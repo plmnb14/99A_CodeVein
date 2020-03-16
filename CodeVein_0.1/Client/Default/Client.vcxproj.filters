@@ -1,0 +1,170 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="99.Default">
+      <UniqueIdentifier>{12050d82-529f-451b-a007-685621a315bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.MainApp">
+      <UniqueIdentifier>{ff7e1193-11ee-4989-b76f-f4281bd9f968}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Headers">
+      <UniqueIdentifier>{eb46acd4-0407-4655-9962-2831501e71ed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Scene">
+      <UniqueIdentifier>{80279647-f98e-4113-8585-9d9b02213ea7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject">
+      <UniqueIdentifier>{2e720a25-95ad-4795-835d-b5d9da89d356}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Logo">
+      <UniqueIdentifier>{8ce732b6-6573-416b-ae66-554a3d05dfaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Logo\BackGround">
+      <UniqueIdentifier>{3d9e6581-23f3-48d6-bb65-fc4ea5bb4f59}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="97.ShaderFiles">
+      <UniqueIdentifier>{828b8041-cc7e-405f-b922-39f4d3a3ca1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Scene\99.Loading">
+      <UniqueIdentifier>{7609c16d-6df2-4f67-8f44-62adf86c8d24}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Scene\00.Logo">
+      <UniqueIdentifier>{bde31f09-2062-43ab-a923-ea90bbb8283a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Scene\01.Stage">
+      <UniqueIdentifier>{db7e1bcb-3d76-4a33-8aba-ff2365f2932b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage">
+      <UniqueIdentifier>{4906a369-b8c8-473f-8723-4cbb692fe9a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\Terrain">
+      <UniqueIdentifier>{9ba38b9d-24eb-44a9-90e7-758c353fe55c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Public">
+      <UniqueIdentifier>{1d29a86d-7d64-48b1-9c03-9130316429e4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\Player">
+      <UniqueIdentifier>{ad20ce46-5eec-4c07-8f84-ee15a8e3237c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\Sky">
+      <UniqueIdentifier>{a86a26cf-cb01-4bbb-9eb3-56b9af6d576e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\Effect">
+      <UniqueIdentifier>{83e29ab0-c6ec-406c-85cf-0fdef8abded7}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Client.h">
+      <Filter>99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MainApp.h">
+      <Filter>00.MainApp</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Client_Defines.h">
+      <Filter>98.Headers</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Scene_Logo.h">
+      <Filter>01.Scene\00.Logo</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BackGround.h">
+      <Filter>02.GameObject\Logo\BackGround</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Scene_Stage.h">
+      <Filter>01.Scene\01.Stage</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Loading.h">
+      <Filter>01.Scene\99.Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Terrain.h">
+      <Filter>02.GameObject\Stage\Terrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Player.h">
+      <Filter>02.GameObject\Stage\Player</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Sky.h">
+      <Filter>02.GameObject\Stage\Sky</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Effect.h">
+      <Filter>02.GameObject\Stage\Effect</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Client.cpp">
+      <Filter>99.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>99.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MainApp.cpp">
+      <Filter>00.MainApp</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Scene_Logo.cpp">
+      <Filter>01.Scene\00.Logo</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BackGround.cpp">
+      <Filter>02.GameObject\Logo\BackGround</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Scene_Stage.cpp">
+      <Filter>01.Scene\01.Stage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Loading.cpp">
+      <Filter>01.Scene\99.Loading</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Terrain.cpp">
+      <Filter>02.GameObject\Stage\Terrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Player.cpp">
+      <Filter>02.GameObject\Stage\Player</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Sky.cpp">
+      <Filter>02.GameObject\Stage\Sky</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Effect.cpp">
+      <Filter>02.GameObject\Stage\Effect</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Client.ico">
+      <Filter>99.Default</Filter>
+    </Image>
+    <Image Include="small.ico">
+      <Filter>99.Default</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Client.rc">
+      <Filter>99.Default</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Text Include="ReadMe.txt">
+      <Filter>99.Default</Filter>
+    </Text>
+  </ItemGroup>
+  <ItemGroup>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Default.fx">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Terrain.fx">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Mesh.fx">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Sky.fx">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect.fx">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+  </ItemGroup>
+</Project>

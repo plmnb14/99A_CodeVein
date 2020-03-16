@@ -1,0 +1,139 @@
+#include "..\Headers\Component_Manager.h"
+
+IMPLEMENT_SINGLETON(CComponent_Manager)
+
+CComponent_Manager::CComponent_Manager()
+{
+}
+
+HRESULT CComponent_Manager::Ready_Component_Manager(_Device _pGraphicDev)
+{
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Transform", CTransform::Create(_pGraphicDev))))
+		return E_FAIL;
+
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Collider", CCollider::Create(_pGraphicDev))))
+		return E_FAIL;
+
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Rigidbody", CRigidBody::Create(_pGraphicDev))))
+		return E_FAIL;
+
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Renderer", CRenderer::Create(_pGraphicDev))))
+		return E_FAIL;
+
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Texture_Default", CTexture::Create(_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Textures/Default.jpg"))))
+		return E_FAIL;
+
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"VIBuffer_Rect", CBuffer_RcTex::Create(_pGraphicDev))))
+		return E_FAIL;
+
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Default", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Default.fx"))))
+		return E_FAIL;
+
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Terrain", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Terrain.fx"))))
+		return E_FAIL;
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Mesh", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Mesh.fx"))))
+		return E_FAIL;
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Sky", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Sky.fx"))))
+		return E_FAIL;
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Effect", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Effect.fx"))))
+		return E_FAIL;
+
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"VIBuffer_Terrain", CBuffer_Terrain::Create(_pGraphicDev, 256, 256, 1))))
+		return E_FAIL;
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"VIBuffer_Cube", CBuffer_CubeTex::Create(_pGraphicDev))))
+		return E_FAIL;
+
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Texture_Terrain", CTexture::Create(_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Textures/Terrain/Grass_%d.tga", 2))))
+		return E_FAIL;
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Texture_Effect", CTexture::Create(_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Textures/Explosion/Explosion%d.png", 90))))
+		return E_FAIL;
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Texture_Sky", CTexture::Create(_pGraphicDev, CTexture::TYPE_CUBE, L"../Bin/Resources/Textures/SkyBox/burger%d.dds", 4))))
+		return E_FAIL;
+
+	_mat		LocalMatrix, ScaleMatrix, RotationMatrix;
+
+	D3DXMatrixIdentity(&LocalMatrix);
+
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Mesh_Player", CMesh_Dynamic::Create(_pGraphicDev, L"../Bin/Resources/Meshes/DynamicMesh/PlayerXFile/", L"Player.x", LocalMatrix))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CComponent_Manager::Reserve_Container_Size(_uint iNumScenes)
+{
+	if (nullptr != m_pPrototypes)
+		return E_FAIL;
+
+	m_pPrototypes = new PROTOTYPES[iNumScenes];
+
+	m_iNumScenes = iNumScenes;
+
+	return NOERROR;
+}
+
+HRESULT CComponent_Manager::Add_Prototype(_uint iSceneID, const _tchar * pPrototypeTag, CComponent * pPrototype)
+{
+	if (m_iNumScenes <= iSceneID || 
+		nullptr == pPrototype || 
+		nullptr == m_pPrototypes ||
+		nullptr != Find_Prototype(iSceneID, pPrototypeTag))
+		return E_FAIL;
+
+	m_pPrototypes[iSceneID].insert(PROTOTYPES::value_type(pPrototypeTag, pPrototype));
+
+	return NOERROR;
+}
+
+CComponent * CComponent_Manager::Clone_Component(_uint iSceneID, const _tchar * pPrototypeTag, void * pArg)
+{
+	if (m_iNumScenes <= iSceneID || 
+		nullptr == m_pPrototypes)
+		return nullptr;
+
+	// 우너본을ㅇ찾는다.
+	CComponent* pPrototype = Find_Prototype(iSceneID, pPrototypeTag);
+	if (nullptr == pPrototype)
+		return nullptr;
+
+	// 원본을 복제한다.
+	return pPrototype->Clone_Component(pArg);	
+}
+
+HRESULT CComponent_Manager::Clear_Instance(_uint iSceneIndex)
+{
+	if (m_iNumScenes <= iSceneIndex ||
+		nullptr == m_pPrototypes)
+		return E_FAIL;
+
+	for (auto& Pair : m_pPrototypes[iSceneIndex])
+		Safe_Release(Pair.second);
+
+	m_pPrototypes[iSceneIndex].clear();
+
+	return NOERROR;	
+}
+
+CComponent * CComponent_Manager::Find_Prototype(_uint iSceneID, const _tchar * pPrototypeTag)
+{
+	auto	iter = find_if(m_pPrototypes[iSceneID].begin(), m_pPrototypes[iSceneID].end(), CTag_Finder(pPrototypeTag));
+
+	if (iter == m_pPrototypes[iSceneID].end())
+		return nullptr;
+
+	return iter->second;
+}
+
+void CComponent_Manager::Free()
+{
+	for (size_t i = 0; i < m_iNumScenes; ++i)
+	{
+		for (auto& Pair : m_pPrototypes[i])		
+			Safe_Release(Pair.second);
+
+		m_pPrototypes[i].clear();		
+	}
+
+	Safe_Delete_Array(m_pPrototypes);
+
+}

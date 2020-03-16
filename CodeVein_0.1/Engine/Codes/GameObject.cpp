@@ -1,0 +1,109 @@
+#include "..\Headers\GameObject.h"
+#include "Management.h"
+
+CGameObject::CGameObject(LPDIRECT3DDEVICE9 pGraphic_Device)
+	: m_pGraphic_Dev(pGraphic_Device)
+{
+	Safe_AddRef(m_pGraphic_Dev);
+}
+
+CGameObject::CGameObject(const CGameObject & rhs)
+{
+}
+
+HRESULT CGameObject::Ready_GameObject_Prototype()
+{
+	return S_OK;
+}
+
+HRESULT CGameObject::Ready_GameObject(void * pArg)
+{
+	return S_OK;
+}
+
+_int CGameObject::Update_GameObject(_double TimeDelta)
+{
+	if (m_bIsDead)
+		return DEAD_OBJ;
+
+	COMPONENTS::iterator iter_begin = m_pmapComponents.begin();
+	COMPONENTS::iterator iter_end = m_pmapComponents.end();
+
+	for (; iter_begin != iter_end; ++iter_begin)
+	{
+		iter_begin->second->Update_Component();
+	}
+
+	return NO_EVENT;
+}
+
+_int CGameObject::Late_Update_GameObject(_double TimeDelta)
+{
+	return _int();
+}
+
+HRESULT CGameObject::LateInit_GameObject()
+{
+	return E_NOTIMPL;
+}
+
+HRESULT CGameObject::Render_GameObject()
+{
+	return S_OK;
+}
+
+HRESULT CGameObject::Add_Component(_uint iSceneID, const _tchar * pPrototypeTag, const _tchar * pComponentTag, CComponent** ppComponent, void * pArg)
+{
+	if (nullptr != Find_Component(pComponentTag))
+		return E_FAIL;
+
+	CComponent_Manager*		pComponent_Manager = CComponent_Manager::Get_Instance();
+	if (nullptr == pComponent_Manager)
+		return E_FAIL;
+
+	Safe_AddRef(pComponent_Manager);
+
+	CComponent*	pComponent = pComponent_Manager->Clone_Component(iSceneID, pPrototypeTag, pArg);
+	if (nullptr == pComponent)
+		return E_FAIL;
+
+	*ppComponent = pComponent;
+
+	m_pmapComponents.insert(COMPONENTS::value_type(pComponentTag, pComponent));
+
+	Safe_AddRef(pComponent);
+
+	Safe_Release(pComponent_Manager);
+
+	return NOERROR;
+}
+
+CComponent * CGameObject::Get_Component(const _tchar * pComponentTag)
+{
+	auto	iter = find_if(m_pmapComponents.begin(), m_pmapComponents.end(), CTag_Finder(pComponentTag));
+
+	if (iter == m_pmapComponents.end())
+		return nullptr;
+
+	return iter->second;
+}
+
+CComponent * CGameObject::Find_Component(const _tchar * pComponentTag)
+{
+	auto	iter = find_if(m_pmapComponents.begin(), m_pmapComponents.end(), CTag_Finder(pComponentTag));
+
+	if (iter == m_pmapComponents.end())
+		return nullptr;
+
+	return iter->second;
+}
+
+void CGameObject::Free()
+{
+	for (auto& Pair : m_pmapComponents)
+		Safe_Release(Pair.second);
+
+	m_pmapComponents.clear();
+
+	Safe_Release(m_pGraphic_Dev);
+}

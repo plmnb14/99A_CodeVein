@@ -1,0 +1,213 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="00. WinApp">
+      <UniqueIdentifier>{1349976d-c260-4946-8974-f2bd47c978c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00. WinApp\01. Document">
+      <UniqueIdentifier>{46b548b2-9d1b-4032-98c8-8950e3642061}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01. MainFrame">
+      <UniqueIdentifier>{8bb540ae-d56b-44da-96c6-77f5e0ec650f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99. Default">
+      <UniqueIdentifier>{6d4e70ae-1555-4629-a0b7-d439c9cf0ad8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98. Header">
+      <UniqueIdentifier>{bf6f75eb-5006-4539-904f-f8e1d9df0835}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. View">
+      <UniqueIdentifier>{97938ebc-bcda-4669-b5aa-1aa6f3bde5c9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. View\[01] MainForm">
+      <UniqueIdentifier>{c34fec14-c434-43b6-b9c2-1015851b2731}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. View\[02] Inspector_Form">
+      <UniqueIdentifier>{7c49f900-7a64-4561-bc45-4bdb86146e6d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. View\[02] Inspector_Form\01. Sheet">
+      <UniqueIdentifier>{a7c754c8-5c3b-4b6c-b199-76693128e928}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. View\[02] Inspector_Form\00. This">
+      <UniqueIdentifier>{c45fbead-505a-40ac-be7d-40f823e8faaf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. View\[00] ToolView">
+      <UniqueIdentifier>{1bfc8823-dc3f-4136-8f88-95d481175007}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. View\[00] ToolView\00. MapTool">
+      <UniqueIdentifier>{875006bf-44f1-4186-9615-25a375e00eed}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. View\[02] Inspector_Form\01. Sheet\01. Transform_Sheet">
+      <UniqueIdentifier>{579bce5f-ce4c-428a-ac12-4e0c739b98a7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. View\[02] Inspector_Form\01. Sheet\02. Inspector Sheet">
+      <UniqueIdentifier>{53f587ae-91d2-453a-b78c-8d815ff8b2cf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. View\[02] Inspector_Form\01. Sheet\03. Page">
+      <UniqueIdentifier>{aeace701-6e63-453e-919f-52654e927f18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. View\[02] Inspector_Form\01. Sheet\03. Page\01. Inspector">
+      <UniqueIdentifier>{808100e3-90a8-4c71-a26c-f8bfb57d1467}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="06. FileInfo">
+      <UniqueIdentifier>{f9e49754-7735-440a-ae24-5441f1866ed9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. View\[02] Inspector_Form\01. Sheet\03. Page\03. Animator">
+      <UniqueIdentifier>{59f03097-7125-4959-8ab3-8b154bf37954}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. View\[02] Inspector_Form\01. Sheet\03. Page\04. Collider">
+      <UniqueIdentifier>{6c63fc06-d816-4b20-9127-99972c1e6a9d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. View\[02] Inspector_Form\01. Sheet\03. Page\05. NaviMesh">
+      <UniqueIdentifier>{3887c7d8-62b9-4fbc-b9e7-43723f108cca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. View\[02] Inspector_Form\01. Sheet\03. Page\06. MapTool">
+      <UniqueIdentifier>{fd601914-8c73-4768-83ae-f2ef16c61b8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02. View\[02] Inspector_Form\01. Sheet\03. Page\02. Pivot">
+      <UniqueIdentifier>{81fd7268-39a9-4225-81df-fec3ad377cca}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05. TreeFinder">
+      <UniqueIdentifier>{9d0cb92b-1dbc-4716-8b4d-3af0b7c72ab5}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Tool.h">
+      <Filter>00. WinApp</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolDoc.h">
+      <Filter>00. WinApp\01. Document</Filter>
+    </ClInclude>
+    <ClInclude Include="MainFrm.h">
+      <Filter>01. MainFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>99. Default</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>99. Default</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>99. Default</Filter>
+    </ClInclude>
+    <ClInclude Include="MainForm.h">
+      <Filter>02. View\[01] MainForm</Filter>
+    </ClInclude>
+    <ClInclude Include="Inspector_Form.h">
+      <Filter>02. View\[02] Inspector_Form\00. This</Filter>
+    </ClInclude>
+    <ClInclude Include="Inspector_Page.h">
+      <Filter>02. View\[02] Inspector_Form\01. Sheet\03. Page\01. Inspector</Filter>
+    </ClInclude>
+    <ClInclude Include="Animator_Page.h">
+      <Filter>02. View\[02] Inspector_Form\01. Sheet\03. Page\03. Animator</Filter>
+    </ClInclude>
+    <ClInclude Include="Collider_Page.h">
+      <Filter>02. View\[02] Inspector_Form\01. Sheet\03. Page\04. Collider</Filter>
+    </ClInclude>
+    <ClInclude Include="Tool_Defines.h">
+      <Filter>98. Header</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolView.h">
+      <Filter>02. View\[00] ToolView</Filter>
+    </ClInclude>
+    <ClInclude Include="NavMesh_Page.h">
+      <Filter>02. View\[02] Inspector_Form\01. Sheet\03. Page\05. NaviMesh</Filter>
+    </ClInclude>
+    <ClInclude Include="Inspector_Sheet.h">
+      <Filter>02. View\[02] Inspector_Form\01. Sheet\01. Transform_Sheet</Filter>
+    </ClInclude>
+    <ClInclude Include="Essential_Sheet.h">
+      <Filter>02. View\[02] Inspector_Form\01. Sheet\02. Inspector Sheet</Filter>
+    </ClInclude>
+    <ClInclude Include="FileInfo.h">
+      <Filter>06. FileInfo</Filter>
+    </ClInclude>
+    <ClInclude Include="MapTool_Page.h">
+      <Filter>02. View\[02] Inspector_Form\01. Sheet\03. Page\06. MapTool</Filter>
+    </ClInclude>
+    <ClInclude Include="Pivot_Page.h">
+      <Filter>02. View\[02] Inspector_Form\01. Sheet\03. Page\02. Pivot</Filter>
+    </ClInclude>
+    <ClInclude Include="TreeFinder.h">
+      <Filter>05. TreeFinder</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Tool.cpp">
+      <Filter>00. WinApp</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolDoc.cpp">
+      <Filter>00. WinApp\01. Document</Filter>
+    </ClCompile>
+    <ClCompile Include="MainFrm.cpp">
+      <Filter>01. MainFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>99. Default</Filter>
+    </ClCompile>
+    <ClCompile Include="MainForm.cpp">
+      <Filter>02. View\[01] MainForm</Filter>
+    </ClCompile>
+    <ClCompile Include="Inspector_Form.cpp">
+      <Filter>02. View\[02] Inspector_Form\00. This</Filter>
+    </ClCompile>
+    <ClCompile Include="Inspector_Page.cpp">
+      <Filter>02. View\[02] Inspector_Form\01. Sheet\03. Page\01. Inspector</Filter>
+    </ClCompile>
+    <ClCompile Include="Animator_Page.cpp">
+      <Filter>02. View\[02] Inspector_Form\01. Sheet\03. Page\03. Animator</Filter>
+    </ClCompile>
+    <ClCompile Include="Collider_Page.cpp">
+      <Filter>02. View\[02] Inspector_Form\01. Sheet\03. Page\04. Collider</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolView.cpp">
+      <Filter>02. View\[00] ToolView</Filter>
+    </ClCompile>
+    <ClCompile Include="NavMesh_Page.cpp">
+      <Filter>02. View\[02] Inspector_Form\01. Sheet\03. Page\05. NaviMesh</Filter>
+    </ClCompile>
+    <ClCompile Include="Inspector_Sheet.cpp">
+      <Filter>02. View\[02] Inspector_Form\01. Sheet\01. Transform_Sheet</Filter>
+    </ClCompile>
+    <ClCompile Include="Essential_Sheet.cpp">
+      <Filter>02. View\[02] Inspector_Form\01. Sheet\02. Inspector Sheet</Filter>
+    </ClCompile>
+    <ClCompile Include="FileInfo.cpp">
+      <Filter>06. FileInfo</Filter>
+    </ClCompile>
+    <ClCompile Include="MapTool_Page.cpp">
+      <Filter>02. View\[02] Inspector_Form\01. Sheet\03. Page\06. MapTool</Filter>
+    </ClCompile>
+    <ClCompile Include="Pivot_Page.cpp">
+      <Filter>02. View\[02] Inspector_Form\01. Sheet\03. Page\02. Pivot</Filter>
+    </ClCompile>
+    <ClCompile Include="TreeFinder.cpp">
+      <Filter>05. TreeFinder</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\Tool.ico">
+      <Filter>99. Default</Filter>
+    </Image>
+    <Image Include="res\Toolbar.bmp">
+      <Filter>99. Default</Filter>
+    </Image>
+    <Image Include="res\ToolDoc.ico">
+      <Filter>99. Default</Filter>
+    </Image>
+    <Image Include="res\icon1.ico" />
+    <Image Include="..\..\Unity_3D.ico" />
+    <Image Include="..\Unity_3D.ico" />
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Tool.rc">
+      <Filter>99. Default</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\Tool.rc2">
+      <Filter>99. Default</Filter>
+    </None>
+  </ItemGroup>
+</Project>

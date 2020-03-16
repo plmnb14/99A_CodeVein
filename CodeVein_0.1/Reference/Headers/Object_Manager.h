@@ -1,0 +1,36 @@
+#pragma once
+
+#include "Layer.h"
+
+BEGIN(Engine)
+
+class CObject_Manager final : public CBase
+{
+	DECLARE_SINGLETON(CObject_Manager)
+private:
+	explicit CObject_Manager();
+	virtual ~CObject_Manager() = default;
+public:
+	HRESULT Reserve_Container_Size(_uint iNumScenes);
+	HRESULT Add_Prototype(const _tchar* pPrototypeTag, CGameObject* pPrototype);
+	HRESULT Add_GameObject_ToLayer(const _tchar* pPrototypeTag, _uint iSceneID, const _tchar* pLayerTag, void* pArg);
+	_int Update_Object_Manager(_double TimeDelta);
+	_int Late_Update_Object_Manager(_double TimeDelta);
+	HRESULT Clear_Instance(_uint iSceneIndex);
+private:
+	// 게임내에 생성될 수 있는 객체들의 원형.
+	map<const _tchar*, CGameObject*>			m_Prototypes;
+	typedef map<const _tchar*, CGameObject*>	PROTOTYPES;
+private:
+	map<const _tchar*, CLayer*>*				m_pLayers = nullptr;
+	typedef map<const _tchar*, CLayer*>			LAYERS;
+
+	_uint			m_iNumScenes = 0;
+private:
+	CGameObject* Find_Prototype(const _tchar* pPrototypeTag);
+	CLayer*	Find_Layer(_uint iSceneID, const _tchar* pLayerTag);
+public:
+	virtual void Free();
+};
+
+END

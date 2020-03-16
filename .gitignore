@@ -1,0 +1,17 @@
+*.db
+CodeVein_0.1/.vs/CodeVein/v14/.suo
+CodeVein_0.1/.vs/FrameWork/v14/.suo
+*.ilk
+*.dll
+*.cso
+*.zip
+*.tlog
+*.lastbuildstate
+*.pdb
+*.obj
+*.pch
+*.res
+*.idb
+*.log
+*.meta
+*.lib
