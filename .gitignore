@@ -15,3 +15,5 @@ CodeVein_0.1/.vs/FrameWork/v14/.suo
 *.log
 *.meta
 *.lib
+*.opendb
+*.ipch

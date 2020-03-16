@@ -1,6 +1,7 @@
 #include "Camera.h"
 #include "Management.h"
 #include "Timer_Manager.h"
+#include "CameraMgr.h"
 
 CCamera::CCamera(_Device pGraphicDev)
 	: CGameObject(pGraphicDev),
@@ -1131,15 +1132,15 @@ void CCamera::KeyInput()
 
 	float fMoveSpeed = 0.1f;
 
-	if (GetAsyncKeyState('L') & 0x8000)
+	if (CInput_Device::Get_Instance()->Key_Up(DIK_SPACE))
 	{
-		//cout << "Pos  축 : " << m_pTransform->Get_Pos().x << endl;
-		//cout << "Pos Y 축 : " << m_pTransform->Get_Pos().y << endl;
-		//cout << "Pos Z 축 : " << m_pTransform->Get_Pos().z << endl;
-		//cout << "-----------------------------------------" << endl;
-		//cout << "At X 축 : " << m_pTransform->Get_At().x << endl;
-		//cout << "At Y 축 : " << m_pTransform->Get_At().y << endl;
-		//cout << "At Z 축 : " << m_pTransform->Get_At().z << endl;
+		CCameraMgr::Get_Instance()->Set_MouseCtrl(false);
+	}
+
+	if (CInput_Device::Get_Instance()->Key_Down(DIK_SPACE))
+	{
+		CCameraMgr::Get_Instance()->Set_MouseCtrl(true);
+		CInput_Device::Get_Instance()->Calc_MouseLockPos();
 	}
 
 	if (GetAsyncKeyState('W') & 0x8000)

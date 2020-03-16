@@ -65,8 +65,6 @@ const RAY CInput_Device::Get_Ray(const RAY_CALC _eCalc)
 
 	matProj = CPipeLine::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
 	matView = CPipeLine::Get_Instance()->Get_Transform(D3DTS_VIEW);
-	//matWorld = _matWorld;
-
 
 	vMouse.x = (float(pt.x) / (WINCX >> 1) - 1.f) / matProj._11;
 	vMouse.y = (float(-pt.y) / (WINCY >> 1) + 1.f) / matProj._22;
@@ -204,6 +202,27 @@ HRESULT Engine::CInput_Device::Set_InputDev(void)
 	m_pMouse->GetDeviceState(sizeof(m_tMouseState), &m_tMouseState);
 
 	return S_OK;
+}
+
+void  CInput_Device::Set_MouseLock(const _bool _bOnCenter)
+{
+	m_bOnCenter = _bOnCenter;
+
+	POINT pt;
+
+	if (m_bOnCenter)
+	{
+		pt.x = WINCX / 2;
+		pt.y = WINCY / 2;
+	}
+	else
+	{
+		pt.x = m_MouseLockPos.x;
+		pt.y = m_MouseLockPos.y;
+	}
+
+	ClientToScreen(m_hWnd, &pt);
+	SetCursorPos(pt.x, pt.y);
 }
 
 void Engine::CInput_Device::Free(void)

@@ -30,7 +30,7 @@ public:
 
 public:
 	void  Set_DPI(const _float _fDPI) { m_fDPI = _fDPI; }
-	void  Set_MouseLock(const _bool _bOnCenter = true) { m_bOnCenter = _bOnCenter; }
+	void  Set_MouseLock(const _bool _bOnCenter = true);
 
 public:
 	void  Calc_MouseLockPos();
@@ -49,7 +49,7 @@ private:
 	_bool	m_bOnCenter = false;
 
 private:
-	_float	m_fDPI = 0.f;
+	_float	m_fDPI = 0.5f;
 
 private:
 	POINT m_CurMousePos;
