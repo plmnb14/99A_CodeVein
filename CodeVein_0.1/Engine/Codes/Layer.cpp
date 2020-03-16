@@ -23,13 +23,35 @@ _int CLayer::Update_Layer(_double TimeDelta)
 {
 	_int	iProgress = 0;
 
-	for (auto& pGameObject : m_ObjectList)
+	//for (auto& pGameObject : m_ObjectList)
+	//{
+	//	if (nullptr != pGameObject)
+	//	{
+	//		iProgress = pGameObject->Update_GameObject(TimeDelta);
+	//		if (0 > iProgress)
+	//			break;
+	//	}
+	//}
+
+	auto& iter_begin = m_ObjectList.begin();
+	auto& iter_end = m_ObjectList.end();
+	for (; iter_begin != iter_end; )
 	{
-		if (nullptr != pGameObject)
+		if (nullptr != *iter_begin)
 		{
-			iProgress = pGameObject->Update_GameObject(TimeDelta);
-			if (0 > iProgress)
-				break;
+			iProgress = (*iter_begin)->Update_GameObject(TimeDelta);
+			
+			if (DEAD_OBJ == iProgress)
+			{
+				Safe_Release((*iter_begin));
+
+				iter_begin = m_ObjectList.erase(iter_begin);
+			}
+			else
+				iter_begin++;
+	
+			//if (0 > iProgress)
+			//	break;
 		}
 	}
 

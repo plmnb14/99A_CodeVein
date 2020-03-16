@@ -44,7 +44,15 @@ _int CGameObject::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CGameObject::LateInit_GameObject()
 {
-	return E_NOTIMPL;
+	HRESULT hr = E_FAIL;
+
+	if (!m_bIsInit)
+	{
+		hr = this->LateInit_GameObject();
+		m_bIsInit = true;
+	}
+
+	return hr;
 }
 
 HRESULT CGameObject::Render_GameObject()
@@ -97,6 +105,20 @@ CComponent * CGameObject::Find_Component(const _tchar * pComponentTag)
 
 	return iter->second;
 }
+
+void CGameObject::Compute_ViewZ(const _v3* pPos)
+{
+	_mat	matView;
+
+	m_pGraphic_Dev->GetTransform(D3DTS_VIEW, &matView);
+	D3DXMatrixInverse(&matView, NULL, &matView);
+
+	_v3	vCamPos;
+	memcpy(&vCamPos, &matView.m[3][0], sizeof(_v3));
+
+	m_fViewZ = D3DXVec3Length(&(vCamPos - *pPos));
+}
+
 
 void CGameObject::Free()
 {
