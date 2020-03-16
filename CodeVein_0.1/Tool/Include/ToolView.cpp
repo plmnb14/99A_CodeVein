@@ -25,11 +25,6 @@
 #include "Timer_Manager.h"
 #include "FrameMgr.h"
 #include "CameraMgr.h"
-//#include "Cell.h"
-
-//#ifdef _DEBUG
-//#define new DEBUG_NEW
-//#endif
 
 // 전역변수
 HWND g_hWnd;
@@ -64,7 +59,7 @@ CToolView::~CToolView()
 {
 	//m_pPage_Inspecter->free();
 	//m_pPage_MapTool->Free();
-	m_pPage_Navmesh->Free();
+	//m_pPage_Navmesh->Free();
 
 	CMainFrame* pMainFrm = static_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
 	CInspector_Form* pInspector = static_cast<CInspector_Form*>(pMainFrm->m_MainSplitter.GetPane(0, 1));
@@ -167,7 +162,7 @@ void CToolView::OnInitialUpdate()
 
 	// MainFrame의 크기 조정.
 	pMainFrm->SetWindowPos(
-		nullptr, 0, 0, 1610, 1020, SWP_NOZORDER);
+		nullptr, 0, 0, 1610, 720, SWP_NOZORDER);
 
 	Setup_Default();
 
@@ -185,16 +180,12 @@ void CToolView::Setup_Default()
 	CInput_Device::Get_Instance()->Ready_Input_Dev(AfxGetInstanceHandle(), g_hWnd);
 	CInput_Device::Get_Instance()->Set_InputDev();
 
-	//CManagement::Get_Instance()->Ready_Component_Manager(g_pGraphicDev);
-
-	//ENGINE::LoadMesh_FromImgPath(g_pGraphicDev, L"../../Data/MeshPath_Recover.dat");
+	CManagement::Get_Instance()->LoadMesh_FromPath(g_pGraphicDev, L"../../Data/Mesh_Path.dat");
 
 	SetUp_Cam();
 	SetUp_Layer();
 
 	g_pGraphicDev->GetTransform(D3DTS_WORLD, &g_matWorld);
-	g_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
-	g_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CW);
 }
 
 void CToolView::SetUp_Layer()
@@ -266,7 +257,7 @@ void CToolView::LateInit()
 
 void CToolView::Render()
 {
-	g_pGraphicDev->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL, D3DXCOLOR(0.f, 0.f, 1.f, 1.f), 1.f, 0);
+	g_pGraphicDev->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL, D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.f), 1.f, 0);
 	g_pGraphicDev->BeginScene();
 
 	m_pGreedTerrain->Render_GameObject();

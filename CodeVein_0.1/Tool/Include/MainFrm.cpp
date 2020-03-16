@@ -106,6 +106,11 @@ void CMainFrame::Dump(CDumpContext& dc) const
 
 BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 {
+	// 메쉬 경로 추출
+	CFileInfo::Create_Mesh_PathInfo();
+	// 텍스쳐 경로 추출
+	CFileInfo::Create_Texture_PathInfo();
+
 	m_MainSplitter.CreateStatic(this, 1, 2);
 	m_MainSplitter.SetColumnInfo(0, 1280, 0);
 	m_MainSplitter.SetColumnInfo(1, 300, 0);

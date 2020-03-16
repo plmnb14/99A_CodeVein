@@ -889,7 +889,7 @@ HRESULT CCamera::SetUp_Default()
 	// Proj
 	m_fFov = 60.f;
 	m_fNear = 0.1f;
-	m_fFar = 100.f;
+	m_fFar = 500.f;
 
 
 	// Zoom

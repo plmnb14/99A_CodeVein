@@ -104,6 +104,28 @@ const RAY CInput_Device::Get_Ray(const RAY_CALC _eCalc)
 	return tRay;
 }
 
+const _bool CInput_Device::Get_DIMouseState(MOUSEKEYSTATE eMouse)
+{
+	if (m_tMouseState.rgbButtons[eMouse] & 0x80)
+	{
+		if (m_bMouseKeyDown[eMouse] == false)
+		{
+			m_bMouseKeyDown[eMouse] = true;
+
+			return true;
+		}
+
+		return false;
+	}
+
+	else
+	{
+		m_bMouseKeyDown[eMouse] = false;
+
+		return false;
+	}
+}
+
 void CInput_Device::Calc_MouseLockPos()
 {
 	POINT pt = {};

@@ -9,7 +9,7 @@ CRenderObject::CRenderObject(_Device _pGraphicDev)
 }
 
 CRenderObject::CRenderObject(const CRenderObject& rhs)
-	: CGameObject(rhs)
+	: CGameObject(rhs.m_pGraphic_Dev)
 	, m_eGroup(rhs.m_eGroup)
 	, m_iIndex(rhs.m_iIndex)
 {
@@ -28,12 +28,12 @@ CRenderObject::~CRenderObject()
 
 _int CRenderObject::Update_GameObject(_double _TimeDelta)
 {
-	CGameObject::LateInit_GameObject();
+	//CGameObject::LateInit_GameObject();
 	CGameObject::Update_GameObject(_TimeDelta);
 
 	Update_Collider();
 
-	m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
+	//m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
 
 	return S_OK;
 }
@@ -96,7 +96,11 @@ HRESULT CRenderObject::Add_Essentional()
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Player", L"Mesh", (CComponent**)&m_pMesh_Static)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Sword", L"Mesh", (CComponent**)&m_pMesh_Static)))
+		return E_FAIL;
+
+	// for.Com_Mesh
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
 
 	return S_OK;
@@ -117,7 +121,11 @@ HRESULT CRenderObject::Add_Essentional_Copy()
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Player", L"Mesh", (CComponent**)&m_pMesh_Static)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, m_szName, L"Mesh", (CComponent**)&m_pMesh_Static)))
+		return E_FAIL;
+
+	// for.Com_Mesh
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
 
 	return S_OK;
@@ -128,7 +136,7 @@ HRESULT CRenderObject::Default_Setting()
 	m_pTransform->Set_Pos(V3_NULL);
 	m_pTransform->Set_Scale(V3_ONE);
 
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 void CRenderObject::Change_Mesh(const _tchar* _MeshName)
@@ -137,12 +145,12 @@ void CRenderObject::Change_Mesh(const _tchar* _MeshName)
 		return;
 
 	lstrcpy(m_szName, _MeshName);
+	auto& iter = m_pmapComponents.find(L"Mesh");
 
 	Safe_Release(m_pMesh_Static);
+	Safe_Release(iter->second);
 
-	auto& iter = m_pmapComponents.find(L"Static_Mesh");
-
-	m_pMesh_Static = static_cast<CMesh_Static*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, m_szName));
+	iter->second = m_pMesh_Static = static_cast<CMesh_Static*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, m_szName));
 
 	return;
 }
@@ -171,6 +179,12 @@ CRenderObject * CRenderObject::CreateClone(CRenderObject* _pCopy)
 
 void CRenderObject::Free()
 {
+	Safe_Release(m_pTransform);
+	Safe_Release(m_pCollider);
+	Safe_Release(m_pMesh_Static);
+	Safe_Release(m_pShader);
+	Safe_Release(m_pRenderer);
+
 	CGameObject::Free();
 }
 

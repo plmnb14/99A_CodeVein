@@ -54,6 +54,9 @@ public: // for.Component_Manager
 	HRESULT Add_Prototype(_uint iSceneID, const _tchar* pPrototypeTag, CComponent* pPrototype);
 	CComponent* Clone_Component(_uint iSceneID, const _tchar* pPrototypeTag, void* pArg = nullptr);
 
+	HRESULT LoadMesh_FromPath(_Device pGraphicDev, const _tchar* szImgPath);
+	HRESULT LoadTex_FromPath(_Device pGraphicDev, const _tchar* szImgPath);
+
 public: // For.PipeLine
 	_v3	Get_CamPosition();
 	_mat Get_Transform(D3DTRANSFORMSTATETYPE eState);	

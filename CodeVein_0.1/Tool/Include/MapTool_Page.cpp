@@ -77,8 +77,7 @@ void CMapTool_Page::Delete_MouseObj()
 {
 	if (m_pRenderObj != nullptr)
 	{
-		m_pRenderObj->Free();
-		m_pRenderObj = nullptr;
+		Safe_Release(m_pRenderObj);
 	}
 }
 
@@ -97,13 +96,9 @@ void CMapTool_Page::Update()
 	{
 		if (m_pRenderObj != nullptr)
 		{
-			m_pRenderObj->Free();
-			m_pRenderObj = nullptr;
+			Safe_Release(m_pRenderObj);
 		}
 	}
-
-	//IF_NULL(m_pSelectedObj)
-	//	Object_Movement();
 
 	KeyInput();
 
@@ -111,9 +106,9 @@ void CMapTool_Page::Update()
 	{
 		if (m_iEditMode == _CREATE)
 		{
-			if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_LB))
+			if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_RB))
 			{
-				Engine::Safe_Release(m_pRenderObj);
+				Safe_Release(m_pRenderObj);
 			}
 		}
 	}
@@ -131,8 +126,6 @@ void CMapTool_Page::Render()
 
 	for (auto& iter : m_listObject)
 	{
-		g_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
-
 		iter->Update_GameObject(0);
 		iter->Render_GameObject();
 	}
@@ -343,9 +336,9 @@ void CMapTool_Page::Save_Object()
 		lstrcat(szObjdata, ObjInfo->szScale_Z);
 		lstrcat(szObjdata, szSlash);
 
-		//wstrCombined = szObjdata;
+		wstrCombined = szObjdata;
 
-		fout << szObjdata << endl;
+		fout << wstrCombined << endl;
 
 		Engine::Safe_Delete(ObjInfo);
 	}
@@ -360,8 +353,7 @@ void CMapTool_Page::Load_Object()
 
 	for (auto& iter : m_listObject)
 	{
-		iter->Free();
-		iter = nullptr;
+		Safe_Release(iter);
 	}
 	m_listObject.clear();
 
@@ -376,54 +368,51 @@ void CMapTool_Page::Load_Object()
 
 	_v3    vVtx[3];
 
-	fin.open(L"../../Data/Scene_Stage_01.dat");
+	fin.open(L"../../Data/Stage_Test.dat");
 
 	if (fin.fail())
 		return;
 
 	while (true)
 	{
-		Engine::OBJ_INFO* ObjInfo = new Engine::OBJ_INFO;
+		Engine::OBJ_INFO ObjInfo;
 
-		fin.getline(ObjInfo->szName, MAX_STR, '|');
-		fin.getline(ObjInfo->szIndex, MAX_STR, '|');
-		fin.getline(ObjInfo->szTag, MAX_STR, '|');
+		fin.getline(ObjInfo.szName, MAX_STR, '|');
+		fin.getline(ObjInfo.szIndex, MAX_STR, '|');
+		//fin.getline(ObjInfo->szTag, MAX_STR, '|');
 
-		fin.getline(ObjInfo->szPos_X, MAX_STR, '|');
-		fin.getline(ObjInfo->szPos_Y, MAX_STR, '|');
-		fin.getline(ObjInfo->szPos_Z, MAX_STR, '|');
-
-		fin.getline(ObjInfo->szRot_X, MAX_STR, '|');
-		fin.getline(ObjInfo->szRot_Y, MAX_STR, '|');
-		fin.getline(ObjInfo->szRot_Z, MAX_STR, '|');
-
-		fin.getline(ObjInfo->szScale_X, MAX_STR, '|');
-		fin.getline(ObjInfo->szScale_Y, MAX_STR, '|');
-		fin.getline(ObjInfo->szScale_Z, MAX_STR);
+		fin.getline(ObjInfo.szPos_X, MAX_STR, '|');
+		fin.getline(ObjInfo.szPos_Y, MAX_STR, '|');
+		fin.getline(ObjInfo.szPos_Z, MAX_STR, '|');
+		
+		fin.getline(ObjInfo.szRot_X, MAX_STR, '|');
+		fin.getline(ObjInfo.szRot_Y, MAX_STR, '|');
+		fin.getline(ObjInfo.szRot_Z, MAX_STR, '|');
+		
+		fin.getline(ObjInfo.szScale_X, MAX_STR, '|');
+		fin.getline(ObjInfo.szScale_Y, MAX_STR, '|');
+		fin.getline(ObjInfo.szScale_Z, MAX_STR);
 
 
 		if (fin.eof())
-		{
-			Engine::Safe_Delete(ObjInfo);
 			break;
-		}
 
 		else
 		{
-			iIndex	= _ttoi(ObjInfo->szIndex);
-			iTag	= _ttoi(ObjInfo->szTag);
+			iIndex = _ttoi(ObjInfo.szIndex);
+			iTag = _ttoi(ObjInfo.szTag);
 
-			fA[0] = (_float)_tstof(ObjInfo->szPos_X);
-			fA[1] = (_float)_tstof(ObjInfo->szPos_Y);
-			fA[2] = (_float)_tstof(ObjInfo->szPos_Z);
+			fA[0] = (_float)_tstof(ObjInfo.szPos_X);
+			fA[1] = (_float)_tstof(ObjInfo.szPos_Y);
+			fA[2] = (_float)_tstof(ObjInfo.szPos_Z);
 
-			fB[0] = (_float)_tstof(ObjInfo->szRot_X);
-			fB[1] = (_float)_tstof(ObjInfo->szRot_Y);
-			fB[2] = (_float)_tstof(ObjInfo->szRot_Z);
+			fB[0] = (_float)_tstof(ObjInfo.szRot_X);
+			fB[1] = (_float)_tstof(ObjInfo.szRot_Y);
+			fB[2] = (_float)_tstof(ObjInfo.szRot_Z);
 
-			fC[0] = (_float)_tstof(ObjInfo->szScale_X);
-			fC[1] = (_float)_tstof(ObjInfo->szScale_Y);
-			fC[2] = (_float)_tstof(ObjInfo->szScale_Z);
+			fC[0] = (_float)_tstof(ObjInfo.szScale_X);
+			fC[1] = (_float)_tstof(ObjInfo.szScale_Y);
+			fC[2] = (_float)_tstof(ObjInfo.szScale_Z);
 
 			vVtx[0] = { fA[0], fA[1], fA[2] };
 			vVtx[1] = { fB[0], fB[1], fB[2] };
@@ -431,31 +420,23 @@ void CMapTool_Page::Load_Object()
 
 
 			Engine::CRenderObject*	pInstance = Engine::CRenderObject::Create(g_pGraphicDev);
-			pInstance->Change_Mesh(ObjInfo->szName);
+			pInstance->Change_Mesh(ObjInfo.szName);
 			pInstance->Set_Index(iIndex);
-			//pInstance->Set_Tag(iTag);
+
 			TARGET_TO_TRANS(pInstance)->Set_Pos(vVtx[0]);
 			TARGET_TO_TRANS(pInstance)->Set_Angle(vVtx[1]);
 			TARGET_TO_TRANS(pInstance)->Set_Scale(vVtx[2]);
 
-			//pInstance->Add_PickCollider();
-
 			m_listObject.push_back(pInstance);
 			
 			_tchar szObjName[MAX_STR] = L"";
-			lstrcpy(szObjName, ObjInfo->szName);
-			lstrcat(szObjName, ObjInfo->szIndex);
+			lstrcpy(szObjName, ObjInfo.szName);
+			lstrcat(szObjName, ObjInfo.szIndex);
 
-			// 트리 추가
-
-			//HTREEITEM* tmpItem = new HTREEITEM;
-
-			//*tmpItem = m_pObjectTree.InsertItem(szObjName, 0, 0, hObjectRoot);
 			m_pObjectTree.InsertItem(szObjName, 0, 0, hObjectRoot);
-			//m_vecCellset.push_back(tmpItem);
 
 			pInstance = nullptr;
-			Engine::Safe_Delete(ObjInfo);
+			//Engine::Safe_Delete(ObjInfo);
 		}
 	}
 
@@ -668,7 +649,8 @@ _bool CMapTool_Page::CheckObject()
 	Engine::CGameObject* pIstance = nullptr;
 	_float m_fCross = 0.f;
 
-	pIstance = Engine::CCollisionMgr::Collision_Ray(m_listObject, g_Ray, &g_fCross);
+	if(m_listObject.size() > 0)
+		pIstance = Engine::CCollisionMgr::Collision_Ray(m_listObject, g_Ray, &g_fCross);
 
 	if (pIstance == nullptr)
 	{
@@ -701,6 +683,8 @@ void CMapTool_Page::LoadFilePath(const wstring & wstrImgPath)
 	hStaticRoot = m_Tree.InsertItem(TEXT("StaticMesh"), 0, 0, TVI_ROOT);
 	hDynamicRoot = m_Tree.InsertItem(TEXT("DynamicMesh"), 0, 0, TVI_ROOT);
 
+	cout << sizeof(PATH_INFO) << endl;
+
 	while (true)
 	{
 		Engine::PATH_INFO* tmpPath = new Engine::PATH_INFO;
@@ -708,7 +692,7 @@ void CMapTool_Page::LoadFilePath(const wstring & wstrImgPath)
 		fin.getline(tmpPath->sztrStateKey, MAX_STR, '|');
 		fin.getline(tmpPath->sztrFileName, MAX_STR, '|');
 		fin.getline(tmpPath->sztrImgPath, MAX_STR, '|');
-		fin.getline(tmpPath->szIsDynamic, MAX_STR);
+		fin.getline(tmpPath->szIsDynamic, MAX_STR, '|');
 
 		if (fin.eof())
 		{
@@ -845,16 +829,14 @@ void CMapTool_Page::Free()
 
 	if (m_pRenderObj != nullptr)
 	{
-		//Engine::Safe_Release(m_pRenderObj);
-		m_pRenderObj->Free();
-		m_pRenderObj = nullptr;
+		Engine::Safe_Release(m_pRenderObj);
 	}
 
 	for (auto& iter : m_listObject)
 	{
-		iter->Free();
-		iter = nullptr;
-		//Engine::Safe_Release(iter);
+		//iter->Free();
+		//iter = nullptr;
+		Engine::Safe_Release(iter);
 	}
 	m_listObject.clear();
 
@@ -972,8 +954,6 @@ void CMapTool_Page::OnTvnSelchangedTree1(NMHDR *pNMHDR, LRESULT *pResult)
 		if (m_pRenderObj == nullptr)
 		{
 			m_pRenderObj = Engine::CRenderObject::Create(g_pGraphicDev);
-			//m_pRenderObj->Add_PickCollider();
-			//m_pRenderObj->Set_Tag(m_CTagBox.GetCurSel());
 		}
 
 		if (!lstrcmp(strCur, L"StaticMesh"))
@@ -1133,7 +1113,7 @@ BOOL CMapTool_Page::OnInitDialog()
 
 	m_CTagBox.SetCurSel(0);
 
-	LoadFilePath(L"../../Data/MeshPath_Recover.dat");
+	LoadFilePath(L"../../Data/Mesh_Path.dat");
 
 	hObjectRoot = m_pObjectTree.InsertItem(TEXT("Object"), 0, 0, TVI_ROOT , TVI_LAST);
 

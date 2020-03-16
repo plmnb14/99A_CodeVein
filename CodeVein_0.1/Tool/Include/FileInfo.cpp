@@ -35,30 +35,30 @@ void CFileInfo::Create_Mesh_PathInfo()
 	_tchar szStaticPath[MAX_STR] = L"";
 	_tchar szDynamicPath[MAX_STR] = L"";
 
-	//cout << "Extracting StaticMesh Path . . ." << endl;
+	cout << "Extracting StaticMesh Path . . ." << endl;
 
-	lstrcpy(szStaticPath, L"..\\..\\Client\\Bin\\Resource\\Mesh\\");	// 문자열 복사
+	lstrcpy(szStaticPath, L"..\\..\\Client\\Bin\\Resources\\Mesh\\");	// 문자열 복사
 	lstrcat(szStaticPath, L"StaticMesh");								// 문자열 결합
 	Extract_Mesh_PathInfo(szStaticPath, m_listPathInfo);
 
-	//cout << "Extracting DynamicMesh Path . . ." << endl;
+	cout << "Extracting DynamicMesh Path . . ." << endl;
 
-	lstrcpy(szDynamicPath, L"..\\..\\Client\\Bin\\Resource\\Mesh\\");	// 문자열 복사
+	lstrcpy(szDynamicPath, L"..\\..\\Client\\Bin\\Resources\\Mesh\\");	// 문자열 복사
 	lstrcat(szDynamicPath, L"DynamicMesh");								// 문자열 결합
 	Extract_Mesh_PathInfo(szDynamicPath, m_listPathInfo, true);
 
-	//cout << "Extracting Complete . . ." << endl;
+	cout << "Extracting Complete . . ." << endl;
 
 	Save_Mesh_PathInfo(m_listPathInfo);
 }
 
 void CFileInfo::Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst)
 {
-	//cout << "Saving MeshPath . . ." << endl;
+	cout << "Saving MeshPath . . ." << endl;
 
 	wofstream fout;
 
-	fout.open(L"../../Data/MeshPath.dat");
+	fout.open(L"../../Data/Mesh_Path.dat");
 
 	if (fout.fail())
 		return;
@@ -85,14 +85,14 @@ void CFileInfo::Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst)
 	}
 	rPathInfoLst.clear();
 
-	//cout << "Done . . . !" << endl;
+	cout << "Done . . . !" << endl;
 }
 
 void CFileInfo::Extract_Mesh_PathInfo(
-	const TCHAR* pPath, /* D:\\김태윤\\4개월차\\98기\\Framework98\\Texture\\Stage\\Effect\\BossMultiAttack */
+	const TCHAR* pPath,
 	list<MESH_INFO*>& rPathInfoLst , _bool _bIsDynamic)
 {
-	//cout << "Extracting Path . . ." << endl;
+	cout << "Extracting Path . . ." << endl;
 
 	wstring wstrFindPath = wstring(pPath) +L"\\*";
 
@@ -175,9 +175,9 @@ void CFileInfo::Create_Texture_PathInfo()
 	_tchar szStaticPath[MAX_STR] = L"";
 	_tchar szDynamicPath[MAX_STR] = L"";
 
-	//cout << "Extracting Texture Path . . ." << endl;
+	cout << "Extracting Texture Path . . ." << endl;
 
-	lstrcpy(szStaticPath, L"..\\..\\Client\\Bin\\Resource\\UI\\UI_Extended\\");	// 문자열 복사
+	lstrcpy(szStaticPath, L"..\\..\\Client\\Bin\\Resources\\Texture");	// 문자열 복사
 	Extract_Texture_PathInfo(szStaticPath, m_listPathInfo);
 
 	Save_Texture_PathInfo(m_listPathInfo);
@@ -189,7 +189,7 @@ void CFileInfo::Save_Texture_PathInfo(list<Engine::TEX_INFO*>& rPathInfoLst)
 
 	wofstream fout;
 
-	fout.open(L"../../Data/TexPath.dat");
+	fout.open(L"../../Data/Tex_Path.dat");
 
 	if (fout.fail())
 		return;
@@ -246,14 +246,26 @@ void CFileInfo::Extract_Texture_PathInfo(const TCHAR * pPath, list<Engine::TEX_I
 			if (find.IsSystem())	// 시스템이면 건너 뛰고
 				continue;
 
-			CString strFullPath = find.GetFilePath();
+			// GetTitleName : 순수 파일이름
+			// GetFileName : 순수 파일이름 + 확장자
 
-			if (strFullPath.Find(L".png") != -1)
+			CString strFullPath = find.GetFilePath();
+			CString strRelative = ConvertRelativePath(strFullPath);
+
+			if (strRelative.Find(L".png") != -1)
 			{
-				strFullPath.Replace(L"0.", L"%d.");
+				strRelative.Replace(L"0.", L"%d.");
 			}
 
-			CString strRelative = ConvertRelativePath(strFullPath);
+			else if (strRelative.Find(L".dds") != -1)
+			{
+				strRelative.Replace(L"0.", L"%d.");
+			}
+
+			else if (strRelative.Find(L".tga") != -1)
+			{
+				strRelative.Replace(L"0.", L"%d.");
+			}
 
 			Engine::TEX_INFO* pPathInfo = new Engine::TEX_INFO;
 
@@ -291,6 +303,9 @@ void CFileInfo::Extract_Texture_PathInfo(const TCHAR * pPath, list<Engine::TEX_I
 			::PathRemoveBackslash(szBuf);
 			wstring tmpString = ::PathFindFileName(szBuf);
 
+
+			wstring tmpString2 = ::PathFindFileName(szBeforeName);
+
 			// 파일명
 			pPathInfo->wstrFileName = tmpString;
 
@@ -299,7 +314,7 @@ void CFileInfo::Extract_Texture_PathInfo(const TCHAR * pPath, list<Engine::TEX_I
 			tmpString = PathFindFileName(szBuf);
 
 			// 키 값
-			pPathInfo->wstrStateKey = L"Tex_" + tmpString;
+			pPathInfo->wstrStateKey = L"Tex_" + tmpString2;
 
 			TCHAR szBuf_2[MAX_STR] = L"";
 			(_bIsDynamic ? lstrcpy(szBuf_2, L"1") : lstrcpy(szBuf_2, L"0"));
@@ -307,9 +322,6 @@ void CFileInfo::Extract_Texture_PathInfo(const TCHAR * pPath, list<Engine::TEX_I
 			pPathInfo->szIsDynamic = szBuf_2;
 
 			rPathInfoLst.push_back(pPathInfo);
-
-			//Engine::Safe_Delete(szBuf_2);
-			//break;
 		}
 
 	}

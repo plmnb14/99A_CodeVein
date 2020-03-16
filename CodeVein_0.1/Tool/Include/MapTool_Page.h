@@ -82,9 +82,9 @@ public:
 	virtual void Free();
 
 private:
-	Engine::CRenderObject*		m_pRenderObj;
-	Engine::CRenderObject*		m_pSelectedObj;
-	Engine::CRenderObject*		m_pPickObj;
+	Engine::CRenderObject*		m_pRenderObj = nullptr;
+	Engine::CRenderObject*		m_pSelectedObj = nullptr;
+	Engine::CRenderObject*		m_pPickObj = nullptr;
 
 private:
 	typedef list<Engine::CGameObject*> OBJECT_LIST;

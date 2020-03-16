@@ -179,7 +179,7 @@ _bool CCollider::Check_RayCollision(CCollider * _rDstCol, RAY _rSrcRay, _float*_
 {
 	COL_INFO* rDstCol = _rDstCol->Get_ColInfo();
 
-	_v3				   vRayOri = _rSrcRay.vRayPos;
+	_v3		  vRayOri = _rSrcRay.vRayPos;
 
 	_v3		vRayConvertDir = {};
 	_float	t[6] = {};

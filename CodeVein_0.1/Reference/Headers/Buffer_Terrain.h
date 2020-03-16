@@ -13,11 +13,12 @@ private:
 	explicit CBuffer_Terrain(const CBuffer_Terrain& rhs);
 	virtual ~CBuffer_Terrain(void) = default;
 public:
-	const _v3* Get_VtxPos(void) const {	
-		return m_pPosition;	}
+	const _v3* Get_VtxPos(void) const {
+		return m_pPosition;
+	}
 	_float Get_Height(CTransform* pTransform);
 public:
-	HRESULT	Ready_Component_Prototype(_ulong dwCntX, _ulong dwCntZ, _ulong dwVtxItv);	
+	HRESULT	Ready_Component_Prototype(_ulong dwCntX, _ulong dwCntZ, _ulong dwVtxItv);
 	HRESULT	Ready_Component_Prototype(const _tchar* pFilePath, _ulong dwVtxItv);
 	virtual HRESULT Ready_Component(void* pArg);
 	void Render_VIBuffer();
@@ -32,6 +33,7 @@ private:
 
 public:
 	static CBuffer_Terrain* Create(LPDIRECT3DDEVICE9 pGraphicDev, _ulong dwCntX, _ulong dwCntZ, _ulong dwVtxItv);
+	static CBuffer_Terrain* Create(LPDIRECT3DDEVICE9 pGraphicDev, const _tchar* pFilePath, _ulong dwVtxItv);
 	virtual CComponent* Clone_Component(void* pArg);
 	virtual void Free(void);
 };

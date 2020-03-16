@@ -226,6 +226,22 @@ CComponent * CManagement::Clone_Component(_uint iSceneID, const _tchar * pProtot
 	return m_pComponent_Manager->Clone_Component(iSceneID, pPrototypeTag, pArg);
 }
 
+HRESULT CManagement::LoadMesh_FromPath(_Device pGraphicDev, const _tchar * szImgPath)
+{
+	if (nullptr == m_pComponent_Manager)
+		return E_FAIL;
+
+	return m_pComponent_Manager->LoadMesh_FilesFromPath(pGraphicDev, szImgPath);
+}
+
+HRESULT CManagement::LoadTex_FromPath(_Device pGraphicDev, const _tchar * szImgPath)
+{
+	if (nullptr == m_pComponent_Manager)
+		return E_FAIL;
+
+	return m_pComponent_Manager->LoadTex_FilesFromPath(pGraphicDev, szImgPath);
+}
+
 _v3 CManagement::Get_CamPosition()
 {
 	if (nullptr == m_pPipeLine)

@@ -25,7 +25,7 @@ public:
 
 public:
 	const	_byte	Get_DIKeyState(_ubyte byKeyID) { return m_byKeyState[byKeyID]; }
-	const	_byte	Get_DIMouseState(MOUSEKEYSTATE eMouse) { return m_tMouseState.rgbButtons[eMouse]; }
+	const	_bool	Get_DIMouseState(MOUSEKEYSTATE eMouse);
 	const	_long	Get_DIMouseMove(MOUSEMOVESTATE eMouseState) { return *(((_long*)&m_tMouseState) + eMouseState); }
 
 public:
@@ -69,6 +69,7 @@ private:
 
 private:
 	DIMOUSESTATE			m_tMouseState;
+	_bool					m_bMouseKeyDown[4] = {};
 	_byte					m_byKeyState[MAX_STR];
 
 	_byte					m_byKeyDown[MAX_STR];
