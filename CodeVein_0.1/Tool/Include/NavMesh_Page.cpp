@@ -41,7 +41,7 @@ CNavMesh_Page::CNavMesh_Page()
 
 CNavMesh_Page::~CNavMesh_Page()
 {
-
+	Free();
 }
 
 void CNavMesh_Page::DoDataExchange(CDataExchange* pDX) 
@@ -547,14 +547,14 @@ void CNavMesh_Page::Render()
 	MyUpdateData();
 	Move_Position();
 
-	LOOP(3)
-	{
-		if (m_arrVertex[i] != nullptr)
-		{
-			m_arrVertex[i]->Update_GameObject(0);
-			m_arrVertex[i]->Render_GameObject();
-		}
-	}
+	//LOOP(3)
+	//{
+	//	if (m_arrVertex[i] != nullptr)
+	//	{
+	//		m_arrVertex[i]->Update_GameObject(0);
+	//		m_arrVertex[i]->Render_GameObject();
+	//	}
+	//}
 
 
 	//for (auto& vecIter : m_vecSubset_Cell)

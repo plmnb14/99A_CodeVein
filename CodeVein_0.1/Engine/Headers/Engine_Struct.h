@@ -190,6 +190,7 @@ namespace Engine
 	{
 		_tchar szName[256] = L"";
 		_tchar szTag[256] = L"";
+		_tchar szLayerIdx[256] = L"";
 
 		_tchar szIndex[256] = L"";
 

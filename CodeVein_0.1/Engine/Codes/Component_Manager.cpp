@@ -28,7 +28,6 @@ HRESULT CComponent_Manager::Ready_Component_Manager(_Device _pGraphicDev)
 
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Default", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Default.fx"))))
 		return E_FAIL;
-
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Terrain", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Terrain.fx"))))
 		return E_FAIL;
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Mesh", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Mesh.fx"))))
@@ -37,9 +36,14 @@ HRESULT CComponent_Manager::Ready_Component_Manager(_Device _pGraphicDev)
 		return E_FAIL;
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Effect", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Effect.fx"))))
 		return E_FAIL;
-
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"VIBuffer_Terrain", CBuffer_Terrain::Create(_pGraphicDev, 256, 256, 1))))
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Gizmo", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Gizmo.fx"))))
 		return E_FAIL;
+
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"VIBuffer_Terrain", CBuffer_Terrain::Create(_pGraphicDev, L"../Bin/Resources/Textures/Terrain/Height.bmp", 1))))
+		return E_FAIL;
+
+	//if (FAILED(Add_Prototype(SCENE_STATIC, L"VIBuffer_Terrain", CBuffer_Terrain::Create(_pGraphicDev, 256, 256, 1))))
+	//	return E_FAIL;
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"VIBuffer_Cube", CBuffer_CubeTex::Create(_pGraphicDev))))
 		return E_FAIL;
 
@@ -55,6 +59,9 @@ HRESULT CComponent_Manager::Ready_Component_Manager(_Device _pGraphicDev)
 	D3DXMatrixIdentity(&LocalMatrix);
 
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"Mesh_Player", CMesh_Dynamic::Create(_pGraphicDev, L"../Bin/Resources/Meshes/DynamicMesh/PlayerXFile/", L"Player.x", LocalMatrix))))
+		return E_FAIL;
+
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Mesh_Sword", CMesh_Static::Create(_pGraphicDev, L"../Bin/Resources/Meshes/StaticMesh/Sword/", L"Sword.X", LocalMatrix))))
 		return E_FAIL;
 
 	return S_OK;
@@ -114,6 +121,116 @@ HRESULT CComponent_Manager::Clear_Instance(_uint iSceneIndex)
 	return NOERROR;	
 }
 
+HRESULT CComponent_Manager::LoadMesh_FilesFromPath(_Device pGraphicDev, const _tchar * wstrImgPath)
+{
+	wifstream fin;
+
+	list<PATH_INFO*> tmpList;
+
+	fin.open(wstrImgPath);
+
+	if (fin.fail())
+		return E_FAIL;
+
+	while (true)
+	{
+		PATH_INFO* tmpPath = new PATH_INFO;
+
+		fin.getline(tmpPath->sztrStateKey, MAX_STR, '|');
+		fin.getline(tmpPath->sztrFileName, MAX_STR, '|');
+		fin.getline(tmpPath->sztrImgPath, MAX_STR, '|');
+		fin.getline(tmpPath->szIsDynamic, MAX_STR, '|');
+
+		if (fin.eof())
+		{
+			Safe_Delete(tmpPath);
+			break;
+		}
+
+		m_fMaxResCnt += 1.f;
+		tmpList.push_back(tmpPath);
+	}
+
+	fin.close();
+
+	_mat matDefault;
+	D3DXMatrixIdentity(&matDefault);
+
+	for (auto& iter : tmpList)
+	{
+		CComponent* pMeshCom = (lstrcmp(iter->szIsDynamic, L"0") ? 
+			(CComponent*)CMesh_Dynamic::Create(pGraphicDev, iter->sztrImgPath, iter->sztrFileName, matDefault) :
+			(CComponent*)CMesh_Static::Create(pGraphicDev, iter->sztrImgPath, iter->sztrFileName, matDefault));
+
+		Add_Prototype(SCENE_STATIC, iter->sztrStateKey, pMeshCom);
+		m_fResCnt += 1.f;
+
+		m_listMeshPathInfo.push_back(iter);
+	}
+	tmpList.clear();
+
+	m_fResCnt = 0.f;
+	m_fMaxResCnt = 0.f;
+
+	return S_OK;
+}
+
+HRESULT CComponent_Manager::LoadTex_FilesFromPath(_Device pGraphicDev, const _tchar * szImgPath)
+{
+	wifstream fin;
+
+	list<PATH_INFO*> tmpList;
+
+
+	fin.open(szImgPath);
+
+	if (fin.fail())
+		return E_FAIL;
+
+	while (true)
+	{
+		PATH_INFO* tmpPath = new PATH_INFO;
+
+		fin.getline(tmpPath->sztrStateKey, MAX_STR, '|');
+		fin.getline(tmpPath->sztrFileName, MAX_STR, '|');
+		fin.getline(tmpPath->sztrImgPath, MAX_STR, '|');
+		fin.getline(tmpPath->szIsDynamic, MAX_STR, '|');
+		fin.getline(tmpPath->szImgCnt, MAX_STR);
+
+		if (fin.eof())
+		{
+			Safe_Delete(tmpPath);
+			break;
+		}
+
+		++m_fMaxResCnt;
+		tmpList.push_back(tmpPath);
+	}
+
+	fin.close();
+
+
+	for (auto& iter : tmpList)
+	{
+		lstrcat(iter->sztrImgPath, iter->sztrFileName);
+
+
+		Add_Prototype(SCENE_STATIC, iter->sztrStateKey, CTexture::Create(pGraphicDev, CTexture::TYPE_GENERAL, iter->sztrImgPath, _wtoi(iter->szImgCnt)));
+		++m_fResCnt;
+
+		m_fResPercent = m_fResCnt / m_fMaxResCnt;
+
+		m_listTexturePathInfo.push_back(iter);
+	}
+
+	tmpList.clear();
+
+	m_fResCnt = 0.f;
+	m_fMaxResCnt = 0.f;
+
+	return S_OK;
+}
+
 CComponent * CComponent_Manager::Find_Prototype(_uint iSceneID, const _tchar * pPrototypeTag)
 {
 	auto	iter = find_if(m_pPrototypes[iSceneID].begin(), m_pPrototypes[iSceneID].end(), CTag_Finder(pPrototypeTag));
@@ -136,4 +253,17 @@ void CComponent_Manager::Free()
 
 	Safe_Delete_Array(m_pPrototypes);
 
+	for (auto& iter : m_listMeshPathInfo)
+	{
+		Safe_Delete(iter);
+	}
+
+	m_listMeshPathInfo.clear();
+
+	for (auto& iter : m_listTexturePathInfo)
+	{
+		Safe_Delete(iter);
+	}
+
+	m_listTexturePathInfo.clear();
 }

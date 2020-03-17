@@ -199,6 +199,7 @@
     <Image Include="res\icon1.ico" />
     <Image Include="..\..\Unity_3D.ico" />
     <Image Include="..\Unity_3D.ico" />
+    <Image Include="Unity_3D.ico" />
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="Tool.rc">

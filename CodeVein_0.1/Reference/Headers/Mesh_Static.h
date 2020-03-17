@@ -18,9 +18,7 @@ public:
 	_ulong			Get_Stride() const { return m_dwStride; }
 
 public:
-	_ulong Get_NumMaterials() const {
-		return m_dwNumMaterials;
-	}
+	_ulong Get_NumMaterials() const { return m_dwNumMaterials; }
 	LPDIRECT3DBASETEXTURE9 Get_Texture(_ulong dwMaterialIndex, MESHTEXTURE::TYPE eType);
 public:
 	virtual HRESULT Ready_Component_Prototype(const _tchar* pFilePath, const _tchar* pFileName, _mat PivotMatrix);

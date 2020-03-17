@@ -234,6 +234,22 @@ CComponent * CManagement::Clone_Component(_uint iSceneID, const _tchar * pProtot
 	return m_pComponent_Manager->Clone_Component(iSceneID, pPrototypeTag, pArg);
 }
 
+HRESULT CManagement::LoadMesh_FromPath(_Device pGraphicDev, const _tchar * szImgPath)
+{
+	if (nullptr == m_pComponent_Manager)
+		return E_FAIL;
+
+	return m_pComponent_Manager->LoadMesh_FilesFromPath(pGraphicDev, szImgPath);
+}
+
+HRESULT CManagement::LoadTex_FromPath(_Device pGraphicDev, const _tchar * szImgPath)
+{
+	if (nullptr == m_pComponent_Manager)
+		return E_FAIL;
+
+	return m_pComponent_Manager->LoadTex_FilesFromPath(pGraphicDev, szImgPath);
+}
+
 _v3 CManagement::Get_CamPosition()
 {
 	if (nullptr == m_pPipeLine)
@@ -282,76 +298,76 @@ LPDIRECT3DTEXTURE9 CManagement::Get_Target_Texture(const _tchar * pTargetTag)
 	return m_pTarget_Manager->Get_Texture(pTargetTag);
 }
 
-//void CManagement::Ready_Gizmo(_Device _pGraphicDev)
-//{
-//	if (m_pGizmo == nullptr)
-//		return;
-//
-//	m_pGizmo->Ready_Gizmo(_pGraphicDev);
-//}
-
-void CManagement::Gizmo_Draw_XYZ(_Device _pGraphicDev, const _v3 _vPos, const _v3 _vLook, const _v3 _vRight, const _v3 _vUp)
+void CManagement::Ready_Gizmo(_Device _pGraphicDev)
 {
 	if (m_pGizmo == nullptr)
 		return;
 
-	m_pGizmo->Draw_XYZ(_pGraphicDev, _vPos, _vLook, _vRight, _vUp);
+	m_pGizmo->Ready_Gizmo(_pGraphicDev);
 }
 
-void CManagement::Gizmo_Draw_Vertex(_Device _pGraphicDev, const _v3 _vVertex, const _v3 _vSize)
+void CManagement::Gizmo_Draw_XYZ(const _v3 _vPos, const _v3 _vLook, const _v3 _vRight, const _v3 _vUp)
 {
 	if (m_pGizmo == nullptr)
 		return;
 
-	m_pGizmo->Draw_Vertex(_pGraphicDev, _vVertex, _vSize);
+	m_pGizmo->Draw_XYZ(_vPos, _vLook, _vRight, _vUp);
 }
 
-void CManagement::Gizmo_Draw_Sphere(_Device _pGraphicDev, const _v3 _vVertex, const _float _fRadius)
+void CManagement::Gizmo_Draw_Vertex(const _v3 _vVertex, const _v3 _vSize)
 {
 	if (m_pGizmo == nullptr)
 		return;
 
-	m_pGizmo->Draw_Sphere(_pGraphicDev, _vVertex, _fRadius);
+	m_pGizmo->Draw_Vertex(_vVertex, _vSize);
 }
 
-void CManagement::Gizmo_Draw_Triangle_Line(_Device _pGraphicDev, _v3 * _vVertex, const _bool _bSelect, CELL_PARAM _eParam)
+void CManagement::Gizmo_Draw_Sphere(const _v3 _vVertex, const _float _fRadius)
 {
 	if (m_pGizmo == nullptr)
 		return;
 
-	m_pGizmo->Draw_Triangle_Line(_pGraphicDev, _vVertex, _bSelect, _eParam);
+	m_pGizmo->Draw_Sphere(_vVertex, _fRadius);
 }
 
-void CManagement::Gizmo_Draw_Triangle(_Device _pGraphicDev, VTX_COL * _vVertex)
+void CManagement::Gizmo_Draw_Triangle_Line(_v3 * _vVertex, const _bool _bSelect, CELL_PARAM _eParam)
 {
 	if (m_pGizmo == nullptr)
 		return;
 
-	m_pGizmo->Draw_Triangle(_pGraphicDev, _vVertex);
+	m_pGizmo->Draw_Triangle_Line(_vVertex, _bSelect, _eParam);
 }
 
-void CManagement::Gizmo_Draw_AABB(_Device _pGraphicDev, _v3 * _vVertex, const _v3 _vPos, const _v3 _vSize)
+void CManagement::Gizmo_Draw_Triangle(VTX_COL * _vVertex)
 {
 	if (m_pGizmo == nullptr)
 		return;
 
-	m_pGizmo->Draw_AABB(_pGraphicDev, _vVertex, _vPos, _vSize);
+	m_pGizmo->Draw_Triangle(_vVertex);
 }
 
-void CManagement::Gizmo_Draw_OBB(_Device _pGraphicDev, _v3 * _vVertex, const _v3 vRotate, const _v3 _vPos, const _v3 _vSize)
+void CManagement::Gizmo_Draw_AABB(_v3 * _vVertex, const _v3 _vPos, const _v3 _vSize)
 {
 	if (m_pGizmo == nullptr)
 		return;
 
-	m_pGizmo->Draw_OBB(_pGraphicDev, _vVertex, vRotate, _vPos, _vSize);
+	m_pGizmo->Draw_AABB(_vVertex, _vPos, _vSize);
 }
 
-void CManagement::Gizmo_Draw_Capsule(_Device _pGraphicDev, _v3 _vVertex, const _float _fRadius, const _float _fMaxHeight)
+void CManagement::Gizmo_Draw_OBB(_v3 * _vVertex, const _v3 vRotate, const _v3 _vPos, const _v3 _vSize)
 {
 	if (m_pGizmo == nullptr)
 		return;
 
-	m_pGizmo->Draw_Capsule(_pGraphicDev, _vVertex, _fRadius, _fMaxHeight);
+	m_pGizmo->Draw_OBB(_vVertex, vRotate, _vPos, _vSize);
+}
+
+void CManagement::Gizmo_Draw_Capsule(_v3 _vVertex, const _float _fRadius, const _float _fMaxHeight)
+{
+	if (m_pGizmo == nullptr)
+		return;
+
+	m_pGizmo->Draw_Capsule(_vVertex, _fRadius, _fMaxHeight);
 }
 
 void CManagement::Gizmo_Enable()

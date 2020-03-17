@@ -106,11 +106,22 @@ void CMainFrame::Dump(CDumpContext& dc) const
 
 BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 {
+	// 메쉬 경로 추출
+	CFileInfo::Create_Mesh_PathInfo();
+	// 텍스쳐 경로 추출
+	CFileInfo::Create_Texture_PathInfo();
+
 	m_MainSplitter.CreateStatic(this, 1, 2);
 	m_MainSplitter.SetColumnInfo(0, 1280, 0);
 	m_MainSplitter.SetColumnInfo(1, 300, 0);
 
-	m_MainSplitter.CreateView(0, 0, RUNTIME_CLASS(CToolView), CSize(1280, 720), pContext);
+
+	m_SecondSplitter.CreateStatic(&m_MainSplitter, 2, 1,
+		WS_CHILD | WS_VISIBLE, m_MainSplitter.IdFromRowCol(0, 0));
+
+	m_SecondSplitter.CreateView(0, 0, RUNTIME_CLASS(CToolView), CSize(1280, 720), pContext);
+	m_SecondSplitter.CreateView(1, 0, RUNTIME_CLASS(CMainForm), CSize(1280, 180), pContext);
+
 	m_MainSplitter.CreateView(0, 1, RUNTIME_CLASS(CInspector_Form), CSize(300, 720), pContext);
 
 	return TRUE;

@@ -15,6 +15,10 @@ CMesh_Static::CMesh_Static(const CMesh_Static & rhs)
 	, m_pMaterialsBuff(rhs.m_pMaterialsBuff)
 	, m_pMaterials(rhs.m_pMaterials)
 	, m_ppTextures(rhs.m_ppTextures)
+	, m_dwVtxCnt(rhs.m_dwVtxCnt)
+	, m_dwStride(rhs.m_dwStride)
+	, m_pVtxMin(rhs.m_pVtxMin)
+	, m_pVtxMax(rhs.m_pVtxMax)
 {
 	Safe_AddRef(m_pMesh);
 	Safe_AddRef(m_pAdjacencyBuff);
@@ -72,7 +76,7 @@ HRESULT CMesh_Static::Ready_Component_Prototype(const _tchar * pFilePath, const 
 		if (FAILED(D3DXCreateTextureFromFile(m_pGraphic_Dev, szFullPath, &m_ppTextures[i].pTextures[MESHTEXTURE::TYPE_DIFFUSE])))
 			return E_FAIL;
 
-		Change_TextureFileName(szFullPath, L"D", L"N");
+		Change_TextureFileName(szFullPath, L"C", L"N");
 
 		D3DXCreateTextureFromFile(m_pGraphic_Dev, szFullPath, &m_ppTextures[i].pTextures[MESHTEXTURE::TYPE_NORMAL]);
 
@@ -83,8 +87,6 @@ HRESULT CMesh_Static::Ready_Component_Prototype(const _tchar * pFilePath, const 
 		Change_TextureFileName(szFullPath, L"S", L"E");
 
 		D3DXCreateTextureFromFile(m_pGraphic_Dev, szFullPath, &m_ppTextures[i].pTextures[MESHTEXTURE::TYPE_EMISSIVE]);
-
-
 	}
 
 	_ulong dwFVF = pMesh->GetFVF();

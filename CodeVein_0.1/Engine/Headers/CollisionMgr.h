@@ -28,6 +28,7 @@ public:
 
 public:
 	static CGameObject* Collision_Ray(list<CGameObject*>& rDstList, RAY _tRay, _float*_vCrossLength);
+	static CGameObject* Collision_Ray(list<CGameObject*>& rDstList, RAY _tRay, _float*_vCrossLength, _bool _bLayered , _short _sLayerIdx);
 	static _bool		Collision_Ray(CGameObject* rDst, RAY _tRay, _float*_vCrossLength);
 
 public:

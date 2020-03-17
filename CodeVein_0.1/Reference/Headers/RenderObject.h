@@ -37,6 +37,7 @@ public:
 	virtual void Set_RenderGroup(RENDERID _eGroup);
 	virtual void Set_Index(_int _iIndex) { m_iIndex = _iIndex; }
 	virtual void Set_Selected(_bool _bSelected) { m_bIsSelected = _bSelected; }
+	virtual void Set_OnTool(_bool _bOnTool) { m_bOnTool = _bOnTool; }
 
 public:
 	virtual _tchar*	Get_Name()		{ return m_szName; }
@@ -50,14 +51,18 @@ protected:
 	CRenderer*		m_pRenderer = nullptr;
 	CShader*		m_pShader = nullptr;
 
+	// 텍스쳐, 메쉬 관련 변수
 protected:
 	_tchar			m_szName[MAX_STR] = L"";
 	_int			m_iIndex = 0;
 	_ulong			m_dwPassNum = 0;
 
+	// 툴에서 사용되는 변수
 protected:
 	_bool			m_bIsSelected = false;
+	_bool			m_bOnTool = false;
 
+	// 오브젝트 렌더 그룹 변수
 private:
 	RENDERID		m_eGroup = RENDER_NONALPHA;
 
