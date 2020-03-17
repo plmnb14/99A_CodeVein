@@ -4,6 +4,11 @@ CLayer::CLayer()
 {
 }
 
+CGameObject* CLayer::Get_GameObjectBack()
+{
+	return m_ObjectList.back();
+}
+
 HRESULT CLayer::Ready_Layer()
 {
 	return NOERROR;

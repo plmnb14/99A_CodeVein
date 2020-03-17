@@ -2,6 +2,7 @@
 #include "..\Headers\Scene_Stage.h"
 #include "Management.h"
 #include "CameraMgr.h"
+#include "Effect.h"
 
 CScene_Stage::CScene_Stage(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
@@ -34,6 +35,33 @@ HRESULT CScene_Stage::Ready_Scene()
 
 _int CScene_Stage::Update_Scene(_double TimeDelta)
 {
+	// юс╫ц
+	//static _bool bCreate = false;
+	static _float fStartPosY = 0.f;
+	if (GetAsyncKeyState('Z') & 0x8000)
+	{
+		CManagement*		pManagement = CManagement::Get_Instance();
+		if (nullptr == pManagement)
+			return E_FAIL;
+		
+		Safe_AddRef(pManagement);
+
+		LOOP(3)
+		{
+			CEffect::EFFECT_DESC* pEffDesc = new CEffect::EFFECT_DESC;
+			pEffDesc->pTargetTrans = nullptr;
+			pEffDesc->vWorldPos = {0.f, fStartPosY, 0.f};
+			if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_EffectLineParticle", SCENE_STAGE, L"Layer_Effect", pEffDesc)))
+				return E_FAIL;
+		}
+		
+		Safe_Release(pManagement);
+	//	bCreate = true;
+		fStartPosY += 0.01f;
+	}
+	else
+		fStartPosY = 0.f;
+
 	return _int();
 }
 
@@ -120,11 +148,6 @@ HRESULT CScene_Stage::Ready_Layer_Effect(const _tchar * pLayerTag)
 
 	// For.Effect
 
-	for (size_t i = 0; i < 20; i++)
-	{
-		if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_Effect", SCENE_STAGE, pLayerTag)))
-			return E_FAIL;
-	}	
 
 	Safe_Release(pManagement);
 

@@ -112,7 +112,7 @@ private:
 	//ENGINE::CGameObject*	m_arrVertex[3];
 
 private:
-	CCell*				m_pSibling[LINE_END];
+	CCell*				m_pSibling[LINE_END] = {};
 	_int				m_pSiblingIdx[LINE_END];
 	CELL_PARAM			m_eCellParam;
 

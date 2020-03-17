@@ -207,6 +207,14 @@ HRESULT CManagement::Add_GameObject_ToLayer(const _tchar * pPrototypeTag, _uint 
 	return m_pObject_Manager->Add_GameObject_ToLayer(pPrototypeTag, iSceneID, pLayerTag, pArg);	
 }
 
+CGameObject* CManagement::Get_GameObjectBack(const _tchar* pLayerTag, _uint iSceneID)
+{
+	if (nullptr == m_pObject_Manager)
+		return nullptr;
+
+	return m_pObject_Manager->Get_GameObjectBack(pLayerTag, iSceneID);
+}
+
 HRESULT CManagement::Ready_Component_Manager(_Device _pGraphicDev)
 {
 	if (nullptr == m_pComponent_Manager)

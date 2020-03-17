@@ -36,6 +36,15 @@ VS_OUT VS_MAIN(VS_IN In)
 	return Out;
 }
 
+VS_OUT VS_MAIN_NoWorld(VS_IN In)
+{
+	VS_OUT		Out = (VS_OUT)0;
+
+	Out.vPos = In.vPos;
+
+	return Out;
+}
+
 struct PS_IN
 {
 	float4		vPos : POSITION;
@@ -88,6 +97,15 @@ technique Default_Technique
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_MAIN();
+	}
+
+	VS_OUT VS_MAIN_NoWorld(VS_IN In)
+	{
+		VS_OUT		Out = (VS_OUT)0;
+
+		Out.vPos = In.vPos;
+
+		return Out;
 	}
 }
 

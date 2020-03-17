@@ -224,17 +224,11 @@ void CCell::LateUpdate()
 
 void CCell::Render()
 {
-	m_pGraphic_Dev->SetRenderState(D3DRS_LIGHTING, false);
-
-	m_pGraphic_Dev->SetTransform(D3DTS_WORLD, &m_pTransform->Get_WorldMat());
-
 	CManagement::Get_Instance()->Gizmo_Draw_Triangle(m_pVertex);
 	CManagement::Get_Instance()->Gizmo_Draw_Triangle_Line(m_pVertexPos , m_bSelected , m_eCellParam);
 
 	//LOOP(3)
 	//	CGizmoMgr::GetInstance()->Draw_Vertex(m_pVertex[i].vPos);
-
-	m_pGraphic_Dev->SetRenderState(D3DRS_LIGHTING, true);
 }
 
 void CCell::DrawTriangle(_v3* _pVertex)
@@ -491,4 +485,6 @@ CCell * CCell::Create(_Device pGraphicDev, _v3* _vPos)
 void CCell::Free()
 {
 	CGameObject::Free();
+
+	Safe_Release(m_pTransform);
 }
