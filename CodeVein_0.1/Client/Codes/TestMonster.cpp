@@ -30,8 +30,8 @@ HRESULT CTestMonster::Ready_GameObject(void * pArg)
 	CManagement*		pManagement = CManagement::Get_Instance();
 
 	CBT_Sequence* pSequence = static_cast<CBT_Sequence*>(pManagement->Clone_Node(L"Sequence", CBT_Node_Manager::COMPOSITE, nullptr));
-	CBT_Wait* pWait = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO{ 2 }));
-	CBT_Move* pMove = static_cast<CBT_Move*>(pManagement->Clone_Node(L"Move", CBT_Node_Manager::TASK, &CBT_Move::INFO{ m_pTransformCom, 5 }));
+	CBT_Wait* pWait = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO(2)));
+	CBT_Move* pMove = static_cast<CBT_Move*>(pManagement->Clone_Node(L"Move", CBT_Node_Manager::TASK, &CBT_Move::INFO(m_pTransformCom, 5 )));
 
 	pBehaviorTree->Set_Child(pSequence);
 	pSequence->Add_Child(pWait);
@@ -188,11 +188,11 @@ CGameObject * CTestMonster::Clone_GameObject(void * pArg)
 
 void CTestMonster::Free()
 {
+	Safe_Release(m_pAIControllerCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pMeshCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
-	Safe_Release(m_pAIControllerCom);
 
 	CGameObject::Free();
 }

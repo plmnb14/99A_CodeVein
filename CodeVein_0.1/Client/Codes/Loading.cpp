@@ -46,9 +46,9 @@ _uint CLoading::Loading_ForStage(void)
 		return E_FAIL;
 	
 	//몬스터
-	/*if (FAILED(pManagement->Add_Prototype(L"Monster_TestMonster", CTestMonster::Create(m_pGraphicDev))))
+	if (FAILED(pManagement->Add_Prototype(L"Monster_TestMonster", CTestMonster::Create(m_pGraphicDev))))
 		return E_FAIL;
-*/
+
 	lstrcpy(m_szString, L"지형 생성 중....");
 	if (FAILED(pManagement->Add_Prototype(L"GameObject_Terrain", CTerrain::Create(m_pGraphicDev))))
 		return E_FAIL;
@@ -58,8 +58,8 @@ _uint CLoading::Loading_ForStage(void)
 		return E_FAIL;
 
 	// BT_Node 생성 중
-	//if (FAILED(pManagement->Ready_BT_Node()))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Ready_BT_Node()))
+		return E_FAIL;
 
 	m_bFinish = true;
 	lstrcpy(m_szString, L"로딩 완료");

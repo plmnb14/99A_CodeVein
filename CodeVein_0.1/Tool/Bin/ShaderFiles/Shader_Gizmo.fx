@@ -1,4 +1,14 @@
-#include "Shader_Base.fx"
+matrix		g_matWorld, g_matView, g_matProj;
+
+texture		g_DiffuseTexture;
+
+sampler		DiffuseSampler = sampler_state
+{
+	texture = g_DiffuseTexture;
+	minfilter = linear;
+	magfilter = linear;
+	mipfilter = linear;
+};
 
 float4 g_GizmoColor = float4(0.f, 1.f, 0.f, 1.f);
 

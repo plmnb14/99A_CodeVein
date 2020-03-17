@@ -19,6 +19,9 @@ HRESULT CScene_Stage::Ready_Scene()
 	
 	if (FAILED(Ready_Layer_Camera(L"Layer_Camera")))
 		return E_FAIL;
+
+	if (FAILED(Ready_Layer_Monster(L"Layer_Monster")))
+		return E_FAIL;
 	
 	if (FAILED(Ready_Layer_Effect(L"Layer_Effect")))
 		return E_FAIL;
@@ -62,6 +65,23 @@ HRESULT CScene_Stage::Ready_Layer_Player(const _tchar * pLayerTag)
 HRESULT CScene_Stage::Ready_Layer_Camera(const _tchar * pLayerTag)
 {
 	// 여기서 카메라 준비
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage::Ready_Layer_Monster(const _tchar * pLayerTag)
+{
+	CManagement*		pManagement = CManagement::Get_Instance();
+	if (nullptr == pManagement)
+		return E_FAIL;
+
+	Safe_AddRef(pManagement);
+
+	// For. TestMonster
+	//if (FAILED(pManagement->Add_GameObject_ToLayer(L"Monster_TestMonster", SCENE_STAGE, pLayerTag)))
+	//	return E_FAIL;
+
+	Safe_Release(pManagement);
 
 	return S_OK;
 }

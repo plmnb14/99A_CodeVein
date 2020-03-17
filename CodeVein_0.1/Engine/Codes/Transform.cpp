@@ -12,12 +12,22 @@ CTransform::CTransform(_Device _pGraphicDev)
 	m_tInfo.vAxisDir[AXIS_Z] = WORLD_LOOK;
 
 	m_tInfo.vAt = { 0.f, 0.f, 1.f };
+
+	ZeroMemory(&m_matRotAxis, sizeof(_mat));
+	ZeroMemory(&m_matScale, sizeof(_mat));
+	ZeroMemory(&m_matRot[0], sizeof(_mat) * AXIS_END);
+	ZeroMemory(&m_matTrans, sizeof(_mat));
 }
 
 CTransform::CTransform(const CTransform & rhs)
 	: CComponent(rhs)
 {
 	memcpy(&m_tInfo, &rhs.m_tInfo, sizeof(TRANS_INFO));
+
+	ZeroMemory(&m_matRotAxis, sizeof(_mat));
+	ZeroMemory(&m_matScale, sizeof(_mat));
+	ZeroMemory(&m_matRot[0], sizeof(_mat) * AXIS_END);
+	ZeroMemory(&m_matTrans, sizeof(_mat));
 }
 
 CTransform::~CTransform()

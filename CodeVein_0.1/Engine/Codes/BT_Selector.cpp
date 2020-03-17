@@ -90,6 +90,9 @@ void CBT_Selector::Free()
 	for (CBT_Node* pChild : m_pChildren)
 	{
 		pChild->Free();
+
+		int a = 0;
+
 		Safe_Release(pChild);
 	}
 	m_pChildren.clear();

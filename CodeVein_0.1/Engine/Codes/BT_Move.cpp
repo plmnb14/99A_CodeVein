@@ -25,21 +25,6 @@ CBT_Node::BT_NODE_STATE CBT_Move::Update_Node(_double TimeDelta, vector<CBT_Node
 	return BT_NODE_STATE::INPROGRESS;
 }
 
-HRESULT CBT_Move::Initialize_Node(CTransform * pTargetTransform, _double dMovingTime)
-{
-	if (nullptr == pTargetTransform)
-		return E_FAIL;
-	
-	Safe_Release(m_pTargetTransform);
-
-	m_pTargetTransform = pTargetTransform;
-	Safe_AddRef(m_pTargetTransform);
-
-	m_dMovingTime = dMovingTime;
-
-	return S_OK;
-}
-
 void CBT_Move::Start_Node(vector<CBT_Node*>* pNodeStack)
 {
 	if (m_bInit)
@@ -65,6 +50,7 @@ HRESULT CBT_Move::Ready_Clone_Node(void * pInit_Struct)
 
 	m_dMovingTime = temp.m_dMovingTime;
 	m_pTargetTransform = temp.m_pTargetTransform;
+	Safe_AddRef(m_pTargetTransform);
 
 	return S_OK;
 }

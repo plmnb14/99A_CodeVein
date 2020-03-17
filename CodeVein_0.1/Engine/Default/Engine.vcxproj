@@ -180,6 +180,10 @@ call CopyEngine.bat</Command>
     <FxCompile>
       <ShaderModel>2.0</ShaderModel>
     </FxCompile>
+    <PostBuildEvent>
+      <Command>cd /d $(SolutionDir)
+call CopyEngine.bat</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Headers\AIController.h" />

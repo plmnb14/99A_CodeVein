@@ -23,13 +23,6 @@ CBT_Node::BT_NODE_STATE CBT_Wait::Update_Node(_double TimeDelta, vector<CBT_Node
 	return BT_NODE_STATE::INPROGRESS;
 }
 
-HRESULT CBT_Wait::Initialize_Node(_double dMaxTime)
-{
-	m_dMaxTime = dMaxTime;
-
-	return S_OK;
-}
-
 void CBT_Wait::Start_Node(vector<CBT_Node*>* pNodeStack)
 {
 	if (m_bInit)

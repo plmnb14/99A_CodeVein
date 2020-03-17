@@ -7,6 +7,7 @@ CInput_Device::CInput_Device(void)
 {
 	ZeroMemory(&m_byKeyDown, sizeof(_byte) * MAX_STR);
 	ZeroMemory(&m_byKeyUp, sizeof(_byte) * MAX_STR);
+	ZeroMemory(&m_byKeyState, sizeof(_byte) * MAX_STR);
 }
 
 CInput_Device::~CInput_Device(void)

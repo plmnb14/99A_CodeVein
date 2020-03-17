@@ -100,6 +100,9 @@ HRESULT CManagement::Release_Engine()
 	if (0 != CManagement::Get_Instance()->Destroy_Instance())
 		MSG_BOX("Failed To Release CManagement");
 
+	if (0 != CBT_Node_Manager::Get_Instance()->Destroy_Instance())
+		MSG_BOX("Failed To Release CBT_Node_Manager");
+
 	if (0 != CObject_Manager::Get_Instance()->Destroy_Instance())
 		MSG_BOX("Failed To Release CObject_Manager");
 

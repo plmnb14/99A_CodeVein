@@ -211,6 +211,18 @@
     <Filter Include="01.Utility\[03] Component\Component\09%29 AIController\Node\Task">
       <UniqueIdentifier>{692a44b2-99b1-4ebb-bbf9-096da646dc67}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive">
+      <UniqueIdentifier>{38f21121-50ac-4802-bac0-60014f7da2c4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\[03] Component\Component\09%29 AIController\Node\Service\Derive">
+      <UniqueIdentifier>{19fb9110-5e85-4738-bf28-1ff22ede59eb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive">
+      <UniqueIdentifier>{3e20616d-c639-4beb-888d-7ceebc6f997d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\[03] Component\Component\09%29 AIController\Node\Composite\Derive">
+      <UniqueIdentifier>{e519e73a-8501-45d1-a76b-ff307982fc3f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Headers\Base.h">
@@ -393,26 +405,26 @@
     <ClInclude Include="..\Headers\BT_Composite_Node.h">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Composite</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\BT_Wait.h">
-      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\BT_Task_Node.h">
-      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\BT_Move.h">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\BT_Decorator_Node.h">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\BT_Selector.h">
-      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Composite</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\BT_Sequence.h">
-      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Composite</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\BT_Service_Node.h">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Service</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BT_Move.h">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BT_Wait.h">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BT_Selector.h">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Composite\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BT_Sequence.h">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Composite\Derive</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -572,26 +584,26 @@
     <ClCompile Include="..\Codes\BT_Composite_Node.cpp">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Composite</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\BT_Wait.cpp">
-      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\BT_Task_Node.cpp">
-      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\BT_Move.cpp">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\BT_Decorator_Node.cpp">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\BT_Selector.cpp">
-      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Composite</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\BT_Sequence.cpp">
-      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Composite</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\BT_Service_Node.cpp">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Service</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BT_Move.cpp">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BT_Wait.cpp">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BT_Selector.cpp">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Composite\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BT_Sequence.cpp">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Composite\Derive</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
