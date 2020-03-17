@@ -40,6 +40,9 @@ CMapTool_Page::CMapTool_Page()
 	, m_strScaleRate(_T("0.000"))
 	, m_iEditType(0)
 	, m_bSelectAdvence(FALSE)
+	, m_strLayer_Cur(_T("0"))
+	, m_strLayer_Render(_T("0"))
+	, m_CurObjLayerIdx(_T("0"))
 {
 
 }
@@ -70,7 +73,9 @@ void CMapTool_Page::DoDataExchange(CDataExchange* pDX)
 	DDX_Radio(pDX, ID_TRANSFORM_00, m_iEditType);
 	DDV_MinMaxInt(pDX, m_iEditType, 0, 2);
 	DDX_Radio(pDX, IDC_CTRL_00, m_bSelectAdvence);
-	DDX_Control(pDX, IDC_COMBO1, m_CTagBox);
+	DDX_Text(pDX, IDC_LAYER_CUR, m_strLayer_Cur);
+	DDX_Text(pDX, IDC_LAYER_RENDER, m_strLayer_Render);
+	DDX_Text(pDX, IDC_LAYER_CUR2, m_CurObjLayerIdx);
 }
 
 void CMapTool_Page::Delete_MouseObj()
@@ -126,6 +131,12 @@ void CMapTool_Page::Render()
 
 	for (auto& iter : m_listObject)
 	{
+		if (false == m_bShowAll)
+		{
+			if(m_sLayerRenderIdx != iter->Get_LayerIdx())
+				continue;
+		}
+
 		iter->Update_GameObject(0);
 		iter->Render_GameObject();
 	}
@@ -141,26 +152,28 @@ void CMapTool_Page::KeyInput()
 
 	if (m_bSelectAdvence == 1)
 	{
-		switch (m_iEditType)
-		{
-		case 0:
-		{
-			Key_Pos();
-			break;
-		}
+		Key_Acting();
 
-		case 1:
-		{
-			Key_Rot();
-			break;
-		}
-
-		case 2:
-		{
-			Key_Scale();
-			break;
-		}
-		}
+		//switch (m_iEditType)
+		//{
+		//case 0:
+		//{
+		//	Key_Pos();
+		//	break;
+		//}
+		//
+		//case 1:
+		//{
+		//	Key_Rot();
+		//	break;
+		//}
+		//
+		//case 2:
+		//{
+		//	Key_Scale();
+		//	break;
+		//}
+		//}
 	}
 
 	else
@@ -170,96 +183,193 @@ void CMapTool_Page::KeyInput()
 	}
 }
 
-void CMapTool_Page::Key_Pos()
+void CMapTool_Page::Key_Acting()
 {
-	if (Engine::CInput_Device::Get_Instance()->Key_Pressing(DIK_LEFTARROW))
+	if (false == m_bDetailMode)
 	{
-		TARGET_TO_TRANS(m_pSelectedObj)->Add_Pos_Divide(-m_fPosRate, AXIS_X);
-		Object_Movement();
+		if (Engine::CInput_Device::Get_Instance()->Key_Pressing(DIK_LEFTARROW))
+		{
+			if (0 == m_iEditType)
+			{
+				TARGET_TO_TRANS(m_pSelectedObj)->Add_Pos_Divide(-m_fPosRate, AXIS_X);
+			}
+
+			else if (1 == m_iEditType)
+			{
+				TARGET_TO_TRANS(m_pSelectedObj)->Add_Angle(AXIS_Y, m_fRotRate);
+			}
+
+			Object_Movement();
+		}
+
+		else if (Engine::CInput_Device::Get_Instance()->Key_Pressing(DIK_RIGHTARROW))
+		{
+			if (0 == m_iEditType)
+			{
+				TARGET_TO_TRANS(m_pSelectedObj)->Add_Pos_Divide(m_fPosRate, AXIS_X);
+			}
+
+			else if (1 == m_iEditType)
+			{
+				TARGET_TO_TRANS(m_pSelectedObj)->Add_Angle(AXIS_Y, -m_fRotRate);
+			}
+
+			Object_Movement();
+		}
+
+		if (Engine::CInput_Device::Get_Instance()->Key_Pressing(DIK_UPARROW))
+		{
+			if (0 == m_iEditType)
+			{
+				TARGET_TO_TRANS(m_pSelectedObj)->Add_Pos_Divide(m_fPosRate, AXIS_Z);
+			}
+
+			else if (1 == m_iEditType)
+			{
+				TARGET_TO_TRANS(m_pSelectedObj)->Add_Angle(AXIS_X, m_fRotRate);
+			}
+
+			Object_Movement();
+		}
+
+		else if (Engine::CInput_Device::Get_Instance()->Key_Pressing(DIK_DOWNARROW))
+		{
+			if (0 == m_iEditType)
+			{
+				TARGET_TO_TRANS(m_pSelectedObj)->Add_Pos_Divide(-m_fPosRate, AXIS_Z);
+			}
+
+			else if (1 == m_iEditType)
+			{
+				TARGET_TO_TRANS(m_pSelectedObj)->Add_Angle(AXIS_X, -m_fRotRate);
+			}
+
+			Object_Movement();
+		}
+
+		if (Engine::CInput_Device::Get_Instance()->Key_Pressing(DIK_G))
+		{
+			if (0 == m_iEditType)
+			{
+				TARGET_TO_TRANS(m_pSelectedObj)->Add_Pos_Divide(-m_fPosRate, AXIS_Y);
+			}
+
+			else if (1 == m_iEditType)
+			{
+				TARGET_TO_TRANS(m_pSelectedObj)->Add_Angle(AXIS_Z, -m_fRotRate);
+			}
+
+			Object_Movement();
+		}
+
+		else if (Engine::CInput_Device::Get_Instance()->Key_Pressing(DIK_H))
+		{
+			if (0 == m_iEditType)
+			{
+				TARGET_TO_TRANS(m_pSelectedObj)->Add_Pos_Divide(m_fPosRate, AXIS_Y);
+			}
+
+			else if (1 == m_iEditType)
+			{
+				TARGET_TO_TRANS(m_pSelectedObj)->Add_Angle(AXIS_Z, m_fRotRate);
+			}
+
+			Object_Movement();
+		}
 	}
 
-	if (Engine::CInput_Device::Get_Instance()->Key_Pressing(DIK_RIGHTARROW))
+	else if (true == m_bDetailMode)
 	{
-		TARGET_TO_TRANS(m_pSelectedObj)->Add_Pos_Divide(m_fPosRate, AXIS_X);
-		Object_Movement();
-	}
+		if (Engine::CInput_Device::Get_Instance()->Key_Down(DIK_LEFTARROW))
+		{
+			if (0 == m_iEditType)
+			{
+				TARGET_TO_TRANS(m_pSelectedObj)->Add_Pos_Divide(-m_fPosRate, AXIS_X);
+			}
 
-	if (Engine::CInput_Device::Get_Instance()->Key_Pressing(DIK_UPARROW))
-	{
-		TARGET_TO_TRANS(m_pSelectedObj)->Add_Pos_Divide(m_fPosRate, AXIS_Z);
-		Object_Movement();
-	}
+			else if (1 == m_iEditType)
+			{
+				TARGET_TO_TRANS(m_pSelectedObj)->Add_Angle(AXIS_Y, m_fRotRate);
+			}
 
-	if (Engine::CInput_Device::Get_Instance()->Key_Pressing(DIK_DOWNARROW))
-	{
-		TARGET_TO_TRANS(m_pSelectedObj)->Add_Pos_Divide(-m_fPosRate, AXIS_X);
-		Object_Movement();
-	}
+			Object_Movement();
+		}
 
-	if (Engine::CInput_Device::Get_Instance()->Key_Pressing(DIK_G))
-	{
-		TARGET_TO_TRANS(m_pSelectedObj)->Add_Pos_Divide(-m_fPosRate, AXIS_Y);
-		Object_Movement();
-	}
+		else if (Engine::CInput_Device::Get_Instance()->Key_Down(DIK_RIGHTARROW))
+		{
+			if (0 == m_iEditType)
+			{
+				TARGET_TO_TRANS(m_pSelectedObj)->Add_Pos_Divide(m_fPosRate, AXIS_X);
+			}
 
-	if (Engine::CInput_Device::Get_Instance()->Key_Pressing(DIK_H))
-	{
-		TARGET_TO_TRANS(m_pSelectedObj)->Add_Pos_Divide(m_fPosRate, AXIS_Y);
-		Object_Movement();
-	}
-}
+			else if (1 == m_iEditType)
+			{
+				TARGET_TO_TRANS(m_pSelectedObj)->Add_Angle(AXIS_Y, -m_fRotRate);
+			}
 
-void CMapTool_Page::Key_Rot()
-{
-	if (Engine::CInput_Device::Get_Instance()->Key_Pressing(DIK_LEFTARROW))
-	{
-		TARGET_TO_TRANS(m_pSelectedObj)->Add_Angle(AXIS_Y , m_fRotRate);
-		//Object_Movement();
-	}
+			Object_Movement();
+		}
 
-	else if (Engine::CInput_Device::Get_Instance()->Key_Pressing(DIK_RIGHTARROW))
-	{
-		TARGET_TO_TRANS(m_pSelectedObj)->Add_Angle(AXIS_Y, -m_fRotRate);
-		//Object_Movement();
-	}
+		if (Engine::CInput_Device::Get_Instance()->Key_Down(DIK_UPARROW))
+		{
+			if (0 == m_iEditType)
+			{
+				TARGET_TO_TRANS(m_pSelectedObj)->Add_Pos_Divide(m_fPosRate, AXIS_Z);
+			}
 
-	if (Engine::CInput_Device::Get_Instance()->Key_Pressing(DIK_UPARROW))
-	{
-		TARGET_TO_TRANS(m_pSelectedObj)->Add_Angle(AXIS_X, m_fRotRate);
-		//Object_Movement();
-	}
+			else if (1 == m_iEditType)
+			{
+				TARGET_TO_TRANS(m_pSelectedObj)->Add_Angle(AXIS_X, m_fRotRate);
+			}
 
-	else if (Engine::CInput_Device::Get_Instance()->Key_Pressing(DIK_DOWNARROW))
-	{
-		TARGET_TO_TRANS(m_pSelectedObj)->Add_Angle(AXIS_X, -m_fRotRate);
-		//Object_Movement();
-	}
+			Object_Movement();
+		}
 
-	if (Engine::CInput_Device::Get_Instance()->Key_Pressing(DIK_G))
-	{
-		TARGET_TO_TRANS(m_pSelectedObj)->Add_Angle(AXIS_Z, -m_fRotRate);
-		//Object_Movement();
-	}
+		else if (Engine::CInput_Device::Get_Instance()->Key_Down(DIK_DOWNARROW))
+		{
+			if (0 == m_iEditType)
+			{
+				TARGET_TO_TRANS(m_pSelectedObj)->Add_Pos_Divide(-m_fPosRate, AXIS_Z);
+			}
 
-	else if (Engine::CInput_Device::Get_Instance()->Key_Pressing(DIK_H))
-	{
-		TARGET_TO_TRANS(m_pSelectedObj)->Add_Angle(AXIS_Z, m_fRotRate);
-		//Object_Movement();
-	}
+			else if (1 == m_iEditType)
+			{
+				TARGET_TO_TRANS(m_pSelectedObj)->Add_Angle(AXIS_X, -m_fRotRate);
+			}
 
-	if (Engine::CInput_Device::Get_Instance()->Key_Up(DIK_UPARROW) ||
-		Engine::CInput_Device::Get_Instance()->Key_Up(DIK_DOWNARROW) ||
-		Engine::CInput_Device::Get_Instance()->Key_Up(DIK_RIGHTARROW) ||
-		Engine::CInput_Device::Get_Instance()->Key_Up(DIK_LEFTARROW) ||
-		Engine::CInput_Device::Get_Instance()->Key_Up(DIK_G) ||
-		Engine::CInput_Device::Get_Instance()->Key_Up(DIK_H))
-	{
-		Object_Movement();
-	}
-}
+			Object_Movement();
+		}
 
-void CMapTool_Page::Key_Scale()
-{
+		if (Engine::CInput_Device::Get_Instance()->Key_Down(DIK_G))
+		{
+			if (0 == m_iEditType)
+			{
+				TARGET_TO_TRANS(m_pSelectedObj)->Add_Pos_Divide(-m_fPosRate, AXIS_Y);
+			}
+
+			else if (1 == m_iEditType)
+			{
+				TARGET_TO_TRANS(m_pSelectedObj)->Add_Angle(AXIS_Z, -m_fRotRate);
+			}
+
+			Object_Movement();
+		}
+
+		else if (Engine::CInput_Device::Get_Instance()->Key_Down(DIK_H))
+		{
+			if (0 == m_iEditType)
+			{
+				TARGET_TO_TRANS(m_pSelectedObj)->Add_Pos_Divide(m_fPosRate, AXIS_Y);
+			}
+
+			else if (1 == m_iEditType)
+			{
+				TARGET_TO_TRANS(m_pSelectedObj)->Add_Angle(AXIS_Z, m_fRotRate);
+			}
+
+			Object_Movement();
+		}
+	}
 }
 
 void CMapTool_Page::Save_Object()
@@ -291,8 +401,8 @@ void CMapTool_Page::Save_Object()
 
 		// 정보 복사
 		lstrcpy(ObjInfo->szName, tmpObj->Get_Name());
+		_stprintf_s(ObjInfo->szLayerIdx, _T("%d"), tmpObj->Get_LayerIdx());
 		_stprintf_s(ObjInfo->szIndex, _T("%d"), tmpObj->Get_Index());
-		//_stprintf_s(ObjInfo->szTag, _T("%d"), tmpObj->Get_ObjTag());
 
 		_stprintf_s(ObjInfo->szPos_X, _T("%.3f"), ObjTrans->Get_Pos().x);
 		_stprintf_s(ObjInfo->szPos_Y, _T("%.3f"), ObjTrans->Get_Pos().y);
@@ -310,10 +420,10 @@ void CMapTool_Page::Save_Object()
 		// 정보 합치기
 		lstrcpy(szObjdata, ObjInfo->szName);
 		lstrcat(szObjdata, szSlash);
+		lstrcat(szObjdata, ObjInfo->szLayerIdx);
+		lstrcat(szObjdata, szSlash);
 		lstrcat(szObjdata, ObjInfo->szIndex);
 		lstrcat(szObjdata, szSlash);
-		//lstrcat(szObjdata, ObjInfo->szTag);
-		//lstrcat(szObjdata, szSlash);
 
 		lstrcat(szObjdata, ObjInfo->szPos_X);
 		lstrcat(szObjdata, szSlash);
@@ -361,6 +471,7 @@ void CMapTool_Page::Load_Object()
 
 	_int	iIndex;
 	_int	iTag;
+	_int	iLayerIdx;
 
 	_float fA[3];
 	_float fB[3];
@@ -378,8 +489,8 @@ void CMapTool_Page::Load_Object()
 		Engine::OBJ_INFO ObjInfo;
 
 		fin.getline(ObjInfo.szName, MAX_STR, '|');
+		fin.getline(ObjInfo.szLayerIdx, MAX_STR, '|');
 		fin.getline(ObjInfo.szIndex, MAX_STR, '|');
-		//fin.getline(ObjInfo->szTag, MAX_STR, '|');
 
 		fin.getline(ObjInfo.szPos_X, MAX_STR, '|');
 		fin.getline(ObjInfo.szPos_Y, MAX_STR, '|');
@@ -401,6 +512,7 @@ void CMapTool_Page::Load_Object()
 		{
 			iIndex = _ttoi(ObjInfo.szIndex);
 			iTag = _ttoi(ObjInfo.szTag);
+			iLayerIdx = _ttoi(ObjInfo.szLayerIdx);
 
 			fA[0] = (_float)_tstof(ObjInfo.szPos_X);
 			fA[1] = (_float)_tstof(ObjInfo.szPos_Y);
@@ -423,6 +535,7 @@ void CMapTool_Page::Load_Object()
 			pInstance->Set_OnTool(true);
 			pInstance->Change_Mesh(ObjInfo.szName);
 			pInstance->Set_Index(iIndex);
+			pInstance->Set_LayerIdx(iLayerIdx);
 
 			TARGET_TO_TRANS(pInstance)->Set_Pos(vVtx[0]);
 			TARGET_TO_TRANS(pInstance)->Set_Angle(vVtx[1]);
@@ -437,7 +550,6 @@ void CMapTool_Page::Load_Object()
 			m_pObjectTree.InsertItem(szObjName, 0, 0, hObjectRoot);
 
 			pInstance = nullptr;
-			//Engine::Safe_Delete(ObjInfo);
 		}
 	}
 
@@ -454,6 +566,7 @@ void CMapTool_Page::CreateObject()
 	// 렌더 오브젝트를 복사 한다.
 	Engine::CRenderObject* pInstace = Engine::CRenderObject::CreateClone(m_pRenderObj);
 	pInstace->Set_OnTool(true);
+	pInstace->Set_LayerIdx(m_sLayerCurIdx);
 
 	// 현재 오브젝트 리스트에서 같은 이름이 있는지 찾는다.
 	for (auto& iter : m_listObject)
@@ -501,8 +614,7 @@ void CMapTool_Page::Delete_SelectObject()
 					memcpy(&szName, m_pSelectedObj->Get_Name(), sizeof(_tchar[MAX_STR]));
 					lstrcat(szName, szIndex);
 
-					iter->Free();
-					iter = nullptr;
+					Safe_Release(iter);
 
 					m_pSelectedObj = nullptr;
 
@@ -619,7 +731,7 @@ void CMapTool_Page::Check_SelectObj()
 {
 	Engine::CGameObject* pIstance = nullptr;
 
-	pIstance = CCollisionMgr::Collision_Ray(m_listObject, g_Ray, &g_fCross);
+	pIstance = CCollisionMgr::Collision_Ray(m_listObject, g_Ray, &g_fCross, m_bShowAll, m_sLayerCurIdx);
 
 	IF_NOT_NULL(pIstance)
 	{
@@ -628,6 +740,10 @@ void CMapTool_Page::Check_SelectObj()
 
 		m_pSelectedObj = static_cast<Engine::CRenderObject*>(pIstance);
 		m_pSelectedObj->Set_Selected(true);
+
+		m_CurObjLayerIdx.Format(_T("%d"), m_pSelectedObj->Get_LayerIdx());
+		SetDlgItemText(IDC_LAYER_CUR2, m_CurObjLayerIdx);
+
 		Object_Movement();
 
 		//m_CTagBox.SetCurSel(m_pSelectedObj->Get_ObjTag());
@@ -789,7 +905,6 @@ void CMapTool_Page::Change_Mesh(const _tchar * _MeshName)
 
 void CMapTool_Page::Add_Object_OnTree(Engine::CRenderObject * _pObj)
 {
-	//_bool bCreateFolder = true;
 	_tchar tmpName[MAX_STR] = L"";
 	_tchar tmpNumber[MAX_STR] = L"";
 	//HTREEITEM* newItem = new HTREEITEM;
@@ -900,7 +1015,7 @@ BEGIN_MESSAGE_MAP(CMapTool_Page, CPropertyPage)
 	ON_BN_CLICKED(ID_TRANSFORM_00, &CMapTool_Page::OnBnClickedTransform00)
 	ON_BN_CLICKED(ID_TRANSFORM_01, &CMapTool_Page::OnBnClickedTransform01)
 	ON_BN_CLICKED(ID_TRANSFORM_02, &CMapTool_Page::OnBnClickedTransform02)
-	ON_CONTROL_RANGE(BN_CLICKED, IDC_CTRL_01, IDC_CTRL_00, &CMapTool_Page::OnSelectMode)
+	ON_CONTROL_RANGE(BN_CLICKED, IDC_CTRL_00, IDC_CTRL_01, &CMapTool_Page::OnSelectMode)
 	ON_BN_CLICKED(IDC_CTRL_01, &CMapTool_Page::OnBnClickedCtrl01)
 	ON_BN_CLICKED(IDC_CTRL_00, &CMapTool_Page::OnBnClickedCtrl00)
 	//ON_BN_CLICKED(IDC_DELETE, &CMapTool_Page::OnBnClickedDelete)
@@ -908,6 +1023,12 @@ BEGIN_MESSAGE_MAP(CMapTool_Page, CPropertyPage)
 	ON_BN_CLICKED(IDC_SAVE_OBJ, &CMapTool_Page::OnBnClickedSaveObj)
 	ON_BN_CLICKED(IDC_LOAD_OBJ, &CMapTool_Page::OnBnClickedLoadObj)
 	ON_BN_CLICKED(IDC_DELETE_ALL, &CMapTool_Page::OnBnClickedDeleteAll)
+	ON_EN_CHANGE(IDC_LAYER_CUR, &CMapTool_Page::OnEnChangeLayerCur)
+	ON_EN_CHANGE(IDC_LAYER_RENDER, &CMapTool_Page::OnEnChangeLayerRender)
+	ON_BN_CLICKED(IDC_CTRL_1, &CMapTool_Page::OnBnClickedCtrl1)
+	ON_BN_CLICKED(IDC_CTRL_2, &CMapTool_Page::OnBnClickedCtrl2)
+	ON_BN_CLICKED(IDC_CHECK3, &CMapTool_Page::OnBnClickedCheck3)
+	ON_BN_CLICKED(IDC_BUTTON3, &CMapTool_Page::OnBnClickedButton3)
 END_MESSAGE_MAP()
 
 
@@ -1049,10 +1170,14 @@ void CMapTool_Page::OnTvnSelchangedTree3(NMHDR * pNMHDR, LRESULT * pResult)
 				{
 					m_pSelectedObj = static_cast<Engine::CRenderObject*>(iter);
 					m_pSelectedObj->Set_Selected(true);
+
+					if(m_pSelectedObj->Get_LayerIdx() != m_sLayerCurIdx)
+						m_pSelectedObj->Set_LayerIdx(m_sLayerCurIdx);
 					break;
 				}
 			}
 
+			m_pSelectedObj->Set_Selected(false);
 			m_pSelectedObj = nullptr;
 		}
 	}
@@ -1100,22 +1225,6 @@ BOOL CMapTool_Page::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	//OBJECT_LIST* tmpObjlist = new OBJECT_LIST;
-	//
-	//m_vecObject.reserve(OBJ_END);
-	//m_vecObject.push_back(tmpObjlist);
-
-	m_CTagBox.AddString(L"00_Misc");
-	m_CTagBox.AddString(L"01_Render_Only");
-	m_CTagBox.AddString(L"02_Player");
-	m_CTagBox.AddString(L"03_Monster");
-	m_CTagBox.AddString(L"04_Equip");
-	m_CTagBox.AddString(L"05_Item");
-	m_CTagBox.AddString(L"06_Bullet");
-	m_CTagBox.AddString(L"07_Effect");
-
-	m_CTagBox.SetCurSel(0);
-
 	LoadFilePath(L"../../Data/Mesh_Path.dat");
 
 	hObjectRoot = m_pObjectTree.InsertItem(TEXT("Object"), 0, 0, TVI_ROOT , TVI_LAST);
@@ -1151,6 +1260,28 @@ void CMapTool_Page::OnSelectMode(_uint _Mode)
 	case 1:
 	{
 		m_bSelectAdvence = true;
+		break;
+	}
+	}
+
+	UpdateData(false);
+}
+
+void CMapTool_Page::OnEditLayer(_uint _Mode)
+{
+	UpdateData(true);
+
+	switch (_Mode)
+	{
+	case 0:
+	{
+		m_bShowAll = true;
+
+		break;
+	}
+	case 1:
+	{
+		m_bShowAll = false;
 		break;
 	}
 	}
@@ -1374,13 +1505,6 @@ void CMapTool_Page::OnBnClickedCtrl01()
 
 void CMapTool_Page::OnBnClickedButton5()
 {
-	_int tmpOption = m_CTagBox.GetCurSel();
-
-	//IF_NOT_NULL(m_pSelectedObj)
-	//	m_pSelectedObj->Set_Tag(tmpOption);
-	//
-	//IF_NOT_NULL(m_pRenderObj)
-	//	m_pRenderObj->Set_Tag(tmpOption);
 }
 
 
@@ -1398,4 +1522,50 @@ void CMapTool_Page::OnBnClickedLoadObj()
 
 void CMapTool_Page::OnBnClickedDeleteAll()
 {
+}
+
+
+void CMapTool_Page::OnEnChangeLayerCur()
+{
+	GetDlgItemText(IDC_LAYER_CUR, m_strLayer_Cur);
+	m_sLayerCurIdx = (_short)_tstof(m_strLayer_Cur);
+}
+
+
+void CMapTool_Page::OnEnChangeLayerRender()
+{
+	GetDlgItemText(IDC_LAYER_RENDER, m_strLayer_Render);
+	m_sLayerRenderIdx = (_short)_tstof(m_strLayer_Render);
+}
+
+
+void CMapTool_Page::OnBnClickedCtrl1()
+{
+	m_bShowAll = true;
+}
+
+
+void CMapTool_Page::OnBnClickedCtrl2()
+{
+	m_bShowAll = false;
+}
+
+
+void CMapTool_Page::OnBnClickedCheck3()
+{
+	m_bDetailMode = (m_bDetailMode == false ? true : false);
+}
+
+
+void CMapTool_Page::OnBnClickedButton3()
+{
+	IF_NOT_NULL(m_pSelectedObj)
+	{
+		m_pSelectedObj->Set_LayerIdx(m_sLayerCurIdx);
+
+		m_CurObjLayerIdx.Format(_T("%d"), m_pSelectedObj->Get_LayerIdx());
+		SetDlgItemText(IDC_LAYER_CUR2, m_CurObjLayerIdx);
+	}
+
+	cout << "탑니다" << endl;
 }

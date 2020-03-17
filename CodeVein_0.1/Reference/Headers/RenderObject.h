@@ -38,13 +38,11 @@ public:
 	virtual void Set_Index(_int _iIndex) { m_iIndex = _iIndex; }
 	virtual void Set_Selected(_bool _bSelected) { m_bIsSelected = _bSelected; }
 	virtual void Set_OnTool(_bool _bOnTool) { m_bOnTool = _bOnTool; }
-	virtual void Set_LayerIdx(_ulong _dwLayerIdx) { m_dwLayerIdx = _dwLayerIdx; }
 
 public:
 	virtual _tchar*	Get_Name()		{ return m_szName; }
 	virtual _int	Get_Index()		{ return m_iIndex; }
 	virtual _bool   Get_Selected()	{ return m_bIsSelected; }
-	virtual _ulong  Get_LayerIdx()	{ return m_dwLayerIdx; }
 
 protected:
 	CTransform*		m_pTransform = nullptr;
@@ -58,7 +56,6 @@ protected:
 	_tchar			m_szName[MAX_STR] = L"";
 	_int			m_iIndex = 0;
 	_ulong			m_dwPassNum = 0;
-	_ulong			m_dwLayerIdx = 0;			// 생성될 레이어 번호
 
 	// 툴에서 사용되는 변수
 protected:

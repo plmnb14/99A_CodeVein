@@ -1,6 +1,6 @@
 //{{NO_DEPENDENCIES}}
-// Microsoft Visual C++ generated include file.
-// Used by Tool.rc
+// Microsoft Visual C++에서 생성한 포함 파일입니다.
+// Tool.rc에서 사용되고 있습니다.
 //
 #define IDR                             5
 #define IDD_ABOUTBOX                    100
@@ -51,15 +51,18 @@
 #define IDC_SCALE_Z                     1016
 #define IDC_CHECK1                      1017
 #define IDC_FREEZE_POS_X                1017
+#define IDC_LAYER_CUR                   1017
 #define IDC_CHECK2                      1018
 #define IDC_RADIO1                      1018
 #define IDC_FREEZE_POS_Y                1018
+#define IDC_LAYER_RENDER                1018
 #define IDC_CHECK3                      1019
 #define IDC_BUTTON1                     1019
 #define IDC_RADIO11                     1019
 #define IDC_CHECK4                      1020
 #define IDC_RADIO3                      1020
 #define IDC_BUTTON9                     1020
+#define IDC_LAYER_CUR2                  1020
 #define IDC_CHECK5                      1021
 #define IDC_RADIO2                      1021
 #define IDC_FREEZE_ROT_Y                1021
@@ -121,6 +124,7 @@
 #define IDC_CTRL_01                     1038
 #define IDC_RADIO12                     1039
 #define IDC_GREED_01                    1039
+#define IDC_CTRL_1                      1039
 #define IDC_EDITMODE_01                 1040
 #define IDC_EMODE_01                    1040
 #define ID_TRANSFORM_00                 1040
@@ -130,6 +134,7 @@
 #define ID_POSITION3                    1042
 #define ID_TRANSFORM_02                 1042
 #define CELL_CENTER_01                  1043
+#define IDC_CTRL_2                      1043
 #define CELL_CENTER_02                  1044
 #define GREED_RATE                      1045
 #define IDC_CELL_SAVE                   1046

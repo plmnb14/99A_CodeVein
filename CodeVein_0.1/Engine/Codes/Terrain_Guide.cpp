@@ -16,13 +16,15 @@ HRESULT CTerrain_Guide::Ready_GameObject_Prototype()
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
-	// 생성 시, 오래 걸릴 수 있느 ㄴ작업\들을 수행한다.
+
+	m_pTransformCom->Set_Pos(V3_NULL);
+	m_pTransformCom->Set_Scale(V3_ONE);
+
 	return NOERROR;
 }
 
 HRESULT CTerrain_Guide::Ready_GameObject(void * pArg)
 {
-	// 복제해서 생성 된 후, 추가적으로 필요한 데이터들을 셋팅하낟.
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 
@@ -32,6 +34,8 @@ HRESULT CTerrain_Guide::Ready_GameObject(void * pArg)
 _int CTerrain_Guide::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
+
+	m_pColliderCom->Update(m_pTransformCom->Get_Pos() - WORLD_UP);
 
 	return NO_EVENT;
 }

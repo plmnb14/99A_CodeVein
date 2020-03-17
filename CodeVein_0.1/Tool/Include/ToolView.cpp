@@ -195,7 +195,7 @@ void CToolView::SetUp_Layer()
 	Engine::CCollider* tmpCol = TARGET_TO_COL(m_pGreedTerrain);
 
 	tmpCol->Set_Radius(_v3{ 1000.f , 1.f , 1000.f });
-	tmpCol->Set_CenterPos(TARGET_TO_TRANS(m_pGreedTerrain)->Get_Pos() - _v3{ 0, TARGET_TO_COL(m_pGreedTerrain)->Get_Radius().y,0 });
+	tmpCol->Set_CenterPos(TARGET_TO_TRANS(m_pGreedTerrain)->Get_Pos() - _v3{ 0, TARGET_TO_COL(m_pGreedTerrain)->Get_Radius().y * 0.5f,0 });
 	tmpCol->SetUp_Box();
 	tmpCol->Set_Type(COL_AABB);
 }
@@ -239,6 +239,8 @@ void CToolView::Update()
 
 	if(m_bActive_Object)
 		m_pPage_MapTool->Update();
+
+	m_pGreedTerrain->Update_GameObject(0);
 
 	Selected_Object();
 	Selected_Transform();
@@ -379,6 +381,8 @@ void CToolView::Change_Data()
 {
 	_float fWorkY = m_pPage_Inspecter->Get_WorkY();
 
+	cout << fWorkY << endl;
+
 	TARGET_TO_TRANS(m_pGreedTerrain)->Set_Pos(_v3{0.f ,fWorkY, 0.f});
 }
 
@@ -424,12 +428,12 @@ void CToolView::Global_KeyDown()
 		CManagement::Get_Instance()->Gizmo_Enable();
 	}
 
-	if (Engine::CInput_Device::Get_Instance()->Key_Down(DIK_R))
+	if (Engine::CInput_Device::Get_Instance()->Key_Down(DIK_E))
 	{
 		m_pPage_Inspecter->Add_WorkY(TRUE);
 	}
 
-	if (Engine::CInput_Device::Get_Instance()->Key_Down(DIK_F))
+	if (Engine::CInput_Device::Get_Instance()->Key_Down(DIK_R))
 	{
 		m_pPage_Inspecter->Add_WorkY(FALSE);
 	}

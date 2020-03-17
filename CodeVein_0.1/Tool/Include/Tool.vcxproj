@@ -284,6 +284,7 @@
     <Image Include="res\Tool.ico" />
     <Image Include="res\Toolbar.bmp" />
     <Image Include="res\ToolDoc.ico" />
+    <Image Include="Unity_3D.ico" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

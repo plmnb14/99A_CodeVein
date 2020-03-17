@@ -48,9 +48,7 @@ public:
 
 public:
 	void KeyInput();
-	void Key_Pos();
-	void Key_Rot();
-	void Key_Scale();
+	void Key_Acting();
 
 public:
 	void Save_Object();
@@ -119,6 +117,7 @@ public:
 	afx_msg void OnSelectMode(_uint _Mode);
 	afx_msg void OnEditCtrl(_uint _Mode);
 	afx_msg void OnEditType(_uint _Mode);
+	afx_msg void OnEditLayer(_uint _Mode);
 
 	afx_msg void OnEnChangeTransX();
 	afx_msg void OnEnChangeTransY();
@@ -169,6 +168,7 @@ public:
 
 	int m_iEditType;
 	BOOL m_bSelectAdvence;
+	_bool m_bDetailMode = false;
 
 	afx_msg void OnBnClickedTransform00();
 	afx_msg void OnBnClickedTransform01();
@@ -176,9 +176,22 @@ public:
 	afx_msg void OnBnClickedCtrl01();
 	afx_msg void OnBnClickedCtrl00();
 	afx_msg void OnBnClickedButton5();
-
-	CComboBox m_CTagBox;
 	afx_msg void OnBnClickedSaveObj();
 	afx_msg void OnBnClickedLoadObj();
 	afx_msg void OnBnClickedDeleteAll();
+
+	CString m_strLayer_Cur;
+	CString m_strLayer_Render;
+
+	_short	m_sLayerCurIdx = 0;
+	_short  m_sLayerRenderIdx = 0;
+
+	_bool	m_bShowAll = true;
+	afx_msg void OnEnChangeLayerCur();
+	afx_msg void OnEnChangeLayerRender();
+	afx_msg void OnBnClickedCtrl1();
+	afx_msg void OnBnClickedCtrl2();
+	afx_msg void OnBnClickedCheck3();
+	afx_msg void OnBnClickedButton3();
+	CString m_CurObjLayerIdx;
 };

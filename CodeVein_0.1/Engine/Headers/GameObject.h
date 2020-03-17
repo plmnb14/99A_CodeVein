@@ -21,11 +21,15 @@ public:
 	virtual HRESULT Render_GameObject();
 
 public:
+	virtual _ulong		Get_LayerIdx() { return m_dwLayerIdx; }
+	virtual CComponent*	Get_Component(const _tchar* pComponentTag);
+
+public:
 	virtual void Set_Target(CGameObject* _pTarget) { m_pTarget = _pTarget; }
+	virtual void Set_LayerIdx(_ulong _dwLayerIdx) { m_dwLayerIdx = _dwLayerIdx; }
 
 public:
 	HRESULT			Add_Component(_uint iSceneID, const _tchar* pPrototypeTag, const _tchar* pComponentTag, CComponent** ppComponent, void* pArg = nullptr);
-	CComponent*		Get_Component(const _tchar* pComponentTag);
 
 protected:
 	void			Compute_ViewZ(const _v3* pPos);
@@ -40,6 +44,9 @@ protected:
 	_bool	m_bIsDead = false;
 	_bool	m_bIsInit = false;
 	_float	m_fViewZ;
+
+protected:
+	_ulong			m_dwLayerIdx = 0;			// 생성될 레이어 번호
 
 protected:
 	map<const _tchar*, CComponent*>			m_pmapComponents;

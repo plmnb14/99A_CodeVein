@@ -51,6 +51,7 @@ technique Default_Technique
 	pass Default_Rendering_WireFrame
 	{
 		FillMode = WireFrame;
+		cullmode = none;
 
 		AlphablendEnable = false;
 
@@ -62,6 +63,7 @@ technique Default_Technique
 	pass Default_Rendering_Non_WireFrame
 	{
 		AlphablendEnable = false;
+		cullmode = none;
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_MAIN();

@@ -153,6 +153,49 @@ CGameObject* CCollisionMgr::Collision_Ray(list<CGameObject*>& rDstList, RAY _tRa
 	return tmpObj;
 }
 
+CGameObject * CCollisionMgr::Collision_Ray(list<CGameObject*>& rDstList, RAY _tRay, _float * _vCrossLength, _bool _bLayered, _short _sLayerIdx)
+{
+	CGameObject*	tmpObj = nullptr;
+	_float			tmpCross = 0;
+
+	for (auto& rDst : rDstList)
+	{
+		if (false == _bLayered)
+		{
+			if (rDst->Get_LayerIdx() != _sLayerIdx)
+				continue;
+		}
+
+		if (static_cast<CRenderObject*>(rDst)->Get_Selected())
+			continue;
+
+		CCollider* rDstCol = TARGET_TO_COL(rDst);
+
+		bool IsCollision = rDstCol->Check_RayCollision(rDstCol, _tRay, _vCrossLength);
+
+		if (IsCollision)
+		{
+			if (tmpObj == nullptr)
+			{
+				tmpObj = rDst;
+				tmpCross = *_vCrossLength;
+			}
+			else
+			{
+				if (*_vCrossLength < tmpCross)
+				{
+					tmpObj = rDst;
+					tmpCross = *_vCrossLength;
+				}
+			}
+		}
+	}
+
+	*_vCrossLength = tmpCross;
+
+	return tmpObj;
+}
+
 _bool CCollisionMgr::Collision_Ray(CGameObject * rDst, RAY _tRay, _float * _vCrossLength)
 {
 	CCollider* rDstCol = TARGET_TO_COL(rDst);
