@@ -1,9 +1,10 @@
 
 
 matrix		g_matWorld, g_matView, g_matProj;
+float		g_fAlpha;
+vector		g_vColor;
 
 texture		g_DiffuseTexture;
-
 sampler		DiffuseSampler = sampler_state
 {
 	texture = g_DiffuseTexture;
@@ -12,9 +13,16 @@ sampler		DiffuseSampler = sampler_state
 	mipfilter = linear;
 };
 
+texture		g_GradientTexture;
+sampler		GradientSampler = sampler_state
+{
+	texture = g_GradientTexture;
+	minfilter = linear;
+	magfilter = linear;
+	mipfilter = linear;
+};
 
 texture		g_DepthTexture;
-
 sampler		DepthSampler = sampler_state
 {
 	texture = g_DepthTexture;
@@ -68,16 +76,20 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
 
-	float2		vTexUV;
+	float fGradientUV = In.vTexUV + (g_fAlpha);
+	vector vGradientMask = tex2D(GradientSampler, fGradientUV );
+	Out.vColor *= vGradientMask;
 
+	Out.vColor *= g_vColor;
+
+	float2		vTexUV;
 	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
 	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
 
 	vector		vDepthInfo = tex2D(DepthSampler, vTexUV);
 	float		fViewZ = vDepthInfo.y * 300.f;
 
-	Out.vColor.a = Out.vColor.a * saturate(fViewZ - In.vProjPos.w);
-
+	Out.vColor.a = (Out.vColor.a * saturate(fViewZ - In.vProjPos.w)) * g_fAlpha;
 
 	return Out;
 }
@@ -86,9 +98,11 @@ technique Default_Technique
 {
 	pass Default_Rendering
 	{	
+		ZWriteEnable = false;
 		AlphablendEnable = true;
 		SrcBlend = SrcAlpha;
-		DestBlend = InvSrcAlpha;
+		DestBlend = One;
+		//DestBlend = InvSrcAlpha;
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_MAIN();
