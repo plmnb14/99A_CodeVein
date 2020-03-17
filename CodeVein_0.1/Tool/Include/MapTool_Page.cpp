@@ -420,6 +420,7 @@ void CMapTool_Page::Load_Object()
 
 
 			Engine::CRenderObject*	pInstance = Engine::CRenderObject::Create(g_pGraphicDev);
+			pInstance->Set_OnTool(true);
 			pInstance->Change_Mesh(ObjInfo.szName);
 			pInstance->Set_Index(iIndex);
 
@@ -452,6 +453,7 @@ void CMapTool_Page::CreateObject()
 
 	// 렌더 오브젝트를 복사 한다.
 	Engine::CRenderObject* pInstace = Engine::CRenderObject::CreateClone(m_pRenderObj);
+	pInstace->Set_OnTool(true);
 
 	// 현재 오브젝트 리스트에서 같은 이름이 있는지 찾는다.
 	for (auto& iter : m_listObject)
@@ -954,6 +956,7 @@ void CMapTool_Page::OnTvnSelchangedTree1(NMHDR *pNMHDR, LRESULT *pResult)
 		if (m_pRenderObj == nullptr)
 		{
 			m_pRenderObj = Engine::CRenderObject::Create(g_pGraphicDev);
+			m_pRenderObj->Set_OnTool(true);
 		}
 
 		if (!lstrcmp(strCur, L"StaticMesh"))

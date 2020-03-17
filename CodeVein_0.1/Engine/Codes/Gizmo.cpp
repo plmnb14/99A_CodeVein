@@ -1,4 +1,5 @@
 #include "Gizmo.h"
+#include "Management.h"
 
 IMPLEMENT_SINGLETON(CGizmo)
 
@@ -15,20 +16,19 @@ CGizmo::~CGizmo()
 
 void CGizmo::Ready_Gizmo(_Device pGraphicDev)
 {
-	//_pGraphicDev = pGraphicDev;
-	//Safe_AddRef(_pGraphicDev);
+	m_pGraphicDev = pGraphicDev;
+	Safe_AddRef(m_pGraphicDev);
 
-	//if (m_pShpereBuffer == nullptr)
-	//	m_pShpereBuffer = static_cast<CVIBuffer*>(Engine::CResourcesMgr::GetInstance()->Clone(ENGINE::RESOURCE_STATIC, L"Buffer_Sphere"));
+	m_pGizmoShader = static_cast<CShader*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Shader_Gizmo"));
 }
 
-void CGizmo::Draw_Vertex(_Device _pGraphicDev, _v3 _vVertex, _v3 _vSize)
+void CGizmo::Draw_Vertex(_v3 _vVertex, _v3 _vSize)
 {
 	if (!m_bEnableGizmo)
 		return;
 
-	_pGraphicDev->SetTexture(0, NULL);
-	_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
+	m_pGraphicDev->SetTexture(0, NULL);
+	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
 
 	_mat matWorld, matScale, matPos;
 	D3DXMatrixIdentity(&matWorld);
@@ -38,33 +38,25 @@ void CGizmo::Draw_Vertex(_Device _pGraphicDev, _v3 _vVertex, _v3 _vSize)
 
 	matWorld = matScale * matPos;
 
-	_pGraphicDev->SetTransform(D3DTS_WORLD, &matWorld);
+	m_pGraphicDev->SetTransform(D3DTS_WORLD, &matWorld);
 
 	//m_pShpereBuffer->Render_Buffer(CVIBuffer::RENDER_SPHERE);
-
-#ifdef TOOL_PROJECT
-	//_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
-
-#ifdef  CLIENT_PROJECT
-	//_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
-#endif // CLIENT_PROJECT
-#endif // TOOL_PROJECT
 }
 
-void CGizmo::Draw_Sphere(_Device _pGraphicDev, _v3 _vVertex, _float _fRadius)
+void CGizmo::Draw_Sphere(_v3 _vVertex, _float _fRadius)
 {
 	if (!m_bEnableGizmo)
 		return;
 
-	_pGraphicDev->SetTexture(0, NULL);
-	_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
-	_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
-	_pGraphicDev->SetFVF(VTXFVF_COL);
+	m_pGraphicDev->SetTexture(0, NULL);
+	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
+	m_pGraphicDev->SetFVF(VTXFVF_COL);
 
 	_mat matView, matViewInverse;
 	_mat matWorld, matScale, matPos;
 
-	_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
+	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
 
 	D3DXMatrixIdentity(&matViewInverse);
 	D3DXMatrixIdentity(&matWorld);
@@ -121,27 +113,27 @@ void CGizmo::Draw_Sphere(_Device _pGraphicDev, _v3 _vVertex, _float _fRadius)
 		CALC::V3_RotY(&vVertex, &vVertex, fRadian);
 	}
 
-	_pGraphicDev->SetTransform(D3DTS_WORLD, &(matViewInverse));
+	m_pGraphicDev->SetTransform(D3DTS_WORLD, &(matViewInverse));
 
-	_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 20, pVtxCol_Z, sizeof(VTX_COL));
+	m_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 20, pVtxCol_Z, sizeof(VTX_COL));
 
-	_pGraphicDev->SetTransform(D3DTS_WORLD, &(matWorld));
+	m_pGraphicDev->SetTransform(D3DTS_WORLD, &(matWorld));
 
-	_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 20, pVtxCol_Z, sizeof(VTX_COL));
-	_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 20, pVtxCol_X, sizeof(VTX_COL));
-	_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 20, pVtxCol_Y, sizeof(VTX_COL));
+	m_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 20, pVtxCol_Z, sizeof(VTX_COL));
+	m_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 20, pVtxCol_X, sizeof(VTX_COL));
+	m_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 20, pVtxCol_Y, sizeof(VTX_COL));
 
-	_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
 }
 
-void CGizmo::Draw_Triangle_Line(_Device _pGraphicDev, _v3 * _vVertex, _bool _bSelect , CELL_PARAM _eParam)
+void CGizmo::Draw_Triangle_Line(_v3 * _vVertex, _bool _bSelect , CELL_PARAM _eParam)
 {
 	if (!m_bEnableGizmo)
 		return;
 
-	_pGraphicDev->SetTexture(0, NULL);
-	_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
-	_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	m_pGraphicDev->SetTexture(0, NULL);
+	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
+	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
 	_mat matView, matProj, matWorld, Trans , matTmp;
 
@@ -151,9 +143,8 @@ void CGizmo::Draw_Triangle_Line(_Device _pGraphicDev, _v3 * _vVertex, _bool _bSe
 	_v3 vTriangle[4];
 	_v3 vTransVtx[3];
 
-	_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
-	_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
-	//_pGraphicDev->GetTransform(D3DTS_WORLD, &matWorld);
+	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
+	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
 
 	D3DXMatrixIdentity(&Trans);
 	D3DXMatrixIdentity(&matTmp);
@@ -190,7 +181,7 @@ void CGizmo::Draw_Triangle_Line(_Device _pGraphicDev, _v3 * _vVertex, _bool _bSe
 
 
 	ID3DXLine *Line;
-	D3DXCreateLine(_pGraphicDev, &Line);
+	D3DXCreateLine(m_pGraphicDev, &Line);
 
 	(_bSelect ? Line->SetWidth(5) : Line->SetWidth(3));
 	Line->SetAntialias(true);
@@ -223,34 +214,29 @@ void CGizmo::Draw_Triangle_Line(_Device _pGraphicDev, _v3 * _vVertex, _bool _bSe
 
 	Line->Release();
 
-	_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
+	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
 
-	_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 }
 
-void CGizmo::Draw_Triangle(_Device _pGraphicDev, VTX_COL * _vVertex)
+void CGizmo::Draw_Triangle(VTX_COL * _vVertex)
 {
 	if (!m_bEnableGizmo)
 		return;
 
-	_pGraphicDev->SetTexture(0, NULL);
-	_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
-	_pGraphicDev->SetFVF(VTXFVF_COL);
+	m_pGraphicDev->SetTexture(0, NULL);
+	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
+	m_pGraphicDev->SetFVF(VTXFVF_COL);
 
-	_pGraphicDev->DrawPrimitiveUP(D3DPT_TRIANGLELIST, 1, _vVertex, sizeof(VTX_COL));
+	m_pGraphicDev->DrawPrimitiveUP(D3DPT_TRIANGLELIST, 1, _vVertex, sizeof(VTX_COL));
 
-	_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
+	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
 }
 
-void  CGizmo::Draw_AABB(_Device _pGraphicDev, const _v3* _vVertex, _v3 _vPos, _v3 _vSize)
+void  CGizmo::Draw_AABB(const _v3* _vVertex, _v3 _vPos, _v3 _vSize)
 {
 	if (!m_bEnableGizmo)
 		return;
-
-	_pGraphicDev->SetTexture(0, NULL);
-	_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
-	_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
-	_pGraphicDev->SetFVF(VTXFVF_COL);
 
 	_mat matWorld, matScale, matPos;
 	D3DXMatrixIdentity(&matWorld);
@@ -259,8 +245,6 @@ void  CGizmo::Draw_AABB(_Device _pGraphicDev, const _v3* _vVertex, _v3 _vPos, _v
 	D3DXMatrixTranslation(&matPos, _vPos.x, _vPos.y, _vPos.z);
 
 	matWorld = matScale * matPos;
-
-	_pGraphicDev->SetTransform(D3DTS_WORLD, &matWorld);
 
 	VTX_COL pVtxCol[8] = {};
 
@@ -320,28 +304,27 @@ void  CGizmo::Draw_AABB(_Device _pGraphicDev, const _v3* _vVertex, _v3 _vPos, _v
 	wIdx[11]._1 = 1;
 	wIdx[11]._2 = 0;
 
-	_pGraphicDev->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, 8, 12, wIdx, D3DFMT_INDEX32, pVtxCol, sizeof(VTX_COL));
+	Init_Shader(matWorld);
 
-	_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+	m_pGizmoShader->Begin_Shader();
+	m_pGizmoShader->Begin_Pass(0);
 
-#ifdef TOOL_PROJECT
-	_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
+	m_pGraphicDev->SetFVF(VTXFVF_COL);
+	m_pGraphicDev->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, 8, 12, wIdx, D3DFMT_INDEX32, pVtxCol, sizeof(VTX_COL));
 
-#ifdef  CLIENT_PROJECT
-	_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
-#endif // CLIENT_PROJECT
-#endif // TOOL_PROJECT
+	m_pGizmoShader->End_Pass();
+	m_pGizmoShader->End_Shader();
 }
 
-void  CGizmo::Draw_OBB(_Device _pGraphicDev, const _v3* _vVertex, _v3 vRotate, _v3 _vPos, _v3 _vSize)
+void  CGizmo::Draw_OBB(const _v3* _vVertex, _v3 vRotate, _v3 _vPos, _v3 _vSize)
 {
 	if (!m_bEnableGizmo)
 		return;
 
-	_pGraphicDev->SetTexture(0, NULL);
-	_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
-	_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
-	_pGraphicDev->SetFVF(VTXFVF_COL);
+	m_pGraphicDev->SetTexture(0, NULL);
+	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
+	m_pGraphicDev->SetFVF(VTXFVF_COL);
 
 	_mat matWorld, matScale, matPos;
 	_mat matRot[3];
@@ -358,7 +341,7 @@ void  CGizmo::Draw_OBB(_Device _pGraphicDev, const _v3* _vVertex, _v3 vRotate, _
 
 	matWorld = matScale * matRot[AXIS_X] * matRot[AXIS_Y] * matRot[AXIS_Z] * matPos;
 
-	_pGraphicDev->SetTransform(D3DTS_WORLD, &matWorld);
+	m_pGraphicDev->SetTransform(D3DTS_WORLD, &matWorld);
 
 	VTX_COL pVtxCol[8] = {};
 
@@ -418,22 +401,22 @@ void  CGizmo::Draw_OBB(_Device _pGraphicDev, const _v3* _vVertex, _v3 vRotate, _
 	wIdx[11]._1 = 1;
 	wIdx[11]._2 = 0;
 
-	_pGraphicDev->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, 8, 12, wIdx, D3DFMT_INDEX32, pVtxCol, sizeof(VTX_COL));
+	m_pGraphicDev->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, 8, 12, wIdx, D3DFMT_INDEX32, pVtxCol, sizeof(VTX_COL));
 
-	_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
 
-	_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
+	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
 }
 
-void	CGizmo::Draw_Capsule(_Device _pGraphicDev, const _v3 _vVertex, _float _fRadius, _float _fMaxHeight)
+void	CGizmo::Draw_Capsule(const _v3 _vVertex, _float _fRadius, _float _fMaxHeight)
 {
 	if (!m_bEnableGizmo)
 		return;
 
-	_pGraphicDev->SetTexture(0, NULL);
-	_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
-	_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
-	_pGraphicDev->SetFVF(VTXFVF_COL);
+	m_pGraphicDev->SetTexture(0, NULL);
+	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
+	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
+	m_pGraphicDev->SetFVF(VTXFVF_COL);
 
 	_mat matWorld, matScale, matPos;
 	D3DXMatrixIdentity(&matWorld);
@@ -443,7 +426,7 @@ void	CGizmo::Draw_Capsule(_Device _pGraphicDev, const _v3 _vVertex, _float _fRad
 
 	matWorld = matScale * matPos;
 
-	_pGraphicDev->SetTransform(D3DTS_WORLD, &matWorld);
+	m_pGraphicDev->SetTransform(D3DTS_WORLD, &matWorld);
 
 	VTX_COL pVtxCol_Z[23] = {};
 	VTX_COL pVtxCol_X[23] = {};
@@ -529,16 +512,44 @@ void	CGizmo::Draw_Capsule(_Device _pGraphicDev, const _v3 _vVertex, _float _fRad
 		CALC::V3_RotY(&vVertex, &vVertex, fRadian);
 	}
 
-	_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 20, pVtxCol_Y_Top, sizeof(VTX_COL));
-	_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 20, pVtxCol_Y_Mid, sizeof(VTX_COL));
-	_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 20, pVtxCol_Y_Bot, sizeof(VTX_COL));
+	m_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 20, pVtxCol_Y_Top, sizeof(VTX_COL));
+	m_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 20, pVtxCol_Y_Mid, sizeof(VTX_COL));
+	m_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 20, pVtxCol_Y_Bot, sizeof(VTX_COL));
 
-	_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 22, pVtxCol_Z, sizeof(VTX_COL));
-	_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 22, pVtxCol_X, sizeof(VTX_COL));
+	m_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 22, pVtxCol_Z, sizeof(VTX_COL));
+	m_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 22, pVtxCol_X, sizeof(VTX_COL));
 
-	_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
 
-	_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
+	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
+}
+
+HRESULT CGizmo::Init_Shader(_mat _DefaultMat)
+{
+	if (nullptr == m_pGizmoShader)
+		return E_FAIL;
+
+	CManagement*		pManagement = CManagement::Get_Instance();
+	if (nullptr == pManagement)
+		return E_FAIL;
+
+	Safe_AddRef(pManagement);
+
+	if (FAILED(m_pGizmoShader->Set_Value("g_matWorld", &_DefaultMat, sizeof(_mat))))
+		return E_FAIL;
+
+	_mat		ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
+
+	if (FAILED(m_pGizmoShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(m_pGizmoShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+		return E_FAIL;
+
+
+	Safe_Release(pManagement);
+
+	return NOERROR;
 }
 
 void CGizmo::Set_EnableGizmo()
@@ -546,12 +557,12 @@ void CGizmo::Set_EnableGizmo()
 	(m_bEnableGizmo == true ? m_bEnableGizmo = false : m_bEnableGizmo = true);
 }
 
-void CGizmo::Draw_XYZ(_Device _pGraphicDev, _v3 _vPos, _v3 _vLook, _v3 _vRight, _v3 _vUp)
+void CGizmo::Draw_XYZ(_v3 _vPos, _v3 _vLook, _v3 _vRight, _v3 _vUp)
 {
 	if (!m_bEnableGizmo)
 		return;
 
-	_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
+	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
 
 	_mat matView, matProj, matWorld, Trans;
 
@@ -560,9 +571,9 @@ void CGizmo::Draw_XYZ(_Device _pGraphicDev, _v3 _vPos, _v3 _vLook, _v3 _vRight, 
 	_v3 vPoint_Y[2];
 	_v3 vTarget[2];
 
-	_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
-	_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
-	_pGraphicDev->GetTransform(D3DTS_WORLD, &matWorld);
+	m_pGraphicDev->GetTransform(D3DTS_VIEW, &matView);
+	m_pGraphicDev->GetTransform(D3DTS_PROJECTION, &matProj);
+	m_pGraphicDev->GetTransform(D3DTS_WORLD, &matWorld);
 
 	D3DXMatrixIdentity(&Trans);
 
@@ -579,7 +590,7 @@ void CGizmo::Draw_XYZ(_Device _pGraphicDev, _v3 _vPos, _v3 _vLook, _v3 _vRight, 
 
 
 	ID3DXLine *Line;
-	D3DXCreateLine(_pGraphicDev, &Line);
+	D3DXCreateLine(m_pGraphicDev, &Line);
 	Line->SetWidth(2);
 	Line->SetAntialias(true);
 
@@ -592,10 +603,12 @@ void CGizmo::Draw_XYZ(_Device _pGraphicDev, _v3 _vPos, _v3 _vLook, _v3 _vRight, 
 
 	Line->Release();
 
-	_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
+	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
 }
 
 void CGizmo::Free(void)
 {
+	Safe_Release(m_pGraphicDev);
+	Safe_Release(m_pGizmoShader);
 	//Safe_Release(m_pShpereBuffer);
 }

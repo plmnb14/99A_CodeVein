@@ -15,6 +15,10 @@ CMesh_Static::CMesh_Static(const CMesh_Static & rhs)
 	, m_pMaterialsBuff(rhs.m_pMaterialsBuff)
 	, m_pMaterials(rhs.m_pMaterials)
 	, m_ppTextures(rhs.m_ppTextures)
+	, m_dwVtxCnt(rhs.m_dwVtxCnt)
+	, m_dwStride(rhs.m_dwStride)
+	, m_pVtxMin(rhs.m_pVtxMin)
+	, m_pVtxMax(rhs.m_pVtxMax)
 {
 	Safe_AddRef(m_pMesh);
 	Safe_AddRef(m_pAdjacencyBuff);

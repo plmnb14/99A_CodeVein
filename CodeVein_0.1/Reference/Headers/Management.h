@@ -70,15 +70,15 @@ public: // For.Target_Manager
 	LPDIRECT3DTEXTURE9 Get_Target_Texture(const _tchar* pTargetTag);
 
 public: // For.Gizmo
-	//void Ready_Gizmo(_Device _pGraphicDev);
-	void Gizmo_Draw_XYZ(_Device _pGraphicDev, const _v3 _vPos, const _v3 _vLook, const _v3 _vRight, const _v3 _vUp = WORLD_UP);
-	void Gizmo_Draw_Vertex(_Device _pGraphicDev, const _v3 _vVertex, const _v3 _vSize = { 0.1f, 0.1f,0.1f });
-	void Gizmo_Draw_Sphere(_Device _pGraphicDev, const _v3 _vVertex, const _float _fRadius = 1.f);
-	void Gizmo_Draw_Triangle_Line(_Device _pGraphicDev, _v3 * _vVertex, const _bool _bSelect = false, CELL_PARAM _eParam = NORMAL);
-	void Gizmo_Draw_Triangle(_Device _pGraphicDev, VTX_COL * _vVertex);
-	void Gizmo_Draw_AABB(_Device _pGraphicDev, _v3* _vVertex, const _v3 _vPos, const _v3 _vSize = _v3{ 1.f, 1.f, 1.f });
-	void Gizmo_Draw_OBB(_Device _pGraphicDev, _v3* _vVertex, const _v3 vRotate, const _v3 _vPos, const _v3 _vSize = _v3{ 1.f, 1.f, 1.f });
-	void Gizmo_Draw_Capsule(_Device _pGraphicDev, _v3 _vVertex, const _float _fRadius, const _float _fMaxHeight);
+	void Ready_Gizmo(_Device _pGraphicDev);
+	void Gizmo_Draw_XYZ(const _v3 _vPos, const _v3 _vLook, const _v3 _vRight, const _v3 _vUp = WORLD_UP);
+	void Gizmo_Draw_Vertex(const _v3 _vVertex, const _v3 _vSize = { 0.1f, 0.1f,0.1f });
+	void Gizmo_Draw_Sphere(const _v3 _vVertex, const _float _fRadius = 1.f);
+	void Gizmo_Draw_Triangle_Line(_v3 * _vVertex, const _bool _bSelect = false, CELL_PARAM _eParam = NORMAL);
+	void Gizmo_Draw_Triangle(VTX_COL * _vVertex);
+	void Gizmo_Draw_AABB(_v3* _vVertex, const _v3 _vPos, const _v3 _vSize = _v3{ 1.f, 1.f, 1.f });
+	void Gizmo_Draw_OBB(_v3* _vVertex, const _v3 vRotate, const _v3 _vPos, const _v3 _vSize = _v3{ 1.f, 1.f, 1.f });
+	void Gizmo_Draw_Capsule(_v3 _vVertex, const _float _fRadius, const _float _fMaxHeight);
 
 	void Gizmo_Enable();
 

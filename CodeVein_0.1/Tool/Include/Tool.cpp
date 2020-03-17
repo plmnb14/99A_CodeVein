@@ -196,7 +196,7 @@ BOOL CToolApp::OnIdle(LONG lCount)
 	CMainFrame* pMainFrm = dynamic_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
 	//NULL_CHECK_RETURN(pMainFrm, false);
 	
-	CToolView* pView = dynamic_cast<CToolView*>(pMainFrm->m_MainSplitter.GetPane(0, 0));
+	CToolView* pView = dynamic_cast<CToolView*>(pMainFrm->m_SecondSplitter.GetPane(0, 0));
 	//NULL_CHECK_RETURN(pView, false);
 	
 	pView->Function();

@@ -24,6 +24,7 @@ class CComponent_Manager final : public CBase
 private:
 	explicit CComponent_Manager();
 	virtual ~CComponent_Manager() = default;
+
 public:
 	HRESULT Ready_Component_Manager(_Device _pGraphicDev);
 	HRESULT Reserve_Container_Size(_uint iNumScenes);

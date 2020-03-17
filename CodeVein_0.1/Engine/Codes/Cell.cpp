@@ -228,8 +228,8 @@ void CCell::Render()
 
 	m_pGraphic_Dev->SetTransform(D3DTS_WORLD, &m_pTransform->Get_WorldMat());
 
-	CManagement::Get_Instance()->Gizmo_Draw_Triangle(m_pGraphic_Dev, m_pVertex);
-	CManagement::Get_Instance()->Gizmo_Draw_Triangle_Line(m_pGraphic_Dev, m_pVertexPos , m_bSelected , m_eCellParam);
+	CManagement::Get_Instance()->Gizmo_Draw_Triangle(m_pVertex);
+	CManagement::Get_Instance()->Gizmo_Draw_Triangle_Line(m_pVertexPos , m_bSelected , m_eCellParam);
 
 	//LOOP(3)
 	//	CGizmoMgr::GetInstance()->Draw_Vertex(m_pVertex[i].vPos);

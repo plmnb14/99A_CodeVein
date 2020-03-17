@@ -162,7 +162,7 @@ void CToolView::OnInitialUpdate()
 
 	// MainFrame의 크기 조정.
 	pMainFrm->SetWindowPos(
-		nullptr, 0, 0, 1610, 720, SWP_NOZORDER);
+		nullptr, 0, 0, 1610, 1020, SWP_NOZORDER);
 
 	Setup_Default();
 
@@ -176,6 +176,7 @@ void CToolView::Setup_Default()
 	CManagement::Get_Instance()->Ready_Engine(SCENE_END);
 	CManagement::Get_Instance()->Ready_GraphicDev(g_hWnd, CGraphic_Device::WINMODE_WIN, WINCX, WINCY, &g_pGraphicDev);
 	CManagement::Get_Instance()->Ready_Component_Manager(g_pGraphicDev);
+	CManagement::Get_Instance()->Ready_Gizmo(g_pGraphicDev);
 
 	CInput_Device::Get_Instance()->Ready_Input_Dev(AfxGetInstanceHandle(), g_hWnd);
 	CInput_Device::Get_Instance()->Set_InputDev();

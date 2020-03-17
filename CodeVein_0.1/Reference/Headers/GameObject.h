@@ -27,6 +27,8 @@ public:
 	HRESULT			Add_Component(_uint iSceneID, const _tchar* pPrototypeTag, const _tchar* pComponentTag, CComponent** ppComponent, void* pArg = nullptr);
 	CComponent*		Get_Component(const _tchar* pComponentTag);
 
+protected:
+	void			Compute_ViewZ(const _v3* pPos);
 
 protected:
 	LPDIRECT3DDEVICE9		m_pGraphic_Dev = nullptr;
@@ -37,6 +39,7 @@ protected:
 protected:
 	_bool	m_bIsDead = false;
 	_bool	m_bIsInit = false;
+	_float	m_fViewZ;
 
 protected:
 	map<const _tchar*, CComponent*>			m_pmapComponents;

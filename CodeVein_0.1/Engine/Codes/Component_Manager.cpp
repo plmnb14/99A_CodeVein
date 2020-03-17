@@ -36,6 +36,8 @@ HRESULT CComponent_Manager::Ready_Component_Manager(_Device _pGraphicDev)
 		return E_FAIL;
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Effect", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Effect.fx"))))
 		return E_FAIL;
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Gizmo", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Gizmo.fx"))))
+		return E_FAIL;
 
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"VIBuffer_Terrain", CBuffer_Terrain::Create(_pGraphicDev, L"../Bin/Resources/Textures/Terrain/Height.bmp", 1))))
 		return E_FAIL;
