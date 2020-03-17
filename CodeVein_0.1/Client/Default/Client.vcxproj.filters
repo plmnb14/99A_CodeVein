@@ -52,6 +52,9 @@
     <Filter Include="02.GameObject\Stage\Effect">
       <UniqueIdentifier>{83e29ab0-c6ec-406c-85cf-0fdef8abded7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\Monster">
+      <UniqueIdentifier>{71691d1d-2d69-411b-8330-bcd4d01bfd07}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -96,6 +99,9 @@
     <ClInclude Include="..\Headers\Effect.h">
       <Filter>02.GameObject\Stage\Effect</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\TestMonster.h">
+      <Filter>02.GameObject\Stage\Monster</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -130,6 +136,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Effect.cpp">
       <Filter>02.GameObject\Stage\Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\TestMonster.cpp">
+      <Filter>02.GameObject\Stage\Monster</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -6,6 +6,7 @@
 #include "Effect.h"
 #include "Player.h"
 #include "Terrain.h"
+#include "TestMonster.h"
 
 USING(Client)
 
@@ -44,6 +45,10 @@ _uint CLoading::Loading_ForStage(void)
 	if (FAILED(pManagement->Add_Prototype(L"GameObject_Effect", CEffect::Create(m_pGraphicDev))))
 		return E_FAIL;
 	
+	//몬스터
+	/*if (FAILED(pManagement->Add_Prototype(L"Monster_TestMonster", CTestMonster::Create(m_pGraphicDev))))
+		return E_FAIL;
+*/
 	lstrcpy(m_szString, L"지형 생성 중....");
 	if (FAILED(pManagement->Add_Prototype(L"GameObject_Terrain", CTerrain::Create(m_pGraphicDev))))
 		return E_FAIL;
@@ -52,6 +57,9 @@ _uint CLoading::Loading_ForStage(void)
 	if (FAILED(pManagement->Add_Prototype(L"GameObject_Sky", CSky::Create(m_pGraphicDev))))
 		return E_FAIL;
 
+	// BT_Node 생성 중
+	//if (FAILED(pManagement->Ready_BT_Node()))
+	//	return E_FAIL;
 
 	m_bFinish = true;
 	lstrcpy(m_szString, L"로딩 완료");

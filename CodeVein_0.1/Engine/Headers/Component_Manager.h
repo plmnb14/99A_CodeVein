@@ -15,6 +15,7 @@
 #include "Texture.h"
 #include "RigidBody.h"
 #include "NavMesh.h"
+#include "AIController.h"
 
 BEGIN(Engine)
 

@@ -14,7 +14,7 @@
 #include "Light_Manager.h"
 #include "Target_Manager.h"
 #include "Gizmo.h"
-
+#include "BT_Node_Mgr.h"
 
 BEGIN(Engine)
 
@@ -82,6 +82,10 @@ public: // For.Gizmo
 
 	void Gizmo_Enable();
 
+public: // For.BT_Node_Manager
+	HRESULT Ready_BT_Node();
+	CBT_Node* Clone_Node(const _tchar* pPrototypeTag, CBT_Node_Manager::NODE_TYPE eType, void* pInit_Struct);
+
 private:
 	CGraphic_Device*			m_pGraphic_Device = nullptr;
 	CInput_Device*				m_pInput_Device = nullptr;
@@ -92,6 +96,8 @@ private:
 	CLight_Manager*				m_pLight_Manager = nullptr;
 	CTarget_Manager*			m_pTarget_Manager = nullptr;
 	CGizmo*						m_pGizmo = nullptr;
+	CBT_Node_Manager*			m_pBT_Node_Manager = nullptr;
+
 public:
 	virtual void Free();
 

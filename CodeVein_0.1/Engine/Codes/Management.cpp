@@ -12,6 +12,7 @@ CManagement::CManagement()
 	, m_pLight_Manager(CLight_Manager::Get_Instance())
 	, m_pTarget_Manager(CTarget_Manager::Get_Instance())
 	, m_pGizmo(CGizmo::Get_Instance())
+	, m_pBT_Node_Manager(CBT_Node_Manager::Get_Instance())
 {
 	Safe_AddRef(m_pTarget_Manager);
 	Safe_AddRef(m_pLight_Manager);
@@ -19,9 +20,10 @@ CManagement::CManagement()
 	Safe_AddRef(m_pPipeLine);
 	Safe_AddRef(m_pComponent_Manager);
 	Safe_AddRef(m_pObject_Manager);
-	Safe_AddRef(m_pScene_Manager);
+	Safe_AddRef(m_pScene_Manager);	
 	Safe_AddRef(m_pGraphic_Device);
 	Safe_AddRef(m_pGizmo);
+	Safe_AddRef(m_pBT_Node_Manager);
 }
 
 HRESULT CManagement::Ready_Engine(_uint iNumScenes)
@@ -370,8 +372,19 @@ void CManagement::Gizmo_Enable()
 	m_pGizmo->Set_EnableGizmo();
 }
 
+HRESULT CManagement::Ready_BT_Node()
+{
+	return m_pBT_Node_Manager->Ready_BT_Node();
+}
+
+CBT_Node * CManagement::Clone_Node(const _tchar * pPrototypeTag, CBT_Node_Manager::NODE_TYPE eType, void * pInit_Struct)
+{
+	return m_pBT_Node_Manager->Clone_Node(pPrototypeTag, eType, pInit_Struct);
+}
+
 void CManagement::Free()
 {
+	Safe_Release(m_pBT_Node_Manager);
 	Safe_Release(m_pGizmo);
 	Safe_Release(m_pTarget_Manager);
 	Safe_Release(m_pLight_Manager);
