@@ -131,10 +131,6 @@ void CGizmo::Draw_Triangle_Line(_v3 * _vVertex, _bool _bSelect , CELL_PARAM _ePa
 	if (!m_bEnableGizmo)
 		return;
 
-	m_pGraphicDev->SetTexture(0, NULL);
-	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
-	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-
 	_mat matView, matProj, matWorld, Trans , matTmp;
 
 	_v3 vAB[2];
@@ -180,6 +176,11 @@ void CGizmo::Draw_Triangle_Line(_v3 * _vVertex, _bool _bSelect , CELL_PARAM _ePa
 	}
 
 
+	Init_Shader(Trans);
+
+	m_pGizmoShader->Begin_Shader();
+	m_pGizmoShader->Begin_Pass(0);
+
 	ID3DXLine *Line;
 	D3DXCreateLine(m_pGraphicDev, &Line);
 
@@ -190,17 +191,7 @@ void CGizmo::Draw_Triangle_Line(_v3 * _vVertex, _bool _bSelect , CELL_PARAM _ePa
 
 	if (_bSelect == false)
 	{
-		//if(_eParam == NORMAL)
-		//	Line->DrawTransform(vTriangle, 4, &matTmp, COLOR_DARKTEAL(1.f));
-		//
-		//if (_eParam == WATER)
-		//	Line->DrawTransform(vTriangle, 4, &matTmp, COLOR_DARKTEAL(1.f));
-		//
-		//if (_eParam == EVENT_TRIGGER)
-		//	Line->DrawTransform(vTriangle, 4, &matTmp, COLOR_DARKTEAL(1.f));
-		//
-		//if (_eParam == CINEMA_TRIGGER)
-			Line->DrawTransform(vTriangle, 4, &matTmp, COLOR_DARKTEAL(1.f));
+		Line->DrawTransform(vTriangle, 4, &matTmp, COLOR_DARKTEAL(1.f));
 	}
 
 	else
@@ -211,12 +202,10 @@ void CGizmo::Draw_Triangle_Line(_v3 * _vVertex, _bool _bSelect , CELL_PARAM _ePa
 	}
 
 	Line->End();
-
 	Line->Release();
 
-	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
-
-	m_pGraphicDev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+	m_pGizmoShader->End_Pass();
+	m_pGizmoShader->End_Shader();
 }
 
 void CGizmo::Draw_Triangle(VTX_COL * _vVertex)
@@ -224,13 +213,19 @@ void CGizmo::Draw_Triangle(VTX_COL * _vVertex)
 	if (!m_bEnableGizmo)
 		return;
 
-	m_pGraphicDev->SetTexture(0, NULL);
-	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
-	m_pGraphicDev->SetFVF(VTXFVF_COL);
+	_mat DefaultMat;
+	D3DXMatrixIdentity(&DefaultMat);
 
+	Init_Shader(DefaultMat);
+
+	m_pGizmoShader->Begin_Shader();
+	m_pGizmoShader->Begin_Pass(1);
+
+	m_pGraphicDev->SetFVF(VTXFVF_COL);
 	m_pGraphicDev->DrawPrimitiveUP(D3DPT_TRIANGLELIST, 1, _vVertex, sizeof(VTX_COL));
 
-	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
+	m_pGizmoShader->End_Pass();
+	m_pGizmoShader->End_Shader();
 }
 
 void  CGizmo::Draw_AABB(const _v3* _vVertex, _v3 _vPos, _v3 _vSize)
