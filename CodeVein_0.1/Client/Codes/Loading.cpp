@@ -42,7 +42,7 @@ _uint CLoading::Loading_ForStage(void)
 	if (FAILED(pManagement->Add_Prototype(L"GameObject_Player", CPlayer::Create(m_pGraphicDev))))
 		return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_Effect", CEffect::Create(m_pGraphicDev))))
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_Effect", CEffect::Create(m_pGraphicDev, nullptr))))
 		return E_FAIL;
 	
 	//∏ÛΩ∫≈Õ
