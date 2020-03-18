@@ -52,13 +52,13 @@ private:
 	_float	m_fDPI = 0.5f;
 
 private:
-	POINT m_CurMousePos;
-	POINT m_OldMousePos;
-	POINT m_MouseGap;
-	POINT m_MouseLockPos;
+	POINT m_CurMousePos = { 0,0 };
+	POINT m_OldMousePos = { 0,0 };
+	POINT m_MouseGap = { 0,0 };
+	POINT m_MouseLockPos = { 0,0 };
 
 private:
-	HWND	m_hWnd;
+	HWND	m_hWnd = nullptr;
 
 private:
 	LPDIRECTINPUT8			m_pInputSDK = nullptr;
@@ -68,8 +68,8 @@ private:
 	LPDIRECTINPUTDEVICE8	m_pMouse = nullptr;
 
 private:
-	DIMOUSESTATE			m_tMouseState;
-	_bool					m_bMouseKeyDown[4] = {};
+	DIMOUSESTATE			m_tMouseState = { 0, };
+	_bool					m_bMouseKeyDown[4] = {false, };
 	_byte					m_byKeyState[MAX_STR];
 
 	_byte					m_byKeyDown[MAX_STR];

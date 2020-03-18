@@ -20,6 +20,7 @@ public:
 	HRESULT Ready_Layer_Monster(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_BackGround(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Effect(const _tchar* pLayerTag);
+	HRESULT Ready_Layer_UI(const _tchar* pLayerTag);
 private:
 	HRESULT Ready_LightDesc();
 public:

@@ -9,6 +9,9 @@ class ENGINE_DLL CBT_Move final : public CBT_Task_Node
 public:
 	typedef struct tagInitInfo
 	{
+		tagInitInfo(CTransform* pTransform, _double dMovingTime)
+			: m_pTargetTransform(pTransform), m_dMovingTime(dMovingTime) {}
+
 		CTransform*		m_pTargetTransform;
 		_double			m_dMovingTime;
 	}INFO;
@@ -20,8 +23,6 @@ protected:
 
 public:
 	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack) override;
-
-	HRESULT Initialize_Node(CTransform* pTargetTransform, _double dMovingTime);
 
 protected:
 	virtual void Start_Node(vector<CBT_Node*>* pNodeStack);
