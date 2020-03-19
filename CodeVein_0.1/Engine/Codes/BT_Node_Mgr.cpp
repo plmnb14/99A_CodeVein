@@ -39,21 +39,27 @@ HRESULT CBT_Node_Manager::Ready_BT_Node()
 	// Composite
 	if (FAILED(Add_Prototype_Node(L"Selector", CBT_Selector::Create_Prototype(), CBT_Node_Manager::COMPOSITE)))
 		return E_FAIL;
-
 	if (FAILED(Add_Prototype_Node(L"Sequence", CBT_Sequence::Create_Prototype(), CBT_Node_Manager::COMPOSITE)))
+		return E_FAIL;
+	if (FAILED(Add_Prototype_Node(L"Simple_Parallel", CBT_Simple_Parallel::Create_Prototype(), CBT_Node_Manager::COMPOSITE)))
 		return E_FAIL;
 
 	// Decorator
+	if (FAILED(Add_Prototype_Node(L"Inverter", CBT_Inverter::Create_Prototype(), CBT_Node_Manager::DECORATOR)))
+		return E_FAIL;
+	if (FAILED(Add_Prototype_Node(L"Loop", CBT_Loop::Create_Prototype(), CBT_Node_Manager::DECORATOR)))
+		return E_FAIL;
+
 
 	// Service
 
 	// Task
 	if (FAILED(Add_Prototype_Node(L"Wait", CBT_Wait::Create_Prototype(), CBT_Node_Manager::TASK)))
 		return E_FAIL;
-
 	if (FAILED(Add_Prototype_Node(L"Move", CBT_Move::Create_Prototype(), CBT_Node_Manager::TASK)))
 		return E_FAIL;
-
+	if (FAILED(Add_Prototype_Node(L"Play_Ani", CBT_Play_Ani::Create_Prototype(), CBT_Node_Manager::TASK)))
+		return E_FAIL;
 
 	return S_OK;
 }

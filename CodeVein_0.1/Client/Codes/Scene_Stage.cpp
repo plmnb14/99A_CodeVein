@@ -106,8 +106,8 @@ HRESULT CScene_Stage::Ready_Layer_Monster(const _tchar * pLayerTag)
 	Safe_AddRef(pManagement);
 
 	// For. TestMonster
-	//if (FAILED(pManagement->Add_GameObject_ToLayer(L"Monster_TestMonster", SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Add_GameObject_ToLayer(L"Monster_TestMonster", SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
 
 	Safe_Release(pManagement);
 

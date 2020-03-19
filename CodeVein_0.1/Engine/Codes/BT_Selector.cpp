@@ -18,53 +18,71 @@ HRESULT CBT_Selector::Add_Child(CBT_Node * pNode)
 	return S_OK;
 }
 
-CBT_Node::BT_NODE_STATE CBT_Selector::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack)
+CBT_Node::BT_NODE_STATE CBT_Selector::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging)
 {
 	/*
 	왼쪽부터 자식들을 검사해서 성공한 자식을 수행한다.
 	*/
-	Start_Node(pNodeStack);
+	Start_Node(pNodeStack, bDebugging);
 
 	//for (CBT_Node* pChild : m_pChildren)
 	if (m_pCurIndex < m_pChildren.size())
 	{
-		switch (m_pChildren[m_pCurIndex++]->Update_Node(TimeDelta, pNodeStack))
+		switch(m_eChild_State)
 		{
-			case BT_NODE_STATE::ABORTED:
 			case BT_NODE_STATE::FAILED:
 			case BT_NODE_STATE::SERVICE:
-				break;
+				++m_pCurIndex;
+				this->m_eChild_State = BT_NODE_STATE::INPROGRESS;
+				return BT_NODE_STATE::INPROGRESS;
 
 			case BT_NODE_STATE::INPROGRESS:
+				return m_pChildren[m_pCurIndex]->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, bDebugging);
 
-			case BT_NODE_STATE::SUCCEEDED:
-				End_Node(pNodeStack);
-				return BT_NODE_STATE::SUCCEEDED;
+			case BT_NODE_STATE::SUCCEEDED:			
+				return End_Node(pNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
 		}
 	}
-
-	End_Node(pNodeStack);
-	return BT_NODE_STATE::FAILED;
+	
+	return End_Node(pNodeStack, BT_NODE_STATE::FAILED, bDebugging);
 }
 
-void CBT_Selector::Start_Node(vector<CBT_Node*>* pNodeStack)
+void CBT_Selector::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 {
 	if (m_bInit)
 	{
 		pNodeStack->push_back(this);
+		Safe_AddRef(this);
 
 		m_bInit = false;
+
+		if (bDebugging)
+		{
+			cout << "[" << m_iNodeNumber << "]" << "Selector Start" << endl;
+		}
 	}
 }
 
-void CBT_Selector::End_Node(vector<CBT_Node*>* pNodeStack)
+CBT_Node::BT_NODE_STATE CBT_Selector::End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging)
 {
+	Safe_Release(pNodeStack->back());
 	pNodeStack->pop_back();
+
+	if (!pNodeStack->empty())
+		Notify_Parent_Of_State(pNodeStack->back(), eState);
 	m_bInit = true;
+
+	if (bDebugging)
+	{
+		cout << "[" << m_iNodeNumber << "]" << "Selector End" << endl;
+	}
+
+	return eState;
 }
 
 HRESULT CBT_Selector::Ready_Clone_Node(void* pInit_Struct)
 {
+	CBT_Node::Set_Auto_Number(&m_iNodeNumber);
 	return S_OK;
 }
 
@@ -90,8 +108,6 @@ void CBT_Selector::Free()
 	for (CBT_Node* pChild : m_pChildren)
 	{
 		pChild->Free();
-
-		int a = 0;
 
 		Safe_Release(pChild);
 	}

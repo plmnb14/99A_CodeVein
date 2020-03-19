@@ -37,6 +37,10 @@ _uint CLoading::Loading_ForStage(void)
 
 	Safe_AddRef(pManagement);
 
+	// BT_Node 생성 중
+	if (FAILED(pManagement->Ready_BT_Node()))
+		return E_FAIL;
+
 	// 오브젝트 원형
 	lstrcpy(m_szString, L"게임오브젝트 원형 생성 중....");	
 	if (FAILED(pManagement->Add_Prototype(L"GameObject_Player", CPlayer::Create(m_pGraphicDev))))
@@ -55,10 +59,6 @@ _uint CLoading::Loading_ForStage(void)
 
 	//lstrcpy(m_szString, L"하늘 생성 중....");
 	if (FAILED(pManagement->Add_Prototype(L"GameObject_Sky", CSky::Create(m_pGraphicDev))))
-		return E_FAIL;
-
-	// BT_Node 생성 중
-	if (FAILED(pManagement->Ready_BT_Node()))
 		return E_FAIL;
 
 	m_bFinish = true;

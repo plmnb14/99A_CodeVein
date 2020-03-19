@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BT_Node.h"
+#include "..\headers\BT_Node.h"
 
 /*
 분기의 루트를 정의, 분기실행의 기본규칙이다.
@@ -15,18 +15,13 @@ protected:
 	virtual ~CBT_Composite_Node() = default;
 
 public:
-	vector<CBT_Node*> Get_Children() const;
+	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging) = 0;
 
 public:
-	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack) = 0;
-
-	void Add_Child(CBT_Node* pNode);
+	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging) = 0;
+	virtual BT_NODE_STATE End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging) = 0;
 
 protected:
-	virtual void Start_Node(vector<CBT_Node*>* pNodeStack) = 0;
-	virtual void End_Node(vector<CBT_Node*>* pNodeStack) = 0;
-
-private:
 	vector<CBT_Node*>	m_pChildren;
 
 public:

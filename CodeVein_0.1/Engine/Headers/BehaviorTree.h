@@ -25,14 +25,23 @@ public:
 	virtual void Update_BeHaviorTree(_double TimeDelta);
 
 private:
-	HRESULT Ready_BehavioTree();
+	HRESULT Ready_BehavioTree(_bool bDebuging);
 
 private:
-	CBT_Root*			m_pRoot = nullptr;
-	vector<CBT_Node*>	m_pNodeStack;
+	CBT_Root*					m_pRoot = nullptr;
+	//메인 쓰레드
+	vector<CBT_Node*>			m_pNodeStack;
+
+	/* 
+	0번   : mainThread
+	1번 ~ : SubThread
+	*/
+	list<vector<CBT_Node*>*>	m_plistNodeStack;
+
+	_bool						m_bDebuging = false;
 
 public:
-	static CBehaviorTree* Create();
+	static CBehaviorTree* Create(_bool bDebuging = false);
 
 	virtual void Free();
 };

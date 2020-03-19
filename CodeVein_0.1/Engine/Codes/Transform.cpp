@@ -168,13 +168,13 @@ void CTransform::Add_Pos_Divide(const _float _fSpeed, AXIS_TYPE _eAxis)
 	m_tInfo.vPos[_eAxis] += _fSpeed;
 }
 
-void CTransform::Add_At(const float _fSpeed)
+void CTransform::Add_At(const _float _fSpeed)
 {
 	D3DXVec3Normalize(&m_tInfo.vAxisDir[AXIS_Z], &m_tInfo.vAxisDir[AXIS_Z]);
 	m_tInfo.vAt += m_tInfo.vAxisDir[AXIS_Z] * _fSpeed;
 }
 
-void CTransform::Add_At(const float _fSpeed, const _v3 & _vDir)
+void CTransform::Add_At(const _float _fSpeed, const _v3 & _vDir)
 {
 	m_tInfo.vAt += _vDir * _fSpeed;
 }

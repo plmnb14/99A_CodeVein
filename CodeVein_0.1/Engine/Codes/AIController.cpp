@@ -27,7 +27,6 @@ HRESULT CAIController::Set_BeHaviorTree(CBehaviorTree * pBehaviorTree)
 	Safe_Release(m_pBehaviorTree);
 
 	m_pBehaviorTree = pBehaviorTree;
-	//Safe_AddRef(m_pBehaviorTree);
 
 	return S_OK;
 }
