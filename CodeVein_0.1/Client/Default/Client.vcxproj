@@ -169,7 +169,6 @@
   <ItemGroup>
     <ClInclude Include="..\Headers\BackGround.h" />
     <ClInclude Include="..\Headers\Client_Defines.h" />
-    <ClInclude Include="..\Headers\Effect.h" />
     <ClInclude Include="..\Headers\HPBack.h" />
     <ClInclude Include="..\Headers\HPBar.h" />
     <ClInclude Include="..\Headers\Loading.h" />
@@ -188,7 +187,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\BackGround.cpp" />
-    <ClCompile Include="..\Codes\Effect.cpp" />
     <ClCompile Include="..\Codes\HPBack.cpp" />
     <ClCompile Include="..\Codes\HPBar.cpp" />
     <ClCompile Include="..\Codes\Loading.cpp" />
