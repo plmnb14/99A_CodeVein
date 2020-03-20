@@ -198,6 +198,7 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\Component.h" />
     <ClInclude Include="..\Headers\Component_Manager.h" />
     <ClInclude Include="..\Headers\Dynamic_Camera.h" />
+    <ClInclude Include="..\Headers\Effect.h" />
     <ClInclude Include="..\Headers\Engine_Defines.h" />
     <ClInclude Include="..\Headers\Engine_Enum.h" />
     <ClInclude Include="..\Headers\Engine_Function.h" />
@@ -214,6 +215,7 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\Light.h" />
     <ClInclude Include="..\Headers\Light_Manager.h" />
     <ClInclude Include="..\Headers\Management.h" />
+    <ClInclude Include="..\Headers\MeshEffect.h" />
     <ClInclude Include="..\Headers\Mesh_Dynamic.h" />
     <ClInclude Include="..\Headers\Mesh_Static.h" />
     <ClInclude Include="..\Headers\NavMesh.h" />
@@ -250,6 +252,7 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\Component.cpp" />
     <ClCompile Include="..\Codes\Component_Manager.cpp" />
     <ClCompile Include="..\Codes\Dynamic_Camera.cpp" />
+    <ClCompile Include="..\Codes\Effect.cpp" />
     <ClCompile Include="..\Codes\FrameMgr.cpp" />
     <ClCompile Include="..\Codes\GameObject.cpp" />
     <ClCompile Include="..\Codes\Gizmo.cpp" />
@@ -260,6 +263,7 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\Light.cpp" />
     <ClCompile Include="..\Codes\Light_Manager.cpp" />
     <ClCompile Include="..\Codes\Management.cpp" />
+    <ClCompile Include="..\Codes\MeshEffect.cpp" />
     <ClCompile Include="..\Codes\Mesh_Dynamic.cpp" />
     <ClCompile Include="..\Codes\Mesh_Static.cpp" />
     <ClCompile Include="..\Codes\NavMesh.cpp" />

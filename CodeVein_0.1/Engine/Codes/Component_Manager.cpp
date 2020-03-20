@@ -20,8 +20,8 @@ HRESULT CComponent_Manager::Ready_Component_Manager(_Device _pGraphicDev)
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"Renderer", CRenderer::Create(_pGraphicDev))))
 		return E_FAIL;
 
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"Texture_Default", CTexture::Create(_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Textures/Default.jpg"))))
-		return E_FAIL;
+	//if (FAILED(Add_Prototype(SCENE_STATIC, L"Texture_Default", CTexture::Create(_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Textures/Default.jpg"))))
+	//	return E_FAIL;
 
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"VIBuffer_Rect", CBuffer_RcTex::Create(_pGraphicDev))))
 		return E_FAIL;
@@ -39,30 +39,30 @@ HRESULT CComponent_Manager::Ready_Component_Manager(_Device _pGraphicDev)
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Gizmo", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Gizmo.fx"))))
 		return E_FAIL;
 
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"VIBuffer_Terrain", CBuffer_Terrain::Create(_pGraphicDev, L"../Bin/Resources/Textures/Terrain/Height.bmp", 1))))
+	//if (FAILED(Add_Prototype(SCENE_STATIC, L"VIBuffer_Terrain", CBuffer_Terrain::Create(_pGraphicDev, L"../Bin/Resources/Textures/Terrain/Height.bmp", 1))))
+	//	return E_FAIL;
+
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"VIBuffer_Terrain", CBuffer_Terrain::Create(_pGraphicDev, 256, 256, 1))))
 		return E_FAIL;
 
-	//if (FAILED(Add_Prototype(SCENE_STATIC, L"VIBuffer_Terrain", CBuffer_Terrain::Create(_pGraphicDev, 256, 256, 1))))
-	//	return E_FAIL;
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"VIBuffer_Cube", CBuffer_CubeTex::Create(_pGraphicDev))))
 		return E_FAIL;
 
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"Texture_Terrain", CTexture::Create(_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Textures/Terrain/Grass_%d.tga", 2))))
-		return E_FAIL;
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"Texture_Effect", CTexture::Create(_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Textures/Explosion/Explosion%d.png", 90))))
-		return E_FAIL;
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"Texture_Sky", CTexture::Create(_pGraphicDev, CTexture::TYPE_CUBE, L"../Bin/Resources/Textures/SkyBox/burger%d.dds", 4))))
-		return E_FAIL;
+	//if (FAILED(Add_Prototype(SCENE_STATIC, L"Texture_Terrain", CTexture::Create(_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Textures/Terrain/Grass_%d.tga", 2))))
+	//	return E_FAIL;
+
+	//if (FAILED(Add_Prototype(SCENE_STATIC, L"Texture_Sky", CTexture::Create(_pGraphicDev, CTexture::TYPE_CUBE, L"../Bin/Resources/Textures/SkyBox/burger%d.dds", 4))))
+	//	return E_FAIL;
 
 	_mat		LocalMatrix, ScaleMatrix, RotationMatrix;
 
 	D3DXMatrixIdentity(&LocalMatrix);
 
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"Mesh_Player", CMesh_Dynamic::Create(_pGraphicDev, L"../Bin/Resources/Meshes/DynamicMesh/PlayerXFile/", L"Player.x", LocalMatrix))))
-		return E_FAIL;
-
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"Mesh_Sword", CMesh_Static::Create(_pGraphicDev, L"../Bin/Resources/Meshes/StaticMesh/Sword/", L"Sword.X", LocalMatrix))))
-		return E_FAIL;
+	//if (FAILED(Add_Prototype(SCENE_STATIC, L"Mesh_Player", CMesh_Dynamic::Create(_pGraphicDev, L"../Bin/Resources/Meshes/DynamicMesh/PlayerXFile/", L"Player.x", LocalMatrix))))
+	//	return E_FAIL;
+	//
+	//if (FAILED(Add_Prototype(SCENE_STATIC, L"Mesh_Sword", CMesh_Static::Create(_pGraphicDev, L"../Bin/Resources/Meshes/StaticMesh/Sword/", L"Sword.X", LocalMatrix))))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -139,7 +139,7 @@ HRESULT CComponent_Manager::LoadMesh_FilesFromPath(_Device pGraphicDev, const _t
 		fin.getline(tmpPath->sztrStateKey, MAX_STR, '|');
 		fin.getline(tmpPath->sztrFileName, MAX_STR, '|');
 		fin.getline(tmpPath->sztrImgPath, MAX_STR, '|');
-		fin.getline(tmpPath->szIsDynamic, MAX_STR, '|');
+		fin.getline(tmpPath->szIsDynamic, MAX_STR);
 
 		if (fin.eof())
 		{

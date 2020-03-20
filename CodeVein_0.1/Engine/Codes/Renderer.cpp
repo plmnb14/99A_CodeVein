@@ -39,6 +39,24 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Specular", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
+	// Target_Bloom
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Bloom", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+
+	// Target_Distortion
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Distortion", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.2f, 0.2f, 1.f, 0.f))))
+		return E_FAIL;
+
+	// Blend에 찍기 위한 Alpha 타겟
+	// Target_Alpha
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Alpha", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+
+	// 후처리 할 최종 Blend를 저장
+	// Target_Blend
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Blend", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+
 
 	// MRT : Multi Render Target 그룹을 지어놓은것. 
 
@@ -54,6 +72,20 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_LightAcc", L"Target_Shade")))
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_LightAcc", L"Target_Specular")))
+		return E_FAIL;
+
+	// For.MRT_Distortion
+	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Distortion", L"Target_Distortion")))
+		return E_FAIL;
+
+	// For.MRT_Alpha
+	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Alpha", L"Target_Alpha")))
+		return E_FAIL;
+
+	// For.MRT_Blend
+	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Blend", L"Target_Blend")))
+		return E_FAIL;
+	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Blend", L"Target_Bloom")))
 		return E_FAIL;
 
 	// For.Shader_LightAcc
@@ -74,25 +106,35 @@ HRESULT CRenderer::Ready_Component_Prototype()
 
 #ifdef _DEBUG
 	
+	_float fTargetSize = 150.f;
 	// For.Target_Diffuse`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Diffuse", 0.0f, 0.0f, 200.f, 200.f)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Diffuse", 0.0f, 0.0f, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_Normal`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Normal", 0.0f, 200.f, 200.f, 200.f)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Normal", 0.0f, fTargetSize, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_Depth`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Depth", 0.0f, 400.f, 200.f, 200.f)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Depth", 0.0f, fTargetSize * 2, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_Shade`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Shade", 200.0f, 0.0f, 200.f, 200.f)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Shade", fTargetSize, 0.0f, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_Specular`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Specular", 200.0f, 200.0f, 200.f, 200.f)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Specular", fTargetSize, fTargetSize, fTargetSize, fTargetSize)))
 		return E_FAIL;
+
+	// For.Target_Bloom`s Debug Buffer
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Bloom", fTargetSize, fTargetSize * 2, fTargetSize, fTargetSize)))
+		return E_FAIL;
+
+	// For.Target_Distortion`s Debug Buffer
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Distortion", fTargetSize * 2, 0.f, fTargetSize, fTargetSize)))
+		return E_FAIL;
+	
 #endif
 
 	
@@ -136,8 +178,18 @@ HRESULT CRenderer::Draw_RenderList()
 	if (FAILED(Render_Blend()))
 		return E_FAIL;
 
+	// Distortion
+	if (FAILED(Render_Distortion()))
+		return E_FAIL;
+	
+	// 후처리
+	if (FAILED(Render_After()))
+		return E_FAIL;
+
+	// Alpha
 	if (FAILED(Render_Alpha()))
 		return E_FAIL;
+
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
@@ -148,6 +200,8 @@ HRESULT CRenderer::Draw_RenderList()
 
 	m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Deferred");
 	m_pTarget_Manager->Render_Debug_Buffer(L"MRT_LightAcc");
+	m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Blend");
+	m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Distortion");
 
 #endif
 
@@ -206,8 +260,40 @@ HRESULT CRenderer::Render_NonAlpha()
 	return NOERROR;
 }
 
+HRESULT CRenderer::Render_Distortion()
+{
+	if (nullptr == m_pTarget_Manager)
+		return E_FAIL;
+
+	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Distortion")))
+		return E_FAIL;
+
+	for (auto& pGameObject : m_RenderList[RENDER_DISTORTION])
+	{
+		if (nullptr != pGameObject)
+		{
+			if (FAILED(pGameObject->Render_GameObject()))
+			{
+				Safe_Release(pGameObject);
+				return E_FAIL;
+			}
+			Safe_Release(pGameObject);
+		}
+	}
+
+	m_RenderList[RENDER_DISTORTION].clear();
+
+	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_Distortion")))
+		return E_FAIL;
+
+	return NOERROR;
+}
+
 HRESULT CRenderer::Render_Alpha()
 {
+	//if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Alpha")))
+	//	return E_FAIL;
+
 	for (auto& pGameObject : m_RenderList[RENDER_ALPHA])
 	{
 		if (nullptr != pGameObject)
@@ -222,6 +308,9 @@ HRESULT CRenderer::Render_Alpha()
 	}
 
 	m_RenderList[RENDER_ALPHA].clear();
+
+	//if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_Alpha")))
+	//	return E_FAIL;
 
 	return NOERROR;
 }
@@ -302,6 +391,11 @@ HRESULT CRenderer::Render_Blend()
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_SpecularTexture", m_pTarget_Manager->Get_Texture(L"Target_Specular"))))
 		return E_FAIL;
+	//if (FAILED(m_pShader_Blend->Set_Texture("g_AlphaTexture", m_pTarget_Manager->Get_Texture(L"Target_Alpha"))))
+	//	return E_FAIL;
+
+	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Blend")))
+		return E_FAIL;
 
 	// 장치에 백버퍼가 셋팅되어있다.	
 	m_pShader_Blend->Begin_Shader();
@@ -312,7 +406,37 @@ HRESULT CRenderer::Render_Blend()
 	m_pShader_Blend->End_Pass();
 	m_pShader_Blend->End_Shader();
 
+	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_Blend")))
+		return E_FAIL;
+
 	return NOERROR;
+}
+
+HRESULT CRenderer::Render_After()
+{
+	if (nullptr == m_pViewPortBuffer ||
+		nullptr == m_pShader_Blend)
+		return E_FAIL;
+
+	if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_Blend"))))
+		return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Texture("g_DepthTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"))))
+		return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Texture("g_BloomTexture", m_pTarget_Manager->Get_Texture(L"Target_Bloom"))))
+		return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Texture("g_DistortionTexture", m_pTarget_Manager->Get_Texture(L"Target_Distortion"))))
+		return E_FAIL;
+
+	// 장치에 백버퍼가 셋팅되어있다.	
+	m_pShader_Blend->Begin_Shader();
+	m_pShader_Blend->Begin_Pass(1);
+
+	m_pViewPortBuffer->Render_VIBuffer();
+
+	m_pShader_Blend->End_Pass();
+	m_pShader_Blend->End_Shader();
+
+	return S_OK;
 }
 
 CRenderer * CRenderer::Create(LPDIRECT3DDEVICE9 pGraphic_Device)

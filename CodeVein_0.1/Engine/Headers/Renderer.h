@@ -35,11 +35,13 @@ private:
 private:
 	HRESULT Render_Priority();
 	HRESULT Render_NonAlpha();
+	HRESULT Render_Distortion();
 	HRESULT Render_Alpha();
 	HRESULT Render_UI();
 private:
 	HRESULT Render_LightAcc();
 	HRESULT Render_Blend();
+	HRESULT Render_After();
 public:
 	static CRenderer* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
 	virtual CComponent* Clone_Component(void* pArg);

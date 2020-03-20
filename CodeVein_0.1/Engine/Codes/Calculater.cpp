@@ -107,6 +107,12 @@ void CCalculater::V3_RotZ(_v3 * _pOut, const _v3 * _pIn, const _float _fRadian)
 	*_pOut = pOut;
 }
 
+// _fValue1 - 시작점, _fValue2 - 마지막점, _fAmount - 시간
+float CCalculater::Lerp(float _fValue1, float _fValue2, float _fAmount)
+{
+	return float(_fValue1 + ((float)(_fValue2 - _fValue1) * _fAmount));
+}
+
 const _int CCalculater::Random_Num(_int _iBegin, _int _iEnd)
 {
 	random_device rd;

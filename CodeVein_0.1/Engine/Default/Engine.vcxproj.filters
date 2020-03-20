@@ -181,6 +181,12 @@
     <Filter Include="01.Utility\[02] GameObject\0%29 GameObject\0%29 GuidTerrain">
       <UniqueIdentifier>{118bc0af-c4f3-4b5a-9aef-07175109312c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\[02] GameObject\4%29 Effect">
+      <UniqueIdentifier>{e05e1616-b32a-4ec3-8bd5-5647d2c79ff6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\[02] GameObject\4%29 Effect\0%29 MeshEffect">
+      <UniqueIdentifier>{9d3192da-064a-4d78-a7b4-6ac86c74d0bc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Headers\Base.h">
@@ -336,6 +342,12 @@
     <ClInclude Include="..\Headers\Terrain_Guide.h">
       <Filter>01.Utility\[02] GameObject\0%29 GameObject\0%29 GuidTerrain</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Effect.h">
+      <Filter>01.Utility\[02] GameObject\4%29 Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MeshEffect.h">
+      <Filter>01.Utility\[02] GameObject\4%29 Effect\0%29 MeshEffect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Base.cpp">
@@ -469,6 +481,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Terrain_Guide.cpp">
       <Filter>01.Utility\[02] GameObject\0%29 GameObject\0%29 GuidTerrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Effect.cpp">
+      <Filter>01.Utility\[02] GameObject\4%29 Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MeshEffect.cpp">
+      <Filter>01.Utility\[02] GameObject\4%29 Effect\0%29 MeshEffect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

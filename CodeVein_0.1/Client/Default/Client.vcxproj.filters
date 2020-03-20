@@ -49,9 +49,6 @@
     <Filter Include="02.GameObject\Stage\Sky">
       <UniqueIdentifier>{a86a26cf-cb01-4bbb-9eb3-56b9af6d576e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\Effect">
-      <UniqueIdentifier>{83e29ab0-c6ec-406c-85cf-0fdef8abded7}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -93,9 +90,6 @@
     <ClInclude Include="..\Headers\Sky.h">
       <Filter>02.GameObject\Stage\Sky</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Effect.h">
-      <Filter>02.GameObject\Stage\Effect</Filter>
-    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -127,9 +121,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Sky.cpp">
       <Filter>02.GameObject\Stage\Sky</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Effect.cpp">
-      <Filter>02.GameObject\Stage\Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
@@ -167,9 +158,6 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Gizmo.fx">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Base.fx">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

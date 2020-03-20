@@ -169,7 +169,6 @@
   <ItemGroup>
     <ClInclude Include="..\Headers\BackGround.h" />
     <ClInclude Include="..\Headers\Client_Defines.h" />
-    <ClInclude Include="..\Headers\Effect.h" />
     <ClInclude Include="..\Headers\Loading.h" />
     <ClInclude Include="..\Headers\MainApp.h" />
     <ClInclude Include="..\Headers\Player.h" />
@@ -184,7 +183,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\BackGround.cpp" />
-    <ClCompile Include="..\Codes\Effect.cpp" />
     <ClCompile Include="..\Codes\Loading.cpp" />
     <ClCompile Include="..\Codes\MainApp.cpp" />
     <ClCompile Include="..\Codes\Player.cpp" />
@@ -208,7 +206,6 @@
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Base.fx" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Default.fx" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect.fx" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Gizmo.fx" />
