@@ -1,4 +1,14 @@
-#include "Shader_Base.fx"
+matrix		g_matWorld, g_matView, g_matProj;
+
+texture		g_DiffuseTexture;
+
+sampler		DiffuseSampler = sampler_state
+{
+	texture = g_DiffuseTexture;
+	minfilter = linear;
+	magfilter = linear;
+	mipfilter = linear;
+};
 
 float4 g_GizmoColor = float4(0.f, 1.f, 0.f, 1.f);
 
@@ -22,6 +32,15 @@ VS_OUT VS_MAIN(VS_IN In)
 	matWVP = mul(matWV, g_matProj);
 
 	Out.vPos = mul(vector(In.vPos, 1.f), matWVP);
+
+	return Out;
+}
+
+VS_OUT VS_MAIN_NoWorld(VS_IN In)
+{
+	VS_OUT		Out = (VS_OUT)0;
+
+	Out.vPos = float4(In.vPos, 1.f);
 
 	return Out;
 }
@@ -79,5 +98,6 @@ technique Default_Technique
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_MAIN();
 	}
+
 }
 

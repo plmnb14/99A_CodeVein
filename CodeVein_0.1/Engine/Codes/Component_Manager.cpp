@@ -8,6 +8,19 @@ CComponent_Manager::CComponent_Manager()
 
 HRESULT CComponent_Manager::Ready_Component_Manager(_Device _pGraphicDev)
 {
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Default", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Default.fx"))))
+		return E_FAIL;
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Terrain", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Terrain.fx"))))
+		return E_FAIL;
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Mesh", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Mesh.fx"))))
+		return E_FAIL;
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Sky", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Sky.fx"))))
+		return E_FAIL;
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Effect", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Effect.fx"))))
+		return E_FAIL;
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Gizmo", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Gizmo.fx"))))
+		return E_FAIL;
+
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"Transform", CTransform::Create(_pGraphicDev))))
 		return E_FAIL;
 
@@ -20,23 +33,13 @@ HRESULT CComponent_Manager::Ready_Component_Manager(_Device _pGraphicDev)
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"Renderer", CRenderer::Create(_pGraphicDev))))
 		return E_FAIL;
 
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"AIController", CAIController::Create(_pGraphicDev))))
+		return E_FAIL;
+
 	//if (FAILED(Add_Prototype(SCENE_STATIC, L"Texture_Default", CTexture::Create(_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Textures/Default.jpg"))))
 	//	return E_FAIL;
 
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"VIBuffer_Rect", CBuffer_RcTex::Create(_pGraphicDev))))
-		return E_FAIL;
-
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Default", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Default.fx"))))
-		return E_FAIL;
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Terrain", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Terrain.fx"))))
-		return E_FAIL;
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Mesh", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Mesh.fx"))))
-		return E_FAIL;
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Sky", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Sky.fx"))))
-		return E_FAIL;
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Effect", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Effect.fx"))))
-		return E_FAIL;
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Gizmo", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Gizmo.fx"))))
 		return E_FAIL;
 
 	//if (FAILED(Add_Prototype(SCENE_STATIC, L"VIBuffer_Terrain", CBuffer_Terrain::Create(_pGraphicDev, L"../Bin/Resources/Textures/Terrain/Height.bmp", 1))))

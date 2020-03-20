@@ -279,7 +279,6 @@ _bool CCameraMgr::Calc_Distance(CCamera * _pOld, CCamera * _pNew, _v3 * _Distanc
 void CCameraMgr::Free(void)
 {
 	Safe_Delete_Array(m_pCamTag);
-	Safe_Release(m_pMainCamera);
 
 	for (_ushort i = 0; i < m_wContainerSize; ++i)
 	{

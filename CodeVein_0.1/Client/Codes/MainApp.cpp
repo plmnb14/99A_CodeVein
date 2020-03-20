@@ -94,6 +94,8 @@ HRESULT CMainApp::Ready_Component_Prototype()
 	m_pRenderer = static_cast<CRenderer*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Renderer"));
 	//Safe_AddRef(m_pRenderer);
 	
+	g_pManagement->Ready_Gizmo(m_pGraphic_Dev);
+
 	return S_OK;
 }
 

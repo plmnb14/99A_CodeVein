@@ -109,7 +109,9 @@ CTarget * CTarget::Create(LPDIRECT3DDEVICE9 pGraphic_Device, _uint iSizeX, _uint
 
 void CTarget::Free()
 {
+#ifdef _DEBUG
 	Safe_Release(m_pViewPortBuffer);
+#endif
 
 	Safe_Release(m_pTarget_Surface);
 	Safe_Release(m_pTarget_Texture);

@@ -12,12 +12,22 @@ CTransform::CTransform(_Device _pGraphicDev)
 	m_tInfo.vAxisDir[AXIS_Z] = WORLD_LOOK;
 
 	m_tInfo.vAt = { 0.f, 0.f, 1.f };
+
+	ZeroMemory(&m_matRotAxis, sizeof(_mat));
+	ZeroMemory(&m_matScale, sizeof(_mat));
+	ZeroMemory(&m_matRot[0], sizeof(_mat) * AXIS_END);
+	ZeroMemory(&m_matTrans, sizeof(_mat));
 }
 
 CTransform::CTransform(const CTransform & rhs)
 	: CComponent(rhs)
 {
 	memcpy(&m_tInfo, &rhs.m_tInfo, sizeof(TRANS_INFO));
+
+	ZeroMemory(&m_matRotAxis, sizeof(_mat));
+	ZeroMemory(&m_matScale, sizeof(_mat));
+	ZeroMemory(&m_matRot[0], sizeof(_mat) * AXIS_END);
+	ZeroMemory(&m_matTrans, sizeof(_mat));
 }
 
 CTransform::~CTransform()
@@ -158,13 +168,13 @@ void CTransform::Add_Pos_Divide(const _float _fSpeed, AXIS_TYPE _eAxis)
 	m_tInfo.vPos[_eAxis] += _fSpeed;
 }
 
-void CTransform::Add_At(const float _fSpeed)
+void CTransform::Add_At(const _float _fSpeed)
 {
 	D3DXVec3Normalize(&m_tInfo.vAxisDir[AXIS_Z], &m_tInfo.vAxisDir[AXIS_Z]);
 	m_tInfo.vAt += m_tInfo.vAxisDir[AXIS_Z] * _fSpeed;
 }
 
-void CTransform::Add_At(const float _fSpeed, const _v3 & _vDir)
+void CTransform::Add_At(const _float _fSpeed, const _v3 & _vDir)
 {
 	m_tInfo.vAt += _vDir * _fSpeed;
 }

@@ -457,9 +457,9 @@ CComponent * CRenderer::Clone_Component(void * pArg)
 {
 	// 복제를 하려 들면 새로운객체를 만드는것이아니라, 
 	// 원형객체의 주소를 그대로 리턴하겠다.
-
-	AddRef();
 	
+	Safe_AddRef(this);
+
 	// this는 멤버함수안에서만 사용할 수 있으며, 
 	// 멤버함수는 호출시에 반드시 객체를 필요로한다.
 	// 해서 this는 멤버함수를 호출한 객체의 주소를 의미하낟.

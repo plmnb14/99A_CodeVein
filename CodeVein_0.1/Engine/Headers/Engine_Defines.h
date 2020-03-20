@@ -19,10 +19,10 @@
 #include <fstream>
 #include <random>
 
-#ifdef _DEBUG
-
 #pragma warning (disable : 4005)
 #pragma warning (disable : 4251)
+
+#ifdef _DEBUG
 
 #define _CRTDBG_MAP_ALLOC
 #include <stdlib.h>
