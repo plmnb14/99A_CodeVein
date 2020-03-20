@@ -1,17 +1,17 @@
 #pragma once
 
-#include "Management.h"
-#include "UI.h"
 #include "Client_Defines.h"
+#include "UI.h"
+#include "Management.h"
 
 BEGIN(Client)
 
-class CHPBar final : public CUI
+class CMenu_Btn final : public CUI
 {
 private:
-	explicit CHPBar(_Device pGraphic_Device);
-	explicit CHPBar(const CHPBar& rhs);
-	virtual ~CHPBar() = default;
+	explicit CMenu_Btn(_Device pGraphic_Device);
+	explicit CMenu_Btn(const CMenu_Btn& rhs);
+	virtual ~CMenu_Btn() = default;
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -29,13 +29,12 @@ private:
 	CRenderer*				m_pRendererCom = nullptr;
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
-	CBuffer_Terrain*		m_pBufferCom = nullptr;
+	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 public:
-	static CHPBar*			Create(_Device pGraphic_Device);
+	static	CMenu_Btn*		Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);
 	virtual void			Free();
 };
 
 END
-

@@ -21,6 +21,18 @@ CUI::CUI(const CUI & rhs)
 	
 }
 
+void CUI::Set_UI_Pos(_float fPosX, _float fPosY)
+{
+	m_fPosX = fPosX;
+	m_fPosY = fPosY;
+}
+
+void CUI::Set_UI_Size(_float fSizeX, _float fSizeY)
+{
+	m_fSizeX = fSizeX;
+	m_fSizeY = fSizeY;
+}
+
 HRESULT CUI::Ready_GameObject_Prototype()
 {
 	

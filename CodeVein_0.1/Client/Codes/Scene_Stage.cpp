@@ -4,6 +4,7 @@
 #include "CameraMgr.h"
 #include "Effect.h"
 #include "UI.h"
+#include "UI_Manager.h"
 
 CScene_Stage::CScene_Stage(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
@@ -31,7 +32,7 @@ HRESULT CScene_Stage::Ready_Scene()
 	if (FAILED(Ready_Layer_BackGround(L"Layer_BackGround")))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_UI(L"Layer_UI")))
+	if (FAILED(CUI_Manager::Get_Instance()->SetUp_UILayer()))
 		return E_FAIL;
 
 	return S_OK;
@@ -65,7 +66,7 @@ _int CScene_Stage::Update_Scene(_double TimeDelta)
 	}
 	else
 		fStartPosY = 0.f;
-
+	
 	return _int();
 }
 
@@ -167,23 +168,24 @@ HRESULT CScene_Stage::Ready_Layer_UI(const _tchar * pLayerTag)
 
 	Safe_AddRef(pManagement);
 
-	CUI::UI_DESC* pUIDesc = new CUI::UI_DESC;
-	pUIDesc->fPosX = 200.f;
-	pUIDesc->fPosY = 650.f;
-	pUIDesc->fSizeX = 300.f;
-	pUIDesc->fSizeY = 30.f;
-
-	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_HPBack", SCENE_STAGE, pLayerTag, pUIDesc)))
-		return E_FAIL;
-
-	CUI::UI_DESC* pUIDesc2 = new CUI::UI_DESC;
-	pUIDesc2->fPosX = 200.f;
-	pUIDesc2->fPosY = 650.f;
-	pUIDesc2->fSizeX = 280.f;
-	pUIDesc2->fSizeY = 25.f;
 	
-	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_HPBar", SCENE_STAGE, pLayerTag, pUIDesc2)))
+
+	CUI_Manager::Get_Instance()->SetUp_UILayer();
+	
+
+	Safe_Release(pManagement);
+
+	return NOERROR;
+}
+
+HRESULT CScene_Stage::Ready_Layer_ItemSlot(const _tchar * pLayerTag)
+{
+	CManagement* pManagement = CManagement::Get_Instance();
+	if (nullptr == pManagement)
 		return E_FAIL;
+
+	Safe_AddRef(pManagement);
+
 	
 
 	Safe_Release(pManagement);
@@ -258,6 +260,7 @@ CScene_Stage * CScene_Stage::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 
 void CScene_Stage::Free()
 {
+	CUI_Manager::Get_Instance()->Destroy_Instance();
 	CScene::Free();
 }
 

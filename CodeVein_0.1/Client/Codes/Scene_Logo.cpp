@@ -5,6 +5,7 @@
 #include "Management.h"
 #include "CameraMgr.h"
 #include "LogoBtn.h"
+#include "CursorSelectBar.h"
 
 
 CScene_Logo::CScene_Logo(LPDIRECT3DDEVICE9 pGraphic_Device)
@@ -25,6 +26,9 @@ HRESULT CScene_Logo::Ready_Scene()
 	if (FAILED(Ready_Layer_LogoBtn(L"Layer_LogoBtn")))
 		return E_FAIL;
 
+	//if (FAILED(Ready_Layer_CursorUI(L"Layer_CursorUI")))
+	//	return E_FAIL;
+
 	m_pLoading = CLoading::Create(m_pGraphic_Device, SCENE_STAGE);
 	if (nullptr == m_pLoading)
 		return E_FAIL;
@@ -39,22 +43,20 @@ _int CScene_Logo::Update_Scene(_double TimeDelta)
 		return -1;
 
 	Safe_AddRef(pManagement);
+
+	
+
+	_bool Coll_ToButton = static_cast<CLogoBtn*>(pManagement->Get_GameObjectBack(L"Layer_LogoBtn", SCENE_LOGO))->Get_CollMose();
+
 	if (true == m_pLoading->Get_Finish() 
 		&& GetKeyState(VK_LBUTTON) & 0x8000
-		&& true == static_cast<CLogoBtn*>(pManagement->Get_GameObjectBack(L"Layer_LogoBtn", SCENE_LOGO))->Get_CollMose())
+		&& true == Coll_ToButton)
 	{
-		/*CManagement*		pManagement = CManagement::Get_Instance();
-		if (nullptr == pManagement)
-			return -1;*/
-
-		//Safe_AddRef(pManagement);
-
 		if (FAILED(pManagement->SetUp_CurrentScene(CScene_Stage::Create(m_pGraphic_Device))))
 			return -1;
 
 		if (FAILED(pManagement->Clear_Instance(SCENE_LOGO)))
 			return -1;
-
 
 		Safe_Release(pManagement);		
 
@@ -89,9 +91,16 @@ HRESULT CScene_Logo::Ready_Prototype_GameObject()
 	if (FAILED(pManagement->Add_Prototype(L"GameObject_LogoBtn", CLogoBtn::Create(m_pGraphic_Device))))
 		return E_FAIL;
 
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_CursorBar", CCursorSelectBar::Create(m_pGraphic_Device))))
+		return E_FAIL;
+
 	//// 임시 로고 Texture
 	
 	if (FAILED(pManagement->Add_Prototype(SCENE_LOGO, L"Texture_LogoBtn", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/Button/TestBtn.png", 1))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(SCENE_STATIC, L"Texture_CursorBar", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/CursorSelect/T_Cursor_Select_I_UI.tga", 1))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(SCENE_STATIC, L"Texture_CursorLight", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/CursorSelect/T_Cursor_SelectLight_UI.tga", 1))))
 		return E_FAIL;
 
 	Safe_Release(pManagement);
@@ -135,6 +144,22 @@ HRESULT CScene_Logo::Ready_Layer_LogoBtn(const _tchar * pLayerTag)
 	Safe_AddRef(pManagement);
 
 	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_LogoBtn", SCENE_LOGO, pLayerTag)))
+		return E_FAIL;
+
+	Safe_Release(pManagement);
+
+	return NOERROR;
+}
+
+HRESULT CScene_Logo::Ready_Layer_CursorUI(const _tchar * pLayerTag)
+{
+	CManagement* pManagement = CManagement::Get_Instance();
+	if (nullptr == pManagement)
+		return E_FAIL;
+
+	Safe_AddRef(pManagement);
+
+	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_CursorBar", SCENE_LOGO, pLayerTag)))
 		return E_FAIL;
 
 	Safe_Release(pManagement);

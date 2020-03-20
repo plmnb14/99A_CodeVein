@@ -25,7 +25,11 @@ HRESULT CHPBack::Ready_GameObject(void * pArg)
 
 	CUI::Ready_GameObject(pArg);
 
-	
+	m_fPosX = 200.f;
+	m_fPosY = 650.f;
+	m_fSizeX = 300.f;
+	m_fSizeY = 30.f;
+
 	return NOERROR;
 }
 

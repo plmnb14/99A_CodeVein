@@ -29,7 +29,7 @@ private:
 	CRenderer*				m_pRendererCom = nullptr;
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
-	CBuffer_Terrain*		m_pBufferCom = nullptr;
+	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 public:
 	static CHPBack*			Create(_Device pGraphic_Device);

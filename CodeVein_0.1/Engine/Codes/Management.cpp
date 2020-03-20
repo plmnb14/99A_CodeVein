@@ -183,6 +183,7 @@ HRESULT CManagement::Set_InputDev(void)
 	return m_pInput_Device->Set_InputDev();
 }
 
+
 HRESULT CManagement::SetUp_CurrentScene(CScene * pScene)
 {
 	if (nullptr == m_pScene_Manager)

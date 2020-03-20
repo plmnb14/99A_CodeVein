@@ -1,37 +1,41 @@
 #include "stdafx.h"
-#include "..\Headers\HPBar.h"
+#include "..\Headers\SlotCnt_UI.h"
 
+#include "ItemSlot.h"
 
-
-CHPBar::CHPBar(_Device pGraphic_Device)
+CSlotCnt_UI::CSlotCnt_UI(_Device pGraphic_Device)
 	: CUI(pGraphic_Device)
 {
 }
 
-CHPBar::CHPBar(const CHPBar & rhs)
+CSlotCnt_UI::CSlotCnt_UI(const CSlotCnt_UI & rhs)
 	: CUI(rhs)
 {
 }
 
-HRESULT CHPBar::Ready_GameObject_Prototype()
+HRESULT CSlotCnt_UI::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
 
 	return NOERROR;
 }
 
-HRESULT CHPBar::Ready_GameObject(void * pArg)
+HRESULT CSlotCnt_UI::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 
 	CUI::Ready_GameObject(pArg);
 
+	m_fPosX = 300.f;
+	m_fPosY = 580.f;
+	m_fSizeX = 30.f;
+	m_fSizeY = 30.f;
 
 	return NOERROR;
 }
 
-_int CHPBar::Update_GameObject(_double TimeDelta)
+_int CSlotCnt_UI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
@@ -39,10 +43,19 @@ _int CHPBar::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
+	CManagement* pManagement = CManagement::Get_Instance();
+	if (nullptr == pManagement)
+		return -1;
+	Safe_AddRef(pManagement);
+
+	m_iItemCnt = static_cast<CItemSlot*>(pManagement->Get_GameObjectBack(L"Layer_ItemSlot", SCENE_STAGE))->Get_ItemCount();
+	
+	Safe_Release(pManagement);
+
 	return NO_EVENT;
 }
 
-_int CHPBar::Late_Update_GameObject(_double TimeDelta)
+_int CSlotCnt_UI::Late_Update_GameObject(_double TimeDelta)
 {
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
@@ -56,7 +69,7 @@ _int CHPBar::Late_Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-HRESULT CHPBar::Render_GameObject()
+HRESULT CSlotCnt_UI::Render_GameObject()
 {
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
@@ -82,7 +95,7 @@ HRESULT CHPBar::Render_GameObject()
 
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(0);
+	m_pShaderCom->Begin_Pass(1);
 
 	// 버퍼를 렌더링한다.
 	// (인덱스버퍼(012023)에 보관하고있는 인덱스를 가진 정점을 그리낟.)
@@ -93,7 +106,6 @@ HRESULT CHPBar::Render_GameObject()
 
 	m_pShaderCom->End_Shader();
 
-
 	pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
 	pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
 
@@ -102,7 +114,7 @@ HRESULT CHPBar::Render_GameObject()
 	return NOERROR;
 }
 
-HRESULT CHPBar::Add_Component()
+HRESULT CSlotCnt_UI::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -113,11 +125,11 @@ HRESULT CHPBar::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STAGE, L"Texture_HPBar", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STAGE, L"Texture_Num", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Default", L"Com_Shader", (CComponent**)&m_pShaderCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_UI", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
 	// for.Com_VIBuffer
@@ -127,7 +139,7 @@ HRESULT CHPBar::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CHPBar::SetUp_ConstantTable()
+HRESULT CSlotCnt_UI::SetUp_ConstantTable()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -140,45 +152,45 @@ HRESULT CHPBar::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 0)))
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, m_iItemCnt)))
 		return E_FAIL;
 
 	return NOERROR;
 }
 
-CHPBar * CHPBar::Create(_Device pGraphic_Device)
+CSlotCnt_UI * CSlotCnt_UI::Create(_Device pGraphic_Device)
 {
-	CHPBar* pInstance = new CHPBar(pGraphic_Device);
+	CSlotCnt_UI* pInstance = new CSlotCnt_UI(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 	{
-		MSG_BOX("CHPBar Creating Fail");
+		MSG_BOX("CSlotCnt_UI Create Failed");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject * CHPBar::Clone_GameObject(void * pArg)
+CGameObject * CSlotCnt_UI::Clone_GameObject(void * pArg)
 {
-	CHPBar* pInstance = new CHPBar(*this);
+	CSlotCnt_UI* pInstance = new CSlotCnt_UI(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
-		MSG_BOX("Failed To Cloned CHPBar");
+		MSG_BOX("CSlotCnt_UI Cloned Failed");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CHPBar::Free()
+void CSlotCnt_UI::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
-	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pShaderCom);
 
 	CUI::Free();
 }

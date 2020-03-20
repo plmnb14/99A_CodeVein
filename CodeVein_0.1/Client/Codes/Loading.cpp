@@ -8,8 +8,18 @@
 #include "Terrain.h"
 #include "TestMonster.h"
 #include "HPBack.h"
-#include "HPBar.h"
-
+#include "PlayerHP.h"
+#include "PlayerST.h"
+#include "BossDecoUI.h"
+#include "BossHP.h"
+#include "ItemPalette.h"
+#include "ItemSlot.h"
+#include "RightArrow.h"
+#include "LeftArrow.h"
+#include "ItemIcon.h"
+#include "MenuBaseUI.h"
+#include "Menu_Btn.h"
+#include "SlotCnt_UI.h"
 
 USING(Client)
 
@@ -49,13 +59,34 @@ _uint CLoading::Loading_ForStage(void)
 	if (FAILED(pManagement->Add_Prototype(L"GameObject_Effect", CEffect::Create(m_pGraphicDev, nullptr))))
 		return E_FAIL;
 
+	// UI
 	if (FAILED(pManagement->Add_Prototype(L"GameObject_HPBack", CHPBack::Create(m_pGraphicDev))))
 		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_HPBar", CHPBar::Create(m_pGraphicDev))))
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_PlayerHP", CPlayerHP::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_PlayerST", CPlayerST::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_BossDecoUI", CBossDecoUI::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_BossHP", CBossHP::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_ItemSlot", CItemSlot::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_RightArrow", CRightArrow::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_LeftArrow", CLeftArrow::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_ItemPalette", CItemPalette::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_ItemIcon", CItemIcon::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuBase", CMenuBaseUI::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuBtn", CMenu_Btn::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_CntSlotUI", CSlotCnt_UI::Create(m_pGraphicDev))))
 		return E_FAIL;
 
-	
 	
 	//몬스터
 	if (FAILED(pManagement->Add_Prototype(L"Monster_TestMonster", CTestMonster::Create(m_pGraphicDev))))
@@ -76,10 +107,30 @@ _uint CLoading::Loading_ForStage(void)
 	// UI텍스쳐 (임시)
 	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_HPBack", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/HPBarBack/HPBack.png", 1))))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_HPBar", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/HPBar/T_HPGaugeTexture_UI.tga", 1))))
+	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_PlayerHP", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/HPBar/T_HPGaugeTexture_UI.tga", 1))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_PlayerST", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/STBar/T_StaminaBar_UI.tga", 1))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_BossHP", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/BossUI/T_BossHpGaugeTexture_UI.tga", 1))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_BossDecoUI", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/BossUI/BossHpGauge_Deco.tga", 1))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_ItemIcon", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/ItemIcon/T_ItemIcon_00%d.tga", 5))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_Arrow", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/QuickSlotUI/T_Arrow%d.jpg", 2))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_ItemPalette", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/ItemPalette/ItemPalette.png", 1))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_MenuBase", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/MenuWindow/Window%d.png", 1))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_MenuBtn", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/Menu_Icon/MenuIcon00%d.tga", 10))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_Num", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/Number/Num%d.png", 4))))
 		return E_FAIL;
 	
-	
+	// UI Shader
+	if (FAILED(pManagement->Add_Prototype(SCENE_STATIC, L"Shader_UI", CShader::Create(m_pGraphicDev, L"../Bin/ShaderFiles/Shader_UI.fx"))))
+		return E_FAIL;
 
 	m_bFinish = true;
 	lstrcpy(m_szString, L"로딩 완료");
