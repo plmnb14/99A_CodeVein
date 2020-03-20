@@ -24,26 +24,46 @@ void CBehaviorTree::Update_BeHaviorTree(_double TimeDelta)
 	if (m_pNodeStack.empty())
 	{
 		if (m_pRoot)
-			m_pRoot->Update_Node(TimeDelta, &m_pNodeStack);
+			m_pRoot->Update_Node(TimeDelta, &m_pNodeStack, &m_plistNodeStack, m_bDebuging);
 	}
 	else
-		m_pNodeStack.back()->Update_Node(TimeDelta, &m_pNodeStack);
+	{
+		for (auto SubNodeStack : m_plistNodeStack)
+		{
+			while (!SubNodeStack->empty() && CBT_Node::BT_NODE_STATE::INPROGRESS != SubNodeStack->back()->Update_Node(TimeDelta, SubNodeStack, &m_plistNodeStack, m_bDebuging));
+		}
+
+
+		//// 메인 스레드
+		//while (!m_pNodeStack.empty() && CBT_Node::BT_NODE_STATE::INPROGRESS != m_pNodeStack.back()->Update_Node(TimeDelta, &m_pNodeStack, &m_plistNodeStack, m_bDebuging));
+		//
+		//// 서브 스레드
+		//for (auto SubNodeStack : m_plistNodeStack)
+		//{
+		//	while (CBT_Node::BT_NODE_STATE::INPROGRESS != SubNodeStack->back()->Update_Node(TimeDelta, SubNodeStack, &m_plistNodeStack, m_bDebuging));
+		//}
+	}
 }
 
-HRESULT CBehaviorTree::Ready_BehavioTree()
+HRESULT CBehaviorTree::Ready_BehavioTree(_bool bDebuging)
 {
 	m_pRoot = CBT_Root::Create();
 
+	m_bDebuging = bDebuging;
 	m_pNodeStack.reserve(20);
 
+	m_plistNodeStack.push_back(&m_pNodeStack);
+
+
+	CBT_Node::Init_NodeNumber();
 	return S_OK;
 }
 
-CBehaviorTree * CBehaviorTree::Create()
+CBehaviorTree * CBehaviorTree::Create(_bool bDebuging)
 {
 	CBehaviorTree* pInstance = new CBehaviorTree();
 
-	if (FAILED(pInstance->Ready_BehavioTree()))
+	if (FAILED(pInstance->Ready_BehavioTree(bDebuging)))
 		Safe_Release(pInstance);
 
 	return pInstance;
@@ -51,10 +71,21 @@ CBehaviorTree * CBehaviorTree::Create()
 
 void CBehaviorTree::Free()
 {
-	m_pNodeStack.clear();
+	// 모든 쓰레드안의 노드들 주소 제거
+	for (auto pvecSubNode : m_plistNodeStack)
+	{
+		//if (pvecSubNode == &m_pNodeStack)
+		//	continue;
 
-	if(m_pRoot)
-		m_pRoot->Free();
+		if (!pvecSubNode->empty())
+		{
+			for (auto pNode : *pvecSubNode)
+				Safe_Release(pNode);
+
+			pvecSubNode->clear();
+		}
+	}
+	m_plistNodeStack.clear();
 
 	Safe_Release(m_pRoot);
 }

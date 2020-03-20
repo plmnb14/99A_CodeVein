@@ -3,26 +3,23 @@
 #include "..\headers\BT_Task_Node.h"
 
 BEGIN(Engine)
-class CTransform;
-class ENGINE_DLL CBT_Move final : public CBT_Task_Node
+class CMesh_Dynamic;
+class ENGINE_DLL CBT_Play_Ani final : public CBT_Task_Node
 {
 public:
 	typedef struct tagInitInfo
 	{
-		tagInitInfo(CTransform* pTransform, _double dMoveSpeed, _double dMovingTime)
-			: Target_pTargetTransform(pTransform), Target_dMoveSpeed(dMovingTime)
-			, Target_dMovingTime(dMovingTime)			
-		{}
+		tagInitInfo(CMesh_Dynamic* pMesh_Dynamic, _uint iAni_Index)
+			: Target_pMesh_Dynamic(pMesh_Dynamic), Target_iAni_iIndex(iAni_Index) {}
 
-		CTransform*		Target_pTargetTransform;
-		_double			Target_dMovingTime;
-		_double			Target_dMoveSpeed;
+		CMesh_Dynamic*	Target_pMesh_Dynamic;
+		_uint			Target_iAni_iIndex;
 	}INFO;
 
 protected:
-	explicit CBT_Move();
-	explicit CBT_Move(const CBT_Move& rhs);
-	virtual ~CBT_Move() = default;
+	explicit CBT_Play_Ani();
+	explicit CBT_Play_Ani(const CBT_Play_Ani& rhs);
+	virtual ~CBT_Play_Ani() = default;
 
 public:
 	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging) override;
@@ -35,14 +32,11 @@ private:
 	HRESULT Ready_Clone_Node(void* pInit_Struct);
 
 private:
-	CTransform*		m_pTransform = nullptr;
-	_double			m_dMoveSpeed = 0;
-	_double			m_dMovingTime = 0;
-
-	_double			m_dCurTime = 0;
+	CMesh_Dynamic*	m_pMesh_Dynamic = nullptr;
+	_uint			m_iAni_Index = 0;
 
 public:
-	static CBT_Move* Create_Prototype();
+	static CBT_Play_Ani* Create_Prototype();
 	virtual CBT_Node* Clone(void* pInit_Struct) override;
 
 	virtual void Free();

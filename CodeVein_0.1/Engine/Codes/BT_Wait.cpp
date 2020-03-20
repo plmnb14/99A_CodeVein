@@ -8,47 +8,64 @@ CBT_Wait::CBT_Wait(const CBT_Wait & rhs)
 {
 }
 
-CBT_Node::BT_NODE_STATE CBT_Wait::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack)
+CBT_Node::BT_NODE_STATE CBT_Wait::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging)
 {
-	Start_Node(pNodeStack);
+	Start_Node(pNodeStack, bDebugging);
 
 	m_dCurTime += TimeDelta;
 
 	if (m_dCurTime > m_dMaxTime)
-	{
-		End_Node(pNodeStack);
-		return BT_NODE_STATE::SUCCEEDED;
+	{		
+		return End_Node(pNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
 	}
 
 	return BT_NODE_STATE::INPROGRESS;
 }
 
-void CBT_Wait::Start_Node(vector<CBT_Node*>* pNodeStack)
+void CBT_Wait::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 {
 	if (m_bInit)
 	{
 		pNodeStack->push_back(this);
+		Safe_AddRef(this);
 
+		m_dCurTime = 0;
 
 		m_bInit = false;
+
+		if (bDebugging)
+		{
+			cout << "[" << m_iNodeNumber << "]" <<  "time start" << endl;
+		}
 	}
 
 }
 
-void CBT_Wait::End_Node(vector<CBT_Node*>* pNodeStack)
+CBT_Node::BT_NODE_STATE CBT_Wait::End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging)
 {
+	Safe_Release(pNodeStack->back());
 	pNodeStack->pop_back();
+
+	if(!pNodeStack->empty())
+		Notify_Parent_Of_State(pNodeStack->back(), eState);
 	m_bInit = true;
 
+	if (bDebugging)
+	{
+		cout << "[" << m_iNodeNumber << "]" << "time end : " << m_dCurTime << endl;
+	}
 	m_dCurTime = 0;
+
+	return eState;
 }
 
 HRESULT CBT_Wait::Ready_Clone_Node(void * pInit_Struct)
 {
 	INFO temp = *(INFO*)pInit_Struct;
 
-	m_dMaxTime = temp.m_dMaxTime;
+	m_dMaxTime = temp.Target_dMaxTime;
 
+	CBT_Node::Set_Auto_Number(&m_iNodeNumber);
 	return S_OK;
 }
 

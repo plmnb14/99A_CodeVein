@@ -30,16 +30,34 @@ HRESULT CTestMonster::Ready_GameObject(void * pArg)
 	CManagement*		pManagement = CManagement::Get_Instance();
 
 	CBT_Sequence* pSequence = static_cast<CBT_Sequence*>(pManagement->Clone_Node(L"Sequence", CBT_Node_Manager::COMPOSITE, nullptr));
-	CBT_Wait* pWait = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO(2)));
-	CBT_Move* pMove = static_cast<CBT_Move*>(pManagement->Clone_Node(L"Move", CBT_Node_Manager::TASK, &CBT_Move::INFO(m_pTransformCom, 5 )));
+	CBT_Sequence* pSequence1 = static_cast<CBT_Sequence*>(pManagement->Clone_Node(L"Sequence", CBT_Node_Manager::COMPOSITE, nullptr));
+
+	CBT_Wait* pWait2 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO(2)));
+	CBT_Wait* pWait2_1 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO(2)));
+	CBT_Wait* pWait4 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO(4)));
+	//CBT_Move* pMove = static_cast<CBT_Move*>(pManagement->Clone_Node(L"Move", CBT_Node_Manager::TASK, &CBT_Move::INFO(m_pTransformCom, 1, 5)));
+	//CBT_Play_Ani* pAni1 = static_cast<CBT_Play_Ani*>(pManagement->Clone_Node(L"Play_Ani", CBT_Node_Manager::TASK, &CBT_Play_Ani::INFO(m_pMeshCom, 4)));
+	//CBT_Play_Ani* pAni2 = static_cast<CBT_Play_Ani*>(pManagement->Clone_Node(L"Play_Ani", CBT_Node_Manager::TASK, &CBT_Play_Ani::INFO(m_pMeshCom, 3)));
+	//CBT_Simple_Parallel* pParallel = static_cast<CBT_Simple_Parallel*>(pManagement->Clone_Node(L"Simple_Parallel", CBT_Node_Manager::COMPOSITE, &CBT_Simple_Parallel::INFO(CBT_Simple_Parallel::Mode::Immediate)));
+
+	//CBT_Loop* pLoop3 = static_cast<CBT_Loop*>(pManagement->Clone_Node(L"Loop", CBT_Node_Manager::DECORATOR, &CBT_Loop::INFO(3)));
 
 	pBehaviorTree->Set_Child(pSequence);
-	pSequence->Add_Child(pWait);
-	pSequence->Add_Child(pMove);
+	pSequence->Add_Child(pWait2);
+	pSequence->Add_Child(pSequence1);
+	pSequence1->Add_Child(pWait4);
+	pSequence1->Add_Child(pWait2_1);
+
+
+	//pSequence->Add_Child(pParallel);
+	//pParallel->Set_Main_Child(pWait2);
+	//pParallel->Set_Sub_Child(pWait4);
+
+
 
 	m_pAIControllerCom->Set_BeHaviorTree(pBehaviorTree);
 
-	m_pMeshCom->SetUp_Animation(56);
+	//m_pMeshCom->SetUp_Animation(56);
 
 	return NOERROR;
 }
@@ -72,7 +90,7 @@ HRESULT CTestMonster::Render_GameObject()
 		nullptr == m_pMeshCom)
 		return E_FAIL;
 
-	m_pMeshCom->Play_Animation(_float(m_dTimeDelta));
+	m_pMeshCom->Play_Animation(_float(m_dTimeDelta)); // * alpha
 
 	if (FAILED(SetUp_ConstantTable()))
 		return E_FAIL;

@@ -223,9 +223,6 @@
     <Filter Include="01.Utility\[03] Component\Component\09%29 AIController\Node\Composite\Derive">
       <UniqueIdentifier>{e519e73a-8501-45d1-a76b-ff307982fc3f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\[02] GameObject\0%29 GameObject\1%29 UI">
-      <UniqueIdentifier>{3f08e9b1-6cc7-438e-baeb-fad5397ae0b0}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Headers\Base.h">
@@ -429,8 +426,17 @@
     <ClInclude Include="..\Headers\BT_Sequence.h">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Composite\Derive</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\UI.h">
-      <Filter>01.Utility\[02] GameObject\0%29 GameObject\1%29 UI</Filter>
+    <ClInclude Include="..\Headers\BT_Play_Ani.h">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BT_Inverter.h">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BT_Simple_Parallel.h">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Composite\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BT_Loop.h">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -611,8 +617,17 @@
     <ClCompile Include="..\Codes\BT_Sequence.cpp">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Composite\Derive</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\UI.cpp">
-      <Filter>01.Utility\[02] GameObject\0%29 GameObject\1%29 UI</Filter>
+    <ClCompile Include="..\Codes\BT_Play_Ani.cpp">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BT_Inverter.cpp">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BT_Simple_Parallel.cpp">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Composite\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BT_Loop.cpp">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
