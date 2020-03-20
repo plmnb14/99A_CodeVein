@@ -1,52 +1,46 @@
 #include "stdafx.h"
-#include "..\Headers\BackGround.h"
+#include "..\Headers\HPBack.h"
 
-CBackGround::CBackGround(LPDIRECT3DDEVICE9 pGraphic_Device)
+CHPBack::CHPBack(_Device pGraphic_Device)
 	: CUI(pGraphic_Device)
 {
-
 }
 
-CBackGround::CBackGround(const CBackGround & rhs)
+CHPBack::CHPBack(const CHPBack & rhs)
 	: CUI(rhs)
 {
-
 }
 
-HRESULT CBackGround::Ready_GameObject_Prototype()
+HRESULT CHPBack::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
 
 	return NOERROR;
 }
 
-HRESULT CBackGround::Ready_GameObject(void * pArg)
+HRESULT CHPBack::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = WINCX * 0.5f;
-	m_fPosY = WINCY * 0.5f;
-	m_fSizeX = WINCX;
-	m_fSizeY = WINCY;
-
+	
 	return NOERROR;
 }
 
-_int CBackGround::Update_GameObject(_double TimeDelta)
+_int CHPBack::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
-
+	
 	return NO_EVENT;
 }
 
-_int CBackGround::Late_Update_GameObject(_double TimeDelta)
+_int CHPBack::Late_Update_GameObject(_double TimeDelta)
 {
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
@@ -60,7 +54,7 @@ _int CBackGround::Late_Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-HRESULT CBackGround::Render_GameObject()
+HRESULT CHPBack::Render_GameObject()
 {
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
@@ -106,7 +100,7 @@ HRESULT CBackGround::Render_GameObject()
 	return NOERROR;
 }
 
-HRESULT CBackGround::Add_Component()
+HRESULT CHPBack::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -117,7 +111,7 @@ HRESULT CBackGround::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Texture_Default", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STAGE, L"Texture_HPBack", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -127,12 +121,11 @@ HRESULT CBackGround::Add_Component()
 	// for.Com_VIBuffer
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Rect", L"Com_VIBuffer", (CComponent**)&m_pBufferCom)))
 		return E_FAIL;
-	
-	
+
 	return NOERROR;
 }
 
-HRESULT CBackGround::SetUp_ConstantTable()
+HRESULT CHPBack::SetUp_ConstantTable()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -151,34 +144,33 @@ HRESULT CBackGround::SetUp_ConstantTable()
 	return NOERROR;
 }
 
-CBackGround * CBackGround::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
+CHPBack * CHPBack::Create(_Device pGraphic_Device)
 {
-	CBackGround*	pInstance = new CBackGround(pGraphic_Device);
+	CHPBack* pInstance = new CHPBack(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 	{
-		MSG_BOX("Failed To Creating CMainApp");
+		MSG_BOX("HPBack Creating Fail");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
-
 }
 
-CGameObject * CBackGround::Clone_GameObject(void * pArg)
+CGameObject * CHPBack::Clone_GameObject(void * pArg)
 {
-	CBackGround*	pInstance = new CBackGround(*this);
+	CHPBack* pInstance = new CHPBack(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
-		MSG_BOX("Failed To Cloned CMainApp");
+		MSG_BOX("Failed To Cloned HPBack");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CBackGround::Free()
+void CHPBack::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
@@ -186,5 +178,5 @@ void CBackGround::Free()
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pRendererCom);
 
-	CGameObject::Free();
+	CUI::Free();
 }

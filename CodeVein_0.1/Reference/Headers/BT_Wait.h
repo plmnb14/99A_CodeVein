@@ -9,6 +9,9 @@ class ENGINE_DLL CBT_Wait final : public CBT_Task_Node
 public:
 	typedef struct tagInitInfo
 	{
+		tagInitInfo(_double dMaxTime)
+			: m_dMaxTime(dMaxTime) {}
+
 		_double m_dMaxTime;
 	}INFO;
 
@@ -19,8 +22,6 @@ protected:
 
 public:
 	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack) override;
-
-	HRESULT Initialize_Node(_double dMaxTime);
 
 protected:
 	virtual void Start_Node(vector<CBT_Node*>* pNodeStack);

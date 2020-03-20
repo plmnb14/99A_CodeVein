@@ -55,6 +55,27 @@
     <Filter Include="02.GameObject\Stage\Monster">
       <UniqueIdentifier>{71691d1d-2d69-411b-8330-bcd4d01bfd07}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\UI">
+      <UniqueIdentifier>{c4430b7f-3cc2-4c69-886a-16a0e0447311}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Logo\LogoButton">
+      <UniqueIdentifier>{4f8b8664-1d1b-4d2b-8ec4-2bdf40633246}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\UI\00.PlayerUI">
+      <UniqueIdentifier>{4c20310c-aa64-471f-abb8-3bcdda962cbd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\UI\00.PlayerUI\HPBack">
+      <UniqueIdentifier>{fa879426-186e-47c8-b86a-a658c605a61a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\UI\00.PlayerUI\HPBar">
+      <UniqueIdentifier>{71f3b7e5-9b16-4faf-a9d7-c6bc1ae53dfb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\UI\01.MonsterUI">
+      <UniqueIdentifier>{c8d63875-25fd-4802-a102-e872f46bb451}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\UI\02.BossUI">
+      <UniqueIdentifier>{525e338f-a342-4a0c-8cd1-1035ddbf57e6}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -102,6 +123,15 @@
     <ClInclude Include="..\Headers\TestMonster.h">
       <Filter>02.GameObject\Stage\Monster</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\HPBack.h">
+      <Filter>02.GameObject\Stage\UI\00.PlayerUI\HPBack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\HPBar.h">
+      <Filter>02.GameObject\Stage\UI\00.PlayerUI\HPBar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\LogoBtn.h">
+      <Filter>02.GameObject\Logo\LogoButton</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -139,6 +169,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\TestMonster.cpp">
       <Filter>02.GameObject\Stage\Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HPBack.cpp">
+      <Filter>02.GameObject\Stage\UI\00.PlayerUI\HPBack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HPBar.cpp">
+      <Filter>02.GameObject\Stage\UI\00.PlayerUI\HPBar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\LogoBtn.cpp">
+      <Filter>02.GameObject\Logo\LogoButton</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,12 +1,12 @@
 #pragma once
 
 #include "Client_Defines.h"
-#include "GameObject.h"
+#include "UI.h"
 #include "Management.h"
 
 BEGIN(Client)
 
-class CBackGround final : public CGameObject
+class CBackGround final : public CUI
 {
 protected:
 	explicit CBackGround(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -19,6 +19,7 @@ public:
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
 private:
+	CTransform*				m_pTransformCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
