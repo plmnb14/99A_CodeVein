@@ -36,8 +36,8 @@ public:
 
 public:
 	// 각 노드에 번호를 붙이기 위함.
-	static HRESULT Set_Auto_Number(_uint* iNum_Variable);
-	static HRESULT Init_NodeNumber();
+	static HRESULT _Set_Auto_Number(_uint* iNum_Variable);
+	static HRESULT _Init_NodeNumber();
 
 protected:
 	void Notify_Parent_Of_State(CBT_Node* pParent, BT_NODE_STATE eState);

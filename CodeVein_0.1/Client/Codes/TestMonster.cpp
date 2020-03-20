@@ -25,7 +25,7 @@ HRESULT CTestMonster::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Scale(_v3(0.01f, 0.01f, 0.01f));
 
 	
-	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create();
+	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create(true);
 
 	CManagement*		pManagement = CManagement::Get_Instance();
 
@@ -38,7 +38,9 @@ HRESULT CTestMonster::Ready_GameObject(void * pArg)
 	//CBT_Move* pMove = static_cast<CBT_Move*>(pManagement->Clone_Node(L"Move", CBT_Node_Manager::TASK, &CBT_Move::INFO(m_pTransformCom, 1, 5)));
 	//CBT_Play_Ani* pAni1 = static_cast<CBT_Play_Ani*>(pManagement->Clone_Node(L"Play_Ani", CBT_Node_Manager::TASK, &CBT_Play_Ani::INFO(m_pMeshCom, 4)));
 	//CBT_Play_Ani* pAni2 = static_cast<CBT_Play_Ani*>(pManagement->Clone_Node(L"Play_Ani", CBT_Node_Manager::TASK, &CBT_Play_Ani::INFO(m_pMeshCom, 3)));
-	//CBT_Simple_Parallel* pParallel = static_cast<CBT_Simple_Parallel*>(pManagement->Clone_Node(L"Simple_Parallel", CBT_Node_Manager::COMPOSITE, &CBT_Simple_Parallel::INFO(CBT_Simple_Parallel::Mode::Immediate)));
+	CBT_Simple_Parallel* pParallel = static_cast<CBT_Simple_Parallel*>(pManagement->Clone_Node(L"Simple_Parallel", CBT_Node_Manager::COMPOSITE, &CBT_Simple_Parallel::INFO(CBT_Simple_Parallel::Mode::Immediate)));
+	CBT_Wait* pWait1 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO(1)));
+	CBT_Wait* pWait3 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO(3)));
 
 	//CBT_Loop* pLoop3 = static_cast<CBT_Loop*>(pManagement->Clone_Node(L"Loop", CBT_Node_Manager::DECORATOR, &CBT_Loop::INFO(3)));
 
@@ -47,6 +49,10 @@ HRESULT CTestMonster::Ready_GameObject(void * pArg)
 	pSequence->Add_Child(pSequence1);
 	pSequence1->Add_Child(pWait4);
 	pSequence1->Add_Child(pWait2_1);
+
+	pSequence->Add_Child(pParallel);
+	pParallel->Set_Main_Child(pWait1);
+	pParallel->Set_Sub_Child(pWait3);
 
 
 	//pSequence->Add_Child(pParallel);

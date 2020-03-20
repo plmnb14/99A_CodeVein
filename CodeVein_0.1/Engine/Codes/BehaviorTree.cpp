@@ -55,7 +55,7 @@ HRESULT CBehaviorTree::Ready_BehavioTree(_bool bDebuging)
 	m_plistNodeStack.push_back(&m_pNodeStack);
 
 
-	CBT_Node::Init_NodeNumber();
+	CBT_Node::_Init_NodeNumber();
 	return S_OK;
 }
 
@@ -71,21 +71,46 @@ CBehaviorTree * CBehaviorTree::Create(_bool bDebuging)
 
 void CBehaviorTree::Free()
 {
+	for (auto child : m_pNodeStack)
+	{
+		child->Free();
+		Safe_Release(child);
+	}
+	m_pNodeStack.clear();
+
 	// 모든 쓰레드안의 노드들 주소 제거
 	for (auto pvecSubNode : m_plistNodeStack)
 	{
-		//if (pvecSubNode == &m_pNodeStack)
-		//	continue;
-
 		if (!pvecSubNode->empty())
 		{
-			for (auto pNode : *pvecSubNode)
-				Safe_Release(pNode);
+			//for (auto pNode : *pvecSubNode)
+			//	Safe_Release(pNode);
 
 			pvecSubNode->clear();
 		}
 	}
 	m_plistNodeStack.clear();
 
+	if (m_pRoot)
+		m_pRoot->Free();
+
 	Safe_Release(m_pRoot);
+
+	//// 모든 쓰레드안의 노드들 주소 제거
+	//for (auto pvecSubNode : m_plistNodeStack)
+	//{
+	//	//if (pvecSubNode == &m_pNodeStack)
+	//	//	continue;
+
+	//	if (!pvecSubNode->empty())
+	//	{
+	//		for (auto pNode : *pvecSubNode)
+	//			Safe_Release(pNode);
+
+	//		pvecSubNode->clear();
+	//	}
+	//}
+	//m_plistNodeStack.clear();
+
+	//Safe_Release(m_pRoot);
 }

@@ -43,6 +43,9 @@ void CBT_Wait::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 
 CBT_Node::BT_NODE_STATE CBT_Wait::End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging)
 {
+	if (pNodeStack->empty())
+		return eState;
+
 	Safe_Release(pNodeStack->back());
 	pNodeStack->pop_back();
 
@@ -65,7 +68,7 @@ HRESULT CBT_Wait::Ready_Clone_Node(void * pInit_Struct)
 
 	m_dMaxTime = temp.Target_dMaxTime;
 
-	CBT_Node::Set_Auto_Number(&m_iNodeNumber);
+	CBT_Node::_Set_Auto_Number(&m_iNodeNumber);
 	return S_OK;
 }
 

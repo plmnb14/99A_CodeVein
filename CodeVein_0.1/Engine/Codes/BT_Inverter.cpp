@@ -85,6 +85,9 @@ void CBT_Inverter::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 
 CBT_Node::BT_NODE_STATE CBT_Inverter::End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging)
 {
+	if (pNodeStack->empty())
+		return eState;
+
 	Safe_Release(pNodeStack->back());
 	pNodeStack->pop_back();
 
@@ -104,7 +107,7 @@ CBT_Node::BT_NODE_STATE CBT_Inverter::End_Node(vector<CBT_Node*>* pNodeStack, BT
 HRESULT CBT_Inverter::Ready_Clone_Node(void * pInit_Struct)
 {
 
-	CBT_Node::Set_Auto_Number(&m_iNodeNumber);
+	CBT_Node::_Set_Auto_Number(&m_iNodeNumber);
 	return NO_ERROR;
 }
 

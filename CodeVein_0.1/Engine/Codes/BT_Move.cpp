@@ -44,6 +44,9 @@ void CBT_Move::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 
 CBT_Node::BT_NODE_STATE CBT_Move::End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging)
 {
+	if (pNodeStack->empty())
+		return eState;
+
 	Safe_Release(pNodeStack->back());
 	pNodeStack->pop_back();
 
@@ -69,7 +72,7 @@ HRESULT CBT_Move::Ready_Clone_Node(void * pInit_Struct)
 	m_dMoveSpeed = temp.Target_dMoveSpeed;
 	m_dMovingTime = temp.Target_dMovingTime;
 
-	CBT_Node::Set_Auto_Number(&m_iNodeNumber);
+	CBT_Node::_Set_Auto_Number(&m_iNodeNumber);
 	return S_OK;
 }
 

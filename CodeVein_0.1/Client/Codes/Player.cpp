@@ -39,7 +39,7 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	m_pTransformCom->Add_Pos(0.001f);
 
-	cout << m_pTransformCom->Get_Pos().z << endl;
+	//cout << m_pTransformCom->Get_Pos().z << endl;
 
 	return _int();
 }
