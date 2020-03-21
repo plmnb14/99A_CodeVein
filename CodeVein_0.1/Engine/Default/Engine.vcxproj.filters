@@ -456,6 +456,9 @@
     <ClInclude Include="..\Headers\UI.h">
       <Filter>01.Utility\[02] GameObject\3%29 UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\BT_Cooldown.h">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Base.cpp">
@@ -655,6 +658,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\UI.cpp">
       <Filter>01.Utility\[02] GameObject\3%29 UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BT_Cooldown.cpp">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
