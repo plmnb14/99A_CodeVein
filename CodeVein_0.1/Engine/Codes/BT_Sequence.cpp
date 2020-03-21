@@ -12,8 +12,10 @@ CBT_Sequence::CBT_Sequence(const CBT_Sequence & rhs)
 HRESULT CBT_Sequence::Add_Child(CBT_Node * pNode)
 {
 	if (nullptr == pNode)
+	{
+		MSG_BOX("Sequence : Failed To Add_Child");
 		return E_FAIL;
-
+	}
 	m_pChildren.emplace_back(pNode);
 	return S_OK;
 }
@@ -21,7 +23,7 @@ HRESULT CBT_Sequence::Add_Child(CBT_Node * pNode)
 CBT_Node::BT_NODE_STATE CBT_Sequence::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging)
 {
 	/*
-	왼쪽부터 자식들을 검사해서 성공한 자식을 수행한다.
+	왼쪽부터 자식들을 검사해서 실패할 때가지 수행한다.
 	*/
 	Start_Node(pNodeStack, bDebugging);
 	
@@ -30,18 +32,18 @@ CBT_Node::BT_NODE_STATE CBT_Sequence::Update_Node(_double TimeDelta, vector<CBT_
 	{
 		switch (m_eChild_State)
 		{
-			case BT_NODE_STATE::FAILED:			
+			case BT_NODE_STATE::FAILED:
 				return End_Node(pNodeStack, BT_NODE_STATE::FAILED, bDebugging);
 
 			case BT_NODE_STATE::INPROGRESS:
-				return m_pChildren[m_pCurIndex]->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, bDebugging);
+				return m_pChildren[m_pCurIndex++]->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, bDebugging);
 
 			case BT_NODE_STATE::SUCCEEDED:
 			case BT_NODE_STATE::SERVICE:
-				++m_pCurIndex;
-				this->m_eChild_State = BT_NODE_STATE::INPROGRESS;
-				return BT_NODE_STATE::INPROGRESS;
+				//this->m_eChild_State = BT_NODE_STATE::INPROGRESS;
+				return m_pChildren[m_pCurIndex++]->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, bDebugging);
 		}
+
 	}
 
 	
@@ -52,16 +54,21 @@ void CBT_Sequence::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 {
 	if (m_bInit)
 	{
+		if (bDebugging)
+		{
+			Cout_Indentation(pNodeStack);
+			cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " Start   { Sequence }" << endl;
+		}
+
 		pNodeStack->push_back(this);
 		Safe_AddRef(this);
+
+		m_eChild_State = BT_NODE_STATE::INPROGRESS;
 
 		m_pCurIndex = 0;
 		m_bInit = false;
 
-		if (bDebugging)
-		{
-			cout << "[" << m_iNodeNumber << "]" << "Sequence Start" << endl;
-		}
+
 	}
 }
 
@@ -79,7 +86,8 @@ CBT_Node::BT_NODE_STATE CBT_Sequence::End_Node(vector<CBT_Node*>* pNodeStack, BT
 
 	if (bDebugging)
 	{
-		cout << "[" << m_iNodeNumber << "]" << "Seqiemce End" << endl;
+		Cout_Indentation(pNodeStack);
+		cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " End   { Sequence }" << endl;
 	}
 
 	return eState;
@@ -87,6 +95,10 @@ CBT_Node::BT_NODE_STATE CBT_Sequence::End_Node(vector<CBT_Node*>* pNodeStack, BT
 
 HRESULT CBT_Sequence::Ready_Clone_Node(void* pInit_Struct)
 {
+	INFO temp = *(INFO*)pInit_Struct;
+
+	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
+
 	CBT_Node::_Set_Auto_Number(&m_iNodeNumber);
 	return S_OK;
 }

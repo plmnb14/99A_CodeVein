@@ -194,6 +194,7 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\BT_All_Node.h" />
     <ClInclude Include="..\Headers\BT_BlackBoard_Mgr.h" />
     <ClInclude Include="..\Headers\BT_Composite_Node.h" />
+    <ClInclude Include="..\Headers\BT_Cooldown.h" />
     <ClInclude Include="..\Headers\BT_Decorator_Node.h" />
     <ClInclude Include="..\Headers\BT_Inverter.h" />
     <ClInclude Include="..\Headers\BT_Loop.h" />
@@ -267,6 +268,7 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\BlackBoard.cpp" />
     <ClCompile Include="..\Codes\BT_BlackBoard_Mgr.cpp" />
     <ClCompile Include="..\Codes\BT_Composite_Node.cpp" />
+    <ClCompile Include="..\Codes\BT_Cooldown.cpp" />
     <ClCompile Include="..\Codes\BT_Decorator_Node.cpp" />
     <ClCompile Include="..\Codes\BT_Inverter.cpp" />
     <ClCompile Include="..\Codes\BT_Loop.cpp" />

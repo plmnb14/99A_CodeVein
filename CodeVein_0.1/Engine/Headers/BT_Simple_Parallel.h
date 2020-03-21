@@ -21,9 +21,11 @@ public:
 
 	typedef struct tagInitInfo
 	{
-		tagInitInfo(Mode eMode)
-			: eNode_Mode(eMode) {}
+		tagInitInfo(char* tNodeName, Mode eMode)
+			: eNode_Mode(eMode) 
+		{ strcpy_s<256>(Target_NodeName, tNodeName); }
 
+		char	Target_NodeName[256];
 		Mode eNode_Mode;
 	}INFO;
 

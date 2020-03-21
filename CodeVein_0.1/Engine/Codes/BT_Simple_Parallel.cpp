@@ -199,6 +199,12 @@ void CBT_Simple_Parallel::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebug
 
 	if (m_bInit)
 	{
+		if (bDebugging)
+		{
+			Cout_Indentation(pNodeStack);
+			cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " Start   { Simple_Parallel } " << endl;
+		}
+
 		pNodeStack->push_back(this);
 		Safe_AddRef(this);
 
@@ -210,10 +216,6 @@ void CBT_Simple_Parallel::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebug
 
 		m_bInit = false;
 
-		if (bDebugging)
-		{
-			cout << "[" << m_iNodeNumber << "]" << "Simple_Parallel Start" << endl;
-		}
 	}
 }
 
@@ -231,7 +233,8 @@ CBT_Node::BT_NODE_STATE CBT_Simple_Parallel::End_Node(vector<CBT_Node*>* pNodeSt
 
 	if (bDebugging)
 	{
-		cout << "[" << m_iNodeNumber << "]" << "Simpl_Parallel End" << endl;
+		Cout_Indentation(pNodeStack);
+		cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " End   { Simple_Parallel } " << endl;
 	}
 
 	return eState;
@@ -239,6 +242,10 @@ CBT_Node::BT_NODE_STATE CBT_Simple_Parallel::End_Node(vector<CBT_Node*>* pNodeSt
 
 HRESULT CBT_Simple_Parallel::Ready_Clone_Node(void * pInit_Struct)
 {
+	INFO temp = *(INFO*)pInit_Struct;
+
+	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
+
 	m_pChildren.resize(2);
 
 	CBT_Node::_Set_Auto_Number(&m_iNodeNumber);

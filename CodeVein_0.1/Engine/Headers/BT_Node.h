@@ -34,6 +34,7 @@ public:
 	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging) = 0;
 	virtual BT_NODE_STATE End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging) = 0;
 
+	// 엔진에서만 사용
 public:
 	// 각 노드에 번호를 붙이기 위함.
 	static HRESULT _Set_Auto_Number(_uint* iNum_Variable);
@@ -42,9 +43,14 @@ public:
 protected:
 	void Notify_Parent_Of_State(CBT_Node* pParent, BT_NODE_STATE eState);
 
+	// 엔진에서만 사용
+protected:
+	void Cout_Indentation(vector<CBT_Node*>* pNodeStack);
+
 protected:
 	_uint			m_iNodeNumber = 0;
 	BT_NODE_STATE	m_eChild_State = BT_NODE_STATE::INPROGRESS;
+	char			m_pNodeName[256] = { 0, };
 
 	_bool	m_bInit = true;
 	

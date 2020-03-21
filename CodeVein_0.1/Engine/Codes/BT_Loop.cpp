@@ -74,6 +74,12 @@ void CBT_Loop::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 {
 	if (m_bInit)
 	{
+		if (bDebugging)
+		{
+			Cout_Indentation(pNodeStack);
+			cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " Start   { Loop : " << m_iCurLoopCount << " }" << endl;
+		}
+
 		pNodeStack->push_back(this);
 		Safe_AddRef(this);
 
@@ -81,11 +87,6 @@ void CBT_Loop::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 		m_bInProgress = false;
 		m_bInit = false;
 
-		if (bDebugging)
-		{
-			cout << "[" << m_iNodeNumber << "]" << "Loop Start" << endl;
-
-		}
 	}
 }
 
@@ -104,8 +105,8 @@ CBT_Node::BT_NODE_STATE CBT_Loop::End_Node(vector<CBT_Node*>* pNodeStack, BT_NOD
 
 	if (bDebugging)
 	{
-		cout << "[" << m_iNodeNumber << "]" << "Loop " << m_iCurLoopCount << " : End" << endl;
-
+		Cout_Indentation(pNodeStack);
+		cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " End   { Loop : " << m_iCurLoopCount << " }" << endl;
 	}
 
 	return eState;
@@ -114,6 +115,8 @@ CBT_Node::BT_NODE_STATE CBT_Loop::End_Node(vector<CBT_Node*>* pNodeStack, BT_NOD
 HRESULT CBT_Loop::Ready_Clone_Node(void * pInit_Struct)
 {
 	INFO temp = *(INFO*)pInit_Struct;
+
+	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
 
 	m_iMaxLoopCount = temp.iMaxLoopCount;
 

@@ -13,10 +13,12 @@ class ENGINE_DLL CBT_Loop final : public CBT_Decorator_Node
 public:
 	typedef struct tagInitInfo
 	{
-		tagInitInfo(_uint iLoopCount)
-			: iMaxLoopCount(iLoopCount) {}
+		tagInitInfo(char* tNodeName, _uint iLoopCount)
+			: iMaxLoopCount(iLoopCount)
+		{ strcpy_s<256>(Target_NodeName, tNodeName); }
 
-		_uint iMaxLoopCount;
+		char	Target_NodeName[256];
+		_uint	iMaxLoopCount;
 	}INFO;
 
 protected:

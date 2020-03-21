@@ -25,34 +25,43 @@ HRESULT CTestMonster::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Scale(_v3(0.01f, 0.01f, 0.01f));
 
 	
-	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create(true);
+	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create();
 
 	CManagement*		pManagement = CManagement::Get_Instance();
 
-	CBT_Sequence* pSequence = static_cast<CBT_Sequence*>(pManagement->Clone_Node(L"Sequence", CBT_Node_Manager::COMPOSITE, nullptr));
-	CBT_Sequence* pSequence1 = static_cast<CBT_Sequence*>(pManagement->Clone_Node(L"Sequence", CBT_Node_Manager::COMPOSITE, nullptr));
+	CBT_Sequence* pSequence = static_cast<CBT_Sequence*>(pManagement->Clone_Node(L"Sequence", CBT_Node_Manager::COMPOSITE, &CBT_Sequence::INFO("Sequence1")));
+	//CBT_Sequence* pSequence1 = static_cast<CBT_Sequence*>(pManagement->Clone_Node(L"Sequence", CBT_Node_Manager::COMPOSITE, nullptr));
+	//CBT_Sequence* pSequence2 = static_cast<CBT_Sequence*>(pManagement->Clone_Node(L"Sequence", CBT_Node_Manager::COMPOSITE, nullptr));
 
-	CBT_Wait* pWait2 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO(2)));
-	CBT_Wait* pWait2_1 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO(2)));
-	CBT_Wait* pWait4 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO(4)));
+	CBT_Wait* pWait2 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait2", 2)));
+	CBT_Wait* CoolWait = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait2_1",2)));
+	CBT_Wait* CoolWait22 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait444", 4)));
 	//CBT_Move* pMove = static_cast<CBT_Move*>(pManagement->Clone_Node(L"Move", CBT_Node_Manager::TASK, &CBT_Move::INFO(m_pTransformCom, 1, 5)));
 	//CBT_Play_Ani* pAni1 = static_cast<CBT_Play_Ani*>(pManagement->Clone_Node(L"Play_Ani", CBT_Node_Manager::TASK, &CBT_Play_Ani::INFO(m_pMeshCom, 4)));
 	//CBT_Play_Ani* pAni2 = static_cast<CBT_Play_Ani*>(pManagement->Clone_Node(L"Play_Ani", CBT_Node_Manager::TASK, &CBT_Play_Ani::INFO(m_pMeshCom, 3)));
-	CBT_Simple_Parallel* pParallel = static_cast<CBT_Simple_Parallel*>(pManagement->Clone_Node(L"Simple_Parallel", CBT_Node_Manager::COMPOSITE, &CBT_Simple_Parallel::INFO(CBT_Simple_Parallel::Mode::Immediate)));
-	CBT_Wait* pWait1 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO(1)));
-	CBT_Wait* pWait3 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO(3)));
+	//CBT_Simple_Parallel* pParallel = static_cast<CBT_Simple_Parallel*>(pManagement->Clone_Node(L"Simple_Parallel", CBT_Node_Manager::COMPOSITE, &CBT_Simple_Parallel::INFO(CBT_Simple_Parallel::Mode::Immediate)));
+	//CBT_Wait* pWait1 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO(1)));
+	//CBT_Wait* pWait3 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO(3)));
+
+	CBT_Cooldown* pCooldown1 = static_cast<CBT_Cooldown*>(pManagement->Clone_Node(L"Cooldown", CBT_Node_Manager::DECORATOR, &CBT_Cooldown::INFO("Colldown1", 5)));
+	CBT_Cooldown* pCooldown2 = static_cast<CBT_Cooldown*>(pManagement->Clone_Node(L"Cooldown", CBT_Node_Manager::DECORATOR, &CBT_Cooldown::INFO("Colldown2", 3)));
 
 	//CBT_Loop* pLoop3 = static_cast<CBT_Loop*>(pManagement->Clone_Node(L"Loop", CBT_Node_Manager::DECORATOR, &CBT_Loop::INFO(3)));
 
-	pBehaviorTree->Set_Child(pSequence);
+	if (FAILED(pBehaviorTree->Set_Child(pSequence))) return E_FAIL;
+	if (FAILED(pSequence->Add_Child(pCooldown1))) return E_FAIL;
+	pCooldown1->Set_Child(CoolWait);
 	pSequence->Add_Child(pWait2);
-	pSequence->Add_Child(pSequence1);
-	pSequence1->Add_Child(pWait4);
-	pSequence1->Add_Child(pWait2_1);
+	pSequence->Add_Child(pCooldown2);
+	pCooldown2->Set_Child(CoolWait22);
+	//pSequence->Add_Child(pSequence1);
+	//pSequence1->Add_Child(pWait4);
+	//pSequence1->Add_Child(pWait2_1);
 
-	pSequence->Add_Child(pParallel);
-	pParallel->Set_Main_Child(pWait1);
-	pParallel->Set_Sub_Child(pWait3);
+	//pSequence->Add_Child(pParallel);
+	//pParallel->Set_Main_Child(pSequence2);
+	//pSequence2->Add_Child()
+	//pParallel->Set_Sub_Child(pWait3);
 
 
 	//pSequence->Add_Child(pParallel);

@@ -9,9 +9,11 @@ class ENGINE_DLL CBT_Play_Ani final : public CBT_Task_Node
 public:
 	typedef struct tagInitInfo
 	{
-		tagInitInfo(CMesh_Dynamic* pMesh_Dynamic, _uint iAni_Index)
-			: Target_pMesh_Dynamic(pMesh_Dynamic), Target_iAni_iIndex(iAni_Index) {}
+		tagInitInfo(char* tNodeName, CMesh_Dynamic* pMesh_Dynamic, _uint iAni_Index)
+			: Target_pMesh_Dynamic(pMesh_Dynamic), Target_iAni_iIndex(iAni_Index)
+		{ strcpy_s<256>(Target_NodeName, tNodeName); }
 
+		char			Target_NodeName[256];
 		CMesh_Dynamic*	Target_pMesh_Dynamic;
 		_uint			Target_iAni_iIndex;
 	}INFO;

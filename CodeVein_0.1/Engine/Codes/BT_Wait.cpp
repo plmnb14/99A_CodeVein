@@ -26,6 +26,12 @@ void CBT_Wait::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 {
 	if (m_bInit)
 	{
+		if (bDebugging)
+		{
+			Cout_Indentation(pNodeStack);
+			cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " Start   { Wait : " << m_dMaxTime << " }" << endl;
+		}
+
 		pNodeStack->push_back(this);
 		Safe_AddRef(this);
 
@@ -33,10 +39,6 @@ void CBT_Wait::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 
 		m_bInit = false;
 
-		if (bDebugging)
-		{
-			cout << "[" << m_iNodeNumber << "]" <<  "time start" << endl;
-		}
 	}
 
 }
@@ -55,9 +57,13 @@ CBT_Node::BT_NODE_STATE CBT_Wait::End_Node(vector<CBT_Node*>* pNodeStack, BT_NOD
 
 	if (bDebugging)
 	{
-		cout << "[" << m_iNodeNumber << "]" << "time end : " << m_dCurTime << endl;
+		Cout_Indentation(pNodeStack);
+		cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " End   { Wait : " << m_dMaxTime << " }" << endl;
 	}
-	m_dCurTime = 0;
+
+	//m_dCurTime = 0;
+
+
 
 	return eState;
 }
@@ -66,6 +72,7 @@ HRESULT CBT_Wait::Ready_Clone_Node(void * pInit_Struct)
 {
 	INFO temp = *(INFO*)pInit_Struct;
 
+	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
 	m_dMaxTime = temp.Target_dMaxTime;
 
 	CBT_Node::_Set_Auto_Number(&m_iNodeNumber);

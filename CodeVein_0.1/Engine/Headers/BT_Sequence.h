@@ -6,6 +6,15 @@ BEGIN(Engine)
 
 class ENGINE_DLL CBT_Sequence final : public CBT_Composite_Node
 {
+public:
+	typedef struct tagInitInfo
+	{
+		tagInitInfo(char* tNodeName)
+		{ strcpy_s<256>(Target_NodeName, tNodeName); }
+
+		char	Target_NodeName[256];
+	}INFO;
+
 protected:
 	explicit CBT_Sequence();
 	explicit CBT_Sequence(const CBT_Sequence& rhs);

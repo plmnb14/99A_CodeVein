@@ -6,6 +6,7 @@
 // Decorator
 #include "..\Headers\BT_Inverter.h"
 #include "..\Headers\BT_Loop.h"
+#include "..\Headers\BT_Cooldown.h"
 
 // Service
 

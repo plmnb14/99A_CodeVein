@@ -27,8 +27,8 @@ public:
 	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging) override;
 
 protected:
-	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging) {};
-	virtual BT_NODE_STATE End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging) { return BT_NODE_STATE::SUCCEEDED; };
+	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging);
+	virtual BT_NODE_STATE End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging);
 
 private:
 	CBT_Node*		m_pChildNode = nullptr;

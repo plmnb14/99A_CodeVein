@@ -51,15 +51,17 @@ void CBT_Selector::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 {
 	if (m_bInit)
 	{
+		if (bDebugging)
+		{
+			Cout_Indentation(pNodeStack);
+			cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " Start   { Selector } " << endl;
+		}
+
 		pNodeStack->push_back(this);
 		Safe_AddRef(this);
 
 		m_bInit = false;
 
-		if (bDebugging)
-		{
-			cout << "[" << m_iNodeNumber << "]" << "Selector Start" << endl;
-		}
 	}
 }
 
@@ -77,7 +79,9 @@ CBT_Node::BT_NODE_STATE CBT_Selector::End_Node(vector<CBT_Node*>* pNodeStack, BT
 
 	if (bDebugging)
 	{
-		cout << "[" << m_iNodeNumber << "]" << "Selector End" << endl;
+		Cout_Indentation(pNodeStack);
+		cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " End   { Selector } " << endl;
+
 	}
 
 	return eState;

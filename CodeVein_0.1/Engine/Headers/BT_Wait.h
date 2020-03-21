@@ -9,9 +9,11 @@ class ENGINE_DLL CBT_Wait final : public CBT_Task_Node
 public:
 	typedef struct tagInitInfo
 	{
-		tagInitInfo(_double dMaxTime)
-			: Target_dMaxTime(dMaxTime) {}
+		tagInitInfo(char* tNodeName, _double dMaxTime)
+			: Target_dMaxTime(dMaxTime) 
+		{ strcpy_s<256>(Target_NodeName, tNodeName); }
 
+		char	Target_NodeName[256];
 		_double Target_dMaxTime;
 	}INFO;
 
@@ -29,7 +31,7 @@ public:
 
 private:
 	HRESULT Ready_Clone_Node(void* pInit_Struct);
-
+	
 private:
 	_double		m_dCurTime = 0;
 	_double		m_dMaxTime = 0;
