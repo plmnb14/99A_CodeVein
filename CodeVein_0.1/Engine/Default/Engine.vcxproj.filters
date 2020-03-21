@@ -181,6 +181,12 @@
     <Filter Include="01.Utility\[02] GameObject\0%29 GameObject\0%29 GuidTerrain">
       <UniqueIdentifier>{118bc0af-c4f3-4b5a-9aef-07175109312c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\[02] GameObject\4%29 Effect">
+      <UniqueIdentifier>{e05e1616-b32a-4ec3-8bd5-5647d2c79ff6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\[02] GameObject\4%29 Effect\0%29 MeshEffect">
+      <UniqueIdentifier>{9d3192da-064a-4d78-a7b4-6ac86c74d0bc}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01.Utility\[03] Component\Component\09%29 AIController">
       <UniqueIdentifier>{3b6681e3-0579-488c-a43e-c7ed0e0d79fc}</UniqueIdentifier>
     </Filter>
@@ -222,6 +228,9 @@
     </Filter>
     <Filter Include="01.Utility\[03] Component\Component\09%29 AIController\Node\Composite\Derive">
       <UniqueIdentifier>{e519e73a-8501-45d1-a76b-ff307982fc3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\[02] GameObject\3%29 UI">
+      <UniqueIdentifier>{2609861d-baea-48f1-abbb-8f2bfa680600}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -378,6 +387,12 @@
     <ClInclude Include="..\Headers\Terrain_Guide.h">
       <Filter>01.Utility\[02] GameObject\0%29 GameObject\0%29 GuidTerrain</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Effect.h">
+      <Filter>01.Utility\[02] GameObject\4%29 Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MeshEffect.h">
+      <Filter>01.Utility\[02] GameObject\4%29 Effect\0%29 MeshEffect</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\AIController.h">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController</Filter>
     </ClInclude>
@@ -438,9 +453,8 @@
     <ClInclude Include="..\Headers\BT_Loop.h">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\UI.h" />
-    <ClInclude Include="..\Headers\BT_Cooldown.h">
-      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
+    <ClInclude Include="..\Headers\UI.h">
+      <Filter>01.Utility\[02] GameObject\3%29 UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -576,6 +590,12 @@
     <ClCompile Include="..\Codes\Terrain_Guide.cpp">
       <Filter>01.Utility\[02] GameObject\0%29 GameObject\0%29 GuidTerrain</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\Effect.cpp">
+      <Filter>01.Utility\[02] GameObject\4%29 Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MeshEffect.cpp">
+      <Filter>01.Utility\[02] GameObject\4%29 Effect\0%29 MeshEffect</Filter>
+    </ClCompile>
     <ClCompile Include="..\Codes\AIController.cpp">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController</Filter>
     </ClCompile>
@@ -633,9 +653,8 @@
     <ClCompile Include="..\Codes\BT_Loop.cpp">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\UI.cpp" />
-    <ClCompile Include="..\Codes\BT_Cooldown.cpp">
-      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
+    <ClCompile Include="..\Codes\UI.cpp">
+      <Filter>01.Utility\[02] GameObject\3%29 UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,5 +1,8 @@
-Mesh_Bookcase|Bookcase.X|..\..\Client\Bin\Resources\Mesh\StaticMesh\Bookcase\|0|
-Mesh_Break_rosewindow_glass|Break_rosewindow_glass.X|..\..\Client\Bin\Resources\Mesh\StaticMesh\Break_rosewindow_glass\|0|
-Mesh_Sword|Sword.X|..\..\Client\Bin\Resources\Mesh\StaticMesh\Sword\|0|
-Mesh_TombStone|TombStone.X|..\..\Client\Bin\Resources\Mesh\StaticMesh\TombStone\|0|
-Mesh_Player|Player.X|..\..\Client\Bin\Resources\Mesh\DynamicMesh\Player\|1|
+Mesh_Bookcase|Bookcase.X|..\..\Client\Bin\Resources\Mesh\StaticMesh\Bookcase\|0
+Mesh_Break_rosewindow_glass|Break_rosewindow_glass.X|..\..\Client\Bin\Resources\Mesh\StaticMesh\Break_rosewindow_glass\|0
+Mesh_ARBloodAura01|ARBloodAura01.X|..\..\Client\Bin\Resources\Mesh\StaticMesh\Effect\ARBloodAura01\|0
+Mesh_ARBloodAura02|ARBloodAura02.X|..\..\Client\Bin\Resources\Mesh\StaticMesh\Effect\ARBloodAura02\|0
+Mesh_SlashLine|SlashLine.X|..\..\Client\Bin\Resources\Mesh\StaticMesh\Effect\SlashLine\|0
+Mesh_Sword|Sword.X|..\..\Client\Bin\Resources\Mesh\StaticMesh\Sword\|0
+Mesh_TombStone|TombStone.X|..\..\Client\Bin\Resources\Mesh\StaticMesh\TombStone\|0
+Mesh_Player|Player.X|..\..\Client\Bin\Resources\Mesh\DynamicMesh\Player\|1
