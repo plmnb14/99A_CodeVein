@@ -113,7 +113,7 @@ void CParticleMgr::Input_Pool(_tchar* szName, _int iCount)
 	for (_int i = 0; i <iCount; ++i)
 	{
 		// 미리 클론만 해놓기
-		CEffect* pEffect;
+		CEffect* pEffect = nullptr;
 		pEffect->Set_ParticleName(szName);
 		m_EffectPool[szName].push(pEffect);
 	}

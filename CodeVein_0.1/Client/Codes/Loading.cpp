@@ -3,7 +3,7 @@
 #include "Management.h"
 
 #include "Sky.h"
-#include "Effect.h"
+#include "TexEffect.h"
 #include "MeshEffect.h"
 #include "Player.h"
 #include "Terrain.h"
@@ -117,7 +117,7 @@ HRESULT CLoading::Ready_Effect(void)
 
 	Safe_AddRef(pManagement);
 
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_EffectSmoke", CEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/testSmoke.dat")))))
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_EffectSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/testSmoke.dat")))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype(L"GameObject_EffectTestMesh", CMeshEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/testMeshEff.dat")))))
 		return E_FAIL;
