@@ -138,7 +138,7 @@ technique Default_Technique
 	{
 		AlphaBlendEnable = true;
 		SrcBlend = SrcAlpha;
-		DestBlend = DestAlpha;
+		destblend = invsrcalpha;
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_MAIN();

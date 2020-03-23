@@ -7,19 +7,25 @@
 #include "Player.h"
 #include "Terrain.h"
 #include "TestMonster.h"
+
+
 #include "HPBack.h"
 #include "PlayerHP.h"
 #include "PlayerST.h"
 #include "BossDecoUI.h"
 #include "BossHP.h"
-#include "ItemPalette.h"
 #include "ItemSlot.h"
 #include "RightArrow.h"
 #include "LeftArrow.h"
-#include "ItemIcon.h"
+#include "Item.h"
 #include "MenuBaseUI.h"
-#include "Menu_Btn.h"
+#include "MenuIcon.h"
 #include "SlotCnt_UI.h"
+#include "Item_QuickSlot.h"
+#include "Menu_Status.h"
+#include "Menu_Item.h"
+#include "ActiveSkill_UI.h"
+#include "Menu_Active.h"
 
 USING(Client)
 
@@ -76,15 +82,24 @@ _uint CLoading::Loading_ForStage(void)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype(L"GameObject_LeftArrow", CLeftArrow::Create(m_pGraphicDev))))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_ItemPalette", CItemPalette::Create(m_pGraphicDev))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_ItemIcon", CItemIcon::Create(m_pGraphicDev))))
+	
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_Item", CItem::Create(m_pGraphicDev))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuBase", CMenuBaseUI::Create(m_pGraphicDev))))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuBtn", CMenu_Btn::Create(m_pGraphicDev))))
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuIcon", CMenuIcon::Create(m_pGraphicDev))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype(L"GameObject_CntSlotUI", CSlotCnt_UI::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_ItemQuickSlot", CItem_QuickSlot::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuStatus", CMenu_Status::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuItem", CMenu_Item::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_ActionUI", CActiveSkill_UI::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuActive", CMenu_Active::Create(m_pGraphicDev))))
 		return E_FAIL;
 
 	
@@ -115,17 +130,17 @@ _uint CLoading::Loading_ForStage(void)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_BossDecoUI", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/BossUI/BossHpGauge_Deco.tga", 1))))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_ItemIcon", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/ItemIcon/T_ItemIcon_00%d.tga", 5))))
+	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_Item", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/ItemIcon/T_ItemIcon_00%d.tga", 5))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_Arrow", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/QuickSlotUI/T_Arrow%d.jpg", 2))))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_ItemPalette", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/ItemPalette/ItemPalette.png", 1))))
+	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_Window", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/MenuWindow/Window%d.png", 3))))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_MenuBase", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/MenuWindow/Window%d.png", 1))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_MenuBtn", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/Menu_Icon/MenuIcon00%d.tga", 10))))
+	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_MenuIcon", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/Menu_Icon/MenuIcon00%d.tga", 10))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_Num", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/Number/Num%d.png", 4))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_ActiveIcon", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/KetsugiIcon/T_ActionKetsugi%d.tga", 15))))
 		return E_FAIL;
 	
 	// UI Shader

@@ -43,7 +43,9 @@ _int CLeftArrow::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
-	Click_LeftArrow();
+	//Click_LeftArrow();
+
+	Update_UIPos();
 
 	return NO_EVENT;
 }
@@ -161,18 +163,36 @@ void CLeftArrow::Click_LeftArrow()
 
 	Safe_AddRef(pManagement);
 
-	CItemSlot* pItemSlot = static_cast<CItemSlot*>(pManagement->Get_GameObjectBack(L"Layer_ItemSlot", SCENE_STAGE));
-	if (nullptr == pItemSlot)
+	CItem_QuickSlot* pItemQuickSlot = static_cast<CItem_QuickSlot*>(pManagement->Get_GameObjectBack(L"Layer_ItemSlot", SCENE_STAGE));
+	if (nullptr == pItemQuickSlot)
 		return;
 
 	if (CInput_Device::Get_Instance()->MousePt_InRect(m_fPosX, m_fPosY, m_fSizeX, m_fSizeY, g_hWnd)
 		&& CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
-		_int iIndex = pItemSlot->Get_Index() - 1;
-		pItemSlot->Set_Index(iIndex);
+		CItem_QuickSlot* pItemQuickSlot = static_cast<CItem_QuickSlot*>(pManagement->Get_GameObjectBack(L"Layer_ItemQuickSlot", SCENE_STAGE));
+		CMenuBaseUI* pMenuBase = static_cast<CMenuBaseUI*>(pManagement->Get_GameObjectBack(L"Layer_MenuBase", SCENE_STAGE));
+		if (pItemQuickSlot->Get_Index() > 0)
+			pItemQuickSlot->Set_Index(pItemQuickSlot->Get_Index() - 1);
+		else
+			pItemQuickSlot->Set_Index(pMenuBase->Get_SlotCnt() - 1);
 	}
 
 	Safe_Release(pManagement);
+}
+
+void CLeftArrow::Update_UIPos()
+{
+	if (m_bIsOpen)
+	{
+		m_fPosX = 220.f;
+		m_fPosY = 500.f;
+	}
+	else
+	{
+		m_fPosX = -WINCX + 220.f;
+		m_fPosY = 500.f;
+	}
 }
 
 CLeftArrow * CLeftArrow::Create(_Device pGraphic_Device)

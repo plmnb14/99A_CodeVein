@@ -5,6 +5,8 @@
 #include "UI.h"
 #include "Management.h"
 
+#include "Item.h"
+
 class CItemSlot : public CUI
 {
 private:
@@ -13,12 +15,12 @@ private:
 	virtual ~CItemSlot() = default;
 
 public:
-	_uint Get_Index() { return m_iIndex; }
-	_uint Get_MaxIndex() { return m_iMaxIndex; }
-	_uint Get_ItemCount() { return m_iItemCnt; }
+	
+	CItem::ITEM_TYPE Get_SlotItemType();
+	_uint Get_SlotSize();
 
 public:
-	void Set_Index(_uint iIndex);
+	void Set_Select(_bool bSelect) { m_bIsSelect = bSelect; }
 
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();
@@ -30,7 +32,11 @@ public:
 private:
 	HRESULT					Add_Component();
 	HRESULT					SetUp_ConstantTable();
-	void					Click_ItemSlot();
+
+public:
+	void					Add_Item(CItem::ITEM_TYPE eType);
+	void					Pop_Item();
+	
 
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
@@ -39,11 +45,11 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 
-	_uint					m_iIndex = 0;
-	_uint					m_iMaxIndex = 8;
-
-	_uint					m_iTexNum = 0;
-	_uint					m_iItemCnt = 0;
+	
+	vector<CItem*>			m_vecItem;
+	_uint					m_iSlotItemType;
+	_uint					m_iTexIndex = 0;
+	_bool					m_bIsSelect = false;
 
 public:
 	static CItemSlot*		Create(_Device pGraphic_Device);

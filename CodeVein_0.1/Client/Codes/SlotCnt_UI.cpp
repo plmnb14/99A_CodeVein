@@ -27,10 +27,10 @@ HRESULT CSlotCnt_UI::Ready_GameObject(void * pArg)
 
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = 300.f;
+	/*m_fPosX = 300.f;
 	m_fPosY = 580.f;
 	m_fSizeX = 30.f;
-	m_fSizeY = 30.f;
+	m_fSizeY = 30.f;*/
 
 	return NOERROR;
 }
@@ -48,7 +48,7 @@ _int CSlotCnt_UI::Update_GameObject(_double TimeDelta)
 		return -1;
 	Safe_AddRef(pManagement);
 
-	m_iItemCnt = static_cast<CItemSlot*>(pManagement->Get_GameObjectBack(L"Layer_ItemSlot", SCENE_STAGE))->Get_ItemCount();
+
 	
 	Safe_Release(pManagement);
 

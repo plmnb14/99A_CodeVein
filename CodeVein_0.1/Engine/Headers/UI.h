@@ -21,6 +21,11 @@ protected:
 	virtual ~CUI() = default;
 
 public:
+	_v2 Get_UI_Pos() { return _v2(m_fPosX, m_fPosY); }
+	_v2 Get_UI_Size() { return _v2(m_fSizeX, m_fSizeY); }
+	
+
+public:
 	void Set_UI_Pos(_float fPosX, _float fPosY);
 	void Set_UI_Size(_float fSizeX, _float fSizeY);
 

@@ -14,6 +14,9 @@ private:
 	virtual ~CSlotCnt_UI() = default;
 
 public:
+	void Set_Count(_uint iItemCnt) { m_iItemCnt = iItemCnt; }
+
+public:
 	virtual HRESULT			Ready_GameObject_Prototype();
 	virtual HRESULT			Ready_GameObject(void* pArg);
 	virtual _int			Update_GameObject(_double TimeDelta);

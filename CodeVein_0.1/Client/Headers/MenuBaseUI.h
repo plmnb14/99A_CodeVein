@@ -4,20 +4,29 @@
 #include "UI.h"
 #include "Client_Defines.h"
 
-#include "ItemIcon.h"
-#include "Menu_Btn.h"
+#include "ItemSlot.h"
+#include "SlotCnt_UI.h"
+#include "MenuIcon.h"
+
 
 BEGIN(Client)
 
-class CMenuBaseUI final : public CUI
+class CMenuIcon;
+class CMenuBaseUI  : public CUI
 {
 private:
 	explicit CMenuBaseUI(_Device pGraphic_Device);
 	explicit CMenuBaseUI(const CMenuBaseUI& rhs);
-	virtual ~CMenuBaseUI() = default;
+	virtual ~CMenuBaseUI() {};
+
 public:
-	_uint Get_ItemIndex(_uint iSlotIndex);
-	_uint Get_ItemCount(_uint iSlotIndex);
+	_uint Get_SlotSize(_uint iSlotIndex);
+	CItem::ITEM_TYPE Get_SlotItemType(_uint iSlotIndex);
+	_uint Get_SlotCnt() { return m_iSlotCnt; }
+	_bool Get_Full() { return m_bIsFull; }
+
+public:
+	void Set_WindowState(_bool WinState) { m_bIsOpenWindow = WinState; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -29,12 +38,20 @@ public:
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
+	
 	void	SetUp_WindowPosition();
-	HRESULT SetUp_MenuButton();
-	_bool	Find_Item(_uint iItemIndex);
+	
+private:
+	// 슬롯 개수
+	void Add_Slot(_uint iSlotCnt);
+	void Add_CntUI(_uint iCountUICnt);
+	void Add_MenuIcon(_uint iMenuIconCnt);
 
 public:
-	void Add_ItemIcon(const _tchar* pPrototypeTag, _uint iSceneID, const _tchar* pLayerTag, _uint iItemIndex);
+	void Add_Item(CItem::ITEM_TYPE eType, _uint iSlotIndex);
+	void Delete_Item(_uint iSlotIndex);
+	void Add_Manu_Slot(CItemSlot* pSlot);
+	
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -43,13 +60,19 @@ private:
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
-	_uint					m_iSlotCnt = 0;
-	_uint					m_iMaxSlotCnt = 8;
+	_uint					m_iSlotCnt = 0; // 소비아이템 슬롯 개수
+	_uint					m_iCountUICnt = 0; // Count UI 개수
+	_uint					m_iMenuIconCnt = 0; // 메뉴 아이콘 개수
+
+	//_uint					m_iMaxSlotCnt = 8;
 	_bool					m_bIsOpenWindow = false;
 
 	
-	vector<CItemIcon*>		m_vecItemSlot[8];
-	vector<CMenu_Btn*>		m_vecMenuBtn;
+	vector<CItemSlot*>			m_vecItemSlot;
+	vector<CSlotCnt_UI*>		m_vecCntUI;
+	vector<CMenuIcon*>			m_vecMenuIcon;
+	_bool						m_bIsFull = false;
+	
 
 public:
 	static CMenuBaseUI*		Create(_Device pGraphic_Device);

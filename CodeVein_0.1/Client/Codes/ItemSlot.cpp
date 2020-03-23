@@ -13,18 +13,30 @@ CItemSlot::CItemSlot(const CItemSlot & rhs)
 {
 }
 
-void CItemSlot::Set_Index(_uint iIndex)
-{
-	if ((iIndex > m_iMaxIndex) || (0 > iIndex))
-		return;
 
-	m_iIndex = iIndex;
+CItem::ITEM_TYPE CItemSlot::Get_SlotItemType()
+{
+	if (0 == m_vecItem.size())
+		return CItem::ITEM_NONE;
+
+	auto iter = m_vecItem.begin();
+
+	CItem::ITEM_TYPE eType = (*iter)->Get_Type();
+
+	return CItem::ITEM_TYPE(eType);
 }
+
+_uint CItemSlot::Get_SlotSize()
+{
+	size_t iSize = m_vecItem.size();
+	return _uint(iSize);
+}
+
 
 HRESULT CItemSlot::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
-
+	
 	return NOERROR;
 }
 
@@ -35,13 +47,8 @@ HRESULT CItemSlot::Ready_GameObject(void * pArg)
 
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = 300.f;
-	m_fPosY = 500.f;
-	m_fSizeX = 100.f;
-	m_fSizeY = 100.f;
-
-	m_iIndex = 0;
-
+	
+	
 	return NOERROR;
 }
 
@@ -54,24 +61,8 @@ _int CItemSlot::Update_GameObject(_double TimeDelta)
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
 	
-
-	CManagement* pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return -1;
-	Safe_AddRef(pManagement);
-
-	if (CInput_Device::Get_Instance()->Key_Up(DIK_P))
-	{
-		if (m_iIndex < m_iMaxIndex)
-			++m_iIndex;
-		else
-			m_iIndex = 0;
-	}
-
-	m_iTexNum = static_cast<CMenuBaseUI*>(pManagement->Get_GameObjectBack(L"Layer_MenuBase", SCENE_STAGE))->Get_ItemIndex(m_iIndex);
-	m_iItemCnt = static_cast<CMenuBaseUI*>(pManagement->Get_GameObjectBack(L"Layer_MenuBase", SCENE_STAGE))->Get_ItemCount(m_iIndex);
-
-	Safe_Release(pManagement);
+		
+	
 	return NO_EVENT;
 }
 
@@ -145,7 +136,7 @@ HRESULT CItemSlot::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STAGE, L"Texture_ItemIcon", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STAGE, L"Texture_Item", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -172,13 +163,13 @@ HRESULT CItemSlot::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, m_iTexNum)))
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, _uint(Get_SlotItemType()))))
 		return E_FAIL;
 
 	return NOERROR;
 }
 
-void CItemSlot::Click_ItemSlot()
+void CItemSlot::Add_Item(CItem::ITEM_TYPE eType)
 {
 	CManagement* pManagement = CManagement::Get_Instance();
 	if (nullptr == pManagement)
@@ -186,19 +177,20 @@ void CItemSlot::Click_ItemSlot()
 
 	Safe_AddRef(pManagement);
 
+	pManagement->Add_GameObject_ToLayer(L"GameObject_Item", SCENE_STAGE, L"Layer_Item");
+	CItem* pItem = static_cast<CItem*>(pManagement->Get_GameObjectBack(L"Layer_Item", SCENE_STAGE));
 	
-
-	if (CInput_Device::Get_Instance()->MousePt_InRect(m_fPosX, m_fPosY, m_fSizeX, m_fSizeY, g_hWnd))
-	{
-		if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_LB))
-		{			
-			pManagement->Add_GameObject_ToLayer(L"GameObject_ItemPalette", SCENE_STAGE, L"Layer_ItemPalette");
-		}
-		
-	}
+	pItem->Set_Type(eType);
+	m_vecItem.push_back(pItem);
 
 	Safe_Release(pManagement);
 }
+
+void CItemSlot::Pop_Item()
+{
+	m_vecItem.pop_back();
+}
+
 
 CItemSlot * CItemSlot::Create(_Device pGraphic_Device)
 {

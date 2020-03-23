@@ -13,21 +13,18 @@ CMenuBaseUI::CMenuBaseUI(const CMenuBaseUI & rhs)
 {
 }
 
-_uint CMenuBaseUI::Get_ItemIndex(_uint iSlotIndex)
+_uint CMenuBaseUI::Get_SlotSize(_uint iSlotIndex)
 {
-	if (m_iSlotCnt <= iSlotIndex)
-		return 0;
+	return m_vecItemSlot[iSlotIndex]->Get_SlotSize();
+}
 
+CItem::ITEM_TYPE CMenuBaseUI::Get_SlotItemType(_uint iSlotIndex)
+{
 	
-
-	return m_vecItemSlot[iSlotIndex].front()->Get_Index();
+	return m_vecItemSlot[iSlotIndex]->Get_SlotItemType();
 }
 
-_uint CMenuBaseUI::Get_ItemCount(_uint iSlotIndex)
-{
-	_uint iCnt = _uint(m_vecItemSlot[iSlotIndex].size());
-	return iCnt;
-}
+
 
 HRESULT CMenuBaseUI::Ready_GameObject_Prototype()
 {
@@ -42,13 +39,17 @@ HRESULT CMenuBaseUI::Ready_GameObject(void * pArg)
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
-	m_vecMenuBtn.reserve(9);
-	
+	//m_vecMenuIcon.reserve(9);
+	//m_vecItemSlot.reserve(8);
 
 	m_fPosX = WINCX - 300.f;
 	m_fPosY = WINCY * 0.5f;
-	m_fSizeX = WINCX * 0.5f;
-	m_fSizeY = WINCY;
+	m_fSizeX = 648;
+	m_fSizeY = 648;
+
+	Add_Slot(5);
+	Add_CntUI(5);
+	Add_MenuIcon(3);
 
 	return NOERROR;
 }
@@ -61,16 +62,25 @@ _int CMenuBaseUI::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
-	if (CInput_Device::Get_Instance()->Key_Up(DIK_C))
-		Add_ItemIcon(L"GameObject_ItemIcon", SCENE_STAGE, L"Layer_ItemIcon", 1);
+	/*if (CInput_Device::Get_Instance()->Key_Up(DIK_C))
+		Add_Item(CItem::ITEM_TYPE::REGEN_POWER, 0);
 	if (CInput_Device::Get_Instance()->Key_Up(DIK_V))
-		Add_ItemIcon(L"GameObject_ItemIcon", SCENE_STAGE, L"Layer_ItemIcon", 2);
+		Add_Item(CItem::ITEM_TYPE::ITEM_2, 1);
 	if (CInput_Device::Get_Instance()->Key_Up(DIK_B))
-		Add_ItemIcon(L"GameObject_ItemIcon", SCENE_STAGE, L"Layer_ItemIcon", 3);
+		Add_Item(CItem::ITEM_TYPE::ITEM_3, 2);*/
+	
 
 	SetUp_WindowPosition();
-
 	
+	for(_uint i = 0; i < m_iCountUICnt; ++i)
+	{
+		m_vecCntUI[i]->Set_Count(m_vecItemSlot[i]->Get_SlotSize());
+	}
+
+
+
+	//cout << m_vecItemSlot.size() << endl;
+
 	return NO_EVENT;
 }
 
@@ -143,7 +153,7 @@ HRESULT CMenuBaseUI::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STAGE, L"Texture_MenuBase", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STAGE, L"Texture_Window", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -176,96 +186,163 @@ HRESULT CMenuBaseUI::SetUp_ConstantTable()
 	return NOERROR;
 }
 
+
 void CMenuBaseUI::SetUp_WindowPosition()
 {
-	if (CInput_Device::Get_Instance()->Key_Up(DIK_ESCAPE))
-		m_bIsOpenWindow = !m_bIsOpenWindow;
-
 	if (true == m_bIsOpenWindow)
 	{
 		m_fPosX = WINCX - 300.f;
-		m_fPosY = WINCY * 0.5f;
+		m_fPosY = WINCY * 0.5f;	
 	}
 	else
 	{
 		m_fPosX = -WINCX * 0.5f;
-		m_fPosY = -WINCY * 0.5f;
+		m_fPosY = -WINCY * 0.5f;	
 	}
 
-	
 	for(_uint i = 0; i < m_iSlotCnt; ++i)
 	{
-		for (auto& iter : m_vecItemSlot[i])
-		{
-			iter->Set_UI_Pos(m_fPosX - 125.f + _float(m_iSlotCnt) * 45.f, m_fPosY + 200.f);
-		}
+		m_vecItemSlot[i]->Set_UI_Pos(m_fPosX - 126.f + /*m_vecItemSlot[i]->Get_UI_Size().x**/ i * 40.f, m_fPosY + 205.f);
 	}
+
+	for (_uint i = 0; i < m_iCountUICnt; ++i)
+	{
+		m_vecCntUI[i]->Set_UI_Pos(m_vecItemSlot[i]->Get_UI_Pos().x, m_vecItemSlot[i]->Get_UI_Pos().y + 30.f);
+	}
+	
+	for (_uint i = 0; i < m_iMenuIconCnt; ++i)
+	{
+		m_vecMenuIcon[i]->Set_UI_Pos(m_fPosX - 200.f + (m_vecMenuIcon[i]->Get_UI_Size().x + 10.f) * i, m_fPosY - 230.f);
+	}
+
 	
 }
 
-HRESULT CMenuBaseUI::SetUp_MenuButton()
+
+
+void CMenuBaseUI::Add_Slot(_uint iSlotCnt)
 {
-	CManagement* pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
+	m_iSlotCnt = iSlotCnt;
 
-	Safe_AddRef(pManagement);
-
-	CUI::UI_DESC* pDesc = new CUI::UI_DESC;
-	pDesc->fPosX = 500.f;
-	pDesc->fPosY = 600.f;
-	pDesc->fSizeX = 100.f;
-	pDesc->fSizeY = 100.f;
-	pManagement->Add_GameObject_ToLayer(L"GameObject_MenuBtn", SCENE_STAGE, L"Layer_MenuBtn", pDesc);
-
-	Safe_Release(pManagement);
-
-	return NOERROR;
-}
-
-_bool CMenuBaseUI::Find_Item(_uint iItemIndex)
-{
-	for (auto& iter : m_vecItemSlot)
-	{
-		for (auto& pItem : iter)
-		{
-			if (iItemIndex == pItem->Get_Index())
-				return true;
-		}
-	}
-	return false;
-}
-
-void CMenuBaseUI::Add_ItemIcon(const _tchar * pPrototypeTag, _uint iSceneID, const _tchar * pLayerTag, _uint iItemIndex)
-{
 	CManagement* pManagement = CManagement::Get_Instance();
 	if (nullptr == pManagement)
 		return;
 	Safe_AddRef(pManagement);
 
-	if (Find_Item(iItemIndex))
+	for(_uint i = 0; i < iSlotCnt; ++i)
 	{
-		//카운트 증가
-		/*CItemIcon* pItemIcon = static_cast<CItemIcon*>(pManagement->Get_GameObjectBack(pLayerTag, iSceneID));
-		pItemIcon->Set_ItemCnt(pItemIcon->Get_ItemCnt() + 1);*/
-	}
-	else
-	{
-		CUI::UI_DESC* pDesc = new CUI::UI_DESC;
-		pDesc->fPosX = m_fPosX - 125.f + _float(m_iSlotCnt) * 45.f;
-		pDesc->fPosY = m_fPosY + 200.f;
-		pDesc->fSizeX = 45.f;
-		pDesc->fSizeY = 45.f;
-		pManagement->Add_GameObject_ToLayer(pPrototypeTag, iSceneID, pLayerTag, pDesc);
-
-		CItemIcon* pItemIcon = static_cast<CItemIcon*>(pManagement->Get_GameObjectBack(pLayerTag, iSceneID));
-		pItemIcon->Set_Index(iItemIndex);
-		m_vecItemSlot[m_iSlotCnt].push_back(pItemIcon);
+		CUI::UI_DESC* pSlotDesc = new CUI::UI_DESC;
 		
-		++m_iSlotCnt;
+		pSlotDesc->fSizeX = 46.f;
+		pSlotDesc->fSizeY = 46.f;
+		pManagement->Add_GameObject_ToLayer(L"GameObject_ItemSlot", SCENE_STAGE, L"Layer_ItemSlot", pSlotDesc);
+
+		CItemSlot* pItemSlot = static_cast<CItemSlot*>(pManagement->Get_GameObjectBack(L"Layer_ItemSlot", SCENE_STAGE));
+
+		m_vecItemSlot.push_back(pItemSlot);
 	}
 	
 	Safe_Release(pManagement);
+}
+
+void CMenuBaseUI::Add_CntUI(_uint iCountUICnt)
+{
+	m_iCountUICnt = iCountUICnt;
+
+	CManagement* pManagement = CManagement::Get_Instance();
+	if (nullptr == pManagement)
+		return;
+	Safe_AddRef(pManagement);
+
+	for (_uint i = 0; i < iCountUICnt; ++i)
+	{
+		CUI::UI_DESC* pCntDesc = new CUI::UI_DESC;
+		pCntDesc->fPosX = m_fPosX;
+		pCntDesc->fPosY = m_fPosY;
+		pCntDesc->fSizeX = 20.f;
+		pCntDesc->fSizeY = 20.f;
+
+		pManagement->Add_GameObject_ToLayer(L"GameObject_CntSlotUI", SCENE_STAGE, L"Layer_CntUI", pCntDesc);
+
+		CSlotCnt_UI* pCntUI = static_cast<CSlotCnt_UI*>(pManagement->Get_GameObjectBack(L"Layer_CntUI", SCENE_STAGE));
+
+		m_vecCntUI.push_back(pCntUI);
+	}
+
+	Safe_Release(pManagement);
+}
+
+void CMenuBaseUI::Add_MenuIcon(_uint iMenuIconCnt)
+{
+	m_iMenuIconCnt = iMenuIconCnt;
+
+	CManagement* pManagement = CManagement::Get_Instance();
+	if (nullptr == pManagement)
+		return;
+
+	Safe_AddRef(pManagement);
+
+	for (_uint i = 0; i < iMenuIconCnt; ++i)
+	{
+		CUI::UI_DESC* pDesc = new CUI::UI_DESC;
+		pDesc->fPosX = 500.f;
+		pDesc->fPosY = 600.f;
+		pDesc->fSizeX = 50.f;
+		pDesc->fSizeY = 50.f;
+
+		pManagement->Add_GameObject_ToLayer(L"GameObject_MenuIcon", SCENE_STAGE, L"Layer_MenuIcon", pDesc);
+
+		CMenuIcon* pIcon = static_cast<CMenuIcon*>(pManagement->Get_GameObjectBack(L"Layer_MenuIcon", SCENE_STAGE));
+		pIcon->Set_MenuType(CMenuIcon::MENU_TYPE(i));
+		m_vecMenuIcon.push_back(pIcon);
+	}
+
+	Safe_Release(pManagement);
+}
+
+void CMenuBaseUI::Add_Item(CItem::ITEM_TYPE eType, _uint iSlotIndex)
+{
+	if (CItem::ITEM_NONE == eType)
+		return;
+
+	CManagement* pManagement = CManagement::Get_Instance();
+	if (nullptr == pManagement)
+		return;
+	Safe_AddRef(pManagement);
+
+	if (iSlotIndex > m_iSlotCnt - 1)
+	{
+		m_bIsFull = true;
+		Safe_Release(pManagement);
+		return;
+	}
+	else
+		m_bIsFull = false;
+
+	if (((0 < m_vecItemSlot[iSlotIndex]->Get_SlotSize()) &&
+		(eType != m_vecItemSlot[iSlotIndex]->Get_SlotItemType())) ||
+		(m_vecItemSlot[iSlotIndex]->Get_SlotSize() >= 3))
+	{
+		Add_Item(eType, iSlotIndex + 1);
+	}
+	else
+		m_vecItemSlot[iSlotIndex]->Add_Item(eType);
+
+	Safe_Release(pManagement);
+}
+
+void CMenuBaseUI::Delete_Item(_uint iSlotIndex)
+{
+	if (0 < m_vecItemSlot[iSlotIndex]->Get_SlotSize())
+		m_vecItemSlot[iSlotIndex]->Pop_Item();
+	else
+		MSG_BOX("해당 슬롯에 등록된 아이템이 없습니다.");
+}
+
+void CMenuBaseUI::Add_Manu_Slot(CItemSlot * pSlot)
+{
+	m_iSlotCnt++;
+	m_vecItemSlot.push_back(pSlot);
 }
 
 CMenuBaseUI * CMenuBaseUI::Create(_Device pGraphic_Device)
