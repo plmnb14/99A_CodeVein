@@ -18,7 +18,7 @@ HRESULT CBT_Inverter::Set_Child(CBT_Node * pNode)
 	return NO_ERROR;
 }
 
-CBT_Node::BT_NODE_STATE CBT_Inverter::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Inverter::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	/*
 	자식노드 결과의 반대값을 반환합니다.
@@ -31,14 +31,14 @@ CBT_Node::BT_NODE_STATE CBT_Inverter::Update_Node(_double TimeDelta, vector<CBT_
 	// 최초 평가
 	if (!m_bInProgress)
 	{
-		switch (m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, bDebugging))
+		switch (m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging))
 		{
 		case BT_NODE_STATE::SERVICE:
 		case BT_NODE_STATE::FAILED:
 			return End_Node(pNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
 
 		case BT_NODE_STATE::INPROGRESS:
-			return BT_NODE_STATE::INPROGRESS;
+			break;
 
 		case BT_NODE_STATE::SUCCEEDED:
 			return End_Node(pNodeStack, BT_NODE_STATE::FAILED, bDebugging);
@@ -70,16 +70,17 @@ void CBT_Inverter::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 {
 	if (m_bInit)
 	{
+		if (bDebugging)
+		{
+			Cout_Indentation(pNodeStack);
+			cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " Start   { Inverter } " << endl;
+		}
+
 		pNodeStack->push_back(this);
 		Safe_AddRef(this);
 
 		m_bInProgress = false;
 		m_bInit = false;
-
-		if (bDebugging)
-		{
-			cout << "Inverter Start" << endl;
-		}
 	}
 }
 
@@ -98,7 +99,8 @@ CBT_Node::BT_NODE_STATE CBT_Inverter::End_Node(vector<CBT_Node*>* pNodeStack, BT
 
 	if (bDebugging)
 	{
-		cout << "Inverter End" << endl;
+		Cout_Indentation(pNodeStack);
+		cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " End   { Inverter } " << endl;
 	}
 
 	return eState;
@@ -106,6 +108,9 @@ CBT_Node::BT_NODE_STATE CBT_Inverter::End_Node(vector<CBT_Node*>* pNodeStack, BT
 
 HRESULT CBT_Inverter::Ready_Clone_Node(void * pInit_Struct)
 {
+	INFO temp = *(INFO*)pInit_Struct;
+
+	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
 
 	CBT_Node::_Set_Auto_Number(&m_iNodeNumber);
 	return NO_ERROR;
@@ -121,8 +126,10 @@ CBT_Node * CBT_Inverter::Clone(void * pInit_Struct)
 	CBT_Inverter* pInstance = new CBT_Inverter(*this);
 
 	if (FAILED(pInstance->Ready_Clone_Node(pInit_Struct)))
+	{
+		MSG_BOX("Failed To Clone CBT_Inverter");
 		Safe_Release(pInstance);
-
+	}
 	return pInstance;
 }
 

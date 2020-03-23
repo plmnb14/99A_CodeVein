@@ -118,6 +118,25 @@ const _bool CInput_Device::Get_DIMouseState_Up(MOUSEKEYSTATE eMouse)
 	}
 
 	return false;
+
+const _bool CInput_Device::MousePt_InRect(_float fRectPosX, _float fRectPosY, _float fRectSizeX, _float fRectSizeY, HWND hWnd)
+{
+	POINT pt = {};
+
+	GetCursorPos(&pt);
+	ScreenToClient(hWnd, &pt);
+
+	_float fMouseX = static_cast<float>(pt.x);
+	_float fMouseY = static_cast<float>(pt.y);
+
+
+	if (fMouseX < (fRectPosX - fRectSizeX * 0.5f) ||
+		fMouseX >(fRectPosX + fRectSizeX * 0.5f) ||
+		fMouseY < (fRectPosY - fRectSizeY * 0.5f) ||
+		fMouseY >(fRectPosY + fRectSizeY * 0.5f))
+		return false;
+	
+	return true;
 }
 
 const _bool CInput_Device::Get_DIMouseState(MOUSEKEYSTATE eMouse)

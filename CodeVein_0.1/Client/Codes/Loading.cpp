@@ -3,14 +3,30 @@
 #include "Management.h"
 
 #include "Sky.h"
-#include "Effect.h"
+#include "TexEffect.h"
+#include "MeshEffect.h"
 #include "Player.h"
-//#include "Terrain.h"
 #include "TestMonster.h"
 #include "HPBack.h"
 #include "HPBar.h"
 #include "Weapon.h"
 
+#include "PlayerHP.h"
+#include "PlayerST.h"
+#include "BossDecoUI.h"
+#include "BossHP.h"
+#include "ItemSlot.h"
+#include "RightArrow.h"
+#include "LeftArrow.h"
+#include "Item.h"
+#include "MenuBaseUI.h"
+#include "MenuIcon.h"
+#include "SlotCnt_UI.h"
+#include "Item_QuickSlot.h"
+#include "Menu_Status.h"
+#include "Menu_Item.h"
+#include "ActiveSkill_UI.h"
+#include "Menu_Active.h"
 
 USING(Client)
 
@@ -69,15 +85,47 @@ _uint CLoading::Loading_ForStage(void)
 	if (FAILED(pManagement->Add_Prototype(L"GameObject_Player", CPlayer::Create(m_pGraphicDev))))
 		return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_Effect", CEffect::Create(m_pGraphicDev, nullptr))))
-		return E_FAIL;
 
+	lstrcpy(m_szString, L"이펙트 생성 중....");
+	Ready_Effect();
+
+	// UI
 	if (FAILED(pManagement->Add_Prototype(L"GameObject_HPBack", CHPBack::Create(m_pGraphicDev))))
 		return E_FAIL;
-
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_HPBar", CHPBar::Create(m_pGraphicDev))))
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_PlayerHP", CPlayerHP::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_PlayerST", CPlayerST::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_BossDecoUI", CBossDecoUI::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_BossHP", CBossHP::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_ItemSlot", CItemSlot::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_RightArrow", CRightArrow::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_LeftArrow", CLeftArrow::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_Item", CItem::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuBase", CMenuBaseUI::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuIcon", CMenuIcon::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_CntSlotUI", CSlotCnt_UI::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_ItemQuickSlot", CItem_QuickSlot::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuStatus", CMenu_Status::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuItem", CMenu_Item::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_ActionUI", CActiveSkill_UI::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuActive", CMenu_Active::Create(m_pGraphicDev))))
 		return E_FAIL;
 
+	
 	//몬스터
 	if (FAILED(pManagement->Add_Prototype(L"Monster_TestMonster", CTestMonster::Create(m_pGraphicDev))))
 		return E_FAIL;
@@ -86,8 +134,29 @@ _uint CLoading::Loading_ForStage(void)
 	if (FAILED(pManagement->Add_Prototype(L"GameObject_Weapon", CWeapon::Create(m_pGraphicDev))))
 		return E_FAIL;
 
-
-	cout << "로딩 완료" << endl;
+	// UI텍스쳐 (임시)
+	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_HPBack", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/HPBarBack/HPBack.png", 1))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_PlayerHP", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/HPBar/T_HPGaugeTexture_UI.tga", 1))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_PlayerST", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/STBar/T_StaminaBar_UI.tga", 1))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_BossHP", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/BossUI/T_BossHpGaugeTexture_UI.tga", 1))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_BossDecoUI", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/BossUI/BossHpGauge_Deco.tga", 1))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_Item", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/ItemIcon/T_ItemIcon_00%d.tga", 5))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_Arrow", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/QuickSlotUI/T_Arrow%d.jpg", 2))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_Window", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/MenuWindow/Window%d.png", 3))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_MenuIcon", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/Menu_Icon/MenuIcon00%d.tga", 10))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_Num", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/Number/Num%d.png", 4))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_ActiveIcon", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/KetsugiIcon/T_ActionKetsugi%d.tga", 15))))
+		return E_FAIL;
 
 	m_bFinish = true;
 	lstrcpy(m_szString, L"로딩 완료");
@@ -115,6 +184,96 @@ unsigned int CALLBACK CLoading::Thread_Main(void* pArg)
 	LeaveCriticalSection(pLoading->Get_Crt());
 
 	return iFlag;
+}
+
+HRESULT CLoading::Ready_Effect(void)
+{
+	CManagement*	pManagement = CManagement::Get_Instance();
+	if (nullptr == pManagement)
+		return -1;
+
+	Safe_AddRef(pManagement);
+
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_EffectSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/testSmoke.dat")))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_EffectTestMesh", CMeshEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/testMeshEff.dat")))))
+		return E_FAIL;
+
+	Safe_Release(pManagement);
+	return S_OK;
+}
+
+Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
+{
+	HANDLE hFile = CreateFile(szPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		::MSG_BOX("Load Failed. [INVALID_HANDLE_VALUE]");
+
+	DWORD dwByte = 0;
+	Engine::EFFECT_INFO* pInfo = new Engine::EFFECT_INFO;
+
+	_bool bIsTex = false;
+	::ReadFile(hFile, &bIsTex, sizeof(_bool), &dwByte, nullptr);
+
+	while (true)
+	{
+		::ReadFile(hFile, &pInfo->bBillBoard, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bOnlyYRot, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bDistortion, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bStaticFrame, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bUseColorTex, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bColorMove, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bDirMove, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bFadeIn, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bFadeOut, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bLinearMove, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bRandomMove, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bRandomRot, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bRandStartPos, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bRevColor, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bRotMove, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bScaleMove, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fAlphaSpeed, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fAlphaSpeed_Max, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fAlphaSpeed_Min, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fColorSpeed, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fCreateDelay, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fCreateDelay_Max, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fCreateDelay_Min, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fLifeTime, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fMaxAlpha, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fAnimSpeed, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fMaxFrame, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fMoveScaleSpeed, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fMoveSpeed, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fMoveSpeed_Max, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fMoveSpeed_Min, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fRandStartPosRange_Max, sizeof(_float) * 3, &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fRandStartPosRange_Min, sizeof(_float) * 3, &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fRotSpeed, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fRotSpeed_Max, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fRotSpeed_Min, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->iMaxCount, sizeof(_int), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->szColorName, sizeof(TCHAR) * MAX_STR, &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->szName, sizeof(TCHAR) * MAX_STR, &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->szGradientName, sizeof(TCHAR) * MAX_STR, &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->vEndColor, sizeof(_v4), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->vMoveDirection, sizeof(_v3), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->vMoveScale, sizeof(_v3), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->vRandDirectionRange, sizeof(_v3), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->vRotDirection, sizeof(_v3), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->vStartColor, sizeof(_v4), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->vStartPos, sizeof(_v3), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->vStartScale, sizeof(_v3), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fColorIndex, sizeof(_float), &dwByte, nullptr);
+
+		break;
+	}
+
+	CloseHandle(hFile);
+
+	return pInfo;
 }
 
 CLoading* CLoading::Create(LPDIRECT3DDEVICE9 pGraphicDev, SCENEID eLoadingID)

@@ -13,10 +13,12 @@ class ENGINE_DLL CBT_Loop final : public CBT_Decorator_Node
 public:
 	typedef struct tagInitInfo
 	{
-		tagInitInfo(_uint iLoopCount)
-			: iMaxLoopCount(iLoopCount) {}
+		tagInitInfo(char* pNodeName, _uint iLoopCount)
+			: iMaxLoopCount(iLoopCount)
+		{ strcpy_s<256>(Target_NodeName, pNodeName); }
 
-		_uint iMaxLoopCount;
+		char	Target_NodeName[256];
+		_uint	iMaxLoopCount;
 	}INFO;
 
 protected:
@@ -28,7 +30,7 @@ public:
 	HRESULT Set_Child(CBT_Node* pNode);
 
 public:
-	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging) override;
+	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging) override;
 
 public:
 	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging);

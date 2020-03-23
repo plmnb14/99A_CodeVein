@@ -14,54 +14,6 @@ CBlackBoard::CBlackBoard(const CBlackBoard & rhs)
 
 CBlackBoard::BLACKBOARD_OUTPUT_STATE CBlackBoard::Set_Value(const _tchar * pName, const void * pData, BLACKBOARD_VALUE_STATE eValue_Type)
 {
-	//switch (eValue_Type)
-	//{
-	//case BLACKBOARD_VALUE_STATE::BOOL:
-	//	auto iter = find_if(m_mapBool.begin(), m_mapBool.end(), CTag_Finder(pName));
-
-	//	if (iter == m_mapBool.end())
-	//		m_mapBool.emplace(MAP_BOOL::value_type(pName, *(_bool*)pData));
-	//	else
-	//		iter->second = *(_bool*)pData;
-	//	break;
-	//case BLACKBOARD_VALUE_STATE::FLOAT:
-	//	auto iter = find_if(m_mapBool.begin(), m_mapBool.end(), CTag_Finder(pName));
-
-	//	if (iter == m_mapBool.end())
-	//		m_mapBool.emplace(MAP_BOOL::value_type(pName, *(_bool*)pData));
-	//	else
-	//		iter->second = *(_bool*)pData;
-	//	break;
-	//case BLACKBOARD_VALUE_STATE::INT:
-	//	auto iter = find_if(m_mapBool.begin(), m_mapBool.end(), CTag_Finder(pName));
-
-	//	if (iter == m_mapBool.end())
-	//		m_mapBool.emplace(MAP_BOOL::value_type(pName, *(_bool*)pData));
-	//	else
-	//		iter->second = *(_bool*)pData;
-	//	break;
-	//case BLACKBOARD_VALUE_STATE::VEC3:
-	//	auto iter = find_if(m_mapBool.begin(), m_mapBool.end(), CTag_Finder(pName));
-
-	//	if (iter == m_mapBool.end())
-	//		m_mapBool.emplace(MAP_BOOL::value_type(pName, *(_bool*)pData));
-	//	else
-	//		iter->second = *(_bool*)pData;
-	//	break;
-	//case BLACKBOARD_VALUE_STATE::GAMEOBJECT:
-	//	auto iter = find_if(m_mapBool.begin(), m_mapBool.end(), CTag_Finder(pName));
-
-	//	if (iter == m_mapBool.end())
-	//		m_mapBool.emplace(MAP_BOOL::value_type(pName, *(_bool*)pData));
-	//	else
-	//		iter->second = *(_bool*)pData;
-	//	break;
-	//default:
-	//	break;
-	//}
-
-	//return E_NOTIMPL;
-
 	/*
 	반환값
 	NONE : 값 변경이 없을 떄
@@ -150,27 +102,49 @@ CBlackBoard::BLACKBOARD_OUTPUT_STATE CBlackBoard::Set_Value(const _tchar * pName
 	return eState;
 }
 
-template<class T>
-T CBlackBoard::Get_Value(const _tchar * pName, BLACKBOARD_VALUE_STATE eValue_Type) const
+const _bool CBlackBoard::Get_BoolValue(const _tchar * pName) const
 {
-	switch (eValue_Type)
+	const _bool* bTemp = Find_Value_In_mapBool(pName);
+
+	if (nullptr == bTemp)
 	{
-	case BLACKBOARD_VALUE_STATE::BOOL:
-		return T(*Find_Value_In_mapBool(pName));
-	case BLACKBOARD_VALUE_STATE::FLOAT:
-		return T(*Find_Value_In_mapFloat(pName));
-	case BLACKBOARD_VALUE_STATE::INT:
-		return T(*Find_Value_In_mapInt(pName));
-	case BLACKBOARD_VALUE_STATE::VEC3:
-		return T(*Find_Value_In_mapVec3(pName));
-	default:
-		break;
+		return false;
 	}
 
-	return T(NULL);
+	return *bTemp;
 }
 
-const _bool* CBlackBoard::Find_Value_In_mapBool(const _tchar * pName)
+const _float CBlackBoard::Get_FloatValue(const _tchar * pName) const
+{
+	const _float* fTemp = Find_Value_In_mapFloat(pName);
+
+	if (nullptr == fTemp)
+		return 0.f;
+
+	return *fTemp;
+}
+
+const _int CBlackBoard::Get_IntValue(const _tchar * pName) const
+{
+	const _int* iTemp = Find_Value_In_mapInt(pName);
+
+	if (nullptr == iTemp)
+		return 0;
+
+	return *iTemp;
+}
+
+const _v3 CBlackBoard::Get_V3Value(const _tchar * pName) const
+{
+	const _v3* vTemp = Find_Value_In_mapVec3(pName);
+
+	if (nullptr == vTemp)
+		return _v3(0.f, 0.f, 0.f);
+
+	return *vTemp;
+}
+
+const _bool* CBlackBoard::Find_Value_In_mapBool(const _tchar * pName) const
 {
 	auto iter = find_if(m_mapBool.begin(), m_mapBool.end(), CTag_Finder(pName));
 
@@ -180,7 +154,7 @@ const _bool* CBlackBoard::Find_Value_In_mapBool(const _tchar * pName)
 	return &iter->second;
 }
 
-const _int * CBlackBoard::Find_Value_In_mapInt(const _tchar * pName)
+const _int * CBlackBoard::Find_Value_In_mapInt(const _tchar * pName) const
 {
 	auto iter = find_if(m_mapInt.begin(), m_mapInt.end(), CTag_Finder(pName));
 
@@ -190,7 +164,7 @@ const _int * CBlackBoard::Find_Value_In_mapInt(const _tchar * pName)
 	return &iter->second;
 }
 
-const _float* CBlackBoard::Find_Value_In_mapFloat(const _tchar * pName)
+const _float* CBlackBoard::Find_Value_In_mapFloat(const _tchar * pName) const
 {
 	auto iter = find_if(m_mapFloat.begin(), m_mapFloat.end(), CTag_Finder(pName));
 
@@ -200,7 +174,7 @@ const _float* CBlackBoard::Find_Value_In_mapFloat(const _tchar * pName)
 	return &iter->second;
 }
 
-const _v3* CBlackBoard::Find_Value_In_mapVec3(const _tchar * pName)
+const _v3* CBlackBoard::Find_Value_In_mapVec3(const _tchar * pName) const
 {
 	auto iter = find_if(m_mapVec3.begin(), m_mapVec3.end(), CTag_Finder(pName));
 

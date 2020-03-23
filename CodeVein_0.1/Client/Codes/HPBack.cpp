@@ -25,7 +25,11 @@ HRESULT CHPBack::Ready_GameObject(void * pArg)
 
 	CUI::Ready_GameObject(pArg);
 
-	
+	/*m_fPosX = 200.f;
+	m_fPosY = 650.f;
+	m_fSizeX = 284.f;
+	m_fSizeY = 32.f;*/
+
 	return NOERROR;
 }
 
@@ -115,7 +119,7 @@ HRESULT CHPBack::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Shader
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Default", L"Com_Shader", (CComponent**)&m_pShaderCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_UI", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
 	// for.Com_VIBuffer

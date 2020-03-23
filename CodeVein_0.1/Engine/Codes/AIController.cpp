@@ -14,7 +14,7 @@ CAIController::CAIController(const CAIController & rhs)
 HRESULT CAIController::Update_AIController(_double TimeDelta)
 {
 	if(m_pBehaviorTree)
-		m_pBehaviorTree->Update_BeHaviorTree(TimeDelta);
+		m_pBehaviorTree->Update_BeHaviorTree(TimeDelta, m_pBlackBoard);
 
 	return S_OK;
 }
@@ -39,7 +39,6 @@ HRESULT CAIController::Set_BlackBoard(CBlackBoard * pBlackBoard)
 	Safe_Release(m_pBlackBoard);
 
 	m_pBlackBoard = pBlackBoard;
-	Safe_AddRef(m_pBlackBoard);
 
 	return S_OK;
 }
@@ -82,13 +81,7 @@ CComponent * CAIController::Clone_Component(void * pArg)
 
 void CAIController::Free()
 {
-	if(m_pBehaviorTree)
-		m_pBehaviorTree->Free();
-
 	Safe_Release(m_pBehaviorTree);
-
-	if (m_pBlackBoard)
-		m_pBlackBoard->Free();
 
 	Safe_Release(m_pBlackBoard);
 

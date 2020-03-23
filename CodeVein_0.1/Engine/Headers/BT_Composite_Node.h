@@ -15,7 +15,7 @@ protected:
 	virtual ~CBT_Composite_Node() = default;
 
 public:
-	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging) = 0;
+	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging) = 0;
 
 public:
 	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging) = 0;

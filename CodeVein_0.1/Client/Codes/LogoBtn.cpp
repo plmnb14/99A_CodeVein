@@ -44,7 +44,7 @@ _int CLogoBtn::Update_GameObject(_double TimeDelta)
 
 	m_bIsColl = Coll_Mouse();
 
-	
+	//Make_CursorBar();
 
 	return NO_EVENT;
 }
@@ -151,6 +151,28 @@ HRESULT CLogoBtn::SetUp_ConstantTable()
 		return E_FAIL;
 
 	return NOERROR;
+}
+
+void CLogoBtn::Make_CursorBar()
+{
+	CManagement* pManagement = CManagement::Get_Instance();
+	if (nullptr == pManagement)
+		return;
+
+	Safe_AddRef(pManagement);
+
+	if (true == m_bIsColl)
+	{
+		CUI::UI_DESC* pDesc = new CUI::UI_DESC;
+		pDesc->fPosX = WINCX * 0.5f - 60.f;
+		pDesc->fPosY = WINCY * 0.8f;
+		pDesc->fSizeX = 20.f;
+		pDesc->fSizeY = 50.f;
+
+		pManagement->Add_GameObject_ToLayer(L"GameObject_CursorBar", SCENE_LOGO, L"Layer_CursorUI", pDesc);
+	}
+
+	Safe_Release(pManagement);
 }
 
 _bool CLogoBtn::Coll_Mouse()

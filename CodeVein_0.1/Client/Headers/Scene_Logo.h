@@ -19,7 +19,7 @@ public:
 	HRESULT Ready_Prototype_GameObject();
 	HRESULT Ready_Layer_BackGround(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_LogoBtn(const _tchar* pLayerTag);
-
+	HRESULT Ready_Layer_CursorUI(const _tchar* pLayerTag);
 
 private:
 	CLoading*			m_pLoading = nullptr;

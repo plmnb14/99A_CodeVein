@@ -26,6 +26,12 @@ void CBT_Node::Notify_Parent_Of_State(CBT_Node* pParent, BT_NODE_STATE eState)
 	this->m_eChild_State = BT_NODE_STATE::INPROGRESS;
 }
 
+void CBT_Node::Cout_Indentation(vector<CBT_Node*>* pNodeStack)
+{
+	for (size_t i = 0; i < pNodeStack->size(); ++i)
+		cout << "  ";
+}
+
 void CBT_Node::Free()
 {
 

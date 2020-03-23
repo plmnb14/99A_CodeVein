@@ -107,10 +107,26 @@ void CCalculater::V3_RotZ(_v3 * _pOut, const _v3 * _pIn, const _float _fRadian)
 	*_pOut = pOut;
 }
 
+// _fValue1 - 시작점, _fValue2 - 마지막점, _fAmount - 시간
+float CCalculater::Lerp(float _fValue1, float _fValue2, float _fAmount)
+{
+	return float(_fValue1 + ((float)(_fValue2 - _fValue1) * _fAmount));
+}
+
+const _double CCalculater::Random_Num_Double(_double dBegin, _double _dEnd)
+{
+	random_device rd;
+	mt19937_64 rng(rd());
+
+	uniform_real<> Value(dBegin, _dEnd);
+
+	return Value(rng);
+}
+
 const _int CCalculater::Random_Num(_int _iBegin, _int _iEnd)
 {
 	random_device rd;
-	mt19937	rng(rd());
+	mt19937_64	rng(rd());
 
 	uniform_int_distribution<> Value(_iBegin, _iEnd);
 
@@ -122,7 +138,7 @@ const _v3 CCalculater::Random_Dir(_float _fDirX, _float _fDirY, _float _fDirZ)
 	_v3 vRandomDir;
 
 	random_device rd;
-	mt19937	rng(rd());
+	mt19937_64	rng(rd());
 
 	uniform_int_distribution<> dis_a(-100, 100);
 	uniform_int_distribution<> dis_b(-100, 100);
@@ -140,7 +156,7 @@ const _v3 CCalculater::Random_Dir(_float _fLength)
 	_v3 vRandomDir;
 
 	random_device rd;
-	mt19937	rng(rd());
+	mt19937_64	rng(rd());
 
 	uniform_int_distribution<> dis_a(-100, 100);
 	uniform_int_distribution<> dis_b(-100, 100);
@@ -158,7 +174,7 @@ const _v3 CCalculater::Random_Dir(_int _iX_Begin, _int _iX_End, _int _iY_Begin, 
 	_v3 vRandomDir;
 
 	random_device rd;
-	mt19937	rng(rd());
+	mt19937_64	rng(rd());
 
 	uniform_int_distribution<> dis_a(_iX_Begin, _iX_End);
 	uniform_int_distribution<> dis_b(_iY_Begin, _iY_End);
@@ -176,7 +192,7 @@ const _v3 CCalculater::Random_Dir_Positive()
 	_v3 vRandomDir;
 
 	random_device rd;
-	mt19937	rng(rd());
+	mt19937_64	rng(rd());
 
 	uniform_int_distribution<> dis_a(-100, 100);
 	uniform_int_distribution<> dis_b(-100, 100);
@@ -194,7 +210,7 @@ const _v3 CCalculater::Random_Dir_Nagative()
 	_v3 vRandomDir;
 
 	random_device rd;
-	mt19937	rng(rd());
+	mt19937_64	rng(rd());
 
 	uniform_int_distribution<> dis_a(-100, 100);
 	uniform_int_distribution<> dis_b(-100, 100);

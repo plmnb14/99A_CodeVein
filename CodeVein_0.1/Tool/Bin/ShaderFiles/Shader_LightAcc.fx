@@ -42,7 +42,10 @@ struct PS_OUT
 {
 	vector		vShade : COLOR0;
 	vector		vSpecular : COLOR1;
+	vector		vBloom : COLOR2;
 };
+
+
 
 PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 {
@@ -79,6 +82,20 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	vWorldPos = mul(vWorldPos, g_matViewInv);
 
 	vector		vLook = vWorldPos - g_vCamPosition;
+
+	//// Bloom ====================================================================
+	//float fThreshold = 0.3;	 // 이 기준점보다 밝으면 Bloom 타겟
+	//Out.vBloom = saturate((Out.vShade - fThreshold) / (1 - fThreshold));
+	//Out.vBloom *= Out.vShade;
+	//// Bloom End ====================================================================
+
+	// RimLight ====================================================================
+	float fRimWidth = 1.5f - vDepthInfo.x;
+	vector vCamPos = g_vCamPosition - vWorldPos;
+	float fRim = smoothstep(1.f - fRimWidth, 1.f, 1.f - saturate(abs(dot(vNormal, vCamPos))));
+	float4 rc = g_vLightDiffuse;
+	Out.vShade += pow(fRim, 2.f) * rc;
+	// RimLight End ====================================================================
 
 	Out.vSpecular = g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 30.f) * (g_vLightSpecular * g_vMtrlSpecular);
 	Out.vSpecular.a = 0.f;	
@@ -127,6 +144,14 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
 
 	Out.vShade = fAtt * g_vLightDiffuse * saturate(dot(normalize(vLightDir) * -1.f, vNormal)) + saturate(g_vLightAmbient * g_vMtrlAmbient);
 	Out.vShade.a = 1.f;
+
+	// RimLight ====================================================================
+	float fRimWidth = 1.5f - vDepthInfo.x;
+	vector vCamPos = g_vCamPosition - vWorldPos;
+	float fRim = smoothstep(1.f - fRimWidth, 1.f, 1.f - saturate(abs(dot(vNormal, vCamPos))));
+	float4 rc = g_vLightDiffuse;
+	Out.vShade += pow(fRim, 2.f) * rc;
+	// RimLight End ====================================================================
 
 	vector		vReflect = reflect(normalize(vLightDir), vNormal);
 

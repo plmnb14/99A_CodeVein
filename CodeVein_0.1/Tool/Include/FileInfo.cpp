@@ -72,7 +72,7 @@ void CFileInfo::Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst)
 			pPathInfo->wstrStateKey + L"|" +
 			pPathInfo->wstrFileName + L"|" +
 			pPathInfo->wstrImgPath + L"|" +
-			pPathInfo->szIsDynamic + L"|";
+			pPathInfo->szIsDynamic;
 
 		fout << wstrCombined << endl;
 	}

@@ -27,6 +27,7 @@ public:
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
+	void	Make_CursorBar();
 
 public:
 	_bool Coll_Mouse();
@@ -36,7 +37,7 @@ private:
 	CRenderer*				m_pRendererCom = nullptr;
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
-	CBuffer_Terrain*		m_pBufferCom = nullptr;
+	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 	_bool					m_bIsColl = false;
 

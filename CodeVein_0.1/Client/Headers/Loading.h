@@ -25,6 +25,9 @@ public:
 public:
 	static unsigned int CALLBACK Thread_Main(void* pArg);
 private:
+	HRESULT Ready_Effect(void);
+	Engine::EFFECT_INFO* Read_EffectData(const _tchar* szPath);
+private:
 	HANDLE				m_hThread;
 	CRITICAL_SECTION	m_Crt;
 	SCENEID				m_eLoadingID;
