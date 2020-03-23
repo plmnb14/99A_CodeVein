@@ -49,6 +49,7 @@ private:
 
 private:
 	CBT_Node*		m_pChild = nullptr;
+	_bool			m_bInProgress = false;
 
 	CTransform*		m_pTransform = nullptr;
 	_tchar			m_Target_Key[256] = { 0, };

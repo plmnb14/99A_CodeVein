@@ -43,6 +43,11 @@ HRESULT CAIController::Set_BlackBoard(CBlackBoard * pBlackBoard)
 	return S_OK;
 }
 
+const CBlackBoard * CAIController::Get_BlackBoard() const
+{
+	return m_pBlackBoard;
+}
+
 HRESULT CAIController::Ready_Component_Prototype()
 {
 	return S_OK;;

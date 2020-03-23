@@ -79,6 +79,8 @@ void CBT_Inverter::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 		pNodeStack->push_back(this);
 		Safe_AddRef(this);
 
+		m_eChild_State = BT_NODE_STATE::INPROGRESS;
+
 		m_bInProgress = false;
 		m_bInit = false;
 	}

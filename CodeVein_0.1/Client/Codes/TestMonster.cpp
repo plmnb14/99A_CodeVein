@@ -26,19 +26,19 @@ HRESULT CTestMonster::Ready_GameObject(void * pArg)
 
 	
 	CBlackBoard* pBlackBoard = CBlackBoard::Create();
-	pBlackBoard->Set_Value(L"Target_Pos", &_v3(2.f, 2.f, 2.f), CBlackBoard::BLACKBOARD_VALUE_STATE::VEC3);
+	pBlackBoard->Set_Value(L"Target_Pos", &_v3(-2.f, -2.f, -2.f), CBlackBoard::BLACKBOARD_VALUE_STATE::VEC3);
 
 	//_v3 temp = pBlackBoard->Get_V3Value(L"Target_Pos");
 
-	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create();
+	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create(true);
 
 	CManagement*		pManagement = CManagement::Get_Instance();
 
-	CBT_Sequence* pSequence = static_cast<CBT_Sequence*>(pManagement->Clone_Node(L"Sequence", CBT_Node_Manager::COMPOSITE, &CBT_Sequence::INFO("Sequence1")));
+	//CBT_Sequence* pSequence = static_cast<CBT_Sequence*>(pManagement->Clone_Node(L"Sequence", CBT_Node_Manager::COMPOSITE, &CBT_Sequence::INFO("Sequence1")));
 	//CBT_Sequence* pSequence1 = static_cast<CBT_Sequence*>(pManagement->Clone_Node(L"Sequence", CBT_Node_Manager::COMPOSITE, &CBT_Sequence::INFO("Sequence2")));
 	//CBT_Sequence* pSequence2 = static_cast<CBT_Sequence*>(pManagement->Clone_Node(L"Sequence", CBT_Node_Manager::COMPOSITE, nullptr));
 
-	//CBT_Selector* pSelector = static_cast<CBT_Selector*>(pManagement->Clone_Node(L"Selector", CBT_Node_Manager::COMPOSITE, &CBT_Selector::INFO("Selecotr")));
+	CBT_Selector* pSelector = static_cast<CBT_Selector*>(pManagement->Clone_Node(L"Selector", CBT_Node_Manager::COMPOSITE, &CBT_Selector::INFO("Selecotr")));
 
 	//CBT_Wait* pWait2 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait2", 2, 0)));
 	//CBT_Wait* CoolWait = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("CoolWait",2)));
@@ -52,23 +52,24 @@ HRESULT CTestMonster::Ready_GameObject(void * pArg)
 	CBT_Wait* pWait4 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait4", 4, 0)));
 
 	//CBT_Cooldown* pCooldown1 = static_cast<CBT_Cooldown*>(pManagement->Clone_Node(L"Cooldown", CBT_Node_Manager::DECORATOR, &CBT_Cooldown::INFO("Colldown1", 1)));
-	CBT_Cooldown* pCooldown4 = static_cast<CBT_Cooldown*>(pManagement->Clone_Node(L"Cooldown", CBT_Node_Manager::DECORATOR, &CBT_Cooldown::INFO("Colldown4", 4)));
+	//CBT_Cooldown* pCooldown4 = static_cast<CBT_Cooldown*>(pManagement->Clone_Node(L"Cooldown", CBT_Node_Manager::DECORATOR, &CBT_Cooldown::INFO("Colldown4", 4)));
 
 	//CBT_Loop* pLoop3 = static_cast<CBT_Loop*>(pManagement->Clone_Node(L"Loop", CBT_Node_Manager::DECORATOR, &CBT_Loop::INFO("Loop", 3)));
 	//CBT_Loop* pLoop0 = static_cast<CBT_Loop*>(pManagement->Clone_Node(L"Loop", CBT_Node_Manager::DECORATOR, &CBT_Loop::INFO("Loop", 0)));
 
 	//CBT_MoveDirectly* pMoveDirect = static_cast<CBT_MoveDirectly*>(pManagement->Clone_Node(L"MoveDirectly", CBT_Node_Manager::TASK, &CBT_MoveDirectly::INFO("MoveDirectly", m_pTransformCom, L"Target_Pos", 1, 3)));
 
-	//CBT_ConeCheck* pConeCheck = static_cast<CBT_ConeCheck*>(pManagement->Clone_Node(L"ConeCheck", CBT_Node_Manager::DECORATOR, &CBT_ConeCheck::INFO("ConeCheck", L"Target_Pos", m_pTransformCom, 40, 5)));
+	CBT_ConeCheck* pConeCheck = static_cast<CBT_ConeCheck*>(pManagement->Clone_Node(L"ConeCheck", CBT_Node_Manager::DECORATOR, &CBT_ConeCheck::INFO("ConeCheck", L"Target_Pos", m_pTransformCom, 40, 5)));
+	//CBT_Inverter* pInverter = static_cast<CBT_Inverter*>(pManagement->Clone_Node(L"Inverter", CBT_Node_Manager::DECORATOR, &CBT_Inverter::INFO("Inverter")));
 
-
-	if (FAILED(pBehaviorTree->Set_Child(pSequence))) return E_FAIL;
+	if (FAILED(pBehaviorTree->Set_Child(pSelector))) return E_FAIL;
 	//if (FAILED(pSelector->Add_Child(pSequence))) return E_FAIL;
-	if (FAILED(pSequence->Add_Child(pCooldown4))) return E_FAIL;
-	pCooldown4->Set_Child(pWait1);
-	//pConeCheck->Set_Child(pAni17);
+	if (FAILED(pSelector->Add_Child(pConeCheck))) return E_FAIL;
+	//pCooldown4->Set_Child(pInverter);
+	//pInverter->Set_Child(pWait1);
+	pConeCheck->Set_Child(pWait1);
 	//pCooldown1->Set_Child(pLoop3);
-	pSequence->Add_Child(pWait4);
+	pSelector->Add_Child(pWait4);
 	//pLoop3->Set_Child(pWait1);
 	//pCooldown4->Set_Child(pAni2);
 

@@ -10,6 +10,7 @@ BEGIN(Engine)
 
 class ENGINE_DLL CBT_Inverter final : public CBT_Decorator_Node
 {
+public:
 	typedef struct tagInitInfo
 	{
 		tagInitInfo(char* pNodeName)

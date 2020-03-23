@@ -45,15 +45,7 @@ void CBehaviorTree::Update_BeHaviorTree(_double TimeDelta, const CBlackBoard* pB
 			}
 		}
 
-
-		//// 메인 스레드
-		//while (!m_pNodeStack.empty() && CBT_Node::BT_NODE_STATE::INPROGRESS != m_pNodeStack.back()->Update_Node(TimeDelta, &m_pNodeStack, &m_plistNodeStack, m_bDebuging));
-		//
-		//// 서브 스레드
-		//for (auto SubNodeStack : m_plistNodeStack)
-		//{
-		//	while (CBT_Node::BT_NODE_STATE::INPROGRESS != SubNodeStack->back()->Update_Node(TimeDelta, SubNodeStack, &m_plistNodeStack, m_bDebuging));
-		//}
+		
 	}
 }
 

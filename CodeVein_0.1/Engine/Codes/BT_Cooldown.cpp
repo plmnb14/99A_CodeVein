@@ -30,8 +30,7 @@ CBT_Node::BT_NODE_STATE CBT_Cooldown::Update_Node(_double TimeDelta, vector<CBT_
 		{
 			m_bInit = true;
 			m_eCurState = BT_NODE_STATE::INPROGRESS;
-			//Safe_AddRef(m_pChild);	//  종료시 충돌은 나지않지만, 릭이 남음
-			//횟수가 반복될수록 릭이 늘어남
+
 			return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
 		}
 		else

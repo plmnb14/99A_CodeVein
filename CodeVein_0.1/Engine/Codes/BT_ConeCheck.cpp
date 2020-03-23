@@ -26,30 +26,52 @@ CBT_Node::BT_NODE_STATE CBT_ConeCheck::Update_Node(_double TimeDelta, vector<CBT
 
 	Start_Node(pNodeStack, bDebugging);
 
-	_v3 vTarget_Pos = pBlackBoard->Get_V3Value(m_Target_Key);
-
-	_v3 vLength = vTarget_Pos - m_pTransform->Get_Pos();
-	vLength.y = 0.f;
-
-	/*
-	높이와 상관없이 거리를 판단함.
-	타겟이 허용거리 안에 있다.  ->  시야각 판단 시작
-	*/
-	//	허용거리		타겟
-	if (m_fMaxLength >= D3DXVec3Length(&vLength))
+	//최초 평가
+	if (!m_bInProgress)
 	{
-		if (Is_InFov(m_fDegreeOfFov, m_pTransform, vTarget_Pos))
+		_v3 vTarget_Pos = pBlackBoard->Get_V3Value(m_Target_Key);
+
+		_v3 vLength = vTarget_Pos - m_pTransform->Get_Pos();
+		vLength.y = 0.f;
+
+		/*
+		높이와 상관없이 거리를 판단함.
+		타겟이 허용거리 안에 있다.  ->  시야각 판단 시작
+		*/
+		//	허용거리		타겟
+		if (m_fMaxLength >= D3DXVec3Length(&vLength))
 		{
-			return End_Node(pNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+			if (Is_InFov(m_fDegreeOfFov, m_pTransform, vTarget_Pos))
+			{
+				m_bInProgress = true;
+				return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
+				//return End_Node(pNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+			}
+			else
+			{
+				return End_Node(pNodeStack, BT_NODE_STATE::FAILED, bDebugging);
+			}
 		}
 		else
 		{
 			return End_Node(pNodeStack, BT_NODE_STATE::FAILED, bDebugging);
 		}
 	}
+	// 진행중 평가
 	else
 	{
-		return End_Node(pNodeStack, BT_NODE_STATE::FAILED, bDebugging);
+		switch (m_eChild_State)
+		{
+		case BT_NODE_STATE::SERVICE:
+		case BT_NODE_STATE::FAILED:
+			return End_Node(pNodeStack, BT_NODE_STATE::FAILED, bDebugging);
+
+		case BT_NODE_STATE::INPROGRESS:
+			return BT_NODE_STATE::INPROGRESS;
+
+		case BT_NODE_STATE::SUCCEEDED:
+			return End_Node(pNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+		}
 	}
 
 	return BT_NODE_STATE::INPROGRESS;
@@ -68,6 +90,8 @@ void CBT_ConeCheck::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 		pNodeStack->push_back(this);
 		Safe_AddRef(this);
 
+		m_eChild_State = BT_NODE_STATE::INPROGRESS;
+		m_bInProgress = false;
 		m_bInit = false;
 	}
 }

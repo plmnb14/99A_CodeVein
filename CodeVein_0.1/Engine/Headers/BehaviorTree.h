@@ -7,6 +7,7 @@ Ai를 작동시키는 행동트리의 인터페이스
 */
 
 BEGIN(Engine)
+class thread;
 class CBT_Task_Node;
 class CBT_Composite_Node;
 class CBT_Root;
@@ -31,7 +32,7 @@ private:
 	CBT_Root*					m_pRoot = nullptr;
 	//메인 쓰레드
 	vector<CBT_Node*>			m_pNodeStack;
-
+	
 	/* 
 	0번   : mainThread
 	1번 ~ : SubThread
