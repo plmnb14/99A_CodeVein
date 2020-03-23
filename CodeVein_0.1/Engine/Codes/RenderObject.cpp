@@ -54,8 +54,6 @@ HRESULT CRenderObject::Render_GameObject()
 
 	for (_ulong i = 0; i < dwNumSubSet; ++i)
 	{
-		cout << "¤·? " << endl;
-
 		m_pShader->Begin_Pass(m_dwPassNum);
 
 		if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_DIFFUSE))))
@@ -86,8 +84,6 @@ void CRenderObject::Update_Collider()
 		m_pCollider->SetUp_Radius_Auto(V3_ONE, m_pMesh_Static->Get_VtxMin(), m_pMesh_Static->Get_VtxMax());
 		m_pCollider->Update(m_pTransform->Get_Pos() + _v3{ 0.f, m_pCollider->Get_Radius().y ,0.f });
 	}
-
-	cout << m_pMesh_Static->Get_VtxMax().y << endl;
 }
 
 HRESULT CRenderObject::Add_Essentional()

@@ -40,7 +40,7 @@ VS_OUT VS_MAIN_NoWorld(VS_IN In)
 {
 	VS_OUT		Out = (VS_OUT)0;
 
-	Out.vPos = float4(In.vPos, 1.f);
+	Out.vPos = (float4)(In.vPos, 1.f);
 
 	return Out;
 }
@@ -98,6 +98,5 @@ technique Default_Technique
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_MAIN();
 	}
-
 }
 

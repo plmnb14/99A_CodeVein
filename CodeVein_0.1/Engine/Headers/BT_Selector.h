@@ -1,11 +1,20 @@
 #pragma once
 
-#include "BT_Composite_Node.h"
+#include "..\headers\BT_Composite_Node.h"
 
 BEGIN(Engine)
 
 class ENGINE_DLL CBT_Selector final : public CBT_Composite_Node
 {
+public:
+	typedef struct tagInitInfo
+	{
+		tagInitInfo(char* pNodeName)
+		{ strcpy_s<256>(Target_NodeName, pNodeName); }
+
+		char	Target_NodeName[256];
+	}INFO;
+
 protected:
 	explicit CBT_Selector();
 	explicit CBT_Selector(const CBT_Selector& rhs);
@@ -15,18 +24,16 @@ public:
 	HRESULT Add_Child(CBT_Node* pNode);
 
 public:
-	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack) override;
+	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging) override;
 
-protected:
-	virtual void Start_Node(vector<CBT_Node*>* pNodeStack);
-	virtual void End_Node(vector<CBT_Node*>* pNodeStack);
+public:
+	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging);
+	virtual BT_NODE_STATE End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging);
 
 private:
 	HRESULT Ready_Clone_Node(void* pInit_Struct);
 
 private:
-	vector<CBT_Node*>	m_pChildren;
-
 	size_t				m_pCurIndex = 0;
 
 public:

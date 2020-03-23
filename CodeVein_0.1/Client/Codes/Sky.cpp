@@ -24,12 +24,15 @@ HRESULT CSky::Ready_GameObject(void * pArg)
 	// 복제해서 생성 된 후, 추가적으로 필요한 데이터들을 셋팅하낟.
 	if (FAILED(Add_Component()))
 		return E_FAIL;
+	
+	m_pTransformCom->Set_Scale(_v3(100.f, 100.f, 100.f));
 
 	return NOERROR;
 }
 
 _int CSky::Update_GameObject(_double TimeDelta)
 {
+	CGameObject::Update_GameObject(TimeDelta);
 	return _int();
 }
 
@@ -117,7 +120,7 @@ HRESULT CSky::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 2)))
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 3)))
 		return E_FAIL;
 
 	Safe_Release(pManagement);

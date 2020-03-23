@@ -49,9 +49,6 @@
     <Filter Include="02.GameObject\Stage\Sky">
       <UniqueIdentifier>{a86a26cf-cb01-4bbb-9eb3-56b9af6d576e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\Effect">
-      <UniqueIdentifier>{83e29ab0-c6ec-406c-85cf-0fdef8abded7}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\Monster">
       <UniqueIdentifier>{71691d1d-2d69-411b-8330-bcd4d01bfd07}</UniqueIdentifier>
     </Filter>
@@ -207,9 +204,6 @@
     <ClInclude Include="..\Headers\Sky.h">
       <Filter>02.GameObject\Stage\Sky</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Effect.h">
-      <Filter>02.GameObject\Stage\Effect</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\TestMonster.h">
       <Filter>02.GameObject\Stage\Monster</Filter>
     </ClInclude>
@@ -310,9 +304,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Sky.cpp">
       <Filter>02.GameObject\Stage\Sky</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Effect.cpp">
-      <Filter>02.GameObject\Stage\Effect</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\TestMonster.cpp">
       <Filter>02.GameObject\Stage\Monster</Filter>

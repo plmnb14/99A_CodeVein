@@ -1,0 +1,132 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="00.WinApp">
+      <UniqueIdentifier>{abe62e3b-c212-41c4-b503-873e14f44bce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Document">
+      <UniqueIdentifier>{d206a81e-2cf3-4656-88d4-4d23a2743f7e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.MainFrm">
+      <UniqueIdentifier>{7001a50f-63e0-4127-83e3-57977e77267b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.View">
+      <UniqueIdentifier>{fd77f2fd-51c6-4903-87e1-c3e76a99b97c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="99.Default">
+      <UniqueIdentifier>{e2c69486-83fd-4783-b6b6-d50c4b5544bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="98.Header">
+      <UniqueIdentifier>{ca4945ec-3cd7-4784-b18f-2db914b0cab3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.Dialog">
+      <UniqueIdentifier>{dcf16c3b-f18b-4720-9faf-37cbcbd2facb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.Dialog\00.ParticleTab">
+      <UniqueIdentifier>{053d29e3-2d0f-4275-8f0c-b15d07261f3b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.Dialog\01.EffectTab">
+      <UniqueIdentifier>{d6d8ac35-85ea-42cf-a968-ad1b163adfd5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.Dialog\02.TrailTab">
+      <UniqueIdentifier>{cb10242b-422f-46fc-bfb6-c94e99f709bf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.View\00.FormView">
+      <UniqueIdentifier>{562f5e98-90a2-4590-9663-c6600e57d59c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="04.Dialog\00.ParticleTab\00.ListPopup">
+      <UniqueIdentifier>{a6851157-a468-42df-a6d8-b6cc59f1a264}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="EffectTool.h">
+      <Filter>00.WinApp</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectToolDoc.h">
+      <Filter>01.Document</Filter>
+    </ClInclude>
+    <ClInclude Include="MainFrm.h">
+      <Filter>02.MainFrm</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectToolView.h">
+      <Filter>03.View</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>98.Header</Filter>
+    </ClInclude>
+    <ClInclude Include="MyFormView.h">
+      <Filter>03.View\00.FormView</Filter>
+    </ClInclude>
+    <ClInclude Include="ParticleTab.h">
+      <Filter>04.Dialog\00.ParticleTab</Filter>
+    </ClInclude>
+    <ClInclude Include="EffectTab.h">
+      <Filter>04.Dialog\01.EffectTab</Filter>
+    </ClInclude>
+    <ClInclude Include="TrailTab.h">
+      <Filter>04.Dialog\02.TrailTab</Filter>
+    </ClInclude>
+    <ClInclude Include="ResListPopup.h">
+      <Filter>04.Dialog\00.ParticleTab\00.ListPopup</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="EffectTool.cpp">
+      <Filter>00.WinApp</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectToolDoc.cpp">
+      <Filter>01.Document</Filter>
+    </ClCompile>
+    <ClCompile Include="MainFrm.cpp">
+      <Filter>02.MainFrm</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectToolView.cpp">
+      <Filter>03.View</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>99.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="MyFormView.cpp">
+      <Filter>03.View\00.FormView</Filter>
+    </ClCompile>
+    <ClCompile Include="ParticleTab.cpp">
+      <Filter>04.Dialog\00.ParticleTab</Filter>
+    </ClCompile>
+    <ClCompile Include="EffectTab.cpp">
+      <Filter>04.Dialog\01.EffectTab</Filter>
+    </ClCompile>
+    <ClCompile Include="TrailTab.cpp">
+      <Filter>04.Dialog\02.TrailTab</Filter>
+    </ClCompile>
+    <ClCompile Include="ResListPopup.cpp">
+      <Filter>04.Dialog\00.ParticleTab\00.ListPopup</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="res\EffectTool.ico">
+      <Filter>99.Default</Filter>
+    </Image>
+    <Image Include="res\EffectToolDoc.ico">
+      <Filter>99.Default</Filter>
+    </Image>
+    <Image Include="res\Toolbar.bmp">
+      <Filter>99.Default</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="EffectTool.rc">
+      <Filter>99.Default</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="res\EffectTool.rc2">
+      <Filter>99.Default</Filter>
+    </None>
+  </ItemGroup>
+</Project>

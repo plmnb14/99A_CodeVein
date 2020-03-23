@@ -1194,13 +1194,13 @@ void CCamera::KeyInput()
 	//	m_fFov += fMoveSpeed;
 	//}
 
-	if (GetAsyncKeyState(VK_LSHIFT) & 0x8000)
+	if (CInput_Device::Get_Instance()->Key_Up(DIK_Z))
 	{
 		m_pTransform->Add_Pos(fMoveSpeed, _v3(0, 1, 0));
 		m_pTransform->Add_At(fMoveSpeed, _v3(0, 1, 0));
 	}
 
-	if (GetAsyncKeyState(VK_LCONTROL) & 0x8000)
+	if (CInput_Device::Get_Instance()->Key_Up(DIK_X))
 	{
 		m_pTransform->Add_Pos(-fMoveSpeed, _v3(0, 1, 0));
 		m_pTransform->Add_At(-fMoveSpeed, _v3(0, 1, 0));

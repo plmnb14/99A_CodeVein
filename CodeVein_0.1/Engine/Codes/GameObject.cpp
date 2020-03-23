@@ -61,6 +61,11 @@ HRESULT CGameObject::Render_GameObject()
 	return S_OK;
 }
 
+void CGameObject::Set_Dead()
+{
+	m_bIsDead = true;
+}
+
 HRESULT CGameObject::Add_Component(_uint iSceneID, const _tchar * pPrototypeTag, const _tchar * pComponentTag, CComponent** ppComponent, void * pArg)
 {
 	if (nullptr != Find_Component(pComponentTag))
