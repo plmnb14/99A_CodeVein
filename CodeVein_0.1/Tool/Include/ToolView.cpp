@@ -489,6 +489,7 @@ void CToolView::Free()
 	Engine::CCameraMgr::Get_Instance()->Destroy_Instance();
 
 	Engine::CFrameMgr::Get_Instance()->Destroy_Instance();
+
 	Engine::CTimer_Manager::Get_Instance()->Destroy_Instance();
 
 	Engine::Safe_Release(g_pGraphicDev);

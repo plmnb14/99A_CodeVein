@@ -1,7 +1,7 @@
 Tex_Aura|Aura%d.dds|..\..\Client\Bin\Resources\Texture\Aura\|0|3
-Tex_CloudPattern|T_CloudPattern_%d.tga|..\..\Client\Bin\Resources\Texture\CloudPattern\|0|7
-Tex_HPBarBack|HPBar_Back.png|..\..\Client\Bin\Resources\Texture\HPBarBack\|0|1
-Tex_LogoBack|Logo_BackGround.tga|..\..\Client\Bin\Resources\Texture\LogoBack\|0|1
-Tex_LogoFrame|LogoFrame.png|..\..\Client\Bin\Resources\Texture\LogoFrame\|0|1
-Tex_LogoTitle|T_TitleLogo_TM_UI.tga|..\..\Client\Bin\Resources\Texture\LogoTitle\|0|2
+Tex_BossUI|BossHpGauge_Deco.tga|..\..\Client\Bin\Resources\Texture\TestUI\BossUI\|0|2
+Tex_Button|TestBtn.png|..\..\Client\Bin\Resources\Texture\TestUI\Button\|0|1
+Tex_HPBar|T_HPGaugeTexture_UI.tga|..\..\Client\Bin\Resources\Texture\TestUI\HPBar\|0|1
+Tex_HPBarBack|HPBack.png|..\..\Client\Bin\Resources\Texture\TestUI\HPBarBack\|0|1
+Tex_LogoBack|Logo_BackGround.tga|..\..\Client\Bin\Resources\Texture\TestUI\LogoBack\|0|2
 Tex_TitleUI|TitleUI%d.png|..\..\Client\Bin\Resources\Texture\TitleUI\|0|12

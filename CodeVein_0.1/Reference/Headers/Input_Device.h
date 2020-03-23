@@ -26,6 +26,7 @@ public:
 public:
 	const	_byte	Get_DIKeyState(_ubyte byKeyID) { return m_byKeyState[byKeyID]; }
 	const	_bool	Get_DIMouseState(MOUSEKEYSTATE eMouse);
+	const	_bool	Get_DIMouseState_Up(MOUSEKEYSTATE eMouse);
 	const	_long	Get_DIMouseMove(MOUSEMOVESTATE eMouseState) { return *(((_long*)&m_tMouseState) + eMouseState); }
 
 public:

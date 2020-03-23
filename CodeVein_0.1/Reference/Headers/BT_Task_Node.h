@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BT_Node.h"
+#include "..\headers\BT_Node.h"
 
 /*
 AI가 행동할 액션을 정의한다.
@@ -16,15 +16,11 @@ protected:
 	virtual ~CBT_Task_Node() = default;
 
 public:
-	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack) = 0;
+	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging) = 0;
 
-protected:
-	/*
-	Task 노드가 시작될때 Start_Node를 호출
-	            끝날때 End_Node를 호출
-	*/
-	virtual void Start_Node(vector<CBT_Node*>* pNodeStack) = 0;
-	virtual void End_Node(vector<CBT_Node*>* pNodeStack) = 0;
+public:
+	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging) = 0;
+	virtual BT_NODE_STATE End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging) = 0;
 
 public:
 	virtual CBT_Node* Clone(void* pInit_Struct) = 0;

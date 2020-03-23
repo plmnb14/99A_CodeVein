@@ -146,8 +146,8 @@ HRESULT CRenderer::Draw_RenderList()
 	if (nullptr == m_pTarget_Manager)
 		return E_FAIL;
 
-	m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Deferred");
-	m_pTarget_Manager->Render_Debug_Buffer(L"MRT_LightAcc");
+	//m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Deferred");
+	//m_pTarget_Manager->Render_Debug_Buffer(L"MRT_LightAcc");
 
 #endif
 

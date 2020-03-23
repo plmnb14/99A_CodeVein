@@ -55,7 +55,6 @@ _int CScene_Logo::Update_Scene(_double TimeDelta)
 		if (FAILED(pManagement->Clear_Instance(SCENE_LOGO)))
 			return -1;
 
-
 		Safe_Release(pManagement);		
 
 		return 0;

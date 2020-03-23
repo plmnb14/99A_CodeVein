@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BT_Task_Node.h"
+#include "..\headers\BT_Task_Node.h"
 
 BEGIN(Engine)
 
@@ -10,9 +10,9 @@ public:
 	typedef struct tagInitInfo
 	{
 		tagInitInfo(_double dMaxTime)
-			: m_dMaxTime(dMaxTime) {}
+			: Target_dMaxTime(dMaxTime) {}
 
-		_double m_dMaxTime;
+		_double Target_dMaxTime;
 	}INFO;
 
 protected:
@@ -21,11 +21,11 @@ protected:
 	virtual ~CBT_Wait() = default;
 
 public:
-	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack) override;
+	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging) override;
 
-protected:
-	virtual void Start_Node(vector<CBT_Node*>* pNodeStack);
-	virtual void End_Node(vector<CBT_Node*>* pNodeStack);
+public:
+	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging);
+	virtual BT_NODE_STATE End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging);
 
 private:
 	HRESULT Ready_Clone_Node(void* pInit_Struct);

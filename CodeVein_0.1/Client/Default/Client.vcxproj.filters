@@ -37,44 +37,44 @@
     <Filter Include="02.GameObject\Stage">
       <UniqueIdentifier>{4906a369-b8c8-473f-8723-4cbb692fe9a4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\Terrain">
-      <UniqueIdentifier>{9ba38b9d-24eb-44a9-90e7-758c353fe55c}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Public">
       <UniqueIdentifier>{1d29a86d-7d64-48b1-9c03-9130316429e4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\Player">
-      <UniqueIdentifier>{ad20ce46-5eec-4c07-8f84-ee15a8e3237c}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\Sky">
-      <UniqueIdentifier>{a86a26cf-cb01-4bbb-9eb3-56b9af6d576e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\Effect">
-      <UniqueIdentifier>{83e29ab0-c6ec-406c-85cf-0fdef8abded7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\Monster">
-      <UniqueIdentifier>{71691d1d-2d69-411b-8330-bcd4d01bfd07}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\UI">
-      <UniqueIdentifier>{c4430b7f-3cc2-4c69-886a-16a0e0447311}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\Logo\LogoButton">
       <UniqueIdentifier>{4f8b8664-1d1b-4d2b-8ec4-2bdf40633246}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\UI\00.PlayerUI">
+    <Filter Include="02.GameObject\Stage\1%29 Monster">
+      <UniqueIdentifier>{71691d1d-2d69-411b-8330-bcd4d01bfd07}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\3%29 Sky">
+      <UniqueIdentifier>{a86a26cf-cb01-4bbb-9eb3-56b9af6d576e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Effect">
+      <UniqueIdentifier>{83e29ab0-c6ec-406c-85cf-0fdef8abded7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI">
+      <UniqueIdentifier>{c4430b7f-3cc2-4c69-886a-16a0e0447311}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\00.PlayerUI">
       <UniqueIdentifier>{4c20310c-aa64-471f-abb8-3bcdda962cbd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\UI\00.PlayerUI\HPBack">
+    <Filter Include="02.GameObject\Stage\4%29 UI\00.PlayerUI\HPBack">
       <UniqueIdentifier>{fa879426-186e-47c8-b86a-a658c605a61a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\UI\00.PlayerUI\HPBar">
+    <Filter Include="02.GameObject\Stage\4%29 UI\00.PlayerUI\HPBar">
       <UniqueIdentifier>{71f3b7e5-9b16-4faf-a9d7-c6bc1ae53dfb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\UI\01.MonsterUI">
+    <Filter Include="02.GameObject\Stage\4%29 UI\01.MonsterUI">
       <UniqueIdentifier>{c8d63875-25fd-4802-a102-e872f46bb451}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\UI\02.BossUI">
+    <Filter Include="02.GameObject\Stage\4%29 UI\02.BossUI">
       <UniqueIdentifier>{525e338f-a342-4a0c-8cd1-1035ddbf57e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\0%29 Player">
+      <UniqueIdentifier>{ad20ce46-5eec-4c07-8f84-ee15a8e3237c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 Weapon">
+      <UniqueIdentifier>{6c692abc-5cd0-46ed-bd2d-c6aa9c586e72}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -108,29 +108,29 @@
     <ClInclude Include="..\Headers\Loading.h">
       <Filter>01.Scene\99.Loading</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Terrain.h">
-      <Filter>02.GameObject\Stage\Terrain</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\Player.h">
-      <Filter>02.GameObject\Stage\Player</Filter>
+      <Filter>02.GameObject\Stage\0%29 Player</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Sky.h">
-      <Filter>02.GameObject\Stage\Sky</Filter>
+      <Filter>02.GameObject\Stage\3%29 Sky</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Effect.h">
-      <Filter>02.GameObject\Stage\Effect</Filter>
+      <Filter>02.GameObject\Stage\2%29 Effect</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\TestMonster.h">
-      <Filter>02.GameObject\Stage\Monster</Filter>
+      <Filter>02.GameObject\Stage\1%29 Monster</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\HPBack.h">
-      <Filter>02.GameObject\Stage\UI\00.PlayerUI\HPBack</Filter>
+      <Filter>02.GameObject\Stage\4%29 UI\00.PlayerUI\HPBack</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\HPBar.h">
-      <Filter>02.GameObject\Stage\UI\00.PlayerUI\HPBar</Filter>
+      <Filter>02.GameObject\Stage\4%29 UI\00.PlayerUI\HPBar</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\LogoBtn.h">
       <Filter>02.GameObject\Logo\LogoButton</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Weapon.h">
+      <Filter>02.GameObject\Stage\5%29 Weapon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -155,29 +155,29 @@
     <ClCompile Include="..\Codes\Loading.cpp">
       <Filter>01.Scene\99.Loading</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Terrain.cpp">
-      <Filter>02.GameObject\Stage\Terrain</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\Player.cpp">
-      <Filter>02.GameObject\Stage\Player</Filter>
+      <Filter>02.GameObject\Stage\0%29 Player</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Sky.cpp">
-      <Filter>02.GameObject\Stage\Sky</Filter>
+      <Filter>02.GameObject\Stage\3%29 Sky</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Effect.cpp">
-      <Filter>02.GameObject\Stage\Effect</Filter>
+      <Filter>02.GameObject\Stage\2%29 Effect</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\TestMonster.cpp">
-      <Filter>02.GameObject\Stage\Monster</Filter>
+      <Filter>02.GameObject\Stage\1%29 Monster</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\HPBack.cpp">
-      <Filter>02.GameObject\Stage\UI\00.PlayerUI\HPBack</Filter>
+      <Filter>02.GameObject\Stage\4%29 UI\00.PlayerUI\HPBack</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\HPBar.cpp">
-      <Filter>02.GameObject\Stage\UI\00.PlayerUI\HPBar</Filter>
+      <Filter>02.GameObject\Stage\4%29 UI\00.PlayerUI\HPBar</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\LogoBtn.cpp">
       <Filter>02.GameObject\Logo\LogoButton</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Weapon.cpp">
+      <Filter>02.GameObject\Stage\5%29 Weapon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

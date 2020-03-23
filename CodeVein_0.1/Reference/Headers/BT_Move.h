@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BT_Task_Node.h"
+#include "..\headers\BT_Task_Node.h"
 
 BEGIN(Engine)
 class CTransform;
@@ -9,11 +9,14 @@ class ENGINE_DLL CBT_Move final : public CBT_Task_Node
 public:
 	typedef struct tagInitInfo
 	{
-		tagInitInfo(CTransform* pTransform, _double dMovingTime)
-			: m_pTargetTransform(pTransform), m_dMovingTime(dMovingTime) {}
+		tagInitInfo(CTransform* pTransform, _double dMoveSpeed, _double dMovingTime)
+			: Target_pTargetTransform(pTransform), Target_dMoveSpeed(dMovingTime)
+			, Target_dMovingTime(dMovingTime)			
+		{}
 
-		CTransform*		m_pTargetTransform;
-		_double			m_dMovingTime;
+		CTransform*		Target_pTargetTransform;
+		_double			Target_dMovingTime;
+		_double			Target_dMoveSpeed;
 	}INFO;
 
 protected:
@@ -22,18 +25,20 @@ protected:
 	virtual ~CBT_Move() = default;
 
 public:
-	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack) override;
+	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging) override;
 
-protected:
-	virtual void Start_Node(vector<CBT_Node*>* pNodeStack);
-	virtual void End_Node(vector<CBT_Node*>* pNodeStack);
+public:
+	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging);
+	virtual BT_NODE_STATE End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging);
 
 private:
 	HRESULT Ready_Clone_Node(void* pInit_Struct);
 
 private:
-	CTransform*		m_pTargetTransform = nullptr;
+	CTransform*		m_pTransform = nullptr;
+	_double			m_dMoveSpeed = 0;
 	_double			m_dMovingTime = 0;
+
 	_double			m_dCurTime = 0;
 
 public:

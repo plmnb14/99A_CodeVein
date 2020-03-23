@@ -20,7 +20,7 @@ public:
 	const _v3&					Get_Pos()	const;
 	const _v3&					Get_Size()	const;
 	const _v3&					Get_At()	const;
-	const _mat&					Get_WorldMat()	const;
+	_mat&						Get_WorldMat();
 
 public:
 	const _v3&		Get_Angle()					const;

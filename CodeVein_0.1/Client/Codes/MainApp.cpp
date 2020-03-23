@@ -34,6 +34,7 @@ _int CMainApp::Update_MainApp(_double TimeDelta)
 
 void CMainApp::LateUpdate_MainApp(_double TimeDelta)
 {
+	Global_KeyInput();
 }
 
 HRESULT CMainApp::Render_MainApp()
@@ -75,6 +76,9 @@ HRESULT CMainApp::Ready_Default_Setting(CGraphic_Device::WINMODE eMode, _ushort 
 		return E_FAIL;
 	// 장치초기화.(For.Input_Device)
 	if (FAILED(g_pManagement->Ready_InputDev(g_hInst, g_hWnd)))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Set_InputDev()))
 		return E_FAIL;
 
 
@@ -120,6 +124,22 @@ HRESULT CMainApp::Ready_Start_Scene(SCENEID eScene)
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CMainApp::Global_KeyInput()
+{
+	// 자유 시점 카메라
+	if (g_pInput_Device->Key_Down(DIK_NUMPAD0))
+	{
+		CCameraMgr::Get_Instance()->Set_CamView(TOOL_VIEW);
+	}
+
+	// 3인칭 카메라
+	if (g_pInput_Device->Key_Down(DIK_NUMPAD1))
+	{
+		CCameraMgr::Get_Instance()->Set_CamView(BACK_VIEW);
+	}
+
 }
 
 CMainApp * CMainApp::Create()

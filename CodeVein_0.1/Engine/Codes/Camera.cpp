@@ -435,11 +435,13 @@ void CCamera::Change_Type_Option(CameraView _CameraViewType)
 	{
 	case FIRST_VIEW:
 	{
-		m_pTransform->Set_At(TARGET_TO_TRANS(m_pTarget)->Get_Pos() + TARGET_TO_TRANS(m_pTarget)->Get_Axis(AXIS_Z) + _v3{0,5,0});
+		//m_pTransform->Set_At(TARGET_TO_TRANS(m_pTarget)->Get_Pos() + TARGET_TO_TRANS(m_pTarget)->Get_Axis(AXIS_Z) + _v3{0,5,0});
 		break;
 	}
 	case BACK_VIEW:
 	{
+		m_fDistance = 2.f;
+		m_pTarget = CManagement::Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
 		break;
 	}
 	}

@@ -5,10 +5,11 @@
 #include "Sky.h"
 #include "Effect.h"
 #include "Player.h"
-#include "Terrain.h"
+//#include "Terrain.h"
 #include "TestMonster.h"
 #include "HPBack.h"
 #include "HPBar.h"
+#include "Weapon.h"
 
 
 USING(Client)
@@ -44,8 +45,27 @@ _uint CLoading::Loading_ForStage(void)
 	if (FAILED(pManagement->Ready_BT_Node()))
 		return E_FAIL;
 
+
+	//lstrcpy(m_szString, L"지형 생성 중....");
+	//if (FAILED(pManagement->Add_Prototype(L"GameObject_Terrain", CTerrain::Create(m_pGraphicDev))))
+	//	return E_FAIL;
+
+	//lstrcpy(m_szString, L"하늘 생성 중....");
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_Sky", CSky::Create(m_pGraphicDev))))
+		return E_FAIL;
+
+	// UI텍스쳐 (임시)
+	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_HPBack", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/HPBarBack/HPBack.png", 1))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_HPBar", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/HPBar/T_HPGaugeTexture_UI.tga", 1))))
+		return E_FAIL;
+
+	_mat DefaultMat;
+	D3DXMatrixIdentity(&DefaultMat);
+
+	
 	// 오브젝트 원형
-	lstrcpy(m_szString, L"게임오브젝트 원형 생성 중....");	
+	lstrcpy(m_szString, L"게임오브젝트 원형 생성 중....");
 	if (FAILED(pManagement->Add_Prototype(L"GameObject_Player", CPlayer::Create(m_pGraphicDev))))
 		return E_FAIL;
 
@@ -58,26 +78,16 @@ _uint CLoading::Loading_ForStage(void)
 	if (FAILED(pManagement->Add_Prototype(L"GameObject_HPBar", CHPBar::Create(m_pGraphicDev))))
 		return E_FAIL;
 
-	
-	
 	//몬스터
 	if (FAILED(pManagement->Add_Prototype(L"Monster_TestMonster", CTestMonster::Create(m_pGraphicDev))))
 		return E_FAIL;
 
-	lstrcpy(m_szString, L"지형 생성 중....");
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_Terrain", CTerrain::Create(m_pGraphicDev))))
+	//무기
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_Weapon", CWeapon::Create(m_pGraphicDev))))
 		return E_FAIL;
 
-	//lstrcpy(m_szString, L"하늘 생성 중....");
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_Sky", CSky::Create(m_pGraphicDev))))
-		return E_FAIL;
 
-	// UI텍스쳐 (임시)
-	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_HPBack", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/HPBarBack/HPBack.png", 1))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_HPBar", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/HPBar/T_HPGaugeTexture_UI.tga", 1))))
-		return E_FAIL;
-	
+	cout << "로딩 완료" << endl;
 
 	m_bFinish = true;
 	lstrcpy(m_szString, L"로딩 완료");

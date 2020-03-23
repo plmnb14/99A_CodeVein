@@ -105,6 +105,21 @@ const RAY CInput_Device::Get_Ray(const RAY_CALC _eCalc)
 	return tRay;
 }
 
+const _bool CInput_Device::Get_DIMouseState_Up(MOUSEKEYSTATE eMouse)
+{
+	if (m_tMouseState.rgbButtons[eMouse])
+	{
+		return false;
+	}
+
+	else
+	{
+		return true;
+	}
+
+	return false;
+}
+
 const _bool CInput_Device::Get_DIMouseState(MOUSEKEYSTATE eMouse)
 {
 	if (m_tMouseState.rgbButtons[eMouse] & 0x80)
@@ -115,8 +130,6 @@ const _bool CInput_Device::Get_DIMouseState(MOUSEKEYSTATE eMouse)
 
 			return true;
 		}
-
-		return false;
 	}
 
 	else
@@ -125,6 +138,8 @@ const _bool CInput_Device::Get_DIMouseState(MOUSEKEYSTATE eMouse)
 
 		return false;
 	}
+
+	return false;
 }
 
 void CInput_Device::Calc_MouseLockPos()
@@ -179,6 +194,8 @@ const _bool CInput_Device::Key_Up(_ubyte byKeyID)
 
 HRESULT Engine::CInput_Device::Ready_Input_Dev(HINSTANCE hInst, HWND hWnd)
 {
+	m_hWnd = hWnd;
+
 	// DInput 컴객체를 생성하는 함수
 	if (FAILED((DirectInput8Create(hInst,
 		DIRECTINPUT_VERSION,

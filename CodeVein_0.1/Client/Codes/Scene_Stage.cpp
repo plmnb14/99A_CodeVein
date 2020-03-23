@@ -24,7 +24,7 @@ HRESULT CScene_Stage::Ready_Scene()
 
 	if (FAILED(Ready_Layer_Monster(L"Layer_Monster")))
 		return E_FAIL;
-	
+
 	if (FAILED(Ready_Layer_Effect(L"Layer_Effect")))
 		return E_FAIL;
 
@@ -103,17 +103,17 @@ HRESULT CScene_Stage::Ready_Layer_Camera(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
-	CManagement*		pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
-
-	Safe_AddRef(pManagement);
-
-	// For. TestMonster
-	if (FAILED(pManagement->Add_GameObject_ToLayer(L"Monster_TestMonster", SCENE_STAGE, pLayerTag)))
-		return E_FAIL;
-
-	Safe_Release(pManagement);
+	//CManagement*		pManagement = CManagement::Get_Instance();
+	//if (nullptr == pManagement)
+	//	return E_FAIL;
+	//
+	//Safe_AddRef(pManagement);
+	//
+	//// For. TestMonster
+	//if (FAILED(pManagement->Add_GameObject_ToLayer(L"Monster_TestMonster", SCENE_STAGE, pLayerTag)))
+	//	return E_FAIL;
+	//
+	//Safe_Release(pManagement);
 
 	return S_OK;
 }
@@ -217,7 +217,7 @@ HRESULT CScene_Stage::Ready_LightDesc()
 
 	// Point
 	LightDesc.Type = D3DLIGHT_POINT;
-	LightDesc.Diffuse = D3DXCOLOR(1.f, 0.0f, 0.0f, 1.f);
+	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
 	LightDesc.Ambient = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;	
 	LightDesc.Position = _v3(5.f, 5.0f, 5.f);
@@ -228,7 +228,7 @@ HRESULT CScene_Stage::Ready_LightDesc()
 
 	// Point
 	LightDesc.Type = D3DLIGHT_POINT;
-	LightDesc.Diffuse = D3DXCOLOR(0.0f, 1.f, 0.0f, 1.f);
+	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
 	LightDesc.Ambient = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	LightDesc.Position = _v3(15.f, 5.0f, 5.f);

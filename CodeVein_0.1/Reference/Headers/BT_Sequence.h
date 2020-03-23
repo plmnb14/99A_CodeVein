@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BT_Composite_Node.h"
+#include "..\headers\BT_Composite_Node.h"
 
 BEGIN(Engine)
 
@@ -15,17 +15,16 @@ public:
 	HRESULT Add_Child(CBT_Node* pNode);
 
 public:
-	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack) override;
+	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging) override;
 
-	HRESULT Ready_Clone_Node();
-
-protected:
-	virtual void Start_Node(vector<CBT_Node*>* pNodeStack);
-	virtual void End_Node(vector<CBT_Node*>* pNodeStack);
+public:
+	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging);
+	virtual BT_NODE_STATE End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging);
 
 private:
-	vector<CBT_Node*>	m_pChildren;
-	
+	HRESULT Ready_Clone_Node(void* pInit_Struct);
+
+private:
 	size_t				m_pCurIndex = 0;
 
 public:

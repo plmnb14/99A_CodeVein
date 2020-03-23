@@ -15,9 +15,19 @@ CMesh_Dynamic::CMesh_Dynamic(const CMesh_Dynamic & rhs)
 	, m_pRootFrame(rhs.m_pRootFrame)
 	, m_matPivot(rhs.m_matPivot)
 	, m_pHierarchy(rhs.m_pHierarchy)
-	, m_pAniCtrl(rhs.m_pAniCtrl->Clone_AniCtrl())
+	, m_pAniCtrl_Lower(rhs.m_pAniCtrl_Lower->Clone_AniCtrl())
+	, m_bIsSeperate(rhs.m_bIsSeperate)
 {
 	Safe_AddRef(m_pHierarchy);
+
+	if (m_bIsSeperate)
+	{
+		m_pUpperFrame = rhs.m_pUpperFrame;
+		m_pRightArmFrame = rhs.m_pRightArmFrame;
+
+		m_pAniCtrl_Upper = (rhs.m_pAniCtrl_Upper->Clone_AniCtrl());
+		m_pAniCtrl_RightArm = (rhs.m_pAniCtrl_RightArm->Clone_AniCtrl());
+	}
 }
 
 _mat CMesh_Dynamic::Get_FrameMatrix(const char * pFrameName)
@@ -54,17 +64,43 @@ HRESULT CMesh_Dynamic::Ready_Component_Prototype(const _tchar * pFilePath, const
 	if (FAILED(D3DXLoadMeshHierarchyFromX(szFullPath, D3DXMESH_MANAGED, m_pGraphic_Dev, m_pHierarchy, nullptr, &m_pRootFrame, &pAniCtrl)))
 		return E_FAIL;
 
-	m_pAniCtrl = CAniCtrl::Create(m_pGraphic_Dev, pAniCtrl);
-	if (nullptr == m_pAniCtrl)
+	m_pAniCtrl_Lower = CAniCtrl::Create(m_pGraphic_Dev, pAniCtrl);
+	if (nullptr == m_pAniCtrl_Lower)
 		return E_FAIL;
-
-	Safe_Release(pAniCtrl);
 
 	m_matPivot = PivotMatrix;
 
 	Update_CombinedTransformationMatrices(m_pRootFrame, m_matPivot);
 
-	SetUp_CombinedTransformationMatricesPointer(m_pRootFrame);
+	SetUp_CombinedTransformationMatricesPointer(m_pRootFrame , 0);
+
+	if (!lstrcmp(pFileName, L"Player.x"))
+	{
+		m_bIsSeperate = true;
+
+		m_pAniCtrl_Upper = CAniCtrl::Create(m_pGraphic_Dev, pAniCtrl);
+
+		Set_BoneSeperate((D3DXFRAME_DERIVED*)m_pRootFrame, "Hips", 0);
+
+
+		_mat		matTemp2;
+
+		Update_CombinedTransformationMatrices((D3DXFRAME_DERIVED*)m_pUpperFrame, *D3DXMatrixIdentity(&matTemp2));
+
+		SetUp_CombinedTransformationMatricesPointer((D3DXFRAME_DERIVED*)m_pUpperFrame, 1);
+
+		//////////////////////
+
+		m_pAniCtrl_RightArm = CAniCtrl::Create(m_pGraphic_Dev, pAniCtrl);
+
+		Set_BoneSeperate((D3DXFRAME_DERIVED*)m_pUpperFrame, "LeftShoulder", 1);
+
+		Update_CombinedTransformationMatrices((D3DXFRAME_DERIVED*)m_pRightArmFrame, *D3DXMatrixIdentity(&matTemp2));
+
+		SetUp_CombinedTransformationMatricesPointer((D3DXFRAME_DERIVED*)m_pRightArmFrame, 2);
+	}
+
+	Safe_Release(pAniCtrl);
 
 	return NOERROR;
 }
@@ -97,7 +133,7 @@ HRESULT CMesh_Dynamic::Update_CombinedTransformationMatrices(D3DXFRAME* pFrame, 
 	return NOERROR;
 }
 
-HRESULT CMesh_Dynamic::SetUp_CombinedTransformationMatricesPointer(D3DXFRAME* pFrame)
+HRESULT CMesh_Dynamic::SetUp_CombinedTransformationMatricesPointer(D3DXFRAME* pFrame, _short _sSeperatePart)
 {
 	if (nullptr != pFrame->pMeshContainer)
 	{
@@ -105,19 +141,33 @@ HRESULT CMesh_Dynamic::SetUp_CombinedTransformationMatricesPointer(D3DXFRAME* pF
 
 		for (_ulong i = 0; i < pMeshContainer_Derived->dwNumBones; ++i)
 		{
-			D3DXFRAME_DERIVED*	pFrame_Derived = (D3DXFRAME_DERIVED*)D3DXFrameFind(m_pRootFrame, pMeshContainer_Derived->pSkinInfo->GetBoneName(i));
+			if (0 == _sSeperatePart)
+			{
+				D3DXFRAME_DERIVED*	pFrame_Derived = (D3DXFRAME_DERIVED*)D3DXFrameFind(m_pRootFrame, pMeshContainer_Derived->pSkinInfo->GetBoneName(i));
+				pMeshContainer_Derived->ppCombinedTransformationMatrices[i] = &pFrame_Derived->CombinedTransformationMatrix;
+			}
 
-			pMeshContainer_Derived->ppCombinedTransformationMatrices[i] = &pFrame_Derived->CombinedTransformationMatrix;
+			else if (1 == _sSeperatePart)
+			{
+				D3DXFRAME_DERIVED*	pFrame_Derived = (D3DXFRAME_DERIVED*)D3DXFrameFind(m_pUpperFrame, pMeshContainer_Derived->pSkinInfo->GetBoneName(i));
+				pMeshContainer_Derived->ppCombinedTransformationMatrices[i] = &pFrame_Derived->CombinedTransformationMatrix;
+			}
+
+			else if (2 == _sSeperatePart)
+			{
+				D3DXFRAME_DERIVED*	pFrame_Derived = (D3DXFRAME_DERIVED*)D3DXFrameFind(m_pRightArmFrame, pMeshContainer_Derived->pSkinInfo->GetBoneName(i));
+				pMeshContainer_Derived->ppCombinedTransformationMatrices[i] = &pFrame_Derived->CombinedTransformationMatrix;
+			}
 		}
 
 		m_MeshContainerList.push_back(pMeshContainer_Derived);
 	}
 
 	if (nullptr != pFrame->pFrameFirstChild)
-		SetUp_CombinedTransformationMatricesPointer(pFrame->pFrameFirstChild);
+		SetUp_CombinedTransformationMatricesPointer(pFrame->pFrameFirstChild , _sSeperatePart);
 
 	if (nullptr != pFrame->pFrameSibling)
-		SetUp_CombinedTransformationMatricesPointer(pFrame->pFrameSibling);
+		SetUp_CombinedTransformationMatricesPointer(pFrame->pFrameSibling , _sSeperatePart);
 
 	return NOERROR;
 }
@@ -174,22 +224,181 @@ HRESULT CMesh_Dynamic::Render_Mesh(_uint iMeshContainerIdx, _uint iAttributeID)
 	return NOERROR;
 }
 
+void CMesh_Dynamic::Reset_OldIndx(_short _sAniCtrlNum)
+{
+	m_pAniCtrl_Lower->Reset_OldIdx();
+
+	if (_sAniCtrlNum != 0)
+	{
+		m_pAniCtrl_Upper->Reset_OldIdx();
+		m_pAniCtrl_RightArm->Reset_OldIdx();
+	}
+}
+
+LPD3DXFRAME CMesh_Dynamic::Get_BonInfo(LPCSTR _bBoneName)
+{
+	// 현재 분리된 "상체" 의 정보만을 가져옴.
+	return D3DXFrameFind(m_pRightArmFrame, _bBoneName);
+}
+
+D3DXTRACK_DESC CMesh_Dynamic::Get_TrackInfo()
+{
+	return m_pAniCtrl_Lower->Get_TrackInfo();
+}
+
+D3DXTRACK_DESC CMesh_Dynamic::Get_TrackInfo_Upper()
+{
+	return m_pAniCtrl_Upper->Get_TrackInfo();
+}
+
+void CMesh_Dynamic::Set_BoneSeperate(D3DXFRAME_DERIVED * _frame, const char * _bodyName, _short _sSeperateNum)
+{
+	if (_frame->Name != nullptr)
+	{
+		if (!strcmp(_frame->Name, _bodyName))
+		{
+			if (0 == _sSeperateNum)
+			{
+				m_pUpperFrame = _frame->pFrameFirstChild;	// Spine
+				_frame->pFrameFirstChild = m_pUpperFrame->pFrameSibling;			// 첫번째 자식 사라지고 이웃으로 채워줌
+				m_pUpperFrame->pFrameSibling = NULL;
+			}
+
+			else if (1 == _sSeperateNum)
+			{
+				// 좌 어깨의 이웃 == 우 어깨
+				//m_pRightArmFrame = _frame->pFrameSibling->pFrameFirstChild;
+				//_frame->pFrameSibling->pFrameFirstChild = nullptr;
+
+				m_pRightArmFrame = _frame->pFrameSibling;
+				_frame->pFrameSibling = m_pRightArmFrame->pFrameSibling;
+				m_pRightArmFrame->pFrameSibling = NULL;
+			}
+		}
+	}
+
+	if (_frame->pFrameSibling)
+		Set_BoneSeperate((D3DXFRAME_DERIVED*)_frame->pFrameSibling, _bodyName, _sSeperateNum);
+
+	if (_frame->pFrameFirstChild)
+		Set_BoneSeperate((D3DXFRAME_DERIVED*)_frame->pFrameFirstChild, _bodyName, _sSeperateNum);
+}
+
 HRESULT CMesh_Dynamic::SetUp_Animation(_uint iIndex)
 {
-	if (nullptr == m_pAniCtrl)
+	if (nullptr == m_pAniCtrl_Upper)
 		return E_FAIL;
 
-	m_pAniCtrl->SetUp_Animation(iIndex);
+	m_pAniCtrl_Upper->SetUp_Animation(iIndex);
 
 	return NOERROR;
 }
 
-HRESULT CMesh_Dynamic::Play_Animation(_double TimeDelta)
+HRESULT CMesh_Dynamic::SetUp_Animation_Lower(_uint iIndex)
 {
-	if (nullptr == m_pAniCtrl)
+	if (nullptr == m_pAniCtrl_Lower)
 		return E_FAIL;
 
-	m_pAniCtrl->Play_Animation(TimeDelta);
+	m_pAniCtrl_Lower->SetUp_Animation(iIndex);
+
+	return S_OK;
+}
+
+HRESULT CMesh_Dynamic::SetUp_Animation_Upper(_uint iIndex)
+{
+	if (nullptr == m_pAniCtrl_Upper)
+		return E_FAIL;
+
+	m_pAniCtrl_Upper->SetUp_Animation(iIndex);
+
+	return S_OK;
+}
+
+HRESULT CMesh_Dynamic::SetUp_Animation_RightArm(_uint iIndex)
+{
+	if (nullptr == m_pAniCtrl_RightArm)
+		return E_FAIL;
+
+	m_pAniCtrl_RightArm->SetUp_Animation(iIndex);
+
+	return S_OK;
+}
+
+HRESULT CMesh_Dynamic::Play_Animation_Lower(_double TimeDelta)
+{
+	if (nullptr == m_pAniCtrl_Lower)
+		return E_FAIL;
+
+	m_pAniCtrl_Lower->Play_Animation(TimeDelta);
+
+	_mat tmp;
+	_mat topMatrix;
+
+	D3DXMatrixIdentity(&topMatrix);
+
+	Update_CombinedTransformationMatrices((D3DXFRAME_DERIVED*)m_pRootFrame, topMatrix);
+
+	return E_NOTIMPL;
+}
+
+HRESULT CMesh_Dynamic::Play_Animation_Upper(_double TimeDelta)
+{
+	if (nullptr == m_pAniCtrl_Upper)
+		return E_FAIL;
+	
+	m_pAniCtrl_Upper->Play_Animation(TimeDelta);
+	
+	_mat tmpMat;
+	D3DXMatrixIdentity(&tmpMat);
+	
+	tmpMat = ((D3DXFRAME_DERIVED*)(m_pRootFrame->pFrameFirstChild->pFrameFirstChild))->CombinedTransformationMatrix;
+	
+	Update_CombinedTransformationMatrices((D3DXFRAME_DERIVED*)m_pUpperFrame, tmpMat);
+	
+	return E_NOTIMPL;
+}
+
+HRESULT CMesh_Dynamic::Play_Animation_RightArm(_double TimeDelta , _bool _bTwoHanded)
+{
+	if (nullptr == m_pAniCtrl_RightArm)
+		return E_FAIL;
+
+	m_pAniCtrl_RightArm->Play_Animation(TimeDelta);
+
+	_mat tmpMat, PosMat;
+	D3DXMatrixIdentity(&tmpMat);
+	D3DXMatrixIdentity(&PosMat);
+
+	if (_bTwoHanded)
+	{
+		tmpMat = ((D3DXFRAME_DERIVED*)
+			(m_pUpperFrame->
+				pFrameFirstChild->	// Spine1
+				pFrameFirstChild))->CombinedTransformationMatrix;
+
+		//memcpy(&PosMat._41, &tmpMat._41, sizeof(_v4));
+	}
+
+	else
+	{
+		tmpMat = ((D3DXFRAME_DERIVED*)
+			(m_pUpperFrame->
+				pFrameFirstChild->	// Spine1
+				pFrameFirstChild->
+				pFrameFirstChild))->CombinedTransformationMatrix;
+	}
+
+	Update_CombinedTransformationMatrices(m_pRightArmFrame, tmpMat);
+
+	return E_NOTIMPL;
+}
+
+HRESULT CMesh_Dynamic::Play_Animation(_double TimeDelta)
+{
+	if (nullptr == m_pAniCtrl_Upper)
+		return E_FAIL;
+
+	m_pAniCtrl_Upper->Play_Animation(TimeDelta);
 
 	Update_CombinedTransformationMatrices(m_pRootFrame, m_matPivot);
 
@@ -198,7 +407,17 @@ HRESULT CMesh_Dynamic::Play_Animation(_double TimeDelta)
 
 _bool CMesh_Dynamic::Is_Finish_Animation(_float _fLerpValue)
 {
-	return m_pAniCtrl->Is_Finish_Animation(_fLerpValue);
+	return m_pAniCtrl_Lower->Is_Finish_Animation(_fLerpValue);
+}
+
+_bool CMesh_Dynamic::Is_Finish_Animation_Lower(_float _fLerpValue)
+{
+	return m_pAniCtrl_Lower->Is_Finish_Animation(_fLerpValue);
+}
+
+_bool CMesh_Dynamic::Is_Finish_Animation_Upper(_float _fLerpValue)
+{
+	return m_pAniCtrl_Upper->Is_Finish_Animation(_fLerpValue);
 }
 
 const _mat* CMesh_Dynamic::Find_CombinedTransformationMatrix(const char* pFrameName)
@@ -240,13 +459,24 @@ void CMesh_Dynamic::Free()
 {
 	if (false == m_bisClone)
 	{
+		if (m_bIsSeperate)
+		{
+			if (FAILED(m_pHierarchy->DestroyFrame(m_pRightArmFrame)))
+				return;
+
+			if (FAILED(m_pHierarchy->DestroyFrame(m_pUpperFrame)))
+				return;
+		}
+
 		if (FAILED(m_pHierarchy->DestroyFrame(m_pRootFrame)))
 			return;
 	}
 
 	m_MeshContainerList.clear();
 
-	Safe_Release(m_pAniCtrl);
+	Safe_Release(m_pAniCtrl_RightArm);
+	Safe_Release(m_pAniCtrl_Lower);
+	Safe_Release(m_pAniCtrl_Upper);
 	Safe_Release(m_pHierarchy);
 
 	CComponent::Free();
