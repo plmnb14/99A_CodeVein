@@ -28,7 +28,7 @@ HRESULT CMenu_Status::Ready_GameObject(void * pArg)
 	CUI::Ready_GameObject(pArg);
 
 	
-	m_fSizeX = WINCX * 0.5f;
+	m_fSizeX = WINCX * 0.7f;
 	m_fSizeY = WINCY * 0.7f;
 
 	return NOERROR;

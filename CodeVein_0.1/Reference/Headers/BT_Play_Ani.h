@@ -1,27 +1,27 @@
 #pragma once
 
-#include "..\headers\BT_Composite_Node.h"
+#include "..\headers\BT_Task_Node.h"
 
 BEGIN(Engine)
-
-class ENGINE_DLL CBT_Sequence final : public CBT_Composite_Node
+class CMesh_Dynamic;
+class ENGINE_DLL CBT_Play_Ani final : public CBT_Task_Node
 {
 public:
 	typedef struct tagInitInfo
 	{
-		tagInitInfo(char* pNodeName)
+		tagInitInfo(char* pNodeName, CMesh_Dynamic* pMesh_Dynamic, _uint iAni_Index)
+			: Target_pMesh_Dynamic(pMesh_Dynamic), Target_iAni_iIndex(iAni_Index)
 		{ strcpy_s<256>(Target_NodeName, pNodeName); }
 
-		char	Target_NodeName[256];
+		char			Target_NodeName[256];
+		CMesh_Dynamic*	Target_pMesh_Dynamic;
+		_uint			Target_iAni_iIndex;
 	}INFO;
 
 protected:
-	explicit CBT_Sequence();
-	explicit CBT_Sequence(const CBT_Sequence& rhs);
-	virtual ~CBT_Sequence() = default;
-
-public:
-	HRESULT Add_Child(CBT_Node* pNode);
+	explicit CBT_Play_Ani();
+	explicit CBT_Play_Ani(const CBT_Play_Ani& rhs);
+	virtual ~CBT_Play_Ani() = default;
 
 public:
 	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging) override;
@@ -34,10 +34,11 @@ private:
 	HRESULT Ready_Clone_Node(void* pInit_Struct);
 
 private:
-	size_t				m_pCurIndex = 0;
+	CMesh_Dynamic*	m_pMesh_Dynamic = nullptr;
+	_uint			m_iAni_Index = 0;
 
 public:
-	static CBT_Sequence* Create_Prototype();
+	static CBT_Play_Ani* Create_Prototype();
 	virtual CBT_Node* Clone(void* pInit_Struct) override;
 
 	virtual void Free();

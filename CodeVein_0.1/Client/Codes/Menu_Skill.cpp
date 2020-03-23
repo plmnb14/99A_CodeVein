@@ -1,37 +1,33 @@
 #include "stdafx.h"
-#include "..\Headers\Menu_Active.h"
+#include "..\Headers\Menu_Skill.h"
 
-CMenu_Active::CMenu_Active(_Device pGraphic_Device)
+CMenu_Skill::CMenu_Skill(_Device pGraphic_Device)
 	: CUI(pGraphic_Device)
 {
 }
 
-CMenu_Active::CMenu_Active(const CMenu_Active & rhs)
+CMenu_Skill::CMenu_Skill(const CMenu_Skill & rhs)
 	: CUI(rhs)
 {
 }
 
-HRESULT CMenu_Active::Ready_GameObject_Prototype()
+HRESULT CMenu_Skill::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
 
 	return NOERROR;
 }
 
-HRESULT CMenu_Active::Ready_GameObject(void * pArg)
+HRESULT CMenu_Skill::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 
 	CUI::Ready_GameObject(pArg);
-
-	m_fSizeX = WINCX * 0.7f;
-	m_fSizeY = WINCY * 0.7f;
-
 	return NOERROR;
 }
 
-_int CMenu_Active::Update_GameObject(_double TimeDelta)
+_int CMenu_Skill::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
@@ -41,10 +37,10 @@ _int CMenu_Active::Update_GameObject(_double TimeDelta)
 
 	SetUp_WindowPos();
 
-	return NOERROR;
+	return NO_EVENT;
 }
 
-_int CMenu_Active::Late_Update_GameObject(_double TimeDelta)
+_int CMenu_Skill::Late_Update_GameObject(_double TimeDelta)
 {
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
@@ -55,10 +51,10 @@ _int CMenu_Active::Late_Update_GameObject(_double TimeDelta)
 	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
 	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;
 
-	return NOERROR;
+	return NO_EVENT;
 }
 
-HRESULT CMenu_Active::Render_GameObject()
+HRESULT CMenu_Skill::Render_GameObject()
 {
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
@@ -104,7 +100,7 @@ HRESULT CMenu_Active::Render_GameObject()
 	return NOERROR;
 }
 
-HRESULT CMenu_Active::Add_Component()
+HRESULT CMenu_Skill::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -129,7 +125,7 @@ HRESULT CMenu_Active::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CMenu_Active::SetUp_ConstantTable()
+HRESULT CMenu_Skill::SetUp_ConstantTable()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -148,7 +144,7 @@ HRESULT CMenu_Active::SetUp_ConstantTable()
 	return NOERROR;
 }
 
-void CMenu_Active::SetUp_WindowPos()
+void CMenu_Skill::SetUp_WindowPos()
 {
 	if (true == m_bIsOpenWindow)
 	{
@@ -160,56 +156,35 @@ void CMenu_Active::SetUp_WindowPos()
 		m_fPosX = -WINCX * 0.5f;
 		m_fPosY = WINCY * 0.5f;
 	}
-
-	
 }
 
-HRESULT CMenu_Active::SetUp_ActiveSkill(_uint iActiveIndex)
+CMenu_Skill * CMenu_Skill::Create(_Device pGraphic_Device)
 {
-	CManagement* pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
-
-	Safe_AddRef(pManagement);
-
-	pManagement->Add_GameObject_ToLayer(L"GameObject_ActionUI", SCENE_STAGE, L"Layer_ActiveIcon");
-	CActiveSkill_UI* pActive = static_cast<CActiveSkill_UI*>(pManagement->Get_GameObjectBack(L"Layer_ActiveIcon", SCENE_STAGE));
-	pActive->Set_Skill_Index(iActiveIndex);
-
-	m_vecActiveSkill.push_back(pActive);
-
-	Safe_Release(pManagement);
-
-	return NOERROR;
-}
-
-CMenu_Active * CMenu_Active::Create(_Device pGraphic_Device)
-{
-	CMenu_Active* pInstance = new CMenu_Active(pGraphic_Device);
+	CMenu_Skill* pInstance = new CMenu_Skill(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 	{
-		MSG_BOX("CMenu_Active Creating Fail");
+		MSG_BOX("CMenu_Skill Creating Fail");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject * CMenu_Active::Clone_GameObject(void * pArg)
+CGameObject * CMenu_Skill::Clone_GameObject(void * pArg)
 {
-	CMenu_Active* pInstance = new CMenu_Active(*this);
+	CMenu_Skill* pInstance = new CMenu_Skill(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
-		MSG_BOX("Failed To Cloned CMenu_Active");
+		MSG_BOX("Failed To Cloned CMenu_Skill");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CMenu_Active::Free()
+void CMenu_Skill::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);

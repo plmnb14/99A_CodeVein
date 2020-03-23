@@ -1,12 +1,15 @@
 #pragma once
 
-#include "..\headers\BT_Composite_Node.h"
+#include "..\headers\BT_Decorator_Node.h"
+
+/*
+자식노드 결과의 반대값을 반환합니다.
+*/
 
 BEGIN(Engine)
 
-class ENGINE_DLL CBT_Sequence final : public CBT_Composite_Node
+class ENGINE_DLL CBT_Inverter final : public CBT_Decorator_Node
 {
-public:
 	typedef struct tagInitInfo
 	{
 		tagInitInfo(char* pNodeName)
@@ -16,12 +19,12 @@ public:
 	}INFO;
 
 protected:
-	explicit CBT_Sequence();
-	explicit CBT_Sequence(const CBT_Sequence& rhs);
-	virtual ~CBT_Sequence() = default;
+	explicit CBT_Inverter();
+	explicit CBT_Inverter(const CBT_Inverter& rhs);
+	virtual ~CBT_Inverter() = default;
 
 public:
-	HRESULT Add_Child(CBT_Node* pNode);
+	HRESULT Set_Child(CBT_Node* pNode);
 
 public:
 	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging) override;
@@ -34,10 +37,11 @@ private:
 	HRESULT Ready_Clone_Node(void* pInit_Struct);
 
 private:
-	size_t				m_pCurIndex = 0;
+	CBT_Node*	m_pChild = nullptr;
+	_bool		m_bInProgress = false;
 
 public:
-	static CBT_Sequence* Create_Prototype();
+	static CBT_Inverter* Create_Prototype();
 	virtual CBT_Node* Clone(void* pInit_Struct) override;
 
 	virtual void Free();

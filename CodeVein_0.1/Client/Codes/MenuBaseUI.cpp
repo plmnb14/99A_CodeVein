@@ -62,12 +62,6 @@ _int CMenuBaseUI::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
-	/*if (CInput_Device::Get_Instance()->Key_Up(DIK_C))
-		Add_Item(CItem::ITEM_TYPE::REGEN_POWER, 0);
-	if (CInput_Device::Get_Instance()->Key_Up(DIK_V))
-		Add_Item(CItem::ITEM_TYPE::ITEM_2, 1);
-	if (CInput_Device::Get_Instance()->Key_Up(DIK_B))
-		Add_Item(CItem::ITEM_TYPE::ITEM_3, 2);*/
 	
 
 	SetUp_WindowPosition();
@@ -79,7 +73,7 @@ _int CMenuBaseUI::Update_GameObject(_double TimeDelta)
 
 
 
-	//cout << m_vecItemSlot.size() << endl;
+	
 
 	return NO_EVENT;
 }

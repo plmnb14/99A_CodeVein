@@ -27,6 +27,9 @@ HRESULT CItem_QuickSlot::Ready_GameObject(void * pArg)
 
 	m_fPosX = 300.f;
 	m_fPosY = 500.f;
+
+	m_vOldPos =_v2(m_fPosX, m_fPosY);
+	
 	m_fSizeX = 50.f;
 	m_fSizeY = 50.f;
 
@@ -219,13 +222,13 @@ void CItem_QuickSlot::Update_UIPos()
 {
 	if (m_bIsOpen)
 	{
-		m_fPosX = 300.f;
-		m_fPosY = 500.f;
+		m_fPosX = m_vOldPos.x;
+		m_fPosY = m_vOldPos.y;
 	}
 	else
 	{
-		m_fPosX = -WINCX + 300.f;
-		m_fPosY = 500.f;
+		m_fPosX = -WINCX + m_vOldPos.x;
+		m_fPosY = m_vOldPos.y;
 	}
 
 	CManagement* pManagement = CManagement::Get_Instance();

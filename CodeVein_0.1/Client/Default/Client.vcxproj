@@ -178,8 +178,8 @@
     <ClInclude Include="..\Headers\ItemSlot.h" />
     <ClInclude Include="..\Headers\Item_QuickSlot.h" />
     <ClInclude Include="..\Headers\MenuIcon.h" />
-    <ClInclude Include="..\Headers\Menu_Active.h" />
     <ClInclude Include="..\Headers\Menu_Item.h" />
+    <ClInclude Include="..\Headers\Menu_Skill.h" />
     <ClInclude Include="..\Headers\Menu_Status.h" />
     <ClInclude Include="..\Headers\SlotCnt_UI.h" />
     <ClInclude Include="..\Headers\SubQuickSlot.h" />
@@ -217,8 +217,8 @@
     <ClCompile Include="..\Codes\ItemSlot.cpp" />
     <ClCompile Include="..\Codes\Item_QuickSlot.cpp" />
     <ClCompile Include="..\Codes\MenuIcon.cpp" />
-    <ClCompile Include="..\Codes\Menu_Active.cpp" />
     <ClCompile Include="..\Codes\Menu_Item.cpp" />
+    <ClCompile Include="..\Codes\Menu_Skill.cpp" />
     <ClCompile Include="..\Codes\Menu_Status.cpp" />
     <ClCompile Include="..\Codes\SlotCnt_UI.cpp" />
     <ClCompile Include="..\Codes\SubQuickSlot.cpp" />

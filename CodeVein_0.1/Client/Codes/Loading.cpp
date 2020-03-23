@@ -9,24 +9,8 @@
 #include "Terrain.h"
 #include "TestMonster.h"
 
+#include "UI_Manager.h"
 
-#include "HPBack.h"
-#include "PlayerHP.h"
-#include "PlayerST.h"
-#include "BossDecoUI.h"
-#include "BossHP.h"
-#include "ItemSlot.h"
-#include "RightArrow.h"
-#include "LeftArrow.h"
-#include "Item.h"
-#include "MenuBaseUI.h"
-#include "MenuIcon.h"
-#include "SlotCnt_UI.h"
-#include "Item_QuickSlot.h"
-#include "Menu_Status.h"
-#include "Menu_Item.h"
-#include "ActiveSkill_UI.h"
-#include "Menu_Active.h"
 
 USING(Client)
 
@@ -70,42 +54,8 @@ _uint CLoading::Loading_ForStage(void)
 	lstrcpy(m_szString, L"이펙트 생성 중....");
 	Ready_Effect();
 
-	// UI
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_HPBack", CHPBack::Create(m_pGraphicDev))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_PlayerHP", CPlayerHP::Create(m_pGraphicDev))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_PlayerST", CPlayerST::Create(m_pGraphicDev))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_BossDecoUI", CBossDecoUI::Create(m_pGraphicDev))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_BossHP", CBossHP::Create(m_pGraphicDev))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_ItemSlot", CItemSlot::Create(m_pGraphicDev))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_RightArrow", CRightArrow::Create(m_pGraphicDev))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_LeftArrow", CLeftArrow::Create(m_pGraphicDev))))
-		return E_FAIL;
-	
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_Item", CItem::Create(m_pGraphicDev))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuBase", CMenuBaseUI::Create(m_pGraphicDev))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuIcon", CMenuIcon::Create(m_pGraphicDev))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_CntSlotUI", CSlotCnt_UI::Create(m_pGraphicDev))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_ItemQuickSlot", CItem_QuickSlot::Create(m_pGraphicDev))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuStatus", CMenu_Status::Create(m_pGraphicDev))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuItem", CMenu_Item::Create(m_pGraphicDev))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_ActionUI", CActiveSkill_UI::Create(m_pGraphicDev))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuActive", CMenu_Active::Create(m_pGraphicDev))))
-		return E_FAIL;
+	// UI 생성
+	CUI_Manager::Get_Instance()->Add_UI_Prototype(m_pGraphicDev);
 
 	
 	//몬스터

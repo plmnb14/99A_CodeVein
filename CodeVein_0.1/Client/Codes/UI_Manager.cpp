@@ -12,6 +12,57 @@ CUI_Manager::~CUI_Manager()
 	Free();
 }
 
+HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
+{
+	CManagement* pManagement = CManagement::Get_Instance();
+	if (nullptr == pManagement)
+		return E_FAIL;
+
+	Safe_AddRef(pManagement);
+	// UI
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_HPBack", CHPBack::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_PlayerHP", CPlayerHP::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_PlayerST", CPlayerST::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_BossDecoUI", CBossDecoUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_BossHP", CBossHP::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_ItemSlot", CItemSlot::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_RightArrow", CRightArrow::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_LeftArrow", CLeftArrow::Create(pDevice))))
+		return E_FAIL;
+
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_Item", CItem::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuBase", CMenuBaseUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuIcon", CMenuIcon::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_CntSlotUI", CSlotCnt_UI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_ItemQuickSlot", CItem_QuickSlot::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuStatus", CMenu_Status::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuItem", CMenu_Item::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_ActionUI", CActiveSkill_UI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuSkill", CMenu_Skill::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_SubeQuickSlot", CSubQuickSlot::Create(pDevice))))
+		return E_FAIL;
+
+	Safe_Release(pManagement);
+
+	return NOERROR;
+}
+
 HRESULT CUI_Manager::SetUp_UILayer()
 {
 	CManagement* pManagement = CManagement::Get_Instance();
@@ -56,8 +107,34 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_LeftArrow", SCENE_STAGE, L"Layer_LeftArrow")))
 		return E_FAIL;
 	
-	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_ItemQuickSlot", SCENE_STAGE, L"Layer_ItemQuickSlot")))
+	CUI::UI_DESC* pQuickSlotDesc = new CUI::UI_DESC;
+	pQuickSlotDesc->fPosX = 300.f;
+	pQuickSlotDesc->fPosY = 500.f;
+	pQuickSlotDesc->fSizeX = 50.f;
+	pQuickSlotDesc->fSizeY = 50.f;
+
+	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_ItemQuickSlot", SCENE_STAGE, L"Layer_ItemQuickSlot", pQuickSlotDesc)))
 		return E_FAIL;
+
+	CUI::UI_DESC* pRightSlotDesc = new CUI::UI_DESC;
+	pRightSlotDesc->fPosX = 350.f;
+	pRightSlotDesc->fPosY = 500.f;
+	pRightSlotDesc->fSizeX = 30.f;
+	pRightSlotDesc->fSizeY = 30.f;
+
+	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_SubeQuickSlot", SCENE_STAGE, L"Layer_RightQuickSlot", pRightSlotDesc)))
+		return E_FAIL;
+
+	CUI::UI_DESC* pLeftSlotDesc = new CUI::UI_DESC;
+	pLeftSlotDesc->fPosX = 250.f;
+	pLeftSlotDesc->fPosY = 500.f;
+	pLeftSlotDesc->fSizeX = 30.f;
+	pLeftSlotDesc->fSizeY = 30.f;
+
+	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_SubeQuickSlot", SCENE_STAGE, L"Layer_LeftQuickSlot", pLeftSlotDesc)))
+		return E_FAIL;
+
+	
 
 	CUI::UI_DESC* pActDesc = new CUI::UI_DESC;
 	pActDesc->fPosX = 1100.f;
@@ -77,7 +154,7 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_ActionUI", SCENE_STAGE, L"Layer_ActionUI2", pActDesc2)))
 		return E_FAIL;
 
-	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_MenuActive", SCENE_STAGE, L"Layer_MenuActive")))
+	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_MenuSkill", SCENE_STAGE, L"Layer_MenuSkill")))
 		return E_FAIL;
 	
 	Safe_Release(pManagement);
@@ -100,11 +177,17 @@ _int CUI_Manager::Update_UI()
 	CMenu_Item* pItem = static_cast<CMenu_Item*>(pManagement->Get_GameObjectBack(L"Layer_MenuItem", SCENE_STAGE));
 
 	CItem_QuickSlot* pQuickSlot = static_cast<CItem_QuickSlot*>(pManagement->Get_GameObjectBack(L"Layer_ItemQuickSlot", SCENE_STAGE));
+	CSubQuickSlot* pLeftSubSlot = static_cast<CSubQuickSlot*>(pManagement->Get_GameObjectBack(L"Layer_LeftQuickSlot", SCENE_STAGE));
+	CSubQuickSlot* pRightSubSlot = static_cast<CSubQuickSlot*>(pManagement->Get_GameObjectBack(L"Layer_RightQuickSlot", SCENE_STAGE));
+
 	CLeftArrow* pLeftArrow = static_cast<CLeftArrow*>(pManagement->Get_GameObjectBack(L"Layer_LeftArrow", SCENE_STAGE));
 	CRightArrow* pRightArrow = static_cast<CRightArrow*>(pManagement->Get_GameObjectBack(L"Layer_RightArrow", SCENE_STAGE));
 	CActiveSkill_UI* pActiveUI = static_cast<CActiveSkill_UI*>(pManagement->Get_GameObjectBack(L"Layer_ActionUI", SCENE_STAGE));
 	CActiveSkill_UI* pActiveUI2 = static_cast<CActiveSkill_UI*>(pManagement->Get_GameObjectBack(L"Layer_ActionUI2", SCENE_STAGE));
-	CMenu_Active* pActiveMenu = static_cast<CMenu_Active*>(pManagement->Get_GameObjectBack(L"Layer_MenuActive", SCENE_STAGE));
+	CMenu_Skill* pSkillMenu = static_cast<CMenu_Skill*>(pManagement->Get_GameObjectBack(L"Layer_MenuSkill", SCENE_STAGE));
+
+	pLeftSubSlot->Set_Index(true);
+	pRightSubSlot->Set_Index(false);
 
 	if (WIN_BASE == m_eMenuState)
 	{
@@ -124,6 +207,8 @@ _int CUI_Manager::Update_UI()
 		pRightArrow->Set_OpenUI(true);
 		pActiveUI->Set_OpenUI(true);
 		pActiveUI2->Set_OpenUI(true);
+		pLeftSubSlot->Set_OpenUI(true);
+		pRightSubSlot->Set_OpenUI(true);
 	}
 	else
 	{
@@ -132,6 +217,8 @@ _int CUI_Manager::Update_UI()
 		pRightArrow->Set_OpenUI(false);
 		pActiveUI->Set_OpenUI(false);
 		pActiveUI2->Set_OpenUI(false);
+		pLeftSubSlot->Set_OpenUI(false);
+		pRightSubSlot->Set_OpenUI(false);
 	}
 
 	switch (m_eMenuState)
@@ -140,31 +227,31 @@ _int CUI_Manager::Update_UI()
 		pBase->Set_WindowState(false);
 		pStatus->Set_WindowState(false);
 		pItem->Set_WindowState(false);
-		pActiveMenu->Set_WindowState(false);
+		pSkillMenu->Set_WindowState(false);
 		break;
 	case WIN_BASE:
 		pBase->Set_WindowState(true);
 		pStatus->Set_WindowState(false);
 		pItem->Set_WindowState(false);
-		pActiveMenu->Set_WindowState(false);
+		pSkillMenu->Set_WindowState(false);
 		break;
 	case WIN_STATUS:
 		pBase->Set_WindowState(false);
 		pStatus->Set_WindowState(true);
 		pItem->Set_WindowState(false);
-		pActiveMenu->Set_WindowState(false);
+		pSkillMenu->Set_WindowState(false);
 		break;
 	case WIN_ITEM:
 		pBase->Set_WindowState(false);
 		pStatus->Set_WindowState(false);
 		pItem->Set_WindowState(true);
-		pActiveMenu->Set_WindowState(false);
+		pSkillMenu->Set_WindowState(false);
 		break;
 	case WIN_ACTIVE:
 		pBase->Set_WindowState(false);
 		pStatus->Set_WindowState(false);
 		pItem->Set_WindowState(false);
-		pActiveMenu->Set_WindowState(true);
+		pSkillMenu->Set_WindowState(true);
 		break;
 	}
 
@@ -175,6 +262,7 @@ _int CUI_Manager::Update_UI()
 		pActiveUI2->Set_Skill_Index(pActiveUI2->Get_Skill_Index() + 1);
 
 
+	
 	Safe_Release(pManagement);
 
 	return 0;

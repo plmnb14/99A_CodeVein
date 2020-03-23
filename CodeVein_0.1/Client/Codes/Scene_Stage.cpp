@@ -80,6 +80,7 @@ _int CScene_Stage::Update_Scene(_double TimeDelta)
 		CUI_Manager::Get_Instance()->Add_Item(CItem::ITEM_2);
 	if (CInput_Device::Get_Instance()->Key_Up(DIK_NUMPAD5))
 		CUI_Manager::Get_Instance()->Use_Item();
+
 	return _int();
 }
 

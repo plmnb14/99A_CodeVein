@@ -4,16 +4,14 @@
 #include "UI.h"
 #include "Management.h"
 
-#include "ActiveSkill_UI.h"
-
 BEGIN(Client)
 
-class CMenu_Active : public CUI
+class CMenu_Skill : public CUI
 {
 private:
-	explicit CMenu_Active(_Device pGraphic_Device);
-	explicit CMenu_Active(const CMenu_Active& rhs);
-	virtual ~CMenu_Active() = default;
+	explicit CMenu_Skill(_Device pGraphic_Device);
+	explicit CMenu_Skill(const CMenu_Skill& rhs);
+	virtual ~CMenu_Skill() = default;
 
 public:
 	_bool Get_WindowState() { return m_bIsOpenWindow; }
@@ -33,9 +31,6 @@ private:
 	HRESULT SetUp_ConstantTable();
 	void	SetUp_WindowPos();
 
-public:
-	HRESULT SetUp_ActiveSkill(_uint iActiveIndex);
-
 private:
 	CTransform*				m_pTransformCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
@@ -45,10 +40,8 @@ private:
 
 	_bool					m_bIsOpenWindow = false;
 
-	vector<CActiveSkill_UI*> m_vecActiveSkill;
-
 public:
-	static CMenu_Active*	Create(_Device pGraphic_Device);
+	static CMenu_Skill*		Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);
 	virtual void			Free();
 };

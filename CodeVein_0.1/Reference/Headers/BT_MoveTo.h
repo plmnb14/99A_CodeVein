@@ -4,15 +4,15 @@
 
 BEGIN(Engine)
 class CTransform;
-class ENGINE_DLL CBT_Move final : public CBT_Task_Node
+class ENGINE_DLL CBT_MoveTo final : public CBT_Task_Node
 {
 public:
 	typedef struct tagInitInfo
 	{
-		tagInitInfo(char* tNodeName, CTransform* pTransform, _double dMoveSpeed, _double dMovingTime)
+		tagInitInfo(char* pNodeName, CTransform* pTransform, _double dMoveSpeed, _double dMovingTime)
 			: Target_pTargetTransform(pTransform), Target_dMoveSpeed(dMovingTime)
 			, Target_dMovingTime(dMovingTime)			
-		{ strcpy_s<256>(Target_NodeName, tNodeName); }
+		{ strcpy_s<256>(Target_NodeName, pNodeName); }
 
 		char			Target_NodeName[256];
 		CTransform*		Target_pTargetTransform;
@@ -21,12 +21,12 @@ public:
 	}INFO;
 
 protected:
-	explicit CBT_Move();
-	explicit CBT_Move(const CBT_Move& rhs);
-	virtual ~CBT_Move() = default;
+	explicit CBT_MoveTo();
+	explicit CBT_MoveTo(const CBT_MoveTo& rhs);
+	virtual ~CBT_MoveTo() = default;
 
 public:
-	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging) override;
+	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging) override;
 
 public:
 	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging);
@@ -43,7 +43,7 @@ private:
 	_double			m_dCurTime = 0;
 
 public:
-	static CBT_Move* Create_Prototype();
+	static CBT_MoveTo* Create_Prototype();
 	virtual CBT_Node* Clone(void* pInit_Struct) override;
 
 	virtual void Free();

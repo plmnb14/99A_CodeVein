@@ -54,6 +54,8 @@ private:
 
 	_bool					m_bIsOpen = true;
 
+	_v2						m_vOldPos;
+
 public:
 	static	CItem_QuickSlot*		Create(_Device pGraphic_Device);
 	virtual CGameObject*			Clone_GameObject(void* pArg);

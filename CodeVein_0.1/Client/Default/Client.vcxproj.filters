@@ -160,9 +160,6 @@
     <Filter Include="02.GameObject\Stage\UI\UI\06.SkillUI\Passive">
       <UniqueIdentifier>{34d53496-60aa-4fd8-8de2-fcb102f66d06}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\UI\UI\03.MenuUI\Menu_Skill\Menu_Active">
-      <UniqueIdentifier>{c96dc1db-dfd3-4c4f-a2e3-a28477acee6f}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -270,8 +267,8 @@
     <ClInclude Include="..\Headers\ActiveSkill_UI.h">
       <Filter>02.GameObject\Stage\UI\UI\06.SkillUI\Active</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Menu_Active.h">
-      <Filter>02.GameObject\Stage\UI\UI\03.MenuUI\Menu_Skill\Menu_Active</Filter>
+    <ClInclude Include="..\Headers\Menu_Skill.h">
+      <Filter>02.GameObject\Stage\UI\UI\03.MenuUI\Menu_Skill</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -371,8 +368,8 @@
     <ClCompile Include="..\Codes\ActiveSkill_UI.cpp">
       <Filter>02.GameObject\Stage\UI\UI\06.SkillUI\Active</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Menu_Active.cpp">
-      <Filter>02.GameObject\Stage\UI\UI\03.MenuUI\Menu_Skill\Menu_Active</Filter>
+    <ClCompile Include="..\Codes\Menu_Skill.cpp">
+      <Filter>02.GameObject\Stage\UI\UI\03.MenuUI\Menu_Skill</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

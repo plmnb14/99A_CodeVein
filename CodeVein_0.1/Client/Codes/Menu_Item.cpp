@@ -45,10 +45,6 @@ _int CMenu_Item::Update_GameObject(_double TimeDelta)
 
 	SetUp_WindowPos();
 
-	if (CInput_Device::Get_Instance()->Key_Up(DIK_U))
-		Add_Item(CItem::REGEN_POWER, 0);
-	if (CInput_Device::Get_Instance()->Key_Up(DIK_I))
-		Add_Item(CItem::ITEM_2, 0);
 	
 	Click_ItemSlot();
 	
