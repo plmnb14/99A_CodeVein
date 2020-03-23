@@ -17,15 +17,24 @@ public:
 	HRESULT SetUp_Animation(_uint iIndex); // 특정 애니메이션을 재생할 수 있도록 준비시킨다.
 	HRESULT Play_Animation(_double TimeDelta); // 애니메이션을 재생한다.
 	_bool Is_Finish_Animation(_float _fLerpValue);
+
+public:
+	D3DXTRACK_DESC Get_TrackInfo();
+
+public:
+	void Reset_OldIdx();
+
 private:
 	LPDIRECT3DDEVICE9			m_pGraphic_Device = nullptr;
 	LPD3DXANIMATIONCONTROLLER	m_pAnimationCtrl = nullptr;
+
 private:
 	_uint		m_iOldAniIndex = ANI_DEFAULT;
 	_uint		m_iCurrentTrack = 0;
 	_uint		m_iNewTrack = 1;
 	_double		m_TimeDeltaAcc = 0.0;
 	_double		m_Period = 0.0;
+
 public:
 	static CAniCtrl* Create(LPDIRECT3DDEVICE9 pGraphic_Device, LPD3DXANIMATIONCONTROLLER	pAnimationCtrl);
 	virtual CAniCtrl* Clone_AniCtrl();

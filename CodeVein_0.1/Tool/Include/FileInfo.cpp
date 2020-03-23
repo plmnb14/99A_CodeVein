@@ -37,13 +37,13 @@ void CFileInfo::Create_Mesh_PathInfo()
 
 	cout << "Extracting StaticMesh Path . . ." << endl;
 
-	lstrcpy(szStaticPath, L"..\\..\\Client\\Bin\\Resources\\Mesh\\");	// 문자열 복사
+	lstrcpy(szStaticPath, L"..\\..\\Client\\Resources\\Mesh\\");	// 문자열 복사
 	lstrcat(szStaticPath, L"StaticMesh");								// 문자열 결합
 	Extract_Mesh_PathInfo(szStaticPath, m_listPathInfo);
 
 	cout << "Extracting DynamicMesh Path . . ." << endl;
 
-	lstrcpy(szDynamicPath, L"..\\..\\Client\\Bin\\Resources\\Mesh\\");	// 문자열 복사
+	lstrcpy(szDynamicPath, L"..\\..\\Client\\Resources\\Mesh\\");	// 문자열 복사
 	lstrcat(szDynamicPath, L"DynamicMesh");								// 문자열 결합
 	Extract_Mesh_PathInfo(szDynamicPath, m_listPathInfo, true);
 
@@ -177,7 +177,7 @@ void CFileInfo::Create_Texture_PathInfo()
 
 	cout << "Extracting Texture Path . . ." << endl;
 
-	lstrcpy(szStaticPath, L"..\\..\\Client\\Bin\\Resources\\Texture");	// 문자열 복사
+	lstrcpy(szStaticPath, L"..\\..\\Client\\Resources\\Texture");	// 문자열 복사
 	Extract_Texture_PathInfo(szStaticPath, m_listPathInfo);
 
 	Save_Texture_PathInfo(m_listPathInfo);

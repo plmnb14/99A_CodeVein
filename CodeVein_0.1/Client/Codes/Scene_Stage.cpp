@@ -25,15 +25,15 @@ HRESULT CScene_Stage::Ready_Scene()
 
 	if (FAILED(Ready_Layer_Monster(L"Layer_Monster")))
 		return E_FAIL;
-	
-	if (FAILED(Ready_Layer_Effect(L"Layer_Effect")))
-		return E_FAIL;
 
-	if (FAILED(Ready_Layer_BackGround(L"Layer_BackGround")))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Effect(L"Layer_Effect")))
+	//	return E_FAIL;
 
-	if (FAILED(CUI_Manager::Get_Instance()->SetUp_UILayer()))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_BackGround(L"Layer_BackGround")))
+	//	return E_FAIL;
+
+	//if (FAILED(CUI_Manager::Get_Instance()->SetUp_UILayer()))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -72,14 +72,15 @@ _int CScene_Stage::Update_Scene(_double TimeDelta)
 	
 
 	// -------------- UI Manager ----------------------
-	CUI_Manager::Get_Instance()->Update_UI();
+	//CUI_Manager::Get_Instance()->Update_UI();
+	//
+	//if (CInput_Device::Get_Instance()->Key_Up(DIK_NUMPAD3))
+	//	CUI_Manager::Get_Instance()->Add_Item(CItem::REGEN_POWER);
+	//if (CInput_Device::Get_Instance()->Key_Up(DIK_NUMPAD4))
+	//	CUI_Manager::Get_Instance()->Add_Item(CItem::ITEM_2);
+	//if (CInput_Device::Get_Instance()->Key_Up(DIK_NUMPAD5))
+	//	CUI_Manager::Get_Instance()->Use_Item();
 
-	if (CInput_Device::Get_Instance()->Key_Up(DIK_NUMPAD3))
-		CUI_Manager::Get_Instance()->Add_Item(CItem::REGEN_POWER);
-	if (CInput_Device::Get_Instance()->Key_Up(DIK_NUMPAD4))
-		CUI_Manager::Get_Instance()->Add_Item(CItem::ITEM_2);
-	if (CInput_Device::Get_Instance()->Key_Up(DIK_NUMPAD5))
-		CUI_Manager::Get_Instance()->Use_Item();
 	return _int();
 }
 
@@ -100,8 +101,7 @@ HRESULT CScene_Stage::Ready_Layer_Player(const _tchar * pLayerTag)
 
 	Safe_AddRef(pManagement);
 
-	// For.Terrain
-	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_Player", SCENE_STATIC, pLayerTag)))
+	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_Player", SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 
 	Safe_Release(pManagement);
@@ -183,7 +183,7 @@ HRESULT CScene_Stage::Ready_Layer_UI(const _tchar * pLayerTag)
 
 	
 
-	CUI_Manager::Get_Instance()->SetUp_UILayer();
+	//CUI_Manager::Get_Instance()->SetUp_UILayer();
 	
 
 	Safe_Release(pManagement);
@@ -214,12 +214,9 @@ HRESULT CScene_Stage::Ready_LightDesc()
 
 	Safe_AddRef(pManagement);
 
-	
-
 	D3DLIGHT9		LightDesc;
 	ZeroMemory(&LightDesc, sizeof(D3DLIGHT9));
 
-	// Direction
 	LightDesc.Type = D3DLIGHT_DIRECTIONAL;
 	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
 	LightDesc.Ambient = D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.f);
@@ -229,28 +226,6 @@ HRESULT CScene_Stage::Ready_LightDesc()
 
 	if (FAILED(pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
 		return E_FAIL;
-
-	//// Point
-	//LightDesc.Type = D3DLIGHT_POINT;
-	//LightDesc.Diffuse = D3DXCOLOR(1.f, 1.0f, 1.0f, 1.f);
-	//LightDesc.Ambient = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.f);
-	//LightDesc.Specular = LightDesc.Diffuse;	
-	//LightDesc.Position = _v3(0.f, 0.0f, -5.f);
-	//LightDesc.Range = 15.0f;
-	//
-	//if (FAILED(pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
-	//	return E_FAIL;
-
-	//// Point
-	//LightDesc.Type = D3DLIGHT_POINT;
-	//LightDesc.Diffuse = D3DXCOLOR(0.0f, 1.f, 0.0f, 1.f);
-	//LightDesc.Ambient = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.f);
-	//LightDesc.Specular = LightDesc.Diffuse;
-	//LightDesc.Position = _v3(15.f, 5.0f, 5.f);
-	//LightDesc.Range = 10.0f;
-	//
-	//if (FAILED(pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
-	//	return E_FAIL;
 
 
 	Safe_Release(pManagement);
@@ -273,7 +248,7 @@ CScene_Stage * CScene_Stage::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 
 void CScene_Stage::Free()
 {
-	CUI_Manager::Get_Instance()->Destroy_Instance();
+	//CUI_Manager::Get_Instance()->Destroy_Instance();
 	CScene::Free();
 }
 

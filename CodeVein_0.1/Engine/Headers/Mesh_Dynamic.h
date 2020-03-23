@@ -25,22 +25,55 @@ public:
 	virtual HRESULT Ready_Component(void* pArg);
 public:
 	HRESULT Update_CombinedTransformationMatrices(D3DXFRAME* pFrame, _mat ParentMatrix); // 뼈의 컴바인트 행렬을 갱신한다.
-	HRESULT SetUp_CombinedTransformationMatricesPointer(D3DXFRAME* pFrame); // 메시컨테이너에 있는 ppCombinedTransformationMAtrices에 주소를 채워주기위한 함수.
+	HRESULT SetUp_CombinedTransformationMatricesPointer(D3DXFRAME* pFrame , _short _sSeperatePart); // 메시컨테이너에 있는 ppCombinedTransformationMAtrices에 주소를 채워주기위한 함수.
 	HRESULT SetTexture_OnShader(LPD3DXEFFECT pEffect, D3DXHANDLE pConstantName, _uint iMeshContainerIdx, _uint iAttributeID, MESHTEXTURE::TYPE eType);
 	HRESULT SetMaterial_OnShader(LPD3DXEFFECT pEffect, D3DXHANDLE pConstantName, _uint iMeshContainerIdx, _uint iAttributeID);
 	HRESULT Update_SkinnedMesh(_int iMeshContainerIdx);
 	HRESULT Render_Mesh(_uint iMeshContainerIdx, _uint iAttributeID);
+
 public:
-	HRESULT SetUp_Animation(_uint iIndex); // 특정 애니메이션을 재생할 수 있도록 준비시킨다.
+	void Reset_OldIndx(_short _sAniCtrlNum = 0);
+
+public:
+	LPD3DXFRAME		Get_BonInfo(LPCSTR _bBoneName);
+	D3DXTRACK_DESC	Get_TrackInfo();
+	D3DXTRACK_DESC	Get_TrackInfo_Upper();
+
+public:
+	void	Set_BoneSeperate(D3DXFRAME_DERIVED* _frame, const char* _bodyName , _short _sSeperateNum);
+
+public:
+	HRESULT SetUp_Animation(_uint iIndex);
+	HRESULT SetUp_Animation_Lower(_uint iIndex);
+	HRESULT SetUp_Animation_Upper(_uint iIndex);
+	HRESULT SetUp_Animation_RightArm(_uint iIndex);
+
+
+	HRESULT Play_Animation_Lower(_double TimeDelta);
+	HRESULT Play_Animation_Upper(_double TimeDelta);
+	HRESULT	Play_Animation_RightArm(_double TimeDelta, _bool _bTwoHanded = false);
 	HRESULT Play_Animation(_double TimeDelta); // 애니메이션을 재생한다.
 
 	_bool Is_Finish_Animation(_float _fLerpValue = 1.f);
+	_bool Is_Finish_Animation_Lower(_float _fLerpValue = 1.f);
+	_bool Is_Finish_Animation_Upper(_float _fLerpValue = 1.f);
+
 private:
-	D3DXFRAME*			m_pRootFrame = nullptr;
+	D3DXFRAME*			m_pRootFrame		= nullptr;
+	D3DXFRAME*			m_pUpperFrame		= nullptr;
+	D3DXFRAME*			m_pRightArmFrame	= nullptr;
+
+private:
 	_mat				m_matPivot;
 	CHierarchy*			m_pHierarchy = nullptr;
+
 private:
-	CAniCtrl*			m_pAniCtrl = nullptr;
+	CAniCtrl*			m_pAniCtrl_Upper	= nullptr;
+	CAniCtrl*			m_pAniCtrl_Lower	= nullptr;
+	CAniCtrl*			m_pAniCtrl_RightArm = nullptr;
+
+private:
+	_bool				m_bIsSeperate = false;
 
 private:
 	vector<LPD3DXMESHCONTAINER_DERIVED>			m_MeshContainerList;

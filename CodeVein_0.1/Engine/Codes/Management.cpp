@@ -216,6 +216,22 @@ CGameObject* CManagement::Get_GameObjectBack(const _tchar* pLayerTag, _uint iSce
 	return m_pObject_Manager->Get_GameObjectBack(pLayerTag, iSceneID);
 }
 
+CGameObject * CManagement::Clone_GameObject_Return(const _tchar * pPrototypeTag, void * pArg)
+{
+	if (nullptr == m_pObject_Manager)
+		return nullptr;
+
+	return m_pObject_Manager->Clone_GameObject_Return(pPrototypeTag , pArg);
+}
+
+HRESULT CManagement::Add_GameOject_ToLayer_NoClone(CGameObject * _pGameObject, _uint iSceneID, const _tchar * pLayerTag, void * pArg)
+{
+	if (nullptr == m_pObject_Manager)
+		return E_FAIL;
+
+	return m_pObject_Manager->Add_GameOject_ToLayer_NoClone(_pGameObject, iSceneID, pLayerTag, pArg);
+}
+
 HRESULT CManagement::Ready_Component_Manager(_Device _pGraphicDev)
 {
 	if (nullptr == m_pComponent_Manager)
@@ -252,6 +268,7 @@ HRESULT CManagement::LoadTex_FromPath(_Device pGraphicDev, const _tchar * szImgP
 {
 	if (nullptr == m_pComponent_Manager)
 		return E_FAIL;
+
 
 	return m_pComponent_Manager->LoadTex_FilesFromPath(pGraphicDev, szImgPath);
 }

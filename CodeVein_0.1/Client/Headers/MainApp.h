@@ -31,6 +31,9 @@ private:
 	HRESULT Ready_Component_Prototype();
 	HRESULT Ready_Start_Scene(SCENEID eScene);
 
+private:
+	void	Global_KeyInput();
+
 public:
 	static CMainApp* Create();
 	virtual void Free(); // 멤버변수의 정리.

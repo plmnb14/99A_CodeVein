@@ -14,6 +14,25 @@ namespace Engine
 	const _ulong FVF_SCREEN = D3DFVF_XYZRHW | D3DFVF_TEX1;
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	typedef struct tagActorInfo
+	{
+		_float		fHP;				// 체력
+		_float		fArmor;				// 방어도
+		_float		fStamina;			// 스태미나
+		_float		fDamage;			// 공격력
+
+		_float		fMoveSpeed_Cur;		// 현재 이동속도
+		_float		fMoveSpeed_Max;		// 최대 이동속도
+		_float		fMoveAccel_Cur;		// 현재 이동가속도
+		_float		fMoveAccel_Max;		// 최대 이동가속도
+
+	}ACTOR_INFO;
+
+	typedef struct tagPlayerInfo : public tagActorInfo
+	{
+
+	}PLAYER_INFO;
+
 	typedef	struct tagVertexColor
 	{
 		_v3			vPos;
@@ -257,4 +276,77 @@ namespace Engine
 	{
 		D3DXMATRIX		CombinedTransformationMatrix;
 	}D3DXFRAME_DERIVED, *LPD3DXFRAME_DERIVED;
+
+	typedef struct tagEffectInfo
+	{
+		TCHAR	szName[256];
+		TCHAR	szGradientName[256];
+		TCHAR	szColorName[256];
+
+		_bool	bUseRGBA;
+		_bool	bStaticFrame;
+		_float	fMaxFrame;
+		_float	fColorIndex;
+
+		_float	fAnimSpeed;
+		_float  fLifeTime;
+
+		_int	iMaxCount; // For Particle
+
+		_float  fMaxAlpha;
+		_float	fAlphaSpeed;
+		_float	fAlphaSpeed_Min;
+		_float	fAlphaSpeed_Max;
+
+		_bool	bUseColorTex;
+		_bool	bRevColor;
+
+		_bool	bBillBoard;
+		_bool	bOnlyYRot;
+
+		_bool	bLinearMove;
+		_bool	bEaseInMove;
+		_bool	bEaseOutMove;
+
+		_bool	bFadeIn;
+		_bool	bFadeOut;
+
+		_float	fCreateDelay;
+		_float	fCreateDelay_Min;
+		_float	fCreateDelay_Max;
+
+		_float	fMoveSpeed;
+		_float	fMoveSpeed_Min;
+		_float	fMoveSpeed_Max;
+
+		_v3		vStartPos;
+		_float	fRandStartPosRange_Min[AXIS_END];
+		_float	fRandStartPosRange_Max[AXIS_END];
+		_bool	bRandStartPos;
+
+		_bool	bDistortion;
+
+		_bool	bDirMove;
+		_v3		vMoveDirection;
+		_bool	bRandomMove;
+		_v3		vRandDirectionRange;
+
+		_bool	bScaleMove;
+		_v3		vStartScale;
+		_v3		vMoveScale;
+		_float	fMoveScaleSpeed;
+
+		_bool	bRotMove;
+		_bool	bRandomRot;
+		_v3		vRotDirection;
+		_float	fRotSpeed;
+		_float	fRotSpeed_Min;
+		_float	fRotSpeed_Max;
+
+		_bool	bColorMove;
+		_v4		vStartColor;
+		_v4		vEndColor;
+		_float	fColorSpeed;
+	}EFFECT_INFO;
+
 }
