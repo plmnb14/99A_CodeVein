@@ -9,9 +9,9 @@ class ENGINE_DLL CBT_Play_Ani final : public CBT_Task_Node
 public:
 	typedef struct tagInitInfo
 	{
-		tagInitInfo(char* tNodeName, CMesh_Dynamic* pMesh_Dynamic, _uint iAni_Index)
+		tagInitInfo(char* pNodeName, CMesh_Dynamic* pMesh_Dynamic, _uint iAni_Index)
 			: Target_pMesh_Dynamic(pMesh_Dynamic), Target_iAni_iIndex(iAni_Index)
-		{ strcpy_s<256>(Target_NodeName, tNodeName); }
+		{ strcpy_s<256>(Target_NodeName, pNodeName); }
 
 		char			Target_NodeName[256];
 		CMesh_Dynamic*	Target_pMesh_Dynamic;
@@ -24,7 +24,7 @@ protected:
 	virtual ~CBT_Play_Ani() = default;
 
 public:
-	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging) override;
+	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging) override;
 
 public:
 	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging);

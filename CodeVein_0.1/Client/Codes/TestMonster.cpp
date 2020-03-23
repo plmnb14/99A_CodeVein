@@ -22,41 +22,65 @@ HRESULT CTestMonster::Ready_GameObject(void * pArg)
 		return E_FAIL;
 
 	m_pTransformCom->Set_Pos(_v3(1.f, 1.f, 1.f));
-	m_pTransformCom->Set_Scale(_v3(0.01f, 0.01f, 0.01f));
+	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 	
+	CBlackBoard* pBlackBoard = CBlackBoard::Create();
+	pBlackBoard->Set_Value(L"Target_Pos", &_v3(2.f, 2.f, 2.f), CBlackBoard::BLACKBOARD_VALUE_STATE::VEC3);
+
+	//_v3 temp = pBlackBoard->Get_V3Value(L"Target_Pos");
+
 	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create();
 
 	CManagement*		pManagement = CManagement::Get_Instance();
 
 	CBT_Sequence* pSequence = static_cast<CBT_Sequence*>(pManagement->Clone_Node(L"Sequence", CBT_Node_Manager::COMPOSITE, &CBT_Sequence::INFO("Sequence1")));
-	//CBT_Sequence* pSequence1 = static_cast<CBT_Sequence*>(pManagement->Clone_Node(L"Sequence", CBT_Node_Manager::COMPOSITE, nullptr));
+	//CBT_Sequence* pSequence1 = static_cast<CBT_Sequence*>(pManagement->Clone_Node(L"Sequence", CBT_Node_Manager::COMPOSITE, &CBT_Sequence::INFO("Sequence2")));
 	//CBT_Sequence* pSequence2 = static_cast<CBT_Sequence*>(pManagement->Clone_Node(L"Sequence", CBT_Node_Manager::COMPOSITE, nullptr));
 
-	CBT_Wait* pWait2 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait2", 2)));
-	CBT_Wait* CoolWait = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait2_1",2)));
-	CBT_Wait* CoolWait22 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait444", 4)));
+	//CBT_Selector* pSelector = static_cast<CBT_Selector*>(pManagement->Clone_Node(L"Selector", CBT_Node_Manager::COMPOSITE, &CBT_Selector::INFO("Selecotr")));
+
+	//CBT_Wait* pWait2 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait2", 2, 0)));
+	//CBT_Wait* CoolWait = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("CoolWait",2)));
+	//CBT_Wait* CoolWait22 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait444", 4)));
 	//CBT_Move* pMove = static_cast<CBT_Move*>(pManagement->Clone_Node(L"Move", CBT_Node_Manager::TASK, &CBT_Move::INFO(m_pTransformCom, 1, 5)));
-	//CBT_Play_Ani* pAni1 = static_cast<CBT_Play_Ani*>(pManagement->Clone_Node(L"Play_Ani", CBT_Node_Manager::TASK, &CBT_Play_Ani::INFO(m_pMeshCom, 4)));
-	//CBT_Play_Ani* pAni2 = static_cast<CBT_Play_Ani*>(pManagement->Clone_Node(L"Play_Ani", CBT_Node_Manager::TASK, &CBT_Play_Ani::INFO(m_pMeshCom, 3)));
-	//CBT_Simple_Parallel* pParallel = static_cast<CBT_Simple_Parallel*>(pManagement->Clone_Node(L"Simple_Parallel", CBT_Node_Manager::COMPOSITE, &CBT_Simple_Parallel::INFO(CBT_Simple_Parallel::Mode::Immediate)));
-	//CBT_Wait* pWait1 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO(1)));
-	//CBT_Wait* pWait3 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO(3)));
+	CBT_Play_Ani* pAni17 = static_cast<CBT_Play_Ani*>(pManagement->Clone_Node(L"Play_Ani", CBT_Node_Manager::TASK, &CBT_Play_Ani::INFO("Ani17", m_pMeshCom, 17)));
+	CBT_Play_Ani* pAni6 = static_cast<CBT_Play_Ani*>(pManagement->Clone_Node(L"Play_Ani", CBT_Node_Manager::TASK, &CBT_Play_Ani::INFO("Ani6", m_pMeshCom, 6)));
+	//CBT_Simple_Parallel* pParallel = static_cast<CBT_Simple_Parallel*>(pManagement->Clone_Node(L"Simple_Parallel", CBT_Node_Manager::COMPOSITE, &CBT_Simple_Parallel::INFO("Parallel", CBT_Simple_Parallel::Mode::Immediate)));
+	//CBT_Wait* pWait1 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait1", 2, 1)));
+	//CBT_Wait* pWait5 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait3", 5)));
+	//CBT_Wait* pWait4 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait4", 4)));
 
-	CBT_Cooldown* pCooldown1 = static_cast<CBT_Cooldown*>(pManagement->Clone_Node(L"Cooldown", CBT_Node_Manager::DECORATOR, &CBT_Cooldown::INFO("Colldown1", 5)));
-	CBT_Cooldown* pCooldown2 = static_cast<CBT_Cooldown*>(pManagement->Clone_Node(L"Cooldown", CBT_Node_Manager::DECORATOR, &CBT_Cooldown::INFO("Colldown2", 3)));
+	//CBT_Cooldown* pCooldown1 = static_cast<CBT_Cooldown*>(pManagement->Clone_Node(L"Cooldown", CBT_Node_Manager::DECORATOR, &CBT_Cooldown::INFO("Colldown1", 1)));
+	//CBT_Cooldown* pCooldown4 = static_cast<CBT_Cooldown*>(pManagement->Clone_Node(L"Cooldown", CBT_Node_Manager::DECORATOR, &CBT_Cooldown::INFO("Colldown4", 4)));
 
-	//CBT_Loop* pLoop3 = static_cast<CBT_Loop*>(pManagement->Clone_Node(L"Loop", CBT_Node_Manager::DECORATOR, &CBT_Loop::INFO(3)));
+	//CBT_Loop* pLoop3 = static_cast<CBT_Loop*>(pManagement->Clone_Node(L"Loop", CBT_Node_Manager::DECORATOR, &CBT_Loop::INFO("Loop", 3)));
+	//CBT_Loop* pLoop0 = static_cast<CBT_Loop*>(pManagement->Clone_Node(L"Loop", CBT_Node_Manager::DECORATOR, &CBT_Loop::INFO("Loop", 0)));
+
+	//CBT_MoveDirectly* pMoveDirect = static_cast<CBT_MoveDirectly*>(pManagement->Clone_Node(L"MoveDirectly", CBT_Node_Manager::TASK, &CBT_MoveDirectly::INFO("MoveDirectly", m_pTransformCom, L"Target_Pos", 1, 3)));
+
+	CBT_ConeCheck* pConeCheck = static_cast<CBT_ConeCheck*>(pManagement->Clone_Node(L"ConeCheck", CBT_Node_Manager::DECORATOR, &CBT_ConeCheck::INFO("ConeCheck", L"Target_Pos", m_pTransformCom, 40, 5)));
+
 
 	if (FAILED(pBehaviorTree->Set_Child(pSequence))) return E_FAIL;
-	if (FAILED(pSequence->Add_Child(pCooldown1))) return E_FAIL;
-	pCooldown1->Set_Child(CoolWait);
-	pSequence->Add_Child(pWait2);
-	pSequence->Add_Child(pCooldown2);
-	pCooldown2->Set_Child(CoolWait22);
+	//if (FAILED(pSelector->Add_Child(pSequence))) return E_FAIL;
+	if (FAILED(pSequence->Add_Child(pConeCheck))) return E_FAIL;
+	pConeCheck->Set_Child(pAni17);
+	//pCooldown1->Set_Child(pLoop3);
+	pSequence->Add_Child(pAni6);
+	//pLoop3->Set_Child(pWait1);
+	//pCooldown4->Set_Child(pAni2);
+
+	//if (FAILED(pBehaviorTree->Set_Child(pSequence))) return E_FAIL;
+	//pSequence->Add_Child(pWait2);
+	////pSequence->Add_Child(pCooldown2);
+	////pCooldown2->Set_Child(CoolWait22);
 	//pSequence->Add_Child(pSequence1);
-	//pSequence1->Add_Child(pWait4);
-	//pSequence1->Add_Child(pWait2_1);
+	//pSequence->Add_Child(pWait3);
+	//pSequence1->Add_Child(pParallel);
+	//pParallel->Set_Main_Child(pWait4);
+	//pParallel->Set_Sub_Child(pWait1);
+	//pSequence1->Add_Child(pAni4);
 
 	//pSequence->Add_Child(pParallel);
 	//pParallel->Set_Main_Child(pSequence2);
@@ -71,7 +95,7 @@ HRESULT CTestMonster::Ready_GameObject(void * pArg)
 
 
 	m_pAIControllerCom->Set_BeHaviorTree(pBehaviorTree);
-
+	m_pAIControllerCom->Set_BlackBoard(pBlackBoard);
 	//m_pMeshCom->SetUp_Animation(56);
 
 	return NOERROR;
@@ -105,7 +129,7 @@ HRESULT CTestMonster::Render_GameObject()
 		nullptr == m_pMeshCom)
 		return E_FAIL;
 
-	m_pMeshCom->Play_Animation(_float(m_dTimeDelta)); // * alpha
+	m_pMeshCom->Play_Animation(_float(m_dTimeDelta) * 2.f); // * alpha
 
 	if (FAILED(SetUp_ConstantTable()))
 		return E_FAIL;
@@ -155,7 +179,7 @@ HRESULT CTestMonster::Add_Component()
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Player", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_PoisonButterFly", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
 		return E_FAIL;
 
 	// for.Com_AIController

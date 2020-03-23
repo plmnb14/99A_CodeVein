@@ -18,52 +18,52 @@ HRESULT CBT_Loop::Set_Child(CBT_Node * pNode)
 	return NO_ERROR;
 }
 
-CBT_Node::BT_NODE_STATE CBT_Loop::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Loop::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	if (nullptr == m_pChild)
 		return BT_NODE_STATE::FAILED;
 
 	Start_Node(pNodeStack, bDebugging);
 
-	if (m_iCurLoopCount > m_iMaxLoopCount)
+	if (m_iCurLoopCount >= m_iMaxLoopCount)
 	{
-		cout << "Loop End" << endl;
-			
 		return End_Node(pNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
 	}
 
 	if (!m_bInProgress)
 	{
-		switch (m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, bDebugging))
+		//값 판단하는 루틴
+
+		switch (m_eChild_State)
 		{
 		case BT_NODE_STATE::FAILED:
-			++m_iCurLoopCount;
 			break;
 		case BT_NODE_STATE::INPROGRESS:
-			return BT_NODE_STATE::INPROGRESS;
+			return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
 		case BT_NODE_STATE::SUCCEEDED:
 		case BT_NODE_STATE::SERVICE:
-			++m_iCurLoopCount;
 			break;
 		}
-		m_eChild_State = BT_NODE_STATE::INPROGRESS;
 		m_bInProgress = true;
 	}
 	else
 	{
+		//루프횟수 증가 판단 루틴
+
+		cout << m_iCurLoopCount << endl;
 		switch (m_eChild_State)
 		{
 		case BT_NODE_STATE::FAILED:
 			++m_iCurLoopCount;
 			m_bInProgress = false;
-			break;
+			return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
 		case BT_NODE_STATE::INPROGRESS:
 			return BT_NODE_STATE::INPROGRESS;
 		case BT_NODE_STATE::SUCCEEDED:
 		case BT_NODE_STATE::SERVICE:
 			++m_iCurLoopCount;
 			m_bInProgress = false;
-			break;
+			return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
 		}
 	}
 

@@ -24,13 +24,13 @@ HRESULT CBT_Root::Set_Child(CBT_Task_Node * pTask_Node)
 	return S_OK;
 }
 
-CBT_Node::BT_NODE_STATE CBT_Root::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Root::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	//Start_Node(pNodeStack, bDebugging);
 	
 	if (m_pChildNode)
-	{
-		m_pChildNode->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, bDebugging);
+	{	
+		m_pChildNode->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
 		//return End_Node(pNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
 	}
 

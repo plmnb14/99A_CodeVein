@@ -9,7 +9,7 @@ CBT_Play_Ani::CBT_Play_Ani(const CBT_Play_Ani & rhs)
 {
 }
 
-CBT_Node::BT_NODE_STATE CBT_Play_Ani::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Play_Ani::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 
 	Start_Node(pNodeStack, bDebugging);
@@ -35,7 +35,6 @@ void CBT_Play_Ani::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 		pNodeStack->push_back(this);
 		Safe_AddRef(this);
 
-		m_pMesh_Dynamic->SetUp_Animation(0);
 		m_pMesh_Dynamic->SetUp_Animation(m_iAni_Index);
 
 		m_bInit = false;

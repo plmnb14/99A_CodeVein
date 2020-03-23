@@ -6,3 +6,4 @@ Mesh_SlashLine|SlashLine.X|..\..\Client\Bin\Resources\Mesh\StaticMesh\Effect\Sla
 Mesh_Sword|Sword.X|..\..\Client\Bin\Resources\Mesh\StaticMesh\Sword\|0
 Mesh_TombStone|TombStone.X|..\..\Client\Bin\Resources\Mesh\StaticMesh\TombStone\|0
 Mesh_Player|Player.X|..\..\Client\Bin\Resources\Mesh\DynamicMesh\Player\|1
+Mesh_PoisonButterFly|PoisonButterFly.X|..\..\Client\Bin\Resources\Mesh\DynamicMesh\PoisonButterFly\|1

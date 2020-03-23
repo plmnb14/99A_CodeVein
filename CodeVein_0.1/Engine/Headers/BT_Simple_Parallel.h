@@ -21,9 +21,9 @@ public:
 
 	typedef struct tagInitInfo
 	{
-		tagInitInfo(char* tNodeName, Mode eMode)
+		tagInitInfo(char* pNodeName, Mode eMode)
 			: eNode_Mode(eMode) 
-		{ strcpy_s<256>(Target_NodeName, tNodeName); }
+		{ strcpy_s<256>(Target_NodeName, pNodeName); }
 
 		char	Target_NodeName[256];
 		Mode eNode_Mode;
@@ -40,7 +40,7 @@ public:
 	HRESULT Set_Sub_Child(CBT_Node* pNode);
 
 public:
-	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging);
+	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging);
 
 public:
 	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging);
@@ -49,7 +49,7 @@ public:
 private:
 	HRESULT Ready_Clone_Node(void* pInit_Struct);
 
-	HRESULT Delete_SubNodeStack(list<vector<CBT_Node*>*>* plistSubNodeStack);
+	HRESULT Delete_SubNodeStack(list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging);
 
 private:
 	Mode				m_eMode = Mode::Immediate;

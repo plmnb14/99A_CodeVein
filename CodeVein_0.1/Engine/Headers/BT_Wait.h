@@ -7,14 +7,18 @@ BEGIN(Engine)
 class ENGINE_DLL CBT_Wait final : public CBT_Task_Node
 {
 public:
+	/*
+	대기시간 = dMaxTime +- dOffsetTime
+	*/
 	typedef struct tagInitInfo
 	{
-		tagInitInfo(char* tNodeName, _double dMaxTime)
-			: Target_dMaxTime(dMaxTime) 
-		{ strcpy_s<256>(Target_NodeName, tNodeName); }
+		tagInitInfo(char* pNodeName, _double dWaitingTime, _double dOffset)
+			: Target_dWaitingTime(dWaitingTime), Target_dOffset(dOffset)
+		{ strcpy_s<256>(Target_NodeName, pNodeName); }
 
 		char	Target_NodeName[256];
-		_double Target_dMaxTime;
+		_double Target_dWaitingTime;
+		_double Target_dOffset;
 	}INFO;
 
 protected:
@@ -23,7 +27,7 @@ protected:
 	virtual ~CBT_Wait() = default;
 
 public:
-	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging) override;
+	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging) override;
 
 public:
 	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging);
@@ -34,6 +38,10 @@ private:
 	
 private:
 	_double		m_dCurTime = 0;
+	_double		m_dWaitingTime = 0;
+	_double		m_dOffset = 0;
+
+	// dMaxTime = m_dWaitingTime +- m_dOffset
 	_double		m_dMaxTime = 0;
 
 public:

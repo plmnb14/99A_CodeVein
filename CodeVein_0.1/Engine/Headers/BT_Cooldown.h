@@ -9,9 +9,9 @@ class ENGINE_DLL CBT_Cooldown final : public CBT_Decorator_Node
 public:
 	typedef struct tagInitInfo
 	{
-		tagInitInfo(char* tNodeName, _double dCoolTime)
+		tagInitInfo(char* pNodeName, _double dCoolTime)
 			: Target_dCoolTime(dCoolTime)
-		{ strcpy_s<256>(Target_NodeName, tNodeName); }
+		{ strcpy_s<256>(Target_NodeName, pNodeName); }
 		
 		char	Target_NodeName[256];
 		_double	Target_dCoolTime;
@@ -26,7 +26,7 @@ public:
 	HRESULT Set_Child(CBT_Node* pNode);
 
 public:
-	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging) override;
+	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging) override;
 
 public:
 	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging);
@@ -42,7 +42,7 @@ private:
 	_bool				m_bInProgress = false;
 	_bool				m_bAddThread = true;
 
-	BT_NODE_STATE		m_eCurState = BT_NODE_STATE::INPROGRESS;
+	BT_NODE_STATE		m_eCurState = BT_NODE_STATE::SUCCEEDED;
 	_double				m_dCurTime = 0;
 	_double				m_dCoolTime = 0;
 

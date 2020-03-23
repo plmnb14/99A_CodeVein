@@ -20,7 +20,7 @@ HRESULT CBT_Sequence::Add_Child(CBT_Node * pNode)
 	return S_OK;
 }
 
-CBT_Node::BT_NODE_STATE CBT_Sequence::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Sequence::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	/*
 	왼쪽부터 자식들을 검사해서 실패할 때가지 수행한다.
@@ -36,12 +36,12 @@ CBT_Node::BT_NODE_STATE CBT_Sequence::Update_Node(_double TimeDelta, vector<CBT_
 				return End_Node(pNodeStack, BT_NODE_STATE::FAILED, bDebugging);
 
 			case BT_NODE_STATE::INPROGRESS:
-				return m_pChildren[m_pCurIndex++]->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, bDebugging);
+				return m_pChildren[m_pCurIndex++]->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
 
 			case BT_NODE_STATE::SUCCEEDED:
 			case BT_NODE_STATE::SERVICE:
 				//this->m_eChild_State = BT_NODE_STATE::INPROGRESS;
-				return m_pChildren[m_pCurIndex++]->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, bDebugging);
+				return m_pChildren[m_pCurIndex++]->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
 		}
 
 	}
@@ -74,6 +74,8 @@ void CBT_Sequence::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 
 CBT_Node::BT_NODE_STATE CBT_Sequence::End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging)
 {
+	m_bInit = true;
+
 	if (pNodeStack->empty())
 		return eState;
 
@@ -82,7 +84,6 @@ CBT_Node::BT_NODE_STATE CBT_Sequence::End_Node(vector<CBT_Node*>* pNodeStack, BT
 
 	if (!pNodeStack->empty())
 		Notify_Parent_Of_State(pNodeStack->back(), eState);
-	m_bInit = true;
 
 	if (bDebugging)
 	{
@@ -113,17 +114,31 @@ CBT_Node * CBT_Sequence::Clone(void* pInit_Struct)
 	CBT_Sequence* pInstance = new CBT_Sequence(*this);
 
 	if (FAILED(pInstance->Ready_Clone_Node(pInit_Struct)))
+	{
+		MSG_BOX("Failed To Clone CBT_Sequence");
 		Safe_Release(pInstance);
+	}
 
 	return pInstance;
 }
 
 void CBT_Sequence::Free()
 {
-	for (CBT_Node* pChild : m_pChildren)
+	for (auto iter = m_pChildren.begin(); iter != m_pChildren.end(); )
 	{
-		pChild->Free();
-		Safe_Release(pChild);
+		(*iter)->Free();
+		Safe_Release(*iter);
+
+		if (nullptr == *iter)
+			iter = m_pChildren.erase(iter);
+		else
+			++iter;
 	}
-	m_pChildren.clear();
+
+	//for (CBT_Node* pChild : m_pChildren)
+	//{
+	//	//pChild->Free();
+	//	Safe_Release(pChild);
+	//}
+	//m_pChildren.clear();
 }

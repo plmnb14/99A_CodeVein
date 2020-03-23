@@ -9,8 +9,8 @@ class ENGINE_DLL CBT_Selector final : public CBT_Composite_Node
 public:
 	typedef struct tagInitInfo
 	{
-		tagInitInfo(char* tNodeName)
-		{ strcpy_s<256>(Target_NodeName, tNodeName); }
+		tagInitInfo(char* pNodeName)
+		{ strcpy_s<256>(Target_NodeName, pNodeName); }
 
 		char	Target_NodeName[256];
 	}INFO;
@@ -24,7 +24,7 @@ public:
 	HRESULT Add_Child(CBT_Node* pNode);
 
 public:
-	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging) override;
+	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging) override;
 
 public:
 	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging);

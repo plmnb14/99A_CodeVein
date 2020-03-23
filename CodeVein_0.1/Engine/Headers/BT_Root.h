@@ -24,7 +24,7 @@ public:
 	HRESULT Set_Child(CBT_Task_Node* pTask_Node);
 
 public:
-	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging) override;
+	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard,  _bool bDebugging) override;
 
 protected:
 	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging);

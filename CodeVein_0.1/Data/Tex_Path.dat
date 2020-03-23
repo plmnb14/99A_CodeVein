@@ -27,4 +27,9 @@ Tex_SmokeHeavy64|SmokeHeavy64_%d.png|..\..\Client\Bin\Resources\Texture\Effect\S
 Tex_SmokePuff01|T_FX_TC5SmokePuff01.tga|..\..\Client\Bin\Resources\Texture\Effect\Smoke\SmokePuff01\|0|11
 Tex_SmokeSoft16|SmokeSoft16_%d.png|..\..\Client\Bin\Resources\Texture\Effect\Smoke\SmokeSoft16\|0|16
 Tex_SmokeSoft64|SmokeSoft64_%d.png|..\..\Client\Bin\Resources\Texture\Effect\Smoke\SmokeSoft64\|0|64
+Tex_BossUI|BossHpGauge_Deco.tga|..\..\Client\Bin\Resources\Texture\TestUI\BossUI\|0|2
+Tex_Button|TestBtn.png|..\..\Client\Bin\Resources\Texture\TestUI\Button\|0|1
+Tex_HPBar|T_HPGaugeTexture_UI.tga|..\..\Client\Bin\Resources\Texture\TestUI\HPBar\|0|1
+Tex_HPBarBack|HPBack.png|..\..\Client\Bin\Resources\Texture\TestUI\HPBarBack\|0|1
+Tex_LogoBack|Logo_BackGround.tga|..\..\Client\Bin\Resources\Texture\TestUI\LogoBack\|0|2
 Tex_TitleUI|TitleUI%d.png|..\..\Client\Bin\Resources\Texture\TitleUI\|0|12

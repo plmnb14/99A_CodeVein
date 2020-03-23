@@ -18,7 +18,7 @@ HRESULT CBT_Cooldown::Set_Child(CBT_Node * pNode)
 	return S_OK;
 }
 
-CBT_Node::BT_NODE_STATE CBT_Cooldown::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Cooldown::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	if (nullptr == m_pChild)
 		return BT_NODE_STATE::FAILED;
@@ -30,7 +30,9 @@ CBT_Node::BT_NODE_STATE CBT_Cooldown::Update_Node(_double TimeDelta, vector<CBT_
 		{
 			m_bInit = true;
 			m_eCurState = BT_NODE_STATE::INPROGRESS;
-			return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, bDebugging);
+			//Safe_AddRef(m_pChild);	//  종료시 충돌은 나지않지만, 릭이 남음
+			//횟수가 반복될수록 릭이 늘어남
+			return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
 		}
 		else
 		{
@@ -150,10 +152,11 @@ void CBT_Cooldown::Free()
 	{
 		Safe_Release(m_pSubNodeStatck[0]);
 		Safe_Release(m_pSubNodeStatck[1]);
+
 		m_pSubNodeStatck.clear();
 	}
 
-	if(m_pChild)
+	if (m_pChild)
 		m_pChild->Free();
 
 	Safe_Release(m_pChild);

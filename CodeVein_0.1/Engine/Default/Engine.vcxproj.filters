@@ -429,9 +429,6 @@
     <ClInclude Include="..\Headers\BT_Service_Node.h">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Service</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\BT_Move.h">
-      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\BT_Wait.h">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
     </ClInclude>
@@ -457,6 +454,15 @@
       <Filter>01.Utility\[02] GameObject\3%29 UI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\BT_Cooldown.h">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BT_MoveTo.h">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BT_MoveDirectly.h">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BT_ConeCheck.h">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
     </ClInclude>
   </ItemGroup>
@@ -632,9 +638,6 @@
     <ClCompile Include="..\Codes\BT_Service_Node.cpp">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Service</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\BT_Move.cpp">
-      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\BT_Wait.cpp">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
     </ClCompile>
@@ -660,6 +663,15 @@
       <Filter>01.Utility\[02] GameObject\3%29 UI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\BT_Cooldown.cpp">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BT_MoveTo.cpp">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BT_MoveDirectly.cpp">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BT_ConeCheck.cpp">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
     </ClCompile>
   </ItemGroup>

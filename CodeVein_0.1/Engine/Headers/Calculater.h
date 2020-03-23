@@ -27,12 +27,13 @@ public:
 	static float Lerp(float _fValue1, float _fValue2, float _fAmount);
 
 public:
-	static const _int Random_Num(_int _iBegin, _int _iEnd);
-	static const _v3  Random_Dir(_float _fLength);
-	static const _v3  Random_Dir(_float _fDirX = 1.f, _float _fDirY = 1.f, _float _fDirZ = 1.f);
-	static const _v3  Random_Dir(_int _iX_Begin, _int _iX_End, _int _iY_Begin, _int _iY_End, _int _iZ_Begin, _int _iZ_End);
-	static const _v3  Random_Dir_Positive();
-	static const _v3  Random_Dir_Nagative();
+	static const _double	Random_Num_Double(_double dBegin, _double _dEnd);
+	static const _int		Random_Num(_int _iBegin, _int _iEnd);
+	static const _v3		Random_Dir(_float _fLength);
+	static const _v3		Random_Dir(_float _fDirX = 1.f, _float _fDirY = 1.f, _float _fDirZ = 1.f);
+	static const _v3		Random_Dir(_int _iX_Begin, _int _iX_End, _int _iY_Begin, _int _iY_End, _int _iZ_Begin, _int _iZ_End);
+	static const _v3		Random_Dir_Positive();
+	static const _v3		Random_Dir_Nagative();
 
 }CALC;
 
