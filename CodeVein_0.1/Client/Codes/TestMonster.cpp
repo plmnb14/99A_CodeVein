@@ -30,7 +30,7 @@ HRESULT CTestMonster::Ready_GameObject(void * pArg)
 
 	//_v3 temp = pBlackBoard->Get_V3Value(L"Target_Pos");
 
-	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create(true);
+	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create();
 
 	CManagement*		pManagement = CManagement::Get_Instance();
 
