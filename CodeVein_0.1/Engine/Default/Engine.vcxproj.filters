@@ -229,14 +229,14 @@
     <Filter Include="01.Utility\[02] GameObject\3%29 UI">
       <UniqueIdentifier>{2609861d-baea-48f1-abbb-8f2bfa680600}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\[07] ShaderFiles\[09] =======================================">
-      <UniqueIdentifier>{65e0df4a-40eb-4a8f-b7aa-9aa4452846fe}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\[02] GameObject\4%29 Effect\1%29 TexEffect">
       <UniqueIdentifier>{23352423-4e0a-40a8-bf8d-c513628d8f2b}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Utility\[02] GameObject\4%29 Effect\2%29 ParticleMgr">
       <UniqueIdentifier>{f507cbe0-83d6-45e4-8d09-c46cbd8a534f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\[09] =======================================">
+      <UniqueIdentifier>{65e0df4a-40eb-4a8f-b7aa-9aa4452846fe}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>

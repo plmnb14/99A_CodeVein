@@ -169,10 +169,10 @@ _int CUI_Manager::Update_UI()
 	}
 
 
-	if (CInput_Device::Get_Instance()->Key_Up(DIK_NUMPAD1))
-		pActiveUI->Set_Skill_Index(pActiveUI->Get_Skill_Index() + 1);
-	if (CInput_Device::Get_Instance()->Key_Up(DIK_NUMPAD2))
-		pActiveUI2->Set_Skill_Index(pActiveUI2->Get_Skill_Index() + 1);
+	//if (CInput_Device::Get_Instance()->Key_Up(DIK_NUMPAD1))
+	//	pActiveUI->Set_Skill_Index(pActiveUI->Get_Skill_Index() + 1);
+	//if (CInput_Device::Get_Instance()->Key_Up(DIK_NUMPAD2))
+	//	pActiveUI2->Set_Skill_Index(pActiveUI2->Get_Skill_Index() + 1);
 
 
 	Safe_Release(pManagement);

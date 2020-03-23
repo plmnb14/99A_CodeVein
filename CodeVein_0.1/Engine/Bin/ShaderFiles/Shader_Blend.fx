@@ -70,8 +70,9 @@ PS_OUT PS_MAIN(PS_IN In)
 	vector	vDiffuse = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
 	vector	vShade = pow(tex2D(ShadeSampler, In.vTexUV), 2.2);
 	vector	vSpecular = tex2D(SpecularSampler, In.vTexUV);
+	vector	vRim = pow(tex2D(BloomSampler, In.vTexUV), 2.2);
 
-	Out.vColor = (vDiffuse + vSpecular) * vShade;
+	Out.vColor = (vDiffuse + vSpecular + vRim) * vShade;
 	Out.vColor = pow(Out.vColor, 1 / 2.2);
 
 	return Out;
@@ -97,7 +98,7 @@ PS_OUT PS_TONEMAPPING(PS_IN In)
 	//Out.vColor = float4(pow(Color, 1.f / 2.2f), 1.f);
 
 	// EA studio ========================================================================
-	float3 Color = pow(Out.vColor, 2.2f);
+	float3 Color = pow(Out.vColor.xyz, 2.2f);
 	float3 x = max(0.f, Color - 0.004);
 	Color = (x * (6.2f * x + 0.5f)) / (x * (6.2f * x + 1.7f) + 0.06f);
 	//Color = pow(Color, 1.0 / 2.2);
@@ -186,7 +187,7 @@ PS_OUT PS_BLUR(PS_IN In)
 	{
 		samp.x = In.vTexUV.x + PixelKernel[i] * pixelWidthX;
 		samp.y = In.vTexUV.y + PixelKernel[i] * pixelWidthY;
-		color += tex2D(DiffuseSampler, samp) * BlurWeights[i];
+		color += tex2D(DiffuseSampler, samp) * BlurWeights[i] * 1.3f;
 	}
 
 	//////////////////////////////////////////////////////////////
@@ -248,7 +249,7 @@ PS_OUT PS_Bloom(PS_IN In) // Extract Bright Color
 
 	// Bloom 3====================================================================
 	Out.vColor = vDiffuse;
-	Out.vColor.rgb -= 1.f; // 작은 값일 수록 빛에 민감한 광선
+	Out.vColor.rgb -= 0.85f; // 작은 값일 수록 빛에 민감한 광선
 
 	Out.vColor = 4.0f * max(Out.vColor, 0.0f); // 큰 값일 수록 확실한 모양의 광선
 
@@ -286,7 +287,7 @@ PS_OUT PS_MotionBlur(PS_IN In)
 	float	fViewZ = vDepthInfo.g * 300.f;
 	//float	zOverW = vDepthInfo.x;
 	float	zOverW = 1;
-	float4 H = float4(In.vTexUV.x * 2 - 1, (1 - In.vTexUV.y) * 2 - 1, zOverW, 1);
+	float4 H = float4(In.vTexUV.x * 2 - 1, (In.vTexUV.y * -2) + 1, zOverW, 1);
 	//H = H * fViewZ;
 
 	float4 D = mul(H, g_matInvVP);
@@ -298,9 +299,8 @@ PS_OUT PS_MotionBlur(PS_IN In)
 	float4 previousPos = mul(worldPos, g_matLastVP);
 	// Convert to nonhomogeneous points [-1,1] by dividing by w.
 	previousPos /= previousPos.w;
-	// Use this frame's position and last frame's to compute the pixel    
-	// velocity.   
-	float2 velocity = (currentPos - previousPos) / 2.f;
+	// Use this frame's position and last frame's to compute the pixel velocity.   
+	float2 velocity = (currentPos.xy - previousPos.xy) / 2.f;
 
 	// Get the initial color at this pixel.    
 	float4 color = tex2D(DiffuseSampler, In.vTexUV);
@@ -329,10 +329,10 @@ PS_OUT MotionBlurForObj(PS_IN In)
 	// Get the initial color at this pixel.    
 	float4 velocity = tex2D(ShadeSampler, In.vTexUV);
 	float4 color = tex2D(DiffuseSampler, In.vTexUV);
-	In.vTexUV += velocity;
+	In.vTexUV += velocity.xy;
 
 	int g_numSamples = 10;
-	for (int i = 1; i < g_numSamples; ++i, In.vTexUV += velocity)
+	for (int i = 1; i < g_numSamples; ++i, In.vTexUV += velocity.xy)
 	{   // Sample the color buffer along the velocity vector.    
 		float4 currentColor = tex2D(DiffuseSampler, In.vTexUV);
 		// Add the current color to our color sum.   
@@ -340,8 +340,8 @@ PS_OUT MotionBlurForObj(PS_IN In)
 	}
 	// Average all of the samples to get the final blur color.
 	float4 finalColor = color / g_numSamples;
-
-	Out.vColor = finalColor;
+	finalColor.a *= velocity.a;
+	Out.vColor = finalColor; 
 
 	//// From Velocity Map =============================================
 	//const int SAMPLES = 26;
