@@ -264,6 +264,7 @@ namespace Engine
 		TCHAR	szGradientName[256];
 		TCHAR	szColorName[256];
 
+		_bool	bUseRGBA;
 		_bool	bStaticFrame;
 		_float	fMaxFrame;
 		_float	fColorIndex;

@@ -179,6 +179,8 @@ const _bool CInput_Device::Key_Up(_ubyte byKeyID)
 
 HRESULT Engine::CInput_Device::Ready_Input_Dev(HINSTANCE hInst, HWND hWnd)
 {
+	m_hWnd = hWnd;
+
 	// DInput 컴객체를 생성하는 함수
 	if (FAILED((DirectInput8Create(hInst,
 		DIRECTINPUT_VERSION,

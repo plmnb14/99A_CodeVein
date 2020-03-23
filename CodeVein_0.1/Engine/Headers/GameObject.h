@@ -27,7 +27,7 @@ public:
 public:
 	virtual void Set_Target(CGameObject* _pTarget) { m_pTarget = _pTarget; }
 	virtual void Set_LayerIdx(_ulong _dwLayerIdx) { m_dwLayerIdx = _dwLayerIdx; }
-
+	void Set_Dead();
 public:
 	HRESULT			Add_Component(_uint iSceneID, const _tchar* pPrototypeTag, const _tchar* pComponentTag, CComponent** ppComponent, void* pArg = nullptr);
 

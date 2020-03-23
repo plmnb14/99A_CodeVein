@@ -247,6 +247,7 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\Mesh_Static.h" />
     <ClInclude Include="..\Headers\NavMesh.h" />
     <ClInclude Include="..\Headers\Object_Manager.h" />
+    <ClInclude Include="..\Headers\ParticleMgr.h" />
     <ClInclude Include="..\Headers\PipeLine.h" />
     <ClInclude Include="..\Headers\Renderer.h" />
     <ClInclude Include="..\Headers\RenderObject.h" />
@@ -257,6 +258,7 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\Target.h" />
     <ClInclude Include="..\Headers\Target_Manager.h" />
     <ClInclude Include="..\Headers\Terrain_Guide.h" />
+    <ClInclude Include="..\Headers\TexEffect.h" />
     <ClInclude Include="..\Headers\Texture.h" />
     <ClInclude Include="..\Headers\Timer.h" />
     <ClInclude Include="..\Headers\Timer_Manager.h" />
@@ -318,6 +320,7 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\Mesh_Static.cpp" />
     <ClCompile Include="..\Codes\NavMesh.cpp" />
     <ClCompile Include="..\Codes\Object_Manager.cpp" />
+    <ClCompile Include="..\Codes\ParticleMgr.cpp" />
     <ClCompile Include="..\Codes\PipeLine.cpp" />
     <ClCompile Include="..\Codes\Renderer.cpp" />
     <ClCompile Include="..\Codes\RenderObject.cpp" />
@@ -328,6 +331,7 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\Target.cpp" />
     <ClCompile Include="..\Codes\Target_Manager.cpp" />
     <ClCompile Include="..\Codes\Terrain_Guide.cpp" />
+    <ClCompile Include="..\Codes\TexEffect.cpp" />
     <ClCompile Include="..\Codes\Texture.cpp" />
     <ClCompile Include="..\Codes\Timer.cpp" />
     <ClCompile Include="..\Codes\Timer_Manager.cpp" />

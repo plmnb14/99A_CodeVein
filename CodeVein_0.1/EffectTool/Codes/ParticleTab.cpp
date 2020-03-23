@@ -153,6 +153,7 @@ void CParticleTab::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_EDIT38, m_EditCtrMaxFrame);
 	DDX_Text(pDX, IDC_EDIT40, m_EditFileName);
 	DDX_Text(pDX, IDC_EDIT42, m_EditColorIndex);
+	DDX_Control(pDX, IDC_CHECK1, m_CheckUseRGBA);
 }
 
 void CParticleTab::Set_GraphicDev(LPDIRECT3DDEVICE9 pDev)
@@ -367,6 +368,8 @@ void CParticleTab::Setup_EffInfo(_bool bIsMesh)
 	m_pInfo->bLinearMove = m_RadioMoveType[1].GetCheck() ? true : false;
 	m_pInfo->bEaseInMove = m_RadioMoveType[2].GetCheck() ? true : false;
 	m_pInfo->bEaseOutMove = m_RadioMoveType[3].GetCheck() ? true : false;
+
+	m_pInfo->bUseRGBA = m_CheckUseRGBA.GetCheck() ? true : false;
 
 	GetDlgItemText(IDC_EDIT42, m_EditColorIndex);
 	m_pInfo->fColorIndex = _float(_tstoi(m_EditColorIndex));
@@ -583,6 +586,7 @@ void CParticleTab::OnBnClickedButton_Save()
 		::WriteFile(hFile, &m_pInfo->bDistortion, sizeof(_bool), &dwByte, nullptr);
 		::WriteFile(hFile, &m_pInfo->bStaticFrame, sizeof(_bool), &dwByte, nullptr);
 		::WriteFile(hFile, &m_pInfo->bUseColorTex, sizeof(_bool), &dwByte, nullptr);
+		::WriteFile(hFile, &m_pInfo->bUseRGBA, sizeof(_bool), &dwByte, nullptr);
 
 		::WriteFile(hFile, &m_pInfo->bColorMove, sizeof(_bool), &dwByte, nullptr);
 		::WriteFile(hFile, &m_pInfo->bDirMove, sizeof(_bool), &dwByte, nullptr);
@@ -707,6 +711,9 @@ void CParticleTab::OnBnClickedButton_Load()
 
 			::ReadFile(hFile, &tInfo.bUseColorTex, sizeof(_bool), &dwByte, nullptr);
 			m_CheckColorTex.SetCheck(tInfo.bUseColorTex);
+
+			::ReadFile(hFile, &tInfo.bUseRGBA, sizeof(_bool), &dwByte, nullptr);
+			m_CheckUseRGBA.SetCheck(tInfo.bUseRGBA);
 
 			::ReadFile(hFile, &tInfo.bColorMove, sizeof(_bool), &dwByte, nullptr);
 
