@@ -26,14 +26,14 @@ HRESULT CScene_Stage::Ready_Scene()
 	if (FAILED(Ready_Layer_Monster(L"Layer_Monster")))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Effect(L"Layer_Effect")))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Effect(L"Layer_Effect")))
+	//	return E_FAIL;
 
-	if (FAILED(Ready_Layer_BackGround(L"Layer_BackGround")))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_BackGround(L"Layer_BackGround")))
+	//	return E_FAIL;
 
-	if (FAILED(CUI_Manager::Get_Instance()->SetUp_UILayer()))
-		return E_FAIL;
+	//if (FAILED(CUI_Manager::Get_Instance()->SetUp_UILayer()))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -72,14 +72,15 @@ _int CScene_Stage::Update_Scene(_double TimeDelta)
 	
 
 	// -------------- UI Manager ----------------------
-	CUI_Manager::Get_Instance()->Update_UI();
+	//CUI_Manager::Get_Instance()->Update_UI();
+	//
+	//if (CInput_Device::Get_Instance()->Key_Up(DIK_NUMPAD3))
+	//	CUI_Manager::Get_Instance()->Add_Item(CItem::REGEN_POWER);
+	//if (CInput_Device::Get_Instance()->Key_Up(DIK_NUMPAD4))
+	//	CUI_Manager::Get_Instance()->Add_Item(CItem::ITEM_2);
+	//if (CInput_Device::Get_Instance()->Key_Up(DIK_NUMPAD5))
+	//	CUI_Manager::Get_Instance()->Use_Item();
 
-	if (CInput_Device::Get_Instance()->Key_Up(DIK_NUMPAD3))
-		CUI_Manager::Get_Instance()->Add_Item(CItem::REGEN_POWER);
-	if (CInput_Device::Get_Instance()->Key_Up(DIK_NUMPAD4))
-		CUI_Manager::Get_Instance()->Add_Item(CItem::ITEM_2);
-	if (CInput_Device::Get_Instance()->Key_Up(DIK_NUMPAD5))
-		CUI_Manager::Get_Instance()->Use_Item();
 	return _int();
 }
 
@@ -100,8 +101,7 @@ HRESULT CScene_Stage::Ready_Layer_Player(const _tchar * pLayerTag)
 
 	Safe_AddRef(pManagement);
 
-	// For.Terrain
-	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_Player", SCENE_STATIC, pLayerTag)))
+	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_Player", SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 
 	Safe_Release(pManagement);
@@ -117,17 +117,17 @@ HRESULT CScene_Stage::Ready_Layer_Camera(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
-	//CManagement*		pManagement = CManagement::Get_Instance();
-	//if (nullptr == pManagement)
-	//	return E_FAIL;
-	//
-	//Safe_AddRef(pManagement);
-	//
-	//// For. TestMonster
-	//if (FAILED(pManagement->Add_GameObject_ToLayer(L"Monster_TestMonster", SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
-	//
-	//Safe_Release(pManagement);
+	CManagement*		pManagement = CManagement::Get_Instance();
+	if (nullptr == pManagement)
+		return E_FAIL;
+
+	Safe_AddRef(pManagement);
+
+	// For. TestMonster
+	if (FAILED(pManagement->Add_GameObject_ToLayer(L"Monster_TestMonster", SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+
+	Safe_Release(pManagement);
 
 	return S_OK;
 }
@@ -183,7 +183,7 @@ HRESULT CScene_Stage::Ready_Layer_UI(const _tchar * pLayerTag)
 
 	
 
-	CUI_Manager::Get_Instance()->SetUp_UILayer();
+	//CUI_Manager::Get_Instance()->SetUp_UILayer();
 	
 
 	Safe_Release(pManagement);
@@ -248,7 +248,7 @@ CScene_Stage * CScene_Stage::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 
 void CScene_Stage::Free()
 {
-	CUI_Manager::Get_Instance()->Destroy_Instance();
+	//CUI_Manager::Get_Instance()->Destroy_Instance();
 	CScene::Free();
 }
 

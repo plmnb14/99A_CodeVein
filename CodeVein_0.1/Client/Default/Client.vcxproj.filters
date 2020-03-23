@@ -58,12 +58,6 @@
     <Filter Include="02.GameObject\Stage\4%29 UI\00.PlayerUI">
       <UniqueIdentifier>{4c20310c-aa64-471f-abb8-3bcdda962cbd}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\4%29 UI\00.PlayerUI\HPBack">
-      <UniqueIdentifier>{fa879426-186e-47c8-b86a-a658c605a61a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\4%29 UI\00.PlayerUI\HPBar">
-      <UniqueIdentifier>{71f3b7e5-9b16-4faf-a9d7-c6bc1ae53dfb}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\4%29 UI\01.MonsterUI">
       <UniqueIdentifier>{c8d63875-25fd-4802-a102-e872f46bb451}</UniqueIdentifier>
     </Filter>
@@ -228,19 +222,8 @@
     <ClInclude Include="..\Headers\Sky.h">
       <Filter>02.GameObject\Stage\3%29 Sky</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Effect.h">
-      <Filter>02.GameObject\Stage\2%29 Effect</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\TestMonster.h">
       <Filter>02.GameObject\Stage\1%29 Monster</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\HPBack.h">
-      <Filter>02.GameObject\Stage\4%29 UI\00.PlayerUI\HPBack</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\HPBar.h">
-      <Filter>02.GameObject\Stage\4%29 UI\00.PlayerUI\HPBar</Filter>
-   </ClInclude>
-      <Filter>02.GameObject\Stage\UI\UI\00.PlayerUI\HPBack</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\LogoBtn.h">
       <Filter>02.GameObject\Logo\LogoButton</Filter>
@@ -308,6 +291,9 @@
     <ClInclude Include="..\Headers\Menu_Active.h">
       <Filter>02.GameObject\Stage\UI\UI\03.MenuUI\Menu_Skill\Menu_Active</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\HPBack.h">
+      <Filter>02.GameObject\Stage\UI\UI\00.PlayerUI\HPBack</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -337,17 +323,8 @@
     <ClCompile Include="..\Codes\Sky.cpp">
       <Filter>02.GameObject\Stage\3%29 Sky</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Effect.cpp">
-      <Filter>02.GameObject\Stage\2%29 Effect</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\TestMonster.cpp">
       <Filter>02.GameObject\Stage\1%29 Monster</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\HPBack.cpp">
-      <Filter>02.GameObject\Stage\4%29 UI\00.PlayerUI\HPBack</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\HPBar.cpp">
-      <Filter>02.GameObject\Stage\4%29 UI\00.PlayerUI\HPBar</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\LogoBtn.cpp">
       <Filter>02.GameObject\Logo\LogoButton</Filter>
@@ -415,6 +392,9 @@
     <ClCompile Include="..\Codes\Menu_Active.cpp">
       <Filter>02.GameObject\Stage\UI\UI\03.MenuUI\Menu_Skill\Menu_Active</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\HPBack.cpp">
+      <Filter>02.GameObject\Stage\UI\UI\00.PlayerUI\HPBack</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -435,25 +415,31 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Default.fx">
+    <FxCompile Include="..\ShaderFiles\Shader_Blend.fx">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Terrain.fx">
+    <FxCompile Include="..\ShaderFiles\Shader_Default.fx">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Mesh.fx">
+    <FxCompile Include="..\ShaderFiles\Shader_Effect.fx">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Sky.fx">
+    <FxCompile Include="..\ShaderFiles\Shader_Gizmo.fx">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect.fx">
+    <FxCompile Include="..\ShaderFiles\Shader_LightAcc.fx">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Gizmo.fx">
+    <FxCompile Include="..\ShaderFiles\Shader_Mesh.fx">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_UI.fx">
+    <FxCompile Include="..\ShaderFiles\Shader_Sky.fx">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\ShaderFiles\Shader_Terrain.fx">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\ShaderFiles\Shader_UI.fx">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

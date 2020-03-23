@@ -74,7 +74,7 @@ HRESULT CMesh_Dynamic::Ready_Component_Prototype(const _tchar * pFilePath, const
 
 	SetUp_CombinedTransformationMatricesPointer(m_pRootFrame , 0);
 
-	if (!lstrcmp(pFileName, L"Player.x"))
+	if (!lstrcmp(pFileName, L"Player.X"))
 	{
 		m_bIsSeperate = true;
 

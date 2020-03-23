@@ -118,6 +118,7 @@ const _bool CInput_Device::Get_DIMouseState_Up(MOUSEKEYSTATE eMouse)
 	}
 
 	return false;
+}
 
 const _bool CInput_Device::MousePt_InRect(_float fRectPosX, _float fRectPosY, _float fRectSizeX, _float fRectSizeY, HWND hWnd)
 {

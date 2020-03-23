@@ -8,17 +8,19 @@ CComponent_Manager::CComponent_Manager()
 
 HRESULT CComponent_Manager::Ready_Component_Manager(_Device _pGraphicDev)
 {
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Default", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Default.fx"))))
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Default", CShader::Create(_pGraphicDev, L"../ShaderFiles/Shader_Default.fx"))))
 		return E_FAIL;
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Terrain", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Terrain.fx"))))
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Terrain", CShader::Create(_pGraphicDev, L"../ShaderFiles/Shader_Terrain.fx"))))
 		return E_FAIL;
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Mesh", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Mesh.fx"))))
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Mesh", CShader::Create(_pGraphicDev, L"../ShaderFiles/Shader_Mesh.fx"))))
 		return E_FAIL;
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Sky", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Sky.fx"))))
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Sky", CShader::Create(_pGraphicDev, L"../ShaderFiles/Shader_Sky.fx"))))
 		return E_FAIL;
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Effect", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Effect.fx"))))
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Effect", CShader::Create(_pGraphicDev, L"../ShaderFiles/Shader_Effect.fx"))))
 		return E_FAIL;
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Gizmo", CShader::Create(_pGraphicDev, L"../Bin/ShaderFiles/Shader_Gizmo.fx"))))
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Gizmo", CShader::Create(_pGraphicDev, L"../ShaderFiles/Shader_Gizmo.fx"))))
+		return E_FAIL;
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_UI", CShader::Create(_pGraphicDev, L"../ShaderFiles/Shader_UI.fx"))))
 		return E_FAIL;
 
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"Transform", CTransform::Create(_pGraphicDev))))
@@ -36,39 +38,19 @@ HRESULT CComponent_Manager::Ready_Component_Manager(_Device _pGraphicDev)
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"AIController", CAIController::Create(_pGraphicDev))))
 		return E_FAIL;
 
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"Texture_Default", CTexture::Create(_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Textures/Default.jpg"))))
-		return E_FAIL;
-
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"VIBuffer_Rect", CBuffer_RcTex::Create(_pGraphicDev))))
 		return E_FAIL;
 
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"VIBuffer_Terrain", CBuffer_Terrain::Create(_pGraphicDev, L"../Bin/Resources/Textures/Terrain/Height.bmp", 1))))
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"VIBuffer_Terrain", CBuffer_Terrain::Create(_pGraphicDev, 128, 128, 1 ))))
 		return E_FAIL;
 
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"VIBuffer_Cube", CBuffer_CubeTex::Create(_pGraphicDev))))
 		return E_FAIL;
 
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"Texture_Terrain", CTexture::Create(_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Textures/Terrain/Grass_%d.tga", 2))))
-		return E_FAIL;
-
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"Texture_Effect", CTexture::Create(_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Textures/Explosion/Explosion%d.png", 90))))
-		return E_FAIL;
-
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"Texture_Sky", CTexture::Create(_pGraphicDev, CTexture::TYPE_CUBE, L"../Bin/Resources/Textures/SkyBox/burger%d.dds", 4))))
-		return E_FAIL;
 
 	_mat		LocalMatrix, ScaleMatrix, RotationMatrix;
 
 	D3DXMatrixIdentity(&LocalMatrix);
-
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"Mesh_Hammer", CMesh_Static::Create(_pGraphicDev, L"../Bin/Resources/Mesh/StaticMesh/Wpn_Hammer/", L"Wpn_Hammer.x", LocalMatrix))))
-		return E_FAIL;
-
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"Mesh_Sword", CMesh_Static::Create(_pGraphicDev, L"../Bin/Resources/Mesh/StaticMesh/Wpn_Sword/", L"Wpn_Sword.x", LocalMatrix))))
-		return E_FAIL;
-
-	if (FAILED(Add_Prototype(SCENE_STATIC, L"Mesh_Player", CMesh_Dynamic::Create(_pGraphicDev, L"../Bin/Resources/Mesh/DynamicMesh/Player/", L"Player.x", LocalMatrix))))
-		return E_FAIL;
 
 	return S_OK;
 }
@@ -145,7 +127,7 @@ HRESULT CComponent_Manager::LoadMesh_FilesFromPath(_Device pGraphicDev, const _t
 		fin.getline(tmpPath->sztrStateKey, MAX_STR, '|');
 		fin.getline(tmpPath->sztrFileName, MAX_STR, '|');
 		fin.getline(tmpPath->sztrImgPath, MAX_STR, '|');
-		fin.getline(tmpPath->szIsDynamic, MAX_STR, '|');
+		fin.getline(tmpPath->szIsDynamic, MAX_STR);
 
 		if (fin.eof())
 		{
@@ -219,7 +201,6 @@ HRESULT CComponent_Manager::LoadTex_FilesFromPath(_Device pGraphicDev, const _tc
 	for (auto& iter : tmpList)
 	{
 		lstrcat(iter->sztrImgPath, iter->sztrFileName);
-
 
 		Add_Prototype(SCENE_STATIC, iter->sztrStateKey, CTexture::Create(pGraphicDev, CTexture::TYPE_GENERAL, iter->sztrImgPath, _wtoi(iter->szImgCnt)));
 		++m_fResCnt;

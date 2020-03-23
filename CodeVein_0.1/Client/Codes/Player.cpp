@@ -930,7 +930,7 @@ void CPlayer::Play_MoveDelay()
 	
 	else if ( true == m_bOnMoveDelay)
 	{
-		cout << m_fSkillMoveSpeed_Cur << endl;
+		//cout << m_fSkillMoveSpeed_Cur << endl;
 
 		Decre_Skill_Movement(0.75f);
 		Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
@@ -1488,7 +1488,7 @@ HRESULT CPlayer::Add_Component()
 
 	// for.Com_Mesh
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Player", L"Mesh_Dynamic", (CComponent**)&m_pDynamicMesh)))
-		return E_FAIL;	
+		return E_FAIL;
 	
 	return NOERROR;
 }

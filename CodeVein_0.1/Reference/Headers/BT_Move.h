@@ -9,11 +9,12 @@ class ENGINE_DLL CBT_Move final : public CBT_Task_Node
 public:
 	typedef struct tagInitInfo
 	{
-		tagInitInfo(CTransform* pTransform, _double dMoveSpeed, _double dMovingTime)
+		tagInitInfo(char* tNodeName, CTransform* pTransform, _double dMoveSpeed, _double dMovingTime)
 			: Target_pTargetTransform(pTransform), Target_dMoveSpeed(dMovingTime)
 			, Target_dMovingTime(dMovingTime)			
-		{}
+		{ strcpy_s<256>(Target_NodeName, tNodeName); }
 
+		char			Target_NodeName[256];
 		CTransform*		Target_pTargetTransform;
 		_double			Target_dMovingTime;
 		_double			Target_dMoveSpeed;

@@ -30,6 +30,7 @@ _int CMainApp::Update_MainApp(_double TimeDelta)
 	CCameraMgr::Get_Instance()->Update();
 	
 	return g_pManagement->Update_Management(TimeDelta);
+
 	return 0;
 }	
 

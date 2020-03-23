@@ -269,6 +269,7 @@ HRESULT CManagement::LoadTex_FromPath(_Device pGraphicDev, const _tchar * szImgP
 	if (nullptr == m_pComponent_Manager)
 		return E_FAIL;
 
+
 	return m_pComponent_Manager->LoadTex_FilesFromPath(pGraphicDev, szImgPath);
 }
 

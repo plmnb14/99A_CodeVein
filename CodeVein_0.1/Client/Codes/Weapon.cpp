@@ -167,10 +167,10 @@ HRESULT CWeapon::Add_Component()
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Sword", L"Static_Mesh", (CComponent**)&m_pMesh_Static)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Wpn_Sword", L"Static_Mesh", (CComponent**)&m_pMesh_Static)))
 		return E_FAIL;
 
-	lstrcpy(m_szName, L"Mesh_Sword");
+	lstrcpy(m_szName, L"Mesh_Wpn_Sword");
 
 	return NOERROR;
 }

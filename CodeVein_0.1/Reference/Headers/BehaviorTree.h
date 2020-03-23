@@ -1,7 +1,7 @@
 #pragma once
 
 #include "Base.h"
-
+#include "BlackBoard.h"
 /*
 Ai를 작동시키는 행동트리의 인터페이스
 */
@@ -22,10 +22,10 @@ public:
 	HRESULT Set_Child(CBT_Task_Node* pTask_Node);
 
 public:
-	virtual void Update_BeHaviorTree(_double TimeDelta);
+	virtual void Update_BeHaviorTree(_double TimeDelta, const CBlackBoard* pBlackBoard);
 
 private:
-	HRESULT Ready_BehavioTree(_bool bDebuging);
+	HRESULT Ready_BehaviorTree(_bool bDebuging);
 
 private:
 	CBT_Root*					m_pRoot = nullptr;

@@ -10,6 +10,14 @@ BEGIN(Engine)
 
 class ENGINE_DLL CBT_Inverter final : public CBT_Decorator_Node
 {
+	typedef struct tagInitInfo
+	{
+		tagInitInfo(char* pNodeName)
+		{ strcpy_s<256>(Target_NodeName, pNodeName); }
+
+		char	Target_NodeName[256];
+	}INFO;
+
 protected:
 	explicit CBT_Inverter();
 	explicit CBT_Inverter(const CBT_Inverter& rhs);
@@ -19,7 +27,7 @@ public:
 	HRESULT Set_Child(CBT_Node* pNode);
 
 public:
-	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging) override;
+	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging) override;
 
 public:
 	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging);
