@@ -467,6 +467,7 @@
     </ClInclude>
     <ClInclude Include="..\Headers\BT_ConeCheck.h">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\ParticleMgr.h">
       <Filter>01.Utility\[02] GameObject\4%29 Effect\2%29 ParticleMgr</Filter>
     </ClInclude>
@@ -681,6 +682,7 @@
     </ClCompile>
     <ClCompile Include="..\Codes\BT_ConeCheck.cpp">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
+    </ClCompile>
     <ClCompile Include="..\Codes\ParticleMgr.cpp">
       <Filter>01.Utility\[02] GameObject\4%29 Effect\2%29 ParticleMgr</Filter>
     </ClCompile>

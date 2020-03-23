@@ -283,7 +283,7 @@ HRESULT CRenderer::Draw_RenderList()
 
 #ifdef _DEBUG
 
-	if (GetAsyncKeyState('R') & 0x8000)
+	if (CInput_Device::Get_Instance()->Key_Down(DIK_NUMPAD9))
 		m_bOnRenderTarget = !m_bOnRenderTarget;
 
 	if (m_bOnRenderTarget)

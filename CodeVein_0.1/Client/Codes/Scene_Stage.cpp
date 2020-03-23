@@ -58,8 +58,8 @@ _int CScene_Stage::Update_Scene(_double TimeDelta)
 			//if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_EffectSmoke", SCENE_STAGE, L"Layer_Effect", pEffDesc)))
 			//	return E_FAIL;
 
-			if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_EffectTestMesh", SCENE_STAGE, L"Layer_Effect")))
-				return E_FAIL;
+			//if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_EffectTestMesh", SCENE_STAGE, L"Layer_Effect")))
+			//	return E_FAIL;
 		}
 
 		Safe_Release(pManagement);
