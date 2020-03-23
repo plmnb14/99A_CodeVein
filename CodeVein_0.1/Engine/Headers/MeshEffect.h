@@ -2,10 +2,11 @@
 
 #include "GameObject.h"
 #include "Management.h"
+#include "Effect.h"
 
 BEGIN(Engine)
 
-class ENGINE_DLL CMeshEffect final : public CGameObject
+class ENGINE_DLL CMeshEffect final : public CEffect
 {
 public:
 
@@ -13,9 +14,6 @@ protected:
 	explicit CMeshEffect(LPDIRECT3DDEVICE9 pGraphic_Device);
 	explicit CMeshEffect(const CMeshEffect& rhs);
 	virtual ~CMeshEffect() = default;
-
-public:
-	EFFECT_INFO* Get_Info() { return m_pInfo; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype(); // 원복객체 생성 시, 호출될 함수.
@@ -32,25 +30,6 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 
 private:
-	EFFECT_INFO*			m_pInfo = nullptr;
-
-	_float					m_fAlpha = 1.f;
-	_float					m_fLifeTime = 0.f;
-	_float					m_fMoveSpeed = 0.f;
-	_float					m_fLinearMoveSpeed = 0.f;
-	_float					m_fLinearMovePercent = 0.f;
-	_float					m_fRotSpeed = 0.f;
-	_float					m_fAlphaSpeed = 0.f;
-	_float					m_fCreateDelay = 0.f;
-	_v3						m_vLerpPos = { 1.f, 1.f, 1.f };
-	_v3						m_vLerpScale = { 1.f, 1.f, 1.f };
-	_v3						m_vDir = { 1.f, 1.f, 1.f };
-	_v3						m_vRot = { 0.f, 0.f, 0.f };
-	_v3						m_vFollowPos = { 1.f, 1.f, 1.f };
-	_v4						m_vColor = { 1.f, 1.f, 1.f, 1.f };
-
-	_bool					m_bFadeOutStart = false;
-	_bool					m_bClone = false;
 
 private:
 	void Check_Move(_double TimeDelta);

@@ -3,6 +3,7 @@
 matrix		g_matWorld, g_matView, g_matProj;
 float		g_fAlpha;
 vector		g_vColor;
+bool		g_bUseRGBA = false;
 bool		g_bUseColorTex = false;
 bool		g_bReverseColor = false;
 
@@ -115,6 +116,12 @@ PS_OUT PS_MAIN(PS_IN In)
 	{
 		Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
 		Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
+
+		if (g_bUseRGBA)
+		{
+			Out.vColor.xyz = g_vColor.xyz;
+			Out.vColor.a *= g_vColor.a;
+		}
 	}
 
 	// ==============================================================================================

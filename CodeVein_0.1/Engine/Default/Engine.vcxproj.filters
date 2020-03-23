@@ -91,9 +91,6 @@
     <Filter Include="01.Utility\[03] Component\Component\01%29 Transform">
       <UniqueIdentifier>{2590fad2-5e32-4623-a275-e3ff5a21b33f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\[09] =======================================">
-      <UniqueIdentifier>{65e0df4a-40eb-4a8f-b7aa-9aa4452846fe}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\[09] Renderer">
       <UniqueIdentifier>{f9254ec1-1d30-4178-8884-3ffa0ad2b04d}</UniqueIdentifier>
     </Filter>
@@ -231,6 +228,15 @@
     </Filter>
     <Filter Include="01.Utility\[02] GameObject\3%29 UI">
       <UniqueIdentifier>{2609861d-baea-48f1-abbb-8f2bfa680600}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\[07] ShaderFiles\[09] =======================================">
+      <UniqueIdentifier>{65e0df4a-40eb-4a8f-b7aa-9aa4452846fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\[02] GameObject\4%29 Effect\1%29 TexEffect">
+      <UniqueIdentifier>{23352423-4e0a-40a8-bf8d-c513628d8f2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\[02] GameObject\4%29 Effect\2%29 ParticleMgr">
+      <UniqueIdentifier>{f507cbe0-83d6-45e4-8d09-c46cbd8a534f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -387,9 +393,6 @@
     <ClInclude Include="..\Headers\Terrain_Guide.h">
       <Filter>01.Utility\[02] GameObject\0%29 GameObject\0%29 GuidTerrain</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Effect.h">
-      <Filter>01.Utility\[02] GameObject\4%29 Effect</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\MeshEffect.h">
       <Filter>01.Utility\[02] GameObject\4%29 Effect\0%29 MeshEffect</Filter>
     </ClInclude>
@@ -458,6 +461,15 @@
     </ClInclude>
     <ClInclude Include="..\Headers\BT_Cooldown.h">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ParticleMgr.h">
+      <Filter>01.Utility\[02] GameObject\4%29 Effect\2%29 ParticleMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\TexEffect.h">
+      <Filter>01.Utility\[02] GameObject\4%29 Effect\1%29 TexEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Effect.h">
+      <Filter>01.Utility\[02] GameObject\4%29 Effect</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -593,9 +605,6 @@
     <ClCompile Include="..\Codes\Terrain_Guide.cpp">
       <Filter>01.Utility\[02] GameObject\0%29 GameObject\0%29 GuidTerrain</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Effect.cpp">
-      <Filter>01.Utility\[02] GameObject\4%29 Effect</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\MeshEffect.cpp">
       <Filter>01.Utility\[02] GameObject\4%29 Effect\0%29 MeshEffect</Filter>
     </ClCompile>
@@ -661,6 +670,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\BT_Cooldown.cpp">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ParticleMgr.cpp">
+      <Filter>01.Utility\[02] GameObject\4%29 Effect\2%29 ParticleMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\TexEffect.cpp">
+      <Filter>01.Utility\[02] GameObject\4%29 Effect\1%29 TexEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Effect.cpp">
+      <Filter>01.Utility\[02] GameObject\4%29 Effect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

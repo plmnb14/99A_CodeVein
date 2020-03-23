@@ -22,7 +22,7 @@
 #include "CameraMgr.h"
 #include "Terrain_Guide.h"
 
-#include "Effect.h"
+#include "TexEffect.h"
 #include "MeshEffect.h"
 
 #ifdef _DEBUG
@@ -264,7 +264,7 @@ void CEffectToolView::Ready_Resource()
 	pManagement->LoadTex_FromPath(m_pGraphicDev, L"../../Data/Tex_Path.dat");
 	pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_Path.dat");
 
-	if (0 > (pManagement->Add_Prototype(L"GameObject_Effect", CEffect::Create(m_pGraphicDev))))
+	if (0 > (pManagement->Add_Prototype(L"GameObject_Effect", CTexEffect::Create(m_pGraphicDev))))
 		return;
 	if (0 > (pManagement->Add_Prototype(L"GameObject_MeshEffect", CMeshEffect::Create(m_pGraphicDev))))
 		return;

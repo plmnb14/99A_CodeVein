@@ -3,7 +3,7 @@
 // ∫˚
 vector		g_vLightDir;
 vector		g_vLightPos;
-float		g_fRange; 
+float		g_fRange;
 
 vector		g_vLightDiffuse;
 vector		g_vLightAmbient;
@@ -42,7 +42,6 @@ struct PS_OUT
 {
 	vector		vShade : COLOR0;
 	vector		vSpecular : COLOR1;
-	vector		vBloom : COLOR2;
 };
 
 
@@ -83,22 +82,16 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	vector		vLook = vWorldPos - g_vCamPosition;
 
-	//// Bloom ====================================================================
-	//float fThreshold = 0.3;	 // ¿Ã ±‚¡ÿ¡°∫∏¥Ÿ π‡¿∏∏È Bloom ≈∏∞Ÿ
-	//Out.vBloom = saturate((Out.vShade - fThreshold) / (1 - fThreshold));
-	//Out.vBloom *= Out.vShade;
-	//// Bloom End ====================================================================
-
 	// RimLight ====================================================================
 	float fRimWidth = 1.5f - vDepthInfo.x;
 	vector vCamPos = g_vCamPosition - vWorldPos;
-	float fRim = smoothstep(1.f - fRimWidth, 1.f, 1.f - saturate(abs(dot(vNormal, vCamPos))));
+	float fRim = smoothstep(1.f - fRimWidth, 1.f, vDepthInfo.x - saturate(abs(dot(vNormal, vCamPos))));
 	float4 rc = g_vLightDiffuse;
 	Out.vShade += pow(fRim, 2.f) * rc;
 	// RimLight End ====================================================================
 
 	Out.vSpecular = g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 30.f) * (g_vLightSpecular * g_vMtrlSpecular);
-	Out.vSpecular.a = 0.f;	
+	Out.vSpecular.a = 0.f;
 
 	return Out;
 }
@@ -136,7 +129,7 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
 
 	float		fAtt = saturate((g_fRange - fLength) / g_fRange);
 
-	
+
 
 	// 0 ~ 1
 	// -1 ~ 1
@@ -155,7 +148,7 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
 
 	vector		vReflect = reflect(normalize(vLightDir), vNormal);
 
-	
+
 	vector		vLook = vWorldPos - g_vCamPosition;
 
 	Out.vSpecular = fAtt * g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 30.f) * (g_vLightSpecular * g_vMtrlSpecular);
