@@ -160,4 +160,5 @@ private:
 	CEdit m_EditCtrMaxFrame;
 	CString m_EditFileName;
 	CString m_EditColorIndex;
+	CButton m_CheckUseRGBA;
 };

@@ -23,6 +23,8 @@ public:
 	HRESULT Add_RenderList(RENDERID eGroup, CGameObject* pGameObject);
 	HRESULT Draw_RenderList();
 private:
+	_bool						m_bOnRenderTarget;
+	_mat						m_matLastWVP;
 	list<CGameObject*>			m_RenderList[RENDER_END];
 	typedef list<CGameObject*>	RENDERLIST;
 private:
@@ -41,6 +43,11 @@ private:
 private:
 	HRESULT Render_LightAcc();
 	HRESULT Render_Blend();
+	HRESULT Render_BrightPass();
+	HRESULT Render_Blur();
+	HRESULT Render_MotionBlurObj();
+	HRESULT Render_MotionBlur();
+	HRESULT Render_ToneMapping();
 	HRESULT Render_After();
 public:
 	static CRenderer* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
