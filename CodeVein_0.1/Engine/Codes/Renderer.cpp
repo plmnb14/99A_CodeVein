@@ -135,12 +135,12 @@ HRESULT CRenderer::Ready_Component_Prototype()
 
 
 	// For.Shader_LightAcc
-	m_pShader_LightAcc = CShader::Create(m_pGraphic_Dev, L"../Bin/ShaderFiles/Shader_LightAcc.fx");
+	m_pShader_LightAcc = CShader::Create(m_pGraphic_Dev, L"../ShaderFiles/Shader_LightAcc.fx");
 	if (nullptr == m_pShader_LightAcc)
 		return E_FAIL;
 
 	// For.Shader_LightAcc
-	m_pShader_Blend = CShader::Create(m_pGraphic_Dev, L"../Bin/ShaderFiles/Shader_Blend.fx");
+	m_pShader_Blend = CShader::Create(m_pGraphic_Dev, L"../ShaderFiles/Shader_Blend.fx");
 	if (nullptr == m_pShader_Blend)
 		return E_FAIL;
 

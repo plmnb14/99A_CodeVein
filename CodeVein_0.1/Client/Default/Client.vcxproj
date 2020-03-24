@@ -83,7 +83,7 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\Bin\</OutDir>
+    <OutDir>..\Release\</OutDir>
     <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
@@ -172,7 +172,6 @@
     <ClInclude Include="..\Headers\BossDecoUI.h" />
     <ClInclude Include="..\Headers\BossHP.h" />
     <ClInclude Include="..\Headers\Client_Defines.h" />
-    <ClInclude Include="..\Headers\CursorSelectBar.h" />
     <ClInclude Include="..\Headers\HPBack.h" />
     <ClInclude Include="..\Headers\Item.h" />
     <ClInclude Include="..\Headers\ItemSlot.h" />
@@ -199,8 +198,8 @@
     <ClInclude Include="..\Headers\Scene_Logo.h" />
     <ClInclude Include="..\Headers\Scene_Stage.h" />
     <ClInclude Include="..\Headers\Sky.h" />
-    <ClInclude Include="..\Headers\Terrain.h" />
     <ClInclude Include="..\Headers\TestMonster.h" />
+    <ClInclude Include="..\Headers\Weapon.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="stdafx.h" />
@@ -211,7 +210,6 @@
     <ClCompile Include="..\Codes\BackGround.cpp" />
     <ClCompile Include="..\Codes\BossDecoUI.cpp" />
     <ClCompile Include="..\Codes\BossHP.cpp" />
-    <ClCompile Include="..\Codes\CursorSelectBar.cpp" />
     <ClCompile Include="..\Codes\HPBack.cpp" />
     <ClCompile Include="..\Codes\Item.cpp" />
     <ClCompile Include="..\Codes\ItemSlot.cpp" />
@@ -238,8 +236,8 @@
     <ClCompile Include="..\Codes\Scene_Logo.cpp" />
     <ClCompile Include="..\Codes\Scene_Stage.cpp" />
     <ClCompile Include="..\Codes\Sky.cpp" />
-    <ClCompile Include="..\Codes\Terrain.cpp" />
     <ClCompile Include="..\Codes\TestMonster.cpp" />
+    <ClCompile Include="..\Codes\Weapon.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -256,13 +254,15 @@
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Default.fx" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Effect.fx" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Gizmo.fx" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_UI.fx" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Mesh.fx" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Sky.fx" />
-    <FxCompile Include="..\Bin\ShaderFiles\Shader_Terrain.fx" />
+    <FxCompile Include="..\ShaderFiles\Shader_Blend.fx" />
+    <FxCompile Include="..\ShaderFiles\Shader_Default.fx" />
+    <FxCompile Include="..\ShaderFiles\Shader_Effect.fx" />
+    <FxCompile Include="..\ShaderFiles\Shader_Gizmo.fx" />
+    <FxCompile Include="..\ShaderFiles\Shader_LightAcc.fx" />
+    <FxCompile Include="..\ShaderFiles\Shader_Mesh.fx" />
+    <FxCompile Include="..\ShaderFiles\Shader_Sky.fx" />
+    <FxCompile Include="..\ShaderFiles\Shader_Terrain.fx" />
+    <FxCompile Include="..\ShaderFiles\Shader_UI.fx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

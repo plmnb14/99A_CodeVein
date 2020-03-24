@@ -86,9 +86,6 @@ HRESULT CHPBack::Render_GameObject()
 
 	m_pShaderCom->Begin_Pass(0);
 
-	// 버퍼를 렌더링한다.
-	// (인덱스버퍼(012023)에 보관하고있는 인덱스를 가진 정점을 그리낟.)
-	// 삼각형 두개를 그리낟.각각의 삼각형마다 정점세개, 각각의 정점을 버텍스 셰이더의 인자로 던진다.
 	m_pBufferCom->Render_VIBuffer();
 
 	m_pShaderCom->End_Pass();
@@ -115,7 +112,7 @@ HRESULT CHPBack::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STAGE, L"Texture_HPBack", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_HPBarBack", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader

@@ -51,6 +51,7 @@ private:
 	//CVIBuffer*		m_pShpereBuffer;
 	_Device				m_pGraphicDev;
 	CShader*			m_pGizmoShader;
+	D3DXCOLOR			m_Color;
 
 private:
 	_bool	m_bEnableGizmo;

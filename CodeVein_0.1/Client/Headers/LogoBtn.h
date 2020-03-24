@@ -42,7 +42,7 @@ private:
 	_bool					m_bIsColl = false;
 
 public:
-	static CLogoBtn*			Create(_Device pGraphic_Device);
+	static CLogoBtn*		Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);
 	virtual void			Free();
 };

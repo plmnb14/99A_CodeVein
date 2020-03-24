@@ -20,6 +20,8 @@ void CGizmo::Ready_Gizmo(_Device pGraphicDev)
 	Safe_AddRef(m_pGraphicDev);
 
 	m_pGizmoShader = static_cast<CShader*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Shader_Gizmo"));
+
+	m_Color = COLOR_TEAL(1.f);
 }
 
 void CGizmo::Draw_Vertex(_v3 _vVertex, _v3 _vSize)
@@ -212,6 +214,8 @@ void CGizmo::Draw_Triangle(VTX_COL * _vVertex)
 {
 	if (!m_bEnableGizmo)
 		return;
+
+	m_Color = COLOR_TEAL(1.f);
 
 	_mat DefaultMat;
 	D3DXMatrixIdentity(&DefaultMat);
@@ -541,6 +545,8 @@ HRESULT CGizmo::Init_Shader(_mat _DefaultMat)
 	if (FAILED(m_pGizmoShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
 
+	if (FAILED(m_pGizmoShader->Set_Value("g_GizmoColor", &m_Color, sizeof(_mat))))
+		return E_FAIL;
 
 	Safe_Release(pManagement);
 

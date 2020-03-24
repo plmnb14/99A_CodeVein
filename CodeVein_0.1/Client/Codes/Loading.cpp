@@ -6,8 +6,8 @@
 #include "TexEffect.h"
 #include "MeshEffect.h"
 #include "Player.h"
-#include "Terrain.h"
 #include "TestMonster.h"
+#include "Weapon.h"
 
 #include "UI_Manager.h"
 
@@ -45,14 +45,19 @@ _uint CLoading::Loading_ForStage(void)
 	if (FAILED(pManagement->Ready_BT_Node()))
 		return E_FAIL;
 
+	_mat DefaultMat;
+	D3DXMatrixIdentity(&DefaultMat);
+
+	
 	// 오브젝트 원형
-	lstrcpy(m_szString, L"게임오브젝트 원형 생성 중....");	
+	lstrcpy(m_szString, L"게임오브젝트 원형 생성 중....");
 	if (FAILED(pManagement->Add_Prototype(L"GameObject_Player", CPlayer::Create(m_pGraphicDev))))
 		return E_FAIL;
 
 
 	lstrcpy(m_szString, L"이펙트 생성 중....");
 	Ready_Effect();
+
 
 	// UI 생성
 	CUI_Manager::Get_Instance()->Add_UI_Prototype(m_pGraphicDev);
@@ -62,38 +67,9 @@ _uint CLoading::Loading_ForStage(void)
 	if (FAILED(pManagement->Add_Prototype(L"Monster_TestMonster", CTestMonster::Create(m_pGraphicDev))))
 		return E_FAIL;
 
-	lstrcpy(m_szString, L"지형 생성 중....");
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_Terrain", CTerrain::Create(m_pGraphicDev))))
+	//무기
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_Weapon", CWeapon::Create(m_pGraphicDev))))
 		return E_FAIL;
-
-	//lstrcpy(m_szString, L"하늘 생성 중....");
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_Sky", CSky::Create(m_pGraphicDev))))
-		return E_FAIL;
-
-	// UI텍스쳐 (임시)
-	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_HPBack", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/HPBarBack/HPBack.png", 1))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_PlayerHP", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/HPBar/T_HPGaugeTexture_UI.tga", 1))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_PlayerST", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/STBar/T_StaminaBar_UI.tga", 1))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_BossHP", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/BossUI/T_BossHpGaugeTexture_UI.tga", 1))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_BossDecoUI", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/BossUI/BossHpGauge_Deco.tga", 1))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_Item", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/ItemIcon/T_ItemIcon_00%d.tga", 5))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_Arrow", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/QuickSlotUI/T_Arrow%d.jpg", 2))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_Window", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/MenuWindow/Window%d.png", 3))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_MenuIcon", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/Menu_Icon/MenuIcon00%d.tga", 10))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_Num", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/Number/Num%d.png", 4))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(SCENE_STAGE, L"Texture_ActiveIcon", CTexture::Create(m_pGraphicDev, CTexture::TYPE_GENERAL, L"../Bin/Resources/Texture/TestUI/KetsugiIcon/T_ActionKetsugi%d.tga", 15))))
-		return E_FAIL;
-
 
 	m_bFinish = true;
 	lstrcpy(m_szString, L"로딩 완료");

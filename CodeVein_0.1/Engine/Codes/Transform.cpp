@@ -72,7 +72,7 @@ const _v3 & CTransform::Get_At() const
 	return m_tInfo.vAt;
 }
 
-const _mat& CTransform::Get_WorldMat() const
+_mat& CTransform::Get_WorldMat()
 {
 	return m_tInfo.matWorld;
 }

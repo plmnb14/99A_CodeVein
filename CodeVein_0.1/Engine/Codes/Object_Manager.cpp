@@ -69,6 +69,39 @@ HRESULT CObject_Manager::Add_GameObject_ToLayer(const _tchar * pPrototypeTag, _u
 	return NOERROR;
 }
 
+CGameObject * CObject_Manager::Clone_GameObject_Return(const _tchar * pPrototypeTag, void * pArg)
+{
+	CGameObject*	pPrototype = Find_Prototype(pPrototypeTag);
+	if (nullptr == pPrototype)
+		return nullptr;
+
+	CGameObject*	pGameObject = pPrototype->Clone_GameObject(pArg);
+	if (nullptr == pGameObject)
+		return nullptr;
+
+	return pGameObject;
+}
+
+HRESULT CObject_Manager::Add_GameOject_ToLayer_NoClone(CGameObject * _pGameObject, _uint iSceneID, const _tchar * pLayerTag, void * pArg)
+{
+	CLayer*	pLayer = Find_Layer(iSceneID, pLayerTag);
+
+	if (nullptr == pLayer)
+	{
+		pLayer = CLayer::Create();
+		if (nullptr == pLayer)
+			return E_FAIL;
+
+		pLayer->Add_GameObject(_pGameObject);
+
+		m_pLayers[iSceneID].insert(LAYERS::value_type(pLayerTag, pLayer));
+	}
+	else
+		pLayer->Add_GameObject(_pGameObject);
+
+	return NOERROR;
+}
+
 _int CObject_Manager::Update_Object_Manager(_double TimeDelta)
 {
 	_int	iProgress = 0;

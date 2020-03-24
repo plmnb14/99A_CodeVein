@@ -105,6 +105,21 @@ const RAY CInput_Device::Get_Ray(const RAY_CALC _eCalc)
 	return tRay;
 }
 
+const _bool CInput_Device::Get_DIMouseState_Up(MOUSEKEYSTATE eMouse)
+{
+	if (m_tMouseState.rgbButtons[eMouse])
+	{
+		return false;
+	}
+
+	else
+	{
+		return true;
+	}
+
+	return false;
+}
+
 const _bool CInput_Device::MousePt_InRect(_float fRectPosX, _float fRectPosY, _float fRectSizeX, _float fRectSizeY, HWND hWnd)
 {
 	POINT pt = {};
@@ -135,8 +150,6 @@ const _bool CInput_Device::Get_DIMouseState(MOUSEKEYSTATE eMouse)
 
 			return true;
 		}
-
-		return false;
 	}
 
 	else
@@ -145,6 +158,8 @@ const _bool CInput_Device::Get_DIMouseState(MOUSEKEYSTATE eMouse)
 
 		return false;
 	}
+
+	return false;
 }
 
 void CInput_Device::Calc_MouseLockPos()
