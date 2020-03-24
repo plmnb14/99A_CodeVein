@@ -13,6 +13,7 @@ CManagement::CManagement()
 	, m_pTarget_Manager(CTarget_Manager::Get_Instance())
 	, m_pGizmo(CGizmo::Get_Instance())
 	, m_pBT_Node_Manager(CBT_Node_Manager::Get_Instance())
+	, m_pParticle_Manager(CParticleMgr::Get_Instance())
 {
 	Safe_AddRef(m_pTarget_Manager);
 	Safe_AddRef(m_pLight_Manager);
@@ -24,6 +25,7 @@ CManagement::CManagement()
 	Safe_AddRef(m_pGraphic_Device);
 	Safe_AddRef(m_pGizmo);
 	Safe_AddRef(m_pBT_Node_Manager);
+	Safe_AddRef(m_pParticle_Manager);
 }
 
 HRESULT CManagement::Ready_Engine(_uint iNumScenes)
@@ -59,6 +61,10 @@ _int CManagement::Update_Management(_double TimeDelta)
 		return iProgress;
 
 	iProgress = m_pPipeLine->Update_PipeLine();
+	if (0 > iProgress)
+		return iProgress;
+
+	iProgress = m_pParticle_Manager->Update_ParticleManager(TimeDelta);
 	if (0 > iProgress)
 		return iProgress;
 
@@ -102,6 +108,9 @@ HRESULT CManagement::Release_Engine()
 
 	if (0 != CBT_Node_Manager::Get_Instance()->Destroy_Instance())
 		MSG_BOX("Failed To Release CBT_Node_Manager");
+
+	if (0 != CParticleMgr::Get_Instance()->Destroy_Instance())
+		MSG_BOX("Failed To Release CParticleMgr");
 
 	if (0 != CObject_Manager::Get_Instance()->Destroy_Instance())
 		MSG_BOX("Failed To Release CObject_Manager");
@@ -411,8 +420,19 @@ CBT_Node * CManagement::Clone_Node(const _tchar * pPrototypeTag, CBT_Node_Manage
 	return m_pBT_Node_Manager->Clone_Node(pPrototypeTag, eType, pInit_Struct);
 }
 
+HRESULT CManagement::Ready_ParticleManager()
+{
+	return m_pParticle_Manager->Ready_ParticleManager();;
+}
+
+void CManagement::Create_ParticleEffect(_tchar* szName, _float fLifeTime, CTransform* pFollowTrans)
+{
+	m_pParticle_Manager->Create_ParticleEffect(szName, fLifeTime, pFollowTrans);
+}
+
 void CManagement::Free()
 {
+	Safe_Release(m_pParticle_Manager);
 	Safe_Release(m_pBT_Node_Manager);
 	Safe_Release(m_pGizmo);
 	Safe_Release(m_pTarget_Manager);

@@ -8,7 +8,7 @@ xcopy /y .\Engine\Bin\*.dll				.\EffectTool\Codes\
 xcopy /y .\Engine\Bin\*.dll				.\EffectTool\Codes\x64\Debug\
 xcopy /y .\Engine\Bin\*.dll				.\EffectTool\Bin\
 
-xcopy /y .\Engine\ShaderFiles\*.fx		.\Client\ShaderFiles\
+xcopy /y .\Engine\Bin\ShaderFiles\*.fx		.\Client\ShaderFiles\
 xcopy /y .\Client\ShaderFiles\*.fx		.\Tool\ShaderFiles\
 xcopy /y .\Client\ShaderFiles\*.fx		.\EffectTool\ShaderFiles\
 

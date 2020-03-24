@@ -13,6 +13,12 @@ CEffect::CEffect(const CEffect & rhs)
 	m_bClone = true;
 }
 
+void CEffect::Reset_Init()
+{
+	m_bIsDead = false;
+	this->Setup_Info();
+}
+
 HRESULT CEffect::Ready_GameObject_Prototype()
 {
 	// 생성 시, 오래 걸릴 수 있는 작업들을 수행한다.
@@ -45,10 +51,14 @@ HRESULT CEffect::Render_GameObject()
 	return NOERROR;
 }
 
+void CEffect::Setup_Info()
+{
+}
+
 
 void CEffect::Free()
 {
-	Safe_Delete(m_pInfo);
-
 	CGameObject::Free();
+
+	if(!m_bClone) Safe_Delete(m_pInfo);
 }

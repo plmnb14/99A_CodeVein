@@ -22,14 +22,16 @@ public:
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual	HRESULT LateInit_GameObject();
 	virtual HRESULT Render_GameObject();
+
+protected:
+	virtual void Setup_Info();
+
 private:
 	CTransform*				m_pTransformCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 	CMesh_Static*			m_pMeshCom = nullptr;
 	CTexture*				m_pTextureCom = nullptr;
-
-private:
 
 private:
 	void Check_Move(_double TimeDelta);

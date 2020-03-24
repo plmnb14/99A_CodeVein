@@ -28,6 +28,10 @@ public:
 	virtual _int Update_GameObject(_double TimeDelta);
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
+
+protected:
+	virtual void Setup_Info();
+
 protected:
 	CTransform*				m_pTransformCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
@@ -38,6 +42,8 @@ protected:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 protected:
+	CManagement*			m_pManagement = nullptr;
+
 	EFFECT_DESC*			m_pDesc = nullptr;
 	_int					m_iPass = 0;
 

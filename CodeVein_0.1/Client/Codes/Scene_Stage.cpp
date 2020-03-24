@@ -26,11 +26,11 @@ HRESULT CScene_Stage::Ready_Scene()
 	if (FAILED(Ready_Layer_Monster(L"Layer_Monster")))
 		return E_FAIL;
 
-	//if (FAILED(Ready_Layer_Effect(L"Layer_Effect")))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Effect(L"Layer_Effect")))
+		return E_FAIL;
 
-	//if (FAILED(Ready_Layer_BackGround(L"Layer_BackGround")))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_BackGround(L"Layer_BackGround")))
+		return E_FAIL;
 
 	//if (FAILED(CUI_Manager::Get_Instance()->SetUp_UILayer()))
 	//	return E_FAIL;
@@ -40,36 +40,18 @@ HRESULT CScene_Stage::Ready_Scene()
 
 _int CScene_Stage::Update_Scene(_double TimeDelta)
 {
-	// юс╫ц
-	//static _bool bCreate = false;
-	static _float fStartPosY = 0.f;
-	if (GetAsyncKeyState('Z') & 0x8000)
+	if(g_pInput_Device->Key_Down(DIK_K))
 	{
-		CManagement*		pManagement = CManagement::Get_Instance();
+		CManagement*	pManagement = CManagement::Get_Instance();
 		if (nullptr == pManagement)
 			return E_FAIL;
-		
 		Safe_AddRef(pManagement);
 
-		//LOOP(3)
-		{
-			//CEffect::EFFECT_DESC* pEffDesc = new CEffect::EFFECT_DESC;
-			//pEffDesc->pTargetTrans = nullptr;
-			//pEffDesc->vWorldPos = {0.f, fStartPosY, 0.f};
-			//if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_EffectSmoke", SCENE_STAGE, L"Layer_Effect", pEffDesc)))
-			//	return E_FAIL;
-
-			//if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_EffectTestMesh", SCENE_STAGE, L"Layer_Effect")))
-			//	return E_FAIL;
-		}
+		pManagement->Create_ParticleEffect(L"Effect_TestSmoke", 0.5f, nullptr);
+		//pManagement->Add_GameObject_ToLayer(L"Effect_TestSmoke", SCENE_STAGE, L"Layer_Effect");
 
 		Safe_Release(pManagement);
-		//fStartPosY += 0.01f;
 	}
-	else
-		fStartPosY = 0.f;
-	
-	
 
 	// -------------- UI Manager ----------------------
 	//CUI_Manager::Get_Instance()->Update_UI();
@@ -148,8 +130,8 @@ HRESULT CScene_Stage::Ready_Layer_BackGround(const _tchar * pLayerTag)
 	//	return E_FAIL;
 
 	// For.Sky
-	//if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_Sky", SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_Sky", SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
 
 	Safe_Release(pManagement);
 
@@ -165,7 +147,7 @@ HRESULT CScene_Stage::Ready_Layer_Effect(const _tchar * pLayerTag)
 	Safe_AddRef(pManagement);
 
 	// For.Effect
-
+	pManagement->Ready_ParticleManager();
 
 	Safe_Release(pManagement);
 

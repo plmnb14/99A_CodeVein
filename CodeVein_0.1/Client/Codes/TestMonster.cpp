@@ -97,7 +97,7 @@ HRESULT CTestMonster::Ready_GameObject(void * pArg)
 
 	m_pAIControllerCom->Set_BeHaviorTree(pBehaviorTree);
 	m_pAIControllerCom->Set_BlackBoard(pBlackBoard);
-	//m_pMeshCom->SetUp_Animation(56);
+	m_pMeshCom->SetUp_Animation(0);
 
 	return NOERROR;
 }
@@ -130,7 +130,7 @@ HRESULT CTestMonster::Render_GameObject()
 		nullptr == m_pMeshCom)
 		return E_FAIL;
 
-	m_pMeshCom->Play_Animation(_float(m_dTimeDelta) * 2.f); // * alpha
+	m_pMeshCom->Play_Animation(_float(m_dTimeDelta)); // * alpha
 
 	if (FAILED(SetUp_ConstantTable()))
 		return E_FAIL;
@@ -147,7 +147,7 @@ HRESULT CTestMonster::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			m_pShaderCom->Begin_Pass(0);
+			m_pShaderCom->Begin_Pass(2);
 
 			if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE))))
 				return E_FAIL;
@@ -213,6 +213,13 @@ HRESULT CTestMonster::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
 
+	_mat matInvVP = ViewMatrix * ProjMatrix;// *m_pTransformCom->Get_WorldMat();
+	D3DXMatrixInverse(&matInvVP, nullptr, &matInvVP);
+	if (FAILED(m_pShaderCom->Set_Value("g_matInvVP", &matInvVP, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_matLastVP", &m_matLastVP, sizeof(_mat))))
+		return E_FAIL;
+	m_matLastVP = ViewMatrix * ProjMatrix;// *m_pTransformCom->Get_WorldMat();
 	Safe_Release(pManagement);
 
 	return NOERROR;

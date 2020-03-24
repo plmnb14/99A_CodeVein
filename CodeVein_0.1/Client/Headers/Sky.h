@@ -23,8 +23,9 @@ private:
 	CRenderer*				m_pRendererCom = nullptr;	
 	CShader*				m_pShaderCom = nullptr;
 	CTexture*				m_pTextureCom = nullptr;
-	CBuffer_CubeTex*		m_pBufferCom = nullptr;
-	
+	//CBuffer_CubeTex*		m_pBufferCom = nullptr;
+	CMesh_Static*			m_pMeshCom = nullptr;
+
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();

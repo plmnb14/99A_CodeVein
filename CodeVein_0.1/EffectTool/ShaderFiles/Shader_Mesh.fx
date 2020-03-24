@@ -72,15 +72,15 @@ VS_BLUROUT VS_MOTIONBLUR(VS_IN In)
 
 	//==============================================================================
 
-	float4 currentPos = mul(In.vPosition, matWVP);
+	float4 currentPos = mul(float4(In.vPosition.xyz, 1.f), matWVP);
 
 	// Use the world position, and transform by the previous view-projection matrix.    
-	float4 previousPos = mul(In.vPosition, g_matLastVP);
+	float4 previousPos = mul(float4(In.vPosition.xyz, 1.f), g_matLastVP);
 	// Convert to nonhomogeneous points [-1,1] by dividing by w.
 	previousPos /= previousPos.w;
 	// Use this frame's position and last frame's to compute the pixel    
 	// velocity.   
-	Out.vVelocity = (currentPos - previousPos) / 2.f;
+	Out.vVelocity = (currentPos.xy - previousPos.xy) / 2.f;
 
 	//==============================================================================
 	//float4 x1 = mul(In.vPosition, matWV);
@@ -154,28 +154,30 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.f, 0.f);
 
 	Out.vVelocity = 0;
 
 	return Out;
 }
 
-PS_OUT PS_MOTIONBLUR(PS_BLURIN In)
+PS_OUT PS_MOTIONBLUR(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	matrix matWVP = g_matWorld * g_matView * g_matProj;
-	float4 currentPos = mul(In.vTexUV, matWVP);
-
-	// Use the world position, and transform by the previous view-projection matrix.    
-	float4 previousPos = mul(In.vTexUV, g_matLastVP);
-	// Convert to nonhomogeneous points [-1,1] by dividing by w.
-	previousPos /= previousPos.w;
-	// Use this frame's position and last frame's to compute the pixel    
-	// velocity.   
-	Out.vVelocity = (currentPos - previousPos) * 0.00001f;
-
+	//matrix matWVP = g_matWorld * g_matView * g_matProj;
+	//
+	//float4 currentPos = mul(float4(In.vTexUV, 0, 1), matWVP);
+	//
+	//// Use the world position, and transform by the previous view-projection matrix.    
+	//float4 previousPos = mul(float4(In.vTexUV, 0, 1), g_matLastVP);
+	//// Convert to nonhomogeneous points [-1,1] by dividing by w.
+	//previousPos /= previousPos.w;
+	//// Use this frame's position and last frame's to compute the pixel    
+	//// velocity.   
+	//
+	//Out.vVelocity = (currentPos - previousPos);// *0.00001f;
+	
 
 	//float4 NewPos = mul(In.vProjPos, matWVP);
 	//float4 OldPos = mul(In.vProjPos, g_matLastVP);
@@ -186,17 +188,19 @@ PS_OUT PS_MOTIONBLUR(PS_BLURIN In)
 	//Out.vVelocity.w *= In.vProjPos.w;
 
 	//float	zOverW = In.vProjPos.z / In.vProjPos.w;
-	//float4 H = float4(In.vTexUV.x * 2 - 1, (1 - In.vTexUV.y) * 2 - 1, zOverW, 1);
-	////float4 H = mul(In.vProjPos, matWVP);
-	//
-	//// 월드( 로컬위치 * 월드)
-	//float4 D = mul(H, g_matInvVP);
-	//vector worldPos = D / D.w;
-	//float4 currentPos = H;
-	//float4 previousPos = mul(worldPos, g_matLastVP);
-	//previousPos /= previousPos.w;
-	//
-	//float2 velocity = (currentPos - previousPos) / 2.f;
+	float	zOverW = 1;
+	float4 H = float4(In.vTexUV.x * 2 - 1, (1 - In.vTexUV.y) * 2 - 1, zOverW, 1);
+	//float4 H = mul(In.vProjPos, matWVP);
+	
+	// 월드( 로컬위치 * 월드)
+	float4 D = mul(H, g_matInvVP);
+	vector worldPos = D / D.w;
+	float4 currentPos = H;
+	float4 previousPos = mul(worldPos, g_matLastVP);
+	previousPos /= previousPos.w;
+	
+	float2 velocity = (currentPos - previousPos) / 2.f;
+	//velocity *= 0.01f;
 
 	//for (int i = 0; i > 26; i++)
 	//{
@@ -207,8 +211,8 @@ PS_OUT PS_MOTIONBLUR(PS_BLURIN In)
 
 	Out.vDiffuse = tex2D(DiffuseSampler, In.vTexUV);
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
-	//Out.vVelocity = vector(velocity.xy, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.f, 0.f);
+	Out.vVelocity = vector(velocity.xy, 0.f, 1.f);
 	//Out.vVelocity = vector(In.vVelocity.xy, 0.f, 0.f);
 
 	return Out;

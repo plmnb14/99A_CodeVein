@@ -147,7 +147,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
 
 	vector		vDepthInfo = tex2D(DepthSampler, vTexUV);
-	float		fViewZ = vDepthInfo.y * 300.f;
+	float		fViewZ = vDepthInfo.y * 500.f;
 
 	Out.vColor.a = (Out.vColor.a * saturate(fViewZ - In.vProjPos.w)) * g_fAlpha;
 
@@ -171,7 +171,7 @@ PS_OUT PS_DISTORTION(PS_IN In)
 	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
 
 	vector		vDepthInfo = tex2D(DepthSampler, vTexUV);
-	float		fViewZ = vDepthInfo.y * 300.f;
+	float		fViewZ = vDepthInfo.y * 500.f;
 
 	Out.vColor.a = Out.vColor.a * saturate(fViewZ - In.vProjPos.w);
 

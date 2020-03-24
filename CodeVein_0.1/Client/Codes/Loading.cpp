@@ -69,6 +69,9 @@ _uint CLoading::Loading_ForStage(void)
 	if (FAILED(pManagement->Add_Prototype(L"GameObject_Player", CPlayer::Create(m_pGraphicDev))))
 		return E_FAIL;
 
+	// Sky
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_Sky", CSky::Create(m_pGraphicDev))))
+		return E_FAIL;
 
 	lstrcpy(m_szString, L"이펙트 생성 중....");
 	Ready_Effect();
@@ -153,10 +156,10 @@ HRESULT CLoading::Ready_Effect(void)
 
 	Safe_AddRef(pManagement);
 
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_EffectSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/testSmoke.dat")))))
+	if (FAILED(pManagement->Add_Prototype(L"Effect_TestSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/testSmoke.dat")))))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_EffectTestMesh", CMeshEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/testMeshEff.dat")))))
-		return E_FAIL;
+	//if (FAILED(pManagement->Add_Prototype(L"GameObject_EffectTestMesh", CMeshEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/testMeshEff.dat")))))
+	//	return E_FAIL;
 
 	Safe_Release(pManagement);
 	return S_OK;
@@ -182,6 +185,8 @@ Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
 		::ReadFile(hFile, &pInfo->bDistortion, sizeof(_bool), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->bStaticFrame, sizeof(_bool), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->bUseColorTex, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bUseRGBA, sizeof(_bool), &dwByte, nullptr);
+
 		::ReadFile(hFile, &pInfo->bColorMove, sizeof(_bool), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->bDirMove, sizeof(_bool), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->bFadeIn, sizeof(_bool), &dwByte, nullptr);
@@ -193,6 +198,7 @@ Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
 		::ReadFile(hFile, &pInfo->bRevColor, sizeof(_bool), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->bRotMove, sizeof(_bool), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->bScaleMove, sizeof(_bool), &dwByte, nullptr);
+
 		::ReadFile(hFile, &pInfo->fAlphaSpeed, sizeof(_float), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->fAlphaSpeed_Max, sizeof(_float), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->fAlphaSpeed_Min, sizeof(_float), &dwByte, nullptr);

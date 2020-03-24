@@ -29,7 +29,7 @@ private:
 
 	//렌더에서 타임델타 쓰기위해서 저장해놓음
 	_double				m_dTimeDelta = 0;
-
+	_mat				m_matLastVP;
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();

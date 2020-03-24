@@ -17,6 +17,7 @@
 #include "BT_Node_Mgr.h"
 #include "Timer_Manager.h"
 #include "FrameMgr.h"
+#include "ParticleMgr.h"
 
 BEGIN(Engine)
 
@@ -91,6 +92,10 @@ public: // For.BT_Node_Manager
 	HRESULT Ready_BT_Node();
 	CBT_Node* Clone_Node(const _tchar* pPrototypeTag, CBT_Node_Manager::NODE_TYPE eType, void* pInit_Struct);
 
+public: // For.ParticleManager
+	HRESULT Ready_ParticleManager();
+	void Create_ParticleEffect(_tchar* szName, _float fLifeTime, CTransform* pFollowTrans = nullptr);
+
 private:
 	CGraphic_Device*			m_pGraphic_Device = nullptr;
 	CInput_Device*				m_pInput_Device = nullptr;
@@ -102,6 +107,7 @@ private:
 	CTarget_Manager*			m_pTarget_Manager = nullptr;
 	CGizmo*						m_pGizmo = nullptr;
 	CBT_Node_Manager*			m_pBT_Node_Manager = nullptr;
+	CParticleMgr*				m_pParticle_Manager = nullptr;
 
 public:
 	virtual void Free();

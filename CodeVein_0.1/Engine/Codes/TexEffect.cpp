@@ -11,6 +11,7 @@ CTexEffect::CTexEffect(const CTexEffect& rhs)
 	, m_iPass(rhs.m_iPass)
 	//, m_pInfo(rhs.m_pInfo)
 {
+	CEffect::m_pInfo = rhs.m_pInfo;
 	m_bClone = true;
 }
 
@@ -46,95 +47,21 @@ HRESULT CTexEffect::Ready_GameObject(void* pArg)
 		m_pDesc->pTargetTrans = nullptr;
 	}
 
+	m_pManagement = CManagement::Get_Instance();
+	if (nullptr == m_pManagement)
+		return E_FAIL;
+	
+	//Safe_AddRef(m_pManagement);
+
 	return NOERROR;
 }
 
 HRESULT CTexEffect::LateInit_GameObject()
 {
-	m_fLifeTime = m_pInfo->fLifeTime;
-	m_vColor = m_pInfo->vStartColor;
-	m_fAlpha = m_pInfo->fMaxAlpha;
-	m_vLerpScale = m_pInfo->vStartScale;
-	m_fMoveSpeed = m_pInfo->fMoveSpeed;
-	m_fRotSpeed = m_pInfo->fRotSpeed;
-	m_fAlphaSpeed = m_pInfo->fAlphaSpeed;
-	m_fCreateDelay = m_pInfo->fCreateDelay;
-	m_pTransformCom->Set_Scale(m_pInfo->vStartScale);
+	Setup_Info();
 	Change_EffectTexture(m_pInfo->szName);
 	Change_GradientTexture(m_pInfo->szGradientName);
 	Change_ColorTexture(m_pInfo->szColorName);
-	m_pInfo->fMoveScaleSpeed = 1.f;
-
-	if (m_pInfo->bDistortion)
-		m_iPass = 1;
-
-	if (m_pInfo->bFadeIn)
-		m_fAlpha = 0.f;
-
-	if (m_pInfo->bStaticFrame)
-		m_fFrame = m_pInfo->fMaxFrame;
-
-	if (m_pInfo->bRandomMove)
-	{
-		_v3 vRandDir = _v3(1.f, 1.f, 1.f);
-		vRandDir = Engine::CCalculater::Random_Dir(m_pInfo->vRandDirectionRange.x, m_pInfo->vRandDirectionRange.y, m_pInfo->vRandDirectionRange.z);
-		D3DXVec3Normalize(&vRandDir, &vRandDir);
-		m_vDir = vRandDir;
-	}
-
-	if (m_pInfo->fMoveSpeed_Max > 0.f)
-	{
-		m_fMoveSpeed = Engine::CCalculater::Random_Num(0, _int(m_pInfo->fMoveSpeed_Max * 100)) * 0.01f;
-		m_fMoveSpeed += _int(m_pInfo->fMoveSpeed_Min);
-	}
-
-	if (m_pInfo->fRotSpeed_Max > 0.f)
-	{
-		m_fRotSpeed = Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRotSpeed_Max * 100)) * 0.01f;
-		m_fRotSpeed += _int(m_pInfo->fRotSpeed_Min);
-	}
-
-	if (m_pInfo->fAlphaSpeed_Max > 0.f)
-	{
-		m_fAlphaSpeed = Engine::CCalculater::Random_Num(0, _int(m_pInfo->fAlphaSpeed_Max * 100)) * 0.01f;
-		m_fAlphaSpeed += _int(m_pInfo->fAlphaSpeed_Min);
-	}
-
-	if (m_pInfo->fCreateDelay_Max > 0.f)
-	{
-		m_fCreateDelay = Engine::CCalculater::Random_Num(0, _int(m_pInfo->fCreateDelay_Max * 100)) * 0.01f;
-		m_fCreateDelay += _int(m_pInfo->fCreateDelay_Min);
-	}
-
-	if (m_pInfo->bRandStartPos)
-	{
-		_v3 vPos = _v3(m_pInfo->fRandStartPosRange_Min[AXIS_X], m_pInfo->fRandStartPosRange_Min[AXIS_Y], m_pInfo->fRandStartPosRange_Min[AXIS_Z]);
-
-		_float fMinus = Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f;
-		vPos += _v3(Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_X] * 100)) * 0.01f * fMinus,
-			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Y] * 100)) * 0.01f * fMinus,
-			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Z] * 100)) * 0.01f * fMinus);
-
-		m_pTransformCom->Set_Pos(vPos + m_pDesc->vWorldPos);
-		m_vLerpPos = (vPos + m_pDesc->vWorldPos);
-	}
-	else
-	{
-		m_pTransformCom->Set_Pos(m_pInfo->vStartPos + m_pDesc->vWorldPos);
-		m_vLerpPos = (m_pInfo->vStartPos + m_pDesc->vWorldPos);
-	}
-
-
-	if (m_pInfo->bRandomRot)
-	{
-		_float fMinus = Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f;
-		_v3 vPos = _v3(Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.x * 100)) * 0.01f * fMinus,
-			Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.y * 100)) * 0.01f * fMinus,
-			Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.z * 100)) * 0.01f * fMinus);
-
-		m_vRot = vPos;
-	}
-
 
 	return S_OK;
 }
@@ -210,19 +137,97 @@ HRESULT CTexEffect::Render_GameObject()
 	return NOERROR;
 }
 
+void CTexEffect::Setup_Info()
+{
+	m_fLifeTime = m_pInfo->fLifeTime;
+	m_vColor = m_pInfo->vStartColor;
+	m_fAlpha = m_pInfo->fMaxAlpha;
+	m_vLerpScale = m_pInfo->vStartScale;
+	m_fMoveSpeed = m_pInfo->fMoveSpeed;
+	m_fRotSpeed = m_pInfo->fRotSpeed;
+	m_fAlphaSpeed = m_pInfo->fAlphaSpeed;
+	m_fCreateDelay = m_pInfo->fCreateDelay;
+	m_pTransformCom->Set_Scale(m_pInfo->vStartScale);
+	m_pInfo->fMoveScaleSpeed = 1.f;
+
+	if (m_pInfo->bDistortion)
+		m_iPass = 1;
+
+	if (m_pInfo->bFadeIn)
+		m_fAlpha = 0.f;
+
+	if (m_pInfo->bStaticFrame)
+		m_fFrame = m_pInfo->fMaxFrame;
+
+	if (m_pInfo->bRandomMove)
+	{
+		_v3 vRandDir = _v3(1.f, 1.f, 1.f);
+		vRandDir = Engine::CCalculater::Random_Dir(m_pInfo->vRandDirectionRange.x, m_pInfo->vRandDirectionRange.y, m_pInfo->vRandDirectionRange.z);
+		D3DXVec3Normalize(&vRandDir, &vRandDir);
+		m_vDir = vRandDir;
+	}
+
+	if (m_pInfo->fMoveSpeed_Max > 0.f)
+	{
+		m_fMoveSpeed = Engine::CCalculater::Random_Num(0, _int(m_pInfo->fMoveSpeed_Max * 100)) * 0.01f;
+		m_fMoveSpeed += _int(m_pInfo->fMoveSpeed_Min);
+	}
+
+	if (m_pInfo->fRotSpeed_Max > 0.f)
+	{
+		m_fRotSpeed = Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRotSpeed_Max * 100)) * 0.01f;
+		m_fRotSpeed += _int(m_pInfo->fRotSpeed_Min);
+	}
+
+	if (m_pInfo->fAlphaSpeed_Max > 0.f)
+	{
+		m_fAlphaSpeed = Engine::CCalculater::Random_Num(0, _int(m_pInfo->fAlphaSpeed_Max * 100)) * 0.01f;
+		m_fAlphaSpeed += _int(m_pInfo->fAlphaSpeed_Min);
+	}
+
+	if (m_pInfo->fCreateDelay_Max > 0.f)
+	{
+		m_fCreateDelay = Engine::CCalculater::Random_Num(0, _int(m_pInfo->fCreateDelay_Max * 100)) * 0.01f;
+		m_fCreateDelay += _int(m_pInfo->fCreateDelay_Min);
+	}
+
+	if (m_pInfo->bRandStartPos)
+	{
+		_v3 vPos = _v3(m_pInfo->fRandStartPosRange_Min[AXIS_X], m_pInfo->fRandStartPosRange_Min[AXIS_Y], m_pInfo->fRandStartPosRange_Min[AXIS_Z]);
+
+		_float fMinus = Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f;
+		vPos += _v3(Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_X] * 100)) * 0.01f * fMinus,
+			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Y] * 100)) * 0.01f * fMinus,
+			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Z] * 100)) * 0.01f * fMinus);
+
+		m_pTransformCom->Set_Pos(vPos + m_pDesc->vWorldPos);
+		m_vLerpPos = (vPos + m_pDesc->vWorldPos);
+	}
+	else
+	{
+		m_pTransformCom->Set_Pos(m_pInfo->vStartPos + m_pDesc->vWorldPos);
+		m_vLerpPos = (m_pInfo->vStartPos + m_pDesc->vWorldPos);
+	}
+
+
+	if (m_pInfo->bRandomRot)
+	{
+		_float fMinus = Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f;
+		_v3 vPos = _v3(Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.x * 100)) * 0.01f * fMinus,
+			Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.y * 100)) * 0.01f * fMinus,
+			Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.z * 100)) * 0.01f * fMinus);
+
+		m_vRot = vPos;
+	}
+}
+
 void CTexEffect::Setup_Billboard()
 {
 	_mat matBill, matView, matWorld;
 
 	matWorld = m_pTransformCom->Get_WorldMat();
 
-	CManagement*		pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return;
-
-	Safe_AddRef(pManagement);
-
-	matView = pManagement->Get_Transform(D3DTS_VIEW);
+	matView = m_pManagement->Get_Transform(D3DTS_VIEW);
 
 	D3DXMatrixIdentity(&matBill);
 
@@ -261,8 +266,6 @@ void CTexEffect::Setup_Billboard()
 	}
 
 	Compute_ViewZ(&m_pTransformCom->Get_Pos());
-
-	Safe_Release(pManagement);
 }
 
 void CTexEffect::Check_Frame(_double TimeDelta)
@@ -538,6 +541,7 @@ void CTexEffect::Free()
 	Safe_Release(m_pGradientTextureCom);
 	Safe_Release(m_pColorTextureCom);
 	Safe_Release(m_pRendererCom);
+	//Safe_Release(m_pManagement);
 
 	Safe_Delete(m_pDesc);
 }

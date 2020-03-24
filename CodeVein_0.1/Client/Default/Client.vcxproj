@@ -256,11 +256,9 @@
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\ShaderFiles\Shader_Blend.fx" />
     <FxCompile Include="..\ShaderFiles\Shader_Default.fx" />
     <FxCompile Include="..\ShaderFiles\Shader_Effect.fx" />
     <FxCompile Include="..\ShaderFiles\Shader_Gizmo.fx" />
-    <FxCompile Include="..\ShaderFiles\Shader_LightAcc.fx" />
     <FxCompile Include="..\ShaderFiles\Shader_Mesh.fx" />
     <FxCompile Include="..\ShaderFiles\Shader_Sky.fx" />
     <FxCompile Include="..\ShaderFiles\Shader_Terrain.fx" />

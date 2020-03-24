@@ -1,4 +1,6 @@
 Mesh_DefaultBox|DefaultBox.X|..\..\Client\Resources\Mesh\StaticMesh\DefaultBox\|0
+Mesh_Sky_0|Sky_0.X|..\..\Client\Resources\Mesh\StaticMesh\Sky\|0
+Mesh_Sky_1|Sky_1.X|..\..\Client\Resources\Mesh\StaticMesh\Sky\|0
 Mesh_Wpn_Hammer|Wpn_Hammer.X|..\..\Client\Resources\Mesh\StaticMesh\Wpn_Hammer\|0
 Mesh_Wpn_Sword|Wpn_Sword.X|..\..\Client\Resources\Mesh\StaticMesh\Wpn_Sword\|0
 Mesh_Player|Player.X|..\..\Client\Resources\Mesh\DynamicMesh\Player\|1
