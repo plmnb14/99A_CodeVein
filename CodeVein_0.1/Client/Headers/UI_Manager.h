@@ -23,6 +23,9 @@
 #include "Menu_Skill.h"
 #include "SubQuickSlot.h"
 
+#include "Consume_Item.h"
+#include "Inven_Item.h"
+
 BEGIN(Client)
 
 class CUI_Manager final : public CBase

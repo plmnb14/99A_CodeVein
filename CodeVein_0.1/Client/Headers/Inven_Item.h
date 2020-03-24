@@ -1,27 +1,19 @@
 #pragma once
 
-
-#include "Client_Defines.h"
-#include "UI.h"
 #include "Management.h"
+#include "UI.h"
+#include "Client_Defines.h"
 
-#include "Item.h"
+#include "ItemSlot.h"
 
-class CItemSlot : public CUI
+BEGIN(Client)
+
+class CInven_Item : public CUI
 {
 private:
-	explicit CItemSlot(_Device pGraphic_Device);
-	explicit CItemSlot(const CItemSlot& rhs);
-	virtual ~CItemSlot() = default;
-
-public:
-	
-	CItem::ITEM_TYPE Get_SlotItemType();
-	_uint Get_SlotSize();
-	_uint Get_ItemNum();
-
-public:
-	void Set_Select(_bool bSelect) { m_bIsSelect = bSelect; }
+	explicit CInven_Item(_Device pDevice);
+	explicit CInven_Item(const CInven_Item& rhs);
+	virtual ~CInven_Item() = default;
 
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();
@@ -35,10 +27,8 @@ private:
 	HRESULT					SetUp_ConstantTable();
 
 public:
-	void					Add_Item(CItem::ITEM_TYPE eType);
-	void					Add_Item(const _tchar * pPrototypeTag, void * pArg = nullptr);
-	void					Pop_Item();
-	
+	void SetUp_Slot(CItem::ITEM_TYPE eType, void* pArg = nullptr);
+	void Add_Item_ToInven(CItem::ITEM_TYPE eType, _uint iItemNum, const _tchar * pPrototypeTag, const _tchar* pLayerTag, void * pArg = nullptr);
 
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
@@ -47,14 +37,13 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 
-	
-	vector<CItem*>			m_vecItem;
-	_uint					m_iSlotItemType;
-	_uint					m_iTexIndex = 0;
-	_bool					m_bIsSelect = false;
+private:
+	list<CItemSlot*>	m_SlotList[CItem::ITEM_END];
 
 public:
-	static CItemSlot*		Create(_Device pGraphic_Device);
+	static CInven_Item*		Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);
 	virtual void			Free();
 };
+
+END

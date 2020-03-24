@@ -37,7 +37,7 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 	if (FAILED(pManagement->Add_Prototype(L"GameObject_LeftArrow", CLeftArrow::Create(pDevice))))
 		return E_FAIL;
 
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_Item", CItem::Create(pDevice))))
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_ConsumeItem", CConsume_Item::Create(pDevice))))
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuBase", CMenuBaseUI::Create(pDevice))))
 		return E_FAIL;
@@ -58,6 +58,9 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 	if (FAILED(pManagement->Add_Prototype(L"GameObject_SubeQuickSlot", CSubQuickSlot::Create(pDevice))))
 		return E_FAIL;
 
+	if (FAILED(pManagement->Add_Prototype(L"GameObject_InvenItem", CInven_Item::Create(pDevice))))
+		return E_FAIL;
+
 	Safe_Release(pManagement);
 
 	return NOERROR;
@@ -69,6 +72,9 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	if (nullptr == pManagement)
 		return E_FAIL;
 	Safe_AddRef(pManagement);
+
+	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_ConsumeItem", SCENE_STAGE, L"Layer_ConsumeItem")))
+		return E_FAIL;
 
 	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_MenuBase", SCENE_STAGE, L"Layer_MenuBase")))
 		return E_FAIL;
@@ -157,6 +163,11 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_MenuSkill", SCENE_STAGE, L"Layer_MenuSkill")))
 		return E_FAIL;
 	
+	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_ItemSlot", SCENE_STAGE, L"Layer_ItemSlot")))
+		return E_FAIL;
+
+	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_InvenItem", SCENE_STAGE, L"Layer_InvenItem")))
+		return E_FAIL;
 	Safe_Release(pManagement);
 
 	m_eMenuState = WIN_NONE;
@@ -255,12 +266,7 @@ _int CUI_Manager::Update_UI()
 		break;
 	}
 
-
-	//if (CInput_Device::Get_Instance()->Key_Up(DIK_NUMPAD1))
-	//	pActiveUI->Set_Skill_Index(pActiveUI->Get_Skill_Index() + 1);
-	//if (CInput_Device::Get_Instance()->Key_Up(DIK_NUMPAD2))
-	//	pActiveUI2->Set_Skill_Index(pActiveUI2->Get_Skill_Index() + 1);
-
+	//CItemSlot* pTestSlot = static_cast<CItemSlot*>(pManagement->Get_GameObjectBack(L"Layer_ItemSlot", SCENE_STAGE));
 
 	
 	Safe_Release(pManagement);
@@ -305,7 +311,7 @@ CItem::ITEM_TYPE CUI_Manager::Get_QuickItemType()
 {
 	CManagement* pManagement = CManagement::Get_Instance();
 	if (nullptr == pManagement)
-		return CItem::ITEM_NONE;
+		return CItem::ITEM_END;
 
 	Safe_AddRef(pManagement);
 

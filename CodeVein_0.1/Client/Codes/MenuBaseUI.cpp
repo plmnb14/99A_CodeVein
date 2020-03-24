@@ -294,7 +294,7 @@ void CMenuBaseUI::Add_MenuIcon(_uint iMenuIconCnt)
 
 void CMenuBaseUI::Add_Item(CItem::ITEM_TYPE eType, _uint iSlotIndex)
 {
-	if (CItem::ITEM_NONE == eType)
+	if (CItem::ITEM_END == eType)
 		return;
 
 	CManagement* pManagement = CManagement::Get_Instance();

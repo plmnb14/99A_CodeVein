@@ -172,7 +172,9 @@
     <ClInclude Include="..\Headers\BossDecoUI.h" />
     <ClInclude Include="..\Headers\BossHP.h" />
     <ClInclude Include="..\Headers\Client_Defines.h" />
+    <ClInclude Include="..\Headers\Consume_Item.h" />
     <ClInclude Include="..\Headers\HPBack.h" />
+    <ClInclude Include="..\Headers\Inven_Item.h" />
     <ClInclude Include="..\Headers\Item.h" />
     <ClInclude Include="..\Headers\ItemSlot.h" />
     <ClInclude Include="..\Headers\Item_QuickSlot.h" />
@@ -210,7 +212,9 @@
     <ClCompile Include="..\Codes\BackGround.cpp" />
     <ClCompile Include="..\Codes\BossDecoUI.cpp" />
     <ClCompile Include="..\Codes\BossHP.cpp" />
+    <ClCompile Include="..\Codes\Consume_Item.cpp" />
     <ClCompile Include="..\Codes\HPBack.cpp" />
+    <ClCompile Include="..\Codes\Inven_Item.cpp" />
     <ClCompile Include="..\Codes\Item.cpp" />
     <ClCompile Include="..\Codes\ItemSlot.cpp" />
     <ClCompile Include="..\Codes\Item_QuickSlot.cpp" />

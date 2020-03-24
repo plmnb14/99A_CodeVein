@@ -1,53 +1,26 @@
 #include "stdafx.h"
-#include "..\Headers\ItemSlot.h"
-
-#include "MenuBaseUI.h"
+#include "..\Headers\Inven_Item.h"
 
 
-CItemSlot::CItemSlot(_Device pGraphic_Device)
-	: CUI(pGraphic_Device)
+CInven_Item::CInven_Item(_Device pDevice)
+	: CUI(pDevice)
 {
 }
 
-CItemSlot::CItemSlot(const CItemSlot & rhs)
+CInven_Item::CInven_Item(const CInven_Item & rhs)
 	: CUI(rhs)
 {
 }
 
-
-CItem::ITEM_TYPE CItemSlot::Get_SlotItemType()
-{
-	if (0 == m_vecItem.size())
-		return CItem::ITEM_END;
-
-	auto iter = m_vecItem.begin();
-
-	CItem::ITEM_TYPE eType = (*iter)->Get_Type();
-
-	return CItem::ITEM_TYPE(eType);
-}
-
-_uint CItemSlot::Get_SlotSize()
-{
-	size_t iSize = m_vecItem.size();
-	return _uint(iSize);
-}
-
-_uint CItemSlot::Get_ItemNum()
-{
-	
-	return m_vecItem.front()->Get_ItemNumber();
-}
-
-
-HRESULT CItemSlot::Ready_GameObject_Prototype()
+HRESULT CInven_Item::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
+
 	
 	return NOERROR;
 }
 
-HRESULT CItemSlot::Ready_GameObject(void * pArg)
+HRESULT CInven_Item::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
@@ -56,13 +29,15 @@ HRESULT CItemSlot::Ready_GameObject(void * pArg)
 
 	m_fPosX = WINCX * 0.5f;
 	m_fPosY = WINCY * 0.5f;
-	m_fSizeX = 100.f;
-	m_fSizeY = 100.f;
-	
+	m_fSizeX = WINCX;
+	m_fSizeY = WINCY;
+
+	SetUp_Slot(CItem::CONSUME);
+
 	return NOERROR;
 }
 
-_int CItemSlot::Update_GameObject(_double TimeDelta)
+_int CInven_Item::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
@@ -70,13 +45,13 @@ _int CItemSlot::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
-	
-	
-	
+	/*if (GetAsyncKeyState(VK_MULTIPLY) & 0x8000)
+		Add_Item_ToInven(CItem::CONSUME, 0, L"GameObject_ConsumeItem", L"Layer_ConsumeItem");
+	cout << m_SlotList[CItem::CONSUME].front()->Get_SlotSize() << endl;*/
 	return NO_EVENT;
 }
 
-_int CItemSlot::Late_Update_GameObject(_double TimeDelta)
+_int CInven_Item::Late_Update_GameObject(_double TimeDelta)
 {
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
@@ -90,7 +65,7 @@ _int CItemSlot::Late_Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-HRESULT CItemSlot::Render_GameObject()
+HRESULT CInven_Item::Render_GameObject()
 {
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
@@ -135,7 +110,7 @@ HRESULT CItemSlot::Render_GameObject()
 	return NOERROR;
 }
 
-HRESULT CItemSlot::Add_Component()
+HRESULT CInven_Item::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -146,7 +121,7 @@ HRESULT CItemSlot::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_ItemIcon", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_MenuWindow", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -160,7 +135,7 @@ HRESULT CItemSlot::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CItemSlot::SetUp_ConstantTable()
+HRESULT CInven_Item::SetUp_ConstantTable()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -173,58 +148,62 @@ HRESULT CItemSlot::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, _uint(1))))
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 0)))
 		return E_FAIL;
 
 	return NOERROR;
 }
 
-void CItemSlot::Add_Item(CItem::ITEM_TYPE eType)
+void CInven_Item::SetUp_Slot(CItem::ITEM_TYPE eType, void* pArg)
 {
+	CItemSlot* pSlot = nullptr;
 
+
+	LOOP(5)
+	{
+		g_pManagement->Add_GameObject_ToLayer(L"GameObject_ItemSlot", SCENE_STAGE, L"Layer_ItemSlot");
+		pSlot = static_cast<CItemSlot*>(g_pManagement->Get_GameObjectBack(L"Layer_ItemSlot", SCENE_STAGE));
+		
+		m_SlotList[eType].push_back(pSlot);
+	}
 }
 
-void CItemSlot::Add_Item(const _tchar * pPrototypeTag, void * pArg)
+void CInven_Item::Add_Item_ToInven(CItem::ITEM_TYPE eType, _uint iItemNum, const _tchar * pPrototypeTag, const _tchar* pLayerTag, void * pArg)
 {
-	CItem* pItem = static_cast<CItem*>(g_pManagement->Clone_GameObject_Return(pPrototypeTag, pArg));
+	/*CItem* pItem = nullptr;
+	g_pManagement->Add_GameObject_ToLayer(pPrototypeTag, SCENE_STAGE, pLayerTag, pArg);
+	pItem = static_cast<CItem*>(g_pManagement->Get_GameObjectBack(pLayerTag, SCENE_STAGE));*/
 
-	m_vecItem.push_back(pItem);
+	m_SlotList[eType].front()->Add_Item(pPrototypeTag);
 }
 
-void CItemSlot::Pop_Item()
+CInven_Item * CInven_Item::Create(_Device pGraphic_Device)
 {
-	m_vecItem.pop_back();
-}
-
-
-
-CItemSlot * CItemSlot::Create(_Device pGraphic_Device)
-{
-	CItemSlot* pInstance = new CItemSlot(pGraphic_Device);
+	CInven_Item* pInstance = new CInven_Item(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 	{
-		MSG_BOX("ItemSlot Create Failed");
+		MSG_BOX("CInven_Item Create Failed");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject * CItemSlot::Clone_GameObject(void * pArg)
+CGameObject * CInven_Item::Clone_GameObject(void * pArg)
 {
-	CItemSlot* pInstance = new CItemSlot(*this);
+	CInven_Item* pInstance = new CInven_Item(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
-		MSG_BOX("ItemSlot Cloned Failed");
+		MSG_BOX("CInven_Item Cloned Failed");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CItemSlot::Free()
+void CInven_Item::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
@@ -232,8 +211,14 @@ void CItemSlot::Free()
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
 
-	for_each(m_vecItem.begin(), m_vecItem.end(), Safe_Release<CItem*>);
-	m_vecItem.clear();
+	for (_uint i = 0; i < CItem::ITEM_END; ++i)
+	{
+		for (auto& pSlot : m_SlotList[i])
+		{
+			Safe_Release(pSlot);
+		}
+		m_SlotList[i].clear();
+	}
 
 	CUI::Free();
 }

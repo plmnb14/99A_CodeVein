@@ -26,8 +26,7 @@ HRESULT CScene_Logo::Ready_Scene()
 	if (FAILED(Ready_Layer_LogoBtn(L"Layer_LogoBtn")))
 		return E_FAIL;
 
-	if (FAILED(CUI_Manager::Get_Instance()->Add_UI_Prototype(m_pGraphic_Device)))
-		return E_FAIL;
+
 
 	m_pLoading = CLoading::Create(m_pGraphic_Device, SCENE_STAGE);
 	if (nullptr == m_pLoading)

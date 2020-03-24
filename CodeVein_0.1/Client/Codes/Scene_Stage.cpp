@@ -17,14 +17,14 @@ HRESULT CScene_Stage::Ready_Scene()
 	if (FAILED(Ready_LightDesc()))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Player(L"Layer_Player")))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Player(L"Layer_Player")))
+	//	return E_FAIL;
 	
 	if (FAILED(Ready_Layer_Camera(L"Layer_Camera")))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Monster(L"Layer_Monster")))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Monster(L"Layer_Monster")))
+	//	return E_FAIL;
 
 	if(FAILED(CUI_Manager::Get_Instance()->SetUp_UILayer()))
 		return E_FAIL;
@@ -40,12 +40,7 @@ _int CScene_Stage::Update_Scene(_double TimeDelta)
 
 	CUI_Manager::Get_Instance()->Update_UI();
 
-	if (CInput_Device::Get_Instance()->Key_Up(DIK_NUMPAD3))
-		CUI_Manager::Get_Instance()->Add_Item(CItem::REGEN_POWER);
-	if (CInput_Device::Get_Instance()->Key_Up(DIK_NUMPAD4))
-		CUI_Manager::Get_Instance()->Add_Item(CItem::ITEM_2);
-	if (CInput_Device::Get_Instance()->Key_Up(DIK_NUMPAD5))
-		CUI_Manager::Get_Instance()->Use_Item();
+	
 
 
 	return _int();
