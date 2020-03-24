@@ -87,8 +87,7 @@ HRESULT CScene_Logo::Ready_Prototype_GameObject()
 	if (FAILED(pManagement->Add_Prototype(L"GameObject_LogoBtn", CLogoBtn::Create(m_pGraphic_Device))))
 		return E_FAIL;
 
-	/*if (FAILED(pManagement->Add_Prototype(L"GameObject_CursorBar", CCursorSelectBar::Create(m_pGraphic_Device))))
-		return E_FAIL;*/
+
 
 	Safe_Release(pManagement);
 
@@ -130,22 +129,6 @@ HRESULT CScene_Logo::Ready_Layer_LogoBtn(const _tchar * pLayerTag)
 	Safe_AddRef(pManagement);
 
 	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_LogoBtn", SCENE_LOGO, pLayerTag)))
-		return E_FAIL;
-
-	Safe_Release(pManagement);
-
-	return NOERROR;
-}
-
-HRESULT CScene_Logo::Ready_Layer_CursorUI(const _tchar * pLayerTag)
-{
-	CManagement* pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
-
-	Safe_AddRef(pManagement);
-
-	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_CursorBar", SCENE_LOGO, pLayerTag)))
 		return E_FAIL;
 
 	Safe_Release(pManagement);

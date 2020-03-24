@@ -2,7 +2,7 @@
 #include "..\Headers\MainApp.h"
 #include "Scene_Logo.h"
 #include "CameraMgr.h"
-
+#include "UI_Manager.h"
 
 CMainApp::CMainApp()
 {
@@ -163,7 +163,7 @@ void CMainApp::Free()
 	Safe_Release(m_pRenderer);
 	
 	CCameraMgr::Get_Instance()->Destroy_Instance();
-
+	CUI_Manager::Get_Instance()->Destroy_Instance();
 	
 	Safe_Release(g_pManagement);
 	
