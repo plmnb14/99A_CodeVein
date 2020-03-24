@@ -183,7 +183,7 @@ CScene_Stage * CScene_Stage::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 
 void CScene_Stage::Free()
 {
-	//CUI_Manager::Get_Instance()->Destroy_Instance();
+	CUI_Manager::Get_Instance()->Destroy_Instance();
 	CScene::Free();
 }
 
