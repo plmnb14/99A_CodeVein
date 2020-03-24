@@ -32,7 +32,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 		return E_FAIL;
 
 	// Target_Velocity
-	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Velocity", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Velocity", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 1.0f, 0.f))))
 		return E_FAIL;
 	
 	// 명암을 저장한다.
@@ -42,6 +42,10 @@ HRESULT CRenderer::Ready_Component_Prototype()
 
 	// Target_Specular
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Specular", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+
+	// Target_Rim
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Rim", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
 	// Target_Distortion
@@ -62,11 +66,11 @@ HRESULT CRenderer::Ready_Component_Prototype()
 		return E_FAIL;
 	
 	// Target_MotionBlur
-	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_MotionBlur", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_MotionBlur", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 1.0f, 0.f))))
 		return E_FAIL;
 
 	// Target_MotionBlurObj
-	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_MotionBlurObj", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_MotionBlurObj", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(1.0f, 0.0f, 0.0f, 0.f))))
 		return E_FAIL;
 
 	// Target_MotionBlurBlend
@@ -98,7 +102,9 @@ HRESULT CRenderer::Ready_Component_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_LightAcc", L"Target_Specular")))
 		return E_FAIL;
-
+	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_LightAcc", L"Target_Rim")))
+		return E_FAIL;
+	
 	// For.MRT_Distortion
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Distortion", L"Target_Distortion")))
 		return E_FAIL;
@@ -178,12 +184,16 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Specular", fTargetSize, fTargetSize, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
+	// For.Target_Specular`s Debug Buffer
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Rim", fTargetSize, fTargetSize * 2, fTargetSize, fTargetSize)))
+		return E_FAIL;
+
 	// For.Target_Blend`s Debug Buffer // 톤매핑 직전
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Blend", fTargetSize * 3, 0.f, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_Bloom`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Bloom", fTargetSize, fTargetSize * 2, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Bloom", fTargetSize, fTargetSize * 3, fTargetSize, fTargetSize)))
 		return E_FAIL;
 	
 	// For.Target_Distortion`s Debug Buffer
@@ -491,6 +501,8 @@ HRESULT CRenderer::Render_Blend()
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_SpecularTexture", m_pTarget_Manager->Get_Texture(L"Target_Specular"))))
 		return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Texture("g_BloomTexture", m_pTarget_Manager->Get_Texture(L"Target_Rim"))))
+		return E_FAIL;
 
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Blend")))
 		return E_FAIL;
@@ -613,22 +625,22 @@ HRESULT CRenderer::Render_MotionBlurObj()
 
 	Safe_Release(pManagement);
 
-	//// 오브젝트 단위의 모션블러, 속도맵 ==============================================================================
-	//m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_Blend"));
-	//m_pShader_Blend->Set_Texture("g_ShadeTexture", m_pTarget_Manager->Get_Texture(L"Target_Velocity"));
-	//if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_MotionBlurObj")))
-	//	return E_FAIL;
-	//
-	//m_pShader_Blend->Begin_Shader();
-	//m_pShader_Blend->Begin_Pass(7);
-	//
-	//m_pViewPortBuffer->Render_VIBuffer();
-	//
-	//m_pShader_Blend->End_Pass();
-	//m_pShader_Blend->End_Shader();
-	//
-	//if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_MotionBlurObj")))
-	//	return E_FAIL;
+	// 오브젝트 단위의 모션블러, 속도맵 ==============================================================================
+	m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_Blend"));
+	m_pShader_Blend->Set_Texture("g_ShadeTexture", m_pTarget_Manager->Get_Texture(L"Target_Velocity"));
+	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_MotionBlurObj")))
+		return E_FAIL;
+	
+	m_pShader_Blend->Begin_Shader();
+	m_pShader_Blend->Begin_Pass(7);
+	
+	m_pViewPortBuffer->Render_VIBuffer();
+	
+	m_pShader_Blend->End_Pass();
+	m_pShader_Blend->End_Shader();
+	
+	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_MotionBlurObj")))
+		return E_FAIL;
 
 	return NOERROR;
 }
@@ -656,10 +668,10 @@ HRESULT CRenderer::Render_MotionBlur()
 	m_pShader_Blend->Commit_Changes();
 	m_pViewPortBuffer->Render_VIBuffer();
 
-	//if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_MotionBlurObj"))))
-	//	return E_FAIL;
-	//m_pShader_Blend->Commit_Changes();
-	//m_pViewPortBuffer->Render_VIBuffer();
+	if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_MotionBlurObj"))))
+		return E_FAIL;
+	m_pShader_Blend->Commit_Changes();
+	m_pViewPortBuffer->Render_VIBuffer();
 
 	m_pShader_Blend->End_Pass();
 	m_pShader_Blend->End_Shader();
@@ -675,8 +687,8 @@ HRESULT CRenderer::Render_ToneMapping()
 	if (nullptr == m_pViewPortBuffer ||
 		nullptr == m_pShader_Blend)
 		return E_FAIL;
-
-	if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_MotionBlurBlend"))))
+	 
+	if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_Blend")))) //임시로 모션블러 꺼둠. 키려면 Target_MotionBlurBlend
 		return E_FAIL;
 
 	// Blur
