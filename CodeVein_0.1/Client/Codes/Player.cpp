@@ -37,6 +37,7 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	KeyInput();
 
+	Parameter_YPos();
 	Parameter_Movement();
 	Parameter_State();
 	Parameter_Atk();
@@ -289,8 +290,8 @@ void CPlayer::Parameter_Movement()
 		D3DXVec3Normalize(&tmpLook, &tmpLook);
 
 		// 네비 메쉬 추가되면 바꿔야함
-		m_pTransform->Add_Pos(fMoveSpeed);
-		//m_pTransform->Set_Pos((m_pNav->Move_OnNaviMesh(m_pRigid, &m_pTransform->Get_Pos(), &tmpLook, fMoveSpeed)));
+		//m_pTransform->Add_Pos(fMoveSpeed);
+		m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, fMoveSpeed)));
 	}
 
 	else if (m_bMove[MOVE_Left])
@@ -344,8 +345,8 @@ void CPlayer::Parameter_Movement()
 		D3DXVec3Normalize(&tmpLook, &tmpLook);
 
 		// 네비 메쉬 추가되면 바꿔야함
-		m_pTransform->Add_Pos(fMoveSpeed);
-		//m_pTransform->Set_Pos((m_pNav->Move_OnNaviMesh(m_pRigid, &m_pTransform->Get_Pos(), &tmpLook, fMoveSpeed)));
+		//m_pTransform->Add_Pos(fMoveSpeed);
+		m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, fMoveSpeed)));
 	}
 
 	else if (m_bMove[MOVE_Right])
@@ -398,8 +399,8 @@ void CPlayer::Parameter_Movement()
 		D3DXVec3Normalize(&tmpLook, &tmpLook);
 
 		// 네비 메쉬 추가되면 바꿔야함
-		m_pTransform->Add_Pos(fMoveSpeed);
-		//m_pTransform->Set_Pos((m_pNav->Move_OnNaviMesh(m_pRigid, &m_pTransform->Get_Pos(), &tmpLook, fMoveSpeed)));
+		//m_pTransform->Add_Pos(fMoveSpeed);
+		m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, fMoveSpeed)));
 	}
 
 	else if (m_bMove[MOVE_Back])
@@ -471,8 +472,8 @@ void CPlayer::Parameter_Movement()
 		D3DXVec3Normalize(&tmpLook, &tmpLook);
 
 		// 네비 메쉬 추가되면 바꿔야함
-		m_pTransform->Add_Pos(fMoveSpeed);
-		//m_pTransform->Set_Pos((m_pNav->Move_OnNaviMesh(m_pRigid, &m_pTransform->Get_Pos(), &tmpLook, fMoveSpeed)));
+		//m_pTransform->Add_Pos(fMoveSpeed);
+		m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, fMoveSpeed)));
 	}
 }
 
@@ -484,8 +485,16 @@ void CPlayer::Parameter_HeavyCharging()
 	}
 }
 
+void CPlayer::Parameter_YPos()
+{
+	m_pTransform->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransform->Get_Pos()));
+}
+
 void CPlayer::KeyInput()
 {
+	if (CCameraMgr::Get_Instance()->Get_CamView() == TOOL_VIEW)
+		return;
+
 	KeyDown();
 	KeyUp();
 }
@@ -1489,6 +1498,10 @@ HRESULT CPlayer::Add_Component()
 	// for.Com_Mesh
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Player", L"Mesh_Dynamic", (CComponent**)&m_pDynamicMesh)))
 		return E_FAIL;
+
+	// for.Com_NavMesh
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"NavMesh", (CComponent**)&m_pNavMesh)))
+		return E_FAIL;
 	
 	return NOERROR;
 }
@@ -1498,7 +1511,7 @@ HRESULT CPlayer::SetUp_Default()
 	ZeroMemory(&m_tInfo, sizeof(ACTOR_INFO));
 
 	// Transform
-	m_pTransform->Set_Pos(V3_NULL);
+	m_pTransform->Set_Pos(_v3(-0.487f , 0.f , 23.497f));
 	m_pTransform->Set_Scale(V3_ONE);
 
 	// Mesh
@@ -1516,6 +1529,11 @@ HRESULT CPlayer::SetUp_Default()
 
 	// Anim
 	m_fAnimMutiply = 1.f;
+
+	// Navi
+	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Test.dat");
+	m_pNavMesh->Set_SubsetIndex(0);
+	m_pNavMesh->Set_Index(14);
 
 	return S_OK;
 }
@@ -1600,6 +1618,7 @@ void CPlayer::Free()
 	Safe_Release(m_pDynamicMesh);
 	Safe_Release(m_pShader);	
 	Safe_Release(m_pRenderer);
+	Safe_Release(m_pNavMesh);
 
 	CGameObject::Free();
 }

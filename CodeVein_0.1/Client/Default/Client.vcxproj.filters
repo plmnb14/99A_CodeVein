@@ -184,6 +184,9 @@
     <Filter Include="02.GameObject\Stage\UI\UI\03.MenuUI\Menu_Skill\Menu_Active">
       <UniqueIdentifier>{c96dc1db-dfd3-4c4f-a2e3-a28477acee6f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Scene\98.StageLoader">
+      <UniqueIdentifier>{d72f0ec9-9a87-49b1-948e-7dbcf2483c02}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -294,6 +297,9 @@
     <ClInclude Include="..\Headers\HPBack.h">
       <Filter>02.GameObject\Stage\UI\UI\00.PlayerUI\HPBack</Filter>
     </ClInclude>
+    <ClInclude Include="StageLoader.h">
+      <Filter>01.Scene\98.StageLoader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -394,6 +400,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\HPBack.cpp">
       <Filter>02.GameObject\Stage\UI\UI\00.PlayerUI\HPBack</Filter>
+    </ClCompile>
+    <ClCompile Include="StageLoader.cpp">
+      <Filter>01.Scene\98.StageLoader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

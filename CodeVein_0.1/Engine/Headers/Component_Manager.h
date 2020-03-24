@@ -5,6 +5,7 @@
 #include "Buffer_RcTex.h"
 #include "Buffer_Terrain.h"
 #include "Buffer_CubeTex.h"
+#include "Buffer_Sphere.h"
 
 #include "Renderer.h"
 #include "Transform.h"

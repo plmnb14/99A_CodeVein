@@ -422,10 +422,22 @@ void CToolView::Global_KeyDown()
 	// Util
 //////////////////////////////////////////////////////////////////////////////////////
 
-	if (Engine::CInput_Device::Get_Instance()->Key_Down(DIK_Q))
+	if (Engine::CInput_Device::Get_Instance()->Key_Down(DIK_NUMPAD6))
 	{
 		// 기즈모 On / Off
-		CManagement::Get_Instance()->Gizmo_Enable();
+		CManagement::Get_Instance()->Gizmo_Toggle();
+	}
+
+	if (Engine::CInput_Device::Get_Instance()->Key_Down(DIK_NUMPAD7))
+	{
+		// 기즈모 On / Off
+		CManagement::Get_Instance()->Gizmo_CellEnable();
+	}
+
+	if (Engine::CInput_Device::Get_Instance()->Key_Down(DIK_NUMPAD8))
+	{
+		// 기즈모 On / Off
+		CManagement::Get_Instance()->Gizmo_ColliderEnable();
 	}
 
 	if (Engine::CInput_Device::Get_Instance()->Key_Down(DIK_E))

@@ -60,6 +60,7 @@ private:
 	CRenderer*				m_pRenderer			= nullptr;	
 	CShader*				m_pShader			= nullptr;
 	CMesh_Dynamic*			m_pDynamicMesh		= nullptr;
+	CNavMesh*				m_pNavMesh			= nullptr;
 
 private:
 	vector<CCollider*>		m_vecPhsycColl;
@@ -127,6 +128,7 @@ private:
 	virtual void Parameter_Atk();
 	virtual void Parameter_Movement();
 	virtual void Parameter_HeavyCharging();
+	virtual void Parameter_YPos();
 
 private:
 	virtual void KeyInput();

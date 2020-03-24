@@ -153,6 +153,11 @@ HRESULT CScene_Logo::Ready_Layer_CursorUI(const _tchar * pLayerTag)
 	return NOERROR;
 }
 
+HRESULT CScene_Logo::Temp_Stage_Loader(const _tchar * _DatPath)
+{
+	return S_OK;
+}
+
 
 CScene_Logo * CScene_Logo::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 {

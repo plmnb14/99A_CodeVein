@@ -235,6 +235,11 @@ Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
 	return pInfo;
 }
 
+HRESULT CLoading::Stage_Object_Ready()
+{
+	return E_NOTIMPL;
+}
+
 CLoading* CLoading::Create(LPDIRECT3DDEVICE9 pGraphicDev, SCENEID eLoadingID)
 {
 	CLoading*	pInstance = new CLoading(pGraphicDev);

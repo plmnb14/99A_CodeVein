@@ -44,9 +44,12 @@ void CNavMesh::Move_NaviMesh_Y(const _ulong _dwSubIdx, const _float _fYDist)
 	}
 }
 
-HRESULT CNavMesh::Ready_NaviMesh(const _tchar * _NavMeshPath)
+HRESULT CNavMesh::Ready_NaviMesh(_Device _pGraphicDev, const _tchar * _NavMeshPath)
 {
 	m_vecSubset_Cell.reserve(1000);
+
+	_tchar FullPathName[MAX_STR] = L"../../Data/";
+	lstrcat(FullPathName, _NavMeshPath);
 
 	wifstream fin;
 	_int	iIndex;
@@ -59,7 +62,7 @@ HRESULT CNavMesh::Ready_NaviMesh(const _tchar * _NavMeshPath)
 
 	_tchar tmpSubset[MAX_STR] = L"999";
 
-	fin.open(_NavMeshPath);
+	fin.open(FullPathName);
 
 	if (fin.fail())
 		return S_OK;
@@ -83,7 +86,7 @@ HRESULT CNavMesh::Ready_NaviMesh(const _tchar * _NavMeshPath)
 		fin.getline(CellInfo->szVtx_C_y, MAX_STR, '|');
 		fin.getline(CellInfo->szVtx_C_z, MAX_STR, '|');
 
-		fin.getline(CellInfo->szOption, MAX_STR, '|');
+		fin.getline(CellInfo->szOption, MAX_STR);
 
 
 		if (fin.eof())
@@ -120,7 +123,7 @@ HRESULT CNavMesh::Ready_NaviMesh(const _tchar * _NavMeshPath)
 			vVtx[2] = { fC[0], fC[1], fC[2] };
 
 
-			Engine::CCell*	pInstance = Engine::CCell::Create(m_pGraphic_Dev, vVtx);
+			Engine::CCell*	pInstance = Engine::CCell::Create(_pGraphicDev, vVtx);
 			pInstance->Set_CellIdx(iIndex);
 			pInstance->Set_CellParam(CELL_PARAM(iParam));
 			pInstance->Calc_Line();
@@ -146,6 +149,11 @@ HRESULT CNavMesh::Ready_NaviMesh(const _tchar * _NavMeshPath)
 
 	Link_Cell();
 
+	return S_OK;
+}
+
+HRESULT CNavMesh::Ready_Prototype_NaviMesh()
+{
 	return S_OK;
 }
 
@@ -291,8 +299,11 @@ _v3 CNavMesh::Move_OnNaviMesh(CRigidBody* _pRigid, const _v3* pTargetPos, const 
 	{
 		//if (CCell::COMPARE_FALL == m_vecSubset_Cell[m_dwSubsetIdx][m_dwIndex]->Compare(&*pTargetPos, &m_dwIndex, &vDirection, &iIndex, bIsUpper))
 		//{
-		_pRigid->Set_IsFall(true);
-		_pRigid->Set_IsGround(false);
+		if (_pRigid != nullptr)
+		{
+			_pRigid->Set_IsFall(true);
+			_pRigid->Set_IsGround(false);
+		}
 		//}
 
 		m_bCanMove = true;
@@ -446,6 +457,10 @@ _v3 CNavMesh::Move_OnNaviMesh(CRigidBody* _pRigid, const _v3* pTargetPos, const 
 
 _v3 CNavMesh::Axis_Y_OnNavMesh(const _v3 _vPos)
 {
+
+	if (m_vecSubset_Cell[m_dwSubsetIdx][m_dwIndex] == nullptr)
+		return _vPos;
+
 	D3DXPLANE plane;
 
 	////cout << m_vecSubset_Cell[m_dwSubsetIdx][m_dwIndex]->Get_VertexPos()[1].y << endl;
@@ -458,7 +473,7 @@ _v3 CNavMesh::Axis_Y_OnNavMesh(const _v3 _vPos)
 	_v3 vPos = _vPos;
 
 	vPos.y = -(plane.a * vPos.x
-		+ plane.c * vPos.z + plane.d) / plane.b - 0.15f;
+		+ plane.c * vPos.z + plane.d) / plane.b;
 
 	return vPos;
 }
@@ -516,19 +531,21 @@ CELL_PARAM CNavMesh::Get_CellParam()
 	return m_vecSubset_Cell[m_dwSubsetIdx][m_dwIndex]->Get_CellParam();
 }
 
-CNavMesh * CNavMesh::Create(_Device pGraphicDev, const _tchar * _NavMeshPath)
+CNavMesh * CNavMesh::Create(_Device pGraphicDev)
 {
 	CNavMesh*	pInstance = new CNavMesh(pGraphicDev);
 
-	if (FAILED(pInstance->Ready_NaviMesh(_NavMeshPath)))
+	if (FAILED(pInstance->Ready_Prototype_NaviMesh()))
 		Safe_Release(pInstance);
 
 	return pInstance;
 }
 
-CComponent * CNavMesh::Clone_Component(void*_pArg)
+CComponent * CNavMesh::Clone_Component(void * pArg)
 {
-	return	new CNavMesh(*this);
+	CNavMesh*		pInstance = new CNavMesh(*this);
+
+	return pInstance;
 }
 
 void CNavMesh::Free()
