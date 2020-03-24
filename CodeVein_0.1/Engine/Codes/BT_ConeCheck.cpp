@@ -45,7 +45,6 @@ CBT_Node::BT_NODE_STATE CBT_ConeCheck::Update_Node(_double TimeDelta, vector<CBT
 			{
 				m_bInProgress = true;
 				return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
-				//return End_Node(pNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
 			}
 			else
 			{

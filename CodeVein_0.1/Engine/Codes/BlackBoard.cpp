@@ -12,93 +12,190 @@ CBlackBoard::CBlackBoard(const CBlackBoard & rhs)
 	m_mapVec3.insert(rhs.m_mapVec3.begin(), rhs.m_mapVec3.end());
 }
 
-CBlackBoard::BLACKBOARD_OUTPUT_STATE CBlackBoard::Set_Value(const _tchar * pName, const void * pData, BLACKBOARD_VALUE_STATE eValue_Type)
+//CBlackBoard::OUTPUT CBlackBoard::Set_Value(const _tchar * pName, const void * pData, VALUE eValue_Type)
+//{
+//	/*
+//	반환값
+//	NONE : 값 변경이 없을 떄
+//	UPDATE : 기존 값이 변하거나, 새로운 변수를 할당할 때
+//	*/
+//
+//
+//	OUTPUT eState = OUTPUT::NONE;
+//
+//	if (eValue_Type == VALUE::BOOL)
+//	{
+//		auto iter = find_if(m_mapBool.begin(), m_mapBool.end(), CTag_Finder(pName));
+//
+//		if (iter == m_mapBool.end())
+//		{
+//			m_mapBool.emplace(MAP_BOOL::value_type(pName, *(_bool*)pData));
+//			eState = OUTPUT::UPDATE;
+//		}
+//		else
+//		{
+//			if (iter->second != *(_bool*)pData)
+//			{
+//				iter->second = *(_bool*)pData;
+//				eState = OUTPUT::UPDATE;
+//			}
+//		}
+//	}
+//
+//	else if (eValue_Type == VALUE::FLOAT)
+//	{
+//		auto iter = find_if(m_mapFloat.begin(), m_mapFloat.end(), CTag_Finder(pName));
+//
+//		if (iter == m_mapFloat.end())
+//		{
+//			m_mapFloat.emplace(MAP_FLOAT::value_type(pName, *(_float*)pData));
+//			eState = OUTPUT::UPDATE;
+//		}
+//		else
+//		{
+//			if (iter->second != *(_float*)pData)
+//			{	
+//				iter->second = *(_float*)pData;
+//				eState = OUTPUT::UPDATE;
+//			}
+//		}
+//	}
+//
+//	else if (eValue_Type == VALUE::INT)
+//	{
+//		auto iter = find_if(m_mapInt.begin(), m_mapInt.end(), CTag_Finder(pName));
+//
+//		if (iter == m_mapInt.end())
+//		{
+//			m_mapInt.emplace(MAP_INT::value_type(pName, *(_int*)pData));
+//			eState = OUTPUT::UPDATE;
+//		}
+//		else
+//		{
+//			if (iter->second != *(_int*)pData)
+//			{
+//				iter->second = *(_int*)pData;
+//				eState = OUTPUT::UPDATE;
+//			}
+//		}
+//	}
+//
+//	else if (eValue_Type == VALUE::VEC3)
+//	{
+//		auto iter = find_if(m_mapVec3.begin(), m_mapVec3.end(), CTag_Finder(pName));
+//
+//		if (iter == m_mapVec3.end())
+//		{
+//			m_mapVec3.emplace(MAP_VEC3::value_type(pName, *(_v3*)pData));
+//			eState = OUTPUT::UPDATE;
+//		}
+//		else
+//		{
+//			if (iter->second != *(_v3*)pData)
+//			{
+//				iter->second = *(_v3*)pData;
+//				eState = OUTPUT::UPDATE;
+//			}
+//		}
+//	}
+//
+//	return eState;
+//}
+
+/*
+반환값
+NONE : 값 변경이 없을 떄
+UPDATE : 기존 값이 변하거나, 새로운 변수를 할당할 때
+*/
+CBlackBoard::OUTPUT CBlackBoard::Set_Value(const _tchar * pName, _bool bValue)
 {
-	/*
-	반환값
-	NONE : 값 변경이 없을 떄
-	UPDATE : 기존 값이 변하거나, 새로운 변수를 할당할 때
-	*/
+	OUTPUT eState = OUTPUT::NONE;
 
+	auto iter = find_if(m_mapBool.begin(), m_mapBool.end(), CTag_Finder(pName));
 
-	BLACKBOARD_OUTPUT_STATE eState = BLACKBOARD_OUTPUT_STATE::NONE;
-
-	if (eValue_Type == BLACKBOARD_VALUE_STATE::BOOL)
+	if (iter == m_mapBool.end())
 	{
-		auto iter = find_if(m_mapBool.begin(), m_mapBool.end(), CTag_Finder(pName));
-
-		if (iter == m_mapBool.end())
-		{
-			m_mapBool.emplace(MAP_BOOL::value_type(pName, *(_bool*)pData));
-			eState = BLACKBOARD_OUTPUT_STATE::UPDATE;
-		}
-		else
-		{
-			if (iter->second != *(_bool*)pData)
-			{
-				iter->second = *(_bool*)pData;
-				eState = BLACKBOARD_OUTPUT_STATE::UPDATE;
-			}
-		}
+		m_mapBool.emplace(MAP_BOOL::value_type(pName, bValue));
+		eState = OUTPUT::UPDATE;
 	}
-
-	else if (eValue_Type == BLACKBOARD_VALUE_STATE::FLOAT)
+	else
 	{
-		auto iter = find_if(m_mapFloat.begin(), m_mapFloat.end(), CTag_Finder(pName));
+		if (iter->second != bValue)
+		{
+			iter->second = bValue;
+			eState = OUTPUT::UPDATE;
+		}
 
-		if (iter == m_mapFloat.end())
-		{
-			m_mapFloat.emplace(MAP_FLOAT::value_type(pName, *(_float*)pData));
-			eState = BLACKBOARD_OUTPUT_STATE::UPDATE;
-		}
-		else
-		{
-			if (iter->second != *(_float*)pData)
-			{	
-				iter->second = *(_float*)pData;
-				eState = BLACKBOARD_OUTPUT_STATE::UPDATE;
-			}
-		}
 	}
+	return eState;
+}
 
-	else if (eValue_Type == BLACKBOARD_VALUE_STATE::INT)
+CBlackBoard::OUTPUT CBlackBoard::Set_Value(const _tchar * pName, _float fValue)
+{
+	OUTPUT eState = OUTPUT::NONE;
+
+	auto iter = find_if(m_mapFloat.begin(), m_mapFloat.end(), CTag_Finder(pName));
+
+	if (iter == m_mapFloat.end())
 	{
-		auto iter = find_if(m_mapInt.begin(), m_mapInt.end(), CTag_Finder(pName));
-
-		if (iter == m_mapInt.end())
-		{
-			m_mapInt.emplace(MAP_INT::value_type(pName, *(_int*)pData));
-			eState = BLACKBOARD_OUTPUT_STATE::UPDATE;
-		}
-		else
-		{
-			if (iter->second != *(_int*)pData)
-			{
-				iter->second = *(_int*)pData;
-				eState = BLACKBOARD_OUTPUT_STATE::UPDATE;
-			}
-		}
+		m_mapFloat.emplace(MAP_FLOAT::value_type(pName, fValue));
+		eState = OUTPUT::UPDATE;
 	}
-
-	else if (eValue_Type == BLACKBOARD_VALUE_STATE::VEC3)
+	else
 	{
-		auto iter = find_if(m_mapVec3.begin(), m_mapVec3.end(), CTag_Finder(pName));
+		if (iter->second != fValue)
+		{
+			iter->second = fValue;
+			eState = OUTPUT::UPDATE;
+		}
 
-		if (iter == m_mapVec3.end())
-		{
-			m_mapVec3.emplace(MAP_VEC3::value_type(pName, *(_v3*)pData));
-			eState = BLACKBOARD_OUTPUT_STATE::UPDATE;
-		}
-		else
-		{
-			if (iter->second != *(_v3*)pData)
-			{
-				iter->second = *(_v3*)pData;
-				eState = BLACKBOARD_OUTPUT_STATE::UPDATE;
-			}
-		}
 	}
+	return eState;
+}
 
+CBlackBoard::OUTPUT CBlackBoard::Set_Value(const _tchar * pName, _int iValue)
+{
+	OUTPUT eState = OUTPUT::NONE;
+
+	auto iter = find_if(m_mapInt.begin(), m_mapInt.end(), CTag_Finder(pName));
+
+	if (iter == m_mapInt.end())
+	{
+		m_mapInt.emplace(MAP_INT::value_type(pName, iValue));
+		eState = OUTPUT::UPDATE;
+	}
+	else
+	{
+		if (iter->second != iValue)
+		{
+			iter->second = iValue;
+			eState = OUTPUT::UPDATE;
+		}
+
+	}
+	return eState;
+}
+
+CBlackBoard::OUTPUT CBlackBoard::Set_Value(const _tchar * pName, _v3 _vValue)
+{
+	OUTPUT eState = OUTPUT::NONE;
+
+	auto iter = find_if(m_mapVec3.begin(), m_mapVec3.end(), CTag_Finder(pName));
+
+	if (iter == m_mapVec3.end())
+	{
+		m_mapVec3.emplace(MAP_VEC3::value_type(pName, _vValue));
+		eState = OUTPUT::UPDATE;
+	}
+	else
+	{
+		if (iter->second != _vValue)
+		{
+			iter->second = _vValue;
+			eState = OUTPUT::UPDATE;
+		}
+
+	}
 	return eState;
 }
 

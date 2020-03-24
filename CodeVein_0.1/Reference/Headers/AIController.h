@@ -19,6 +19,7 @@ public:
 	HRESULT Set_BlackBoard(CBlackBoard* pBlackBoard);
 
 public:
+	const CBlackBoard* Get_BlackBoard() const;
 
 
 public:

@@ -17,7 +17,7 @@ BEGIN(Engine)
 class ENGINE_DLL CBT_Simple_Parallel final : public CBT_Composite_Node
 {
 public:
-	enum class Mode { Immediate, Delayed };
+	enum Mode { Immediate, Delayed };
 
 	typedef struct tagInitInfo
 	{

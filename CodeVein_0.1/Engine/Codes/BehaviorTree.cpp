@@ -44,8 +44,6 @@ void CBehaviorTree::Update_BeHaviorTree(_double TimeDelta, const CBlackBoard* pB
 					++iter;
 			}
 		}
-
-		
 	}
 }
 

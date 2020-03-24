@@ -70,9 +70,6 @@
     <Filter Include="02.GameObject\Stage\5%29 Weapon">
       <UniqueIdentifier>{6c692abc-5cd0-46ed-bd2d-c6aa9c586e72}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\Monster">
-      <UniqueIdentifier>{71691d1d-2d69-411b-8330-bcd4d01bfd07}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\UI">
       <UniqueIdentifier>{c4430b7f-3cc2-4c69-886a-16a0e0447311}</UniqueIdentifier>
     </Filter>
@@ -84,12 +81,6 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\UI\UI">
       <UniqueIdentifier>{97ba43ae-56c0-4c4e-a764-a204e88c96f7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\UI\Manager">
-      <UniqueIdentifier>{cacbd413-3503-475e-9ca5-17f232cc0b10}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\UI\Manager\UI_Manager">
-      <UniqueIdentifier>{806185d2-30fa-4b86-b4ea-807861ea9ae5}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\Stage\UI\UI\00.PlayerUI">
       <UniqueIdentifier>{4c20310c-aa64-471f-abb8-3bcdda962cbd}</UniqueIdentifier>
@@ -184,6 +175,30 @@
     <Filter Include="02.GameObject\Stage\UI\UI\03.MenuUI\Menu_Skill\Menu_Active">
       <UniqueIdentifier>{c96dc1db-dfd3-4c4f-a2e3-a28477acee6f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\UI\UI\Manager">
+      <UniqueIdentifier>{cacbd413-3503-475e-9ca5-17f232cc0b10}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\UI\UI\Manager\UI_Manager">
+      <UniqueIdentifier>{806185d2-30fa-4b86-b4ea-807861ea9ae5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\1%29 Monster\CatWoman">
+      <UniqueIdentifier>{e568e588-f565-417a-acdc-050897a061aa}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\1%29 Monster\Cocoon">
+      <UniqueIdentifier>{6c86a1b7-e934-4a45-9bf4-e48f97b7c27b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\1%29 Monster\Genji">
+      <UniqueIdentifier>{46c1a8dc-1d15-4b6e-97ef-572286d156a0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\1%29 Monster\PoisonButterfly">
+      <UniqueIdentifier>{3625e8d8-de25-4c6f-9d0d-1266dcc58923}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\1%29 Monster\Urchin">
+      <UniqueIdentifier>{d5078eb0-dcf5-4078-8ad4-dfe766841a1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\1%29 Monster\Wolf">
+      <UniqueIdentifier>{fc9f0418-2c4d-45ed-ade0-7b692d0fc94d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -259,7 +274,7 @@
       <Filter>02.GameObject\Stage\UI\UI\03.MenuUI\Menu_UI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\UI_Manager.h">
-      <Filter>02.GameObject\Stage\UI\Manager\UI_Manager</Filter>
+      <Filter>02.GameObject\Stage\UI\UI\Manager\UI_Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\ItemSlot.h">
       <Filter>02.GameObject\Stage\UI\UI\03.MenuUI\ItemSlot</Filter>
@@ -293,6 +308,18 @@
     </ClInclude>
     <ClInclude Include="..\Headers\HPBack.h">
       <Filter>02.GameObject\Stage\UI\UI\00.PlayerUI\HPBack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\PoisonButterfly.h">
+      <Filter>02.GameObject\Stage\1%29 Monster\PoisonButterfly</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BlackUrchin.h">
+      <Filter>02.GameObject\Stage\1%29 Monster\Urchin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BlackWolf.h">
+      <Filter>02.GameObject\Stage\1%29 Monster\Wolf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Genji.h">
+      <Filter>02.GameObject\Stage\1%29 Monster\Genji</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -360,7 +387,7 @@
       <Filter>02.GameObject\Stage\UI\UI\03.MenuUI\Menu_UI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\UI_Manager.cpp">
-      <Filter>02.GameObject\Stage\UI\Manager\UI_Manager</Filter>
+      <Filter>02.GameObject\Stage\UI\UI\Manager\UI_Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\ItemSlot.cpp">
       <Filter>02.GameObject\Stage\UI\UI\03.MenuUI\ItemSlot</Filter>
@@ -394,6 +421,18 @@
     </ClCompile>
     <ClCompile Include="..\Codes\HPBack.cpp">
       <Filter>02.GameObject\Stage\UI\UI\00.PlayerUI\HPBack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\PoisonButterfly.cpp">
+      <Filter>02.GameObject\Stage\1%29 Monster\PoisonButterfly</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BlackUrchin.cpp">
+      <Filter>02.GameObject\Stage\1%29 Monster\Urchin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BlackWolf.cpp">
+      <Filter>02.GameObject\Stage\1%29 Monster\Wolf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Genji.cpp">
+      <Filter>02.GameObject\Stage\1%29 Monster\Genji</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

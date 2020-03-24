@@ -53,6 +53,9 @@ HRESULT CBT_Node_Manager::Ready_BT_Node()
 		return E_FAIL;
 	if (FAILED(Add_Prototype_Node(L"ConeCheck", CBT_ConeCheck::Create_Prototype(), CBT_Node_Manager::DECORATOR)))
 		return E_FAIL;
+	if (FAILED(Add_Prototype_Node(L"Compare", CBT_Compare::Create_Prototype(), CBT_Node_Manager::DECORATOR)))
+		return E_FAIL;
+
 	// Service
 
 	// Task

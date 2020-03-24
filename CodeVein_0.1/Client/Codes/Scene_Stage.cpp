@@ -124,8 +124,24 @@ HRESULT CScene_Stage::Ready_Layer_Monster(const _tchar * pLayerTag)
 	Safe_AddRef(pManagement);
 
 	// For. TestMonster
-	if (FAILED(pManagement->Add_GameObject_ToLayer(L"Monster_TestMonster", SCENE_STAGE, pLayerTag)))
-		return E_FAIL;
+	//if (FAILED(pManagement->Add_GameObject_ToLayer(L"Monster_TestMonster", SCENE_STAGE, pLayerTag)))
+	//	return E_FAIL;
+
+	// For. PoisonButterfly
+	//if (FAILED(pManagement->Add_GameObject_ToLayer(L"Monster_PoisonButterfly", SCENE_STAGE, pLayerTag)))
+	//	return E_FAIL;
+
+	// For. BlackUrchin
+	//if (FAILED(pManagement->Add_GameObject_ToLayer(L"Monster_BlackUrchin", SCENE_STAGE, pLayerTag)))
+	//	return E_FAIL;
+
+	// For. BlackWolf
+	//if (FAILED(pManagement->Add_GameObject_ToLayer(L"Monster_BlackWolf", SCENE_STAGE, pLayerTag)))
+	//	return E_FAIL;
+
+	// For. NormalGenji
+	//if (FAILED(pManagement->Add_GameObject_ToLayer(L"Monster_Genji", SCENE_STAGE, pLayerTag)))
+	//	return E_FAIL;
 
 	Safe_Release(pManagement);
 

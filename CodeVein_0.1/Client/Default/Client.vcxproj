@@ -169,6 +169,7 @@
   <ItemGroup>
     <ClInclude Include="..\Headers\ActiveSkill_UI.h" />
     <ClInclude Include="..\Headers\BackGround.h" />
+    <ClInclude Include="..\Headers\BlackWolf.h" />
     <ClInclude Include="..\Headers\BossDecoUI.h" />
     <ClInclude Include="..\Headers\BossHP.h" />
     <ClInclude Include="..\Headers\Client_Defines.h" />
@@ -181,6 +182,8 @@
     <ClInclude Include="..\Headers\Menu_Active.h" />
     <ClInclude Include="..\Headers\Menu_Item.h" />
     <ClInclude Include="..\Headers\Menu_Status.h" />
+    <ClInclude Include="..\Headers\Genji.h" />
+    <ClInclude Include="..\Headers\PoisonButterfly.h" />
     <ClInclude Include="..\Headers\SlotCnt_UI.h" />
     <ClInclude Include="..\Headers\SubQuickSlot.h" />
     <ClInclude Include="..\Headers\UI_Manager.h" />
@@ -200,6 +203,7 @@
     <ClInclude Include="..\Headers\Scene_Stage.h" />
     <ClInclude Include="..\Headers\Sky.h" />
     <ClInclude Include="..\Headers\TestMonster.h" />
+    <ClInclude Include="..\Headers\BlackUrchin.h" />
     <ClInclude Include="..\Headers\Weapon.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
@@ -209,6 +213,7 @@
   <ItemGroup>
     <ClCompile Include="..\Codes\ActiveSkill_UI.cpp" />
     <ClCompile Include="..\Codes\BackGround.cpp" />
+    <ClCompile Include="..\Codes\BlackWolf.cpp" />
     <ClCompile Include="..\Codes\BossDecoUI.cpp" />
     <ClCompile Include="..\Codes\BossHP.cpp" />
     <ClCompile Include="..\Codes\CursorSelectBar.cpp" />
@@ -220,6 +225,8 @@
     <ClCompile Include="..\Codes\Menu_Active.cpp" />
     <ClCompile Include="..\Codes\Menu_Item.cpp" />
     <ClCompile Include="..\Codes\Menu_Status.cpp" />
+    <ClCompile Include="..\Codes\Genji.cpp" />
+    <ClCompile Include="..\Codes\PoisonButterfly.cpp" />
     <ClCompile Include="..\Codes\SlotCnt_UI.cpp" />
     <ClCompile Include="..\Codes\SubQuickSlot.cpp" />
     <ClCompile Include="..\Codes\UI_Manager.cpp" />
@@ -239,6 +246,7 @@
     <ClCompile Include="..\Codes\Scene_Stage.cpp" />
     <ClCompile Include="..\Codes\Sky.cpp" />
     <ClCompile Include="..\Codes\TestMonster.cpp" />
+    <ClCompile Include="..\Codes\BlackUrchin.cpp" />
     <ClCompile Include="..\Codes\Weapon.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="stdafx.cpp">

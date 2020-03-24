@@ -286,10 +286,10 @@ void CMesh_Dynamic::Set_BoneSeperate(D3DXFRAME_DERIVED * _frame, const char * _b
 
 HRESULT CMesh_Dynamic::SetUp_Animation(_uint iIndex)
 {
-	if (nullptr == m_pAniCtrl_Upper)
+	if (nullptr == m_pAniCtrl_Lower)
 		return E_FAIL;
 
-	m_pAniCtrl_Upper->SetUp_Animation(iIndex);
+	m_pAniCtrl_Lower->SetUp_Animation(iIndex);
 
 	return NOERROR;
 }
@@ -395,10 +395,10 @@ HRESULT CMesh_Dynamic::Play_Animation_RightArm(_double TimeDelta , _bool _bTwoHa
 
 HRESULT CMesh_Dynamic::Play_Animation(_double TimeDelta)
 {
-	if (nullptr == m_pAniCtrl_Upper)
+	if (nullptr == m_pAniCtrl_Lower)
 		return E_FAIL;
 
-	m_pAniCtrl_Upper->Play_Animation(TimeDelta);
+	m_pAniCtrl_Lower->Play_Animation(TimeDelta);
 
 	Update_CombinedTransformationMatrices(m_pRootFrame, m_matPivot);
 

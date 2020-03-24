@@ -193,6 +193,7 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\BlackBoard.h" />
     <ClInclude Include="..\Headers\BT_All_Node.h" />
     <ClInclude Include="..\Headers\BT_BlackBoard_Mgr.h" />
+    <ClInclude Include="..\Headers\BT_Compare.h" />
     <ClInclude Include="..\Headers\BT_Composite_Node.h" />
     <ClInclude Include="..\Headers\BT_ConeCheck.h" />
     <ClInclude Include="..\Headers\BT_Cooldown.h" />
@@ -273,6 +274,7 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\BehaviorTree.cpp" />
     <ClCompile Include="..\Codes\BlackBoard.cpp" />
     <ClCompile Include="..\Codes\BT_BlackBoard_Mgr.cpp" />
+    <ClCompile Include="..\Codes\BT_Compare.cpp" />
     <ClCompile Include="..\Codes\BT_Composite_Node.cpp" />
     <ClCompile Include="..\Codes\BT_ConeCheck.cpp" />
     <ClCompile Include="..\Codes\BT_Cooldown.cpp" />

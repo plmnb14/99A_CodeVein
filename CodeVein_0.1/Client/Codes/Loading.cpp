@@ -6,9 +6,14 @@
 #include "TexEffect.h"
 #include "MeshEffect.h"
 #include "Player.h"
-#include "TestMonster.h"
 #include "HPBack.h"
 #include "Weapon.h"
+
+#include "TestMonster.h"
+#include "PoisonButterfly.h"
+#include "BlackUrchin.h"
+#include "BlackWolf.h"
+#include "Genji.h"
 
 #include "PlayerHP.h"
 #include "PlayerST.h"
@@ -110,17 +115,27 @@ _uint CLoading::Loading_ForStage(void)
 	//	return E_FAIL;
 
 	//몬스터
+	//테스트용
 	if (FAILED(pManagement->Add_Prototype(L"Monster_TestMonster", CTestMonster::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 독나방
+	if (FAILED(pManagement->Add_Prototype(L"Monster_PoisonButterfly", CPoisonButterfly::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 검은 성게
+	if (FAILED(pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 검은 늑대
+	if (FAILED(pManagement->Add_Prototype(L"Monster_BlackWolf", CBlackWolf::Create(m_pGraphicDev))))
 		return E_FAIL;
 
 	//무기
 	if (FAILED(pManagement->Add_Prototype(L"GameObject_Weapon", CWeapon::Create(m_pGraphicDev))))
 		return E_FAIL;
 
+	Safe_Release(pManagement);
+
 	m_bFinish = true;
 	lstrcpy(m_szString, L"로딩 완료");
-
-	Safe_Release(pManagement);
 
 	return 0;
 }
