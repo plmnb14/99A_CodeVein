@@ -2,7 +2,7 @@
 #include "..\Headers\MainApp.h"
 #include "Scene_Logo.h"
 #include "CameraMgr.h"
-
+#include "ParticleMgr.h"
 
 CMainApp::CMainApp()
 {
@@ -15,7 +15,7 @@ HRESULT CMainApp::Ready_MainApp()
 	
 	if (FAILED(Ready_Component_Prototype()))
 		return E_FAIL;
-	
+
 	if (FAILED(Ready_Start_Scene(SCENE_LOGO)))
 		return E_FAIL;
 
@@ -28,7 +28,8 @@ _int CMainApp::Update_MainApp(_double TimeDelta)
 		return -1;
 	
 	CCameraMgr::Get_Instance()->Update();
-	
+	CParticleMgr::Get_Instance()->Update_ParticleManager(TimeDelta);
+
 	return g_pManagement->Update_Management(TimeDelta);
 
 	return 0;
@@ -161,6 +162,8 @@ CMainApp * CMainApp::Create()
 void CMainApp::Free()
 {
 	Safe_Release(m_pGraphic_Dev);
+	
+	CParticleMgr::Get_Instance()->Destroy_Instance();
 
 	Safe_Release(m_pRenderer);
 	

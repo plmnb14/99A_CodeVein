@@ -5,6 +5,7 @@
 #include "Effect.h"
 #include "UI.h"
 #include "UI_Manager.h"
+#include "ParticleMgr.h"
 
 CScene_Stage::CScene_Stage(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
@@ -147,7 +148,8 @@ HRESULT CScene_Stage::Ready_Layer_Effect(const _tchar * pLayerTag)
 	Safe_AddRef(pManagement);
 
 	// For.Effect
-	pManagement->Ready_ParticleManager();
+	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager())) // 프로토타입 생성 이후 실행되어야 함
+		return E_FAIL;
 
 	Safe_Release(pManagement);
 

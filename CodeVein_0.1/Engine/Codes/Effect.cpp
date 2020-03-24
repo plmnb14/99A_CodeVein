@@ -58,7 +58,7 @@ void CEffect::Setup_Info()
 
 void CEffect::Free()
 {
-	CGameObject::Free();
-
 	if(!m_bClone) Safe_Delete(m_pInfo);
+	
+	CGameObject::Free();
 }

@@ -16,6 +16,14 @@ CMeshEffect::CMeshEffect(const CMeshEffect & rhs)
 HRESULT CMeshEffect::Ready_GameObject_Prototype()
 {
 	// 생성 시, 오래 걸릴 수 있느 작업들을 수행한다.
+
+	// Set Default Info
+	if (!m_pInfo)
+	{
+		m_pInfo = new EFFECT_INFO;
+		ZeroMemory(m_pInfo, sizeof(EFFECT_INFO));
+	}
+
 	return NOERROR;
 }
 
@@ -28,13 +36,6 @@ HRESULT CMeshEffect::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Pos(V3_NULL);
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 	m_pTransformCom->Set_Angle(_v3(0.f, 0.f, 0.f));
-
-	// Set Default Info
-	if (!m_pInfo)
-	{
-		m_pInfo = new EFFECT_INFO;
-		ZeroMemory(m_pInfo, sizeof(EFFECT_INFO));
-	}
 
 	return NOERROR;
 }

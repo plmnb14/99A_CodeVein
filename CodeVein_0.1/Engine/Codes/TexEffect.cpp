@@ -18,6 +18,13 @@ CTexEffect::CTexEffect(const CTexEffect& rhs)
 HRESULT CTexEffect::Ready_GameObject_Prototype()
 {
 	// 생성 시, 오래 걸릴 수 있는 작업들을 수행한다.
+
+	if (!m_pInfo)
+	{
+		m_pInfo = new EFFECT_INFO;
+		ZeroMemory(m_pInfo, sizeof(EFFECT_INFO));
+	}
+
 	return NOERROR;
 }
 
@@ -31,12 +38,6 @@ HRESULT CTexEffect::Ready_GameObject(void* pArg)
 	m_pTransformCom->Set_Pos(V3_NULL);
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 	m_pTransformCom->Set_Angle(_v3(0.f, 0.f, 0.f));
-
-	if (!m_pInfo)
-	{
-		m_pInfo = new EFFECT_INFO;
-		ZeroMemory(m_pInfo, sizeof(EFFECT_INFO));
-	}
 
 	if (pArg)
 		m_pDesc = (EFFECT_DESC*)pArg;
@@ -149,6 +150,13 @@ void CTexEffect::Setup_Info()
 	m_fCreateDelay = m_pInfo->fCreateDelay;
 	m_pTransformCom->Set_Scale(m_pInfo->vStartScale);
 	m_pInfo->fMoveScaleSpeed = 1.f;
+
+	m_fFrame = 0.f;
+	m_fLinearMoveSpeed = 0.f;
+	m_fLinearMovePercent = 0.f;
+	m_vFollowPos = { 0.f, 0.f, 0.f };
+
+	m_bFadeOutStart = false;
 
 	if (m_pInfo->bDistortion)
 		m_iPass = 1;
