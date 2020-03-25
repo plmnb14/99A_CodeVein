@@ -15,13 +15,13 @@ sampler		DiffuseSampler = sampler_state
 struct VS_IN
 {
 	float3		vPosition : POSITION;
-	float3		vTexUV : TEXCOORD0;
+	float2		vTexUV : TEXCOORD0;
 };
 
 struct VS_OUT
 {
 	float4		vPosition : POSITION;
-	float3		vTexUV : TEXCOORD0;
+	float2		vTexUV : TEXCOORD0;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -42,7 +42,7 @@ VS_OUT VS_MAIN(VS_IN In)
 struct PS_IN
 {
 	float4		vPosition : POSITION;
-	float3		vTexUV : TEXCOORD0;
+	float2		vTexUV : TEXCOORD0;
 
 };
 
@@ -56,7 +56,7 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	Out.vColor = texCUBE(DiffuseSampler, In.vTexUV);
+	Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2); 
 
 	return Out;
 }
@@ -68,7 +68,7 @@ technique Default_Technique
 {
 	pass Default_Rendering
 	{
-		CullMode = cw;
+		CullMode = none;
 		ZEnable = false;
 		ZWriteEnable = false;
 

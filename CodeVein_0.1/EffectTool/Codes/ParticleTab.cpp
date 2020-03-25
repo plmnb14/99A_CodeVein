@@ -66,6 +66,7 @@ CParticleTab::CParticleTab(CWnd* pParent /*=NULL*/)
 
 CParticleTab::~CParticleTab()
 {
+	Release();
 }
 
 void CParticleTab::DoDataExchange(CDataExchange* pDX)
@@ -197,6 +198,14 @@ void CParticleTab::LateInit()
 		m_ResPopup_Tex.Create(IDD_RESLISTPOPUP);
 		m_ResPopup_Tex.Set_ResType(CResListPopup::TYPE_TEX);
 	}
+
+	CManagement*		pManagement = CManagement::Get_Instance();
+	
+	m_pTestBox = static_cast<CMeshEffect*>(pManagement->Clone_GameObject_Return(L"GameObject_MeshEffect", nullptr));
+	lstrcpy(m_pTestBox->Get_Info()->szName, L"Mesh_DefaultBox");
+	lstrcpy(m_pTestBox->Get_Info()->szColorName, L"Tex_Colors");
+	m_pTestBox->Get_Info()->vStartScale = _v3(5, 5, 5);
+
 }
 
 void CParticleTab::Update(const _float DeltaTime)
@@ -205,7 +214,6 @@ void CParticleTab::Update(const _float DeltaTime)
 
 	Check_ResType();
 	Check_FormControlEnable();
-	Check_TestMesh();
 
 	Create_Particle(DeltaTime);
 
@@ -214,6 +222,11 @@ void CParticleTab::Update(const _float DeltaTime)
 
 void CParticleTab::Render()
 {
+	if (m_CheckTestMesh.GetCheck() ? true : false)
+	{
+		//m_pTestBox->Render_GameObject();
+		static_cast<CRenderer*>(m_pTestBox->Get_Component(L"Com_Renderer"))->Add_RenderList(RENDER_NONALPHA, m_pTestBox);
+	}
 }
 
 void CParticleTab::Check_ResType()
@@ -282,14 +295,6 @@ void CParticleTab::Check_FormControlEnable()
 	GetDlgItemText(IDC_EDIT34, m_EditCreateDelay);
 	GetDlgItemText(IDC_EDIT35, m_EditCreateDelay_Min);
 	GetDlgItemText(IDC_EDIT36, m_EditCreateDelay_Max);
-}
-
-void CParticleTab::Check_TestMesh()
-{
-	if (m_CheckTestMesh.GetCheck() ? true : false)
-	{
-
-	}
 }
 
 void CParticleTab::Create_Particle(const _float DeltaTime)
@@ -487,6 +492,11 @@ void CParticleTab::Setup_EffInfo(_bool bIsMesh)
 	lstrcpy(m_pInfo->szGradientName, m_wstrGradientTexName.c_str());
 	lstrcpy(m_pInfo->szColorName, m_wstrColorTexName.c_str());
 
+}
+
+void CParticleTab::Release()
+{
+	Safe_Release(m_pTestBox);
 }
 
 

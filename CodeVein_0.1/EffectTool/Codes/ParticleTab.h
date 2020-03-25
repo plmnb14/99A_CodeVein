@@ -58,11 +58,11 @@ public:
 private:
 	void Check_ResType();
 	void Check_FormControlEnable();
-	void Check_TestMesh();
 	void Create_Particle(const _float DeltaTime);
 	void Create_Effect();
 	void Create_MeshEffect();
 	void Setup_EffInfo(_bool bIsMesh);
+	void Release();
 
 private:
 	vector<CGameObject*> m_vecObjectList;
@@ -71,6 +71,8 @@ private:
 	_float m_fParticleTime_Check = 0.f;
 	_float m_fCreatePause = 0.f; // юс╫ц
 	_float m_fMaxFrame = 0.f;
+
+	CMeshEffect* m_pTestBox = nullptr;
 private:
 	LPDIRECT3DDEVICE9	 m_pGraphicDev = nullptr;
 	CResListPopup		 m_ResPopup_Tex = nullptr;

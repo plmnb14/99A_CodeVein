@@ -14,10 +14,12 @@ protected:
 
 public:
 	EFFECT_INFO* Get_Info() { return m_pInfo; }
-	wstring Get_ParticleName() { return m_wstrParticleName; }
+	_tchar* Get_ParticleName() { return m_szParticleName; }
+	_float	Get_CreateDelay() { return m_fCreateDelay; }
 
 public:
-	void Set_ParticleName(wstring wstrParticleName) { m_wstrParticleName = wstrParticleName; }
+	void Set_ParticleName(_tchar* szBuff) { lstrcpy(m_szParticleName, szBuff); }
+	void Reset_Init();
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -26,6 +28,9 @@ public:
 	virtual _int Update_GameObject(_double TimeDelta);
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
+
+protected:
+	virtual void Setup_Info();
 
 protected:
 	EFFECT_INFO*			m_pInfo = nullptr;
@@ -49,7 +54,7 @@ protected:
 	_bool					m_bClone = false;
 	_bool					m_bFadeOutStart = false;
 
-	wstring					m_wstrParticleName;
+	_tchar					m_szParticleName[256];
 
 public:
 	virtual void Free();

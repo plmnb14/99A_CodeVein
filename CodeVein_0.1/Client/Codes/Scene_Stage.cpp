@@ -4,6 +4,7 @@
 #include "Effect.h"
 #include "UI.h"
 #include "UI_Manager.h"
+#include "ParticleMgr.h"
 
 CScene_Stage::CScene_Stage(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
@@ -29,7 +30,14 @@ HRESULT CScene_Stage::Ready_Scene()
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Stage_Test.dat");
 
 	m_pNavMesh = static_cast<Engine::CNavMesh*>(g_pManagement->Clone_Component(SCENE_STATIC, L"NavMesh"));
+
 	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Test.dat");
+
+	if (FAILED(Ready_Layer_Effect(L"Layer_Effect")))
+		return E_FAIL;
+
+	if (FAILED(Ready_Layer_BackGround(L"Layer_BackGround")))
+		return E_FAIL;
 
 
 	if(FAILED(CUI_Manager::Get_Instance()->SetUp_UILayer()))
@@ -40,7 +48,21 @@ HRESULT CScene_Stage::Ready_Scene()
 
 _int CScene_Stage::Update_Scene(_double TimeDelta)
 {
-	
+	if(g_pInput_Device->Key_Down(DIK_K))
+	{
+		CManagement*	pManagement = CManagement::Get_Instance();
+
+		if (nullptr == pManagement)
+			return E_FAIL;
+
+		Safe_AddRef(pManagement);
+		
+		pManagement->Create_ParticleEffect(L"Effect_ButterFly_Distortion", 0.1f, nullptr);
+
+		//pManagement->Add_GameObject_ToLayer(L"Effect_TestSmoke", SCENE_STAGE, L"Layer_Effect");
+
+		Safe_Release(pManagement);
+	}
 
 	// -------------- UI Manager ----------------------
 
@@ -86,14 +108,37 @@ HRESULT CScene_Stage::Ready_Layer_Monster(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage::Ready_Layer_BackGround(const _tchar * pLayerTag)
 {
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Sky", SCENE_STAGE, pLayerTag)))
+	CManagement*		pManagement = CManagement::Get_Instance();
+	if (nullptr == pManagement)
+		return E_FAIL;
+
+	Safe_AddRef(pManagement);
+
+	// For.Terrain
+	//if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_Terrain", SCENE_STAGE, pLayerTag)))
 	//	return E_FAIL;
+
+	// For.Sky
+	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_Sky", SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
 
 	return S_OK;
 }
 
 HRESULT CScene_Stage::Ready_Layer_Effect(const _tchar * pLayerTag)
 {
+	CManagement*		pManagement = CManagement::Get_Instance();
+	if (nullptr == pManagement)
+		return E_FAIL;
+
+	Safe_AddRef(pManagement);
+
+	// For.Effect
+	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager())) // 프로토타입 생성 이후 실행되어야 함
+		return E_FAIL;
+
+	Safe_Release(pManagement);
+
 	return S_OK;
 }
 

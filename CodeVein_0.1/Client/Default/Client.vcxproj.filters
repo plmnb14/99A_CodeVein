@@ -430,9 +430,6 @@
     </Text>
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\ShaderFiles\Shader_Blend.fx">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
     <FxCompile Include="..\ShaderFiles\Shader_Default.fx">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
@@ -440,9 +437,6 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\ShaderFiles\Shader_Gizmo.fx">
-      <Filter>97.ShaderFiles</Filter>
-    </FxCompile>
-    <FxCompile Include="..\ShaderFiles\Shader_LightAcc.fx">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\ShaderFiles\Shader_Mesh.fx">

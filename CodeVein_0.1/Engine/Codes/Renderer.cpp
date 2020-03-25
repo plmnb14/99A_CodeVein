@@ -184,7 +184,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Specular", fTargetSize, fTargetSize, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
-	// For.Target_Specular`s Debug Buffer
+	// For.Target_Rim`s Debug Buffer
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Rim", fTargetSize, fTargetSize * 2, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
@@ -709,7 +709,7 @@ HRESULT CRenderer::Render_ToneMapping()
 
 	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_HDR")))
 		return E_FAIL;
-
+	
 	return S_OK;
 }
 

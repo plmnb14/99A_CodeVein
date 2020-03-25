@@ -109,34 +109,38 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	if (g_bUseColorTex)
 	{
-		Out.vColor = tex2D(ColorSampler, In.vTexUV);
+		Out.vColor = pow(tex2D(ColorSampler, In.vTexUV), 2.2);
+		//Out.vColor = tex2D(ColorSampler, In.vTexUV);
 		Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
 	}
 	else
 	{
-		Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
+		Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
+		//Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
 		Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
-
-		if (g_bUseRGBA)
-		{
-			Out.vColor.xyz = g_vColor.xyz;
-			Out.vColor.a *= g_vColor.a;
-		}
 	}
 
-	// ==============================================================================================
-	// [Memo]  g_vColor.x = Hue / g_vColor.y = Contrast / g_vColor.z = Brightness / g_vColor.w = Saturation
-	// ==============================================================================================
-	float3 intensity;
-	float half_angle = 0.5 * radians(g_vColor.x); // Hue is radians of 0 tp 360 degree
-	float4 rot_quat = float4((root3 * sin(half_angle)), cos(half_angle));
-	float3x3 rot_Matrix = QuaternionToMatrix(rot_quat);
-	Out.vColor.rgb = mul(rot_Matrix, Out.vColor.rgb);
-	Out.vColor.rgb = (Out.vColor.rgb - 0.5) *(g_vColor.y + 1.0) + 0.5;
-	Out.vColor.rgb = Out.vColor.rgb + g_vColor.z;
-	intensity = float(dot(Out.vColor.rgb, lumCoeff));
-	Out.vColor.rgb = lerp(intensity, Out.vColor.rgb, g_vColor.w);
-	// End ==========================================================================================
+	if (g_bUseRGBA)
+	{
+		Out.vColor.xyz = g_vColor.xyz;
+		Out.vColor.a *= g_vColor.a;
+	}
+	else
+	{
+		// ==============================================================================================
+		// [Memo]  g_vColor.x = Hue / g_vColor.y = Contrast / g_vColor.z = Brightness / g_vColor.w = Saturation
+		// ==============================================================================================
+		float3 intensity;
+		float half_angle = 0.5 * radians(g_vColor.x); // Hue is radians of 0 tp 360 degree
+		float4 rot_quat = float4((root3 * sin(half_angle)), cos(half_angle));
+		float3x3 rot_Matrix = QuaternionToMatrix(rot_quat);
+		Out.vColor.rgb = mul(rot_Matrix, Out.vColor.rgb);
+		Out.vColor.rgb = (Out.vColor.rgb - 0.5) *(g_vColor.y + 1.0) + 0.5;
+		Out.vColor.rgb = Out.vColor.rgb + g_vColor.z;
+		intensity = float(dot(Out.vColor.rgb, lumCoeff));
+		Out.vColor.rgb = lerp(intensity, Out.vColor.rgb, g_vColor.w);
+		// End ==========================================================================================
+	}
 
 	//float fGradientUV = In.vTexUV + (g_fAlpha);
 	//vector vGradientMask = tex2D(GradientSampler, fGradientUV );
@@ -147,7 +151,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
 
 	vector		vDepthInfo = tex2D(DepthSampler, vTexUV);
-	float		fViewZ = vDepthInfo.y * 300.f;
+	float		fViewZ = vDepthInfo.y * 500.f;
 
 	Out.vColor.a = (Out.vColor.a * saturate(fViewZ - In.vProjPos.w)) * g_fAlpha;
 
@@ -171,7 +175,7 @@ PS_OUT PS_DISTORTION(PS_IN In)
 	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
 
 	vector		vDepthInfo = tex2D(DepthSampler, vTexUV);
-	float		fViewZ = vDepthInfo.y * 300.f;
+	float		fViewZ = vDepthInfo.y * 500.f;
 
 	Out.vColor.a = Out.vColor.a * saturate(fViewZ - In.vProjPos.w);
 
@@ -188,22 +192,33 @@ PS_OUT PS_MESHEFFECT(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	Out.vColor = tex2D(ColorSampler, In.vTexUV);
+	Out.vColor = pow(tex2D(ColorSampler, In.vTexUV), 2.2);
+	//Out.vColor = tex2D(ColorSampler, In.vTexUV);
 	Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
 
-	Out.vColor.a *= g_fAlpha;
+	if (g_bUseRGBA)
+	{
+		Out.vColor.xyz = g_vColor.xyz;
+		Out.vColor.a *= g_vColor.a;
+	}
+	else
+	{
+		// ==============================================================================================
+		// [Memo]  g_vColor.x = Hue / g_vColor.y = Contrast / g_vColor.z = Brightness / g_vColor.w = Saturation
+		// ==============================================================================================
+		float3 intensity;
+		float half_angle = 0.5 * radians(g_vColor.x); // Hue is radians of 0 tp 360 degree
+		float4 rot_quat = float4((root3 * sin(half_angle)), cos(half_angle));
+		float3x3 rot_Matrix = QuaternionToMatrix(rot_quat);
+		Out.vColor.rgb = mul(rot_Matrix, Out.vColor.rgb);
+		Out.vColor.rgb = (Out.vColor.rgb - 0.5) *(g_vColor.y + 1.0) + 0.5;
+		Out.vColor.rgb = Out.vColor.rgb + g_vColor.z;
+		intensity = float(dot(Out.vColor.rgb, lumCoeff));
+		Out.vColor.rgb = lerp(intensity, Out.vColor.rgb, g_vColor.w);
+		// End ==========================================================================================
+	}
 
-	// Hue, Contrast, Brightness, Saturation ===============================================
-	float3 intensity;
-	float half_angle = 0.5 * radians(g_vColor.x); // Hue is radians of 0 tp 360 degree
-	float4 rot_quat = float4((root3 * sin(half_angle)), cos(half_angle));
-	float3x3 rot_Matrix = QuaternionToMatrix(rot_quat);
-	Out.vColor.rgb = mul(rot_Matrix, Out.vColor.rgb);
-	Out.vColor.rgb = (Out.vColor.rgb - 0.5) *(g_vColor.y + 1.0) + 0.5;
-	Out.vColor.rgb = Out.vColor.rgb + g_vColor.z;
-	intensity = float(dot(Out.vColor.rgb, lumCoeff));
-	Out.vColor.rgb = lerp(intensity, Out.vColor.rgb, g_vColor.w);
-	// Hue End ===============================================
+	Out.vColor.a *= g_fAlpha;
 
 	if(g_bReverseColor)
 		Out.vColor.rgb = 1 - Out.vColor.rgb;
