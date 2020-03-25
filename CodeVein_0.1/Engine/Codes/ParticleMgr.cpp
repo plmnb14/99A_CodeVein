@@ -17,6 +17,9 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	//Safe_AddRef(m_pManagement);
 
 	Input_Pool(L"Effect_TestSmoke", 500);
+	Input_Pool(L"Effect_FootSmoke", 100);
+	Input_Pool(L"Effect_ButterFly_SoftSmoke", 2000);
+	Input_Pool(L"Effect_ButterFly_Distortion", 10);
 
 	return S_OK;
 }
@@ -38,7 +41,7 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 		m_fCreateDelay_Check -= _float(TimeDelta);
 		if (nullptr != *iter_begin && 0.f >= m_fCreateDelay_Check)
 		{
-			m_fCreateDelay_Check = 0.1f;
+			m_fCreateDelay_Check = 0.3f;
 
 			if ((*iter_begin)->fLifeTime > 0)
 			{
@@ -48,25 +51,22 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 				if (pFindedQueue == nullptr)
 					return E_FAIL;
 
-				if (pFindedQueue->size() <= 20) // 넉넉하게... 남은게 20 이하면 생성하여 사용
+				 // 풀 안에서 미리 생성한 오브젝트 꺼내서 사용
+				for (_int i = 0; i < pFindedQueue->front()->Get_Info()->iMaxCount; ++i)
 				{
-					for (_int i = 0; i < pFindedQueue->front()->Get_Info()->iMaxCount; ++i)
+					if (pFindedQueue->size() <= 20) // 넉넉하게... 남은게 20 이하면 생성하여 사용
 					{
 						_tchar* szEffName = pFindedQueue->front()->Get_ParticleName();
 						CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));
 						pEffect->Set_ParticleName(szEffName);
 
 						m_EffectList.push_back(pEffect);
+						continue;
 					}
-				}
-				else // 풀 안에서 미리 생성한 오브젝트 꺼내서 사용
-				{
-					for (_int i = 0; i < pFindedQueue->front()->Get_Info()->iMaxCount; ++i)
-					{
-						m_EffectList.push_back(pFindedQueue->front());
-						pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
-						pFindedQueue->pop();
-					}
+
+					m_EffectList.push_back(pFindedQueue->front());
+					pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
+					pFindedQueue->pop();
 				}
 
 				iter_begin++;
@@ -93,6 +93,32 @@ void CParticleMgr::Create_ParticleEffect(_tchar* szName, _float fLifeTime, CTran
 	m_vecParticle.push_back(pInfo);
 }
 
+void CParticleMgr::Create_Effect(_tchar* szName, _v3 vPos, CTransform * pFollowTrans)
+{
+	queue<CEffect*>* pFindedQueue = Find_Queue(szName);
+	if (pFindedQueue == nullptr)
+		return;
+
+	// 풀 안에서 미리 생성한 오브젝트 꺼내서 사용
+	for (_int i = 0; i < pFindedQueue->front()->Get_Info()->iMaxCount; ++i)
+	{
+		if (pFindedQueue->size() <= 20) // 넉넉하게... 남은게 20 이하면 생성하여 사용
+		{
+			_tchar* szEffName = pFindedQueue->front()->Get_ParticleName();
+			CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));
+			pEffect->Set_ParticleName(szEffName);
+
+			m_EffectList.push_back(pEffect);
+			continue;
+		}
+
+		m_EffectList.push_back(pFindedQueue->front());
+		pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
+		pFindedQueue->front()->Get_Info()->vStartPos = vPos;
+		pFindedQueue->pop();
+	}
+}
+
 HRESULT CParticleMgr::Update_Effect(const _double TimeDelta)
 {
 	_int iProgress;
@@ -113,7 +139,7 @@ HRESULT CParticleMgr::Update_Effect(const _double TimeDelta)
 				//cout << "Queue Size : " << Find_Queue((*iter_begin)->Get_ParticleName())->size() << endl;
 
 				// 삭제하지 않고 큐에 다시 넣기
-				if (pFindedQueue->size() < 500)
+				if (pFindedQueue->size() < 1000) // 임시...
 					pFindedQueue->emplace((*iter_begin));
 				else
 					Safe_Release((*iter_begin));
@@ -150,6 +176,10 @@ void CParticleMgr::Input_Pool(_tchar* szName, _int iCount)
 		pEffect->Set_ParticleName(szName); // 이펙트 Info 안의 이름과 오브젝트 Tag이름이 달라서 이렇게 해줌. (해당 큐 안에 다시 넣으려고)
 		m_EffectPool[szName].emplace(pEffect);
 	}
+}
+
+void CParticleMgr::Pop_Pool(_tchar * szPoolName)
+{
 }
 
 queue<CEffect*>* CParticleMgr::Find_Queue(_tchar* szName)

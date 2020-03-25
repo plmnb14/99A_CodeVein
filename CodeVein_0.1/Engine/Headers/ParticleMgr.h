@@ -16,10 +16,12 @@ public:
 	HRESULT Ready_ParticleManager();
 	HRESULT Update_ParticleManager(const _double TimeDelta);
 	void Create_ParticleEffect(_tchar* szName, _float fLifeTime, CTransform* pFollowTrans = nullptr);
+	void Create_Effect(_tchar* szName, _v3 vPos, CTransform* pFollowTrans = nullptr);
 
 private:
 	HRESULT Update_Effect(const _double TimeDelta);
 	void Input_Pool(_tchar* szName, _int iCount);
+	void Pop_Pool(_tchar* szPoolName);
 	queue<CEffect*>* Find_Queue(_tchar* szName);
 
 private:

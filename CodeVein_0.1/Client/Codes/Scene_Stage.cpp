@@ -47,8 +47,9 @@ _int CScene_Stage::Update_Scene(_double TimeDelta)
 		if (nullptr == pManagement)
 			return E_FAIL;
 		Safe_AddRef(pManagement);
+		
+		pManagement->Create_ParticleEffect(L"Effect_ButterFly_Distortion", 0.1f, nullptr);
 
-		pManagement->Create_ParticleEffect(L"Effect_TestSmoke", 0.5f, nullptr);
 		//pManagement->Add_GameObject_ToLayer(L"Effect_TestSmoke", SCENE_STAGE, L"Layer_Effect");
 
 		Safe_Release(pManagement);

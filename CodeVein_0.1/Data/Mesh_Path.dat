@@ -1,4 +1,6 @@
 Mesh_DefaultBox|DefaultBox.X|..\..\Client\Resources\Mesh\StaticMesh\DefaultBox\|0
+Mesh_LineRing_0|LineRing_0.X|..\..\Client\Resources\Mesh\StaticMesh\Effect\LineRing\|0
+Mesh_LineRing_1|LineRing_1.X|..\..\Client\Resources\Mesh\StaticMesh\Effect\LineRing\|0
 Mesh_Sky_0|Sky_0.X|..\..\Client\Resources\Mesh\StaticMesh\Sky\|0
 Mesh_Sky_1|Sky_1.X|..\..\Client\Resources\Mesh\StaticMesh\Sky\|0
 Mesh_Wpn_Hammer|Wpn_Hammer.X|..\..\Client\Resources\Mesh\StaticMesh\Wpn_Hammer\|0

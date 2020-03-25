@@ -8,8 +8,8 @@ CMeshEffect::CMeshEffect(LPDIRECT3DDEVICE9 pGraphic_Device)
 
 CMeshEffect::CMeshEffect(const CMeshEffect & rhs)
 	: CEffect(rhs.m_pGraphic_Dev)
-	//, m_pInfo(rhs.m_pInfo)
 {
+	CEffect::m_pInfo = rhs.m_pInfo;
 	m_bClone = true;
 }
 
@@ -43,6 +43,8 @@ HRESULT CMeshEffect::Ready_GameObject(void * pArg)
 HRESULT CMeshEffect::LateInit_GameObject()
 {
 	Setup_Info();
+	Change_Mesh(m_pInfo->szName);
+	Change_Texture(m_pInfo->szColorName);
 
 	return S_OK;
 }
@@ -136,9 +138,13 @@ void CMeshEffect::Setup_Info()
 	m_fAlphaSpeed = m_pInfo->fAlphaSpeed;
 	m_fCreateDelay = m_pInfo->fCreateDelay;
 	m_pTransformCom->Set_Scale(m_pInfo->vStartScale);
-	Change_Mesh(m_pInfo->szName);
-	Change_Texture(m_pInfo->szColorName);
 	m_pInfo->fMoveScaleSpeed = 1.f;
+
+	m_fLinearMoveSpeed = 0.f;
+	m_fLinearMovePercent = 0.f;
+	m_vFollowPos = { 0.f, 0.f, 0.f };
+
+	m_bFadeOutStart = false;
 
 	if (m_pInfo->bFadeIn)
 		m_fAlpha = 0.f;
@@ -305,7 +311,7 @@ HRESULT CMeshEffect::Add_Component()
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_ARBloodAura01", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_DefaultBox", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
 		return E_FAIL;
 
 	// For.Com_Texture

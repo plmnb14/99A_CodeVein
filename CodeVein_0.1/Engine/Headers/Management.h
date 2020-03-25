@@ -95,6 +95,7 @@ public: // For.BT_Node_Manager
 
 public: // For.ParticleManager
 	void Create_ParticleEffect(_tchar* szName, _float fLifeTime, CTransform* pFollowTrans = nullptr);
+	void Create_Effect(_tchar* szName, _v3 vPos, CTransform* pFollowTrans = nullptr);
 
 private:
 	CGraphic_Device*			m_pGraphic_Device = nullptr;

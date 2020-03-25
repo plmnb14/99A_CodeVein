@@ -150,7 +150,8 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	Out.vDiffuse = tex2D(DiffuseSampler, In.vTexUV);
+	Out.vDiffuse = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
+	//Out.vDiffuse = tex2D(DiffuseSampler, In.vTexUV);
 
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 

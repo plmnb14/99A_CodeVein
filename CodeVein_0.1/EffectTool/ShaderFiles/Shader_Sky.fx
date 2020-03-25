@@ -56,8 +56,7 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	//Out.vColor = texCUBE(DiffuseSampler, In.vTexUV);
-	Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
+	Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2); 
 
 	return Out;
 }

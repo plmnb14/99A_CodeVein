@@ -695,8 +695,8 @@ HRESULT CRenderer::Render_ToneMapping()
 	if (FAILED(m_pShader_Blend->Set_Texture("g_BloomTexture", m_pTarget_Manager->Get_Texture(L"Target_Blur"))))
 		return E_FAIL;
 
-	//if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_HDR")))
-	//	return E_FAIL;
+	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_HDR")))
+		return E_FAIL;
 
 	// 장치에 백버퍼가 셋팅되어있다.	
 	m_pShader_Blend->Begin_Shader();
@@ -707,9 +707,9 @@ HRESULT CRenderer::Render_ToneMapping()
 	m_pShader_Blend->End_Pass();
 	m_pShader_Blend->End_Shader();
 
-	//if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_HDR")))
-	//	return E_FAIL;
-	//
+	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_HDR")))
+		return E_FAIL;
+	
 	return S_OK;
 }
 

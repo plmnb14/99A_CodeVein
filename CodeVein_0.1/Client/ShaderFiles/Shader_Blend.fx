@@ -73,7 +73,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	vector	vRim = pow(tex2D(BloomSampler, In.vTexUV), 2.2);
 
 	Out.vColor = (vDiffuse + vSpecular + vRim) * vShade;
-	Out.vColor = pow(Out.vColor, 1 / 2.2);
+	//Out.vColor = pow(Out.vColor, 1 / 2.2);
 
 	return Out;
 }
@@ -82,11 +82,8 @@ PS_OUT PS_TONEMAPPING(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
-	//Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
-
-	Out.vColor += pow(tex2D(BloomSampler, In.vTexUV), 2.2);
-	Out.vColor = pow(Out.vColor, 1 / 2.2);
+	Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
+	Out.vColor += tex2D(BloomSampler, In.vTexUV);
 
 	//// DX Sample ========================================================================
 	//float Luminance = 0.08f;
@@ -98,13 +95,17 @@ PS_OUT PS_TONEMAPPING(PS_IN In)
 	//Color /= (1.f + Color);
 	//Out.vColor = float4(pow(Color, 1.f / 2.2f), 1.f);
 
-	//// EA studio ========================================================================
-	//float3 Color = pow(Out.vColor.xyz, 2.2f);
-	//float3 x = max(0.f, Color - 0.004);
-	//Color = (x * (6.2f * x + 0.5f)) / (x * (6.2f * x + 1.7f) + 0.06f);
-	////Color = pow(Color, 1.0 / 2.2);
-	//Out.vColor = float4(Color, 1.f);
-	
+	////ToneMapACES ========================================================================
+	//const float A = 2.51, B = 0.03, C = 2.43, D = 0.59, E = 0.14;
+	//Out.vColor = saturate((Out.vColor * (A * Out.vColor + B)) / (Out.vColor * (C * Out.vColor + D) + E));
+
+	// EA studio ========================================================================
+	float3 Color = Out.vColor.xyz;
+	float3 x = max(0.f, Color - 0.004);
+	Color = (x * (6.2f * x + 0.5f)) / (x * (6.2f * x + 1.7f) + 0.06f);
+	//Color = pow(Color, 1.0 / 2.2);
+	Out.vColor = float4(Color, 1.f);
+
 	//// reinhardTone ========================================================================
 	//float3 mapped = Out.vColor / (Out.vColor + float3(1.0, 1.0, 1.0));
 	//mapped = pow(mapped, float3((1.0 / 2.2), (1.0 / 2.2), (1.0 / 2.2)));
@@ -222,8 +223,7 @@ PS_OUT PS_AFTER(PS_IN In)
 		UV = In.vTexUV;
 	// Calc Distortion End =========================================
 
-	vector	vDiffuse = pow(tex2D(DiffuseSampler, UV), 2.2);
-	//vector	vDiffuse = tex2D(DiffuseSampler, UV);
+	vector	vDiffuse = tex2D(DiffuseSampler, UV);
 	Out.vColor = pow(vDiffuse, 1 / 2.2);
 	//Out.vColor = vDiffuse;
 
@@ -234,7 +234,7 @@ PS_OUT PS_Bloom(PS_IN In) // Extract Bright Color
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	vector	vDiffuse = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
+	vector	vDiffuse = tex2D(DiffuseSampler, In.vTexUV);
 
 	//// Bloom 1====================================================================
 	//float fThreshold = 0.5;	 // 이 기준점보다 밝으면 Bloom 타겟
@@ -254,11 +254,9 @@ PS_OUT PS_Bloom(PS_IN In) // Extract Bright Color
 	// Bloom 3====================================================================
 
 	Out.vColor = vDiffuse;
-	Out.vColor.rgb -= 0.85f; // 작은 값일 수록 빛에 민감한 광선
+	Out.vColor.rgb -= 1.5f; // 작은 값일 수록 빛에 민감한 광선
 
-	Out.vColor = 4.0f * max(Out.vColor, 0.0f); // 큰 값일 수록 확실한 모양의 광선
-
-	Out.vColor = pow(Out.vColor, 1 / 2.2);
+	Out.vColor = 3.0f * max(Out.vColor, 0.0f); // 큰 값일 수록 확실한 모양의 광선
 
 	return Out;
 }

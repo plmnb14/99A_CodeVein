@@ -416,6 +416,11 @@ void CManagement::Create_ParticleEffect(_tchar* szName, _float fLifeTime, CTrans
 	CParticleMgr::Get_Instance()->Create_ParticleEffect(szName, fLifeTime, pFollowTrans);
 }
 
+void CManagement::Create_Effect(_tchar* szName, _v3 vPos, CTransform * pFollowTrans)
+{
+	CParticleMgr::Get_Instance()->Create_Effect(szName, vPos, pFollowTrans);
+}
+
 void CManagement::Free()
 {
 	Safe_Release(m_pBT_Node_Manager);

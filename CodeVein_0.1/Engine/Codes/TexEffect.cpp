@@ -9,7 +9,6 @@ CTexEffect::CTexEffect(LPDIRECT3DDEVICE9 pGraphic_Device)
 CTexEffect::CTexEffect(const CTexEffect& rhs)
 	: CEffect(rhs)
 	, m_iPass(rhs.m_iPass)
-	//, m_pInfo(rhs.m_pInfo)
 {
 	CEffect::m_pInfo = rhs.m_pInfo;
 	m_bClone = true;
@@ -36,8 +35,8 @@ HRESULT CTexEffect::Ready_GameObject(void* pArg)
 
 	// Set Default Info
 	m_pTransformCom->Set_Pos(V3_NULL);
-	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
-	m_pTransformCom->Set_Angle(_v3(0.f, 0.f, 0.f));
+	m_pTransformCom->Set_Scale(V3_ONE);
+	m_pTransformCom->Set_Angle(V3_NULL);
 
 	if (pArg)
 		m_pDesc = (EFFECT_DESC*)pArg;
@@ -75,6 +74,8 @@ _int CTexEffect::Update_GameObject(_double TimeDelta)
 	CGameObject::LateInit_GameObject();
 	CGameObject::Update_GameObject(TimeDelta);
 
+	_int a = 0;
+
 	if (m_fCreateDelay > 0.f)
 	{
 		Check_CreateDelay(TimeDelta);
@@ -86,11 +87,11 @@ _int CTexEffect::Update_GameObject(_double TimeDelta)
 	Check_Frame(TimeDelta);
 	Check_LifeTime(TimeDelta);
 
+	Setup_Billboard();
 	Check_Move(TimeDelta);
 	Check_Alpha(TimeDelta);
 	Check_Color(TimeDelta);
 
-	Setup_Billboard();
 
 	return S_OK;
 }
@@ -244,16 +245,16 @@ void CTexEffect::Setup_Billboard()
 		matBill = matView;
 		memset(&matBill._41, 0, sizeof(_v3));
 		D3DXMatrixInverse(&matBill, NULL, &matBill);
-		memcpy(&matBill._41, &matWorld._41, sizeof(_v3));
+		//memcpy(&matBill._41, &m_pTransformCom->Get_Pos(), sizeof(_v3));
+		//
+		//_float fScale[3]{ m_pTransformCom->Get_Size().x, m_pTransformCom->Get_Size().y, m_pTransformCom->Get_Size().z };
+		//for (int i = 0; i < 3; ++i)
+		//{
+		//	for (int j = 0; j < 4; ++j)
+		//		matBill(i, j) *= fScale[i];
+		//}
 
-		_float fScale[3]{ m_pTransformCom->Get_Size().x, m_pTransformCom->Get_Size().y, m_pTransformCom->Get_Size().z };
-		for (int i = 0; i < 3; ++i)
-		{
-			for (int j = 0; j < 4; ++j)
-				matBill(i, j) *= fScale[i];
-		}
-
-		m_pTransformCom->Set_WorldMat(matBill* matWorld);
+		m_pTransformCom->Set_WorldMat(matBill * matWorld);
 	}
 	else if (m_pInfo->bOnlyYRot)
 	{
@@ -263,13 +264,19 @@ void CTexEffect::Setup_Billboard()
 		matBill._33 = matView._33;
 
 		D3DXMatrixInverse(&matBill, NULL, &matBill);
+		//memcpy(&matBill._41, &m_pTransformCom->Get_Pos(), sizeof(_v3));
+		//
+		//_float fScale[3]{ m_pTransformCom->Get_Size().x, m_pTransformCom->Get_Size().y, m_pTransformCom->Get_Size().z };
+		//for (int i = 0; i < 3; ++i)
+		//{
+		//	for (int j = 0; j < 4; ++j)
+		//		matBill(i, j) *= fScale[i];
+		//}
+		//
+		////D3DXMatrixRotationX(&matBill, m_vRot.x);
+		////D3DXMatrixRotationY(&matBill, m_vRot.y);
+		//D3DXMatrixRotationZ(&matBill, m_vRot.z);
 
-		_float fScale[3]{ m_pTransformCom->Get_Size().x, m_pTransformCom->Get_Size().y, m_pTransformCom->Get_Size().z };
-		for (int i = 0; i < 3; ++i)
-		{
-			for (int j = 0; j < 4; ++j)
-				matBill(i, j) *= fScale[i];
-		}
 		m_pTransformCom->Set_WorldMat((matBill * matWorld));
 	}
 
