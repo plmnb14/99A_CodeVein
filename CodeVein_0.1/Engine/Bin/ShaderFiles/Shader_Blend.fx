@@ -1,3 +1,4 @@
+int g_iToneIndex = 0;
 
 texture		g_DiffuseTexture;
 sampler DiffuseSampler = sampler_state
@@ -85,45 +86,56 @@ PS_OUT PS_TONEMAPPING(PS_IN In)
 	Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
 	Out.vColor += tex2D(BloomSampler, In.vTexUV);
 
-	//// DX Sample ========================================================================
-	//float Luminance = 0.08f;
-	//static const float fMiddleGray = 0.18f;
-	//static const float fWhiteCutoff = 0.9f;
-	//
-	//float3 Color = pow(Out.vColor, 1.f / 2.2f) * fMiddleGray / (Luminance + 0.001f);
-	//Color *= (1.f + (Color / (fWhiteCutoff * fWhiteCutoff)));
-	//Color /= (1.f + Color);
-	//Out.vColor = float4(pow(Color, 1.f / 2.2f), 1.f);
+	// For Test
+	if (0 == g_iToneIndex)
+	{
+		// DX Sample ========================================================================
+		float Luminance = 0.08f;
+		static const float fMiddleGray = 0.18f;
+		static const float fWhiteCutoff = 0.9f;
+		
+		float3 Color = pow(Out.vColor.xyz, 1.f / 2.2f) * fMiddleGray / (Luminance + 0.001f);
+		Color *= (1.f + (Color / (fWhiteCutoff * fWhiteCutoff)));
+		Color /= (1.f + Color);
+		Out.vColor = float4(pow(Color, 1.f / 2.2f), 1.f);
 
-	////ToneMapACES ========================================================================
-	//const float A = 2.51, B = 0.03, C = 2.43, D = 0.59, E = 0.14;
-	//Out.vColor = saturate((Out.vColor * (A * Out.vColor + B)) / (Out.vColor * (C * Out.vColor + D) + E));
-
-	// EA studio ========================================================================
-	float3 Color = Out.vColor.xyz;
-	float3 x = max(0.f, Color - 0.004);
-	Color = (x * (6.2f * x + 0.5f)) / (x * (6.2f * x + 1.7f) + 0.06f);
-	//Color = pow(Color, 1.0 / 2.2);
-	Out.vColor = float4(Color, 1.f);
-
-	//// reinhardTone ========================================================================
-	//float3 mapped = Out.vColor / (Out.vColor + float3(1.0, 1.0, 1.0));
-	//mapped = pow(mapped, float3((1.0 / 2.2), (1.0 / 2.2), (1.0 / 2.2)));
-	//Out.vColor = float4(mapped, 1.f);
-
-	////// Uncharted2Tonemap ========================================================================
-	//float A = 0.15;
-	//float B = 0.50;
-	//float C = 0.10;
-	//float D = 0.20;
-	//float E = 0.02;
-	//float F = 0.30;
-	//
-	//float3 x = Out.vColor.rgb;
-	//float3 Color = ((x*(A*x + C*B) + D*E) / (x*(A*x + B) + D*F)) - E / F;
-	//Out.vColor = float4(Color, 1.f);
-
-
+	}
+	else if (1 == g_iToneIndex)
+	{
+		//ToneMapACES ========================================================================
+		const float A = 2.51, B = 0.03, C = 2.43, D = 0.59, E = 0.14;
+		Out.vColor = saturate((Out.vColor * (A * Out.vColor + B)) / (Out.vColor * (C * Out.vColor + D) + E));
+	}
+	else if (2 == g_iToneIndex)
+	{
+		// EA studio ========================================================================
+		float3 Color = Out.vColor.xyz;
+		float3 x = max(0.f, Color - 0.004);
+		Color = (x * (6.2f * x + 0.5f)) / (x * (6.2f * x + 1.7f) + 0.06f);
+		//Color = pow(Color, 1.0 / 2.2);
+		Out.vColor = float4(Color, 1.f);
+	}
+	else if (3 == g_iToneIndex)
+	{
+		// reinhardTone ========================================================================
+		float3 mapped = Out.vColor.xyz / (Out.vColor.xyz + float3(1.0, 1.0, 1.0));
+		mapped = pow(mapped, float3((1.0 / 2.2), (1.0 / 2.2), (1.0 / 2.2)));
+		Out.vColor = float4(mapped, 1.f);
+	}
+	else if (4 == g_iToneIndex)
+	{
+		//// Uncharted2Tonemap ========================================================================
+		float A = 0.15;
+		float B = 0.50;
+		float C = 0.10;
+		float D = 0.20;
+		float E = 0.02;
+		float F = 0.30;
+		
+		float3 x = Out.vColor.rgb;
+		float3 Color = ((x*(A*x + C*B) + D*E) / (x*(A*x + B) + D*F)) - E / F;
+		Out.vColor = float4(Color, 1.f);
+	}
 
 	return Out;
 }
@@ -254,7 +266,7 @@ PS_OUT PS_Bloom(PS_IN In) // Extract Bright Color
 	// Bloom 3====================================================================
 
 	Out.vColor = vDiffuse;
-	Out.vColor.rgb -= 0.85f; // 작은 값일 수록 빛에 민감한 광선
+	Out.vColor.rgb -= 1.5f; // 작은 값일 수록 빛에 민감한 광선
 
 	Out.vColor = 3.0f * max(Out.vColor, 0.0f); // 큰 값일 수록 확실한 모양의 광선
 

@@ -122,6 +122,8 @@ HRESULT CScene_Stage::Ready_Layer_BackGround(const _tchar * pLayerTag)
 	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_Sky", SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 
+	Safe_Release(pManagement);
+
 	return S_OK;
 }
 

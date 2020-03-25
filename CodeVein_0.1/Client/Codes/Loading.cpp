@@ -47,7 +47,7 @@ _uint CLoading::Loading_ForStage(void)
 	Ready_Effect();
 
 	// Sky
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_Sky", CSky::Create(m_pGraphicDev))))
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Sky", CSky::Create(m_pGraphicDev))))
 		return E_FAIL;
 
 	// UI 원형 생성
@@ -119,6 +119,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	//if (FAILED(pManagement->Add_Prototype(L"GameObject_EffectTestMesh", CMeshEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/testMeshEff.dat")))))
 	//	return E_FAIL;
+
+	Safe_Release(pManagement);
 
 	return S_OK;
 }

@@ -1590,7 +1590,7 @@ void CPlayer::OnCollisionEnter()
 
 void CPlayer::Update_Collider()
 {
-	cout << m_pCollider->Get_ColInfo()->vBegin.x << endl;
+	//cout << m_pCollider->Get_ColInfo()->vBegin.x << endl;
 
 	m_pCollider->Update(m_pTransform->Get_WorldMat());
 }
