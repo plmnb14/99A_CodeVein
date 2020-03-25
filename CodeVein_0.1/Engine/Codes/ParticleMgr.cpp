@@ -35,7 +35,7 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 
 	for (; iter_begin != iter_end;)
 	{
-		m_fCreateDelay_Check -= TimeDelta;
+		m_fCreateDelay_Check -= _float(TimeDelta);
 		if (nullptr != *iter_begin && 0.f >= m_fCreateDelay_Check)
 		{
 			m_fCreateDelay_Check = 0.1f;
@@ -167,7 +167,7 @@ void CParticleMgr::Free()
 {
 	for (auto& iter : m_EffectPool)
 	{
-		_int iQueueSize = iter.second.size();
+		_int iQueueSize = _int(iter.second.size());
 		for (_int i = 0; i < iQueueSize; ++i)
 		{
 			Safe_Release(iter.second.front());
@@ -175,6 +175,9 @@ void CParticleMgr::Free()
 		}
 	}
 	m_EffectPool.clear();
+
+	for(auto& iter : m_EffectList)
+		Safe_Release(iter);
 
 	for (auto& iter : m_vecParticle)
 	{

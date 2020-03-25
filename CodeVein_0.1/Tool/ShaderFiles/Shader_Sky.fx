@@ -15,13 +15,13 @@ sampler		DiffuseSampler = sampler_state
 struct VS_IN
 {
 	float3		vPosition : POSITION;
-	float3		vTexUV : TEXCOORD0;
+	float2		vTexUV : TEXCOORD0;
 };
 
 struct VS_OUT
 {
 	float4		vPosition : POSITION;
-	float3		vTexUV : TEXCOORD0;
+	float2		vTexUV : TEXCOORD0;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -42,7 +42,7 @@ VS_OUT VS_MAIN(VS_IN In)
 struct PS_IN
 {
 	float4		vPosition : POSITION;
-	float3		vTexUV : TEXCOORD0;
+	float2		vTexUV : TEXCOORD0;
 
 };
 

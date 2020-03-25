@@ -199,7 +199,7 @@ PS_OUT PS_MOTIONBLUR(PS_IN In)
 	float4 previousPos = mul(worldPos, g_matLastVP);
 	previousPos /= previousPos.w;
 	
-	float2 velocity = (currentPos - previousPos) / 2.f;
+	float2 velocity = (currentPos.xy - previousPos.xy) / 2.f;
 	//velocity *= 0.01f;
 
 	//for (int i = 0; i > 26; i++)
