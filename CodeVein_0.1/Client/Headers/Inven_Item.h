@@ -16,6 +16,9 @@ private:
 	virtual ~CInven_Item() = default;
 
 public:
+	void	SetUp_WindowPosition();
+
+public:
 	virtual HRESULT			Ready_GameObject_Prototype();
 	virtual HRESULT			Ready_GameObject(void* pArg);
 	virtual _int			Update_GameObject(_double TimeDelta);
@@ -38,7 +41,8 @@ private:
 	CShader*				m_pShaderCom = nullptr;
 
 private:
-	list<CItemSlot*>	m_SlotList[CItem::ITEM_END];
+	vector<CItemSlot*>	m_SlotList[CItem::ITEM_END];
+	_bool				m_bIsOpenWindow = false;
 
 public:
 	static CInven_Item*		Create(_Device pGraphic_Device);

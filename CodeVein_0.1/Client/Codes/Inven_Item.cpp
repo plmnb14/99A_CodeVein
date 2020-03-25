@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\Inven_Item.h"
 
-
+#include "Item_Manager.h"
 CInven_Item::CInven_Item(_Device pDevice)
 	: CUI(pDevice)
 {
@@ -10,6 +10,28 @@ CInven_Item::CInven_Item(_Device pDevice)
 CInven_Item::CInven_Item(const CInven_Item & rhs)
 	: CUI(rhs)
 {
+}
+
+void CInven_Item::SetUp_WindowPosition()
+{
+	if (true == m_bIsOpenWindow)
+	{
+		m_fPosX = WINCX - 300.f;
+		m_fPosY = WINCY * 0.5f;
+	}
+	else
+	{
+		m_fPosX = -WINCX * 0.5f;
+		m_fPosY = -WINCY * 0.5f;
+	}
+
+	for (_uint i = 0; i < CItem::ITEM_END; ++i)
+	{
+		for (auto& pSlot : m_SlotList[i])
+		{
+			pSlot->Set_UI_Pos(m_fPosX, m_fPosY);
+		}
+	}
 }
 
 HRESULT CInven_Item::Ready_GameObject_Prototype()
@@ -45,9 +67,14 @@ _int CInven_Item::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
-	/*if (GetAsyncKeyState(VK_MULTIPLY) & 0x8000)
-		Add_Item_ToInven(CItem::CONSUME, 0, L"GameObject_ConsumeItem", L"Layer_ConsumeItem");
-	cout << m_SlotList[CItem::CONSUME].front()->Get_SlotSize() << endl;*/
+	SetUp_WindowPosition();
+
+	//if (CInput_Device::Get_Instance()->Key_Up(DIK_MULTIPLY))
+	//{
+	//	CItem_Manager::Get_Instance()->Add_Item(CItem::CONSUME, 0);
+	//	//m_SlotList[CItem::CONSUME] = *(CItem_Manager::Get_Instance()->Get_Slot(CItem::CONSUME));
+	//}
+	
 	return NO_EVENT;
 }
 

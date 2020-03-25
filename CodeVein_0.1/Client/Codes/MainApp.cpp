@@ -3,6 +3,7 @@
 #include "Scene_Logo.h"
 #include "CameraMgr.h"
 #include "UI_Manager.h"
+#include "Item_Manager.h"
 
 CMainApp::CMainApp()
 {
@@ -182,6 +183,7 @@ void CMainApp::Free()
 	
 	CCameraMgr::Get_Instance()->Destroy_Instance();
 	CUI_Manager::Get_Instance()->Destroy_Instance();
+	CItem_Manager::Get_Instance()->Destroy_Instance();
 	
 	Safe_Release(g_pManagement);
 	

@@ -44,7 +44,7 @@ HRESULT CMenuBaseUI::Ready_GameObject(void * pArg)
 
 	m_fPosX = WINCX - 300.f;
 	m_fPosY = WINCY * 0.5f;
-	m_fSizeX = 648;
+	m_fSizeX = 300;
 	m_fSizeY = 648;
 
 	Add_Slot(5);

@@ -169,6 +169,9 @@
     <Filter Include="01.Scene\98.StageLoader">
       <UniqueIdentifier>{d72f0ec9-9a87-49b1-948e-7dbcf2483c02}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\Manager\Item_Manager">
+      <UniqueIdentifier>{ade95dcd-cb82-48af-b4cd-b701c0241f53}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -285,6 +288,9 @@
     <ClInclude Include="StageLoader.h">
       <Filter>01.Scene\98.StageLoader</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Item_Manager.h">
+      <Filter>02.GameObject\Stage\4%29 UI\Manager\Item_Manager</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -391,6 +397,9 @@
     </ClCompile>
     <ClCompile Include="StageLoader.cpp">
       <Filter>01.Scene\98.StageLoader</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Item_Manager.cpp">
+      <Filter>02.GameObject\Stage\4%29 UI\Manager\Item_Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

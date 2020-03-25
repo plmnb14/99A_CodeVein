@@ -163,8 +163,8 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_MenuSkill", SCENE_STAGE, L"Layer_MenuSkill")))
 		return E_FAIL;
 	
-	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_ItemSlot", SCENE_STAGE, L"Layer_ItemSlot")))
-		return E_FAIL;
+	/*if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_ItemSlot", SCENE_STAGE, L"Layer_ItemSlot")))
+		return E_FAIL;*/
 
 	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_InvenItem", SCENE_STAGE, L"Layer_InvenItem")))
 		return E_FAIL;
@@ -196,6 +196,7 @@ _int CUI_Manager::Update_UI()
 	CActiveSkill_UI* pActiveUI = static_cast<CActiveSkill_UI*>(pManagement->Get_GameObjectBack(L"Layer_ActionUI", SCENE_STAGE));
 	CActiveSkill_UI* pActiveUI2 = static_cast<CActiveSkill_UI*>(pManagement->Get_GameObjectBack(L"Layer_ActionUI2", SCENE_STAGE));
 	CMenu_Skill* pSkillMenu = static_cast<CMenu_Skill*>(pManagement->Get_GameObjectBack(L"Layer_MenuSkill", SCENE_STAGE));
+	//CInven_Item* pInven_Item = static_cast<CInven_Item*>(g_pManagement->Get_GameObjectBack(L"Layer_InvenItem", SCENE_STAGE));
 
 	pLeftSubSlot->Set_Index(true);
 	pRightSubSlot->Set_Index(false);
@@ -220,6 +221,7 @@ _int CUI_Manager::Update_UI()
 		pActiveUI2->Set_OpenUI(true);
 		pLeftSubSlot->Set_OpenUI(true);
 		pRightSubSlot->Set_OpenUI(true);
+		
 	}
 	else
 	{
@@ -266,8 +268,7 @@ _int CUI_Manager::Update_UI()
 		break;
 	}
 
-	//CItemSlot* pTestSlot = static_cast<CItemSlot*>(pManagement->Get_GameObjectBack(L"Layer_ItemSlot", SCENE_STAGE));
-
+	
 	
 	Safe_Release(pManagement);
 

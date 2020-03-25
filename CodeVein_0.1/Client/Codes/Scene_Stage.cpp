@@ -49,7 +49,7 @@ _int CScene_Stage::Update_Scene(_double TimeDelta)
 
 HRESULT CScene_Stage::Render_Scene()
 {
-	//m_pNavMesh->Render_NaviMesh();
+	m_pNavMesh->Render_NaviMesh();
 
 	return S_OK;
 }

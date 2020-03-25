@@ -177,6 +177,7 @@
     <ClInclude Include="..\Headers\Inven_Item.h" />
     <ClInclude Include="..\Headers\Item.h" />
     <ClInclude Include="..\Headers\ItemSlot.h" />
+    <ClInclude Include="..\Headers\Item_Manager.h" />
     <ClInclude Include="..\Headers\Item_QuickSlot.h" />
     <ClInclude Include="..\Headers\MenuIcon.h" />
     <ClInclude Include="..\Headers\Menu_Item.h" />
@@ -218,6 +219,7 @@
     <ClCompile Include="..\Codes\Inven_Item.cpp" />
     <ClCompile Include="..\Codes\Item.cpp" />
     <ClCompile Include="..\Codes\ItemSlot.cpp" />
+    <ClCompile Include="..\Codes\Item_Manager.cpp" />
     <ClCompile Include="..\Codes\Item_QuickSlot.cpp" />
     <ClCompile Include="..\Codes\MenuIcon.cpp" />
     <ClCompile Include="..\Codes\Menu_Item.cpp" />
