@@ -213,6 +213,7 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\BT_Wait.h" />
     <ClInclude Include="..\Headers\Buffer_CubeTex.h" />
     <ClInclude Include="..\Headers\Buffer_RcTex.h" />
+    <ClInclude Include="..\Headers\Buffer_Sphere.h" />
     <ClInclude Include="..\Headers\Buffer_Terrain.h" />
     <ClInclude Include="..\Headers\Buffer_ViewPort.h" />
     <ClInclude Include="..\Headers\Calculater.h" />
@@ -293,6 +294,7 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\BT_Wait.cpp" />
     <ClCompile Include="..\Codes\Buffer_CubeTex.cpp" />
     <ClCompile Include="..\Codes\Buffer_RcTex.cpp" />
+    <ClCompile Include="..\Codes\Buffer_Sphere.cpp" />
     <ClCompile Include="..\Codes\Buffer_Terrain.cpp" />
     <ClCompile Include="..\Codes\Buffer_ViewPort.cpp" />
     <ClCompile Include="..\Codes\Calculater.cpp" />

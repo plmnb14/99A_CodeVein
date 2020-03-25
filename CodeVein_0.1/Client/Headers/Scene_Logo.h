@@ -21,6 +21,9 @@ public:
 	HRESULT Ready_Layer_LogoBtn(const _tchar* pLayerTag);
 
 
+public:
+	HRESULT Temp_Stage_Loader(const _tchar* _DatPath);
+
 private:
 	CLoading*			m_pLoading = nullptr;
 public:

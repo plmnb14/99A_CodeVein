@@ -2,6 +2,8 @@ matrix		g_matWorld, g_matView, g_matProj;
 
 texture		g_DiffuseTexture;
 
+float		g_fAlpha = 1.f;
+
 sampler		DiffuseSampler = sampler_state
 {
 	texture = g_DiffuseTexture;
@@ -60,6 +62,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	Out.vDiffuse = g_GizmoColor;
+	Out.vDiffuse.a = g_fAlpha;
 
 	return Out;
 }
@@ -91,6 +94,8 @@ technique Default_Technique
 	// 2
 	pass AlphaBlending
 	{
+		cullmode = none;
+
 		AlphaBlendEnable = true;
 		SrcBlend = SrcAlpha;
 		DestBlend = DestAlpha;

@@ -35,6 +35,9 @@ HRESULT CComponent_Manager::Ready_Component_Manager(_Device _pGraphicDev)
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"Renderer", CRenderer::Create(_pGraphicDev))))
 		return E_FAIL;
 
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"NavMesh", CNavMesh::Create(_pGraphicDev))))
+		return E_FAIL;
+
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"AIController", CAIController::Create(_pGraphicDev))))
 		return E_FAIL;
 
@@ -45,6 +48,9 @@ HRESULT CComponent_Manager::Ready_Component_Manager(_Device _pGraphicDev)
 		return E_FAIL;
 
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"VIBuffer_Cube", CBuffer_CubeTex::Create(_pGraphicDev))))
+		return E_FAIL;
+
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"VIBuffer_Sphere", CBuffer_Sphere::Create(_pGraphicDev))))
 		return E_FAIL;
 
 

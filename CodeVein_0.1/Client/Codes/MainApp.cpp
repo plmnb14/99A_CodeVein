@@ -141,6 +141,24 @@ void CMainApp::Global_KeyInput()
 		CCameraMgr::Get_Instance()->Set_CamView(BACK_VIEW);
 	}
 
+	// All Gizmo's Toggle On / Off
+	if (g_pInput_Device->Key_Down(DIK_NUMPAD6))
+	{
+		g_pManagement->Gizmo_Toggle();
+	}
+
+	// Cell Gizmo's Toggle On / Off
+	if (g_pInput_Device->Key_Down(DIK_NUMPAD7))
+	{
+		g_pManagement->Gizmo_CellEnable();
+	}
+
+	// Collider Gizmo Toggle On / Off
+	if (g_pInput_Device->Key_Down(DIK_NUMPAD8))
+	{
+		g_pManagement->Gizmo_ColliderEnable();
+	}
+
 }
 
 CMainApp * CMainApp::Create()

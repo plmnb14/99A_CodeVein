@@ -166,6 +166,9 @@
     <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inven_UI\00.Inventory">
       <UniqueIdentifier>{13323d62-5e24-43fa-8f22-816e07e19759}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Scene\98.StageLoader">
+      <UniqueIdentifier>{d72f0ec9-9a87-49b1-948e-7dbcf2483c02}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -279,6 +282,9 @@
     <ClInclude Include="..\Headers\Inven_Item.h">
       <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inven_UI\00.Inventory</Filter>
     </ClInclude>
+    <ClInclude Include="StageLoader.h">
+      <Filter>01.Scene\98.StageLoader</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -382,6 +388,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Inven_Item.cpp">
       <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inven_UI\00.Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="StageLoader.cpp">
+      <Filter>01.Scene\98.StageLoader</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

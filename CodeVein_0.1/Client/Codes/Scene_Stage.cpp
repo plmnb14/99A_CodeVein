@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "..\Headers\Scene_Stage.h"
-#include "Management.h"
 #include "CameraMgr.h"
 #include "Effect.h"
 #include "UI.h"
@@ -17,14 +16,19 @@ HRESULT CScene_Stage::Ready_Scene()
 	if (FAILED(Ready_LightDesc()))
 		return E_FAIL;
 
-	//if (FAILED(Ready_Layer_Player(L"Layer_Player")))
-	//	return E_FAIL;
 	
 	if (FAILED(Ready_Layer_Camera(L"Layer_Camera")))
 		return E_FAIL;
 
-	//if (FAILED(Ready_Layer_Monster(L"Layer_Monster")))
-	//	return E_FAIL;
+
+	if (FAILED(Ready_Layer_Monster(L"Layer_Monster")))
+		return E_FAIL;
+
+	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Stage_Test.dat");
+
+	m_pNavMesh = static_cast<Engine::CNavMesh*>(g_pManagement->Clone_Component(SCENE_STATIC, L"NavMesh"));
+	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Test.dat");
+
 
 	if(FAILED(CUI_Manager::Get_Instance()->SetUp_UILayer()))
 		return E_FAIL;
@@ -48,6 +52,7 @@ _int CScene_Stage::Update_Scene(_double TimeDelta)
 
 HRESULT CScene_Stage::Render_Scene()
 {
+	m_pNavMesh->Render_NaviMesh();
 
 	return S_OK;
 }
@@ -178,7 +183,8 @@ CScene_Stage * CScene_Stage::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 
 void CScene_Stage::Free()
 {
-	CUI_Manager::Get_Instance()->Destroy_Instance();
+	Safe_Release(m_pNavMesh);
+
 	CScene::Free();
 }
 

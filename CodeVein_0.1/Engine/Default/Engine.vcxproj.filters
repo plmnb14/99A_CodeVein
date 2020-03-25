@@ -238,6 +238,9 @@
     <Filter Include="01.Utility\[09] =======================================">
       <UniqueIdentifier>{65e0df4a-40eb-4a8f-b7aa-9aa4452846fe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\[03] Component\Component\06%29 VIBuffer\Sphere">
+      <UniqueIdentifier>{351ceb45-8deb-4991-bd2a-19bdbd39835f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Headers\Base.h">
@@ -477,6 +480,9 @@
     <ClInclude Include="..\Headers\Effect.h">
       <Filter>01.Utility\[02] GameObject\4%29 Effect</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Buffer_Sphere.h">
+      <Filter>01.Utility\[03] Component\Component\06%29 VIBuffer\Sphere</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Base.cpp">
@@ -691,6 +697,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Effect.cpp">
       <Filter>01.Utility\[02] GameObject\4%29 Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Buffer_Sphere.cpp">
+      <Filter>01.Utility\[03] Component\Component\06%29 VIBuffer\Sphere</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

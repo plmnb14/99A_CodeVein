@@ -135,6 +135,27 @@ HRESULT CScene_Logo::Ready_Layer_LogoBtn(const _tchar * pLayerTag)
 	return NOERROR;
 }
 
+HRESULT CScene_Logo::Ready_Layer_CursorUI(const _tchar * pLayerTag)
+{
+	CManagement* pManagement = CManagement::Get_Instance();
+	if (nullptr == pManagement)
+		return E_FAIL;
+
+	Safe_AddRef(pManagement);
+
+	//if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_CursorBar", SCENE_LOGO, pLayerTag)))
+	//	return E_FAIL;
+
+	Safe_Release(pManagement);
+
+	return NOERROR;
+}
+
+HRESULT CScene_Logo::Temp_Stage_Loader(const _tchar * _DatPath)
+{
+	return S_OK;
+}
+
 
 CScene_Logo * CScene_Logo::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 {

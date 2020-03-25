@@ -67,8 +67,6 @@ _int CManagement::Update_Management(_double TimeDelta)
 	if (0 > iProgress)
 		return iProgress;
 
-
-
 	return m_pScene_Manager->Update_Scene(TimeDelta);	
 }
 
@@ -76,6 +74,11 @@ HRESULT CManagement::Render_Management()
 {
 	if (nullptr == m_pScene_Manager)
 		return E_FAIL;
+
+	if (m_pNavMesh != nullptr)
+	{
+		m_pNavMesh->Render_NaviMesh();
+	}
 
 	return m_pScene_Manager->Render_Scene();
 }
@@ -232,6 +235,14 @@ HRESULT CManagement::Add_GameOject_ToLayer_NoClone(CGameObject * _pGameObject, _
 	return m_pObject_Manager->Add_GameOject_ToLayer_NoClone(_pGameObject, iSceneID, pLayerTag, pArg);
 }
 
+HRESULT CManagement::LoadCreateObject_FromPath(_Device _pGraphicDev, const _tchar * _FilePath)
+{
+	if (nullptr == m_pObject_Manager)
+		return E_FAIL;
+
+	return m_pObject_Manager->LoadObjectPrototypes_FromPath(_pGraphicDev, _FilePath);
+}
+
 HRESULT CManagement::Ready_Component_Manager(_Device _pGraphicDev)
 {
 	if (nullptr == m_pComponent_Manager)
@@ -271,6 +282,22 @@ HRESULT CManagement::LoadTex_FromPath(_Device pGraphicDev, const _tchar * szImgP
 
 
 	return m_pComponent_Manager->LoadTex_FilesFromPath(pGraphicDev, szImgPath);
+}
+
+void CManagement::Clone_NavMesh_OnManagement()
+{
+	if (nullptr == m_pComponent_Manager)
+		return;
+
+	m_pNavMesh = static_cast<CNavMesh*>(m_pComponent_Manager->Clone_Component(SCENE_STATIC, L"NavMesh", nullptr));
+}
+
+void CManagement::LoadNavMesh_FromFile(_Device _pGraphicDev, const _tchar * szFile)
+{
+	IF_NOT_NULL(m_pNavMesh)
+		return;
+
+	m_pNavMesh->Ready_NaviMesh(_pGraphicDev , szFile);
 }
 
 _v3 CManagement::Get_CamPosition()
@@ -393,12 +420,28 @@ void CManagement::Gizmo_Draw_Capsule(_v3 _vVertex, const _float _fRadius, const 
 	m_pGizmo->Draw_Capsule(_vVertex, _fRadius, _fMaxHeight);
 }
 
-void CManagement::Gizmo_Enable()
+void CManagement::Gizmo_ColliderEnable()
 {
 	if (m_pGizmo == nullptr)
 		return;
 
-	m_pGizmo->Set_EnableGizmo();
+	m_pGizmo->Enable_GizmoCollider();
+}
+
+void CManagement::Gizmo_CellEnable()
+{
+	if (m_pGizmo == nullptr)
+		return;
+
+	m_pGizmo->Enable_GizmoCell();
+}
+
+void CManagement::Gizmo_Toggle()
+{
+	if (m_pGizmo == nullptr)
+		return;
+
+	m_pGizmo->Gizmo_Toggle();
 }
 
 HRESULT CManagement::Ready_BT_Node()
