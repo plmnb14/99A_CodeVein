@@ -5,6 +5,7 @@ float		g_fAlpha;
 vector		g_vColor;
 bool		g_bUseRGBA = false;
 bool		g_bUseColorTex = false;
+bool		g_bUseMaskTex = false;
 bool		g_bReverseColor = false;
 
 texture		g_DiffuseTexture;
@@ -142,9 +143,12 @@ PS_OUT PS_MAIN(PS_IN In)
 		// End ==========================================================================================
 	}
 
-	//float fGradientUV = In.vTexUV + (g_fAlpha);
-	//vector vGradientMask = tex2D(GradientSampler, fGradientUV );
-	//Out.vColor *= vGradientMask;
+	if (g_bUseMaskTex)
+	{
+		//float fGradientUV = In.vTexUV + (g_fAlpha);
+		vector vGradientMask = tex2D(GradientSampler, In.vTexUV);
+		Out.vColor.a *= vGradientMask.x;
+	}
 
 	float2		vTexUV;
 	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
@@ -168,6 +172,25 @@ PS_OUT PS_DISTORTION(PS_IN In)
 	/////////////////////////////////////////////
 	// Color
 	Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
+
+	if (g_bUseColorTex)
+	{
+		Out.vColor = pow(tex2D(ColorSampler, In.vTexUV), 2.2);
+		//Out.vColor = tex2D(ColorSampler, In.vTexUV);
+		Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
+	}
+	else
+	{
+		Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
+		//Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
+		Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
+	}
+
+	if (g_bUseMaskTex)
+	{
+		vector vGradientMask = tex2D(GradientSampler, In.vTexUV);
+		Out.vColor.a *= vGradientMask.x;
+	}
 
 	float2		vTexUV;
 

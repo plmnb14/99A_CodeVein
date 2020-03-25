@@ -406,7 +406,7 @@ HRESULT CTexEffect::Add_Component()
 		return E_FAIL;
 
 	// For.Com_ColorTexture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Gradient", L"Com_ColorTexture", (CComponent**)&m_pColorTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Colors", L"Com_ColorTexture", (CComponent**)&m_pColorTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -457,9 +457,16 @@ HRESULT CTexEffect::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Bool("g_bUseRGBA", m_pInfo->bUseRGBA)))
 		return E_FAIL;
 
+	_float fMaskIndex = 0.f;
+	if (FAILED(m_pShaderCom->Set_Bool("g_bUseMaskTex", (m_pInfo->fMaskIndex != -1.f))))
+		return E_FAIL;
+
+	if((m_pInfo->fMaskIndex != -1.f))
+		fMaskIndex = m_pInfo->fMaskIndex;
+
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, _uint(m_fFrame))))
 		return E_FAIL;
-	if (FAILED(m_pGradientTextureCom->SetUp_OnShader("g_GradientTexture", m_pShaderCom)))
+	if (FAILED(m_pGradientTextureCom->SetUp_OnShader("g_GradientTexture", m_pShaderCom, _uint(fMaskIndex))))
 		return E_FAIL;
 	if (FAILED(m_pColorTextureCom->SetUp_OnShader("g_ColorTexture", m_pShaderCom, _uint(m_pInfo->fColorIndex))))
 		return E_FAIL;

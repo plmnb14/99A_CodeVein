@@ -163,4 +163,8 @@ private:
 	CString m_EditFileName;
 	CString m_EditColorIndex;
 	CButton m_CheckUseRGBA;
+public:
+	CButton m_bCheckUseMask;
+	afx_msg void OnBnClickedButton_ResMask();
+	CString m_EditMaskIndex;
 };

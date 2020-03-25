@@ -60,6 +60,7 @@ CParticleTab::CParticleTab(CWnd* pParent /*=NULL*/)
 	, m_EditSaturationEnd(_T("1.0"))
 	, m_EditFileName(_T(""))
 	, m_EditColorIndex(_T("0.0"))
+	, m_EditMaskIndex(_T(""))
 {
 
 }
@@ -155,6 +156,8 @@ void CParticleTab::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT40, m_EditFileName);
 	DDX_Text(pDX, IDC_EDIT42, m_EditColorIndex);
 	DDX_Control(pDX, IDC_CHECK1, m_CheckUseRGBA);
+	DDX_Control(pDX, IDC_CHECK21, m_bCheckUseMask);
+	DDX_Text(pDX, IDC_EDIT50, m_EditMaskIndex);
 }
 
 void CParticleTab::Set_GraphicDev(LPDIRECT3DDEVICE9 pDev)
@@ -379,6 +382,14 @@ void CParticleTab::Setup_EffInfo(_bool bIsMesh)
 	GetDlgItemText(IDC_EDIT42, m_EditColorIndex);
 	m_pInfo->fColorIndex = _float(_tstoi(m_EditColorIndex));
 
+	if (m_bCheckUseMask.GetCheck() ? true : false)
+	{
+		GetDlgItemText(IDC_EDIT50, m_EditMaskIndex);
+		m_pInfo->fMaskIndex = _float(_tstoi(m_EditMaskIndex));
+	}
+	else
+		m_pInfo->fMaskIndex = -1.f;
+
 	GetDlgItemText(IDC_EDIT43, m_EditParticleCount);
 	m_pInfo->iMaxCount = _int(_tstoi(m_EditParticleCount));
 
@@ -509,6 +520,7 @@ BEGIN_MESSAGE_MAP(CParticleTab, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON9, &CParticleTab::OnBnClickedButton_ResColor)
 	ON_BN_CLICKED(IDC_BUTTON4, &CParticleTab::OnBnClickedButton_Save)
 	ON_BN_CLICKED(IDC_BUTTON5, &CParticleTab::OnBnClickedButton_Load)
+	ON_BN_CLICKED(IDC_BUTTON3, &CParticleTab::OnBnClickedButton_ResMask)
 END_MESSAGE_MAP()
 
 
@@ -531,6 +543,14 @@ void CParticleTab::OnBnClickedButton_ResColor()
 	m_ResPopup_Tex.ShowWindow(SW_SHOW);
 	m_ResPopup_Tex.Set_ResType(CResListPopup::TYPE_COLOR);
 }
+
+
+void CParticleTab::OnBnClickedButton_ResMask()
+{
+	m_ResPopup_Tex.ShowWindow(SW_SHOW);
+	m_ResPopup_Tex.Set_ResType(CResListPopup::TYPE_GRADIENT);
+}
+
 
 void CParticleTab::OnBnClickedButton_StartParticle()
 {
@@ -643,7 +663,8 @@ void CParticleTab::OnBnClickedButton_Save()
 		::WriteFile(hFile, &m_pInfo->vStartPos, sizeof(_v3), &dwByte, nullptr);
 		::WriteFile(hFile, &m_pInfo->vStartScale, sizeof(_v3), &dwByte, nullptr);
 		::WriteFile(hFile, &m_pInfo->fColorIndex, sizeof(_float), &dwByte, nullptr);
-
+		::WriteFile(hFile, &m_pInfo->fMaskIndex, sizeof(_float), &dwByte, nullptr);
+		
 		_bool bRandRotSpeed = (m_CheckRandRotSpeed.GetCheck()) ? true : false;
 		::WriteFile(hFile, &bRandRotSpeed, sizeof(_bool), &dwByte, nullptr);
 		_bool bRandAlphaSpeed = (m_CheckRandAlphaSpeed.GetCheck()) ? true : false;
@@ -938,6 +959,10 @@ void CParticleTab::OnBnClickedButton_Load()
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fColorIndex);
 			m_EditColorIndex.SetString(szBuff);
 
+			::ReadFile(hFile, &tInfo.fMaskIndex, sizeof(_float), &dwByte, nullptr);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fMaskIndex);
+			m_EditMaskIndex.SetString(szBuff);
+
 			_bool bRandRotSpeed = false;
 			::ReadFile(hFile, &bRandRotSpeed, sizeof(_bool), &dwByte, nullptr);
 			m_CheckRandRotSpeed.SetCheck(bRandRotSpeed);
@@ -964,3 +989,4 @@ void CParticleTab::OnBnClickedButton_Load()
 
 	UpdateData(FALSE);
 }
+

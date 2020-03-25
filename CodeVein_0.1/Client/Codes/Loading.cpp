@@ -115,6 +115,12 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype(L"Effect_ButterFly_SoftSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_SoftSmoke.dat")))))
 		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"Effect_ButterFly_PointParticle", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_PointParticle.dat")))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"Effect_ButterFly_VenomShot", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_VenomShot.dat")))))
+		return E_FAIL;
+	if (FAILED(pManagement->Add_Prototype(L"Effect_ButterFly_RingLine", CMeshEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_RingLine.dat")))))
+		return E_FAIL;
 	if (FAILED(pManagement->Add_Prototype(L"Effect_ButterFly_Distortion", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_Distortion.dat")))))
 		return E_FAIL;
 	//if (FAILED(pManagement->Add_Prototype(L"GameObject_EffectTestMesh", CMeshEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/testMeshEff.dat")))))
@@ -192,6 +198,7 @@ Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
 		::ReadFile(hFile, &pInfo->vStartPos, sizeof(_v3), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->vStartScale, sizeof(_v3), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->fColorIndex, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fMaskIndex, sizeof(_float), &dwByte, nullptr);
 
 		break;
 	}

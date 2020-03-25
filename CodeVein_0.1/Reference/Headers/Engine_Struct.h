@@ -299,6 +299,7 @@ namespace Engine
 		_bool	bStaticFrame;
 		_float	fMaxFrame;
 		_float	fColorIndex;
+		_float	fMaskIndex;
 
 		_float	fAnimSpeed;
 		_float  fLifeTime;

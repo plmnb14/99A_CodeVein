@@ -58,8 +58,21 @@ _int CScene_Stage::Update_Scene(_double TimeDelta)
 		Safe_AddRef(pManagement);
 		
 		pManagement->Create_ParticleEffect(L"Effect_ButterFly_Distortion", 0.1f, nullptr);
+		pManagement->Create_ParticleEffect(L"Effect_ButterFly_RingLine", 0.1f, nullptr);
+		
+		Safe_Release(pManagement);
+	}
+	if (g_pInput_Device->Key_Down(DIK_L))
+	{
+		CManagement*	pManagement = CManagement::Get_Instance();
 
-		//pManagement->Add_GameObject_ToLayer(L"Effect_TestSmoke", SCENE_STAGE, L"Layer_Effect");
+		if (nullptr == pManagement)
+			return E_FAIL;
+
+		Safe_AddRef(pManagement);
+
+		pManagement->Create_ParticleEffect(L"Effect_ButterFly_VenomShot", 0.1f, nullptr);
+		pManagement->Create_ParticleEffect(L"Effect_ButterFly_PointParticle", 0.1f, nullptr);
 
 		Safe_Release(pManagement);
 	}

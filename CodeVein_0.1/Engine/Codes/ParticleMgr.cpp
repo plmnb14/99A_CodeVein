@@ -19,6 +19,9 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Effect_TestSmoke", 500);
 	Input_Pool(L"Effect_FootSmoke", 100);
 	Input_Pool(L"Effect_ButterFly_SoftSmoke", 2000);
+	Input_Pool(L"Effect_ButterFly_VenomShot", 1000);
+	Input_Pool(L"Effect_ButterFly_PointParticle", 1000);
+	Input_Pool(L"Effect_ButterFly_RingLine", 10);
 	Input_Pool(L"Effect_ButterFly_Distortion", 10);
 
 	return S_OK;
