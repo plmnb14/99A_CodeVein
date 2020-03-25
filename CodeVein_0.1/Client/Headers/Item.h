@@ -27,6 +27,9 @@ public:
 	_uint		Get_ItemNumber() { return m_iItemNumber; }
 
 public:
+	void Set_ItemNumber(_uint iNum) { m_iItemNumber = iNum; }
+
+public:
 	virtual HRESULT			Ready_GameObject_Prototype();
 	virtual HRESULT			Ready_GameObject(void* pArg);
 	virtual _int			Update_GameObject(_double TimeDelta);
