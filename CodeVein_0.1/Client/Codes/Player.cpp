@@ -1442,13 +1442,11 @@ void CPlayer::Skill_Movement(_float _fspeed, _v3 _vDir)
 	_v3 tmpLook;
 	_float fSpeed = _fspeed;
 
-	m_pTransform->Add_Pos(fSpeed* g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") , _vDir);
-
-	//tmpLook = _vDir;
-	//D3DXVec3Normalize(&tmpLook, &tmpLook);
+	tmpLook = _vDir;
+	D3DXVec3Normalize(&tmpLook, &tmpLook);
 
 	// 네비게이션 적용하면 
-	//m_pTransform->Set_Pos((m_pNav->Move_OnNaviMesh(m_pRigid, &m_pTransform->Get_Pos(), &tmpLook, fSpeed * ENGINE::Get_Deltatime(L"Timer_Fps_60"))));
+	m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
 }
 
 void CPlayer::Decre_Skill_Movement(_float _fMutiply)
@@ -1543,24 +1541,16 @@ HRESULT CPlayer::SetUp_ConstantTable()
 	if (nullptr == m_pShader)
 		return E_FAIL;
 
-	CManagement*		pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
-
-	Safe_AddRef(pManagement);
-
 	if (FAILED(m_pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;	
 
-	_mat		ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
+	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 
 	if (FAILED(m_pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
-
-	Safe_Release(pManagement);
 
 	return NOERROR;
 }

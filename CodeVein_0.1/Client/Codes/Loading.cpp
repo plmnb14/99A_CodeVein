@@ -35,46 +35,40 @@ HRESULT CLoading::Ready_Loading(SCENEID eLoadingID)
 
 _uint CLoading::Loading_ForStage(void)
 {
-	CManagement*	pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return -1;
-
-	Safe_AddRef(pManagement);
-
 	// BT_Node 생성 중
-	if (FAILED(pManagement->Ready_BT_Node()))
+	if (FAILED(g_pManagement->Ready_BT_Node()))
 		return E_FAIL;
 
 	_mat DefaultMat;
 	D3DXMatrixIdentity(&DefaultMat);
 
-	
-	// 오브젝트 원형
-	lstrcpy(m_szString, L"게임오브젝트 원형 생성 중....");
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_Player", CPlayer::Create(m_pGraphicDev))))
-		return E_FAIL;
-
-
-	lstrcpy(m_szString, L"이펙트 생성 중....");
+	// 이펙트 원형 생성
 	Ready_Effect();
 
 
-	// UI 생성
+	// UI 원형 생성
 	CUI_Manager::Get_Instance()->Add_UI_Prototype(m_pGraphicDev);
 
 	
+	// 오브젝트 원형 생성
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	// 플레이어
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Player", CPlayer::Create(m_pGraphicDev))))
+		return E_FAIL;
+
 	//몬스터
-	if (FAILED(pManagement->Add_Prototype(L"Monster_TestMonster", CTestMonster::Create(m_pGraphicDev))))
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_TestMonster", CTestMonster::Create(m_pGraphicDev))))
 		return E_FAIL;
 
 	//무기
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_Weapon", CWeapon::Create(m_pGraphicDev))))
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon", CWeapon::Create(m_pGraphicDev))))
 		return E_FAIL;
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	m_bFinish = true;
-	lstrcpy(m_szString, L"로딩 완료");
 
-	Safe_Release(pManagement);
+	cout << "로딩 완료" << endl;
 
 	return 0;
 }
@@ -101,18 +95,11 @@ unsigned int CALLBACK CLoading::Thread_Main(void* pArg)
 
 HRESULT CLoading::Ready_Effect(void)
 {
-	CManagement*	pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return -1;
-
-	Safe_AddRef(pManagement);
-
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_EffectSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/testSmoke.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_EffectSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/testSmoke.dat")))))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_EffectTestMesh", CMeshEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/testMeshEff.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_EffectTestMesh", CMeshEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/testMeshEff.dat")))))
 		return E_FAIL;
 
-	Safe_Release(pManagement);
 	return S_OK;
 }
 

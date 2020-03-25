@@ -65,12 +65,14 @@ public:
 public:
 	_bool Check_AABB(CCollider* _rDstCol, RAY _rSrcRay);
 	_bool Check_Sphere(CCollider* _rDstCol, RAY _rSrcRay);
+	_bool Check_Capsule(CCollider* _rDstCol, RAY _rSrcRay);
 
 public:
 	_bool Check_OBB(CCollider* _rSrc);
 	_bool Check_AABB(CCollider* _rSrc);
 	_bool Check_Sphere(CCollider * _rSrc, _float * _fLegnthOut, _v3 * _vDirOut);
 	_bool Check_Sphere(CCollider* _rSrc);
+	_bool Check_Capsule(CCollider* _rSrc);
 
 public:
 	_v3	Calc_Length(COL_INFO * _rDst, COL_INFO * _rSrc, _bool _dynamic = false);
