@@ -13,6 +13,9 @@ private:
 	virtual ~CObject_Manager() = default;
 public:
 	CGameObject* Get_GameObjectBack(const _tchar* pLayerTag, _uint iSceneID);
+	list<CGameObject*> Get_GameObjectList(const _tchar* pLayerTag, _uint iSceneID);
+
+
 public:
 	HRESULT		 Reserve_Container_Size(_uint iNumScenes);
 	HRESULT		 Add_Prototype(const _tchar* pPrototypeTag, CGameObject* pPrototype);

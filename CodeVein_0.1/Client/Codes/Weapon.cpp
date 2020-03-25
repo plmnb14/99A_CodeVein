@@ -37,6 +37,8 @@ _int CWeapon::Update_GameObject(_double TimeDelta)
 
 	Cacl_AttachBoneTransform();
 
+	m_pCollider->Update(m_pTransform->Get_WorldMat());
+
 	return NO_EVENT;
 }
 
@@ -82,6 +84,8 @@ HRESULT CWeapon::Render_GameObject()
 
 
 	m_pShader->End_Shader();
+
+	g_pManagement->Gizmo_Draw_Capsule(m_pCollider->Get_CenterPos(), m_pCollider->Get_Radius());
 
 	return NOERROR;
 }
@@ -170,7 +174,16 @@ HRESULT CWeapon::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Wpn_Sword", L"Static_Mesh", (CComponent**)&m_pMesh_Static)))
 		return E_FAIL;
 
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Collider", (CComponent**)&m_pCollider)))
+		return E_FAIL;
+
 	lstrcpy(m_szName, L"Mesh_Wpn_Sword");
+
+	m_pCollider->Set_Radius(_v3{ 0.2f, 0.5f, 0.2f });
+	m_pCollider->Set_Dynamic(true);
+	m_pCollider->Set_Type(COL_CAPSULE);
+	m_pCollider->Set_CapsuleLength(1.8f);
+	m_pCollider->Set_CenterPos(m_pTransform->Get_Pos() + _v3{ 0.f , m_pCollider->Get_Radius().y * 2.f , 0.f });
 
 	return NOERROR;
 }
@@ -247,6 +260,7 @@ void CWeapon::Free()
 {
 	m_pmatAttach = nullptr;
 
+	Safe_Release(m_pCollider);
 	Safe_Release(m_pTransform);
 	Safe_Release(m_pMesh_Static);
 	Safe_Release(m_pShader);

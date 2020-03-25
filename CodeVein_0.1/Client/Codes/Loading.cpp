@@ -8,6 +8,7 @@
 #include "Player.h"
 #include "TestMonster.h"
 #include "Weapon.h"
+#include "Dummy_Target.h"
 
 #include "UI_Manager.h"
 
@@ -63,6 +64,10 @@ _uint CLoading::Loading_ForStage(void)
 
 	//무기
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon", CWeapon::Create(m_pGraphicDev))))
+		return E_FAIL;
+
+	//더미
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Dummy", CDummy_Target::Create(m_pGraphicDev))))
 		return E_FAIL;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

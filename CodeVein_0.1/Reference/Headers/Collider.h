@@ -18,7 +18,8 @@ public:
 	virtual HRESULT Ready_Component();
 
 public:
-	virtual void Update(_v3 _vPos);
+	virtual void Update(_mat matWorld);
+	virtual void Update(_v3 vPos);
 
 public:
 	void SetUp_Radius_Auto(const _v3 _vSize, const _v3 _vMin, const _v3 _vMax);
@@ -29,9 +30,11 @@ public:
 	void Set_Radius(_v3 _Radius);
 	void Set_Length(_v3 _Length);
 	void Set_CenterPos(_v3 _CenterPos);
+	void Set_CenterPos(_mat matWorld);
 	void Set_UnderPos();
 	void Set_IsCollision(_bool _bIsCollision);
 	void Set_GizmoPos();
+	void Set_CapsuleLength(_float _fBeginEndLength);
 
 public:
 	void Set_Dynamic(_bool _Dynamic);
@@ -60,13 +63,22 @@ public:
 public:
 	_bool Check_RayCollision(CCollider* _rDstCol, RAY _rSrcRay, _float* _vCrossLength);
 
+public:
+	void  Update_Capsule(_mat _matWorld);
 
 
+
+	// 캡슐 충돌 체크용
+private:
+	_bool Check_Sphere(COL_INFO _rDstColInfo, RAY _rSrcRay, _v3 _vCapsuleVertexPos);
+
+	// 도형과 Ray
 public:
 	_bool Check_AABB(CCollider* _rDstCol, RAY _rSrcRay);
 	_bool Check_Sphere(CCollider* _rDstCol, RAY _rSrcRay);
 	_bool Check_Capsule(CCollider* _rDstCol, RAY _rSrcRay);
 
+	// 도형과 도형
 public:
 	_bool Check_OBB(CCollider* _rSrc);
 	_bool Check_AABB(CCollider* _rSrc);

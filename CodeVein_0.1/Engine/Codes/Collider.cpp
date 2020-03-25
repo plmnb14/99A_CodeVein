@@ -18,11 +18,19 @@ CCollider::~CCollider()
 {
 }
 
-void CCollider::Update(_v3 _vPos)
+void CCollider::Update(_v3 vPos)
 {
-	Set_CenterPos(_vPos);
+	Set_CenterPos(vPos);
 	Set_UnderPos();
 	SetUp_Box();
+}
+
+void CCollider::Update(_mat matWorld)
+{
+	Set_CenterPos(matWorld);
+	Set_UnderPos();
+	SetUp_Box();
+	Update_Capsule(matWorld);
 }
 
 HRESULT CCollider::Ready_Component()
@@ -63,6 +71,14 @@ void CCollider::Set_Length(_v3 _Length)
 void CCollider::Set_CenterPos(_v3 _CenterPos)
 {
 	m_tColInfo.vCenterPos = _CenterPos;
+}
+
+void CCollider::Set_CenterPos(_mat matWorld)
+{
+	_v3 vPos;
+	memcpy(&vPos, &matWorld._41, sizeof(_v3));
+
+	m_tColInfo.vCenterPos = vPos + _v3(0.f, m_tColInfo.vRadius.y, 0.f);
 }
 
 void CCollider::Set_UnderPos()
@@ -160,6 +176,16 @@ void CCollider::Set_GizmoPos()
 	}
 }
 
+void CCollider::Set_CapsuleLength(_float _fBeginEndLength)
+{
+	m_tColInfo.fBeginEndLength = _fBeginEndLength;
+
+	m_tColInfo.vBegin	= m_tColInfo.vCenterPos + _v3(0.f, (_fBeginEndLength * 0.5f), 0.f);
+	m_tColInfo.vEnd		= m_tColInfo.vCenterPos - _v3(0.f, (_fBeginEndLength * 0.5f), 0.f);
+
+	m_tColInfo.vRadius.y = _fBeginEndLength * 0.5f;
+}
+
 void CCollider::Set_Dynamic(_bool _Dynamic)
 {
 	m_tColInfo.bIsDynamic = _Dynamic;
@@ -213,6 +239,12 @@ _bool CCollider::Check_RayCollision(CCollider * _rDstCol, RAY _rSrcRay, _float*_
 	*_vCrossLength = tMin;
 	//*_vCrossLength = D3DXVec3Length(&(rDstCol->vCenterPos - vRayOri));
 	return true;
+}
+
+void CCollider::Update_Capsule(_mat _matWorld)
+{
+	m_tColInfo.vBegin = m_tColInfo.vCenterPos + _v3(0.f, m_tColInfo.vRadius.y, 0.f);
+	m_tColInfo.vEnd = m_tColInfo.vCenterPos - _v3(0.f, m_tColInfo.vRadius.y, 0.f);
 }
 
 _bool CCollider::Check_Sphere(COL_INFO _rDstColInfo, RAY _rSrcRay, _v3 _vCapsuleVertexPos)
@@ -593,9 +625,8 @@ _bool CCollider::Check_Sphere(CCollider * _rSrc)
 
 _bool CCollider::Check_Capsule(CCollider * _rSrc)
 {
+	// 로컬 포지션으로 계산하지말고 월드로 올려서 계산하자.
 	COL_INFO* rSrtCol = _rSrc->Get_ColInfo();
-
-	// Sphere 체크 우선
 
 	// 가까운 점 찾아내기
 	_v3 vThisClose, vOtherClose;
@@ -694,7 +725,7 @@ _bool CCollider::Check_Capsule(CCollider * _rSrc)
 
 	// 충돌 거리 계산
 
-	return false;
+	return true;
 }
 
 _v3 CCollider::Calc_Length(COL_INFO * _rDst, COL_INFO * _rSrc, _bool _dynamic)

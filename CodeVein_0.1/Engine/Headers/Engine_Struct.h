@@ -126,9 +126,15 @@ namespace Engine
 
 	typedef struct tagCollider
 	{
-		_v3  vBegin;		// 시작 점
-		_v3  vEnd;			// 바닥 점
-		_v3	 vAxis;			// 축
+		// 캡슐용
+		///////////////////////////////////////////////////////
+
+		_v3		vBegin;		// 시작 점
+		_v3		vEnd;			// 바닥 점
+		_v3		vAxis;			// 축
+		_float	fBeginEndLength;
+
+		///////////////////////////////////////////////////////
 
 		_v3  vCrossPoint;	// 교차 지점
 

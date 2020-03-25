@@ -21,8 +21,8 @@ HRESULT CTestMonster::Ready_GameObject(void * pArg)
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_Pos(_v3(1.f, 1.f, 1.f));
-	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
+	m_pTransformCom->Set_Pos(_v3(1.f, 0.f, 1.f));
+	m_pTransformCom->Set_Scale(_v3(0.1f, 0.1f, 0.1f));
 
 	
 	CBlackBoard* pBlackBoard = CBlackBoard::Create();

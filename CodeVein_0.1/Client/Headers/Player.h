@@ -61,6 +61,7 @@ private:
 	CShader*				m_pShader			= nullptr;
 	CMesh_Dynamic*			m_pDynamicMesh		= nullptr;
 	CNavMesh*				m_pNavMesh			= nullptr;
+	CCollider*				m_pCollider			= nullptr;
 
 private:
 	vector<CCollider*>		m_vecPhsycColl;
@@ -120,6 +121,12 @@ private:
 	HRESULT SetUp_ConstantTable();
 
 private:
+	virtual void OnCollisionEnter();
+
+private:
+	virtual void Update_Collider();
+
+private:
 	virtual void Reset_BattleState();
 
 private:
@@ -129,6 +136,7 @@ private:
 	virtual void Parameter_Movement();
 	virtual void Parameter_HeavyCharging();
 	virtual void Parameter_YPos();
+	virtual void Parameter_Collision();
 
 private:
 	virtual void KeyInput();

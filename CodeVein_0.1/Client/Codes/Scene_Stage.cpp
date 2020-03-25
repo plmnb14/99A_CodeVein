@@ -75,6 +75,12 @@ HRESULT CScene_Stage::Ready_Layer_Monster(const _tchar * pLayerTag)
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_TestMonster", SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 
+	// µð¹ö±ë¿ë ´õ¹Ì Å¸°Ù
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Dummy", SCENE_STAGE, L"Layer_Dummy")))
+		return E_FAIL;
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 	return S_OK;
 }
 

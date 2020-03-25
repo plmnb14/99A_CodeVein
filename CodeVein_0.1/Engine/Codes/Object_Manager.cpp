@@ -18,6 +18,13 @@ CGameObject* CObject_Manager::Get_GameObjectBack(const _tchar* pLayerTag, _uint 
 	return pLayer->Get_GameObjectBack();
 }
 
+list<CGameObject*> CObject_Manager::Get_GameObjectList(const _tchar * pLayerTag, _uint iSceneID)
+{
+	CLayer* pLayer = Find_Layer(iSceneID, pLayerTag);
+
+	return pLayer->Get_GameObjectList();
+}
+
 HRESULT CObject_Manager::Reserve_Container_Size(_uint iNumScenes)
 {
 	if (nullptr != m_pLayers)

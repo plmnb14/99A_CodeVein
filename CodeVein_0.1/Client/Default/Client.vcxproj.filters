@@ -172,6 +172,9 @@
     <Filter Include="02.GameObject\Stage\4%29 UI\Manager\Item_Manager">
       <UniqueIdentifier>{ade95dcd-cb82-48af-b4cd-b701c0241f53}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\1%29 Monster\00%29 Dummy_Target">
+      <UniqueIdentifier>{30189a81-a048-468d-a30c-26360c03ccdb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -291,6 +294,9 @@
     <ClInclude Include="..\Headers\Item_Manager.h">
       <Filter>02.GameObject\Stage\4%29 UI\Manager\Item_Manager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Dummy_Target.h">
+      <Filter>02.GameObject\Stage\1%29 Monster\00%29 Dummy_Target</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -400,6 +406,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Item_Manager.cpp">
       <Filter>02.GameObject\Stage\4%29 UI\Manager\Item_Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Dummy_Target.cpp">
+      <Filter>02.GameObject\Stage\1%29 Monster\00%29 Dummy_Target</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -173,6 +173,7 @@
     <ClInclude Include="..\Headers\BossHP.h" />
     <ClInclude Include="..\Headers\Client_Defines.h" />
     <ClInclude Include="..\Headers\Consume_Item.h" />
+    <ClInclude Include="..\Headers\Dummy_Target.h" />
     <ClInclude Include="..\Headers\HPBack.h" />
     <ClInclude Include="..\Headers\Inven_Item.h" />
     <ClInclude Include="..\Headers\Item.h" />
@@ -215,6 +216,7 @@
     <ClCompile Include="..\Codes\BossDecoUI.cpp" />
     <ClCompile Include="..\Codes\BossHP.cpp" />
     <ClCompile Include="..\Codes\Consume_Item.cpp" />
+    <ClCompile Include="..\Codes\Dummy_Target.cpp" />
     <ClCompile Include="..\Codes\HPBack.cpp" />
     <ClCompile Include="..\Codes\Inven_Item.cpp" />
     <ClCompile Include="..\Codes\Item.cpp" />
