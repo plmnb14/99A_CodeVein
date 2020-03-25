@@ -44,15 +44,12 @@ _int CScene_Stage::Update_Scene(_double TimeDelta)
 
 	CUI_Manager::Get_Instance()->Update_UI();
 
-	
-
-
 	return _int();
 }
 
 HRESULT CScene_Stage::Render_Scene()
 {
-	m_pNavMesh->Render_NaviMesh();
+	//m_pNavMesh->Render_NaviMesh();
 
 	return S_OK;
 }
