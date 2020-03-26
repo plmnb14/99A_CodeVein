@@ -18,16 +18,16 @@ HRESULT CBT_Loop::Set_Child(CBT_Node * pNode)
 	return NO_ERROR;
 }
 
-CBT_Node::BT_NODE_STATE CBT_Loop::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Loop::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	if (nullptr == m_pChild)
 		return BT_NODE_STATE::FAILED;
 
-	Start_Node(pNodeStack, bDebugging);
+	Start_Node(pNodeStack, plistSubNodeStack, bDebugging);
 
 	if (m_iCurLoopCount >= m_iMaxLoopCount)
 	{
-		return End_Node(pNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
 	}
 
 	if (!m_bInProgress)
@@ -70,7 +70,7 @@ CBT_Node::BT_NODE_STATE CBT_Loop::Update_Node(_double TimeDelta, vector<CBT_Node
 	return BT_NODE_STATE::INPROGRESS;
 }
 
-void CBT_Loop::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
+void CBT_Loop::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging)
 {
 	if (m_bInit)
 	{
@@ -92,7 +92,7 @@ void CBT_Loop::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 	}
 }
 
-CBT_Node::BT_NODE_STATE CBT_Loop::End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Loop::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
 {
 	if (pNodeStack->empty())
 		return eState;

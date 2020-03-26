@@ -18,9 +18,9 @@ HRESULT CBT_Compare::Set_Child(CBT_Node * pNode)
 	return S_OK;
 }
 
-CBT_Node::BT_NODE_STATE CBT_Compare::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard * pBlackBoard, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Compare::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, CBlackBoard * pBlackBoard, _bool bDebugging)
 {
-	Start_Node(pNodeStack, bDebugging);
+	Start_Node(pNodeStack, plistSubNodeStack, bDebugging);
 
 	/*
 	Value 상태 확인 -> 조건 확인
@@ -54,7 +54,7 @@ CBT_Node::BT_NODE_STATE CBT_Compare::Update_Node(_double TimeDelta, vector<CBT_N
 				break;
 			}
 
-			return End_Node(pNodeStack, BT_NODE_STATE::FAILED, bDebugging);
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, bDebugging);
 
 		case Value::FLOAT:
 			m_fTargetValue[0] = pBlackBoard->Get_FloatValue(m_pTargetKey_A);
@@ -84,7 +84,7 @@ CBT_Node::BT_NODE_STATE CBT_Compare::Update_Node(_double TimeDelta, vector<CBT_N
 				break;
 			}
 
-			return End_Node(pNodeStack, BT_NODE_STATE::FAILED, bDebugging);
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, bDebugging);
 
 		case Value::INT:
 			m_iTargetValue[0] = pBlackBoard->Get_IntValue(m_pTargetKey_A);
@@ -114,7 +114,7 @@ CBT_Node::BT_NODE_STATE CBT_Compare::Update_Node(_double TimeDelta, vector<CBT_N
 				break;
 			}
 
-			return End_Node(pNodeStack, BT_NODE_STATE::FAILED, bDebugging);
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, bDebugging);
 
 		}
 	}
@@ -124,20 +124,20 @@ CBT_Node::BT_NODE_STATE CBT_Compare::Update_Node(_double TimeDelta, vector<CBT_N
 		{
 		case BT_NODE_STATE::SERVICE:
 		case BT_NODE_STATE::FAILED:
-			return End_Node(pNodeStack, BT_NODE_STATE::FAILED, bDebugging);
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, bDebugging);
 
 		case BT_NODE_STATE::INPROGRESS:
 			return BT_NODE_STATE::INPROGRESS;
 
 		case BT_NODE_STATE::SUCCEEDED:
-			return End_Node(pNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
 		}
 	}
 
 	return BT_NODE_STATE::INPROGRESS;
 }
 
-void CBT_Compare::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
+void CBT_Compare::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging)
 {
 	if (m_bInit)
 	{
@@ -156,7 +156,7 @@ void CBT_Compare::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 	}
 }
 
-CBT_Node::BT_NODE_STATE CBT_Compare::End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Compare::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
 {
 	if (pNodeStack->empty())
 		return eState;

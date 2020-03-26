@@ -21,7 +21,7 @@
 #define Node_Cooldown(_name, _dCooltime) static_cast<CBT_Cooldown*>(CManagement::Get_Instance()->Clone_Node(L"Cooldown", CBT_Node_Manager::DECORATOR, &CBT_Cooldown::INFO(_name, _dCooltime)))
 
 #include "..\Headers\BT_ConeCheck.h"
-#define Node_ConeCheck(_name, _target_Key, _fDegreeOfFov, _MaxLength) static_cast<CBT_ConeCheck*>(CManagement::Get_Instance()->Clone_Node(L"ConeCheck", CBT_Node_Manager::DECORATOR, &CBT_ConeCheck::INFO(_name, _target_Key, m_pTransform, _fDegreeOfFov,  _MaxLength)))
+#define Node_ConeCheck(_name, _target_Key, _fDegreeOfFov, _MaxLength) static_cast<CBT_ConeCheck*>(CManagement::Get_Instance()->Clone_Node(L"ConeCheck", CBT_Node_Manager::DECORATOR, &CBT_ConeCheck::INFO(_name, _target_Key, m_pTransformCom, _fDegreeOfFov,  _MaxLength)))
 
 #include "..\Headers\BT_Compare.h"
 #define Node_BOOL_A_Equal_B(_name, _TargetKey_A, _TargetKey_B) static_cast<CBT_Compare*>(CManagement::Get_Instance()->Clone_Node(L"Compare", CBT_Node_Manager::DECORATOR, &CBT_Compare::(_name, CBT_Compare::Mode::EQUAL, _TargetKey_A, CBT_Compare::Value::BOOL, _TargetKey_B)))
@@ -41,14 +41,21 @@
 #define Node_INT_A_Smaller_Than_B(_name, _TargetKey_A, _TargetKey_B) static_cast<CBT_Compare*>(CManagement::Get_Instance()->Clone_Node(L"Compare", CBT_Node_Manager::DECORATOR, &CBT_Compare::(_name, CBT_Compare::Mode::SMALLER_THAN, _TargetKey_A, CBT_Compare::Value::INT, _TargetKey_B)))
 
 // Service
-
+#include "..\Headers\BT_UpdatePos.h"
+#define Node_UpdatePos(_name, _Target_Key, _Target_Transform, _dUpdateTime, _dOffset) static_cast<CBT_UpdatePos*>(CManagement::Get_Instance()->Clone_Node(L"UpdatePos", CBT_Node_Manager::SERVICE, &CBT_UpdatePos::INFO(_name, _Target_Key, _Target_Transform, _dUpdateTime, _dOffset)))
+#include "..\Headers\BT_UpdateGageRatio.h"
+#define Node_UpdateGageRatio(_name, _Key_Save_HPRatio, _Key_MAXHP, _Key_HP, _dWaitingTime, _dOffset) static_cast<CBT_UpdateGageRatio*>(CManagement::Get_Instance()->Clone_Node(L"UpdateHPRatio", CBT_Node_Manager::SERVICE, &CBT_UpdateGageRatio::INFO(_name, _Key_Save_HPRatio, _Key_MAXHP, _Key_HP, _dWaitingTime, _dOffset)))
 
 // Task
 #include "..\Headers\BT_Wait.h"
 #define Node_Wait(_name, _dTime, _dOffset) static_cast<CBT_Wait*>(CManagement::Get_Instance()->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO(_name, _dTime, _dOffset)))
 
 #include "..\Headers\BT_MoveDirectly.h"
-#define Node_MoveDirectly(_name, _Target_Key, _Move_Speed, _Acceptable_Radius) static_cast<CBT_MoveDirectly*>(CManagement::Get_Instance()->Clone_Node(L"MoveDirectly", CBT_Node_Manager::TASK, &CBT_MoveDirectly::INFO(_name, m_pTransform, _Target_Key, _Move_Speed, _Acceptable_Radius)))
+#define Node_MoveDirectly_Chace(_name, _Target_Key, _Move_Speed, _Acceptable_Radius) static_cast<CBT_MoveDirectly*>(CManagement::Get_Instance()->Clone_Node(L"MoveDirectly", CBT_Node_Manager::TASK, &CBT_MoveDirectly::INFO(_name, m_pTransformCom, _Target_Key, _Move_Speed, _Acceptable_Radius, 0, 0, CBT_MoveDirectly::CHASE)))
+#define Node_MoveDirectly_Rush(_name, _Move_Speed, _dMoveTime, _dTimeOffset) static_cast<CBT_MoveDirectly*>(CManagement::Get_Instance()->Clone_Node(L"MoveDirectly", CBT_Node_Manager::TASK, &CBT_MoveDirectly::INFO(_name, m_pTransformCom, nullptr, _Move_Speed, 0, _dMoveTime, _dTimeOffset, CBT_MoveDirectly::RUSH)))
+
+#include "..\Headers\BT_RotationDir.h"
+#define Node_RotationDir(_name, _Target_Key, _dMoveTime) static_cast<CBT_RotationDir*>(CManagement::Get_Instance()->Clone_Node(L"RotationDir", CBT_Node_Manager::TASK, &CBT_RotationDir::INFO(_name, m_pTransformCom, _Target_Key, _dMoveTime)))
 
 #include "..\Headers\BT_MoveTo.h"
 

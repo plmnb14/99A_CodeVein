@@ -12,14 +12,8 @@ class CGameObject;
 class ENGINE_DLL CBlackBoard final : public CBase
 {
 public:
-	/*
-	enum은 정수와 비교가 가능하지만,
-	enum class는 해당하는 enum이랑만 비교가 가능하다.
-	ex) if( 0 == MyEnum )  불가
-	    if( BOOL == MyEnum) 가능
-	*/
-	enum class VALUE { BOOL, FLOAT, INT, VEC3};
-	enum class OUTPUT { NONE, UPDATE};
+	enum VALUE { BOOL, FLOAT, INT, VEC3};
+	enum OUTPUT { NONE, UPDATE};
 
 private:
 	explicit CBlackBoard();

@@ -19,7 +19,14 @@ HRESULT CBehaviorTree::Set_Child(CBT_Task_Node * pTask_Node)
 	return S_OK;
 }
 
-void CBehaviorTree::Update_BeHaviorTree(_double TimeDelta, const CBlackBoard* pBlackBoard)
+HRESULT CBehaviorTree::Set_Child(CBT_Decorator_Node * pDecorator_Node)
+{
+	m_pRoot->Set_Child(pDecorator_Node);
+
+	return S_OK;
+}
+
+void CBehaviorTree::Update_BeHaviorTree(_double TimeDelta, CBlackBoard* pBlackBoard)
 {
 	if (m_pNodeStack.empty())
 	{

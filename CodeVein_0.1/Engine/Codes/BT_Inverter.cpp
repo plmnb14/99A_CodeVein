@@ -18,7 +18,7 @@ HRESULT CBT_Inverter::Set_Child(CBT_Node * pNode)
 	return NO_ERROR;
 }
 
-CBT_Node::BT_NODE_STATE CBT_Inverter::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Inverter::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	/*
 	자식노드 결과의 반대값을 반환합니다.
@@ -26,7 +26,7 @@ CBT_Node::BT_NODE_STATE CBT_Inverter::Update_Node(_double TimeDelta, vector<CBT_
 	if (nullptr == m_pChild)
 		return BT_NODE_STATE::FAILED;
 
-	Start_Node(pNodeStack, bDebugging);
+	Start_Node(pNodeStack, plistSubNodeStack, bDebugging);
 
 	// 최초 평가
 	if (!m_bInProgress)
@@ -35,13 +35,13 @@ CBT_Node::BT_NODE_STATE CBT_Inverter::Update_Node(_double TimeDelta, vector<CBT_
 		{
 		case BT_NODE_STATE::SERVICE:
 		case BT_NODE_STATE::FAILED:
-			return End_Node(pNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
 
 		case BT_NODE_STATE::INPROGRESS:
 			break;
 
 		case BT_NODE_STATE::SUCCEEDED:
-			return End_Node(pNodeStack, BT_NODE_STATE::FAILED, bDebugging);
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, bDebugging);
 		}
 
 		m_bInProgress = true;
@@ -53,20 +53,20 @@ CBT_Node::BT_NODE_STATE CBT_Inverter::Update_Node(_double TimeDelta, vector<CBT_
 		{
 		case BT_NODE_STATE::SERVICE:
 		case BT_NODE_STATE::FAILED:
-			return End_Node(pNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
 
 		case BT_NODE_STATE::INPROGRESS:
 			return BT_NODE_STATE::INPROGRESS;
 
 		case BT_NODE_STATE::SUCCEEDED:
-			return End_Node(pNodeStack, BT_NODE_STATE::FAILED, bDebugging);
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, bDebugging);
 		}
 	}
 
 	return BT_NODE_STATE::INPROGRESS;
 }
 
-void CBT_Inverter::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
+void CBT_Inverter::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging)
 {
 	if (m_bInit)
 	{
@@ -86,7 +86,7 @@ void CBT_Inverter::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 	}
 }
 
-CBT_Node::BT_NODE_STATE CBT_Inverter::End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Inverter::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
 {
 	if (pNodeStack->empty())
 		return eState;

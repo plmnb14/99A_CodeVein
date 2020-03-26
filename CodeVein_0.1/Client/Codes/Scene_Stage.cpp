@@ -128,8 +128,8 @@ HRESULT CScene_Stage::Ready_Layer_Monster(const _tchar * pLayerTag)
 	//	return E_FAIL;
 
 	// For. PoisonButterfly
-	//if (FAILED(pManagement->Add_GameObject_ToLayer(L"Monster_PoisonButterfly", SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
+	if (FAILED(pManagement->Add_GameObject_ToLayer(L"Monster_PoisonButterfly", SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
 
 	// For. BlackUrchin
 	//if (FAILED(pManagement->Add_GameObject_ToLayer(L"Monster_BlackUrchin", SCENE_STAGE, pLayerTag)))

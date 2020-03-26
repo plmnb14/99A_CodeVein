@@ -7,7 +7,8 @@ Ai를 작동시키는 행동트리의 인터페이스
 */
 
 BEGIN(Engine)
-class thread;
+
+class CBT_Decorator_Node;
 class CBT_Task_Node;
 class CBT_Composite_Node;
 class CBT_Root;
@@ -21,9 +22,10 @@ private:
 public:
 	HRESULT Set_Child(CBT_Composite_Node* pComposite_Node);
 	HRESULT Set_Child(CBT_Task_Node* pTask_Node);
+	HRESULT Set_Child(CBT_Decorator_Node* pDecorator_Node);
 
 public:
-	virtual void Update_BeHaviorTree(_double TimeDelta, const CBlackBoard* pBlackBoard);
+	virtual void Update_BeHaviorTree(_double TimeDelta, CBlackBoard* pBlackBoard);
 
 private:
 	HRESULT Ready_BehaviorTree(_bool bDebuging);

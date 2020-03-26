@@ -18,7 +18,7 @@ HRESULT CBT_Cooldown::Set_Child(CBT_Node * pNode)
 	return S_OK;
 }
 
-CBT_Node::BT_NODE_STATE CBT_Cooldown::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Cooldown::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	if (nullptr == m_pChild)
 		return BT_NODE_STATE::FAILED;
@@ -41,7 +41,7 @@ CBT_Node::BT_NODE_STATE CBT_Cooldown::Update_Node(_double TimeDelta, vector<CBT_
 				m_pSubNodeStatck.push_back(pNodeStack->back());
 				Safe_AddRef(pNodeStack->back());
 				plistSubNodeStack->push_back(&m_pSubNodeStatck);
-				Start_Node(&m_pSubNodeStatck, bDebugging);
+				Start_Node(&m_pSubNodeStatck, plistSubNodeStack, bDebugging);
 			}
 
 			return BT_NODE_STATE::FAILED;
@@ -57,14 +57,14 @@ CBT_Node::BT_NODE_STATE CBT_Cooldown::Update_Node(_double TimeDelta, vector<CBT_
 		{
 			//m_bAddThread = true;
 			m_eCurState = BT_NODE_STATE::SUCCEEDED;
-			return End_Node(pNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
 		}
 	}
 
 	return BT_NODE_STATE::INPROGRESS;
 }
 
-void CBT_Cooldown::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
+void CBT_Cooldown::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging)
 {
 	if (m_bInit)
 	{
@@ -86,7 +86,7 @@ void CBT_Cooldown::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 	}
 }
 
-CBT_Node::BT_NODE_STATE CBT_Cooldown::End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Cooldown::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
 {
 	if (pNodeStack->empty())
 		return eState;
