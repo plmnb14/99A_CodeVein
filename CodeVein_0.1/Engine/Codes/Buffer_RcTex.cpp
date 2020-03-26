@@ -6,8 +6,7 @@ D3DVERTEXELEMENT9 g_VertexElemHardware[] =
 	{ 0, 0,     D3DDECLTYPE_FLOAT3,     D3DDECLMETHOD_DEFAULT,  D3DDECLUSAGE_POSITION,  0 },
 	//{ 0, 3 * 4, D3DDECLTYPE_FLOAT3,     D3DDECLMETHOD_DEFAULT,  D3DDECLUSAGE_NORMAL,    0 },
 	{ 0, 3 * 4	,D3DDECLTYPE_FLOAT2,     D3DDECLMETHOD_DEFAULT,  D3DDECLUSAGE_TEXCOORD,  0 },
-	{ 1, 0,     D3DDECLTYPE_D3DCOLOR,   D3DDECLMETHOD_DEFAULT,  D3DDECLUSAGE_COLOR,     0 },
-	{ 1, 4,     D3DDECLTYPE_D3DCOLOR,   D3DDECLMETHOD_DEFAULT,  D3DDECLUSAGE_COLOR,     1 },
+	{ 1, 0,     D3DDECLTYPE_FLOAT16_4,   D3DDECLMETHOD_DEFAULT,  D3DDECLUSAGE_COLOR,     0 },
 	D3DDECL_END()
 };
 
@@ -91,29 +90,22 @@ HRESULT CBuffer_RcTex::Ready_Component_Prototype()
 
 	m_pIB->Unlock();
 
-	// 3)  Create a VB for the instancing data
-	m_pGraphic_Dev->CreateVertexBuffer(g_iNumofInstance * sizeof(BOX_INSTANCEDATA_POS), 0, 0, D3DPOOL_MANAGED, &m_pVBInstanceData, 0);
+
+	_int gvSizegeom = D3DXGetDeclVertexSize(g_VertexElemHardware, 0);
+	_int gvSizeInst = D3DXGetDeclVertexSize(g_VertexElemHardware, 1);
+	//
+	//numVert = meshx->GetMesh()->GetNumVertices();
+	//numInd = meshx->GetMesh()->GetNumFaces();
+	//dev->SetStreamSource(0, gVBufferGeom, 0, gvSizegeom);
+	//dev->SetStreamSource(1, gVBufferInst, 0, gvSizeInst);
+
+	 // 3)  Create a VB for the instancing data
+	m_pGraphic_Dev->CreateVertexBuffer(g_iNumofInstance * gvSizeInst, 0, 0, D3DPOOL_MANAGED, &m_pVBInstanceData, 0);
 	
 	BOX_INSTANCEDATA_POS* pIPos;
 	m_pVBInstanceData->Lock(0, NULL, (void**)&pIPos, 0);
-	int nRemainingBoxes = g_iNumofInstance;
-	for (BYTE iY = 0; iY < 1; iY++)
-		for (BYTE iZ = 0; iZ < 1; iZ++)
-			for (BYTE iX = 0; iX < 1 && nRemainingBoxes > 0; iX++, nRemainingBoxes--)
-			{
-				// 12 : Pos (4 * 3) 나중에 노말이 추가되면 24로 변경할 것.
-				BOX_INSTANCEDATA_POS instanceBox;
-				instanceBox.color = D3DCOLOR_ARGB(
-					0xff,
-					0x7f + 0x40 * ((g_iNumofInstance - nRemainingBoxes +iX) % 3),
-					0x7f + 0x40 * ((g_iNumofInstance - nRemainingBoxes + iZ + 1) % 3),
-					0x7f + 0x40 * ((g_iNumofInstance - nRemainingBoxes + iY + 2) % 3));
-				instanceBox.x = iZ * 12;
-				instanceBox.z = iX * 12;
-				instanceBox.y = iY * 12;
-				instanceBox.rotation = ((WORD)iX + (WORD)iZ + (WORD)iY) * 12 / 3;
-				*pIPos = instanceBox, pIPos++;
-			}
+	// 동적으로 어떻게??
+	//memcpy(pIPos, wrld, gvSizeInst * g_iNumofInstance);
 	m_pVBInstanceData->Unlock();
 
 
