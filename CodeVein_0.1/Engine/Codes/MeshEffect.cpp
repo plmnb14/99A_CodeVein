@@ -37,6 +37,15 @@ HRESULT CMeshEffect::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Scale(V3_ONE);
 	m_pTransformCom->Set_Angle(V3_NULL);
 
+	if (pArg)
+		m_pDesc = (EFFECT_DESC*)pArg;
+	else
+	{
+		m_pDesc = new EFFECT_DESC;
+		m_pDesc->vWorldPos = { 0.f , 0.f , 0.f };
+		m_pDesc->pTargetTrans = nullptr;
+	}
+
 	return NOERROR;
 }
 

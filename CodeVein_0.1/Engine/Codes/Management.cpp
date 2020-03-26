@@ -459,9 +459,9 @@ CBT_Node * CManagement::Clone_Node(const _tchar * pPrototypeTag, CBT_Node_Manage
 	return m_pBT_Node_Manager->Clone_Node(pPrototypeTag, eType, pInit_Struct);
 }
 
-void CManagement::Create_ParticleEffect(_tchar* szName, _float fLifeTime, CTransform* pFollowTrans)
+void CManagement::Create_ParticleEffect(_tchar* szName, _float fLifeTime, _v3 vPos, CTransform* pFollowTrans)
 {
-	CParticleMgr::Get_Instance()->Create_ParticleEffect(szName, fLifeTime, pFollowTrans);
+	CParticleMgr::Get_Instance()->Create_ParticleEffect(szName, fLifeTime, vPos, pFollowTrans);
 }
 
 void CManagement::Create_Effect(_tchar* szName, _v3 vPos, CTransform * pFollowTrans)

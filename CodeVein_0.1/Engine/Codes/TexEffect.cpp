@@ -337,7 +337,20 @@ void CTexEffect::Check_Move(_double TimeDelta)
 			m_pTransformCom->Set_Pos(m_vLerpPos);
 		}
 		else
-			m_pTransformCom->Add_Pos(m_pInfo->vMoveDirection * m_fMoveSpeed * _float(TimeDelta));
+		{
+			_v3 vMove = m_pInfo->vMoveDirection * m_fMoveSpeed * _float(TimeDelta);
+			if (m_pDesc->pTargetTrans)
+			{
+				_v3 vPos = m_pDesc->pTargetTrans->Get_Pos();
+				m_vFollowPos += vMove;
+				vPos += m_vFollowPos;
+				m_pTransformCom->Set_Pos(vPos);
+			}
+			else
+			{
+				m_pTransformCom->Add_Pos(vMove);
+			}
+		}
 
 	}
 
@@ -600,6 +613,5 @@ void CTexEffect::Free()
 
 	//Safe_Release(m_pManagement);
 
-	Safe_Delete(m_pDesc);
 	CEffect::Free();
 }

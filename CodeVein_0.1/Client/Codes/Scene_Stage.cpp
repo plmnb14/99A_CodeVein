@@ -48,16 +48,16 @@ HRESULT CScene_Stage::Ready_Scene()
 
 _int CScene_Stage::Update_Scene(_double TimeDelta)
 {
-	if(g_pInput_Device->Key_Down(DIK_K))
-	{
-		g_pManagement->Create_ParticleEffect(L"Effect_ButterFly_Distortion", 0.1f, nullptr);
-		g_pManagement->Create_ParticleEffect(L"Effect_ButterFly_RingLine", 0.1f, nullptr);
-	}
-	if (g_pInput_Device->Key_Down(DIK_L))
-	{
-		//g_pManagement->Create_ParticleEffect(L"Effect_ButterFly_VenomShot", 0.1f, nullptr);
-		g_pManagement->Add_GameObject_ToLayer(L"Effect_ButterFly_PointParticle", SCENE_STAGE, L"Layer_Effect");
-	}
+	//if(g_pInput_Device->Key_Down(DIK_K))
+	//{
+	//	g_pManagement->Create_ParticleEffect(L"Effect_ButterFly_Distortion", 0.1f, nullptr);
+	//	g_pManagement->Create_ParticleEffect(L"Effect_ButterFly_RingLine", 0.1f, nullptr);
+	//}
+	//if (g_pInput_Device->Key_Down(DIK_L))
+	//{
+	//	//g_pManagement->Create_ParticleEffect(L"Effect_ButterFly_VenomShot", 0.1f, nullptr);
+	//	g_pManagement->Add_GameObject_ToLayer(L"Effect_ButterFly_PointParticle", SCENE_STAGE, L"Layer_Effect");
+	//}
 
 	// -------------- UI Manager ----------------------
 
