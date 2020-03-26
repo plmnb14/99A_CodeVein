@@ -75,41 +75,41 @@ HRESULT CUI_Manager::SetUp_UILayer()
 
 	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_ConsumeItem", SCENE_STAGE, L"Layer_ConsumeItem")))
 		return E_FAIL;
-
+	
 	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_MenuBase", SCENE_STAGE, L"Layer_MenuBase")))
 		return E_FAIL;
-
+	
 	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_MenuStatus", SCENE_STAGE, L"Layer_MenuStatus")))
 		return E_FAIL;
-
+	
 	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_MenuItem", SCENE_STAGE, L"Layer_MenuItem")))
 		return E_FAIL;
-
+	
 	// Player HP Back
 	CUI::UI_DESC* pHPBackDesc = new CUI::UI_DESC;
 	pHPBackDesc->fPosX = 200.f;
 	pHPBackDesc->fPosY = 650.f;
 	pHPBackDesc->fSizeX = 284.f;
 	pHPBackDesc->fSizeY = 32.f;
-
+	
 	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_HPBack", SCENE_STAGE, L"Layer_HPBack", pHPBackDesc)))
 		return E_FAIL;
 	
 	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerHP", SCENE_STAGE, L"Layer_PlayerHP")))
 		return E_FAIL;
-
+	
 	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerST", SCENE_STAGE, L"Layer_PlayerST")))
 		return E_FAIL;
-
+	
 	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_BossDecoUI", SCENE_STAGE, L"Layer_BossDecoUI")))
 		return E_FAIL;
-
+	
 	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_BossHP", SCENE_STAGE, L"Layer_BossHP")))
 		return E_FAIL;
-
+	
 	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_RightArrow", SCENE_STAGE, L"Layer_RightArrow")))
 		return E_FAIL;
-
+	
 	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_LeftArrow", SCENE_STAGE, L"Layer_LeftArrow")))
 		return E_FAIL;
 	
@@ -118,56 +118,56 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	pQuickSlotDesc->fPosY = 500.f;
 	pQuickSlotDesc->fSizeX = 50.f;
 	pQuickSlotDesc->fSizeY = 50.f;
-
+	
 	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_ItemQuickSlot", SCENE_STAGE, L"Layer_ItemQuickSlot", pQuickSlotDesc)))
 		return E_FAIL;
-
+	
 	CUI::UI_DESC* pRightSlotDesc = new CUI::UI_DESC;
 	pRightSlotDesc->fPosX = 350.f;
 	pRightSlotDesc->fPosY = 500.f;
 	pRightSlotDesc->fSizeX = 30.f;
 	pRightSlotDesc->fSizeY = 30.f;
-
+	
 	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_SubeQuickSlot", SCENE_STAGE, L"Layer_RightQuickSlot", pRightSlotDesc)))
 		return E_FAIL;
-
+	
 	CUI::UI_DESC* pLeftSlotDesc = new CUI::UI_DESC;
 	pLeftSlotDesc->fPosX = 250.f;
 	pLeftSlotDesc->fPosY = 500.f;
 	pLeftSlotDesc->fSizeX = 30.f;
 	pLeftSlotDesc->fSizeY = 30.f;
-
+	
 	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_SubeQuickSlot", SCENE_STAGE, L"Layer_LeftQuickSlot", pLeftSlotDesc)))
 		return E_FAIL;
-
 	
-
+	
+	
 	CUI::UI_DESC* pActDesc = new CUI::UI_DESC;
 	pActDesc->fPosX = 1100.f;
 	pActDesc->fPosY = 550.f;
 	pActDesc->fSizeX = 50.f;
 	pActDesc->fSizeY = 50.f;
-
+	
 	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_ActionUI", SCENE_STAGE, L"Layer_ActionUI", pActDesc)))
 		return E_FAIL;
-
+	
 	CUI::UI_DESC* pActDesc2 = new CUI::UI_DESC;
 	pActDesc2->fPosX = 1150.f;
 	pActDesc2->fPosY = 600.f;
 	pActDesc2->fSizeX = 50.f;
 	pActDesc2->fSizeY = 50.f;
-
+	
 	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_ActionUI", SCENE_STAGE, L"Layer_ActionUI2", pActDesc2)))
 		return E_FAIL;
-
+	
 	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_MenuSkill", SCENE_STAGE, L"Layer_MenuSkill")))
 		return E_FAIL;
 	
-	/*if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_ItemSlot", SCENE_STAGE, L"Layer_ItemSlot")))
-		return E_FAIL;*/
+	///*if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_ItemSlot", SCENE_STAGE, L"Layer_ItemSlot")))
+	//	return E_FAIL;*/
 
-	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_InvenItem", SCENE_STAGE, L"Layer_InvenItem")))
-		return E_FAIL;
+	//if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_InvenItem", SCENE_STAGE, L"Layer_InvenItem")))
+	//	return E_FAIL;
 	Safe_Release(pManagement);
 
 	m_eMenuState = WIN_NONE;

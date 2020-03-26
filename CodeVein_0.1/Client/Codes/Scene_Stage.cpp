@@ -20,24 +20,24 @@ HRESULT CScene_Stage::Ready_Scene()
 	
 	if (FAILED(Ready_Layer_Camera(L"Layer_Camera")))
 		return E_FAIL;
-
+	
 	if (FAILED(Ready_Layer_Player(L"Layer_Player")))
 		return E_FAIL;
-
+	
 	if (FAILED(Ready_Layer_Monster(L"Layer_Monster")))
 		return E_FAIL;
 
-	//g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Stage_Test.dat");
+	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Stage_Test.dat");
 
 	m_pNavMesh = static_cast<Engine::CNavMesh*>(g_pManagement->Clone_Component(SCENE_STATIC, L"NavMesh"));
-
+	
 	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Test.dat");
-
-	//if (FAILED(Ready_Layer_Effect(L"Layer_Effect")))
-	//	return E_FAIL;
-	//
-	//if (FAILED(Ready_Layer_BackGround(L"Layer_BackGround")))
-	//	return E_FAIL;
+	
+	if (FAILED(Ready_Layer_Effect(L"Layer_Effect")))
+		return E_FAIL;
+	
+	if (FAILED(Ready_Layer_BackGround(L"Layer_BackGround")))
+		return E_FAIL;
 
 
 	if(FAILED(CUI_Manager::Get_Instance()->SetUp_UILayer()))
@@ -48,34 +48,16 @@ HRESULT CScene_Stage::Ready_Scene()
 
 _int CScene_Stage::Update_Scene(_double TimeDelta)
 {
-	if(g_pInput_Device->Key_Down(DIK_K))
-	{
-		CManagement*	pManagement = CManagement::Get_Instance();
-
-		if (nullptr == pManagement)
-			return E_FAIL;
-
-		Safe_AddRef(pManagement);
-		
-		pManagement->Create_ParticleEffect(L"Effect_ButterFly_Distortion", 0.1f, nullptr);
-		pManagement->Create_ParticleEffect(L"Effect_ButterFly_RingLine", 0.1f, nullptr);
-		
-		Safe_Release(pManagement);
-	}
-	if (g_pInput_Device->Key_Down(DIK_L))
-	{
-		CManagement*	pManagement = CManagement::Get_Instance();
-
-		if (nullptr == pManagement)
-			return E_FAIL;
-
-		Safe_AddRef(pManagement);
-
-		pManagement->Create_ParticleEffect(L"Effect_ButterFly_VenomShot", 0.1f, nullptr);
-		pManagement->Create_ParticleEffect(L"Effect_ButterFly_PointParticle", 0.1f, nullptr);
-
-		Safe_Release(pManagement);
-	}
+	//if(g_pInput_Device->Key_Down(DIK_K))
+	//{
+	//	g_pManagement->Create_ParticleEffect(L"Effect_ButterFly_Distortion", 0.1f, nullptr);
+	//	g_pManagement->Create_ParticleEffect(L"Effect_ButterFly_RingLine", 0.1f, nullptr);
+	//}
+	//if (g_pInput_Device->Key_Down(DIK_L))
+	//{
+	//	//g_pManagement->Create_ParticleEffect(L"Effect_ButterFly_VenomShot", 0.1f, nullptr);
+	//	g_pManagement->Add_GameObject_ToLayer(L"Effect_ButterFly_PointParticle", SCENE_STAGE, L"Layer_Effect");
+	//}
 
 	// -------------- UI Manager ----------------------
 
@@ -121,38 +103,22 @@ HRESULT CScene_Stage::Ready_Layer_Monster(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage::Ready_Layer_BackGround(const _tchar * pLayerTag)
 {
-	CManagement*		pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
-
-	Safe_AddRef(pManagement);
-
 	// For.Terrain
 	//if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_Terrain", SCENE_STAGE, pLayerTag)))
 	//	return E_FAIL;
 
 	// For.Sky
-	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_Sky", SCENE_STAGE, pLayerTag)))
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Sky", SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
-
-	Safe_Release(pManagement);
 
 	return S_OK;
 }
 
 HRESULT CScene_Stage::Ready_Layer_Effect(const _tchar * pLayerTag)
 {
-	CManagement*		pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
-
-	Safe_AddRef(pManagement);
-
 	// For.Effect
-	//if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager())) // 프로토타입 생성 이후 실행되어야 함
-	//	return E_FAIL;
-
-	Safe_Release(pManagement);
+	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager())) // 프로토타입 생성 이후 실행되어야 함
+		return E_FAIL;
 
 	return S_OK;
 }

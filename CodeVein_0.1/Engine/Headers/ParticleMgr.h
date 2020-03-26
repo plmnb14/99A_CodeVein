@@ -15,7 +15,7 @@ private:
 public:
 	HRESULT Ready_ParticleManager();
 	HRESULT Update_ParticleManager(const _double TimeDelta);
-	void Create_ParticleEffect(_tchar* szName, _float fLifeTime, CTransform* pFollowTrans = nullptr);
+	void Create_ParticleEffect(_tchar* szName, _float fLifeTime, _v3 vPos, CTransform* pFollowTrans = nullptr);
 	void Create_Effect(_tchar* szName, _v3 vPos, CTransform* pFollowTrans = nullptr);
 
 private:
@@ -27,8 +27,9 @@ private:
 private:
 	typedef struct tagParticleInfo
 	{
-		_tchar szName[256];
-		_float fLifeTime;
+		_tchar	szName[256];
+		_float	fLifeTime;
+		_v3		vCreatePos;
 		Engine::CTransform* pFollowTrans;
 	}PARTICLE_INFO;
 
@@ -39,7 +40,7 @@ private:
 
 	_float							m_fCreateDelay_Check = 0.f;
 
-	CManagement*					m_pManagement;
+	CManagement*					m_pManagement = nullptr;
 
 public:
 	virtual void Free();

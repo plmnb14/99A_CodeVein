@@ -11,6 +11,7 @@ CTexEffect::CTexEffect(const CTexEffect& rhs)
 	, m_iPass(rhs.m_iPass)
 {
 	CEffect::m_pInfo = rhs.m_pInfo;
+
 	m_bClone = true;
 }
 
@@ -336,7 +337,20 @@ void CTexEffect::Check_Move(_double TimeDelta)
 			m_pTransformCom->Set_Pos(m_vLerpPos);
 		}
 		else
-			m_pTransformCom->Add_Pos(m_pInfo->vMoveDirection * m_fMoveSpeed * _float(TimeDelta));
+		{
+			_v3 vMove = m_pInfo->vMoveDirection * m_fMoveSpeed * _float(TimeDelta);
+			if (m_pDesc->pTargetTrans)
+			{
+				_v3 vPos = m_pDesc->pTargetTrans->Get_Pos();
+				m_vFollowPos += vMove;
+				vPos += m_vFollowPos;
+				m_pTransformCom->Set_Pos(vPos);
+			}
+			else
+			{
+				m_pTransformCom->Add_Pos(vMove);
+			}
+		}
 
 	}
 
@@ -518,6 +532,7 @@ void CTexEffect::Change_EffectTexture(const _tchar* _Name)
 	Safe_Release(iter->second);
 
 	iter->second = m_pTextureCom = static_cast<CTexture*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, _Name));
+	Safe_AddRef(iter->second);
 }
 
 void CTexEffect::Change_GradientTexture(const _tchar * _Name)
@@ -530,6 +545,7 @@ void CTexEffect::Change_GradientTexture(const _tchar * _Name)
 
 	// Release 한 컴포넌트에 새로이 Clone 받음.
 	iter->second = m_pGradientTextureCom = static_cast<CTexture*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, _Name));
+	Safe_AddRef(iter->second);
 }
 
 void CTexEffect::Change_ColorTexture(const _tchar* _Name)
@@ -540,6 +556,7 @@ void CTexEffect::Change_ColorTexture(const _tchar* _Name)
 	Safe_Release(iter->second);
 
 	iter->second = m_pColorTextureCom = static_cast<CTexture*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, _Name));
+	Safe_AddRef(iter->second);
 }
 
 CTexEffect* CTexEffect::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
@@ -586,16 +603,15 @@ CGameObject* CTexEffect::Clone_GameObject(void* pArg)
 
 void CTexEffect::Free()
 {
-	CEffect::Free();
-
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
-	Safe_Release(m_pGradientTextureCom);
 	Safe_Release(m_pColorTextureCom);
+	Safe_Release(m_pGradientTextureCom);
 	Safe_Release(m_pRendererCom);
+
 	//Safe_Release(m_pManagement);
 
-	Safe_Delete(m_pDesc);
+	CEffect::Free();
 }

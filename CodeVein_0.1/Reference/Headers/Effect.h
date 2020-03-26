@@ -7,6 +7,13 @@ BEGIN(Engine)
 
 class ENGINE_DLL CEffect abstract : public CGameObject
 {
+public:
+	typedef struct tagEffDesc
+	{
+		CTransform* pTargetTrans;
+		_v3			vWorldPos;
+	}EFFECT_DESC;
+
 protected:
 	explicit CEffect(LPDIRECT3DDEVICE9 pGraphic_Device);
 	explicit CEffect(const CEffect& rhs);
@@ -19,6 +26,7 @@ public:
 
 public:
 	void Set_ParticleName(_tchar* szBuff) { lstrcpy(m_szParticleName, szBuff); }
+	void Set_Desc(_v3 vPos, CTransform* pTrans = nullptr);
 	void Reset_Init();
 
 public:
@@ -34,6 +42,7 @@ protected:
 
 protected:
 	EFFECT_INFO*			m_pInfo = nullptr;
+	EFFECT_DESC*			m_pDesc = nullptr;
 
 	_float					m_fFrame = 0.f;
 	_float					m_fAlpha = 1.f;
@@ -54,7 +63,7 @@ protected:
 	_bool					m_bClone = false;
 	_bool					m_bFadeOutStart = false;
 
-	_tchar					m_szParticleName[256];
+	_tchar					m_szParticleName[256] = L"";
 
 public:
 	virtual void Free();

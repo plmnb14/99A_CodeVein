@@ -7,7 +7,7 @@ CEffect::CEffect(LPDIRECT3DDEVICE9 pGraphic_Device)
 }
 
 CEffect::CEffect(const CEffect & rhs)
-	: CGameObject(rhs.m_pGraphic_Dev)
+	: CGameObject(rhs)
 	, m_pInfo(rhs.m_pInfo)
 {
 	m_bClone = true;
@@ -55,10 +55,17 @@ void CEffect::Setup_Info()
 {
 }
 
+void CEffect::Set_Desc(_v3 vPos, CTransform* pTrans)
+{
+	m_pDesc->vWorldPos = vPos;
+	m_pDesc->pTargetTrans = pTrans;
+}
+
 
 void CEffect::Free()
 {
 	if(!m_bClone) Safe_Delete(m_pInfo);
-	
+	Safe_Delete(m_pDesc);
+
 	CGameObject::Free();
 }
