@@ -22,7 +22,10 @@ public:
 public:
 	static CBuffer_RcTex* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
 	virtual CComponent* Clone_Component(void* pArg = nullptr);
-
+	
+private:
+	IDirect3DVertexDeclaration9*    m_pVertexDeclHardware = NULL;
+	IDirect3DVertexBuffer9*         m_pVBInstanceData = 0;
 protected:
 	virtual void Free();
 

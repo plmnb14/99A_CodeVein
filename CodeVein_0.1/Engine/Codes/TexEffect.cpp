@@ -120,24 +120,24 @@ _int CTexEffect::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CTexEffect::Render_GameObject()
 {
-	//Render_GameObject_HWInstance();
+	Render_GameObject_HWInstance();
 
-	if (nullptr == m_pShaderCom ||
-		nullptr == m_pBufferCom)
-		return E_FAIL;
-	
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
-	
-	m_pShaderCom->Begin_Shader();
-	
-	m_pShaderCom->Begin_Pass(m_iPass);
-	
-	m_pBufferCom->Render_VIBuffer();
-	
-	m_pShaderCom->End_Pass();
-	
-	m_pShaderCom->End_Shader();
+	//if (nullptr == m_pShaderCom ||
+	//	nullptr == m_pBufferCom)
+	//	return E_FAIL;
+	//
+	//if (FAILED(SetUp_ConstantTable()))
+	//	return E_FAIL;
+	//
+	//m_pShaderCom->Begin_Shader();
+	//
+	//m_pShaderCom->Begin_Pass(m_iPass);
+	//
+	//m_pBufferCom->Render_VIBuffer();
+	//
+	//m_pShaderCom->End_Pass();
+	//
+	//m_pShaderCom->End_Shader();
 
 	return NOERROR;
 }
