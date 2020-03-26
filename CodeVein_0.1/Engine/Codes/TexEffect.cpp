@@ -119,22 +119,52 @@ _int CTexEffect::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CTexEffect::Render_GameObject()
 {
+	//Render_GameObject_HWInstance();
+
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
+	
+	if (FAILED(SetUp_ConstantTable()))
+		return E_FAIL;
+	
+	m_pShaderCom->Begin_Shader();
+	
+	m_pShaderCom->Begin_Pass(m_iPass);
+	
+	m_pBufferCom->Render_VIBuffer();
+	
+	m_pShaderCom->End_Pass();
+	
+	m_pShaderCom->End_Shader();
 
+	return NOERROR;
+}
+
+HRESULT CTexEffect::Render_GameObject_HWInstance()
+{
+	if (nullptr == m_pShaderCom ||
+		nullptr == m_pBufferCom)
+		return E_FAIL;
+	
+	m_pBufferCom->Render_Before_Instancing();
+
+	m_pShaderCom->Begin_Shader();
+	m_pShaderCom->Begin_Pass(m_iPass);
+	
+	// Set Texture
 	if (FAILED(SetUp_ConstantTable()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin_Shader();
+	// Begin Pass 사이에 SetTexture 할 경우 바로 적용시키기 위해
+	m_pShaderCom->Commit_Changes();
 
-	m_pShaderCom->Begin_Pass(m_iPass);
-
-	m_pBufferCom->Render_VIBuffer();
-
+	m_pBufferCom->Render_DrawPrimitive_Instancing();
+	
 	m_pShaderCom->End_Pass();
-
 	m_pShaderCom->End_Shader();
+
+	m_pBufferCom->Render_After_Instancing();
 
 	return NOERROR;
 }
@@ -463,6 +493,8 @@ HRESULT CTexEffect::SetUp_ConstantTable()
 
 	if((m_pInfo->fMaskIndex != -1.f))
 		fMaskIndex = m_pInfo->fMaskIndex;
+
+	//D3DXHANDLE g_HandleTexture = g_pEffect->GetParameterBySemantic(NULL, "TEXTURE");
 
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, _uint(m_fFrame))))
 		return E_FAIL;

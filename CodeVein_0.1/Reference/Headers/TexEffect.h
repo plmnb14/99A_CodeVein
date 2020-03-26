@@ -28,6 +28,7 @@ public:
 	virtual _int Update_GameObject(_double TimeDelta);
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
+	HRESULT Render_GameObject_HWInstance();
 
 protected:
 	virtual void Setup_Info();

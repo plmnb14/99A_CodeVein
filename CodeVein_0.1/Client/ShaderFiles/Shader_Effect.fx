@@ -44,7 +44,10 @@ sampler		DepthSampler = sampler_state
 struct VS_IN
 {
 	float3		vPosition : POSITION;
+	float3		vNormal : NORMAL;
 	float2		vTexUV : TEXCOORD0;
+	float4		vColor : COLOR0;
+	float4		vInstance : COLOR1;
 };
 
 struct VS_OUT
@@ -52,8 +55,61 @@ struct VS_OUT
 	float4		vPosition : POSITION;
 	float2		vTexUV : TEXCOORD0;
 	float4		vProjPos : TEXCOORD1;
+	float4		vColor : COLOR0;
 };
 
+VS_OUT VS_MAIN(VS_IN In)
+{
+	VS_OUT			Out = (VS_OUT)0;
+
+	matrix		matWV, matWVP;
+	
+	matWV = mul(g_matWorld, g_matView);
+	matWVP = mul(matWV, g_matProj);
+	//
+	//Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);	
+	//Out.vTexUV = In.vTexUV;
+	//Out.vProjPos = Out.vPosition;
+	
+	// ============================================================
+	//Use the fourth component of the vBoxInstance to rotate the box:
+	In.vInstance.w *= 2 * 3.1415;
+	float4 vRotatedPos = float4(In.vPosition.xyz, 1.f);
+	vRotatedPos.x = In.vPosition.x * cos(In.vInstance.w) + In.vPosition.z * sin(In.vInstance.w);
+	vRotatedPos.z = In.vPosition.z * cos(In.vInstance.w) - In.vPosition.x * sin(In.vInstance.w);
+
+	//Use the instance position to offset the incoming box corner position:
+	//  The "* 32 - 16" is to scale the incoming 0-1 intrapos range so that it maps to 8 box widths, covering
+	//  the signed range -8 to 8. Boxes are 2 word units wide.
+	vRotatedPos += float4(In.vInstance.xyz * 32 - 16, 0);
+
+	// Transform the position from object space to homogeneous projection space
+	Out.vPosition = mul(vRotatedPos, matWVP);
+	Out.vProjPos = Out.vPosition;
+
+	// Just copy the texture coordinate & color through
+	Out.vTexUV = In.vTexUV;
+	Out.vColor = In.vColor;
+
+	return Out;		
+}
+
+struct PS_IN
+{
+	float4		vPosition : POSITION;
+	float2		vTexUV : TEXCOORD0;
+	float4		vProjPos : TEXCOORD1;
+	float4		vColor : COLOR0;
+};
+
+struct PS_OUT
+{
+	vector		vColor : COLOR0;
+	vector		vDistortion : COLOR1;
+};
+
+float3 lumCoeff = float3(0.2125, 0.7154, 0.0721);
+float3 root3 = float3(0.57735, 0.57735, 0.57735);
 float3x3 QuaternionToMatrix(float4 quat)
 {
 	float3 cross = quat.yzx * quat.zxy;
@@ -72,38 +128,6 @@ float3x3 QuaternionToMatrix(float4 quat)
 		2.0 * float3(b.y, a.x, diag.z));
 }
 
-VS_OUT VS_MAIN(VS_IN In)
-{
-	VS_OUT			Out = (VS_OUT)0;
-
-	matrix		matWV, matWVP;
-
-	matWV = mul(g_matWorld, g_matView);
-	matWVP = mul(matWV, g_matProj);
-
-	Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);	
-	Out.vTexUV = In.vTexUV;
-	Out.vProjPos = Out.vPosition;
-
-	return Out;		
-}
-
-struct PS_IN
-{
-	float4		vPosition : POSITION;
-	float2		vTexUV : TEXCOORD0;
-	float4		vProjPos : TEXCOORD1;
-};
-
-struct PS_OUT
-{
-	vector		vColor : COLOR0;
-	vector		vDistortion : COLOR1;
-};
-
-float3 lumCoeff = float3(0.2125, 0.7154, 0.0721);
-float3 root3 = float3(0.57735, 0.57735, 0.57735);
-
 PS_OUT PS_MAIN(PS_IN In) 
 {
 	PS_OUT			Out = (PS_OUT)0;
@@ -116,7 +140,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	}
 	else
 	{
-		Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
+		Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV)  * In.vColor, 2.2);
 		//Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
 		Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
 	}
