@@ -2,7 +2,9 @@
 #include "..\Headers\MainApp.h"
 #include "Scene_Logo.h"
 #include "CameraMgr.h"
-
+#include "UI_Manager.h"
+#include "Item_Manager.h"
+#include "ParticleMgr.h"
 
 CMainApp::CMainApp()
 {
@@ -15,7 +17,7 @@ HRESULT CMainApp::Ready_MainApp()
 	
 	if (FAILED(Ready_Component_Prototype()))
 		return E_FAIL;
-	
+
 	if (FAILED(Ready_Start_Scene(SCENE_LOGO)))
 		return E_FAIL;
 
@@ -28,10 +30,9 @@ _int CMainApp::Update_MainApp(_double TimeDelta)
 		return -1;
 	
 	CCameraMgr::Get_Instance()->Update();
-	
-	return g_pManagement->Update_Management(TimeDelta);
+	CParticleMgr::Get_Instance()->Update_ParticleManager(TimeDelta);
 
-	return 0;
+	return g_pManagement->Update_Management(TimeDelta);
 }	
 
 void CMainApp::LateUpdate_MainApp(_double TimeDelta)
@@ -143,6 +144,24 @@ void CMainApp::Global_KeyInput()
 		CCameraMgr::Get_Instance()->Set_CamView(BACK_VIEW);
 	}
 
+	// All Gizmo's Toggle On / Off
+	if (g_pInput_Device->Key_Down(DIK_NUMPAD6))
+	{
+		g_pManagement->Gizmo_Toggle();
+	}
+
+	// Cell Gizmo's Toggle On / Off
+	if (g_pInput_Device->Key_Down(DIK_NUMPAD7))
+	{
+		g_pManagement->Gizmo_CellEnable();
+	}
+
+	// Collider Gizmo Toggle On / Off
+	if (g_pInput_Device->Key_Down(DIK_NUMPAD8))
+	{
+		g_pManagement->Gizmo_ColliderEnable();
+	}
+
 }
 
 CMainApp * CMainApp::Create()
@@ -161,13 +180,17 @@ CMainApp * CMainApp::Create()
 void CMainApp::Free()
 {
 	Safe_Release(m_pGraphic_Dev);
+	
+	CParticleMgr::Get_Instance()->Destroy_Instance();
 
 	Safe_Release(m_pRenderer);
 	
 	CCameraMgr::Get_Instance()->Destroy_Instance();
-
+	CUI_Manager::Get_Instance()->Destroy_Instance();
+	CItem_Manager::Get_Instance()->Destroy_Instance();
+	
 	Safe_Release(g_pManagement);
-
+	
 	CManagement::Release_Engine();
 }
 

@@ -15,7 +15,8 @@ protected:
 
 public:
 	void		Move_NaviMesh_Y(const _ulong _dwSubIdx , const _float _fYDist);
-	HRESULT		Ready_NaviMesh(const _tchar * _NavMeshPath);
+	HRESULT		Ready_NaviMesh(_Device _pGraphicDev, const _tchar * _NavMeshPath);
+	HRESULT		Ready_Prototype_NaviMesh();
 	void		Render_NaviMesh();
 	_v3			Move_OnNaviMesh(CRigidBody* _pRigid, const _v3* pTargetPos, const _v3* pTargetDir, const _float _fSpeedDelta = 0.f);
 	_v3			Axis_Y_OnNavMesh(const _v3 _vPos);
@@ -46,20 +47,18 @@ public:
 
 private:
 	typedef vector<CCell*>		VEC_CELL;
-	typedef vector<VEC_CELL>	VEC_SUBSET;
+	typedef vector<VEC_CELL*>	VEC_SUBSET;
 
-	vector<VEC_CELL>		m_vecSubset_Cell;
+	vector<VEC_CELL*>		m_vecSubset_Cell;
 
-	//VEC_SUBSET			m_vecSubset;
-	//VEC_CELL				m_vecCell;
-	_ulong					m_dwSubsetIdx;
-	_ulong					m_dwIndex;
-	_bool					m_bCanMove;
+	_ulong					m_dwSubsetIdx = 0;
+	_ulong					m_dwIndex = 0;
+	_bool					m_bCanMove = false;
 
 
 public:
-	static	CNavMesh*		Create(_Device pGraphicDev , const _tchar * _NavMeshPath = nullptr);
-	virtual CComponent*		Clone_Component(void*_pArg);
+	static	CNavMesh*		Create(_Device pGraphicDev);
+	virtual CComponent*		Clone_Component(void* pArg);
 	virtual void			Free();
 };
 

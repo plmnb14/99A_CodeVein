@@ -173,14 +173,17 @@
     <ClInclude Include="..\Headers\BossDecoUI.h" />
     <ClInclude Include="..\Headers\BossHP.h" />
     <ClInclude Include="..\Headers\Client_Defines.h" />
-    <ClInclude Include="..\Headers\CursorSelectBar.h" />
+    <ClInclude Include="..\Headers\Consume_Item.h" />
+    <ClInclude Include="..\Headers\Dummy_Target.h" />
     <ClInclude Include="..\Headers\HPBack.h" />
+    <ClInclude Include="..\Headers\Inven_Item.h" />
     <ClInclude Include="..\Headers\Item.h" />
     <ClInclude Include="..\Headers\ItemSlot.h" />
+    <ClInclude Include="..\Headers\Item_Manager.h" />
     <ClInclude Include="..\Headers\Item_QuickSlot.h" />
     <ClInclude Include="..\Headers\MenuIcon.h" />
-    <ClInclude Include="..\Headers\Menu_Active.h" />
     <ClInclude Include="..\Headers\Menu_Item.h" />
+    <ClInclude Include="..\Headers\Menu_Skill.h" />
     <ClInclude Include="..\Headers\Menu_Status.h" />
     <ClInclude Include="..\Headers\Genji.h" />
     <ClInclude Include="..\Headers\PoisonButterfly.h" />
@@ -207,6 +210,7 @@
     <ClInclude Include="..\Headers\Weapon.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="StageLoader.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -216,14 +220,17 @@
     <ClCompile Include="..\Codes\BlackWolf.cpp" />
     <ClCompile Include="..\Codes\BossDecoUI.cpp" />
     <ClCompile Include="..\Codes\BossHP.cpp" />
-    <ClCompile Include="..\Codes\CursorSelectBar.cpp" />
+    <ClCompile Include="..\Codes\Consume_Item.cpp" />
+    <ClCompile Include="..\Codes\Dummy_Target.cpp" />
     <ClCompile Include="..\Codes\HPBack.cpp" />
+    <ClCompile Include="..\Codes\Inven_Item.cpp" />
     <ClCompile Include="..\Codes\Item.cpp" />
     <ClCompile Include="..\Codes\ItemSlot.cpp" />
+    <ClCompile Include="..\Codes\Item_Manager.cpp" />
     <ClCompile Include="..\Codes\Item_QuickSlot.cpp" />
     <ClCompile Include="..\Codes\MenuIcon.cpp" />
-    <ClCompile Include="..\Codes\Menu_Active.cpp" />
     <ClCompile Include="..\Codes\Menu_Item.cpp" />
+    <ClCompile Include="..\Codes\Menu_Skill.cpp" />
     <ClCompile Include="..\Codes\Menu_Status.cpp" />
     <ClCompile Include="..\Codes\Genji.cpp" />
     <ClCompile Include="..\Codes\PoisonButterfly.cpp" />
@@ -249,6 +256,7 @@
     <ClCompile Include="..\Codes\BlackUrchin.cpp" />
     <ClCompile Include="..\Codes\Weapon.cpp" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="StageLoader.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -264,11 +272,9 @@
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
-    <FxCompile Include="..\ShaderFiles\Shader_Blend.fx" />
     <FxCompile Include="..\ShaderFiles\Shader_Default.fx" />
     <FxCompile Include="..\ShaderFiles\Shader_Effect.fx" />
     <FxCompile Include="..\ShaderFiles\Shader_Gizmo.fx" />
-    <FxCompile Include="..\ShaderFiles\Shader_LightAcc.fx" />
     <FxCompile Include="..\ShaderFiles\Shader_Mesh.fx" />
     <FxCompile Include="..\ShaderFiles\Shader_Sky.fx" />
     <FxCompile Include="..\ShaderFiles\Shader_Terrain.fx" />

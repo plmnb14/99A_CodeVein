@@ -261,8 +261,8 @@ void CEffectToolView::Ready_Resource()
 
 	Safe_AddRef(pManagement);
 
-	pManagement->LoadTex_FromPath(m_pGraphicDev, L"../../Data/Tex_Path.dat");
-	pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_Path.dat");
+	pManagement->LoadTex_FromPath(m_pGraphicDev, L"../../Data/EffectTex_Path.dat");
+	pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/EffectMesh_Path.dat");
 
 	if (0 > (pManagement->Add_Prototype(L"GameObject_Effect", CTexEffect::Create(m_pGraphicDev))))
 		return;

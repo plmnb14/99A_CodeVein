@@ -18,6 +18,7 @@ public:
 	
 	CItem::ITEM_TYPE Get_SlotItemType();
 	_uint Get_SlotSize();
+	_uint Get_ItemNum();
 
 public:
 	void Set_Select(_bool bSelect) { m_bIsSelect = bSelect; }
@@ -35,6 +36,7 @@ private:
 
 public:
 	void					Add_Item(CItem::ITEM_TYPE eType);
+	void					Add_Item(const _tchar * pPrototypeTag, void * pArg = nullptr);
 	void					Pop_Item();
 	
 

@@ -2,6 +2,7 @@
 #include "..\Headers\Player.h"
 #include "Weapon.h"
 #include "CameraMgr.h"
+#include "Dummy_Target.h"
 
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
@@ -37,21 +38,19 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	KeyInput();
 
+	Parameter_YPos();
 	Parameter_Movement();
 	Parameter_State();
 	Parameter_Atk();
 	Parameter_HeavyCharging();
-
-	m_pDynamicMesh->SetUp_Animation_Lower(m_eAnim_Lower);
-	m_pDynamicMesh->SetUp_Animation_Upper(m_eAnim_Upper);
-	m_pDynamicMesh->SetUp_Animation_RightArm(m_eAnim_RightArm);
+	Parameter_Collision();
 
 	if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
 
 	m_pWeapon[m_eActiveSlot]->Update_GameObject(TimeDelta);
 
-	return _int();
+	return NO_EVENT;
 }
 
 _int CPlayer::Late_Update_GameObject(_double TimeDelta)
@@ -60,9 +59,9 @@ _int CPlayer::Late_Update_GameObject(_double TimeDelta)
 		nullptr == m_pDynamicMesh)
 		return E_FAIL;
 
-	m_pDynamicMesh->Play_Animation_Upper(_float(TimeDelta) * m_fAnimMutiply);
-	m_pDynamicMesh->Play_Animation_Lower(_float(TimeDelta) * m_fAnimMutiply);
-	m_pDynamicMesh->Play_Animation_RightArm(_float(TimeDelta) * m_fAnimMutiply , true);
+	m_pDynamicMesh->SetUp_Animation_Lower(m_eAnim_Lower);
+	m_pDynamicMesh->SetUp_Animation_Upper(m_eAnim_Upper);
+	m_pDynamicMesh->SetUp_Animation_RightArm(m_eAnim_RightArm);
 
 	m_pWeapon[m_eActiveSlot]->Late_Update_GameObject(TimeDelta);
 
@@ -75,11 +74,14 @@ HRESULT CPlayer::Render_GameObject()
 		nullptr == m_pDynamicMesh)
 		return E_FAIL;
 
+	m_pDynamicMesh->Play_Animation_Lower(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply);
+	m_pDynamicMesh->Play_Animation_Upper(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply);
+	m_pDynamicMesh->Play_Animation_RightArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply, true);
+
 	if (FAILED(SetUp_ConstantTable()))
 		return E_FAIL;
 
 	m_pShader->Begin_Shader();
-
 
 	_uint iNumMeshContainer = _uint(m_pDynamicMesh->Get_NumMeshContainer());
 
@@ -106,6 +108,8 @@ HRESULT CPlayer::Render_GameObject()
 	}
 
 	m_pShader->End_Shader();
+
+	g_pManagement->Gizmo_Draw_Capsule(m_pCollider->Get_CenterPos(), m_pCollider->Get_Radius());
 
 	return NOERROR;
 }
@@ -289,8 +293,8 @@ void CPlayer::Parameter_Movement()
 		D3DXVec3Normalize(&tmpLook, &tmpLook);
 
 		// 네비 메쉬 추가되면 바꿔야함
-		m_pTransform->Add_Pos(fMoveSpeed);
-		//m_pTransform->Set_Pos((m_pNav->Move_OnNaviMesh(m_pRigid, &m_pTransform->Get_Pos(), &tmpLook, fMoveSpeed)));
+		//m_pTransform->Add_Pos(fMoveSpeed);
+		m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, fMoveSpeed)));
 	}
 
 	else if (m_bMove[MOVE_Left])
@@ -344,8 +348,8 @@ void CPlayer::Parameter_Movement()
 		D3DXVec3Normalize(&tmpLook, &tmpLook);
 
 		// 네비 메쉬 추가되면 바꿔야함
-		m_pTransform->Add_Pos(fMoveSpeed);
-		//m_pTransform->Set_Pos((m_pNav->Move_OnNaviMesh(m_pRigid, &m_pTransform->Get_Pos(), &tmpLook, fMoveSpeed)));
+		//m_pTransform->Add_Pos(fMoveSpeed);
+		m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, fMoveSpeed)));
 	}
 
 	else if (m_bMove[MOVE_Right])
@@ -398,8 +402,8 @@ void CPlayer::Parameter_Movement()
 		D3DXVec3Normalize(&tmpLook, &tmpLook);
 
 		// 네비 메쉬 추가되면 바꿔야함
-		m_pTransform->Add_Pos(fMoveSpeed);
-		//m_pTransform->Set_Pos((m_pNav->Move_OnNaviMesh(m_pRigid, &m_pTransform->Get_Pos(), &tmpLook, fMoveSpeed)));
+		//m_pTransform->Add_Pos(fMoveSpeed);
+		m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, fMoveSpeed)));
 	}
 
 	else if (m_bMove[MOVE_Back])
@@ -471,8 +475,8 @@ void CPlayer::Parameter_Movement()
 		D3DXVec3Normalize(&tmpLook, &tmpLook);
 
 		// 네비 메쉬 추가되면 바꿔야함
-		m_pTransform->Add_Pos(fMoveSpeed);
-		//m_pTransform->Set_Pos((m_pNav->Move_OnNaviMesh(m_pRigid, &m_pTransform->Get_Pos(), &tmpLook, fMoveSpeed)));
+		//m_pTransform->Add_Pos(fMoveSpeed);
+		m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, fMoveSpeed)));
 	}
 }
 
@@ -484,8 +488,22 @@ void CPlayer::Parameter_HeavyCharging()
 	}
 }
 
+void CPlayer::Parameter_YPos()
+{
+	m_pTransform->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransform->Get_Pos()));
+}
+
+void CPlayer::Parameter_Collision()
+{
+	Update_Collider();
+	OnCollisionEnter();
+}
+
 void CPlayer::KeyInput()
 {
+	if (CCameraMgr::Get_Instance()->Get_CamView() == TOOL_VIEW)
+		return;
+
 	KeyDown();
 	KeyUp();
 }
@@ -1433,13 +1451,11 @@ void CPlayer::Skill_Movement(_float _fspeed, _v3 _vDir)
 	_v3 tmpLook;
 	_float fSpeed = _fspeed;
 
-	m_pTransform->Add_Pos(fSpeed* g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") , _vDir);
-
-	//tmpLook = _vDir;
-	//D3DXVec3Normalize(&tmpLook, &tmpLook);
+	tmpLook = _vDir;
+	D3DXVec3Normalize(&tmpLook, &tmpLook);
 
 	// 네비게이션 적용하면 
-	//m_pTransform->Set_Pos((m_pNav->Move_OnNaviMesh(m_pRigid, &m_pTransform->Get_Pos(), &tmpLook, fSpeed * ENGINE::Get_Deltatime(L"Timer_Fps_60"))));
+	m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
 }
 
 void CPlayer::Decre_Skill_Movement(_float _fMutiply)
@@ -1489,7 +1505,19 @@ HRESULT CPlayer::Add_Component()
 	// for.Com_Mesh
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Player", L"Mesh_Dynamic", (CComponent**)&m_pDynamicMesh)))
 		return E_FAIL;
-	
+
+	// for.Com_NavMesh
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"NavMesh", (CComponent**)&m_pNavMesh)))
+		return E_FAIL;
+
+	m_pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
+
+	m_pCollider->Set_Radius(_v3{ 0.4f, 0.5f, 0.4f});
+	m_pCollider->Set_Dynamic(true);
+	m_pCollider->Set_Type(COL_CAPSULE);
+	m_pCollider->Set_CapsuleLength(1.8f);
+	m_pCollider->Set_CenterPos(m_pTransform->Get_Pos() + _v3{0.f , m_pCollider->Get_Radius().y , 0.f});
+
 	return NOERROR;
 }
 
@@ -1498,7 +1526,7 @@ HRESULT CPlayer::SetUp_Default()
 	ZeroMemory(&m_tInfo, sizeof(ACTOR_INFO));
 
 	// Transform
-	m_pTransform->Set_Pos(V3_NULL);
+	m_pTransform->Set_Pos(_v3(-0.487f , 0.f , 23.497f));
 	m_pTransform->Set_Scale(V3_ONE);
 
 	// Mesh
@@ -1517,6 +1545,11 @@ HRESULT CPlayer::SetUp_Default()
 	// Anim
 	m_fAnimMutiply = 1.f;
 
+	// Navi
+	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Test.dat");
+	m_pNavMesh->Set_SubsetIndex(0);
+	m_pNavMesh->Set_Index(14);
+
 	return S_OK;
 }
 
@@ -1525,26 +1558,41 @@ HRESULT CPlayer::SetUp_ConstantTable()
 	if (nullptr == m_pShader)
 		return E_FAIL;
 
-	CManagement*		pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
-
-	Safe_AddRef(pManagement);
-
 	if (FAILED(m_pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;	
 
-	_mat		ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
+	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 
 	if (FAILED(m_pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
 
-	Safe_Release(pManagement);
-
 	return NOERROR;
+}
+
+void CPlayer::OnCollisionEnter()
+{
+	for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Dummy", SCENE_STAGE))
+	{
+		CDummy_Target* pDummy = static_cast<CDummy_Target*>(iter);
+
+		for (auto& iterCollider : pDummy->Get_ColliderVector())
+		{
+			if (m_pCollider->Check_Capsule(iterCollider))
+			{
+				cout << "부딪혀요" << endl;
+			}
+		}
+	}
+}
+
+void CPlayer::Update_Collider()
+{
+	//cout << m_pCollider->Get_ColInfo()->vBegin.x << endl;
+
+	m_pCollider->Update(m_pTransform->Get_WorldMat());
 }
 
 void CPlayer::Reset_BattleState()
@@ -1596,10 +1644,12 @@ void CPlayer::Free()
 		Safe_Release(m_pWeapon[i]);
 	}
 
+	Safe_Release(m_pCollider);
 	Safe_Release(m_pTransform);
 	Safe_Release(m_pDynamicMesh);
 	Safe_Release(m_pShader);	
 	Safe_Release(m_pRenderer);
+	Safe_Release(m_pNavMesh);
 
 	CGameObject::Free();
 }

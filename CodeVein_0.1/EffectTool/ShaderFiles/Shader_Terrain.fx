@@ -72,7 +72,7 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	Out.vDiffuse = 1.f;
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.f, 0.f);
 	
 	return Out;
 }

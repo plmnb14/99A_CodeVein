@@ -7,7 +7,11 @@
 #include "MeshEffect.h"
 #include "Player.h"
 #include "HPBack.h"
+#include "TestMonster.h"
 #include "Weapon.h"
+#include "Dummy_Target.h"
+
+#include "UI_Manager.h"
 
 #include "TestMonster.h"
 #include "PoisonButterfly.h"
@@ -55,87 +59,57 @@ HRESULT CLoading::Ready_Loading(SCENEID eLoadingID)
 
 _uint CLoading::Loading_ForStage(void)
 {
-	CManagement*	pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return -1;
-
-	Safe_AddRef(pManagement);
-
 	// BT_Node 생성 중
-	if (FAILED(pManagement->Ready_BT_Node()))
+	if (FAILED(g_pManagement->Ready_BT_Node()))
 		return E_FAIL;
 
 	_mat DefaultMat;
 	D3DXMatrixIdentity(&DefaultMat);
 
-	
-	// 오브젝트 원형
-	lstrcpy(m_szString, L"게임오브젝트 원형 생성 중....");
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_Player", CPlayer::Create(m_pGraphicDev))))
-		return E_FAIL;
-
-
-	lstrcpy(m_szString, L"이펙트 생성 중....");
+	// 이펙트 원형 생성
 	Ready_Effect();
 
-	// UI
-	//if (FAILED(pManagement->Add_Prototype(L"GameObject_HPBack", CHPBack::Create(m_pGraphicDev))))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype(L"GameObject_PlayerHP", CPlayerHP::Create(m_pGraphicDev))))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype(L"GameObject_PlayerST", CPlayerST::Create(m_pGraphicDev))))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype(L"GameObject_BossDecoUI", CBossDecoUI::Create(m_pGraphicDev))))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype(L"GameObject_BossHP", CBossHP::Create(m_pGraphicDev))))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype(L"GameObject_ItemSlot", CItemSlot::Create(m_pGraphicDev))))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype(L"GameObject_RightArrow", CRightArrow::Create(m_pGraphicDev))))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype(L"GameObject_LeftArrow", CLeftArrow::Create(m_pGraphicDev))))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype(L"GameObject_Item", CItem::Create(m_pGraphicDev))))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuBase", CMenuBaseUI::Create(m_pGraphicDev))))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuIcon", CMenuIcon::Create(m_pGraphicDev))))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype(L"GameObject_CntSlotUI", CSlotCnt_UI::Create(m_pGraphicDev))))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype(L"GameObject_ItemQuickSlot", CItem_QuickSlot::Create(m_pGraphicDev))))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuStatus", CMenu_Status::Create(m_pGraphicDev))))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuItem", CMenu_Item::Create(m_pGraphicDev))))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype(L"GameObject_ActionUI", CActiveSkill_UI::Create(m_pGraphicDev))))
-	//	return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype(L"GameObject_MenuActive", CMenu_Active::Create(m_pGraphicDev))))
-	//	return E_FAIL;
+	// Sky
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Sky", CSky::Create(m_pGraphicDev))))
+		return E_FAIL;
+
+	// UI 원형 생성
+	CUI_Manager::Get_Instance()->Add_UI_Prototype(m_pGraphicDev);
+
+	
+	// 오브젝트 원형 생성
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	// 플레이어
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Player", CPlayer::Create(m_pGraphicDev))))
+		return E_FAIL;
 
 	//몬스터
-	//테스트용
-	if (FAILED(pManagement->Add_Prototype(L"Monster_TestMonster", CTestMonster::Create(m_pGraphicDev))))
+
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_TestMonster", CTestMonster::Create(m_pGraphicDev))))
 		return E_FAIL;
 	// 독나방
-	if (FAILED(pManagement->Add_Prototype(L"Monster_PoisonButterfly", CPoisonButterfly::Create(m_pGraphicDev))))
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonButterfly", CPoisonButterfly::Create(m_pGraphicDev))))
 		return E_FAIL;
 	// 검은 성게
-	if (FAILED(pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))
 		return E_FAIL;
 	// 검은 늑대
-	if (FAILED(pManagement->Add_Prototype(L"Monster_BlackWolf", CBlackWolf::Create(m_pGraphicDev))))
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackWolf", CBlackWolf::Create(m_pGraphicDev))))
 		return E_FAIL;
 
 	//무기
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_Weapon", CWeapon::Create(m_pGraphicDev))))
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon", CWeapon::Create(m_pGraphicDev))))
 		return E_FAIL;
 
-	Safe_Release(pManagement);
+	//더미
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Dummy", CDummy_Target::Create(m_pGraphicDev))))
+		return E_FAIL;
 
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	m_bFinish = true;
-	lstrcpy(m_szString, L"로딩 완료");
+
+	cout << "로딩 완료" << endl;
 
 	return 0;
 }
@@ -162,18 +136,23 @@ unsigned int CALLBACK CLoading::Thread_Main(void* pArg)
 
 HRESULT CLoading::Ready_Effect(void)
 {
-	CManagement*	pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return -1;
-
-	Safe_AddRef(pManagement);
-
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_EffectSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/testSmoke.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"Effect_TestSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/testSmoke.dat")))))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_EffectTestMesh", CMeshEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/testMeshEff.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"Effect_FootSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Player_FootSmoke.dat")))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Effect_ButterFly_SoftSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_SoftSmoke.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Effect_ButterFly_PointParticle", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_PointParticle.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Effect_ButterFly_VenomShot", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_VenomShot.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Effect_ButterFly_RingLine", CMeshEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_RingLine.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Effect_ButterFly_Distortion", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_Distortion.dat")))))
+		return E_FAIL;
+	//if (FAILED(g_pManagement->Add_Prototype(L"GameObject_EffectTestMesh", CMeshEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/testMeshEff.dat")))))
+	//	return E_FAIL;
 
-	Safe_Release(pManagement);
 	return S_OK;
 }
 
@@ -197,6 +176,8 @@ Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
 		::ReadFile(hFile, &pInfo->bDistortion, sizeof(_bool), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->bStaticFrame, sizeof(_bool), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->bUseColorTex, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bUseRGBA, sizeof(_bool), &dwByte, nullptr);
+
 		::ReadFile(hFile, &pInfo->bColorMove, sizeof(_bool), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->bDirMove, sizeof(_bool), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->bFadeIn, sizeof(_bool), &dwByte, nullptr);
@@ -208,6 +189,7 @@ Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
 		::ReadFile(hFile, &pInfo->bRevColor, sizeof(_bool), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->bRotMove, sizeof(_bool), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->bScaleMove, sizeof(_bool), &dwByte, nullptr);
+
 		::ReadFile(hFile, &pInfo->fAlphaSpeed, sizeof(_float), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->fAlphaSpeed_Max, sizeof(_float), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->fAlphaSpeed_Min, sizeof(_float), &dwByte, nullptr);
@@ -241,6 +223,7 @@ Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
 		::ReadFile(hFile, &pInfo->vStartPos, sizeof(_v3), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->vStartScale, sizeof(_v3), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->fColorIndex, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fMaskIndex, sizeof(_float), &dwByte, nullptr);
 
 		break;
 	}
@@ -248,6 +231,11 @@ Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
 	CloseHandle(hFile);
 
 	return pInfo;
+}
+
+HRESULT CLoading::Stage_Object_Ready()
+{
+	return E_NOTIMPL;
 }
 
 CLoading* CLoading::Create(LPDIRECT3DDEVICE9 pGraphicDev, SCENEID eLoadingID)

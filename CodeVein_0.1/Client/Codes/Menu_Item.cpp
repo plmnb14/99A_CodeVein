@@ -45,10 +45,6 @@ _int CMenu_Item::Update_GameObject(_double TimeDelta)
 
 	SetUp_WindowPos();
 
-	if (CInput_Device::Get_Instance()->Key_Up(DIK_U))
-		Add_Item(CItem::REGEN_POWER, 0);
-	if (CInput_Device::Get_Instance()->Key_Up(DIK_I))
-		Add_Item(CItem::ITEM_2, 0);
 	
 	Click_ItemSlot();
 	
@@ -137,7 +133,7 @@ HRESULT CMenu_Item::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STAGE, L"Texture_Window", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_MenuWindow", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader

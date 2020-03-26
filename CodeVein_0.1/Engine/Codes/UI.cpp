@@ -1,5 +1,6 @@
 #include "..\Headers\UI.h"
 
+
 CUI::CUI(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {

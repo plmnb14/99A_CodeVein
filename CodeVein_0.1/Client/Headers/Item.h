@@ -1,42 +1,33 @@
 #pragma once
 
 #include "Client_Defines.h"
-#include "UI.h"
+#include "GameObject.h"
 #include "Management.h"
 
-class CItem : public CUI
+BEGIN(Client)
+
+class CItem : public CGameObject
 {
 public:
 	enum ITEM_TYPE
 	{
-		ITEM_NONE,
-		REGEN_POWER, // 재생력
-		ITEM_2,
-		ITEM_3,
+		CONSUME,
+		MATERIAL,
+		QUEST,
 		ITEM_END
 	};
-	typedef struct tagItemInfo
-	{
-		_int iHP; //체력
-		_int iSP; //스태미너
-		ITEM_TYPE eType;
-	}ITEM_INFO;
-private:
+
+protected:
 	explicit CItem(_Device pGraphic_Device);
 	explicit CItem(const CItem& rhs);
 	virtual ~CItem() = default;
 
-//public:
-//	_uint Get_Index() { return m_iIndex; }
-//	_uint Get_ItemCnt() { return m_iItemCount; }
+public:
+	ITEM_TYPE Get_Type() { return m_eType; }
+	_uint		Get_ItemNumber() { return m_iItemNumber; }
 
 public:
-	ITEM_INFO& Get_Info() { return m_tInfo; }
-	ITEM_TYPE Get_Type() { return m_tInfo.eType; }
-
-public:
-	void Set_Info(ITEM_INFO tInfo) { m_tInfo = tInfo; }
-	void Set_Type(ITEM_TYPE eType) { m_tInfo.eType = eType; }
+	void Set_ItemNumber(_uint iNum) { m_iItemNumber = iNum; }
 
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();
@@ -45,22 +36,13 @@ public:
 	virtual _int			Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT			Render_GameObject();
 
-private:
-	HRESULT					Add_Component();
-	HRESULT					SetUp_ConstantTable();
-
-private:
-	CBuffer_RcTex*			m_pBufferCom = nullptr;
-	CTransform*				m_pTransformCom = nullptr;
-	CRenderer*				m_pRendererCom = nullptr;
-	CTexture*				m_pTextureCom = nullptr;
-	CShader*				m_pShaderCom = nullptr;
-	
-	ITEM_INFO				m_tInfo;
+protected:
+	ITEM_TYPE				m_eType;
+	_uint					m_iItemNumber = 0; // 아이템 식별번호
 
 public:
-	static CItem*		Create(_Device pGraphic_Device);
-	virtual CGameObject*	Clone_GameObject(void* pArg);
+	virtual CGameObject*	Clone_GameObject(void* pArg) = 0;
 	virtual void			Free();
 };
 
+END

@@ -27,6 +27,9 @@ HRESULT CItem_QuickSlot::Ready_GameObject(void * pArg)
 
 	m_fPosX = 300.f;
 	m_fPosY = 500.f;
+
+	m_vOldPos =_v2(m_fPosX, m_fPosY);
+	
 	m_fSizeX = 50.f;
 	m_fSizeY = 50.f;
 
@@ -152,7 +155,7 @@ HRESULT CItem_QuickSlot::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STAGE, L"Texture_Item", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_ItemIcon", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -219,13 +222,13 @@ void CItem_QuickSlot::Update_UIPos()
 {
 	if (m_bIsOpen)
 	{
-		m_fPosX = 300.f;
-		m_fPosY = 500.f;
+		m_fPosX = m_vOldPos.x;
+		m_fPosY = m_vOldPos.y;
 	}
 	else
 	{
-		m_fPosX = -WINCX + 300.f;
-		m_fPosY = 500.f;
+		m_fPosX = -WINCX + m_vOldPos.x;
+		m_fPosY = m_vOldPos.y;
 	}
 
 	CManagement* pManagement = CManagement::Get_Instance();

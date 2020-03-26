@@ -36,13 +36,15 @@ public:
 	void Draw_AABB(const _v3* _vVertex ,_v3 _vPos, _v3 _vSize = _v3{1.f, 1.f, 1.f});
 	void Draw_OBB(const _v3* _vVertex, _v3 vRotate, _v3 _vPos, _v3 _vSize = _v3{ 1.f, 1.f, 1.f });
 
-	void Draw_Capsule(const _v3 _vVertex, _float _fRadius, _float _fMaxHeight);
+	void Draw_Capsule(const _v3 _vVertex, const _v3 _vRadius);
 
 public:
 	HRESULT Init_Shader(_mat _DefaultMat);
 
 public:
-	void Set_EnableGizmo();
+	void Gizmo_Toggle();
+	void Enable_GizmoCell();
+	void Enable_GizmoCollider();
 
 public:
 	virtual void Free(void);
@@ -54,7 +56,9 @@ private:
 	D3DXCOLOR			m_Color;
 
 private:
-	_bool	m_bEnableGizmo;
+	_bool	m_bEnableCell = false;
+	_bool	m_bEnableCollider = false;
+	_bool	m_bToogle = false;
 
 };
 

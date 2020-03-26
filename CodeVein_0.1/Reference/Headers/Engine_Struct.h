@@ -126,6 +126,18 @@ namespace Engine
 
 	typedef struct tagCollider
 	{
+		// 캡슐용
+		///////////////////////////////////////////////////////
+
+		_v3		vBegin;		// 시작 점
+		_v3		vEnd;			// 바닥 점
+		_v3		vAxis;			// 축
+		_float	fBeginEndLength;
+
+		///////////////////////////////////////////////////////
+
+		_v3  vCrossPoint;	// 교차 지점
+
 		_v3	 pGizmoPos[8];	// 디버깅용 Gizmo 위치
 		_v3	 vCenterPos;	// 중단점
 		_v3	 vUnderPos;		// 하단점
@@ -287,6 +299,7 @@ namespace Engine
 		_bool	bStaticFrame;
 		_float	fMaxFrame;
 		_float	fColorIndex;
+		_float	fMaskIndex;
 
 		_float	fAnimSpeed;
 		_float  fLifeTime;

@@ -44,7 +44,7 @@ HRESULT CMenuBaseUI::Ready_GameObject(void * pArg)
 
 	m_fPosX = WINCX - 300.f;
 	m_fPosY = WINCY * 0.5f;
-	m_fSizeX = 648;
+	m_fSizeX = 300;
 	m_fSizeY = 648;
 
 	Add_Slot(5);
@@ -62,12 +62,6 @@ _int CMenuBaseUI::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
-	/*if (CInput_Device::Get_Instance()->Key_Up(DIK_C))
-		Add_Item(CItem::ITEM_TYPE::REGEN_POWER, 0);
-	if (CInput_Device::Get_Instance()->Key_Up(DIK_V))
-		Add_Item(CItem::ITEM_TYPE::ITEM_2, 1);
-	if (CInput_Device::Get_Instance()->Key_Up(DIK_B))
-		Add_Item(CItem::ITEM_TYPE::ITEM_3, 2);*/
 	
 
 	SetUp_WindowPosition();
@@ -78,8 +72,6 @@ _int CMenuBaseUI::Update_GameObject(_double TimeDelta)
 	}
 
 
-
-	//cout << m_vecItemSlot.size() << endl;
 
 	return NO_EVENT;
 }
@@ -153,7 +145,7 @@ HRESULT CMenuBaseUI::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STAGE, L"Texture_Window", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_MenuWindow", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -302,7 +294,7 @@ void CMenuBaseUI::Add_MenuIcon(_uint iMenuIconCnt)
 
 void CMenuBaseUI::Add_Item(CItem::ITEM_TYPE eType, _uint iSlotIndex)
 {
-	if (CItem::ITEM_NONE == eType)
+	if (CItem::ITEM_END == eType)
 		return;
 
 	CManagement* pManagement = CManagement::Get_Instance();

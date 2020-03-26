@@ -49,6 +49,7 @@ private:
 	CRenderer*				m_pRenderer		= nullptr;
 	CShader*				m_pShader		= nullptr;
 	CMesh_Static*			m_pMesh_Static	= nullptr;
+	CCollider*				m_pCollider		= nullptr;
 
 private:
 	_tchar					m_szName[MAX_STR] = L"";

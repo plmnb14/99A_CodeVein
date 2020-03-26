@@ -16,6 +16,7 @@ public:
 	}UI_DESC;
 
 protected:
+	explicit CUI();
 	explicit CUI(LPDIRECT3DDEVICE9 pGraphic_Device);
 	explicit CUI(const CUI& rhs);
 	virtual ~CUI() = default;

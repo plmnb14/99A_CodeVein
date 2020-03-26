@@ -111,11 +111,12 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			}
 		}
 	}
-
+	
 	g_pTimer_Manager->Destroy_Instance();
 	g_pFrame_Manager->Destroy_Instance();
+	
 	Safe_Release(pMainApp);
-
+	
     return (int) msg.wParam;
 }
 

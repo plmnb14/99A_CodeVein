@@ -17,6 +17,8 @@
 #include "BT_Node_Mgr.h"
 #include "Timer_Manager.h"
 #include "FrameMgr.h"
+#include "ParticleMgr.h"
+#include "Renderer.h"
 
 BEGIN(Engine)
 
@@ -48,19 +50,25 @@ public: // for.Scene_Manager
 	HRESULT SetUp_CurrentScene(CScene* pScene);
 
 public: // For.Object_Manager
-	HRESULT Add_Prototype(const _tchar* pPrototypeTag, CGameObject* pPrototype);
-	HRESULT Add_GameObject_ToLayer(const _tchar* pPrototypeTag, _uint iSceneID, const _tchar* pLayerTag, void* pArg = nullptr);
-	CGameObject* Get_GameObjectBack(const _tchar* pLayerTag, _uint iSceneID);
-	CGameObject* Clone_GameObject_Return(const _tchar* pPrototypeTag, void* pArg);
-	HRESULT		Add_GameOject_ToLayer_NoClone(CGameObject* _pGameObject, _uint iSceneID, const _tchar* pLayerTag, void* pArg);
+	HRESULT				Add_Prototype(const _tchar* pPrototypeTag, CGameObject* pPrototype);
+	HRESULT				Add_GameObject_ToLayer(const _tchar* pPrototypeTag, _uint iSceneID, const _tchar* pLayerTag, void* pArg = nullptr);
+	CGameObject*		Get_GameObjectBack(const _tchar* pLayerTag, _uint iSceneID);
+	list<CGameObject*>	Get_GameObjectList(const _tchar* pLayerTag, _uint iSceneID);
+	CGameObject*		Clone_GameObject_Return(const _tchar* pPrototypeTag, void* pArg);
+	HRESULT				Add_GameOject_ToLayer_NoClone(CGameObject* _pGameObject, _uint iSceneID, const _tchar* pLayerTag, void* pArg);
+	HRESULT				LoadCreateObject_FromPath(_Device _pGraphicDev, const _tchar* _FilePath);
 
 public: // for.Component_Manager
-	HRESULT Ready_Component_Manager(_Device _pGraphicDev);
-	HRESULT Add_Prototype(_uint iSceneID, const _tchar* pPrototypeTag, CComponent* pPrototype);
+	HRESULT		Ready_Component_Manager(_Device _pGraphicDev);
+	HRESULT		Add_Prototype(_uint iSceneID, const _tchar* pPrototypeTag, CComponent* pPrototype);
 	CComponent* Clone_Component(_uint iSceneID, const _tchar* pPrototypeTag, void* pArg = nullptr);
 
 	HRESULT LoadMesh_FromPath(_Device pGraphicDev, const _tchar* szImgPath);
 	HRESULT LoadTex_FromPath(_Device pGraphicDev, const _tchar* szImgPath);
+
+public:
+	void	Clone_NavMesh_OnManagement();
+	void	LoadNavMesh_FromFile(_Device _pGraphicDev, const _tchar* szFile);
 
 public: // For.PipeLine
 	_v3	Get_CamPosition();
@@ -83,13 +91,19 @@ public: // For.Gizmo
 	void Gizmo_Draw_Triangle(VTX_COL * _vVertex);
 	void Gizmo_Draw_AABB(_v3* _vVertex, const _v3 _vPos, const _v3 _vSize = _v3{ 1.f, 1.f, 1.f });
 	void Gizmo_Draw_OBB(_v3* _vVertex, const _v3 vRotate, const _v3 _vPos, const _v3 _vSize = _v3{ 1.f, 1.f, 1.f });
-	void Gizmo_Draw_Capsule(_v3 _vVertex, const _float _fRadius, const _float _fMaxHeight);
+	void Gizmo_Draw_Capsule(_v3 _vVertex, const _v3 _vRadius);
 
-	void Gizmo_Enable();
+	void Gizmo_ColliderEnable();
+	void Gizmo_CellEnable();
+	void Gizmo_Toggle();
 
 public: // For.BT_Node_Manager
 	HRESULT Ready_BT_Node();
 	CBT_Node* Clone_Node(const _tchar* pPrototypeTag, CBT_Node_Manager::NODE_TYPE eType, void* pInit_Struct);
+
+public: // For.ParticleManager
+	void Create_ParticleEffect(_tchar* szName, _float fLifeTime, _v3 vPos, CTransform* pFollowTrans = nullptr);
+	void Create_Effect(_tchar* szName, _v3 vPos, CTransform* pFollowTrans = nullptr);
 
 private:
 	CGraphic_Device*			m_pGraphic_Device = nullptr;
@@ -102,6 +116,7 @@ private:
 	CTarget_Manager*			m_pTarget_Manager = nullptr;
 	CGizmo*						m_pGizmo = nullptr;
 	CBT_Node_Manager*			m_pBT_Node_Manager = nullptr;
+	CNavMesh*					m_pNavMesh = nullptr;
 
 public:
 	virtual void Free();

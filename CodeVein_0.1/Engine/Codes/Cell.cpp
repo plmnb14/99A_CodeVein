@@ -118,7 +118,7 @@ HRESULT CCell::Add_Components()
 	Engine::CComponent*	pComponent = nullptr;
 
 	// Transform
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Component_Transform", L"Com_Transform", (CComponent**)&m_pTransform)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransform)))
 		return E_FAIL;
 
 	m_pTransform->Set_Scale({ 1,1,1 });
@@ -487,4 +487,9 @@ void CCell::Free()
 	CGameObject::Free();
 
 	Safe_Release(m_pTransform);
+
+	LOOP(3)
+	{
+		m_pSibling[i] = nullptr;
+	}
 }
