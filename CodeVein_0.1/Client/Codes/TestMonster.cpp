@@ -4,11 +4,13 @@
 CTestMonster::CTestMonster(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
+	D3DXMatrixIdentity(&m_matLastVP);
 }
 
 CTestMonster::CTestMonster(const CTestMonster & rhs)
 	: CGameObject(rhs)
 {
+	D3DXMatrixIdentity(&m_matLastVP);
 }
 
 HRESULT CTestMonster::Ready_GameObject_Prototype()

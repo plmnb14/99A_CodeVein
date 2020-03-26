@@ -54,7 +54,7 @@ protected:
 	_bool					m_bClone = false;
 	_bool					m_bFadeOutStart = false;
 
-	_tchar					m_szParticleName[256];
+	_tchar					m_szParticleName[256] = L"";
 
 public:
 	virtual void Free();

@@ -20,7 +20,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Effect_FootSmoke", 100);
 	Input_Pool(L"Effect_ButterFly_SoftSmoke", 2000);
 	Input_Pool(L"Effect_ButterFly_VenomShot", 1000);
-	Input_Pool(L"Effect_ButterFly_PointParticle", 1000);
+	Input_Pool(L"Effect_ButterFly_PointParticle", 100);
 	Input_Pool(L"Effect_ButterFly_RingLine", 10);
 	Input_Pool(L"Effect_ButterFly_Distortion", 10);
 
@@ -142,10 +142,10 @@ HRESULT CParticleMgr::Update_Effect(const _double TimeDelta)
 				//cout << "Queue Size : " << Find_Queue((*iter_begin)->Get_ParticleName())->size() << endl;
 
 				// 삭제하지 않고 큐에 다시 넣기
-				if (pFindedQueue->size() < 1000) // 임시...
+				//if (pFindedQueue->size() < 1000) // 임시...
 					pFindedQueue->emplace((*iter_begin));
-				else
-					Safe_Release((*iter_begin));
+				//else
+				//	Safe_Release((*iter_begin));
 				
 				iter_begin = m_EffectList.erase(iter_begin);
 			}

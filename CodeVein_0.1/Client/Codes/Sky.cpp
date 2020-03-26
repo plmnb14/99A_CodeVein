@@ -174,7 +174,7 @@ CGameObject * CSky::Clone_GameObject(void * pArg)
 
 void CSky::Free()
 {
-	Safe_Release(m_pTextureCom);
+	//Safe_Release(m_pTextureCom);
 	Safe_Release(m_pMeshCom);
 	Safe_Release(m_pTransformCom);	
 	Safe_Release(m_pShaderCom);	

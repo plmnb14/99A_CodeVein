@@ -103,30 +103,22 @@ unsigned int CALLBACK CLoading::Thread_Main(void* pArg)
 
 HRESULT CLoading::Ready_Effect(void)
 {
-	CManagement*	pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return -1;
-
-	Safe_AddRef(pManagement);
-
-	if (FAILED(pManagement->Add_Prototype(L"Effect_TestSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/testSmoke.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"Effect_TestSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/testSmoke.dat")))))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"Effect_FootSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Player_FootSmoke.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"Effect_FootSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Player_FootSmoke.dat")))))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"Effect_ButterFly_SoftSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_SoftSmoke.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"Effect_ButterFly_SoftSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_SoftSmoke.dat")))))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"Effect_ButterFly_PointParticle", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_PointParticle.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"Effect_ButterFly_PointParticle", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_PointParticle.dat")))))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"Effect_ButterFly_VenomShot", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_VenomShot.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"Effect_ButterFly_VenomShot", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_VenomShot.dat")))))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"Effect_ButterFly_RingLine", CMeshEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_RingLine.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"Effect_ButterFly_RingLine", CMeshEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_RingLine.dat")))))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"Effect_ButterFly_Distortion", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_Distortion.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"Effect_ButterFly_Distortion", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_Distortion.dat")))))
 		return E_FAIL;
-	//if (FAILED(pManagement->Add_Prototype(L"GameObject_EffectTestMesh", CMeshEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/testMeshEff.dat")))))
+	//if (FAILED(g_pManagement->Add_Prototype(L"GameObject_EffectTestMesh", CMeshEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/testMeshEff.dat")))))
 	//	return E_FAIL;
-
-	Safe_Release(pManagement);
 
 	return S_OK;
 }

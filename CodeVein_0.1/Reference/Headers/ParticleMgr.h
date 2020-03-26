@@ -39,7 +39,7 @@ private:
 
 	_float							m_fCreateDelay_Check = 0.f;
 
-	CManagement*					m_pManagement;
+	CManagement*					m_pManagement = nullptr;
 
 public:
 	virtual void Free();

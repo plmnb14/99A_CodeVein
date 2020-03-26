@@ -186,8 +186,8 @@ CComponent * CBuffer_RcTex::Clone_Component(void* pArg)
 
 void CBuffer_RcTex::Free()
 {
-	Safe_Release(g_pVBInstanceData);
-	Safe_Release(g_pVertexDeclHardware);
+	//Safe_Release(g_pVBInstanceData);
+	//Safe_Release(g_pVertexDeclHardware);
 	
 	CVIBuffer::Free();
 }
