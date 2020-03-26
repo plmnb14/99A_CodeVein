@@ -27,17 +27,19 @@ HRESULT CScene_Stage::Ready_Scene()
 	if (FAILED(Ready_Layer_Monster(L"Layer_Monster")))
 		return E_FAIL;
 
-	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Stage_Test.dat");
+	//g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Stage_Test.dat");
 
 	m_pNavMesh = static_cast<Engine::CNavMesh*>(g_pManagement->Clone_Component(SCENE_STATIC, L"NavMesh"));
 	
 	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Test.dat");
 	
-	if (FAILED(Ready_Layer_Effect(L"Layer_Effect")))
-		return E_FAIL;
-	
-	if (FAILED(Ready_Layer_BackGround(L"Layer_BackGround")))
-		return E_FAIL;
+	// ÀÌÆåÆ® ÅÍÁü
+	//
+	//if (FAILED(Ready_Layer_Effect(L"Layer_Effect")))
+	//	return E_FAIL;
+	//
+	//if (FAILED(Ready_Layer_BackGround(L"Layer_BackGround")))
+	//	return E_FAIL;
 
 
 	if(FAILED(CUI_Manager::Get_Instance()->SetUp_UILayer()))
