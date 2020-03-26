@@ -85,6 +85,8 @@ private:
 	_bool					m_bOnMoveDelay = false;
 	_bool					m_bChangeWeapon = false;
 	_bool					m_bOnBuff = false;
+	_bool					m_bOnAiming = false;
+	_bool					m_bHaveAimingTarget = false;
 	_bool					m_bEventTrigger[32] = {};
 
 private:
@@ -116,9 +118,19 @@ private:
 	_float					m_fAtkEndTime = 0.f;
 
 private:
+	_float					m_fAmingRange = 20.f;
+
+private:
 	HRESULT Add_Component();
 	HRESULT SetUp_Default();
 	HRESULT SetUp_ConstantTable();
+
+private:
+	virtual void Movement_Aiming(_float _fAngle, _float _fMoveSpeed);
+	virtual void Movement_NonAiming(_float _fRecover , _float _fAngle, _float _fRadian, _float _fMoveSpeed);
+
+private:
+	virtual void Target_AimChasing();
 
 private:
 	virtual void OnCollisionEnter();
@@ -137,6 +149,7 @@ private:
 	virtual void Parameter_HeavyCharging();
 	virtual void Parameter_YPos();
 	virtual void Parameter_Collision();
+	virtual void Parameter_Aiming();
 
 private:
 	virtual void KeyInput();

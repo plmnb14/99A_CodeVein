@@ -27,17 +27,17 @@ HRESULT CScene_Stage::Ready_Scene()
 	if (FAILED(Ready_Layer_Monster(L"Layer_Monster")))
 		return E_FAIL;
 
-	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Stage_Test.dat");
+	//g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Stage_Test.dat");
 
 	m_pNavMesh = static_cast<Engine::CNavMesh*>(g_pManagement->Clone_Component(SCENE_STATIC, L"NavMesh"));
 
 	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Test.dat");
 
-	if (FAILED(Ready_Layer_Effect(L"Layer_Effect")))
-		return E_FAIL;
-
-	if (FAILED(Ready_Layer_BackGround(L"Layer_BackGround")))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Effect(L"Layer_Effect")))
+	//	return E_FAIL;
+	//
+	//if (FAILED(Ready_Layer_BackGround(L"Layer_BackGround")))
+	//	return E_FAIL;
 
 
 	if(FAILED(CUI_Manager::Get_Instance()->SetUp_UILayer()))
@@ -149,8 +149,8 @@ HRESULT CScene_Stage::Ready_Layer_Effect(const _tchar * pLayerTag)
 	Safe_AddRef(pManagement);
 
 	// For.Effect
-	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager())) // 프로토타입 생성 이후 실행되어야 함
-		return E_FAIL;
+	//if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager())) // 프로토타입 생성 이후 실행되어야 함
+	//	return E_FAIL;
 
 	Safe_Release(pManagement);
 

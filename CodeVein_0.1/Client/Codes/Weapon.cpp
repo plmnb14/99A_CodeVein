@@ -37,7 +37,7 @@ _int CWeapon::Update_GameObject(_double TimeDelta)
 
 	Cacl_AttachBoneTransform();
 
-	m_pCollider->Update(m_pTransform->Get_WorldMat());
+	//m_pCollider->Update(m_pTransform->Get_WorldMat());
 
 	return NO_EVENT;
 }
@@ -135,7 +135,7 @@ void CWeapon::Change_WeaponData(WEAPON_DATA _eWpnData)
 	}
 	case WPN_Hammer_Normal:
 	{
-		lstrcpy(WeaponMeshName, L"Mesh_Hammer");
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_Hammer");
 		m_eWeaponType = WEAPON_Hammer;
 		break;
 	}
