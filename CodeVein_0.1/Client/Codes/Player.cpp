@@ -647,6 +647,8 @@ void CPlayer::Target_AimChasing()
 		CCameraMgr::Get_Instance()->Set_AimingTarget(m_pTarget);
 		CCameraMgr::Get_Instance()->Set_OnAimingTarget();
 
+		m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(m_pTarget)->Get_Pos()));
+
 		return;
 	}
 
@@ -937,6 +939,8 @@ void CPlayer::Key_ChangeWeapon()
 
 void CPlayer::Key_Special()
 {
+	cout << "플레이어 y 축 : " << D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)) << endl;
+
 	if (g_pInput_Device->Key_Down(DIK_SPACE))
 	{
 		if (m_bCanDodge)
@@ -953,11 +957,18 @@ void CPlayer::Key_Special()
 	if (g_pInput_Device->Key_Down(DIK_Q))
 	{
 		m_bOnAiming = (m_bOnAiming == false ? true : false);
+
+		if (false == m_bOnAiming)
+		{
+			CCameraMgr::Get_Instance()->Set_LockAngleX(D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)));
+		}
 	}
 }
 
 void CPlayer::Key_Attack()
 {
+	cout << "?" << endl;
+
 	if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
 		if (false == m_bOnCombo)
@@ -996,7 +1007,7 @@ void CPlayer::Key_Attack()
 		}
 	}
 
-	else if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
+	if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
 	{
 		if (false == m_bOnCombo)
 		{
@@ -1426,6 +1437,12 @@ void CPlayer::Play_Dodge()
 			{
 				m_bDodgeBack = false;
 
+				if (false == m_bOnAiming)
+				{
+					m_eAnim_Lower = Cmn_DodgeLight_F;
+					break;
+				}
+
 				if (m_bMove[MOVE_Front])
 				{
 					if (m_bMove[MOVE_Left])
@@ -1545,7 +1562,8 @@ void CPlayer::Play_Dodge()
 		m_bCanDodge = false;
 		m_bStopMovementKeyInput = true;
 
-		m_fSkillMoveSpeed_Cur = 6.f;
+		m_fSkillMoveSpeed_Cur = 12.f;
+		m_fSkillMoveAccel_Cur = 0.f;
 	}
 
 	else
@@ -1622,10 +1640,10 @@ void CPlayer::Play_Dodge()
 		else
 			vDir = (m_bDodgeBack ? -m_pTransform->Get_Axis(AXIS_Z) : m_pTransform->Get_Axis(AXIS_Z));
 
-		Decre_Skill_Movement(0.4f);
+		Decre_Skill_Movement(0.8f);
 		Skill_Movement(m_fSkillMoveSpeed_Cur, vDir);
 
-		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.6f))
+		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.5f))
 		{
 			m_bDodgeBack = false;
 			m_bAFK = false;
@@ -1644,7 +1662,7 @@ void CPlayer::Play_Dodge()
 			Reset_BattleState();
 		}
 
-		else if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.5f))
+		else if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.25f))
 		{
 			m_bDodgeBack = false;
 			m_bCanDodge = true;

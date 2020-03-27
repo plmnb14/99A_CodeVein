@@ -168,34 +168,34 @@ HRESULT CMenu_Item::SetUp_ConstantTable()
 
 void CMenu_Item::Click_ItemSlot()
 {
-	if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_RB))
-	{
-		LOOP(_int(m_iSlotCnt))
-		{
-			if (CInput_Device::Get_Instance()->MousePt_InRect(m_vecItemSlot[i]->Get_UI_Pos().x, m_vecItemSlot[i]->Get_UI_Pos().y,
-				m_vecItemSlot[i]->Get_UI_Size().x, m_vecItemSlot[i]->Get_UI_Size().y, g_hWnd))
-			{
-				CManagement* pManagement = CManagement::Get_Instance();
-				if (nullptr == pManagement)
-					return;
-				Safe_AddRef(pManagement);
+	//if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_RB))
+	//{
+	//	LOOP(_int(m_iSlotCnt))
+	//	{
+	//		if (CInput_Device::Get_Instance()->MousePt_InRect(m_vecItemSlot[i]->Get_UI_Pos().x, m_vecItemSlot[i]->Get_UI_Pos().y,
+	//			m_vecItemSlot[i]->Get_UI_Size().x, m_vecItemSlot[i]->Get_UI_Size().y, g_hWnd))
+	//		{
+	//			CManagement* pManagement = CManagement::Get_Instance();
+	//			if (nullptr == pManagement)
+	//				return;
+	//			Safe_AddRef(pManagement);
 
-				CMenuBaseUI* pBase = static_cast<CMenuBaseUI*>(pManagement->Get_GameObjectBack(L"Layer_MenuBase", SCENE_STAGE));
+	//			CMenuBaseUI* pBase = static_cast<CMenuBaseUI*>(pManagement->Get_GameObjectBack(L"Layer_MenuBase", SCENE_STAGE));
 
-				if (m_vecItemSlot[i]->Get_SlotSize() > 0)
-				{
-					pBase->Add_Item(m_vecItemSlot[i]->Get_SlotItemType(), 0);
-					if (false == pBase->Get_Full())
-						m_vecItemSlot[i]->Pop_Item();
-					else
-						MSG_BOX("더이상 넣을 수 없습니다.");
-				}
-				
+	//			if (m_vecItemSlot[i]->Get_SlotSize() > 0)
+	//			{
+	//				pBase->Add_Item(m_vecItemSlot[i]->Get_SlotItemType(), 0);
+	//				if (false == pBase->Get_Full())
+	//					m_vecItemSlot[i]->Pop_Item();
+	//				else
+	//					MSG_BOX("더이상 넣을 수 없습니다.");
+	//			}
 
-				Safe_Release(pManagement);
-			}
-		}
-	}
+
+	//			Safe_Release(pManagement);
+	//		}
+	//	}
+	//}
 	
 }
 

@@ -9,6 +9,7 @@
 #include "TestMonster.h"
 #include "Weapon.h"
 #include "Dummy_Target.h"
+#include "Trail_VFX.h"
 
 #include "UI_Manager.h"
 
@@ -71,6 +72,10 @@ _uint CLoading::Loading_ForStage(void)
 
 	//더미
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Dummy", CDummy_Target::Create(m_pGraphicDev))))
+		return E_FAIL;
+
+	// 트레일
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SwordTrail", Engine::CTrail_VFX::Create(m_pGraphicDev))))
 		return E_FAIL;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////

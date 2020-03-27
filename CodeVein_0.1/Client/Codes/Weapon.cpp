@@ -25,6 +25,16 @@ HRESULT CWeapon::Ready_GameObject(void * pArg)
 
 	SetUp_Default();
 
+	m_pTrailEffect = static_cast<Engine::CTrail_VFX*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SwordTrail", nullptr));
+	m_pTrailEffect->Set_TrailIdx(0);
+
+	m_pDistortionEffect = static_cast<Engine::CTrail_VFX*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SwordTrail", nullptr));
+	m_pDistortionEffect->Set_TrailIdx(3);
+	m_pDistortionEffect->Set_TrailType(Engine::CTrail_VFX::Trail_Distortion);
+
+	m_pStaticTrailEffect = static_cast<Engine::CTrail_VFX*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SwordTrail", nullptr));
+	m_pStaticTrailEffect->Set_TrailIdx(1);
+
 	return NOERROR;
 }
 
@@ -37,7 +47,7 @@ _int CWeapon::Update_GameObject(_double TimeDelta)
 
 	Cacl_AttachBoneTransform();
 
-	//m_pCollider->Update(m_pTransform->Get_WorldMat());
+	UpdateTrails(TimeDelta);
 
 	return NO_EVENT;
 }
@@ -88,6 +98,36 @@ HRESULT CWeapon::Render_GameObject()
 	g_pManagement->Gizmo_Draw_Capsule(m_pCollider->Get_CenterPos(), m_pCollider->Get_Radius());
 
 	return NOERROR;
+}
+
+void CWeapon::UpdateTrails(_double TimeDelta)
+{
+	_mat matWorld = m_pTransform->Get_WorldMat();
+	_v3 vBegin, vDir;
+
+	memcpy(vBegin, &m_pTransform->Get_WorldMat()._41, sizeof(_v3));
+	memcpy(vDir, &m_pTransform->Get_WorldMat()._31, sizeof(_v3));
+
+	if (m_pTrailEffect)
+	{
+		//m_pTrailEffect->Set_ParentTransform(&matWorld);
+		//m_pTrailEffect->Ready_Info(vBegin + vDir * 0.5f, vBegin + vDir * 1.4f);
+		//m_pTrailEffect->Update_GameObject(TimeDelta);
+	}
+
+	if (m_pDistortionEffect)
+	{
+		m_pDistortionEffect->Set_ParentTransform(&matWorld);
+		m_pDistortionEffect->Ready_Info(vBegin + vDir * 0.2f, vBegin + vDir * 1.5f);
+		m_pDistortionEffect->Update_GameObject(TimeDelta);
+	}
+
+	if (m_pStaticTrailEffect)
+	{
+		m_pStaticTrailEffect->Set_ParentTransform(&matWorld);
+		m_pStaticTrailEffect->Ready_Info(vBegin + vDir * 0.2f, vBegin + vDir * 1.6f);
+		m_pStaticTrailEffect->Update_GameObject(TimeDelta);
+	}
 }
 
 void CWeapon::Change_WeaponMesh(const _tchar* _MeshName)
@@ -259,6 +299,10 @@ CGameObject * CWeapon::Clone_GameObject(void * pArg)
 void CWeapon::Free()
 {
 	m_pmatAttach = nullptr;
+
+	Safe_Release(m_pTrailEffect);
+	Safe_Release(m_pStaticTrailEffect);
+	Safe_Release(m_pDistortionEffect);
 
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pTransform);
