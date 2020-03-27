@@ -1,0 +1,8 @@
+ButterFly_Distortion 	베놈볼(독 구체 던지기) 꼬리(입)에서 왜곡효과
+ButterFly_PointParticle 	전체적으로 쓰이는 보라 파티클
+ButterFly_PointParticle_Plum 독기폭발(웅크렸다펴기)에서 폭발할때 나오는 자두색 파티클
+ButterFly_RingLine		독기폭발 메쉬이펙트
+ButterFly_SoftSmoke	독기폭발 스모크
+ButterFly_SoftSmoke_Mist	전체적으로 쓰이는 옅은 독안개
+ButterFly_SoftSmoke_Puff	독안개와 같이쓰니는 다른색 독안개
+ButterFly_VenomShot	베놈볼

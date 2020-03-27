@@ -120,24 +120,24 @@ _int CTexEffect::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CTexEffect::Render_GameObject()
 {
-	//Render_GameObject_HWInstance();
+	Render_GameObject_HWInstance();
 
-	if (nullptr == m_pShaderCom ||
-		nullptr == m_pBufferCom)
-		return E_FAIL;
-	
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
-	
-	m_pShaderCom->Begin_Shader();
-	
-	m_pShaderCom->Begin_Pass(m_iPass);
-	
-	m_pBufferCom->Render_VIBuffer();
-	
-	m_pShaderCom->End_Pass();
-	
-	m_pShaderCom->End_Shader();
+	//if (nullptr == m_pShaderCom ||
+	//	nullptr == m_pBufferCom)
+	//	return E_FAIL;
+	//
+	//if (FAILED(SetUp_ConstantTable()))
+	//	return E_FAIL;
+	//
+	//m_pShaderCom->Begin_Shader();
+	//
+	//m_pShaderCom->Begin_Pass(m_iPass);
+	//
+	//m_pBufferCom->Render_VIBuffer();
+	//
+	//m_pShaderCom->End_Pass();
+	//
+	//m_pShaderCom->End_Shader();
 
 	return NOERROR;
 }
@@ -148,7 +148,7 @@ HRESULT CTexEffect::Render_GameObject_HWInstance()
 		nullptr == m_pBufferCom)
 		return E_FAIL;
 	
-	m_pBufferCom->Render_Before_Instancing();
+	m_pBufferCom->Render_Before_Instancing(m_pTransformCom->Get_WorldMat());
 
 	m_pShaderCom->Begin_Shader();
 	m_pShaderCom->Begin_Pass(m_iPass);
@@ -249,16 +249,23 @@ void CTexEffect::Setup_Info()
 		m_vLerpPos = (m_pInfo->vStartPos + m_pDesc->vWorldPos);
 	}
 
-
-	if (m_pInfo->bRandomRot)
+	if (m_pInfo->bRotMove)
 	{
-		_float fMinus = Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f;
-		_v3 vPos = _v3(Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.x * 100)) * 0.01f * fMinus,
-			Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.y * 100)) * 0.01f * fMinus,
-			Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.z * 100)) * 0.01f * fMinus);
+		if (m_pInfo->bRandomRot)
+		{
+			_float fMinus = Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f;
+			_v3 vPos = _v3(Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.x * 100)) * 0.01f * fMinus,
+				Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.y * 100)) * 0.01f * fMinus,
+				Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.z * 100)) * 0.01f * fMinus);
 
-		m_vRot = vPos;
+			m_vRot = vPos;
+		}
 	}
+	else
+	{
+		m_pTransformCom->Set_Angle(_v3(D3DXToRadian(m_pInfo->vRotDirection.x), D3DXToRadian(m_pInfo->vRotDirection.y), D3DXToRadian(m_pInfo->vRotDirection.z)));
+	}
+	
 }
 
 void CTexEffect::Setup_Billboard()
@@ -276,14 +283,6 @@ void CTexEffect::Setup_Billboard()
 		matBill = matView;
 		memset(&matBill._41, 0, sizeof(_v3));
 		D3DXMatrixInverse(&matBill, NULL, &matBill);
-		//memcpy(&matBill._41, &m_pTransformCom->Get_Pos(), sizeof(_v3));
-		//
-		//_float fScale[3]{ m_pTransformCom->Get_Size().x, m_pTransformCom->Get_Size().y, m_pTransformCom->Get_Size().z };
-		//for (int i = 0; i < 3; ++i)
-		//{
-		//	for (int j = 0; j < 4; ++j)
-		//		matBill(i, j) *= fScale[i];
-		//}
 
 		m_pTransformCom->Set_WorldMat(matBill * matWorld);
 	}
@@ -295,18 +294,6 @@ void CTexEffect::Setup_Billboard()
 		matBill._33 = matView._33;
 
 		D3DXMatrixInverse(&matBill, NULL, &matBill);
-		//memcpy(&matBill._41, &m_pTransformCom->Get_Pos(), sizeof(_v3));
-		//
-		//_float fScale[3]{ m_pTransformCom->Get_Size().x, m_pTransformCom->Get_Size().y, m_pTransformCom->Get_Size().z };
-		//for (int i = 0; i < 3; ++i)
-		//{
-		//	for (int j = 0; j < 4; ++j)
-		//		matBill(i, j) *= fScale[i];
-		//}
-		//
-		////D3DXMatrixRotationX(&matBill, m_vRot.x);
-		////D3DXMatrixRotationY(&matBill, m_vRot.y);
-		//D3DXMatrixRotationZ(&matBill, m_vRot.z);
 
 		m_pTransformCom->Set_WorldMat((matBill * matWorld));
 	}
@@ -376,17 +363,20 @@ void CTexEffect::Check_Move(_double TimeDelta)
 		m_pTransformCom->Set_Scale(m_vLerpScale);
 	}
 
-	if (m_pInfo->bRandomRot)
+	if (m_pInfo->bRotMove)
 	{
-		m_pTransformCom->Add_Angle(AXIS_X, (m_vRot.x * _float(TimeDelta) * m_fRotSpeed));
-		m_pTransformCom->Add_Angle(AXIS_Y, (m_vRot.y * _float(TimeDelta) * m_fRotSpeed));
-		m_pTransformCom->Add_Angle(AXIS_Z, (m_vRot.z * _float(TimeDelta) * m_fRotSpeed));
-	}
-	else
-	{
-		m_pTransformCom->Add_Angle(AXIS_X, (m_pInfo->vRotDirection.x * _float(TimeDelta) * m_fRotSpeed));
-		m_pTransformCom->Add_Angle(AXIS_Y, (m_pInfo->vRotDirection.y * _float(TimeDelta) * m_fRotSpeed));
-		m_pTransformCom->Add_Angle(AXIS_Z, (m_pInfo->vRotDirection.z * _float(TimeDelta) * m_fRotSpeed));
+		if (m_pInfo->bRandomRot)
+		{
+			m_pTransformCom->Add_Angle(AXIS_X, (m_vRot.x * _float(TimeDelta) * m_fRotSpeed));
+			m_pTransformCom->Add_Angle(AXIS_Y, (m_vRot.y * _float(TimeDelta) * m_fRotSpeed));
+			m_pTransformCom->Add_Angle(AXIS_Z, (m_vRot.z * _float(TimeDelta) * m_fRotSpeed));
+		}
+		else
+		{
+			m_pTransformCom->Add_Angle(AXIS_X, (m_pInfo->vRotDirection.x * _float(TimeDelta) * m_fRotSpeed));
+			m_pTransformCom->Add_Angle(AXIS_Y, (m_pInfo->vRotDirection.y * _float(TimeDelta) * m_fRotSpeed));
+			m_pTransformCom->Add_Angle(AXIS_Z, (m_pInfo->vRotDirection.z * _float(TimeDelta) * m_fRotSpeed));
+		}
 	}
 }
 
@@ -480,6 +470,9 @@ HRESULT CTexEffect::SetUp_ConstantTable()
 
 	Safe_AddRef(pManagement);
 
+	//_mat matTest;
+	//D3DXMatrixIdentity(&matTest);
+	//memcpy(&matTest[3][0], &m_pTransformCom->Get_Pos(), sizeof(_v3));
 	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
 
@@ -507,8 +500,6 @@ HRESULT CTexEffect::SetUp_ConstantTable()
 
 	if((m_pInfo->fMaskIndex != -1.f))
 		fMaskIndex = m_pInfo->fMaskIndex;
-
-	//D3DXHANDLE g_HandleTexture = g_pEffect->GetParameterBySemantic(NULL, "TEXTURE");
 
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, _uint(m_fFrame))))
 		return E_FAIL;
