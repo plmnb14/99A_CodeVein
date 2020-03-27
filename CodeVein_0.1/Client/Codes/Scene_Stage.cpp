@@ -16,7 +16,6 @@ HRESULT CScene_Stage::Ready_Scene()
 {
 	if (FAILED(Ready_LightDesc()))
 		return E_FAIL;
-
 	
 	if (FAILED(Ready_Layer_Camera(L"Layer_Camera")))
 		return E_FAIL;

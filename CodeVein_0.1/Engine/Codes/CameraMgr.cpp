@@ -19,7 +19,7 @@ void CCameraMgr::Update()
 	{
 		m_pMainCamera->Update_GameObject();
 
-		if(m_bChange)
+		if (m_bChange)
 			Set_MainCamera(m_sCamClass, m_pCamTag);
 	}
 }
@@ -38,10 +38,10 @@ HRESULT CCameraMgr::Reserve_ContainerSize(const _ushort& wSize)
 }
 
 HRESULT CCameraMgr::Ready_Camera(_Device pGraphicDev,
-								const _ushort& _eCameraClass,
-								const _tchar* pCameraTag,
-								CameraView _eCameraView,
-								CameraMode _eCameraMode)
+	const _ushort& _eCameraClass,
+	const _tchar* pCameraTag,
+	CameraView _eCameraView,
+	CameraMode _eCameraMode)
 {
 	if (nullptr == m_pmapCamera)
 	{
@@ -152,6 +152,16 @@ void CCameraMgr::Set_Distance(_float _fDist)
 {
 }
 
+void CCameraMgr::Set_OnAimingTarget()
+{
+	m_pMainCamera->Set_OnAimingTarget();
+}
+
+void CCameraMgr::Set_AimingTarget(CGameObject * pAimingTarget)
+{
+	m_pMainCamera->Set_AimingTarget(pAimingTarget);
+}
+
 void CCameraMgr::Set_MouseCtrl(_bool _bMouseCtrl)
 {
 	m_pMainCamera->Set_MouseControl(_bMouseCtrl);
@@ -159,17 +169,22 @@ void CCameraMgr::Set_MouseCtrl(_bool _bMouseCtrl)
 
 void CCameraMgr::Add_MainPos(_float _fSpeed, _v3 _vDir)
 {
-	m_pMainCamera->Add_Pos(_fSpeed , _vDir);
+	m_pMainCamera->Add_Pos(_fSpeed, _vDir);
 }
 
-void CCameraMgr::Add_MainAt(_float _fSpeed , _v3 _vDir)
+void CCameraMgr::Add_MainAt(_float _fSpeed, _v3 _vDir)
 {
-	m_pMainCamera->Add_At(_fSpeed , _vDir);
+	m_pMainCamera->Add_At(_fSpeed, _vDir);
 }
 
 void CCameraMgr::Set_MainAt(_v3 _vAt)
 {
 	m_pMainCamera->Set_At(_vAt);
+}
+
+void CCameraMgr::Set_LockAngleX(_float _fLockAngleX)
+{
+	m_pMainCamera->Set_LockAngleX(_fLockAngleX);
 }
 
 void CCameraMgr::MainCamera_Oscillatation_SetUp(_float _fDuration, _float _fFrequency, _float _fPower, _float _fMutiply, CCamera::CAM_OSC_TYPE _eOSCType)
