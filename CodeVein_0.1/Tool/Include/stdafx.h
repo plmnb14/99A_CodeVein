@@ -58,7 +58,11 @@
 #include "Tool_Defines.h"
 
 // lib
+#ifdef _DEBUG
+#pragma comment(lib, "EngineDebug.lib")
+#else
 #pragma comment(lib, "Engine.lib")
+#endif
 
 // ¾Ù¸®»í ¤£¤£
 #pragma comment(linker,"/entry:wWinMainCRTStartup /subsystem:console")

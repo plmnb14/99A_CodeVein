@@ -44,13 +44,13 @@ _int CActiveObject::Update_GameObject(_double _TimeDelta)
 			_v3 Test = V3_NULL;
 			Test =TARGET_TO_TRANS(pManagement->Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos();
 			_v3 TestVec3 = m_pTransform->Get_Pos() - Test;
-			if (V3_LENGTH(&TestVec3) <= 2.f)
+			if (V3_LENGTH(&TestVec3) <= 2.f && false == m_bCheck_Mistletoe)
 			{
-				cout << "생성됐음" << endl;
+				//cout << "상호작용 가능" << endl;
 			}
+			if (pManagement->Get_DIKeyState(DIK_E))
+				m_bCheck_Mistletoe = true;
 		}
-		
-		
 		break;
 	}
 	case ATV_DOOR:
@@ -64,7 +64,34 @@ _int CActiveObject::Update_GameObject(_double _TimeDelta)
 	{
 		// 플레이어가 상자와 충돌 후 특정 키를 누르면 박스가 열리면서 아이템이 나온다.
 		// 아이템, 상자와 상호작용을 한다.
-		// 아이템 획득 후 해당 아이템은 겨우살이로 돌아가도 다시 생성되면 안 됨
+		// 박스 뚜껑이 일정 각도가 되었을 때 박스 안의 아이템을 E키를 누르면 획득할 수 있게 한다
+		// 박스 뚜껑을 불값줘서 true 일 때 아이템을 드랍하고 드랍 후 획득 시 아이템 드랍 금지
+		/*if (true == m_bCheck_Boxopen_end)
+		{
+			cout << "아이템 드랍" << endl;
+			if (pManagement->Get_DIKeyState(DIK_E))
+				cout << "아이템 겟" << endl;
+		}*/
+			
+		break;
+	}
+	case ATV_BOX_LID:
+	{
+		// 플레이어가 박스 앞에서 E키를 눌렀을 때 박스의 뚜껑이 일정 속도로 45도? 정도 돌린다.
+		/*cout << m_pTransform->Get_Angle(AXIS_X) << endl;
+		_v3 Test = V3_NULL;
+		Test = TARGET_TO_TRANS(pManagement->Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos();
+		_v3 TestVec3 = m_pTransform->Get_Pos() - Test;
+
+		if (V3_LENGTH(&TestVec3) <= 2.f && true == m_bCheck_BoxLid)
+			m_bCheck_Boxopen = true;
+		if (pManagement->Get_DIKeyState(DIK_E))
+			m_bCheck_BoxLid = true;
+		if (true == m_bCheck_Boxopen && 45.f >= m_pTransform->Get_Angle(AXIS_X))
+			m_pTransform->Add_Angle(AXIS_X, 10.f);
+		else if (45.f <= m_pTransform->Get_Angle(AXIS_X))
+			m_bCheck_Boxopen_end = true;
+		*/
 		break;
 	}
 	}
@@ -79,7 +106,6 @@ _int CActiveObject::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CActiveObject::Render_GameObject()
 {
-	CGameObject::Render_GameObject();
 	Init_Shader();
 
 	m_pShader->Begin_Shader();
@@ -116,9 +142,9 @@ void CActiveObject::Chaning_AtvMesh(const _tchar* _MeshName)
 
 	Safe_Release(m_pMesh_Static);
 	Safe_Release(iter->second);
-
 	
 	iter->second = m_pMesh_Static = static_cast<CMesh_Static*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, m_szAciveName));
+	Safe_AddRef(iter->second);
 	//iter->second = m_pMesh_Dynamic = static_cast<CMesh_Dynamic*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, m_szAciveName));
 
 	return;

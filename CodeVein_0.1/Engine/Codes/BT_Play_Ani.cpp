@@ -9,20 +9,20 @@ CBT_Play_Ani::CBT_Play_Ani(const CBT_Play_Ani & rhs)
 {
 }
 
-CBT_Node::BT_NODE_STATE CBT_Play_Ani::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Play_Ani::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 
-	Start_Node(pNodeStack, bDebugging);
+	Start_Node(pNodeStack, plistSubNodeStack, bDebugging);
 
-	if (m_pMesh_Dynamic->Is_Finish_Animation(0.9f))
+	if (m_pMesh_Dynamic->Is_Finish_Animation(m_fAniWeight))
 	{
-		return End_Node(pNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
 	}
 
 	return BT_NODE_STATE::INPROGRESS;
 }
 
-void CBT_Play_Ani::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
+void CBT_Play_Ani::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging)
 {
 	if (m_bInit)
 	{
@@ -42,7 +42,7 @@ void CBT_Play_Ani::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 
 }
 
-CBT_Node::BT_NODE_STATE CBT_Play_Ani::End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Play_Ani::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
 {
 	if (pNodeStack->empty())
 		return eState;
@@ -73,6 +73,7 @@ HRESULT CBT_Play_Ani::Ready_Clone_Node(void * pInit_Struct)
 	Safe_AddRef(m_pMesh_Dynamic);
 
 	m_iAni_Index = temp.Target_iAni_iIndex;
+	m_fAniWeight = temp.fAniWeight;
 
 	CBT_Node::_Set_Auto_Number(&m_iNodeNumber);
 	return S_OK;

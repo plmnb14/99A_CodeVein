@@ -486,8 +486,23 @@
     <ClInclude Include="..\Headers\Effect.h">
       <Filter>01.Utility\[02] GameObject\4%29 Effect</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\BT_Compare.h">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BT_UpdatePos.h">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Service\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BT_RotationDir.h">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BT_UpdateGageRatio.h">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Service\Derive</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\Buffer_Sphere.h">
       <Filter>01.Utility\[03] Component\Component\06%29 VIBuffer\Sphere</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BT_CreateEffect.h">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Service\Derive</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Trail_VFX.h">
       <Filter>01.Utility\[02] GameObject\4%29 Effect\99%29 Trail</Filter>
@@ -710,8 +725,23 @@
     <ClCompile Include="..\Codes\Effect.cpp">
       <Filter>01.Utility\[02] GameObject\4%29 Effect</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\BT_Compare.cpp">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BT_UpdatePos.cpp">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Service\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BT_RotationDir.cpp">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BT_UpdateGageRatio.cpp">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Service\Derive</Filter>
+    </ClCompile>
     <ClCompile Include="..\Codes\Buffer_Sphere.cpp">
       <Filter>01.Utility\[03] Component\Component\06%29 VIBuffer\Sphere</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BT_CreateEffect.cpp">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Service\Derive</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Trail_VFX.cpp">
       <Filter>01.Utility\[02] GameObject\4%29 Effect\99%29 Trail</Filter>

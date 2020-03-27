@@ -19,10 +19,10 @@ HRESULT CScene_Stage::Ready_Scene()
 	
 	if (FAILED(Ready_Layer_Camera(L"Layer_Camera")))
 		return E_FAIL;
-	
+
 	if (FAILED(Ready_Layer_Player(L"Layer_Player")))
 		return E_FAIL;
-	
+
 	if (FAILED(Ready_Layer_Monster(L"Layer_Monster")))
 		return E_FAIL;
 
@@ -95,11 +95,33 @@ HRESULT CScene_Stage::Ready_Layer_Monster(const _tchar * pLayerTag)
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_TestMonster", SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 
+	// For. TestMonster
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_TestMonster", SCENE_STAGE, pLayerTag)))
+	//	return E_FAIL;
+
+	// For. PoisonButterfly
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_PoisonButterfly", SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+
+	// For. BlackUrchin
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_BlackUrchin", SCENE_STAGE, pLayerTag)))
+	//	return E_FAIL;
+
+	// For. BlackWolf
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_BlackWolf", SCENE_STAGE, pLayerTag)))
+	//	return E_FAIL;
+
+	// For. NormalGenji
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_Genji", SCENE_STAGE, pLayerTag)))
+	//	return E_FAIL;
+
+
 	// µð¹ö±ë¿ë ´õ¹Ì Å¸°Ù
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Dummy", SCENE_STAGE, L"Layer_Dummy")))
 		return E_FAIL;
 //////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 	return S_OK;
 }

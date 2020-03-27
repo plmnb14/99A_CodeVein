@@ -109,6 +109,7 @@ void CEffectToolView::Dump(CDumpContext& dc) const
 {
 	CView::Dump(dc);
 }
+#endif //_DEBUG
 
 void CEffectToolView::Update()
 {
@@ -196,12 +197,13 @@ void CEffectToolView::Release()
 	Engine::CManagement::Release_Engine();
 }
 
+#ifdef _DEBUG
 CEffectToolDoc* CEffectToolView::GetDocument() const // 디버그되지 않은 버전은 인라인으로 지정됩니다.
 {
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CEffectToolDoc)));
 	return (CEffectToolDoc*)m_pDocument;
 }
-#endif //_DEBUG
+#endif
 
 
 // CEffectToolView 메시지 처리기

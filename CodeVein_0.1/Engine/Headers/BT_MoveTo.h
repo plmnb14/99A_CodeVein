@@ -14,10 +14,10 @@ public:
 			, Target_dMovingTime(dMovingTime)			
 		{ strcpy_s<256>(Target_NodeName, pNodeName); }
 
-		char			Target_NodeName[256];
-		CTransform*		Target_pTargetTransform;
-		_double			Target_dMovingTime;
-		_double			Target_dMoveSpeed;
+		char			Target_NodeName[256] = {0,};
+		CTransform*		Target_pTargetTransform = nullptr;
+		_double			Target_dMovingTime = 0;
+		_double			Target_dMoveSpeed = 0;
 	}INFO;
 
 protected:
@@ -26,11 +26,11 @@ protected:
 	virtual ~CBT_MoveTo() = default;
 
 public:
-	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging) override;
+	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, CBlackBoard* pBlackBoard, _bool bDebugging) override;
 
 public:
-	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging);
-	virtual BT_NODE_STATE End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging);
+	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging);
+	virtual BT_NODE_STATE End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging);
 
 private:
 	HRESULT Ready_Clone_Node(void* pInit_Struct);

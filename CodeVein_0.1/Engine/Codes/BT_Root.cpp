@@ -4,27 +4,17 @@ CBT_Root::CBT_Root()
 {
 }
 
-HRESULT CBT_Root::Set_Child(CBT_Composite_Node * pComposite_Node)
+HRESULT CBT_Root::Set_Child(CBT_Node* pNode)
 {
-	if (nullptr == pComposite_Node)
+	if (nullptr == pNode)
 		return E_FAIL;
 
-	m_pChildNode = (CBT_Node*)pComposite_Node;
+	m_pChildNode = pNode;
 
 	return S_OK;
 }
 
-HRESULT CBT_Root::Set_Child(CBT_Task_Node * pTask_Node)
-{
-	if (nullptr == pTask_Node)
-		return E_FAIL;
-
-	m_pChildNode = (CBT_Node*)pTask_Node;
-
-	return S_OK;
-}
-
-CBT_Node::BT_NODE_STATE CBT_Root::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Root::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	//Start_Node(pNodeStack, bDebugging);
 	
@@ -37,7 +27,7 @@ CBT_Node::BT_NODE_STATE CBT_Root::Update_Node(_double TimeDelta, vector<CBT_Node
 	return BT_NODE_STATE::SUCCEEDED;
 }
 
-void CBT_Root::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
+void CBT_Root::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging)
 {
 	if (m_bInit)
 	{
@@ -54,7 +44,7 @@ void CBT_Root::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 	}
 }
 
-CBT_Node::BT_NODE_STATE CBT_Root::End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Root::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
 {
 	if (pNodeStack->empty())
 		return eState;

@@ -148,6 +148,7 @@ void CWeapon::Change_WeaponMesh(const _tchar* _MeshName)
 
 	// Release 한 컴포넌트에 새로이 Clone 받음.
 	iter->second = m_pMesh_Static = static_cast<CMesh_Static*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, _MeshName));
+	Safe_AddRef(iter->second);
 }
 
 void CWeapon::Change_WeaponData(WEAPON_DATA _eWpnData)
@@ -242,24 +243,16 @@ HRESULT CWeapon::SetUp_ConstantTable()
 	if (nullptr == m_pShader)
 		return E_FAIL;
 
-	CManagement*		pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
-
-	Safe_AddRef(pManagement);
-
 	if (FAILED(m_pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
 
-	_mat		ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
+	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 
 	if (FAILED(m_pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
-
-	Safe_Release(pManagement);
 
 	return NOERROR;
 }
@@ -299,6 +292,7 @@ CGameObject * CWeapon::Clone_GameObject(void * pArg)
 void CWeapon::Free()
 {
 	m_pmatAttach = nullptr;
+	m_pmatParent = nullptr;
 
 	Safe_Release(m_pTrailEffect);
 	Safe_Release(m_pStaticTrailEffect);

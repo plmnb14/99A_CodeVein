@@ -6,6 +6,7 @@
 #include "TexEffect.h"
 #include "MeshEffect.h"
 #include "Player.h"
+#include "HPBack.h"
 #include "TestMonster.h"
 #include "Weapon.h"
 #include "Dummy_Target.h"
@@ -13,6 +14,28 @@
 
 #include "UI_Manager.h"
 
+#include "TestMonster.h"
+#include "PoisonButterfly.h"
+#include "BlackUrchin.h"
+#include "BlackWolf.h"
+#include "Genji.h"
+
+#include "PlayerHP.h"
+#include "PlayerST.h"
+#include "BossDecoUI.h"
+#include "BossHP.h"
+#include "ItemSlot.h"
+#include "RightArrow.h"
+#include "LeftArrow.h"
+#include "Item.h"
+#include "MenuBaseUI.h"
+#include "MenuIcon.h"
+#include "SlotCnt_UI.h"
+#include "Item_QuickSlot.h"
+#include "Menu_Status.h"
+#include "Menu_Item.h"
+#include "ActiveSkill_UI.h"
+//#include "Menu_Active.h"
 
 USING(Client)
 
@@ -45,7 +68,7 @@ _uint CLoading::Loading_ForStage(void)
 	D3DXMatrixIdentity(&DefaultMat);
 
 	// 이펙트 원형 생성
-	//Ready_Effect();
+	Ready_Effect();
 
 	// Sky
 	//if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Sky", CSky::Create(m_pGraphicDev))))
@@ -63,7 +86,17 @@ _uint CLoading::Loading_ForStage(void)
 		return E_FAIL;
 
 	//몬스터
+
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_TestMonster", CTestMonster::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 독나방
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonButterfly", CPoisonButterfly::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 검은 성게
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 검은 늑대
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackWolf", CBlackWolf::Create(m_pGraphicDev))))
 		return E_FAIL;
 
 	//무기
