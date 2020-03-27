@@ -15,8 +15,6 @@ private:
 	explicit CInven_Item(const CInven_Item& rhs);
 	virtual ~CInven_Item() = default;
 
-public:
-	void	SetUp_WindowPosition();
 
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();
@@ -29,9 +27,6 @@ private:
 	HRESULT					Add_Component();
 	HRESULT					SetUp_ConstantTable();
 
-public:
-	void SetUp_Slot(CItem::ITEM_TYPE eType, void* pArg = nullptr);
-	void Add_Item_ToInven(CItem::ITEM_TYPE eType, _uint iItemNum, const _tchar * pPrototypeTag, const _tchar* pLayerTag, void * pArg = nullptr);
 
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
@@ -41,8 +36,7 @@ private:
 	CShader*				m_pShaderCom = nullptr;
 
 private:
-	vector<CItemSlot*>	m_SlotList[CItem::ITEM_END];
-	_bool				m_bIsOpenWindow = false;
+	
 
 public:
 	static CInven_Item*		Create(_Device pGraphic_Device);

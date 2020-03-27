@@ -10,21 +10,23 @@
 #include "BossDecoUI.h"
 #include "BossHP.h"
 #include "ItemSlot.h"
-#include "RightArrow.h"
-#include "LeftArrow.h"
+
 #include "Item.h"
-#include "MenuBaseUI.h"
-#include "MenuIcon.h"
-#include "SlotCnt_UI.h"
-#include "Item_QuickSlot.h"
-#include "Menu_Status.h"
-#include "Menu_Item.h"
-#include "ActiveSkill_UI.h"
-#include "Menu_Skill.h"
-#include "SubQuickSlot.h"
+
+/////////////////
+#include "Inventory.h"
+#include "Inven_Icon.h"
+#include "Item_Icon.h"
+
+#include "Inven_Status.h"
+#include "Inven_Item.h"
+#include "Inven_Skill.h"
+/////////////////
+
 
 #include "Consume_Item.h"
-#include "Inven_Item.h"
+
+
 
 BEGIN(Client)
 
@@ -33,14 +35,14 @@ class CUI_Manager final : public CBase
 	DECLARE_SINGLETON(CUI_Manager)
 
 public: //메뉴창 상태
-	enum MENUWIN_STATE
+	enum INVEN_STATE
 	{
-		WIN_NONE,
-		WIN_BASE,
-		WIN_STATUS,
-		WIN_ITEM,
-		WIN_ACTIVE,
-		WIN_END
+		INVEN_NONE,
+		INVEN_BASE,
+		INVEN_STATUS,
+		INVEN_ITEM,
+		INVEN_ACTIVE,
+		INVEN_END
 	};
 
 private:
@@ -48,16 +50,28 @@ private:
 	virtual ~CUI_Manager();
 
 public:
+	_bool	Get_OpenInven() { return m_bOpenInven; }
+
+public:
+	void	Set_OpenInven() { m_bOpenInven = false; }
+
+public:
 	HRESULT Add_UI_Prototype(_Device pDevice);
 	HRESULT SetUp_UILayer();
 	_int	Update_UI();
-	void	Set_MenuState(MENUWIN_STATE eState) { m_eMenuState = eState; }
-	void	Add_Item(CItem::ITEM_TYPE eType); // 해당 타입의 아이템 인벤토리 창에 추가
-	void	Use_Item(); // 퀵슬롯에 표시된 아이템 수 감소
-	CItem::ITEM_TYPE Get_QuickItemType(); // 현재 퀵슬롯의 아이템 타입 반환
+	void	Set_InvenState(INVEN_STATE eState) { m_eInvenState = eState; }
+
+	void	Open_Inventory();
+	void	Open_Status();
+	void	Open_Item();
+	void	Open_Skill();
+
+	/////////////////////////////////////////////////////////////////////////////////////////////
 
 private:
-	MENUWIN_STATE m_eMenuState;
+	INVEN_STATE		m_eInvenState;
+	_bool			m_bOpenInven = false;
+	_uint			m_iIndex = 0;
 
 public:
 	virtual void Free();

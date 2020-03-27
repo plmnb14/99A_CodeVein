@@ -2,22 +2,15 @@
 
 #include "Client_Defines.h"
 #include "UI.h"
-#include "Management.h"
-
-#include "Item_QuickSlot.h"
-#include "ItemSlot.h"
 
 BEGIN(Client)
 
-class CRightArrow : public CUI
+class CInven_Status final : public CUI
 {
 private:
-	explicit CRightArrow(_Device pGraphic_Device);
-	explicit CRightArrow(const CRightArrow& rhs);
-	virtual ~CRightArrow() = default;
-
-public:
-	void Set_OpenUI(_bool bOpen) { m_bIsOpen = bOpen; }
+	explicit CInven_Status(_Device pDevice);
+	explicit CInven_Status(const CInven_Status& rhs);
+	virtual ~CInven_Status() = default;
 
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();
@@ -29,8 +22,7 @@ public:
 private:
 	HRESULT					Add_Component();
 	HRESULT					SetUp_ConstantTable();
-	void					Click_RightArrow();
-	void					Update_UIPos();
+	void					Destroy_Inven();
 
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
@@ -39,10 +31,8 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 
-	_bool					m_bIsOpen = true;
-
 public:
-	static CRightArrow*		Create(_Device pGraphic_Device);
+	static CInven_Status*	Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);
 	virtual void			Free();
 };

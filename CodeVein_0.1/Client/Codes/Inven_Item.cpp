@@ -12,33 +12,13 @@ CInven_Item::CInven_Item(const CInven_Item & rhs)
 {
 }
 
-void CInven_Item::SetUp_WindowPosition()
-{
-	if (true == m_bIsOpenWindow)
-	{
-		m_fPosX = WINCX - 300.f;
-		m_fPosY = WINCY * 0.5f;
-	}
-	else
-	{
-		m_fPosX = -WINCX * 0.5f;
-		m_fPosY = -WINCY * 0.5f;
-	}
-
-	for (_uint i = 0; i < CItem::ITEM_END; ++i)
-	{
-		for (auto& pSlot : m_SlotList[i])
-		{
-			pSlot->Set_UI_Pos(m_fPosX, m_fPosY);
-		}
-	}
-}
 
 HRESULT CInven_Item::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
 
 	
+
 	return NOERROR;
 }
 
@@ -51,29 +31,22 @@ HRESULT CInven_Item::Ready_GameObject(void * pArg)
 
 	m_fPosX = WINCX * 0.5f;
 	m_fPosY = WINCY * 0.5f;
-	m_fSizeX = WINCX;
-	m_fSizeY = WINCY;
-
-	SetUp_Slot(CItem::CONSUME);
-
+	m_fSizeX = 500.f;
+	m_fSizeY = 600.f;
+	
 	return NOERROR;
 }
 
 _int CInven_Item::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
+	if (g_pInput_Device->Get_DIKeyState(DIK_ADD))
+		return DEAD_OBJ;
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
-	SetUp_WindowPosition();
-
-	//if (CInput_Device::Get_Instance()->Key_Up(DIK_MULTIPLY))
-	//{
-	//	CItem_Manager::Get_Instance()->Add_Item(CItem::CONSUME, 0);
-	//	//m_SlotList[CItem::CONSUME] = *(CItem_Manager::Get_Instance()->Get_Slot(CItem::CONSUME));
-	//}
 	
 	return NO_EVENT;
 }
@@ -85,9 +58,12 @@ _int CInven_Item::Late_Update_GameObject(_double TimeDelta)
 
 	m_matWorld._11 = m_fSizeX;
 	m_matWorld._22 = m_fSizeY;
-	m_matWorld._33 = 1.f;
+	m_matWorld._33 = 0.1f;
 	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
 	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;
+
+	
+	Compute_ViewZ_UI(0.9f);
 
 	return NO_EVENT;
 }
@@ -175,33 +151,10 @@ HRESULT CInven_Item::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 0)))
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 2)))
 		return E_FAIL;
 
 	return NOERROR;
-}
-
-void CInven_Item::SetUp_Slot(CItem::ITEM_TYPE eType, void* pArg)
-{
-	CItemSlot* pSlot = nullptr;
-
-
-	LOOP(5)
-	{
-		g_pManagement->Add_GameObject_ToLayer(L"GameObject_ItemSlot", SCENE_STAGE, L"Layer_ItemSlot");
-		pSlot = static_cast<CItemSlot*>(g_pManagement->Get_GameObjectBack(L"Layer_ItemSlot", SCENE_STAGE));
-		
-		m_SlotList[eType].push_back(pSlot);
-	}
-}
-
-void CInven_Item::Add_Item_ToInven(CItem::ITEM_TYPE eType, _uint iItemNum, const _tchar * pPrototypeTag, const _tchar* pLayerTag, void * pArg)
-{
-	/*CItem* pItem = nullptr;
-	g_pManagement->Add_GameObject_ToLayer(pPrototypeTag, SCENE_STAGE, pLayerTag, pArg);
-	pItem = static_cast<CItem*>(g_pManagement->Get_GameObjectBack(pLayerTag, SCENE_STAGE));*/
-
-	m_SlotList[eType].front()->Add_Item(pPrototypeTag);
 }
 
 CInven_Item * CInven_Item::Create(_Device pGraphic_Device)
@@ -237,15 +190,6 @@ void CInven_Item::Free()
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
-
-	for (_uint i = 0; i < CItem::ITEM_END; ++i)
-	{
-		for (auto& pSlot : m_SlotList[i])
-		{
-			Safe_Release(pSlot);
-		}
-		m_SlotList[i].clear();
-	}
 
 	CUI::Free();
 }

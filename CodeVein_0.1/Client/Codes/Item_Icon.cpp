@@ -1,53 +1,47 @@
 #include "stdafx.h"
-#include "..\Headers\Menu_Status.h"
+#include "..\Headers\Item_Icon.h"
 
-#include "MenuBaseUI.h"
-
-CMenu_Status::CMenu_Status(_Device pGraphic_Device)
-	: CUI(pGraphic_Device)
+CItem_Icon::CItem_Icon(_Device pDevice)
+	: CUI(pDevice)
 {
 }
 
-CMenu_Status::CMenu_Status(const CMenu_Status & rhs)
+CItem_Icon::CItem_Icon(const CItem_Icon & rhs)
 	: CUI(rhs)
 {
 }
 
-HRESULT CMenu_Status::Ready_GameObject_Prototype()
+HRESULT CItem_Icon::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
 
 	return NOERROR;
 }
 
-HRESULT CMenu_Status::Ready_GameObject(void * pArg)
+HRESULT CItem_Icon::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 
 	CUI::Ready_GameObject(pArg);
 
-	
-	m_fSizeX = WINCX * 0.7f;
-	m_fSizeY = WINCY * 0.7f;
-
 	return NOERROR;
 }
 
-_int CMenu_Status::Update_GameObject(_double TimeDelta)
+_int CItem_Icon::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
+	if (m_bIsDead)
+		return DEAD_OBJ;
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
-	SetUp_WindowPos();
-
 	return NO_EVENT;
 }
 
-_int CMenu_Status::Late_Update_GameObject(_double TimeDelta)
+_int CItem_Icon::Late_Update_GameObject(_double TimeDelta)
 {
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
@@ -58,28 +52,26 @@ _int CMenu_Status::Late_Update_GameObject(_double TimeDelta)
 	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
 	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;
 
+	m_pTransformCom->Set_Pos(_v3(0.f, 0.f, 0.8f));
+	Compute_ViewZ(&m_pTransformCom->Get_Pos());
+
 	return NO_EVENT;
 }
 
-HRESULT CMenu_Status::Render_GameObject()
+HRESULT CItem_Icon::Render_GameObject()
 {
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
 
-	CManagement* pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
 
-	Safe_AddRef(pManagement);
+	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
 
-	pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
+	m_matOldView = g_pManagement->Get_Transform(D3DTS_VIEW);
+	m_matOldProj = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 
-	m_matOldView = pManagement->Get_Transform(D3DTS_VIEW);
-	m_matOldProj = pManagement->Get_Transform(D3DTS_PROJECTION);
-
-	pManagement->Set_Transform(D3DTS_VIEW, m_matView);
-	pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
+	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
+	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
 
 	if (FAILED(SetUp_ConstantTable()))
@@ -98,16 +90,13 @@ HRESULT CMenu_Status::Render_GameObject()
 
 	m_pShaderCom->End_Shader();
 
-
-	pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
-	pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
-
-	Safe_Release(pManagement);
+	g_pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
+	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
 
 	return NOERROR;
 }
 
-HRESULT CMenu_Status::Add_Component()
+HRESULT CItem_Icon::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -132,7 +121,7 @@ HRESULT CMenu_Status::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CMenu_Status::SetUp_ConstantTable()
+HRESULT CItem_Icon::SetUp_ConstantTable()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -145,74 +134,45 @@ HRESULT CMenu_Status::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 1)))
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 0)))
 		return E_FAIL;
 
 	return NOERROR;
 }
 
-void CMenu_Status::SetUp_WindowPos()
+CItem_Icon * CItem_Icon::Create(_Device pGraphic_Device)
 {
-	
-
-	if (true == m_bIsOpenWindow)
-	{
-		m_fPosX = WINCX * 0.5f;
-		m_fPosY = WINCY * 0.5f;
-
-		CManagement* pManagement = CManagement::Get_Instance();
-		if (nullptr == pManagement)
-			return;
-		Safe_AddRef(pManagement);
-
-		//static_cast<CMenuBaseUI*>(pManagement->Get_GameObjectBack(L"Layer_MenuBase", SCENE_STAGE))->Set_WindowState(false);
-
-		Safe_Release(pManagement);
-	}
-	else
-	{
-		m_fPosX = -WINCX * 0.5f;
-		m_fPosY = WINCY * 0.5f;
-
-		
-	}
-
-	
-}
-
-CMenu_Status * CMenu_Status::Create(_Device pGraphic_Device)
-{
-	CMenu_Status* pInstance = new CMenu_Status(pGraphic_Device);
+	CItem_Icon* pInstance = new CItem_Icon(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 	{
-		MSG_BOX("CMenu_Status Creating Fail");
+		MSG_BOX("Item_Icon Created Failed");
 		Safe_Release(pInstance);
-	}
+	}	
 
 	return pInstance;
 }
 
-CGameObject * CMenu_Status::Clone_GameObject(void * pArg)
+CGameObject * CItem_Icon::Clone_GameObject(void * pArg)
 {
-	CMenu_Status* pInstance = new CMenu_Status(*this);
+	CItem_Icon* pInstance = new CItem_Icon(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
-		MSG_BOX("Failed To Cloned CMenu_Status");
+		MSG_BOX("Item_Icon Cloned Failed");
 		Safe_Release(pInstance);
 	}
-
+		
 	return pInstance;
 }
 
-void CMenu_Status::Free()
+void CItem_Icon::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
-	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pShaderCom);
 
 	CUI::Free();
 }

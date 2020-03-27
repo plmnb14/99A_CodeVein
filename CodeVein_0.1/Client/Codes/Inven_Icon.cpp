@@ -1,61 +1,57 @@
 #include "stdafx.h"
-#include "..\Headers\SlotCnt_UI.h"
+#include "..\Headers\Inven_Icon.h"
 
-#include "ItemSlot.h"
+#include "UI_Manager.h"
+#include "Inventory.h"
+#include "Inven_Status.h"
 
-CSlotCnt_UI::CSlotCnt_UI(_Device pGraphic_Device)
-	: CUI(pGraphic_Device)
+
+CInven_Icon::CInven_Icon(_Device pDevice)
+	: CUI(pDevice)
 {
 }
 
-CSlotCnt_UI::CSlotCnt_UI(const CSlotCnt_UI & rhs)
+CInven_Icon::CInven_Icon(const CInven_Icon & rhs)
 	: CUI(rhs)
 {
 }
 
-HRESULT CSlotCnt_UI::Ready_GameObject_Prototype()
+HRESULT CInven_Icon::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
+
+	m_eIconType = ICON_END;
 
 	return NOERROR;
 }
 
-HRESULT CSlotCnt_UI::Ready_GameObject(void * pArg)
+HRESULT CInven_Icon::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 
 	CUI::Ready_GameObject(pArg);
 
-	/*m_fPosX = 300.f;
-	m_fPosY = 580.f;
-	m_fSizeX = 30.f;
-	m_fSizeY = 30.f;*/
-
+	
 	return NOERROR;
 }
 
-_int CSlotCnt_UI::Update_GameObject(_double TimeDelta)
+_int CInven_Icon::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
+	if (m_bIsDead)
+		return DEAD_OBJ;
+
+	//Click_Icon();
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
-	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
-
-	CManagement* pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return -1;
-	Safe_AddRef(pManagement);
-
-
-	
-	Safe_Release(pManagement);
+	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 0.1f);
 
 	return NO_EVENT;
 }
 
-_int CSlotCnt_UI::Late_Update_GameObject(_double TimeDelta)
+_int CInven_Icon::Late_Update_GameObject(_double TimeDelta)
 {
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
@@ -65,29 +61,28 @@ _int CSlotCnt_UI::Late_Update_GameObject(_double TimeDelta)
 	m_matWorld._33 = 1.f;
 	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
 	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;
+	
+	
+	
+	Compute_ViewZ_UI(0.95f);
 
 	return NO_EVENT;
 }
 
-HRESULT CSlotCnt_UI::Render_GameObject()
+HRESULT CInven_Icon::Render_GameObject()
 {
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
 
-	CManagement* pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
 
-	Safe_AddRef(pManagement);
+	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
 
-	pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
+	m_matOldView = g_pManagement->Get_Transform(D3DTS_VIEW);
+	m_matOldProj = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 
-	m_matOldView = pManagement->Get_Transform(D3DTS_VIEW);
-	m_matOldProj = pManagement->Get_Transform(D3DTS_PROJECTION);
-
-	pManagement->Set_Transform(D3DTS_VIEW, m_matView);
-	pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
+	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
+	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
 
 	if (FAILED(SetUp_ConstantTable()))
@@ -106,15 +101,13 @@ HRESULT CSlotCnt_UI::Render_GameObject()
 
 	m_pShaderCom->End_Shader();
 
-	pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
-	pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
-
-	Safe_Release(pManagement);
+	g_pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
+	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
 
 	return NOERROR;
 }
 
-HRESULT CSlotCnt_UI::Add_Component()
+HRESULT CInven_Icon::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -125,7 +118,7 @@ HRESULT CSlotCnt_UI::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Number", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Menu_Icon", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -139,7 +132,7 @@ HRESULT CSlotCnt_UI::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CSlotCnt_UI::SetUp_ConstantTable()
+HRESULT CInven_Icon::SetUp_ConstantTable()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -152,39 +145,69 @@ HRESULT CSlotCnt_UI::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, m_iItemCnt)))
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, m_eIconType)))
 		return E_FAIL;
-
+	
 	return NOERROR;
 }
 
-CSlotCnt_UI * CSlotCnt_UI::Create(_Device pGraphic_Device)
+void CInven_Icon::Click_Icon()
 {
-	CSlotCnt_UI* pInstance = new CSlotCnt_UI(pGraphic_Device);
+	CGameObject* pInventory = nullptr;
+
+	if (g_pInput_Device->MousePt_InRect(m_fPosX, m_fPosY, m_fSizeX, m_fSizeY, g_hWnd) && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+	{
+		switch (m_eIconType)
+		{
+		case ICON_STATUS:
+			CUI_Manager::Get_Instance()->Open_Status();
+			break;
+		case ICON_ITEM:
+			CUI_Manager::Get_Instance()->Open_Item();
+			break;
+		case ICON_SKILL:
+			CUI_Manager::Get_Instance()->Open_Skill();
+			break;
+		}
+
+	
+	}
+}
+
+_bool CInven_Icon::Coll_Mouse()
+{
+	
+	return g_pInput_Device->MousePt_InRect(m_fPosX, m_fPosY, m_fSizeX, m_fSizeY, g_hWnd);
+}
+
+CInven_Icon * CInven_Icon::Create(_Device pGraphic_Device)
+{
+	CInven_Icon* pInstance = new CInven_Icon(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 	{
-		MSG_BOX("CSlotCnt_UI Create Failed");
+		MSG_BOX("CInven_Icon Created Failed");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject * CSlotCnt_UI::Clone_GameObject(void * pArg)
+CGameObject * CInven_Icon::Clone_GameObject(void * pArg)
 {
-	CSlotCnt_UI* pInstance = new CSlotCnt_UI(*this);
+	CInven_Icon* pInstance = new CInven_Icon(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
-		MSG_BOX("CSlotCnt_UI Cloned Failed");
+		MSG_BOX("CInven_Icon Cloned Failed");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CSlotCnt_UI::Free()
+
+void CInven_Icon::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);

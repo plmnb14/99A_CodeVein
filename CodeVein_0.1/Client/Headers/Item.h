@@ -11,9 +11,10 @@ class CItem : public CGameObject
 public:
 	enum ITEM_TYPE
 	{
-		CONSUME,
-		MATERIAL,
-		QUEST,
+		CONSUME,	// 소비 아이템
+		MATERIAL,	// 재료 아이템
+		ARMOR,		// 아장
+		WEAPON,		// 무기
 		ITEM_END
 	};
 

@@ -1,20 +1,32 @@
 #pragma once
 
 #include "Client_Defines.h"
-#include "Management.h"
 #include "UI.h"
 
 BEGIN(Client)
 
-class CSlotCnt_UI final : public CUI
+class CInven_Icon final : public CUI
 {
+public:
+	enum ICON_TYPE
+	{
+		ICON_STATUS,
+		ICON_ITEM,
+		ICON_SKILL,
+		ICON_CONFIG,
+		ICON_EXIT,
+		ICON_END
+	};
 private:
-	explicit CSlotCnt_UI(_Device pGraphic_Device);
-	explicit CSlotCnt_UI(const CSlotCnt_UI& rhs);
-	virtual ~CSlotCnt_UI() = default;
+	explicit CInven_Icon(_Device pDevice);
+	explicit CInven_Icon(const CInven_Icon& rhs);
+	virtual ~CInven_Icon() = default;
 
 public:
-	void Set_Count(_uint iItemCnt) { m_iItemCnt = iItemCnt; }
+	ICON_TYPE Get_IconType() { return m_eIconType; }
+
+public:
+	void Set_IconType(ICON_TYPE eType) { m_eIconType = eType; }
 
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();
@@ -26,6 +38,14 @@ public:
 private:
 	HRESULT					Add_Component();
 	HRESULT					SetUp_ConstantTable();
+	void					Click_Icon();
+
+public:
+	_bool					Coll_Mouse();
+
+private:
+	ICON_TYPE				m_eIconType;
+
 
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
@@ -34,10 +54,11 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 
-	_uint					m_iItemCnt = 0;
+private:
+	
 
 public:
-	static CSlotCnt_UI*		Create(_Device pGraphic_Device);
+	static CInven_Icon*		Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);
 	virtual void			Free();
 };

@@ -2,25 +2,15 @@
 
 #include "Client_Defines.h"
 #include "UI.h"
-#include "Management.h"
 
 BEGIN(Client)
 
-class CActiveSkill_UI final : public CUI
+class CItem_Icon final : public CUI
 {
 private:
-	explicit CActiveSkill_UI(_Device pGraphic_Device);
-	explicit CActiveSkill_UI(const CActiveSkill_UI& rhs);
-	virtual ~CActiveSkill_UI() = default;
-
-public:
-	_uint Get_Skill_Index() { return m_iIndex; }
-
-public:
-	void Set_Skill_Index(_uint iIndex) { m_iIndex = iIndex; }
-
-public:
-	void Set_OpenUI(_bool bOpen) { m_bIsOpen = bOpen; }
+	explicit CItem_Icon(_Device pDevice);
+	explicit CItem_Icon(const CItem_Icon& rhs);
+	virtual ~CItem_Icon() = default;
 
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();
@@ -32,7 +22,7 @@ public:
 private:
 	HRESULT					Add_Component();
 	HRESULT					SetUp_ConstantTable();
-	void					Update_UIPos();
+
 
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
@@ -41,16 +31,13 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 
-	_bool					m_bIsOpen = true;
+private:
 
-	_v2						m_vOldPos;
-
-	_uint					m_iIndex = 0;
 
 public:
-	static CActiveSkill_UI*		Create(_Device pGraphic_Device);
-	virtual CGameObject*		Clone_GameObject(void* pArg);
-	virtual void				Free();
+	static CItem_Icon*		Create(_Device pGraphic_Device);
+	virtual CGameObject*	Clone_GameObject(void* pArg);
+	virtual void			Free();
 };
 
 END

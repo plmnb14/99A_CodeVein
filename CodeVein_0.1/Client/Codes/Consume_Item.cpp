@@ -16,7 +16,7 @@ HRESULT CConsume_Item::Ready_GameObject_Prototype()
 {
 	CItem::Ready_GameObject_Prototype();
 
-	m_eType = CItem::CONSUME;
+	
 
 	return NOERROR;
 }
@@ -28,7 +28,7 @@ HRESULT CConsume_Item::Ready_GameObject(void * pArg)
 	CItem::Ready_GameObject(pArg);
 
 	m_eType = CItem::CONSUME;
-
+	
 	return NOERROR;
 }
 
@@ -66,7 +66,7 @@ CConsume_Item * CConsume_Item::Create(_Device pGraphic_Device)
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 	{
-		MSG_BOX("Consume Item Created Filed");
+		MSG_BOX("CConsume_Item Item Created Filed");
 		Safe_Release(pInstance);
 	}
 
@@ -79,7 +79,7 @@ CGameObject * CConsume_Item::Clone_GameObject(void * pArg)
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
-		MSG_BOX("Consume Item Cloned Failed");
+		MSG_BOX("CConsume_Item Item Cloned Failed");
 		Safe_Release(pInstance);
 	}
 
@@ -88,5 +88,5 @@ CGameObject * CConsume_Item::Clone_GameObject(void * pArg)
 
 void CConsume_Item::Free()
 {
-	CGameObject::Free();
+	CItem::Free();
 }

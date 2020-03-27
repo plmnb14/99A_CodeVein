@@ -23,7 +23,6 @@ private:
 	HRESULT		SetUp_ConstantTable();
 
 
-
 public:
 	static CConsume_Item*		Create(_Device pGraphic_Device);
 	virtual CGameObject*		Clone_GameObject(void* pArg);

@@ -4,6 +4,7 @@
 #include "Effect.h"
 #include "UI.h"
 #include "UI_Manager.h"
+#include "Item_Manager.h"
 
 CScene_Stage::CScene_Stage(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
@@ -21,18 +22,19 @@ HRESULT CScene_Stage::Ready_Scene()
 		return E_FAIL;
 
 
-	if (FAILED(Ready_Layer_Monster(L"Layer_Monster")))
+	//if (FAILED(Ready_Layer_Monster(L"Layer_Monster")))
+	//	return E_FAIL;
+
+	//g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Stage_Test.dat");
+
+	//m_pNavMesh = static_cast<Engine::CNavMesh*>(g_pManagement->Clone_Component(SCENE_STATIC, L"NavMesh"));
+	//m_pNavMesh->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Test.dat");
+
+
+	if (FAILED(CUI_Manager::Get_Instance()->SetUp_UILayer()))
 		return E_FAIL;
-
-	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Stage_Test.dat");
-
-	m_pNavMesh = static_cast<Engine::CNavMesh*>(g_pManagement->Clone_Component(SCENE_STATIC, L"NavMesh"));
-	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Test.dat");
-
-
-	if(FAILED(CUI_Manager::Get_Instance()->SetUp_UILayer()))
-		return E_FAIL;
-
+	
+		
 	return S_OK;
 }
 
@@ -43,13 +45,16 @@ _int CScene_Stage::Update_Scene(_double TimeDelta)
 	// -------------- UI Manager ----------------------
 
 	CUI_Manager::Get_Instance()->Update_UI();
+	
+	
+	
 
 	return _int();
 }
 
 HRESULT CScene_Stage::Render_Scene()
 {
-	m_pNavMesh->Render_NaviMesh();
+	//m_pNavMesh->Render_NaviMesh();
 
 	return S_OK;
 }
@@ -180,7 +185,7 @@ CScene_Stage * CScene_Stage::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 
 void CScene_Stage::Free()
 {
-	Safe_Release(m_pNavMesh);
+	//Safe_Release(m_pNavMesh);
 
 	CScene::Free();
 }

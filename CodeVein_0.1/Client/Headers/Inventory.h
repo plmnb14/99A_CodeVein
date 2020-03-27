@@ -1,25 +1,22 @@
 #pragma once
 
-#include "Client_Defines.h"
 #include "UI.h"
-#include "Management.h"
-#include "MenuBaseUI.h"
-#include "Item_QuickSlot.h"
+#include "Client_Defines.h"
 
-class CSubQuickSlot : public CUI
+
+
+
+BEGIN(Client)
+class CInven_Icon;
+class CInventory final : public CUI
 {
 private:
-	explicit CSubQuickSlot(_Device pGraphic_Device);
-	explicit CSubQuickSlot(const CSubQuickSlot& rhs);
-	virtual ~CSubQuickSlot() = default;
+	explicit CInventory(_Device pDevice);
+	explicit CInventory(const CInventory& rhs);
+	virtual ~CInventory() = default;
 
 public:
-	_bool Get_OpenUI() { return m_bIsOpen; }
-	_uint Get_Index() { return m_iIndex; }
-
-public:
-	void Set_OpenUI(_bool bOpen) { m_bIsOpen = bOpen; }
-	void Set_Index(_bool bIsLeft);
+	void Set_Move() { m_bIsMove = true; }
 
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();
@@ -31,7 +28,11 @@ public:
 private:
 	HRESULT					Add_Component();
 	HRESULT					SetUp_ConstantTable();
-	void					Update_UIPos();
+	void					Move_Inven(_double TimeDelta);
+	void					Click_Icon();
+
+private:
+	HRESULT					SetUp_Icon(); // 인벤토리 생성 시, 버튼 생성
 
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
@@ -40,17 +41,15 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 
-	_bool					m_bIsOpen = true;
-
+private:
+	vector<CInven_Icon*>	m_vecIcon;
+	_bool					m_bIsMove = false;
 	_v2						m_vOldPos;
-	_uint					m_iIndex = 0;
 
-	CItem::ITEM_TYPE		m_eType;
-	_uint					m_iMaxIndex = 0;
-	
 public:
-	static CSubQuickSlot*	Create(_Device pGraphic_Device);
+	static CInventory*		Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);
 	virtual void			Free();
 };
 
+END

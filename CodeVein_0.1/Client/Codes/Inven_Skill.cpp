@@ -1,51 +1,50 @@
 #include "stdafx.h"
-#include "..\Headers\ActiveSkill_UI.h"
+#include "..\Headers\Inven_Skill.h"
 
-
-
-CActiveSkill_UI::CActiveSkill_UI(_Device pGraphic_Device)
-	: CUI(pGraphic_Device)
+CInven_Skill::CInven_Skill(_Device pDevice)
+	: CUI(pDevice)
 {
 }
 
-CActiveSkill_UI::CActiveSkill_UI(const CActiveSkill_UI & rhs)
+CInven_Skill::CInven_Skill(const CInven_Skill & rhs)
 	: CUI(rhs)
 {
 }
 
-HRESULT CActiveSkill_UI::Ready_GameObject_Prototype()
+HRESULT CInven_Skill::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
 
 	return NOERROR;
 }
 
-HRESULT CActiveSkill_UI::Ready_GameObject(void * pArg)
+HRESULT CInven_Skill::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
-
 	CUI::Ready_GameObject(pArg);
 
-	m_vOldPos = _v2(m_fPosX, m_fPosY);
+	m_fPosX = WINCX * 0.5f;
+	m_fPosY = WINCY * 0.5f;
+	m_fSizeX = 500.f;
+	m_fSizeY = 600.f;
 
 	return NOERROR;
 }
 
-_int CActiveSkill_UI::Update_GameObject(_double TimeDelta)
+_int CInven_Skill::Update_GameObject(_double TimeDelta)
 {
-	CUI::Update_GameObject(TimeDelta);
+	if (g_pInput_Device->Get_DIKeyState(DIK_ADD))
+		return DEAD_OBJ;
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
-	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
-
-	Update_UIPos();
+	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 
 	return NO_EVENT;
 }
 
-_int CActiveSkill_UI::Late_Update_GameObject(_double TimeDelta)
+_int CInven_Skill::Late_Update_GameObject(_double TimeDelta)
 {
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
@@ -55,29 +54,28 @@ _int CActiveSkill_UI::Late_Update_GameObject(_double TimeDelta)
 	m_matWorld._33 = 1.f;
 	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
 	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;
+	m_matWorld._42 = 1.f;
+
+	
+	Compute_ViewZ_UI(0.9f);
 
 	return NO_EVENT;
 }
 
-HRESULT CActiveSkill_UI::Render_GameObject()
+HRESULT CInven_Skill::Render_GameObject()
 {
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
 
-	CManagement* pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
 
-	Safe_AddRef(pManagement);
+	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
 
-	pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
+	m_matOldView = g_pManagement->Get_Transform(D3DTS_VIEW);
+	m_matOldProj = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 
-	m_matOldView = pManagement->Get_Transform(D3DTS_VIEW);
-	m_matOldProj = pManagement->Get_Transform(D3DTS_PROJECTION);
-
-	pManagement->Set_Transform(D3DTS_VIEW, m_matView);
-	pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
+	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
+	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
 
 	if (FAILED(SetUp_ConstantTable()))
@@ -85,7 +83,7 @@ HRESULT CActiveSkill_UI::Render_GameObject()
 
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(1);
+	m_pShaderCom->Begin_Pass(0);
 
 	// 버퍼를 렌더링한다.
 	// (인덱스버퍼(012023)에 보관하고있는 인덱스를 가진 정점을 그리낟.)
@@ -96,15 +94,13 @@ HRESULT CActiveSkill_UI::Render_GameObject()
 
 	m_pShaderCom->End_Shader();
 
-	pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
-	pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
-
-	Safe_Release(pManagement);
+	g_pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
+	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
 
 	return NOERROR;
 }
 
-HRESULT CActiveSkill_UI::Add_Component()
+HRESULT CInven_Skill::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -115,7 +111,7 @@ HRESULT CActiveSkill_UI::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Skill_ICon", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_MenuWindow", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -129,7 +125,7 @@ HRESULT CActiveSkill_UI::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CActiveSkill_UI::SetUp_ConstantTable()
+HRESULT CInven_Skill::SetUp_ConstantTable()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -142,54 +138,35 @@ HRESULT CActiveSkill_UI::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, m_iIndex)))
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 2)))
 		return E_FAIL;
 
 	return NOERROR;
 }
 
 
-void CActiveSkill_UI::Update_UIPos()
-{
-	if (m_bIsOpen)
-	{
-		m_fPosX = m_vOldPos.x;
-		m_fPosY = m_vOldPos.y;
-	}
-	else
-	{
-		m_fPosX = m_vOldPos.x - WINCX;
-		m_fPosY = m_vOldPos.y;
-	}
-}
 
-CActiveSkill_UI * CActiveSkill_UI::Create(_Device pGraphic_Device)
+CInven_Skill * CInven_Skill::Create(_Device pGraphic_Device)
 {
-	CActiveSkill_UI* pInstance = new CActiveSkill_UI(pGraphic_Device);
+	CInven_Skill* pInstance = new CInven_Skill(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
-	{
-		MSG_BOX("CActiveSkill_UI Create Failed");
 		Safe_Release(pInstance);
-	}
 
 	return pInstance;
 }
 
-CGameObject * CActiveSkill_UI::Clone_GameObject(void * pArg)
+CGameObject * CInven_Skill::Clone_GameObject(void * pArg)
 {
-	CActiveSkill_UI* pInstance = new CActiveSkill_UI(*this);
+	CInven_Skill* pInstance = new CInven_Skill(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
-	{
-		MSG_BOX("CActiveSkill_UI Cloned Failed");
 		Safe_Release(pInstance);
-	}
 
 	return pInstance;
 }
 
-void CActiveSkill_UI::Free()
+void CInven_Skill::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);

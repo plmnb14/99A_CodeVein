@@ -1,82 +1,53 @@
 #include "stdafx.h"
-#include "..\Headers\ItemSlot.h"
+#include "..\Headers\Inven_Status.h"
 
-#include "MenuBaseUI.h"
+#include "UI_Manager.h"
 
-
-CItemSlot::CItemSlot(_Device pGraphic_Device)
-	: CUI(pGraphic_Device)
+CInven_Status::CInven_Status(_Device pDevice)
+	: CUI(pDevice)
 {
 }
 
-CItemSlot::CItemSlot(const CItemSlot & rhs)
+CInven_Status::CInven_Status(const CInven_Status & rhs)
 	: CUI(rhs)
 {
 }
 
-
-CItem::ITEM_TYPE CItemSlot::Get_SlotItemType()
-{
-	if (0 == m_vecItem.size())
-		return CItem::ITEM_END;
-
-	auto iter = m_vecItem.begin();
-
-	CItem::ITEM_TYPE eType = (*iter)->Get_Type();
-
-	return CItem::ITEM_TYPE(eType);
-}
-
-_uint CItemSlot::Get_SlotSize()
-{
-	size_t iSize = m_vecItem.size();
-	return _uint(iSize);
-}
-
-_uint CItemSlot::Get_ItemNum()
-{
-	
-	return m_vecItem.front()->Get_ItemNumber();
-}
-
-
-HRESULT CItemSlot::Ready_GameObject_Prototype()
+HRESULT CInven_Status::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
-	
+
 	return NOERROR;
 }
 
-HRESULT CItemSlot::Ready_GameObject(void * pArg)
+HRESULT CInven_Status::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
-
 	CUI::Ready_GameObject(pArg);
 
 	m_fPosX = WINCX * 0.5f;
 	m_fPosY = WINCY * 0.5f;
-	m_fSizeX = 100.f;
-	m_fSizeY = 100.f;
-	
+	m_fSizeX = 800.f;
+	m_fSizeY = 600.f;
+
 	return NOERROR;
 }
 
-_int CItemSlot::Update_GameObject(_double TimeDelta)
+_int CInven_Status::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
-
+	if (g_pInput_Device->Get_DIKeyState(DIK_ADD))
+		return DEAD_OBJ;
+	
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
-	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
+	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 
-	
-	
-	
 	return NO_EVENT;
 }
 
-_int CItemSlot::Late_Update_GameObject(_double TimeDelta)
+_int CInven_Status::Late_Update_GameObject(_double TimeDelta)
 {
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
@@ -86,29 +57,28 @@ _int CItemSlot::Late_Update_GameObject(_double TimeDelta)
 	m_matWorld._33 = 1.f;
 	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
 	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;
+	m_matWorld._42 = 1.f;
+
+	
+	Compute_ViewZ_UI(0.8f);
 
 	return NO_EVENT;
 }
 
-HRESULT CItemSlot::Render_GameObject()
+HRESULT CInven_Status::Render_GameObject()
 {
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
 
-	CManagement* pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
 
-	Safe_AddRef(pManagement);
+	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
 
-	pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
+	m_matOldView = g_pManagement->Get_Transform(D3DTS_VIEW);
+	m_matOldProj = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 
-	m_matOldView = pManagement->Get_Transform(D3DTS_VIEW);
-	m_matOldProj = pManagement->Get_Transform(D3DTS_PROJECTION);
-
-	pManagement->Set_Transform(D3DTS_VIEW, m_matView);
-	pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
+	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
+	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
 
 	if (FAILED(SetUp_ConstantTable()))
@@ -116,7 +86,7 @@ HRESULT CItemSlot::Render_GameObject()
 
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(1);
+	m_pShaderCom->Begin_Pass(0);
 
 	// 버퍼를 렌더링한다.
 	// (인덱스버퍼(012023)에 보관하고있는 인덱스를 가진 정점을 그리낟.)
@@ -127,15 +97,13 @@ HRESULT CItemSlot::Render_GameObject()
 
 	m_pShaderCom->End_Shader();
 
-	pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
-	pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
-
-	Safe_Release(pManagement);
+	g_pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
+	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
 
 	return NOERROR;
 }
 
-HRESULT CItemSlot::Add_Component()
+HRESULT CInven_Status::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -146,7 +114,7 @@ HRESULT CItemSlot::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_ItemIcon", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_StatusWindow", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -160,7 +128,7 @@ HRESULT CItemSlot::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CItemSlot::SetUp_ConstantTable()
+HRESULT CInven_Status::SetUp_ConstantTable()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -173,67 +141,44 @@ HRESULT CItemSlot::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, _uint(1))))
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 0)))
 		return E_FAIL;
 
 	return NOERROR;
 }
 
-void CItemSlot::Add_Item(CItem::ITEM_TYPE eType)
+void CInven_Status::Destroy_Inven()
 {
-
+	
 }
 
-void CItemSlot::Add_Item(const _tchar * pPrototypeTag, void * pArg)
+CInven_Status * CInven_Status::Create(_Device pGraphic_Device)
 {
-	CItem* pItem = static_cast<CItem*>(g_pManagement->Clone_GameObject_Return(pPrototypeTag, pArg));
-
-	m_vecItem.push_back(pItem);
-}
-
-void CItemSlot::Pop_Item()
-{
-	m_vecItem.pop_back();
-}
-
-
-
-CItemSlot * CItemSlot::Create(_Device pGraphic_Device)
-{
-	CItemSlot* pInstance = new CItemSlot(pGraphic_Device);
+	CInven_Status* pInstance = new CInven_Status(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
-	{
-		MSG_BOX("ItemSlot Create Failed");
 		Safe_Release(pInstance);
-	}
 
 	return pInstance;
 }
 
-CGameObject * CItemSlot::Clone_GameObject(void * pArg)
+CGameObject * CInven_Status::Clone_GameObject(void * pArg)
 {
-	CItemSlot* pInstance = new CItemSlot(*this);
+	CInven_Status* pInstance = new CInven_Status(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
-	{
-		MSG_BOX("ItemSlot Cloned Failed");
 		Safe_Release(pInstance);
-	}
 
 	return pInstance;
 }
 
-void CItemSlot::Free()
+void CInven_Status::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
-
-	for_each(m_vecItem.begin(), m_vecItem.end(), Safe_Release<CItem*>);
-	m_vecItem.clear();
 
 	CUI::Free();
 }
