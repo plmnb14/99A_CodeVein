@@ -26,11 +26,6 @@ Mesh_Cliff_smallend|Cliff_smallend.X|..\..\Client\Resources\Mesh\StaticMesh\Clif
 Mesh_Clusterd_pillar|Clusterd_pillar.X|..\..\Client\Resources\Mesh\StaticMesh\Clusterd_pillar\|0
 Mesh_Crosswall|Crosswall.X|..\..\Client\Resources\Mesh\StaticMesh\Crosswall\|0
 Mesh_DefaultBox|DefaultBox.X|..\..\Client\Resources\Mesh\StaticMesh\DefaultBox\|0
-<<<<<<< HEAD
-Mesh_Mistletoe|Mistletoe.X|..\..\Client\Resources\Mesh\StaticMesh\Mistletoe\|0
-Mesh_Itembox|Itembox.X|..\..\Client\Resources\Mesh\StaticMesh\Itembox\|0
-Mesh_Itembox_Lid|Itembox_Lid.X|..\..\Client\Resources\Mesh\StaticMesh\Itembox_Lid\|0
-=======
 Mesh_DirtHole|DirtHole.X|..\..\Client\Resources\Mesh\StaticMesh\DirtHole\|0
 Mesh_Display_Rebar|Display_Rebar.X|..\..\Client\Resources\Mesh\StaticMesh\Display_Rebar\|0
 Mesh_ARBloodAura01|ARBloodAura01.X|..\..\Client\Resources\Mesh\StaticMesh\Effect\ARBloodAura01\|0
@@ -158,7 +153,6 @@ Mesh_Win_PillarA|Win_PillarA.X|..\..\Client\Resources\Mesh\StaticMesh\Win_Pillar
 Mesh_Win_PillarB|Win_PillarB.X|..\..\Client\Resources\Mesh\StaticMesh\Win_PillarB\|0
 Mesh_Wood_Box|Wood_Box.X|..\..\Client\Resources\Mesh\StaticMesh\Wood_Box\|0
 Mesh_Wood_Box2|Wood_Box2.X|..\..\Client\Resources\Mesh\StaticMesh\Wood_Box2\|0
->>>>>>> origin/Merge_Brench
 Mesh_Wpn_Hammer|Wpn_Hammer.X|..\..\Client\Resources\Mesh\StaticMesh\Wpn_Hammer\|0
 Mesh_Wpn_Sword|Wpn_Sword.X|..\..\Client\Resources\Mesh\StaticMesh\Wpn_Sword\|0
 Mesh_Player|Player.X|..\..\Client\Resources\Mesh\DynamicMesh\Player\|1

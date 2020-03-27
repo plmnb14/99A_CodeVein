@@ -26,11 +26,7 @@ HRESULT CScene_Stage::Ready_Scene()
 	if (FAILED(Ready_Layer_Monster(L"Layer_Monster")))
 		return E_FAIL;
 
-<<<<<<< HEAD
-	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Stage_ObjectTest.dat");
-=======
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Stage_Test.dat");
->>>>>>> origin/Merge_Brench
 
 	m_pNavMesh = static_cast<Engine::CNavMesh*>(g_pManagement->Clone_Component(SCENE_STATIC, L"NavMesh"));
 	
