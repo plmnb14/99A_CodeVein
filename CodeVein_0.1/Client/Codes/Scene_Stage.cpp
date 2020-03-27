@@ -52,7 +52,7 @@ _int CScene_Stage::Update_Scene(_double TimeDelta)
 		//g_pManagement->Create_ParticleEffect(L"Effect_ButterFly_Distortion", 0.1f, V3_NULL, nullptr);
 		//g_pManagement->Create_ParticleEffect(L"Effect_ButterFly_RingLine", 0.1f, V3_NULL, nullptr);
 	}
-	//if (g_pInput_Device->Key_Down(DIK_L))
+	if (g_pInput_Device->Key_Down(DIK_L))
 	{
 		g_pManagement->Create_ParticleEffect(L"Effect_ButterFly_PointParticle", 0.1f, V3_NULL, nullptr);
 		//_tchar	szBuff[MAX_PATH] = L"";
