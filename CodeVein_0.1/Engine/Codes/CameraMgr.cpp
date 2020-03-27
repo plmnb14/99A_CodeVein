@@ -182,6 +182,11 @@ void CCameraMgr::Set_MainAt(_v3 _vAt)
 	m_pMainCamera->Set_At(_vAt);
 }
 
+void CCameraMgr::Set_LockAngleX(_float _fLockAngleX)
+{
+	m_pMainCamera->Set_LockAngleX(_fLockAngleX);
+}
+
 void CCameraMgr::MainCamera_Oscillatation_SetUp(_float _fDuration, _float _fFrequency, _float _fPower, _float _fMutiply, CCamera::CAM_OSC_TYPE _eOSCType)
 {
 	m_pMainCamera->Camera_Oscillatation_SetUp(_fDuration, _fFrequency, _fPower, _fMutiply, _eOSCType);

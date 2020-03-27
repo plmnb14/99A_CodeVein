@@ -50,6 +50,7 @@ public:
 	void Add_MainPos(_float _fSpeed, _v3 _vDir);
 	void Add_MainAt(_float _fSpeed, _v3 _vDir);
 	void Set_MainAt(_v3 _vDir);
+	void Set_LockAngleX(_float _fLockAngleX);
 
 	void MainCamera_Oscillatation_SetUp(_float _fDuration, _float _fFrequency, _float _fPower, _float _fMutiply, CCamera::CAM_OSC_TYPE _eOSCType);
 

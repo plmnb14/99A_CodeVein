@@ -100,6 +100,9 @@ public:
 	_mat		Get_ProjMat();
 
 public:
+	virtual void Set_LockAngleX(_float _fAngle) { m_fX_LockAngle = _fAngle; }
+
+public:
 	_bool		Get_MouseControl() { return m_bMouseControl; }
 
 public:
@@ -181,6 +184,10 @@ protected:	// Rotate Value
 	_float m_fY_LockAngle;
 	_float m_fX_MaxLockAngle;
 	_float m_fY_MaxLockAngle;
+	_float m_fY_LateLockAngle = 0.f;
+	_float m_fY_LateLateLockAngle = 0.f;
+
+	_float m_fLateRefreshTimer = 10.f;
 
 protected:
 	_float m_fMaxDist;

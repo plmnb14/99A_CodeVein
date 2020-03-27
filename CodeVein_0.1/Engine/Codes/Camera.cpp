@@ -432,10 +432,10 @@ void CCamera::Set_OnAimingTarget()
 	m_fAtLerpValue = 0.f;
 	m_fPosLerpValue = 0.f;
 
-	if (false == m_bOnAiming)
-	{
-		m_fY_LockAngle = 22.5f;
-	}
+	//if (false == m_bOnAiming)
+	//{
+	//	m_fY_LockAngle = 22.5f;
+	//}
 }
 
 void CCamera::Add_At(_float _fSpeed, _v3 _vDir)
@@ -542,6 +542,7 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 		_v3 vTransPos = vTrans->Get_Pos();
 		_v3 vRightextra = {};
 		_v3 vLerpTargetPos, vLerpTargetAt;
+		_float fLerpAngle = 0.f;
 
 		if (false == m_bOnAiming)
 		{
@@ -551,40 +552,62 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 				vRightextra = _v3{ vRight_2.x * 2.f  , 0.f , vRight_2.z * 2.f } :
 				vRightextra = _v3{ vRight_2.x * -2.f  , 0.f , vRight_2.z * -2.f });
 
-
 			vEyePos = -WORLD_LOOK;
 			V3_NORMAL_SELF(&vEyePos);
 
 			vEyePos *= m_fDistance;
 
+			/*if (m_fY_LateLockAngle != m_fX_LockAngle)
+			{
+				if (m_fY_LateLateLockAngle != m_fY_LateLockAngle)
+				{
+					m_fY_LateLateLockAngle = m_fY_LateLockAngle;
+					m_fPosLerpValue = 0.f;
+				}
 
+				if (m_fPosLerpValue >= 1.f)
+				{
+					m_fPosLerpValue = 0.f;
+					m_fY_LateLockAngle = m_fX_LockAngle;
+				}
+
+				else
+				{
+					m_fPosLerpValue += DELTA_60;
+					_v3 tmpLerp1 = _v3(0.f, m_fY_LateLockAngle, 0.f);
+					_v3 tmpLerp2 = _v3(0.f, m_fX_LockAngle, 0.f);
+					_v3 tmpLerp3 = _v3(0.f, 0.f, 0.f);
+
+					if (m_fPosLerpValue >= 1.f)
+					{
+						m_fPosLerpValue = 1.f;
+					}
+
+					D3DXVec3Lerp(&tmpLerp3, &tmpLerp1, &tmpLerp2, m_fPosLerpValue);
+					fLerpAngle = tmpLerp3.y;
+				}
+			}
+
+			else
+			{
+				fLerpAngle = m_fX_LockAngle;
+			}*/
+			
 			CALC::V3_Axis_Normal(&matRotAxis, &vEyePos, &WORLD_RIGHT, m_fY_LockAngle, true);
 			CALC::V3_Axis_Normal(&matRotAxis, &vEyePos, &WORLD_UP, m_fX_LockAngle, true);
 
-			cout << m_fY_LockAngle << endl;
-
-
-			vRight_2 = { 1,0,0 };
-			CALC::V3_Dir_Normal(&vDir, &m_pTransform->Get_Pos(), &vTransPos);
-			CALC::V3_Cross_Normal(&vRight_2, &_v3{ 0,1,0 }, &vDir);
-			CALC::V3_Cross_Normal(&vUp_2, &vRight_2, &vDir);
-
-
-			_v3 vRight_NoY = _v3{ m_pTransform->Get_Axis(AXIS_X).x , 0.f , m_pTransform->Get_Axis(AXIS_X).z } *m_fOSCAxis_Gap[AXIS_X];
-			_v3 vUP = _v3{ vRight_2.y ,m_pTransform->Get_Axis(AXIS_Y).y , m_pTransform->Get_Axis(AXIS_Z).y } *m_fOSCAxis_Gap[AXIS_Y];
-
-			vEyePos += vTransPos + _v3{ 0,1,0 } +vRight_NoY + vUP;
-
-			CALC::V3_Dir_Normal(&vDir, &vEyePos, &vTransPos);
-			CALC::V3_Cross_Normal(&vRight_2, &_v3{ 0,1,0 }, &vDir);
-			CALC::V3_Cross_Normal(&vUp_2, &vRight_2, &vDir);
-
+			vEyePos += vTransPos + _v3{ 0,1,0 };
 			vAt = vTransPos + (WORLD_UP * 1.5f);
 
 			//===========================================
 
-			m_pTransform->Set_Pos(vEyePos);
+			//if (m_pTransform->Get_Pos() != m_vOldPos)
+			//{
+			//	m_vOldPos = m_pTransform->Get_Pos();
+			//	m_bOnLerpPos = true;
 
+			//	m_fPosLerpValue = 0.f;
+			//}
 
 			if (m_bOnLerpAt)
 			{
@@ -598,7 +621,7 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 
 				else
 				{
-					m_fAtLerpValue += DELTA_60 * 2.f;
+					m_fAtLerpValue += DELTA_60;
 					D3DXVec3Lerp(&vLerpTargetAt, &m_vOldAt, &vAt, m_fAtLerpValue);
 					m_vOldAt = vLerpTargetAt;
 				}
@@ -621,9 +644,11 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 
 				else
 				{
-					m_fPosLerpValue += DELTA_60 * 2.f;
+					m_fPosLerpValue += DELTA_60 * 0.5f;
 					D3DXVec3Lerp(&vLerpTargetPos, &m_vOldPos, &vEyePos, m_fPosLerpValue);
-					m_vOldPos = vLerpTargetPos;
+
+					//V3_NORMAL_SELF(&vLerpTargetPos);
+					//vLerpTargetPos *= m_fDistance;
 				}
 			}
 
@@ -634,6 +659,8 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 
 			m_pTransform->Set_Pos(vLerpTargetPos);
 			m_pTransform->Set_At(vLerpTargetAt);
+
+			cout << "카메라 x 축 : " << m_fX_LockAngle << endl;
 		}
 
 		else if (true == m_bOnAiming)
@@ -953,7 +980,10 @@ HRESULT CCamera::SetUp_MouseRotate()
 
 		if (mp.x != 0)
 		{
-			m_fX_Angle = mp.x * 0.5f;
+			if(m_fX_LockAngle != m_fY_LateLockAngle)
+				m_fY_LateLockAngle = m_fX_LockAngle;
+
+			m_fX_Angle = mp.x * 1.f;
 			m_fX_LockAngle += m_fX_Angle;
 
 			if (m_fX_LockAngle > 360.f)

@@ -263,6 +263,7 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\Texture.h" />
     <ClInclude Include="..\Headers\Timer.h" />
     <ClInclude Include="..\Headers\Timer_Manager.h" />
+    <ClInclude Include="..\Headers\Trail_VFX.h" />
     <ClInclude Include="..\Headers\Transform.h" />
     <ClInclude Include="..\Headers\UI.h" />
     <ClInclude Include="..\Headers\VIBuffer.h" />
@@ -337,6 +338,7 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\Texture.cpp" />
     <ClCompile Include="..\Codes\Timer.cpp" />
     <ClCompile Include="..\Codes\Timer_Manager.cpp" />
+    <ClCompile Include="..\Codes\Trail_VFX.cpp" />
     <ClCompile Include="..\Codes\Transform.cpp" />
     <ClCompile Include="..\Codes\UI.cpp" />
     <ClCompile Include="..\Codes\VIBuffer.cpp" />
