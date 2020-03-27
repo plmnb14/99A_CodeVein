@@ -16,7 +16,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 
 	//Safe_AddRef(m_pManagement);
 
-	Input_Pool(L"Effect_TestSmoke", 500);
+	//Input_Pool(L"Effect_TestSmoke", 500);
 	Input_Pool(L"Effect_FootSmoke", 100);
 	Input_Pool(L"Effect_ButterFly_SoftSmoke", 2000);
 	Input_Pool(L"Effect_ButterFly_VenomShot", 1000);

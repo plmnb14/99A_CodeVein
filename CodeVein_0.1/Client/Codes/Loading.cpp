@@ -68,7 +68,7 @@ _uint CLoading::Loading_ForStage(void)
 	D3DXMatrixIdentity(&DefaultMat);
 
 	// 이펙트 원형 생성
-	//Ready_Effect();
+	Ready_Effect();
 
 	// Sky
 	//if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Sky", CSky::Create(m_pGraphicDev))))
