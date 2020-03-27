@@ -77,6 +77,7 @@
     <OutDir>..\Bin\</OutDir>
     <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)DEBUG</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -197,6 +198,7 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\BT_Composite_Node.h" />
     <ClInclude Include="..\Headers\BT_ConeCheck.h" />
     <ClInclude Include="..\Headers\BT_Cooldown.h" />
+    <ClInclude Include="..\Headers\BT_CreateEffect.h" />
     <ClInclude Include="..\Headers\BT_Decorator_Node.h" />
     <ClInclude Include="..\Headers\BT_Inverter.h" />
     <ClInclude Include="..\Headers\BT_Loop.h" />
@@ -282,6 +284,7 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\BT_Composite_Node.cpp" />
     <ClCompile Include="..\Codes\BT_ConeCheck.cpp" />
     <ClCompile Include="..\Codes\BT_Cooldown.cpp" />
+    <ClCompile Include="..\Codes\BT_CreateEffect.cpp" />
     <ClCompile Include="..\Codes\BT_Decorator_Node.cpp" />
     <ClCompile Include="..\Codes\BT_Inverter.cpp" />
     <ClCompile Include="..\Codes\BT_Loop.cpp" />

@@ -235,10 +235,13 @@ void CMesh_Dynamic::Reset_OldIndx(_short _sAniCtrlNum)
 	}
 }
 
-LPD3DXFRAME CMesh_Dynamic::Get_BonInfo(LPCSTR _bBoneName)
+LPD3DXFRAME CMesh_Dynamic::Get_BonInfo(LPCSTR _bBoneName , _short _sCTRL_Type)
 {
+	
+
 	// 현재 분리된 "상체" 의 정보만을 가져옴.
-	return D3DXFrameFind(m_pRightArmFrame, _bBoneName);
+	return (_sCTRL_Type == 0 ? D3DXFrameFind(m_pRootFrame, _bBoneName) :
+			_sCTRL_Type == 1 ? D3DXFrameFind(m_pUpperFrame, _bBoneName) : D3DXFrameFind(m_pRightArmFrame, _bBoneName));
 }
 
 D3DXTRACK_DESC CMesh_Dynamic::Get_TrackInfo()

@@ -319,7 +319,6 @@ void CBT_Simple_Parallel::Free()
 
 	for (auto iter = m_pChildren.begin(); iter != m_pChildren.end(); )
 	{
-		(*iter)->Free();
 		Safe_Release(*iter);
 
 		if (nullptr == *iter)

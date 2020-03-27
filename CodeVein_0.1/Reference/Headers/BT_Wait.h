@@ -16,9 +16,9 @@ public:
 			: Target_dWaitingTime(dWaitingTime), Target_dOffset(dOffset)
 		{ strcpy_s<256>(Target_NodeName, pNodeName); }
 
-		char	Target_NodeName[256];
-		_double Target_dWaitingTime;
-		_double Target_dOffset;
+		char	Target_NodeName[256] = {0,};
+		_double Target_dWaitingTime = 0;
+		_double Target_dOffset = 0;
 	}INFO;
 
 protected:

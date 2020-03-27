@@ -15,10 +15,10 @@ public:
 		{ strcpy_s<256>(Target_NodeName, _pNodeName); 
 		lstrcpy(Target_Key, _pTarget_Key); }
 
-		CTransform*	pTransform;
-		char		Target_NodeName[256];
-		_tchar		Target_Key[256];
-		_double		dTurnTime;
+		CTransform*	pTransform = nullptr;
+		char		Target_NodeName[256] = { 0, };
+		_tchar		Target_Key[256] = { 0, };
+		_double		dTurnTime = 0;
 	} INFO;
 
 protected:

@@ -10,8 +10,19 @@ CBT_UpdateGageRatio::CBT_UpdateGageRatio(const CBT_UpdateGageRatio & rhs)
 
 CBT_Node::BT_NODE_STATE CBT_UpdateGageRatio::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, CBlackBoard * pBlackBoard, _bool bDebugging)
 {
-	Start_Node(pNodeStack, plistSubNodeStack, false);
+	switch (m_eMode)
+	{
+	case CBT_Service_Node::Finite:
+		if (m_iCur_Count_Of_Execution > m_iMax_Count_Of_Execution)
+			return BT_NODE_STATE::FAILED;
+		break;
 
+	case CBT_Service_Node::Infinite:
+		break;
+	}
+
+	Start_Node(pNodeStack, plistSubNodeStack, false);
+	
 	m_dCurTime += TimeDelta;
 
 	if (m_dCurTime > m_dMaxTime)
@@ -42,6 +53,7 @@ void CBT_UpdateGageRatio::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<
 
 		m_dCurTime = 0;
 		m_dMaxTime = m_dUpdateTime + CALC::Random_Num_Double(-m_dOffset, m_dOffset);
+		m_iCur_Count_Of_Execution = 0;
 
 		m_bInit = false;
 	}
@@ -53,6 +65,16 @@ CBT_Node::BT_NODE_STATE CBT_UpdateGageRatio::End_Node(vector<CBT_Node*>* pNodeSt
 	{
 		Cout_Indentation(pNodeStack);
 		cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " End   { Service : HPRatio }" << endl;
+	}
+
+	switch (m_eMode)
+	{
+	case CBT_Service_Node::Finite:
+		++m_iCur_Count_Of_Execution;
+		break;
+
+	case CBT_Service_Node::Infinite:
+		break;
 	}
 
 	m_bInit = true;
@@ -70,6 +92,8 @@ HRESULT CBT_UpdateGageRatio::Ready_Clone_Node(void * pInit_Struct)
 	lstrcpy(m_pTargetKey_MaxGage, temp.Target_KeyMaxGage);
 	m_dUpdateTime = temp.Target_dUpdateTime;
 	m_dOffset = temp.Target_dOffset;
+	m_iMax_Count_Of_Execution = temp.Count_Of_Execution;
+	m_eMode = temp.eMode;
 
 	CBT_Node::_Set_Auto_Number(&m_iNodeNumber);
 	return S_OK;

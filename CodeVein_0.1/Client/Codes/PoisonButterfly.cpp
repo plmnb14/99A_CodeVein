@@ -24,9 +24,16 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Pos(_v3(1.f, 1.f, 1.f));
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
-	//체력 키보드로 깎고 0 이하면 사망
 
 	CBlackBoard* pBlackBoard = CBlackBoard::Create();
+	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create();
+
+	m_pAIControllerCom->Set_BeHaviorTree(pBehaviorTree);
+	m_pAIControllerCom->Set_BlackBoard(pBlackBoard);
+
+	//체력 키보드로 깎고 0 이하면 사망
+
+	Update_Bone_Of_BlackBoard();
 
 	pBlackBoard->Set_Value(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos());
 	pBlackBoard->Set_Value(L"HP", 100);
@@ -35,28 +42,23 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"Show", true);
 	//pBlackBoard->Set_Value(L"HPRation", ((_float)(pBlackBoard->Get_IntValue(L"MaxHP") - pBlackBoard->Get_IntValue(L"HP")) / pBlackBoard->Get_IntValue(L"MaxHP")));
 
-	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create(true);
 	
-	CBT_Sequence* Check_Length_Seq = Node_Sequence("범위 체크");
-	//CBT_Selector* Check_Length_Sel = Node_Selector("범위 체크");
-	CBT_UpdatePos* UpdatePlayerPosService = Node_UpdatePos("Update_Player_Pos", L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE)), 0.01, 0);
-	CBT_Wait* wait0 = Node_Wait("대기", 1, 0);
-	//CBT_ConeCheck* ConeCheck = Node_ConeCheck("시야각 체크", L"Player_Pos", 30.f, 1.f);
-	//CBT_MoveDirectly* Chase = Node_MoveDirectly_Chace("추적", L"Player_Pos", 5.f, 2.f);
-	
+	CBT_Sequence* Check_Length_Seq = Node_Sequence("행동 시작");
+	CBT_UpdatePos* UpdatePlayerPosService = Node_UpdatePos("Update_Player_Pos", L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE)), 0, 0.01, 0, CBT_Service_Node::Infinite);
+	CBT_UpdateGageRatio* UpdatePlayerHPservice = Node_UpdateGageRatio("Update_Player_Pos", L"HPRatio", L"MaxHP", L"HP", 0, 0.01, 0, CBT_Service_Node::Infinite);
+
+
 	//CBT_Sequence* Check_Length_Sel = Node_Sequence("범위 체크");
 	pBehaviorTree->Set_Child(Check_Length_Seq);
-	Check_Length_Seq->Add_Service(UpdatePlayerPosService);
+	Check_Length_Seq->Add_Service(UpdatePlayerPosService);	//플레이어 위치 확인
+	Check_Length_Seq->Add_Service(UpdatePlayerHPservice);	//플레이어 HP 확인
 
+	Check_Length_Seq->Add_Child(AttackOrChase());
 
-	//CBT_MoveDirectly* Chase = Node_MoveDirectly_Chace("추적", L"Player_Pos", 5.f, 1.f);
-	//Check_Length_Sel->Add_Child(Chase);
-
-	Check_Length_Seq->Add_Child(wait0);
 
 	//시야각 체크
 
-	Check_Length_Seq->Add_Child(Left_Eat());
+	//Check_Length_Seq->Add_Child(Left_Eat());
 
 	//Check_Length_Seq->Add_Child(ConeCheck);
 	//ConeCheck->Set_Child(Left_Eat());
@@ -348,8 +350,7 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 
 
 
-	m_pAIControllerCom->Set_BeHaviorTree(pBehaviorTree);
-	m_pAIControllerCom->Set_BlackBoard(pBlackBoard);
+
 
 	return NOERROR;
 }
@@ -359,43 +360,9 @@ _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 	CGameObject::Update_GameObject(TimeDelta);
 
 	m_pAIControllerCom->Update_AIController(TimeDelta);
-	//static int i = 0;
 
-	//if (i == 0)
-	//{
-	//	m_pMeshCom->SetUp_Animation(27);
-
-	//	if (m_pMeshCom->Is_Finish_Animation(0.6f))
-	//		++i;
-	//}
-	//if (i == 1)
-	//{
-	//	m_pMeshCom->SetUp_Animation(26);
-
-	//	if (m_pMeshCom->Is_Finish_Animation(0.95f))
-	//		++i;
-	//}
-	//if (i == 2)
-	//{
-	//	m_pMeshCom->SetUp_Animation(15);
-
-	//	if (m_pMeshCom->Is_Finish_Animation(1.f))
-	//		++i;
-	//}
-	//if (i == 3)
-	//{
-	//	m_pMeshCom->SetUp_Animation(24);
-
-	//	if (m_pMeshCom->Is_Finish_Animation(0.95f))
-	//		++i;
-	//}
-	//if (i == 4)
-	//{
-	//	m_pMeshCom->SetUp_Animation(15);
-
-	//	if (m_pMeshCom->Is_Finish_Animation(1.f))
-	//		i = 0;
-	//}
+	// 뼈 위치 업데이트
+	Update_Bone_Of_BlackBoard();
 
 	return _int();
 }
@@ -584,13 +551,29 @@ CBT_Composite_Node * CPoisonButterfly::WhirlWind()
 
 CBT_Sequence * CPoisonButterfly::AttackOrChase()
 {
-	CBT_Sequence* Root_Seq = Node_Sequence("공격 또는 추적");
+	CBT_Sequence* Check_Length_Seq = Node_Sequence("공격 또는 추적");
+	//CBT_ConeCheck* ConeCheck = Node_ConeCheck("시야각 체크", L"Player_Pos", 30.f, 2.2f);
+	CBT_MoveDirectly* Chase = Node_MoveDirectly_Chace("추적", L"Player_Pos", 3.f, 2.f);
 
-	CBT_ConeCheck* ConeCheck = Node_ConeCheck("시야각 체크", L"Player_Pos", 30.f, 1.f);
-	
-	Left_Eat();
 
-	return Root_Seq;
+	CBT_CreateEffect* Poison = Node_CreateEffect("포이즌", L"Effect_ButterFly_SoftSmoke", m_pAIControllerCom->Get_V3Value(L"Bone_Tail6"), 1, 0.5f, 0.f, CBT_Service_Node::Infinite);
+	Check_Length_Seq->Add_Service(Poison);
+
+	Check_Length_Seq->Add_Child(Chase);
+
+	Check_Length_Seq->Add_Child(Left_Eat());
+
+	return Check_Length_Seq;
+}
+
+HRESULT CPoisonButterfly::Update_Bone_Of_BlackBoard()
+{
+	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Tail6");
+	m_vTail = *(_v3*)(&pFamre->TransformationMatrix.m[3]) * *m_pTransformCom->Get_WorldMat();
+
+	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Bone_Tail6", m_vTail);
+
+	return S_OK;
 }
 
 HRESULT CPoisonButterfly::Add_Component()

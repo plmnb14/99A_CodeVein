@@ -13,8 +13,8 @@ public:
 			: Target_dCoolTime(dCoolTime)
 		{ strcpy_s<256>(Target_NodeName, pNodeName); }
 		
-		char	Target_NodeName[256];
-		_double	Target_dCoolTime;
+		char	Target_NodeName[256] = { 0, };
+		_double	Target_dCoolTime = 0;
 	}INFO;
 
 protected:

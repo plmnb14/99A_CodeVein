@@ -14,10 +14,10 @@ public:
 			, Target_dMovingTime(dMovingTime)			
 		{ strcpy_s<256>(Target_NodeName, pNodeName); }
 
-		char			Target_NodeName[256];
-		CTransform*		Target_pTargetTransform;
-		_double			Target_dMovingTime;
-		_double			Target_dMoveSpeed;
+		char			Target_NodeName[256] = {0,};
+		CTransform*		Target_pTargetTransform = nullptr;
+		_double			Target_dMovingTime = 0;
+		_double			Target_dMoveSpeed = 0;
 	}INFO;
 
 protected:

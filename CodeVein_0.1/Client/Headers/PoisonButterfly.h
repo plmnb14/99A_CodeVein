@@ -43,10 +43,14 @@ private:	//패턴들
 	// 4. 트린다미어
 	CBT_Composite_Node* WhirlWind();
 
-	//응용
+	// 응용
 	// 시야각내에 있으면 공격, 없으면 추적
 	CBT_Sequence*		AttackOrChase();
 
+	// 
+
+private:
+	HRESULT Update_Bone_Of_BlackBoard();
 
 private:
 	CTransform*			m_pTransformCom = nullptr;
@@ -57,6 +61,10 @@ private:
 
 	//렌더에서 타임델타 쓰기위해서 저장해놓음
 	_double				m_dTimeDelta = 0;
+
+private:	// 뼈의 Pos 저장소
+	_v3					m_vTail = _v3(0.f, 0.f, 0.f);	//Tail6
+	_v3					m_vBody = _v3(0.f, 0.f, 0.f);	//Spine2
 
 private:
 	HRESULT Add_Component();

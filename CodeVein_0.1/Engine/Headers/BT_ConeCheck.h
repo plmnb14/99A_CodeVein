@@ -20,11 +20,11 @@ public:
 		{ strcpy_s<256>(Target_NodeName, pNodeName);
 		lstrcpy(Target_Key, _pTarget_Key); }
 
-		char		Target_NodeName[256];
-		_tchar		Target_Key[256];
-		CTransform*	pTransform;
-		_float		fDegreeOfFov;
-		_float		fMaxLength;
+		char		Target_NodeName[256] = { 0, };
+		_tchar		Target_Key[256] = { 0, };
+		CTransform*	pTransform = nullptr;
+		_float		fDegreeOfFov = 0.f;
+		_float		fMaxLength = 0.f;
 	} INFO;
 
 protected:

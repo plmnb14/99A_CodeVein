@@ -53,12 +53,14 @@ public:
 	void Update();
 	void Render();
 
+
 private:
 	void Ready_Default();
 	void Ready_Camera();
 	void Ready_Layer();
 	void Ready_Resource();
 	void Release();
+
 
 private:
 	LPDIRECT3DDEVICE9			m_pGraphicDev = nullptr;

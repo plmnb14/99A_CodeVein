@@ -12,96 +12,6 @@ CBlackBoard::CBlackBoard(const CBlackBoard & rhs)
 	m_mapVec3.insert(rhs.m_mapVec3.begin(), rhs.m_mapVec3.end());
 }
 
-//CBlackBoard::OUTPUT CBlackBoard::Set_Value(const _tchar * pName, const void * pData, VALUE eValue_Type)
-//{
-//	/*
-//	반환값
-//	NONE : 값 변경이 없을 떄
-//	UPDATE : 기존 값이 변하거나, 새로운 변수를 할당할 때
-//	*/
-//
-//
-//	OUTPUT eState = OUTPUT::NONE;
-//
-//	if (eValue_Type == VALUE::BOOL)
-//	{
-//		auto iter = find_if(m_mapBool.begin(), m_mapBool.end(), CTag_Finder(pName));
-//
-//		if (iter == m_mapBool.end())
-//		{
-//			m_mapBool.emplace(MAP_BOOL::value_type(pName, *(_bool*)pData));
-//			eState = OUTPUT::UPDATE;
-//		}
-//		else
-//		{
-//			if (iter->second != *(_bool*)pData)
-//			{
-//				iter->second = *(_bool*)pData;
-//				eState = OUTPUT::UPDATE;
-//			}
-//		}
-//	}
-//
-//	else if (eValue_Type == VALUE::FLOAT)
-//	{
-//		auto iter = find_if(m_mapFloat.begin(), m_mapFloat.end(), CTag_Finder(pName));
-//
-//		if (iter == m_mapFloat.end())
-//		{
-//			m_mapFloat.emplace(MAP_FLOAT::value_type(pName, *(_float*)pData));
-//			eState = OUTPUT::UPDATE;
-//		}
-//		else
-//		{
-//			if (iter->second != *(_float*)pData)
-//			{	
-//				iter->second = *(_float*)pData;
-//				eState = OUTPUT::UPDATE;
-//			}
-//		}
-//	}
-//
-//	else if (eValue_Type == VALUE::INT)
-//	{
-//		auto iter = find_if(m_mapInt.begin(), m_mapInt.end(), CTag_Finder(pName));
-//
-//		if (iter == m_mapInt.end())
-//		{
-//			m_mapInt.emplace(MAP_INT::value_type(pName, *(_int*)pData));
-//			eState = OUTPUT::UPDATE;
-//		}
-//		else
-//		{
-//			if (iter->second != *(_int*)pData)
-//			{
-//				iter->second = *(_int*)pData;
-//				eState = OUTPUT::UPDATE;
-//			}
-//		}
-//	}
-//
-//	else if (eValue_Type == VALUE::VEC3)
-//	{
-//		auto iter = find_if(m_mapVec3.begin(), m_mapVec3.end(), CTag_Finder(pName));
-//
-//		if (iter == m_mapVec3.end())
-//		{
-//			m_mapVec3.emplace(MAP_VEC3::value_type(pName, *(_v3*)pData));
-//			eState = OUTPUT::UPDATE;
-//		}
-//		else
-//		{
-//			if (iter->second != *(_v3*)pData)
-//			{
-//				iter->second = *(_v3*)pData;
-//				eState = OUTPUT::UPDATE;
-//			}
-//		}
-//	}
-//
-//	return eState;
-//}
-
 /*
 반환값
 NONE : 값 변경이 없을 떄
@@ -143,7 +53,7 @@ CBlackBoard::OUTPUT CBlackBoard::Set_Value(const _tchar * pName, _float fValue)
 	}
 	else
 	{
-		if (iter->second != fValue)
+		if (abs(iter->second - fValue) > 0.01f)
 		{
 			iter->second = fValue;
 			eState = OUTPUT::UPDATE;

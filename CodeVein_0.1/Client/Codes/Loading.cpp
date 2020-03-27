@@ -34,7 +34,7 @@
 #include "Menu_Status.h"
 #include "Menu_Item.h"
 #include "ActiveSkill_UI.h"
-#include "Menu_Active.h"
+//#include "Menu_Active.h"
 
 USING(Client)
 

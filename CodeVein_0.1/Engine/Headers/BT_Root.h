@@ -21,9 +21,7 @@ protected:
 	virtual ~CBT_Root() = default;
 
 public:
-	HRESULT Set_Child(CBT_Composite_Node* pComposite_Node);
-	HRESULT Set_Child(CBT_Task_Node* pTask_Node);
-	HRESULT Set_Child(CBT_Decorator_Node* pDecorator_Node);
+	HRESULT Set_Child(CBT_Node* pNode);
 
 public:
 	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, CBlackBoard* pBlackBoard,  _bool bDebugging) override;

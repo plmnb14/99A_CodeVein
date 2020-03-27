@@ -25,8 +25,8 @@ public:
 			: eNode_Mode(eMode) 
 		{ strcpy_s<256>(Target_NodeName, pNodeName); }
 
-		char	Target_NodeName[256];
-		Mode eNode_Mode;
+		char	Target_NodeName[256] = { 0, };
+		Mode eNode_Mode = Immediate;
 	}INFO;
 
 

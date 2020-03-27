@@ -4,32 +4,12 @@ CBT_Root::CBT_Root()
 {
 }
 
-HRESULT CBT_Root::Set_Child(CBT_Composite_Node * pComposite_Node)
+HRESULT CBT_Root::Set_Child(CBT_Node* pNode)
 {
-	if (nullptr == pComposite_Node)
+	if (nullptr == pNode)
 		return E_FAIL;
 
-	m_pChildNode = (CBT_Node*)pComposite_Node;
-
-	return S_OK;
-}
-
-HRESULT CBT_Root::Set_Child(CBT_Task_Node * pTask_Node)
-{
-	if (nullptr == pTask_Node)
-		return E_FAIL;
-
-	m_pChildNode = (CBT_Node*)pTask_Node;
-
-	return S_OK;
-}
-
-HRESULT CBT_Root::Set_Child(CBT_Decorator_Node * pDecorator_Node)
-{
-	if (nullptr == pDecorator_Node)
-		return E_FAIL;
-
-	m_pChildNode = (CBT_Node*)pDecorator_Node;
+	m_pChildNode = pNode;
 
 	return S_OK;
 }

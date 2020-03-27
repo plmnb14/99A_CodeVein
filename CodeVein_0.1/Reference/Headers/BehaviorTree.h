@@ -20,9 +20,7 @@ private:
 	virtual ~CBehaviorTree() = default;
 
 public:
-	HRESULT Set_Child(CBT_Composite_Node* pComposite_Node);
-	HRESULT Set_Child(CBT_Task_Node* pTask_Node);
-	HRESULT Set_Child(CBT_Decorator_Node* pDecorator_Node);
+	HRESULT Set_Child(CBT_Node* pNode);
 
 public:
 	virtual void Update_BeHaviorTree(_double TimeDelta, CBlackBoard* pBlackBoard);

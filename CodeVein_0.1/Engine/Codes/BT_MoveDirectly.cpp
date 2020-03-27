@@ -23,6 +23,7 @@ CBT_Node::BT_NODE_STATE CBT_MoveDirectly::Update_Node(_double TimeDelta, vector<
 	{
 		case CHASE:
 			vTarget_Pos = pBlackBoard->Get_V3Value(m_Target_Key);
+			vTarget_Pos.y = 0.f;
 
 			vLength = vTarget_Pos - m_pTransform->Get_Pos();
 			vLength.y = 0.f;
@@ -39,7 +40,7 @@ CBT_Node::BT_NODE_STATE CBT_MoveDirectly::Update_Node(_double TimeDelta, vector<
 			else
 			{
 				// 방향 타겟쪽으로 변경
-				m_pTransform->Chase_Target(&vTarget_Pos);
+				Look_At_Target(TimeDelta, vTarget_Pos);
 
 				// 이동
 				m_pTransform->Add_Pos(_float(m_fMove_Speed * TimeDelta));
@@ -161,6 +162,34 @@ HRESULT CBT_MoveDirectly::Ready_Clone_Node(void * pInit_Struct)
 
 	CBT_Node::_Set_Auto_Number(&m_iNodeNumber);
 	return S_OK;
+}
+
+void CBT_MoveDirectly::Look_At_Target(_double TimeDelta, _v3 Target_Pos)
+{
+	_v3 vToPlayerDir, vOriginDir;
+	_float Radian;
+
+	vOriginDir = *(_v3*)(&m_pTransform->Get_WorldMat().m[2]);
+	vOriginDir.y = 0.f;
+	D3DXVec3Normalize(&vOriginDir, &vOriginDir);
+
+	vToPlayerDir = Target_Pos - m_pTransform->Get_Pos();
+	vToPlayerDir.y = 0.f;
+	D3DXVec3Normalize(&vToPlayerDir, &vToPlayerDir);
+
+	float temp = D3DXVec3Dot(&vOriginDir, &vToPlayerDir);
+	//1.0보다 커짐 방지
+	if (temp > 1.0f)
+		temp = 1.0f;
+	Radian = acosf(temp);
+
+	_v3 vRight;
+	D3DXVec3Normalize(&vRight, (_v3*)(&m_pTransform->Get_WorldMat().m[0]));
+
+	if (0 < D3DXVec3Dot(&vRight, &vToPlayerDir))
+		m_pTransform->Add_Angle(AXIS_TYPE::AXIS_Y, D3DXToDegree(_float(6 * Radian * TimeDelta)));
+	else
+		m_pTransform->Add_Angle(AXIS_TYPE::AXIS_Y, -D3DXToDegree(_float( 6 * Radian * TimeDelta)));
 }
 
 CBT_MoveDirectly * CBT_MoveDirectly::Create_Prototype()

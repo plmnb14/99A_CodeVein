@@ -137,8 +137,8 @@ CBT_Node * CBT_Inverter::Clone(void * pInit_Struct)
 
 void CBT_Inverter::Free()
 {
-	if(m_pChild)
-		m_pChild->Free();
+	//if(m_pChild)
+	//	m_pChild->Free();
 
 	Safe_Release(m_pChild);
 }

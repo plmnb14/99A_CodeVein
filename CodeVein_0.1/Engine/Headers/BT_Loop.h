@@ -17,8 +17,8 @@ public:
 			: iMaxLoopCount(iLoopCount)
 		{ strcpy_s<256>(Target_NodeName, pNodeName); }
 
-		char	Target_NodeName[256];
-		_uint	iMaxLoopCount;
+		char	Target_NodeName[256] = { 0, };
+		_uint	iMaxLoopCount = 0;
 	}INFO;
 
 protected:

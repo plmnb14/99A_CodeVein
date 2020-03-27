@@ -13,6 +13,17 @@ CBT_Node::BT_NODE_STATE CBT_UpdatePos::Update_Node(_double TimeDelta, vector<CBT
 	if (nullptr == m_pTarget_Transform)
 		return BT_NODE_STATE::FAILED;
 
+	switch (m_eMode)
+	{
+	case CBT_Service_Node::Finite:
+		if (m_iCur_Count_Of_Execution > m_iMax_Count_Of_Execution)
+			return BT_NODE_STATE::FAILED;
+		break;
+
+	case CBT_Service_Node::Infinite:
+		break;
+	}
+
 	Start_Node(pNodeStack, plistSubNodeStack, false);
 
 	m_dCurTime += TimeDelta;
@@ -39,6 +50,7 @@ void CBT_UpdatePos::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_No
 
 		m_dCurTime = 0;
 		m_dMaxTime = m_dUpdateTime + CALC::Random_Num_Double(-m_dOffset, m_dOffset);
+		m_iCur_Count_Of_Execution = 0;
 
 		m_bInit = false;
 	}
@@ -50,6 +62,16 @@ CBT_Node::BT_NODE_STATE CBT_UpdatePos::End_Node(vector<CBT_Node*>* pNodeStack, l
 	{
 		Cout_Indentation(pNodeStack);
 		cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " End   { Service : Transform }" << endl;
+	}
+
+	switch (m_eMode)
+	{
+	case CBT_Service_Node::Finite:
+		++m_iCur_Count_Of_Execution;
+		break;
+
+	case CBT_Service_Node::Infinite:
+		break;
 	}
 
 	m_bInit = true;
@@ -67,6 +89,8 @@ HRESULT CBT_UpdatePos::Ready_Clone_Node(void * pInit_Struct)
 	m_dOffset = temp.Target_dOffset;
 	m_pTarget_Transform = temp.Target_Transform;
 	Safe_AddRef(m_pTarget_Transform);
+	m_iMax_Count_Of_Execution = temp.Count_Of_Execution;
+	m_eMode = temp.eMode;
 
 	CBT_Node::_Set_Auto_Number(&m_iNodeNumber);
 	return S_OK;

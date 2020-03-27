@@ -21,11 +21,11 @@ public:
 		lstrcpy(TargetKey_A, _TargetKey_A);
 		lstrcpy(TargetKey_B, _TargetKey_B);}
 
-		char		Target_NodeName[256];
-		_tchar*		TargetKey_A;
-		_tchar*		TargetKey_B;
-		Mode		eMode;
-		Value		eValue;
+		char		Target_NodeName[256] = { 0, };
+		_tchar*		TargetKey_A = nullptr;
+		_tchar*		TargetKey_B = nullptr;
+		Mode		eMode = EQUAL;
+		Value		eValue = BOOL;
 
 	} INFO;
 

@@ -16,7 +16,7 @@ public:
 		tagInitInfo(char* pNodeName)
 		{ strcpy_s<256>(Target_NodeName, pNodeName); }
 
-		char	Target_NodeName[256];
+		char	Target_NodeName[256] = { 0, };
 	}INFO;
 
 protected:

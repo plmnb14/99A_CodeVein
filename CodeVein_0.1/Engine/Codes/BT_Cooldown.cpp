@@ -155,8 +155,8 @@ void CBT_Cooldown::Free()
 		m_pSubNodeStatck.clear();
 	}
 
-	if (m_pChild)
-		m_pChild->Free();
+	//if (m_pChild)
+	//	m_pChild->Free();
 
 	Safe_Release(m_pChild);
 }

@@ -5,26 +5,13 @@ CBehaviorTree::CBehaviorTree()
 {
 }
 
-HRESULT CBehaviorTree::Set_Child(CBT_Composite_Node * pComposite_Node)
+HRESULT CBehaviorTree::Set_Child(CBT_Node* pNode)
 {
-	m_pRoot->Set_Child(pComposite_Node);
+	m_pRoot->Set_Child(pNode);
 
 	return S_OK;
 }
 
-HRESULT CBehaviorTree::Set_Child(CBT_Task_Node * pTask_Node)
-{
-	m_pRoot->Set_Child(pTask_Node);
-
-	return S_OK;
-}
-
-HRESULT CBehaviorTree::Set_Child(CBT_Decorator_Node * pDecorator_Node)
-{
-	m_pRoot->Set_Child(pDecorator_Node);
-
-	return S_OK;
-}
 
 void CBehaviorTree::Update_BeHaviorTree(_double TimeDelta, CBlackBoard* pBlackBoard)
 {

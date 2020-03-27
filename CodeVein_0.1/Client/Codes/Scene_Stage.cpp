@@ -20,10 +20,10 @@ HRESULT CScene_Stage::Ready_Scene()
 	
 	if (FAILED(Ready_Layer_Camera(L"Layer_Camera")))
 		return E_FAIL;
-	
+
 	if (FAILED(Ready_Layer_Player(L"Layer_Player")))
 		return E_FAIL;
-	
+
 	if (FAILED(Ready_Layer_Monster(L"Layer_Monster")))
 		return E_FAIL;
 

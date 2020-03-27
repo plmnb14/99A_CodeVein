@@ -30,14 +30,14 @@ public:
 		if(nullptr != _pTarget_Key)lstrcpy(Target_Key, _pTarget_Key); 
 		else ZeroMemory(Target_Key, sizeof(_tchar) * 256);}
 
-		CTransform*	pTransform;
-		char		Target_NodeName[256];
-		_tchar		Target_Key[256];
-		_float		fMove_Speed;
-		_float		fAcceptable_Radius;
-		_double		dMoveTime;
-		_double		dTimeOffset;
-		MODE		eMode;
+		CTransform*	pTransform = nullptr;
+		char		Target_NodeName[256] = { 0, };
+		_tchar		Target_Key[256] = { 0, };
+		_float		fMove_Speed = 0;
+		_float		fAcceptable_Radius = 0;
+		_double		dMoveTime = 0;
+		_double		dTimeOffset = 0;
+		MODE		eMode = CHASE;
 	} INFO;
 
 protected:
@@ -54,6 +54,8 @@ public:
 
 private:
 	HRESULT Ready_Clone_Node(void* pInit_Struct);
+
+	void Look_At_Target(_double TimeDelta, _v3 Target_Pos);
 
 private:
 	CTransform*	m_pTransform = nullptr;
