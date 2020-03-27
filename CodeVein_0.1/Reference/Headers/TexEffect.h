@@ -9,13 +9,6 @@ BEGIN(Engine)
 
 class ENGINE_DLL CTexEffect : public CEffect
 {
-public:
-
-	typedef struct tagEffDesc
-	{
-		CTransform* pTargetTrans;
-		_v3			vWorldPos;
-	}EFFECT_DESC;
 
 protected:
 	explicit CTexEffect(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -46,7 +39,6 @@ protected:
 protected:
 	CManagement*			m_pManagement = nullptr;
 
-	EFFECT_DESC*			m_pDesc = nullptr;
 	_int					m_iPass = 0;
 
 protected:

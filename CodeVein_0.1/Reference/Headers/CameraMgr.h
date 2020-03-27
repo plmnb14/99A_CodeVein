@@ -23,10 +23,10 @@ public:
 	HRESULT	Reserve_ContainerSize(const _ushort& wSize);
 
 	HRESULT	Ready_Camera(_Device pGraphicDev,
-						const _ushort& _eCameraClass,
-						const _tchar* pCameraTag,
-						CameraView _CameraView,
-						CameraMode _CameraMode);
+		const _ushort& _eCameraClass,
+		const _tchar* pCameraTag,
+		CameraView _CameraView,
+		CameraMode _CameraMode);
 
 	HRESULT Set_Target(CGameObject* _Target);
 
@@ -41,6 +41,8 @@ public:
 	void Set_MinDistance(_float _fMinDist);
 	void Set_Distance(_float _fDist);
 
+	void Set_OnAimingTarget();
+	void Set_AimingTarget(CGameObject* pAimingTarget);
 
 	void Set_MouseCtrl(_bool _bMouseCtrl);
 
@@ -49,7 +51,7 @@ public:
 	void Add_MainAt(_float _fSpeed, _v3 _vDir);
 	void Set_MainAt(_v3 _vDir);
 
-	void MainCamera_Oscillatation_SetUp(_float _fDuration, _float _fFrequency, _float _fPower , _float _fMutiply, CCamera::CAM_OSC_TYPE _eOSCType);
+	void MainCamera_Oscillatation_SetUp(_float _fDuration, _float _fFrequency, _float _fPower, _float _fMutiply, CCamera::CAM_OSC_TYPE _eOSCType);
 
 	_v3* Calc_MainCamPosAt();
 
@@ -77,8 +79,8 @@ public:
 
 private:
 	CCamera* Find_Camera(const _ushort& _eCameraClass, const _tchar* pCameraTag);
-	_bool Calc_Distance(CCamera* _pOld , CCamera* _pNew, _v3* _Distance);
-	
+	_bool Calc_Distance(CCamera* _pOld, CCamera* _pNew, _v3* _Distance);
+
 
 private:
 	CCamera*							m_pMainCamera = nullptr;

@@ -44,10 +44,10 @@ sampler		DepthSampler = sampler_state
 struct VS_IN
 {
 	float3		vPosition : POSITION;
-	float3		vNormal : NORMAL;
+	//float3		vNormal : NORMAL;
 	float2		vTexUV : TEXCOORD0;
-	float4		vColor : COLOR0;
-	float4		vInstance : COLOR1;
+	//float4		vColor : COLOR0;
+	//float4		vInstance : COLOR1;
 };
 
 struct VS_OUT
@@ -55,7 +55,7 @@ struct VS_OUT
 	float4		vPosition : POSITION;
 	float2		vTexUV : TEXCOORD0;
 	float4		vProjPos : TEXCOORD1;
-	float4		vColor : COLOR0;
+	//float4		vColor : COLOR0;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -66,30 +66,30 @@ VS_OUT VS_MAIN(VS_IN In)
 	
 	matWV = mul(g_matWorld, g_matView);
 	matWVP = mul(matWV, g_matProj);
-	//
-	//Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);	
-	//Out.vTexUV = In.vTexUV;
-	//Out.vProjPos = Out.vPosition;
 	
-	// ============================================================
-	//Use the fourth component of the vBoxInstance to rotate the box:
-	In.vInstance.w *= 2 * 3.1415;
-	float4 vRotatedPos = float4(In.vPosition.xyz, 1.f);
-	vRotatedPos.x = In.vPosition.x * cos(In.vInstance.w) + In.vPosition.z * sin(In.vInstance.w);
-	vRotatedPos.z = In.vPosition.z * cos(In.vInstance.w) - In.vPosition.x * sin(In.vInstance.w);
-
-	//Use the instance position to offset the incoming box corner position:
-	//  The "* 32 - 16" is to scale the incoming 0-1 intrapos range so that it maps to 8 box widths, covering
-	//  the signed range -8 to 8. Boxes are 2 word units wide.
-	vRotatedPos += float4(In.vInstance.xyz * 32 - 16, 0);
-
-	// Transform the position from object space to homogeneous projection space
-	Out.vPosition = mul(vRotatedPos, matWVP);
-	Out.vProjPos = Out.vPosition;
-
-	// Just copy the texture coordinate & color through
+	Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);	
 	Out.vTexUV = In.vTexUV;
-	Out.vColor = In.vColor;
+	Out.vProjPos = Out.vPosition;
+	
+	//// ============================================================
+	////Use the fourth component of the vBoxInstance to rotate the box:
+	//In.vInstance.w *= 2 * 3.1415;
+	//float4 vRotatedPos = float4(In.vPosition.xyz, 1.f);
+	//vRotatedPos.x = In.vPosition.x * cos(In.vInstance.w) + In.vPosition.z * sin(In.vInstance.w);
+	//vRotatedPos.z = In.vPosition.z * cos(In.vInstance.w) - In.vPosition.x * sin(In.vInstance.w);
+	//
+	////Use the instance position to offset the incoming box corner position:
+	////  The "* 32 - 16" is to scale the incoming 0-1 intrapos range so that it maps to 8 box widths, covering
+	////  the signed range -8 to 8. Boxes are 2 word units wide.
+	//vRotatedPos += float4(In.vInstance.xyz * 32 - 16, 0);
+	//
+	//// Transform the position from object space to homogeneous projection space
+	//Out.vPosition = mul(vRotatedPos, matWVP);
+	//Out.vProjPos = Out.vPosition;
+	//
+	//// Just copy the texture coordinate & color through
+	//Out.vTexUV = In.vTexUV;
+	//Out.vColor = In.vColor;
 
 	return Out;		
 }
@@ -99,7 +99,7 @@ struct PS_IN
 	float4		vPosition : POSITION;
 	float2		vTexUV : TEXCOORD0;
 	float4		vProjPos : TEXCOORD1;
-	float4		vColor : COLOR0;
+	//float4		vColor : COLOR0;
 };
 
 struct PS_OUT
@@ -140,8 +140,8 @@ PS_OUT PS_MAIN(PS_IN In)
 	}
 	else
 	{
-		Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV)  * In.vColor, 2.2);
-		//Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
+		Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
+		//Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV)  * In.vColor, 2.2);
 		Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
 	}
 

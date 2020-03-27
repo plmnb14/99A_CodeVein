@@ -34,8 +34,17 @@ HRESULT CMeshEffect::Ready_GameObject(void * pArg)
 		return E_FAIL;
 
 	m_pTransformCom->Set_Pos(V3_NULL);
-	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
-	m_pTransformCom->Set_Angle(_v3(0.f, 0.f, 0.f));
+	m_pTransformCom->Set_Scale(V3_ONE);
+	m_pTransformCom->Set_Angle(V3_NULL);
+
+	if (pArg)
+		m_pDesc = (EFFECT_DESC*)pArg;
+	else
+	{
+		m_pDesc = new EFFECT_DESC;
+		m_pDesc->vWorldPos = { 0.f , 0.f , 0.f };
+		m_pDesc->pTargetTrans = nullptr;
+	}
 
 	return NOERROR;
 }
@@ -368,6 +377,7 @@ void CMeshEffect::Change_Texture(const _tchar* _Name)
 	Safe_Release(iter->second);
 
 	iter->second = m_pTextureCom = static_cast<CTexture*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, _Name));
+	Safe_AddRef(m_pTextureCom);
 }
 
 void CMeshEffect::Change_Mesh(const _tchar* _Name)
@@ -378,6 +388,7 @@ void CMeshEffect::Change_Mesh(const _tchar* _Name)
 	Safe_Release(iter->second);
 
 	iter->second = m_pMeshCom = static_cast<CMesh_Static*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, _Name));
+	Safe_AddRef(m_pMeshCom);
 }
 
 CMeshEffect * CMeshEffect::Create(LPDIRECT3DDEVICE9 pGraphic_Device)

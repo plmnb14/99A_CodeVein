@@ -20,7 +20,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Effect_FootSmoke", 100);
 	Input_Pool(L"Effect_ButterFly_SoftSmoke", 2000);
 	Input_Pool(L"Effect_ButterFly_VenomShot", 1000);
-	Input_Pool(L"Effect_ButterFly_PointParticle", 1000);
+	Input_Pool(L"Effect_ButterFly_PointParticle", 100);
 	Input_Pool(L"Effect_ButterFly_RingLine", 10);
 	Input_Pool(L"Effect_ButterFly_Distortion", 10);
 
@@ -62,6 +62,7 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 						_tchar* szEffName = pFindedQueue->front()->Get_ParticleName();
 						CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));
 						pEffect->Set_ParticleName(szEffName);
+						pEffect->Set_Desc((*iter_begin)->vCreatePos, (*iter_begin)->pFollowTrans);
 
 						m_EffectList.push_back(pEffect);
 						continue;
@@ -69,6 +70,7 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 
 					m_EffectList.push_back(pFindedQueue->front());
 					pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
+					pFindedQueue->front()->Set_Desc((*iter_begin)->vCreatePos, (*iter_begin)->pFollowTrans);
 					pFindedQueue->pop();
 				}
 
@@ -85,14 +87,15 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 	return S_OK;
 }
 
-void CParticleMgr::Create_ParticleEffect(_tchar* szName, _float fLifeTime, CTransform* pFollowTrans)
+void CParticleMgr::Create_ParticleEffect(_tchar* szName, _float fLifeTime, _v3 vPos, CTransform* pFollowTrans)
 {
 	PARTICLE_INFO* pInfo = new PARTICLE_INFO;
 
 	lstrcpy(pInfo->szName, szName);
 	pInfo->fLifeTime = fLifeTime;
 	pInfo->pFollowTrans = pFollowTrans;
-
+	pInfo->vCreatePos = vPos;
+	
 	m_vecParticle.push_back(pInfo);
 }
 
@@ -110,6 +113,7 @@ void CParticleMgr::Create_Effect(_tchar* szName, _v3 vPos, CTransform * pFollowT
 			_tchar* szEffName = pFindedQueue->front()->Get_ParticleName();
 			CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));
 			pEffect->Set_ParticleName(szEffName);
+			pEffect->Set_Desc(vPos, pFollowTrans);
 
 			m_EffectList.push_back(pEffect);
 			continue;
@@ -117,7 +121,7 @@ void CParticleMgr::Create_Effect(_tchar* szName, _v3 vPos, CTransform * pFollowT
 
 		m_EffectList.push_back(pFindedQueue->front());
 		pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
-		pFindedQueue->front()->Get_Info()->vStartPos = vPos;
+		pFindedQueue->front()->Set_Desc(vPos, pFollowTrans);
 		pFindedQueue->pop();
 	}
 }

@@ -164,6 +164,7 @@ void CRenderObject::Change_Mesh(const _tchar* _MeshName)
 
 	// Release 한 컴포넌트에 새로이 Clone 받음.
 	iter->second = m_pMesh_Static = static_cast<CMesh_Static*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, m_szName));
+	Safe_AddRef(iter->second);
 
 	return;
 }
