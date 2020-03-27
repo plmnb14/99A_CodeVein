@@ -175,6 +175,9 @@
     <Filter Include="02.GameObject\Stage\1%29 Monster\00%29 Dummy_Target">
       <UniqueIdentifier>{30189a81-a048-468d-a30c-26360c03ccdb}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\ActeiveObject">
+      <UniqueIdentifier>{21a4dba6-aa19-4511-a9eb-71bfa0143bd5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">

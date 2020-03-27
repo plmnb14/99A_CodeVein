@@ -241,6 +241,9 @@
     <Filter Include="01.Utility\[03] Component\Component\06%29 VIBuffer\Sphere">
       <UniqueIdentifier>{351ceb45-8deb-4991-bd2a-19bdbd39835f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\[02] GameObject\5%29ActeiveObject_Engine">
+      <UniqueIdentifier>{063442cd-02dd-4869-8ab7-3d2f69c964cc}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Headers\Base.h">
@@ -483,6 +486,9 @@
     <ClInclude Include="..\Headers\Buffer_Sphere.h">
       <Filter>01.Utility\[03] Component\Component\06%29 VIBuffer\Sphere</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\ActeiveObject.h">
+      <Filter>01.Utility\[02] GameObject\5%29ActeiveObject_Engine</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Base.cpp">
@@ -700,6 +706,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Buffer_Sphere.cpp">
       <Filter>01.Utility\[03] Component\Component\06%29 VIBuffer\Sphere</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ActeiveObject.cpp">
+      <Filter>01.Utility\[02] GameObject\5%29ActeiveObject_Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

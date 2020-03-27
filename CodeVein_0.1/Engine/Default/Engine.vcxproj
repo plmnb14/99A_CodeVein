@@ -186,6 +186,7 @@ call CopyEngine.bat</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Headers\ActeiveObject.h" />
     <ClInclude Include="..\Headers\AIController.h" />
     <ClInclude Include="..\Headers\AniCtrl.h" />
     <ClInclude Include="..\Headers\Base.h" />
@@ -268,6 +269,7 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\VIBuffer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Codes\ActeiveObject.cpp" />
     <ClCompile Include="..\Codes\AIController.cpp" />
     <ClCompile Include="..\Codes\AniCtrl.cpp" />
     <ClCompile Include="..\Codes\Base.cpp" />
