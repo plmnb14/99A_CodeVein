@@ -119,6 +119,7 @@ void CActiveObject::Chaning_AtvMesh(const _tchar* _MeshName)
 
 	
 	iter->second = m_pMesh_Static = static_cast<CMesh_Static*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, m_szAciveName));
+	Safe_AddRef(iter->second);
 	//iter->second = m_pMesh_Dynamic = static_cast<CMesh_Dynamic*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, m_szAciveName));
 
 	return;
