@@ -437,7 +437,6 @@ void CParticleTab::Setup_EffInfo(_bool bIsMesh)
 	m_pInfo->bBillBoard = m_RadioBillType[1].GetCheck() ? true : false;
 	m_pInfo->bOnlyYRot = m_RadioBillType[2].GetCheck() ? true : false;
 
-	m_pInfo->bRotMove = true;
 	GetDlgItemText(IDC_EDIT19, m_EditRotX);
 	GetDlgItemText(IDC_EDIT20, m_EditRotY);
 	GetDlgItemText(IDC_EDIT21, m_EditRotZ);
@@ -450,6 +449,8 @@ void CParticleTab::Setup_EffInfo(_bool bIsMesh)
 	m_pInfo->fRotSpeed_Min = _float(_tstof(m_EditRotSpeed_Min));
 	m_pInfo->fRotSpeed_Max = _float(_tstof(m_EditRotSpeed_Max));
 	m_pInfo->bRandomRot = m_CheckRandRot.GetCheck() ? true : false;
+
+	m_pInfo->bRotMove = (m_pInfo->fRotSpeed == 0) ? false : true;
 
 	GetDlgItemText(IDC_EDIT10, m_EditPosX);
 	GetDlgItemText(IDC_EDIT11, m_EditPosY);
@@ -886,13 +887,13 @@ void CParticleTab::OnBnClickedButton_Load()
 
 			::ReadFile(hFile, &tInfo.vEndColor, sizeof(_v4), &dwByte, nullptr);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vEndColor.x);
-			m_EditHueStart.SetString(szBuff);
+			m_EditHueEnd.SetString(szBuff);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vEndColor.y);
-			m_EditContrastStart.SetString(szBuff);
+			m_EditContrastEnd.SetString(szBuff);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vEndColor.z);
-			m_EditBrightnessStart.SetString(szBuff);
+			m_EditBrightnessEnd.SetString(szBuff);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vEndColor.w);
-			m_EditSaturationStart.SetString(szBuff);
+			m_EditSaturationEnd.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.vMoveDirection, sizeof(_v3), &dwByte, nullptr);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vMoveDirection.x);
@@ -928,13 +929,13 @@ void CParticleTab::OnBnClickedButton_Load()
 
 			::ReadFile(hFile, &tInfo.vStartColor, sizeof(_v4), &dwByte, nullptr);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vStartColor.x);
-			m_EditHueEnd.SetString(szBuff);
+			m_EditHueStart.SetString(szBuff);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vStartColor.y);
-			m_EditContrastEnd.SetString(szBuff);
+			m_EditContrastStart.SetString(szBuff);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vStartColor.z);
-			m_EditBrightnessEnd.SetString(szBuff);
+			m_EditBrightnessStart.SetString(szBuff);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vStartColor.w);
-			m_EditSaturationEnd.SetString(szBuff);
+			m_EditSaturationStart.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.vStartPos, sizeof(_v3), &dwByte, nullptr);
 			if (!tInfo.bRandStartPos)

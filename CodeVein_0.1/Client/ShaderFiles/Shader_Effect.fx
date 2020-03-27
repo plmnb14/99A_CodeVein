@@ -46,7 +46,13 @@ struct VS_IN
 	float3		vPosition : POSITION;
 	//float3		vNormal : NORMAL;
 	float2		vTexUV : TEXCOORD0;
-	float4x4	vInstanceWorldMat : COLOR0;
+
+	float4		vInstanceRight	: TEXCOORD1;
+	float4		vInstanceUp		: TEXCOORD2;
+	float4		vInstanceLook	: TEXCOORD3;
+	float4		vInstancePos	: TEXCOORD4;
+	//float4		vColor			: COLOR0;
+
 };
 
 struct VS_OUT
@@ -54,49 +60,39 @@ struct VS_OUT
 	float4		vPosition : POSITION;
 	float2		vTexUV : TEXCOORD0;
 	float4		vProjPos : TEXCOORD1;
-	float4		vColor : COLOR0;
+	//float4		vColor : COLOR0;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
 {
 	VS_OUT			Out = (VS_OUT)0;
 
-	matrix		matWV, matWVP;
-	
-	matWV = mul(g_matWorld, g_matView);
-	matWVP = mul(matWV, g_matProj);
+	//matrix		matWV, matWVP;
+	//
+	//matWV = mul(g_matWorld, g_matView);
+	//matWVP = mul(matWV, g_matProj);
 	
 	//Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);	
 	//Out.vTexUV = In.vTexUV;
 	//Out.vProjPos = Out.vPosition;
-	
-	float4x4 object = vInstanceWorldMat;
-	float4x4 objectworld = mul(object, g_matWorld);
-	float4x4 WVP = mul(objectworld, mul(view, proj));
-	Out.vPosition = mul(float4(In.vPosition, 1.0f), WVP);
-	Out.vTexUV = In.vTexUV;
 
-	//// ============================================================
-	////Use the fourth component of the vBoxInstance to rotate the box:
-	//In.vInstance.w *= 2 * 3.1415;
-	//float4 vRotatedPos = float4(In.vPosition.xyz, 1.f);
-	//vRotatedPos.x = In.vPosition.x * cos(In.vInstance.w) + In.vPosition.z * sin(In.vInstance.w);
-	//vRotatedPos.z = In.vPosition.z * cos(In.vInstance.w) - In.vPosition.x * sin(In.vInstance.w);
-	//
-	////Use the instance position to offset the incoming box corner position:
-	////  The "* 32 - 16" is to scale the incoming 0-1 intrapos range so that it maps to 8 box widths, covering
-	////  the signed range -8 to 8. Boxes are 2 word units wide.
-	//int iInstancePosSize = 20;
-	//int iIdzSize = 6 * 2;
-	//vRotatedPos += float4(In.vInstance.xyz * iInstancePosSize - iIdzSize, 0);
-	//
-	//// Transform the position from object space to homogeneous projection space
-	//Out.vPosition = mul(vRotatedPos, matWVP);
-	//
-	//Out.vProjPos = Out.vPosition;
-	//
-	//// Just copy the texture coordinate & color through
-	//Out.vTexUV = In.vTexUV;
+	// ============================================================
+
+	float4x4 matWorld, matWVP;
+	matWorld = float4x4(In.vInstanceRight,
+						In.vInstanceUp,
+						In.vInstanceLook,
+						float4(In.vInstancePos.xyz, 1.f));
+	
+	matWorld = mul(matWorld, g_matWorld);
+
+	matWVP = mul(matWorld, g_matView);
+	matWVP = mul(matWVP, g_matProj);
+
+	Out.vPosition = mul(float4(In.vPosition.xyz, 1.f), matWVP);
+	
+	Out.vProjPos = Out.vPosition;
+	Out.vTexUV = In.vTexUV;
 	//Out.vColor = In.vColor;
 
 	return Out;		
@@ -107,7 +103,7 @@ struct PS_IN
 	float4		vPosition : POSITION;
 	float2		vTexUV : TEXCOORD0;
 	float4		vProjPos : TEXCOORD1;
-	float4		vColor : COLOR0;
+	//float4		vColor : COLOR0;
 };
 
 struct PS_OUT
@@ -289,6 +285,8 @@ technique Default_Technique
 		AlphablendEnable = true;
 		srcblend = SrcAlpha;
 		DestBlend = InvSrcAlpha;
+
+		cullmode = none;
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_MAIN();

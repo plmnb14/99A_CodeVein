@@ -50,12 +50,27 @@ _int CScene_Stage::Update_Scene(_double TimeDelta)
 {
 	if(g_pInput_Device->Key_Down(DIK_K))
 	{
-		g_pManagement->Create_ParticleEffect(L"Effect_ButterFly_Distortion", 0.1f, V3_NULL, nullptr);
-		g_pManagement->Create_ParticleEffect(L"Effect_ButterFly_RingLine", 0.1f, V3_NULL, nullptr);
+		//g_pManagement->Create_ParticleEffect(L"Effect_ButterFly_Distortion", 0.1f, V3_NULL, nullptr);
+		//g_pManagement->Create_ParticleEffect(L"Effect_ButterFly_RingLine", 0.1f, V3_NULL, nullptr);
 	}
 	if (g_pInput_Device->Key_Down(DIK_L))
 	{
 		g_pManagement->Create_ParticleEffect(L"Effect_ButterFly_PointParticle", 0.1f, V3_NULL, nullptr);
+		//_tchar	szBuff[MAX_PATH] = L"";
+		//lstrcpy(szBuff, L"Effect_Hit_Blood_%d");
+		//_int iRand = CCalculater::Random_Num(0, 2);
+		//wsprintf(szBuff, szBuff, iRand);
+		//g_pManagement->Create_Effect(szBuff, V3_NULL, nullptr);
+		//
+		//lstrcpy(szBuff, L"Effect_Hit_BloodMist_%d");
+		//iRand = CCalculater::Random_Num(0, 1);
+		//wsprintf(szBuff, szBuff, iRand);
+		//g_pManagement->Create_Effect(szBuff, V3_NULL, nullptr);
+		//
+		//lstrcpy(szBuff, L"Effect_Hit_BloodParticle_%d");
+		//iRand = CCalculater::Random_Num(0, 3);
+		//wsprintf(szBuff, szBuff, iRand);
+		//g_pManagement->Create_Effect(szBuff, V3_NULL, nullptr);
 	}
 
 	// -------------- UI Manager ----------------------
