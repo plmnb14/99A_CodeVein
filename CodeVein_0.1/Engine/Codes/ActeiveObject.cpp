@@ -227,6 +227,8 @@ void CActiveObject::Free()
 	Safe_Release(m_pMesh_Static);
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pShader);
+
+	CGameObject::Free();
 }
 
 CGameObject* CActiveObject::Clone_GameObject(void * pArg)
