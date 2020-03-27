@@ -1,4 +1,7 @@
 Mesh_DefaultBox|DefaultBox.X|..\..\Client\Resources\Mesh\StaticMesh\DefaultBox\|0
+Mesh_Mistletoe|Mistletoe.X|..\..\Client\Resources\Mesh\StaticMesh\Mistletoe\|0
+Mesh_Itembox|Itembox.X|..\..\Client\Resources\Mesh\StaticMesh\Itembox\|0
+Mesh_Itembox_Lid|Itembox_Lid.X|..\..\Client\Resources\Mesh\StaticMesh\Itembox_Lid\|0
 Mesh_Wpn_Hammer|Wpn_Hammer.X|..\..\Client\Resources\Mesh\StaticMesh\Wpn_Hammer\|0
 Mesh_Wpn_Sword|Wpn_Sword.X|..\..\Client\Resources\Mesh\StaticMesh\Wpn_Sword\|0
 Mesh_Player|Player.X|..\..\Client\Resources\Mesh\DynamicMesh\Player\|1

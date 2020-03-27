@@ -245,12 +245,42 @@ HRESULT CObject_Manager::LoadObjectPrototypes_FromPath(_Device pGraphicDev, cons
 				TARGET_TO_TRANS(pActiveObj)->Set_Scale(vVtx[2]);
 				
 				Add_GameOject_ToLayer_NoClone(pActiveObj, SCENE_STAGE, L"Layer_Render", NULL);
-				//Add_GameObject_ToLayer(L"GameObject_Mistletoe", SCENE_STAGE, L"Layer_Render", NULL);
 				lstrcat(szObjName, ObjInfo->szIndex);
 
 				pActiveObj = nullptr;
 			}
-				
+			if (!(lstrcmp(szObjName, L"Mesh_Itembox")))
+			{
+				Engine::CActiveObject*	pActiveObj = Engine::CActiveObject::Create(pGraphicDev, 2);
+
+				pActiveObj->Chaning_AtvMesh(ObjInfo->szName);
+				pActiveObj->Set_Index(iIndex);
+
+				TARGET_TO_TRANS(pActiveObj)->Set_Pos(vVtx[0]);
+				TARGET_TO_TRANS(pActiveObj)->Set_Angle(vVtx[1]);
+				TARGET_TO_TRANS(pActiveObj)->Set_Scale(vVtx[2]);
+
+				Add_GameOject_ToLayer_NoClone(pActiveObj, SCENE_STAGE, L"Layer_Render", NULL);
+				lstrcat(szObjName, ObjInfo->szIndex);
+
+				pActiveObj = nullptr;
+			}
+			if (!(lstrcmp(szObjName, L"Mesh_Itembox_Lid")))
+			{
+				Engine::CActiveObject*	pActiveObj = Engine::CActiveObject::Create(pGraphicDev, 3);
+
+				pActiveObj->Chaning_AtvMesh(ObjInfo->szName);
+				pActiveObj->Set_Index(iIndex);
+
+				TARGET_TO_TRANS(pActiveObj)->Set_Pos(vVtx[0]);
+				TARGET_TO_TRANS(pActiveObj)->Set_Angle(vVtx[1]);
+				TARGET_TO_TRANS(pActiveObj)->Set_Scale(vVtx[2]);
+
+				Add_GameOject_ToLayer_NoClone(pActiveObj, SCENE_STAGE, L"Layer_Render", NULL);
+				lstrcat(szObjName, ObjInfo->szIndex);
+
+				pActiveObj = nullptr;
+			}
 			else
 			{
 				Engine::CRenderObject*	pInstance = Engine::CRenderObject::Create(pGraphicDev);

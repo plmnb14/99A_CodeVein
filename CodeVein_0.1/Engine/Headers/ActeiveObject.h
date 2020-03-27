@@ -13,7 +13,7 @@ class CRenderer;
 
 class ENGINE_DLL CActiveObject : public CGameObject
 {
-	enum ActeivaObj { ATV_MISTLETOE, ATV_DOOR, ATV_BOX, ATV_END };
+	enum ActeivaObj { ATV_MISTLETOE, ATV_DOOR, ATV_BOX, ATV_BOX_LID, ATV_END };
 
 protected:
 	explicit CActiveObject(_Device _pGraphicDev);
@@ -54,6 +54,12 @@ protected:
 	_ulong			m_PassNum = 0;
 
 	_tchar			m_szAciveName[MAX_STR] = L"";
+
+	_bool			m_bCheck_Mistletoe = false;
+	// 임시적으로 멤버변수 불값 사용. 후에 수정
+	_bool			m_bCheck_BoxLid = false;
+	_bool			m_bCheck_Boxopen = false;
+	_bool			m_bCheck_Boxopen_end = false;
 
 private:
 	RENDERID		m_pGrouop = RENDER_ALPHA;
