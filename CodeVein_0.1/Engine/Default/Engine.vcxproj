@@ -77,13 +77,14 @@
     <OutDir>..\Bin\</OutDir>
     <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(LibraryPath)</LibraryPath>
+    <TargetName>$(ProjectName)DEBUG</TargetName>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
-    <OutDir>..\Bin\</OutDir>
+    <OutDir>..\Release\</OutDir>
     <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
     <LibraryPath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
@@ -186,6 +187,7 @@ call CopyEngine.bat</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Headers\ActeiveObject.h" />
     <ClInclude Include="..\Headers\AIController.h" />
     <ClInclude Include="..\Headers\AniCtrl.h" />
     <ClInclude Include="..\Headers\Base.h" />
@@ -193,9 +195,11 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\BlackBoard.h" />
     <ClInclude Include="..\Headers\BT_All_Node.h" />
     <ClInclude Include="..\Headers\BT_BlackBoard_Mgr.h" />
+    <ClInclude Include="..\Headers\BT_Compare.h" />
     <ClInclude Include="..\Headers\BT_Composite_Node.h" />
     <ClInclude Include="..\Headers\BT_ConeCheck.h" />
     <ClInclude Include="..\Headers\BT_Cooldown.h" />
+    <ClInclude Include="..\Headers\BT_CreateEffect.h" />
     <ClInclude Include="..\Headers\BT_Decorator_Node.h" />
     <ClInclude Include="..\Headers\BT_Inverter.h" />
     <ClInclude Include="..\Headers\BT_Loop.h" />
@@ -205,11 +209,14 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\BT_Node_Mgr.h" />
     <ClInclude Include="..\Headers\BT_Play_Ani.h" />
     <ClInclude Include="..\Headers\BT_Root.h" />
+    <ClInclude Include="..\Headers\BT_RotationDir.h" />
     <ClInclude Include="..\Headers\BT_Selector.h" />
     <ClInclude Include="..\Headers\BT_Sequence.h" />
     <ClInclude Include="..\Headers\BT_Service_Node.h" />
     <ClInclude Include="..\Headers\BT_Simple_Parallel.h" />
     <ClInclude Include="..\Headers\BT_Task_Node.h" />
+    <ClInclude Include="..\Headers\BT_UpdateGageRatio.h" />
+    <ClInclude Include="..\Headers\BT_UpdatePos.h" />
     <ClInclude Include="..\Headers\BT_Wait.h" />
     <ClInclude Include="..\Headers\Buffer_CubeTex.h" />
     <ClInclude Include="..\Headers\Buffer_RcTex.h" />
@@ -263,20 +270,24 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\Texture.h" />
     <ClInclude Include="..\Headers\Timer.h" />
     <ClInclude Include="..\Headers\Timer_Manager.h" />
+    <ClInclude Include="..\Headers\Trail_VFX.h" />
     <ClInclude Include="..\Headers\Transform.h" />
     <ClInclude Include="..\Headers\UI.h" />
     <ClInclude Include="..\Headers\VIBuffer.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Codes\ActeiveObject.cpp" />
     <ClCompile Include="..\Codes\AIController.cpp" />
     <ClCompile Include="..\Codes\AniCtrl.cpp" />
     <ClCompile Include="..\Codes\Base.cpp" />
     <ClCompile Include="..\Codes\BehaviorTree.cpp" />
     <ClCompile Include="..\Codes\BlackBoard.cpp" />
     <ClCompile Include="..\Codes\BT_BlackBoard_Mgr.cpp" />
+    <ClCompile Include="..\Codes\BT_Compare.cpp" />
     <ClCompile Include="..\Codes\BT_Composite_Node.cpp" />
     <ClCompile Include="..\Codes\BT_ConeCheck.cpp" />
     <ClCompile Include="..\Codes\BT_Cooldown.cpp" />
+    <ClCompile Include="..\Codes\BT_CreateEffect.cpp" />
     <ClCompile Include="..\Codes\BT_Decorator_Node.cpp" />
     <ClCompile Include="..\Codes\BT_Inverter.cpp" />
     <ClCompile Include="..\Codes\BT_Loop.cpp" />
@@ -286,11 +297,14 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\BT_Node_Mgr.cpp" />
     <ClCompile Include="..\Codes\BT_Play_Ani.cpp" />
     <ClCompile Include="..\Codes\BT_Root.cpp" />
+    <ClCompile Include="..\Codes\BT_RotationDir.cpp" />
     <ClCompile Include="..\Codes\BT_Selector.cpp" />
     <ClCompile Include="..\Codes\BT_Sequence.cpp" />
     <ClCompile Include="..\Codes\BT_Service_Node.cpp" />
     <ClCompile Include="..\Codes\BT_Simple_Parallel.cpp" />
     <ClCompile Include="..\Codes\BT_Task_Node.cpp" />
+    <ClCompile Include="..\Codes\BT_UpdateGageRatio.cpp" />
+    <ClCompile Include="..\Codes\BT_UpdatePos.cpp" />
     <ClCompile Include="..\Codes\BT_Wait.cpp" />
     <ClCompile Include="..\Codes\Buffer_CubeTex.cpp" />
     <ClCompile Include="..\Codes\Buffer_RcTex.cpp" />
@@ -337,6 +351,7 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\Texture.cpp" />
     <ClCompile Include="..\Codes\Timer.cpp" />
     <ClCompile Include="..\Codes\Timer_Manager.cpp" />
+    <ClCompile Include="..\Codes\Trail_VFX.cpp" />
     <ClCompile Include="..\Codes\Transform.cpp" />
     <ClCompile Include="..\Codes\UI.cpp" />
     <ClCompile Include="..\Codes\VIBuffer.cpp" />

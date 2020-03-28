@@ -91,8 +91,6 @@ HRESULT CHPBack::Render_GameObject()
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
 
-	
-
 	return NOERROR;
 }
 

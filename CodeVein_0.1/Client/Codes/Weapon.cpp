@@ -25,6 +25,17 @@ HRESULT CWeapon::Ready_GameObject(void * pArg)
 
 	SetUp_Default();
 
+	m_pTrailEffect = static_cast<Engine::CTrail_VFX*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SwordTrail", nullptr));
+	m_pTrailEffect->Set_TrailIdx(0);
+
+	m_pDistortionEffect = static_cast<Engine::CTrail_VFX*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SwordTrail", nullptr));
+	m_pDistortionEffect->Set_TrailIdx(3);
+	m_pDistortionEffect->Set_TrailType(Engine::CTrail_VFX::Trail_Distortion);
+
+	m_pStaticTrailEffect = static_cast<Engine::CTrail_VFX*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SwordTrail", nullptr));
+	m_pStaticTrailEffect->Set_TrailIdx(1);
+
+
 	return NOERROR;
 }
 
@@ -36,6 +47,9 @@ _int CWeapon::Update_GameObject(_double TimeDelta)
 	CGameObject::Update_GameObject(TimeDelta);
 
 	Cacl_AttachBoneTransform();
+
+	UpdateTrails(TimeDelta);
+
 
 	return NO_EVENT;
 }
@@ -83,8 +97,41 @@ HRESULT CWeapon::Render_GameObject()
 
 	m_pShader->End_Shader();
 
+	g_pManagement->Gizmo_Draw_Capsule(m_pCollider->Get_CenterPos(), m_pCollider->Get_Radius());
+
 	return NOERROR;
 }
+
+void CWeapon::UpdateTrails(_double TimeDelta)
+{
+	_mat matWorld = m_pTransform->Get_WorldMat();
+	_v3 vBegin, vDir;
+
+	memcpy(vBegin, &m_pTransform->Get_WorldMat()._41, sizeof(_v3));
+	memcpy(vDir, &m_pTransform->Get_WorldMat()._31, sizeof(_v3));
+
+	if (m_pTrailEffect)
+	{
+		//m_pTrailEffect->Set_ParentTransform(&matWorld);
+		//m_pTrailEffect->Ready_Info(vBegin + vDir * 0.5f, vBegin + vDir * 1.4f);
+		//m_pTrailEffect->Update_GameObject(TimeDelta);
+	}
+
+	if (m_pDistortionEffect)
+	{
+		m_pDistortionEffect->Set_ParentTransform(&matWorld);
+		m_pDistortionEffect->Ready_Info(vBegin + vDir * 0.2f, vBegin + vDir * 1.5f);
+		m_pDistortionEffect->Update_GameObject(TimeDelta);
+	}
+
+	if (m_pStaticTrailEffect)
+	{
+		m_pStaticTrailEffect->Set_ParentTransform(&matWorld);
+		m_pStaticTrailEffect->Ready_Info(vBegin + vDir * 0.2f, vBegin + vDir * 1.6f);
+		m_pStaticTrailEffect->Update_GameObject(TimeDelta);
+	}
+}
+
 
 void CWeapon::Change_WeaponMesh(const _tchar* _MeshName)
 {
@@ -104,6 +151,8 @@ void CWeapon::Change_WeaponMesh(const _tchar* _MeshName)
 
 	// Release 한 컴포넌트에 새로이 Clone 받음.
 	iter->second = m_pMesh_Static = static_cast<CMesh_Static*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, _MeshName));
+
+	Safe_AddRef(iter->second);
 }
 
 void CWeapon::Change_WeaponData(WEAPON_DATA _eWpnData)
@@ -132,6 +181,7 @@ void CWeapon::Change_WeaponData(WEAPON_DATA _eWpnData)
 	case WPN_Hammer_Normal:
 	{
 		lstrcpy(WeaponMeshName, L"Mesh_Hammer");
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_Hammer");
 		m_eWeaponType = WEAPON_Hammer;
 		break;
 	}
@@ -170,7 +220,20 @@ HRESULT CWeapon::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Wpn_Sword", L"Static_Mesh", (CComponent**)&m_pMesh_Static)))
 		return E_FAIL;
 
+
 	lstrcpy(m_szName, L"Mesh_Wpn_Sword");
+
+
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Collider", (CComponent**)&m_pCollider)))
+		return E_FAIL;
+
+	lstrcpy(m_szName, L"Mesh_Wpn_Sword");
+
+	m_pCollider->Set_Radius(_v3{ 0.2f, 0.5f, 0.2f });
+	m_pCollider->Set_Dynamic(true);
+	m_pCollider->Set_Type(COL_CAPSULE);
+	m_pCollider->Set_CapsuleLength(1.8f);
+	m_pCollider->Set_CenterPos(m_pTransform->Get_Pos() + _v3{ 0.f , m_pCollider->Get_Radius().y * 2.f , 0.f });
 
 	return NOERROR;
 }
@@ -189,24 +252,18 @@ HRESULT CWeapon::SetUp_ConstantTable()
 	if (nullptr == m_pShader)
 		return E_FAIL;
 
-	CManagement*		pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
-
-	Safe_AddRef(pManagement);
-
+	
 	if (FAILED(m_pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
 
-	_mat		ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
+	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+
 
 	if (FAILED(m_pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
-
-	Safe_Release(pManagement);
 
 	return NOERROR;
 }
@@ -246,6 +303,14 @@ CGameObject * CWeapon::Clone_GameObject(void * pArg)
 void CWeapon::Free()
 {
 	m_pmatAttach = nullptr;
+
+	m_pmatParent = nullptr;
+
+	Safe_Release(m_pTrailEffect);
+	Safe_Release(m_pStaticTrailEffect);
+	Safe_Release(m_pDistortionEffect);
+
+	Safe_Release(m_pCollider);
 
 	Safe_Release(m_pTransform);
 	Safe_Release(m_pMesh_Static);

@@ -5,6 +5,7 @@
 #include "UI.h"
 #include "UI_Manager.h"
 #include "Item_Manager.h"
+#include "ParticleMgr.h"
 
 CScene_Stage::CScene_Stage(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
@@ -27,13 +28,33 @@ HRESULT CScene_Stage::Ready_Scene()
 
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Stage_Test.dat");
 
+	if (FAILED(Ready_Layer_Player(L"Layer_Player")))
+		return E_FAIL;
+
+	if (FAILED(Ready_Layer_Monster(L"Layer_Monster")))
+		return E_FAIL;
+
+	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Stage_Test.dat");
+
+	m_pNavMesh = static_cast<Engine::CNavMesh*>(g_pManagement->Clone_Component(SCENE_STATIC, L"NavMesh"));
+	
+	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Test.dat");
+	
+	if (FAILED(Ready_Layer_Effect(L"Layer_Effect")))
+		return E_FAIL;
+	
+	//if (FAILED(Ready_Layer_BackGround(L"Layer_BackGround")))
+	//	return E_FAIL;
+
+
+	if(FAILED(CUI_Manager::Get_Instance()->SetUp_UILayer()))
+		return E_FAIL;
+
 	m_pNavMesh = static_cast<Engine::CNavMesh*>(g_pManagement->Clone_Component(SCENE_STATIC, L"NavMesh"));
 	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Test.dat");
 
 
 
-	if (FAILED(CUI_Manager::Get_Instance()->SetUp_UILayer()))
-		return E_FAIL;
 	
 		
 	return S_OK;
@@ -41,36 +62,47 @@ HRESULT CScene_Stage::Ready_Scene()
 
 _int CScene_Stage::Update_Scene(_double TimeDelta)
 {
+	//if(g_pInput_Device->Key_Down(DIK_K))
+	{
+		//g_pManagement->Create_ParticleEffect(L"Effect_ButterFly_Distortion", 0.1f, V3_NULL, nullptr);
+		//g_pManagement->Create_ParticleEffect(L"Effect_ButterFly_RingLine", 0.1f, V3_NULL, nullptr);
+	}
+	//if (g_pInput_Device->Key_Down(DIK_L))
+	{
+		g_pManagement->Create_ParticleEffect(L"Effect_ButterFly_PointParticle", 0.1f, V3_NULL, nullptr);
+		//_tchar	szBuff[MAX_PATH] = L"";
+		//lstrcpy(szBuff, L"Effect_Hit_Blood_%d");
+		//_int iRand = CCalculater::Random_Num(0, 2);
+		//wsprintf(szBuff, szBuff, iRand);
+		//g_pManagement->Create_Effect(szBuff, V3_NULL, nullptr);
+	}
+
 	// -------------- UI Manager ----------------------
+
 	CUI_Manager::Get_Instance()->Update_UI();
 
-	
 
 	return _int();
 }
 
 HRESULT CScene_Stage::Render_Scene()
 {
-	//m_pNavMesh->Render_NaviMesh();
+
+	m_pNavMesh->Render_NaviMesh();
+
 
 	return S_OK;
 }
 
 HRESULT CScene_Stage::Ready_Layer_Player(const _tchar * pLayerTag)
 {
+
 	// 이미 오브젝트 매니져에 추가되어있는 객체를 찾아서 복제한다음. 
 	// 적절한 레이어에 보관해라.
 
-	CManagement*		pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
+	
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Player", SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
-
-	Safe_AddRef(pManagement);
-
-	if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_Player", SCENE_STAGE, pLayerTag)))
-		return E_FAIL;
-
-	Safe_Release(pManagement);
 
 	return S_OK;
 }
@@ -83,27 +115,42 @@ HRESULT CScene_Stage::Ready_Layer_Camera(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
-	CManagement*		pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_TestMonster", SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
-
-	Safe_AddRef(pManagement);
 
 	// For. TestMonster
-	if (FAILED(pManagement->Add_GameObject_ToLayer(L"Monster_TestMonster", SCENE_STAGE, pLayerTag)))
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_TestMonster", SCENE_STAGE, pLayerTag)))
+	//	return E_FAIL;
+
+	// For. PoisonButterfly
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_PoisonButterfly", SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 
-	Safe_Release(pManagement);
+	// For. BlackUrchin
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_BlackUrchin", SCENE_STAGE, pLayerTag)))
+	//	return E_FAIL;
+
+	// For. BlackWolf
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_BlackWolf", SCENE_STAGE, pLayerTag)))
+	//	return E_FAIL;
+
+	// For. NormalGenji
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_Genji", SCENE_STAGE, pLayerTag)))
+	//	return E_FAIL;
+
+
+	// 디버깅용 더미 타겟
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Dummy", SCENE_STAGE, L"Layer_Dummy")))
+		return E_FAIL;
+//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+
 
 	return S_OK;
 }
 
 HRESULT CScene_Stage::Ready_Layer_BackGround(const _tchar * pLayerTag)
 {
-	// 이미 오브젝트 매니져에 추가되어있는 객체를 찾아서 복제한다음. 
-	// 적절한 레이어에 보관해라.
-
-	
 	// For.Terrain
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Terrain", SCENE_STAGE, pLayerTag)))
 	//	return E_FAIL;
@@ -113,22 +160,15 @@ HRESULT CScene_Stage::Ready_Layer_BackGround(const _tchar * pLayerTag)
 	//	return E_FAIL;
 
 
+
 	return S_OK;
 }
 
 HRESULT CScene_Stage::Ready_Layer_Effect(const _tchar * pLayerTag)
 {
-	CManagement*		pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
-
-	Safe_AddRef(pManagement);
-
 	// For.Effect
-
-
-	Safe_Release(pManagement);
-
+	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager())) // 프로토타입 생성 이후 실행되어야 함
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -136,12 +176,6 @@ HRESULT CScene_Stage::Ready_Layer_Effect(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage::Ready_LightDesc()
 {
-	CManagement*		pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
-
-	Safe_AddRef(pManagement);
-
 	D3DLIGHT9		LightDesc;
 	ZeroMemory(&LightDesc, sizeof(D3DLIGHT9));
 
@@ -152,11 +186,8 @@ HRESULT CScene_Stage::Ready_LightDesc()
 	// In.WorldSpace
 	LightDesc.Direction = _v3(1.f, 1.f, -1.f);
 
-	if (FAILED(pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
+	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
 		return E_FAIL;
-
-
-	Safe_Release(pManagement);
 
 	return NOERROR;
 }

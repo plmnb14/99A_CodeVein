@@ -3,6 +3,9 @@
 #include "Weapon.h"
 #include "CameraMgr.h"
 
+#include "Dummy_Target.h"
+
+
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
@@ -27,6 +30,7 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 
 	SetUp_Default();
 	Ready_Weapon();
+
 
 	return NOERROR;
 }
@@ -107,6 +111,90 @@ HRESULT CPlayer::Render_GameObject()
 	}
 
 	m_pShader->End_Shader();
+
+	return NOERROR;
+}
+
+
+_int CPlayer::Update_GameObject(_double TimeDelta)
+{
+	CGameObject::Update_GameObject(TimeDelta);
+
+	KeyInput();
+
+	Parameter_YPos();
+	Parameter_Movement();
+	Parameter_State();
+	Parameter_Atk();
+	Parameter_HeavyCharging();
+	Parameter_Collision();
+	Parameter_Aiming();
+
+	if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
+		return E_FAIL;
+
+	m_pWeapon[m_eActiveSlot]->Update_GameObject(TimeDelta);
+
+	return NO_EVENT;
+}
+
+_int CPlayer::Late_Update_GameObject(_double TimeDelta)
+{
+	if (nullptr == m_pRenderer ||
+		nullptr == m_pDynamicMesh)
+		return E_FAIL;
+
+	m_pDynamicMesh->SetUp_Animation_Lower(m_eAnim_Lower);
+	m_pDynamicMesh->SetUp_Animation_Upper(m_eAnim_Upper);
+	m_pDynamicMesh->SetUp_Animation_RightArm(m_eAnim_RightArm);
+
+	m_pWeapon[m_eActiveSlot]->Late_Update_GameObject(TimeDelta);
+
+	return NO_EVENT;
+}
+
+HRESULT CPlayer::Render_GameObject()
+{
+	if (nullptr == m_pShader ||
+		nullptr == m_pDynamicMesh)
+		return E_FAIL;
+
+	m_pDynamicMesh->Play_Animation_Lower(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply);
+	m_pDynamicMesh->Play_Animation_Upper(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply);
+	m_pDynamicMesh->Play_Animation_RightArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply, true);
+
+	if (FAILED(SetUp_ConstantTable()))
+		return E_FAIL;
+
+	m_pShader->Begin_Shader();
+
+	_uint iNumMeshContainer = _uint(m_pDynamicMesh->Get_NumMeshContainer());
+
+	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+	{
+		_uint iNumSubSet = (_uint)m_pDynamicMesh->Get_NumMaterials(i);
+
+		// 메시를 뼈에 붙인다.
+		m_pDynamicMesh->Update_SkinnedMesh(i);
+
+		for (_uint j = 0; j < iNumSubSet; ++j)
+		{
+			m_pShader->Begin_Pass(0);
+
+			if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pDynamicMesh->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE))))
+				return E_FAIL;
+
+			m_pShader->Commit_Changes();
+
+			m_pDynamicMesh->Render_Mesh(i, j);
+
+			m_pShader->End_Pass();
+		}
+	}
+
+	m_pShader->End_Shader();
+
+	g_pManagement->Gizmo_Draw_Capsule(m_pCollider->Get_CenterPos(), m_pCollider->Get_Radius());
 
 	return NOERROR;
 }
@@ -201,13 +289,171 @@ void CPlayer::Parameter_Movement()
 	_float fRadian = 0.f;
 	_float fRecover = 720.f;
 
+
+	if (m_bOnDodge)
+	{
+		if (m_pTarget != nullptr)
+		{
+			_float fAngle = D3DXToDegree(m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(m_pTarget)->Get_Pos()));
+			m_pTransform->Set_Angle(AXIS_Y, D3DXToRadian(fAngle));
+		}
+
+		return;
+	}
+
+	_float fMoveSpeed = m_tInfo.fMoveSpeed_Cur * DELTA_60;
+	_float fRadian = 0.f;
+	_float fRecover = 720.f;
+
+	_float fAngle = (m_pTarget != nullptr ?
+		D3DXToDegree(m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(m_pTarget)->Get_Pos())) :
+		CCameraMgr::Get_Instance()->Get_XAngle());
+
+	//if (m_bOnAiming)
+	//	fMoveSpeed = 0.f;
+
+	if (m_bOnAiming && m_pTarget != nullptr)
+		Movement_Aiming(fAngle, fMoveSpeed);
+
+	else
+		Movement_NonAiming(fRecover, fAngle, fRadian, fMoveSpeed);
+}
+
+void CPlayer::Parameter_HeavyCharging()
+{
+	if (m_bCharging)
+	{
+		m_fChargeTimer_Cur += DELTA_60;
+	}
+}
+
+void CPlayer::Parameter_YPos()
+{
+	m_pTransform->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransform->Get_Pos()));
+}
+
+void CPlayer::Parameter_Collision()
+{
+	Update_Collider();
+	OnCollisionEnter();
+}
+
+void CPlayer::Parameter_Aiming()
+{
+	if (true == m_bOnAiming)
+	{
+		cout << "타겟" << endl;
+		Target_AimChasing();
+	}
+
+	else if (false == m_bOnAiming)
+	{
+		if (nullptr != m_pTarget)
+		{
+			m_pTarget = nullptr;
+			m_bHaveAimingTarget = false;
+
+			CCameraMgr::Get_Instance()->Set_AimingTarget(m_pTarget);
+			CCameraMgr::Get_Instance()->Set_OnAimingTarget();
+		}
+	}
+}
+
+void CPlayer::Movement_Aiming(_float _fAngle, _float _fMovespeed)
+{
+	if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Right] || m_bMove[MOVE_Left])
+	{
+		_v3 tmpLook;
+
+		if (m_bMove[MOVE_Front])
+		{
+			if (m_bMove[MOVE_Left])
+			{
+				V3_NORMAL(&tmpLook, &(-m_pTransform->Get_Axis(AXIS_X) + m_pTransform->Get_Axis(AXIS_Z)));
+			}
+
+			else if (m_bMove[MOVE_Right])
+			{
+				V3_NORMAL(&tmpLook, &(m_pTransform->Get_Axis(AXIS_X) + m_pTransform->Get_Axis(AXIS_Z)));
+			}
+
+			else
+			{
+				tmpLook = m_pTransform->Get_Axis(AXIS_Z);
+			}
+		}
+
+		else if (m_bMove[MOVE_Back])
+		{
+			if (m_bMove[MOVE_Left])
+			{
+				V3_NORMAL(&tmpLook, &(-m_pTransform->Get_Axis(AXIS_X) + -m_pTransform->Get_Axis(AXIS_Z)));
+			}
+
+			else if (m_bMove[MOVE_Right])
+			{
+				V3_NORMAL(&tmpLook, &(m_pTransform->Get_Axis(AXIS_X) + -m_pTransform->Get_Axis(AXIS_Z)));
+			}
+
+			else
+			{
+				tmpLook = -m_pTransform->Get_Axis(AXIS_Z);
+			}
+		}
+
+		else if (m_bMove[MOVE_Left])
+		{
+			if (m_bMove[MOVE_Front])
+			{
+				V3_NORMAL(&tmpLook, &(-m_pTransform->Get_Axis(AXIS_X) + m_pTransform->Get_Axis(AXIS_Z)));
+			}
+
+			else if (m_bMove[MOVE_Back])
+			{
+				V3_NORMAL(&tmpLook, &(-m_pTransform->Get_Axis(AXIS_X) + -m_pTransform->Get_Axis(AXIS_Z)));
+			}
+
+			else
+			{
+				tmpLook = -m_pTransform->Get_Axis(AXIS_X);
+			}
+		}
+
+		else if (m_bMove[MOVE_Right])
+		{
+			if (m_bMove[MOVE_Front])
+			{
+				V3_NORMAL(&tmpLook, &(m_pTransform->Get_Axis(AXIS_X) + m_pTransform->Get_Axis(AXIS_Z)));
+			}
+
+			else if (m_bMove[MOVE_Back])
+			{
+				V3_NORMAL(&tmpLook, &(m_pTransform->Get_Axis(AXIS_X) + -m_pTransform->Get_Axis(AXIS_Z)));
+			}
+
+			else
+			{
+				tmpLook = m_pTransform->Get_Axis(AXIS_X);
+			}
+		}
+
+		D3DXVec3Normalize(&tmpLook, &tmpLook);
+		m_pTransform->Set_Angle(AXIS_Y, D3DXToRadian(_fAngle));
+		m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, _fMovespeed)));
+	}
+}
+
+void CPlayer::Movement_NonAiming(_float _fRecover, _float _fAngle, _float _fRadian, _float _fMoveSpeed)
+{
+
 	if (m_bMove[MOVE_Front])
 	{
 		if (m_bMove[MOVE_Left] == true)
 		{
 			if (m_fAngle_Recover > -45.f)
 			{
-				m_fAngle_Recover -= fRecover * DELTA_60;
+				m_fAngle_Recover -= _fRecover * DELTA_60;
+
 
 				if (m_fAngle_Recover <= -45.f)
 				{
@@ -217,7 +463,7 @@ void CPlayer::Parameter_Movement()
 
 			else if (m_fAngle_Recover < -45.f)
 			{
-				m_fAngle_Recover += fRecover * DELTA_60;
+				m_fAngle_Recover += _fRecover * DELTA_60;
 
 				if (m_fAngle_Recover >= -45.f)
 				{
@@ -230,7 +476,7 @@ void CPlayer::Parameter_Movement()
 		{
 			if (m_fAngle_Recover < 45.f)
 			{
-				m_fAngle_Recover += fRecover * DELTA_60;
+				m_fAngle_Recover += _fRecover * DELTA_60;
 
 				if (m_fAngle_Recover >= 45.f)
 				{
@@ -240,7 +486,8 @@ void CPlayer::Parameter_Movement()
 
 			else if (m_fAngle_Recover > 45.f)
 			{
-				m_fAngle_Recover -= fRecover * DELTA_60;
+				m_fAngle_Recover -= _fRecover * DELTA_60;
+
 
 				if (m_fAngle_Recover <= 45.f)
 				{
@@ -253,7 +500,8 @@ void CPlayer::Parameter_Movement()
 		{
 			if (m_fAngle_Recover > 180.f)
 			{
-				m_fAngle_Recover += fRecover * DELTA_60;
+				m_fAngle_Recover += _fRecover * DELTA_60;
+
 
 				if (m_fAngle_Recover >= 360.f)
 				{
@@ -263,7 +511,8 @@ void CPlayer::Parameter_Movement()
 
 			else if (m_fAngle_Recover > 0.f)
 			{
-				m_fAngle_Recover -= fRecover * DELTA_60;
+				m_fAngle_Recover -= _fRecover * DELTA_60;
+
 
 				if (m_fAngle_Recover <= 0.f)
 				{
@@ -273,7 +522,8 @@ void CPlayer::Parameter_Movement()
 
 			else if (m_fAngle_Recover < 0.f)
 			{
-				m_fAngle_Recover += fRecover * DELTA_60;
+				m_fAngle_Recover += _fRecover * DELTA_60;
+
 
 				if (m_fAngle_Recover >= 0.f)
 				{
@@ -282,23 +532,28 @@ void CPlayer::Parameter_Movement()
 			}
 		}
 
-		fRadian = D3DXToRadian(fAngle + m_fAngle_Recover);
 
-		m_pTransform->Set_Angle({ 0, fRadian, 0 });
+		
+		_fRadian = D3DXToRadian(_fAngle + m_fAngle_Recover);
+
+		m_pTransform->Set_Angle({ 0, _fRadian, 0 });
+
 
 		_v3 tmpLook = m_pTransform->Get_Axis(AXIS_Z);
 		D3DXVec3Normalize(&tmpLook, &tmpLook);
 
 		// 네비 메쉬 추가되면 바꿔야함
 		//m_pTransform->Add_Pos(fMoveSpeed);
-		m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, fMoveSpeed)));
+
+		
+		m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, _fMoveSpeed)));
 	}
 
 	else if (m_bMove[MOVE_Left])
 	{
 		if (m_fAngle_Recover < -270)
 		{
-			m_fAngle_Recover += fRecover * DELTA_60;
+			m_fAngle_Recover += _fRecover * DELTA_60;
 
 			if (m_fAngle_Recover <= -360.f)
 			{
@@ -308,7 +563,7 @@ void CPlayer::Parameter_Movement()
 
 		else if (m_fAngle_Recover <= 0)
 		{
-			m_fAngle_Recover -= fRecover * DELTA_60;
+			m_fAngle_Recover -= _fRecover * DELTA_60;
 
 			if (m_fAngle_Recover <= -90.f)
 			{
@@ -318,7 +573,7 @@ void CPlayer::Parameter_Movement()
 
 		else if (m_fAngle_Recover > 90)
 		{
-			m_fAngle_Recover += fRecover * DELTA_60;
+			m_fAngle_Recover += _fRecover * DELTA_60;
 
 			if (m_fAngle_Recover >= 270.f)
 			{
@@ -328,7 +583,7 @@ void CPlayer::Parameter_Movement()
 
 		else if (m_fAngle_Recover > 0)
 		{
-			m_fAngle_Recover -= fRecover * DELTA_60;
+			m_fAngle_Recover -= _fRecover * DELTA_60;
 
 			if (m_fAngle_Recover <= -90.f)
 			{
@@ -336,24 +591,28 @@ void CPlayer::Parameter_Movement()
 			}
 		}
 
-		fRadian = D3DXToRadian(fAngle + m_fAngle_Recover);
-		//_fRadian = D3DXToRadian((m_bAim ? _fAngle : _fAngle + m_fAngle_Recover));
+		
+		_fRadian = D3DXToRadian(_fAngle + m_fAngle_Recover);
+		//__fRadian = D3DXToRadian((m_bAim ? __fAngle : __fAngle + m__fAngle_Recover));
 
-		m_pTransform->Set_Angle({ 0, fRadian, 0 });
+		m_pTransform->Set_Angle({ 0, _fRadian, 0 });
+
 
 		_v3 tmpLook = m_pTransform->Get_Axis(AXIS_Z);
 		D3DXVec3Normalize(&tmpLook, &tmpLook);
 
 		// 네비 메쉬 추가되면 바꿔야함
 		//m_pTransform->Add_Pos(fMoveSpeed);
-		m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, fMoveSpeed)));
+
+		m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, _fMoveSpeed)));
+
 	}
 
 	else if (m_bMove[MOVE_Right])
 	{
 		if (m_fAngle_Recover < -90.f)
 		{
-			m_fAngle_Recover -= fRecover * DELTA_60;
+			m_fAngle_Recover -= _fRecover * DELTA_60;
 
 			if (m_fAngle_Recover <= -270.f)
 			{
@@ -363,7 +622,8 @@ void CPlayer::Parameter_Movement()
 
 		else if (m_fAngle_Recover < 0)
 		{
-			m_fAngle_Recover += fRecover * DELTA_60;
+			m_fAngle_Recover += _fRecover * DELTA_60;
+
 
 			if (m_fAngle_Recover >= 180.f)
 			{
@@ -373,7 +633,7 @@ void CPlayer::Parameter_Movement()
 
 		else if (m_fAngle_Recover > 270.f)
 		{
-			m_fAngle_Recover += fRecover * DELTA_60;
+			m_fAngle_Recover += _fRecover * DELTA_60;
 
 			if (m_fAngle_Recover >= 360.f)
 			{
@@ -383,7 +643,7 @@ void CPlayer::Parameter_Movement()
 
 		else if (m_fAngle_Recover >= 0)
 		{
-			m_fAngle_Recover += fRecover * DELTA_60;
+			m_fAngle_Recover += _fRecover * DELTA_60;
 
 			if (m_fAngle_Recover >= 90.f)
 			{
@@ -391,16 +651,18 @@ void CPlayer::Parameter_Movement()
 			}
 		}
 
-		fRadian = D3DXToRadian(fAngle + m_fAngle_Recover);
+		_fRadian = D3DXToRadian(_fAngle + m_fAngle_Recover);
 
-		m_pTransform->Set_Angle({ 0, fRadian, 0 });
+		m_pTransform->Set_Angle({ 0, _fRadian, 0 });
+
 
 		_v3 tmpLook = m_pTransform->Get_Axis(AXIS_Z);
 		D3DXVec3Normalize(&tmpLook, &tmpLook);
 
 		// 네비 메쉬 추가되면 바꿔야함
 		//m_pTransform->Add_Pos(fMoveSpeed);
-		m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, fMoveSpeed)));
+
+		m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, _fMoveSpeed)));
 	}
 
 	else if (m_bMove[MOVE_Back])
@@ -409,7 +671,7 @@ void CPlayer::Parameter_Movement()
 		{
 			if (m_fAngle_Recover < 225.f)
 			{
-				m_fAngle_Recover += fRecover * DELTA_60;
+				m_fAngle_Recover += _fRecover * DELTA_60;
 
 				if (m_fAngle_Recover >= 225.f)
 				{
@@ -422,7 +684,7 @@ void CPlayer::Parameter_Movement()
 		{
 			if (m_fAngle_Recover > 135.f)
 			{
-				m_fAngle_Recover -= fRecover * DELTA_60;
+				m_fAngle_Recover -= _fRecover * DELTA_60;
 
 				if (m_fAngle_Recover <= 135.f)
 				{
@@ -435,7 +697,7 @@ void CPlayer::Parameter_Movement()
 		{
 			if (m_fAngle_Recover > 180.f)
 			{
-				m_fAngle_Recover -= fRecover * DELTA_60;
+				m_fAngle_Recover -= _fRecover * DELTA_60;
 
 				if (m_fAngle_Recover <= 180.f)
 				{
@@ -445,7 +707,7 @@ void CPlayer::Parameter_Movement()
 
 			else if (m_fAngle_Recover < 0.f)
 			{
-				m_fAngle_Recover -= fRecover * DELTA_60;
+				m_fAngle_Recover -= _fRecover * DELTA_60;
 
 				if (m_fAngle_Recover <= -180.f)
 				{
@@ -455,7 +717,7 @@ void CPlayer::Parameter_Movement()
 
 			else if (m_fAngle_Recover < 180.f)
 			{
-				m_fAngle_Recover += fRecover * DELTA_60;
+				m_fAngle_Recover += _fRecover * DELTA_60;
 
 				if (m_fAngle_Recover >= 180.f)
 				{
@@ -464,9 +726,11 @@ void CPlayer::Parameter_Movement()
 			}
 		}
 
-		fRadian = D3DXToRadian(fAngle + m_fAngle_Recover);
 
-		m_pTransform->Set_Angle({ 0, fRadian, 0 });
+		_fRadian = D3DXToRadian(_fAngle + m_fAngle_Recover);
+
+		m_pTransform->Set_Angle({ 0, _fRadian, 0 });
+
 
 		_v3 tmpLook = m_pTransform->Get_Axis(AXIS_Z);
 		D3DXVec3Normalize(&tmpLook, &tmpLook);
@@ -488,6 +752,35 @@ void CPlayer::Parameter_HeavyCharging()
 void CPlayer::Parameter_YPos()
 {
 	m_pTransform->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransform->Get_Pos()));
+}
+
+void CPlayer::Target_AimChasing()
+{
+	if (m_bHaveAimingTarget)
+		return;
+
+	for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Dummy", SCENE_STAGE))
+	{
+		_float fLength = D3DXVec3Length(&(TARGET_TO_TRANS(iter)->Get_Pos() - m_pTransform->Get_Pos()));
+
+		if (fLength > m_fAmingRange)
+			continue;
+
+		m_bHaveAimingTarget = true;
+
+		m_pTarget = iter;
+
+		CCameraMgr::Get_Instance()->Set_AimingTarget(m_pTarget);
+		CCameraMgr::Get_Instance()->Set_OnAimingTarget();
+
+		m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(m_pTarget)->Get_Pos()));
+
+		return;
+	}
+
+	m_bOnAiming = false;
+
+	return;
 }
 
 void CPlayer::KeyInput()
@@ -585,6 +878,27 @@ void CPlayer::Key_Movement_Down()
 			}
 		}
 
+
+		else if (true == m_bOnAiming)
+		{
+			_float tmpSpeedValue = 0.75f;
+
+			if (m_bMove[MOVE_Back])
+				tmpSpeedValue = 0.33f;
+
+			if (m_tInfo.fMoveSpeed_Max * tmpSpeedValue > m_tInfo.fMoveSpeed_Cur)
+			{
+				m_tInfo.fMoveSpeed_Cur += 0.1f + m_tInfo.fMoveAccel_Cur * m_tInfo.fMoveAccel_Cur * DELTA_60;
+				m_tInfo.fMoveAccel_Cur += DELTA_60;
+			}
+
+			else
+			{
+				m_tInfo.fMoveSpeed_Cur = m_tInfo.fMoveSpeed_Max * tmpSpeedValue;
+			}
+		}
+
+
 		else
 		{
 			if (m_tInfo.fMoveSpeed_Max * 0.25f > m_tInfo.fMoveSpeed_Cur)
@@ -620,8 +934,95 @@ void CPlayer::Key_Movement_Down()
 		if (m_eActState == ACT_Buff)
 			return;
 
-		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.1f))
+
+		
+		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.05f))
 		{
+			if (ACT_Run == m_eActState)
+			{
+				if (m_bOnAiming)
+				{
+					if (m_bMove[MOVE_Front])
+					{
+						if (m_bMove[MOVE_Left])
+						{
+							m_eAnim_Lower = Cmn_Run_FL_L_End;
+						}
+
+						else if (m_bMove[MOVE_Right])
+						{
+							m_eAnim_Lower = Cmn_Run_FR_End_L;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Cmn_Run_F_End_L;
+						}
+					}
+
+					else if (m_bMove[MOVE_Back])
+					{
+						if (m_bMove[MOVE_Left])
+						{
+							m_eAnim_Lower = Cmn_Run_FL_L_End;
+						}
+
+						else if (m_bMove[MOVE_Right])
+						{
+							m_eAnim_Lower = Cmn_Run_FR_End_L;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Cmn_Run_B_End_L;
+						}
+					}
+
+					else if (m_bMove[MOVE_Left])
+					{
+						if (m_bMove[MOVE_Front])
+						{
+							m_eAnim_Lower = Cmn_Run_FL_L_End;
+						}
+
+						else if (m_bMove[MOVE_Back])
+						{
+							m_eAnim_Lower = Cmn_Run_BL_End_R;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Cmn_Run_L_End_L;
+						}
+					}
+
+					else if (m_bMove[MOVE_Right])
+					{
+						if (m_bMove[MOVE_Front])
+						{
+							m_eAnim_Lower = Cmn_Run_FR_End_L;
+						}
+
+						else if (m_bMove[MOVE_Back])
+						{
+							m_eAnim_Lower = Cmn_Run_BR_End_L;
+						}
+
+						else
+						{
+							m_eAnim_Lower = Cmn_Run_R_End_L;
+						}
+					}
+				}
+
+				else
+					m_eAnim_Lower = Cmn_Run_F_End_L;
+
+				m_eAnim_Upper = m_eAnim_Lower;
+				m_eAnim_RightArm = m_eAnim_Lower;
+			}
+
+
 			m_eActState = (m_eActState == ACT_Run ? ACT_MoveDelay : ACT_Idle);
 
 			m_bOnDodge = false;
@@ -669,6 +1070,8 @@ void CPlayer::Key_ChangeWeapon()
 
 void CPlayer::Key_Special()
 {
+	cout << "플레이어 y 축 : " << D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)) << endl;
+
 	if (g_pInput_Device->Key_Down(DIK_SPACE))
 	{
 		if (m_bCanDodge)
@@ -681,17 +1084,32 @@ void CPlayer::Key_Special()
 			m_eActState = ACT_Dodge;
 		}
 	}
+
+
+	if (g_pInput_Device->Key_Down(DIK_Q))
+	{
+		m_bOnAiming = (m_bOnAiming == false ? true : false);
+
+		if (false == m_bOnAiming)
+		{
+			CCameraMgr::Get_Instance()->Set_LockAngleX(D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)));
+		}
+	}
 }
 
 void CPlayer::Key_Attack()
 {
+
+	cout << "?" << endl;
+
+
 	if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
 		if (false == m_bOnCombo)
 		{
 			if (m_bCanAttack == false)
 			{
-				if(m_pDynamicMesh->Is_Finish_Animation_Lower(m_fAtkEndTime))
+				if (m_pDynamicMesh->Is_Finish_Animation_Lower(m_fAtkEndTime))
 				{
 					m_bCanAttack = (m_sWeakAtkCnt < m_sWeakAtkCnt_Max ? true : false);
 					m_bOnAttack = (m_sWeakAtkCnt < m_sWeakAtkCnt_Max ? false : true);
@@ -713,7 +1131,8 @@ void CPlayer::Key_Attack()
 
 				else if (m_sWeakAtkCnt < m_sWeakAtkCnt_Max)
 				{
-					m_eActState =  ACT_WeakAtk;
+					m_eActState = ACT_WeakAtk;
+
 					m_bCanAttack = false;
 
 					m_sWeakAtkCnt += 1;
@@ -723,7 +1142,8 @@ void CPlayer::Key_Attack()
 		}
 	}
 
-	else if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
+
+	if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
 	{
 		if (false == m_bOnCombo)
 		{
@@ -923,24 +1343,143 @@ void CPlayer::Play_Dash()
 	m_eAnim_RightArm = m_eAnim_Lower;
 }
 
+
+void CPlayer::Play_Dash()
+{
+	switch (m_eMainWpnState)
+	{
+	case WEAPON_None:
+	{
+		m_eAnim_Lower = Cmn_Dash;
+		break;
+	}
+
+	case WEAPON_Ssword:
+	{
+		m_eAnim_Lower = Cmn_Dash;
+		break;
+	}
+
+	case WEAPON_LSword:
+	{
+		m_eAnim_Lower = Cmn_Dash;
+		break;
+	}
+
+	case WEAPON_Hammer:
+	{
+		m_eAnim_Lower = Cmn_Dash;
+		break;
+	}
+
+	case WEAPON_Halverd:
+	{
+		m_eAnim_Lower = Cmn_Dash;
+		break;
+	}
+	case WEAPON_Gun:
+	{
+		m_eAnim_Lower = Cmn_Dash;
+		break;
+	}
+	}
+
+	m_eAnim_Upper = m_eAnim_Lower;
+	m_eAnim_RightArm = m_eAnim_Lower;
+}
+
 void CPlayer::Play_MoveDelay()
 {
 	if (false == m_bOnMoveDelay)
 	{
 		m_bOnMoveDelay = true;
 
-		m_eAnim_Lower = Cmn_Run_F_End_L;
+		if (m_bOnAiming)
+		{
+			if (m_bMove[MOVE_Front])
+			{
+				if (m_bMove[MOVE_Left])
+				{
+					m_eAnim_Lower = Cmn_Run_FL_L_End;
+				}
+
+				else if (m_bMove[MOVE_Right])
+				{
+					m_eAnim_Lower = Cmn_Run_FR_End_L;
+				}
+
+				else
+				{
+					m_eAnim_Lower = Cmn_Run_F_End_L;
+				}
+			}
+
+			else if (m_bMove[MOVE_Back])
+			{
+				if (m_bMove[MOVE_Left])
+				{
+					m_eAnim_Lower = Cmn_Run_FL_L_End;
+				}
+
+				else if (m_bMove[MOVE_Right])
+				{
+					m_eAnim_Lower = Cmn_Run_FR_End_L;
+				}
+
+				else
+				{
+					m_eAnim_Lower = Cmn_Run_B_End_L;
+				}
+			}
+
+			else if (m_bMove[MOVE_Left])
+			{
+				if (m_bMove[MOVE_Front])
+				{
+					m_eAnim_Lower = Cmn_Run_FL_L_End;
+				}
+
+				else if (m_bMove[MOVE_Back])
+				{
+					m_eAnim_Lower = Cmn_Run_BL_End_R;
+				}
+
+				else
+				{
+					m_eAnim_Lower = Cmn_Run_L_End_L;
+				}
+			}
+
+			else if (m_bMove[MOVE_Right])
+			{
+				if (m_bMove[MOVE_Front])
+				{
+					m_eAnim_Lower = Cmn_Run_FR_End_L;
+				}
+
+				else if (m_bMove[MOVE_Back])
+				{
+					m_eAnim_Lower = Cmn_Run_BR_End_L;
+				}
+
+				else
+				{
+					m_eAnim_Lower = Cmn_Run_R_End_L;
+				}
+			}
+		}
+		else
+			m_eAnim_Lower = Cmn_Run_F_End_L;
+
 		m_eAnim_Upper = m_eAnim_Lower;
 		m_eAnim_RightArm = m_eAnim_Lower;
 
 		m_fSkillMoveAccel_Cur = 0.f;
 		m_fSkillMoveSpeed_Cur = m_tInfo.fMoveSpeed_Cur;
 	}
-	
-	else if ( true == m_bOnMoveDelay)
-	{
-		//cout << m_fSkillMoveSpeed_Cur << endl;
 
+	else if (true == m_bOnMoveDelay)
+	{
 		Decre_Skill_Movement(0.75f);
 		Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
 
@@ -951,6 +1490,529 @@ void CPlayer::Play_MoveDelay()
 		}
 	}
 }
+
+void CPlayer::Play_Dodge()
+{
+	if (false == m_bOnDodge)
+	{
+		switch (m_eMainWpnState)
+		{
+		case WEAPON_None:
+		{
+			if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Right] || m_bMove[MOVE_Left])
+			{
+				m_bDodgeBack = false;
+
+				if (false == m_bOnAiming)
+				{
+					m_eAnim_Lower = Cmn_DodgeLight_F;
+					break;
+				}
+
+				if (m_bMove[MOVE_Front])
+				{
+					if (m_bMove[MOVE_Left])
+					{
+						m_eAnim_Lower = Cmn_DodgeLight_FL;
+					}
+
+					else if (m_bMove[MOVE_Right])
+					{
+						m_eAnim_Lower = Cmn_DodgeLight_FR;
+					}
+
+					else
+					{
+						m_eAnim_Lower = Cmn_DodgeLight_F;
+					}
+				}
+
+				else if (m_bMove[MOVE_Back])
+				{
+					if (m_bMove[MOVE_Left])
+					{
+						m_eAnim_Lower = Cmn_DodgeLight_BL;
+					}
+
+					else if (m_bMove[MOVE_Right])
+					{
+						m_eAnim_Lower = Cmn_DodgeLight_BR;
+					}
+
+					else
+					{
+						m_eAnim_Lower = Cmn_DodgeLight_B;
+					}
+				}
+
+				else if (m_bMove[MOVE_Left])
+				{
+					if (m_bMove[MOVE_Front])
+					{
+						m_eAnim_Lower = Cmn_DodgeLight_FL;
+					}
+
+					else if (m_bMove[MOVE_Back])
+					{
+						m_eAnim_Lower = Cmn_DodgeLight_BL;
+					}
+
+					else
+					{
+						m_eAnim_Lower = Cmn_DodgeLight_L;
+					}
+				}
+
+				else if (m_bMove[MOVE_Right])
+				{
+					if (m_bMove[MOVE_Front])
+					{
+						m_eAnim_Lower = Cmn_DodgeLight_FR;
+					}
+
+					else if (m_bMove[MOVE_Back])
+					{
+						m_eAnim_Lower = Cmn_DodgeLight_BR;
+					}
+
+					else
+					{
+						m_eAnim_Lower = Cmn_DodgeLight_R;
+					}
+				}
+			}
+
+			else
+			{
+				m_bDodgeBack = true;
+				m_eAnim_Lower = Cmn_DodgeLight_B;
+			}
+
+			break;
+		}
+
+		case WEAPON_Ssword:
+		{
+			m_eAnim_Lower = Cmn_Run_F;
+			break;
+		}
+
+		case WEAPON_LSword:
+		{
+			m_eAnim_Lower = Cmn_Run_F;
+			break;
+		}
+
+		case WEAPON_Hammer:
+		{
+			m_eAnim_Lower = Cmn_Run_F;
+			break;
+		}
+
+		case WEAPON_Halverd:
+		{
+			m_eAnim_Lower = Cmn_Run_F;
+			break;
+		}
+		case WEAPON_Gun:
+		{
+			m_eAnim_Lower = Cmn_Run_F;
+			break;
+		}
+		}
+
+		m_eAnim_Upper = m_eAnim_Lower;
+		m_eAnim_RightArm = m_eAnim_Lower;
+
+		m_bOnDodge = true;
+		m_bCanDodge = false;
+		m_bStopMovementKeyInput = true;
+
+		m_fSkillMoveSpeed_Cur = 12.f;
+		m_fSkillMoveAccel_Cur = 0.f;
+	}
+
+	else
+	{
+		_v3 vDir;
+
+		if (true == m_bOnAiming)
+		{
+			if (m_bMove[MOVE_Front])
+			{
+				if (m_bMove[MOVE_Right])
+				{
+					V3_NORMAL(&vDir, &(m_pTransform->Get_Axis(AXIS_X) + m_pTransform->Get_Axis(AXIS_Z)));
+				}
+
+				else if (m_bMove[MOVE_Left])
+				{
+					V3_NORMAL(&vDir, &(-m_pTransform->Get_Axis(AXIS_X) + m_pTransform->Get_Axis(AXIS_Z)));
+				}
+
+				else
+					vDir = m_pTransform->Get_Axis(AXIS_Z);
+			}
+
+			else if (m_bMove[MOVE_Back])
+			{
+				if (m_bMove[MOVE_Right])
+				{
+					V3_NORMAL(&vDir, &(m_pTransform->Get_Axis(AXIS_X) + -m_pTransform->Get_Axis(AXIS_Z)));
+				}
+
+				else if (m_bMove[MOVE_Left])
+				{
+					V3_NORMAL(&vDir, &(-m_pTransform->Get_Axis(AXIS_X) + -m_pTransform->Get_Axis(AXIS_Z)));
+				}
+
+				else
+					vDir = -m_pTransform->Get_Axis(AXIS_Z);
+			}
+
+			else if (m_bMove[MOVE_Right])
+			{
+				if (m_bMove[MOVE_Front])
+				{
+					V3_NORMAL(&vDir, &(m_pTransform->Get_Axis(AXIS_X) + m_pTransform->Get_Axis(AXIS_Z)));
+				}
+
+				else if (m_bMove[MOVE_Back])
+				{
+					V3_NORMAL(&vDir, &(m_pTransform->Get_Axis(AXIS_X) + -m_pTransform->Get_Axis(AXIS_Z)));
+				}
+
+				else
+					vDir = m_pTransform->Get_Axis(AXIS_X);
+			}
+
+			else if (m_bMove[MOVE_Left])
+			{
+				if (m_bMove[MOVE_Front])
+				{
+					V3_NORMAL(&vDir, &(-m_pTransform->Get_Axis(AXIS_X) + m_pTransform->Get_Axis(AXIS_Z)));
+				}
+
+				else if (m_bMove[MOVE_Back])
+				{
+					V3_NORMAL(&vDir, &(-m_pTransform->Get_Axis(AXIS_X) + -m_pTransform->Get_Axis(AXIS_Z)));
+				}
+
+				else
+					vDir = -m_pTransform->Get_Axis(AXIS_X);
+			}
+		}
+
+		else
+			vDir = (m_bDodgeBack ? -m_pTransform->Get_Axis(AXIS_Z) : m_pTransform->Get_Axis(AXIS_Z));
+
+		Decre_Skill_Movement(0.8f);
+		Skill_Movement(m_fSkillMoveSpeed_Cur, vDir);
+
+		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.5f))
+		{
+			m_bDodgeBack = false;
+			m_bAFK = false;
+			m_bOnDodge = false;
+			m_bCanDodge = true;
+			m_bStopMovementKeyInput = false;
+
+			if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Right] || m_bMove[MOVE_Left])
+			{
+				m_eActState = (m_bSprint ? ACT_Dash : ACT_Run);
+			}
+
+			else
+				m_eActState = ACT_Idle;
+
+			Reset_BattleState();
+		}
+
+		else if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.25f))
+		{
+			m_bDodgeBack = false;
+			m_bCanDodge = true;
+			m_bStopMovementKeyInput = false;
+		}
+	}
+}
+
+void CPlayer::Play_WeakAtk()
+{
+	if (false == m_bOnAttack)
+	{
+		m_bOnAttack = true;
+
+		switch (m_eMainWpnState)
+		{
+		case WEAPON_None:
+		{
+			if (m_bSprint)
+			{
+				m_eAnim_Lower = Ssword_DownAtk_01;
+
+				m_fSkillMoveSpeed_Cur = 13.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+			}
+			else
+			{
+				m_eAnim_Lower = Player_Anim(Ssword_WeakAtk_01 + (m_sWeakAtkCnt - 1));
+
+				m_fSkillMoveSpeed_Cur = (m_sWeakAtkCnt == 1 ? 5.f : 6.5f);
+				m_fSkillMoveAccel_Cur = 0.f;
+			}
+			break;
+		}
+
+		case WEAPON_Ssword:
+		{
+			m_eAnim_Lower = Ssword_WeakAtk_01;
+			break;
+		}
+
+		case WEAPON_LSword:
+		{
+			m_eAnim_Lower = Cmn_Idle;
+			break;
+		}
+
+		case WEAPON_Hammer:
+		{
+			m_eAnim_Lower = Cmn_Idle;
+			break;
+		}
+
+		case WEAPON_Halverd:
+		{
+			m_eAnim_Lower = Cmn_Idle;
+			break;
+		}
+		case WEAPON_Gun:
+		{
+			m_eAnim_Lower = Cmn_Idle;
+			break;
+		}
+		}
+
+		m_eAnim_Upper = m_eAnim_Lower;
+		m_eAnim_RightArm = m_eAnim_Lower;
+	}
+
+	else if (true == m_bOnAttack)
+	{
+		switch (m_eAnim_Lower)
+		{
+		case Ssword_DownAtk_01:
+		{
+			if (m_pDynamicMesh->Get_TrackInfo().Position > 1.05f)
+			{
+				Decre_Skill_Movement(2.5f);
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
+			}
+
+			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
+			{
+				Reset_BattleState();
+
+				m_eActState = ACT_Idle;
+			}
+
+			break;
+		}
+
+		default:
+		{
+			Decre_Skill_Movement();
+			Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
+
+			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
+			{
+				Reset_BattleState();
+
+				m_eActState = ACT_Idle;
+			}
+
+			break;
+		}
+		}
+	}
+}
+
+void CPlayer::Play_HeavyAtk()
+{
+	if (false == m_bOnAttack)
+	{
+		m_bOnAttack = true;
+
+		switch (m_eMainWpnState)
+		{
+		case WEAPON_None:
+		{
+			if (m_bSprint)
+			{
+				m_fSkillMoveMultiply = 1.f;
+
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveSpeed_Cur = 7.f;
+
+				m_eAnim_Lower = Ssword_SpecialLaunch;
+			}
+			else
+			{
+				m_fSkillMoveMultiply = 2.f;
+
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveSpeed_Cur = 7.f;
+
+				m_eAnim_Lower = Ssword_Charge;
+			}
+			break;
+		}
+
+		case WEAPON_Ssword:
+		{
+			m_eAnim_Lower = Ssword_WeakAtk_01;
+			break;
+		}
+
+		case WEAPON_LSword:
+		{
+			m_eAnim_Lower = Cmn_Idle;
+			break;
+		}
+
+		case WEAPON_Hammer:
+		{
+			m_eAnim_Lower = Cmn_Idle;
+			break;
+		}
+
+		case WEAPON_Halverd:
+		{
+			m_eAnim_Lower = Cmn_Idle;
+			break;
+		}
+		case WEAPON_Gun:
+		{
+			m_eAnim_Lower = Cmn_Idle;
+			break;
+		}
+		}
+
+		m_eAnim_Upper = m_eAnim_Lower;
+		m_eAnim_RightArm = m_eAnim_Lower;
+	}
+
+	else if (true == m_bOnAttack)
+	{
+		switch (m_eAnim_Lower)
+		{
+		case Ssword_Charge:
+		{
+			Decre_Skill_Movement(m_fSkillMoveMultiply);
+			Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_Z));
+
+			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.65f))
+			{
+				m_eAnim_Lower = (m_fChargeTimer_Cur > 0.2f ? Ssword_Charge_Attack_01_B : Ssword_Charge_Attack_01_A);
+				m_eAnim_Upper = m_eAnim_Lower;
+				m_eAnim_RightArm = m_eAnim_Lower;
+
+				m_fChargeTimer_Cur = 0.f;
+
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveSpeed_Cur = (m_eAnim_Lower == Ssword_Charge_Attack_01_B ? 12.f : 8.f);
+
+				m_fSkillMoveMultiply = 1.f;
+			}
+			break;
+		}
+		case Ssword_Charge_Attack_01_B:
+		{
+			if (m_pDynamicMesh->Get_TrackInfo().Position > 1.35f)
+			{
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
+			}
+
+			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
+			{
+				Reset_BattleState();
+
+				m_eActState = ACT_Idle;
+			}
+			break;
+		}
+
+		case Ssword_Charge_Attack_01_A:
+		{
+			Decre_Skill_Movement(m_fSkillMoveMultiply);
+			Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
+
+			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
+			{
+				Reset_BattleState();
+
+				m_eActState = ACT_Idle;
+			}
+			break;
+		}
+
+		case Ssword_SpecialLaunch:
+		{
+			if (m_pDynamicMesh->Get_TrackInfo().Position > 1.45f)
+			{
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
+
+				if (m_fAnimMutiply <= 0.5f)
+				{
+					m_fAnimMutiply = 2.f;
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position > 1.35f)
+			{
+				if (m_fAnimMutiply > 0.5f)
+				{
+					m_fAnimMutiply -= DELTA_60;
+
+					if (m_fAnimMutiply <= 0.5f)
+					{
+						m_fAnimMutiply = 0.5f;
+					}
+				}
+			}
+
+			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
+			{
+				Reset_BattleState();
+
+				m_eActState = ACT_Idle;
+			}
+
+			break;
+		}
+
+		default:
+		{
+			//Decre_Skill_Movement(m_fSkillMoveMultiply);
+			//Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
+
+			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
+			{
+				Reset_BattleState();
+
+				m_eActState = ACT_Idle;
+			}
+
+			break;
+		}
+
+		}
+	}
+}
+
 
 void CPlayer::Play_Dodge()
 {
@@ -1364,6 +2426,46 @@ void CPlayer::Play_Buff()
 	}
 }
 
+
+void CPlayer::Play_Skill()
+{
+}
+
+void CPlayer::Play_BloodSucking()
+{
+}
+
+void CPlayer::Play_Buff()
+{
+	if (false == m_bOnBuff)
+	{
+		m_bOnBuff = true;
+
+		m_eAnim_Upper = Cmn_UseItem;
+		m_eAnim_Lower = m_eAnim_Upper;
+		m_eAnim_RightArm = m_eAnim_Upper;
+
+		m_fAnimMutiply = 1.f;
+	}
+
+	else if (true == m_bOnBuff)
+	{
+		if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Left] || m_bMove[MOVE_Right])
+		{
+			m_eAnim_Lower = Cmn_Walk_F;
+		}
+
+		else
+			m_eAnim_Lower = Cmn_UseEnchant;
+
+		if (m_pDynamicMesh->Is_Finish_Animation_Upper(0.95f))
+		{
+			m_bOnBuff = false;
+			m_eActState = ACT_Idle;
+		}
+	}
+}
+
 void CPlayer::Play_Hit()
 {
 }
@@ -1394,15 +2496,17 @@ void CPlayer::Play_WeaponChange()
 		if (m_pDynamicMesh->Is_Finish_Animation_Upper(0.95f))
 		{
 			m_eActiveSlot = (m_eActiveSlot == WPN_SLOT_A ? WPN_SLOT_B : WPN_SLOT_A);
-				 
+
 			m_eMainWpnState = m_pWeapon[m_eActiveSlot]->Get_WeaponType();
 
 			m_bChangeWeapon = false;
 
+>>>>>>> origin/Une
 			m_eActState = ACT_Idle;
 		}
 	}
 }
+
 
 void CPlayer::Play_Skills()
 {
@@ -1424,7 +2528,7 @@ void CPlayer::Ready_Weapon()
 	LPCSTR tmpChar = "RightHandAttach";
 	_mat   matAttach;
 
-	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar);
+	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar , 2);
 
 	m_pWeapon[WPN_SLOT_A]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
 	m_pWeapon[WPN_SLOT_A]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
@@ -1432,7 +2536,7 @@ void CPlayer::Ready_Weapon()
 
 	m_pWeapon[WPN_SLOT_B] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
 	m_pWeapon[WPN_SLOT_B]->Change_WeaponData(CWeapon::WPN_Hammer_Normal);
-	
+
 	m_pWeapon[WPN_SLOT_B]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
 	m_pWeapon[WPN_SLOT_B]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
 }
@@ -1442,13 +2546,11 @@ void CPlayer::Skill_Movement(_float _fspeed, _v3 _vDir)
 	_v3 tmpLook;
 	_float fSpeed = _fspeed;
 
-	m_pTransform->Add_Pos(fSpeed* g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") , _vDir);
-
-	//tmpLook = _vDir;
-	//D3DXVec3Normalize(&tmpLook, &tmpLook);
+	tmpLook = _vDir;
+	D3DXVec3Normalize(&tmpLook, &tmpLook);
 
 	// 네비게이션 적용하면 
-	//m_pTransform->Set_Pos((m_pNav->Move_OnNaviMesh(m_pRigid, &m_pTransform->Get_Pos(), &tmpLook, fSpeed * ENGINE::Get_Deltatime(L"Timer_Fps_60"))));
+	m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
 }
 
 void CPlayer::Decre_Skill_Movement(_float _fMutiply)
@@ -1502,7 +2604,16 @@ HRESULT CPlayer::Add_Component()
 	// for.Com_NavMesh
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"NavMesh", (CComponent**)&m_pNavMesh)))
 		return E_FAIL;
-	
+
+	m_pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
+
+	m_pCollider->Set_Radius(_v3{ 0.4f, 0.5f, 0.4f });
+	m_pCollider->Set_Dynamic(true);
+	m_pCollider->Set_Type(COL_CAPSULE);
+	m_pCollider->Set_CapsuleLength(1.8f);
+	m_pCollider->Set_CenterPos(m_pTransform->Get_Pos() + _v3{ 0.f , m_pCollider->Get_Radius().y , 0.f });
+
+
 	return NOERROR;
 }
 
@@ -1540,30 +2651,88 @@ HRESULT CPlayer::SetUp_Default()
 
 HRESULT CPlayer::SetUp_ConstantTable()
 {
-	if (nullptr == m_pShader)
-		return E_FAIL;
+	ZeroMemory(&m_tInfo, sizeof(ACTOR_INFO));
 
-	CManagement*		pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
 
-	Safe_AddRef(pManagement);
+	// Transform
+	m_pTransform->Set_Pos(_v3(-0.487f, 0.f, 23.497f));
+	m_pTransform->Set_Scale(V3_ONE);
+
+	// Mesh
+	m_pDynamicMesh->SetUp_Animation(Cmn_Run_F);
+
+	// Info
+	m_tInfo.fHP = 100.f;
+	m_tInfo.fArmor = 0.f;
+	m_tInfo.fStamina = 100.f;
+	m_tInfo.fDamage = 0.f;
+	m_tInfo.fMoveAccel_Cur = 0.f;
+	m_tInfo.fMoveSpeed_Max = 1.5f;
+	m_tInfo.fMoveAccel_Cur = 0.f;
+	m_tInfo.fMoveSpeed_Max = 5.f;
 
 	if (FAILED(m_pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;	
 
-	_mat		ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
+	// Anim
+	m_fAnimMutiply = 1.f;
+
+
+	// Navi
+	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Test.dat");
+	m_pNavMesh->Set_SubsetIndex(0);
+	m_pNavMesh->Set_Index(14);
+
+
+	if (FAILED(m_pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+
+	return S_OK;
+}
+
+HRESULT CPlayer::SetUp_ConstantTable()
+{
+	if (nullptr == m_pShader)
+		return E_FAIL;
+
+	if (FAILED(m_pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
+		return E_FAIL;
+
+	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 
 	if (FAILED(m_pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
 
-	Safe_Release(pManagement);
-
 	return NOERROR;
 }
+
+void CPlayer::OnCollisionEnter()
+{
+	for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Dummy", SCENE_STAGE))
+	{
+		CDummy_Target* pDummy = static_cast<CDummy_Target*>(iter);
+
+		for (auto& iterCollider : pDummy->Get_ColliderVector())
+		{
+			if (m_pCollider->Check_Capsule(iterCollider))
+			{
+				cout << "부딪혀요" << endl;
+			}
+		}
+	}
+}
+
+void CPlayer::Update_Collider()
+{
+	//cout << m_pCollider->Get_ColInfo()->vBegin.x << endl;
+
+	m_pCollider->Update(m_pTransform->Get_WorldMat());
+}
+
 
 void CPlayer::Reset_BattleState()
 {
@@ -1614,9 +2783,13 @@ void CPlayer::Free()
 		Safe_Release(m_pWeapon[i]);
 	}
 
+
+	Safe_Release(m_pTransform);
+	
+	Safe_Release(m_pCollider);
 	Safe_Release(m_pTransform);
 	Safe_Release(m_pDynamicMesh);
-	Safe_Release(m_pShader);	
+	Safe_Release(m_pShader);
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pNavMesh);
 

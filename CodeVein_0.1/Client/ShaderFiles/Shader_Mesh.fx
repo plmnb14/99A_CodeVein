@@ -150,11 +150,14 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	Out.vDiffuse = tex2D(DiffuseSampler, In.vTexUV);
+
+	Out.vDiffuse = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
+	//Out.vDiffuse = tex2D(DiffuseSampler, In.vTexUV);
 
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.f, 0.f);
+
 
 	Out.vVelocity = 0;
 
@@ -199,8 +202,9 @@ PS_OUT PS_MOTIONBLUR(PS_IN In)
 	float4 previousPos = mul(worldPos, g_matLastVP);
 	previousPos /= previousPos.w;
 	
-	float2 velocity = (currentPos - previousPos) / 2.f;
-	velocity *= 0.01f;
+	float2 velocity = (currentPos.xy - previousPos.xy) / 2.f;
+	//velocity *= 0.01f;
+
 
 	//for (int i = 0; i > 26; i++)
 	//{
@@ -211,7 +215,9 @@ PS_OUT PS_MOTIONBLUR(PS_IN In)
 
 	Out.vDiffuse = tex2D(DiffuseSampler, In.vTexUV);
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
+
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.f, 0.f);
+
 	Out.vVelocity = vector(velocity.xy, 0.f, 1.f);
 	//Out.vVelocity = vector(In.vVelocity.xy, 0.f, 0.f);
 

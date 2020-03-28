@@ -31,22 +31,25 @@ public:
 		ITEM_ID		eID;
 	}ITEM_INFO;
 
+
 protected:
 	explicit CItem(_Device pGraphic_Device);
 	explicit CItem(const CItem& rhs);
 	virtual ~CItem() = default;
 
 public:
+
 	ITEM_TYPE	Get_ItemType() { return m_eType; }
 	ITEM_ID		Get_ItemID() { return m_eID; }
 
-public:
 	ITEM_TYPE Get_Type() { return m_eType; }
+	
 
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();
 	virtual HRESULT			Ready_GameObject(void* pArg);
 	virtual _int			Update_GameObject(_double TimeDelta);
+
 
 protected:
 	ITEM_INFO*				m_pInfo = nullptr;
@@ -56,6 +59,10 @@ protected:
 public:
 	static CItem*			Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);
+
+
+public:
+	virtual CGameObject*	Clone_GameObject(void* pArg) = 0;
 	virtual void			Free();
 };
 

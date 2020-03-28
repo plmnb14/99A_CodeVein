@@ -4,6 +4,9 @@
 #include "RenderObject.h"
 #include "Management.h"
 
+#include "Trail_VFX.h"
+
+
 BEGIN(Client)
 
 class CWeapon : public CGameObject
@@ -32,6 +35,11 @@ public:
 	virtual HRESULT Render_GameObject();
 
 public:
+
+	virtual void UpdateTrails(_double TimeDelta);
+
+public:
+
 	virtual void Change_WeaponData(WEAPON_DATA _eWpnData);
 
 public:
@@ -50,12 +58,20 @@ private:
 	CShader*				m_pShader		= nullptr;
 	CMesh_Static*			m_pMesh_Static	= nullptr;
 
+	CCollider*				m_pCollider		= nullptr;
+
+	CTrail_VFX*				m_pTrailEffect  = nullptr;
+	CTrail_VFX*				m_pDistortionEffect = nullptr;
+	CTrail_VFX*				m_pStaticTrailEffect = nullptr;
+
+
 private:
 	_tchar					m_szName[MAX_STR] = L"";
 
 private:
-	_mat*					m_pmatAttach;
-	_mat*					m_pmatParent;
+	_mat*					m_pmatAttach = nullptr;
+	_mat*					m_pmatParent = nullptr;
+
 
 private:
 	_bool					m_bEquip = false;				// 무기 장착 여부

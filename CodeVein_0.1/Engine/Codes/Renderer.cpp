@@ -166,6 +166,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 
 	// For.Target_Normal`s Debug Buffer
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Normal", 0.0f, fTargetSize, fTargetSize, fTargetSize)))
+
 		return E_FAIL;
 
 	// For.Target_Depth`s Debug Buffer
@@ -173,6 +174,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 		return E_FAIL;
 
 	// For.Target_Depth`s Debug Buffer
+
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Velocity", 0.0f, fTargetSize * 3, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
@@ -184,7 +186,9 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Specular", fTargetSize, fTargetSize, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
-	// For.Target_Specular`s Debug Buffer
+
+	// For.Target_Rim`s Debug Buffer
+
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Rim", fTargetSize, fTargetSize * 2, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
@@ -533,8 +537,11 @@ HRESULT CRenderer::Render_Blend()
 	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_Blend")))
 		return E_FAIL;
 
+
 	return NOERROR;
 }
+
+
 
 HRESULT CRenderer::Render_BrightPass()
 {
@@ -562,6 +569,7 @@ HRESULT CRenderer::Render_BrightPass()
 
 	return NOERROR;
 }
+
 
 HRESULT CRenderer::Render_Blur()
 {
@@ -700,6 +708,25 @@ HRESULT CRenderer::Render_ToneMapping()
 
 	// Blur
 	if (FAILED(m_pShader_Blend->Set_Texture("g_BloomTexture", m_pTarget_Manager->Get_Texture(L"Target_Blur"))))
+		return E_FAIL;
+
+
+	static _int iIdx = 5;
+	if (GetAsyncKeyState(VK_F1) & 0x8000)
+		iIdx = 0;
+	if (GetAsyncKeyState(VK_F2) & 0x8000)
+		iIdx = 1;
+	if (GetAsyncKeyState(VK_F3) & 0x8000)
+		iIdx = 2;
+	if (GetAsyncKeyState(VK_F4) & 0x8000)
+		iIdx = 3;
+	if (GetAsyncKeyState(VK_F5) & 0x8000)
+		iIdx = 4;
+	if (GetAsyncKeyState(VK_F6) & 0x8000)
+		iIdx = 5;
+
+	// Tone index
+	if (FAILED(m_pShader_Blend->Set_Value("g_iToneIndex", &iIdx, sizeof(_int))))
 		return E_FAIL;
 
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_HDR")))

@@ -31,16 +31,16 @@ public:
 	void Rotate_Z(_float _Angle);
 
 public:
-	void Camera_Oscillatation_SetUp(_float _fDuration, _float _fFrequency, _float _fPower , _float _fMuliply, CAM_OSC_TYPE _eOSCType);
+	void Camera_Oscillatation_SetUp(_float _fDuration, _float _fFrequency, _float _fPower, _float _fMuliply, CAM_OSC_TYPE _eOSCType);
 	void Camera_Oscillate();
 	void Camera_Oscillate_Rotate();
 	void Camera_Oscillate_Position();
 	void Camera_Oscillate_FOV();
 
 public:
-	HRESULT SetUp_ViewMat	();
-	HRESULT SetUp_ProjMat	();
-	HRESULT SetUp_ViewType	(CameraView _CameraViewType);
+	HRESULT SetUp_ViewMat();
+	HRESULT SetUp_ProjMat();
+	HRESULT SetUp_ViewType(CameraView _CameraViewType);
 	HRESULT SetUp_Zoom();
 	HRESULT SetUp_MouseRotate();
 	HRESULT SetUp_Default();
@@ -60,7 +60,7 @@ public:
 
 public:
 	void Set_ReverseRight(_bool _bReverse);
-	
+
 public:
 	void Set_At(_v3 _At);
 
@@ -73,6 +73,8 @@ public:
 
 public:
 	void Set_MouseControl(_bool _bMouseControl);
+	void Set_OnAimingTarget();
+	void Set_AimingTarget(CGameObject* pAimingTarget) { m_pAimingTarget = pAimingTarget; }
 
 public:
 	void Add_At(_float _fSpeed, _v3 _vDir);
@@ -98,10 +100,13 @@ public:
 	_mat		Get_ProjMat();
 
 public:
+	virtual void Set_LockAngleX(_float _fAngle) { m_fX_LockAngle = _fAngle; }
+
+public:
 	_bool		Get_MouseControl() { return m_bMouseControl; }
 
 public:
-	void KeyInput();
+	void		KeyInput();
 
 public:
 	virtual _int Update_GameObject();
@@ -116,10 +121,10 @@ public:
 	virtual void Free() override;
 
 protected:
-	CTransform*		m_pTransform	= nullptr;
+	CTransform*		m_pTransform = nullptr;
 
 protected:
-	CPipeLine*		m_pPipeLine		= nullptr;
+	CPipeLine*		m_pPipeLine = nullptr;
 
 protected:	// State
 	CameraClass		m_eCamClass;
@@ -135,15 +140,19 @@ protected:
 	_v3				m_vReturnValue[2];
 
 protected:
-	_float	m_fOSC_Duration  = 0.f;	// 지속 시간
+	_float  m_fLerpTimer = 0.f;
+	_v3		m_vOriginPos = {};
+
+protected:
+	_float	m_fOSC_Duration = 0.f;	// 지속 시간
 	_float	m_fOSC_Frequency = 0.f;	// 주기
-	_float	m_fOSC_Power	 = 0.f; // 강도
-	_float	m_fOSC_Mutiply	 = 0.f;
+	_float	m_fOSC_Power = 0.f; // 강도
+	_float	m_fOSC_Mutiply = 0.f;
 
-	_float	m_fOSC_Timer[3] = {0.f};
+	_float	m_fOSC_Timer[3] = { 0.f };
 
-	_float  m_fOSCAxis_Gap[3] = {0.f};
-	_bool  m_bOSCReverse[3] = {0};
+	_float  m_fOSCAxis_Gap[3] = { 0.f };
+	_bool  m_bOSCReverse[3] = { 0 };
 	_bool  m_bOSCOrigin = false;
 
 	CAM_OSC_TYPE m_eOSCType = OSC_END;
@@ -175,6 +184,10 @@ protected:	// Rotate Value
 	_float m_fY_LockAngle;
 	_float m_fX_MaxLockAngle;
 	_float m_fY_MaxLockAngle;
+	_float m_fY_LateLockAngle = 0.f;
+	_float m_fY_LateLateLockAngle = 0.f;
+
+	_float m_fLateRefreshTimer = 10.f;
 
 protected:
 	_float m_fMaxDist;
@@ -192,6 +205,19 @@ protected:
 protected:
 	_bool m_bMainCamera;
 	_bool m_bGetMp;
+	_bool m_bOnAiming = false;
+
+	// lerp things
+protected:
+	_v3			m_vOldAt = {};
+	_v3			m_vOldPos = {};
+	_float		m_fAtLerpValue = 0.f;
+	_float		m_fPosLerpValue = 0.f;
+	_bool		m_bOnLerpAt = false;
+	_bool		m_bOnLerpPos = false;
+
+protected:
+	CGameObject*	m_pAimingTarget = nullptr;
 };
 
 END

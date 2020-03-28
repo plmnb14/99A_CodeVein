@@ -10,6 +10,7 @@
 #include "EffectToolView.h"
 
 
+#include "FileInfo.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -105,6 +106,10 @@ void CMainFrame::Dump(CDumpContext& dc) const
 
 BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 {
+	CFileInfo::Create_Mesh_PathInfo();
+	CFileInfo::Create_Texture_PathInfo();
+
+
 	int iFormViewCX = 350;
 
 	// 창 2개 분할

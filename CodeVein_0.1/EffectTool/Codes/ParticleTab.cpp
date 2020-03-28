@@ -60,12 +60,14 @@ CParticleTab::CParticleTab(CWnd* pParent /*=NULL*/)
 	, m_EditSaturationEnd(_T("1.0"))
 	, m_EditFileName(_T(""))
 	, m_EditColorIndex(_T("0.0"))
+	, m_EditMaskIndex(_T(""))
 {
 
 }
 
 CParticleTab::~CParticleTab()
 {
+	Release();
 }
 
 void CParticleTab::DoDataExchange(CDataExchange* pDX)
@@ -154,6 +156,8 @@ void CParticleTab::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT40, m_EditFileName);
 	DDX_Text(pDX, IDC_EDIT42, m_EditColorIndex);
 	DDX_Control(pDX, IDC_CHECK1, m_CheckUseRGBA);
+	DDX_Control(pDX, IDC_CHECK21, m_bCheckUseMask);
+	DDX_Text(pDX, IDC_EDIT50, m_EditMaskIndex);
 }
 
 void CParticleTab::Set_GraphicDev(LPDIRECT3DDEVICE9 pDev)
@@ -197,6 +201,16 @@ void CParticleTab::LateInit()
 		m_ResPopup_Tex.Create(IDD_RESLISTPOPUP);
 		m_ResPopup_Tex.Set_ResType(CResListPopup::TYPE_TEX);
 	}
+
+
+	CManagement*		pManagement = CManagement::Get_Instance();
+	
+	m_pTestBox = static_cast<CMeshEffect*>(pManagement->Clone_GameObject_Return(L"GameObject_MeshEffect", nullptr));
+	lstrcpy(m_pTestBox->Get_Info()->szName, L"Mesh_DefaultBox");
+	lstrcpy(m_pTestBox->Get_Info()->szColorName, L"Tex_Colors");
+	m_pTestBox->Get_Info()->vStartScale = _v3(5, 5, 5);
+
+
 }
 
 void CParticleTab::Update(const _float DeltaTime)
@@ -205,7 +219,9 @@ void CParticleTab::Update(const _float DeltaTime)
 
 	Check_ResType();
 	Check_FormControlEnable();
-	Check_TestMesh();
+
+	
+
 
 	Create_Particle(DeltaTime);
 
@@ -214,6 +230,11 @@ void CParticleTab::Update(const _float DeltaTime)
 
 void CParticleTab::Render()
 {
+	if (m_CheckTestMesh.GetCheck() ? true : false)
+	{
+		//m_pTestBox->Render_GameObject();
+		static_cast<CRenderer*>(m_pTestBox->Get_Component(L"Com_Renderer"))->Add_RenderList(RENDER_NONALPHA, m_pTestBox);
+	}
 }
 
 void CParticleTab::Check_ResType()
@@ -284,13 +305,6 @@ void CParticleTab::Check_FormControlEnable()
 	GetDlgItemText(IDC_EDIT36, m_EditCreateDelay_Max);
 }
 
-void CParticleTab::Check_TestMesh()
-{
-	if (m_CheckTestMesh.GetCheck() ? true : false)
-	{
-
-	}
-}
 
 void CParticleTab::Create_Particle(const _float DeltaTime)
 {
@@ -374,6 +388,16 @@ void CParticleTab::Setup_EffInfo(_bool bIsMesh)
 	GetDlgItemText(IDC_EDIT42, m_EditColorIndex);
 	m_pInfo->fColorIndex = _float(_tstoi(m_EditColorIndex));
 
+
+	if (m_bCheckUseMask.GetCheck() ? true : false)
+	{
+		GetDlgItemText(IDC_EDIT50, m_EditMaskIndex);
+		m_pInfo->fMaskIndex = _float(_tstoi(m_EditMaskIndex));
+	}
+	else
+		m_pInfo->fMaskIndex = -1.f;
+
+
 	GetDlgItemText(IDC_EDIT43, m_EditParticleCount);
 	m_pInfo->iMaxCount = _int(_tstoi(m_EditParticleCount));
 
@@ -421,7 +445,7 @@ void CParticleTab::Setup_EffInfo(_bool bIsMesh)
 	m_pInfo->bBillBoard = m_RadioBillType[1].GetCheck() ? true : false;
 	m_pInfo->bOnlyYRot = m_RadioBillType[2].GetCheck() ? true : false;
 
-	m_pInfo->bRotMove = true;
+
 	GetDlgItemText(IDC_EDIT19, m_EditRotX);
 	GetDlgItemText(IDC_EDIT20, m_EditRotY);
 	GetDlgItemText(IDC_EDIT21, m_EditRotZ);
@@ -434,6 +458,10 @@ void CParticleTab::Setup_EffInfo(_bool bIsMesh)
 	m_pInfo->fRotSpeed_Min = _float(_tstof(m_EditRotSpeed_Min));
 	m_pInfo->fRotSpeed_Max = _float(_tstof(m_EditRotSpeed_Max));
 	m_pInfo->bRandomRot = m_CheckRandRot.GetCheck() ? true : false;
+
+
+	m_pInfo->bRotMove = (m_pInfo->fRotSpeed == 0) ? false : true;
+
 
 	GetDlgItemText(IDC_EDIT10, m_EditPosX);
 	GetDlgItemText(IDC_EDIT11, m_EditPosY);
@@ -489,6 +517,12 @@ void CParticleTab::Setup_EffInfo(_bool bIsMesh)
 
 }
 
+void CParticleTab::Release()
+{
+	Safe_Release(m_pTestBox);
+}
+
+
 
 BEGIN_MESSAGE_MAP(CParticleTab, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON1, &CParticleTab::OnBnClickedButton_MeshRes)
@@ -499,6 +533,8 @@ BEGIN_MESSAGE_MAP(CParticleTab, CDialog)
 	ON_BN_CLICKED(IDC_BUTTON9, &CParticleTab::OnBnClickedButton_ResColor)
 	ON_BN_CLICKED(IDC_BUTTON4, &CParticleTab::OnBnClickedButton_Save)
 	ON_BN_CLICKED(IDC_BUTTON5, &CParticleTab::OnBnClickedButton_Load)
+	ON_BN_CLICKED(IDC_BUTTON3, &CParticleTab::OnBnClickedButton_ResMask)
+
 END_MESSAGE_MAP()
 
 
@@ -521,6 +557,13 @@ void CParticleTab::OnBnClickedButton_ResColor()
 	m_ResPopup_Tex.ShowWindow(SW_SHOW);
 	m_ResPopup_Tex.Set_ResType(CResListPopup::TYPE_COLOR);
 }
+
+void CParticleTab::OnBnClickedButton_ResMask()
+{
+	m_ResPopup_Tex.ShowWindow(SW_SHOW);
+	m_ResPopup_Tex.Set_ResType(CResListPopup::TYPE_GRADIENT);
+}
+
 
 void CParticleTab::OnBnClickedButton_StartParticle()
 {
@@ -633,6 +676,8 @@ void CParticleTab::OnBnClickedButton_Save()
 		::WriteFile(hFile, &m_pInfo->vStartPos, sizeof(_v3), &dwByte, nullptr);
 		::WriteFile(hFile, &m_pInfo->vStartScale, sizeof(_v3), &dwByte, nullptr);
 		::WriteFile(hFile, &m_pInfo->fColorIndex, sizeof(_float), &dwByte, nullptr);
+		::WriteFile(hFile, &m_pInfo->fMaskIndex, sizeof(_float), &dwByte, nullptr);
+		
 
 		_bool bRandRotSpeed = (m_CheckRandRotSpeed.GetCheck()) ? true : false;
 		::WriteFile(hFile, &bRandRotSpeed, sizeof(_bool), &dwByte, nullptr);
@@ -855,13 +900,15 @@ void CParticleTab::OnBnClickedButton_Load()
 
 			::ReadFile(hFile, &tInfo.vEndColor, sizeof(_v4), &dwByte, nullptr);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vEndColor.x);
-			m_EditHueStart.SetString(szBuff);
+
+			m_EditHueEnd.SetString(szBuff);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vEndColor.y);
-			m_EditContrastStart.SetString(szBuff);
+			m_EditContrastEnd.SetString(szBuff);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vEndColor.z);
-			m_EditBrightnessStart.SetString(szBuff);
+			m_EditBrightnessEnd.SetString(szBuff);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vEndColor.w);
-			m_EditSaturationStart.SetString(szBuff);
+			m_EditSaturationEnd.SetString(szBuff);
+
 
 			::ReadFile(hFile, &tInfo.vMoveDirection, sizeof(_v3), &dwByte, nullptr);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vMoveDirection.x);
@@ -897,13 +944,15 @@ void CParticleTab::OnBnClickedButton_Load()
 
 			::ReadFile(hFile, &tInfo.vStartColor, sizeof(_v4), &dwByte, nullptr);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vStartColor.x);
-			m_EditHueEnd.SetString(szBuff);
+
+			m_EditHueStart.SetString(szBuff);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vStartColor.y);
-			m_EditContrastEnd.SetString(szBuff);
+			m_EditContrastStart.SetString(szBuff);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vStartColor.z);
-			m_EditBrightnessEnd.SetString(szBuff);
+			m_EditBrightnessStart.SetString(szBuff);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vStartColor.w);
-			m_EditSaturationEnd.SetString(szBuff);
+			m_EditSaturationStart.SetString(szBuff);
+
 
 			::ReadFile(hFile, &tInfo.vStartPos, sizeof(_v3), &dwByte, nullptr);
 			if (!tInfo.bRandStartPos)
@@ -927,6 +976,12 @@ void CParticleTab::OnBnClickedButton_Load()
 			::ReadFile(hFile, &tInfo.fColorIndex, sizeof(_float), &dwByte, nullptr);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fColorIndex);
 			m_EditColorIndex.SetString(szBuff);
+
+
+			::ReadFile(hFile, &tInfo.fMaskIndex, sizeof(_float), &dwByte, nullptr);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fMaskIndex);
+			m_EditMaskIndex.SetString(szBuff);
+
 
 			_bool bRandRotSpeed = false;
 			::ReadFile(hFile, &bRandRotSpeed, sizeof(_bool), &dwByte, nullptr);
@@ -954,3 +1009,4 @@ void CParticleTab::OnBnClickedButton_Load()
 
 	UpdateData(FALSE);
 }
+

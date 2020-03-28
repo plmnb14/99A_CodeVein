@@ -8,26 +8,14 @@ CMeshEffect::CMeshEffect(LPDIRECT3DDEVICE9 pGraphic_Device)
 
 CMeshEffect::CMeshEffect(const CMeshEffect & rhs)
 	: CEffect(rhs.m_pGraphic_Dev)
-	//, m_pInfo(rhs.m_pInfo)
 {
+	CEffect::m_pInfo = rhs.m_pInfo;
 	m_bClone = true;
 }
 
 HRESULT CMeshEffect::Ready_GameObject_Prototype()
 {
 	// 생성 시, 오래 걸릴 수 있느 작업들을 수행한다.
-	return NOERROR;
-}
-
-HRESULT CMeshEffect::Ready_GameObject(void * pArg)
-{
-	// 복제해서 생성 된 후, 추가적으로 필요한 데이터들을 셋팅하낟.
-	if (FAILED(Add_Component()))
-		return E_FAIL;
-
-	m_pTransformCom->Set_Pos(V3_NULL);
-	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
-	m_pTransformCom->Set_Angle(_v3(0.f, 0.f, 0.f));
 
 	// Set Default Info
 	if (!m_pInfo)
@@ -39,83 +27,33 @@ HRESULT CMeshEffect::Ready_GameObject(void * pArg)
 	return NOERROR;
 }
 
-HRESULT CMeshEffect::LateInit_GameObject()
+HRESULT CMeshEffect::Ready_GameObject(void * pArg)
 {
-	m_fLifeTime = m_pInfo->fLifeTime;
-	m_vColor = m_pInfo->vStartColor;
-	m_fAlpha = m_pInfo->fMaxAlpha;
-	m_vLerpScale = m_pInfo->vStartScale;
-	m_fMoveSpeed = m_pInfo->fMoveSpeed;
-	m_fRotSpeed = m_pInfo->fRotSpeed;
-	m_fAlphaSpeed = m_pInfo->fAlphaSpeed;
-	m_fCreateDelay = m_pInfo->fCreateDelay;
-	m_pTransformCom->Set_Scale(m_pInfo->vStartScale);
-	Change_Mesh(m_pInfo->szName);
-	Change_Texture(m_pInfo->szColorName);
-	m_pInfo->fMoveScaleSpeed = 1.f;
+	// 복제해서 생성 된 후, 추가적으로 필요한 데이터들을 셋팅하낟.
+	if (FAILED(Add_Component()))
+		return E_FAIL;
 
-	if (m_pInfo->bFadeIn)
-		m_fAlpha = 0.f;
+	m_pTransformCom->Set_Pos(V3_NULL);
+	m_pTransformCom->Set_Scale(V3_ONE);
+	m_pTransformCom->Set_Angle(V3_NULL);
 
-	if (m_pInfo->bRandomMove)
-	{
-		_v3 vRandDir = _v3(1.f, 1.f, 1.f);
-		vRandDir = Engine::CCalculater::Random_Dir(m_pInfo->vRandDirectionRange.x, m_pInfo->vRandDirectionRange.y, m_pInfo->vRandDirectionRange.z);
-		D3DXVec3Normalize(&vRandDir, &vRandDir);
-		m_vDir = vRandDir;
-	}
-
-	if (m_pInfo->fMoveSpeed_Max > 0.f)
-	{
-		m_fMoveSpeed = Engine::CCalculater::Random_Num(0, _int(m_pInfo->fMoveSpeed_Max * 100)) * 0.01f;
-		m_fMoveSpeed += _int(m_pInfo->fMoveSpeed_Min);
-	}
-
-	if (m_pInfo->fRotSpeed_Max > 0.f)
-	{
-		m_fRotSpeed = Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRotSpeed_Max * 100)) * 0.01f;
-		m_fRotSpeed += _int(m_pInfo->fRotSpeed_Min);
-	}
-
-	if (m_pInfo->fAlphaSpeed_Max > 0.f)
-	{
-		m_fAlphaSpeed = Engine::CCalculater::Random_Num(0, _int(m_pInfo->fAlphaSpeed_Max * 100)) * 0.01f;
-		m_fAlphaSpeed += _int(m_pInfo->fAlphaSpeed_Min);
-	}
-
-	if (m_pInfo->fCreateDelay_Max > 0.f)
-	{
-		m_fCreateDelay = Engine::CCalculater::Random_Num(0, _int(m_pInfo->fCreateDelay_Max * 100)) * 0.01f;
-		m_fCreateDelay += _int(m_pInfo->fCreateDelay_Min);
-	}
-
-	if (m_pInfo->bRandStartPos)
-	{
-		_v3 vPos = _v3(m_pInfo->fRandStartPosRange_Min[AXIS_X], m_pInfo->fRandStartPosRange_Min[AXIS_Y], m_pInfo->fRandStartPosRange_Min[AXIS_Z]);
-
-		_float fMinus = Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f;
-		vPos += _v3(Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_X] * 100)) * 0.01f * fMinus,
-			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Y] * 100)) * 0.01f * fMinus,
-			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Z] * 100)) * 0.01f * fMinus);
-		
-		m_pTransformCom->Set_Pos(vPos);
-		m_vLerpPos = (vPos);
-	}
+	if (pArg)
+		m_pDesc = (EFFECT_DESC*)pArg;
 	else
 	{
-		m_pTransformCom->Set_Pos(m_pInfo->vStartPos);
-		m_vLerpPos = (m_pInfo->vStartPos);
+		m_pDesc = new EFFECT_DESC;
+		m_pDesc->vWorldPos = { 0.f , 0.f , 0.f };
+		m_pDesc->pTargetTrans = nullptr;
 	}
 
-	if (m_pInfo->bRandomRot)
-	{
-		_float fMinus = Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f;
-		_v3 vPos = _v3(Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.x * 100)) * 0.01f * fMinus,
-			Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.y * 100)) * 0.01f * fMinus,
-			Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.z * 100)) * 0.01f * fMinus);
+	return NOERROR;
+}
 
-		m_vRot = vPos;
-	}
+HRESULT CMeshEffect::LateInit_GameObject()
+{
+	Setup_Info();
+	Change_Mesh(m_pInfo->szName);
+	Change_Texture(m_pInfo->szColorName);
 
 	return S_OK;
 }
@@ -196,6 +134,89 @@ HRESULT CMeshEffect::Render_GameObject()
 	m_pShaderCom->End_Shader();
 
 	return NOERROR;
+}
+
+void CMeshEffect::Setup_Info()
+{
+	m_fLifeTime = m_pInfo->fLifeTime;
+	m_vColor = m_pInfo->vStartColor;
+	m_fAlpha = m_pInfo->fMaxAlpha;
+	m_vLerpScale = m_pInfo->vStartScale;
+	m_fMoveSpeed = m_pInfo->fMoveSpeed;
+	m_fRotSpeed = m_pInfo->fRotSpeed;
+	m_fAlphaSpeed = m_pInfo->fAlphaSpeed;
+	m_fCreateDelay = m_pInfo->fCreateDelay;
+	m_pTransformCom->Set_Scale(m_pInfo->vStartScale);
+	m_pInfo->fMoveScaleSpeed = 1.f;
+
+	m_fLinearMoveSpeed = 0.f;
+	m_fLinearMovePercent = 0.f;
+	m_vFollowPos = { 0.f, 0.f, 0.f };
+
+	m_bFadeOutStart = false;
+
+	if (m_pInfo->bFadeIn)
+		m_fAlpha = 0.f;
+
+	if (m_pInfo->bRandomMove)
+	{
+		_v3 vRandDir = _v3(1.f, 1.f, 1.f);
+		vRandDir = Engine::CCalculater::Random_Dir(m_pInfo->vRandDirectionRange.x, m_pInfo->vRandDirectionRange.y, m_pInfo->vRandDirectionRange.z);
+		D3DXVec3Normalize(&vRandDir, &vRandDir);
+		m_vDir = vRandDir;
+	}
+
+	if (m_pInfo->fMoveSpeed_Max > 0.f)
+	{
+		m_fMoveSpeed = Engine::CCalculater::Random_Num(0, _int(m_pInfo->fMoveSpeed_Max * 100)) * 0.01f;
+		m_fMoveSpeed += _int(m_pInfo->fMoveSpeed_Min);
+	}
+
+	if (m_pInfo->fRotSpeed_Max > 0.f)
+	{
+		m_fRotSpeed = Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRotSpeed_Max * 100)) * 0.01f;
+		m_fRotSpeed += _int(m_pInfo->fRotSpeed_Min);
+	}
+
+	if (m_pInfo->fAlphaSpeed_Max > 0.f)
+	{
+		m_fAlphaSpeed = Engine::CCalculater::Random_Num(0, _int(m_pInfo->fAlphaSpeed_Max * 100)) * 0.01f;
+		m_fAlphaSpeed += _int(m_pInfo->fAlphaSpeed_Min);
+	}
+
+	if (m_pInfo->fCreateDelay_Max > 0.f)
+	{
+		m_fCreateDelay = Engine::CCalculater::Random_Num(0, _int(m_pInfo->fCreateDelay_Max * 100)) * 0.01f;
+		m_fCreateDelay += _int(m_pInfo->fCreateDelay_Min);
+	}
+
+	if (m_pInfo->bRandStartPos)
+	{
+		_v3 vPos = _v3(m_pInfo->fRandStartPosRange_Min[AXIS_X], m_pInfo->fRandStartPosRange_Min[AXIS_Y], m_pInfo->fRandStartPosRange_Min[AXIS_Z]);
+
+		_float fMinus = Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f;
+		vPos += _v3(Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_X] * 100)) * 0.01f * fMinus,
+			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Y] * 100)) * 0.01f * fMinus,
+			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Z] * 100)) * 0.01f * fMinus);
+
+		m_pTransformCom->Set_Pos(vPos);
+		m_vLerpPos = (vPos);
+	}
+	else
+	{
+		m_pTransformCom->Set_Pos(m_pInfo->vStartPos);
+		m_vLerpPos = (m_pInfo->vStartPos);
+	}
+
+	if (m_pInfo->bRandomRot)
+	{
+		_float fMinus = Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f;
+		_v3 vPos = _v3(Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.x * 100)) * 0.01f * fMinus,
+			Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.y * 100)) * 0.01f * fMinus,
+			Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.z * 100)) * 0.01f * fMinus);
+
+		m_vRot = vPos;
+	}
 }
 
 void CMeshEffect::Check_Move(_double TimeDelta)
@@ -299,7 +320,7 @@ HRESULT CMeshEffect::Add_Component()
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_ARBloodAura01", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Default", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
 		return E_FAIL;
 
 	// For.Com_Texture
@@ -356,6 +377,7 @@ void CMeshEffect::Change_Texture(const _tchar* _Name)
 	Safe_Release(iter->second);
 
 	iter->second = m_pTextureCom = static_cast<CTexture*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, _Name));
+	Safe_AddRef(m_pTextureCom);
 }
 
 void CMeshEffect::Change_Mesh(const _tchar* _Name)
@@ -366,6 +388,7 @@ void CMeshEffect::Change_Mesh(const _tchar* _Name)
 	Safe_Release(iter->second);
 
 	iter->second = m_pMeshCom = static_cast<CMesh_Static*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, _Name));
+	Safe_AddRef(m_pMeshCom);
 }
 
 CMeshEffect * CMeshEffect::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
@@ -419,4 +442,5 @@ void CMeshEffect::Free()
 	Safe_Release(m_pMeshCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
+
 }

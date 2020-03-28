@@ -20,7 +20,7 @@ HRESULT CScene_Logo::Ready_Scene()
 	if (FAILED(Ready_Prototype_GameObject()))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_BackGround(L"Layer_BackGround")))
+	if (FAILED(Ready_Layer_LogoBtn(L"Layer_LogoBtn")))
 		return E_FAIL;
 
 	if (FAILED(Ready_Layer_LogoBtn(L"Layer_LogoBtn")))
@@ -79,24 +79,10 @@ HRESULT CScene_Logo::Ready_Prototype_GameObject()
 
 HRESULT CScene_Logo::Ready_Layer_BackGround(const _tchar * pLayerTag)
 {
-	// 이미 오브젝트 매니져에 추가되어있는 객체를 찾아서 복제한다음. 
-	// 적절한 레이어에 보관해라.
-
-	CManagement*		pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
-
-	Safe_AddRef(pManagement);
-
-	
-	/*if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_BackGround", SCENE_LOGO, pLayerTag)))
-		return E_FAIL;*/
-
-
-	Safe_Release(pManagement);
-
 	return S_OK;
 }
+
+
 
 HRESULT CScene_Logo::Ready_Layer_LogoBtn(const _tchar * pLayerTag)
 {

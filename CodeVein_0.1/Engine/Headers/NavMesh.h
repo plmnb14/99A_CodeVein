@@ -47,12 +47,10 @@ public:
 
 private:
 	typedef vector<CCell*>		VEC_CELL;
-	typedef vector<VEC_CELL>	VEC_SUBSET;
+	typedef vector<VEC_CELL*>	VEC_SUBSET;
 
-	vector<VEC_CELL>		m_vecSubset_Cell;
+	vector<VEC_CELL*>		m_vecSubset_Cell;
 
-	//VEC_SUBSET			m_vecSubset;
-	//VEC_CELL				m_vecCell;
 	_ulong					m_dwSubsetIdx = 0;
 	_ulong					m_dwIndex = 0;
 	_bool					m_bCanMove = false;

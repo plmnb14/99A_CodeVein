@@ -4,11 +4,13 @@
 CTestMonster::CTestMonster(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
+	D3DXMatrixIdentity(&m_matLastVP);
 }
 
 CTestMonster::CTestMonster(const CTestMonster & rhs)
 	: CGameObject(rhs)
 {
+	D3DXMatrixIdentity(&m_matLastVP);
 }
 
 HRESULT CTestMonster::Ready_GameObject_Prototype()
@@ -21,18 +23,62 @@ HRESULT CTestMonster::Ready_GameObject(void * pArg)
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_Pos(_v3(1.f, 1.f, 1.f));
-	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
+	m_pTransformCom->Set_Pos(_v3(1.f, 0.f, 0.5f));
+	m_pTransformCom->Set_Scale(_v3(0.1f, 0.1f, 0.1f));
 
 	
-	CBlackBoard* pBlackBoard = CBlackBoard::Create();
-	pBlackBoard->Set_Value(L"Target_Pos", &_v3(2.f, 2.f, 2.f), CBlackBoard::BLACKBOARD_VALUE_STATE::VEC3);
+	//CBlackBoard* pBlackBoard = CBlackBoard::Create();
+	////pBlackBoard->Set_Value(L"Target_Pos", &_v3(-2.f, -2.f, -2.f), CBlackBoard::VALUE::VEC3);
+	////pBlackBoard->Set_Value(L"A", &_bool(true), CBlackBoard::VALUE::BOOL);
+	////_v3 temp = pBlackBoard->Get_V3Value(L"Target_Pos");
 
-	//_v3 temp = pBlackBoard->Get_V3Value(L"Target_Pos");
 
-	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create();
+	//CBehaviorTree* pBehaviorTree = CBehaviorTree::Create();
 
-	CManagement*		pManagement = CManagement::Get_Instance();
+	//CManagement*		pManagement = CManagement::Get_Instance();
+
+	//CBT_Sequence* pSequence = static_cast<CBT_Sequence*>(pManagement->Clone_Node(L"Sequence", CBT_Node_Manager::COMPOSITE, &CBT_Sequence::INFO("Sequence1")));
+	////CBT_Sequence* pSequence1 = static_cast<CBT_Sequence*>(pManagement->Clone_Node(L"Sequence", CBT_Node_Manager::COMPOSITE, &CBT_Sequence::INFO("Sequence2")));
+	////CBT_Sequence* pSequence2 = static_cast<CBT_Sequence*>(pManagement->Clone_Node(L"Sequence", CBT_Node_Manager::COMPOSITE, nullptr));
+
+	////CBT_Selector* pSelector = static_cast<CBT_Selector*>(pManagement->Clone_Node(L"Selector", CBT_Node_Manager::COMPOSITE, &CBT_Selector::INFO("Selecotr")));
+
+	////CBT_Wait* pWait2 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait2", 2, 0)));
+	////CBT_Wait* CoolWait = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("CoolWait",2)));
+	////CBT_Wait* CoolWait22 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait444", 4)));
+	////CBT_Move* pMove = static_cast<CBT_Move*>(pManagement->Clone_Node(L"Move", CBT_Node_Manager::TASK, &CBT_Move::INFO(m_pTransformCom, 1, 5)));
+
+	////static_cast<CBT_Compare*>(pManagement->Clone_Node(L"Play_Ani", CBT_Node_Manager::TASK, &CBT_Compare::INFO("Ani27", m_pMeshCom, 27, 0.6f)));
+
+	//// 냠 -> 빙그르 냠  왼쪽  패턴
+	//CBT_Play_Ani* pAni27 = static_cast<CBT_Play_Ani*>(pManagement->Clone_Node(L"Play_Ani", CBT_Node_Manager::TASK, &CBT_Play_Ani::INFO("Ani27", m_pMeshCom, 27, 0.6f)));
+	//CBT_Play_Ani* pAni26 = static_cast<CBT_Play_Ani*>(pManagement->Clone_Node(L"Play_Ani", CBT_Node_Manager::TASK, &CBT_Play_Ani::INFO("Ani26", m_pMeshCom, 26)));
+
+	////공격 패턴
+
+	//// 29 -> 오발탄 
+
+
+	//// 28 -> 좁은 범위 독안개
+
+
+	//// 25 -> 시야각 기준으로 기모아서 전방으로 독숨
+
+
+	//// 24 -> 독지뢰 살포
+
+
+	//// 23 -> 저격샷
+
+
+	//// 22 -> 오른쪽 물기
+
+
+	//// 20 -> 뒤돌아서 덥썩
+
+
+	//// 19 -> 좌회전 한바퀴  덥썩
+
 
 	CBT_Sequence* pSequence = static_cast<CBT_Sequence*>(pManagement->Clone_Node(L"Sequence", CBT_Node_Manager::COMPOSITE, &CBT_Sequence::INFO("Sequence1")));
 	//CBT_Sequence* pSequence1 = static_cast<CBT_Sequence*>(pManagement->Clone_Node(L"Sequence", CBT_Node_Manager::COMPOSITE, &CBT_Sequence::INFO("Sequence2")));
@@ -89,15 +135,96 @@ HRESULT CTestMonster::Ready_GameObject(void * pArg)
 	//pParallel->Set_Sub_Child(pWait3);
 
 
-	//pSequence->Add_Child(pParallel);
-	//pParallel->Set_Main_Child(pWait2);
-	//pParallel->Set_Sub_Child(pWait4);
+	//// 18 -> 트린다미어
+
+
+	//// 17 -> 돌진하면서 5번 타격하면서 텀블링
+
+
+
+	////최초 조우시
+	//// 15 -> 혼자 있을 때 idle상태
+
+	//// 16 -> 보스존 진입 시
 
 
 
 	m_pAIControllerCom->Set_BeHaviorTree(pBehaviorTree);
 	m_pAIControllerCom->Set_BlackBoard(pBlackBoard);
 	//m_pMeshCom->SetUp_Animation(56);
+
+	//// 움찔
+	////14 -> 뒤맞고 움찔
+
+	////13 -> 앞맞고 움찔
+
+	////12 -> 페이퍼번 , 디졸브 로 사망
+
+	////11 -> 반피되면  2페이지 시작 시
+
+	////10 -> 회피
+
+	////CBT_Simple_Parallel* pParallel = static_cast<CBT_Simple_Parallel*>(pManagement->Clone_Node(L"Simple_Parallel", CBT_Node_Manager::COMPOSITE, &CBT_Simple_Parallel::INFO("Parallel", CBT_Simple_Parallel::Mode::Immediate)));
+	////CBT_Wait* pWait1 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait1", 2, 1)));
+	////CBT_Wait* pWait5 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait3", 5)));
+	////CBT_Wait* pWait4 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait4", 4, 0)));
+
+	////CBT_Cooldown* pCooldown1 = static_cast<CBT_Cooldown*>(pManagement->Clone_Node(L"Cooldown", CBT_Node_Manager::DECORATOR, &CBT_Cooldown::INFO("Colldown1", 1)));
+	////CBT_Cooldown* pCooldown4 = static_cast<CBT_Cooldown*>(pManagement->Clone_Node(L"Cooldown", CBT_Node_Manager::DECORATOR, &CBT_Cooldown::INFO("Colldown4", 4)));
+
+	////CBT_Loop* pLoop3 = static_cast<CBT_Loop*>(pManagement->Clone_Node(L"Loop", CBT_Node_Manager::DECORATOR, &CBT_Loop::INFO("Loop", 3)));
+	////CBT_Loop* pLoop0 = static_cast<CBT_Loop*>(pManagement->Clone_Node(L"Loop", CBT_Node_Manager::DECORATOR, &CBT_Loop::INFO("Loop", 0)));
+
+	////CBT_MoveDirectly* pMoveDirect = static_cast<CBT_MoveDirectly*>(pManagement->Clone_Node(L"MoveDirectly", CBT_Node_Manager::TASK, &CBT_MoveDirectly::INFO("MoveDirectly", m_pTransformCom, L"Target_Pos", 1, 3)));
+
+	////CBT_ConeCheck* pConeCheck = static_cast<CBT_ConeCheck*>(pManagement->Clone_Node(L"ConeCheck", CBT_Node_Manager::DECORATOR, &CBT_ConeCheck::INFO("ConeCheck", L"Target_Pos", m_pTransformCom, 40, 5)));
+	////CBT_Inverter* pInverter = static_cast<CBT_Inverter*>(pManagement->Clone_Node(L"Inverter", CBT_Node_Manager::DECORATOR, &CBT_Inverter::INFO("Inverter")));
+
+	//if (FAILED(pBehaviorTree->Set_Child(pSequence))) return E_FAIL;
+	////if (FAILED(pSelector->Add_Child(pSequence))) return E_FAIL;
+	//if (FAILED(pSequence->Add_Child(pAni27))) return E_FAIL;
+	//pSequence->Add_Child(pAni26);
+
+	////Node_Parallel_Immediate(a, bbb::Immediate);
+
+
+	////pCooldown4->Set_Child(pInverter);
+	////pInverter->Set_Child(pWait1);
+	////pConeCheck->Set_Child(pWait1);
+	////pCooldown1->Set_Child(pLoop3);
+	////pSelector->Add_Child(pWait4);
+	////pLoop3->Set_Child(pWait1);
+	////pCooldown4->Set_Child(pAni2);
+
+	////if (FAILED(pBehaviorTree->Set_Child(pSequence))) return E_FAIL;
+	////pSequence->Add_Child(pWait2);
+	//////pSequence->Add_Child(pCooldown2);
+	//////pCooldown2->Set_Child(CoolWait22);
+	////pSequence->Add_Child(pSequence1);
+	////pSequence->Add_Child(pWait3);
+	////pSequence1->Add_Child(pParallel);
+	////pParallel->Set_Main_Child(pWait4);
+	////pParallel->Set_Sub_Child(pWait1);
+	////pSequence1->Add_Child(pAni4);
+
+	////pSequence->Add_Child(pParallel);
+	////pParallel->Set_Main_Child(pSequence2);
+	////pSequence2->Add_Child()
+	////pParallel->Set_Sub_Child(pWait3);
+
+
+	////pSequence->Add_Child(pParallel);
+	////pParallel->Set_Main_Child(pWait2);
+	////pParallel->Set_Sub_Child(pWait4);
+	////m_pMeshCom->SetUp_Animation(0);
+
+
+
+	//m_pAIControllerCom->Set_BeHaviorTree(pBehaviorTree);
+	//m_pAIControllerCom->Set_BlackBoard(pBlackBoard);
+
+	m_pMeshCom->SetUp_Animation(0);
+
 
 	return NOERROR;
 }
@@ -106,7 +233,7 @@ _int CTestMonster::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
 
-	m_pAIControllerCom->Update_AIController(TimeDelta);
+	//m_pAIControllerCom->Update_AIController(TimeDelta);
 
 	return _int();
 }
@@ -147,7 +274,7 @@ HRESULT CTestMonster::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			m_pShaderCom->Begin_Pass(0);
+			m_pShaderCom->Begin_Pass(2);
 
 			if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE))))
 				return E_FAIL;
@@ -213,6 +340,13 @@ HRESULT CTestMonster::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
 
+	_mat matInvVP = ViewMatrix * ProjMatrix;// *m_pTransformCom->Get_WorldMat();
+	D3DXMatrixInverse(&matInvVP, nullptr, &matInvVP);
+	if (FAILED(m_pShaderCom->Set_Value("g_matInvVP", &matInvVP, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_matLastVP", &m_matLastVP, sizeof(_mat))))
+		return E_FAIL;
+	m_matLastVP = ViewMatrix * ProjMatrix;// *m_pTransformCom->Get_WorldMat();
 	Safe_Release(pManagement);
 
 	return NOERROR;

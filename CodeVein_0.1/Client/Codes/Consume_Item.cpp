@@ -16,15 +16,21 @@ HRESULT CConsume_Item::Ready_GameObject_Prototype()
 {
 	CItem::Ready_GameObject_Prototype();
 
+	m_eType = CItem::CONSUME;
+
+
 	return NOERROR;
 }
 
 HRESULT CConsume_Item::Ready_GameObject(void * pArg)
 {
+	if (FAILED(Add_Component()))
+		return E_FAIL;
 	CItem::Ready_GameObject(pArg);
 
 	m_eType = CItem::CONSUME;
-	
+
+
 	return NOERROR;
 }
 
@@ -32,10 +38,32 @@ _int CConsume_Item::Update_GameObject(_double TimeDelta)
 {
 	CItem::Update_GameObject(TimeDelta);
 
+
 	if (m_bIsDead)
 		return DEAD_OBJ;
 
 	return NO_EVENT;
+}
+
+_int CConsume_Item::Late_Update_GameObject(_double TimeDelta)
+{
+	
+	return _int();
+}
+
+HRESULT CConsume_Item::Render_GameObject()
+{
+	return NOERROR;
+}
+
+HRESULT CConsume_Item::Add_Component()
+{
+	return NOERROR;
+}
+
+HRESULT CConsume_Item::SetUp_ConstantTable()
+{
+	return NOERROR;
 }
 
 CConsume_Item * CConsume_Item::Create(_Device pGraphic_Device)
@@ -58,6 +86,7 @@ CGameObject * CConsume_Item::Clone_GameObject(void * pArg)
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		MSG_BOX("CConsume_Item Item Cloned Failed");
+
 		Safe_Release(pInstance);
 	}
 

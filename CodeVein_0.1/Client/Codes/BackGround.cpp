@@ -51,6 +51,14 @@ _int CBackGround::Late_Update_GameObject(_double TimeDelta)
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
 
+
+	m_matWorld._11 = m_fSizeX;
+	m_matWorld._22 = m_fSizeY;
+	m_matWorld._33 = 1.f;
+	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
+	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;
+
+
 	m_matWorld._11 = m_fSizeX;
 	m_matWorld._22 = m_fSizeY;
 	m_matWorld._33 = 1.f;
@@ -66,6 +74,7 @@ HRESULT CBackGround::Render_GameObject()
 		nullptr == m_pBufferCom)
 		return E_FAIL;
 
+
 	CManagement* pManagement = CManagement::Get_Instance();
 	if (nullptr == pManagement)
 		return E_FAIL;
@@ -79,6 +88,15 @@ HRESULT CBackGround::Render_GameObject()
 
 	pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
+
+	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
+
+	m_matOldView = g_pManagement->Get_Transform(D3DTS_VIEW);
+	m_matOldProj = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+
+	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
+	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
+
 
 
 	if (FAILED(SetUp_ConstantTable()))
@@ -98,10 +116,14 @@ HRESULT CBackGround::Render_GameObject()
 	m_pShaderCom->End_Shader();
 
 
+
 	pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
 	pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
 
 	Safe_Release(pManagement);
+
+	g_pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
+	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
 
 	return NOERROR;
 }

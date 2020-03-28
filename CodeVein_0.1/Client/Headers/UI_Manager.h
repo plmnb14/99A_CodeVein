@@ -5,10 +5,6 @@
 
 
 
-
-
-
-
 BEGIN(Client)
 
 class CUI_Manager final : public CBase
@@ -53,6 +49,7 @@ private:
 	INVEN_STATE		m_eInvenState;
 	_bool			m_bOpenInven = false;
 	_uint			m_iIndex = 0;
+
 
 public:
 	virtual void Free();

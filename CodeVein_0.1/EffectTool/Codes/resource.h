@@ -101,6 +101,8 @@
 #define IDC_EDIT48                      1085
 #define IDC_EDIT49                      1086
 #define IDC_CHECK1                      1087
+#define IDC_CHECK21                     1088
+#define IDC_EDIT50                      1089
 
 // Next default values for new objects
 // 
@@ -109,6 +111,7 @@
 #define _APS_NEXT_RESOURCE_VALUE        316
 #define _APS_NEXT_COMMAND_VALUE         32771
 #define _APS_NEXT_CONTROL_VALUE         1088
+#define _APS_NEXT_CONTROL_VALUE         1089
 #define _APS_NEXT_SYMED_VALUE           315
 #endif
 #endif

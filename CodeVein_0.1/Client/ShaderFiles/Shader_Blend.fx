@@ -1,4 +1,6 @@
 
+int g_iToneIndex = 0;
+
 texture		g_DiffuseTexture;
 sampler DiffuseSampler = sampler_state
 {
@@ -71,8 +73,15 @@ PS_OUT PS_MAIN(PS_IN In)
 	vector	vShade = pow(tex2D(ShadeSampler, In.vTexUV), 2.2);
 	vector	vSpecular = tex2D(SpecularSampler, In.vTexUV);
 
+
 	Out.vColor = (vDiffuse + vSpecular) * vShade;
 	Out.vColor = pow(Out.vColor, 1 / 2.2);
+
+	vector	vRim = pow(tex2D(BloomSampler, In.vTexUV), 2.2);
+
+	Out.vColor = (vDiffuse + vSpecular + vRim) * vShade;
+	//Out.vColor = pow(Out.vColor, 1 / 2.2);
+
 
 	return Out;
 }
@@ -82,6 +91,7 @@ PS_OUT PS_TONEMAPPING(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
+
 
 	Out.vColor += tex2D(BloomSampler, In.vTexUV);
 
@@ -119,6 +129,59 @@ PS_OUT PS_TONEMAPPING(PS_IN In)
 	//float3 x = Out.vColor.rgb;
 	//float3 Color = ((x*(A*x + C*B) + D*E) / (x*(A*x + B) + D*F)) - E / F;
 	//Out.vColor = float4(Color, 1.f);
+
+	Out.vColor += tex2D(BloomSampler, In.vTexUV);
+
+	// For Test
+	if (0 == g_iToneIndex)
+	{
+		// DX Sample ========================================================================
+		float Luminance = 0.08f;
+		static const float fMiddleGray = 0.18f;
+		static const float fWhiteCutoff = 0.9f;
+		
+		float3 Color = pow(Out.vColor.xyz, 1.f / 2.2f) * fMiddleGray / (Luminance + 0.001f);
+		Color *= (1.f + (Color / (fWhiteCutoff * fWhiteCutoff)));
+		Color /= (1.f + Color);
+		Out.vColor = float4(pow(Color, 1.f / 2.2f), 1.f);
+
+	}
+	else if (1 == g_iToneIndex)
+	{
+		//ToneMapACES ========================================================================
+		const float A = 2.51, B = 0.03, C = 2.43, D = 0.59, E = 0.14;
+		Out.vColor = saturate((Out.vColor * (A * Out.vColor + B)) / (Out.vColor * (C * Out.vColor + D) + E));
+	}
+	else if (2 == g_iToneIndex)
+	{
+		// EA studio ========================================================================
+		float3 Color = Out.vColor.xyz;
+		float3 x = max(0.f, Color - 0.004);
+		Color = (x * (6.2f * x + 0.5f)) / (x * (6.2f * x + 1.7f) + 0.06f);
+		//Color = pow(Color, 1.0 / 2.2);
+		Out.vColor = float4(Color, 1.f);
+	}
+	else if (3 == g_iToneIndex)
+	{
+		// reinhardTone ========================================================================
+		float3 mapped = Out.vColor.xyz / (Out.vColor.xyz + float3(1.0, 1.0, 1.0));
+		mapped = pow(mapped, float3((1.0 / 2.2), (1.0 / 2.2), (1.0 / 2.2)));
+		Out.vColor = float4(mapped, 1.f);
+	}
+	else if (4 == g_iToneIndex)
+	{
+		//// Uncharted2Tonemap ========================================================================
+		float A = 0.15;
+		float B = 0.50;
+		float C = 0.10;
+		float D = 0.20;
+		float E = 0.02;
+		float F = 0.30;
+		
+		float3 x = Out.vColor.rgb;
+		float3 Color = ((x*(A*x + C*B) + D*E) / (x*(A*x + B) + D*F)) - E / F;
+		Out.vColor = float4(Color, 1.f);
+	}
 
 	return Out;
 }
@@ -186,7 +249,8 @@ PS_OUT PS_BLUR(PS_IN In)
 	{
 		samp.x = In.vTexUV.x + PixelKernel[i] * pixelWidthX;
 		samp.y = In.vTexUV.y + PixelKernel[i] * pixelWidthY;
-		color += tex2D(DiffuseSampler, samp) * BlurWeights[i];
+
+		color += tex2D(DiffuseSampler, samp) * BlurWeights[i] * 1.3f;
 	}
 
 	//////////////////////////////////////////////////////////////
@@ -220,7 +284,9 @@ PS_OUT PS_AFTER(PS_IN In)
 
 	vector	vDiffuse = tex2D(DiffuseSampler, UV);
 
-	Out.vColor = vDiffuse;
+	Out.vColor = pow(vDiffuse, 1 / 2.2);
+	//Out.vColor = vDiffuse;
+
 
 	return Out;
 }
@@ -247,10 +313,14 @@ PS_OUT PS_Bloom(PS_IN In) // Extract Bright Color
 	//Out.vColor = BrightColor;
 
 	// Bloom 3====================================================================
-	Out.vColor = vDiffuse;
-	Out.vColor.rgb -= 1.f; // 작은 값일 수록 빛에 민감한 광선
 
-	Out.vColor = 4.0f * max(Out.vColor, 0.0f); // 큰 값일 수록 확실한 모양의 광선
+
+
+	Out.vColor = vDiffuse;
+	Out.vColor.rgb -= 1.5f; // 작은 값일 수록 빛에 민감한 광선
+
+	Out.vColor = 3.0f * max(Out.vColor, 0.0f); // 큰 값일 수록 확실한 모양의 광선
+
 
 	return Out;
 }
@@ -283,10 +353,12 @@ PS_OUT PS_MotionBlur(PS_IN In)
 	//float4 currentPos = H;
 
 	vector	vDepthInfo = tex2D(DepthSampler, In.vTexUV);
-	float	fViewZ = vDepthInfo.g * 300.f;
+
+	float	fViewZ = vDepthInfo.g * 500.f;
 	//float	zOverW = vDepthInfo.x;
 	float	zOverW = 1;
-	float4 H = float4(In.vTexUV.x * 2 - 1, (1 - In.vTexUV.y) * 2 - 1, zOverW, 1);
+	float4 H = float4(In.vTexUV.x * 2 - 1, (In.vTexUV.y * -2) + 1, zOverW, 1);
+
 	//H = H * fViewZ;
 
 	float4 D = mul(H, g_matInvVP);
@@ -298,9 +370,10 @@ PS_OUT PS_MotionBlur(PS_IN In)
 	float4 previousPos = mul(worldPos, g_matLastVP);
 	// Convert to nonhomogeneous points [-1,1] by dividing by w.
 	previousPos /= previousPos.w;
-	// Use this frame's position and last frame's to compute the pixel    
-	// velocity.   
-	float2 velocity = (currentPos - previousPos) / 2.f;
+
+	// Use this frame's position and last frame's to compute the pixel velocity.   
+	float2 velocity = (currentPos.xy - previousPos.xy) / 2.f;
+
 
 	// Get the initial color at this pixel.    
 	float4 color = tex2D(DiffuseSampler, In.vTexUV);
@@ -329,10 +402,12 @@ PS_OUT MotionBlurForObj(PS_IN In)
 	// Get the initial color at this pixel.    
 	float4 velocity = tex2D(ShadeSampler, In.vTexUV);
 	float4 color = tex2D(DiffuseSampler, In.vTexUV);
-	In.vTexUV += velocity;
+
+	In.vTexUV += velocity.xy;
 
 	int g_numSamples = 10;
-	for (int i = 1; i < g_numSamples; ++i, In.vTexUV += velocity)
+	for (int i = 1; i < g_numSamples; ++i, In.vTexUV += velocity.xy)
+
 	{   // Sample the color buffer along the velocity vector.    
 		float4 currentColor = tex2D(DiffuseSampler, In.vTexUV);
 		// Add the current color to our color sum.   
@@ -341,7 +416,9 @@ PS_OUT MotionBlurForObj(PS_IN In)
 	// Average all of the samples to get the final blur color.
 	float4 finalColor = color / g_numSamples;
 
-	Out.vColor = finalColor;
+	finalColor.a *= velocity.a;
+	Out.vColor = finalColor; 
+
 
 	//// From Velocity Map =============================================
 	//const int SAMPLES = 26;
@@ -397,6 +474,9 @@ technique Default_Technique
 
 		VertexShader = NULL;
 		PixelShader = compile ps_3_0 PS_TONEMAPPING();
+
+		minfilter[0] = point;
+		magfilter[0] = point;
 	}
 
 	pass Blur // 2
