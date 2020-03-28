@@ -48,8 +48,8 @@
 #define Node_UpdateGageRatio(_name, _Key_Save_HPRatio, _Key_MAXHP, _Key_HP, _MaxCount_Of_Execution, _dCoolTime, _dOffset, _Service_Mode) static_cast<CBT_UpdateGageRatio*>(CManagement::Get_Instance()->Clone_Node(L"UpdateHPRatio", CBT_Node_Manager::SERVICE, &CBT_UpdateGageRatio::INFO(_name, _Key_Save_HPRatio, _Key_MAXHP, _Key_HP, _MaxCount_Of_Execution, _dCoolTime, _dOffset, _Service_Mode)))
 
 #include "..\Headers\BT_CreateEffect.h"
-#define Node_CreateEffect(_name, _Effect_Tag, _vEffect_Create_Pos, _MaxCount_Of_Execution, _dCoolTime, _dOffset, _Service_Mode) static_cast<CBT_CreateEffect*>(CManagement::Get_Instance()->Clone_Node(L"CreateEffect", CBT_Node_Manager::SERVICE, &CBT_CreateEffect::INFO(_name, _Effect_Tag, _vEffect_Create_Pos, 0,  _MaxCount_Of_Execution, _dCoolTime, _dOffset, _Service_Mode, CBT_CreateEffect::One)))
-#define Node_CreateParticle(_name, _Effect_Tag, _vEffect_Create_Pos, _Effect_Life_Time, _MaxCount_Of_Execution, _dCoolTime, _dOffset, _Service_Mode) static_cast<CBT_CreateEffect*>(CManagement::Get_Instance()->Clone_Node(L"CreateEffect", CBT_Node_Manager::SERVICE, &CBT_CreateEffect::INFO(_name, _Effect_Tag, _vEffect_Create_Pos, _Effect_Life_Time, _MaxCount_Of_Execution, _dCoolTime, _dOffset, _Service_Mode, CBT_CreateEffect::Particle)))
+#define Node_CreateEffect(_name, _Effect_Tag, _Create_Pos_Key, _MaxCount_Of_Execution, _dCoolTime, _dOffset, _Service_Mode) static_cast<CBT_CreateEffect*>(CManagement::Get_Instance()->Clone_Node(L"CreateEffect", CBT_Node_Manager::SERVICE, &CBT_CreateEffect::INFO(_name, _Effect_Tag, _Create_Pos_Key, 0,  _MaxCount_Of_Execution, _dCoolTime, _dOffset, _Service_Mode, CBT_CreateEffect::One)))
+#define Node_CreateParticle(_name, _Effect_Tag, _Create_Pos_Key, _Effect_Life_Time, _MaxCount_Of_Execution, _dCoolTime, _dOffset, _Service_Mode) static_cast<CBT_CreateEffect*>(CManagement::Get_Instance()->Clone_Node(L"CreateEffect", CBT_Node_Manager::SERVICE, &CBT_CreateEffect::INFO(_name, _Effect_Tag, _Create_Pos_Key, _Effect_Life_Time, _MaxCount_Of_Execution, _dCoolTime, _dOffset, _Service_Mode, CBT_CreateEffect::Particle)))
 
 
 // Task

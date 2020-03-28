@@ -180,7 +180,7 @@ void CBT_MoveDirectly::Look_At_Target(_double TimeDelta, _v3 Target_Pos)
 	float temp = D3DXVec3Dot(&vOriginDir, &vToPlayerDir);
 	//1.0보다 커짐 방지
 	if (temp > 1.0f)
-		temp = 1.0f;
+		temp = 0.99f;
 	Radian = acosf(temp);
 
 	_v3 vRight;

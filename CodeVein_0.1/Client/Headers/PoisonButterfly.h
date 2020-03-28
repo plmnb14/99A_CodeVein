@@ -29,7 +29,7 @@ private:	//패턴들
 	// 3. 냠-> 빙그르르냠
 	CBT_Composite_Node* Eat_Turn_Eat();
 	// 4. 기모아서 독 소용돌이
-	CBT_Composite_Node* Poison_Tornado_After_Chaing();
+	CBT_Composite_Node* Poison_Tornado_After_Charging();
 	// 5. 좁은 범위 한바퀴 독 발사
 	CBT_Composite_Node* OneTurn_Poison();
 
@@ -43,11 +43,22 @@ private:	//패턴들
 	// 4. 트린다미어
 	CBT_Composite_Node* WhirlWind();
 
-	// 응용
-	// 시야각내에 있으면 공격, 없으면 추적
-	CBT_Sequence*		AttackOrChase();
+	//
 
-	// 
+	/*
+	방향 조절 -> 패턴 선택  -> 근거리 패턴, 추적 후 공격 or 그냥 그 자리에서 공격
+							-> 원거리 패턴, 제자리에서 공격
+	*/
+	
+	//////////////////// 시연회용
+	// 시야각내에 있으면 공격(첫 패턴부터 차례대로), 없으면 추적
+	CBT_Composite_Node*		Show_ChaseAndNearAttack();
+	CBT_Composite_Node*		Show_TurnAndFarAttack();
+	// 패턴 순서대로 근거리 공격
+	CBT_Composite_Node*		Show_NearAttack();
+	// 패턴 순서대로 원거리 공격
+	CBT_Composite_Node*		Show_FarAttack();
+	//////////////////// 
 
 private:
 	HRESULT Update_Bone_Of_BlackBoard();
