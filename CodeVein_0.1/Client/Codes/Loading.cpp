@@ -132,36 +132,40 @@ unsigned int CALLBACK CLoading::Thread_Main(void* pArg)
 
 HRESULT CLoading::Ready_Effect(void)
 {
-	if (FAILED(g_pManagement->Add_Prototype(L"Effect_FootSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Player_FootSmoke.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"FootSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Player_FootSmoke.dat")))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"Effect_ButterFly_SoftSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_SoftSmoke.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_SoftSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_SoftSmoke.dat")))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"Effect_ButterFly_PointParticle", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_PointParticle.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_PointParticle", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_PointParticle.dat")))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"Effect_ButterFly_VenomShot", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_VenomShot.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_VenomShot", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_VenomShot.dat")))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"Effect_ButterFly_RingLine", CMeshEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_RingLine.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_RingLine", CMeshEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_RingLine.dat")))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"Effect_ButterFly_Distortion", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_Distortion.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_RingLine_Distortion", CMeshEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_RingLine_Distortion.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_Distortion", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_Distortion.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_SoftSmoke_Ready", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_SoftSmoke_Ready.dat")))))
 		return E_FAIL;
 
-	if (FAILED(g_pManagement->Add_Prototype(L"Effect_Hit_Blood_0", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_Blood_0.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"Hit_Blood_0", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_Blood_0.dat")))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"Effect_Hit_Blood_1", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_Blood_1.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"Hit_Blood_1", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_Blood_1.dat")))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"Effect_Hit_Blood_2", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_Blood_2.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"Hit_Blood_2", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_Blood_2.dat")))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"Effect_Hit_BloodMist_0", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_BloodMist_0.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"Hit_BloodMist_0", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_BloodMist_0.dat")))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"Effect_Hit_BloodMist_1", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_BloodMist_1.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"Hit_BloodMist_1", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_BloodMist_1.dat")))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"Effect_Hit_BloodParticle_0", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_BloodParticle_0.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"Hit_BloodParticle_0", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_BloodParticle_0.dat")))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"Effect_Hit_BloodParticle_1", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_BloodParticle_1.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"Hit_BloodParticle_1", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_BloodParticle_1.dat")))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"Effect_Hit_BloodParticle_2", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_BloodParticle_2.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"Hit_BloodParticle_2", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_BloodParticle_2.dat")))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"Effect_Hit_BloodParticle_3", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_BloodParticle_3.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"Hit_BloodParticle_3", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_BloodParticle_3.dat")))))
 		return E_FAIL;
 
 	if (FAILED(g_pManagement->Add_Prototype(L"SpawnParticle", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/SpawnParticle.dat")))))
@@ -238,6 +242,15 @@ Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
 		::ReadFile(hFile, &pInfo->vStartScale, sizeof(_v3), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->fColorIndex, sizeof(_float), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->fMaskIndex, sizeof(_float), &dwByte, nullptr);
+		
+		_bool bTemp;
+		::ReadFile(hFile, &bTemp, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &bTemp, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &bTemp, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &bTemp, sizeof(_bool), &dwByte, nullptr);
+
+		::ReadFile(hFile, &pInfo->bGravity, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bRandScale, sizeof(_bool), &dwByte, nullptr);
 
 		break;
 	}
