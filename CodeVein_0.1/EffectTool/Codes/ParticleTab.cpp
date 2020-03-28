@@ -158,6 +158,8 @@ void CParticleTab::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK1, m_CheckUseRGBA);
 	DDX_Control(pDX, IDC_CHECK21, m_bCheckUseMask);
 	DDX_Text(pDX, IDC_EDIT50, m_EditMaskIndex);
+	DDX_Control(pDX, IDC_CHECK7, m_CheckGravity);
+	DDX_Control(pDX, IDC_CHECK22, m_CheckRandSize);
 }
 
 void CParticleTab::Set_GraphicDev(LPDIRECT3DDEVICE9 pDev)
@@ -381,6 +383,10 @@ void CParticleTab::Setup_EffInfo(_bool bIsMesh)
 
 	GetDlgItemText(IDC_EDIT42, m_EditColorIndex);
 	m_pInfo->fColorIndex = _float(_tstoi(m_EditColorIndex));
+
+	m_pInfo->bGravity = m_CheckGravity.GetCheck() ? true : false;
+
+	m_pInfo->bRandScale = m_CheckRandSize.GetCheck() ? true : false;
 
 	if (m_bCheckUseMask.GetCheck() ? true : false)
 	{
@@ -674,6 +680,11 @@ void CParticleTab::OnBnClickedButton_Save()
 		::WriteFile(hFile, &bRandMoveSpeed, sizeof(_bool), &dwByte, nullptr);
 		_bool bRandCreateDelay = (m_CheckRandCreateDelay.GetCheck()) ? true : false;
 		::WriteFile(hFile, &bRandCreateDelay, sizeof(_bool), &dwByte, nullptr);
+		
+		_bool bGravity = (m_CheckGravity.GetCheck()) ? true : false;
+		::WriteFile(hFile, &bGravity, sizeof(_bool), &dwByte, nullptr);
+		_bool bRandSize = (m_CheckRandSize.GetCheck()) ? true : false;
+		::WriteFile(hFile, &bRandSize, sizeof(_bool), &dwByte, nullptr);
 
 		CloseHandle(hFile);
 		MessageBox(_T("Save Success."), _T("Save"), MB_OK);
@@ -979,6 +990,14 @@ void CParticleTab::OnBnClickedButton_Load()
 			_bool bRandCreateDelay = false;
 			::ReadFile(hFile, &bRandCreateDelay, sizeof(_bool), &dwByte, nullptr);
 			m_CheckRandCreateDelay.SetCheck(bRandCreateDelay);
+
+			_bool bGravity = false;
+			::ReadFile(hFile, &bGravity, sizeof(_bool), &dwByte, nullptr);
+			m_CheckGravity.SetCheck(bGravity);
+
+			_bool bRandSize = false;
+			::ReadFile(hFile, &bRandSize, sizeof(_bool), &dwByte, nullptr);
+			m_CheckRandSize.SetCheck(bRandSize);
 
 			//if (0 == dwByte)
 			break;

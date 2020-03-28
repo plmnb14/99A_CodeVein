@@ -1,6 +1,6 @@
 Tex_BloodDecal|BloodDecal_%d.tga|..\..\Client\Resources\Texture\Effect\Blood\BloodDecal\|0|5
 Tex_BloodMist|BloodMist_%d.tga|..\..\Client\Resources\Texture\Effect\Blood\BloodMist\|0|2
-Tex_BloodParticle|BloodParticle_%d.tga|..\..\Client\Resources\Texture\Effect\Blood\BloodParticle\|0|4
+Tex_BloodParticle|BloodParticle_%d.tga|..\..\Client\Resources\Texture\Effect\Blood\BloodParticle\|0|5
 Tex_BloodVarious01|BloodVarious01_%d.png|..\..\Client\Resources\Texture\Effect\Blood\BloodVarious01\|0|8
 Tex_BloodVarious02|BloodVarious02_%d.png|..\..\Client\Resources\Texture\Effect\Blood\BloodVarious02\|0|8
 Tex_BloodVarious03|BloodVarious03_%d.png|..\..\Client\Resources\Texture\Effect\Blood\BloodVarious03\|0|8
@@ -10,6 +10,7 @@ Tex_BloodVarious06|BloodVarious06_%d.png|..\..\Client\Resources\Texture\Effect\B
 Tex_BloodVarious07|BloodVarious07_%d.png|..\..\Client\Resources\Texture\Effect\Blood\BloodVarious07\|0|8
 Tex_BloodVarious08|BloodVarious08_%d.png|..\..\Client\Resources\Texture\Effect\Blood\BloodVarious08\|0|8
 Tex_Colors|Colors_%d.tga|..\..\Client\Resources\Texture\Effect\Colors\|0|7
+Tex_ElemSplash|ElemSplash_%d.tga|..\..\Client\Resources\Texture\Effect\ElemSplash\|0|2
 Tex_BrightFire|BrightFire_%d.png|..\..\Client\Resources\Texture\Effect\Fire\BrightFire\|0|16
 Tex_FireTorch01|FireTorch01_%d.png|..\..\Client\Resources\Texture\Effect\Fire\FireTorch01\|0|16
 Tex_FireTorch02|FireTorch02_%d.png|..\..\Client\Resources\Texture\Effect\Fire\FireTorch02\|0|16
@@ -17,6 +18,8 @@ Tex_FireTorch03|FireTorch03_%d.png|..\..\Client\Resources\Texture\Effect\Fire\Fi
 Tex_FireTorch04|FireTorch04_%d.png|..\..\Client\Resources\Texture\Effect\Fire\FireTorch04\|0|16
 Tex_FireTorch_Low|FireTorch_Low_%d.png|..\..\Client\Resources\Texture\Effect\Fire\FireTorch_Low\|0|32
 Tex_FireTorch_Low2|FireTorch_Low2_%d.png|..\..\Client\Resources\Texture\Effect\Fire\FireTorch_Low2\|0|32
+Tex_FireBlast1|FireBlast1_%d.png|..\..\Client\Resources\Texture\Effect\FireBlast\FireBlast1\|0|32
+Tex_FireBlast2|FireBlast2_%d.png|..\..\Client\Resources\Texture\Effect\FireBlast\FireBlast2\|0|32
 Tex_Gradient|Gradient_%d.tga|..\..\Client\Resources\Texture\Effect\Gradient\|0|3
 Tex_LinePoint|LinePoint_%d.png|..\..\Client\Resources\Texture\Effect\LinePoint\|0|8
 Tex_Mask|Mask_%d.tga|..\..\Client\Resources\Texture\Effect\Mask\|0|1
@@ -29,8 +32,10 @@ Tex_Smoke16|Smoke16_%d.png|..\..\Client\Resources\Texture\Effect\Smoke\Smoke16\|
 Tex_Smoke64|Smoke64_%d.png|..\..\Client\Resources\Texture\Effect\Smoke\Smoke64\|0|64
 Tex_SmokeHeavy64|SmokeHeavy64_%d.png|..\..\Client\Resources\Texture\Effect\Smoke\SmokeHeavy64\|0|64
 Tex_SmokePuff|SmokePuff_%d.tga|..\..\Client\Resources\Texture\Effect\Smoke\SmokePuff\|0|11
+Tex_SmokeSmall|SmokeSmall_%d.png|..\..\Client\Resources\Texture\Effect\Smoke\SmokeSmall\|0|16
 Tex_SmokeSoft16|SmokeSoft16_%d.png|..\..\Client\Resources\Texture\Effect\Smoke\SmokeSoft16\|0|16
 Tex_SmokeSoft64|SmokeSoft64_%d.png|..\..\Client\Resources\Texture\Effect\Smoke\SmokeSoft64\|0|64
+Tex_Splash|Splash_%d.png|..\..\Client\Resources\Texture\Effect\Splash\|0|24
 Tex_SwordTrail|SwordTrail%d.tga|..\..\Client\Resources\Texture\Effect\SwordTrail\|0|4
 Tex_Tail|Tail_%d.tga|..\..\Client\Resources\Texture\Effect\Tail\|0|1
 Tex_SkyBridgeBoss_Trail|SkyBridgeBoss_Trail_%d.tga|..\..\Client\Resources\Texture\Effect\Trail\SkyBridgeBoss_Trail\|0|1

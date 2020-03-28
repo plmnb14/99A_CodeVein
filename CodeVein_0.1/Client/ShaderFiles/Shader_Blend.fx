@@ -288,22 +288,10 @@ PS_OUT PS_MotionBlur(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	//// Get the depth buffer value at this pixel.
-	//float zOverW = tex2D(DepthSampler, In.vTexUV);
-	//// H is the viewport position at this pixel in the range -1 to 1.    
-	//float4 H = float4(In.vTexUV.x * 2 - 1, (1 - In.vTexUV.y) * 2 - 1, zOverW, 1);
-	//// Transform by the view-projection inverse.   
-	//float4 D = mul(H, g_matInvVP);
-	//// Divide by w to get the world position.    
-	//float4 worldPos = D / D.w; 
-
-	// Current viewport position    
-	//float4 currentPos = H;
-
 	vector	vDepthInfo = tex2D(DepthSampler, In.vTexUV);
 	float	fViewZ = vDepthInfo.g * 500.f;
-	//float	zOverW = vDepthInfo.x;
-	float	zOverW = 1;
+	float	zOverW = vDepthInfo.x;
+	//float	zOverW = 1;
 	float4 H = float4(In.vTexUV.x * 2 - 1, (In.vTexUV.y * -2) + 1, zOverW, 1);
 	//H = H * fViewZ;
 
@@ -317,7 +305,7 @@ PS_OUT PS_MotionBlur(PS_IN In)
 	// Convert to nonhomogeneous points [-1,1] by dividing by w.
 	previousPos /= previousPos.w;
 	// Use this frame's position and last frame's to compute the pixel velocity.   
-	float2 velocity = (currentPos.xy - previousPos.xy) / 2.f;
+	float2 velocity = (currentPos.xy - previousPos.xy) * 0.5f;
 
 	// Get the initial color at this pixel.    
 	float4 color = tex2D(DiffuseSampler, In.vTexUV);
@@ -342,47 +330,27 @@ PS_OUT MotionBlurForObj(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	// ==========================================================
-	// Get the initial color at this pixel.    
-	float4 velocity = tex2D(ShadeSampler, In.vTexUV);
-	float4 color = tex2D(DiffuseSampler, In.vTexUV);
-	In.vTexUV += velocity.xy;
-
-	int g_numSamples = 10;
-	for (int i = 1; i < g_numSamples; ++i, In.vTexUV += velocity.xy)
-	{   // Sample the color buffer along the velocity vector.    
-		float4 currentColor = tex2D(DiffuseSampler, In.vTexUV);
-		// Add the current color to our color sum.   
-		color += currentColor;
+	float uVelocityScale = 1.f;// currentFps / targetFps;
+	int MAX_SAMPLES = 8;
+	
+	float2 texelSize = (1.f / 1280.f, 1.f / 720.f);
+	float2 screenTexCoords = In.vTexUV.xy;// *texelSize;
+	
+	//float2 velocity = tex2D(ShadeSampler, screenTexCoords).rg;
+	//velocity *= uVelocityScale;
+	float2 velocity = tex2D(ShadeSampler, screenTexCoords).rg;
+	velocity = pow(velocity * 2 - 1, 3.0);
+	
+	//float speed = length(velocity / texelSize);
+	//float nSamples = clamp(int(speed), 1, MAX_SAMPLES);
+	
+	Out.vColor = tex2D(DiffuseSampler, screenTexCoords);
+	for (int i = 1; i < MAX_SAMPLES; ++i) {
+		float2 offset = velocity * (float(i) / float(MAX_SAMPLES - 1) - 0.5);
+		Out.vColor += tex2D(DiffuseSampler, screenTexCoords + offset);
 	}
-	// Average all of the samples to get the final blur color.
-	float4 finalColor = color / g_numSamples;
-	finalColor.a *= velocity.a;
-	Out.vColor = finalColor; 
-
-	//// From Velocity Map =============================================
-	//const int SAMPLES = 26;
-	//const float samples = 26;
-	//
-	//float4 velocityTest = tex2D(ShadeSampler, In.vTexUV);
-	//velocityTest.xy /= 1.f;
-	//
-	//int cnt = 1;
-	//float4 Color = 0;
-	//float4 Scene = tex2D(DiffuseSampler, In.vTexUV);
-	//
-	//for (int i = cnt; i < SAMPLES; i++)
-	//{
-	//	Color = tex2D(DiffuseSampler, In.vTexUV + velocityTest.xy * (float)i);
-	//
-	//	if (velocityTest.a < Color.a + 0.04f)
-	//	{
-	//		cnt++;
-	//		Scene += Color;
-	//	}
-	//}
-	//
-	//Out.vColor = Scene / (float)cnt;
+	Out.vColor /= float(MAX_SAMPLES);
+	Out.vColor.a *= tex2D(ShadeSampler, screenTexCoords).w;
 
 	return Out;
 }

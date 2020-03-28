@@ -37,7 +37,7 @@ public:
 	virtual _int Update_GameObject(_double TimeDelta);
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
-
+	HRESULT Render_GameObject_HWInstance();
 protected:
 	virtual void Setup_Info();
 
@@ -54,6 +54,7 @@ protected:
 	_float					m_fRotSpeed = 0.f;
 	_float					m_fAlphaSpeed = 0.f;
 	_float					m_fCreateDelay = 0.f;
+	_float					m_fAccel = 0.f;
 	_v3						m_vLerpPos = { 1.f, 1.f, 1.f };
 	_v3						m_vLerpScale = { 1.f, 1.f, 1.f };
 	_v3						m_vDir = { 1.f, 1.f, 1.f };
@@ -63,6 +64,8 @@ protected:
 
 	_bool					m_bClone = false;
 	_bool					m_bFadeOutStart = false;
+
+	_int					m_iPass = 0;
 
 	_tchar					m_szParticleName[256] = L"";
 

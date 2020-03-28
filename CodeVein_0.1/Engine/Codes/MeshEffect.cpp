@@ -92,7 +92,13 @@ _int CMeshEffect::Late_Update_GameObject(_double TimeDelta)
 	if (m_bIsDead || m_fCreateDelay > 0.f)
 		return S_OK;
 
-	if (0 > (m_pRendererCom->Add_RenderList(RENDERID::RENDER_ALPHA, this)))
+	RENDERID eGroup = RENDERID::RENDER_ALPHA;
+	if (m_iPass == 3)
+		eGroup = RENDERID::RENDER_ALPHA;
+	else
+		eGroup = RENDERID::RENDER_DISTORTION;
+
+	if (FAILED(m_pRendererCom->Add_RenderList(eGroup, this)))
 		return E_FAIL;
 
 	return _int();
@@ -113,7 +119,7 @@ HRESULT CMeshEffect::Render_GameObject()
 
 	for (size_t j = 0; j < iNumSubSet; ++j)
 	{
-		m_pShaderCom->Begin_Pass(2);
+		m_pShaderCom->Begin_Pass(m_iPass);
 
 		if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_Texture(_ulong(j), MESHTEXTURE::TYPE_DIFFUSE))))
 			return E_FAIL;
@@ -154,6 +160,11 @@ void CMeshEffect::Setup_Info()
 	m_vFollowPos = { 0.f, 0.f, 0.f };
 
 	m_bFadeOutStart = false;
+	
+	if (m_pInfo->bDistortion)
+		m_iPass = 1;
+	else
+		m_iPass = 2; // For Mesh Pass
 
 	if (m_pInfo->bFadeIn)
 		m_fAlpha = 0.f;
@@ -355,14 +366,12 @@ HRESULT CMeshEffect::SetUp_ConstantTable()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_vColor", &m_vColor, sizeof(_v4))))
 		return E_FAIL;
-
+	if (FAILED(m_pShaderCom->Set_Bool("g_bUseColorTex", m_pInfo->bUseColorTex)))
+		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Bool("g_bReverseColor", m_pInfo->bRevColor)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Bool("g_bUseRGBA", m_pInfo->bUseRGBA)))
 		return E_FAIL;
-
-	//if (FAILED(m_pTextureCom->SetUp_OnShader("g_ColorTexture", m_pShaderCom)))
-	//	return E_FAIL;
 
 	Safe_Release(pManagement);
 

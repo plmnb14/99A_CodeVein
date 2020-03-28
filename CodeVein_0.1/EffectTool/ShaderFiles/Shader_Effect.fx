@@ -67,35 +67,37 @@ VS_OUT VS_MAIN(VS_IN In)
 {
 	VS_OUT			Out = (VS_OUT)0;
 
-	//matrix		matWV, matWVP;
-	//
-	//matWV = mul(g_matWorld, g_matView);
-	//matWVP = mul(matWV, g_matProj);
+	matrix		matWV, matWVP;
 	
-	//Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);	
-	//Out.vTexUV = In.vTexUV;
-	//Out.vProjPos = Out.vPosition;
+	matWV = mul(g_matWorld, g_matView);
+	matWVP = mul(matWV, g_matProj);
+	
+	Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);	
+	Out.vTexUV = In.vTexUV;
+	Out.vProjPos = Out.vPosition;
 
-	// ============================================================
+	return Out;		
+}
+
+VS_OUT VS_INSTANCE(VS_IN In)
+{
+	VS_OUT			Out = (VS_OUT)0;
 
 	float4x4 matWorld, matWVP;
 	matWorld = float4x4(In.vInstanceRight,
-						In.vInstanceUp,
-						In.vInstanceLook,
-						float4(In.vInstancePos.xyz, 1.f));
-	
-	matWorld = mul(matWorld, g_matWorld);
+		In.vInstanceUp,
+		In.vInstanceLook,
+		float4(In.vInstancePos.xyz, 1.f));
 
 	matWVP = mul(matWorld, g_matView);
 	matWVP = mul(matWVP, g_matProj);
 
 	Out.vPosition = mul(float4(In.vPosition.xyz, 1.f), matWVP);
-	
+
 	Out.vProjPos = Out.vPosition;
 	Out.vTexUV = In.vTexUV;
-	//Out.vColor = In.vColor;
 
-	return Out;		
+	return Out;
 }
 
 struct PS_IN
@@ -318,6 +320,22 @@ technique Default_Technique
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_MESHEFFECT();
+	}
+
+	pass InstanceTexEffect
+	{
+		zwriteenable = false;
+
+		AlphablendEnable = true;
+		AlphaTestEnable = true;
+		srcblend = SrcAlpha;
+		DestBlend = InvSrcAlpha;
+		blendop = add;
+
+		cullmode = none;
+
+		VertexShader = compile vs_3_0 VS_INSTANCE();
+		PixelShader = compile ps_3_0 PS_MAIN();
 	}
 }
 
