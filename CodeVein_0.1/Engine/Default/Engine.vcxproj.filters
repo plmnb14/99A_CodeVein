@@ -91,9 +91,6 @@
     <Filter Include="01.Utility\[03] Component\Component\01%29 Transform">
       <UniqueIdentifier>{2590fad2-5e32-4623-a275-e3ff5a21b33f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\[09] =======================================">
-      <UniqueIdentifier>{65e0df4a-40eb-4a8f-b7aa-9aa4452846fe}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\[09] Renderer">
       <UniqueIdentifier>{f9254ec1-1d30-4178-8884-3ffa0ad2b04d}</UniqueIdentifier>
     </Filter>
@@ -181,6 +178,12 @@
     <Filter Include="01.Utility\[02] GameObject\0%29 GameObject\0%29 GuidTerrain">
       <UniqueIdentifier>{118bc0af-c4f3-4b5a-9aef-07175109312c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\[02] GameObject\4%29 Effect">
+      <UniqueIdentifier>{e05e1616-b32a-4ec3-8bd5-5647d2c79ff6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\[02] GameObject\4%29 Effect\0%29 MeshEffect">
+      <UniqueIdentifier>{9d3192da-064a-4d78-a7b4-6ac86c74d0bc}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01.Utility\[03] Component\Component\09%29 AIController">
       <UniqueIdentifier>{3b6681e3-0579-488c-a43e-c7ed0e0d79fc}</UniqueIdentifier>
     </Filter>
@@ -222,6 +225,21 @@
     </Filter>
     <Filter Include="01.Utility\[03] Component\Component\09%29 AIController\Node\Composite\Derive">
       <UniqueIdentifier>{e519e73a-8501-45d1-a76b-ff307982fc3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\[02] GameObject\3%29 UI">
+      <UniqueIdentifier>{2609861d-baea-48f1-abbb-8f2bfa680600}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\[02] GameObject\4%29 Effect\1%29 TexEffect">
+      <UniqueIdentifier>{23352423-4e0a-40a8-bf8d-c513628d8f2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\[02] GameObject\4%29 Effect\2%29 ParticleMgr">
+      <UniqueIdentifier>{f507cbe0-83d6-45e4-8d09-c46cbd8a534f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\[09] =======================================">
+      <UniqueIdentifier>{65e0df4a-40eb-4a8f-b7aa-9aa4452846fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\[03] Component\Component\06%29 VIBuffer\Sphere">
+      <UniqueIdentifier>{351ceb45-8deb-4991-bd2a-19bdbd39835f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -378,6 +396,9 @@
     <ClInclude Include="..\Headers\Terrain_Guide.h">
       <Filter>01.Utility\[02] GameObject\0%29 GameObject\0%29 GuidTerrain</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\MeshEffect.h">
+      <Filter>01.Utility\[02] GameObject\4%29 Effect\0%29 MeshEffect</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\AIController.h">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController</Filter>
     </ClInclude>
@@ -414,9 +435,6 @@
     <ClInclude Include="..\Headers\BT_Service_Node.h">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Service</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\BT_Move.h">
-      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\BT_Wait.h">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
     </ClInclude>
@@ -437,6 +455,33 @@
     </ClInclude>
     <ClInclude Include="..\Headers\BT_Loop.h">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI.h">
+      <Filter>01.Utility\[02] GameObject\3%29 UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BT_Cooldown.h">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BT_MoveTo.h">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BT_MoveDirectly.h">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BT_ConeCheck.h">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ParticleMgr.h">
+      <Filter>01.Utility\[02] GameObject\4%29 Effect\2%29 ParticleMgr</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\TexEffect.h">
+      <Filter>01.Utility\[02] GameObject\4%29 Effect\1%29 TexEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Effect.h">
+      <Filter>01.Utility\[02] GameObject\4%29 Effect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Buffer_Sphere.h">
+      <Filter>01.Utility\[03] Component\Component\06%29 VIBuffer\Sphere</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -572,6 +617,9 @@
     <ClCompile Include="..\Codes\Terrain_Guide.cpp">
       <Filter>01.Utility\[02] GameObject\0%29 GameObject\0%29 GuidTerrain</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\MeshEffect.cpp">
+      <Filter>01.Utility\[02] GameObject\4%29 Effect\0%29 MeshEffect</Filter>
+    </ClCompile>
     <ClCompile Include="..\Codes\AIController.cpp">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController</Filter>
     </ClCompile>
@@ -605,9 +653,6 @@
     <ClCompile Include="..\Codes\BT_Service_Node.cpp">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Service</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\BT_Move.cpp">
-      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\BT_Wait.cpp">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
     </ClCompile>
@@ -628,6 +673,33 @@
     </ClCompile>
     <ClCompile Include="..\Codes\BT_Loop.cpp">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI.cpp">
+      <Filter>01.Utility\[02] GameObject\3%29 UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BT_Cooldown.cpp">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BT_MoveTo.cpp">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BT_MoveDirectly.cpp">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BT_ConeCheck.cpp">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ParticleMgr.cpp">
+      <Filter>01.Utility\[02] GameObject\4%29 Effect\2%29 ParticleMgr</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\TexEffect.cpp">
+      <Filter>01.Utility\[02] GameObject\4%29 Effect\1%29 TexEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Effect.cpp">
+      <Filter>01.Utility\[02] GameObject\4%29 Effect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Buffer_Sphere.cpp">
+      <Filter>01.Utility\[03] Component\Component\06%29 VIBuffer\Sphere</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

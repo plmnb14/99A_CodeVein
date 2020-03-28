@@ -18,52 +18,52 @@ HRESULT CBT_Loop::Set_Child(CBT_Node * pNode)
 	return NO_ERROR;
 }
 
-CBT_Node::BT_NODE_STATE CBT_Loop::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Loop::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	if (nullptr == m_pChild)
 		return BT_NODE_STATE::FAILED;
 
 	Start_Node(pNodeStack, bDebugging);
 
-	if (m_iCurLoopCount > m_iMaxLoopCount)
+	if (m_iCurLoopCount >= m_iMaxLoopCount)
 	{
-		cout << "Loop End" << endl;
-			
 		return End_Node(pNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
 	}
 
 	if (!m_bInProgress)
 	{
-		switch (m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, bDebugging))
+		//값 판단하는 루틴
+
+		switch (m_eChild_State)
 		{
 		case BT_NODE_STATE::FAILED:
-			++m_iCurLoopCount;
 			break;
 		case BT_NODE_STATE::INPROGRESS:
-			return BT_NODE_STATE::INPROGRESS;
+			return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
 		case BT_NODE_STATE::SUCCEEDED:
 		case BT_NODE_STATE::SERVICE:
-			++m_iCurLoopCount;
 			break;
 		}
-		m_eChild_State = BT_NODE_STATE::INPROGRESS;
 		m_bInProgress = true;
 	}
 	else
 	{
+		//루프횟수 증가 판단 루틴
+
+		cout << m_iCurLoopCount << endl;
 		switch (m_eChild_State)
 		{
 		case BT_NODE_STATE::FAILED:
 			++m_iCurLoopCount;
 			m_bInProgress = false;
-			break;
+			return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
 		case BT_NODE_STATE::INPROGRESS:
 			return BT_NODE_STATE::INPROGRESS;
 		case BT_NODE_STATE::SUCCEEDED:
 		case BT_NODE_STATE::SERVICE:
 			++m_iCurLoopCount;
 			m_bInProgress = false;
-			break;
+			return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
 		}
 	}
 
@@ -74,6 +74,12 @@ void CBT_Loop::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 {
 	if (m_bInit)
 	{
+		if (bDebugging)
+		{
+			Cout_Indentation(pNodeStack);
+			cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " Start   { Loop : " << m_iCurLoopCount << " }" << endl;
+		}
+
 		pNodeStack->push_back(this);
 		Safe_AddRef(this);
 
@@ -81,16 +87,14 @@ void CBT_Loop::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 		m_bInProgress = false;
 		m_bInit = false;
 
-		if (bDebugging)
-		{
-			cout << "[" << m_iNodeNumber << "]" << "Loop Start" << endl;
-
-		}
 	}
 }
 
 CBT_Node::BT_NODE_STATE CBT_Loop::End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging)
 {
+	if (pNodeStack->empty())
+		return eState;
+
 	Safe_Release(pNodeStack->back());
 	pNodeStack->pop_back();
 
@@ -101,8 +105,8 @@ CBT_Node::BT_NODE_STATE CBT_Loop::End_Node(vector<CBT_Node*>* pNodeStack, BT_NOD
 
 	if (bDebugging)
 	{
-		cout << "[" << m_iNodeNumber << "]" << "Loop " << m_iCurLoopCount << " : End" << endl;
-
+		Cout_Indentation(pNodeStack);
+		cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " End   { Loop : " << m_iCurLoopCount << " }" << endl;
 	}
 
 	return eState;
@@ -112,9 +116,11 @@ HRESULT CBT_Loop::Ready_Clone_Node(void * pInit_Struct)
 {
 	INFO temp = *(INFO*)pInit_Struct;
 
+	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
+
 	m_iMaxLoopCount = temp.iMaxLoopCount;
 
-	CBT_Node::Set_Auto_Number(&m_iNodeNumber);
+	CBT_Node::_Set_Auto_Number(&m_iNodeNumber);
 	return NO_ERROR;
 }
 

@@ -61,6 +61,11 @@ HRESULT CGameObject::Render_GameObject()
 	return S_OK;
 }
 
+void CGameObject::Set_Dead()
+{
+	m_bIsDead = true;
+}
+
 HRESULT CGameObject::Add_Component(_uint iSceneID, const _tchar * pPrototypeTag, const _tchar * pComponentTag, CComponent** ppComponent, void * pArg)
 {
 	if (nullptr != Find_Component(pComponentTag))
@@ -118,6 +123,11 @@ void CGameObject::Compute_ViewZ(const _v3* pPos)
 	memcpy(&vCamPos, &matView.m[3][0], sizeof(_v3));
 
 	m_fViewZ = D3DXVec3Length(&(vCamPos - *pPos));
+}
+
+void CGameObject::Compute_ViewZ_UI(_float fZ)
+{
+	m_fViewZ = fZ;
 }
 
 

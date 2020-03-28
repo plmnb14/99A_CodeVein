@@ -9,7 +9,7 @@ AI에게 필요한 값들은 여기에 보관한다.
 BEGIN(Engine)
 
 class CGameObject;
-class CBlackBoard final : public CBase
+class ENGINE_DLL CBlackBoard final : public CBase
 {
 public:
 	/*
@@ -37,19 +37,16 @@ public:
 	BLACKBOARD_OUTPUT_STATE Set_Value(const _tchar* pName, const void* pData, BLACKBOARD_VALUE_STATE eValue_Type);
 
 public:
-	/*
-	template T : OutPut 자료형
-	pName : 찾을 값의 이름
-	BLACKBOARD_VALUE : 찾을 값에 해당하는 Enum
-	*/
-	template<class T>
-	T Get_Value(const _tchar* pName, BLACKBOARD_VALUE_STATE eValue_Type) const;
+	const _bool Get_BoolValue(const _tchar* pName) const;
+	const _float Get_FloatValue(const _tchar* pName) const;
+	const _int Get_IntValue(const _tchar* pName) const;
+	const _v3 Get_V3Value(const _tchar* pName) const;
 
 private:
-	const _bool* Find_Value_In_mapBool(const _tchar* pName);
-	const _float* Find_Value_In_mapFloat(const _tchar* pName);
-	const _int* Find_Value_In_mapInt(const _tchar* pName);
-	const _v3* Find_Value_In_mapVec3(const _tchar* pName);
+	const _bool* Find_Value_In_mapBool(const _tchar* pName) const;
+	const _float* Find_Value_In_mapFloat(const _tchar* pName) const;
+	const _int* Find_Value_In_mapInt(const _tchar* pName) const;
+	const _v3* Find_Value_In_mapVec3(const _tchar* pName) const;
 
 private:
 	HRESULT Ready_BlackBoard();

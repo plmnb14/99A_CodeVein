@@ -24,7 +24,7 @@ protected:
 
 public:
 	// timedelta, &본인 멤버변수 스택, debug,  쓰레드여부 필요없음
-	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging) = 0;
+	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging) = 0;
 
 public:
 	/*
@@ -34,17 +34,23 @@ public:
 	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging) = 0;
 	virtual BT_NODE_STATE End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging) = 0;
 
+	// 엔진에서만 사용
 public:
 	// 각 노드에 번호를 붙이기 위함.
-	static HRESULT Set_Auto_Number(_uint* iNum_Variable);
-	static HRESULT Init_NodeNumber();
+	static HRESULT _Set_Auto_Number(_uint* iNum_Variable);
+	static HRESULT _Init_NodeNumber();
 
 protected:
 	void Notify_Parent_Of_State(CBT_Node* pParent, BT_NODE_STATE eState);
 
+	// 엔진에서만 사용
+protected:
+	void Cout_Indentation(vector<CBT_Node*>* pNodeStack);
+
 protected:
 	_uint			m_iNodeNumber = 0;
 	BT_NODE_STATE	m_eChild_State = BT_NODE_STATE::INPROGRESS;
+	char			m_pNodeName[256] = { 0, };
 
 	_bool	m_bInit = true;
 	

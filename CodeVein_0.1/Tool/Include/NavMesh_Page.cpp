@@ -467,6 +467,8 @@ void CNavMesh_Page::Set_AreaParam()
 
 	_int iAreaindex = m_cAreaList.GetCurSel();
 
+	cout << iAreaindex << endl;
+
 	m_pSelectCell->Set_CellParam(CELL_PARAM(iAreaindex));
 
 	_int iAreaindex2 = m_pSelectCell->Get_CellParam();
@@ -605,6 +607,7 @@ void CNavMesh_Page::Create_Cell(LPDIRECT3DDEVICE9 pGraphicDev, _v3* _vPos)
 	}
 
 	pInstance->Set_CellIdx(iIndex);
+	pInstance->Set_CellParam(CELL_PARAM::NORMAL);
 	m_vecSubset_Cell[m_iSubsetIdx].push_back(pInstance);
 
 	_tchar	tmpSubsetIndex[MAX_STR] = L"";
@@ -705,11 +708,10 @@ void CNavMesh_Page::Save_CellData()
 			lstrcat(szCelldata, szSlash);
 
 			lstrcat(szCelldata, CellInfo->szOption);
-			lstrcat(szCelldata, szSlash);
 
-			//wstrCombined = szCelldata;
+			wstrCombined = szCelldata;
 
-			fout << szCelldata << endl;
+			fout << wstrCombined << endl;
 
 			Safe_Delete(CellInfo);
 		}

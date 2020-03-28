@@ -6,14 +6,14 @@ CBT_Node::CBT_Node()
 {
 }
 
-HRESULT CBT_Node::Set_Auto_Number(_uint* iNum_Variable)
+HRESULT CBT_Node::_Set_Auto_Number(_uint* iNum_Variable)
 {
 	*iNum_Variable = m_iNode_Count++;
 
 	return S_OK;
 }
 
-HRESULT CBT_Node::Init_NodeNumber()
+HRESULT CBT_Node::_Init_NodeNumber()
 {
 	m_iNode_Count = 0;
 
@@ -24,6 +24,12 @@ void CBT_Node::Notify_Parent_Of_State(CBT_Node* pParent, BT_NODE_STATE eState)
 {
 	pParent->m_eChild_State = eState;
 	this->m_eChild_State = BT_NODE_STATE::INPROGRESS;
+}
+
+void CBT_Node::Cout_Indentation(vector<CBT_Node*>* pNodeStack)
+{
+	for (size_t i = 0; i < pNodeStack->size(); ++i)
+		cout << "  ";
 }
 
 void CBT_Node::Free()

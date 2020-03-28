@@ -28,22 +28,26 @@ void CBT_Move::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 {
 	if (m_bInit)
 	{
+		if (bDebugging)
+		{
+			Cout_Indentation(pNodeStack);
+			cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " Start   { Move : " << "Speed " << m_dMoveSpeed << ", Time " << m_dMovingTime << " }" << endl;
+		}
+
 		pNodeStack->push_back(this);
 		Safe_AddRef(this);
 
 		m_dCurTime = 0;
 
 		m_bInit = false;
-
-		if (bDebugging)
-		{
-			cout << "[" << m_iNodeNumber << "]" << "Move Start" << endl;
-		}
 	}
 }
 
 CBT_Node::BT_NODE_STATE CBT_Move::End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging)
 {
+	if (pNodeStack->empty())
+		return eState;
+
 	Safe_Release(pNodeStack->back());
 	pNodeStack->pop_back();
 
@@ -53,7 +57,8 @@ CBT_Node::BT_NODE_STATE CBT_Move::End_Node(vector<CBT_Node*>* pNodeStack, BT_NOD
 
 	if (bDebugging)
 	{
-		cout << "[" << m_iNodeNumber << "]" << "Move End" << endl;
+		Cout_Indentation(pNodeStack);
+		cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " End   { Move : " << "Speed " << m_dMoveSpeed << ", Time " << m_dMovingTime << " }" << endl;
 	}
 
 	return eState;
@@ -69,7 +74,7 @@ HRESULT CBT_Move::Ready_Clone_Node(void * pInit_Struct)
 	m_dMoveSpeed = temp.Target_dMoveSpeed;
 	m_dMovingTime = temp.Target_dMovingTime;
 
-	CBT_Node::Set_Auto_Number(&m_iNodeNumber);
+	CBT_Node::_Set_Auto_Number(&m_iNodeNumber);
 	return S_OK;
 }
 

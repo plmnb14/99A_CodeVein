@@ -54,8 +54,6 @@ HRESULT CRenderObject::Render_GameObject()
 
 	for (_ulong i = 0; i < dwNumSubSet; ++i)
 	{
-		cout << "¤·? " << endl;
-
 		m_pShader->Begin_Pass(m_dwPassNum);
 
 		if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_DIFFUSE))))
@@ -86,8 +84,6 @@ void CRenderObject::Update_Collider()
 		m_pCollider->SetUp_Radius_Auto(V3_ONE, m_pMesh_Static->Get_VtxMin(), m_pMesh_Static->Get_VtxMax());
 		m_pCollider->Update(m_pTransform->Get_Pos() + _v3{ 0.f, m_pCollider->Get_Radius().y ,0.f });
 	}
-
-	cout << m_pMesh_Static->Get_VtxMax().y << endl;
 }
 
 HRESULT CRenderObject::Add_Essentional()
@@ -105,12 +101,14 @@ HRESULT CRenderObject::Add_Essentional()
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Sword", L"Mesh", (CComponent**)&m_pMesh_Static)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_DefaultBox", L"Mesh", (CComponent**)&m_pMesh_Static)))
 		return E_FAIL;
 
 	// for.Com_Mesh
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
+
+	lstrcpy(m_szName , L"Mesh_DefaultBox");
 
 	return S_OK;
 }

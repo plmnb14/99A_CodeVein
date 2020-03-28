@@ -22,10 +22,12 @@ public:
 	const	POINT	Get_MouseGap();
 	const	POINT	Get_MousePos();
 	const	RAY		Get_Ray(const RAY_CALC _eCalc = RAY_TO_WORLD);
+	const	_bool	MousePt_InRect(_float fRectPosX, _float fRectPosY, _float fRectSizeX, _float fRectSizeY, HWND hWnd);
 
 public:
 	const	_byte	Get_DIKeyState(_ubyte byKeyID) { return m_byKeyState[byKeyID]; }
 	const	_bool	Get_DIMouseState(MOUSEKEYSTATE eMouse);
+	const	_bool	Get_DIMouseState_Up(MOUSEKEYSTATE eMouse);
 	const	_long	Get_DIMouseMove(MOUSEMOVESTATE eMouseState) { return *(((_long*)&m_tMouseState) + eMouseState); }
 
 public:

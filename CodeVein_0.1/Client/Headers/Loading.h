@@ -14,16 +14,27 @@ class CLoading final : public CBase
 private:
 	explicit CLoading(LPDIRECT3DDEVICE9 pGraphicDev);
 	virtual ~CLoading(void) = default;
+
 public:
 	SCENEID Get_LoadingID(void) const { return m_eLoadingID; }
 	CRITICAL_SECTION* Get_Crt(void) { return &m_Crt; }
 	_bool Get_Finish(void) const { return m_bFinish; }
 	const _tchar* Get_String(void) const { return m_szString; }
+
 public:
 	HRESULT Ready_Loading(SCENEID eLoadingID);
 	_uint Loading_ForStage(void);
+
 public:
 	static unsigned int CALLBACK Thread_Main(void* pArg);
+
+private:
+	HRESULT Ready_Effect(void);
+	Engine::EFFECT_INFO* Read_EffectData(const _tchar* szPath);
+
+private:
+	HRESULT Stage_Object_Ready();
+
 private:
 	HANDLE				m_hThread;
 	CRITICAL_SECTION	m_Crt;

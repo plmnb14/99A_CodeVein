@@ -9,6 +9,8 @@ class CLayer final : public CBase
 private:
 	explicit CLayer();
 	virtual ~CLayer() = default;
+public:
+	CGameObject* Get_GameObjectBack();
 public: 
 	HRESULT Ready_Layer();
 	HRESULT Add_GameObject(CGameObject* pGameObject);

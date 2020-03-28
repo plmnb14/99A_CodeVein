@@ -9,15 +9,13 @@ CBT_Play_Ani::CBT_Play_Ani(const CBT_Play_Ani & rhs)
 {
 }
 
-CBT_Node::BT_NODE_STATE CBT_Play_Ani::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Play_Ani::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 
 	Start_Node(pNodeStack, bDebugging);
 
 	if (m_pMesh_Dynamic->Is_Finish_Animation(0.9f))
 	{
-		cout << "Ani End" << endl;
-
 		return End_Node(pNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
 	}
 
@@ -28,24 +26,27 @@ void CBT_Play_Ani::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 {
 	if (m_bInit)
 	{
+		if (bDebugging)
+		{
+			Cout_Indentation(pNodeStack);
+			cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " Start   { Play_Ani : " << m_iAni_Index << " }" << endl;
+		}
+
 		pNodeStack->push_back(this);
 		Safe_AddRef(this);
 
-		m_pMesh_Dynamic->SetUp_Animation(0);
 		m_pMesh_Dynamic->SetUp_Animation(m_iAni_Index);
 
 		m_bInit = false;
-
-		if (bDebugging)
-		{
-			cout << "[" << m_iNodeNumber << "]" << "Play_Ani " << m_iAni_Index << " Start" << endl;
-		}
 	}
 
 }
 
 CBT_Node::BT_NODE_STATE CBT_Play_Ani::End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging)
 {
+	if (pNodeStack->empty())
+		return eState;
+
 	Safe_Release(pNodeStack->back());
 	pNodeStack->pop_back();
 
@@ -55,7 +56,8 @@ CBT_Node::BT_NODE_STATE CBT_Play_Ani::End_Node(vector<CBT_Node*>* pNodeStack, BT
 
 	if (bDebugging)
 	{
-		cout << "[" << m_iNodeNumber << "]" << "Play_Ani " << m_iAni_Index << " End" << endl;
+		Cout_Indentation(pNodeStack);
+		cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " End   { Play_Ani : " << m_iAni_Index << " }" << endl;
 	}
 
 	return eState;
@@ -65,12 +67,14 @@ HRESULT CBT_Play_Ani::Ready_Clone_Node(void * pInit_Struct)
 {
 	INFO temp = *(INFO*)pInit_Struct;
 
+	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
+
 	m_pMesh_Dynamic = temp.Target_pMesh_Dynamic;
 	Safe_AddRef(m_pMesh_Dynamic);
 
 	m_iAni_Index = temp.Target_iAni_iIndex;
 
-	CBT_Node::Set_Auto_Number(&m_iNodeNumber);
+	CBT_Node::_Set_Auto_Number(&m_iNodeNumber);
 	return S_OK;
 }
 

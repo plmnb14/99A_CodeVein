@@ -18,7 +18,7 @@ HRESULT CBT_Selector::Add_Child(CBT_Node * pNode)
 	return S_OK;
 }
 
-CBT_Node::BT_NODE_STATE CBT_Selector::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Selector::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	/*
 	왼쪽부터 자식들을 검사해서 성공한 자식을 수행한다.
@@ -32,12 +32,14 @@ CBT_Node::BT_NODE_STATE CBT_Selector::Update_Node(_double TimeDelta, vector<CBT_
 		{
 			case BT_NODE_STATE::FAILED:
 			case BT_NODE_STATE::SERVICE:
-				++m_pCurIndex;
-				this->m_eChild_State = BT_NODE_STATE::INPROGRESS;
-				return BT_NODE_STATE::INPROGRESS;
+				return m_pChildren[m_pCurIndex++]->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
+
+				//++m_pCurIndex;
+				//this->m_eChild_State = BT_NODE_STATE::INPROGRESS;
+				//return BT_NODE_STATE::INPROGRESS;
 
 			case BT_NODE_STATE::INPROGRESS:
-				return m_pChildren[m_pCurIndex]->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, bDebugging);
+				return m_pChildren[m_pCurIndex++]->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
 
 			case BT_NODE_STATE::SUCCEEDED:			
 				return End_Node(pNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
@@ -51,30 +53,41 @@ void CBT_Selector::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 {
 	if (m_bInit)
 	{
+		if (bDebugging)
+		{
+			Cout_Indentation(pNodeStack);
+			cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " Start   { Selector } " << endl;
+		}
+
 		pNodeStack->push_back(this);
 		Safe_AddRef(this);
 
+		m_eChild_State = BT_NODE_STATE::INPROGRESS;
+
+		m_pCurIndex = 0;
 		m_bInit = false;
 
-		if (bDebugging)
-		{
-			cout << "[" << m_iNodeNumber << "]" << "Selector Start" << endl;
-		}
 	}
 }
 
 CBT_Node::BT_NODE_STATE CBT_Selector::End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging)
 {
+	m_bInit = true;
+
+	if (pNodeStack->empty())
+		return eState;
+
 	Safe_Release(pNodeStack->back());
 	pNodeStack->pop_back();
 
 	if (!pNodeStack->empty())
 		Notify_Parent_Of_State(pNodeStack->back(), eState);
-	m_bInit = true;
 
 	if (bDebugging)
 	{
-		cout << "[" << m_iNodeNumber << "]" << "Selector End" << endl;
+		Cout_Indentation(pNodeStack);
+		cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " End   { Selector } " << endl;
+
 	}
 
 	return eState;
@@ -82,7 +95,7 @@ CBT_Node::BT_NODE_STATE CBT_Selector::End_Node(vector<CBT_Node*>* pNodeStack, BT
 
 HRESULT CBT_Selector::Ready_Clone_Node(void* pInit_Struct)
 {
-	CBT_Node::Set_Auto_Number(&m_iNodeNumber);
+	CBT_Node::_Set_Auto_Number(&m_iNodeNumber);
 	return S_OK;
 }
 
@@ -105,11 +118,22 @@ CBT_Node * CBT_Selector::Clone(void* pInit_Struct)
 
 void CBT_Selector::Free()
 {
-	for (CBT_Node* pChild : m_pChildren)
+	for (auto iter = m_pChildren.begin(); iter != m_pChildren.end(); )
 	{
-		pChild->Free();
+		(*iter)->Free();
+		Safe_Release(*iter);
 
-		Safe_Release(pChild);
+		if (nullptr == *iter)
+			iter = m_pChildren.erase(iter);
+		else
+			++iter;
 	}
-	m_pChildren.clear();
+
+	//for (CBT_Node* pChild : m_pChildren)
+	//{
+	//	//pChild->Free();
+
+	//	Safe_Release(pChild);
+	//}
+	//m_pChildren.clear();
 }

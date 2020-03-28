@@ -22,10 +22,12 @@ public:
 	const	POINT	Get_MouseGap();
 	const	POINT	Get_MousePos();
 	const	RAY		Get_Ray(const RAY_CALC _eCalc = RAY_TO_WORLD);
+	const	_bool	MousePt_InRect(_float fRectPosX, _float fRectPosY, _float fRectSizeX, _float fRectSizeY, HWND hWnd);
 
 public:
 	const	_byte	Get_DIKeyState(_ubyte byKeyID) { return m_byKeyState[byKeyID]; }
 	const	_bool	Get_DIMouseState(MOUSEKEYSTATE eMouse);
+	const	_bool	Get_DIMouseState_Up(MOUSEKEYSTATE eMouse);
 	const	_long	Get_DIMouseMove(MOUSEMOVESTATE eMouseState) { return *(((_long*)&m_tMouseState) + eMouseState); }
 
 public:
@@ -52,13 +54,13 @@ private:
 	_float	m_fDPI = 0.5f;
 
 private:
-	POINT m_CurMousePos;
-	POINT m_OldMousePos;
-	POINT m_MouseGap;
-	POINT m_MouseLockPos;
+	POINT m_CurMousePos = { 0,0 };
+	POINT m_OldMousePos = { 0,0 };
+	POINT m_MouseGap = { 0,0 };
+	POINT m_MouseLockPos = { 0,0 };
 
 private:
-	HWND	m_hWnd;
+	HWND	m_hWnd = nullptr;
 
 private:
 	LPDIRECTINPUT8			m_pInputSDK = nullptr;
@@ -68,8 +70,8 @@ private:
 	LPDIRECTINPUTDEVICE8	m_pMouse = nullptr;
 
 private:
-	DIMOUSESTATE			m_tMouseState;
-	_bool					m_bMouseKeyDown[4] = {};
+	DIMOUSESTATE			m_tMouseState = { 0, };
+	_bool					m_bMouseKeyDown[4] = {false, };
 	_byte					m_byKeyState[MAX_STR];
 
 	_byte					m_byKeyDown[MAX_STR];

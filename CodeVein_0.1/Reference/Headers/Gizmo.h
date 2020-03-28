@@ -42,7 +42,9 @@ public:
 	HRESULT Init_Shader(_mat _DefaultMat);
 
 public:
-	void Set_EnableGizmo();
+	void Gizmo_Toggle();
+	void Enable_GizmoCell();
+	void Enable_GizmoCollider();
 
 public:
 	virtual void Free(void);
@@ -51,9 +53,12 @@ private:
 	//CVIBuffer*		m_pShpereBuffer;
 	_Device				m_pGraphicDev;
 	CShader*			m_pGizmoShader;
+	D3DXCOLOR			m_Color;
 
 private:
-	_bool	m_bEnableGizmo;
+	_bool	m_bEnableCell = false;
+	_bool	m_bEnableCollider = false;
+	_bool	m_bToogle = false;
 
 };
 

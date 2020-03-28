@@ -6,8 +6,6 @@
 #include "MainApp.h"
 
 #include "Management.h"
-#include "FrameMgr.h"
-#include "Timer_Manager.h"
 
 #define MAX_LOADSTRING 100
 
@@ -20,6 +18,7 @@ HWND g_hWnd;
 CManagement*		g_pManagement;
 CTimer_Manager*		g_pTimer_Manager;
 CFrameMgr*			g_pFrame_Manager;
+CInput_Device*		g_pInput_Device;
 
 // 이 코드 모듈에 들어 있는 함수의 정방향 선언입니다.
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -58,10 +57,10 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	Safe_AddRef(g_pManagement);
 
 	g_pTimer_Manager = CTimer_Manager::Get_Instance();
-	//Safe_AddRef(g_pTimer_Manager);
 
 	g_pFrame_Manager = CFrameMgr::Get_Instance();
-	//Safe_AddRef(g_pFrame_Manager);
+	g_pInput_Device = CInput_Device::Get_Instance();
+
 
 	pMainApp = CMainApp::Create();
 
@@ -107,14 +106,17 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 				if (FAILED(pMainApp->Render_MainApp()))
 					break;
+
+				pMainApp->LateUpdate_MainApp(fFrame);
 			}
 		}
 	}
-
+	
 	g_pTimer_Manager->Destroy_Instance();
 	g_pFrame_Manager->Destroy_Instance();
+	
 	Safe_Release(pMainApp);
-
+	
     return (int) msg.wParam;
 }
 

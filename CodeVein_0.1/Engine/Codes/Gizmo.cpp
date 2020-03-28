@@ -4,7 +4,6 @@
 IMPLEMENT_SINGLETON(CGizmo)
 
 CGizmo::CGizmo()
-	: m_bEnableGizmo(false)
 {
 }
 
@@ -20,11 +19,13 @@ void CGizmo::Ready_Gizmo(_Device pGraphicDev)
 	Safe_AddRef(m_pGraphicDev);
 
 	m_pGizmoShader = static_cast<CShader*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Shader_Gizmo"));
+
+	m_Color = COLOR_TEAL(1.f);
 }
 
 void CGizmo::Draw_Vertex(_v3 _vVertex, _v3 _vSize)
 {
-	if (!m_bEnableGizmo)
+	if (!m_bEnableCollider)
 		return;
 
 	m_pGraphicDev->SetTexture(0, NULL);
@@ -45,13 +46,8 @@ void CGizmo::Draw_Vertex(_v3 _vVertex, _v3 _vSize)
 
 void CGizmo::Draw_Sphere(_v3 _vVertex, _float _fRadius)
 {
-	if (!m_bEnableGizmo)
+	if (!m_bEnableCollider)
 		return;
-
-	m_pGraphicDev->SetTexture(0, NULL);
-	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
-	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
-	m_pGraphicDev->SetFVF(VTXFVF_COL);
 
 	_mat matView, matViewInverse;
 	_mat matWorld, matScale, matPos;
@@ -113,22 +109,29 @@ void CGizmo::Draw_Sphere(_v3 _vVertex, _float _fRadius)
 		CALC::V3_RotY(&vVertex, &vVertex, fRadian);
 	}
 
-	m_pGraphicDev->SetTransform(D3DTS_WORLD, &(matViewInverse));
+	Init_Shader(matViewInverse);
+
+	m_pGraphicDev->SetFVF(VTXFVF_COL);
+
+	m_pGizmoShader->Begin_Shader();
+	m_pGizmoShader->Begin_Pass(0);
 
 	m_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 20, pVtxCol_Z, sizeof(VTX_COL));
 
-	m_pGraphicDev->SetTransform(D3DTS_WORLD, &(matWorld));
+	m_pGizmoShader->Set_Value("g_matWorld", &matWorld, sizeof(_mat));
+	m_pGizmoShader->Commit_Changes();
 
 	m_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 20, pVtxCol_Z, sizeof(VTX_COL));
 	m_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 20, pVtxCol_X, sizeof(VTX_COL));
 	m_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 20, pVtxCol_Y, sizeof(VTX_COL));
 
-	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
+	m_pGizmoShader->End_Pass();
+	m_pGizmoShader->End_Shader();
 }
 
 void CGizmo::Draw_Triangle_Line(_v3 * _vVertex, _bool _bSelect , CELL_PARAM _eParam)
 {
-	if (!m_bEnableGizmo)
+	if (!m_bEnableCell)
 		return;
 
 	_mat matView, matProj, matWorld, Trans , matTmp;
@@ -210,16 +213,21 @@ void CGizmo::Draw_Triangle_Line(_v3 * _vVertex, _bool _bSelect , CELL_PARAM _ePa
 
 void CGizmo::Draw_Triangle(VTX_COL * _vVertex)
 {
-	if (!m_bEnableGizmo)
+	if (!m_bEnableCell)
 		return;
+
+	m_Color = COLOR_TEAL(1.f);
 
 	_mat DefaultMat;
 	D3DXMatrixIdentity(&DefaultMat);
 
 	Init_Shader(DefaultMat);
 
+	_float fAlpha = 0.5f;
+	m_pGizmoShader->Set_Value("g_fAlpha", &fAlpha, sizeof(_float));
+		
 	m_pGizmoShader->Begin_Shader();
-	m_pGizmoShader->Begin_Pass(1);
+	m_pGizmoShader->Begin_Pass(2);
 
 	m_pGraphicDev->SetFVF(VTXFVF_COL);
 	m_pGraphicDev->DrawPrimitiveUP(D3DPT_TRIANGLELIST, 1, _vVertex, sizeof(VTX_COL));
@@ -230,7 +238,7 @@ void CGizmo::Draw_Triangle(VTX_COL * _vVertex)
 
 void  CGizmo::Draw_AABB(const _v3* _vVertex, _v3 _vPos, _v3 _vSize)
 {
-	if (!m_bEnableGizmo)
+	if (!m_bEnableCollider)
 		return;
 
 	_mat matWorld, matScale, matPos;
@@ -313,7 +321,7 @@ void  CGizmo::Draw_AABB(const _v3* _vVertex, _v3 _vPos, _v3 _vSize)
 
 void  CGizmo::Draw_OBB(const _v3* _vVertex, _v3 vRotate, _v3 _vPos, _v3 _vSize)
 {
-	if (!m_bEnableGizmo)
+	if (!m_bEnableCollider)
 		return;
 
 	m_pGraphicDev->SetTexture(0, NULL);
@@ -405,7 +413,7 @@ void  CGizmo::Draw_OBB(const _v3* _vVertex, _v3 vRotate, _v3 _vPos, _v3 _vSize)
 
 void	CGizmo::Draw_Capsule(const _v3 _vVertex, _float _fRadius, _float _fMaxHeight)
 {
-	if (!m_bEnableGizmo)
+	if (!m_bEnableCollider)
 		return;
 
 	m_pGraphicDev->SetTexture(0, NULL);
@@ -541,20 +549,32 @@ HRESULT CGizmo::Init_Shader(_mat _DefaultMat)
 	if (FAILED(m_pGizmoShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
 
+	if (FAILED(m_pGizmoShader->Set_Value("g_GizmoColor", &m_Color, sizeof(_mat))))
+		return E_FAIL;
 
 	Safe_Release(pManagement);
 
 	return NOERROR;
 }
 
-void CGizmo::Set_EnableGizmo()
+void CGizmo::Gizmo_Toggle()
 {
-	(m_bEnableGizmo == true ? m_bEnableGizmo = false : m_bEnableGizmo = true);
+	m_bToogle = m_bEnableCollider = m_bEnableCell = (m_bToogle == false ? true : false);
+}
+
+void CGizmo::Enable_GizmoCell()
+{
+	m_bEnableCell = (m_bEnableCell == false ? true : false);
+}
+
+void CGizmo::Enable_GizmoCollider()
+{
+	m_bEnableCollider = (m_bEnableCollider == false ? true : false);
 }
 
 void CGizmo::Draw_XYZ(_v3 _vPos, _v3 _vLook, _v3 _vRight, _v3 _vUp)
 {
-	if (!m_bEnableGizmo)
+	if (!m_bEnableCollider)
 		return;
 
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);

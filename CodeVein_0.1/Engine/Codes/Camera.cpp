@@ -435,11 +435,13 @@ void CCamera::Change_Type_Option(CameraView _CameraViewType)
 	{
 	case FIRST_VIEW:
 	{
-		m_pTransform->Set_At(TARGET_TO_TRANS(m_pTarget)->Get_Pos() + TARGET_TO_TRANS(m_pTarget)->Get_Axis(AXIS_Z) + _v3{0,5,0});
+		//m_pTransform->Set_At(TARGET_TO_TRANS(m_pTarget)->Get_Pos() + TARGET_TO_TRANS(m_pTarget)->Get_Axis(AXIS_Z) + _v3{0,5,0});
 		break;
 	}
 	case BACK_VIEW:
 	{
+		m_fDistance = 2.f;
+		m_pTarget = CManagement::Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
 		break;
 	}
 	}
@@ -1132,12 +1134,12 @@ void CCamera::KeyInput()
 
 	float fMoveSpeed = 0.1f;
 
-	if (CInput_Device::Get_Instance()->Key_Up(DIK_SPACE))
+	if (CInput_Device::Get_Instance()->Key_Up(DIK_LCONTROL))
 	{
 		CCameraMgr::Get_Instance()->Set_MouseCtrl(false);
 	}
 
-	if (CInput_Device::Get_Instance()->Key_Down(DIK_SPACE))
+	if (CInput_Device::Get_Instance()->Key_Down(DIK_LCONTROL))
 	{
 		CCameraMgr::Get_Instance()->Set_MouseCtrl(true);
 		CInput_Device::Get_Instance()->Calc_MouseLockPos();
@@ -1194,13 +1196,13 @@ void CCamera::KeyInput()
 	//	m_fFov += fMoveSpeed;
 	//}
 
-	if (GetAsyncKeyState(VK_LSHIFT) & 0x8000)
+	if (CInput_Device::Get_Instance()->Key_Pressing(DIK_Z))
 	{
 		m_pTransform->Add_Pos(fMoveSpeed, _v3(0, 1, 0));
 		m_pTransform->Add_At(fMoveSpeed, _v3(0, 1, 0));
 	}
 
-	if (GetAsyncKeyState(VK_LCONTROL) & 0x8000)
+	if (CInput_Device::Get_Instance()->Key_Pressing(DIK_X))
 	{
 		m_pTransform->Add_Pos(-fMoveSpeed, _v3(0, 1, 0));
 		m_pTransform->Add_At(-fMoveSpeed, _v3(0, 1, 0));

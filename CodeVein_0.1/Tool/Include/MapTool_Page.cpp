@@ -444,7 +444,7 @@ void CMapTool_Page::Save_Object()
 		lstrcat(szObjdata, ObjInfo->szScale_Y);
 		lstrcat(szObjdata, szSlash);
 		lstrcat(szObjdata, ObjInfo->szScale_Z);
-		lstrcat(szObjdata, szSlash);
+		//lstrcat(szObjdata, szSlash);
 
 		wstrCombined = szObjdata;
 
@@ -568,24 +568,34 @@ void CMapTool_Page::CreateObject()
 	pInstace->Set_OnTool(true);
 	pInstace->Set_LayerIdx(m_sLayerCurIdx);
 
+	_bool m_bFindSame = false;
+	_bool m_iOldIdx = 0;
+
 	// 현재 오브젝트 리스트에서 같은 이름이 있는지 찾는다.
-	for (auto& iter : m_listObject)
+
+	while (true)
 	{
-		Engine::CRenderObject* tmpRend = static_cast<Engine::CRenderObject*>(iter);
+		m_bFindSame = false;
 
-		// 이름 비교해서
-		if (!lstrcmp(tmpRend->Get_Name(), pInstace->Get_Name()))
+		for (auto& iter : m_listObject)
 		{
-			// 같으면 인덱스 + 1
-			if (tmpRend->Get_Index() == iIndex)
-			{
-				++iIndex;
-			}
+			Engine::CRenderObject* tmpRend = static_cast<Engine::CRenderObject*>(iter);
 
-			// 다르면 탈출
-			else
-				break;
+			// 이름 비교해서
+			if (!lstrcmp(tmpRend->Get_Name(), pInstace->Get_Name()))
+			{
+				// 같으면 인덱스 + 1
+				if (tmpRend->Get_Index() == iIndex)
+				{
+					m_bFindSame = true;
+					++iIndex;
+					break;
+				}
+			}
 		}
+
+		if (false == m_bFindSame)
+			break;
 	}
 
 	pInstace->Set_Index(iIndex);
@@ -600,19 +610,20 @@ void CMapTool_Page::Delete_SelectObject()
 	{
 		for (auto& iter : m_listObject)
 		{
-			if (static_cast<Engine::CRenderObject*>(iter)->Get_Index() == m_pSelectedObj->Get_Index())
+			if (!lstrcmp(static_cast<Engine::CRenderObject*>(iter)->Get_Name(), m_pSelectedObj->Get_Name()))
 			{
-				if (!lstrcmp(static_cast<Engine::CRenderObject*>(iter)->Get_Name(), m_pSelectedObj->Get_Name()))
+				if (static_cast<Engine::CRenderObject*>(iter)->Get_Index() == m_pSelectedObj->Get_Index())
 				{
-					_int	iIndex = 0;
-					_tchar	szIndex[32] = L"";
-					_tchar	szName[MAX_STR] = L"";
 
-					iIndex = m_pSelectedObj->Get_Index();
-					_stprintf_s(szIndex, _T("%d"), iIndex);
-
-					memcpy(&szName, m_pSelectedObj->Get_Name(), sizeof(_tchar[MAX_STR]));
-					lstrcat(szName, szIndex);
+					//_int	iIndex = 0;
+					//_tchar	szIndex[32] = L"";
+					//_tchar	szName[MAX_STR] = L"";
+					//
+					//iIndex = m_pSelectedObj->Get_Index();
+					//_stprintf_s(szIndex, _T("%d"), iIndex);
+					//
+					//memcpy(&szName, m_pSelectedObj->Get_Name(), sizeof(_tchar[MAX_STR]));
+					//lstrcat(szName, szIndex);
 
 					Safe_Release(iter);
 
@@ -620,14 +631,11 @@ void CMapTool_Page::Delete_SelectObject()
 
 					m_listObject.remove(iter);
 
-					HTREEITEM tmpNode = CTreeFinder::Find_Node_By_Name(m_pObjectTree, szName);
+					//HTREEITEM tmpNode = CTreeFinder::Find_Node_By_Name(m_pObjectTree, szName);
 
-					m_pObjectTree.DeleteItem(tmpNode);
+					//m_pObjectTree.DeleteItem(tmpNode);
 					return;
 				}
-
-				else
-					continue;
 			}
 		}
 	}
@@ -801,7 +809,7 @@ void CMapTool_Page::LoadFilePath(const wstring & wstrImgPath)
 	hStaticRoot = m_Tree.InsertItem(TEXT("StaticMesh"), 0, 0, TVI_ROOT);
 	hDynamicRoot = m_Tree.InsertItem(TEXT("DynamicMesh"), 0, 0, TVI_ROOT);
 
-	cout << sizeof(PATH_INFO) << endl;
+	//cout << sizeof(PATH_INFO) << endl;
 
 	while (true)
 	{
@@ -810,7 +818,7 @@ void CMapTool_Page::LoadFilePath(const wstring & wstrImgPath)
 		fin.getline(tmpPath->sztrStateKey, MAX_STR, '|');
 		fin.getline(tmpPath->sztrFileName, MAX_STR, '|');
 		fin.getline(tmpPath->sztrImgPath, MAX_STR, '|');
-		fin.getline(tmpPath->szIsDynamic, MAX_STR, '|');
+		fin.getline(tmpPath->szIsDynamic, MAX_STR);
 
 		if (fin.eof())
 		{

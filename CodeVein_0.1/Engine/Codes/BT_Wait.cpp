@@ -8,7 +8,7 @@ CBT_Wait::CBT_Wait(const CBT_Wait & rhs)
 {
 }
 
-CBT_Node::BT_NODE_STATE CBT_Wait::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Wait::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	Start_Node(pNodeStack, bDebugging);
 
@@ -26,23 +26,28 @@ void CBT_Wait::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 {
 	if (m_bInit)
 	{
+		if (bDebugging)
+		{
+			Cout_Indentation(pNodeStack);
+			cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " Start   { Wait : " << m_dWaitingTime << " +- " << m_dOffset << " }" << endl;
+		}
+		
 		pNodeStack->push_back(this);
 		Safe_AddRef(this);
-
 		m_dCurTime = 0;
+		m_dMaxTime = m_dWaitingTime + CALC::Random_Num_Double(-m_dOffset, m_dOffset);
 
 		m_bInit = false;
 
-		if (bDebugging)
-		{
-			cout << "[" << m_iNodeNumber << "]" <<  "time start" << endl;
-		}
 	}
 
 }
 
 CBT_Node::BT_NODE_STATE CBT_Wait::End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging)
 {
+	if (pNodeStack->empty())
+		return eState;
+
 	Safe_Release(pNodeStack->back());
 	pNodeStack->pop_back();
 
@@ -52,9 +57,9 @@ CBT_Node::BT_NODE_STATE CBT_Wait::End_Node(vector<CBT_Node*>* pNodeStack, BT_NOD
 
 	if (bDebugging)
 	{
-		cout << "[" << m_iNodeNumber << "]" << "time end : " << m_dCurTime << endl;
+		Cout_Indentation(pNodeStack);
+		cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " End   { Wait : " << m_dWaitingTime << " +- " << m_dOffset << "  EndTime  " << m_dCurTime << " }" << endl;
 	}
-	m_dCurTime = 0;
 
 	return eState;
 }
@@ -63,9 +68,11 @@ HRESULT CBT_Wait::Ready_Clone_Node(void * pInit_Struct)
 {
 	INFO temp = *(INFO*)pInit_Struct;
 
-	m_dMaxTime = temp.Target_dMaxTime;
+	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
+	m_dWaitingTime = temp.Target_dWaitingTime;
+	m_dOffset = temp.Target_dOffset;
 
-	CBT_Node::Set_Auto_Number(&m_iNodeNumber);
+	CBT_Node::_Set_Auto_Number(&m_iNodeNumber);
 	return S_OK;
 }
 
