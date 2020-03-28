@@ -21,8 +21,8 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 	if (FAILED(Ready_Layer_Player(L"Layer_Player")))
 		return E_FAIL;
 
- 	if (FAILED(Ready_Layer_Dummy(L"Layer_Dummy")))
-		return E_FAIL;
+	//if (FAILED(Ready_Layer_Dummy(L"Layer_Dummy")))
+	//	return E_FAIL;
 
 	// Æ®·¹ÀÌ´× ¸ÊÀº ±×³É ·Îµå °¡´ÉÇØ¿è
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Stage_Training.dat");
@@ -39,7 +39,7 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 
 _int CScene_Stage_Training::Update_Scene(_double TimeDelta)
 {
-	//CUI_Manager::Get_Instance()->Update_UI();
+	CUI_Manager::Get_Instance()->Update_UI();
 
 	return _int();
 }

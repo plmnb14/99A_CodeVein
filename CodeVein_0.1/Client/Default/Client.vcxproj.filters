@@ -228,7 +228,6 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\4%29 UI\UI\99.Public\Button_UI">
       <UniqueIdentifier>{f4308e4f-0a96-460c-ba32-24c91ab05ac0}</UniqueIdentifier>
->>>>>>> 78bbb085bd048d0e14eb68ad9ecb7ffa116115ab
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -363,7 +362,6 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Button_UI.h">
       <Filter>02.GameObject\Stage\4%29 UI\UI\99.Public\Button_UI</Filter>
->>>>>>> 78bbb085bd048d0e14eb68ad9ecb7ffa116115ab
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -489,7 +487,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Button_UI.cpp">
       <Filter>02.GameObject\Stage\4%29 UI\UI\99.Public\Button_UI</Filter>
->>>>>>> 78bbb085bd048d0e14eb68ad9ecb7ffa116115ab
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

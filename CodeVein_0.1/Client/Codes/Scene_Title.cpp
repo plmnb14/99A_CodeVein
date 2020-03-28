@@ -41,11 +41,15 @@ HRESULT CScene_Title::Ready_Scene()
 
 	m_pLoading->Set_LoadStaticMesh(m_bLoadStaticMesh);
 
+	CUI_Manager::Get_Instance()->SetUp_UILayer();
+
 	return S_OK;
 }
 
 _int CScene_Title::Update_Scene(_double TimeDelta)
 {
+	CUI_Manager::Get_Instance()->Update_UI();
+
 	if (true == m_pLoading->Get_Finish())
 	{
 		cout << "로드 되었습니다!! 넘어가세요!!" << endl;
