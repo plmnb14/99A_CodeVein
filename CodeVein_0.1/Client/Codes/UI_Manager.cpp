@@ -16,8 +16,8 @@
 #include "ItemIcon.h"
 
 #include "Inven_Status.h"
-#include "Inven_Item.h"
-#include "Inven_Skill.h"
+//#include "Inven_Item.h"
+//#include "Inven_Skill.h"
 //////////////////
 #include "Tab_Consume.h"
 
@@ -62,11 +62,11 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_InvenStatus", CInven_Status::Create(pDevice))))
 		return E_FAIL;
 
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_InvenItem", CInven_Item::Create(pDevice))))
+	/*if (FAILED(g_pManagement->Add_Prototype(L"GameObject_InvenItem", CInven_Item::Create(pDevice))))
 		return E_FAIL;
 
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_InvenSkill", CInven_Skill::Create(pDevice))))
-		return E_FAIL;
+		return E_FAIL;*/
 	//////////////////////////////////////////////////////////
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MiniMap", CMiniMap::Create(pDevice))))
 		return E_FAIL;
@@ -78,16 +78,23 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ItemSlot", CItem_Slot::Create(pDevice))))
 		return E_FAIL;
-
 	return NOERROR;
 }
 
 HRESULT CUI_Manager::SetUp_UILayer()
 {
+	/*g_pManagement->Add_GameObject_ToLayer(L"GameObject_TabConsume", SCENE_STAGE, L"Layer_TabConsume");
 
-	//if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_InvenItem", SCENE_STAGE, L"Layer_InvenItem")))
-	//	return E_FAIL;
-	
+	CUI::UI_DESC* pDesc = nullptr;
+	pDesc = new CUI::UI_DESC;
+
+	pDesc->fPosX = 100.f;
+	pDesc->fPosY = 600.f;
+	pDesc->fSizeX = 100.f;
+	pDesc->fSizeY = 100.f;
+	pDesc->iIndex = 0;
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_QuickSlot", SCENE_STAGE, L"Layer_QuickSlot", pDesc);*/
+	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_Inventory", SCENE_STAGE, L"Layer_Inventory");
 	return NOERROR;
 }
 
@@ -121,4 +128,12 @@ void CUI_Manager::Open_Skill()
 {
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_InvenSkill", SCENE_STAGE, L"Layer_InvenSkill");
 }
+
+
+
+void CUI_Manager::Free()
+{
+}
+
+
 

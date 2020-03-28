@@ -61,9 +61,7 @@ private:
 	CShader*				m_pShader			= nullptr;
 	CMesh_Dynamic*			m_pDynamicMesh		= nullptr;
 	CNavMesh*				m_pNavMesh			= nullptr;
-
 	CCollider*				m_pCollider			= nullptr;
-
 
 private:
 	vector<CCollider*>		m_vecPhsycColl;
@@ -87,10 +85,8 @@ private:
 	_bool					m_bOnMoveDelay = false;
 	_bool					m_bChangeWeapon = false;
 	_bool					m_bOnBuff = false;
-
 	_bool					m_bOnAiming = false;
 	_bool					m_bHaveAimingTarget = false;
-
 	_bool					m_bEventTrigger[32] = {};
 
 private:
@@ -122,7 +118,6 @@ private:
 	_float					m_fAtkEndTime = 0.f;
 
 private:
-
 	_float					m_fAmingRange = 20.f;
 
 private:

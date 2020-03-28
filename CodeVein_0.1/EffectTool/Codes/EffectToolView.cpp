@@ -198,14 +198,12 @@ void CEffectToolView::Release()
 }
 
 #ifdef _DEBUG
-
 CEffectToolDoc* CEffectToolView::GetDocument() const // 디버그되지 않은 버전은 인라인으로 지정됩니다.
 {
 	ASSERT(m_pDocument->IsKindOf(RUNTIME_CLASS(CEffectToolDoc)));
 	return (CEffectToolDoc*)m_pDocument;
 }
-#endif //_DEBUG
-
+#endif
 
 
 // CEffectToolView 메시지 처리기
@@ -265,10 +263,8 @@ void CEffectToolView::Ready_Resource()
 
 	Safe_AddRef(pManagement);
 
-
 	pManagement->LoadTex_FromPath(m_pGraphicDev, L"../../Data/EffectTex_Path.dat");
 	pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/EffectMesh_Path.dat");
-
 
 	if (0 > (pManagement->Add_Prototype(L"GameObject_Effect", CTexEffect::Create(m_pGraphicDev))))
 		return;

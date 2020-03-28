@@ -84,7 +84,6 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	vector		vLook = vWorldPos - g_vCamPosition;
 
 	// RimLight ====================================================================
-
 	float fRimWidth = 1.5f;
 
 	vector vCamPos = normalize(g_vCamPosition - vWorldPos);
@@ -96,7 +95,6 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	Out.vShade += pow(fRim, 2.f) * rc;
 	// RimLight End ====================================================================
 	
-
 	Out.vSpecular = g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 30.f) * (g_vLightSpecular * g_vMtrlSpecular);
 	Out.vSpecular.a = 0.f;
 
@@ -146,13 +144,11 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
 	Out.vShade.a = 1.f;
 
 	// RimLight ====================================================================
-
 	float fRimWidth = 1.5f;
 	vector vCamPos = g_vCamPosition - vWorldPos;
 	float fRim = smoothstep(max(1.f - fRimWidth + vDepthInfo.x, 0.5f), max(0.1f + vDepthInfo.x - fRimWidth, 0.7f), vDepthInfo.x - saturate(abs(dot(vNormal, vCamPos))));
 	float4 rc = g_vLightDiffuse;
 	Out.vRim = pow(fRim, 2.f) * rc;
-
 	// RimLight End ====================================================================
 
 	vector		vReflect = reflect(normalize(vLightDir), vNormal);

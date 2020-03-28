@@ -23,11 +23,6 @@ HRESULT CScene_Logo::Ready_Scene()
 	if (FAILED(Ready_Layer_LogoBtn(L"Layer_LogoBtn")))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_LogoBtn(L"Layer_LogoBtn")))
-		return E_FAIL;
-
-
-
 	m_pLoading = CLoading::Create(m_pGraphic_Device, SCENE_STAGE);
 	if (nullptr == m_pLoading)
 		return E_FAIL;
@@ -65,7 +60,6 @@ HRESULT CScene_Logo::Render_Scene()
 
 HRESULT CScene_Logo::Ready_Prototype_GameObject()
 {
-	// UI 오브젝트
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LogoBtn", CLogoBtn::Create(m_pGraphic_Device))))
 		return E_FAIL;
 
@@ -81,8 +75,6 @@ HRESULT CScene_Logo::Ready_Layer_BackGround(const _tchar * pLayerTag)
 {
 	return S_OK;
 }
-
-
 
 HRESULT CScene_Logo::Ready_Layer_LogoBtn(const _tchar * pLayerTag)
 {

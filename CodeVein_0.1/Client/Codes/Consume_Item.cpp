@@ -16,8 +16,8 @@ HRESULT CConsume_Item::Ready_GameObject_Prototype()
 {
 	CItem::Ready_GameObject_Prototype();
 
-	m_eType = CItem::CONSUME;
 
+	m_eType = CItem::CONSUME;
 
 	return NOERROR;
 }
@@ -86,7 +86,6 @@ CGameObject * CConsume_Item::Clone_GameObject(void * pArg)
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
 		MSG_BOX("CConsume_Item Item Cloned Failed");
-
 		Safe_Release(pInstance);
 	}
 

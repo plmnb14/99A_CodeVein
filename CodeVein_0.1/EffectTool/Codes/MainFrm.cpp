@@ -9,7 +9,6 @@
 #include "MyFormView.h"
 #include "EffectToolView.h"
 
-
 #include "FileInfo.h"
 
 #ifdef _DEBUG
@@ -108,7 +107,6 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 {
 	CFileInfo::Create_Mesh_PathInfo();
 	CFileInfo::Create_Texture_PathInfo();
-
 
 	int iFormViewCX = 350;
 

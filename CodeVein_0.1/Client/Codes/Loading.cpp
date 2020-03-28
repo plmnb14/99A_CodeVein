@@ -6,13 +6,7 @@
 #include "TexEffect.h"
 #include "MeshEffect.h"
 #include "Player.h"
-
-#include "TestMonster.h"
-#include "Weapon.h"
-
-#include "Item_Manager.h"
-#include "UI_Manager.h"
-
+#include "HPBack.h"
 #include "TestMonster.h"
 #include "Weapon.h"
 #include "Dummy_Target.h"
@@ -25,6 +19,13 @@
 #include "BlackUrchin.h"
 #include "BlackWolf.h"
 #include "Genji.h"
+
+#include "PlayerHP.h"
+#include "PlayerST.h"
+#include "BossDecoUI.h"
+#include "BossHP.h"
+
+#include "Item.h"
 
 
 USING(Client)
@@ -56,25 +57,6 @@ _uint CLoading::Loading_ForStage(void)
 
 	_mat DefaultMat;
 	D3DXMatrixIdentity(&DefaultMat);
-
-	
-	// 오브젝트 원형
-	lstrcpy(m_szString, L"게임오브젝트 원형 생성 중....");
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_Player", CPlayer::Create(m_pGraphicDev))))
-		return E_FAIL;
-
-
-	lstrcpy(m_szString, L"이펙트 생성 중....");
-	Ready_Effect();
-
-
-	// UI 생성
-	if (FAILED(CUI_Manager::Get_Instance()->Add_UI_Prototype(m_pGraphicDev)))
-		return E_FAIL;
-	// Item 매니저
-	if (FAILED(CItem_Manager::Get_Instance()->Ready_Item_Prototype(m_pGraphicDev)))
-		return E_FAIL;
-
 
 	// 이펙트 원형 생성
 	Ready_Effect();
@@ -112,17 +94,12 @@ _uint CLoading::Loading_ForStage(void)
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon", CWeapon::Create(m_pGraphicDev))))
 		return E_FAIL;
 
-
-	//무기
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_Weapon", CWeapon::Create(m_pGraphicDev))))
-
 	//더미
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Dummy", CDummy_Target::Create(m_pGraphicDev))))
 		return E_FAIL;
 
 	// 트레일
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SwordTrail", Engine::CTrail_VFX::Create(m_pGraphicDev))))
-
 		return E_FAIL;
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -155,19 +132,6 @@ unsigned int CALLBACK CLoading::Thread_Main(void* pArg)
 
 HRESULT CLoading::Ready_Effect(void)
 {
-	CManagement*	pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return -1;
-
-	Safe_AddRef(pManagement);
-
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_EffectSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/testSmoke.dat")))))
-		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_EffectTestMesh", CMeshEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/testMeshEff.dat")))))
-		return E_FAIL;
-
-	Safe_Release(pManagement);
-
 	if (FAILED(g_pManagement->Add_Prototype(L"Effect_FootSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Player_FootSmoke.dat")))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"Effect_ButterFly_SoftSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_SoftSmoke.dat")))))
@@ -226,7 +190,6 @@ Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
 		::ReadFile(hFile, &pInfo->bDistortion, sizeof(_bool), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->bStaticFrame, sizeof(_bool), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->bUseColorTex, sizeof(_bool), &dwByte, nullptr);
-
 		::ReadFile(hFile, &pInfo->bUseRGBA, sizeof(_bool), &dwByte, nullptr);
 
 		::ReadFile(hFile, &pInfo->bColorMove, sizeof(_bool), &dwByte, nullptr);
@@ -274,9 +237,7 @@ Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
 		::ReadFile(hFile, &pInfo->vStartPos, sizeof(_v3), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->vStartScale, sizeof(_v3), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->fColorIndex, sizeof(_float), &dwByte, nullptr);
-
 		::ReadFile(hFile, &pInfo->fMaskIndex, sizeof(_float), &dwByte, nullptr);
-
 
 		break;
 	}

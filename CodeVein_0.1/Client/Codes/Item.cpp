@@ -22,7 +22,6 @@ HRESULT CItem::Ready_GameObject(void * pArg)
 {
 	CGameObject::Ready_GameObject(pArg);
 
-
 	if (nullptr != pArg)
 	{
 		m_pInfo = static_cast<ITEM_INFO*>(pArg);
@@ -80,25 +79,6 @@ CGameObject * CItem::Clone_GameObject(void * pArg)
 void CItem::Free()
 {
 	Safe_Delete(m_pInfo);
-	
-	return NO_EVENT;
-}
-
-_int CItem::Late_Update_GameObject(_double TimeDelta)
-{
-	return NO_EVENT;
-}
-
-HRESULT CItem::Render_GameObject()
-{
-	
-	return NOERROR;
-}
-
-
-
-void CItem::Free()
-{
-
 	CGameObject::Free();
 }
+

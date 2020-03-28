@@ -17,7 +17,7 @@ HRESULT CMainApp::Ready_MainApp()
 	
 	if (FAILED(Ready_Component_Prototype()))
 		return E_FAIL;
-	
+
 	if (FAILED(Ready_Start_Scene(SCENE_LOGO)))
 		return E_FAIL;
 
@@ -30,10 +30,7 @@ _int CMainApp::Update_MainApp(_double TimeDelta)
 		return -1;
 	
 	CCameraMgr::Get_Instance()->Update();
-	
-
 	CParticleMgr::Get_Instance()->Update_ParticleManager(TimeDelta);
-
 
 	return g_pManagement->Update_Management(TimeDelta);
 }	

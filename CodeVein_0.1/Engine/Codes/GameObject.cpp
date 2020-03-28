@@ -126,10 +126,6 @@ void CGameObject::Compute_ViewZ(const _v3* pPos)
 	m_fViewZ = D3DXVec3Length(&(vCamPos - *pPos));
 }
 
-void CGameObject::Compute_ViewZ_UI(_float fZ)
-{
-	m_fViewZ = fZ;
-}
 
 
 void CGameObject::Free()

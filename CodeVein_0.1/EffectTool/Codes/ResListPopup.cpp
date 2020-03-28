@@ -138,9 +138,7 @@ void CResListPopup::Load_TextureFromPath()
 {
 	wifstream fin;
 
-
 	fin.open(L"../../Data/EffectTex_Path.dat");
-
 
 	if (fin.fail())
 		return;
@@ -207,7 +205,6 @@ void CResListPopup::Load_MeshFromPath()
 	wifstream fin;
 
 	fin.open(L"../../Data/EffectMesh_Path.dat");
-
 
 	if (fin.fail())
 		return;

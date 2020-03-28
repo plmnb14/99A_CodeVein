@@ -4,7 +4,6 @@
 #include "Effect.h"
 #include "UI.h"
 #include "UI_Manager.h"
-#include "Item_Manager.h"
 #include "ParticleMgr.h"
 
 CScene_Stage::CScene_Stage(LPDIRECT3DDEVICE9 pGraphic_Device)
@@ -17,16 +16,9 @@ HRESULT CScene_Stage::Ready_Scene()
 {
 	if (FAILED(Ready_LightDesc()))
 		return E_FAIL;
-
 	
 	if (FAILED(Ready_Layer_Camera(L"Layer_Camera")))
 		return E_FAIL;
-
-
-	if (FAILED(Ready_Layer_Monster(L"Layer_Monster")))
-		return E_FAIL;
-
-	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Stage_Test.dat");
 
 	if (FAILED(Ready_Layer_Player(L"Layer_Player")))
 		return E_FAIL;
@@ -50,13 +42,6 @@ HRESULT CScene_Stage::Ready_Scene()
 	if(FAILED(CUI_Manager::Get_Instance()->SetUp_UILayer()))
 		return E_FAIL;
 
-	m_pNavMesh = static_cast<Engine::CNavMesh*>(g_pManagement->Clone_Component(SCENE_STATIC, L"NavMesh"));
-	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Test.dat");
-
-
-
-	
-		
 	return S_OK;
 }
 
@@ -67,7 +52,7 @@ _int CScene_Stage::Update_Scene(_double TimeDelta)
 		//g_pManagement->Create_ParticleEffect(L"Effect_ButterFly_Distortion", 0.1f, V3_NULL, nullptr);
 		//g_pManagement->Create_ParticleEffect(L"Effect_ButterFly_RingLine", 0.1f, V3_NULL, nullptr);
 	}
-	//if (g_pInput_Device->Key_Down(DIK_L))
+	if (g_pInput_Device->Key_Down(DIK_L))
 	{
 		g_pManagement->Create_ParticleEffect(L"Effect_ButterFly_PointParticle", 0.1f, V3_NULL, nullptr);
 		//_tchar	szBuff[MAX_PATH] = L"";
@@ -81,26 +66,18 @@ _int CScene_Stage::Update_Scene(_double TimeDelta)
 
 	CUI_Manager::Get_Instance()->Update_UI();
 
-
 	return _int();
 }
 
 HRESULT CScene_Stage::Render_Scene()
 {
-
 	m_pNavMesh->Render_NaviMesh();
-
 
 	return S_OK;
 }
 
 HRESULT CScene_Stage::Ready_Layer_Player(const _tchar * pLayerTag)
 {
-
-	// 이미 오브젝트 매니져에 추가되어있는 객체를 찾아서 복제한다음. 
-	// 적절한 레이어에 보관해라.
-
-	
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Player", SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 
@@ -152,14 +129,12 @@ HRESULT CScene_Stage::Ready_Layer_Monster(const _tchar * pLayerTag)
 HRESULT CScene_Stage::Ready_Layer_BackGround(const _tchar * pLayerTag)
 {
 	// For.Terrain
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Terrain", SCENE_STAGE, pLayerTag)))
+	//if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_Terrain", SCENE_STAGE, pLayerTag)))
 	//	return E_FAIL;
 
 	// For.Sky
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Sky", SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
-
-
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Sky", SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
 
 	return S_OK;
 }

@@ -5,9 +5,7 @@ float		g_fAlpha;
 vector		g_vColor;
 bool		g_bUseRGBA = false;
 bool		g_bUseColorTex = false;
-
 bool		g_bUseMaskTex = false;
-
 bool		g_bReverseColor = false;
 
 texture		g_DiffuseTexture;
@@ -46,7 +44,6 @@ sampler		DepthSampler = sampler_state
 struct VS_IN
 {
 	float3		vPosition : POSITION;
-
 	//float3		vNormal : NORMAL;
 	float2		vTexUV : TEXCOORD0;
 
@@ -55,6 +52,7 @@ struct VS_IN
 	float4		vInstanceLook	: TEXCOORD3;
 	float4		vInstancePos	: TEXCOORD4;
 	//float4		vColor			: COLOR0;
+
 };
 
 struct VS_OUT
@@ -62,34 +60,12 @@ struct VS_OUT
 	float4		vPosition : POSITION;
 	float2		vTexUV : TEXCOORD0;
 	float4		vProjPos : TEXCOORD1;
-
-};
-
-float3x3 QuaternionToMatrix(float4 quat)
-{
-	float3 cross = quat.yzx * quat.zxy;
-	float3 square = quat.xyz * quat.xyz;
-	float3 wimag = quat.w * quat.xyz;
-
-	square = square.xyz + square.yzx;
-
-	float3 diag = 0.5 - square;
-	float3 a = (cross + wimag);
-	float3 b = (cross - wimag);
-
-	return float3x3(
-		2.0 * float3(diag.x, b.z, a.y),
-		2.0 * float3(a.z, diag.y, b.x),
-		2.0 * float3(b.y, a.x, diag.z));
-
 	//float4		vColor : COLOR0;
 };
-
 
 VS_OUT VS_MAIN(VS_IN In)
 {
 	VS_OUT			Out = (VS_OUT)0;
-
 
 	//matrix		matWV, matWVP;
 	//
@@ -108,7 +84,7 @@ VS_OUT VS_MAIN(VS_IN In)
 						In.vInstanceLook,
 						float4(In.vInstancePos.xyz, 1.f));
 	
-	//matWorld = mul(matWorld, g_matWorld);
+	matWorld = mul(matWorld, g_matWorld);
 
 	matWVP = mul(matWorld, g_matView);
 	matWVP = mul(matWVP, g_matProj);
@@ -119,7 +95,6 @@ VS_OUT VS_MAIN(VS_IN In)
 	Out.vTexUV = In.vTexUV;
 	//Out.vColor = In.vColor;
 
-
 	return Out;		
 }
 
@@ -128,7 +103,6 @@ struct PS_IN
 	float4		vPosition : POSITION;
 	float2		vTexUV : TEXCOORD0;
 	float4		vProjPos : TEXCOORD1;
-
 	//float4		vColor : COLOR0;
 };
 
@@ -140,7 +114,6 @@ struct PS_OUT
 
 float3 lumCoeff = float3(0.2125, 0.7154, 0.0721);
 float3 root3 = float3(0.57735, 0.57735, 0.57735);
-
 float3x3 QuaternionToMatrix(float4 quat)
 {
 	float3 cross = quat.yzx * quat.zxy;
@@ -158,7 +131,6 @@ float3x3 QuaternionToMatrix(float4 quat)
 		2.0 * float3(a.z, diag.y, b.x),
 		2.0 * float3(b.y, a.x, diag.z));
 }
-
 
 PS_OUT PS_MAIN(PS_IN In) 
 {
@@ -206,15 +178,12 @@ PS_OUT PS_MAIN(PS_IN In)
 		Out.vColor.a *= vGradientMask.x;
 	}
 
-
 	float2		vTexUV;
 	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
 	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
 
 	vector		vDepthInfo = tex2D(DepthSampler, vTexUV);
-
 	float		fViewZ = vDepthInfo.y * 500.f;
-
 
 	Out.vColor.a = (Out.vColor.a * saturate(fViewZ - In.vProjPos.w)) * g_fAlpha;
 
@@ -231,7 +200,6 @@ PS_OUT PS_DISTORTION(PS_IN In)
 	/////////////////////////////////////////////
 	// Color
 	Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
-
 
 	if (g_bUseColorTex)
 	{
@@ -252,16 +220,13 @@ PS_OUT PS_DISTORTION(PS_IN In)
 		Out.vColor.a *= vGradientMask.x;
 	}
 
-
 	float2		vTexUV;
 
 	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
 	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
 
 	vector		vDepthInfo = tex2D(DepthSampler, vTexUV);
-
 	float		fViewZ = vDepthInfo.y * 500.f;
-
 
 	Out.vColor.a = Out.vColor.a * saturate(fViewZ - In.vProjPos.w);
 
@@ -277,7 +242,6 @@ PS_OUT PS_DISTORTION(PS_IN In)
 PS_OUT PS_MESHEFFECT(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
-
 
 	Out.vColor = pow(tex2D(ColorSampler, In.vTexUV), 2.2);
 	//Out.vColor = tex2D(ColorSampler, In.vTexUV);
@@ -307,7 +271,6 @@ PS_OUT PS_MESHEFFECT(PS_IN In)
 
 	Out.vColor.a *= g_fAlpha;
 
-
 	if(g_bReverseColor)
 		Out.vColor.rgb = 1 - Out.vColor.rgb;
 
@@ -324,7 +287,6 @@ technique Default_Technique
 		DestBlend = InvSrcAlpha;
 
 		cullmode = none;
-
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_MAIN();

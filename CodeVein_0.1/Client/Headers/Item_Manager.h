@@ -5,9 +5,6 @@
 
 #include "Item.h"
 
-#include "ItemSlot.h"
-
-
 BEGIN(Client)
 
 class CItem_Manager : public CBase
@@ -37,12 +34,6 @@ public:
 private:
 	vector<CItem*>	m_vecItem[CItem::ID_END];
 	_bool			m_bUpdateData = false;
-	void Add_Item(CItem::ITEM_TYPE eType, _uint iItemNum);
-	vector<CItemSlot*>* Get_Slot(CItem::ITEM_TYPE eType) { return &m_SlotVec[eType]; }
-
-private:
-	vector<CItem*> m_ItemVec;
-	
 
 public:
 	virtual void Free();

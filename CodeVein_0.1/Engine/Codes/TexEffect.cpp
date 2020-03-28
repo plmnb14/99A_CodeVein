@@ -120,24 +120,24 @@ _int CTexEffect::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CTexEffect::Render_GameObject()
 {
-	//Render_GameObject_HWInstance();
+	Render_GameObject_HWInstance();
 
-	if (nullptr == m_pShaderCom ||
-		nullptr == m_pBufferCom)
-		return E_FAIL;
-	
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
-	
-	m_pShaderCom->Begin_Shader();
-	
-	m_pShaderCom->Begin_Pass(m_iPass);
-	
-	m_pBufferCom->Render_VIBuffer();
-	
-	m_pShaderCom->End_Pass();
-	
-	m_pShaderCom->End_Shader();
+	//if (nullptr == m_pShaderCom ||
+	//	nullptr == m_pBufferCom)
+	//	return E_FAIL;
+	//
+	//if (FAILED(SetUp_ConstantTable()))
+	//	return E_FAIL;
+	//
+	//m_pShaderCom->Begin_Shader();
+	//
+	//m_pShaderCom->Begin_Pass(m_iPass);
+	//
+	//m_pBufferCom->Render_VIBuffer();
+	//
+	//m_pShaderCom->End_Pass();
+	//
+	//m_pShaderCom->End_Shader();
 
 	return NOERROR;
 }
@@ -263,19 +263,7 @@ void CTexEffect::Setup_Info()
 	}
 	else
 	{
-		if (m_pInfo->bRandomRot)
-		{
-			_float fMinus = Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f;
-			_v3 vPos = _v3(Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.x * 100)) * 0.01f * fMinus,
-				Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.y * 100)) * 0.01f * fMinus,
-				Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.z * 100)) * 0.01f * fMinus);
-
-			m_pTransformCom->Set_Angle(_v3(D3DXToRadian(vPos)));
-		}
-		else
-		{
-			m_pTransformCom->Set_Angle(_v3(D3DXToRadian(m_pInfo->vRotDirection.x), D3DXToRadian(m_pInfo->vRotDirection.y), D3DXToRadian(m_pInfo->vRotDirection.z)));
-		}
+		m_pTransformCom->Set_Angle(_v3(D3DXToRadian(m_pInfo->vRotDirection.x), D3DXToRadian(m_pInfo->vRotDirection.y), D3DXToRadian(m_pInfo->vRotDirection.z)));
 	}
 	
 }
@@ -379,15 +367,15 @@ void CTexEffect::Check_Move(_double TimeDelta)
 	{
 		if (m_pInfo->bRandomRot)
 		{
-			m_pTransformCom->Add_Angle(AXIS_X, ((m_vRot.x) * _float(TimeDelta) * m_fRotSpeed));
-			m_pTransformCom->Add_Angle(AXIS_Y, ((m_vRot.y) * _float(TimeDelta) * m_fRotSpeed));
-			m_pTransformCom->Add_Angle(AXIS_Z, ((m_vRot.z) * _float(TimeDelta) * m_fRotSpeed));
+			m_pTransformCom->Add_Angle(AXIS_X, (m_vRot.x * _float(TimeDelta) * m_fRotSpeed));
+			m_pTransformCom->Add_Angle(AXIS_Y, (m_vRot.y * _float(TimeDelta) * m_fRotSpeed));
+			m_pTransformCom->Add_Angle(AXIS_Z, (m_vRot.z * _float(TimeDelta) * m_fRotSpeed));
 		}
 		else
 		{
-			m_pTransformCom->Add_Angle(AXIS_X, ((m_pInfo->vRotDirection.x) * _float(TimeDelta) * m_fRotSpeed));
-			m_pTransformCom->Add_Angle(AXIS_Y, ((m_pInfo->vRotDirection.y) * _float(TimeDelta) * m_fRotSpeed));
-			m_pTransformCom->Add_Angle(AXIS_Z, ((m_pInfo->vRotDirection.z) * _float(TimeDelta) * m_fRotSpeed));
+			m_pTransformCom->Add_Angle(AXIS_X, (m_pInfo->vRotDirection.x * _float(TimeDelta) * m_fRotSpeed));
+			m_pTransformCom->Add_Angle(AXIS_Y, (m_pInfo->vRotDirection.y * _float(TimeDelta) * m_fRotSpeed));
+			m_pTransformCom->Add_Angle(AXIS_Z, (m_pInfo->vRotDirection.z * _float(TimeDelta) * m_fRotSpeed));
 		}
 	}
 }
@@ -482,9 +470,6 @@ HRESULT CTexEffect::SetUp_ConstantTable()
 
 	Safe_AddRef(pManagement);
 
-	//_mat matTest;
-	//D3DXMatrixIdentity(&matTest);
-	//memcpy(&matTest[3][0], &m_pTransformCom->Get_Pos(), sizeof(_v3));
 	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
 

@@ -65,13 +65,11 @@
 using namespace std;
 
 // lib
-
 #ifdef _DEBUG
 #pragma comment(lib, "EngineDEBUG.lib")
 #else
 #pragma comment(lib, "Engine.lib")
 #endif
-
 
 // Engine Headers
 #include "Engine_Defines.h"

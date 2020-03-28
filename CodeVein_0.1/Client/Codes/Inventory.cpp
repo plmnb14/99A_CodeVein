@@ -93,7 +93,7 @@ _int CInventory::Late_Update_GameObject(_double TimeDelta)
 	m_matWorld._42 = 1.f;
 
 	
-	Compute_ViewZ_UI(1.f);
+	m_fViewZ = 1.f;
 
 
 	m_pConsumeTab->Get_Slot(0);

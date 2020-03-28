@@ -9,9 +9,6 @@ CUI::CUI(LPDIRECT3DDEVICE9 pGraphic_Device)
 	D3DXMatrixIdentity(&m_matProj);
 	D3DXMatrixIdentity(&m_matOldView);
 	D3DXMatrixIdentity(&m_matOldProj);
-
-	
-	
 }
 
 CUI::CUI(const CUI & rhs)
@@ -54,8 +51,8 @@ HRESULT CUI::Ready_GameObject(void * pArg)
 	{
 		m_fPosX = 0.f;
 		m_fPosY = 0.f;
-		m_fSizeX = 0.f;
-		m_fSizeY = 0.f;
+		m_fSizeX = 1.f;
+		m_fSizeY = 1.f;
 		m_iIndex = 0;
 	}
 
