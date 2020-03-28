@@ -3,12 +3,6 @@
 #include "Client_Defines.h"
 #include "UI.h"
 
-
-
-
-
-
-
 BEGIN(Client)
 
 class CUI_Manager final : public CBase

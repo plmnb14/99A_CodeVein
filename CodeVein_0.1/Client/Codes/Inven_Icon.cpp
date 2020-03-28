@@ -63,7 +63,7 @@ _int CInven_Icon::Late_Update_GameObject(_double TimeDelta)
 	
 	
 	
-	Compute_ViewZ_UI(0.95f);
+	m_fViewZ = 0.95f;
 
 	return NO_EVENT;
 }

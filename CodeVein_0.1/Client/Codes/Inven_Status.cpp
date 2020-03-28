@@ -60,7 +60,7 @@ _int CInven_Status::Late_Update_GameObject(_double TimeDelta)
 	m_matWorld._42 = 1.f;
 
 	
-	Compute_ViewZ_UI(0.8f);
+	m_fViewZ = 0.8f;
 
 	return NO_EVENT;
 }

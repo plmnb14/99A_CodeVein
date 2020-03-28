@@ -130,7 +130,7 @@ _int CTab_Consume::Late_Update_GameObject(_double TimeDelta)
 	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
 	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;
 	
-	Compute_ViewZ_UI(0.91f);
+	m_fViewZ = 0.91f;
 
 	return NO_EVENT;
 }

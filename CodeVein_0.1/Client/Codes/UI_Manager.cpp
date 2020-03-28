@@ -16,8 +16,8 @@
 #include "ItemIcon.h"
 
 #include "Inven_Status.h"
-#include "Inven_Item.h"
-#include "Inven_Skill.h"
+//#include "Inven_Item.h"
+//#include "Inven_Skill.h"
 //////////////////
 #include "Tab_Consume.h"
 
@@ -62,11 +62,11 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_InvenStatus", CInven_Status::Create(pDevice))))
 		return E_FAIL;
 
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_InvenItem", CInven_Item::Create(pDevice))))
+	/*if (FAILED(g_pManagement->Add_Prototype(L"GameObject_InvenItem", CInven_Item::Create(pDevice))))
 		return E_FAIL;
 
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_InvenSkill", CInven_Skill::Create(pDevice))))
-		return E_FAIL;
+		return E_FAIL;*/
 	//////////////////////////////////////////////////////////
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MiniMap", CMiniMap::Create(pDevice))))
 		return E_FAIL;
