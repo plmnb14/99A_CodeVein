@@ -1,8 +1,61 @@
-ButterFly_Distortion 	베놈볼(독 구체 던지기) 꼬리(입)에서 왜곡효과
-ButterFly_PointParticle 	전체적으로 쓰이는 보라 파티클
-ButterFly_PointParticle_Plum 독기폭발(웅크렸다펴기)에서 폭발할때 나오는 자두색 파티클
-ButterFly_RingLine		독기폭발 메쉬이펙트
-ButterFly_SoftSmoke	독기폭발 스모크
+<독기폭발>
+ButterFly_SoftSmoke_Ready	기 모을 때 맨처음 한번 생성되는 스모크
+//			기 모을 때 메쉬이펙트
+ButterFly_SoftSmoke	기 모을 때 스모크 01 (진보라)
+ButterFly_SoftSmoke_Bottom	기 모을 때 바닥 스모크 02 (연보라)
+ButterFly_Smoke_Red_Once	 폭발할 때 맨 처음 한번 생성되는 빨간 스모크
+ButterFly_Smoke_Red_Particle 폭발하는 빨간 스모크
+ButterFly_SoftSmoke_Floor	바닥에 깔리는 빨간 스모크 
+ButterFly_PointParticle_Plum 	폭발할 때 나오는 자두색 동그라미 파티클
+ButterFly_RingLine		폭발할 때 회오리 메쉬이펙트
+ButterFly_RingLine_Distortion	회오리 메쉬 왜곡
+
+<돌진>
+ButterFly_PointParticle 	전체적으로 쓰이는 보라 동그라미 파티클
 ButterFly_SoftSmoke_Mist	전체적으로 쓰이는 옅은 독안개
-ButterFly_SoftSmoke_Puff	독안개와 같이쓰니는 다른색 독안개
-ButterFly_VenomShot	베놈볼
+ButterFly_WaterSplash 	보라색 투명한 물방울
+ButterFly_GlitterSand	반짝이는 보라색 모래
+ButterFly_Distortion_Smoke	안개와 같이 나오는 왜곡
+ButterFly_PopSand		바닥에서 튀는 모래 (바닥과 가까운 돌진일 경우 발생)
+
+<그냥 공격 / 윈드밀>
+ButterFly_PointParticle 	전체적으로 쓰이는 보라 동그라미 파티클
+ButterFly_SoftSmoke_Mist	전체적으로 쓰이는 옅은 독안개
+ButterFly_GlitterSand	반짝이는 보라색 모래
+ButterFly_Distortion_Smoke	안개와 같이 나오는 왜곡
+//			꼬리 트레일
+
+<베놈볼>
+ButterFly_Distortion_Smoke		투사체 꼬리 왜곡
+ButterFly_SoftSmoke_Mist		투사체 꼬리 안개 == 전체적으로 쓰이는 옅은 독안개
+ButterFly_VenomShot		투사체 안개 진보라
+ButterFly_VenomShot_SubSmoke 	투사체 안개 핑크
+ButterFly_PointParticle 		투사체 파티클
+<베놈볼 맞아서 터질 때>
+ButterFly_WaterSplash 		보라색 투명한 물방울
+ButterFly_SoftSmoke_Mist		전체적으로 쓰이는 옅은 독안개
+ButterFly_GlitterSand		반짝이는 보라색 모래
+
+<유도 베놈볼>
+위의 <베놈볼>에서 추가
+ButterFly_Distortion_Circle		꼬리에서 원 왜곡
+
+<백스텝>
+ButterFly_BackStepSand01		바닥에서 튀는 모래먼지
+ButterFly_BackStepSand02		바닥에서 세게 튀는 모래
+ButterFly_BackStepSand_Floor	바닥에 부는 먼지바람
+
+<깨물기>
+ButterFly_Distortion_Circle	꼬리에서 원 왜곡
+ButterFly_PointParticle 	전체적으로 쓰이는 보라 동그라미 파티클
+ButterFly_SoftSmoke_Mist	전체적으로 쓰이는 옅은 독안개
+ButterFly_GlitterSand	반짝이는 보라색 모래
+
+<포효>
+ButterFly_Distortion_SmokeGravity 	떨어지는 왜곡
+ButterFly_Distortion_Circle		원 왜곡
+ButterFly_SoftSmoke_Mist		전체적으로 쓰이는 옅은 독안개
+ButterFly_PointParticle 		전체적으로 쓰이는 보라 파티클
+
+<공통>
+Boss_KnonkDown_Dust		쿵하고 쓰러질 때 먼지

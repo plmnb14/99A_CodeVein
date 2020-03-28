@@ -22,6 +22,10 @@ public:
 	const _tchar* Get_String(void) const { return m_szString; }
 
 public:
+	virtual void Set_LoadStaticMesh(_bool _bLoadStatic) { m_bLoadStaticMesh = _bLoadStatic; }
+	virtual void Set_LoadDynamicMesh(_bool _bLoadDynamic) { m_bLoadDynamicMesh = _bLoadDynamic; }
+
+public:
 	HRESULT Ready_Loading(SCENEID eLoadingID);
 	_uint Loading_ForStage(void);
 
@@ -33,7 +37,8 @@ private:
 	Engine::EFFECT_INFO* Read_EffectData(const _tchar* szPath);
 
 private:
-	HRESULT Stage_Object_Ready();
+	_uint Loading_Title();
+	_uint Loading_Stage();
 
 private:
 	HANDLE				m_hThread;
@@ -42,6 +47,10 @@ private:
 	LPDIRECT3DDEVICE9	m_pGraphicDev;
 	_bool				m_bFinish;
 	_tchar				m_szString[128];
+
+private:
+	_bool				m_bLoadStaticMesh = false;
+	_bool				m_bLoadDynamicMesh = false;
 
 public:
 	static CLoading* Create(LPDIRECT3DDEVICE9 pGraphicDev, SCENEID eLoadingID);

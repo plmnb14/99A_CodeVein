@@ -33,6 +33,9 @@ public:
 	_ulong		Get_CellIndex() { return m_dwIndex; };
 	_ulong		Get_SubSetIndex() { return m_dwSubsetIdx; };
 	CELL_PARAM	Get_CellParam();
+
+public:
+	virtual void Reset_NaviMesh();
 	
 
 public:

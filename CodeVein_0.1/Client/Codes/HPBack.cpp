@@ -64,19 +64,14 @@ HRESULT CHPBack::Render_GameObject()
 		nullptr == m_pBufferCom)
 		return E_FAIL;
 
-	CManagement* pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
+	
+	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
 
-	Safe_AddRef(pManagement);
+	m_matOldView = g_pManagement->Get_Transform(D3DTS_VIEW);
+	m_matOldProj = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 
-	pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
-
-	m_matOldView = pManagement->Get_Transform(D3DTS_VIEW);
-	m_matOldProj = pManagement->Get_Transform(D3DTS_PROJECTION);
-
-	pManagement->Set_Transform(D3DTS_VIEW, m_matView);
-	pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
+	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
+	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
 
 	if (FAILED(SetUp_ConstantTable()))
@@ -93,10 +88,10 @@ HRESULT CHPBack::Render_GameObject()
 	m_pShaderCom->End_Shader();
 
 
-	pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
-	pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
+	g_pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
+	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
 
-	Safe_Release(pManagement);
+	
 
 	return NOERROR;
 }

@@ -167,4 +167,6 @@ public:
 	CButton m_bCheckUseMask;
 	afx_msg void OnBnClickedButton_ResMask();
 	CString m_EditMaskIndex;
+	CButton m_CheckGravity;
+	CButton m_CheckRandSize;
 };
