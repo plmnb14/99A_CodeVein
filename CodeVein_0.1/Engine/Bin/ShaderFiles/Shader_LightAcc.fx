@@ -54,7 +54,7 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	vector		vNormalInfo = tex2D(NormalSampler, In.vTexUV);
 	vector		vDepthInfo = tex2D(DepthSampler, In.vTexUV);
 
-	float		fViewZ = vDepthInfo.g * 300.f;
+	float		fViewZ = vDepthInfo.g * 500.f;
 
 	// 0 ~ 1
 	// -1 ~ 1
@@ -85,12 +85,16 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	// RimLight ====================================================================
 	float fRimWidth = 1.5f;
-	vector vCamPos = g_vCamPosition - vWorldPos;
-	float fRim = smoothstep(max(1.f - fRimWidth + vDepthInfo.x, 0.5f), max(1.f + vDepthInfo.x - fRimWidth, 0.7f), vDepthInfo.x - saturate(abs(dot(vNormal, vCamPos))));
-	float4 rc = g_vLightDiffuse;
-	Out.vRim = pow(fRim, 2.f) * rc;
-	// RimLight End ====================================================================
 
+	vector vCamPos = normalize(g_vCamPosition - vWorldPos);
+	float fRim = smoothstep((1.f - fRimWidth), (1.f), (vDepthInfo.x) - saturate(abs(dot(vNormal, vCamPos))));
+	//float fRim = smoothstep(max(1.f - fRimWidth + vDepthInfo.x, 0.5f), max(1.f - fRimWidth + vDepthInfo.x, 0.9f), (vDepthInfo.x) - saturate(abs(dot(vNormal, vCamPos))));
+	//float fRim = smoothstep((1.f - fRimWidth), (1.f), (vDepthInfo.x) - max(0, (dot(vNormal, vCamPos))));
+	float4 rc = g_vLightDiffuse;
+	//Out.vRim = pow(fRim, 2.f) * rc;
+	Out.vShade += pow(fRim, 2.f) * rc;
+	// RimLight End ====================================================================
+	
 	Out.vSpecular = g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 30.f) * (g_vLightSpecular * g_vMtrlSpecular);
 	Out.vSpecular.a = 0.f;
 
@@ -104,7 +108,7 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
 	vector		vNormalInfo = tex2D(NormalSampler, In.vTexUV);
 	vector		vDepthInfo = tex2D(DepthSampler, In.vTexUV);
 
-	float		fViewZ = vDepthInfo.g * 300.f;
+	float		fViewZ = vDepthInfo.g * 500.f;
 
 
 	vector		vWorldPos;

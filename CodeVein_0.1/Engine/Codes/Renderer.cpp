@@ -184,7 +184,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Specular", fTargetSize, fTargetSize, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
-	// For.Target_Specular`s Debug Buffer
+	// For.Target_Rim`s Debug Buffer
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Rim", fTargetSize, fTargetSize * 2, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
@@ -425,15 +425,8 @@ HRESULT CRenderer::Render_Alpha()
 	return NOERROR;
 }
 
-_bool Compare_Z(CGameObject* pDest, CGameObject* pSour)
-{
-	return pDest->Get_ViewZ() > pSour->Get_ViewZ();
-}
-
 HRESULT CRenderer::Render_UI()
 {
-	m_RenderList[RENDER_UI].sort(Compare_Z);
-
 	for (auto& pGameObject : m_RenderList[RENDER_UI])
 	{
 		if (nullptr != pGameObject)
@@ -702,6 +695,24 @@ HRESULT CRenderer::Render_ToneMapping()
 	if (FAILED(m_pShader_Blend->Set_Texture("g_BloomTexture", m_pTarget_Manager->Get_Texture(L"Target_Blur"))))
 		return E_FAIL;
 
+	static _int iIdx = 5;
+	if (GetAsyncKeyState(VK_F1) & 0x8000)
+		iIdx = 0;
+	if (GetAsyncKeyState(VK_F2) & 0x8000)
+		iIdx = 1;
+	if (GetAsyncKeyState(VK_F3) & 0x8000)
+		iIdx = 2;
+	if (GetAsyncKeyState(VK_F4) & 0x8000)
+		iIdx = 3;
+	if (GetAsyncKeyState(VK_F5) & 0x8000)
+		iIdx = 4;
+	if (GetAsyncKeyState(VK_F6) & 0x8000)
+		iIdx = 5;
+
+	// Tone index
+	if (FAILED(m_pShader_Blend->Set_Value("g_iToneIndex", &iIdx, sizeof(_int))))
+		return E_FAIL;
+
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_HDR")))
 		return E_FAIL;
 
@@ -716,7 +727,7 @@ HRESULT CRenderer::Render_ToneMapping()
 
 	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_HDR")))
 		return E_FAIL;
-
+	
 	return S_OK;
 }
 
@@ -742,7 +753,6 @@ HRESULT CRenderer::Render_After()
 
 	return S_OK;
 }
-
 
 CRenderer * CRenderer::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 {

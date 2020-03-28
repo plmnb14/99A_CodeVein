@@ -5,21 +5,15 @@ CBehaviorTree::CBehaviorTree()
 {
 }
 
-HRESULT CBehaviorTree::Set_Child(CBT_Composite_Node * pComposite_Node)
+HRESULT CBehaviorTree::Set_Child(CBT_Node* pNode)
 {
-	m_pRoot->Set_Child(pComposite_Node);
+	m_pRoot->Set_Child(pNode);
 
 	return S_OK;
 }
 
-HRESULT CBehaviorTree::Set_Child(CBT_Task_Node * pTask_Node)
-{
-	m_pRoot->Set_Child(pTask_Node);
 
-	return S_OK;
-}
-
-void CBehaviorTree::Update_BeHaviorTree(_double TimeDelta, const CBlackBoard* pBlackBoard)
+void CBehaviorTree::Update_BeHaviorTree(_double TimeDelta, CBlackBoard* pBlackBoard)
 {
 	if (m_pNodeStack.empty())
 	{
@@ -44,16 +38,6 @@ void CBehaviorTree::Update_BeHaviorTree(_double TimeDelta, const CBlackBoard* pB
 					++iter;
 			}
 		}
-
-
-		//// 메인 스레드
-		//while (!m_pNodeStack.empty() && CBT_Node::BT_NODE_STATE::INPROGRESS != m_pNodeStack.back()->Update_Node(TimeDelta, &m_pNodeStack, &m_plistNodeStack, m_bDebuging));
-		//
-		//// 서브 스레드
-		//for (auto SubNodeStack : m_plistNodeStack)
-		//{
-		//	while (CBT_Node::BT_NODE_STATE::INPROGRESS != SubNodeStack->back()->Update_Node(TimeDelta, SubNodeStack, &m_plistNodeStack, m_bDebuging));
-		//}
 	}
 }
 

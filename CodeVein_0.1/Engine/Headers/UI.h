@@ -13,10 +13,10 @@ public:
 	{
 		_float					fPosX, fPosY;
 		_float					fSizeX, fSizeY;
-		_uint					iIndex = 0;
 	}UI_DESC;
 
 protected:
+	explicit CUI();
 	explicit CUI(LPDIRECT3DDEVICE9 pGraphic_Device);
 	explicit CUI(const CUI& rhs);
 	virtual ~CUI() = default;
@@ -24,7 +24,7 @@ protected:
 public:
 	_v2 Get_UI_Pos() { return _v2(m_fPosX, m_fPosY); }
 	_v2 Get_UI_Size() { return _v2(m_fSizeX, m_fSizeY); }
-	_uint Get_UI_Index() { return m_iIndex; }
+	
 
 public:
 	void Set_UI_Pos(_float fPosX, _float fPosY);
@@ -43,9 +43,8 @@ protected:
 	_mat					m_matView;
 	_mat					m_matOldView, m_matOldProj;
 
-	_float					m_fPosX = 0.f, m_fPosY = 0.f;
-	_float					m_fSizeX = 0.f, m_fSizeY = 0.f;
-	_uint					m_iIndex = 0;
+	_float					m_fPosX, m_fPosY;
+	_float					m_fSizeX, m_fSizeY;
 	
 	UI_DESC*				m_pUIDesc = nullptr;
 

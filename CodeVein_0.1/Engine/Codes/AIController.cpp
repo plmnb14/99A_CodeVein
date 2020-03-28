@@ -43,6 +43,58 @@ HRESULT CAIController::Set_BlackBoard(CBlackBoard * pBlackBoard)
 	return S_OK;
 }
 
+CBlackBoard::OUTPUT CAIController::Set_Value_Of_BloackBoard(const _tchar * pName, _bool bValue)
+{
+	if (nullptr == m_pBlackBoard)
+		return CBlackBoard::NONE;
+
+	return m_pBlackBoard->Set_Value(pName, bValue);
+}
+
+CBlackBoard::OUTPUT CAIController::Set_Value_Of_BloackBoard(const _tchar * pName, _float fValue)
+{
+	if (nullptr == m_pBlackBoard)
+		return CBlackBoard::NONE;
+
+	return m_pBlackBoard->Set_Value(pName, fValue);
+}
+
+CBlackBoard::OUTPUT CAIController::Set_Value_Of_BloackBoard(const _tchar * pName, _int iValue)
+{
+	if (nullptr == m_pBlackBoard)
+		return CBlackBoard::NONE;
+
+	return m_pBlackBoard->Set_Value(pName, iValue);
+}
+
+CBlackBoard::OUTPUT CAIController::Set_Value_Of_BloackBoard(const _tchar* pName, _v3 vValue)
+{
+	if (nullptr == m_pBlackBoard)
+		return CBlackBoard::NONE;
+
+	return m_pBlackBoard->Set_Value(pName, vValue);
+}
+
+const _bool CAIController::Get_BoolValue(const _tchar * pName) const
+{
+	return m_pBlackBoard->Get_BoolValue(pName);
+}
+
+const _float CAIController::Get_FloatValue(const _tchar * pName) const
+{
+	return m_pBlackBoard->Get_FloatValue(pName);
+}
+
+const _int CAIController::Get_IntValue(const _tchar * pName) const
+{
+	return m_pBlackBoard->Get_IntValue(pName);
+}
+
+const _v3 CAIController::Get_V3Value(const _tchar * pName) const
+{
+	return m_pBlackBoard->Get_V3Value(pName);
+}
+
 HRESULT CAIController::Ready_Component_Prototype()
 {
 	return S_OK;;

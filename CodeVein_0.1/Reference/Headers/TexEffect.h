@@ -1,6 +1,7 @@
 #pragma once
 
 #include "RenderObject.h"
+#include "ActeiveObject.h"
 #include "Management.h"
 #include "Effect.h"
 
@@ -8,13 +9,6 @@ BEGIN(Engine)
 
 class ENGINE_DLL CTexEffect : public CEffect
 {
-public:
-
-	typedef struct tagEffDesc
-	{
-		CTransform* pTargetTrans;
-		_v3			vWorldPos;
-	}EFFECT_DESC;
 
 protected:
 	explicit CTexEffect(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -28,6 +22,11 @@ public:
 	virtual _int Update_GameObject(_double TimeDelta);
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
+	HRESULT Render_GameObject_HWInstance();
+
+protected:
+	virtual void Setup_Info();
+
 protected:
 	CTransform*				m_pTransformCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
@@ -38,7 +37,8 @@ protected:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 protected:
-	EFFECT_DESC*			m_pDesc = nullptr;
+	CManagement*			m_pManagement = nullptr;
+
 	_int					m_iPass = 0;
 
 protected:

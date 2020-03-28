@@ -37,6 +37,9 @@
     <Filter Include="04.Dialog\00.ParticleTab\00.ListPopup">
       <UniqueIdentifier>{a6851157-a468-42df-a6d8-b6cc59f1a264}</UniqueIdentifier>
     </Filter>
+    <Filter Include="97.FileInfo">
+      <UniqueIdentifier>{995dc215-20fe-48e9-a192-3be7c13335d4}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="EffectTool.h">
@@ -75,6 +78,9 @@
     <ClInclude Include="ResListPopup.h">
       <Filter>04.Dialog\00.ParticleTab\00.ListPopup</Filter>
     </ClInclude>
+    <ClInclude Include="FileInfo.h">
+      <Filter>97.FileInfo</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="EffectTool.cpp">
@@ -106,6 +112,9 @@
     </ClCompile>
     <ClCompile Include="ResListPopup.cpp">
       <Filter>04.Dialog\00.ParticleTab\00.ListPopup</Filter>
+    </ClCompile>
+    <ClCompile Include="FileInfo.cpp">
+      <Filter>97.FileInfo</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

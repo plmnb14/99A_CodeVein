@@ -24,15 +24,15 @@ protected:
 
 public:
 	// timedelta, &본인 멤버변수 스택, debug,  쓰레드여부 필요없음
-	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging) = 0;
+	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, CBlackBoard* pBlackBoard, _bool bDebugging) = 0;
 
 public:
 	/*
 	Task 노드가 시작될때 Start_Node를 호출
 	끝날때 End_Node를 호출
 	*/
-	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging) = 0;
-	virtual BT_NODE_STATE End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging) = 0;
+	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging) = 0;
+	virtual BT_NODE_STATE End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging) = 0;
 
 	// 엔진에서만 사용
 public:

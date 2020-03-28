@@ -18,11 +18,19 @@ CCollider::~CCollider()
 {
 }
 
-void CCollider::Update(_v3 _vPos)
+void CCollider::Update(_v3 vPos)
 {
-	Set_CenterPos(_vPos);
+	Set_CenterPos(vPos);
 	Set_UnderPos();
 	SetUp_Box();
+}
+
+void CCollider::Update(_mat matWorld)
+{
+	Set_CenterPos(matWorld);
+	Set_UnderPos();
+	SetUp_Box();
+	Update_Capsule(matWorld);
 }
 
 HRESULT CCollider::Ready_Component()
@@ -63,6 +71,14 @@ void CCollider::Set_Length(_v3 _Length)
 void CCollider::Set_CenterPos(_v3 _CenterPos)
 {
 	m_tColInfo.vCenterPos = _CenterPos;
+}
+
+void CCollider::Set_CenterPos(_mat matWorld)
+{
+	_v3 vPos;
+	memcpy(&vPos, &matWorld._41, sizeof(_v3));
+
+	m_tColInfo.vCenterPos = vPos + _v3(0.f, m_tColInfo.vRadius.y, 0.f);
 }
 
 void CCollider::Set_UnderPos()
@@ -160,6 +176,16 @@ void CCollider::Set_GizmoPos()
 	}
 }
 
+void CCollider::Set_CapsuleLength(_float _fBeginEndLength)
+{
+	m_tColInfo.fBeginEndLength = _fBeginEndLength;
+
+	m_tColInfo.vBegin	= m_tColInfo.vCenterPos + _v3(0.f, (_fBeginEndLength * 0.5f), 0.f);
+	m_tColInfo.vEnd		= m_tColInfo.vCenterPos - _v3(0.f, (_fBeginEndLength * 0.5f), 0.f);
+
+	m_tColInfo.vRadius.y = _fBeginEndLength * 0.5f;
+}
+
 void CCollider::Set_Dynamic(_bool _Dynamic)
 {
 	m_tColInfo.bIsDynamic = _Dynamic;
@@ -215,6 +241,26 @@ _bool CCollider::Check_RayCollision(CCollider * _rDstCol, RAY _rSrcRay, _float*_
 	return true;
 }
 
+void CCollider::Update_Capsule(_mat _matWorld)
+{
+	m_tColInfo.vBegin = m_tColInfo.vCenterPos + _v3(0.f, m_tColInfo.vRadius.y, 0.f);
+	m_tColInfo.vEnd = m_tColInfo.vCenterPos - _v3(0.f, m_tColInfo.vRadius.y, 0.f);
+}
+
+_bool CCollider::Check_Sphere(COL_INFO _rDstColInfo, RAY _rSrcRay, _v3 _vCapsuleVertexPos)
+{
+	_v3				 vRayPos = _rSrcRay.vRayPos;
+
+	_v3 vDistance = _vCapsuleVertexPos - vRayPos;
+
+	if (vDistance.x < _rDstColInfo.vRadius.x && vDistance.z < _rDstColInfo.vRadius.y && vDistance.z < _rDstColInfo.vRadius.z)
+	{
+		return true;
+	}
+
+	return false;
+}
+
 _bool CCollider::Check_AABB(CCollider * _rDstCol, RAY _rSrcRay)
 {
 	COL_INFO* rDstCol = _rDstCol->Get_ColInfo();
@@ -245,6 +291,58 @@ _bool CCollider::Check_Sphere(CCollider * _rDstCol, RAY _rSrcRay)
 	return false;
 }
 
+_bool CCollider::Check_Capsule(CCollider * _rDstCol, RAY _rSrcRay)
+{
+	// Sphere 체크 우선
+
+	// 가까운 점 찾아내기
+	_v3 vThisClose, vOtherClose;
+
+	_v3 u = _rSrcRay.vRayDir;
+	_v3 v = m_tColInfo.vEnd - m_tColInfo.vBegin;
+	_v3 w = _rSrcRay.vRayPos - m_tColInfo.vBegin;
+
+	_v3 vRayEnd = _rSrcRay.vRayPos + u;
+
+	// a = dot  u u
+	float a = D3DXVec3Dot(&u, &u);
+	// b = dot u v
+	float b = D3DXVec3Dot(&u, &v);
+	// c = dot v v
+	float c = D3DXVec3Dot(&v, &v);
+	// d = dot u w
+	float d = D3DXVec3Dot(&u, &w);
+	// e = dot v w
+	float e = D3DXVec3Dot(&v, &w);
+
+	// ac - bb = 0  평행
+	float denominator = (a * c - (b * b));
+
+	if (fabsf(denominator) < 0.0001f)		// 평행함
+	{
+		float x = D3DXVec3Dot(&_rSrcRay.vRayDir, &m_tColInfo.vAxis);
+
+		if (x < 0)	// 둔각
+			vThisClose = m_tColInfo.vBegin;
+		else
+			vThisClose = m_tColInfo.vEnd;
+	}
+	else
+	{
+		// t = (ae - bd) / d
+		float t = (a * e - b * d) / denominator;
+
+		if (t <= 0)
+			vThisClose = m_tColInfo.vBegin;
+		else if (t >= 1)
+			vThisClose = m_tColInfo.vEnd;
+		else
+			vThisClose = m_tColInfo.vBegin + v * t;
+	}
+	\
+	return Check_Sphere(m_tColInfo, _rSrcRay, vThisClose);
+}
+
 _bool CCollider::Check_OBB(CCollider * _rSrc)
 {
 	COL_INFO* rDstCol = &m_tColInfo;
@@ -261,9 +359,6 @@ _bool CCollider::Check_OBB(CCollider * _rSrc)
 	_bool  bPair = FALSE;
 
 	// Dst 의 x 축 기준
-
-
-
 
 	// 계산법 참조 /////////////////////////////////////////////////////////////////////////////
 	LOOP(3)
@@ -526,6 +621,111 @@ _bool CCollider::Check_Sphere(CCollider * _rSrc)
 	_float fRadiusSum = _rSrc->Get_Radius().x + m_tColInfo.vRadius.x;
 
 	return (fLength > fRadiusSum ? false : true);
+}
+
+_bool CCollider::Check_Capsule(CCollider * _rSrc)
+{
+	// 로컬 포지션으로 계산하지말고 월드로 올려서 계산하자.
+	COL_INFO* rSrtCol = _rSrc->Get_ColInfo();
+
+	// 가까운 점 찾아내기
+	_v3 vThisClose, vOtherClose;
+
+	_v3 u = m_tColInfo.vEnd - m_tColInfo.vBegin;
+	_v3 v = rSrtCol->vEnd - rSrtCol->vBegin;
+	_v3 w = rSrtCol->vEnd - m_tColInfo.vBegin;
+
+	// a = dot  u u
+	float a = D3DXVec3Dot(&u, &u);
+	// b = dot u v
+	float b = D3DXVec3Dot(&u, &v);
+	// c = dot v v
+	float c = D3DXVec3Dot(&v, &v);
+	// d = dot u w
+	float d = D3DXVec3Dot(&u, &w);
+	// e = dot v w
+	float e = D3DXVec3Dot(&v, &w);
+
+	// ac - bb = 0  평행
+	float denominator = (a * c - (b * b));
+
+	if (denominator < 0.0001f)		// 평행함
+	{
+		float x = D3DXVec3Dot(&(rSrtCol->vEnd - m_tColInfo.vBegin), &m_tColInfo.vAxis);
+
+		if (x < 0)	// 둔각
+		{
+			vOtherClose = rSrtCol->vEnd;
+			vThisClose = m_tColInfo.vBegin;
+		}
+		else
+		{
+			float y = D3DXVec3Dot(&(rSrtCol->vEnd - rSrtCol->vBegin), &rSrtCol->vAxis);
+
+			if (y < 0)
+			{
+				vOtherClose = rSrtCol->vBegin;
+				vThisClose = m_tColInfo.vEnd;
+			}
+			else
+			{
+				if (x < y)		// 짧은 쪽의 중앙이 가까운 점
+				{
+					vThisClose = m_tColInfo.vBegin + x * 0.5f * m_tColInfo.vAxis;
+					vOtherClose = rSrtCol->vBegin + D3DXVec3Dot(&(vThisClose - rSrtCol->vBegin), &rSrtCol->vAxis) * rSrtCol->vAxis;
+				}
+				else
+				{
+					vOtherClose = rSrtCol->vBegin + y * 0.5f * rSrtCol->vAxis;
+					vThisClose = m_tColInfo.vBegin + D3DXVec3Dot(&(vOtherClose - m_tColInfo.vBegin), &m_tColInfo.vAxis) * m_tColInfo.vAxis;
+				}
+			}
+		}
+	}
+
+	else
+	{
+		denominator = 1.f / denominator;
+		// s = (be - cd) / d
+		float s = (b * e - c * d) * denominator;
+
+		if (s <= 0)
+			vOtherClose = rSrtCol->vBegin;
+		else if (s >= 1)
+			vOtherClose = rSrtCol->vEnd;
+		else
+			vOtherClose = rSrtCol->vBegin + u * s;
+
+		// t = (ae - bd) / d
+		float t = (a * e - b * d) * denominator;
+
+		if (t <= 0)
+			vThisClose = m_tColInfo.vBegin;
+		else if (t >= 1)
+			vThisClose = m_tColInfo.vEnd;
+		else
+			vThisClose = m_tColInfo.vBegin + v * t;
+	}
+
+	_v3 vDiff(vOtherClose - vThisClose);
+	float fSumRadius = rSrtCol->vRadius.x + m_tColInfo.vRadius.x;
+
+	float fOverlap = fSumRadius - D3DXVec3Length(&vDiff);
+
+	if (fOverlap < 0)
+		return false;
+
+	V3_NORMAL_SELF(&vDiff);
+
+	if (m_tColInfo.bIsTrigger || rSrtCol->bIsTrigger)	// 둘 중 하나라도 트리거 이면
+	{
+		m_tColInfo.vCrossPoint = vThisClose + vDiff * (m_tColInfo.vRadius.x - fOverlap * 0.5f);	// 겹친부위의 중간
+		return true;		// 바로 리턴
+	}
+
+	// 충돌 거리 계산
+
+	return true;
 }
 
 _v3 CCollider::Calc_Length(COL_INFO * _rDst, COL_INFO * _rSrc, _bool _dynamic)

@@ -12,14 +12,8 @@ class CGameObject;
 class ENGINE_DLL CBlackBoard final : public CBase
 {
 public:
-	/*
-	enum은 정수와 비교가 가능하지만,
-	enum class는 해당하는 enum이랑만 비교가 가능하다.
-	ex) if( 0 == MyEnum )  불가
-	    if( BOOL == MyEnum) 가능
-	*/
-	enum class BLACKBOARD_VALUE_STATE { BOOL, FLOAT, INT, VEC3};
-	enum class BLACKBOARD_OUTPUT_STATE { NONE, UPDATE};
+	enum VALUE { BOOL, FLOAT, INT, VEC3};
+	enum OUTPUT { NONE, UPDATE};
 
 private:
 	explicit CBlackBoard();
@@ -34,7 +28,10 @@ public:
 
 	만약 해당 변수의 이름이 이미 존재한다면, 그 값에 덮어쓴다.
 	*/
-	BLACKBOARD_OUTPUT_STATE Set_Value(const _tchar* pName, const void* pData, BLACKBOARD_VALUE_STATE eValue_Type);
+	OUTPUT Set_Value(const _tchar* pName, _bool bValue);
+	OUTPUT Set_Value(const _tchar* pName, _float fValue);
+	OUTPUT Set_Value(const _tchar* pName, _int iValue);
+	OUTPUT Set_Value(const _tchar* pName, _v3 _vValue);
 
 public:
 	const _bool Get_BoolValue(const _tchar* pName) const;

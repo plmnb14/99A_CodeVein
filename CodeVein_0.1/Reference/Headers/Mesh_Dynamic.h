@@ -35,7 +35,7 @@ public:
 	void Reset_OldIndx(_short _sAniCtrlNum = 0);
 
 public:
-	LPD3DXFRAME		Get_BonInfo(LPCSTR _bBoneName);
+	LPD3DXFRAME		Get_BonInfo(LPCSTR _bBoneName, _short _sCTRL_Type = 0);
 	D3DXTRACK_DESC	Get_TrackInfo();
 	D3DXTRACK_DESC	Get_TrackInfo_Upper();
 

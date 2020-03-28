@@ -11,6 +11,7 @@ Composite 이나 Task만 child에 할당 가능합니다.
 
 BEGIN(Engine)
 
+class CBT_Decorator_Node;
 class CBT_Composite_Node;
 class CBT_Task_Node;
 class ENGINE_DLL CBT_Root final : public CBT_Node
@@ -20,15 +21,14 @@ protected:
 	virtual ~CBT_Root() = default;
 
 public:
-	HRESULT Set_Child(CBT_Composite_Node* pComposite_Node);
-	HRESULT Set_Child(CBT_Task_Node* pTask_Node);
+	HRESULT Set_Child(CBT_Node* pNode);
 
 public:
-	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard,  _bool bDebugging) override;
+	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, CBlackBoard* pBlackBoard,  _bool bDebugging) override;
 
 protected:
-	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging);
-	virtual BT_NODE_STATE End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging);
+	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging);
+	virtual BT_NODE_STATE End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging);
 
 private:
 	CBT_Node*		m_pChildNode = nullptr;

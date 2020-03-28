@@ -17,7 +17,7 @@ BEGIN(Engine)
 class ENGINE_DLL CBT_Simple_Parallel final : public CBT_Composite_Node
 {
 public:
-	enum class Mode { Immediate, Delayed };
+	enum Mode { Immediate, Delayed };
 
 	typedef struct tagInitInfo
 	{
@@ -25,8 +25,8 @@ public:
 			: eNode_Mode(eMode) 
 		{ strcpy_s<256>(Target_NodeName, pNodeName); }
 
-		char	Target_NodeName[256];
-		Mode eNode_Mode;
+		char	Target_NodeName[256] = { 0, };
+		Mode eNode_Mode = Immediate;
 	}INFO;
 
 
@@ -40,11 +40,11 @@ public:
 	HRESULT Set_Sub_Child(CBT_Node* pNode);
 
 public:
-	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging);
+	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, CBlackBoard* pBlackBoard, _bool bDebugging);
 
 public:
-	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging);
-	virtual BT_NODE_STATE End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging);
+	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging);
+	virtual BT_NODE_STATE End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging);
 
 private:
 	HRESULT Ready_Clone_Node(void* pInit_Struct);
@@ -54,7 +54,8 @@ private:
 private:
 	Mode				m_eMode = Mode::Immediate;
 
-	vector<CBT_Node*>	m_pSubNodeStatck;
+	// 병렬노드 스택
+	vector<CBT_Node*>	m_pSubNodeStack;
 
 	_bool				m_bMain_InProgress = false;
 	_bool				m_bSub_InProgress = false;
