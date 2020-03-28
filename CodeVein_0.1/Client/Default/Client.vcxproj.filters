@@ -31,9 +31,6 @@
     <Filter Include="01.Scene\00.Logo">
       <UniqueIdentifier>{bde31f09-2062-43ab-a923-ea90bbb8283a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Scene\01.Stage">
-      <UniqueIdentifier>{db7e1bcb-3d76-4a33-8aba-ff2365f2932b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage">
       <UniqueIdentifier>{4906a369-b8c8-473f-8723-4cbb692fe9a4}</UniqueIdentifier>
     </Filter>
@@ -181,9 +178,6 @@
     <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inven_UI\00.Inventory">
       <UniqueIdentifier>{13323d62-5e24-43fa-8f22-816e07e19759}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Scene\98.StageLoader">
-      <UniqueIdentifier>{d72f0ec9-9a87-49b1-948e-7dbcf2483c02}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\4%29 UI\Manager\Item_Manager">
       <UniqueIdentifier>{ade95dcd-cb82-48af-b4cd-b701c0241f53}</UniqueIdentifier>
     </Filter>
@@ -214,6 +208,27 @@
     <Filter Include="02.GameObject\Stage\1%29 Monster\Wolf">
       <UniqueIdentifier>{fc9f0418-2c4d-45ed-ade0-7b692d0fc94d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Scene\01.Title">
+      <UniqueIdentifier>{df53b7a2-f104-447b-b23b-ec4bca726083}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Scene\03.Stage_Base">
+      <UniqueIdentifier>{db7e1bcb-3d76-4a33-8aba-ff2365f2932b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Scene\05.Stage_02">
+      <UniqueIdentifier>{d4029c2f-1095-48e5-aafc-45d0676e9898}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Scene\04.Stage_01">
+      <UniqueIdentifier>{49262417-136a-48a1-ba6f-33fca9b78573}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Scene\98.StageLoader">
+      <UniqueIdentifier>{d72f0ec9-9a87-49b1-948e-7dbcf2483c02}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Scene\02.Stage_Training">
+      <UniqueIdentifier>{f26c5412-c7bf-4b03-861d-fe91398c2b2c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Scene\06.Stage_03">
+      <UniqueIdentifier>{a123d5e7-5db6-4680-b094-97f030e6f2b7}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -239,9 +254,6 @@
     </ClInclude>
     <ClInclude Include="..\Headers\BackGround.h">
       <Filter>02.GameObject\Logo\BackGround</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Scene_Stage.h">
-      <Filter>01.Scene\01.Stage</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Loading.h">
       <Filter>01.Scene\99.Loading</Filter>
@@ -348,6 +360,24 @@
     <ClInclude Include="..\Headers\Genji.h">
       <Filter>02.GameObject\Stage\1%29 Monster\Genji</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Scene_Title.h">
+      <Filter>01.Scene\01.Title</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Scene_Stage_Base.h">
+      <Filter>01.Scene\03.Stage_Base</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Scene_Stage_02.h">
+      <Filter>01.Scene\05.Stage_02</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Scene_Stage_01.h">
+      <Filter>01.Scene\04.Stage_01</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Scene_Stage_Training.h">
+      <Filter>01.Scene\02.Stage_Training</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Scene_Stage_03.h">
+      <Filter>01.Scene\06.Stage_03</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -364,9 +394,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\BackGround.cpp">
       <Filter>02.GameObject\Logo\BackGround</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Scene_Stage.cpp">
-      <Filter>01.Scene\01.Stage</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Loading.cpp">
       <Filter>01.Scene\99.Loading</Filter>
@@ -472,6 +499,24 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Genji.cpp">
       <Filter>02.GameObject\Stage\1%29 Monster\Genji</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Scene_Title.cpp">
+      <Filter>01.Scene\01.Title</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Scene_Stage_Base.cpp">
+      <Filter>01.Scene\03.Stage_Base</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Scene_Stage_02.cpp">
+      <Filter>01.Scene\05.Stage_02</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Scene_Stage_01.cpp">
+      <Filter>01.Scene\04.Stage_01</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Scene_Stage_Training.cpp">
+      <Filter>01.Scene\02.Stage_Training</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Scene_Stage_03.cpp">
+      <Filter>01.Scene\06.Stage_03</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -187,6 +187,11 @@
     <ClInclude Include="..\Headers\Menu_Status.h" />
     <ClInclude Include="..\Headers\Genji.h" />
     <ClInclude Include="..\Headers\PoisonButterfly.h" />
+    <ClInclude Include="..\Headers\Scene_Stage_01.h" />
+    <ClInclude Include="..\Headers\Scene_Stage_02.h" />
+    <ClInclude Include="..\Headers\Scene_Stage_03.h" />
+    <ClInclude Include="..\Headers\Scene_Stage_Training.h" />
+    <ClInclude Include="..\Headers\Scene_Title.h" />
     <ClInclude Include="..\Headers\SlotCnt_UI.h" />
     <ClInclude Include="..\Headers\SubQuickSlot.h" />
     <ClInclude Include="..\Headers\UI_Manager.h" />
@@ -203,7 +208,7 @@
     <ClInclude Include="..\Headers\PlayerST.h" />
     <ClInclude Include="..\Headers\RightArrow.h" />
     <ClInclude Include="..\Headers\Scene_Logo.h" />
-    <ClInclude Include="..\Headers\Scene_Stage.h" />
+    <ClInclude Include="..\Headers\Scene_Stage_Base.h" />
     <ClInclude Include="..\Headers\Sky.h" />
     <ClInclude Include="..\Headers\TestMonster.h" />
     <ClInclude Include="..\Headers\BlackUrchin.h" />
@@ -234,8 +239,13 @@
     <ClCompile Include="..\Codes\Menu_Status.cpp" />
     <ClCompile Include="..\Codes\Genji.cpp" />
     <ClCompile Include="..\Codes\PoisonButterfly.cpp" />
+    <ClCompile Include="..\Codes\Scene_Stage_01.cpp" />
+    <ClCompile Include="..\Codes\Scene_Stage_02.cpp" />
+    <ClCompile Include="..\Codes\Scene_Stage_03.cpp" />
+    <ClCompile Include="..\Codes\Scene_Stage_Training.cpp" />
     <ClCompile Include="..\Codes\SlotCnt_UI.cpp" />
     <ClCompile Include="..\Codes\SubQuickSlot.cpp" />
+    <ClCompile Include="..\Codes\Scene_Title.cpp" />
     <ClCompile Include="..\Codes\UI_Manager.cpp" />
     <ClCompile Include="..\Codes\LeftArrow.cpp" />
     <ClCompile Include="..\Codes\MenuBaseUI.cpp" />
@@ -250,7 +260,7 @@
     <ClCompile Include="..\Codes\PlayerST.cpp" />
     <ClCompile Include="..\Codes\RightArrow.cpp" />
     <ClCompile Include="..\Codes\Scene_Logo.cpp" />
-    <ClCompile Include="..\Codes\Scene_Stage.cpp" />
+    <ClCompile Include="..\Codes\Scene_Stage_Base.cpp" />
     <ClCompile Include="..\Codes\Sky.cpp" />
     <ClCompile Include="..\Codes\TestMonster.cpp" />
     <ClCompile Include="..\Codes\BlackUrchin.cpp" />

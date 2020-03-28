@@ -6,6 +6,7 @@ CRenderer::CRenderer(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CComponent(pGraphic_Device)
 	, m_pTarget_Manager(CTarget_Manager::Get_Instance())
 	, m_pLight_Manager(CLight_Manager::Get_Instance())
+	, m_bOnRenderTarget(false)
 {
 	Safe_AddRef(m_pLight_Manager);
 	Safe_AddRef(m_pTarget_Manager);

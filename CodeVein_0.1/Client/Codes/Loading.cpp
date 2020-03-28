@@ -70,13 +70,6 @@ _uint CLoading::Loading_ForStage(void)
 	// 이펙트 원형 생성
 	Ready_Effect();
 
-	// Sky
-	//if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Sky", CSky::Create(m_pGraphicDev))))
-	//	return E_FAIL;
-
-	// UI 원형 생성
-	CUI_Manager::Get_Instance()->Add_UI_Prototype(m_pGraphicDev);
-
 	
 	// 오브젝트 원형 생성
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -84,6 +77,11 @@ _uint CLoading::Loading_ForStage(void)
 	// 플레이어
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Player", CPlayer::Create(m_pGraphicDev))))
 		return E_FAIL;
+
+	g_pManagement->LoadTex_FromPath(m_pGraphicDev, L"../../Data/Tex_Path.dat");
+
+
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_Path.dat");
 
 	//몬스터
 
@@ -129,9 +127,17 @@ unsigned int CALLBACK CLoading::Thread_Main(void* pArg)
 
 	switch (pLoading->Get_LoadingID())
 	{
-	case SCENE_STAGE:
-		iFlag = pLoading->Loading_ForStage();
+	case SCENE_TITLE:
+	{
+		iFlag = pLoading->Loading_Title();
 		break;
+	}
+
+	case SCENE_STAGE:
+	{
+		iFlag = pLoading->Loading_Stage();
+		break;
+	}
 	}
 
 	LeaveCriticalSection(pLoading->Get_Crt());
@@ -256,9 +262,123 @@ Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
 	return pInfo;
 }
 
-HRESULT CLoading::Stage_Object_Ready()
+_uint CLoading::Loading_Title()
 {
-	return E_NOTIMPL;
+	cout << "Title_Loading . . ." << endl;
+	cout << "===============================================================================" << endl;
+
+	// 필수 메쉬 불러오는중
+	//============================================================================================================
+	cout << "필수 메쉬 불러오는중" << endl;
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_Essential_Path.dat");
+
+	// 텍스쳐 불러오는 중
+	//============================================================================================================
+	cout << "텍스쳐 불러오는중" << endl;
+	g_pManagement->LoadTex_FromPath(m_pGraphicDev, L"../../Data/Tex_Path.dat");
+
+	//============================================================================================================
+	
+	// 이펙트 원형 생성
+	//============================================================================================================
+	cout << "이펙트 원형 생성중" << endl;
+	Ready_Effect();
+
+	// UI 원형 생성
+	//============================================================================================================
+	cout << " UI 원형 생성중" << endl;
+	CUI_Manager::Get_Instance()->Add_UI_Prototype(m_pGraphicDev);
+
+	//============================================================================================================
+
+	m_bFinish = true;
+
+	system("cls");
+	cout << "===============================================================================" << endl;
+	cout << "타이틀 로딩 완료" << endl;
+	cout << "===============================================================================" << endl;
+	cout << " 1. 위 숫자 키를 누르면 옵션이 활성화 됩니다." << endl;
+	cout << " 2. (Load_StaticMesh) 가 (false) 이면 스테이지 들어가도 생성 안됩니다." << endl;
+	cout << " 3. Space 를 누르면 다음 스테이지로 넘어갑니다." << endl;
+	cout << " 4. 현재 Stage_(n) 은 실행되지 않고 자동으로 Training Stage 로 넘어갑니다." << endl;
+	cout << "-------------------------------------------------------------------------------" << endl;
+	cout << "[1] Stage_Base = true " << endl;
+	cout << "[2] Stage_Training = false " << endl;
+	cout << "[3] Stage_01 = false " << endl;
+	cout << "[4] Stage_02 = false " << endl;
+	cout << "[5] Stage_03 = false " << endl;
+	cout << "-------------------------------------------------------------------------------" << endl;
+	cout << "[6] Load_StaticMesh = false " << endl;
+	cout << "-------------------------------------------------------------------------------" << endl;
+
+
+	return NO_EVENT;
+}
+
+_uint CLoading::Loading_Stage()
+{
+	// 스태틱 메쉬 불러오는 중
+	//============================================================================================================
+	if(m_bLoadStaticMesh)
+		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_Static_Path.dat");
+
+
+	// 다이나믹 메쉬 불러오는 중
+	//============================================================================================================
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_Dynamic_Path.dat");
+
+
+	// 무기 불러오는 중
+	//============================================================================================================
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_Weapon_Path.dat");
+
+	// BT_Node 생성 중
+	//============================================================================================================
+	if (FAILED(g_pManagement->Ready_BT_Node()))
+		return E_FAIL;
+
+
+	// 오브젝트 원형 생성
+	//============================================================================================================
+
+	// 플레이어
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Player", CPlayer::Create(m_pGraphicDev))))
+		return E_FAIL;
+
+	// 몬스터
+	//============================================================================================================
+
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_TestMonster", CTestMonster::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 독나방
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonButterfly", CPoisonButterfly::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 검은 성게
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 검은 늑대
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackWolf", CBlackWolf::Create(m_pGraphicDev))))
+		return E_FAIL;
+
+	// 기타
+	//============================================================================================================
+
+	//무기
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon", CWeapon::Create(m_pGraphicDev))))
+		return E_FAIL;
+	//더미
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Dummy", CDummy_Target::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 트레일
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SwordTrail", Engine::CTrail_VFX::Create(m_pGraphicDev))))
+		return E_FAIL;
+
+	//============================================================================================================
+	m_bFinish = true;
+
+	cout << "로딩 완료" << endl;
+
+	return NO_EVENT;
 }
 
 CLoading* CLoading::Create(LPDIRECT3DDEVICE9 pGraphicDev, SCENEID eLoadingID)
