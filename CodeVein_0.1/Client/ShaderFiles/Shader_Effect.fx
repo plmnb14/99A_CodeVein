@@ -84,7 +84,7 @@ VS_OUT VS_MAIN(VS_IN In)
 						In.vInstanceLook,
 						float4(In.vInstancePos.xyz, 1.f));
 	
-	matWorld = mul(matWorld, g_matWorld);
+	//matWorld = mul(matWorld, g_matWorld);
 
 	matWVP = mul(matWorld, g_matView);
 	matWVP = mul(matWVP, g_matProj);
