@@ -9,6 +9,7 @@ CEffect::CEffect(LPDIRECT3DDEVICE9 pGraphic_Device)
 CEffect::CEffect(const CEffect & rhs)
 	: CGameObject(rhs)
 	, m_pInfo(rhs.m_pInfo)
+	, m_iPass(rhs.m_iPass)
 {
 	m_bClone = true;
 }

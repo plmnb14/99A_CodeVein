@@ -38,9 +38,6 @@ protected:
 
 protected:
 	CManagement*			m_pManagement = nullptr;
-
-	_int					m_iPass = 0;
-
 protected:
 	void Check_Frame(_double TimeDelta);
 	void Check_Move(_double TimeDelta);

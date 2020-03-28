@@ -8,7 +8,6 @@ CTexEffect::CTexEffect(LPDIRECT3DDEVICE9 pGraphic_Device)
 
 CTexEffect::CTexEffect(const CTexEffect& rhs)
 	: CEffect(rhs)
-	, m_iPass(rhs.m_iPass)
 {
 	CEffect::m_pInfo = rhs.m_pInfo;
 
@@ -106,7 +105,7 @@ _int CTexEffect::Late_Update_GameObject(_double TimeDelta)
 		return S_OK;
 
 	RENDERID eGroup = RENDERID::RENDER_ALPHA;
-	if (m_iPass == 0)
+	if (m_iPass == 3)
 		eGroup = RENDERID::RENDER_ALPHA;
 	else
 		eGroup = RENDERID::RENDER_DISTORTION;
@@ -120,24 +119,24 @@ _int CTexEffect::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CTexEffect::Render_GameObject()
 {
-	//Render_GameObject_HWInstance();
+	Render_GameObject_HWInstance(); // 텍스쳐 이펙트만 인스턴싱
 
-	if (nullptr == m_pShaderCom ||
-		nullptr == m_pBufferCom)
-		return E_FAIL;
-	
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
-	
-	m_pShaderCom->Begin_Shader();
-	
-	m_pShaderCom->Begin_Pass(m_iPass);
-	
-	m_pBufferCom->Render_VIBuffer();
-	
-	m_pShaderCom->End_Pass();
-	
-	m_pShaderCom->End_Shader();
+	//if (nullptr == m_pShaderCom ||
+	//	nullptr == m_pBufferCom)
+	//	return E_FAIL;
+	//
+	//if (FAILED(SetUp_ConstantTable()))
+	//	return E_FAIL;
+	//
+	//m_pShaderCom->Begin_Shader();
+	//
+	//m_pShaderCom->Begin_Pass(m_iPass);
+	//
+	//m_pBufferCom->Render_VIBuffer();
+	//
+	//m_pShaderCom->End_Pass();
+	//
+	//m_pShaderCom->End_Shader();
 
 	return NOERROR;
 }
@@ -175,29 +174,45 @@ void CTexEffect::Setup_Info()
 	m_fLifeTime = m_pInfo->fLifeTime;
 	m_vColor = m_pInfo->vStartColor;
 	m_fAlpha = m_pInfo->fMaxAlpha;
-	m_vLerpScale = m_pInfo->vStartScale;
 	m_fMoveSpeed = m_pInfo->fMoveSpeed;
 	m_fRotSpeed = m_pInfo->fRotSpeed;
 	m_fAlphaSpeed = m_pInfo->fAlphaSpeed;
 	m_fCreateDelay = m_pInfo->fCreateDelay;
-	m_pTransformCom->Set_Scale(m_pInfo->vStartScale);
 	m_pInfo->fMoveScaleSpeed = 1.f;
 
 	m_fFrame = 0.f;
 	m_fLinearMoveSpeed = 0.f;
 	m_fLinearMovePercent = 0.f;
 	m_vFollowPos = { 0.f, 0.f, 0.f };
+	m_fAccel = 0.f;
 
 	m_bFadeOutStart = false;
 
 	if (m_pInfo->bDistortion)
 		m_iPass = 1;
+	else
+		m_iPass = 3; // For Instancing Pass
 
 	if (m_pInfo->bFadeIn)
 		m_fAlpha = 0.f;
 
 	if (m_pInfo->bStaticFrame)
 		m_fFrame = m_pInfo->fMaxFrame;
+
+	if (m_pInfo->bRandScale)
+	{
+		// rand 설정하면 x 값기준으로 동일하게 조정
+		_float fScale = Engine::CCalculater::Random_Num(_int(m_pInfo->vStartScale.x * 50), _int(m_pInfo->vStartScale.x * 100)) * 0.01f;
+		_v3 vSize = _v3(fScale, fScale, fScale);
+
+		m_vLerpScale = vSize;
+		m_pTransformCom->Set_Scale(vSize);
+	}
+	else
+	{
+		m_vLerpScale = m_pInfo->vStartScale;
+		m_pTransformCom->Set_Scale(m_pInfo->vStartScale);
+	}
 
 	if (m_pInfo->bRandomMove)
 	{
@@ -235,10 +250,9 @@ void CTexEffect::Setup_Info()
 	{
 		_v3 vPos = _v3(m_pInfo->fRandStartPosRange_Min[AXIS_X], m_pInfo->fRandStartPosRange_Min[AXIS_Y], m_pInfo->fRandStartPosRange_Min[AXIS_Z]);
 
-		_float fMinus = Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f;
-		vPos += _v3(Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_X] * 100)) * 0.01f * fMinus,
-			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Y] * 100)) * 0.01f * fMinus,
-			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Z] * 100)) * 0.01f * fMinus);
+		vPos += _v3(Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_X] * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f),
+			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Y] * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f),
+			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Z] * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f));
 
 		m_pTransformCom->Set_Pos(vPos + m_pDesc->vWorldPos);
 		m_vLerpPos = (vPos + m_pDesc->vWorldPos);
@@ -253,10 +267,9 @@ void CTexEffect::Setup_Info()
 	{
 		if (m_pInfo->bRandomRot)
 		{
-			_float fMinus = Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f;
-			_v3 vPos = _v3(Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.x * 100)) * 0.01f * fMinus,
-				Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.y * 100)) * 0.01f * fMinus,
-				Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.z * 100)) * 0.01f * fMinus);
+			_v3 vPos = _v3(Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.x * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f),
+				Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.y * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f),
+				Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.z * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f));
 
 			m_vRot = vPos;
 		}
@@ -265,10 +278,9 @@ void CTexEffect::Setup_Info()
 	{
 		if (m_pInfo->bRandomRot)
 		{
-			_float fMinus = Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f;
-			_v3 vPos = _v3(Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.x * 100)) * 0.01f * fMinus,
-				Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.y * 100)) * 0.01f * fMinus,
-				Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.z * 100)) * 0.01f * fMinus);
+			_v3 vPos = _v3(Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.x * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f),
+				Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.y * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f),
+				Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.z * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f));
 
 			m_pTransformCom->Set_Angle(_v3(D3DXToRadian(vPos)));
 		}
@@ -367,6 +379,15 @@ void CTexEffect::Check_Move(_double TimeDelta)
 		{
 			m_pTransformCom->Add_Pos(vMove);
 		}
+	}
+
+	if (m_pInfo->bGravity)
+	{
+		m_fAccel += _float(TimeDelta);
+		_float fY = (-GRAVITY * m_fAccel * m_fAccel * 0.5f) *  _float(TimeDelta);
+		_v3 vPos = m_pTransformCom->Get_Pos();
+		vPos.y += fY;
+		m_pTransformCom->Set_Pos(vPos);
 	}
 
 	if (m_pInfo->bScaleMove)

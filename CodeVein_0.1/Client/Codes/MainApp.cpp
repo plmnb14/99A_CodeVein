@@ -95,7 +95,8 @@ HRESULT CMainApp::Ready_Component_Prototype()
 
 	g_pManagement->Ready_Component_Manager(m_pGraphic_Dev);
 	g_pManagement->LoadTex_FromPath(m_pGraphic_Dev, L"../../Data/Tex_Path.dat");
-	g_pManagement->LoadMesh_FromPath(m_pGraphic_Dev, L"../../Data/Mesh_Path.dat");
+	g_pManagement->LoadMesh_FromPath(m_pGraphic_Dev, L"../../Data/Mesh_Path_NoStage.dat");
+	//g_pManagement->LoadMesh_FromPath(m_pGraphic_Dev, L"../../Data/Mesh_Path.dat");
 	g_pManagement->Ready_Gizmo(m_pGraphic_Dev);
 
 	m_pRenderer = static_cast<CRenderer*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Renderer"));

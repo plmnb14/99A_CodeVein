@@ -103,6 +103,7 @@
 #define IDC_CHECK1                      1087
 #define IDC_CHECK21                     1088
 #define IDC_EDIT50                      1089
+#define IDC_CHECK22                     1090
 
 // Next default values for new objects
 // 

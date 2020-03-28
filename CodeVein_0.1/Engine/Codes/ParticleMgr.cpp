@@ -16,23 +16,25 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 
 	//Safe_AddRef(m_pManagement);
 
-	Input_Pool(L"Effect_FootSmoke", 100);
+	Input_Pool(L"FootSmoke", 100);
 
-	Input_Pool(L"Effect_ButterFly_SoftSmoke", 2000);
-	Input_Pool(L"Effect_ButterFly_VenomShot", 1000);
-	Input_Pool(L"Effect_ButterFly_PointParticle", 100);
-	//Input_Pool(L"Effect_ButterFly_RingLine", 10);
-	Input_Pool(L"Effect_ButterFly_Distortion", 10);
-
-	Input_Pool(L"Effect_Hit_Blood_0", 50);
-	Input_Pool(L"Effect_Hit_Blood_1", 50);
-	Input_Pool(L"Effect_Hit_Blood_2", 50);
-	Input_Pool(L"Effect_Hit_BloodMist_0", 50);
-	Input_Pool(L"Effect_Hit_BloodMist_1", 50);
-	Input_Pool(L"Effect_Hit_BloodParticle_0", 50);
-	Input_Pool(L"Effect_Hit_BloodParticle_1", 50);
-	Input_Pool(L"Effect_Hit_BloodParticle_2", 50);
-	Input_Pool(L"Effect_Hit_BloodParticle_3", 50);
+	Input_Pool(L"ButterFly_SoftSmoke", 2000);
+	Input_Pool(L"ButterFly_SoftSmoke_Ready", 300);
+	Input_Pool(L"ButterFly_VenomShot", 1000);
+	Input_Pool(L"ButterFly_PointParticle", 100);
+	Input_Pool(L"ButterFly_RingLine", 10);
+	Input_Pool(L"ButterFly_RingLine_Distortion", 10);
+	Input_Pool(L"ButterFly_Distortion", 10);
+	
+	Input_Pool(L"Hit_Blood_0", 50);
+	Input_Pool(L"Hit_Blood_1", 50);
+	Input_Pool(L"Hit_Blood_2", 50);
+	Input_Pool(L"Hit_BloodMist_0", 50);
+	Input_Pool(L"Hit_BloodMist_1", 50);
+	Input_Pool(L"Hit_BloodParticle_0", 50);
+	Input_Pool(L"Hit_BloodParticle_1", 50);
+	Input_Pool(L"Hit_BloodParticle_2", 50);
+	Input_Pool(L"Hit_BloodParticle_3", 50);
 
 	Input_Pool(L"SpawnParticle", 1000);
 
