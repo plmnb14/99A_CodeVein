@@ -24,18 +24,9 @@
 #include "PlayerST.h"
 #include "BossDecoUI.h"
 #include "BossHP.h"
-#include "ItemSlot.h"
-#include "RightArrow.h"
-#include "LeftArrow.h"
+
 #include "Item.h"
-#include "MenuBaseUI.h"
-#include "MenuIcon.h"
-#include "SlotCnt_UI.h"
-#include "Item_QuickSlot.h"
-#include "Menu_Status.h"
-#include "Menu_Item.h"
-#include "ActiveSkill_UI.h"
-//#include "Menu_Active.h"
+
 
 USING(Client)
 
