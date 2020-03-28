@@ -277,13 +277,13 @@ HRESULT CTestMonster::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
 
-	_mat matInvVP = ViewMatrix * ProjMatrix;// *m_pTransformCom->Get_WorldMat();
+	_mat matInvVP = m_pTransformCom->Get_WorldMat() * ViewMatrix * ProjMatrix;
 	D3DXMatrixInverse(&matInvVP, nullptr, &matInvVP);
 	if (FAILED(m_pShaderCom->Set_Value("g_matInvVP", &matInvVP, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matLastVP", &m_matLastVP, sizeof(_mat))))
 		return E_FAIL;
-	m_matLastVP = ViewMatrix * ProjMatrix;// *m_pTransformCom->Get_WorldMat();
+	m_matLastVP = m_pTransformCom->Get_WorldMat() * ViewMatrix * ProjMatrix;
 	Safe_Release(pManagement);
 
 	return NOERROR;
