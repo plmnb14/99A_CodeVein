@@ -338,12 +338,14 @@ namespace Engine
 		_bool	bRandStartPos;
 
 		_bool	bDistortion;
+		_bool	bGravity;
 
 		_bool	bDirMove;
 		_v3		vMoveDirection;
 		_bool	bRandomMove;
 		_v3		vRandDirectionRange;
 
+		_bool	bRandScale;
 		_bool	bScaleMove;
 		_v3		vStartScale;
 		_v3		vMoveScale;

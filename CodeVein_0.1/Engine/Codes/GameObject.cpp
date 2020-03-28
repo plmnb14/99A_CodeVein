@@ -127,6 +127,7 @@ void CGameObject::Compute_ViewZ(const _v3* pPos)
 }
 
 
+
 void CGameObject::Free()
 {
 	for (auto& Pair : m_pmapComponents)

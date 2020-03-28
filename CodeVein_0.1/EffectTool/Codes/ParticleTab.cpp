@@ -158,6 +158,8 @@ void CParticleTab::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK1, m_CheckUseRGBA);
 	DDX_Control(pDX, IDC_CHECK21, m_bCheckUseMask);
 	DDX_Text(pDX, IDC_EDIT50, m_EditMaskIndex);
+	DDX_Control(pDX, IDC_CHECK7, m_CheckGravity);
+	DDX_Control(pDX, IDC_CHECK22, m_CheckRandSize);
 }
 
 void CParticleTab::Set_GraphicDev(LPDIRECT3DDEVICE9 pDev)
@@ -382,6 +384,10 @@ void CParticleTab::Setup_EffInfo(_bool bIsMesh)
 	GetDlgItemText(IDC_EDIT42, m_EditColorIndex);
 	m_pInfo->fColorIndex = _float(_tstoi(m_EditColorIndex));
 
+	m_pInfo->bGravity = m_CheckGravity.GetCheck() ? true : false;
+
+	m_pInfo->bRandScale = m_CheckRandSize.GetCheck() ? true : false;
+
 	if (m_bCheckUseMask.GetCheck() ? true : false)
 	{
 		GetDlgItemText(IDC_EDIT50, m_EditMaskIndex);
@@ -437,7 +443,6 @@ void CParticleTab::Setup_EffInfo(_bool bIsMesh)
 	m_pInfo->bBillBoard = m_RadioBillType[1].GetCheck() ? true : false;
 	m_pInfo->bOnlyYRot = m_RadioBillType[2].GetCheck() ? true : false;
 
-	m_pInfo->bRotMove = true;
 	GetDlgItemText(IDC_EDIT19, m_EditRotX);
 	GetDlgItemText(IDC_EDIT20, m_EditRotY);
 	GetDlgItemText(IDC_EDIT21, m_EditRotZ);
@@ -450,6 +455,8 @@ void CParticleTab::Setup_EffInfo(_bool bIsMesh)
 	m_pInfo->fRotSpeed_Min = _float(_tstof(m_EditRotSpeed_Min));
 	m_pInfo->fRotSpeed_Max = _float(_tstof(m_EditRotSpeed_Max));
 	m_pInfo->bRandomRot = m_CheckRandRot.GetCheck() ? true : false;
+
+	m_pInfo->bRotMove = (m_pInfo->fRotSpeed == 0) ? false : true;
 
 	GetDlgItemText(IDC_EDIT10, m_EditPosX);
 	GetDlgItemText(IDC_EDIT11, m_EditPosY);
@@ -673,6 +680,11 @@ void CParticleTab::OnBnClickedButton_Save()
 		::WriteFile(hFile, &bRandMoveSpeed, sizeof(_bool), &dwByte, nullptr);
 		_bool bRandCreateDelay = (m_CheckRandCreateDelay.GetCheck()) ? true : false;
 		::WriteFile(hFile, &bRandCreateDelay, sizeof(_bool), &dwByte, nullptr);
+		
+		_bool bGravity = (m_CheckGravity.GetCheck()) ? true : false;
+		::WriteFile(hFile, &bGravity, sizeof(_bool), &dwByte, nullptr);
+		_bool bRandSize = (m_CheckRandSize.GetCheck()) ? true : false;
+		::WriteFile(hFile, &bRandSize, sizeof(_bool), &dwByte, nullptr);
 
 		CloseHandle(hFile);
 		MessageBox(_T("Save Success."), _T("Save"), MB_OK);
@@ -886,13 +898,13 @@ void CParticleTab::OnBnClickedButton_Load()
 
 			::ReadFile(hFile, &tInfo.vEndColor, sizeof(_v4), &dwByte, nullptr);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vEndColor.x);
-			m_EditHueStart.SetString(szBuff);
+			m_EditHueEnd.SetString(szBuff);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vEndColor.y);
-			m_EditContrastStart.SetString(szBuff);
+			m_EditContrastEnd.SetString(szBuff);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vEndColor.z);
-			m_EditBrightnessStart.SetString(szBuff);
+			m_EditBrightnessEnd.SetString(szBuff);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vEndColor.w);
-			m_EditSaturationStart.SetString(szBuff);
+			m_EditSaturationEnd.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.vMoveDirection, sizeof(_v3), &dwByte, nullptr);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vMoveDirection.x);
@@ -928,13 +940,13 @@ void CParticleTab::OnBnClickedButton_Load()
 
 			::ReadFile(hFile, &tInfo.vStartColor, sizeof(_v4), &dwByte, nullptr);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vStartColor.x);
-			m_EditHueEnd.SetString(szBuff);
+			m_EditHueStart.SetString(szBuff);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vStartColor.y);
-			m_EditContrastEnd.SetString(szBuff);
+			m_EditContrastStart.SetString(szBuff);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vStartColor.z);
-			m_EditBrightnessEnd.SetString(szBuff);
+			m_EditBrightnessStart.SetString(szBuff);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vStartColor.w);
-			m_EditSaturationEnd.SetString(szBuff);
+			m_EditSaturationStart.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.vStartPos, sizeof(_v3), &dwByte, nullptr);
 			if (!tInfo.bRandStartPos)
@@ -978,6 +990,14 @@ void CParticleTab::OnBnClickedButton_Load()
 			_bool bRandCreateDelay = false;
 			::ReadFile(hFile, &bRandCreateDelay, sizeof(_bool), &dwByte, nullptr);
 			m_CheckRandCreateDelay.SetCheck(bRandCreateDelay);
+
+			_bool bGravity = false;
+			::ReadFile(hFile, &bGravity, sizeof(_bool), &dwByte, nullptr);
+			m_CheckGravity.SetCheck(bGravity);
+
+			_bool bRandSize = false;
+			::ReadFile(hFile, &bRandSize, sizeof(_bool), &dwByte, nullptr);
+			m_CheckRandSize.SetCheck(bRandSize);
 
 			//if (0 == dwByte)
 			break;

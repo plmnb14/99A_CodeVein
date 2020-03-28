@@ -34,9 +34,6 @@
     <Filter Include="02. View\[00] ToolView">
       <UniqueIdentifier>{1bfc8823-dc3f-4136-8f88-95d481175007}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02. View\[00] ToolView\00. MapTool">
-      <UniqueIdentifier>{875006bf-44f1-4186-9615-25a375e00eed}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02. View\[02] Inspector_Form\01. Sheet\01. Transform_Sheet">
       <UniqueIdentifier>{579bce5f-ce4c-428a-ac12-4e0c739b98a7}</UniqueIdentifier>
     </Filter>

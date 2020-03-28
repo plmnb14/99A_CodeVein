@@ -8,24 +8,37 @@ BEGIN(Client)
 
 class CScene_Logo final : public CScene
 {
+public:
+	enum DEBUG_SceneChange
+	{
+		Stage_Base, Stage_Training, Stage_01, Stage_02, Stage_03, Stage_End
+	};
+
 private:
 	explicit CScene_Logo(LPDIRECT3DDEVICE9 pGraphic_Device);
 	virtual ~CScene_Logo() = default;
+
 public:
 	virtual HRESULT Ready_Scene();
 	virtual _int Update_Scene(_double TimeDelta);
 	virtual HRESULT Render_Scene();
-public:
-	HRESULT Ready_Prototype_GameObject();
-	HRESULT Ready_Layer_BackGround(const _tchar* pLayerTag);
-	HRESULT Ready_Layer_LogoBtn(const _tchar* pLayerTag);
-
 
 public:
-	HRESULT Temp_Stage_Loader(const _tchar* _DatPath);
+	HRESULT Ready_Essential_Prototype_GameObject();
+	HRESULT Ready_Layer_Logo(const _tchar* pLayerTag);
+
+private:
+	virtual void Update_DebugStage_Console();
 
 private:
 	CLoading*			m_pLoading = nullptr;
+
+private:
+	DEBUG_SceneChange   m_eSceneChange = Stage_Training;
+
+private:
+	virtual void Logo_KeyInput();
+
 public:
 	static CScene_Logo* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
 	virtual void Free();

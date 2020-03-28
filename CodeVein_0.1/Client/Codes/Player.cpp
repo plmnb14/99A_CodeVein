@@ -34,6 +34,12 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 
 _int CPlayer::Update_GameObject(_double TimeDelta)
 {
+	if (-1 == m_pNavMesh->Get_CellIndex())
+	{
+		_v3 tmpPos = m_pTransform->Get_Pos();
+		m_pNavMesh->Check_OnNavMesh(&tmpPos);
+	}
+
 	CGameObject::Update_GameObject(TimeDelta);
 
 	KeyInput();
@@ -2138,7 +2144,8 @@ HRESULT CPlayer::SetUp_Default()
 	ZeroMemory(&m_tInfo, sizeof(ACTOR_INFO));
 
 	// Transform
-	m_pTransform->Set_Pos(_v3(-0.487f, 0.f, 23.497f));
+	//m_pTransform->Set_Pos(_v3(-0.487f, 0.f, 23.497f));
+	m_pTransform->Set_Pos(_v3(0.f, 0.f, 0.f));
 	m_pTransform->Set_Scale(V3_ONE);
 
 	// Mesh
@@ -2158,9 +2165,9 @@ HRESULT CPlayer::SetUp_Default()
 	m_fAnimMutiply = 1.f;
 
 	// Navi
-	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Test.dat");
+	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_StageBase.dat");
 	m_pNavMesh->Set_SubsetIndex(0);
-	m_pNavMesh->Set_Index(14);
+	//m_pNavMesh->Set_Index(14);
 
 	return S_OK;
 }
@@ -2186,18 +2193,18 @@ HRESULT CPlayer::SetUp_ConstantTable()
 
 void CPlayer::OnCollisionEnter()
 {
-	for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Dummy", SCENE_STAGE))
-	{
-		CDummy_Target* pDummy = static_cast<CDummy_Target*>(iter);
-
-		for (auto& iterCollider : pDummy->Get_ColliderVector())
-		{
-			if (m_pCollider->Check_Capsule(iterCollider))
-			{
-				cout << "ºÎµúÇô¿ä" << endl;
-			}
-		}
-	}
+	//for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Dummy", SCENE_STAGE))
+	//{
+	//	CDummy_Target* pDummy = static_cast<CDummy_Target*>(iter);
+	//
+	//	for (auto& iterCollider : pDummy->Get_ColliderVector())
+	//	{
+	//		if (m_pCollider->Check_Capsule(iterCollider))
+	//		{
+	//			cout << "ºÎµúÇô¿ä" << endl;
+	//		}
+	//	}
+	//}
 }
 
 void CPlayer::Update_Collider()
