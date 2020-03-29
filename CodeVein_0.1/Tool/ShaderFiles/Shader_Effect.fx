@@ -1,8 +1,8 @@
 
 
 matrix		g_matWorld, g_matView, g_matProj;
-float		g_fAlpha;
-vector		g_vColor;
+float		g_fAlpha = 1;
+vector		g_vColor = {0, 0, 0, 1};
 bool		g_bUseRGBA = false;
 bool		g_bUseColorTex = false;
 bool		g_bUseMaskTex = false;

@@ -169,4 +169,5 @@ public:
 	CString m_EditMaskIndex;
 	CButton m_CheckGravity;
 	CButton m_CheckRandSize;
+	CButton m_CheckMoveWithRot;
 };

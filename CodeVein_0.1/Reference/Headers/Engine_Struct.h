@@ -344,6 +344,7 @@ namespace Engine
 		_v3		vMoveDirection;
 		_bool	bRandomMove;
 		_v3		vRandDirectionRange;
+		_bool	bMoveWithRot;
 
 		_bool	bRandScale;
 		_bool	bScaleMove;

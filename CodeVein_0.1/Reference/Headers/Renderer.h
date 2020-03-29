@@ -8,9 +8,9 @@
 #include "Target_Manager.h"
 #include "Light_Manager.h"
 #include "Shader.h"
+#include "Texture.h"
 
 BEGIN(Engine)
-
 class ENGINE_DLL CRenderer final : public CComponent
 {
 private:
@@ -34,6 +34,7 @@ private:
 	CShader*					m_pShader_LightAcc = nullptr;
 	CShader*					m_pShader_Blend = nullptr;
 	CBuffer_ViewPort*			m_pViewPortBuffer = nullptr;
+	CTexture*					m_pSSAOTexture = nullptr;
 private:
 	HRESULT Render_Priority();
 	HRESULT Render_NonAlpha();

@@ -37,15 +37,15 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	
 	// 명암을 저장한다.
 	// Target_Shade (명암. 내적. 실수값을.)
-	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Shade", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.f, 0.f, 0.f, 1.f))))
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Shade", ViewPort.Width, ViewPort.Height, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.f, 0.f, 0.f, 1.f))))
 		return E_FAIL;
 
 	// Target_Specular
-	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Specular", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Specular", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
-	// Target_Rim
-	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Rim", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
+	// Target_SSAO
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_SSAO", ViewPort.Width, ViewPort.Height, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.f, 0.f, 0.f, 1.f))))
 		return E_FAIL;
 
 	// Target_Distortion
@@ -53,7 +53,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 		return E_FAIL;
 
 	// Target_Blend
-	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Blend", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Blend", ViewPort.Width, ViewPort.Height, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
 	//// Blend에 찍기 위한 Alpha 타겟
@@ -65,9 +65,9 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Blur", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
 		return E_FAIL;
 	
-	// Target_MotionBlur
-	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_MotionBlur", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.0f, 0.0f, 1.0f, 0.f))))
-		return E_FAIL;
+	//// Target_MotionBlur
+	//if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_MotionBlur", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.0f, 0.0f, 1.0f, 0.f))))
+	//	return E_FAIL;
 
 	// Target_MotionBlurObj
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_MotionBlurObj", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(1.0f, 0.0f, 0.0f, 0.f))))
@@ -102,7 +102,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_LightAcc", L"Target_Specular")))
 		return E_FAIL;
-	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_LightAcc", L"Target_Rim")))
+	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_LightAcc", L"Target_SSAO")))
 		return E_FAIL;
 	
 	// For.MRT_Distortion
@@ -113,9 +113,9 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Blend", L"Target_Blend")))
 		return E_FAIL;
 	
-	// For.MRT_MotionBlur
-	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_MotionBlur", L"Target_MotionBlur")))
-		return E_FAIL;
+	//// For.MRT_MotionBlur
+	//if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_MotionBlur", L"Target_MotionBlur")))
+	//	return E_FAIL;
 	// For.MRT_MotionBlur
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_MotionBlurObj", L"Target_MotionBlurObj")))
 		return E_FAIL;
@@ -157,6 +157,10 @@ HRESULT CRenderer::Ready_Component_Prototype()
 
 	//m_pViewPortBufferForBlur = CBuffer_ViewPort::Create(m_pGraphic_Dev, 0.f, 0.f, (_float)ViewPort.Width / 4, (_float)ViewPort.Height / 4);
 
+	// For.m_pSSAOTexture
+	m_pSSAOTexture = CTexture::Create(m_pGraphic_Dev, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Effect/Normal/Normal_4.tga");
+	// static_cast<CTexture*>(CComponent_Manager::Get_Instance()->Clone_Component(SCENE_STATIC, L"Tex_Noise", nullptr));
+
 #ifdef _DEBUG
 	
 	_float fTargetSize = 150.f;
@@ -184,8 +188,8 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Specular", fTargetSize, fTargetSize, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
-	// For.Target_Rim`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Rim", fTargetSize, fTargetSize * 2, fTargetSize, fTargetSize)))
+	// For.Target_SSAO`s Debug Buffer
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_SSAO", fTargetSize, fTargetSize * 2, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_Blend`s Debug Buffer // 톤매핑 직전
@@ -208,12 +212,12 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Blur", fTargetSize * 2, fTargetSize, fTargetSize, fTargetSize)))
 		return E_FAIL;
 	
-	// For.Target_MotionBlur`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_MotionBlur", fTargetSize * 2, fTargetSize * 2, fTargetSize, fTargetSize)))
-		return E_FAIL;
+	//// For.Target_MotionBlur`s Debug Buffer
+	//if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_MotionBlur", fTargetSize * 2, fTargetSize * 2, fTargetSize, fTargetSize)))
+	//	return E_FAIL;
 
 	// For.Target_MotionBlur`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_MotionBlurObj", fTargetSize * 2, fTargetSize * 3, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_MotionBlurObj", fTargetSize * 2, fTargetSize * 2, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_ToneMapping`s Debug Buffer
@@ -463,6 +467,7 @@ HRESULT CRenderer::Render_LightAcc()
 
 	m_pShader_LightAcc->Set_Texture("g_NormalTexture", m_pTarget_Manager->Get_Texture(L"Target_Normal"));
 	m_pShader_LightAcc->Set_Texture("g_DepthTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"));
+	m_pSSAOTexture->SetUp_OnShader("g_SSAOTexture", m_pShader_LightAcc, 9);
 
 	m_pShader_LightAcc->Set_Value("g_matProjInv", &pPipeLine->Get_Transform_Inverse(D3DTS_PROJECTION), sizeof(_mat));
 	m_pShader_LightAcc->Set_Value("g_matViewInv", &pPipeLine->Get_Transform_Inverse(D3DTS_VIEW), sizeof(_mat));
@@ -470,16 +475,11 @@ HRESULT CRenderer::Render_LightAcc()
 	m_pShader_LightAcc->Set_Value("g_vCamPosition", &_v4(pPipeLine->Get_CamPosition(), 1.f), sizeof(_v4));
 	
 
-	// 셰이더 비긴.
 	m_pShader_LightAcc->Begin_Shader();
 
-	// 셰이드 타겟과 같은 사이즈를 가진 사각형버퍼를 화면에 렌더링한다.
 	m_pLight_Manager->Render_Light(m_pShader_LightAcc);
 
 	m_pShader_LightAcc->End_Shader();
-
-
-	// 셰)이더 엔드.
 
 	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_LightAcc")))
 		return E_FAIL;
@@ -501,8 +501,7 @@ HRESULT CRenderer::Render_Blend()
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_SpecularTexture", m_pTarget_Manager->Get_Texture(L"Target_Specular"))))
 		return E_FAIL;
-	if (FAILED(m_pShader_Blend->Set_Texture("g_BloomTexture", m_pTarget_Manager->Get_Texture(L"Target_Rim"))))
-		return E_FAIL;
+
 
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Blend")))
 		return E_FAIL;
@@ -564,6 +563,8 @@ HRESULT CRenderer::Render_Blur()
 
 	if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_Bloom"))))
 		return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Texture("g_SSAOTexture", m_pTarget_Manager->Get_Texture(L"Target_SSAO"))))
+		return E_FAIL;
 
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Blur")))
 		return E_FAIL;
@@ -588,51 +589,31 @@ HRESULT CRenderer::Render_MotionBlurObj()
 		nullptr == m_pShader_Blend)
 		return E_FAIL;
 
-	//CManagement*		pManagement = CManagement::Get_Instance();
-	//if (nullptr == pManagement)
-	//	return E_FAIL;
-	//
-	//Safe_AddRef(pManagement);
-	//
-	//_mat		ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
-	//_mat		ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
-	//_mat		matWVP;
-	//matWVP = ViewMatrix * ProjMatrix;
-	//D3DXMatrixInverse(&matWVP, nullptr, &matWVP);
-	//if (FAILED(m_pShader_Blend->Set_Value("g_matInvVP", &matWVP, sizeof(_mat))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShader_Blend->Set_Value("g_matLastVP", &m_matLastWVP, sizeof(_mat))))
-	//	return E_FAIL;
-	//m_matLastWVP = ViewMatrix * ProjMatrix;
-	//
-	//// 카메라 단위의 모션블러 (전체 씬)
-	//m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_Blend"));
-	//m_pShader_Blend->Set_Texture("g_DepthTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"));
-	//
-	//if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_MotionBlur")))
-	//	return E_FAIL;
-	//
-	//m_pShader_Blend->Begin_Shader();
-	//m_pShader_Blend->Begin_Pass(6);
-	//
-	//m_pViewPortBuffer->Render_VIBuffer();
-	//
-	//m_pShader_Blend->End_Pass();
-	//m_pShader_Blend->End_Shader();
-	//
-	//if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_MotionBlur")))
-	//	return E_FAIL;
-	//
-	//Safe_Release(pManagement);
+	CManagement*		pManagement = CManagement::Get_Instance();
+	if (nullptr == pManagement)
+		return E_FAIL;
+	
+	Safe_AddRef(pManagement);
+	
+	_mat		ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
+	_mat		matWVP;
+	matWVP = ViewMatrix * ProjMatrix;
+	D3DXMatrixInverse(&matWVP, nullptr, &matWVP);
+	if (FAILED(m_pShader_Blend->Set_Value("g_matInvVP", &matWVP, sizeof(_mat))))
+		return E_FAIL;
+
+	Safe_Release(pManagement);
 
 	// 오브젝트 단위의 모션블러, 속도맵 ==============================================================================
 	m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_Blend"));
 	m_pShader_Blend->Set_Texture("g_ShadeTexture", m_pTarget_Manager->Get_Texture(L"Target_Velocity"));
+	m_pShader_Blend->Set_Texture("g_DepthTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"));
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_MotionBlurObj")))
 		return E_FAIL;
 	
 	m_pShader_Blend->Begin_Shader();
-	m_pShader_Blend->Begin_Pass(7);
+	m_pShader_Blend->Begin_Pass(6);
 	
 	m_pViewPortBuffer->Render_VIBuffer();
 	
@@ -662,11 +643,6 @@ HRESULT CRenderer::Render_MotionBlur()
 		return E_FAIL;
 	m_pShader_Blend->Commit_Changes();
 	m_pViewPortBuffer->Render_VIBuffer();
-
-	//if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_MotionBlur"))))
-	//	return E_FAIL;
-	//m_pShader_Blend->Commit_Changes();
-	//m_pViewPortBuffer->Render_VIBuffer();
 	
 	if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_MotionBlurObj"))))
 		return E_FAIL;

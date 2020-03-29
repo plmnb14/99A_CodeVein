@@ -411,6 +411,29 @@ void CTexEffect::Check_Move(_double TimeDelta)
 			m_pTransformCom->Add_Angle(AXIS_Z, ((m_pInfo->vRotDirection.z) * _float(TimeDelta) * m_fRotSpeed));
 		}
 	}
+
+	if (m_pInfo->bMoveWithRot)
+	{
+		_mat matRotX, matRotY, matRotZ;
+		//_v3 vDirX = m_pTransformCom->Get_Axis(AXIS_X), vDirY = m_pTransformCom->Get_Axis(AXIS_Y), vDirZ = m_pTransformCom->Get_Axis(AXIS_Z);
+		_v3 vAngle = m_pTransformCom->Get_Angle();
+		_v3 vDir = vAngle;
+		D3DXMatrixIdentity(&matRotX);
+		D3DXMatrixIdentity(&matRotY);
+		D3DXMatrixIdentity(&matRotZ);
+
+		D3DXMatrixRotationX(&matRotX, D3DXToRadian(vAngle.x));
+		D3DXMatrixRotationY(&matRotY, D3DXToRadian(vAngle.y));
+		D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(vAngle.z));
+		D3DXVec3TransformNormal(&vDir, &vDir, &matRotX);
+		D3DXVec3TransformNormal(&vDir, &vDir, &matRotY);
+		D3DXVec3TransformNormal(&vDir, &vDir, &matRotZ);
+
+		//vDirZ = vDirX + vDirY + vDirZ;
+		D3DXVec3Normalize(&vDir, &vDir);
+
+		m_pTransformCom->Add_Pos(m_fMoveSpeed * _float(TimeDelta), vDir);
+	}
 }
 
 void CTexEffect::Check_LifeTime(_double TimeDelta)

@@ -56,7 +56,7 @@ protected:
 	_tchar			m_szName[MAX_STR] = L"";
 	_int			m_iIndex = 0;
 	_ulong			m_dwPassNum = 0;
-
+	_mat			m_matLastVP;
 	// 툴에서 사용되는 변수
 protected:
 	_bool			m_bIsSelected = false;
