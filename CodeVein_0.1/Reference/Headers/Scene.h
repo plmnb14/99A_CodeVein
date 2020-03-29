@@ -16,6 +16,10 @@ public:
 	virtual HRESULT Render_Scene();
 protected:
 	LPDIRECT3DDEVICE9			m_pGraphic_Device = nullptr;
+
+protected:
+	_bool						m_bLoadStaticMesh = false;
+
 public:
 	virtual void Free();
 };

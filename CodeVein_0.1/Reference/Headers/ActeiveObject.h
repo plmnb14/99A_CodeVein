@@ -47,7 +47,7 @@ protected:
 
 	CRenderer*		m_pRenderer = nullptr;
 	CShader*		m_pShader = nullptr;
-	
+
 	_int			m_iAtvNumber;
 	_int			m_iIndex = 0;
 

@@ -1233,7 +1233,7 @@ BOOL CMapTool_Page::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	LoadFilePath(L"../../Data/Mesh_Path.dat");
+	LoadFilePath(L"../../Data/Mesh_Static_Path.dat");
 
 	hObjectRoot = m_pObjectTree.InsertItem(TEXT("Object"), 0, 0, TVI_ROOT , TVI_LAST);
 
