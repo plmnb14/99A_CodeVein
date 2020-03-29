@@ -50,7 +50,7 @@ HRESULT CTexEffect::Ready_GameObject(void* pArg)
 	m_pManagement = CManagement::Get_Instance();
 	if (nullptr == m_pManagement)
 		return E_FAIL;
-	
+
 	//Safe_AddRef(m_pManagement);
 
 	return NOERROR;
@@ -121,22 +121,22 @@ HRESULT CTexEffect::Render_GameObject()
 {
 	Render_GameObject_HWInstance(); // 텍스쳐 이펙트만 인스턴싱
 
-	//if (nullptr == m_pShaderCom ||
-	//	nullptr == m_pBufferCom)
-	//	return E_FAIL;
-	//
-	//if (FAILED(SetUp_ConstantTable()))
-	//	return E_FAIL;
-	//
-	//m_pShaderCom->Begin_Shader();
-	//
-	//m_pShaderCom->Begin_Pass(m_iPass);
-	//
-	//m_pBufferCom->Render_VIBuffer();
-	//
-	//m_pShaderCom->End_Pass();
-	//
-	//m_pShaderCom->End_Shader();
+									//if (nullptr == m_pShaderCom ||
+									//	nullptr == m_pBufferCom)
+									//	return E_FAIL;
+									//
+									//if (FAILED(SetUp_ConstantTable()))
+									//	return E_FAIL;
+									//
+									//m_pShaderCom->Begin_Shader();
+									//
+									//m_pShaderCom->Begin_Pass(m_iPass);
+									//
+									//m_pBufferCom->Render_VIBuffer();
+									//
+									//m_pShaderCom->End_Pass();
+									//
+									//m_pShaderCom->End_Shader();
 
 	return NOERROR;
 }
@@ -146,12 +146,12 @@ HRESULT CTexEffect::Render_GameObject_HWInstance()
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
-	
+
 	m_pBufferCom->Render_Before_Instancing(m_pTransformCom->Get_WorldMat());
 
 	m_pShaderCom->Begin_Shader();
 	m_pShaderCom->Begin_Pass(m_iPass);
-	
+
 	// Set Texture
 	if (FAILED(SetUp_ConstantTable()))
 		return E_FAIL;
@@ -160,7 +160,7 @@ HRESULT CTexEffect::Render_GameObject_HWInstance()
 	m_pShaderCom->Commit_Changes();
 
 	m_pBufferCom->Render_DrawPrimitive_Instancing();
-	
+
 	m_pShaderCom->End_Pass();
 	m_pShaderCom->End_Shader();
 
@@ -289,7 +289,7 @@ void CTexEffect::Setup_Info()
 			m_pTransformCom->Set_Angle(_v3(D3DXToRadian(m_pInfo->vRotDirection.x), D3DXToRadian(m_pInfo->vRotDirection.y), D3DXToRadian(m_pInfo->vRotDirection.z)));
 		}
 	}
-	
+
 }
 
 void CTexEffect::Setup_Billboard()
@@ -411,6 +411,29 @@ void CTexEffect::Check_Move(_double TimeDelta)
 			m_pTransformCom->Add_Angle(AXIS_Z, ((m_pInfo->vRotDirection.z) * _float(TimeDelta) * m_fRotSpeed));
 		}
 	}
+
+	if (m_pInfo->bMoveWithRot)
+	{
+		_mat matRotX, matRotY, matRotZ;
+		//_v3 vDirX = m_pTransformCom->Get_Axis(AXIS_X), vDirY = m_pTransformCom->Get_Axis(AXIS_Y), vDirZ = m_pTransformCom->Get_Axis(AXIS_Z);
+		_v3 vAngle = m_pTransformCom->Get_Angle();
+		_v3 vDir = vAngle;
+		D3DXMatrixIdentity(&matRotX);
+		D3DXMatrixIdentity(&matRotY);
+		D3DXMatrixIdentity(&matRotZ);
+
+		D3DXMatrixRotationX(&matRotX, D3DXToRadian(vAngle.x));
+		D3DXMatrixRotationY(&matRotY, D3DXToRadian(vAngle.y));
+		D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(vAngle.z));
+		D3DXVec3TransformNormal(&vDir, &vDir, &matRotX);
+		D3DXVec3TransformNormal(&vDir, &vDir, &matRotY);
+		D3DXVec3TransformNormal(&vDir, &vDir, &matRotZ);
+
+		//vDirZ = vDirX + vDirY + vDirZ;
+		D3DXVec3Normalize(&vDir, &vDir);
+
+		m_pTransformCom->Add_Pos(m_fMoveSpeed * _float(TimeDelta), vDir);
+	}
 }
 
 void CTexEffect::Check_LifeTime(_double TimeDelta)
@@ -503,6 +526,9 @@ HRESULT CTexEffect::SetUp_ConstantTable()
 
 	Safe_AddRef(pManagement);
 
+	//_mat matTest;
+	//D3DXMatrixIdentity(&matTest);
+	//memcpy(&matTest[3][0], &m_pTransformCom->Get_Pos(), sizeof(_v3));
 	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
 
@@ -528,7 +554,7 @@ HRESULT CTexEffect::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Bool("g_bUseMaskTex", (m_pInfo->fMaskIndex != -1.f))))
 		return E_FAIL;
 
-	if((m_pInfo->fMaskIndex != -1.f))
+	if ((m_pInfo->fMaskIndex != -1.f))
 		fMaskIndex = m_pInfo->fMaskIndex;
 
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, _uint(m_fFrame))))
