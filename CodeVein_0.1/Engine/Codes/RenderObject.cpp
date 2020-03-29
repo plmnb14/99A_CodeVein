@@ -59,6 +59,15 @@ HRESULT CRenderObject::Render_GameObject()
 		if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_DIFFUSE))))
 			return E_FAIL;
 
+		if (FAILED(m_pShader->Set_Texture("g_NormalTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_NORMAL))))
+			return E_FAIL;
+
+		//if (FAILED(m_pShader->Set_Texture("g_SpecularTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_SPECULAR))))
+		//	return E_FAIL;
+		
+		//if (FAILED(m_pShader->Set_Texture("g_EmissiveTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_EMISSIVE))))
+		//	return E_FAIL;
+
 		m_pShader->Commit_Changes();
 
 		m_pMesh_Static->Render_Mesh(i);

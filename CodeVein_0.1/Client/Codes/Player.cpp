@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\Player.h"
 #include "Weapon.h"
+#include "Drain_Weapon.h"
 #include "CameraMgr.h"
 #include "Dummy_Target.h"
 
@@ -28,6 +29,7 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 
 	SetUp_Default();
 	Ready_Weapon();
+	Ready_DrainWeapon();
 
 	return NOERROR;
 }
@@ -55,7 +57,11 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 	if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
 
-	m_pWeapon[m_eActiveSlot]->Update_GameObject(TimeDelta);
+	IF_NOT_NULL(m_pWeapon[m_eActiveSlot])
+		m_pWeapon[m_eActiveSlot]->Update_GameObject(TimeDelta);
+
+	IF_NOT_NULL(m_pDrainWeapon)
+		m_pDrainWeapon->Update_GameObject(TimeDelta);
 
 	return NO_EVENT;
 }
@@ -70,7 +76,11 @@ _int CPlayer::Late_Update_GameObject(_double TimeDelta)
 	m_pDynamicMesh->SetUp_Animation_Upper(m_eAnim_Upper);
 	m_pDynamicMesh->SetUp_Animation_RightArm(m_eAnim_RightArm);
 
-	m_pWeapon[m_eActiveSlot]->Late_Update_GameObject(TimeDelta);
+	IF_NOT_NULL(m_pWeapon[m_eActiveSlot])
+		m_pWeapon[m_eActiveSlot]->Late_Update_GameObject(TimeDelta);
+
+	IF_NOT_NULL(m_pDrainWeapon)
+		m_pDrainWeapon->Late_Update_GameObject(TimeDelta);
 
 	return NO_EVENT;
 }
@@ -83,7 +93,7 @@ HRESULT CPlayer::Render_GameObject()
 
 	m_pDynamicMesh->Play_Animation_Lower(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply);
 	m_pDynamicMesh->Play_Animation_Upper(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply);
-	m_pDynamicMesh->Play_Animation_RightArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply, true);
+	m_pDynamicMesh->Play_Animation_RightArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply, false);
 
 	if (FAILED(SetUp_ConstantTable()))
 		return E_FAIL;
@@ -1078,6 +1088,17 @@ void CPlayer::Key_Utility()
 {
 }
 
+void CPlayer::Key_InterAct()
+{
+	if (g_pInput_Device->Key_Down(DIK_E))
+	{
+		// 상호 작용 버튼
+		//===========================================
+		// 아이템 줍기
+		//===========================================
+	}
+}
+
 void CPlayer::Play_Idle()
 {
 	switch (m_eMainWpnState)
@@ -2064,6 +2085,11 @@ void CPlayer::Ready_Weapon()
 	m_pWeapon[WPN_SLOT_B]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
 }
 
+void CPlayer::Ready_DrainWeapon()
+{
+	m_pDrainWeapon = static_cast<CDrain_Weapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_DrainWeapon", NULL));
+}
+
 void CPlayer::Skill_Movement(_float _fspeed, _v3 _vDir)
 {
 	_v3 tmpLook;
@@ -2262,6 +2288,8 @@ void CPlayer::Free()
 	{
 		Safe_Release(m_pWeapon[i]);
 	}
+
+	Safe_Release(m_pDrainWeapon);
 
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pTransform);

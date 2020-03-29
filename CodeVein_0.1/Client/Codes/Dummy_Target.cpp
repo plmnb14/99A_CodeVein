@@ -60,6 +60,7 @@ HRESULT CDummy_Target::Render_GameObject()
 	m_pDynamic_Mesh->Play_Animation_Lower(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * 2.f);
 	m_pDynamic_Mesh->Play_Animation_Upper(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * 2.f);
 	m_pDynamic_Mesh->Play_Animation_RightArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * 2.f, false);
+	//m_pDynamic_Mesh->Play_Animation_RightArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * 2.f, false);
 
 	if (FAILED(SetUp_ConstantTable()))
 		return E_FAIL;
@@ -160,7 +161,7 @@ HRESULT CDummy_Target::SetUp_ConstantTable()
 	return NOERROR;
 }
 
-CDummy_Target * CDummy_Target::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
+CDummy_Target * CDummy_Target::Create(_Device pGraphic_Device)
 {
 	CDummy_Target* pInstance = new CDummy_Target(pGraphic_Device);
 

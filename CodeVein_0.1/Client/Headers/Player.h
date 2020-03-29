@@ -6,6 +6,7 @@
 
 BEGIN(Client)
 
+class CDrain_Weapon;
 class CWeapon;
 class CPlayer : public CGameObject
 {
@@ -14,6 +15,11 @@ public:
 	{
 		MOVE_Front, MOVE_Back, MOVE_Left, MOVE_Right,
 		MOVE_End
+	};
+
+	enum DRAIN_STATE
+	{
+		DRAIN_TAIL, DRAIN_DRAPE, DRAIN_IVY, DRAIN_END
 	};
 
 	enum ACT_STATE
@@ -50,10 +56,12 @@ private:
 	ACT_STATE				m_eActState_Upper	= ACT_Idle;
 	WEAPON_STATE			m_eMainWpnState		= WEAPON_None;
 	WEAPON_STATE			m_eSubWpnState	= WEAPON_None;
+	DRAIN_STATE				m_eDrainState = DRAIN_END;
 	ACTIVE_WEAPON_SLOT		m_eActiveSlot	= WPN_SLOT_A;
 
 private:
 	CWeapon*				m_pWeapon[WPN_SLOT_End] = {};
+	CDrain_Weapon*			m_pDrainWeapon;
 
 private:
 	CTransform*				m_pTransform		= nullptr;
@@ -162,6 +170,7 @@ private:
 	virtual void Key_Attack();
 	virtual void Key_Skill();
 	virtual void Key_Utility();
+	virtual void Key_InterAct();
 
 private:
 	virtual void Play_Idle();
@@ -183,7 +192,17 @@ private:
 	virtual void Play_Enchants();
 
 private:
+
+
+private:
+	virtual void Play_Ssword_WeakAtk();
+	virtual void Play_Ssword_HeavyAtk();
+	virtual void Play_Ssword_DownAtk();
+	virtual void Play_Ssword_DashAtk();
+
+private:
 	virtual void Ready_Weapon();
+	virtual void Ready_DrainWeapon();
 
 private:
 	void Skill_Movement(_float _fspeed, _v3 _vDir = { 0.f , 0.f , 0.f });
@@ -362,167 +381,6 @@ private:
 		Hammer_Idle_Loop,
 		LSword_Run_Blend,
 		LSword_Dash_Blend
-
-
-/*
-LSword_Dash_Blend,
-LSword_Run_Blend,
-Hammer_Idle_Loop,
-Gun_Idle_Loop,
-LSowrd_Idle_Loop,
-Halberd_Idle_Loop,
-Ssword_Attack_Charging,
-Ssword_Guard_Hit,
-Ssword_Guard_Break,
-Ssword_Guard_End,
-Ssword_Guard_Loop,
-Ssword_Guard_Start,
-Ssword_HeavyAtk_16_A,
-Ssword_HeavyAtk_14_B,
-Ssword_HeavyAtk_14_A,
-Ssword_HeavyAtk_12_B,	// 차징 내려찍기
-Ssword_HeavyAtk_10_B,	// 차징 올려베기
-Ssword_HeavyAtk_09_A,	// 차징 강공격 2단 종베기
-Ssword_HeavyAtk_08_B,	// 차징 강공격 1단 종베기
-Ssword_HeavyAtk_07_B,	// 뒤로갔다가 앞베기
-Ssword_HeavyAtk_07_A,	// 차징 앞베기
-Ssword_HeavyAtk_06_B,	// 차징
-Ssword_HeavyAtk_06_A,	// 제자리 3단 강공격
-Ssword_HeavyAtk_04_B,	// 찌르고 강공격
-Ssword_HeavyAtk_02_A,	// Shift 강공격
-Ssword_HeavyAtk_01_B,	// 차지 강공격
-Ssword_HeavyAtk_01_A,	// 강공격
-Ssword_SpecialLaunch,
-Ssword_DownAtk_04,
-Ssword_DownAtk_03,
-Ssword_DownAtk_02,
-Ssword_DownAtk_01,
-Ssword_Atk_Repel,
-Ssword_WeakAtk_16,
-Ssword_WeakAtk_15,
-Ssword_WeakAtk_14,
-Ssword_WeakAtk_13,
-Ssword_WeakAtk_12,
-Ssword_WeakAtk_11,
-Ssword_WeakAtk_10,
-Ssword_WeakAtk_09,
-Ssword_WeakAtk_08,
-Ssword_WeakAtk_07,
-Ssword_WeakAtk_06,
-Ssword_WeakAtk_05,
-Ssword_WeakAtk_04,
-Ssword_WeakAtk_03,
-Ssword_WeakAtk_02,
-Ssword_WeakAtk_01,
-Cmn_WeaponChange,
-Cmn_GameStart,
-Cmn_Fall_End,
-Cmn_Fall,
-Cmn_Dying_Live,
-Cmn_Dying_End,
-Cmn_Dying_Loop,
-Cmn_Drop_Item,
-Cmn_Down_WakeUp_02,
-Cmn_Down_WakeUp_01,
-Cmn_Down_Death_02,
-Cmn_Down_Death_01,
-Cmn_Down_02_End,
-Cmn_Down_02,
-Cmn_Down_01_End,
-Cmn_Down_01,
-Cmn_DoorOpen_Push_H,
-Cmn_DoorOpen_Pull_H,
-Cmn_DoorOpen_Push,
-Cmn_DoorOpen_Pull,
-Cmn_DoorOpen_Lift,
-Cmn_DodgeLight_BR,
-Cmn_DodgeLight_BL,
-Cmn_DodgeLight_B,
-Cmn_DodgeLight_R,
-Cmn_DodgeLight_L,
-Cmn_DodgeLight_FR,
-Cmn_DodgeLight_FL,
-Cmn_DodgeLight_F,
-Cmn_DeadIdle,
-Cmn_Dash_End_R,
-Cmn_Dash_End_L,
-Cmn_Dash,
-Cmn_Hit_Strike_B,
-Cmn_Hit_Strike_F,
-Cmn_Hit_RaiseDown,
-Cmn_Hit_RaiseUp,
-Cmn_HitBlow_B,
-Cmn_HitBlow_R,
-Cmn_HitBlow_L,
-Cmn_HitBlow_F,
-Cmn_HitStun,
-Cmn_Hit04_B,
-Cmn_Hit04_R,
-Cmn_Hit04_L,
-Cmn_Hit04_F,
-Cmn_Hit03_B,
-Cmn_Hit03_R,
-Cmn_Hit03_L,
-Cmn_Hit03_F,
-Cmn_Hit02_B,
-Cmn_Hit02_R,
-Cmn_Hit02_L,
-Cmn_Hit02_F,
-Cmn_Hit_Ground,
-Cmn_Hit01_BR,
-Cmn_Hit01_BL,
-Cmn_Hit01_B,
-Cmn_Hit01_R,
-Cmn_Hit01_L,
-Cmn_Hit01_FR,
-Cmn_Hit01_FL,
-Cmn_Hit01_F,
-Cmn_CheckPoint,
-Cmn_PickItem,
-Cmn_Stun_End,
-Cmn_Stun,
-Cmn_UseThrow,
-Cmn_UseInject,
-Cmn_UseEnchant,
-Cmn_UseItem,
-Cmn_Run_BR_End_L,
-Cmn_Run_BR_R,
-Cmn_Run_BR_L_End_R,
-Cmn_Run_BR_L_End_L,
-Cmn_Run_BR_L,
-Cmn_Run_BL_End_R,
-Cmn_Run_BL,
-Cmn_Run_B_End_R,
-Cmn_Run_B_End_L,
-Cmn_Run_B,
-Cmn_Run_R_End_R,
-Cmn_Run_R_End_L,
-Cmn_Run_R,
-Cmn_Run_L_End_R,
-Cmn_Run_L_End_L,
-Cmn_Run_L,
-Cmn_Run_FR_End_R,
-Cmn_Run_FR_End_L,
-Cmn_Run_FR,
-Cmn_Run_FL_R_End_R,
-Cmn_Run_FL_R_End_L,
-Cmn_Run_FL_R,
-Cmn_Run_FL_L_End,
-Cmn_Run_FL_L,
-Cmn_Run_F_End_R,
-Cmn_Run_F_End_L,
-Cmn_Run_F,
-Cmn_Walk_B,
-Cmn_Walk_BR,
-Cmn_Walk_BR_LockOn,
-Cmn_Walk_R,
-Cmn_Walk_L,
-Cmn_Walk_FL,
-Cmn_Walk_FL_LockOn,
-Cmn_Walk_F,
-Cmn_Idle_Look,
-Cmn_Idle
-*/
 
 	}P_ANI;
 

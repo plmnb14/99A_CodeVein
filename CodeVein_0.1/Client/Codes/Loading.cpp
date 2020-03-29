@@ -9,6 +9,8 @@
 #include "HPBack.h"
 #include "TestMonster.h"
 #include "Weapon.h"
+#include "Drain_Weapon.h"
+
 #include "Dummy_Target.h"
 #include "Trail_VFX.h"
 
@@ -88,11 +90,17 @@ _uint CLoading::Loading_ForStage(void)
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackWolf", CBlackWolf::Create(m_pGraphicDev))))
 		return E_FAIL;
 
-	//무기
+//========================================================================================================================================
+
+	// 무기
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon", CWeapon::Create(m_pGraphicDev))))
 		return E_FAIL;
 
-	//더미
+	// 흡혈 무기
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DrainWeapon", CDrain_Weapon::Create(m_pGraphicDev))))
+		return E_FAIL;
+
+	// 더미
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Dummy", CDummy_Target::Create(m_pGraphicDev))))
 		return E_FAIL;
 
@@ -288,6 +296,9 @@ _uint CLoading::Loading_Title()
 	cout << "이펙트 원형 생성중" << endl;
 	Ready_Effect();
 
+	// 이펙트 메쉬 불러오는중
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_Effect_Path.dat");
+
 	// UI 원형 생성
 	//============================================================================================================
 	cout << " UI 원형 생성중" << endl;
@@ -326,7 +337,6 @@ _uint CLoading::Loading_Stage()
 	if(m_bLoadStaticMesh)
 		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_Static_Path.dat");
 
-
 	// 다이나믹 메쉬 불러오는 중
 	//============================================================================================================
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_Dynamic_Path.dat");
@@ -335,6 +345,9 @@ _uint CLoading::Loading_Stage()
 	// 무기 불러오는 중
 	//============================================================================================================
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_Weapon_Path.dat");
+	// 일반 무기
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_DrainWeapon_Path.dat");
+	// 흡혈 무기
 
 	// BT_Node 생성 중
 	//============================================================================================================
@@ -367,6 +380,9 @@ _uint CLoading::Loading_Stage()
 	// 기타
 	//============================================================================================================
 
+	// 흡혈 무기
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DrainWeapon", CDrain_Weapon::Create(m_pGraphicDev))))
+		return E_FAIL;
 	//무기
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon", CWeapon::Create(m_pGraphicDev))))
 		return E_FAIL;

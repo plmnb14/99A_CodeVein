@@ -86,6 +86,30 @@ void CFileInfo::Create_Mesh_PathInfo(Extract_Mesh _eExtract_Mesh)
 
 		break;
 	}
+
+	case Extract_DrainWeapon:
+	{
+		cout << "Extracting DrainWeaponMesh Path . . ." << endl;
+		cout << "=============================================================" << endl;
+
+		lstrcpy(szStaticPath, L"..\\..\\Client\\Resources\\Mesh\\");
+		lstrcat(szStaticPath, L"DrainWeapons");
+
+		bDynamic = true;
+
+		break;
+	}
+
+	case Extract_Effect:
+	{
+		cout << "Extracting EffectMesh Path . . ." << endl;
+		cout << "=============================================================" << endl;
+
+		lstrcpy(szStaticPath, L"..\\..\\Client\\Resources\\Mesh\\");
+		lstrcat(szStaticPath, L"EffectMesh");
+		break;
+	}
+
 	}
 
 	Extract_Mesh_PathInfo(szStaticPath, m_listPathInfo, bDynamic);
@@ -123,6 +147,16 @@ void CFileInfo::Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst, Extract_Mesh 
 	case Extract_Weapon:
 	{
 		lstrcpy(szDataPath, L"../../Data/Mesh_Weapon_Path.dat");
+		break;
+	}
+	case Extract_DrainWeapon:
+	{
+		lstrcpy(szDataPath, L"../../Data/Mesh_DrainWeapon_Path.dat");
+		break;
+	}
+	case Extract_Effect:
+	{
+		lstrcpy(szDataPath, L"../../Data/Mesh_Effect_Path.dat");
 		break;
 	}
 	}

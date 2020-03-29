@@ -229,6 +229,9 @@
     <Filter Include="02.GameObject\Stage\4%29 UI\UI\99.Public\Button_UI">
       <UniqueIdentifier>{f4308e4f-0a96-460c-ba32-24c91ab05ac0}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\0%29 Player\00%29 DrainWeapon">
+      <UniqueIdentifier>{3b3dddb5-14c2-4366-8b67-4ae8f25b5dbd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -363,6 +366,9 @@
     <ClInclude Include="..\Headers\Button_UI.h">
       <Filter>02.GameObject\Stage\4%29 UI\UI\99.Public\Button_UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Drain_Weapon.h">
+      <Filter>02.GameObject\Stage\0%29 Player\00%29 DrainWeapon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -487,6 +493,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Button_UI.cpp">
       <Filter>02.GameObject\Stage\4%29 UI\UI\99.Public\Button_UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Drain_Weapon.cpp">
+      <Filter>02.GameObject\Stage\0%29 Player\00%29 DrainWeapon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

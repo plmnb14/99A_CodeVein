@@ -63,8 +63,8 @@ private:
 	_tchar					m_szName[MAX_STR] = L"";
 
 private:
-	_mat*					m_pmatAttach = nullptr;
-	_mat*					m_pmatParent = nullptr;
+	_mat*					m_pmatAttach;
+	_mat*					m_pmatParent;
 
 private:
 	_bool					m_bEquip = false;				// 무기 장착 여부

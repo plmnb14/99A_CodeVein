@@ -66,6 +66,8 @@ _int CWeapon::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CWeapon::Render_GameObject()
 {
+	return S_OK;
+
 	if (nullptr == m_pShader ||
 		nullptr == m_pMesh_Static)
 		return E_FAIL;

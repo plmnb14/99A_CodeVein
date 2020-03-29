@@ -21,8 +21,8 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 	if (FAILED(Ready_Layer_Player(L"Layer_Player")))
 		return E_FAIL;
 
-	//if (FAILED(Ready_Layer_Dummy(L"Layer_Dummy")))
-	//	return E_FAIL;
+	if (FAILED(Ready_Layer_Dummy(L"Layer_Dummy")))
+		return E_FAIL;
 
 	// Æ®·¹ÀÌ´× ¸ÊÀº ±×³É ·Îµå °¡´ÉÇØ¿è
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Stage_Training.dat");
@@ -80,7 +80,7 @@ HRESULT CScene_Stage_Training::Ready_LightDesc()
 
 	LightDesc.Type = D3DLIGHT_DIRECTIONAL;
 	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	LightDesc.Ambient = D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.f);
+	LightDesc.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	// In.WorldSpace
 	LightDesc.Direction = _v3(1.f, 1.f, -1.f);
