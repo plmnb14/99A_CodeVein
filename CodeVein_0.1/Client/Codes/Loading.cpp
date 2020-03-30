@@ -18,7 +18,8 @@
 #include "PoisonButterfly.h"
 #include "BlackUrchin.h"
 #include "BlackWolf.h"
-#include "Genji.h"
+#include "NormalGenji.h"
+#include "PoisonBullet.h"
 
 #include "PlayerHP.h"
 #include "PlayerST.h"
@@ -87,6 +88,10 @@ _uint CLoading::Loading_ForStage(void)
 	// 검은 늑대
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackWolf", CBlackWolf::Create(m_pGraphicDev))))
 		return E_FAIL;
+	// 독나비 독 총알
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonBullet", CPoisonBullet::Create(m_pGraphicDev))))
+		return E_FAIL;
+
 
 	//무기
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon", CWeapon::Create(m_pGraphicDev))))
@@ -362,6 +367,12 @@ _uint CLoading::Loading_Stage()
 		return E_FAIL;
 	// 검은 늑대
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackWolf", CBlackWolf::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 일반겐지
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_NormalGenji", CNormalGenji::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 독나비 독 총알
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonBullet", CPoisonBullet::Create(m_pGraphicDev))))
 		return E_FAIL;
 
 	// 기타

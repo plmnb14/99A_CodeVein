@@ -315,9 +315,6 @@
     <ClInclude Include="..\Headers\BlackWolf.h">
       <Filter>02.GameObject\Stage\1%29 Monster\Wolf</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Genji.h">
-      <Filter>02.GameObject\Stage\1%29 Monster\Genji</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\Scene_Title.h">
       <Filter>01.Scene\01.Title</Filter>
     </ClInclude>
@@ -362,6 +359,12 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Button_UI.h">
       <Filter>02.GameObject\Stage\4%29 UI\UI\99.Public\Button_UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\NormalGenji.h">
+      <Filter>02.GameObject\Stage\1%29 Monster\Genji</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\PoisonBullet.h">
+      <Filter>02.GameObject\Stage\1%29 Monster\PoisonButterfly</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -440,9 +443,6 @@
     <ClCompile Include="..\Codes\BlackWolf.cpp">
       <Filter>02.GameObject\Stage\1%29 Monster\Wolf</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Genji.cpp">
-      <Filter>02.GameObject\Stage\1%29 Monster\Genji</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\Scene_Title.cpp">
       <Filter>01.Scene\01.Title</Filter>
     </ClCompile>
@@ -487,6 +487,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Button_UI.cpp">
       <Filter>02.GameObject\Stage\4%29 UI\UI\99.Public\Button_UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\NormalGenji.cpp">
+      <Filter>02.GameObject\Stage\1%29 Monster\Genji</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\PoisonBullet.cpp">
+      <Filter>02.GameObject\Stage\1%29 Monster\PoisonButterfly</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -12,7 +12,7 @@ public:
 	typedef struct tagInitInfo
 	{
 		tagInitInfo(char* pNodeName, _tchar* _Effect_Tag, _tchar* _Create_Pos_Key, _float _Effect_Life_Time, _uint _MaxCount_Of_Execution, _double dCreateTime, _double dOffset, CBT_Service_Node::Mode _eMode, CBT_CreateEffect::Mode _eEffect_Mode)
-			: Effect_Life_Time(_Effect_Life_Time), Target_dCreateTime(dCreateTime), Target_dOffset(dOffset), MaxCount_Of_Execution(_MaxCount_Of_Execution), eEffect_Mode(_eEffect_Mode)
+			: Effect_Life_Time(_Effect_Life_Time), Target_dCreateTime(dCreateTime), Target_dOffset(dOffset), MaxCount_Of_Execution(_MaxCount_Of_Execution), eMode(_eMode), eEffect_Mode(_eEffect_Mode)
 		{strcpy_s<256>(Target_NodeName, pNodeName);
 		lstrcpy(Effect_Tag, _Effect_Tag);
 		lstrcpy(Create_Pos_Key, _Create_Pos_Key);}

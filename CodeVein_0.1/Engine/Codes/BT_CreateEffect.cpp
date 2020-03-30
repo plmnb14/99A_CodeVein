@@ -51,7 +51,7 @@ void CBT_CreateEffect::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT
 		if (bDebugging)
 		{
 			Cout_Indentation(pNodeStack);
-			cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " Start   { Service : Transform }" << endl;
+			cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " Start   { Service : Effect }" << endl;
 		}
 
 		m_dCurTime = 0;
@@ -67,7 +67,7 @@ CBT_Node::BT_NODE_STATE CBT_CreateEffect::End_Node(vector<CBT_Node*>* pNodeStack
 	if (bDebugging)
 	{
 		Cout_Indentation(pNodeStack);
-		cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " End   { Service : Transform }" << endl;
+		cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " End   { Service : Effect }" << endl;
 	}
 
 	switch (m_eMode)

@@ -7,12 +7,16 @@ BEGIN(Engine)
 class ENGINE_DLL CBT_Selector final : public CBT_Composite_Node
 {
 public:
+	enum Mode { Normal, Random };
+
 	typedef struct tagInitInfo
 	{
-		tagInitInfo(char* pNodeName)
+		tagInitInfo(char* pNodeName, Mode _eMode)
+			: eMode(_eMode)
 		{ strcpy_s<256>(Target_NodeName, pNodeName); }
 
 		char	Target_NodeName[256] = { 0, };
+		Mode	eMode = Normal;
 	}INFO;
 
 protected:
@@ -35,6 +39,9 @@ private:
 
 private:
 	size_t				m_pCurIndex = 0;
+	Mode				m_eMode = Normal;
+
+	_int				m_iRandomNum = 0;
 
 public:
 	static CBT_Selector* Create_Prototype();

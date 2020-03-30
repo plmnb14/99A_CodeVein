@@ -1,27 +1,23 @@
 #include "stdafx.h"
-#include "..\Headers\Genji.h"
+#include "..\Headers\NormalGenji.h"
 
-CGenji::CGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
+CNormalGenji::CNormalGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
 }
 
-CGenji::CGenji(const CGenji & rhs)
+CNormalGenji::CNormalGenji(const CNormalGenji & rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CGenji::Ready_GameObject_Prototype()
+HRESULT CNormalGenji::Ready_GameObject_Prototype()
 {
 	return NOERROR;
 }
 
-HRESULT CGenji::Ready_GameObject(void * pArg)
+HRESULT CNormalGenji::Ready_GameObject(void * pArg)
 {
-	INFO temp = *(INFO*)pArg;
-
-	m_eWeapon = temp.eWeapon;
-	m_eColor = temp.eColor;
 
 	if (FAILED(Add_Component(pArg)))
 		return E_FAIL;
@@ -130,7 +126,7 @@ HRESULT CGenji::Ready_GameObject(void * pArg)
 	//가드 오른쪽180도
 	CBT_Play_Ani* pAni17 = Node_Ani("가드 오른쪽180도 ", 17, 0.9f);
 	pSequence->Add_Child(pAni17);
-	
+
 	//가드 오른쪽 90도
 	CBT_Play_Ani* pAni18 = Node_Ani("가드 오른쪽 90도 ", 18, 0.9f);
 	pSequence->Add_Child(pAni18);
@@ -265,7 +261,7 @@ HRESULT CGenji::Ready_GameObject(void * pArg)
 	return NOERROR;
 }
 
-_int CGenji::Update_GameObject(_double TimeDelta)
+_int CNormalGenji::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
 
@@ -274,7 +270,7 @@ _int CGenji::Update_GameObject(_double TimeDelta)
 	return _int();
 }
 
-_int CGenji::Late_Update_GameObject(_double TimeDelta)
+_int CNormalGenji::Late_Update_GameObject(_double TimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
@@ -287,7 +283,7 @@ _int CGenji::Late_Update_GameObject(_double TimeDelta)
 	return _int();
 }
 
-HRESULT CGenji::Render_GameObject()
+HRESULT CNormalGenji::Render_GameObject()
 {
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pMeshCom)
@@ -328,7 +324,7 @@ HRESULT CGenji::Render_GameObject()
 	return NOERROR;
 }
 
-HRESULT CGenji::Add_Component(void* pArg)
+HRESULT CNormalGenji::Add_Component(void* pArg)
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -343,21 +339,9 @@ HRESULT CGenji::Add_Component(void* pArg)
 		return E_FAIL;
 
 	// for.Com_Mesh
-	switch (m_eColor)
-	{
-	case Color::Normal:
-		if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_NormalGenji", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
-			return E_FAIL;
-		break;
-	case Color::Jungle:
-		if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_JungleGenji", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
-			return E_FAIL;
-		break;
-	case Color::White:
-		if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_WhiteGenji", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
-			return E_FAIL;
-		break;
-	}
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_NormalGenji", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
+		return E_FAIL;
+
 
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_NormalGenji", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
 		return E_FAIL;
@@ -370,7 +354,7 @@ HRESULT CGenji::Add_Component(void* pArg)
 	return NOERROR;
 }
 
-HRESULT CGenji::SetUp_ConstantTable()
+HRESULT CNormalGenji::SetUp_ConstantTable()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -397,36 +381,36 @@ HRESULT CGenji::SetUp_ConstantTable()
 	return NOERROR;
 }
 
-CGenji * CGenji::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
+CNormalGenji * CNormalGenji::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 {
-	CGenji* pInstance = new CGenji(pGraphic_Device);
+	CNormalGenji* pInstance = new CNormalGenji(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 	{
-		MSG_BOX("Failed To Creating CGenji");
+		MSG_BOX("Failed To Creating CNormalGenji");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject * CGenji::Clone_GameObject(void * pArg)
+CGameObject * CNormalGenji::Clone_GameObject(void * pArg)
 {
 	// 검, 총, 방패
 	// 
 
-	CGenji* pInstance = new CGenji(*this);
+	CNormalGenji* pInstance = new CNormalGenji(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
-		MSG_BOX("Failed To Cloned CGenji");
+		MSG_BOX("Failed To Cloned CNormalGenji");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CGenji::Free()
+void CNormalGenji::Free()
 {
 	Safe_Release(m_pAIControllerCom);
 	Safe_Release(m_pTransformCom);
