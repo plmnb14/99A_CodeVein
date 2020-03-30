@@ -1,0 +1,10 @@
+diff a/CodeVein_0.1/EffectTool/Codes/EffectToolView.cpp b/CodeVein_0.1/EffectTool/Codes/EffectToolView.cpp	(rejected hunks)
+@@ -197,6 +197,8 @@
+ 	Engine::CManagement::Release_Engine();
+ }
+ 
++<<<<<<< HEAD
++=======
+ #ifdef _DEBUG
+ >>>>>>> origin/Une
+ CEffectToolDoc* CEffectToolView::GetDocument() const // ����׵��� ���� ������ �ζ������� �����˴ϴ�.

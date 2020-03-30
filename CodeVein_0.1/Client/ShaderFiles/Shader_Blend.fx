@@ -55,7 +55,7 @@ sampler	DistortionSampler = sampler_state
 	minfilter = linear;
 	magfilter = linear;
 	mipfilter = linear;
-}; 
+};
 
 texture		g_SSAOTexture;
 sampler	SSAOSampler = sampler_state
@@ -111,7 +111,7 @@ PS_OUT PS_TONEMAPPING(PS_IN In)
 		float Luminance = 0.08f;
 		static const float fMiddleGray = 0.18f;
 		static const float fWhiteCutoff = 0.9f;
-		
+
 		float3 Color = pow(Out.vColor.xyz, 1.f / 2.2f) * fMiddleGray / (Luminance + 0.001f);
 		Color *= (1.f + (Color / (fWhiteCutoff * fWhiteCutoff)));
 		Color /= (1.f + Color);
@@ -149,7 +149,7 @@ PS_OUT PS_TONEMAPPING(PS_IN In)
 		float D = 0.20;
 		float E = 0.02;
 		float F = 0.30;
-		
+
 		float3 x = Out.vColor.rgb;
 		float3 Color = ((x*(A*x + C*B) + D*E) / (x*(A*x + B) + D*F)) - E / F;
 		Out.vColor = float4(Color, 1.f);
@@ -290,15 +290,15 @@ PS_OUT MotionBlurForObj(PS_IN In)
 
 	float uVelocityScale = 1.f;// currentFps / targetFps;
 	int MAX_SAMPLES = 8;
-	
+
 	float2 texelSize = float2(1.f / 1280.f, 1.f / 720.f);
 	float2 screenTexCoords = In.vTexUV.xy;// *texelSize;
-	
-	//float2 velocity = tex2D(ShadeSampler, screenTexCoords).rg;
-	//velocity *= uVelocityScale;
+
+										  //float2 velocity = tex2D(ShadeSampler, screenTexCoords).rg;
+										  //velocity *= uVelocityScale;
 	float4 velocity = tex2D(ShadeSampler, screenTexCoords);
 	velocity.xy = pow(velocity.xy * 2 - 1, 3.0);
-	
+
 	//float speed = length(velocity / texelSize);
 	//float nSamples = clamp(int(speed), 1, MAX_SAMPLES);
 

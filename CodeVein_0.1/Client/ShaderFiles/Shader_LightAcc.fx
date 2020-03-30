@@ -168,7 +168,7 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	float4 rc = g_vLightDiffuse;
 	Out.vShade += pow(fRim, 2.f) * rc;
 	// RimLight End ====================================================================
-	
+
 
 	// SSAO ====================================================================
 	vNormal = mul(vNormal, g_matProjInv);

@@ -173,7 +173,7 @@ void CParticleTab::Set_Index(wstring wstrIdx)
 	m_fCreatePause = _float(_tstof(m_EditCreateDelay)) + 1.f;
 
 	_bool bIsAnim = m_CheckIsAnim.GetCheck() ? true : false;
-	if(!bIsAnim)
+	if (!bIsAnim)
 		GetDlgItem(IDC_EDIT38)->SetWindowTextW(wstrIdx.c_str());
 	else
 		GetDlgItem(IDC_EDIT38)->SetWindowTextW(L"0");
@@ -206,7 +206,7 @@ void CParticleTab::LateInit()
 	}
 
 	CManagement*		pManagement = CManagement::Get_Instance();
-	
+
 	//m_pTestBox = static_cast<CMeshEffect*>(pManagement->Clone_GameObject_Return(L"GameObject_MeshEffect", nullptr));
 	//lstrcpy(m_pTestBox->Get_Info()->szName, L"Mesh_DefaultBox");
 	//lstrcpy(m_pTestBox->Get_Info()->szColorName, L"Tex_Colors");
@@ -505,7 +505,7 @@ void CParticleTab::Setup_EffInfo(_bool bIsMesh)
 	m_pInfo->fAlphaSpeed_Min = _float(_tstof(m_EditAlphaSpeed_Min));
 	m_pInfo->fAlphaSpeed_Max = _float(_tstof(m_EditAlphaSpeed_Max));
 
-	if(bIsMesh)
+	if (bIsMesh)
 		lstrcpy(m_pInfo->szName, m_wstrMeshName.c_str());
 	else
 		lstrcpy(m_pInfo->szName, m_wstrTexName.c_str());
@@ -674,7 +674,7 @@ void CParticleTab::OnBnClickedButton_Save()
 		::WriteFile(hFile, &m_pInfo->vStartScale, sizeof(_v3), &dwByte, nullptr);
 		::WriteFile(hFile, &m_pInfo->fColorIndex, sizeof(_float), &dwByte, nullptr);
 		::WriteFile(hFile, &m_pInfo->fMaskIndex, sizeof(_float), &dwByte, nullptr);
-		
+
 		_bool bRandRotSpeed = (m_CheckRandRotSpeed.GetCheck()) ? true : false;
 		::WriteFile(hFile, &bRandRotSpeed, sizeof(_bool), &dwByte, nullptr);
 		_bool bRandAlphaSpeed = (m_CheckRandAlphaSpeed.GetCheck()) ? true : false;
@@ -683,7 +683,7 @@ void CParticleTab::OnBnClickedButton_Save()
 		::WriteFile(hFile, &bRandMoveSpeed, sizeof(_bool), &dwByte, nullptr);
 		_bool bRandCreateDelay = (m_CheckRandCreateDelay.GetCheck()) ? true : false;
 		::WriteFile(hFile, &bRandCreateDelay, sizeof(_bool), &dwByte, nullptr);
-		
+
 		_bool bGravity = (m_CheckGravity.GetCheck()) ? true : false;
 		::WriteFile(hFile, &bGravity, sizeof(_bool), &dwByte, nullptr);
 		_bool bRandSize = (m_CheckRandSize.GetCheck()) ? true : false;
@@ -1018,4 +1018,3 @@ void CParticleTab::OnBnClickedButton_Load()
 
 	UpdateData(FALSE);
 }
-

@@ -59,14 +59,14 @@ VS_OUT VS_MAIN(VS_IN In)
 	matWVP = mul(matWV, g_matProj);
 
 
-	Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);	
+	Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
 	Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), g_matWorld));
 	Out.vTexUV = In.vTexUV;
 
 	Out.vProjPos = Out.vPosition;
 	Out.vLocalPos = float4(In.vPosition.xyz, 1.f);
 
-	return Out;		
+	return Out;
 }
 
 VS_BLUROUT VS_MOTIONBLUR(VS_IN In)
@@ -128,7 +128,7 @@ struct PS_OUT
 };
 
 // 픽셀의 색을 결정한다.
-PS_OUT PS_MAIN(PS_IN In) 
+PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 

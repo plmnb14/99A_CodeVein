@@ -23,7 +23,7 @@ public:
 	HRESULT Add_RenderList(RENDERID eGroup, CGameObject* pGameObject);
 	HRESULT Draw_RenderList();
 private:
-	_bool						m_bOnRenderTarget;
+	_bool						m_bOnRenderTarget = false;
 	_mat						m_matLastWVP;
 	list<CGameObject*>			m_RenderList[RENDER_END];
 	typedef list<CGameObject*>	RENDERLIST;

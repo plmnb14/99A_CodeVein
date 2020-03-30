@@ -522,6 +522,24 @@ CELL_PARAM CNavMesh::Get_CellParam()
 	return (*m_vecSubset_Cell[m_dwSubsetIdx])[m_dwIndex]->Get_CellParam();
 }
 
+void CNavMesh::Reset_NaviMesh()
+{
+	for (auto& iter : m_vecSubset_Cell)
+	{
+		for (auto& Veciter : *iter)
+		{
+			Safe_Release(Veciter);
+		}
+
+		iter->clear();
+		iter->shrink_to_fit();
+		Safe_Delete(iter);
+	}
+
+	m_vecSubset_Cell.clear();
+	m_vecSubset_Cell.shrink_to_fit();
+}
+
 CNavMesh * CNavMesh::Create(_Device pGraphicDev)
 {
 	CNavMesh*	pInstance = new CNavMesh(pGraphicDev);

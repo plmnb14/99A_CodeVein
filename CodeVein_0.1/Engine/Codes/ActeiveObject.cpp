@@ -1,6 +1,8 @@
 #include "..\Headers\ActeiveObject.h"
 #include "Management.h"
 
+static _bool bTestObject = false;
+
 CActiveObject::CActiveObject(_Device _pGraphicDev)
 	: CGameObject(_pGraphicDev)
 	, m_pGrouop(RENDER_ALPHA)
@@ -15,8 +17,11 @@ CActiveObject::CActiveObject(const CActiveObject & rhs)
 {
 	memcpy(m_szAciveName, rhs.m_szAciveName, sizeof(_tchar[MAX_STR]));
 
+	Add_Essentional_Copy();
 	Default_Setting();
+
 	m_pTransform->Set_Info(rhs.m_pTransform->Get_Info());
+
 }
 
 CActiveObject::~CActiveObject()
@@ -42,11 +47,11 @@ _int CActiveObject::Update_GameObject(_double _TimeDelta)
 		if (nullptr != pManagement)
 		{
 			_v3 Test = V3_NULL;
-			Test =TARGET_TO_TRANS(pManagement->Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos();
+			Test = TARGET_TO_TRANS(pManagement->Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos();
 			_v3 TestVec3 = m_pTransform->Get_Pos() - Test;
 			if (V3_LENGTH(&TestVec3) <= 2.f && false == m_bCheck_Mistletoe)
 			{
-				//cout << "상호작용 가능" << endl;
+				//	cout << "상호작용 가능" << endl;
 			}
 			if (pManagement->Get_DIKeyState(DIK_E))
 				m_bCheck_Mistletoe = true;
@@ -66,32 +71,40 @@ _int CActiveObject::Update_GameObject(_double _TimeDelta)
 		// 아이템, 상자와 상호작용을 한다.
 		// 박스 뚜껑이 일정 각도가 되었을 때 박스 안의 아이템을 E키를 누르면 획득할 수 있게 한다
 		// 박스 뚜껑을 불값줘서 true 일 때 아이템을 드랍하고 드랍 후 획득 시 아이템 드랍 금지
-		/*if (true == m_bCheck_Boxopen_end)
+		if (true == bTestObject)
 		{
-			cout << "아이템 드랍" << endl;
-			if (pManagement->Get_DIKeyState(DIK_E))
-				cout << "아이템 겟" << endl;
-		}*/
-			
+			if (false == m_bCheck_Boxopen_end)
+				//cout << "아이템 획득 가능" << endl;
+			if (pManagement->Get_DIKeyState(DIK_E) && false == m_bCheck_Boxopen_end)
+			{
+				//cout << "아이템 겟" << endl;
+				m_bCheck_Boxopen_end = true;
+			}
+
+		}
+		else
+			//cout << "아이템 획득 불가능" << endl;
+
 		break;
 	}
 	case ATV_BOX_LID:
 	{
 		// 플레이어가 박스 앞에서 E키를 눌렀을 때 박스의 뚜껑이 일정 속도로 45도? 정도 돌린다.
-		/*cout << m_pTransform->Get_Angle(AXIS_X) << endl;
+		float TestAngle = m_pTransform->Get_Angle(AXIS_X);
+		cout << TestAngle << endl;
 		_v3 Test = V3_NULL;
 		Test = TARGET_TO_TRANS(pManagement->Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos();
 		_v3 TestVec3 = m_pTransform->Get_Pos() - Test;
 
-		if (V3_LENGTH(&TestVec3) <= 2.f && true == m_bCheck_BoxLid)
+		if (V3_LENGTH(&TestVec3) <= 5.f && true == m_bCheck_BoxLid)
 			m_bCheck_Boxopen = true;
 		if (pManagement->Get_DIKeyState(DIK_E))
 			m_bCheck_BoxLid = true;
-		if (true == m_bCheck_Boxopen && 45.f >= m_pTransform->Get_Angle(AXIS_X))
-			m_pTransform->Add_Angle(AXIS_X, 10.f);
-		else if (45.f <= m_pTransform->Get_Angle(AXIS_X))
-			m_bCheck_Boxopen_end = true;
-		*/
+		if (true == m_bCheck_Boxopen && 1.0f >= m_pTransform->Get_Angle(AXIS_X))
+			m_pTransform->Add_Angle(AXIS_X, 1.f);
+		else if (D3DXToRadian(1.f) <= m_pTransform->Get_Angle(AXIS_X))
+			bTestObject = true;
+
 		break;
 	}
 	}
@@ -142,7 +155,7 @@ void CActiveObject::Chaning_AtvMesh(const _tchar* _MeshName)
 
 	Safe_Release(m_pMesh_Static);
 	Safe_Release(iter->second);
-	
+
 	iter->second = m_pMesh_Static = static_cast<CMesh_Static*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, m_szAciveName));
 	Safe_AddRef(iter->second);
 	//iter->second = m_pMesh_Dynamic = static_cast<CMesh_Dynamic*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, m_szAciveName));
@@ -212,6 +225,8 @@ HRESULT CActiveObject::Initialize()
 
 HRESULT CActiveObject::LateInit_GameObject()
 {
+
+	m_pTransform->Set_Angle(AXIS_Y, D3DXToRadian(45.f));
 	return S_OK;
 }
 
