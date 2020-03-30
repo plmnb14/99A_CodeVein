@@ -1,6 +1,6 @@
 
 
-matrix		g_matWorld, g_matView, g_matProj;
+matrix		g_matWorld, g_matView, g_matProj, g_matInvWorld;
 float		g_fAlpha = 1;
 vector		g_vColor = { 0, 0, 0, 1 };
 bool		g_bUseRGBA = false;
@@ -12,9 +12,9 @@ texture		g_DiffuseTexture;
 sampler		DiffuseSampler = sampler_state
 {
 	texture = g_DiffuseTexture;
-	minfilter = linear;
-	magfilter = linear;
-	mipfilter = linear;
+	minfilter = point;
+	magfilter = point;
+	mipfilter = point;
 };
 
 texture		g_ColorTexture;
@@ -110,8 +110,8 @@ struct PS_IN
 
 struct PS_OUT
 {
-	vector		vColor : COLOR0;
-	vector		vDistortion : COLOR1;
+	vector		vColor		:	COLOR0;
+	vector		vDistortion :	COLOR1;
 };
 
 float3 lumCoeff = float3(0.2125, 0.7154, 0.0721);
@@ -211,7 +211,7 @@ PS_OUT PS_DISTORTION(PS_IN In)
 	}
 	else
 	{
-		Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
+		Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
 		//Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
 		Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
 	}
@@ -230,13 +230,14 @@ PS_OUT PS_DISTORTION(PS_IN In)
 	vector		vDepthInfo = tex2D(DepthSampler, vTexUV);
 	float		fViewZ = vDepthInfo.y * 500.f;
 
-	Out.vColor.a = Out.vColor.a * saturate(fViewZ - In.vProjPos.w);
+	//Out.vColor.a = Out.vColor.a * saturate(fViewZ - In.vProjPos.w);
 
+	//float2  fDistortion = tex2D(DiffuseSampler, In.vTexUV).xy;
 	//float fPower = In.vProjPos.w;
-	Out.vColor.a -= (Out.vColor.x + Out.vColor.y);
+	//Out.vColor *= (1.f - (fDistortion.x + fDistortion.y));
+	//Out.vColor -= (Out.vColor.x + Out.vColor.y);
 	//Out.vColor *= fPower;
 	Out.vDistortion = saturate(Out.vColor);
-
 
 	return Out;
 }
@@ -278,10 +279,41 @@ PS_OUT PS_MESHEFFECT(PS_IN In)
 
 	return Out;
 }
+matrix		g_matProjInv;
+matrix		g_matViewInv;
+PS_OUT PS_SSD(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	vector		vDepthInfo = tex2D(DepthSampler, In.vTexUV); //Depth값을 알아옵니다.  
+	float		fViewZ = vDepthInfo.g * 500.f;
+	vector		vWorldPos;
+	vWorldPos.x = In.vTexUV.x * 2.f - 1.f;
+	vWorldPos.y = In.vTexUV.y * -2.f + 1.f;
+	vWorldPos.z = vDepthInfo.x;
+	vWorldPos.w = 1.f;
+	vWorldPos = vWorldPos * fViewZ;
+	vWorldPos = mul(vWorldPos, g_matProjInv);
+	vWorldPos = mul(vWorldPos, g_matViewInv);
+	
+	float3 decalLocalPos = float3(0, 0, 0);
+	decalLocalPos = mul(vWorldPos, g_matInvWorld).xyz;
+
+	float2 decalUV = decalLocalPos.xy + 0.5f;
+	
+	float dist = decalLocalPos.z;
+	float scaleDistance = max(dist * 2.0f, 1.0f);
+	float fadeOut = 1.0f - scaleDistance;
+	float4 Color = tex2D(DiffuseSampler, In.vTexUV);
+	Color.a *= fadeOut; 
+
+	Out.vColor = Color;
+	return Out;
+}
 
 technique Default_Technique
 {
-	pass Default_Rendering
+	pass Default_Rendering // 0
 	{	
 		ZWriteEnable = false;
 		AlphablendEnable = true;
@@ -294,7 +326,7 @@ technique Default_Technique
 		PixelShader = compile ps_3_0 PS_MAIN();
 	}	
 
-	pass Distortion
+	pass Distortion // 1
 	{
 		ZWriteEnable = false;
 
@@ -306,7 +338,7 @@ technique Default_Technique
 		PixelShader = compile ps_3_0 PS_DISTORTION();
 	}
 
-	pass MeshEffect
+	pass MeshEffect // 2
 	{
 		zwriteenable = false;
 
@@ -322,7 +354,7 @@ technique Default_Technique
 		PixelShader = compile ps_3_0 PS_MESHEFFECT();
 	}
 
-	pass InstanceTexEffect
+	pass InstanceTexEffect // 3
 	{
 		zwriteenable = false;
 
@@ -336,6 +368,21 @@ technique Default_Technique
 
 		VertexShader = compile vs_3_0 VS_INSTANCE();
 		PixelShader = compile ps_3_0 PS_MAIN();
+	}
+
+	pass SSD // 4
+	{
+		zwriteenable = false;
+
+		AlphablendEnable = true;
+		AlphaTestEnable = true;
+		srcblend = SrcAlpha;
+		DestBlend = InvSrcAlpha;
+		//blendop = add;
+		//cullmode = none;
+
+		VertexShader = compile vs_3_0 VS_INSTANCE();
+		PixelShader = compile ps_3_0 PS_SSD();
 	}
 }
 

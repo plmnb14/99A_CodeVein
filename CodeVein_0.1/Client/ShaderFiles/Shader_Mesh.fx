@@ -150,12 +150,15 @@ PS_OUT PS_MOTIONBLUR(PS_BLURIN In)
 
 	float2 a = (In.vProjPos.xy / In.vProjPos.w) * 0.5 + 0.5;
 	float2 b = (In.vLastPos.xy / In.vLastPos.w) * 0.5 + 0.5;
-	float2 velocity = pow(abs(a - b), 1 / 3.0)*sign(a - b) * 0.5 + 0.5;
+	//float2 velocity = pow(abs(a - b), 1 / 3.0)*sign(a - b) * 0.5 + 0.5;
+	float2 velocity = (a - b) * 0.5 + 0.5;
+	velocity = pow(velocity, 3.0);
 
 	Out.vDiffuse = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.f, 0.f);
 	Out.vVelocity = vector(velocity.xy, Out.vDepth.x, 1.f);
+
 	//Out.vVelocity = In.vVelocity;
 
 	return Out;
@@ -173,7 +176,7 @@ PS_OUT PS_DISSOLVE(PS_IN In)
 	if (vColor.a == 0.f)
 		clip(-1);
 
-	if (In.vLocalPos.y < g_fFxAlpha * 2.f) // 밑에서부터 서서히 사라짐
+	//if (In.vLocalPos.y < g_fFxAlpha * 2.f) // 밑에서부터 서서히 사라짐
 	{
 		if (fxColor.r >= g_fFxAlpha)
 			vColor.a = 1;
@@ -199,7 +202,7 @@ PS_OUT PS_DISSOLVE(PS_IN In)
 
 	Out.vDiffuse = vColor;
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 300.f, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.f, 0.f);
 	Out.vVelocity = 0;
 
 	return Out;

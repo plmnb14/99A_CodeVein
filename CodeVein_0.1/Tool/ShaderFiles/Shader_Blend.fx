@@ -81,12 +81,12 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	//vector	vDiffuse = tex2D(DiffuseSampler, In.vTexUV);
+	vector	vDiffuse = tex2D(DiffuseSampler, In.vTexUV);
 	//vector	vShade = tex2D(ShadeSampler, In.vTexUV);
 	//vector	vSpecular = tex2D(SpecularSampler, In.vTexUV);
 	//vector	vSSAO = tex2D(SSAOSampler, In.vTexUV);
 
-	vector	vDiffuse = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
+	//vector	vDiffuse = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
 	vector	vShade = pow(tex2D(ShadeSampler, In.vTexUV), 2.2);
 	vector	vSpecular = pow(tex2D(SpecularSampler, In.vTexUV), 2.2);
 	//vector	vSSAO = pow(tex2D(SSAOSampler, In.vTexUV), 2.2);
@@ -224,11 +224,9 @@ PS_OUT PS_AFTER(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	// Calc Distortion =========================================
-	float2 Trans = In.vTexUV + 0.001f;
+	float2 Trans = In.vTexUV;// +0.001f;
 	vector	Noise = tex2D(DistortionSampler, Trans);
-	//Noise.x -= 0.5f;
-	//Noise.y -= 0.5f;
-
+	Noise.xy *= 1.f - (Noise.x + Noise.y);
 	float2 UV = In.vTexUV + Noise.xy * 0.05f;
 	if (Noise.w <= 0)
 		UV = In.vTexUV;
@@ -283,29 +281,36 @@ PS_OUT PS_Default(PS_IN In)
 }
 
 matrix		g_matInvVP, g_matLastVP;
-
+//float g_fCurFrame, g_fTargetFrame;
 PS_OUT MotionBlurForObj(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	float uVelocityScale = 1.f;// currentFps / targetFps;
-	int MAX_SAMPLES = 8;
+	//float uVelocityScale = g_fCurFrame / g_fTargetFrame;
+	int MAX_SAMPLES = 15;
 
-	float2 texelSize = float2(1.f / 1280.f, 1.f / 720.f);
+	//float2 texelSize = float2(1.f / 1280.f, 1.f / 720.f);
 	float2 screenTexCoords = In.vTexUV.xy;// *texelSize;
 
-										  //float2 velocity = tex2D(ShadeSampler, screenTexCoords).rg;
-										  //velocity *= uVelocityScale;
 	float4 velocity = tex2D(ShadeSampler, screenTexCoords);
-	velocity.xy = pow(velocity.xy * 2 - 1, 3.0);
+	//velocity.xy = pow(velocity.xy * 2 - 1, 3.0);
+	//velocity *= uVelocityScale;
+	velocity.xy = pow(velocity.xy, 1.0 / 3.0);
+	velocity.xy = velocity.xy * 2.0 - 1.0;
 
 	//float speed = length(velocity / texelSize);
 	//float nSamples = clamp(int(speed), 1, MAX_SAMPLES);
 
+	//vector	vDepthInfo = tex2D(DepthSampler, screenTexCoords);
+
 	Out.vColor = tex2D(DiffuseSampler, screenTexCoords);
+
+	// 제한
+	velocity.xy = (clamp(velocity.x, -0.5f, 0.5f), clamp(velocity.y, -0.5f, 0.5f));
+
 	for (int i = 1; i < MAX_SAMPLES; ++i) {
-		//// 앞의 물체는 블러에서 제외. 뒤의 것들만 처리해라
-		//if (velocity.z < vWorldPos.z)
+		// 앞의 물체는 블러에서 제외. 뒤의 것들만 처리해라
+		//if (velocity.z < vDepthInfo.x + 0.34f)
 		{
 			float2 offset = velocity.xy * (float(i) / float(MAX_SAMPLES - 1) - 0.5);
 			Out.vColor += tex2D(DiffuseSampler, screenTexCoords + offset);

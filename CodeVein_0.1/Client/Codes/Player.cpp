@@ -43,6 +43,7 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 	CGameObject::Update_GameObject(TimeDelta);
 
 	KeyInput();
+	Check_Dissolve(TimeDelta);
 
 	Parameter_YPos();
 	Parameter_Movement();
@@ -101,11 +102,12 @@ HRESULT CPlayer::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			m_pShader->Begin_Pass(0);
+			m_pShader->Begin_Pass(m_iPass);
 
 			if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pDynamicMesh->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE))))
 				return E_FAIL;
-
+			if (FAILED(m_pFXTexture->SetUp_OnShader("g_FXTexture", m_pShader, 13)))
+				return E_FAIL;
 			m_pShader->Commit_Changes();
 
 			m_pDynamicMesh->Render_Mesh(i, j);
@@ -810,6 +812,9 @@ void CPlayer::Key_Movement_Down()
 			return;
 
 		if (m_eActState == ACT_Buff)
+			return;
+
+		if (m_eActState == ACT_Down)
 			return;
 
 		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.05f))
@@ -2106,6 +2111,23 @@ void CPlayer::Change_Weapon()
 	// 여기 무기 바꾸는 코드를 추후에 작성해야 합니다.
 }
 
+void CPlayer::Check_Dissolve(_double TimeDelta)
+{
+	if(m_eActState == ACT_Down) // 임시
+	//if (g_pInput_Device->Key_Pressing(DIK_J)) // 디버그
+	{
+		m_iPass = 3;
+
+		const _float SPEED = 0.7f;
+		m_fFxSpeed += _float(TimeDelta) * SPEED;
+
+		g_pManagement->Create_Effect(L"SpawnParticle", m_pTransform->Get_Pos());
+
+		if (m_fFxSpeed >= 1.f)
+			m_fFxSpeed = 1.f;
+	}
+}
+
 HRESULT CPlayer::Add_Component()
 {
 	// For.Com_Transform
@@ -2128,6 +2150,10 @@ HRESULT CPlayer::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"NavMesh", (CComponent**)&m_pNavMesh)))
 		return E_FAIL;
 
+	// for.Com_FXTex
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Noise", L"FXTexture", (CComponent**)&m_pFXTexture)))
+		return E_FAIL;
+	
 	m_pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 
 	m_pCollider->Set_Radius(_v3{ 0.4f, 0.5f, 0.4f });
@@ -2187,6 +2213,13 @@ HRESULT CPlayer::SetUp_ConstantTable()
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
+	if (FAILED(m_pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
+		return E_FAIL;
+	m_matLastWVP = m_pTransform->Get_WorldMat() * ViewMatrix * ProjMatrix;
+
+	if (FAILED(m_pShader->Set_Value("g_fFxAlpha", &m_fFxSpeed, sizeof(_mat))))
+		return E_FAIL;
+
 
 	return NOERROR;
 }
@@ -2263,6 +2296,7 @@ void CPlayer::Free()
 		Safe_Release(m_pWeapon[i]);
 	}
 
+	Safe_Release(m_pFXTexture);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pTransform);
 	Safe_Release(m_pDynamicMesh);

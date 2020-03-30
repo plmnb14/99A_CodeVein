@@ -35,6 +35,7 @@ protected:
 	CTexture*				m_pColorTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
+	CMesh_Static*			m_pDecalCube = nullptr;
 
 protected:
 	CManagement*			m_pManagement = nullptr;

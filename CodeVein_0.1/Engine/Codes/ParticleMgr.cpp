@@ -26,6 +26,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"ButterFly_RingLine", 10);
 	Input_Pool(L"ButterFly_RingLine_Distortion", 10);
 	Input_Pool(L"ButterFly_Distortion", 10);
+	Input_Pool(L"ButterFly_Distortion_Circle", 10);
 	
 	Input_Pool(L"Hit_Blood_0", 50);
 	Input_Pool(L"Hit_Blood_1", 50);
