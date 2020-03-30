@@ -44,6 +44,9 @@ _int CScene_Stage_Training::Update_Scene(_double TimeDelta)
 {
 	CUI_Manager::Get_Instance()->Update_UI();
 
+	if (g_pInput_Device->Key_Down(DIK_K))
+		CParticleMgr::Get_Instance()->Create_ParticleEffect(L"SpawnParticle", 0.1f, V3_NULL);
+
 	return _int();
 }
 

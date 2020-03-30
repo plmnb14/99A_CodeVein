@@ -30,6 +30,9 @@ HRESULT CScene_Stage_Base::Ready_Scene()
 	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
 
 	static_cast<CNavMesh*>(pPlayer->Get_Component(L"NavMesh"))->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_StageBase.dat");
+	
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_PoisonButterfly", SCENE_STAGE, L"Layer_Monster")))
+		return E_FAIL;
 
 	return S_OK;
 }

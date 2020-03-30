@@ -148,7 +148,9 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_SoftSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_SoftSmoke.dat")))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_PointParticle", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_PointParticle.dat")))))
-		return E_FAIL;
+		return E_FAIL; 
+	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_PointParticle_Plum", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_PointParticle_Plum.dat")))))
+		return E_FAIL; 
 	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_VenomShot", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_VenomShot.dat")))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_RingLine", CMeshEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_RingLine.dat")))))

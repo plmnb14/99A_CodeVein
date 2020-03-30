@@ -20,7 +20,7 @@ public:
 	CParticleTab(CWnd* pParent = NULL);   // 표준 생성자입니다.
 	virtual ~CParticleTab();
 
-// 대화 상자 데이터입니다.
+	// 대화 상자 데이터입니다.
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_PARTICLETAB };
 #endif
@@ -169,4 +169,5 @@ public:
 	CString m_EditMaskIndex;
 	CButton m_CheckGravity;
 	CButton m_CheckRandSize;
+	CButton m_CheckMoveWithRot;
 };
