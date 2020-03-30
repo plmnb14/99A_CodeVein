@@ -306,14 +306,17 @@
     <ClInclude Include="..\Headers\Dummy_Target.h">
       <Filter>02.GameObject\Stage\1%29 Monster\00%29 Dummy_Target</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\PoisonButterfly.h">
-      <Filter>02.GameObject\Stage\1%29 Monster\PoisonButterfly</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\BlackUrchin.h">
       <Filter>02.GameObject\Stage\1%29 Monster\Urchin</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\BlackWolf.h">
       <Filter>02.GameObject\Stage\1%29 Monster\Wolf</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Genji.h">
+      <Filter>02.GameObject\Stage\1%29 Monster\Genji</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\PoisonButterfly.h">
+      <Filter>02.GameObject\Stage\1%29 Monster\PoisonButterfly</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Scene_Title.h">
       <Filter>01.Scene\01.Title</Filter>

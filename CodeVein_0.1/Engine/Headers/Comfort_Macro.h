@@ -67,10 +67,12 @@
 #define IF_NOT_NULL(_pointer)			if((_pointer) != nullptr)
 
 #define IF_NULL_RETURN(_pointer)		if((_pointer) == nullptr) { return; }
+#define IF_NULL_VALUE_RETURN(_pointer, _value)		if((_pointer) == nullptr) { return _value; }
 #define IF_NULL_BRAEK(_pointer)			if((_pointer) == nullptr) { break; }
 #define IF_NULL_KEEP(_pointer)			if((_pointer) == nullptr) { continue; }
 
 #define IF_NOT_NULL_RETURN(_pointer)	if((_pointer) != nullptr) { return; }
+#define IF_NOT_NULL_VALUE_RETURN(_pointer, _value)		if((_pointer) == nullptr) { return _value; }
 #define IF_NOT_NULL_BRAEK(_pointer)		if((_pointer) != nullptr) { break; }
 #define IF_NOT_NULL_KEEP(_pointer)		if((_pointer) != nullptr) { continue; }
 ////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -101,5 +103,6 @@
 ////////////////////////////////////////////////////////////////////////////////////////////////////	
 
 #define TARGET_TO_S_MESH(_Target)	static_cast<Engine::CMesh_Static*>((_Target)->Get_Component(L"Mesh_Static"))
+#define TARGET_TO_D_MESH(_Target)	static_cast<Engine::CMesh_Dynamic*>((_Target)->Get_Component(L"Mesh_Dynamic"))
 #define TARGET_TO_TRANS(_Target)	static_cast<Engine::CTransform*>((_Target)->Get_Component(L"Transform"))
 #define TARGET_TO_COL(_Target)		static_cast<Engine::CCollider*>((_Target)->Get_Component(L"Collider"))

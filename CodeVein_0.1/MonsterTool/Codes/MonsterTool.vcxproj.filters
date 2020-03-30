@@ -1,0 +1,98 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="99.Default">
+      <UniqueIdentifier>{eebdf024-b290-450e-865e-5c8120cd3693}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="00.WinApp">
+      <UniqueIdentifier>{05ab17de-23d7-4ae1-820e-bbc2823ba613}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Document">
+      <UniqueIdentifier>{ced04729-58e4-48e7-ad02-dd6165ebecab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.MainFrame">
+      <UniqueIdentifier>{b699dada-0f5f-48b6-8cc8-e97448738332}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.View">
+      <UniqueIdentifier>{b94d7a2d-c672-4c1b-8e1e-c0ebe0901cbe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.View\SetingView">
+      <UniqueIdentifier>{cad965a9-2c09-4c57-b0e9-b9dd86c6eb74}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="03.View\SetingView\00.Monster">
+      <UniqueIdentifier>{9bbdc2b6-f30c-4a83-951c-300abdb13a16}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="stdafx.h">
+      <Filter>99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Resource.h">
+      <Filter>99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="Tool.h">
+      <Filter>00.WinApp</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolDoc.h">
+      <Filter>01.Document</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>99.Default</Filter>
+    </ClInclude>
+    <ClInclude Include="ToolView.h">
+      <Filter>03.View</Filter>
+    </ClInclude>
+    <ClInclude Include="MainFrm.h">
+      <Filter>02.MainFrame</Filter>
+    </ClInclude>
+    <ClInclude Include="SetingView.h">
+      <Filter>03.View\SetingView</Filter>
+    </ClInclude>
+    <ClInclude Include="TestObject.h" />
+    <ClInclude Include="MonsterTool.h">
+      <Filter>03.View\SetingView\00.Monster</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>99.Default</Filter>
+    </ClCompile>
+    <ClCompile Include="Tool.cpp">
+      <Filter>00.WinApp</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolDoc.cpp">
+      <Filter>01.Document</Filter>
+    </ClCompile>
+    <ClCompile Include="MainFrm.cpp">
+      <Filter>02.MainFrame</Filter>
+    </ClCompile>
+    <ClCompile Include="SetingView.cpp">
+      <Filter>03.View\SetingView</Filter>
+    </ClCompile>
+    <ClCompile Include="ToolView.cpp">
+      <Filter>03.View</Filter>
+    </ClCompile>
+    <ClCompile Include="TestObject.cpp" />
+    <ClCompile Include="MonsterTool.cpp">
+      <Filter>03.View\SetingView\00.Monster</Filter>
+    </ClCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="..\res\Tool.ico">
+      <Filter>99.Default</Filter>
+    </Image>
+    <Image Include="..\res\ToolDoc.ico">
+      <Filter>99.Default</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <ResourceCompile Include="Tool.rc">
+      <Filter>99.Default</Filter>
+    </ResourceCompile>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="..\res\Tool.rc2">
+      <Filter>99.Default</Filter>
+    </None>
+  </ItemGroup>
+</Project>

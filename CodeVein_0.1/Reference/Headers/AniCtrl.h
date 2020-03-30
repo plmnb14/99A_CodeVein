@@ -20,6 +20,8 @@ public:
 
 public:
 	D3DXTRACK_DESC Get_TrackInfo();
+	_double Get_AnimationFullTime() { return m_Period; };
+	LPD3DXANIMATIONCONTROLLER Get_AniCtrl() { return m_pAnimationCtrl; }
 
 public:
 	void Reset_OldIdx();
