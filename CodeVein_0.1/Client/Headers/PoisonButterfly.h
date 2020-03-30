@@ -51,12 +51,13 @@ private:	//패턴들
 	방향 조절 -> 패턴 선택  -> 근거리 패턴, 추적 후 공격 or 그냥 그 자리에서 공격
 							-> 원거리 패턴, 제자리에서 공격
 	*/
-	
+	CBT_Composite_Node*		Start_Game();
+
+	CBT_Composite_Node*		ChaseAndNearAttack();
+	CBT_Composite_Node*		TurnAndFarAttack();
 	CBT_Composite_Node*		NearAttack();	//랜덤 공격
 	CBT_Composite_Node*		FarAttack();	//랜덤 공격
 
-
-	CBT_Composite_Node*		Start_Game();
 
 
 	//////////////////// 시연회용
@@ -65,11 +66,9 @@ private:	//패턴들
 
 	// 시야각내에 있으면 공격(첫 패턴부터 차례대로), 없으면 추적
 	CBT_Composite_Node*		Show_ChaseAndNearAttack();
-	CBT_Composite_Node*		Show_TurnAndFarAttack();
-	// 패턴 순서대로 근거리 공격
-	CBT_Composite_Node*		Show_NearAttack();
-	// 패턴 순서대로 원거리 공격
-	CBT_Composite_Node*		Show_FarAttack();
+	CBT_Composite_Node*		Show_TurnAndFarAttack();	
+	CBT_Composite_Node*		Show_NearAttack();	// 패턴 순서대로 근거리 공격	
+	CBT_Composite_Node*		Show_FarAttack();	// 패턴 순서대로 원거리 공격
 
 	//////////////////// 
 

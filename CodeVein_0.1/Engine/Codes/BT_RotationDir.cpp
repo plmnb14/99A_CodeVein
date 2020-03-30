@@ -19,7 +19,7 @@ CBT_Node::BT_NODE_STATE CBT_RotationDir::Update_Node(_double TimeDelta, vector<C
 	Look_At_Target(TimeDelta, pBlackBoard->Get_V3Value(m_Target_Key));
 
 	// 사이각 0.003 정도는 넘어간다.
-	if ( m_dDestRadian < 0.4 )
+	if ( m_dDestRadian < 0.3 )
 	{
 		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
 	}

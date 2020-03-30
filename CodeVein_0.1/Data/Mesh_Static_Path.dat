@@ -57,6 +57,8 @@ Mesh_ConcWall_B|ConcWall_B.X|..\..\Client\Resources\Mesh\StaticMesh\ConcWall_B\|
 Mesh_Container_A|Container_A.X|..\..\Client\Resources\Mesh\StaticMesh\Container_A\|0
 Mesh_Container_WallA|Container_WallA.X|..\..\Client\Resources\Mesh\StaticMesh\Container_WallA\|0
 Mesh_Crosswall|Crosswall.X|..\..\Client\Resources\Mesh\StaticMesh\Crosswall\|0
+Mesh_DebrisA|DebrisA.X|..\..\Client\Resources\Mesh\StaticMesh\DebrisA\|0
+Mesh_DebrisC|DebrisC.X|..\..\Client\Resources\Mesh\StaticMesh\DebrisC\|0
 Mesh_DirtHole|DirtHole.X|..\..\Client\Resources\Mesh\StaticMesh\DirtHole\|0
 Mesh_Display_Rebar|Display_Rebar.X|..\..\Client\Resources\Mesh\StaticMesh\Display_Rebar\|0
 Mesh_Down_GroundA|Down_GroundA.X|..\..\Client\Resources\Mesh\StaticMesh\Down_GroundA\|0
@@ -187,6 +189,11 @@ Mesh_Sky_1|Sky_1.X|..\..\Client\Resources\Mesh\StaticMesh\Sky\|0
 Mesh_Staindeglass_ba|Staindeglass_ba.X|..\..\Client\Resources\Mesh\StaticMesh\Staindeglass_ba\|0
 Mesh_Store_picture|Store_picture.X|..\..\Client\Resources\Mesh\StaticMesh\Store_picture\|0
 Mesh_StreetLight|StreetLight.X|..\..\Client\Resources\Mesh\StaticMesh\StreetLight\|0
+Mesh_Test_Itembox|Test_Itembox.X|..\..\Client\Resources\Mesh\StaticMesh\Test_Itembox\|0
+Mesh_Test_ItemboxLid|Test_ItemboxLid.X|..\..\Client\Resources\Mesh\StaticMesh\Test_ItemboxLid\|0
+Mesh_Test_StairsA|Test_StairsA.X|..\..\Client\Resources\Mesh\StaticMesh\Test_StairsA\|0
+Mesh_Test_StairsB|Test_StairsB.X|..\..\Client\Resources\Mesh\StaticMesh\Test_StairsB\|0
+Mesh_Test_Stairs_End|Test_Stairs_End.X|..\..\Client\Resources\Mesh\StaticMesh\Test_Stairs_End\|0
 Mesh_Toolboard|Toolboard.X|..\..\Client\Resources\Mesh\StaticMesh\Toolboard\|0
 Mesh_Townfloor|Townfloor.X|..\..\Client\Resources\Mesh\StaticMesh\Townfloor\|0
 Mesh_Triangleroof_A|Triangleroof_A.X|..\..\Client\Resources\Mesh\StaticMesh\Triangleroof_A\|0
