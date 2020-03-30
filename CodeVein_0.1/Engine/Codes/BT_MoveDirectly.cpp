@@ -164,24 +164,21 @@ HRESULT CBT_MoveDirectly::Ready_Clone_Node(void * pInit_Struct)
 	return S_OK;
 }
 
-void CBT_MoveDirectly::Look_At_Target(_double TimeDelta, _v3 Target_Pos)
+void CBT_MoveDirectly::Look_At_Target(_double TimeDelta, const _v3& Target_Pos)
 {
-	_v3 vToPlayerDir, vOriginDir;
-	_float Radian;
-
-	vOriginDir = *(_v3*)(&m_pTransform->Get_WorldMat().m[2]);
+	_v3 vOriginDir = *(_v3*)(&m_pTransform->Get_WorldMat().m[2]);
 	vOriginDir.y = 0.f;
 	D3DXVec3Normalize(&vOriginDir, &vOriginDir);
 
-	vToPlayerDir = Target_Pos - m_pTransform->Get_Pos();
+	_v3 vToPlayerDir = Target_Pos - m_pTransform->Get_Pos();
 	vToPlayerDir.y = 0.f;
 	D3DXVec3Normalize(&vToPlayerDir, &vToPlayerDir);
 
 	float temp = D3DXVec3Dot(&vOriginDir, &vToPlayerDir);
 	//1.0보다 커짐 방지
 	if (temp > 1.0f)
-		temp = 1.0f;
-	Radian = acosf(temp);
+		temp = 0.999f;
+	_float Radian = acosf(temp);
 
 	_v3 vRight;
 	D3DXVec3Normalize(&vRight, (_v3*)(&m_pTransform->Get_WorldMat().m[0]));

@@ -182,7 +182,8 @@
     <ClInclude Include="..\Headers\Item.h" />
     <ClInclude Include="..\Headers\ItemIcon.h" />
     <ClInclude Include="..\Headers\Item_Manager.h" />
-    <ClInclude Include="..\Headers\Genji.h" />
+    <ClInclude Include="..\Headers\PoisonBullet.h" />
+    <ClInclude Include="..\Headers\NormalGenji.h" />
     <ClInclude Include="..\Headers\Item_Slot.h" />
     <ClInclude Include="..\Headers\MiniMap.h" />
     <ClInclude Include="..\Headers\PoisonButterfly.h" />
@@ -227,7 +228,8 @@
     <ClCompile Include="..\Codes\Item.cpp" />
     <ClCompile Include="..\Codes\ItemIcon.cpp" />
     <ClCompile Include="..\Codes\Item_Manager.cpp" />
-    <ClCompile Include="..\Codes\Genji.cpp" />
+    <ClCompile Include="..\Codes\PoisonBullet.cpp" />
+    <ClCompile Include="..\Codes\NormalGenji.cpp" />
     <ClCompile Include="..\Codes\Item_Slot.cpp" />
     <ClCompile Include="..\Codes\MiniMap.cpp" />
     <ClCompile Include="..\Codes\PoisonButterfly.cpp" />

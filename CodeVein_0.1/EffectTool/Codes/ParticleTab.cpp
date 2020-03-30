@@ -160,6 +160,7 @@ void CParticleTab::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_EDIT50, m_EditMaskIndex);
 	DDX_Control(pDX, IDC_CHECK7, m_CheckGravity);
 	DDX_Control(pDX, IDC_CHECK22, m_CheckRandSize);
+	DDX_Control(pDX, IDC_CHECK8, m_CheckMoveWithRot);
 }
 
 void CParticleTab::Set_GraphicDev(LPDIRECT3DDEVICE9 pDev)
@@ -172,7 +173,7 @@ void CParticleTab::Set_Index(wstring wstrIdx)
 	m_fCreatePause = _float(_tstof(m_EditCreateDelay)) + 1.f;
 
 	_bool bIsAnim = m_CheckIsAnim.GetCheck() ? true : false;
-	if(!bIsAnim)
+	if (!bIsAnim)
 		GetDlgItem(IDC_EDIT38)->SetWindowTextW(wstrIdx.c_str());
 	else
 		GetDlgItem(IDC_EDIT38)->SetWindowTextW(L"0");
@@ -205,11 +206,11 @@ void CParticleTab::LateInit()
 	}
 
 	CManagement*		pManagement = CManagement::Get_Instance();
-	
-	m_pTestBox = static_cast<CMeshEffect*>(pManagement->Clone_GameObject_Return(L"GameObject_MeshEffect", nullptr));
-	lstrcpy(m_pTestBox->Get_Info()->szName, L"Mesh_DefaultBox");
-	lstrcpy(m_pTestBox->Get_Info()->szColorName, L"Tex_Colors");
-	m_pTestBox->Get_Info()->vStartScale = _v3(5, 5, 5);
+
+	//m_pTestBox = static_cast<CMeshEffect*>(pManagement->Clone_GameObject_Return(L"GameObject_MeshEffect", nullptr));
+	//lstrcpy(m_pTestBox->Get_Info()->szName, L"Mesh_DefaultBox");
+	//lstrcpy(m_pTestBox->Get_Info()->szColorName, L"Tex_Colors");
+	//m_pTestBox->Get_Info()->vStartScale = _v3(5, 5, 5);
 
 }
 
@@ -230,7 +231,7 @@ void CParticleTab::Render()
 	if (m_CheckTestMesh.GetCheck() ? true : false)
 	{
 		//m_pTestBox->Render_GameObject();
-		static_cast<CRenderer*>(m_pTestBox->Get_Component(L"Com_Renderer"))->Add_RenderList(RENDER_NONALPHA, m_pTestBox);
+		//static_cast<CRenderer*>(m_pTestBox->Get_Component(L"Com_Renderer"))->Add_RenderList(RENDER_NONALPHA, m_pTestBox);
 	}
 }
 
@@ -388,6 +389,8 @@ void CParticleTab::Setup_EffInfo(_bool bIsMesh)
 
 	m_pInfo->bRandScale = m_CheckRandSize.GetCheck() ? true : false;
 
+	m_pInfo->bMoveWithRot = m_CheckMoveWithRot.GetCheck() ? true : false;
+
 	if (m_bCheckUseMask.GetCheck() ? true : false)
 	{
 		GetDlgItemText(IDC_EDIT50, m_EditMaskIndex);
@@ -502,7 +505,7 @@ void CParticleTab::Setup_EffInfo(_bool bIsMesh)
 	m_pInfo->fAlphaSpeed_Min = _float(_tstof(m_EditAlphaSpeed_Min));
 	m_pInfo->fAlphaSpeed_Max = _float(_tstof(m_EditAlphaSpeed_Max));
 
-	if(bIsMesh)
+	if (bIsMesh)
 		lstrcpy(m_pInfo->szName, m_wstrMeshName.c_str());
 	else
 		lstrcpy(m_pInfo->szName, m_wstrTexName.c_str());
@@ -514,7 +517,7 @@ void CParticleTab::Setup_EffInfo(_bool bIsMesh)
 
 void CParticleTab::Release()
 {
-	Safe_Release(m_pTestBox);
+	//Safe_Release(m_pTestBox);
 }
 
 
@@ -671,7 +674,7 @@ void CParticleTab::OnBnClickedButton_Save()
 		::WriteFile(hFile, &m_pInfo->vStartScale, sizeof(_v3), &dwByte, nullptr);
 		::WriteFile(hFile, &m_pInfo->fColorIndex, sizeof(_float), &dwByte, nullptr);
 		::WriteFile(hFile, &m_pInfo->fMaskIndex, sizeof(_float), &dwByte, nullptr);
-		
+
 		_bool bRandRotSpeed = (m_CheckRandRotSpeed.GetCheck()) ? true : false;
 		::WriteFile(hFile, &bRandRotSpeed, sizeof(_bool), &dwByte, nullptr);
 		_bool bRandAlphaSpeed = (m_CheckRandAlphaSpeed.GetCheck()) ? true : false;
@@ -680,11 +683,13 @@ void CParticleTab::OnBnClickedButton_Save()
 		::WriteFile(hFile, &bRandMoveSpeed, sizeof(_bool), &dwByte, nullptr);
 		_bool bRandCreateDelay = (m_CheckRandCreateDelay.GetCheck()) ? true : false;
 		::WriteFile(hFile, &bRandCreateDelay, sizeof(_bool), &dwByte, nullptr);
-		
+
 		_bool bGravity = (m_CheckGravity.GetCheck()) ? true : false;
 		::WriteFile(hFile, &bGravity, sizeof(_bool), &dwByte, nullptr);
 		_bool bRandSize = (m_CheckRandSize.GetCheck()) ? true : false;
 		::WriteFile(hFile, &bRandSize, sizeof(_bool), &dwByte, nullptr);
+		_bool bMoveWithRot = (m_CheckMoveWithRot.GetCheck()) ? true : false;
+		::WriteFile(hFile, &bMoveWithRot, sizeof(_bool), &dwByte, nullptr);
 
 		CloseHandle(hFile);
 		MessageBox(_T("Save Success."), _T("Save"), MB_OK);
@@ -999,6 +1004,10 @@ void CParticleTab::OnBnClickedButton_Load()
 			::ReadFile(hFile, &bRandSize, sizeof(_bool), &dwByte, nullptr);
 			m_CheckRandSize.SetCheck(bRandSize);
 
+			_bool bMoveWithRot = false;
+			::ReadFile(hFile, &bMoveWithRot, sizeof(_bool), &dwByte, nullptr);
+			m_CheckMoveWithRot.SetCheck(bMoveWithRot);
+
 			//if (0 == dwByte)
 			break;
 		}
@@ -1009,4 +1018,3 @@ void CParticleTab::OnBnClickedButton_Load()
 
 	UpdateData(FALSE);
 }
-

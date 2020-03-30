@@ -63,7 +63,7 @@ CBT_Node::BT_NODE_STATE CBT_Compare::Update_Node(_double TimeDelta, vector<CBT_N
 			switch (m_eValue)
 			{
 			case Mode::EQUAL:
-				if (m_fTargetValue[0] == m_fTargetValue[1])
+				if ( abs( m_fTargetValue[0] - m_fTargetValue[1]) < 0.0001)
 					return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
 
 				break;
@@ -187,6 +187,7 @@ HRESULT CBT_Compare::Ready_Clone_Node(void * pInit_Struct)
 	lstrcpy(m_pTargetKey_B, temp.TargetKey_B);
 	m_eMode = temp.eMode;
 
+	CBT_Node::_Set_Auto_Number(&m_iNodeNumber);
 	return S_OK;
 }
 

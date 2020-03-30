@@ -52,7 +52,7 @@ _int CTrail_VFX::Update_GameObject(_double TimeDelta)
 	_v3 TmpPos;
 
 	memcpy(TmpPos, &m_pTransform->Get_WorldMat()._41, sizeof(_v3));
-	
+
 	Compute_ViewZ(&TmpPos);
 
 	CatmullRom_Pos();
@@ -264,7 +264,14 @@ HRESULT CTrail_VFX::Shader_Init(const _uint & iIndex)
 	m_pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat));
 	m_pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat));
 
+	_bool	bDefaultOption = false;
+	_v4		vDefaultOption = { 0.f, 0.f, 0.f, 1.f };
 	m_pShader->Set_Value("g_fAlpha", &fAlpha, sizeof(_float));
+	m_pShader->Set_Value("g_vColor", &vDefaultOption, sizeof(_float));
+	m_pShader->Set_Bool("g_bUseRGBA", bDefaultOption);
+	m_pShader->Set_Bool("g_bUseColorTex", bDefaultOption);
+	m_pShader->Set_Bool("g_bUseMaskTex", bDefaultOption);
+	m_pShader->Set_Bool("g_bReverseColor", bDefaultOption);
 
 	m_pTexture->SetUp_OnShader("g_DiffuseTexture", m_pShader, iIndex);
 	m_pShader->Set_Texture("g_DepthTexture", pManagement->Get_Target_Texture(L"Target_Depth"));

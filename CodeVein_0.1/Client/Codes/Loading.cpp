@@ -18,7 +18,8 @@
 #include "PoisonButterfly.h"
 #include "BlackUrchin.h"
 #include "BlackWolf.h"
-#include "Genji.h"
+#include "NormalGenji.h"
+#include "PoisonBullet.h"
 
 #include "PlayerHP.h"
 #include "PlayerST.h"
@@ -87,6 +88,10 @@ _uint CLoading::Loading_ForStage(void)
 	// 검은 늑대
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackWolf", CBlackWolf::Create(m_pGraphicDev))))
 		return E_FAIL;
+	// 독나비 독 총알
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonBullet", CPoisonBullet::Create(m_pGraphicDev))))
+		return E_FAIL;
+
 
 	//무기
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon", CWeapon::Create(m_pGraphicDev))))
@@ -140,19 +145,55 @@ HRESULT CLoading::Ready_Effect(void)
 {
 	if (FAILED(g_pManagement->Add_Prototype(L"FootSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Player_FootSmoke.dat")))))
 		return E_FAIL;
+
 	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_SoftSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_SoftSmoke.dat")))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_PointParticle", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_PointParticle.dat")))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_VenomShot", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_VenomShot.dat")))))
-		return E_FAIL;
+		return E_FAIL; 
 	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_RingLine", CMeshEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_RingLine.dat")))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_RingLine_Distortion", CMeshEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_RingLine_Distortion.dat")))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_Distortion", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_Distortion.dat")))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_Distortion_Circle", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_Distortion_Circle.dat")))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_SoftSmoke_Bottom", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_SoftSmoke_Bottom.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_Smoke_Red_Once", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_Smoke_Red_Once.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_Smoke_Red_Particle", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_Smoke_Red_Particle.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_SoftSmoke_Floor", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_SoftSmoke_Floor.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_PointParticle_Plum", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_PointParticle_Plum.dat")))))
+		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_SoftSmoke_Ready", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_SoftSmoke_Ready.dat")))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_WaterSplash", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_WaterSplash.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_GlitterSand", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_GlitterSand.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_Distortion_Smoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_Distortion_Smoke.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_PopSand", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_PopSand.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_VenomShot", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_VenomShot.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_VenomShot_SubSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_VenomShot_SubSmoke.dat")))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_BackStepSand01", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_BackStepSand01.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_BackStepSand02", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_BackStepSand02.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_BackStepSand_Floor", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_BackStepSand_Floor.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_Distortion_SmokeGravity", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_Distortion_SmokeGravity.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Boss_KnonkDown_Dust", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Boss_KnonkDown_Dust.dat")))))
 		return E_FAIL;
 
 	if (FAILED(g_pManagement->Add_Prototype(L"Hit_Blood_0", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_Blood_0.dat")))))
@@ -362,6 +403,12 @@ _uint CLoading::Loading_Stage()
 		return E_FAIL;
 	// 검은 늑대
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackWolf", CBlackWolf::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 일반겐지
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_NormalGenji", CNormalGenji::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 독나비 독 총알
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonBullet", CPoisonBullet::Create(m_pGraphicDev))))
 		return E_FAIL;
 
 	// 기타

@@ -31,10 +31,10 @@ CBT_Node::BT_NODE_STATE CBT_CreateEffect::Update_Node(_double TimeDelta, vector<
 		switch (m_eEffectMode)
 		{
 		case CBT_CreateEffect::One:
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag, m_vEffect_Pos);
+			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag, pBlackBoard->Get_V3Value(m_vEffect_Pos_Key));
 			break;
 		case CBT_CreateEffect::Particle:
-			CParticleMgr::Get_Instance()->Create_ParticleEffect(m_pEffect_Tag, m_fEffect_lifeTime, m_vEffect_Pos);
+			CParticleMgr::Get_Instance()->Create_ParticleEffect(m_pEffect_Tag, m_fEffect_lifeTime, pBlackBoard->Get_V3Value(m_vEffect_Pos_Key));
 			break;
 		}
 
@@ -51,7 +51,7 @@ void CBT_CreateEffect::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT
 		if (bDebugging)
 		{
 			Cout_Indentation(pNodeStack);
-			cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " Start   { Service : Transform }" << endl;
+			cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " Start   { Service : Effect }" << endl;
 		}
 
 		m_dCurTime = 0;
@@ -67,7 +67,7 @@ CBT_Node::BT_NODE_STATE CBT_CreateEffect::End_Node(vector<CBT_Node*>* pNodeStack
 	if (bDebugging)
 	{
 		Cout_Indentation(pNodeStack);
-		cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " End   { Service : Transform }" << endl;
+		cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " End   { Service : Effect }" << endl;
 	}
 
 	switch (m_eMode)
@@ -91,7 +91,7 @@ HRESULT CBT_CreateEffect::Ready_Clone_Node(void * pInit_Struct)
 
 	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
 	lstrcpy(m_pEffect_Tag, temp.Effect_Tag);
-	m_vEffect_Pos = temp.Effect_Create_Pos;
+	lstrcpy(m_vEffect_Pos_Key, temp.Create_Pos_Key);
 
 	switch (m_eEffectMode)
 	{
