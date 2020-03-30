@@ -19,7 +19,6 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"FootSmoke", 100);
 
 	Input_Pool(L"ButterFly_SoftSmoke", 2000);
-	Input_Pool(L"ButterFly_SoftSmoke_Ready", 300);
 	Input_Pool(L"ButterFly_VenomShot", 1000);
 	Input_Pool(L"ButterFly_PointParticle", 100);
 	Input_Pool(L"ButterFly_PointParticle_Plum", 100);
@@ -27,7 +26,23 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"ButterFly_RingLine_Distortion", 10);
 	Input_Pool(L"ButterFly_Distortion", 10);
 	Input_Pool(L"ButterFly_Distortion_Circle", 10);
-	
+	Input_Pool(L"ButterFly_SoftSmoke_Bottom", 200);
+	Input_Pool(L"ButterFly_Smoke_Red_Once", 200);
+	Input_Pool(L"ButterFly_Smoke_Red_Particle", 1000);
+	Input_Pool(L"ButterFly_SoftSmoke_Floor", 500);
+	Input_Pool(L"ButterFly_SoftSmoke_Ready", 300);
+	Input_Pool(L"ButterFly_WaterSplash", 100);
+	Input_Pool(L"ButterFly_GlitterSand", 100);
+	Input_Pool(L"ButterFly_Distortion_Smoke", 50);
+	Input_Pool(L"ButterFly_PopSand", 50);
+	Input_Pool(L"ButterFly_VenomShot_SubSmoke", 100);
+	Input_Pool(L"ButterFly_BackStepSand01", 50);
+	Input_Pool(L"ButterFly_BackStepSand02", 50);
+	Input_Pool(L"ButterFly_BackStepSand_Floor", 50);
+	Input_Pool(L"ButterFly_Distortion_SmokeGravity", 50);
+
+	Input_Pool(L"Boss_KnonkDown_Dust", 10);
+
 	Input_Pool(L"Hit_Blood_0", 50);
 	Input_Pool(L"Hit_Blood_1", 50);
 	Input_Pool(L"Hit_Blood_2", 50);

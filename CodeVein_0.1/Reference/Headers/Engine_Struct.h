@@ -365,4 +365,15 @@ namespace Engine
 		_float	fColorSpeed;
 	}EFFECT_INFO;
 
+	typedef struct tagBulletInfo
+	{
+		tagBulletInfo(_v3 _vCreatePos, _v3 _vDir, _float _fSpeed, _double _dLifeTime)
+			: vCreatePos(_vCreatePos), vDir(_vDir), fSpeed(_fSpeed), dLifeTime(_dLifeTime)
+		{}
+
+		_v3			vCreatePos = _v3(0.f, 0.f, 0.f);
+		_v3			vDir = _v3(0.f, 0.f, 0.f);
+		_float		fSpeed = 0.f;
+		_double		dLifeTime = 0;
+	}BULLET_INFO;
 }

@@ -9,6 +9,11 @@ xcopy /y .\Engine\Bin\*.dll					.\EffectTool\Codes\x64\Debug\
 xcopy /y .\Engine\Bin\*.dll					.\EffectTool\Bin\
 xcopy /y .\Engine\Release\*.dll				.\EffectTool\Release\
 
+xcopy /y .\Engine\Bin\*.dll					.\MonsterTool\Codes\
+xcopy /y .\Engine\Bin\*.dll					.\MonsterTool\Codes\x64\Debug\
+xcopy /y .\Engine\Bin\*.dll					.\MonsterTool\Bin\
+xcopy /y .\Engine\Release\*.dll				.\MonsterTool\Release\
+
 xcopy /y .\Engine\Bin\ShaderFiles\*.fx		.\Client\ShaderFiles\
 xcopy /y .\Engine\Release\ShaderFiles\*.fx	.\Client\ShaderFiles\
 xcopy /y .\Client\ShaderFiles\*.fx			.\Tool\ShaderFiles\

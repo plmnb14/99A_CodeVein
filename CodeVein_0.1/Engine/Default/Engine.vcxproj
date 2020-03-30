@@ -196,10 +196,12 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\BT_All_Node.h" />
     <ClInclude Include="..\Headers\BT_BlackBoard_Mgr.h" />
     <ClInclude Include="..\Headers\BT_Compare.h" />
+    <ClInclude Include="..\Headers\BT_CompareValue.h" />
     <ClInclude Include="..\Headers\BT_Composite_Node.h" />
     <ClInclude Include="..\Headers\BT_ConeCheck.h" />
     <ClInclude Include="..\Headers\BT_Cooldown.h" />
     <ClInclude Include="..\Headers\BT_CreateEffect.h" />
+    <ClInclude Include="..\Headers\BT_CreateBullet.h" />
     <ClInclude Include="..\Headers\BT_Decorator_Node.h" />
     <ClInclude Include="..\Headers\BT_Inverter.h" />
     <ClInclude Include="..\Headers\BT_Loop.h" />
@@ -213,8 +215,10 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\BT_Selector.h" />
     <ClInclude Include="..\Headers\BT_Sequence.h" />
     <ClInclude Include="..\Headers\BT_Service_Node.h" />
+    <ClInclude Include="..\Headers\BT_SetValue.h" />
     <ClInclude Include="..\Headers\BT_Simple_Parallel.h" />
     <ClInclude Include="..\Headers\BT_Task_Node.h" />
+    <ClInclude Include="..\Headers\BT_UpdateCollider.h" />
     <ClInclude Include="..\Headers\BT_UpdateGageRatio.h" />
     <ClInclude Include="..\Headers\BT_UpdatePos.h" />
     <ClInclude Include="..\Headers\BT_Wait.h" />
@@ -284,10 +288,12 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\BlackBoard.cpp" />
     <ClCompile Include="..\Codes\BT_BlackBoard_Mgr.cpp" />
     <ClCompile Include="..\Codes\BT_Compare.cpp" />
+    <ClCompile Include="..\Codes\BT_CompareValue.cpp" />
     <ClCompile Include="..\Codes\BT_Composite_Node.cpp" />
     <ClCompile Include="..\Codes\BT_ConeCheck.cpp" />
     <ClCompile Include="..\Codes\BT_Cooldown.cpp" />
     <ClCompile Include="..\Codes\BT_CreateEffect.cpp" />
+    <ClCompile Include="..\Codes\BT_CreateBullet.cpp" />
     <ClCompile Include="..\Codes\BT_Decorator_Node.cpp" />
     <ClCompile Include="..\Codes\BT_Inverter.cpp" />
     <ClCompile Include="..\Codes\BT_Loop.cpp" />
@@ -301,8 +307,10 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\BT_Selector.cpp" />
     <ClCompile Include="..\Codes\BT_Sequence.cpp" />
     <ClCompile Include="..\Codes\BT_Service_Node.cpp" />
+    <ClCompile Include="..\Codes\BT_SetValue.cpp" />
     <ClCompile Include="..\Codes\BT_Simple_Parallel.cpp" />
     <ClCompile Include="..\Codes\BT_Task_Node.cpp" />
+    <ClCompile Include="..\Codes\BT_UpdateCollider.cpp" />
     <ClCompile Include="..\Codes\BT_UpdateGageRatio.cpp" />
     <ClCompile Include="..\Codes\BT_UpdatePos.cpp" />
     <ClCompile Include="..\Codes\BT_Wait.cpp" />

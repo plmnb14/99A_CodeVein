@@ -6,27 +6,27 @@
 
 BEGIN(Client)
 
-class CGenji final : public CGameObject
+class CNormalGenji final : public CGameObject
 {
 public:
-	// 총, 검, 방패와 검
-	enum Weapon { Gun, Sword, Shield };
-	enum Color { Normal, Jungle, White };
+	//// 총, 검, 방패와 검
+	//enum Weapon { Gun, Sword, Shield };
+	//enum Color { Normal, Jungle, White };
 
-	typedef struct tagInitInfo
-	{
-		tagInitInfo(Weapon _eWeapon, Color _eColor)
-			: eWeapon(_eWeapon), eColor(_eColor)
-		{}
+	//typedef struct tagInitInfo
+	//{
+	//	tagInitInfo(Weapon _eWeapon, Color _eColor)
+	//		: eWeapon(_eWeapon), eColor(_eColor)
+	//	{}
 
-		Weapon	eWeapon;
-		Color	eColor;
-	}INFO;
+	//	Weapon	eWeapon;
+	//	Color	eColor;
+	//}INFO;
 
 protected:
-	explicit CGenji(LPDIRECT3DDEVICE9 pGraphic_Device);
-	explicit CGenji(const CGenji& rhs);
-	virtual ~CGenji() = default;
+	explicit CNormalGenji(LPDIRECT3DDEVICE9 pGraphic_Device);
+	explicit CNormalGenji(const CNormalGenji& rhs);
+	virtual ~CNormalGenji() = default;
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -45,16 +45,16 @@ private:
 	//렌더에서 타임델타 쓰기위해서 저장해놓음
 	_double				m_dTimeDelta = 0;
 
-	//겐지 전용
-	Weapon				m_eWeapon = Gun;
-	Color				m_eColor = Normal;
+	////겐지 전용
+	//Weapon				m_eWeapon = Gun;
+	//Color				m_eColor = Normal;
 
 private:
 	HRESULT Add_Component(void* pArg);
 	HRESULT SetUp_ConstantTable();
 
 public:
-	static CGenji* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
+	static CNormalGenji* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
 	virtual CGameObject* Clone_GameObject(void* pArg);
 	virtual void Free();
 };

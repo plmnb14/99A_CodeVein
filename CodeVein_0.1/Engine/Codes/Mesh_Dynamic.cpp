@@ -30,6 +30,11 @@ CMesh_Dynamic::CMesh_Dynamic(const CMesh_Dynamic & rhs)
 	}
 }
 
+vector<D3DXMESHCONTAINER_DERIVED*> CMesh_Dynamic::Get_MeshContainer()
+{
+	return m_MeshContainerList;
+}
+
 _mat CMesh_Dynamic::Get_FrameMatrix(const char * pFrameName)
 {
 	_mat	matTmp;
@@ -252,6 +257,16 @@ D3DXTRACK_DESC CMesh_Dynamic::Get_TrackInfo()
 D3DXTRACK_DESC CMesh_Dynamic::Get_TrackInfo_Upper()
 {
 	return m_pAniCtrl_Upper->Get_TrackInfo();
+}
+
+CAniCtrl * CMesh_Dynamic::Get_AniCtrl()
+{
+	return m_pAniCtrl_Lower;
+}
+
+_double CMesh_Dynamic::Get_AnimationFullTime()
+{
+	return m_pAniCtrl_Lower->Get_AnimationFullTime();
 }
 
 void CMesh_Dynamic::Set_BoneSeperate(D3DXFRAME_DERIVED * _frame, const char * _bodyName, _short _sSeperateNum)

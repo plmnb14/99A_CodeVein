@@ -71,24 +71,29 @@ void CBehaviorTree::Free()
 	// 본인이 가지고 있던 스택은 본인이 직접 지운다.
 	for (auto child : m_pNodeStack)
 	{
-		//child->Free();
 		Safe_Release(child);
 	}
 	m_pNodeStack.clear();
 
-	//// 모든 쓰레드안의 노드들 주소만 clear
-	//for (auto pvecSubNode : m_plistNodeStack)
-	//{
-	//	if (!pvecSubNode->empty())
-	//	{
-	//		pvecSubNode->clear();
-	//	}
-	//}
-	//m_plistNodeStack.clear();
 
-	//최종으로 루트부터 모든 노드를 순회해서 지운다.
-	//if (m_pRoot)
-	//	m_pRoot->Free();
 
+	// 루트부터 모든 노드를 순회해서 지운다.
 	Safe_Release(m_pRoot);
+
+	
+	// 쿨다운 노드 검색 후 그 노드만 지워줌
+	for (auto pvecSubNode : m_plistNodeStack)
+	{
+		if(pvecSubNode->empty())
+			continue;
+
+		Safe_Release((*pvecSubNode)[1]);
+		//for (auto aaaa : *pvecSubNode)
+		//{
+		//	Safe_Release(aaaa);
+		//	if (pvecSubNode->empty())
+		//		break;
+		//}
+	}
+	m_plistNodeStack.clear();
 }
