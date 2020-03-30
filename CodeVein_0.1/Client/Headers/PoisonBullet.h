@@ -26,11 +26,17 @@ private:
 	_v3					m_vDir = _v3(0.f, 0.f, 0.f);
 	_float				m_fSpeed = 0.f;
 
-	_tchar				m_pEffect_Tag[256] = { 0, };
+	_tchar				m_pEffect_Tag0[256] = { 0, };
+	_tchar				m_pEffect_Tag1[256] = { 0, };
+	_tchar				m_pEffect_Tag2[256] = { 0, };
+	_tchar				m_pEffect_Tag3[256] = { 0, };
+	_tchar				m_pEffect_Tag4[256] = { 0, };
 
 	_double				m_dCurTime = 0;
 	_double				m_dLifeTime = 0;
 	_bool				m_bDead = false;
+
+	_bool				m_bEffect = true;
 
 private:
 	HRESULT Add_Component();

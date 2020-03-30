@@ -10,32 +10,45 @@ CBT_UpdateGageRatio::CBT_UpdateGageRatio(const CBT_UpdateGageRatio & rhs)
 
 CBT_Node::BT_NODE_STATE CBT_UpdateGageRatio::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, CBlackBoard * pBlackBoard, _bool bDebugging)
 {
-	switch (m_eMode)
-	{
-	case CBT_Service_Node::Finite:
-		if (m_iCur_Count_Of_Execution > m_iMax_Count_Of_Execution)
-			return BT_NODE_STATE::FAILED;
-		break;
-
-	case CBT_Service_Node::Infinite:
-		break;
-	}
-
 	Start_Node(pNodeStack, plistSubNodeStack, false);
 	
 	m_dCurTime += TimeDelta;
 
 	if (m_dCurTime > m_dMaxTime)
 	{
-		_int CurGage = pBlackBoard->Get_IntValue(m_pTargetKey_CurGage);
-		_int MaxGage = pBlackBoard->Get_IntValue(m_pTargetKey_MaxGage);
+		switch (m_eMode)
+		{
+			// 积己 冉荐 力茄
+		case CBT_Service_Node::Finite:
+			if (m_iCur_Count_Of_Execution > m_iMax_Count_Of_Execution)
+				break;
+			else
+			{
+				_int CurGage = pBlackBoard->Get_IntValue(m_pTargetKey_CurGage);
+				_int MaxGage = pBlackBoard->Get_IntValue(m_pTargetKey_MaxGage);
 
-		if( 0 <= CurGage || 0 <= MaxGage)
-			pBlackBoard->Set_Value(m_pKey_Save_GageRatio, 0);
-		else
-			pBlackBoard->Set_Value(m_pKey_Save_GageRatio, _float(CurGage / MaxGage));
+				if (0 <= CurGage || 0 <= MaxGage)
+					pBlackBoard->Set_Value(m_pKey_Save_GageRatio, 0);
+				else
+					pBlackBoard->Set_Value(m_pKey_Save_GageRatio, _float(CurGage / MaxGage));
 
-		End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, false);
+				++m_iCur_Count_Of_Execution;
+			}
+			break;
+
+			// 积己 冉荐 公力茄
+		case CBT_Service_Node::Infinite:
+			_int CurGage = pBlackBoard->Get_IntValue(m_pTargetKey_CurGage);
+			_int MaxGage = pBlackBoard->Get_IntValue(m_pTargetKey_MaxGage);
+
+			if (0 <= CurGage || 0 <= MaxGage)
+				pBlackBoard->Set_Value(m_pKey_Save_GageRatio, 0);
+			else
+				pBlackBoard->Set_Value(m_pKey_Save_GageRatio, _float(CurGage / MaxGage));
+
+			End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, false);
+			break;
+		}
 	}
 
 	return BT_NODE_STATE::INPROGRESS;
@@ -65,16 +78,6 @@ CBT_Node::BT_NODE_STATE CBT_UpdateGageRatio::End_Node(vector<CBT_Node*>* pNodeSt
 	{
 		Cout_Indentation(pNodeStack);
 		cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " End   { Service : HPRatio }" << endl;
-	}
-
-	switch (m_eMode)
-	{
-	case CBT_Service_Node::Finite:
-		++m_iCur_Count_Of_Execution;
-		break;
-
-	case CBT_Service_Node::Infinite:
-		break;
 	}
 
 	m_bInit = true;

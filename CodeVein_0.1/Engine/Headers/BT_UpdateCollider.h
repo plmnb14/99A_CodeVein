@@ -9,14 +9,15 @@ class ENGINE_DLL CBT_UpdateCollider final : public CBT_Service_Node
 public:
 	typedef struct tagInitInfo
 	{
-		tagInitInfo(char* pNodeName, CCollider* _pTarget_Collider, _uint _Count_Of_Execution, _double dUpdateTime, _double dOffset, CBT_Service_Node::Mode _eMode)
-			: Target_Collider(_pTarget_Collider), Target_dUpdateTime(dUpdateTime), Target_dOffset(dOffset), Count_Of_Execution(_Count_Of_Execution)
+		tagInitInfo(char* pNodeName, CCollider* _pTarget_Collider, _double _Service_Start_Time, _uint _Count_Of_Execution, _double dUpdateTime, _double dOffset, CBT_Service_Node::Mode _eMode)
+			: Target_Collider(_pTarget_Collider), Service_Start_Time(_Service_Start_Time), Target_dUpdateTime(dUpdateTime), Target_dOffset(dOffset), Count_Of_Execution(_Count_Of_Execution)
 		{ strcpy_s<256>(Target_NodeName, pNodeName); }
 
 		char					Target_NodeName[256] = {0,};
 		_double					Target_dUpdateTime = 0;
 		_double					Target_dOffset = 0;
 		CCollider*				Target_Collider = nullptr;
+		_double					Service_Start_Time = 0;
 		_uint					Count_Of_Execution = 0;
 		CBT_Service_Node::Mode	eMode = CBT_Service_Node::Infinite;
 	}INFO;
@@ -43,6 +44,9 @@ private:
 	_double				m_dCurTime = 0;
 	_double				m_dUpdateTime = 0;
 	_double				m_dOffset = 0;
+
+	_double					m_dService_StartTime = 0;
+	_bool					m_bService_Start = false;
 
 	CCollider*			m_pTarget_Collider = nullptr;
 

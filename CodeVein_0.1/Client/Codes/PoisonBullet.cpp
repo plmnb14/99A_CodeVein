@@ -31,7 +31,11 @@ HRESULT CPoisonBullet::Ready_GameObject(void * pArg)
 	m_fSpeed = temp.fSpeed;
 	m_dLifeTime = temp.dLifeTime;
 
-	lstrcpy(m_pEffect_Tag, L"ButterFly_SoftSmoke");
+	lstrcpy(m_pEffect_Tag0, L"ButterFly_PointParticle");
+	lstrcpy(m_pEffect_Tag1, L"ButterFly_SoftSmoke_Mist");
+	lstrcpy(m_pEffect_Tag2, L"ButterFly_VenomShot");
+	lstrcpy(m_pEffect_Tag3, L"ButterFly_VenomShot_SubSmoke");
+	lstrcpy(m_pEffect_Tag4, L"ButterFly_PointParticle");
 
 	return NOERROR;
 }
@@ -57,7 +61,16 @@ _int CPoisonBullet::Update_GameObject(_double TimeDelta)
 	// ÁøÇàÁß
 	else
 	{
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag, m_pTransformCom->Get_Pos());
+		if (m_bEffect)
+		{
+			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag0, _v3(), m_pTransformCom);
+			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag1, _v3(), m_pTransformCom);
+			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag2, _v3(), m_pTransformCom);
+			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag3, _v3(), m_pTransformCom);
+			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, _v3(), m_pTransformCom);
+
+			m_bEffect = false;
+		}
 	}
 
 

@@ -11,34 +11,59 @@ CBT_CreateEffect::CBT_CreateEffect(const CBT_CreateEffect & rhs)
 
 CBT_Node::BT_NODE_STATE CBT_CreateEffect::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, CBlackBoard * pBlackBoard, _bool bDebugging)
 {
-	switch (m_eMode)
-	{
-	case CBT_Service_Node::Finite:
-		if (m_iCur_Count_Of_Execution > m_iMax_Count_Of_Execution)
-			return BT_NODE_STATE::FAILED;
-		break;
-
-	case CBT_Service_Node::Infinite:
-		break;
-	}
-
 	Start_Node(pNodeStack, plistSubNodeStack, false);
 
 	m_dCurTime += TimeDelta;
 
-	if (m_dCurTime > m_dMaxTime)
+	if (false == m_bService_Start)
 	{
-		switch (m_eEffectMode)
+		if (m_dService_StartTime < m_dCurTime)
+			m_bService_Start = true;
+	}
+	else
+	{
+		if (m_dCurTime > m_dMaxTime)
 		{
-		case CBT_CreateEffect::One:
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag, pBlackBoard->Get_V3Value(m_vEffect_Pos_Key));
-			break;
-		case CBT_CreateEffect::Particle:
-			CParticleMgr::Get_Instance()->Create_ParticleEffect(m_pEffect_Tag, m_fEffect_lifeTime, pBlackBoard->Get_V3Value(m_vEffect_Pos_Key));
-			break;
+			switch (m_eMode)
+			{
+				// 积己 冉荐 力茄
+			case CBT_Service_Node::Finite:
+				if (m_iCur_Count_Of_Execution > m_iMax_Count_Of_Execution)
+					break;
+				else
+				{
+					++m_iCur_Count_Of_Execution;
+
+					switch (m_eEffectMode)
+					{
+					case CBT_CreateEffect::One:
+						CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag, pBlackBoard->Get_V3Value(m_vEffect_Pos_Key));
+						break;
+					case CBT_CreateEffect::Particle:
+						CParticleMgr::Get_Instance()->Create_ParticleEffect(m_pEffect_Tag, m_fEffect_lifeTime, pBlackBoard->Get_V3Value(m_vEffect_Pos_Key));
+						break;
+					}
+				}
+				break;
+				// 积己 冉荐 公力茄
+			case CBT_Service_Node::Infinite:
+				switch (m_eEffectMode)
+				{
+				case CBT_CreateEffect::One:
+					CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag, pBlackBoard->Get_V3Value(m_vEffect_Pos_Key));
+					break;
+				case CBT_CreateEffect::Particle:
+					CParticleMgr::Get_Instance()->Create_ParticleEffect(m_pEffect_Tag, m_fEffect_lifeTime, pBlackBoard->Get_V3Value(m_vEffect_Pos_Key));
+					break;
+				}
+
+				End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, false);
+				break;
+
+
+			}
 		}
 
-		End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, false);
 	}
 
 	return BT_NODE_STATE::INPROGRESS;
@@ -57,6 +82,7 @@ void CBT_CreateEffect::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT
 		m_dCurTime = 0;
 		m_dMaxTime = m_dCreateTime + CALC::Random_Num_Double(-m_dOffset, m_dOffset);
 		m_iCur_Count_Of_Execution = 0;
+		m_dService_StartTime = 0;
 
 		m_bInit = false;
 	}
@@ -70,16 +96,7 @@ CBT_Node::BT_NODE_STATE CBT_CreateEffect::End_Node(vector<CBT_Node*>* pNodeStack
 		cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " End   { Service : Effect }" << endl;
 	}
 
-	switch (m_eMode)
-	{
-	case CBT_Service_Node::Finite:
-		++m_iCur_Count_Of_Execution;
-		break;
-
-	case CBT_Service_Node::Infinite:
-		break;
-	}
-
+	m_bService_Start = false;
 	m_bInit = true;
 
 	return eState;
@@ -106,6 +123,7 @@ HRESULT CBT_CreateEffect::Ready_Clone_Node(void * pInit_Struct)
 	m_dOffset = temp.Target_dOffset;
 	m_iMax_Count_Of_Execution = temp.MaxCount_Of_Execution;
 	m_eMode = temp.eMode;
+	m_dService_StartTime = temp.Service_Start_Time;
 
 	CBT_Node::_Set_Auto_Number(&m_iNodeNumber);
 	return S_OK;

@@ -14,28 +14,40 @@ CBT_Node::BT_NODE_STATE CBT_UpdateCollider::Update_Node(_double TimeDelta, vecto
 	if (nullptr == m_pTarget_Collider)
 		return BT_NODE_STATE::FAILED;
 
-	switch (m_eMode)
-	{
-	case CBT_Service_Node::Finite:
-		if (m_iCur_Count_Of_Execution > m_iMax_Count_Of_Execution)
-			return BT_NODE_STATE::FAILED;
-		break;
-
-	case CBT_Service_Node::Infinite:
-		break;
-	}
-
 	Start_Node(pNodeStack, plistSubNodeStack, false);
 
 	m_dCurTime += TimeDelta;
 
-	if (m_dCurTime > m_dMaxTime)
+	if (false == m_bService_Start)
 	{
-		m_pTarget_Collider->Set_Enabled(true);
-
-		End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, false);
+		if (m_dService_StartTime < m_dCurTime)
+			m_bService_Start = true;
 	}
+	else
+	{
+		if (m_dCurTime > m_dMaxTime)
+		{
+			switch (m_eMode)
+			{
+				// 积己 冉荐 力茄
+			case CBT_Service_Node::Finite:
+				if (m_iCur_Count_Of_Execution > m_iMax_Count_Of_Execution)
+					break;
+				else
+				{
+					m_pTarget_Collider->Set_Enabled(true);
+					++m_iCur_Count_Of_Execution;
+				}
+				break;
 
+				// 积己 冉荐 公力茄
+			case CBT_Service_Node::Infinite:
+				m_pTarget_Collider->Set_Enabled(true);
+				End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, false);
+				break;
+			}
+		}
+	}
 	return BT_NODE_STATE::INPROGRESS;
 }
 
@@ -52,6 +64,7 @@ void CBT_UpdateCollider::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<C
 		m_dCurTime = 0;
 		m_dMaxTime = m_dUpdateTime + CALC::Random_Num_Double(-m_dOffset, m_dOffset);
 		m_iCur_Count_Of_Execution = 0;
+		m_dService_StartTime = 0;
 
 		m_bInit = false;
 	}
@@ -65,16 +78,7 @@ CBT_Node::BT_NODE_STATE CBT_UpdateCollider::End_Node(vector<CBT_Node*>* pNodeSta
 		cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " End   { Service : Collider }" << endl;
 	}
 
-	switch (m_eMode)
-	{
-	case CBT_Service_Node::Finite:
-		++m_iCur_Count_Of_Execution;
-		break;
-
-	case CBT_Service_Node::Infinite:
-		break;
-	}
-
+	m_bService_Start = false;
 	m_bInit = true;
 
 	return eState;
@@ -91,6 +95,7 @@ HRESULT CBT_UpdateCollider::Ready_Clone_Node(void * pInit_Struct)
 	Safe_AddRef(m_pTarget_Collider);
 	m_iMax_Count_Of_Execution = temp.Count_Of_Execution;
 	m_eMode = temp.eMode;
+	m_dService_StartTime = temp.Service_Start_Time;
 
 	CBT_Node::_Set_Auto_Number(&m_iNodeNumber);
 	return S_OK;

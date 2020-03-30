@@ -13,26 +13,31 @@ CBT_Node::BT_NODE_STATE CBT_UpdatePos::Update_Node(_double TimeDelta, vector<CBT
 	if (nullptr == m_pTarget_Transform)
 		return BT_NODE_STATE::FAILED;
 
-	switch (m_eMode)
-	{
-	case CBT_Service_Node::Finite:
-		if (m_iCur_Count_Of_Execution > m_iMax_Count_Of_Execution)
-			return BT_NODE_STATE::FAILED;
-		break;
-
-	case CBT_Service_Node::Infinite:
-		break;
-	}
-
 	Start_Node(pNodeStack, plistSubNodeStack, false);
 
 	m_dCurTime += TimeDelta;
 
 	if (m_dCurTime > m_dMaxTime)
 	{
-		pBlackBoard->Set_Value(m_pTargetKey, m_pTarget_Transform->Get_Pos());
+		switch (m_eMode)
+		{
+			// 积己 冉荐 力茄
+		case CBT_Service_Node::Finite:
+			if (m_iCur_Count_Of_Execution > m_iMax_Count_Of_Execution)
+				break;
+			else
+			{
+				pBlackBoard->Set_Value(m_pTargetKey, m_pTarget_Transform->Get_Pos());
+				++m_iCur_Count_Of_Execution;
+			}
+			break;
 
-		End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, false);
+			// 积己 冉荐 公力茄
+		case CBT_Service_Node::Infinite:
+			pBlackBoard->Set_Value(m_pTargetKey, m_pTarget_Transform->Get_Pos());
+			End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, false);
+			break;
+		}
 	}
 
 	return BT_NODE_STATE::INPROGRESS;
@@ -62,16 +67,6 @@ CBT_Node::BT_NODE_STATE CBT_UpdatePos::End_Node(vector<CBT_Node*>* pNodeStack, l
 	{
 		Cout_Indentation(pNodeStack);
 		cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " End   { Service : Transform }" << endl;
-	}
-
-	switch (m_eMode)
-	{
-	case CBT_Service_Node::Finite:
-		++m_iCur_Count_Of_Execution;
-		break;
-
-	case CBT_Service_Node::Infinite:
-		break;
 	}
 
 	m_bInit = true;

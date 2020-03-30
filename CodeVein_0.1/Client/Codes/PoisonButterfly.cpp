@@ -22,12 +22,12 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 
-	m_pTransformCom->Set_Pos(_v3(1.f, 0.5f, 1.f));
+	m_pTransformCom->Set_Pos(_v3(10.f, 0.5f, 1.f));
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 
 	CBlackBoard* pBlackBoard = CBlackBoard::Create();
-	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create(true);
+	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create();	//인자에 true 주면 콘솔창에 디버깅정보 뜸, default = false
 
 	m_pAIControllerCom->Set_BeHaviorTree(pBehaviorTree);
 	m_pAIControllerCom->Set_BlackBoard(pBlackBoard);
@@ -46,171 +46,31 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 	CBT_Selector* Start_Sel = Node_Selector("행동 시작");
 	CBT_UpdatePos* UpdatePlayerPosService = Node_UpdatePos("Update_Player_Pos", L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE)), 0, 0.01, 0, CBT_Service_Node::Infinite);
 	CBT_UpdateGageRatio* UpdatePlayerHPservice = Node_UpdateGageRatio("Update_Player_Pos", L"HPRatio", L"MaxHP", L"HP", 0, 0.01, 0, CBT_Service_Node::Infinite);
+	CBT_UpdateGageRatio* UpdateHPRatioService = Node_UpdateGageRatio("체력 비율", L"HPRatio", L"MAXHP", L"HP", 1, 0.01, 0, CBT_Service_Node::Infinite);
 
 	pBehaviorTree->Set_Child(Start_Sel);
 
 	Start_Sel->Add_Service(UpdatePlayerPosService);
 	Start_Sel->Add_Service(UpdatePlayerHPservice);
+	Start_Sel->Add_Service(UpdateHPRatioService);
 
-	CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
-	Check_ShowValue->Set_Child(Start_Show());
+	//////////// 아래에 주석해놓은 4줄이 본게임에서 쓸 것임, 차례대로 공격함.
+
+	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
+	//Check_ShowValue->Set_Child(Start_Show());
+	//Start_Sel->Add_Child(Check_ShowValue);
+	//Start_Sel->Add_Child(Start_Game());
+
+	////////////
+
+
+	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨.
+	Start_Sel->Add_Child(Left_Eat());
+
+
+
+
 	
-	Start_Sel->Add_Child(Check_ShowValue);
-	Start_Sel->Add_Child(Start_Game());
-
-	////////CBT_Sequence* Check_Length_Sel = Node_Sequence("범위 체크");
-	//////pBehaviorTree->Set_Child(Start_Sel);
-	//////Start_Sel->Add_Service(UpdatePlayerPosService);	//플레이어 위치 확인
-	//////Start_Sel->Add_Service(UpdatePlayerHPservice);	//플레이어 HP 확인
-
-	//////CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
-
-	//////Start_Sel->Add_Child(Check_ShowValue);
-	//////Check_ShowValue->Set_Child(Show_Seq);
-	//////Show_Seq->Add_Child(Show_ChaseAndNearAttack());
-	//////Show_Seq->Add_Child(Show_TurnAndFarAttack());
-
-	////////Check_Length_Seq->Add_Child(Fire_5Bullet());
-
-	//////CBT_Sequence* Real_Seq = Node_Sequence("게임 시작");
-	//////Check_ShowValue->Set_Child(Real_Seq);
-	//////Real_Seq->Add_Child(NearAttack());
-	//////Real_Seq->Add_Child(FarAttack());
-
-
-
-	//시야각 체크
-
-	//Check_Length_Seq->Add_Child(Left_Eat());
-
-	//Check_Length_Seq->Add_Child(ConeCheck);
-	//ConeCheck->Set_Child(Left_Eat());
-
-
-
-	//CBT_RotationDir* Rotation = Node_RotationDir("돌기", L"Player_Pos", 0.5);
-	//Root_Child->Add_Child(Rotation);
-
-	//CBT_Wait* Wait1111 = Node_Wait("대기", 1, 0);
-	//Root_Child->Add_Child(Wait1111);
-
-	//CBT_UpdatePos* UpdatePlayerPosService = Node_UpdatePos("돌진 이동", L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE)), 0.02, 0);
-	//Root_Child->Add_Service(UpdatePlayerPosService);
-
-	//// 체력비율 확인
-	//CBT_UpdateGageRatio* UpdateHPRatioService = Node_UpdateGageRatio("체력 비율", L"HPRatio", L"MAXHP", L"HP", 1, 0);
-	//Root_Child->Add_Service(UpdateHPRatioService);
-
-	//// 체력확인
-	//CBT_Sequence* Check_HPRatio = Node_Sequence("체력 확인");
-	//Root_Child->Add_Child()
-
-
-	//Root_Child->Add_Child(RushParallel);
-
-	////
-
-	/*
-
-
-
-	CBT_Play_Ani* Show_Ani27 = Node_Ani("냠", 27, 0.6f);
-	Sequence0->Add_Child(Show_Ani27);
-	CBT_Play_Ani* Show_Ani26 = Node_Ani("빙그르르냠", 26, 0.95f);
-	Sequence0->Add_Child(Show_Ani26);
-	CBT_Play_Ani* Show_Ani6_2 = Node_Ani("기본", 6, 0.3f);
-	Sequence0->Add_Child(Show_Ani6_2);
-
-
-
-
-
-
-
-	CBT_Play_Ani* Show_Ani21 = Node_Ani("기모아서 살랑살랑 독숨", 21, 0.95f);
-	Sequence0->Add_Child(Show_Ani21);
-	CBT_Play_Ani* Show_Ani6_5 = Node_Ani("기본", 6, 0.3f);
-	Sequence0->Add_Child(Show_Ani6_5);
-
-
-
-
-
-	*/
-
-	//
-
-	//// 돌진 패턴
-
-	/*CBT_Simple_Parallel* RushParallel = Node_Parallel_Immediate("돌진 병렬");
-	CBT_Sequence* RushAniSeq = Node_Sequence("RushSequence");
-	CBT_UpdatePos* UpdatePlayerPosService = Node_UpdatePos("돌진 이동", L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE)), 0.02, 0);
-	CBT_Play_Ani* Show_Ani17 = Node_Ani("5회 타격후 덤블링", 17, 0.95f);
-	CBT_Play_Ani* Show_Ani6_9 = Node_Ani("기본", 6, 0.3f);
-
-	CBT_Sequence* MoveSequence = Node_Sequence("돌진 이동");
-	CBT_Wait* RushWaitF = Node_Wait("RushWait0", 1.7, 0);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("돌진", 10, 0.7, 0);
-	CBT_Wait* RushWaitB = Node_Wait("RushWait1", 0.2, 0);
-
-	Root_Child->Add_Child(RushParallel);
-
-	RushParallel->Set_Sub_Child(MoveSequence);
-	MoveSequence->Add_Child(RushWaitF);
-	MoveSequence->Add_Child(Move0);
-	MoveSequence->Add_Child(RushWaitB);
-
-	RushParallel->Set_Main_Child(RushAniSeq);
-
-	RushAniSeq->Add_Service(UpdatePlayerPosService);
-	RushAniSeq->Add_Child(Show_Ani17);
-	RushAniSeq->Add_Child(Show_Ani6_9);
-
-
-	CBT_Wait* pWait = Node_Wait("멈춤", 1, 0);
-	Root_Child->Add_Child(pWait);*/
-
-	////
-
-	//CBT_Selector* HP_Check_Service = Node_Selector("체력 조건");
-
-	//pBehaviorTree->Set_Child(N_AtkSelector);
-
-	//CBT_UpdateValue(L"")
-
-	// 냠 -> 빙그르 냠  왼쪽  패턴
-	//CBT_Sequence* EatTrunEat = Node_Sequence("냠빙그르르");
-	//CBT_Play_Ani* pAni27 = Node_Ani("냠", 27, 0.6f);
-	//EatTrunEat->Add_Child(pAni27);
-
-	//CBT_Play_Ani* pAni26 = Node_Ani("빙그르르냠", 26, 0.9f);
-	//EatTrunEat->Add_Child(pAni26);
-
-	//CBT_Cooldown* pCooldown = Node_Cooldown("냠 빙그르르 쿨다운", 3);
-	//pCooldown->Set_Child(EatTrunEat);
-	//N_AtkSelector->Add_Child(pCooldown);
-
-	//// 24 -> 독지뢰 살포
-	//CBT_Play_Ani* pAni24 = Node_Ani("독지뢰 살포", 24, 0.9f);
-	//N_AtkSelector->Add_Child(pAni24);
-
-	//// 25 -> 시야각 기준으로 기모아서 전방으로 독숨
-	//CBT_Play_Ani* pAni25 = Node_Ani("전방으로 독숨", 25, 0.9f);
-	//N_AtkSelector->Add_Child(pAni25);
-
-	//CBT_Sequence* RightEatBackTurn = Node_Sequence("일반공격");
-
-	//// 22 -> 오른쪽 물기
-	//CBT_Play_Ani* pAni22 = Node_Ani("오른쪽 물기", 22, 0.9f);
-	//RightEatBackTurn->Add_Child(pAni22);
-
-	//// 23 -> 덥썩 후 뒤돌기
-	//CBT_Play_Ani* pAni23 = Node_Ani("덥썩 후 뒤돌기", 23, 0.9f);
-	//RightEatBackTurn->Add_Child(pAni23);
-
-	//N_AtkSelector->Add_Child(RightEatBackTurn);
-
-
 	//나무위키
 
 	/////////////////////////////////////////////////////////////////////////////일반 공격
@@ -453,6 +313,16 @@ CBT_Composite_Node * CPoisonButterfly::Left_Eat()
 	CBT_Play_Ani* Show_Ani24 = Node_Ani("왼쪽 냠", 24, 0.95f);
 	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 6, 0.3f);
 
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("왜곡", L"ButterFly_Distortion_Circle", L"Bone_Tail6", 1.0, 1, 0.01, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("보라 파티클", L"ButterFly_PointParticle", L"Bone_Tail6", 0.5, 60, 0.01, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Bone_Tail6", 0.5, 60, 0.01, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("반짝 보라 모래", L"ButterFly_GlitterSand", L"Bone_Tail6", 0.5, 60, 0.01, 0);
+
+	Root_Seq->Add_Service(Effect0);
+	Root_Seq->Add_Service(Effect1);
+	Root_Seq->Add_Service(Effect2);
+	Root_Seq->Add_Service(Effect3);
+
 	Root_Seq->Add_Child(Show_Ani24);
 	Root_Seq->Add_Child(Show_Ani6);
 
@@ -494,6 +364,30 @@ CBT_Composite_Node * CPoisonButterfly::Poison_Tornado_After_Charging()
 	CBT_Play_Ani* Show_Ani28 = Node_Ani("기모아서 독 소용돌이", 28, 0.95f);
 	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 6, 0.3f);
 
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("기 모을 때 처음 스모크", L"ButterFly_SoftSmoke_Ready", L"Self_Pos", 0.3, 5, 0.2, 0);
+	//CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("기 모을 때 메쉬이펙트", L"ButterFly_Distortion_Circle", L"Self_Pos", 0.3, 1, 0.01, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("기 모을 때 스모크 01", L"ButterFly_SoftSmoke", L"Self_Pos", 0.3, 1, 0.01, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("기 모을 때 스모크 02", L"ButterFly_SoftSmoke_Bottom", L"Self_Pos", 0.3, 1, 0.01, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("폭발할 때 처음 빨간 스모크", L"ButterFly_Smoke_Red_Once", L"Self_Pos", 0.3, 1, 0.01, 0);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("폭발하는 빨간 스모크", L"ButterFly_Smoke_Red_Particle", L"Self_Pos", 0.3, 1, 0.01, 0);
+	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("바닥에 깔리는 빨간 스모크", L"ButterFly_SoftSmoke_Floor", L"Self_Pos", 0.3, 1, 0.01, 0);
+	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("폭발할 때 자두색 동그라미 파티클", L"ButterFly_PointParticle_Plum", L"Self_Pos", 1.0, 1, 0.01, 0);
+	//CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("폴발할 때 회오리 메쉬이펙트", L"ButterFly_RingLine", L"Self_Pos", 0.3, 1, 0.01, 0);
+	//CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("회오리 메쉬 왜곡", L"ButterFly_RingLine_Distortion", L"Self_Pos", 0.3, 1, 0.01, 0);
+
+	Root_Seq->Add_Service(Effect0);
+	//Root_Seq->Add_Service(Effect1);
+	Root_Seq->Add_Service(Effect2);
+	Root_Seq->Add_Service(Effect3);
+	Root_Seq->Add_Service(Effect4);
+	Root_Seq->Add_Service(Effect5);
+	Root_Seq->Add_Service(Effect6);
+	Root_Seq->Add_Service(Effect7);
+	//Root_Seq->Add_Service(Effect8);
+	//Root_Seq->Add_Service(Effect9);
+
+
+
 	Root_Seq->Add_Child(Show_Ani28);
 	Root_Seq->Add_Child(Show_Ani6);
 
@@ -502,10 +396,20 @@ CBT_Composite_Node * CPoisonButterfly::Poison_Tornado_After_Charging()
 
 CBT_Composite_Node * CPoisonButterfly::OneTurn_Poison()
 {
-	CBT_Sequence* Root_Seq = Node_Sequence("부르르 독지뢰 살포");
+	CBT_Sequence* Root_Seq = Node_Sequence("좁은 범위 한바퀴 독 발사");
 
-	CBT_Play_Ani* Show_Ani20 = Node_Ani("부르르 독지뢰 살포", 20, 0.95f);
+	CBT_Play_Ani* Show_Ani20 = Node_Ani("좁은 범위 한바퀴 독 발사", 20, 0.95f);
 	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 6, 0.3f);
+
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("전체적으로 보라 동그라미 파티클", L"ButterFly_SoftSmoke_Ready", L"Self_Pos", 0.3, 5, 0.2, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("전체적으로 쓰이는 옅은 독안개", L"ButterFly_SoftSmoke_Ready", L"Self_Pos", 0.3, 5, 0.2, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("반짝이는 보라색 모래", L"ButterFly_SoftSmoke_Ready", L"Self_Pos", 0.3, 5, 0.2, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("안개와 같이 나오는 왜곡", L"ButterFly_SoftSmoke_Ready", L"Self_Pos", 0.3, 5, 0.2, 0);
+
+	Root_Seq->Add_Service(Effect0);
+	Root_Seq->Add_Service(Effect1);
+	Root_Seq->Add_Service(Effect2);
+	Root_Seq->Add_Service(Effect3);
 
 	Root_Seq->Add_Child(Show_Ani20);
 	Root_Seq->Add_Child(Show_Ani6);
@@ -524,6 +428,19 @@ CBT_Composite_Node * CPoisonButterfly::Rush()
 	CBT_Wait* RushWaitF = Node_Wait("RushWait0", 1.7, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("돌진", 10, 0.7, 0);
 	CBT_Wait* RushWaitB = Node_Wait("RushWait1", 0.2, 0);
+
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("전체적으로 보라 동그라미 파티클", L"ButterFly_PointParticle", L"Self_Pos", 0.3, 5, 0.2, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("전체적으로 옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Self_Pos", 0.3, 5, 0.2, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("보라색 투명한 물방울", L"ButterFly_WaterSplash", L"Self_Pos", 0.3, 5, 0.2, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("반짝이는 보라색 모래", L"ButterFly_GlitterSand", L"Self_Pos", 0.3, 5, 0.2, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("안개와 같이 나오는 왜곡", L"ButterFly_Distortion_Smoke", L"Self_Pos", 0.3, 5, 0.2, 0);
+
+	RushParallel->Add_Service(Effect0);
+	RushParallel->Add_Service(Effect1);
+	RushParallel->Add_Service(Effect2);
+	RushParallel->Add_Service(Effect3);
+	RushParallel->Add_Service(Effect4);
+
 
 	RushParallel->Set_Sub_Child(MoveSequence);
 	MoveSequence->Add_Child(RushWaitF);
@@ -546,11 +463,11 @@ CBT_Composite_Node * CPoisonButterfly::Fire_5Bullet()
 	CBT_Play_Ani* Show_Ani6_0 = Node_Ani("기본", 6, 0.3f);
 
 	
-	CBT_CreateBullet* PoisonBullet0 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Self_Pos", L"Self_PoisonDir0", 5, 5, 1, 0.5, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* PoisonBullet1 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Self_Pos", L"Self_PoisonDir1", 5, 5, 1, 0.5, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* PoisonBullet2 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Self_Pos", L"Self_PoisonDir2", 5, 5, 1, 0.5, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* PoisonBullet3 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Self_Pos", L"Self_PoisonDir3", 5, 5, 1, 0.5, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* PoisonBullet4 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Self_Pos", L"Self_PoisonDir4", 5, 5, 1, 0.5, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* PoisonBullet0 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Self_Pos", L"Self_PoisonDir0", 5, 5, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* PoisonBullet1 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Self_Pos", L"Self_PoisonDir1", 5, 5, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* PoisonBullet2 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Self_Pos", L"Self_PoisonDir2", 5, 5, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* PoisonBullet3 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Self_Pos", L"Self_PoisonDir3", 5, 5, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* PoisonBullet4 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Self_Pos", L"Self_PoisonDir4", 5, 5, 1, 1, 0, CBT_Service_Node::Finite);
 	Root_Seq->Add_Service(PoisonBullet0);
 	Root_Seq->Add_Service(PoisonBullet1);
 	Root_Seq->Add_Service(PoisonBullet2);
@@ -745,11 +662,11 @@ HRESULT CPoisonButterfly::Update_Value_Of_BB()
 {
 	_v3 vSelfDir = *(_v3*)&m_pTransformCom->Get_WorldMat().m[2];
 
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_PoisonDir0", *D3DXVec3TransformNormal(&_v3(), &vSelfDir, D3DXMatrixRotationY(&_mat(), D3DXToRadian(60))));
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_PoisonDir1", *D3DXVec3TransformNormal(&_v3(), &vSelfDir, D3DXMatrixRotationY(&_mat(), D3DXToRadian(30))));
+	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_PoisonDir0", *D3DXVec3TransformNormal(&_v3(), &vSelfDir, D3DXMatrixRotationY(&_mat(), D3DXToRadian(25))));
+	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_PoisonDir1", *D3DXVec3TransformNormal(&_v3(), &vSelfDir, D3DXMatrixRotationY(&_mat(), D3DXToRadian(12.5f))));
 	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_PoisonDir2", vSelfDir);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_PoisonDir3", *D3DXVec3TransformNormal(&_v3(), &vSelfDir, D3DXMatrixRotationY(&_mat(), D3DXToRadian(-30))));
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_PoisonDir4", *D3DXVec3TransformNormal(&_v3(), &vSelfDir, D3DXMatrixRotationY(&_mat(), D3DXToRadian(-60))));
+	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_PoisonDir3", *D3DXVec3TransformNormal(&_v3(), &vSelfDir, D3DXMatrixRotationY(&_mat(), D3DXToRadian(-12.5f))));
+	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_PoisonDir4", *D3DXVec3TransformNormal(&_v3(), &vSelfDir, D3DXMatrixRotationY(&_mat(), D3DXToRadian(-25))));
 
 	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_Pos", m_pTransformCom->Get_Pos());
 

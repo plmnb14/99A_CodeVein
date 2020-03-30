@@ -11,8 +11,8 @@ public:
 
 	typedef struct tagInitInfo
 	{
-		tagInitInfo(char* pNodeName, _tchar* _Effect_Tag, _tchar* _Create_Pos_Key, _float _Effect_Life_Time, _uint _MaxCount_Of_Execution, _double dCreateTime, _double dOffset, CBT_Service_Node::Mode _eMode, CBT_CreateEffect::Mode _eEffect_Mode)
-			: Effect_Life_Time(_Effect_Life_Time), Target_dCreateTime(dCreateTime), Target_dOffset(dOffset), MaxCount_Of_Execution(_MaxCount_Of_Execution), eMode(_eMode), eEffect_Mode(_eEffect_Mode)
+		tagInitInfo(char* pNodeName, _tchar* _Effect_Tag, _tchar* _Create_Pos_Key, _float _Effect_Life_Time, _double _Service_Start_Time, _uint _MaxCount_Of_Execution, _double dCreateTime, _double dOffset, CBT_Service_Node::Mode _eMode, CBT_CreateEffect::Mode _eEffect_Mode)
+			: Effect_Life_Time(_Effect_Life_Time), Service_Start_Time(_Service_Start_Time), Target_dCreateTime(dCreateTime), Target_dOffset(dOffset), MaxCount_Of_Execution(_MaxCount_Of_Execution), eMode(_eMode), eEffect_Mode(_eEffect_Mode)
 		{strcpy_s<256>(Target_NodeName, pNodeName);
 		lstrcpy(Effect_Tag, _Effect_Tag);
 		lstrcpy(Create_Pos_Key, _Create_Pos_Key);}
@@ -21,6 +21,7 @@ public:
 		_tchar					Effect_Tag[256] = { 0, };
 		_tchar					Create_Pos_Key[256] = { 0, };
 		_float					Effect_Life_Time = 0.f;
+		_double					Service_Start_Time = 0;
 		_double					Target_dCreateTime = 0;
 		_double					Target_dOffset = 0;
 		_uint					MaxCount_Of_Execution = 0;
@@ -51,6 +52,9 @@ private:
 	_tchar					m_vEffect_Pos_Key[256] = { 0, };
 	_float					m_fEffect_lifeTime = 0.f;
 	CBT_CreateEffect::Mode	m_eEffectMode = CBT_CreateEffect::One;
+
+	_double					m_dService_StartTime = 0;
+	_bool					m_bService_Start = false;
 
 	_double					m_dCurTime = 0;
 	_double					m_dCreateTime = 0;
