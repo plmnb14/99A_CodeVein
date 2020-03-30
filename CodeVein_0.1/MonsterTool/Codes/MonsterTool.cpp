@@ -23,11 +23,6 @@ CMonsterTool::CMonsterTool(CWnd* pParent /*=NULL*/)
 
 CMonsterTool::~CMonsterTool()
 {
-	for (auto& list_iter : m_listMeshName)
-		Safe_Delete(list_iter);
-
-	m_listMeshName.clear();
-
 	for (auto& Meshmap_iter : m_mapmapmapAniEvent)
 	{
 		for (auto& AniIndexmap_iter : Meshmap_iter.second)
@@ -43,6 +38,12 @@ CMonsterTool::~CMonsterTool()
 	}
 
 	m_mapmapmapAniEvent.clear(); //다 지우기
+
+	for (auto& list_iter : m_listMeshName)
+		Safe_Delete(list_iter);
+
+	m_listMeshName.clear();
+
 }
 
 void CMonsterTool::DoDataExchange(CDataExchange* pDX)
@@ -131,8 +132,11 @@ BEGIN_MESSAGE_MAP(CMonsterTool, CDialog)
 
 	ON_BN_CLICKED(IDC_ADDEVENT, &CMonsterTool::Add_AniEvent)
 	ON_BN_CLICKED(IDC_ANIEVEVNTSAVE, &CMonsterTool::Save_AniEvent)
+	ON_BN_CLICKED(IDC_ANIEVENTLOAD, &CMonsterTool::Load_AniEvent)
 
 	ON_BN_CLICKED(IDC_ADDANICOMBO, &CMonsterTool::Add_AniCombo)
+	ON_BN_CLICKED(IDC_ANiCOMBOSAVE, &CMonsterTool::Save_AniCombo)
+	ON_BN_CLICKED(IDC_ANiCOMBOLOAD, &CMonsterTool::Load_AniCombo)
 	ON_BN_CLICKED(IDC_PLAYANICOMBO, &CMonsterTool::Play_AniCombo)
 END_MESSAGE_MAP()
 
@@ -543,10 +547,9 @@ void CMonsterTool::Seting_TreeCtrlAniCombo()
 						strTempAniRatio.Format(L"%.2f", AniIndex_iter.second);
 						m_ListhBoxAni.GetText(AniIndex_iter.first, strTempAniName);
 						m_TreeCtrlAniCombo.InsertItem(strTempAniIndex + L"/" + strTempAniRatio + L"/ " + strTempAniName, 0, 0, Root, TVI_LAST);
-						break;
 					}
 				}
-
+				break;
 			}
 		}
 	}
@@ -773,81 +776,73 @@ void CMonsterTool::LDBClick_TreeCtrlAniEvent(NMHDR *pNMHDR, LRESULT *pResult)
 
 void CMonsterTool::LDBClick_TreeCtrlAniCombo(NMHDR *pNMHDR, LRESULT *pResult)
 {
-	HTREEITEM hSelectedItem = m_TreeCtrlAniCombo.GetSelectedItem();
-	CString strText = m_TreeCtrlAniCombo.GetItemText(hSelectedItem); //선택된 친구의 이름
+	HTREEITEM hSelectedItem = m_TreeCtrlAniCombo.GetSelectedItem(); //부모 혹은 자식클릭상태
+	CString strSelectedItemName = m_TreeCtrlAniCombo.GetItemText(hSelectedItem); //선택된 노드 이름
 
-	_tchar szTreeItemNameText[MAX_STR];
-	lstrcpy(szTreeItemNameText, strText);
+	_tchar szSelectedItemName[MAX_STR];
+	lstrcpy(szSelectedItemName, strSelectedItemName);
 
-	HTREEITEM ParentOrChildNode = Find_Node_By_Name(m_TreeCtrlAniCombo, szTreeItemNameText); //부모인지 자식인지 판별
-	CString strParentOrChild = m_TreeCtrlAniCombo.GetItemText(ParentOrChildNode); //부모또는자식 이름
-
-	if (0 > strParentOrChild.Find(L"/")) //자식이라면
+	if (0 > strSelectedItemName.Find(L"/")) //부모인 경우
 	{
-		CString strComboNum = strParentOrChild.Left(strParentOrChild.ReverseFind(L'/'));
-
-		_tchar szTemp[MAX_STR];
-		lstrcpy(szTemp, m_strMeshName);
-		HTREEITEM hTemp, hClickedChildFindParent;
-		CString strParentName;
-
-		hTemp = m_TreeCtrlAniCombo.GetNextItem(NULL, TVGN_CARET);
-		hClickedChildFindParent = m_TreeCtrlAniCombo.GetNextItem(hTemp, TVGN_PARENT); // 현재 선택되어진 아이템의 상위 아이템을 가져온다.
-		strParentName = m_TreeCtrlAniCombo.GetItemText(hClickedChildFindParent); // 그 아이템의 이름을 얻어온다.
-
 		for (auto& list_iter : m_listMeshName)
 		{
-			if (0 == lstrcmp(list_iter, szTemp))
+			if (0 == lstrcmp(list_iter, (_tchar*)(LPCTSTR)m_strMeshName))
 			{
 				auto& MeshName_iter = find_if(m_mapmapmapAniCombo.begin(), m_mapmapmapAniCombo.end(), CTag_Finder(list_iter));
 
-				for (auto& AniCombo_iter : MeshName_iter->second)
+				if (MeshName_iter->second.find(_ttoi(strSelectedItemName)) != MeshName_iter->second.end()) //해당 콤보번호가 존재할 경우
 				{
-					//콤보 번호 검색
-					if (_ttoi(strParentName) == AniCombo_iter.first)
-					{
-						for (auto& AniIndex_iter : AniCombo_iter.second)
-						{
-							//애니인덱스 번호 검색
-							if (_ttoi(strComboNum) == AniIndex_iter.first)
-							{
-								AniCombo_iter.second.erase(_ttoi(strComboNum));
-								break;
-							}
-						}
-					}
+					MeshName_iter->second.find(_ttoi(strSelectedItemName))->second.clear();
+
+					if (MeshName_iter->second.find(_ttoi(strSelectedItemName))->second.empty())
+						MeshName_iter->second.erase(_ttoi(strSelectedItemName));
+
+					break;
 				}
 			}
 		}
+
 		Seting_TreeCtrlAniCombo();
 	}
-	else //자식 선택시 특정값만 지우기
+	else //자식인 경우
 	{
-		_tchar szTemp[MAX_STR];
-		lstrcpy(szTemp, m_strMeshName);
-
-		CString strComboNum = m_TreeCtrlAniCombo.GetItemText(hSelectedItem);
+		CString strComboNum = strSelectedItemName.Left(strSelectedItemName.Find(L'/')); //인덱스 번호
 
 		for (auto& list_iter : m_listMeshName)
 		{
-			if (!lstrcmp(list_iter, szTemp))
+			if (0 == lstrcmp(list_iter, (_tchar*)(LPCTSTR)m_strMeshName))
 			{
-				auto& Meshname_iter = find_if(m_mapmapmapAniCombo.begin(), m_mapmapmapAniCombo.end(), CTag_Finder(list_iter));
+				HTREEITEM hTemp, hClickedChildFindParent;
+				CString strParentName;
 
-				for (auto& ComboNumber_iter : Meshname_iter->second) // 콤보번호 _uint
+				auto& MeshName_iter = find_if(m_mapmapmapAniCombo.begin(), m_mapmapmapAniCombo.end(), CTag_Finder(list_iter));
+
+				hTemp = m_TreeCtrlAniCombo.GetNextItem(NULL, TVGN_CARET); //선택된 노드 찾기
+				hClickedChildFindParent = m_TreeCtrlAniCombo.GetNextItem(hTemp, TVGN_PARENT); // 현재 선택되어진 아이템의 상위 아이템을 가져온다.
+				strParentName = m_TreeCtrlAniCombo.GetItemText(hClickedChildFindParent); // 그 아이템의 이름을 얻어온다.
+
+				//콤보 번호를 못찾은 경우
+				if (MeshName_iter->second.find(_ttoi(strParentName)) == MeshName_iter->second.end())
 				{
-					if (_ttoi(strComboNum) == ComboNumber_iter.first)
-					{
-						Meshname_iter->second.clear();
-						Meshname_iter->second.erase(_ttoi(strComboNum));
-						break;
-					}
+					::AfxMessageBox(L"해당 콤보번호가 없습니다");
+					break;
+				}
+				else //콤보번호를 찾은 경우
+				{
+					//인덱스를 지운다
+					MeshName_iter->second.find(_ttoi(strParentName))->second.erase(_ttoi(strComboNum));
+
+					//인덱스가 하나도 없다면?
+					//해당 콤보를 지운다
+					if (MeshName_iter->second.find(_ttoi(strParentName))->second.empty())
+						MeshName_iter->second.erase(_ttoi(strParentName));
+
+					break;
 				}
 			}
 		}
 		Seting_TreeCtrlAniCombo();
 	}
-
 
 	*pResult = 0;
 }
@@ -913,6 +908,8 @@ void CMonsterTool::Play_Ani()
 	{
 		IF_NOT_NULL(m_pTestObject)
 		{
+			m_pTestObject->Check_ComboPlayBtn(false);
+
 			m_strAniFullTime.Format(L"%.2f", TARGET_TO_D_MESH(m_pTestObject)->Get_AnimationFullTime());
 			m_strAniTime.Format(L"%.2f", TARGET_TO_D_MESH(m_pTestObject)->Get_TrackInfo().Position);
 			TARGET_TO_D_MESH(m_pTestObject)->SetUp_Animation(_ttoi(m_strAniIndex));
@@ -938,11 +935,13 @@ void CMonsterTool::Stop_Ani()
 	UpdateData(FALSE);
 }
 
+/////////////////////////////////////////////이벤트 관련 함순
 void CMonsterTool::Add_AniEvent()
 {
 	if (TRUE == m_ButtonMove.GetCheck())
 	{
 		auto& Meshmap_iter = find_if(m_mapmapmapAniEvent.begin(), m_mapmapmapAniEvent.end(), CTag_Finder((_tchar*)(LPCTSTR)m_strMeshName));
+		_uint num = _ttoi(m_strAniIndex);
 
 		//해당 몬스터가 map에 없다면
 		if (Meshmap_iter == m_mapmapmapAniEvent.end())
@@ -962,7 +961,7 @@ void CMonsterTool::Add_AniEvent()
 
 			map <_uint, map<ANI_EVENT_TYPE, ANI_EVENT_VALUE*>> SecondValue;
 			SecondValue.emplace(num, FirstValue);
-		
+
 			for (auto& list_iter : m_listMeshName)
 			{
 				if (0 == lstrcmp(list_iter, (_tchar*)(LPCTSTR)m_strMeshName))
@@ -974,56 +973,48 @@ void CMonsterTool::Add_AniEvent()
 		}
 		else //해당 몬스터가 있다면
 		{
-			_uint num = _ttoi(m_strAniIndex);
-
-			for (auto& AniIdx_iter : Meshmap_iter->second)
+			if (Meshmap_iter->second.find(num) == Meshmap_iter->second.end())
 			{
-				//해당 애니인덱스가 없다면
-				if (Meshmap_iter->second.find(num) == Meshmap_iter->second.end())
-				{
-					ANI_EVENT_VALUE* TempEventValue = new ANI_EVENT_VALUE;
-					TempEventValue->m_dStartTime = _wtof(m_strMoveStartTime);
-					TempEventValue->m_dEndTime = _wtof(m_strMoveEndTime);
-					TempEventValue->m_dLoopTime = _wtof(m_strMoveLoopTime);
-					TempEventValue->m_dMoveSpeed = _wtof(m_strMoveSpeed);
-					TempEventValue->m_dMoveAccel = _wtof(m_strMoveAccel);
-					TempEventValue->m_dAniRatio = _wtof(m_strMoveAniRatio);
+				ANI_EVENT_VALUE* TempEventValue = new ANI_EVENT_VALUE;
+				TempEventValue->m_dStartTime = _wtof(m_strMoveStartTime);
+				TempEventValue->m_dEndTime = _wtof(m_strMoveEndTime);
+				TempEventValue->m_dLoopTime = _wtof(m_strMoveLoopTime);
+				TempEventValue->m_dMoveSpeed = _wtof(m_strMoveSpeed);
+				TempEventValue->m_dMoveAccel = _wtof(m_strMoveAccel);
+				TempEventValue->m_dAniRatio = _wtof(m_strMoveAniRatio);
 
-					map<ANI_EVENT_TYPE, ANI_EVENT_VALUE*> FirstValue;
-					FirstValue.emplace(ANI_EVENT_TYPE::MOVE, TempEventValue);
-					Meshmap_iter->second.emplace(num, FirstValue);
-					break;
-				}
-				else //해당 애니인덱스가 있다면
+				map<ANI_EVENT_TYPE, ANI_EVENT_VALUE*> FirstValue;
+				FirstValue.emplace(ANI_EVENT_TYPE::MOVE, TempEventValue);
+				Meshmap_iter->second.emplace(num, FirstValue);
+			}
+			else
+			{
+				for (auto& EventType_iter : Meshmap_iter->second.find(num)->second)
 				{
-					for (auto& EventType_iter : AniIdx_iter.second)
+					//해당 이벤트가 없다면
+					if (Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE) == Meshmap_iter->second.find(num)->second.end())
 					{
-						//해당 이벤트가 없다면
-						if (Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE) == Meshmap_iter->second.find(num)->second.end())
-						{
-							ANI_EVENT_VALUE* TempEventValue = new ANI_EVENT_VALUE;
-							TempEventValue->m_dStartTime = _wtof(m_strMoveStartTime);
-							TempEventValue->m_dEndTime = _wtof(m_strMoveEndTime);
-							TempEventValue->m_dLoopTime = _wtof(m_strMoveLoopTime);
-							TempEventValue->m_dMoveSpeed = _wtof(m_strMoveSpeed);
-							TempEventValue->m_dMoveAccel = _wtof(m_strMoveAccel);
-							TempEventValue->m_dAniRatio = _wtof(m_strMoveAniRatio);
+						ANI_EVENT_VALUE* TempEventValue = new ANI_EVENT_VALUE;
+						TempEventValue->m_dStartTime = _wtof(m_strMoveStartTime);
+						TempEventValue->m_dEndTime = _wtof(m_strMoveEndTime);
+						TempEventValue->m_dLoopTime = _wtof(m_strMoveLoopTime);
+						TempEventValue->m_dMoveSpeed = _wtof(m_strMoveSpeed);
+						TempEventValue->m_dMoveAccel = _wtof(m_strMoveAccel);
+						TempEventValue->m_dAniRatio = _wtof(m_strMoveAniRatio);
 
-							Meshmap_iter->second.find(num)->second.emplace(ANI_EVENT_TYPE::MOVE, TempEventValue);
-							break;
-						}
-						else //해당 이벤트가 있다면
-						{
-							Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE)->second->m_dStartTime = _wtof(m_strMoveStartTime);
-							Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE)->second->m_dEndTime = _wtof(m_strMoveEndTime);
-							Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE)->second->m_dLoopTime = _wtof(m_strMoveLoopTime);
-							Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE)->second->m_dMoveSpeed = _wtof(m_strMoveSpeed);
-							Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE)->second->m_dMoveAccel = _wtof(m_strMoveAccel);
-							Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE)->second->m_dAniRatio = _wtof(m_strMoveAniRatio);
-							break;
-						}
+						Meshmap_iter->second.find(num)->second.emplace(ANI_EVENT_TYPE::MOVE, TempEventValue);
+						break;
 					}
-					break;
+					else //해당 이벤트가 있다면
+					{
+						Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE)->second->m_dStartTime = _wtof(m_strMoveStartTime);
+						Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE)->second->m_dEndTime = _wtof(m_strMoveEndTime);
+						Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE)->second->m_dLoopTime = _wtof(m_strMoveLoopTime);
+						Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE)->second->m_dMoveSpeed = _wtof(m_strMoveSpeed);
+						Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE)->second->m_dMoveAccel = _wtof(m_strMoveAccel);
+						Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE)->second->m_dAniRatio = _wtof(m_strMoveAniRatio);
+						break;
+					}
 				}
 			}
 		}
@@ -1032,6 +1023,8 @@ void CMonsterTool::Add_AniEvent()
 	if (TRUE == m_ButtonEffect.GetCheck())
 	{
 		auto& Meshmap_iter = find_if(m_mapmapmapAniEvent.begin(), m_mapmapmapAniEvent.end(), CTag_Finder((_tchar*)(LPCTSTR)m_strMeshName));
+
+		_uint num = _ttoi(m_strAniIndex);
 
 		if (Meshmap_iter == m_mapmapmapAniEvent.end())
 		{
@@ -1060,48 +1053,41 @@ void CMonsterTool::Add_AniEvent()
 		}
 		else
 		{
-			_uint num = _ttoi(m_strAniIndex);
-
-			for (auto& AniIdx_iter : Meshmap_iter->second)
+			if (Meshmap_iter->second.find(num) == Meshmap_iter->second.end())
 			{
-				if (Meshmap_iter->second.find(num) == Meshmap_iter->second.end())
-				{
-					ANI_EVENT_VALUE* TempEventValue = new ANI_EVENT_VALUE;
-					TempEventValue->m_dStartTime = _wtof(m_strEffectStartTime);
-					TempEventValue->m_dEndTime = _wtof(m_strEffectEndTime);
-					TempEventValue->m_dLoopTime = _wtof(m_strEffectLoopTime);
-					TempEventValue->m_dAniRatio = _wtof(m_strEffectAniRatio);
+				ANI_EVENT_VALUE* TempEventValue = new ANI_EVENT_VALUE;
+				TempEventValue->m_dStartTime = _wtof(m_strEffectStartTime);
+				TempEventValue->m_dEndTime = _wtof(m_strEffectEndTime);
+				TempEventValue->m_dLoopTime = _wtof(m_strEffectLoopTime);
+				TempEventValue->m_dAniRatio = _wtof(m_strEffectAniRatio);
 
-					map<ANI_EVENT_TYPE, ANI_EVENT_VALUE*> FirstValue;
-					FirstValue.emplace(ANI_EVENT_TYPE::EFFECT, TempEventValue);
-					Meshmap_iter->second.emplace(num, FirstValue);
-					break;
-				}
-				else
+				map<ANI_EVENT_TYPE, ANI_EVENT_VALUE*> FirstValue;
+				FirstValue.emplace(ANI_EVENT_TYPE::EFFECT, TempEventValue);
+				Meshmap_iter->second.emplace(num, FirstValue);
+			}
+			else
+			{
+				for (auto& EventType_iter : Meshmap_iter->second.find(num)->second)
 				{
-					for (auto& EventType_iter : AniIdx_iter.second)
+					if (Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::EFFECT) == Meshmap_iter->second.find(num)->second.end())
 					{
-						if (Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::EFFECT) == Meshmap_iter->second.find(num)->second.end())
-						{
-							ANI_EVENT_VALUE* TempEventValue = new ANI_EVENT_VALUE;
-							TempEventValue->m_dStartTime = _wtof(m_strEffectStartTime);
-							TempEventValue->m_dEndTime = _wtof(m_strEffectEndTime);
-							TempEventValue->m_dLoopTime = _wtof(m_strEffectLoopTime);
-							TempEventValue->m_dAniRatio = _wtof(m_strEffectAniRatio);
+						ANI_EVENT_VALUE* TempEventValue = new ANI_EVENT_VALUE;
+						TempEventValue->m_dStartTime = _wtof(m_strEffectStartTime);
+						TempEventValue->m_dEndTime = _wtof(m_strEffectEndTime);
+						TempEventValue->m_dLoopTime = _wtof(m_strEffectLoopTime);
+						TempEventValue->m_dAniRatio = _wtof(m_strEffectAniRatio);
 
-							Meshmap_iter->second.find(num)->second.emplace(ANI_EVENT_TYPE::EFFECT, TempEventValue);
-							break;
-						}
-						else
-						{
-							Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::EFFECT)->second->m_dStartTime = _wtof(m_strEffectStartTime);
-							Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::EFFECT)->second->m_dEndTime = _wtof(m_strEffectEndTime);
-							Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::EFFECT)->second->m_dLoopTime = _wtof(m_strEffectLoopTime);
-							Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::EFFECT)->second->m_dAniRatio = _wtof(m_strEffectAniRatio);
-							break;
-						}
+						Meshmap_iter->second.find(num)->second.emplace(ANI_EVENT_TYPE::EFFECT, TempEventValue);
+						break;
 					}
-					break;
+					else
+					{
+						Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::EFFECT)->second->m_dStartTime = _wtof(m_strEffectStartTime);
+						Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::EFFECT)->second->m_dEndTime = _wtof(m_strEffectEndTime);
+						Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::EFFECT)->second->m_dLoopTime = _wtof(m_strEffectLoopTime);
+						Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::EFFECT)->second->m_dAniRatio = _wtof(m_strEffectAniRatio);
+						break;
+					}
 				}
 			}
 		}
@@ -1110,6 +1096,7 @@ void CMonsterTool::Add_AniEvent()
 	if (TRUE == m_ButtonSound.GetCheck())
 	{
 		auto& Meshmap_iter = find_if(m_mapmapmapAniEvent.begin(), m_mapmapmapAniEvent.end(), CTag_Finder((_tchar*)(LPCTSTR)m_strMeshName));
+		_uint num = _ttoi(m_strAniIndex);
 
 		if (Meshmap_iter == m_mapmapmapAniEvent.end())
 		{
@@ -1122,8 +1109,6 @@ void CMonsterTool::Add_AniEvent()
 			map<ANI_EVENT_TYPE, ANI_EVENT_VALUE*> FirstValue;
 			FirstValue.emplace(ANI_EVENT_TYPE::SOUND, TempEventValue);
 
-			_uint num = _ttoi(m_strAniIndex);
-
 			map <_uint, map<ANI_EVENT_TYPE, ANI_EVENT_VALUE*>> SecondValue;
 			SecondValue.emplace(num, FirstValue);
 
@@ -1138,48 +1123,41 @@ void CMonsterTool::Add_AniEvent()
 		}
 		else
 		{
-			_uint num = _ttoi(m_strAniIndex);
-
-			for (auto& AniIdx_iter : Meshmap_iter->second)
+			if (Meshmap_iter->second.find(num) == Meshmap_iter->second.end())
 			{
-				if (Meshmap_iter->second.find(num) == Meshmap_iter->second.end())
-				{
-					ANI_EVENT_VALUE* TempEventValue = new ANI_EVENT_VALUE;
-					TempEventValue->m_dStartTime = _wtof(m_strSoundStartTime);
-					TempEventValue->m_dEndTime = _wtof(m_strSoundEndTime);
-					TempEventValue->m_dLoopTime = _wtof(m_strSoundLoopTime);
-					TempEventValue->m_dAniRatio = _wtof(m_strSoundAniRatio);
+				ANI_EVENT_VALUE* TempEventValue = new ANI_EVENT_VALUE;
+				TempEventValue->m_dStartTime = _wtof(m_strSoundStartTime);
+				TempEventValue->m_dEndTime = _wtof(m_strSoundEndTime);
+				TempEventValue->m_dLoopTime = _wtof(m_strSoundLoopTime);
+				TempEventValue->m_dAniRatio = _wtof(m_strSoundAniRatio);
 
-					map<ANI_EVENT_TYPE, ANI_EVENT_VALUE*> FirstValue;
-					FirstValue.emplace(ANI_EVENT_TYPE::SOUND, TempEventValue);
-					Meshmap_iter->second.emplace(num, FirstValue);
-					break;
-				}
-				else //해당 애니인덱스가 있다면
+				map<ANI_EVENT_TYPE, ANI_EVENT_VALUE*> FirstValue;
+				FirstValue.emplace(ANI_EVENT_TYPE::SOUND, TempEventValue);
+				Meshmap_iter->second.emplace(num, FirstValue);
+			}
+			else
+			{
+				for (auto& EventType_iter : Meshmap_iter->second.find(num)->second)
 				{
-					for (auto& EventType_iter : AniIdx_iter.second)
+					if (Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::SOUND) == Meshmap_iter->second.find(num)->second.end())
 					{
-						if (Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::SOUND) == Meshmap_iter->second.find(num)->second.end())
-						{
-							ANI_EVENT_VALUE* TempEventValue = new ANI_EVENT_VALUE;
-							TempEventValue->m_dStartTime = _wtof(m_strSoundStartTime);
-							TempEventValue->m_dEndTime = _wtof(m_strSoundEndTime);
-							TempEventValue->m_dLoopTime = _wtof(m_strSoundLoopTime);
-							TempEventValue->m_dAniRatio = _wtof(m_strSoundAniRatio);
+						ANI_EVENT_VALUE* TempEventValue = new ANI_EVENT_VALUE;
+						TempEventValue->m_dStartTime = _wtof(m_strSoundStartTime);
+						TempEventValue->m_dEndTime = _wtof(m_strSoundEndTime);
+						TempEventValue->m_dLoopTime = _wtof(m_strSoundLoopTime);
+						TempEventValue->m_dAniRatio = _wtof(m_strSoundAniRatio);
 
-							Meshmap_iter->second.find(num)->second.emplace(ANI_EVENT_TYPE::SOUND, TempEventValue);
-							break;
-						}
-						else
-						{
-							Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::SOUND)->second->m_dStartTime = _wtof(m_strSoundStartTime);
-							Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::SOUND)->second->m_dEndTime = _wtof(m_strSoundEndTime);
-							Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::SOUND)->second->m_dLoopTime = _wtof(m_strSoundLoopTime);
-							Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::SOUND)->second->m_dAniRatio = _wtof(m_strSoundAniRatio);
-							break;
-						}
+						Meshmap_iter->second.find(num)->second.emplace(ANI_EVENT_TYPE::SOUND, TempEventValue);
+						break;
 					}
-					break;
+					else
+					{
+						Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::SOUND)->second->m_dStartTime = _wtof(m_strSoundStartTime);
+						Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::SOUND)->second->m_dEndTime = _wtof(m_strSoundEndTime);
+						Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::SOUND)->second->m_dLoopTime = _wtof(m_strSoundLoopTime);
+						Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::SOUND)->second->m_dAniRatio = _wtof(m_strSoundAniRatio);
+						break;
+					}
 				}
 			}
 		}
@@ -1188,6 +1166,8 @@ void CMonsterTool::Add_AniEvent()
 	if (TRUE == m_ButtonCollision.GetCheck())
 	{
 		auto& Meshmap_iter = find_if(m_mapmapmapAniEvent.begin(), m_mapmapmapAniEvent.end(), CTag_Finder((_tchar*)(LPCTSTR)m_strMeshName));
+
+		_uint num = _ttoi(m_strAniIndex);
 
 		if (Meshmap_iter == m_mapmapmapAniEvent.end())
 		{
@@ -1200,7 +1180,6 @@ void CMonsterTool::Add_AniEvent()
 			map<ANI_EVENT_TYPE, ANI_EVENT_VALUE*> FirstValue;
 			FirstValue.emplace(ANI_EVENT_TYPE::COLLISION, TempEventValue);
 
-			_uint num = _ttoi(m_strAniIndex);
 
 			map <_uint, map<ANI_EVENT_TYPE, ANI_EVENT_VALUE*>> SecondValue;
 			SecondValue.emplace(num, FirstValue);
@@ -1216,46 +1195,40 @@ void CMonsterTool::Add_AniEvent()
 		}
 		else
 		{
-			_uint num = _ttoi(m_strAniIndex);
-
-			for (auto& IndexTypeValue_iter : Meshmap_iter->second)
+			if (Meshmap_iter->second.find(num) == Meshmap_iter->second.end())
 			{
-				if (Meshmap_iter->second.find(num) == Meshmap_iter->second.end())
-				{
-					ANI_EVENT_VALUE* TempEventValue = new ANI_EVENT_VALUE;
-					TempEventValue->m_dStartTime = _wtof(m_strCollisionStartTime);
-					TempEventValue->m_dEndTime = _wtof(m_strCollisionEndTime);
-					TempEventValue->m_dRange = _wtof(m_strCollisionRange);
-					TempEventValue->m_dAniRatio = _wtof(m_strCollisionAniRatio);
+				ANI_EVENT_VALUE* TempEventValue = new ANI_EVENT_VALUE;
+				TempEventValue->m_dStartTime = _wtof(m_strCollisionStartTime);
+				TempEventValue->m_dEndTime = _wtof(m_strCollisionEndTime);
+				TempEventValue->m_dRange = _wtof(m_strCollisionRange);
+				TempEventValue->m_dAniRatio = _wtof(m_strCollisionAniRatio);
 
-					map<ANI_EVENT_TYPE, ANI_EVENT_VALUE*> FirstValue;
-					FirstValue.emplace(ANI_EVENT_TYPE::COLLISION, TempEventValue);
-					Meshmap_iter->second.emplace(num, FirstValue);
-					break;
-				}
-				else
+				map<ANI_EVENT_TYPE, ANI_EVENT_VALUE*> FirstValue;
+				FirstValue.emplace(ANI_EVENT_TYPE::COLLISION, TempEventValue);
+				Meshmap_iter->second.emplace(num, FirstValue);
+			}
+			else
+			{
+				for (auto& TypeValue_iter : Meshmap_iter->second.find(num)->second)
 				{
-					for (auto& TypeValue_iter : IndexTypeValue_iter.second)
+					if (Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::COLLISION) == Meshmap_iter->second.find(num)->second.end())
 					{
-						if (IndexTypeValue_iter.second.find(ANI_EVENT_TYPE::COLLISION) == IndexTypeValue_iter.second.end())
-						{
-							ANI_EVENT_VALUE* TempEventValue = new ANI_EVENT_VALUE;
-							TempEventValue->m_dStartTime = _wtof(m_strCollisionStartTime);
-							TempEventValue->m_dEndTime = _wtof(m_strCollisionEndTime);
-							TempEventValue->m_dRange = _wtof(m_strCollisionRange);
-							TempEventValue->m_dAniRatio = _wtof(m_strCollisionAniRatio);
+						ANI_EVENT_VALUE* TempEventValue = new ANI_EVENT_VALUE;
+						TempEventValue->m_dStartTime = _wtof(m_strCollisionStartTime);
+						TempEventValue->m_dEndTime = _wtof(m_strCollisionEndTime);
+						TempEventValue->m_dRange = _wtof(m_strCollisionRange);
+						TempEventValue->m_dAniRatio = _wtof(m_strCollisionAniRatio);
 
-							IndexTypeValue_iter.second.emplace(ANI_EVENT_TYPE::COLLISION, TempEventValue);
-							break;
-						}
-						else
-						{
-							IndexTypeValue_iter.second.find(ANI_EVENT_TYPE::COLLISION)->second->m_dStartTime = _wtof(m_strCollisionStartTime);
-							IndexTypeValue_iter.second.find(ANI_EVENT_TYPE::COLLISION)->second->m_dEndTime = _wtof(m_strCollisionEndTime);
-							IndexTypeValue_iter.second.find(ANI_EVENT_TYPE::COLLISION)->second->m_dRange = _wtof(m_strCollisionRange);
-							IndexTypeValue_iter.second.find(ANI_EVENT_TYPE::COLLISION)->second->m_dAniRatio = _wtof(m_strCollisionAniRatio);
-							break;
-						}
+						Meshmap_iter->second.find(num)->second.emplace(ANI_EVENT_TYPE::COLLISION, TempEventValue);
+						break;
+					}
+					else
+					{
+						Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::COLLISION)->second->m_dStartTime = _wtof(m_strCollisionStartTime);
+						Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::COLLISION)->second->m_dEndTime = _wtof(m_strCollisionEndTime);
+						Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::COLLISION)->second->m_dRange = _wtof(m_strCollisionRange);
+						Meshmap_iter->second.find(num)->second.find(ANI_EVENT_TYPE::COLLISION)->second->m_dAniRatio = _wtof(m_strCollisionAniRatio);
+						break;
 					}
 				}
 			}
@@ -1269,8 +1242,7 @@ void CMonsterTool::Add_AniEvent()
 
 void CMonsterTool::Save_AniEvent()
 {
-	CFileDialog Dlg(FALSE, L".txt", L"제목없음.txt",
-		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, L"Text Files(*.txt)|*.txt||", this);
+	CFileDialog Dlg(FALSE, L".txt", L"Event.txt", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, L"Text Files(*.txt)|*.txt||", this);
 
 	_tchar szCurrentPath[MAX_STR] = L"";
 	::GetCurrentDirectory(MAX_STR, szCurrentPath);
@@ -1299,17 +1271,49 @@ void CMonsterTool::Save_AniEvent()
 					for (auto& AniEventType_iter : AniIndex_iter.second)
 					{
 						// 메쉬이름 애니인덱스 이벤트종류 이벤트값
-						if (AniIndex_iter.first == ANI_EVENT_TYPE::MOVE) lstrcpy(szEventType, L"MOVE");
-						if (AniIndex_iter.first == ANI_EVENT_TYPE::EFFECT) lstrcpy(szEventType, L"EFFECT");
-						if (AniIndex_iter.first == ANI_EVENT_TYPE::SOUND) lstrcpy(szEventType, L"SOUND");
-						if (AniIndex_iter.first == ANI_EVENT_TYPE::COLLISION) lstrcpy(szEventType, L"COLLISION");
-						swprintf_s<MAX_STR>(FullData, L"%s|%d|%s|%.2f|%.2f|%.2f|%.2f|%.2f|%.2f|%.2f",
-							MeshName_iter.first, AniIndex_iter.first, szEventType,
-							AniEventType_iter.second->m_dStartTime, AniEventType_iter.second->m_dEndTime,
-							AniEventType_iter.second->m_dLoopTime, AniEventType_iter.second->m_dRange,
-							AniEventType_iter.second->m_dMoveSpeed, AniEventType_iter.second->m_dMoveAccel,
-							AniEventType_iter.second->m_dAniRatio );
+						switch (AniEventType_iter.first)
+						{
+						case ANI_EVENT_TYPE::MOVE:
+							lstrcpy(szEventType, L"MOVE");
+							swprintf_s<MAX_STR>(FullData, L"%s|%d|%s|%.2f|%.2f|%.2f|%.2f|%.2f|%.2f|%.2f",
+								MeshName_iter.first, AniIndex_iter.first, szEventType,
+								AniEventType_iter.second->m_dStartTime, AniEventType_iter.second->m_dEndTime,
+								AniEventType_iter.second->m_dLoopTime, AniEventType_iter.second->m_dRange,
+								AniEventType_iter.second->m_dMoveSpeed, AniEventType_iter.second->m_dMoveAccel,
+								AniEventType_iter.second->m_dAniRatio);
 							wcharFileWrite << FullData << endl;
+							break;
+						case ANI_EVENT_TYPE::EFFECT:
+							lstrcpy(szEventType, L"EFFECT");
+							swprintf_s<MAX_STR>(FullData, L"%s|%d|%s|%.2f|%.2f|%.2f|%.2f|%.2f|%.2f|%.2f",
+								MeshName_iter.first, AniIndex_iter.first, szEventType,
+								AniEventType_iter.second->m_dStartTime, AniEventType_iter.second->m_dEndTime,
+								AniEventType_iter.second->m_dLoopTime, AniEventType_iter.second->m_dRange,
+								AniEventType_iter.second->m_dMoveSpeed, AniEventType_iter.second->m_dMoveAccel,
+								AniEventType_iter.second->m_dAniRatio);
+							wcharFileWrite << FullData << endl;
+							break;
+						case ANI_EVENT_TYPE::SOUND:
+							lstrcpy(szEventType, L"SOUND");
+							swprintf_s<MAX_STR>(FullData, L"%s|%d|%s|%.2f|%.2f|%.2f|%.2f|%.2f|%.2f|%.2f",
+								MeshName_iter.first, AniIndex_iter.first, szEventType,
+								AniEventType_iter.second->m_dStartTime, AniEventType_iter.second->m_dEndTime,
+								AniEventType_iter.second->m_dLoopTime, AniEventType_iter.second->m_dRange,
+								AniEventType_iter.second->m_dMoveSpeed, AniEventType_iter.second->m_dMoveAccel,
+								AniEventType_iter.second->m_dAniRatio);
+							wcharFileWrite << FullData << endl;
+							break;
+						case ANI_EVENT_TYPE::COLLISION:
+							lstrcpy(szEventType, L"COLLISION");
+							swprintf_s<MAX_STR>(FullData, L"%s|%d|%s|%.2f|%.2f|%.2f|%.2f|%.2f|%.2f|%.2f",
+								MeshName_iter.first, AniIndex_iter.first, szEventType,
+								AniEventType_iter.second->m_dStartTime, AniEventType_iter.second->m_dEndTime,
+								AniEventType_iter.second->m_dLoopTime, AniEventType_iter.second->m_dRange,
+								AniEventType_iter.second->m_dMoveSpeed, AniEventType_iter.second->m_dMoveAccel,
+								AniEventType_iter.second->m_dAniRatio);
+							wcharFileWrite << FullData << endl;
+							break;
+						}
 					}
 				}
 			}
@@ -1321,6 +1325,177 @@ void CMonsterTool::Save_AniEvent()
 	}
 
 	return;
+}
+
+void CMonsterTool::Load_AniEvent()
+{
+	UpdateData(TRUE);
+
+	CFileDialog	Dlg(TRUE, L".txt", L"Event.txt", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, L"Text Files(*.txt)|*.txt||", this);
+
+	_tchar szCurrentPath[MAX_STR] = L"";
+	::GetCurrentDirectory(MAX_STR, szCurrentPath);
+
+	::PathRemoveFileSpec(szCurrentPath);
+	::PathRemoveFileSpec(szCurrentPath);
+
+	lstrcat(szCurrentPath, L"\\Data\\MonsterData");
+
+	Dlg.m_ofn.lpstrInitialDir = szCurrentPath;
+
+	if (IDOK == Dlg.DoModal())
+	{
+		wifstream wcharFileRead;
+		wcharFileRead.open(Dlg.GetPathName()); //해당 파일 열기
+
+		_tchar szMeshName[MAX_STR];
+		_tchar Number[MAX_STR];
+		ANI_EVENT_TYPE EventType;
+
+		if (!m_mapmapmapAniEvent.empty())
+		{
+			for (auto& Meshmap_iter : m_mapmapmapAniEvent)
+			{
+				for (auto& AniIndexmap_iter : Meshmap_iter.second)
+				{
+					for (auto& AniTypemap_iter : AniIndexmap_iter.second)
+					{
+						Safe_Delete(AniTypemap_iter.second); //구조체 지우기
+					}
+					AniIndexmap_iter.second.clear(); //구조체그릇 지우기
+				}
+
+				Meshmap_iter.second.clear(); //구조체그릇 담았던 그릇 지우기
+			}
+			m_mapmapmapAniEvent.clear(); //다 지우기
+		}
+
+
+		if (wcharFileRead.is_open()) //텍스트 파일을 연다면
+		{
+			while (true)
+			{
+				wcharFileRead.getline(szMeshName, MAX_STR, '|');
+
+				if (!lstrcmp(szMeshName, L""))
+					break;
+
+				wcharFileRead.getline(Number, MAX_STR, '|');
+				_uint AniIndexNumber = _wtoi(Number); //인덱스 번호
+
+				wcharFileRead.getline(Number, MAX_STR, '|');
+				//이벤트 종류
+
+				if (!lstrcmp(Number, L"MOVE")) EventType = ANI_EVENT_TYPE::MOVE;
+				if (!lstrcmp(Number, L"EFFECT"))  EventType = ANI_EVENT_TYPE::EFFECT;
+				if (!lstrcmp(Number, L"SOUND"))  EventType = ANI_EVENT_TYPE::SOUND;
+				if (!lstrcmp(Number, L"COLLISION"))  EventType = ANI_EVENT_TYPE::COLLISION;
+
+				wcharFileRead.getline(Number, MAX_STR, '|'); //시작 값
+				_double dStartTime = _wtof(Number);
+				
+				wcharFileRead.getline(Number, MAX_STR, '|'); //끝 값
+				_double dEndTime = _wtof(Number);
+
+				wcharFileRead.getline(Number, MAX_STR, '|'); //반복 값
+				_double dLoopTime = _wtof(Number);
+
+				wcharFileRead.getline(Number, MAX_STR, '|'); //반경 값
+				_double dRange = _wtof(Number);
+
+				wcharFileRead.getline(Number, MAX_STR, '|'); //이동속도 값
+				_double dMoveSpeed = _wtof(Number);
+
+				wcharFileRead.getline(Number, MAX_STR, '|'); //이동가속도 값
+				_double dMoveAccel = _wtof(Number);
+
+				wcharFileRead.getline(Number, MAX_STR); //비율 값
+				_double dAniRatio = _wtof(Number);
+
+				for (auto& list_iter : m_listMeshName)
+				{
+					//몬스터가 map에 존재하는지
+					auto& Meshmap_iter = find_if(m_mapmapmapAniEvent.begin(), m_mapmapmapAniEvent.end(), CTag_Finder(szMeshName));
+
+					//map에 몬스터가 없다면
+					if (Meshmap_iter == m_mapmapmapAniEvent.end())
+					{
+						ANI_EVENT_VALUE* EventValue = new ANI_EVENT_VALUE;
+
+						EventValue->m_dStartTime = dStartTime;
+						EventValue->m_dEndTime = dEndTime;
+						EventValue->m_dLoopTime = dLoopTime;
+						EventValue->m_dRange = dRange;
+						EventValue->m_dMoveSpeed = dMoveSpeed;
+						EventValue->m_dMoveAccel = dMoveAccel;
+						EventValue->m_dAniRatio = dAniRatio;
+
+						map<ANI_EVENT_TYPE, ANI_EVENT_VALUE*> FirstValue;
+						FirstValue.emplace(EventType, EventValue);
+						map <_uint, map<ANI_EVENT_TYPE, ANI_EVENT_VALUE*>> SecondValue;
+						SecondValue.emplace(AniIndexNumber, FirstValue);
+
+						m_mapmapmapAniEvent.emplace(list_iter, SecondValue);
+					}
+					else //map에 몬스터가 있다면
+					{
+						//해당 인덱스가 존재 하지 않는다면
+						if (Meshmap_iter->second.find(AniIndexNumber) == Meshmap_iter->second.end())
+						{
+							ANI_EVENT_VALUE* EventValue = new ANI_EVENT_VALUE;
+
+							EventValue->m_dStartTime = dStartTime;
+							EventValue->m_dEndTime = dEndTime;
+							EventValue->m_dLoopTime = dLoopTime;
+							EventValue->m_dRange = dRange;
+							EventValue->m_dMoveSpeed = dMoveSpeed;
+							EventValue->m_dMoveAccel = dMoveAccel;
+							EventValue->m_dAniRatio = dAniRatio;
+
+							map<ANI_EVENT_TYPE, ANI_EVENT_VALUE*> FirstValue;
+							FirstValue.emplace(EventType, EventValue);
+
+							Meshmap_iter->second.emplace(AniIndexNumber, FirstValue);
+						}
+						else //해당 인덱스가 존재 한다면
+						{
+							//해당 이벤트가 존재 하지 않는다면
+							if (Meshmap_iter->second.find(AniIndexNumber)->second.find(EventType) == Meshmap_iter->second.find(AniIndexNumber)->second.end())
+							{
+								ANI_EVENT_VALUE* EventValue = new ANI_EVENT_VALUE;
+
+								EventValue->m_dStartTime = dStartTime;
+								EventValue->m_dEndTime = dEndTime;
+								EventValue->m_dLoopTime = dLoopTime;
+								EventValue->m_dRange = dRange;
+								EventValue->m_dMoveSpeed = dMoveSpeed;
+								EventValue->m_dMoveAccel = dMoveAccel;
+								EventValue->m_dAniRatio = dAniRatio;
+
+								Meshmap_iter->second.find(AniIndexNumber)->second.emplace(EventType, EventValue);
+							}
+							else //해당 이벤트가존재할경우
+							{
+								Meshmap_iter->second.find(AniIndexNumber)->second.find(EventType)->second->m_dStartTime = dStartTime;
+								Meshmap_iter->second.find(AniIndexNumber)->second.find(EventType)->second->m_dEndTime = dEndTime;
+								Meshmap_iter->second.find(AniIndexNumber)->second.find(EventType)->second->m_dLoopTime = dLoopTime;
+								Meshmap_iter->second.find(AniIndexNumber)->second.find(EventType)->second->m_dRange = dRange;
+								Meshmap_iter->second.find(AniIndexNumber)->second.find(EventType)->second->m_dMoveSpeed = dMoveSpeed;
+								Meshmap_iter->second.find(AniIndexNumber)->second.find(EventType)->second->m_dMoveAccel = dMoveAccel;
+								Meshmap_iter->second.find(AniIndexNumber)->second.find(EventType)->second->m_dAniRatio = dAniRatio;
+							}
+						}
+					}
+				}
+			}
+		}
+		else //열리지 않았다면
+			::AfxMessageBox(L"MonsterTool Event Load Failed");
+
+		wcharFileRead.close();
+	}
+
+	UpdateData(FALSE);
 }
 
 /////////////////////////////////////////콤보 구현 관련 함수
@@ -1359,48 +1534,31 @@ void CMonsterTool::Add_AniCombo()
 	}
 	else //해당 map에 몬스터가 있을 경우
 	{
-		//해당 콤보번호 검색
-		for (auto& ComboNumber_iter : Meshmap_iter->second)
+		//해당 콤보번호가 없을 경우(신규 추가)
+		if (Meshmap_iter->second.find(num) == Meshmap_iter->second.end())
 		{
-			auto& ComboNumFind_iter = Meshmap_iter->second.find(num);
+			map<_uint, _float> FirstValue;
+			FirstValue.emplace(idx, Ratio);
 
-			//해당 콤보번호가 없을 경우 (신규추가)
-			if (ComboNumFind_iter == Meshmap_iter->second.end())
+			for (auto& list_iter : m_listMeshName)
 			{
-				map<_uint, _float> FirstValue;
-				FirstValue.emplace(idx, Ratio);
-
-				map<_uint, map<_uint, _float>> SecondValue;
-				SecondValue.emplace(num, FirstValue);
-
-				for (auto& list_iter : m_listMeshName)
+				if (0 == lstrcmp(list_iter, (_tchar*)(LPCTSTR)m_strMeshName))
 				{
-					if (0 == lstrcmp(list_iter, (_tchar*)(LPCTSTR)m_strMeshName))
-					{
-						m_mapmapmapAniCombo.emplace(list_iter, SecondValue);
-						break;
-					}
+					m_mapmapmapAniCombo.find(list_iter)->second.emplace(num, FirstValue);
+					break;
 				}
 			}
-			else //해당 콤보번호가 있을 경우(수정)
+		}
+		else //해당 콤보번호가 있을 경우(수정)
+		{
+			//인덱스가 없을 경우(신규 추가)
+			if (Meshmap_iter->second.find(num)->second.find(idx) == Meshmap_iter->second.find(num)->second.end())
 			{
-				for (auto& AniIndex_iter : ComboNumber_iter.second)
-				{
-					auto& AniIndexFind_iter = ComboNumber_iter.second.find(idx);
-
-					//해당 인덱스가 없을 경우(신규 추가)
-					if (AniIndexFind_iter == ComboNumber_iter.second.end())
-					{
-						ComboNumber_iter.second.emplace(idx, Ratio);
-						break;
-					}
-					else //해당 인덱스가 있을경우(수정)
-					{
-						AniIndex_iter.second = Ratio;
-						break;
-					}
-				}
-				break;
+				Meshmap_iter->second.find(num)->second.emplace(idx, Ratio);
+			}
+			else //인덱스가 있을 경우(수정)
+			{
+				Meshmap_iter->second.find(num)->second.find(idx)->second = Ratio;
 			}
 		}
 		Seting_TreeCtrlAniCombo();
@@ -1411,12 +1569,184 @@ void CMonsterTool::Add_AniCombo()
 
 void CMonsterTool::Play_AniCombo()
 {
+	IF_NOT_NULL(m_pTestObject)
+	{
+		m_pTestObject->Check_ComboPlayBtn(false);
+
+		for(auto& list_iter : m_listMeshName)
+		{
+			if (!lstrcmp(list_iter, (_tchar*)(LPCTSTR)m_strMeshName))
+			{
+				//해당 몬스터 찾기
+				auto& Mesh_iter = find_if(m_mapmapmapAniCombo.begin(), m_mapmapmapAniCombo.end(), CTag_Finder(list_iter));
+
+				if (Mesh_iter == m_mapmapmapAniCombo.end())
+					return;
+
+				//콤보를 찾고
+				auto& Combo_iter = Mesh_iter->second.find(_ttoi(m_strAniComboNumber));
+
+				if (Combo_iter == Mesh_iter->second.end())
+				{
+					return;
+				}
+				else
+				{
+					m_pTestObject->Reset_Combo();
+
+					for (auto& index_iter : Combo_iter->second)
+					{
+						m_pTestObject->Set_Combo(index_iter.first, index_iter.second);
+					}
+				}
+			}
+		}
+		m_pTestObject->Check_ComboPlayBtn(true);
+	}
 }
 
 void CMonsterTool::Save_AniCombo()
 {
+	CFileDialog Dlg(FALSE, L".txt", L"Combo.txt", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, L"Text Files(*.txt)|*.txt||", this);
+
+	_tchar szCurrentPath[MAX_STR] = L"";
+	::GetCurrentDirectory(MAX_STR, szCurrentPath);
+	::PathRemoveFileSpec(szCurrentPath);
+	::PathRemoveFileSpec(szCurrentPath);
+
+	lstrcat(szCurrentPath, L"\\Data\\MonsterData");
+
+	// 절대 경로만 가능
+	Dlg.m_ofn.lpstrInitialDir = szCurrentPath;
+
+	if (IDOK == Dlg.DoModal())
+	{
+		wofstream wcharFileWrite;
+		wcharFileWrite.open(Dlg.GetPathName()); //해당 파일 열기, 모드 바이너리로 하고 싶다면 wifstream::binary
+
+		_tchar FullData[MAX_STR];
+
+		if (wcharFileWrite.is_open()) //텍스트 파일을 연다면
+		{
+			for (auto& MeshName_iter : m_mapmapmapAniCombo)
+			{
+				for (auto& ComboNumber_iter : MeshName_iter.second)
+				{
+					for (auto& AniIndex_iter : ComboNumber_iter.second)
+					{
+						//몬스터 종류, 콤보번호, 애니인덱스, 애니재생비율
+						swprintf_s<MAX_STR>(FullData, L"%s|%d|%d|%.2f",
+							MeshName_iter.first, ComboNumber_iter.first, AniIndex_iter.first, AniIndex_iter.second);
+						wcharFileWrite << FullData << endl;
+					}
+				}
+			}
+		}
+		else //열리지 않았다면
+			::AfxMessageBox(L"ObjectTool Object Save Failed");
+
+		wcharFileWrite.close();
+	}
+
+	return;
+
 }
 
 void CMonsterTool::Load_AniCombo()
 {
+	UpdateData(TRUE);
+
+	CFileDialog	Dlg(TRUE, L".txt", L"Combo.txt", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, L"Text Files(*.txt)|*.txt||", this);
+
+	_tchar szCurrentPath[MAX_STR] = L"";
+	::GetCurrentDirectory(MAX_STR, szCurrentPath);
+	::PathRemoveFileSpec(szCurrentPath);
+	::PathRemoveFileSpec(szCurrentPath);
+
+	lstrcat(szCurrentPath, L"\\Data\\MonsterData");
+
+	Dlg.m_ofn.lpstrInitialDir = szCurrentPath;
+
+	if (IDOK == Dlg.DoModal())
+	{
+		m_TreeCtrlAniCombo.DeleteAllItems();
+
+		wifstream wcharFileRead;
+
+		wcharFileRead.open(Dlg.GetPathName()); //해당 파일 열기
+		_tchar szMeshName[MAX_STR];
+		_tchar Number[MAX_STR];
+
+		if (wcharFileRead.is_open()) //텍스트 파일을 연다면
+		{
+			while (true) //끝자락에 도달하지 않는다면 계속 반복하라
+			{
+				wcharFileRead.getline(szMeshName, MAX_STR, '|');
+
+				if (!lstrcmp(szMeshName, L""))
+					break;
+
+				wcharFileRead.getline(Number, MAX_STR, '|');
+				_uint AniComboNumber = _wtoi(Number); //콤보 번호
+
+				wcharFileRead.getline(Number, MAX_STR, '|');
+				_uint AniIndexNumber = _wtoi(Number); //인덱스 번호
+
+				wcharFileRead.getline(Number, MAX_STR);
+				_float AniRatio = (_float)_wtof(Number); //애니 비율
+
+				for (auto& list_iter : m_listMeshName)
+				{
+					if (!lstrcmp(list_iter, szMeshName)) //해당 값을 찾았다면
+					{
+						auto& Mesh_iter = find_if(m_mapmapmapAniCombo.begin(), m_mapmapmapAniCombo.end(), CTag_Finder(szMeshName));
+
+						//해당 몬스터가 없다면
+						if (Mesh_iter == m_mapmapmapAniCombo.end())
+						{
+							map<_uint, _float> FirstValue;
+							FirstValue.emplace(AniIndexNumber, AniRatio);
+
+							map<_uint, map<_uint, _float>> SecondValue;
+							SecondValue.emplace(AniComboNumber, FirstValue);
+
+							m_mapmapmapAniCombo.emplace(list_iter, SecondValue);
+						}
+						else //해당 몬스터가 있다면
+						{
+							auto& ComboNumber_iter = Mesh_iter->second.find(AniComboNumber);
+
+							//해당 콤보 번호가 없다면
+							if (ComboNumber_iter == Mesh_iter->second.end())
+							{
+								map<_uint, _float> FirstValue;
+								FirstValue.emplace(AniIndexNumber, AniRatio);
+
+								Mesh_iter->second.emplace(AniComboNumber, FirstValue);
+							}
+							else //해당 콤보 번호가 있다면
+							{
+								auto& AniIndex_iter = ComboNumber_iter->second.find(AniIndexNumber);
+
+								//해당 인덱스가 없다면
+								if (AniIndex_iter == ComboNumber_iter->second.end())
+								{
+									ComboNumber_iter->second.emplace(AniIndexNumber, AniRatio);
+								}
+								else
+									AniIndex_iter->second = AniRatio;
+							}
+						}
+					}
+				}
+			}
+		}
+		else //열리지 않았다면
+			::AfxMessageBox(L"MonsterTool Combo Load Failed");
+
+		Seting_TreeCtrlAniCombo();
+		wcharFileRead.close();
+	}
+
+	UpdateData(FALSE);
 }

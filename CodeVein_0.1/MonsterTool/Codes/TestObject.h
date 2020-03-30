@@ -18,6 +18,10 @@ public:
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
 	void	Set_AniSpeed(_float _Speed) { m_fAniPlayMul = _Speed; }
+	void	Set_Combo(_uint _Idx, _float _Ratio);
+	void	Reset_Combo();
+	void	Play_Combo();
+	void	Check_ComboPlayBtn(_bool onoff) { m_bisPlayCombo = onoff; }
 
 public:
 	static CTestObject* Create(LPDIRECT3DDEVICE9 pGraphic_Device, _tchar* szMeshname);
@@ -29,10 +33,17 @@ private:
 	HRESULT SetUp_ConstantTable();
 
 private:
+	vector<pair<_uint, _float>> m_vectorIndexAniRatio;
+
+	map<_uint, map<_uint, _float>>	m_mapComboNumberAniIndexAniRatio;
 	CTransform*			m_pTransform = nullptr;
 	CRenderer*			m_pRenderer = nullptr;
 	CShader*			m_pShader = nullptr;
 	CMesh_Dynamic*		m_pMesh = nullptr;
+
+	_bool				m_bisPlayCombo = false;
+	_uint				m_iMaxCount;
+	_uint				m_iComboCount;
 
 	_tchar*				m_pszMeshName;
 	_double				m_dTimeDelta = 0;

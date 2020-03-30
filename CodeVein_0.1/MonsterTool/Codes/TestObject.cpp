@@ -39,6 +39,12 @@ _int CTestObject::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
 
+	if (m_bisPlayCombo)
+	{
+		cout << m_iMaxCount << endl;
+		Play_Combo();
+	}
+
 	return _int();
 }
 
@@ -180,4 +186,76 @@ void CTestObject::Free()
 
 	return;
 }
+
+void CTestObject::Set_Combo(_uint _Idx, _float _Ratio)
+{
+	m_vectorIndexAniRatio.push_back(pair<_uint, _float>(_Idx, _Ratio));
+
+	m_iMaxCount = (_int)m_vectorIndexAniRatio.size();
+	//auto& ComboNumber_iter = m_mapComboNumberAniIndexAniRatio.find(ComboNum);
+	////콤보 번호가 없다면
+	//if (ComboNumber_iter == m_mapComboNumberAniIndexAniRatio.end())
+	//{
+	//	map<_uint, _float> FirstValue;
+	//	FirstValue.emplace(_idx, _Ratio);
+	//	m_mapComboNumberAniIndexAniRatio.emplace(ComboNum, FirstValue);
+	//	return;
+	//}
+	//else //콤보번호가 있다면
+	//{
+	//	auto& AniIndex_iter = ComboNumber_iter->second.find(_idx);
+	//	//인덱스가 없다면
+	//	if (AniIndex_iter == ComboNumber_iter->second.end())
+	//	{
+	//		ComboNumber_iter->second.emplace(_idx, _Ratio);
+	//		return;
+	//	}
+	//	else //인덱스가 있다면
+	//	{
+	//		AniIndex_iter->second = _Ratio;
+	//		return;
+	//	}
+	//}
+}
+
+void CTestObject::Reset_Combo()
+{
+	//if (!m_mapComboNumberAniIndexAniRatio.empty())
+	//	m_mapComboNumberAniIndexAniRatio.clear();
+
+	if (!m_vectorIndexAniRatio.empty())
+		m_vectorIndexAniRatio.clear();
+}
+
+void CTestObject::Play_Combo()
+{
+	//map에 있는 값들로 재생하기
+	//map<_uint, map<_uint, _float>>
+	//for (auto& ComboNumber_iter : m_mapComboNumberAniIndexAniRatio)
+	//{
+	//	for (auto& AniIndex_iter : ComboNumber_iter.second)
+	//	{
+	//		if (m_iCheckAniIndex != AniIndex_iter.first && m_pMesh->Is_Finish_Animation(AniIndex_iter.second))
+	//		{
+	//			cout << m_iCheckAniIndex << endl;
+	//			m_iCheckAniIndex = AniIndex_iter.first;
+	//			m_pMesh->SetUp_Animation(AniIndex_iter.first);
+	//		}
+	//		else
+	//			continue;
+	//	}
+	//}
+	if (m_iMaxCount <= m_iComboCount)
+	{
+		m_iComboCount = 0;
+	}
+	
+	m_pMesh->SetUp_Animation(m_vectorIndexAniRatio[m_iComboCount].first);
+
+	if (m_pMesh->Is_Finish_Animation(m_vectorIndexAniRatio[m_iComboCount].second))
+	{
+		++m_iComboCount;
+	}
+}
+
 

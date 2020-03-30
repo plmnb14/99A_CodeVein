@@ -51,6 +51,7 @@ public:
 	void Seting_ListBoxBone();
 	void Seting_TreeCtrlAniEvent();
 	void Seting_TreeCtrlAniCombo();
+
 	HTREEITEM Find_Node_By_Name(CTreeCtrl& _TreeCtrl, const _tchar* _szTargetName, HTREEITEM _RootNode = NULL);
 
 	afx_msg void LDBClick_MeshList();
@@ -59,16 +60,18 @@ public:
 	afx_msg void LDBClick_TreeCtrlAniEvent(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void LDBClick_TreeCtrlAniCombo(NMHDR *pNMHDR, LRESULT *pResult);
 	afx_msg void Change_AniSpeed();
+
 	afx_msg void Add_AniEvent();
-	afx_msg void Delete_AniEvent();
+	afx_msg void Save_AniEvent();
+	afx_msg void Load_AniEvent();
+
 	afx_msg void Play_Ani();
 	afx_msg void Stop_Ani();
+
 	afx_msg void Add_AniCombo();
 	afx_msg void Play_AniCombo();
 	afx_msg void Save_AniCombo();
 	afx_msg void Load_AniCombo();
-	afx_msg void Save_AniEvent();
-	afx_msg void Load_Monster();
 
 public:
 	//몬스터 종류, 애니인덱스, 이벤트종류, 이벤트 값
@@ -132,4 +135,5 @@ public:
 	CString		m_strObjPosX;
 	CString		m_strObjPosY;
 	CString		m_strObjPosZ;
+
 };
