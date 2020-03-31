@@ -227,6 +227,8 @@ PS_OUT PS_AFTER(PS_IN In)
 	float2 Trans = In.vTexUV;// +0.001f;
 	vector	Noise = tex2D(DistortionSampler, Trans);
 	Noise.xy *= 1.f - (Noise.x + Noise.y);
+	Noise.xy *= Noise.w; // ¾ËÆÄ°ª
+
 	float2 UV = In.vTexUV + Noise.xy * 0.05f;
 	if (Noise.w <= 0)
 		UV = In.vTexUV;

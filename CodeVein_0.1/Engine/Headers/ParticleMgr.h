@@ -17,6 +17,7 @@ public:
 	HRESULT Update_ParticleManager(const _double TimeDelta);
 	void Create_ParticleEffect(_tchar* szName, _float fLifeTime, _v3 vPos, CTransform* pFollowTrans = nullptr);
 	void Create_Effect(_tchar* szName, _v3 vPos, CTransform* pFollowTrans = nullptr);
+	void Create_Effect_NoPool(_tchar* szName, _v3 vPos, CTransform* pFollowTrans = nullptr);
 
 private:
 	HRESULT Update_Effect(const _double TimeDelta);

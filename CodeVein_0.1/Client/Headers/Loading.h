@@ -34,6 +34,7 @@ public:
 
 private:
 	HRESULT Ready_Effect(void);
+	HRESULT Add_EffectPrototype(const _tchar* szName);
 	Engine::EFFECT_INFO* Read_EffectData(const _tchar* szPath);
 
 private:

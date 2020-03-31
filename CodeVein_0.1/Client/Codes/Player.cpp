@@ -950,7 +950,7 @@ void CPlayer::Key_ChangeWeapon()
 
 void CPlayer::Key_Special()
 {
-	cout << "플레이어 y 축 : " << D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)) << endl;
+	//cout << "플레이어 y 축 : " << D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)) << endl;
 
 	if (g_pInput_Device->Key_Down(DIK_SPACE))
 	{
@@ -978,7 +978,7 @@ void CPlayer::Key_Special()
 
 void CPlayer::Key_Attack()
 {
-	cout << "?" << endl;
+	//cout << "?" << endl;
 
 	if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
@@ -2113,6 +2113,30 @@ void CPlayer::Change_Weapon()
 
 void CPlayer::Check_Dissolve(_double TimeDelta)
 {
+	if(false)
+	//if (g_pInput_Device->Key_Pressing(DIK_J))
+	{
+		_v3 vPos = m_pTransform->Get_Pos();
+		vPos.y += 1.5f;
+		vPos.z += 2.5f;
+		
+		_tchar szBuff[256] = L"";
+		wsprintf(szBuff, L"Hit_Slash_Particle_%d", CCalculater::Random_Num(0, 3));
+		g_pManagement->Create_Effect(szBuff, vPos);
+		
+		g_pManagement->Create_Effect(L"Hit_Slash_0", vPos);
+		g_pManagement->Create_Effect(L"Hit_Slash_1", vPos);
+		g_pManagement->Create_Effect(L"Hit_Slash_2", vPos);
+		g_pManagement->Create_Effect(L"Hit_Slash_3", vPos);
+
+		g_pManagement->Create_Effect(L"Hit_Particle_Red", vPos);
+		g_pManagement->Create_Effect(L"Hit_Particle_Yellow", vPos);
+
+		//g_pManagement->Create_Effect(L"Hit_SlashLine_0", vPos);
+	}
+
+
+
 	if(m_eActState == ACT_Down) // 임시
 	//if (g_pInput_Device->Key_Pressing(DIK_J)) // 디버그
 	{

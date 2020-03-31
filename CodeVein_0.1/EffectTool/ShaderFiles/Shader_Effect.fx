@@ -12,9 +12,9 @@ texture		g_DiffuseTexture;
 sampler		DiffuseSampler = sampler_state
 {
 	texture = g_DiffuseTexture;
-	minfilter = point;
-	magfilter = point;
-	mipfilter = point;
+	minfilter = linear;
+	magfilter = linear;
+	mipfilter = linear;
 };
 
 texture		g_ColorTexture;
@@ -237,6 +237,8 @@ PS_OUT PS_DISTORTION(PS_IN In)
 	//Out.vColor *= (1.f - (fDistortion.x + fDistortion.y));
 	//Out.vColor -= (Out.vColor.x + Out.vColor.y);
 	//Out.vColor *= fPower;
+
+	Out.vColor.w = g_fAlpha;
 	Out.vDistortion = saturate(Out.vColor);
 
 	return Out;

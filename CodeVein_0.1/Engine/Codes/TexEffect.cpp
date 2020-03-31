@@ -494,12 +494,12 @@ HRESULT CTexEffect::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
 		return E_FAIL;
 
-	if (true) // 데칼 이펙트만 생성하도록 수정하기
-	{
-		// For.Com_CubeTex
-		if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_DefaultBox", L"Com_DecalCube", (CComponent**)&m_pDecalCube)))
-			return E_FAIL;
-	}
+	//if (true) // 데칼 이펙트만 생성하도록 수정하기
+	//{
+	//	// For.Com_CubeTex
+	//	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_DefaultBox", L"Com_DecalCube", (CComponent**)&m_pDecalCube)))
+	//		return E_FAIL;
+	//}
 	
 	return NOERROR;
 }
