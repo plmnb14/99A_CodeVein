@@ -36,6 +36,11 @@ private:
 	CBT_Composite_Node* JumpDodgeR_And_Bite(); // 3. 우회피 후 물기
 	CBT_Composite_Node* Bite_LeftRightLeft(); 	// 4. 좌 우 좌
 
+	CBT_Composite_Node* Random_Attack(); //4개중 1개의 랜덤 공격
+	CBT_Composite_Node* Fov_Check(); //시야각 각도와 거리 체크
+	//CBT_Composite_Node* Check_Dist(); //감지
+									 
+
 	CBT_Composite_Node* Walk(); //22 걷기 탐색상태
 	CBT_Composite_Node* Run(); //0 달리기 추적상태
 	CBT_Composite_Node* Dodge(); //22 회피
@@ -53,7 +58,6 @@ private:
 
 	//Near
 	//시야각 이내인 경우 == 4개중 1개 공격
-
 	//시야각 밖인 경우 == 회전
 
 	//Far

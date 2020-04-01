@@ -210,6 +210,7 @@
     <ClInclude Include="..\Headers\TestMonster.h" />
     <ClInclude Include="..\Headers\BlackUrchin.h" />
     <ClInclude Include="..\Headers\Weapon.h" />
+    <ClInclude Include="..\Headers\YachaMan.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StageLoader.h" />
@@ -259,6 +260,7 @@
     <ClCompile Include="..\Codes\TestMonster.cpp" />
     <ClCompile Include="..\Codes\BlackUrchin.cpp" />
     <ClCompile Include="..\Codes\Weapon.cpp" />
+    <ClCompile Include="..\Codes\YachaMan.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="StageLoader.cpp" />
     <ClCompile Include="stdafx.cpp">
