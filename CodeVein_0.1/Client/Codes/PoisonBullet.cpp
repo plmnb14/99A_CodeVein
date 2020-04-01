@@ -65,16 +65,11 @@ _int CPoisonBullet::Update_GameObject(_double TimeDelta)
 		//lstrcpy(m_pEffect_Tag6, L"ButterFly_VenomShot_DeadMist");
 		//lstrcpy(m_pEffect_Tag7, L"ButterFly_VenomShot_DeadSmoke");
 
-<<<<<<< HEAD
-		cout << "ªÁ∏¡" << endl;
-
-=======
 		//¡◊¿Ω ¿Ã∆Â∆Æ
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag5, m_pTransformCom->Get_Pos(), nullptr);
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag6, m_pTransformCom->Get_Pos(), nullptr);
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag7, m_pTransformCom->Get_Pos(), nullptr);
 		
->>>>>>> 59f1bd6b15adabb4ae370e03d9f9ebf4f18ee2f5
 		m_bDead = true;
 	}
 	// ¡¯«‡¡ﬂ
