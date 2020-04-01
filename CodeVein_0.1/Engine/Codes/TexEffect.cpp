@@ -121,23 +121,6 @@ HRESULT CTexEffect::Render_GameObject()
 {
 	Render_GameObject_HWInstance(); // 텍스쳐 이펙트만 인스턴싱
 
-									//if (nullptr == m_pShaderCom ||
-									//	nullptr == m_pBufferCom)
-									//	return E_FAIL;
-									//
-									//if (FAILED(SetUp_ConstantTable()))
-									//	return E_FAIL;
-									//
-									//m_pShaderCom->Begin_Shader();
-									//
-									//m_pShaderCom->Begin_Pass(m_iPass);
-									//
-									//m_pBufferCom->Render_VIBuffer();
-									//
-									//m_pShaderCom->End_Pass();
-									//
-									//m_pShaderCom->End_Shader();
-
 	return NOERROR;
 }
 
@@ -146,24 +129,24 @@ HRESULT CTexEffect::Render_GameObject_HWInstance()
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
-
+	
 	m_pBufferCom->Render_Before_Instancing(m_pTransformCom->Get_WorldMat());
-
+	
 	m_pShaderCom->Begin_Shader();
 	m_pShaderCom->Begin_Pass(m_iPass);
-
+	
 	// Set Texture
 	if (FAILED(SetUp_ConstantTable()))
 		return E_FAIL;
-
+	
 	// Begin Pass 사이에 SetTexture 할 경우 바로 적용시키기 위해
 	m_pShaderCom->Commit_Changes();
-
+	
 	m_pBufferCom->Render_DrawPrimitive_Instancing();
-
+	
 	m_pShaderCom->End_Pass();
 	m_pShaderCom->End_Shader();
-
+	
 	m_pBufferCom->Render_After_Instancing();
 
 	return NOERROR;
@@ -511,7 +494,13 @@ HRESULT CTexEffect::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
 		return E_FAIL;
 
-
+	//if (true) // 데칼 이펙트만 생성하도록 수정하기
+	//{
+	//	// For.Com_CubeTex
+	//	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_DefaultBox", L"Com_DecalCube", (CComponent**)&m_pDecalCube)))
+	//		return E_FAIL;
+	//}
+	
 	return NOERROR;
 }
 
@@ -525,11 +514,11 @@ HRESULT CTexEffect::SetUp_ConstantTable()
 		return E_FAIL;
 
 	Safe_AddRef(pManagement);
-
-	//_mat matTest;
-	//D3DXMatrixIdentity(&matTest);
-	//memcpy(&matTest[3][0], &m_pTransformCom->Get_Pos(), sizeof(_v3));
-	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
+	_mat matWorld = m_pTransformCom->Get_WorldMat();
+	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &matWorld, sizeof(_mat))))
+		return E_FAIL;
+	D3DXMatrixInverse(&matWorld, nullptr, &matWorld);
+	if (FAILED(m_pShaderCom->Set_Value("g_matInvWorld", &matWorld, sizeof(_mat))))
 		return E_FAIL;
 
 	_mat		ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
@@ -539,6 +528,13 @@ HRESULT CTexEffect::SetUp_ConstantTable()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
+	D3DXMatrixInverse(&ViewMatrix, nullptr, &ViewMatrix);
+	D3DXMatrixInverse(&ProjMatrix, nullptr, &ProjMatrix);
+	if (FAILED(m_pShaderCom->Set_Value("g_matProjInv", &ViewMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_matViewInv", &ProjMatrix, sizeof(_mat))))
+		return E_FAIL;
+
 	if (FAILED(m_pShaderCom->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_vColor", &m_vColor, sizeof(_v4))))

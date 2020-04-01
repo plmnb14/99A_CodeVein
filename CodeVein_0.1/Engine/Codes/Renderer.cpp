@@ -609,6 +609,12 @@ HRESULT CRenderer::Render_MotionBlurObj()
 	m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_Blend"));
 	m_pShader_Blend->Set_Texture("g_ShadeTexture", m_pTarget_Manager->Get_Texture(L"Target_Velocity"));
 	m_pShader_Blend->Set_Texture("g_DepthTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"));
+
+	//_float fCurFrame = _float(CFrameMgr::Get_Instance()->Get_Frame());
+	//_float fTargetFrame = 60.f;
+	//m_pShader_Blend->Set_Value("g_fCurFrame", &fCurFrame, sizeof(_float));
+	//m_pShader_Blend->Set_Value("g_fTargetFrame", &fTargetFrame, sizeof(_float));
+	
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_MotionBlurObj")))
 		return E_FAIL;
 

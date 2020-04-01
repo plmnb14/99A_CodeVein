@@ -30,13 +30,20 @@ HRESULT CPoisonBullet::Ready_GameObject(void * pArg)
 	m_vDir = temp.vDir;
 	m_fSpeed = temp.fSpeed;
 	m_dLifeTime = temp.dLifeTime;
+	
+	m_fEffectCreateOffset = 0.1f;
 
-	lstrcpy(m_pEffect_Tag0, L"ButterFly_PointParticle");
+	lstrcpy(m_pEffect_Tag0, L"ButterFly_Distortion_Smoke");
 	lstrcpy(m_pEffect_Tag1, L"ButterFly_SoftSmoke_Mist");
 	lstrcpy(m_pEffect_Tag2, L"ButterFly_VenomShot");
 	lstrcpy(m_pEffect_Tag3, L"ButterFly_VenomShot_SubSmoke");
-	lstrcpy(m_pEffect_Tag4, L"ButterFly_PointParticle");
+	lstrcpy(m_pEffect_Tag4, L"ButterFly_VenomShot_PointParticle");
 
+	lstrcpy(m_pEffect_Tag5, L"ButterFly_VenomShot_DeadSplash");
+	lstrcpy(m_pEffect_Tag6, L"ButterFly_VenomShot_DeadMist");
+	lstrcpy(m_pEffect_Tag7, L"ButterFly_VenomShot_DeadSmoke");
+
+	
 	return NOERROR;
 }
 
@@ -54,24 +61,45 @@ _int CPoisonBullet::Update_GameObject(_double TimeDelta)
 	// ½Ã°£ ÃÊ°ú
 	if (m_dCurTime > m_dLifeTime)
 	{
-		//Á×À½ ÀÌÆåÆ®
+		//lstrcpy(m_pEffect_Tag5, L"ButterFly_VenomShot_DeadSplash");
+		//lstrcpy(m_pEffect_Tag6, L"ButterFly_VenomShot_DeadMist");
+		//lstrcpy(m_pEffect_Tag7, L"ButterFly_VenomShot_DeadSmoke");
 
+<<<<<<< HEAD
 		cout << "»ç¸Á" << endl;
 
+=======
+		//Á×À½ ÀÌÆåÆ®
+		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag5, m_pTransformCom->Get_Pos(), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag6, m_pTransformCom->Get_Pos(), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag7, m_pTransformCom->Get_Pos(), nullptr);
+		
+>>>>>>> 59f1bd6b15adabb4ae370e03d9f9ebf4f18ee2f5
 		m_bDead = true;
 	}
 	// ÁøÇàÁß
 	else
 	{
+		//lstrcpy(m_pEffect_Tag0, L"ButterFly_Distortion_Smoke");
+		//lstrcpy(m_pEffect_Tag1, L"ButterFly_SoftSmoke_Mist");
+		//lstrcpy(m_pEffect_Tag2, L"ButterFly_VenomShot");
+		//lstrcpy(m_pEffect_Tag3, L"ButterFly_VenomShot_SubSmoke");
+		//lstrcpy(m_pEffect_Tag4, L"ButterFly_PointParticle");
+
 		if (m_bEffect)
 		{
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag0, _v3(), m_pTransformCom);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag1, _v3(), m_pTransformCom);
+			m_bEffect = false;
+		}
+
+		m_fEffectCreateOffset_Check += _float(TimeDelta);
+		if (m_fEffectCreateOffset < m_fEffectCreateOffset_Check)
+		{
+			m_fEffectCreateOffset_Check = 0.f;
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag2, _v3(), m_pTransformCom);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag3, _v3(), m_pTransformCom);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, _v3(), m_pTransformCom);
-
-			m_bEffect = false;
+			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag0, m_pTransformCom->Get_Pos(), nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag1, m_pTransformCom->Get_Pos(), nullptr);
 		}
 	}
 

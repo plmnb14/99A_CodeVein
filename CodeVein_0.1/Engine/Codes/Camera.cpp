@@ -660,7 +660,7 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 			m_pTransform->Set_Pos(vLerpTargetPos);
 			m_pTransform->Set_At(vLerpTargetAt);
 
-			cout << "카메라 x 축 : " << m_fX_LockAngle << endl;
+			//cout << "카메라 x 축 : " << m_fX_LockAngle << endl;
 		}
 
 		else if (true == m_bOnAiming)

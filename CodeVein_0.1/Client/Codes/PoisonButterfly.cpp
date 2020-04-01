@@ -69,7 +69,6 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 
 
 
-
 	
 	//나무위키
 
@@ -313,15 +312,17 @@ CBT_Composite_Node * CPoisonButterfly::Left_Eat()
 	CBT_Play_Ani* Show_Ani24 = Node_Ani("왼쪽 냠", 24, 0.95f);
 	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 6, 0.3f);
 
-	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("왜곡", L"ButterFly_Distortion_Circle", L"Bone_Tail6", 1.0, 1, 0.01, 0);
-	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("보라 파티클", L"ButterFly_PointParticle", L"Bone_Tail6", 0.5, 60, 0.01, 0);
-	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Bone_Tail6", 0.5, 60, 0.01, 0);
-	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("반짝 보라 모래", L"ButterFly_GlitterSand", L"Bone_Tail6", 0.5, 60, 0.01, 0);
-
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("왜곡", L"ButterFly_Distortion_Circle", L"Bone_Tail6"		, 0.f, 1, 0.01, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("보라 파티클", L"ButterFly_PointParticle", L"Bone_Tail6"	, 0.f, 160, 0.7, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("반짝 보라 모래", L"ButterFly_GlitterSand", L"Bone_Tail6"	, 0.f, 160, 0.7, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Bone_Tail6"	, 0.f, 160, 0.7, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("왜곡안개", L"ButterFly_Distortion_Smoke", L"Bone_Tail6"	, 0.f, 60, 0.7, 0);
+	
 	Root_Seq->Add_Service(Effect0);
 	Root_Seq->Add_Service(Effect1);
 	Root_Seq->Add_Service(Effect2);
 	Root_Seq->Add_Service(Effect3);
+	Root_Seq->Add_Service(Effect4);
 
 	Root_Seq->Add_Child(Show_Ani24);
 	Root_Seq->Add_Child(Show_Ani6);
@@ -335,6 +336,18 @@ CBT_Composite_Node * CPoisonButterfly::Right_Eat()
 
 	CBT_Play_Ani* Show_Ani25 = Node_Ani("오른쪽 냠", 25, 0.95f);
 	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 6, 0.3f);
+
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("왜곡", L"ButterFly_Distortion_Circle", L"Bone_Tail6", 1.0, 1, 0.01, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("보라 파티클", L"ButterFly_PointParticle", L"Bone_Tail6", 0.f, 160, 0.7, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("반짝 보라 모래", L"ButterFly_GlitterSand", L"Bone_Tail6", 0.f, 160, 0.7, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Bone_Tail6", 0.f, 160, 0.7, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("왜곡안개", L"ButterFly_Distortion_Smoke", L"Bone_Tail6", 0.f, 60, 0.7, 0);
+
+	Root_Seq->Add_Service(Effect0);
+	Root_Seq->Add_Service(Effect1);
+	Root_Seq->Add_Service(Effect2);
+	Root_Seq->Add_Service(Effect3);
+	Root_Seq->Add_Service(Effect4);
 
 	Root_Seq->Add_Child(Show_Ani25);
 	Root_Seq->Add_Child(Show_Ani6);
@@ -350,6 +363,18 @@ CBT_Composite_Node * CPoisonButterfly::Eat_Turn_Eat()
 	CBT_Play_Ani* Show_Ani23 = Node_Ani("뒤돌아서 덥썩", 23, 0.95f);
 	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 6, 0.3f);
 
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("왜곡", L"ButterFly_Distortion_Circle", L"Bone_Tail6", 1.0, 1, 0.01, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("보라 파티클", L"ButterFly_PointParticle", L"Bone_Tail6", 0.f, 160, 0.7, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("반짝 보라 모래", L"ButterFly_GlitterSand", L"Bone_Tail6", 0.f, 160, 0.7, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Bone_Tail6", 0.f, 160, 0.7, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("왜곡안개", L"ButterFly_Distortion_Smoke", L"Bone_Tail6", 0.f, 60, 0.7, 0);
+
+	Root_Seq->Add_Service(Effect0);
+	Root_Seq->Add_Service(Effect1);
+	Root_Seq->Add_Service(Effect2);
+	Root_Seq->Add_Service(Effect3);
+	Root_Seq->Add_Service(Effect4);
+
 	Root_Seq->Add_Child(Show_Ani22);
 	Root_Seq->Add_Child(Show_Ani23);
 	Root_Seq->Add_Child(Show_Ani6);
@@ -364,16 +389,16 @@ CBT_Composite_Node * CPoisonButterfly::Poison_Tornado_After_Charging()
 	CBT_Play_Ani* Show_Ani28 = Node_Ani("기모아서 독 소용돌이", 28, 0.95f);
 	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 6, 0.3f);
 
-	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("기 모을 때 처음 스모크", L"ButterFly_SoftSmoke_Ready", L"Self_Pos", 0.3, 5, 0.2, 0);
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("기 모을 때 처음 스모크", L"ButterFly_SoftSmoke_Ready", L"Self_Pos", 0, 1, 0.01, 0);
 	//CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("기 모을 때 메쉬이펙트", L"ButterFly_Distortion_Circle", L"Self_Pos", 0.3, 1, 0.01, 0);
-	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("기 모을 때 스모크 01", L"ButterFly_SoftSmoke", L"Self_Pos", 0.3, 1, 0.01, 0);
-	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("기 모을 때 스모크 02", L"ButterFly_SoftSmoke_Bottom", L"Self_Pos", 0.3, 1, 0.01, 0);
-	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("폭발할 때 처음 빨간 스모크", L"ButterFly_Smoke_Red_Once", L"Self_Pos", 0.3, 1, 0.01, 0);
-	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("폭발하는 빨간 스모크", L"ButterFly_Smoke_Red_Particle", L"Self_Pos", 0.3, 1, 0.01, 0);
-	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("바닥에 깔리는 빨간 스모크", L"ButterFly_SoftSmoke_Floor", L"Self_Pos", 0.3, 1, 0.01, 0);
-	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("폭발할 때 자두색 동그라미 파티클", L"ButterFly_PointParticle_Plum", L"Self_Pos", 1.0, 1, 0.01, 0);
-	//CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("폴발할 때 회오리 메쉬이펙트", L"ButterFly_RingLine", L"Self_Pos", 0.3, 1, 0.01, 0);
-	//CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("회오리 메쉬 왜곡", L"ButterFly_RingLine_Distortion", L"Self_Pos", 0.3, 1, 0.01, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("기 모을 때 스모크 01", L"ButterFly_SoftSmoke", L"Self_Pos", 0, 1, 0.01, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("기 모을 때 스모크 02", L"ButterFly_SoftSmoke_Bottom", L"Self_Pos", 0, 1, 0.01, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("폭발할 때 처음 빨간 스모크", L"ButterFly_Smoke_Red_Once", L"Self_Pos",0, 1, 0.001, 0);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("폭발하는 빨간 스모크", L"ButterFly_Smoke_Red_Particle", L"Self_Pos", 0, 1, 0.001, 0);
+	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("바닥에 깔리는 빨간 스모크", L"ButterFly_SoftSmoke_Floor", L"Self_Pos", 0, 1, 0.1, 0);
+	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("폭발할 때 자두색 동그라미 파티클", L"ButterFly_PointParticle_Plum", L"Self_Pos", 0, 10, 0.01, 0);
+	CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("폭발할 때 회오리 메쉬이펙트", L"ButterFly_RingLine", L"Self_Pos", 0, 1, 0.01, 0);
+	CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("회오리 메쉬 왜곡", L"ButterFly_RingLine_Distortion", L"Self_Pos", 0, 1, 0.01, 0);
 
 	Root_Seq->Add_Service(Effect0);
 	//Root_Seq->Add_Service(Effect1);
@@ -383,8 +408,8 @@ CBT_Composite_Node * CPoisonButterfly::Poison_Tornado_After_Charging()
 	Root_Seq->Add_Service(Effect5);
 	Root_Seq->Add_Service(Effect6);
 	Root_Seq->Add_Service(Effect7);
-	//Root_Seq->Add_Service(Effect8);
-	//Root_Seq->Add_Service(Effect9);
+	Root_Seq->Add_Service(Effect8);
+	Root_Seq->Add_Service(Effect9);
 
 
 
@@ -401,10 +426,10 @@ CBT_Composite_Node * CPoisonButterfly::OneTurn_Poison()
 	CBT_Play_Ani* Show_Ani20 = Node_Ani("좁은 범위 한바퀴 독 발사", 20, 0.95f);
 	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 6, 0.3f);
 
-	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("전체적으로 보라 동그라미 파티클", L"ButterFly_SoftSmoke_Ready", L"Self_Pos", 0.3, 5, 0.2, 0);
-	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("전체적으로 쓰이는 옅은 독안개", L"ButterFly_SoftSmoke_Ready", L"Self_Pos", 0.3, 5, 0.2, 0);
-	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("반짝이는 보라색 모래", L"ButterFly_SoftSmoke_Ready", L"Self_Pos", 0.3, 5, 0.2, 0);
-	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("안개와 같이 나오는 왜곡", L"ButterFly_SoftSmoke_Ready", L"Self_Pos", 0.3, 5, 0.2, 0);
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("전체적으로 보라 동그라미 파티클", L"ButterFly_PointParticle", L"Bone_Tail6", 0, 150, 0.01, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("전체적으로 쓰이는 옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Bone_Tail6", 0, 150, 0.01, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("반짝이는 보라색 모래", L"ButterFly_GlitterSand", L"Bone_Tail6", 0, 150, 0.01, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("안개와 같이 나오는 왜곡", L"ButterFly_Distortion_Smoke", L"Bone_Tail6", 0, 150, 0.01, 0);
 
 	Root_Seq->Add_Service(Effect0);
 	Root_Seq->Add_Service(Effect1);
@@ -429,18 +454,25 @@ CBT_Composite_Node * CPoisonButterfly::Rush()
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("돌진", 10, 0.7, 0);
 	CBT_Wait* RushWaitB = Node_Wait("RushWait1", 0.2, 0);
 
+<<<<<<< HEAD
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("전체적으로 보라 동그라미 파티클", L"ButterFly_PointParticle", L"Self_Pos", 1, 5, 0.2, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("전체적으로 옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Self_Pos", 0.3, 5, 0.2, 0);
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("보라색 투명한 물방울", L"ButterFly_WaterSplash", L"Self_Pos", 0.3, 5, 0.2, 0);
 	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("반짝이는 보라색 모래", L"ButterFly_GlitterSand", L"Self_Pos", 0.3, 5, 0.2, 0);
 	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("안개와 같이 나오는 왜곡", L"ButterFly_Distortion_Smoke", L"Self_Pos", 0.3, 5, 0.2, 0);
+=======
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("전체적으로 보라 동그라미 파티클", L"ButterFly_PointParticle", L"Bone_Tail6", 0, 150, 0, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("전체적으로 옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Bone_Tail6", 0, 150, 0, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("보라색 투명한 물방울", L"ButterFly_WaterSplash", L"Bone_Tail6", 0, 150, 0, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("반짝이는 보라색 모래", L"ButterFly_GlitterSand", L"Bone_Tail6", 0, 150, 0, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("안개와 같이 나오는 왜곡", L"ButterFly_Distortion_Smoke", L"Bone_Tail6", 0, 150, 0, 0);
+>>>>>>> 59f1bd6b15adabb4ae370e03d9f9ebf4f18ee2f5
 
 	RushParallel->Add_Service(Effect0);
 	RushParallel->Add_Service(Effect1);
 	RushParallel->Add_Service(Effect2);
 	RushParallel->Add_Service(Effect3);
 	RushParallel->Add_Service(Effect4);
-
 
 	RushParallel->Set_Sub_Child(MoveSequence);
 	MoveSequence->Add_Child(RushWaitF);
@@ -461,7 +493,6 @@ CBT_Composite_Node * CPoisonButterfly::Fire_5Bullet()
 
 	CBT_Play_Ani* Show_Ani29 = Node_Ani("5발탄", 29, 0.95f);
 	CBT_Play_Ani* Show_Ani6_0 = Node_Ani("기본", 6, 0.3f);
-
 	
 	//CBT_CreateBullet* PoisonBullet0 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Self_Pos", L"Self_PoisonDir0", 5, 5, 1, 1, 0, CBT_Service_Node::Finite);
 	//CBT_CreateBullet* PoisonBullet1 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Self_Pos", L"Self_PoisonDir1", 5, 5, 1, 1, 0, CBT_Service_Node::Finite);
@@ -489,10 +520,21 @@ CBT_Composite_Node * CPoisonButterfly::Fire_ChaseBullet()
 	CBT_Sequence* Root_Seq = Node_Sequence("반바퀴 돌아서 독샷");
 
 	CBT_Play_Ani* Show_Ani19 = Node_Ani("반바퀴 돌아서 독샷", 19, 0.95f);
-	Root_Seq->Add_Child(Show_Ani19);
 	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 6, 0.3f);
-	Root_Seq->Add_Child(Show_Ani6);
 
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("전체적으로 보라 동그라미 파티클", L"ButterFly_PointParticle", L"Bone_Tail6", 0, 150, 0.01, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("전체적으로 쓰이는 옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Bone_Tail6", 0, 150, 0.01, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("반짝이는 보라색 모래", L"ButterFly_GlitterSand", L"Bone_Tail6", 0, 150, 0.01, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("안개와 같이 나오는 왜곡", L"ButterFly_Distortion_Smoke", L"Bone_Tail6", 0, 150, 0.01, 0);
+
+	Root_Seq->Add_Service(Effect0);
+	Root_Seq->Add_Service(Effect1);
+	Root_Seq->Add_Service(Effect2);
+	Root_Seq->Add_Service(Effect3);
+
+	Root_Seq->Add_Child(Show_Ani19);
+	Root_Seq->Add_Child(Show_Ani6);
+	
 	return Root_Seq;
 }
 
@@ -501,10 +543,21 @@ CBT_Composite_Node * CPoisonButterfly::WhirlWind()
 	CBT_Sequence* Root_Seq = Node_Sequence("빙그르르");
 
 	CBT_Play_Ani* Show_Ani18 = Node_Ani("빙그르르", 18, 0.95f);
-	Root_Seq->Add_Child(Show_Ani18);
 	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 6, 0.3f);
-	Root_Seq->Add_Child(Show_Ani6);
 
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("전체적으로 보라 동그라미 파티클", L"ButterFly_PointParticle", L"Bone_Tail6", 0, 150, 0.01, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("전체적으로 쓰이는 옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Bone_Tail6", 0, 150, 0.01, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("반짝이는 보라색 모래", L"ButterFly_GlitterSand", L"Bone_Tail6", 0, 150, 0.01, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("안개와 같이 나오는 왜곡", L"ButterFly_Distortion_Smoke", L"Bone_Tail6", 0, 150, 0.01, 0);
+
+	Root_Seq->Add_Service(Effect0);
+	Root_Seq->Add_Service(Effect1);
+	Root_Seq->Add_Service(Effect2);
+	Root_Seq->Add_Service(Effect3);
+
+	Root_Seq->Add_Child(Show_Ani18);
+	Root_Seq->Add_Child(Show_Ani6);
+	
 	return Root_Seq;
 }
 

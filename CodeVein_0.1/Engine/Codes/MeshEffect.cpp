@@ -93,7 +93,7 @@ _int CMeshEffect::Late_Update_GameObject(_double TimeDelta)
 		return S_OK;
 
 	RENDERID eGroup = RENDERID::RENDER_ALPHA;
-	if (m_iPass == 3)
+	if (m_iPass == 2)
 		eGroup = RENDERID::RENDER_ALPHA;
 	else
 		eGroup = RENDERID::RENDER_DISTORTION;
@@ -169,6 +169,21 @@ void CMeshEffect::Setup_Info()
 	if (m_pInfo->bFadeIn)
 		m_fAlpha = 0.f;
 
+	if (m_pInfo->bRandScale)
+	{
+		// rand 설정하면 x 값기준으로 동일하게 조정
+		_float fScale = Engine::CCalculater::Random_Num(_int(m_pInfo->vStartScale.x * 50), _int(m_pInfo->vStartScale.x * 100)) * 0.01f;
+		_v3 vSize = _v3(fScale, fScale, fScale);
+
+		m_vLerpScale = vSize;
+		m_pTransformCom->Set_Scale(vSize);
+	}
+	else
+	{
+		m_vLerpScale = m_pInfo->vStartScale;
+		m_pTransformCom->Set_Scale(m_pInfo->vStartScale);
+	}
+
 	if (m_pInfo->bRandomMove)
 	{
 		_v3 vRandDir = _v3(1.f, 1.f, 1.f);
@@ -205,28 +220,44 @@ void CMeshEffect::Setup_Info()
 	{
 		_v3 vPos = _v3(m_pInfo->fRandStartPosRange_Min[AXIS_X], m_pInfo->fRandStartPosRange_Min[AXIS_Y], m_pInfo->fRandStartPosRange_Min[AXIS_Z]);
 
-		_float fMinus = Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f;
-		vPos += _v3(Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_X] * 100)) * 0.01f * fMinus,
-			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Y] * 100)) * 0.01f * fMinus,
-			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Z] * 100)) * 0.01f * fMinus);
+		vPos += _v3(Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_X] * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f),
+			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Y] * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f),
+			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Z] * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f));
 
-		m_pTransformCom->Set_Pos(vPos);
-		m_vLerpPos = (vPos);
+		m_pTransformCom->Set_Pos(vPos + m_pDesc->vWorldPos);
+		m_vLerpPos = (vPos + m_pDesc->vWorldPos);
 	}
 	else
 	{
-		m_pTransformCom->Set_Pos(m_pInfo->vStartPos);
-		m_vLerpPos = (m_pInfo->vStartPos);
+		m_pTransformCom->Set_Pos(m_pInfo->vStartPos + m_pDesc->vWorldPos);
+		m_vLerpPos = (m_pInfo->vStartPos + m_pDesc->vWorldPos);
 	}
 
-	if (m_pInfo->bRandomRot)
+	if (m_pInfo->bRotMove)
 	{
-		_float fMinus = Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f;
-		_v3 vPos = _v3(Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.x * 100)) * 0.01f * fMinus,
-			Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.y * 100)) * 0.01f * fMinus,
-			Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.z * 100)) * 0.01f * fMinus);
+		if (m_pInfo->bRandomRot)
+		{
+			_v3 vPos = _v3(Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.x * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f),
+				Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.y * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f),
+				Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.z * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f));
 
-		m_vRot = vPos;
+			m_vRot = vPos;
+		}
+	}
+	else
+	{
+		if (m_pInfo->bRandomRot)
+		{
+			_v3 vPos = _v3(Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.x * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f),
+				Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.y * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f),
+				Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.z * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f));
+
+			m_pTransformCom->Set_Angle(_v3(D3DXToRadian(vPos)));
+		}
+		else
+		{
+			m_pTransformCom->Set_Angle(_v3(D3DXToRadian(m_pInfo->vRotDirection.x), D3DXToRadian(m_pInfo->vRotDirection.y), D3DXToRadian(m_pInfo->vRotDirection.z)));
+		}
 	}
 }
 
@@ -241,14 +272,45 @@ void CMeshEffect::Check_Move(_double TimeDelta)
 			m_pTransformCom->Set_Pos(m_vLerpPos);
 		}
 		else
-			m_pTransformCom->Add_Pos(m_pInfo->vMoveDirection * m_fMoveSpeed * _float(TimeDelta));
-
+		{
+			_v3 vMove = m_pInfo->vMoveDirection * m_fMoveSpeed * _float(TimeDelta);
+			if (m_pDesc->pTargetTrans)
+			{
+				_v3 vPos = m_pDesc->pTargetTrans->Get_Pos();
+				m_vFollowPos += vMove;
+				vPos += m_vFollowPos;
+				m_pTransformCom->Set_Pos(vPos);
+			}
+			else
+			{
+				m_pTransformCom->Add_Pos(vMove);
+			}
+		}
 	}
 
 	if (m_pInfo->bRandomMove)
 	{
 		_v3 vMove = m_vDir * m_fMoveSpeed * _float(TimeDelta);
-		m_pTransformCom->Add_Pos(vMove);
+		if (m_pDesc->pTargetTrans)
+		{
+			_v3 vPos = m_pDesc->pTargetTrans->Get_Pos();
+			m_vFollowPos += vMove;
+			vPos += m_vFollowPos;
+			m_pTransformCom->Set_Pos(vPos);
+		}
+		else
+		{
+			m_pTransformCom->Add_Pos(vMove);
+		}
+	}
+
+	if (m_pInfo->bGravity)
+	{
+		m_fAccel += _float(TimeDelta);
+		_float fY = (-GRAVITY * m_fAccel * m_fAccel * 0.5f) *  _float(TimeDelta);
+		_v3 vPos = m_pTransformCom->Get_Pos();
+		vPos.y += fY;
+		m_pTransformCom->Set_Pos(vPos);
 	}
 
 	if (m_pInfo->bScaleMove)
@@ -257,17 +319,41 @@ void CMeshEffect::Check_Move(_double TimeDelta)
 		m_pTransformCom->Set_Scale(m_vLerpScale);
 	}
 
-	if (m_pInfo->bRandomRot)
+	if (m_pInfo->bRotMove)
 	{
-		m_pTransformCom->Add_Angle(AXIS_X, (m_vRot.x * _float(TimeDelta) * m_fRotSpeed));
-		m_pTransformCom->Add_Angle(AXIS_Y, (m_vRot.y * _float(TimeDelta) * m_fRotSpeed));
-		m_pTransformCom->Add_Angle(AXIS_Z, (m_vRot.z * _float(TimeDelta) * m_fRotSpeed));
+		if (m_pInfo->bRandomRot)
+		{
+			m_pTransformCom->Add_Angle(AXIS_X, ((m_vRot.x) * _float(TimeDelta) * m_fRotSpeed));
+			m_pTransformCom->Add_Angle(AXIS_Y, ((m_vRot.y) * _float(TimeDelta) * m_fRotSpeed));
+			m_pTransformCom->Add_Angle(AXIS_Z, ((m_vRot.z) * _float(TimeDelta) * m_fRotSpeed));
+		}
+		else
+		{
+			m_pTransformCom->Add_Angle(AXIS_X, ((m_pInfo->vRotDirection.x) * _float(TimeDelta) * m_fRotSpeed));
+			m_pTransformCom->Add_Angle(AXIS_Y, ((m_pInfo->vRotDirection.y) * _float(TimeDelta) * m_fRotSpeed));
+			m_pTransformCom->Add_Angle(AXIS_Z, ((m_pInfo->vRotDirection.z) * _float(TimeDelta) * m_fRotSpeed));
+		}
 	}
-	else
+
+	if (m_pInfo->bMoveWithRot)
 	{
-		m_pTransformCom->Add_Angle(AXIS_X, (m_pInfo->vRotDirection.x * _float(TimeDelta) * m_fRotSpeed));
-		m_pTransformCom->Add_Angle(AXIS_Y, (m_pInfo->vRotDirection.y * _float(TimeDelta) * m_fRotSpeed));
-		m_pTransformCom->Add_Angle(AXIS_Z, (m_pInfo->vRotDirection.z * _float(TimeDelta) * m_fRotSpeed));
+		_mat matRotX, matRotY, matRotZ;
+		_v3 vAngle = m_pTransformCom->Get_Angle();
+		_v3 vDir = vAngle;
+		D3DXMatrixIdentity(&matRotX);
+		D3DXMatrixIdentity(&matRotY);
+		D3DXMatrixIdentity(&matRotZ);
+
+		D3DXMatrixRotationX(&matRotX, D3DXToRadian(vAngle.x));
+		D3DXMatrixRotationY(&matRotY, D3DXToRadian(vAngle.y));
+		D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(vAngle.z));
+		D3DXVec3TransformNormal(&vDir, &vDir, &matRotX);
+		D3DXVec3TransformNormal(&vDir, &vDir, &matRotY);
+		D3DXVec3TransformNormal(&vDir, &vDir, &matRotZ);
+
+		D3DXVec3Normalize(&vDir, &vDir);
+
+		m_pTransformCom->Add_Pos(m_fMoveSpeed * _float(TimeDelta), vDir);
 	}
 }
 
@@ -331,7 +417,7 @@ HRESULT CMeshEffect::Add_Component()
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Default", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_LineRing_0", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
 		return E_FAIL;
 
 	// For.Com_Texture

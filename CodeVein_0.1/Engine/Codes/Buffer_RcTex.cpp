@@ -24,7 +24,7 @@ struct BOX_INSTANCEDATA_POS
 	float fPos[4];
 };
 
-_int g_iNumofInstance = 30;
+_int g_iNumofInstance = 250;
 
 
 CBuffer_RcTex::CBuffer_RcTex(LPDIRECT3DDEVICE9 pGraphic_Device)
