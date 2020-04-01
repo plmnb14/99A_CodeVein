@@ -73,6 +73,9 @@ void CToolView::OnInitialUpdate()
 {
 	CView::OnInitialUpdate();
 
+	g_hWnd = m_hWnd;
+	g_hInst = AfxGetInstanceHandle();
+
 	CMainFrame* pMainFrm = static_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
 
 	RECT rcMain = {};
@@ -87,8 +90,6 @@ void CToolView::OnInitialUpdate()
 
 	pMainFrm->SetWindowPos(	nullptr, 0, 0, WINCX + iGapX, 900 + iGapY, SWP_NOZORDER);
 
-	g_hWnd = m_hWnd;
-
 	CManagement* pManagement = CManagement::Get_Instance();
 	IF_NULL_RETURN(pManagement);
 
@@ -99,7 +100,7 @@ void CToolView::OnInitialUpdate()
 	pManagement->Ready_Component_Manager(m_pDevice);
 	pManagement->Ready_Gizmo(m_pDevice);
 
-	CInput_Device::Get_Instance()->Ready_Input_Dev(AfxGetInstanceHandle(), g_hWnd);
+	CInput_Device::Get_Instance()->Ready_Input_Dev(g_hInst, g_hWnd);
 	CInput_Device::Get_Instance()->Set_InputDev();
 
 	Create_Mesh_PathInfo();
@@ -119,7 +120,7 @@ void CToolView::OnInitialUpdate()
 	tmpCol->SetUp_Box();
 	tmpCol->Set_Type(COL_AABB);
 
-	m_pDevice->GetTransform(D3DTS_WORLD, &g_matWorld);
+	//m_pDevice->GetTransform(D3DTS_WORLD, &g_matWorld);
 
 	//m_pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
 
@@ -265,8 +266,6 @@ void CToolView::Start()
 	{
 		CTimer_Manager::Get_Instance()->Set_DeltaTime(L"Timer_Fps_60");
 
-		KeyDown();
-		KeyUp();
 		Update(DELTA_60);
 		LateUpdate(DELTA_60);
 		Render();
@@ -276,7 +275,11 @@ void CToolView::Start()
 void CToolView::Update(const _float & fTimeDelta)
 {
 	CCameraMgr::Get_Instance()->Update();
-	
+	CInput_Device::Get_Instance()->Set_InputDev();
+
+	KeyDown();
+	KeyUp();
+
 	m_fTime += fTimeDelta;
 	m_dwRenderCnt++;
 
@@ -324,6 +327,7 @@ void CToolView::KeyUp()
 
 void CToolView::KeyDown()
 {
+
 	if (Engine::CInput_Device::Get_Instance()->Key_Down(DIK_DELETE))
 	{
 	}
@@ -358,7 +362,7 @@ void CToolView::KeyDown()
 
 	}
 
-	if (CInput_Device::Get_Instance()->Key_Down(DIK_SPACE))
+	if (Engine::CInput_Device::Get_Instance()->Key_Down(DIK_SPACE))
 	{
 		Engine::CCameraMgr::Get_Instance()->Set_MouseCtrl(true);
 		CInput_Device::Get_Instance()->Calc_MouseLockPos();

@@ -27,7 +27,7 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 
 
 	CBlackBoard* pBlackBoard = CBlackBoard::Create();
-	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create();	//인자에 true 주면 콘솔창에 디버깅정보 뜸, default = false
+	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create(false);	//인자에 true 주면 콘솔창에 디버깅정보 뜸, default = false
 
 	m_pAIControllerCom->Set_BeHaviorTree(pBehaviorTree);
 	m_pAIControllerCom->Set_BlackBoard(pBlackBoard);
@@ -65,7 +65,7 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨.
-	Start_Sel->Add_Child(Left_Eat());
+	Start_Sel->Add_Child(Rush());
 
 
 
@@ -429,7 +429,7 @@ CBT_Composite_Node * CPoisonButterfly::Rush()
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("돌진", 10, 0.7, 0);
 	CBT_Wait* RushWaitB = Node_Wait("RushWait1", 0.2, 0);
 
-	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("전체적으로 보라 동그라미 파티클", L"ButterFly_PointParticle", L"Self_Pos", 0.3, 5, 0.2, 0);
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("전체적으로 보라 동그라미 파티클", L"ButterFly_PointParticle", L"Self_Pos", 1, 5, 0.2, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("전체적으로 옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Self_Pos", 0.3, 5, 0.2, 0);
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("보라색 투명한 물방울", L"ButterFly_WaterSplash", L"Self_Pos", 0.3, 5, 0.2, 0);
 	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("반짝이는 보라색 모래", L"ButterFly_GlitterSand", L"Self_Pos", 0.3, 5, 0.2, 0);
@@ -463,19 +463,23 @@ CBT_Composite_Node * CPoisonButterfly::Fire_5Bullet()
 	CBT_Play_Ani* Show_Ani6_0 = Node_Ani("기본", 6, 0.3f);
 
 	
-	CBT_CreateBullet* PoisonBullet0 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Self_Pos", L"Self_PoisonDir0", 5, 5, 1, 1, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* PoisonBullet1 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Self_Pos", L"Self_PoisonDir1", 5, 5, 1, 1, 0, CBT_Service_Node::Finite);
+	//CBT_CreateBullet* PoisonBullet0 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Self_Pos", L"Self_PoisonDir0", 5, 5, 1, 1, 0, CBT_Service_Node::Finite);
+	//CBT_CreateBullet* PoisonBullet1 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Self_Pos", L"Self_PoisonDir1", 5, 5, 1, 1, 0, CBT_Service_Node::Finite);
 	CBT_CreateBullet* PoisonBullet2 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Self_Pos", L"Self_PoisonDir2", 5, 5, 1, 1, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* PoisonBullet3 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Self_Pos", L"Self_PoisonDir3", 5, 5, 1, 1, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* PoisonBullet4 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Self_Pos", L"Self_PoisonDir4", 5, 5, 1, 1, 0, CBT_Service_Node::Finite);
-	Root_Seq->Add_Service(PoisonBullet0);
-	Root_Seq->Add_Service(PoisonBullet1);
+	//CBT_CreateBullet* PoisonBullet3 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Self_Pos", L"Self_PoisonDir3", 5, 5, 1, 1, 0, CBT_Service_Node::Finite);
+	//CBT_CreateBullet* PoisonBullet4 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Self_Pos", L"Self_PoisonDir4", 5, 5, 1, 1, 0, CBT_Service_Node::Finite);
+	//Root_Seq->Add_Service(PoisonBullet0);
+	//Root_Seq->Add_Service(PoisonBullet1);
 	Root_Seq->Add_Service(PoisonBullet2);
-	Root_Seq->Add_Service(PoisonBullet3);
-	Root_Seq->Add_Service(PoisonBullet4);
+	//Root_Seq->Add_Service(PoisonBullet3);
+	//Root_Seq->Add_Service(PoisonBullet4);
 
 	Root_Seq->Add_Child(Show_Ani29);
 	Root_Seq->Add_Child(Show_Ani6_0);
+
+
+	CBT_Wait* Wait0 = Node_Wait("대기", 2, 0);
+	Root_Seq->Add_Child(Wait0);
 
 	return Root_Seq;
 }
@@ -519,7 +523,7 @@ CBT_Composite_Node * CPoisonButterfly::NearAttack()
 
 CBT_Composite_Node * CPoisonButterfly::FarAttack()
 {
-	CBT_Selector* Root_Sel = Node_Selector_Random("순서대로 원거리 공격");
+	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 원거리 공격");
 
 	Root_Sel->Add_Child(Rush());
 	Root_Sel->Add_Child(Fire_5Bullet());
@@ -567,6 +571,7 @@ CBT_Composite_Node * CPoisonButterfly::TurnAndFarAttack()
 CBT_Composite_Node * CPoisonButterfly::Start_Show()
 {
 	CBT_Sequence* Root_Seq = Node_Sequence("시연회");
+	//CBT_Selector* Root_Seq = Node_Selector("시연회");
 
 	Root_Seq->Add_Child(Show_ChaseAndNearAttack());
 	Root_Seq->Add_Child(Show_TurnAndFarAttack());
@@ -689,7 +694,7 @@ HRESULT CPoisonButterfly::Add_Component()
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_PoisonButterFly", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_PoisonButterFly", L"Com_DynamicMesh", (CComponent**)&m_pMeshCom)))
 		return E_FAIL;
 
 	// for.Com_AIController

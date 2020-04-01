@@ -16,10 +16,12 @@
 
 #include "TestMonster.h"
 #include "PoisonButterfly.h"
+#include "PoisonBullet.h"
 #include "BlackUrchin.h"
 #include "BlackWolf.h"
-#include "NormalGenji.h"
-#include "PoisonBullet.h"
+#include "GunGenji.h"
+#include "SwordGenji.h"
+#include "SwordShieldGenji.h"
 
 #include "PlayerHP.h"
 #include "PlayerST.h"
@@ -404,8 +406,14 @@ _uint CLoading::Loading_Stage()
 	// °ËÀº ´Á´ë
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackWolf", CBlackWolf::Create(m_pGraphicDev))))
 		return E_FAIL;
-	// ÀÏ¹Ý°ÕÁö
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_NormalGenji", CNormalGenji::Create(m_pGraphicDev))))
+	// ÃÑ°ÕÁö
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenji", CGunGenji::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// °Ë°ÕÁö
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenji", CSwordGenji::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// °Ë¹æÆÐ°ÕÁö
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordShieldGenji", CSwordShieldGenji::Create(m_pGraphicDev))))
 		return E_FAIL;
 	// µ¶³ªºñ µ¶ ÃÑ¾Ë
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonBullet", CPoisonBullet::Create(m_pGraphicDev))))

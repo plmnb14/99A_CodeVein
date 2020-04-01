@@ -41,7 +41,7 @@ CBT_Node::BT_NODE_STATE CBT_MoveDirectly::Update_Node(_double TimeDelta, vector<
 			{
 				// 방향 타겟쪽으로 변경
 				Look_At_Target(TimeDelta, vTarget_Pos);
-
+				
 				// 이동
 				m_pTransform->Add_Pos(_float(m_fMove_Speed * TimeDelta));
 			}

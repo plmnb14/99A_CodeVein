@@ -29,7 +29,7 @@ public:
 		{ strcpy_s<256>(Target_NodeName, _pNodeName); 
 		if(nullptr != _pTarget_Key)lstrcpy(Target_Key, _pTarget_Key); 
 		else ZeroMemory(Target_Key, sizeof(_tchar) * 256);}
-
+		
 		CTransform*	pTransform = nullptr;
 		char		Target_NodeName[256] = { 0, };
 		_tchar		Target_Key[256] = { 0, };

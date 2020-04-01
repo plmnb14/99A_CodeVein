@@ -48,6 +48,7 @@ CBT_Node::BT_NODE_STATE CBT_Sequence::Update_Node(_double TimeDelta, vector<CBT_
 
 	
 	return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+	return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, bDebugging);
 }
 
 void CBT_Sequence::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging)

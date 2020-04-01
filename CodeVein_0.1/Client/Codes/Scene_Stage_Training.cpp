@@ -80,8 +80,8 @@ HRESULT CScene_Stage_Training::Ready_Layer_Dummy(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage_Training::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_PoisonButterfly", SCENE_STAGE, pLayerTag)))
-		return E_FAIL;
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_PoisonButterfly", SCENE_STAGE, pLayerTag)))
+	//	return E_FAIL;
 
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_BlackUrchin", SCENE_STAGE, pLayerTag)))
 	//	return E_FAIL;
@@ -89,10 +89,16 @@ HRESULT CScene_Stage_Training::Ready_Layer_Monster(const _tchar * pLayerTag)
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_BlackWolf", SCENE_STAGE, pLayerTag)))
 	//	return E_FAIL;
 
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_NormalGenji", SCENE_STAGE, pLayerTag)))
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_GunGenji", SCENE_STAGE, pLayerTag)))
 	//	return E_FAIL;
 
-	CParticleMgr::Get_Instance()->Ready_ParticleManager();
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_SwordGenji", SCENE_STAGE, pLayerTag)))
+	//	return E_FAIL;
+
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_SwordShieldGenji", SCENE_STAGE, pLayerTag)))
+	//	return E_FAIL;
+
+	//CParticleMgr::Get_Instance()->Ready_ParticleManager();
 
 	return S_OK;
 }

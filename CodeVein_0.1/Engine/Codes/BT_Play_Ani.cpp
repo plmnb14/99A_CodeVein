@@ -19,6 +19,11 @@ CBT_Node::BT_NODE_STATE CBT_Play_Ani::Update_Node(_double TimeDelta, vector<CBT_
 		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
 	}
 
+	/*
+	상태가 hit이면 동작 초기화
+	m_pMesh_Dynamic->Reset_OldIndx(); // 
+	*/
+
 	return BT_NODE_STATE::INPROGRESS;
 }
 

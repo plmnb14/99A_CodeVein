@@ -312,9 +312,6 @@
     <ClInclude Include="..\Headers\BlackWolf.h">
       <Filter>02.GameObject\Stage\1%29 Monster\Wolf</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Genji.h">
-      <Filter>02.GameObject\Stage\1%29 Monster\Genji</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\PoisonButterfly.h">
       <Filter>02.GameObject\Stage\1%29 Monster\PoisonButterfly</Filter>
     </ClInclude>
@@ -363,11 +360,20 @@
     <ClInclude Include="..\Headers\Button_UI.h">
       <Filter>02.GameObject\Stage\4%29 UI\UI\99.Public\Button_UI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\NormalGenji.h">
-      <Filter>02.GameObject\Stage\1%29 Monster\Genji</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\PoisonBullet.h">
       <Filter>02.GameObject\Stage\1%29 Monster\PoisonButterfly</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GunGenji.h">
+      <Filter>02.GameObject\Stage\1%29 Monster\Genji</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\SwordGenji.h">
+      <Filter>02.GameObject\Stage\1%29 Monster\Genji</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\SwordShieldGenji.h">
+      <Filter>02.GameObject\Stage\1%29 Monster\Genji</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GenjiBullet.h">
+      <Filter>02.GameObject\Stage\1%29 Monster\Genji</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -491,11 +497,20 @@
     <ClCompile Include="..\Codes\Button_UI.cpp">
       <Filter>02.GameObject\Stage\4%29 UI\UI\99.Public\Button_UI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\NormalGenji.cpp">
-      <Filter>02.GameObject\Stage\1%29 Monster\Genji</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\PoisonBullet.cpp">
       <Filter>02.GameObject\Stage\1%29 Monster\PoisonButterfly</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GunGenji.cpp">
+      <Filter>02.GameObject\Stage\1%29 Monster\Genji</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SwordGenji.cpp">
+      <Filter>02.GameObject\Stage\1%29 Monster\Genji</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SwordShieldGenji.cpp">
+      <Filter>02.GameObject\Stage\1%29 Monster\Genji</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GenjiBullet.cpp">
+      <Filter>02.GameObject\Stage\1%29 Monster\Genji</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

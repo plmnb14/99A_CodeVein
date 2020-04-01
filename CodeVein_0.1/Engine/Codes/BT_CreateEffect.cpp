@@ -82,7 +82,6 @@ void CBT_CreateEffect::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT
 		m_dCurTime = 0;
 		m_dMaxTime = m_dCreateTime + CALC::Random_Num_Double(-m_dOffset, m_dOffset);
 		m_iCur_Count_Of_Execution = 0;
-		m_dService_StartTime = 0;
 
 		m_bInit = false;
 	}
@@ -98,6 +97,7 @@ CBT_Node::BT_NODE_STATE CBT_CreateEffect::End_Node(vector<CBT_Node*>* pNodeStack
 
 	m_bService_Start = false;
 	m_bInit = true;
+	//m_dService_StartTime = 0;
 
 	return eState;
 }

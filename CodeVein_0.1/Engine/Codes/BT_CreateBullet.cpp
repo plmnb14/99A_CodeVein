@@ -22,13 +22,13 @@ CBT_Node::BT_NODE_STATE CBT_CreateBullet::Update_Node(_double TimeDelta, vector<
 		{
 			// 생성 횟수 제한
 		case CBT_Service_Node::Finite:
-			if (m_iCur_Count_Of_Execution > m_iMax_Count_Of_Execution)
+			if (m_iCur_Count_Of_Execution >= m_iMax_Count_Of_Execution)
 				break;
 			else
 			{
 				m_vCreate_Pos = pBlackBoard->Get_V3Value(m_pCreate_Pos_Key);
 				m_vDir = pBlackBoard->Get_V3Value(m_pDir_Key);
-
+				
 				CObject_Manager::Get_Instance()->Add_GameObject_ToLayer(m_pObject_Tag, SCENE_STAGE, L"Layer_Monster", &BULLET_INFO(m_vCreate_Pos, m_vDir, m_fSpeed, m_dLifeTime));
 				++m_iCur_Count_Of_Execution;
 			}

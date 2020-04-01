@@ -66,7 +66,7 @@ private:	//패턴들
 
 	// 시야각내에 있으면 공격(첫 패턴부터 차례대로), 없으면 추적
 	CBT_Composite_Node*		Show_ChaseAndNearAttack();
-	CBT_Composite_Node*		Show_TurnAndFarAttack();	
+	CBT_Composite_Node*		Show_TurnAndFarAttack();
 	CBT_Composite_Node*		Show_NearAttack();	// 패턴 순서대로 근거리 공격	
 	CBT_Composite_Node*		Show_FarAttack();	// 패턴 순서대로 원거리 공격
 

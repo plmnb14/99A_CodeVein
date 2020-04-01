@@ -6,6 +6,7 @@ class CTestObject;
 class CMonsterTool : public CDialog
 {
 	DECLARE_DYNAMIC(CMonsterTool)
+
 	enum ANI_EVENT_TYPE
 	{ 
 		MOVE,
@@ -24,6 +25,24 @@ class CMonsterTool : public CDialog
 		_double m_dMoveSpeed = 0;
 		_double m_dMoveAccel = 0;
 		_double m_dAniRatio = 0;
+	};
+
+	class Cuint_Finder
+	{
+	public:
+		explicit Cuint_Finder(_uint _num) { m_uint = _num; }
+		~Cuint_Finder() {		}
+
+	public:
+		template<typename T>
+		bool operator()(const T& pair)
+		{
+			if (m_uint == pair.first) return true;
+
+			return false;
+		}	
+	private:
+		_uint m_uint;
 	};
 
 public:
@@ -76,8 +95,10 @@ public:
 public:
 	//몬스터 종류, 애니인덱스, 이벤트종류, 이벤트 값
 	map<const _tchar*, map<_uint, map<ANI_EVENT_TYPE, ANI_EVENT_VALUE*>>> m_mapmapmapAniEvent;
+
 	//몬스터 종류, 콤보번호, 애니인덱스, 애니재생비율
-	map<const _tchar*, map<_uint, map<_uint, _float>>> m_mapmapmapAniCombo;
+	typedef pair<_uint, _float> IdxRatio;
+	map<const _tchar*, map<_uint, vector<IdxRatio>>> m_STLAniCombo;
 	list<const _tchar*>						m_listMeshName; //글자 저장소
 	CTestObject*							m_pTestObject = nullptr;
 
@@ -132,6 +153,7 @@ public:
 	CString		m_strCollisionRange;
 	CString		m_strCollisionAniRatio;
 
+	//몬스터	위치값
 	CString		m_strObjPosX;
 	CString		m_strObjPosY;
 	CString		m_strObjPosZ;

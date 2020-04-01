@@ -19,7 +19,8 @@ CBT_Node::BT_NODE_STATE CBT_RotationDir::Update_Node(_double TimeDelta, vector<C
 	Look_At_Target(TimeDelta, pBlackBoard->Get_V3Value(m_Target_Key));
 
 	// 사이각 0.003 정도는 넘어간다.
-	if ( m_dDestRadian < 0.3 )
+	cout << m_dDestRadian << endl;
+	if ( m_dDestRadian < 0.03 )
 	{
 		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
 	}
@@ -41,8 +42,6 @@ void CBT_RotationDir::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_
 
 		pNodeStack->push_back(this);
 		Safe_AddRef(this);
-
-
 
 		m_bInit = false;
 	}
@@ -108,9 +107,13 @@ HRESULT CBT_RotationDir::Look_At_Target(_double TimeDelta, const _v3& vTarget_Po
 	D3DXVec3Normalize(&vRight, (_v3*)(&m_pTransform->Get_WorldMat().m[0]));
 
 	if (0 < D3DXVec3Dot(&vRight, &vToTarget))
+	{
 		m_pTransform->Add_Angle(AXIS_TYPE::AXIS_Y, D3DXToDegree(_float(m_dTurnSpeed * m_dDestRadian * TimeDelta)));
+	}
 	else
+	{
 		m_pTransform->Add_Angle(AXIS_TYPE::AXIS_Y, -D3DXToDegree(_float(m_dTurnSpeed * m_dDestRadian * TimeDelta)));
+	}
 
 	return S_OK;
 }

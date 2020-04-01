@@ -1,23 +1,23 @@
 #include "stdafx.h"
-#include "..\Headers\PoisonBullet.h"
+#include "..\Headers\GenjiBullet.h"
 #include "ParticleMgr.h"
 
-CPoisonBullet::CPoisonBullet(LPDIRECT3DDEVICE9 pGraphic_Device)
+CGenjiBullet::CGenjiBullet(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
 }
 
-CPoisonBullet::CPoisonBullet(const CPoisonBullet & rhs)
+CGenjiBullet::CGenjiBullet(const CGenjiBullet & rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CPoisonBullet::Ready_GameObject_Prototype()
+HRESULT CGenjiBullet::Ready_GameObject_Prototype()
 {
 	return NOERROR;
 }
 
-HRESULT CPoisonBullet::Ready_GameObject(void * pArg)
+HRESULT CGenjiBullet::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
@@ -40,7 +40,7 @@ HRESULT CPoisonBullet::Ready_GameObject(void * pArg)
 	return NOERROR;
 }
 
-_int CPoisonBullet::Update_GameObject(_double TimeDelta)
+_int CGenjiBullet::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
 
@@ -55,8 +55,6 @@ _int CPoisonBullet::Update_GameObject(_double TimeDelta)
 	if (m_dCurTime > m_dLifeTime)
 	{
 		//Á×À½ ÀÌÆåÆ®
-
-		cout << "»ç¸Á" << endl;
 
 		m_bDead = true;
 	}
@@ -79,20 +77,20 @@ _int CPoisonBullet::Update_GameObject(_double TimeDelta)
 	return NOERROR;
 }
 
-_int CPoisonBullet::Late_Update_GameObject(_double TimeDelta)
+_int CGenjiBullet::Late_Update_GameObject(_double TimeDelta)
 {
 	// Ãæµ¹Ã³¸®
 
 	return NOERROR;
 }
 
-HRESULT CPoisonBullet::Render_GameObject()
+HRESULT CGenjiBullet::Render_GameObject()
 {
 	
 	return NOERROR;
 }
 
-HRESULT CPoisonBullet::Add_Component()
+HRESULT CGenjiBullet::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -105,38 +103,38 @@ HRESULT CPoisonBullet::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CPoisonBullet::SetUp_ConstantTable()
+HRESULT CGenjiBullet::SetUp_ConstantTable()
 {
 	return NOERROR;
 }
 
-CPoisonBullet * CPoisonBullet::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
+CGenjiBullet * CGenjiBullet::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 {
-	CPoisonBullet* pInstance = new CPoisonBullet(pGraphic_Device);
+	CGenjiBullet* pInstance = new CGenjiBullet(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 	{
-		MSG_BOX("Failed To Creating CPoisonBullet");
+		MSG_BOX("Failed To Creating CGenjiBullet");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject * CPoisonBullet::Clone_GameObject(void * pArg)
+CGameObject * CGenjiBullet::Clone_GameObject(void * pArg)
 {
-	CPoisonBullet* pInstance = new CPoisonBullet(*this);
+	CGenjiBullet* pInstance = new CGenjiBullet(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
-		MSG_BOX("Failed To Cloned CPoisonBullet");
+		MSG_BOX("Failed To Cloned CGenjiBullet");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CPoisonBullet::Free()
+void CGenjiBullet::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pCollider);
