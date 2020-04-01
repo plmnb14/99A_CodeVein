@@ -30,13 +30,13 @@ private:	//패턴들
 	CBT_Composite_Node* Sudden_Shot();
 
 	// 근거리
-	// 2. 개머리판 치기, 이동거리 : 1.6
+	// 1. 개머리판 치기, 이동거리 : 1.6
 	CBT_Composite_Node* Upper_Slash();
-	// 3. 팔꿈치 치기, 이동거리 : 1
+	// 2. 팔꿈치 치기, 이동거리 : 1
 	CBT_Composite_Node* Arm_Attack();
-	// 4. 찌르기, 이동거리 : 0.3
+	// 3. 찌르기, 이동거리 : 0.3
 	CBT_Composite_Node* Sting_Attack();
-	// 5. 오른쪽으로 베기, 이동거리 : 0.5
+	// 4. 오른쪽으로 베기, 이동거리 : 0.5
 	CBT_Composite_Node* Cut_To_Right();
 
 

@@ -81,6 +81,9 @@
 #define Node_MoveDirectly_Chace(_name, _Target_Key, _Move_Speed, _Acceptable_Radius) static_cast<CBT_MoveDirectly*>(CManagement::Get_Instance()->Clone_Node(L"MoveDirectly", CBT_Node_Manager::TASK, &CBT_MoveDirectly::INFO(_name, m_pTransformCom, _Target_Key, _Move_Speed, _Acceptable_Radius, 0, 0, CBT_MoveDirectly::CHASE)))
 #define Node_MoveDirectly_Rush(_name, _Move_Speed, _dMoveTime, _dTimeOffset) static_cast<CBT_MoveDirectly*>(CManagement::Get_Instance()->Clone_Node(L"MoveDirectly", CBT_Node_Manager::TASK, &CBT_MoveDirectly::INFO(_name, m_pTransformCom, nullptr, _Move_Speed, 0, _dMoveTime, _dTimeOffset, CBT_MoveDirectly::RUSH)))
 
+#include "..\Headers\BT_MoveDir.h"
+#define Node_MoveDir(_name, _Dir_Key, _Move_Speed, _dMoveTime, _dTimeOffset) static_cast<CBT_MoveDir*>(CManagement::Get_Instance()->Clone_Node(L"MoveDir", CBT_Node_Manager::TASK, &CBT_MoveDir::INFO(_name, m_pTransformCom, _Dir_Key, _Move_Speed, _dMoveTime, _dTimeOffset)))
+
 #include "..\Headers\BT_RotationDir.h"
 #define Node_RotationDir(_name, _Target_Key, _dTurnSpeed) static_cast<CBT_RotationDir*>(CManagement::Get_Instance()->Clone_Node(L"RotationDir", CBT_Node_Manager::TASK, &CBT_RotationDir::INFO(_name, m_pTransformCom, _Target_Key, _dTurnSpeed)))
 

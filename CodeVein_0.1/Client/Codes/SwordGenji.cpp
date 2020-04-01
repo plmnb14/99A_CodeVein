@@ -27,7 +27,7 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 
 
 	CBlackBoard* pBlackBoard = CBlackBoard::Create();
-	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create();
+	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create(true);
 
 	m_pAIControllerCom->Set_BeHaviorTree(pBehaviorTree);
 	m_pAIControllerCom->Set_BlackBoard(pBlackBoard);
@@ -62,70 +62,70 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 
 	//Start_Sel->Add_Child(Throwing_BackStep());
 
-	//CBT_RotationDir* TurnDir0 = Node_RotationDir("Look 회전", L"Player_Pos", 4);
-	//Start_Sel->Add_Child(TurnDir0);
+	CBT_RotationDir* TurnDir0 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
+	Start_Sel->Add_Child(TurnDir0);
 
-	//Start_Sel->Add_Child(Normal_Cut1());
+	Start_Sel->Add_Child(Normal_Cut1());
 
-	//CBT_RotationDir* TurnDir1 = Node_RotationDir("Look 회전", L"Player_Pos", 4);
-	//Start_Sel->Add_Child(TurnDir1);
+	CBT_RotationDir* TurnDir1 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
+	Start_Sel->Add_Child(TurnDir1);
 
-	//Start_Sel->Add_Child(Normal_Cut2());
+	Start_Sel->Add_Child(Normal_Cut2());
 
-	//CBT_RotationDir* TurnDir2 = Node_RotationDir("Look 회전", L"Player_Pos", 4);
-	//Start_Sel->Add_Child(TurnDir2);
+	CBT_RotationDir* TurnDir2 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
+	Start_Sel->Add_Child(TurnDir2);
 
-	//Start_Sel->Add_Child(Normal_Cut3());
+	Start_Sel->Add_Child(Normal_Cut3());
 
-	CBT_RotationDir* TurnDir3 = Node_RotationDir("Look 회전", L"Player_Pos", 1);
+	CBT_RotationDir* TurnDir3 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
 	Start_Sel->Add_Child(TurnDir3);
 
 	Start_Sel->Add_Child(Strong_RightCut());
 
-	//CBT_RotationDir* TurnDir4 = Node_RotationDir("Look 회전", L"Player_Pos", 4);
-	//Start_Sel->Add_Child(TurnDir4);
+	CBT_RotationDir* TurnDir4 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
+	Start_Sel->Add_Child(TurnDir4);
 
-	//Start_Sel->Add_Child(Strong_LeftCut());
+	Start_Sel->Add_Child(Strong_LeftCut());
 
-	/*CBT_RotationDir* TurnDir5 = Node_RotationDir("Look 회전", L"Player_Pos", 4);
+	CBT_RotationDir* TurnDir5 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
 	Start_Sel->Add_Child(TurnDir5);
 
 	Start_Sel->Add_Child(ThreeCombo_Cut());
 
-	CBT_RotationDir* TurnDir6 = Node_RotationDir("Look 회전", L"Player_Pos", 4);
+	CBT_RotationDir* TurnDir6 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
 	Start_Sel->Add_Child(TurnDir6);
 
 	Start_Sel->Add_Child(Run_Straight_Cut());
 
-	CBT_RotationDir* TurnDir7 = Node_RotationDir("Look 회전", L"Player_Pos", 4);
+	CBT_RotationDir* TurnDir7 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
 	Start_Sel->Add_Child(TurnDir7);
 
 	Start_Sel->Add_Child(Horizon_Cut());
 
-	CBT_RotationDir* TurnDir8 = Node_RotationDir("Look 회전", L"Player_Pos", 4);
+	CBT_RotationDir* TurnDir8 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
 	Start_Sel->Add_Child(TurnDir8);
 
 	Start_Sel->Add_Child(Sting_Attack());
 
-	CBT_RotationDir* TurnDir9 = Node_RotationDir("Look 회전", L"Player_Pos", 4);
+	CBT_RotationDir* TurnDir9 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
 	Start_Sel->Add_Child(TurnDir9);
 
 	Start_Sel->Add_Child(TwoCombo_Cut());
 
-	CBT_RotationDir* TurnDir10 = Node_RotationDir("Look 회전", L"Player_Pos", 4);
+	CBT_RotationDir* TurnDir10 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
 	Start_Sel->Add_Child(TurnDir10);
 
 	Start_Sel->Add_Child(Throwing1());
 
-	CBT_RotationDir* TurnDir11 = Node_RotationDir("Look 회전", L"Player_Pos", 4);
+	CBT_RotationDir* TurnDir11 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
 	Start_Sel->Add_Child(TurnDir11);
 
 	Start_Sel->Add_Child(Throwing2());
 
-	CBT_RotationDir* TurnDir12 = Node_RotationDir("Look 회전", L"Player_Pos", 4);
+	CBT_RotationDir* TurnDir12 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
 	Start_Sel->Add_Child(TurnDir12);
 
-	Start_Sel->Add_Child(Throwing_BackStep());*/
+	Start_Sel->Add_Child(Throwing_BackStep());
 
 	////방패 벗겨짐
 	//CBT_Play_Ani* pAni0 = Node_Ani("방패 벗겨짐 ", 0, 0.9f);
