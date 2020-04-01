@@ -31,14 +31,19 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"ButterFly_Smoke_Red_Once", 200);
 	Input_Pool(L"ButterFly_Smoke_Red_Particle", 1000);
 	Input_Pool(L"ButterFly_SoftSmoke_Floor", 500);
-	Input_Pool(L"ButterFly_SoftSmoke_Ready", 300);
+	Input_Pool(L"ButterFly_SoftSmoke_Ready_1", 100);
+	Input_Pool(L"ButterFly_SoftSmoke_Ready_2", 100);
 	Input_Pool(L"ButterFly_SoftSmoke_Mist", 300);
+	Input_Pool(L"ButterFly_SoftSmoke_Chunk", 50);
 	Input_Pool(L"ButterFly_WaterSplash", 100);
 	Input_Pool(L"ButterFly_GlitterSand", 300);
 
 	Input_Pool(L"ButterFly_VenomShot", 1000);
 	Input_Pool(L"ButterFly_VenomShot_SubSmoke", 1000);
+	Input_Pool(L"ButterFly_VenomShot_Distortion", 300);
+	Input_Pool(L"ButterFly_VenomShot_Chunk", 100);
 	Input_Pool(L"ButterFly_VenomShot_PointParticle", 500);
+	Input_Pool(L"ButterFly_VenomShot_Tail", 500);
 	Input_Pool(L"ButterFly_VenomShot_DeadMist", 100);
 	Input_Pool(L"ButterFly_VenomShot_DeadSmoke", 100);
 	Input_Pool(L"ButterFly_VenomShot_DeadSplash", 100);

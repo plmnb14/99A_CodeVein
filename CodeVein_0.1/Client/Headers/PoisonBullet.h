@@ -35,6 +35,9 @@ private:
 	_tchar				m_pEffect_Tag5[256] = { 0, };
 	_tchar				m_pEffect_Tag6[256] = { 0, };
 	_tchar				m_pEffect_Tag7[256] = { 0, };
+	_tchar				m_pEffect_Tag8[256] = { 0, };
+	_tchar				m_pEffect_Tag9[256] = { 0, };
+	_tchar				m_pEffect_Tag10[256] = { 0, };
 
 	_double				m_dCurTime = 0;
 	_double				m_dLifeTime = 0;

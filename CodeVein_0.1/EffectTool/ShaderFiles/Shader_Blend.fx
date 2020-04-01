@@ -36,6 +36,9 @@ sampler BloomSampler = sampler_state
 	minfilter = linear;
 	magfilter = linear;
 	mipfilter = linear;
+
+	addressU = clamp;
+	addressV = clamp;
 };
 
 texture		g_DepthTexture;
@@ -55,6 +58,9 @@ sampler	DistortionSampler = sampler_state
 	minfilter = linear;
 	magfilter = linear;
 	mipfilter = linear;
+
+	addressU = clamp;
+	addressV = clamp;
 };
 
 texture		g_SSAOTexture;
@@ -64,6 +70,9 @@ sampler	SSAOSampler = sampler_state
 	minfilter = linear;
 	magfilter = linear;
 	mipfilter = linear;
+
+	addressU = clamp;
+	addressV = clamp;
 };
 
 struct PS_IN
@@ -226,10 +235,13 @@ PS_OUT PS_AFTER(PS_IN In)
 	// Calc Distortion =========================================
 	float2 Trans = In.vTexUV;// +0.001f;
 	vector	Noise = tex2D(DistortionSampler, Trans);
-	Noise.xy *= 1.f - (Noise.x + Noise.y);
+	//Noise.xy *= 1.f - (Noise.x + Noise.y);
 	Noise.xy *= Noise.w; // ¾ËÆÄ°ª
 
-	float2 UV = In.vTexUV + Noise.xy * 0.05f;
+	float fPower = Noise.z;
+	//fPower *= Noise.w;
+
+	float2 UV = In.vTexUV + (Noise.xy * fPower);
 	if (Noise.w <= 0)
 		UV = In.vTexUV;
 	// Calc Distortion End =========================================

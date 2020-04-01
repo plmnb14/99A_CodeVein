@@ -23,7 +23,7 @@ Tex_FireBlast2|FireBlast2_%d.png|..\..\Client\Resources\Texture\Effect\FireBlast
 Tex_Flash|Flash_%d.tga|..\..\Client\Resources\Texture\Effect\Flash\|0|2
 Tex_Gradient|Gradient_%d.tga|..\..\Client\Resources\Texture\Effect\Gradient\|0|3
 Tex_LinePoint|LinePoint_%d.png|..\..\Client\Resources\Texture\Effect\LinePoint\|0|8
-Tex_Mask|Mask_%d.tga|..\..\Client\Resources\Texture\Effect\Mask\|0|1
+Tex_Mask|Mask_%d.tga|..\..\Client\Resources\Texture\Effect\Mask\|0|8
 Tex_Noise|Noise_%d.tga|..\..\Client\Resources\Texture\Effect\Noise\|0|23
 Tex_Normal|Normal_%d.tga|..\..\Client\Resources\Texture\Effect\Normal\|0|10
 Tex_Crystals|Crystals_%d.png|..\..\Client\Resources\Texture\Effect\Particle\Crystals\|0|16

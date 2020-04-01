@@ -24,7 +24,10 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 	//if (FAILED(Ready_Layer_Dummy(L"Layer_Dummy")))
 	//	return E_FAIL;
 
-	if (FAILED(Ready_Layer_Monster(L"Layer_Monster")))
+	//if (FAILED(Ready_Layer_Monster(L"Layer_Monster")))
+	//	return E_FAIL;
+
+	if (FAILED(Ready_Layer_Environment(L"Layer_Environment")))
 		return E_FAIL;
 
 	// Æ®·¹ÀÌ´× ¸ÊÀº ±×³É ·Îµå °¡´ÉÇØ¿è
@@ -44,8 +47,7 @@ _int CScene_Stage_Training::Update_Scene(_double TimeDelta)
 {
 	CUI_Manager::Get_Instance()->Update_UI();
 
-	if (g_pInput_Device->Key_Down(DIK_K))
-		CParticleMgr::Get_Instance()->Create_ParticleEffect(L"SpawnParticle", 0.1f, V3_NULL);
+	CFrameMgr::Get_Instance()->Render_Frame(TimeDelta);
 
 	return _int();
 }
@@ -54,6 +56,7 @@ HRESULT CScene_Stage_Training::Render_Scene()
 {
 	IF_NOT_NULL(m_pNavMesh)
 		m_pNavMesh->Render_NaviMesh();
+
 
 	return S_OK;
 }
@@ -99,6 +102,14 @@ HRESULT CScene_Stage_Training::Ready_Layer_Monster(const _tchar * pLayerTag)
 	//	return E_FAIL;
 
 	//CParticleMgr::Get_Instance()->Ready_ParticleManager();
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage_Training::Ready_Layer_Environment(const _tchar* pLayerTag)
+{
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Sky", SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
 
 	return S_OK;
 }

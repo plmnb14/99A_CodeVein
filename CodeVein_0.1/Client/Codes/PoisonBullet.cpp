@@ -31,17 +31,20 @@ HRESULT CPoisonBullet::Ready_GameObject(void * pArg)
 	m_fSpeed = temp.fSpeed;
 	m_dLifeTime = temp.dLifeTime;
 	
-	m_fEffectCreateOffset = 0.1f;
+	m_fEffectCreateOffset = 0.05f;
 
-	lstrcpy(m_pEffect_Tag0, L"ButterFly_Distortion_Smoke");
+	lstrcpy(m_pEffect_Tag0, L"ButterFly_VenomShot_Distortion");
 	lstrcpy(m_pEffect_Tag1, L"ButterFly_SoftSmoke_Mist");
 	lstrcpy(m_pEffect_Tag2, L"ButterFly_VenomShot");
 	lstrcpy(m_pEffect_Tag3, L"ButterFly_VenomShot_SubSmoke");
 	lstrcpy(m_pEffect_Tag4, L"ButterFly_VenomShot_PointParticle");
+	lstrcpy(m_pEffect_Tag5, L"ButterFly_VenomShot_Chunk");
+	lstrcpy(m_pEffect_Tag6, L"ButterFly_VenomShot_Tail");
 
-	lstrcpy(m_pEffect_Tag5, L"ButterFly_VenomShot_DeadSplash");
-	lstrcpy(m_pEffect_Tag6, L"ButterFly_VenomShot_DeadMist");
-	lstrcpy(m_pEffect_Tag7, L"ButterFly_VenomShot_DeadSmoke");
+	lstrcpy(m_pEffect_Tag7, L"ButterFly_VenomShot_DeadSplash");
+	lstrcpy(m_pEffect_Tag8, L"ButterFly_VenomShot_DeadMist");
+	lstrcpy(m_pEffect_Tag9, L"ButterFly_VenomShot_DeadSmoke");
+	lstrcpy(m_pEffect_Tag10, L"ButterFly_PointParticle");
 
 	
 	return NOERROR;
@@ -61,26 +64,17 @@ _int CPoisonBullet::Update_GameObject(_double TimeDelta)
 	// 시간 초과
 	if (m_dCurTime > m_dLifeTime)
 	{
-		//lstrcpy(m_pEffect_Tag5, L"ButterFly_VenomShot_DeadSplash");
-		//lstrcpy(m_pEffect_Tag6, L"ButterFly_VenomShot_DeadMist");
-		//lstrcpy(m_pEffect_Tag7, L"ButterFly_VenomShot_DeadSmoke");
-
 		//죽음 이펙트
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag5, m_pTransformCom->Get_Pos(), nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag6, m_pTransformCom->Get_Pos(), nullptr);
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag7, m_pTransformCom->Get_Pos(), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag8, m_pTransformCom->Get_Pos(), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag9, m_pTransformCom->Get_Pos(), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag10, m_pTransformCom->Get_Pos(), nullptr);
 		
 		m_bDead = true;
 	}
 	// 진행중
 	else
 	{
-		//lstrcpy(m_pEffect_Tag0, L"ButterFly_Distortion_Smoke");
-		//lstrcpy(m_pEffect_Tag1, L"ButterFly_SoftSmoke_Mist");
-		//lstrcpy(m_pEffect_Tag2, L"ButterFly_VenomShot");
-		//lstrcpy(m_pEffect_Tag3, L"ButterFly_VenomShot_SubSmoke");
-		//lstrcpy(m_pEffect_Tag4, L"ButterFly_PointParticle");
-
 		if (m_bEffect)
 		{
 			m_bEffect = false;
@@ -93,8 +87,10 @@ _int CPoisonBullet::Update_GameObject(_double TimeDelta)
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag2, _v3(), m_pTransformCom);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag3, _v3(), m_pTransformCom);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, _v3(), m_pTransformCom);
+			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag5, _v3(), m_pTransformCom);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag0, m_pTransformCom->Get_Pos(), nullptr);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag1, m_pTransformCom->Get_Pos(), nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag6, m_pTransformCom->Get_Pos(), nullptr);
 		}
 	}
 

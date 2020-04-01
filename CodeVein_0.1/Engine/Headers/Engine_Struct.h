@@ -338,7 +338,9 @@ namespace Engine
 		_bool	bRandStartPos;
 
 		_bool	bDistortion;
+		_float	fDistortionPower;
 		_bool	bGravity;
+		_bool	bSlowly;
 
 		_bool	bDirMove;
 		_v3		vMoveDirection;

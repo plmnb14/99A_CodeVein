@@ -255,19 +255,21 @@ HRESULT CTrail_VFX::Shader_Init(const _uint & iIndex)
 
 	Safe_AddRef(pManagement);
 
-	_float	fAlpha = 1.f;
-
 	_mat		ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
 	_mat		ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
-
 	m_pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat));
 	m_pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat));
 	m_pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat));
 
-	_bool	bDefaultOption = false;
-	_v4		vDefaultOption = { 0.f, 0.f, 0.f, 1.f };
+	_float	fAlpha = 1.f;
+	_float	fDistortion = 0.01f;
 	m_pShader->Set_Value("g_fAlpha", &fAlpha, sizeof(_float));
+	m_pShader->Set_Value("g_fDistortion", &fDistortion, sizeof(_float));
+
+	_v4		vDefaultOption = { 0.f, 0.f, 0.f, 1.f };
 	m_pShader->Set_Value("g_vColor", &vDefaultOption, sizeof(_float));
+
+	_bool	bDefaultOption = false;
 	m_pShader->Set_Bool("g_bUseRGBA", bDefaultOption);
 	m_pShader->Set_Bool("g_bUseColorTex", bDefaultOption);
 	m_pShader->Set_Bool("g_bUseMaskTex", bDefaultOption);

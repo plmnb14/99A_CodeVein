@@ -2,6 +2,7 @@
 
 matrix		g_matWorld, g_matView, g_matProj, g_matInvWorld;
 float		g_fAlpha = 1;
+float		g_fDistortion = 0.15f;
 vector		g_vColor = { 0, 0, 0, 1 };
 bool		g_bUseRGBA = false;
 bool		g_bUseColorTex = false;
@@ -199,27 +200,21 @@ PS_OUT PS_DISTORTION(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	/////////////////////////////////////////////
-	// Color
-	Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
-
 	if (g_bUseColorTex)
 	{
-		Out.vColor = pow(tex2D(ColorSampler, In.vTexUV), 2.2);
-		//Out.vColor = tex2D(ColorSampler, In.vTexUV);
-		Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
+		Out.vColor = tex2D(ColorSampler, In.vTexUV);
+		Out.vColor *= tex2D(DiffuseSampler, In.vTexUV).x;
 	}
 	else
 	{
 		Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
-		//Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
-		Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
+		//Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
 	}
 
 	if (g_bUseMaskTex)
 	{
 		vector vGradientMask = tex2D(GradientSampler, In.vTexUV);
-		Out.vColor.a *= vGradientMask.x;
+		Out.vColor *= vGradientMask.x;
 	}
 
 	float2		vTexUV;
@@ -227,18 +222,17 @@ PS_OUT PS_DISTORTION(PS_IN In)
 	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
 	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
 
-	vector		vDepthInfo = tex2D(DepthSampler, vTexUV);
-	float		fViewZ = vDepthInfo.y * 500.f;
-
+	//vector		vDepthInfo = tex2D(DepthSampler, vTexUV);
+	//float		fViewZ = vDepthInfo.y * 500.f;
 	//Out.vColor.a = Out.vColor.a * saturate(fViewZ - In.vProjPos.w);
 
-	//float2  fDistortion = tex2D(DiffuseSampler, In.vTexUV).xy;
 	//float fPower = In.vProjPos.w;
-	//Out.vColor *= (1.f - (fDistortion.x + fDistortion.y));
+	//Out.vColor *= (1.f - (Out.vColor.x + Out.vColor.y));
 	//Out.vColor -= (Out.vColor.x + Out.vColor.y);
 	//Out.vColor *= fPower;
 
-	Out.vColor.w = g_fAlpha;
+	Out.vColor *= g_fAlpha;
+	Out.vColor.z = g_fDistortion;
 	Out.vDistortion = saturate(Out.vColor);
 
 	return Out;

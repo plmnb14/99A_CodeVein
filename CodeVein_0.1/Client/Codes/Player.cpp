@@ -3,7 +3,7 @@
 #include "Weapon.h"
 #include "CameraMgr.h"
 #include "Dummy_Target.h"
-
+#include "Effect.h"
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
@@ -2113,36 +2113,41 @@ void CPlayer::Change_Weapon()
 
 void CPlayer::Check_Dissolve(_double TimeDelta)
 {
-	if(false)
-	//if (g_pInput_Device->Key_Pressing(DIK_J))
+	//if(false)
+	if (g_pInput_Device->Key_Down(DIK_K))
 	{
 		_v3 vPos = m_pTransform->Get_Pos();
 		vPos.y += 1.5f;
-		vPos.z += 2.5f;
-		
-		_tchar szBuff[256] = L"";
-		wsprintf(szBuff, L"Hit_Slash_Particle_%d", CCalculater::Random_Num(0, 3));
-		g_pManagement->Create_Effect(szBuff, vPos);
-		
-		g_pManagement->Create_Effect(L"Hit_Slash_0", vPos);
-		g_pManagement->Create_Effect(L"Hit_Slash_1", vPos);
-		g_pManagement->Create_Effect(L"Hit_Slash_2", vPos);
-		g_pManagement->Create_Effect(L"Hit_Slash_3", vPos);
 
-		g_pManagement->Create_Effect(L"Hit_Particle_Red", vPos);
-		g_pManagement->Create_Effect(L"Hit_Particle_Yellow", vPos);
+		//_tchar szBuff[256] = L"";
+		//wsprintf(szBuff, L"Hit_Slash_Particle_%d", CCalculater::Random_Num(0, 3));
+		//g_pManagement->Create_Effect(szBuff, vPos);
+		//
+		//g_pManagement->Create_Effect(L"Hit_Slash_0", vPos);
+		//g_pManagement->Create_Effect(L"Hit_Slash_1", vPos);
+		//g_pManagement->Create_Effect(L"Hit_Slash_2", vPos);
+		//g_pManagement->Create_Effect(L"Hit_Slash_3", vPos);
+		//
+		//g_pManagement->Create_Effect(L"Hit_Particle_Red", vPos);
+		//g_pManagement->Create_Effect(L"Hit_Particle_Yellow", vPos);
 
+		//CEffect* pEffect = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Hit_SlashLine_0", nullptr));
+		//_v3 vAngle = m_pTransform->Get_Angle();
+		//vAngle += _v3(0, 0, _float(CCalculater::Random_Num(0, 360)));
+		//pEffect->Set_Angle(vAngle);
+		//g_pManagement->Add_GameOject_ToLayer_NoClone(pEffect, SCENE_STAGE, L"Layer_Effect", nullptr);
 		//g_pManagement->Create_Effect(L"Hit_SlashLine_0", vPos);
+		
+		//cout << "Angle  : " << vAngle.z << endl;
 	}
 
 
-
-	if(m_eActState == ACT_Down) // 임시
-	//if (g_pInput_Device->Key_Pressing(DIK_J)) // 디버그
+	const _float SPEED = 0.7f;
+	//if(m_eActState == ACT_Down) // 임시
+	if (g_pInput_Device->Key_Pressing(DIK_J)) // 디버그
 	{
 		m_iPass = 3;
 
-		const _float SPEED = 0.7f;
 		m_fFxSpeed += _float(TimeDelta) * SPEED;
 
 		g_pManagement->Create_Effect(L"SpawnParticle", m_pTransform->Get_Pos());
@@ -2150,6 +2155,34 @@ void CPlayer::Check_Dissolve(_double TimeDelta)
 		if (m_fFxSpeed >= 1.f)
 			m_fFxSpeed = 1.f;
 	}
+	else
+	{
+		m_fFxSpeed -= _float(TimeDelta) * SPEED;
+
+		if (m_fFxSpeed <= 0.f)
+			m_fFxSpeed = 0.f;
+	}
+}
+
+void CPlayer::Create_AttackEffect()
+{
+	_v3 vPos = m_pTransform->Get_Pos();
+	vPos.y += 1.5f;
+
+	g_pManagement->Add_GameObject_ToLayer(L"Hit_SlashLine_0", SCENE_STAGE, L"Layer_Effect", nullptr);
+	CEffect* pEffect = static_cast<CEffect*>(g_pManagement->Get_GameObjectBack(L"Layer_Effect", SCENE_STAGE));
+	_v3 vAngle = m_pTransform->Get_Angle();
+	vAngle += _v3(0, 0, _float(CCalculater::Random_Num(0, 360)));
+	pEffect->Set_Angle(vAngle);
+
+	_mat matRotY;
+	_v3 vDir = V3_NULL;
+	D3DXMatrixIdentity(&matRotY);
+	D3DXMatrixRotationY(&matRotY, D3DXToRadian(m_pTransform->Get_Angle().y));
+	D3DXVec3TransformNormal(&vDir, &vDir, &matRotY);
+	D3DXVec3Normalize(&vDir, &vDir);
+
+	pEffect->Set_Desc(vPos + vDir * 2.2f);
 }
 
 HRESULT CPlayer::Add_Component()

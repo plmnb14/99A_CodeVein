@@ -176,6 +176,9 @@ void CTexEffect::Setup_Info()
 	else
 		m_iPass = 3; // For Instancing Pass
 
+	if(m_pInfo->fDistortionPower <= 0.f || m_pInfo->fDistortionPower > 2.f)
+		m_pInfo->fDistortionPower = 0.09f;
+
 	if (m_pInfo->bFadeIn)
 		m_fAlpha = 0.f;
 
@@ -185,7 +188,7 @@ void CTexEffect::Setup_Info()
 	if (m_pInfo->bRandScale)
 	{
 		// rand 설정하면 x 값기준으로 동일하게 조정
-		_float fScale = Engine::CCalculater::Random_Num(_int(m_pInfo->vStartScale.x * 50), _int(m_pInfo->vStartScale.x * 100)) * 0.01f;
+		_float fScale = Engine::CCalculater::Random_Num(_int(m_pInfo->vStartScale.x * 30), _int(m_pInfo->vStartScale.x * 100)) * 0.01f;
 		_v3 vSize = _v3(fScale, fScale, fScale);
 
 		m_vLerpScale = vSize;
@@ -280,7 +283,6 @@ void CTexEffect::Setup_Billboard()
 	_mat matBill, matView, matWorld;
 
 	matWorld = m_pTransformCom->Get_WorldMat();
-
 	matView = m_pManagement->Get_Transform(D3DTS_VIEW);
 
 	D3DXMatrixIdentity(&matBill);
@@ -291,7 +293,17 @@ void CTexEffect::Setup_Billboard()
 		memset(&matBill._41, 0, sizeof(_v3));
 		D3DXMatrixInverse(&matBill, NULL, &matBill);
 
-		m_pTransformCom->Set_WorldMat(matBill * matWorld);
+		//m_pTransformCom->Set_WorldMat(matBill * matWorld);
+
+		_mat matRot;
+		D3DXMatrixIdentity(&matRot);
+		D3DXMatrixRotationX(&matRot, D3DXToRadian(m_vAngle.x));
+		D3DXMatrixRotationY(&matRot, D3DXToRadian(m_vAngle.y));
+		D3DXMatrixRotationZ(&matRot, D3DXToRadian(m_vAngle.z));
+		//D3DXMatrixTranslation(&matRot, m_pTransformCom->Get_Pos().x, m_pTransformCom->Get_Pos().y, m_pTransformCom->Get_Pos().z);
+		cout << "Angle Check : " << m_vAngle.z << endl;
+
+		m_pTransformCom->Set_WorldMat((matRot) * (matBill * matWorld));
 	}
 	else if (m_pInfo->bOnlyYRot)
 	{
@@ -302,7 +314,13 @@ void CTexEffect::Setup_Billboard()
 
 		D3DXMatrixInverse(&matBill, NULL, &matBill);
 
-		m_pTransformCom->Set_WorldMat((matBill * matWorld));
+		_mat matRot;
+		D3DXMatrixIdentity(&matRot);
+		D3DXMatrixRotationX(&matRot, D3DXToRadian(m_vAngle.x));
+		D3DXMatrixRotationY(&matRot, D3DXToRadian(m_vAngle.y));
+		D3DXMatrixRotationZ(&matRot, D3DXToRadian(m_vAngle.z));
+
+		m_pTransformCom->Set_WorldMat((matRot) * (matBill * matWorld));
 	}
 
 	Compute_ViewZ(&m_pTransformCom->Get_Pos());
@@ -322,6 +340,13 @@ void CTexEffect::Check_Frame(_double TimeDelta)
 
 void CTexEffect::Check_Move(_double TimeDelta)
 {
+	if (m_pInfo->bSlowly)
+	{
+		m_fMoveSpeed -= m_fMoveSpeed * _float(TimeDelta);
+		if (m_fMoveSpeed <= 0.f)
+			m_fMoveSpeed = 0.f;
+	}
+
 	if (m_pInfo->bDirMove)
 	{
 		if (m_pInfo->bLinearMove)
@@ -376,6 +401,7 @@ void CTexEffect::Check_Move(_double TimeDelta)
 	if (m_pInfo->bScaleMove)
 	{
 		D3DXVec3Lerp(&m_vLerpScale, &m_vLerpScale, &m_pInfo->vMoveScale, m_fLinearMovePercent * m_pInfo->fMoveScaleSpeed);
+		//m_vLerpScale -= m_pInfo->vStartScale * _float(TimeDelta);
 		m_pTransformCom->Set_Scale(m_vLerpScale);
 	}
 
@@ -528,17 +554,22 @@ HRESULT CTexEffect::SetUp_ConstantTable()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
+
 	D3DXMatrixInverse(&ViewMatrix, nullptr, &ViewMatrix);
 	D3DXMatrixInverse(&ProjMatrix, nullptr, &ProjMatrix);
+
 	if (FAILED(m_pShaderCom->Set_Value("g_matProjInv", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matViewInv", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
 
+	if (FAILED(m_pShaderCom->Set_Value("g_fDistortion", &m_pInfo->fDistortionPower, sizeof(_float))))
+		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_vColor", &m_vColor, sizeof(_v4))))
 		return E_FAIL;
+
 	if (FAILED(m_pShaderCom->Set_Bool("g_bUseColorTex", m_pInfo->bUseColorTex)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Bool("g_bReverseColor", m_pInfo->bRevColor)))

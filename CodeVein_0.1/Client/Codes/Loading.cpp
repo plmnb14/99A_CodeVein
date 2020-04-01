@@ -146,7 +146,9 @@ unsigned int CALLBACK CLoading::Thread_Main(void* pArg)
 HRESULT CLoading::Ready_Effect(void)
 {
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/EffectMesh_Path.dat"); // 임시
-	
+																						// 스카이
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Sky", CSky::Create(m_pGraphicDev))))
+		return E_FAIL;
 
 #pragma region ButterFly
 	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke")))
@@ -173,7 +175,11 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"ButterFly_PointParticle_Plum")))
 		return E_FAIL;
-	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke_Ready")))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke_Ready_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke_Ready_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke_Chunk")))
 		return E_FAIL;
 
 	if (FAILED(Add_EffectPrototype(L"ButterFly_WaterSplash")))
@@ -189,6 +195,12 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_SubSmoke")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_PointParticle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_Chunk")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_Distortion")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_Tail")))
 		return E_FAIL;
 
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_DeadMist")))
@@ -361,6 +373,8 @@ Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
 		::ReadFile(hFile, &pInfo->bGravity, sizeof(_bool), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->bRandScale, sizeof(_bool), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->bMoveWithRot, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bSlowly, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fDistortionPower, sizeof(_float), &dwByte, nullptr);
 
 		break;
 	}

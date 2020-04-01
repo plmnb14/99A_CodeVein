@@ -198,8 +198,9 @@ private:
 private:
 	virtual void Change_Weapon();
 
-private: //For.Shader Dissolve
+private: //For.Effect
 	void Check_Dissolve(_double TimeDelta);
+	void Create_AttackEffect();
 
 public:
 	static	CPlayer* Create(_Device pGraphic_Device);
