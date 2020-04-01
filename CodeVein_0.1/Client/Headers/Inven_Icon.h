@@ -38,7 +38,6 @@ public:
 private:
 	HRESULT					Add_Component();
 	HRESULT					SetUp_ConstantTable();
-	void					Click_Icon();
 
 public:
 	_bool					Coll_Mouse();

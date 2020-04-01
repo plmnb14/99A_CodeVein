@@ -9,11 +9,6 @@ CUI::CUI(LPDIRECT3DDEVICE9 pGraphic_Device)
 	D3DXMatrixIdentity(&m_matProj);
 	D3DXMatrixIdentity(&m_matOldView);
 	D3DXMatrixIdentity(&m_matOldProj);
-
-	m_fPosX = 0.f;
-	m_fPosY = 0.f;
-	m_fSizeX = 1.f;
-	m_fSizeY = 1.f;
 }
 
 CUI::CUI(const CUI & rhs)
@@ -36,7 +31,6 @@ void CUI::Set_UI_Size(_float fSizeX, _float fSizeY)
 
 HRESULT CUI::Ready_GameObject_Prototype()
 {
-	
 	return NOERROR;
 }
 
@@ -50,13 +44,15 @@ HRESULT CUI::Ready_GameObject(void * pArg)
 		m_fPosY = m_pUIDesc->fPosY;
 		m_fSizeX = m_pUIDesc->fSizeX;
 		m_fSizeY = m_pUIDesc->fSizeY;
+		m_iIndex = m_pUIDesc->iIndex;
 	}
 	else
 	{
 		m_fPosX = 0.f;
 		m_fPosY = 0.f;
-		m_fSizeX = 1.f;
-		m_fSizeY = 1.f;
+		m_fSizeX = 0.f;
+		m_fSizeY = 0.f;
+		m_iIndex = 0;
 	}
 
 	return NOERROR;

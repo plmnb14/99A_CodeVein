@@ -743,6 +743,7 @@ HRESULT CRenderer::Render_After()
 	return S_OK;
 }
 
+
 CRenderer * CRenderer::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 {
 	CRenderer*	pInstance = new CRenderer(pGraphic_Device);

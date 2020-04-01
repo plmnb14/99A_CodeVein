@@ -94,9 +94,6 @@
     <Filter Include="02.GameObject\Stage\4%29 UI\UI\02.BossUI\BossDecoUI">
       <UniqueIdentifier>{6fb9265f-38ad-474d-b695-8cf2ee7cc6fb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\4%29 UI\UI\HPBack">
-      <UniqueIdentifier>{fa879426-186e-47c8-b86a-a658c605a61a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\6%29 Item">
       <UniqueIdentifier>{f36caa92-e13e-47aa-a03d-0ac0628f233a}</UniqueIdentifier>
     </Filter>
@@ -109,26 +106,65 @@
     <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory">
       <UniqueIdentifier>{29df8d85-91d5-4f19-b3a7-21bb4b6bcad3}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inventory">
-      <UniqueIdentifier>{64aafa63-d837-463b-9bea-d888e0d02aaf}</UniqueIdentifier>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\99.Public">
+      <UniqueIdentifier>{3bc88974-f0e0-472f-b53b-4b6cb56613e1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory\01.Inven_Status">
-      <UniqueIdentifier>{9ab72302-7abc-435d-8b25-1cccb636b6be}</UniqueIdentifier>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\99.Public\HPBack">
+      <UniqueIdentifier>{fa879426-186e-47c8-b86a-a658c605a61a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory\02.Inven_Item">
-      <UniqueIdentifier>{46dfb6f7-58f1-4719-ad4c-1a3435f543a4}</UniqueIdentifier>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\04.MiniMap">
+      <UniqueIdentifier>{8933579b-d09b-4136-92f7-e96c5d1eea5f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory\03.Inven_Skill">
-      <UniqueIdentifier>{bee25af1-5991-467b-809a-75fe1e60174f}</UniqueIdentifier>
+    <Filter Include="02.GameObject\Stage\6%29 Item\Expendables%28소비품%29">
+      <UniqueIdentifier>{f0b90cc0-7825-42c5-acfc-75c010e403b4}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\6%29 Item\ConsumeItem">
-      <UniqueIdentifier>{f539c5fd-c913-46de-838b-1ad6bcaaa456}</UniqueIdentifier>
+    <Filter Include="02.GameObject\Stage\6%29 Item\Materials%28재료%29">
+      <UniqueIdentifier>{a9ef39e6-c420-4745-adfa-a177d6d387f0}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\6%29 Item\MaterialItem">
-      <UniqueIdentifier>{594772b6-eb8f-429f-adce-6adba47ee9d7}</UniqueIdentifier>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\99.Public\Select_UI">
+      <UniqueIdentifier>{d969d618-9881-41d3-9549-30ecc9919a98}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory\02.Inven_Item\Icon">
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\99.Public\Button_UI">
+      <UniqueIdentifier>{815a28f9-cc7c-4822-a354-28a591afb3be}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inven_Icon">
       <UniqueIdentifier>{a48b15d9-69f7-4675-80df-53a9f626e6b4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inven_Icon\Inven_Icon">
+      <UniqueIdentifier>{81ce441e-6a64-4fcf-a9fc-70157795c7b1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inven_Icon\Item_Icon">
+      <UniqueIdentifier>{1a609fd0-4ed1-4f4f-9c58-bd131edf6e1a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory\01.Inventory">
+      <UniqueIdentifier>{6671024f-4bc4-46ec-97a5-34925f76cfdf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory\02.Slot">
+      <UniqueIdentifier>{b05cccd8-83eb-413a-8b03-6677eb7fc8ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory\01.Inventory\Expendables%28소비 인벤%29">
+      <UniqueIdentifier>{f706f8ce-3151-4e2d-9966-eec490dc0066}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory\01.Inventory\Materials%28재료 인벤%29">
+      <UniqueIdentifier>{5265e8d3-97e0-4eff-a82c-d45ad097341c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory\01.Inventory\Weapons%28무기 인벤%29">
+      <UniqueIdentifier>{538fffcf-fcbf-49df-87bd-77f182f226a8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory\02.Slot\00.Expendables%28소비슬롯%29">
+      <UniqueIdentifier>{68a8451e-cce7-467e-8353-e1e5688d84f1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory\02.Slot\01.Materials%28재료슬롯%29">
+      <UniqueIdentifier>{6d58a6f1-a7b3-464c-b435-4d469fb23b50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory\02.Slot\02.Weapons%28무기슬롯%29">
+      <UniqueIdentifier>{d06c9a10-a850-4a8b-ad0f-a302a047713b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory\02.Slot\03.Armor%28아장슬롯%29">
+      <UniqueIdentifier>{fc8ed6d4-acb8-4a88-8e04-e0875d02658b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\05.QuickSlot">
+      <UniqueIdentifier>{77566a1b-96e2-4f7f-a13b-4bed7857d67b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -193,7 +229,7 @@
       <Filter>02.GameObject\Stage\4%29 UI\Manager\UI_Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\HPBack.h">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\HPBack</Filter>
+      <Filter>02.GameObject\Stage\4%29 UI\UI\99.Public\HPBack</Filter>
     </ClInclude>
     <ClInclude Include="StageLoader.h">
       <Filter>01.Scene\98.StageLoader</Filter>
@@ -201,26 +237,50 @@
     <ClInclude Include="..\Headers\Item_Manager.h">
       <Filter>02.GameObject\Stage\4%29 UI\Manager\Item_Manager</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Item.h">
-      <Filter>02.GameObject\Stage\6%29 Item</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Consume_Item.h">
-      <Filter>02.GameObject\Stage\6%29 Item\ConsumeItem</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Inventory.h">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inventory</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Inven_Status.h">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\01.Inven_Status</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Inven_Item.h">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\02.Inven_Item</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Inven_Skill.h">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\03.Inven_Skill</Filter>
+    <ClInclude Include="..\Headers\MiniMap.h">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\04.MiniMap</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Inven_Icon.h">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\02.Inven_Item\Icon</Filter>
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inven_Icon\Inven_Icon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ItemIcon.h">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inven_Icon\Item_Icon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Expendables_Slot.h">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\02.Slot\00.Expendables%28소비슬롯%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Expendables.h">
+      <Filter>02.GameObject\Stage\6%29 Item\Expendables%28소비품%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Material.h">
+      <Filter>02.GameObject\Stage\6%29 Item\Materials%28재료%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Material_Slot.h">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\02.Slot\01.Materials%28재료슬롯%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Select_UI.h">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\99.Public\Select_UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Weapon_Slot.h">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\02.Slot\02.Weapons%28무기슬롯%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Button_UI.h">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\99.Public\Button_UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Expendables_Inven.h">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\01.Inventory\Expendables%28소비 인벤%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Material_Inven.h">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\01.Inventory\Materials%28재료 인벤%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Weapon_Inven.h">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\01.Inventory\Weapons%28무기 인벤%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\QuickSlot.h">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\05.QuickSlot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Armor_Slot.h">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\02.Slot\03.Armor%28아장슬롯%29</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -276,7 +336,7 @@
       <Filter>02.GameObject\Stage\4%29 UI\Manager\UI_Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\HPBack.cpp">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\HPBack</Filter>
+      <Filter>02.GameObject\Stage\4%29 UI\UI\99.Public\HPBack</Filter>
     </ClCompile>
     <ClCompile Include="StageLoader.cpp">
       <Filter>01.Scene\98.StageLoader</Filter>
@@ -284,26 +344,50 @@
     <ClCompile Include="..\Codes\Item_Manager.cpp">
       <Filter>02.GameObject\Stage\4%29 UI\Manager\Item_Manager</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Item.cpp">
-      <Filter>02.GameObject\Stage\6%29 Item</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Consume_Item.cpp">
-      <Filter>02.GameObject\Stage\6%29 Item\ConsumeItem</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Inventory.cpp">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inventory</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Inven_Status.cpp">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\01.Inven_Status</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Inven_Item.cpp">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\02.Inven_Item</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Inven_Skill.cpp">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\03.Inven_Skill</Filter>
+    <ClCompile Include="..\Codes\MiniMap.cpp">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\04.MiniMap</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Inven_Icon.cpp">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\02.Inven_Item\Icon</Filter>
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inven_Icon\Inven_Icon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ItemIcon.cpp">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inven_Icon\Item_Icon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Expendables_Slot.cpp">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\02.Slot\00.Expendables%28소비슬롯%29</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Expendables.cpp">
+      <Filter>02.GameObject\Stage\6%29 Item\Expendables%28소비품%29</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Material.cpp">
+      <Filter>02.GameObject\Stage\6%29 Item\Materials%28재료%29</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Material_Slot.cpp">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\02.Slot\01.Materials%28재료슬롯%29</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Select_UI.cpp">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\99.Public\Select_UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Weapon_Slot.cpp">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\02.Slot\02.Weapons%28무기슬롯%29</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Button_UI.cpp">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\99.Public\Button_UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Expendables_Inven.cpp">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\01.Inventory\Expendables%28소비 인벤%29</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Material_Inven.cpp">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\01.Inventory\Materials%28재료 인벤%29</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Weapon_Inven.cpp">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\01.Inventory\Weapons%28무기 인벤%29</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\QuickSlot.cpp">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\05.QuickSlot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Armor_Slot.cpp">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\02.Slot\03.Armor%28아장슬롯%29</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

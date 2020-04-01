@@ -9,6 +9,7 @@
 #include "TestMonster.h"
 #include "Weapon.h"
 
+#include "Item_Manager.h"
 #include "UI_Manager.h"
 
 
@@ -60,7 +61,11 @@ _uint CLoading::Loading_ForStage(void)
 
 
 	// UI 생성
-	CUI_Manager::Get_Instance()->Add_UI_Prototype(m_pGraphicDev);
+	if (FAILED(CUI_Manager::Get_Instance()->Add_UI_Prototype(m_pGraphicDev)))
+		return E_FAIL;
+	// Item 매니저
+	if (FAILED(CItem_Manager::Get_Instance()->Add_Item_Prototype(m_pGraphicDev)))
+		return E_FAIL;
 
 	
 	//몬스터

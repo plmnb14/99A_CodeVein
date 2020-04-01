@@ -42,8 +42,7 @@ _int CInven_Icon::Update_GameObject(_double TimeDelta)
 	if (m_bIsDead)
 		return DEAD_OBJ;
 
-	//Click_Icon();
-
+	
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 0.1f);
@@ -64,8 +63,7 @@ _int CInven_Icon::Late_Update_GameObject(_double TimeDelta)
 	
 	
 	
-	Compute_ViewZ_UI(0.95f);
-
+	
 	return NO_EVENT;
 }
 
@@ -151,28 +149,7 @@ HRESULT CInven_Icon::SetUp_ConstantTable()
 	return NOERROR;
 }
 
-void CInven_Icon::Click_Icon()
-{
-	CGameObject* pInventory = nullptr;
 
-	if (g_pInput_Device->MousePt_InRect(m_fPosX, m_fPosY, m_fSizeX, m_fSizeY, g_hWnd) && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
-	{
-		switch (m_eIconType)
-		{
-		case ICON_STATUS:
-			CUI_Manager::Get_Instance()->Open_Status();
-			break;
-		case ICON_ITEM:
-			CUI_Manager::Get_Instance()->Open_Item();
-			break;
-		case ICON_SKILL:
-			CUI_Manager::Get_Instance()->Open_Skill();
-			break;
-		}
-
-	
-	}
-}
 
 _bool CInven_Icon::Coll_Mouse()
 {

@@ -16,15 +16,11 @@ HRESULT CConsume_Item::Ready_GameObject_Prototype()
 {
 	CItem::Ready_GameObject_Prototype();
 
-	
-
 	return NOERROR;
 }
 
 HRESULT CConsume_Item::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component()))
-		return E_FAIL;
 	CItem::Ready_GameObject(pArg);
 
 	m_eType = CItem::CONSUME;
@@ -36,28 +32,10 @@ _int CConsume_Item::Update_GameObject(_double TimeDelta)
 {
 	CItem::Update_GameObject(TimeDelta);
 
-	return _int();
-}
+	if (m_bIsDead)
+		return DEAD_OBJ;
 
-_int CConsume_Item::Late_Update_GameObject(_double TimeDelta)
-{
-	
-	return _int();
-}
-
-HRESULT CConsume_Item::Render_GameObject()
-{
-	return NOERROR;
-}
-
-HRESULT CConsume_Item::Add_Component()
-{
-	return NOERROR;
-}
-
-HRESULT CConsume_Item::SetUp_ConstantTable()
-{
-	return NOERROR;
+	return NO_EVENT;
 }
 
 CConsume_Item * CConsume_Item::Create(_Device pGraphic_Device)

@@ -4,7 +4,7 @@
 #include "UI.h"
 #include "Client_Defines.h"
 
-#include "ItemSlot.h"
+#include "Item_Slot.h"
 
 BEGIN(Client)
 
@@ -26,7 +26,6 @@ public:
 private:
 	HRESULT					Add_Component();
 	HRESULT					SetUp_ConstantTable();
-
 
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;

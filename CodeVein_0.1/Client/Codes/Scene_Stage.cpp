@@ -31,6 +31,7 @@ HRESULT CScene_Stage::Ready_Scene()
 	//m_pNavMesh->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Test.dat");
 
 
+
 	if (FAILED(CUI_Manager::Get_Instance()->SetUp_UILayer()))
 		return E_FAIL;
 	
@@ -40,15 +41,10 @@ HRESULT CScene_Stage::Ready_Scene()
 
 _int CScene_Stage::Update_Scene(_double TimeDelta)
 {
-	
-
 	// -------------- UI Manager ----------------------
-
 	CUI_Manager::Get_Instance()->Update_UI();
-	
-	
-	
 
+	
 	return _int();
 }
 
@@ -106,21 +102,15 @@ HRESULT CScene_Stage::Ready_Layer_BackGround(const _tchar * pLayerTag)
 	// 이미 오브젝트 매니져에 추가되어있는 객체를 찾아서 복제한다음. 
 	// 적절한 레이어에 보관해라.
 
-	CManagement*		pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
-
-	Safe_AddRef(pManagement);
-
+	
 	// For.Terrain
-	//if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_Terrain", SCENE_STAGE, pLayerTag)))
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Terrain", SCENE_STAGE, pLayerTag)))
 	//	return E_FAIL;
 
 	// For.Sky
-	//if (FAILED(pManagement->Add_GameObject_ToLayer(L"GameObject_Sky", SCENE_STAGE, pLayerTag)))
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Sky", SCENE_STAGE, pLayerTag)))
 	//	return E_FAIL;
 
-	Safe_Release(pManagement);
 
 	return S_OK;
 }
@@ -185,7 +175,7 @@ CScene_Stage * CScene_Stage::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 
 void CScene_Stage::Free()
 {
-	//Safe_Release(m_pNavMesh);
+	Safe_Release(m_pNavMesh);
 
 	CScene::Free();
 }

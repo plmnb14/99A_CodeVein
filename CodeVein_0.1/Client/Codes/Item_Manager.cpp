@@ -1,87 +1,144 @@
 #include "stdafx.h"
 #include "..\Headers\Item_Manager.h"
 
-#include "Consume_Item.h"
+
 
 IMPLEMENT_SINGLETON(CItem_Manager)
 
 CItem_Manager::CItem_Manager()
 {
+
 }
 
 
 CItem_Manager::~CItem_Manager()
 {
-}
-
-_uint CItem_Manager::Get_ItemCnt(CItem::ITEM_TYPE eType, _uint iItemNumber)
-{
-	if (0 == iItemNumber)
-		return 0;
-
-	_uint iItemCnt = 0;
-
-	switch (eType)
-	{
-	case CItem::CONSUME:
-		iItemCnt = _uint(m_ConsumeVec[iItemNumber].size());
-		break;
-	case CItem::MATERIAL:
-		iItemCnt = _uint(m_MaterialVec[iItemNumber].size());
-		break;
-	case CItem::ARMOR:
-		iItemCnt = _uint(m_ArmorVec[iItemNumber].size());
-		break;
-	case CItem::WEAPON:
-		iItemCnt = _uint(m_WeaponVec[iItemNumber].size());
-		break;
-	}
-
-	return _uint(iItemCnt);
+	Free();
 }
 
 
-HRESULT CItem_Manager::Ready_Item_Prototype(_Device pDevice)
+CWeapon::WEAPON_DATA CItem_Manager::Get_WeaponData(_uint iIndex)
 {
-	g_pManagement->Add_Prototype(L"GameObject_Consume_Item", CConsume_Item::Create(pDevice));
+	if (iIndex >= m_vecWeaponData.size())
+		return CWeapon::WPN_DATA_End;
+
+	return m_vecWeaponData[iIndex];
+}
+
+HRESULT CItem_Manager::Add_Item_Prototype(_Device pDevice)
+{
+	g_pManagement->Add_Prototype(L"GameObject_Expendables", CExpendables::Create(pDevice));
+	g_pManagement->Add_Prototype(L"GameObject_Material", CMaterial::Create(pDevice));
+
+	
 
 	return NOERROR;
 }
 
-void CItem_Manager::Add_ConsumeItem(_uint iItemNum)
+
+void CItem_Manager::Add_Expendables(CExpendables::EXPEND_TYPE eType)
 {
-	if (0 == iItemNum)
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_Expendables", SCENE_STAGE, L"Layer_Expendables");
+	CExpendables* pExpendables = static_cast<CExpendables*>(g_pManagement->Get_GameObjectBack(L"Layer_Expendables", SCENE_STAGE));
+	pExpendables->Set_Type(eType);
+	m_vecExpendables.push_back(pExpendables);
+}
+
+void CItem_Manager::Add_QuickSlot(CExpendables_Slot* pExpendSlot)
+{
+	m_vecQuickSlot.push_back(pExpendSlot);
+}
+
+void CItem_Manager::Delete_QuickSlot(CExpendables_Slot* pExpendSlot)
+{
+	for (_uint i = 0; i < m_vecQuickSlot.size(); ++i)
+	{
+		if (m_vecQuickSlot[i]->Get_Type() == pExpendSlot->Get_Type() &&
+			m_vecQuickSlot[i]->Get_Size() == pExpendSlot->Get_Size())
+			m_vecQuickSlot.erase(m_vecQuickSlot.begin() + i);
+	}
+
+}
+
+void CItem_Manager::Delete_Expendable(CExpendables::EXPEND_TYPE eType)
+{
+	for (_uint i = 0; i < m_vecExpendables.size(); ++i)
+	{
+		if (m_vecExpendables[i]->Get_Type() == eType)
+		{
+			m_vecExpendables.erase(m_vecExpendables.begin() + i);
+			break;
+		}
+	}
+}
+
+void CItem_Manager::Delete_Expendables(CExpendables_Slot* pExpendSlot, _uint iDeletCnt)
+{
+	if (iDeletCnt > pExpendSlot->Get_Size())
 		return;
 
-	CItem* pConsume_Item = static_cast<CItem*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Consume_Item", nullptr));
-	pConsume_Item->Set_ItemNumber(iItemNum);
-	m_ConsumeVec[iItemNum].push_back(pConsume_Item);
+	for (_uint i = 0; i < iDeletCnt; ++i)
+	{
+		Delete_Expendable(CExpendables::EXPEND_TYPE(pExpendSlot->Get_Type()));
+		pExpendSlot->Delete_Item();
+	}
 }
 
-void CItem_Manager::Add_MaterialItem(_uint iItemNum)
+void CItem_Manager::Add_Material(CMaterial::MATERIAL_TYPE eType)
 {
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_Material", SCENE_STAGE, L"Layer_Material");
+	CMaterial* pMaterial = static_cast<CMaterial*>(g_pManagement->Get_GameObjectBack(L"Layer_Material", SCENE_STAGE));
+	pMaterial->Set_Type(eType);
+	m_vecMaterial.push_back(pMaterial);
 }
 
+void CItem_Manager::Delete_Material(CMaterial::MATERIAL_TYPE eType)
+{
+	for (_uint i = 0; i < m_vecMaterial.size(); ++i)
+	{
+		if (m_vecMaterial[i]->Get_Type() == eType)
+		{
+			m_vecMaterial.erase(m_vecMaterial.begin() + i);
+			break;
+		}
+	}
+}
 
+void CItem_Manager::Delete_Materials(CMaterial_Slot * pMaterialSlot, _uint iDeleteCnt)
+{
+	if (iDeleteCnt > pMaterialSlot->Get_Size())
+		return;
 
+	for (_uint i = 0; i < iDeleteCnt; ++i)
+	{
+		Delete_Material(CMaterial::MATERIAL_TYPE(pMaterialSlot->Get_Type()));
+		pMaterialSlot->Delete_Item();
+		
+	}
+}
+
+void CItem_Manager::Add_WeaponData(CWeapon::WEAPON_DATA WeaponData)
+{
+	if (m_vecWeaponData.size() == 2)
+		return;
+	
+	m_vecWeaponData.push_back(WeaponData);
+}
+
+void CItem_Manager::Delete_WeaponData(CWeapon::WEAPON_DATA WeaponData)
+{
+	for (_uint i = 0; i < m_vecWeaponData.size(); ++i)
+	{
+		if (m_vecWeaponData[i] == WeaponData)
+		{
+			m_vecWeaponData.erase(m_vecWeaponData.begin() + i);
+			break;
+		}
+	}
+}
 
 
 void CItem_Manager::Free()
 {
-	LOOP(16)
-	{
-		for_each(m_ConsumeVec[i].begin(), m_ConsumeVec[i].end(), Safe_Release<CItem*>);
-	}
-	LOOP(16)
-	{
-		for_each(m_MaterialVec[i].begin(), m_MaterialVec[i].end(), Safe_Release<CItem*>);
-	}
-	LOOP(16)
-	{
-		for_each(m_ArmorVec[i].begin(), m_ArmorVec[i].end(), Safe_Release<CItem*>);
-	}
-	LOOP(16)
-	{
-		for_each(m_WeaponVec[i].begin(), m_WeaponVec[i].end(), Safe_Release<CItem*>);
-	}
 }
+

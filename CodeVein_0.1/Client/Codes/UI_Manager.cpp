@@ -1,6 +1,34 @@
 #include "stdafx.h"
 #include "..\Headers\UI_Manager.h"
 
+#include "Button_UI.h"
+#include "HPBack.h"
+#include "PlayerHP.h"
+#include "PlayerST.h"
+#include "BossDecoUI.h"
+#include "BossHP.h"
+
+#include "QuickSlot.h"
+#include "Inven_Icon.h"
+#include "ItemIcon.h"
+
+/////////////////
+#include "Inventory.h"
+#include "Inven_Icon.h"
+#include "ItemIcon.h"
+
+
+//////////////////
+#include "Expendables_Inven.h"
+#include "Expendables_Slot.h"
+#include "Select_UI.h"
+#include "Material_Inven.h"
+#include "Material_Slot.h"
+#include "Weapon_Slot.h"
+#include "Weapon_Inven.h"
+/////////////////
+#include "MiniMap.h"
+
 IMPLEMENT_SINGLETON(CUI_Manager)
 
 CUI_Manager::CUI_Manager()
@@ -24,69 +52,99 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BossHP", CBossHP::Create(pDevice))))
 		return E_FAIL;
-
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ButtonUI", CButton_UI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_QuickSlot", CQuickSlot::Create(pDevice))))
+		return E_FAIL;
 	////////////////////////////////////////////////////////////////////////////////////////////
 
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Inventory", CInventory::Create(pDevice))))
-		return E_FAIL;
+	
 
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_InvenIcon", CInven_Icon::Create(pDevice))))
 		return E_FAIL;
 
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_InvenStatus", CInven_Status::Create(pDevice))))
+	//////////////////////////////////////////////////////////
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MiniMap", CMiniMap::Create(pDevice))))
 		return E_FAIL;
 
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_InvenItem", CInven_Item::Create(pDevice))))
-		return E_FAIL;
-
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_InvenSkill", CInven_Skill::Create(pDevice))))
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ItemIcon", CItemIcon::Create(pDevice))))
 		return E_FAIL;
 	//////////////////////////////////////////////////////////
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SelectUI", CSelect_UI::Create(pDevice))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ExpendSlot", CExpendables_Slot::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ExpendablesInven", CExpendables_Inven::Create(pDevice))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MaterialSlot", CMaterial_Slot::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MaterialInven", CMaterial_Inven::Create(pDevice))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_WeaponSlot", CWeapon_Slot::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_WeaponInven", CWeapon_Inven::Create(pDevice))))
+		return E_FAIL;
 
 	return NOERROR;
 }
 
 HRESULT CUI_Manager::SetUp_UILayer()
 {
-
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_QuickSlot", SCENE_STAGE, L"Layer_QuickSlot");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ExpendablesInven", SCENE_STAGE, L"Layer_ExpendablesInven");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_MaterialInven", SCENE_STAGE, L"Layer_MaterialInven");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_WeaponInven", SCENE_STAGE, L"Layer_WeaponInven");
 	return NOERROR;
 }
 
 _int CUI_Manager::Update_UI()
 {
-	if (g_pInput_Device->Key_Up(DIK_ESCAPE))
+	/*if (g_pInput_Device->Key_Up(DIK_1))
 	{
-		g_pManagement->Add_GameObject_ToLayer(L"GameObject_Inventory", SCENE_STAGE, L"Layer_Inventory");
-	}
+		m_bIsOpenEx = !m_bIsOpenEx;
 
+		if (m_bIsOpenEx)
+		{
+			g_pManagement->Add_GameObject_ToLayer(L"GameObject_ExpendablesInven", SCENE_STAGE, L"Layer_ExpendablesInven");
+		}
+		else
+		{
+			static_cast<CExpendables_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendablesInven", SCENE_STAGE))->Set_Dead();
+		}
+	}
+	if (g_pInput_Device->Key_Up(DIK_2))
+	{
+		m_bIsOpenMat = !m_bIsOpenMat;
+
+		if (m_bIsOpenMat)
+		{
+			g_pManagement->Add_GameObject_ToLayer(L"GameObject_MaterialInven", SCENE_STAGE, L"Layer_MaterialInven");
+		}
+		else
+		{
+			static_cast<CMaterial_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_MaterialInven", SCENE_STAGE))->Set_Dead();
+		}
+	}
+	if (g_pInput_Device->Key_Up(DIK_3))
+	{
+		m_bIsOpenWea = !m_bIsOpenWea;
+
+		if (m_bIsOpenWea)
+		{
+			g_pManagement->Add_GameObject_ToLayer(L"GameObject_WeaponInven", SCENE_STAGE, L"Layer_WeaponInven");
+		}
+		else
+		{
+			static_cast<CWeapon_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponInven", SCENE_STAGE))->Set_Dead();
+		}
+	}
+*/
+	
 	return 0;
 }
-
-void CUI_Manager::Open_Inventory()
-{
-	m_eInvenState = INVEN_BASE;
-
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_Inventory", SCENE_STAGE, L"Layer_Inventory");
-}
-
-
-void CUI_Manager::Open_Status()
-{
-
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_InvenStatus", SCENE_STAGE, L"Layer_InvenStatus");
-}
-
-void CUI_Manager::Open_Item()
-{
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_InvenItem", SCENE_STAGE, L"Layer_InvenItem");
-}
-
-void CUI_Manager::Open_Skill()
-{
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_InvenSkill", SCENE_STAGE, L"Layer_InvenSkill");
-}
-
-
 
 void CUI_Manager::Free()
 {

@@ -13,10 +13,23 @@ public:
 	{
 		CONSUME,	// 소비 아이템
 		MATERIAL,	// 재료 아이템
-		ARMOR,		// 아장
-		WEAPON,		// 무기
-		ITEM_END
+		TYPE_END
 	};
+	enum ITEM_ID
+	{
+		ID_NONE,
+		CONS_HP,
+		CONS_SP,
+		MAT_1,
+		MAT_2,
+		MAT_3,
+		ID_END
+	};
+	typedef struct tagItemInfo
+	{
+		ITEM_TYPE	eType;
+		ITEM_ID		eID;
+	}ITEM_INFO;
 
 protected:
 	explicit CItem(_Device pGraphic_Device);
@@ -24,25 +37,25 @@ protected:
 	virtual ~CItem() = default;
 
 public:
-	ITEM_TYPE Get_Type() { return m_eType; }
-	_uint		Get_ItemNumber() { return m_iItemNumber; }
+	ITEM_TYPE	Get_ItemType() { return m_eType; }
+	ITEM_ID		Get_ItemID() { return m_eID; }
 
 public:
-	void Set_ItemNumber(_uint iNum) { m_iItemNumber = iNum; }
+	ITEM_TYPE Get_Type() { return m_eType; }
 
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();
 	virtual HRESULT			Ready_GameObject(void* pArg);
 	virtual _int			Update_GameObject(_double TimeDelta);
-	virtual _int			Late_Update_GameObject(_double TimeDelta);
-	virtual HRESULT			Render_GameObject();
 
 protected:
+	ITEM_INFO*				m_pInfo = nullptr;
 	ITEM_TYPE				m_eType;
-	_uint					m_iItemNumber = 0; // 아이템 식별번호
+	ITEM_ID					m_eID;
 
 public:
-	virtual CGameObject*	Clone_GameObject(void* pArg) = 0;
+	static CItem*			Create(_Device pGraphic_Device);
+	virtual CGameObject*	Clone_GameObject(void* pArg);
 	virtual void			Free();
 };
 
