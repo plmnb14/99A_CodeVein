@@ -22,12 +22,12 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	if (FAILED(Add_Component(pArg)))
 		return E_FAIL;
 
-	m_pTransformCom->Set_Pos(_v3(1.f, 0.f, 1.f));
+	m_pTransformCom->Set_Pos(_v3(-3.f, 0.f, -3.f));
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 
 	CBlackBoard* pBlackBoard = CBlackBoard::Create();
-	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create();
+	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create(true);
 
 	m_pAIControllerCom->Set_BeHaviorTree(pBehaviorTree);
 	m_pAIControllerCom->Set_BlackBoard(pBlackBoard);
@@ -61,43 +61,45 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 
 	//Start_Sel->Add_Child(Start_Show());
 
-	CBT_RotationDir* TurnDir0 = Node_RotationDir("Look 회전", L"Player_Pos", 4);
+
+	///////////보여주기용
+
+	CBT_RotationDir* TurnDir0 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
 	Start_Sel->Add_Child(TurnDir0);
 
 	Start_Sel->Add_Child(Shot());
 
-	CBT_RotationDir* TurnDir1 = Node_RotationDir("Look 회전", L"Player_Pos", 4);
+	CBT_RotationDir* TurnDir1 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
 	Start_Sel->Add_Child(TurnDir1);
 
 	Start_Sel->Add_Child(Tumbling_Shot());
 
-	CBT_RotationDir* TurnDir2 = Node_RotationDir("Look 회전", L"Player_Pos", 4);
+	CBT_RotationDir* TurnDir2 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
 	Start_Sel->Add_Child(TurnDir2);
 
 	Start_Sel->Add_Child(Sudden_Shot());
 
-	CBT_RotationDir* TurnDir3 = Node_RotationDir("Look 회전", L"Player_Pos", 4);
+	CBT_RotationDir* TurnDir3 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
 	Start_Sel->Add_Child(TurnDir3);
 
 	Start_Sel->Add_Child(Upper_Slash());
 
-	CBT_RotationDir* TurnDir4 = Node_RotationDir("Look 회전", L"Player_Pos", 4);
+	CBT_RotationDir* TurnDir4 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
 	Start_Sel->Add_Child(TurnDir4);
 
 	Start_Sel->Add_Child(Arm_Attack());
 
-	CBT_RotationDir* TurnDir5 = Node_RotationDir("Look 회전", L"Player_Pos", 4);
+	CBT_RotationDir* TurnDir5 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
 	Start_Sel->Add_Child(TurnDir5);
 
 	Start_Sel->Add_Child(Sting_Attack());
 
-	CBT_RotationDir* TurnDir6 = Node_RotationDir("Look 회전", L"Player_Pos", 4);
+	CBT_RotationDir* TurnDir6 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
 	Start_Sel->Add_Child(TurnDir6);
 
 	Start_Sel->Add_Child(Cut_To_Right());
 
-	CBT_RotationDir* TurnDir7 = Node_RotationDir("Look 회전", L"Player_Pos", 4);
-	Start_Sel->Add_Child(TurnDir7);
+	////////////////////////
 
 
 	////방패 벗겨짐

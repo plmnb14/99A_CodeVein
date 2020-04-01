@@ -77,6 +77,8 @@ HRESULT CBT_Node_Manager::Ready_BT_Node()
 		return E_FAIL;
 	if (FAILED(Add_Prototype_Node(L"MoveDirectly", CBT_MoveDirectly::Create_Prototype(), CBT_Node_Manager::TASK)))
 		return E_FAIL;
+	if (FAILED(Add_Prototype_Node(L"MoveDir", CBT_MoveDir::Create_Prototype(), CBT_Node_Manager::TASK)))
+		return E_FAIL;
 	if (FAILED(Add_Prototype_Node(L"RotationDir", CBT_RotationDir::Create_Prototype(), CBT_Node_Manager::TASK)))
 		return E_FAIL;
 	if (FAILED(Add_Prototype_Node(L"Play_Ani", CBT_Play_Ani::Create_Prototype(), CBT_Node_Manager::TASK)))

@@ -205,6 +205,7 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\BT_Decorator_Node.h" />
     <ClInclude Include="..\Headers\BT_Inverter.h" />
     <ClInclude Include="..\Headers\BT_Loop.h" />
+    <ClInclude Include="..\Headers\BT_MoveDir.h" />
     <ClInclude Include="..\Headers\BT_MoveDirectly.h" />
     <ClInclude Include="..\Headers\BT_MoveTo.h" />
     <ClInclude Include="..\Headers\BT_Node.h" />
@@ -297,6 +298,7 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\BT_Decorator_Node.cpp" />
     <ClCompile Include="..\Codes\BT_Inverter.cpp" />
     <ClCompile Include="..\Codes\BT_Loop.cpp" />
+    <ClCompile Include="..\Codes\BT_MoveDir.cpp" />
     <ClCompile Include="..\Codes\BT_MoveDirectly.cpp" />
     <ClCompile Include="..\Codes\BT_MoveTo.cpp" />
     <ClCompile Include="..\Codes\BT_Node.cpp" />

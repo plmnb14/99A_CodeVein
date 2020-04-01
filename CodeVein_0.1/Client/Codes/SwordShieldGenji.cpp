@@ -22,12 +22,12 @@ HRESULT CSwordShieldGenji::Ready_GameObject(void * pArg)
 	if (FAILED(Add_Component(pArg)))
 		return E_FAIL;
 
-	m_pTransformCom->Set_Pos(_v3(1.f, 0.f, 1.f));
+	m_pTransformCom->Set_Pos(_v3(3.f, 0.f, 3.f));
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 
 	CBlackBoard* pBlackBoard = CBlackBoard::Create();
-	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create();
+	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create(true);
 
 	m_pAIControllerCom->Set_BeHaviorTree(pBehaviorTree);
 	m_pAIControllerCom->Set_BlackBoard(pBlackBoard);
@@ -60,32 +60,32 @@ HRESULT CSwordShieldGenji::Ready_GameObject(void * pArg)
 
 	Start_Sel->Add_Child(ShortDelay_Sting());
 
-	CBT_RotationDir* TurnDir0 = Node_RotationDir("Look 회전", L"Player_Pos", 4);
+	CBT_RotationDir* TurnDir0 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
 	Start_Sel->Add_Child(TurnDir0);
 
 	Start_Sel->Add_Child(Upper_Slash());
 
-	CBT_RotationDir* TurnDir1 = Node_RotationDir("Look 회전", L"Player_Pos", 4);
+	CBT_RotationDir* TurnDir1 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
 	Start_Sel->Add_Child(TurnDir1);
 
 	Start_Sel->Add_Child(LongDelay_Sting());
 
-	CBT_RotationDir* TurnDir2 = Node_RotationDir("Look 회전", L"Player_Pos", 4);
+	CBT_RotationDir* TurnDir2 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
 	Start_Sel->Add_Child(TurnDir2);
 
 	Start_Sel->Add_Child(Shield_Attack());
 
-	CBT_RotationDir* TurnDir3 = Node_RotationDir("Look 회전", L"Player_Pos", 4);
+	CBT_RotationDir* TurnDir3 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
 	Start_Sel->Add_Child(TurnDir3);
 
 	Start_Sel->Add_Child(Turning_Cut());
 
-	CBT_RotationDir* TurnDir4 = Node_RotationDir("Look 회전", L"Player_Pos", 4);
+	CBT_RotationDir* TurnDir4 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
 	Start_Sel->Add_Child(TurnDir4);
 
 	Start_Sel->Add_Child(ShortDelay_Sting());
 
-	CBT_RotationDir* TurnDir5 = Node_RotationDir("Look 회전", L"Player_Pos", 4);
+	CBT_RotationDir* TurnDir5 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
 	Start_Sel->Add_Child(TurnDir5);
 
 	Start_Sel->Add_Child(Guard(3));
