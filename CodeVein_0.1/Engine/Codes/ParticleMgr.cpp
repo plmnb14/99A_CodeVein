@@ -58,6 +58,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Hit_Blood_0", 50);
 	Input_Pool(L"Hit_Blood_1", 50);
 	Input_Pool(L"Hit_Blood_2", 50);
+	Input_Pool(L"Hit_Blood_3", 50);
 	Input_Pool(L"Hit_BloodMist_0", 50);
 	Input_Pool(L"Hit_BloodMist_1", 50);
 	Input_Pool(L"Hit_BloodParticle_0", 50);

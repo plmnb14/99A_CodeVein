@@ -232,6 +232,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Hit_Blood_2")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Blood_3")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Hit_BloodMist_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Hit_BloodMist_1")))

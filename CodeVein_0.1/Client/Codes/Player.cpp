@@ -2138,7 +2138,7 @@ void CPlayer::Check_Dissolve(_double TimeDelta)
 		//g_pManagement->Add_GameOject_ToLayer_NoClone(pEffect, SCENE_STAGE, L"Layer_Effect", nullptr);
 		//g_pManagement->Create_Effect(L"Hit_SlashLine_0", vPos);
 		
-		//cout << "Angle  : " << vAngle.z << endl;
+		Create_AttackEffect();
 	}
 
 
@@ -2167,22 +2167,29 @@ void CPlayer::Check_Dissolve(_double TimeDelta)
 void CPlayer::Create_AttackEffect()
 {
 	_v3 vPos = m_pTransform->Get_Pos();
-	vPos.y += 1.5f;
+	vPos.y += 1.f;
 
-	g_pManagement->Add_GameObject_ToLayer(L"Hit_SlashLine_0", SCENE_STAGE, L"Layer_Effect", nullptr);
-	CEffect* pEffect = static_cast<CEffect*>(g_pManagement->Get_GameObjectBack(L"Layer_Effect", SCENE_STAGE));
-	_v3 vAngle = m_pTransform->Get_Angle();
-	vAngle += _v3(0, 0, _float(CCalculater::Random_Num(0, 360)));
-	pEffect->Set_Angle(vAngle);
+	//g_pManagement->Add_GameObject_ToLayer(L"Hit_SlashLine_0", SCENE_STAGE, L"Layer_Effect", nullptr);
+	//CEffect* pEffect = static_cast<CEffect*>(g_pManagement->Get_GameObjectBack(L"Layer_Effect", SCENE_STAGE));
+	//_v3 vAngle = m_pTransform->Get_Angle();
+	//vAngle += _v3(0, 0, _float(CCalculater::Random_Num(0, 360)));
+	//pEffect->Set_Angle(vAngle);
 
 	_mat matRotY;
-	_v3 vDir = V3_NULL;
-	D3DXMatrixIdentity(&matRotY);
-	D3DXMatrixRotationY(&matRotY, D3DXToRadian(m_pTransform->Get_Angle().y));
-	D3DXVec3TransformNormal(&vDir, &vDir, &matRotY);
-	D3DXVec3Normalize(&vDir, &vDir);
+	_v3 vDir = m_pTransform->Get_Axis(AXIS_Z);
+	vPos = vPos + vDir * 2.2f;
+	//pEffect->Set_Desc(vPos);
 
-	pEffect->Set_Desc(vPos + vDir * 2.2f);
+	g_pManagement->Create_Effect(L"Hit_Blood_0", vPos);
+	g_pManagement->Create_Effect(L"Hit_Blood_1", vPos);
+	g_pManagement->Create_Effect(L"Hit_Blood_2", vPos);
+	g_pManagement->Create_Effect(L"Hit_Blood_3", vPos);
+
+	g_pManagement->Create_Effect(L"Hit_BloodParticle_0", vPos);
+	g_pManagement->Create_Effect(L"Hit_BloodParticle_1", vPos);
+	g_pManagement->Create_Effect(L"Hit_BloodParticle_2", vPos);
+	g_pManagement->Create_Effect(L"Hit_BloodParticle_3", vPos);
+
 }
 
 HRESULT CPlayer::Add_Component()
