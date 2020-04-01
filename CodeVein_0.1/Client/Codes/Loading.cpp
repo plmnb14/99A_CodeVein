@@ -151,9 +151,9 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"ButterFly_PointParticle")))
 		return E_FAIL;
-	if (FAILED(Add_EffectPrototype(L"ButterFly_RingLine")))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_RingLine", true)))
 		return E_FAIL;
-	if (FAILED(Add_EffectPrototype(L"ButterFly_RingLine_Distortion")))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_RingLine_Distortion", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"ButterFly_Distortion")))
 		return E_FAIL;
@@ -260,14 +260,23 @@ HRESULT CLoading::Ready_Effect(void)
 	return S_OK;
 }
 
-HRESULT CLoading::Add_EffectPrototype(const _tchar* szName)
+HRESULT CLoading::Add_EffectPrototype(const _tchar* szName, _bool bIsMesh)
 {
 	_tchar szBuff[256] = L"../../Data/EffectData/";
 	lstrcat(szBuff, szName);
 	lstrcat(szBuff, L".dat");
 
-	if (FAILED(g_pManagement->Add_Prototype(szName, CTexEffect::Create(m_pGraphicDev, Read_EffectData(szBuff)))))
-		return E_FAIL;
+	if (!bIsMesh)
+	{
+		if (FAILED(g_pManagement->Add_Prototype(szName, CTexEffect::Create(m_pGraphicDev, Read_EffectData(szBuff)))))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(g_pManagement->Add_Prototype(szName, CMeshEffect::Create(m_pGraphicDev, Read_EffectData(szBuff)))))
+			return E_FAIL;
+	}
+	
 
 	return S_OK;
 }
