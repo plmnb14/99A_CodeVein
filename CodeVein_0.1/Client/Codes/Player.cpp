@@ -3658,8 +3658,8 @@ HRESULT CPlayer::SetUp_Default()
 	ZeroMemory(&m_tInfo, sizeof(ACTOR_INFO));
 
 	// Transform
-	//m_pTransform->Set_Pos(_v3(-0.487f, 0.f, 23.497f));
-	m_pTransform->Set_Pos(_v3(0.f, 0.f, 0.f));
+	m_pTransform->Set_Pos(_v3(150.484f, -18.08f, 70.417f));
+	//m_pTransform->Set_Pos(_v3(0.f, 0.f, 0.f));
 	m_pTransform->Set_Scale(V3_ONE);
 
 	// Mesh
@@ -3683,7 +3683,7 @@ HRESULT CPlayer::SetUp_Default()
 	m_fAnimMutiply = 1.f;
 
 	// Navi
-	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_StageBase.dat");
+	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
 	m_pNavMesh->Set_SubsetIndex(0);
 	//m_pNavMesh->Set_Index(14);
 

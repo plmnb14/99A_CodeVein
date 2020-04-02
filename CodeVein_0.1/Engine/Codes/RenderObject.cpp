@@ -114,7 +114,7 @@ HRESULT CRenderObject::Add_Essentional()
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Collider", (CComponent**)&m_pCollider)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
 
 	lstrcpy(m_szName, L"Mesh_DefaultBox");
@@ -141,7 +141,7 @@ HRESULT CRenderObject::Add_Essentional_Copy()
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Collider", (CComponent**)&m_pCollider)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
 
 	return S_OK;

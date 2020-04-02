@@ -54,7 +54,12 @@ _int CActiveObject::Update_GameObject(_double _TimeDelta)
 				//	cout << "상호작용 가능" << endl;
 			}
 			if (pManagement->Get_DIKeyState(DIK_E))
+			{
+				if (m_bCheck_Mistletoe == false)
+					cout << "겻우살이 활성화" << endl;
+
 				m_bCheck_Mistletoe = true;
+			}
 		}
 		break;
 	}
@@ -151,7 +156,7 @@ void CActiveObject::Chaning_AtvMesh(const _tchar* _MeshName)
 
 	lstrcpy(m_szAciveName, _MeshName);
 
-	auto& iter = m_pmapComponents.find(L"Mesh");
+	auto& iter = m_pmapComponents.find(L"Com_StaticMesh");
 
 	Safe_Release(m_pMesh_Static);
 	Safe_Release(iter->second);
@@ -166,23 +171,23 @@ void CActiveObject::Chaning_AtvMesh(const _tchar* _MeshName)
 HRESULT CActiveObject::Add_Essentional_Copy()
 {
 	// For.Com_Transform
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Transform", (CComponent**)&m_pTransform)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransform)))
 		return E_FAIL;
 
 	// For.Com_Renderer
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Renderer", (CComponent**)&m_pRenderer)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRenderer)))
 		return E_FAIL;
 
 	// For.Com_Shader
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Shader", (CComponent**)&m_pShader)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShader)))
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, m_szAciveName, L"Mesh", (CComponent**)&m_pMesh_Static)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, m_szAciveName, L"Com_StaticMesh", (CComponent**)&m_pMesh_Static)))
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Collider", (CComponent**)&m_pCollider)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
 
 	return S_OK;
@@ -199,23 +204,23 @@ HRESULT CActiveObject::Default_Setting()
 HRESULT CActiveObject::Initialize()
 {
 	// For.Com_Transform
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Transform", (CComponent**)&m_pTransform)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransform)))
 		return E_FAIL;
 
 	// For.Com_Renderer
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Renderer", (CComponent**)&m_pRenderer)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRenderer)))
 		return E_FAIL;
 
 	// For.Com_Shader
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Shader", (CComponent**)&m_pShader)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShader)))
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_DefaultBox", L"Mesh", (CComponent**)&m_pMesh_Static)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_DefaultBox", L"Com_StaticMesh", (CComponent**)&m_pMesh_Static)))
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Collider", (CComponent**)&m_pCollider)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
 
 	lstrcpy(m_szAciveName, L"Mesh_DefaultBox");
