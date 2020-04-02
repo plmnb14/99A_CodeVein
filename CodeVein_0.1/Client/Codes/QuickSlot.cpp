@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "..\Headers\QuickSlot.h"
 
-#include "Item.h"
+#include "Expendables_Inven.h"
+
 
 CQuickSlot::CQuickSlot(_Device pDevice)
 	: CUI(pDevice)
@@ -28,6 +29,11 @@ HRESULT CQuickSlot::Ready_GameObject(void * pArg)
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
+	m_fPosX = 120.f;
+	m_fPosY = 630.f;
+	m_fSizeX = 50.f;
+	m_fSizeY = 50.f;
+
 	return NOERROR;
 }
 
@@ -39,9 +45,35 @@ _int CQuickSlot::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
-	if(m_vecItem.size() > 0)
-		m_iIndex = m_vecItem.front()->Get_ItemID();
 
+	
+
+	if (m_vecQuickSlot.size() > m_iSelect)
+		m_iIndex = m_vecQuickSlot[m_iSelect]->Get_Type();
+	else m_iIndex = CExpendables::EXPEND_END;
+
+	
+
+	m_vecQuickSlot = *static_cast<CExpendables_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendablesInven", SCENE_STAGE))->Get_QuickSlot();
+
+	if(m_vecQuickSlot.size() > 0)
+		cout << m_vecQuickSlot[0]->Get_Type() << endl;
+	
+	if (g_pInput_Device->Key_Up(DIK_ADD))
+	{
+		if (m_iSelect >= m_vecQuickSlot.size() - 1)
+			m_iSelect = 0;
+		else
+			++m_iSelect;
+
+	}
+	if (g_pInput_Device->Key_Up(DIK_SUBTRACT))
+	{
+		if (m_iSelect > 0)
+			--m_iSelect;
+		else
+			m_iSelect = m_vecQuickSlot.size() - 1;
+	}
 	return NO_EVENT;
 }
 
@@ -56,7 +88,7 @@ _int CQuickSlot::Late_Update_GameObject(_double TimeDelta)
 	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
 	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;
 
-	m_fViewZ = 0.5f;
+
 	return NO_EVENT;
 }
 
@@ -107,7 +139,7 @@ HRESULT CQuickSlot::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Consume_Item", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Expendables", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -140,13 +172,6 @@ HRESULT CQuickSlot::SetUp_ConstantTable()
 	return NOERROR;
 }
 
-void CQuickSlot::Add_Item(CItem * pItem)
-{
-	if (nullptr == pItem)
-		return;
-
-	m_vecItem.push_back(pItem);
-}
 
 CQuickSlot * CQuickSlot::Create(_Device pGraphic_Device)
 {
@@ -184,3 +209,4 @@ void CQuickSlot::Free()
 
 	CUI::Free();
 }
+

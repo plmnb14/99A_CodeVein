@@ -44,6 +44,12 @@ private:	//패턴들
 
 	// 방패들고 걷기	플레이어와 거리 계산 후 걷는다.
 
+	CBT_Composite_Node*		Start_Game();
+
+	CBT_Composite_Node*		ChaseAndNearAttack();
+	CBT_Composite_Node*		Chase();
+	CBT_Composite_Node*		NearAttack();	// 랜덤 근접 공격
+
 
 
 private:

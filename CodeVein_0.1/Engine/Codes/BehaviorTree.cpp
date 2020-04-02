@@ -12,6 +12,18 @@ HRESULT CBehaviorTree::Set_Child(CBT_Node* pNode)
 	return S_OK;
 }
 
+void CBehaviorTree::Reset_BT()
+{
+	if (m_pNodeStack.empty())
+		return;
+
+	for (size_t iNode = m_pNodeStack.size() - 1; iNode > 0; --iNode)
+	{
+		m_pNodeStack[iNode]->End_Node(&m_pNodeStack, &m_plistNodeStack, CBT_Node::BT_NODE_STATE::FAILED, false);
+	}
+	m_pNodeStack[0]->End_Node(&m_pNodeStack, &m_plistNodeStack, CBT_Node::BT_NODE_STATE::FAILED, false);
+}
+
 
 void CBehaviorTree::Update_BeHaviorTree(_double TimeDelta, CBlackBoard* pBlackBoard)
 {
@@ -39,6 +51,7 @@ void CBehaviorTree::Update_BeHaviorTree(_double TimeDelta, CBlackBoard* pBlackBo
 			}
 		}
 	}
+
 }
 
 HRESULT CBehaviorTree::Ready_BehaviorTree(_bool bDebuging)

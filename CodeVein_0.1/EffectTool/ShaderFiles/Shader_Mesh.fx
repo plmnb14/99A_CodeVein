@@ -2,7 +2,11 @@
 
 matrix		g_matWorld, g_matView, g_matProj, g_matLastWVP;// , g_matInvVP, g_matLastVP;
 float		g_fFxAlpha;
+
 texture		g_DiffuseTexture;
+texture		g_NormalTexture;
+texture		g_SpecularTexture;
+texture		g_EmissiveTexture;
 
 sampler		DiffuseSampler = sampler_state
 {
@@ -10,6 +14,27 @@ sampler		DiffuseSampler = sampler_state
 	minfilter = linear;
 	magfilter = linear;
 	mipfilter = linear;
+};
+
+sampler		NormalSampler = sampler_state
+{
+	texture = g_NormalTexture;
+	minfilter = linear;
+	magfilter = linear;
+	mipfilter = linear;
+};
+
+sampler		SpecularSampler = sampler_state
+{
+	texture = g_SpecularTexture;
+	minfilter = linear;
+	magfilter = linear;
+	mipfilter = linear;
+};
+
+sampler		EmissiveSampler = sampler_state
+{
+	texture = g_EmissiveTexture;
 };
 
 texture		g_FXTexture;
@@ -23,15 +48,19 @@ sampler		FXSampler = sampler_state
 
 struct VS_IN
 {
-	float3		vPosition : POSITION;
-	float3		vNormal : NORMAL;
-	float2		vTexUV : TEXCOORD0;
+	float3		vPosition	: POSITION;
+	float3		vNormal	: NORMAL;
+	float3		vTangent	: TANGENT;
+	float3		vBinormal	: BINORMAL;
+	float2		vTexUV		: TEXCOORD0;
 };
 
 struct VS_OUT
 {
 	float4		vPosition : POSITION;
-	float4		vNormal : NORMAL;
+	float3		N	: NORMAL;
+	float3		T	: TANGENT;
+	float3		B	: BINORMAL;
 	float2		vTexUV : TEXCOORD0;
 	float4		vProjPos : TEXCOORD1;
 	float4		vLocalPos : TEXCOORD2;
@@ -58,9 +87,11 @@ VS_OUT VS_MAIN(VS_IN In)
 	matWV = mul(g_matWorld, g_matView);
 	matWVP = mul(matWV, g_matProj);
 
+	Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);	
+	Out.N = normalize(mul(In.vNormal, (float3x3)g_matWorld));
+	Out.T = normalize(mul(In.vTangent, (float3x3)g_matWorld));
+	Out.B = normalize(mul(In.vBinormal, (float3x3)g_matWorld));
 
-	Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
-	Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), g_matWorld));
 	Out.vTexUV = In.vTexUV;
 
 	Out.vProjPos = Out.vPosition;
@@ -103,10 +134,12 @@ VS_BLUROUT VS_MOTIONBLUR(VS_IN In)
 
 struct PS_IN
 {
-	float4		vPosition : POSITION;
-	float4		vNormal : NORMAL;
-	float2		vTexUV : TEXCOORD0;
-	float4		vProjPos : TEXCOORD1;
+	float4		vPosition	: POSITION;
+	float3		N		: NORMAL;
+	float3		T		: TANGENT;
+	float3		B		: BINORMAL;
+	float2		vTexUV	: TEXCOORD0;
+	float4		vProjPos	: TEXCOORD1;
 	float4		vLocalPos : TEXCOORD2;
 };
 
@@ -133,9 +166,26 @@ PS_OUT PS_MAIN(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	Out.vDiffuse = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
-	//Out.vDiffuse = tex2D(DiffuseSampler, In.vTexUV);
 
-	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	float2 SpecularIntensity = tex2D(SpecularSampler, In.vTexUV).xy;
+
+	//========================================================================================================================
+
+	float3 TanNormal = tex2D(NormalSampler, In.vTexUV).xyz;
+
+	TanNormal = normalize(TanNormal * 2.f - 1.f);
+
+	float3x3 TBN = float3x3(normalize(In.T), normalize(In.B), normalize(In.N));
+	TBN = transpose(TBN);
+
+	float3 worldNormal = mul(TBN, TanNormal);
+
+	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 5.f);
+	/*Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, SpecularIntensity.x * 5.f);*/
+	//  스펙큘러 텍스쳐 추가되면 변경예정
+
+	//========================================================================================================================
+
 
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.f, 0.f);
 
@@ -185,8 +235,8 @@ PS_OUT PS_DISSOLVE(PS_IN In)
 
 		if (fxColor.r >= g_fFxAlpha - 0.01 && fxColor.r <= g_fFxAlpha + 0.01)
 			vColor = pow(float4(0.9, 0.75, 0.65, 1), 2.2); //
-		else
-			;
+		//else
+		//	;
 
 		//if (fxColor.r >= g_fFxAlpha - 0.007 && fxColor.r <= g_fFxAlpha + 0.007)
 		//	vColor = pow(float4(0.9, 0.87, 0.8, 0.5), 2.2); // 
@@ -201,7 +251,7 @@ PS_OUT PS_DISSOLVE(PS_IN In)
 
 
 	Out.vDiffuse = vColor;
-	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vNormal = vector(In.N.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.f, 0.f);
 	Out.vVelocity = 0;
 

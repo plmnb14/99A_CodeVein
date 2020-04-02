@@ -9,8 +9,8 @@ class ENGINE_DLL CBT_CreateBullet final : public CBT_Service_Node
 public:
 	typedef struct tagInitInfo
 	{
-		tagInitInfo(char* pNodeName, _tchar* _Object_Tag, _tchar* _Create_Pos_Key, _tchar* _Dir_Key, _float _fSpeed, _double _dLifeTime, _uint _MaxCount_Of_Execution, _double dCreateTime, _double dOffset, CBT_Service_Node::Mode _eMode)
-			: fSpeed(_fSpeed), dLifeTime(_dLifeTime), Target_dCreateTime(dCreateTime), Target_dOffset(dOffset), MaxCount_Of_Execution(_MaxCount_Of_Execution), eMode(_eMode)
+		tagInitInfo(char* pNodeName, _tchar* _Object_Tag, _tchar* _Create_Pos_Key, _tchar* _Dir_Key, _float _fSpeed, _double _dLifeTime, _double _dService_Start_Time, _uint _MaxCount_Of_Execution, _double dCreateTime, _double dOffset, CBT_Service_Node::Mode _eMode)
+			: fSpeed(_fSpeed), dLifeTime(_dLifeTime), Service_Start_Time(_dService_Start_Time), Target_dCreateTime(dCreateTime), Target_dOffset(dOffset), MaxCount_Of_Execution(_MaxCount_Of_Execution), eMode(_eMode)
 		{strcpy_s<256>(Target_NodeName, pNodeName);
 		lstrcpy(Object_Tag, _Object_Tag);
 		lstrcpy(Create_Pos_Key, _Create_Pos_Key);
@@ -22,7 +22,7 @@ public:
 		_tchar					Dir_Key[256] = { 0, };
 		_float					fSpeed = 0.f;
 		_double					dLifeTime = 0;
-		
+		_double					Service_Start_Time = 0;
 		_double					Target_dCreateTime = 0;
 		_double					Target_dOffset = 0;
 		_uint					MaxCount_Of_Execution = 0;
@@ -58,6 +58,9 @@ private:
 	_v3						m_vDir = _v3(0.f, 0.f, 0.f);
 	_float					m_fSpeed = 0.f;
 	_double					m_dLifeTime = 0;
+
+	_double					m_dService_StartTime = 0;
+	_bool					m_bService_Start = false;
 
 	_double					m_dCurTime = 0;
 	_double					m_dCreateTime = 0;

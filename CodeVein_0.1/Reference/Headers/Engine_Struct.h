@@ -14,6 +14,47 @@ namespace Engine
 	const _ulong FVF_SCREEN = D3DFVF_XYZRHW | D3DFVF_TEX1;
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	typedef struct tagWeaponParam
+	{
+		_float		fDamage;
+
+		_float		fTrail_Min;
+		_float		fTrail_Max;
+
+		_float		fCol_Height;
+		_float		fRadius;
+	}WPN_PARAM;
+
+	typedef struct tagObjectParameter
+	{
+		_float		fHp_Cur;		// 현재 HP
+		_float		fHp_Max;		// 최대 HP_Max
+		_float		fStamina_Cur;	// 현재 스테미나
+		_float		fStamina_Max;	// 최대 스테미나
+		_float		fArmor_Cur;		// 현재 방어도
+		_float		fArmor_Max;		// 최대 방어도
+		_float		fHoldGage_Cur;	// 현재 경직도
+		_float		fHoldGage_Max;	// 최대 경직도
+		_float		fDamage;		// 공격력
+
+		_float		fLength;		// 충돌 대상과의 거리
+
+		_bool		bDown;			// 넘어진 상태일 때
+		_bool		bAir;			// 공중인 상태일 때
+		_bool		bKnockBack;		// 넉백 상태일 때
+
+		_bool		bIsHit;			// 맞는 도중인지
+		_bool		bCanHit;		// 맞을 수 있는지
+
+		_bool		bIsAttack;		// 공격 중인지.
+		_bool		bCanAttack;		// 공격가능한지
+
+		_bool		bDodge;			// 회피 상태인지
+
+		_v3			vHitDir;		// 맞은 방향
+
+	}OBJECT_PARAM;
+
 	typedef struct tagActorInfo
 	{
 		_float		fHP;				// 체력

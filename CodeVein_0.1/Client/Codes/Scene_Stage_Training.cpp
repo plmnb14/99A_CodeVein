@@ -21,13 +21,7 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 	if (FAILED(Ready_Layer_Player(L"Layer_Player")))
 		return E_FAIL;
 
-	//if (FAILED(Ready_Layer_Dummy(L"Layer_Dummy")))
-	//	return E_FAIL;
-
-	//if (FAILED(Ready_Layer_Monster(L"Layer_Monster")))
-	//	return E_FAIL;
-
-	if (FAILED(Ready_Layer_Environment(L"Layer_Environment")))
+	if (FAILED(Ready_Layer_Enemies()))
 		return E_FAIL;
 
 	// 트레이닝 맵은 그냥 로드 가능해욤
@@ -36,9 +30,9 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 	m_pNavMesh = static_cast<Engine::CNavMesh*>(g_pManagement->Clone_Component(SCENE_STATIC, L"NavMesh"));
 	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 
-	CNavMesh* pNavMesh = static_cast<Engine::CNavMesh*>(g_pManagement->Get_GameObjectBack(L"Layer_Player" , SCENE_STAGE)->Get_Component(L"NavMesh"));
+	CNavMesh* pNavMesh = static_cast<Engine::CNavMesh*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE)->Get_Component(L"NavMesh"));
 	pNavMesh->Reset_NaviMesh();
-	pNavMesh->Ready_NaviMesh(m_pGraphic_Device , L"Navmesh_Training.dat");
+	pNavMesh->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 
 	return S_OK;
 }
@@ -47,8 +41,6 @@ _int CScene_Stage_Training::Update_Scene(_double TimeDelta)
 {
 	CUI_Manager::Get_Instance()->Update_UI();
 
-	//CFrameMgr::Get_Instance()->Render_Frame(TimeDelta);
-
 	return _int();
 }
 
@@ -56,7 +48,6 @@ HRESULT CScene_Stage_Training::Render_Scene()
 {
 	IF_NOT_NULL(m_pNavMesh)
 		m_pNavMesh->Render_NaviMesh();
-
 
 	return S_OK;
 }
@@ -75,41 +66,25 @@ HRESULT CScene_Stage_Training::Ready_Layer_Dummy(const _tchar * pLayerTag)
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Dummy", SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
-	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
+		//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
-	return S_OK;
+		return S_OK;
 }
 
-HRESULT CScene_Stage_Training::Ready_Layer_Monster(const _tchar * pLayerTag)
+HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 {
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_PoisonButterfly", SCENE_STAGE, pLayerTag)))
+	// 몬스터 레이어만 미리 추가
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Monster")))
 		return E_FAIL;
 
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_BlackUrchin", SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
-
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_BlackWolf", SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
-
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_GunGenji", SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
-
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_SwordGenji", SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
-
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_SwordShieldGenji", SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
-
-	//CParticleMgr::Get_Instance()->Ready_ParticleManager();
-
-	return S_OK;
-}
-
-HRESULT CScene_Stage_Training::Ready_Layer_Environment(const _tchar* pLayerTag)
-{
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Sky", SCENE_STAGE, pLayerTag)))
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Dummy", SCENE_STAGE, L"Layer_Monster")))
 		return E_FAIL;
+
+	// 보스 레이어만 미리 추가
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Boss")))
+		return E_FAIL;
+
 
 	return S_OK;
 }
@@ -122,7 +97,7 @@ HRESULT CScene_Stage_Training::Ready_LightDesc()
 
 	LightDesc.Type = D3DLIGHT_DIRECTIONAL;
 	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	LightDesc.Ambient = D3DXCOLOR(0.4f, 0.4f, 0.4f, 1.f);
+	LightDesc.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	// In.WorldSpace
 	LightDesc.Direction = _v3(1.f, 1.f, -1.f);

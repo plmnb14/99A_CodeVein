@@ -5,6 +5,7 @@
 
 BEGIN(Engine)
 
+class CCollider;
 class ENGINE_DLL CGameObject abstract : public CBase
 {
 protected:
@@ -26,9 +27,9 @@ public:
 	_float				Get_ViewZ(void) { return m_fViewZ; }
 
 public:
-	virtual void Set_Target(CGameObject* _pTarget) { m_pTarget = _pTarget; }
-	virtual void Set_LayerIdx(_ulong _dwLayerIdx) { m_dwLayerIdx = _dwLayerIdx; }
-	void Set_Dead();
+	virtual void	Set_Target(CGameObject* _pTarget) { m_pTarget = _pTarget; }
+	virtual void	Set_LayerIdx(_ulong _dwLayerIdx) { m_dwLayerIdx = _dwLayerIdx; }
+	void			Set_Dead();
 	void			Set_ViewZ(_float fViewZ) { m_fViewZ = fViewZ; }
 
 public:
@@ -36,6 +37,52 @@ public:
 
 protected:
 	void			Compute_ViewZ(const _v3* pPos);
+
+	//======================================================================================================================
+	// 임시 충돌	
+	//======================================================================================================================
+protected:
+	OBJECT_PARAM m_tObjParam;
+
+public:
+	virtual OBJECT_PARAM Get_Target_Param() { return m_tObjParam; }
+	virtual _bool Get_Target_IsAir() { return m_tObjParam.bAir; }
+	virtual _bool Get_Target_IsDown() { return m_tObjParam.bDown; }
+	virtual _bool Get_Target_Dodge() { return m_tObjParam.bDodge; };
+	virtual _bool Get_Target_IsHit() { return m_tObjParam.bIsHit; }
+	virtual _bool Get_Target_CanHit() { return m_tObjParam.bCanHit; }
+	virtual _bool Get_Target_KnockBack() { return m_tObjParam.bKnockBack; }
+	virtual _bool Get_Target_IsAttack() { return m_tObjParam.bIsAttack; }
+	virtual _bool Get_Target_CanAttack() { return m_tObjParam.bCanAttack; }
+	virtual _float Get_Target_Hp() { return m_tObjParam.fHp_Cur; };
+	virtual _float Get_Target_Stamina() { return m_tObjParam.fStamina_Cur; };
+	virtual _float Get_Target_HoldGage() { return m_tObjParam.fHoldGage_Cur; };
+
+public:
+	virtual void Add_Target_Hp(_float _fHp) { m_tObjParam.fHp_Cur += _fHp; };
+	virtual void Add_Target_Stamina(_float _fStamina) { m_tObjParam.fStamina_Cur += _fStamina; };
+	virtual void Add_Target_HoldGage(_float _fHoldGage) { m_tObjParam.fHoldGage_Cur += _fHoldGage; };
+
+public:
+	virtual void Set_Target_IsAir(_bool _bAir) { m_tObjParam.bAir = _bAir; }
+	virtual void Set_Target_IsDown(_bool _bDown) { m_tObjParam.bDown = _bDown; }
+	virtual void Set_Target_IsHit(_bool _bHit) { m_tObjParam.bIsHit = _bHit; }
+	virtual void Set_Target_CanHit(_bool _bCanHit) { m_tObjParam.bCanHit = _bCanHit; }
+	virtual void Set_Target_IsAttack(_bool _bIsAttack) { m_tObjParam.bIsAttack = _bIsAttack; }
+	virtual void Set_Target_CanAttack(_bool _bCanAttack) { m_tObjParam.bCanAttack = _bCanAttack; }
+	virtual void Set_Target_KnockBack(_bool _bKnockBack) { m_tObjParam.bKnockBack = _bKnockBack; }
+	virtual void Set_Target_Dodge(_bool _bDodge) { m_tObjParam.bDodge = _bDodge; }
+
+public:
+	vector<CCollider*>		Get_PhysicColVector() { return m_vecPhysicCol; };	// 충돌 체크용 콜라이더 벡터
+	vector<CCollider*>		Get_AtkColVector() { return m_vecAttackCol; };		// 공격용 콜라이더 벡터
+
+protected:
+	vector<CCollider*>		m_vecPhysicCol;		// 충돌 체크용 콜라이더 벡터
+	vector<CCollider*>		m_vecAttackCol;		// 공격용 콜라이더 벡터
+												//======================================================================================================================
+												// 임시 충돌	
+												//======================================================================================================================
 
 protected:
 	LPDIRECT3DDEVICE9		m_pGraphic_Dev = nullptr;

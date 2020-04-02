@@ -13,14 +13,15 @@ private:
 	explicit CMesh_Dynamic(const CMesh_Dynamic& rhs);
 	virtual  ~CMesh_Dynamic() = default;
 public:
-	vector<D3DXMESHCONTAINER_DERIVED*> Get_MeshContainer();
 	_uint Get_NumMeshContainer() const {
-		return (_uint)m_MeshContainerList.size(); }
+		return (_uint)m_MeshContainerList.size();
+	}
 	_uint Get_NumMaterials(_uint iMeshConstainerIdx) {
-		return (_uint)m_MeshContainerList[iMeshConstainerIdx]->NumMaterials; }
+		return (_uint)m_MeshContainerList[iMeshConstainerIdx]->NumMaterials;
+	}
 	_mat Get_FrameMatrix(const char* pFrameName);
 	LPDIRECT3DTEXTURE9 Get_MeshTexture(_uint iMeshContainerIndex, _uint iSubSetIndex, MESHTEXTURE::TYPE eType);
-	
+
 public:
 	virtual HRESULT Ready_Component_Prototype(const _tchar* pFilePath, const _tchar* pFileName, _mat PivotMatrix);
 	virtual HRESULT Ready_Component(void* pArg);
@@ -39,8 +40,6 @@ public:
 	LPD3DXFRAME		Get_BonInfo(LPCSTR _bBoneName, _short _sCTRL_Type = 0);
 	D3DXTRACK_DESC	Get_TrackInfo();
 	D3DXTRACK_DESC	Get_TrackInfo_Upper();
-	CAniCtrl*		Get_AniCtrl();
-	_double			Get_AnimationFullTime();
 
 public:
 	void	Set_BoneSeperate(D3DXFRAME_DERIVED* _frame, const char* _bodyName , _short _sSeperateNum);
@@ -50,30 +49,37 @@ public:
 	HRESULT SetUp_Animation_Lower(_uint iIndex);
 	HRESULT SetUp_Animation_Upper(_uint iIndex);
 	HRESULT SetUp_Animation_RightArm(_uint iIndex);
+	HRESULT SetUp_Animation_LeftArm(_uint iIndex);
 
 
 	HRESULT Play_Animation_Lower(_double TimeDelta);
 	HRESULT Play_Animation_Upper(_double TimeDelta);
 	HRESULT	Play_Animation_RightArm(_double TimeDelta, _bool _bTwoHanded = false);
+	HRESULT	Play_Animation_LeftArm(_double TimeDelta, _bool _bTwoHanded = false);
 	HRESULT Play_Animation(_double TimeDelta); // 애니메이션을 재생한다.
 
 	_bool Is_Finish_Animation(_float _fLerpValue = 1.f);
 	_bool Is_Finish_Animation_Lower(_float _fLerpValue = 1.f);
 	_bool Is_Finish_Animation_Upper(_float _fLerpValue = 1.f);
+	_bool Is_Finish_Animation_LeftArm(_float _fLerpValue = 1.f);
+	_bool Is_Finish_Animation_RightArm(_float _fLerpValue = 1.f);
+
 
 private:
-	D3DXFRAME*			m_pRootFrame		= nullptr;
-	D3DXFRAME*			m_pUpperFrame		= nullptr;
-	D3DXFRAME*			m_pRightArmFrame	= nullptr;
+	D3DXFRAME*			m_pRootFrame = nullptr;
+	D3DXFRAME*			m_pUpperFrame = nullptr;
+	D3DXFRAME*			m_pRightArmFrame = nullptr;
+	D3DXFRAME*			m_pLeftArmFrame = nullptr;
 
 private:
 	_mat				m_matPivot;
 	CHierarchy*			m_pHierarchy = nullptr;
 
 private:
-	CAniCtrl*			m_pAniCtrl_Upper	= nullptr;
-	CAniCtrl*			m_pAniCtrl_Lower	= nullptr;
+	CAniCtrl*			m_pAniCtrl_Upper = nullptr;
+	CAniCtrl*			m_pAniCtrl_Lower = nullptr;
 	CAniCtrl*			m_pAniCtrl_RightArm = nullptr;
+	CAniCtrl*			m_pAniCtrl_LeftArm = nullptr;
 
 private:
 	_bool				m_bIsSeperate = false;

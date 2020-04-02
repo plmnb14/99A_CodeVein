@@ -33,7 +33,7 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 
 	Update_Collider();
 
-	if(false == m_bOnTool)
+	if (false == m_bOnTool)
 		m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
 
 	return S_OK;
@@ -47,9 +47,9 @@ _int CRenderObject::Late_Update_GameObject(_double TimeDelta)
 HRESULT CRenderObject::Render_GameObject()
 {
 	Init_Shader();
-	m_dwPassNum = 2; // For MotionBlur
 
 	m_pShader->Begin_Shader();
+
 	_ulong dwNumSubSet = m_pMesh_Static->Get_NumMaterials();
 
 	for (_ulong i = 0; i < dwNumSubSet; ++i)
@@ -58,6 +58,15 @@ HRESULT CRenderObject::Render_GameObject()
 
 		if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_DIFFUSE))))
 			return E_FAIL;
+
+		if (FAILED(m_pShader->Set_Texture("g_NormalTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_NORMAL))))
+			return E_FAIL;
+
+		//if (FAILED(m_pShader->Set_Texture("g_SpecularTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_SPECULAR))))
+		//	return E_FAIL;
+
+		//if (FAILED(m_pShader->Set_Texture("g_EmissiveTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_EMISSIVE))))
+		//	return E_FAIL;
 
 		m_pShader->Commit_Changes();
 
@@ -89,26 +98,26 @@ void CRenderObject::Update_Collider()
 HRESULT CRenderObject::Add_Essentional()
 {
 	// For.Com_Transform
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Transform", (CComponent**)&m_pTransform)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransform)))
 		return E_FAIL;
 
 	// For.Com_Renderer
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Renderer", (CComponent**)&m_pRenderer)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRenderer)))
 		return E_FAIL;
 
 	// For.Com_Shader
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Shader", (CComponent**)&m_pShader)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShader)))
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_DefaultBox", L"Mesh", (CComponent**)&m_pMesh_Static)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_DefaultBox", L"Com_StaticMesh", (CComponent**)&m_pMesh_Static)))
 		return E_FAIL;
 
 	// for.Com_Mesh
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
 
-	lstrcpy(m_szName , L"Mesh_DefaultBox");
+	lstrcpy(m_szName, L"Mesh_DefaultBox");
 
 	return S_OK;
 }
@@ -116,19 +125,19 @@ HRESULT CRenderObject::Add_Essentional()
 HRESULT CRenderObject::Add_Essentional_Copy()
 {
 	// For.Com_Transform
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Transform", (CComponent**)&m_pTransform)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransform)))
 		return E_FAIL;
 
 	// For.Com_Renderer
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Renderer", (CComponent**)&m_pRenderer)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRenderer)))
 		return E_FAIL;
 
 	// For.Com_Shader
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Shader", (CComponent**)&m_pShader)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShader)))
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, m_szName, L"Mesh", (CComponent**)&m_pMesh_Static)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, m_szName, L"Com_StaticMesh", (CComponent**)&m_pMesh_Static)))
 		return E_FAIL;
 
 	// for.Com_Mesh
@@ -156,7 +165,7 @@ void CRenderObject::Change_Mesh(const _tchar* _MeshName)
 	lstrcpy(m_szName, _MeshName);
 
 	// 컴포넌트에 있는 매쉬 찾아서
-	auto& iter = m_pmapComponents.find(L"Mesh");
+	auto& iter = m_pmapComponents.find(L"Com_StaticMesh");
 
 	// 둘 다 해제
 	Safe_Release(m_pMesh_Static);
@@ -231,7 +240,4 @@ void CRenderObject::Init_Shader()
 	m_pShader->Set_Value("g_matWorld", &matWorld, sizeof(_mat));
 	m_pShader->Set_Value("g_matView", &matView, sizeof(_mat));
 	m_pShader->Set_Value("g_matProj", &matProj, sizeof(_mat));
-
-	m_pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat));
-	m_matLastWVP = matWorld * matView * matProj;
 }

@@ -9,6 +9,8 @@
 #include "HPBack.h"
 #include "TestMonster.h"
 #include "Weapon.h"
+#include "Drain_Weapon.h"
+
 #include "Dummy_Target.h"
 #include "Trail_VFX.h"
 
@@ -38,7 +40,7 @@ CLoading::CLoading(LPDIRECT3DDEVICE9 pGraphicDev)
 	, m_bFinish(false)
 {
 	ZeroMemory(m_szString, sizeof(_tchar) * 128);
-	Safe_AddRef(m_pGraphicDev);	
+	Safe_AddRef(m_pGraphicDev);
 }
 
 HRESULT CLoading::Ready_Loading(SCENEID eLoadingID)
@@ -50,69 +52,6 @@ HRESULT CLoading::Ready_Loading(SCENEID eLoadingID)
 	m_eLoadingID = eLoadingID;
 
 	return S_OK;
-}
-
-_uint CLoading::Loading_ForStage(void)
-{
-	// BT_Node 생성 중
-	if (FAILED(g_pManagement->Ready_BT_Node()))
-		return E_FAIL;
-
-	_mat DefaultMat;
-	D3DXMatrixIdentity(&DefaultMat);
-
-	// 이펙트 원형 생성
-	Ready_Effect();
-
-	
-	// 오브젝트 원형 생성
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	
-	// 플레이어
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Player", CPlayer::Create(m_pGraphicDev))))
-		return E_FAIL;
-
-	g_pManagement->LoadTex_FromPath(m_pGraphicDev, L"../../Data/Tex_Path.dat");
-
-
-	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_Path.dat");
-
-	//몬스터
-
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_TestMonster", CTestMonster::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 독나방
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonButterfly", CPoisonButterfly::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 검은 성게
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 검은 늑대
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackWolf", CBlackWolf::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 독나비 독 총알
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonBullet", CPoisonBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-
-
-	//무기
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon", CWeapon::Create(m_pGraphicDev))))
-		return E_FAIL;
-
-	//더미
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Dummy", CDummy_Target::Create(m_pGraphicDev))))
-		return E_FAIL;
-
-	// 트레일
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SwordTrail", Engine::CTrail_VFX::Create(m_pGraphicDev))))
-		return E_FAIL;
-
-////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-	m_bFinish = true;
-
-	cout << "로딩 완료" << endl;
-
-	return 0;
 }
 
 unsigned int CALLBACK CLoading::Thread_Main(void* pArg)
@@ -146,7 +85,8 @@ unsigned int CALLBACK CLoading::Thread_Main(void* pArg)
 HRESULT CLoading::Ready_Effect(void)
 {
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/EffectMesh_Path.dat"); // 임시
-																						// 스카이
+
+	// 스카이
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Sky", CSky::Create(m_pGraphicDev))))
 		return E_FAIL;
 
@@ -159,18 +99,17 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"ButterFly_RingLine_Distortion", true)))
 		return E_FAIL;
-	if (FAILED(Add_EffectPrototype(L"ButterFly_Distortion")))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_Distortion", true)))
 		return E_FAIL;
-	if (FAILED(Add_EffectPrototype(L"ButterFly_Distortion_Circle")))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_Distortion_Circle", true)))
 		return E_FAIL;
-	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke_Bottom")))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_Softsmoke_Bottom", true)))
 		return E_FAIL;
-	if (FAILED(Add_EffectPrototype(L"ButterFly_Smoke_Red_Once")))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_Smoke_Red_Particle", true)))
 		return E_FAIL;
-	if (FAILED(Add_EffectPrototype(L"ButterFly_Smoke_Red_Particle")))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke_Floor", true)))
 		return E_FAIL;
-	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke_Floor")))
-		return E_FAIL;
+
 	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke_Mist")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"ButterFly_PointParticle_Plum")))
@@ -221,8 +160,7 @@ HRESULT CLoading::Ready_Effect(void)
 
 	if (FAILED(Add_EffectPrototype(L"Boss_KnonkDown_Dust")))
 		return E_FAIL;
-
-
+	
 	if (FAILED(Add_EffectPrototype(L"Player_FootSmoke")))
 		return E_FAIL;
 
@@ -292,7 +230,7 @@ HRESULT CLoading::Ready_Effect(void)
 
 	if (FAILED(Add_EffectPrototype(L"SpawnParticle")))
 		return E_FAIL;
-	
+
 	return S_OK;
 }
 
@@ -312,10 +250,10 @@ HRESULT CLoading::Add_EffectPrototype(const _tchar* szName, _bool bIsMesh)
 		if (FAILED(g_pManagement->Add_Prototype(szName, CMeshEffect::Create(m_pGraphicDev, Read_EffectData(szBuff)))))
 			return E_FAIL;
 	}
-	
 
 	return S_OK;
 }
+
 
 Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
 {
@@ -385,7 +323,7 @@ Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
 		::ReadFile(hFile, &pInfo->vStartScale, sizeof(_v3), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->fColorIndex, sizeof(_float), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->fMaskIndex, sizeof(_float), &dwByte, nullptr);
-		
+
 		_bool bTemp;
 		::ReadFile(hFile, &bTemp, sizeof(_bool), &dwByte, nullptr);
 		::ReadFile(hFile, &bTemp, sizeof(_bool), &dwByte, nullptr);
@@ -423,11 +361,14 @@ _uint CLoading::Loading_Title()
 	g_pManagement->LoadTex_FromPath(m_pGraphicDev, L"../../Data/Tex_Path.dat");
 
 	//============================================================================================================
-	
+
 	// 이펙트 원형 생성
 	//============================================================================================================
 	cout << "이펙트 원형 생성중" << endl;
 	Ready_Effect();
+
+	// 이펙트 메쉬 불러오는중
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_Effect_Path.dat");
 
 	// UI 원형 생성
 	//============================================================================================================
@@ -464,9 +405,8 @@ _uint CLoading::Loading_Stage()
 {
 	// 스태틱 메쉬 불러오는 중
 	//============================================================================================================
-	if(m_bLoadStaticMesh)
+	if (m_bLoadStaticMesh)
 		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_Static_Path.dat");
-
 
 	// 다이나믹 메쉬 불러오는 중
 	//============================================================================================================
@@ -476,6 +416,9 @@ _uint CLoading::Loading_Stage()
 	// 무기 불러오는 중
 	//============================================================================================================
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_Weapon_Path.dat");
+	// 일반 무기
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_DrainWeapon_Path.dat");
+	// 흡혈 무기
 
 	// BT_Node 생성 중
 	//============================================================================================================
@@ -504,22 +447,24 @@ _uint CLoading::Loading_Stage()
 	// 검은 늑대
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackWolf", CBlackWolf::Create(m_pGraphicDev))))
 		return E_FAIL;
-	// 총겐지
+	// 
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenji", CGunGenji::Create(m_pGraphicDev))))
 		return E_FAIL;
-	// 검겐지
+	// 
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenji", CSwordGenji::Create(m_pGraphicDev))))
 		return E_FAIL;
-	// 검방패겐지
+	// 
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordShieldGenji", CSwordShieldGenji::Create(m_pGraphicDev))))
 		return E_FAIL;
-	// 독나비 독 총알
+	// 
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonBullet", CPoisonBullet::Create(m_pGraphicDev))))
 		return E_FAIL;
-
 	// 기타
 	//============================================================================================================
 
+	// 흡혈 무기
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DrainWeapon", CDrain_Weapon::Create(m_pGraphicDev))))
+		return E_FAIL;
 	//무기
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon", CWeapon::Create(m_pGraphicDev))))
 		return E_FAIL;
@@ -544,7 +489,7 @@ CLoading* CLoading::Create(LPDIRECT3DDEVICE9 pGraphicDev, SCENEID eLoadingID)
 
 	if (FAILED(pInstance->Ready_Loading(eLoadingID)))
 		Engine::Safe_Release(pInstance);
-	
+
 	return pInstance;
 }
 

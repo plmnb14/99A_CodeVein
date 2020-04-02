@@ -37,6 +37,22 @@ HRESULT CObject_Manager::Reserve_Container_Size(_uint iNumScenes)
 	return S_OK;
 }
 
+HRESULT CObject_Manager::Add_Layer(_uint iSceneID, const _tchar * pLayerTag)
+{
+	CLayer*	pLayer = Find_Layer(iSceneID, pLayerTag);
+
+	if (nullptr == pLayer)
+	{
+		pLayer = CLayer::Create();
+		if (nullptr == pLayer)
+			return E_FAIL;
+
+		m_pLayers[iSceneID].insert(LAYERS::value_type(pLayerTag, pLayer));
+	}
+
+	return S_OK;
+}
+
 HRESULT CObject_Manager::Add_Prototype(const _tchar * pPrototypeTag, CGameObject * pPrototype)
 {
 	if (nullptr == pPrototype)
@@ -45,7 +61,7 @@ HRESULT CObject_Manager::Add_Prototype(const _tchar * pPrototypeTag, CGameObject
 	if (nullptr != Find_Prototype(pPrototypeTag))
 		return E_FAIL;
 
-	m_Prototypes.insert(PROTOTYPES::value_type(pPrototypeTag, pPrototype));		
+	m_Prototypes.insert(PROTOTYPES::value_type(pPrototypeTag, pPrototype));
 
 	return NOERROR;
 }
@@ -72,8 +88,8 @@ HRESULT CObject_Manager::Add_GameObject_ToLayer(const _tchar * pPrototypeTag, _u
 
 		m_pLayers[iSceneID].insert(LAYERS::value_type(pLayerTag, pLayer));
 	}
-	else	
-		pLayer->Add_GameObject(pGameObject);	
+	else
+		pLayer->Add_GameObject(pGameObject);
 
 	return NOERROR;
 }
@@ -116,7 +132,7 @@ _int CObject_Manager::Update_Object_Manager(_double TimeDelta)
 	_int	iProgress = 0;
 
 	for (size_t i = 0; i < m_iNumScenes; ++i)
-	{		
+	{
 		for (auto& Pair : m_pLayers[i])
 		{
 			iProgress = Pair.second->Update_Layer(TimeDelta);
@@ -149,14 +165,14 @@ _int CObject_Manager::Late_Update_Object_Manager(_double TimeDelta)
 
 HRESULT CObject_Manager::Clear_Instance(_uint iSceneIndex)
 {
-	if (m_iNumScenes <= iSceneIndex || 
+	if (m_iNumScenes <= iSceneIndex ||
 		nullptr == m_pLayers)
 		return E_FAIL;
 
 	for (auto& Pair : m_pLayers[iSceneIndex])
 		Safe_Release(Pair.second);
 
-	m_pLayers[iSceneIndex].clear();	
+	m_pLayers[iSceneIndex].clear();
 
 	return NOERROR;
 }
@@ -213,7 +229,7 @@ HRESULT CObject_Manager::LoadObjectPrototypes_FromPath(_Device pGraphicDev, cons
 		else
 		{
 			iIndex = _wtoi(ObjInfo->szIndex);
-			
+
 			fA[0] = (_float)_wtof(ObjInfo->szPos_X);
 			fA[1] = (_float)_wtof(ObjInfo->szPos_Y);
 			fA[2] = (_float)_wtof(ObjInfo->szPos_Z);
@@ -230,7 +246,7 @@ HRESULT CObject_Manager::LoadObjectPrototypes_FromPath(_Device pGraphicDev, cons
 			vVtx[1] = { fB[0], fB[1], fB[2] };
 			vVtx[2] = { fC[0], fC[1], fC[2] };
 
-			
+
 			_tchar szObjName[MAX_STR] = L"";
 			lstrcpy(szObjName, ObjInfo->szName);
 			if (!(lstrcmp(szObjName, L"Mesh_Mistletoe")))
@@ -243,7 +259,7 @@ HRESULT CObject_Manager::LoadObjectPrototypes_FromPath(_Device pGraphicDev, cons
 				TARGET_TO_TRANS(pActiveObj)->Set_Pos(vVtx[0]);
 				TARGET_TO_TRANS(pActiveObj)->Set_Angle(vVtx[1]);
 				TARGET_TO_TRANS(pActiveObj)->Set_Scale(vVtx[2]);
-				
+
 				Add_GameOject_ToLayer_NoClone(pActiveObj, SCENE_STAGE, L"Layer_Render", NULL);
 				lstrcat(szObjName, ObjInfo->szIndex);
 
@@ -339,11 +355,11 @@ void CObject_Manager::Free()
 
 	for (size_t i = 0; i < m_iNumScenes; ++i)
 	{
-		for (auto& Pair : m_pLayers[i])		
+		for (auto& Pair : m_pLayers[i])
 			Safe_Release(Pair.second);
 
-		m_pLayers[i].clear();		
+		m_pLayers[i].clear();
 	}
 
-	Safe_Delete_Array(m_pLayers);	
+	Safe_Delete_Array(m_pLayers);
 }

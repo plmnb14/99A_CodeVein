@@ -525,6 +525,12 @@
     <ClInclude Include="..\Headers\BT_MoveDir.h">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\BT_DistCheck.h">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BT_FixDir.h">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Base.cpp">
@@ -777,6 +783,12 @@
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Service\Derive</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\BT_MoveDir.cpp">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BT_DistCheck.cpp">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BT_FixDir.cpp">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
     </ClCompile>
   </ItemGroup>

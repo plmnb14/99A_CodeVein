@@ -51,6 +51,7 @@ public: // for.Scene_Manager
 
 public: // For.Object_Manager
 	HRESULT				Add_Prototype(const _tchar* pPrototypeTag, CGameObject* pPrototype);
+	HRESULT				Add_Layer(_uint iSceneID, const _tchar* pLayerTag);
 	HRESULT				Add_GameObject_ToLayer(const _tchar* pPrototypeTag, _uint iSceneID, const _tchar* pLayerTag, void* pArg = nullptr);
 	CGameObject*		Get_GameObjectBack(const _tchar* pLayerTag, _uint iSceneID);
 	list<CGameObject*>	Get_GameObjectList(const _tchar* pLayerTag, _uint iSceneID);
@@ -72,7 +73,7 @@ public:
 
 public: // For.PipeLine
 	_v3	Get_CamPosition();
-	_mat Get_Transform(D3DTRANSFORMSTATETYPE eState);	
+	_mat Get_Transform(D3DTRANSFORMSTATETYPE eState);
 	HRESULT Set_Transform(D3DTRANSFORMSTATETYPE eState, _mat StateMatrix);
 
 public: // For.Light_Manager

@@ -22,7 +22,10 @@
 #define Node_Cooldown(_name, _dCooltime) static_cast<CBT_Cooldown*>(CManagement::Get_Instance()->Clone_Node(L"Cooldown", CBT_Node_Manager::DECORATOR, &CBT_Cooldown::INFO(_name, _dCooltime)))
 
 #include "..\Headers\BT_ConeCheck.h"
-#define Node_ConeCheck(_name, _target_Key, _fDegreeOfFov, _MaxLength) static_cast<CBT_ConeCheck*>(CManagement::Get_Instance()->Clone_Node(L"ConeCheck", CBT_Node_Manager::DECORATOR, &CBT_ConeCheck::INFO(_name, _target_Key, m_pTransformCom, _fDegreeOfFov,  _MaxLength)))
+#define Node_ConeCheck(_name, _target_Key, _fDegreeOfFov, _fMaxDistance) static_cast<CBT_ConeCheck*>(CManagement::Get_Instance()->Clone_Node(L"ConeCheck", CBT_Node_Manager::DECORATOR, &CBT_ConeCheck::INFO(_name, _target_Key, m_pTransformCom, _fDegreeOfFov,  _fMaxDistance)))
+
+#include "..\Headers\BT_DistCheck.h"
+#define Node_DistCheck(_name, _target_Key, _fMaxDistance) static_cast<CBT_DistCheck*>(CManagement::Get_Instance()->Clone_Node(L"DistCheck", CBT_Node_Manager::DECORATOR, &CBT_DistCheck::INFO(_name, _target_Key, m_pTransformCom, _fMaxDistance)))
 
 #include "..\Headers\BT_Compare.h"
 #define Node_BOOL_A_Equal_B(_name, _TargetKey_A, _TargetKey_B) static_cast<CBT_Compare*>(CManagement::Get_Instance()->Clone_Node(L"Compare", CBT_Node_Manager::DECORATOR, &CBT_Compare::INFO(_name, CBT_Compare::Mode::EQUAL, _TargetKey_A, CBT_Compare::Value::BOOL, _TargetKey_B)))
@@ -70,7 +73,7 @@
 #define Node_CreateParticle_Finite(_name, _Effect_Tag, _Create_Pos_Key, _dEffect_Life_Time, _dService_Start_Time, _iMaxCount_Of_Execution, _dCoolTime, _dOffset) static_cast<CBT_CreateEffect*>(CManagement::Get_Instance()->Clone_Node(L"CreateEffect", CBT_Node_Manager::SERVICE, &CBT_CreateEffect::INFO(_name, _Effect_Tag, _Create_Pos_Key, _dEffect_Life_Time, _dService_Start_Time, _iMaxCount_Of_Execution, _dCoolTime, _dOffset, CBT_Service_Node::Mode::Finite, CBT_CreateEffect::Particle)))
 
 #include "..\Headers\BT_CreateBullet.h"
-#define Node_CreateBullet(_name, _Object_Tag, _Create_Pos_Key, _Dir_Key, _fSpeed, _dBulletLifeTime, _MaxCount_Of_Execution, _dCoolTime, _dOffset, _Service_Mode) static_cast<CBT_CreateBullet*>(CManagement::Get_Instance()->Clone_Node(L"CreateBullet", CBT_Node_Manager::SERVICE, &CBT_CreateBullet::INFO(_name, _Object_Tag, _Create_Pos_Key, _Dir_Key, _fSpeed, _dBulletLifeTime, _MaxCount_Of_Execution, _dCoolTime, _dOffset, _Service_Mode)))
+#define Node_CreateBullet(_name, _Object_Tag, _Create_Pos_Key, _Dir_Key, _fSpeed, _dBulletLifeTime, _dService_Start_Time, _MaxCount_Of_Execution, _dCoolTime, _dOffset, _Service_Mode) static_cast<CBT_CreateBullet*>(CManagement::Get_Instance()->Clone_Node(L"CreateBullet", CBT_Node_Manager::SERVICE, &CBT_CreateBullet::INFO(_name, _Object_Tag, _Create_Pos_Key, _Dir_Key, _fSpeed, _dBulletLifeTime, _dService_Start_Time, _MaxCount_Of_Execution, _dCoolTime, _dOffset, _Service_Mode)))
 
 
 // Task
@@ -78,14 +81,17 @@
 #define Node_Wait(_name, _dTime, _dOffset) static_cast<CBT_Wait*>(CManagement::Get_Instance()->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO(_name, _dTime, _dOffset)))
 
 #include "..\Headers\BT_MoveDirectly.h"
-#define Node_MoveDirectly_Chace(_name, _Target_Key, _Move_Speed, _Acceptable_Radius) static_cast<CBT_MoveDirectly*>(CManagement::Get_Instance()->Clone_Node(L"MoveDirectly", CBT_Node_Manager::TASK, &CBT_MoveDirectly::INFO(_name, m_pTransformCom, _Target_Key, _Move_Speed, _Acceptable_Radius, 0, 0, CBT_MoveDirectly::CHASE)))
-#define Node_MoveDirectly_Rush(_name, _Move_Speed, _dMoveTime, _dTimeOffset) static_cast<CBT_MoveDirectly*>(CManagement::Get_Instance()->Clone_Node(L"MoveDirectly", CBT_Node_Manager::TASK, &CBT_MoveDirectly::INFO(_name, m_pTransformCom, nullptr, _Move_Speed, 0, _dMoveTime, _dTimeOffset, CBT_MoveDirectly::RUSH)))
+#define Node_MoveDirectly_Chace(_name, _Target_Key, _fMove_Speed, _fAcceptable_Radius) static_cast<CBT_MoveDirectly*>(CManagement::Get_Instance()->Clone_Node(L"MoveDirectly", CBT_Node_Manager::TASK, &CBT_MoveDirectly::INFO(_name, m_pTransformCom, _Target_Key, _fMove_Speed, _fAcceptable_Radius, 0, 0, CBT_MoveDirectly::CHASE)))
+#define Node_MoveDirectly_Rush(_name, _fMove_Speed, _dMoveTime, _dTimeOffset) static_cast<CBT_MoveDirectly*>(CManagement::Get_Instance()->Clone_Node(L"MoveDirectly", CBT_Node_Manager::TASK, &CBT_MoveDirectly::INFO(_name, m_pTransformCom, nullptr, _fMove_Speed, 0, _dMoveTime, _dTimeOffset, CBT_MoveDirectly::RUSH)))
 
 #include "..\Headers\BT_MoveDir.h"
-#define Node_MoveDir(_name, _Dir_Key, _Move_Speed, _dMoveTime, _dTimeOffset) static_cast<CBT_MoveDir*>(CManagement::Get_Instance()->Clone_Node(L"MoveDir", CBT_Node_Manager::TASK, &CBT_MoveDir::INFO(_name, m_pTransformCom, _Dir_Key, _Move_Speed, _dMoveTime, _dTimeOffset)))
+#define Node_MoveDir(_name, _Dir_Key, _fMove_Speed, _dMoveTime, _dTimeOffset) static_cast<CBT_MoveDir*>(CManagement::Get_Instance()->Clone_Node(L"MoveDir", CBT_Node_Manager::TASK, &CBT_MoveDir::INFO(_name, m_pTransformCom, _Dir_Key, _fMove_Speed, _dMoveTime, _dTimeOffset)))
 
 #include "..\Headers\BT_RotationDir.h"
 #define Node_RotationDir(_name, _Target_Key, _dTurnSpeed) static_cast<CBT_RotationDir*>(CManagement::Get_Instance()->Clone_Node(L"RotationDir", CBT_Node_Manager::TASK, &CBT_RotationDir::INFO(_name, m_pTransformCom, _Target_Key, _dTurnSpeed)))
+
+#include "..\Headers\BT_FixDir.h"
+#define Node_FixDir(_name, _Target_Key, _dMoveTime, _dTimeOffset) static_cast<CBT_FixDir*>(CManagement::Get_Instance()->Clone_Node(L"FixDir", CBT_Node_Manager::TASK, &CBT_FixDir::INFO(_name, m_pTransformCom, _Target_Key, _dMoveTime, _dTimeOffset)))
 
 #include "..\Headers\BT_MoveTo.h"
 
