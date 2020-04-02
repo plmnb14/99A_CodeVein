@@ -409,6 +409,14 @@ void CManagement::Gizmo_Draw_Triangle(VTX_COL * _vVertex)
 	m_pGizmo->Draw_Triangle(_vVertex);
 }
 
+void CManagement::Gizmo_Draw_Triangle(VTX_COL * _vVertex , D3DXCOLOR _vColor)
+{
+	if (m_pGizmo == nullptr)
+		return;
+
+	m_pGizmo->Draw_Triangle(_vVertex  , _vColor);
+}
+
 void CManagement::Gizmo_Draw_AABB(_v3 * _vVertex, const _v3 _vPos, const _v3 _vSize)
 {
 	if (m_pGizmo == nullptr)

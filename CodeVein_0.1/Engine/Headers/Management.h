@@ -90,6 +90,7 @@ public: // For.Gizmo
 	void Gizmo_Draw_Sphere(const _v3 _vVertex, const _float _fRadius = 1.f);
 	void Gizmo_Draw_Triangle_Line(_v3 * _vVertex, const _bool _bSelect = false, CELL_PARAM _eParam = NORMAL);
 	void Gizmo_Draw_Triangle(VTX_COL * _vVertex);
+	void Gizmo_Draw_Triangle(VTX_COL * _vVertex , D3DXCOLOR _vColor);
 	void Gizmo_Draw_AABB(_v3* _vVertex, const _v3 _vPos, const _v3 _vSize = _v3{ 1.f, 1.f, 1.f });
 	void Gizmo_Draw_OBB(_v3* _vVertex, const _v3 vRotate, const _v3 _vPos, const _v3 _vSize = _v3{ 1.f, 1.f, 1.f });
 	void Gizmo_Draw_Capsule(_v3 _vVertex, const _v3 _vRadius);
