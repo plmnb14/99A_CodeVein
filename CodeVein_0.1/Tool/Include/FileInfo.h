@@ -9,7 +9,7 @@ private:
 public:
 	enum Extract_Mesh
 	{
-		Extract_Static, Extract_Dynamic, Extract_Essential, Extract_Weapon, Extract_End
+		Extract_Static, Extract_Dynamic, Extract_Essential, Extract_DrainWeapon, Extract_Weapon, Extract_Effect, Extract_End
 	};
 
 	static CString ConvertRelativePath(const TCHAR* pFullPath);

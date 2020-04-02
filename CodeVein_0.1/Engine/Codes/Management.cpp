@@ -20,7 +20,7 @@ CManagement::CManagement()
 	Safe_AddRef(m_pPipeLine);
 	Safe_AddRef(m_pComponent_Manager);
 	Safe_AddRef(m_pObject_Manager);
-	Safe_AddRef(m_pScene_Manager);	
+	Safe_AddRef(m_pScene_Manager);
 	Safe_AddRef(m_pGraphic_Device);
 	Safe_AddRef(m_pGizmo);
 	Safe_AddRef(m_pBT_Node_Manager);
@@ -28,7 +28,7 @@ CManagement::CManagement()
 
 HRESULT CManagement::Ready_Engine(_uint iNumScenes)
 {
-	if (nullptr == m_pObject_Manager || 
+	if (nullptr == m_pObject_Manager ||
 		nullptr == m_pComponent_Manager)
 		return E_FAIL;
 
@@ -43,15 +43,15 @@ HRESULT CManagement::Ready_Engine(_uint iNumScenes)
 
 _int CManagement::Update_Management(_double TimeDelta)
 {
-	if (nullptr == m_pScene_Manager || 
-		nullptr == m_pObject_Manager || 
+	if (nullptr == m_pScene_Manager ||
+		nullptr == m_pObject_Manager ||
 		nullptr == m_pInput_Device)
 		return -1;
 
 	if (FAILED(m_pInput_Device->Set_InputDev()))
 		return -1;
 
-	_int iProgress = 0; 
+	_int iProgress = 0;
 
 	iProgress = m_pObject_Manager->Update_Object_Manager(TimeDelta);
 
@@ -67,7 +67,7 @@ _int CManagement::Update_Management(_double TimeDelta)
 	if (0 > iProgress)
 		return iProgress;
 
-	return m_pScene_Manager->Update_Scene(TimeDelta);	
+	return m_pScene_Manager->Update_Scene(TimeDelta);
 }
 
 HRESULT CManagement::Render_Management()
@@ -98,7 +98,7 @@ HRESULT CManagement::Clear_Instance(_uint iSceneIndex)
 }
 
 HRESULT CManagement::Release_Engine()
-{	
+{
 	// 최종적으로 엔진에서 사용하고 있는 다양한 매니져클래스들의 정리작업을 수행한다.
 	if (0 != CManagement::Get_Instance()->Destroy_Instance())
 		MSG_BOX("Failed To Release CManagement");
@@ -143,7 +143,7 @@ HRESULT CManagement::Ready_GraphicDev(HWND hWnd, CGraphic_Device::WINMODE eMode,
 	if (nullptr == m_pGraphic_Device)
 		return E_FAIL;
 
-	return m_pGraphic_Device->Ready_GraphicDev(hWnd, eMode, iSizeX, iSizeY, ppGraphicDev);	
+	return m_pGraphic_Device->Ready_GraphicDev(hWnd, eMode, iSizeX, iSizeY, ppGraphicDev);
 }
 
 _byte CManagement::Get_DIKeyState(_ubyte byKeyID)
@@ -151,7 +151,7 @@ _byte CManagement::Get_DIKeyState(_ubyte byKeyID)
 	if (nullptr == m_pInput_Device)
 		return 0;
 
-	return m_pInput_Device->Get_DIKeyState(byKeyID);	
+	return m_pInput_Device->Get_DIKeyState(byKeyID);
 }
 
 _byte CManagement::Get_DIMouseState(CInput_Device::MOUSEKEYSTATE eMouse)
@@ -192,7 +192,7 @@ HRESULT CManagement::SetUp_CurrentScene(CScene * pScene)
 	if (nullptr == m_pScene_Manager)
 		return E_FAIL;
 
-	return m_pScene_Manager->SetUp_CurrentScene(pScene);	
+	return m_pScene_Manager->SetUp_CurrentScene(pScene);
 }
 
 HRESULT CManagement::Add_Prototype(const _tchar * pPrototypeTag, CGameObject * pPrototype)
@@ -200,7 +200,15 @@ HRESULT CManagement::Add_Prototype(const _tchar * pPrototypeTag, CGameObject * p
 	if (nullptr == m_pObject_Manager)
 		return E_FAIL;
 
-	return m_pObject_Manager->Add_Prototype(pPrototypeTag, pPrototype);	
+	return m_pObject_Manager->Add_Prototype(pPrototypeTag, pPrototype);
+}
+
+HRESULT CManagement::Add_Layer(_uint iSceneID, const _tchar * pLayerTag)
+{
+	if (nullptr == m_pObject_Manager)
+		return E_FAIL;
+
+	return m_pObject_Manager->Add_Layer(iSceneID, pLayerTag);
 }
 
 HRESULT CManagement::Add_GameObject_ToLayer(const _tchar * pPrototypeTag, _uint iSceneID, const _tchar * pLayerTag, void * pArg)
@@ -208,7 +216,7 @@ HRESULT CManagement::Add_GameObject_ToLayer(const _tchar * pPrototypeTag, _uint 
 	if (nullptr == m_pObject_Manager)
 		return E_FAIL;
 
-	return m_pObject_Manager->Add_GameObject_ToLayer(pPrototypeTag, iSceneID, pLayerTag, pArg);	
+	return m_pObject_Manager->Add_GameObject_ToLayer(pPrototypeTag, iSceneID, pLayerTag, pArg);
 }
 
 CGameObject* CManagement::Get_GameObjectBack(const _tchar* pLayerTag, _uint iSceneID)
@@ -229,7 +237,7 @@ CGameObject * CManagement::Clone_GameObject_Return(const _tchar * pPrototypeTag,
 	if (nullptr == m_pObject_Manager)
 		return nullptr;
 
-	return m_pObject_Manager->Clone_GameObject_Return(pPrototypeTag , pArg);
+	return m_pObject_Manager->Clone_GameObject_Return(pPrototypeTag, pArg);
 }
 
 HRESULT CManagement::Add_GameOject_ToLayer_NoClone(CGameObject * _pGameObject, _uint iSceneID, const _tchar * pLayerTag, void * pArg)
@@ -261,7 +269,7 @@ HRESULT CManagement::Add_Prototype(_uint iSceneID, const _tchar * pPrototypeTag,
 	if (nullptr == m_pComponent_Manager)
 		return E_FAIL;
 
-	return m_pComponent_Manager->Add_Prototype(iSceneID, pPrototypeTag, pPrototype);	
+	return m_pComponent_Manager->Add_Prototype(iSceneID, pPrototypeTag, pPrototype);
 }
 
 CComponent * CManagement::Clone_Component(_uint iSceneID, const _tchar * pPrototypeTag, void * pArg)
@@ -302,14 +310,14 @@ void CManagement::LoadNavMesh_FromFile(_Device _pGraphicDev, const _tchar * szFi
 	IF_NOT_NULL(m_pNavMesh)
 		return;
 
-	m_pNavMesh->Ready_NaviMesh(_pGraphicDev , szFile);
+	m_pNavMesh->Ready_NaviMesh(_pGraphicDev, szFile);
 }
 
 _v3 CManagement::Get_CamPosition()
 {
 	if (nullptr == m_pPipeLine)
 		return _v3();
-	
+
 	return _v3(m_pPipeLine->Get_CamPosition());
 }
 
@@ -342,7 +350,7 @@ HRESULT CManagement::Add_Light(LPDIRECT3DDEVICE9 pGraphic_Device, D3DLIGHT9 Ligh
 	if (nullptr == m_pLight_Manager)
 		return E_FAIL;
 
-	return m_pLight_Manager->Add_Light(pGraphic_Device, LightDesc);	
+	return m_pLight_Manager->Add_Light(pGraphic_Device, LightDesc);
 }
 
 LPDIRECT3DTEXTURE9 CManagement::Get_Target_Texture(const _tchar * pTargetTag)

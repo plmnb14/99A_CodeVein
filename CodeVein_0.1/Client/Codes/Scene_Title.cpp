@@ -32,8 +32,8 @@ HRESULT CScene_Title::Ready_Scene()
 		return E_FAIL;
 
 	// 파티클
-	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
-		return E_FAIL;
+	//if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
+	//	return E_FAIL;
 
 	m_pLoading = CLoading::Create(m_pGraphic_Device, SCENE_STAGE);
 	if (nullptr == m_pLoading)
@@ -56,14 +56,14 @@ _int CScene_Title::Update_Scene(_double TimeDelta)
 	}
 
 	// =======================================================
-	// UI 불러오기가 안되서 막아놓음.
+	// UI 버튼 막아놓음.
 	// =======================================================
 	//_bool Coll_ToButton = static_cast<CLogoBtn*>(g_pManagement->Get_GameObjectBack(L"Layer_LogoBtn", SCENE_TITLE))->Get_CollMose();
 
 	if (true == m_pLoading->Get_Finish() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
 		// =======================================================
-		// UI 불러오기가 안되서 막아놓음.
+		// UI 버튼 막아놓음.
 		// =======================================================
 		//if (false == Coll_ToButton)
 		//	return 0;
