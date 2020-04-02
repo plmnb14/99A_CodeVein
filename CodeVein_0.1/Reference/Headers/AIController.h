@@ -29,6 +29,9 @@ public:
 	const _v3 Get_V3Value(const _tchar* pName) const;
 
 public:
+	void Reset_BT();
+
+public:
 	HRESULT Update_AIController(_double TimeDelta);
 
 public:

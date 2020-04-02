@@ -16,16 +16,40 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 
 	//Safe_AddRef(m_pManagement);
 
-	Input_Pool(L"FootSmoke", 100);
+	Input_Pool(L"Player_FootSmoke", 100);
 
 	Input_Pool(L"ButterFly_SoftSmoke", 2000);
-	Input_Pool(L"ButterFly_SoftSmoke_Ready", 300);
-	Input_Pool(L"ButterFly_VenomShot", 1000);
 	Input_Pool(L"ButterFly_PointParticle", 100);
+	Input_Pool(L"ButterFly_PointParticle_Plum", 100);
 	Input_Pool(L"ButterFly_RingLine", 10);
 	Input_Pool(L"ButterFly_RingLine_Distortion", 10);
 	Input_Pool(L"ButterFly_Distortion", 10);
+	Input_Pool(L"ButterFly_Distortion_Circle", 10);
+	Input_Pool(L"ButterFly_Distortion_Smoke", 100);
+	Input_Pool(L"ButterFly_Distortion_SmokeGravity", 50);
+	Input_Pool(L"ButterFly_SoftSmoke_Bottom", 200);
+	Input_Pool(L"ButterFly_Smoke_Red_Once", 200);
+	Input_Pool(L"ButterFly_Smoke_Red_Particle", 1000);
+	Input_Pool(L"ButterFly_SoftSmoke_Floor", 500);
+	Input_Pool(L"ButterFly_SoftSmoke_Ready", 300);
+	Input_Pool(L"ButterFly_SoftSmoke_Mist", 300);
+	Input_Pool(L"ButterFly_WaterSplash", 100);
+	Input_Pool(L"ButterFly_GlitterSand", 300);
+
+	Input_Pool(L"ButterFly_VenomShot", 1000);
+	Input_Pool(L"ButterFly_VenomShot_SubSmoke", 1000);
+	Input_Pool(L"ButterFly_VenomShot_PointParticle", 500);
+	Input_Pool(L"ButterFly_VenomShot_DeadMist", 100);
+	Input_Pool(L"ButterFly_VenomShot_DeadSmoke", 100);
+	Input_Pool(L"ButterFly_VenomShot_DeadSplash", 100);
 	
+	Input_Pool(L"ButterFly_BackStepSand01", 50);
+	Input_Pool(L"ButterFly_BackStepSand02", 50);
+	Input_Pool(L"ButterFly_BackStepSand_Floor", 50);
+	Input_Pool(L"ButterFly_PopSand", 50);
+
+	Input_Pool(L"Boss_KnonkDown_Dust", 10);
+
 	Input_Pool(L"Hit_Blood_0", 50);
 	Input_Pool(L"Hit_Blood_1", 50);
 	Input_Pool(L"Hit_Blood_2", 50);
@@ -35,6 +59,18 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Hit_BloodParticle_1", 50);
 	Input_Pool(L"Hit_BloodParticle_2", 50);
 	Input_Pool(L"Hit_BloodParticle_3", 50);
+
+	Input_Pool(L"Hit_Slash_Particle_0", 50);
+	Input_Pool(L"Hit_Slash_Particle_1", 50);
+	Input_Pool(L"Hit_Slash_Particle_2", 50);
+	Input_Pool(L"Hit_Slash_Particle_3", 50);
+	Input_Pool(L"Hit_Slash_0", 50);
+	Input_Pool(L"Hit_Slash_1", 50);
+	Input_Pool(L"Hit_Slash_2", 50);
+	Input_Pool(L"Hit_Slash_3", 50);
+	Input_Pool(L"Hit_SlashLine_0", 50);
+	Input_Pool(L"Hit_Particle_Red"		, 100);
+	Input_Pool(L"Hit_Particle_Yellow"	, 100);
 
 	Input_Pool(L"SpawnParticle", 1000);
 
@@ -77,14 +113,15 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 						CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));
 						pEffect->Set_ParticleName(szEffName);
 						pEffect->Set_Desc((*iter_begin)->vCreatePos, (*iter_begin)->pFollowTrans);
+						pEffect->Reset_Init();
 
 						m_EffectList.push_back(pEffect);
 						continue;
 					}
 
 					m_EffectList.push_back(pFindedQueue->front());
-					pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
 					pFindedQueue->front()->Set_Desc((*iter_begin)->vCreatePos, (*iter_begin)->pFollowTrans);
+					pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
 					pFindedQueue->pop();
 				}
 
@@ -128,16 +165,25 @@ void CParticleMgr::Create_Effect(_tchar* szName, _v3 vPos, CTransform * pFollowT
 			CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));
 			pEffect->Set_ParticleName(szEffName);
 			pEffect->Set_Desc(vPos, pFollowTrans);
+			pEffect->Reset_Init();
 
 			m_EffectList.push_back(pEffect);
 			continue;
 		}
 
 		m_EffectList.push_back(pFindedQueue->front());
-		pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
 		pFindedQueue->front()->Set_Desc(vPos, pFollowTrans);
+		pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
 		pFindedQueue->pop();
 	}
+}
+
+void CParticleMgr::Create_Effect_NoPool(_tchar* szName, _v3 vPos, CTransform* pFollowTrans)
+{
+	CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szName, nullptr));
+	pEffect->Set_Desc(vPos, pFollowTrans);
+	pEffect->Reset_Init();
+	m_pManagement->Add_GameOject_ToLayer_NoClone(pEffect, SCENE_STAGE, L"Layer_Effect", nullptr);
 }
 
 HRESULT CParticleMgr::Update_Effect(const _double TimeDelta)
@@ -161,7 +207,7 @@ HRESULT CParticleMgr::Update_Effect(const _double TimeDelta)
 
 				// 삭제하지 않고 큐에 다시 넣기
 				if (pFindedQueue->size() < 1000) // 임시...
-					pFindedQueue->emplace((*iter_begin));
+					pFindedQueue->push((*iter_begin));
 				else
 					Safe_Release((*iter_begin));
 				
@@ -195,7 +241,7 @@ void CParticleMgr::Input_Pool(_tchar* szName, _int iCount)
 		// 미리 클론만 해놓기
 		CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szName, nullptr));
 		pEffect->Set_ParticleName(szName); // 이펙트 Info 안의 이름과 오브젝트 Tag이름이 달라서 이렇게 해줌. (해당 큐 안에 다시 넣으려고)
-		m_EffectPool[szName].emplace(pEffect);
+		m_EffectPool[szName].push(pEffect);
 	}
 }
 

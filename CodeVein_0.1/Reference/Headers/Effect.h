@@ -28,6 +28,8 @@ public:
 public:
 	void Set_ParticleName(_tchar* szBuff) { lstrcpy(m_szParticleName, szBuff); }
 	void Set_Desc(_v3 vPos, CTransform* pTrans = nullptr);
+	void Set_Angle(_v3 vAngle) { m_vAngle = vAngle; }
+
 	void Reset_Init();
 
 public:
@@ -37,7 +39,7 @@ public:
 	virtual _int Update_GameObject(_double TimeDelta);
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
-	HRESULT Render_GameObject_HWInstance();
+
 protected:
 	virtual void Setup_Info();
 
@@ -61,6 +63,7 @@ protected:
 	_v3						m_vRot = { 0.f, 0.f, 0.f };
 	_v3						m_vFollowPos = { 1.f, 1.f, 1.f };
 	_v4						m_vColor = { 1.f, 1.f, 1.f, 1.f };
+	_v3						m_vAngle = { 0.f, 0.f, 0.f };	// For Worldmat Rot
 
 	_bool					m_bClone = false;
 	_bool					m_bFadeOutStart = false;

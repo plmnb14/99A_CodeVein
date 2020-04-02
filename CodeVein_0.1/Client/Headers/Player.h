@@ -70,6 +70,7 @@ private:
 	CMesh_Dynamic*			m_pDynamicMesh		= nullptr;
 	CNavMesh*				m_pNavMesh			= nullptr;
 	CCollider*				m_pCollider			= nullptr;
+	CTexture*				m_pFXTexture		= nullptr;
 
 private:
 	vector<CCollider*>		m_vecPhsycColl;
@@ -127,6 +128,11 @@ private:
 
 private:
 	_float					m_fAmingRange = 20.f;
+
+private: //For.Shader Var
+	_mat					m_matLastWVP;
+	_float					m_fFxSpeed = 0.f;
+	_int					m_iPass = 0;
 
 private:
 	HRESULT Add_Component();
@@ -210,6 +216,9 @@ private:
 
 private:
 	virtual void Change_Weapon();
+
+private: //For.Shader Dissolve
+	void Check_Dissolve(_double TimeDelta);
 
 public:
 	static	CPlayer* Create(_Device pGraphic_Device);

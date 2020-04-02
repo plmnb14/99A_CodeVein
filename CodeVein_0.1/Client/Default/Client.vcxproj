@@ -176,6 +176,7 @@
     <ClInclude Include="..\Headers\Consume_Item.h" />
     <ClInclude Include="..\Headers\Drain_Weapon.h" />
     <ClInclude Include="..\Headers\Dummy_Target.h" />
+    <ClInclude Include="..\Headers\GenjiBullet.h" />
     <ClInclude Include="..\Headers\HPBack.h" />
     <ClInclude Include="..\Headers\Inventory.h" />
     <ClInclude Include="..\Headers\Inven_Icon.h" />
@@ -183,7 +184,8 @@
     <ClInclude Include="..\Headers\Item.h" />
     <ClInclude Include="..\Headers\ItemIcon.h" />
     <ClInclude Include="..\Headers\Item_Manager.h" />
-    <ClInclude Include="..\Headers\Genji.h" />
+    <ClInclude Include="..\Headers\PoisonBullet.h" />
+    <ClInclude Include="..\Headers\GunGenji.h" />
     <ClInclude Include="..\Headers\Item_Slot.h" />
     <ClInclude Include="..\Headers\MiniMap.h" />
     <ClInclude Include="..\Headers\PoisonButterfly.h" />
@@ -193,6 +195,8 @@
     <ClInclude Include="..\Headers\Scene_Stage_Training.h" />
     <ClInclude Include="..\Headers\Scene_Title.h" />
     <ClInclude Include="..\Headers\QuickSlot.h" />
+    <ClInclude Include="..\Headers\SwordGenji.h" />
+    <ClInclude Include="..\Headers\SwordShieldGenji.h" />
     <ClInclude Include="..\Headers\Tab_Consume.h" />
     <ClInclude Include="..\Headers\UI_Manager.h" />
     <ClInclude Include="..\Headers\PlayerHP.h" />
@@ -207,6 +211,7 @@
     <ClInclude Include="..\Headers\TestMonster.h" />
     <ClInclude Include="..\Headers\BlackUrchin.h" />
     <ClInclude Include="..\Headers\Weapon.h" />
+    <ClInclude Include="..\Headers\YachaMan.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StageLoader.h" />
@@ -222,6 +227,7 @@
     <ClCompile Include="..\Codes\Consume_Item.cpp" />
     <ClCompile Include="..\Codes\Drain_Weapon.cpp" />
     <ClCompile Include="..\Codes\Dummy_Target.cpp" />
+    <ClCompile Include="..\Codes\GenjiBullet.cpp" />
     <ClCompile Include="..\Codes\HPBack.cpp" />
     <ClCompile Include="..\Codes\Inventory.cpp" />
     <ClCompile Include="..\Codes\Inven_Icon.cpp" />
@@ -229,7 +235,8 @@
     <ClCompile Include="..\Codes\Item.cpp" />
     <ClCompile Include="..\Codes\ItemIcon.cpp" />
     <ClCompile Include="..\Codes\Item_Manager.cpp" />
-    <ClCompile Include="..\Codes\Genji.cpp" />
+    <ClCompile Include="..\Codes\PoisonBullet.cpp" />
+    <ClCompile Include="..\Codes\GunGenji.cpp" />
     <ClCompile Include="..\Codes\Item_Slot.cpp" />
     <ClCompile Include="..\Codes\MiniMap.cpp" />
     <ClCompile Include="..\Codes\PoisonButterfly.cpp" />
@@ -239,6 +246,8 @@
     <ClCompile Include="..\Codes\Scene_Stage_Training.cpp" />
     <ClCompile Include="..\Codes\Scene_Title.cpp" />
     <ClCompile Include="..\Codes\QuickSlot.cpp" />
+    <ClCompile Include="..\Codes\SwordGenji.cpp" />
+    <ClCompile Include="..\Codes\SwordShieldGenji.cpp" />
     <ClCompile Include="..\Codes\Tab_Consume.cpp" />
     <ClCompile Include="..\Codes\UI_Manager.cpp" />
     <ClCompile Include="..\Codes\PlayerHP.cpp" />
@@ -253,6 +262,7 @@
     <ClCompile Include="..\Codes\TestMonster.cpp" />
     <ClCompile Include="..\Codes\BlackUrchin.cpp" />
     <ClCompile Include="..\Codes\Weapon.cpp" />
+    <ClCompile Include="..\Codes\YachaMan.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="StageLoader.cpp" />
     <ClCompile Include="stdafx.cpp">

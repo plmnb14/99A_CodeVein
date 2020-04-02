@@ -18,9 +18,12 @@
 
 #include "TestMonster.h"
 #include "PoisonButterfly.h"
+#include "PoisonBullet.h"
 #include "BlackUrchin.h"
 #include "BlackWolf.h"
-#include "Genji.h"
+#include "GunGenji.h"
+#include "SwordGenji.h"
+#include "SwordShieldGenji.h"
 
 #include "PlayerHP.h"
 #include "PlayerST.h"
@@ -89,6 +92,10 @@ _uint CLoading::Loading_ForStage(void)
 	// ∞À¿∫ ¥¡¥Î
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackWolf", CBlackWolf::Create(m_pGraphicDev))))
 		return E_FAIL;
+	// µ∂≥™∫Ò µ∂ √—æÀ
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonBullet", CPoisonBullet::Create(m_pGraphicDev))))
+		return E_FAIL;
+
 
 //========================================================================================================================================
 
@@ -146,45 +153,141 @@ unsigned int CALLBACK CLoading::Thread_Main(void* pArg)
 
 HRESULT CLoading::Ready_Effect(void)
 {
-	if (FAILED(g_pManagement->Add_Prototype(L"FootSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Player_FootSmoke.dat")))))
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/EffectMesh_Path.dat"); // ¿”Ω√
+	
+
+#pragma region ButterFly
+	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke")))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_SoftSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_SoftSmoke.dat")))))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_PointParticle")))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_PointParticle", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_PointParticle.dat")))))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_RingLine", true)))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_VenomShot", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_VenomShot.dat")))))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_RingLine_Distortion", true)))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_RingLine", CMeshEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_RingLine.dat")))))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_Distortion")))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_RingLine_Distortion", CMeshEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_RingLine_Distortion.dat")))))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_Distortion_Circle")))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_Distortion", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_Distortion.dat")))))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke_Bottom")))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"ButterFly_SoftSmoke_Ready", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/ButterFly_SoftSmoke_Ready.dat")))))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_Smoke_Red_Once")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_Smoke_Red_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke_Floor")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke_Mist")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_PointParticle_Plum")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke_Ready")))
 		return E_FAIL;
 
-	if (FAILED(g_pManagement->Add_Prototype(L"Hit_Blood_0", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_Blood_0.dat")))))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_WaterSplash")))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"Hit_Blood_1", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_Blood_1.dat")))))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_GlitterSand")))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"Hit_Blood_2", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_Blood_2.dat")))))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_Distortion_Smoke")))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"Hit_BloodMist_0", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_BloodMist_0.dat")))))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_PopSand")))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"Hit_BloodMist_1", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_BloodMist_1.dat")))))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot")))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"Hit_BloodParticle_0", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_BloodParticle_0.dat")))))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_SubSmoke")))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"Hit_BloodParticle_1", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_BloodParticle_1.dat")))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"Hit_BloodParticle_2", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_BloodParticle_2.dat")))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"Hit_BloodParticle_3", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Hit_BloodParticle_3.dat")))))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_PointParticle")))
 		return E_FAIL;
 
-	if (FAILED(g_pManagement->Add_Prototype(L"SpawnParticle", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/SpawnParticle.dat")))))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_DeadMist")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_DeadSmoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_DeadSplash")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_BackStepSand01")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_BackStepSand02")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_BackStepSand_Floor")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_Distortion_SmokeGravity")))
+		return E_FAIL;
+#pragma endregion
+
+	if (FAILED(Add_EffectPrototype(L"Boss_KnonkDown_Dust")))
+		return E_FAIL;
+
+
+	if (FAILED(Add_EffectPrototype(L"Player_FootSmoke")))
+		return E_FAIL;
+
+	if (FAILED(Add_EffectPrototype(L"Hit_Blood_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Blood_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Blood_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_BloodMist_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_BloodMist_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_BloodParticle_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_BloodParticle_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_BloodParticle_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_BloodParticle_3")))
+		return E_FAIL;
+
+	if (FAILED(Add_EffectPrototype(L"Hit_Slash_Particle_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Slash_Particle_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Slash_Particle_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Slash_Particle_3")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Slash_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Slash_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Slash_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Slash_3")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_SlashLine_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Particle_Red")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Particle_Yellow")))
+		return E_FAIL;
+
+	if (FAILED(Add_EffectPrototype(L"SpawnParticle")))
 		return E_FAIL;
 	
+	return S_OK;
+}
+
+HRESULT CLoading::Add_EffectPrototype(const _tchar* szName, _bool bIsMesh)
+{
+	_tchar szBuff[256] = L"../../Data/EffectData/";
+	lstrcat(szBuff, szName);
+	lstrcat(szBuff, L".dat");
+
+	if (!bIsMesh)
+	{
+		if (FAILED(g_pManagement->Add_Prototype(szName, CTexEffect::Create(m_pGraphicDev, Read_EffectData(szBuff)))))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(g_pManagement->Add_Prototype(szName, CMeshEffect::Create(m_pGraphicDev, Read_EffectData(szBuff)))))
+			return E_FAIL;
+	}
+	
+
 	return S_OK;
 }
 
@@ -265,6 +368,7 @@ Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
 
 		::ReadFile(hFile, &pInfo->bGravity, sizeof(_bool), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->bRandScale, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bMoveWithRot, sizeof(_bool), &dwByte, nullptr);
 
 		break;
 	}
@@ -375,6 +479,18 @@ _uint CLoading::Loading_Stage()
 		return E_FAIL;
 	// ∞À¿∫ ¥¡¥Î
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackWolf", CBlackWolf::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// √—∞’¡ˆ
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenji", CGunGenji::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// ∞À∞’¡ˆ
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenji", CSwordGenji::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// ∞ÀπÊ∆–∞’¡ˆ
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordShieldGenji", CSwordShieldGenji::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// µ∂≥™∫Ò µ∂ √—æÀ
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonBullet", CPoisonBullet::Create(m_pGraphicDev))))
 		return E_FAIL;
 
 	// ±‚≈∏

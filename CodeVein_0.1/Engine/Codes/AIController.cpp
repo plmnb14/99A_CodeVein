@@ -95,6 +95,14 @@ const _v3 CAIController::Get_V3Value(const _tchar * pName) const
 	return m_pBlackBoard->Get_V3Value(pName);
 }
 
+void CAIController::Reset_BT()
+{
+	if (nullptr == m_pBehaviorTree)
+		return;
+
+	m_pBehaviorTree->Reset_BT();
+}
+
 HRESULT CAIController::Ready_Component_Prototype()
 {
 	return S_OK;;

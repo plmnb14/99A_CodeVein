@@ -25,11 +25,13 @@ CBT_Node::BT_NODE_STATE CBT_Selector::Update_Node(_double TimeDelta, vector<CBT_
 	*/
 	Start_Node(pNodeStack, plistSubNodeStack, bDebugging);
 
-	//for (CBT_Node* pChild : m_pChildren)
-	if (m_pCurIndex < m_pChildren.size())
+	switch (m_eMode)
 	{
-		switch(m_eChild_State)
+	case Engine::CBT_Selector::Normal:
+		if (m_pCurIndex < m_pChildren.size())
 		{
+			switch (m_eChild_State)
+			{
 			case BT_NODE_STATE::FAILED:
 			case BT_NODE_STATE::SERVICE:
 				return m_pChildren[m_pCurIndex++]->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
@@ -41,11 +43,30 @@ CBT_Node::BT_NODE_STATE CBT_Selector::Update_Node(_double TimeDelta, vector<CBT_
 			case BT_NODE_STATE::INPROGRESS:
 				return m_pChildren[m_pCurIndex++]->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
 
-			case BT_NODE_STATE::SUCCEEDED:			
+			case BT_NODE_STATE::SUCCEEDED:
 				return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+			}
 		}
+		break;
+
+	case Engine::CBT_Selector::Random:
+		switch (m_eChild_State)
+		{
+		case BT_NODE_STATE::FAILED:
+		case BT_NODE_STATE::SERVICE:
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, bDebugging);
+		
+		case BT_NODE_STATE::INPROGRESS:
+			return m_pChildren[m_iRandomNum]->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
+		
+		case BT_NODE_STATE::SUCCEEDED:
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+		}
+
+		break;
 	}
-	
+
+
 	return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, bDebugging);
 }
 
@@ -64,6 +85,7 @@ void CBT_Selector::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Nod
 
 		m_eChild_State = BT_NODE_STATE::INPROGRESS;
 
+		m_iRandomNum = CALC::Random_Num(0, (_int)m_pChildren.size() - 1);
 		m_pCurIndex = 0;
 		m_bInit = false;
 
@@ -106,6 +128,11 @@ CBT_Node::BT_NODE_STATE CBT_Selector::End_Node(vector<CBT_Node*>* pNodeStack, li
 
 HRESULT CBT_Selector::Ready_Clone_Node(void* pInit_Struct)
 {
+	INFO temp = *(INFO*)pInit_Struct;
+
+	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
+	m_eMode = temp.eMode;
+
 	CBT_Node::_Set_Auto_Number(&m_iNodeNumber);
 	return S_OK;
 }

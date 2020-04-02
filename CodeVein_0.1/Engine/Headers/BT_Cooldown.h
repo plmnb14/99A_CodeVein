@@ -38,7 +38,7 @@ private:
 private:
 	CBT_Node*			m_pChild = nullptr;
 	//쓰레드로 쿨타임 돌릴 공간
-	vector<CBT_Node*>	m_pSubNodeStatck;
+	vector<CBT_Node*>	m_pSubNodeStack;
 	_bool				m_bInProgress = false;
 	_bool				m_bAddThread = true;
 

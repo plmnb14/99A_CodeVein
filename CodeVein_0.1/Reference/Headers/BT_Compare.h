@@ -7,9 +7,7 @@ BEGIN(Engine)
 class ENGINE_DLL CBT_Compare final : public CBT_Decorator_Node
 {
 public:
-	/*
 	
-	*/
 	enum Mode { EQUAL, NOT_EQUAL, GREATER_THAN, SMALLER_THAN };
 	enum Value { BOOL, FLOAT, INT};
 
@@ -21,11 +19,11 @@ public:
 		lstrcpy(TargetKey_A, _TargetKey_A);
 		lstrcpy(TargetKey_B, _TargetKey_B);}
 
-		char		Target_NodeName[256] = { 0, };
-		_tchar*		TargetKey_A = nullptr;
-		_tchar*		TargetKey_B = nullptr;
-		Mode		eMode = EQUAL;
-		Value		eValue = BOOL;
+		char			Target_NodeName[256] = { 0, };
+		_tchar*			TargetKey_A = nullptr;
+		_tchar*			TargetKey_B = nullptr;
+		Mode			eMode = EQUAL;
+		Value			eValue = BOOL;
 
 	} INFO;
 

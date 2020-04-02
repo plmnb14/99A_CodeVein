@@ -36,17 +36,16 @@ public:
 private:
 	HRESULT Ready_Clone_Node(void* pInit_Struct);
 
-	HRESULT Cal_Rotation_Angle(const _v3 vTarget_Pos);
+	HRESULT Look_At_Target(_double TimeDelta, const _v3& vTarget_Pos);
 	
 private:
 	CTransform*	m_pTransform = nullptr;
 	_tchar		m_Target_Key[256] = { 0, };
-	_double		m_dTurnTime = 0;
 
-	_double		m_dDestRadian = 0;
-	_double		m_dCurRadian = 0;
-	_bool		m_bTurnLeft = false;
-	_double		m_dDestRadian_Per_TurnTime = 0;
+	_double		m_dRadianPerSec = 0;	// 초당 돌아야할 라데안
+	_double		m_dMaxTurnTime = 0;
+	_double		m_dCurTime = 0;
+	_bool		m_bTurnLeft = true;
 
 public:
 	static CBT_RotationDir* Create_Prototype();
