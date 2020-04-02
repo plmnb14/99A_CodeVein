@@ -166,6 +166,12 @@
     <Filter Include="02.GameObject\Stage\4%29 UI\UI\05.QuickSlot">
       <UniqueIdentifier>{77566a1b-96e2-4f7f-a13b-4bed7857d67b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory\01.Inventory\Armor">
+      <UniqueIdentifier>{bb2901bd-2116-463d-9434-63dc128a661f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\7%29 Armor">
+      <UniqueIdentifier>{bfe549f5-1e52-48c4-9180-1b0492c0768f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -282,6 +288,12 @@
     <ClInclude Include="..\Headers\Armor_Slot.h">
       <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\02.Slot\03.Armor%28아장슬롯%29</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Armor.h">
+      <Filter>02.GameObject\Stage\7%29 Armor</Filter>
+    </ClInclude>
+    <ClInclude Include="Armor_Inven.h">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\01.Inventory\Armor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -388,6 +400,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Armor_Slot.cpp">
       <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\02.Slot\03.Armor%28아장슬롯%29</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Armor.cpp">
+      <Filter>02.GameObject\Stage\7%29 Armor</Filter>
+    </ClCompile>
+    <ClCompile Include="Armor_Inven.cpp">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\01.Inventory\Armor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

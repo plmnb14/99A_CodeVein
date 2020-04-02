@@ -53,19 +53,21 @@ HRESULT CExpendables_Inven::Ready_GameObject(void * pArg)
 			pDesc->fSizeY = 80.f;
 			g_pManagement->Add_GameObject_ToLayer(L"GameObject_ExpendSlot", SCENE_STAGE, L"Layer_ExpendSlot", pDesc);
 			pExSlot = static_cast<CExpendables_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendSlot", SCENE_STAGE));
+
 			m_vecSlot.push_back(pExSlot);
 		}
 
 	}
-
+	Add_Expendables(CExpendables::EXPEND_1);
+	Add_Expendables(CExpendables::EXPEND_2);
+	Add_Expendables(CExpendables::EXPEND_3);
 	return NOERROR;
 }
 
 _int CExpendables_Inven::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
-	if (m_bIsDead)
-		return DEAD_OBJ;
+
 	if (g_pInput_Device->Key_Up(DIK_1))
 		m_bIsActive = !m_bIsActive;
 
@@ -73,17 +75,15 @@ _int CExpendables_Inven::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 
-	if(m_bIsActive)
+	if (m_bIsActive)
 		Click_Inven();
-	
+
 	for (auto& pSlot : m_vecSlot)
+	{
 		pSlot->Set_Active(m_bIsActive);
+		pSlot->Set_ViewZ(m_fViewZ - 0.1f);
+	}
 
-	
-
-	if (g_pInput_Device->Key_Up(DIK_5))
-		Add_Expendables(CExpendables::EXPEND_1);
-	
 	return NO_EVENT;
 }
 
@@ -205,8 +205,8 @@ void CExpendables_Inven::Click_Inven()
 	}
 	
 
-	if (g_pInput_Device->Key_Up(DIK_6))
-		Sell_Expendables(2);
+	//if (g_pInput_Device->Key_Up(DIK_6))
+	//	Sell_Expendables(2);
 }
 
 void CExpendables_Inven::Add_Expendables(CExpendables::EXPEND_TYPE eType)

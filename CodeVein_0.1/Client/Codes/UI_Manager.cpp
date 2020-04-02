@@ -26,6 +26,8 @@
 #include "Material_Slot.h"
 #include "Weapon_Slot.h"
 #include "Weapon_Inven.h"
+#include "Armor_Slot.h"
+#include "Armor_Inven.h"
 /////////////////
 #include "MiniMap.h"
 
@@ -87,7 +89,10 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_WeaponInven", CWeapon_Inven::Create(pDevice))))
 		return E_FAIL;
-
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ArmorSlot", CArmor_Slot::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ArmorInven", CArmor_Inven::Create(pDevice))))
+		return E_FAIL;
 	return NOERROR;
 }
 
@@ -97,6 +102,7 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ExpendablesInven", SCENE_STAGE, L"Layer_ExpendablesInven");
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_MaterialInven", SCENE_STAGE, L"Layer_MaterialInven");
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_WeaponInven", SCENE_STAGE, L"Layer_WeaponInven");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ArmorInven", SCENE_STAGE, L"Layer_ArmorInven");
 	return NOERROR;
 }
 

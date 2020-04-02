@@ -167,6 +167,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Headers\Armor.h" />
     <ClInclude Include="..\Headers\Armor_Slot.h" />
     <ClInclude Include="..\Headers\BackGround.h" />
     <ClInclude Include="..\Headers\BossDecoUI.h" />
@@ -200,6 +201,7 @@
     <ClInclude Include="..\Headers\Weapon.h" />
     <ClInclude Include="..\Headers\Weapon_Inven.h" />
     <ClInclude Include="..\Headers\Weapon_Slot.h" />
+    <ClInclude Include="Armor_Inven.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StageLoader.h" />
@@ -207,6 +209,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Codes\Armor.cpp" />
     <ClCompile Include="..\Codes\Armor_Slot.cpp" />
     <ClCompile Include="..\Codes\BackGround.cpp" />
     <ClCompile Include="..\Codes\BossDecoUI.cpp" />
@@ -239,6 +242,7 @@
     <ClCompile Include="..\Codes\Weapon.cpp" />
     <ClCompile Include="..\Codes\Weapon_Inven.cpp" />
     <ClCompile Include="..\Codes\Weapon_Slot.cpp" />
+    <ClCompile Include="Armor_Inven.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="StageLoader.cpp" />
     <ClCompile Include="stdafx.cpp">

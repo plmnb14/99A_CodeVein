@@ -2,7 +2,6 @@
 #include "..\Headers\Weapon_Slot.h"
 
 
-
 #include "Select_UI.h"
 
 CWeapon_Slot::CWeapon_Slot(_Device pDevice)
@@ -28,15 +27,7 @@ HRESULT CWeapon_Slot::Ready_GameObject(void * pArg)
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
-	m_fViewZ = 1.f;
-
-	CUI::UI_DESC* pDesc = new CUI::UI_DESC;
-	pDesc->fPosX = m_fPosX;
-	pDesc->fPosY = m_fPosY;
-	pDesc->fSizeX = m_fSizeX;
-	pDesc->fPosY = m_fSizeY;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_SelectUI", SCENE_STAGE, L"Layer_SelectUI", pDesc);
-	m_pSelectUI = static_cast<CSelect_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_SelectUI", SCENE_STAGE));
+	SetUp_Default();
 
 	return NOERROR;
 }
@@ -44,22 +35,22 @@ HRESULT CWeapon_Slot::Ready_GameObject(void * pArg)
 _int CWeapon_Slot::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
-	if (m_bIsDead)
-		return DEAD_OBJ;
-	
+
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
 
-	
 	if (m_pSelectUI)
 	{
-		m_pSelectUI->Set_Select(m_bIsSelect);
 		m_pSelectUI->Set_Active(m_bIsActive);
+		m_pSelectUI->Set_UI_Pos(m_fPosX, m_fPosY);
+		m_pSelectUI->Set_UI_Size(m_fSizeX, m_fSizeY);
+		m_pSelectUI->Set_ViewZ(m_fViewZ - 0.1f);
+		m_pSelectUI->Set_Select(m_bIsSelect);
 	}
-	
+
 
 	return NO_EVENT;
 }
@@ -86,6 +77,7 @@ HRESULT CWeapon_Slot::Render_GameObject()
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
+
 
 	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
 
@@ -171,6 +163,19 @@ HRESULT CWeapon_Slot::SetUp_ConstantTable()
 	return NOERROR;
 }
 
+void CWeapon_Slot::SetUp_Default()
+{
+	CUI::UI_DESC* pDesc = new CUI::UI_DESC;
+	pDesc->fPosX = m_fPosX;
+	pDesc->fPosY = m_fPosY;
+	pDesc->fSizeX = m_fSizeX;
+	pDesc->fPosY = m_fSizeY;
+
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_SelectUI", SCENE_STAGE, L"Layer_SelectUI", pDesc)))
+		return;
+	m_pSelectUI = static_cast<CSelect_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_SelectUI", SCENE_STAGE));
+}
+
 CWeapon_Slot * CWeapon_Slot::Create(_Device pGraphic_Device)
 {
 	CWeapon_Slot* pInstance = new CWeapon_Slot(pGraphic_Device);
@@ -199,9 +204,6 @@ CGameObject * CWeapon_Slot::Clone_GameObject(void * pArg)
 
 void CWeapon_Slot::Free()
 {
-	if (m_pSelectUI)
-		m_pSelectUI->Set_Dead();
-
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom);

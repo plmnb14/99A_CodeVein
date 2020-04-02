@@ -2,8 +2,6 @@
 #include "..\Headers\Weapon_Inven.h"
 
 
-#include "Item_Manager.h"
-
 CWeapon_Inven::CWeapon_Inven(_Device pDevice)
 	: CUI(pDevice)
 {
@@ -31,7 +29,7 @@ HRESULT CWeapon_Inven::Ready_GameObject(void * pArg)
 	m_fSizeX = WINCX * 0.5f;
 	m_fSizeY = WINCY;
 
-	m_fViewZ = 3.f;
+	m_fViewZ = 1.f;
 
 	m_bIsActive = false;
 
@@ -71,8 +69,7 @@ HRESULT CWeapon_Inven::Ready_GameObject(void * pArg)
 _int CWeapon_Inven::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
-	if (m_bIsDead)
-		return DEAD_OBJ;
+
 	if (g_pInput_Device->Key_Up(DIK_3))
 		m_bIsActive = !m_bIsActive;
 
@@ -80,38 +77,41 @@ _int CWeapon_Inven::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 
-	
-	for (auto& pWeaponSlot : m_vecWeaponSlot)
+
+	/*for (auto& pWeaponSlot : m_vecWeaponSlot)
 	{
-		if (pWeaponSlot->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
-		{				
-			Regist_Weapon(pWeaponSlot->Get_Type());
-			
-		}
+	if (pWeaponSlot->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+	{
+	Regist_Weapon(pWeaponSlot->Get_Type());
+	}
 	}
 
 	LOOP(2)
 	{
-		if (m_pSelectSlot[i]->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
-		{
-			Unregist_Weapon(m_pSelectSlot[i]);
-			
-		}
+	if (m_pSelectSlot[i]->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
+	{
+	Unregist_Weapon(m_pSelectSlot[i]);
+
 	}
-	
-	
+	}*/
+
+	if (GetAsyncKeyState(VK_LBUTTON) && 0x8000)
+		Regist_Weapon();
+	if (GetAsyncKeyState(VK_RBUTTON) && 0x8000)
+		Unregist_Weapon();
+
 	for (auto& pWeaponSlot : m_vecWeaponSlot)
 	{
 		pWeaponSlot->Set_Active(m_bIsActive);
 		pWeaponSlot->Set_ViewZ(m_fViewZ - 0.1f);
 	}
-	
+
 	LOOP(2)
 	{
 		m_pSelectSlot[i]->Set_Active(m_bIsActive);
 		m_pSelectSlot[i]->Set_ViewZ(m_fViewZ - 0.1f);
 	}
-		
+
 	return NO_EVENT;
 }
 
@@ -154,7 +154,6 @@ HRESULT CWeapon_Inven::Render_GameObject()
 
 	m_pShaderCom->Begin_Pass(0);
 
-	
 	m_pBufferCom->Render_VIBuffer();
 
 	m_pShaderCom->End_Pass();
@@ -212,9 +211,17 @@ HRESULT CWeapon_Inven::SetUp_ConstantTable()
 void CWeapon_Inven::Regist_Weapon(CWeapon::WEAPON_DATA eData)
 {
 	if (CWeapon::WPN_DATA_End == m_pSelectSlot[0]->Get_Type())
+	{
 		m_pSelectSlot[0]->Set_UI_Index(eData);
+		return;
+	}
+
 	else if (CWeapon::WPN_DATA_End == m_pSelectSlot[1]->Get_Type())
+	{
 		m_pSelectSlot[1]->Set_UI_Index(eData);
+		return;
+	}
+
 	else
 		return;
 }
@@ -223,8 +230,53 @@ void CWeapon_Inven::Unregist_Weapon(CWeapon_Slot* pWeaponSlot)
 {
 	if (nullptr == pWeaponSlot)
 		return;
-	
+
 	pWeaponSlot->Set_UI_Index(CWeapon::WPN_DATA_End);
+}
+
+void CWeapon_Inven::Regist_Weapon()
+{
+	for (auto& pWeaponSlot : m_vecWeaponSlot)
+	{
+		if (pWeaponSlot->Pt_InRect() && !pWeaponSlot->Get_Select())
+		{
+			if (CWeapon::WPN_DATA_End == m_pSelectSlot[0]->Get_Type())
+			{
+				m_pSelectSlot[0]->Set_UI_Index(pWeaponSlot->Get_Type());
+				pWeaponSlot->Set_Select(true);
+			}
+
+			else if (CWeapon::WPN_DATA_End == m_pSelectSlot[1]->Get_Type())
+			{
+				m_pSelectSlot[1]->Set_UI_Index(pWeaponSlot->Get_Type());
+				pWeaponSlot->Set_Select(true);
+			}
+
+			else
+				return;
+		}
+	}
+}
+
+void CWeapon_Inven::Unregist_Weapon()
+{
+	for (auto& pWeaponSlot : m_vecWeaponSlot)
+	{
+		if (pWeaponSlot->Get_Type() == m_pSelectSlot[0]->Get_Type() &&
+			pWeaponSlot->Get_Type() != CWeapon::WPN_DATA_End && pWeaponSlot->Pt_InRect() &&
+			pWeaponSlot->Get_Select())
+		{
+			m_pSelectSlot[0]->Set_UI_Index(CWeapon::WPN_DATA_End);
+			pWeaponSlot->Set_Select(false);
+		}
+		if (pWeaponSlot->Get_Type() == m_pSelectSlot[1]->Get_Type() &&
+			pWeaponSlot->Get_Type() != CWeapon::WPN_DATA_End && pWeaponSlot->Pt_InRect() &&
+			pWeaponSlot->Get_Select())
+		{
+			m_pSelectSlot[1]->Set_UI_Index(CWeapon::WPN_DATA_End);
+			pWeaponSlot->Set_Select(false);
+		}
+	}
 }
 
 CWeapon_Inven * CWeapon_Inven::Create(_Device pGraphic_Device)

@@ -32,7 +32,7 @@ public:
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
-
+	void	SetUp_Default();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;

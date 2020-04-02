@@ -2,6 +2,7 @@
 
 #include "Client_Defines.h"
 #include "UI.h"
+#include "Armor.h"
 
 BEGIN(Client)
 class CSelect_UI;
@@ -13,16 +14,24 @@ private:
 	virtual ~CArmor_Slot() = default;
 
 public:
+	bool Get_Select() { return m_bIsSelect; }
+	void Set_Select(_bool bIsSelect) { m_bIsSelect = bIsSelect; }
+
+public:
 	virtual HRESULT Ready_GameObject_Prototype();
 	virtual HRESULT Ready_GameObject(void* pArg);
 	virtual _int	Update_GameObject(_double TimeDelta);
 	virtual _int	Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
 
+public:
+	_bool Pt_InRect();
+	CArmor::ARMOR_TYPE Get_Type();
+
 private:
-	HRESULT			Add_Component();
-	HRESULT			SetUp_ConstantTable();
-	_uint			Get_Type();
+	HRESULT Add_Component();
+	HRESULT SetUp_ConstantTable();
+	void	SetUp_Default();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;

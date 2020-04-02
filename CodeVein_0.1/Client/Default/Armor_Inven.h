@@ -2,18 +2,16 @@
 
 #include "Client_Defines.h"
 #include "UI.h"
-#include "Weapon_Slot.h"
+#include "Armor_Slot.h"
 
 BEGIN(Client)
 
-class CWeapon;
-class CWeapon_Slot;
-class CWeapon_Inven final : public CUI
+class CArmor_Inven final : public CUI
 {
 private:
-	explicit CWeapon_Inven(_Device pDevice);
-	explicit CWeapon_Inven(const CWeapon_Inven& rhs);
-	virtual ~CWeapon_Inven() = default;
+	explicit CArmor_Inven(_Device pDevice);
+	explicit CArmor_Inven(const CArmor_Inven& rhs);
+	virtual ~CArmor_Inven() = default;
 
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();
@@ -25,12 +23,11 @@ public:
 private:
 	HRESULT					Add_Component();
 	HRESULT					SetUp_ConstantTable();
+	void					SetUp_Default();
 
 public:
-	void Regist_Weapon(CWeapon::WEAPON_DATA eData);
-	void Unregist_Weapon(CWeapon_Slot* pWeaponSlot);
-	void Regist_Weapon();
-	void Unregist_Weapon();
+	void Regist_Armor();
+	void Unregist_Armor();
 
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
@@ -39,14 +36,13 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 	_bool					m_bIsActive;
-	vector<CWeapon_Slot*>	m_vecWeaponSlot;
-	CWeapon_Slot*			m_pSelectSlot[2];
+	vector<CArmor_Slot*>	m_vecArmorSlot;
+	CArmor_Slot*			m_pRegistArmor;
 
 public:
-	static CWeapon_Inven*	Create(_Device pGraphic_Device);
+	static CArmor_Inven*	Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);
 	virtual void			Free();
 };
 
 END
-
