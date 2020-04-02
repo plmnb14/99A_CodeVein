@@ -11,11 +11,19 @@ class CDummy_Target final : public CGameObject
 private:
 	typedef enum tmp_Animation
 	{
+		Guard_Break = 0,
+		Guard_Hit_01,
+		Guard_Hit_02,
 		Guard_Start = 3,
 		Guard_Loop = 4,
 		Guard_End = 5,
 		Idle_State = 42
 	}TMP_ANI;
+
+	typedef enum tmp_ActState
+	{
+		ACT_IDLE, ACT_HIT, ACT_BREAK
+	}TMP_ACT;
 
 private:
 	enum BoneMatrix
@@ -48,6 +56,10 @@ public:
 	virtual void OnCollisionEvent_Physic(list<CGameObject*> plistGameObject);
 
 private:
+	void Skill_Movement(_float _fspeed, _v3 _vDir = { 0.f , 0.f , 0.f });
+	void Decre_Skill_Movement(_float _fMutiply = 1.f);
+
+private:
 	_mat*					m_matBones[Bone_End];
 
 private:
@@ -60,8 +72,17 @@ private:
 
 	//======================================================================
 	TMP_ANI				m_eTmpAnimNum = Idle_State;
+	TMP_ACT		m_eActState = ACT_IDLE;
+	_ulong				m_dwHitCnt = 0;
 	_float				m_fTimer = 0.f;
 	_bool				m_bOnGuard = false;
+
+private:
+	_float					m_fSkillMoveSpeed_Cur = 0.f;
+	_float					m_fSkillMoveSpeed_Max = 0.f;
+	_float					m_fSkillMoveAccel_Cur = 0.5f;
+	_float					m_fSkillMoveAccel_Max = 0.f;
+	_float					m_fSkillMoveMultiply = 1.f;
 	//======================================================================
 
 private:
