@@ -170,8 +170,8 @@ PS_OUT PS_DISSOLVE(PS_IN In)
 
 	float4 vColor = (float4)0.f;
 
-	vColor = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
-	float4 fxColor = pow(tex2D(FXSampler, In.vTexUV), 2.2);
+	//float4 fxColor = pow(tex2D(FXSampler, In.vTexUV), 2.2);
+	float4 fxColor = tex2D(FXSampler, In.vTexUV);
 
 	if (vColor.a == 0.f)
 		clip(-1);

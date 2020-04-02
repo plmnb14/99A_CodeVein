@@ -47,7 +47,7 @@ _int CScene_Stage_Training::Update_Scene(_double TimeDelta)
 {
 	CUI_Manager::Get_Instance()->Update_UI();
 
-	CFrameMgr::Get_Instance()->Render_Frame(TimeDelta);
+	//CFrameMgr::Get_Instance()->Render_Frame(TimeDelta);
 
 	return _int();
 }
@@ -83,8 +83,8 @@ HRESULT CScene_Stage_Training::Ready_Layer_Dummy(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage_Training::Ready_Layer_Monster(const _tchar * pLayerTag)
 {
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_PoisonButterfly", SCENE_STAGE, pLayerTag)))
-	//	return E_FAIL;
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_PoisonButterfly", SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
 
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_BlackUrchin", SCENE_STAGE, pLayerTag)))
 	//	return E_FAIL;

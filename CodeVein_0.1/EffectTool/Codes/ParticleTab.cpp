@@ -164,6 +164,7 @@ void CParticleTab::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK8, m_CheckMoveWithRot);
 	DDX_Control(pDX, IDC_CHECK13, m_CheckSlowly);
 	DDX_Text(pDX, IDC_EDIT51, m_EditDistortion);
+	DDX_Control(pDX, IDC_CHECK9, m_CheckDissolve);
 }
 
 void CParticleTab::Set_GraphicDev(LPDIRECT3DDEVICE9 pDev)
@@ -395,6 +396,8 @@ void CParticleTab::Setup_EffInfo(_bool bIsMesh)
 	m_pInfo->bMoveWithRot = m_CheckMoveWithRot.GetCheck() ? true : false;
 
 	m_pInfo->bSlowly = m_CheckSlowly.GetCheck() ? true : false;
+
+	m_pInfo->bDissolve = m_CheckDissolve.GetCheck() ? true : false;
 
 	if (m_bCheckUseMask.GetCheck() ? true : false)
 	{
@@ -702,6 +705,9 @@ void CParticleTab::OnBnClickedButton_Save()
 		::WriteFile(hFile, &bSlowly, sizeof(_bool), &dwByte, nullptr);
 
 		::WriteFile(hFile, &m_pInfo->fDistortionPower, sizeof(_float), &dwByte, nullptr);
+
+		_bool bDissolve = (m_CheckDissolve.GetCheck()) ? true : false;
+		::WriteFile(hFile, &bDissolve, sizeof(_bool), &dwByte, nullptr);
 
 		CloseHandle(hFile);
 		MessageBox(_T("Save Success."), _T("Save"), MB_OK);
@@ -1028,6 +1034,10 @@ void CParticleTab::OnBnClickedButton_Load()
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fDistortionPower);
 			m_EditDistortion.SetString(szBuff);
 
+			_bool bDissolve = false;
+			::ReadFile(hFile, &bDissolve, sizeof(_bool), &dwByte, nullptr);
+			m_CheckDissolve.SetCheck(bDissolve);
+			
 			//if (0 == dwByte)
 			break;
 		}

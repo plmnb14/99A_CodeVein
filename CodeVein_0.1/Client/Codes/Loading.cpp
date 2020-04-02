@@ -246,6 +246,26 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Hit_BloodParticle_3")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_BloodParticle_4")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_BloodParticle_5")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Blood_Direction_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Blood_Direction_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Blood_Direction_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Blood_Direction_3")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Blood_Direction_4")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Blood_Direction_5")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Blood_Direction_6")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_BloodDecal_0")))
+		return E_FAIL;
 
 	if (FAILED(Add_EffectPrototype(L"Hit_Slash_Particle_0")))
 		return E_FAIL;
@@ -377,6 +397,7 @@ Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
 		::ReadFile(hFile, &pInfo->bMoveWithRot, sizeof(_bool), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->bSlowly, sizeof(_bool), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->fDistortionPower, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bDissolve, sizeof(_bool), &dwByte, nullptr);
 
 		break;
 	}

@@ -200,7 +200,7 @@ private:
 
 private: //For.Effect
 	void Check_Dissolve(_double TimeDelta);
-	void Create_AttackEffect();
+	void Create_HittedEffect(_float fAngle);
 
 public:
 	static	CPlayer* Create(_Device pGraphic_Device);

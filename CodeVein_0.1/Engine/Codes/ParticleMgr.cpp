@@ -55,16 +55,21 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 
 	Input_Pool(L"Boss_KnonkDown_Dust", 10);
 
-	Input_Pool(L"Hit_Blood_0", 50);
-	Input_Pool(L"Hit_Blood_1", 50);
-	Input_Pool(L"Hit_Blood_2", 50);
-	Input_Pool(L"Hit_Blood_3", 50);
-	Input_Pool(L"Hit_BloodMist_0", 50);
-	Input_Pool(L"Hit_BloodMist_1", 50);
 	Input_Pool(L"Hit_BloodParticle_0", 50);
 	Input_Pool(L"Hit_BloodParticle_1", 50);
 	Input_Pool(L"Hit_BloodParticle_2", 50);
 	Input_Pool(L"Hit_BloodParticle_3", 50);
+	Input_Pool(L"Hit_BloodParticle_4", 50);
+	Input_Pool(L"Hit_BloodParticle_5", 50);
+	Input_Pool(L"Hit_Blood_Direction_0", 50);
+	Input_Pool(L"Hit_Blood_Direction_1", 50);
+	Input_Pool(L"Hit_Blood_Direction_2", 50);
+	Input_Pool(L"Hit_Blood_Direction_3", 50);
+	Input_Pool(L"Hit_Blood_Direction_4", 50);
+	Input_Pool(L"Hit_Blood_Direction_5", 50);
+	Input_Pool(L"Hit_Blood_Direction_6", 50);
+
+	Input_Pool(L"Hit_BloodDecal_0", 50);
 
 	Input_Pool(L"Hit_Slash_Particle_0", 50);
 	Input_Pool(L"Hit_Slash_Particle_1", 50);
@@ -85,15 +90,16 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 
 HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 {
-	Update_Effect(TimeDelta);
-
 	static _int iCnt = 0;
 
 	auto& iter_begin = m_vecParticle.begin();
 	auto& iter_end = m_vecParticle.end();
 
 	if (m_vecParticle.size() <= 0)
+	{
+		Update_Effect(TimeDelta);
 		return S_OK;
+	}
 
 	for (; iter_begin != iter_end;)
 	{
@@ -141,6 +147,8 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 		}
 	}
 
+	Update_Effect(TimeDelta);
+
 	return S_OK;
 }
 
@@ -180,6 +188,74 @@ void CParticleMgr::Create_Effect(_tchar* szName, _v3 vPos, CTransform * pFollowT
 		m_EffectList.push_back(pFindedQueue->front());
 		pFindedQueue->front()->Set_Desc(vPos, pFollowTrans);
 		pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
+		pFindedQueue->pop();
+	}
+}
+
+void CParticleMgr::Create_DirEffect(_tchar * szName, _v3 vPos, _v3 vDir, CTransform * pFollowTrans)
+{
+	queue<CEffect*>* pFindedQueue = Find_Queue(szName);
+	if (pFindedQueue == nullptr)
+		return;
+
+	// 풀 안에서 미리 생성한 오브젝트 꺼내서 사용
+	for (_int i = 0; i < pFindedQueue->front()->Get_Info()->iMaxCount; ++i)
+	{
+		if (pFindedQueue->size() <= 20) // 넉넉하게... 남은게 20 이하면 생성하여 사용
+		{
+			_tchar* szEffName = pFindedQueue->front()->Get_ParticleName();
+			CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));
+			
+			m_EffectList.push_back(pEffect);
+
+			pEffect->Set_ParticleName(szEffName);
+			pEffect->Set_Desc(vPos, pFollowTrans);
+			pEffect->Set_Dir(vDir);
+			pEffect->Reset_Init();
+
+			continue;
+		}
+
+		m_EffectList.push_back(pFindedQueue->front());
+
+		pFindedQueue->front()->Set_Desc(vPos, pFollowTrans);
+		pFindedQueue->front()->Set_Dir(vDir);
+		pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
+
+		pFindedQueue->pop();
+	}
+}
+
+void CParticleMgr::Create_AngleEffect(_tchar * szName, _v3 vPos, _v3 vAngle, CTransform * pFollowTrans)
+{
+	queue<CEffect*>* pFindedQueue = Find_Queue(szName);
+	if (pFindedQueue == nullptr)
+		return;
+
+	// 풀 안에서 미리 생성한 오브젝트 꺼내서 사용
+	for (_int i = 0; i < pFindedQueue->front()->Get_Info()->iMaxCount; ++i)
+	{
+		if (pFindedQueue->size() <= 20) // 넉넉하게... 남은게 20 이하면 생성하여 사용
+		{
+			_tchar* szEffName = pFindedQueue->front()->Get_ParticleName();
+			CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));
+
+			m_EffectList.push_back(pEffect);
+
+			pEffect->Set_ParticleName(szEffName);
+			pEffect->Set_Desc(vPos, pFollowTrans);
+			pEffect->Set_Angle(vAngle);
+			pEffect->Reset_Init();
+
+			continue;
+		}
+
+		m_EffectList.push_back(pFindedQueue->front());
+
+		pFindedQueue->front()->Set_Desc(vPos, pFollowTrans);
+		pFindedQueue->front()->Set_Angle(vAngle);
+		pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
+
 		pFindedQueue->pop();
 	}
 }

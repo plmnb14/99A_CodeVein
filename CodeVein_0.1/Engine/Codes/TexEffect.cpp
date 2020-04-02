@@ -121,6 +121,92 @@ HRESULT CTexEffect::Render_GameObject()
 {
 	Render_GameObject_HWInstance(); // 텍스쳐 이펙트만 인스턴싱
 
+	//if (FAILED(SetUp_ConstantTable()))
+	//	return E_FAIL;
+	//
+	//m_pShaderCom->Begin_Shader();
+	//m_pShaderCom->Begin_Pass(4);
+	//
+	//VTXCUBE_COL VtxCubeCol[8];
+	//VtxCubeCol[0].vPosition = _v3(-0.5f, 0.5f, -0.5f);
+	//VtxCubeCol[0].dwColor = COLOR_GREEN(1.f);
+	//
+	//VtxCubeCol[1].vPosition = _v3(0.5f, 0.5f, -0.5f);
+	//VtxCubeCol[1].dwColor = COLOR_GREEN(1.f);
+	//
+	//VtxCubeCol[2].vPosition = _v3(0.5f, -0.5f, -0.5f);
+	//VtxCubeCol[2].dwColor = COLOR_GREEN(1.f);
+	//
+	//VtxCubeCol[3].vPosition = _v3(-0.5f, -0.5f, -0.5f);
+	//VtxCubeCol[3].dwColor = COLOR_GREEN(1.f);
+	//
+	//VtxCubeCol[4].vPosition = _v3(-0.5f, 0.5f, 0.5f);
+	//VtxCubeCol[4].dwColor = COLOR_GREEN(1.f);
+	//
+	//VtxCubeCol[5].vPosition = _v3(0.5f, 0.5f, 0.5f);
+	//VtxCubeCol[5].dwColor = COLOR_GREEN(1.f);
+	//
+	//VtxCubeCol[6].vPosition = _v3(0.5f, -0.5f, 0.5f);
+	//VtxCubeCol[6].dwColor = COLOR_GREEN(1.f);
+	//
+	//VtxCubeCol[7].vPosition = _v3(-0.5f, -0.5f, 0.5f);
+	//VtxCubeCol[7].dwColor = COLOR_GREEN(1.f);
+	//
+	//POLYGON32 wIdx[12] = {};
+	//
+	//wIdx[0]._0 = 1;
+	//wIdx[0]._1 = 5;
+	//wIdx[0]._2 = 6;
+	//
+	//wIdx[1]._0 = 1;
+	//wIdx[1]._1 = 6;
+	//wIdx[1]._2 = 2;
+	//
+	//wIdx[2]._0 = 4;
+	//wIdx[2]._1 = 0;
+	//wIdx[2]._2 = 3;
+	//
+	//wIdx[3]._0 = 4;
+	//wIdx[3]._1 = 3;
+	//wIdx[3]._2 = 7;
+	//
+	//wIdx[4]._0 = 4;
+	//wIdx[4]._1 = 5;
+	//wIdx[4]._2 = 1;
+	//
+	//wIdx[5]._0 = 4;
+	//wIdx[5]._1 = 1;
+	//wIdx[5]._2 = 0;
+	//
+	//wIdx[6]._0 = 3;
+	//wIdx[6]._1 = 2;
+	//wIdx[6]._2 = 6;
+	//
+	//wIdx[7]._0 = 3;
+	//wIdx[7]._1 = 6;
+	//wIdx[7]._2 = 7;
+	//
+	//wIdx[8]._0 = 5;
+	//wIdx[8]._1 = 4;
+	//wIdx[8]._2 = 7;
+	//
+	//wIdx[9]._0 = 5;
+	//wIdx[9]._1 = 7;
+	//wIdx[9]._2 = 6;
+	//
+	//wIdx[10]._0 = 0;
+	//wIdx[10]._1 = 1;
+	//wIdx[10]._2 = 2;
+	//
+	//wIdx[11]._0 = 0;
+	//wIdx[11]._1 = 2;
+	//wIdx[11]._2 = 3;
+	//
+	//m_pGraphic_Dev->SetFVF(VTXFVF_COL);
+	//m_pGraphic_Dev->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, 8, 12, wIdx, D3DFMT_INDEX32, VtxCubeCol, sizeof(VTX_COL));
+	//
+	//m_pShaderCom->End_Pass();
+	//m_pShaderCom->End_Shader();
 	return NOERROR;
 }
 
@@ -168,6 +254,7 @@ void CTexEffect::Setup_Info()
 	m_fLinearMovePercent = 0.f;
 	m_vFollowPos = { 0.f, 0.f, 0.f };
 	m_fAccel = 0.f;
+	m_fDissolve = 0.f;
 
 	m_bFadeOutStart = false;
 
@@ -301,7 +388,6 @@ void CTexEffect::Setup_Billboard()
 		D3DXMatrixRotationY(&matRot, D3DXToRadian(m_vAngle.y));
 		D3DXMatrixRotationZ(&matRot, D3DXToRadian(m_vAngle.z));
 		//D3DXMatrixTranslation(&matRot, m_pTransformCom->Get_Pos().x, m_pTransformCom->Get_Pos().y, m_pTransformCom->Get_Pos().z);
-		cout << "Angle Check : " << m_vAngle.z << endl;
 
 		m_pTransformCom->Set_WorldMat((matRot) * (matBill * matWorld));
 	}
@@ -340,6 +426,9 @@ void CTexEffect::Check_Frame(_double TimeDelta)
 
 void CTexEffect::Check_Move(_double TimeDelta)
 {
+	if (m_pTransformCom->Get_Pos().x == 0)
+		int a = 0;
+
 	if (m_pInfo->bSlowly)
 	{
 		m_fMoveSpeed -= m_fMoveSpeed * _float(TimeDelta);
@@ -357,7 +446,11 @@ void CTexEffect::Check_Move(_double TimeDelta)
 		}
 		else
 		{
-			_v3 vMove = m_pInfo->vMoveDirection * m_fMoveSpeed * _float(TimeDelta);
+			_v3 vMove = V3_NULL;
+			if (m_vMyDir != V3_NULL)
+				vMove = m_vMyDir * m_fMoveSpeed * _float(TimeDelta);
+			else
+				vMove = m_pInfo->vMoveDirection * m_fMoveSpeed * _float(TimeDelta);
 			if (m_pDesc->pTargetTrans)
 			{
 				_v3 vPos = m_pDesc->pTargetTrans->Get_Pos();
@@ -472,6 +565,19 @@ void CTexEffect::Check_Alpha(_double TimeDelta)
 		m_fAlpha = 0.f;
 	if (m_pInfo->fMaxAlpha < m_fAlpha)
 		m_fAlpha = m_pInfo->fMaxAlpha;
+
+	//if(m_bDissolveToggle)
+	//	m_fDissolve -= _float(TimeDelta) * m_fAlphaSpeed;
+	//else
+		m_fDissolve += _float(TimeDelta) * m_fAlphaSpeed;
+
+	//if (m_fDissolve < 0.f)
+	//	m_bDissolveToggle = !m_bDissolveToggle;
+	if (m_fDissolve > 1.f)
+	{
+		m_fDissolve = 1.f;
+		m_bDissolveToggle = !m_bDissolveToggle;
+	}
 }
 
 void CTexEffect::Check_Color(_double TimeDelta)
@@ -520,13 +626,6 @@ HRESULT CTexEffect::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
 		return E_FAIL;
 
-	//if (true) // 데칼 이펙트만 생성하도록 수정하기
-	//{
-	//	// For.Com_CubeTex
-	//	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_DefaultBox", L"Com_DecalCube", (CComponent**)&m_pDecalCube)))
-	//		return E_FAIL;
-	//}
-	
 	return NOERROR;
 }
 
@@ -575,6 +674,11 @@ HRESULT CTexEffect::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Bool("g_bReverseColor", m_pInfo->bRevColor)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Bool("g_bUseRGBA", m_pInfo->bUseRGBA)))
+		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_Bool("g_bDissolve", m_pInfo->bDissolve)))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fDissolve", &m_fDissolve, sizeof(_float))))
 		return E_FAIL;
 
 	_float fMaskIndex = 0.f;

@@ -3,7 +3,7 @@
 #include "Weapon.h"
 #include "CameraMgr.h"
 #include "Dummy_Target.h"
-#include "Effect.h"
+
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
@@ -2114,33 +2114,10 @@ void CPlayer::Change_Weapon()
 void CPlayer::Check_Dissolve(_double TimeDelta)
 {
 	//if(false)
-	if (g_pInput_Device->Key_Down(DIK_K))
+	if (g_pInput_Device->Key_Down(DIK_U))
 	{
-		_v3 vPos = m_pTransform->Get_Pos();
-		vPos.y += 1.5f;
-
-		//_tchar szBuff[256] = L"";
-		//wsprintf(szBuff, L"Hit_Slash_Particle_%d", CCalculater::Random_Num(0, 3));
-		//g_pManagement->Create_Effect(szBuff, vPos);
-		//
-		//g_pManagement->Create_Effect(L"Hit_Slash_0", vPos);
-		//g_pManagement->Create_Effect(L"Hit_Slash_1", vPos);
-		//g_pManagement->Create_Effect(L"Hit_Slash_2", vPos);
-		//g_pManagement->Create_Effect(L"Hit_Slash_3", vPos);
-		//
-		//g_pManagement->Create_Effect(L"Hit_Particle_Red", vPos);
-		//g_pManagement->Create_Effect(L"Hit_Particle_Yellow", vPos);
-
-		//CEffect* pEffect = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Hit_SlashLine_0", nullptr));
-		//_v3 vAngle = m_pTransform->Get_Angle();
-		//vAngle += _v3(0, 0, _float(CCalculater::Random_Num(0, 360)));
-		//pEffect->Set_Angle(vAngle);
-		//g_pManagement->Add_GameOject_ToLayer_NoClone(pEffect, SCENE_STAGE, L"Layer_Effect", nullptr);
-		//g_pManagement->Create_Effect(L"Hit_SlashLine_0", vPos);
-		
-		Create_AttackEffect();
+		Create_HittedEffect(45.f);
 	}
-
 
 	const _float SPEED = 0.7f;
 	//if(m_eActState == ACT_Down) // юс╫ц
@@ -2164,32 +2141,47 @@ void CPlayer::Check_Dissolve(_double TimeDelta)
 	}
 }
 
-void CPlayer::Create_AttackEffect()
+void CPlayer::Create_HittedEffect(_float fAngle)
 {
 	_v3 vPos = m_pTransform->Get_Pos();
 	vPos.y += 1.f;
 
-	//g_pManagement->Add_GameObject_ToLayer(L"Hit_SlashLine_0", SCENE_STAGE, L"Layer_Effect", nullptr);
-	//CEffect* pEffect = static_cast<CEffect*>(g_pManagement->Get_GameObjectBack(L"Layer_Effect", SCENE_STAGE));
-	//_v3 vAngle = m_pTransform->Get_Angle();
-	//vAngle += _v3(0, 0, _float(CCalculater::Random_Num(0, 360)));
-	//pEffect->Set_Angle(vAngle);
-
-	_mat matRotY;
-	_v3 vDir = m_pTransform->Get_Axis(AXIS_Z);
-	vPos = vPos + vDir * 2.2f;
-	//pEffect->Set_Desc(vPos);
-
-	g_pManagement->Create_Effect(L"Hit_Blood_0", vPos);
-	g_pManagement->Create_Effect(L"Hit_Blood_1", vPos);
-	g_pManagement->Create_Effect(L"Hit_Blood_2", vPos);
-	g_pManagement->Create_Effect(L"Hit_Blood_3", vPos);
-
+	_v3 vAngle = m_pTransform->Get_Angle();
+	vAngle.z += fAngle;
+	g_pManagement->Create_AngleEffect(L"Hit_SlashLine_0", vPos, vAngle);
+		
+	_tchar szBuff[256] = L"";
+	wsprintf(szBuff, L"Hit_Slash_Particle_%d", CCalculater::Random_Num(0, 3));
+	g_pManagement->Create_Effect(szBuff, vPos);
+	
+	g_pManagement->Create_Effect(L"Hit_Slash_0", vPos);
+	g_pManagement->Create_Effect(L"Hit_Slash_1", vPos);
+	g_pManagement->Create_Effect(L"Hit_Slash_2", vPos);
+	g_pManagement->Create_Effect(L"Hit_Slash_3", vPos);
+	g_pManagement->Create_Effect(L"Hit_Particle_Red", vPos);
+	g_pManagement->Create_Effect(L"Hit_Particle_Yellow", vPos);
+	
 	g_pManagement->Create_Effect(L"Hit_BloodParticle_0", vPos);
 	g_pManagement->Create_Effect(L"Hit_BloodParticle_1", vPos);
 	g_pManagement->Create_Effect(L"Hit_BloodParticle_2", vPos);
 	g_pManagement->Create_Effect(L"Hit_BloodParticle_3", vPos);
+	g_pManagement->Create_Effect(L"Hit_BloodParticle_4", vPos);
+	g_pManagement->Create_Effect(L"Hit_BloodParticle_5", vPos);
 
+	_v3 vDir = m_pTransform->Get_Axis(AXIS_Z);
+	_v3 vRight = V3_NULL;
+	memcpy(&vRight, &m_pTransform->Get_WorldMat().m[0][0], sizeof(_v3));
+
+	_float fMinus = (fAngle > 0) ? 1.f : -1.f;
+	_v3 vBloodDir = vDir + (vRight * fMinus);
+
+	g_pManagement->Create_DirEffect(L"Hit_Blood_Direction_0", vPos, vBloodDir);
+	g_pManagement->Create_DirEffect(L"Hit_Blood_Direction_1", vPos, vBloodDir);
+	g_pManagement->Create_DirEffect(L"Hit_Blood_Direction_2", vPos, vBloodDir);
+	g_pManagement->Create_DirEffect(L"Hit_Blood_Direction_3", vPos, vBloodDir);
+	g_pManagement->Create_DirEffect(L"Hit_Blood_Direction_4", vPos, vBloodDir);
+	g_pManagement->Create_DirEffect(L"Hit_Blood_Direction_5", vPos, vBloodDir);
+	g_pManagement->Create_DirEffect(L"Hit_Blood_Direction_6", vPos, vBloodDir);
 }
 
 HRESULT CPlayer::Add_Component()

@@ -3,11 +3,13 @@
 matrix		g_matWorld, g_matView, g_matProj, g_matInvWorld;
 float		g_fAlpha = 1;
 float		g_fDistortion = 0.15f;
+float		g_fDissolve = 0.f;
 vector		g_vColor = { 0, 0, 0, 1 };
 bool		g_bUseRGBA = false;
 bool		g_bUseColorTex = false;
 bool		g_bUseMaskTex = false;
 bool		g_bReverseColor = false;
+bool		g_bDissolve = false;
 
 texture		g_DiffuseTexture;
 sampler		DiffuseSampler = sampler_state
@@ -181,6 +183,28 @@ PS_OUT PS_MAIN(PS_IN In)
 		Out.vColor.a *= vGradientMask.x;
 	}
 
+	if (g_bDissolve)
+	{
+		float4 fxColor = tex2D(DiffuseSampler, In.vTexUV);
+
+		if (Out.vColor.a == 0.f)
+			clip(-1);
+
+		if (fxColor.r >= g_fDissolve)
+			Out.vColor.a = 1;
+		else
+			Out.vColor.a = 0;
+
+		//if (fxColor.r >= g_fFxAlpha - 0.01 && fxColor.r <= g_fFxAlpha + 0.01)
+		//	vColor = pow(float4(0.9, 0.75, 0.65, 1), 2.2); //
+		//else
+		//	;
+	}
+
+	if (g_bReverseColor)
+		Out.vColor.rgb = 1 - Out.vColor.rgb;
+
+	// 소프트 이펙트 ==========================================================================================
 	float2		vTexUV;
 	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
 	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
@@ -189,9 +213,9 @@ PS_OUT PS_MAIN(PS_IN In)
 	float		fViewZ = vDepthInfo.y * 500.f;
 
 	Out.vColor.a = (Out.vColor.a * saturate(fViewZ - In.vProjPos.w)) * g_fAlpha;
+	// =========================================================================================================
 
-	if (g_bReverseColor)
-		Out.vColor.rgb = 1 - Out.vColor.rgb;
+
 
 	return Out;
 }
@@ -291,19 +315,33 @@ PS_OUT PS_SSD(PS_IN In)
 	vWorldPos = vWorldPos * fViewZ;
 	vWorldPos = mul(vWorldPos, g_matProjInv);
 	vWorldPos = mul(vWorldPos, g_matViewInv);
-	
+
 	float3 decalLocalPos = float3(0, 0, 0);
 	decalLocalPos = mul(vWorldPos, g_matInvWorld).xyz;
-
+	
 	float2 decalUV = decalLocalPos.xy + 0.5f;
 	
-	float dist = decalLocalPos.z;
-	float scaleDistance = max(dist * 2.0f, 1.0f);
-	float fadeOut = 1.0f - scaleDistance;
-	float4 Color = tex2D(DiffuseSampler, In.vTexUV);
-	Color.a *= fadeOut; 
+	//float dist = abs(decalLocalPos.z); //decal의 local 깊이
+	//float scaleDistance = max(dist * 2.0f, 1.0f);//Local깊이를 0.0과 1.0으로 맵핑시킵니다. 
+	//float fadeOut = 1.0f - scaleDistance;
 
+	float4 Color = float4(1, 1, 1, 1);
+	if (g_bUseColorTex)
+	{
+		Color = tex2D(ColorSampler, In.vTexUV);
+		Color *= tex2D(DiffuseSampler, In.vTexUV).x;
+	}
+	else
+	{
+		Color = tex2D(DiffuseSampler, In.vTexUV);
+	}
+
+	//Color.a *= fadeOut; // FadeOut값을 곱해주면 표면의 부분 이외는 사라지게 됩니다.  
+	
 	Out.vColor = Color;
+	
+	//Out.vColor = float4(1, 1, 1, 1);
+
 	return Out;
 }
 
@@ -375,9 +413,9 @@ technique Default_Technique
 		srcblend = SrcAlpha;
 		DestBlend = InvSrcAlpha;
 		//blendop = add;
-		//cullmode = none;
+		cullmode = none;
 
-		VertexShader = compile vs_3_0 VS_INSTANCE();
+		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_SSD();
 	}
 }

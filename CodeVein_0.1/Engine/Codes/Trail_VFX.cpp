@@ -274,6 +274,7 @@ HRESULT CTrail_VFX::Shader_Init(const _uint & iIndex)
 	m_pShader->Set_Bool("g_bUseColorTex", bDefaultOption);
 	m_pShader->Set_Bool("g_bUseMaskTex", bDefaultOption);
 	m_pShader->Set_Bool("g_bReverseColor", bDefaultOption);
+	m_pShader->Set_Bool("g_bDissolve", bDefaultOption);
 
 	m_pTexture->SetUp_OnShader("g_DiffuseTexture", m_pShader, iIndex);
 	m_pShader->Set_Texture("g_DepthTexture", pManagement->Get_Target_Texture(L"Target_Depth"));

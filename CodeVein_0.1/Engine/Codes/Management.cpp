@@ -469,6 +469,16 @@ void CManagement::Create_Effect(_tchar* szName, _v3 vPos, CTransform * pFollowTr
 	CParticleMgr::Get_Instance()->Create_Effect(szName, vPos, pFollowTrans);
 }
 
+void CManagement::Create_DirEffect(_tchar * szName, _v3 vPos, _v3 vDir, CTransform * pFollowTrans)
+{
+	CParticleMgr::Get_Instance()->Create_DirEffect(szName, vPos, vDir, pFollowTrans);
+}
+
+void CManagement::Create_AngleEffect(_tchar * szName, _v3 vPos, _v3 vAngle, CTransform * pFollowTrans)
+{
+	CParticleMgr::Get_Instance()->Create_AngleEffect(szName, vPos, vAngle, pFollowTrans);
+}
+
 void CManagement::Free()
 {
 	Safe_Release(m_pBT_Node_Manager);

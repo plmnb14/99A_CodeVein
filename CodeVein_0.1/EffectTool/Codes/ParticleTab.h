@@ -172,4 +172,5 @@ public:
 	CButton m_CheckMoveWithRot;
 	CButton m_CheckSlowly;
 	CString m_EditDistortion;
+	CButton m_CheckDissolve;
 };

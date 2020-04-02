@@ -65,7 +65,7 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨.
-	Start_Sel->Add_Child(Poison_Tornado_After_Charging());
+	Start_Sel->Add_Child(Fire_5Bullet());
 
 
 
