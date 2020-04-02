@@ -6,6 +6,7 @@
 
 BEGIN(Client)
 
+class CWeapon;
 class CSwordGenji final : public CGameObject
 {
 protected:
@@ -43,21 +44,25 @@ private:	//패턴들
 
 
 	// 원거리
-	// 던지기1
+	// 1. 던지기1
 	CBT_Composite_Node* Throwing1();
-	// 던지기2
+	// 2. 던지기2
 	CBT_Composite_Node* Throwing2();
-	// 백스탭 던지기, 이동거리 : 1
+	// 3. 백스탭 던지기, 이동거리 : 1
 	CBT_Composite_Node* Throwing_BackStep();
-	// 달리면서 직선베기, 이동거리 : 7
+	// 4. 달리면서 직선베기, 이동거리 : 7
 	CBT_Composite_Node* Run_Straight_Cut();
 
 
 	CBT_Composite_Node*		Start_Game();
 
+	CBT_Composite_Node*		RotationAndNearAttack();
 	CBT_Composite_Node*		ChaseAndNearAttack();
 	CBT_Composite_Node*		Chase();
-	CBT_Composite_Node*		NearAttack();
+	CBT_Composite_Node*		NearAttack();	// 랜덤 근거리 공격
+
+	CBT_Composite_Node*		LookPlayer_FarAttack();	//플레이어 바라본 후 랜덤 원거리 공격
+	CBT_Composite_Node*		FarAttack();	// 랜덤 원거리 공격
 
 	////////////// 시연회용
 
@@ -75,6 +80,8 @@ private:
 	CMesh_Dynamic*		m_pMeshCom = nullptr;
 	CAIController*		m_pAIControllerCom = nullptr;
 
+	CWeapon*			m_pSword = nullptr;
+
 	//렌더에서 타임델타 쓰기위해서 저장해놓음
 	_double				m_dTimeDelta = 0;
 
@@ -85,6 +92,7 @@ private:
 private:
 	HRESULT Add_Component(void* pArg);
 	HRESULT SetUp_ConstantTable();
+	HRESULT Ready_Weapon();
 
 public:
 	static CSwordGenji* Create(LPDIRECT3DDEVICE9 pGraphic_Device);

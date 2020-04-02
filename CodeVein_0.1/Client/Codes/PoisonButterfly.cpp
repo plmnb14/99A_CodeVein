@@ -591,7 +591,7 @@ CBT_Composite_Node * CPoisonButterfly::Start_Game()
 CBT_Composite_Node * CPoisonButterfly::ChaseAndNearAttack()
 {
 	CBT_Sequence* Root_Seq = Node_Sequence("랜덤 공격 또는 추적");
-	CBT_MoveDirectly* Chase = Node_MoveDirectly_Chace("추적", L"Player_Pos", 3.f, 2.f);
+	CBT_MoveDirectly* Chase = Node_MoveDirectly_Chase("추적", L"Player_Pos", 3.f, 2.f);
 
 	//CBT_CreateEffect* Poison = Node_CreateEffect("포이즌", L"ButterFly_SoftSmoke", L"Bone_Tail6", 1, 0.5f, 0.f, CBT_Service_Node::Infinite);
 	//Check_Length_Seq->Add_Service(Poison);
@@ -627,7 +627,7 @@ CBT_Composite_Node * CPoisonButterfly::Start_Show()
 CBT_Composite_Node * CPoisonButterfly::Show_ChaseAndNearAttack()
 {
 	CBT_Sequence* Root_Seq = Node_Sequence("공격 또는 추적");
-	CBT_MoveDirectly* Chase = Node_MoveDirectly_Chace("추적", L"Player_Pos", 3.f, 2.f);
+	CBT_MoveDirectly* Chase = Node_MoveDirectly_Chase("추적", L"Player_Pos", 3.f, 2.f);
 
 	//CBT_CreateEffect* Poison = Node_CreateEffect("포이즌", L"ButterFly_SoftSmoke", L"Bone_Tail6", 1, 0.5f, 0.f, CBT_Service_Node::Infinite);
 	//Check_Length_Seq->Add_Service(Poison);

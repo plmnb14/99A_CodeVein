@@ -81,7 +81,7 @@
 #define Node_Wait(_name, _dTime, _dOffset) static_cast<CBT_Wait*>(CManagement::Get_Instance()->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO(_name, _dTime, _dOffset)))
 
 #include "..\Headers\BT_MoveDirectly.h"
-#define Node_MoveDirectly_Chace(_name, _Target_Key, _fMove_Speed, _fAcceptable_Radius) static_cast<CBT_MoveDirectly*>(CManagement::Get_Instance()->Clone_Node(L"MoveDirectly", CBT_Node_Manager::TASK, &CBT_MoveDirectly::INFO(_name, m_pTransformCom, _Target_Key, _fMove_Speed, _fAcceptable_Radius, 0, 0, CBT_MoveDirectly::CHASE)))
+#define Node_MoveDirectly_Chase(_name, _Target_Key, _fMove_Speed, _fAcceptable_Radius) static_cast<CBT_MoveDirectly*>(CManagement::Get_Instance()->Clone_Node(L"MoveDirectly", CBT_Node_Manager::TASK, &CBT_MoveDirectly::INFO(_name, m_pTransformCom, _Target_Key, _fMove_Speed, _fAcceptable_Radius, 0, 0, CBT_MoveDirectly::CHASE)))
 #define Node_MoveDirectly_Rush(_name, _fMove_Speed, _dMoveTime, _dTimeOffset) static_cast<CBT_MoveDirectly*>(CManagement::Get_Instance()->Clone_Node(L"MoveDirectly", CBT_Node_Manager::TASK, &CBT_MoveDirectly::INFO(_name, m_pTransformCom, nullptr, _fMove_Speed, 0, _dMoveTime, _dTimeOffset, CBT_MoveDirectly::RUSH)))
 
 #include "..\Headers\BT_MoveDir.h"
@@ -91,7 +91,7 @@
 #define Node_RotationDir(_name, _Target_Key, _dTurnSpeed) static_cast<CBT_RotationDir*>(CManagement::Get_Instance()->Clone_Node(L"RotationDir", CBT_Node_Manager::TASK, &CBT_RotationDir::INFO(_name, m_pTransformCom, _Target_Key, _dTurnSpeed)))
 
 #include "..\Headers\BT_FixDir.h"
-#define Node_FixDir(_name, _Target_Key, _dMoveTime, _dTimeOffset) static_cast<CBT_FixDir*>(CManagement::Get_Instance()->Clone_Node(L"FixDir", CBT_Node_Manager::TASK, &CBT_FixDir::INFO(_name, m_pTransformCom, _Target_Key, _dMoveTime, _dTimeOffset)))
+#define Node_FixDir(_name, _Target_Key, _dLookingTime, _dTimeOffset) static_cast<CBT_FixDir*>(CManagement::Get_Instance()->Clone_Node(L"FixDir", CBT_Node_Manager::TASK, &CBT_FixDir::INFO(_name, m_pTransformCom, _Target_Key, _dLookingTime, _dTimeOffset)))
 
 #include "..\Headers\BT_MoveTo.h"
 

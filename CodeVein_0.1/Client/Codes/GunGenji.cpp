@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\GunGenji.h"
+#include "..\Headers\Weapon.h"
 
 CGunGenji::CGunGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
@@ -18,9 +19,10 @@ HRESULT CGunGenji::Ready_GameObject_Prototype()
 
 HRESULT CGunGenji::Ready_GameObject(void * pArg)
 {
-
 	if (FAILED(Add_Component(pArg)))
 		return E_FAIL;
+
+	Ready_Weapon();
 
 	m_pTransformCom->Set_Pos(_v3(-3.f, 0.f, -3.f));
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
@@ -40,8 +42,8 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"HPRatio", 100);
 	pBlackBoard->Set_Value(L"Show", true);
 
-	//CBT_Selector* Start_Sel = Node_Selector("행동 시작");
-	CBT_Sequence* Start_Sel = Node_Sequence("행동 시작"); // 테스트
+	CBT_Selector* Start_Sel = Node_Selector("행동 시작");
+	//CBT_Sequence* Start_Sel = Node_Sequence("행동 시작"); // 테스트
 
 	CBT_UpdatePos* UpdatePlayerPosService = Node_UpdatePos("Update_Player_Pos", L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE)), 0, 0.01, 0, CBT_Service_Node::Infinite);
 	CBT_UpdateGageRatio* UpdatePlayerHPservice = Node_UpdateGageRatio("Update_Player_Pos", L"HPRatio", L"MaxHP", L"HP", 0, 0.01, 0, CBT_Service_Node::Infinite);
@@ -56,10 +58,10 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
 	//Check_ShowValue->Set_Child(Start_Show());
 	//Start_Sel->Add_Child(Check_ShowValue);
-	//Start_Sel->Add_Child(Start_Game());
+	Start_Sel->Add_Child(Start_Game());
 
 
-	Start_Sel->Add_Child(Dodge_B());
+	//Start_Sel->Add_Child(Dodge_B());
 
 
 	///////////보여주기용
@@ -311,6 +313,8 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
 
+	m_pGun->Update_GameObject(TimeDelta);
+
 	static _double Cur_Time = 0;
 	static _bool	bbbb = false;
 
@@ -345,6 +349,8 @@ _int CGunGenji::Late_Update_GameObject(_double TimeDelta)
 		return E_FAIL;
 
 	m_dTimeDelta = TimeDelta;
+
+	m_pGun->Late_Update_GameObject(TimeDelta);
 
 	return _int();
 }
@@ -570,6 +576,8 @@ CBT_Composite_Node * CGunGenji::Dist_Attack()
 	CBT_Selector* Root_Sel = Node_Selector("근거리 원거리 구분 공격");
 
 	CBT_DistCheck* Dist0 = Node_DistCheck("거리 체크", L"Player_Pos", 3);
+	CBT_DistCheck* Dist1 = Node_DistCheck("거리 체크", L"Player_Pos", 6);
+
 	// 쳐다보기가 먼저,  그다음 거리체크후 공격
 
 	//거리로 판단하고 공격, selector
@@ -577,7 +585,10 @@ CBT_Composite_Node * CGunGenji::Dist_Attack()
 	Root_Sel->Add_Child(Dist0);
 	Dist0->Set_Child(LookPlayer_NearAttack());
 
-	Root_Sel->Add_Child(LookPlayer_FarAttack());
+	Root_Sel->Add_Child(Dist1);
+	Dist1->Set_Child(LookPlayer_FarAttack());
+
+	Root_Sel->Add_Child(Chase());
 
 	return Root_Sel;
 }
@@ -606,6 +617,21 @@ CBT_Composite_Node * CGunGenji::LookPlayer_FarAttack()
 	return Root_Seq;
 }
 
+CBT_Composite_Node * CGunGenji::Chase()
+{
+	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
+
+	CBT_MoveDirectly* pChase = Node_MoveDirectly_Chase("추적", L"Player_Pos", 3.f, 5.f);
+
+	CBT_Play_Ani* Show_Ani139 = Node_Ani("추적", 139, 1.f);
+
+	Root_Parallel->Set_Main_Child(pChase);
+
+	Root_Parallel->Set_Sub_Child(Show_Ani139);
+
+	return Root_Parallel;
+}
+
 CBT_Composite_Node * CGunGenji::NearAttack()
 {
 	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 근거리 공격");
@@ -614,6 +640,7 @@ CBT_Composite_Node * CGunGenji::NearAttack()
 	Root_Sel->Add_Child(Arm_Attack());
 	Root_Sel->Add_Child(Sting_Attack());
 	Root_Sel->Add_Child(Cut_To_Right());
+	Root_Sel->Add_Child(Tumbling_Shot());
 
 	return Root_Sel;
 }
@@ -623,7 +650,6 @@ CBT_Composite_Node * CGunGenji::FarAttack()
 	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 원거리 공격");
 
 	Root_Sel->Add_Child(Shot());
-	Root_Sel->Add_Child(Tumbling_Shot());
 	Root_Sel->Add_Child(Sudden_Shot());
 
 	return Root_Sel;
@@ -641,7 +667,7 @@ CBT_Composite_Node * CGunGenji::Start_Show()
 CBT_Composite_Node * CGunGenji::Show_ChaseAttack()
 {
 	CBT_Sequence* Root_Seq = Node_Sequence("공격 또는 추적");
-	CBT_MoveDirectly* Chase = Node_MoveDirectly_Chace("추적", L"Player_Pos", 3.f, 2.f);
+	CBT_MoveDirectly* Chase = Node_MoveDirectly_Chase("추적", L"Player_Pos", 3.f, 2.f);
 
 	Root_Seq->Add_Child(Chase);
 	Root_Seq->Add_Child(Show_Attack());
@@ -712,6 +738,8 @@ HRESULT CGunGenji::Add_Component(void* pArg)
 		return E_FAIL;
 
 
+
+
 	return NOERROR;
 }
 
@@ -740,6 +768,18 @@ HRESULT CGunGenji::SetUp_ConstantTable()
 	Safe_Release(pManagement);
 
 	return NOERROR;
+}
+
+HRESULT CGunGenji::Ready_Weapon()
+{
+	m_pGun = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
+	m_pGun->Change_WeaponData(CWeapon::WPN_Hammer_Normal);
+
+	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
+	m_pGun->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
+	m_pGun->Set_ParentMatrix(&m_pTransformCom->Get_WorldMat());
+
+	return S_OK;
 }
 
 CGunGenji * CGunGenji::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
@@ -773,6 +813,7 @@ CGameObject * CGunGenji::Clone_GameObject(void * pArg)
 
 void CGunGenji::Free()
 {
+	Safe_Release(m_pGun);
 	Safe_Release(m_pAIControllerCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pMeshCom);
