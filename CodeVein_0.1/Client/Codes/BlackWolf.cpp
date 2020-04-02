@@ -54,7 +54,7 @@ HRESULT CBlackWolf::Ready_GameObject(void * pArg)
 	Start_Sel->Add_Service(UpdatePlayerHPservice);
 	Start_Sel->Add_Service(UpdateHPRatioService);
 
-	Start_Sel->Add_Child(Bite_LeftRightLeft());
+	Start_Sel->Add_Child(Start_Pattern());
 	Start_Sel->Add_Child(Attack_After_Chase);
 
 	return NOERROR;
@@ -205,6 +205,41 @@ HRESULT CBlackWolf::Update_Value_Of_BB()
 	return S_OK;
 }
 
+CBT_Composite_Node * CBlackWolf::Start_Pattern()
+{
+	//절대적 거리 측정 노드를 추가하시오
+	CBT_Selector* Selector = Node_Selector("거리에 따른 양자택일");
+
+	Selector->Add_Child(Dist_Near_FovCheck()); //가까이
+	Selector->Add_Child(Dist_Far_FovCheck()); //아니라면
+
+	return Selector;
+}
+
+CBT_Composite_Node * CBlackWolf::Dist_Near_FovCheck()
+{
+	CBT_ConeCheck* FovNode = Node_ConeCheck("시야각, 반지름", L"Player_Pos", 10, 40);
+	FovNode->Set_Child(Random_Attack());
+
+	CBT_Selector* Selector = Node_Selector("양자택일");
+	Selector->Add_Child(FovNode); //시야각안에 있다면
+	Selector->Add_Child(Dodge()); //시야각 외부에 있다면
+
+	return Selector;
+}
+
+CBT_Composite_Node * CBlackWolf::Dist_Far_FovCheck()
+{
+	CBT_ConeCheck* FovNode = Node_ConeCheck("시야각, 반지름", L"Player_Pos", 10, 40);
+	FovNode->Set_Child(Run());
+
+	CBT_Selector* Selector = Node_Selector("양자택일");
+	Selector->Add_Child(FovNode); //시야각안에 있다면
+	Selector->Add_Child(Idle()); //시야각 외부에 있다면
+
+	return Selector;
+}
+
 CBT_Composite_Node * CBlackWolf::Frisbee()
 {
 	CBT_Simple_Parallel* Parallel = Node_Parallel_Immediate("병렬");
@@ -228,6 +263,72 @@ CBT_Composite_Node * CBlackWolf::Frisbee()
 	//원하는 방향
 	//치아에 맞춰서 0.5f~0.8f 트레일
 	//충돌 했을 경우 번쩍임, 왜곡
+
+	return Parallel;
+}
+
+CBT_Composite_Node * CBlackWolf::Idle_Eat()
+{
+	//14식사 11식사발견 15아이들(경계)
+	return nullptr;
+}
+
+CBT_Composite_Node * CBlackWolf::Idle_Sit()
+{
+	//12앉기 8일어서기 15아이들(경계)
+	return nullptr;
+}
+
+CBT_Composite_Node * CBlackWolf::Idle_Stand()
+{
+	//13 서있기 15아이들(경계)
+	return nullptr;
+}
+
+CBT_Composite_Node * CBlackWolf::Idle()
+{
+	CBT_Sequence* MainSq = Node_Sequence("애니");
+	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.98f);
+
+	MainSq->Add_Child(Show_Ani15);
+
+	return MainSq;
+}
+
+CBT_Composite_Node * CBlackWolf::Walk()
+{
+	CBT_Simple_Parallel* Parallel = Node_Parallel_Immediate("병렬");
+	
+	CBT_Sequence* MainSq = Node_Sequence("애니");
+	CBT_Play_Ani* Show_Ani7 = Node_Ani("걷기", 7, 1.f);
+
+	CBT_Sequence* SubSq = Node_Sequence("이동");
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("걷기 이동값", 8, 1, 0);
+
+	Parallel->Set_Main_Child(MainSq);
+	MainSq->Add_Child(Show_Ani7);
+
+	Parallel->Set_Sub_Child(SubSq);
+	SubSq->Add_Child(Move0);
+
+	return Parallel;
+}
+//애니 자체의 문제가 있음
+CBT_Composite_Node * CBlackWolf::Run()
+{
+	CBT_Simple_Parallel* Parallel = Node_Parallel_Immediate("병렬");
+	 //애니 자체의 문제가 있음
+	CBT_Sequence* MainSq = Node_Sequence("애니");
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("달리기", 0, 0.95f);
+
+	CBT_Sequence* SubSq = Node_Sequence("이동");
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("달리기 이동값", 13, 1, 0); //낙하까지 진행
+
+	Parallel->Set_Main_Child(MainSq);
+	MainSq->Add_Child(Show_Ani0);
+
+	Parallel->Set_Sub_Child(SubSq);
+	SubSq->Add_Child(Move0);
 
 	return Parallel;
 }
@@ -332,50 +433,6 @@ CBT_Composite_Node * CBlackWolf::Random_Attack()
 	return Root;
 }
 
-CBT_Composite_Node * CBlackWolf::Fov_Check()
-{
-	return nullptr;
-}
-
-CBT_Composite_Node * CBlackWolf::Walk()
-{
-	CBT_Simple_Parallel* Parallel = Node_Parallel_Immediate("병렬");
-	
-	CBT_Sequence* MainSq = Node_Sequence("애니");
-	CBT_Play_Ani* Show_Ani7 = Node_Ani("걷기", 7, 1.f);
-
-	CBT_Sequence* SubSq = Node_Sequence("이동");
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("걷기 이동값", 8, 1, 0);
-
-	Parallel->Set_Main_Child(MainSq);
-	MainSq->Add_Child(Show_Ani7);
-
-	Parallel->Set_Sub_Child(SubSq);
-	SubSq->Add_Child(Move0);
-
-	return Parallel;
-}
-
-//애니 자체의 문제가 있음
-CBT_Composite_Node * CBlackWolf::Run()
-{
-	CBT_Simple_Parallel* Parallel = Node_Parallel_Immediate("병렬");
-	 //애니 자체의 문제가 있음
-	CBT_Sequence* MainSq = Node_Sequence("애니");
-	CBT_Play_Ani* Show_Ani0 = Node_Ani("달리기", 0, 0.95f);
-
-	CBT_Sequence* SubSq = Node_Sequence("이동");
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("달리기 이동값", 13, 1, 0); //낙하까지 진행
-
-	Parallel->Set_Main_Child(MainSq);
-	MainSq->Add_Child(Show_Ani0);
-
-	Parallel->Set_Sub_Child(SubSq);
-	SubSq->Add_Child(Move0);
-
-	return Parallel;
-}
-
 CBT_Composite_Node * CBlackWolf::Dodge()
 {
 	CBT_Simple_Parallel* Parallel = Node_Parallel_Immediate("병렬");
@@ -395,28 +452,6 @@ CBT_Composite_Node * CBlackWolf::Dodge()
 	SubSq->Add_Child(Move0);
 
 	return Parallel;
-}
-
-CBT_Composite_Node * CBlackWolf::Death_Normal()
-{
-	CBT_Sequence* MainSq = Node_Sequence("애니");
-	CBT_Play_Ani* Show_Ani24 = Node_Ani("일반 죽음",24,0.95f);
-	
-	//디솔브로 사라지고 디솔브 종료시 오브젝트 제거
-	MainSq->Add_Child(Show_Ani24);
-
-	return MainSq;
-}
-
-CBT_Composite_Node * CBlackWolf::Death_Strong()
-{
-	CBT_Sequence* MainSq = Node_Sequence("애니");
-	CBT_Play_Ani* Show_Ani23 = Node_Ani("강한 죽음", 23, 0.95f);
-
-	//디솔브로 사라지고 디솔브 종료시 오브젝트 제거
-	MainSq->Add_Child(Show_Ani23);
-
-	return MainSq;
 }
 
 CBT_Composite_Node * CBlackWolf::Dmg_Front()
@@ -461,7 +496,7 @@ CBT_Composite_Node * CBlackWolf::Dmg_Back()
 	return Parallel;
 }
 
-CBT_Composite_Node * CBlackWolf::Hit_DownStrong()
+CBT_Composite_Node * CBlackWolf::Down_Strong()
 {
 	CBT_Simple_Parallel* Parallel = Node_Parallel_Immediate("병렬");
 
@@ -484,7 +519,7 @@ CBT_Composite_Node * CBlackWolf::Hit_DownStrong()
 	return Parallel;
 }
 
-CBT_Composite_Node * CBlackWolf::Hit_DownWeak()
+CBT_Composite_Node * CBlackWolf::Down_Weak()
 {
 	CBT_Simple_Parallel* Parallel = Node_Parallel_Immediate("병렬");
 
@@ -507,22 +542,26 @@ CBT_Composite_Node * CBlackWolf::Hit_DownWeak()
 	return Parallel;
 }
 
-CBT_Composite_Node * CBlackWolf::Idle_Eat()
+CBT_Composite_Node * CBlackWolf::Death_Normal()
 {
-	//14식사 11식사발견 15아이들(경계)
-	return nullptr;
+	CBT_Sequence* MainSq = Node_Sequence("애니");
+	CBT_Play_Ani* Show_Ani24 = Node_Ani("일반 죽음",24,0.95f);
+	
+	//디솔브로 사라지고 디솔브 종료시 오브젝트 제거
+	MainSq->Add_Child(Show_Ani24);
+
+	return MainSq;
 }
 
-CBT_Composite_Node * CBlackWolf::Idle_Sit()
+CBT_Composite_Node * CBlackWolf::Death_Strong()
 {
-	//12앉기 8일어서기 15아이들(경계)
-	return nullptr;
-}
+	CBT_Sequence* MainSq = Node_Sequence("애니");
+	CBT_Play_Ani* Show_Ani23 = Node_Ani("강한 죽음", 23, 0.95f);
 
-CBT_Composite_Node * CBlackWolf::Idle_Stand()
-{
-	//13 서있기 15아이들(경계)
-	return nullptr;
+	//디솔브로 사라지고 디솔브 종료시 오브젝트 제거
+	MainSq->Add_Child(Show_Ani23);
+
+	return MainSq;
 }
 
 CBlackWolf * CBlackWolf::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
