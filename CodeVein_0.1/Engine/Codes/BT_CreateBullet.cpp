@@ -16,38 +16,45 @@ CBT_Node::BT_NODE_STATE CBT_CreateBullet::Update_Node(_double TimeDelta, vector<
 
 	m_dCurTime += TimeDelta;
 
-	if (m_dCurTime > m_dMaxTime)
+	if (false == m_bService_Start)
 	{
-		switch (m_eMode)
+		if (m_dService_StartTime < m_dCurTime)
+			m_bService_Start = true;
+	}
+	else
+	{
+		if (m_dCurTime > m_dMaxTime)
 		{
-			// 积己 冉荐 力茄
-		case CBT_Service_Node::Finite:
-			if (m_iCur_Count_Of_Execution >= m_iMax_Count_Of_Execution)
-				break;
-			else
+			switch (m_eMode)
 			{
+				// 积己 冉荐 力茄
+			case CBT_Service_Node::Finite:
+				if (m_iCur_Count_Of_Execution >= m_iMax_Count_Of_Execution)
+					break;
+				else
+				{
+					m_vCreate_Pos = pBlackBoard->Get_V3Value(m_pCreate_Pos_Key);
+					m_vDir = pBlackBoard->Get_V3Value(m_pDir_Key);
+
+					CObject_Manager::Get_Instance()->Add_GameObject_ToLayer(m_pObject_Tag, SCENE_STAGE, L"Layer_Monster", &BULLET_INFO(m_vCreate_Pos, m_vDir, m_fSpeed, m_dLifeTime));
+					++m_iCur_Count_Of_Execution;
+				}
+				break;
+
+				// 积己 冉荐 公力茄
+			case CBT_Service_Node::Infinite:
 				m_vCreate_Pos = pBlackBoard->Get_V3Value(m_pCreate_Pos_Key);
 				m_vDir = pBlackBoard->Get_V3Value(m_pDir_Key);
-				
+
 				CObject_Manager::Get_Instance()->Add_GameObject_ToLayer(m_pObject_Tag, SCENE_STAGE, L"Layer_Monster", &BULLET_INFO(m_vCreate_Pos, m_vDir, m_fSpeed, m_dLifeTime));
-				++m_iCur_Count_Of_Execution;
+
+				End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, false);
+				break;
 			}
-			break;
-
-			// 积己 冉荐 公力茄
-		case CBT_Service_Node::Infinite:
-			m_vCreate_Pos = pBlackBoard->Get_V3Value(m_pCreate_Pos_Key);
-			m_vDir = pBlackBoard->Get_V3Value(m_pDir_Key);
-
-			CObject_Manager::Get_Instance()->Add_GameObject_ToLayer(m_pObject_Tag, SCENE_STAGE, L"Layer_Monster", &BULLET_INFO(m_vCreate_Pos, m_vDir, m_fSpeed, m_dLifeTime));
-
-			End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, false);
-			break;
 		}
 	}
 
 	return BT_NODE_STATE::INPROGRESS;
-
 }
 
 void CBT_CreateBullet::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging)
@@ -76,6 +83,7 @@ CBT_Node::BT_NODE_STATE CBT_CreateBullet::End_Node(vector<CBT_Node*>* pNodeStack
 		cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " End   { Service : CreateBullet Count " << m_iCur_Count_Of_Execution << " }" << endl;
 	}
 
+	m_bService_Start = false;
 	m_bInit = true;
 
 	return eState;
@@ -95,6 +103,7 @@ HRESULT CBT_CreateBullet::Ready_Clone_Node(void * pInit_Struct)
 
 	m_dCreateTime = temp.Target_dCreateTime;
 	m_dOffset = temp.Target_dOffset;
+	m_dService_StartTime = temp.Service_Start_Time;
 	m_iMax_Count_Of_Execution = temp.MaxCount_Of_Execution;
 	m_eMode = temp.eMode;
 	

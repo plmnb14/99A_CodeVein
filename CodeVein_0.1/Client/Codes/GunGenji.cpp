@@ -59,45 +59,45 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	//Start_Sel->Add_Child(Start_Game());
 
 
-	//Start_Sel->Add_Child(Start_Show());
+	Start_Sel->Add_Child(Dodge_B());
 
 
 	///////////보여주기용
 
-	CBT_RotationDir* TurnDir0 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
-	Start_Sel->Add_Child(TurnDir0);
+	//CBT_RotationDir* TurnDir0 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
+	//Start_Sel->Add_Child(TurnDir0);
 
-	Start_Sel->Add_Child(Shot());
+	//Start_Sel->Add_Child(Shot());
 
-	CBT_RotationDir* TurnDir1 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
-	Start_Sel->Add_Child(TurnDir1);
+	//CBT_RotationDir* TurnDir1 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
+	//Start_Sel->Add_Child(TurnDir1);
 
-	Start_Sel->Add_Child(Tumbling_Shot());
+	//Start_Sel->Add_Child(Tumbling_Shot());
 
-	CBT_RotationDir* TurnDir2 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
-	Start_Sel->Add_Child(TurnDir2);
+	//CBT_RotationDir* TurnDir2 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
+	//Start_Sel->Add_Child(TurnDir2);
 
-	Start_Sel->Add_Child(Sudden_Shot());
+	//Start_Sel->Add_Child(Sudden_Shot());
 
-	CBT_RotationDir* TurnDir3 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
-	Start_Sel->Add_Child(TurnDir3);
+	//CBT_RotationDir* TurnDir3 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
+	//Start_Sel->Add_Child(TurnDir3);
 
-	Start_Sel->Add_Child(Upper_Slash());
+	//Start_Sel->Add_Child(Upper_Slash());
 
-	CBT_RotationDir* TurnDir4 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
-	Start_Sel->Add_Child(TurnDir4);
+	//CBT_RotationDir* TurnDir4 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
+	//Start_Sel->Add_Child(TurnDir4);
 
-	Start_Sel->Add_Child(Arm_Attack());
+	//Start_Sel->Add_Child(Arm_Attack());
 
-	CBT_RotationDir* TurnDir5 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
-	Start_Sel->Add_Child(TurnDir5);
+	//CBT_RotationDir* TurnDir5 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
+	//Start_Sel->Add_Child(TurnDir5);
 
-	Start_Sel->Add_Child(Sting_Attack());
+	//Start_Sel->Add_Child(Sting_Attack());
 
-	CBT_RotationDir* TurnDir6 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
-	Start_Sel->Add_Child(TurnDir6);
+	//CBT_RotationDir* TurnDir6 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
+	//Start_Sel->Add_Child(TurnDir6);
 
-	Start_Sel->Add_Child(Cut_To_Right());
+	//Start_Sel->Add_Child(Cut_To_Right());
 
 	////////////////////////
 
@@ -311,7 +311,27 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
 
-	m_pAIControllerCom->Update_AIController(TimeDelta);
+	static _double Cur_Time = 0;
+	static _bool	bbbb = false;
+
+
+	if (GetAsyncKeyState(0x48))
+	{
+		bbbb = true;
+	}
+
+	if (bbbb == true)
+	{
+		m_pMeshCom->SetUp_Animation(122);
+		m_pAIControllerCom->Reset_BT();
+
+		if ( m_pMeshCom->Is_Finish_Animation(0.95f))
+		{
+			bbbb = false;
+		}
+	}
+	else
+		m_pAIControllerCom->Update_AIController(TimeDelta);
 
 	return _int();
 }
@@ -372,28 +392,46 @@ HRESULT CGunGenji::Render_GameObject()
 
 CBT_Composite_Node * CGunGenji::Shot()
 {
-	CBT_Sequence* Root_Seq = Node_Sequence("일반 총쏘기");
-
+	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("일반 총쏘기");
+	CBT_Sequence* MainSeq = Node_Sequence("일반 총쏘기");
 	CBT_Play_Ani* Show_Ani44 = Node_Ani("일반 총쏘기", 44, 0.95f);
-	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.3f);
+	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.1f);
 
-	Root_Seq->Add_Child(Show_Ani44);
-	Root_Seq->Add_Child(Show_Ani42);
+	CBT_Sequence* SubSeq = Node_Sequence("이동");
+	CBT_FixDir* FixDir0 = Node_FixDir("방향 고정", L"Player_Pos", 1, 0);
+	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 돌리기", L"Player_Pos", 0.2);
 
-	return Root_Seq;
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(Show_Ani44);
+	MainSeq->Add_Child(Show_Ani42);
+
+	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(FixDir0);
+	SubSeq->Add_Child(Rotation0);
+
+	return Root_Parallel;
 }
 
 CBT_Composite_Node * CGunGenji::Tumbling_Shot()
 {
-	CBT_Sequence* Root_Seq = Node_Sequence("텀블링 총쏘기");
-
+	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("텀블링 총쏘기");
+	CBT_Sequence* MainSeq = Node_Sequence("텀블링 총쏘기");
 	CBT_Play_Ani* Show_Ani48 = Node_Ani("텀블링 총쏘기", 48, 0.95f);
-	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.3f);
+	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.1f);
 
-	Root_Seq->Add_Child(Show_Ani48);
-	Root_Seq->Add_Child(Show_Ani42);
+	CBT_Sequence* SubSeq = Node_Sequence("이동");
+	CBT_Wait* Wait0 = Node_Wait("대기", 0.3, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", -1, 1.3, 0);
 
-	return Root_Seq;
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(Show_Ani48);
+	MainSeq->Add_Child(Show_Ani42);
+
+	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(Move0);
+
+	return Root_Parallel;
 }
 
 CBT_Composite_Node * CGunGenji::Sudden_Shot()
@@ -491,6 +529,104 @@ CBT_Composite_Node * CGunGenji::Cut_To_Right()
 	SubSeq->Add_Child(Move0);
 
 	return Root_Parallel;
+}
+
+CBT_Composite_Node * CGunGenji::Dodge_B()
+{
+	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
+	CBT_Sequence* MainSeq = Node_Sequence("뒤로 회피");
+	CBT_Play_Ani* Show_Ani162 = Node_Ani("뒤로 회피", 162, 0.95f);
+	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.3f);
+
+	CBT_Sequence* SubSeq = Node_Sequence("이동");
+	CBT_Wait* Wait0 = Node_Wait("대기", 0.4, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", -10, 0.1, 0);
+
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(Show_Ani162);
+	MainSeq->Add_Child(Show_Ani42);
+
+	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(Move0);
+
+	return Root_Parallel;
+}
+
+CBT_Composite_Node * CGunGenji::Start_Game()
+{
+	CBT_Sequence* Root_Seq = Node_Sequence("게임 시작");
+
+
+
+	//Root_Seq->Add_Child(NearAttack());
+	Root_Seq->Add_Child(Dist_Attack());
+
+	return Root_Seq;
+}
+
+CBT_Composite_Node * CGunGenji::Dist_Attack()
+{
+	CBT_Selector* Root_Sel = Node_Selector("근거리 원거리 구분 공격");
+
+	CBT_DistCheck* Dist0 = Node_DistCheck("거리 체크", L"Player_Pos", 3);
+	// 쳐다보기가 먼저,  그다음 거리체크후 공격
+
+	//거리로 판단하고 공격, selector
+
+	Root_Sel->Add_Child(Dist0);
+	Dist0->Set_Child(LookPlayer_NearAttack());
+
+	Root_Sel->Add_Child(LookPlayer_FarAttack());
+
+	return Root_Sel;
+}
+
+CBT_Composite_Node * CGunGenji::LookPlayer_NearAttack()
+{
+	CBT_Sequence* Root_Seq = Node_Sequence("플레이어 바라본 후 랜덤 근접 공격");
+
+	CBT_RotationDir* Rotation0 = Node_RotationDir("플레이어 바라보기", L"Player_Pos", 0.1);
+	
+	Root_Seq->Add_Child(Rotation0);
+	Root_Seq->Add_Child(NearAttack());
+
+	return Root_Seq;
+}
+
+CBT_Composite_Node * CGunGenji::LookPlayer_FarAttack()
+{
+	CBT_Sequence* Root_Seq = Node_Sequence("플레이어 바라본 후 랜덤 원거리 공격");
+
+	CBT_RotationDir* Rotation0 = Node_RotationDir("플레이어 바라보기", L"Player_Pos", 0.1);
+
+	Root_Seq->Add_Child(Rotation0);
+	Root_Seq->Add_Child(FarAttack());
+
+	return Root_Seq;
+}
+
+CBT_Composite_Node * CGunGenji::NearAttack()
+{
+	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 근거리 공격");
+
+	Root_Sel->Add_Child(Upper_Slash());
+	Root_Sel->Add_Child(Arm_Attack());
+	Root_Sel->Add_Child(Sting_Attack());
+	Root_Sel->Add_Child(Cut_To_Right());
+
+	return Root_Sel;
+}
+
+CBT_Composite_Node * CGunGenji::FarAttack()
+{
+	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 원거리 공격");
+
+	Root_Sel->Add_Child(Shot());
+	Root_Sel->Add_Child(Tumbling_Shot());
+	Root_Sel->Add_Child(Sudden_Shot());
+
+	return Root_Sel;
 }
 
 CBT_Composite_Node * CGunGenji::Start_Show()

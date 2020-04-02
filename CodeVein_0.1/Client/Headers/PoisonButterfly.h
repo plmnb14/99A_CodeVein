@@ -91,6 +91,7 @@ private:
 private:	// 뼈의 Pos 저장소
 	_v3					m_vTail = _v3(0.f, 0.f, 0.f);	//Tail6
 	_v3					m_vBody = _v3(0.f, 0.f, 0.f);	//Spine2
+	_v3					m_vHead = _v3(0.f, 0.f, 0.f);	//Head
 
 private:
 	
