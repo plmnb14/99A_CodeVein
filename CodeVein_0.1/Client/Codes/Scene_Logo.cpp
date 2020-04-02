@@ -48,7 +48,8 @@ _int CScene_Logo::Update_Scene(_double TimeDelta)
 		return 0;
 	}
 	
-	
+
+
 	return _int();
 }
 

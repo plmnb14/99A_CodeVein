@@ -70,9 +70,6 @@
     <Filter Include="02.GameObject\Stage\4%29 UI\Manager">
       <UniqueIdentifier>{cacbd413-3503-475e-9ca5-17f232cc0b10}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\4%29 UI\Manager\UI_Manager">
-      <UniqueIdentifier>{806185d2-30fa-4b86-b4ea-807861ea9ae5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\4%29 UI\UI">
       <UniqueIdentifier>{97ba43ae-56c0-4c4e-a764-a204e88c96f7}</UniqueIdentifier>
     </Filter>
@@ -100,14 +97,8 @@
     <Filter Include="02.GameObject\Stage\6%29 Item">
       <UniqueIdentifier>{f36caa92-e13e-47aa-a03d-0ac0628f233a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\6%29 Item\Consume_Item">
-      <UniqueIdentifier>{3f8c8425-71fa-449a-ad13-190f7dac9c57}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Scene\98.StageLoader">
       <UniqueIdentifier>{d72f0ec9-9a87-49b1-948e-7dbcf2483c02}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\4%29 UI\Manager\Item_Manager">
-      <UniqueIdentifier>{ade95dcd-cb82-48af-b4cd-b701c0241f53}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\Stage\1%29 Monster\00%29 Dummy_Target">
       <UniqueIdentifier>{30189a81-a048-468d-a30c-26360c03ccdb}</UniqueIdentifier>
@@ -130,36 +121,6 @@
     <Filter Include="02.GameObject\Stage\1%29 Monster\Wolf">
       <UniqueIdentifier>{fc9f0418-2c4d-45ed-ade0-7b692d0fc94d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory">
-      <UniqueIdentifier>{fa90bcf0-fdcd-4fec-894f-4da5626f7aa6}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inventory">
-      <UniqueIdentifier>{26d9b898-b713-4740-b718-f2a98b8fd697}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inventory\Icon">
-      <UniqueIdentifier>{947b015a-6a0a-44ec-9a1e-cedbdfdda3eb}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inventory\Icon\Inven_Icon">
-      <UniqueIdentifier>{8eebf34d-97f0-43ad-b967-4a7d6858d931}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inventory\Icon\Item_Icon">
-      <UniqueIdentifier>{c71b2dfe-81ad-427d-8d14-296a5f269137}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inventory\02.Inven_Item">
-      <UniqueIdentifier>{1658580f-7f82-4204-8ec1-45a8e906f02d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inventory\01.Inven_Status">
-      <UniqueIdentifier>{7f5dec9d-ac22-48a1-9eac-f1f9cac9259e}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inventory\02.Inven_Item\00.Tab_Consume">
-      <UniqueIdentifier>{2e68c907-0121-47f8-accf-05f34e33f8c7}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inventory\02.Inven_Item\01.Slot">
-      <UniqueIdentifier>{bbb35716-c693-4523-8187-dfad04eb2883}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Inventory\04.MiniMap">
-      <UniqueIdentifier>{dbae5204-f71c-49e7-ac83-1719cc0120d5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\4%29 UI\UI\05.QuickSlot">
       <UniqueIdentifier>{c9068e77-c3c0-46a6-806f-2bc35d7df3b2}</UniqueIdentifier>
     </Filter>
@@ -171,6 +132,51 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\4%29 UI\UI\99.Public\Button_UI">
       <UniqueIdentifier>{f4308e4f-0a96-460c-ba32-24c91ab05ac0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Item_UI">
+      <UniqueIdentifier>{fa90bcf0-fdcd-4fec-894f-4da5626f7aa6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Item_UI\00.Inventory">
+      <UniqueIdentifier>{db953d35-cc7c-49f4-91e9-dbb7da74642d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Item_UI\01.Slot">
+      <UniqueIdentifier>{ba73a71a-8309-46e6-9a56-1083412109d6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Item_UI\00.Inventory\00.Expendables">
+      <UniqueIdentifier>{90163a60-e39c-43d4-bc8e-314e5ee3e563}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Item_UI\00.Inventory\01.Materials">
+      <UniqueIdentifier>{225d6888-2cfb-4561-ac94-8f06ade09aef}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Item_UI\01.Slot\00.Expendables">
+      <UniqueIdentifier>{247eff65-75a3-482d-b3af-630f74750790}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Item_UI\01.Slot\01.Materials">
+      <UniqueIdentifier>{b09bd06b-84da-4411-b3f1-b908d5593fa8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Item_UI\01.Slot\02.Weapons">
+      <UniqueIdentifier>{c389717f-549a-4d92-af0e-5bc41d2e42e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Item_UI\01.Slot\03.Armor">
+      <UniqueIdentifier>{67c5ae32-c5fa-4299-9ea1-79ca2e022dba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Item_UI\00.Inventory\03.Armor">
+      <UniqueIdentifier>{8bbad517-43eb-4b50-b535-ad281ab433b0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Item_UI\00.Inventory\02.Weapons">
+      <UniqueIdentifier>{41defbf1-a277-4a06-9826-81e3a5e2af4f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\6%29 Item\Expendables%28소모품%29">
+      <UniqueIdentifier>{3658dfad-f202-465f-b5c6-26aa1a62eb0d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\6%29 Item\Material%28재료%29">
+      <UniqueIdentifier>{03284ba0-e561-49e1-abc8-55051ff5bf52}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 UI\UI\03.Item_UI\01.Slot\04.Select_UI">
+      <UniqueIdentifier>{645edcf2-0cb5-4a4f-a543-ff0d2da422e9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\7%29 Armor">
+      <UniqueIdentifier>{5a54ce5f-2609-4917-8cf1-25561369e52b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -231,23 +237,11 @@
     <ClInclude Include="..\Headers\BossDecoUI.h">
       <Filter>02.GameObject\Stage\4%29 UI\UI\02.BossUI\BossDecoUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\UI_Manager.h">
-      <Filter>02.GameObject\Stage\4%29 UI\Manager\UI_Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Item.h">
-      <Filter>02.GameObject\Stage\6%29 Item</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\HPBack.h">
       <Filter>02.GameObject\Stage\4%29 UI\UI\99.Public\HPBack</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Consume_Item.h">
-      <Filter>02.GameObject\Stage\6%29 Item\Consume_Item</Filter>
-    </ClInclude>
     <ClInclude Include="StageLoader.h">
       <Filter>01.Scene\98.StageLoader</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Item_Manager.h">
-      <Filter>02.GameObject\Stage\4%29 UI\Manager\Item_Manager</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Dummy_Target.h">
       <Filter>02.GameObject\Stage\1%29 Monster\00%29 Dummy_Target</Filter>
@@ -264,32 +258,50 @@
     <ClInclude Include="..\Headers\Genji.h">
       <Filter>02.GameObject\Stage\1%29 Monster\Genji</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Inven_Icon.h">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inventory\Icon\Inven_Icon</Filter>
+    <ClInclude Include="..\Headers\Button_UI.h">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\99.Public\Button_UI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\ItemIcon.h">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inventory\Icon\Item_Icon</Filter>
+    <ClInclude Include="..\Headers\Expendables_Inven.h">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Item_UI\00.Inventory\00.Expendables</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Inventory.h">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inventory</Filter>
+    <ClInclude Include="..\Headers\Material_Inven.h">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Item_UI\00.Inventory\01.Materials</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Inven_Status.h">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inventory\01.Inven_Status</Filter>
+    <ClInclude Include="..\Headers\Weapon_Inven.h">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Item_UI\00.Inventory\02.Weapons</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Tab_Consume.h">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inventory\02.Inven_Item\00.Tab_Consume</Filter>
+    <ClInclude Include="..\Headers\Expendables_Slot.h">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Item_UI\01.Slot\00.Expendables</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Item_Slot.h">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inventory\02.Inven_Item\01.Slot</Filter>
+    <ClInclude Include="..\Headers\Material_Slot.h">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Item_UI\01.Slot\01.Materials</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\MiniMap.h">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\04.MiniMap</Filter>
+    <ClInclude Include="..\Headers\Weapon_Slot.h">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Item_UI\01.Slot\02.Weapons</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\UI_Manager.h">
+      <Filter>02.GameObject\Stage\4%29 UI\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Expendables.h">
+      <Filter>02.GameObject\Stage\6%29 Item\Expendables%28소모품%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Material.h">
+      <Filter>02.GameObject\Stage\6%29 Item\Material%28재료%29</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\QuickSlot.h">
       <Filter>02.GameObject\Stage\4%29 UI\UI\05.QuickSlot</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Button_UI.h">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\99.Public\Button_UI</Filter>
+    <ClInclude Include="..\Headers\Select_UI.h">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Item_UI\01.Slot\04.Select_UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Armor_Slot.h">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Item_UI\01.Slot\03.Armor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Armor.h">
+      <Filter>02.GameObject\Stage\7%29 Armor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Armor_Inven.h">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Item_UI\00.Inventory\03.Armor</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -341,23 +353,11 @@
     <ClCompile Include="..\Codes\BossDecoUI.cpp">
       <Filter>02.GameObject\Stage\4%29 UI\UI\02.BossUI\BossDecoUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\UI_Manager.cpp">
-      <Filter>02.GameObject\Stage\4%29 UI\Manager\UI_Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Item.cpp">
-      <Filter>02.GameObject\Stage\6%29 Item</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\HPBack.cpp">
       <Filter>02.GameObject\Stage\4%29 UI\UI\99.Public\HPBack</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Consume_Item.cpp">
-      <Filter>02.GameObject\Stage\6%29 Item\Consume_Item</Filter>
-    </ClCompile>
     <ClCompile Include="StageLoader.cpp">
       <Filter>01.Scene\98.StageLoader</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Item_Manager.cpp">
-      <Filter>02.GameObject\Stage\4%29 UI\Manager\Item_Manager</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Dummy_Target.cpp">
       <Filter>02.GameObject\Stage\1%29 Monster\00%29 Dummy_Target</Filter>
@@ -374,32 +374,50 @@
     <ClCompile Include="..\Codes\Genji.cpp">
       <Filter>02.GameObject\Stage\1%29 Monster\Genji</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Inven_Icon.cpp">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inventory\Icon\Inven_Icon</Filter>
+    <ClCompile Include="..\Codes\Button_UI.cpp">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\99.Public\Button_UI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\ItemIcon.cpp">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inventory\Icon\Item_Icon</Filter>
+    <ClCompile Include="..\Codes\Expendables_Inven.cpp">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Item_UI\00.Inventory\00.Expendables</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Inventory.cpp">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inventory</Filter>
+    <ClCompile Include="..\Codes\Material_Inven.cpp">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Item_UI\00.Inventory\01.Materials</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Inven_Status.cpp">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inventory\01.Inven_Status</Filter>
+    <ClCompile Include="..\Codes\Weapon_Inven.cpp">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Item_UI\00.Inventory\02.Weapons</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Tab_Consume.cpp">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inventory\02.Inven_Item\00.Tab_Consume</Filter>
+    <ClCompile Include="..\Codes\Expendables_Slot.cpp">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Item_UI\01.Slot\00.Expendables</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Item_Slot.cpp">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\00.Inventory\02.Inven_Item\01.Slot</Filter>
+    <ClCompile Include="..\Codes\Material_Slot.cpp">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Item_UI\01.Slot\01.Materials</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\MiniMap.cpp">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Inventory\04.MiniMap</Filter>
+    <ClCompile Include="..\Codes\Weapon_Slot.cpp">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Item_UI\01.Slot\02.Weapons</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_Manager.cpp">
+      <Filter>02.GameObject\Stage\4%29 UI\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Expendables.cpp">
+      <Filter>02.GameObject\Stage\6%29 Item\Expendables%28소모품%29</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Material.cpp">
+      <Filter>02.GameObject\Stage\6%29 Item\Material%28재료%29</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\QuickSlot.cpp">
       <Filter>02.GameObject\Stage\4%29 UI\UI\05.QuickSlot</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Button_UI.cpp">
-      <Filter>02.GameObject\Stage\4%29 UI\UI\99.Public\Button_UI</Filter>
+    <ClCompile Include="..\Codes\Select_UI.cpp">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Item_UI\01.Slot\04.Select_UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Armor_Slot.cpp">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Item_UI\01.Slot\03.Armor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Armor.cpp">
+      <Filter>02.GameObject\Stage\7%29 Armor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Armor_Inven.cpp">
+      <Filter>02.GameObject\Stage\4%29 UI\UI\03.Item_UI\00.Inventory\03.Armor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

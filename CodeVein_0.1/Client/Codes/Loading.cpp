@@ -25,8 +25,9 @@
 #include "BossDecoUI.h"
 #include "BossHP.h"
 
-#include "Item.h"
-
+#include "Expendables.h"
+#include "Material.h"
+#include "Armor.h"
 
 USING(Client)
 
@@ -66,8 +67,14 @@ _uint CLoading::Loading_ForStage(void)
 	//	return E_FAIL;
 
 	// UI 원형 생성
-	CUI_Manager::Get_Instance()->Add_UI_Prototype(m_pGraphicDev);
-
+	if (FAILED(CUI_Manager::Get_Instance()->Add_UI_Prototype(m_pGraphicDev)))
+		return E_FAIL;
+	
+	// Item 원형 생성
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Expendables", CExpendables::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Material", CMaterial::Create(m_pGraphicDev))))
+		return E_FAIL;
 	
 	// 오브젝트 원형 생성
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -249,7 +256,7 @@ Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
 
 HRESULT CLoading::Stage_Object_Ready()
 {
-	return E_NOTIMPL;
+	return NOERROR;
 }
 
 CLoading* CLoading::Create(LPDIRECT3DDEVICE9 pGraphicDev, SCENEID eLoadingID)

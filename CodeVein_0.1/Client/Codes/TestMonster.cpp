@@ -80,77 +80,77 @@ HRESULT CTestMonster::Ready_GameObject(void * pArg)
 	//// 19 -> 좌회전 한바퀴  덥썩
 
 
-	CBT_Sequence* pSequence = static_cast<CBT_Sequence*>(pManagement->Clone_Node(L"Sequence", CBT_Node_Manager::COMPOSITE, &CBT_Sequence::INFO("Sequence1")));
-	//CBT_Sequence* pSequence1 = static_cast<CBT_Sequence*>(pManagement->Clone_Node(L"Sequence", CBT_Node_Manager::COMPOSITE, &CBT_Sequence::INFO("Sequence2")));
-	//CBT_Sequence* pSequence2 = static_cast<CBT_Sequence*>(pManagement->Clone_Node(L"Sequence", CBT_Node_Manager::COMPOSITE, nullptr));
+	//CBT_Sequence* pSequence = static_cast<CBT_Sequence*>(pManagement->Clone_Node(L"Sequence", CBT_Node_Manager::COMPOSITE, &CBT_Sequence::INFO("Sequence1")));
+	////CBT_Sequence* pSequence1 = static_cast<CBT_Sequence*>(pManagement->Clone_Node(L"Sequence", CBT_Node_Manager::COMPOSITE, &CBT_Sequence::INFO("Sequence2")));
+	////CBT_Sequence* pSequence2 = static_cast<CBT_Sequence*>(pManagement->Clone_Node(L"Sequence", CBT_Node_Manager::COMPOSITE, nullptr));
 
-	//CBT_Selector* pSelector = static_cast<CBT_Selector*>(pManagement->Clone_Node(L"Selector", CBT_Node_Manager::COMPOSITE, &CBT_Selector::INFO("Selecotr")));
+	////CBT_Selector* pSelector = static_cast<CBT_Selector*>(pManagement->Clone_Node(L"Selector", CBT_Node_Manager::COMPOSITE, &CBT_Selector::INFO("Selecotr")));
 
-	//CBT_Wait* pWait2 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait2", 2, 0)));
-	//CBT_Wait* CoolWait = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("CoolWait",2)));
-	//CBT_Wait* CoolWait22 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait444", 4)));
-	//CBT_Move* pMove = static_cast<CBT_Move*>(pManagement->Clone_Node(L"Move", CBT_Node_Manager::TASK, &CBT_Move::INFO(m_pTransformCom, 1, 5)));
-	//CBT_Play_Ani* pAni17 = static_cast<CBT_Play_Ani*>(pManagement->Clone_Node(L"Play_Ani", CBT_Node_Manager::TASK, &CBT_Play_Ani::INFO("Ani17", m_pMeshCom, 17)));
-	//CBT_Play_Ani* pAni6 = static_cast<CBT_Play_Ani*>(pManagement->Clone_Node(L"Play_Ani", CBT_Node_Manager::TASK, &CBT_Play_Ani::INFO("Ani6", m_pMeshCom, 6)));
-	//CBT_Simple_Parallel* pParallel = static_cast<CBT_Simple_Parallel*>(pManagement->Clone_Node(L"Simple_Parallel", CBT_Node_Manager::COMPOSITE, &CBT_Simple_Parallel::INFO("Parallel", CBT_Simple_Parallel::Mode::Immediate)));
-	CBT_Wait* pWait1 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait1", 2, 1)));
-	//CBT_Wait* pWait5 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait3", 5)));
-	CBT_Wait* pWait4 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait4", 4, 0)));
+	////CBT_Wait* pWait2 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait2", 2, 0)));
+	////CBT_Wait* CoolWait = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("CoolWait",2)));
+	////CBT_Wait* CoolWait22 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait444", 4)));
+	////CBT_Move* pMove = static_cast<CBT_Move*>(pManagement->Clone_Node(L"Move", CBT_Node_Manager::TASK, &CBT_Move::INFO(m_pTransformCom, 1, 5)));
+	////CBT_Play_Ani* pAni17 = static_cast<CBT_Play_Ani*>(pManagement->Clone_Node(L"Play_Ani", CBT_Node_Manager::TASK, &CBT_Play_Ani::INFO("Ani17", m_pMeshCom, 17)));
+	////CBT_Play_Ani* pAni6 = static_cast<CBT_Play_Ani*>(pManagement->Clone_Node(L"Play_Ani", CBT_Node_Manager::TASK, &CBT_Play_Ani::INFO("Ani6", m_pMeshCom, 6)));
+	////CBT_Simple_Parallel* pParallel = static_cast<CBT_Simple_Parallel*>(pManagement->Clone_Node(L"Simple_Parallel", CBT_Node_Manager::COMPOSITE, &CBT_Simple_Parallel::INFO("Parallel", CBT_Simple_Parallel::Mode::Immediate)));
+	//CBT_Wait* pWait1 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait1", 2, 1)));
+	////CBT_Wait* pWait5 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait3", 5)));
+	//CBT_Wait* pWait4 = static_cast<CBT_Wait*>(pManagement->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO("Wait4", 4, 0)));
 
-	//CBT_Cooldown* pCooldown1 = static_cast<CBT_Cooldown*>(pManagement->Clone_Node(L"Cooldown", CBT_Node_Manager::DECORATOR, &CBT_Cooldown::INFO("Colldown1", 1)));
-	CBT_Cooldown* pCooldown4 = static_cast<CBT_Cooldown*>(pManagement->Clone_Node(L"Cooldown", CBT_Node_Manager::DECORATOR, &CBT_Cooldown::INFO("Colldown4", 4)));
+	////CBT_Cooldown* pCooldown1 = static_cast<CBT_Cooldown*>(pManagement->Clone_Node(L"Cooldown", CBT_Node_Manager::DECORATOR, &CBT_Cooldown::INFO("Colldown1", 1)));
+	//CBT_Cooldown* pCooldown4 = static_cast<CBT_Cooldown*>(pManagement->Clone_Node(L"Cooldown", CBT_Node_Manager::DECORATOR, &CBT_Cooldown::INFO("Colldown4", 4)));
 
-	//CBT_Loop* pLoop3 = static_cast<CBT_Loop*>(pManagement->Clone_Node(L"Loop", CBT_Node_Manager::DECORATOR, &CBT_Loop::INFO("Loop", 3)));
-	//CBT_Loop* pLoop0 = static_cast<CBT_Loop*>(pManagement->Clone_Node(L"Loop", CBT_Node_Manager::DECORATOR, &CBT_Loop::INFO("Loop", 0)));
+	////CBT_Loop* pLoop3 = static_cast<CBT_Loop*>(pManagement->Clone_Node(L"Loop", CBT_Node_Manager::DECORATOR, &CBT_Loop::INFO("Loop", 3)));
+	////CBT_Loop* pLoop0 = static_cast<CBT_Loop*>(pManagement->Clone_Node(L"Loop", CBT_Node_Manager::DECORATOR, &CBT_Loop::INFO("Loop", 0)));
 
-	//CBT_MoveDirectly* pMoveDirect = static_cast<CBT_MoveDirectly*>(pManagement->Clone_Node(L"MoveDirectly", CBT_Node_Manager::TASK, &CBT_MoveDirectly::INFO("MoveDirectly", m_pTransformCom, L"Target_Pos", 1, 3)));
+	////CBT_MoveDirectly* pMoveDirect = static_cast<CBT_MoveDirectly*>(pManagement->Clone_Node(L"MoveDirectly", CBT_Node_Manager::TASK, &CBT_MoveDirectly::INFO("MoveDirectly", m_pTransformCom, L"Target_Pos", 1, 3)));
 
-	//CBT_ConeCheck* pConeCheck = static_cast<CBT_ConeCheck*>(pManagement->Clone_Node(L"ConeCheck", CBT_Node_Manager::DECORATOR, &CBT_ConeCheck::INFO("ConeCheck", L"Target_Pos", m_pTransformCom, 40, 5)));
+	////CBT_ConeCheck* pConeCheck = static_cast<CBT_ConeCheck*>(pManagement->Clone_Node(L"ConeCheck", CBT_Node_Manager::DECORATOR, &CBT_ConeCheck::INFO("ConeCheck", L"Target_Pos", m_pTransformCom, 40, 5)));
 
-
-	if (FAILED(pBehaviorTree->Set_Child(pSequence))) return E_FAIL;
-	//if (FAILED(pSelector->Add_Child(pSequence))) return E_FAIL;
-	if (FAILED(pSequence->Add_Child(pCooldown4))) return E_FAIL;
-	pCooldown4->Set_Child(pWait1);
-	//pConeCheck->Set_Child(pAni17);
-	//pCooldown1->Set_Child(pLoop3);
-	pSequence->Add_Child(pWait4);
-	//pLoop3->Set_Child(pWait1);
-	//pCooldown4->Set_Child(pAni2);
 
 	//if (FAILED(pBehaviorTree->Set_Child(pSequence))) return E_FAIL;
-	//pSequence->Add_Child(pWait2);
-	////pSequence->Add_Child(pCooldown2);
-	////pCooldown2->Set_Child(CoolWait22);
-	//pSequence->Add_Child(pSequence1);
-	//pSequence->Add_Child(pWait3);
-	//pSequence1->Add_Child(pParallel);
-	//pParallel->Set_Main_Child(pWait4);
-	//pParallel->Set_Sub_Child(pWait1);
-	//pSequence1->Add_Child(pAni4);
+	////if (FAILED(pSelector->Add_Child(pSequence))) return E_FAIL;
+	//if (FAILED(pSequence->Add_Child(pCooldown4))) return E_FAIL;
+	//pCooldown4->Set_Child(pWait1);
+	////pConeCheck->Set_Child(pAni17);
+	////pCooldown1->Set_Child(pLoop3);
+	//pSequence->Add_Child(pWait4);
+	////pLoop3->Set_Child(pWait1);
+	////pCooldown4->Set_Child(pAni2);
 
-	//pSequence->Add_Child(pParallel);
-	//pParallel->Set_Main_Child(pSequence2);
-	//pSequence2->Add_Child()
-	//pParallel->Set_Sub_Child(pWait3);
+	////if (FAILED(pBehaviorTree->Set_Child(pSequence))) return E_FAIL;
+	////pSequence->Add_Child(pWait2);
+	//////pSequence->Add_Child(pCooldown2);
+	//////pCooldown2->Set_Child(CoolWait22);
+	////pSequence->Add_Child(pSequence1);
+	////pSequence->Add_Child(pWait3);
+	////pSequence1->Add_Child(pParallel);
+	////pParallel->Set_Main_Child(pWait4);
+	////pParallel->Set_Sub_Child(pWait1);
+	////pSequence1->Add_Child(pAni4);
 
-
-	//// 18 -> 트린다미어
-
-
-	//// 17 -> 돌진하면서 5번 타격하면서 텀블링
-
-
-
-	////최초 조우시
-	//// 15 -> 혼자 있을 때 idle상태
-
-	//// 16 -> 보스존 진입 시
+	////pSequence->Add_Child(pParallel);
+	////pParallel->Set_Main_Child(pSequence2);
+	////pSequence2->Add_Child()
+	////pParallel->Set_Sub_Child(pWait3);
 
 
+	////// 18 -> 트린다미어
 
-	m_pAIControllerCom->Set_BeHaviorTree(pBehaviorTree);
-	m_pAIControllerCom->Set_BlackBoard(pBlackBoard);
+
+	////// 17 -> 돌진하면서 5번 타격하면서 텀블링
+
+
+
+	//////최초 조우시
+	////// 15 -> 혼자 있을 때 idle상태
+
+	////// 16 -> 보스존 진입 시
+
+
+
+	//m_pAIControllerCom->Set_BeHaviorTree(pBehaviorTree);
+	//m_pAIControllerCom->Set_BlackBoard(pBlackBoard);
 	//m_pMeshCom->SetUp_Animation(56);
 
 	//// 움찔
