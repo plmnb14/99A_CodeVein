@@ -5,12 +5,15 @@ CGameObject::CGameObject(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: m_pGraphic_Dev(pGraphic_Device)
 {
 	Safe_AddRef(m_pGraphic_Dev);
+
+	ZeroMemory(&m_tObjParam, sizeof(OBJECT_PARAM));
 }
 
 CGameObject::CGameObject(const CGameObject & rhs)
 	: m_pGraphic_Dev(rhs.m_pGraphic_Dev)
 {
 	Safe_AddRef(m_pGraphic_Dev);
+	ZeroMemory(&m_tObjParam, sizeof(OBJECT_PARAM));
 }
 
 HRESULT CGameObject::Ready_GameObject_Prototype()
@@ -125,8 +128,6 @@ void CGameObject::Compute_ViewZ(const _v3* pPos)
 
 	m_fViewZ = D3DXVec3Length(&(vCamPos - *pPos));
 }
-
-
 
 void CGameObject::Free()
 {

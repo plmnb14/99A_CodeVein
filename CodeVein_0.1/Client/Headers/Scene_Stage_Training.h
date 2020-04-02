@@ -22,7 +22,7 @@ public:
 public:
 	HRESULT Ready_Layer_Player(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Dummy(const _tchar* pLayerTag);
-	HRESULT Ready_Layer_Monster(const _tchar* pLayerTag);
+	HRESULT Ready_Layer_Enemies();
 
 private:
 	CNavMesh*		m_pNavMesh = nullptr;
@@ -31,7 +31,7 @@ private:
 	HRESULT Ready_LightDesc();
 
 public:
-	static CScene_Stage_Training* Create(LPDIRECT3DDEVICE9 pGraphic_Device , _bool _bLoadStatic);
+	static CScene_Stage_Training* Create(LPDIRECT3DDEVICE9 pGraphic_Device, _bool _bLoadStatic);
 	virtual void Free();
 };
 

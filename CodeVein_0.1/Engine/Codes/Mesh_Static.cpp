@@ -83,11 +83,16 @@ HRESULT CMesh_Static::Ready_Component_Prototype(const _tchar * pFilePath, const 
 		// 임시로, 스펙큘러 대신 러프니스맵 삽입
 		Change_TextureFileName(szFullPath, L"N", L"R");
 
-		D3DXCreateTextureFromFile(m_pGraphic_Dev, szFullPath, &m_ppTextures[i].pTextures[MESHTEXTURE::TYPE_SPECULAR]);
+		//D3DXCreateTextureFromFile(m_pGraphic_Dev, szFullPath, &m_ppTextures[i].pTextures[MESHTEXTURE::TYPE_SPECULAR]);
+		//
+		//Change_TextureFileName(szFullPath, L"S", L"E");
 
-		Change_TextureFileName(szFullPath, L"S", L"E");
-
-		D3DXCreateTextureFromFile(m_pGraphic_Dev, szFullPath, &m_ppTextures[i].pTextures[MESHTEXTURE::TYPE_EMISSIVE]);
+		if (FAILED(D3DXCreateTextureFromFile(m_pGraphic_Dev, szFullPath, &m_ppTextures[i].pTextures[MESHTEXTURE::TYPE_EMISSIVE])))
+		{
+			//Change_TextureFileName(szFullPath, L"R", L"ID");
+			//
+			//D3DXCreateTextureFromFile(m_pGraphic_Dev, szFullPath, &m_ppTextures[i].pTextures[MESHTEXTURE::TYPE_SPECULAR]);
+		}
 	}
 
 	_ulong dwFVF = pMesh->GetFVF();
@@ -100,20 +105,19 @@ HRESULT CMesh_Static::Ready_Component_Prototype(const _tchar * pFilePath, const 
 	//}
 	//else
 	//{
-		// D3DVERTEXELEMENT9구조체 하나가 정점의 fvf하나의 정보를 의미한다.
-		D3DVERTEXELEMENT9		DeclCreate[MAX_FVF_DECL_SIZE] = {
-			{ 0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
-			{ 0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0 },
-			{ 0, 24, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TANGENT, 0 },
-			{ 0, 36, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_BINORMAL, 0 },
-			{ 0, 48, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
-			{ 0, 56, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 1 },
-			D3DDECL_END()
-		};
+	// D3DVERTEXELEMENT9구조체 하나가 정점의 fvf하나의 정보를 의미한다.
+	D3DVERTEXELEMENT9		DeclCreate[MAX_FVF_DECL_SIZE] = {
+		{ 0, 0, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_POSITION, 0 },
+		{ 0, 12, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_NORMAL, 0 },
+		{ 0, 24, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TANGENT, 0 },
+		{ 0, 36, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_BINORMAL, 0 },
+		{ 0, 48, D3DDECLTYPE_FLOAT2, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 0 },
+		D3DDECL_END()
+	};
 
-		//pMesh->GetDeclaration(DeclCreate);
+	//pMesh->GetDeclaration(DeclCreate);
 
-		pMesh->CloneMesh(pMesh->GetOptions(), DeclCreate, m_pGraphic_Dev, &m_pMesh);
+	pMesh->CloneMesh(pMesh->GetOptions(), DeclCreate, m_pGraphic_Dev, &m_pMesh);
 	//}
 
 	Safe_Release(pMesh);

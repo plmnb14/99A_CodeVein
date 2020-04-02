@@ -33,7 +33,13 @@ public:
 	virtual HRESULT Render_GameObject();
 
 public:
-	virtual void UpdateTrails(_double TimeDelta);
+	virtual void OnCollisionEnter();
+	virtual void OnCollisionEvent(list<CGameObject*> plistGameObject);
+
+public:
+	virtual void Update_Trails(_double TimeDelta);
+	virtual void Update_Collider();
+	virtual void Draw_Collider();
 
 public:
 	virtual void Change_WeaponData(WEAPON_DATA _eWpnData);
@@ -46,18 +52,27 @@ public:
 	virtual void			Set_AttachBoneMartix(_mat* _matAttachBone) { m_pmatAttach = _matAttachBone; }
 	// 무기를 붙인 부모의 메트릭스 주소를 받습니다.
 	virtual void			Set_ParentMatrix(_mat* _matParent) { m_pmatParent = _matParent; }
+	// 무기의 타입을 정합니다.
 	virtual void			Set_WeaponType(WEAPON_STATE _eWeaponType) { m_eWeaponType = _eWeaponType; }
+	// 무기의 아군 유무를 정합니다.
+	virtual void			Set_Friendly(_bool _bFriendly) { m_bPlayerFriendly = _bFriendly; }
+	// 트레일 On/Off
+	virtual void			Set_Enable_Trail(_bool _bEnable);
 
 private:
-	CTransform*				m_pTransform	= nullptr;
-	CRenderer*				m_pRenderer		= nullptr;
-	CShader*				m_pShader		= nullptr;
-	CMesh_Static*			m_pMesh_Static	= nullptr;
-	CCollider*				m_pCollider		= nullptr;
+	CTransform*				m_pTransform = nullptr;
+	CRenderer*				m_pRenderer = nullptr;
+	CShader*				m_pShader = nullptr;
+	CMesh_Static*			m_pMesh_Static = nullptr;
 
-	CTrail_VFX*				m_pTrailEffect  = nullptr;
+	CTrail_VFX*				m_pTrailEffect = nullptr;
 	CTrail_VFX*				m_pDistortionEffect = nullptr;
 	CTrail_VFX*				m_pStaticTrailEffect = nullptr;
+
+private:
+	_float					m_fTrailHeight_Min = 0.f;		// 트레일 시작점 보정수치
+	_float					m_fTrailHeight_Max = 1.f;		// 트레일 끝점 보정수치
+
 
 private:
 	_tchar					m_szName[MAX_STR] = L"";
@@ -68,14 +83,18 @@ private:
 
 private:
 	_bool					m_bEquip = false;				// 무기 장착 여부
+	_bool					m_bPlayerFriendly = false;		// 플레이어 껀지
+	_bool					m_bTrailEnable = false;
 
 private:
 	WEAPON_STATE			m_eWeaponType = WEAPON_Ssword;
 	WEAPON_DATA				m_eWeaponData = WPN_SSword_Normal;
+	WPN_PARAM				m_tWeaponParam[WPN_DATA_End];
 
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_Default();
+	HRESULT SetUp_WeaponData();
 	HRESULT SetUp_ConstantTable();
 
 private:

@@ -25,6 +25,9 @@ HRESULT CDrain_Weapon::Ready_GameObject(void * pArg)
 
 	SetUp_Default();
 
+	m_fAnimMultiply = 1.f;
+	m_pMesh_Dynamic->SetUp_Animation(m_eAnimnum);
+
 	return NOERROR;
 }
 
@@ -32,7 +35,7 @@ _int CDrain_Weapon::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
 
-	//Cacl_AttachBoneTransform();
+	Cacl_AttachBoneTransform();
 
 	return NO_EVENT;
 }
@@ -43,22 +46,19 @@ _int CDrain_Weapon::Late_Update_GameObject(_double TimeDelta)
 		nullptr == m_pMesh_Dynamic)
 		return E_FAIL;
 
-	if (m_bEquip)
+	if (m_bActive)
 	{
-		m_pMesh_Dynamic->SetUp_Animation(0);
-		m_fAnimMultiply = 0.f;
+		m_pMesh_Dynamic->SetUp_Animation(m_eAnimnum);
 
 		if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
 			return E_FAIL;
 	}
 
-	return _int();
+	return NO_EVENT;
 }
 
 HRESULT CDrain_Weapon::Render_GameObject()
 {
-	return S_OK;
-
 	if (nullptr == m_pShader ||
 		nullptr == m_pMesh_Dynamic)
 		return E_FAIL;
@@ -86,6 +86,9 @@ HRESULT CDrain_Weapon::Render_GameObject()
 			if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pMesh_Dynamic->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE))))
 				return E_FAIL;
 
+			if (FAILED(m_pShader->Set_Texture("g_NormalTexture", m_pMesh_Dynamic->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_NORMAL))))
+				return E_FAIL;
+
 			m_pShader->Commit_Changes();
 
 			m_pMesh_Dynamic->Render_Mesh(i, j);
@@ -101,9 +104,81 @@ HRESULT CDrain_Weapon::Render_GameObject()
 	return NOERROR;
 }
 
+void CDrain_Weapon::Set_Active(_bool _bActiveDrain)
+{
+	m_bActive = _bActiveDrain;
+
+	if (false == m_bActive)
+	{
+		m_pMesh_Dynamic->SetUp_Animation(0);
+		m_pMesh_Dynamic->Play_Animation(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
+	}
+}
+
 void CDrain_Weapon::Set_ActiveCollider(_bool _bActiveCollider)
 {
 	m_pCollider->Set_Enabled(_bActiveCollider);
+}
+
+void CDrain_Weapon::Set_ResetOldAnimIdx()
+{
+	m_pMesh_Dynamic->Reset_OldIndx();
+}
+
+void CDrain_Weapon::Set_AnimIdx(_ulong _eAnimState)
+{
+	switch (_eAnimState)
+	{
+		// Parry
+	case 375:
+	{
+		m_eAnimnum = Drain_Parry;
+		break;
+	}
+
+	// Suck_Charge_Start
+	case 376:
+	{
+		m_eAnimnum = Drain_Charge_Start;
+		break;
+	}
+
+	// Suck_Charge_End
+	case 377:
+	{
+		m_eAnimnum = Drain_Charge_End;
+		break;
+	}
+
+	// Suck_Combo
+	case 378:
+	{
+		m_eAnimnum = Drain_ComboSuck;
+		break;
+	}
+
+	// Suck_Ground
+	case 379:
+	{
+		m_eAnimnum = Drain_GroundSuck;
+		break;
+	}
+
+	// Suck_Special_01
+	case 380:
+	{
+		m_eAnimnum = Drain_SpecialSuck_01;
+		break;
+	}
+
+	// Suck_Special_02
+	case 381:
+	{
+		m_eAnimnum = Drain_SpecialSuck_02;
+		break;
+	}
+
+	}
 }
 
 void CDrain_Weapon::Change_WeaponMesh(const _tchar* _MeshName)
@@ -116,7 +191,7 @@ void CDrain_Weapon::Change_WeaponMesh(const _tchar* _MeshName)
 	lstrcpy(m_szName, _MeshName);
 
 	// 컴포넌트에 있는 매쉬 찾아서
-	auto& iter = m_pmapComponents.find(L"Dynamic_Mesh");
+	auto& iter = m_pmapComponents.find(L"Com_DynamicMesh");
 
 	// 둘 다 해제
 	Safe_Release(m_pMesh_Dynamic);
@@ -130,19 +205,19 @@ void CDrain_Weapon::Change_WeaponMesh(const _tchar* _MeshName)
 HRESULT CDrain_Weapon::Add_Component()
 {
 	// For.Com_Transform
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Transform", (CComponent**)&m_pTransform)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransform)))
 		return E_FAIL;
 
 	// For.Com_Renderer
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Renderer", (CComponent**)&m_pRenderer)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRenderer)))
 		return E_FAIL;
 
 	// For.Com_Shader
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Shader", (CComponent**)&m_pShader)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShader)))
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Drain_LongTail", L"Dynamic_Mesh", (CComponent**)&m_pMesh_Dynamic)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Drain_LongTail", L"Com_DynamicMesh", (CComponent**)&m_pMesh_Dynamic)))
 		return E_FAIL;
 
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Collider", (CComponent**)&m_pCollider)))
@@ -164,7 +239,8 @@ HRESULT CDrain_Weapon::SetUp_Default()
 	// Transform
 	m_pTransform->Set_Pos(V3_NULL);
 	m_pTransform->Set_Scale(V3_ONE);
-	m_pTransform->Set_Angle(AXIS_X, D3DXToRadian(-90.f));
+	//m_pTransform->Set_Angle(AXIS_X, -D3DXToRadian(90.f));
+	//m_pTransform->Set_Angle(AXIS_Z, D3DXToRadian(45.f));
 	return S_OK;
 }
 
@@ -189,7 +265,12 @@ HRESULT CDrain_Weapon::SetUp_ConstantTable()
 
 void CDrain_Weapon::Cacl_AttachBoneTransform()
 {
-	m_pTransform->Calc_ParentMat(&(*m_pmatAttach * *m_pmatParent));
+	_mat tmpMat;
+	D3DXMatrixIdentity(&tmpMat);
+
+	memcpy(&tmpMat._41, &(*m_pmatAttach)._41, sizeof(_v3));
+
+	m_pTransform->Calc_ParentMat(&(tmpMat * *m_pmatParent));
 }
 
 CDrain_Weapon * CDrain_Weapon::Create(_Device pGraphic_Device)
@@ -198,6 +279,7 @@ CDrain_Weapon * CDrain_Weapon::Create(_Device pGraphic_Device)
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 	{
+		MSG_BOX("Failed To Creating Prototype DrainWeapon");
 		MSG_BOX("Failed To Creating CMainApp");
 		Safe_Release(pInstance);
 	}
@@ -212,6 +294,7 @@ CGameObject * CDrain_Weapon::Clone_GameObject(void * pArg)
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
+		MSG_BOX("Failed To Creating Clone DrainWeapon");
 		MSG_BOX("Failed To Cloned CMainApp");
 		Safe_Release(pInstance);
 	}

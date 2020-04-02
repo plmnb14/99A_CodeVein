@@ -32,8 +32,8 @@ HRESULT CScene_Title::Ready_Scene()
 		return E_FAIL;
 
 	// ÆÄÆ¼Å¬
-	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
-		return E_FAIL;
+	//if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
+	//	return E_FAIL;
 
 	m_pLoading = CLoading::Create(m_pGraphic_Device, SCENE_STAGE);
 	if (nullptr == m_pLoading)

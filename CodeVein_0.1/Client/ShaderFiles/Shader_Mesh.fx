@@ -35,7 +35,7 @@ sampler		SpecularSampler = sampler_state
 sampler		EmissiveSampler = sampler_state
 {
 	texture = g_EmissiveTexture;
-}
+};
 
 texture		g_FXTexture;
 sampler		FXSampler = sampler_state
@@ -140,7 +140,7 @@ struct PS_IN
 	float3		B		: BINORMAL;
 	float2		vTexUV	: TEXCOORD0;
 	float4		vProjPos	: TEXCOORD1;
-	loat4		vLocalPos : TEXCOORD2;
+	float4		vLocalPos : TEXCOORD2;
 };
 
 struct PS_BLURIN
@@ -235,8 +235,8 @@ PS_OUT PS_DISSOLVE(PS_IN In)
 
 		if (fxColor.r >= g_fFxAlpha - 0.01 && fxColor.r <= g_fFxAlpha + 0.01)
 			vColor = pow(float4(0.9, 0.75, 0.65, 1), 2.2); //
-		else
-			;
+		//else
+		//	;
 
 		//if (fxColor.r >= g_fFxAlpha - 0.007 && fxColor.r <= g_fFxAlpha + 0.007)
 		//	vColor = pow(float4(0.9, 0.87, 0.8, 0.5), 2.2); // 
@@ -251,7 +251,7 @@ PS_OUT PS_DISSOLVE(PS_IN In)
 
 
 	Out.vDiffuse = vColor;
-	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vNormal = vector(In.N.xyz * 0.5f + 0.5f, 0.f);
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.f, 0.f);
 	Out.vVelocity = 0;
 
