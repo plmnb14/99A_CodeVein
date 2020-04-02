@@ -31,17 +31,29 @@ private:
 	HRESULT Update_Bone_Of_BlackBoard();
 	HRESULT Update_Value_Of_BB();
 
-	// 1. 프리스비 == 점프하면서 냠
-	CBT_Composite_Node* Frisbee();
-	// 2. 좌회피 후 물기
-	CBT_Composite_Node* JumpDodgeL_And_Bite();
-	// 3. 우회피 후 물기
-	CBT_Composite_Node* JumpDodgeR_And_Bite();
-	// 4. 좌 우 좌
-	CBT_Composite_Node* Bite_LeftRightLeft();
+	CBT_Composite_Node* Frisbee(); 	// 1. 프리스비
+	CBT_Composite_Node* JumpDodgeL_And_Bite(); // 2. 좌회피 후 물기
+	CBT_Composite_Node* JumpDodgeR_And_Bite(); // 3. 우회피 후 물기
+	CBT_Composite_Node* Bite_LeftRightLeft(); 	// 4. 좌 우 좌
+
+	CBT_Composite_Node* Walk(); //22 걷기 탐색상태
+	CBT_Composite_Node* Run(); //0 달리기 추적상태
+	CBT_Composite_Node* Dodge(); //22 회피
+
+	CBT_Composite_Node* Death_Normal(); //24 죽음
+	CBT_Composite_Node* Death_Strong(); //23 강하게 죽음
+	CBT_Composite_Node* Dmg_Front(); //25 앞에서 맞음
+	CBT_Composite_Node* Dmg_Back(); //26 뒤에서 맞음
+	CBT_Composite_Node* Hit_DownStrong(); //19 20 21 강하게 날아감
+	CBT_Composite_Node* Hit_DownWeak(); //16 17 18 약하게 날아감
+
+	CBT_Composite_Node* Idle_Eat(); //14 11 15 식사 도중 발견, 경계상태
+	CBT_Composite_Node* Idle_Sit(); //12 8 15 앉아서 쉬는 도중 발견, 경계상태 
+	CBT_Composite_Node* Idle_Stand(); //서있는 도중 발견, 경계상태
 
 	//Near
 	//시야각 이내인 경우 == 4개중 1개 공격
+
 	//시야각 밖인 경우 == 회전
 
 	//Far
