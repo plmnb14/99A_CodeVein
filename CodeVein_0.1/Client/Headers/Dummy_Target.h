@@ -8,6 +8,21 @@ BEGIN(Client)
 
 class CDummy_Target final : public CGameObject
 {
+private:
+	typedef enum tmp_Animation
+	{
+		Guard_Start = 3,
+		Guard_Loop = 4,
+		Guard_End = 5,
+		Idle_State = 42
+	}TMP_ANI;
+
+private:
+	enum BoneMatrix
+	{
+		Bone_Range, Bone_Body, Bone_Head, Bone_End
+	};
+
 protected:
 	explicit CDummy_Target(LPDIRECT3DDEVICE9 pGraphic_Device);
 	explicit CDummy_Target(const CDummy_Target& rhs);
@@ -20,19 +35,34 @@ public:
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
 
+private:
+	virtual void Ready_BoneMatrix();
+	virtual void Ready_Collider();
+
+private:
+	virtual void Draw_Collider();
+	virtual void Update_Collder();
+
 public:
-	virtual vector<CCollider*> Get_ColliderVector() { return m_vecPhysicCollider; }
+	virtual void OnCollisionEnter();
+	virtual void OnCollisionEvent_Physic(list<CGameObject*> plistGameObject);
+
+private:
+	_mat*					m_matBones[Bone_End];
 
 private:
 	CTransform*			m_pTransform = nullptr;
 	CRenderer*			m_pRenderer = nullptr;
 	CShader*			m_pShader = nullptr;
 	CMesh_Dynamic*		m_pDynamic_Mesh = nullptr;
-	
-private:
-	vector<CCollider*>			m_vecPhysicCollider;
 
 	_double				m_dTimeDelta = 0;
+
+	//======================================================================
+	TMP_ANI				m_eTmpAnimNum = Idle_State;
+	_float				m_fTimer = 0.f;
+	_bool				m_bOnGuard = false;
+	//======================================================================
 
 private:
 	HRESULT Add_Component();

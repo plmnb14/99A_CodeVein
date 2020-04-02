@@ -110,7 +110,9 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 	CFileInfo::Create_Mesh_PathInfo(CFileInfo::Extract_Essential);
 	CFileInfo::Create_Mesh_PathInfo(CFileInfo::Extract_Static);
 	CFileInfo::Create_Mesh_PathInfo(CFileInfo::Extract_Weapon);
+	CFileInfo::Create_Mesh_PathInfo(CFileInfo::Extract_DrainWeapon);
 	CFileInfo::Create_Mesh_PathInfo(CFileInfo::Extract_Dynamic);
+	CFileInfo::Create_Mesh_PathInfo(CFileInfo::Extract_Effect);
 
 	// 텍스쳐 경로 추출
 	CFileInfo::Create_Texture_PathInfo();

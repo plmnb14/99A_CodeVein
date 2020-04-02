@@ -174,6 +174,7 @@
     <ClInclude Include="..\Headers\Button_UI.h" />
     <ClInclude Include="..\Headers\Client_Defines.h" />
     <ClInclude Include="..\Headers\Consume_Item.h" />
+    <ClInclude Include="..\Headers\Drain_Weapon.h" />
     <ClInclude Include="..\Headers\Dummy_Target.h" />
     <ClInclude Include="..\Headers\GenjiBullet.h" />
     <ClInclude Include="..\Headers\HPBack.h" />
@@ -210,6 +211,7 @@
     <ClInclude Include="..\Headers\TestMonster.h" />
     <ClInclude Include="..\Headers\BlackUrchin.h" />
     <ClInclude Include="..\Headers\Weapon.h" />
+    <ClInclude Include="..\Headers\YachaMan.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StageLoader.h" />
@@ -223,6 +225,7 @@
     <ClCompile Include="..\Codes\BossHP.cpp" />
     <ClCompile Include="..\Codes\Button_UI.cpp" />
     <ClCompile Include="..\Codes\Consume_Item.cpp" />
+    <ClCompile Include="..\Codes\Drain_Weapon.cpp" />
     <ClCompile Include="..\Codes\Dummy_Target.cpp" />
     <ClCompile Include="..\Codes\GenjiBullet.cpp" />
     <ClCompile Include="..\Codes\HPBack.cpp" />
@@ -259,6 +262,7 @@
     <ClCompile Include="..\Codes\TestMonster.cpp" />
     <ClCompile Include="..\Codes\BlackUrchin.cpp" />
     <ClCompile Include="..\Codes\Weapon.cpp" />
+    <ClCompile Include="..\Codes\YachaMan.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="StageLoader.cpp" />
     <ClCompile Include="stdafx.cpp">

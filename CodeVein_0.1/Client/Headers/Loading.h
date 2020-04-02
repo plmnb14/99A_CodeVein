@@ -27,14 +27,12 @@ public:
 
 public:
 	HRESULT Ready_Loading(SCENEID eLoadingID);
-	_uint Loading_ForStage(void);
 
 public:
 	static unsigned int CALLBACK Thread_Main(void* pArg);
 
 private:
 	HRESULT Ready_Effect(void);
-	HRESULT Add_EffectPrototype(const _tchar* szName, _bool bIsMesh = false);
 	Engine::EFFECT_INFO* Read_EffectData(const _tchar* szPath);
 
 private:

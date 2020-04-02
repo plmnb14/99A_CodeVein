@@ -40,9 +40,9 @@ public:
 	virtual void Set_OnTool(_bool _bOnTool) { m_bOnTool = _bOnTool; }
 
 public:
-	virtual _tchar*	Get_Name()		{ return m_szName; }
-	virtual _int	Get_Index()		{ return m_iIndex; }
-	virtual _bool   Get_Selected()	{ return m_bIsSelected; }
+	virtual _tchar*	Get_Name() { return m_szName; }
+	virtual _int	Get_Index() { return m_iIndex; }
+	virtual _bool   Get_Selected() { return m_bIsSelected; }
 
 protected:
 	CTransform*		m_pTransform = nullptr;
@@ -56,7 +56,6 @@ protected:
 	_tchar			m_szName[MAX_STR] = L"";
 	_int			m_iIndex = 0;
 	_ulong			m_dwPassNum = 0;
-	_mat			m_matLastWVP;
 
 	// 툴에서 사용되는 변수
 protected:

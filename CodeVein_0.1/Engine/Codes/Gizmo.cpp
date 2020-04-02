@@ -115,12 +115,16 @@ void CGizmo::Draw_Sphere(_v3 _vVertex, _float _fRadius)
 
 	m_pGraphicDev->SetFVF(VTXFVF_COL);
 
+	_float fAlpha = 1.f;
+
 	m_pGizmoShader->Begin_Shader();
 	m_pGizmoShader->Begin_Pass(0);
 
 	m_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 20, pVtxCol_Z, sizeof(VTX_COL));
 
 	m_pGizmoShader->Set_Value("g_matWorld", &matWorld, sizeof(_mat));
+	m_pGizmoShader->Set_Value("g_fAlpha", &fAlpha, sizeof(float));
+
 	m_pGizmoShader->Commit_Changes();
 
 	m_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 20, pVtxCol_Z, sizeof(VTX_COL));
