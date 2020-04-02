@@ -49,6 +49,8 @@ void CGizmo::Draw_Sphere(_v3 _vVertex, _float _fRadius)
 	if (!m_bEnableCollider)
 		return;
 
+	m_Color = COLOR_GREEN(0.5f);
+
 	_mat matView, matViewInverse;
 	_mat matWorld, matScale, matPos;
 
@@ -241,6 +243,8 @@ void  CGizmo::Draw_AABB(const _v3* _vVertex, _v3 _vPos, _v3 _vSize)
 	if (!m_bEnableCollider)
 		return;
 
+	m_Color = COLOR_PINK(0.5f);
+
 	_mat matWorld, matScale, matPos;
 	D3DXMatrixIdentity(&matWorld);
 
@@ -411,15 +415,12 @@ void  CGizmo::Draw_OBB(const _v3* _vVertex, _v3 vRotate, _v3 _vPos, _v3 _vSize)
 	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
 }
 
-void	CGizmo::Draw_Capsule(const _v3 _vVertex, _float _fRadius, _float _fMaxHeight)
+void	CGizmo::Draw_Capsule(const _v3 _vVertex, const _v3 _vRadius)
 {
 	if (!m_bEnableCollider)
 		return;
 
-	m_pGraphicDev->SetTexture(0, NULL);
-	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_WIREFRAME);
-	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, FALSE);
-	m_pGraphicDev->SetFVF(VTXFVF_COL);
+	m_Color = COLOR_GREEN(0.5f);
 
 	_mat matWorld, matScale, matPos;
 	D3DXMatrixIdentity(&matWorld);
@@ -429,18 +430,16 @@ void	CGizmo::Draw_Capsule(const _v3 _vVertex, _float _fRadius, _float _fMaxHeigh
 
 	matWorld = matScale * matPos;
 
-	m_pGraphicDev->SetTransform(D3DTS_WORLD, &matWorld);
-
 	VTX_COL pVtxCol_Z[23] = {};
 	VTX_COL pVtxCol_X[23] = {};
 	VTX_COL pVtxCol_Y_Top[21] = {};
 	VTX_COL pVtxCol_Y_Mid[21] = {};
 	VTX_COL pVtxCol_Y_Bot[21] = {};
-	_v3	vVertex = { 0.f, _fRadius, 0.f };
+	_v3	vVertex = { 0.f, _vRadius.x, 0.f };
 	_float fRadian = D3DXToRadian(360.f / 20);
-	_float fInnerHeight = _fMaxHeight - (_fRadius * 2);
+	_float fInnerHeight = _vRadius.y;
 
-	vVertex = { 0.f, 0.f, _fRadius };
+	vVertex = { 0.f, 0.f, _vRadius.x };
 	LOOP(11)
 	{
 		// 반지름 10개 생성
@@ -466,7 +465,7 @@ void	CGizmo::Draw_Capsule(const _v3 _vVertex, _float _fRadius, _float _fMaxHeigh
 
 
 
-	vVertex = { _fRadius, 0.f, 0.f };
+	vVertex = { _vRadius.x, 0.f, 0.f };
 	LOOP(11)
 	{
 		// 반지름 10개 생성
@@ -491,7 +490,7 @@ void	CGizmo::Draw_Capsule(const _v3 _vVertex, _float _fRadius, _float _fMaxHeigh
 	pVtxCol_X[22].dwColor = COLOR_GREEN(1.f);
 
 
-	vVertex = { 0.f, 0.f, _fRadius };
+	vVertex = { 0.f, 0.f, _vRadius.x };
 	LOOP(21)
 	{
 		pVtxCol_Y_Top[i].vPos = vVertex + _v3{ 0.f, fInnerHeight * 0.5f ,0.f };;
@@ -499,7 +498,7 @@ void	CGizmo::Draw_Capsule(const _v3 _vVertex, _float _fRadius, _float _fMaxHeigh
 		CALC::V3_RotY(&vVertex, &vVertex, fRadian);
 	}
 
-	vVertex = { 0.f, 0.f, _fRadius };
+	vVertex = { 0.f, 0.f, _vRadius.x };
 	LOOP(21)
 	{
 		pVtxCol_Y_Mid[i].vPos = vVertex;
@@ -507,13 +506,18 @@ void	CGizmo::Draw_Capsule(const _v3 _vVertex, _float _fRadius, _float _fMaxHeigh
 		CALC::V3_RotY(&vVertex, &vVertex, fRadian);
 	}
 
-	vVertex = { 0.f, 0.f, _fRadius };
+	vVertex = { 0.f, 0.f, _vRadius.x };
 	LOOP(21)
 	{
 		pVtxCol_Y_Bot[i].vPos = vVertex - _v3{ 0.f, fInnerHeight * 0.5f ,0.f };;
 		pVtxCol_Y_Bot[i].dwColor = COLOR_GREEN(1.f);
 		CALC::V3_RotY(&vVertex, &vVertex, fRadian);
 	}
+
+	Init_Shader(matWorld);
+
+	m_pGizmoShader->Begin_Shader();
+	m_pGizmoShader->Begin_Pass(0);
 
 	m_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 20, pVtxCol_Y_Top, sizeof(VTX_COL));
 	m_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 20, pVtxCol_Y_Mid, sizeof(VTX_COL));
@@ -522,9 +526,8 @@ void	CGizmo::Draw_Capsule(const _v3 _vVertex, _float _fRadius, _float _fMaxHeigh
 	m_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 22, pVtxCol_Z, sizeof(VTX_COL));
 	m_pGraphicDev->DrawPrimitiveUP(D3DPT_LINESTRIP, 22, pVtxCol_X, sizeof(VTX_COL));
 
-	m_pGraphicDev->SetRenderState(D3DRS_FILLMODE, D3DFILL_SOLID);
-
-	m_pGraphicDev->SetRenderState(D3DRS_LIGHTING, TRUE);
+	m_pGizmoShader->End_Pass();
+	m_pGizmoShader->End_Shader();
 }
 
 HRESULT CGizmo::Init_Shader(_mat _DefaultMat)

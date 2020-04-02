@@ -8,9 +8,9 @@
 #include "Target_Manager.h"
 #include "Light_Manager.h"
 #include "Shader.h"
+#include "Texture.h"
 
 BEGIN(Engine)
-
 class ENGINE_DLL CRenderer final : public CComponent
 {
 private:
@@ -23,7 +23,7 @@ public:
 	HRESULT Add_RenderList(RENDERID eGroup, CGameObject* pGameObject);
 	HRESULT Draw_RenderList();
 private:
-	_bool						m_bOnRenderTarget;
+	_bool						m_bOnRenderTarget = false;
 	_mat						m_matLastWVP;
 	list<CGameObject*>			m_RenderList[RENDER_END];
 	typedef list<CGameObject*>	RENDERLIST;
@@ -34,6 +34,7 @@ private:
 	CShader*					m_pShader_LightAcc = nullptr;
 	CShader*					m_pShader_Blend = nullptr;
 	CBuffer_ViewPort*			m_pViewPortBuffer = nullptr;
+	CTexture*					m_pSSAOTexture = nullptr;
 private:
 	HRESULT Render_Priority();
 	HRESULT Render_NonAlpha();

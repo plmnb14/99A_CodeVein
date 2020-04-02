@@ -20,11 +20,11 @@ public:
 		{ strcpy_s<256>(Target_NodeName, pNodeName);
 		lstrcpy(Target_Key, _pTarget_Key); }
 
-		char		Target_NodeName[256];
-		_tchar		Target_Key[256];
-		CTransform*	pTransform;
-		_float		fDegreeOfFov;
-		_float		fMaxLength;
+		char		Target_NodeName[256] = { 0, };
+		_tchar		Target_Key[256] = { 0, };
+		CTransform*	pTransform = nullptr;
+		_float		fDegreeOfFov = 0.f;
+		_float		fMaxLength = 0.f;
 	} INFO;
 
 protected:
@@ -36,11 +36,11 @@ public:
 	HRESULT Set_Child(CBT_Node* pNode);
 
 public:
-	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging) override;
+	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, CBlackBoard* pBlackBoard, _bool bDebugging) override;
 
 public:
-	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging);
-	virtual BT_NODE_STATE End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging);
+	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging);
+	virtual BT_NODE_STATE End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging);
 
 private:
 	HRESULT Ready_Clone_Node(void* pInit_Struct);
@@ -49,6 +49,7 @@ private:
 
 private:
 	CBT_Node*		m_pChild = nullptr;
+	_bool			m_bInProgress = false;
 
 	CTransform*		m_pTransform = nullptr;
 	_tchar			m_Target_Key[256] = { 0, };

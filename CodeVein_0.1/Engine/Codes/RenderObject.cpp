@@ -47,9 +47,9 @@ _int CRenderObject::Late_Update_GameObject(_double TimeDelta)
 HRESULT CRenderObject::Render_GameObject()
 {
 	Init_Shader();
+	m_dwPassNum = 2; // For MotionBlur
 
 	m_pShader->Begin_Shader();
-
 	_ulong dwNumSubSet = m_pMesh_Static->Get_NumMaterials();
 
 	for (_ulong i = 0; i < dwNumSubSet; ++i)
@@ -164,6 +164,7 @@ void CRenderObject::Change_Mesh(const _tchar* _MeshName)
 
 	// Release 한 컴포넌트에 새로이 Clone 받음.
 	iter->second = m_pMesh_Static = static_cast<CMesh_Static*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, m_szName));
+	Safe_AddRef(iter->second);
 
 	return;
 }
@@ -230,4 +231,7 @@ void CRenderObject::Init_Shader()
 	m_pShader->Set_Value("g_matWorld", &matWorld, sizeof(_mat));
 	m_pShader->Set_Value("g_matView", &matView, sizeof(_mat));
 	m_pShader->Set_Value("g_matProj", &matProj, sizeof(_mat));
+
+	m_pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat));
+	m_matLastWVP = matWorld * matView * matProj;
 }

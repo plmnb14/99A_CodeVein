@@ -18,7 +18,7 @@ HRESULT CBT_Cooldown::Set_Child(CBT_Node * pNode)
 	return S_OK;
 }
 
-CBT_Node::BT_NODE_STATE CBT_Cooldown::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Cooldown::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	if (nullptr == m_pChild)
 		return BT_NODE_STATE::FAILED;
@@ -26,12 +26,12 @@ CBT_Node::BT_NODE_STATE CBT_Cooldown::Update_Node(_double TimeDelta, vector<CBT_
 	// 메인쓰레드 실행 루트
 	if (pNodeStack == plistSubNodeStack->front())
 	{
+		// 쿨다운 준비 완료
 		if (BT_NODE_STATE::SUCCEEDED == m_eCurState)
 		{
 			m_bInit = true;
 			m_eCurState = BT_NODE_STATE::INPROGRESS;
-			//Safe_AddRef(m_pChild);	//  종료시 충돌은 나지않지만, 릭이 남음
-			//횟수가 반복될수록 릭이 늘어남
+
 			return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
 		}
 		else
@@ -39,10 +39,10 @@ CBT_Node::BT_NODE_STATE CBT_Cooldown::Update_Node(_double TimeDelta, vector<CBT_
 			if (m_bInit)
 			{
 				//부모에게 알리기 위해서 첫 스택에 부모를 넣어줌.
-				m_pSubNodeStatck.push_back(pNodeStack->back());
-				Safe_AddRef(pNodeStack->back());
-				plistSubNodeStack->push_back(&m_pSubNodeStatck);
-				Start_Node(&m_pSubNodeStatck, bDebugging);
+				m_pSubNodeStack.push_back(pNodeStack->back());
+				//Safe_AddRef(pNodeStack->back());
+				plistSubNodeStack->push_back(&m_pSubNodeStack);
+				Start_Node(&m_pSubNodeStack, plistSubNodeStack, bDebugging);
 			}
 
 			return BT_NODE_STATE::FAILED;
@@ -58,14 +58,14 @@ CBT_Node::BT_NODE_STATE CBT_Cooldown::Update_Node(_double TimeDelta, vector<CBT_
 		{
 			//m_bAddThread = true;
 			m_eCurState = BT_NODE_STATE::SUCCEEDED;
-			return End_Node(pNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
 		}
 	}
 
 	return BT_NODE_STATE::INPROGRESS;
 }
 
-void CBT_Cooldown::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
+void CBT_Cooldown::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging)
 {
 	if (m_bInit)
 	{
@@ -87,7 +87,7 @@ void CBT_Cooldown::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 	}
 }
 
-CBT_Node::BT_NODE_STATE CBT_Cooldown::End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Cooldown::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
 {
 	if (pNodeStack->empty())
 		return eState;
@@ -110,7 +110,7 @@ CBT_Node::BT_NODE_STATE CBT_Cooldown::End_Node(vector<CBT_Node*>* pNodeStack, BT
 	/*
 	부모에게 알리기위해 쓰레드에 첫 스택에 임의로 넣었던 것 빼준다.
 	*/
-	Safe_Release(pNodeStack->back());
+	//Safe_Release(pNodeStack->back());
 	pNodeStack->pop_back();
 
 
@@ -147,17 +147,15 @@ CBT_Node * CBT_Cooldown::Clone(void * pInit_Struct)
 
 void CBT_Cooldown::Free()
 {
-	//부모와 본인것 주소 제거
-	if (!m_pSubNodeStatck.empty())
+	if (false == m_bInit)
 	{
-		Safe_Release(m_pSubNodeStatck[0]);
-		Safe_Release(m_pSubNodeStatck[1]);
-
-		m_pSubNodeStatck.clear();
+		// this
+		//m_pSubNodeStack.pop_back();
+		m_pSubNodeStack[0] = nullptr;
+		// 부모노드
+		//m_pSubNodeStack.pop_back();
+		m_pSubNodeStack[1] = nullptr;
 	}
-
-	if (m_pChild)
-		m_pChild->Free();
 
 	Safe_Release(m_pChild);
 }

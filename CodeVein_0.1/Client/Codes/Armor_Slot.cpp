@@ -26,7 +26,7 @@ HRESULT CArmor_Slot::Ready_GameObject(void * pArg)
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
-
+	
 	SetUp_Default();
 
 	return NOERROR;
@@ -36,7 +36,7 @@ _int CArmor_Slot::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
-
+	
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
@@ -49,7 +49,7 @@ _int CArmor_Slot::Update_GameObject(_double TimeDelta)
 		m_pSelectUI->Set_ViewZ(m_fViewZ - 0.1f);
 		m_pSelectUI->Set_Select(m_bIsSelect);
 	}
-
+	
 
 	return NO_EVENT;
 }

@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Button_UI.h"
 
-
-
 CButton_UI::CButton_UI(_Device pDevice)
 	: CUI(pDevice)
 {
@@ -28,14 +26,13 @@ HRESULT CButton_UI::Ready_GameObject(void * pArg)
 	CUI::Ready_GameObject(pArg);
 
 
+
 	return NOERROR;
 }
 
 _int CButton_UI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
-	if (m_bIsDead)
-		return DEAD_OBJ;
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
@@ -181,4 +178,3 @@ void CButton_UI::Free()
 
 	CUI::Free();
 }
-

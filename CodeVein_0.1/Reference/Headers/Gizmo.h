@@ -36,7 +36,7 @@ public:
 	void Draw_AABB(const _v3* _vVertex ,_v3 _vPos, _v3 _vSize = _v3{1.f, 1.f, 1.f});
 	void Draw_OBB(const _v3* _vVertex, _v3 vRotate, _v3 _vPos, _v3 _vSize = _v3{ 1.f, 1.f, 1.f });
 
-	void Draw_Capsule(const _v3 _vVertex, _float _fRadius, _float _fMaxHeight);
+	void Draw_Capsule(const _v3 _vVertex, const _v3 _vRadius);
 
 public:
 	HRESULT Init_Shader(_mat _DefaultMat);

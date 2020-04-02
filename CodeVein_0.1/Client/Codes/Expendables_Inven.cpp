@@ -213,6 +213,11 @@ void CExpendables_Inven::Add_Expendables(CExpendables::EXPEND_TYPE eType)
 {
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_Expendables", SCENE_STAGE, L"Layer_Expendables");
 	CExpendables* pExpendables = static_cast<CExpendables*>(g_pManagement->Get_GameObjectBack(L"Layer_Expendables", SCENE_STAGE));
+	if (nullptr == pExpendables)
+	{
+		MSG_BOX("Expendables is null");
+		return;
+	}
 	pExpendables->Set_Type(eType);
 	
 	Load_Expendables(pExpendables, 0);

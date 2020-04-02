@@ -487,4 +487,9 @@ void CCell::Free()
 	CGameObject::Free();
 
 	Safe_Release(m_pTransform);
+
+	LOOP(3)
+	{
+		m_pSibling[i] = nullptr;
+	}
 }

@@ -25,7 +25,8 @@ HRESULT CSky::Ready_GameObject(void * pArg)
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 	
-	m_pTransformCom->Set_Scale(_v3(100.f, 100.f, 100.f));
+	m_pTransformCom->Set_Pos(_v3(1.f, 1.f, 1.f));
+	m_pTransformCom->Set_Scale(_v3(0.4f, 0.4f, 0.4f));
 
 	return NOERROR;
 }
@@ -62,11 +63,23 @@ HRESULT CSky::Render_GameObject()
 		return E_FAIL;
 
 	m_pShaderCom->Begin_Shader();
-	m_pShaderCom->Begin_Pass(0);
 
-	m_pBufferCom->Render_VIBuffer();
+	_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials();
 
-	m_pShaderCom->End_Pass();
+	for (_uint i = 0; i < iNumSubSet; ++i)
+	{
+		m_pShaderCom->Begin_Pass(0);
+
+		if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_Texture(i, MESHTEXTURE::TYPE_DIFFUSE))))
+			return E_FAIL;
+
+		m_pShaderCom->Commit_Changes();
+
+		m_pMeshCom->Render_Mesh(i);
+
+		m_pShaderCom->End_Pass();
+	}
+
 	m_pShaderCom->End_Shader();
 
 	return NOERROR;
@@ -85,14 +98,18 @@ HRESULT CSky::Add_Component()
 	// For.Com_Shader
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Sky", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
-
-	// For.Com_Buffer
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Cube", L"Com_Buffer", (CComponent**)&m_pBufferCom)))
+	
+	// for.Com_Mesh
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Sky_1", L"Static_Mesh", (CComponent**)&m_pMeshCom)))
 		return E_FAIL;
 
-	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Texture_Sky", L"Com_Texture", (CComponent**)&m_pTextureCom)))
-		return E_FAIL;
+	//// For.Com_Buffer
+	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Cube", L"Com_Buffer", (CComponent**)&m_pBufferCom)))
+	//	return E_FAIL;
+	//
+	//// For.Com_Texture
+	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Texture_Sky", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	//	return E_FAIL;
 
 	
 	return NOERROR;
@@ -120,8 +137,8 @@ HRESULT CSky::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 3)))
-		return E_FAIL;
+	//if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom)))
+	//	return E_FAIL;
 
 	Safe_Release(pManagement);
 
@@ -157,8 +174,8 @@ CGameObject * CSky::Clone_GameObject(void * pArg)
 
 void CSky::Free()
 {
-	Safe_Release(m_pTextureCom);
-	Safe_Release(m_pBufferCom);
+	//Safe_Release(m_pTextureCom);
+	Safe_Release(m_pMeshCom);
 	Safe_Release(m_pTransformCom);	
 	Safe_Release(m_pShaderCom);	
 	Safe_Release(m_pRendererCom);

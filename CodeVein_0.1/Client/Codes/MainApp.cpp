@@ -4,6 +4,7 @@
 #include "CameraMgr.h"
 #include "UI_Manager.h"
 #include "Item_Manager.h"
+#include "ParticleMgr.h"
 
 CMainApp::CMainApp()
 {
@@ -16,7 +17,7 @@ HRESULT CMainApp::Ready_MainApp()
 	
 	if (FAILED(Ready_Component_Prototype()))
 		return E_FAIL;
-	
+
 	if (FAILED(Ready_Start_Scene(SCENE_LOGO)))
 		return E_FAIL;
 
@@ -29,7 +30,8 @@ _int CMainApp::Update_MainApp(_double TimeDelta)
 		return -1;
 	
 	CCameraMgr::Get_Instance()->Update();
-	
+	CParticleMgr::Get_Instance()->Update_ParticleManager(TimeDelta);
+
 	return g_pManagement->Update_Management(TimeDelta);
 }	
 
@@ -92,12 +94,10 @@ HRESULT CMainApp::Ready_Component_Prototype()
 		return E_FAIL;
 
 	g_pManagement->Ready_Component_Manager(m_pGraphic_Dev);
-	g_pManagement->LoadTex_FromPath(m_pGraphic_Dev, L"../../Data/Tex_Path.dat");
-	//g_pManagement->LoadMesh_FromPath(m_pGraphic_Dev, L"../../Data/Mesh_Path.dat");
+
 	g_pManagement->Ready_Gizmo(m_pGraphic_Dev);
 
 	m_pRenderer = static_cast<CRenderer*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Renderer"));
-	//Safe_AddRef(m_pRenderer);
 	
 	return S_OK;
 }
@@ -178,6 +178,8 @@ CMainApp * CMainApp::Create()
 void CMainApp::Free()
 {
 	Safe_Release(m_pGraphic_Dev);
+	
+	CParticleMgr::Get_Instance()->Destroy_Instance();
 
 	Safe_Release(m_pRenderer);
 	

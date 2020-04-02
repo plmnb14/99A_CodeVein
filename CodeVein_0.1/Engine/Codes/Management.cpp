@@ -219,6 +219,11 @@ CGameObject* CManagement::Get_GameObjectBack(const _tchar* pLayerTag, _uint iSce
 	return m_pObject_Manager->Get_GameObjectBack(pLayerTag, iSceneID);
 }
 
+list<CGameObject*> CManagement::Get_GameObjectList(const _tchar * pLayerTag, _uint iSceneID)
+{
+	return m_pObject_Manager->Get_GameObjectList(pLayerTag, iSceneID);
+}
+
 CGameObject * CManagement::Clone_GameObject_Return(const _tchar * pPrototypeTag, void * pArg)
 {
 	if (nullptr == m_pObject_Manager)
@@ -412,12 +417,12 @@ void CManagement::Gizmo_Draw_OBB(_v3 * _vVertex, const _v3 vRotate, const _v3 _v
 	m_pGizmo->Draw_OBB(_vVertex, vRotate, _vPos, _vSize);
 }
 
-void CManagement::Gizmo_Draw_Capsule(_v3 _vVertex, const _float _fRadius, const _float _fMaxHeight)
+void CManagement::Gizmo_Draw_Capsule(_v3 _vVertex, const _v3 _vRadius)
 {
 	if (m_pGizmo == nullptr)
 		return;
 
-	m_pGizmo->Draw_Capsule(_vVertex, _fRadius, _fMaxHeight);
+	m_pGizmo->Draw_Capsule(_vVertex, _vRadius);
 }
 
 void CManagement::Gizmo_ColliderEnable()
@@ -452,6 +457,16 @@ HRESULT CManagement::Ready_BT_Node()
 CBT_Node * CManagement::Clone_Node(const _tchar * pPrototypeTag, CBT_Node_Manager::NODE_TYPE eType, void * pInit_Struct)
 {
 	return m_pBT_Node_Manager->Clone_Node(pPrototypeTag, eType, pInit_Struct);
+}
+
+void CManagement::Create_ParticleEffect(_tchar* szName, _float fLifeTime, _v3 vPos, CTransform* pFollowTrans)
+{
+	CParticleMgr::Get_Instance()->Create_ParticleEffect(szName, fLifeTime, vPos, pFollowTrans);
+}
+
+void CManagement::Create_Effect(_tchar* szName, _v3 vPos, CTransform * pFollowTrans)
+{
+	CParticleMgr::Get_Instance()->Create_Effect(szName, vPos, pFollowTrans);
 }
 
 void CManagement::Free()

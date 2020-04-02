@@ -2,7 +2,7 @@
 #include "..\Headers\QuickSlot.h"
 
 #include "Expendables_Inven.h"
-#include "Item_Manager.h"
+
 
 CQuickSlot::CQuickSlot(_Device pDevice)
 	: CUI(pDevice)
@@ -46,13 +46,13 @@ _int CQuickSlot::Update_GameObject(_double TimeDelta)
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
 
-	/*m_vecQuickSlot = *CItem_Manager::Get_Instance()->Get_QuickSlot();*/
+	
 
 	if (m_vecQuickSlot.size() > m_iSelect)
 		m_iIndex = m_vecQuickSlot[m_iSelect]->Get_Type();
 	else m_iIndex = CExpendables::EXPEND_END;
 
-	//cout << CItem_Manager::Get_Instance()->Get_QuickSlotSize() << endl;
+	
 
 	m_vecQuickSlot = *static_cast<CExpendables_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendablesInven", SCENE_STAGE))->Get_QuickSlot();
 

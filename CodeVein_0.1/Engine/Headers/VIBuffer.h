@@ -20,7 +20,7 @@ public:
 protected:
 	LPDIRECT3DVERTEXBUFFER9			m_pVB = nullptr;
 	_uint							m_iStride = 0; // 정점 하나의 크기.
-	_uint							m_iNumVertices; // 정점들의 갯수.
+	_uint							m_iNumVertices = 0; // 정점들의 갯수.
 	_ulong							m_dwFVF = 0; // 정점 멤버를 구성하는 fvf열거체.
 	_v3*							m_pPosition = nullptr;
 protected:

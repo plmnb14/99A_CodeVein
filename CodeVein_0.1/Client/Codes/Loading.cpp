@@ -6,11 +6,29 @@
 #include "TexEffect.h"
 #include "MeshEffect.h"
 #include "Player.h"
+#include "HPBack.h"
 #include "TestMonster.h"
 #include "Weapon.h"
+#include "Dummy_Target.h"
+#include "Trail_VFX.h"
 
 #include "Item_Manager.h"
 #include "UI_Manager.h"
+
+#include "TestMonster.h"
+#include "PoisonButterfly.h"
+#include "PoisonBullet.h"
+#include "BlackUrchin.h"
+#include "BlackWolf.h"
+#include "GunGenji.h"
+#include "SwordGenji.h"
+#include "SwordShieldGenji.h"
+
+#include "PlayerHP.h"
+#include "PlayerST.h"
+#include "BossDecoUI.h"
+#include "BossHP.h"
+
 
 
 USING(Client)
@@ -36,50 +54,67 @@ HRESULT CLoading::Ready_Loading(SCENEID eLoadingID)
 
 _uint CLoading::Loading_ForStage(void)
 {
-	CManagement*	pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return -1;
-
-	Safe_AddRef(pManagement);
-
 	// BT_Node 생성 중
-	if (FAILED(pManagement->Ready_BT_Node()))
+	if (FAILED(g_pManagement->Ready_BT_Node()))
 		return E_FAIL;
 
 	_mat DefaultMat;
 	D3DXMatrixIdentity(&DefaultMat);
 
-	
-	// 오브젝트 원형
-	lstrcpy(m_szString, L"게임오브젝트 원형 생성 중....");
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_Player", CPlayer::Create(m_pGraphicDev))))
-		return E_FAIL;
-
-
-	lstrcpy(m_szString, L"이펙트 생성 중....");
+	// 이펙트 원형 생성
 	Ready_Effect();
 
+	
+	// 오브젝트 원형 생성
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	
+	// 플레이어
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Player", CPlayer::Create(m_pGraphicDev))))
+		return E_FAIL;
 
-	// UI 생성
-	if (FAILED(CUI_Manager::Get_Instance()->Add_UI_Prototype(m_pGraphicDev)))
-		return E_FAIL;
-	// Item 매니저
-	if (FAILED(CItem_Manager::Get_Instance()->Add_Item_Prototype(m_pGraphicDev)))
-		return E_FAIL;
+	g_pManagement->LoadTex_FromPath(m_pGraphicDev, L"../../Data/Tex_Path.dat");
+
+
 
 	
+
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_Path.dat");
+
+
 	//몬스터
-	if (FAILED(pManagement->Add_Prototype(L"Monster_TestMonster", CTestMonster::Create(m_pGraphicDev))))
+
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_TestMonster", CTestMonster::Create(m_pGraphicDev))))
 		return E_FAIL;
+	// 독나방
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonButterfly", CPoisonButterfly::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 검은 성게
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 검은 늑대
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackWolf", CBlackWolf::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 독나비 독 총알
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonBullet", CPoisonBullet::Create(m_pGraphicDev))))
+		return E_FAIL;
+
 
 	//무기
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_Weapon", CWeapon::Create(m_pGraphicDev))))
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon", CWeapon::Create(m_pGraphicDev))))
 		return E_FAIL;
 
-	m_bFinish = true;
-	lstrcpy(m_szString, L"로딩 완료");
+	//더미
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Dummy", CDummy_Target::Create(m_pGraphicDev))))
+		return E_FAIL;
 
-	Safe_Release(pManagement);
+	// 트레일
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SwordTrail", Engine::CTrail_VFX::Create(m_pGraphicDev))))
+		return E_FAIL;
+
+////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
+	m_bFinish = true;
+
+	cout << "로딩 완료" << endl;
 
 	return 0;
 }
@@ -94,9 +129,17 @@ unsigned int CALLBACK CLoading::Thread_Main(void* pArg)
 
 	switch (pLoading->Get_LoadingID())
 	{
-	case SCENE_STAGE:
-		iFlag = pLoading->Loading_ForStage();
+	case SCENE_TITLE:
+	{
+		iFlag = pLoading->Loading_Title();
 		break;
+	}
+
+	case SCENE_STAGE:
+	{
+		iFlag = pLoading->Loading_Stage();
+		break;
+	}
 	}
 
 	LeaveCriticalSection(pLoading->Get_Crt());
@@ -106,18 +149,141 @@ unsigned int CALLBACK CLoading::Thread_Main(void* pArg)
 
 HRESULT CLoading::Ready_Effect(void)
 {
-	CManagement*	pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return -1;
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/EffectMesh_Path.dat"); // 임시
+	
 
-	Safe_AddRef(pManagement);
-
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_EffectSmoke", CTexEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/testSmoke.dat")))))
+#pragma region ButterFly
+	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke")))
 		return E_FAIL;
-	if (FAILED(pManagement->Add_Prototype(L"GameObject_EffectTestMesh", CMeshEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/testMeshEff.dat")))))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_PointParticle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_RingLine", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_RingLine_Distortion", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_Distortion")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_Distortion_Circle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke_Bottom")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_Smoke_Red_Once")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_Smoke_Red_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke_Floor")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke_Mist")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_PointParticle_Plum")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke_Ready")))
 		return E_FAIL;
 
-	Safe_Release(pManagement);
+	if (FAILED(Add_EffectPrototype(L"ButterFly_WaterSplash")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_GlitterSand")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_Distortion_Smoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_PopSand")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_SubSmoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_PointParticle")))
+		return E_FAIL;
+
+	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_DeadMist")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_DeadSmoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_DeadSplash")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_BackStepSand01")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_BackStepSand02")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_BackStepSand_Floor")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_Distortion_SmokeGravity")))
+		return E_FAIL;
+#pragma endregion
+
+	if (FAILED(Add_EffectPrototype(L"Boss_KnonkDown_Dust")))
+		return E_FAIL;
+
+
+	if (FAILED(Add_EffectPrototype(L"Player_FootSmoke")))
+		return E_FAIL;
+
+	if (FAILED(Add_EffectPrototype(L"Hit_Blood_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Blood_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Blood_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_BloodMist_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_BloodMist_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_BloodParticle_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_BloodParticle_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_BloodParticle_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_BloodParticle_3")))
+		return E_FAIL;
+
+	if (FAILED(Add_EffectPrototype(L"Hit_Slash_Particle_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Slash_Particle_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Slash_Particle_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Slash_Particle_3")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Slash_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Slash_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Slash_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Slash_3")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_SlashLine_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Particle_Red")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_Particle_Yellow")))
+		return E_FAIL;
+
+	if (FAILED(Add_EffectPrototype(L"SpawnParticle")))
+		return E_FAIL;
+	
+	return S_OK;
+}
+
+HRESULT CLoading::Add_EffectPrototype(const _tchar* szName, _bool bIsMesh)
+{
+	_tchar szBuff[256] = L"../../Data/EffectData/";
+	lstrcat(szBuff, szName);
+	lstrcat(szBuff, L".dat");
+
+	if (!bIsMesh)
+	{
+		if (FAILED(g_pManagement->Add_Prototype(szName, CTexEffect::Create(m_pGraphicDev, Read_EffectData(szBuff)))))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(g_pManagement->Add_Prototype(szName, CMeshEffect::Create(m_pGraphicDev, Read_EffectData(szBuff)))))
+			return E_FAIL;
+	}
+	
+
 	return S_OK;
 }
 
@@ -141,6 +307,8 @@ Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
 		::ReadFile(hFile, &pInfo->bDistortion, sizeof(_bool), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->bStaticFrame, sizeof(_bool), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->bUseColorTex, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bUseRGBA, sizeof(_bool), &dwByte, nullptr);
+
 		::ReadFile(hFile, &pInfo->bColorMove, sizeof(_bool), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->bDirMove, sizeof(_bool), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->bFadeIn, sizeof(_bool), &dwByte, nullptr);
@@ -152,6 +320,7 @@ Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
 		::ReadFile(hFile, &pInfo->bRevColor, sizeof(_bool), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->bRotMove, sizeof(_bool), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->bScaleMove, sizeof(_bool), &dwByte, nullptr);
+
 		::ReadFile(hFile, &pInfo->fAlphaSpeed, sizeof(_float), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->fAlphaSpeed_Max, sizeof(_float), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->fAlphaSpeed_Min, sizeof(_float), &dwByte, nullptr);
@@ -185,6 +354,17 @@ Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
 		::ReadFile(hFile, &pInfo->vStartPos, sizeof(_v3), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->vStartScale, sizeof(_v3), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->fColorIndex, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fMaskIndex, sizeof(_float), &dwByte, nullptr);
+		
+		_bool bTemp;
+		::ReadFile(hFile, &bTemp, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &bTemp, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &bTemp, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &bTemp, sizeof(_bool), &dwByte, nullptr);
+
+		::ReadFile(hFile, &pInfo->bGravity, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bRandScale, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bMoveWithRot, sizeof(_bool), &dwByte, nullptr);
 
 		break;
 	}
@@ -194,9 +374,140 @@ Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
 	return pInfo;
 }
 
-HRESULT CLoading::Stage_Object_Ready()
+_uint CLoading::Loading_Title()
 {
-	return E_NOTIMPL;
+	cout << "Title_Loading . . ." << endl;
+	cout << "===============================================================================" << endl;
+
+	// 필수 메쉬 불러오는중
+	//============================================================================================================
+	cout << "필수 메쉬 불러오는중" << endl;
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_Essential_Path.dat");
+
+	// 텍스쳐 불러오는 중
+	//============================================================================================================
+	cout << "텍스쳐 불러오는중" << endl;
+	g_pManagement->LoadTex_FromPath(m_pGraphicDev, L"../../Data/Tex_Path.dat");
+
+	//============================================================================================================
+	
+	// 이펙트 원형 생성
+	//============================================================================================================
+	cout << "이펙트 원형 생성중" << endl;
+	Ready_Effect();
+
+	// UI 원형 생성
+	//============================================================================================================
+	cout << " UI 원형 생성중" << endl;
+	
+	// UI 생성
+	if (FAILED(CUI_Manager::Get_Instance()->Add_UI_Prototype(m_pGraphicDev)))
+		return E_FAIL;
+	// Item 매니저
+	if (FAILED(CItem_Manager::Get_Instance()->Add_Item_Prototype(m_pGraphicDev)))
+		return E_FAIL;
+	//============================================================================================================
+
+	m_bFinish = true;
+
+	system("cls");
+	cout << "===============================================================================" << endl;
+	cout << "타이틀 로딩 완료" << endl;
+	cout << "===============================================================================" << endl;
+	cout << " 1. 위 숫자 키를 누르면 옵션이 활성화 됩니다." << endl;
+	cout << " 2. (Load_StaticMesh) 가 (false) 이면 스테이지 들어가도 생성 안됩니다." << endl;
+	cout << " 3. Space 를 누르면 다음 스테이지로 넘어갑니다." << endl;
+	cout << " 4. 현재 Stage_(n) 은 실행되지 않고 자동으로 Training Stage 로 넘어갑니다." << endl;
+	cout << "-------------------------------------------------------------------------------" << endl;
+	cout << "[1] Stage_Base = true " << endl;
+	cout << "[2] Stage_Training = false " << endl;
+	cout << "[3] Stage_01 = false " << endl;
+	cout << "[4] Stage_02 = false " << endl;
+	cout << "[5] Stage_03 = false " << endl;
+	cout << "-------------------------------------------------------------------------------" << endl;
+	cout << "[6] Load_StaticMesh = false " << endl;
+	cout << "-------------------------------------------------------------------------------" << endl;
+
+
+	return NO_EVENT;
+}
+
+_uint CLoading::Loading_Stage()
+{
+	// 스태틱 메쉬 불러오는 중
+	//============================================================================================================
+	if(m_bLoadStaticMesh)
+		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_Static_Path.dat");
+
+
+	// 다이나믹 메쉬 불러오는 중
+	//============================================================================================================
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_Dynamic_Path.dat");
+
+
+	// 무기 불러오는 중
+	//============================================================================================================
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_Weapon_Path.dat");
+
+	// BT_Node 생성 중
+	//============================================================================================================
+	if (FAILED(g_pManagement->Ready_BT_Node()))
+		return E_FAIL;
+
+
+	// 오브젝트 원형 생성
+	//============================================================================================================
+
+	// 플레이어
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Player", CPlayer::Create(m_pGraphicDev))))
+		return E_FAIL;
+
+	// 몬스터
+	//============================================================================================================
+
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_TestMonster", CTestMonster::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 독나방
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonButterfly", CPoisonButterfly::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 검은 성게
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 검은 늑대
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackWolf", CBlackWolf::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 총겐지
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenji", CGunGenji::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 검겐지
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenji", CSwordGenji::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 검방패겐지
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordShieldGenji", CSwordShieldGenji::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 독나비 독 총알
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonBullet", CPoisonBullet::Create(m_pGraphicDev))))
+		return E_FAIL;
+
+	// 기타
+	//============================================================================================================
+
+	//무기
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon", CWeapon::Create(m_pGraphicDev))))
+		return E_FAIL;
+	//더미
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Dummy", CDummy_Target::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 트레일
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SwordTrail", Engine::CTrail_VFX::Create(m_pGraphicDev))))
+		return E_FAIL;
+
+	//============================================================================================================
+	m_bFinish = true;
+
+	cout << "로딩 완료" << endl;
+
+	return NO_EVENT;
 }
 
 CLoading* CLoading::Create(LPDIRECT3DDEVICE9 pGraphicDev, SCENEID eLoadingID)

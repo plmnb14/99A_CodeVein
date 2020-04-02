@@ -107,7 +107,11 @@ void CMainFrame::Dump(CDumpContext& dc) const
 BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 {
 	// 메쉬 경로 추출
-	CFileInfo::Create_Mesh_PathInfo();
+	CFileInfo::Create_Mesh_PathInfo(CFileInfo::Extract_Essential);
+	CFileInfo::Create_Mesh_PathInfo(CFileInfo::Extract_Static);
+	CFileInfo::Create_Mesh_PathInfo(CFileInfo::Extract_Weapon);
+	CFileInfo::Create_Mesh_PathInfo(CFileInfo::Extract_Dynamic);
+
 	// 텍스쳐 경로 추출
 	CFileInfo::Create_Texture_PathInfo();
 

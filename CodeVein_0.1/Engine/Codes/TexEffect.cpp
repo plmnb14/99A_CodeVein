@@ -8,15 +8,22 @@ CTexEffect::CTexEffect(LPDIRECT3DDEVICE9 pGraphic_Device)
 
 CTexEffect::CTexEffect(const CTexEffect& rhs)
 	: CEffect(rhs)
-	, m_iPass(rhs.m_iPass)
-	//, m_pInfo(rhs.m_pInfo)
 {
+	CEffect::m_pInfo = rhs.m_pInfo;
+
 	m_bClone = true;
 }
 
 HRESULT CTexEffect::Ready_GameObject_Prototype()
 {
 	// 생성 시, 오래 걸릴 수 있는 작업들을 수행한다.
+
+	if (!m_pInfo)
+	{
+		m_pInfo = new EFFECT_INFO;
+		ZeroMemory(m_pInfo, sizeof(EFFECT_INFO));
+	}
+
 	return NOERROR;
 }
 
@@ -28,14 +35,8 @@ HRESULT CTexEffect::Ready_GameObject(void* pArg)
 
 	// Set Default Info
 	m_pTransformCom->Set_Pos(V3_NULL);
-	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
-	m_pTransformCom->Set_Angle(_v3(0.f, 0.f, 0.f));
-
-	if (!m_pInfo)
-	{
-		m_pInfo = new EFFECT_INFO;
-		ZeroMemory(m_pInfo, sizeof(EFFECT_INFO));
-	}
+	m_pTransformCom->Set_Scale(V3_ONE);
+	m_pTransformCom->Set_Angle(V3_NULL);
 
 	if (pArg)
 		m_pDesc = (EFFECT_DESC*)pArg;
@@ -46,33 +47,155 @@ HRESULT CTexEffect::Ready_GameObject(void* pArg)
 		m_pDesc->pTargetTrans = nullptr;
 	}
 
+	m_pManagement = CManagement::Get_Instance();
+	if (nullptr == m_pManagement)
+		return E_FAIL;
+
+	//Safe_AddRef(m_pManagement);
+
 	return NOERROR;
 }
 
 HRESULT CTexEffect::LateInit_GameObject()
 {
+	Setup_Info();
+	Change_EffectTexture(m_pInfo->szName);
+	Change_GradientTexture(m_pInfo->szGradientName);
+	Change_ColorTexture(m_pInfo->szColorName);
+
+	return S_OK;
+}
+
+_int CTexEffect::Update_GameObject(_double TimeDelta)
+{
+	if (m_bIsDead)
+		return DEAD_OBJ;
+
+	CGameObject::LateInit_GameObject();
+	CGameObject::Update_GameObject(TimeDelta);
+
+	_int a = 0;
+
+	if (m_fCreateDelay > 0.f)
+	{
+		Check_CreateDelay(TimeDelta);
+		return S_OK;
+	}
+
+	m_fLinearMovePercent += _float(TimeDelta);
+
+	Check_Frame(TimeDelta);
+	Check_LifeTime(TimeDelta);
+
+	Setup_Billboard();
+	Check_Move(TimeDelta);
+	Check_Alpha(TimeDelta);
+	Check_Color(TimeDelta);
+
+
+	return S_OK;
+}
+
+_int CTexEffect::Late_Update_GameObject(_double TimeDelta)
+{
+	if (nullptr == m_pRendererCom)
+		return E_FAIL;
+
+	if (m_bIsDead || m_fCreateDelay > 0.f)
+		return S_OK;
+
+	RENDERID eGroup = RENDERID::RENDER_ALPHA;
+	if (m_iPass == 3)
+		eGroup = RENDERID::RENDER_ALPHA;
+	else
+		eGroup = RENDERID::RENDER_DISTORTION;
+
+	if (FAILED(m_pRendererCom->Add_RenderList(eGroup, this)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+
+HRESULT CTexEffect::Render_GameObject()
+{
+	Render_GameObject_HWInstance(); // 텍스쳐 이펙트만 인스턴싱
+
+	return NOERROR;
+}
+
+HRESULT CTexEffect::Render_GameObject_HWInstance()
+{
+	if (nullptr == m_pShaderCom ||
+		nullptr == m_pBufferCom)
+		return E_FAIL;
+	
+	m_pBufferCom->Render_Before_Instancing(m_pTransformCom->Get_WorldMat());
+	
+	m_pShaderCom->Begin_Shader();
+	m_pShaderCom->Begin_Pass(m_iPass);
+	
+	// Set Texture
+	if (FAILED(SetUp_ConstantTable()))
+		return E_FAIL;
+	
+	// Begin Pass 사이에 SetTexture 할 경우 바로 적용시키기 위해
+	m_pShaderCom->Commit_Changes();
+	
+	m_pBufferCom->Render_DrawPrimitive_Instancing();
+	
+	m_pShaderCom->End_Pass();
+	m_pShaderCom->End_Shader();
+	
+	m_pBufferCom->Render_After_Instancing();
+
+	return NOERROR;
+}
+
+void CTexEffect::Setup_Info()
+{
 	m_fLifeTime = m_pInfo->fLifeTime;
 	m_vColor = m_pInfo->vStartColor;
 	m_fAlpha = m_pInfo->fMaxAlpha;
-	m_vLerpScale = m_pInfo->vStartScale;
 	m_fMoveSpeed = m_pInfo->fMoveSpeed;
 	m_fRotSpeed = m_pInfo->fRotSpeed;
 	m_fAlphaSpeed = m_pInfo->fAlphaSpeed;
 	m_fCreateDelay = m_pInfo->fCreateDelay;
-	m_pTransformCom->Set_Scale(m_pInfo->vStartScale);
-	Change_EffectTexture(m_pInfo->szName);
-	Change_GradientTexture(m_pInfo->szGradientName);
-	Change_ColorTexture(m_pInfo->szColorName);
 	m_pInfo->fMoveScaleSpeed = 1.f;
+
+	m_fFrame = 0.f;
+	m_fLinearMoveSpeed = 0.f;
+	m_fLinearMovePercent = 0.f;
+	m_vFollowPos = { 0.f, 0.f, 0.f };
+	m_fAccel = 0.f;
+
+	m_bFadeOutStart = false;
 
 	if (m_pInfo->bDistortion)
 		m_iPass = 1;
+	else
+		m_iPass = 3; // For Instancing Pass
 
 	if (m_pInfo->bFadeIn)
 		m_fAlpha = 0.f;
 
 	if (m_pInfo->bStaticFrame)
 		m_fFrame = m_pInfo->fMaxFrame;
+
+	if (m_pInfo->bRandScale)
+	{
+		// rand 설정하면 x 값기준으로 동일하게 조정
+		_float fScale = Engine::CCalculater::Random_Num(_int(m_pInfo->vStartScale.x * 50), _int(m_pInfo->vStartScale.x * 100)) * 0.01f;
+		_v3 vSize = _v3(fScale, fScale, fScale);
+
+		m_vLerpScale = vSize;
+		m_pTransformCom->Set_Scale(vSize);
+	}
+	else
+	{
+		m_vLerpScale = m_pInfo->vStartScale;
+		m_pTransformCom->Set_Scale(m_pInfo->vStartScale);
+	}
 
 	if (m_pInfo->bRandomMove)
 	{
@@ -110,10 +233,9 @@ HRESULT CTexEffect::LateInit_GameObject()
 	{
 		_v3 vPos = _v3(m_pInfo->fRandStartPosRange_Min[AXIS_X], m_pInfo->fRandStartPosRange_Min[AXIS_Y], m_pInfo->fRandStartPosRange_Min[AXIS_Z]);
 
-		_float fMinus = Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f;
-		vPos += _v3(Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_X] * 100)) * 0.01f * fMinus,
-			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Y] * 100)) * 0.01f * fMinus,
-			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Z] * 100)) * 0.01f * fMinus);
+		vPos += _v3(Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_X] * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f),
+			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Y] * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f),
+			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Z] * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f));
 
 		m_pTransformCom->Set_Pos(vPos + m_pDesc->vWorldPos);
 		m_vLerpPos = (vPos + m_pDesc->vWorldPos);
@@ -124,90 +246,33 @@ HRESULT CTexEffect::LateInit_GameObject()
 		m_vLerpPos = (m_pInfo->vStartPos + m_pDesc->vWorldPos);
 	}
 
-
-	if (m_pInfo->bRandomRot)
+	if (m_pInfo->bRotMove)
 	{
-		_float fMinus = Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f;
-		_v3 vPos = _v3(Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.x * 100)) * 0.01f * fMinus,
-			Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.y * 100)) * 0.01f * fMinus,
-			Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.z * 100)) * 0.01f * fMinus);
+		if (m_pInfo->bRandomRot)
+		{
+			_v3 vPos = _v3(Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.x * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f),
+				Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.y * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f),
+				Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.z * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f));
 
-		m_vRot = vPos;
+			m_vRot = vPos;
+		}
 	}
-
-
-	return S_OK;
-}
-
-_int CTexEffect::Update_GameObject(_double TimeDelta)
-{
-	if (m_bIsDead)
-		return DEAD_OBJ;
-
-	CGameObject::LateInit_GameObject();
-	CGameObject::Update_GameObject(TimeDelta);
-
-	if (m_fCreateDelay > 0.f)
-	{
-		Check_CreateDelay(TimeDelta);
-		return S_OK;
-	}
-
-	m_fLinearMovePercent += _float(TimeDelta);
-
-	Check_Frame(TimeDelta);
-	Check_LifeTime(TimeDelta);
-
-	Check_Move(TimeDelta);
-	Check_Alpha(TimeDelta);
-	Check_Color(TimeDelta);
-
-	Setup_Billboard();
-
-	return S_OK;
-}
-
-_int CTexEffect::Late_Update_GameObject(_double TimeDelta)
-{
-	if (nullptr == m_pRendererCom)
-		return E_FAIL;
-
-	if (m_bIsDead || m_fCreateDelay > 0.f)
-		return S_OK;
-
-	RENDERID eGroup = RENDERID::RENDER_ALPHA;
-	if (m_iPass == 0)
-		eGroup = RENDERID::RENDER_ALPHA;
 	else
-		eGroup = RENDERID::RENDER_DISTORTION;
+	{
+		if (m_pInfo->bRandomRot)
+		{
+			_v3 vPos = _v3(Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.x * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f),
+				Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.y * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f),
+				Engine::CCalculater::Random_Num(0, _int(m_pInfo->vRotDirection.z * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f));
 
-	if (FAILED(m_pRendererCom->Add_RenderList(eGroup, this)))
-		return E_FAIL;
+			m_pTransformCom->Set_Angle(_v3(D3DXToRadian(vPos)));
+		}
+		else
+		{
+			m_pTransformCom->Set_Angle(_v3(D3DXToRadian(m_pInfo->vRotDirection.x), D3DXToRadian(m_pInfo->vRotDirection.y), D3DXToRadian(m_pInfo->vRotDirection.z)));
+		}
+	}
 
-	return S_OK;
-}
-
-
-HRESULT CTexEffect::Render_GameObject()
-{
-	if (nullptr == m_pShaderCom ||
-		nullptr == m_pBufferCom)
-		return E_FAIL;
-
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
-
-	m_pShaderCom->Begin_Shader();
-
-	m_pShaderCom->Begin_Pass(m_iPass);
-
-	m_pBufferCom->Render_VIBuffer();
-
-	m_pShaderCom->End_Pass();
-
-	m_pShaderCom->End_Shader();
-
-	return NOERROR;
 }
 
 void CTexEffect::Setup_Billboard()
@@ -216,13 +281,7 @@ void CTexEffect::Setup_Billboard()
 
 	matWorld = m_pTransformCom->Get_WorldMat();
 
-	CManagement*		pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return;
-
-	Safe_AddRef(pManagement);
-
-	matView = pManagement->Get_Transform(D3DTS_VIEW);
+	matView = m_pManagement->Get_Transform(D3DTS_VIEW);
 
 	D3DXMatrixIdentity(&matBill);
 
@@ -231,16 +290,8 @@ void CTexEffect::Setup_Billboard()
 		matBill = matView;
 		memset(&matBill._41, 0, sizeof(_v3));
 		D3DXMatrixInverse(&matBill, NULL, &matBill);
-		memcpy(&matBill._41, &matWorld._41, sizeof(_v3));
 
-		_float fScale[3]{ m_pTransformCom->Get_Size().x, m_pTransformCom->Get_Size().y, m_pTransformCom->Get_Size().z };
-		for (int i = 0; i < 3; ++i)
-		{
-			for (int j = 0; j < 4; ++j)
-				matBill(i, j) *= fScale[i];
-		}
-
-		m_pTransformCom->Set_WorldMat(matBill* matWorld);
+		m_pTransformCom->Set_WorldMat(matBill * matWorld);
 	}
 	else if (m_pInfo->bOnlyYRot)
 	{
@@ -251,18 +302,10 @@ void CTexEffect::Setup_Billboard()
 
 		D3DXMatrixInverse(&matBill, NULL, &matBill);
 
-		_float fScale[3]{ m_pTransformCom->Get_Size().x, m_pTransformCom->Get_Size().y, m_pTransformCom->Get_Size().z };
-		for (int i = 0; i < 3; ++i)
-		{
-			for (int j = 0; j < 4; ++j)
-				matBill(i, j) *= fScale[i];
-		}
 		m_pTransformCom->Set_WorldMat((matBill * matWorld));
 	}
 
 	Compute_ViewZ(&m_pTransformCom->Get_Pos());
-
-	Safe_Release(pManagement);
 }
 
 void CTexEffect::Check_Frame(_double TimeDelta)
@@ -288,7 +331,20 @@ void CTexEffect::Check_Move(_double TimeDelta)
 			m_pTransformCom->Set_Pos(m_vLerpPos);
 		}
 		else
-			m_pTransformCom->Add_Pos(m_pInfo->vMoveDirection * m_fMoveSpeed * _float(TimeDelta));
+		{
+			_v3 vMove = m_pInfo->vMoveDirection * m_fMoveSpeed * _float(TimeDelta);
+			if (m_pDesc->pTargetTrans)
+			{
+				_v3 vPos = m_pDesc->pTargetTrans->Get_Pos();
+				m_vFollowPos += vMove;
+				vPos += m_vFollowPos;
+				m_pTransformCom->Set_Pos(vPos);
+			}
+			else
+			{
+				m_pTransformCom->Add_Pos(vMove);
+			}
+		}
 
 	}
 
@@ -308,23 +364,58 @@ void CTexEffect::Check_Move(_double TimeDelta)
 		}
 	}
 
+	if (m_pInfo->bGravity)
+	{
+		m_fAccel += _float(TimeDelta);
+		_float fY = (-GRAVITY * m_fAccel * m_fAccel * 0.5f) *  _float(TimeDelta);
+		_v3 vPos = m_pTransformCom->Get_Pos();
+		vPos.y += fY;
+		m_pTransformCom->Set_Pos(vPos);
+	}
+
 	if (m_pInfo->bScaleMove)
 	{
 		D3DXVec3Lerp(&m_vLerpScale, &m_vLerpScale, &m_pInfo->vMoveScale, m_fLinearMovePercent * m_pInfo->fMoveScaleSpeed);
 		m_pTransformCom->Set_Scale(m_vLerpScale);
 	}
 
-	if (m_pInfo->bRandomRot)
+	if (m_pInfo->bRotMove)
 	{
-		m_pTransformCom->Add_Angle(AXIS_X, (m_vRot.x * _float(TimeDelta) * m_fRotSpeed));
-		m_pTransformCom->Add_Angle(AXIS_Y, (m_vRot.y * _float(TimeDelta) * m_fRotSpeed));
-		m_pTransformCom->Add_Angle(AXIS_Z, (m_vRot.z * _float(TimeDelta) * m_fRotSpeed));
+		if (m_pInfo->bRandomRot)
+		{
+			m_pTransformCom->Add_Angle(AXIS_X, ((m_vRot.x) * _float(TimeDelta) * m_fRotSpeed));
+			m_pTransformCom->Add_Angle(AXIS_Y, ((m_vRot.y) * _float(TimeDelta) * m_fRotSpeed));
+			m_pTransformCom->Add_Angle(AXIS_Z, ((m_vRot.z) * _float(TimeDelta) * m_fRotSpeed));
+		}
+		else
+		{
+			m_pTransformCom->Add_Angle(AXIS_X, ((m_pInfo->vRotDirection.x) * _float(TimeDelta) * m_fRotSpeed));
+			m_pTransformCom->Add_Angle(AXIS_Y, ((m_pInfo->vRotDirection.y) * _float(TimeDelta) * m_fRotSpeed));
+			m_pTransformCom->Add_Angle(AXIS_Z, ((m_pInfo->vRotDirection.z) * _float(TimeDelta) * m_fRotSpeed));
+		}
 	}
-	else
+
+	if (m_pInfo->bMoveWithRot)
 	{
-		m_pTransformCom->Add_Angle(AXIS_X, (m_pInfo->vRotDirection.x * _float(TimeDelta) * m_fRotSpeed));
-		m_pTransformCom->Add_Angle(AXIS_Y, (m_pInfo->vRotDirection.y * _float(TimeDelta) * m_fRotSpeed));
-		m_pTransformCom->Add_Angle(AXIS_Z, (m_pInfo->vRotDirection.z * _float(TimeDelta) * m_fRotSpeed));
+		_mat matRotX, matRotY, matRotZ;
+		//_v3 vDirX = m_pTransformCom->Get_Axis(AXIS_X), vDirY = m_pTransformCom->Get_Axis(AXIS_Y), vDirZ = m_pTransformCom->Get_Axis(AXIS_Z);
+		_v3 vAngle = m_pTransformCom->Get_Angle();
+		_v3 vDir = vAngle;
+		D3DXMatrixIdentity(&matRotX);
+		D3DXMatrixIdentity(&matRotY);
+		D3DXMatrixIdentity(&matRotZ);
+
+		D3DXMatrixRotationX(&matRotX, D3DXToRadian(vAngle.x));
+		D3DXMatrixRotationY(&matRotY, D3DXToRadian(vAngle.y));
+		D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(vAngle.z));
+		D3DXVec3TransformNormal(&vDir, &vDir, &matRotX);
+		D3DXVec3TransformNormal(&vDir, &vDir, &matRotY);
+		D3DXVec3TransformNormal(&vDir, &vDir, &matRotZ);
+
+		//vDirZ = vDirX + vDirY + vDirZ;
+		D3DXVec3Normalize(&vDir, &vDir);
+
+		m_pTransformCom->Add_Pos(m_fMoveSpeed * _float(TimeDelta), vDir);
 	}
 }
 
@@ -388,7 +479,7 @@ HRESULT CTexEffect::Add_Component()
 		return E_FAIL;
 
 	// For.Com_ColorTexture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Gradient", L"Com_ColorTexture", (CComponent**)&m_pColorTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Colors", L"Com_ColorTexture", (CComponent**)&m_pColorTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -403,7 +494,13 @@ HRESULT CTexEffect::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
 		return E_FAIL;
 
-
+	//if (true) // 데칼 이펙트만 생성하도록 수정하기
+	//{
+	//	// For.Com_CubeTex
+	//	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_DefaultBox", L"Com_DecalCube", (CComponent**)&m_pDecalCube)))
+	//		return E_FAIL;
+	//}
+	
 	return NOERROR;
 }
 
@@ -417,8 +514,11 @@ HRESULT CTexEffect::SetUp_ConstantTable()
 		return E_FAIL;
 
 	Safe_AddRef(pManagement);
-
-	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
+	_mat matWorld = m_pTransformCom->Get_WorldMat();
+	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &matWorld, sizeof(_mat))))
+		return E_FAIL;
+	D3DXMatrixInverse(&matWorld, nullptr, &matWorld);
+	if (FAILED(m_pShaderCom->Set_Value("g_matInvWorld", &matWorld, sizeof(_mat))))
 		return E_FAIL;
 
 	_mat		ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
@@ -428,6 +528,13 @@ HRESULT CTexEffect::SetUp_ConstantTable()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
+	D3DXMatrixInverse(&ViewMatrix, nullptr, &ViewMatrix);
+	D3DXMatrixInverse(&ProjMatrix, nullptr, &ProjMatrix);
+	if (FAILED(m_pShaderCom->Set_Value("g_matProjInv", &ViewMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_matViewInv", &ProjMatrix, sizeof(_mat))))
+		return E_FAIL;
+
 	if (FAILED(m_pShaderCom->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_vColor", &m_vColor, sizeof(_v4))))
@@ -439,9 +546,16 @@ HRESULT CTexEffect::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Bool("g_bUseRGBA", m_pInfo->bUseRGBA)))
 		return E_FAIL;
 
+	_float fMaskIndex = 0.f;
+	if (FAILED(m_pShaderCom->Set_Bool("g_bUseMaskTex", (m_pInfo->fMaskIndex != -1.f))))
+		return E_FAIL;
+
+	if ((m_pInfo->fMaskIndex != -1.f))
+		fMaskIndex = m_pInfo->fMaskIndex;
+
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, _uint(m_fFrame))))
 		return E_FAIL;
-	if (FAILED(m_pGradientTextureCom->SetUp_OnShader("g_GradientTexture", m_pShaderCom)))
+	if (FAILED(m_pGradientTextureCom->SetUp_OnShader("g_GradientTexture", m_pShaderCom, _uint(fMaskIndex))))
 		return E_FAIL;
 	if (FAILED(m_pColorTextureCom->SetUp_OnShader("g_ColorTexture", m_pShaderCom, _uint(m_pInfo->fColorIndex))))
 		return E_FAIL;
@@ -461,6 +575,7 @@ void CTexEffect::Change_EffectTexture(const _tchar* _Name)
 	Safe_Release(iter->second);
 
 	iter->second = m_pTextureCom = static_cast<CTexture*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, _Name));
+	Safe_AddRef(iter->second);
 }
 
 void CTexEffect::Change_GradientTexture(const _tchar * _Name)
@@ -473,6 +588,7 @@ void CTexEffect::Change_GradientTexture(const _tchar * _Name)
 
 	// Release 한 컴포넌트에 새로이 Clone 받음.
 	iter->second = m_pGradientTextureCom = static_cast<CTexture*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, _Name));
+	Safe_AddRef(iter->second);
 }
 
 void CTexEffect::Change_ColorTexture(const _tchar* _Name)
@@ -483,6 +599,7 @@ void CTexEffect::Change_ColorTexture(const _tchar* _Name)
 	Safe_Release(iter->second);
 
 	iter->second = m_pColorTextureCom = static_cast<CTexture*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, _Name));
+	Safe_AddRef(iter->second);
 }
 
 CTexEffect* CTexEffect::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
@@ -529,15 +646,15 @@ CGameObject* CTexEffect::Clone_GameObject(void* pArg)
 
 void CTexEffect::Free()
 {
-	CEffect::Free();
-
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
-	Safe_Release(m_pGradientTextureCom);
 	Safe_Release(m_pColorTextureCom);
+	Safe_Release(m_pGradientTextureCom);
 	Safe_Release(m_pRendererCom);
 
-	Safe_Delete(m_pDesc);
+	//Safe_Release(m_pManagement);
+
+	CEffect::Free();
 }

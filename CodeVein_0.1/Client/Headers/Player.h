@@ -61,6 +61,8 @@ private:
 	CShader*				m_pShader			= nullptr;
 	CMesh_Dynamic*			m_pDynamicMesh		= nullptr;
 	CNavMesh*				m_pNavMesh			= nullptr;
+	CCollider*				m_pCollider			= nullptr;
+	CTexture*				m_pFXTexture		= nullptr;
 
 private:
 	vector<CCollider*>		m_vecPhsycColl;
@@ -84,6 +86,8 @@ private:
 	_bool					m_bOnMoveDelay = false;
 	_bool					m_bChangeWeapon = false;
 	_bool					m_bOnBuff = false;
+	_bool					m_bOnAiming = false;
+	_bool					m_bHaveAimingTarget = false;
 	_bool					m_bEventTrigger[32] = {};
 
 private:
@@ -115,9 +119,30 @@ private:
 	_float					m_fAtkEndTime = 0.f;
 
 private:
+	_float					m_fAmingRange = 20.f;
+
+private: //For.Shader Var
+	_mat					m_matLastWVP;
+	_float					m_fFxSpeed = 0.f;
+	_int					m_iPass = 0;
+
+private:
 	HRESULT Add_Component();
 	HRESULT SetUp_Default();
 	HRESULT SetUp_ConstantTable();
+
+private:
+	virtual void Movement_Aiming(_float _fAngle, _float _fMoveSpeed);
+	virtual void Movement_NonAiming(_float _fRecover , _float _fAngle, _float _fRadian, _float _fMoveSpeed);
+
+private:
+	virtual void Target_AimChasing();
+
+private:
+	virtual void OnCollisionEnter();
+
+private:
+	virtual void Update_Collider();
 
 private:
 	virtual void Reset_BattleState();
@@ -129,6 +154,8 @@ private:
 	virtual void Parameter_Movement();
 	virtual void Parameter_HeavyCharging();
 	virtual void Parameter_YPos();
+	virtual void Parameter_Collision();
+	virtual void Parameter_Aiming();
 
 private:
 	virtual void KeyInput();
@@ -170,6 +197,9 @@ private:
 
 private:
 	virtual void Change_Weapon();
+
+private: //For.Shader Dissolve
+	void Check_Dissolve(_double TimeDelta);
 
 public:
 	static	CPlayer* Create(_Device pGraphic_Device);

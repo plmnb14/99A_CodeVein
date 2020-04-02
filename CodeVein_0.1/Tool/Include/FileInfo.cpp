@@ -28,37 +28,106 @@ CString CFileInfo::ConvertRelativePath(const TCHAR* pFullPath)
 	return CString(szRelativePath);
 }
 
-void CFileInfo::Create_Mesh_PathInfo()
+void CFileInfo::Create_Mesh_PathInfo(Extract_Mesh _eExtract_Mesh)
 {
 	list<Engine::MESH_INFO*> m_listPathInfo;
 
 	_tchar szStaticPath[MAX_STR] = L"";
 	_tchar szDynamicPath[MAX_STR] = L"";
 
-	cout << "Extracting StaticMesh Path . . ." << endl;
+	_bool	bDynamic = false;
 
-	lstrcpy(szStaticPath, L"..\\..\\Client\\Resources\\Mesh\\");	// 문자열 복사
-	lstrcat(szStaticPath, L"StaticMesh");								// 문자열 결합
-	Extract_Mesh_PathInfo(szStaticPath, m_listPathInfo);
+	cout << "=============================================================" << endl;
 
-	cout << "Extracting DynamicMesh Path . . ." << endl;
+	switch (_eExtract_Mesh)
+	{
+	case Extract_Essential:
+	{
+		cout << "Extracting EssentialMesh Path . . ." << endl;
+		cout << "=============================================================" << endl;
+		
+		lstrcpy(szStaticPath, L"..\\..\\Client\\Resources\\Mesh\\");
+		lstrcat(szStaticPath, L"Essential");
 
-	lstrcpy(szDynamicPath, L"..\\..\\Client\\Resources\\Mesh\\");	// 문자열 복사
-	lstrcat(szDynamicPath, L"DynamicMesh");								// 문자열 결합
-	Extract_Mesh_PathInfo(szDynamicPath, m_listPathInfo, true);
+		break;
+	}
 
-	cout << "Extracting Complete . . ." << endl;
+	case Extract_Dynamic:
+	{
+		cout << "Extracting DynamicMesh Path . . ." << endl;
+		cout << "=============================================================" << endl;
+		
+		lstrcpy(szStaticPath, L"..\\..\\Client\\Resources\\Mesh\\");
+		lstrcat(szStaticPath, L"DynamicMesh");						
 
-	Save_Mesh_PathInfo(m_listPathInfo);
+		bDynamic = true;
+
+		break;
+	}
+
+	case Extract_Static:
+	{
+		cout << "Extracting StaticMesh Path . . ." << endl;
+		cout << "=============================================================" << endl;
+
+		lstrcpy(szStaticPath, L"..\\..\\Client\\Resources\\Mesh\\");
+		lstrcat(szStaticPath, L"StaticMesh");
+
+		break;
+	}
+
+	case Extract_Weapon:
+	{
+		cout << "Extracting WeaponMesh Path . . ." << endl;
+		cout << "=============================================================" << endl;
+
+		lstrcpy(szStaticPath, L"..\\..\\Client\\Resources\\Mesh\\");
+		lstrcat(szStaticPath, L"Weapons");
+
+		break;
+	}
+	}
+
+	Extract_Mesh_PathInfo(szStaticPath, m_listPathInfo, bDynamic);
+	Save_Mesh_PathInfo(m_listPathInfo, _eExtract_Mesh);
 }
 
-void CFileInfo::Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst)
+void CFileInfo::Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst, Extract_Mesh _eExtract_Mesh)
 {
 	cout << "Saving MeshPath . . ." << endl;
 
 	wofstream fout;
+	_tchar szDataPath[MAX_STR] = L"";
 
-	fout.open(L"../../Data/Mesh_Path.dat");
+	switch (_eExtract_Mesh)
+	{
+	case Extract_Essential:
+	{
+		lstrcpy(szDataPath, L"../../Data/Mesh_Essential_Path.dat");
+		break;
+	}
+
+	case Extract_Dynamic:
+	{
+		lstrcpy(szDataPath, L"../../Data/Mesh_Dynamic_Path.dat");
+
+		break;
+	}
+
+	case Extract_Static:
+	{
+		lstrcpy(szDataPath, L"../../Data/Mesh_Static_Path.dat");
+
+		break;
+	}
+	case Extract_Weapon:
+	{
+		lstrcpy(szDataPath, L"../../Data/Mesh_Weapon_Path.dat");
+		break;
+	}
+	}
+
+	fout.open(szDataPath);
 
 	if (fout.fail())
 		return;

@@ -55,4 +55,3 @@ void CArmor::Free()
 {
 	CGameObject::Free();
 }
-

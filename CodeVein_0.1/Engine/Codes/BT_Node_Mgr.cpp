@@ -53,7 +53,24 @@ HRESULT CBT_Node_Manager::Ready_BT_Node()
 		return E_FAIL;
 	if (FAILED(Add_Prototype_Node(L"ConeCheck", CBT_ConeCheck::Create_Prototype(), CBT_Node_Manager::DECORATOR)))
 		return E_FAIL;
+	if (FAILED(Add_Prototype_Node(L"DistCheck", CBT_DistCheck::Create_Prototype(), CBT_Node_Manager::DECORATOR)))
+		return E_FAIL;
+	if (FAILED(Add_Prototype_Node(L"Compare", CBT_Compare::Create_Prototype(), CBT_Node_Manager::DECORATOR)))
+		return E_FAIL;
+	if (FAILED(Add_Prototype_Node(L"CompareValue", CBT_CompareValue::Create_Prototype(), CBT_Node_Manager::DECORATOR)))
+		return E_FAIL;
+
 	// Service
+	if (FAILED(Add_Prototype_Node(L"UpdatePos", CBT_UpdatePos::Create_Prototype(), CBT_Node_Manager::SERVICE)))
+		return E_FAIL;
+	if (FAILED(Add_Prototype_Node(L"UpdateHPRatio", CBT_UpdateGageRatio::Create_Prototype(), CBT_Node_Manager::SERVICE)))
+		return E_FAIL;
+	if (FAILED(Add_Prototype_Node(L"UpdateCollider", CBT_UpdateCollider::Create_Prototype(), CBT_Node_Manager::SERVICE)))
+		return E_FAIL;
+	if (FAILED(Add_Prototype_Node(L"CreateEffect", CBT_CreateEffect::Create_Prototype(), CBT_Node_Manager::SERVICE)))
+		return E_FAIL;
+	if (FAILED(Add_Prototype_Node(L"CreateBullet", CBT_CreateBullet::Create_Prototype(), CBT_Node_Manager::SERVICE)))
+		return E_FAIL;
 
 	// Task
 	if (FAILED(Add_Prototype_Node(L"Wait", CBT_Wait::Create_Prototype(), CBT_Node_Manager::TASK)))
@@ -62,7 +79,15 @@ HRESULT CBT_Node_Manager::Ready_BT_Node()
 		return E_FAIL;
 	if (FAILED(Add_Prototype_Node(L"MoveDirectly", CBT_MoveDirectly::Create_Prototype(), CBT_Node_Manager::TASK)))
 		return E_FAIL;
+	if (FAILED(Add_Prototype_Node(L"MoveDir", CBT_MoveDir::Create_Prototype(), CBT_Node_Manager::TASK)))
+		return E_FAIL;
+	if (FAILED(Add_Prototype_Node(L"FixDir", CBT_FixDir::Create_Prototype(), CBT_Node_Manager::TASK)))
+		return E_FAIL;
+	if (FAILED(Add_Prototype_Node(L"RotationDir", CBT_RotationDir::Create_Prototype(), CBT_Node_Manager::TASK)))
+		return E_FAIL;
 	if (FAILED(Add_Prototype_Node(L"Play_Ani", CBT_Play_Ani::Create_Prototype(), CBT_Node_Manager::TASK)))
+		return E_FAIL;
+	if (FAILED(Add_Prototype_Node(L"SetValue", CBT_SetValue::Create_Prototype(), CBT_Node_Manager::TASK)))
 		return E_FAIL;
 
 	return S_OK;

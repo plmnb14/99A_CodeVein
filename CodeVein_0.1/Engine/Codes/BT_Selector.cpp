@@ -18,18 +18,20 @@ HRESULT CBT_Selector::Add_Child(CBT_Node * pNode)
 	return S_OK;
 }
 
-CBT_Node::BT_NODE_STATE CBT_Selector::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Selector::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	/*
 	왼쪽부터 자식들을 검사해서 성공한 자식을 수행한다.
 	*/
-	Start_Node(pNodeStack, bDebugging);
+	Start_Node(pNodeStack, plistSubNodeStack, bDebugging);
 
-	//for (CBT_Node* pChild : m_pChildren)
-	if (m_pCurIndex < m_pChildren.size())
+	switch (m_eMode)
 	{
-		switch(m_eChild_State)
+	case Engine::CBT_Selector::Normal:
+		if (m_pCurIndex < m_pChildren.size())
 		{
+			switch (m_eChild_State)
+			{
 			case BT_NODE_STATE::FAILED:
 			case BT_NODE_STATE::SERVICE:
 				return m_pChildren[m_pCurIndex++]->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
@@ -41,15 +43,34 @@ CBT_Node::BT_NODE_STATE CBT_Selector::Update_Node(_double TimeDelta, vector<CBT_
 			case BT_NODE_STATE::INPROGRESS:
 				return m_pChildren[m_pCurIndex++]->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
 
-			case BT_NODE_STATE::SUCCEEDED:			
-				return End_Node(pNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+			case BT_NODE_STATE::SUCCEEDED:
+				return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+			}
 		}
+		break;
+
+	case Engine::CBT_Selector::Random:
+		switch (m_eChild_State)
+		{
+		case BT_NODE_STATE::FAILED:
+		case BT_NODE_STATE::SERVICE:
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, bDebugging);
+		
+		case BT_NODE_STATE::INPROGRESS:
+			return m_pChildren[m_iRandomNum]->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
+		
+		case BT_NODE_STATE::SUCCEEDED:
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+		}
+
+		break;
 	}
-	
-	return End_Node(pNodeStack, BT_NODE_STATE::FAILED, bDebugging);
+
+
+	return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, bDebugging);
 }
 
-void CBT_Selector::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
+void CBT_Selector::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging)
 {
 	if (m_bInit)
 	{
@@ -64,13 +85,22 @@ void CBT_Selector::Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging)
 
 		m_eChild_State = BT_NODE_STATE::INPROGRESS;
 
+		m_iRandomNum = CALC::Random_Num(0, (_int)m_pChildren.size() - 1);
 		m_pCurIndex = 0;
 		m_bInit = false;
 
+		// 서비스노드 쓰레드에 각각 추가
+		if (!m_listServiceNodeStack.empty())
+		{
+			for (auto Child : m_listServiceNodeStack)
+			{
+				plistSubNodeStack->emplace_back(Child);
+			}
+		}
 	}
 }
 
-CBT_Node::BT_NODE_STATE CBT_Selector::End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Selector::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
 {
 	m_bInit = true;
 
@@ -82,6 +112,9 @@ CBT_Node::BT_NODE_STATE CBT_Selector::End_Node(vector<CBT_Node*>* pNodeStack, BT
 
 	if (!pNodeStack->empty())
 		Notify_Parent_Of_State(pNodeStack->back(), eState);
+
+	if (!m_listServiceNodeStack.empty())
+		Release_ServiceNode(plistSubNodeStack, &m_listServiceNodeStack, bDebugging);
 
 	if (bDebugging)
 	{
@@ -95,6 +128,11 @@ CBT_Node::BT_NODE_STATE CBT_Selector::End_Node(vector<CBT_Node*>* pNodeStack, BT
 
 HRESULT CBT_Selector::Ready_Clone_Node(void* pInit_Struct)
 {
+	INFO temp = *(INFO*)pInit_Struct;
+
+	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
+	m_eMode = temp.eMode;
+
 	CBT_Node::_Set_Auto_Number(&m_iNodeNumber);
 	return S_OK;
 }
@@ -118,9 +156,10 @@ CBT_Node * CBT_Selector::Clone(void* pInit_Struct)
 
 void CBT_Selector::Free()
 {
+	CBT_Composite_Node::Free();
+
 	for (auto iter = m_pChildren.begin(); iter != m_pChildren.end(); )
 	{
-		(*iter)->Free();
 		Safe_Release(*iter);
 
 		if (nullptr == *iter)

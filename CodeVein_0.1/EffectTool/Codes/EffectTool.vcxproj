@@ -90,6 +90,7 @@
     <LinkIncremental>false</LinkIncremental>
     <LibraryPath>$(DXSDK_DIR)Lib\x64;$(LibraryPath)</LibraryPath>
     <IncludePath>$(WindowsSDK_IncludePath);$(DXSDK_DIR)Include;$(IncludePath)</IncludePath>
+    <OutDir>../Release/</OutDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -138,6 +139,10 @@
       <PreprocessorDefinitions>_DEBUG;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>$(IntDir);%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ResourceCompile>
+    <PostBuildEvent>
+      <Command>cd /d $(SolutionDir)
+call CopyEngine.bat</Command>
+    </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
@@ -200,6 +205,7 @@
     <ClInclude Include="EffectTool.h" />
     <ClInclude Include="EffectToolDoc.h" />
     <ClInclude Include="EffectToolView.h" />
+    <ClInclude Include="FileInfo.h" />
     <ClInclude Include="MainFrm.h" />
     <ClInclude Include="MyFormView.h" />
     <ClInclude Include="ParticleTab.h" />
@@ -214,6 +220,7 @@
     <ClCompile Include="EffectTool.cpp" />
     <ClCompile Include="EffectToolDoc.cpp" />
     <ClCompile Include="EffectToolView.cpp" />
+    <ClCompile Include="FileInfo.cpp" />
     <ClCompile Include="MainFrm.cpp" />
     <ClCompile Include="MyFormView.cpp" />
     <ClCompile Include="ParticleTab.cpp" />

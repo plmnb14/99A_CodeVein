@@ -7,10 +7,17 @@ CEffect::CEffect(LPDIRECT3DDEVICE9 pGraphic_Device)
 }
 
 CEffect::CEffect(const CEffect & rhs)
-	: CGameObject(rhs.m_pGraphic_Dev)
+	: CGameObject(rhs)
 	, m_pInfo(rhs.m_pInfo)
+	, m_iPass(rhs.m_iPass)
 {
 	m_bClone = true;
+}
+
+void CEffect::Reset_Init()
+{
+	m_bIsDead = false;
+	this->Setup_Info();
 }
 
 HRESULT CEffect::Ready_GameObject_Prototype()
@@ -45,10 +52,21 @@ HRESULT CEffect::Render_GameObject()
 	return NOERROR;
 }
 
+void CEffect::Setup_Info()
+{
+}
+
+void CEffect::Set_Desc(_v3 vPos, CTransform* pTrans)
+{
+	m_pDesc->vWorldPos = vPos;
+	m_pDesc->pTargetTrans = pTrans;
+}
+
 
 void CEffect::Free()
 {
-	Safe_Delete(m_pInfo);
+	if(!m_bClone) Safe_Delete(m_pInfo);
+	Safe_Delete(m_pDesc);
 
 	CGameObject::Free();
 }

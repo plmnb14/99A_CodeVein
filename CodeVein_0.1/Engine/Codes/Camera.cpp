@@ -23,7 +23,7 @@ void CCamera::Walk_V(_float _Speed)
 	{
 	case DEFAULT_MODE:
 	{
-		_v3 vDir, vRight ,vWorldUp;
+		_v3 vDir, vRight, vWorldUp;
 
 		vDir = m_pTransform->Get_At() - m_pTransform->Get_Pos();
 		D3DXVec3Normalize(&vDir, &vDir);
@@ -43,7 +43,7 @@ void CCamera::Walk_H(_float _Speed)
 	_v3 vDir, vWorldUp;
 	vWorldUp = { 0.f , 1.f ,0.f };
 
-	vDir = m_pTransform->Get_At() -m_pTransform->Get_Pos();
+	vDir = m_pTransform->Get_At() - m_pTransform->Get_Pos();
 	D3DXVec3Normalize(&vDir, &vDir);
 
 	switch (m_eCamMode)
@@ -68,8 +68,8 @@ void CCamera::Rotate_X(_float _Angle)
 	D3DXVec3TransformCoord(&tmpUp, &m_pTransform->Get_Axis(AXIS_Y), &T);
 	D3DXVec3TransformCoord(&tmpLook, &m_pTransform->Get_Axis(AXIS_Z), &T);
 
-	m_pTransform->Set_Axis(tmpUp , AXIS_Y);
-	m_pTransform->Set_Axis(tmpLook , AXIS_Z);
+	m_pTransform->Set_Axis(tmpUp, AXIS_Y);
+	m_pTransform->Set_Axis(tmpLook, AXIS_Z);
 }
 
 void CCamera::Rotate_Y(_float _Angle)
@@ -92,8 +92,8 @@ void CCamera::Rotate_Y(_float _Angle)
 	D3DXVec3TransformCoord(&vTmpRight, &m_pTransform->Get_Axis(AXIS_X), &T);
 	D3DXVec3TransformCoord(&vTempLook, &m_pTransform->Get_Axis(AXIS_Z), &T);
 
-	m_pTransform->Set_Axis(vTmpRight , AXIS_X);
-	m_pTransform->Set_Axis(vTempLook , AXIS_Z);
+	m_pTransform->Set_Axis(vTmpRight, AXIS_X);
+	m_pTransform->Set_Axis(vTempLook, AXIS_Z);
 }
 
 void CCamera::Rotate_Z(_float _Angle)
@@ -114,8 +114,8 @@ void CCamera::Rotate_Z(_float _Angle)
 	D3DXVec3TransformCoord(&vTmpRight, &m_pTransform->Get_Axis(AXIS_X), &T);
 	D3DXVec3TransformCoord(&vTmpUp, &m_pTransform->Get_Axis(AXIS_Y), &T);
 
-	m_pTransform->Set_Axis(vTmpRight , AXIS_X);
-	m_pTransform->Set_Axis(vTmpUp , AXIS_Y);
+	m_pTransform->Set_Axis(vTmpRight, AXIS_X);
+	m_pTransform->Set_Axis(vTmpUp, AXIS_Y);
 }
 
 void CCamera::Camera_Oscillatation_SetUp(_float _fDuration, _float _fFrequency, _float _fPower, _float _fMuliply, CAM_OSC_TYPE _eOSCType)
@@ -163,7 +163,7 @@ void CCamera::Camera_Oscillate_Position()
 	if (m_fOSC_Frequency <= 0 || m_fOSC_Duration < m_fOSC_Timer[0])
 	{
 		m_eOSCType = OSC_END;
-		
+
 		LOOP(3)
 		{
 			m_fOSCAxis_Gap[i] = 0.f;
@@ -312,60 +312,60 @@ void CCamera::Camera_Oscillate_Position()
 	/*
 	if (true == m_bOSCReverse[1])
 	{
-		if (false == m_bOSCOrigin)
-		{
-			m_fOSCAxis_Gap[1] += DELTA_60 * (m_fOSC_Frequency * 0.5f);
+	if (false == m_bOSCOrigin)
+	{
+	m_fOSCAxis_Gap[1] += DELTA_60 * (m_fOSC_Frequency * 0.5f);
 
-			if (m_fOSCAxis_Gap[1] >= m_fOSC_Power * 0.5f)
-			{
-				m_bOSCOrigin = true;
-				m_fOSC_Frequency *= m_fOSC_Mutiply;
+	if (m_fOSCAxis_Gap[1] >= m_fOSC_Power * 0.5f)
+	{
+	m_bOSCOrigin = true;
+	m_fOSC_Frequency *= m_fOSC_Mutiply;
 
-				m_fOSCAxis_Gap[1] = m_fOSC_Power * 0.5f;
-			}
-		}
+	m_fOSCAxis_Gap[1] = m_fOSC_Power * 0.5f;
+	}
+	}
 
-		else
-		{
-			m_fOSCAxis_Gap[1] -= DELTA_60 * (m_fOSC_Frequency * 0.5f);
+	else
+	{
+	m_fOSCAxis_Gap[1] -= DELTA_60 * (m_fOSC_Frequency * 0.5f);
 
-			if (m_fOSCAxis_Gap[1] <= 0)
-			{
-				m_bOSCOrigin = false;
-				m_fOSC_Power *= m_fOSC_Mutiply;
+	if (m_fOSCAxis_Gap[1] <= 0)
+	{
+	m_bOSCOrigin = false;
+	m_fOSC_Power *= m_fOSC_Mutiply;
 
-				m_bOSCReverse[1] = false;
-			}
-		}
+	m_bOSCReverse[1] = false;
+	}
+	}
 	}
 
 	else if (false == m_bOSCReverse[1])
 	{
-		if (false == m_bOSCOrigin)
-		{
-			m_fOSCAxis_Gap[1] -= DELTA_60 * (m_fOSC_Frequency * 0.5f);
+	if (false == m_bOSCOrigin)
+	{
+	m_fOSCAxis_Gap[1] -= DELTA_60 * (m_fOSC_Frequency * 0.5f);
 
-			if (m_fOSCAxis_Gap[1] <= -m_fOSC_Power * 0.5f)
-			{
-				m_bOSCOrigin = true;
-				m_fOSC_Frequency *= m_fOSC_Mutiply;
+	if (m_fOSCAxis_Gap[1] <= -m_fOSC_Power * 0.5f)
+	{
+	m_bOSCOrigin = true;
+	m_fOSC_Frequency *= m_fOSC_Mutiply;
 
-				m_fOSCAxis_Gap[1] = -m_fOSC_Power * 0.5f;
-			}
-		}
+	m_fOSCAxis_Gap[1] = -m_fOSC_Power * 0.5f;
+	}
+	}
 
-		else
-		{
-			m_fOSCAxis_Gap[1] += DELTA_60 * (m_fOSC_Frequency * 0.5f);
+	else
+	{
+	m_fOSCAxis_Gap[1] += DELTA_60 * (m_fOSC_Frequency * 0.5f);
 
-			if (m_fOSCAxis_Gap[1] >= 0)
-			{
-				m_bOSCOrigin = false;
-				m_fOSC_Power *= m_fOSC_Mutiply;
+	if (m_fOSCAxis_Gap[1] >= 0)
+	{
+	m_bOSCOrigin = false;
+	m_fOSC_Power *= m_fOSC_Mutiply;
 
-				m_bOSCReverse[1] = true;
-			}
-		}
+	m_bOSCReverse[1] = true;
+	}
+	}
 	}
 	*/
 }
@@ -388,9 +388,9 @@ HRESULT CCamera::SetUp_ViewMat()
 	D3DXVec3Cross(&vUp, &vLook, &vRight);
 	D3DXVec3Normalize(&vUp, &vUp);
 
-	m_pTransform->Set_Axis(vLook , AXIS_Z);
-	m_pTransform->Set_Axis(vRight , AXIS_X);
-	m_pTransform->Set_Axis(vUp , AXIS_Y);
+	m_pTransform->Set_Axis(vLook, AXIS_Z);
+	m_pTransform->Set_Axis(vRight, AXIS_X);
+	m_pTransform->Set_Axis(vUp, AXIS_Y);
 
 	return S_OK;
 }
@@ -419,9 +419,28 @@ void CCamera::Set_MouseControl(_bool _bMouseControl)
 	m_bMouseControl = _bMouseControl;
 }
 
-void CCamera::Add_At(_float _fSpeed , _v3 _vDir)
+void CCamera::Set_OnAimingTarget()
 {
-	m_pTransform->Add_At(_fSpeed , _vDir);
+	m_bOnAiming = (m_bOnAiming == true ? false : true);
+
+	m_vOldPos = m_pTransform->Get_Pos();
+	m_vOldAt = m_pTransform->Get_At();
+
+	m_bOnLerpPos = true;
+	m_bOnLerpAt = true;
+
+	m_fAtLerpValue = 0.f;
+	m_fPosLerpValue = 0.f;
+
+	//if (false == m_bOnAiming)
+	//{
+	//	m_fY_LockAngle = 22.5f;
+	//}
+}
+
+void CCamera::Add_At(_float _fSpeed, _v3 _vDir)
+{
+	m_pTransform->Add_At(_fSpeed, _vDir);
 }
 
 void CCamera::Add_Pos(_float _fSpeed, _v3 _vDir)
@@ -500,8 +519,8 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 			vDir = WORLD_LOOK;
 			CALC::V3_Cross_Normal(&vRight_2, &_v3{ 0,1,0 }, &vDir);
 
-			_v3 vRight_NoY = _v3{ m_pTransform->Get_Axis(AXIS_X).x , 0.f , m_pTransform->Get_Axis(AXIS_X).z } * m_fOSCAxis_Gap[AXIS_X];
-			_v3 vUP = _v3{ vRight_2.y , m_pTransform->Get_Axis(AXIS_Y).y , m_pTransform->Get_Axis(AXIS_Z).y } * m_fOSCAxis_Gap[AXIS_Y];
+			_v3 vRight_NoY = _v3{ m_pTransform->Get_Axis(AXIS_X).x , 0.f , m_pTransform->Get_Axis(AXIS_X).z } *m_fOSCAxis_Gap[AXIS_X];
+			_v3 vUP = _v3{ vRight_2.y , m_pTransform->Get_Axis(AXIS_Y).y , m_pTransform->Get_Axis(AXIS_Z).y } *m_fOSCAxis_Gap[AXIS_Y];
 
 			vAt = vEyePos + WORLD_LOOK + vRight_NoY + vUP;
 			m_pTransform->Set_At(vAt);
@@ -512,86 +531,205 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 
 	case BACK_VIEW:
 	{
-		Tps_Aiming();
-
-		if (nullptr == m_pTarget)
-			return E_FAIL;
-
 		CTransform* vTrans = TARGET_TO_TRANS(m_pTarget);
 
 		D3DXMATRIX matRotAxis;
-		_v3 vDir, vRight_2 , vUp_2;
+		_v3 vDir, vRight_2, vUp_2;
 		_v3 vEyePos = m_pTransform->Get_Pos();
 		_v3 vRight = m_pTransform->Get_Axis(AXIS_X);
 		_v3 vUp = m_pTransform->Get_Axis(AXIS_Y);
 		_v3 vAt = vTrans->Get_Pos();
 		_v3 vTransPos = vTrans->Get_Pos();
-		_v3 vWorldRight = { 1,0,0 };
-		_v3 vWorldLook = { 0,0,1 };
 		_v3 vRightextra = {};
+		_v3 vLerpTargetPos, vLerpTargetAt;
+		_float fLerpAngle = 0.f;
 
-		(m_bReverseRight ? 
-			vRightextra = _v3{ vRight_2.x * 2.f  , 0.f , vRight_2.z * 2.f } :
-			vRightextra = _v3{ vRight_2.x * -2.f  , 0.f , vRight_2.z * -2.f });
+		if (false == m_bOnAiming)
+		{
+			Tps_Aiming();
 
+			(m_bReverseRight ?
+				vRightextra = _v3{ vRight_2.x * 2.f  , 0.f , vRight_2.z * 2.f } :
+				vRightextra = _v3{ vRight_2.x * -2.f  , 0.f , vRight_2.z * -2.f });
 
+			vEyePos = -WORLD_LOOK;
+			V3_NORMAL_SELF(&vEyePos);
 
+			vEyePos *= m_fDistance;
 
-		vEyePos = -vWorldLook;
-		V3_NORMAL_SELF(&vEyePos);
-		
-		vEyePos *= m_fDistance;
-		
+			/*if (m_fY_LateLockAngle != m_fX_LockAngle)
+			{
+				if (m_fY_LateLateLockAngle != m_fY_LateLockAngle)
+				{
+					m_fY_LateLateLockAngle = m_fY_LateLockAngle;
+					m_fPosLerpValue = 0.f;
+				}
 
-		CALC::V3_Axis_Normal(&matRotAxis, &vEyePos, &vWorldRight, m_fY_LockAngle, true);
-		CALC::V3_Axis_Normal(&matRotAxis, &vEyePos, &WORLD_UP, m_fX_LockAngle - 22.5f, true);
+				if (m_fPosLerpValue >= 1.f)
+				{
+					m_fPosLerpValue = 0.f;
+					m_fY_LateLockAngle = m_fX_LockAngle;
+				}
 
+				else
+				{
+					m_fPosLerpValue += DELTA_60;
+					_v3 tmpLerp1 = _v3(0.f, m_fY_LateLockAngle, 0.f);
+					_v3 tmpLerp2 = _v3(0.f, m_fX_LockAngle, 0.f);
+					_v3 tmpLerp3 = _v3(0.f, 0.f, 0.f);
 
-		vRight_2 = {1,0,0};
-		CALC::V3_Dir_Normal(&vDir, &m_pTransform->Get_Pos(), &vTransPos);
-		CALC::V3_Cross_Normal(&vRight_2, &_v3{ 0,1,0 }, &vDir);
-		CALC::V3_Cross_Normal(&vUp_2, &vRight_2, &vDir);
+					if (m_fPosLerpValue >= 1.f)
+					{
+						m_fPosLerpValue = 1.f;
+					}
 
-		////cout << "x 축의 y : " <<m_pTransform->Get_Right().y << endl;
-		////cout << "y 축의 y : " << m_pTransform->Get_Up().y << endl;
+					D3DXVec3Lerp(&tmpLerp3, &tmpLerp1, &tmpLerp2, m_fPosLerpValue);
+					fLerpAngle = tmpLerp3.y;
+				}
+			}
 
-		_v3 vRight_NoY = _v3{ m_pTransform->Get_Axis(AXIS_X).x , 0.f , m_pTransform->Get_Axis(AXIS_X).z } * m_fOSCAxis_Gap[AXIS_X];
-		_v3 vUP = _v3{ vRight_2.y ,m_pTransform->Get_Axis(AXIS_Y).y , m_pTransform->Get_Axis(AXIS_Z).y } * m_fOSCAxis_Gap[AXIS_Y];
+			else
+			{
+				fLerpAngle = m_fX_LockAngle;
+			}*/
+			
+			CALC::V3_Axis_Normal(&matRotAxis, &vEyePos, &WORLD_RIGHT, m_fY_LockAngle, true);
+			CALC::V3_Axis_Normal(&matRotAxis, &vEyePos, &WORLD_UP, m_fX_LockAngle, true);
 
-		vEyePos += vTransPos + _v3{ 0,1,0 } + vRight_NoY + vUP;
-		m_pTransform->Set_Pos(vEyePos);
+			vEyePos += vTransPos + _v3{ 0,1,0 };
+			vAt = vTransPos + (WORLD_UP * 1.5f);
 
-		//m_TargetPos.push_back(vEyePos);
-		//
-		//if (m_TargetPos.size() >= 14)
-		//{
-		//	_v3 OutVector, CatVec[8];
-		//	_ulong iIndex = 0;
-		//
-		//	for (auto& iter : m_TargetPos)
-		//	{
-		//		CatVec[iIndex] = iter;
-		//		++iIndex;
-		//
-		//		if (iIndex == 7)
-		//			break;
-		//	}
-		//
-		//	D3DXVec3CatmullRom(&OutVector, &CatVec[0], &CatVec[2], &CatVec[4], &CatVec[6], 0.1f);
-		//
-		//	vEyePos = OutVector;
-		//
-		//	m_TargetPos.pop_front();
-		//}
+			//===========================================
 
-		CALC::V3_Dir_Normal(&vDir, &m_pTransform->Get_Pos(), &vTransPos);
-		CALC::V3_Cross_Normal(&vRight_2, &_v3{ 0,1,0 }, &vDir);
-		CALC::V3_Cross_Normal(&vUp_2, &vRight_2, &vDir);
+			//if (m_pTransform->Get_Pos() != m_vOldPos)
+			//{
+			//	m_vOldPos = m_pTransform->Get_Pos();
+			//	m_bOnLerpPos = true;
 
+			//	m_fPosLerpValue = 0.f;
+			//}
 
-		vAt = vTransPos + _v3{ vRight_2.x * -0.66f, 1.6f , vRight_2.z * -0.66f} + vRight_NoY + vUP;
-		m_pTransform->Set_At(vAt);
+			if (m_bOnLerpAt)
+			{
+				if (m_fAtLerpValue >= 1.f)
+				{
+					m_fAtLerpValue = 0.f;
+					m_bOnLerpAt = false;
 
+					vLerpTargetAt = vAt;
+				}
+
+				else
+				{
+					m_fAtLerpValue += DELTA_60;
+					D3DXVec3Lerp(&vLerpTargetAt, &m_vOldAt, &vAt, m_fAtLerpValue);
+					m_vOldAt = vLerpTargetAt;
+				}
+			}
+
+			else
+			{
+				vLerpTargetAt = vAt;
+			}
+
+			if (m_bOnLerpPos)
+			{
+				if (m_fPosLerpValue >= 1.f)
+				{
+					m_fPosLerpValue = 0.f;
+					m_bOnLerpPos = false;
+
+					vLerpTargetPos = vEyePos;
+				}
+
+				else
+				{
+					m_fPosLerpValue += DELTA_60 * 0.5f;
+					D3DXVec3Lerp(&vLerpTargetPos, &m_vOldPos, &vEyePos, m_fPosLerpValue);
+
+					//V3_NORMAL_SELF(&vLerpTargetPos);
+					//vLerpTargetPos *= m_fDistance;
+				}
+			}
+
+			else
+			{
+				vLerpTargetPos = vEyePos;
+			}
+
+			m_pTransform->Set_Pos(vLerpTargetPos);
+			m_pTransform->Set_At(vLerpTargetAt);
+
+			//cout << "카메라 x 축 : " << m_fX_LockAngle << endl;
+		}
+
+		else if (true == m_bOnAiming)
+		{
+			Tps_Aiming();
+
+			_v3 vAimAt;
+			_v3 vOwnerDir = vTrans->Get_Axis(AXIS_Z);
+			_v3 vOwnerRight = vTrans->Get_Axis(AXIS_X);
+			_v3 vLerpTargetPos, vLerpTargetAt;
+
+			vAimAt = TARGET_TO_TRANS(m_pAimingTarget)->Get_Pos() + (WORLD_UP * 1.5f);
+
+			vEyePos = vOwnerDir *= -1.f;
+			vEyePos *= m_fDistance;
+
+			CALC::V3_Axis_Normal(&matRotAxis, &vEyePos, &vOwnerRight, 22.5f, true);
+
+			vEyePos += vTransPos + _v3{ 0,1,0 };
+
+			if (m_bOnLerpAt)
+			{
+				if (m_fAtLerpValue >= 1.f)
+				{
+					m_fAtLerpValue = 0.f;
+					m_bOnLerpAt = false;
+
+					vLerpTargetAt = vAimAt;
+				}
+
+				else
+				{
+					m_fAtLerpValue += DELTA_60 * 2.f;
+					D3DXVec3Lerp(&vLerpTargetAt, &m_vOldAt, &vAimAt, m_fAtLerpValue);
+					m_vOldAt = vLerpTargetAt;
+				}
+			}
+
+			else 
+			{
+				vLerpTargetAt = vAimAt;
+			}
+
+			if (m_bOnLerpPos)
+			{
+				if (m_fPosLerpValue >= 1.f)
+				{
+					m_fPosLerpValue = 0.f;
+					m_bOnLerpPos = false;
+
+					vLerpTargetPos = vEyePos;
+				}
+			
+				else
+				{
+					m_fPosLerpValue += DELTA_60 * 2.f;
+					D3DXVec3Lerp(&vLerpTargetPos, &m_vOldPos, &vEyePos, m_fPosLerpValue);
+					m_vOldPos = vLerpTargetPos;
+				}
+			}
+
+			else
+			{
+				vLerpTargetPos = vEyePos;
+			}
+
+			m_pTransform->Set_Pos(vLerpTargetPos);
+			m_pTransform->Set_At(vLerpTargetAt);
+		}
 		break;
 
 	}
@@ -627,7 +765,7 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 		vEyePos *= m_fDistance * 2;
 
 		CALC::V3_Axis_Normal(&matRotAxis, &vEyePos, &vWorldRight, 60.f, true);
-		CALC::V3_Axis_Normal(&matRotAxis, &vEyePos, &WORLD_UP,45.f, true);
+		CALC::V3_Axis_Normal(&matRotAxis, &vEyePos, &WORLD_UP, 45.f, true);
 
 		vEyePos += vTrans->Get_Pos();
 		vAt = vTrans->Get_Pos();
@@ -666,14 +804,19 @@ HRESULT CCamera::SetUp_MouseRotate()
 
 	if (m_bGetMp == true)
 		mp = CInput_Device::Get_Instance()->Get_MouseGap();
-	
+
 	else if (m_bGetMp == false)
 		m_bGetMp = true;
 
 	_mat	matRot;
-	_v3		vDir, vRight, tmpAt, vUp , vLook;
+	_v3		vDir, vRight, tmpAt, vUp, vLook;
 
 	D3DXMatrixIdentity(&matRot);
+
+	if (m_eCamView != QUATER_VIEW && m_eCamView != TOOL_VIEW)
+	{
+		CInput_Device::Get_Instance()->Set_MouseLock();
+	}
 
 	if (m_eCamView == FIRST_VIEW || m_eCamView == TOP_VIEW)
 	{
@@ -832,9 +975,15 @@ HRESULT CCamera::SetUp_MouseRotate()
 
 	else if (m_eCamView != CINEMA_VIEW)
 	{
+		if (m_bOnAiming)
+			return S_OK;
+
 		if (mp.x != 0)
 		{
-			m_fX_Angle = mp.x * 0.5f;
+			if(m_fX_LockAngle != m_fY_LateLockAngle)
+				m_fY_LateLockAngle = m_fX_LockAngle;
+
+			m_fX_Angle = mp.x * 1.f;
 			m_fX_LockAngle += m_fX_Angle;
 
 			if (m_fX_LockAngle > 360.f)
@@ -854,10 +1003,10 @@ HRESULT CCamera::SetUp_MouseRotate()
 
 				if (fabs(m_fY_LockAngle) >= fabs(m_fY_MaxLockAngle))
 				{
-					if(m_fY_LockAngle < 0)
+					if (m_fY_LockAngle < 0)
 						m_fY_LockAngle = -m_fY_MaxLockAngle;
 
-					else if(m_fY_LockAngle > 0)
+					else if (m_fY_LockAngle > 0)
 						m_fY_LockAngle = m_fY_MaxLockAngle;
 				}
 			}
@@ -877,11 +1026,6 @@ HRESULT CCamera::SetUp_MouseRotate()
 		}
 	}
 
-
-	if (m_eCamView != QUATER_VIEW && m_eCamView != TOOL_VIEW)
-	{
-		CInput_Device::Get_Instance()->Set_MouseLock();
-	}
 
 	return S_OK;
 }
@@ -925,9 +1069,9 @@ HRESULT CCamera::SetUp_Default()
 
 	// Position
 	m_pTransform->Set_Pos({ 0,0,0 });
-	m_pTransform->Set_Axis(WORLD_RIGHT , AXIS_X);
-	m_pTransform->Set_Axis(WORLD_UP , AXIS_X);
-	m_pTransform->Set_Axis(WORLD_LOOK , AXIS_X);
+	m_pTransform->Set_Axis(WORLD_RIGHT, AXIS_X);
+	m_pTransform->Set_Axis(WORLD_UP, AXIS_X);
+	m_pTransform->Set_Axis(WORLD_LOOK, AXIS_X);
 	m_pTransform->Set_At({ 0.f,0.f,1.f });
 
 	return S_OK;
@@ -1003,7 +1147,7 @@ _v3 * CCamera::Calc_Pos_and_At()
 	CALC::V3_Cross_Normal(&vUp_2, &vRight_2, &vDir);
 
 
-	vAt = vTransPos + _v3{ vRight_2.x * + 0.66f, 1.6f , vRight_2.z * - 0.66f };
+	vAt = vTransPos + _v3{ vRight_2.x * +0.66f, 1.6f , vRight_2.z * -0.66f };
 
 	m_vReturnValue[0] = vEyePos;
 	m_vReturnValue[1] = vAt;

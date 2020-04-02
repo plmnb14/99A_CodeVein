@@ -18,8 +18,18 @@ public:
 	HRESULT Set_BeHaviorTree(CBehaviorTree* pBehaviorTree);
 	HRESULT Set_BlackBoard(CBlackBoard* pBlackBoard);
 
-public:
+	CBlackBoard::OUTPUT Set_Value_Of_BloackBoard(const _tchar* pName, _bool bValue);
+	CBlackBoard::OUTPUT Set_Value_Of_BloackBoard(const _tchar* pName, _float fValue);
+	CBlackBoard::OUTPUT Set_Value_Of_BloackBoard(const _tchar* pName, _int iValue);
+	CBlackBoard::OUTPUT Set_Value_Of_BloackBoard(const _tchar* pName, _v3 vValue);
 
+	const _bool Get_BoolValue(const _tchar* pName) const;
+	const _float Get_FloatValue(const _tchar* pName) const;
+	const _int Get_IntValue(const _tchar* pName) const;
+	const _v3 Get_V3Value(const _tchar* pName) const;
+
+public:
+	void Reset_BT();
 
 public:
 	HRESULT Update_AIController(_double TimeDelta);

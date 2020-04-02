@@ -30,6 +30,11 @@ CMesh_Dynamic::CMesh_Dynamic(const CMesh_Dynamic & rhs)
 	}
 }
 
+vector<D3DXMESHCONTAINER_DERIVED*> CMesh_Dynamic::Get_MeshContainer()
+{
+	return m_MeshContainerList;
+}
+
 _mat CMesh_Dynamic::Get_FrameMatrix(const char * pFrameName)
 {
 	_mat	matTmp;
@@ -235,10 +240,13 @@ void CMesh_Dynamic::Reset_OldIndx(_short _sAniCtrlNum)
 	}
 }
 
-LPD3DXFRAME CMesh_Dynamic::Get_BonInfo(LPCSTR _bBoneName)
+LPD3DXFRAME CMesh_Dynamic::Get_BonInfo(LPCSTR _bBoneName , _short _sCTRL_Type)
 {
+	
+
 	// 현재 분리된 "상체" 의 정보만을 가져옴.
-	return D3DXFrameFind(m_pRightArmFrame, _bBoneName);
+	return (_sCTRL_Type == 0 ? D3DXFrameFind(m_pRootFrame, _bBoneName) :
+			_sCTRL_Type == 1 ? D3DXFrameFind(m_pUpperFrame, _bBoneName) : D3DXFrameFind(m_pRightArmFrame, _bBoneName));
 }
 
 D3DXTRACK_DESC CMesh_Dynamic::Get_TrackInfo()
@@ -249,6 +257,16 @@ D3DXTRACK_DESC CMesh_Dynamic::Get_TrackInfo()
 D3DXTRACK_DESC CMesh_Dynamic::Get_TrackInfo_Upper()
 {
 	return m_pAniCtrl_Upper->Get_TrackInfo();
+}
+
+CAniCtrl * CMesh_Dynamic::Get_AniCtrl()
+{
+	return m_pAniCtrl_Lower;
+}
+
+_double CMesh_Dynamic::Get_AnimationFullTime()
+{
+	return m_pAniCtrl_Lower->Get_AnimationFullTime();
 }
 
 void CMesh_Dynamic::Set_BoneSeperate(D3DXFRAME_DERIVED * _frame, const char * _bodyName, _short _sSeperateNum)
@@ -286,10 +304,10 @@ void CMesh_Dynamic::Set_BoneSeperate(D3DXFRAME_DERIVED * _frame, const char * _b
 
 HRESULT CMesh_Dynamic::SetUp_Animation(_uint iIndex)
 {
-	if (nullptr == m_pAniCtrl_Upper)
+	if (nullptr == m_pAniCtrl_Lower)
 		return E_FAIL;
 
-	m_pAniCtrl_Upper->SetUp_Animation(iIndex);
+	m_pAniCtrl_Lower->SetUp_Animation(iIndex);
 
 	return NOERROR;
 }
@@ -395,10 +413,10 @@ HRESULT CMesh_Dynamic::Play_Animation_RightArm(_double TimeDelta , _bool _bTwoHa
 
 HRESULT CMesh_Dynamic::Play_Animation(_double TimeDelta)
 {
-	if (nullptr == m_pAniCtrl_Upper)
+	if (nullptr == m_pAniCtrl_Lower)
 		return E_FAIL;
 
-	m_pAniCtrl_Upper->Play_Animation(TimeDelta);
+	m_pAniCtrl_Lower->Play_Animation(TimeDelta);
 
 	Update_CombinedTransformationMatrices(m_pRootFrame, m_matPivot);
 

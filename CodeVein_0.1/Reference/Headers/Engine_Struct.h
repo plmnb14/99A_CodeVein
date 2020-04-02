@@ -126,6 +126,18 @@ namespace Engine
 
 	typedef struct tagCollider
 	{
+		// 캡슐용
+		///////////////////////////////////////////////////////
+
+		_v3		vBegin;		// 시작 점
+		_v3		vEnd;			// 바닥 점
+		_v3		vAxis;			// 축
+		_float	fBeginEndLength;
+
+		///////////////////////////////////////////////////////
+
+		_v3  vCrossPoint;	// 교차 지점
+
 		_v3	 pGizmoPos[8];	// 디버깅용 Gizmo 위치
 		_v3	 vCenterPos;	// 중단점
 		_v3	 vUnderPos;		// 하단점
@@ -287,6 +299,7 @@ namespace Engine
 		_bool	bStaticFrame;
 		_float	fMaxFrame;
 		_float	fColorIndex;
+		_float	fMaskIndex;
 
 		_float	fAnimSpeed;
 		_float  fLifeTime;
@@ -325,12 +338,15 @@ namespace Engine
 		_bool	bRandStartPos;
 
 		_bool	bDistortion;
+		_bool	bGravity;
 
 		_bool	bDirMove;
 		_v3		vMoveDirection;
 		_bool	bRandomMove;
 		_v3		vRandDirectionRange;
+		_bool	bMoveWithRot;
 
+		_bool	bRandScale;
 		_bool	bScaleMove;
 		_v3		vStartScale;
 		_v3		vMoveScale;
@@ -349,4 +365,15 @@ namespace Engine
 		_float	fColorSpeed;
 	}EFFECT_INFO;
 
+	typedef struct tagBulletInfo
+	{
+		tagBulletInfo(_v3 _vCreatePos, _v3 _vDir, _float _fSpeed, _double _dLifeTime)
+			: vCreatePos(_vCreatePos), vDir(_vDir), fSpeed(_fSpeed), dLifeTime(_dLifeTime)
+		{}
+
+		_v3			vCreatePos = _v3(0.f, 0.f, 0.f);
+		_v3			vDir = _v3(0.f, 0.f, 0.f);
+		_float		fSpeed = 0.f;
+		_double		dLifeTime = 0;
+	}BULLET_INFO;
 }

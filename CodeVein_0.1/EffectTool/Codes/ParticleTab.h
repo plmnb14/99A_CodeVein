@@ -20,7 +20,7 @@ public:
 	CParticleTab(CWnd* pParent = NULL);   // 표준 생성자입니다.
 	virtual ~CParticleTab();
 
-// 대화 상자 데이터입니다.
+	// 대화 상자 데이터입니다.
 #ifdef AFX_DESIGN_TIME
 	enum { IDD = IDD_PARTICLETAB };
 #endif
@@ -58,11 +58,11 @@ public:
 private:
 	void Check_ResType();
 	void Check_FormControlEnable();
-	void Check_TestMesh();
 	void Create_Particle(const _float DeltaTime);
 	void Create_Effect();
 	void Create_MeshEffect();
 	void Setup_EffInfo(_bool bIsMesh);
+	void Release();
 
 private:
 	vector<CGameObject*> m_vecObjectList;
@@ -71,6 +71,8 @@ private:
 	_float m_fParticleTime_Check = 0.f;
 	_float m_fCreatePause = 0.f; // 임시
 	_float m_fMaxFrame = 0.f;
+
+	CMeshEffect* m_pTestBox = nullptr;
 private:
 	LPDIRECT3DDEVICE9	 m_pGraphicDev = nullptr;
 	CResListPopup		 m_ResPopup_Tex = nullptr;
@@ -161,4 +163,11 @@ private:
 	CString m_EditFileName;
 	CString m_EditColorIndex;
 	CButton m_CheckUseRGBA;
+public:
+	CButton m_bCheckUseMask;
+	afx_msg void OnBnClickedButton_ResMask();
+	CString m_EditMaskIndex;
+	CButton m_CheckGravity;
+	CButton m_CheckRandSize;
+	CButton m_CheckMoveWithRot;
 };

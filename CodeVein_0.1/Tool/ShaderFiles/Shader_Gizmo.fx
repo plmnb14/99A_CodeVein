@@ -33,7 +33,7 @@ VS_OUT VS_MAIN(VS_IN In)
 	matWV = mul(g_matWorld, g_matView);
 	matWVP = mul(matWV, g_matProj);
 
-	Out.vPos = mul(vector(In.vPos, 1.f), matWVP);
+	Out.vPos = mul(float4(In.vPos, 1.f), matWVP);
 
 	return Out;
 }

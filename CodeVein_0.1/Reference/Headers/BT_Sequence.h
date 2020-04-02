@@ -12,7 +12,7 @@ public:
 		tagInitInfo(char* pNodeName)
 		{ strcpy_s<256>(Target_NodeName, pNodeName); }
 
-		char	Target_NodeName[256];
+		char	Target_NodeName[256] = { 0, };
 	}INFO;
 
 protected:
@@ -24,11 +24,11 @@ public:
 	HRESULT Add_Child(CBT_Node* pNode);
 
 public:
-	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, const CBlackBoard* pBlackBoard, _bool bDebugging) override;
+	virtual BT_NODE_STATE Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, CBlackBoard* pBlackBoard, _bool bDebugging) override;
 
 public:
-	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, _bool bDebugging);
-	virtual BT_NODE_STATE End_Node(vector<CBT_Node*>* pNodeStack, BT_NODE_STATE eState, _bool bDebugging);
+	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging);
+	virtual BT_NODE_STATE End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging);
 
 private:
 	HRESULT Ready_Clone_Node(void* pInit_Struct);
