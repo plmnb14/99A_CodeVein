@@ -203,6 +203,8 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\BT_CreateEffect.h" />
     <ClInclude Include="..\Headers\BT_CreateBullet.h" />
     <ClInclude Include="..\Headers\BT_Decorator_Node.h" />
+    <ClInclude Include="..\Headers\BT_DistCheck.h" />
+    <ClInclude Include="..\Headers\BT_FixDir.h" />
     <ClInclude Include="..\Headers\BT_Inverter.h" />
     <ClInclude Include="..\Headers\BT_Loop.h" />
     <ClInclude Include="..\Headers\BT_MoveDir.h" />
@@ -296,6 +298,8 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\BT_CreateEffect.cpp" />
     <ClCompile Include="..\Codes\BT_CreateBullet.cpp" />
     <ClCompile Include="..\Codes\BT_Decorator_Node.cpp" />
+    <ClCompile Include="..\Codes\BT_DistCheck.cpp" />
+    <ClCompile Include="..\Codes\BT_FixDir.cpp" />
     <ClCompile Include="..\Codes\BT_Inverter.cpp" />
     <ClCompile Include="..\Codes\BT_Loop.cpp" />
     <ClCompile Include="..\Codes\BT_MoveDir.cpp" />

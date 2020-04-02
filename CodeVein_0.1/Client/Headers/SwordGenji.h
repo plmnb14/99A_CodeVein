@@ -34,13 +34,11 @@ private:	//패턴들
 	CBT_Composite_Node* Strong_LeftCut();
 	// 6. 3연속 베기, 이동거리 : 1
 	CBT_Composite_Node* ThreeCombo_Cut();
-	// 7. 달리면서 직선베기, 이동거리 : 7
-	CBT_Composite_Node* Run_Straight_Cut();
-	// 8. 수평베기, 이동거리 : 1
+	// 7. 수평베기, 이동거리 : 1
 	CBT_Composite_Node* Horizon_Cut();
-	// 9. 찌르기, 이동거리 : 1
+	// 8. 찌르기, 이동거리 : 1
 	CBT_Composite_Node* Sting_Attack();
-	// 10. 2연속 베기, 이동거리 : 1 + 1
+	// 9. 2연속 베기, 이동거리 : 1 + 1
 	CBT_Composite_Node* TwoCombo_Cut();
 
 
@@ -51,7 +49,24 @@ private:	//패턴들
 	CBT_Composite_Node* Throwing2();
 	// 백스탭 던지기, 이동거리 : 1
 	CBT_Composite_Node* Throwing_BackStep();
+	// 달리면서 직선베기, 이동거리 : 7
+	CBT_Composite_Node* Run_Straight_Cut();
 
+
+	CBT_Composite_Node*		Start_Game();
+
+	CBT_Composite_Node*		ChaseAndNearAttack();
+	CBT_Composite_Node*		Chase();
+	CBT_Composite_Node*		NearAttack();
+
+	////////////// 시연회용
+
+	CBT_Composite_Node* Show_ChaseAndNeqrAttack();
+
+	CBT_Composite_Node* Show_NearAttack();
+
+
+	//////////////
 
 private:
 	CTransform*			m_pTransformCom = nullptr;

@@ -24,7 +24,7 @@ private:	//패턴들
 	// 원거리
 	// 1. 총쏘기
 	CBT_Composite_Node* Shot();
-	// 2. 텀블링 총쏘기
+	// 2. 텀블링 총쏘기, 이동거리 : -1.3
 	CBT_Composite_Node* Tumbling_Shot();
 	// 3. 갑자기 총쏘기
 	CBT_Composite_Node* Sudden_Shot();
@@ -38,6 +38,22 @@ private:	//패턴들
 	CBT_Composite_Node* Sting_Attack();
 	// 4. 오른쪽으로 베기, 이동거리 : 0.5
 	CBT_Composite_Node* Cut_To_Right();
+
+	// 회피
+	// 1. 뒤로 회피
+	CBT_Composite_Node* Dodge_B();
+
+
+	CBT_Composite_Node*		Start_Game();
+
+	CBT_Composite_Node*		Dist_Attack();	// 쳐다보고 가까우면 근접공격, 멀면 원거리공격
+
+	
+	CBT_Composite_Node*		LookPlayer_NearAttack();	// 플레이어 바라본 후 랜덤 근접 공격
+	CBT_Composite_Node*		LookPlayer_FarAttack();		// 플레이어 바라본 후 랜덤 원거리 공격
+
+	CBT_Composite_Node*		NearAttack();	// 랜덤 근접 공격
+	CBT_Composite_Node*		FarAttack();	// 랜덤 원거리 공격
 
 
 	//////////////////// 시연회용
