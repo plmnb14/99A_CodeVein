@@ -866,7 +866,7 @@ void CPlayer::Key_Movement_Down()
 		if (m_eActState == ACT_Idle)
 			return;
 
-		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.01f))
+		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.001f))
 		{
 			m_eActState = (m_eActState == ACT_Run ? ACT_MoveDelay : ACT_Idle);
 
@@ -2104,6 +2104,10 @@ void CPlayer::Play_Dodge()
 				m_eMainWpnState == WEAPON_Gun ? 0.6f : 1.2f);
 
 		m_fSkillMoveAccel_Cur = 0.f;
+
+		cout << m_fSkillMoveAccel_Cur << endl;
+		cout << m_fSkillMoveSpeed_Cur << endl;
+		cout << m_fSkillMoveMultiply << endl;
 	}
 
 	else

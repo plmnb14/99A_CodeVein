@@ -36,7 +36,22 @@ _int CDummy_Target::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
 
+	if (m_tObjParam.bCanHit == false)
+	{
+		if (m_dwHitCnt > 5)
+		{
+			m_eActState = ACT_BREAK;
+		}
+		else
+		{
+			m_eActState = ACT_HIT;
+		}
+	}
 
+	else
+		m_eActState = ACT_IDLE;
+
+	/*
 	if (m_bOnGuard)
 	{
 		switch (m_eTmpAnimNum)
@@ -85,6 +100,90 @@ _int CDummy_Target::Update_GameObject(_double TimeDelta)
 			m_fTimer = 0.f;
 		}
 	}
+	*/
+
+	switch (m_eActState)
+	{
+	case ACT_IDLE:
+	{
+		if (false == m_bOnGuard)
+		{
+			if (m_eTmpAnimNum != Guard_Start)
+				m_eTmpAnimNum = Guard_Start;
+
+			else if (m_pDynamic_Mesh->Is_Finish_Animation(0.75f))
+			{
+				m_eTmpAnimNum = Guard_Loop;
+				m_bOnGuard = true;
+			}
+		}
+
+		else if (true == m_bOnGuard)
+		{
+			m_eTmpAnimNum = Guard_Loop;
+		}
+		break;
+	}
+	case ACT_HIT:
+	{
+		if (m_eTmpAnimNum != Guard_Hit_01)
+		{
+			cout << "맞는중" << endl;
+
+			m_bOnGuard = false;
+			m_dwHitCnt += 1;
+			m_eTmpAnimNum = Guard_Hit_01;
+
+			m_fSkillMoveSpeed_Cur = 4.f;
+			m_fSkillMoveAccel_Cur = 0.f;
+			m_fSkillMoveMultiply = 0.5f;
+		}
+
+		else
+		{
+			Decre_Skill_Movement(m_fSkillMoveMultiply);
+			Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_Z));
+
+			if (m_pDynamic_Mesh->Is_Finish_Animation(0.75f))
+			{
+				cout << "아이들로" << endl;
+
+				m_bOnGuard = false;
+				m_eActState = ACT_IDLE;
+				m_tObjParam.bCanHit = true;
+			}
+		}
+
+		break;
+	}
+
+	case ACT_BREAK:
+	{
+		if (m_eTmpAnimNum != Guard_Break)
+		{
+			m_bOnGuard = false;
+			m_eTmpAnimNum = Guard_Break;
+
+			m_fSkillMoveSpeed_Cur = 7.f;
+			m_fSkillMoveAccel_Cur = 0.f;
+			m_fSkillMoveMultiply = 0.5f;
+		}
+
+		else
+		{
+			Decre_Skill_Movement(m_fSkillMoveMultiply);
+			Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_Z));
+
+			if (m_pDynamic_Mesh->Is_Finish_Animation(0.9f))
+			{
+				m_bOnGuard = false;
+				m_tObjParam.bCanHit = true;
+				m_eActState = ACT_IDLE;
+			}
+			break;
+		}
+	}
+	}
 
 	Update_Collder();
 
@@ -96,9 +195,6 @@ _int CDummy_Target::Late_Update_GameObject(_double TimeDelta)
 	m_dTimeDelta = TimeDelta;
 
 	m_pDynamic_Mesh->SetUp_Animation(m_eTmpAnimNum);
-	//m_pDynamic_Mesh->SetUp_Animation_Lower(0);
-	//m_pDynamic_Mesh->SetUp_Animation_Upper(0);
-	//m_pDynamic_Mesh->SetUp_Animation_RightArm(0);
 
 	if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
@@ -112,9 +208,6 @@ HRESULT CDummy_Target::Render_GameObject()
 		nullptr == m_pDynamic_Mesh)
 		return E_FAIL;
 
-	//m_pDynamic_Mesh->Play_Animation_Lower(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * 2.f);
-	//m_pDynamic_Mesh->Play_Animation_Upper(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * 2.f);
-	//m_pDynamic_Mesh->Play_Animation_RightArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * 2.f, false);
 	m_pDynamic_Mesh->Play_Animation(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * 1.f);
 
 	if (FAILED(SetUp_ConstantTable()))
@@ -150,6 +243,33 @@ HRESULT CDummy_Target::Render_GameObject()
 	Draw_Collider();
 
 	return NOERROR;
+}
+
+void CDummy_Target::Skill_Movement(_float _fspeed, _v3 _vDir)
+{
+	_v3 tmpLook;
+	_float fSpeed = _fspeed;
+
+	tmpLook = _vDir;
+	D3DXVec3Normalize(&tmpLook, &tmpLook);
+
+	// 네비 없이
+	m_pTransform->Add_Pos(fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"), tmpLook);
+
+	// 네비게이션 적용하면 
+	//m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
+}
+
+void CDummy_Target::Decre_Skill_Movement(_float _fMutiply)
+{
+	m_fSkillMoveSpeed_Cur -= (0.3f - m_fSkillMoveAccel_Cur * m_fSkillMoveAccel_Cur * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60")) * _fMutiply;
+	m_fSkillMoveAccel_Cur += g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60");
+
+	if (m_fSkillMoveSpeed_Cur < 0.f)
+	{
+		m_fSkillMoveAccel_Cur = 0.5f;
+		m_fSkillMoveSpeed_Cur = 0.f;
+	}
 }
 
 HRESULT CDummy_Target::Add_Component()
