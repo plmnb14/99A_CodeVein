@@ -155,12 +155,13 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 #pragma endregion
 
-	if (FAILED(Add_EffectPrototype(L"Boss_KnonkDown_Dust")))
+	if (FAILED(Add_EffectPrototype(L"Boss_KnockDown_Dust")))
 		return E_FAIL;
 	
 	if (FAILED(Add_EffectPrototype(L"Player_FootSmoke")))
 		return E_FAIL;
 
+#pragma region Blood
 	if (FAILED(Add_EffectPrototype(L"Hit_Blood_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Hit_Blood_1")))
@@ -201,7 +202,9 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Hit_BloodDecal_0")))
 		return E_FAIL;
+#pragma endregion
 
+#pragma region Slash
 	if (FAILED(Add_EffectPrototype(L"Hit_Slash_Particle_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Hit_Slash_Particle_1")))
@@ -224,6 +227,28 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Hit_Particle_Yellow")))
 		return E_FAIL;
+#pragma endregion
+
+#pragma region Bullet
+	if (FAILED(Add_EffectPrototype(L"Bullet_Body")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Bullet_Body_Aura")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Bullet_DeadFlash")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Bullet_DeadSmoke_Base")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Bullet_DeadSmoke_Black")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Bullet_Fire_Flash")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Bullet_Ready_Aura")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Bullet_Ready_Flash")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Bullet_Tail_Particle")))
+		return E_FAIL;
+#pragma endregion
 
 	if (FAILED(Add_EffectPrototype(L"SpawnParticle")))
 		return E_FAIL;

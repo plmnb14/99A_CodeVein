@@ -21,6 +21,9 @@ HRESULT CScene_Stage_01::Ready_Scene()
 	if (FAILED(Ready_Layer_Player(L"Layer_Player")))
 		return E_FAIL;
 
+	if (FAILED(Ready_Layer_Environment(L"Layer_Environment")))
+		return E_FAIL;
+
 	//if (m_bLoadStaticMesh)
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_01.dat");
 
@@ -61,6 +64,14 @@ HRESULT CScene_Stage_01::Ready_Layer_Player(const _tchar * pLayerTag)
 		return E_FAIL;
 
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Player", SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage_01::Ready_Layer_Environment(const _tchar* pLayerTag)
+{
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Sky", SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 
 	return S_OK;

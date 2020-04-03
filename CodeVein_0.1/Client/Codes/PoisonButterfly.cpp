@@ -258,7 +258,7 @@ _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 	// 죽었을 경우
 	if (m_bIsDead)
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		//if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
 			return DEAD_OBJ;
 		}
@@ -318,7 +318,7 @@ HRESULT CPoisonButterfly::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			m_pShaderCom->Begin_Pass(0);
+			m_pShaderCom->Begin_Pass(m_iPass);
 
 			if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE))))
 				return E_FAIL;
@@ -812,7 +812,8 @@ void CPoisonButterfly::Check_Collider()
 		else
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
-			m_bIsDead = true;
+			//m_bIsDead = true;
+			Start_Dissolve(0.7f, false, true);
 		}
 	}
 	else
@@ -892,6 +893,10 @@ HRESULT CPoisonButterfly::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShaderCom)))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	Safe_Release(pManagement);
