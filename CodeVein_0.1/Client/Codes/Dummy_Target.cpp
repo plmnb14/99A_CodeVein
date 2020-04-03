@@ -185,9 +185,8 @@ _int CDummy_Target::Update_GameObject(_double TimeDelta)
 	}
 	}
 
-	Update_Collder();
 
-	return _int();
+	return NO_EVENT;
 }
 
 _int CDummy_Target::Late_Update_GameObject(_double TimeDelta)
@@ -208,10 +207,10 @@ HRESULT CDummy_Target::Render_GameObject()
 		nullptr == m_pDynamic_Mesh)
 		return E_FAIL;
 
-	m_pDynamic_Mesh->Play_Animation(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * 1.f);
-
 	if (FAILED(SetUp_ConstantTable()))
 		return E_FAIL;
+
+	m_pDynamic_Mesh->Play_Animation(m_dTimeDelta);
 
 	m_pShader->Begin_Shader();
 
@@ -240,6 +239,7 @@ HRESULT CDummy_Target::Render_GameObject()
 
 	m_pShader->End_Shader();
 
+	Update_Collder();
 	Draw_Collider();
 
 	return NOERROR;

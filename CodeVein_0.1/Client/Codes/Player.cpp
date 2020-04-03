@@ -3658,8 +3658,8 @@ HRESULT CPlayer::SetUp_Default()
 	ZeroMemory(&m_tInfo, sizeof(ACTOR_INFO));
 
 	// Transform
-	m_pTransform->Set_Pos(_v3(150.484f, -18.08f, 70.417f));
-	//m_pTransform->Set_Pos(_v3(0.f, 0.f, 0.f));
+	//m_pTransform->Set_Pos(_v3(150.484f, -18.08f, 70.417f));
+	m_pTransform->Set_Pos(_v3(0.f, 0.f, 0.f));
 	m_pTransform->Set_Scale(V3_ONE);
 
 	// Mesh

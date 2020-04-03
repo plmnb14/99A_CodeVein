@@ -463,7 +463,7 @@ HRESULT CMesh_Dynamic::Play_Animation(_double TimeDelta)
 
 	m_pAniCtrl_Lower->Play_Animation(TimeDelta);
 
-	Update_CombinedTransformationMatrices(m_pRootFrame, m_matPivot);
+	Update_CombinedTransformationMatrices(m_pRootFrame, *D3DXMatrixIdentity(&m_matPivot));
 
 	return NOERROR;
 }
