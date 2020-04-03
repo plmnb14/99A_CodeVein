@@ -22,6 +22,7 @@
 #include "BlackUrchin.h"
 #include "BlackWolf.h"
 #include "GunGenji.h"
+#include "GenjiBullet.h"
 #include "SwordGenji.h"
 #include "SwordShieldGenji.h"
 #include "YachaMan.h"
@@ -450,6 +451,9 @@ _uint CLoading::Loading_Stage()
 		return E_FAIL;
 	// ÃÑ°ÕÁö
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenji", CGunGenji::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// ÃÑ°ÕÁö ÃÑ¾Ë
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_GenjiBullet", CGenjiBullet::Create(m_pGraphicDev))))
 		return E_FAIL;
 	// °Ë¹æÆÐ°ÕÁö
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordShieldGenji", CSwordShieldGenji::Create(m_pGraphicDev))))

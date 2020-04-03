@@ -88,9 +88,6 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Dummy", SCENE_STAGE, L"Layer_Monster")))
 	//	return E_FAIL;
-
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_PoisonButterfly", SCENE_STAGE, L"Layer_Monster")))
-		return E_FAIL;
 	
 	// °ËÀº ¼º°Ô
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_BlackUrchin", SCENE_STAGE, L"Layer_Monster")))
@@ -108,8 +105,8 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//	return E_FAIL;
 
 	//// ÃÑ°ÕÁö
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_GunGenji", SCENE_STAGE, L"Layer_Monster", &CGunGenji::INFO(CGunGenji::White))))
-	//	return E_FAIL;
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_GunGenji", SCENE_STAGE, L"Layer_Monster", &CGunGenji::INFO(CGunGenji::White))))
+		return E_FAIL;
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_GunGenji", SCENE_STAGE, L"Layer_Monster", &CGunGenji::INFO(CGunGenji::Normal))))
 	//	return E_FAIL;
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_GunGenji", SCENE_STAGE, L"Layer_Monster", &CGunGenji::INFO(CGunGenji::Jungle))))

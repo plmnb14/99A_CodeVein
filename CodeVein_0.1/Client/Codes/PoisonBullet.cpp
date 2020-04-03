@@ -211,6 +211,8 @@ void CPoisonBullet::OnCollisionEvent(list<CGameObject*> plistGameObject)
 					iter->Set_Target_CanHit(false);
 					iter->Add_Target_Hp(m_tObjParam.fDamage);
 
+					m_dCurTime = 100;	// 바로 사망시키기 위해서 현재시간 100줬음
+
 					break;
 
 				}
@@ -266,7 +268,7 @@ HRESULT CPoisonBullet::Ready_Collider()
 
 	m_vecAttackCol.push_back(pCollider);
 
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 CPoisonBullet * CPoisonBullet::Create(LPDIRECT3DDEVICE9 pGraphic_Device)

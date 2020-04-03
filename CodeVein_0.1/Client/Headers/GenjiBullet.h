@@ -23,6 +23,7 @@ public:
 private:
 	CTransform*			m_pTransformCom = nullptr;
 	CCollider*			m_pCollider = nullptr;
+	CRenderer*			m_pRendererCom = nullptr;
 	_v3					m_vDir = _v3(0.f, 0.f, 0.f);
 	_float				m_fSpeed = 0.f;
 
@@ -39,8 +40,22 @@ private:
 	_bool				m_bEffect = true;
 
 private:
+	_bool				m_bPlayerFriendly = false;		// 플레이어 껀지
+
+private:
+	HRESULT Update_Collider();
+
+	HRESULT Draw_Collider();
+
+private:
+	virtual void OnCollisionEnter();
+	virtual void OnCollisionEvent(list<CGameObject*> plistGameObject);
+
+private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
+
+	HRESULT Ready_Collider();
 
 public:
 	static CGenjiBullet* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
