@@ -31,7 +31,7 @@ private:
 
 private:
 	enum BoneMatrix { Bone_Range, Bone_Body, Bone_Head, Bone_End };
-	
+
 protected:
 	explicit CSwordGenji(LPDIRECT3DDEVICE9 pGraphic_Device);
 	explicit CSwordGenji(const CSwordGenji& rhs);
@@ -114,14 +114,24 @@ private:
 	_bool				m_bAIController = false;
 
 private:
+	_float					m_fSkillMoveSpeed_Cur = 0.f;
+	_float					m_fSkillMoveSpeed_Max = 0.f;
+	_float					m_fSkillMoveAccel_Cur = 0.5f;
+	_float					m_fSkillMoveAccel_Max = 0.f;
+	_float					m_fSkillMoveMultiply = 1.f;
+
+private:
 	HRESULT Update_Bone_Of_BlackBoard();
 	HRESULT Update_Value_Of_BB();
 
 	HRESULT Update_Collider();
 
 private:
+	void Skill_Movement(_float _fspeed, _v3 _vDir = { 0.f , 0.f , 0.f });
+	void Decre_Skill_Movement(_float _fMutiply = 1.f);
+
 	void Check_Collider();
-	
+
 	HRESULT Draw_Collider();
 
 private:

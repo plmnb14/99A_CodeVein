@@ -24,9 +24,6 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	if (FAILED(Add_Component(pArg)))
 		return E_FAIL;
 
-	//m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_StageBase.dat");
-	//m_pNavMesh->Set_SubsetIndex(0);
-
 	Ready_Weapon();
 	Ready_BoneMatrix();
 	Ready_Collider();
@@ -159,11 +156,6 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 	if (m_bIsDead)
 	{
 		return DEAD_OBJ;
-
-		//if (m_pMeshCom->Is_Finish_Animation(0.95f))
-		//{
-		//	return DEAD_OBJ;
-		//}
 	}
 	else
 	{
@@ -732,6 +724,33 @@ HRESULT CSwordGenji::Update_Collider()
 	return S_OK;
 }
 
+void CSwordGenji::Skill_Movement(_float _fspeed, _v3 _vDir)
+{
+	_v3 tmpLook;
+	_float fSpeed = _fspeed;
+
+	tmpLook = _vDir;
+	D3DXVec3Normalize(&tmpLook, &tmpLook);
+
+	// 네비 없이
+	m_pTransformCom->Add_Pos(fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"), tmpLook);
+
+	// 네비게이션 적용하면 
+	//m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
+}
+
+void CSwordGenji::Decre_Skill_Movement(_float _fMutiply)
+{
+	m_fSkillMoveSpeed_Cur -= (0.3f - m_fSkillMoveAccel_Cur * m_fSkillMoveAccel_Cur * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60")) * _fMutiply;
+	m_fSkillMoveAccel_Cur += g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60");
+
+	if (m_fSkillMoveSpeed_Cur < 0.f)
+	{
+		m_fSkillMoveAccel_Cur = 0.5f;
+		m_fSkillMoveSpeed_Cur = 0.f;
+	}
+}
+
 
 void CSwordGenji::Check_Collider()
 {
@@ -758,7 +777,7 @@ void CSwordGenji::Check_Collider()
 		else
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
-			//m_bIsDead = true;
+			
 			Start_Dissolve(0.7f, false, true);
 			g_pManagement->Create_Effect(L"SpawnParticle", m_pTransformCom->Get_Pos());
 		}
@@ -777,6 +796,13 @@ void CSwordGenji::Check_Collider()
 		else if (m_pMeshCom->Is_Finish_Animation(0.7f))	// 이때부터 재충돌 가능
 		{
 			m_tObjParam.bIsHit = false;
+		}
+
+		// 밀림 처리
+		if (m_tObjParam.bIsHit == true)
+		{
+			Decre_Skill_Movement(m_fSkillMoveMultiply);
+			Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
 		}
 	}
 

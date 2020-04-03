@@ -22,9 +22,6 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	if (FAILED(Add_Component(pArg)))
 		return E_FAIL;
 
-	//m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_StageBase.dat");
-	//m_pNavMesh->Set_SubsetIndex(0);
-
 	Ready_Weapon();
 	Ready_BoneMatrix();
 	Ready_Collider();
@@ -331,11 +328,6 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 	if (m_bIsDead)
 	{
 		return DEAD_OBJ;
-
-		//if (m_pMeshCom->Is_Finish_Animation(0.95f))
-		//{
-		//	return DEAD_OBJ;
-		//}
 	}
 	else
 	{
@@ -424,7 +416,7 @@ CBT_Composite_Node * CGunGenji::Shot()
 	CBT_Play_Ani* Show_Ani42 = Node_Ani("±âº»", 42, 0.1f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("ÀÌµ¿");
-	CBT_ChaseDir* FixDir0 = Node_ChaseDir("¹æÇâ °íÁ¤", L"Player_Pos", 1, 0);
+	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("¹æÇâ ÃßÀû", L"Player_Pos", 1, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("¹æÇâ µ¹¸®±â", L"Player_Pos", 0.2);
 
 	CBT_CreateBullet* Bullet0 = Node_CreateBullet("°ÕÁö ÃÑ¾Ë", L"Monster_GenjiBullet", L"CreateBulletPos", L"GunDir", 7, 3, 1.725, 1, 1, 0, CBT_Service_Node::Finite);
@@ -435,7 +427,7 @@ CBT_Composite_Node * CGunGenji::Shot()
 	MainSeq->Add_Child(Show_Ani42);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
-	SubSeq->Add_Child(FixDir0);
+	SubSeq->Add_Child(ChaseDir0);
 	SubSeq->Add_Child(Rotation0);
 
 	return Root_Parallel;
@@ -470,18 +462,27 @@ CBT_Composite_Node * CGunGenji::Tumbling_Shot()
 
 CBT_Composite_Node * CGunGenji::Sudden_Shot()
 {
-	CBT_Sequence* Root_Seq = Node_Sequence("°©ÀÚ±â ÃÑ½î±â");
-
+	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("°©ÀÚ±â ÃÑ½î±â");
+	CBT_Sequence* MainSeq = Node_Sequence("°©ÀÚ±â ÃÑ½î±â");
 	CBT_Play_Ani* Show_Ani49 = Node_Ani("°©ÀÚ±â ÃÑ½î±â", 49, 0.95f);
-	CBT_Play_Ani* Show_Ani42 = Node_Ani("±âº»", 42, 0.3f);
+	CBT_Play_Ani* Show_Ani42 = Node_Ani("±âº»", 42, 0.1f);
+
+	CBT_Sequence* SubSeq = Node_Sequence("ÀÌµ¿");
+	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("¹æÇâ ÃßÀû", L"Player_Pos", 1, 0);
+	CBT_RotationDir* Rotation0 = Node_RotationDir("¹æÇâ µ¹¸®±â", L"Player_Pos", 0.2);
 
 	CBT_CreateBullet* Bullet0 = Node_CreateBullet("°ÕÁö ÃÑ¾Ë", L"Monster_GenjiBullet", L"CreateBulletPos", L"GunDir", 7, 3, 3.725, 1, 1, 0, CBT_Service_Node::Finite);
-	Root_Seq->Add_Service(Bullet0);
+	Root_Parallel->Add_Service(Bullet0);
 
-	Root_Seq->Add_Child(Show_Ani49);
-	Root_Seq->Add_Child(Show_Ani42);
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(Show_Ani49);
+	MainSeq->Add_Child(Show_Ani42);
 
-	return Root_Seq;
+	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(ChaseDir0);
+	SubSeq->Add_Child(Rotation0);
+
+	return Root_Parallel;
 }
 
 CBT_Composite_Node * CGunGenji::Upper_Slash()
@@ -748,11 +749,13 @@ HRESULT CGunGenji::Update_Value_Of_BB()
 
 
 	// ¹«±â »ÀÀ§Ä¡  ¿ì¼± º¸·ù
-	//_mat matBulletCreate = static_cast<CTransform*>(m_pGun->Get_Component(L"Com_Transform"))->Get_WorldMat();
-	//matBulletCreate *= m_pTransformCom->Get_WorldMat();
-	//_v3 vCreateBulletPos = _v3(matBulletCreate.m[3][0], matBulletCreate.m[3][1], matBulletCreate.m[3][2]);
+	_mat matBulletCreate = static_cast<CTransform*>(m_pGun->Get_Component(L"Com_Transform"))->Get_WorldMat();
+	matBulletCreate *= m_pTransformCom->Get_WorldMat();
+	_v3 vCreateBulletPos = _v3(matBulletCreate.m[3][0], matBulletCreate.m[3][1], matBulletCreate.m[3][2]);
 
-	//m_pAIControllerCom->Set_Value_Of_BloackBoard(L"CreateBulletPos", vCreateBulletPos);
+	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"CreateBulletPos", vCreateBulletPos);
+
+
 
 	_mat matCreateBulletPos = m_pTransformCom->Get_WorldMat();
 	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"CreateBulletPos",_v3(matCreateBulletPos.m[3][0], matCreateBulletPos.m[3][1] + 0.5f, matCreateBulletPos.m[3][2]));
