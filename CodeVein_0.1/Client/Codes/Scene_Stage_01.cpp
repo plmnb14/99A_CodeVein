@@ -26,7 +26,7 @@ HRESULT CScene_Stage_01::Ready_Scene()
 
 	m_pNavMesh = static_cast<Engine::CNavMesh*>(g_pManagement->Clone_Component(SCENE_STATIC, L"NavMesh"));
 
-	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Stage_01.dat");
+	//m_pNavMesh->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Stage_01.dat");
 
 	return S_OK;
 }
@@ -40,8 +40,8 @@ _int CScene_Stage_01::Update_Scene(_double TimeDelta)
 
 HRESULT CScene_Stage_01::Render_Scene()
 {
-	IF_NOT_NULL(m_pNavMesh)
-		m_pNavMesh->Render_NaviMesh();
+	//IF_NOT_NULL(m_pNavMesh)
+	//	m_pNavMesh->Render_NaviMesh();
 
 	return S_OK;
 }

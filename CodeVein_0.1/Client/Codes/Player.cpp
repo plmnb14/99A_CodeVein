@@ -38,11 +38,14 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 
 _int CPlayer::Update_GameObject(_double TimeDelta)
 {
-	if (-1 == m_pNavMesh->Get_CellIndex())
-	{
-		_v3 tmpPos = m_pTransform->Get_Pos();
-		m_pNavMesh->Check_OnNavMesh(&tmpPos);
-	}
+	//if (-1 == m_pNavMesh->Get_CellIndex())
+	//{
+	//	_v3 tmpPos = m_pTransform->Get_Pos();
+	//	m_pNavMesh->Check_OnNavMesh(&tmpPos);
+	//}
+
+	cout << "현재 셀 번호 :" << m_pNavMesh->Get_CellIndex() << endl;
+	cout << "현재 서브셋 번호 :" << m_pNavMesh->Get_SubSetIndex() << endl;
 
 	CGameObject::Update_GameObject(TimeDelta);
 
@@ -63,6 +66,8 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	IF_NOT_NULL(m_pDrainWeapon)
 		m_pDrainWeapon->Update_GameObject(TimeDelta);
+
+	m_pNavMesh->Goto_Next_Subset(m_pTransform->Get_Pos(), nullptr);
 
 	return NO_EVENT;
 }
@@ -139,6 +144,9 @@ HRESULT CPlayer::Render_GameObject()
 	m_pShader->End_Shader();
 
 	Draw_Collider();
+
+	//IF_NOT_NULL(m_pNavMesh)
+	m_pNavMesh->Render_NaviMesh();
 
 	return NOERROR;
 }
@@ -3658,8 +3666,8 @@ HRESULT CPlayer::SetUp_Default()
 	ZeroMemory(&m_tInfo, sizeof(ACTOR_INFO));
 
 	// Transform
-	//m_pTransform->Set_Pos(_v3(150.484f, -18.08f, 70.417f));
-	m_pTransform->Set_Pos(_v3(0.f, 0.f, 0.f));
+	m_pTransform->Set_Pos(_v3(150.484f, -18.08f, 70.417f));
+	//m_pTransform->Set_Pos(_v3(0.f, 0.f, 0.f));
 	m_pTransform->Set_Scale(V3_ONE);
 
 	// Mesh

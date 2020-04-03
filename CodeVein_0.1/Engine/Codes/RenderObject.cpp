@@ -90,7 +90,8 @@ void CRenderObject::Update_Collider()
 {
 	IF_NOT_NULL(m_pCollider)
 	{
-		m_pCollider->SetUp_Radius_Auto(V3_ONE, m_pMesh_Static->Get_VtxMin(), m_pMesh_Static->Get_VtxMax());
+		m_pCollider->Set_Radius(V3_ONE);
+		//m_pCollider->SetUp_Radius_Auto(V3_ONE, m_pMesh_Static->Get_VtxMin(), m_pMesh_Static->Get_VtxMax());
 		m_pCollider->Update(m_pTransform->Get_Pos() + _v3{ 0.f, m_pCollider->Get_Radius().y ,0.f });
 	}
 }
