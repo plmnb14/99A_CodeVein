@@ -22,8 +22,8 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 
-	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_StageBase.dat");
-	m_pNavMesh->Set_SubsetIndex(0);
+	//m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_StageBase.dat");
+	//m_pNavMesh->Set_SubsetIndex(0);
 
 	Ready_BoneMatrix();
 	Ready_Collider();
@@ -866,7 +866,7 @@ HRESULT CPoisonButterfly::Add_Component()
 		return E_FAIL;
 
 	// for.Com_NavMesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"NavMesh", (CComponent**)&m_pNavMesh)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMesh)))
 		return E_FAIL;
 
 	return NOERROR;

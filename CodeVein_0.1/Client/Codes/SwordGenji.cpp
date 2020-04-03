@@ -24,12 +24,13 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	if (FAILED(Add_Component(pArg)))
 		return E_FAIL;
 
-	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_StageBase.dat");
-	m_pNavMesh->Set_SubsetIndex(0);
+	//m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_StageBase.dat");
+	//m_pNavMesh->Set_SubsetIndex(0);
 
 	Ready_Weapon();
 	Ready_BoneMatrix();
 	Ready_Collider();
+
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.fHp_Cur = 3.f;
 
@@ -41,7 +42,7 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 
 
 	CBlackBoard* pBlackBoard = CBlackBoard::Create();
-	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create(true);
+	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create(false);
 
 	m_pAIControllerCom->Set_BeHaviorTree(pBehaviorTree);
 	m_pAIControllerCom->Set_BlackBoard(pBlackBoard);
@@ -831,7 +832,7 @@ HRESULT CSwordGenji::Add_Component(void* pArg)
 		return E_FAIL;
 
 	// for.Com_NavMesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"NavMesh", (CComponent**)&m_pNavMesh)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMesh)))
 		return E_FAIL;
 
 
