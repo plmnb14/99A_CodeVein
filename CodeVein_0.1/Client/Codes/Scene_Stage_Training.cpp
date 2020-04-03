@@ -7,6 +7,10 @@
 #include "UI_Manager.h"
 #include "ParticleMgr.h"
 
+#include "MassageUI.h"
+#include "MonsterUI.h"
+
+
 #include "SwordGenji.h"
 #include "GunGenji.h"
 #include "SwordShieldGenji.h"
@@ -41,6 +45,8 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 	CNavMesh* pNavMesh = static_cast<Engine::CNavMesh*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE)->Get_Component(L"NavMesh"));
 	pNavMesh->Reset_NaviMesh();
 	pNavMesh->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+
+
 
 	return S_OK;
 }
