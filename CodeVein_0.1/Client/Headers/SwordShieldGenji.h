@@ -6,8 +6,32 @@
 
 BEGIN(Client)
 
+class CWeapon;
 class CSwordShieldGenji final : public CGameObject
 {
+public:
+	enum Type { White, Jungle, Normal };
+
+	typedef struct tagInitInfo
+	{
+		tagInitInfo(CSwordShieldGenji::Type _eType)
+			: eType(_eType)
+		{}
+
+		CSwordShieldGenji::Type	eType = Normal;
+
+	}INFO;
+
+private:
+	enum Ani {
+		Ani_Idle = 42,
+		Ani_Death = 64,
+		Ani_Dmg01_FL = 122
+	};
+
+private:
+	enum BoneMatrix { Bone_Range, Bone_Body, Bone_Head, Bone_End };
+
 protected:
 	explicit CSwordShieldGenji(LPDIRECT3DDEVICE9 pGraphic_Device);
 	explicit CSwordShieldGenji(const CSwordShieldGenji& rhs);
@@ -46,7 +70,8 @@ private:	//패턴들
 
 	CBT_Composite_Node*		Start_Game();
 
-	CBT_Composite_Node*		ChaseAndNearAttack();
+	CBT_Composite_Node*		RotationAndNearAttack();
+	CBT_Composite_Node*		Chase_Guard_NearAttack();
 	CBT_Composite_Node*		Chase();
 	CBT_Composite_Node*		NearAttack();	// 랜덤 근접 공격
 
@@ -58,17 +83,36 @@ private:
 	CShader*			m_pShaderCom = nullptr;
 	CMesh_Dynamic*		m_pMeshCom = nullptr;
 	CAIController*		m_pAIControllerCom = nullptr;
+	CNavMesh*			m_pNavMesh = nullptr;
+
+	CWeapon*			m_pSpear = nullptr;
+	CWeapon*			m_pShied = nullptr;
 
 	//렌더에서 타임델타 쓰기위해서 저장해놓음
 	_double				m_dTimeDelta = 0;
+
+	//뼈다귀
+	_mat*				m_matBones[Bone_End];
+	_bool				m_bAIController = false;
 
 private:
 	HRESULT Update_Bone_Of_BlackBoard();
 	HRESULT Update_Value_Of_BB();
 
+	HRESULT Update_Collider();
+
+private:
+	void Check_Collider();
+
+	HRESULT Draw_Collider();
+
 private:
 	HRESULT Add_Component(void* pArg);
 	HRESULT SetUp_ConstantTable();
+
+	HRESULT Ready_Weapon();
+	HRESULT Ready_BoneMatrix();
+	HRESULT Ready_Collider();
 
 public:
 	static CSwordShieldGenji* Create(LPDIRECT3DDEVICE9 pGraphic_Device);

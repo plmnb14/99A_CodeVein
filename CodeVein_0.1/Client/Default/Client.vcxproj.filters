@@ -169,6 +169,15 @@
     <Filter Include="02.GameObject\Stage\1%29 Boss\CatWoman">
       <UniqueIdentifier>{e568e588-f565-417a-acdc-050897a061aa}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Monster\Genji\Gun">
+      <UniqueIdentifier>{2559073b-348a-4906-a8bc-c47e3dbfa5fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Monster\Genji\Sword">
+      <UniqueIdentifier>{562d86e8-2e5b-4e7d-a71a-301e8da919d3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Monster\Genji\SwordShield">
+      <UniqueIdentifier>{5b4cc628-da0e-4139-9edb-071b0c3e44a2}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory">
       <UniqueIdentifier>{fbb9eebb-0115-4c1d-b18b-aaf34456cc64}</UniqueIdentifier>
     </Filter>
@@ -315,18 +324,6 @@
     <ClInclude Include="..\Headers\PoisonBullet.h">
       <Filter>02.GameObject\Stage\1%29 Boss\PoisonButterfly</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\GunGenji.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\Genji</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\SwordGenji.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\Genji</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\SwordShieldGenji.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\Genji</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\GenjiBullet.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\Genji</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\YachaMan.h">
       <Filter>02.GameObject\Stage\2%29 Monster\YachaMan</Filter>
     </ClInclude>
@@ -371,6 +368,18 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Drain_Weapon.h">
       <Filter>02.GameObject\Stage\0%29 Player\00%29 DrainWeapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GenjiBullet.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Genji\Gun</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GunGenji.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Genji\Gun</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\SwordGenji.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Genji\Sword</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\SwordShieldGenji.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Genji\SwordShield</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -467,18 +476,6 @@
     <ClCompile Include="..\Codes\PoisonBullet.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\PoisonButterfly</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\GunGenji.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\Genji</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\SwordGenji.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\Genji</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\SwordShieldGenji.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\Genji</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\GenjiBullet.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\Genji</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\YachaMan.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster\YachaMan</Filter>
     </ClCompile>
@@ -523,6 +520,18 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Drain_Weapon.cpp">
       <Filter>02.GameObject\Stage\0%29 Player\00%29 DrainWeapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GenjiBullet.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Genji\Gun</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GunGenji.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Genji\Gun</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SwordGenji.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Genji\Sword</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SwordShieldGenji.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Genji\SwordShield</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

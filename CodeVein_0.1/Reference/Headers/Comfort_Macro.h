@@ -106,3 +106,4 @@
 #define TARGET_TO_D_MESH(_Target)	static_cast<Engine::CMesh_Dynamic*>((_Target)->Get_Component(L"Com_MeshDynamic"))
 #define TARGET_TO_TRANS(_Target)	static_cast<Engine::CTransform*>((_Target)->Get_Component(L"Com_Transform"))
 #define TARGET_TO_COL(_Target)		static_cast<Engine::CCollider*>((_Target)->Get_Component(L"Com_Collider"))
+#define TARGET_TO_NAV(_Target)		static_cast<Engine::CNavMesh*>((_Target)->Get_Component(L"Com_NavMesh"))

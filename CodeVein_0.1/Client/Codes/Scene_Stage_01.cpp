@@ -21,12 +21,12 @@ HRESULT CScene_Stage_01::Ready_Scene()
 	if (FAILED(Ready_Layer_Player(L"Layer_Player")))
 		return E_FAIL;
 
-	if (m_bLoadStaticMesh)
-		g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_01.dat");
+	//if (m_bLoadStaticMesh)
+	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_01.dat");
 
-	m_pNavMesh = static_cast<Engine::CNavMesh*>(g_pManagement->Clone_Component(SCENE_STATIC, L"NavMesh"));
+	//m_pNavMesh = static_cast<Engine::CNavMesh*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Com_NavMesh"));
 
-	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Stage_01.dat");
+	//m_pNavMesh->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Stage_01.dat");
 
 	return S_OK;
 }
@@ -40,14 +40,26 @@ _int CScene_Stage_01::Update_Scene(_double TimeDelta)
 
 HRESULT CScene_Stage_01::Render_Scene()
 {
-	IF_NOT_NULL(m_pNavMesh)
-		m_pNavMesh->Render_NaviMesh();
+	//IF_NOT_NULL(m_pNavMesh)
+	//	m_pNavMesh->Render_NaviMesh();
 
 	return S_OK;
 }
 
 HRESULT CScene_Stage_01::Ready_Layer_Player(const _tchar * pLayerTag)
 {
+	// 몬스터 레이어만 미리 추가
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Monster")))
+		return E_FAIL;
+
+	// 보스 레이어만 미리 추가
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Boss")))
+		return E_FAIL;
+
+	// 투사체 레이어 추가
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_MonsterProjectile")))
+		return E_FAIL;
+
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Player", SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 
@@ -90,7 +102,7 @@ CScene_Stage_01 * CScene_Stage_01::Create(LPDIRECT3DDEVICE9 pGraphic_Device, _bo
 
 void CScene_Stage_01::Free()
 {
-	Safe_Release(m_pNavMesh);
+	//Safe_Release(m_pNavMesh);
 
 	CScene::Free();
 }

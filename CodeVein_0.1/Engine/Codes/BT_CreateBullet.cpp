@@ -36,7 +36,7 @@ CBT_Node::BT_NODE_STATE CBT_CreateBullet::Update_Node(_double TimeDelta, vector<
 					m_vCreate_Pos = pBlackBoard->Get_V3Value(m_pCreate_Pos_Key);
 					m_vDir = pBlackBoard->Get_V3Value(m_pDir_Key);
 
-					CObject_Manager::Get_Instance()->Add_GameObject_ToLayer(m_pObject_Tag, SCENE_STAGE, L"Layer_Monster", &BULLET_INFO(m_vCreate_Pos, m_vDir, m_fSpeed, m_dLifeTime));
+					CObject_Manager::Get_Instance()->Add_GameObject_ToLayer(m_pObject_Tag, SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(m_vCreate_Pos, m_vDir, m_fSpeed, m_dLifeTime));
 					++m_iCur_Count_Of_Execution;
 				}
 				break;
@@ -46,7 +46,7 @@ CBT_Node::BT_NODE_STATE CBT_CreateBullet::Update_Node(_double TimeDelta, vector<
 				m_vCreate_Pos = pBlackBoard->Get_V3Value(m_pCreate_Pos_Key);
 				m_vDir = pBlackBoard->Get_V3Value(m_pDir_Key);
 
-				CObject_Manager::Get_Instance()->Add_GameObject_ToLayer(m_pObject_Tag, SCENE_STAGE, L"Layer_Monster", &BULLET_INFO(m_vCreate_Pos, m_vDir, m_fSpeed, m_dLifeTime));
+				CObject_Manager::Get_Instance()->Add_GameObject_ToLayer(m_pObject_Tag, SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(m_vCreate_Pos, m_vDir, m_fSpeed, m_dLifeTime));
 
 				End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, false);
 				break;
