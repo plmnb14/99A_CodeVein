@@ -458,9 +458,6 @@ _uint CLoading::Loading_Stage()
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_YachaMan", CYachaMan::Create(m_pGraphicDev))))
 		return E_FAIL;
 
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonBullet", CPoisonBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-
 	// ±‚≈∏
 	//============================================================================================================
 

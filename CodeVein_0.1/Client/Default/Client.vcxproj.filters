@@ -177,6 +177,7 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\2%29 Monster\Genji\SwordShield">
       <UniqueIdentifier>{5b4cc628-da0e-4139-9edb-071b0c3e44a2}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory">
       <UniqueIdentifier>{fbb9eebb-0115-4c1d-b18b-aaf34456cc64}</UniqueIdentifier>
     </Filter>
