@@ -760,7 +760,7 @@ void CSwordGenji::Check_Collider()
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
 			//m_bIsDead = true;
 			Start_Dissolve(0.7f, false, true);
-			g_pManagement->Create_Effect(L"SpawnParticle", m_pTransformCom->Get_Pos());
+			g_pManagement->Create_ParticleEffect(L"SpawnParticle", 2.f, m_pTransformCom->Get_Pos());
 		}
 	}
 	else

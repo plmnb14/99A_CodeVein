@@ -95,7 +95,9 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Bullet_Ready_Flash", 10);
 	Input_Pool(L"Bullet_Tail_Particle", 100);
 
-
+	Input_Pool(L"MistletoeParticle", 80);
+	Input_Pool(L"MistletoeParticle_Sub", 80);
+	
 	return S_OK;
 }
 
