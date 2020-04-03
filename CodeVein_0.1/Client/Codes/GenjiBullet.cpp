@@ -33,11 +33,15 @@ HRESULT CGenjiBullet::Ready_GameObject(void * pArg)
 	m_fSpeed = temp.fSpeed;
 	m_dLifeTime = temp.dLifeTime;
 
-	lstrcpy(m_pEffect_Tag0, L"ButterFly_PointParticle");
-	lstrcpy(m_pEffect_Tag1, L"ButterFly_SoftSmoke_Mist");
-	lstrcpy(m_pEffect_Tag2, L"ButterFly_VenomShot");
-	lstrcpy(m_pEffect_Tag3, L"ButterFly_VenomShot_SubSmoke");
-	lstrcpy(m_pEffect_Tag4, L"ButterFly_PointParticle");
+	m_fEffectCreateOffset = 0.05f;
+
+	lstrcpy(m_pEffect_Tag0, L"Bullet_Body");
+	lstrcpy(m_pEffect_Tag1, L"Bullet_Body_Aura");
+	lstrcpy(m_pEffect_Tag2, L"Bullet_Tail_Particle");
+
+	lstrcpy(m_pEffect_Tag3, L"Bullet_DeadFlash");
+	lstrcpy(m_pEffect_Tag4, L"Bullet_DeadSmoke_Base");
+	lstrcpy(m_pEffect_Tag5, L"Bullet_DeadSmoke_Black");
 
 	return NOERROR;
 }
@@ -59,6 +63,9 @@ _int CGenjiBullet::Update_GameObject(_double TimeDelta)
 	if (m_dCurTime > m_dLifeTime)
 	{
 		//Á×À½ ÀÌÆåÆ®
+		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag3, _v3(), m_pTransformCom);
+		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, _v3(), m_pTransformCom);
+		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag5, _v3(), m_pTransformCom);
 
 		m_bDead = true;
 	}
@@ -69,12 +76,19 @@ _int CGenjiBullet::Update_GameObject(_double TimeDelta)
 		{
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag0, _v3(), m_pTransformCom);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag1, _v3(), m_pTransformCom);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag2, _v3(), m_pTransformCom);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag3, _v3(), m_pTransformCom);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, _v3(), m_pTransformCom);
+	
 
 			m_bEffect = false;
 		}
+
+		m_fEffectCreateOffset_Check += _float(TimeDelta);
+		if (m_fEffectCreateOffset < m_fEffectCreateOffset_Check)
+		{
+			m_fEffectCreateOffset_Check = 0.f;
+
+			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag2, _v3(), m_pTransformCom);
+		}
+	
 	}
 
 

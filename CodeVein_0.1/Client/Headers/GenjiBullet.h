@@ -32,6 +32,7 @@ private:
 	_tchar				m_pEffect_Tag2[256] = { 0, };
 	_tchar				m_pEffect_Tag3[256] = { 0, };
 	_tchar				m_pEffect_Tag4[256] = { 0, };
+	_tchar				m_pEffect_Tag5[256] = { 0, };
 
 	_double				m_dCurTime = 0;
 	_double				m_dLifeTime = 0;
@@ -39,6 +40,8 @@ private:
 
 	_bool				m_bEffect = true;
 
+	_float				m_fEffectCreateOffset = 0.f;
+	_float				m_fEffectCreateOffset_Check = 0.f;
 private:
 	_bool				m_bPlayerFriendly = false;		// 플레이어 껀지
 

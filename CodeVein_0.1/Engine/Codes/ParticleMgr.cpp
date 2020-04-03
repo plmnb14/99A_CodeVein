@@ -53,7 +53,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"ButterFly_BackStepSand_Floor", 50);
 	Input_Pool(L"ButterFly_PopSand", 50);
 
-	Input_Pool(L"Boss_KnonkDown_Dust", 10);
+	Input_Pool(L"Boss_KnockDown_Dust", 10);
 
 	Input_Pool(L"Hit_BloodParticle_0", 50);
 	Input_Pool(L"Hit_BloodParticle_1", 50);
@@ -84,6 +84,17 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Hit_Particle_Yellow"	, 100);
 
 	Input_Pool(L"SpawnParticle", 1000);
+
+	Input_Pool(L"Bullet_Body", 50);
+	Input_Pool(L"Bullet_Body_Aura", 100);
+	Input_Pool(L"Bullet_DeadFlash", 10);
+	Input_Pool(L"Bullet_DeadSmoke_Base", 50);
+	Input_Pool(L"Bullet_DeadSmoke_Black", 100);
+	Input_Pool(L"Bullet_Fire_Flash", 10);
+	Input_Pool(L"Bullet_Ready_Aura", 100);
+	Input_Pool(L"Bullet_Ready_Flash", 10);
+	Input_Pool(L"Bullet_Tail_Particle", 100);
+
 
 	return S_OK;
 }

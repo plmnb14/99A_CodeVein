@@ -5,6 +5,10 @@
 #include "CameraMgr.h"
 #include "Dummy_Target.h"
 
+#include "GunGenji.h"
+#include "SwordGenji.h"
+#include "PoisonButterfly.h"
+
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
@@ -40,11 +44,11 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 
 _int CPlayer::Update_GameObject(_double TimeDelta)
 {
-	if (-1 == m_pNavMesh->Get_CellIndex())
-	{
-		_v3 tmpPos = m_pTransform->Get_Pos();
-		m_pNavMesh->Check_OnNavMesh(&tmpPos);
-	}
+	//if (-1 == m_pNavMesh->Get_CellIndex())
+	//{
+	//	_v3 tmpPos = m_pTransform->Get_Pos();
+	//	m_pNavMesh->Check_OnNavMesh(&tmpPos);
+	//}
 
 	CGameObject::Update_GameObject(TimeDelta);
 
@@ -67,6 +71,10 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	IF_NOT_NULL(m_pDrainWeapon)
 		m_pDrainWeapon->Update_GameObject(TimeDelta);
+
+	m_pNavMesh->Goto_Next_Subset(m_pTransform->Get_Pos(), nullptr);
+
+	Trigger_Event();
 
 	return NO_EVENT;
 }
@@ -143,6 +151,9 @@ HRESULT CPlayer::Render_GameObject()
 	m_pShader->End_Shader();
 
 	Draw_Collider();
+
+	//IF_NOT_NULL(m_pNavMesh)
+	m_pNavMesh->Render_NaviMesh();
 
 	return NOERROR;
 }
@@ -3647,6 +3658,100 @@ void CPlayer::Change_Weapon()
 	// 여기 무기 바꾸는 코드를 추후에 작성해야 합니다.
 }
 
+void CPlayer::Trigger_Event()
+{
+	// 임시 트리거 매니저
+
+	_ulong dwSubSet = m_pNavMesh->Get_SubSetIndex();
+	_ulong dwCellIdx = m_pNavMesh->Get_CellIndex();
+
+	switch (dwSubSet)
+	{
+	case 0:
+	{
+		switch (dwCellIdx)
+		{
+		case 5:
+		{
+			if (m_bSpawnTrigger[0] == false)
+			{
+				m_bSpawnTrigger[0] = true;
+
+				_v3 vPos[4] = {
+				_v3(144.551f, -18.08f, 79.895f),
+				_v3(145.498f, -18.08f, 84.775f),
+				_v3(150.690f, -18.08f, 94.981f),
+				_v3(117.045f, -18.08f, 111.482f)};
+
+				CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White));
+				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[0]);	// 위치
+				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
+				TARGET_TO_NAV(pInstance)->Set_Index(32);
+				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+
+				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle));
+				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[1]);	// 위치
+				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
+				TARGET_TO_NAV(pInstance)->Set_Index(39);
+				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+
+				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal));
+				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[2]);	// 위치
+				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
+				TARGET_TO_NAV(pInstance)->Set_Index(52);
+				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+
+				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal));
+				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[3]);	// 위치
+				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
+				TARGET_TO_NAV(pInstance)->Set_Index(64);
+				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+			}
+
+			break;
+		}
+		}
+
+		break;
+	}
+
+	case 1:
+	{
+		break;
+	}
+
+	case 2:
+	{
+		break;
+	}
+
+	case 3:
+	{
+		break;
+	}
+
+	case 4:
+	{
+		break;
+	}
+
+	case 5:
+	{
+		break;
+	}
+
+	case 6:
+	{
+		break;
+	}
+
+	}
+}
+
 HRESULT CPlayer::Add_Component()
 {
 	// For.Com_Transform
@@ -3666,7 +3771,7 @@ HRESULT CPlayer::Add_Component()
 		return E_FAIL;
 
 	// for.Com_NavMesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"NavMesh", (CComponent**)&m_pNavMesh)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMesh)))
 		return E_FAIL;
 
 	//m_pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
@@ -3685,8 +3790,8 @@ HRESULT CPlayer::SetUp_Default()
 	ZeroMemory(&m_tInfo, sizeof(ACTOR_INFO));
 
 	// Transform
-	//m_pTransform->Set_Pos(_v3(-0.487f, 0.f, 23.497f));
-	m_pTransform->Set_Pos(_v3(0.f, 0.f, 0.f));
+	m_pTransform->Set_Pos(_v3(150.484f, -18.08f, 70.417f));
+	//m_pTransform->Set_Pos(_v3(0.f, 0.f, 0.f));
 	m_pTransform->Set_Scale(V3_ONE);
 
 	// Mesh
@@ -3710,7 +3815,7 @@ HRESULT CPlayer::SetUp_Default()
 	m_fAnimMutiply = 1.f;
 
 	// Navi
-	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_StageBase.dat");
+	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
 	m_pNavMesh->Set_SubsetIndex(0);
 	//m_pNavMesh->Set_Index(14);
 
