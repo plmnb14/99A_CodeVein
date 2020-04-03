@@ -16,10 +16,14 @@
 
 #include "UI_Manager.h"
 
-#include "TestMonster.h"
 #include "PoisonButterfly.h"
+#include "PoisonBullet.h"
 #include "BlackUrchin.h"
 #include "BlackWolf.h"
+#include "GunGenji.h"
+#include "SwordGenji.h"
+#include "SwordShieldGenji.h"
+#include "YachaMan.h"
 
 #include "PlayerHP.h"
 #include "PlayerST.h"
@@ -299,16 +303,29 @@ _uint CLoading::Loading_Stage()
 	// 몬스터
 	//============================================================================================================
 
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_TestMonster", CTestMonster::Create(m_pGraphicDev))))
-		return E_FAIL;
 	// 독나방
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonButterfly", CPoisonButterfly::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 독나방 투사체
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonBullet", CPoisonBullet::Create(m_pGraphicDev))))
 		return E_FAIL;
 	// 검은 성게
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))
 		return E_FAIL;
 	// 검은 늑대
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackWolf", CBlackWolf::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 검겐지
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenji", CSwordGenji::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 총겐지
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenji", CGunGenji::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 검방패겐지
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordShieldGenji", CSwordShieldGenji::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 야차맨
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_YachaMan", CYachaMan::Create(m_pGraphicDev))))
 		return E_FAIL;
 
 	// 기타

@@ -81,7 +81,7 @@ HRESULT CBT_Node_Manager::Ready_BT_Node()
 		return E_FAIL;
 	if (FAILED(Add_Prototype_Node(L"MoveDir", CBT_MoveDir::Create_Prototype(), CBT_Node_Manager::TASK)))
 		return E_FAIL;
-	if (FAILED(Add_Prototype_Node(L"FixDir", CBT_FixDir::Create_Prototype(), CBT_Node_Manager::TASK)))
+	if (FAILED(Add_Prototype_Node(L"ChaseDir", CBT_ChaseDir::Create_Prototype(), CBT_Node_Manager::TASK)))
 		return E_FAIL;
 	if (FAILED(Add_Prototype_Node(L"RotationDir", CBT_RotationDir::Create_Prototype(), CBT_Node_Manager::TASK)))
 		return E_FAIL;

@@ -119,8 +119,15 @@ void CWeapon::OnCollisionEnter()
 	// 충돌
 	// =============================================================================================
 
-	OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE));
-	OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE));
+	if ( m_bPlayerFriendly)
+	{
+		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE));
+		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE));
+		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_MonsterProjectile", SCENE_STAGE));
+	}
+	else
+		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_STAGE));
+
 
 	// =============================================================================================
 }
@@ -130,6 +137,8 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 	// 공격 불가능이면 체크 안함
 	if (false == m_tObjParam.bCanAttack)
 		return;
+
+	//cout << "uykiuyuh" << endl;
 
 	_bool bFirst = true;
 	//게임 오브젝트를 받아와서
@@ -161,6 +170,8 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 
 					iter->Set_Target_CanHit(false);
 					iter->Add_Target_Hp(m_tObjParam.fDamage);
+
+					break;
 				
 				}
 

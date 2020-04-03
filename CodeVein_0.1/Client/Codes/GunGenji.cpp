@@ -22,7 +22,14 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	if (FAILED(Add_Component(pArg)))
 		return E_FAIL;
 
+	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_StageBase.dat");
+	m_pNavMesh->Set_SubsetIndex(0);
+
 	Ready_Weapon();
+	Ready_BoneMatrix();
+	Ready_Collider();
+	m_tObjParam.bCanHit = true;
+	m_tObjParam.fHp_Cur = 3.f;
 
 	m_pTransformCom->Set_Pos(_v3(-3.f, 0.f, -3.f));
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
@@ -305,6 +312,7 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	//pSequence->Add_Child(pAni49);
 
 
+	m_pMeshCom->SetUp_Animation(Ani_Idle);
 
 	return NOERROR;
 }
@@ -313,29 +321,29 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
 
-	m_pGun->Update_GameObject(TimeDelta);
-
-	static _double Cur_Time = 0;
-	static _bool	bbbb = false;
-
-
-	if (GetAsyncKeyState(0x48))
+	// 죽었을 경우
+	if (m_bIsDead)
 	{
-		bbbb = true;
-	}
-
-	if (bbbb == true)
-	{
-		m_pMeshCom->SetUp_Animation(122);
-		m_pAIControllerCom->Reset_BT();
-
-		if ( m_pMeshCom->Is_Finish_Animation(0.95f))
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			bbbb = false;
+			return DEAD_OBJ;
 		}
 	}
 	else
-		m_pAIControllerCom->Update_AIController(TimeDelta);
+	{
+		if (true == m_bAIController)
+			m_pAIControllerCom->Update_AIController(TimeDelta);
+
+		Check_Collider();
+	}
+
+	// 네비메쉬 태우기
+	if (-1 == m_pNavMesh->Get_CellIndex())
+	{
+		// 안탔을 경우
+	}
+	else
+		m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
 	return _int();
 }
@@ -393,6 +401,10 @@ HRESULT CGunGenji::Render_GameObject()
 
 	m_pShaderCom->End_Shader();
 
+	m_pGun->Update_GameObject(m_dTimeDelta);
+	Update_Collider();
+	Draw_Collider();
+
 	return NOERROR;
 }
 
@@ -404,7 +416,7 @@ CBT_Composite_Node * CGunGenji::Shot()
 	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.1f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
-	CBT_FixDir* FixDir0 = Node_FixDir("방향 고정", L"Player_Pos", 1, 0);
+	CBT_ChaseDir* FixDir0 = Node_ChaseDir("방향 고정", L"Player_Pos", 1, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 돌리기", L"Player_Pos", 0.2);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
@@ -715,6 +727,78 @@ HRESULT CGunGenji::Update_Value_Of_BB()
 	return E_NOTIMPL;
 }
 
+HRESULT CGunGenji::Update_Collider()
+{
+	_ulong matrixIdx = 0;
+
+	for (auto& iter : m_vecPhysicCol)
+	{
+		_mat tmpMat;
+		tmpMat = *m_matBones[matrixIdx] * m_pTransformCom->Get_WorldMat();
+
+		_v3 ColPos = _v3(tmpMat._41, tmpMat._42, tmpMat._43);
+
+		iter->Update(ColPos);
+
+		++matrixIdx;
+	}
+
+	return S_OK;
+}
+
+void CGunGenji::Check_Collider()
+{
+	// 충돌처리, bCanHit를 무기가 false시켜줄것임.
+	if (false == m_tObjParam.bCanHit && m_tObjParam.bIsHit == false)
+	{
+		m_pMeshCom->Reset_OldIndx();	//애니 인덱스 초기화
+
+		m_tObjParam.fHp_Cur -= 0.99f;	// 체력 임의로 닳게 만듦.
+
+		m_bAIController = false;
+		cout << "나도 부딪힘 ^^" << endl;
+		m_tObjParam.bIsHit = true;
+		m_tObjParam.bCanHit = true;
+
+		m_pAIControllerCom->Reset_BT();
+
+		if (m_tObjParam.fHp_Cur > 0.f)
+		{
+			m_pMeshCom->SetUp_Animation(Ani_Dmg01_FL);	//방향에 따른 모션 해줘야함.
+		}
+		else
+		{
+			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
+			m_bIsDead = true;
+		}
+	}
+	else
+	{
+		if (m_pMeshCom->Is_Finish_Animation(0.9f))
+		{
+			m_bAIController = true;
+			m_tObjParam.bIsHit = false;
+
+			//m_pMeshCom->SetUp_Animation(Ani_Idle);
+		}
+
+		else if (m_pMeshCom->Is_Finish_Animation(0.7f))	// 이때부터 재충돌 가능
+		{
+			m_tObjParam.bIsHit = false;
+		}
+	}
+}
+
+HRESULT CGunGenji::Draw_Collider()
+{
+	for (auto& iter : m_vecPhysicCol)
+	{
+		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
+	}
+
+	return S_OK;
+}
+
 HRESULT CGunGenji::Add_Component(void* pArg)
 {
 	// For.Com_Transform
@@ -729,15 +813,38 @@ HRESULT CGunGenji::Add_Component(void* pArg)
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
+	_tchar name[256] = { 0, };
+	INFO eTemp = *(INFO*)pArg;
+
+	if (nullptr == pArg)
+		lstrcpy(name, L"Mesh_NormalGenji");
+	else
+	{
+		switch (eTemp.eType)
+		{
+		case CGunGenji::Jungle:
+			lstrcpy(name, L"Mesh_JungleGenji");
+			break;
+		case CGunGenji::Normal:
+			lstrcpy(name, L"Mesh_NormalGenji");
+			break;
+		case CGunGenji::White:
+			lstrcpy(name, L"Mesh_WhiteGenji");
+			break;
+		}
+	}
+
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_NormalGenji", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, name, L"Com_Mesh", (CComponent**)&m_pMeshCom)))
 		return E_FAIL;
 
 	// for.Com_AIController
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"AIController", L"Com_AIController", (CComponent**)&m_pAIControllerCom)))
 		return E_FAIL;
 
-
+	// for.Com_NavMesh
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"NavMesh", (CComponent**)&m_pNavMesh)))
+		return E_FAIL;
 
 
 	return NOERROR;
@@ -773,11 +880,71 @@ HRESULT CGunGenji::SetUp_ConstantTable()
 HRESULT CGunGenji::Ready_Weapon()
 {
 	m_pGun = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pGun->Change_WeaponData(CWeapon::WPN_Hammer_Normal);
+	m_pGun->Change_WeaponData(CWeapon::WPN_Gun_Normal);
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
 	m_pGun->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
 	m_pGun->Set_ParentMatrix(&m_pTransformCom->Get_WorldMat());
+
+	return S_OK;
+}
+
+HRESULT CGunGenji::Ready_BoneMatrix()
+{
+	D3DXFRAME_DERIVED*	pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head", 0);
+
+	m_matBones[Bone_Head] = &pFrame->CombinedTransformationMatrix;
+
+	pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Spine", 0);
+
+	m_matBones[Bone_Range] = &pFrame->CombinedTransformationMatrix;
+	m_matBones[Bone_Body] = &pFrame->CombinedTransformationMatrix;
+
+	return S_OK;
+}
+
+HRESULT CGunGenji::Ready_Collider()
+{
+	m_vecPhysicCol.reserve(10);
+
+	//경계체크용
+	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
+
+	_float fRadius = 1.2f;
+
+	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
+	pCollider->Set_Dynamic(true);
+	pCollider->Set_Type(COL_SPHERE);
+	pCollider->Set_CenterPos(_v3(m_matBones[Bone_Range]->_41, m_matBones[Bone_Range]->_42, m_matBones[Bone_Range]->_43));
+	pCollider->Set_Enabled(true);
+
+	m_vecPhysicCol.push_back(pCollider);
+
+	//몸
+	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
+
+	fRadius = 0.5f;
+
+	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
+	pCollider->Set_Dynamic(true);
+	pCollider->Set_Type(COL_SPHERE);
+	pCollider->Set_CenterPos(_v3(m_matBones[Bone_Body]->_41, m_matBones[Bone_Body]->_42, m_matBones[Bone_Body]->_43));
+	pCollider->Set_Enabled(true);
+
+	m_vecPhysicCol.push_back(pCollider);
+
+	//머리
+	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
+
+	fRadius = 0.2f;
+
+	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
+	pCollider->Set_Dynamic(true);
+	pCollider->Set_Type(COL_SPHERE);
+	pCollider->Set_CenterPos(_v3(m_matBones[Bone_Head]->_41, m_matBones[Bone_Head]->_42, m_matBones[Bone_Head]->_43));
+	pCollider->Set_Enabled(true);
+
+	m_vecPhysicCol.push_back(pCollider);
 
 	return S_OK;
 }
@@ -797,9 +964,6 @@ CGunGenji * CGunGenji::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 
 CGameObject * CGunGenji::Clone_GameObject(void * pArg)
 {
-	// 검, 총, 방패
-	// 
-
 	CGunGenji* pInstance = new CGunGenji(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
@@ -813,6 +977,7 @@ CGameObject * CGunGenji::Clone_GameObject(void * pArg)
 
 void CGunGenji::Free()
 {
+	Safe_Release(m_pNavMesh);
 	Safe_Release(m_pGun);
 	Safe_Release(m_pAIControllerCom);
 	Safe_Release(m_pTransformCom);

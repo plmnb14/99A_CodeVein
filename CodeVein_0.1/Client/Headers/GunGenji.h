@@ -9,6 +9,29 @@ BEGIN(Client)
 class CWeapon;
 class CGunGenji final : public CGameObject
 {
+public:
+	enum Type { White, Jungle, Normal };
+
+	typedef struct tagInitInfo
+	{
+		tagInitInfo(CGunGenji::Type _eType)
+			: eType(_eType)
+		{}
+
+		CGunGenji::Type	eType = Normal;
+
+	}INFO;
+
+private:
+	enum Ani {
+		Ani_Idle = 42,
+		Ani_Death = 64,
+		Ani_Dmg01_FL = 122
+	};
+
+private:
+	enum BoneMatrix { Bone_Range, Bone_Body, Bone_Head, Bone_End };
+
 protected:
 	explicit CGunGenji(LPDIRECT3DDEVICE9 pGraphic_Device);
 	explicit CGunGenji(const CGunGenji& rhs);
@@ -74,20 +97,35 @@ private:
 	CShader*			m_pShaderCom = nullptr;
 	CMesh_Dynamic*		m_pMeshCom = nullptr;
 	CAIController*		m_pAIControllerCom = nullptr;
+	CNavMesh*			m_pNavMesh = nullptr;
 
 	CWeapon*			m_pGun = nullptr;
 
 	//렌더에서 타임델타 쓰기위해서 저장해놓음
 	_double				m_dTimeDelta = 0;
 
+	//뼈다귀
+	_mat*				m_matBones[Bone_End];
+	_bool				m_bAIController = false;
+
 private:
 	HRESULT Update_Bone_Of_BlackBoard();
 	HRESULT Update_Value_Of_BB();
 
+	HRESULT Update_Collider();
+
+private:
+	void Check_Collider();
+
+	HRESULT Draw_Collider();
+
 private:
 	HRESULT Add_Component(void* pArg);
 	HRESULT SetUp_ConstantTable();
+
 	HRESULT Ready_Weapon();
+	HRESULT Ready_BoneMatrix();
+	HRESULT Ready_Collider();
 
 public:
 	static CGunGenji* Create(LPDIRECT3DDEVICE9 pGraphic_Device);

@@ -46,6 +46,7 @@ protected:
 
 public:
 	virtual OBJECT_PARAM Get_Target_Param() { return m_tObjParam; }
+	virtual OBJECT_PARAM* Get_pTarget_Param() { return &m_tObjParam; }
 	virtual _bool Get_Target_IsAir() { return m_tObjParam.bAir; }
 	virtual _bool Get_Target_IsDown() { return m_tObjParam.bDown; }
 	virtual _bool Get_Target_Dodge() { return m_tObjParam.bDodge; };

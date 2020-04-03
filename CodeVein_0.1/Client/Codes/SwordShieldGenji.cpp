@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\SwordShieldGenji.h"
+#include "..\Headers\Weapon.h"
 
 CSwordShieldGenji::CSwordShieldGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
@@ -21,6 +22,12 @@ HRESULT CSwordShieldGenji::Ready_GameObject(void * pArg)
 
 	if (FAILED(Add_Component(pArg)))
 		return E_FAIL;
+
+	Ready_Weapon();
+	Ready_BoneMatrix();
+	Ready_Collider();
+	m_tObjParam.bCanHit = true;
+	m_tObjParam.fHp_Cur = 3.f;
 
 	m_pTransformCom->Set_Pos(_v3(3.f, 0.f, 3.f));
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
@@ -291,6 +298,7 @@ HRESULT CSwordShieldGenji::Ready_GameObject(void * pArg)
 	//CBT_Play_Ani* pAni49 = Node_Ani("총 쏘기 ", 49, 0.9f);
 	//pSequence->Add_Child(pAni49);
 
+	m_pMeshCom->SetUp_Animation(Ani_Idle);
 
 
 	return NOERROR;
@@ -300,7 +308,21 @@ _int CSwordShieldGenji::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
 
-	m_pAIControllerCom->Update_AIController(TimeDelta);
+	// 죽었을 경우
+	if (m_bIsDead)
+	{
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		{
+			return DEAD_OBJ;
+		}
+	}
+	else
+	{
+		if (true == m_bAIController)
+			m_pAIControllerCom->Update_AIController(TimeDelta);
+
+		Check_Collider();
+	}
 
 	return _int();
 }
@@ -355,6 +377,11 @@ HRESULT CSwordShieldGenji::Render_GameObject()
 	}
 
 	m_pShaderCom->End_Shader();
+
+	m_pSpear->Update_GameObject(m_dTimeDelta);
+	m_pShied->Update_GameObject(m_dTimeDelta);
+	Update_Collider();
+	Draw_Collider();
 
 	return NOERROR;
 }
@@ -494,39 +521,53 @@ CBT_Composite_Node * CSwordShieldGenji::Hit_Strongly()
 
 CBT_Composite_Node * CSwordShieldGenji::Guard(_double dGuardTime)
 {
-	//345
-	CBT_Sequence* Root_Seq = Node_Sequence("방패들기");
-
+	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("방패들기");
+	CBT_Sequence* MainSeq = Node_Sequence("방패들기");
 	CBT_Play_Ani* Show_Ani3 = Node_Ani("시작", 3, 0.8f);
 	CBT_Play_Ani* Show_Ani4 = Node_Ani("루프", 4, 0.95f);
 	CBT_Wait* Wait0 = Node_Wait("루프 대기", dGuardTime, 0);
 	CBT_Play_Ani* Show_Ani5 = Node_Ani("끝", 5, 0.8f);
-	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 1.f);
-	
-	Root_Seq->Add_Child(Show_Ani3);
-	Root_Seq->Add_Child(Show_Ani4);
-	Root_Seq->Add_Child(Wait0);
-	Root_Seq->Add_Child(Show_Ani5);
-	Root_Seq->Add_Child(Show_Ani42);
 
-	return Root_Seq;
+	CBT_ChaseDir* RotationDir0 = Node_ChaseDir("이동", L"Player_Pos", dGuardTime + 1 , 0);
+
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(Show_Ani3);
+	MainSeq->Add_Child(Show_Ani4);
+	MainSeq->Add_Child(Wait0);
+	MainSeq->Add_Child(Show_Ani5);
+
+	Root_Parallel->Set_Sub_Child(RotationDir0);
+
+	return Root_Parallel;
 }
 
 CBT_Composite_Node * CSwordShieldGenji::Start_Game()
 {
 	CBT_Sequence* Root_Seq = Node_Sequence("게임 시작");
 
-	Root_Seq->Add_Child(ChaseAndNearAttack());
+	Root_Seq->Add_Child(Chase_Guard_NearAttack());
 	//Root_Seq->Add_Child(TurnAndFarAttack());
 
 	return Root_Seq;
 }
 
-CBT_Composite_Node * CSwordShieldGenji::ChaseAndNearAttack()
+CBT_Composite_Node * CSwordShieldGenji::RotationAndNearAttack()
 {
-	CBT_Sequence* Root_Seq = Node_Sequence("랜덤 공격 또는 추적");
+	CBT_Sequence* Root_Seq = Node_Sequence("돌고 랜덤 근접 공격");
+	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.1);
+
+	Root_Seq->Add_Child(Rotation0);
+	Root_Seq->Add_Child(NearAttack());
+
+	return Root_Seq;
+}
+
+CBT_Composite_Node * CSwordShieldGenji::Chase_Guard_NearAttack()
+{
+	CBT_Sequence* Root_Seq = Node_Sequence("추적_가드_근접공격");
 
 	Root_Seq->Add_Child(Chase());
+	Root_Seq->Add_Child(Guard(2));
 	Root_Seq->Add_Child(NearAttack());
 
 	return Root_Seq;
@@ -570,6 +611,79 @@ HRESULT CSwordShieldGenji::Update_Value_Of_BB()
 	return E_NOTIMPL;
 }
 
+HRESULT CSwordShieldGenji::Update_Collider()
+{
+	_ulong matrixIdx = 0;
+
+	for (auto& iter : m_vecPhysicCol)
+	{
+		_mat tmpMat;
+		tmpMat = *m_matBones[matrixIdx] * m_pTransformCom->Get_WorldMat();
+
+		_v3 ColPos = _v3(tmpMat._41, tmpMat._42, tmpMat._43);
+
+		iter->Update(ColPos);
+
+		++matrixIdx;
+	}
+
+	return S_OK;
+}
+
+void CSwordShieldGenji::Check_Collider()
+{
+	// 충돌처리, bCanHit를 무기가 false시켜줄것임.
+	if (false == m_tObjParam.bCanHit && m_tObjParam.bIsHit == false)
+	{
+		m_pMeshCom->Reset_OldIndx();	//애니 인덱스 초기화
+
+		m_tObjParam.fHp_Cur -= 2.99f;	// 체력 임의로 닳게 만듦.
+
+		m_bAIController = false;
+		cout << "나도 부딪힘 ^^" << endl;
+		m_tObjParam.bIsHit = true;
+		m_tObjParam.bCanHit = true;
+
+		m_pAIControllerCom->Reset_BT();
+
+		if (m_tObjParam.fHp_Cur > 0.f)
+		{
+			m_pMeshCom->SetUp_Animation(Ani_Dmg01_FL);	//방향에 따른 모션 해줘야함.
+		}
+		else
+		{
+			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
+			m_bIsDead = true;
+		}
+	}
+	else
+	{
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		{
+			m_bAIController = true;
+			m_tObjParam.bIsHit = false;
+
+			//m_pMeshCom->SetUp_Animation(Ani_Idle);
+		}
+
+		else if (m_pMeshCom->Is_Finish_Animation(0.5f))	// 이때부터 재충돌 가능
+		{
+			m_tObjParam.bIsHit = false;
+		}
+	}
+
+}
+
+HRESULT CSwordShieldGenji::Draw_Collider()
+{
+	for (auto& iter : m_vecPhysicCol)
+	{
+		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
+	}
+
+	return S_OK;
+}
+
 HRESULT CSwordShieldGenji::Add_Component(void* pArg)
 {
 	// For.Com_Transform
@@ -592,6 +706,9 @@ HRESULT CSwordShieldGenji::Add_Component(void* pArg)
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"AIController", L"Com_AIController", (CComponent**)&m_pAIControllerCom)))
 		return E_FAIL;
 
+	// for.Com_NavMesh
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"NavMesh", (CComponent**)&m_pNavMesh)))
+		return E_FAIL;
 
 	return NOERROR;
 }
@@ -621,6 +738,88 @@ HRESULT CSwordShieldGenji::SetUp_ConstantTable()
 	Safe_Release(pManagement);
 
 	return NOERROR;
+}
+
+HRESULT CSwordShieldGenji::Ready_Weapon()
+{
+	// 오른손 무기
+	m_pSpear = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
+	m_pSpear->Change_WeaponData(CWeapon::WPN_SSword_Normal);
+
+	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
+	m_pSpear->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
+	m_pSpear->Set_ParentMatrix(&m_pTransformCom->Get_WorldMat());
+
+	// 왼손 무기
+	m_pShied = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
+	m_pShied->Change_WeaponData(CWeapon::WPN_SSword_Normal);
+
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHandAttach");
+	m_pShied->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
+	m_pShied->Set_ParentMatrix(&m_pTransformCom->Get_WorldMat());
+
+
+	return S_OK;
+}
+
+HRESULT CSwordShieldGenji::Ready_BoneMatrix()
+{
+	D3DXFRAME_DERIVED*	pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head", 0);
+
+	m_matBones[Bone_Head] = &pFrame->CombinedTransformationMatrix;
+
+	pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Spine", 0);
+
+	m_matBones[Bone_Range] = &pFrame->CombinedTransformationMatrix;
+	m_matBones[Bone_Body] = &pFrame->CombinedTransformationMatrix;
+
+	return S_OK;
+}
+
+HRESULT CSwordShieldGenji::Ready_Collider()
+{
+	m_vecPhysicCol.reserve(10);
+
+	//경계체크용
+	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
+
+	_float fRadius = 1.2f;
+
+	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
+	pCollider->Set_Dynamic(true);
+	pCollider->Set_Type(COL_SPHERE);
+	pCollider->Set_CenterPos(_v3(m_matBones[Bone_Range]->_41, m_matBones[Bone_Range]->_42, m_matBones[Bone_Range]->_43));
+	pCollider->Set_Enabled(true);
+
+	m_vecPhysicCol.push_back(pCollider);
+
+	//몸
+	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
+
+	fRadius = 0.5f;
+
+	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
+	pCollider->Set_Dynamic(true);
+	pCollider->Set_Type(COL_SPHERE);
+	pCollider->Set_CenterPos(_v3(m_matBones[Bone_Body]->_41, m_matBones[Bone_Body]->_42, m_matBones[Bone_Body]->_43));
+	pCollider->Set_Enabled(true);
+
+	m_vecPhysicCol.push_back(pCollider);
+
+	//머리
+	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
+
+	fRadius = 0.2f;
+
+	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
+	pCollider->Set_Dynamic(true);
+	pCollider->Set_Type(COL_SPHERE);
+	pCollider->Set_CenterPos(_v3(m_matBones[Bone_Head]->_41, m_matBones[Bone_Head]->_42, m_matBones[Bone_Head]->_43));
+	pCollider->Set_Enabled(true);
+
+	m_vecPhysicCol.push_back(pCollider);
+
+	return S_OK;
 }
 
 CSwordShieldGenji * CSwordShieldGenji::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
@@ -654,6 +853,8 @@ CGameObject * CSwordShieldGenji::Clone_GameObject(void * pArg)
 
 void CSwordShieldGenji::Free()
 {
+	Safe_Release(m_pShied);
+	Safe_Release(m_pSpear);
 	Safe_Release(m_pAIControllerCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pMeshCom);

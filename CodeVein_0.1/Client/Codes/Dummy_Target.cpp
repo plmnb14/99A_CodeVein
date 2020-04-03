@@ -21,13 +21,15 @@ HRESULT CDummy_Target::Ready_GameObject(void * pArg)
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 
-	m_pTransform->Set_Pos(_v3(0.f, 0.f, 0.f));
+	m_pTransform->Set_Pos(_v3(2.f, 0.f, 2.f));
 	m_pTransform->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 	Ready_BoneMatrix();
 	Ready_Collider();
 
 	m_tObjParam.bCanHit = true;
+
+	m_pDynamic_Mesh->SetUp_Animation(m_eTmpAnimNum);
 
 	return NOERROR;
 }
@@ -194,7 +196,7 @@ _int CDummy_Target::Late_Update_GameObject(_double TimeDelta)
 {
 	m_dTimeDelta = TimeDelta;
 
-	m_pDynamic_Mesh->SetUp_Animation(m_eTmpAnimNum);
+	//m_pDynamic_Mesh->SetUp_Animation(m_eTmpAnimNum);
 
 	if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;

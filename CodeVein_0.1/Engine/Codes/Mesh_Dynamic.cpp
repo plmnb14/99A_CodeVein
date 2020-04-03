@@ -270,6 +270,16 @@ D3DXTRACK_DESC CMesh_Dynamic::Get_TrackInfo_Upper()
 	return m_pAniCtrl_Upper->Get_TrackInfo();
 }
 
+CAniCtrl * CMesh_Dynamic::Get_AniCtrl()
+{
+	return m_pAniCtrl_Lower;
+}
+
+_double CMesh_Dynamic::Get_AnimationFullTime()
+{
+	return m_pAniCtrl_Lower->Get_AnimationFullTime();
+}
+
 void CMesh_Dynamic::Set_BoneSeperate(D3DXFRAME_DERIVED * _frame, const char * _bodyName, _short _sSeperateNum)
 {
 	if (_frame->Name != nullptr)

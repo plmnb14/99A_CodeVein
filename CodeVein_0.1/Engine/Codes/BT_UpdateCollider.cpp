@@ -11,9 +11,6 @@ CBT_UpdateCollider::CBT_UpdateCollider(const CBT_UpdateCollider & rhs)
 
 CBT_Node::BT_NODE_STATE CBT_UpdateCollider::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, CBlackBoard * pBlackBoard, _bool bDebugging)
 {
-	if (nullptr == m_pTarget_Collider)
-		return BT_NODE_STATE::FAILED;
-
 	Start_Node(pNodeStack, plistSubNodeStack, false);
 
 	m_dCurTime += TimeDelta;
@@ -31,20 +28,28 @@ CBT_Node::BT_NODE_STATE CBT_UpdateCollider::Update_Node(_double TimeDelta, vecto
 			{
 				// 생성 횟수 제한
 			case CBT_Service_Node::Finite:
-				if (m_iCur_Count_Of_Execution > m_iMax_Count_Of_Execution)
+				if (m_iCur_Count_Of_Execution >= m_iMax_Count_Of_Execution)
+				{
+					m_pTarget_ObjParam->bCanAttack = false;
+					//cout << "HIt End " << m_dCurTime << endl;
 					break;
+				}
 				else
 				{
-					m_pTarget_Collider->Set_Enabled(true);
+					//cout << "Hit On" << m_dCurTime << endl;
+
+					m_pTarget_ObjParam->bCanAttack = true;
+
 					++m_iCur_Count_Of_Execution;
+					m_dCurTime = 0;
 				}
 				break;
 
-				// 생성 횟수 무제한
-			case CBT_Service_Node::Infinite:
-				m_pTarget_Collider->Set_Enabled(true);
-				End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, false);
-				break;
+				// 생성 횟수 무제한,  콜라이더는 필요없음
+			//case CBT_Service_Node::Infinite:
+			//	m_pTarget_ObjParam->bCanAttack = true;
+			//	End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, false);
+			//	break;
 			}
 		}
 	}
@@ -58,13 +63,12 @@ void CBT_UpdateCollider::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<C
 		if (bDebugging)
 		{
 			Cout_Indentation(pNodeStack);
-			cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " Start   { Service : Collider }" << endl;
+			cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " Start   { Service : AttackOn }" << endl;
 		}
 
 		m_dCurTime = 0;
 		m_dMaxTime = m_dUpdateTime + CALC::Random_Num_Double(-m_dOffset, m_dOffset);
 		m_iCur_Count_Of_Execution = 0;
-		m_dService_StartTime = 0;
 
 		m_bInit = false;
 	}
@@ -75,8 +79,10 @@ CBT_Node::BT_NODE_STATE CBT_UpdateCollider::End_Node(vector<CBT_Node*>* pNodeSta
 	if (bDebugging)
 	{
 		Cout_Indentation(pNodeStack);
-		cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " End   { Service : Collider }" << endl;
+		cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " End   { Service : AttackOn }" << endl;
 	}
+
+	m_pTarget_ObjParam->bCanAttack = false;
 
 	m_bService_Start = false;
 	m_bInit = true;
@@ -91,8 +97,7 @@ HRESULT CBT_UpdateCollider::Ready_Clone_Node(void * pInit_Struct)
 	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
 	m_dUpdateTime = temp.Target_dUpdateTime;
 	m_dOffset = temp.Target_dOffset;
-	m_pTarget_Collider = temp.Target_Collider;
-	Safe_AddRef(m_pTarget_Collider);
+	m_pTarget_ObjParam = temp.Target_ObjParam;
 	m_iMax_Count_Of_Execution = temp.Count_Of_Execution;
 	m_eMode = temp.eMode;
 	m_dService_StartTime = temp.Service_Start_Time;
@@ -121,5 +126,4 @@ CBT_UpdateCollider * CBT_UpdateCollider::Clone(void * pInit_Struct)
 
 void CBT_UpdateCollider::Free()
 {
-	Safe_Release(m_pTarget_Collider);
 }

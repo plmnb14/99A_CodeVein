@@ -27,8 +27,10 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 		return E_FAIL;
 
 	SetUp_Default();
+
 	Ready_BoneMatrix();
 	Ready_Collider();
+
 	Ready_Weapon();
 	Ready_DrainWeapon();
 
@@ -45,6 +47,8 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 	}
 
 	CGameObject::Update_GameObject(TimeDelta);
+
+	m_tObjParam.bCanHit = true;
 
 	KeyInput();
 
@@ -3435,7 +3439,7 @@ void CPlayer::Ready_Weapon()
 {
 	m_pWeapon[WPN_SLOT_A] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
 	m_pWeapon[WPN_SLOT_A]->Change_WeaponData(CWeapon::WPN_SSword_Normal);
-
+	m_pWeapon[WPN_SLOT_A]->Set_Friendly(true);
 	LPCSTR tmpChar = "RightHandAttach";
 	_mat   matAttach;
 
@@ -3450,6 +3454,7 @@ void CPlayer::Ready_Weapon()
 
 	m_pWeapon[WPN_SLOT_B]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
 	m_pWeapon[WPN_SLOT_B]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
+	m_pWeapon[WPN_SLOT_B]->Set_Friendly(true);
 
 	//========================================================================================================================
 	// 여기서 부터 디버그용 무기슬롯
@@ -3460,6 +3465,7 @@ void CPlayer::Ready_Weapon()
 
 	m_pWeapon[WPN_SLOT_C]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
 	m_pWeapon[WPN_SLOT_C]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
+	m_pWeapon[WPN_SLOT_C]->Set_Friendly(true);
 
 	//========================================================================================================================
 }
