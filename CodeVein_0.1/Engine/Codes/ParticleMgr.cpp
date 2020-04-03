@@ -84,6 +84,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Hit_Particle_Yellow"	, 100);
 
 	Input_Pool(L"SpawnParticle", 1000);
+	Input_Pool(L"SpawnParticle_Sub", 1000);
 
 	Input_Pool(L"Bullet_Body", 50);
 	Input_Pool(L"Bullet_Body_Aura", 100);
@@ -335,6 +336,12 @@ void CParticleMgr::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCo
 	Create_DirEffect(L"Hit_Blood_Direction_4", vAttackPos, vBloodDir);
 	Create_DirEffect(L"Hit_Blood_Direction_5", vAttackPos, vBloodDir);
 	Create_DirEffect(L"Hit_Blood_Direction_6", vAttackPos, vBloodDir);
+}
+
+void CParticleMgr::Create_Spawn_Effect(_v3 vPos, CTransform* pFollowTrans)
+{
+	Create_ParticleEffect(L"SpawnParticle", 2.f, vPos, pFollowTrans);
+	Create_ParticleEffect(L"SpawnParticle_Sub", 2.f, vPos, pFollowTrans);
 }
 
 HRESULT CParticleMgr::Update_Effect(const _double TimeDelta)

@@ -253,6 +253,8 @@ HRESULT CLoading::Ready_Effect(void)
 
 	if (FAILED(Add_EffectPrototype(L"SpawnParticle")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"SpawnParticle_Sub")))
+		return E_FAIL;
 
 	if (FAILED(Add_EffectPrototype(L"MistletoeParticle")))
 		return E_FAIL;
