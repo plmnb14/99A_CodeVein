@@ -457,6 +457,7 @@ void CDummy_Target::OnCollisionEvent_Physic(list<CGameObject*> plistGameObject)
 					{
 						iter->Set_Target_CanHit(false);
 						iter->Add_Target_Hp(m_tObjParam.fDamage);
+
 					}
 				}
 

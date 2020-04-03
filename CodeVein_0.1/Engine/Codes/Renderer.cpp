@@ -429,8 +429,15 @@ HRESULT CRenderer::Render_Alpha()
 	return NOERROR;
 }
 
+_bool Compare_Z(CGameObject* pDest, CGameObject* pSour)
+{
+	return pDest->Get_ViewZ() > pSour->Get_ViewZ();
+}
+
 HRESULT CRenderer::Render_UI()
 {
+	m_RenderList[RENDER_UI].sort(Compare_Z);
+
 	for (auto& pGameObject : m_RenderList[RENDER_UI])
 	{
 		if (nullptr != pGameObject)
@@ -735,6 +742,7 @@ HRESULT CRenderer::Render_After()
 
 	return S_OK;
 }
+
 
 CRenderer * CRenderer::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 {

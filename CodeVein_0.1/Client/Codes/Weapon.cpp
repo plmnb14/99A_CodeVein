@@ -86,7 +86,7 @@ HRESULT CWeapon::Render_GameObject()
 
 	for (_uint i = 0; i < iNumSubSet; ++i)
 	{
-		m_pShader->Begin_Pass(0);
+		m_pShader->Begin_Pass(m_iPass);
 
 		if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_DIFFUSE))))
 			return E_FAIL;
@@ -171,8 +171,10 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 					iter->Set_Target_CanHit(false);
 					iter->Add_Target_Hp(m_tObjParam.fDamage);
 
+
+					g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
+					
 					break;
-				
 				}
 
 				else
@@ -422,6 +424,10 @@ HRESULT CWeapon::SetUp_ConstantTable()
 	if (FAILED(m_pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShader)))
+		return E_FAIL;
+	if (FAILED(m_pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	return NOERROR;

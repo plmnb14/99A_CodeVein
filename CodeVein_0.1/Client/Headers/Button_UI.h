@@ -34,7 +34,7 @@ private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 public:
-	static CButton_UI*			Create(_Device pGraphic_Device);
+	static CButton_UI*		Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);
 	virtual void			Free();
 };

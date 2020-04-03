@@ -25,8 +25,9 @@ HRESULT CButton_UI::Ready_GameObject(void * pArg)
 
 	CUI::Ready_GameObject(pArg);
 
-	
-	return NO_EVENT;
+
+
+	return NOERROR;
 }
 
 _int CButton_UI::Update_GameObject(_double TimeDelta)

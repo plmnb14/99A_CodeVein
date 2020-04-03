@@ -61,6 +61,7 @@ CParticleTab::CParticleTab(CWnd* pParent /*=NULL*/)
 	, m_EditFileName(_T(""))
 	, m_EditColorIndex(_T("0.0"))
 	, m_EditMaskIndex(_T(""))
+	, m_EditDistortion(_T("0.0"))
 {
 
 }
@@ -161,6 +162,9 @@ void CParticleTab::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK7, m_CheckGravity);
 	DDX_Control(pDX, IDC_CHECK22, m_CheckRandSize);
 	DDX_Control(pDX, IDC_CHECK8, m_CheckMoveWithRot);
+	DDX_Control(pDX, IDC_CHECK13, m_CheckSlowly);
+	DDX_Text(pDX, IDC_EDIT51, m_EditDistortion);
+	DDX_Control(pDX, IDC_CHECK9, m_CheckDissolve);
 }
 
 void CParticleTab::Set_GraphicDev(LPDIRECT3DDEVICE9 pDev)
@@ -391,6 +395,10 @@ void CParticleTab::Setup_EffInfo(_bool bIsMesh)
 
 	m_pInfo->bMoveWithRot = m_CheckMoveWithRot.GetCheck() ? true : false;
 
+	m_pInfo->bSlowly = m_CheckSlowly.GetCheck() ? true : false;
+
+	m_pInfo->bDissolve = m_CheckDissolve.GetCheck() ? true : false;
+
 	if (m_bCheckUseMask.GetCheck() ? true : false)
 	{
 		GetDlgItemText(IDC_EDIT50, m_EditMaskIndex);
@@ -398,6 +406,9 @@ void CParticleTab::Setup_EffInfo(_bool bIsMesh)
 	}
 	else
 		m_pInfo->fMaskIndex = -1.f;
+
+	GetDlgItemText(IDC_EDIT51, m_EditDistortion);
+	m_pInfo->fDistortionPower = _float(_tstof(m_EditDistortion));
 
 	GetDlgItemText(IDC_EDIT43, m_EditParticleCount);
 	m_pInfo->iMaxCount = _int(_tstoi(m_EditParticleCount));
@@ -690,6 +701,13 @@ void CParticleTab::OnBnClickedButton_Save()
 		::WriteFile(hFile, &bRandSize, sizeof(_bool), &dwByte, nullptr);
 		_bool bMoveWithRot = (m_CheckMoveWithRot.GetCheck()) ? true : false;
 		::WriteFile(hFile, &bMoveWithRot, sizeof(_bool), &dwByte, nullptr);
+		_bool bSlowly = (m_CheckSlowly.GetCheck()) ? true : false;
+		::WriteFile(hFile, &bSlowly, sizeof(_bool), &dwByte, nullptr);
+
+		::WriteFile(hFile, &m_pInfo->fDistortionPower, sizeof(_float), &dwByte, nullptr);
+
+		_bool bDissolve = (m_CheckDissolve.GetCheck()) ? true : false;
+		::WriteFile(hFile, &bDissolve, sizeof(_bool), &dwByte, nullptr);
 
 		CloseHandle(hFile);
 		MessageBox(_T("Save Success."), _T("Save"), MB_OK);
@@ -884,7 +902,7 @@ void CParticleTab::OnBnClickedButton_Load()
 
 			::ReadFile(hFile, &tInfo.szColorName, sizeof(TCHAR) * MAX_STR, &dwByte, nullptr);
 			GetDlgItem(IDC_EDIT44)->SetWindowTextW(tInfo.szColorName);
-			m_wstrColorTexName = tInfo.szColorName;
+			m_wstrColorTexName = tInfo.szColorName; 
 
 			if (bIsTex)
 			{
@@ -1008,6 +1026,18 @@ void CParticleTab::OnBnClickedButton_Load()
 			::ReadFile(hFile, &bMoveWithRot, sizeof(_bool), &dwByte, nullptr);
 			m_CheckMoveWithRot.SetCheck(bMoveWithRot);
 
+			_bool bSlowly = false;
+			::ReadFile(hFile, &bSlowly, sizeof(_bool), &dwByte, nullptr);
+			m_CheckSlowly.SetCheck(bSlowly);
+
+			::ReadFile(hFile, &tInfo.fDistortionPower, sizeof(_float), &dwByte, nullptr);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fDistortionPower);
+			m_EditDistortion.SetString(szBuff);
+
+			_bool bDissolve = false;
+			::ReadFile(hFile, &bDissolve, sizeof(_bool), &dwByte, nullptr);
+			m_CheckDissolve.SetCheck(bDissolve);
+			
 			//if (0 == dwByte)
 			break;
 		}
