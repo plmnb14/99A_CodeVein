@@ -29,6 +29,7 @@ public:
 	void Set_ParticleName(_tchar* szBuff) { lstrcpy(m_szParticleName, szBuff); }
 	void Set_Desc(_v3 vPos, CTransform* pTrans = nullptr);
 	void Set_Angle(_v3 vAngle) { m_vAngle = vAngle; }
+	void Set_Dir(_v3 vDir) { m_vMyDir = vDir; }
 
 	void Reset_Init();
 
@@ -57,9 +58,11 @@ protected:
 	_float					m_fAlphaSpeed = 0.f;
 	_float					m_fCreateDelay = 0.f;
 	_float					m_fAccel = 0.f;
+	_float					m_fDissolve = 0.f;
 	_v3						m_vLerpPos = { 1.f, 1.f, 1.f };
 	_v3						m_vLerpScale = { 1.f, 1.f, 1.f };
-	_v3						m_vDir = { 1.f, 1.f, 1.f };
+	_v3						m_vDir = { 0.f, 0.f, 0.f };
+	_v3						m_vMyDir = { 0.f, 0.f, 0.f }; // For MoveEffect
 	_v3						m_vRot = { 0.f, 0.f, 0.f };
 	_v3						m_vFollowPos = { 1.f, 1.f, 1.f };
 	_v4						m_vColor = { 1.f, 1.f, 1.f, 1.f };
@@ -67,6 +70,7 @@ protected:
 
 	_bool					m_bClone = false;
 	_bool					m_bFadeOutStart = false;
+	_bool					m_bDissolveToggle = false;
 
 	_int					m_iPass = 0;
 

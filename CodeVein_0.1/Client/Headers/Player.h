@@ -160,6 +160,9 @@ private:
 private:
 	_float					m_fAmingRange = 20.f;
 
+private: // For Dissolve
+	_float					m_fDissolveY = 0.f;
+
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_Default();
@@ -216,6 +219,7 @@ private:
 	virtual void Play_Buff();
 	virtual void Play_Hit();
 	virtual void Play_WeaponChange();
+	virtual void Play_Spawn();
 
 private:
 	virtual void Play_BloodSuck();

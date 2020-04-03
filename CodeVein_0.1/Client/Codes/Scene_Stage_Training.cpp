@@ -7,6 +7,11 @@
 #include "UI_Manager.h"
 #include "ParticleMgr.h"
 
+#include "SwordGenji.h"
+#include "GunGenji.h"
+#include "SwordShieldGenji.h"
+
+
 CScene_Stage_Training::CScene_Stage_Training(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
 {
@@ -22,6 +27,9 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 		return E_FAIL;
 
 	if (FAILED(Ready_Layer_Enemies()))
+		return E_FAIL;
+
+	if (FAILED(Ready_Layer_Environment()))
 		return E_FAIL;
 
 	// 트레이닝 맵은 그냥 로드 가능해욤
@@ -79,8 +87,51 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Monster")))
 		return E_FAIL;
 
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Dummy", SCENE_STAGE, L"Layer_Monster")))
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Dummy", SCENE_STAGE, L"Layer_Monster")))
+	//	return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_PoisonButterfly", SCENE_STAGE, L"Layer_Monster")))
 		return E_FAIL;
+	
+	// 검은 성게
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_BlackUrchin", SCENE_STAGE, L"Layer_Monster")))
+	//	return E_FAIL;
+	// 검은 늑대
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_BlackWolf", SCENE_STAGE, L"Layer_Monster")))
+	//	return E_FAIL;
+
+	//// 검겐지
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_SwordGenji", SCENE_STAGE, L"Layer_Monster", &CSwordGenji::INFO(CSwordGenji::White))))
+	//	return E_FAIL;
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_SwordGenji", SCENE_STAGE, L"Layer_Monster", &CSwordGenji::INFO(CSwordGenji::Normal))))
+	//	return E_FAIL;
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_SwordGenji", SCENE_STAGE, L"Layer_Monster", &CSwordGenji::INFO(CSwordGenji::Jungle))))
+	//	return E_FAIL;
+
+	//// 총겐지
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_GunGenji", SCENE_STAGE, L"Layer_Monster", &CGunGenji::INFO(CGunGenji::White))))
+	//	return E_FAIL;
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_GunGenji", SCENE_STAGE, L"Layer_Monster", &CGunGenji::INFO(CGunGenji::Normal))))
+	//	return E_FAIL;
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_GunGenji", SCENE_STAGE, L"Layer_Monster", &CGunGenji::INFO(CGunGenji::Jungle))))
+	//	return E_FAIL;
+
+
+	//// 검방패겐지
+	////if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_SwordShieldGenji", SCENE_STAGE, L"Layer_Monster")))
+	////	return E_FAIL;
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_SwordShieldGenji", SCENE_STAGE, L"Layer_Monster", &CSwordShieldGenji::INFO(CSwordShieldGenji::White))))
+	//	return E_FAIL;
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_SwordShieldGenji", SCENE_STAGE, L"Layer_Monster", &CSwordShieldGenji::INFO(CSwordShieldGenji::Normal))))
+	//	return E_FAIL;
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_SwordShieldGenji", SCENE_STAGE, L"Layer_Monster", &CSwordShieldGenji::INFO(CSwordShieldGenji::Jungle))))
+	//	return E_FAIL;
+	
+	
+	// 야차맨
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_YachaMan", SCENE_STAGE, L"Layer_Monster")))
+	//	return E_FAIL;
+
 
 	CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Dummy", nullptr);
 
@@ -93,6 +144,22 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Boss")))
 		return E_FAIL;
 
+	// 독나방
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_PoisonButterfly", SCENE_STAGE, L"Layer_Monster")))
+	//	return E_FAIL;
+
+	// 투사체 레이어만 미리 추가
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_MonsterProjectile")))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage_Training::Ready_Layer_Environment()
+{
+
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Sky", SCENE_STAGE, L"Layer_Sky")))
+		return E_FAIL;
 
 	return S_OK;
 }

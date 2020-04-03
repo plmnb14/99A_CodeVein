@@ -146,7 +146,7 @@ _bool CBT_ConeCheck::Is_InFov(_float fDegreeOfFov, CTransform * pThisTransform, 
 	_float fDot_Temp = D3DXVec3Dot(&vThisLook, &FromThisToTarget);
 	_float fRadian = acosf(fDot_Temp);
 
-	if (D3DXToDegree(fRadian) < fDegreeOfFov)
+	if (D3DXToDegree(fRadian) > fDegreeOfFov * 0.5f)
 		return true;
 
 	return false;

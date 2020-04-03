@@ -34,6 +34,7 @@ public:
 private:
 	HRESULT Ready_Effect(void);
 	Engine::EFFECT_INFO* Read_EffectData(const _tchar* szPath);
+	HRESULT Add_EffectPrototype(const _tchar* szName, _bool bIsMesh = false);
 
 private:
 	_uint Loading_Title();

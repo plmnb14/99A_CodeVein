@@ -3,9 +3,11 @@
 #include "Client_Defines.h"
 #include "UI.h"
 
+#include "Expendables_Slot.h"
+
 BEGIN(Client)
 
-class CItem;
+
 class CQuickSlot final : public CUI
 {
 private:
@@ -14,7 +16,7 @@ private:
 	virtual ~CQuickSlot() = default;
 
 public:
-	
+
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -27,9 +29,6 @@ private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
 
-public:
-	void Add_Item(CItem* pItem);
-
 private:
 	CTransform*				m_pTransformCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
@@ -38,7 +37,8 @@ private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 private:
-	vector<CItem*>			m_vecItem;
+	vector<CExpendables_Slot*>	m_vecQuickSlot;
+	_uint						m_iSelect = 0;
 
 public:
 	static CQuickSlot*		Create(_Device pGraphic_Device);
@@ -47,3 +47,4 @@ public:
 };
 
 END
+

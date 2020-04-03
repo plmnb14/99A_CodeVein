@@ -27,8 +27,10 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 		return E_FAIL;
 
 	SetUp_Default();
+
 	Ready_BoneMatrix();
 	Ready_Collider();
+
 	Ready_Weapon();
 	Ready_DrainWeapon();
 
@@ -48,6 +50,8 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 	cout << "현재 서브셋 번호 :" << m_pNavMesh->Get_SubSetIndex() << endl;
 
 	CGameObject::Update_GameObject(TimeDelta);
+
+	m_tObjParam.bCanHit = true;
 
 	KeyInput();
 
@@ -122,7 +126,7 @@ HRESULT CPlayer::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			m_pShader->Begin_Pass(0);
+			m_pShader->Begin_Pass(m_iPass);
 
 			if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pDynamicMesh->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE))))
 				return E_FAIL;
@@ -2435,6 +2439,27 @@ void CPlayer::Play_WeaponChange()
 	}
 }
 
+void CPlayer::Play_Spawn()
+{
+	const _float SPEED = 0.3f;
+	Start_Dissolve(SPEED, true);
+
+	for (auto& iter : m_pWeapon)
+		iter->Start_Dissolve(SPEED, true);
+	//m_pDrainWeapon->Start_Dissolve(0.7f, true);
+
+	const _float END_VALUE = 0.6f;
+	if (m_iPass == 3 && m_fFXAlpha > END_VALUE)
+	{
+		_v3 vPos = m_pTransform->Get_Pos();
+		vPos.y += m_fDissolveY;
+		g_pManagement->Create_Effect(L"SpawnParticle", vPos);
+		m_fDissolveY += DELTA_60 * 1.3f;
+	}
+	else
+		m_fDissolveY = 0.f;
+}
+
 void CPlayer::Play_BloodSuck()
 {
 	if (false == m_bOnBloodSuck)
@@ -3443,7 +3468,7 @@ void CPlayer::Ready_Weapon()
 {
 	m_pWeapon[WPN_SLOT_A] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
 	m_pWeapon[WPN_SLOT_A]->Change_WeaponData(CWeapon::WPN_SSword_Normal);
-
+	m_pWeapon[WPN_SLOT_A]->Set_Friendly(true);
 	LPCSTR tmpChar = "RightHandAttach";
 	_mat   matAttach;
 
@@ -3458,6 +3483,7 @@ void CPlayer::Ready_Weapon()
 
 	m_pWeapon[WPN_SLOT_B]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
 	m_pWeapon[WPN_SLOT_B]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
+	m_pWeapon[WPN_SLOT_B]->Set_Friendly(true);
 
 	//========================================================================================================================
 	// 여기서 부터 디버그용 무기슬롯
@@ -3468,6 +3494,7 @@ void CPlayer::Ready_Weapon()
 
 	m_pWeapon[WPN_SLOT_C]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
 	m_pWeapon[WPN_SLOT_C]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
+	m_pWeapon[WPN_SLOT_C]->Set_Friendly(true);
 
 	//========================================================================================================================
 }
@@ -3712,6 +3739,10 @@ HRESULT CPlayer::SetUp_ConstantTable()
 	if (FAILED(m_pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShader)))
+		return E_FAIL;
+	if (FAILED(m_pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	return NOERROR;

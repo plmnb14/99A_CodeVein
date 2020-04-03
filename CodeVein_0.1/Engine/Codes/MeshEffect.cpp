@@ -263,6 +263,13 @@ void CMeshEffect::Setup_Info()
 
 void CMeshEffect::Check_Move(_double TimeDelta)
 {
+	if (m_pInfo->bSlowly)
+	{
+		m_fMoveSpeed -= m_fMoveSpeed * _float(TimeDelta);
+		if (m_fMoveSpeed <= 0.f)
+			m_fMoveSpeed = 0.f;
+	}
+
 	if (m_pInfo->bDirMove)
 	{
 		if (m_pInfo->bLinearMove)
@@ -437,7 +444,7 @@ HRESULT CMeshEffect::SetUp_ConstantTable()
 		return E_FAIL;
 
 	Safe_AddRef(pManagement);
-
+	
 	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
 
@@ -448,10 +455,16 @@ HRESULT CMeshEffect::SetUp_ConstantTable()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
+
+	_float	fDistortion = 0.2f;
+
+	if (FAILED(m_pShaderCom->Set_Value("g_fDistortion", &fDistortion, sizeof(_float))))
+		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_vColor", &m_vColor, sizeof(_v4))))
 		return E_FAIL;
+
 	if (FAILED(m_pShaderCom->Set_Bool("g_bUseColorTex", m_pInfo->bUseColorTex)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Bool("g_bReverseColor", m_pInfo->bRevColor)))

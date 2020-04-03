@@ -3,7 +3,14 @@
 #include "Management.h"
 #include "Client_Defines.h"
 
-#include "Item.h"
+#include "Expendables.h"
+#include "Expendables_Slot.h"
+
+#include "Material.h"
+#include "Material_Slot.h"
+
+#include "Weapon.h"
+#include "Weapon_Slot.h"
 
 BEGIN(Client)
 
@@ -16,24 +23,29 @@ private:
 	virtual ~CItem_Manager();
 
 public:
-	CItem*	Get_Item(CItem::ITEM_ID eID, _uint iIndex);
-	_uint	Get_ItemCount(CItem::ITEM_ID eID);
-	_bool	Get_IsUpdateItem() { return m_bUpdateData; }
-	CItem*	Get_ItemBack(CItem::ITEM_ID eID);
+	/*소모품*/
+	vector<CExpendables*>*	Get_Expendables() { return &m_vecExpendables; } // 가지고 있는 소모품 정보들
+	vector<CExpendables_Slot*>*	Get_QuickSlot() { return &m_vecQuickSlot; } // 현재 등록된 퀵슬롯 정보들
+	_uint Get_QuickSlotSize() { return _uint(m_vecQuickSlot.size()); } // 현재 등록된 퀵슬롯 사이즈 반환
+																	   /*재료(혈영)*/
+	vector<CMaterial*>*		Get_Material() { return &m_vecMaterial; }
+	/*무기 데이터*/
+	
+	_uint Get_WeaponDataSize() { return _uint(m_vecWeaponData.size()); }
+	
+	
+	
 
 public:
-	void	Set_IsUpdateItem() { m_bUpdateData = false; }
-
-public:
-	HRESULT Ready_Item_Prototype(_Device pDevice);
-	void Add_Item(CItem::ITEM_TYPE eType, CItem::ITEM_ID eID);
-	void Delete_Item(CItem::ITEM_ID eID);
-	void Save_Item();
-	void Load_Item();
+	HRESULT Add_Item_Prototype(_Device pDevice);
+	
 
 private:
-	vector<CItem*>	m_vecItem[CItem::ID_END];
-	_bool			m_bUpdateData = false;
+	vector<CExpendables*>	m_vecExpendables;
+	vector<CExpendables_Slot*>	m_vecQuickSlot;
+	vector<CMaterial*>		m_vecMaterial;
+	vector<CWeapon::WEAPON_DATA>	m_vecWeaponData;
+
 
 public:
 	virtual void Free();

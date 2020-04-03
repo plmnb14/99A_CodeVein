@@ -3,7 +3,9 @@
 #include "BT_Task_Node.h"
 
 BEGIN(Engine)
-
+/*
+업데이트시마다 계속 사이각을 체크해서 돌린다.
+*/
 class CTransform;
 class ENGINE_DLL CBT_FixDir final : public CBT_Task_Node
 {

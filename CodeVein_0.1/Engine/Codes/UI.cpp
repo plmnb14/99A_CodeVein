@@ -31,7 +31,6 @@ void CUI::Set_UI_Size(_float fSizeX, _float fSizeY)
 
 HRESULT CUI::Ready_GameObject_Prototype()
 {
-	
 	return NOERROR;
 }
 
@@ -51,8 +50,8 @@ HRESULT CUI::Ready_GameObject(void * pArg)
 	{
 		m_fPosX = 0.f;
 		m_fPosY = 0.f;
-		m_fSizeX = 1.f;
-		m_fSizeY = 1.f;
+		m_fSizeX = 0.f;
+		m_fSizeY = 0.f;
 		m_iIndex = 0;
 	}
 
