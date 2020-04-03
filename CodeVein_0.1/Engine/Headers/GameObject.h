@@ -33,10 +33,14 @@ public:
 	void			Set_ViewZ(_float fViewZ) { m_fViewZ = fViewZ; }
 
 public:
+	void			Start_Dissolve(_float fFxSpeed = 0.7f, _bool bFadeIn = false, _bool bReadyDead = false);
+
+public:
 	HRESULT			Add_Component(_uint iSceneID, const _tchar* pPrototypeTag, const _tchar* pComponentTag, CComponent** ppComponent, void* pArg = nullptr);
 
 protected:
 	void			Compute_ViewZ(const _v3* pPos);
+	void			Check_Dissolve(_double TimeDelta);
 
 	//======================================================================================================================
 	// 임시 충돌	
@@ -72,7 +76,7 @@ public:
 	virtual void Set_Target_CanAttack(_bool _bCanAttack) { m_tObjParam.bCanAttack = _bCanAttack; }
 	virtual void Set_Target_KnockBack(_bool _bKnockBack) { m_tObjParam.bKnockBack = _bKnockBack; }
 	virtual void Set_Target_Dodge(_bool _bDodge) { m_tObjParam.bDodge = _bDodge; }
-
+	
 public:
 	vector<CCollider*>		Get_PhysicColVector() { return m_vecPhysicCol; };	// 충돌 체크용 콜라이더 벡터
 	vector<CCollider*>		Get_AtkColVector() { return m_vecAttackCol; };		// 공격용 콜라이더 벡터
@@ -93,7 +97,18 @@ protected:
 protected:
 	_bool	m_bIsDead = false;
 	_bool	m_bIsInit = false;
+	
 	_float	m_fViewZ = 0.f;
+
+	// For	MotionBlur
+	_mat	m_matLastWVP;
+
+	// For Dissolve
+	_bool	m_bFadeIn = false;
+	_bool	m_bReadyDead = false;
+	_float	m_fFXSpeed = 0.f;
+	_float	m_fFXAlpha = 0.f;
+	_int	m_iPass = 0;
 
 protected:
 	_ulong			m_dwLayerIdx = 0;			// 생성될 레이어 번호

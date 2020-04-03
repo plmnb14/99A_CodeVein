@@ -77,7 +77,7 @@ _int CMaterial_Inven::Update_GameObject(_double TimeDelta)
 		Add_Material(CMaterial::MATERIAL_1);
 	if (g_pInput_Device->Key_Up(DIK_9))
 		Sell_Material(3);
-	cout << m_vecMaterialSlot[0]->Get_Size() << endl;
+	//cout << m_vecMaterialSlot[0]->Get_Size() << endl;
 
 	return NO_EVENT;
 }

@@ -47,7 +47,6 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 	CGameObject::Update_GameObject(TimeDelta);
 
 	KeyInput();
-	Check_Dissolve(TimeDelta);
 
 	Parameter_YPos();
 	Parameter_Movement();
@@ -122,8 +121,7 @@ HRESULT CPlayer::Render_GameObject()
 
 			if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pDynamicMesh->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE))))
 				return E_FAIL;
-			if (FAILED(m_pShader->Set_Texture("g_FXTexture", m_pShader, 13)))
-				return E_FAIL;
+
 			if (FAILED(m_pShader->Set_Texture("g_NormalTexture", m_pDynamicMesh->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_NORMAL))))
 				return E_FAIL;
 
@@ -2429,6 +2427,27 @@ void CPlayer::Play_WeaponChange()
 	}
 }
 
+void CPlayer::Play_Spawn()
+{
+	const _float SPEED = 0.3f;
+	Start_Dissolve(SPEED, true);
+
+	for (auto& iter : m_pWeapon)
+		iter->Start_Dissolve(SPEED, true);
+	//m_pDrainWeapon->Start_Dissolve(0.7f, true);
+
+	const _float END_VALUE = 0.6f;
+	if (m_iPass == 3 && m_fFXAlpha > END_VALUE)
+	{
+		_v3 vPos = m_pTransform->Get_Pos();
+		vPos.y += m_fDissolveY;
+		g_pManagement->Create_Effect(L"SpawnParticle", vPos);
+		m_fDissolveY += DELTA_60 * 1.3f;
+	}
+	else
+		m_fDissolveY = 0.f;
+}
+
 void CPlayer::Play_BloodSuck()
 {
 	if (false == m_bOnBloodSuck)
@@ -3622,79 +3641,6 @@ void CPlayer::Change_Weapon()
 	// 여기 무기 바꾸는 코드를 추후에 작성해야 합니다.
 }
 
-void CPlayer::Check_Dissolve(_double TimeDelta)
-{
-	//if(false)
-	if (g_pInput_Device->Key_Down(DIK_U))
-	{
-		Create_HittedEffect(45.f);
-	}
-
-	const _float SPEED = 0.7f;
-	//if(m_eActState == ACT_Down) // 임시
-	if (g_pInput_Device->Key_Pressing(DIK_J)) // 디버그
-	{
-		m_iPass = 3;
-
-		m_fFxSpeed += _float(TimeDelta) * SPEED;
-
-		g_pManagement->Create_Effect(L"SpawnParticle", m_pTransform->Get_Pos());
-
-		if (m_fFxSpeed >= 1.f)
-			m_fFxSpeed = 1.f;
-	}
-	else
-	{
-		m_fFxSpeed -= _float(TimeDelta) * SPEED;
-
-		if (m_fFxSpeed <= 0.f)
-			m_fFxSpeed = 0.f;
-	}
-}
-
-void CPlayer::Create_HittedEffect(_float fAngle)
-{
-	_v3 vPos = m_pTransform->Get_Pos();
-	vPos.y += 1.f;
-
-	_v3 vAngle = m_pTransform->Get_Angle();
-	vAngle.z += fAngle;
-	g_pManagement->Create_AngleEffect(L"Hit_SlashLine_0", vPos, vAngle);
-		
-	_tchar szBuff[256] = L"";
-	wsprintf(szBuff, L"Hit_Slash_Particle_%d", CCalculater::Random_Num(0, 3));
-	g_pManagement->Create_Effect(szBuff, vPos);
-	
-	g_pManagement->Create_Effect(L"Hit_Slash_0", vPos);
-	g_pManagement->Create_Effect(L"Hit_Slash_1", vPos);
-	g_pManagement->Create_Effect(L"Hit_Slash_2", vPos);
-	g_pManagement->Create_Effect(L"Hit_Slash_3", vPos);
-	g_pManagement->Create_Effect(L"Hit_Particle_Red", vPos);
-	g_pManagement->Create_Effect(L"Hit_Particle_Yellow", vPos);
-	
-	g_pManagement->Create_Effect(L"Hit_BloodParticle_0", vPos);
-	g_pManagement->Create_Effect(L"Hit_BloodParticle_1", vPos);
-	g_pManagement->Create_Effect(L"Hit_BloodParticle_2", vPos);
-	g_pManagement->Create_Effect(L"Hit_BloodParticle_3", vPos);
-	g_pManagement->Create_Effect(L"Hit_BloodParticle_4", vPos);
-	g_pManagement->Create_Effect(L"Hit_BloodParticle_5", vPos);
-
-	_v3 vDir = m_pTransform->Get_Axis(AXIS_Z);
-	_v3 vRight = V3_NULL;
-	memcpy(&vRight, &m_pTransform->Get_WorldMat().m[0][0], sizeof(_v3));
-
-	_float fMinus = (fAngle > 0) ? 1.f : -1.f;
-	_v3 vBloodDir = vDir + (vRight * fMinus);
-
-	g_pManagement->Create_DirEffect(L"Hit_Blood_Direction_0", vPos, vBloodDir);
-	g_pManagement->Create_DirEffect(L"Hit_Blood_Direction_1", vPos, vBloodDir);
-	g_pManagement->Create_DirEffect(L"Hit_Blood_Direction_2", vPos, vBloodDir);
-	g_pManagement->Create_DirEffect(L"Hit_Blood_Direction_3", vPos, vBloodDir);
-	g_pManagement->Create_DirEffect(L"Hit_Blood_Direction_4", vPos, vBloodDir);
-	g_pManagement->Create_DirEffect(L"Hit_Blood_Direction_5", vPos, vBloodDir);
-	g_pManagement->Create_DirEffect(L"Hit_Blood_Direction_6", vPos, vBloodDir);
-}
-
 HRESULT CPlayer::Add_Component()
 {
 	// For.Com_Transform
@@ -3715,10 +3661,6 @@ HRESULT CPlayer::Add_Component()
 
 	// for.Com_NavMesh
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"NavMesh", (CComponent**)&m_pNavMesh)))
-		return E_FAIL;
-
-	// For.Com_FXTexture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Noise", L"Com_FXTexture", (CComponent**)&m_pFXTexture)))
 		return E_FAIL;
 
 	//m_pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
@@ -3783,6 +3725,10 @@ HRESULT CPlayer::SetUp_ConstantTable()
 	if (FAILED(m_pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShader)))
+		return E_FAIL;
+	if (FAILED(m_pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	return NOERROR;

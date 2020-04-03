@@ -150,7 +150,7 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\0%29 Player\00%29 DrainWeapon">
       <UniqueIdentifier>{3b3dddb5-14c2-4366-8b67-4ae8f25b5dbd}</UniqueIdentifier>
- </Filter>
+    </Filter>
     <Filter Include="02.GameObject\Stage\6%29 Weapon">
       <UniqueIdentifier>{6c692abc-5cd0-46ed-bd2d-c6aa9c586e72}</UniqueIdentifier>
     </Filter>
@@ -368,7 +368,7 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Select_UI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\04. Select_UI</Filter>
-</ClInclude>
+    </ClInclude>
     <ClInclude Include="..\Headers\Drain_Weapon.h">
       <Filter>02.GameObject\Stage\0%29 Player\00%29 DrainWeapon</Filter>
     </ClInclude>

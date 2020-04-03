@@ -83,7 +83,6 @@ private:
 	CMesh_Dynamic*			m_pDynamicMesh = nullptr;
 	CNavMesh*				m_pNavMesh = nullptr;
 	CCollider*				m_pCollider = nullptr;
-	CTexture*				m_pFXTexture = nullptr;
 
 private:
 	vector<CCollider*>		m_vecPhsycColl;
@@ -150,10 +149,8 @@ private:
 private:
 	_float					m_fAmingRange = 20.f;
 
-private: //For Effect
-	_mat					m_matLastWVP;
-	_float					m_fFXSpeed = 0.f;
-	_int					m_iPass = 0;
+private: // For Dissolve
+	_float					m_fDissolveY = 0.f;
 
 private:
 	HRESULT Add_Component();
@@ -211,6 +208,7 @@ private:
 	virtual void Play_Buff();
 	virtual void Play_Hit();
 	virtual void Play_WeaponChange();
+	virtual void Play_Spawn();
 
 private:
 	virtual void Play_BloodSuck();
@@ -281,10 +279,6 @@ private:
 
 private:
 	virtual void Draw_Collider();
-
-private: //For.Effect
-	void Check_Dissolve(_double TimeDelta);
-	void Create_HittedEffect(_float fAngle);
 
 private:
 	virtual void Change_Weapon();

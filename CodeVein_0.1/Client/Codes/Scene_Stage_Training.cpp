@@ -24,6 +24,9 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 	if (FAILED(Ready_Layer_Enemies()))
 		return E_FAIL;
 
+	if (FAILED(Ready_Layer_Environment()))
+		return E_FAIL;
+
 	// 트레이닝 맵은 그냥 로드 가능해욤
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Stage_Training.dat");
 
@@ -78,13 +81,25 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Monster")))
 		return E_FAIL;
 
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Dummy", SCENE_STAGE, L"Layer_Monster")))
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Dummy", SCENE_STAGE, L"Layer_Monster")))
+	//	return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_PoisonButterfly", SCENE_STAGE, L"Layer_Monster")))
 		return E_FAIL;
 
 	// 보스 레이어만 미리 추가
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Boss")))
 		return E_FAIL;
 
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage_Training::Ready_Layer_Environment()
+{
+
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Sky", SCENE_STAGE, L"Layer_Sky")))
+		return E_FAIL;
 
 	return S_OK;
 }

@@ -15,6 +15,7 @@
 #include "Trail_VFX.h"
 
 #include "UI_Manager.h"
+#include "Item_Manager.h"
 
 #include "TestMonster.h"
 #include "PoisonButterfly.h"
@@ -30,7 +31,7 @@
 #include "BossDecoUI.h"
 #include "BossHP.h"
 
-#include "Item.h"
+//#include "Item.h"
 
 
 USING(Client)
@@ -84,12 +85,6 @@ unsigned int CALLBACK CLoading::Thread_Main(void* pArg)
 
 HRESULT CLoading::Ready_Effect(void)
 {
-	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/EffectMesh_Path.dat"); // 임시
-
-	// 스카이
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Sky", CSky::Create(m_pGraphicDev))))
-		return E_FAIL;
-
 #pragma region ButterFly
 	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke")))
 		return E_FAIL;
@@ -99,15 +94,17 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"ButterFly_RingLine_Distortion", true)))
 		return E_FAIL;
-	if (FAILED(Add_EffectPrototype(L"ButterFly_Distortion", true)))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_Distortion")))
 		return E_FAIL;
-	if (FAILED(Add_EffectPrototype(L"ButterFly_Distortion_Circle", true)))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_Distortion_Circle")))
 		return E_FAIL;
-	if (FAILED(Add_EffectPrototype(L"ButterFly_Softsmoke_Bottom", true)))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke_Bottom")))
 		return E_FAIL;
-	if (FAILED(Add_EffectPrototype(L"ButterFly_Smoke_Red_Particle", true)))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_Smoke_Red_Particle")))
 		return E_FAIL;
-	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke_Floor", true)))
+	if (FAILED(Add_EffectPrototype(L"ButterFly_Smoke_Red_Once")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke_Floor")))
 		return E_FAIL;
 
 	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke_Mist")))
@@ -362,18 +359,18 @@ _uint CLoading::Loading_Title()
 
 	//============================================================================================================
 
+	// 이펙트 메쉬 불러오는중
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_Effect_Path.dat");
 	// 이펙트 원형 생성
 	//============================================================================================================
 	cout << "이펙트 원형 생성중" << endl;
 	Ready_Effect();
 
-	// 이펙트 메쉬 불러오는중
-	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_Effect_Path.dat");
-
 	// UI 원형 생성
 	//============================================================================================================
 	cout << " UI 원형 생성중" << endl;
 	CUI_Manager::Get_Instance()->Add_UI_Prototype(m_pGraphicDev);
+	CItem_Manager::Get_Instance()->Add_Item_Prototype(m_pGraphicDev);
 
 	//============================================================================================================
 
@@ -474,7 +471,9 @@ _uint CLoading::Loading_Stage()
 	// 트레일
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SwordTrail", Engine::CTrail_VFX::Create(m_pGraphicDev))))
 		return E_FAIL;
-
+	// 스카이
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Sky", CSky::Create(m_pGraphicDev))))
+		return E_FAIL;
 	//============================================================================================================
 	m_bFinish = true;
 

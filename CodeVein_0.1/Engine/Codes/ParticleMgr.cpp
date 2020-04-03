@@ -268,6 +268,62 @@ void CParticleMgr::Create_Effect_NoPool(_tchar* szName, _v3 vPos, CTransform* pF
 	m_pManagement->Add_GameOject_ToLayer_NoClone(pEffect, SCENE_STAGE, L"Layer_Effect", nullptr);
 }
 
+void CParticleMgr::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol, CTransform* pHittedTrans, _float fPower)
+{
+	_v3 vAttackPos = pAttackCol->Get_CenterPos();
+	_v3 vHittedPos = pHittedCol->Get_CenterPos(); // pHittedTrans->Get_Pos() + _v3(0.f, 1.f, 0.f);
+
+	_v3 vRight = V3_NULL;
+	memcpy(&vRight, &pHittedTrans->Get_WorldMat().m[0][0], sizeof(_v3));
+
+	_v3 vDir = vHittedPos - vAttackPos;
+	vDir.y *= 0.5f; // y´Â ¹Ý°¨
+	D3DXVec3Normalize(&vDir, &vDir);
+	_float fAngle = acosf(D3DXVec3Dot(&vDir, &vRight));
+	fAngle *= -1.f;
+
+	//cout << D3DXToDegree(fAngle) << endl;
+	//cout << "[Attack Pos] " << vAttackPos.x << ", " << vAttackPos.y << ", " << vAttackPos.z << endl;
+	//cout << "[Hitted Pos] " << vHittedPos.x << ", " << vHittedPos.y << ", " << vHittedPos.z << endl;
+	//cout << vDir.x<<", "<< vDir.y<<", "<< vDir.z << endl;
+
+	// ÇÇ°¡ Ä®¿¡¼­ ³ª¿È
+
+	_v3 vAngle = pHittedTrans->Get_Angle();
+	vAngle.z += D3DXToDegree(fAngle);
+	Create_AngleEffect(L"Hit_SlashLine_0", vAttackPos, vAngle);
+
+	_tchar szBuff[256] = L"";
+	wsprintf(szBuff, L"Hit_Slash_Particle_%d", CCalculater::Random_Num(0, 3));
+	Create_Effect(szBuff, vAttackPos);
+
+	Create_Effect(L"Hit_Slash_0", vAttackPos);
+	Create_Effect(L"Hit_Slash_1", vAttackPos);
+	Create_Effect(L"Hit_Slash_2", vAttackPos);
+	Create_Effect(L"Hit_Slash_3", vAttackPos);
+	Create_Effect(L"Hit_Particle_Red", vAttackPos);
+	Create_Effect(L"Hit_Particle_Yellow", vAttackPos);
+
+	Create_Effect(L"Hit_BloodParticle_0", vAttackPos);
+	Create_Effect(L"Hit_BloodParticle_1", vAttackPos);
+	Create_Effect(L"Hit_BloodParticle_2", vAttackPos);
+	Create_Effect(L"Hit_BloodParticle_3", vAttackPos);
+	Create_Effect(L"Hit_BloodParticle_4", vAttackPos);
+	Create_Effect(L"Hit_BloodParticle_5", vAttackPos);
+
+	//_float fMinus = (fAngle > 0) ? 1.f : -1.f;
+	//_v3 vMyDir = pHittedTrans->Get_Axis(AXIS_Z);
+	_v3 vBloodDir = vDir * fPower;// +(vRight * fMinus);
+
+	Create_DirEffect(L"Hit_Blood_Direction_0", vAttackPos, vBloodDir);
+	Create_DirEffect(L"Hit_Blood_Direction_1", vAttackPos, vBloodDir);
+	Create_DirEffect(L"Hit_Blood_Direction_2", vAttackPos, vBloodDir);
+	Create_DirEffect(L"Hit_Blood_Direction_3", vAttackPos, vBloodDir);
+	Create_DirEffect(L"Hit_Blood_Direction_4", vAttackPos, vBloodDir);
+	Create_DirEffect(L"Hit_Blood_Direction_5", vAttackPos, vBloodDir);
+	Create_DirEffect(L"Hit_Blood_Direction_6", vAttackPos, vBloodDir);
+}
+
 HRESULT CParticleMgr::Update_Effect(const _double TimeDelta)
 {
 	_int iProgress;
