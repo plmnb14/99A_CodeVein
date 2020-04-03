@@ -19,8 +19,8 @@
 #include "Weapon_Inven.h"
 #include "Armor_Slot.h"
 #include "Armor_Inven.h"
-
-
+#include "NumberUI.h"
+#include "CursorUI.h"
 
 IMPLEMENT_SINGLETON(CUI_Manager)
 
@@ -73,7 +73,10 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ArmorInven", CArmor_Inven::Create(pDevice))))
 		return E_FAIL;
-
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_NumberUI", CNumberUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CursorUI", CCursorUI::Create(pDevice))))
+		return E_FAIL;
 	return NOERROR;
 }
 
@@ -90,6 +93,10 @@ HRESULT CUI_Manager::SetUp_UILayer()
 
 _int CUI_Manager::Update_UI()
 {
+	/*CExpendables_Inven* pExpendInven = static_cast<CExpendables_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendablesInven", SCENE_STAGE));
+	CMaterial_Inven*	pMaterialInven = static_cast<CMaterial_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_MaterialInven", SCENE_STAGE));
+	CWeapon_Inven* pWeaponInven = static_cast<CWeapon_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponInven", SCENE_STAGE));
+	CArmor_Inven* pArmorInven = static_cast<CArmor_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ArmorInven", SCENE_STAGE));*/
 	
 	
 	return 0;

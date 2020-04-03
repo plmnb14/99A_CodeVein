@@ -211,6 +211,12 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\04. Select_UI">
       <UniqueIdentifier>{6be15063-782e-4209-96d4-18ea99a6801b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\05. NumberUI">
+      <UniqueIdentifier>{06250359-a0c3-4de4-afff-90ff48c1c972}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\06. CursorUI">
+      <UniqueIdentifier>{6d74b162-2001-4bc6-8023-f3d2ca758c6e}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -372,6 +378,12 @@
     <ClInclude Include="..\Headers\Drain_Weapon.h">
       <Filter>02.GameObject\Stage\0%29 Player\00%29 DrainWeapon</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\NumberUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\05. NumberUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\CursorUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\06. CursorUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -523,6 +535,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Drain_Weapon.cpp">
       <Filter>02.GameObject\Stage\0%29 Player\00%29 DrainWeapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\NumberUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\05. NumberUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\CursorUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\06. CursorUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

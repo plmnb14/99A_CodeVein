@@ -26,6 +26,8 @@ HRESULT CMaterial_Slot::Ready_GameObject(void * pArg)
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
+	m_bIsActive = false;
+
 	CUI::UI_DESC* pDesc = new CUI::UI_DESC;
 	pDesc->fPosX = m_fPosX;
 	pDesc->fPosY = m_fPosY;
@@ -34,6 +36,23 @@ HRESULT CMaterial_Slot::Ready_GameObject(void * pArg)
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_SelectUI", SCENE_STAGE, L"Layer_SelectUI", pDesc);
 	m_pSelectUI = static_cast<CSelect_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_SelectUI", SCENE_STAGE));
 
+	pDesc = new CUI::UI_DESC;
+	pDesc->fPosX = m_fPosX;
+	pDesc->fPosY = m_fPosY;
+	pDesc->fSizeX = m_fSizeX;
+	pDesc->fSizeY = m_fSizeY;
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_CursorUI", SCENE_STAGE, L"Layer_CursorUI", pDesc);
+	m_pCursorUI = static_cast<CCursorUI*>(g_pManagement->Get_GameObjectBack(L"Layer_CursorUI", SCENE_STAGE));
+
+	pDesc = new CUI::UI_DESC;
+	pDesc->fPosX = m_fPosX - m_fSizeX * 0.25f;
+	pDesc->fPosY = m_fPosY + m_fSizeY * 0.25f;
+	pDesc->fSizeX = m_fSizeX * 0.25f;
+	pDesc->fSizeY = m_fSizeY * 0.25f;
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NumberUI", SCENE_STAGE, L"Layer_NumberUI", pDesc);
+	m_pNumberUI = static_cast<CNumberUI*>(g_pManagement->Get_GameObjectBack(L"Layer_NumberUI", SCENE_STAGE));
+
+	
 	return NOERROR;
 }
 
@@ -58,7 +77,32 @@ _int CMaterial_Slot::Update_GameObject(_double TimeDelta)
 		m_pSelectUI->Set_Active(m_bIsActive);
 	}
 		
+	if (m_pCursorUI)
+	{
+		m_pCursorUI->Set_UI_Pos(m_fPosX, m_fPosY);
+		m_pCursorUI->Set_UI_Size(m_fSizeX, m_fSizeY);
+		m_pCursorUI->Set_ViewZ(m_fViewZ - 0.2f);
 
+		if (m_vecMaterial.size() > 0)
+			m_pCursorUI->Set_Active(m_bIsActive);
+		else
+			m_pCursorUI->Set_Active(false);
+
+		m_pCursorUI->Set_CursorColl(Pt_InRect());
+	}
+
+	if (m_pNumberUI)
+	{
+		m_pNumberUI->Set_Active(m_bIsActive);
+
+		if (m_vecMaterial.size() == 0)
+			m_pNumberUI->Set_Active(false);
+
+		m_pNumberUI->Set_UI_Index(m_vecMaterial.size());
+		m_pNumberUI->Set_ViewZ(m_fViewZ - 0.1f);
+	}
+
+	
 	return NO_EVENT;
 }
 
@@ -98,7 +142,7 @@ HRESULT CMaterial_Slot::Render_GameObject()
 
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(0);
+	m_pShaderCom->Begin_Pass(1);
 
 	m_pBufferCom->Render_VIBuffer();
 
@@ -215,8 +259,6 @@ CGameObject * CMaterial_Slot::Clone_GameObject(void * pArg)
 
 void CMaterial_Slot::Free()
 {
-	
-
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom);

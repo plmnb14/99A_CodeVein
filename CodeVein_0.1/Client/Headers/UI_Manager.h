@@ -19,11 +19,6 @@ public:
 	HRESULT Add_UI_Prototype(_Device pDevice);
 	HRESULT SetUp_UILayer();
 	_int	Update_UI();
-	
-private:
-	_bool m_bIsOpenEx = false;
-	_bool m_bIsOpenMat = false;
-	_bool m_bIsOpenWea = false;
 
 public:
 	virtual void Free();

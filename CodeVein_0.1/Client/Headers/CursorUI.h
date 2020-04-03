@@ -3,21 +3,17 @@
 #include "Client_Defines.h"
 #include "UI.h"
 
-#include "Expendables_Slot.h"
-
 BEGIN(Client)
 
-class CButton_UI;
-class CNumberUI;
-class CQuickSlot final : public CUI
+class CCursorUI final : public CUI
 {
 private:
-	explicit CQuickSlot(_Device pDevice);
-	explicit CQuickSlot(const CQuickSlot& rhs);
-	virtual ~CQuickSlot() = default;
+	explicit CCursorUI(_Device pDevice);
+	explicit CCursorUI(const CCursorUI& rhs);
+	virtual ~CCursorUI() = default;
 
 public:
-	
+	void Set_CursorColl(_bool bIsColl) { m_bIsCollMouse = bIsColl; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -29,7 +25,6 @@ public:
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
-	void	SetUp_Default();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -39,16 +34,13 @@ private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 private:
-	vector<CExpendables_Slot*>	m_vecQuickSlot;
-	_uint						m_iSelect = 0;
-	vector<CButton_UI*>			m_vecDecoUI;
-	CNumberUI*					m_pNumberUI = nullptr;
+	_bool					m_bIsCollMouse = false;
+	_bool					m_bIsPointOut = false;
 
 public:
-	static CQuickSlot*		Create(_Device pGraphic_Device);
+	static CCursorUI*		Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);
 	virtual void			Free();
 };
 
 END
-

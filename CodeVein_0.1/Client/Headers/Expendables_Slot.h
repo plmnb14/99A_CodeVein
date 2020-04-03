@@ -6,6 +6,8 @@
 
 #include "Expendables.h"
 #include "Select_UI.h"
+#include "NumberUI.h"
+#include "CursorUI.h"
 
 BEGIN(Client)
 
@@ -20,6 +22,9 @@ private:
 public:
 	vector<CExpendables*> Get_Expendables() { return m_vecExpendables; }
 	_bool Get_Select() { return m_bIsSelect; }
+	CNumberUI* Get_NumberUI() { return m_pNumberUI; }
+
+public:
 	void Set_Select(_bool bIsSelect);
 
 public:
@@ -41,6 +46,7 @@ public:
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
+	void	SetUp_Default();
 	
 
 private:
@@ -53,6 +59,8 @@ private:
 	vector<CExpendables*>	m_vecExpendables;
 	CSelect_UI*				m_pSelectUI = nullptr;
 	_bool					m_bIsSelect = false;
+	CNumberUI*				m_pNumberUI = nullptr;
+	CCursorUI*				m_pCursorUI = nullptr;
 
 public:
 	static CExpendables_Slot*	Create(_Device pGraphic_Device);

@@ -2,16 +2,19 @@
 #include "..\Headers\QuickSlot.h"
 
 #include "Expendables_Inven.h"
-
+#include "Button_UI.h"
+#include "NumberUI.h"
 
 CQuickSlot::CQuickSlot(_Device pDevice)
 	: CUI(pDevice)
 {
+
 }
 
 CQuickSlot::CQuickSlot(const CQuickSlot & rhs)
 	: CUI(rhs)
 {
+	
 }
 
 
@@ -27,12 +30,16 @@ HRESULT CQuickSlot::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
+	
 	CUI::Ready_GameObject(pArg);
 
 	m_fPosX = 120.f;
-	m_fPosY = 630.f;
+	m_fPosY = 500.f;
 	m_fSizeX = 50.f;
 	m_fSizeY = 50.f;
+
+
+	SetUp_Default();
 
 	return NOERROR;
 }
@@ -46,19 +53,23 @@ _int CQuickSlot::Update_GameObject(_double TimeDelta)
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
 
-	
-
 	if (m_vecQuickSlot.size() > m_iSelect)
+	{
 		m_iIndex = m_vecQuickSlot[m_iSelect]->Get_Type();
-	else m_iIndex = CExpendables::EXPEND_END;
-
+		m_pNumberUI->Set_UI_Index(m_vecQuickSlot[m_iSelect]->Get_NumberUI()->Get_UI_Index());
+	}
+		
+	else
+	{
+		m_iIndex = CExpendables::EXPEND_END;
+		m_pNumberUI->Set_UI_Index(0);
+	}
 	
-
+	// 소비템 창에서 실시간으로 퀵슬롯 등록 정보를 얻어와서 벡터에 저장	
 	m_vecQuickSlot = *static_cast<CExpendables_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendablesInven", SCENE_STAGE))->Get_QuickSlot();
-
-	if(m_vecQuickSlot.size() > 0)
-		cout << m_vecQuickSlot[0]->Get_Type() << endl;
 	
+	
+	// ADD: 퀵슬롯 ->  방향으로 
 	if (g_pInput_Device->Key_Up(DIK_ADD))
 	{
 		if (m_iSelect >= m_vecQuickSlot.size() - 1)
@@ -67,6 +78,7 @@ _int CQuickSlot::Update_GameObject(_double TimeDelta)
 			++m_iSelect;
 
 	}
+	// SUBTRACT: 퀵슬롯 <- 방향으로
 	if (g_pInput_Device->Key_Up(DIK_SUBTRACT))
 	{
 		if (m_iSelect > 0)
@@ -74,6 +86,8 @@ _int CQuickSlot::Update_GameObject(_double TimeDelta)
 		else
 			m_iSelect = m_vecQuickSlot.size() - 1;
 	}
+
+	
 	return NO_EVENT;
 }
 
@@ -139,7 +153,7 @@ HRESULT CQuickSlot::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Expendables", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_QuickSlotUI", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -171,6 +185,49 @@ HRESULT CQuickSlot::SetUp_ConstantTable()
 
 	return NOERROR;
 }
+
+void CQuickSlot::SetUp_Default()
+{
+	CUI::UI_DESC* pDesc = nullptr;
+
+	pDesc = new CUI::UI_DESC;
+	pDesc->fPosX = m_fPosX - 30.f;
+	pDesc->fPosY = m_fPosY;
+	pDesc->fSizeX = 20.f;
+	pDesc->fSizeY = 20.f;
+	pDesc->iIndex = 5;
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ButtonUI", SCENE_STAGE, L"Layer_DecoUI", pDesc);
+	m_vecDecoUI.push_back(static_cast<CButton_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_DecoUI", SCENE_STAGE)));
+
+	pDesc = new CUI::UI_DESC;
+	pDesc->fPosX = m_fPosX + 30.f;
+	pDesc->fPosY = m_fPosY;
+	pDesc->fSizeX = 20.f;
+	pDesc->fSizeY = 20.f;
+	pDesc->iIndex = 6;
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ButtonUI", SCENE_STAGE, L"Layer_DecoUI", pDesc);
+	m_vecDecoUI.push_back(static_cast<CButton_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_DecoUI", SCENE_STAGE)));
+
+	pDesc = new CUI::UI_DESC;
+	pDesc->fPosX = m_fPosX - 15.f;
+	pDesc->fPosY = m_fPosY + 70.f;
+	pDesc->fSizeX = 30.f;
+	pDesc->fSizeY = 30.f;
+	pDesc->iIndex = 7;
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ButtonUI", SCENE_STAGE, L"Layer_DecoUI", pDesc);
+	m_vecDecoUI.push_back(static_cast<CButton_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_DecoUI", SCENE_STAGE)));
+
+	pDesc = new CUI::UI_DESC;
+	pDesc->fPosX = m_fPosX;
+	pDesc->fPosY = m_fPosY + 30.f;
+	pDesc->fSizeX = 20.f;
+	pDesc->fSizeY = 20.f;
+	pDesc->iIndex = 0;
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NumberUI", SCENE_STAGE, L"Layer_NumberUI", pDesc);
+	m_pNumberUI = static_cast<CNumberUI*>(g_pManagement->Get_GameObjectBack(L"Layer_NumberUI", SCENE_STAGE));
+	m_pNumberUI->Set_Active(true);
+}
+
 
 
 CQuickSlot * CQuickSlot::Create(_Device pGraphic_Device)

@@ -30,10 +30,10 @@ HRESULT CExpendables_Inven::Ready_GameObject(void * pArg)
 
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = WINCX * 0.75f;
+	m_fPosX = WINCX * 0.3f;
 	m_fPosY = WINCY * 0.5f;
-	m_fSizeX = WINCX * 0.5f;
-	m_fSizeY = WINCY;
+	m_fSizeX = 352.f;
+	m_fSizeY = 471.f;
 
 	m_fViewZ = 1.f;
 
@@ -42,25 +42,26 @@ HRESULT CExpendables_Inven::Ready_GameObject(void * pArg)
 	// Slot Create
 	CUI::UI_DESC* pDesc = nullptr;
 	CExpendables_Slot* pExSlot = nullptr;
-	for (_uint i = 0; i < 2; ++i)
+	for (_uint i = 0; i < 6; ++i)
 	{
 		for (_uint j = 0; j < 5; ++j)
 		{
 			pDesc = new CUI::UI_DESC;
-			pDesc->fPosX = m_fPosX - 180.f + 90.f * j;
-			pDesc->fPosY = m_fPosY - 100.f + 90.f * i;
-			pDesc->fSizeX = 80.f;
-			pDesc->fSizeY = 80.f;
+			pDesc->fPosX = m_fPosX - 120.f + 60.f * j;
+			pDesc->fPosY = m_fPosY - 130.f + 60.f * i;
+			pDesc->fSizeX = 50.f;
+			pDesc->fSizeY = 50.f;
 			g_pManagement->Add_GameObject_ToLayer(L"GameObject_ExpendSlot", SCENE_STAGE, L"Layer_ExpendSlot", pDesc);
 			pExSlot = static_cast<CExpendables_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendSlot", SCENE_STAGE));
 
 			m_vecSlot.push_back(pExSlot);
 		}
-
 	}
+
 	Add_Expendables(CExpendables::EXPEND_1);
 	Add_Expendables(CExpendables::EXPEND_2);
 	Add_Expendables(CExpendables::EXPEND_3);
+	Add_Expendables(CExpendables::EXPEND_4);
 	return NOERROR;
 }
 
@@ -203,10 +204,11 @@ void CExpendables_Inven::Click_Inven()
 			}
 		}
 	}
-	
 
-	//if (g_pInput_Device->Key_Up(DIK_6))
-	//	Sell_Expendables(2);
+	if (g_pInput_Device->Key_Up(DIK_6))
+		Add_Expendables(CExpendables::EXPEND_1);
+	if (g_pInput_Device->Key_Up(DIK_7))
+		Add_Expendables(CExpendables::EXPEND_1);
 }
 
 void CExpendables_Inven::Add_Expendables(CExpendables::EXPEND_TYPE eType)
@@ -255,11 +257,11 @@ void CExpendables_Inven::Load_Expendables(CExpendables* pExpendables, _uint iInd
 {
 	if (nullptr == pExpendables)
 		return;
-	if (m_vecSlot.size() < iIndex)
+	if (m_vecSlot.size() <= iIndex)
 		return;
 
-	if (m_vecSlot[iIndex]->Get_Type() == pExpendables->Get_Type() ||
-		m_vecSlot[iIndex]->Get_Size() == 0)
+	if ((m_vecSlot[iIndex]->Get_Type() == pExpendables->Get_Type() ||
+		m_vecSlot[iIndex]->Get_Size() == 0) && m_vecSlot[iIndex]->Get_Size() < 9)
 		m_vecSlot[iIndex]->Input_Item(pExpendables);
 	else
 		Load_Expendables(pExpendables, iIndex + 1);

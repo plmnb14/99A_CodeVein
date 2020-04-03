@@ -176,6 +176,7 @@
     <ClInclude Include="..\Headers\BossHP.h" />
     <ClInclude Include="..\Headers\Button_UI.h" />
     <ClInclude Include="..\Headers\Client_Defines.h" />
+    <ClInclude Include="..\Headers\CursorUI.h" />
     <ClInclude Include="..\Headers\Drain_Weapon.h" />
     <ClInclude Include="..\Headers\Dummy_Target.h" />
     <ClInclude Include="..\Headers\Expendables.h" />
@@ -187,6 +188,7 @@
     <ClInclude Include="..\Headers\Material.h" />
     <ClInclude Include="..\Headers\Material_Inven.h" />
     <ClInclude Include="..\Headers\Material_Slot.h" />
+    <ClInclude Include="..\Headers\NumberUI.h" />
     <ClInclude Include="..\Headers\PoisonBullet.h" />
     <ClInclude Include="..\Headers\GunGenji.h" />
     <ClInclude Include="..\Headers\PoisonButterfly.h" />
@@ -230,6 +232,7 @@
     <ClCompile Include="..\Codes\BossDecoUI.cpp" />
     <ClCompile Include="..\Codes\BossHP.cpp" />
     <ClCompile Include="..\Codes\Button_UI.cpp" />
+    <ClCompile Include="..\Codes\CursorUI.cpp" />
     <ClCompile Include="..\Codes\Drain_Weapon.cpp" />
     <ClCompile Include="..\Codes\Dummy_Target.cpp" />
     <ClCompile Include="..\Codes\Expendables.cpp" />
@@ -241,6 +244,7 @@
     <ClCompile Include="..\Codes\Material.cpp" />
     <ClCompile Include="..\Codes\Material_Inven.cpp" />
     <ClCompile Include="..\Codes\Material_Slot.cpp" />
+    <ClCompile Include="..\Codes\NumberUI.cpp" />
     <ClCompile Include="..\Codes\PoisonBullet.cpp" />
     <ClCompile Include="..\Codes\GunGenji.cpp" />
     <ClCompile Include="..\Codes\PoisonButterfly.cpp" />

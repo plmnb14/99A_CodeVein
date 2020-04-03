@@ -25,10 +25,10 @@ HRESULT CMaterial_Inven::Ready_GameObject(void * pArg)
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = WINCX * 0.75f;
+	m_fPosX = WINCX * 0.3f;
 	m_fPosY = WINCY * 0.5f;
-	m_fSizeX = WINCX * 0.5f;
-	m_fSizeY = WINCY;
+	m_fSizeX = 352.f;
+	m_fSizeY = 471.f;
 
 	m_fViewZ = 2.f;
 
@@ -37,16 +37,15 @@ HRESULT CMaterial_Inven::Ready_GameObject(void * pArg)
 	// Slot Create
 	CUI::UI_DESC* pDesc = nullptr;
 	CMaterial_Slot* pSlot = nullptr;
-	for (_uint i = 0; i < 2; ++i)
+	for (_uint i = 0; i < 6; ++i)
 	{
 		for (_uint j = 0; j < 5; ++j)
 		{
 			pDesc = new CUI::UI_DESC;
-			pDesc->fPosX = m_fPosX - 180.f + 90.f * j;
-			pDesc->fPosY = m_fPosY - 100.f + 90.f * i;
-			pDesc->fSizeX = 80.f;
-			pDesc->fSizeY = 80.f;
-			pDesc->iIndex = 0;
+			pDesc->fPosX = m_fPosX - 120.f + 60.f * j;
+			pDesc->fPosY = m_fPosY - 130.f + 60.f * i;
+			pDesc->fSizeX = 50.f;
+			pDesc->fSizeY = 50.f;
 			g_pManagement->Add_GameObject_ToLayer(L"GameObject_MaterialSlot", SCENE_STAGE, L"Layer_MaterialSlot", pDesc);
 			pSlot = static_cast<CMaterial_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_MaterialSlot", SCENE_STAGE));
 			m_vecMaterialSlot.push_back(pSlot);
@@ -54,7 +53,12 @@ HRESULT CMaterial_Inven::Ready_GameObject(void * pArg)
 
 	}
 
-
+	LOOP(16)
+		Add_Material(CMaterial::MATERIAL_1);
+	LOOP(16)
+		Add_Material(CMaterial::MATERIAL_2);
+	LOOP(16)
+		Add_Material(CMaterial::MATERIAL_3);
 	return NOERROR;
 }
 
@@ -72,12 +76,6 @@ _int CMaterial_Inven::Update_GameObject(_double TimeDelta)
 	
 	for (auto& pSlot : m_vecMaterialSlot)
 		pSlot->Set_Active(m_bIsActive);
-
-	if (g_pInput_Device->Key_Up(DIK_8))
-		Add_Material(CMaterial::MATERIAL_1);
-	if (g_pInput_Device->Key_Up(DIK_9))
-		Sell_Material(3);
-	cout << m_vecMaterialSlot[0]->Get_Size() << endl;
 
 	return NO_EVENT;
 }
@@ -120,7 +118,7 @@ HRESULT CMaterial_Inven::Render_GameObject()
 
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(0);
+	m_pShaderCom->Begin_Pass(1);
 
 	// 버퍼를 렌더링한다.
 	// (인덱스버퍼(012023)에 보관하고있는 인덱스를 가진 정점을 그리낟.)
@@ -181,11 +179,22 @@ HRESULT CMaterial_Inven::SetUp_ConstantTable()
 
 void CMaterial_Inven::Load_Materials(CMaterial * pMaterial, _uint iIndex)
 {
-	if (iIndex > m_vecMaterialSlot.size())
+	/*if (iIndex > m_vecMaterialSlot.size())
 		return;
 
-	if (m_vecMaterialSlot[iIndex]->Get_Type() == pMaterial->Get_Type() ||
-		m_vecMaterialSlot[iIndex]->Get_Size() == 0)
+	if ((m_vecMaterialSlot[iIndex]->Get_Type() == pMaterial->Get_Type() ||
+		m_vecMaterialSlot[iIndex]->Get_Size() == 0) && m_vecMaterialSlot[iIndex]->Get_Size() < 9)
+		m_vecMaterialSlot[iIndex]->Input_Item(pMaterial);
+	else
+		Load_Materials(pMaterial, iIndex + 1);*/
+
+	if (nullptr == pMaterial)
+		return;
+	if (m_vecMaterialSlot.size() <= iIndex)
+		return;
+
+	if ((m_vecMaterialSlot[iIndex]->Get_Type() == pMaterial->Get_Type() ||
+		m_vecMaterialSlot[iIndex]->Get_Size() == 0) && m_vecMaterialSlot[iIndex]->Get_Size() < 9)
 		m_vecMaterialSlot[iIndex]->Input_Item(pMaterial);
 	else
 		Load_Materials(pMaterial, iIndex + 1);
@@ -193,10 +202,21 @@ void CMaterial_Inven::Load_Materials(CMaterial * pMaterial, _uint iIndex)
 
 void CMaterial_Inven::Add_Material(CMaterial::MATERIAL_TYPE eType)
 {
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_Material", SCENE_STAGE, L"Layer_Material");
+	/*g_pManagement->Add_GameObject_ToLayer(L"GameObject_Material", SCENE_STAGE, L"Layer_Material");
 	CMaterial* pMaterial = static_cast<CMaterial*>(g_pManagement->Get_GameObjectBack(L"Layer_Material", SCENE_STAGE));
 	pMaterial->Set_Type(eType);
 	
+	Load_Materials(pMaterial, 0);*/
+
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_Material", SCENE_STAGE, L"Layer_Material");
+	CMaterial* pMaterial = static_cast<CMaterial*>(g_pManagement->Get_GameObjectBack(L"Layer_Material", SCENE_STAGE));
+	if (nullptr == pMaterial)
+	{
+		MSG_BOX("pMaterial is null");
+		return;
+	}
+	pMaterial->Set_Type(eType);
+
 	Load_Materials(pMaterial, 0);
 }
 
