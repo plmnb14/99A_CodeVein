@@ -779,7 +779,8 @@ void CSwordGenji::Check_Collider()
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
 			
 			Start_Dissolve(0.7f, false, true);
-			g_pManagement->Create_Effect(L"SpawnParticle", m_pTransformCom->Get_Pos());
+			m_pSword->Start_Dissolve();
+			g_pManagement->Create_Spawn_Effect(m_pTransformCom->Get_Pos());
 		}
 	}
 	else

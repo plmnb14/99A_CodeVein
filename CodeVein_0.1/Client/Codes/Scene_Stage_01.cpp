@@ -88,7 +88,7 @@ HRESULT CScene_Stage_01::Ready_LightDesc()
 	LightDesc.Ambient = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	// In.WorldSpace
-	LightDesc.Direction = _v3(1.f, 1.f, -1.f);
+	LightDesc.Direction = _v3(1.f, 0.f, -1.f);
 
 	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
 		return E_FAIL;
