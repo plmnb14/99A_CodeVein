@@ -27,9 +27,6 @@ HRESULT CPlayer::Ready_GameObject_Prototype()
 
 HRESULT CPlayer::Ready_GameObject(void * pArg)
 {
-	//if (m_pTarget == nullptr)
-	//	m_bOnAiming = false;
-
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 
@@ -40,7 +37,6 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 
 	Ready_Weapon();
 	Ready_DrainWeapon();
-
 
 	return NOERROR;
 }
