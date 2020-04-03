@@ -42,7 +42,7 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 	m_pNavMesh = static_cast<Engine::CNavMesh*>(g_pManagement->Clone_Component(SCENE_STATIC, L"NavMesh"));
 	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 
-	CNavMesh* pNavMesh = static_cast<Engine::CNavMesh*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE)->Get_Component(L"NavMesh"));
+	CNavMesh* pNavMesh = static_cast<Engine::CNavMesh*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE)->Get_Component(L"Com_NavMesh"));
 	pNavMesh->Reset_NaviMesh();
 	pNavMesh->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 
@@ -95,9 +95,6 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Dummy", SCENE_STAGE, L"Layer_Monster")))
 	//	return E_FAIL;
-
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_PoisonButterfly", SCENE_STAGE, L"Layer_Monster")))
-		return E_FAIL;
 	
 	// °ËÀº ¼º°Ô
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_BlackUrchin", SCENE_STAGE, L"Layer_Monster")))
@@ -106,17 +103,17 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_BlackWolf", SCENE_STAGE, L"Layer_Monster")))
 	//	return E_FAIL;
 
-	//// °Ë°ÕÁö
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_SwordGenji", SCENE_STAGE, L"Layer_Monster", &CSwordGenji::INFO(CSwordGenji::White))))
-	//	return E_FAIL;
+	// °Ë°ÕÁö
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_SwordGenji", SCENE_STAGE, L"Layer_Monster", &CSwordGenji::INFO(CSwordGenji::White))))
+		return E_FAIL;
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_SwordGenji", SCENE_STAGE, L"Layer_Monster", &CSwordGenji::INFO(CSwordGenji::Normal))))
 	//	return E_FAIL;
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_SwordGenji", SCENE_STAGE, L"Layer_Monster", &CSwordGenji::INFO(CSwordGenji::Jungle))))
 	//	return E_FAIL;
 
 	//// ÃÑ°ÕÁö
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_GunGenji", SCENE_STAGE, L"Layer_Monster", &CGunGenji::INFO(CGunGenji::White))))
-	//	return E_FAIL;
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_GunGenji", SCENE_STAGE, L"Layer_Monster", &CGunGenji::INFO(CGunGenji::White))))
+		return E_FAIL;
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_GunGenji", SCENE_STAGE, L"Layer_Monster", &CGunGenji::INFO(CGunGenji::Normal))))
 	//	return E_FAIL;
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_GunGenji", SCENE_STAGE, L"Layer_Monster", &CGunGenji::INFO(CGunGenji::Jungle))))

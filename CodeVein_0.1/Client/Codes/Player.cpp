@@ -38,7 +38,6 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 	Ready_Weapon();
 	Ready_DrainWeapon();
 
-
 	return NOERROR;
 }
 
@@ -692,7 +691,7 @@ void CPlayer::Target_AimChasing()
 	if (m_bHaveAimingTarget)
 		return;
 
-	for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Dummy", SCENE_STAGE))
+	for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE))
 	{
 		_float fLength = D3DXVec3Length(&(TARGET_TO_TRANS(iter)->Get_Pos() - m_pTransform->Get_Pos()));
 
@@ -810,7 +809,7 @@ void CPlayer::Key_Movement_Down()
 
 			if (m_tInfo.fMoveSpeed_Max > m_tInfo.fMoveSpeed_Cur)
 			{
-				m_tInfo.fMoveSpeed_Cur += 0.1f + m_tInfo.fMoveAccel_Cur * m_tInfo.fMoveAccel_Cur * DELTA_60;
+				m_tInfo.fMoveSpeed_Cur += 1.f + m_tInfo.fMoveAccel_Cur * m_tInfo.fMoveAccel_Cur * DELTA_60;
 				m_tInfo.fMoveAccel_Cur += DELTA_60;
 			}
 		}
@@ -994,6 +993,9 @@ void CPlayer::Key_Attack()
 			{
 				m_tInfo.fMoveSpeed_Cur = 0.f;
 				m_tInfo.fMoveAccel_Cur = 0.f;
+
+				m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
+				m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(true);
 
 				if (m_bSprint)
 				{
@@ -2456,7 +2458,7 @@ void CPlayer::Play_Spawn()
 	{
 		_v3 vPos = m_pTransform->Get_Pos();
 		vPos.y += m_fDissolveY;
-		g_pManagement->Create_Effect(L"SpawnParticle", vPos);
+		g_pManagement->Create_Spawn_Effect(vPos);
 		m_fDissolveY += DELTA_60 * 1.3f;
 	}
 	else
@@ -3721,21 +3723,179 @@ void CPlayer::Trigger_Event()
 
 	case 1:
 	{
+		switch (dwCellIdx)
+		{
+		case 41:
+		{
+			if (m_bSpawnTrigger[1] == false)
+			{
+				m_bSpawnTrigger[1] = true;
+
+				_v3 vPos[2] = {
+					_v3(95.754f, -17.15f, 106.058f),
+					_v3(87.195f, -17.15f, 105.301f) 
+				};
+
+				CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White));
+				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[0]);	// 위치
+				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
+				TARGET_TO_NAV(pInstance)->Set_Index(55);
+				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+
+				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle));
+				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[1]);	// 위치
+				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
+				TARGET_TO_NAV(pInstance)->Set_Index(63);
+				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+			}
+
+			break;
+		}
+		}
+
 		break;
 	}
 
 	case 2:
 	{
+		switch (dwCellIdx)
+		{
+		case 0:
+		{
+			if (m_bSpawnTrigger[2] == false)
+			{
+				m_bSpawnTrigger[2] = true;
+
+				_v3 vPos[5] = {
+					_v3(61.826f, -17.15f, 115.219f),
+					_v3(65.298f, -17.15f, 125.649f),
+					_v3(62.689f, -17.15f, 127.093f),
+					_v3(71.845f, -17.15f, 132.392f),
+					_v3(102.201f, -17.15f, 141.943f) };
+
+				CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White));
+				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[0]);	// 위치
+				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
+				TARGET_TO_NAV(pInstance)->Set_Index(28);
+				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+
+				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle));
+				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[1]);	// 위치
+				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
+				TARGET_TO_NAV(pInstance)->Set_Index(34);
+				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+
+				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CSwordGenji::INFO(CSwordGenji::White));
+				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[2]);	// 위치
+				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
+				TARGET_TO_NAV(pInstance)->Set_Index(138);
+				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+
+				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CSwordGenji::INFO(CSwordGenji::White));
+				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[3]);	// 위치
+				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
+				TARGET_TO_NAV(pInstance)->Set_Index(45);
+				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+
+				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal));
+				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[4]);	// 위치
+				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
+				TARGET_TO_NAV(pInstance)->Set_Index(72);
+				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+			}
+
+			break;
+		}
+
+		case 104:
+		{
+			if (m_bSpawnTrigger[3] == false)
+			{
+				m_bSpawnTrigger[3] = true;
+
+				_v3 vPos[2] = {
+					_v3(85.174f, 0.1f, 154.160f),
+					_v3(87.157f, 0.1f, 167.728f) };
+
+				CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White));
+				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[0]);	// 위치
+				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
+				TARGET_TO_NAV(pInstance)->Set_Index(25);
+				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+
+				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle));
+				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[1]);	// 위치
+				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
+				TARGET_TO_NAV(pInstance)->Set_Index(36);
+				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+			}
+
+			break;
+		}
+		}
+
 		break;
 	}
 
 	case 3:
-	{
+	{		
+		switch (dwCellIdx)
+		{
+		case 66:
+		{
+			if (m_bSpawnTrigger[4] == false)
+			{
+				m_bSpawnTrigger[4] = true;
+
+				_v3 vPos = _v3(43.606f, 0.1f, 151.288f);
+
+				CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White));
+				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos);	// 위치
+				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
+				TARGET_TO_NAV(pInstance)->Set_Index(126);
+				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+			}
+
+			break;
+		}
+		}
+
 		break;
 	}
 
 	case 4:
 	{
+		switch (dwCellIdx)
+		{
+		case 52:
+		{
+			if (m_bSpawnTrigger[5] == false)
+			{
+				m_bSpawnTrigger[5] = true;
+
+				_v3 vPos = _v3(-0.955f, 0.8f, -5.525f);
+
+				CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_PoisonButterfly" , nullptr);
+				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos);	// 위치
+				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(6);
+				TARGET_TO_NAV(pInstance)->Set_Index(2);
+				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+			}
+
+			break;
+		}
+		}
 		break;
 	}
 
@@ -3876,6 +4036,9 @@ void CPlayer::Reset_BattleState()
 	m_sHeavyAtkCnt = 0;
 
 	m_fChargeTimer_Cur = 0.f;
+
+	m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
+	m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(false);
 
 	LOOP(16)
 		m_bEventTrigger[i] = false;

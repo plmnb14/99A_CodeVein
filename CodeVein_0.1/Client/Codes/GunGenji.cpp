@@ -322,6 +322,11 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
 
+	// »À À§Ä¡ ¾÷µ¥ÀÌÆ®
+	Update_Bone_Of_BlackBoard();
+	// BB Á÷Á¢ ¾÷µ¥ÀÌÆ®
+	Update_Value_Of_BB();
+
 	// Á×¾úÀ» °æ¿ì
 	if (m_bIsDead)
 	{
@@ -422,6 +427,9 @@ CBT_Composite_Node * CGunGenji::Shot()
 	CBT_ChaseDir* FixDir0 = Node_ChaseDir("¹æÇâ °íÁ¤", L"Player_Pos", 1, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("¹æÇâ µ¹¸®±â", L"Player_Pos", 0.2);
 
+	CBT_CreateBullet* Bullet0 = Node_CreateBullet("°ÕÁö ÃÑ¾Ë", L"Monster_GenjiBullet", L"CreateBulletPos", L"GunDir", 7, 3, 1.725, 1, 1, 0, CBT_Service_Node::Finite);
+	Root_Parallel->Add_Service(Bullet0);
+	
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani44);
 	MainSeq->Add_Child(Show_Ani42);
@@ -444,6 +452,11 @@ CBT_Composite_Node * CGunGenji::Tumbling_Shot()
 	CBT_Wait* Wait0 = Node_Wait("´ë±â", 0.3, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("ÀÌµ¿", -1, 1.3, 0);
 
+	CBT_CreateBullet* Bullet0 = Node_CreateBullet("°ÕÁö ÃÑ¾Ë", L"Monster_GenjiBullet", L"CreateBulletPos", L"GunDir", 7, 3, 0.335, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Bullet1 = Node_CreateBullet("°ÕÁö ÃÑ¾Ë", L"Monster_GenjiBullet", L"CreateBulletPos", L"GunDir", 7, 3, 0.725, 1, 1, 0, CBT_Service_Node::Finite);
+	Root_Parallel->Add_Service(Bullet0);
+	Root_Parallel->Add_Service(Bullet1);
+
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani48);
 	MainSeq->Add_Child(Show_Ani42);
@@ -461,6 +474,9 @@ CBT_Composite_Node * CGunGenji::Sudden_Shot()
 
 	CBT_Play_Ani* Show_Ani49 = Node_Ani("°©ÀÚ±â ÃÑ½î±â", 49, 0.95f);
 	CBT_Play_Ani* Show_Ani42 = Node_Ani("±âº»", 42, 0.3f);
+
+	CBT_CreateBullet* Bullet0 = Node_CreateBullet("°ÕÁö ÃÑ¾Ë", L"Monster_GenjiBullet", L"CreateBulletPos", L"GunDir", 7, 3, 3.725, 1, 1, 0, CBT_Service_Node::Finite);
+	Root_Seq->Add_Service(Bullet0);
 
 	Root_Seq->Add_Child(Show_Ani49);
 	Root_Seq->Add_Child(Show_Ani42);
@@ -722,12 +738,26 @@ CBT_Composite_Node * CGunGenji::Show_Attack()
 
 HRESULT CGunGenji::Update_Bone_Of_BlackBoard()
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 HRESULT CGunGenji::Update_Value_Of_BB()
 {
-	return E_NOTIMPL;
+	_mat matGunDir = m_pTransformCom->Get_WorldMat();
+	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"GunDir", _v3(matGunDir.m[2][0], matGunDir.m[2][1], matGunDir.m[2][2]));
+
+
+	// ¹«±â »ÀÀ§Ä¡  ¿ì¼± º¸·ù
+	//_mat matBulletCreate = static_cast<CTransform*>(m_pGun->Get_Component(L"Com_Transform"))->Get_WorldMat();
+	//matBulletCreate *= m_pTransformCom->Get_WorldMat();
+	//_v3 vCreateBulletPos = _v3(matBulletCreate.m[3][0], matBulletCreate.m[3][1], matBulletCreate.m[3][2]);
+
+	//m_pAIControllerCom->Set_Value_Of_BloackBoard(L"CreateBulletPos", vCreateBulletPos);
+
+	_mat matCreateBulletPos = m_pTransformCom->Get_WorldMat();
+	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"CreateBulletPos",_v3(matCreateBulletPos.m[3][0], matCreateBulletPos.m[3][1] + 0.5f, matCreateBulletPos.m[3][2]));
+
+	return S_OK;
 }
 
 HRESULT CGunGenji::Update_Collider()
@@ -772,9 +802,9 @@ void CGunGenji::Check_Collider()
 		else
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// Á×À½Ã³¸® ½ÃÀÛ
-			//m_bIsDead = true;
 			Start_Dissolve(0.7f, false, true);
-			g_pManagement->Create_Effect(L"SpawnParticle", m_pTransformCom->Get_Pos());
+			m_pGun->Start_Dissolve();
+			g_pManagement->Create_Spawn_Effect(m_pTransformCom->Get_Pos());
 		}
 	}
 	else
