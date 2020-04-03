@@ -215,8 +215,7 @@ CGameObject * CMaterial_Slot::Clone_GameObject(void * pArg)
 
 void CMaterial_Slot::Free()
 {
-	if (m_pSelectUI)
-		m_pSelectUI->Set_Dead();
+	
 
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);

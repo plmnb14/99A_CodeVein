@@ -15,6 +15,7 @@
 #include "Trail_VFX.h"
 
 #include "UI_Manager.h"
+#include "Item_Manager.h"
 
 #include "TestMonster.h"
 #include "PoisonButterfly.h"
@@ -26,7 +27,7 @@
 #include "BossDecoUI.h"
 #include "BossHP.h"
 
-#include "Item.h"
+
 
 
 USING(Client)
@@ -237,6 +238,7 @@ _uint CLoading::Loading_Title()
 	//============================================================================================================
 	cout << " UI 원형 생성중" << endl;
 	CUI_Manager::Get_Instance()->Add_UI_Prototype(m_pGraphicDev);
+	CItem_Manager::Get_Instance()->Add_Item_Prototype(m_pGraphicDev);
 
 	//============================================================================================================
 

@@ -204,6 +204,7 @@ CGameObject * CWeapon_Slot::Clone_GameObject(void * pArg)
 
 void CWeapon_Slot::Free()
 {
+	
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom);

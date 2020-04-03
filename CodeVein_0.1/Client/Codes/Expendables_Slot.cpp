@@ -110,7 +110,7 @@ HRESULT CExpendables_Slot::Render_GameObject()
 
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(0);
+	m_pShaderCom->Begin_Pass(1);
 
 	m_pBufferCom->Render_VIBuffer();
 
@@ -239,9 +239,7 @@ CGameObject * CExpendables_Slot::Clone_GameObject(void * pArg)
 
 void CExpendables_Slot::Free()
 {
-	if (m_pSelectUI)
-		m_pSelectUI->Set_Dead();
-
+	
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom);
