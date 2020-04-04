@@ -39,15 +39,6 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 	// 트레이닝 맵은 그냥 로드 가능해욤
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Stage_Training.dat");
 
-	m_pNavMesh = static_cast<Engine::CNavMesh*>(g_pManagement->Clone_Component(SCENE_STATIC, L"NavMesh"));
-	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-
-	CNavMesh* pNavMesh = static_cast<Engine::CNavMesh*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE)->Get_Component(L"Com_NavMesh"));
-	pNavMesh->Reset_NaviMesh();
-	pNavMesh->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-
-
-
 	return S_OK;
 }
 
@@ -60,16 +51,19 @@ _int CScene_Stage_Training::Update_Scene(_double TimeDelta)
 
 HRESULT CScene_Stage_Training::Render_Scene()
 {
-	IF_NOT_NULL(m_pNavMesh)
-		m_pNavMesh->Render_NaviMesh();
-
 	return S_OK;
 }
 
 HRESULT CScene_Stage_Training::Ready_Layer_Player(const _tchar * pLayerTag)
 {
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Player", SCENE_STAGE, pLayerTag)))
-		return E_FAIL;
+	CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Player" , nullptr);
+	
+	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
+	TARGET_TO_TRANS(pInstance)->Set_Angle(V3_NULL);
+
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Player", nullptr);
 
 	return S_OK;
 }
@@ -89,12 +83,14 @@ HRESULT CScene_Stage_Training::Ready_Layer_Dummy(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 {
-	// 몬스터 레이어만 미리 추가
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Monster")))
 		return E_FAIL;
 
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Dummy", SCENE_STAGE, L"Layer_Monster")))
-	//	return E_FAIL;
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Boss")))
+		return E_FAIL;
+
+	CGameObject* pInstance = nullptr;
+
 	
 	// 검은 성게
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_BlackUrchin", SCENE_STAGE, L"Layer_Monster")))
@@ -103,49 +99,92 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_BlackWolf", SCENE_STAGE, L"Layer_Monster")))
 	//	return E_FAIL;
 
-	// 검겐지
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_SwordGenji", SCENE_STAGE, L"Layer_Monster", &CSwordGenji::INFO(CSwordGenji::White))))
-		return E_FAIL;
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_SwordGenji", SCENE_STAGE, L"Layer_Monster", &CSwordGenji::INFO(CSwordGenji::Normal))))
-	//	return E_FAIL;
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_SwordGenji", SCENE_STAGE, L"Layer_Monster", &CSwordGenji::INFO(CSwordGenji::Jungle))))
-	//	return E_FAIL;
-
-	//// 총겐지
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_GunGenji", SCENE_STAGE, L"Layer_Monster", &CGunGenji::INFO(CGunGenji::White))))
-	//	return E_FAIL;
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_GunGenji", SCENE_STAGE, L"Layer_Monster", &CGunGenji::INFO(CGunGenji::Normal))))
-	//	return E_FAIL;
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_GunGenji", SCENE_STAGE, L"Layer_Monster", &CGunGenji::INFO(CGunGenji::Jungle))))
-	//	return E_FAIL;
-
-
-	//// 검방패겐지
-	////if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_SwordShieldGenji", SCENE_STAGE, L"Layer_Monster")))
-	////	return E_FAIL;
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_SwordShieldGenji", SCENE_STAGE, L"Layer_Monster", &CSwordShieldGenji::INFO(CSwordShieldGenji::White))))
-	//	return E_FAIL;
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_SwordShieldGenji", SCENE_STAGE, L"Layer_Monster", &CSwordShieldGenji::INFO(CSwordShieldGenji::Normal))))
-	//	return E_FAIL;
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_SwordShieldGenji", SCENE_STAGE, L"Layer_Monster", &CSwordShieldGenji::INFO(CSwordShieldGenji::Jungle))))
-	//	return E_FAIL;
+	//====================================================================================================================================================
+	// 총겐지
+	//====================================================================================================================================================
 	
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji" , &CSwordGenji::INFO(CSwordGenji::White));
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
+	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle));
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
+	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal));
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
+	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 	
+	//====================================================================================================================================================
+
+
+	//====================================================================================================================================================
+	// 총겐지
+	//====================================================================================================================================================
+	
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::White));
+	TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
+	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::Jungle));
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
+	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::Normal));
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
+	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	
+	//====================================================================================================================================================
+
+
+	//====================================================================================================================================================
+	// 창 방패 겐지
+	//====================================================================================================================================================
+	
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordShieldGenji" , &CSwordShieldGenji::INFO(CSwordShieldGenji::White));
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
+	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordShieldGenji", &CSwordShieldGenji::INFO(CSwordShieldGenji::Jungle));
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
+	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordShieldGenji", &CSwordShieldGenji::INFO(CSwordShieldGenji::Normal));
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
+	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	
+	//====================================================================================================================================================
+
 	// 야차맨
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_YachaMan", SCENE_STAGE, L"Layer_Monster")))
 	//	return E_FAIL;
 
+	//CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Dummy", nullptr);
+	//
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3{ 0.f, 0.f, 4.f });
+	//
+	//if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr)))
+	//	return E_FAIL;
 
-	CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Dummy", nullptr);
 
-	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3{ 0.f, 0.f, 4.f });
-
-	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr)))
-		return E_FAIL;
-
-	// 보스 레이어만 미리 추가
-	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Boss")))
-		return E_FAIL;
 
 	// 독나방
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_PoisonButterfly", SCENE_STAGE, L"Layer_Monster")))

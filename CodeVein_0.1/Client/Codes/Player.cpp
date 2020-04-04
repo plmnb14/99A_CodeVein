@@ -43,12 +43,6 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 
 _int CPlayer::Update_GameObject(_double TimeDelta)
 {
-	//if (-1 == m_pNavMesh->Get_CellIndex())
-	//{
-	//	_v3 tmpPos = m_pTransform->Get_Pos();
-	//	m_pNavMesh->Check_OnNavMesh(&tmpPos);
-	//}
-
 	CGameObject::Update_GameObject(TimeDelta);
 
 	m_tObjParam.bCanHit = true;
@@ -3692,7 +3686,7 @@ void CPlayer::Trigger_Event()
 				TARGET_TO_NAV(pInstance)->Set_Index(32);
 				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
-				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle));
+				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::Jungle));
 				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[1]);	// 위치
 				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
 				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
@@ -3789,14 +3783,14 @@ void CPlayer::Trigger_Event()
 				TARGET_TO_NAV(pInstance)->Set_Index(34);
 				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
-				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CSwordGenji::INFO(CSwordGenji::White));
+				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::White));
 				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[2]);	// 위치
 				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
 				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
 				TARGET_TO_NAV(pInstance)->Set_Index(138);
 				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
-				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CSwordGenji::INFO(CSwordGenji::White));
+				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::White));
 				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[3]);	// 위치
 				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
 				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
