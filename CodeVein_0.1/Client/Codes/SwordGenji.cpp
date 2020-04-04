@@ -255,7 +255,7 @@ CBT_Composite_Node * CSwordGenji::Normal_Cut1()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 
-	CBT_UpdateCollider* pHitCol = Node_UpdateCollider("무기 히트 On", m_pSword->Get_pTarget_Param(), 1.2, 1, 0.2, 0);
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.2, 1, 0.2, 0);
 	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
@@ -280,7 +280,7 @@ CBT_Composite_Node * CSwordGenji::Normal_Cut2()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 
-	CBT_UpdateCollider* pHitCol = Node_UpdateCollider("무기 히트 On", m_pSword->Get_pTarget_Param(), 1, 1, 0.2, 0);
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1, 1, 0.2, 0);
 	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
@@ -305,7 +305,7 @@ CBT_Composite_Node * CSwordGenji::Normal_Cut3()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 
-	CBT_UpdateCollider* pHitCol = Node_UpdateCollider("무기 히트 On", m_pSword->Get_pTarget_Param(), 0.7, 1, 0.3, 0);
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.7, 1, 0.3, 0);
 	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
@@ -326,7 +326,7 @@ CBT_Composite_Node * CSwordGenji::Strong_RightCut()
 
 	Root_Parallel->Set_Sub_Child(Move0);
 
-	CBT_UpdateCollider* pHitCol = Node_UpdateCollider("무기 히트 On", m_pSword->Get_pTarget_Param(), 0.45, 1, 0.2, 0);
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.45, 1, 0.2, 0);
 	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
@@ -347,7 +347,7 @@ CBT_Composite_Node * CSwordGenji::Strong_LeftCut()
 
 	Root_Parallel->Set_Sub_Child(Move0);
 
-	CBT_UpdateCollider* pHitCol = Node_UpdateCollider("무기 히트 On", m_pSword->Get_pTarget_Param(), 0.55, 1, 0.35, 0);
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.55, 1, 0.35, 0);
 	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
@@ -372,9 +372,9 @@ CBT_Composite_Node * CSwordGenji::ThreeCombo_Cut()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 
-	CBT_UpdateCollider* pHitCol0 = Node_UpdateCollider("무기 히트 On", m_pSword->Get_pTarget_Param(), 0.7, 1, 0.2, 0);
-	CBT_UpdateCollider* pHitCol1 = Node_UpdateCollider("무기 히트 On", m_pSword->Get_pTarget_Param(), 1.1, 1, 0.2, 0);
-	CBT_UpdateCollider* pHitCol2 = Node_UpdateCollider("무기 히트 On", m_pSword->Get_pTarget_Param(), 1.5, 1, 0.2, 0);
+	CBT_UpdateParam* pHitCol0 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.7, 1, 0.2, 0);
+	CBT_UpdateParam* pHitCol1 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.1, 1, 0.2, 0);
+	CBT_UpdateParam* pHitCol2 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.5, 1, 0.2, 0);
 	Root_Parallel->Add_Service(pHitCol0);
 	Root_Parallel->Add_Service(pHitCol1);
 	Root_Parallel->Add_Service(pHitCol2);
@@ -410,7 +410,7 @@ CBT_Composite_Node * CSwordGenji::Run_Straight_Cut()
 	MoveSeq->Add_Child(Move);
 	MoveSeq->Add_Child(RunWaitB);
 
-	CBT_UpdateCollider* pHitCol = Node_UpdateCollider("무기 히트 On", m_pSword->Get_pTarget_Param(), 0.95, 1, 0.7, 0);
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.95, 1, 0.7, 0);
 	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
@@ -534,7 +534,7 @@ CBT_Composite_Node * CSwordGenji::Horizon_Cut()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 
-	CBT_UpdateCollider* pHitCol = Node_UpdateCollider("무기 히트 On", m_pSword->Get_pTarget_Param(), 0.8, 1, 0.3, 0);
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.8, 1, 0.3, 0);
 	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
@@ -559,7 +559,7 @@ CBT_Composite_Node * CSwordGenji::Sting_Attack()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 
-	CBT_UpdateCollider* pHitCol = Node_UpdateCollider("무기 히트 On", m_pSword->Get_pTarget_Param(), 1.5, 1, 0.2, 0);
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.5, 1, 0.2, 0);
 	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
@@ -588,8 +588,8 @@ CBT_Composite_Node * CSwordGenji::TwoCombo_Cut()
 	SubSeq->Add_Child(Wait1);
 	SubSeq->Add_Child(Move1);
 
-	CBT_UpdateCollider* pHitCol0 = Node_UpdateCollider("무기 히트 On", m_pSword->Get_pTarget_Param(), 0.7, 1, 0.25, 0);
-	CBT_UpdateCollider* pHitCol1 = Node_UpdateCollider("무기 히트 On", m_pSword->Get_pTarget_Param(), 1.25, 1, 0.2, 0);
+	CBT_UpdateParam* pHitCol0 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.7, 1, 0.25, 0);
+	CBT_UpdateParam* pHitCol1 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.25, 1, 0.2, 0);
 	Root_Parallel->Add_Service(pHitCol0);
 	Root_Parallel->Add_Service(pHitCol1);
 

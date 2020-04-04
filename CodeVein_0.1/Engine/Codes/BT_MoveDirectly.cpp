@@ -46,7 +46,7 @@ CBT_Node::BT_NODE_STATE CBT_MoveDirectly::Update_Node(_double TimeDelta, vector<
 				// ÀÌµ¿
 				
 				//m_pTransform->Add_Pos(_float(m_fMove_Speed * TimeDelta));
-				m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), D3DXVec3Normalize( &_v3(), (_v3*)m_pTransform->Get_WorldMat().m[2]), m_fMove_Speed * TimeDelta)));
+				m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), D3DXVec3Normalize( &_v3(), (_v3*)m_pTransform->Get_WorldMat().m[2]), m_fMove_Speed * (_float)TimeDelta)));
 			}
 
 			break;
@@ -61,7 +61,7 @@ CBT_Node::BT_NODE_STATE CBT_MoveDirectly::Update_Node(_double TimeDelta, vector<
 			}
 
 			//m_pTransform->Add_Pos(_float(m_fMove_Speed * TimeDelta));
-			m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), D3DXVec3Normalize(&_v3(), (_v3*)m_pTransform->Get_WorldMat().m[2]), m_fMove_Speed * TimeDelta)));
+			m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), D3DXVec3Normalize(&_v3(), (_v3*)m_pTransform->Get_WorldMat().m[2]), m_fMove_Speed * (_float)TimeDelta)));
 			break;
 
 		default:

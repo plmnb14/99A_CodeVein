@@ -750,15 +750,14 @@ HRESULT CGunGenji::Update_Value_Of_BB()
 
 	// 무기 뼈위치  우선 보류
 	_mat matBulletCreate = static_cast<CTransform*>(m_pGun->Get_Component(L"Com_Transform"))->Get_WorldMat();
-	matBulletCreate *= m_pTransformCom->Get_WorldMat();
 	_v3 vCreateBulletPos = _v3(matBulletCreate.m[3][0], matBulletCreate.m[3][1], matBulletCreate.m[3][2]);
 
 	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"CreateBulletPos", vCreateBulletPos);
 
 
 
-	_mat matCreateBulletPos = m_pTransformCom->Get_WorldMat();
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"CreateBulletPos",_v3(matCreateBulletPos.m[3][0], matCreateBulletPos.m[3][1] + 0.5f, matCreateBulletPos.m[3][2]));
+	//_mat matCreateBulletPos = m_pTransformCom->Get_WorldMat();
+	//m_pAIControllerCom->Set_Value_Of_BloackBoard(L"CreateBulletPos",_v3(matCreateBulletPos.m[3][0], matCreateBulletPos.m[3][1] + 0.5f, matCreateBulletPos.m[3][2]));
 
 	return S_OK;
 }

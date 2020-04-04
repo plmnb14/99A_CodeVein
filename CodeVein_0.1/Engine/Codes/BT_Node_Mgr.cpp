@@ -65,7 +65,7 @@ HRESULT CBT_Node_Manager::Ready_BT_Node()
 		return E_FAIL;
 	if (FAILED(Add_Prototype_Node(L"UpdateHPRatio", CBT_UpdateGageRatio::Create_Prototype(), CBT_Node_Manager::SERVICE)))
 		return E_FAIL;
-	if (FAILED(Add_Prototype_Node(L"UpdateCollider", CBT_UpdateCollider::Create_Prototype(), CBT_Node_Manager::SERVICE)))
+	if (FAILED(Add_Prototype_Node(L"UpdateParam", CBT_UpdateParam::Create_Prototype(), CBT_Node_Manager::SERVICE)))
 		return E_FAIL;
 	if (FAILED(Add_Prototype_Node(L"CreateEffect", CBT_CreateEffect::Create_Prototype(), CBT_Node_Manager::SERVICE)))
 		return E_FAIL;
