@@ -33,8 +33,11 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 
+
+	////////////////// 행동트리 init
+
 	CBlackBoard* pBlackBoard = CBlackBoard::Create();
-	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create(false);
+	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create();
 
 	m_pAIControllerCom->Set_BeHaviorTree(pBehaviorTree);
 	m_pAIControllerCom->Set_BlackBoard(pBlackBoard);
@@ -42,22 +45,18 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	Update_Bone_Of_BlackBoard();
 
 	pBlackBoard->Set_Value(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos());
-	pBlackBoard->Set_Value(L"HP", 100);
-	pBlackBoard->Set_Value(L"MAXHP", 100);
+	pBlackBoard->Set_Value(L"HP", m_tObjParam.fHp_Cur);
+	pBlackBoard->Set_Value(L"MAXHP", m_tObjParam.fHp_Max);
 	pBlackBoard->Set_Value(L"HPRatio", 100);
 	pBlackBoard->Set_Value(L"Show", true);
 
 	CBT_Selector* Start_Sel = Node_Selector("행동 시작");
 	//CBT_Sequence* Start_Sel = Node_Sequence("행동 시작"); // 테스트
 
-	CBT_UpdatePos* UpdatePlayerPosService = Node_UpdatePos("Update_Player_Pos", L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE)), 0, 0.01, 0, CBT_Service_Node::Infinite);
-	CBT_UpdateGageRatio* UpdatePlayerHPservice = Node_UpdateGageRatio("Update_Player_Pos", L"HPRatio", L"MaxHP", L"HP", 0, 0.01, 0, CBT_Service_Node::Infinite);
 	CBT_UpdateGageRatio* UpdateHPRatioService = Node_UpdateGageRatio("체력 비율", L"HPRatio", L"MAXHP", L"HP", 1, 0.01, 0, CBT_Service_Node::Infinite);
 
 	pBehaviorTree->Set_Child(Start_Sel);
 
-	Start_Sel->Add_Service(UpdatePlayerPosService);
-	Start_Sel->Add_Service(UpdatePlayerHPservice);
 	Start_Sel->Add_Service(UpdateHPRatioService);
 
 	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
@@ -66,7 +65,7 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	Start_Sel->Add_Child(Start_Game());
 
 
-	//Start_Sel->Add_Child(Dodge_B());
+	//Start_Sel->Add_Child(Sudden_Shot());
 
 
 	///////////보여주기용
@@ -419,7 +418,7 @@ CBT_Composite_Node * CGunGenji::Shot()
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적", L"Player_Pos", 1, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 돌리기", L"Player_Pos", 0.2);
 
-	CBT_CreateBullet* Bullet0 = Node_CreateBullet("겐지 총알", L"Monster_GenjiBullet", L"CreateBulletPos", L"GunDir", 7, 3, 1.725, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Bullet0 = Node_CreateBullet("겐지 총알", L"Monster_GenjiBullet", L"CreateBulletPos", L"NormalShotDir", 7, 3, 1.725, 1, 1, 0, CBT_Service_Node::Finite);
 	Root_Parallel->Add_Service(Bullet0);
 	
 	Root_Parallel->Set_Main_Child(MainSeq);
@@ -444,10 +443,8 @@ CBT_Composite_Node * CGunGenji::Tumbling_Shot()
 	CBT_Wait* Wait0 = Node_Wait("대기", 0.3, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", -1, 1.3, 0);
 
-	CBT_CreateBullet* Bullet0 = Node_CreateBullet("겐지 총알", L"Monster_GenjiBullet", L"CreateBulletPos", L"GunDir", 7, 3, 0.335, 1, 1, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Bullet1 = Node_CreateBullet("겐지 총알", L"Monster_GenjiBullet", L"CreateBulletPos", L"GunDir", 7, 3, 0.725, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Bullet0 = Node_CreateBullet("겐지 총알", L"Monster_GenjiBullet", L"CreateBulletPos", L"TumblingShotDir", 7, 3, 0.335, 1, 1, 0, CBT_Service_Node::Finite);
 	Root_Parallel->Add_Service(Bullet0);
-	Root_Parallel->Add_Service(Bullet1);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani48);
@@ -466,12 +463,12 @@ CBT_Composite_Node * CGunGenji::Sudden_Shot()
 	CBT_Sequence* MainSeq = Node_Sequence("갑자기 총쏘기");
 	CBT_Play_Ani* Show_Ani49 = Node_Ani("갑자기 총쏘기", 49, 0.95f);
 	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.1f);
-
+	
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
-	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적", L"Player_Pos", 1, 0);
+	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적", L"Player_Pos", 3, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 돌리기", L"Player_Pos", 0.2);
 
-	CBT_CreateBullet* Bullet0 = Node_CreateBullet("겐지 총알", L"Monster_GenjiBullet", L"CreateBulletPos", L"GunDir", 7, 3, 3.725, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Bullet0 = Node_CreateBullet("겐지 총알", L"Monster_GenjiBullet", L"CreateBulletPos", L"NormalShotDir", 7, 3, 3.6, 1, 1, 0, CBT_Service_Node::Finite);
 	Root_Parallel->Add_Service(Bullet0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
@@ -744,20 +741,37 @@ HRESULT CGunGenji::Update_Bone_Of_BlackBoard()
 
 HRESULT CGunGenji::Update_Value_Of_BB()
 {
+	// 1. 플레이어 좌표 업데이트
+	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos());
+	// 2. 체력 업데이트
+	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"HP", m_tObjParam.fHp_Cur);
+
+
+
+
+	// 1. 평상시 총 발사 방향
 	_mat matGunDir = m_pTransformCom->Get_WorldMat();
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"GunDir", _v3(matGunDir.m[2][0], matGunDir.m[2][1], matGunDir.m[2][2]));
+	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"NormalShotDir", _v3(matGunDir.m[2][0], matGunDir.m[2][1], matGunDir.m[2][2]));
 
+	// 2. 텀블링시 총 발사 방향
+	_v3 vSelfDir = *(_v3*)&m_pTransformCom->Get_WorldMat().m[2];	// 본인 Look
+	_v3 vTumblingShotDir;
 
-	// 무기 뼈위치  우선 보류
+	_v3 vFrontDir = _v3(0.f, 0.f, 1.f);
+	_float fRadian = D3DXVec3Dot(&vSelfDir, &vFrontDir);
+
+	if (fRadian >= 0)
+		D3DXVec3TransformNormal(&vTumblingShotDir, &vSelfDir, D3DXMatrixRotationX(&_mat(), D3DXToRadian(30)));
+	else if (fRadian < 0)
+		D3DXVec3TransformNormal(&vTumblingShotDir, &vSelfDir, D3DXMatrixRotationX(&_mat(), D3DXToRadian(-30)));
+	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"TumblingShotDir", vTumblingShotDir);
+
+	// 3. 총알의 생성 위치
 	_mat matBulletCreate = static_cast<CTransform*>(m_pGun->Get_Component(L"Com_Transform"))->Get_WorldMat();
-	_v3 vCreateBulletPos = _v3(matBulletCreate.m[3][0], matBulletCreate.m[3][1], matBulletCreate.m[3][2]);
+	// 총의 월드좌표 + 위로 조금 더 올려서 보정
+	_v3 vCreateBulletPos = _v3(matBulletCreate.m[3][0], matBulletCreate.m[3][1], matBulletCreate.m[3][2]) + (_v3(0.f, 0.3f, 0.f));	
 
 	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"CreateBulletPos", vCreateBulletPos);
-
-
-
-	//_mat matCreateBulletPos = m_pTransformCom->Get_WorldMat();
-	//m_pAIControllerCom->Set_Value_Of_BloackBoard(L"CreateBulletPos",_v3(matCreateBulletPos.m[3][0], matCreateBulletPos.m[3][1] + 0.5f, matCreateBulletPos.m[3][2]));
 
 	return S_OK;
 }

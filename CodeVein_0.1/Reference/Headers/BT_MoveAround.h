@@ -42,8 +42,6 @@ public:
 private:
 	HRESULT Ready_Clone_Node(void* pInit_Struct);
 
-	void Look_At_Target(_double TimeDelta, const _v3& Target_Pos);
-
 private:
 	CTransform*	m_pTransform = nullptr;
 	CNavMesh*	m_pNavMesh = nullptr;

@@ -25,7 +25,7 @@ CBT_Node::BT_NODE_STATE CBT_MoveAround::Update_Node(_double TimeDelta, vector<CB
 
 	if (m_dCurTime > m_dMaxTime)
 	{
-		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, bDebugging);
+		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
 	}
 	else
 	{
@@ -37,7 +37,7 @@ CBT_Node::BT_NODE_STATE CBT_MoveAround::Update_Node(_double TimeDelta, vector<CB
 		if (m_fMove_Speed >= 0.f)
 		{
 			// 타겟을 향한 벡터를 회전
-			D3DXVec3TransformNormal(&vToTarget, &vToTarget, D3DXMatrixRotationY(&_mat(), D3DXToRadian(15)));
+			D3DXVec3TransformNormal(&vToTarget, &vToTarget, D3DXMatrixRotationY(&_mat(), D3DXToRadian(5)));
 			// 회전된 벡터를 기준으로 right벡터를 구함.
 			D3DXVec3Cross(&vRight, &vToTarget, &_v3(0.f, 1.f, 0.f));
 
@@ -49,12 +49,12 @@ CBT_Node::BT_NODE_STATE CBT_MoveAround::Update_Node(_double TimeDelta, vector<CB
 			// 반대 회전
 
 			// 타겟을 향한 벡터를 회전
-			D3DXVec3TransformNormal(&vToTarget, &vToTarget, D3DXMatrixRotationY(&_mat(), D3DXToRadian(-15)));
+			D3DXVec3TransformNormal(&vToTarget, &vToTarget, D3DXMatrixRotationY(&_mat(), D3DXToRadian(-5)));
 			// 회전된 벡터를 기준으로 right벡터를 구함.
 			D3DXVec3Cross(&vRight, &vToTarget, &_v3(0.f, 1.f, 0.f));
 			vRight *= -1.f;
 
-			m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &vRight, m_fMove_Speed * (_float)TimeDelta)));
+			m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &vRight, -m_fMove_Speed * (_float)TimeDelta)));
 		}
 	}
 
@@ -126,38 +126,13 @@ HRESULT CBT_MoveAround::Ready_Clone_Node(void * pInit_Struct)
 		Safe_AddRef(m_pNavMesh);
 
 	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
-
+	lstrcpy(m_Target_Key, temp.Target_Key);
 	m_fMove_Speed = temp.fMove_Speed;
 	m_dMoveTime = temp.dMoveTime;
 	m_dTimeOffset = temp.dTimeOffset;
 
 	CBT_Node::_Set_Auto_Number(&m_iNodeNumber);
 	return S_OK;
-}
-
-void CBT_MoveAround::Look_At_Target(_double TimeDelta, const _v3& Target_Pos)
-{
-	_v3 vOriginDir = *(_v3*)(&m_pTransform->Get_WorldMat().m[2]);
-	vOriginDir.y = 0.f;
-	D3DXVec3Normalize(&vOriginDir, &vOriginDir);
-
-	_v3 vToPlayerDir = Target_Pos - m_pTransform->Get_Pos();
-	vToPlayerDir.y = 0.f;
-	D3DXVec3Normalize(&vToPlayerDir, &vToPlayerDir);
-
-	float temp = D3DXVec3Dot(&vOriginDir, &vToPlayerDir);
-	//1.0보다 커짐 방지
-	if (temp > 1.0f)
-		temp = 0.999f;
-	_float Radian = acosf(temp);
-
-	_v3 vRight;
-	D3DXVec3Normalize(&vRight, (_v3*)(&m_pTransform->Get_WorldMat().m[0]));
-
-	if (0 < D3DXVec3Dot(&vRight, &vToPlayerDir))
-		m_pTransform->Add_Angle(AXIS_TYPE::AXIS_Y, D3DXToDegree(_float(6 * Radian * TimeDelta)));
-	else
-		m_pTransform->Add_Angle(AXIS_TYPE::AXIS_Y, -D3DXToDegree(_float(6 * Radian * TimeDelta)));
 }
 
 CBT_MoveAround * CBT_MoveAround::Create_Prototype()

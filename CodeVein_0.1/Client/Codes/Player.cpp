@@ -3658,252 +3658,252 @@ void CPlayer::Trigger_Event()
 {
 	// 임시 트리거 매니저
 
-	_ulong dwSubSet = m_pNavMesh->Get_SubSetIndex();
-	_ulong dwCellIdx = m_pNavMesh->Get_CellIndex();
+	//_ulong dwSubSet = m_pNavMesh->Get_SubSetIndex();
+	//_ulong dwCellIdx = m_pNavMesh->Get_CellIndex();
 
-	switch (dwSubSet)
-	{
-	case 0:
-	{
-		switch (dwCellIdx)
-		{
-		case 5:
-		{
-			if (m_bSpawnTrigger[0] == false)
-			{
-				m_bSpawnTrigger[0] = true;
+	//switch (dwSubSet)
+	//{
+	//case 0:
+	//{
+	//	switch (dwCellIdx)
+	//	{
+	//	case 5:
+	//	{
+	//		if (m_bSpawnTrigger[0] == false)
+	//		{
+	//			m_bSpawnTrigger[0] = true;
 
-				_v3 vPos[4] = {
-				_v3(144.551f, -18.08f, 79.895f),
-				_v3(145.498f, -18.08f, 84.775f),
-				_v3(150.690f, -18.08f, 94.981f),
-				_v3(117.045f, -18.08f, 111.482f)};
+	//			_v3 vPos[4] = {
+	//			_v3(144.551f, -18.08f, 79.895f),
+	//			_v3(145.498f, -18.08f, 84.775f),
+	//			_v3(150.690f, -18.08f, 94.981f),
+	//			_v3(117.045f, -18.08f, 111.482f)};
 
-				CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[0]);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-				TARGET_TO_NAV(pInstance)->Set_Index(32);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	//			CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White));
+	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[0]);	// 위치
+	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
+	//			TARGET_TO_NAV(pInstance)->Set_Index(32);
+	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
-				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::Jungle));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[1]);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-				TARGET_TO_NAV(pInstance)->Set_Index(39);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	//			pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::Jungle));
+	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[1]);	// 위치
+	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
+	//			TARGET_TO_NAV(pInstance)->Set_Index(39);
+	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
-				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[2]);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-				TARGET_TO_NAV(pInstance)->Set_Index(52);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	//			pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal));
+	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[2]);	// 위치
+	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
+	//			TARGET_TO_NAV(pInstance)->Set_Index(52);
+	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
-				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[3]);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-				TARGET_TO_NAV(pInstance)->Set_Index(64);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-			}
+	//			pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal));
+	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[3]);	// 위치
+	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
+	//			TARGET_TO_NAV(pInstance)->Set_Index(64);
+	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	//		}
 
-			break;
-		}
-		}
+	//		break;
+	//	}
+	//	}
 
-		break;
-	}
+	//	break;
+	//}
 
-	case 1:
-	{
-		switch (dwCellIdx)
-		{
-		case 41:
-		{
-			if (m_bSpawnTrigger[1] == false)
-			{
-				m_bSpawnTrigger[1] = true;
+	//case 1:
+	//{
+	//	switch (dwCellIdx)
+	//	{
+	//	case 41:
+	//	{
+	//		if (m_bSpawnTrigger[1] == false)
+	//		{
+	//			m_bSpawnTrigger[1] = true;
 
-				_v3 vPos[2] = {
-					_v3(95.754f, -17.15f, 106.058f),
-					_v3(87.195f, -17.15f, 105.301f) 
-				};
+	//			_v3 vPos[2] = {
+	//				_v3(95.754f, -17.15f, 106.058f),
+	//				_v3(87.195f, -17.15f, 105.301f) 
+	//			};
 
-				CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[0]);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-				TARGET_TO_NAV(pInstance)->Set_Index(55);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	//			CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White));
+	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[0]);	// 위치
+	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
+	//			TARGET_TO_NAV(pInstance)->Set_Index(55);
+	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
-				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[1]);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-				TARGET_TO_NAV(pInstance)->Set_Index(63);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-			}
+	//			pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle));
+	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[1]);	// 위치
+	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
+	//			TARGET_TO_NAV(pInstance)->Set_Index(63);
+	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	//		}
 
-			break;
-		}
-		}
+	//		break;
+	//	}
+	//	}
 
-		break;
-	}
+	//	break;
+	//}
 
-	case 2:
-	{
-		switch (dwCellIdx)
-		{
-		case 0:
-		{
-			if (m_bSpawnTrigger[2] == false)
-			{
-				m_bSpawnTrigger[2] = true;
+	//case 2:
+	//{
+	//	switch (dwCellIdx)
+	//	{
+	//	case 0:
+	//	{
+	//		if (m_bSpawnTrigger[2] == false)
+	//		{
+	//			m_bSpawnTrigger[2] = true;
 
-				_v3 vPos[5] = {
-					_v3(61.826f, -17.15f, 115.219f),
-					_v3(65.298f, -17.15f, 125.649f),
-					_v3(62.689f, -17.15f, 127.093f),
-					_v3(71.845f, -17.15f, 132.392f),
-					_v3(102.201f, -17.15f, 141.943f) };
+	//			_v3 vPos[5] = {
+	//				_v3(61.826f, -17.15f, 115.219f),
+	//				_v3(65.298f, -17.15f, 125.649f),
+	//				_v3(62.689f, -17.15f, 127.093f),
+	//				_v3(71.845f, -17.15f, 132.392f),
+	//				_v3(102.201f, -17.15f, 141.943f) };
 
-				CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[0]);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-				TARGET_TO_NAV(pInstance)->Set_Index(28);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	//			CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White));
+	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[0]);	// 위치
+	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
+	//			TARGET_TO_NAV(pInstance)->Set_Index(28);
+	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
-				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[1]);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-				TARGET_TO_NAV(pInstance)->Set_Index(34);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	//			pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle));
+	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[1]);	// 위치
+	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
+	//			TARGET_TO_NAV(pInstance)->Set_Index(34);
+	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
-				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::White));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[2]);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-				TARGET_TO_NAV(pInstance)->Set_Index(138);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	//			pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::White));
+	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[2]);	// 위치
+	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
+	//			TARGET_TO_NAV(pInstance)->Set_Index(138);
+	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
-				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::White));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[3]);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-				TARGET_TO_NAV(pInstance)->Set_Index(45);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	//			pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::White));
+	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[3]);	// 위치
+	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
+	//			TARGET_TO_NAV(pInstance)->Set_Index(45);
+	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
-				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[4]);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-				TARGET_TO_NAV(pInstance)->Set_Index(72);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-			}
+	//			pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal));
+	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[4]);	// 위치
+	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
+	//			TARGET_TO_NAV(pInstance)->Set_Index(72);
+	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	//		}
 
-			break;
-		}
+	//		break;
+	//	}
 
-		case 104:
-		{
-			if (m_bSpawnTrigger[3] == false)
-			{
-				m_bSpawnTrigger[3] = true;
+	//	case 104:
+	//	{
+	//		if (m_bSpawnTrigger[3] == false)
+	//		{
+	//			m_bSpawnTrigger[3] = true;
 
-				_v3 vPos[2] = {
-					_v3(85.174f, 0.1f, 154.160f),
-					_v3(87.157f, 0.1f, 167.728f) };
+	//			_v3 vPos[2] = {
+	//				_v3(85.174f, 0.1f, 154.160f),
+	//				_v3(87.157f, 0.1f, 167.728f) };
 
-				CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[0]);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
-				TARGET_TO_NAV(pInstance)->Set_Index(25);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	//			CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White));
+	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[0]);	// 위치
+	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
+	//			TARGET_TO_NAV(pInstance)->Set_Index(25);
+	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
-				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[1]);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
-				TARGET_TO_NAV(pInstance)->Set_Index(36);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-			}
+	//			pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle));
+	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[1]);	// 위치
+	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
+	//			TARGET_TO_NAV(pInstance)->Set_Index(36);
+	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	//		}
 
-			break;
-		}
-		}
+	//		break;
+	//	}
+	//	}
 
-		break;
-	}
+	//	break;
+	//}
 
-	case 3:
-	{		
-		switch (dwCellIdx)
-		{
-		case 66:
-		{
-			if (m_bSpawnTrigger[4] == false)
-			{
-				m_bSpawnTrigger[4] = true;
+	//case 3:
+	//{		
+	//	switch (dwCellIdx)
+	//	{
+	//	case 66:
+	//	{
+	//		if (m_bSpawnTrigger[4] == false)
+	//		{
+	//			m_bSpawnTrigger[4] = true;
 
-				_v3 vPos = _v3(43.606f, 0.1f, 151.288f);
+	//			_v3 vPos = _v3(43.606f, 0.1f, 151.288f);
 
-				CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
-				TARGET_TO_NAV(pInstance)->Set_Index(126);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-			}
+	//			CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White));
+	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos);	// 위치
+	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
+	//			TARGET_TO_NAV(pInstance)->Set_Index(126);
+	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	//		}
 
-			break;
-		}
-		}
+	//		break;
+	//	}
+	//	}
 
-		break;
-	}
+	//	break;
+	//}
 
-	case 4:
-	{
-		switch (dwCellIdx)
-		{
-		case 52:
-		{
-			if (m_bSpawnTrigger[5] == false)
-			{
-				m_bSpawnTrigger[5] = true;
+	//case 4:
+	//{
+	//	switch (dwCellIdx)
+	//	{
+	//	case 52:
+	//	{
+	//		if (m_bSpawnTrigger[5] == false)
+	//		{
+	//			m_bSpawnTrigger[5] = true;
 
-				_v3 vPos = _v3(-0.955f, 0.8f, -5.525f);
+	//			_v3 vPos = _v3(-0.955f, 0.8f, -5.525f);
 
-				CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_PoisonButterfly" , nullptr);
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(6);
-				TARGET_TO_NAV(pInstance)->Set_Index(2);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-			}
+	//			CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_PoisonButterfly" , nullptr);
+	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos);	// 위치
+	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(6);
+	//			TARGET_TO_NAV(pInstance)->Set_Index(2);
+	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	//		}
 
-			break;
-		}
-		}
-		break;
-	}
+	//		break;
+	//	}
+	//	}
+	//	break;
+	//}
 
-	case 5:
-	{
-		break;
-	}
+	//case 5:
+	//{
+	//	break;
+	//}
 
-	case 6:
-	{
-		break;
-	}
+	//case 6:
+	//{
+	//	break;
+	//}
 
-	}
+	//}
 }
 
 HRESULT CPlayer::Add_Component()
