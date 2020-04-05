@@ -27,6 +27,7 @@ HRESULT CMaterial_Inven::Ready_GameObject(void * pArg)
 
 	m_fPosX = WINCX * 0.3f;
 	m_fPosY = WINCY * 0.5f;
+
 	m_fSizeX = 280.f;
 	m_fSizeY = 471.f;
 
@@ -42,6 +43,7 @@ HRESULT CMaterial_Inven::Ready_GameObject(void * pArg)
 		for (_uint j = 0; j < 5; ++j)
 		{
 			pDesc = new CUI::UI_DESC;
+
 			pDesc->fPosX = m_fPosX - 103.f + 52.f * j;
 			pDesc->fPosY = m_fPosY - 130.f + 52.f * i;
 			pDesc->fSizeX = 50.f;
@@ -60,8 +62,6 @@ HRESULT CMaterial_Inven::Ready_GameObject(void * pArg)
 		Add_Material(CMaterial::MATERIAL_2);
 	LOOP(16)
 		Add_Material(CMaterial::MATERIAL_3);
-
-	
 	return NOERROR;
 }
 
@@ -83,6 +83,7 @@ _int CMaterial_Inven::Update_GameObject(_double TimeDelta)
 		pSlot->Set_Active(m_bIsActive);
 		pSlot->Set_ViewZ(m_fViewZ - 0.1f);
 	}
+
 
 	return NO_EVENT;
 }
@@ -194,6 +195,8 @@ void CMaterial_Inven::Load_Materials(CMaterial * pMaterial, _uint iIndex)
 		m_vecMaterialSlot[iIndex]->Input_Item(pMaterial);
 	else
 		Load_Materials(pMaterial, iIndex + 1);*/
+
+	
 
 	if (nullptr == pMaterial)
 		return;

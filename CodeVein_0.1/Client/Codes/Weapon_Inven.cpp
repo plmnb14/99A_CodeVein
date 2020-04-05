@@ -39,6 +39,7 @@ HRESULT CWeapon_Inven::Ready_GameObject(void * pArg)
 	
 	/*for (_uint i = 0; i < 6; ++i)
 	{
+
 		for (_uint j = 0; j < 5; ++j)
 		{
 			pDesc = new CUI::UI_DESC;
@@ -62,6 +63,7 @@ HRESULT CWeapon_Inven::Ready_GameObject(void * pArg)
 	Add_Weapon(WEAPON_LSword);
 	Add_Weapon(WEAPON_Ssword);
 
+		
 	return NOERROR;
 }
 
@@ -78,10 +80,15 @@ _int CWeapon_Inven::Update_GameObject(_double TimeDelta)
 
 	Click_Inven();
 	
-	
+
+
+	for (auto& pWeaponSlot : m_vecWeaponSlot)
+	{
+		pWeaponSlot->Set_Active(m_bIsActive);
+		pWeaponSlot->Set_ViewZ(m_fViewZ - 0.1f);
+	}
 
 	
-
 	return NO_EVENT;
 }
 

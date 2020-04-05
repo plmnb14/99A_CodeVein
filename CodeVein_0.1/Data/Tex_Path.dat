@@ -52,6 +52,9 @@ Tex_ClickUI|ClickUI%d.png|..\..\Client\Resources\Texture\TestUI\ClickUI\|0|1
 Tex_Consume_Item|Consume_Item%d.tga|..\..\Client\Resources\Texture\TestUI\Consume_Item\|0|5
 Tex_CursorSelect|CursorSelect%d.tga|..\..\Client\Resources\Texture\TestUI\CursorSelect\|0|3
 Tex_CursorUI|CursorUI%d.png|..\..\Client\Resources\Texture\TestUI\CursorUI\|0|1
+Tex_Consume_Item|Consume_Item%d.tga|..\..\Client\Resources\Texture\TestUI\Consume_Item\|0|5
+Tex_CursorSelect|CursorSelect%d.tga|..\..\Client\Resources\Texture\TestUI\CursorSelect\|0|3
+Tex_CursorUI|CursorUI%d.tga|..\..\Client\Resources\Texture\TestUI\CursorUI\|0|1
 Tex_Expendables|Expendables%d.png|..\..\Client\Resources\Texture\TestUI\Expendables\|0|5
 Tex_Halberd_Icon|Halberd_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Halberd_Icon\|0|3
 Tex_Hammer_Icon|Hammer_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Hammer_Icon\|0|3

@@ -32,7 +32,9 @@ HRESULT CExpendables_Inven::Ready_GameObject(void * pArg)
 
 	m_fPosX = WINCX * 0.3f;
 	m_fPosY = WINCY * 0.5f;
+
 	m_fSizeX = 280.f;
+
 	m_fSizeY = 471.f;
 
 	m_fViewZ = 1.f;
@@ -47,6 +49,7 @@ HRESULT CExpendables_Inven::Ready_GameObject(void * pArg)
 		for (_uint j = 0; j < 5; ++j)
 		{
 			pDesc = new CUI::UI_DESC;
+
 			pDesc->fPosX = m_fPosX - 103.f + 52.f * j;
 			pDesc->fPosY = m_fPosY - 130.f + 52.f * i;
 			pDesc->fSizeX = 50.f;
@@ -59,10 +62,12 @@ HRESULT CExpendables_Inven::Ready_GameObject(void * pArg)
 		}
 	}
 
+
 	Add_MultiExpendables(CExpendables::EXPEND_1, 15);
 	Add_MultiExpendables(CExpendables::EXPEND_2, 15);
 	Add_MultiExpendables(CExpendables::EXPEND_3, 15);
 	Add_MultiExpendables(CExpendables::EXPEND_4, 20);
+
 
 	return NOERROR;
 }
@@ -208,10 +213,12 @@ void CExpendables_Inven::Click_Inven()
 		}
 	}
 
+
 	/*if (g_pInput_Device->Key_Up(DIK_6))
 		Add_MultiExpendables(CExpendables::EXPEND_1, 1);
 	if (g_pInput_Device->Key_Up(DIK_7))
 		Sell_Expendables(1);*/
+
 }
 
 void CExpendables_Inven::Add_Expendables(CExpendables::EXPEND_TYPE eType)

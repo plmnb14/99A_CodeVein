@@ -26,7 +26,9 @@ HRESULT CArmor_Inven::Ready_GameObject(void * pArg)
 	CUI::Ready_GameObject(pArg);
 	m_fPosX = WINCX * 0.3f;
 	m_fPosY = WINCY * 0.5f;
+
 	m_fSizeX = 280.f;
+
 	m_fSizeY = 471.f;
 
 	m_fViewZ = 4.f;
@@ -60,7 +62,9 @@ _int CArmor_Inven::Update_GameObject(_double TimeDelta)
 		pSlot->Set_Active(m_bIsActive);
 	}
 
+
 	Click_Inven();
+
 		
 	return NO_EVENT;
 }
