@@ -13,34 +13,46 @@ public:
 
 	enum YACHAMAN_ANI
 	{
-		Idle = 13, //일반 idle 서있기
-		Eat = 10,
-		Eat_End = 11,
-		Sit = 12,
-		Sit_End = 8,
 
-		Alert = 15, //경계 idle
+		Hammer_Idle = 0,
+		Lurk = 70,
+		Lurk_End,
+		Glance,
+		LookAround,
+		Eat,
+		Eat_End,
 
-		Run = 0,
-		Walk = 7,
-		Dodge = 22,
+		AtkR =1,
+		AtkL,
+		AtkHammering,
+		AtkShoulder,
+		AtkHalfClock,
+		AtkTurnTwice,
+		AtkTargetHammering,
+		AtkWheelWind,
+		AtkRun_Start,
+		AtkRun_Loop,
+		AtkRun_End,
 
-		BiteLRL = 27,
-		RDodgeAtk,
-		LDodgeAtk,
-		Frisbee,
-		Dead_Strong = 23,
+		Dead_B,
+		Dead_F,
 		Dead,
-		Dmg_F,
-		Dmg_B,
 
-		Down_Weak_Start = 16,
-		Down_Weak_Loop,
-		Down_weak_End,
+		Run = 64,
+		Dodge,
+		Walk,
 
-		Down_Strong_Start = 19,
-		Down_Strong_Loop,
-		Down_Strong_End
+		//Down_HitF_Start = 31,
+		//Down_HitF_End,
+		//Down_HitB_Start,
+		//Down_HitB_Loop,
+		//Down_HitB_End,
+		//DownFly_Weak_Start = 36,
+		//DownFly_Weak_End == 32번 애니로
+		//DownFly_Strong_Start=37,
+		//DownFly_Strong_End,
+		//DownFly_Weak_End,
+		Groggy = 41
 	};
 
 	enum BONE_TYPE
@@ -78,7 +90,6 @@ private:
 	void Skill_Movement(_float _fspeed, _v3 _vDir = { V3_NULL });
 	void Decre_Skill_Movement(_float _fMutiply = 1.f);
 	void Reset_BattleState();
-
 
 	void Play_Idle();
 	void Play_Walk();

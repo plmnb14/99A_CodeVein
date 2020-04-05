@@ -260,13 +260,13 @@ void CYachaMan::Check_Dist()
 			{
 				if (true == m_bIsCoolDown)
 				{
-					m_eState = Threat;
+					//m_eState = Threat;
 					return;
 				}
 				else
 				{
 					m_eFirstIdentify = MONSTER_ANITYPE::ATTACK;
-					m_iAttackRandomNumber = CALC::Random_Num(BiteLRL, Frisbee);
+					//m_iAttackRandomNumber = CALC::Random_Num(BiteLRL, Frisbee);
 					return;
 				}
 			}
@@ -287,10 +287,10 @@ void CYachaMan::Check_Dist()
 	{
 		m_bCanChase = false;
 		m_eFirstIdentify = MONSTER_ANITYPE::IDLE;
-		m_iIdleRandomNumber = CALC::Random_Num(Eat, Idle);
+		//m_iIdleRandomNumber = CALC::Random_Num(Eat, Idle);
 
-		if (Eat_End == m_iIdleRandomNumber)
-			m_iIdleRandomNumber = Eat;
+		//if (Eat_End == m_iIdleRandomNumber)
+		//	m_iIdleRandomNumber = Eat;
 
 		return;
 	}
@@ -305,35 +305,31 @@ void CYachaMan::Set_AniEvent()
 		{
 			switch (m_eState)
 			{
-			case YACHAMAN_ANI::Idle:
+			case YACHAMAN_ANI::Hammer_Idle:
 				Play_Idle();
 				break;
 			case YACHAMAN_ANI::Eat:
 			case YACHAMAN_ANI::Eat_End:
-				Play_Eat();
-				break;
-			case YACHAMAN_ANI::Sit:
-			case YACHAMAN_ANI::Sit_End:
-				Play_Sit();
+				//Play_Eat();
 				break;
 			}
 		}
 		else
 		{
-			switch (m_iIdleRandomNumber)
-			{
-			case YACHAMAN_ANI::Idle:
-				Play_Idle();
-				break;
-			case YACHAMAN_ANI::Eat:
-			case YACHAMAN_ANI::Eat_End:
-				Play_Eat();
-				break;
-			case YACHAMAN_ANI::Sit:
-			case YACHAMAN_ANI::Sit_End:
-				Play_Sit();
-				break;
-			}
+			//switch (m_iIdleRandomNumber)
+			//{
+			//case YACHAMAN_ANI::Idle:
+			//	Play_Idle();
+			//	break;
+			//case YACHAMAN_ANI::Eat:
+			//case YACHAMAN_ANI::Eat_End:
+			//	//Play_Eat();
+			//	break;
+			//case YACHAMAN_ANI::Sit:
+			//case YACHAMAN_ANI::Sit_End:
+			//	//Play_Sit();
+			//	break;
+			//}
 		}
 
 		break;
