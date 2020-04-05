@@ -25,8 +25,8 @@ HRESULT CSky::Ready_GameObject(void * pArg)
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 	
-	m_pTransformCom->Set_Pos(_v3(0.f, -50.f, 0.f));
-	m_pTransformCom->Set_Scale(_v3(0.3f, 0.3f, 0.3f));
+	m_pTransformCom->Set_Pos(_v3(1.f, 1.f, 1.f));
+	m_pTransformCom->Set_Scale(_v3(0.4f, 0.4f, 0.4f));
 
 	return NOERROR;
 }

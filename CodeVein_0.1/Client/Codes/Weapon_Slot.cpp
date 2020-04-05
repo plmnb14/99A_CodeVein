@@ -1,8 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\Weapon_Slot.h"
-
-
 #include "Select_UI.h"
+#include "CursorUI.h"
 
 CWeapon_Slot::CWeapon_Slot(_Device pDevice)
 	: CUI(pDevice)
@@ -29,6 +28,8 @@ HRESULT CWeapon_Slot::Ready_GameObject(void * pArg)
 
 	SetUp_Default();
 
+	m_bIsActive = false;
+
 	return NOERROR;
 }
 
@@ -51,6 +52,42 @@ _int CWeapon_Slot::Update_GameObject(_double TimeDelta)
 		m_pSelectUI->Set_Select(m_bIsSelect);
 	}
 
+	if (m_pCursorUI)
+	{
+		m_pCursorUI->Set_UI_Pos(m_fPosX, m_fPosY);
+		m_pCursorUI->Set_UI_Size(m_fSizeX, m_fSizeY);
+		m_pCursorUI->Set_ViewZ(m_fViewZ - 0.2f);
+
+		if (m_eType == WEAPON_None)
+			m_pCursorUI->Set_Active(false);
+		else
+			m_pCursorUI->Set_Active(m_bIsActive);
+		
+		m_pCursorUI->Set_CursorColl(Pt_InRect());
+	}
+
+
+	switch (m_eType)
+	{
+	case WEAPON_None:
+		m_iIndex = 5;
+		break;
+	case WEAPON_Hammer:
+		m_iIndex = 0;
+		break;
+	case WEAPON_LSword:
+		m_iIndex = 1;
+		break;
+	case WEAPON_Ssword:
+		m_iIndex = 2;
+		break;
+	case WEAPON_Gun:
+		m_iIndex = 3;
+		break;
+	case WEAPON_Halverd:
+		m_iIndex = 4;
+		break;
+	}
 
 	return NO_EVENT;
 }
@@ -93,7 +130,7 @@ HRESULT CWeapon_Slot::Render_GameObject()
 
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(0);
+	m_pShaderCom->Begin_Pass(1);
 
 	m_pBufferCom->Render_VIBuffer();
 
@@ -114,9 +151,9 @@ _bool CWeapon_Slot::Pt_InRect()
 	return g_pInput_Device->MousePt_InRect(m_fPosX, m_fPosY, m_fSizeX, m_fSizeY, g_hWnd);
 }
 
-CWeapon::WEAPON_DATA CWeapon_Slot::Get_Type()
+WEAPON_STATE CWeapon_Slot::Get_Type()
 {
-	return CWeapon::WEAPON_DATA(m_iIndex);
+	return m_eType;
 }
 
 HRESULT CWeapon_Slot::Add_Component()
@@ -169,11 +206,21 @@ void CWeapon_Slot::SetUp_Default()
 	pDesc->fPosX = m_fPosX;
 	pDesc->fPosY = m_fPosY;
 	pDesc->fSizeX = m_fSizeX;
-	pDesc->fPosY = m_fSizeY;
+	pDesc->fSizeY = m_fSizeY;
 
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_SelectUI", SCENE_STAGE, L"Layer_SelectUI", pDesc)))
 		return;
 	m_pSelectUI = static_cast<CSelect_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_SelectUI", SCENE_STAGE));
+
+	pDesc = new CUI::UI_DESC;
+	pDesc->fPosX = m_fPosX;
+	pDesc->fPosY = m_fPosY;
+	pDesc->fSizeX = m_fSizeX;
+	pDesc->fSizeY = m_fSizeY;
+
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_CursorUI", SCENE_STAGE, L"Layer_CursorUI", pDesc)))
+		return;
+	m_pCursorUI = static_cast<CCursorUI*>(g_pManagement->Get_GameObjectBack(L"Layer_CursorUI", SCENE_STAGE));
 }
 
 CWeapon_Slot * CWeapon_Slot::Create(_Device pGraphic_Device)
@@ -204,6 +251,7 @@ CGameObject * CWeapon_Slot::Clone_GameObject(void * pArg)
 
 void CWeapon_Slot::Free()
 {
+	
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom);

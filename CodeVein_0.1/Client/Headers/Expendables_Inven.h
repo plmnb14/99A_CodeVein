@@ -26,12 +26,13 @@ public:
 private:
 	HRESULT					Add_Component();
 	HRESULT					SetUp_ConstantTable();
-	void					Load_Expendables(CExpendables* pExpendables, _uint iIndex = 0);
-	void					Click_Inven();
+	void					Load_Expendables(CExpendables* pExpendables, _uint iIndex = 0); // 슬롯에 아이템 넣는 함수(한 슬롯당 9개가 넘어가면 다음 슬롯 검색)
+	void					Click_Inven(); // 활성화일 경우에만 적용됨
 
 public:
-	void Add_Expendables(CExpendables::EXPEND_TYPE eType);
-	void Sell_Expendables(_uint iDelete);
+	void Add_Expendables(CExpendables::EXPEND_TYPE eType); // 해당 타입의 소비 아이템 획득
+	void Add_MultiExpendables(CExpendables::EXPEND_TYPE eType, _uint iCnt);
+	void Sell_Expendables(_uint iDelete); // 마우스 커서와 충돌한 아이템을 인수만큼 차감
 	void Delete_QuickSlot(CExpendables_Slot* pSlot);
 	
 private:
@@ -45,7 +46,7 @@ private:
 	vector<CExpendables_Slot*>	m_vecSlot;
 	vector<CExpendables_Slot*>	m_vecQuickSlot;
 	vector<CExpendables*>	m_vecExpendables;
-	
+	vector<UI_DESC*>		m_vecUI_DESC;
 
 public:
 	static CExpendables_Inven*	Create(_Device pGraphic_Device);

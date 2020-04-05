@@ -94,7 +94,7 @@ HRESULT CObject_Manager::Add_GameObject_ToLayer(const _tchar * pPrototypeTag, _u
 	return NOERROR;
 }
 
-CGameObject* CObject_Manager::Clone_GameObject_Return(const _tchar * pPrototypeTag, void * pArg)
+CGameObject * CObject_Manager::Clone_GameObject_Return(const _tchar * pPrototypeTag, void * pArg)
 {
 	CGameObject*	pPrototype = Find_Prototype(pPrototypeTag);
 	if (nullptr == pPrototype)

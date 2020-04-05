@@ -169,15 +169,6 @@
     <Filter Include="02.GameObject\Stage\1%29 Boss\CatWoman">
       <UniqueIdentifier>{e568e588-f565-417a-acdc-050897a061aa}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\2%29 Monster\Genji\Gun">
-      <UniqueIdentifier>{2559073b-348a-4906-a8bc-c47e3dbfa5fe}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\2%29 Monster\Genji\Sword">
-      <UniqueIdentifier>{562d86e8-2e5b-4e7d-a71a-301e8da919d3}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\2%29 Monster\Genji\SwordShield">
-      <UniqueIdentifier>{5b4cc628-da0e-4139-9edb-071b0c3e44a2}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory">
       <UniqueIdentifier>{fbb9eebb-0115-4c1d-b18b-aaf34456cc64}</UniqueIdentifier>
     </Filter>
@@ -219,6 +210,24 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\04. Select_UI">
       <UniqueIdentifier>{6be15063-782e-4209-96d4-18ea99a6801b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\05. NumberUI">
+      <UniqueIdentifier>{06250359-a0c3-4de4-afff-90ff48c1c972}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\06. CursorUI">
+      <UniqueIdentifier>{6d74b162-2001-4bc6-8023-f3d2ca758c6e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Inventory_Icon">
+      <UniqueIdentifier>{f0468381-7282-42ee-881f-8a47f6f56742}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\03.ClickUI">
+      <UniqueIdentifier>{a25424ef-1bd1-4613-ba59-7a50c64c1016}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\05.Inventory">
+      <UniqueIdentifier>{4535d910-4dd8-428b-9507-79fce28bdbde}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\04. Total_Inven">
+      <UniqueIdentifier>{62386c67-0f1d-4d83-81b7-b6d5432e0c3d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -324,6 +333,18 @@
     <ClInclude Include="..\Headers\PoisonBullet.h">
       <Filter>02.GameObject\Stage\1%29 Boss\PoisonButterfly</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\GunGenji.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Genji</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\SwordGenji.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Genji</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\SwordShieldGenji.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Genji</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GenjiBullet.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Genji</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\YachaMan.h">
       <Filter>02.GameObject\Stage\2%29 Monster\YachaMan</Filter>
     </ClInclude>
@@ -369,17 +390,23 @@
     <ClInclude Include="..\Headers\Drain_Weapon.h">
       <Filter>02.GameObject\Stage\0%29 Player\00%29 DrainWeapon</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\GenjiBullet.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\Genji\Gun</Filter>
+    <ClInclude Include="..\Headers\NumberUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\05. NumberUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\GunGenji.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\Genji\Gun</Filter>
+    <ClInclude Include="..\Headers\CursorUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\06. CursorUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\SwordGenji.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\Genji\Sword</Filter>
+    <ClInclude Include="..\Headers\Inventory.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\05.Inventory</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\SwordShieldGenji.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\Genji\SwordShield</Filter>
+    <ClInclude Include="..\Headers\Inventory_Icon.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Inventory_Icon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ClickUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\03.ClickUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Total_Inven.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\04. Total_Inven</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -476,6 +503,18 @@
     <ClCompile Include="..\Codes\PoisonBullet.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\PoisonButterfly</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\GunGenji.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Genji</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SwordGenji.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Genji</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SwordShieldGenji.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Genji</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GenjiBullet.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Genji</Filter>
+    </ClCompile>
     <ClCompile Include="..\Codes\YachaMan.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster\YachaMan</Filter>
     </ClCompile>
@@ -521,17 +560,23 @@
     <ClCompile Include="..\Codes\Drain_Weapon.cpp">
       <Filter>02.GameObject\Stage\0%29 Player\00%29 DrainWeapon</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\GenjiBullet.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\Genji\Gun</Filter>
+    <ClCompile Include="..\Codes\NumberUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\05. NumberUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\GunGenji.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\Genji\Gun</Filter>
+    <ClCompile Include="..\Codes\CursorUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\06. CursorUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\SwordGenji.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\Genji\Sword</Filter>
+    <ClCompile Include="..\Codes\Inventory.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\05.Inventory</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\SwordShieldGenji.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\Genji\SwordShield</Filter>
+    <ClCompile Include="..\Codes\Inventory_Icon.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Inventory_Icon</Filter>
+    </ClCompile>
+    <ClCompile Include="ClickUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\03.ClickUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Total_Inven.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\04. Total_Inven</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

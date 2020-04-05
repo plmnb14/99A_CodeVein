@@ -1,8 +1,6 @@
 float		g_fSpeed;
 float		g_fPosX, g_fSizeX;
 float		g_fPercentage;
-float		g_fAlpha;
-float		g_fSparkle;
 
 matrix		g_matWorld, g_matView, g_matProj;
 
@@ -125,17 +123,6 @@ PS_OUT PS_UI_DOWN(PS_IN In)
 	return Out;
 }
 
-PS_OUT PS_UI_FADE(PS_IN In)
-{
-	PS_OUT			Out = (PS_OUT)0;
-
-	Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
-
-	Out.vColor.a *= g_fAlpha;
-
-	return Out;
-}
-
 technique Default_Technique
 {
 	pass Default_Rendering
@@ -186,16 +173,6 @@ technique Default_Technique
 
 		vertexshader = compile vs_3_0 VS_MAIN();
 		pixelshader = compile ps_3_0 PS_UI_DOWN();
-	}
-
-	pass	UI_Fade_InOut
-	{
-		AlpHaBlENdEnaBLE = true;
-		srcblend = srcalpha;
-		destblend = invsrcalpha;
-
-		vertexshader = compile vs_3_0 VS_MAIN();
-		pixelshader = compile ps_3_0 PS_UI_FADE();
 	}
 }
 

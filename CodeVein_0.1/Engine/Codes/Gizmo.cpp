@@ -242,31 +242,6 @@ void CGizmo::Draw_Triangle(VTX_COL * _vVertex)
 	m_pGizmoShader->End_Shader();
 }
 
-void CGizmo::Draw_Triangle(VTX_COL * _vVertex, D3DXCOLOR _vColor)
-{
-	if (!m_bEnableCell)
-		return;
-
-	m_Color = _vColor;
-
-	_mat DefaultMat;
-	D3DXMatrixIdentity(&DefaultMat);
-
-	Init_Shader(DefaultMat);
-
-	_float fAlpha = 0.5f;
-	m_pGizmoShader->Set_Value("g_fAlpha", &fAlpha, sizeof(_float));
-
-	m_pGizmoShader->Begin_Shader();
-	m_pGizmoShader->Begin_Pass(2);
-
-	m_pGraphicDev->SetFVF(VTXFVF_COL);
-	m_pGraphicDev->DrawPrimitiveUP(D3DPT_TRIANGLELIST, 1, _vVertex, sizeof(VTX_COL));
-
-	m_pGizmoShader->End_Pass();
-	m_pGizmoShader->End_Shader();
-}
-
 void  CGizmo::Draw_AABB(const _v3* _vVertex, _v3 _vPos, _v3 _vSize)
 {
 	if (!m_bEnableCollider)

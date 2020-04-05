@@ -1,6 +1,5 @@
 #include "..\Headers\BT_MoveDirectly.h"
 #include "..\Headers\Transform.h"
-#include "..\Headers\NavMesh.h"
 
 CBT_MoveDirectly::CBT_MoveDirectly()
 {
@@ -44,9 +43,7 @@ CBT_Node::BT_NODE_STATE CBT_MoveDirectly::Update_Node(_double TimeDelta, vector<
 				Look_At_Target(TimeDelta, vTarget_Pos);
 				
 				// ÀÌµ¿
-				
-				//m_pTransform->Add_Pos(_float(m_fMove_Speed * TimeDelta));
-				m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), D3DXVec3Normalize( &_v3(), (_v3*)m_pTransform->Get_WorldMat().m[2]), m_fMove_Speed * (_float)TimeDelta)));
+				m_pTransform->Add_Pos(_float(m_fMove_Speed * TimeDelta));
 			}
 
 			break;
@@ -60,8 +57,7 @@ CBT_Node::BT_NODE_STATE CBT_MoveDirectly::Update_Node(_double TimeDelta, vector<
 				End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
 			}
 
-			//m_pTransform->Add_Pos(_float(m_fMove_Speed * TimeDelta));
-			m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), D3DXVec3Normalize(&_v3(), (_v3*)m_pTransform->Get_WorldMat().m[2]), m_fMove_Speed * (_float)TimeDelta)));
+			m_pTransform->Add_Pos(_float(m_fMove_Speed * TimeDelta));
 			break;
 
 		default:
@@ -153,11 +149,6 @@ HRESULT CBT_MoveDirectly::Ready_Clone_Node(void * pInit_Struct)
 	if (m_pTransform)
 		Safe_AddRef(m_pTransform);
 
-	m_pNavMesh = temp.pNavMesh;
-
-	if (m_pNavMesh)
-		Safe_AddRef(m_pNavMesh);
-
 	m_eMode = temp.eMode;
 	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
 
@@ -219,5 +210,4 @@ CBT_Node * CBT_MoveDirectly::Clone(void * pInit_Struct)
 void CBT_MoveDirectly::Free()
 {
 	Safe_Release(m_pTransform);
-	Safe_Release(m_pNavMesh);
 }

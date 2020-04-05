@@ -224,9 +224,7 @@ void CCell::LateUpdate()
 
 void CCell::Render()
 {
-	D3DXCOLOR tmpColor = m_pVertex[0].dwColor;
-
-	CManagement::Get_Instance()->Gizmo_Draw_Triangle(m_pVertex , tmpColor);
+	CManagement::Get_Instance()->Gizmo_Draw_Triangle(m_pVertex);
 	CManagement::Get_Instance()->Gizmo_Draw_Triangle_Line(m_pVertexPos , m_bSelected , m_eCellParam);
 
 	//LOOP(3)

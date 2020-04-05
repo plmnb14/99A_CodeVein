@@ -65,7 +65,7 @@ HRESULT CBT_Node_Manager::Ready_BT_Node()
 		return E_FAIL;
 	if (FAILED(Add_Prototype_Node(L"UpdateHPRatio", CBT_UpdateGageRatio::Create_Prototype(), CBT_Node_Manager::SERVICE)))
 		return E_FAIL;
-	if (FAILED(Add_Prototype_Node(L"UpdateParam", CBT_UpdateParam::Create_Prototype(), CBT_Node_Manager::SERVICE)))
+	if (FAILED(Add_Prototype_Node(L"UpdateCollider", CBT_UpdateCollider::Create_Prototype(), CBT_Node_Manager::SERVICE)))
 		return E_FAIL;
 	if (FAILED(Add_Prototype_Node(L"CreateEffect", CBT_CreateEffect::Create_Prototype(), CBT_Node_Manager::SERVICE)))
 		return E_FAIL;
@@ -79,11 +79,9 @@ HRESULT CBT_Node_Manager::Ready_BT_Node()
 		return E_FAIL;
 	if (FAILED(Add_Prototype_Node(L"MoveDirectly", CBT_MoveDirectly::Create_Prototype(), CBT_Node_Manager::TASK)))
 		return E_FAIL;
-	if (FAILED(Add_Prototype_Node(L"MoveAround", CBT_MoveAround::Create_Prototype(), CBT_Node_Manager::TASK)))
-		return E_FAIL;
 	if (FAILED(Add_Prototype_Node(L"MoveDir", CBT_MoveDir::Create_Prototype(), CBT_Node_Manager::TASK)))
 		return E_FAIL;
-	if (FAILED(Add_Prototype_Node(L"ChaseDir", CBT_ChaseDir::Create_Prototype(), CBT_Node_Manager::TASK)))
+	if (FAILED(Add_Prototype_Node(L"FixDir", CBT_FixDir::Create_Prototype(), CBT_Node_Manager::TASK)))
 		return E_FAIL;
 	if (FAILED(Add_Prototype_Node(L"RotationDir", CBT_RotationDir::Create_Prototype(), CBT_Node_Manager::TASK)))
 		return E_FAIL;

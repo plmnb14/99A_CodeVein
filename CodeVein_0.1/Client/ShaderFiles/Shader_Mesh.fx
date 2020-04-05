@@ -63,6 +63,7 @@ struct VS_OUT
 	float3		B	: BINORMAL;
 	float2		vTexUV : TEXCOORD0;
 	float4		vProjPos : TEXCOORD1;
+	float4		vLocalPos : TEXCOORD2;
 };
 
 struct VS_BLUROUT
@@ -94,6 +95,7 @@ VS_OUT VS_MAIN(VS_IN In)
 	Out.vTexUV = In.vTexUV;
 
 	Out.vProjPos = Out.vPosition;
+	Out.vLocalPos = float4(In.vPosition.xyz, 1.f);
 
 	return Out;
 }
@@ -138,6 +140,7 @@ struct PS_IN
 	float3		B		: BINORMAL;
 	float2		vTexUV	: TEXCOORD0;
 	float4		vProjPos	: TEXCOORD1;
+	float4		vLocalPos : TEXCOORD2;
 };
 
 struct PS_BLURIN
@@ -211,7 +214,6 @@ PS_OUT PS_MOTIONBLUR(PS_BLURIN In)
 	return Out;
 }
 
-// 최적화를 위해 main과 따로 나눔
 PS_OUT PS_DISSOLVE(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
@@ -219,18 +221,34 @@ PS_OUT PS_DISSOLVE(PS_IN In)
 	float4 vColor = (float4)0.f;
 
 	vColor = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
-	float4 fxColor = tex2D(FXSampler, In.vTexUV);
+	float4 fxColor = pow(tex2D(FXSampler, In.vTexUV), 2.2);
 
 	if (vColor.a == 0.f)
 		clip(-1);
 
-	if (fxColor.r >= g_fFxAlpha)
-		vColor.a = 1;
-	else
-		vColor.a = 0;
+	//if (In.vLocalPos.y < g_fFxAlpha * 2.f) // 밑에서부터 서서히 사라짐
+	{
+		if (fxColor.r >= g_fFxAlpha)
+			vColor.a = 1;
+		else
+			vColor.a = 0;
 
-	if (fxColor.r >= g_fFxAlpha - 0.01 && fxColor.r <= g_fFxAlpha + 0.01)
-		vColor = pow(float4(0.9, 0.75, 0.65, 1), 2.2); //
+		if (fxColor.r >= g_fFxAlpha - 0.01 && fxColor.r <= g_fFxAlpha + 0.01)
+			vColor = pow(float4(0.9, 0.75, 0.65, 1), 2.2); //
+		//else
+		//	;
+
+		//if (fxColor.r >= g_fFxAlpha - 0.007 && fxColor.r <= g_fFxAlpha + 0.007)
+		//	vColor = pow(float4(0.9, 0.87, 0.8, 0.5), 2.2); // 
+		//else
+		//	;
+
+		//if (fxColor.r >= g_fFxAlpha - 0.001 && fxColor.r <= g_fFxAlpha + 0.001)
+		//	vColor = float4(1, 1, 1, 1); // 흰
+		//else
+		//	;
+	}
+
 
 	Out.vDiffuse = vColor;
 	Out.vNormal = vector(In.N.xyz * 0.5f + 0.5f, 0.f);

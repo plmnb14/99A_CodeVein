@@ -24,16 +24,22 @@ HRESULT CArmor_Inven::Ready_GameObject(void * pArg)
 		return E_FAIL;
 
 	CUI::Ready_GameObject(pArg);
-	m_fPosX = WINCX * 0.75f;
+	m_fPosX = WINCX * 0.3f;
 	m_fPosY = WINCY * 0.5f;
-	m_fSizeX = WINCX * 0.5f;
-	m_fSizeY = WINCY;
+	m_fSizeX = 280.f;
+	m_fSizeY = 471.f;
 
-	m_fViewZ = 1.f;
+	m_fViewZ = 4.f;
 
 	m_bIsActive = false;
 
 	SetUp_Default();
+
+	LOOP(5)
+	Add_Armor(CArmor::ARMOR_2);
+
+	LOOP(5)
+		Add_Armor(CArmor::ARMOR_3);
 	return NOERROR;
 }
 
@@ -54,15 +60,7 @@ _int CArmor_Inven::Update_GameObject(_double TimeDelta)
 		pSlot->Set_Active(m_bIsActive);
 	}
 
-	if (m_bIsActive)
-	{
-		//if(g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
-		if (GetAsyncKeyState(VK_LBUTTON) && 0x8000)
-			Regist_Armor();
-		//if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
-		if (GetAsyncKeyState(VK_RBUTTON) && 0x8000)
-			Unregist_Armor();
-	}
+	Click_Inven();
 		
 	return NO_EVENT;
 }
@@ -104,7 +102,7 @@ HRESULT CArmor_Inven::Render_GameObject()
 
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(0);
+	m_pShaderCom->Begin_Pass(1);
 
 
 	m_pBufferCom->Render_VIBuffer();
@@ -163,46 +161,90 @@ HRESULT CArmor_Inven::SetUp_ConstantTable()
 
 void CArmor_Inven::SetUp_Default()
 {
+	/*CUI::UI_DESC* pDesc = nullptr;
+	CArmor_Slot* pSlot = nullptr;
+	for (_uint i = 0; i < 6; ++i)
+	{
+		for (_uint j = 0; j < 5; ++j)
+		{
+			pDesc = new CUI::UI_DESC;
+			pDesc->fPosX = m_fPosX - 103.f + 52.f * j;
+			pDesc->fPosY = m_fPosY - 130.f + 52.f * i;
+			pDesc->fSizeX = 50.f;
+			pDesc->fSizeY = 50.f;
+			g_pManagement->Add_GameObject_ToLayer(L"GameObject_ArmorSlot", SCENE_STAGE, L"Layer_ArmorSlot", pDesc);
+			pSlot = static_cast<CArmor_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_ArmorSlot", SCENE_STAGE));
+			m_vecArmorSlot.push_back(pSlot);
+		}
+	}*/
+
+	m_eRegistArmor = CArmor::ARMOR_END;
+}
+
+void CArmor_Inven::Click_Inven()
+{
+	if (!m_bIsActive)
+		return;
+
+	for (auto& pSlot : m_vecArmorSlot)
+	{
+		if (pSlot->Pt_InRect())
+		{
+			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB) &&
+				!pSlot->Get_Select())
+				Regist_Armor(pSlot);
+			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB) &&
+				pSlot->Get_Select())
+				UnRegist_Armor(pSlot);
+		}
+	}
+}
+
+void CArmor_Inven::Regist_Armor(CArmor_Slot * pArmorSlot)
+{
+	if (pArmorSlot->Get_Type() == CArmor::ARMOR_END)
+		return;
+	if (m_eRegistArmor == CArmor::ARMOR_END)
+	{
+		m_eRegistArmor = pArmorSlot->Get_Type();
+		pArmorSlot->Set_Select(true);
+	}
+	else
+		return;
+}
+
+void CArmor_Inven::UnRegist_Armor(CArmor_Slot * pArmorSlot)
+{
+	if (pArmorSlot->Get_Type() == CArmor::ARMOR_END)
+		return;
+	if (pArmorSlot->Get_Type() == m_eRegistArmor)
+	{
+		m_eRegistArmor = CArmor::ARMOR_END;
+		pArmorSlot->Set_Select(false);
+	}
+}
+
+void CArmor_Inven::Add_Armor(CArmor::ARMOR_TYPE eType)
+{
 	CUI::UI_DESC* pDesc = nullptr;
 	CArmor_Slot* pSlot = nullptr;
-	LOOP(CArmor::ARMOR_END)
+
+
+	pDesc = new CUI::UI_DESC;
+
+	pDesc->fSizeX = 50.f;
+	pDesc->fSizeY = 50.f;
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ArmorSlot", SCENE_STAGE, L"Layer_ArmorSlot", pDesc);
+	pSlot = static_cast<CArmor_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_ArmorSlot", SCENE_STAGE));
+	pSlot->Set_Type(eType);
+	m_vecArmorSlot.push_back(pSlot);
+
+	// 슬롯 생성시 위치 조정
+	for (_uint i = 0; i < m_vecArmorSlot.size(); ++i)
 	{
-		pDesc = new CUI::UI_DESC;
-		pDesc->fPosX = m_fPosX - 100.f;
-		pDesc->fPosY = m_fPosY - 100.f + 90.f * i;
-		pDesc->fSizeX = 80.f;
-		pDesc->fSizeY = 80.f;
-		pDesc->iIndex = i;
-		g_pManagement->Add_GameObject_ToLayer(L"GameObject_ArmorSlot", SCENE_STAGE, L"Layer_ArmorSlot", pDesc);
-		pSlot = static_cast<CArmor_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_ArmorSlot", SCENE_STAGE));
-		m_vecArmorSlot.push_back(pSlot);
-	}
-}
-
-
-void CArmor_Inven::Regist_Armor()
-{
-	for (auto& pSlot : m_vecArmorSlot)
-		pSlot->Set_Select(false);
-	for (auto& pSlot : m_vecArmorSlot)
-	{	
-		if (pSlot->Pt_InRect())
-		{
-			m_pRegistArmor = pSlot;
-			pSlot->Set_Select(true);
-		}		
-	}
-}
-
-void CArmor_Inven::Unregist_Armor()
-{
-	for (auto& pSlot : m_vecArmorSlot)
-	{
-		if (pSlot->Pt_InRect())
-		{
-			pSlot->Set_Select(false);
-			m_pRegistArmor = nullptr;
-		}
+		m_vecArmorSlot[i]->Set_Active(m_bIsActive);
+		m_vecArmorSlot[i]->Set_ViewZ(m_fViewZ - 0.1f);
+		m_vecArmorSlot[i]->Set_UI_Pos(m_fPosX - 103.f + 52.f * (i % 5), m_fPosY - 130.f + 52.f * (i / 5));
 	}
 }
 

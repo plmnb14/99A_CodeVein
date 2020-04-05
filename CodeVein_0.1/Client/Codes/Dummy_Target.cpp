@@ -21,7 +21,7 @@ HRESULT CDummy_Target::Ready_GameObject(void * pArg)
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 
-	m_pTransform->Set_Pos(_v3(2.f, 0.f, 2.f));
+	m_pTransform->Set_Pos(_v3(0.f, 0.f, 0.f));
 	m_pTransform->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 	Ready_BoneMatrix();
@@ -29,15 +29,11 @@ HRESULT CDummy_Target::Ready_GameObject(void * pArg)
 
 	m_tObjParam.bCanHit = true;
 
-	m_pDynamic_Mesh->SetUp_Animation(m_eTmpAnimNum);
-
 	return NOERROR;
 }
 
 _int CDummy_Target::Update_GameObject(_double TimeDelta)
 {
-
-
 	CGameObject::Update_GameObject(TimeDelta);
 
 	if (m_tObjParam.bCanHit == false)
@@ -189,15 +185,16 @@ _int CDummy_Target::Update_GameObject(_double TimeDelta)
 	}
 	}
 
+	Update_Collder();
 
-	return NO_EVENT;
+	return _int();
 }
 
 _int CDummy_Target::Late_Update_GameObject(_double TimeDelta)
 {
 	m_dTimeDelta = TimeDelta;
 
-	//m_pDynamic_Mesh->SetUp_Animation(m_eTmpAnimNum);
+	m_pDynamic_Mesh->SetUp_Animation(m_eTmpAnimNum);
 
 	if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
@@ -211,10 +208,10 @@ HRESULT CDummy_Target::Render_GameObject()
 		nullptr == m_pDynamic_Mesh)
 		return E_FAIL;
 
+	m_pDynamic_Mesh->Play_Animation(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * 1.f);
+
 	if (FAILED(SetUp_ConstantTable()))
 		return E_FAIL;
-
-	m_pDynamic_Mesh->Play_Animation(m_dTimeDelta);
 
 	m_pShader->Begin_Shader();
 
@@ -243,7 +240,6 @@ HRESULT CDummy_Target::Render_GameObject()
 
 	m_pShader->End_Shader();
 
-	Update_Collder();
 	Draw_Collider();
 
 	return NOERROR;
@@ -459,7 +455,6 @@ void CDummy_Target::OnCollisionEvent_Physic(list<CGameObject*> plistGameObject)
 					{
 						iter->Set_Target_CanHit(false);
 						iter->Add_Target_Hp(m_tObjParam.fDamage);
-
 					}
 				}
 

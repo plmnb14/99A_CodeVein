@@ -31,8 +31,6 @@ _int CGameObject::Update_GameObject(_double TimeDelta)
 	if (m_bIsDead)
 		return DEAD_OBJ;
 
-	Check_Dissolve(TimeDelta);
-
 	COMPONENTS::iterator iter_begin = m_pmapComponents.begin();
 	COMPONENTS::iterator iter_end = m_pmapComponents.end();
 
@@ -70,19 +68,6 @@ HRESULT CGameObject::Render_GameObject()
 void CGameObject::Set_Dead()
 {
 	m_bIsDead = true;
-}
-
-void CGameObject::Start_Dissolve(_float fFxSpeed, _bool bFadeIn, _bool bReadyDead)
-{
-	m_iPass = 3;
-	m_bFadeIn = bFadeIn;
-	m_fFXSpeed = fFxSpeed;
-	m_bReadyDead = bReadyDead;
-
-	if (bFadeIn)
-		m_fFXAlpha = 1.f;
-	else
-		m_fFXAlpha = 0.f;
 }
 
 HRESULT CGameObject::Add_Component(_uint iSceneID, const _tchar * pPrototypeTag, const _tchar * pComponentTag, CComponent** ppComponent, void * pArg)
@@ -144,49 +129,12 @@ void CGameObject::Compute_ViewZ(const _v3* pPos)
 	m_fViewZ = D3DXVec3Length(&(vCamPos - *pPos));
 }
 
-void CGameObject::Check_Dissolve(_double TimeDelta)
-{
-	if (m_iPass != 3)
-		return;
-
-	if(!m_bFadeIn)
-	{
-		m_fFXAlpha += _float(TimeDelta) * m_fFXSpeed;
-		
-		if (m_fFXAlpha >= 1.f)
-		{
-			if (m_bReadyDead)
-				m_bIsDead = true;
-			m_fFXAlpha = 1.f;
-			m_iPass = 0;
-		}
-	}
-	else
-	{
-		m_fFXAlpha -= _float(TimeDelta) * m_fFXSpeed;
-
-		if (m_fFXAlpha <= 0.f)
-		{
-			m_fFXAlpha = 0.f;
-			m_iPass = 0;
-		}
-	}
-}
-
 void CGameObject::Free()
 {
 	for (auto& Pair : m_pmapComponents)
 		Safe_Release(Pair.second);
 
 	m_pmapComponents.clear();
-
-	for (auto& Col : m_vecPhysicCol)
-		Safe_Release(Col);
-	m_vecPhysicCol.clear();
-
-	for (auto& Col : m_vecAttackCol)
-		Safe_Release(Col);
-	m_vecPhysicCol.clear();
 
 	Safe_Release(m_pGraphic_Dev);
 }

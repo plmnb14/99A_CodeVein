@@ -1,3 +1,4 @@
+Mesh_AAAA|AAAA.X|..\..\Client\Resources\Mesh\StaticMesh\AAAA\|0
 Mesh_ArchA|ArchA.X|..\..\Client\Resources\Mesh\StaticMesh\ArchA\|0
 Mesh_Asphalt01|Asphalt01.X|..\..\Client\Resources\Mesh\StaticMesh\Asphalt01\|0
 Mesh_BarricadeA|BarricadeA.X|..\..\Client\Resources\Mesh\StaticMesh\BarricadeA\|0
@@ -89,7 +90,6 @@ Mesh_Gaia_Cell|Gaia_Cell.X|..\..\Client\Resources\Mesh\StaticMesh\Gaia_Cell\|0
 Mesh_Gaia_floor|Gaia_floor.X|..\..\Client\Resources\Mesh\StaticMesh\Gaia_floor\|0
 Mesh_Gary_Rock1|Gary_Rock1.X|..\..\Client\Resources\Mesh\StaticMesh\Gary_Rock1\|0
 Mesh_GrayStoneFloorL|GrayStoneFloorL.X|..\..\Client\Resources\Mesh\StaticMesh\GrayStoneFloorL\|0
-Mesh_SM_GrayStoneFloorL|SM_GrayStoneFloorL.X|..\..\Client\Resources\Mesh\StaticMesh\GrayStoneFloorL\|0
 Mesh_GrayStoneFloorM|GrayStoneFloorM.X|..\..\Client\Resources\Mesh\StaticMesh\GrayStoneFloorM\|0
 Mesh_GrayStoneFloorS|GrayStoneFloorS.X|..\..\Client\Resources\Mesh\StaticMesh\GrayStoneFloorS\|0
 Mesh_Gray_Rock2|Gray_Rock2.X|..\..\Client\Resources\Mesh\StaticMesh\Gray_Rock2\|0
@@ -173,13 +173,14 @@ Mesh_Samll_Fencerack2|Samll_Fencerack2.X|..\..\Client\Resources\Mesh\StaticMesh\
 Mesh_ScylinderCase|ScylinderCase.X|..\..\Client\Resources\Mesh\StaticMesh\ScylinderCase\|0
 Mesh_Set_ScylinderCase|Set_ScylinderCase.X|..\..\Client\Resources\Mesh\StaticMesh\Set_ScylinderCase\|0
 Mesh_Shot_ironframe|Shot_ironframe.X|..\..\Client\Resources\Mesh\StaticMesh\Shot_ironframe\|0
-Mesh_SM_SteelFrameM_ba03|SM_SteelFrameM_ba03.X|..\..\Client\Resources\Mesh\StaticMesh\Shot_ironframe\|0
 Mesh_Shot_Sofa|Shot_Sofa.X|..\..\Client\Resources\Mesh\StaticMesh\Shot_Sofa\|0
 Mesh_ShowCase|ShowCase.X|..\..\Client\Resources\Mesh\StaticMesh\ShowCase\|0
 Mesh_Showercurtain|Showercurtain.X|..\..\Client\Resources\Mesh\StaticMesh\Showercurtain\|0
 Mesh_ShowerRail|ShowerRail.X|..\..\Client\Resources\Mesh\StaticMesh\ShowerRail\|0
 Mesh_SignboardA|SignboardA.X|..\..\Client\Resources\Mesh\StaticMesh\SignboardA\|0
 Mesh_Simple_Chair|Simple_Chair.X|..\..\Client\Resources\Mesh\StaticMesh\Simple_Chair\|0
+Mesh_Sky_0|Sky_0.X|..\..\Client\Resources\Mesh\StaticMesh\Sky\|0
+Mesh_Sky_1|Sky_1.X|..\..\Client\Resources\Mesh\StaticMesh\Sky\|0
 Mesh_Staindeglass_ba|Staindeglass_ba.X|..\..\Client\Resources\Mesh\StaticMesh\Staindeglass_ba\|0
 Mesh_Store_picture|Store_picture.X|..\..\Client\Resources\Mesh\StaticMesh\Store_picture\|0
 Mesh_StreetLight|StreetLight.X|..\..\Client\Resources\Mesh\StaticMesh\StreetLight\|0

@@ -24,44 +24,43 @@ HRESULT CWeapon_Inven::Ready_GameObject(void * pArg)
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = WINCX * 0.75f;
+	m_fPosX = WINCX * 0.3f;
 	m_fPosY = WINCY * 0.5f;
-	m_fSizeX = WINCX * 0.5f;
-	m_fSizeY = WINCY;
+	m_fSizeX = 280.f;
+	m_fSizeY = 471.f;
 
-	m_fViewZ = 1.f;
+	m_fViewZ = 3.f;
 
 	m_bIsActive = false;
 
 	// Slot Create
 	CUI::UI_DESC* pDesc = nullptr;
 	CWeapon_Slot* pSlot = nullptr;
-	LOOP(5)
+	
+	/*for (_uint i = 0; i < 6; ++i)
 	{
-		pDesc = new CUI::UI_DESC;
-		pDesc->fPosX = m_fPosX - 100.f;
-		pDesc->fPosY = m_fPosY - 100.f + 90.f * i;
-		pDesc->fSizeX = 80.f;
-		pDesc->fSizeY = 80.f;
-		pDesc->iIndex = i;
-		g_pManagement->Add_GameObject_ToLayer(L"GameObject_WeaponSlot", SCENE_STAGE, L"Layer_WeaponSlot", pDesc);
-		pSlot = static_cast<CWeapon_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponSlot", SCENE_STAGE));
-		m_vecWeaponSlot.push_back(pSlot);
-	}
+		for (_uint j = 0; j < 5; ++j)
+		{
+			pDesc = new CUI::UI_DESC;
+			pDesc->fPosX = m_fPosX - 103.f + 52.f * j;
+			pDesc->fPosY = m_fPosY - 130.f + 52.f * i;
+			pDesc->fSizeX = 50.f;
+			pDesc->fSizeY = 50.f;
+			g_pManagement->Add_GameObject_ToLayer(L"GameObject_WeaponSlot", SCENE_STAGE, L"Layer_WeaponSlot", pDesc);
+			pSlot = static_cast<CWeapon_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponSlot", SCENE_STAGE));
+			m_vecWeaponSlot.push_back(pSlot);
+		}
+
+	}*/
 
 	LOOP(2)
-	{
-		pDesc = new CUI::UI_DESC;
-		pDesc->fPosX = m_fPosX + 100.f;
-		pDesc->fPosY = m_fPosY - 100.f + 90.f * i;
-		pDesc->fSizeX = 80.f;
-		pDesc->fSizeY = 80.f;
-		pDesc->iIndex = CWeapon::WPN_DATA_End;
-		g_pManagement->Add_GameObject_ToLayer(L"GameObject_WeaponSlot", SCENE_STAGE, L"Layer_WeaponSlot", pDesc);
-		pSlot = static_cast<CWeapon_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponSlot", SCENE_STAGE));
-		pSlot->Set_UI_Index(CWeapon::WPN_DATA_End);
-		m_pSelectSlot[i] = pSlot;
-	}
+		m_UseWeapon[i] = WEAPON_None;
+
+	Add_Weapon(WEAPON_Gun);
+	Add_Weapon(WEAPON_Halverd);
+	Add_Weapon(WEAPON_Hammer);
+	Add_Weapon(WEAPON_LSword);
+	Add_Weapon(WEAPON_Ssword);
 
 	return NOERROR;
 }
@@ -77,40 +76,11 @@ _int CWeapon_Inven::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 
+	Click_Inven();
+	
+	
 
-	/*for (auto& pWeaponSlot : m_vecWeaponSlot)
-	{
-	if (pWeaponSlot->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
-	{
-	Regist_Weapon(pWeaponSlot->Get_Type());
-	}
-	}
-
-	LOOP(2)
-	{
-	if (m_pSelectSlot[i]->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
-	{
-	Unregist_Weapon(m_pSelectSlot[i]);
-
-	}
-	}*/
-
-	if (GetAsyncKeyState(VK_LBUTTON) && 0x8000)
-		Regist_Weapon();
-	if (GetAsyncKeyState(VK_RBUTTON) && 0x8000)
-		Unregist_Weapon();
-
-	for (auto& pWeaponSlot : m_vecWeaponSlot)
-	{
-		pWeaponSlot->Set_Active(m_bIsActive);
-		pWeaponSlot->Set_ViewZ(m_fViewZ - 0.1f);
-	}
-
-	LOOP(2)
-	{
-		m_pSelectSlot[i]->Set_Active(m_bIsActive);
-		m_pSelectSlot[i]->Set_ViewZ(m_fViewZ - 0.1f);
-	}
+	
 
 	return NO_EVENT;
 }
@@ -152,7 +122,7 @@ HRESULT CWeapon_Inven::Render_GameObject()
 
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(0);
+	m_pShaderCom->Begin_Pass(1);
 
 	m_pBufferCom->Render_VIBuffer();
 
@@ -208,76 +178,100 @@ HRESULT CWeapon_Inven::SetUp_ConstantTable()
 	return NOERROR;
 }
 
-void CWeapon_Inven::Regist_Weapon(CWeapon::WEAPON_DATA eData)
+void CWeapon_Inven::Click_Inven()
 {
-	if (CWeapon::WPN_DATA_End == m_pSelectSlot[0]->Get_Type())
-	{
-		m_pSelectSlot[0]->Set_UI_Index(eData);
+	if (!m_bIsActive)
 		return;
-	}
 
-	else if (CWeapon::WPN_DATA_End == m_pSelectSlot[1]->Get_Type())
+	for (auto& pSlot : m_vecWeaponSlot)
 	{
-		m_pSelectSlot[1]->Set_UI_Index(eData);
-		return;
+		if (pSlot->Pt_InRect())
+		{
+			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB) &&
+				!pSlot->Get_Select())
+			{
+				Regist_Weapon(pSlot);
+			}
+			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB) &&
+				pSlot->Get_Select())
+			{
+				UnRegist_Weapon(pSlot);
+			}
+		}
 	}
+}
 
+
+void CWeapon_Inven::Regist_Weapon(CWeapon_Slot* pWeaponSlot)
+{
+	if (pWeaponSlot->Get_Type() == WEAPON_None)
+		return;
+	if (m_UseWeapon[0] == WEAPON_None)
+	{
+		m_UseWeapon[0] = pWeaponSlot->Get_Type();
+		pWeaponSlot->Set_Select(true);
+	}
+	else if (m_UseWeapon[1] == WEAPON_None)
+	{
+		m_UseWeapon[1] = pWeaponSlot->Get_Type();
+		pWeaponSlot->Set_Select(true);
+	}
 	else
 		return;
 }
 
-void CWeapon_Inven::Unregist_Weapon(CWeapon_Slot* pWeaponSlot)
+void CWeapon_Inven::UnRegist_Weapon(CWeapon_Slot * pWeaponSlot)
 {
-	if (nullptr == pWeaponSlot)
+	if (pWeaponSlot->Get_Type() == WEAPON_None)
 		return;
-
-	pWeaponSlot->Set_UI_Index(CWeapon::WPN_DATA_End);
+	if (pWeaponSlot->Get_Type() == m_UseWeapon[0])
+	{
+		m_UseWeapon[0] = WEAPON_None;
+		pWeaponSlot->Set_Select(false);
+	}
+	else if (pWeaponSlot->Get_Type() == m_UseWeapon[1])
+	{
+		m_UseWeapon[1] = WEAPON_None;
+		pWeaponSlot->Set_Select(false);
+	}
+	else
+		return;
 }
 
-void CWeapon_Inven::Regist_Weapon()
+void CWeapon_Inven::Add_Weapon(WEAPON_STATE eType)
 {
-	for (auto& pWeaponSlot : m_vecWeaponSlot)
+	/*for (auto& pSlot : m_vecWeaponSlot)
 	{
-		if (pWeaponSlot->Pt_InRect() && !pWeaponSlot->Get_Select())
+		if (pSlot->Get_Type() == WEAPON_None)
 		{
-			if (CWeapon::WPN_DATA_End == m_pSelectSlot[0]->Get_Type())
-			{
-				m_pSelectSlot[0]->Set_UI_Index(pWeaponSlot->Get_Type());
-				pWeaponSlot->Set_Select(true);
-			}
-
-			else if (CWeapon::WPN_DATA_End == m_pSelectSlot[1]->Get_Type())
-			{
-				m_pSelectSlot[1]->Set_UI_Index(pWeaponSlot->Get_Type());
-				pWeaponSlot->Set_Select(true);
-			}
-
-			else
-				return;
+			pSlot->Set_Type(eType);
+			return;
 		}
+		else
+			continue;
+	}*/
+	CUI::UI_DESC* pDesc = nullptr;
+	CWeapon_Slot* pSlot = nullptr;
+
+	
+	pDesc = new CUI::UI_DESC;
+	
+	pDesc->fSizeX = 50.f;
+	pDesc->fSizeY = 50.f;
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_WeaponSlot", SCENE_STAGE, L"Layer_WeaponSlot", pDesc);
+	pSlot = static_cast<CWeapon_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponSlot", SCENE_STAGE));
+	pSlot->Set_Type(eType);
+	m_vecWeaponSlot.push_back(pSlot);
+
+	// 슬롯 생성시 위치 조정
+	for (_uint i = 0; i < m_vecWeaponSlot.size(); ++i)
+	{
+		m_vecWeaponSlot[i]->Set_Active(m_bIsActive);
+		m_vecWeaponSlot[i]->Set_ViewZ(m_fViewZ - 0.1f);
+		m_vecWeaponSlot[i]->Set_UI_Pos(m_fPosX - 103.f + 52.f * (i % 5), m_fPosY - 130.f + 52.f * (i / 5));
 	}
 }
 
-void CWeapon_Inven::Unregist_Weapon()
-{
-	for (auto& pWeaponSlot : m_vecWeaponSlot)
-	{
-		if (pWeaponSlot->Get_Type() == m_pSelectSlot[0]->Get_Type() &&
-			pWeaponSlot->Get_Type() != CWeapon::WPN_DATA_End && pWeaponSlot->Pt_InRect() &&
-			pWeaponSlot->Get_Select())
-		{
-			m_pSelectSlot[0]->Set_UI_Index(CWeapon::WPN_DATA_End);
-			pWeaponSlot->Set_Select(false);
-		}
-		if (pWeaponSlot->Get_Type() == m_pSelectSlot[1]->Get_Type() &&
-			pWeaponSlot->Get_Type() != CWeapon::WPN_DATA_End && pWeaponSlot->Pt_InRect() &&
-			pWeaponSlot->Get_Select())
-		{
-			m_pSelectSlot[1]->Set_UI_Index(CWeapon::WPN_DATA_End);
-			pWeaponSlot->Set_Select(false);
-		}
-	}
-}
 
 CWeapon_Inven * CWeapon_Inven::Create(_Device pGraphic_Device)
 {

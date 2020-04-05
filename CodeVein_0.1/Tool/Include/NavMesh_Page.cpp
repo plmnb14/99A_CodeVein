@@ -834,6 +834,19 @@ void CNavMesh_Page::Load_CellData()
 				++iCellIndex;
 			}
 
+			//HTREEITEM tmpNode = CTreeFinder::Find_Node_By_Name(NaviNodeTree, SubsetName);
+
+			//if (tmpNode == NULL)
+			//{
+			//	HTREEITEM newTree = NaviNodeTree.InsertItem(SubsetName, 0, 0, TVI_ROOT, TVI_LAST);
+			//	NaviNodeTree.InsertItem(CellInfo->szIndex, 0, 0, newTree);
+			//}
+			//
+			//else
+			//{
+			//	NaviNodeTree.InsertItem(CellInfo->szIndex, 0, 0, newTreeNode);
+			//}
+
 
 			pInstance = nullptr;
 			Safe_Delete(CellInfo);

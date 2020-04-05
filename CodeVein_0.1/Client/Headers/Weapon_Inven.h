@@ -25,12 +25,12 @@ public:
 private:
 	HRESULT					Add_Component();
 	HRESULT					SetUp_ConstantTable();
+	void					Click_Inven();
+	void					Regist_Weapon(CWeapon_Slot* pWeaponSlot);
+	void					UnRegist_Weapon(CWeapon_Slot* pWeaponSlot);
 
 public:
-	void Regist_Weapon(CWeapon::WEAPON_DATA eData);
-	void Unregist_Weapon(CWeapon_Slot* pWeaponSlot);
-	void Regist_Weapon();
-	void Unregist_Weapon();
+	void Add_Weapon(WEAPON_STATE eType);
 
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
@@ -38,9 +38,8 @@ private:
 	CRenderer*				m_pRendererCom = nullptr;
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
-	_bool					m_bIsActive;
 	vector<CWeapon_Slot*>	m_vecWeaponSlot;
-	CWeapon_Slot*			m_pSelectSlot[2];
+	WEAPON_STATE			m_UseWeapon[2];
 
 public:
 	static CWeapon_Inven*	Create(_Device pGraphic_Device);

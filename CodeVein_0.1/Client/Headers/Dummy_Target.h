@@ -72,7 +72,7 @@ private:
 
 	//======================================================================
 	TMP_ANI				m_eTmpAnimNum = Idle_State;
-	TMP_ACT				m_eActState = ACT_IDLE;
+	TMP_ACT		m_eActState = ACT_IDLE;
 	_ulong				m_dwHitCnt = 0;
 	_float				m_fTimer = 0.f;
 	_bool				m_bOnGuard = false;

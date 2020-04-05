@@ -8,16 +8,6 @@ BEGIN(Client)
 
 class CPoisonButterfly final : public CGameObject
 {
-private:
-	enum Ani {
-		Ani_Idle = 6,
-		Ani_Death = 12,
-		Ani_Dmg01_B = 14
-	};
-
-private:
-	enum BoneMatrix { Bone_Range, Bone_Body, Bone_Head, Bone_End };
-
 protected:
 	explicit CPoisonButterfly(LPDIRECT3DDEVICE9 pGraphic_Device);
 	explicit CPoisonButterfly(const CPoisonButterfly& rhs);
@@ -83,47 +73,32 @@ private:	//패턴들
 	//////////////////// 
 
 private:
+	HRESULT Update_Bone_Of_BlackBoard();
+	HRESULT Update_Value_Of_BB();
+
+private:
 	CTransform*			m_pTransformCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
 	CMesh_Dynamic*		m_pMeshCom = nullptr;
 	CAIController*		m_pAIControllerCom = nullptr;
-	CNavMesh*			m_pNavMesh = nullptr;
+	CCollider*			m_pCollider = nullptr;
 
 
 	//렌더에서 타임델타 쓰기위해서 저장해놓음
 	_double				m_dTimeDelta = 0;
 
-private:
-	_int				m_iHitCount = 0;
-
-private:	
-	// 충돌체를 위한 뼈다귀
-	_mat*				m_matBones[Bone_End];
-	_bool				m_bAIController = false;
-
-	// 블랙보드에서 뼈의 Pos 저장소
+private:	// 뼈의 Pos 저장소
 	_v3					m_vTail = _v3(0.f, 0.f, 0.f);	//Tail6
 	_v3					m_vBody = _v3(0.f, 0.f, 0.f);	//Spine2
 	_v3					m_vHead = _v3(0.f, 0.f, 0.f);	//Head
 
 private:
-	HRESULT Update_Bone_Of_BlackBoard();
-	HRESULT Update_Value_Of_BB();
-
-	HRESULT Update_Collider();
-
-private:
-	void Check_Collider();
-
-	HRESULT Draw_Collider();
+	
 
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
-
-	HRESULT Ready_BoneMatrix();
-	HRESULT Ready_Collider();
 
 public:
 	static CPoisonButterfly* Create(LPDIRECT3DDEVICE9 pGraphic_Device);

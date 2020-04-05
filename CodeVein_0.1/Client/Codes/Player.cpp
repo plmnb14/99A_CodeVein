@@ -5,10 +5,6 @@
 #include "CameraMgr.h"
 #include "Dummy_Target.h"
 
-#include "GunGenji.h"
-#include "SwordGenji.h"
-#include "PoisonButterfly.h"
-
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
@@ -31,21 +27,24 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 		return E_FAIL;
 
 	SetUp_Default();
-
 	Ready_BoneMatrix();
 	Ready_Collider();
-
 	Ready_Weapon();
 	Ready_DrainWeapon();
+
 
 	return NOERROR;
 }
 
 _int CPlayer::Update_GameObject(_double TimeDelta)
 {
-	CGameObject::Update_GameObject(TimeDelta);
+	if (-1 == m_pNavMesh->Get_CellIndex())
+	{
+		_v3 tmpPos = m_pTransform->Get_Pos();
+		m_pNavMesh->Check_OnNavMesh(&tmpPos);
+	}
 
-	m_tObjParam.bCanHit = true;
+	CGameObject::Update_GameObject(TimeDelta);
 
 	KeyInput();
 
@@ -64,10 +63,6 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	IF_NOT_NULL(m_pDrainWeapon)
 		m_pDrainWeapon->Update_GameObject(TimeDelta);
-
-	m_pNavMesh->Goto_Next_Subset(m_pTransform->Get_Pos(), nullptr);
-
-	Trigger_Event();
 
 	return NO_EVENT;
 }
@@ -122,7 +117,7 @@ HRESULT CPlayer::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			m_pShader->Begin_Pass(m_iPass);
+			m_pShader->Begin_Pass(0);
 
 			if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pDynamicMesh->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE))))
 				return E_FAIL;
@@ -144,9 +139,6 @@ HRESULT CPlayer::Render_GameObject()
 	m_pShader->End_Shader();
 
 	Draw_Collider();
-
-	//IF_NOT_NULL(m_pNavMesh)
-	m_pNavMesh->Render_NaviMesh();
 
 	return NOERROR;
 }
@@ -685,7 +677,7 @@ void CPlayer::Target_AimChasing()
 	if (m_bHaveAimingTarget)
 		return;
 
-	for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE))
+	for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Dummy", SCENE_STAGE))
 	{
 		_float fLength = D3DXVec3Length(&(TARGET_TO_TRANS(iter)->Get_Pos() - m_pTransform->Get_Pos()));
 
@@ -803,7 +795,7 @@ void CPlayer::Key_Movement_Down()
 
 			if (m_tInfo.fMoveSpeed_Max > m_tInfo.fMoveSpeed_Cur)
 			{
-				m_tInfo.fMoveSpeed_Cur += 1.f + m_tInfo.fMoveAccel_Cur * m_tInfo.fMoveAccel_Cur * DELTA_60;
+				m_tInfo.fMoveSpeed_Cur += 0.1f + m_tInfo.fMoveAccel_Cur * m_tInfo.fMoveAccel_Cur * DELTA_60;
 				m_tInfo.fMoveAccel_Cur += DELTA_60;
 			}
 		}
@@ -987,9 +979,6 @@ void CPlayer::Key_Attack()
 			{
 				m_tInfo.fMoveSpeed_Cur = 0.f;
 				m_tInfo.fMoveAccel_Cur = 0.f;
-
-				m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
-				m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(true);
 
 				if (m_bSprint)
 				{
@@ -2438,27 +2427,6 @@ void CPlayer::Play_WeaponChange()
 	}
 }
 
-void CPlayer::Play_Spawn()
-{
-	const _float SPEED = 0.3f;
-	Start_Dissolve(SPEED, true);
-
-	for (auto& iter : m_pWeapon)
-		iter->Start_Dissolve(SPEED, true);
-	//m_pDrainWeapon->Start_Dissolve(0.7f, true);
-
-	const _float END_VALUE = 0.6f;
-	if (m_iPass == 3 && m_fFXAlpha > END_VALUE)
-	{
-		_v3 vPos = m_pTransform->Get_Pos();
-		vPos.y += m_fDissolveY;
-		g_pManagement->Create_Spawn_Effect(vPos);
-		m_fDissolveY += DELTA_60 * 1.3f;
-	}
-	else
-		m_fDissolveY = 0.f;
-}
-
 void CPlayer::Play_BloodSuck()
 {
 	if (false == m_bOnBloodSuck)
@@ -3467,7 +3435,7 @@ void CPlayer::Ready_Weapon()
 {
 	m_pWeapon[WPN_SLOT_A] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
 	m_pWeapon[WPN_SLOT_A]->Change_WeaponData(CWeapon::WPN_SSword_Normal);
-	m_pWeapon[WPN_SLOT_A]->Set_Friendly(true);
+
 	LPCSTR tmpChar = "RightHandAttach";
 	_mat   matAttach;
 
@@ -3482,7 +3450,6 @@ void CPlayer::Ready_Weapon()
 
 	m_pWeapon[WPN_SLOT_B]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
 	m_pWeapon[WPN_SLOT_B]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
-	m_pWeapon[WPN_SLOT_B]->Set_Friendly(true);
 
 	//========================================================================================================================
 	// 여기서 부터 디버그용 무기슬롯
@@ -3493,7 +3460,6 @@ void CPlayer::Ready_Weapon()
 
 	m_pWeapon[WPN_SLOT_C]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
 	m_pWeapon[WPN_SLOT_C]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
-	m_pWeapon[WPN_SLOT_C]->Set_Friendly(true);
 
 	//========================================================================================================================
 }
@@ -3654,258 +3620,6 @@ void CPlayer::Change_Weapon()
 	// 여기 무기 바꾸는 코드를 추후에 작성해야 합니다.
 }
 
-void CPlayer::Trigger_Event()
-{
-	// 임시 트리거 매니저
-
-	//_ulong dwSubSet = m_pNavMesh->Get_SubSetIndex();
-	//_ulong dwCellIdx = m_pNavMesh->Get_CellIndex();
-
-	//switch (dwSubSet)
-	//{
-	//case 0:
-	//{
-	//	switch (dwCellIdx)
-	//	{
-	//	case 5:
-	//	{
-	//		if (m_bSpawnTrigger[0] == false)
-	//		{
-	//			m_bSpawnTrigger[0] = true;
-
-	//			_v3 vPos[4] = {
-	//			_v3(144.551f, -18.08f, 79.895f),
-	//			_v3(145.498f, -18.08f, 84.775f),
-	//			_v3(150.690f, -18.08f, 94.981f),
-	//			_v3(117.045f, -18.08f, 111.482f)};
-
-	//			CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White));
-	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[0]);	// 위치
-	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-	//			TARGET_TO_NAV(pInstance)->Set_Index(32);
-	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-
-	//			pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::Jungle));
-	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[1]);	// 위치
-	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-	//			TARGET_TO_NAV(pInstance)->Set_Index(39);
-	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-
-	//			pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal));
-	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[2]);	// 위치
-	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-	//			TARGET_TO_NAV(pInstance)->Set_Index(52);
-	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-
-	//			pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal));
-	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[3]);	// 위치
-	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-	//			TARGET_TO_NAV(pInstance)->Set_Index(64);
-	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-	//		}
-
-	//		break;
-	//	}
-	//	}
-
-	//	break;
-	//}
-
-	//case 1:
-	//{
-	//	switch (dwCellIdx)
-	//	{
-	//	case 41:
-	//	{
-	//		if (m_bSpawnTrigger[1] == false)
-	//		{
-	//			m_bSpawnTrigger[1] = true;
-
-	//			_v3 vPos[2] = {
-	//				_v3(95.754f, -17.15f, 106.058f),
-	//				_v3(87.195f, -17.15f, 105.301f) 
-	//			};
-
-	//			CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White));
-	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[0]);	// 위치
-	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-	//			TARGET_TO_NAV(pInstance)->Set_Index(55);
-	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-
-	//			pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle));
-	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[1]);	// 위치
-	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-	//			TARGET_TO_NAV(pInstance)->Set_Index(63);
-	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-	//		}
-
-	//		break;
-	//	}
-	//	}
-
-	//	break;
-	//}
-
-	//case 2:
-	//{
-	//	switch (dwCellIdx)
-	//	{
-	//	case 0:
-	//	{
-	//		if (m_bSpawnTrigger[2] == false)
-	//		{
-	//			m_bSpawnTrigger[2] = true;
-
-	//			_v3 vPos[5] = {
-	//				_v3(61.826f, -17.15f, 115.219f),
-	//				_v3(65.298f, -17.15f, 125.649f),
-	//				_v3(62.689f, -17.15f, 127.093f),
-	//				_v3(71.845f, -17.15f, 132.392f),
-	//				_v3(102.201f, -17.15f, 141.943f) };
-
-	//			CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White));
-	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[0]);	// 위치
-	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-	//			TARGET_TO_NAV(pInstance)->Set_Index(28);
-	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-
-	//			pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle));
-	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[1]);	// 위치
-	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-	//			TARGET_TO_NAV(pInstance)->Set_Index(34);
-	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-
-	//			pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::White));
-	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[2]);	// 위치
-	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-	//			TARGET_TO_NAV(pInstance)->Set_Index(138);
-	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-
-	//			pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::White));
-	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[3]);	// 위치
-	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-	//			TARGET_TO_NAV(pInstance)->Set_Index(45);
-	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-
-	//			pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal));
-	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[4]);	// 위치
-	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-	//			TARGET_TO_NAV(pInstance)->Set_Index(72);
-	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-	//		}
-
-	//		break;
-	//	}
-
-	//	case 104:
-	//	{
-	//		if (m_bSpawnTrigger[3] == false)
-	//		{
-	//			m_bSpawnTrigger[3] = true;
-
-	//			_v3 vPos[2] = {
-	//				_v3(85.174f, 0.1f, 154.160f),
-	//				_v3(87.157f, 0.1f, 167.728f) };
-
-	//			CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White));
-	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[0]);	// 위치
-	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
-	//			TARGET_TO_NAV(pInstance)->Set_Index(25);
-	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-
-	//			pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle));
-	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[1]);	// 위치
-	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
-	//			TARGET_TO_NAV(pInstance)->Set_Index(36);
-	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-	//		}
-
-	//		break;
-	//	}
-	//	}
-
-	//	break;
-	//}
-
-	//case 3:
-	//{		
-	//	switch (dwCellIdx)
-	//	{
-	//	case 66:
-	//	{
-	//		if (m_bSpawnTrigger[4] == false)
-	//		{
-	//			m_bSpawnTrigger[4] = true;
-
-	//			_v3 vPos = _v3(43.606f, 0.1f, 151.288f);
-
-	//			CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White));
-	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos);	// 위치
-	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
-	//			TARGET_TO_NAV(pInstance)->Set_Index(126);
-	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-	//		}
-
-	//		break;
-	//	}
-	//	}
-
-	//	break;
-	//}
-
-	//case 4:
-	//{
-	//	switch (dwCellIdx)
-	//	{
-	//	case 52:
-	//	{
-	//		if (m_bSpawnTrigger[5] == false)
-	//		{
-	//			m_bSpawnTrigger[5] = true;
-
-	//			_v3 vPos = _v3(-0.955f, 0.8f, -5.525f);
-
-	//			CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_PoisonButterfly" , nullptr);
-	//			TARGET_TO_TRANS(pInstance)->Set_Pos(vPos);	// 위치
-	//			TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-	//			TARGET_TO_NAV(pInstance)->Set_SubsetIndex(6);
-	//			TARGET_TO_NAV(pInstance)->Set_Index(2);
-	//			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-	//		}
-
-	//		break;
-	//	}
-	//	}
-	//	break;
-	//}
-
-	//case 5:
-	//{
-	//	break;
-	//}
-
-	//case 6:
-	//{
-	//	break;
-	//}
-
-	//}
-}
-
 HRESULT CPlayer::Add_Component()
 {
 	// For.Com_Transform
@@ -3925,7 +3639,7 @@ HRESULT CPlayer::Add_Component()
 		return E_FAIL;
 
 	// for.Com_NavMesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMesh)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"NavMesh", (CComponent**)&m_pNavMesh)))
 		return E_FAIL;
 
 	//m_pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
@@ -3944,8 +3658,8 @@ HRESULT CPlayer::SetUp_Default()
 	ZeroMemory(&m_tInfo, sizeof(ACTOR_INFO));
 
 	// Transform
-	m_pTransform->Set_Pos(_v3(150.484f, -18.08f, 70.417f));
-	//m_pTransform->Set_Pos(_v3(0.f, 0.f, 0.f));
+	//m_pTransform->Set_Pos(_v3(-0.487f, 0.f, 23.497f));
+	m_pTransform->Set_Pos(_v3(0.f, 0.f, 0.f));
 	m_pTransform->Set_Scale(V3_ONE);
 
 	// Mesh
@@ -3969,7 +3683,7 @@ HRESULT CPlayer::SetUp_Default()
 	m_fAnimMutiply = 1.f;
 
 	// Navi
-	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_StageBase.dat");
 	m_pNavMesh->Set_SubsetIndex(0);
 	//m_pNavMesh->Set_Index(14);
 
@@ -3990,10 +3704,6 @@ HRESULT CPlayer::SetUp_ConstantTable()
 	if (FAILED(m_pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShader)))
-		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	return NOERROR;
@@ -4030,9 +3740,6 @@ void CPlayer::Reset_BattleState()
 	m_sHeavyAtkCnt = 0;
 
 	m_fChargeTimer_Cur = 0.f;
-
-	m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
-	m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(false);
 
 	LOOP(16)
 		m_bEventTrigger[i] = false;

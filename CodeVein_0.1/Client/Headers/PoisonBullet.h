@@ -23,7 +23,6 @@ public:
 private:
 	CTransform*			m_pTransformCom = nullptr;
 	CCollider*			m_pCollider = nullptr;
-	CRenderer*			m_pRendererCom = nullptr;
 	_v3					m_vDir = _v3(0.f, 0.f, 0.f);
 	_float				m_fSpeed = 0.f;
 
@@ -36,9 +35,6 @@ private:
 	_tchar				m_pEffect_Tag5[256] = { 0, };
 	_tchar				m_pEffect_Tag6[256] = { 0, };
 	_tchar				m_pEffect_Tag7[256] = { 0, };
-	_tchar				m_pEffect_Tag8[256] = { 0, };
-	_tchar				m_pEffect_Tag9[256] = { 0, };
-	_tchar				m_pEffect_Tag10[256] = { 0, };
 
 	_double				m_dCurTime = 0;
 	_double				m_dLifeTime = 0;
@@ -50,23 +46,8 @@ private:
 	_float				m_fEffectCreateOffset_Check = 0.f;
 
 private:
-	_bool				m_bPlayerFriendly = false;		// 플레이어 껀지
-
-
-private:
-	HRESULT Update_Collider();
-
-	HRESULT Draw_Collider();
-
-private:
-	virtual void OnCollisionEnter();
-	virtual void OnCollisionEvent(list<CGameObject*> plistGameObject);
-
-private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
-
-	HRESULT Ready_Collider();
 
 public:
 	static CPoisonBullet* Create(LPDIRECT3DDEVICE9 pGraphic_Device);

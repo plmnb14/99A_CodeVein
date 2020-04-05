@@ -10,13 +10,6 @@
 
 #include "QuickSlot.h"
 
-////////////////////
-//유미작업
-//#include "MonsterUI.h"
-//#include "MassageUI.h"
-//#include "Get_ItemUI.h"
-///////////////////
-
 #include "Expendables_Inven.h"
 #include "Expendables_Slot.h"
 #include "Select_UI.h"
@@ -26,8 +19,11 @@
 #include "Weapon_Inven.h"
 #include "Armor_Slot.h"
 #include "Armor_Inven.h"
-
-
+#include "NumberUI.h"
+#include "CursorUI.h"
+#include "Inventory.h"
+#include "Inventory_Icon.h"
+#include "ClickUI.h"
 
 IMPLEMENT_SINGLETON(CUI_Manager)
 
@@ -57,17 +53,7 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_QuickSlot", CQuickSlot::Create(pDevice))))
 		return E_FAIL;
 	
-	//////////////////////////////////////////////////////////////////////////
-	// 유미 작업
-	//if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MonsterUI", CMonsterUI::Create(pDevice))))
-	//	return E_FAIL;
 
-	//if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Start_BossUI", CMassageUI::Create(pDevice))))
-	//	return E_FAIL;
-
-	//if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Get_ItemUI", CGet_ItemUI::Create(pDevice))))
-	//	return E_FAIL;
-	////////////////////////////////////////////////////////////////////////////////////////////
 	
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SelectUI", CSelect_UI::Create(pDevice))))
 		return E_FAIL;
@@ -90,7 +76,16 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ArmorInven", CArmor_Inven::Create(pDevice))))
 		return E_FAIL;
-
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_NumberUI", CNumberUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CursorUI", CCursorUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Inventory", CInventory::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_InvenIcon", CInventory_Icon::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ClickUI", CClickUI::Create(pDevice))))
+		return E_FAIL;
 	return NOERROR;
 }
 
@@ -101,13 +96,13 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_MaterialInven", SCENE_STAGE, L"Layer_MaterialInven");
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_WeaponInven", SCENE_STAGE, L"Layer_WeaponInven");
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ArmorInven", SCENE_STAGE, L"Layer_ArmorInven");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_Inventory", SCENE_STAGE, L"Layer_Inventory");
 
 	return NOERROR;
 }
 
 _int CUI_Manager::Update_UI()
 {
-	
 	
 	return 0;
 }

@@ -28,7 +28,7 @@ CBT_Node::BT_NODE_STATE CBT_CreateEffect::Update_Node(_double TimeDelta, vector<
 			{
 				// 생성 횟수 제한
 			case CBT_Service_Node::Finite:
-				if (m_iCur_Count_Of_Execution >= m_iMax_Count_Of_Execution)
+				if (m_iCur_Count_Of_Execution > m_iMax_Count_Of_Execution)
 					break;
 				else
 				{
@@ -97,6 +97,7 @@ CBT_Node::BT_NODE_STATE CBT_CreateEffect::End_Node(vector<CBT_Node*>* pNodeStack
 
 	m_bService_Start = false;
 	m_bInit = true;
+	//m_dService_StartTime = 0;
 
 	return eState;
 }

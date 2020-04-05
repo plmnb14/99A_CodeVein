@@ -14,8 +14,6 @@ private:
 	explicit CMaterial_Inven(const CMaterial_Inven& rhs);
 	virtual ~CMaterial_Inven() = default;
 
-
-
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();
 	virtual HRESULT			Ready_GameObject(void* pArg);
@@ -27,9 +25,11 @@ private:
 	HRESULT					Add_Component();
 	HRESULT					SetUp_ConstantTable();
 	void					Load_Materials(CMaterial* pMaterial, _uint iIndex = 0);
+	void					Click_Inven(); // 활성화일 경우에만 적용됨
 
 public:
 	void Add_Material(CMaterial::MATERIAL_TYPE eType);
+	void Add_MultiMaterial(CMaterial::MATERIAL_TYPE eType, _uint iCnt);
 	void Sell_Material(_uint iDelete);
 
 private:
@@ -38,9 +38,9 @@ private:
 	CRenderer*				m_pRendererCom = nullptr;
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
-	_bool					m_bIsActive;
 	vector<CMaterial*>		m_vecMaterial;
 	vector<CMaterial_Slot*>	m_vecMaterialSlot;
+	vector<UI_DESC*>		m_vecUI_DESC;
 
 public:
 	static CMaterial_Inven*	Create(_Device pGraphic_Device);

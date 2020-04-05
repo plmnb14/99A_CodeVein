@@ -32,7 +32,6 @@ public:
 
 	void Draw_Triangle_Line(_v3 * _vVertex, _bool _bSelect = false , CELL_PARAM _eParam = NORMAL);
 	void Draw_Triangle(VTX_COL * _vVertex);
-	void Draw_Triangle(VTX_COL * _vVertex, D3DXCOLOR _vColor);
 
 	void Draw_AABB(const _v3* _vVertex ,_v3 _vPos, _v3 _vSize = _v3{1.f, 1.f, 1.f});
 	void Draw_OBB(const _v3* _vVertex, _v3 vRotate, _v3 _vPos, _v3 _vSize = _v3{ 1.f, 1.f, 1.f });

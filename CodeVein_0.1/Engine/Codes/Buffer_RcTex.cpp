@@ -24,7 +24,7 @@ struct BOX_INSTANCEDATA_POS
 	float fPos[4];
 };
 
-_int g_iNumofInstance = 160;
+_int g_iNumofInstance = 250;
 
 
 CBuffer_RcTex::CBuffer_RcTex(LPDIRECT3DDEVICE9 pGraphic_Device)
@@ -111,7 +111,7 @@ void CBuffer_RcTex::Render_VIBuffer()
 	m_pGraphic_Dev->SetStreamSource(0, m_pVB, 0, m_iStride);
 	m_pGraphic_Dev->SetFVF(m_dwFVF);
 	m_pGraphic_Dev->SetIndices(m_pIB);
-	m_pGraphic_Dev->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_iNumVertices, 0, m_iNumPolygons);
+	m_pGraphic_Dev->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_iNumVertices, 0, m_iNumPolygons);	
 }
 
 void CBuffer_RcTex::Render_Before_Instancing(_mat matInstance)
@@ -140,7 +140,6 @@ void CBuffer_RcTex::Render_Before_Instancing(_mat matInstance)
 
 void CBuffer_RcTex::Render_DrawPrimitive_Instancing()
 {
-	//m_pGraphic_Dev->DrawPrimitive(D3DPT_POINTLIST, 0, m_iNumVertices);
 	m_pGraphic_Dev->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_iNumVertices, 0, m_iNumPolygons);
 }
 

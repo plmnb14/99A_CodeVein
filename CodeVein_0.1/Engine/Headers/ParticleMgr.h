@@ -5,7 +5,6 @@
 BEGIN(Engine)
 class CManagement;
 class CEffect;
-class CCollider;
 class ENGINE_DLL CParticleMgr final : public CBase
 {
 	DECLARE_SINGLETON(CParticleMgr)
@@ -18,13 +17,7 @@ public:
 	HRESULT Update_ParticleManager(const _double TimeDelta);
 	void Create_ParticleEffect(_tchar* szName, _float fLifeTime, _v3 vPos, CTransform* pFollowTrans = nullptr);
 	void Create_Effect(_tchar* szName, _v3 vPos, CTransform* pFollowTrans = nullptr);
-	void Create_DirEffect(_tchar* szName, _v3 vPos, _v3 vDir, CTransform* pFollowTrans = nullptr);
-	void Create_AngleEffect(_tchar* szName, _v3 vPos, _v3 vAngle, CTransform* pFollowTrans = nullptr);
 	void Create_Effect_NoPool(_tchar* szName, _v3 vPos, CTransform* pFollowTrans = nullptr);
-
-public:
-	void Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol, CTransform* pHittedTrans, _float fPower = 1.5f);
-	void Create_Spawn_Effect(_v3 vPos, CTransform* pFollowTrans = nullptr);
 
 private:
 	HRESULT Update_Effect(const _double TimeDelta);

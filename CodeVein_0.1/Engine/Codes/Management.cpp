@@ -409,14 +409,6 @@ void CManagement::Gizmo_Draw_Triangle(VTX_COL * _vVertex)
 	m_pGizmo->Draw_Triangle(_vVertex);
 }
 
-void CManagement::Gizmo_Draw_Triangle(VTX_COL * _vVertex , D3DXCOLOR _vColor)
-{
-	if (m_pGizmo == nullptr)
-		return;
-
-	m_pGizmo->Draw_Triangle(_vVertex  , _vColor);
-}
-
 void CManagement::Gizmo_Draw_AABB(_v3 * _vVertex, const _v3 _vPos, const _v3 _vSize)
 {
 	if (m_pGizmo == nullptr)
@@ -483,26 +475,6 @@ void CManagement::Create_ParticleEffect(_tchar* szName, _float fLifeTime, _v3 vP
 void CManagement::Create_Effect(_tchar* szName, _v3 vPos, CTransform * pFollowTrans)
 {
 	CParticleMgr::Get_Instance()->Create_Effect(szName, vPos, pFollowTrans);
-}
-
-void CManagement::Create_DirEffect(_tchar * szName, _v3 vPos, _v3 vDir, CTransform * pFollowTrans)
-{
-	CParticleMgr::Get_Instance()->Create_DirEffect(szName, vPos, vDir, pFollowTrans);
-}
-
-void CManagement::Create_AngleEffect(_tchar * szName, _v3 vPos, _v3 vAngle, CTransform * pFollowTrans)
-{
-	CParticleMgr::Get_Instance()->Create_AngleEffect(szName, vPos, vAngle, pFollowTrans);
-}
-
-void CManagement::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol, CTransform* pHittedTrans, _float fPower)
-{
-	CParticleMgr::Get_Instance()->Create_Hit_Effect(pAttackCol, pHittedCol, pHittedTrans, fPower);
-}
-
-void CManagement::Create_Spawn_Effect(_v3 vPos, CTransform* pFollowTrans)
-{
-	CParticleMgr::Get_Instance()->Create_Spawn_Effect(vPos, pFollowTrans);
 }
 
 void CManagement::Free()

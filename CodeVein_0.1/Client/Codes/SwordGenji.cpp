@@ -1,17 +1,14 @@
 #include "stdafx.h"
 #include "..\Headers\SwordGenji.h"
-#include "..\Headers\Weapon.h"
 
 CSwordGenji::CSwordGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
-	ZeroMemory(m_matBones, sizeof(_mat*) * Bone_End);
 }
 
 CSwordGenji::CSwordGenji(const CSwordGenji & rhs)
 	: CGameObject(rhs)
 {
-	ZeroMemory(m_matBones, sizeof(_mat*) * Bone_End);
 }
 
 HRESULT CSwordGenji::Ready_GameObject_Prototype()
@@ -21,26 +18,16 @@ HRESULT CSwordGenji::Ready_GameObject_Prototype()
 
 HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 {
+
 	if (FAILED(Add_Component(pArg)))
 		return E_FAIL;
 
-	Ready_NF(pArg);
-	Ready_Weapon();
-	Ready_BoneMatrix();
-	Ready_Collider();
-
-	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 3.f;
-
-	//m_pTransformCom->Set_Pos(_v3(4.f, 0.f, 4.f));
+	m_pTransformCom->Set_Pos(_v3(1.f, 0.f, 1.f));
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 
-
-	//////////////////// 행동트리 init
-
 	CBlackBoard* pBlackBoard = CBlackBoard::Create();
-	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create(false);
+	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create(true);
 
 	m_pAIControllerCom->Set_BeHaviorTree(pBehaviorTree);
 	m_pAIControllerCom->Set_BlackBoard(pBlackBoard);
@@ -48,33 +35,33 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	Update_Bone_Of_BlackBoard();
 
 	pBlackBoard->Set_Value(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos());
-	pBlackBoard->Set_Value(L"HP", m_tObjParam.fHp_Cur);
-	pBlackBoard->Set_Value(L"MAXHP", m_tObjParam.fHp_Max);
+	pBlackBoard->Set_Value(L"HP", 100);
+	pBlackBoard->Set_Value(L"MAXHP", 100);
 	pBlackBoard->Set_Value(L"HPRatio", 100);
 	pBlackBoard->Set_Value(L"Show", true);
 
 	//CBT_Selector* Start_Sel = Node_Selector("행동 시작"); // 찐
 	CBT_Sequence* Start_Sel = Node_Sequence("행동 시작"); // 테스트
+	CBT_UpdatePos* UpdatePlayerPosService = Node_UpdatePos("Update_Player_Pos", L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE)), 0, 0.01, 0, CBT_Service_Node::Infinite);
+	CBT_UpdateGageRatio* UpdatePlayerHPservice = Node_UpdateGageRatio("Update_Player_Pos", L"HPRatio", L"MaxHP", L"HP", 0, 0.01, 0, CBT_Service_Node::Infinite);
 	CBT_UpdateGageRatio* UpdateHPRatioService = Node_UpdateGageRatio("체력 비율", L"HPRatio", L"MAXHP", L"HP", 1, 0.01, 0, CBT_Service_Node::Infinite);
 
 	pBehaviorTree->Set_Child(Start_Sel);
 
+	Start_Sel->Add_Service(UpdatePlayerPosService);
+	Start_Sel->Add_Service(UpdatePlayerHPservice);
 	Start_Sel->Add_Service(UpdateHPRatioService);
 
 	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
 	//Check_ShowValue->Set_Child(Start_Show());
 	//Start_Sel->Add_Child(Check_ShowValue);
 	Start_Sel->Add_Child(Start_Game());
-	//Start_Sel->Add_Child(Run_Straight_Cut());
-
 
 	//CBT_Wait* Wait1 = Node_Wait("RushWait1", 0.5, 0);
 	//Start_Sel->Add_Child(Wait1);
 
-	//CBT_MoveAround* aaaa = Node_MoveAround("MoveAround", L"Player_Pos", -3.f, 1.f, 0.f);
-	//Start_Sel->Add_Child(aaaa);
-	//CBT_MoveAround* bbbb = Node_MoveAround("MoveAround", L"Player_Pos", 3.f, 1.f, 0.f);
-	//Start_Sel->Add_Child(bbbb);
+	//Start_Sel->Add_Child(Throwing_BackStep());
+
 
 	//그냥 재생
 	/*CBT_RotationDir* TurnDir0 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
@@ -142,7 +129,209 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 
 	Start_Sel->Add_Child(Throwing_BackStep());*/
 
-	m_pMeshCom->SetUp_Animation(Ani_Idle);
+
+
+	////방패 벗겨짐
+	//CBT_Play_Ani* pAni0 = Node_Ani("방패 벗겨짐 ", 0, 0.9f);
+	//pSequence->Add_Child(pAni0);
+
+	////방패 풀림
+	//CBT_Play_Ani* pAni1 = Node_Ani("방패 풀림 ", 1, 0.9f);
+	//pSequence->Add_Child(pAni1);
+
+	////방패 틱틱
+	//CBT_Play_Ani* pAni2 = Node_Ani("방패 틱틱 ", 2, 0.9f);
+	//pSequence->Add_Child(pAni2);
+
+	////가드 시작
+	//CBT_Play_Ani* pAni3 = Node_Ani("가드 시작 ", 3, 0.9f);
+	//pSequence->Add_Child(pAni3);
+
+	////가드 루프
+	//CBT_Play_Ani* pAni4 = Node_Ani("가드 루프 ", 4, 0.9f);
+	//pSequence->Add_Child(pAni4);
+
+	////가드 끝
+	//CBT_Play_Ani* pAni5 = Node_Ani("가드 끝 ", 5, 0.9f);
+	//pSequence->Add_Child(pAni5);
+
+	////가드 달리기
+	//CBT_Play_Ani* pAni6 = Node_Ani("가드 달리기 ", 6, 0.9f);
+	//pSequence->Add_Child(pAni6);
+
+	////가드 오른쪽 걷기
+	//CBT_Play_Ani* pAni7 = Node_Ani("가드 뒤로 걷기 ", 7, 0.9f);
+	//pSequence->Add_Child(pAni7);
+
+	////가드 왼쪽 걷기
+	//CBT_Play_Ani* pAni8 = Node_Ani("가드 왼쪽 걷기 ", 8, 0.9f);
+	//pSequence->Add_Child(pAni8);
+
+	////가드 앞오른쪾 걷기
+	//CBT_Play_Ani* pAni9 = Node_Ani("가드 앞오른쪾 걷기 ", 9, 0.9f);
+	//pSequence->Add_Child(pAni9);
+
+	////가드 앞왼쪽오른발 걷기
+	//CBT_Play_Ani* pAni10 = Node_Ani("가드 앞왼쪽오른발 걷기 ", 10, 0.9f);
+	//pSequence->Add_Child(pAni10);
+
+	////가드 앞왼쪽왼발 걷기
+	//CBT_Play_Ani* pAni11 = Node_Ani("가드 앞왼쪽왼발 걷기 ", 11, 0.9f);
+	//pSequence->Add_Child(pAni11);
+
+	////가드 앞으로 걷기
+	//CBT_Play_Ani* pAni12 = Node_Ani("가드 앞으로 걷기 ", 12, 0.9f);
+	//pSequence->Add_Child(pAni12);
+
+	////가드 뒤오른쪽오른발 걷기
+	//CBT_Play_Ani* pAni13 = Node_Ani("가드 뒤오른쪽오른발 걷기 ", 13, 0.9f);
+	//pSequence->Add_Child(pAni13);
+
+	////가드 뒤 오른쪽왼발 걷기
+	//CBT_Play_Ani* pAni14 = Node_Ani("가드 뒤 오른쪽왼발 걷기 ", 14, 0.9f);
+	//pSequence->Add_Child(pAni14);
+
+	////가드 뒤 왼쪽 걷기
+	//CBT_Play_Ani* pAni15 = Node_Ani("가드 뒤 왼쪽 걷기 ", 15, 0.9f);
+	//pSequence->Add_Child(pAni15);
+
+	////가드 뒤 걷기
+	//CBT_Play_Ani* pAni16 = Node_Ani("가드 뒤 걷기 ", 16, 0.9f);
+	//pSequence->Add_Child(pAni16);
+
+	////가드 오른쪽180도
+	//CBT_Play_Ani* pAni17 = Node_Ani("가드 오른쪽180도 ", 17, 0.9f);
+	//pSequence->Add_Child(pAni17);
+
+	////가드 오른쪽 90도
+	//CBT_Play_Ani* pAni18 = Node_Ani("가드 오른쪽 90도 ", 18, 0.9f);
+	//pSequence->Add_Child(pAni18);
+
+	////가드 왼쪽 180도
+	//CBT_Play_Ani* pAni19 = Node_Ani("가드 왼쪽 180도 ", 19, 0.9f);
+	//pSequence->Add_Child(pAni19);
+
+	////가드 왼쪽 90도
+	//CBT_Play_Ani* pAni20 = Node_Ani("가드 왼쪽 90도 ", 20, 0.9f);
+	//pSequence->Add_Child(pAni20);
+
+	////막고 지르기
+	//CBT_Play_Ani* pAni21 = Node_Ani("막고 지르기 ", 21, 0.9f);
+	//pSequence->Add_Child(pAni21);
+
+	////방패들고 휘돌아치기
+	//CBT_Play_Ani* pAni22 = Node_Ani("방패들고 휘돌아치기 ", 22, 0.9f);
+	//pSequence->Add_Child(pAni22);
+
+	////방패로 후려치기
+	//CBT_Play_Ani* pAni23 = Node_Ani("방패로 후려치기 ", 23, 0.9f);
+	//pSequence->Add_Child(pAni23);
+
+	////방패들고 지르기
+	//CBT_Play_Ani* pAni24 = Node_Ani("방패들고 지르기 ", 24, 0.9f);
+	//pSequence->Add_Child(pAni24);
+
+	////방패로 치고 어퍼치기
+	//CBT_Play_Ani* pAni25 = Node_Ani("방패로 치고 어퍼치기 ", 25, 0.9f);
+	//pSequence->Add_Child(pAni25);
+
+	////주머니에서 표창
+	//CBT_Play_Ani* pAni26 = Node_Ani("주머니에서 표창 ", 26, 0.9f);
+	//pSequence->Add_Child(pAni26);
+
+	////등에서 표창내던지기
+	//CBT_Play_Ani* pAni27 = Node_Ani("등에서 표창 내던지기 ", 27, 0.9f);
+	//pSequence->Add_Child(pAni27);
+
+	////사선후려베기
+	//CBT_Play_Ani* pAni28 = Node_Ani("사선 후려베기 ", 28, 0.9f);
+	//pSequence->Add_Child(pAni28);
+
+	////크게 옆구리베기
+	//CBT_Play_Ani* pAni29 = Node_Ani("크게 옆구리 베기", 29, 0.9f);
+	//pSequence->Add_Child(pAni29);
+
+	////테니스 토스 두번베기
+	//CBT_Play_Ani* pAni30 = Node_Ani("테니스 토스 두번베기 ", 30, 0.9f);
+	//pSequence->Add_Child(pAni30);
+
+	////힘껏 내려배는척하면서 찌르기
+	//CBT_Play_Ani* pAni31 = Node_Ani("힘껏 내려배는척 하면서 찌르기 ", 31, 0.9f);
+	//pSequence->Add_Child(pAni31);
+
+	////앉아서 왼쪽옆구리 베기
+	//CBT_Play_Ani* pAni32 = Node_Ani("앉아서 왼쪽옆구리베기 ", 32, 0.9f);
+	//pSequence->Add_Child(pAni32);
+
+	////백스텝하며 표창
+	//CBT_Play_Ani* pAni33 = Node_Ani("백스텝하며 표창 ", 33, 0.9f);
+	//pSequence->Add_Child(pAni33);
+
+	////달려가 지르기 시작
+	//CBT_Play_Ani* pAni34 = Node_Ani("달려가 지르기 시작 ", 34, 0.9f);
+	//pSequence->Add_Child(pAni34);
+
+	////달려가 지르기 루프
+	//CBT_Play_Ani* pAni35 = Node_Ani("달려가 지르기 루프 ", 35, 0.9f);
+	//pSequence->Add_Child(pAni35);
+
+	////달려가 지르기 끝
+	//CBT_Play_Ani* pAni36 = Node_Ani("달려가 지르기 끝 ", 36, 0.9f);
+	//pSequence->Add_Child(pAni36);
+
+	////테니스 토스 세번베기
+	//CBT_Play_Ani* pAni37 = Node_Ani("테니스 토스 세번베기 ", 37, 0.9f);
+	//pSequence->Add_Child(pAni37);
+
+	////휘청거리게 크게 베기
+	//CBT_Play_Ani* pAni38 = Node_Ani("휘청거리게 크게 베기 ", 38, 0.9f);
+	//pSequence->Add_Child(pAni38);
+
+	////손날치듯이
+	//CBT_Play_Ani* pAni39 = Node_Ani("손날치듯이 ", 39, 0.9f);
+	//pSequence->Add_Child(pAni39);
+
+	////손등으로 뺨치듯이
+	//CBT_Play_Ani* pAni40 = Node_Ani("손등으로 뺨치듯이 ", 40, 0.9f);
+	//pSequence->Add_Child(pAni40);
+
+	////미운놈 꿀밤패듯이
+	//CBT_Play_Ani* pAni41 = Node_Ani("미운놈 꿀밤패듯이", 41, 0.9f);
+	//pSequence->Add_Child(pAni41);
+
+	////총 기본
+	//CBT_Play_Ani* pAni42 = Node_Ani("총 기본", 42, 0.9f);
+	//pSequence->Add_Child(pAni42);
+
+	////개머리판 치기
+	//CBT_Play_Ani* pAni43 = Node_Ani("개머리판 치기 ", 43, 0.9f);
+	//pSequence->Add_Child(pAni43);
+
+	////정조준
+	//CBT_Play_Ani* pAni44 = Node_Ani("정조준 ", 44, 0.9f);
+	//pSequence->Add_Child(pAni44);
+
+	////팔꿈치 치기
+	//CBT_Play_Ani* pAni45 = Node_Ani("팔꿈치 치기 ", 45, 0.9f);
+	//pSequence->Add_Child(pAni45);
+
+	////한손 총 찌르기
+	//CBT_Play_Ani* pAni46 = Node_Ani("한손 총 찌르기 ", 46, 0.9f);
+	//pSequence->Add_Child(pAni46);
+
+	////총 왼쪽부터 베기
+	//CBT_Play_Ani* pAni47 = Node_Ani("총 왼쪽부터 베기 ", 47, 0.9f);
+	//pSequence->Add_Child(pAni47);
+
+	////백덤블링중 2회 쏘기
+	//CBT_Play_Ani* pAni48 = Node_Ani("백덤블링중 2회 쏘기 ", 48, 0.9f);
+	//pSequence->Add_Child(pAni48);
+
+	////총 쏘기
+	//CBT_Play_Ani* pAni49 = Node_Ani("총 쏘기 ", 49, 0.9f);
+	//pSequence->Add_Child(pAni49);
+
+
 
 	return NOERROR;
 }
@@ -151,32 +340,7 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
 
-	// 플레이어 미 발견
-	if (false == m_bFight)
-	{
-		Update_NF();
-	}
-	// 플레이어 발견
-	else
-	{
-		// 뼈 위치 업데이트
-		Update_Bone_Of_BlackBoard();
-		// BB 직접 업데이트
-		Update_Value_Of_BB();
-
-		// 죽었을 경우
-		if (m_bIsDead)
-		{
-			return DEAD_OBJ;
-		}
-		else
-		{
-			if (true == m_bAIController)
-				m_pAIControllerCom->Update_AIController(TimeDelta);
-
-			Check_Collider();
-		}
-	}
+	m_pAIControllerCom->Update_AIController(TimeDelta);
 
 	return _int();
 }
@@ -190,8 +354,6 @@ _int CSwordGenji::Late_Update_GameObject(_double TimeDelta)
 		return E_FAIL;
 
 	m_dTimeDelta = TimeDelta;
-
-	m_pSword->Late_Update_GameObject(TimeDelta);
 
 	return _int();
 }
@@ -219,7 +381,7 @@ HRESULT CSwordGenji::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			m_pShaderCom->Begin_Pass(m_iPass);
+			m_pShaderCom->Begin_Pass(0);
 
 			if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE))))
 				return E_FAIL;
@@ -233,10 +395,6 @@ HRESULT CSwordGenji::Render_GameObject()
 	}
 
 	m_pShaderCom->End_Shader();
-
-	m_pSword->Update_GameObject(m_dTimeDelta);
-	Update_Collider();
-	Draw_Collider();
 
 	return NOERROR;
 }
@@ -260,9 +418,6 @@ CBT_Composite_Node * CSwordGenji::Normal_Cut1()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 
-	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.2, 1, 0.2, 0);
-	Root_Parallel->Add_Service(pHitCol);
-
 	return Root_Parallel;
 }
 
@@ -284,9 +439,6 @@ CBT_Composite_Node * CSwordGenji::Normal_Cut2()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
-
-	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1, 1, 0.2, 0);
-	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
 }
@@ -310,9 +462,6 @@ CBT_Composite_Node * CSwordGenji::Normal_Cut3()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 
-	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.7, 1, 0.3, 0);
-	Root_Parallel->Add_Service(pHitCol);
-
 	return Root_Parallel;
 }
 
@@ -331,9 +480,6 @@ CBT_Composite_Node * CSwordGenji::Strong_RightCut()
 
 	Root_Parallel->Set_Sub_Child(Move0);
 
-	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.45, 1, 0.2, 0);
-	Root_Parallel->Add_Service(pHitCol);
-
 	return Root_Parallel;
 }
 
@@ -351,9 +497,6 @@ CBT_Composite_Node * CSwordGenji::Strong_LeftCut()
 	MainSeq->Add_Child(Show_Ani42);
 
 	Root_Parallel->Set_Sub_Child(Move0);
-
-	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.55, 1, 0.35, 0);
-	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
 }
@@ -377,20 +520,13 @@ CBT_Composite_Node * CSwordGenji::ThreeCombo_Cut()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 
-	CBT_UpdateParam* pHitCol0 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.7, 1, 0.2, 0);
-	CBT_UpdateParam* pHitCol1 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.1, 1, 0.2, 0);
-	CBT_UpdateParam* pHitCol2 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.5, 1, 0.2, 0);
-	Root_Parallel->Add_Service(pHitCol0);
-	Root_Parallel->Add_Service(pHitCol1);
-	Root_Parallel->Add_Service(pHitCol2);
-
 	return Root_Parallel;
 }
 
 CBT_Composite_Node * CSwordGenji::Run_Straight_Cut()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("달리면서 직선베기");
-
+	
 	//메인 병렬
 	CBT_Sequence* Run_Cut_Seq = Node_Sequence("베기seq");
 	CBT_Play_Ani* Show_Ani34 = Node_Ani("달리기 시작", 34, 0.7f);
@@ -415,48 +551,22 @@ CBT_Composite_Node * CSwordGenji::Run_Straight_Cut()
 	MoveSeq->Add_Child(Move);
 	MoveSeq->Add_Child(RunWaitB);
 
-	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.95, 1, 0.7, 0);
-	Root_Parallel->Add_Service(pHitCol);
-
 	return Root_Parallel;
 }
 
 CBT_Composite_Node * CSwordGenji::Start_Game()
 {
-	CBT_Selector* Root_Seq = Node_Selector("게임 시작");
+	CBT_Sequence* Root_Seq = Node_Sequence("게임 시작");
 
-	CBT_DistCheck* DistCheck0 = Node_DistCheck("거리 체크", L"Player_Pos", 2);
-	CBT_DistCheck* DistCheck1 = Node_DistCheck("거리 체크", L"Player_Pos", 4);
-	CBT_DistCheck* DistCheck2 = Node_DistCheck("거리 체크", L"Player_Pos", 6);
-
-	Root_Seq->Add_Child(DistCheck0);
-	DistCheck0->Set_Child(RotationAndNearAttack());
-
-	Root_Seq->Add_Child(DistCheck1);
-	DistCheck1->Set_Child(ChaseAndNearAttack());
-
-	Root_Seq->Add_Child(DistCheck2);
-	DistCheck2->Set_Child(LookPlayer_FarAttack());
-
-	Root_Seq->Add_Child(Chase());
-
-	return Root_Seq;
-}
-
-CBT_Composite_Node * CSwordGenji::RotationAndNearAttack()
-{
-	CBT_Sequence* Root_Seq = Node_Sequence("돌고 랜덤 근접 공격");
-	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.1);
-
-	Root_Seq->Add_Child(Rotation0);
-	Root_Seq->Add_Child(NearAttack());
+	Root_Seq->Add_Child(ChaseAndNearAttack());
+	//Root_Seq->Add_Child(TurnAndFarAttack());
 
 	return Root_Seq;
 }
 
 CBT_Composite_Node * CSwordGenji::ChaseAndNearAttack()
 {
-	CBT_Sequence* Root_Seq = Node_Sequence("추적 후 랜덤 공격");
+	CBT_Sequence* Root_Seq = Node_Sequence("랜덤 공격 또는 추적");
 
 	Root_Seq->Add_Child(Chase());
 	Root_Seq->Add_Child(NearAttack());
@@ -468,7 +578,7 @@ CBT_Composite_Node * CSwordGenji::Chase()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
-	CBT_MoveDirectly* pChase = Node_MoveDirectly_Chase("추적", L"Player_Pos", 3.f, 2.f);
+	CBT_MoveDirectly* pChase = Node_MoveDirectly_Chace("추적", L"Player_Pos", 3.f, 2.f);
 
 	CBT_Play_Ani* Show_Ani139 = Node_Ani("추적", 139, 1.f);
 
@@ -496,30 +606,6 @@ CBT_Composite_Node * CSwordGenji::NearAttack()
 	return Root_Sel;
 }
 
-CBT_Composite_Node * CSwordGenji::LookPlayer_FarAttack()
-{
-	CBT_Sequence* Root_Seq = Node_Sequence("플레이어 바라본 후 랜덤 근접 공격");
-
-	CBT_RotationDir* Rotation0 = Node_RotationDir("플레이어 바라보기", L"Player_Pos", 0.1);
-
-	Root_Seq->Add_Child(Rotation0);
-	Root_Seq->Add_Child(FarAttack());
-
-	return Root_Seq;
-}
-
-CBT_Composite_Node * CSwordGenji::FarAttack()
-{
-	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 원거리 공격");
-
-	Root_Sel->Add_Child(Throwing1());
-	Root_Sel->Add_Child(Throwing2());
-	Root_Sel->Add_Child(Throwing_BackStep());
-	Root_Sel->Add_Child(Run_Straight_Cut());
-
-	return Root_Sel;
-}
-
 CBT_Composite_Node * CSwordGenji::Horizon_Cut()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
@@ -538,9 +624,6 @@ CBT_Composite_Node * CSwordGenji::Horizon_Cut()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
-
-	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.8, 1, 0.3, 0);
-	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
 }
@@ -563,9 +646,6 @@ CBT_Composite_Node * CSwordGenji::Sting_Attack()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
-
-	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.5, 1, 0.2, 0);
-	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
 }
@@ -592,11 +672,6 @@ CBT_Composite_Node * CSwordGenji::TwoCombo_Cut()
 	SubSeq->Add_Child(Move0);
 	SubSeq->Add_Child(Wait1);
 	SubSeq->Add_Child(Move1);
-
-	CBT_UpdateParam* pHitCol0 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.7, 1, 0.25, 0);
-	CBT_UpdateParam* pHitCol1 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.25, 1, 0.2, 0);
-	Root_Parallel->Add_Service(pHitCol0);
-	Root_Parallel->Add_Service(pHitCol1);
 
 	return Root_Parallel;
 }
@@ -652,7 +727,7 @@ CBT_Composite_Node * CSwordGenji::Throwing_BackStep()
 CBT_Composite_Node * CSwordGenji::Show_ChaseAndNeqrAttack()
 {
 	CBT_Sequence* Root_Seq = Node_Sequence("공격 또는 추적");
-	CBT_MoveDirectly* Chase = Node_MoveDirectly_Chase("추적", L"Player_Pos", 3.f, 2.f);
+	CBT_MoveDirectly* Chase = Node_MoveDirectly_Chace("추적", L"Player_Pos", 3.f, 2.f);
 
 	Root_Seq->Add_Child(Chase);
 	Root_Seq->Add_Child(Show_NearAttack());
@@ -687,7 +762,7 @@ CBT_Composite_Node * CSwordGenji::Show_NearAttack()
 	Cool4->Set_Child(Strong_LeftCut());
 	Root_Sel->Add_Child(Cool5);
 	Cool5->Set_Child(ThreeCombo_Cut());
-
+	
 	Root_Sel->Add_Child(Cool6);
 	Cool6->Set_Child(Run_Straight_Cut());
 	Root_Sel->Add_Child(Cool7);
@@ -702,199 +777,12 @@ CBT_Composite_Node * CSwordGenji::Show_NearAttack()
 
 HRESULT CSwordGenji::Update_Bone_Of_BlackBoard()
 {
-	return S_OK;
+	return E_NOTIMPL;
 }
 
 HRESULT CSwordGenji::Update_Value_Of_BB()
 {
-	// 1. 플레이어 좌표 업데이트
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos());
-	// 2. 체력 업데이트
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"HP", m_tObjParam.fHp_Cur);
-
-	return S_OK;
-}
-
-HRESULT CSwordGenji::Update_NF()
-{
-	// 플레이어 좌표 구함.
-	_v3 vPlayer_Pos = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos();
-
-	// 플레이어와 몬스터의 거리
-	_v3 vLengthTemp = vPlayer_Pos - m_pTransformCom->Get_Pos();
-	vLengthTemp.y = 0.f;
-	_float fLength = D3DXVec3Length(&vLengthTemp);
-
-	//cout << "거리 : " << fLength << endl;
-
-	// 플레이어가 최소거리안에 있는가?
-	if (fLength < m_fMinLength)
-	{
-		// 싸움 시작
-		m_bFight = true;
-	}
-	// 플레이어가 최대거리 안에 있는가?
-	else if (fLength < m_fMaxLength)
-	{
-		// 플레이어가 시야각 안에 있는가?
-		if (Is_InFov(m_fFov, vPlayer_Pos))
-		{
-			m_bFight = true;
-		}
-		else
-		{
-			m_pMeshCom->SetUp_Animation(Talk);
-		}
-	}
-	// 플레이어가 최대거리 밖에 있는가?
-	else
-		m_pMeshCom->SetUp_Animation(Talk);
-
-	return S_OK;
-}
-
-HRESULT CSwordGenji::Update_Collider()
-{
-	_ulong matrixIdx = 0;
-
-	for (auto& iter : m_vecPhysicCol)
-	{
-		_mat tmpMat;
-		tmpMat = *m_matBones[matrixIdx] * m_pTransformCom->Get_WorldMat();
-
-		_v3 ColPos = _v3(tmpMat._41, tmpMat._42, tmpMat._43);
-
-		iter->Update(ColPos);
-
-		++matrixIdx;
-	}
-
-	return S_OK;
-}
-
-void CSwordGenji::Skill_Movement(_float _fspeed, _v3 _vDir)
-{
-	_v3 tmpLook;
-	_float fSpeed = _fspeed;
-
-	tmpLook = _vDir;
-	D3DXVec3Normalize(&tmpLook, &tmpLook);
-
-	// 네비 없이
-	//m_pTransformCom->Add_Pos(fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"), tmpLook);
-
-	// 네비게이션 적용하면 
-	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &tmpLook, fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
-}
-
-void CSwordGenji::Decre_Skill_Movement(_float _fMutiply)
-{
-	m_fSkillMoveSpeed_Cur -= (0.3f - m_fSkillMoveAccel_Cur * m_fSkillMoveAccel_Cur * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60")) * _fMutiply;
-	m_fSkillMoveAccel_Cur += g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60");
-
-	if (m_fSkillMoveSpeed_Cur < 0.f)
-	{
-		m_fSkillMoveAccel_Cur = 0.5f;
-		m_fSkillMoveSpeed_Cur = 0.f;
-	}
-}
-
-
-_bool CSwordGenji::Is_InFov(_float fDegreeOfFov, _v3 vTargetPos)
-{
-	_v3 vThisLook = *(_v3*)(&m_pTransformCom->Get_WorldMat().m[3]);
-	vThisLook.y = 0.f;
-	D3DXVec3Normalize(&vThisLook, &vThisLook);
-
-	_v3 FromThisToTarget = vTargetPos - m_pTransformCom->Get_Pos();
-	FromThisToTarget.y = 0.f;
-	D3DXVec3Normalize(&FromThisToTarget, &FromThisToTarget);
-
-
-	_float fDot_Temp = D3DXVec3Dot(&vThisLook, &FromThisToTarget);
-	_float fRadian = acosf(fDot_Temp);
-
-	//cout << "시야각 : " << D3DXToDegree(fRadian) << endl;
-
-	if (D3DXToDegree(fRadian) > fDegreeOfFov * 0.5f)
-		return true;
-
-	return false;
-}
-
-void CSwordGenji::Check_Collider()
-{
-	// 충돌처리, bCanHit를 무기가 false시켜줄것임.
-	if (false == m_tObjParam.bCanHit && m_tObjParam.bIsHit == false)
-	{
-		m_pMeshCom->Reset_OldIndx();	//애니 인덱스 초기화
-
-		//m_tObjParam.fHp_Cur -= 0.99f;	// 체력 임의로 닳게 만듦.
-
-		m_bAIController = false;
-		cout << "나도 부딪힘 ^^" << endl;
-		m_tObjParam.bIsHit = true;
-		m_tObjParam.bCanHit = true;
-
-		m_fSkillMoveSpeed_Cur = 4.f;
-		m_fSkillMoveAccel_Cur = 0.f;
-		m_fSkillMoveMultiply = 0.5f;
-
-		// 맞을때 플레이어의 룩을 받아와서 그 방향으로 밈.
-		m_vPushDir_forHitting = (*(_v3*)&TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_WorldMat().m[2]);
-
-		m_pAIControllerCom->Reset_BT();
-
-		if (m_tObjParam.fHp_Cur > 0.f)
-		{
-			m_pMeshCom->SetUp_Animation(Ani_Dmg01_FL);	//방향에 따른 모션 해줘야함.
-
-			// 디졸브 시작
-		}
-		else
-		{
-			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
-
-			Start_Dissolve(0.7f, false, true);
-			m_pSword->Start_Dissolve();
-			g_pManagement->Create_Spawn_Effect(m_pTransformCom->Get_Pos());
-		}
-	}
-	else
-	{
-		// 맞았을 아래 태울것임
-		if (m_pMeshCom->Is_Finish_Animation(0.9f))
-		{
-			m_bAIController = true;
-			m_tObjParam.bIsHit = false;
-
-			//m_pMeshCom->SetUp_Animation(Ani_Idle);
-		}
-
-		else if (m_pMeshCom->Is_Finish_Animation(0.7f))	// 이때부터 재충돌 가능
-		{
-			m_tObjParam.bIsHit = false;
-		}
-
-		// 밀림 처리
-		if (m_tObjParam.bIsHit == true)
-		{
-			Decre_Skill_Movement(m_fSkillMoveMultiply);
-			Skill_Movement(m_fSkillMoveSpeed_Cur, m_vPushDir_forHitting);
-			cout << "밀리는 중" << endl;
-		}
-	}
-
-}
-
-HRESULT CSwordGenji::Draw_Collider()
-{
-	for (auto& iter : m_vecPhysicCol)
-	{
-		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
-	}
-
-	return S_OK;
+	return E_NOTIMPL;
 }
 
 HRESULT CSwordGenji::Add_Component(void* pArg)
@@ -911,37 +799,12 @@ HRESULT CSwordGenji::Add_Component(void* pArg)
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
-	_tchar name[256] = { 0, };
-	INFO eTemp = *(INFO*)pArg;
-
-	if (nullptr == pArg)
-		lstrcpy(name, L"Mesh_NormalGenji");
-	else
-	{
-		switch (eTemp.eColor)
-		{
-		case CSwordGenji::Jungle:
-			lstrcpy(name, L"Mesh_JungleGenji");
-			break;
-		case CSwordGenji::Normal:
-			lstrcpy(name, L"Mesh_NormalGenji");
-			break;
-		case CSwordGenji::White:
-			lstrcpy(name, L"Mesh_WhiteGenji");
-			break;
-		}
-	}
-
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, name, L"Com_Mesh", (CComponent**)&m_pMeshCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_NormalGenji", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
 		return E_FAIL;
 
 	// for.Com_AIController
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"AIController", L"Com_AIController", (CComponent**)&m_pAIControllerCom)))
-		return E_FAIL;
-
-	// for.Com_NavMesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMesh)))
 		return E_FAIL;
 
 
@@ -969,98 +832,10 @@ HRESULT CSwordGenji::SetUp_ConstantTable()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShaderCom)))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
-		return E_FAIL;
 
 	Safe_Release(pManagement);
 
 	return NOERROR;
-}
-
-HRESULT CSwordGenji::Ready_Weapon()
-{
-	m_pSword = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pSword->Change_WeaponData(CWeapon::WPN_SSword_Normal);
-
-	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
-	m_pSword->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
-	m_pSword->Set_ParentMatrix(&m_pTransformCom->Get_WorldMat());
-
-	return S_OK;
-}
-
-HRESULT CSwordGenji::Ready_Collider()
-{
-	m_vecPhysicCol.reserve(10);
-
-	//경계체크용
-	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
-
-	_float fRadius = 1.2f;
-
-	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
-	pCollider->Set_Dynamic(true);
-	pCollider->Set_Type(COL_SPHERE);
-	pCollider->Set_CenterPos(_v3(m_matBones[Bone_Range]->_41, m_matBones[Bone_Range]->_42, m_matBones[Bone_Range]->_43));
-	pCollider->Set_Enabled(true);
-
-	m_vecPhysicCol.push_back(pCollider);
-
-	//몸
-	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
-
-	fRadius = 0.5f;
-
-	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
-	pCollider->Set_Dynamic(true);
-	pCollider->Set_Type(COL_SPHERE);
-	pCollider->Set_CenterPos(_v3(m_matBones[Bone_Body]->_41, m_matBones[Bone_Body]->_42, m_matBones[Bone_Body]->_43));
-	pCollider->Set_Enabled(true);
-
-	m_vecPhysicCol.push_back(pCollider);
-
-	//머리
-	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
-
-	fRadius = 0.2f;
-
-	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
-	pCollider->Set_Dynamic(true);
-	pCollider->Set_Type(COL_SPHERE);
-	pCollider->Set_CenterPos(_v3(m_matBones[Bone_Head]->_41, m_matBones[Bone_Head]->_42, m_matBones[Bone_Head]->_43));
-	pCollider->Set_Enabled(true);
-
-	m_vecPhysicCol.push_back(pCollider);
-
-	return S_OK;
-}
-
-HRESULT CSwordGenji::Ready_NF(void * pArg)
-{
-	INFO eTemp = *(INFO*)pArg;
-
-	m_eNF_Ani = eTemp.eNF_Ani;
-	m_fFov = eTemp.fFov;
-	m_fMaxLength = eTemp.fMaxLength;
-	m_fMinLength = eTemp.fMinLength;
-
-	return S_OK;
-}
-
-HRESULT CSwordGenji::Ready_BoneMatrix()
-{
-	D3DXFRAME_DERIVED*	pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head", 0);
-
-	m_matBones[Bone_Head] = &pFrame->CombinedTransformationMatrix;
-
-	pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Spine", 0);
-
-	m_matBones[Bone_Range] = &pFrame->CombinedTransformationMatrix;
-	m_matBones[Bone_Body] = &pFrame->CombinedTransformationMatrix;
-
-	return S_OK;
 }
 
 CSwordGenji * CSwordGenji::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
@@ -1078,6 +853,9 @@ CSwordGenji * CSwordGenji::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 
 CGameObject * CSwordGenji::Clone_GameObject(void * pArg)
 {
+	// 검, 총, 방패
+	// 
+
 	CSwordGenji* pInstance = new CSwordGenji(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
@@ -1091,8 +869,6 @@ CGameObject * CSwordGenji::Clone_GameObject(void * pArg)
 
 void CSwordGenji::Free()
 {
-	Safe_Release(m_pNavMesh);
-	Safe_Release(m_pSword);
 	Safe_Release(m_pAIControllerCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pMeshCom);

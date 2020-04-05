@@ -4,9 +4,6 @@
 
 BEGIN(Engine)
 
-/*
-정한 시간안에 해당 방향으로 일정속도로 회전한다.
-*/
 class CTransform;
 class ENGINE_DLL CBT_RotationDir final : public CBT_Task_Node
 {

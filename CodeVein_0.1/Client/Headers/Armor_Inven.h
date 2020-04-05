@@ -6,7 +6,7 @@
 
 BEGIN(Client)
 
-class CArmor_Inven final : public CUI
+class CArmor_Inven : public CUI
 {
 private:
 	explicit CArmor_Inven(_Device pDevice);
@@ -24,10 +24,12 @@ private:
 	HRESULT					Add_Component();
 	HRESULT					SetUp_ConstantTable();
 	void					SetUp_Default();
+	void					Click_Inven();
+	void					Regist_Armor(CArmor_Slot* pArmorSlot);
+	void					UnRegist_Armor(CArmor_Slot* pArmorSlot);
 
 public:
-	void Regist_Armor();
-	void Unregist_Armor();
+	void					Add_Armor(CArmor::ARMOR_TYPE eType);
 
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
@@ -35,9 +37,8 @@ private:
 	CRenderer*				m_pRendererCom = nullptr;
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
-	_bool					m_bIsActive;
 	vector<CArmor_Slot*>	m_vecArmorSlot;
-	CArmor_Slot*			m_pRegistArmor;
+	CArmor::ARMOR_TYPE		m_eRegistArmor = CArmor::ARMOR_END;
 
 public:
 	static CArmor_Inven*	Create(_Device pGraphic_Device);

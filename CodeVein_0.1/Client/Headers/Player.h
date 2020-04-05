@@ -143,27 +143,11 @@ private:
 	_float					m_fSkillMoveAccel_Max = 0.f;
 	_float					m_fSkillMoveMultiply = 1.f;
 
-	//==============================================================================
-	// 임시 트리거 이벤트
-	//==============================================================================
-
-	virtual void Trigger_Event();
-
-	_bool		m_bSpawnTrigger[16] = {};
-
-	//==============================================================================
-	// 임시 트리거 이벤트
-	//==============================================================================
-
-
 private:
 	_float					m_fAtkEndTime = 0.f;
 
 private:
 	_float					m_fAmingRange = 20.f;
-
-private: // For Dissolve
-	_float					m_fDissolveY = 0.f;
 
 private:
 	HRESULT Add_Component();
@@ -221,7 +205,6 @@ private:
 	virtual void Play_Buff();
 	virtual void Play_Hit();
 	virtual void Play_WeaponChange();
-	virtual void Play_Spawn();
 
 private:
 	virtual void Play_BloodSuck();

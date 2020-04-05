@@ -90,7 +90,6 @@ public: // For.Gizmo
 	void Gizmo_Draw_Sphere(const _v3 _vVertex, const _float _fRadius = 1.f);
 	void Gizmo_Draw_Triangle_Line(_v3 * _vVertex, const _bool _bSelect = false, CELL_PARAM _eParam = NORMAL);
 	void Gizmo_Draw_Triangle(VTX_COL * _vVertex);
-	void Gizmo_Draw_Triangle(VTX_COL * _vVertex , D3DXCOLOR _vColor);
 	void Gizmo_Draw_AABB(_v3* _vVertex, const _v3 _vPos, const _v3 _vSize = _v3{ 1.f, 1.f, 1.f });
 	void Gizmo_Draw_OBB(_v3* _vVertex, const _v3 vRotate, const _v3 _vPos, const _v3 _vSize = _v3{ 1.f, 1.f, 1.f });
 	void Gizmo_Draw_Capsule(_v3 _vVertex, const _v3 _vRadius);
@@ -106,11 +105,6 @@ public: // For.BT_Node_Manager
 public: // For.ParticleManager
 	void Create_ParticleEffect(_tchar* szName, _float fLifeTime, _v3 vPos, CTransform* pFollowTrans = nullptr);
 	void Create_Effect(_tchar* szName, _v3 vPos, CTransform* pFollowTrans = nullptr);
-	void Create_DirEffect(_tchar* szName, _v3 vPos, _v3 vDir, CTransform* pFollowTrans = nullptr);
-	void Create_AngleEffect(_tchar* szName, _v3 vPos, _v3 vAngle, CTransform* pFollowTrans = nullptr);
-
-	void Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol, CTransform* pHittedTrans, _float fPower = 1.5f);
-	void Create_Spawn_Effect(_v3 vPos, CTransform* pFollowTrans = nullptr);
 
 private:
 	CGraphic_Device*			m_pGraphic_Device = nullptr;

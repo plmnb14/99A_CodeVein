@@ -13,7 +13,6 @@ private:
 	explicit CMesh_Dynamic(const CMesh_Dynamic& rhs);
 	virtual  ~CMesh_Dynamic() = default;
 public:
-	vector<D3DXMESHCONTAINER_DERIVED*> Get_MeshContainer() { return m_MeshContainerList; }
 	_uint Get_NumMeshContainer() const {
 		return (_uint)m_MeshContainerList.size();
 	}
@@ -41,8 +40,6 @@ public:
 	LPD3DXFRAME		Get_BonInfo(LPCSTR _bBoneName, _short _sCTRL_Type = 0);
 	D3DXTRACK_DESC	Get_TrackInfo();
 	D3DXTRACK_DESC	Get_TrackInfo_Upper();
-	CAniCtrl*		Get_AniCtrl();
-	_double			Get_AnimationFullTime();
 
 public:
 	void	Set_BoneSeperate(D3DXFRAME_DERIVED* _frame, const char* _bodyName , _short _sSeperateNum);

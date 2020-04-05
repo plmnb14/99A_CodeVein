@@ -112,13 +112,6 @@ namespace Engine
 
 	}VTXCUBE;
 
-	typedef	struct tagVertexCubeColor
-	{
-		_v3			vPosition;
-		_ulong		dwColor;
-
-	}VTXCUBE_COL;
-
 	typedef struct tagViewPortVertex
 	{
 		_v4				vPosition;
@@ -386,10 +379,7 @@ namespace Engine
 		_bool	bRandStartPos;
 
 		_bool	bDistortion;
-		_float	fDistortionPower;
 		_bool	bGravity;
-		_bool	bSlowly;
-		_bool	bDissolve;
 
 		_bool	bDirMove;
 		_v3		vMoveDirection;
