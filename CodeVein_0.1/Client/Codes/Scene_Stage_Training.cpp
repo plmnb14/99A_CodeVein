@@ -7,6 +7,10 @@
 #include "UI_Manager.h"
 #include "ParticleMgr.h"
 
+//#include "MonsterUI.h"
+//#include "MassageUI.h"
+//#include "Get_ItemUI.h"
+
 #include "SwordGenji.h"
 #include "GunGenji.h"
 #include "SwordShieldGenji.h"
@@ -74,6 +78,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Dummy(const _tchar * pLayerTag)
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+
 	return S_OK;
 }
 
@@ -87,6 +92,17 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 
 	CGameObject* pInstance = nullptr;
 
+ 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_MonsterUI", SCENE_STAGE, L"Layer_MonsterHPUI")))
+ 		return E_FAIL;
+
+	 if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Start_BossUI", SCENE_STAGE, L"Layer_MassageUI")))
+	 	return E_FAIL;
+
+	 if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Get_ItemUI", SCENE_STAGE, L"Layer_Get_ItemUI")))
+		 return E_FAIL;
+
+	 if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Pickup_ItemUI", SCENE_STAGE, L"Layer_PickUPUI")))
+		 return E_FAIL;
 	
 	// 검은 성게
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_BlackUrchin", SCENE_STAGE, L"Layer_Monster")))

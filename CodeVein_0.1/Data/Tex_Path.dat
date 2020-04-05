@@ -54,6 +54,7 @@ Tex_ButtonUI|ButtonUI%d.tga|..\..\Client\Resources\Texture\TestUI\ButtonUI\|0|6
 Tex_Consume_Item|Consume_Item%d.tga|..\..\Client\Resources\Texture\TestUI\Consume_Item\|0|5
 Tex_CursorSelect|CursorSelect%d.tga|..\..\Client\Resources\Texture\TestUI\CursorSelect\|0|3
 Tex_Expendables|Expendables%d.tga|..\..\Client\Resources\Texture\TestUI\Expendables\|0|5
+Tex_Get_ItemUI|Get_ItemUI%d.png|..\..\Client\Resources\Texture\TestUI\Get_ItemUI\|0|7
 Tex_Halberd_Icon|Halberd_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Halberd_Icon\|0|3
 Tex_Hammer_Icon|Hammer_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Hammer_Icon\|0|3
 Tex_HPBar|HPBar%d.tga|..\..\Client\Resources\Texture\TestUI\HPBar\|0|1
@@ -66,14 +67,18 @@ Tex_MapPattern|MapPattern%d.tga|..\..\Client\Resources\Texture\TestUI\MapPattern
 Tex_Materials|Materials%d.tga|..\..\Client\Resources\Texture\TestUI\Materials\|0|5
 Tex_MenuWindow|MenuWindow%d.png|..\..\Client\Resources\Texture\TestUI\MenuWindow\|0|4
 Tex_Menu_Icon|Menu_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Menu_Icon\|0|8
+Tex_MonsterHPBar|MonsterHPBar%d.png|..\..\Client\Resources\Texture\TestUI\MonsterHPBar\|0|3
 Tex_Number|Number%d.png|..\..\Client\Resources\Texture\TestUI\Number\|0|4
 Tex_Passive_Icon|Passive_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Passive_Icon\|0|89
+Tex_PickUp_Item|PickUp_Item%d.png|..\..\Client\Resources\Texture\TestUI\PickUp_Item\|0|3
 Tex_QuickSlotUI|QuickSlotUI0.jpg|..\..\Client\Resources\Texture\TestUI\QuickSlotUI\|0|2
 Tex_Select_UI|Select_UI.png|..\..\Client\Resources\Texture\TestUI\Select_UI\|0|1
 Tex_SingleSword_Icon|SingleSword_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\SingleSword_Icon\|0|3
 Tex_Skill_ICon|Skill_ICon%d.tga|..\..\Client\Resources\Texture\TestUI\Skill_ICon\|0|157
+Tex_Start_BossUI|Start_BossUI%d.png|..\..\Client\Resources\Texture\TestUI\Start_BossUI\|0|4
 Tex_StatusWindow|StatusWindow%d.png|..\..\Client\Resources\Texture\TestUI\StatusWindow\|0|1
 Tex_STBar|STBar%d.tga|..\..\Client\Resources\Texture\TestUI\STBar\|0|1
 Tex_TestLogo|TestLogo%d.png|..\..\Client\Resources\Texture\TestUI\TestLogo\|0|1
 Tex_T_ActionKetsugi|T_ActionKetsugi%d.tga|..\..\Client\Resources\Texture\TestUI\T_ActionKetsugi\|0|15
 Tex_Weapon_Icon|Weapon_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Weapon_Icon\|0|6
+Tex_PickUp_Item|PickUp_Item%d.png|..\..\Client\Resources\Texture\TestUI\PickUp_Item\|0|3
