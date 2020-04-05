@@ -36,6 +36,8 @@ HRESULT CDummy_Target::Ready_GameObject(void * pArg)
 
 _int CDummy_Target::Update_GameObject(_double TimeDelta)
 {
+
+
 	CGameObject::Update_GameObject(TimeDelta);
 
 	if (m_tObjParam.bCanHit == false)

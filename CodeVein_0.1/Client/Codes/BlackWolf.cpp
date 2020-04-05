@@ -768,53 +768,6 @@ void CBlackWolf::Play_RDodgeAtk()
 			}
 		}
 	}
-
-	//_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
-	//_float fTime = g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60");
-	//if (m_eAniPlayState != m_eState)
-	//{
-	//	m_tObjParam.bCanAttack = false;
-	//	m_eAniPlayState = m_eState;
-	//	m_bIsAttack = true;
-	//}
-	//else
-	//{
-	//	if (m_pMeshCom->Is_Finish_Animation(0.95f))
-	//	{
-	//		cout << "우 회피어택 끝" << endl;
-	//		m_eState = Idle;
-	//		m_eAniPlayState = m_eState;
-	//		m_bIsAttack = true;
-	//		LOOP(8) m_bEventTrigger[i] = false;
-	//		return;
-	//	}
-	//	else if (AniTime < 1.2f)
-	//	{
-	//		if (m_bEventTrigger[3] == false)
-	//		{
-	//			m_bEventTrigger[3] = true;
-	//			m_fSkillMoveSpeed_Cur = 4.f;
-	//			m_fSkillMoveAccel_Cur = 0.f;
-	//			m_fSkillMoveMultiply = 0.1f;
-	//		}
-	//		Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-	//		Decre_Skill_Movement(m_fSkillMoveMultiply);
-	//		return;
-	//	}
-	//	else if (AniTime > 1.6f && AniTime < 2.8f)
-	//	{
-	//		if (m_bEventTrigger[4] == false)
-	//		{
-	//			m_bEventTrigger[4] = true;
-	//			m_fSkillMoveSpeed_Cur = 10.f;
-	//			m_fSkillMoveAccel_Cur = 0.f;
-	//			m_fSkillMoveMultiply = 0.1f;
-	//		}
-	//		Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-	//		Decre_Skill_Movement(m_fSkillMoveMultiply);
-	//		return;
-	//	}
-	//}
 }
 
 void CBlackWolf::Play_LDodgeAtk()

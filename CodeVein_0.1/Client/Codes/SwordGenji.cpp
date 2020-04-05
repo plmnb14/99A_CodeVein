@@ -24,9 +24,7 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	if (FAILED(Add_Component(pArg)))
 		return E_FAIL;
 
-	//m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_StageBase.dat");
-	//m_pNavMesh->Set_SubsetIndex(0);
-
+	Ready_NF(pArg);
 	Ready_Weapon();
 	Ready_BoneMatrix();
 	Ready_Collider();
@@ -34,12 +32,12 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.fHp_Cur = 3.f;
 
-	m_pTransformCom->Set_Pos(_v3(1.f, 0.f, 1.f));
+	//m_pTransformCom->Set_Pos(_v3(4.f, 0.f, 4.f));
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 
 
-
+	//////////////////// 행동트리 init
 
 	CBlackBoard* pBlackBoard = CBlackBoard::Create();
 	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create(false);
@@ -50,35 +48,33 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	Update_Bone_Of_BlackBoard();
 
 	pBlackBoard->Set_Value(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos());
-	pBlackBoard->Set_Value(L"HP", 100);
-	pBlackBoard->Set_Value(L"MAXHP", 100);
+	pBlackBoard->Set_Value(L"HP", m_tObjParam.fHp_Cur);
+	pBlackBoard->Set_Value(L"MAXHP", m_tObjParam.fHp_Max);
 	pBlackBoard->Set_Value(L"HPRatio", 100);
 	pBlackBoard->Set_Value(L"Show", true);
 
 	//CBT_Selector* Start_Sel = Node_Selector("행동 시작"); // 찐
 	CBT_Sequence* Start_Sel = Node_Sequence("행동 시작"); // 테스트
-	CBT_UpdatePos* UpdatePlayerPosService = Node_UpdatePos("Update_Player_Pos", L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE)), 0, 0.01, 0, CBT_Service_Node::Infinite);
-	CBT_UpdateGageRatio* UpdatePlayerHPservice = Node_UpdateGageRatio("Update_Player_Pos", L"HPRatio", L"MaxHP", L"HP", 0, 0.01, 0, CBT_Service_Node::Infinite);
 	CBT_UpdateGageRatio* UpdateHPRatioService = Node_UpdateGageRatio("체력 비율", L"HPRatio", L"MAXHP", L"HP", 1, 0.01, 0, CBT_Service_Node::Infinite);
 
 	pBehaviorTree->Set_Child(Start_Sel);
 
-	Start_Sel->Add_Service(UpdatePlayerPosService);
-	Start_Sel->Add_Service(UpdatePlayerHPservice);
 	Start_Sel->Add_Service(UpdateHPRatioService);
 
 	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
 	//Check_ShowValue->Set_Child(Start_Show());
 	//Start_Sel->Add_Child(Check_ShowValue);
 	Start_Sel->Add_Child(Start_Game());
-	//Start_Sel->Add_Child(Normal_Cut1());
+	//Start_Sel->Add_Child(Run_Straight_Cut());
 
 
 	//CBT_Wait* Wait1 = Node_Wait("RushWait1", 0.5, 0);
 	//Start_Sel->Add_Child(Wait1);
 
-	//Start_Sel->Add_Child(Throwing_BackStep());
-
+	//CBT_MoveAround* aaaa = Node_MoveAround("MoveAround", L"Player_Pos", -3.f, 1.f, 0.f);
+	//Start_Sel->Add_Child(aaaa);
+	//CBT_MoveAround* bbbb = Node_MoveAround("MoveAround", L"Player_Pos", 3.f, 1.f, 0.f);
+	//Start_Sel->Add_Child(bbbb);
 
 	//그냥 재생
 	/*CBT_RotationDir* TurnDir0 = Node_RotationDir("Look 회전", L"Player_Pos", 0.15);
@@ -155,31 +151,32 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
 
-	// 죽었을 경우
-	if (m_bIsDead)
+	// 플레이어 미 발견
+	if (false == m_bFight)
 	{
-		return DEAD_OBJ;
-
-		//if (m_pMeshCom->Is_Finish_Animation(0.95f))
-		//{
-		//	return DEAD_OBJ;
-		//}
+		Update_NF();
 	}
+	// 플레이어 발견
 	else
 	{
-		if (true == m_bAIController)
-			m_pAIControllerCom->Update_AIController(TimeDelta);
+		// 뼈 위치 업데이트
+		Update_Bone_Of_BlackBoard();
+		// BB 직접 업데이트
+		Update_Value_Of_BB();
 
-		Check_Collider();
-	}
+		// 죽었을 경우
+		if (m_bIsDead)
+		{
+			return DEAD_OBJ;
+		}
+		else
+		{
+			if (true == m_bAIController)
+				m_pAIControllerCom->Update_AIController(TimeDelta);
 
-	// 네비메쉬 태우기
-	if (-1 == m_pNavMesh->Get_CellIndex())
-	{
-		// 안탔을 경우
+			Check_Collider();
+		}
 	}
-	else
-		m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
 	return _int();
 }
@@ -263,7 +260,7 @@ CBT_Composite_Node * CSwordGenji::Normal_Cut1()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 
-	CBT_UpdateCollider* pHitCol = Node_UpdateCollider("무기 히트 On", m_pSword->Get_pTarget_Param(), 1.2, 1, 0.2, 0);
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.2, 1, 0.2, 0);
 	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
@@ -288,7 +285,7 @@ CBT_Composite_Node * CSwordGenji::Normal_Cut2()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 
-	CBT_UpdateCollider* pHitCol = Node_UpdateCollider("무기 히트 On", m_pSword->Get_pTarget_Param(), 1, 1, 0.2, 0);
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1, 1, 0.2, 0);
 	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
@@ -313,7 +310,7 @@ CBT_Composite_Node * CSwordGenji::Normal_Cut3()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 
-	CBT_UpdateCollider* pHitCol = Node_UpdateCollider("무기 히트 On", m_pSword->Get_pTarget_Param(), 0.7, 1, 0.3, 0);
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.7, 1, 0.3, 0);
 	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
@@ -334,7 +331,7 @@ CBT_Composite_Node * CSwordGenji::Strong_RightCut()
 
 	Root_Parallel->Set_Sub_Child(Move0);
 
-	CBT_UpdateCollider* pHitCol = Node_UpdateCollider("무기 히트 On", m_pSword->Get_pTarget_Param(), 0.45, 1, 0.2, 0);
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.45, 1, 0.2, 0);
 	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
@@ -355,7 +352,7 @@ CBT_Composite_Node * CSwordGenji::Strong_LeftCut()
 
 	Root_Parallel->Set_Sub_Child(Move0);
 
-	CBT_UpdateCollider* pHitCol = Node_UpdateCollider("무기 히트 On", m_pSword->Get_pTarget_Param(), 0.55, 1, 0.35, 0);
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.55, 1, 0.35, 0);
 	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
@@ -380,9 +377,9 @@ CBT_Composite_Node * CSwordGenji::ThreeCombo_Cut()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 
-	CBT_UpdateCollider* pHitCol0 = Node_UpdateCollider("무기 히트 On", m_pSword->Get_pTarget_Param(), 0.7, 1, 0.2, 0);
-	CBT_UpdateCollider* pHitCol1 = Node_UpdateCollider("무기 히트 On", m_pSword->Get_pTarget_Param(), 1.1, 1, 0.2, 0);
-	CBT_UpdateCollider* pHitCol2 = Node_UpdateCollider("무기 히트 On", m_pSword->Get_pTarget_Param(), 1.5, 1, 0.2, 0);
+	CBT_UpdateParam* pHitCol0 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.7, 1, 0.2, 0);
+	CBT_UpdateParam* pHitCol1 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.1, 1, 0.2, 0);
+	CBT_UpdateParam* pHitCol2 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.5, 1, 0.2, 0);
 	Root_Parallel->Add_Service(pHitCol0);
 	Root_Parallel->Add_Service(pHitCol1);
 	Root_Parallel->Add_Service(pHitCol2);
@@ -418,7 +415,7 @@ CBT_Composite_Node * CSwordGenji::Run_Straight_Cut()
 	MoveSeq->Add_Child(Move);
 	MoveSeq->Add_Child(RunWaitB);
 
-	CBT_UpdateCollider* pHitCol = Node_UpdateCollider("무기 히트 On", m_pSword->Get_pTarget_Param(), 0.95, 1, 0.7, 0);
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.95, 1, 0.7, 0);
 	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
@@ -429,8 +426,8 @@ CBT_Composite_Node * CSwordGenji::Start_Game()
 	CBT_Selector* Root_Seq = Node_Selector("게임 시작");
 
 	CBT_DistCheck* DistCheck0 = Node_DistCheck("거리 체크", L"Player_Pos", 2);
-	CBT_DistCheck* DistCheck1 = Node_DistCheck("거리 체크", L"Player_Pos", 5);
-	CBT_DistCheck* DistCheck2 = Node_DistCheck("거리 체크", L"Player_Pos", 7);
+	CBT_DistCheck* DistCheck1 = Node_DistCheck("거리 체크", L"Player_Pos", 4);
+	CBT_DistCheck* DistCheck2 = Node_DistCheck("거리 체크", L"Player_Pos", 6);
 
 	Root_Seq->Add_Child(DistCheck0);
 	DistCheck0->Set_Child(RotationAndNearAttack());
@@ -542,7 +539,7 @@ CBT_Composite_Node * CSwordGenji::Horizon_Cut()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 
-	CBT_UpdateCollider* pHitCol = Node_UpdateCollider("무기 히트 On", m_pSword->Get_pTarget_Param(), 0.8, 1, 0.3, 0);
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.8, 1, 0.3, 0);
 	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
@@ -567,7 +564,7 @@ CBT_Composite_Node * CSwordGenji::Sting_Attack()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 
-	CBT_UpdateCollider* pHitCol = Node_UpdateCollider("무기 히트 On", m_pSword->Get_pTarget_Param(), 1.5, 1, 0.2, 0);
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.5, 1, 0.2, 0);
 	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
@@ -596,8 +593,8 @@ CBT_Composite_Node * CSwordGenji::TwoCombo_Cut()
 	SubSeq->Add_Child(Wait1);
 	SubSeq->Add_Child(Move1);
 
-	CBT_UpdateCollider* pHitCol0 = Node_UpdateCollider("무기 히트 On", m_pSword->Get_pTarget_Param(), 0.7, 1, 0.25, 0);
-	CBT_UpdateCollider* pHitCol1 = Node_UpdateCollider("무기 히트 On", m_pSword->Get_pTarget_Param(), 1.25, 1, 0.2, 0);
+	CBT_UpdateParam* pHitCol0 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.7, 1, 0.25, 0);
+	CBT_UpdateParam* pHitCol1 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.25, 1, 0.2, 0);
 	Root_Parallel->Add_Service(pHitCol0);
 	Root_Parallel->Add_Service(pHitCol1);
 
@@ -705,12 +702,55 @@ CBT_Composite_Node * CSwordGenji::Show_NearAttack()
 
 HRESULT CSwordGenji::Update_Bone_Of_BlackBoard()
 {
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 HRESULT CSwordGenji::Update_Value_Of_BB()
 {
-	return E_NOTIMPL;
+	// 1. 플레이어 좌표 업데이트
+	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos());
+	// 2. 체력 업데이트
+	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"HP", m_tObjParam.fHp_Cur);
+
+	return S_OK;
+}
+
+HRESULT CSwordGenji::Update_NF()
+{
+	// 플레이어 좌표 구함.
+	_v3 vPlayer_Pos = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos();
+
+	// 플레이어와 몬스터의 거리
+	_v3 vLengthTemp = vPlayer_Pos - m_pTransformCom->Get_Pos();
+	vLengthTemp.y = 0.f;
+	_float fLength = D3DXVec3Length(&vLengthTemp);
+
+	//cout << "거리 : " << fLength << endl;
+
+	// 플레이어가 최소거리안에 있는가?
+	if (fLength < m_fMinLength)
+	{
+		// 싸움 시작
+		m_bFight = true;
+	}
+	// 플레이어가 최대거리 안에 있는가?
+	else if (fLength < m_fMaxLength)
+	{
+		// 플레이어가 시야각 안에 있는가?
+		if (Is_InFov(m_fFov, vPlayer_Pos))
+		{
+			m_bFight = true;
+		}
+		else
+		{
+			m_pMeshCom->SetUp_Animation(Talk);
+		}
+	}
+	// 플레이어가 최대거리 밖에 있는가?
+	else
+		m_pMeshCom->SetUp_Animation(Talk);
+
+	return S_OK;
 }
 
 HRESULT CSwordGenji::Update_Collider()
@@ -732,6 +772,55 @@ HRESULT CSwordGenji::Update_Collider()
 	return S_OK;
 }
 
+void CSwordGenji::Skill_Movement(_float _fspeed, _v3 _vDir)
+{
+	_v3 tmpLook;
+	_float fSpeed = _fspeed;
+
+	tmpLook = _vDir;
+	D3DXVec3Normalize(&tmpLook, &tmpLook);
+
+	// 네비 없이
+	//m_pTransformCom->Add_Pos(fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"), tmpLook);
+
+	// 네비게이션 적용하면 
+	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &tmpLook, fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
+}
+
+void CSwordGenji::Decre_Skill_Movement(_float _fMutiply)
+{
+	m_fSkillMoveSpeed_Cur -= (0.3f - m_fSkillMoveAccel_Cur * m_fSkillMoveAccel_Cur * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60")) * _fMutiply;
+	m_fSkillMoveAccel_Cur += g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60");
+
+	if (m_fSkillMoveSpeed_Cur < 0.f)
+	{
+		m_fSkillMoveAccel_Cur = 0.5f;
+		m_fSkillMoveSpeed_Cur = 0.f;
+	}
+}
+
+
+_bool CSwordGenji::Is_InFov(_float fDegreeOfFov, _v3 vTargetPos)
+{
+	_v3 vThisLook = *(_v3*)(&m_pTransformCom->Get_WorldMat().m[3]);
+	vThisLook.y = 0.f;
+	D3DXVec3Normalize(&vThisLook, &vThisLook);
+
+	_v3 FromThisToTarget = vTargetPos - m_pTransformCom->Get_Pos();
+	FromThisToTarget.y = 0.f;
+	D3DXVec3Normalize(&FromThisToTarget, &FromThisToTarget);
+
+
+	_float fDot_Temp = D3DXVec3Dot(&vThisLook, &FromThisToTarget);
+	_float fRadian = acosf(fDot_Temp);
+
+	//cout << "시야각 : " << D3DXToDegree(fRadian) << endl;
+
+	if (D3DXToDegree(fRadian) > fDegreeOfFov * 0.5f)
+		return true;
+
+	return false;
+}
 
 void CSwordGenji::Check_Collider()
 {
@@ -740,12 +829,19 @@ void CSwordGenji::Check_Collider()
 	{
 		m_pMeshCom->Reset_OldIndx();	//애니 인덱스 초기화
 
-		m_tObjParam.fHp_Cur -= 0.99f;	// 체력 임의로 닳게 만듦.
+		//m_tObjParam.fHp_Cur -= 0.99f;	// 체력 임의로 닳게 만듦.
 
 		m_bAIController = false;
 		cout << "나도 부딪힘 ^^" << endl;
 		m_tObjParam.bIsHit = true;
 		m_tObjParam.bCanHit = true;
+
+		m_fSkillMoveSpeed_Cur = 4.f;
+		m_fSkillMoveAccel_Cur = 0.f;
+		m_fSkillMoveMultiply = 0.5f;
+
+		// 맞을때 플레이어의 룩을 받아와서 그 방향으로 밈.
+		m_vPushDir_forHitting = (*(_v3*)&TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_WorldMat().m[2]);
 
 		m_pAIControllerCom->Reset_BT();
 
@@ -758,7 +854,7 @@ void CSwordGenji::Check_Collider()
 		else
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
-			//m_bIsDead = true;
+
 			Start_Dissolve(0.7f, false, true);
 			m_pSword->Start_Dissolve();
 			g_pManagement->Create_Spawn_Effect(m_pTransformCom->Get_Pos());
@@ -778,6 +874,14 @@ void CSwordGenji::Check_Collider()
 		else if (m_pMeshCom->Is_Finish_Animation(0.7f))	// 이때부터 재충돌 가능
 		{
 			m_tObjParam.bIsHit = false;
+		}
+
+		// 밀림 처리
+		if (m_tObjParam.bIsHit == true)
+		{
+			Decre_Skill_Movement(m_fSkillMoveMultiply);
+			Skill_Movement(m_fSkillMoveSpeed_Cur, m_vPushDir_forHitting);
+			cout << "밀리는 중" << endl;
 		}
 	}
 
@@ -814,7 +918,7 @@ HRESULT CSwordGenji::Add_Component(void* pArg)
 		lstrcpy(name, L"Mesh_NormalGenji");
 	else
 	{
-		switch (eTemp.eType)
+		switch (eTemp.eColor)
 		{
 		case CSwordGenji::Jungle:
 			lstrcpy(name, L"Mesh_JungleGenji");
@@ -929,6 +1033,18 @@ HRESULT CSwordGenji::Ready_Collider()
 	pCollider->Set_Enabled(true);
 
 	m_vecPhysicCol.push_back(pCollider);
+
+	return S_OK;
+}
+
+HRESULT CSwordGenji::Ready_NF(void * pArg)
+{
+	INFO eTemp = *(INFO*)pArg;
+
+	m_eNF_Ani = eTemp.eNF_Ani;
+	m_fFov = eTemp.fFov;
+	m_fMaxLength = eTemp.fMaxLength;
+	m_fMinLength = eTemp.fMinLength;
 
 	return S_OK;
 }

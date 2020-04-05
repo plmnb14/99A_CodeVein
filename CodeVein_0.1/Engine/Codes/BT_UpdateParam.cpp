@@ -1,15 +1,15 @@
-#include "BT_UpdateCollider.h"
+#include "BT_UpdateParam.h"
 #include "Collider.h"
 
-CBT_UpdateCollider::CBT_UpdateCollider()
+CBT_UpdateParam::CBT_UpdateParam()
 {
 }
 
-CBT_UpdateCollider::CBT_UpdateCollider(const CBT_UpdateCollider & rhs)
+CBT_UpdateParam::CBT_UpdateParam(const CBT_UpdateParam & rhs)
 {
 }
 
-CBT_Node::BT_NODE_STATE CBT_UpdateCollider::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, CBlackBoard * pBlackBoard, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_UpdateParam::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, CBlackBoard * pBlackBoard, _bool bDebugging)
 {
 	Start_Node(pNodeStack, plistSubNodeStack, false);
 
@@ -30,15 +30,21 @@ CBT_Node::BT_NODE_STATE CBT_UpdateCollider::Update_Node(_double TimeDelta, vecto
 			case CBT_Service_Node::Finite:
 				if (m_iCur_Count_Of_Execution >= m_iMax_Count_Of_Execution)
 				{
-					m_pTarget_ObjParam->bCanAttack = false;
-					//cout << "HIt End " << m_dCurTime << endl;
-					break;
+					switch (m_eParam)
+					{
+					case CBT_UpdateParam::Collider:
+						m_pTarget_ObjParam->bCanAttack = false;
+						break;
+					}
 				}
 				else
 				{
-					//cout << "Hit On" << m_dCurTime << endl;
-
-					m_pTarget_ObjParam->bCanAttack = true;
+					switch (m_eParam)
+					{
+					case Engine::CBT_UpdateParam::Collider:
+						m_pTarget_ObjParam->bCanAttack = true;
+						break;
+					}
 
 					++m_iCur_Count_Of_Execution;
 					m_dCurTime = 0;
@@ -46,17 +52,15 @@ CBT_Node::BT_NODE_STATE CBT_UpdateCollider::Update_Node(_double TimeDelta, vecto
 				break;
 
 				// 생성 횟수 무제한,  콜라이더는 필요없음
-			//case CBT_Service_Node::Infinite:
-			//	m_pTarget_ObjParam->bCanAttack = true;
-			//	End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, false);
-			//	break;
+			case CBT_Service_Node::Infinite:
+				break;
 			}
 		}
 	}
 	return BT_NODE_STATE::INPROGRESS;
 }
 
-void CBT_UpdateCollider::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging)
+void CBT_UpdateParam::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging)
 {
 	if (m_bInit)
 	{
@@ -74,7 +78,7 @@ void CBT_UpdateCollider::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<C
 	}
 }
 
-CBT_Node::BT_NODE_STATE CBT_UpdateCollider::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_UpdateParam::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
 {
 	if (bDebugging)
 	{
@@ -90,7 +94,7 @@ CBT_Node::BT_NODE_STATE CBT_UpdateCollider::End_Node(vector<CBT_Node*>* pNodeSta
 	return eState;
 }
 
-HRESULT CBT_UpdateCollider::Ready_Clone_Node(void * pInit_Struct)
+HRESULT CBT_UpdateParam::Ready_Clone_Node(void * pInit_Struct)
 {
 	INFO temp = *(INFO*)pInit_Struct;
 
@@ -98,6 +102,7 @@ HRESULT CBT_UpdateCollider::Ready_Clone_Node(void * pInit_Struct)
 	m_dUpdateTime = temp.Target_dUpdateTime;
 	m_dOffset = temp.Target_dOffset;
 	m_pTarget_ObjParam = temp.Target_ObjParam;
+	m_eParam = temp.eParam;
 	m_iMax_Count_Of_Execution = temp.Count_Of_Execution;
 	m_eMode = temp.eMode;
 	m_dService_StartTime = temp.Service_Start_Time;
@@ -106,24 +111,24 @@ HRESULT CBT_UpdateCollider::Ready_Clone_Node(void * pInit_Struct)
 	return S_OK;
 }
 
-CBT_UpdateCollider * CBT_UpdateCollider::Create_Prototype()
+CBT_UpdateParam * CBT_UpdateParam::Create_Prototype()
 {
-	return new CBT_UpdateCollider();
+	return new CBT_UpdateParam();
 }
 
-CBT_UpdateCollider * CBT_UpdateCollider::Clone(void * pInit_Struct)
+CBT_UpdateParam * CBT_UpdateParam::Clone(void * pInit_Struct)
 {
-	CBT_UpdateCollider* pInstance = new CBT_UpdateCollider(*this);
+	CBT_UpdateParam* pInstance = new CBT_UpdateParam(*this);
 
 	if (FAILED(pInstance->Ready_Clone_Node(pInit_Struct)))
 	{
-		MSG_BOX("Failed To Clone CBT_UpdateCollider");
+		MSG_BOX("Failed To Clone CBT_UpdateParam");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CBT_UpdateCollider::Free()
+void CBT_UpdateParam::Free()
 {
 }

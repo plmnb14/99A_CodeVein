@@ -62,8 +62,8 @@
 #include "..\Headers\BT_UpdateGageRatio.h"
 #define Node_UpdateGageRatio(_name, _Key_Save_HPRatio, _Key_MAXHP, _Key_HP, _iMaxCount_Of_Execution, _dCoolTime, _dOffset, _Service_Mode) static_cast<CBT_UpdateGageRatio*>(CManagement::Get_Instance()->Clone_Node(L"UpdateHPRatio", CBT_Node_Manager::SERVICE, &CBT_UpdateGageRatio::INFO(_name, _Key_Save_HPRatio, _Key_MAXHP, _Key_HP, _iMaxCount_Of_Execution, _dCoolTime, _dOffset, _Service_Mode)))
 
-#include "..\Headers\BT_UpdateCollider.h"
-#define Node_UpdateCollider(_name, _pObject_Param, _dService_Start_Time, _MaxCount_Of_Execution, _dCoolTime, _dOffset) static_cast<CBT_UpdateCollider*>(CManagement::Get_Instance()->Clone_Node(L"UpdateCollider", CBT_Node_Manager::SERVICE, &CBT_UpdateCollider::INFO(_name, _pObject_Param, _dService_Start_Time, _MaxCount_Of_Execution, _dCoolTime, _dOffset, CBT_Service_Node::Finite)))
+#include "..\Headers\BT_UpdateParam.h"
+#define Node_UpdateParam(_name, _pObject_Param, _eParam, _dService_Start_Time, _MaxCount_Of_Execution, _dCoolTime, _dOffset) static_cast<CBT_UpdateParam*>(CManagement::Get_Instance()->Clone_Node(L"UpdateParam", CBT_Node_Manager::SERVICE, &CBT_UpdateParam::INFO(_name, _pObject_Param, _eParam, _dService_Start_Time, _MaxCount_Of_Execution, _dCoolTime, _dOffset, CBT_Service_Node::Finite)))
 
 #include "..\Headers\BT_CreateEffect.h"
 #define Node_CreateEffect_Infinite(_name, _Effect_Tag, _Create_Pos_Key, _iMaxCount_Of_Execution, _dCoolTime, _dOffset) static_cast<CBT_CreateEffect*>(CManagement::Get_Instance()->Clone_Node(L"CreateEffect", CBT_Node_Manager::SERVICE, &CBT_CreateEffect::INFO(_name, _Effect_Tag, _Create_Pos_Key,  0, 0, _iMaxCount_Of_Execution, _dCoolTime, _dOffset, CBT_Service_Node::Mode::Infinite, CBT_CreateEffect::One)))
@@ -81,8 +81,11 @@
 #define Node_Wait(_name, _dTime, _dOffset) static_cast<CBT_Wait*>(CManagement::Get_Instance()->Clone_Node(L"Wait", CBT_Node_Manager::TASK, &CBT_Wait::INFO(_name, _dTime, _dOffset)))
 
 #include "..\Headers\BT_MoveDirectly.h"
-#define Node_MoveDirectly_Chase(_name, _Target_Key, _fMove_Speed, _fAcceptable_Radius) static_cast<CBT_MoveDirectly*>(CManagement::Get_Instance()->Clone_Node(L"MoveDirectly", CBT_Node_Manager::TASK, &CBT_MoveDirectly::INFO(_name, m_pTransformCom, _Target_Key, _fMove_Speed, _fAcceptable_Radius, 0, 0, CBT_MoveDirectly::CHASE)))
-#define Node_MoveDirectly_Rush(_name, _fMove_Speed, _dMoveTime, _dTimeOffset) static_cast<CBT_MoveDirectly*>(CManagement::Get_Instance()->Clone_Node(L"MoveDirectly", CBT_Node_Manager::TASK, &CBT_MoveDirectly::INFO(_name, m_pTransformCom, nullptr, _fMove_Speed, 0, _dMoveTime, _dTimeOffset, CBT_MoveDirectly::RUSH)))
+#define Node_MoveDirectly_Chase(_name, _Target_Key, _fMove_Speed, _fAcceptable_Radius) static_cast<CBT_MoveDirectly*>(CManagement::Get_Instance()->Clone_Node(L"MoveDirectly", CBT_Node_Manager::TASK, &CBT_MoveDirectly::INFO(_name, m_pTransformCom, m_pNavMesh, _Target_Key, _fMove_Speed, _fAcceptable_Radius, 0, 0, CBT_MoveDirectly::CHASE)))
+#define Node_MoveDirectly_Rush(_name, _fMove_Speed, _dMoveTime, _dTimeOffset) static_cast<CBT_MoveDirectly*>(CManagement::Get_Instance()->Clone_Node(L"MoveDirectly", CBT_Node_Manager::TASK, &CBT_MoveDirectly::INFO(_name, m_pTransformCom, m_pNavMesh, nullptr, _fMove_Speed, 0, _dMoveTime, _dTimeOffset, CBT_MoveDirectly::RUSH)))
+
+#include "..\Headers\BT_MoveAround.h"
+#define Node_MoveAround(_name, _Target_Key, _fMove_Speed, _dMoveTime, _dTimeOffset) static_cast<CBT_MoveAround*>(CManagement::Get_Instance()->Clone_Node(L"MoveAround", CBT_Node_Manager::TASK, &CBT_MoveAround::INFO(_name, m_pTransformCom, m_pNavMesh, _Target_Key, _fMove_Speed, _dMoveTime, _dTimeOffset)))
 
 #include "..\Headers\BT_MoveDir.h"
 #define Node_MoveDir(_name, _Dir_Key, _fMove_Speed, _dMoveTime, _dTimeOffset) static_cast<CBT_MoveDir*>(CManagement::Get_Instance()->Clone_Node(L"MoveDir", CBT_Node_Manager::TASK, &CBT_MoveDir::INFO(_name, m_pTransformCom, _Dir_Key, _fMove_Speed, _dMoveTime, _dTimeOffset)))

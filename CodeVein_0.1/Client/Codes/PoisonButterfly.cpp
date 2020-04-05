@@ -22,9 +22,6 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 
-	//m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_StageBase.dat");
-	//m_pNavMesh->Set_SubsetIndex(0);
-
 	Ready_BoneMatrix();
 	Ready_Collider();
 	m_tObjParam.bCanHit = true;
@@ -258,10 +255,7 @@ _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 	// Á×¾úÀ» °æ¿ì
 	if (m_bIsDead)
 	{
-		//if (m_pMeshCom->Is_Finish_Animation(0.95f))
-		{
-			return DEAD_OBJ;
-		}
+		return DEAD_OBJ;
 	}
 	else
 	{
