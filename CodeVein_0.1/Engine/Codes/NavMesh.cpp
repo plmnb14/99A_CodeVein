@@ -448,7 +448,6 @@ _v3 CNavMesh::Move_OnNaviMesh(CRigidBody* _pRigid, const _v3* pTargetPos, const 
 
 _v3 CNavMesh::Axis_Y_OnNavMesh(const _v3 _vPos)
 {
-
 	if ((*m_vecSubset_Cell[m_dwSubsetIdx])[m_dwIndex] == nullptr)
 		return _vPos;
 
@@ -533,6 +532,7 @@ void CNavMesh::Reset_NaviMesh()
 
 		iter->clear();
 		iter->shrink_to_fit();
+
 		Safe_Delete(iter);
 	}
 

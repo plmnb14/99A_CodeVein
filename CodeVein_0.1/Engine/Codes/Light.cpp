@@ -46,6 +46,7 @@ HRESULT CLight::Render_Light(CShader* pShader)
 	pShader->Set_Value("g_vLightDiffuse", (_v4*)&m_LightDesc.Diffuse, sizeof(_v4));
 	pShader->Set_Value("g_vLightAmbient", (_v4*)&m_LightDesc.Ambient, sizeof(_v4));	
 	pShader->Set_Value("g_vLightSpecular", (_v4*)&m_LightDesc.Specular, sizeof(_v4));
+	pShader->Set_Value("g_LightVP_Close", &(m_matView * m_matProj), sizeof(_mat));
 
 	pShader->Begin_Pass(iPassIndex); 
 
@@ -56,6 +57,38 @@ HRESULT CLight::Render_Light(CShader* pShader)
 	pShader->End_Pass();
 
 	return NOERROR;
+}
+
+void CLight::Update_Light()
+{
+	D3DXMatrixIdentity(&m_matView);
+	_v3 vPos = m_vPos;
+
+	//_v3 vDir, vRight, vUp, vLook, vLookAt;
+	//
+	//V3_NORMAL(&vLook, &vPos);
+	//vLook *= -1.f;
+	//CALC::V3_Cross_Normal(&vRight, &WORLD_UP, &vLook);
+	//CALC::V3_Cross_Normal(&vUp, &vLook, &vRight);
+	//
+	//memcpy(&m_matView._11, &vRight, sizeof(_v3));
+	//memcpy(&m_matView._21, &vUp, sizeof(_v3));
+	//memcpy(&m_matView._31, &vLook, sizeof(_v3));
+	//
+	//m_matView._14 = -D3DXVec3Dot(&vRight, &vPos);
+	//m_matView._24 = -D3DXVec3Dot(&vUp, &vPos);
+	//m_matView._34 = -D3DXVec3Dot(&vLook, &vPos);
+	//m_matView._44 = 1.f;
+	//
+	//D3DXMatrixTranspose(&m_matView, &m_matView);
+
+	D3DXMatrixLookAtLH(&m_matView, &vPos, &_v3(-10, -10, -10), &WORLD_UP);
+
+	// =================================================
+
+	D3DXMatrixIdentity(&m_matProj);
+
+	D3DXMatrixPerspectiveFovLH(&m_matProj, D3DXToRadian(60.f), WINCX / (float)WINCY, 0.1f, 1000.f);
 }
 
 CLight * CLight::Create(LPDIRECT3DDEVICE9 pGraphic_Device, D3DLIGHT9 LightDesc)

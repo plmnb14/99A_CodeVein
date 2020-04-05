@@ -18,9 +18,61 @@ HRESULT CTarget::Ready_Render_Target(_uint iSizeX, _uint iSizeY, D3DFORMAT eForm
 
 	m_ClearColor = ClearColor;
 
+	D3DVIEWPORT9		ViewPort;
+	m_pGraphic_Device->GetViewport(&ViewPort);
+	m_pGraphic_Device->CreateDepthStencilSurface(ViewPort.Width, ViewPort.Height, D3DFMT_D24S8, D3DMULTISAMPLE_NONE, 0, TRUE, &m_pNewStencil, NULL);
+
 	return NOERROR;
 }
 
+HRESULT CTarget::Origin_DepthBuffer()
+{
+	m_pGraphic_Device->GetDepthStencilSurface(&m_pOriginStencil);
+
+	return S_OK;
+}
+
+HRESULT CTarget::Begin_DepthBuffer()
+{
+	m_pGraphic_Device->SetDepthStencilSurface(m_pNewStencil);
+
+	return S_OK;
+}
+
+HRESULT CTarget::End_DepthBuffer()
+{
+	m_pGraphic_Device->SetDepthStencilSurface(m_pOriginStencil);
+
+	Safe_Release(m_pOriginStencil);
+
+	return S_OK;
+}
+
+HRESULT CTarget::Origin_ViewPort()
+{
+	m_pGraphic_Device->GetViewport(&m_tViewPort_Old);
+
+	m_tViewPort_New = { 0, 0, m_tViewPort_Old.Width, m_tViewPort_Old.Height, m_tViewPort_Old.MinZ, m_tViewPort_Old.MaxZ };
+
+	return S_OK;
+}
+
+HRESULT CTarget::Begin_ViewPort()
+{
+	m_pGraphic_Device->SetViewport(&m_tViewPort_New);
+
+	return S_OK;
+}
+
+HRESULT CTarget::End_ViewPort()
+{
+	m_pGraphic_Device->SetViewport(&m_tViewPort_Old);
+
+	m_tViewPort_Old = {};
+	m_tViewPort_New = {};
+
+	return S_OK;
+}
 HRESULT CTarget::SetUp_OnGraphicDev(_uint iIndex)
 {
 	if (nullptr == m_pGraphic_Device ||
@@ -112,6 +164,8 @@ void CTarget::Free()
 #ifdef _DEBUG
 	Safe_Release(m_pViewPortBuffer);
 #endif
+	Safe_Release(m_pNewStencil);
+	Safe_Release(m_pOriginStencil);
 
 	Safe_Release(m_pTarget_Surface);
 	Safe_Release(m_pTarget_Texture);

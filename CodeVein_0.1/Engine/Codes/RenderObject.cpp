@@ -34,7 +34,10 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 	Update_Collider();
 
 	if (false == m_bOnTool)
+	{
 		m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
+		m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this);
+	}
 
 	return S_OK;
 }
@@ -84,6 +87,52 @@ HRESULT CRenderObject::Render_GameObject()
 		CGizmo::Get_Instance()->Draw_XYZ(m_pTransform->Get_Pos(), m_pTransform->Get_Axis(AXIS_Z), m_pTransform->Get_Axis(AXIS_X));
 
 	return S_OK;
+}
+
+HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass)
+{
+	if (nullptr == pShader ||
+		nullptr == m_pMesh_Static)
+		return E_FAIL;
+
+	_mat		ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+
+	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
+		return E_FAIL;
+	CManagement::Get_Instance()->Set_LightPos(0, m_pTransform->Get_Pos() + _v3(10, 10, 10));
+
+	_ulong dwNumSubSet = m_pMesh_Static->Get_NumMaterials();
+
+	for (_ulong i = 0; i < dwNumSubSet; ++i)
+	{
+		pShader->Begin_Pass(m_dwPassNum);
+
+		//if (FAILED(pShader->Set_Texture("g_DiffuseTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_DIFFUSE))))
+		//	return E_FAIL;
+		//
+		//if (FAILED(pShader->Set_Texture("g_NormalTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_NORMAL))))
+		//	return E_FAIL;
+
+		//if (FAILED(m_pShader->Set_Texture("g_SpecularTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_SPECULAR))))
+		//	return E_FAIL;
+
+		//if (FAILED(m_pShader->Set_Texture("g_EmissiveTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_EMISSIVE))))
+		//	return E_FAIL;
+
+		//pShader->Commit_Changes();
+
+		m_pMesh_Static->Render_Mesh(i);
+
+		pShader->End_Pass();
+	}
+
+
+	return NOERROR;
 }
 
 void CRenderObject::Update_Collider()

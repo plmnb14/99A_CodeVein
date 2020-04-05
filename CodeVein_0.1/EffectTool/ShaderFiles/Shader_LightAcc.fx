@@ -16,6 +16,8 @@ vector		g_vCamPosition;
 matrix		g_matProjInv;
 matrix		g_matViewInv;
 
+matrix		g_LightVP_Close;
+
 // 노멀
 texture		g_NormalTexture;
 
@@ -47,6 +49,21 @@ sampler SSAOSampler = sampler_state
 	mipfilter = linear;
 };
 
+texture		g_ShadowMapTexture;
+sampler ShadowMapSampler = sampler_state
+{
+	texture = g_ShadowMapTexture;
+
+	minfilter = linear;
+	magfilter = linear;
+	mipfilter = linear;
+	
+	addressU = border;
+	addressV = border;
+	
+	BorderColor = float4(1.0f, 1.0f, 1.0f, 0.0f);
+
+};
 struct PS_IN
 {
 	float4		vPosition : POSITION;
@@ -155,6 +172,30 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	// 3. 월드( 로컬위치 * 월드)
 	vWorldPos = mul(vWorldPos, g_matViewInv);
 
+
+	// Shadow ====================================================================
+
+	float4 lightingPosition = mul(vWorldPos, g_LightVP_Close);
+	
+	float2 ShadowTexCoord = 0.5 * lightingPosition.xy /
+		lightingPosition.w + float2(0.5, 0.5);
+	ShadowTexCoord.y = 1.0f - ShadowTexCoord.y;
+	
+	float fShadow = tex2D(ShadowMapSampler, ShadowTexCoord).x;
+	
+	float DepthBias = 0.001f;
+	float ourdepth = (lightingPosition.z / lightingPosition.w) - DepthBias;
+	
+	//
+	if (fShadow <= ourdepth)
+	{
+		Out.vShade.rgb *= 0.2f;
+	
+		return Out;
+	}
+
+	// Shadow End ====================================================================
+
 	vector		vLook = vWorldPos - g_vCamPosition;
 
 	Out.vSpecular = g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 30.f) * (g_vLightSpecular * g_vMtrlSpecular);
@@ -208,6 +249,56 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
 	Out.vShade = fAtt * g_vLightDiffuse * saturate(dot(normalize(vLightDir) * -1.f, vNormal)) + saturate(g_vLightAmbient * g_vMtrlAmbient);
 	Out.vShade.a = 1.f;
 
+
+	// Shadow ====================================================================
+
+	//float4 lightingPosition = mul(vWorldPos, g_LightVP_Close);
+	//
+	//float2 ShadowTexCoord = 0.5 * lightingPosition.xy /
+	//	lightingPosition.w + float2(0.5, 0.5);
+	//ShadowTexCoord.y = 1.0f - ShadowTexCoord.y;
+	//
+	//float fShadow = tex2D(ShadowMapSampler, ShadowTexCoord).x;
+	//
+	//float DepthBias = 0.001f;
+	//float ourdepth = (lightingPosition.z / lightingPosition.w) - DepthBias;
+	//
+	////
+	//if (fShadow <= ourdepth)
+	//{
+	//	Out.vShade.rgb *= 0.2f;
+	//
+	//	return Out;
+	//}
+
+	float4 lightingPosition = mul(vWorldPos, g_LightVP_Close); 
+	
+	float2 ShadowTexCoord = 0.5 * lightingPosition.xy /
+		lightingPosition.w + float2(0.5, 0.5);
+	ShadowTexCoord.y = -ShadowTexCoord.y;
+	
+	float4 fShadow = tex2D(ShadowMapSampler, ShadowTexCoord.xy);
+	//
+	if (fShadow.x <= 0.6f)
+	{
+		Out.vShade.rgb *= 0.2f;
+	
+		return Out;
+	}
+
+	//float4 fShadow = tex2D(ShadowMapSampler, In.vTexUV.xy); 
+	////
+	//if (fShadow.a <= 0.6f)
+	//{
+	//	Out.vShade.rgb *= 0.2f;
+	//
+	//	return Out;
+	//}
+
+	// Shadow ====================================================================
+
+
+
 	vector		vReflect = reflect(normalize(vLightDir), vNormal);
 	vector		vLook = vWorldPos - g_vCamPosition;
 
@@ -227,6 +318,9 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
 	float ao = Get_SSAO(vNormal.xyz, vDepthInfo.xyz, In.vTexUV);
 	Out.vSSAO = float4(ao, 0, 0, 1);
 	// SSAO End ====================================================================
+
+
+
 
 	return Out;
 }
