@@ -22,40 +22,20 @@ HRESULT CYachaMan::Ready_GameObject(void * pArg)
 		return E_FAIL;
 
 	m_pTransformCom->Set_Pos(_v3(1.f, 0.f, 1.f));
-	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
+	m_pTransformCom->Set_Scale(V3_ONE);
 
-	CBlackBoard* pBlackBoard = CBlackBoard::Create();
-	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create();
+	Ready_BoneMatrix();
+	Ready_Collider();
 
-	m_pAIControllerCom->Set_BeHaviorTree(pBehaviorTree);
-	m_pAIControllerCom->Set_BlackBoard(pBlackBoard);
+	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
+	m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE));
 
-	//체력 0이하인 경우 사망
-	Update_Bone_Of_BlackBoard();
+	m_tObjParam.fHp_Max = 80.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
+	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
 
-	pBlackBoard->Set_Value(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos());
-	pBlackBoard->Set_Value(L"HP", 10);
-	pBlackBoard->Set_Value(L"MAXHP", 10);
-	pBlackBoard->Set_Value(L"HPRatio", 100);
-	pBlackBoard->Set_Value(L"Show", true);
-
-	//CBT_Selector* Start_Sel = Node_Selector("행동 시작");
-	CBT_Sequence* Start_Sel = Node_Sequence("행동 시작"); //원래 공격 해야합니다
-
-	CBT_UpdatePos* UpdatePlayerPosService = Node_UpdatePos("Update_Player_Pos", L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE)), 0, 0.01, 0, CBT_Service_Node::Infinite);
-	CBT_UpdateGageRatio* UpdatePlayerHPservice = Node_UpdateGageRatio("Update_Player_Pos", L"HPRatio", L"MaxHP", L"HP", 0, 0.01, 0, CBT_Service_Node::Infinite);
-	CBT_UpdateGageRatio* UpdateHPRatioService = Node_UpdateGageRatio("체력 비율", L"HPRatio", L"MAXHP", L"HP", 1, 0.01, 0, CBT_Service_Node::Infinite);
-
-	CBT_RotationDir* Attack_After_Chase = Node_RotationDir("추적기능 노드", L"Player_Pos", 0.2);
-
-	pBehaviorTree->Set_Child(Start_Sel);
-
-	Start_Sel->Add_Service(UpdatePlayerPosService);
-	Start_Sel->Add_Service(UpdatePlayerHPservice);
-	Start_Sel->Add_Service(UpdateHPRatioService);
-
-	//Start_Sel->Add_Child(Bite_LeftRightLeft());
-	Start_Sel->Add_Child(Attack_After_Chase);
+	m_tObjParam.bCanHit = true;
+	m_tObjParam.bCanAttack = true;
+	m_tObjParam.bDodge = false;
 
 	return NOERROR;
 }
@@ -64,12 +44,17 @@ _int CYachaMan::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
 
-	m_pAIControllerCom->Update_AIController(TimeDelta);
+	if (m_bIsDead)
+		return DEAD_OBJ;
 
-	// 뼈 위치 업데이트
-	Update_Bone_Of_BlackBoard();
-	// BB 직접 업데이트
-	Update_Value_Of_BB();
+	Check_Hit();
+	Check_Dist();
+	Set_AniEvent();
+	Skill_CoolDown();
+
+	m_pMeshCom->SetUp_Animation(m_eState);
+
+	Enter_CollisionEvent();
 
 	return NOERROR;
 }
@@ -81,8 +66,6 @@ _int CYachaMan::Late_Update_GameObject(_double TimeDelta)
 	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
 
-	m_dTimeDelta = TimeDelta;
-
 	return NOERROR;
 }
 
@@ -91,7 +74,7 @@ HRESULT CYachaMan::Render_GameObject()
 	IF_NULL_VALUE_RETURN(m_pShaderCom, E_FAIL);
 	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
 
-	m_pMeshCom->Play_Animation(_float(m_dTimeDelta)); // * alpha
+	m_pMeshCom->Play_Animation(DELTA_60 * m_dAniPlayMul);
 
 	if (FAILED(SetUp_ConstantTable()))
 		return E_FAIL;
@@ -123,7 +106,415 @@ HRESULT CYachaMan::Render_GameObject()
 
 	m_pShaderCom->End_Shader();
 
+	Update_Collider();
+	Render_Collider();
+
 	return NOERROR;
+}
+
+void CYachaMan::Update_Collider()
+{
+	_ulong matrixIdx = 0;
+
+	for (auto& vector_iter : m_vecAttackCol)
+	{
+		_mat matTemp = *m_matBone[matrixIdx] * m_pTransformCom->Get_WorldMat();
+
+		_v3 ColPos = _v3(matTemp._41, matTemp._42, matTemp._43);
+
+		vector_iter->Update(ColPos);
+
+		++matrixIdx;
+	}
+
+	matrixIdx = 0;
+
+	for (auto& iter : m_vecPhysicCol)
+	{
+		_mat tmpMat = *m_matBone[matrixIdx] * m_pTransformCom->Get_WorldMat();
+
+		_v3 ColPos = _v3(tmpMat._41, tmpMat._42, tmpMat._43);
+
+		iter->Update(ColPos);
+
+		++matrixIdx;
+	}
+}
+
+void CYachaMan::Render_Collider()
+{
+	for (auto& iter : m_vecAttackCol)
+	{
+		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
+	}
+
+	for (auto& iter : m_vecPhysicCol)
+	{
+		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
+	}
+}
+
+void CYachaMan::Enter_CollisionEvent()
+{
+	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_STAGE));
+}
+
+void CYachaMan::Check_CollisionEvent(list<CGameObject*> plistGameObject)
+{
+	if (false == m_tObjParam.bIsAttack) return;
+
+	_bool bFirst = true;
+
+	for (auto& iter : plistGameObject)
+	{
+		
+		if (false == iter->Get_Target_CanHit())
+			continue;
+
+		
+		for (auto& vecIter : m_vecAttackCol)
+		{
+			if (false == vecIter->Get_Enabled())
+				continue;
+
+			bFirst = true;
+
+			for (auto& vecCol : iter->Get_PhysicColVector())
+			{
+				if (vecIter->Check_Sphere(vecCol))
+				{
+					if (bFirst)
+					{
+						bFirst = false;
+						continue;
+					}
+
+					iter->Set_Target_CanHit(false);
+					iter->Add_Target_Hp(m_tObjParam.fDamage);
+
+					g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
+
+					break;
+				}
+				else
+				{
+					if (bFirst)
+					{
+						break;
+					}
+				}
+			}
+		}
+	}
+}
+
+void CYachaMan::Check_Hit()
+{
+	if (DEAD == m_eFirstIdentify)
+		return;
+
+	if (true == m_tObjParam.bIsHit)
+	{
+		return;
+	}
+	else
+	{
+		if (false == m_tObjParam.bCanHit)
+		{
+			if (0 >= m_tObjParam.fHp_Cur)
+			{
+				m_eFirstIdentify = DEAD;
+				return;
+			}
+			else
+			{
+				m_eFirstIdentify = HIT;
+				return;
+			}
+		}
+	}
+}
+
+void CYachaMan::Check_Dist()
+{
+	if (HIT == m_eFirstIdentify ||
+		DOWN == m_eFirstIdentify ||
+		DEAD == m_eFirstIdentify)
+		return;
+
+	if (true == m_tObjParam.bIsAttack)
+	{
+		return;
+	}
+
+	_float fLenth = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransform->Get_Pos()));
+
+	m_fRecognitionRange >= fLenth ? m_bInRecognitionRange = true : m_bInRecognitionRange = false;
+	m_fAttackRange >= fLenth ? m_bInAttackRange = true : m_bInAttackRange = false;
+
+	if (true == m_bInRecognitionRange)
+	{
+		if (true == m_bInAttackRange)
+		{
+			if (true == m_tObjParam.bCanAttack)
+			{
+				if (true == m_bIsCoolDown)
+				{
+					m_eState = Threat;
+					return;
+				}
+				else
+				{
+					m_eFirstIdentify = MONSTER_ANITYPE::ATTACK;
+					m_iAttackRandomNumber = CALC::Random_Num(BiteLRL, Frisbee);
+					return;
+				}
+			}
+			else
+			{
+				m_eFirstIdentify = MONSTER_ANITYPE::IDLE;
+				return;
+			}
+		}
+		else
+		{
+			m_bCanChase = true;
+			m_eFirstIdentify = MONSTER_ANITYPE::MOVE;
+			return;
+		}
+	}
+	else
+	{
+		m_bCanChase = false;
+		m_eFirstIdentify = MONSTER_ANITYPE::IDLE;
+		m_iIdleRandomNumber = CALC::Random_Num(Eat, Idle);
+
+		if (Eat_End == m_iIdleRandomNumber)
+			m_iIdleRandomNumber = Eat;
+
+		return;
+	}
+}
+
+void CYachaMan::Set_AniEvent()
+{
+	switch (m_eFirstIdentify)
+	{
+	case MONSTER_ANITYPE::IDLE:
+		if (m_bInRecognitionRange)
+		{
+			switch (m_eState)
+			{
+			case YACHAMAN_ANI::Idle:
+				Play_Idle();
+				break;
+			case YACHAMAN_ANI::Eat:
+			case YACHAMAN_ANI::Eat_End:
+				Play_Eat();
+				break;
+			case YACHAMAN_ANI::Sit:
+			case YACHAMAN_ANI::Sit_End:
+				Play_Sit();
+				break;
+			}
+		}
+		else
+		{
+			switch (m_iIdleRandomNumber)
+			{
+			case YACHAMAN_ANI::Idle:
+				Play_Idle();
+				break;
+			case YACHAMAN_ANI::Eat:
+			case YACHAMAN_ANI::Eat_End:
+				Play_Eat();
+				break;
+			case YACHAMAN_ANI::Sit:
+			case YACHAMAN_ANI::Sit_End:
+				Play_Sit();
+				break;
+			}
+		}
+
+		break;
+
+	case MONSTER_ANITYPE::MOVE:
+		if (true == m_bCanChase)
+			Play_Run();
+		//if(true == m_tObjParam.bDodge) //200406수정
+		//	Play_Dodge();
+		break;
+
+	case MONSTER_ANITYPE::ATTACK:
+		Play_RandomAtk();
+		break;
+
+	case MONSTER_ANITYPE::HIT:
+		Play_Hit();
+		break;
+
+	case MONSTER_ANITYPE::DOWN:
+		break;
+
+	case MONSTER_ANITYPE::DEAD:
+		Play_Dead();
+		break;
+	}
+}
+
+void CYachaMan::Skill_RotateBody()
+{
+	_float fTargetAngle = m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos());
+
+	_float fYAngle = m_pTransformCom->Get_Angle().y;
+
+	_v3 vTargetDir = m_pTransformCom->Get_Axis(AXIS_Z);
+	V3_NORMAL_SELF(&vTargetDir);
+
+	if (fTargetAngle > 0)
+	{
+		if (fYAngle < 0)
+		{
+			if (-D3DXToRadian(90.f) > fYAngle && -D3DXToRadian(180.f) < fYAngle)
+			{
+				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle <= -D3DXToRadian(180.f)) fYAngle = D3DXToRadian(180.f);
+			}
+			else fYAngle += DELTA_60 * D3DXToRadian(360.f);
+		}
+		else
+		{
+			if (fYAngle < fTargetAngle)
+			{
+				fYAngle += DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle >= fTargetAngle) fYAngle = fTargetAngle;
+			}
+			else
+			{
+				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle <= fTargetAngle) fYAngle = fTargetAngle;
+			}
+		}
+	}
+	else if (fTargetAngle < 0)
+	{
+		if (fYAngle > 0)
+		{
+			if (D3DXToRadian(90.f) < fYAngle && D3DXToRadian(180.f) > fYAngle)
+			{
+				fYAngle += DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle >= D3DXToRadian(180.f)) fYAngle = -D3DXToRadian(180.f);
+			}
+			else fYAngle -= DELTA_60 * D3DXToRadian(360.f);
+		}
+		else
+		{
+			if (fYAngle > fTargetAngle)
+			{
+				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle <= fTargetAngle) fYAngle = fTargetAngle;
+			}
+			else
+			{
+				fYAngle += DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle >= fTargetAngle) fYAngle = fTargetAngle;
+			}
+		}
+	}
+
+	m_pTransformCom->Set_Angle(AXIS_Y, fYAngle);
+}
+
+void CYachaMan::Skill_CoolDown()
+{
+	if (false == m_tObjParam.bIsAttack && false == m_tObjParam.bCanAttack)
+	{
+		m_fCoolDown += DELTA_60;
+		m_bIsCoolDown = true;
+
+		if (2.f <= m_fCoolDown)
+		{
+			m_fCoolDown = 0.f;
+			m_bIsCoolDown = false;
+			m_tObjParam.bCanAttack = true;
+			m_eFirstIdentify = MONSTER_ANITYPE::IDLE;
+		}
+	}
+}
+
+void CYachaMan::Skill_Movement(_float _fspeed, _v3 _vDir)
+{
+	V3_NORMAL(&_vDir, &_vDir);
+
+	// 네비 없이
+	m_pTransformCom->Add_Pos(_fspeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"), _vDir);
+
+	// 네비게이션 적용하면 
+	//m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
+}
+
+void CYachaMan::Decre_Skill_Movement(_float _fMutiply)
+{
+	m_fSkillMoveSpeed_Cur -= (0.3f - m_fSkillMoveAccel_Cur * m_fSkillMoveAccel_Cur * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60")) * _fMutiply;
+	m_fSkillMoveAccel_Cur += g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60");
+
+	if (m_fSkillMoveSpeed_Cur < 0.f)
+	{
+		m_fSkillMoveAccel_Cur = 0.5f;
+		m_fSkillMoveSpeed_Cur = 0.f;
+	}
+}
+
+void CYachaMan::Reset_BattleState()
+{
+	m_tObjParam.bIsAttack = false;
+
+	LOOP(10)
+		m_bEventTrigger[i] = false;
+
+	return;
+}
+
+void CYachaMan::Play_Idle()
+{
+}
+
+void CYachaMan::Play_Walk()
+{
+}
+
+void CYachaMan::Play_Run()
+{
+}
+
+void CYachaMan::Play_RandomAtk()
+{
+}
+
+void CYachaMan::Play_Hit()
+{
+}
+
+void CYachaMan::Play_Down_Strong()
+{
+}
+
+void CYachaMan::Play_Down_Weak()
+{
+}
+
+void CYachaMan::Play_Dead()
+{
+}
+
+void CYachaMan::Play_Dead_Strong()
+{
 }
 
 HRESULT CYachaMan::Add_Component()
@@ -142,10 +533,6 @@ HRESULT CYachaMan::Add_Component()
 
 	// for.Com_Mesh
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_BlackWolf", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
-		return E_FAIL;
-
-	// for.Com_AIController
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"AIController", L"Com_AIController", (CComponent**)&m_pAIControllerCom)))
 		return E_FAIL;
 
 	return NOERROR;
@@ -176,30 +563,86 @@ HRESULT CYachaMan::SetUp_ConstantTable()
 	return NOERROR;
 }
 
-HRESULT CYachaMan::Update_Bone_Of_BlackBoard()
+HRESULT CYachaMan::Ready_Collider()
 {
-	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
-	m_vHead = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_vecPhysicCol.reserve(3); //3칸의 공간 할당
+	m_vecAttackCol.reserve(2); //2칸의 공간 할당
 
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Head", m_vHead);
+	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
+	IF_NULL_VALUE_RETURN(pCollider, E_FAIL);
+
+	_float fRadius = 1.2f;
+
+	// 첫번째 콜라이더는 경계 체크용 콜라이더
+	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
+	pCollider->Set_Dynamic(true);
+	pCollider->Set_Type(COL_SPHERE);
+	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Range]->_41, m_matBone[Bone_Range]->_42, m_matBone[Bone_Range]->_43));
+	pCollider->Set_Enabled(true);
+
+	m_vecPhysicCol.push_back(pCollider);
+
+	//==============================================================================================================
+
+	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
+	IF_NULL_VALUE_RETURN(pCollider, E_FAIL);
+
+	fRadius = 0.3f;
+
+	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
+	pCollider->Set_Dynamic(true);
+	pCollider->Set_Type(COL_SPHERE);
+	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Body]->_41, m_matBone[Bone_Body]->_42, m_matBone[Bone_Body]->_43));
+	pCollider->Set_Enabled(true);
+
+	m_vecPhysicCol.push_back(pCollider);
+
+	//==============================================================================================================
+
+	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
+	IF_NULL_VALUE_RETURN(pCollider, E_FAIL);
+
+	fRadius = 0.2f;
+
+	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
+	pCollider->Set_Dynamic(true);
+	pCollider->Set_Type(COL_SPHERE);
+	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Head]->_41, m_matBone[Bone_Head]->_42, m_matBone[Bone_Head]->_43));
+	pCollider->Set_Enabled(true);
+
+	m_vecPhysicCol.push_back(pCollider);
+
+	//==============================================================================================================
+	//공격 구 넣기
+
+	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
+	IF_NULL_VALUE_RETURN(pCollider, E_FAIL);
+
+	fRadius = 1.f; //크기 확인
+
+	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
+	pCollider->Set_Dynamic(true);
+	pCollider->Set_Type(COL_SPHERE);
+	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Head]->_41, m_matBone[Bone_Head]->_42, m_matBone[Bone_Head]->_43));
+	pCollider->Set_Enabled(true);
+
+	m_vecAttackCol.push_back(pCollider);
 
 	return S_OK;
 }
 
-HRESULT CYachaMan::Update_Value_Of_BB()
+HRESULT CYachaMan::Ready_BoneMatrix()
 {
-	_v3 vSelfDir = *(_v3*)&m_pTransformCom->Get_WorldMat().m[2];
+	D3DXFRAME_DERIVED*	pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head", 0);
+	IF_NULL_VALUE_RETURN(pFrame, E_FAIL);
 
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"+Bite_Angle", *D3DXVec3TransformNormal(&_v3(), &vSelfDir, D3DXMatrixRotationY(&_mat(), D3DXToRadian(25))));
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"-Bite_Angle", *D3DXVec3TransformNormal(&_v3(), &vSelfDir, D3DXMatrixRotationY(&_mat(), D3DXToRadian(-25))));
+	m_matBone[Bone_Head] = &pFrame->CombinedTransformationMatrix;
 
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_PoisonDir0", *D3DXVec3TransformNormal(&_v3(), &vSelfDir, D3DXMatrixRotationY(&_mat(), D3DXToRadian(25))));
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_PoisonDir1", *D3DXVec3TransformNormal(&_v3(), &vSelfDir, D3DXMatrixRotationY(&_mat(), D3DXToRadian(12.5f))));
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_PoisonDir2", vSelfDir);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_PoisonDir3", *D3DXVec3TransformNormal(&_v3(), &vSelfDir, D3DXMatrixRotationY(&_mat(), D3DXToRadian(-12.5f))));
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_PoisonDir4", *D3DXVec3TransformNormal(&_v3(), &vSelfDir, D3DXMatrixRotationY(&_mat(), D3DXToRadian(-25))));
+	pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Spine", 0);
+	IF_NULL_VALUE_RETURN(pFrame, E_FAIL);
 
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_Pos", m_pTransformCom->Get_Pos());
+	m_matBone[Bone_Range] = &pFrame->CombinedTransformationMatrix;
+	m_matBone[Bone_Body] = &pFrame->CombinedTransformationMatrix;
 
 	return S_OK;
 }
@@ -232,7 +675,6 @@ CGameObject* CYachaMan::Clone_GameObject(void * pArg)
 
 void CYachaMan::Free()
 {
-	Safe_Release(m_pAIControllerCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pMeshCom);
 	Safe_Release(m_pShaderCom);
