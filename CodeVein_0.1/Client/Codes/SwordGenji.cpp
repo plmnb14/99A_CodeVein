@@ -2,6 +2,8 @@
 #include "..\Headers\SwordGenji.h"
 #include "..\Headers\Weapon.h"
 
+#include "MonsterUI.h"
+
 CSwordGenji::CSwordGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
@@ -35,6 +37,9 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
+	// MonsterHP UI
+	m_pMonsterUI = CMonsterUI::Create(m_pGraphic_Dev, this);
+	m_pMonsterUI->Ready_GameObject(NULL);
 
 
 	//////////////////// 행동트리 init
@@ -155,6 +160,9 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 	Push_Collider();
 
 	CGameObject::Update_GameObject(TimeDelta);
+
+	// MonsterHP UI
+	m_pMonsterUI->Update_GameObject(TimeDelta);
 
 	// 죽었을 경우
 	if (m_bIsDead)
@@ -1181,6 +1189,8 @@ CGameObject * CSwordGenji::Clone_GameObject(void * pArg)
 
 void CSwordGenji::Free()
 {
+	Safe_Release(m_pMonsterUI);
+
 	Safe_Release(m_pSword);
 	Safe_Release(m_pNavMesh);
 	Safe_Release(m_pAIControllerCom);

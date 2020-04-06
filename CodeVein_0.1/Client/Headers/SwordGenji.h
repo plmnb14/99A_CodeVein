@@ -6,6 +6,7 @@
 
 BEGIN(Client)
 
+class CMonsterUI;
 class CWeapon;
 class CSwordGenji final : public CGameObject
 {
@@ -109,6 +110,10 @@ private:
 	CCollider*			m_pCollider = nullptr;
 
 	CWeapon*			m_pSword = nullptr;
+
+	//////////채유미
+	// MonsterHP UI
+	CMonsterUI*			m_pMonsterUI = nullptr;
 
 	//렌더에서 타임델타 쓰기위해서 저장해놓음
 	_double				m_dTimeDelta = 0;

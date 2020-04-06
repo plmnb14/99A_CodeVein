@@ -1241,7 +1241,7 @@ CGameObject * CGunGenji::Clone_GameObject(void * pArg)
 
 void CGunGenji::Free()
 {
-	//Safe_Release(m_pMonsterUI);
+	Safe_Release(m_pMonsterUI);
 
 	Safe_Release(m_pNavMesh);
 	Safe_Release(m_pGun);

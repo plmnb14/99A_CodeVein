@@ -2,6 +2,8 @@
 #include "..\Headers\SwordShieldGenji.h"
 #include "..\Headers\Weapon.h"
 
+#include "MonsterUI.h"
+
 CSwordShieldGenji::CSwordShieldGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
@@ -34,6 +36,11 @@ HRESULT CSwordShieldGenji::Ready_GameObject(void * pArg)
 	m_tObjParam.fHp_Max = 100.f;
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
+
+
+	// MonsterHP UI
+	m_pMonsterUI = CMonsterUI::Create(m_pGraphic_Dev, this);
+	m_pMonsterUI->Ready_GameObject(NULL);
 
 
 
@@ -306,6 +313,9 @@ HRESULT CSwordShieldGenji::Ready_GameObject(void * pArg)
 _int CSwordShieldGenji::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
+
+	// MonsterHP UI
+	m_pMonsterUI->Update_GameObject(TimeDelta);
 
 	// Á×¾úÀ» °æ¿ì
 	if (m_bIsDead)
@@ -1106,6 +1116,8 @@ CGameObject * CSwordShieldGenji::Clone_GameObject(void * pArg)
 
 void CSwordShieldGenji::Free()
 {
+	Safe_Release(m_pMonsterUI);
+
 	Safe_Release(m_pShield);
 	Safe_Release(m_pSword);
 	Safe_Release(m_pNavMesh);

@@ -180,6 +180,8 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 						if (false == iter->Get_Target_Dodge())
 						{
 							// 무기 공격력의 +-20%까지 랜덤범위
+							// 몬스터 HP바 확인을 위해 데미지 추가해놓음 - Chae
+							m_tObjParam.fDamage = 10.f;
 							_uint min = (_uint)(m_tObjParam.fDamage - (m_tObjParam.fDamage * 0.2f));
 							_uint max = (_uint)(m_tObjParam.fDamage + (m_tObjParam.fDamage * 0.2f));
 

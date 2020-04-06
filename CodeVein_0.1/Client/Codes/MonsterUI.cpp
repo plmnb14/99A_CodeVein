@@ -70,11 +70,9 @@ _int CMonsterUI::Update_GameObject(_double TimeDelta)
 	matWorld._41 = m_fPosX - WINCX * 0.5f;
 	matWorld._42 = -m_fPosY + WINCY * 0.5f;
 
-	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
-	
-
-	//m_pTarget = g_pManagement->Get_Instance()->Get_GameObjectBack(L"Layer_Monster", SCENE_STAGE);
+	if(true == m_bCheck_Dir)
+		m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	m_pTransformCom->Set_Pos(_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos()) + (WORLD_UP * 2.f));
 	m_pTransformCom->Set_Scale(_v3(0.8f, 0.08f, 1.f));
@@ -87,15 +85,15 @@ _int CMonsterUI::Update_GameObject(_double TimeDelta)
 	_v3 Player_D3 = TARGET_TO_TRANS(pPlayer)->Get_Pos() - TARGET_TO_TRANS(m_pTarget)->Get_Pos();
 
 	if (V3_LENGTH(&Player_D3) <= 10.f)
-	{
+		m_bCheck_Dir = true;
+	else
+		m_bCheck_Dir = false;
 
-	}
 	return S_OK;
 }
 
 _int CMonsterUI::Late_Update_GameObject(_double TimeDelta)
 {
-
 	return S_OK;
 }
 
@@ -142,10 +140,11 @@ HRESULT CMonsterUI::Render_GameObject()
 					return E_FAIL;
 				m_pTransformCom->Add_Pos(_v3(0.f, 0.f, -0.02f));
 			}
-			if (/*i == 0 || */i == 2)
+			if (i == 2)
 			{
 				if (FAILED(m_pShaderCom->Set_Value("g_fPercentage", &m_fPercentage, sizeof(_float))))
 					return E_FAIL;
+				m_pTransformCom->Add_Pos(_v3(0.f, 0.f, 0.f));
 			}
 
 			if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, i)))
@@ -204,13 +203,8 @@ HRESULT CMonsterUI::SetUp_ConstantTable(_uint TextureIndex)
 	if (FAILED(m_pShaderCom->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
 		return E_FAIL;
 
-
 	if (FAILED(m_pShaderCom->Set_Value("g_fPercentage", &m_fPercentage, sizeof(_float))))
 		return E_FAIL;
-
-	// 마지막에 숫자는 몇번째 사진으로 할건지
-	/*if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, TextureIndex)))
-	return E_FAIL;*/
 
 	return S_OK;
 }
