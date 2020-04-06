@@ -704,8 +704,10 @@ CBT_Composite_Node * CPoisonButterfly::Start_Game()
 {
 	CBT_Sequence* Root_Seq = Node_Sequence("게임 시작");
 
-	Root_Seq->Add_Child(ChaseAndNearAttack());
-	Root_Seq->Add_Child(TurnAndFarAttack());
+	Root_Seq->Add_Child(Dist_Attack());
+
+	//Root_Seq->Add_Child(ChaseAndNearAttack());
+	//Root_Seq->Add_Child(TurnAndFarAttack());
 
 	return Root_Seq;
 }
@@ -785,6 +787,7 @@ CBT_Composite_Node * CPoisonButterfly::NearAttack_Dist6()
 	Root_Sel->Add_Child(Eat_Turn_Eat());
 	Root_Sel->Add_Child(Eat_Turn());
 	Root_Sel->Add_Child(Right_Eat_Left_Eat());
+
 	return Root_Sel;
 }
 

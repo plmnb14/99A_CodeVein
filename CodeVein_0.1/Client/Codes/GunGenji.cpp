@@ -454,11 +454,10 @@ CBT_Composite_Node * CGunGenji::Shot()
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("πÊ«‚ √ﬂ¿˚", L"Player_Pos", 1, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("πÊ«‚ µπ∏Æ±‚", L"Player_Pos", 0.2);
 
-<<<<<<< HEAD
-	CBT_CreateBullet* Bullet0 = Node_CreateBullet("∞’¡ˆ √—æÀ", L"Monster_GunGenjiBullet", L"CreateBulletPos", L"NormalShotDir", 12, 1, 1.5, 1, 0, 0, CBT_Service_Node::Finite);
-	Root_Parallel->Add_Service(Bullet0);
 
-=======
+	//CBT_CreateBullet* Bullet0 = Node_CreateBullet("∞’¡ˆ √—æÀ", L"Monster_GunGenjiBullet", L"CreateBulletPos", L"NormalShotDir", 12, 1, 1.5, 1, 0, 0, CBT_Service_Node::Finite);
+	//Root_Parallel->Add_Service(Bullet0);
+
 	CBT_CreateBullet* Bullet0 = Node_CreateBullet("∞’¡ˆ √—æÀ", L"Monster_GenjiBullet", L"CreateBulletPos", L"NormalShotDir", 20, 1.5, 1.725, 1, 1, 0, CBT_Service_Node::Finite);
 	Root_Parallel->Add_Service(Bullet0);
 
@@ -468,8 +467,7 @@ CBT_Composite_Node * CGunGenji::Shot()
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
 	Root_Parallel->Add_Service(Effect2);
-	
->>>>>>> dba43a8e02d37547ece1a00da1826867f680366f
+
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani44);
 	MainSeq->Add_Child(Show_Ani42);
