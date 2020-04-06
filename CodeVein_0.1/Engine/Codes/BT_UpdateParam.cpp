@@ -13,12 +13,18 @@ CBT_Node::BT_NODE_STATE CBT_UpdateParam::Update_Node(_double TimeDelta, vector<C
 {
 	Start_Node(pNodeStack, plistSubNodeStack, false);
 
+	if(true == m_bService_End)
+		return BT_NODE_STATE::INPROGRESS;
+
 	m_dCurTime += TimeDelta;
 
 	if (false == m_bService_Start)
 	{
 		if (m_dService_StartTime < m_dCurTime)
+		{
 			m_bService_Start = true;
+			m_dCurTime = 100000;		// 서비스 시작시 처음 실행을 위해 큰값을 줌.
+		}
 	}
 	else
 	{
@@ -28,6 +34,7 @@ CBT_Node::BT_NODE_STATE CBT_UpdateParam::Update_Node(_double TimeDelta, vector<C
 			{
 				// 생성 횟수 제한
 			case CBT_Service_Node::Finite:
+				// 루틴 끝날때 마지막 행동
 				if (m_iCur_Count_Of_Execution >= m_iMax_Count_Of_Execution)
 				{
 					switch (m_eParam)
@@ -36,6 +43,8 @@ CBT_Node::BT_NODE_STATE CBT_UpdateParam::Update_Node(_double TimeDelta, vector<C
 						m_pTarget_ObjParam->bCanAttack = false;
 						break;
 					}
+
+					m_bService_End = true;
 				}
 				else
 				{
@@ -43,6 +52,7 @@ CBT_Node::BT_NODE_STATE CBT_UpdateParam::Update_Node(_double TimeDelta, vector<C
 					{
 					case Engine::CBT_UpdateParam::Collider:
 						m_pTarget_ObjParam->bCanAttack = true;
+						//cout << "HIt On" << endl;
 						break;
 					}
 
@@ -73,6 +83,7 @@ void CBT_UpdateParam::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_
 		m_dCurTime = 0;
 		m_dMaxTime = m_dUpdateTime + CALC::Random_Num_Double(-m_dOffset, m_dOffset);
 		m_iCur_Count_Of_Execution = 0;
+		m_bService_End = false;
 
 		m_bInit = false;
 	}

@@ -38,7 +38,7 @@ private:
 	_float		m_fMonsterHp = 0.f;
 	_float		m_fTotalHP = 0.f;
 	_float		m_fPercentage = 0.f;
-	_float		m_fWhite_Percentage = 0.f;
+	_float		m_fWhite_Percentage = 1.f;
 
 	_float		m_fGapHP = 0.f;
 	_float		m_fOldHP = 0.f;
@@ -47,6 +47,8 @@ private:
 
 	_float		m_fAlpha = 0.f;
 
+	_bool		m_bCheck_Dir = false;
+
 private:
 	CTransform*				m_pTransformCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
@@ -54,11 +56,13 @@ private:
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
+	/*CGameObject*			m_pMonsterTatget = nullptr;*/
+
 	/*CTexture*				m_pTextrueCom_Bar1 = nullptr;
 	CBuffer_RcTex*			m_pBufferCom_Bar1 = nullptr;*/
 
 public:
-	static CMonsterUI*		Create(_Device pGraphic_Device);
+	static CMonsterUI*		Create(_Device pGraphic_Device, CGameObject* MonsterTarget);
 	virtual CGameObject*	Clone_GameObject(void* pArg);
 	virtual void			Free();
 };

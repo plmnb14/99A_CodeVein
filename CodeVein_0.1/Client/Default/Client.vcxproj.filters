@@ -217,6 +217,15 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\04. Select_UI">
       <UniqueIdentifier>{6be15063-782e-4209-96d4-18ea99a6801b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\04. MassageUI">
+      <UniqueIdentifier>{f2feb887-81df-48e5-a824-07e92ad80fb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI">
+      <UniqueIdentifier>{1109951a-a48a-447c-bb46-b5d93621bebb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI\PickUp_ItemUI">
+      <UniqueIdentifier>{e70d6cb8-960a-4b13-88a5-ffae11c3cd3c}</UniqueIdentifier>
+    </Filter>
     <Filter Include="96. ScriptManager">
       <UniqueIdentifier>{9372b392-605d-4457-b3ad-1ab7fac2fc17}</UniqueIdentifier>
     </Filter>
@@ -387,9 +396,6 @@
     <ClInclude Include="..\Headers\Drain_Weapon.h">
       <Filter>02.GameObject\Stage\0%29 Player\00%29 DrainWeapon</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\GenjiBullet.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\Genji\Gun</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\GunGenji.h">
       <Filter>02.GameObject\Stage\2%29 Monster\Genji\Gun</Filter>
     </ClInclude>
@@ -398,6 +404,21 @@
     </ClInclude>
     <ClInclude Include="..\Headers\SwordShieldGenji.h">
       <Filter>02.GameObject\Stage\2%29 Monster\Genji\SwordShield</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Get_ItemUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\PickUp_ItemUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI\PickUp_ItemUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\PoisonChaseBullet.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\PoisonButterfly</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GunGenjiBullet.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Genji\Gun</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\SwordGenjiBullet.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Genji\Sword</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\ScriptManager.h">
       <Filter>96. ScriptManager</Filter>
@@ -419,6 +440,9 @@
     </ClInclude>
     <ClInclude Include="..\Headers\MonsterUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\01.MonsterUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MassageUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\04. MassageUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -560,9 +584,6 @@
     <ClCompile Include="..\Codes\Drain_Weapon.cpp">
       <Filter>02.GameObject\Stage\0%29 Player\00%29 DrainWeapon</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\GenjiBullet.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\Genji\Gun</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\GunGenji.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster\Genji\Gun</Filter>
     </ClCompile>
@@ -571,6 +592,27 @@
     </ClCompile>
     <ClCompile Include="..\Codes\SwordShieldGenji.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster\Genji\SwordShield</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MonsterUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\01.MonsterUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\PickUp_ItemUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI\PickUp_ItemUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Get_ItemUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MassageUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\04. MassageUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\PoisonChaseBullet.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\PoisonButterfly</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GunGenjiBullet.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Genji\Gun</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SwordGenjiBullet.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Genji\Sword</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\ScriptManager.cpp">
       <Filter>96. ScriptManager</Filter>

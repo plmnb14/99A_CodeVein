@@ -182,7 +182,7 @@
     <ClInclude Include="..\Headers\Expendables.h" />
     <ClInclude Include="..\Headers\Expendables_Inven.h" />
     <ClInclude Include="..\Headers\Expendables_Slot.h" />
-    <ClInclude Include="..\Headers\GenjiBullet.h" />
+    <ClInclude Include="..\Headers\GunGenjiBullet.h" />
     <ClInclude Include="..\Headers\Get_ItemUI.h" />
     <ClInclude Include="..\Headers\HPBack.h" />
     <ClInclude Include="..\Headers\Item_Manager.h" />
@@ -196,6 +196,7 @@
     <ClInclude Include="..\Headers\PoisonBullet.h" />
     <ClInclude Include="..\Headers\GunGenji.h" />
     <ClInclude Include="..\Headers\PoisonButterfly.h" />
+    <ClInclude Include="..\Headers\PoisonChaseBullet.h" />
     <ClInclude Include="..\Headers\QuickSlot.h" />
     <ClInclude Include="..\Headers\Scene_Stage_01.h" />
     <ClInclude Include="..\Headers\Scene_Stage_02.h" />
@@ -205,6 +206,7 @@
     <ClInclude Include="..\Headers\ScriptManager.h" />
     <ClInclude Include="..\Headers\Select_UI.h" />
     <ClInclude Include="..\Headers\SwordGenji.h" />
+    <ClInclude Include="..\Headers\SwordGenjiBullet.h" />
     <ClInclude Include="..\Headers\SwordShieldGenji.h" />
     <ClInclude Include="..\Headers\UI_Manager.h" />
     <ClInclude Include="..\Headers\PlayerHP.h" />
@@ -243,7 +245,7 @@
     <ClCompile Include="..\Codes\Expendables.cpp" />
     <ClCompile Include="..\Codes\Expendables_Inven.cpp" />
     <ClCompile Include="..\Codes\Expendables_Slot.cpp" />
-    <ClCompile Include="..\Codes\GenjiBullet.cpp" />
+    <ClCompile Include="..\Codes\GunGenjiBullet.cpp" />
     <ClCompile Include="..\Codes\Get_ItemUI.cpp" />
     <ClCompile Include="..\Codes\HPBack.cpp" />
     <ClCompile Include="..\Codes\Item_Manager.cpp" />
@@ -257,6 +259,7 @@
     <ClCompile Include="..\Codes\PoisonBullet.cpp" />
     <ClCompile Include="..\Codes\GunGenji.cpp" />
     <ClCompile Include="..\Codes\PoisonButterfly.cpp" />
+    <ClCompile Include="..\Codes\PoisonChaseBullet.cpp" />
     <ClCompile Include="..\Codes\QuickSlot.cpp" />
     <ClCompile Include="..\Codes\Scene_Stage_01.cpp" />
     <ClCompile Include="..\Codes\Scene_Stage_02.cpp" />
@@ -266,6 +269,7 @@
     <ClCompile Include="..\Codes\ScriptManager.cpp" />
     <ClCompile Include="..\Codes\Select_UI.cpp" />
     <ClCompile Include="..\Codes\SwordGenji.cpp" />
+    <ClCompile Include="..\Codes\SwordGenjiBullet.cpp" />
     <ClCompile Include="..\Codes\SwordShieldGenji.cpp" />
     <ClCompile Include="..\Codes\UI_Manager.cpp" />
     <ClCompile Include="..\Codes\PlayerHP.cpp" />
