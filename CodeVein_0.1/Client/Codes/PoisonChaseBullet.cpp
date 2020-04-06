@@ -1,23 +1,23 @@
 #include "stdafx.h"
-#include "..\Headers\PoisonBullet.h"
+#include "..\Headers\PoisonChaseBullet.h"
 #include "ParticleMgr.h"
 
-CPoisonBullet::CPoisonBullet(LPDIRECT3DDEVICE9 pGraphic_Device)
+CPoisonChaseBullet::CPoisonChaseBullet(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
 }
 
-CPoisonBullet::CPoisonBullet(const CPoisonBullet & rhs)
+CPoisonChaseBullet::CPoisonChaseBullet(const CPoisonChaseBullet & rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CPoisonBullet::Ready_GameObject_Prototype()
+HRESULT CPoisonChaseBullet::Ready_GameObject_Prototype()
 {
 	return NOERROR;
 }
 
-HRESULT CPoisonBullet::Ready_GameObject(void * pArg)
+HRESULT CPoisonChaseBullet::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
@@ -29,7 +29,10 @@ HRESULT CPoisonBullet::Ready_GameObject(void * pArg)
 	m_vDir = temp.vDir;
 	m_fSpeed = temp.fSpeed;
 	m_dLifeTime = temp.dLifeTime;
-	
+
+	m_tObjParam.bCanHit = true;
+	//m_tObjParam.fHp_Cur = 1.f;
+
 	m_pTransformCom->Set_Pos(temp.vCreatePos);
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
@@ -50,11 +53,11 @@ HRESULT CPoisonBullet::Ready_GameObject(void * pArg)
 	lstrcpy(m_pEffect_Tag9, L"ButterFly_VenomShot_DeadSmoke");
 	lstrcpy(m_pEffect_Tag10, L"ButterFly_PointParticle");
 
-	
+
 	return NOERROR;
 }
 
-_int CPoisonBullet::Update_GameObject(_double TimeDelta)
+_int CPoisonChaseBullet::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
 
@@ -62,10 +65,17 @@ _int CPoisonBullet::Update_GameObject(_double TimeDelta)
 		return DEAD_OBJ;
 
 	OnCollisionEnter();
+	Check_PhyCollider();
+
+	_v3 vPlayerPos = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos();
+	m_vDir = *D3DXVec3Normalize(&_v3(), &( (vPlayerPos + _v3(0.f, 1.f, 0.f)) - m_pTransformCom->Get_Pos()));
 
 	m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
 
 	m_dCurTime += TimeDelta;
+
+	if (m_pTransformCom->Get_Pos().y <= 0.f)
+		m_dCurTime = 1000;
 
 	// 시간 초과
 	if (m_dCurTime > m_dLifeTime)
@@ -75,7 +85,7 @@ _int CPoisonBullet::Update_GameObject(_double TimeDelta)
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag8, m_pTransformCom->Get_Pos(), nullptr);
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag9, m_pTransformCom->Get_Pos(), nullptr);
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag10, m_pTransformCom->Get_Pos(), nullptr);
-		
+
 		m_bDead = true;
 	}
 	// 진행중
@@ -104,7 +114,7 @@ _int CPoisonBullet::Update_GameObject(_double TimeDelta)
 	return NOERROR;
 }
 
-_int CPoisonBullet::Late_Update_GameObject(_double TimeDelta)
+_int CPoisonChaseBullet::Late_Update_GameObject(_double TimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
@@ -115,7 +125,7 @@ _int CPoisonBullet::Late_Update_GameObject(_double TimeDelta)
 	return NOERROR;
 }
 
-HRESULT CPoisonBullet::Render_GameObject()
+HRESULT CPoisonChaseBullet::Render_GameObject()
 {
 	Update_Collider();
 	Draw_Collider();
@@ -123,9 +133,18 @@ HRESULT CPoisonBullet::Render_GameObject()
 	return NOERROR;
 }
 
-HRESULT CPoisonBullet::Update_Collider()
+HRESULT CPoisonChaseBullet::Update_Collider()
 {
-	_ulong matrixIdx = 0;
+	for (auto& iter : m_vecPhysicCol)
+	{
+		_mat tmpMat;
+		tmpMat = m_pTransformCom->Get_WorldMat();
+
+		_v3 ColPos = _v3(tmpMat._41, tmpMat._42, tmpMat._43);
+
+		iter->Update(ColPos);
+	}
+
 
 	for (auto& iter : m_vecAttackCol)
 	{
@@ -135,15 +154,19 @@ HRESULT CPoisonBullet::Update_Collider()
 		_v3 ColPos = _v3(tmpMat._41, tmpMat._42, tmpMat._43);
 
 		iter->Update(ColPos);
-
-		++matrixIdx;
 	}
+
 
 	return S_OK;
 }
 
-HRESULT CPoisonBullet::Draw_Collider()
+HRESULT CPoisonChaseBullet::Draw_Collider()
 {
+	for (auto& iter : m_vecPhysicCol)
+	{
+		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
+	}
+
 	for (auto& iter : m_vecAttackCol)
 	{
 		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
@@ -152,7 +175,32 @@ HRESULT CPoisonBullet::Draw_Collider()
 	return S_OK;
 }
 
-void CPoisonBullet::OnCollisionEnter()
+void CPoisonChaseBullet::Check_PhyCollider()
+{
+	if (false == m_tObjParam.bCanHit && m_tObjParam.bIsHit == false)
+	{
+		m_dCurTime = 1000;	// 죽음
+		
+		cout << "추적 총알 사망" << endl;
+
+		//m_tObjParam.fHp_Cur -= 100.f;	// 체력 임의로 닳게 만듦.
+
+		//cout << "나도 부딪힘 ^^" << endl;
+		//m_tObjParam.bIsHit = true;
+		//m_tObjParam.bCanHit = true;
+
+		//if (m_tObjParam.fHp_Cur > 0.f)
+		//{
+		//	m_bDead = false;
+		//}
+		//else
+		//{
+		//	m_bDead = true;
+		//}
+	}
+}
+
+void CPoisonChaseBullet::OnCollisionEnter()
 {
 	Update_Collider();
 
@@ -174,7 +222,7 @@ void CPoisonBullet::OnCollisionEnter()
 
 }
 
-void CPoisonBullet::OnCollisionEvent(list<CGameObject*> plistGameObject)
+void CPoisonChaseBullet::OnCollisionEvent(list<CGameObject*> plistGameObject)
 {
 	// 공격 불가능이면 체크 안함
 	if (false == m_tObjParam.bCanAttack)
@@ -229,7 +277,7 @@ void CPoisonBullet::OnCollisionEvent(list<CGameObject*> plistGameObject)
 	}
 }
 
-HRESULT CPoisonBullet::Add_Component()
+HRESULT CPoisonChaseBullet::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -246,19 +294,39 @@ HRESULT CPoisonBullet::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CPoisonBullet::SetUp_ConstantTable()
+HRESULT CPoisonChaseBullet::SetUp_ConstantTable()
 {
 	return NOERROR;
 }
 
-HRESULT CPoisonBullet::Ready_Collider()
+HRESULT CPoisonChaseBullet::Ready_Collider()
 {
+	////////// 피직 콜라이더
+
+	m_vecPhysicCol.reserve(1);
+
+	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
+
+	_float fRadius = 1.f;
+
+	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
+	pCollider->Set_Dynamic(true);
+	pCollider->Set_Type(COL_SPHERE);
+	pCollider->Set_CenterPos(_v3(m_pTransformCom->Get_WorldMat().m[3][0], m_pTransformCom->Get_WorldMat().m[3][1], m_pTransformCom->Get_WorldMat().m[3][2]));
+	pCollider->Set_Enabled(false);
+
+	m_vecPhysicCol.push_back(pCollider);
+
+
+
+	/////////// 공격 콜라이더
+
 	m_vecAttackCol.reserve(1);
 
 	// 총알 중앙
-	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
+	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 
-	_float fRadius = 0.7f;
+	fRadius = 0.7f;
 
 	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
 	pCollider->Set_Dynamic(true);
@@ -271,33 +339,33 @@ HRESULT CPoisonBullet::Ready_Collider()
 	return S_OK;
 }
 
-CPoisonBullet * CPoisonBullet::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
+CPoisonChaseBullet * CPoisonChaseBullet::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 {
-	CPoisonBullet* pInstance = new CPoisonBullet(pGraphic_Device);
+	CPoisonChaseBullet* pInstance = new CPoisonChaseBullet(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 	{
-		MSG_BOX("Failed To Creating CPoisonBullet");
+		MSG_BOX("Failed To Creating CPoisonChaseBullet");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject * CPoisonBullet::Clone_GameObject(void * pArg)
+CGameObject * CPoisonChaseBullet::Clone_GameObject(void * pArg)
 {
-	CPoisonBullet* pInstance = new CPoisonBullet(*this);
+	CPoisonChaseBullet* pInstance = new CPoisonChaseBullet(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
-		MSG_BOX("Failed To Cloned CPoisonBullet");
+		MSG_BOX("Failed To Cloned CPoisonChaseBullet");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CPoisonBullet::Free()
+void CPoisonChaseBullet::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pCollider);

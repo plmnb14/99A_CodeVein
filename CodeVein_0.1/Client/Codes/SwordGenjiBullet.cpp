@@ -1,23 +1,23 @@
 #include "stdafx.h"
-#include "..\Headers\GenjiBullet.h"
+#include "..\Headers\SwordGenjiBullet.h"
 #include "ParticleMgr.h"
 
-CGenjiBullet::CGenjiBullet(LPDIRECT3DDEVICE9 pGraphic_Device)
+CSwordGenjiBullet::CSwordGenjiBullet(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
 }
 
-CGenjiBullet::CGenjiBullet(const CGenjiBullet & rhs)
+CSwordGenjiBullet::CSwordGenjiBullet(const CSwordGenjiBullet & rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CGenjiBullet::Ready_GameObject_Prototype()
+HRESULT CSwordGenjiBullet::Ready_GameObject_Prototype()
 {
 	return NOERROR;
 }
 
-HRESULT CGenjiBullet::Ready_GameObject(void * pArg)
+HRESULT CSwordGenjiBullet::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
@@ -26,12 +26,14 @@ HRESULT CGenjiBullet::Ready_GameObject(void * pArg)
 
 	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
 
-	m_pTransformCom->Set_Pos(temp.vCreatePos);
-	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
-
 	m_vDir = temp.vDir;
 	m_fSpeed = temp.fSpeed;
 	m_dLifeTime = temp.dLifeTime;
+
+	m_pTransformCom->Set_Pos(temp.vCreatePos);
+	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
+
+	m_tObjParam.bCanAttack = true;
 
 	m_fEffectCreateOffset = 0.05f;
 
@@ -46,7 +48,7 @@ HRESULT CGenjiBullet::Ready_GameObject(void * pArg)
 	return NOERROR;
 }
 
-_int CGenjiBullet::Update_GameObject(_double TimeDelta)
+_int CSwordGenjiBullet::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
 
@@ -95,7 +97,7 @@ _int CGenjiBullet::Update_GameObject(_double TimeDelta)
 	return NOERROR;
 }
 
-_int CGenjiBullet::Late_Update_GameObject(_double TimeDelta)
+_int CSwordGenjiBullet::Late_Update_GameObject(_double TimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
@@ -106,7 +108,7 @@ _int CGenjiBullet::Late_Update_GameObject(_double TimeDelta)
 	return NOERROR;
 }
 
-HRESULT CGenjiBullet::Render_GameObject()
+HRESULT CSwordGenjiBullet::Render_GameObject()
 {
 	Update_Collider();
 	Draw_Collider();
@@ -114,7 +116,7 @@ HRESULT CGenjiBullet::Render_GameObject()
 	return NOERROR;
 }
 
-HRESULT CGenjiBullet::Update_Collider()
+HRESULT CSwordGenjiBullet::Update_Collider()
 {
 	_ulong matrixIdx = 0;
 
@@ -133,7 +135,7 @@ HRESULT CGenjiBullet::Update_Collider()
 	return S_OK;
 }
 
-HRESULT CGenjiBullet::Draw_Collider()
+HRESULT CSwordGenjiBullet::Draw_Collider()
 {
 	for (auto& iter : m_vecAttackCol)
 	{
@@ -143,7 +145,7 @@ HRESULT CGenjiBullet::Draw_Collider()
 	return S_OK;
 }
 
-void CGenjiBullet::OnCollisionEnter()
+void CSwordGenjiBullet::OnCollisionEnter()
 {
 	Update_Collider();
 
@@ -165,7 +167,7 @@ void CGenjiBullet::OnCollisionEnter()
 
 }
 
-void CGenjiBullet::OnCollisionEvent(list<CGameObject*> plistGameObject)
+void CSwordGenjiBullet::OnCollisionEvent(list<CGameObject*> plistGameObject)
 {
 	// 공격 불가능이면 체크 안함
 	if (false == m_tObjParam.bCanAttack)
@@ -220,7 +222,7 @@ void CGenjiBullet::OnCollisionEvent(list<CGameObject*> plistGameObject)
 	}
 }
 
-HRESULT CGenjiBullet::Add_Component()
+HRESULT CSwordGenjiBullet::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -237,19 +239,19 @@ HRESULT CGenjiBullet::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CGenjiBullet::SetUp_ConstantTable()
+HRESULT CSwordGenjiBullet::SetUp_ConstantTable()
 {
 	return NOERROR;
 }
 
-HRESULT CGenjiBullet::Ready_Collider()
+HRESULT CSwordGenjiBullet::Ready_Collider()
 {
 	m_vecAttackCol.reserve(1);
 
 	// 총알 중앙
 	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 
-	_float fRadius = 0.3f;
+	_float fRadius = 0.4f;
 
 	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
 	pCollider->Set_Dynamic(true);
@@ -262,33 +264,33 @@ HRESULT CGenjiBullet::Ready_Collider()
 	return S_OK;
 }
 
-CGenjiBullet * CGenjiBullet::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
+CSwordGenjiBullet * CSwordGenjiBullet::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 {
-	CGenjiBullet* pInstance = new CGenjiBullet(pGraphic_Device);
+	CSwordGenjiBullet* pInstance = new CSwordGenjiBullet(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 	{
-		MSG_BOX("Failed To Creating CGenjiBullet");
+		MSG_BOX("Failed To Creating CSwordGenjiBullet");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject * CGenjiBullet::Clone_GameObject(void * pArg)
+CGameObject * CSwordGenjiBullet::Clone_GameObject(void * pArg)
 {
-	CGenjiBullet* pInstance = new CGenjiBullet(*this);
+	CSwordGenjiBullet* pInstance = new CSwordGenjiBullet(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
-		MSG_BOX("Failed To Cloned CGenjiBullet");
+		MSG_BOX("Failed To Cloned CSwordGenjiBullet");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CGenjiBullet::Free()
+void CSwordGenjiBullet::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pCollider);

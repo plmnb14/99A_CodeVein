@@ -6,12 +6,12 @@
 
 BEGIN(Client)
 
-class CGenjiBullet final : public CGameObject
+class CPoisonChaseBullet final : public CGameObject
 {
 protected:
-	explicit CGenjiBullet(LPDIRECT3DDEVICE9 pGraphic_Device);
-	explicit CGenjiBullet(const CGenjiBullet& rhs);
-	virtual ~CGenjiBullet() = default;
+	explicit CPoisonChaseBullet(LPDIRECT3DDEVICE9 pGraphic_Device);
+	explicit CPoisonChaseBullet(const CPoisonChaseBullet& rhs);
+	virtual ~CPoisonChaseBullet() = default;
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -32,7 +32,13 @@ private:
 	_tchar				m_pEffect_Tag2[256] = { 0, };
 	_tchar				m_pEffect_Tag3[256] = { 0, };
 	_tchar				m_pEffect_Tag4[256] = { 0, };
+
 	_tchar				m_pEffect_Tag5[256] = { 0, };
+	_tchar				m_pEffect_Tag6[256] = { 0, };
+	_tchar				m_pEffect_Tag7[256] = { 0, };
+	_tchar				m_pEffect_Tag8[256] = { 0, };
+	_tchar				m_pEffect_Tag9[256] = { 0, };
+	_tchar				m_pEffect_Tag10[256] = { 0, };
 
 	_double				m_dCurTime = 0;
 	_double				m_dLifeTime = 0;
@@ -40,10 +46,12 @@ private:
 
 	_bool				m_bEffect = true;
 
-	_float				m_fEffectCreateOffset = 0.f;
+	_float				m_fEffectCreateOffset		= 0.f;
 	_float				m_fEffectCreateOffset_Check = 0.f;
+
 private:
 	_bool				m_bPlayerFriendly = false;		// 플레이어 껀지
+
 
 private:
 	HRESULT Update_Collider();
@@ -51,6 +59,8 @@ private:
 	HRESULT Draw_Collider();
 
 private:
+	void Check_PhyCollider();
+
 	virtual void OnCollisionEnter();
 	virtual void OnCollisionEvent(list<CGameObject*> plistGameObject);
 
@@ -61,7 +71,7 @@ private:
 	HRESULT Ready_Collider();
 
 public:
-	static CGenjiBullet* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
+	static CPoisonChaseBullet* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
 	virtual CGameObject* Clone_GameObject(void* pArg);
 	virtual void Free();
 };

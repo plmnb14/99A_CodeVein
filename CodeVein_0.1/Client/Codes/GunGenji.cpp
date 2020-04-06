@@ -5,11 +5,13 @@
 CGunGenji::CGunGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
+	ZeroMemory(m_matBones, sizeof(_mat*) * Bone_End);
 }
 
 CGunGenji::CGunGenji(const CGunGenji & rhs)
 	: CGameObject(rhs)
 {
+	ZeroMemory(m_matBones, sizeof(_mat*) * Bone_End);
 }
 
 HRESULT CGunGenji::Ready_GameObject_Prototype()
@@ -22,14 +24,15 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	if (FAILED(Add_Component(pArg)))
 		return E_FAIL;
 
+	Ready_NF(pArg);
 	Ready_Weapon();
 	Ready_BoneMatrix();
 	Ready_Collider();
 
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 3.f;
+	m_tObjParam.fHp_Cur = 100.f;
+	m_tObjParam.fHp_Max = 100.f;
 
-	m_pTransformCom->Set_Pos(_v3(-3.f, 0.f, -3.f));
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 
@@ -65,7 +68,7 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	Start_Sel->Add_Child(Start_Game());
 
 
-	//Start_Sel->Add_Child(Sudden_Shot());
+	//Start_Sel->Add_Child(Cut_To_Right());
 
 
 	///////////보여주기용
@@ -308,9 +311,6 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	//CBT_Play_Ani* pAni49 = Node_Ani("총 쏘기 ", 49, 0.9f);
 	//pSequence->Add_Child(pAni49);
 
-
-	m_pMeshCom->SetUp_Animation(Ani_Idle);
-
 	return NOERROR;
 }
 
@@ -318,31 +318,29 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
 
-	// 뼈 위치 업데이트
-	Update_Bone_Of_BlackBoard();
-	// BB 직접 업데이트
-	Update_Value_Of_BB();
-
 	// 죽었을 경우
 	if (m_bIsDead)
-	{
 		return DEAD_OBJ;
+
+	// 플레이어 미발견
+	if (false == m_bFight)
+	{
+		Update_NF();
 	}
+	// 플레이어 발견
 	else
 	{
+		// 뼈 위치 업데이트
+		Update_Bone_Of_BlackBoard();
+		// BB 직접 업데이트
+		Update_Value_Of_BB();
+
 		if (true == m_bAIController)
 			m_pAIControllerCom->Update_AIController(TimeDelta);
 
-		Check_Collider();
 	}
 
-	// 네비메쉬 태우기
-	if (-1 == m_pNavMesh->Get_CellIndex())
-	{
-		// 안탔을 경우
-	}
-	else
-		m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
+	Check_PhyCollider();
 
 	return _int();
 }
@@ -418,9 +416,9 @@ CBT_Composite_Node * CGunGenji::Shot()
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적", L"Player_Pos", 1, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 돌리기", L"Player_Pos", 0.2);
 
-	CBT_CreateBullet* Bullet0 = Node_CreateBullet("겐지 총알", L"Monster_GenjiBullet", L"CreateBulletPos", L"NormalShotDir", 7, 3, 1.725, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Bullet0 = Node_CreateBullet("겐지 총알", L"Monster_GunGenjiBullet", L"CreateBulletPos", L"NormalShotDir", 12, 1, 1.5, 1, 0, 0, CBT_Service_Node::Finite);
 	Root_Parallel->Add_Service(Bullet0);
-	
+
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani44);
 	MainSeq->Add_Child(Show_Ani42);
@@ -443,7 +441,7 @@ CBT_Composite_Node * CGunGenji::Tumbling_Shot()
 	CBT_Wait* Wait0 = Node_Wait("대기", 0.3, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", -1, 1.3, 0);
 
-	CBT_CreateBullet* Bullet0 = Node_CreateBullet("겐지 총알", L"Monster_GenjiBullet", L"CreateBulletPos", L"TumblingShotDir", 7, 3, 0.335, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Bullet0 = Node_CreateBullet("겐지 총알", L"Monster_GunGenjiBullet", L"CreateBulletPos", L"TumblingShotDir", 12, 1, 0.65, 1, 0, 0, CBT_Service_Node::Finite);
 	Root_Parallel->Add_Service(Bullet0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
@@ -463,12 +461,12 @@ CBT_Composite_Node * CGunGenji::Sudden_Shot()
 	CBT_Sequence* MainSeq = Node_Sequence("갑자기 총쏘기");
 	CBT_Play_Ani* Show_Ani49 = Node_Ani("갑자기 총쏘기", 49, 0.95f);
 	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.1f);
-	
+
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적", L"Player_Pos", 3, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 돌리기", L"Player_Pos", 0.2);
 
-	CBT_CreateBullet* Bullet0 = Node_CreateBullet("겐지 총알", L"Monster_GenjiBullet", L"CreateBulletPos", L"NormalShotDir", 7, 3, 3.6, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Bullet0 = Node_CreateBullet("겐지 총알", L"Monster_GunGenjiBullet", L"CreateBulletPos", L"NormalShotDir", 7, 3, 3.6, 1, 1, 0, CBT_Service_Node::Finite);
 	Root_Parallel->Add_Service(Bullet0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
@@ -497,6 +495,9 @@ CBT_Composite_Node * CGunGenji::Upper_Slash()
 
 	Root_Parallel->Set_Sub_Child(Move0);
 
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pGun->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.45, 1, 0.20, 0);
+	Root_Parallel->Add_Service(pHitCol);
+
 	return Root_Parallel;
 }
 
@@ -518,6 +519,9 @@ CBT_Composite_Node * CGunGenji::Arm_Attack()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
+
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pGun->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1, 1, 0.2, 0);
+	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
 }
@@ -541,6 +545,9 @@ CBT_Composite_Node * CGunGenji::Sting_Attack()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pGun->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.6, 1, 0.2, 0);
+	Root_Parallel->Add_Service(pHitCol);
+
 	return Root_Parallel;
 }
 
@@ -562,6 +569,9 @@ CBT_Composite_Node * CGunGenji::Cut_To_Right()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
+
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pGun->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.7, 1, 0.35, 0);
+	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
 }
@@ -592,9 +602,6 @@ CBT_Composite_Node * CGunGenji::Start_Game()
 {
 	CBT_Sequence* Root_Seq = Node_Sequence("게임 시작");
 
-
-
-	//Root_Seq->Add_Child(NearAttack());
 	Root_Seq->Add_Child(Dist_Attack());
 
 	return Root_Seq;
@@ -606,10 +613,6 @@ CBT_Composite_Node * CGunGenji::Dist_Attack()
 
 	CBT_DistCheck* Dist0 = Node_DistCheck("거리 체크", L"Player_Pos", 3);
 	CBT_DistCheck* Dist1 = Node_DistCheck("거리 체크", L"Player_Pos", 6);
-
-	// 쳐다보기가 먼저,  그다음 거리체크후 공격
-
-	//거리로 판단하고 공격, selector
 
 	Root_Sel->Add_Child(Dist0);
 	Dist0->Set_Child(LookPlayer_NearAttack());
@@ -627,7 +630,7 @@ CBT_Composite_Node * CGunGenji::LookPlayer_NearAttack()
 	CBT_Sequence* Root_Seq = Node_Sequence("플레이어 바라본 후 랜덤 근접 공격");
 
 	CBT_RotationDir* Rotation0 = Node_RotationDir("플레이어 바라보기", L"Player_Pos", 0.1);
-	
+
 	Root_Seq->Add_Child(Rotation0);
 	Root_Seq->Add_Child(NearAttack());
 
@@ -769,10 +772,75 @@ HRESULT CGunGenji::Update_Value_Of_BB()
 	// 3. 총알의 생성 위치
 	_mat matBulletCreate = static_cast<CTransform*>(m_pGun->Get_Component(L"Com_Transform"))->Get_WorldMat();
 	// 총의 월드좌표 + 위로 조금 더 올려서 보정
-	_v3 vCreateBulletPos = _v3(matBulletCreate.m[3][0], matBulletCreate.m[3][1], matBulletCreate.m[3][2]) + (_v3(0.f, 0.3f, 0.f));	
+	_v3 vCreateBulletPos = _v3(matBulletCreate.m[3][0], matBulletCreate.m[3][1], matBulletCreate.m[3][2]) + (_v3(0.f, 0.3f, 0.f));
 
 	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"CreateBulletPos", vCreateBulletPos);
 
+	return S_OK;
+}
+
+HRESULT CGunGenji::Update_NF()
+{
+	// 플레이어 발견 못 했을 때
+	if (false == m_bFindPlayer)
+	{
+		// 플레이어 좌표 구함.
+		_v3 vPlayer_Pos = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos();
+
+		// 플레이어와 몬스터의 거리
+		_v3 vLengthTemp = vPlayer_Pos - m_pTransformCom->Get_Pos();
+		vLengthTemp.y = 0.f;
+		_float fLength = D3DXVec3Length(&vLengthTemp);
+
+		//cout << "거리 : " << fLength << endl;
+
+		// 플레이어가 최소거리안에 있는가?
+		if (fLength < m_fMinLength)
+		{
+			// 플레이어 발견
+			m_bFindPlayer = true;
+		}
+		// 플레이어가 최대거리 안에 있는가?
+		else if (fLength < m_fMaxLength)
+		{
+			// 플레이어가 시야각 안에 있는가?
+			if (Is_InFov(m_fFov, vPlayer_Pos))
+			{
+				// 플레이어 발견
+				m_bFindPlayer = true;
+			}
+			else
+			{
+				m_pMeshCom->SetUp_Animation(m_eNF_Ani);
+			}
+		}
+		// 플레이어가 최대거리 밖에 있는가?
+		else
+			m_pMeshCom->SetUp_Animation(m_eNF_Ani);
+	}
+	// 플레이어 발견
+	else
+	{
+		switch (m_eNF_Ani)
+		{
+		case Client::CGunGenji::Sit1:
+			m_pMeshCom->SetUp_Animation(Ani_StandUp1);
+			break;
+		case Client::CGunGenji::Sit2:
+			m_pMeshCom->SetUp_Animation(Ani_StandUp2);
+			break;
+		default:
+			m_bFight = true;
+			break;
+		}
+
+		// 일어나는 동작들만 따로 관리
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		{
+			m_pMeshCom->SetUp_Animation(Ani_Idle);
+			m_bFight = true;
+		}
+	}
 	return S_OK;
 }
 
@@ -795,7 +863,54 @@ HRESULT CGunGenji::Update_Collider()
 	return S_OK;
 }
 
-void CGunGenji::Check_Collider()
+void CGunGenji::Skill_Movement(_float _fspeed, _v3 _vDir)
+{
+	_v3 tmpLook;
+	_float fSpeed = _fspeed;
+
+	tmpLook = _vDir;
+	D3DXVec3Normalize(&tmpLook, &tmpLook);
+
+	// 네비게이션 적용하면 
+	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &tmpLook, fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
+
+}
+
+void CGunGenji::Decre_Skill_Movement(_float _fMutiply)
+{
+	m_fSkillMoveSpeed_Cur -= (0.3f - m_fSkillMoveAccel_Cur * m_fSkillMoveAccel_Cur * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60")) * _fMutiply;
+	m_fSkillMoveAccel_Cur += g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60");
+
+	if (m_fSkillMoveSpeed_Cur < 0.f)
+	{
+		m_fSkillMoveAccel_Cur = 0.5f;
+		m_fSkillMoveSpeed_Cur = 0.f;
+	}
+}
+
+_bool CGunGenji::Is_InFov(_float fDegreeOfFov, _v3 vTargetPos)
+{
+	_v3 vThisLook = *(_v3*)(&m_pTransformCom->Get_WorldMat().m[2]);
+	vThisLook.y = 0.f;
+	D3DXVec3Normalize(&vThisLook, &vThisLook);
+
+	_v3 FromThisToTarget = vTargetPos - m_pTransformCom->Get_Pos();
+	FromThisToTarget.y = 0.f;
+	D3DXVec3Normalize(&FromThisToTarget, &FromThisToTarget);
+
+
+	_float fDot_Temp = D3DXVec3Dot(&vThisLook, &FromThisToTarget);
+	_float fRadian = acosf(fDot_Temp);
+
+	//cout << "시야각 : " << D3DXToDegree(fRadian) << endl;
+
+	if (D3DXToDegree(fRadian) < fDegreeOfFov * 0.5f)
+		return true;
+
+	return false;
+}
+
+void CGunGenji::Check_PhyCollider()
 {
 	// 충돌처리, bCanHit를 무기가 false시켜줄것임.
 	if (false == m_tObjParam.bCanHit && m_tObjParam.bIsHit == false)
@@ -808,6 +923,15 @@ void CGunGenji::Check_Collider()
 		cout << "나도 부딪힘 ^^" << endl;
 		m_tObjParam.bIsHit = true;
 		m_tObjParam.bCanHit = true;
+
+		m_bFight = true;	// 싸움 시작
+
+		m_fSkillMoveSpeed_Cur = 4.f;
+		m_fSkillMoveAccel_Cur = 0.f;
+		m_fSkillMoveMultiply = 0.5f;
+
+		// 맞을때 플레이어의 룩을 받아와서 그 방향으로 밈.
+		m_vPushDir_forHitting = (*(_v3*)&TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_WorldMat().m[2]);
 
 		m_pAIControllerCom->Reset_BT();
 
@@ -823,6 +947,7 @@ void CGunGenji::Check_Collider()
 			g_pManagement->Create_Spawn_Effect(m_pTransformCom->Get_Pos());
 		}
 	}
+	// 맞았을 때
 	else
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.9f))
@@ -832,10 +957,17 @@ void CGunGenji::Check_Collider()
 
 			//m_pMeshCom->SetUp_Animation(Ani_Idle);
 		}
-
 		else if (m_pMeshCom->Is_Finish_Animation(0.7f))	// 이때부터 재충돌 가능
 		{
 			m_tObjParam.bIsHit = false;
+		}
+
+		// 밀림 처리
+		if (m_tObjParam.bIsHit == true)
+		{
+			Decre_Skill_Movement(m_fSkillMoveMultiply);
+			Skill_Movement(m_fSkillMoveSpeed_Cur, m_vPushDir_forHitting);
+			//cout << "밀리는 중" << endl;
 		}
 	}
 }
@@ -871,7 +1003,7 @@ HRESULT CGunGenji::Add_Component(void* pArg)
 		lstrcpy(name, L"Mesh_NormalGenji");
 	else
 	{
-		switch (eTemp.eType)
+		switch (eTemp.eColor)
 		{
 		case CGunGenji::Jungle:
 			lstrcpy(name, L"Mesh_JungleGenji");
@@ -1000,6 +1132,18 @@ HRESULT CGunGenji::Ready_Collider()
 	pCollider->Set_Enabled(true);
 
 	m_vecPhysicCol.push_back(pCollider);
+
+	return S_OK;
+}
+
+HRESULT CGunGenji::Ready_NF(void * pArg)
+{
+	INFO eTemp = *(INFO*)pArg;
+
+	m_eNF_Ani = eTemp.eNF_Ani;
+	m_fFov = eTemp.fFov;
+	m_fMaxLength = eTemp.fMaxLength;
+	m_fMinLength = eTemp.fMinLength;
 
 	return S_OK;
 }

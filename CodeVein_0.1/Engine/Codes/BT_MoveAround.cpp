@@ -37,7 +37,7 @@ CBT_Node::BT_NODE_STATE CBT_MoveAround::Update_Node(_double TimeDelta, vector<CB
 		if (m_fMove_Speed >= 0.f)
 		{
 			// 타겟을 향한 벡터를 회전
-			D3DXVec3TransformNormal(&vToTarget, &vToTarget, D3DXMatrixRotationY(&_mat(), D3DXToRadian(5)));
+			D3DXVec3TransformNormal(&vToTarget, &vToTarget, D3DXMatrixRotationY(&_mat(), D3DXToRadian(3)));
 			// 회전된 벡터를 기준으로 right벡터를 구함.
 			D3DXVec3Cross(&vRight, &vToTarget, &_v3(0.f, 1.f, 0.f));
 
@@ -49,7 +49,7 @@ CBT_Node::BT_NODE_STATE CBT_MoveAround::Update_Node(_double TimeDelta, vector<CB
 			// 반대 회전
 
 			// 타겟을 향한 벡터를 회전
-			D3DXVec3TransformNormal(&vToTarget, &vToTarget, D3DXMatrixRotationY(&_mat(), D3DXToRadian(-5)));
+			D3DXVec3TransformNormal(&vToTarget, &vToTarget, D3DXMatrixRotationY(&_mat(), D3DXToRadian(-3)));
 			// 회전된 벡터를 기준으로 right벡터를 구함.
 			D3DXVec3Cross(&vRight, &vToTarget, &_v3(0.f, 1.f, 0.f));
 			vRight *= -1.f;

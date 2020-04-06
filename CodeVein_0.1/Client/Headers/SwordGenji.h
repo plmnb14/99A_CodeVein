@@ -11,7 +11,7 @@ class CSwordGenji final : public CGameObject
 {
 public:
 	enum Color { White, Jungle, Normal };
-	enum NF_Ani {Talk = 143};
+	enum NF_Ani {Talk = 143, LookAround1 = 151, LookAround2 = 150, LookAround3 = 149, Sit1 = 144, Sit2 = 152};
 
 	typedef struct tagInitInfo
 	{
@@ -28,9 +28,8 @@ public:
 
 private:
 	enum Ani {
-		Ani_Idle = 42,
-		Ani_Death = 64,
-		Ani_Dmg01_FL = 122
+		Ani_Idle = 42, Ani_Death = 64, Ani_Dmg01_FL = 122,
+		Ani_StandUp1 = 140, Ani_StandUp2 = 153
 	};
 
 private:
@@ -66,7 +65,7 @@ private:	//패턴들
 	CBT_Composite_Node* Horizon_Cut();
 	// 8. 찌르기, 이동거리 : 1
 	CBT_Composite_Node* Sting_Attack();
-	// 9. 2연속 베기, 이동거리 : 1 + 1
+	// 9. 2연속 베기, 이동거리 : 0.5 + 0.5
 	CBT_Composite_Node* TwoCombo_Cut();
 
 
@@ -113,11 +112,14 @@ private:
 	//렌더에서 타임델타 쓰기위해서 저장해놓음
 	_double				m_dTimeDelta = 0;
 
-	_bool				m_bFight = false;	// 플레이어 발견 못한 상태
+	_bool				m_bFindPlayer = false;	// 플레이어 발견 못한 상태
+	_bool				m_bFight = false;	
 
 	//뼈다귀
 	_mat*				m_matBones[Bone_End];
-	_bool				m_bAIController = false;
+	_bool				m_bAIController = true;
+
+	_v3					m_vLeftHand = _v3(0.f, 0.f, 0.f);
 
 private:
 	_float				m_fSkillMoveSpeed_Cur = 0.f;
@@ -145,10 +147,9 @@ private:
 	void Skill_Movement(_float _fspeed, _v3 _vDir = { 0.f , 0.f , 0.f });
 	void Decre_Skill_Movement(_float _fMutiply = 1.f);
 
-
 	_bool Is_InFov(_float fDegreeOfFov, _v3 vTargetPos);
 
-	void Check_Collider();
+	void Check_PhyCollider();
 
 	HRESULT Draw_Collider();
 

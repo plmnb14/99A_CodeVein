@@ -50,6 +50,7 @@ private:
 
 	_double				m_dService_StartTime = 0;
 	_bool				m_bService_Start = false;
+	_bool				m_bService_End = false;
 
 	OBJECT_PARAM*		m_pTarget_ObjParam = nullptr;
 	Param				m_eParam = Collider;

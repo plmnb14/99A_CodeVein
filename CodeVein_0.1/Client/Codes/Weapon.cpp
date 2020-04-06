@@ -402,7 +402,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[WPN_Hammer_Normal].fCol_Height = 1.3f;
 
 	m_tWeaponParam[WPN_Gun_Normal].fDamage = 10.f;
-	m_tWeaponParam[WPN_Gun_Normal].fRadius = 0.4f;
+	m_tWeaponParam[WPN_Gun_Normal].fRadius = 0.6f;
 	m_tWeaponParam[WPN_Gun_Normal].fTrail_Min = 0.f;
 	m_tWeaponParam[WPN_Gun_Normal].fTrail_Max = 1.f;
 	m_tWeaponParam[WPN_Gun_Normal].fCol_Height = 1.2f;
