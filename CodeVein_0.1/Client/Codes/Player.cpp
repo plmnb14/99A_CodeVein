@@ -2905,7 +2905,7 @@ void CPlayer::Play_Skills()
 		{
 		case Renketsu_StrongAtk_01:
 		{
-			스킬 추가하고있었고, 회피 중에 맞으면 이상해지는 오류 수정해야함.
+			//스킬 추가하고있었고, 회피 중에 맞으면 이상해지는 오류 수정해야함.
 			break;
 		}
 		case Renketsu_StrongAtk_02:

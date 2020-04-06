@@ -178,7 +178,7 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 					if (false == iter->Get_Target_Dodge())
 					{
 						// 임시로 추가된 대미지 상수
-						m_tObjParam.fDamage = 20;
+						//m_tObjParam.fDamage = 20;
 
 						iter->Add_Target_Hp(-m_tObjParam.fDamage);
 						g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
