@@ -4600,6 +4600,11 @@ void CPlayer::Free()
 		Safe_Release(m_pWeapon[i]);
 	}
 
+	for (auto& iter : m_vecFullSkillInfo)
+	{
+		Safe_Delete(iter);
+	}
+
 	Safe_Release(m_pDrainWeapon);
 
 	Safe_Release(m_pCollider);

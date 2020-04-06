@@ -905,6 +905,7 @@ void CSwordGenji::Push_Collider()
 	{
 		CCollider* pCollider = TARGET_TO_COL(iter);
 
+		// 지금 속도값 임의로 넣었는데 구해서 넣어줘야함
 		if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), 5.f * DELTA_60))
 		{
 			CTransform* pTrans = TARGET_TO_TRANS(iter);
@@ -1142,6 +1143,7 @@ void CSwordGenji::Free()
 	Safe_Release(m_pMeshCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pCollider);
 
 	CGameObject::Free();
 }
