@@ -21,6 +21,21 @@ public:
 	_int	Update_UI();
 
 public:
+	_uint	Get_CoundItem() { return m_uiCoundItem; }
+	void	Set_CoundItem(_uint _Cound) { m_uiCoundItem = _Cound; }
+
+private:
+	_bool m_bIsOpenEx = false;
+	_bool m_bIsOpenMat = false;
+	_bool m_bIsOpenWea = false;
+
+	_uint m_uiCoundItem = 0;
+
+//private:
+//	CGet_ItemUI*	m_pGet_ItemUI = nullptr;
+//	CPickUp_ItemUI*	m_pPickUp_ItemUI = nullptr;
+
+public:
 	virtual void Free();
 };
 

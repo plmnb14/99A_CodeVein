@@ -198,4 +198,3 @@ technique Default_Technique
 		pixelshader = compile ps_3_0 PS_UI_FADE();
 	}
 }
-

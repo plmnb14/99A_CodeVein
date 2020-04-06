@@ -6,12 +6,12 @@
 
 BEGIN(Client)
 
-class CGet_ItemUI final : public CUI
+class CPickUp_ItemUI final : public CUI
 {
 private:
-	explicit CGet_ItemUI(_Device Graphic_Device);
-	explicit CGet_ItemUI(const CGet_ItemUI& rhs);
-	virtual ~CGet_ItemUI() = default;
+	explicit CPickUp_ItemUI(_Device Graphic_Device);
+	explicit CPickUp_ItemUI(const CPickUp_ItemUI& rhs);
+	virtual ~CPickUp_ItemUI() = default;
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -26,29 +26,25 @@ private:
 	HRESULT SetUp_ConstantTable(_uint TextureIndex);
 	void	SetUp_State(_double TimeDelta);
 
-public:
-	_bool	Get_Click_Check() { return m_bCheck_Click; }
-	_uint	Get_Cound_Pickuptiem() { return m_iCount_PickUpitem; }
-	_float	Get_EndTimer() { return m_fEndTimer; }
-
-	void	Set_EndTimer(_double TimeDelta) { m_fEndTimer += (_float)TimeDelta; }
-
 private:
-	_bool		m_bCheck_Click = false;
-	_bool		m_bSparkle_Box = false;
-	_bool		m_bShow_GetItemName = false;
-	_bool		m_bShow_Ask_Pickup = false;
+	_uint		m_uiRenderNumber = 0;
 
-	_float		m_fTimer = 0.f;
-	_float		m_fEndTimer = 0.f;
+	_uint		m_iRenderNum = 0;
+
+	_bool		m_bOne_PickupUIEnd = false;
+	_bool		m_bTwo_PickupUIEnd = false;
+	_bool		m_bThree_PickupUIEnd = false;
 
 	_float		m_fPercentage = 0.f;
 	_float		m_fSparkleBox = 1.f;
 
-	_float		m_fNowItemBar_Size = 0.f;
+	_float		m_fPickup_Itembar = 0.f;
+	_float		m_fPickup_Itembar2 = 0.f;
+	_float		m_fPickup_Itembar3 = 0.f;
 
-	_uint		m_iUINumber = 0;
-	_uint		m_iCount_PickUpitem = 0;
+	_float		m_fTimer = 0.f;
+	_float		m_fTwoTimer = 0.f;
+	_float		m_fAllTimer = 0.f;
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -57,10 +53,8 @@ private:
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
-
-
 public:
-	static CGet_ItemUI*		Create(_Device pGraphic_Device);
+	static	CPickUp_ItemUI*	Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);
 	virtual void			Free();
 };
