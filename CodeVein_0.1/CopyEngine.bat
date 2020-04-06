@@ -18,6 +18,7 @@ xcopy /y .\Engine\Bin\ShaderFiles\*.fx		.\Client\ShaderFiles\
 xcopy /y .\Engine\Release\ShaderFiles\*.fx	.\Client\ShaderFiles\
 xcopy /y .\Client\ShaderFiles\*.fx			.\Tool\ShaderFiles\
 xcopy /y .\Client\ShaderFiles\*.fx			.\EffectTool\ShaderFiles\
+xcopy /y .\Client\ShaderFiles\*.fx			.\MonsterTool\ShaderFiles\
 
 xcopy /y .\Engine\Bin\*.lib					.\Reference\Librarys\
 xcopy /y .\Engine\Release\*.lib				.\Reference\Librarys\
