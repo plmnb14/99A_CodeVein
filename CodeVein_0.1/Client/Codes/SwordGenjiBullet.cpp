@@ -173,14 +173,12 @@ void CSwordGenjiBullet::OnCollisionEvent(list<CGameObject*> plistGameObject)
 	if (false == m_tObjParam.bCanAttack)
 		return;
 
+	//cout << "uykiuyuh" << endl;
+
 	_bool bFirst = true;
 	//게임 오브젝트를 받아와서
 	for (auto& iter : plistGameObject)
 	{
-		// 맞을 수 없다면 리턴
-		if (false == iter->Get_Target_CanHit())
-			continue;
-
 		// 내가 가진 Vec 콜라이더와 비교한다.
 		for (auto& vecIter : m_vecAttackCol)
 		{
@@ -199,15 +197,29 @@ void CSwordGenjiBullet::OnCollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					cout << "응 투사체 부딪힘" << endl;
+					if (false == iter->Get_Target_Dodge())
+					{
+						iter->Set_Target_CanHit(false);
 
-					iter->Set_Target_CanHit(false);
-					iter->Add_Target_Hp(m_tObjParam.fDamage);
+						if (iter->Get_Target_IsHit())
+						{
+							iter->Set_HitAgain(true);
+						}
 
-					m_dCurTime = 100;	// 바로 사망시키기 위해서 현재시간 100줬음
+						if (false == iter->Get_Target_Dodge())
+						{
+							// 무기 공격력의 +-20%까지 랜덤범위
+							_uint min = (_uint)(m_tObjParam.fDamage - (m_tObjParam.fDamage * 0.2f));
+							_uint max = (_uint)(m_tObjParam.fDamage + (m_tObjParam.fDamage * 0.2f));
+
+							iter->Add_Target_Hp((_float)-CALC::Random_Num(min, max));
+							g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
+
+							m_dCurTime = 100;
+						}
+					}
 
 					break;
-
 				}
 
 				else

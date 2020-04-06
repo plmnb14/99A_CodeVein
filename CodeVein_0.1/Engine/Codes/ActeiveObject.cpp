@@ -30,6 +30,8 @@ CActiveObject::~CActiveObject()
 
 _int CActiveObject::Update_GameObject(_double _TimeDelta)
 {
+	return 0;
+
 	CGameObject::LateInit_GameObject();
 	CGameObject::Update_GameObject(_TimeDelta);
 	m_pRenderer->Add_RenderList(RENDER_ALPHA, this);

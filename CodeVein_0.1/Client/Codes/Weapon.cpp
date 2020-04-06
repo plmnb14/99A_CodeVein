@@ -184,11 +184,15 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 
 						if (false == iter->Get_Target_Dodge())
 						{
+							m_tObjParam.fDamage = m_tWeaponParam->fDamage;
+
 							// 무기 공격력의 +-20%까지 랜덤범위
 							_uint min = (_uint)(m_tObjParam.fDamage - (m_tObjParam.fDamage * 0.2f));
 							_uint max = (_uint)(m_tObjParam.fDamage + (m_tObjParam.fDamage * 0.2f));
 
-							iter->Add_Target_Hp((_float)-CALC::Random_Num(min , max) * m_fSkillPercent);
+							cout << m_tObjParam.fDamage << endl;
+
+							iter->Add_Target_Hp(-(_float)CALC::Random_Num(min , max) * m_fSkillPercent);
 							g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
 
 							if (m_bRecordCollision)
@@ -297,6 +301,9 @@ void CWeapon::Change_WeaponMesh(const _tchar* _MeshName)
 	// 콜라이더도 업데이트 해야함.
 	_float fRadius = m_tWeaponParam[m_eWeaponData].fRadius;
 	m_vecAttackCol[0]->Set_Radius(_v3(fRadius, fRadius, fRadius));
+
+	// 공격력도 업데이트
+	m_tObjParam.fDamage = m_tWeaponParam->fDamage;
 }
 
 void CWeapon::Update_Collider()
@@ -443,6 +450,10 @@ HRESULT CWeapon::SetUp_Default()
 	m_pTransform->Set_Pos(V3_NULL);
 	m_pTransform->Set_Scale(V3_ONE);
 	m_pTransform->Set_Angle(AXIS_X, D3DXToRadian(-90.f));
+
+	//
+	m_tObjParam.fDamage = m_tWeaponParam->fDamage;
+
 	return S_OK;
 }
 
@@ -545,8 +556,8 @@ void CWeapon::Free()
 	m_vecAttackCol.shrink_to_fit();
 	m_vecAttackCol.clear();
 
-	for (auto& iter : m_listCollisionRecord)
-		iter = nullptr;
+	//for (auto& iter : m_listCollisionRecord)
+	//	iter = nullptr;
 
 	CGameObject::Free();
 }

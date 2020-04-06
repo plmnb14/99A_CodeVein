@@ -64,8 +64,8 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
 	//Check_ShowValue->Set_Child(Start_Show());
 	//Start_Sel->Add_Child(Check_ShowValue);
-	//Start_Sel->Add_Child(Start_Game());
-	Start_Sel->Add_Child(Throwing2());
+	Start_Sel->Add_Child(Start_Game());
+	//Start_Sel->Add_Child(Throwing2());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -158,7 +158,7 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 
 	// 죽었을 경우
 	if (m_bIsDead)
-		return DEAD_OBJ;
+		m_bEnable = false;
 
 	// 플레이어 미발견
 	if (false == m_bFight)

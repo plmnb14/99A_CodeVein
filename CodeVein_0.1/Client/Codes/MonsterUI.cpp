@@ -158,8 +158,6 @@ HRESULT CMonsterUI::Render_GameObject()
 		m_pShaderCom->End_Shader();
 	}
 
-
-	cout << m_fPercentage << ", " << m_fWhite_Percentage << endl;
 	return S_OK;
 }
 

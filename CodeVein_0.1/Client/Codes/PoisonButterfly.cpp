@@ -247,6 +247,8 @@ _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 	if (false == m_bEnable)
 		return NO_EVENT;
 
+	cout << "M : 업데이트 타?" << endl;
+
 	CGameObject::Update_GameObject(TimeDelta);
 
 	// 죽었을 경우

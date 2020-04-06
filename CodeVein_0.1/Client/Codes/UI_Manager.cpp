@@ -130,6 +130,15 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	return NOERROR;
 }
 
+HRESULT CUI_Manager::SetUP_PlayerLayer()
+{
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerST", SCENE_STAGE, L"Layer_Stamina");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_HPBack", SCENE_STAGE, L"Layer_Player_HPback");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerHP", SCENE_STAGE, L"Layer_PlayerHP");
+
+	return S_OK;
+}
+
 _int CUI_Manager::Update_UI()
 {
 	/*CExpendables_Inven* pExpendInven = static_cast<CExpendables_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendablesInven", SCENE_STAGE));

@@ -2341,6 +2341,8 @@ void CPlayer::Play_Dodge()
 
 		if (true == m_bOnAiming)
 		{
+			m_bDodgeBack = false;
+
 			if (m_bMove[MOVE_Front])
 			{
 				if (m_bMove[MOVE_Right])
@@ -2404,6 +2406,9 @@ void CPlayer::Play_Dodge()
 				else
 					vDir = -m_pTransform->Get_Axis(AXIS_X);
 			}
+
+			else
+				m_bDodgeBack = true;
 		}
 
 		else
