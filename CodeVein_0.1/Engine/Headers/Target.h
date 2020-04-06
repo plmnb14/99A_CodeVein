@@ -20,17 +20,33 @@ public:
 	HRESULT SetUp_OnGraphicDev(_uint iIndex);
 	HRESULT Release_OnGraphicDev(_uint iIndex);
 	HRESULT Clear_Target();
+
+	HRESULT Origin_DepthBuffer();
+	HRESULT Begin_DepthBuffer();
+	HRESULT End_DepthBuffer();
+
+	HRESULT Origin_ViewPort();
+	HRESULT Begin_ViewPort();
+	HRESULT End_ViewPort();
+
 #ifdef _DEBUG
 public:
 	HRESULT Ready_Debug_Buffer(_float fStartX, _float fStartY, _float fSizeX, _float fSizeY);
 	HRESULT Render_Debug_Buffer();
 #endif
+
 private:
 	LPDIRECT3DDEVICE9		m_pGraphic_Device = nullptr;
 	LPDIRECT3DTEXTURE9		m_pTarget_Texture = nullptr;
 	LPDIRECT3DSURFACE9		m_pTarget_Surface = nullptr; // ∑ª¥ı≈∏∞Ÿ¿ª ¥Î«•«œ¥¬ ∞¥√º.
 	LPDIRECT3DSURFACE9		m_pOld_Surface = nullptr;
 	D3DXCOLOR				m_ClearColor;
+
+	LPDIRECT3DSURFACE9		m_pOriginStencil = nullptr;
+	LPDIRECT3DSURFACE9		m_pNewStencil = nullptr;
+
+	D3DVIEWPORT9			m_tViewPort_Old = {};
+	D3DVIEWPORT9			m_tViewPort_New = {};
 
 #ifdef _DEBUG
 private:

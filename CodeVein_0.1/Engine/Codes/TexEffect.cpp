@@ -327,6 +327,9 @@ void CTexEffect::Setup_Info()
 			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Y] * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f),
 			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Z] * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f));
 
+		if (m_bAutoFindPos)
+			vPos += m_pDesc->pTargetTrans->Get_Pos();
+
 		m_pTransformCom->Set_Pos(vPos + m_pDesc->vWorldPos);
 		m_vLerpPos = (vPos + m_pDesc->vWorldPos);
 	}
@@ -451,7 +454,7 @@ void CTexEffect::Check_Move(_double TimeDelta)
 				vMove = m_vMyDir * m_fMoveSpeed * _float(TimeDelta);
 			else
 				vMove = m_pInfo->vMoveDirection * m_fMoveSpeed * _float(TimeDelta);
-			if (m_pDesc->pTargetTrans)
+			if (m_pDesc->pTargetTrans && !m_bAutoFindPos)
 			{
 				_v3 vPos = m_pDesc->pTargetTrans->Get_Pos();
 				m_vFollowPos += vMove;
@@ -469,7 +472,7 @@ void CTexEffect::Check_Move(_double TimeDelta)
 	if (m_pInfo->bRandomMove)
 	{
 		_v3 vMove = m_vDir * m_fMoveSpeed * _float(TimeDelta);
-		if (m_pDesc->pTargetTrans)
+		if (m_pDesc->pTargetTrans && !m_bAutoFindPos)
 		{
 			_v3 vPos = m_pDesc->pTargetTrans->Get_Pos();
 			m_vFollowPos += vMove;

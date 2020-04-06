@@ -29,6 +29,8 @@ HRESULT CWeapon_Slot::Ready_GameObject(void * pArg)
 
 	SetUp_Default();
 
+	m_bIsActive = false;
+
 	return NOERROR;
 }
 
@@ -93,7 +95,7 @@ HRESULT CWeapon_Slot::Render_GameObject()
 
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(0);
+	m_pShaderCom->Begin_Pass(1);
 
 	m_pBufferCom->Render_VIBuffer();
 
@@ -169,7 +171,7 @@ void CWeapon_Slot::SetUp_Default()
 	pDesc->fPosX = m_fPosX;
 	pDesc->fPosY = m_fPosY;
 	pDesc->fSizeX = m_fSizeX;
-	pDesc->fPosY = m_fSizeY;
+	pDesc->fSizeY = m_fSizeY;
 
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_SelectUI", SCENE_STAGE, L"Layer_SelectUI", pDesc)))
 		return;
@@ -204,6 +206,7 @@ CGameObject * CWeapon_Slot::Clone_GameObject(void * pArg)
 
 void CWeapon_Slot::Free()
 {
+	
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom);

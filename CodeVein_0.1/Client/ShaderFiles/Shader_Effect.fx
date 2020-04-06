@@ -194,11 +194,6 @@ PS_OUT PS_MAIN(PS_IN In)
 			Out.vColor.a = 1;
 		else
 			Out.vColor.a = 0;
-
-		//if (fxColor.r >= g_fFxAlpha - 0.01 && fxColor.r <= g_fFxAlpha + 0.01)
-		//	vColor = pow(float4(0.9, 0.75, 0.65, 1), 2.2); //
-		//else
-		//	;
 	}
 
 	if (g_bReverseColor)

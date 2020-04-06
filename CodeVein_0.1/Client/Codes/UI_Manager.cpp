@@ -10,12 +10,15 @@
 
 #include "QuickSlot.h"
 
+
 ////////////////////
 //유미작업
-//#include "MonsterUI.h"
-//#include "MassageUI.h"
-//#include "Get_ItemUI.h"
+#include "MonsterUI.h"
+#include "MassageUI.h"
+#include "Get_ItemUI.h"
+#include "PickUp_ItemUI.h"
 ///////////////////
+
 
 #include "Expendables_Inven.h"
 #include "Expendables_Slot.h"
@@ -26,8 +29,8 @@
 #include "Weapon_Inven.h"
 #include "Armor_Slot.h"
 #include "Armor_Inven.h"
-
-
+#include "NumberUI.h"
+#include "CursorUI.h"
 
 IMPLEMENT_SINGLETON(CUI_Manager)
 
@@ -67,7 +70,17 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 
 	//if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Get_ItemUI", CGet_ItemUI::Create(pDevice))))
 	//	return E_FAIL;
-	////////////////////////////////////////////////////////////////////////////////////////////
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MonsterUI", CMonsterUI::Create(pDevice))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Start_BossUI", CMassageUI::Create(pDevice))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Get_ItemUI", CGet_ItemUI::Create(pDevice))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Pickup_ItemUI", CPickUp_ItemUI::Create(pDevice))))
+		return E_FAIL;
 	
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SelectUI", CSelect_UI::Create(pDevice))))
 		return E_FAIL;
@@ -90,7 +103,10 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ArmorInven", CArmor_Inven::Create(pDevice))))
 		return E_FAIL;
-
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_NumberUI", CNumberUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CursorUI", CCursorUI::Create(pDevice))))
+		return E_FAIL;
 	return NOERROR;
 }
 
@@ -102,11 +118,24 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_WeaponInven", SCENE_STAGE, L"Layer_WeaponInven");
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ArmorInven", SCENE_STAGE, L"Layer_ArmorInven");
 
+	//m_GetItem = g_pManagement->Clone_GameObject_Return(L"GameObject_Get_ItemUI", NULL);
+	//Safe_AddRef(m_GetItem);
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(m_GetItem, SCENE_STAGE, L"Layer_Get_ItemUI", NULL);
+
+	//m_PickUp = g_pManagement->Clone_GameObject_Return(L"GameObject_Pickup_ItemUI", NULL);
+	//Safe_AddRef(m_PickUp);
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(m_PickUp, SCENE_STAGE, L"Layer_PickUPUI", NULL);
+
+
 	return NOERROR;
 }
 
 _int CUI_Manager::Update_UI()
 {
+	/*CExpendables_Inven* pExpendInven = static_cast<CExpendables_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendablesInven", SCENE_STAGE));
+	CMaterial_Inven*	pMaterialInven = static_cast<CMaterial_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_MaterialInven", SCENE_STAGE));
+	CWeapon_Inven* pWeaponInven = static_cast<CWeapon_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponInven", SCENE_STAGE));
+	CArmor_Inven* pArmorInven = static_cast<CArmor_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ArmorInven", SCENE_STAGE));*/
 	
 	
 	return 0;

@@ -1,5 +1,13 @@
 #pragma once
 
+enum Skill_Index
+{
+	Skill_OneHand_Active_01, Skill_OneHand_Active_02, Skill_OneHand_Active_03, Skill_OneHand_Active_04,
+	Skill_TwoHand_Active_01, Skill_TwoHand_Active_02, Skill_TwoHand_Active_03, Skill_TwoHand_Active_04,
+	Skill_Buff_Enchant_01, Skill_Buff_Enchant_02, Skill_Buff_Enchant_03,
+	Skill_End
+};
+
 enum RAY_CALC 
 { 
 	RAY_TO_WORLD, RAY_TO_VIEW, 
@@ -8,7 +16,7 @@ enum RAY_CALC
 
 enum RENDERID
 {
-	RENDER_PRIORITY, RENDER_NONALPHA, RENDER_ALPHA, RENDER_DISTORTION, RENDER_UI,
+	RENDER_PRIORITY, RENDER_NONALPHA, RENDER_SHADOWTARGET, RENDER_ALPHA, RENDER_DISTORTION, RENDER_UI,
 	RENDER_END
 };
 

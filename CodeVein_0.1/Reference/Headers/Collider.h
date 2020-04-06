@@ -82,6 +82,7 @@ public:
 public:
 	_bool Check_OBB(CCollider* _rSrc);
 	_bool Check_AABB(CCollider* _rSrc);
+	_bool Check_Sphere(CCollider * _rSrc, _v3 vDir, _float fSpeed);
 	_bool Check_Sphere(CCollider * _rSrc, _float * _fLegnthOut, _v3 * _vDirOut);
 	_bool Check_Sphere(CCollider* _rSrc);
 	_bool Check_Capsule(CCollider* _rSrc);

@@ -152,9 +152,9 @@ void CCameraMgr::Set_Distance(_float _fDist)
 {
 }
 
-void CCameraMgr::Set_OnAimingTarget()
+void CCameraMgr::Set_OnAimingTarget(_bool _bOnAim)
 {
-	m_pMainCamera->Set_OnAimingTarget();
+	m_pMainCamera->Set_OnAimingTarget(_bOnAim);
 }
 
 void CCameraMgr::Set_AimingTarget(CGameObject * pAimingTarget)

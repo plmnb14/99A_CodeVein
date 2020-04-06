@@ -1,6 +1,7 @@
 
 
 matrix		g_matWorld, g_matView, g_matProj, g_matLastWVP;// , g_matInvVP, g_matLastVP;
+matrix		g_LightVP_Close, g_LightVP_Medium, g_LightVP_Far;
 float		g_fFxAlpha;
 
 texture		g_DiffuseTexture;
@@ -49,7 +50,7 @@ sampler		FXSampler = sampler_state
 struct VS_IN
 {
 	float3		vPosition	: POSITION;
-	float3		vNormal	: NORMAL;
+	float3		vNormal		: NORMAL;
 	float3		vTangent	: TANGENT;
 	float3		vBinormal	: BINORMAL;
 	float2		vTexUV		: TEXCOORD0;
@@ -284,5 +285,6 @@ technique Default_Technique
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_DISSOLVE();
 	}
+
 }
 
