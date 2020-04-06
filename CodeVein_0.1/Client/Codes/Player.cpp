@@ -1227,6 +1227,9 @@ void CPlayer::Key_Attack()
 
 			if (m_bCanAttack == true)
 			{
+				LOOP(16)
+					m_bEventTrigger[i] = false;
+
 				if (m_bSprint)
 				{
 					m_eActState = ACT_HeavyAtk;
@@ -2310,6 +2313,7 @@ void CPlayer::Play_Dodge()
 		m_eAnim_Upper = m_eAnim_Lower;
 		m_eAnim_RightArm = m_eAnim_Lower;
 
+		m_tObjParam.bDodge = true;
 		m_bOnDodge = true;
 		m_bCanDodge = false;
 		m_bStopMovementKeyInput = true;
@@ -2415,6 +2419,8 @@ void CPlayer::Play_Dodge()
 			m_bOnDodge = false;
 			m_bCanDodge = true;
 			m_bStopMovementKeyInput = false;
+
+			m_tObjParam.bDodge = false;
 
 			if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Right] || m_bMove[MOVE_Left])
 			{
@@ -4513,6 +4519,7 @@ HRESULT CPlayer::SetUp_Default()
 
 	// Parameter
 	m_tObjParam.bCanHit = true;
+	m_tObjParam.bDodge = false;
 	m_tObjParam.fHp_Cur = 100.f;
 	m_tObjParam.fHp_Max = 100.f;
 

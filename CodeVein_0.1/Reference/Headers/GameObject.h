@@ -68,6 +68,7 @@ public:
 	virtual _float Get_Target_Hp() { return m_tObjParam.fHp_Cur; };
 	virtual _float Get_Target_Stamina() { return m_tObjParam.fStamina_Cur; };
 	virtual _float Get_Target_HoldGage() { return m_tObjParam.fHoldGage_Cur; };
+	virtual _float Get_DodgeTimer() { return m_tObjParam.fDodgeTimer; }
 
 public:
 	virtual void Add_Target_Hp(_float _fHp) { m_tObjParam.fHp_Cur += _fHp; };
@@ -84,6 +85,7 @@ public:
 	virtual void Set_Target_CanAttack(_bool _bCanAttack) { m_tObjParam.bCanAttack = _bCanAttack; }
 	virtual void Set_Target_KnockBack(_bool _bKnockBack) { m_tObjParam.bKnockBack = _bKnockBack; }
 	virtual void Set_Target_Dodge(_bool _bDodge) { m_tObjParam.bDodge = _bDodge; }
+	virtual void Set_Target_DodgeTimer(_float _fDodgeTimer) { m_tObjParam.fDodgeTimer = _fDodgeTimer; }
 	
 public:
 	vector<CCollider*>		Get_PhysicColVector() { return m_vecPhysicCol; };	// 충돌 체크용 콜라이더 벡터

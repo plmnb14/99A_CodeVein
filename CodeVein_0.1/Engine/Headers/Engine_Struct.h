@@ -51,6 +51,7 @@ namespace Engine
 		_bool		bCanAttack;		// 공격가능한지
 
 		_bool		bDodge;			// 회피 상태인지
+		_float		fDodgeTimer;	// 회피 중 무적 시간
 
 		_v3			vHitDir;		// 맞은 방향
 

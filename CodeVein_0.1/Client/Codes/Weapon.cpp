@@ -166,22 +166,26 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					m_tObjParam.bCanAttack = false;
-
-					iter->Set_Target_CanHit(false);
-
-					if (iter->Get_Target_IsHit())
-					{
-						iter->Set_HitAgain(true);
-					}
-
 					if (false == iter->Get_Target_Dodge())
 					{
-						// 임시로 추가된 대미지 상수
-						//m_tObjParam.fDamage = 20;
+						m_tObjParam.bCanAttack = false;
 
-						iter->Add_Target_Hp(-m_tObjParam.fDamage);
-						g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
+						iter->Set_Target_CanHit(false);
+
+						if (iter->Get_Target_IsHit())
+						{
+							iter->Set_HitAgain(true);
+						}
+
+						if (false == iter->Get_Target_Dodge())
+						{
+							// 무기 공격력의 +-20%까지 랜덤범위
+							_uint min = (_uint)(m_tObjParam.fDamage - (m_tObjParam.fDamage * 0.2f));
+							_uint max = (_uint)(m_tObjParam.fDamage + (m_tObjParam.fDamage * 0.2f));
+
+							iter->Add_Target_Hp((_float)-CALC::Random_Num(min , max));
+							g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
+						}
 					}
 					
 					break;
@@ -399,19 +403,19 @@ HRESULT CWeapon::SetUp_Default()
 
 HRESULT CWeapon::SetUp_WeaponData()
 {
-	m_tWeaponParam[WPN_SSword_Normal].fDamage = 15.f;
-	m_tWeaponParam[WPN_SSword_Normal].fRadius = 0.6f;
+	m_tWeaponParam[WPN_SSword_Normal].fDamage = 20.f;
+	m_tWeaponParam[WPN_SSword_Normal].fRadius = 0.7f;
 	m_tWeaponParam[WPN_SSword_Normal].fTrail_Min = 0.f;
 	m_tWeaponParam[WPN_SSword_Normal].fTrail_Max = 1.f;
 	m_tWeaponParam[WPN_SSword_Normal].fCol_Height = 1.f;
 
-	m_tWeaponParam[WPN_Hammer_Normal].fDamage = 20.f;
+	m_tWeaponParam[WPN_Hammer_Normal].fDamage = 50.f;
 	m_tWeaponParam[WPN_Hammer_Normal].fRadius = 0.75f;
 	m_tWeaponParam[WPN_Hammer_Normal].fTrail_Min = 0.75f;
 	m_tWeaponParam[WPN_Hammer_Normal].fTrail_Max = 1.5f;
 	m_tWeaponParam[WPN_Hammer_Normal].fCol_Height = 1.3f;
 
-	m_tWeaponParam[WPN_Gun_Normal].fDamage = 10.f;
+	m_tWeaponParam[WPN_Gun_Normal].fDamage = 25.f;
 	m_tWeaponParam[WPN_Gun_Normal].fRadius = 0.5f;
 	m_tWeaponParam[WPN_Gun_Normal].fTrail_Min = 0.f;
 	m_tWeaponParam[WPN_Gun_Normal].fTrail_Max = 1.f;
