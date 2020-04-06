@@ -70,17 +70,6 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 
 	//if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Get_ItemUI", CGet_ItemUI::Create(pDevice))))
 	//	return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MonsterUI", CMonsterUI::Create(pDevice))))
-		return E_FAIL;
-
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Start_BossUI", CMassageUI::Create(pDevice))))
-		return E_FAIL;
-
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Get_ItemUI", CGet_ItemUI::Create(pDevice))))
-		return E_FAIL;
-
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Pickup_ItemUI", CPickUp_ItemUI::Create(pDevice))))
-		return E_FAIL;
 	
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SelectUI", CSelect_UI::Create(pDevice))))
 		return E_FAIL;

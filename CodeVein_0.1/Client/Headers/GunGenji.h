@@ -6,6 +6,7 @@
 
 BEGIN(Client)
 
+class CMonsterUI;
 class CWeapon;
 class CGunGenji final : public CGameObject
 {
@@ -107,6 +108,8 @@ private:
 	CNavMesh*			m_pNavMesh = nullptr;
 
 	CWeapon*			m_pGun = nullptr;
+
+	CMonsterUI*			m_pMonsterUI = nullptr;
 
 	//렌더에서 타임델타 쓰기위해서 저장해놓음
 	_double				m_dTimeDelta = 0;
