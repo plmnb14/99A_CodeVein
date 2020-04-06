@@ -60,6 +60,13 @@ _int CActiveObject::Update_GameObject(_double _TimeDelta)
 
 				m_bCheck_Mistletoe = true;
 			}
+
+			// Effect
+			_v3 vEffPos = m_pTransform->Get_Pos();
+			vEffPos.y += 0.3f; // »Ñ¸®
+			pManagement->Create_Effect(L"MistletoeParticle_Sub", vEffPos);
+			vEffPos.y += 0.3f; // ²É
+			pManagement->Create_Effect(L"MistletoeParticle", vEffPos);
 		}
 		break;
 	}

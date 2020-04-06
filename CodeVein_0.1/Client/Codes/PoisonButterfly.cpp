@@ -22,9 +22,6 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 
-	//m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_StageBase.dat");
-	//m_pNavMesh->Set_SubsetIndex(0);
-
 	Ready_BoneMatrix();
 	Ready_Collider();
 	m_tObjParam.bCanHit = true;
@@ -248,6 +245,9 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 
 _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 {
+	if (false == m_bEnable)
+		return NO_EVENT;
+
 	CGameObject::Update_GameObject(TimeDelta);
 
 	// »À À§Ä¡ ¾÷µ¥ÀÌÆ®
@@ -258,10 +258,7 @@ _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 	// Á×¾úÀ» °æ¿ì
 	if (m_bIsDead)
 	{
-		//if (m_pMeshCom->Is_Finish_Animation(0.95f))
-		{
-			return DEAD_OBJ;
-		}
+		return DEAD_OBJ;
 	}
 	else
 	{
@@ -284,6 +281,9 @@ _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 
 _int CPoisonButterfly::Late_Update_GameObject(_double TimeDelta)
 {
+	if (false == m_bEnable)
+		return NO_EVENT;
+
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
 
@@ -798,6 +798,9 @@ void CPoisonButterfly::Check_Collider()
 		m_tObjParam.fHp_Cur -= 0.99f;	// Ã¼·Â ÀÓÀÇ·Î ´â°Ô ¸¸µê.
 
 		m_bAIController = false;
+		
+		
+		
 		cout << "³ªµµ ºÎµúÈû ^^" << endl;
 		m_tObjParam.bIsHit = true;
 		m_tObjParam.bCanHit = true;
@@ -817,8 +820,8 @@ void CPoisonButterfly::Check_Collider()
 		else
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// Á×À½Ã³¸® ½ÃÀÛ
-			//m_bIsDead = true;
 			Start_Dissolve(0.7f, false, true);
+			g_pManagement->Create_Spawn_Effect(m_pTransformCom->Get_Pos());
 		}
 	}
 	else

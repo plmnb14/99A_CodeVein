@@ -34,7 +34,7 @@ HRESULT CSwordShieldGenji::Ready_GameObject(void * pArg)
 
 
 	CBlackBoard* pBlackBoard = CBlackBoard::Create();
-	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create(true);
+	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create();
 
 	m_pAIControllerCom->Set_BeHaviorTree(pBehaviorTree);
 	m_pAIControllerCom->Set_BlackBoard(pBlackBoard);
@@ -311,10 +311,7 @@ _int CSwordShieldGenji::Update_GameObject(_double TimeDelta)
 	// 죽었을 경우
 	if (m_bIsDead)
 	{
-		//if (m_pMeshCom->Is_Finish_Animation(0.95f))
-		{
-			return DEAD_OBJ;
-		}
+		return DEAD_OBJ;
 	}
 	else
 	{
@@ -336,6 +333,9 @@ _int CSwordShieldGenji::Late_Update_GameObject(_double TimeDelta)
 		return E_FAIL;
 
 	m_dTimeDelta = TimeDelta;
+
+	m_pSpear->Late_Update_GameObject(TimeDelta);
+	m_pShied->Late_Update_GameObject(TimeDelta);
 
 	return _int();
 }
@@ -653,9 +653,10 @@ void CSwordShieldGenji::Check_Collider()
 		else
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
-			//m_bIsDead = true;
 			Start_Dissolve(0.7f, false, true);
-			g_pManagement->Create_Effect(L"SpawnParticle", m_pTransformCom->Get_Pos());
+			m_pShied->Start_Dissolve();
+			m_pSpear->Start_Dissolve();
+			g_pManagement->Create_Spawn_Effect(m_pTransformCom->Get_Pos());
 		}
 	}
 	else

@@ -4,6 +4,7 @@
 
 BEGIN(Engine)
 
+class CNavMesh;
 class CTransform;
 class ENGINE_DLL CBT_MoveDirectly final : public CBT_Task_Node
 {
@@ -24,13 +25,14 @@ public:
 	*/
 	typedef struct tagInitInfo
 	{
-		tagInitInfo(char* _pNodeName, CTransform* pThis_Transform, _tchar* _pTarget_Key, _float _fMove_Speed,  _float _fAcceptable_Radius, _double _MoveTime, _double _TimeOffset, MODE _eMode)
-			: pTransform(pThis_Transform), fMove_Speed(_fMove_Speed), fAcceptable_Radius(_fAcceptable_Radius), dMoveTime(_MoveTime), dTimeOffset(_TimeOffset), eMode(_eMode)
+		tagInitInfo(char* _pNodeName, CTransform* pThis_Transform, CNavMesh* _pNavMesh, _tchar* _pTarget_Key, _float _fMove_Speed,  _float _fAcceptable_Radius, _double _MoveTime, _double _TimeOffset, MODE _eMode)
+			: pTransform(pThis_Transform), pNavMesh(_pNavMesh), fMove_Speed(_fMove_Speed), fAcceptable_Radius(_fAcceptable_Radius), dMoveTime(_MoveTime), dTimeOffset(_TimeOffset), eMode(_eMode)
 		{ strcpy_s<256>(Target_NodeName, _pNodeName); 
 		if(nullptr != _pTarget_Key)lstrcpy(Target_Key, _pTarget_Key); 
 		else ZeroMemory(Target_Key, sizeof(_tchar) * 256);}
 		
 		CTransform*	pTransform = nullptr;
+		CNavMesh*	pNavMesh = nullptr;
 		char		Target_NodeName[256] = { 0, };
 		_tchar		Target_Key[256] = { 0, };
 		_float		fMove_Speed = 0;
@@ -59,6 +61,7 @@ private:
 
 private:
 	CTransform*	m_pTransform = nullptr;
+	CNavMesh*	m_pNavMesh = nullptr;
 	_tchar		m_Target_Key[256] = { 0, };
 	_float		m_fMove_Speed = 0.f;
 	_float		m_dAcceptable_Radius = 0.f;

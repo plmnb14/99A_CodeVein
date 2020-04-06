@@ -500,6 +500,11 @@ void CManagement::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol
 	CParticleMgr::Get_Instance()->Create_Hit_Effect(pAttackCol, pHittedCol, pHittedTrans, fPower);
 }
 
+void CManagement::Create_Spawn_Effect(_v3 vPos, CTransform* pFollowTrans)
+{
+	CParticleMgr::Get_Instance()->Create_Spawn_Effect(vPos, pFollowTrans);
+}
+
 void CManagement::Free()
 {
 	Safe_Release(m_pBT_Node_Manager);

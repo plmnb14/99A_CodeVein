@@ -35,6 +35,7 @@ public:
 		ACT_WeaponChange,
 		ACT_Hit, ACT_Jump, ACT_Fall, ACT_Down,
 		ACT_PickUp, ACT_OpenDoor, ACT_Cinematic,
+		ACT_Dead,
 		ACT_STATE_END
 	};
 
@@ -88,6 +89,10 @@ private:
 	vector<CCollider*>		m_vecPhsycColl;
 
 private:
+	vector<SKILL_INFO*>		m_vecFullSkillInfo;
+	vector<SKILL_INFO*>		m_vecActiveSkillInfo;
+
+private:
 	_mat*					m_matBones[Bone_End];
 
 private:
@@ -117,6 +122,7 @@ private:
 	_bool					m_bOnBloodSuck = false;
 	_bool					m_bReadyChargeSuck = false;
 	_bool					m_bOnChargeSuck = false;
+	_bool					m_bOnPickUp = false;
 
 private:
 	_short					m_sHeavyAtkCnt = 0;
@@ -143,18 +149,9 @@ private:
 	_float					m_fSkillMoveAccel_Max = 0.f;
 	_float					m_fSkillMoveMultiply = 1.f;
 
-	//==============================================================================
-	// 임시 트리거 이벤트
-	//==============================================================================
-
-	virtual void Trigger_Event();
-
-	_bool		m_bSpawnTrigger[16] = {};
-
-	//==============================================================================
-	// 임시 트리거 이벤트
-	//==============================================================================
-
+private:
+	_float					m_fCurMoveSpeed = 0.f;
+	_v3						m_vMoveDir = {};
 
 private:
 	_float					m_fAtkEndTime = 0.f;
@@ -195,6 +192,7 @@ private:
 	virtual void Parameter_YPos();
 	virtual void Parameter_Collision();
 	virtual void Parameter_Aiming();
+	virtual void Parameter_HitCheck();
 
 private:
 	virtual void KeyInput();
@@ -220,8 +218,10 @@ private:
 	virtual void Play_HeavyAtk();
 	virtual void Play_Buff();
 	virtual void Play_Hit();
+	virtual void Play_Dead();
 	virtual void Play_WeaponChange();
 	virtual void Play_Spawn();
+	virtual void Play_PickUp();
 
 private:
 	virtual void Play_BloodSuck();
@@ -281,6 +281,8 @@ private:
 	virtual void Ready_DrainWeapon();
 	virtual void Ready_BoneMatrix();
 	virtual void Ready_Collider();
+	virtual void Ready_Skills();
+	virtual void Temp_ActiveSkills();
 
 private:
 	virtual void Reset_BloodSuck_Options();

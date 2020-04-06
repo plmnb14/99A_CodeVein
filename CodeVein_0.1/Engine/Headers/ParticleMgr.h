@@ -24,6 +24,7 @@ public:
 
 public:
 	void Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol, CTransform* pHittedTrans, _float fPower = 1.5f);
+	void Create_Spawn_Effect(_v3 vPos, CTransform* pFollowTrans = nullptr);
 
 private:
 	HRESULT Update_Effect(const _double TimeDelta);

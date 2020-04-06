@@ -5,9 +5,7 @@
 #include "CameraMgr.h"
 #include "Dummy_Target.h"
 
-#include "GunGenji.h"
-#include "SwordGenji.h"
-#include "PoisonButterfly.h"
+#include "ScriptManager.h"
 
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
@@ -38,6 +36,8 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 	Ready_Weapon();
 	Ready_DrainWeapon();
 
+	Ready_Skills();
+
 	return NOERROR;
 }
 
@@ -45,10 +45,9 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
 
-	m_tObjParam.bCanHit = true;
-
 	KeyInput();
 
+	Parameter_HitCheck();
 	Parameter_YPos();
 	Parameter_Movement();
 	Parameter_State();
@@ -67,7 +66,7 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	m_pNavMesh->Goto_Next_Subset(m_pTransform->Get_Pos(), nullptr);
 
-	Trigger_Event();
+	CScriptManager::Get_Instance()->Update_ScriptMgr(TimeDelta, m_pNavMesh->Get_SubSetIndex(), m_pNavMesh->Get_CellIndex());
 
 	return NO_EVENT;
 }
@@ -232,10 +231,22 @@ void CPlayer::Parameter_State()
 		Play_Hit();
 		break;
 	}
+
+	case ACT_Dead:
+	{
+		Play_Dead();
+		break;
+	}
+
 	case ACT_WeaponChange:
 	{
 		Play_WeaponChange();
 		break;
+	}
+
+	case ACT_PickUp:
+	{
+		Play_PickUp();
 	}
 	}
 }
@@ -250,6 +261,9 @@ void CPlayer::Parameter_Atk()
 
 void CPlayer::Parameter_Movement()
 {
+	if (m_eActState == ACT_Hit)
+		return;
+
 	if (m_bOnDodge)
 	{
 		if (m_pTarget != nullptr)
@@ -261,13 +275,21 @@ void CPlayer::Parameter_Movement()
 		return;
 	}
 
+	if (m_bOnPickUp)
+		return;
+
 	_float fMoveSpeed = m_tInfo.fMoveSpeed_Cur * DELTA_60;
 	_float fRadian = 0.f;
 	_float fRecover = 720.f;
+	_float fAngle = 0.f;
+		
+	if (false == m_bOnAttack)
+		fAngle = (m_pTarget != nullptr ?
+			D3DXToDegree(m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(m_pTarget)->Get_Pos())) :
+			CCameraMgr::Get_Instance()->Get_XAngle());
 
-	_float fAngle = (m_pTarget != nullptr ?
-		D3DXToDegree(m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(m_pTarget)->Get_Pos())) :
-		CCameraMgr::Get_Instance()->Get_XAngle());
+	else
+		fAngle = D3DXToDegree(m_pTransform->Get_Angle().y);
 
 	//if (m_bOnAiming)
 	//	fMoveSpeed = 0.f;
@@ -281,6 +303,9 @@ void CPlayer::Parameter_Movement()
 
 void CPlayer::Parameter_HeavyCharging()
 {
+	if (m_eActState == ACT_Hit)
+		return;
+
 	if (m_bCharging)
 	{
 		m_fChargeTimer_Cur += DELTA_60;
@@ -294,7 +319,10 @@ void CPlayer::Parameter_YPos()
 
 void CPlayer::Parameter_Collision()
 {
+	// 콜라이더 위치 업데이트
 	Update_Collider();
+
+	// 밀리는거 관련
 	OnCollisionEnter();
 }
 
@@ -302,18 +330,73 @@ void CPlayer::Parameter_Aiming()
 {
 	if (true == m_bOnAiming)
 	{
+		if (nullptr != m_pTarget)
+		{
+			if (m_pTarget->Get_Target_Hp() <= 0.f)
+			{
+				m_bHaveAimingTarget = false;
+				m_bOnAiming = false;
+
+				CCameraMgr::Get_Instance()->Set_AimingTarget(nullptr);
+				CCameraMgr::Get_Instance()->Set_OnAimingTarget(false);
+
+				return;
+			}
+		}
+
 		Target_AimChasing();
+
+		m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(m_pTarget)->Get_Pos()));
 	}
 
 	else if (false == m_bOnAiming)
 	{
+		//cout << "타겟팅 해제" << endl;
+
 		if (nullptr != m_pTarget)
 		{
 			m_pTarget = nullptr;
 			m_bHaveAimingTarget = false;
 
 			CCameraMgr::Get_Instance()->Set_AimingTarget(m_pTarget);
-			CCameraMgr::Get_Instance()->Set_OnAimingTarget();
+			CCameraMgr::Get_Instance()->Set_OnAimingTarget(false);
+		}
+	}
+}
+
+void CPlayer::Parameter_HitCheck()
+{
+	// 플레이어가 외부에서 맞고
+	if (false == m_tObjParam.bCanHit)
+	{
+		if (false == m_tObjParam.bIsHit)
+		{
+			if (m_tObjParam.fHp_Cur <= 0)
+			{
+				m_eActState = ACT_Dead;
+			}
+
+			else if (m_tObjParam.fHp_Cur > 0)
+			{
+				if (m_eActState != ACT_Hit)
+				{
+					m_bOnMoveDelay = false;
+
+					m_eActState = ACT_Hit;
+				}
+			}
+		}
+
+		else if (true == m_tObjParam.bIsHit)
+		{
+			if (m_tObjParam.bHitAgain)
+			{
+				m_eActState = ACT_Hit;
+
+				m_bOnMoveDelay = false;
+				m_tObjParam.bHitAgain = false;
+				m_pDynamicMesh->Reset_OldIndx();
+			}
 		}
 	}
 }
@@ -397,6 +480,7 @@ void CPlayer::Movement_Aiming(_float _fAngle, _float _fMovespeed)
 		}
 
 		D3DXVec3Normalize(&tmpLook, &tmpLook);
+
 		m_pTransform->Set_Angle(AXIS_Y, D3DXToRadian(_fAngle));
 		m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, _fMovespeed)));
 	}
@@ -485,7 +569,11 @@ void CPlayer::Movement_NonAiming(_float _fRecover, _float _fAngle, _float _fRadi
 			}
 		}
 
-		_fRadian = D3DXToRadian(_fAngle + m_fAngle_Recover);
+		if(false == m_bOnAttack)
+			_fRadian = D3DXToRadian(_fAngle + m_fAngle_Recover);
+
+		else if (true == m_bOnAttack)
+			_fRadian = D3DXToRadian(_fAngle);
 
 		m_pTransform->Set_Angle({ 0, _fRadian, 0 });
 
@@ -539,8 +627,11 @@ void CPlayer::Movement_NonAiming(_float _fRecover, _float _fAngle, _float _fRadi
 			}
 		}
 
-		_fRadian = D3DXToRadian(_fAngle + m_fAngle_Recover);
-		//__fRadian = D3DXToRadian((m_bAim ? __fAngle : __fAngle + m__fAngle_Recover));
+		if (false == m_bOnAttack)
+			_fRadian = D3DXToRadian(_fAngle + m_fAngle_Recover);
+
+		else if (true == m_bOnAttack)
+			_fRadian = D3DXToRadian(_fAngle);
 
 		m_pTransform->Set_Angle({ 0, _fRadian, 0 });
 
@@ -594,7 +685,11 @@ void CPlayer::Movement_NonAiming(_float _fRecover, _float _fAngle, _float _fRadi
 			}
 		}
 
-		_fRadian = D3DXToRadian(_fAngle + m_fAngle_Recover);
+		if (false == m_bOnAttack)
+			_fRadian = D3DXToRadian(_fAngle + m_fAngle_Recover);
+
+		else if (true == m_bOnAttack)
+			_fRadian = D3DXToRadian(_fAngle);
 
 		m_pTransform->Set_Angle({ 0, _fRadian, 0 });
 
@@ -667,7 +762,11 @@ void CPlayer::Movement_NonAiming(_float _fRecover, _float _fAngle, _float _fRadi
 			}
 		}
 
-		_fRadian = D3DXToRadian(_fAngle + m_fAngle_Recover);
+		if (false == m_bOnAttack)
+			_fRadian = D3DXToRadian(_fAngle + m_fAngle_Recover);
+
+		else if (true == m_bOnAttack)
+			_fRadian = D3DXToRadian(_fAngle);
 
 		m_pTransform->Set_Angle({ 0, _fRadian, 0 });
 
@@ -687,6 +786,12 @@ void CPlayer::Target_AimChasing()
 
 	for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE))
 	{
+		if(true == iter->Get_Dead())
+			continue;
+
+		if (false == iter->Get_Enable())
+			continue;
+
 		_float fLength = D3DXVec3Length(&(TARGET_TO_TRANS(iter)->Get_Pos() - m_pTransform->Get_Pos()));
 
 		if (fLength > m_fAmingRange)
@@ -697,7 +802,7 @@ void CPlayer::Target_AimChasing()
 		m_pTarget = iter;
 
 		CCameraMgr::Get_Instance()->Set_AimingTarget(m_pTarget);
-		CCameraMgr::Get_Instance()->Set_OnAimingTarget();
+		CCameraMgr::Get_Instance()->Set_OnAimingTarget(true);
 
 		m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(m_pTarget)->Get_Pos()));
 
@@ -712,6 +817,12 @@ void CPlayer::Target_AimChasing()
 void CPlayer::KeyInput()
 {
 	if (CCameraMgr::Get_Instance()->Get_CamView() == TOOL_VIEW)
+		return;
+
+	if (m_eActState == ACT_Hit)
+		return;
+
+	if (m_eActState == ACT_Dead)
 		return;
 
 	KeyDown();
@@ -736,6 +847,9 @@ void CPlayer::KeyDown()
 
 		// 흡혈
 		Key_BloodSuck();
+
+		// 상호작용
+		Key_InterAct();
 	}
 
 	// 특수동작
@@ -760,6 +874,9 @@ void CPlayer::KeyUp()
 
 void CPlayer::Key_Movement_Down()
 {
+	if (m_eActState == ACT_Hit)
+		return;
+
 	if (true == m_bOnSkill)
 		return;
 
@@ -844,6 +961,15 @@ void CPlayer::Key_Movement_Down()
 
 	else
 	{
+		if (m_eActState == ACT_Skill)
+			return;
+
+		if (m_eActState == ACT_Dead)
+			return;
+
+		if (m_eActState == ACT_Hit)
+			return;
+
 		if (m_eActState == ACT_Dodge)
 			return;
 
@@ -985,11 +1111,11 @@ void CPlayer::Key_Attack()
 
 			if (m_bCanAttack == true)
 			{
+				LOOP(16)
+					m_bEventTrigger[i] = false;
+
 				m_tInfo.fMoveSpeed_Cur = 0.f;
 				m_tInfo.fMoveAccel_Cur = 0.f;
-
-				m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
-				m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(true);
 
 				if (m_bSprint)
 				{
@@ -1086,34 +1212,75 @@ void CPlayer::Key_Attack()
 
 void CPlayer::Key_Skill()
 {
+	// 1번 스킬
 	if (g_pInput_Device->Key_Down(DIK_1))
 	{
-		m_eActState = ACT_Buff;
-		m_bOnSkill = true;
+		if (true == m_bOnSkill)
+			return;
+
+		m_eActState = ACT_Skill;
+
+		if (true == m_bOneHand)
+			m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[0]->dwAnimationIdx);
+
+		else if (false == m_bOneHand)
+			m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[4]->dwAnimationIdx);
 	}
 
+	// 2번 스킬
 	else if (g_pInput_Device->Key_Down(DIK_2))
 	{
 		if (true == m_bOnSkill)
 			return;
 
 		m_eActState = ACT_Skill;
+
+		if (true == m_bOneHand)
+			m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[1]->dwAnimationIdx);
+
+		else if (false == m_bOneHand)
+			m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[5]->dwAnimationIdx);
 	}
 
+	// 3번 스킬
 	else if (g_pInput_Device->Key_Down(DIK_3))
 	{
 		if (true == m_bOnSkill)
 			return;
 
 		m_eActState = ACT_Skill;
+
+		if(true == m_bOneHand)
+			m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[2]->dwAnimationIdx);
+
+		else if (false == m_bOneHand)
+			m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[6]->dwAnimationIdx);
 	}
 
+	// 4번 스킬
 	else if (g_pInput_Device->Key_Down(DIK_4))
 	{
 		if (true == m_bOnSkill)
 			return;
 
 		m_eActState = ACT_Skill;
+
+		if (true == m_bOneHand)
+			m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[3]->dwAnimationIdx);
+
+		else if (false == m_bOneHand)
+			m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[7]->dwAnimationIdx);
+	}
+
+	// 1번 버프
+	else if (g_pInput_Device->Key_Down(DIK_5))
+	{
+		if (true == m_bOnSkill)
+			return;
+
+		m_eActState = ACT_Buff;
+
+		m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[8]->dwAnimationIdx);
 	}
 }
 
@@ -2115,10 +2282,6 @@ void CPlayer::Play_Dodge()
 				m_eMainWpnState == WEAPON_Gun ? 0.6f : 1.2f);
 
 		m_fSkillMoveAccel_Cur = 0.f;
-
-		cout << m_fSkillMoveAccel_Cur << endl;
-		cout << m_fSkillMoveSpeed_Cur << endl;
-		cout << m_fSkillMoveMultiply << endl;
 	}
 
 	else
@@ -2394,6 +2557,76 @@ void CPlayer::Play_Buff()
 
 void CPlayer::Play_Hit()
 {
+	if (false == m_tObjParam.bIsHit)
+	{
+		m_tObjParam.bIsHit = true;
+
+		m_eAnim_Upper = Cmn_Hit01_F;
+		m_eAnim_Lower = m_eAnim_Upper;
+		m_eAnim_RightArm = m_eAnim_Upper;
+		m_eAnim_LeftArm = m_eAnim_RightArm;
+
+		// 뒤로 밀리는거는 확인해보고
+	}
+
+	else if (true == m_tObjParam.bIsHit)
+	{
+		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
+		{
+			m_eActState = ACT_Idle;
+
+			m_tObjParam.bIsHit = false;
+			m_tObjParam.bCanHit = true;
+
+			//cout << "여긴 탑니까" << endl;
+		}
+
+		else if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.2f))
+		{
+			if (m_tObjParam.bCanHit == false)
+			{
+				m_tObjParam.bCanHit = true;
+			}
+		}
+	}
+}
+
+void CPlayer::Play_Dead()
+{
+	if (false == m_bIsDead)
+	{
+		m_bIsDead = true;
+
+		m_eAnim_Upper = Cmn_Dying_Loop;
+		m_eAnim_Lower = m_eAnim_Upper;
+		m_eAnim_RightArm = m_eAnim_Upper;
+		m_eAnim_LeftArm = m_eAnim_RightArm;
+	}
+
+	else if (true == m_bIsDead)
+	{
+		if (m_eAnim_Upper == Cmn_Dying_Loop)
+		{
+			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.95f))
+			{
+				m_eAnim_Upper = Cmn_Dying_End;
+				m_eAnim_Lower = m_eAnim_Upper;
+				m_eAnim_RightArm = m_eAnim_Upper;
+				m_eAnim_LeftArm = m_eAnim_RightArm;
+
+				m_eActState = ACT_Dead;
+			}
+		}
+
+		else if (m_eAnim_Upper == Cmn_Dying_End)
+		{
+			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.99f))
+			{
+				m_fAnimMutiply = 0.f;
+				m_eActState = ACT_Dead;
+			}
+		}
+	}
 }
 
 void CPlayer::Play_WeaponChange()
@@ -2457,6 +2690,35 @@ void CPlayer::Play_Spawn()
 	}
 	else
 		m_fDissolveY = 0.f;
+}
+
+
+void CPlayer::Play_PickUp()
+{
+	if (false == m_bOnPickUp)
+	{
+		// 픽업일 땐 못움직임
+		m_bOnPickUp = true;
+		m_bStopMovementKeyInput = true;
+
+		m_eAnim_Upper = Cmn_PickItem;
+		m_eAnim_Lower = m_eAnim_Upper;
+		m_eAnim_RightArm = m_eAnim_Upper;
+		m_eAnim_LeftArm = m_eAnim_Upper;
+	}
+
+	else if (true == m_bOnPickUp)
+	{
+		if (m_pDynamicMesh->Is_Finish_Animation_Lower())
+		{
+			m_eActState = ACT_Idle;
+
+			m_bStopMovementKeyInput = false;
+			m_bOnPickUp = false;
+
+			// 아이템 줍는 이벤트가 있다면 여기 추가
+		}
+	}
 }
 
 void CPlayer::Play_BloodSuck()
@@ -2632,15 +2894,33 @@ void CPlayer::Play_Skills()
 	{
 		m_bOnSkill = true;
 
-		m_eAnim_Lower = P_ANI(Renketsu_StrongAtk_01 + m_lDebugValue);
-		m_lDebugValue += 1;
-
 		m_eAnim_Upper = m_eAnim_Lower;
 		m_eAnim_RightArm = m_eAnim_Lower;
+		m_eAnim_LeftArm = m_eAnim_Lower;
 	}
 
 	else
 	{
+		switch (m_eAnim_Lower)
+		{
+		case Renketsu_StrongAtk_01:
+		{
+			스킬 추가하고있었고, 회피 중에 맞으면 이상해지는 오류 수정해야함.
+			break;
+		}
+		case Renketsu_StrongAtk_02:
+		{
+			break;
+		}
+		case Renketsu_StrongAtk_03:
+		{
+			break;
+		}
+		case Renketsu_StrongAtk_11:
+		{
+			break;
+		}
+		}
 		if (m_pDynamicMesh->Is_Finish_Animation(0.95f))
 		{
 			m_eActState = ACT_Idle;
@@ -2693,21 +2973,28 @@ void CPlayer::Play_Ssword_WeakAtk()
 		{
 			m_eAnim_Lower = Ssword_DownAtk_01;
 
-			m_fSkillMoveSpeed_Cur = 13.f;
+			m_fSkillMoveSpeed_Cur = 20.f;
 			m_fSkillMoveAccel_Cur = 0.f;
+			m_fSkillMoveMultiply = 4.f;
 		}
 		else
 		{
 			m_eAnim_Lower = Player_Anim(Ssword_WeakAtk_01 + (m_sWeakAtkCnt - 1));
 
-			m_fSkillMoveSpeed_Cur = (m_sWeakAtkCnt == 1 ? 5.f : 6.5f);
+			m_fSkillMoveSpeed_Cur = (m_sWeakAtkCnt == 3 ? 8.5f :
+									m_sWeakAtkCnt == 4 ? 7.5f : 5.5f);
 			m_fSkillMoveAccel_Cur = 0.f;
+
+			m_fSkillMoveMultiply = (m_sWeakAtkCnt == 1 ? 1.f :
+									m_sWeakAtkCnt == 3 ? 1.5f :
+									m_sWeakAtkCnt == 4 ? 1.35f : 0.75f);
 		}
 
 		m_bOnAttack = true;
 
 		m_eAnim_Upper = m_eAnim_Lower;
 		m_eAnim_RightArm = m_eAnim_Lower;
+		m_eAnim_LeftArm = m_eAnim_Lower;
 	}
 
 	else if (true == m_bOnAttack)
@@ -2716,17 +3003,45 @@ void CPlayer::Play_Ssword_WeakAtk()
 		{
 		case Ssword_DownAtk_01:
 		{
-			if (m_pDynamicMesh->Get_TrackInfo().Position > 1.05f)
-			{
-				Decre_Skill_Movement(2.5f);
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
-			}
-
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
 				Reset_BattleState();
 
 				m_eActState = ACT_Idle;
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.1f && m_pDynamicMesh->Get_TrackInfo().Position < 2.53f)
+			{
+				if (m_bEventTrigger[0] == false)
+				{
+					m_bEventTrigger[0] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
+					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(true);
+				}
+
+				if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.95f && m_pDynamicMesh->Get_TrackInfo().Position < 2.53f)
+				{
+					if (m_bEventTrigger[2] == false)
+					{
+						m_bEventTrigger[2] = true;
+
+						m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(false);
+					}
+				}
+
+				else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.73f && m_pDynamicMesh->Get_TrackInfo().Position < 2.53f)
+				{
+					if (m_bEventTrigger[1] == false)
+					{
+						m_bEventTrigger[1] = true;
+
+						m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
+					}
+				}
+
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
 			}
 
 			break;
@@ -2739,6 +3054,21 @@ void CPlayer::Play_Ssword_WeakAtk()
 				Reset_BattleState();
 
 				m_eActState = ACT_Idle;
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.3f && m_pDynamicMesh->Get_TrackInfo().Position < 3.43f)
+			{
+				if (m_bEventTrigger[3] == false)
+				{
+					m_bEventTrigger[3] = true;
+
+					m_fSkillMoveSpeed_Cur = 0.6f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.05f;
+				}
+
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
 			}
 
 			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.95f && m_pDynamicMesh->Get_TrackInfo().Position < 1.f)
@@ -2769,13 +3099,192 @@ void CPlayer::Play_Ssword_WeakAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(true);
-
-					cout << m_eActiveSlot << endl;
 				}
 			}
 
-			Decre_Skill_Movement();
+			if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.1f)
+			{
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
+			}
+
+			break;
+		}
+
+		case Ssword_WeakAtk_02:
+		{
+			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
+			{
+				Reset_BattleState();
+
+				m_eActState = ACT_Idle;
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.8f && m_pDynamicMesh->Get_TrackInfo().Position < 2.4f)
+			{
+				if (m_bEventTrigger[3] == false)
+				{
+					m_bEventTrigger[3] = true;
+
+					m_fSkillMoveSpeed_Cur = 0.6f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.05f;
+				}
+
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position > 1.1f)
+			{
+				if (m_bEventTrigger[2] == false)
+				{
+					m_bEventTrigger[2] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(false);
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position > 1.03f)
+			{
+				if (m_bEventTrigger[1] == false)
+				{
+					m_bEventTrigger[1] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position > 0.43f)
+			{
+				if (m_bEventTrigger[0] == false)
+				{
+					m_bEventTrigger[0] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
+					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(true);
+				}
+			}
+
+			Decre_Skill_Movement(m_fSkillMoveMultiply);
 			Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
+
+			break;
+		}
+
+		case Ssword_WeakAtk_03:
+		{
+			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
+			{
+				Reset_BattleState();
+
+				m_eActState = ACT_Idle;
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.6f && m_pDynamicMesh->Get_TrackInfo().Position < 3.23f)
+			{
+				if (m_bEventTrigger[3] == false)
+				{
+					m_bEventTrigger[3] = true;
+
+					m_fSkillMoveSpeed_Cur = 0.8f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.05f;
+				}
+
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position > 0.95f)
+			{
+				if (m_bEventTrigger[2] == false)
+				{
+					m_bEventTrigger[2] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(false);
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.2f && m_pDynamicMesh->Get_TrackInfo().Position < 0.9f)
+			{
+				if (m_pDynamicMesh->Get_TrackInfo().Position > 0.86f)
+				{
+					if (m_bEventTrigger[1] == false)
+					{
+						m_bEventTrigger[1] = true;
+
+						m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
+					}
+				}
+
+				else if (m_pDynamicMesh->Get_TrackInfo().Position > 0.53f)
+				{
+					if (m_bEventTrigger[0] == false)
+					{
+						m_bEventTrigger[0] = true;
+
+						m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
+						m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(true);
+					}
+				}
+
+
+				if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.3f && m_pDynamicMesh->Get_TrackInfo().Position < 0.7f)
+				{
+					Decre_Skill_Movement(m_fSkillMoveMultiply);
+					Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
+				}
+			}
+
+			break;
+		}
+
+		case Ssword_WeakAtk_04:
+		{
+			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
+			{
+				Reset_BattleState();
+
+				m_eActState = ACT_Idle;
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position > 0.95f)
+			{
+				if (m_bEventTrigger[2] == false)
+				{
+					m_bEventTrigger[2] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(false);
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position > 0.7f)
+			{
+				if (m_bEventTrigger[1] == false)
+				{
+					m_bEventTrigger[1] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position > 0.3f)
+			{
+				if (m_bEventTrigger[0] == false)
+				{
+					m_bEventTrigger[0] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
+					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(true);
+				}
+			}
+
+			if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.3f && m_pDynamicMesh->Get_TrackInfo().Position < 0.9f)
+			{
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
+			}
 
 			break;
 		}
@@ -2804,10 +3313,10 @@ void CPlayer::Play_Ssword_HeavyAtk()
 	{
 		if (m_bSprint)
 		{
-			m_fSkillMoveMultiply = 1.f;
+			m_fSkillMoveMultiply = 1.2f;
 
 			m_fSkillMoveAccel_Cur = 0.f;
-			m_fSkillMoveSpeed_Cur = 7.f;
+			m_fSkillMoveSpeed_Cur = 11.f;
 
 			m_eAnim_Lower = Ssword_SpecialLaunch;
 		}
@@ -2820,6 +3329,12 @@ void CPlayer::Play_Ssword_HeavyAtk()
 
 			m_eAnim_Lower = Ssword_Charge;
 		}
+
+		m_eAnim_Upper = m_eAnim_Lower;
+		m_eAnim_RightArm = m_eAnim_Lower;
+		m_eAnim_LeftArm = m_eAnim_Lower;
+
+		m_bOnAttack = true;
 	}
 
 	else if (true == m_bOnAttack)
@@ -2848,49 +3363,167 @@ void CPlayer::Play_Ssword_HeavyAtk()
 		}
 		case Ssword_Charge_Attack_01_B:
 		{
+			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
+			{
+				Reset_BattleState();
+
+				m_eActState = ACT_Idle;
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.8f)
+			{
+				if (m_bEventTrigger[4] == false)
+				{
+					m_bEventTrigger[4] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(false);
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.66f)
+			{
+				if (m_bEventTrigger[3] == false)
+				{
+					m_bEventTrigger[3] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.3f)
+			{
+				if (m_bEventTrigger[2] == false)
+				{
+					m_bEventTrigger[2] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.86f)
+			{
+				if (m_bEventTrigger[1] == false)
+				{
+					m_bEventTrigger[1] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.4f)
+			{
+				if (m_bEventTrigger[0] == false)
+				{
+					m_bEventTrigger[0] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(true);
+					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
+				}
+			}
+
+
 			if (m_pDynamicMesh->Get_TrackInfo().Position > 1.35f)
 			{
 				Decre_Skill_Movement(m_fSkillMoveMultiply);
 				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
 			}
 
-			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
-			{
-				Reset_BattleState();
-
-				m_eActState = ACT_Idle;
-			}
 			break;
 		}
 
 		case Ssword_Charge_Attack_01_A:
 		{
-			Decre_Skill_Movement(m_fSkillMoveMultiply);
-			Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
-
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
 				Reset_BattleState();
 
 				m_eActState = ACT_Idle;
 			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.95f)
+			{
+				if (m_bEventTrigger[2] == false)
+				{
+					m_bEventTrigger[2] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(false);
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.83f)
+			{
+				if (m_bEventTrigger[1] == false)
+				{
+					m_bEventTrigger[1] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.33f && m_pDynamicMesh->Get_TrackInfo().Position < 0.83f)
+			{
+				if (m_bEventTrigger[0] == false)
+				{
+					m_bEventTrigger[0] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(true);
+					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
+				}
+			}
+
+			Decre_Skill_Movement(m_fSkillMoveMultiply);
+			Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
+
 			break;
 		}
 
 		case Ssword_SpecialLaunch:
 		{
-			if (m_pDynamicMesh->Get_TrackInfo().Position > 1.45f)
+			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
+				Reset_BattleState();
+
+				m_eActState = ACT_Idle;
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.4f && m_pDynamicMesh->Get_TrackInfo().Position < 2.1f)
+			{
+				if (m_bEventTrigger[0] == false)
+				{
+					m_bEventTrigger[0] = true;
+
+					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(true);
+					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
+				}
+
+				if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.95f)
+				{
+					if (m_bEventTrigger[2] == false)
+					{
+						m_bEventTrigger[2] = true;
+
+						m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(false);
+					}
+				}
+
+				else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.866f)
+				{
+					if (m_bEventTrigger[1] == false)
+					{
+						m_bEventTrigger[1] = true;
+
+						m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
+					}
+				}
+
 				Decre_Skill_Movement(m_fSkillMoveMultiply);
 				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
 
-				if (m_fAnimMutiply <= 0.5f)
-				{
-					m_fAnimMutiply = 2.f;
-				}
+				m_fAnimMutiply = 1.f;
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position > 1.35f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position > 1.3f)
+			//else if (m_pDynamicMesh->Get_TrackInfo().Position > 1.35f)
 			{
 				if (m_fAnimMutiply > 0.5f)
 				{
@@ -2901,25 +3534,6 @@ void CPlayer::Play_Ssword_HeavyAtk()
 						m_fAnimMutiply = 0.5f;
 					}
 				}
-			}
-
-			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
-			{
-				Reset_BattleState();
-
-				m_eActState = ACT_Idle;
-			}
-
-			break;
-		}
-
-		default:
-		{
-			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
-			{
-				Reset_BattleState();
-
-				m_eActState = ACT_Idle;
 			}
 
 			break;
@@ -3549,7 +4163,7 @@ void CPlayer::Ready_Collider()
 
 	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 
-	fRadius = 0.3f;
+	fRadius = 0.4f;
 
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
@@ -3574,6 +4188,142 @@ void CPlayer::Ready_Collider()
 	m_vecPhysicCol.push_back(pCollider);
 
 	//==============================================================================================================
+}
+
+void CPlayer::Ready_Skills()
+{
+	SKILL_INFO* pSkillInfo = new SKILL_INFO();
+
+	// 1 - 스플릿 어비스
+	pSkillInfo->bOneHand = true;
+	pSkillInfo->dwAnimationIdx = Renketsu_StrongAtk_01;
+	pSkillInfo->eCurSkillIdx = Skill_OneHand_Active_01;
+	pSkillInfo->dwSkillCost = 2;
+
+	LOOP(4)
+		pSkillInfo->ePreSkillIdx[i] = Skill_End;
+
+	m_vecFullSkillInfo.push_back(pSkillInfo);
+
+	//====================================================================================
+	pSkillInfo = new SKILL_INFO();
+
+	// 2 - 팬텀 어썰트
+	pSkillInfo->bOneHand = true;
+	pSkillInfo->dwAnimationIdx = Renketsu_StrongAtk_02;
+	pSkillInfo->eCurSkillIdx = Skill_OneHand_Active_02;
+	pSkillInfo->dwSkillCost = 2;
+
+	LOOP(4)
+		pSkillInfo->ePreSkillIdx[i] = Skill_End;
+
+	m_vecFullSkillInfo.push_back(pSkillInfo);
+
+	//====================================================================================
+	pSkillInfo = new SKILL_INFO();
+
+	// 3 - 블러드 서큘러
+	pSkillInfo->bOneHand = true;
+	pSkillInfo->dwAnimationIdx = Renketsu_StrongAtk_03;
+	pSkillInfo->eCurSkillIdx = Skill_OneHand_Active_03;
+	pSkillInfo->dwSkillCost = 2;
+
+	LOOP(4)
+		pSkillInfo->ePreSkillIdx[i] = Skill_End;
+
+	m_vecFullSkillInfo.push_back(pSkillInfo);
+
+	//====================================================================================
+	pSkillInfo = new SKILL_INFO();
+
+	// 4 - 쉐도우 어썰트
+	pSkillInfo->bOneHand = true;
+	pSkillInfo->dwAnimationIdx = Renketsu_StrongAtk_12;
+	pSkillInfo->eCurSkillIdx = Skill_OneHand_Active_04;
+	pSkillInfo->dwSkillCost = 2;
+
+	LOOP(4)
+		pSkillInfo->ePreSkillIdx[i] = Skill_End;
+
+	m_vecFullSkillInfo.push_back(pSkillInfo);
+
+	//====================================================================================
+	pSkillInfo = new SKILL_INFO();
+
+	// 5 - 리전 피니쉬
+	pSkillInfo->bOneHand = true;
+	pSkillInfo->dwAnimationIdx = Renketsu_StrongAtk_04;
+	pSkillInfo->eCurSkillIdx = Skill_TwoHand_Active_01;
+	pSkillInfo->dwSkillCost = 2;
+
+	LOOP(4)
+		pSkillInfo->ePreSkillIdx[i] = Skill_End;
+
+	m_vecFullSkillInfo.push_back(pSkillInfo);
+
+	//====================================================================================
+	pSkillInfo = new SKILL_INFO();
+
+	// 6 - 삼멸살
+	pSkillInfo->bOneHand = true;
+	pSkillInfo->dwAnimationIdx = Renketsu_StrongAtk_05;
+	pSkillInfo->eCurSkillIdx = Skill_TwoHand_Active_02;
+	pSkillInfo->dwSkillCost = 2;
+
+	LOOP(4)
+		pSkillInfo->ePreSkillIdx[i] = Skill_End;
+
+	m_vecFullSkillInfo.push_back(pSkillInfo);
+
+	//====================================================================================
+	pSkillInfo = new SKILL_INFO();
+
+	// 7 - 강룡복호
+	pSkillInfo->bOneHand = true;
+	pSkillInfo->dwAnimationIdx = Renketsu_StrongAtk_06;
+	pSkillInfo->eCurSkillIdx = Skill_TwoHand_Active_03;
+	pSkillInfo->dwSkillCost = 2;
+
+	LOOP(4)
+		pSkillInfo->ePreSkillIdx[i] = Skill_End;
+
+	m_vecFullSkillInfo.push_back(pSkillInfo);
+
+	//====================================================================================
+	pSkillInfo = new SKILL_INFO();
+
+	// 8 - 토먼트 블레이드
+	pSkillInfo->bOneHand = true;
+	pSkillInfo->dwAnimationIdx = Renketsu_StrongAtk_11;
+	pSkillInfo->eCurSkillIdx = Skill_TwoHand_Active_04;
+	pSkillInfo->dwSkillCost = 2;
+
+	LOOP(4)
+		pSkillInfo->ePreSkillIdx[i] = Skill_End;
+
+	m_vecFullSkillInfo.push_back(pSkillInfo);
+
+	//====================================================================================
+
+	pSkillInfo = new SKILL_INFO();
+
+	// 1 - 버프
+	pSkillInfo->bOneHand = true;
+	pSkillInfo->dwAnimationIdx = Renketsu_Buff;
+	pSkillInfo->eCurSkillIdx = Skill_Buff_Enchant_01;
+	pSkillInfo->dwSkillCost = 2;
+
+	LOOP(4)
+		pSkillInfo->ePreSkillIdx[i] = Skill_End;
+
+	m_vecFullSkillInfo.push_back(pSkillInfo);
+
+	//====================================================================================
+
+}
+
+void CPlayer::Temp_ActiveSkills()
+{
 }
 
 void CPlayer::Reset_BloodSuck_Options()
@@ -3612,6 +4362,8 @@ void CPlayer::Skill_Movement(_float _fspeed, _v3 _vDir)
 
 	tmpLook = _vDir;
 	D3DXVec3Normalize(&tmpLook, &tmpLook);
+
+	m_fCurMoveSpeed = _fspeed;
 
 	// 네비게이션 적용하면 
 	m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
@@ -3654,258 +4406,6 @@ void CPlayer::Change_Weapon()
 	// 여기 무기 바꾸는 코드를 추후에 작성해야 합니다.
 }
 
-void CPlayer::Trigger_Event()
-{
-	// 임시 트리거 매니저
-
-	_ulong dwSubSet = m_pNavMesh->Get_SubSetIndex();
-	_ulong dwCellIdx = m_pNavMesh->Get_CellIndex();
-
-	switch (dwSubSet)
-	{
-	case 0:
-	{
-		switch (dwCellIdx)
-		{
-		case 5:
-		{
-			if (m_bSpawnTrigger[0] == false)
-			{
-				m_bSpawnTrigger[0] = true;
-
-				_v3 vPos[4] = {
-				_v3(144.551f, -18.08f, 79.895f),
-				_v3(145.498f, -18.08f, 84.775f),
-				_v3(150.690f, -18.08f, 94.981f),
-				_v3(117.045f, -18.08f, 111.482f)};
-
-				CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[0]);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-				TARGET_TO_NAV(pInstance)->Set_Index(32);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-
-				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::Jungle));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[1]);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-				TARGET_TO_NAV(pInstance)->Set_Index(39);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-
-				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[2]);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-				TARGET_TO_NAV(pInstance)->Set_Index(52);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-
-				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[3]);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-				TARGET_TO_NAV(pInstance)->Set_Index(64);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-			}
-
-			break;
-		}
-		}
-
-		break;
-	}
-
-	case 1:
-	{
-		switch (dwCellIdx)
-		{
-		case 41:
-		{
-			if (m_bSpawnTrigger[1] == false)
-			{
-				m_bSpawnTrigger[1] = true;
-
-				_v3 vPos[2] = {
-					_v3(95.754f, -17.15f, 106.058f),
-					_v3(87.195f, -17.15f, 105.301f) 
-				};
-
-				CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[0]);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-				TARGET_TO_NAV(pInstance)->Set_Index(55);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-
-				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[1]);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-				TARGET_TO_NAV(pInstance)->Set_Index(63);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-			}
-
-			break;
-		}
-		}
-
-		break;
-	}
-
-	case 2:
-	{
-		switch (dwCellIdx)
-		{
-		case 0:
-		{
-			if (m_bSpawnTrigger[2] == false)
-			{
-				m_bSpawnTrigger[2] = true;
-
-				_v3 vPos[5] = {
-					_v3(61.826f, -17.15f, 115.219f),
-					_v3(65.298f, -17.15f, 125.649f),
-					_v3(62.689f, -17.15f, 127.093f),
-					_v3(71.845f, -17.15f, 132.392f),
-					_v3(102.201f, -17.15f, 141.943f) };
-
-				CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[0]);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-				TARGET_TO_NAV(pInstance)->Set_Index(28);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-
-				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[1]);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-				TARGET_TO_NAV(pInstance)->Set_Index(34);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-
-				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::White));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[2]);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-				TARGET_TO_NAV(pInstance)->Set_Index(138);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-
-				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::White));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[3]);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-				TARGET_TO_NAV(pInstance)->Set_Index(45);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-
-				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[4]);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-				TARGET_TO_NAV(pInstance)->Set_Index(72);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-			}
-
-			break;
-		}
-
-		case 104:
-		{
-			if (m_bSpawnTrigger[3] == false)
-			{
-				m_bSpawnTrigger[3] = true;
-
-				_v3 vPos[2] = {
-					_v3(85.174f, 0.1f, 154.160f),
-					_v3(87.157f, 0.1f, 167.728f) };
-
-				CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[0]);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
-				TARGET_TO_NAV(pInstance)->Set_Index(25);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-
-				pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos[1]);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
-				TARGET_TO_NAV(pInstance)->Set_Index(36);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-			}
-
-			break;
-		}
-		}
-
-		break;
-	}
-
-	case 3:
-	{		
-		switch (dwCellIdx)
-		{
-		case 66:
-		{
-			if (m_bSpawnTrigger[4] == false)
-			{
-				m_bSpawnTrigger[4] = true;
-
-				_v3 vPos = _v3(43.606f, 0.1f, 151.288f);
-
-				CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White));
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
-				TARGET_TO_NAV(pInstance)->Set_Index(126);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-			}
-
-			break;
-		}
-		}
-
-		break;
-	}
-
-	case 4:
-	{
-		switch (dwCellIdx)
-		{
-		case 52:
-		{
-			if (m_bSpawnTrigger[5] == false)
-			{
-				m_bSpawnTrigger[5] = true;
-
-				_v3 vPos = _v3(-0.955f, 0.8f, -5.525f);
-
-				CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_PoisonButterfly" , nullptr);
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vPos);	// 위치
-				TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
-				TARGET_TO_NAV(pInstance)->Set_SubsetIndex(6);
-				TARGET_TO_NAV(pInstance)->Set_Index(2);
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-			}
-
-			break;
-		}
-		}
-		break;
-	}
-
-	case 5:
-	{
-		break;
-	}
-
-	case 6:
-	{
-		break;
-	}
-
-	}
-}
-
 HRESULT CPlayer::Add_Component()
 {
 	// For.Com_Transform
@@ -3928,13 +4428,14 @@ HRESULT CPlayer::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMesh)))
 		return E_FAIL;
 
-	//m_pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
-	//
-	//m_pCollider->Set_Radius(_v3{ 0.4f, 0.5f, 0.4f });
-	//m_pCollider->Set_Dynamic(true);
-	//m_pCollider->Set_Type(COL_CAPSULE);
-	//m_pCollider->Set_CapsuleLength(1.8f);
-	//m_pCollider->Set_CenterPos(m_pTransform->Get_Pos() + _v3{ 0.f , m_pCollider->Get_Radius().y , 0.f });
+	// for.Com_Collider
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+		return E_FAIL;
+
+	m_pCollider->Set_Radius(_v3{ 0.5f, 0.5f, 0.5f });
+	m_pCollider->Set_Dynamic(true);
+	m_pCollider->Set_Type(COL_SPHERE);
+	m_pCollider->Set_CenterPos(m_pTransform->Get_Pos() + _v3{ 0.f , m_pCollider->Get_Radius().y , 0.f });
 
 	return NOERROR;
 }
@@ -3962,6 +4463,7 @@ HRESULT CPlayer::SetUp_Default()
 	m_tInfo.fMoveSpeed_Max = 5.f;
 
 	// Parameter
+	m_tObjParam.bCanHit = true;
 	m_tObjParam.fHp_Cur = 100.f;
 	m_tObjParam.fHp_Max = 100.f;
 
@@ -4001,6 +4503,28 @@ HRESULT CPlayer::SetUp_ConstantTable()
 
 void CPlayer::OnCollisionEnter()
 {
+	//list<CGameObject*> tmpList =  g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
+	//
+	//for (auto& iter : tmpList)
+	//{
+	//	CCollider* pCollider = TARGET_TO_COL(iter);
+	//
+	//	if (m_pCollider->Check_Sphere(pCollider, m_pTransform->Get_Axis(AXIS_Z), m_tInfo.fMoveSpeed_Cur * DELTA_60))
+	//	{
+	//		CTransform* pTrans = TARGET_TO_TRANS(iter);
+	//		CNavMesh*   pNav = TARGET_TO_NAV(iter);
+	//
+	//		// 방향 구해주고
+	//		_v3 vDir = m_pTransform->Get_Pos() - pTrans->Get_Pos();
+	//		V3_NORMAL_SELF(&vDir);
+	//
+	//		// y축 이동은 하지말자
+	//		vDir.y = 0;
+	//
+	//		// 네비 메쉬타게 끔 세팅
+	//		pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pCollider->Get_Length().x));
+	//	}
+	//}
 }
 
 void CPlayer::Update_Collider()
@@ -4018,10 +4542,14 @@ void CPlayer::Update_Collider()
 
 		++matrixIdx;
 	}
+
+	m_pCollider->Update(m_pTransform->Get_Pos() + _v3(0.f, m_pCollider->Get_Radius().y, 0.f));
 }
 
 void CPlayer::Reset_BattleState()
 {
+	m_fAnimMutiply = 1.f;
+
 	m_bOnAttack = false;
 	m_bCanAttack = true;
 	m_bCharging = false;

@@ -45,6 +45,7 @@ namespace Engine
 
 		_bool		bIsHit;			// 맞는 도중인지
 		_bool		bCanHit;		// 맞을 수 있는지
+		_bool		bHitAgain;		// 또 맞는 건지
 
 		_bool		bIsAttack;		// 공격 중인지.
 		_bool		bCanAttack;		// 공격가능한지
@@ -54,6 +55,16 @@ namespace Engine
 		_v3			vHitDir;		// 맞은 방향
 
 	}OBJECT_PARAM;
+
+	typedef struct tagSkillInfo
+	{	
+		Skill_Index		eCurSkillIdx;			// 현재 스킬 인덱스
+		Skill_Index		ePreSkillIdx[4];		// 필수 하위 스킬 인덱스
+		_ulong			dwAnimationIdx;			// 스킬 애니메이션 인덱스
+		_bool			bOneHand;				// 양손 한손 유무
+		_ulong			dwSkillCost;			// 스킬 코스트
+
+	}SKILL_INFO;
 
 	typedef struct tagActorInfo
 	{

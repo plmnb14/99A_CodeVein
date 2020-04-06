@@ -25,10 +25,12 @@ public:
 	virtual _ulong		Get_LayerIdx() { return m_dwLayerIdx; }
 	virtual CComponent*	Get_Component(const _tchar* pComponentTag);
 	_float				Get_ViewZ(void) { return m_fViewZ; }
+	virtual _bool		Get_Enable() { return m_bEnable; }
 
 public:
 	virtual void	Set_Target(CGameObject* _pTarget) { m_pTarget = _pTarget; }
 	virtual void	Set_LayerIdx(_ulong _dwLayerIdx) { m_dwLayerIdx = _dwLayerIdx; }
+	void			Set_Enable(_bool _bEnable) {m_bEnable = _bEnable;}
 	void			Set_Dead();
 	void			Set_ViewZ(_float fViewZ) { m_fViewZ = fViewZ; }
 
@@ -85,9 +87,10 @@ public:
 protected:
 	vector<CCollider*>		m_vecPhysicCol;		// 충돌 체크용 콜라이더 벡터
 	vector<CCollider*>		m_vecAttackCol;		// 공격용 콜라이더 벡터
-												//======================================================================================================================
-												// 임시 충돌	
-												//======================================================================================================================
+
+//======================================================================================================================
+// 임시 충돌	
+//======================================================================================================================
 
 protected:
 	LPDIRECT3DDEVICE9		m_pGraphic_Dev = nullptr;
@@ -98,6 +101,9 @@ protected:
 protected:
 	_bool	m_bIsDead = false;
 	_bool	m_bIsInit = false;
+	_bool	m_bEnable = true;
+
+protected:
 	
 	_float	m_fViewZ = 0.f;
 

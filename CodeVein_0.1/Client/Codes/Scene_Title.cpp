@@ -44,7 +44,7 @@ HRESULT CScene_Title::Ready_Scene()
 
 	m_pLoading->Set_LoadStaticMesh(m_bLoadStaticMesh);
 
-	CUI_Manager::Get_Instance()->SetUp_UILayer();
+	//CUI_Manager::Get_Instance()->SetUp_UILayer();
 
 	return S_OK;
 }

@@ -180,5 +180,13 @@ void CGameObject::Free()
 
 	m_pmapComponents.clear();
 
+	for (auto& Col : m_vecPhysicCol)
+		Safe_Release(Col);
+	m_vecPhysicCol.clear();
+
+	for (auto& Col : m_vecAttackCol)
+		Safe_Release(Col);
+	m_vecPhysicCol.clear();
+
 	Safe_Release(m_pGraphic_Dev);
 }
