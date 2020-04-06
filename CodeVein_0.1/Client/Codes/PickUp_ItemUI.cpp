@@ -103,17 +103,29 @@ HRESULT CPickUp_ItemUI::Render_GameObject()
 	{
 		m_pShaderCom->Begin_Pass(2);
 
-	/*	if (i >= i + 1)
-			m_fPosY += 50.f;
+		/*	if (i >= i + 1)
+		m_fPosY += 50.f;
 		if (i > 3)
-			m_fPosY = 200.f;*/
-		if (1 == i)
+		m_fPosY = 200.f;*/
+		if (0 == i)
+		{
 			m_fPosY = 200.f;
-		if (2 == i)
+			/*if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, i + 4)))
+			return E_FAIL;*/
+		}
+		if (1 == i)
+		{
 			m_fPosY = 250.f;
-		if (3 == i)
+			/*if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, i + 4)))
+			return E_FAIL;*/
+		}
+		if (2 == i)
+		{
 			m_fPosY = 300.f;
-		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, m_iRenderNum)))
+			/*if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, i + 4)))
+			return E_FAIL;*/
+		}
+		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, i + 4)))
 			return E_FAIL;
 
 		m_pShaderCom->Commit_Changes();

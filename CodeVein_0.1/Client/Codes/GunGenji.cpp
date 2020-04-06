@@ -2,6 +2,8 @@
 #include "..\Headers\GunGenji.h"
 #include "..\Headers\Weapon.h"
 
+#include "MonsterUI.h"
+
 CGunGenji::CGunGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
@@ -25,12 +27,16 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	//m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_StageBase.dat");
 	//m_pNavMesh->Set_SubsetIndex(0);
 
+	m_pMonsterUI = CMonsterUI::Create(m_pGraphic_Dev, this);
+	m_pMonsterUI->Ready_GameObject(NULL);
+
 	Ready_Weapon();
 	Ready_BoneMatrix();
 	Ready_Collider();
 
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 3.f;
+	m_tObjParam.fHp_Cur = 10.f;
+	m_tObjParam.fHp_Max = 10.f;
 
 	m_pTransformCom->Set_Pos(_v3(-3.f, 0.f, -3.f));
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
@@ -312,7 +318,6 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	//CBT_Play_Ani* pAni49 = Node_Ani("ÃÑ ½î±â ", 49, 0.9f);
 	//pSequence->Add_Child(pAni49);
 
-
 	m_pMeshCom->SetUp_Animation(Ani_Idle);
 
 	return NOERROR;
@@ -321,6 +326,8 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 _int CGunGenji::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
+	if(0 <= m_tObjParam.fHp_Cur)
+	m_pMonsterUI->Update_GameObject(TimeDelta);
 
 	// »À À§Ä¡ ¾÷µ¥ÀÌÆ®
 	Update_Bone_Of_BlackBoard();
@@ -381,6 +388,7 @@ HRESULT CGunGenji::Render_GameObject()
 
 	if (FAILED(SetUp_ConstantTable()))
 		return E_FAIL;
+
 
 	m_pShaderCom->Begin_Shader();
 
@@ -836,6 +844,9 @@ HRESULT CGunGenji::Draw_Collider()
 
 HRESULT CGunGenji::Add_Component(void* pArg)
 {
+	/*if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_MonsterUI", SCENE_STAGE, L"Layer_MonsterHPUI")))
+	return E_FAIL;*/
+
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
 		return E_FAIL;
@@ -880,7 +891,6 @@ HRESULT CGunGenji::Add_Component(void* pArg)
 	// for.Com_NavMesh
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMesh)))
 		return E_FAIL;
-
 
 	return NOERROR;
 }
@@ -1016,6 +1026,8 @@ CGameObject * CGunGenji::Clone_GameObject(void * pArg)
 
 void CGunGenji::Free()
 {
+	//Safe_Release(m_pMonsterUI);
+
 	Safe_Release(m_pNavMesh);
 	Safe_Release(m_pGun);
 	Safe_Release(m_pAIControllerCom);

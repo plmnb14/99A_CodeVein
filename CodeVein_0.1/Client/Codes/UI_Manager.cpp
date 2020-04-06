@@ -62,8 +62,8 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 	
 	//////////////////////////////////////////////////////////////////////////
 	// 유미 작업
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MonsterUI", CMonsterUI::Create(pDevice))))
-		return E_FAIL;
+	//if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MonsterUI", CMonsterUI::Create(pDevice, ))))
+	//	return E_FAIL;
 
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Start_BossUI", CMassageUI::Create(pDevice))))
 		return E_FAIL;
