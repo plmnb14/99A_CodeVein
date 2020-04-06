@@ -48,6 +48,13 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_SSAO", ViewPort.Width, ViewPort.Height, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.f, 0.f, 0.f, 1.f))))
 		return E_FAIL;
 
+	// Target_ShadowMap
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_ShadowMap", ViewPort.Width, ViewPort.Height, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.f, 1.f, 0.f, 0.f))))
+		return E_FAIL;
+	// Target_Shadow
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Shadow", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.f, 1.f, 0.f, 1.f))))
+		return E_FAIL;
+
 	// Target_Distortion
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Distortion", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.2f, 0.2f, 1.f, 0.f))))
 		return E_FAIL;
@@ -104,7 +111,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_LightAcc", L"Target_SSAO")))
 		return E_FAIL;
-
+	
 	// For.MRT_Distortion
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Distortion", L"Target_Distortion")))
 		return E_FAIL;
@@ -150,6 +157,11 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (nullptr == m_pShader_Blend)
 		return E_FAIL;
 
+	// For.Shader_Shadow
+	m_pShader_Shadow = CShader::Create(m_pGraphic_Dev, L"../ShaderFiles/Shader_Shadow.fx");
+	if (nullptr == m_pShader_Shadow)
+		return E_FAIL;
+	
 	// For.Buffer_ViewPort
 	m_pViewPortBuffer = CBuffer_ViewPort::Create(m_pGraphic_Dev, 0.f - 0.5f, 0.f - 0.5f, (_float)ViewPort.Width, (_float)ViewPort.Height);
 	if (nullptr == m_pViewPortBuffer)
@@ -190,6 +202,14 @@ HRESULT CRenderer::Ready_Component_Prototype()
 
 	// For.Target_SSAO`s Debug Buffer
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_SSAO", fTargetSize, fTargetSize * 2, fTargetSize, fTargetSize)))
+		return E_FAIL;
+
+	// For.Target_ShadowMap`s Debug Buffer
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_ShadowMap", fTargetSize * 4, 0.0f, fTargetSize, fTargetSize)))
+		return E_FAIL;
+
+	// For.Target_Shadow`s Debug Buffer
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Shadow", fTargetSize * 4, fTargetSize, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_Blend`s Debug Buffer // 톤매핑 직전
@@ -251,9 +271,11 @@ HRESULT CRenderer::Add_RenderList(RENDERID eGroup, CGameObject * pGameObject)
 
 HRESULT CRenderer::Draw_RenderList()
 {
-
 	// 디퓨즈, 노멀타겟에 필요한 정보를 그려놓느낟.
 	if (FAILED(Render_NonAlpha()))
+		return E_FAIL;
+
+	if (FAILED(Render_ShadowMap()))
 		return E_FAIL;
 
 	// 노멀타겟과 빛정보를 이용하여 셰이드타겟에 값을 그리낟.
@@ -307,6 +329,8 @@ HRESULT CRenderer::Draw_RenderList()
 
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Deferred");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_LightAcc");
+		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_ShadowMap");
+		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_Shadow");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Blend");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Distortion");
 		//m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Alpha");
@@ -370,6 +394,109 @@ HRESULT CRenderer::Render_NonAlpha()
 
 	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_Deferred")))
 		return E_FAIL;
+
+	return NOERROR;
+}
+
+HRESULT CRenderer::Render_ShadowMap()
+{
+	if (nullptr == m_pTarget_Manager)
+		return E_FAIL;
+	
+	//m_pTarget_Manager->New_Stencil(L"Target_ShadowMap");
+	//m_pGraphic_Dev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DXCOLOR(0.f, 0.f, 0.f, 0.f), 1.f, 0);
+
+	m_pTarget_Manager->Begin_Render_Target(L"Target_ShadowMap");
+
+	m_pShader_Shadow->Set_Value("g_LightVP_Close", &CManagement::Get_Instance()->Get_LightViewProj(), sizeof(_mat));
+
+	m_pShader_Shadow->Begin_Shader();
+
+	for (auto& pGameObject : m_RenderList[RENDER_SHADOWTARGET])
+	{
+		if (nullptr != pGameObject)
+		{
+			if (FAILED(pGameObject->Render_GameObject_SetPass(m_pShader_Shadow, 0))) // 그림자 맵 패스로 렌더
+			{
+				Safe_Release(pGameObject);
+				return E_FAIL;
+			}
+			//Safe_Release(pGameObject);
+		}
+	}
+
+	//m_RenderList[RENDER_SHADOWTARGET].clear();
+
+	m_pShader_Shadow->End_Shader();
+
+	m_pTarget_Manager->End_Render_Target(L"Target_ShadowMap");
+	//m_pTarget_Manager->Origin_Stencil(L"Target_ShadowMap");
+
+	Render_Shadow();
+
+	return NOERROR;
+}
+
+HRESULT CRenderer::Render_Shadow()
+{
+	//m_pTarget_Manager->New_Stencil(L"Target_Shadow");
+	//m_pGraphic_Dev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DXCOLOR(0.f, 0.f, 0.f, 0.f), 1.f, 0);
+	m_pTarget_Manager->Begin_Render_Target(L"Target_Shadow");
+
+	_float fOffsetX = 0.5f + (0.5f / (float)1280.f);
+	_float fOffsetY = 0.5f + (0.5f / (float)720.f);
+
+	_mat matScaleBias = {};
+
+	D3DXMatrixIdentity(&matScaleBias);
+
+	matScaleBias._11 = 0.5f;
+	matScaleBias._22 = -0.5f;
+	matScaleBias._33 = 1.f;
+	matScaleBias._41 = fOffsetX;
+	matScaleBias._42 = fOffsetY;
+	matScaleBias._44 = 1.f;
+
+	m_pShader_Shadow->Set_Value("g_matBias", matScaleBias, sizeof(_mat));
+	if(CManagement::Get_Instance()->Get_LightDesc())
+		m_pShader_Shadow->Set_Value("g_vLightPos", &CManagement::Get_Instance()->Get_LightDesc()->Position, sizeof(_v3));
+	m_pShader_Shadow->Set_Value("g_LightVP_Close", &CManagement::Get_Instance()->Get_LightViewProj(), sizeof(_mat));
+	m_pShader_Shadow->Set_Texture("g_ShadowMapTexture", m_pTarget_Manager->Get_Texture(L"Target_ShadowMap"));
+
+	m_pShader_Shadow->Begin_Shader();
+
+	for (auto& pGameObject : m_RenderList[RENDER_SHADOWTARGET])
+	{
+		if (nullptr != pGameObject)
+		{
+			if (FAILED(pGameObject->Render_GameObject_SetPass(m_pShader_Shadow, 1))) // 그림자 맵 패스로 렌더
+			{
+				Safe_Release(pGameObject);
+				return E_FAIL;
+			}
+			Safe_Release(pGameObject);
+		}
+	}
+	m_RenderList[RENDER_SHADOWTARGET].clear();
+
+	m_pShader_Shadow->End_Shader();
+	m_pTarget_Manager->End_Render_Target(L"Target_Shadow");
+	//m_pTarget_Manager->Origin_Stencil(L"Target_Shadow");
+
+	
+
+	//m_pTarget_Manager->Begin_Render_Target(L"Target_Shadow");
+	//
+	//m_pShader_Blend->Begin_Shader();
+	//m_pShader_Blend->Begin_Pass(5);
+	//if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_Shadow"))))
+	//	return E_FAIL;
+	//m_pShader_Blend->Commit_Changes();
+	//m_pViewPortBuffer->Render_VIBuffer();
+	//m_pShader_Blend->End_Shader();
+	//m_pShader_Blend->End_Pass();
+	//
+	//m_pTarget_Manager->End_Render_Target(L"Target_Shadow");
 
 	return NOERROR;
 }
@@ -474,13 +601,14 @@ HRESULT CRenderer::Render_LightAcc()
 
 	m_pShader_LightAcc->Set_Texture("g_NormalTexture", m_pTarget_Manager->Get_Texture(L"Target_Normal"));
 	m_pShader_LightAcc->Set_Texture("g_DepthTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"));
+	m_pShader_LightAcc->Set_Texture("g_ShadowMapTexture", m_pTarget_Manager->Get_Texture(L"Target_Shadow"));
 	m_pSSAOTexture->SetUp_OnShader("g_SSAOTexture", m_pShader_LightAcc, 9);
-
+	
 	m_pShader_LightAcc->Set_Value("g_matProjInv", &pPipeLine->Get_Transform_Inverse(D3DTS_PROJECTION), sizeof(_mat));
 	m_pShader_LightAcc->Set_Value("g_matViewInv", &pPipeLine->Get_Transform_Inverse(D3DTS_VIEW), sizeof(_mat));
 
 	m_pShader_LightAcc->Set_Value("g_vCamPosition", &_v4(pPipeLine->Get_CamPosition(), 1.f), sizeof(_v4));
-
+	m_pShader_LightAcc->Set_Value("g_LightVP_Close", &CManagement::Get_Instance()->Get_LightViewProj(), sizeof(_mat));
 
 	m_pShader_LightAcc->Begin_Shader();
 
@@ -515,6 +643,7 @@ HRESULT CRenderer::Render_Blend()
 
 	if (FAILED(Render_Priority()))
 		return E_FAIL;
+
 
 	// 장치에 백버퍼가 셋팅되어있다.	
 	m_pShader_Blend->Begin_Shader();
@@ -778,6 +907,7 @@ void CRenderer::Free()
 
 	Safe_Release(m_pShader_Blend);
 	Safe_Release(m_pShader_LightAcc);
+	Safe_Release(m_pShader_Shadow);
 
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pTarget_Manager);

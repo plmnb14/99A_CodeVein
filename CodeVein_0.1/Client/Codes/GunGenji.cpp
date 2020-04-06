@@ -352,6 +352,8 @@ _int CGunGenji::Late_Update_GameObject(_double TimeDelta)
 
 	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
+	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
+	//	return E_FAIL;
 
 	m_dTimeDelta = TimeDelta;
 
@@ -405,6 +407,42 @@ HRESULT CGunGenji::Render_GameObject()
 	return NOERROR;
 }
 
+HRESULT CGunGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass)
+{
+	if (nullptr == pShader ||
+		nullptr == m_pMeshCom)
+		return E_FAIL;
+
+	if (FAILED(SetUp_ConstantTable()))
+		return E_FAIL;
+
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
+		return E_FAIL;
+	_mat matLightVP = g_pManagement->Get_LightViewProj();
+	if (FAILED(pShader->Set_Value("g_LightVP_Close", &matLightVP, sizeof(_mat))))
+		return E_FAIL;
+
+	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+
+	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+	{
+		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+
+		m_pMeshCom->Update_SkinnedMesh(i);
+
+		for (_uint j = 0; j < iNumSubSet; ++j)
+		{
+			pShader->Begin_Pass(iPass);
+
+			m_pMeshCom->Render_Mesh(i, j);
+
+			pShader->End_Pass();
+		}
+	}
+
+	return NOERROR;
+}
+
 CBT_Composite_Node * CGunGenji::Shot()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("¿œπ› √—ΩÓ±‚");
@@ -416,9 +454,22 @@ CBT_Composite_Node * CGunGenji::Shot()
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("πÊ«‚ √ﬂ¿˚", L"Player_Pos", 1, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("πÊ«‚ µπ∏Æ±‚", L"Player_Pos", 0.2);
 
+<<<<<<< HEAD
 	CBT_CreateBullet* Bullet0 = Node_CreateBullet("∞’¡ˆ √—æÀ", L"Monster_GunGenjiBullet", L"CreateBulletPos", L"NormalShotDir", 12, 1, 1.5, 1, 0, 0, CBT_Service_Node::Finite);
 	Root_Parallel->Add_Service(Bullet0);
 
+=======
+	CBT_CreateBullet* Bullet0 = Node_CreateBullet("∞’¡ˆ √—æÀ", L"Monster_GenjiBullet", L"CreateBulletPos", L"NormalShotDir", 20, 1.5, 1.725, 1, 1, 0, CBT_Service_Node::Finite);
+	Root_Parallel->Add_Service(Bullet0);
+
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("¡ÿ∫Ò ø¿ø¿∂Û", L"Bullet_Ready_Aura", L"CreateBulletPos", 0.6, 1, 0.0, 0);	// √— µ⁄¬  or ø¿∏•º’
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("¡ÿ∫Ò º∂±§", L"Bullet_Ready_Flash", L"CreateBulletPos", 0.3, 1, 0.0, 0);	// √— µ⁄¬  or ø¿∏•º’
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("πﬂªÁ º∂±§", L"Bullet_Fire_Flash", L"CreateBulletPos", 1.7f, 1, 0.0, 0);	// √—±∏
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
+	
+>>>>>>> dba43a8e02d37547ece1a00da1826867f680366f
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani44);
 	MainSeq->Add_Child(Show_Ani42);

@@ -805,5 +805,8 @@
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Blend.fx">
       <Filter>01.Utility\[07] ShaderFiles</Filter>
     </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Shadow.fx">
+      <Filter>01.Utility\[07] ShaderFiles</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>
