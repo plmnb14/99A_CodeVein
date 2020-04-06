@@ -30,7 +30,8 @@ HRESULT CSwordShieldGenji::Ready_GameObject(void * pArg)
 	Ready_Collider();
 
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 3.f;
+	m_tObjParam.fHp_Cur = 100.f;
+	m_tObjParam.fHp_Max = 100.f;
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
@@ -853,7 +854,7 @@ void CSwordShieldGenji::Check_PhyCollider()
 	{
 		m_pMeshCom->Reset_OldIndx();	//애니 인덱스 초기화
 
-		m_tObjParam.fHp_Cur -= 2.99f;	// 체력 임의로 닳게 만듦.
+		//m_tObjParam.fHp_Cur -= 2.99f;	// 체력 임의로 닳게 만듦.
 
 		m_bAIController = false;
 		cout << "나도 부딪힘 ^^" << endl;
@@ -878,7 +879,7 @@ void CSwordShieldGenji::Check_PhyCollider()
 		else
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
-			Start_Dissolve(0.7f, false, true);
+			Start_Dissolve(0.5f, false, true);
 			m_pShield->Start_Dissolve();
 			m_pSword->Start_Dissolve();
 			g_pManagement->Create_Spawn_Effect(m_pTransformCom->Get_Pos());

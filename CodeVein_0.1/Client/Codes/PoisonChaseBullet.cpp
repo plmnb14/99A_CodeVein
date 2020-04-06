@@ -179,24 +179,21 @@ void CPoisonChaseBullet::Check_PhyCollider()
 {
 	if (false == m_tObjParam.bCanHit && m_tObjParam.bIsHit == false)
 	{
-		m_dCurTime = 1000;	// Á×À½
 		
 		cout << "ÃßÀû ÃÑ¾Ë »ç¸Á" << endl;
 
-		//m_tObjParam.fHp_Cur -= 100.f;	// Ã¼·Â ÀÓÀÇ·Î ´â°Ô ¸¸µê.
+		m_tObjParam.bIsHit = true;
+		m_tObjParam.bCanHit = true;
 
-		//cout << "³ªµµ ºÎµúÈû ^^" << endl;
-		//m_tObjParam.bIsHit = true;
-		//m_tObjParam.bCanHit = true;
-
-		//if (m_tObjParam.fHp_Cur > 0.f)
-		//{
-		//	m_bDead = false;
-		//}
-		//else
-		//{
-		//	m_bDead = true;
-		//}
+		if (m_tObjParam.fHp_Cur > 0.f)
+		{
+			m_bDead = false;
+		}
+		else
+		{
+			m_dCurTime = 1000;	// Á×À½
+			//m_bDead = true;
+		}
 	}
 }
 

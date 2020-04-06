@@ -966,7 +966,7 @@ void CGunGenji::Check_PhyCollider()
 	{
 		m_pMeshCom->Reset_OldIndx();	//애니 인덱스 초기화
 
-		m_tObjParam.fHp_Cur -= 0.99f;	// 체력 임의로 닳게 만듦.
+		//m_tObjParam.fHp_Cur -= 0.99f;	// 체력 임의로 닳게 만듦.
 
 		m_bAIController = false;
 		cout << "나도 부딪힘 ^^" << endl;
@@ -1006,7 +1006,7 @@ void CGunGenji::Check_PhyCollider()
 
 			//m_pMeshCom->SetUp_Animation(Ani_Idle);
 		}
-		else if (m_pMeshCom->Is_Finish_Animation(0.7f))	// 이때부터 재충돌 가능
+		else if (m_pMeshCom->Is_Finish_Animation(0.5f))	// 이때부터 재충돌 가능
 		{
 			m_tObjParam.bIsHit = false;
 		}

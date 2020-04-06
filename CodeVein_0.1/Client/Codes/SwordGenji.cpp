@@ -30,7 +30,8 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	Ready_Collider();
 
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 3.f;
+	m_tObjParam.fHp_Cur = 100.f;
+	m_tObjParam.fHp_Max = 100.f;
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
@@ -632,7 +633,7 @@ CBT_Composite_Node * CSwordGenji::Throwing2()
 	CBT_Play_Ani* Show_Ani26 = Node_Ani("던지기 2", 27, 0.95f);
 	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.1f);
 
-	CBT_CreateBullet* Bullet0 = Node_CreateBullet("수리검", L"Monster_SwordGenjiBullet", L"Bone_LeftHandAttach", L"ShotDir", 5, 5, 1.72, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Bullet0 = Node_CreateBullet("수리검", L"Monster_SwordGenjiBullet", L"Bone_LeftHandAttach", L"ShotDir", 5, 5, 1.73, 1, 1, 0, CBT_Service_Node::Finite);
 
 	Root_Seq->Add_Service(Bullet0);
 
@@ -881,7 +882,7 @@ void CSwordGenji::Check_PhyCollider()
 	{
 		m_pMeshCom->Reset_OldIndx();	//애니 인덱스 초기화
 
-		m_tObjParam.fHp_Cur -= 0.99f;	// 체력 임의로 닳게 만듦.
+		//m_tObjParam.fHp_Cur -= 0.99f;	// 체력 임의로 닳게 만듦.
 
 		m_bAIController = false;
 		cout << "나도 부딪힘 ^^" << endl;
@@ -925,7 +926,7 @@ void CSwordGenji::Check_PhyCollider()
 
 			//m_pMeshCom->SetUp_Animation(Ani_Idle);
 		}
-		else if (m_pMeshCom->Is_Finish_Animation(0.7f))	// 이때부터 재충돌 가능
+		else if (m_pMeshCom->Is_Finish_Animation(0.5f))	// 이때부터 재충돌 가능
 		{
 			m_tObjParam.bIsHit = false;
 		}
@@ -935,10 +936,8 @@ void CSwordGenji::Check_PhyCollider()
 		{
 			Decre_Skill_Movement(m_fSkillMoveMultiply);
 			Skill_Movement(m_fSkillMoveSpeed_Cur, m_vPushDir_forHitting);
-<<<<<<< HEAD
+
 			//cout << "밀리는 중" << endl;
-=======
->>>>>>> b96e91b1a9ebb11cd253ebe17dc32aec1d3a4aa4
 		}
 	}
 }
