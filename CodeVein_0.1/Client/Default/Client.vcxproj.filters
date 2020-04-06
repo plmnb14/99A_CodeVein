@@ -229,6 +229,15 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\06. CursorUI">
       <UniqueIdentifier>{6d74b162-2001-4bc6-8023-f3d2ca758c6e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\04. Get_ItemUI">
+      <UniqueIdentifier>{0e1a63f9-f5ff-4195-aa2c-8f386bcf0512}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\04. Get_ItemUI\PickUp_ItemUI">
+      <UniqueIdentifier>{350b99e5-54e8-43df-bafa-17f764a32b28}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\06. MassageUI">
+      <UniqueIdentifier>{540b3aae-02d4-4cfe-b5dc-cb949b85ba2b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -399,6 +408,18 @@
     <ClInclude Include="..\Headers\CursorUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\06. CursorUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Get_ItemUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\04. Get_ItemUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\PickUp_ItemUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\04. Get_ItemUI\PickUp_ItemUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MassageUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\06. MassageUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MonsterUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\01.MonsterUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -559,6 +580,18 @@
     </ClCompile>
     <ClCompile Include="..\Codes\CursorUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\06. CursorUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MonsterUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\01.MonsterUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Get_ItemUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\04. Get_ItemUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\PickUp_ItemUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\04. Get_ItemUI\PickUp_ItemUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MassageUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\06. MassageUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

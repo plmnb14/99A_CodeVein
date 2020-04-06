@@ -2625,6 +2625,8 @@ void CPlayer::Play_Hit()
 			m_tObjParam.bIsHit = false;
 			m_tObjParam.bCanHit = true;
 
+			Reset_BattleState();
+
 			//cout << "여긴 탑니까" << endl;
 		}
 
@@ -4600,6 +4602,7 @@ void CPlayer::Reset_BattleState()
 	m_bOnAttack = false;
 	m_bCanAttack = true;
 	m_bCharging = false;
+	m_bStopMovementKeyInput = false;
 
 	m_sWeakAtkCnt = 0;
 	m_sHeavyAtkCnt = 0;
