@@ -59,6 +59,9 @@ _int CInventory_Icon::Update_GameObject(_double TimeDelta)
 	case ICON_ARMOR:
 		m_iIndex = 3;
 		break;
+	case ICON_ALL:
+		m_iIndex = 4;
+		break;
 	}
 	
 	return NO_EVENT;

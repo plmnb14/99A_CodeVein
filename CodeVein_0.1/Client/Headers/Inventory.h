@@ -10,8 +10,15 @@ class CMaterial_Inven;
 class CWeapon_Inven;
 class CArmor_Inven;
 class CInventory_Icon;
+class CTotal_Inven;
 class CInventory final : public CUI
 {
+public:
+	enum INVEN_TYPE
+	{
+		INVEN_TOTAL,
+		INVEN_DETAIL
+	};
 private:
 	explicit CInventory(_Device pDevice);
 	explicit CInventory(const CInventory& rhs);
@@ -43,8 +50,12 @@ private:
 	CMaterial_Inven*		m_pMtrInven = nullptr;
 	CWeapon_Inven*			m_pWeaponInven = nullptr;
 	CArmor_Inven*			m_pArmorInven = nullptr;
+	CTotal_Inven*			m_pTotalInven = nullptr;
 	vector<CInventory_Icon*> m_vecIcon;
+	CInventory_Icon*		m_pDetailIcon = nullptr;
 	CInventory_Icon*		m_pClickIcon = nullptr;
+	_bool					m_bIsOpenTotal = false;
+	INVEN_TYPE				m_eType = INVEN_TOTAL;
 
 public:
 	static CInventory*		Create(_Device pGraphic_Device);

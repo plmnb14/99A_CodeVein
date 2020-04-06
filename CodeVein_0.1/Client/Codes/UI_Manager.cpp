@@ -24,6 +24,7 @@
 #include "Inventory.h"
 #include "Inventory_Icon.h"
 #include "ClickUI.h"
+#include "Total_Inven.h"
 
 
 IMPLEMENT_SINGLETON(CUI_Manager)
@@ -87,6 +88,8 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ClickUI", CClickUI::Create(pDevice))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_TotalInven", CTotal_Inven::Create(pDevice))))
+		return E_FAIL;
 
 	return NOERROR;
 }
@@ -98,6 +101,7 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_MaterialInven", SCENE_STAGE, L"Layer_MaterialInven");
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_WeaponInven", SCENE_STAGE, L"Layer_WeaponInven");
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ArmorInven", SCENE_STAGE, L"Layer_ArmorInven");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_TotalInven", SCENE_STAGE, L"Layer_TotalInven");
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_Inventory", SCENE_STAGE, L"Layer_Inventory");
 
 	return NOERROR;
@@ -105,10 +109,6 @@ HRESULT CUI_Manager::SetUp_UILayer()
 
 _int CUI_Manager::Update_UI()
 {
-	/*CExpendables_Inven* pExpendInven = static_cast<CExpendables_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendablesInven", SCENE_STAGE));
-	CMaterial_Inven*	pMaterialInven = static_cast<CMaterial_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_MaterialInven", SCENE_STAGE));
-	CWeapon_Inven* pWeaponInven = static_cast<CWeapon_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponInven", SCENE_STAGE));
-	CArmor_Inven* pArmorInven = static_cast<CArmor_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ArmorInven", SCENE_STAGE));*/
 	
 	return 0;
 }

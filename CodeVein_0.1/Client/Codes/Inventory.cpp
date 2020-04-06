@@ -6,6 +6,7 @@
 #include "Material_Inven.h"
 #include "Weapon_Inven.h"
 #include "Armor_Inven.h"
+#include "Total_Inven.h"
 #include "Inventory_Icon.h"
 
 CInventory::CInventory(_Device pDevice)
@@ -30,10 +31,9 @@ HRESULT CInventory::Ready_GameObject(void * pArg)
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = WINCX * 0.5f;
+	m_fPosX = WINCX * 0.3f;
 	m_fPosY = WINCY * 0.5f;
-	m_fSizeX = 700.f;
-	m_fSizeY = WINCY;
+	
 	m_fViewZ = 0.5f;
 	m_bIsActive = false;
 
@@ -46,19 +46,33 @@ _int CInventory::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
-	m_pRendererCom->Add_RenderList(RENDER_UI, this);
+	//m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
-	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
+	//D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 
 	if (g_pInput_Device->Key_Up(DIK_ESCAPE))
+	{
 		m_bIsActive = !m_bIsActive;
+
+		if (m_bIsActive)
+		{
+			m_pTotalInven->Set_Active(true);
+			m_pExpInven->Set_Active(false);
+			m_pMtrInven->Set_Active(false);
+			m_pWeaponInven->Set_Active(false);
+			m_pArmorInven->Set_Active(false);
+		}
+		else
+			for (auto& pIcon : m_vecIcon)
+				pIcon->Set_Click(false);
+	}
+		
 
 	Click_Icon();
 
 	for (auto& pIcon : m_vecIcon)
-	{
 		pIcon->Set_Active(m_bIsActive);
-	}
+	m_pDetailIcon->Set_Active(m_bIsActive);
 	
 	if (!m_bIsActive)
 	{
@@ -66,61 +80,33 @@ _int CInventory::Update_GameObject(_double TimeDelta)
 		m_pMtrInven->Set_Active(false);
 		m_pWeaponInven->Set_Active(false);
 		m_pArmorInven->Set_Active(false);
+		m_pTotalInven->Set_Active(false);
 	}
+
+	/*switch (m_eType)
+	{
+	case INVEN_TOTAL:
+		m_pTotalInven->Set_Active(true);
+		break;
+	case INVEN_DETAIL:
+		break;
+	}*/
+	
 
 	return NO_EVENT;
 }
 
 _int CInventory::Late_Update_GameObject(_double TimeDelta)
 {
-	D3DXMatrixIdentity(&m_matWorld);
-	D3DXMatrixIdentity(&m_matView);
-
-	m_matWorld._11 = m_fSizeX;
-	m_matWorld._22 = m_fSizeY;
-	m_matWorld._33 = 1.f;
-	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
-	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;
-	m_matWorld._42 = 1.f;
+	
 
 	return NO_EVENT;
 }
 
 HRESULT CInventory::Render_GameObject()
 {
-	if (!m_bIsActive)
-		return NOERROR;
+	
 
-	if (nullptr == m_pShaderCom ||
-		nullptr == m_pBufferCom)
-		return E_FAIL;
-
-	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
-
-	m_matOldView = g_pManagement->Get_Transform(D3DTS_VIEW);
-	m_matOldProj = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-
-	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
-	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
-
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
-
-	m_pShaderCom->Begin_Shader();
-
-	m_pShaderCom->Begin_Pass(1);
-
-
-	m_pBufferCom->Render_VIBuffer();
-
-	m_pShaderCom->End_Pass();
-
-	m_pShaderCom->End_Shader();
-
-	g_pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
-	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
-
-	return NOERROR;
 	return NOERROR;
 }
 
@@ -173,12 +159,13 @@ void CInventory::SetUp_Default()
 	m_pMtrInven = static_cast<CMaterial_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_MaterialInven", SCENE_STAGE));
 	m_pWeaponInven = static_cast<CWeapon_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponInven", SCENE_STAGE));
 	m_pArmorInven = static_cast<CArmor_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ArmorInven", SCENE_STAGE));
+	m_pTotalInven = static_cast<CTotal_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_TotalInven", SCENE_STAGE));
 
 	CUI::UI_DESC* pDesc = nullptr;
-	LOOP(4)
+	LOOP(5)
 	{
 		pDesc = new CUI::UI_DESC;
-		pDesc->fPosX = m_fPosX - 75.f + 50.f * i;
+		pDesc->fPosX = m_fPosX - 100.f + 50.f * i;
 		pDesc->fPosY = m_fPosY - 203.f;
 		pDesc->fSizeX = 35.f;
 		pDesc->fSizeY = 45.f;
@@ -188,6 +175,14 @@ void CInventory::SetUp_Default()
 		m_vecIcon.push_back(pIcon);
 	}
 	
+	pDesc = new CUI::UI_DESC;
+	pDesc->fPosX = m_fPosX - 200.f;
+	pDesc->fPosY = m_fPosY - 220.f;
+	pDesc->fSizeX = 50.f;
+	pDesc->fSizeY = 60.f;
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_InvenIcon", SCENE_STAGE, L"Layer_InvenIcon", pDesc);
+	m_pDetailIcon = static_cast<CInventory_Icon*>(g_pManagement->Get_GameObjectBack(L"Layer_InvenIcon", SCENE_STAGE));
+	m_pDetailIcon->Set_Type(CInventory_Icon::ICON_ALL);
 }
 
 void CInventory::Click_Icon()
@@ -222,28 +217,41 @@ void CInventory::Click_Icon()
 				m_pMtrInven->Set_Active(false);
 				m_pWeaponInven->Set_Active(false);
 				m_pArmorInven->Set_Active(false);
+				m_pTotalInven->Set_Active(false);
 				break;
 			case CInventory_Icon::ICON_MTRL:
 				m_pExpInven->Set_Active(false);
 				m_pMtrInven->Set_Active(true);
 				m_pWeaponInven->Set_Active(false);
 				m_pArmorInven->Set_Active(false);
+				m_pTotalInven->Set_Active(false);
 				break;
 			case CInventory_Icon::ICON_WEAPON:
 				m_pExpInven->Set_Active(false);
 				m_pMtrInven->Set_Active(false);
 				m_pWeaponInven->Set_Active(true);
 				m_pArmorInven->Set_Active(false);
+				m_pTotalInven->Set_Active(false);
 				break;
 			case CInventory_Icon::ICON_ARMOR:
 				m_pExpInven->Set_Active(false);
 				m_pMtrInven->Set_Active(false);
 				m_pWeaponInven->Set_Active(false);
 				m_pArmorInven->Set_Active(true);
+				m_pTotalInven->Set_Active(false);
+				break;
+			case CInventory_Icon::ICON_ALL:
+				m_pExpInven->Set_Active(false);
+				m_pMtrInven->Set_Active(false);
+				m_pWeaponInven->Set_Active(false);
+				m_pArmorInven->Set_Active(false);
+				m_pTotalInven->Set_Active(true);
 				break;
 			}
 		}
 	}
+
+	
 }
 
 CInventory * CInventory::Create(_Device pGraphic_Device)

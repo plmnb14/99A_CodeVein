@@ -76,9 +76,6 @@ _int CExpendables_Inven::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
-	if (g_pInput_Device->Key_Up(DIK_1))
-		m_bIsActive = !m_bIsActive;
-
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);

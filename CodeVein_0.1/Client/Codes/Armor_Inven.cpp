@@ -49,8 +49,7 @@ _int CArmor_Inven::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 	
-	if (g_pInput_Device->Key_Up(DIK_4))
-		m_bIsActive = !m_bIsActive;
+	
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 

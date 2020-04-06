@@ -15,6 +15,7 @@ public:
 		ICON_MTRL,
 		ICON_WEAPON,
 		ICON_ARMOR,
+		ICON_ALL,
 		ICON_END
 	};
 private:
