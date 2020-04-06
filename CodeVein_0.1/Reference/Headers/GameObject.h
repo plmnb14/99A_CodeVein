@@ -6,6 +6,7 @@
 BEGIN(Engine)
 
 class CCollider;
+class CShader;
 class ENGINE_DLL CGameObject abstract : public CBase
 {
 protected:
@@ -20,6 +21,7 @@ public:
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT LateInit_GameObject();
 	virtual HRESULT Render_GameObject();
+	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass);
 
 public:
 	virtual _ulong		Get_LayerIdx() { return m_dwLayerIdx; }

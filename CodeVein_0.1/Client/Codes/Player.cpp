@@ -57,6 +57,8 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
+	//if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
+	//	return E_FAIL;
 
 	IF_NOT_NULL(m_pWeapon[m_eActiveSlot])
 		m_pWeapon[m_eActiveSlot]->Update_GameObject(TimeDelta);
@@ -146,6 +148,44 @@ HRESULT CPlayer::Render_GameObject()
 
 	//IF_NOT_NULL(m_pNavMesh)
 	m_pNavMesh->Render_NaviMesh();
+
+	return NOERROR;
+}
+
+HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass)
+{
+	if (nullptr == pShader ||
+		nullptr == m_pDynamicMesh)
+		return E_FAIL;
+
+	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+
+	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
+		return E_FAIL;
+	g_pManagement->Set_LightPos(0, m_pTransform->Get_Pos() + _v3(0, 2, 2));
+
+	_uint iNumMeshContainer = _uint(m_pDynamicMesh->Get_NumMeshContainer());
+
+	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+	{
+		_uint iNumSubSet = (_uint)m_pDynamicMesh->Get_NumMaterials(i);
+
+		m_pDynamicMesh->Update_SkinnedMesh(i);
+
+		for (_uint j = 0; j < iNumSubSet; ++j)
+		{
+			pShader->Begin_Pass(iPass);
+
+			m_pDynamicMesh->Render_Mesh(i, j);
+
+			pShader->End_Pass();
+		}
+	}
 
 	return NOERROR;
 }
@@ -1531,6 +1571,8 @@ void CPlayer::Play_Run()
 			m_eMainWpnState == WEAPON_Gun ? Gun_Blend_Run :
 			m_eMainWpnState == WEAPON_Halverd ? Halverd_Run_Blend : m_eAnim_Lower);
 	}
+
+	g_pManagement->Create_FootSmoke_Effect(m_pTransform->Get_Pos(), 0.5f);
 }
 
 void CPlayer::Play_Dash()
@@ -1710,6 +1752,7 @@ void CPlayer::Play_Dodge()
 				if (false == m_bOnAiming)
 				{
 					m_eAnim_Lower = Cmn_RealLightDodge_F;
+					g_pManagement->Create_AutoFindEffect(L"Player_SpaceBar_StepParticle", 1.f, m_pTransform, _v3(0.f, 1.f, 0.f));
 					break;
 				}
 
@@ -1789,6 +1832,8 @@ void CPlayer::Play_Dodge()
 			{
 				m_bDodgeBack = true;
 				m_eAnim_Lower = Cmn_RealLightDodge_B;
+				g_pManagement->Create_Effect(L"Player_FootSmoke_Jump", m_pTransform->Get_Pos());
+				g_pManagement->Create_Effect(L"Player_FootSmoke_DodgeBack", V3_NULL, m_pTransform);
 			}
 
 			break;
@@ -1883,6 +1928,8 @@ void CPlayer::Play_Dodge()
 			{
 				m_bDodgeBack = true;
 				m_eAnim_Lower = Cmn_RealLightDodge_B;
+				g_pManagement->Create_Effect(L"Player_FootSmoke_Jump", m_pTransform->Get_Pos());
+				g_pManagement->Create_Effect(L"Player_FootSmoke_DodgeBack", V3_NULL, m_pTransform);
 			}
 			break;
 		}
@@ -2685,7 +2732,7 @@ void CPlayer::Play_Spawn()
 	{
 		_v3 vPos = m_pTransform->Get_Pos();
 		vPos.y += m_fDissolveY;
-		g_pManagement->Create_Effect(L"SpawnParticle", vPos);
+		g_pManagement->Create_Spawn_Effect(vPos);
 		m_fDissolveY += DELTA_60 * 1.3f;
 	}
 	else

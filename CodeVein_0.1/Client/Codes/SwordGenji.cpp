@@ -172,8 +172,7 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 		// 죽었을 경우
 		if (m_bIsDead)
 		{
-			m_bEnable = false;
-			return NO_EVENT;
+			return DEAD_OBJ;
 		}
 		else
 		{
@@ -386,9 +385,10 @@ CBT_Composite_Node * CSwordGenji::ThreeCombo_Cut()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 
-	CBT_UpdateParam* pHitCol0 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.7, 1, 0.3, 0);
-	CBT_UpdateParam* pHitCol1 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.1, 1, 0.3, 0);
-	CBT_UpdateParam* pHitCol2 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.5, 1, 0.3, 0);
+	CBT_UpdateParam* pHitCol0 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.7, 1, 0.2, 0);
+	CBT_UpdateParam* pHitCol1 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.1, 1, 0.2, 0);
+	CBT_UpdateParam* pHitCol2 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.5, 1, 0.2, 0);
+
 	Root_Parallel->Add_Service(pHitCol0);
 	Root_Parallel->Add_Service(pHitCol1);
 	Root_Parallel->Add_Service(pHitCol2);

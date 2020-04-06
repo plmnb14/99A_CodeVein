@@ -375,6 +375,7 @@ call CopyEngine.bat</Command>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Blend.fx" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_LightAcc.fx" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Shadow.fx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

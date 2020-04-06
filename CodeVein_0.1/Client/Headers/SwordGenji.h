@@ -151,7 +151,6 @@ private:
 
 	void Check_Collider();
 	void Push_Collider();
-
 	HRESULT Draw_Collider();
 
 private:
