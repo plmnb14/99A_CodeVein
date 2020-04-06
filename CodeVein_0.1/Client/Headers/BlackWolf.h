@@ -13,11 +13,11 @@ public:
 
 	enum WOLF_ANI
 	{
-		Idle = 13, //일반 idle 서있기
-		Eat = 10,
-		Eat_End = 11,
-		Sit = 12,
-		Sit_End = 8,
+		Idle = 3, //일반 idle 서있기
+		Sit_End = 4,
+		Sit = 5,
+		Eat_End = 6,
+		Eat = 7,
 
 		Alert = 15, //경계 idle
 		Threat = 6, //위협애니
@@ -138,22 +138,19 @@ private:
 	_bool				m_bEventTrigger[10] = {}; //이벤트 조건 조절
 
 	_bool				m_bInRecognitionRange = false; //인지 범위 여부
-	_float				m_fRecognitionRange = 4.f; //인지 범위
-
 	_bool				m_bInAttackRange = false; //공격 범위 여부
-	_float				m_fAttackRange = 4.f; //공격 범위
-	_int				m_iAttackRandomNumber = 0; //공격애니 랜덤화
-
 	_bool				m_bCanChase = false; //추격 여부
-
-	_bool				m_bIsDodge = false; //회피 진행중 여부
-	_int				m_iDodgeCount = 0; //n회 피격시 바로 회피
-
 	_bool				m_bIsCoolDown = false; //쿨타임 진행중 여부
+	_bool				m_bIsDodge = false; //회피 진행중 여부
+
+	_float				m_fRecognitionRange = 10.f; //인지 범위
+	_float				m_fAttackRange = 4.f; //공격 범위
+
 	_float				m_fCoolDown = 0.f; //쿨타임
 
+	_int				m_iAttackRandomNumber = 0; //공격애니 랜덤화
 	_int				m_iIdleRandomNumber = 0;//일상 애니 랜덤화
-	//////////////////////////////////////////////////////////
+	_int				m_iDodgeCount = 0; //n회 피격시 바로 회피
 
 	//_float			m_fHitDmgLimit = 50.f; //일정 데미지 퍼센트를 맞을 경우 강하게 쓰러짐, 역치
 	//_int				m_iHitCountLimit = 5; //5대 맞으면 약하게 쓰러짐, 역치

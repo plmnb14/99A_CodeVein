@@ -196,8 +196,12 @@ void CBlackWolf::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					iter->Set_Target_CanHit(false);
-					iter->Add_Target_Hp(m_tObjParam.fDamage);
+					//회피 중이 아니라면
+					if (false == m_bIsDodge)
+					{
+						iter->Set_Target_CanHit(false);
+						iter->Add_Target_Hp(m_tObjParam.fDamage);
+					}
 
 					g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
 
@@ -955,8 +959,6 @@ void CBlackWolf::Play_Dodge()
 	}
 	else
 	{
-		Skill_RotateBody();
-
 		if (m_pMeshCom->Is_Finish_Animation(0.8f))
 		{
 			m_eFirstIdentify = MONSTER_ANITYPE::IDLE;
@@ -975,16 +977,15 @@ void CBlackWolf::Play_Dodge()
 				m_fSkillMoveSpeed_Cur = 4.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 0.1f;
-				m_vecAttackCol[0]->Set_Enabled(true);
 			}
+
+			Skill_RotateBody();
 
 			Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
 
 			Decre_Skill_Movement(m_fSkillMoveMultiply);
 			return;
 		}
-
-		return;
 	}
 }
 
@@ -1086,7 +1087,7 @@ HRESULT CBlackWolf::Add_Component()
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_BlackWolf", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Wolf_Black", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
 		return E_FAIL;
 
 	return NOERROR;

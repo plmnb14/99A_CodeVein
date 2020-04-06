@@ -24,15 +24,15 @@ public:
 
 		AtkR =1,
 		AtkL,
-		AtkHammering,
-		AtkShoulder,
-		AtkHalfClock,
-		AtkTurnTwice,
-		AtkTargetHammering,
-		AtkWheelWind,
-		AtkRun_Start,
-		AtkRun_Loop,
-		AtkRun_End,
+		Atk_Hammering,
+		Atk_Shoulder,
+		Atk_HalfClock,
+		Atk_TurnTwice,
+		Atk_TargetHammering,
+		Atk_WheelWind,
+		Atk_Run_Start,
+		Atk_Run_Loop,
+		Atk_Run_End,
 
 		Dead_B,
 		Dead_F,
@@ -92,10 +92,24 @@ private:
 	void Reset_BattleState();
 
 	void Play_Idle();
+	void Play_Lurk();
+	void Play_Glance();
+	void Play_LookAround();
+	void Play_Eat();
+
 	void Play_Walk();
 	void Play_Run();
+	//void Play_Dodge();
 
 	void Play_RandomAtk();
+	void Play_ShoulderAtk(); //4
+	void Play_LeftRightAtk(); //1,2 0.5 0.95
+	void Play_LeftAndHammering(); //1,3 0.5 0.95
+	void Play_ShoulderAtk_LeftAtk(); //4,5 0.28 0.95
+	void Play_ShoulderAtk_TurnTwice(); //4,6 0.28 0.95
+	void Play_TargetHammering(); //7 1타격
+	void Play_WheelWind(); //8 4타격
+	void Play_RunHammering(); //9,10,11 달려가서 내리치기 0.9 0.9 0.9
 
 	void Play_Hit();
 	void Play_Down_Strong();
@@ -139,7 +153,7 @@ private:
 	_bool				m_bInRecognitionRange = false;
 	_bool				m_bInAttackRange = false; 
 	_bool				m_bCanChase = false;
-	_bool				m_bIsDodge = false;
+	//_bool				m_bIsDodge = false;
 	_bool				m_bIsCoolDown = false;
 
 	_float				m_fRecognitionRange = 10.f;
