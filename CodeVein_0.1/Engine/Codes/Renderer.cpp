@@ -403,10 +403,10 @@ HRESULT CRenderer::Render_ShadowMap()
 	if (nullptr == m_pTarget_Manager)
 		return E_FAIL;
 	
-	m_pTarget_Manager->New_Stencil(L"Target_ShadowMap");
-	m_pGraphic_Dev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DXCOLOR(0.f, 0.f, 0.f, 0.f), 1.f, 0);
+	//m_pTarget_Manager->New_Stencil(L"Target_ShadowMap");
+	//m_pGraphic_Dev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DXCOLOR(0.f, 0.f, 0.f, 0.f), 1.f, 0);
 
-	//m_pTarget_Manager->Begin_Render_Target(L"Target_ShadowMap");
+	m_pTarget_Manager->Begin_Render_Target(L"Target_ShadowMap");
 
 	m_pShader_Shadow->Set_Value("g_LightVP_Close", &CManagement::Get_Instance()->Get_LightViewProj(), sizeof(_mat));
 
@@ -429,8 +429,8 @@ HRESULT CRenderer::Render_ShadowMap()
 
 	m_pShader_Shadow->End_Shader();
 
-	//m_pTarget_Manager->End_Render_Target(L"Target_ShadowMap");
-	m_pTarget_Manager->Origin_Stencil(L"Target_ShadowMap");
+	m_pTarget_Manager->End_Render_Target(L"Target_ShadowMap");
+	//m_pTarget_Manager->Origin_Stencil(L"Target_ShadowMap");
 
 	Render_Shadow();
 
@@ -439,9 +439,9 @@ HRESULT CRenderer::Render_ShadowMap()
 
 HRESULT CRenderer::Render_Shadow()
 {
-	m_pTarget_Manager->New_Stencil(L"Target_Shadow");
-	m_pGraphic_Dev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DXCOLOR(0.f, 0.f, 0.f, 0.f), 1.f, 0);
-	//m_pTarget_Manager->Begin_Render_Target(L"Target_Shadow");
+	//m_pTarget_Manager->New_Stencil(L"Target_Shadow");
+	//m_pGraphic_Dev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DXCOLOR(0.f, 0.f, 0.f, 0.f), 1.f, 0);
+	m_pTarget_Manager->Begin_Render_Target(L"Target_Shadow");
 
 	_float fOffsetX = 0.5f + (0.5f / (float)1280.f);
 	_float fOffsetY = 0.5f + (0.5f / (float)720.f);
@@ -480,8 +480,8 @@ HRESULT CRenderer::Render_Shadow()
 	m_RenderList[RENDER_SHADOWTARGET].clear();
 
 	m_pShader_Shadow->End_Shader();
-	//m_pTarget_Manager->End_Render_Target(L"Target_Shadow");
-	m_pTarget_Manager->Origin_Stencil(L"Target_Shadow");
+	m_pTarget_Manager->End_Render_Target(L"Target_Shadow");
+	//m_pTarget_Manager->Origin_Stencil(L"Target_Shadow");
 
 	
 

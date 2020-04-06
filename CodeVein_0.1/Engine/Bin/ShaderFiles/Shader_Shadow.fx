@@ -170,7 +170,7 @@ PS_OUT PS_SHADOWMAP(PS_IN In)
 
 	float fDepth = In.vColor.z / In.vColor.w;
 
-	Out.vDiffuse = float4(fDepth, fDepth * 0.5f, fDepth, 1.f);
+	Out.vDiffuse = float4(fDepth, 0, 0, 1.f);
 
 	//Out.vDiffuse = fDepth;
 

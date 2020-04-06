@@ -58,10 +58,10 @@ sampler ShadowMapSampler = sampler_state
 	magfilter = linear;
 	mipfilter = linear;
 	
-	addressU = border;
-	addressV = border;
-	
-	BorderColor = float4(1.0f, 1.0f, 1.0f, 0.0f);
+	//addressU = border;
+	//addressV = border;
+	//
+	//BorderColor = float4(1.0f, 1.0f, 1.0f, 0.0f);
 
 };
 struct PS_IN
@@ -175,24 +175,24 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	// Shadow ====================================================================
 
-	float4 lightingPosition = mul(vWorldPos, g_LightVP_Close);
-	
-	float2 ShadowTexCoord = 0.5 * lightingPosition.xy /
-		lightingPosition.w + float2(0.5, 0.5);
-	ShadowTexCoord.y = 1.0f - ShadowTexCoord.y;
-	
-	float fShadow = tex2D(ShadowMapSampler, ShadowTexCoord).x;
-	
-	float DepthBias = 0.001f;
-	float ourdepth = (lightingPosition.z / lightingPosition.w) - DepthBias;
-	
+	//float4 lightingPosition = mul(vWorldPos, g_LightVP_Close);
 	//
-	if (fShadow <= ourdepth)
-	{
-		Out.vShade.rgb *= 0.2f;
-	
-		return Out;
-	}
+	//float2 ShadowTexCoord = 0.5 * lightingPosition.xy /
+	//	lightingPosition.w + float2(0.5, 0.5);
+	//ShadowTexCoord.y = 1.0f - ShadowTexCoord.y;
+	//
+	//float fShadow = tex2D(ShadowMapSampler, ShadowTexCoord).x;
+	//
+	//float DepthBias = 0.001f;
+	//float ourdepth = (lightingPosition.z / lightingPosition.w) - DepthBias;
+	//
+	////
+	//if (fShadow <= ourdepth)
+	//{
+	//	Out.vShade.rgb *= 0.2f;
+	//
+	//	return Out;
+	//}
 
 	// Shadow End ====================================================================
 
@@ -271,20 +271,20 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
 	//	return Out;
 	//}
 
-	float4 lightingPosition = mul(vWorldPos, g_LightVP_Close); 
-	
-	float2 ShadowTexCoord = 0.5 * lightingPosition.xy /
-		lightingPosition.w + float2(0.5, 0.5);
-	ShadowTexCoord.y = -ShadowTexCoord.y;
-	
-	float4 fShadow = tex2D(ShadowMapSampler, ShadowTexCoord.xy);
+	//float4 lightingPosition = mul(vWorldPos, g_LightVP_Close); 
 	//
-	if (fShadow.x <= 0.6f)
-	{
-		Out.vShade.rgb *= 0.2f;
-	
-		return Out;
-	}
+	//float2 ShadowTexCoord = 0.5 * lightingPosition.xy /
+	//	lightingPosition.w + float2(0.5, 0.5);
+	//ShadowTexCoord.y = -ShadowTexCoord.y;
+	//
+	//float4 fShadow = tex2D(ShadowMapSampler, ShadowTexCoord.xy);
+	////
+	//if (fShadow.x <= 0.6f)
+	//{
+	//	Out.vShade.rgb *= 0.2f;
+	//
+	//	return Out;
+	//}
 
 	//float4 fShadow = tex2D(ShadowMapSampler, In.vTexUV.xy); 
 	////
