@@ -26,6 +26,13 @@ private:
 	HRESULT SetUp_ConstantTable(_uint TextureIndex);
 	void	SetUp_State(_double TimeDelta);
 
+public:
+	_bool	Get_Click_Check() { return m_bCheck_Click; }
+	_uint	Get_Cound_Pickuptiem() { return m_iCount_PickUpitem; }
+	_float	Get_EndTimer() { return m_fEndTimer; }
+
+	void	Set_EndTimer(_double TimeDelta) { m_fEndTimer += (_float)TimeDelta; }
+
 private:
 	_bool		m_bCheck_Click = false;
 	_bool		m_bSparkle_Box = false;
@@ -41,6 +48,7 @@ private:
 	_float		m_fNowItemBar_Size = 0.f;
 
 	_uint		m_iUINumber = 0;
+	_uint		m_iCount_PickUpitem = 0;
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -48,6 +56,8 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
+
+
 
 public:
 	static CGet_ItemUI*		Create(_Device pGraphic_Device);

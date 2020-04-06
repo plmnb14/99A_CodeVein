@@ -148,6 +148,11 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 
 _int CSwordGenji::Update_GameObject(_double TimeDelta)
 {
+	if (false == m_bEnable)
+		return NO_EVENT;
+
+	Push_Collider();
+
 	CGameObject::Update_GameObject(TimeDelta);
 
 	// 죽었을 경우
@@ -179,6 +184,9 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 
 _int CSwordGenji::Late_Update_GameObject(_double TimeDelta)
 {
+	if (false == m_bEnable)
+		return NO_EVENT;
+
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
 
@@ -376,6 +384,7 @@ CBT_Composite_Node * CSwordGenji::ThreeCombo_Cut()
 	CBT_UpdateParam* pHitCol0 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.7, 1, 0.2, 0);
 	CBT_UpdateParam* pHitCol1 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.1, 1, 0.2, 0);
 	CBT_UpdateParam* pHitCol2 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.5, 1, 0.2, 0);
+
 	Root_Parallel->Add_Service(pHitCol0);
 	Root_Parallel->Add_Service(pHitCol1);
 	Root_Parallel->Add_Service(pHitCol2);
@@ -813,6 +822,8 @@ HRESULT CSwordGenji::Update_Collider()
 		++matrixIdx;
 	}
 
+	m_pCollider->Update(m_pTransformCom->Get_Pos() + _v3(0.f, m_pCollider->Get_Radius().y, 0.f));
+
 	return S_OK;
 }
 
@@ -888,6 +899,7 @@ void CSwordGenji::Check_PhyCollider()
 
 		m_pAIControllerCom->Reset_BT();
 
+
 		if (m_tObjParam.fHp_Cur > 0.f)
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Dmg01_FL);	//방향에 따른 모션 해줘야함.
@@ -923,10 +935,39 @@ void CSwordGenji::Check_PhyCollider()
 		{
 			Decre_Skill_Movement(m_fSkillMoveMultiply);
 			Skill_Movement(m_fSkillMoveSpeed_Cur, m_vPushDir_forHitting);
+<<<<<<< HEAD
 			//cout << "밀리는 중" << endl;
+=======
+>>>>>>> b96e91b1a9ebb11cd253ebe17dc32aec1d3a4aa4
 		}
 	}
+}
 
+void CSwordGenji::Push_Collider()
+{
+	list<CGameObject*> tmpList = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_STAGE);
+
+	for (auto& iter : tmpList)
+	{
+		CCollider* pCollider = TARGET_TO_COL(iter);
+
+		// 지금 속도값 임의로 넣었는데 구해서 넣어줘야함
+		if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), 5.f * DELTA_60))
+		{
+			CTransform* pTrans = TARGET_TO_TRANS(iter);
+			CNavMesh*   pNav = TARGET_TO_NAV(iter);
+
+			// 방향 구해주고
+			_v3 vDir = m_pTransformCom->Get_Pos() - pTrans->Get_Pos();
+			V3_NORMAL_SELF(&vDir);
+
+			// y축 이동은 하지말자
+			vDir.y = 0;
+
+			// 네비 메쉬타게 끔 세팅
+			pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pCollider->Get_Length().x));
+		}
+	}
 }
 
 HRESULT CSwordGenji::Draw_Collider()
@@ -986,6 +1027,14 @@ HRESULT CSwordGenji::Add_Component(void* pArg)
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMesh)))
 		return E_FAIL;
 
+	// for.Com_Collider
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+		return E_FAIL;
+
+	m_pCollider->Set_Radius(_v3{ 0.5f, 0.5f, 0.5f });
+	m_pCollider->Set_Dynamic(true);
+	m_pCollider->Set_Type(COL_SPHERE);
+	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pCollider->Get_Radius().y , 0.f });
 
 	return NOERROR;
 }
@@ -1140,6 +1189,7 @@ void CSwordGenji::Free()
 	Safe_Release(m_pMeshCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pCollider);
 
 	CGameObject::Free();
 }

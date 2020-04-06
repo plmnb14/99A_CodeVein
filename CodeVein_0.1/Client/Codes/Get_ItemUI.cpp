@@ -2,6 +2,8 @@
 #include "Get_ItemUI.h"
 #include "..\Headers\Get_ItemUI.h"
 
+#include "UI_Manager.h"
+
 
 CGet_ItemUI::CGet_ItemUI(_Device Graphic_Device)
 	: CUI(Graphic_Device)
@@ -28,6 +30,12 @@ HRESULT CGet_ItemUI::Ready_GameObject(void * pArg)
 
 	CUI::Ready_GameObject(pArg);
 
+	// 아이템 획득 시 알림이 1개 생성
+	// 아이템 이후 아이템 획득이 더이상 없을시 n초 후 삭제.
+	// n초 보다 시간이 적게 흐른 상태에서, 또 아이템을 습득할 시 n초는 갱신, 
+	// 아이템 획득 메세지 1개 더 추가로 출력
+
+
 	m_fPosX = WINCX * 0.5f;
 	m_fPosY = WINCY - 100.f;
 
@@ -46,7 +54,7 @@ _int CGet_ItemUI::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
-	if (true == m_bShow_Ask_Pickup || 3 == m_iUINumber && m_fEndTimer <= 1.5f)
+	if (true == m_bShow_Ask_Pickup && false == m_bSparkle_Box)
 		m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	return S_OK;
@@ -68,7 +76,7 @@ _int CGet_ItemUI::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CGet_ItemUI::LateInit_GameObject()
 {
-	
+
 	return S_OK;
 }
 
@@ -85,6 +93,11 @@ HRESULT CGet_ItemUI::Render_GameObject()
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
+	CUI_Manager* pUIMgr = CUI_Manager::Get_Instance();
+
+	if (3 < m_iCount_PickUpitem)
+		m_iCount_PickUpitem = 0;
+
 	if (FAILED(SetUp_ConstantTable(0)))
 		return E_FAIL;
 
@@ -96,8 +109,8 @@ HRESULT CGet_ItemUI::Render_GameObject()
 		m_pShaderCom->Begin_Pass(5);
 	else
 		m_pShaderCom->Begin_Pass(1);
-
-	if(true == m_bCheck_Click && false == m_bSparkle_Box)
+	
+	if (true == m_bCheck_Click && false == m_bSparkle_Box)
 	{
 		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 1)))
 			return E_FAIL;
@@ -107,44 +120,49 @@ HRESULT CGet_ItemUI::Render_GameObject()
 		if (g_pInput_Device->Key_Up(DIK_P))
 		{
 			m_bSparkle_Box = true;
-		}
-			
-	}
-	// 여기 사이에 아이템 박스 반짝
-	if (true == m_bSparkle_Box && false == m_bShow_GetItemName)
-	{
-		m_iUINumber = 4;
-
-		m_fSparkleBox -= 0.01f;
-
-
-
-		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 4)))
-			return E_FAIL;
-
-		m_pShaderCom->Commit_Changes();
-
-		if (0.f >= m_fSparkleBox)
-		{
-			m_bShow_GetItemName = true;
-		}
-	}
-	else
-	{
-		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 2)))
-			return E_FAIL;
-	}
 		
-	if (true == m_bShow_GetItemName)
-	{
-		m_iUINumber = 3;
-		m_bShow_Ask_Pickup = true;
-
-		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 3)))
-			return E_FAIL;
-
-		m_pShaderCom->Commit_Changes();
+			++m_iCount_PickUpitem;
+			pUIMgr->Set_CoundItem(m_iCount_PickUpitem);
+		}
 	}
+	
+	//else
+	//{
+
+	//}
+	//// 여기 사이에 아이템 박스 반짝
+	//if (true == m_bSparkle_Box && false == m_bShow_GetItemName)
+	//{
+	//	m_iUINumber = 4;
+
+	//	m_fSparkleBox -= 0.01f;
+
+	//	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 4)))
+	//		return E_FAIL;
+
+	//	m_pShaderCom->Commit_Changes();
+
+	//	if (0.f >= m_fSparkleBox)
+	//	{
+	//		m_bShow_GetItemName = true;
+	//	}
+	//}
+	//else
+	//{
+	//	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 2)))
+	//		return E_FAIL;
+	//}
+
+	//if (true == m_bShow_GetItemName)
+	//{
+	//	m_iUINumber = 3;
+	//	m_bShow_Ask_Pickup = true;
+
+	//	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 3)))
+	//		return E_FAIL;
+
+	//	m_pShaderCom->Commit_Changes();
+	//}
 	m_pBufferCom->Render_VIBuffer();
 
 	m_pShaderCom->End_Pass();
@@ -203,9 +221,11 @@ HRESULT CGet_ItemUI::SetUp_ConstantTable(_uint TextureIndex)
 
 	if (FAILED(m_pShaderCom->Set_Value("g_fSparkle", &m_fSparkleBox, sizeof(_float))))
 		return E_FAIL;
-	
+
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, TextureIndex)))
 		return E_FAIL;
+
+	m_iUINumber = TextureIndex;
 
 	return S_OK;
 }
@@ -223,16 +243,16 @@ void CGet_ItemUI::SetUp_State(_double TimeDelta)
 
 	// 지금은 더미로 했지만 나중에 아이템 생성되고 나면 생성된 아이템에 따라 아이템 이름을(enum값을?)
 	// 변수에다가 받아와서 해당 이름을 띄운다
-	
+
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
-	CGameObject* pItems = g_pManagement->Get_GameObjectBack(L"Layer_Dummy", SCENE_STAGE);
+	CGameObject* pItems = g_pManagement->Get_GameObjectBack(L"Layer_Monster", SCENE_STAGE);
 
 	_v3 Player_D3 = TARGET_TO_TRANS(m_pTarget)->Get_Pos() - TARGET_TO_TRANS(pItems)->Get_Pos();
-	
+
 	if (V3_LENGTH(&Player_D3) <= 2.f)
 	{
 		m_bShow_Ask_Pickup = true;
-		if (g_pInput_Device->Key_Pressing(DIK_P))
+		if (g_pInput_Device->Key_Down(DIK_P))
 		{
 			m_bCheck_Click = true;
 		}
@@ -242,7 +262,8 @@ void CGet_ItemUI::SetUp_State(_double TimeDelta)
 		m_bCheck_Click = false;
 		m_bShow_Ask_Pickup = false;
 	}
-		
+	
+
 	if (3 == m_iUINumber || 4 == m_iUINumber)
 	{
 		m_fSizeX = 298.f;
@@ -259,11 +280,9 @@ void CGet_ItemUI::SetUp_State(_double TimeDelta)
 	if (m_fNowItemBar_Size >= m_fSizeX)
 	{
 		m_fNowItemBar_Size = m_fSizeX;
-		m_fEndTimer += (_float)TimeDelta;
+		//m_fEndTimer += (_float)TimeDelta;
 	}
-
-
-	if (2.3f <= m_fEndTimer)
+	if (true == m_bSparkle_Box)
 	{
 		m_bCheck_Click = false;
 		m_bSparkle_Box = false;
@@ -274,6 +293,7 @@ void CGet_ItemUI::SetUp_State(_double TimeDelta)
 		m_fTimer = 0.f;
 		m_fEndTimer = 0.f;
 		m_fNowItemBar_Size = 0.f;
+
 		m_iUINumber = 0;
 
 		m_fPosX = WINCX * 0.5f;

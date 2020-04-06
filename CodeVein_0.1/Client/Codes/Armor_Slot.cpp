@@ -29,6 +29,8 @@ HRESULT CArmor_Slot::Ready_GameObject(void * pArg)
 	
 	SetUp_Default();
 
+	m_bIsActive = false;
+
 	return NOERROR;
 }
 
@@ -91,7 +93,7 @@ HRESULT CArmor_Slot::Render_GameObject()
 
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(0);
+	m_pShaderCom->Begin_Pass(1);
 
 	m_pBufferCom->Render_VIBuffer();
 
@@ -166,7 +168,7 @@ void CArmor_Slot::SetUp_Default()
 	pDesc->fPosX = m_fPosX;
 	pDesc->fPosY = m_fPosY;
 	pDesc->fSizeX = m_fSizeX;
-	pDesc->fPosY = m_fSizeY;
+	pDesc->fSizeY = m_fSizeY;
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_SelectUI", SCENE_STAGE, L"Layer_SelectUI", pDesc)))
 		return;
 	m_pSelectUI = static_cast<CSelect_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_SelectUI", SCENE_STAGE));
@@ -194,6 +196,7 @@ CGameObject * CArmor_Slot::Clone_GameObject(void * pArg)
 
 void CArmor_Slot::Free()
 {
+	
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom);

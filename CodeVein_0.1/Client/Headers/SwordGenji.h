@@ -106,6 +106,7 @@ private:
 	CMesh_Dynamic*		m_pMeshCom = nullptr;
 	CAIController*		m_pAIControllerCom = nullptr;
 	CNavMesh*			m_pNavMesh = nullptr;
+	CCollider*			m_pCollider = nullptr;
 
 	CWeapon*			m_pSword = nullptr;
 
@@ -150,6 +151,8 @@ private:
 	_bool Is_InFov(_float fDegreeOfFov, _v3 vTargetPos);
 
 	void Check_PhyCollider();
+
+	void Push_Collider();
 
 	HRESULT Draw_Collider();
 

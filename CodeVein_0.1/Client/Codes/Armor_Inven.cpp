@@ -24,12 +24,12 @@ HRESULT CArmor_Inven::Ready_GameObject(void * pArg)
 		return E_FAIL;
 
 	CUI::Ready_GameObject(pArg);
-	m_fPosX = WINCX * 0.75f;
+	m_fPosX = WINCX * 0.3f;
 	m_fPosY = WINCY * 0.5f;
-	m_fSizeX = WINCX * 0.5f;
-	m_fSizeY = WINCY;
+	m_fSizeX = 352.f;
+	m_fSizeY = 471.f;
 
-	m_fViewZ = 1.f;
+	m_fViewZ = 4.f;
 
 	m_bIsActive = false;
 
@@ -56,10 +56,8 @@ _int CArmor_Inven::Update_GameObject(_double TimeDelta)
 
 	if (m_bIsActive)
 	{
-		//if(g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 		if (GetAsyncKeyState(VK_LBUTTON) && 0x8000)
 			Regist_Armor();
-		//if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
 		if (GetAsyncKeyState(VK_RBUTTON) && 0x8000)
 			Unregist_Armor();
 	}
@@ -104,7 +102,7 @@ HRESULT CArmor_Inven::Render_GameObject()
 
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(0);
+	m_pShaderCom->Begin_Pass(1);
 
 
 	m_pBufferCom->Render_VIBuffer();

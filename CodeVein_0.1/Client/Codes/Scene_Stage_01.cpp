@@ -6,6 +6,7 @@
 #include "UI.h"
 #include "UI_Manager.h"
 #include "ParticleMgr.h"
+#include "ScriptManager.h"
 
 CScene_Stage_01::CScene_Stage_01(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
@@ -25,11 +26,10 @@ HRESULT CScene_Stage_01::Ready_Scene()
 		return E_FAIL;
 
 	//if (m_bLoadStaticMesh)
-	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_01.dat");
+		g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_01.dat");
 
-	//m_pNavMesh = static_cast<Engine::CNavMesh*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Com_NavMesh"));
-
-	//m_pNavMesh->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Stage_01.dat");
+	CScriptManager::Get_Instance()->Set_StageIdx(1);
+	CScriptManager::Get_Instance()->Ready_Script_DynamicObject(1);
 
 	return S_OK;
 }
@@ -88,7 +88,7 @@ HRESULT CScene_Stage_01::Ready_LightDesc()
 	LightDesc.Ambient = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	// In.WorldSpace
-	LightDesc.Direction = _v3(1.f, 0.f, -1.f);
+	LightDesc.Direction = _v3(0.0f, 0.f, 1.f);
 
 	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
 		return E_FAIL;

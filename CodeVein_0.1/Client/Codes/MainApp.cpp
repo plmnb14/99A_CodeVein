@@ -5,6 +5,7 @@
 #include "UI_Manager.h"
 #include "Item_Manager.h"
 #include "ParticleMgr.h"
+#include "ScriptManager.h"
 
 CMainApp::CMainApp()
 {
@@ -83,6 +84,8 @@ HRESULT CMainApp::Ready_Default_Setting(CGraphic_Device::WINMODE eMode, _ushort 
 
 	if (FAILED(g_pManagement->Set_InputDev()))
 		return E_FAIL;
+
+	CScriptManager::Get_Instance()->Ready_ScriptManager(m_pGraphic_Dev);
 
 
 	return S_OK;
@@ -181,6 +184,7 @@ void CMainApp::Free()
 
 	Safe_Release(m_pGraphic_Dev);
 	
+	CScriptManager::Get_Instance()->Destroy_Instance();
 	CParticleMgr::Get_Instance()->Destroy_Instance();
 
 	Safe_Release(m_pRenderer);

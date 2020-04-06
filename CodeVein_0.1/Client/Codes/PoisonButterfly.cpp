@@ -244,6 +244,9 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 
 _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 {
+	if (false == m_bEnable)
+		return NO_EVENT;
+
 	CGameObject::Update_GameObject(TimeDelta);
 
 	// Á×¾úÀ» °æ¿ì
@@ -287,6 +290,9 @@ _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 
 _int CPoisonButterfly::Late_Update_GameObject(_double TimeDelta)
 {
+	if (false == m_bEnable)
+		return NO_EVENT;
+
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
 
@@ -1033,6 +1039,9 @@ void CPoisonButterfly::Check_PhyCollider()
 		m_tObjParam.fHp_Cur -= 0.99f;	// Ã¼·Â ÀÓÀÇ·Î ´â°Ô ¸¸µê.
 
 		m_bAIController = false;
+		
+		
+		
 		cout << "³ªµµ ºÎµúÈû ^^" << endl;
 		m_tObjParam.bIsHit = true;
 		m_tObjParam.bCanHit = true;

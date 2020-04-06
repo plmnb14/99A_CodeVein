@@ -7,7 +7,8 @@
 
 BEGIN(Client)
 
-
+class CButton_UI;
+class CNumberUI;
 class CQuickSlot final : public CUI
 {
 private:
@@ -16,7 +17,7 @@ private:
 	virtual ~CQuickSlot() = default;
 
 public:
-
+	
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -28,6 +29,7 @@ public:
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
+	void	SetUp_Default();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -39,6 +41,8 @@ private:
 private:
 	vector<CExpendables_Slot*>	m_vecQuickSlot;
 	_uint						m_iSelect = 0;
+	vector<CButton_UI*>			m_vecDecoUI;
+	CNumberUI*					m_pNumberUI = nullptr;
 
 public:
 	static CQuickSlot*		Create(_Device pGraphic_Device);

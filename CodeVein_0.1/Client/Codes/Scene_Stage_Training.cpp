@@ -7,6 +7,9 @@
 #include "UI_Manager.h"
 #include "ParticleMgr.h"
 
+#include "MassageUI.h"
+#include "MonsterUI.h"
+
 #include "SwordGenji.h"
 #include "GunGenji.h"
 #include "SwordShieldGenji.h"
@@ -74,6 +77,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Dummy(const _tchar * pLayerTag)
 	//////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
+
 	return S_OK;
 }
 
@@ -87,6 +91,17 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 
 	CGameObject* pInstance = nullptr;
 
+ 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_MonsterUI", SCENE_STAGE, L"Layer_MonsterHPUI")))
+ 		return E_FAIL;
+
+	 if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Start_BossUI", SCENE_STAGE, L"Layer_MassageUI")))
+	 	return E_FAIL;
+
+	 if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Get_ItemUI", SCENE_STAGE, L"Layer_Get_ItemUI")))
+		 return E_FAIL;
+
+	 if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Pickup_ItemUI", SCENE_STAGE, L"Layer_PickUPUI")))
+		 return E_FAIL;
 	
 	// 검은 성게
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_BlackUrchin", SCENE_STAGE, L"Layer_Monster")))
@@ -99,9 +114,9 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	// 검겐지
 	//====================================================================================================================================================
 	
+
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White, CSwordGenji::Sit1, 10.f, 5.f, 2.f));
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(-4.f, 0.f, -4.f));
-	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
 	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
 	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
@@ -225,21 +240,9 @@ HRESULT CScene_Stage_Training::Ready_LightDesc()
 	LightDesc.Specular = LightDesc.Diffuse;
 	// In.WorldSpace
 	LightDesc.Direction = _v3(1.f, 1.f, -1.f);
-	
+
 	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
 		return E_FAIL;
-
-	//LightDesc.Type = D3DLIGHT_POINT;
-	//LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	//LightDesc.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.f);
-	//LightDesc.Specular = LightDesc.Diffuse;
-	//// In.WorldSpace
-	////LightDesc.Direction = _v3(1.f, 1.f, -1.f);
-	//LightDesc.Position = _v3(45.f, 45.f, 40.f);
-	//LightDesc.Range = 3000.f;
-	//
-	//if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
-	//	return E_FAIL;
 
 	return NOERROR;
 }
@@ -261,8 +264,6 @@ CScene_Stage_Training * CScene_Stage_Training::Create(LPDIRECT3DDEVICE9 pGraphic
 
 void CScene_Stage_Training::Free()
 {
-	Safe_Release(m_pNavMesh);
-
 	CScene::Free();
 }
 

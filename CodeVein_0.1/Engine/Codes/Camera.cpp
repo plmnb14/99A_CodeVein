@@ -419,9 +419,11 @@ void CCamera::Set_MouseControl(_bool _bMouseControl)
 	m_bMouseControl = _bMouseControl;
 }
 
-void CCamera::Set_OnAimingTarget()
+void CCamera::Set_OnAimingTarget(_bool _bOnAim)
 {
-	m_bOnAiming = (m_bOnAiming == true ? false : true);
+	m_bOnAiming = _bOnAim;
+
+	//m_bOnAiming = (m_bOnAiming == true ? false : true);
 
 	m_vOldPos = m_pTransform->Get_Pos();
 	m_vOldAt = m_pTransform->Get_At();

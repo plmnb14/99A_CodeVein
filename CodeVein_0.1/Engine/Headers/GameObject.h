@@ -27,10 +27,13 @@ public:
 	virtual _ulong		Get_LayerIdx() { return m_dwLayerIdx; }
 	virtual CComponent*	Get_Component(const _tchar* pComponentTag);
 	_float				Get_ViewZ(void) { return m_fViewZ; }
+	virtual _bool		Get_Enable() { return m_bEnable; }
+	virtual _bool		Get_Dead() { return m_bIsDead; }
 
 public:
 	virtual void	Set_Target(CGameObject* _pTarget) { m_pTarget = _pTarget; }
 	virtual void	Set_LayerIdx(_ulong _dwLayerIdx) { m_dwLayerIdx = _dwLayerIdx; }
+	void			Set_Enable(_bool _bEnable) {m_bEnable = _bEnable;}
 	void			Set_Dead();
 	void			Set_ViewZ(_float fViewZ) { m_fViewZ = fViewZ; }
 
@@ -58,12 +61,14 @@ public:
 	virtual _bool Get_Target_Dodge() { return m_tObjParam.bDodge; };
 	virtual _bool Get_Target_IsHit() { return m_tObjParam.bIsHit; }
 	virtual _bool Get_Target_CanHit() { return m_tObjParam.bCanHit; }
+	virtual _bool Get_Target_HitAgain() { return m_tObjParam.bHitAgain; }
 	virtual _bool Get_Target_KnockBack() { return m_tObjParam.bKnockBack; }
 	virtual _bool Get_Target_IsAttack() { return m_tObjParam.bIsAttack; }
 	virtual _bool Get_Target_CanAttack() { return m_tObjParam.bCanAttack; }
 	virtual _float Get_Target_Hp() { return m_tObjParam.fHp_Cur; };
 	virtual _float Get_Target_Stamina() { return m_tObjParam.fStamina_Cur; };
 	virtual _float Get_Target_HoldGage() { return m_tObjParam.fHoldGage_Cur; };
+	virtual _float Get_DodgeTimer() { return m_tObjParam.fDodgeTimer; }
 
 public:
 	virtual void Add_Target_Hp(_float _fHp) { m_tObjParam.fHp_Cur += _fHp; };
@@ -75,10 +80,12 @@ public:
 	virtual void Set_Target_IsDown(_bool _bDown) { m_tObjParam.bDown = _bDown; }
 	virtual void Set_Target_IsHit(_bool _bHit) { m_tObjParam.bIsHit = _bHit; }
 	virtual void Set_Target_CanHit(_bool _bCanHit) { m_tObjParam.bCanHit = _bCanHit; }
+	virtual void Set_HitAgain(_bool _bHitAgain) { m_tObjParam.bHitAgain = _bHitAgain; }
 	virtual void Set_Target_IsAttack(_bool _bIsAttack) { m_tObjParam.bIsAttack = _bIsAttack; }
 	virtual void Set_Target_CanAttack(_bool _bCanAttack) { m_tObjParam.bCanAttack = _bCanAttack; }
 	virtual void Set_Target_KnockBack(_bool _bKnockBack) { m_tObjParam.bKnockBack = _bKnockBack; }
 	virtual void Set_Target_Dodge(_bool _bDodge) { m_tObjParam.bDodge = _bDodge; }
+	virtual void Set_Target_DodgeTimer(_float _fDodgeTimer) { m_tObjParam.fDodgeTimer = _fDodgeTimer; }
 	
 public:
 	vector<CCollider*>		Get_PhysicColVector() { return m_vecPhysicCol; };	// 충돌 체크용 콜라이더 벡터
@@ -87,9 +94,10 @@ public:
 protected:
 	vector<CCollider*>		m_vecPhysicCol;		// 충돌 체크용 콜라이더 벡터
 	vector<CCollider*>		m_vecAttackCol;		// 공격용 콜라이더 벡터
-												//======================================================================================================================
-												// 임시 충돌	
-												//======================================================================================================================
+
+//======================================================================================================================
+// 임시 충돌	
+//======================================================================================================================
 
 protected:
 	LPDIRECT3DDEVICE9		m_pGraphic_Dev = nullptr;
@@ -100,6 +108,9 @@ protected:
 protected:
 	_bool	m_bIsDead = false;
 	_bool	m_bIsInit = false;
+	_bool	m_bEnable = true;
+
+protected:
 	
 	_float	m_fViewZ = 0.f;
 

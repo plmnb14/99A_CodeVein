@@ -32,13 +32,9 @@ HRESULT CExpendables_Slot::Ready_GameObject(void * pArg)
 		return DEAD_OBJ;
 	CUI::Ready_GameObject(pArg);
 
-	CUI::UI_DESC* pDesc = new CUI::UI_DESC;
-	pDesc->fPosX = m_fPosX;
-	pDesc->fPosY = m_fPosY;
-	pDesc->fSizeX = m_fSizeX;
-	pDesc->fPosY = m_fSizeY;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_SelectUI", SCENE_STAGE, L"Layer_SelectUI", pDesc);
-	m_pSelectUI = static_cast<CSelect_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_SelectUI", SCENE_STAGE));
+	SetUp_Default();
+	
+	m_bIsActive = false;
 
 	return NOERROR;
 }
@@ -50,7 +46,40 @@ _int CExpendables_Slot::Update_GameObject(_double TimeDelta)
 		return DEAD_OBJ;
 
 	if (m_pSelectUI)
+	{
+		m_pSelectUI->Set_UI_Pos(m_fPosX, m_fPosY);
+		m_pSelectUI->Set_UI_Size(m_fSizeX, m_fSizeY);
+		m_pSelectUI->Set_ViewZ(m_fViewZ - 0.1f);
 		m_pSelectUI->Set_Active(m_bIsActive);
+
+	}
+		
+
+	if (m_pCursorUI)
+	{
+		m_pCursorUI->Set_UI_Pos(m_fPosX, m_fPosY);
+		m_pCursorUI->Set_UI_Size(m_fSizeX, m_fSizeY);
+		m_pCursorUI->Set_ViewZ(m_fViewZ - 0.2f);
+
+		if (m_vecExpendables.size() > 0)
+			m_pCursorUI->Set_Active(m_bIsActive);
+		else
+			m_pCursorUI->Set_Active(false);
+		
+		m_pCursorUI->Set_CursorColl(Pt_InRect());
+	}
+		
+
+	if (m_pNumberUI)
+	{
+		m_pNumberUI->Set_Active(m_bIsActive);
+
+		if (m_vecExpendables.size() == 0)
+			m_pNumberUI->Set_Active(false);
+
+		m_pNumberUI->Set_UI_Index(m_vecExpendables.size());
+	}
+		
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
@@ -61,10 +90,7 @@ _int CExpendables_Slot::Update_GameObject(_double TimeDelta)
 	else
 		m_iIndex = CExpendables::EXPEND_END;
 
-	m_pSelectUI->Set_UI_Pos(m_fPosX, m_fPosY);
-	m_pSelectUI->Set_UI_Size(m_fSizeX, m_fSizeY);
-	m_pSelectUI->Set_ViewZ(m_fViewZ - 0.1f);
-
+	
 	if (m_vecExpendables.size() > 0)
 		m_pSelectUI->Set_Select(m_bIsSelect);
 	else
@@ -110,7 +136,7 @@ HRESULT CExpendables_Slot::Render_GameObject()
 
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(0);
+	m_pShaderCom->Begin_Pass(1);
 
 	m_pBufferCom->Render_VIBuffer();
 
@@ -163,8 +189,6 @@ void CExpendables_Slot::Delete_Items()
 		m_vecExpendables.pop_back();
 }
 
-
-
 HRESULT CExpendables_Slot::Add_Component()
 {
 	// For.Com_Transform
@@ -209,6 +233,35 @@ HRESULT CExpendables_Slot::SetUp_ConstantTable()
 	return NOERROR;
 }
 
+void CExpendables_Slot::SetUp_Default()
+{
+	CUI::UI_DESC* pDesc = nullptr;
+
+	pDesc = new CUI::UI_DESC;
+	pDesc->fPosX = m_fPosX;
+	pDesc->fPosY = m_fPosY;
+	pDesc->fSizeX = m_fSizeX;
+	pDesc->fSizeY = m_fSizeY;
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_SelectUI", SCENE_STAGE, L"Layer_SelectUI", pDesc);
+	m_pSelectUI = static_cast<CSelect_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_SelectUI", SCENE_STAGE));
+
+	pDesc = new CUI::UI_DESC;
+	pDesc->fPosX = m_fPosX - m_fSizeX * 0.25f;
+	pDesc->fPosY = m_fPosY + m_fSizeY * 0.25f;
+	pDesc->fSizeX = m_fSizeX * 0.25f;
+	pDesc->fSizeY = m_fSizeY * 0.25f;
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NumberUI", SCENE_STAGE, L"Layer_NumberUI", pDesc);
+	m_pNumberUI = static_cast<CNumberUI*>(g_pManagement->Get_GameObjectBack(L"Layer_NumberUI", SCENE_STAGE));
+
+	pDesc = new CUI::UI_DESC;
+	pDesc->fPosX = m_fPosX;
+	pDesc->fPosY = m_fPosY;
+	pDesc->fSizeX = m_fSizeX;
+	pDesc->fSizeY = m_fSizeY;
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_CursorUI", SCENE_STAGE, L"Layer_CursorUI", pDesc);
+	m_pCursorUI = static_cast<CCursorUI*>(g_pManagement->Get_GameObjectBack(L"Layer_CursorUI", SCENE_STAGE));
+}
+
 
 
 CExpendables_Slot * CExpendables_Slot::Create(_Device pGraphic_Device)
@@ -239,9 +292,7 @@ CGameObject * CExpendables_Slot::Clone_GameObject(void * pArg)
 
 void CExpendables_Slot::Free()
 {
-	if (m_pSelectUI)
-		m_pSelectUI->Set_Dead();
-
+	
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom);
