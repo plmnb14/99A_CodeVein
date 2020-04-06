@@ -620,6 +620,45 @@ _bool CCollider::Check_Sphere(CCollider * _rSrc)
 	_float fLength = D3DXVec3Length(&(_rSrc->Get_CenterPos() - m_tColInfo.vCenterPos));
 	_float fRadiusSum = _rSrc->Get_Radius().x + m_tColInfo.vRadius.x;
 
+	_bool bCollision = (fLength > fRadiusSum ? false : true);
+
+	if (bCollision)
+	{
+		_float fCalcLength = fLength - fRadiusSum;
+
+		m_tColInfo.vLength = _v3(fCalcLength, fCalcLength, fCalcLength);
+	}
+
+	else
+		m_tColInfo.vLength = V3_NULL;
+
+	return (fLength > fRadiusSum ? false : true);
+}
+
+
+_bool CCollider::Check_Sphere(CCollider * _rSrc , _v3 vDir, _float fSpeed)
+{
+	_float fLength = D3DXVec3Length(&(_rSrc->Get_CenterPos() - (m_tColInfo.vCenterPos + (vDir * fSpeed))));
+	_float fRadiusSum = _rSrc->Get_Radius().x + m_tColInfo.vRadius.x;
+
+	_bool bCollision = (fLength > fRadiusSum ? false : true);
+
+	if (bCollision)
+	{
+		_float fCalcLength = fLength - fRadiusSum;
+
+		if (m_tColInfo.bIsDynamic)
+		{
+			cout << "드르오냐 " << endl;
+			fCalcLength *= 0.5f;
+		}
+
+		m_tColInfo.vLength = _v3(fCalcLength, fCalcLength, fCalcLength);
+	}
+
+	else
+		m_tColInfo.vLength = V3_NULL;
+
 	return (fLength > fRadiusSum ? false : true);
 }
 

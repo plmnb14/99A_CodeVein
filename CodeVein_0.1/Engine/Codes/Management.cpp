@@ -54,7 +54,6 @@ _int CManagement::Update_Management(_double TimeDelta)
 	_int iProgress = 0;
 
 	iProgress = m_pObject_Manager->Update_Object_Manager(TimeDelta);
-
 	if (0 > iProgress)
 		return iProgress;
 
@@ -345,6 +344,22 @@ const D3DLIGHT9 * CManagement::Get_LightDesc(_uint iIndex)
 	return m_pLight_Manager->Get_LightDesc(iIndex);
 }
 
+const _mat CManagement::Get_LightViewProj(_uint iIndex)
+{
+	if (nullptr == m_pLight_Manager)
+		return _mat();
+
+	return m_pLight_Manager->Get_LightViewProj(iIndex);
+}
+
+void CManagement::Set_LightPos(_uint iIndex, _v3 vPos)
+{
+	if (nullptr == m_pLight_Manager)
+		return;
+
+	return m_pLight_Manager->Set_Pos(iIndex, vPos);
+}
+
 HRESULT CManagement::Add_Light(LPDIRECT3DDEVICE9 pGraphic_Device, D3DLIGHT9 LightDesc)
 {
 	if (nullptr == m_pLight_Manager)
@@ -495,9 +510,24 @@ void CManagement::Create_AngleEffect(_tchar * szName, _v3 vPos, _v3 vAngle, CTra
 	CParticleMgr::Get_Instance()->Create_AngleEffect(szName, vPos, vAngle, pFollowTrans);
 }
 
+void CManagement::Create_AutoFindEffect(_tchar* szName, _float fLifeTime, CTransform* pFollowTrans, _v3 vPos)
+{
+	CParticleMgr::Get_Instance()->Create_AutoFindEffect(szName, fLifeTime, vPos, pFollowTrans);
+}
+
 void CManagement::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol, CTransform* pHittedTrans, _float fPower)
 {
 	CParticleMgr::Get_Instance()->Create_Hit_Effect(pAttackCol, pHittedCol, pHittedTrans, fPower);
+}
+
+void CManagement::Create_Spawn_Effect(_v3 vPos, CTransform* pFollowTrans)
+{
+	CParticleMgr::Get_Instance()->Create_Spawn_Effect(vPos, pFollowTrans);
+}
+
+void CManagement::Create_FootSmoke_Effect(_v3 vPos, _float fOffset)
+{
+	CParticleMgr::Get_Instance()->Create_FootSmoke_Effect(vPos, fOffset);
 }
 
 void CManagement::Free()

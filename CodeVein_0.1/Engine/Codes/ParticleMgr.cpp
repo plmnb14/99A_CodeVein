@@ -16,7 +16,10 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 
 	//Safe_AddRef(m_pManagement);
 
-	Input_Pool(L"Player_FootSmoke", 100);
+	Input_Pool(L"Player_FootSmoke", 50);
+	Input_Pool(L"Player_FootSmoke_Jump", 30);
+	Input_Pool(L"Player_FootSmoke_DodgeBack", 30);
+	Input_Pool(L"Player_SpaceBar_StepParticle", 100);
 
 	Input_Pool(L"ButterFly_SoftSmoke", 2000);
 	Input_Pool(L"ButterFly_PointParticle", 100);
@@ -84,6 +87,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Hit_Particle_Yellow"	, 100);
 
 	Input_Pool(L"SpawnParticle", 1000);
+	Input_Pool(L"SpawnParticle_Sub", 1000);
 
 	Input_Pool(L"Bullet_Body", 50);
 	Input_Pool(L"Bullet_Body_Aura", 100);
@@ -95,7 +99,9 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Bullet_Ready_Flash", 10);
 	Input_Pool(L"Bullet_Tail_Particle", 100);
 
-
+	Input_Pool(L"MistletoeParticle", 80);
+	Input_Pool(L"MistletoeParticle_Sub", 80);
+	
 	return S_OK;
 }
 
@@ -136,6 +142,7 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 						CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));
 						pEffect->Set_ParticleName(szEffName);
 						pEffect->Set_Desc((*iter_begin)->vCreatePos, (*iter_begin)->pFollowTrans);
+						pEffect->Set_AutoFind((*iter_begin)->bAutoFind);
 						pEffect->Reset_Init();
 
 						m_EffectList.push_back(pEffect);
@@ -144,6 +151,7 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 
 					m_EffectList.push_back(pFindedQueue->front());
 					pFindedQueue->front()->Set_Desc((*iter_begin)->vCreatePos, (*iter_begin)->pFollowTrans);
+					pFindedQueue->front()->Set_AutoFind((*iter_begin)->bAutoFind);
 					pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
 					pFindedQueue->pop();
 				}
@@ -171,6 +179,7 @@ void CParticleMgr::Create_ParticleEffect(_tchar* szName, _float fLifeTime, _v3 v
 	pInfo->fLifeTime = fLifeTime;
 	pInfo->pFollowTrans = pFollowTrans;
 	pInfo->vCreatePos = vPos;
+	pInfo->bAutoFind = false;
 	
 	m_vecParticle.push_back(pInfo);
 }
@@ -271,6 +280,19 @@ void CParticleMgr::Create_AngleEffect(_tchar * szName, _v3 vPos, _v3 vAngle, CTr
 	}
 }
 
+void CParticleMgr::Create_AutoFindEffect(_tchar* szName, _float fLifeTime, _v3 vPos, CTransform* pFollowTrans)
+{
+	PARTICLE_INFO* pInfo = new PARTICLE_INFO;
+
+	lstrcpy(pInfo->szName, szName);
+	pInfo->fLifeTime = fLifeTime;
+	pInfo->pFollowTrans = pFollowTrans;
+	pInfo->vCreatePos = vPos;
+	pInfo->bAutoFind = true;
+
+	m_vecParticle.push_back(pInfo);
+}
+
 void CParticleMgr::Create_Effect_NoPool(_tchar* szName, _v3 vPos, CTransform* pFollowTrans)
 {
 	CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szName, nullptr));
@@ -333,6 +355,22 @@ void CParticleMgr::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCo
 	Create_DirEffect(L"Hit_Blood_Direction_4", vAttackPos, vBloodDir);
 	Create_DirEffect(L"Hit_Blood_Direction_5", vAttackPos, vBloodDir);
 	Create_DirEffect(L"Hit_Blood_Direction_6", vAttackPos, vBloodDir);
+}
+
+void CParticleMgr::Create_Spawn_Effect(_v3 vPos, CTransform* pFollowTrans)
+{
+	Create_ParticleEffect(L"SpawnParticle", 2.f, vPos, pFollowTrans);
+	Create_ParticleEffect(L"SpawnParticle_Sub", 2.f, vPos, pFollowTrans);
+}
+
+void CParticleMgr::Create_FootSmoke_Effect(_v3 vPos, _float fOffset)
+{
+	m_fFootSmokeeDelay_Check += DELTA_60;
+	if (m_fFootSmokeeDelay_Check < fOffset)
+		return;
+
+	m_fFootSmokeeDelay_Check = 0.f;
+	Create_Effect(L"Player_FootSmoke", vPos);
 }
 
 HRESULT CParticleMgr::Update_Effect(const _double TimeDelta)

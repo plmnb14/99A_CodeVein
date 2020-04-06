@@ -41,7 +41,7 @@ public:
 	void Set_MinDistance(_float _fMinDist);
 	void Set_Distance(_float _fDist);
 
-	void Set_OnAimingTarget();
+	void Set_OnAimingTarget(_bool _bOnAim);
 	void Set_AimingTarget(CGameObject* pAimingTarget);
 
 	void Set_MouseCtrl(_bool _bMouseCtrl);

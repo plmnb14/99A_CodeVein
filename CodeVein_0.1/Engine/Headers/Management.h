@@ -78,6 +78,8 @@ public: // For.PipeLine
 
 public: // For.Light_Manager
 	const D3DLIGHT9* Get_LightDesc(_uint iIndex = 0);
+	const _mat Get_LightViewProj(_uint iIndex = 0);
+	void Set_LightPos(_uint iIndex, _v3 vPos);
 	HRESULT Add_Light(LPDIRECT3DDEVICE9 pGraphic_Device, D3DLIGHT9 LightDesc);
 
 public: // For.Target_Manager
@@ -108,7 +110,10 @@ public: // For.ParticleManager
 	void Create_Effect(_tchar* szName, _v3 vPos, CTransform* pFollowTrans = nullptr);
 	void Create_DirEffect(_tchar* szName, _v3 vPos, _v3 vDir, CTransform* pFollowTrans = nullptr);
 	void Create_AngleEffect(_tchar* szName, _v3 vPos, _v3 vAngle, CTransform* pFollowTrans = nullptr);
+	void Create_AutoFindEffect(_tchar* szName, _float fLifeTime, CTransform* pFollowTrans, _v3 vPos = V3_NULL);
 	void Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol, CTransform* pHittedTrans, _float fPower = 1.5f);
+	void Create_Spawn_Effect(_v3 vPos, CTransform* pFollowTrans = nullptr);
+	void Create_FootSmoke_Effect(_v3 vPos, _float fOffset);
 
 private:
 	CGraphic_Device*			m_pGraphic_Device = nullptr;

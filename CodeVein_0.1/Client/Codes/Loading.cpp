@@ -19,11 +19,13 @@
 
 #include "PoisonButterfly.h"
 #include "PoisonBullet.h"
+#include "PoisonChaseBullet.h"
 #include "BlackUrchin.h"
 #include "BlackWolf.h"
 #include "GunGenji.h"
-#include "GenjiBullet.h"
+#include "GunGenjiBullet.h"
 #include "SwordGenji.h"
+#include "SwordGenjiBullet.h"
 #include "SwordShieldGenji.h"
 #include "YachaMan.h"
 
@@ -159,9 +161,6 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"Boss_KnockDown_Dust")))
 		return E_FAIL;
 	
-	if (FAILED(Add_EffectPrototype(L"Player_FootSmoke")))
-		return E_FAIL;
-
 #pragma region Blood
 	if (FAILED(Add_EffectPrototype(L"Hit_Blood_0")))
 		return E_FAIL;
@@ -252,6 +251,23 @@ HRESULT CLoading::Ready_Effect(void)
 #pragma endregion
 
 	if (FAILED(Add_EffectPrototype(L"SpawnParticle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"SpawnParticle_Sub")))
+		return E_FAIL;
+
+	if (FAILED(Add_EffectPrototype(L"MistletoeParticle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"MistletoeParticle_Sub")))
+		return E_FAIL;
+
+	if (FAILED(Add_EffectPrototype(L"Player_FootSmoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_FootSmoke_Jump")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_FootSmoke_DodgeBack")))
+		return E_FAIL;
+
+	if (FAILED(Add_EffectPrototype(L"Player_SpaceBar_StepParticle")))
 		return E_FAIL;
 
 	return S_OK;
@@ -462,8 +478,11 @@ _uint CLoading::Loading_Stage()
 	// 독나방
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonButterfly", CPoisonButterfly::Create(m_pGraphicDev))))
 		return E_FAIL;
-	// 독나방 투사체
+	// 독나방 5발 투사체
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonBullet", CPoisonBullet::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 독나방 추적 투사체
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonChaseBullet", CPoisonChaseBullet::Create(m_pGraphicDev))))
 		return E_FAIL;
 	// 검은 성게
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))
@@ -474,11 +493,14 @@ _uint CLoading::Loading_Stage()
 	// 검겐지
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenji", CSwordGenji::Create(m_pGraphicDev))))
 		return E_FAIL;
+	// 검겐지 총알
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenjiBullet", CSwordGenjiBullet::Create(m_pGraphicDev))))
+		return E_FAIL;
 	// 총겐지
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenji", CGunGenji::Create(m_pGraphicDev))))
 		return E_FAIL;
 	// 총겐지 총알
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_GenjiBullet", CGenjiBullet::Create(m_pGraphicDev))))
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenjiBullet", CGunGenjiBullet::Create(m_pGraphicDev))))
 		return E_FAIL;
 	// 검방패겐지
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordShieldGenji", CSwordShieldGenji::Create(m_pGraphicDev))))

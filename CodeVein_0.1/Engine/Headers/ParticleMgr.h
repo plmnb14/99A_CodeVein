@@ -20,10 +20,13 @@ public:
 	void Create_Effect(_tchar* szName, _v3 vPos, CTransform* pFollowTrans = nullptr);
 	void Create_DirEffect(_tchar* szName, _v3 vPos, _v3 vDir, CTransform* pFollowTrans = nullptr);
 	void Create_AngleEffect(_tchar* szName, _v3 vPos, _v3 vAngle, CTransform* pFollowTrans = nullptr);
+	void Create_AutoFindEffect(_tchar* szName, _float fLifeTime, _v3 vPos, CTransform* pFollowTrans = nullptr);
 	void Create_Effect_NoPool(_tchar* szName, _v3 vPos, CTransform* pFollowTrans = nullptr);
 
 public:
 	void Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol, CTransform* pHittedTrans, _float fPower = 1.5f);
+	void Create_Spawn_Effect(_v3 vPos, CTransform* pFollowTrans = nullptr);
+	void Create_FootSmoke_Effect(_v3 vPos, _float fOffset); // 지금은 한 객체만 사용가능
 
 private:
 	HRESULT Update_Effect(const _double TimeDelta);
@@ -37,6 +40,7 @@ private:
 		_tchar	szName[256];
 		_float	fLifeTime;
 		_v3		vCreatePos;
+		_bool	bAutoFind;
 		Engine::CTransform* pFollowTrans;
 	}PARTICLE_INFO;
 
@@ -46,6 +50,8 @@ private:
 	list<CEffect*>					m_EffectList;	// 실제 객체들 (레이어 말고 여기서 돌아감)
 
 	_float							m_fCreateDelay_Check = 0.f;
+
+	_float							m_fFootSmokeeDelay_Check = 0.f;
 
 	CManagement*					m_pManagement = nullptr;
 

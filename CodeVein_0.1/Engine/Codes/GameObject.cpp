@@ -67,6 +67,11 @@ HRESULT CGameObject::Render_GameObject()
 	return S_OK;
 }
 
+HRESULT CGameObject::Render_GameObject_SetPass(CShader* pShader, _int iPass)
+{
+	return S_OK;
+}
+
 void CGameObject::Set_Dead()
 {
 	m_bIsDead = true;
@@ -179,6 +184,14 @@ void CGameObject::Free()
 		Safe_Release(Pair.second);
 
 	m_pmapComponents.clear();
+
+	for (auto& Col : m_vecPhysicCol)
+		Safe_Release(Col);
+	m_vecPhysicCol.clear();
+
+	for (auto& Col : m_vecAttackCol)
+		Safe_Release(Col);
+	m_vecPhysicCol.clear();
 
 	Safe_Release(m_pGraphic_Dev);
 }

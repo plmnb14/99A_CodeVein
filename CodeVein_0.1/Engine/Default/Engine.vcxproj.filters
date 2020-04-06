@@ -519,9 +519,6 @@
     <ClInclude Include="..\Headers\BT_SetValue.h">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\BT_UpdateCollider.h">
-      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Service\Derive</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\BT_MoveDir.h">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
     </ClInclude>
@@ -529,6 +526,12 @@
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\BT_ChaseDir.h">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BT_UpdateParam.h">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Service\Derive</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BT_MoveAround.h">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
     </ClInclude>
   </ItemGroup>
@@ -779,9 +782,6 @@
     <ClCompile Include="..\Codes\BT_SetValue.cpp">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\BT_UpdateCollider.cpp">
-      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Service\Derive</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\BT_MoveDir.cpp">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
     </ClCompile>
@@ -791,12 +791,21 @@
     <ClCompile Include="..\Codes\BT_ChaseDir.cpp">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\BT_UpdateParam.cpp">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Service\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BT_MoveAround.cpp">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_LightAcc.fx">
       <Filter>01.Utility\[07] ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Blend.fx">
+      <Filter>01.Utility\[07] ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Shadow.fx">
       <Filter>01.Utility\[07] ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

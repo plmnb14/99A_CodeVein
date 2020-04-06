@@ -207,6 +207,7 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\BT_ChaseDir.h" />
     <ClInclude Include="..\Headers\BT_Inverter.h" />
     <ClInclude Include="..\Headers\BT_Loop.h" />
+    <ClInclude Include="..\Headers\BT_MoveAround.h" />
     <ClInclude Include="..\Headers\BT_MoveDir.h" />
     <ClInclude Include="..\Headers\BT_MoveDirectly.h" />
     <ClInclude Include="..\Headers\BT_MoveTo.h" />
@@ -221,7 +222,7 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\BT_SetValue.h" />
     <ClInclude Include="..\Headers\BT_Simple_Parallel.h" />
     <ClInclude Include="..\Headers\BT_Task_Node.h" />
-    <ClInclude Include="..\Headers\BT_UpdateCollider.h" />
+    <ClInclude Include="..\Headers\BT_UpdateParam.h" />
     <ClInclude Include="..\Headers\BT_UpdateGageRatio.h" />
     <ClInclude Include="..\Headers\BT_UpdatePos.h" />
     <ClInclude Include="..\Headers\BT_Wait.h" />
@@ -302,6 +303,7 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\BT_ChaseDir.cpp" />
     <ClCompile Include="..\Codes\BT_Inverter.cpp" />
     <ClCompile Include="..\Codes\BT_Loop.cpp" />
+    <ClCompile Include="..\Codes\BT_MoveAround.cpp" />
     <ClCompile Include="..\Codes\BT_MoveDir.cpp" />
     <ClCompile Include="..\Codes\BT_MoveDirectly.cpp" />
     <ClCompile Include="..\Codes\BT_MoveTo.cpp" />
@@ -316,7 +318,7 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\BT_SetValue.cpp" />
     <ClCompile Include="..\Codes\BT_Simple_Parallel.cpp" />
     <ClCompile Include="..\Codes\BT_Task_Node.cpp" />
-    <ClCompile Include="..\Codes\BT_UpdateCollider.cpp" />
+    <ClCompile Include="..\Codes\BT_UpdateParam.cpp" />
     <ClCompile Include="..\Codes\BT_UpdateGageRatio.cpp" />
     <ClCompile Include="..\Codes\BT_UpdatePos.cpp" />
     <ClCompile Include="..\Codes\BT_Wait.cpp" />
@@ -373,6 +375,7 @@ call CopyEngine.bat</Command>
   <ItemGroup>
     <FxCompile Include="..\Bin\ShaderFiles\Shader_Blend.fx" />
     <FxCompile Include="..\Bin\ShaderFiles\Shader_LightAcc.fx" />
+    <FxCompile Include="..\Bin\ShaderFiles\Shader_Shadow.fx" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

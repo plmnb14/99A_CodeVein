@@ -25,7 +25,7 @@ HRESULT CSky::Ready_GameObject(void * pArg)
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 	
-	m_pTransformCom->Set_Pos(_v3(0.f, -50.f, 0.f));
+	m_pTransformCom->Set_Pos(_v3(0.f, -20.f, 0.f));
 	m_pTransformCom->Set_Scale(_v3(0.3f, 0.3f, 0.3f));
 
 	return NOERROR;
@@ -41,12 +41,6 @@ _int CSky::Late_Update_GameObject(_double TimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
-
-	CManagement*		pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
-
-	m_pTransformCom->Set_Pos(V3_NULL);
 
 	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_PRIORITY, this)))
 		return E_FAIL;
@@ -120,17 +114,12 @@ HRESULT CSky::SetUp_ConstantTable()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CManagement*		pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
-
-	Safe_AddRef(pManagement);
 
 	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;	
 
-	_mat		ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
+	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 
 	if (FAILED(m_pShaderCom->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
@@ -139,8 +128,6 @@ HRESULT CSky::SetUp_ConstantTable()
 
 	//if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom)))
 	//	return E_FAIL;
-
-	Safe_Release(pManagement);
 
 	return NOERROR;
 }
