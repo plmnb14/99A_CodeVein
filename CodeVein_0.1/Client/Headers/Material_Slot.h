@@ -5,6 +5,8 @@
 
 #include "Material.h"
 #include "Select_UI.h"
+#include "CursorUI.h"
+#include "NumberUI.h"
 
 BEGIN(Client)
 class CMaterial_Slot final : public CUI
@@ -48,6 +50,8 @@ private:
 	CSelect_UI*				m_pSelectUI = nullptr;
 	_bool					m_bIsSelect = false;
 	vector<CMaterial*>		m_vecMaterial;
+	CCursorUI*				m_pCursorUI = nullptr;
+	CNumberUI*				m_pNumberUI = nullptr;
 
 public:
 	static CMaterial_Slot*		Create(_Device pGraphic_Device);

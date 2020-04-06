@@ -26,6 +26,7 @@ public:
 	virtual CComponent*	Get_Component(const _tchar* pComponentTag);
 	_float				Get_ViewZ(void) { return m_fViewZ; }
 	virtual _bool		Get_Enable() { return m_bEnable; }
+	virtual _bool		Get_Dead() { return m_bIsDead; }
 
 public:
 	virtual void	Set_Target(CGameObject* _pTarget) { m_pTarget = _pTarget; }
@@ -58,6 +59,7 @@ public:
 	virtual _bool Get_Target_Dodge() { return m_tObjParam.bDodge; };
 	virtual _bool Get_Target_IsHit() { return m_tObjParam.bIsHit; }
 	virtual _bool Get_Target_CanHit() { return m_tObjParam.bCanHit; }
+	virtual _bool Get_Target_HitAgain() { return m_tObjParam.bHitAgain; }
 	virtual _bool Get_Target_KnockBack() { return m_tObjParam.bKnockBack; }
 	virtual _bool Get_Target_IsAttack() { return m_tObjParam.bIsAttack; }
 	virtual _bool Get_Target_CanAttack() { return m_tObjParam.bCanAttack; }
@@ -75,6 +77,7 @@ public:
 	virtual void Set_Target_IsDown(_bool _bDown) { m_tObjParam.bDown = _bDown; }
 	virtual void Set_Target_IsHit(_bool _bHit) { m_tObjParam.bIsHit = _bHit; }
 	virtual void Set_Target_CanHit(_bool _bCanHit) { m_tObjParam.bCanHit = _bCanHit; }
+	virtual void Set_HitAgain(_bool _bHitAgain) { m_tObjParam.bHitAgain = _bHitAgain; }
 	virtual void Set_Target_IsAttack(_bool _bIsAttack) { m_tObjParam.bIsAttack = _bIsAttack; }
 	virtual void Set_Target_CanAttack(_bool _bCanAttack) { m_tObjParam.bCanAttack = _bCanAttack; }
 	virtual void Set_Target_KnockBack(_bool _bKnockBack) { m_tObjParam.bKnockBack = _bKnockBack; }

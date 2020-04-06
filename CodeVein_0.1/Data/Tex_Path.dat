@@ -50,10 +50,11 @@ Tex_Armor_Icon|Armor_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Armor_Icon
 Tex_Bayonet_Icon|Bayonet_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Bayonet_Icon\|0|3
 Tex_BossUI|BossUI%d.tga|..\..\Client\Resources\Texture\TestUI\BossUI\|0|2
 Tex_Button|Button%d.png|..\..\Client\Resources\Texture\TestUI\Button\|0|1
-Tex_ButtonUI|ButtonUI%d.tga|..\..\Client\Resources\Texture\TestUI\ButtonUI\|0|6
+Tex_ButtonUI|ButtonUI%d.tga|..\..\Client\Resources\Texture\TestUI\ButtonUI\|0|8
 Tex_Consume_Item|Consume_Item%d.tga|..\..\Client\Resources\Texture\TestUI\Consume_Item\|0|5
 Tex_CursorSelect|CursorSelect%d.tga|..\..\Client\Resources\Texture\TestUI\CursorSelect\|0|3
-Tex_Expendables|Expendables%d.tga|..\..\Client\Resources\Texture\TestUI\Expendables\|0|5
+Tex_CursorUI|CursorUI%d.tga|..\..\Client\Resources\Texture\TestUI\CursorUI\|0|1
+Tex_Expendables|Expendables%d.png|..\..\Client\Resources\Texture\TestUI\Expendables\|0|5
 Tex_Halberd_Icon|Halberd_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Halberd_Icon\|0|3
 Tex_Hammer_Icon|Hammer_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Hammer_Icon\|0|3
 Tex_HPBar|HPBar%d.tga|..\..\Client\Resources\Texture\TestUI\HPBar\|0|1
@@ -66,9 +67,9 @@ Tex_MapPattern|MapPattern%d.tga|..\..\Client\Resources\Texture\TestUI\MapPattern
 Tex_Materials|Materials%d.tga|..\..\Client\Resources\Texture\TestUI\Materials\|0|5
 Tex_MenuWindow|MenuWindow%d.png|..\..\Client\Resources\Texture\TestUI\MenuWindow\|0|4
 Tex_Menu_Icon|Menu_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Menu_Icon\|0|8
-Tex_Number|Number%d.png|..\..\Client\Resources\Texture\TestUI\Number\|0|4
+Tex_Number|Number%d.tga|..\..\Client\Resources\Texture\TestUI\Number\|0|10
 Tex_Passive_Icon|Passive_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Passive_Icon\|0|89
-Tex_QuickSlotUI|QuickSlotUI0.jpg|..\..\Client\Resources\Texture\TestUI\QuickSlotUI\|0|2
+Tex_QuickSlotUI|QuickSlotUI%d.png|..\..\Client\Resources\Texture\TestUI\QuickSlotUI\|0|5
 Tex_Select_UI|Select_UI.png|..\..\Client\Resources\Texture\TestUI\Select_UI\|0|1
 Tex_SingleSword_Icon|SingleSword_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\SingleSword_Icon\|0|3
 Tex_Skill_ICon|Skill_ICon%d.tga|..\..\Client\Resources\Texture\TestUI\Skill_ICon\|0|157

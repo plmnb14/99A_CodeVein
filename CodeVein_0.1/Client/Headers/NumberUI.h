@@ -3,21 +3,14 @@
 #include "Client_Defines.h"
 #include "UI.h"
 
-#include "Expendables_Slot.h"
-
 BEGIN(Client)
 
-class CButton_UI;
-class CNumberUI;
-class CQuickSlot final : public CUI
+class CNumberUI final : public CUI
 {
 private:
-	explicit CQuickSlot(_Device pDevice);
-	explicit CQuickSlot(const CQuickSlot& rhs);
-	virtual ~CQuickSlot() = default;
-
-public:
-	
+	explicit CNumberUI(_Device pDevice);
+	explicit CNumberUI(const CNumberUI& rhs);
+	virtual ~CNumberUI() = default;
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -29,7 +22,6 @@ public:
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
-	void	SetUp_Default();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -38,17 +30,10 @@ private:
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
-private:
-	vector<CExpendables_Slot*>	m_vecQuickSlot;
-	_uint						m_iSelect = 0;
-	vector<CButton_UI*>			m_vecDecoUI;
-	CNumberUI*					m_pNumberUI = nullptr;
-
 public:
-	static CQuickSlot*		Create(_Device pGraphic_Device);
+	static CNumberUI*		Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);
 	virtual void			Free();
 };
 
 END
-

@@ -73,7 +73,7 @@ public:
 
 public:
 	void Set_MouseControl(_bool _bMouseControl);
-	void Set_OnAimingTarget();
+	void Set_OnAimingTarget(_bool _bOnAim);
 	void Set_AimingTarget(CGameObject* pAimingTarget) { m_pAimingTarget = pAimingTarget; }
 
 public:

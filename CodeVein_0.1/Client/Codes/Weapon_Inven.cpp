@@ -24,12 +24,12 @@ HRESULT CWeapon_Inven::Ready_GameObject(void * pArg)
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = WINCX * 0.75f;
+	m_fPosX = WINCX * 0.3f;
 	m_fPosY = WINCY * 0.5f;
-	m_fSizeX = WINCX * 0.5f;
-	m_fSizeY = WINCY;
+	m_fSizeX = 352.f;
+	m_fSizeY = 471.f;
 
-	m_fViewZ = 1.f;
+	m_fViewZ = 3.f;
 
 	m_bIsActive = false;
 
@@ -40,9 +40,9 @@ HRESULT CWeapon_Inven::Ready_GameObject(void * pArg)
 	{
 		pDesc = new CUI::UI_DESC;
 		pDesc->fPosX = m_fPosX - 100.f;
-		pDesc->fPosY = m_fPosY - 100.f + 90.f * i;
-		pDesc->fSizeX = 80.f;
-		pDesc->fSizeY = 80.f;
+		pDesc->fPosY = m_fPosY - 100.f + 70.f * i;
+		pDesc->fSizeX = 60.f;
+		pDesc->fSizeY = 60.f;
 		pDesc->iIndex = i;
 		g_pManagement->Add_GameObject_ToLayer(L"GameObject_WeaponSlot", SCENE_STAGE, L"Layer_WeaponSlot", pDesc);
 		pSlot = static_cast<CWeapon_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponSlot", SCENE_STAGE));
@@ -53,7 +53,7 @@ HRESULT CWeapon_Inven::Ready_GameObject(void * pArg)
 	{
 		pDesc = new CUI::UI_DESC;
 		pDesc->fPosX = m_fPosX + 100.f;
-		pDesc->fPosY = m_fPosY - 100.f + 90.f * i;
+		pDesc->fPosY = m_fPosY - 50.f + 100.f * i;
 		pDesc->fSizeX = 80.f;
 		pDesc->fSizeY = 80.f;
 		pDesc->iIndex = CWeapon::WPN_DATA_End;
@@ -78,22 +78,7 @@ _int CWeapon_Inven::Update_GameObject(_double TimeDelta)
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 
 
-	/*for (auto& pWeaponSlot : m_vecWeaponSlot)
-	{
-	if (pWeaponSlot->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
-	{
-	Regist_Weapon(pWeaponSlot->Get_Type());
-	}
-	}
-
-	LOOP(2)
-	{
-	if (m_pSelectSlot[i]->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
-	{
-	Unregist_Weapon(m_pSelectSlot[i]);
-
-	}
-	}*/
+	
 
 	if (GetAsyncKeyState(VK_LBUTTON) && 0x8000)
 		Regist_Weapon();
@@ -152,7 +137,7 @@ HRESULT CWeapon_Inven::Render_GameObject()
 
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(0);
+	m_pShaderCom->Begin_Pass(1);
 
 	m_pBufferCom->Render_VIBuffer();
 
