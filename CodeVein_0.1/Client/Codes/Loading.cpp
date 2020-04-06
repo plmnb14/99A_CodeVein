@@ -159,9 +159,6 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"Boss_KnockDown_Dust")))
 		return E_FAIL;
 	
-	if (FAILED(Add_EffectPrototype(L"Player_FootSmoke")))
-		return E_FAIL;
-
 #pragma region Blood
 	if (FAILED(Add_EffectPrototype(L"Hit_Blood_0")))
 		return E_FAIL;
@@ -259,6 +256,16 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"MistletoeParticle")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"MistletoeParticle_Sub")))
+		return E_FAIL;
+
+	if (FAILED(Add_EffectPrototype(L"Player_FootSmoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_FootSmoke_Jump")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_FootSmoke_DodgeBack")))
+		return E_FAIL;
+
+	if (FAILED(Add_EffectPrototype(L"Player_SpaceBar_StepParticle")))
 		return E_FAIL;
 
 	return S_OK;

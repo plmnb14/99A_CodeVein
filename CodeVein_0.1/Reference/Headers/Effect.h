@@ -30,6 +30,7 @@ public:
 	void Set_Desc(_v3 vPos, CTransform* pTrans = nullptr);
 	void Set_Angle(_v3 vAngle) { m_vAngle = vAngle; }
 	void Set_Dir(_v3 vDir) { m_vMyDir = vDir; }
+	void Set_AutoFind(_bool  bFind) { m_bAutoFindPos = bFind; }
 
 	void Reset_Init();
 
@@ -71,6 +72,7 @@ protected:
 	_bool					m_bClone = false;
 	_bool					m_bFadeOutStart = false;
 	_bool					m_bDissolveToggle = false;
+	_bool					m_bAutoFindPos = false;
 
 	_int					m_iPass = 0;
 

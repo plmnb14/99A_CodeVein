@@ -7,10 +7,6 @@
 #include "UI_Manager.h"
 #include "ParticleMgr.h"
 
-#include "MassageUI.h"
-#include "MonsterUI.h"
-
-
 #include "SwordGenji.h"
 #include "GunGenji.h"
 #include "SwordShieldGenji.h"
@@ -219,9 +215,21 @@ HRESULT CScene_Stage_Training::Ready_LightDesc()
 	LightDesc.Specular = LightDesc.Diffuse;
 	// In.WorldSpace
 	LightDesc.Direction = _v3(1.f, 1.f, -1.f);
-
+	
 	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
 		return E_FAIL;
+
+	//LightDesc.Type = D3DLIGHT_POINT;
+	//LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.f);
+	//LightDesc.Specular = LightDesc.Diffuse;
+	//// In.WorldSpace
+	////LightDesc.Direction = _v3(1.f, 1.f, -1.f);
+	//LightDesc.Position = _v3(45.f, 45.f, 40.f);
+	//LightDesc.Range = 3000.f;
+	//
+	//if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
+	//	return E_FAIL;
 
 	return NOERROR;
 }

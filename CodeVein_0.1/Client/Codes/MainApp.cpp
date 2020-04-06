@@ -177,6 +177,8 @@ CMainApp * CMainApp::Create()
 
 void CMainApp::Free()
 {
+	Safe_Release(g_pDissolveTexture);
+
 	Safe_Release(m_pGraphic_Dev);
 	
 	CParticleMgr::Get_Instance()->Destroy_Instance();
