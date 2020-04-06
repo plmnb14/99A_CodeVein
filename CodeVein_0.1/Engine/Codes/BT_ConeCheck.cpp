@@ -134,7 +134,7 @@ HRESULT CBT_ConeCheck::Ready_Clone_Node(void * pInit_Struct)
 
 _bool CBT_ConeCheck::Is_InFov(_float fDegreeOfFov, CTransform * pThisTransform, _v3 vTargetPos)
 {
-	_v3 vThisLook = *(_v3*)(&pThisTransform->Get_WorldMat().m[3]);
+	_v3 vThisLook = *(_v3*)(&pThisTransform->Get_WorldMat().m[2]);
 	vThisLook.y = 0.f;
 	D3DXVec3Normalize(&vThisLook, &vThisLook);
 
@@ -146,7 +146,7 @@ _bool CBT_ConeCheck::Is_InFov(_float fDegreeOfFov, CTransform * pThisTransform, 
 	_float fDot_Temp = D3DXVec3Dot(&vThisLook, &FromThisToTarget);
 	_float fRadian = acosf(fDot_Temp);
 
-	if (D3DXToDegree(fRadian) > fDegreeOfFov * 0.5f)
+	if (D3DXToDegree(fRadian) < fDegreeOfFov * 0.5f)
 		return true;
 
 	return false;

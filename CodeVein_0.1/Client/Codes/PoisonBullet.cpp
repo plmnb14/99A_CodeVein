@@ -258,7 +258,7 @@ HRESULT CPoisonBullet::Ready_Collider()
 	// ÃÑ¾Ë Áß¾Ó
 	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 
-	_float fRadius = 1.f;
+	_float fRadius = 0.7f;
 
 	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
 	pCollider->Set_Dynamic(true);

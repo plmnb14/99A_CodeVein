@@ -30,7 +30,7 @@ HRESULT CYachaMan::Ready_GameObject(void * pArg)
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
 	m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE));
 
-	m_tObjParam.fHp_Max = 80.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
+	m_tObjParam.fHp_Max = 140.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
 
 	m_tObjParam.bCanHit = true;
@@ -481,6 +481,22 @@ void CYachaMan::Play_Idle()
 {
 }
 
+void CYachaMan::Play_Lurk()
+{
+}
+
+void CYachaMan::Play_Glance()
+{
+}
+
+void CYachaMan::Play_LookAround()
+{
+}
+
+void CYachaMan::Play_Eat()
+{
+}
+
 void CYachaMan::Play_Walk()
 {
 }
@@ -489,7 +505,43 @@ void CYachaMan::Play_Run()
 {
 }
 
+//void CYachaMan::Play_Dodge()
+//{
+//}
+
 void CYachaMan::Play_RandomAtk()
+{
+}
+
+void CYachaMan::Play_ShoulderAtk()
+{
+}
+
+void CYachaMan::Play_LeftRightAtk()
+{
+}
+
+void CYachaMan::Play_LeftAndHammering()
+{
+}
+
+void CYachaMan::Play_ShoulderAtk_LeftAtk()
+{
+}
+
+void CYachaMan::Play_ShoulderAtk_TurnTwice()
+{
+}
+
+void CYachaMan::Play_TargetHammering()
+{
+}
+
+void CYachaMan::Play_WheelWind()
+{
+}
+
+void CYachaMan::Play_RunHammering()
 {
 }
 

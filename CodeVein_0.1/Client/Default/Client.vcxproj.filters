@@ -387,9 +387,6 @@
     <ClInclude Include="..\Headers\Drain_Weapon.h">
       <Filter>02.GameObject\Stage\0%29 Player\00%29 DrainWeapon</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\GenjiBullet.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\Genji\Gun</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\GunGenji.h">
       <Filter>02.GameObject\Stage\2%29 Monster\Genji\Gun</Filter>
     </ClInclude>
@@ -398,6 +395,15 @@
     </ClInclude>
     <ClInclude Include="..\Headers\SwordShieldGenji.h">
       <Filter>02.GameObject\Stage\2%29 Monster\Genji\SwordShield</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\PoisonChaseBullet.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\PoisonButterfly</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GunGenjiBullet.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Genji\Gun</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\SwordGenjiBullet.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Genji\Sword</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\ScriptManager.h">
       <Filter>96. ScriptManager</Filter>
@@ -560,9 +566,6 @@
     <ClCompile Include="..\Codes\Drain_Weapon.cpp">
       <Filter>02.GameObject\Stage\0%29 Player\00%29 DrainWeapon</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\GenjiBullet.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\Genji\Gun</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\GunGenji.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster\Genji\Gun</Filter>
     </ClCompile>
@@ -571,6 +574,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\SwordShieldGenji.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster\Genji\SwordShield</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\PoisonChaseBullet.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\PoisonButterfly</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GunGenjiBullet.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Genji\Gun</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SwordGenjiBullet.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Genji\Sword</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\ScriptManager.cpp">
       <Filter>96. ScriptManager</Filter>

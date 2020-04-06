@@ -255,43 +255,43 @@ void CScriptManager::Ready_Stage01_DynamicObject()
 
 	CGameObject* pInstance = nullptr;
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White ,CSwordGenji::Talk, 10.f, 5.f, 2.f));
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White ,CSwordGenji::NF_Ani::Talk, 10.f, 5.f, 2.f));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::Jungle));
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::Jungle, CGunGenji::NF_Ani::Sit1, 10.f, 5.f, 2.f));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::Talk, 10.f, 5.f, 2.f));
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::NF_Ani::Talk, 10.f, 5.f, 2.f));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::Talk, 10.f, 5.f, 2.f));
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::NF_Ani::Talk, 10.f, 5.f, 2.f));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White, CSwordGenji::Talk, 10.f, 5.f, 2.f));
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White, CSwordGenji::NF_Ani::Talk, 10.f, 5.f, 2.f));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle, CSwordGenji::Talk, 10.f, 5.f, 2.f));
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle, CSwordGenji::NF_Ani::Talk, 10.f, 5.f, 2.f));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White, CSwordGenji::Talk, 10.f, 5.f, 2.f));
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White, CSwordGenji::NF_Ani::Talk, 10.f, 5.f, 2.f));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle, CSwordGenji::Talk, 10.f, 5.f, 2.f));
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle, CSwordGenji::NF_Ani::Talk, 10.f, 5.f, 2.f));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::White));
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::Jungle, CGunGenji::NF_Ani::Sit1, 10.f, 5.f, 2.f));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::White));
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::Jungle, CGunGenji::NF_Ani::Sit1, 10.f, 5.f, 2.f));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
