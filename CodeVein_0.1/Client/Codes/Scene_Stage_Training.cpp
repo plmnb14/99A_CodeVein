@@ -94,8 +94,8 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	/* if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Start_BossUI", SCENE_STAGE, L"Layer_MassageUI")))
 	 	return E_FAIL;*/
 
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Start_BossUI", SCENE_STAGE, L"Layer_MassageUI")))
-		return E_FAIL;
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Start_BossUI", SCENE_STAGE, L"Layer_MassageUI")))
+	//	return E_FAIL;
 
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Get_ItemUI", SCENE_STAGE, L"Layer_Get_ItemUI")))
 	//	 return E_FAIL;

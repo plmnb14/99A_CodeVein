@@ -22,6 +22,7 @@ public:
 	void Create_AngleEffect(_tchar* szName, _v3 vPos, _v3 vAngle, CTransform* pFollowTrans = nullptr);
 	void Create_AutoFindEffect(_tchar* szName, _float fLifeTime, _v3 vPos, CTransform* pFollowTrans = nullptr);
 	void Create_Effect_NoPool(_tchar* szName, _v3 vPos, CTransform* pFollowTrans = nullptr);
+	void Create_Effect_Offset(_tchar* szName, _float fOffset, _v3 vPos, CTransform* pFollowTrans = nullptr);
 
 public:
 	void Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol, CTransform* pHittedTrans, _float fPower = 1.5f);
@@ -48,6 +49,7 @@ private:
 	map<_tchar*, queue<CEffect*>>	m_EffectPool;	// 미리 클론해놓은 큐
 	list<PARTICLE_INFO*>			m_vecParticle;	// 재생될 파티클 리스트
 	list<CEffect*>					m_EffectList;	// 실제 객체들 (레이어 말고 여기서 돌아감)
+	map<_tchar*, float>				m_mapEffectOffset; // 이펙트 생성 오프셋을 주는 타임값 저장
 
 	_float							m_fCreateDelay_Check = 0.f;
 

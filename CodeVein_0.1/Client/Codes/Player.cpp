@@ -1575,7 +1575,7 @@ void CPlayer::Play_Run()
 			m_eMainWpnState == WEAPON_Halverd ? Halverd_Run_Blend : m_eAnim_Lower);
 	}
 
-	g_pManagement->Create_FootSmoke_Effect(m_pTransform->Get_Pos(), 0.5f);
+	g_pManagement->Create_Effect_Offset(L"Player_FootSmoke", 0.5f, m_pTransform->Get_Pos());
 }
 
 void CPlayer::Play_Dash()

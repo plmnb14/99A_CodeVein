@@ -301,6 +301,20 @@ void CParticleMgr::Create_Effect_NoPool(_tchar* szName, _v3 vPos, CTransform* pF
 	m_pManagement->Add_GameOject_ToLayer_NoClone(pEffect, SCENE_STAGE, L"Layer_Effect", nullptr);
 }
 
+void CParticleMgr::Create_Effect_Offset(_tchar* szName, _float fOffset, _v3 vPos, CTransform * pFollowTrans)
+{
+	auto	iter = find_if(m_mapEffectOffset.begin(), m_mapEffectOffset.end(), CTag_Finder(szName));
+	if (iter == m_mapEffectOffset.end())
+		m_mapEffectOffset.insert(pair<_tchar*, float>(szName, fOffset));
+
+	m_mapEffectOffset[szName] += DELTA_60;
+	if (m_mapEffectOffset[szName]  < fOffset)
+		return;
+
+	m_mapEffectOffset[szName] = 0.f;
+	Create_Effect(szName, vPos, pFollowTrans);
+}
+
 void CParticleMgr::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol, CTransform* pHittedTrans, _float fPower)
 {
 	_v3 vAttackPos = pAttackCol->Get_CenterPos();
@@ -359,8 +373,9 @@ void CParticleMgr::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCo
 
 void CParticleMgr::Create_Spawn_Effect(_v3 vPos, CTransform* pFollowTrans)
 {
-	Create_ParticleEffect(L"SpawnParticle", 2.f, vPos, pFollowTrans);
-	Create_ParticleEffect(L"SpawnParticle_Sub", 2.f, vPos, pFollowTrans);
+	// 렉걸려서 막아둠
+	//Create_ParticleEffect(L"SpawnParticle", 2.f, vPos, pFollowTrans);
+	//Create_ParticleEffect(L"SpawnParticle_Sub", 2.f, vPos, pFollowTrans);
 }
 
 void CParticleMgr::Create_FootSmoke_Effect(_v3 vPos, _float fOffset)

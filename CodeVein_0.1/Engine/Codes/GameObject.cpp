@@ -67,6 +67,11 @@ HRESULT CGameObject::Render_GameObject()
 	return S_OK;
 }
 
+HRESULT CGameObject::Render_GameObject_SetShader(CShader * pShader)
+{
+	return S_OK;
+}
+
 HRESULT CGameObject::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 {
 	return S_OK;
