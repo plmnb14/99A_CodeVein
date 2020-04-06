@@ -518,7 +518,7 @@ CBT_Composite_Node * CPoisonButterfly::Eat_Turn()
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기", 2.8, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("플레이어 보기", L"Player_Pos", 0.2);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", 10, 0.2, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 10, 0.2, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani25);
@@ -548,7 +548,7 @@ CBT_Composite_Node * CPoisonButterfly::Rush()
 	CBT_Sequence* MoveSequence = Node_Sequence("돌진 이동");
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적1", L"Player_Pos", 1.5, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 추적2", L"Player_Pos", 0.2);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("돌진", 13, 1, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("돌진", L"Monster_Speed", L"Monster_Dir", 13, 1, 0);
 	CBT_Wait* RushWaitB = Node_Wait("RushWait1", 0.2, 0);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("전체적으로 보라 동그라미 파티클", L"ButterFly_PointParticle", L"Bone_Tail6", 0, 150, 0, 0);
@@ -643,7 +643,7 @@ CBT_Composite_Node * CPoisonButterfly::WhirlWind()
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적", L"Player_Pos", 1.2, 0);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", 2, 1, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2, 1, 0);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("전체적으로 보라 동그라미 파티클", L"ButterFly_PointParticle", L"Bone_Tail6", 0, 150, 0.01, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("전체적으로 쓰이는 옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Bone_Tail6", 0, 150, 0.01, 0);
@@ -739,7 +739,7 @@ CBT_Composite_Node * CPoisonButterfly::Dist_Attack()
 CBT_Composite_Node * CPoisonButterfly::ChaseAndNearAttack()
 {
 	CBT_Sequence* Root_Seq = Node_Sequence("랜덤 공격 또는 추적");
-	CBT_MoveDirectly* Chase = Node_MoveDirectly_Chase("추적", L"Player_Pos", 3.f, 2.f);
+	CBT_MoveDirectly* Chase = Node_MoveDirectly_Chase("추적", L"Monster_Speed", L"Monster_Dir", L"Player_Pos", 3.f, 2.f);
 
 	Root_Seq->Add_Child(Chase);
 	Root_Seq->Add_Child(NearAttack());
@@ -762,7 +762,7 @@ CBT_Composite_Node * CPoisonButterfly::Chase()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
-	CBT_MoveDirectly* pChase = Node_MoveDirectly_Chase("추적", L"Player_Pos", 3.f, 2.5f);
+	CBT_MoveDirectly* pChase = Node_MoveDirectly_Chase("추적", L"Monster_Speed", L"Monster_Dir", L"Player_Pos", 3.f, 2.5f);
 
 	CBT_Play_Ani* Show_Ani139 = Node_Ani("추적", 139, 1.f);
 
@@ -810,7 +810,7 @@ CBT_Composite_Node * CPoisonButterfly::Start_Show()
 CBT_Composite_Node * CPoisonButterfly::Show_ChaseAndNearAttack()
 {
 	CBT_Sequence* Root_Seq = Node_Sequence("공격 또는 추적");
-	CBT_MoveDirectly* Chase = Node_MoveDirectly_Chase("추적", L"Player_Pos", 3.f, 2.f);
+	CBT_MoveDirectly* Chase = Node_MoveDirectly_Chase("추적", L"Monster_Speed", L"Monster_Dir", L"Player_Pos", 3.f, 2.f);
 
 	Root_Seq->Add_Child(Chase);
 	Root_Seq->Add_Child(Show_NearAttack());

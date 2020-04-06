@@ -151,7 +151,6 @@ private:
 	_bool Is_InFov(_float fDegreeOfFov, _v3 vTargetPos);
 
 	void Check_PhyCollider();
-
 	void Push_Collider();
 
 	HRESULT Draw_Collider();

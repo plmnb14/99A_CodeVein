@@ -67,8 +67,7 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	//Start_Sel->Add_Child(Check_ShowValue);
 	Start_Sel->Add_Child(Start_Game());
 
-
-	//Start_Sel->Add_Child(Cut_To_Right());
+	//Start_Sel->Add_Child(Shot());
 
 
 	///////////보여주기용
@@ -316,6 +315,11 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 
 _int CGunGenji::Update_GameObject(_double TimeDelta)
 {
+	if (false == m_bEnable)
+		return NO_EVENT;
+
+	Push_Collider();
+
 	CGameObject::Update_GameObject(TimeDelta);
 
 	// 죽었을 경우
@@ -347,6 +351,9 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 
 _int CGunGenji::Late_Update_GameObject(_double TimeDelta)
 {
+	if (false == m_bEnable)
+		return NO_EVENT;
+
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
 
@@ -458,7 +465,7 @@ CBT_Composite_Node * CGunGenji::Shot()
 	//CBT_CreateBullet* Bullet0 = Node_CreateBullet("겐지 총알", L"Monster_GunGenjiBullet", L"CreateBulletPos", L"NormalShotDir", 12, 1, 1.5, 1, 0, 0, CBT_Service_Node::Finite);
 	//Root_Parallel->Add_Service(Bullet0);
 
-	CBT_CreateBullet* Bullet0 = Node_CreateBullet("겐지 총알", L"Monster_GenjiBullet", L"CreateBulletPos", L"NormalShotDir", 20, 1.5, 1.725, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Bullet0 = Node_CreateBullet("겐지 총알", L"Monster_GunGenjiBullet", L"CreateBulletPos", L"NormalShotDir", 20, 1.5, 1.725, 1, 1, 0, CBT_Service_Node::Finite);
 	Root_Parallel->Add_Service(Bullet0);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("준비 오오라", L"Bullet_Ready_Aura", L"CreateBulletPos", 0.6, 1, 0.0, 0);	// 총 뒤쪽 or 오른손
@@ -488,7 +495,7 @@ CBT_Composite_Node * CGunGenji::Tumbling_Shot()
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기", 0.3, 0);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", -1, 1.3, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", -1, 1.3, 0);
 
 	CBT_CreateBullet* Bullet0 = Node_CreateBullet("겐지 총알", L"Monster_GunGenjiBullet", L"CreateBulletPos", L"TumblingShotDir", 12, 1, 0.65, 1, 0, 0, CBT_Service_Node::Finite);
 	Root_Parallel->Add_Service(Bullet0);
@@ -536,7 +543,7 @@ CBT_Composite_Node * CGunGenji::Upper_Slash()
 	CBT_Play_Ani* Show_Ani43 = Node_Ani("개머리판 치기", 43, 0.95f);
 	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.3f);
 
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", 2, 0.8, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2, 0.8, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani43);
@@ -559,7 +566,7 @@ CBT_Composite_Node * CGunGenji::Arm_Attack()
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기", 0.7, 0);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", 2, 0.5, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2, 0.5, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani45);
@@ -584,7 +591,7 @@ CBT_Composite_Node * CGunGenji::Sting_Attack()
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기", 0.4, 0);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", 1, 0.3, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 1, 0.3, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani46);
@@ -609,7 +616,7 @@ CBT_Composite_Node * CGunGenji::Cut_To_Right()
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기", 0.4, 0);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", 1, 0.5, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 1, 0.5, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani47);
@@ -634,7 +641,7 @@ CBT_Composite_Node * CGunGenji::Dodge_B()
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기", 0.4, 0);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", -10, 0.1, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", -10, 0.1, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani162);
@@ -702,7 +709,7 @@ CBT_Composite_Node * CGunGenji::Chase()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
-	CBT_MoveDirectly* pChase = Node_MoveDirectly_Chase("추적", L"Player_Pos", 3.f, 5.f);
+	CBT_MoveDirectly* pChase = Node_MoveDirectly_Chase("추적", L"Player_Pos", L"Monster_Speed", L"Monster_Dir", 3.f, 5.f);
 
 	CBT_Play_Ani* Show_Ani139 = Node_Ani("추적", 139, 1.f);
 
@@ -748,7 +755,7 @@ CBT_Composite_Node * CGunGenji::Start_Show()
 CBT_Composite_Node * CGunGenji::Show_ChaseAttack()
 {
 	CBT_Sequence* Root_Seq = Node_Sequence("공격 또는 추적");
-	CBT_MoveDirectly* Chase = Node_MoveDirectly_Chase("추적", L"Player_Pos", 3.f, 2.f);
+	CBT_MoveDirectly* Chase = Node_MoveDirectly_Chase("추적", L"Player_Pos", L"Monster_Speed", L"Monster_Dir", 3.f, 2.f);
 
 	Root_Seq->Add_Child(Chase);
 	Root_Seq->Add_Child(Show_Attack());
@@ -909,6 +916,8 @@ HRESULT CGunGenji::Update_Collider()
 		++matrixIdx;
 	}
 
+	m_pCollider->Update(m_pTransformCom->Get_Pos() + _v3(0.f, m_pCollider->Get_Radius().y, 0.f));
+
 	return S_OK;
 }
 
@@ -1021,6 +1030,35 @@ void CGunGenji::Check_PhyCollider()
 	}
 }
 
+void CGunGenji::Push_Collider()
+{
+	list<CGameObject*> tmpList = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_STAGE);
+
+	for (auto& iter : tmpList)
+	{
+		CCollider* pCollider = TARGET_TO_COL(iter);
+
+		cout << m_pAIControllerCom->Get_FloatValue(L"Monster_Speed") << endl;
+
+		// 지금 속도값 임의로 넣었는데 구해서 넣어줘야함 - 완료
+		if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_pAIControllerCom->Get_FloatValue(L"Monster_Speed")))
+		{
+			CTransform* pTrans = TARGET_TO_TRANS(iter);
+			CNavMesh*   pNav = TARGET_TO_NAV(iter);
+
+			// 방향 구해주고
+			_v3 vDir = m_pTransformCom->Get_Pos() - pTrans->Get_Pos();
+			V3_NORMAL_SELF(&vDir);
+
+			// y축 이동은 하지말자
+			vDir.y = 0;
+
+			// 네비 메쉬타게 끔 세팅
+			pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pCollider->Get_Length().x));
+		}
+	}
+}
+
 HRESULT CGunGenji::Draw_Collider()
 {
 	for (auto& iter : m_vecPhysicCol)
@@ -1078,6 +1116,14 @@ HRESULT CGunGenji::Add_Component(void* pArg)
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMesh)))
 		return E_FAIL;
 
+	// for.Com_Collider
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+		return E_FAIL;
+
+	m_pCollider->Set_Radius(_v3{ 0.5f, 0.5f, 0.5f });
+	m_pCollider->Set_Dynamic(true);
+	m_pCollider->Set_Type(COL_SPHERE);
+	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pCollider->Get_Radius().y , 0.f });
 
 	return NOERROR;
 }
@@ -1232,6 +1278,7 @@ void CGunGenji::Free()
 	Safe_Release(m_pMeshCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pCollider);
 
 	CGameObject::Free();
 }

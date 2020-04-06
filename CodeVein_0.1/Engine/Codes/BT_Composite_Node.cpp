@@ -21,7 +21,7 @@ HRESULT CBT_Composite_Node::Add_Service(CBT_Service_Node * pNode)
 	return S_OK;
 }
 
-HRESULT CBT_Composite_Node::Release_ServiceNode(list<vector<CBT_Node*>*>* m_plistNodeStack, list<vector<CBT_Node*>*>* plistServiceNode, _bool bDebugging)
+HRESULT CBT_Composite_Node::Release_ServiceNode(list<vector<CBT_Node*>*>* m_plistNodeStack, list<vector<CBT_Node*>*>* plistServiceNode, CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	for (auto iter_service = plistServiceNode->begin(); iter_service != plistServiceNode->end(); ++iter_service)
 	{
@@ -30,7 +30,7 @@ HRESULT CBT_Composite_Node::Release_ServiceNode(list<vector<CBT_Node*>*>* m_plis
 			// 서비스에서 벡터공간 == 리스트에서 벡터공간
 			if ((*iter_service) == *iter)
 			{
-				(*iter)->front()->End_Node(*iter_service, m_plistNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+				(*iter)->front()->End_Node(*iter_service, m_plistNodeStack, BT_NODE_STATE::SUCCEEDED, pBlackBoard, bDebugging);
 
 				//메인진행리스트에서 서비스벡터 공간 삭제
 				m_plistNodeStack->erase(iter);

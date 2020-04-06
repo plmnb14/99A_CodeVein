@@ -44,12 +44,12 @@ public:
 
 public:
 	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging);
-	virtual BT_NODE_STATE End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging);
+	virtual BT_NODE_STATE End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, CBlackBoard* pBlackBoard, _bool bDebugging);
 
 private:
 	HRESULT Ready_Clone_Node(void* pInit_Struct);
 
-	HRESULT Delete_SubNodeStack(list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging);
+	HRESULT Delete_SubNodeStack(list<vector<CBT_Node*>*>* plistSubNodeStack, CBlackBoard* pBlackBoard, _bool bDebugging);
 
 private:
 	Mode				m_eMode = Mode::Immediate;

@@ -54,7 +54,7 @@ CBT_Node::BT_NODE_STATE CBT_Compare::Update_Node(_double TimeDelta, vector<CBT_N
 				break;
 			}
 
-			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, bDebugging);
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, pBlackBoard, bDebugging);
 
 		case Value::FLOAT:
 			m_fTargetValue[0] = pBlackBoard->Get_FloatValue(m_pTargetKey_A);
@@ -84,7 +84,7 @@ CBT_Node::BT_NODE_STATE CBT_Compare::Update_Node(_double TimeDelta, vector<CBT_N
 				break;
 			}
 
-			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, bDebugging);
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, pBlackBoard, bDebugging);
 
 		case Value::INT:
 			m_iTargetValue[0] = pBlackBoard->Get_IntValue(m_pTargetKey_A);
@@ -114,7 +114,7 @@ CBT_Node::BT_NODE_STATE CBT_Compare::Update_Node(_double TimeDelta, vector<CBT_N
 				break;
 			}
 
-			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, bDebugging);
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, pBlackBoard, bDebugging);
 
 		}
 	}
@@ -124,13 +124,13 @@ CBT_Node::BT_NODE_STATE CBT_Compare::Update_Node(_double TimeDelta, vector<CBT_N
 		{
 		case BT_NODE_STATE::SERVICE:
 		case BT_NODE_STATE::FAILED:
-			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, bDebugging);
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, pBlackBoard, bDebugging);
 
 		case BT_NODE_STATE::INPROGRESS:
 			return BT_NODE_STATE::INPROGRESS;
 
 		case BT_NODE_STATE::SUCCEEDED:
-			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, pBlackBoard, bDebugging);
 		}
 	}
 
@@ -156,7 +156,7 @@ void CBT_Compare::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node
 	}
 }
 
-CBT_Node::BT_NODE_STATE CBT_Compare::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Compare::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	if (pNodeStack->empty())
 		return eState;

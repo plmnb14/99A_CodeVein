@@ -12,16 +12,16 @@ HRESULT CBehaviorTree::Set_Child(CBT_Node* pNode)
 	return S_OK;
 }
 
-void CBehaviorTree::Reset_BT()
+void CBehaviorTree::Reset_BT(CBlackBoard* pBlackBoard)
 {
 	if (m_pNodeStack.empty())
 		return;
 
 	for (size_t iNode = m_pNodeStack.size() - 1; iNode > 0; --iNode)
 	{
-		m_pNodeStack[iNode]->End_Node(&m_pNodeStack, &m_plistNodeStack, CBT_Node::BT_NODE_STATE::FAILED, false);
+		m_pNodeStack[iNode]->End_Node(&m_pNodeStack, &m_plistNodeStack, CBT_Node::BT_NODE_STATE::FAILED, pBlackBoard, false);
 	}
-	m_pNodeStack[0]->End_Node(&m_pNodeStack, &m_plistNodeStack, CBT_Node::BT_NODE_STATE::FAILED, false);
+	m_pNodeStack[0]->End_Node(&m_pNodeStack, &m_plistNodeStack, CBT_Node::BT_NODE_STATE::FAILED, pBlackBoard, false);
 }
 
 

@@ -89,7 +89,7 @@ void CBT_UpdateParam::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_
 	}
 }
 
-CBT_Node::BT_NODE_STATE CBT_UpdateParam::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_UpdateParam::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	if (bDebugging)
 	{
