@@ -21,6 +21,7 @@ public:
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT LateInit_GameObject();
 	virtual HRESULT Render_GameObject();
+	virtual HRESULT Render_GameObject_SetShader(CShader* pShader);
 	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass);
 
 public:

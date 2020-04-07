@@ -22,6 +22,7 @@ public:
 	virtual _int Update_GameObject(_double TimeDelta);
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
+	virtual HRESULT Render_GameObject_SetShader(CShader* pShader);
 	HRESULT Render_GameObject_HWInstance();
 
 protected:
@@ -53,7 +54,7 @@ protected:
 
 protected:
 	HRESULT Add_Component();
-	HRESULT SetUp_ConstantTable();
+	HRESULT SetUp_ConstantTable(CShader* pShader);
 	void Change_EffectTexture(const _tchar* _Name);
 	void Change_GradientTexture(const _tchar* _Name);
 	void Change_ColorTexture(const _tchar* _Name);

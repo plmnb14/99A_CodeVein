@@ -37,7 +37,10 @@ HRESULT CSwordGenjiBullet::Ready_GameObject(void * pArg)
 
 	m_fEffectCreateOffset = 0.05f;
 
-	lstrcpy(m_pEffect_Tag0, L"Bullet_Body");
+	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Bullet_Body", nullptr));
+	m_pBulletBody->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
+	//lstrcpy(m_pEffect_Tag0, L"Bullet_Body");
 	lstrcpy(m_pEffect_Tag1, L"Bullet_Body_Aura");
 	lstrcpy(m_pEffect_Tag2, L"Bullet_Tail_Particle");
 
@@ -68,6 +71,7 @@ _int CSwordGenjiBullet::Update_GameObject(_double TimeDelta)
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag3, _v3(), m_pTransformCom);
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, _v3(), m_pTransformCom);
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag5, _v3(), m_pTransformCom);
+		m_pBulletBody->Set_Dead();
 
 		m_bDead = true;
 	}
@@ -76,7 +80,7 @@ _int CSwordGenjiBullet::Update_GameObject(_double TimeDelta)
 	{
 		if (m_bEffect)
 		{
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag0, _v3(), m_pTransformCom);
+			//CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag0, _v3(), m_pTransformCom);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag1, _v3(), m_pTransformCom);
 	
 
