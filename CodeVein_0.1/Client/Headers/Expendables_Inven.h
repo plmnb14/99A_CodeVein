@@ -31,8 +31,11 @@ private:
 
 public:
 	void Add_Expendables(CExpendables::EXPEND_TYPE eType); // 해당 타입의 소비 아이템 획득
+	void Add_MultiExpendables(CExpendables::EXPEND_TYPE eType, _uint iCnt);
+
 	void Sell_Expendables(_uint iDelete); // 마우스 커서와 충돌한 아이템을 인수만큼 차감
 	void Delete_QuickSlot(CExpendables_Slot* pSlot);
+	void Use_Expendableas(CExpendables_Slot* pSlot);
 	
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
@@ -45,7 +48,7 @@ private:
 	vector<CExpendables_Slot*>	m_vecSlot;
 	vector<CExpendables_Slot*>	m_vecQuickSlot;
 	vector<CExpendables*>	m_vecExpendables;
-	
+	vector<UI_DESC*>		m_vecUI_DESC;
 
 public:
 	static CExpendables_Inven*	Create(_Device pGraphic_Device);

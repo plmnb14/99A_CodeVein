@@ -17,7 +17,7 @@ private:
 	virtual ~CQuickSlot() = default;
 
 public:
-	
+	vector<CExpendables_Slot*> Get_QuickSlotData() { return m_vecQuickSlot; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -30,6 +30,9 @@ private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
 	void	SetUp_Default();
+
+public:
+	CExpendables::EXPEND_TYPE Use_Item();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;

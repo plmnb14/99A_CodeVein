@@ -2,25 +2,34 @@
 
 #include "Client_Defines.h"
 #include "UI.h"
-#include "Armor.h"
 
 BEGIN(Client)
-class CSelect_UI;
-class CCursorUI;
-class CArmor_Slot final : public CUI
-{
+
+class CClickUI;
+class CInventory_Icon final : public CUI
+{	
+public:
+	enum ICON_TYPE
+	{
+		ICON_EXPEND,
+		ICON_MTRL,
+		ICON_WEAPON,
+		ICON_ARMOR,
+		ICON_ALL,
+		ICON_END
+	};
 private:
-	explicit CArmor_Slot(_Device pDevice);
-	explicit CArmor_Slot(const CArmor_Slot& rhs);
-	virtual ~CArmor_Slot() = default;
+	explicit CInventory_Icon(_Device pDevice);
+	explicit CInventory_Icon(const CInventory_Icon& rhs);
+	virtual ~CInventory_Icon() = default;
 
 public:
-	bool Get_Select() { return m_bIsSelect; }
-	CArmor::ARMOR_TYPE Get_Type();
+	_bool Get_Click() { return m_bIsClick; }
+	ICON_TYPE Get_Type() { return m_eType; }
 
 public:
-	void Set_Select(_bool bIsSelect) { m_bIsSelect = bIsSelect; }
-	void Set_Type(CArmor::ARMOR_TYPE eType) { m_eType = eType; }
+	void Set_Click(_bool bIsClick) { m_bIsClick = bIsClick; }
+	void Set_Type(ICON_TYPE eType) { m_eType = eType; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -29,13 +38,13 @@ public:
 	virtual _int	Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
 
-public:
-	_bool Pt_InRect();
-
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
 	void	SetUp_Default();
+
+public:
+	_bool Pt_InRect();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -43,16 +52,13 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
-
-	CSelect_UI*				m_pSelectUI = nullptr;
-	CCursorUI*				m_pCursorUI = nullptr;
-	_bool					m_bIsSelect = false;
-	CArmor::ARMOR_TYPE		m_eType = CArmor::ARMOR_END;
+	CClickUI*				m_pClickUI = nullptr;
+	_bool					m_bIsClick = false;
+	ICON_TYPE				m_eType;
 
 public:
-	static CArmor_Slot*		Create(_Device pGraphic_Device);
+	static CInventory_Icon*	Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);
 	virtual void			Free();
 };
-
 END

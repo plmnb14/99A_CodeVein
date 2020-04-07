@@ -247,6 +247,27 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\06. MassageUI">
       <UniqueIdentifier>{540b3aae-02d4-4cfe-b5dc-cb949b85ba2b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon">
+      <UniqueIdentifier>{e2162bb6-af71-45f9-aa7c-1cec88822749}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\BloodCode_Icon">
+      <UniqueIdentifier>{1d333b8b-cb97-47f1-95d1-5dd480f56ebf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\Inventory_Icon">
+      <UniqueIdentifier>{4cda91cb-33a6-4ad8-bb12-0f4812e58cee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\04.Inventory">
+      <UniqueIdentifier>{09832318-953c-427e-a127-5e3381248a73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\05.Total_Inven">
+      <UniqueIdentifier>{6e5040da-f8c6-46d6-87ac-1b0648859ebe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\08. InfoSlot">
+      <UniqueIdentifier>{343ae753-bdb9-4056-b045-a2752feb235f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\07. ClickUI">
+      <UniqueIdentifier>{4df8b620-ca33-4900-a23f-bd20831e0c51}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -444,6 +465,24 @@
     <ClInclude Include="..\Headers\MassageUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\04. MassageUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\BloodCode_Icon.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\BloodCode_Icon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Info_Slot.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\08. InfoSlot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Inventory_Icon.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\Inventory_Icon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Inventory.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\04.Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Total_Inven.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\05.Total_Inven</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ClickUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\07. ClickUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -634,6 +673,24 @@
     </ClCompile>
     <ClCompile Include="..\Codes\MassageUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\06. MassageUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BloodCode_Icon.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\BloodCode_Icon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Info_Slot.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\08. InfoSlot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Inventory_Icon.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\Inventory_Icon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Inventory.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\04.Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Total_Inven.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\05.Total_Inven</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ClickUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\07. ClickUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

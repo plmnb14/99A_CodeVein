@@ -1,98 +1,45 @@
 #include "stdafx.h"
-#include "..\Headers\Weapon_Slot.h"
-#include "Select_UI.h"
-#include "CursorUI.h"
+#include "..\Headers\BloodCode_Icon.h"
 
-CWeapon_Slot::CWeapon_Slot(_Device pDevice)
+CBloodCode_Icon::CBloodCode_Icon(_Device pDevice)
 	: CUI(pDevice)
 {
 }
 
-CWeapon_Slot::CWeapon_Slot(const CWeapon_Slot & rhs)
+CBloodCode_Icon::CBloodCode_Icon(const CBloodCode_Icon & rhs)
 	: CUI(rhs)
 {
 }
 
-HRESULT CWeapon_Slot::Ready_GameObject_Prototype()
+HRESULT CBloodCode_Icon::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
-
 	return NOERROR;
 }
 
-HRESULT CWeapon_Slot::Ready_GameObject(void * pArg)
+HRESULT CBloodCode_Icon::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
-	SetUp_Default();
-
 	m_bIsActive = false;
+
+	SetUp_Default();
 
 	return NOERROR;
 }
 
-_int CWeapon_Slot::Update_GameObject(_double TimeDelta)
+_int CBloodCode_Icon::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
-
-
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
-
-
-	if (m_pSelectUI)
-	{
-		m_pSelectUI->Set_Active(m_bIsActive);
-		m_pSelectUI->Set_UI_Pos(m_fPosX, m_fPosY);
-		m_pSelectUI->Set_UI_Size(m_fSizeX, m_fSizeY);
-		m_pSelectUI->Set_ViewZ(m_fViewZ - 0.1f);
-		m_pSelectUI->Set_Select(m_bIsSelect);
-	}
-
-	if (m_pCursorUI)
-	{
-		m_pCursorUI->Set_UI_Pos(m_fPosX, m_fPosY);
-		m_pCursorUI->Set_UI_Size(m_fSizeX, m_fSizeY);
-		m_pCursorUI->Set_ViewZ(m_fViewZ - 0.2f);
-
-		if (m_eType == WEAPON_None)
-			m_pCursorUI->Set_Active(false);
-		else
-			m_pCursorUI->Set_Active(m_bIsActive);
-		
-		m_pCursorUI->Set_CursorColl(Pt_InRect());
-	}
-
-
-	switch (m_eType)
-	{
-	case WEAPON_None:
-		m_iIndex = 5;
-		break;
-	case WEAPON_Hammer:
-		m_iIndex = 0;
-		break;
-	case WEAPON_LSword:
-		m_iIndex = 1;
-		break;
-	case WEAPON_Ssword:
-		m_iIndex = 2;
-		break;
-	case WEAPON_Gun:
-		m_iIndex = 3;
-		break;
-	case WEAPON_Halverd:
-		m_iIndex = 4;
-		break;
-	}
-
 	return NO_EVENT;
 }
 
-_int CWeapon_Slot::Late_Update_GameObject(_double TimeDelta)
+_int CBloodCode_Icon::Late_Update_GameObject(_double TimeDelta)
 {
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
@@ -106,7 +53,7 @@ _int CWeapon_Slot::Late_Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-HRESULT CWeapon_Slot::Render_GameObject()
+HRESULT CBloodCode_Icon::Render_GameObject()
 {
 	if (!m_bIsActive)
 		return NOERROR;
@@ -115,7 +62,6 @@ HRESULT CWeapon_Slot::Render_GameObject()
 		nullptr == m_pBufferCom)
 		return E_FAIL;
 
-
 	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
 
 	m_matOldView = g_pManagement->Get_Transform(D3DTS_VIEW);
@@ -123,7 +69,6 @@ HRESULT CWeapon_Slot::Render_GameObject()
 
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
-
 
 	if (FAILED(SetUp_ConstantTable()))
 		return E_FAIL;
@@ -145,18 +90,7 @@ HRESULT CWeapon_Slot::Render_GameObject()
 	return NOERROR;
 }
 
-
-_bool CWeapon_Slot::Pt_InRect()
-{
-	return g_pInput_Device->MousePt_InRect(m_fPosX, m_fPosY, m_fSizeX, m_fSizeY, g_hWnd);
-}
-
-WEAPON_STATE CWeapon_Slot::Get_Type()
-{
-	return m_eType;
-}
-
-HRESULT CWeapon_Slot::Add_Component()
+HRESULT CBloodCode_Icon::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -167,7 +101,7 @@ HRESULT CWeapon_Slot::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Weapon_Icon", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_BloodCodeIcon", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -181,7 +115,7 @@ HRESULT CWeapon_Slot::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CWeapon_Slot::SetUp_ConstantTable()
+HRESULT CBloodCode_Icon::SetUp_ConstantTable()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -200,58 +134,33 @@ HRESULT CWeapon_Slot::SetUp_ConstantTable()
 	return NOERROR;
 }
 
-void CWeapon_Slot::SetUp_Default()
+void CBloodCode_Icon::SetUp_Default()
 {
-	CUI::UI_DESC* pDesc = new CUI::UI_DESC;
-	pDesc->fPosX = m_fPosX;
-	pDesc->fPosY = m_fPosY;
-	pDesc->fSizeX = m_fSizeX;
-	pDesc->fSizeY = m_fSizeY;
-
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_SelectUI", SCENE_STAGE, L"Layer_SelectUI", pDesc)))
-		return;
-	m_pSelectUI = static_cast<CSelect_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_SelectUI", SCENE_STAGE));
-
-	pDesc = new CUI::UI_DESC;
-	pDesc->fPosX = m_fPosX;
-	pDesc->fPosY = m_fPosY;
-	pDesc->fSizeX = m_fSizeX;
-	pDesc->fSizeY = m_fSizeY;
-
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_CursorUI", SCENE_STAGE, L"Layer_CursorUI", pDesc)))
-		return;
-	m_pCursorUI = static_cast<CCursorUI*>(g_pManagement->Get_GameObjectBack(L"Layer_CursorUI", SCENE_STAGE));
 }
 
-CWeapon_Slot * CWeapon_Slot::Create(_Device pGraphic_Device)
+_bool CBloodCode_Icon::Pt_InRect()
 {
-	CWeapon_Slot* pInstance = new CWeapon_Slot(pGraphic_Device);
+	return g_pInput_Device->MousePt_InRect(m_fPosX, m_fPosY, m_fSizeX, m_fSizeY, g_hWnd);
+}
 
+CBloodCode_Icon * CBloodCode_Icon::Create(_Device pGraphic_Device)
+{
+	CBloodCode_Icon* pInstance = new CBloodCode_Icon(pGraphic_Device);
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
-	{
-		MSG_BOX("CWeaponSlot Creating Fail");
 		Safe_Release(pInstance);
-	}
-
 	return pInstance;
 }
 
-CGameObject * CWeapon_Slot::Clone_GameObject(void * pArg)
+CGameObject * CBloodCode_Icon::Clone_GameObject(void * pArg)
 {
-	CWeapon_Slot* pInstance = new CWeapon_Slot(*this);
-
+	CBloodCode_Icon* pInstance = new CBloodCode_Icon(*this);
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
-	{
-		MSG_BOX("CWeaponSlot Cloned Fail");
 		Safe_Release(pInstance);
-	}
-
 	return pInstance;
 }
 
-void CWeapon_Slot::Free()
+void CBloodCode_Icon::Free()
 {
-	
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom);
@@ -260,4 +169,3 @@ void CWeapon_Slot::Free()
 
 	CUI::Free();
 }
-
