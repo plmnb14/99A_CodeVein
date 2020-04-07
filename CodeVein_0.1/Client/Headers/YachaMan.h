@@ -10,29 +10,30 @@ class CYachaMan final : public CGameObject
 {
 public:
 	enum MONSTER_ANITYPE { IDLE, MOVE, ATTACK, HIT, DOWN, DEAD };
+	enum YACHAMAN_IDLETYPE { IDLE_IDLE, IDLE_EAT, IDLE_LURK };
+	enum YACHAMAN_MOVETYPE {MOVE_RUN, MOVE_WALK, MOVE_DODGE};
+	enum YACHAMAN_ATKTYPE {ATK_NORMAL, ATK_COMBO};
+	enum YACHAMAN_HITTYPE { HIT_HIT, HIT_HIT_F, HIT_HIT_B };
+	enum YACHAMAN_DOWNTYPE { DOWN_DOWN, DOWN_DOWN_W,DOWN_DOWN_P };
+	enum YACHAMAN_DEADTYPE { DEAD_DEAD, DEAD_DEAD_P };
+
+	enum ATK_NORMAL_TYPE { NORMAL_RIGHT, NORMAL_LEFT, NORMAL_HAMMERING, NORMAL_SHOULDER, NORMAL_TURNTWICE, NORMAL_HALFCLOCK, NORMAL_TARGETHAMMERING, NORMAL_WHEELWIND };
+	enum ATK_COMBO_TYPE { COMBO_R_L, COMBO_R_HAMMERING, COMBO_SHOULDE_L, COMBO_SHOULDER_TURNTWICE, COMBO_RUNHAMMERING };
 
 	enum YACHAMAN_ANI
 	{
-
 		Hammer_Idle = 0,
-		Lurk = 70,
-		Lurk_End,
-		Glance,
-		LookAround,
-		Eat,
-		Eat_End,
-
-		AtkR =1,
-		AtkL,
-		Atk_Hammering,
-		Atk_Shoulder,
-		Atk_HalfClock,
-		Atk_TurnTwice,
-		Atk_TargetHammering,
-		Atk_WheelWind,
-		Atk_Run_Start,
-		Atk_Run_Loop,
-		Atk_Run_End,
+		Atk_Ani_R,
+		Atk_Ani_L,
+		Atk_Ani_Hammering,
+		Atk_Ani_Shoulder,
+		Atk_Ani_HalfClock,
+		Atk_Ani_TurnTwice,
+		Atk_Ani_TargetHammering,
+		Atk_Ani_WheelWind,
+		Atk_Ani_Run_Start,
+		Atk_Ani_Run_Loop,
+		Atk_Ani_Run_End,
 
 		Dead_B,
 		Dead_F,
@@ -42,6 +43,12 @@ public:
 		Dodge,
 		Walk,
 
+		Lurk = 70,
+		Lurk_End,
+		Glance,
+		LookAround,
+		Eat,
+		Eat_End,
 		//Down_HitF_Start = 31,
 		//Down_HitF_End,
 		//Down_HitB_Start,
@@ -81,6 +88,7 @@ private:
 	void Enter_CollisionEvent();
 	void Check_CollisionEvent(list<CGameObject*> plistGameObject);
 
+	//피격,회피,인식,범위,공격가능성,엇박자
 	void Check_Hit();
 	void Check_Dist();
 	void Set_AniEvent();
@@ -99,17 +107,28 @@ private:
 
 	void Play_Walk();
 	void Play_Run();
-	//void Play_Dodge();
+	void Play_Dodge();
 
-	void Play_RandomAtk();
-	void Play_ShoulderAtk(); //4
-	void Play_LeftRightAtk(); //1,2 0.5 0.95
-	void Play_LeftAndHammering(); //1,3 0.5 0.95
-	void Play_ShoulderAtk_LeftAtk(); //4,5 0.28 0.95
-	void Play_ShoulderAtk_TurnTwice(); //4,6 0.28 0.95
-	void Play_TargetHammering(); //7 1타격
-	void Play_WheelWind(); //8 4타격
-	void Play_RunHammering(); //9,10,11 달려가서 내리치기 0.9 0.9 0.9
+	void Play_RandomAtkNormal();
+	void Play_R(); //1.3~1.9 이동 1.8~2.0 타격
+	void Play_L(); //0.6~1.1 이동 1.2~1.4타격
+	void play_Hammering(); //0.9~1.8 이동 1.4~1.8 타격
+	void Play_Shoulder(); //0.9~1.3 이동 0.9~1.3 타격
+	void Play_TurnTwice(); //0.8~2.0 2.9~3.3 이동 0.9~1.2 1.6~1.9 타격
+	void Play_HalfClock(); //0.8~2.0회전이동 2.9~3.3 짧게복귀 0.8~1.2타격
+	void Play_TargetHammering(); //1.9~3.0 회전이동 3.9~5.6짧게복귀 1.9~2.7 타격
+	void Play_WheelWind();
+	//1.4~1.8 이동 1.4~1.8 타격
+	//	1.9~2.2 이동 2.1~2.4 타격
+	//	2.3~2.6 이동 2.7~2.8 타격
+	//	2.7~2.9 이동 3.1~3.3 타격
+	//	3.0~3.3 이동
+	void Play_RandomAtkCombo();
+	void Play_Combo_R_L(); //1,2 0.45 0.95
+	void Play_Combo_R_Hammering(); //1,3 0.5 0.95
+	void Play_Combo_Shoulder_TurnTwice(); //4,5 0.28 0.95
+	void Play_Combo_Shoulder_HalfClock(); //4,6 0.28 0.95
+	void Play_Combo_RunHammering(); //9,10,11 달려가서 내리치기 0.9 0.9 0.9
 
 	void Play_Hit();
 	void Play_Down_Strong();
@@ -146,9 +165,17 @@ private:
 	_float				m_fSkillMoveAccel_Max = 0.f;
 	_float				m_fSkillMoveMultiply = 1.f;
 
-	MONSTER_ANITYPE		m_eFirstIdentify;
+	MONSTER_ANITYPE		m_eFirstCategory; //대분류
+	YACHAMAN_IDLETYPE	m_eSecondCategory_Idle; //중분류
+	YACHAMAN_MOVETYPE	m_eSecondCategory_Move;
+	YACHAMAN_ATKTYPE	m_eSecondCategory_Atk;
+	YACHAMAN_HITTYPE	m_eSecondCategory_Hit;
+	YACHAMAN_DOWNTYPE	m_eSecondCategory_Down;
+	YACHAMAN_DEADTYPE	m_eSecondCategory_Dead;
+
+	ATK_COMBO_TYPE		m_eAtkCombo;
 	YACHAMAN_ANI		m_eState;
-	_bool				m_bEventTrigger[10] = {};
+	_bool				m_bEventTrigger[20] = {};
 
 	_bool				m_bInRecognitionRange = false;
 	_bool				m_bInAttackRange = false; 
@@ -156,11 +183,16 @@ private:
 	//_bool				m_bIsDodge = false;
 	_bool				m_bIsCoolDown = false;
 
+	_bool				m_bCanRandomAtkCategory = true;
+	_bool				m_bIsAtkCombo = false;
+	_bool				m_bCanRandomIdle = true;
+
 	_float				m_fRecognitionRange = 10.f;
 	_float				m_fAttackRange = 4.f;
 	_float				m_fCoolDown = 0.f;
 
-	_int				m_iAttackRandomNumber = 0;
+	_int				m_iAtkRandomType = 0;
+	_int				m_iAtkRandom = 0;
 	_int				m_iIdleRandomNumber = 0;
 	_int				m_iDodgeCount = 0;
 

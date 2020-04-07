@@ -30,7 +30,7 @@ HRESULT CBlackWolf::Ready_GameObject(void * pArg)
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
 	m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE));
 
-	m_tObjParam.fHp_Max = 10.f; //4~5´ë »ç¸Á, ±âº»°ø°Ý·Â 20+-5¿¡¼­ ÇÇ°¨¼Ò
+	m_tObjParam.fHp_Max = 100.f; //4~5´ë »ç¸Á, ±âº»°ø°Ý·Â 20+-5¿¡¼­ ÇÇ°¨¼Ò
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
 
 	m_eFirstIdentify = MONSTER_ANITYPE::IDLE;
@@ -223,7 +223,6 @@ void CBlackWolf::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 
 void CBlackWolf::Check_Hit()
 {
-	cout << "´ó´óÀÌ Ã¼·Â ===" << m_tObjParam.fHp_Cur << endl;
 	if (DEAD == m_eFirstIdentify)
 		return;
 
@@ -563,7 +562,6 @@ void CBlackWolf::Play_Eat()
 	{
 		if (WOLF_ANI::Eat != m_eState && WOLF_ANI::Eat_End != m_eState)
 		{
-			cout << "¸Ô±â" << endl;
 			m_eState = WOLF_ANI::Eat;
 			return;
 		}
@@ -572,7 +570,6 @@ void CBlackWolf::Play_Eat()
 		{
 			if (m_pMeshCom->Is_Finish_Animation())
 			{
-				cout << "¸Ô±â ³¡" << endl;
 				m_eState = WOLF_ANI::Eat_End;
 			}
 			return;
@@ -581,7 +578,6 @@ void CBlackWolf::Play_Eat()
 		{
 			if (m_pMeshCom->Is_Finish_Animation())
 			{
-				cout << "¸Ô±â->ÀÏ¹Ý" << endl;
 				m_bIdleRandom = true;
 				m_eState = WOLF_ANI::Idle;
 			}
@@ -610,7 +606,6 @@ void CBlackWolf::Play_Sit()
 	{
 		if (WOLF_ANI::Sit != m_eState && WOLF_ANI::Sit_End != m_eState)
 		{
-			cout << "¾É±â" << endl;
 			m_eState = WOLF_ANI::Sit;
 			return;
 		}
@@ -618,7 +613,6 @@ void CBlackWolf::Play_Sit()
 		{
 			if (m_pMeshCom->Is_Finish_Animation())
 			{
-				cout << "¾É±â ³¡" << endl;
 				m_eState = WOLF_ANI::Sit_End;
 			}
 			return;
@@ -627,7 +621,6 @@ void CBlackWolf::Play_Sit()
 		{
 			if (m_pMeshCom->Is_Finish_Animation())
 			{
-				cout << "¾É±â->ÀÏ¹Ý" << endl;
 				m_bIdleRandom = true;
 				m_eState = WOLF_ANI::Idle;
 			}
