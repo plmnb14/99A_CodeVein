@@ -143,7 +143,7 @@ HRESULT CActiveObject::Render_GameObject()
 	{
 		m_pShader->Begin_Pass(m_PassNum);
 
-		if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_DIFFUSE))))
+		if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
 			return E_FAIL;
 
 		m_pShader->Commit_Changes();

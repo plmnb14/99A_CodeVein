@@ -29,8 +29,8 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	//m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_StageBase.dat");
 	//m_pNavMesh->Set_SubsetIndex(0);
 
-	m_pMonsterUI = CMonsterUI::Create(m_pGraphic_Dev, this);
-	m_pMonsterUI->Ready_GameObject(NULL);
+	//m_pMonsterUI = CMonsterUI::Create(m_pGraphic_Dev, this);
+	//m_pMonsterUI->Ready_GameObject(NULL);
 
 	Ready_NF(pArg);
 
@@ -329,7 +329,7 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
 	if(0 <= m_tObjParam.fHp_Cur)
-	m_pMonsterUI->Update_GameObject(TimeDelta);
+	//m_pMonsterUI->Update_GameObject(TimeDelta);
 
 	// 죽었을 경우
 	if (m_bIsDead)

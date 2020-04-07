@@ -67,6 +67,9 @@ _int CWeapon::Late_Update_GameObject(_double TimeDelta)
 	if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
 
+	//if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
+	//	return E_FAIL;
+
 	return _int();
 }
 
@@ -107,6 +110,38 @@ HRESULT CWeapon::Render_GameObject()
 	m_pShader->End_Shader();
 
 	Draw_Collider();
+
+	return NOERROR;
+}
+
+HRESULT CWeapon::Render_GameObject_SetPass(CShader* pShader, _int iPass)
+{
+	if (nullptr == pShader ||
+		nullptr == m_pMesh_Static)
+		return E_FAIL;
+
+	_mat		ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+
+	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
+		return E_FAIL;
+
+	_ulong dwNumSubSet = m_pMesh_Static->Get_NumMaterials();
+
+	for (_ulong i = 0; i < dwNumSubSet; ++i)
+	{
+		pShader->Begin_Pass(iPass);
+
+		pShader->Commit_Changes();
+
+		m_pMesh_Static->Render_Mesh(i);
+
+		pShader->End_Pass();
+	}
 
 	return NOERROR;
 }

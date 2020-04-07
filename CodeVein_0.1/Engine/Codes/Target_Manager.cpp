@@ -140,6 +140,7 @@ HRESULT CTarget_Manager::New_Stencil(const _tchar * pTargetTag)
 	//// 기존 스탠실 버퍼 받아오고
 	pRenderTarget->Origin_DepthBuffer();
 
+	pRenderTarget->Clear_Target();
 	pRenderTarget->SetUp_OnGraphicDev(0);
 
 	// 뷰포트도 새걸로 바꾸고

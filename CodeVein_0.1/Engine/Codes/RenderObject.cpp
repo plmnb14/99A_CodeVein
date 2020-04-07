@@ -36,6 +36,7 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 	if (false == m_bOnTool)
 	{
 		m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
+		m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this);
 
 		//if (CObject_Manager::Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))
 		//{
@@ -69,10 +70,10 @@ HRESULT CRenderObject::Render_GameObject()
 	{
 		m_pShader->Begin_Pass(m_dwPassNum);
 
-		if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_DIFFUSE))))
+		if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
 			return E_FAIL;
 
-		if (FAILED(m_pShader->Set_Texture("g_NormalTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_NORMAL))))
+		if (FAILED(m_pShader->Set_Texture("g_NormalTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_NORMAL_MAP))))
 			return E_FAIL;
 
 		//if (FAILED(m_pShader->Set_Texture("g_SpecularTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_SPECULAR))))
@@ -114,19 +115,19 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 		return E_FAIL;
 	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
-	CManagement::Get_Instance()->Set_LightPos(0, m_pTransform->Get_Pos() + _v3(0, 2, 2));
 
 	_ulong dwNumSubSet = m_pMesh_Static->Get_NumMaterials();
 
 	for (_ulong i = 0; i < dwNumSubSet; ++i)
 	{
-		pShader->Begin_Pass(m_dwPassNum);
+		pShader->Begin_Pass(iPass);
+
+		pShader->Commit_Changes();
 
 		m_pMesh_Static->Render_Mesh(i);
 
 		pShader->End_Pass();
 	}
-
 
 	return NOERROR;
 }

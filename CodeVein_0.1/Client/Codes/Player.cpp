@@ -69,7 +69,6 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 	m_pNavMesh->Goto_Next_Subset(m_pTransform->Get_Pos(), nullptr);
 
 	CScriptManager::Get_Instance()->Update_ScriptMgr(TimeDelta, m_pNavMesh->Get_SubSetIndex(), m_pNavMesh->Get_CellIndex());
-
 	return NO_EVENT;
 }
 
@@ -165,9 +164,9 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 		return E_FAIL;
 	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
+
 	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
-	g_pManagement->Set_LightPos(0, m_pTransform->Get_Pos() + _v3(0, 2, 2));
 
 	_uint iNumMeshContainer = _uint(m_pDynamicMesh->Get_NumMeshContainer());
 
@@ -175,11 +174,13 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 	{
 		_uint iNumSubSet = (_uint)m_pDynamicMesh->Get_NumMaterials(i);
 
-		m_pDynamicMesh->Update_SkinnedMesh(i);
+		//m_pDynamicMesh->Update_SkinnedMesh(i);
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
 			pShader->Begin_Pass(iPass);
+
+			pShader->Commit_Changes();
 
 			m_pDynamicMesh->Render_Mesh(i, j);
 

@@ -49,9 +49,10 @@ HRESULT CRenderer::Ready_Component_Prototype()
 		return E_FAIL;
 
 	// Target_ShadowMap
-	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_ShadowMap", ViewPort.Width, ViewPort.Height, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.f, 1.f, 0.f, 0.f))))
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_ShadowMap", ViewPort.Width, ViewPort.Height, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.f, 0.f, 0.f, 1.f))))
 		return E_FAIL;
-	// Target_Shadow
+
+	// Target_Shadow ( ¿ø·¡ D3DFMT_A8R8G8B8 )
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Shadow", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.f, 1.f, 0.f, 1.f))))
 		return E_FAIL;
 
@@ -402,13 +403,22 @@ HRESULT CRenderer::Render_ShadowMap()
 {
 	if (nullptr == m_pTarget_Manager)
 		return E_FAIL;
+
+	m_pTarget_Manager->New_Stencil(L"Target_ShadowMap");
+	m_pGraphic_Dev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DXCOLOR(0.f, 0.f, 0.f, 0.f), 1.f, 0);
+
+	_mat matWorld, matView, matProj;
 	
-	//m_pTarget_Manager->New_Stencil(L"Target_ShadowMap");
-	//m_pGraphic_Dev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DXCOLOR(0.f, 0.f, 0.f, 0.f), 1.f, 0);
+	_v3 vLightPos = _v3(5.f, 8.f, -5.f);
+	_v3 vLookAt = V3_NULL;
+	//_v3 vLookAt = m_vLookAtPos;
 
-	m_pTarget_Manager->Begin_Render_Target(L"Target_ShadowMap");
+	D3DXMatrixLookAtLH(&matView, &vLightPos, &vLookAt, &WORLD_UP);
+	D3DXMatrixOrthoLH(&matProj, 200.f, 200.f, 0.1f, 200.f);
 
-	m_pShader_Shadow->Set_Value("g_LightVP_Close", &CManagement::Get_Instance()->Get_LightViewProj(), sizeof(_mat));
+	m_pShader_Shadow->Set_Value("g_matLightView", &matView, sizeof(_mat));
+	m_pShader_Shadow->Set_Value("g_matLightProj", &matProj, sizeof(_mat));
+	m_pShader_Shadow->Set_Value("g_LightPos", &vLightPos, sizeof(_v3));
 
 	m_pShader_Shadow->Begin_Shader();
 
@@ -421,16 +431,12 @@ HRESULT CRenderer::Render_ShadowMap()
 				Safe_Release(pGameObject);
 				return E_FAIL;
 			}
-			//Safe_Release(pGameObject);
 		}
 	}
 
-	//m_RenderList[RENDER_SHADOWTARGET].clear();
-
 	m_pShader_Shadow->End_Shader();
 
-	m_pTarget_Manager->End_Render_Target(L"Target_ShadowMap");
-	//m_pTarget_Manager->Origin_Stencil(L"Target_ShadowMap");
+	m_pTarget_Manager->Origin_Stencil(L"Target_ShadowMap");
 
 	Render_Shadow();
 
@@ -439,16 +445,15 @@ HRESULT CRenderer::Render_ShadowMap()
 
 HRESULT CRenderer::Render_Shadow()
 {
-	//m_pTarget_Manager->New_Stencil(L"Target_Shadow");
-	//m_pGraphic_Dev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DXCOLOR(0.f, 0.f, 0.f, 0.f), 1.f, 0);
-	m_pTarget_Manager->Begin_Render_Target(L"Target_Shadow");
+	m_pTarget_Manager->New_Stencil(L"Target_Shadow");
+	m_pGraphic_Dev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DXCOLOR(0.f, 0.f, 0.f, 0.f), 1.f, 0);
 
-	_float fOffsetX = 0.5f + (0.5f / (float)1280.f);
-	_float fOffsetY = 0.5f + (0.5f / (float)720.f);
+	_float fOffsetX = 0.5f + (0.5f / 1280.f);
+	_float fOffsetY = 0.5f + (0.5f / 720.f);
 
-	_mat matScaleBias = {};
-
+	_mat matScaleBias;
 	D3DXMatrixIdentity(&matScaleBias);
+
 
 	matScaleBias._11 = 0.5f;
 	matScaleBias._22 = -0.5f;
@@ -458,12 +463,26 @@ HRESULT CRenderer::Render_Shadow()
 	matScaleBias._44 = 1.f;
 
 	m_pShader_Shadow->Set_Value("g_matBias", matScaleBias, sizeof(_mat));
-	if(CManagement::Get_Instance()->Get_LightDesc())
-		m_pShader_Shadow->Set_Value("g_vLightPos", &CManagement::Get_Instance()->Get_LightDesc()->Position, sizeof(_v3));
-	m_pShader_Shadow->Set_Value("g_LightVP_Close", &CManagement::Get_Instance()->Get_LightViewProj(), sizeof(_mat));
+
+	_mat matWorld, matView, matProj;
+
+	_v3 vLightPos = _v3(5.f, 8.f, -5.f);
+	_v3 vLookAt = V3_NULL;
+	//_v3 vLookAt = m_vLookAtPos;
+
+
+	D3DXMatrixLookAtLH(&matView, &vLightPos, &vLookAt, &WORLD_UP);
+	D3DXMatrixOrthoLH(&matProj, 200.f, 200.f, 0.1f, 200.f);
+
+	m_pShader_Shadow->Set_Value("g_matLightView", &matView, sizeof(_mat));
+	m_pShader_Shadow->Set_Value("g_matLightProj", &matProj, sizeof(_mat));
+	m_pShader_Shadow->Set_Value("g_LightPos", &vLightPos, sizeof(_v3));
+
 	m_pShader_Shadow->Set_Texture("g_ShadowMapTexture", m_pTarget_Manager->Get_Texture(L"Target_ShadowMap"));
 
 	m_pShader_Shadow->Begin_Shader();
+
+	_uint a = 0;
 
 	for (auto& pGameObject : m_RenderList[RENDER_SHADOWTARGET])
 	{
@@ -474,15 +493,15 @@ HRESULT CRenderer::Render_Shadow()
 				Safe_Release(pGameObject);
 				return E_FAIL;
 			}
+
 			Safe_Release(pGameObject);
 		}
 	}
 	m_RenderList[RENDER_SHADOWTARGET].clear();
 
 	m_pShader_Shadow->End_Shader();
-	m_pTarget_Manager->End_Render_Target(L"Target_Shadow");
-	//m_pTarget_Manager->Origin_Stencil(L"Target_Shadow");
 
+	m_pTarget_Manager->Origin_Stencil(L"Target_Shadow");
 	
 
 	//m_pTarget_Manager->Begin_Render_Target(L"Target_Shadow");
@@ -597,6 +616,11 @@ HRESULT CRenderer::Render_LightAcc()
 
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_LightAcc")))
 		return E_FAIL;
+
+
+	//m_pShader_LightAcc->Set_Value("g_matLightView", &matView, sizeof(_mat));
+	//m_pShader_LightAcc->Set_Value("g_matLightProj", &matProj, sizeof(_mat));
+	//m_pShader_LightAcc->Set_Value("g_vLightPos", &vLightPos, sizeof(_v3));
 
 
 	m_pShader_LightAcc->Set_Texture("g_NormalTexture", m_pTarget_Manager->Get_Texture(L"Target_Normal"));

@@ -41,6 +41,18 @@ private:
 
 	_v3						m_pVtxMin;
 	_v3						m_pVtxMax;
+
+private:
+	_bool					m_bNoDiffuseMap = false;		// 디퓨즈가 없어요
+	_bool					m_bNoNormalMap = false;			// 노말맵이 없어요
+	_bool					m_bNoSpecularMap = false;		// 스펙큘러맵이 없어요
+	_bool					m_bNoIDMap = false;				// ID 맵이 없어요
+	_bool					m_bNoUnionMap = false;			// 유니온 맵이 없어요
+	_bool					m_bNoEmissiveMap = false;		// 이미시브 맵이 없어요
+	_bool					m_bNoRoughnessMap = false;		// 러프니스맵이 없어요
+	_bool					m_bNoTransparencyMap = false;	// 반투명맵이 없어요
+
+
 private:
 	HRESULT Change_TextureFileName(_tchar* pFilePath, _tchar * pSourMark, _tchar * pDestMark);
 public:
