@@ -432,9 +432,6 @@
     <ClInclude Include="..\Headers\PickUp_ItemUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI\PickUp_ItemUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\PoisonChaseBullet.h">
-      <Filter>02.GameObject\Stage\1%29 Boss\PoisonButterfly</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\GunGenjiBullet.h">
       <Filter>02.GameObject\Stage\2%29 Monster\Genji\Gun</Filter>
     </ClInclude>
@@ -494,6 +491,9 @@
     </ClInclude>
     <ClInclude Include="..\Headers\ClickUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\07. ClickUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\PoisonChaseBullet.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\PoisonButterfly\Bullet</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -653,9 +653,6 @@
     <ClCompile Include="..\Codes\MassageUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\04. MassageUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\PoisonChaseBullet.cpp">
-      <Filter>02.GameObject\Stage\1%29 Boss\PoisonButterfly</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\GunGenjiBullet.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster\Genji\Gun</Filter>
     </ClCompile>
@@ -712,6 +709,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\ClickUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\07. ClickUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\PoisonChaseBullet.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\PoisonButterfly\Bullet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
