@@ -37,8 +37,8 @@ void CFileInfo::Create_Mesh_PathInfo()
 
 	cout << "Extracting StaticMesh Path . . ." << endl;
 
-	lstrcpy(szStaticPath, L"..\\..\\Client\\Resources\\Mesh\\StaticMesh\\");	// 문자열 복사
-	lstrcat(szStaticPath, L"Effect");								// 문자열 결합
+	lstrcpy(szStaticPath, L"..\\..\\Client\\Resources\\Mesh\\");	// 문자열 복사
+	lstrcat(szStaticPath, L"EffectMesh");							// 문자열 결합
 	Extract_Mesh_PathInfo(szStaticPath, m_listPathInfo);
 
 	cout << "Extracting Complete . . ." << endl;

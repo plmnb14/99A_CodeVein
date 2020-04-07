@@ -248,6 +248,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Bullet_Tail_Particle")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"RockBullet_Body", true)))
+		return E_FAIL;
 #pragma endregion
 
 	if (FAILED(Add_EffectPrototype(L"SpawnParticle")))

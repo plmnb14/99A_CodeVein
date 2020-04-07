@@ -64,8 +64,8 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
 	//Check_ShowValue->Set_Child(Start_Show());
 	//Start_Sel->Add_Child(Check_ShowValue);
-	Start_Sel->Add_Child(Start_Game());
-	//Start_Sel->Add_Child(Throwing2());
+	//Start_Sel->Add_Child(Start_Game());
+	Start_Sel->Add_Child(Throwing2());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -616,7 +616,7 @@ CBT_Composite_Node * CSwordGenji::Throwing1()
 	CBT_Play_Ani* Show_Ani26 = Node_Ani("던지기 1", 26, 0.95f);
 	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.1f);
 
-	CBT_CreateBullet* Bullet0 = Node_CreateBullet("수리검", L"Monster_SwordGenjiBullet", L"Bone_LeftHandAttach", L"ShotDir", 5, 5, 1.68, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Bullet0 = Node_CreateBullet("수리검", L"Monster_SwordGenjiBullet", L"Bone_LeftHandAttach", L"ShotDir", 30, 5, 1.68, 1, 1, 0, CBT_Service_Node::Finite);
 
 	Root_Seq->Add_Service(Bullet0);
 
@@ -633,7 +633,7 @@ CBT_Composite_Node * CSwordGenji::Throwing2()
 	CBT_Play_Ani* Show_Ani26 = Node_Ani("던지기 2", 27, 0.95f);
 	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.1f);
 
-	CBT_CreateBullet* Bullet0 = Node_CreateBullet("수리검", L"Monster_SwordGenjiBullet", L"Bone_LeftHandAttach", L"ShotDir", 5, 5, 1.73, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Bullet0 = Node_CreateBullet("수리검", L"Monster_SwordGenjiBullet", L"Bone_LeftHandAttach", L"ShotDir", 30, 5, 1.73, 1, 1, 0, CBT_Service_Node::Finite);
 
 	Root_Seq->Add_Service(Bullet0);
 

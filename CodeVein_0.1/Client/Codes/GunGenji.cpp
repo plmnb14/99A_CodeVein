@@ -29,8 +29,8 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	//m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_StageBase.dat");
 	//m_pNavMesh->Set_SubsetIndex(0);
 
-	m_pMonsterUI = CMonsterUI::Create(m_pGraphic_Dev, this);
-	m_pMonsterUI->Ready_GameObject(NULL);
+	//m_pMonsterUI = CMonsterUI::Create(m_pGraphic_Dev, this);
+	//m_pMonsterUI->Ready_GameObject(NULL);
 
 	Ready_NF(pArg);
 
@@ -74,10 +74,10 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("½Ã¿¬È¸ º¯¼ö Ã¼Å©", L"Show", true);
 	//Check_ShowValue->Set_Child(Start_Show());
 	//Start_Sel->Add_Child(Check_ShowValue);
-	Start_Sel->Add_Child(Start_Game());
+	//Start_Sel->Add_Child(Start_Game());
 
 
-	//Start_Sel->Add_Child(Cut_To_Right());
+	Start_Sel->Add_Child(Shot());
 
 
 	///////////º¸¿©ÁÖ±â¿ë
@@ -328,8 +328,8 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 _int CGunGenji::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
-	if(0 <= m_tObjParam.fHp_Cur)
-	m_pMonsterUI->Update_GameObject(TimeDelta);
+	//if(0 <= m_tObjParam.fHp_Cur)
+	//m_pMonsterUI->Update_GameObject(TimeDelta);
 
 	// Á×¾úÀ» °æ¿ì
 	if (m_bIsDead)
@@ -469,17 +469,14 @@ CBT_Composite_Node * CGunGenji::Shot()
 	CBT_RotationDir* Rotation0 = Node_RotationDir("¹æÇâ µ¹¸®±â", L"Player_Pos", 0.2);
 
 
-	//CBT_CreateBullet* Bullet0 = Node_CreateBullet("°ÕÁö ÃÑ¾Ë", L"Monster_GunGenjiBullet", L"CreateBulletPos", L"NormalShotDir", 12, 1, 1.5, 1, 0, 0, CBT_Service_Node::Finite);
-	//Root_Parallel->Add_Service(Bullet0);
-
-	CBT_CreateBullet* Bullet0 = Node_CreateBullet("°ÕÁö ÃÑ¾Ë", L"Monster_GenjiBullet", L"CreateBulletPos", L"NormalShotDir", 20, 1.5, 1.725, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Bullet0 = Node_CreateBullet("°ÕÁö ÃÑ¾Ë", L"Monster_GunGenjiBullet", L"CreateBulletPos", L"NormalShotDir", 20, 1.5, 1.725, 1, 1, 0, CBT_Service_Node::Finite);
 	Root_Parallel->Add_Service(Bullet0);
 
-	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("ÁØºñ ¿À¿À¶ó", L"Bullet_Ready_Aura", L"CreateBulletPos", 0.6, 1, 0.0, 0);	// ÃÑ µÚÂÊ or ¿À¸¥¼Õ
-	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("ÁØºñ ¼¶±¤", L"Bullet_Ready_Flash", L"CreateBulletPos", 0.3, 1, 0.0, 0);	// ÃÑ µÚÂÊ or ¿À¸¥¼Õ
-	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("¹ß»ç ¼¶±¤", L"Bullet_Fire_Flash", L"CreateBulletPos", 1.7f, 1, 0.0, 0);	// ÃÑ±¸
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("ÁØºñ ¿À¿À¶ó"	, L"Bullet_Ready_Aura"	, L"RightHandAttach", 0.3, 5, 1, 0);
+	//CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("ÁØºñ ¼¶±¤"	, L"Bullet_Ready_Flash"	, L"RightHandAttach", 0.3, 1, 0.0, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("¹ß»ç ¼¶±¤"	, L"Bullet_Fire_Flash"	, L"CreateBulletPos", 1.5f, 1, 0.0, 0);
 	Root_Parallel->Add_Service(Effect0);
-	Root_Parallel->Add_Service(Effect1);
+	//Root_Parallel->Add_Service(Effect1);
 	Root_Parallel->Add_Service(Effect2);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
@@ -529,7 +526,7 @@ CBT_Composite_Node * CGunGenji::Sudden_Shot()
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("¹æÇâ ÃßÀû", L"Player_Pos", 3, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("¹æÇâ µ¹¸®±â", L"Player_Pos", 0.2);
 
-	CBT_CreateBullet* Bullet0 = Node_CreateBullet("°ÕÁö ÃÑ¾Ë", L"Monster_GunGenjiBullet", L"CreateBulletPos", L"NormalShotDir", 7, 3, 3.6, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Bullet0 = Node_CreateBullet("°ÕÁö ÃÑ¾Ë", L"Monster_GunGenjiBullet", L"CreateBulletPos", L"NormalShotDir", 20, 1.5, 3.6, 1, 1, 0, CBT_Service_Node::Finite);
 	Root_Parallel->Add_Service(Bullet0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
@@ -802,6 +799,10 @@ CBT_Composite_Node * CGunGenji::Show_Attack()
 
 HRESULT CGunGenji::Update_Bone_Of_BlackBoard()
 {
+	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
+	m_vRightHandAttach = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"RightHandAttach", m_vRightHandAttach);
+
 	return S_OK;
 }
 
