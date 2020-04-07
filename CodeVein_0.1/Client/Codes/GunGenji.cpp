@@ -803,6 +803,14 @@ HRESULT CGunGenji::Update_Bone_Of_BlackBoard()
 	m_vRightHandAttach = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"RightHandAttach", m_vRightHandAttach);
 
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
+	m_vHead = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Bone_Head", m_vHead);
+
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightToeBase");
+	m_vRightToeBase = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Bone_RightToeBase", m_vRightToeBase);
+
 	return S_OK;
 }
 
@@ -1008,7 +1016,7 @@ void CGunGenji::Check_PhyCollider()
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
 			Start_Dissolve(0.7f, false, true);
 			m_pGun->Start_Dissolve();
-			g_pManagement->Create_Spawn_Effect(m_pTransformCom->Get_Pos());
+			g_pManagement->Create_Spawn_Effect(m_vRightToeBase, m_vHead);
 		}
 	}
 	// 맞았을 때

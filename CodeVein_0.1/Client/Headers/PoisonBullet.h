@@ -45,10 +45,6 @@ private:
 	_bool				m_bDead = false;
 
 	_bool				m_bEffect = true;
-
-	_float				m_fEffectCreateOffset		= 0.f;
-	_float				m_fEffectCreateOffset_Check = 0.f;
-
 private:
 	_bool				m_bPlayerFriendly = false;		// 플레이어 껀지
 

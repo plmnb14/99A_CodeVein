@@ -913,7 +913,7 @@ void CSwordGenji::Check_PhyCollider()
 
 			Start_Dissolve(0.7f, false, true);
 			m_pSword->Start_Dissolve();
-			g_pManagement->Create_Spawn_Effect(m_pTransformCom->Get_Pos());
+			//g_pManagement->Create_Spawn_Effect(m_pTransformCom->Get_Pos());
 		}
 	}
 	// 맞았을 때

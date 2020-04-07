@@ -144,6 +144,7 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 						pEffect->Set_ParticleName(szEffName);
 						pEffect->Set_Desc((*iter_begin)->vCreatePos, (*iter_begin)->pFollowTrans);
 						pEffect->Set_AutoFind((*iter_begin)->bAutoFind);
+						if ((*iter_begin)->bFinishPos) pEffect->Set_FinishPos((*iter_begin)->vFinishPos);
 						pEffect->Reset_Init();
 
 						m_EffectList.push_back(pEffect);
@@ -153,6 +154,7 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 					m_EffectList.push_back(pFindedQueue->front());
 					pFindedQueue->front()->Set_Desc((*iter_begin)->vCreatePos, (*iter_begin)->pFollowTrans);
 					pFindedQueue->front()->Set_AutoFind((*iter_begin)->bAutoFind);
+					if((*iter_begin)->bFinishPos) pFindedQueue->front()->Set_FinishPos((*iter_begin)->vFinishPos);
 					pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
 					pFindedQueue->pop();
 				}
@@ -181,7 +183,23 @@ void CParticleMgr::Create_ParticleEffect(_tchar* szName, _float fLifeTime, _v3 v
 	pInfo->pFollowTrans = pFollowTrans;
 	pInfo->vCreatePos = vPos;
 	pInfo->bAutoFind = false;
-	
+	pInfo->bFinishPos = false;
+
+	m_vecParticle.push_back(pInfo);
+}
+
+void CParticleMgr::Create_ParticleEffect_FinishPos(_tchar* szName, _float fLifeTime, _v3 vPos, _v3 vFinishPos, CTransform * pFollowTrans)
+{
+	PARTICLE_INFO* pInfo = new PARTICLE_INFO;
+
+	lstrcpy(pInfo->szName, szName);
+	pInfo->fLifeTime = fLifeTime;
+	pInfo->pFollowTrans = pFollowTrans;
+	pInfo->vCreatePos = vPos;
+	pInfo->vFinishPos = vFinishPos;
+	pInfo->bAutoFind = false;
+	pInfo->bFinishPos = true;
+
 	m_vecParticle.push_back(pInfo);
 }
 
@@ -372,11 +390,12 @@ void CParticleMgr::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCo
 	Create_DirEffect(L"Hit_Blood_Direction_6", vAttackPos, vBloodDir);
 }
 
-void CParticleMgr::Create_Spawn_Effect(_v3 vPos, CTransform* pFollowTrans)
+void CParticleMgr::Create_Spawn_Effect(_v3 vPos, _v3 vFinishPos, CTransform* pFollowTrans)
 {
-	// 렉걸려서 막아둠
-	//Create_ParticleEffect(L"SpawnParticle", 2.f, vPos, pFollowTrans);
-	//Create_ParticleEffect(L"SpawnParticle_Sub", 2.f, vPos, pFollowTrans);
+	/// 렉걸려서 막아둠
+	Create_ParticleEffect_FinishPos(L"SpawnParticle", 2.f, vPos, vFinishPos, pFollowTrans);
+	Create_ParticleEffect_FinishPos(L"SpawnParticle_Sub", 2.f, vPos, vFinishPos, pFollowTrans);
+
 }
 
 void CParticleMgr::Create_FootSmoke_Effect(_v3 vPos, _float fOffset)

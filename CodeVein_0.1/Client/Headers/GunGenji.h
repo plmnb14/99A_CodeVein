@@ -123,6 +123,8 @@ private:
 
 	// 블랙보드에서 뼈의 Pos 저장소
 	_v3					m_vRightHandAttach = _v3(0.f, 0.f, 0.f);	//RightHandAttach
+	_v3					m_vHead = _v3(0.f, 0.f, 0.f);	// Head
+	_v3					m_vRightToeBase	= _v3(0.f, 0.f, 0.f);	// Toe
 
 private:
 	_float				m_fSkillMoveSpeed_Cur = 0.f;

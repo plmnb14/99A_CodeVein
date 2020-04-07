@@ -882,7 +882,7 @@ void CSwordShieldGenji::Check_PhyCollider()
 			Start_Dissolve(0.5f, false, true);
 			m_pShield->Start_Dissolve();
 			m_pSword->Start_Dissolve();
-			g_pManagement->Create_Spawn_Effect(m_pTransformCom->Get_Pos());
+			//g_pManagement->Create_Spawn_Effect(m_pTransformCom->Get_Pos());
 		}
 	}
 	else
