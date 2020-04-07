@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\PoisonButterfly.h"
 #include "..\Headers\PoisonBullet.h"
+#include "..\Headers\PoisonRotationBullet.h"
 
 CPoisonButterfly::CPoisonButterfly(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
@@ -59,19 +60,19 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 
 	//////////// 아래에 주석해놓은 4줄이 본게임에서 쓸 것임, 차례대로 공격함.
 
-	CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
-	Check_ShowValue->Set_Child(Start_Show());
-	Start_Sel->Add_Child(Check_ShowValue);
-	Start_Sel->Add_Child(Start_Game());
+	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
+	//Check_ShowValue->Set_Child(Start_Show());
+	//Start_Sel->Add_Child(Check_ShowValue);
+	//Start_Sel->Add_Child(Start_Game());
 
 	////////////
 
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨.
-	//Start_Sel->Add_Child(Right_Eat_Left_Eat());
+	Start_Sel->Add_Child(Turn_4PoisonShot());
 
-	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
-	//Start_Sel->Add_Child(Rotation0);
+	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
+	Start_Sel->Add_Child(Rotation0);
 
 
 	//나무위키
@@ -633,6 +634,40 @@ CBT_Composite_Node * CPoisonButterfly::Fire_ChaseBullet()
 	return Root_Seq;
 }
 
+CBT_Composite_Node * CPoisonButterfly::Turn_4PoisonShot()
+{
+	CBT_Sequence* Root_Seq = Node_Sequence("돌면서 사방으로 독 날리기");
+
+	CBT_Play_Ani* Show_Ani19 = Node_Ani("돌면서 사방으로 독 날리기", 24, 0.95f);
+	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 6, 0.3f);
+
+	CBT_CreateBullet* PoisonBullet0 = Node_CreateBullet("독 총알", L"Monster_PoisonRotationBullet", L"Bone_Tail6", L"Self_Front", 1.5, 3, 1.53, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* PoisonBullet1 = Node_CreateBullet("독 총알", L"Monster_PoisonRotationBullet", L"Bone_Tail6", L"Self_Right", 1.5, 3, 1.70, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* PoisonBullet2 = Node_CreateBullet("독 총알", L"Monster_PoisonRotationBullet", L"Bone_Tail6", L"Self_Back", 1.5, 3, 1.87, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* PoisonBullet3 = Node_CreateBullet("독 총알", L"Monster_PoisonRotationBullet", L"Bone_Tail6", L"Self_Left", 1.5, 3, 2.04, 1, 1, 0, CBT_Service_Node::Finite);
+
+	//CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("전체적으로 보라 동그라미 파티클", L"ButterFly_PointParticle", L"Bone_Tail6", 0, 150, 0.01, 0);
+	//CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("전체적으로 쓰이는 옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Bone_Tail6", 0, 150, 0.01, 0);
+	//CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("반짝이는 보라색 모래", L"ButterFly_GlitterSand", L"Bone_Tail6", 0, 150, 0.01, 0);
+	//CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("안개와 같이 나오는 왜곡", L"ButterFly_Distortion_Smoke", L"Bone_Tail6", 0, 150, 0.01, 0);
+
+	//Root_Seq->Add_Service(Effect0);
+	//Root_Seq->Add_Service(Effect1);
+	//Root_Seq->Add_Service(Effect2);
+	//Root_Seq->Add_Service(Effect3);
+
+	Root_Seq->Add_Service(PoisonBullet0);
+	Root_Seq->Add_Service(PoisonBullet1);
+	Root_Seq->Add_Service(PoisonBullet2);
+	Root_Seq->Add_Service(PoisonBullet3);
+
+	Root_Seq->Add_Child(Show_Ani19);
+	Root_Seq->Add_Child(Show_Ani6);
+
+
+	return Root_Seq;
+}
+
 CBT_Composite_Node * CPoisonButterfly::WhirlWind()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("휠윈드");
@@ -810,7 +845,7 @@ CBT_Composite_Node * CPoisonButterfly::Start_Show()
 CBT_Composite_Node * CPoisonButterfly::Show_ChaseAndNearAttack()
 {
 	CBT_Sequence* Root_Seq = Node_Sequence("공격 또는 추적");
-	CBT_MoveDirectly* Chase = Node_MoveDirectly_Chase("추적", L"Monster_Speed", L"Monster_Dir", L"Player_Pos", 3.f, 2.f);
+	CBT_MoveDirectly* Chase = Node_MoveDirectly_Chase("추적", L"Monster_Speed", L"Monster_Dir", L"Player_Pos", 5.f, 3.f);
 
 	Root_Seq->Add_Child(Chase);
 	Root_Seq->Add_Child(Show_NearAttack());
@@ -907,11 +942,12 @@ HRESULT CPoisonButterfly::Update_Value_Of_BB()
 	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"HP", m_tObjParam.fHp_Cur);
 
 
+	// 1. 5샷 방향
 	_v3 vSelfDir = *(_v3*)&m_pTransformCom->Get_WorldMat().m[2];
 	_v3 vDirTemp0;
 
-	_v3 vFrontDir = _v3(0.f, 0.f, 1.f);
-	_float fRadian = D3DXVec3Dot(&vSelfDir, &vFrontDir);
+	_v3 vTempFrontDir = _v3(0.f, 0.f, 1.f);
+	_float fRadian = D3DXVec3Dot(&vSelfDir, &vTempFrontDir);
 
 	if(fRadian >= 0)
 		D3DXVec3TransformNormal(&vDirTemp0, &vSelfDir, D3DXMatrixRotationX(&_mat(), D3DXToRadian(15)));
@@ -925,6 +961,14 @@ HRESULT CPoisonButterfly::Update_Value_Of_BB()
 	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_PoisonDir4", *D3DXVec3TransformNormal(&_v3(), &vDirTemp0, D3DXMatrixRotationY(&_mat(), D3DXToRadian(-25))));
 
 	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_Pos", m_pTransformCom->Get_Pos());
+
+	// 2. 로테이션 총알 4방향
+	_v3 vFrontDir = *D3DXVec3Normalize(&_v3(), (_v3*)m_pTransformCom->Get_WorldMat().m[2]);
+	_v3 vRightDir = *D3DXVec3Normalize(&_v3(), (_v3*)m_pTransformCom->Get_WorldMat().m[0]);
+	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_Front", vFrontDir);
+	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_Back", -vFrontDir);
+	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_Right", vRightDir);
+	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_Left", -vRightDir);
 
 	return S_OK;
 }

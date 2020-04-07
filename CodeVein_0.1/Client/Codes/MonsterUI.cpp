@@ -159,7 +159,7 @@ HRESULT CMonsterUI::Render_GameObject()
 	}
 
 
-	cout << m_fPercentage << ", " << m_fWhite_Percentage << endl;
+	//cout << m_fPercentage << ", " << m_fWhite_Percentage << endl;
 	return S_OK;
 }
 

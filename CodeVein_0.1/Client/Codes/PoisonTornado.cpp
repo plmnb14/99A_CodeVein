@@ -1,23 +1,22 @@
 #include "stdafx.h"
-#include "..\Headers\PoisonBullet.h"
-#include "ParticleMgr.h"
+#include "..\Headers\PoisonTornado.h"
 
-CPoisonBullet::CPoisonBullet(LPDIRECT3DDEVICE9 pGraphic_Device)
+CPoisonTornado::CPoisonTornado(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
 }
 
-CPoisonBullet::CPoisonBullet(const CPoisonBullet & rhs)
+CPoisonTornado::CPoisonTornado(const CPoisonTornado & rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CPoisonBullet::Ready_GameObject_Prototype()
+HRESULT CPoisonTornado::Ready_GameObject_Prototype()
 {
 	return NOERROR;
 }
 
-HRESULT CPoisonBullet::Ready_GameObject(void * pArg)
+HRESULT CPoisonTornado::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
@@ -26,8 +25,6 @@ HRESULT CPoisonBullet::Ready_GameObject(void * pArg)
 
 	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
 
-	m_vDir = temp.vDir;
-	m_fSpeed = temp.fSpeed;
 	m_dLifeTime = temp.dLifeTime;
 	
 	m_pTransformCom->Set_Pos(temp.vCreatePos);
@@ -36,26 +33,10 @@ HRESULT CPoisonBullet::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
 
-	m_fEffectCreateOffset = 0.05f;
-
-	lstrcpy(m_pEffect_Tag0, L"ButterFly_VenomShot_Distortion");
-	lstrcpy(m_pEffect_Tag1, L"ButterFly_SoftSmoke_Mist");
-	lstrcpy(m_pEffect_Tag2, L"ButterFly_VenomShot");
-	lstrcpy(m_pEffect_Tag3, L"ButterFly_VenomShot_SubSmoke");
-	lstrcpy(m_pEffect_Tag4, L"ButterFly_VenomShot_PointParticle");
-	lstrcpy(m_pEffect_Tag5, L"ButterFly_VenomShot_Chunk");
-	lstrcpy(m_pEffect_Tag6, L"ButterFly_VenomShot_Tail");
-
-	lstrcpy(m_pEffect_Tag7, L"ButterFly_VenomShot_DeadSplash");
-	lstrcpy(m_pEffect_Tag8, L"ButterFly_VenomShot_DeadMist");
-	lstrcpy(m_pEffect_Tag9, L"ButterFly_VenomShot_DeadSmoke");
-	lstrcpy(m_pEffect_Tag10, L"ButterFly_PointParticle");
-
-	
 	return NOERROR;
 }
 
-_int CPoisonBullet::Update_GameObject(_double TimeDelta)
+_int CPoisonTornado::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
 
@@ -64,48 +45,18 @@ _int CPoisonBullet::Update_GameObject(_double TimeDelta)
 
 	OnCollisionEnter();
 
-	m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
-
 	m_dCurTime += TimeDelta;
 
 	// 시간 초과
 	if (m_dCurTime > m_dLifeTime)
 	{
-		//죽음 이펙트
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag7, m_pTransformCom->Get_Pos(), nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag8, m_pTransformCom->Get_Pos(), nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag9, m_pTransformCom->Get_Pos(), nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag10, m_pTransformCom->Get_Pos(), nullptr);
-		
 		m_bDead = true;
 	}
-	// 진행중
-	else
-	{
-		if (m_bEffect)
-		{
-			m_bEffect = false;
-		}
-
-		m_fEffectCreateOffset_Check += _float(TimeDelta);
-		if (m_fEffectCreateOffset < m_fEffectCreateOffset_Check)
-		{
-			m_fEffectCreateOffset_Check = 0.f;
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag2, _v3(), m_pTransformCom);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag3, _v3(), m_pTransformCom);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, _v3(), m_pTransformCom);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag5, _v3(), m_pTransformCom);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag0, m_pTransformCom->Get_Pos(), nullptr);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag1, m_pTransformCom->Get_Pos(), nullptr);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag6, m_pTransformCom->Get_Pos(), nullptr);
-		}
-	}
-
 
 	return NOERROR;
 }
 
-_int CPoisonBullet::Late_Update_GameObject(_double TimeDelta)
+_int CPoisonTornado::Late_Update_GameObject(_double TimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
@@ -116,7 +67,7 @@ _int CPoisonBullet::Late_Update_GameObject(_double TimeDelta)
 	return NOERROR;
 }
 
-HRESULT CPoisonBullet::Render_GameObject()
+HRESULT CPoisonTornado::Render_GameObject()
 {
 	Update_Collider();
 	Draw_Collider();
@@ -124,7 +75,7 @@ HRESULT CPoisonBullet::Render_GameObject()
 	return NOERROR;
 }
 
-HRESULT CPoisonBullet::Update_Collider()
+HRESULT CPoisonTornado::Update_Collider()
 {
 	_ulong matrixIdx = 0;
 
@@ -143,7 +94,7 @@ HRESULT CPoisonBullet::Update_Collider()
 	return S_OK;
 }
 
-HRESULT CPoisonBullet::Draw_Collider()
+HRESULT CPoisonTornado::Draw_Collider()
 {
 	for (auto& iter : m_vecAttackCol)
 	{
@@ -153,7 +104,7 @@ HRESULT CPoisonBullet::Draw_Collider()
 	return S_OK;
 }
 
-void CPoisonBullet::OnCollisionEnter()
+void CPoisonTornado::OnCollisionEnter()
 {
 	Update_Collider();
 
@@ -175,7 +126,7 @@ void CPoisonBullet::OnCollisionEnter()
 
 }
 
-void CPoisonBullet::OnCollisionEvent(list<CGameObject*> plistGameObject)
+void CPoisonTornado::OnCollisionEvent(list<CGameObject*> plistGameObject)
 {
 	// 공격 불가능이면 체크 안함
 	if (false == m_tObjParam.bCanAttack)
@@ -230,7 +181,7 @@ void CPoisonBullet::OnCollisionEvent(list<CGameObject*> plistGameObject)
 	}
 }
 
-HRESULT CPoisonBullet::Add_Component()
+HRESULT CPoisonTornado::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -247,19 +198,19 @@ HRESULT CPoisonBullet::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CPoisonBullet::SetUp_ConstantTable()
+HRESULT CPoisonTornado::SetUp_ConstantTable()
 {
 	return NOERROR;
 }
 
-HRESULT CPoisonBullet::Ready_Collider()
+HRESULT CPoisonTornado::Ready_Collider()
 {
 	m_vecAttackCol.reserve(1);
 
 	// 총알 중앙
 	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 
-	_float fRadius = 0.7f;
+	_float fRadius = 3.0f;
 
 	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
 	pCollider->Set_Dynamic(true);
@@ -272,33 +223,33 @@ HRESULT CPoisonBullet::Ready_Collider()
 	return S_OK;
 }
 
-CPoisonBullet * CPoisonBullet::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
+CPoisonTornado * CPoisonTornado::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 {
-	CPoisonBullet* pInstance = new CPoisonBullet(pGraphic_Device);
+	CPoisonTornado* pInstance = new CPoisonTornado(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 	{
-		MSG_BOX("Failed To Creating CPoisonBullet");
+		MSG_BOX("Failed To Creating CPoisonTornado");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject * CPoisonBullet::Clone_GameObject(void * pArg)
+CGameObject * CPoisonTornado::Clone_GameObject(void * pArg)
 {
-	CPoisonBullet* pInstance = new CPoisonBullet(*this);
+	CPoisonTornado* pInstance = new CPoisonTornado(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
-		MSG_BOX("Failed To Cloned CPoisonBullet");
+		MSG_BOX("Failed To Cloned CPoisonTornado");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CPoisonBullet::Free()
+void CPoisonTornado::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pCollider);

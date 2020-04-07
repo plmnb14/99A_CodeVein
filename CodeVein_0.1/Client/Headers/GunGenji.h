@@ -68,7 +68,7 @@ private:	//패턴들
 	// 4. 오른쪽으로 베기, 이동거리 : 0.5
 	CBT_Composite_Node* Cut_To_Right();
 	// 5. 텀블링 총쏘기, 이동거리 : -1.3
-	CBT_Composite_Node* Tumbling_Shot();
+	CBT_Composite_Node* Tumbling_Shot();	// 보류
 
 	// 회피
 	// 1. 뒤로 회피

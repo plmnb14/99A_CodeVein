@@ -197,6 +197,8 @@
     <ClInclude Include="..\Headers\GunGenji.h" />
     <ClInclude Include="..\Headers\PoisonButterfly.h" />
     <ClInclude Include="..\Headers\PoisonChaseBullet.h" />
+    <ClInclude Include="..\Headers\PoisonRotationBullet.h" />
+    <ClInclude Include="..\Headers\PoisonTornado.h" />
     <ClInclude Include="..\Headers\QuickSlot.h" />
     <ClInclude Include="..\Headers\Scene_Stage_01.h" />
     <ClInclude Include="..\Headers\Scene_Stage_02.h" />
@@ -260,6 +262,8 @@
     <ClCompile Include="..\Codes\GunGenji.cpp" />
     <ClCompile Include="..\Codes\PoisonButterfly.cpp" />
     <ClCompile Include="..\Codes\PoisonChaseBullet.cpp" />
+    <ClCompile Include="..\Codes\PoisonRotationBullet.cpp" />
+    <ClCompile Include="..\Codes\PoisonTornado.cpp" />
     <ClCompile Include="..\Codes\QuickSlot.cpp" />
     <ClCompile Include="..\Codes\Scene_Stage_01.cpp" />
     <ClCompile Include="..\Codes\Scene_Stage_02.cpp" />

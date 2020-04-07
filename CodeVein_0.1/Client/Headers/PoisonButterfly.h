@@ -67,6 +67,8 @@ private:	//패턴들
 	CBT_Composite_Node* Fire_5Bullet();		//완
 	// 3. 저격 샷
 	CBT_Composite_Node* Fire_ChaseBullet();	// 발사체 추가 완
+	// 4. 돌면서 사방으로 독 날리기
+	CBT_Composite_Node* Turn_4PoisonShot();
 
 	//
 	/*
