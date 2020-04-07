@@ -27,7 +27,7 @@ CBT_Node::BT_NODE_STATE CBT_Loop::Update_Node(_double TimeDelta, vector<CBT_Node
 
 	if (m_iCurLoopCount >= m_iMaxLoopCount)
 	{
-		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, pBlackBoard, bDebugging);
 	}
 
 	if (!m_bInProgress)
@@ -92,7 +92,7 @@ void CBT_Loop::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*
 	}
 }
 
-CBT_Node::BT_NODE_STATE CBT_Loop::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Loop::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	if (pNodeStack->empty())
 		return eState;

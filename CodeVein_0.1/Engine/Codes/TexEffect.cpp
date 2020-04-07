@@ -76,8 +76,6 @@ _int CTexEffect::Update_GameObject(_double TimeDelta)
 	Check_Move(TimeDelta);
 	CGameObject::Update_GameObject(TimeDelta);
 
-	_int a = 0;
-
 	if (m_fCreateDelay > 0.f)
 	{
 		Check_CreateDelay(TimeDelta);
@@ -216,6 +214,12 @@ HRESULT CTexEffect::Render_GameObject_SetShader(CShader* pShader)
 	if (nullptr == pShader ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
+
+	if (m_iPass == 0)
+	{
+		cout << "J : Tex Pass is Zero" << endl;
+		return NOERROR;
+	}
 
 	m_pBufferCom->Render_Before_Instancing(m_pTransformCom->Get_WorldMat());
 
@@ -462,9 +466,6 @@ void CTexEffect::Check_Frame(_double TimeDelta)
 
 void CTexEffect::Check_Move(_double TimeDelta)
 {
-	if (m_pTransformCom->Get_Pos().x == 0)
-		int a = 0;
-
 	if (m_pInfo->bSlowly)
 	{
 		m_fMoveSpeed -= m_fMoveSpeed * _float(TimeDelta);

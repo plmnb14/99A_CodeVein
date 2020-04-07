@@ -48,7 +48,7 @@ CBT_Node::BT_NODE_STATE CBT_CreateBullet::Update_Node(_double TimeDelta, vector<
 
 				CObject_Manager::Get_Instance()->Add_GameObject_ToLayer(m_pObject_Tag, SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(m_vCreate_Pos, m_vDir, m_fSpeed, m_dLifeTime));
 
-				End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, false);
+				End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, pBlackBoard, false);
 				break;
 			}
 		}
@@ -75,7 +75,7 @@ void CBT_CreateBullet::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT
 	}
 }
 
-CBT_Node::BT_NODE_STATE CBT_CreateBullet::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_CreateBullet::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	if (bDebugging)
 	{

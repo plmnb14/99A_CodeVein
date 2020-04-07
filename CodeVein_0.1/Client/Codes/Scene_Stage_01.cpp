@@ -31,7 +31,7 @@ HRESULT CScene_Stage_01::Ready_Scene()
 	CScriptManager::Get_Instance()->Set_StageIdx(1);
 	CScriptManager::Get_Instance()->Ready_Script_DynamicObject(1);
 
-	CUI_Manager::Get_Instance()->SetUP_PlayerLayer();
+	//CUI_Manager::Get_Instance()->SetUP_PlayerLayer();
 
 	return S_OK;
 }

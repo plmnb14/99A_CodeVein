@@ -67,16 +67,17 @@ private:	//패턴들
 	CBT_Composite_Node* Sting_Attack();
 	// 9. 2연속 베기, 이동거리 : 0.5 + 0.5
 	CBT_Composite_Node* TwoCombo_Cut();
-
+	// 10. 왼쪽으로 베기
+	CBT_Composite_Node* Left_Cut();
 
 	// 원거리
-	// 1. 던지기1
+	// 1. 옆에서 던지기
 	CBT_Composite_Node* Throwing1();
-	// 2. 던지기2
+	// 2. 앞으로 던지기
 	CBT_Composite_Node* Throwing2();
 	// 3. 백스탭 던지기, 이동거리 : -1
 	CBT_Composite_Node* Throwing_BackStep();
-	// 4. 달리면서 직선베기, 이동거리 : 7
+	// 4. 달리면서 직선베기, 이동거리 : 4.5
 	CBT_Composite_Node* Run_Straight_Cut();
 
 
@@ -151,7 +152,6 @@ private:
 	_bool Is_InFov(_float fDegreeOfFov, _v3 vTargetPos);
 
 	void Check_PhyCollider();
-
 	void Push_Collider();
 
 	HRESULT Draw_Collider();

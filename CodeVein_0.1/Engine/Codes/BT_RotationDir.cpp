@@ -23,7 +23,7 @@ CBT_Node::BT_NODE_STATE CBT_RotationDir::Update_Node(_double TimeDelta, vector<C
 	m_dCurTime += TimeDelta;
 
 	if ( m_dCurTime > m_dMaxTurnTime)
-		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, pBlackBoard, bDebugging);
 	else
 	{
 		if (true == m_bTurnLeft)
@@ -55,7 +55,7 @@ void CBT_RotationDir::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_
 	}
 }
 
-CBT_Node::BT_NODE_STATE CBT_RotationDir::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_RotationDir::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	if (pNodeStack->empty())
 		return eState;

@@ -44,7 +44,7 @@ CBT_Node::BT_NODE_STATE CBT_Selector::Update_Node(_double TimeDelta, vector<CBT_
 				return m_pChildren[m_pCurIndex++]->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
 
 			case BT_NODE_STATE::SUCCEEDED:
-				return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+				return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, pBlackBoard, bDebugging);
 			}
 		}
 		break;
@@ -54,20 +54,20 @@ CBT_Node::BT_NODE_STATE CBT_Selector::Update_Node(_double TimeDelta, vector<CBT_
 		{
 		case BT_NODE_STATE::FAILED:
 		case BT_NODE_STATE::SERVICE:
-			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, bDebugging);
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, pBlackBoard, bDebugging);
 		
 		case BT_NODE_STATE::INPROGRESS:
 			return m_pChildren[m_iRandomNum]->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
 		
 		case BT_NODE_STATE::SUCCEEDED:
-			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, pBlackBoard, bDebugging);
 		}
 
 		break;
 	}
 
 
-	return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, bDebugging);
+	return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, pBlackBoard, bDebugging);
 }
 
 void CBT_Selector::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging)
@@ -100,7 +100,7 @@ void CBT_Selector::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Nod
 	}
 }
 
-CBT_Node::BT_NODE_STATE CBT_Selector::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Selector::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	m_bInit = true;
 
@@ -114,7 +114,7 @@ CBT_Node::BT_NODE_STATE CBT_Selector::End_Node(vector<CBT_Node*>* pNodeStack, li
 		Notify_Parent_Of_State(pNodeStack->back(), eState);
 
 	if (!m_listServiceNodeStack.empty())
-		Release_ServiceNode(plistSubNodeStack, &m_listServiceNodeStack, bDebugging);
+		Release_ServiceNode(plistSubNodeStack, &m_listServiceNodeStack, pBlackBoard, bDebugging);
 
 	if (bDebugging)
 	{

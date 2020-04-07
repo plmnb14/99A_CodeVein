@@ -17,7 +17,7 @@ CBT_Node::BT_NODE_STATE CBT_MoveTo::Update_Node(_double TimeDelta, vector<CBT_No
 
 	if (m_dCurTime > m_dMovingTime)
 	{
-		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, pBlackBoard, bDebugging);
 	}
 	m_pTransform->Add_Pos(_float(m_dMoveSpeed * TimeDelta));
 
@@ -43,7 +43,7 @@ void CBT_MoveTo::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*
 	}
 }
 
-CBT_Node::BT_NODE_STATE CBT_MoveTo::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_MoveTo::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	if (pNodeStack->empty())
 		return eState;

@@ -89,7 +89,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"SpawnParticle", 1000);
 	Input_Pool(L"SpawnParticle_Sub", 1000);
 
-	Input_Pool(L"Bullet_Body", 50);
+	Input_Pool(L"Bullet_Body", 30);
 	Input_Pool(L"Bullet_Body_Aura", 100);
 	Input_Pool(L"Bullet_DeadFlash", 10);
 	Input_Pool(L"Bullet_DeadSmoke_Base", 50);
@@ -98,7 +98,8 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Bullet_Ready_Aura", 100);
 	Input_Pool(L"Bullet_Ready_Flash", 10);
 	Input_Pool(L"Bullet_Tail_Particle", 100);
-
+	Input_Pool(L"RockBullet_Body", 10);
+	
 	Input_Pool(L"MistletoeParticle", 80);
 	Input_Pool(L"MistletoeParticle_Sub", 80);
 	

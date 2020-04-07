@@ -57,7 +57,7 @@ CBT_Node::BT_NODE_STATE CBT_CreateEffect::Update_Node(_double TimeDelta, vector<
 					break;
 				}
 
-				End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, false);
+				End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, pBlackBoard, false);
 				break;
 
 
@@ -87,7 +87,7 @@ void CBT_CreateEffect::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT
 	}
 }
 
-CBT_Node::BT_NODE_STATE CBT_CreateEffect::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_CreateEffect::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	if (bDebugging)
 	{

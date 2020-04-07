@@ -64,6 +64,8 @@ _int CMeshEffect::Update_GameObject(_double TimeDelta)
 		return DEAD_OBJ;
 
 	CGameObject::LateInit_GameObject();
+
+	Check_Move(TimeDelta);
 	CGameObject::Update_GameObject(TimeDelta);
 
 	if (m_fCreateDelay > 0.f)
@@ -76,7 +78,6 @@ _int CMeshEffect::Update_GameObject(_double TimeDelta)
 
 	Check_LifeTime(TimeDelta);
 
-	Check_Move(TimeDelta);
 	Check_Alpha(TimeDelta);
 	Check_Color(TimeDelta);
 
@@ -148,6 +149,12 @@ HRESULT CMeshEffect::Render_GameObject_SetShader(CShader * pShader)
 		nullptr == m_pMeshCom)
 		return E_FAIL;
 
+	if (m_iPass == 0)
+	{
+		cout << "J : Mesh Pass is Zero" << endl;
+		return NOERROR;
+	}
+
 	if (FAILED(SetUp_ConstantTable(pShader)))
 		return E_FAIL;
 
@@ -162,7 +169,7 @@ HRESULT CMeshEffect::Render_GameObject_SetShader(CShader * pShader)
 		if (FAILED(m_pTextureCom->SetUp_OnShader("g_ColorTexture", pShader, _uint(m_pInfo->fColorIndex))))
 			return E_FAIL;
 
-		//if (FAILED(m_pTextureCom->SetUp_OnShader("g_FXTexture", m_pShaderCom)))
+		//if (FAILED(m_pTextureCom->SetUp_OnShader("g_FXTexture", pShader)))
 		//	return E_FAIL;
 
 		pShader->Commit_Changes();
@@ -257,13 +264,22 @@ void CMeshEffect::Setup_Info()
 			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Y] * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f),
 			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Z] * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f));
 
-		m_pTransformCom->Set_Pos(vPos + m_pDesc->vWorldPos);
-		m_vLerpPos = (vPos + m_pDesc->vWorldPos);
+		//if (m_bAutoFindPos)
+		if (m_pDesc->pTargetTrans)
+			vPos += m_pDesc->pTargetTrans->Get_Pos();
+
+		vPos += m_pDesc->vWorldPos;
+		m_pTransformCom->Set_Pos(vPos);
+		m_vLerpPos = (vPos);
 	}
 	else
 	{
-		m_pTransformCom->Set_Pos(m_pInfo->vStartPos + m_pDesc->vWorldPos);
-		m_vLerpPos = (m_pInfo->vStartPos + m_pDesc->vWorldPos);
+		_v3 vPos = m_pInfo->vStartPos + m_pDesc->vWorldPos;
+		if (m_pDesc->pTargetTrans)
+			vPos += m_pDesc->pTargetTrans->Get_Pos();
+
+		m_pTransformCom->Set_Pos(vPos);
+		m_vLerpPos = (vPos);
 	}
 
 	if (m_pInfo->bRotMove)
@@ -452,9 +468,9 @@ HRESULT CMeshEffect::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
-	// For.Com_Shader
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Effect", L"Com_Shader", (CComponent**)&m_pShaderCom)))
-		return E_FAIL;
+	//// For.Com_Shader
+	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Effect", L"Com_Shader", (CComponent**)&m_pShaderCom)))
+	//	return E_FAIL;
 
 	// for.Com_Mesh
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_LineRing_0", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
@@ -581,7 +597,7 @@ void CMeshEffect::Free()
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pMeshCom);
-	Safe_Release(m_pShaderCom);
+	//Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 
 }

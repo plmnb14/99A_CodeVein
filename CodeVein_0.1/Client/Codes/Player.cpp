@@ -4551,7 +4551,7 @@ void CPlayer::Ready_Collider()
 
 	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 
-	fRadius = 0.4f;
+	fRadius = 0.5f;
 
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);

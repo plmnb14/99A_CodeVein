@@ -23,7 +23,7 @@ public:
 	HRESULT Set_Child(CBT_Node* pNode);
 
 public:
-	void Reset_BT();
+	void Reset_BT(CBlackBoard* pBlackBoard);
 
 public:
 	virtual void Update_BeHaviorTree(_double TimeDelta, CBlackBoard* pBlackBoard);
