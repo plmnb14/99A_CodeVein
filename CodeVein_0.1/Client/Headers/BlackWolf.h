@@ -13,35 +13,36 @@ public:
 
 	enum WOLF_ANI
 	{
-		Idle = 3, //일반 idle 서있기
-		Sit_End = 4,
-		Sit = 5,
-		Eat_End = 6,
-		Eat = 7,
+		Alert, //사용하지 않음
+		Walk,
+		Run,
+		Idle,
+		Sit_End,
+		Sit,
+		Eat_End,
+		Eat,
 
-		Alert = 15, //경계 idle
-		Threat = 6, //위협애니
-
-		Run = 0,
-		Walk = 7,
-		Dodge = 22,
-
-		BiteLRL = 27,
-		RDodgeAtk,
-		LDodgeAtk,
-		Frisbee,
-		Dead_Strong=23,
+		Threat,
+		
+		Down_Weak_Start,
+		Down_Weak_Loop,
+		Down_weak_End,
+		Down_Strong_Start,
+		Down_Strong_Loop,
+		Down_Strong_End,
+		
+		Dodge,
+		
+		Dead_Strong,
 		Dead,
+
 		Dmg_F,
 		Dmg_B,
 
-		Down_Weak_Start = 16,
-		Down_Weak_Loop,
-		Down_weak_End,
-
-		Down_Strong_Start = 19,
-		Down_Strong_Loop,
-		Down_Strong_End
+		BiteLRL,
+		RDodgeAtk,
+		LDodgeAtk,
+		Frisbee
 	};
 
 	enum BONE_TYPE
@@ -142,11 +143,12 @@ private:
 	_bool				m_bCanChase = false; //추격 여부
 	_bool				m_bIsCoolDown = false; //쿨타임 진행중 여부
 	_bool				m_bIsDodge = false; //회피 진행중 여부
+	_bool				m_bIdleRandom = false; //일상 랜덤 여부
 
 	_float				m_fRecognitionRange = 10.f; //인지 범위
 	_float				m_fAttackRange = 4.f; //공격 범위
 
-	_float				m_fCoolDown = 0.f; //쿨타임
+	_float				m_fCoolDown = 0.f; //쿨타임 //델타타임만큼 빼준다
 
 	_int				m_iAttackRandomNumber = 0; //공격애니 랜덤화
 	_int				m_iIdleRandomNumber = 0;//일상 애니 랜덤화

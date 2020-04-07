@@ -35,9 +35,12 @@ HRESULT CGunGenjiBullet::Ready_GameObject(void * pArg)
 
 	m_tObjParam.bCanAttack = true;
 
-	m_fEffectCreateOffset = 0.05f;
+	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Bullet_Body", nullptr));
+	m_pBulletBody->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
+	m_pBulletBody->Reset_Init();
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
 
-	lstrcpy(m_pEffect_Tag0, L"Bullet_Body");
+	//lstrcpy(m_pEffect_Tag0, L"Bullet_Body");
 	lstrcpy(m_pEffect_Tag1, L"Bullet_Body_Aura");
 	lstrcpy(m_pEffect_Tag2, L"Bullet_Tail_Particle");
 
@@ -46,7 +49,7 @@ HRESULT CGunGenjiBullet::Ready_GameObject(void * pArg)
 	lstrcpy(m_pEffect_Tag5, L"Bullet_DeadSmoke_Black");
 
 	m_pTrailEffect = static_cast<Engine::CTrail_VFX*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SwordTrail", nullptr));
-	m_pTrailEffect->Set_TrailIdx(4); // Red Tail
+	m_pTrailEffect->Set_TrailIdx(5); // Red Tail
 
 	return NOERROR;
 }
@@ -54,12 +57,12 @@ HRESULT CGunGenjiBullet::Ready_GameObject(void * pArg)
 _int CGunGenjiBullet::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
-	Update_Trails(TimeDelta);
 
 	if (m_bDead)
 		return DEAD_OBJ;
 
 	OnCollisionEnter();
+	Update_Trails(TimeDelta);
 
 	m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
 
@@ -69,9 +72,10 @@ _int CGunGenjiBullet::Update_GameObject(_double TimeDelta)
 	if (m_dCurTime > m_dLifeTime)
 	{
 		//Á×À½ ÀÌÆåÆ®
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag3, _v3(), m_pTransformCom);
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, _v3(), m_pTransformCom);
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag5, _v3(), m_pTransformCom);
+		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag3, m_pTransformCom->Get_Pos());
+		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, m_pTransformCom->Get_Pos());
+		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag5, m_pTransformCom->Get_Pos());
+		m_pBulletBody->Set_Dead();
 
 		m_bDead = true;
 	}
@@ -80,20 +84,13 @@ _int CGunGenjiBullet::Update_GameObject(_double TimeDelta)
 	{
 		if (m_bEffect)
 		{
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag0, _v3(), m_pTransformCom);
+			//CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag0, _v3(), m_pTransformCom);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag1, _v3(), m_pTransformCom);
 
 			m_bEffect = false;
 		}
-
-		m_fEffectCreateOffset_Check += _float(TimeDelta);
-		if (m_fEffectCreateOffset < m_fEffectCreateOffset_Check)
-		{
-			m_fEffectCreateOffset_Check = 0.f;
-
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag2, _v3(), m_pTransformCom);
-		}
-	
+		
+		CParticleMgr::Get_Instance()->Create_Effect_Offset(m_pEffect_Tag2, 0.1f, m_pTransformCom->Get_Pos());
 	}
 
 
@@ -176,14 +173,13 @@ void CGunGenjiBullet::Update_Trails(_double TimeDelta)
 	_v3 vBegin, vDir;
 
 	memcpy(vBegin, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
-	//memcpy(vDir, &m_pTransformCom->Get_WorldMat()._31, sizeof(_v3));
-	memcpy(vDir, &m_pTransformCom->Get_WorldMat()._11, sizeof(_v3));
+	memcpy(vDir, &m_pTransformCom->Get_WorldMat()._21, sizeof(_v3));
 	//m_vDir
 
 	if (m_pTrailEffect)
 	{
 		m_pTrailEffect->Set_ParentTransform(&matWorld);
-		m_pTrailEffect->Ready_Info(vBegin + vDir * -0.1f, vBegin + vDir * 0.1f);
+		m_pTrailEffect->Ready_Info(vBegin + vDir * -0.05f, vBegin + vDir * 0.05f);
 		m_pTrailEffect->Update_GameObject(TimeDelta);
 	}
 }
@@ -313,6 +309,7 @@ CGameObject * CGunGenjiBullet::Clone_GameObject(void * pArg)
 
 void CGunGenjiBullet::Free()
 {
+	Safe_Release(m_pTrailEffect);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pRendererCom);

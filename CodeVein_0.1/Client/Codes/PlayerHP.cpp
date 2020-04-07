@@ -32,8 +32,10 @@ HRESULT CPlayerHP::Ready_GameObject(void * pArg)
 	m_fSizeX = 280.f;
 	m_fSizeY = 25.f;
 
-	m_fPlayerHP = 50.f;
-	m_fTotalHP = 150.f;
+	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
+
+	m_fPlayerHP = m_pTarget->Get_Target_Hp();
+	m_fTotalHP = m_fPlayerHP;
 
 	return NOERROR;
 }
@@ -172,6 +174,11 @@ HRESULT CPlayerHP::SetUp_ConstantTable()
 
 void CPlayerHP::SetUp_State(_double TimeDelta)
 {
+	m_fPlayerHP = m_pTarget->Get_Target_Hp();
+
+	if (m_fPlayerHP <= 0.f)
+		m_fPlayerHP = 0.f;
+
 	// Texture UV Èå¸£´Â ¼Óµµ
 	m_fSpeed += -0.2f * _float(TimeDelta);
 

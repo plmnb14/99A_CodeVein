@@ -26,7 +26,7 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 	Ready_BoneMatrix();
 	Ready_Collider();
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 10.f;
+	m_tObjParam.fHp_Cur = 100.f;
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
@@ -59,16 +59,16 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 
 	//////////// 아래에 주석해놓은 4줄이 본게임에서 쓸 것임, 차례대로 공격함.
 
-	CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
-	Check_ShowValue->Set_Child(Start_Show());
-	Start_Sel->Add_Child(Check_ShowValue);
-	Start_Sel->Add_Child(Start_Game());
-
+	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
+	//Check_ShowValue->Set_Child(Start_Show());
+	//Start_Sel->Add_Child(Check_ShowValue);
+	//Start_Sel->Add_Child(Start_Game());
+	//
 	////////////
 
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨.
-	//Start_Sel->Add_Child(Right_Eat_Left_Eat());
+	Start_Sel->Add_Child(Eat_Turn());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -247,6 +247,8 @@ _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 	if (false == m_bEnable)
 		return NO_EVENT;
 
+	//cout << "M : 업데이트 타?" << endl;
+
 	CGameObject::Update_GameObject(TimeDelta);
 
 	// 죽었을 경우
@@ -412,17 +414,19 @@ CBT_Composite_Node * CPoisonButterfly::Eat_Turn_Eat()
 	CBT_Play_Ani* Show_Ani26 = Node_Ani("뒤돌아서 덥썩", 26, 0.95f);
 	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 6, 0.3f);
 
-	//CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("왜곡", L"ButterFly_Distortion_Circle", L"Bone_Tail6", 1.0, 1, 0.01, 0);
-	//CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("보라 파티클", L"ButterFly_PointParticle", L"Bone_Tail6", 0.f, 160, 0.7, 0);
-	//CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Bone_Tail6", 0.f, 160, 0.7, 0);
-	//CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("반짝 보라 모래", L"ButterFly_GlitterSand", L"Bone_Tail6", 0.f, 160, 0.7, 0);
-	//CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("왜곡안개", L"ButterFly_Distortion_Smoke", L"Bone_Tail6", 0.f, 60, 0.7, 0);
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("왜곡", L"ButterFly_Distortion_Circle", L"Bone_Tail6_Tongue2", 2.0, 1, 0.01, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("보라 파티클", L"ButterFly_PointParticle", L"Bone_Tail6", 0.f, 160, 0.7, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Bone_Tail6", 0.f, 160, 0.7, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("반짝 보라 모래", L"ButterFly_GlitterSand", L"Bone_Tail6", 0.f, 160, 0.7, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("왜곡안개", L"ButterFly_Distortion_Smoke", L"Bone_Tail6", 0.f, 60, 0.7, 0);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("왜곡", L"ButterFly_Distortion_Circle", L"Bone_Tail6_Tongue2", 4.2, 1, 0.01, 0);
 
-	//Root_Seq->Add_Service(Effect0);
-	//Root_Seq->Add_Service(Effect1);
-	//Root_Seq->Add_Service(Effect2);
-	//Root_Seq->Add_Service(Effect3);
-	//Root_Seq->Add_Service(Effect4);
+	Root_Seq->Add_Service(Effect0);
+	Root_Seq->Add_Service(Effect1);
+	Root_Seq->Add_Service(Effect2);
+	Root_Seq->Add_Service(Effect3);
+	Root_Seq->Add_Service(Effect4);
+	Root_Seq->Add_Service(Effect5);
 
 	Root_Seq->Add_Child(Show_Ani27);
 	Root_Seq->Add_Child(Show_Ani26);
@@ -519,6 +523,17 @@ CBT_Composite_Node * CPoisonButterfly::Eat_Turn()
 	CBT_Wait* Wait0 = Node_Wait("대기", 2.8, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("플레이어 보기", L"Player_Pos", 0.2);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", 10, 0.2, 0);
+
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("전체적으로 보라 동그라미 파티클", L"ButterFly_PointParticle", L"Bone_Tail6", 0, 300, 0.01, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("전체적으로 쓰이는 옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Bone_Tail6", 0, 300, 0.01, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("반짝이는 보라색 모래", L"ButterFly_GlitterSand", L"Bone_Tail6", 0, 300, 0.01, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("안개와 같이 나오는 왜곡", L"ButterFly_Distortion_Smoke", L"Bone_Tail6", 0, 300, 0.01, 0);
+	//CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("왜곡", L"ButterFly_Distortion_Circle", L"Bone_Tail6_Tongue2", 0.5, 1, 0.01, 0);
+
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
+	Root_Parallel->Add_Service(Effect3);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani25);
@@ -896,6 +911,10 @@ HRESULT CPoisonButterfly::Update_Bone_Of_BlackBoard()
 	m_vHead = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Bone_Head", m_vHead);
 
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Tail6_Tongue2");
+	m_vTail6_Tongue2 = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Bone_Tail6_Tongue2", m_vTail6_Tongue2);
+	
 	return S_OK;
 }
 

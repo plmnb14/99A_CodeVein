@@ -158,6 +158,7 @@ HRESULT CMonsterUI::Render_GameObject()
 
 		m_pShaderCom->End_Shader();
 	}
+
 	return S_OK;
 }
 

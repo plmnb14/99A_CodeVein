@@ -18,6 +18,7 @@ private:
 public:
 	HRESULT Add_UI_Prototype(_Device pDevice);
 	HRESULT SetUp_UILayer();
+	HRESULT SetUP_PlayerLayer();
 	_int	Update_UI();
 
 public:
