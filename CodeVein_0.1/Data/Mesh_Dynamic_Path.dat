@@ -1,5 +1,6 @@
 Mesh_CatWoman|CatWoman.X|..\..\Client\Resources\Mesh\DynamicMesh\CatWoman\|1
-Mesh_Cocoon|Cocoon.X|..\..\Client\Resources\Mesh\DynamicMesh\Cocoon\|1
+Mesh_NormalCocoon|NormalCocoon.X|..\..\Client\Resources\Mesh\DynamicMesh\Cocoon_Normal\|1
+Mesh_WinterCocoon|WinterCocoon.X|..\..\Client\Resources\Mesh\DynamicMesh\Cocoon_White\|1
 Mesh_CoralMan|CoralMan.X|..\..\Client\Resources\Mesh\DynamicMesh\CoralMan\|1
 Mesh_DeerMan|DeerMan.X|..\..\Client\Resources\Mesh\DynamicMesh\DeerMan\|1
 Mesh_JungleGenji|JungleGenji.X|..\..\Client\Resources\Mesh\DynamicMesh\JungleGenji\|1
