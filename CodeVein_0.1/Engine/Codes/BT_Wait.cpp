@@ -16,7 +16,7 @@ CBT_Node::BT_NODE_STATE CBT_Wait::Update_Node(_double TimeDelta, vector<CBT_Node
 
 	if (m_dCurTime > m_dMaxTime)
 	{		
-		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, pBlackBoard, bDebugging);
 	}
 
 	return BT_NODE_STATE::INPROGRESS;
@@ -43,7 +43,7 @@ void CBT_Wait::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*
 
 }
 
-CBT_Node::BT_NODE_STATE CBT_Wait::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Wait::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	if (pNodeStack->empty())
 		return eState;

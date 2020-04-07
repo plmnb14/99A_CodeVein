@@ -48,12 +48,12 @@ CBT_Node::BT_NODE_STATE CBT_ConeCheck::Update_Node(_double TimeDelta, vector<CBT
 			}
 			else
 			{
-				return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, bDebugging);
+				return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, pBlackBoard, bDebugging);
 			}
 		}
 		else
 		{
-			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, bDebugging);
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, pBlackBoard, bDebugging);
 		}
 	}
 	// 진행중 평가
@@ -63,13 +63,13 @@ CBT_Node::BT_NODE_STATE CBT_ConeCheck::Update_Node(_double TimeDelta, vector<CBT
 		{
 		case BT_NODE_STATE::SERVICE:
 		case BT_NODE_STATE::FAILED:
-			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, bDebugging);
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, pBlackBoard, bDebugging);
 
 		case BT_NODE_STATE::INPROGRESS:
 			return BT_NODE_STATE::INPROGRESS;
 
 		case BT_NODE_STATE::SUCCEEDED:
-			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, pBlackBoard, bDebugging);
 		}
 	}
 
@@ -95,7 +95,7 @@ void CBT_ConeCheck::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_No
 	}
 }
 
-CBT_Node::BT_NODE_STATE CBT_ConeCheck::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_ConeCheck::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	if (pNodeStack->empty())
 		return eState;

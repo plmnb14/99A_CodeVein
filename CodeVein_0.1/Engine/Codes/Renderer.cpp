@@ -162,6 +162,11 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	m_pShader_Shadow = CShader::Create(m_pGraphic_Dev, L"../ShaderFiles/Shader_Shadow.fx");
 	if (nullptr == m_pShader_Shadow)
 		return E_FAIL;
+
+	// For.Shader_Effect
+	m_pShader_Effect = static_cast<CShader*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Shader_Effect"));
+	if (nullptr == m_pShader_Effect)
+		return E_FAIL;
 	
 	// For.Buffer_ViewPort
 	m_pViewPortBuffer = CBuffer_ViewPort::Create(m_pGraphic_Dev, 0.f - 0.5f, 0.f - 0.5f, (_float)ViewPort.Width, (_float)ViewPort.Height);
@@ -522,17 +527,16 @@ HRESULT CRenderer::Render_Shadow()
 
 HRESULT CRenderer::Render_Distortion()
 {
-	if (nullptr == m_pTarget_Manager)
-		return E_FAIL;
-
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Distortion")))
 		return E_FAIL;
+
+	m_pShader_Effect->Begin_Shader();
 
 	for (auto& pGameObject : m_RenderList[RENDER_DISTORTION])
 	{
 		if (nullptr != pGameObject)
 		{
-			if (FAILED(pGameObject->Render_GameObject()))
+			if (FAILED(pGameObject->Render_GameObject_SetShader(m_pShader_Effect)))
 			{
 				Safe_Release(pGameObject);
 				return E_FAIL;
@@ -543,6 +547,8 @@ HRESULT CRenderer::Render_Distortion()
 
 	m_RenderList[RENDER_DISTORTION].clear();
 
+	m_pShader_Effect->End_Shader();
+
 	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_Distortion")))
 		return E_FAIL;
 
@@ -551,14 +557,13 @@ HRESULT CRenderer::Render_Distortion()
 
 HRESULT CRenderer::Render_Alpha()
 {
-	//if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Alpha")))
-	//	return E_FAIL;
+	m_pShader_Effect->Begin_Shader();
 
 	for (auto& pGameObject : m_RenderList[RENDER_ALPHA])
 	{
 		if (nullptr != pGameObject)
 		{
-			if (FAILED(pGameObject->Render_GameObject()))
+			if (FAILED(pGameObject->Render_GameObject_SetShader(m_pShader_Effect)))
 			{
 				Safe_Release(pGameObject);
 				return E_FAIL;
@@ -569,8 +574,7 @@ HRESULT CRenderer::Render_Alpha()
 
 	m_RenderList[RENDER_ALPHA].clear();
 
-	//if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_Alpha")))
-	//	return E_FAIL;
+	m_pShader_Effect->End_Shader();
 
 	return NOERROR;
 }
@@ -932,7 +936,8 @@ void CRenderer::Free()
 	Safe_Release(m_pShader_Blend);
 	Safe_Release(m_pShader_LightAcc);
 	Safe_Release(m_pShader_Shadow);
-
+	Safe_Release(m_pShader_Effect);
+	
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pTarget_Manager);
 

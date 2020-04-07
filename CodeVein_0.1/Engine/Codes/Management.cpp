@@ -525,9 +525,9 @@ void CManagement::Create_Spawn_Effect(_v3 vPos, CTransform* pFollowTrans)
 	CParticleMgr::Get_Instance()->Create_Spawn_Effect(vPos, pFollowTrans);
 }
 
-void CManagement::Create_FootSmoke_Effect(_v3 vPos, _float fOffset)
+void CManagement::Create_Effect_Offset(_tchar* szName, _float fOffset, _v3 vPos, CTransform * pFollowTrans)
 {
-	CParticleMgr::Get_Instance()->Create_FootSmoke_Effect(vPos, fOffset);
+	CParticleMgr::Get_Instance()->Create_Effect_Offset(szName, fOffset, vPos, pFollowTrans);
 }
 
 void CManagement::Free()

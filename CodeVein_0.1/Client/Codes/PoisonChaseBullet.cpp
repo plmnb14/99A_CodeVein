@@ -31,12 +31,13 @@ HRESULT CPoisonChaseBullet::Ready_GameObject(void * pArg)
 	m_dLifeTime = temp.dLifeTime;
 
 	m_tObjParam.bCanHit = true;
-	//m_tObjParam.fHp_Cur = 1.f;
+	m_tObjParam.bCanAttack = true;
+	m_tObjParam.fDamage = 20.f;
 
 	m_pTransformCom->Set_Pos(temp.vCreatePos);
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
-	m_tObjParam.bCanAttack = true;
+
 
 	m_fEffectCreateOffset = 0.05f;
 
@@ -192,7 +193,6 @@ void CPoisonChaseBullet::Check_PhyCollider()
 		else
 		{
 			m_dCurTime = 1000;	// Á×À½
-			//m_bDead = true;
 		}
 	}
 }

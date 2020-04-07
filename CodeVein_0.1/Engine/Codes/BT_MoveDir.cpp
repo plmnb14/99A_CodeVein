@@ -24,11 +24,15 @@ CBT_Node::BT_NODE_STATE CBT_MoveDir::Update_Node(_double TimeDelta, vector<CBT_N
 
 	if (m_dCurTime > m_dMaxTime)
 	{
-		End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+		End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, pBlackBoard, bDebugging);
 	}
 	else
 	{
 		m_pTransform->Add_Pos(_float(m_fMove_Speed * TimeDelta), fDir);
+
+		// BB에 스피드와 진행방향 저장
+		pBlackBoard->Set_Value(m_BB_SpeedKey, m_fMove_Speed * (_float)TimeDelta);
+		pBlackBoard->Set_Value(m_BB_MoveDir_Key, fDir);
 	}
 
 	return BT_NODE_STATE::INPROGRESS;
@@ -54,7 +58,7 @@ void CBT_MoveDir::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node
 	}
 }
 
-CBT_Node::BT_NODE_STATE CBT_MoveDir::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_MoveDir::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	if (pNodeStack->empty())
 		return eState;

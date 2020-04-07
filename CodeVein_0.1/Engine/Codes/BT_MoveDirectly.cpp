@@ -19,6 +19,7 @@ CBT_Node::BT_NODE_STATE CBT_MoveDirectly::Update_Node(_double TimeDelta, vector<
 
 	_v3 vTarget_Pos = _v3(0.f, 0.f, 0.f);
 	_v3 vLength = _v3(0.f, 0.f, 0.f);
+	_v3* pMoveDir = nullptr;
 
 	switch(m_eMode)
 	{
@@ -36,7 +37,7 @@ CBT_Node::BT_NODE_STATE CBT_MoveDirectly::Update_Node(_double TimeDelta, vector<
 			//	허용거리				타겟
 			if (m_dAcceptable_Radius >= D3DXVec3Length(&vLength))
 			{
-				return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+				return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, pBlackBoard, bDebugging);
 			}
 			else
 			{
@@ -44,9 +45,12 @@ CBT_Node::BT_NODE_STATE CBT_MoveDirectly::Update_Node(_double TimeDelta, vector<
 				Look_At_Target(TimeDelta, vTarget_Pos);
 				
 				// 이동
-				
-				//m_pTransform->Add_Pos(_float(m_fMove_Speed * TimeDelta));
-				m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), D3DXVec3Normalize( &_v3(), (_v3*)m_pTransform->Get_WorldMat().m[2]), m_fMove_Speed * (_float)TimeDelta)));
+				pMoveDir = D3DXVec3Normalize(&_v3(), (_v3*)m_pTransform->Get_WorldMat().m[2]);
+				m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), pMoveDir, m_fMove_Speed * (_float)TimeDelta)));
+
+				// BB에 스피드와 진행방향 저장
+				pBlackBoard->Set_Value(m_BB_SpeedKey, m_fMove_Speed * (_float)TimeDelta);
+				pBlackBoard->Set_Value(m_BB_MoveDir_Key, *pMoveDir);
 			}
 
 			break;
@@ -57,15 +61,21 @@ CBT_Node::BT_NODE_STATE CBT_MoveDirectly::Update_Node(_double TimeDelta, vector<
 
 			if (m_dCurTime > m_dMaxTime)
 			{
-				End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+				pBlackBoard->Set_Value(m_BB_SpeedKey, 0.f);
+				End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, pBlackBoard, bDebugging);
 			}
 
-			//m_pTransform->Add_Pos(_float(m_fMove_Speed * TimeDelta));
-			m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), D3DXVec3Normalize(&_v3(), (_v3*)m_pTransform->Get_WorldMat().m[2]), m_fMove_Speed * (_float)TimeDelta)));
+			pMoveDir = D3DXVec3Normalize(&_v3(), (_v3*)m_pTransform->Get_WorldMat().m[2]);
+			m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), pMoveDir, m_fMove_Speed * (_float)TimeDelta)));
+
+			// BB에 스피드와 진행방향 저장
+			pBlackBoard->Set_Value(m_BB_SpeedKey, m_fMove_Speed * (_float)TimeDelta);
+			pBlackBoard->Set_Value(m_BB_MoveDir_Key, *pMoveDir);
+
 			break;
 
 		default:
-			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, bDebugging);
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, pBlackBoard, bDebugging);
 	}
 
 
@@ -107,7 +117,7 @@ void CBT_MoveDirectly::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT
 	}
 }
 
-CBT_Node::BT_NODE_STATE CBT_MoveDirectly::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_MoveDirectly::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	if (pNodeStack->empty())
 		return eState;
@@ -138,8 +148,7 @@ CBT_Node::BT_NODE_STATE CBT_MoveDirectly::End_Node(vector<CBT_Node*>* pNodeStack
 		break;
 	}
 
-
-
+	pBlackBoard->Set_Value(m_BB_SpeedKey, 0.f);
 
 	return eState;
 }
@@ -163,6 +172,9 @@ HRESULT CBT_MoveDirectly::Ready_Clone_Node(void * pInit_Struct)
 
 	if( MODE::CHASE == m_eMode)
 		lstrcpy(m_Target_Key, temp.Target_Key);
+
+	lstrcpy(m_BB_SpeedKey, temp.BB_Speed_Key);
+	lstrcpy(m_BB_MoveDir_Key, temp.BB_MoveDir_Key);
 
 	m_fMove_Speed = temp.fMove_Speed;
 	m_dAcceptable_Radius = temp.fAcceptable_Radius;

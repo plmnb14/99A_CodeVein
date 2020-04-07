@@ -1576,7 +1576,7 @@ void CPlayer::Play_Run()
 			m_eMainWpnState == WEAPON_Halverd ? Halverd_Run_Blend : m_eAnim_Lower);
 	}
 
-	g_pManagement->Create_FootSmoke_Effect(m_pTransform->Get_Pos(), 0.5f);
+	g_pManagement->Create_Effect_Offset(L"Player_FootSmoke", 0.5f, m_pTransform->Get_Pos());
 }
 
 void CPlayer::Play_Dash()
@@ -4552,7 +4552,7 @@ void CPlayer::Ready_Collider()
 
 	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 
-	fRadius = 0.4f;
+	fRadius = 0.5f;
 
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);

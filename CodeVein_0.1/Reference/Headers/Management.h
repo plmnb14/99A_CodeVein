@@ -113,7 +113,7 @@ public: // For.ParticleManager
 	void Create_AutoFindEffect(_tchar* szName, _float fLifeTime, CTransform* pFollowTrans, _v3 vPos = V3_NULL);
 	void Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol, CTransform* pHittedTrans, _float fPower = 1.5f);
 	void Create_Spawn_Effect(_v3 vPos, CTransform* pFollowTrans = nullptr);
-	void Create_FootSmoke_Effect(_v3 vPos, _float fOffset);
+	void Create_Effect_Offset(_tchar* szName, _float fOffset, _v3 vPos, CTransform* pFollowTrans = nullptr);
 
 private:
 	CGraphic_Device*			m_pGraphic_Device = nullptr;

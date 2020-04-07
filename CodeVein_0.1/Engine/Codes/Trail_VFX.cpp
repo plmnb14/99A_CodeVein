@@ -97,7 +97,7 @@ HRESULT CTrail_VFX::Render_GameObject()
 
 	_int iPass = (m_eType == Trail_Normal ? 0 : 1);
 
-	Shader_Init(m_iTrailIdx);
+	Shader_Init(m_pShader, m_iTrailIdx);
 
 	m_pShader->Begin_Shader();
 	m_pShader->Begin_Pass(iPass);
@@ -106,6 +106,32 @@ HRESULT CTrail_VFX::Render_GameObject()
 
 	m_pShader->End_Pass();
 	m_pShader->End_Shader();
+
+	m_vecStart.clear();
+	m_vecStart.shrink_to_fit();
+
+	m_vecEnd.clear();
+	m_vecStart.shrink_to_fit();
+
+	return S_OK;
+}
+
+HRESULT CTrail_VFX::Render_GameObject_SetShader(CShader * pShader)
+{
+	m_pGraphic_Dev->SetRenderState(D3DRS_LIGHTING, FALSE);
+	m_pGraphic_Dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+
+	m_pGraphic_Dev->SetFVF(m_dwVtxFVF);
+
+	_int iPass = (m_eType == Trail_Normal ? 0 : 1);
+
+	Shader_Init(pShader, m_iTrailIdx);
+
+	pShader->Begin_Pass(iPass);
+
+	m_pGraphic_Dev->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, m_dwTricnt, m_pVtx, sizeof(VTXTEX));
+
+	pShader->End_Pass();
 
 	m_vecStart.clear();
 	m_vecStart.shrink_to_fit();
@@ -244,9 +270,9 @@ void CTrail_VFX::Set_ParentTransform(const _mat * _pWorldMat)
 	m_pTransform->Calc_ParentMat(&(*_pWorldMat));
 }
 
-HRESULT CTrail_VFX::Shader_Init(const _uint & iIndex)
+HRESULT CTrail_VFX::Shader_Init(CShader* pShader, const _uint & iIndex)
 {
-	if (nullptr == m_pShader)
+	if (nullptr == pShader)
 		return E_FAIL;
 
 	CManagement*		pManagement = CManagement::Get_Instance();
@@ -257,30 +283,30 @@ HRESULT CTrail_VFX::Shader_Init(const _uint & iIndex)
 
 	_mat		ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
 	_mat		ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
-	m_pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat));
-	m_pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat));
-	m_pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat));
+	pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat));
+	pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat));
+	pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat));
 
 	_float	fAlpha = 1.f;
 	_float	fDistortion = 0.01f;
-	m_pShader->Set_Value("g_fAlpha", &fAlpha, sizeof(_float));
-	m_pShader->Set_Value("g_fDistortion", &fDistortion, sizeof(_float));
+	pShader->Set_Value("g_fAlpha", &fAlpha, sizeof(_float));
+	pShader->Set_Value("g_fDistortion", &fDistortion, sizeof(_float));
 
 	_v4		vDefaultOption = { 0.f, 0.f, 0.f, 1.f };
-	m_pShader->Set_Value("g_vColor", &vDefaultOption, sizeof(_float));
+	pShader->Set_Value("g_vColor", &vDefaultOption, sizeof(_float));
 
 	_bool	bDefaultOption = false;
-	m_pShader->Set_Bool("g_bUseRGBA", bDefaultOption);
-	m_pShader->Set_Bool("g_bUseColorTex", bDefaultOption);
-	m_pShader->Set_Bool("g_bUseMaskTex", bDefaultOption);
-	m_pShader->Set_Bool("g_bReverseColor", bDefaultOption);
-	m_pShader->Set_Bool("g_bDissolve", bDefaultOption);
+	pShader->Set_Bool("g_bUseRGBA", bDefaultOption);
+	pShader->Set_Bool("g_bUseColorTex", bDefaultOption);
+	pShader->Set_Bool("g_bUseMaskTex", bDefaultOption);
+	pShader->Set_Bool("g_bReverseColor", bDefaultOption);
+	pShader->Set_Bool("g_bDissolve", bDefaultOption);
 
-	m_pTexture->SetUp_OnShader("g_DiffuseTexture", m_pShader, iIndex);
-	m_pShader->Set_Texture("g_DepthTexture", pManagement->Get_Target_Texture(L"Target_Depth"));
+	m_pTexture->SetUp_OnShader("g_DiffuseTexture", pShader, iIndex);
+	pShader->Set_Texture("g_DepthTexture", pManagement->Get_Target_Texture(L"Target_Depth"));
 
-	//m_pTexture->SetUp_OnShader("g_DiffuseTexture_2", m_pShader, iIndex);
-	//m_pTexture->SetUp_OnShader("g_DistortionTexture", m_pShader, iIndex);
+	//m_pTexture->SetUp_OnShader("g_DiffuseTexture_2", pShader, iIndex);
+	//m_pTexture->SetUp_OnShader("g_DistortionTexture", pShader, iIndex);
 
 	Safe_Release(pManagement);
 

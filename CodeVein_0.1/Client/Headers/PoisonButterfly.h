@@ -67,6 +67,8 @@ private:	//패턴들
 	CBT_Composite_Node* Fire_5Bullet();		//완
 	// 3. 저격 샷
 	CBT_Composite_Node* Fire_ChaseBullet();	// 발사체 추가 완
+	// 4. 돌면서 사방으로 독 날리기
+	CBT_Composite_Node* Turn_4PoisonShot();
 
 	//
 	/*
@@ -128,6 +130,7 @@ private:
 	_v3					m_vTail2 = _v3(0.f, 0.f, 0.f);	//Tail2
 	_v3					m_vTail4 = _v3(0.f, 0.f, 0.f);	//Tail4
 	_v3					m_vTail6 = _v3(0.f, 0.f, 0.f);	//Tail6
+	_v3					m_vTail6_Tongue2 = _v3(0.f, 0.f, 0.f);	//Tail6_Tongue2
 	_v3					m_vBody = _v3(0.f, 0.f, 0.f);	//Spine2
 	_v3					m_vHead = _v3(0.f, 0.f, 0.f);	//Head
 

@@ -3,6 +3,8 @@
 #include "Client_Defines.h"
 #include "GameObject.h"
 #include "Management.h"
+#include "Trail_VFX.h"
+#include "Effect.h"
 
 BEGIN(Client)
 
@@ -24,6 +26,9 @@ private:
 	CTransform*			m_pTransformCom = nullptr;
 	CCollider*			m_pCollider = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
+	CTrail_VFX*			m_pTrailEffect = nullptr;
+	CEffect*			m_pBulletBody = nullptr;
+
 	_v3					m_vDir = _v3(0.f, 0.f, 0.f);
 	_float				m_fSpeed = 0.f;
 
@@ -47,8 +52,8 @@ private:
 
 private:
 	HRESULT Update_Collider();
-
 	HRESULT Draw_Collider();
+	void Update_Trails(_double TimeDelta);
 
 private:
 	virtual void OnCollisionEnter();

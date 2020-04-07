@@ -64,6 +64,8 @@ _int CMeshEffect::Update_GameObject(_double TimeDelta)
 		return DEAD_OBJ;
 
 	CGameObject::LateInit_GameObject();
+
+	Check_Move(TimeDelta);
 	CGameObject::Update_GameObject(TimeDelta);
 
 	if (m_fCreateDelay > 0.f)
@@ -76,7 +78,6 @@ _int CMeshEffect::Update_GameObject(_double TimeDelta)
 
 	Check_LifeTime(TimeDelta);
 
-	Check_Move(TimeDelta);
 	Check_Alpha(TimeDelta);
 	Check_Color(TimeDelta);
 
@@ -110,7 +111,7 @@ HRESULT CMeshEffect::Render_GameObject()
 		nullptr == m_pMeshCom)
 		return E_FAIL;
 
-	if (FAILED(SetUp_ConstantTable()))
+	if (FAILED(SetUp_ConstantTable(m_pShaderCom)))
 		return E_FAIL;
 
 	m_pShaderCom->Begin_Shader();
@@ -138,6 +139,45 @@ HRESULT CMeshEffect::Render_GameObject()
 	}
 
 	m_pShaderCom->End_Shader();
+
+	return NOERROR;
+}
+
+HRESULT CMeshEffect::Render_GameObject_SetShader(CShader * pShader)
+{
+	if (nullptr == pShader ||
+		nullptr == m_pMeshCom)
+		return E_FAIL;
+
+	if (m_iPass == 0)
+	{
+		cout << "J : Mesh Pass is Zero" << endl;
+		return NOERROR;
+	}
+
+	if (FAILED(SetUp_ConstantTable(pShader)))
+		return E_FAIL;
+
+	_uint iNumSubSet = m_pMeshCom->Get_NumMaterials();
+
+	pShader->Begin_Pass(m_iPass);
+	for (size_t j = 0; j < iNumSubSet; ++j)
+	{
+		if (FAILED(pShader->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_Texture(_ulong(j), MESHTEXTURE::TYPE_DIFFUSE))))
+			return E_FAIL;
+
+		if (FAILED(m_pTextureCom->SetUp_OnShader("g_ColorTexture", pShader, _uint(m_pInfo->fColorIndex))))
+			return E_FAIL;
+
+		//if (FAILED(m_pTextureCom->SetUp_OnShader("g_FXTexture", pShader)))
+		//	return E_FAIL;
+
+		pShader->Commit_Changes();
+
+		m_pMeshCom->Render_Mesh(_uint(j));
+
+	}
+	pShader->End_Pass();
 
 	return NOERROR;
 }
@@ -224,13 +264,22 @@ void CMeshEffect::Setup_Info()
 			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Y] * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f),
 			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Z] * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f));
 
-		m_pTransformCom->Set_Pos(vPos + m_pDesc->vWorldPos);
-		m_vLerpPos = (vPos + m_pDesc->vWorldPos);
+		//if (m_bAutoFindPos)
+		if (m_pDesc->pTargetTrans)
+			vPos += m_pDesc->pTargetTrans->Get_Pos();
+
+		vPos += m_pDesc->vWorldPos;
+		m_pTransformCom->Set_Pos(vPos);
+		m_vLerpPos = (vPos);
 	}
 	else
 	{
-		m_pTransformCom->Set_Pos(m_pInfo->vStartPos + m_pDesc->vWorldPos);
-		m_vLerpPos = (m_pInfo->vStartPos + m_pDesc->vWorldPos);
+		_v3 vPos = m_pInfo->vStartPos + m_pDesc->vWorldPos;
+		if (m_pDesc->pTargetTrans)
+			vPos += m_pDesc->pTargetTrans->Get_Pos();
+
+		m_pTransformCom->Set_Pos(vPos);
+		m_vLerpPos = (vPos);
 	}
 
 	if (m_pInfo->bRotMove)
@@ -419,9 +468,9 @@ HRESULT CMeshEffect::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
-	// For.Com_Shader
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Effect", L"Com_Shader", (CComponent**)&m_pShaderCom)))
-		return E_FAIL;
+	//// For.Com_Shader
+	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Effect", L"Com_Shader", (CComponent**)&m_pShaderCom)))
+	//	return E_FAIL;
 
 	// for.Com_Mesh
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_LineRing_0", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
@@ -434,9 +483,9 @@ HRESULT CMeshEffect::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CMeshEffect::SetUp_ConstantTable()
+HRESULT CMeshEffect::SetUp_ConstantTable(CShader* pShader)
 {
-	if (nullptr == m_pShaderCom)
+	if (nullptr == pShader)
 		return E_FAIL;
 
 	CManagement*		pManagement = CManagement::Get_Instance();
@@ -445,31 +494,31 @@ HRESULT CMeshEffect::SetUp_ConstantTable()
 
 	Safe_AddRef(pManagement);
 	
-	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
 
 	_mat	ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
 	_mat	ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
 
-	if (FAILED(m_pShaderCom->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
 
 	_float	fDistortion = 0.2f;
 
-	if (FAILED(m_pShaderCom->Set_Value("g_fDistortion", &fDistortion, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fDistortion", &fDistortion, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_vColor", &m_vColor, sizeof(_v4))))
+	if (FAILED(pShader->Set_Value("g_vColor", &m_vColor, sizeof(_v4))))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_Bool("g_bUseColorTex", m_pInfo->bUseColorTex)))
+	if (FAILED(pShader->Set_Bool("g_bUseColorTex", m_pInfo->bUseColorTex)))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Bool("g_bReverseColor", m_pInfo->bRevColor)))
+	if (FAILED(pShader->Set_Bool("g_bReverseColor", m_pInfo->bRevColor)))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Bool("g_bUseRGBA", m_pInfo->bUseRGBA)))
+	if (FAILED(pShader->Set_Bool("g_bUseRGBA", m_pInfo->bUseRGBA)))
 		return E_FAIL;
 
 	Safe_Release(pManagement);
@@ -548,7 +597,7 @@ void CMeshEffect::Free()
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pMeshCom);
-	Safe_Release(m_pShaderCom);
+	//Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 
 }

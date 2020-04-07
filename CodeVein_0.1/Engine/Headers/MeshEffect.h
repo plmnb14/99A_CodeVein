@@ -22,6 +22,7 @@ public:
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual	HRESULT LateInit_GameObject();
 	virtual HRESULT Render_GameObject();
+	virtual HRESULT Render_GameObject_SetShader(CShader* pShader);
 
 protected:
 	virtual void Setup_Info();
@@ -42,7 +43,7 @@ private:
 
 private:
 	HRESULT Add_Component();
-	HRESULT SetUp_ConstantTable();
+	HRESULT SetUp_ConstantTable(CShader* pShader);
 	void Change_Texture(const _tchar* _Name);
 	void Change_Mesh(const _tchar* _Name);
 

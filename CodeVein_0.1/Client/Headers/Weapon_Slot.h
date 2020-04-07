@@ -7,6 +7,7 @@
 BEGIN(Client)
 class CWeapon;
 class CSelect_UI;
+class CCursorUI;
 class CWeapon_Slot final : public CUI
 {
 private:
@@ -16,7 +17,11 @@ private:
 
 public:
 	bool Get_Select() { return m_bIsSelect; }
+	WEAPON_STATE Get_Type();
+
+public:
 	void Set_Select(_bool bIsSelect) { m_bIsSelect = bIsSelect; }
+	void Set_Type(WEAPON_STATE eType) { m_eType = eType; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -27,7 +32,6 @@ public:
 
 public:
 	_bool Pt_InRect();
-	CWeapon::WEAPON_DATA Get_Type();
 
 private:
 	HRESULT Add_Component();
@@ -41,9 +45,11 @@ private:
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
-
+private:
 	CSelect_UI*				m_pSelectUI = nullptr;
+	CCursorUI*				m_pCursorUI = nullptr;
 	_bool					m_bIsSelect = false;
+	WEAPON_STATE			m_eType = WEAPON_None;
 
 public:
 	static CWeapon_Slot*		Create(_Device pGraphic_Device);

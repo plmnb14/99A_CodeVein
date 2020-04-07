@@ -40,7 +40,7 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	//////////////////// 행동트리 init
 
 	CBlackBoard* pBlackBoard = CBlackBoard::Create();
-	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create(false);
+	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create();
 
 	m_pAIControllerCom->Set_BeHaviorTree(pBehaviorTree);
 	m_pAIControllerCom->Set_BlackBoard(pBlackBoard);
@@ -65,7 +65,7 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	//Check_ShowValue->Set_Child(Start_Show());
 	//Start_Sel->Add_Child(Check_ShowValue);
 	Start_Sel->Add_Child(Start_Game());
-	//Start_Sel->Add_Child(Throwing2());
+	//Start_Sel->Add_Child(Strong_LeftCut());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -254,8 +254,11 @@ CBT_Composite_Node * CSwordGenji::Normal_Cut1()
 	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.1f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
-	CBT_Wait* Wait0 = Node_Wait("대기", 1.1, 0);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", 10, 0.1, 0);
+	CBT_Wait* Wait0 = Node_Wait("대기0", 0.366, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 0.5f, 0.584, 0);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 1.f, 0.383, 0);
+	CBT_Wait* Wait1 = Node_Wait("대기1", 1.084, 0);
+	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", 0.3f, 0.633, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani41);
@@ -264,8 +267,11 @@ CBT_Composite_Node * CSwordGenji::Normal_Cut1()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(Move1);
+	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(Move2);
 
-	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.2, 1, 0.2, 0);
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.167, 1, 0.233, 0);
 	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
@@ -279,18 +285,18 @@ CBT_Composite_Node * CSwordGenji::Normal_Cut2()
 	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.1f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
-	CBT_Wait* Wait0 = Node_Wait("대기", 1.1, 0);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", 10, 0.1, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 0.25f, 1.033, 0);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 1.f, 0.4, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani40);
 	MainSeq->Add_Child(Show_Ani42);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
-	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(Move1);
 
-	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1, 1, 0.2, 0);
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.05, 1, 0.283, 0);
 	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
@@ -304,8 +310,10 @@ CBT_Composite_Node * CSwordGenji::Normal_Cut3()
 	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.1f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
-	CBT_Wait* Wait0 = Node_Wait("대기", 0.4, 0);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", 2.5, 0.4, 0);
+	CBT_Wait* Wait0 = Node_Wait("대기0", 0.087, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 1.f, 0.583, 0);
+	CBT_Wait* Wait1 = Node_Wait("대기1", 1.567, 0);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 0.3f, 0.6, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani39);
@@ -314,6 +322,8 @@ CBT_Composite_Node * CSwordGenji::Normal_Cut3()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(Move1);
 
 	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.7, 1, 0.3, 0);
 	Root_Parallel->Add_Service(pHitCol);
@@ -328,15 +338,21 @@ CBT_Composite_Node * CSwordGenji::Strong_RightCut()
 	CBT_Play_Ani* Show_Ani28 = Node_Ani("강하게 오른쪽으로 베기", 28, 0.9f);
 	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.1f);
 
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", 2.5, 0.4, 0);
+	CBT_Sequence* SubSeq = Node_Sequence("이동");
+	CBT_Wait* Wait0 = Node_Wait("대기0", 0.167, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 1.f, 0.4, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani28);
 	MainSeq->Add_Child(Show_Ani42);
 
-	Root_Parallel->Set_Sub_Child(Move0);
 
-	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.45, 1, 0.2, 0);
+	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(Move0);
+
+
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.483, 1, 0.167, 0);
 	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
@@ -349,15 +365,23 @@ CBT_Composite_Node * CSwordGenji::Strong_LeftCut()
 	CBT_Play_Ani* Show_Ani29 = Node_Ani("강하게 왼쪽으로 베기", 29, 0.95f);
 	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.1f);
 
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", 2.5, 0.4, 0);
+	CBT_Sequence* SubSeq = Node_Sequence("이동");
+	CBT_Wait* Wait0 = Node_Wait("대기0", 0.15, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 1.f, 0.483, 0);
+	CBT_Wait* Wait1 = Node_Wait("대기1", 1.35, 0);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 0.3f, 0.734, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani29);
 	MainSeq->Add_Child(Show_Ani42);
 
-	Root_Parallel->Set_Sub_Child(Move0);
+	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(Move1);
 
-	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.55, 1, 0.35, 0);
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.667, 1, 0.183, 0);
 	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
@@ -371,8 +395,8 @@ CBT_Composite_Node * CSwordGenji::ThreeCombo_Cut()
 	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.1f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
-	CBT_Wait* Wait0 = Node_Wait("대기", 0.2, 0);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", 2.5, 0.4, 0);
+	CBT_Wait* Wait0 = Node_Wait("대기", 0.333, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2, 0.417, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani37);
@@ -382,9 +406,9 @@ CBT_Composite_Node * CSwordGenji::ThreeCombo_Cut()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 
-	CBT_UpdateParam* pHitCol0 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.7, 1, 0.2, 0);
-	CBT_UpdateParam* pHitCol1 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.1, 1, 0.2, 0);
-	CBT_UpdateParam* pHitCol2 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.5, 1, 0.2, 0);
+	CBT_UpdateParam* pHitCol0 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.767, 1, 0.133, 0);
+	CBT_UpdateParam* pHitCol1 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.117, 1, 0.15, 0);
+	CBT_UpdateParam* pHitCol2 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.533, 1, 0.134, 0);
 
 	Root_Parallel->Add_Service(pHitCol0);
 	Root_Parallel->Add_Service(pHitCol1);
@@ -406,9 +430,8 @@ CBT_Composite_Node * CSwordGenji::Run_Straight_Cut()
 
 	//서브 병렬
 	CBT_Sequence* MoveSeq = Node_Sequence("돌진");
-	CBT_Wait* RunWaitF = Node_Wait("RunWait0", 0.2, 0);
-	CBT_MoveDirectly* Move = Node_MoveDirectly_Rush("돌진", 6.4f, 0.7, 0);
-	CBT_Wait* RunWaitB = Node_Wait("RunWait1", 0.6, 0);
+	CBT_Wait* RunWaitF = Node_Wait("RunWait0", 0.367, 0);
+	CBT_MoveDirectly* Move = Node_MoveDirectly_Rush("돌진", L"Monster_Speed", L"Monster_Dir", 6.4f, 0.7, 0);
 
 	Root_Parallel->Set_Main_Child(Run_Cut_Seq);
 	Run_Cut_Seq->Add_Child(Show_Ani34);
@@ -419,9 +442,8 @@ CBT_Composite_Node * CSwordGenji::Run_Straight_Cut()
 	Root_Parallel->Set_Sub_Child(MoveSeq);
 	MoveSeq->Add_Child(RunWaitF);
 	MoveSeq->Add_Child(Move);
-	MoveSeq->Add_Child(RunWaitB);
 
-	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.95, 1, 0.7, 0);
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.868, 1, 0.1, 0);
 	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
@@ -476,7 +498,7 @@ CBT_Composite_Node * CSwordGenji::Chase()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
-	CBT_MoveDirectly* pChase = Node_MoveDirectly_Chase("추적", L"Player_Pos", 3.f, 2.5f);
+	CBT_MoveDirectly* pChase = Node_MoveDirectly_Chase("추적", L"Player_Pos", L"Monster_Speed", L"Monster_Dir", 3.f, 2.5f);
 
 	CBT_Play_Ani* Show_Ani139 = Node_Ani("추적", 139, 1.f);
 
@@ -500,7 +522,9 @@ CBT_Composite_Node * CSwordGenji::NearAttack()
 	Root_Sel->Add_Child(Horizon_Cut());
 	Root_Sel->Add_Child(Sting_Attack());
 	Root_Sel->Add_Child(TwoCombo_Cut());
-
+	Root_Sel->Add_Child(Run_Straight_Cut());
+	Root_Sel->Add_Child(Left_Cut());
+	
 	return Root_Sel;
 }
 
@@ -536,8 +560,8 @@ CBT_Composite_Node * CSwordGenji::Horizon_Cut()
 	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.1f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
-	CBT_Wait* Wait0 = Node_Wait("대기", 0.3, 0);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", 2.5, 0.4, 0);
+	CBT_Wait* Wait0 = Node_Wait("대기", 0.417, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 1, 0.416, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani32);
@@ -547,7 +571,7 @@ CBT_Composite_Node * CSwordGenji::Horizon_Cut()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 
-	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.8, 1, 0.3, 0);
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.9, 1, 0.317, 0);
 	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
@@ -561,8 +585,8 @@ CBT_Composite_Node * CSwordGenji::Sting_Attack()
 	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.1f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
-	CBT_Wait* Wait0 = Node_Wait("대기", 1.0, 0);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", 2.5, 0.4, 0);
+	CBT_Wait* Wait0 = Node_Wait("대기", 0.917, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2, 0.716, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani31);
@@ -572,7 +596,7 @@ CBT_Composite_Node * CSwordGenji::Sting_Attack()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 
-	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.5, 1, 0.2, 0);
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.6, 1, 0.117, 0);
 	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
@@ -586,10 +610,10 @@ CBT_Composite_Node * CSwordGenji::TwoCombo_Cut()
 	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.1f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
-	CBT_Wait* Wait0 = Node_Wait("대기", 0.2, 0);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", 1.225f, 0.4, 0);
-	CBT_Wait* Wait1 = Node_Wait("대기", 0.25, 0);
-	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동", 1.225f, 0.4, 0);
+	CBT_Wait* Wait0 = Node_Wait("대기", 0.3, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 1.225f, 0.433, 0);
+	CBT_Wait* Wait1 = Node_Wait("대기", 0.3, 0);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 1.225f, 0.317, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani30);
@@ -601,22 +625,51 @@ CBT_Composite_Node * CSwordGenji::TwoCombo_Cut()
 	SubSeq->Add_Child(Wait1);
 	SubSeq->Add_Child(Move1);
 
-	CBT_UpdateParam* pHitCol0 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.7, 1, 0.25, 0);
-	CBT_UpdateParam* pHitCol1 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.25, 1, 0.2, 0);
+	CBT_UpdateParam* pHitCol0 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.767, 1, 0.166, 0);
+	CBT_UpdateParam* pHitCol1 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.267, 1, 0.116, 0);
 	Root_Parallel->Add_Service(pHitCol0);
 	Root_Parallel->Add_Service(pHitCol1);
 
 	return Root_Parallel;
 }
 
-CBT_Composite_Node * CSwordGenji::Throwing1()
+CBT_Composite_Node * CSwordGenji::Left_Cut()
 {
-	CBT_Sequence* Root_Seq = Node_Sequence("던지기 1");
-
-	CBT_Play_Ani* Show_Ani26 = Node_Ani("던지기 1", 26, 0.95f);
+	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
+	CBT_Sequence* MainSeq = Node_Sequence("왼쪽으로 베기");
+	CBT_Play_Ani* Show_Ani38 = Node_Ani("왼쪽으로 베기", 38, 0.95f);
 	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.1f);
 
-	CBT_CreateBullet* Bullet0 = Node_CreateBullet("수리검", L"Monster_SwordGenjiBullet", L"Bone_LeftHandAttach", L"ShotDir", 5, 5, 1.68, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_Sequence* SubSeq = Node_Sequence("이동");
+	CBT_Wait* Wait0 = Node_Wait("대기0", 0.983, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2.f, 0.284, 0);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 1.2f, 0.466, 0);
+	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 0.8f, 0.45, 0);
+
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(Show_Ani38);
+	MainSeq->Add_Child(Show_Ani42);
+
+	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(Move1);
+	SubSeq->Add_Child(Move2);
+
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.35, 1, 0.2, 0);
+	Root_Parallel->Add_Service(pHitCol);
+
+	return Root_Parallel;
+}
+
+CBT_Composite_Node * CSwordGenji::Throwing1()
+{
+	CBT_Sequence* Root_Seq = Node_Sequence("옆에서 던지기");
+
+	CBT_Play_Ani* Show_Ani26 = Node_Ani("옆에서 던지기", 26, 0.95f);
+	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.1f);
+
+	CBT_CreateBullet* Bullet0 = Node_CreateBullet("수리검", L"Monster_SwordGenjiBullet", L"Bone_LeftHandAttach", L"ShotDir", 30, 5, 1.7, 1, 1, 0, CBT_Service_Node::Finite);
 
 	Root_Seq->Add_Service(Bullet0);
 
@@ -628,12 +681,12 @@ CBT_Composite_Node * CSwordGenji::Throwing1()
 
 CBT_Composite_Node * CSwordGenji::Throwing2()
 {
-	CBT_Sequence* Root_Seq = Node_Sequence("던지기 2");
+	CBT_Sequence* Root_Seq = Node_Sequence("앞으로 던지기");
 
-	CBT_Play_Ani* Show_Ani26 = Node_Ani("던지기 2", 27, 0.95f);
+	CBT_Play_Ani* Show_Ani26 = Node_Ani("앞으로 던지기", 27, 0.95f);
 	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.1f);
 
-	CBT_CreateBullet* Bullet0 = Node_CreateBullet("수리검", L"Monster_SwordGenjiBullet", L"Bone_LeftHandAttach", L"ShotDir", 5, 5, 1.73, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Bullet0 = Node_CreateBullet("수리검", L"Monster_SwordGenjiBullet", L"Bone_LeftHandAttach", L"ShotDir", 30, 5, 1.733, 1, 0, 0, CBT_Service_Node::Finite);
 
 	Root_Seq->Add_Service(Bullet0);
 
@@ -651,8 +704,11 @@ CBT_Composite_Node * CSwordGenji::Throwing_BackStep()
 	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.1f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
-	CBT_Wait* Wait0 = Node_Wait("대기", 1.0, 0);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", -2.5, 0.4, 0);
+	CBT_Wait* Wait0 = Node_Wait("대기", 0.933, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", -2.5, 0.6, 0);
+
+	CBT_CreateBullet* Bullet0 = Node_CreateBullet("수리검", L"Monster_SwordGenjiBullet", L"Bone_LeftHandAttach", L"ShotDir", 5, 8, 1, 1, 0, 0, CBT_Service_Node::Finite);
+	Root_Parallel->Add_Service(Bullet0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani33);
@@ -668,7 +724,7 @@ CBT_Composite_Node * CSwordGenji::Throwing_BackStep()
 CBT_Composite_Node * CSwordGenji::Show_ChaseAndNeqrAttack()
 {
 	CBT_Sequence* Root_Seq = Node_Sequence("공격 또는 추적");
-	CBT_MoveDirectly* Chase = Node_MoveDirectly_Chase("추적", L"Player_Pos", 3.f, 2.f);
+	CBT_MoveDirectly* Chase = Node_MoveDirectly_Chase("추적", L"Player_Pos", L"Monster_Speed", L"Monster_Dir", 3.f, 2.f);
 
 	Root_Seq->Add_Child(Chase);
 	Root_Seq->Add_Child(Show_NearAttack());
@@ -950,8 +1006,8 @@ void CSwordGenji::Push_Collider()
 	{
 		CCollider* pCollider = TARGET_TO_COL(iter);
 
-		// 지금 속도값 임의로 넣었는데 구해서 넣어줘야함
-		if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), 5.f * DELTA_60))
+		// 지금 속도값 임의로 넣었는데 구해서 넣어줘야함 - 완료
+		if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_pAIControllerCom->Get_FloatValue(L"Monster_Speed")))
 		{
 			CTransform* pTrans = TARGET_TO_TRANS(iter);
 			CNavMesh*   pNav = TARGET_TO_NAV(iter);

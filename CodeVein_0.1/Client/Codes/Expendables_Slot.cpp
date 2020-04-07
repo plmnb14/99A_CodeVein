@@ -78,6 +78,7 @@ _int CExpendables_Slot::Update_GameObject(_double TimeDelta)
 			m_pNumberUI->Set_Active(false);
 
 		m_pNumberUI->Set_UI_Index(m_vecExpendables.size());
+		m_pNumberUI->Set_UI_Pos(m_fPosX - m_fSizeX * 0.25f, m_fPosY + m_fSizeY * 0.25f);
 	}
 		
 
@@ -86,15 +87,34 @@ _int CExpendables_Slot::Update_GameObject(_double TimeDelta)
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
 	if (m_vecExpendables.size() > 0)
-		m_iIndex = m_vecExpendables.front()->Get_Type();
+		m_eType = m_vecExpendables.front()->Get_Type();
 	else
-		m_iIndex = CExpendables::EXPEND_END;
+		m_eType = CExpendables::EXPEND_END;
 
 	
 	if (m_vecExpendables.size() > 0)
 		m_pSelectUI->Set_Select(m_bIsSelect);
 	else
 		m_pSelectUI->Set_Select(false);
+
+	switch (m_eType)
+	{
+	case CExpendables::EXPEND_1:
+		m_iIndex = 0;
+		break;
+	case CExpendables::EXPEND_2:
+		m_iIndex = 1;
+		break;
+	case CExpendables::EXPEND_3:
+		m_iIndex = 2;
+		break;
+	case CExpendables::EXPEND_4:
+		m_iIndex = 3;
+		break;
+	case CExpendables::EXPEND_END:
+		m_iIndex = 4;
+		break;
+	}
 	return NO_EVENT;
 }
 
