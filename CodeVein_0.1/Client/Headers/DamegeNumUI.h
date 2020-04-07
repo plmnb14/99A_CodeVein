@@ -6,6 +6,7 @@
 
 BEGIN(Client)
 
+class CMonsterUI;
 class CDamegeNumUI final : public CUI
 {
 private:
@@ -21,11 +22,23 @@ public:
 	virtual	HRESULT	LateInit_GameObject();
 	virtual HRESULT Render_GameObject();
 
+public:
+	void Set_Target(CGameObject* Target) { m_pTarget = Target; }
+
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable(_uint TextureIndex);
 	void	SetUp_State(_double TimeDelta);
 
+private:
+	_uint	m_iNowHP = 0;
+	_uint	m_iMaxHP = 0;
+
+	_uint	m_iGet_Damege = 0;
+
+	_uint	Temp_GetDamage[3] = {};
+
+	_uint	m_iSave_Damage = 0;
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -35,7 +48,7 @@ private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 public:
-	static CDamegeNumUI*	Create(_Device pGraphic_Device, CGameObject* MonsterTarget);
+	static CDamegeNumUI*	Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);
 	virtual void			Free();
 };

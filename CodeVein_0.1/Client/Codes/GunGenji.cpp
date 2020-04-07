@@ -29,7 +29,8 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	//m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_StageBase.dat");
 	//m_pNavMesh->Set_SubsetIndex(0);
 
-	m_pMonsterUI = CMonsterUI::Create(m_pGraphic_Dev, this);
+	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
+	m_pMonsterUI->Set_Target(this);
 	m_pMonsterUI->Ready_GameObject(NULL);
 
 	Ready_NF(pArg);
@@ -328,8 +329,8 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 _int CGunGenji::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
-	if(0 <= m_tObjParam.fHp_Cur)
-	m_pMonsterUI->Update_GameObject(TimeDelta);
+
+ 	m_pMonsterUI->Update_GameObject(TimeDelta);
 
 	// Á×¾úÀ» °æ¿ì
 	if (m_bIsDead)
@@ -1047,9 +1048,6 @@ HRESULT CGunGenji::Draw_Collider()
 
 HRESULT CGunGenji::Add_Component(void* pArg)
 {
-	/*if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_MonsterUI", SCENE_STAGE, L"Layer_MonsterHPUI")))
-	return E_FAIL;*/
-
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
 		return E_FAIL;

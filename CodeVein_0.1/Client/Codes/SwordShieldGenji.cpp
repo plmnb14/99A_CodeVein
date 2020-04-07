@@ -38,10 +38,10 @@ HRESULT CSwordShieldGenji::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 
-	// MonsterHP UI
-	m_pMonsterUI = CMonsterUI::Create(m_pGraphic_Dev, this);
+	//// MonsterHP UI
+	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
+	m_pMonsterUI->Set_Target(this);
 	m_pMonsterUI->Ready_GameObject(NULL);
-
 
 
 	/////////////// 행동트리 init

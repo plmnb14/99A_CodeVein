@@ -238,15 +238,6 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\06. CursorUI">
       <UniqueIdentifier>{6d74b162-2001-4bc6-8023-f3d2ca758c6e}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\04. Get_ItemUI">
-      <UniqueIdentifier>{0e1a63f9-f5ff-4195-aa2c-8f386bcf0512}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\04. Get_ItemUI\PickUp_ItemUI">
-      <UniqueIdentifier>{350b99e5-54e8-43df-bafa-17f764a32b28}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\06. MassageUI">
-      <UniqueIdentifier>{540b3aae-02d4-4cfe-b5dc-cb949b85ba2b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\01.MonsterUI\Monster_DamegeNumUI">
       <UniqueIdentifier>{32b7417e-bdd2-4de3-9ef5-0058a8bbd77b}</UniqueIdentifier>
     </Filter>
@@ -438,9 +429,6 @@
     <ClInclude Include="..\Headers\PickUp_ItemUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\04. Get_ItemUI\PickUp_ItemUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\MassageUI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\06. MassageUI</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\MonsterUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\01.MonsterUI</Filter>
     </ClInclude>
@@ -449,6 +437,9 @@
     </ClInclude>
     <ClInclude Include="..\Headers\DamegeNumUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\01.MonsterUI\Monster_DamegeNumUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MassageUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\04. MassageUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

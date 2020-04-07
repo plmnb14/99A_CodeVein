@@ -54,6 +54,7 @@ Tex_ButtonUI|ButtonUI%d.tga|..\..\Client\Resources\Texture\TestUI\ButtonUI\|0|8
 Tex_Consume_Item|Consume_Item%d.tga|..\..\Client\Resources\Texture\TestUI\Consume_Item\|0|5
 Tex_CursorSelect|CursorSelect%d.tga|..\..\Client\Resources\Texture\TestUI\CursorSelect\|0|3
 Tex_CursorUI|CursorUI%d.tga|..\..\Client\Resources\Texture\TestUI\CursorUI\|0|1
+Tex_DamegeNum|DamegeNum%d.png|..\..\Client\Resources\Texture\TestUI\DamegeNum\|0|10
 Tex_Expendables|Expendables%d.png|..\..\Client\Resources\Texture\TestUI\Expendables\|0|5
 Tex_Get_ItemUI|Get_ItemUI%d.png|..\..\Client\Resources\Texture\TestUI\Get_ItemUI\|0|7
 Tex_Halberd_Icon|Halberd_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Halberd_Icon\|0|3

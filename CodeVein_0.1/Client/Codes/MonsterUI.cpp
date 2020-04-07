@@ -44,6 +44,12 @@ _int CMonsterUI::Update_GameObject(_double TimeDelta)
 	CGameObject::LateInit_GameObject();
 	CUI::Update_GameObject(TimeDelta);
 
+	if (true == m_pTarget->Get_Dead())
+		return DEAD_OBJ;
+
+	//if (true == m_bIsDead)
+	//	return DEAD_OBJ;
+
 	SetUp_State(TimeDelta);
 
 	_mat matBill, matWorld, matView;
@@ -74,8 +80,17 @@ _int CMonsterUI::Update_GameObject(_double TimeDelta)
 	if(true == m_bCheck_Dir)
 		m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
+	
 	m_pTransformCom->Set_Pos(_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos()) + (WORLD_UP * 2.f));
-	m_pTransformCom->Set_Scale(_v3(0.8f, 0.08f, 1.f));
+
+	if (0 == m_iCheck_Renderindex)
+		m_pTransformCom->Set_Pos((_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos().x, TARGET_TO_TRANS(m_pTarget)->Get_Pos().y, (TARGET_TO_TRANS(m_pTarget)->Get_Pos().z - 0.04f)) + (WORLD_UP * 2.f)));
+	if (1 == m_iCheck_Renderindex)
+		m_pTransformCom->Set_Pos((_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos().x, TARGET_TO_TRANS(m_pTarget)->Get_Pos().y, (TARGET_TO_TRANS(m_pTarget)->Get_Pos().z - 0.02f)) + (WORLD_UP * 2.f)));
+	if (2 == m_iCheck_Renderindex)
+		m_pTransformCom->Set_Pos((_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos()) + (WORLD_UP * 2.f)));
+
+	m_pTransformCom->Set_Scale(_v3(0.8f, 0.08f, 0.8f));
 
 	m_fMonsterHp = m_pTarget->Get_Target_Param().fHp_Cur;
 	m_fTotalHP = m_pTarget->Get_Target_Param().fHp_Max;
@@ -106,17 +121,6 @@ HRESULT CMonsterUI::Render_GameObject()
 	if (FAILED(SetUp_ConstantTable(0)))
 		return E_FAIL;
 
-	//_v3 CamDes = g_pManagement->Get_CamPosition() - m_pTransformCom->Get_Pos();
-	//_float fCamDir = V3_LENGTH(&CamDes);
-	//if (fCamDir > 5.f && fCamDir <= 10.f)
-	//{
-	//	m_fAlpha = (fCamDir + 5.f) ;
-	//}
-	//if(fCamDir < 5.f)
-	//	m_fAlpha = 1.f;
-
-
-
 	if (m_fMonsterHp > 0)	// HP 변경이 있거나 플레이어가 락온했거나
 	{
 		m_pGraphic_Dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
@@ -130,23 +134,19 @@ HRESULT CMonsterUI::Render_GameObject()
 			m_pShaderCom->Begin_Pass(Temp[i]);
 
 			if (i == 0)
-			{
-				m_pTransformCom->Add_Pos(_v3(0.f, 0.f, -0.06f));
-			}
-
+				m_iCheck_Renderindex = 0;
 			if (i == 1)
 			{
 				if (FAILED(m_pShaderCom->Set_Value("g_fPercentage", &m_fWhite_Percentage, sizeof(_float))))
 					return E_FAIL;
-				m_pTransformCom->Add_Pos(_v3(0.f, 0.f, -0.02f));
+				m_iCheck_Renderindex = 1;
 			}
 			if (i == 2)
 			{
 				if (FAILED(m_pShaderCom->Set_Value("g_fPercentage", &m_fPercentage, sizeof(_float))))
 					return E_FAIL;
-				m_pTransformCom->Add_Pos(_v3(0.f, 0.f, 0.f));
+				m_iCheck_Renderindex = 2;
 			}
-
 			if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, i)))
 				return E_FAIL;
 
@@ -193,8 +193,8 @@ HRESULT CMonsterUI::SetUp_ConstantTable(_uint TextureIndex)
 	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matView", &g_pManagement->Get_Transform(D3DTS_VIEW), sizeof(_mat))))
-
 		return E_FAIL;
+
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &g_pManagement->Get_Transform(D3DTS_PROJECTION), sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_fSpeed", &m_fSpeed, sizeof(_float))))
@@ -241,11 +241,9 @@ void CMonsterUI::SetUp_State(_double TimeDelta)
 		m_fMonsterHp = 0.f;
 }
 
-CMonsterUI* CMonsterUI::Create(_Device pGraphic_Device, CGameObject* MonsterTarget)
+CMonsterUI* CMonsterUI::Create(_Device pGraphic_Device)
 {
 	CMonsterUI* pInstance = new CMonsterUI(pGraphic_Device);
-
-	pInstance->m_pTarget = MonsterTarget;
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 		Safe_Release(pInstance);
@@ -257,7 +255,6 @@ CGameObject* CMonsterUI::Clone_GameObject(void * pArg)
 {
 	CMonsterUI* pInstance = new CMonsterUI(*this);
 
-	
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 		Safe_Release(pInstance);
 
@@ -266,8 +263,6 @@ CGameObject* CMonsterUI::Clone_GameObject(void * pArg)
 
 void CMonsterUI::Free()
 {
-	Safe_Release(m_pTarget);
-
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom);

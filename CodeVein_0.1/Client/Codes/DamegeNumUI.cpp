@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\Headers\DamegeNumUI.h"
 
+#include "MonsterUI.h"
+
 CDamegeNumUI::CDamegeNumUI(_Device Graphic_Device)
 	: CUI(Graphic_Device)
 {
@@ -25,6 +27,8 @@ HRESULT CDamegeNumUI::Ready_GameObject(void * pArg)
 
 	CUI::Ready_GameObject(pArg);
 
+	m_fSizeX = m_pTransformCom->Get_Size().x;
+	m_fSizeY = m_pTransformCom->Get_Size().y;
 
 	return S_OK;
 }
@@ -60,6 +64,9 @@ _int CDamegeNumUI::Update_GameObject(_double TimeDelta)
 	matWorld._41 = m_fPosX - WINCX * 0.5f;
 	matWorld._42 = -m_fPosY + WINCY * 0.5f;
 
+	//m_pTransformCom->Set_Pos(_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos()) + (WORLD_UP * 2.f) + (WORLD_RIGHT * -0.5f));
+	m_pTransformCom->Set_Scale(_v3(0.1f, 0.1f, 0.1f));
+
 	// 데미지가 들어왔을 때만 랜더해야 함
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
@@ -73,6 +80,9 @@ _int CDamegeNumUI::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CDamegeNumUI::LateInit_GameObject()
 {
+	m_iNowHP = (_uint)m_pTarget->Get_Target_Param().fHp_Cur;
+	m_iMaxHP = (_uint)m_pTarget->Get_Target_Param().fHp_Max;
+	
 	return S_OK;
 }
 
@@ -88,10 +98,50 @@ HRESULT CDamegeNumUI::Render_GameObject()
 
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(0);
+	if (0 <= m_iSave_Damage && 9 >= m_iSave_Damage)
+	{
+		for (_uint i = 0; i < m_iSave_Damage; ++i)
+		{
+			m_pShaderCom->Begin_Pass(1);
 
-	m_pBufferCom->Render_VIBuffer();
-	m_pShaderCom->End_Pass();
+			m_pTransformCom->Set_Pos(_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos()) + (WORLD_UP * 2.f) + (WORLD_RIGHT * -1.f));
+
+			if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, Temp_GetDamage[2])))
+				return E_FAIL;
+
+			m_pShaderCom->Commit_Changes();
+			m_pBufferCom->Render_VIBuffer();
+			m_pShaderCom->End_Pass();
+		}
+
+		for (_uint i = 0; i < m_iSave_Damage; ++i)
+		{
+			m_pShaderCom->Begin_Pass(1);
+
+			m_pTransformCom->Set_Pos(_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos()) + (WORLD_UP * 2.f) + (WORLD_RIGHT * -2.f));
+
+			if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, Temp_GetDamage[1])))
+				return E_FAIL;
+
+			m_pShaderCom->Commit_Changes();
+			m_pBufferCom->Render_VIBuffer();
+			m_pShaderCom->End_Pass();
+		}
+
+		for (_uint i = 0; i < m_iSave_Damage; ++i)
+		{
+			m_pShaderCom->Begin_Pass(1);
+
+			m_pTransformCom->Set_Pos(_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos()) + (WORLD_UP * 2.f) + (WORLD_RIGHT * -3.f));
+
+			if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, Temp_GetDamage[0])))
+				return E_FAIL;
+
+			m_pShaderCom->Commit_Changes();
+			m_pBufferCom->Render_VIBuffer();
+			m_pShaderCom->End_Pass();
+		}
+	}
 
 	m_pShaderCom->End_Shader();
 
@@ -134,20 +184,48 @@ HRESULT CDamegeNumUI::SetUp_ConstantTable(_uint TextureIndex)
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &g_pManagement->Get_Transform(D3DTS_PROJECTION), sizeof(_mat))))
+
+	if (FAILED(m_pShaderCom->Set_Value("g_fPosX", &m_fPosX, sizeof(_float))))
 		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_Value("g_fSizeX", &m_fSizeX, sizeof(_float))))
+		return E_FAIL;
+
+	/*if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, TextureIndex)))
+		return E_FAIL;*/
 
 	return S_OK;
 }
 
 void CDamegeNumUI::SetUp_State(_double TimeDelta)
-{
+{	
+	if (m_pTarget == nullptr)
+		return;
+
+		if (true == m_pTarget->Get_Target_IsHit())
+		{
+			m_iGet_Damege = m_iMaxHP - (_uint)m_pTarget->Get_Target_Hp();
+			m_iNowHP -= m_iGet_Damege;
+			m_iMaxHP = m_iNowHP;
+		}
+
+		if (true == m_pTarget->Get_Target_IsHit())
+		{
+			if(3 < m_iSave_Damage)
+				m_iSave_Damage = 0;
+
+			while (0 != m_iGet_Damege)
+			{
+				Temp_GetDamage[m_iSave_Damage] = m_iGet_Damege % 10;
+				m_iGet_Damege /= 10;
+				m_iSave_Damage += 1;
+			}
+		}
 }
 
-CDamegeNumUI* CDamegeNumUI::Create(_Device pGraphic_Device, CGameObject * MonsterTarget)
+CDamegeNumUI* CDamegeNumUI::Create(_Device pGraphic_Device)
 {
 	CDamegeNumUI* pInstance = new CDamegeNumUI(pGraphic_Device);
-
-	pInstance->m_pTarget = MonsterTarget;
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 		Safe_Release(pInstance);

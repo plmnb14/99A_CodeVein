@@ -3,6 +3,7 @@
 #include "..\Headers\Weapon.h"
 
 #include "MonsterUI.h"
+#include "DamegeNumUI.h"
 
 CSwordGenji::CSwordGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
@@ -38,9 +39,13 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 	// MonsterHP UI
-	m_pMonsterUI = CMonsterUI::Create(m_pGraphic_Dev, this);
-	m_pMonsterUI->Ready_GameObject(NULL);
+	pMonsterHpUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
+	pMonsterHpUI->Set_Target(this);
+	pMonsterHpUI->Ready_GameObject(NULL);
 
+	/*m_pDamegeNumUI = static_cast<CDamegeNumUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_DamegeNumUI", pArg));
+	m_pDamegeNumUI->Set_Target(this);
+	m_pDamegeNumUI->Ready_GameObject(pArg);*/
 
 	//////////////////// 행동트리 init
 
@@ -161,12 +166,13 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 
 	CGameObject::Update_GameObject(TimeDelta);
 
-	// MonsterHP UI
-	m_pMonsterUI->Update_GameObject(TimeDelta);
-
 	// 죽었을 경우
 	if (m_bIsDead)
 		return DEAD_OBJ;
+
+	// MonsterHP UI
+	pMonsterHpUI->Update_GameObject(TimeDelta);
+	//m_pDamegeNumUI->Update_GameObject(TimeDelta);
 
 	// 플레이어 미발견
 	if (false == m_bFight)
@@ -1189,7 +1195,8 @@ CGameObject * CSwordGenji::Clone_GameObject(void * pArg)
 
 void CSwordGenji::Free()
 {
-	Safe_Release(m_pMonsterUI);
+	Safe_Release(pMonsterHpUI);
+	//Safe_Release(m_pDamegeNumUI);
 
 	Safe_Release(m_pSword);
 	Safe_Release(m_pNavMesh);

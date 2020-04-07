@@ -10,6 +10,7 @@
 #include "SwordShieldGenji.h"
 #include "YachaMan.h"
 #include "BlackWolf.h"
+#include "PoisonButterfly.h"
 // =================================
 
 IMPLEMENT_SINGLETON(CScriptManager)
@@ -311,7 +312,7 @@ void CScriptManager::Ready_Stage01_DynamicObject()
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_PoisonButterfly", nullptr);
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_PoisonButterfly", &CPoisonButterfly::INFO(10.f, 5.f, 2.f));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
