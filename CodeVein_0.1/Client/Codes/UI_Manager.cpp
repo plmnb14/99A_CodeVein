@@ -10,16 +10,6 @@
 
 #include "QuickSlot.h"
 
-
-////////////////////
-//유미작업
-#include "MonsterUI.h"
-#include "MassageUI.h"
-#include "Get_ItemUI.h"
-#include "PickUp_ItemUI.h"
-///////////////////
-
-
 #include "Expendables_Inven.h"
 #include "Expendables_Slot.h"
 #include "Select_UI.h"
@@ -31,6 +21,13 @@
 #include "Armor_Inven.h"
 #include "NumberUI.h"
 #include "CursorUI.h"
+#include "Inventory.h"
+#include "Inventory_Icon.h"
+#include "ClickUI.h"
+#include "Total_Inven.h"
+#include "BloodCode_Icon.h"
+#include "Info_Slot.h"
+
 
 IMPLEMENT_SINGLETON(CUI_Manager)
 
@@ -60,27 +57,7 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_QuickSlot", CQuickSlot::Create(pDevice))))
 		return E_FAIL;
 	
-	//////////////////////////////////////////////////////////////////////////
-	// 유미 작업
-	//if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MonsterUI", CMonsterUI::Create(pDevice))))
-	//	return E_FAIL;
 
-	//if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Start_BossUI", CMassageUI::Create(pDevice))))
-	//	return E_FAIL;
-
-	//if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Get_ItemUI", CGet_ItemUI::Create(pDevice))))
-	//	return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MonsterUI", CMonsterUI::Create(pDevice))))
-		return E_FAIL;
-
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Start_BossUI", CMassageUI::Create(pDevice))))
-		return E_FAIL;
-
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Get_ItemUI", CGet_ItemUI::Create(pDevice))))
-		return E_FAIL;
-
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Pickup_ItemUI", CPickUp_ItemUI::Create(pDevice))))
-		return E_FAIL;
 	
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SelectUI", CSelect_UI::Create(pDevice))))
 		return E_FAIL;
@@ -107,6 +84,19 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CursorUI", CCursorUI::Create(pDevice))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Inventory", CInventory::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_InvenIcon", CInventory_Icon::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ClickUI", CClickUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_TotalInven", CTotal_Inven::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BloodCodeIcon", CBloodCode_Icon::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_InfoSlot", CInfo_Slot::Create(pDevice))))
+		return E_FAIL;
+
 	return NOERROR;
 }
 
@@ -117,26 +107,14 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_MaterialInven", SCENE_STAGE, L"Layer_MaterialInven");
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_WeaponInven", SCENE_STAGE, L"Layer_WeaponInven");
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ArmorInven", SCENE_STAGE, L"Layer_ArmorInven");
-
-	//m_GetItem = g_pManagement->Clone_GameObject_Return(L"GameObject_Get_ItemUI", NULL);
-	//Safe_AddRef(m_GetItem);
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(m_GetItem, SCENE_STAGE, L"Layer_Get_ItemUI", NULL);
-
-	//m_PickUp = g_pManagement->Clone_GameObject_Return(L"GameObject_Pickup_ItemUI", NULL);
-	//Safe_AddRef(m_PickUp);
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(m_PickUp, SCENE_STAGE, L"Layer_PickUPUI", NULL);
-
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_TotalInven", SCENE_STAGE, L"Layer_TotalInven");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_Inventory", SCENE_STAGE, L"Layer_Inventory");
 
 	return NOERROR;
 }
 
 _int CUI_Manager::Update_UI()
 {
-	/*CExpendables_Inven* pExpendInven = static_cast<CExpendables_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendablesInven", SCENE_STAGE));
-	CMaterial_Inven*	pMaterialInven = static_cast<CMaterial_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_MaterialInven", SCENE_STAGE));
-	CWeapon_Inven* pWeaponInven = static_cast<CWeapon_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponInven", SCENE_STAGE));
-	CArmor_Inven* pArmorInven = static_cast<CArmor_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ArmorInven", SCENE_STAGE));*/
-	
 	
 	return 0;
 }

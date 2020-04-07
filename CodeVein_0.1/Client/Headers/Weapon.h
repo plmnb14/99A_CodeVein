@@ -42,7 +42,11 @@ public:
 	virtual void Draw_Collider();
 
 public:
+	virtual _bool Update_CollisionRecord(CGameObject* pObject);
+
+public:
 	virtual void Change_WeaponData(WEAPON_DATA _eWpnData);
+	virtual void Clear_CollisionRecordList();
 
 public:
 	virtual WEAPON_STATE	Get_WeaponType() { return m_eWeaponType; }
@@ -58,6 +62,11 @@ public:
 	virtual void			Set_Friendly(_bool _bFriendly) { m_bPlayerFriendly = _bFriendly; }
 	// 트레일 On/Off
 	virtual void			Set_Enable_Trail(_bool _bEnable);
+	virtual void			Set_Enable_Record(_bool _bRecord);
+	virtual void			Set_SkillPercent(_float _fPercent);
+
+private:
+	list<CGameObject*>		m_listCollisionRecord;
 
 private:
 	CTransform*				m_pTransform = nullptr;
@@ -65,6 +74,7 @@ private:
 	CShader*				m_pShader = nullptr;
 	CMesh_Static*			m_pMesh_Static = nullptr;
 
+private:
 	CTrail_VFX*				m_pTrailEffect = nullptr;
 	CTrail_VFX*				m_pDistortionEffect = nullptr;
 	CTrail_VFX*				m_pStaticTrailEffect = nullptr;
@@ -72,6 +82,7 @@ private:
 private:
 	_float					m_fTrailHeight_Min = 0.f;		// 트레일 시작점 보정수치
 	_float					m_fTrailHeight_Max = 1.f;		// 트레일 끝점 보정수치
+	_float					m_fSkillPercent = 1.f;
 
 
 private:
@@ -85,6 +96,7 @@ private:
 	_bool					m_bEquip = false;				// 무기 장착 여부
 	_bool					m_bPlayerFriendly = false;		// 플레이어 껀지
 	_bool					m_bTrailEnable = false;
+	_bool					m_bRecordCollision = false;		// 기록할껀지 말껀지 
 
 private:
 	WEAPON_STATE			m_eWeaponType = WEAPON_Ssword;

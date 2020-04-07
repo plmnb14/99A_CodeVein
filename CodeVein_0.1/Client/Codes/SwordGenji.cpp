@@ -158,7 +158,7 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 
 	// 죽었을 경우
 	if (m_bIsDead)
-		return DEAD_OBJ;
+		m_bEnable = false;
 
 	// 플레이어 미발견
 	if (false == m_bFight)
@@ -664,7 +664,7 @@ CBT_Composite_Node * CSwordGenji::Throwing1()
 	CBT_Play_Ani* Show_Ani26 = Node_Ani("옆에서 던지기", 26, 0.95f);
 	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.1f);
 
-	CBT_CreateBullet* Bullet0 = Node_CreateBullet("수리검", L"Monster_SwordGenjiBullet", L"Bone_LeftHandAttach", L"ShotDir", 8, 5, 1.7, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Bullet0 = Node_CreateBullet("수리검", L"Monster_SwordGenjiBullet", L"Bone_LeftHandAttach", L"ShotDir", 30, 5, 1.7, 1, 1, 0, CBT_Service_Node::Finite);
 
 	Root_Seq->Add_Service(Bullet0);
 
@@ -681,7 +681,8 @@ CBT_Composite_Node * CSwordGenji::Throwing2()
 	CBT_Play_Ani* Show_Ani26 = Node_Ani("앞으로 던지기", 27, 0.95f);
 	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.1f);
 
-	CBT_CreateBullet* Bullet0 = Node_CreateBullet("수리검", L"Monster_SwordGenjiBullet", L"Bone_LeftHandAttach", L"ShotDir", 8, 5, 1.733, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Bullet0 = Node_CreateBullet("수리검", L"Monster_SwordGenjiBullet", L"Bone_LeftHandAttach", L"ShotDir", 30, 5, 1.733, 1, 0, 0, CBT_Service_Node::Finite);
+
 	Root_Seq->Add_Service(Bullet0);
 
 	Root_Seq->Add_Child(Show_Ani26);

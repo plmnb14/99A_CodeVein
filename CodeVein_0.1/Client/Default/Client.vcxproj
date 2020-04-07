@@ -172,9 +172,11 @@
     <ClInclude Include="..\Headers\Armor_Slot.h" />
     <ClInclude Include="..\Headers\BackGround.h" />
     <ClInclude Include="..\Headers\BlackWolf.h" />
+    <ClInclude Include="..\Headers\BloodCode_Icon.h" />
     <ClInclude Include="..\Headers\BossDecoUI.h" />
     <ClInclude Include="..\Headers\BossHP.h" />
     <ClInclude Include="..\Headers\Button_UI.h" />
+    <ClInclude Include="..\Headers\ClickUI.h" />
     <ClInclude Include="..\Headers\Client_Defines.h" />
     <ClInclude Include="..\Headers\CursorUI.h" />
     <ClInclude Include="..\Headers\Drain_Weapon.h" />
@@ -185,6 +187,9 @@
     <ClInclude Include="..\Headers\GunGenjiBullet.h" />
     <ClInclude Include="..\Headers\Get_ItemUI.h" />
     <ClInclude Include="..\Headers\HPBack.h" />
+    <ClInclude Include="..\Headers\Info_Slot.h" />
+    <ClInclude Include="..\Headers\Inventory.h" />
+    <ClInclude Include="..\Headers\Inventory_Icon.h" />
     <ClInclude Include="..\Headers\Item_Manager.h" />
     <ClInclude Include="..\Headers\MassageUI.h" />
     <ClInclude Include="..\Headers\Material.h" />
@@ -210,6 +215,7 @@
     <ClInclude Include="..\Headers\SwordGenji.h" />
     <ClInclude Include="..\Headers\SwordGenjiBullet.h" />
     <ClInclude Include="..\Headers\SwordShieldGenji.h" />
+    <ClInclude Include="..\Headers\Total_Inven.h" />
     <ClInclude Include="..\Headers\UI_Manager.h" />
     <ClInclude Include="..\Headers\PlayerHP.h" />
     <ClInclude Include="..\Headers\Loading.h" />
@@ -238,9 +244,11 @@
     <ClCompile Include="..\Codes\Armor_Slot.cpp" />
     <ClCompile Include="..\Codes\BackGround.cpp" />
     <ClCompile Include="..\Codes\BlackWolf.cpp" />
+    <ClCompile Include="..\Codes\BloodCode_Icon.cpp" />
     <ClCompile Include="..\Codes\BossDecoUI.cpp" />
     <ClCompile Include="..\Codes\BossHP.cpp" />
     <ClCompile Include="..\Codes\Button_UI.cpp" />
+    <ClCompile Include="..\Codes\ClickUI.cpp" />
     <ClCompile Include="..\Codes\CursorUI.cpp" />
     <ClCompile Include="..\Codes\Drain_Weapon.cpp" />
     <ClCompile Include="..\Codes\Dummy_Target.cpp" />
@@ -250,6 +258,9 @@
     <ClCompile Include="..\Codes\GunGenjiBullet.cpp" />
     <ClCompile Include="..\Codes\Get_ItemUI.cpp" />
     <ClCompile Include="..\Codes\HPBack.cpp" />
+    <ClCompile Include="..\Codes\Info_Slot.cpp" />
+    <ClCompile Include="..\Codes\Inventory.cpp" />
+    <ClCompile Include="..\Codes\Inventory_Icon.cpp" />
     <ClCompile Include="..\Codes\Item_Manager.cpp" />
     <ClCompile Include="..\Codes\MassageUI.cpp" />
     <ClCompile Include="..\Codes\Material.cpp" />
@@ -275,6 +286,7 @@
     <ClCompile Include="..\Codes\SwordGenji.cpp" />
     <ClCompile Include="..\Codes\SwordGenjiBullet.cpp" />
     <ClCompile Include="..\Codes\SwordShieldGenji.cpp" />
+    <ClCompile Include="..\Codes\Total_Inven.cpp" />
     <ClCompile Include="..\Codes\UI_Manager.cpp" />
     <ClCompile Include="..\Codes\PlayerHP.cpp" />
     <ClCompile Include="..\Codes\Loading.cpp" />

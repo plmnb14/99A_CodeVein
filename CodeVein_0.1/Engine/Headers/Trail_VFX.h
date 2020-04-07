@@ -26,6 +26,7 @@ public:
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual	HRESULT LateInit_GameObject();
 	virtual HRESULT Render_GameObject();
+	virtual HRESULT Render_GameObject_SetShader(CShader* pShader);
 
 public:
 	virtual size_t	Get_ListSize() { return m_vecStart.size(); };
@@ -46,7 +47,7 @@ public:
 	virtual void	Set_TrailType(TrailType _eTrailType) {m_eType = _eTrailType;}
 
 private:
-	virtual HRESULT	Shader_Init(const _uint & iIndex = 0);
+	virtual HRESULT	Shader_Init(CShader* pShader, const _uint & iIndex = 0);
 
 private:
 	HRESULT Add_Component();

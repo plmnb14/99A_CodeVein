@@ -2,6 +2,8 @@
 #include "..\Headers\GunGenji.h"
 #include "..\Headers\Weapon.h"
 
+#include "MonsterUI.h"
+
 CGunGenji::CGunGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
@@ -24,7 +26,11 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	if (FAILED(Add_Component(pArg)))
 		return E_FAIL;
 
+	//m_pMonsterUI = CMonsterUI::Create(m_pGraphic_Dev, this);
+	//m_pMonsterUI->Ready_GameObject(NULL);
+
 	Ready_NF(pArg);
+
 	Ready_Weapon();
 	Ready_BoneMatrix();
 	Ready_Collider();
@@ -65,9 +71,9 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("½Ã¿¬È¸ º¯¼ö Ã¼Å©", L"Show", true);
 	//Check_ShowValue->Set_Child(Start_Show());
 	//Start_Sel->Add_Child(Check_ShowValue);
-	Start_Sel->Add_Child(Start_Game());
+	//Start_Sel->Add_Child(Start_Game());
 
-	//Start_Sel->Add_Child(Cut_To_Right());
+	Start_Sel->Add_Child(Shot());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("µ¹±â", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -312,6 +318,8 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	//CBT_Play_Ani* pAni49 = Node_Ani("ÃÑ ½î±â ", 49, 0.9f);
 	//pSequence->Add_Child(pAni49);
 
+	m_pMeshCom->SetUp_Animation(Ani_Idle);
+
 	return NOERROR;
 }
 
@@ -323,6 +331,8 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 	Push_Collider();
 
 	CGameObject::Update_GameObject(TimeDelta);
+	//if(0 <= m_tObjParam.fHp_Cur)
+	//m_pMonsterUI->Update_GameObject(TimeDelta);
 
 	// Á×¾úÀ» °æ¿ì
 	if (m_bIsDead)
@@ -381,6 +391,7 @@ HRESULT CGunGenji::Render_GameObject()
 
 	if (FAILED(SetUp_ConstantTable()))
 		return E_FAIL;
+
 
 	m_pShaderCom->Begin_Shader();
 
@@ -466,11 +477,11 @@ CBT_Composite_Node * CGunGenji::Shot()
 	CBT_CreateBullet* Bullet0 = Node_CreateBullet("°ÕÁö ÃÑ¾Ë", L"Monster_GunGenjiBullet", L"CreateBulletPos", L"NormalShotDir", 20, 1.5, 1.633, 1, 1, 0, CBT_Service_Node::Finite);
 	Root_Parallel->Add_Service(Bullet0);
 
-	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("ÁØºñ ¿À¿À¶ó", L"Bullet_Ready_Aura", L"CreateBulletPos", 0.6, 1, 0.0, 0);	// ÃÑ µÚÂÊ or ¿À¸¥¼Õ
-	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("ÁØºñ ¼¶±¤", L"Bullet_Ready_Flash", L"CreateBulletPos", 0.3, 1, 0.0, 0);	// ÃÑ µÚÂÊ or ¿À¸¥¼Õ
-	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("¹ß»ç ¼¶±¤", L"Bullet_Fire_Flash", L"CreateBulletPos", 1.7f, 1, 0.0, 0);	// ÃÑ±¸
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("ÁØºñ ¿À¿À¶ó"	, L"Bullet_Ready_Aura"	, L"RightHandAttach", 0.3, 5, 1, 0);
+	//CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("ÁØºñ ¼¶±¤"	, L"Bullet_Ready_Flash"	, L"RightHandAttach", 0.3, 1, 0.0, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("¹ß»ç ¼¶±¤"	, L"Bullet_Fire_Flash"	, L"CreateBulletPos", 1.5f, 1, 0.0, 0);
 	Root_Parallel->Add_Service(Effect0);
-	Root_Parallel->Add_Service(Effect1);
+	//Root_Parallel->Add_Service(Effect1);
 	Root_Parallel->Add_Service(Effect2);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
@@ -795,6 +806,10 @@ CBT_Composite_Node * CGunGenji::Show_Attack()
 
 HRESULT CGunGenji::Update_Bone_Of_BlackBoard()
 {
+	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
+	m_vRightHandAttach = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"RightHandAttach", m_vRightHandAttach);
+
 	return S_OK;
 }
 
@@ -1071,6 +1086,9 @@ HRESULT CGunGenji::Draw_Collider()
 
 HRESULT CGunGenji::Add_Component(void* pArg)
 {
+	/*if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_MonsterUI", SCENE_STAGE, L"Layer_MonsterHPUI")))
+	return E_FAIL;*/
+
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
 		return E_FAIL;
@@ -1271,6 +1289,8 @@ CGameObject * CGunGenji::Clone_GameObject(void * pArg)
 
 void CGunGenji::Free()
 {
+	//Safe_Release(m_pMonsterUI);
+
 	Safe_Release(m_pNavMesh);
 	Safe_Release(m_pGun);
 	Safe_Release(m_pAIControllerCom);

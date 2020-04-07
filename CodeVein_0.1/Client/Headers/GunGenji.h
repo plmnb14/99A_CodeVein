@@ -6,6 +6,7 @@
 
 BEGIN(Client)
 
+class CMonsterUI;
 class CWeapon;
 class CGunGenji final : public CGameObject
 {
@@ -109,6 +110,8 @@ private:
 
 	CWeapon*			m_pGun = nullptr;
 
+	CMonsterUI*			m_pMonsterUI = nullptr;
+
 	//렌더에서 타임델타 쓰기위해서 저장해놓음
 	_double				m_dTimeDelta = 0;
 
@@ -118,6 +121,9 @@ private:
 	//뼈다귀
 	_mat*				m_matBones[Bone_End];
 	_bool				m_bAIController = true;
+
+	// 블랙보드에서 뼈의 Pos 저장소
+	_v3					m_vRightHandAttach = _v3(0.f, 0.f, 0.f);	//RightHandAttach
 
 private:
 	_float				m_fSkillMoveSpeed_Cur = 0.f;

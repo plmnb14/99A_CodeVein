@@ -144,6 +144,13 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 	//게임 오브젝트를 받아와서
 	for (auto& iter : plistGameObject)
 	{
+		// 1 : 다 의 기술일 경우, 기록을 켜야 한대만 맞는다.
+		if (m_bRecordCollision)
+		{
+			if (false == Update_CollisionRecord(iter))
+				continue;
+		}
+
 		// 맞을 수 없다면 리턴
 		if (false == iter->Get_Target_CanHit())
 			continue;
@@ -168,8 +175,6 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 
 					if (false == iter->Get_Target_Dodge())
 					{
-						m_tObjParam.bCanAttack = false;
-
 						iter->Set_Target_CanHit(false);
 
 						if (iter->Get_Target_IsHit())
@@ -179,12 +184,21 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 
 						if (false == iter->Get_Target_Dodge())
 						{
+							m_tObjParam.fDamage = m_tWeaponParam->fDamage;
+
 							// 무기 공격력의 +-20%까지 랜덤범위
 							_uint min = (_uint)(m_tObjParam.fDamage - (m_tObjParam.fDamage * 0.2f));
 							_uint max = (_uint)(m_tObjParam.fDamage + (m_tObjParam.fDamage * 0.2f));
 
-							iter->Add_Target_Hp((_float)-CALC::Random_Num(min , max));
+							cout << m_tObjParam.fDamage << endl;
+
+							iter->Add_Target_Hp(-(_float)CALC::Random_Num(min , max) * m_fSkillPercent);
 							g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
+
+							if (m_bRecordCollision)
+							{
+								m_listCollisionRecord.push_back(iter);
+							}
 						}
 					}
 					
@@ -249,6 +263,21 @@ void CWeapon::Set_Enable_Trail(_bool _bEnable)
 	}
 }
 
+void CWeapon::Set_Enable_Record(_bool _bRecord)
+{
+	m_bRecordCollision = _bRecord;
+
+	if (false == m_bRecordCollision)
+	{
+		Clear_CollisionRecordList();
+	}
+}
+
+void CWeapon::Set_SkillPercent(_float _fPercent)
+{
+	m_fSkillPercent = _fPercent;
+}
+
 void CWeapon::Change_WeaponMesh(const _tchar* _MeshName)
 {
 	// 이름 비교해서 같으면 Return
@@ -272,6 +301,9 @@ void CWeapon::Change_WeaponMesh(const _tchar* _MeshName)
 	// 콜라이더도 업데이트 해야함.
 	_float fRadius = m_tWeaponParam[m_eWeaponData].fRadius;
 	m_vecAttackCol[0]->Set_Radius(_v3(fRadius, fRadius, fRadius));
+
+	// 공격력도 업데이트
+	m_tObjParam.fDamage = m_tWeaponParam->fDamage;
 }
 
 void CWeapon::Update_Collider()
@@ -289,6 +321,18 @@ void CWeapon::Update_Collider()
 	{
 		iter->Update(vBegin + vDir * m_tWeaponParam[m_eWeaponData].fCol_Height);
 	}
+}
+
+_bool CWeapon::Update_CollisionRecord(CGameObject* pObject)
+{
+	for (auto& iter : m_listCollisionRecord)
+	{
+		// 순회하다가 같으면
+		if (iter == pObject)
+			return false;
+	}
+
+	return true;
 }
 
 void CWeapon::Draw_Collider()
@@ -347,6 +391,14 @@ void CWeapon::Change_WeaponData(WEAPON_DATA _eWpnData)
 	Change_WeaponMesh(WeaponMeshName);
 }
 
+void CWeapon::Clear_CollisionRecordList()
+{
+	for (auto& iter : m_listCollisionRecord)
+	{
+		iter = nullptr;
+	}
+}
+
 HRESULT CWeapon::Add_Component()
 {
 	// For.Com_Transform
@@ -398,6 +450,10 @@ HRESULT CWeapon::SetUp_Default()
 	m_pTransform->Set_Pos(V3_NULL);
 	m_pTransform->Set_Scale(V3_ONE);
 	m_pTransform->Set_Angle(AXIS_X, D3DXToRadian(-90.f));
+
+	//
+	m_tObjParam.fDamage = m_tWeaponParam->fDamage;
+
 	return S_OK;
 }
 
@@ -499,6 +555,9 @@ void CWeapon::Free()
 
 	m_vecAttackCol.shrink_to_fit();
 	m_vecAttackCol.clear();
+
+	//for (auto& iter : m_listCollisionRecord)
+	//	iter = nullptr;
 
 	CGameObject::Free();
 }

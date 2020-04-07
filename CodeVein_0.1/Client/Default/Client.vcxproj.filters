@@ -217,6 +217,15 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\04. Select_UI">
       <UniqueIdentifier>{6be15063-782e-4209-96d4-18ea99a6801b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\04. MassageUI">
+      <UniqueIdentifier>{f2feb887-81df-48e5-a824-07e92ad80fb5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI">
+      <UniqueIdentifier>{1109951a-a48a-447c-bb46-b5d93621bebb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI\PickUp_ItemUI">
+      <UniqueIdentifier>{e70d6cb8-960a-4b13-88a5-ffae11c3cd3c}</UniqueIdentifier>
+    </Filter>
     <Filter Include="96. ScriptManager">
       <UniqueIdentifier>{9372b392-605d-4457-b3ad-1ab7fac2fc17}</UniqueIdentifier>
     </Filter>
@@ -240,6 +249,27 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\1%29 Boss\PoisonButterfly\Bullet">
       <UniqueIdentifier>{9fe0c9c4-700a-4361-889f-770896093c16}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon">
+      <UniqueIdentifier>{e2162bb6-af71-45f9-aa7c-1cec88822749}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\BloodCode_Icon">
+      <UniqueIdentifier>{1d333b8b-cb97-47f1-95d1-5dd480f56ebf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\Inventory_Icon">
+      <UniqueIdentifier>{4cda91cb-33a6-4ad8-bb12-0f4812e58cee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\04.Inventory">
+      <UniqueIdentifier>{09832318-953c-427e-a127-5e3381248a73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\05.Total_Inven">
+      <UniqueIdentifier>{6e5040da-f8c6-46d6-87ac-1b0648859ebe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\08. InfoSlot">
+      <UniqueIdentifier>{343ae753-bdb9-4056-b045-a2752feb235f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\07. ClickUI">
+      <UniqueIdentifier>{4df8b620-ca33-4900-a23f-bd20831e0c51}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -396,6 +426,15 @@
     <ClInclude Include="..\Headers\SwordShieldGenji.h">
       <Filter>02.GameObject\Stage\2%29 Monster\Genji\SwordShield</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Get_ItemUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\PickUp_ItemUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI\PickUp_ItemUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\PoisonChaseBullet.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\PoisonButterfly</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\GunGenjiBullet.h">
       <Filter>02.GameObject\Stage\2%29 Monster\Genji\Gun</Filter>
     </ClInclude>
@@ -434,6 +473,27 @@
     </ClInclude>
     <ClInclude Include="..\Headers\PoisonTornado.h">
       <Filter>02.GameObject\Stage\1%29 Boss\PoisonButterfly\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MassageUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\04. MassageUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BloodCode_Icon.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\BloodCode_Icon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Info_Slot.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\08. InfoSlot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Inventory_Icon.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\Inventory_Icon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Inventory.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\04.Inventory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Total_Inven.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\05.Total_Inven</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ClickUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\07. ClickUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -581,6 +641,21 @@
     <ClCompile Include="..\Codes\SwordShieldGenji.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster\Genji\SwordShield</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\MonsterUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\01.MonsterUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\PickUp_ItemUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI\PickUp_ItemUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Get_ItemUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MassageUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\04. MassageUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\PoisonChaseBullet.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\PoisonButterfly</Filter>
+    </ClCompile>
     <ClCompile Include="..\Codes\GunGenjiBullet.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster\Genji\Gun</Filter>
     </ClCompile>
@@ -619,6 +694,24 @@
     </ClCompile>
     <ClCompile Include="..\Codes\PoisonTornado.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\PoisonButterfly\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BloodCode_Icon.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\BloodCode_Icon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Info_Slot.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\08. InfoSlot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Inventory_Icon.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\Inventory_Icon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Inventory.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\04.Inventory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Total_Inven.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\05.Total_Inven</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ClickUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\07. ClickUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

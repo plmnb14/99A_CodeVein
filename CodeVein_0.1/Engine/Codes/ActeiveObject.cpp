@@ -30,9 +30,11 @@ CActiveObject::~CActiveObject()
 
 _int CActiveObject::Update_GameObject(_double _TimeDelta)
 {
+	return 0;
+
 	CGameObject::LateInit_GameObject();
 	CGameObject::Update_GameObject(_TimeDelta);
-	m_pRenderer->Add_RenderList(RENDER_ALPHA, this);
+	m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
 	// 모든 패턴은 최초 1회만 실행하며 그 이후로 애니메이션이 idle 상태로 고정되어 있어야 함
 	CManagement* pManagement = CManagement::Get_Instance();
 
@@ -64,9 +66,9 @@ _int CActiveObject::Update_GameObject(_double _TimeDelta)
 			// Effect
 			_v3 vEffPos = m_pTransform->Get_Pos();
 			vEffPos.y += 0.3f; // 뿌리
-			pManagement->Create_Effect(L"MistletoeParticle_Sub", vEffPos);
+			pManagement->Create_Effect_Offset(L"MistletoeParticle_Sub", 0.1f, vEffPos);
 			vEffPos.y += 0.3f; // 꽃
-			pManagement->Create_Effect(L"MistletoeParticle", vEffPos);
+			pManagement->Create_Effect_Offset(L"MistletoeParticle", 0.1f, vEffPos);
 		}
 		break;
 	}

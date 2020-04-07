@@ -72,9 +72,9 @@ _int CTexEffect::Update_GameObject(_double TimeDelta)
 		return DEAD_OBJ;
 
 	CGameObject::LateInit_GameObject();
+	
+	Check_Move(TimeDelta);
 	CGameObject::Update_GameObject(TimeDelta);
-
-	_int a = 0;
 
 	if (m_fCreateDelay > 0.f)
 	{
@@ -88,7 +88,6 @@ _int CTexEffect::Update_GameObject(_double TimeDelta)
 	Check_LifeTime(TimeDelta);
 
 	Setup_Billboard();
-	Check_Move(TimeDelta);
 	Check_Alpha(TimeDelta);
 	Check_Color(TimeDelta);
 
@@ -210,6 +209,38 @@ HRESULT CTexEffect::Render_GameObject()
 	return NOERROR;
 }
 
+HRESULT CTexEffect::Render_GameObject_SetShader(CShader* pShader)
+{
+	if (nullptr == pShader ||
+		nullptr == m_pBufferCom)
+		return E_FAIL;
+
+	if (m_iPass == 0)
+	{
+		cout << "J : Tex Pass is Zero" << endl;
+		return NOERROR;
+	}
+
+	m_pBufferCom->Render_Before_Instancing(m_pTransformCom->Get_WorldMat());
+
+	pShader->Begin_Pass(m_iPass);
+
+	// Set Texture
+	if (FAILED(SetUp_ConstantTable(pShader)))
+		return E_FAIL;
+
+	// Begin Pass 사이에 SetTexture 할 경우 바로 적용시키기 위해
+	pShader->Commit_Changes();
+
+	m_pBufferCom->Render_DrawPrimitive_Instancing();
+
+	pShader->End_Pass();
+
+	m_pBufferCom->Render_After_Instancing();
+
+	return S_OK;
+}
+
 HRESULT CTexEffect::Render_GameObject_HWInstance()
 {
 	if (nullptr == m_pShaderCom ||
@@ -222,7 +253,7 @@ HRESULT CTexEffect::Render_GameObject_HWInstance()
 	m_pShaderCom->Begin_Pass(m_iPass);
 	
 	// Set Texture
-	if (FAILED(SetUp_ConstantTable()))
+	if (FAILED(SetUp_ConstantTable(m_pShaderCom)))
 		return E_FAIL;
 	
 	// Begin Pass 사이에 SetTexture 할 경우 바로 적용시키기 위해
@@ -327,16 +358,22 @@ void CTexEffect::Setup_Info()
 			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Y] * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f),
 			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Z] * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f));
 
-		if (m_bAutoFindPos)
+		//if (m_bAutoFindPos)
+		if (m_pDesc->pTargetTrans)
 			vPos += m_pDesc->pTargetTrans->Get_Pos();
 
-		m_pTransformCom->Set_Pos(vPos + m_pDesc->vWorldPos);
-		m_vLerpPos = (vPos + m_pDesc->vWorldPos);
+		vPos += m_pDesc->vWorldPos;
+		m_pTransformCom->Set_Pos(vPos);
+		m_vLerpPos = (vPos);
 	}
 	else
 	{
-		m_pTransformCom->Set_Pos(m_pInfo->vStartPos + m_pDesc->vWorldPos);
-		m_vLerpPos = (m_pInfo->vStartPos + m_pDesc->vWorldPos);
+		_v3 vPos = m_pInfo->vStartPos + m_pDesc->vWorldPos;
+		if (m_pDesc->pTargetTrans)
+			vPos += m_pDesc->pTargetTrans->Get_Pos();
+
+		m_pTransformCom->Set_Pos(vPos);
+		m_vLerpPos = (vPos);
 	}
 
 	if (m_pInfo->bRotMove)
@@ -429,9 +466,6 @@ void CTexEffect::Check_Frame(_double TimeDelta)
 
 void CTexEffect::Check_Move(_double TimeDelta)
 {
-	if (m_pTransformCom->Get_Pos().x == 0)
-		int a = 0;
-
 	if (m_pInfo->bSlowly)
 	{
 		m_fMoveSpeed -= m_fMoveSpeed * _float(TimeDelta);
@@ -617,9 +651,9 @@ HRESULT CTexEffect::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Colors", L"Com_ColorTexture", (CComponent**)&m_pColorTextureCom)))
 		return E_FAIL;
 
-	// For.Com_Shader
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Effect", L"Com_Shader", (CComponent**)&m_pShaderCom)))
-		return E_FAIL;
+	//// For.Com_Shader
+	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Effect", L"Com_Shader", (CComponent**)&m_pShaderCom)))
+	//	return E_FAIL;
 
 	// for.Com_VIBuffer
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Rect", L"Com_VIBuffer", (CComponent**)&m_pBufferCom)))
@@ -632,9 +666,9 @@ HRESULT CTexEffect::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CTexEffect::SetUp_ConstantTable()
+HRESULT CTexEffect::SetUp_ConstantTable(CShader* pShader)
 {
-	if (nullptr == m_pShaderCom)
+	if (nullptr == pShader)
 		return E_FAIL;
 
 	CManagement*		pManagement = CManagement::Get_Instance();
@@ -643,62 +677,62 @@ HRESULT CTexEffect::SetUp_ConstantTable()
 
 	Safe_AddRef(pManagement);
 	_mat matWorld = m_pTransformCom->Get_WorldMat();
-	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &matWorld, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matWorld", &matWorld, sizeof(_mat))))
 		return E_FAIL;
 	D3DXMatrixInverse(&matWorld, nullptr, &matWorld);
-	if (FAILED(m_pShaderCom->Set_Value("g_matInvWorld", &matWorld, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matInvWorld", &matWorld, sizeof(_mat))))
 		return E_FAIL;
 
 	_mat		ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
 	_mat		ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
 
-	if (FAILED(m_pShaderCom->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
 
 	D3DXMatrixInverse(&ViewMatrix, nullptr, &ViewMatrix);
 	D3DXMatrixInverse(&ProjMatrix, nullptr, &ProjMatrix);
 
-	if (FAILED(m_pShaderCom->Set_Value("g_matProjInv", &ViewMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matProjInv", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_matViewInv", &ProjMatrix, sizeof(_mat))))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Set_Value("g_fDistortion", &m_pInfo->fDistortionPower, sizeof(_float))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_vColor", &m_vColor, sizeof(_v4))))
+	if (FAILED(pShader->Set_Value("g_matViewInv", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_Bool("g_bUseColorTex", m_pInfo->bUseColorTex)))
+	if (FAILED(pShader->Set_Value("g_fDistortion", &m_pInfo->fDistortionPower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Bool("g_bReverseColor", m_pInfo->bRevColor)))
+	if (FAILED(pShader->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Bool("g_bUseRGBA", m_pInfo->bUseRGBA)))
+	if (FAILED(pShader->Set_Value("g_vColor", &m_vColor, sizeof(_v4))))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_Bool("g_bDissolve", m_pInfo->bDissolve)))
+	if (FAILED(pShader->Set_Bool("g_bUseColorTex", m_pInfo->bUseColorTex)))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fDissolve", &m_fDissolve, sizeof(_float))))
+	if (FAILED(pShader->Set_Bool("g_bReverseColor", m_pInfo->bRevColor)))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Bool("g_bUseRGBA", m_pInfo->bUseRGBA)))
+		return E_FAIL;
+
+	if (FAILED(pShader->Set_Bool("g_bDissolve", m_pInfo->bDissolve)))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_fDissolve", &m_fDissolve, sizeof(_float))))
 		return E_FAIL;
 
 	_float fMaskIndex = 0.f;
-	if (FAILED(m_pShaderCom->Set_Bool("g_bUseMaskTex", (m_pInfo->fMaskIndex != -1.f))))
+	if (FAILED(pShader->Set_Bool("g_bUseMaskTex", (m_pInfo->fMaskIndex != -1.f))))
 		return E_FAIL;
 
 	if ((m_pInfo->fMaskIndex != -1.f))
 		fMaskIndex = m_pInfo->fMaskIndex;
 
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, _uint(m_fFrame))))
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", pShader, _uint(m_fFrame))))
 		return E_FAIL;
-	if (FAILED(m_pGradientTextureCom->SetUp_OnShader("g_GradientTexture", m_pShaderCom, _uint(fMaskIndex))))
+	if (FAILED(m_pGradientTextureCom->SetUp_OnShader("g_GradientTexture", pShader, _uint(fMaskIndex))))
 		return E_FAIL;
-	if (FAILED(m_pColorTextureCom->SetUp_OnShader("g_ColorTexture", m_pShaderCom, _uint(m_pInfo->fColorIndex))))
+	if (FAILED(m_pColorTextureCom->SetUp_OnShader("g_ColorTexture", pShader, _uint(m_pInfo->fColorIndex))))
 		return E_FAIL;
 
-	m_pShaderCom->Set_Texture("g_DepthTexture", pManagement->Get_Target_Texture(L"Target_Depth"));
+	pShader->Set_Texture("g_DepthTexture", pManagement->Get_Target_Texture(L"Target_Depth"));
 
 	Safe_Release(pManagement);
 
@@ -786,7 +820,7 @@ void CTexEffect::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
-	Safe_Release(m_pShaderCom);
+	//Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pColorTextureCom);
 	Safe_Release(m_pGradientTextureCom);

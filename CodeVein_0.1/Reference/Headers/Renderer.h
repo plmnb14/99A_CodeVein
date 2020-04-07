@@ -34,6 +34,8 @@ private:
 	CShader*					m_pShader_LightAcc = nullptr;
 	CShader*					m_pShader_Blend = nullptr;
 	CShader*					m_pShader_Shadow = nullptr;
+	CShader*					m_pShader_Effect = nullptr;
+
 	CBuffer_ViewPort*			m_pViewPortBuffer = nullptr;
 	CTexture*					m_pSSAOTexture = nullptr;
 private:
