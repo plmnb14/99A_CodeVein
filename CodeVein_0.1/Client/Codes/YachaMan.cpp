@@ -30,7 +30,7 @@ HRESULT CYachaMan::Ready_GameObject(void * pArg)
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
 	m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE));
 
-	m_tObjParam.fHp_Max = 130.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
+	m_tObjParam.fHp_Max = 230.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
 
 	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
@@ -50,6 +50,8 @@ _int CYachaMan::Update_GameObject(_double TimeDelta)
 
 	if (m_bIsDead)
 		return DEAD_OBJ;
+
+	cout << "심, 야차맨 체력 " << m_tObjParam.fHp_Cur << endl;
 
 	Check_Hit();
 	Check_Dist();
@@ -118,20 +120,17 @@ HRESULT CYachaMan::Render_GameObject()
 
 void CYachaMan::Update_Collider()
 {
-	_ulong matrixIdx = 0;
 
 	for (auto& vector_iter : m_vecAttackCol)
 	{
-		_mat matTemp = *m_matBone[matrixIdx] * m_pTransformCom->Get_WorldMat();
+		_mat matTemp = *m_matBone[Bone_Head] * m_pTransformCom->Get_WorldMat();
 
 		_v3 ColPos = _v3(matTemp._41, matTemp._42, matTemp._43);
 
 		vector_iter->Update(ColPos);
-
-		++matrixIdx;
 	}
 
-	matrixIdx = 0;
+	_ulong matrixIdx = 0;
 
 	for (auto& iter : m_vecPhysicCol)
 	{
@@ -193,6 +192,7 @@ void CYachaMan::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
+					//회피 중이 아니라면 충돌 체크
 					iter->Set_Target_CanHit(false);
 					iter->Add_Target_Hp(m_tObjParam.fDamage);
 
@@ -219,6 +219,14 @@ void CYachaMan::Check_Hit()
 
 	if (true == m_tObjParam.bIsHit)
 	{
+		if (3 <= m_iDodgeCount)
+		{
+			m_iDodgeCount = 0;
+			m_tObjParam.bIsHit = false; //3대 맞으면 강제로 회피 작동
+			m_tObjParam.bDodge = true;
+			return;
+		}
+
 		return;
 	}
 	else
@@ -233,10 +241,19 @@ void CYachaMan::Check_Hit()
 			else
 			{
 				m_eFirstCategory = MONSTER_ANITYPE::HIT;
+				Check_FBLR();
 				return;
 			}
 		}
 	}
+}
+
+void CYachaMan::Check_FBLR()
+{
+	//추후 피격 위치에 따른 피격 모션을 다르게 하기 위한 함수
+	m_eSecondCategory_HIT = YACHAMAN_HITTYPE::HIT_HIT;
+	//m_eSecondCategory_Hit = YACHAMAN_HITTYPE::HIT_HIT_F;
+	//m_eSecondCategory_Hit = YACHAMAN_HITTYPE::HIT_HIT_B;
 }
 
 void CYachaMan::Check_Dist()
@@ -257,8 +274,10 @@ void CYachaMan::Check_Dist()
 
 	if (true == m_bInRecognitionRange)
 	{
-		if (YACHAMAN_ANI::Lurk == m_eState || YACHAMAN_ANI::Lurk_End == m_eState ||
-			YACHAMAN_ANI::Eat == m_eState || YACHAMAN_ANI::Eat_End == m_eState)
+		if (YACHAMAN_ANI::Lurk == m_eState ||
+			YACHAMAN_ANI::Lurk_End == m_eState ||
+			YACHAMAN_ANI::Eat == m_eState ||
+			YACHAMAN_ANI::Eat_End == m_eState)
 		{
 			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
 			return;
@@ -272,24 +291,23 @@ void CYachaMan::Check_Dist()
 				{
 					//인지,범위,공격가능,쿨타임 -> 대기패턴
 					m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-					m_eSecondCategory_Idle = YACHAMAN_IDLETYPE::IDLE_IDLE;
-
+					m_eSecondCategory_IDLE = YACHAMAN_IDLETYPE::IDLE_IDLE;
+					Skill_RotateBody();
 					return;
 				}
 				else
 				{
 					//인지,범위,공격가능,쿨타임아님->공격 패턴
 					m_eFirstCategory = MONSTER_ANITYPE::ATTACK;
-
+					Skill_RotateBody();
 					return;
 				}
 			}
 			else
 			{
-				//인지, 범위, 공격불가능 -> 공격중은 아닌데? walk하면서 주위 맴돌기
+				//인지, 범위, 공격불가능 -> 공격중은 아닌데? walk하면서 주위 맴돌기,경계상태에 가깝다
 				m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-				m_eSecondCategory_Idle = YACHAMAN_IDLETYPE::IDLE_IDLE;
-
+				m_eSecondCategory_IDLE = YACHAMAN_IDLETYPE::IDLE_IDLE;
 				return;
 			}
 		}
@@ -298,7 +316,7 @@ void CYachaMan::Check_Dist()
 			//인지o, 공격범위x->추격
 			m_bCanChase = true;
 			m_eFirstCategory = MONSTER_ANITYPE::MOVE;
-			m_eSecondCategory_Move = YACHAMAN_MOVETYPE::MOVE_RUN;
+			m_eSecondCategory_MOVE = YACHAMAN_MOVETYPE::MOVE_RUN;
 			return;
 		}
 	}
@@ -314,13 +332,13 @@ void CYachaMan::Check_Dist()
 			switch (CALC::Random_Num(YACHAMAN_IDLETYPE::IDLE_IDLE, YACHAMAN_IDLETYPE::IDLE_LURK))
 			{
 			case YACHAMAN_IDLETYPE::IDLE_IDLE:
-				m_eSecondCategory_Idle = YACHAMAN_IDLETYPE::IDLE_IDLE;
+				m_eSecondCategory_IDLE = YACHAMAN_IDLETYPE::IDLE_IDLE;
 				break;
 			case YACHAMAN_IDLETYPE::IDLE_EAT:
-				m_eSecondCategory_Idle = YACHAMAN_IDLETYPE::IDLE_EAT;
+				m_eSecondCategory_IDLE = YACHAMAN_IDLETYPE::IDLE_EAT;
 				break;
 			case YACHAMAN_IDLETYPE::IDLE_LURK:
-				m_eSecondCategory_Idle = YACHAMAN_IDLETYPE::IDLE_LURK;
+				m_eSecondCategory_IDLE = YACHAMAN_IDLETYPE::IDLE_LURK;
 				break;
 			}
 		}
@@ -333,7 +351,7 @@ void CYachaMan::Set_AniEvent()
 	switch (m_eFirstCategory)
 	{
 	case MONSTER_ANITYPE::IDLE:
-		switch (m_eSecondCategory_Idle)
+		switch (m_eSecondCategory_IDLE)
 		{
 		case YACHAMAN_IDLETYPE::IDLE_IDLE:
 			Play_Idle();
@@ -347,15 +365,15 @@ void CYachaMan::Set_AniEvent()
 		}
 		break;
 	case MONSTER_ANITYPE::MOVE:
-		switch (m_eSecondCategory_Move)
+		switch (m_eSecondCategory_MOVE)
 		{
-		case Client::CYachaMan::MOVE_RUN:
+		case YACHAMAN_MOVETYPE::MOVE_RUN:
 			Play_Run();
 			break;
-		case Client::CYachaMan::MOVE_WALK:
+		case YACHAMAN_MOVETYPE::MOVE_WALK:
 			Play_Walk();
 			break;
-		case Client::CYachaMan::MOVE_DODGE:
+		case YACHAMAN_MOVETYPE::MOVE_DODGE:
 			Play_Dodge();
 			break;
 		}
@@ -373,13 +391,13 @@ void CYachaMan::Set_AniEvent()
 			switch (m_iAtkRandomType)
 			{
 			case YACHAMAN_ATKTYPE::ATK_NORMAL:
-				m_eSecondCategory_Atk = YACHAMAN_ATKTYPE::ATK_NORMAL;
-				cout << "심, 랜던 노말 공격" << endl;
+				m_eSecondCategory_ATK = YACHAMAN_ATKTYPE::ATK_NORMAL;
+				cout << "심, 랜덤 노말 공격" << endl;
 				Play_RandomAtkNormal();
 				break;
 			case YACHAMAN_ATKTYPE::ATK_COMBO:
-				m_eSecondCategory_Atk = YACHAMAN_ATKTYPE::ATK_COMBO;
-				cout << "심, 랜던 콤보 공격" << endl;
+				m_eSecondCategory_ATK = YACHAMAN_ATKTYPE::ATK_COMBO;
+				cout << "심, 랜덤 콤보 공격" << endl;
 				Play_RandomAtkCombo();
 				break;
 			}
@@ -388,7 +406,7 @@ void CYachaMan::Set_AniEvent()
 		}
 		else
 		{
-			if (YACHAMAN_ATKTYPE::ATK_NORMAL == m_eSecondCategory_Atk)
+			if (YACHAMAN_ATKTYPE::ATK_NORMAL == m_eSecondCategory_ATK)
 			{
 				switch (m_eState)
 				{
@@ -423,7 +441,7 @@ void CYachaMan::Set_AniEvent()
 					break;
 				}
 			}
-			if (YACHAMAN_ATKTYPE::ATK_COMBO == m_eSecondCategory_Atk)
+			if (YACHAMAN_ATKTYPE::ATK_COMBO == m_eSecondCategory_ATK)
 			{
 				switch (m_eAtkCombo)
 				{
@@ -433,11 +451,11 @@ void CYachaMan::Set_AniEvent()
 				case ATK_COMBO_TYPE::COMBO_R_HAMMERING:
 					Play_Combo_R_Hammering();
 					break;
-				case ATK_COMBO_TYPE::COMBO_SHOULDE_L:
-					Play_Combo_Shoulder_TurnTwice();
-					break;
 				case ATK_COMBO_TYPE::COMBO_SHOULDER_TURNTWICE:
 					Play_Combo_Shoulder_HalfClock();
+					break;
+				case ATK_COMBO_TYPE::COMBO_SHOULDER_HALFCLOCK:
+					Play_Combo_Shoulder_TurnTwice();
 					break;
 				case ATK_COMBO_TYPE::COMBO_RUNHAMMERING:
 					Play_Combo_RunHammering();
@@ -447,10 +465,12 @@ void CYachaMan::Set_AniEvent()
 		}
 		break;
 	case MONSTER_ANITYPE::HIT:
+		Play_Hit();
 		break;
 	case MONSTER_ANITYPE::DOWN:
 		break;
 	case MONSTER_ANITYPE::DEAD:
+		Play_Dead();
 		break;
 	}
 
@@ -549,10 +569,16 @@ void CYachaMan::Skill_Movement(_float _fspeed, _v3 _vDir)
 	V3_NORMAL(&_vDir, &_vDir);
 
 	// 네비 없이
-	m_pTransformCom->Add_Pos(_fspeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"), _vDir);
+	//m_pTransformCom->Add_Pos(_fspeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"), _vDir);
 
 	// 네비게이션 적용하면 
-	//m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &tmpLook, fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
+	_v3 tmpLook;
+	_float fSpeed = _fspeed;
+
+	tmpLook = _vDir;
+	D3DXVec3Normalize(&tmpLook, &tmpLook);
+
+	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &tmpLook, fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
 }
 
 void CYachaMan::Decre_Skill_Movement(_float _fMutiply)
@@ -569,7 +595,8 @@ void CYachaMan::Decre_Skill_Movement(_float _fMutiply)
 
 void CYachaMan::Reset_BattleState()
 {
-	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+	m_tObjParam.bCanHit = true;
+	m_tObjParam.bIsHit = false;
 	m_tObjParam.bIsAttack = false; //공격중 아님
 	m_bCanRandomAtkCategory = true; //랜덤공격 가능하게끔
 	m_bIsAtkCombo = false; //콤보공격중 아님
@@ -609,7 +636,9 @@ void CYachaMan::Play_Lurk()
 	{
 		if (YACHAMAN_ANI::Lurk == m_eState)
 		{
-			m_eState = YACHAMAN_ANI::Lurk_End;
+			if(m_pMeshCom->Is_Finish_Animation())
+				m_eState = YACHAMAN_ANI::Lurk_End;
+
 			return;
 		}
 		else if (YACHAMAN_ANI::Lurk_End == m_eState && m_pMeshCom->Is_Finish_Animation(0.98f))
@@ -677,15 +706,45 @@ void CYachaMan::Play_Run()
 
 void CYachaMan::Play_Dodge()
 {
-	m_eState = YACHAMAN_ANI::Walk;
+	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
 
-	Skill_RotateBody();
+	if (true == m_tObjParam.bDodge)
+	{
+		m_eState = YACHAMAN_ANI::Dodge;
+		m_tObjParam.bDodge = false;
+		m_bIsDodge = true;
+		Reset_BattleState();
+	}
+	else
+	{
+		if (m_pMeshCom->Is_Finish_Animation(0.98f))
+		{
+			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+			m_bIsDodge = false;
+			m_tObjParam.bDodge = true;
+			LOOP(10)
+				m_bEventTrigger[i] = false;
 
-	Skill_Movement(2.f, m_pTransformCom->Get_Axis(AXIS_Z));
+			return;
+		}
+		else if (0.8f < AniTime && 2.f> AniTime)
+		{
+			if (m_bEventTrigger[0] == false)
+			{
+				m_bEventTrigger[0] = true;
+				m_fSkillMoveSpeed_Cur = 4.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 0.1f;
+			}
 
-	Decre_Skill_Movement(0.1f);
+			Skill_RotateBody();
 
-	return;
+			Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
+
+			Decre_Skill_Movement(m_fSkillMoveMultiply);
+			return;
+		}
+	}
 }
 
 void CYachaMan::Play_RandomAtkNormal()
@@ -736,6 +795,7 @@ void CYachaMan::Play_R()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.98f))
 		{
+			cout << "심, 랜덤 노말->우치기 종료" << endl;
 			Reset_BattleState();
 
 			return;
@@ -786,6 +846,7 @@ void CYachaMan::Play_L()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.98f))
 		{
+			cout << "심, 랜덤 노말->좌치기 종료" << endl;
 			Reset_BattleState();
 
 			return;
@@ -836,6 +897,7 @@ void CYachaMan::play_Hammering()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.98f))
 		{
+			cout << "심, 랜덤 노말->해머링 종료" << endl;
 			Reset_BattleState();
 
 			return;
@@ -886,6 +948,7 @@ void CYachaMan::Play_Shoulder()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.98f))
 		{
+			cout << "심, 랜덤 노말->어깨치기 종료" << endl;
 			Reset_BattleState();
 
 			return;
@@ -930,6 +993,7 @@ void CYachaMan::Play_TurnTwice()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.98f))
 		{
+			cout << "심, 랜덤 노말->2회전 종료" << endl;
 			Reset_BattleState();
 
 			return;
@@ -1009,6 +1073,7 @@ void CYachaMan::Play_HalfClock()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.98f))
 		{
+			cout << "심, 랜덤 노말->반시계공격 종료" << endl;
 			Reset_BattleState();
 
 			return;
@@ -1071,6 +1136,7 @@ void CYachaMan::Play_TargetHammering()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.98f))
 		{
+			cout << "심, 랜덤 노말->파리치기 종료" << endl;
 			Reset_BattleState();
 
 			return;
@@ -1133,6 +1199,7 @@ void CYachaMan::Play_WheelWind()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.98f))
 		{
+			cout << "심, 랜덤 노말->휠윈드 종료" << endl;
 			Reset_BattleState();
 
 			return;
@@ -1276,7 +1343,6 @@ void CYachaMan::Play_WheelWind()
 
 void CYachaMan::Play_RandomAtkCombo()
 {
-	//최초의 애니를 지정해준다
 	m_iAtkRandom = CALC::Random_Num(ATK_COMBO_TYPE::COMBO_R_L, ATK_COMBO_TYPE::COMBO_RUNHAMMERING);
 
 	switch (m_iAtkRandom)
@@ -1289,13 +1355,13 @@ void CYachaMan::Play_RandomAtkCombo()
 		m_eAtkCombo = ATK_COMBO_TYPE::COMBO_R_HAMMERING;
 		m_eState = Atk_Ani_R;
 		break;
-	case ATK_COMBO_TYPE::COMBO_SHOULDE_L:
-		m_eAtkCombo = ATK_COMBO_TYPE::COMBO_SHOULDE_L;
-		m_eState = Atk_Ani_Shoulder;
-		break;
 	case ATK_COMBO_TYPE::COMBO_SHOULDER_TURNTWICE:
 		m_eAtkCombo = ATK_COMBO_TYPE::COMBO_SHOULDER_TURNTWICE;
-		m_eState = Atk_Ani_TurnTwice;
+		m_eState = Atk_Ani_Shoulder;
+		break;
+	case ATK_COMBO_TYPE::COMBO_SHOULDER_HALFCLOCK:
+		m_eAtkCombo = ATK_COMBO_TYPE::COMBO_SHOULDER_HALFCLOCK;
+		m_eState = Atk_Ani_Shoulder;
 		break;
 	case ATK_COMBO_TYPE::COMBO_RUNHAMMERING:
 		m_eAtkCombo = ATK_COMBO_TYPE::COMBO_RUNHAMMERING;
@@ -1314,6 +1380,7 @@ void CYachaMan::Play_Combo_R_L()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.45f))
 		{
+			cout << "심, 랜덤 콤보->좌치기 우치기, 좌치기 종료" << endl;
 			m_vecAttackCol[0]->Set_Enabled(false);
 			m_eState = Atk_Ani_L;
 			return;
@@ -1352,6 +1419,7 @@ void CYachaMan::Play_Combo_R_L()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
+			cout << "심, 랜덤 콤보->좌치기 우치기 종료" << endl;
 			Reset_BattleState();
 			return;
 		}
@@ -1398,6 +1466,7 @@ void CYachaMan::Play_Combo_R_Hammering()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.45f))
 		{
+			cout << "심, 랜덤 콤보->우치기 어깨치기, 우치기 종료" << endl;
 			m_vecAttackCol[0]->Set_Enabled(false);
 			m_eState = Atk_Ani_Hammering;
 			return;
@@ -1438,8 +1507,9 @@ void CYachaMan::Play_Combo_R_Hammering()
 	}
 	else if (Atk_Ani_Hammering == m_eState)
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.98f))
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
+			cout << "심, 랜덤 콤보->우치기 어깨치기 종료" << endl;
 			Reset_BattleState();
 
 			return;
@@ -1487,6 +1557,7 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.28f))
 		{
+			cout << "심, 랜덤 콤보->어깨치기 2회전, 어깨치기 종료" << endl;
 			m_vecAttackCol[0]->Set_Enabled(false);
 			m_eState = Atk_Ani_TurnTwice;
 			return;
@@ -1518,8 +1589,9 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 	}
 	else if (Atk_Ani_TurnTwice == m_eState)
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		if (m_pMeshCom->Is_Finish_Animation(0.9f))
 		{
+			cout << "심, 랜덤 콤보->어깨치기 2회전 종료" << endl;
 			Reset_BattleState();
 
 			return;
@@ -1601,8 +1673,9 @@ void CYachaMan::Play_Combo_Shoulder_HalfClock()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.28f))
 		{
+			cout << "심, 랜덤 콤보->어깨치기 반시계, 어깨치기 종료" << endl;
 			m_vecAttackCol[0]->Set_Enabled(false);
-			m_eState = Atk_Ani_TurnTwice;
+			m_eState = Atk_Ani_HalfClock;
 			return;
 		}
 		else
@@ -1632,8 +1705,9 @@ void CYachaMan::Play_Combo_Shoulder_HalfClock()
 	}
 	else if (Atk_Ani_HalfClock == m_eState)
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.98f))
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
+			cout << "심, 랜덤 콤보->어깨치기 반시계 종료" << endl;
 			Reset_BattleState();
 
 			return;
@@ -1692,6 +1766,7 @@ void CYachaMan::Play_Combo_RunHammering()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.9f))
 		{
+			cout << "심, 랜덤 콤보->달려가 내리치기,시작 종료" << endl;
 			m_eState = Atk_Ani_Run_Loop;
 			return;
 		}
@@ -1716,6 +1791,7 @@ void CYachaMan::Play_Combo_RunHammering()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.9f))
 		{
+			cout << "심, 랜덤 콤보->달려가 내리치기,루프 종료" << endl;
 			m_eState = Atk_Ani_Run_End;
 			return;
 		}
@@ -1737,6 +1813,7 @@ void CYachaMan::Play_Combo_RunHammering()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.9f))
 		{
+			cout << "심, 랜덤 콤보->달려가 내리치기,종료 종료" << endl;
 			Reset_BattleState();
 			return;
 		}
@@ -1771,6 +1848,39 @@ void CYachaMan::Play_Combo_RunHammering()
 
 void CYachaMan::Play_Hit()
 {
+	if (false == m_tObjParam.bIsHit)
+	{
+		cout << "심, Hit" << endl;
+		m_tObjParam.bIsHit = true;
+		m_eState = YACHAMAN_ANI::Hit_S_FL;
+		Reset_BattleState();
+	}
+	else
+	{
+		//맞는 애니중, 70퍼이상 애니 재생됬다면 또 처맞기 가능
+		if (true == m_tObjParam.bIsHit && m_pMeshCom->Is_Finish_Animation(0.7f))
+		{
+			if (false == m_tObjParam.bCanHit)
+			{
+				cout << "심, 또 Hit" << endl;
+				++m_iDodgeCount; //200406 수정
+				m_tObjParam.bCanHit = true;
+
+				return;
+			}
+		}
+		//맞는 애니중, 95퍼 이상 재생, 행동 종료
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		{
+			cout << "심, Hit 종료" << endl;
+			++m_iDodgeCount;
+			m_tObjParam.bIsHit = false;
+			m_tObjParam.bCanHit = true;
+			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+
+			return;
+		}
+	}
 }
 
 void CYachaMan::Play_Down_Strong()
@@ -1816,6 +1926,19 @@ HRESULT CYachaMan::Add_Component()
 	// for.Com_Mesh
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_YachaMan", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
 		return E_FAIL;
+
+	// for.Com_NavMesh
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMesh)))
+		return E_FAIL;
+
+	// for.Com_Collider
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+		return E_FAIL;
+
+	m_pCollider->Set_Radius(_v3{ 0.5f, 0.5f, 0.5f });
+	m_pCollider->Set_Dynamic(true);
+	m_pCollider->Set_Type(COL_SPHERE);
+	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pCollider->Get_Radius().y , 0.f });
 
 	return NOERROR;
 }
@@ -1957,10 +2080,22 @@ CGameObject* CYachaMan::Clone_GameObject(void * pArg)
 
 void CYachaMan::Free()
 {
+	Safe_Release(m_pCollider);
+	Safe_Release(m_pNavMesh);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pMeshCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
+
+	for (auto& iter : m_vecPhysicCol)
+	{
+		Safe_Release(iter);
+	}
+
+	for (auto& iter : m_matBone)
+	{
+		iter = nullptr;
+	}
 
 	CGameObject::Free();
 }
