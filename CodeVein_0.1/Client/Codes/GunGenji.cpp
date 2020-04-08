@@ -26,8 +26,9 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	if (FAILED(Add_Component(pArg)))
 		return E_FAIL;
 
-	//m_pMonsterUI = CMonsterUI::Create(m_pGraphic_Dev, this);
-	//m_pMonsterUI->Ready_GameObject(NULL);
+	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
+	m_pMonsterUI->Set_Target(this);
+	m_pMonsterUI->Ready_GameObject(NULL);
 
 	Ready_NF(pArg);
 
@@ -332,8 +333,8 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 
 	CGameObject::Update_GameObject(TimeDelta);
 
-	//if(0 <= m_tObjParam.fHp_Cur)
-	//m_pMonsterUI->Update_GameObject(TimeDelta);
+	// MonsterHP UI
+	m_pMonsterUI->Update_GameObject(TimeDelta);
 
 	// 죽었을 경우
 	if (m_bIsDead)
@@ -811,6 +812,14 @@ HRESULT CGunGenji::Update_Bone_Of_BlackBoard()
 	m_vRightHandAttach = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"RightHandAttach", m_vRightHandAttach);
 
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
+	m_vHead = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Bone_Head", m_vHead);
+
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightToeBase");
+	m_vRightToeBase = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Bone_RightToeBase", m_vRightToeBase);
+
 	return S_OK;
 }
 
@@ -1018,7 +1027,7 @@ void CGunGenji::Check_PhyCollider()
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
 			Start_Dissolve(0.7f, false, true);
 			m_pGun->Start_Dissolve();
-			g_pManagement->Create_Spawn_Effect(m_pTransformCom->Get_Pos());
+			g_pManagement->Create_Spawn_Effect(m_vRightToeBase, m_vHead);
 		}
 	}
 	// 맞았을 때
@@ -1054,7 +1063,7 @@ void CGunGenji::Push_Collider()
 	{
 		CCollider* pCollider = TARGET_TO_COL(iter);
 
-		cout << m_pAIControllerCom->Get_FloatValue(L"Monster_Speed") << endl;
+		/*cout << m_pAIControllerCom->Get_FloatValue(L"Monster_Speed") << endl;*/
 
 		// 지금 속도값 임의로 넣었는데 구해서 넣어줘야함 - 완료
 		if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_pAIControllerCom->Get_FloatValue(L"Monster_Speed")))
@@ -1290,7 +1299,7 @@ CGameObject * CGunGenji::Clone_GameObject(void * pArg)
 
 void CGunGenji::Free()
 {
-	//Safe_Release(m_pMonsterUI);
+	Safe_Release(m_pMonsterUI);
 
 	Safe_Release(m_pNavMesh);
 	Safe_Release(m_pGun);

@@ -35,6 +35,10 @@
 #include "BossDecoUI.h"
 #include "BossHP.h"
 
+#include "MonsterUI.h"
+#include "MassageUI.h"
+#include "DamegeNumUI.h"
+
 //#include "Item.h"
 
 
@@ -272,6 +276,15 @@ HRESULT CLoading::Ready_Effect(void)
 
 	if (FAILED(Add_EffectPrototype(L"Player_SpaceBar_StepParticle")))
 		return E_FAIL;
+
+#pragma region Skills
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Scratch_Hor")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Scratch_Ver")))
+		return E_FAIL;
+#pragma endregion
+
+
 
 	return S_OK;
 }
@@ -513,6 +526,17 @@ _uint CLoading::Loading_Stage()
 		return E_FAIL;
 	// 야차맨
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_YachaMan", CYachaMan::Create(m_pGraphicDev))))
+		return E_FAIL;
+
+	// UI - Chea
+	//============================================================================================================
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MonsterHPUI", CMonsterUI::Create(m_pGraphicDev))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MassageUI", CMassageUI::Create(m_pGraphicDev))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DamegeNumUI", CDamegeNumUI::Create(m_pGraphicDev))))
 		return E_FAIL;
 
 	// 기타

@@ -2746,7 +2746,7 @@ void CPlayer::Play_Spawn()
 	{
 		_v3 vPos = m_pTransform->Get_Pos();
 		vPos.y += m_fDissolveY;
-		g_pManagement->Create_Spawn_Effect(vPos);
+		//g_pManagement->Create_Spawn_Effect(vPos);
 		m_fDissolveY += DELTA_60 * 1.3f;
 	}
 	else
