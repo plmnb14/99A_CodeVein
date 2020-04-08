@@ -46,9 +46,6 @@ _int CPickUp_ItemUI::Update_GameObject(_double TimeDelta)
 
 	CUI_Manager* pUIManager = CUI_Manager::Get_Instance();
 
-	if(0 <= pUIManager->Get_CoundItem())
-		m_pRendererCom->Add_RenderList(RENDER_UI, this);
-
 	
 	if (1 == pUIManager->Get_CoundItem())
 		m_iRenderNum = 4;
@@ -56,7 +53,17 @@ _int CPickUp_ItemUI::Update_GameObject(_double TimeDelta)
 		m_iRenderNum = 5;
 	if (3 <= pUIManager->Get_CoundItem())
 		m_iRenderNum = 6;
-	
+
+	if(1 == m_iCheckPos)
+		m_fPosY = 200.f;
+	if (2 == m_iCheckPos)
+		m_fPosY = 250.f;
+	if (3 == m_iCheckPos)
+		m_fPosY = 300.f;
+
+	if (0 <= pUIManager->Get_CoundItem())
+		m_pRendererCom->Add_RenderList(RENDER_UI, this);
+
 	return S_OK;
 }
 
@@ -101,30 +108,15 @@ HRESULT CPickUp_ItemUI::Render_GameObject()
 
 	for (_uint i = 0; i < pUIManager->Get_CoundItem(); ++i)
 	{
+		_mat tmpMat = m_matWorld;
+
+		tmpMat._41 += i * 0.1f;
+
 		m_pShaderCom->Begin_Pass(2);
 
-		/*	if (i >= i + 1)
-		m_fPosY += 50.f;
-		if (i > 3)
-		m_fPosY = 200.f;*/
-		if (0 == i)
-		{
-			m_fPosY = 200.f;
-			/*if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, i + 4)))
-			return E_FAIL;*/
-		}
-		if (1 == i)
-		{
-			m_fPosY = 250.f;
-			/*if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, i + 4)))
-			return E_FAIL;*/
-		}
-		if (2 == i)
-		{
-			m_fPosY = 300.f;
-			/*if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, i + 4)))
-			return E_FAIL;*/
-		}
+		if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &(tmpMat/*m_matWorldPlus[i] * m_pTransformCom->Get_WorldMat()*/), sizeof(_mat))))
+			return E_FAIL;
+
 		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, i + 4)))
 			return E_FAIL;
 
@@ -148,7 +140,7 @@ HRESULT CPickUp_ItemUI::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Get_ItemUI", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_PickUp_Item", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader

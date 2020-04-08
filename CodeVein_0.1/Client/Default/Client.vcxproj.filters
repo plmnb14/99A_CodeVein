@@ -241,9 +241,6 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\04. Get_ItemUI\PickUp_ItemUI">
       <UniqueIdentifier>{350b99e5-54e8-43df-bafa-17f764a32b28}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\06. MassageUI">
-      <UniqueIdentifier>{540b3aae-02d4-4cfe-b5dc-cb949b85ba2b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\1%29 Boss\PoisonButterfly\Bullet">
       <UniqueIdentifier>{9fe0c9c4-700a-4361-889f-770896093c16}</UniqueIdentifier>
     </Filter>
@@ -270,6 +267,9 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\01.MonsterUI\DamegeNumUI">
       <UniqueIdentifier>{17a28e90-9dc3-42dc-a9ea-6b93496b8371}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\07. MassageUI">
+      <UniqueIdentifier>{540b3aae-02d4-4cfe-b5dc-cb949b85ba2b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -454,7 +454,7 @@
       <Filter>02.GameObject\Stage\5%29 UI\UI\04. Get_ItemUI\PickUp_ItemUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\MassageUI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\06. MassageUI</Filter>
+      <Filter>02.GameObject\Stage\5%29 UI\UI\07. MassageUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\MonsterUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\01.MonsterUI</Filter>
@@ -678,7 +678,7 @@
       <Filter>02.GameObject\Stage\5%29 UI\UI\04. Get_ItemUI\PickUp_ItemUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\MassageUI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\06. MassageUI</Filter>
+      <Filter>02.GameObject\Stage\5%29 UI\UI\07. MassageUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\PoisonBullet.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\PoisonButterfly\Bullet</Filter>

@@ -28,6 +28,10 @@
 #include "BloodCode_Icon.h"
 #include "Info_Slot.h"
 
+#include "MassageUI.h"
+#include "Get_ItemUI.h"
+#include "PickUp_ItemUI.h"
+
 
 IMPLEMENT_SINGLETON(CUI_Manager)
 
@@ -95,6 +99,13 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BloodCodeIcon", CBloodCode_Icon::Create(pDevice))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_InfoSlot", CInfo_Slot::Create(pDevice))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Get_ItemUI", CGet_ItemUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Pickup_ItemUI", CPickUp_ItemUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Start_BossUI", CMassageUI::Create(pDevice))))
 		return E_FAIL;
 
 	return NOERROR;
