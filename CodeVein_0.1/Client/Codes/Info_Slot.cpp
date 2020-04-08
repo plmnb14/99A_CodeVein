@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Info_Slot.h"
-
+#include "NumberUI.h"
 
 CInfo_Slot::CInfo_Slot(_Device pDevice)
 	: CUI(pDevice)
@@ -10,6 +10,11 @@ CInfo_Slot::CInfo_Slot(_Device pDevice)
 CInfo_Slot::CInfo_Slot(const CInfo_Slot & rhs)
 	: CUI(rhs)
 {
+}
+
+void CInfo_Slot::Set_Number(_uint iNumber)
+{
+	m_pNumberUI->Set_UI_Index(iNumber);
 }
 
 HRESULT CInfo_Slot::Ready_GameObject_Prototype()
@@ -25,8 +30,18 @@ HRESULT CInfo_Slot::Ready_GameObject(void * pArg)
 		return E_FAIL;
 
 	CUI::Ready_GameObject(pArg);
+
 	m_bIsActive = false;
 
+	CUI::UI_DESC* pDesc = new CUI::UI_DESC;
+	pDesc->fPosX = m_fPosX - m_fSizeX * 0.25f;
+	pDesc->fPosY = m_fPosY + m_fSizeY * 0.25f;
+	pDesc->fSizeX = m_fSizeX * 0.25f;
+	pDesc->fSizeY = m_fSizeY * 0.25f;
+	pDesc->iIndex = 0;
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NumberUI", SCENE_STAGE, L"Layer_NumberUI", pDesc);
+	m_pNumberUI = static_cast<CNumberUI*>(g_pManagement->Get_GameObjectBack(L"Layer_NumberUI", SCENE_STAGE));
+		
 	return NOERROR;
 }
 
@@ -56,6 +71,10 @@ _int CInfo_Slot::Update_GameObject(_double TimeDelta)
 		m_iIndex = 4;
 		break;
 	}
+
+	m_pNumberUI->Set_Active(m_bIsActive);
+	m_pNumberUI->Set_ViewZ(m_fViewZ - 0.1f);
+
 	return NO_EVENT;
 }
 

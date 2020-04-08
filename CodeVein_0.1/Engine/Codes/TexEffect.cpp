@@ -277,8 +277,10 @@ void CTexEffect::Setup_Info()
 	m_fMoveSpeed = m_pInfo->fMoveSpeed;
 	m_fRotSpeed = m_pInfo->fRotSpeed;
 	m_fAlphaSpeed = m_pInfo->fAlphaSpeed;
-	m_fCreateDelay = m_pInfo->fCreateDelay;
-	m_pInfo->fMoveScaleSpeed = 1.f;
+	if (m_bDelay_New)
+		m_fCreateDelay = m_fDelay_New;
+	else
+		m_fCreateDelay = m_pInfo->fCreateDelay;
 
 	m_fFrame = 0.f;
 	m_fLinearMoveSpeed = 0.f;
@@ -344,7 +346,7 @@ void CTexEffect::Setup_Info()
 		m_fAlphaSpeed += _int(m_pInfo->fAlphaSpeed_Min);
 	}
 
-	if (m_pInfo->fCreateDelay_Max > 0.f)
+	if (!m_bDelay_New && m_pInfo->fCreateDelay_Max > 0.f)
 	{
 		m_fCreateDelay = Engine::CCalculater::Random_Num(0, _int(m_pInfo->fCreateDelay_Max * 100)) * 0.01f;
 		m_fCreateDelay += _int(m_pInfo->fCreateDelay_Min);
@@ -358,8 +360,7 @@ void CTexEffect::Setup_Info()
 			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Y] * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f),
 			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Z] * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f));
 
-		//if (m_bAutoFindPos)
-		if (m_pDesc->pTargetTrans)
+		if (m_pDesc->pTargetTrans || m_bAutoFindPos)
 			vPos += m_pDesc->pTargetTrans->Get_Pos();
 
 		vPos += m_pDesc->vWorldPos;
@@ -490,7 +491,7 @@ void CTexEffect::Check_Move(_double TimeDelta)
 			else
 				vMove = m_pInfo->vMoveDirection * m_fMoveSpeed * _float(TimeDelta);
 			
-			if (m_pDesc->pTargetTrans && !m_bAutoFindPos)
+ 			if (m_pDesc->pTargetTrans && !m_bAutoFindPos)
 			{
 				_v3 vPos = m_pDesc->pTargetTrans->Get_Pos();
 				m_vFollowPos += vMove;

@@ -23,15 +23,28 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 
 	Input_Pool(L"Player_Skill_Scratch_Hor", 10);
 	Input_Pool(L"Player_Skill_Scratch_Ver", 10);
+	Input_Pool(L"Player_Skill_ScratchBlur_Hor", 10);
+	Input_Pool(L"Player_Skill_ScratchBlur_Ver", 10);
+	Input_Pool(L"Player_Skill_Ring_Hor", 10);
+	Input_Pool(L"Player_Skill_Ring_Ver", 10);
+	Input_Pool(L"Player_Skill_RedParticle_Explosion", 110);
+	Input_Pool(L"Player_Skill_RedCircle_Flash", 10);
+	Input_Pool(L"Player_Skill_Distortion_Circle", 10);
+	Input_Pool(L"Player_Skill_RedOnion", 40);
+	Input_Pool(L"Player_Skill_SplitAssert_LaserBefore", 5);
+	Input_Pool(L"Player_Skill_SplitAssert_LaserAfter", 5);
+	Input_Pool(L"Player_Skill_SplitAssert_LaserBody", 5);
+	Input_Pool(L"Player_Skill_DarkRedOnion_Explosion", 50);
+	Input_Pool(L"Player_Skill_Blood_Explosion", 100);
 
 	Input_Pool(L"ButterFly_SoftSmoke", 2000);
-	Input_Pool(L"ButterFly_PointParticle", 100);
+	Input_Pool(L"ButterFly_PointParticle", 1000);
 	Input_Pool(L"ButterFly_PointParticle_Plum", 100);
 	Input_Pool(L"ButterFly_RingLine", 10);
 	Input_Pool(L"ButterFly_RingLine_Distortion", 10);
 	Input_Pool(L"ButterFly_Distortion", 10);
 	Input_Pool(L"ButterFly_Distortion_Circle", 10);
-	Input_Pool(L"ButterFly_Distortion_Smoke", 100);
+	Input_Pool(L"ButterFly_Distortion_Smoke", 600);
 	Input_Pool(L"ButterFly_Distortion_SmokeGravity", 50);
 	Input_Pool(L"ButterFly_SoftSmoke_Bottom", 200);
 	Input_Pool(L"ButterFly_Smoke_Red_Once", 200);
@@ -46,8 +59,8 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 
 	Input_Pool(L"ButterFly_VenomShot", 1000);
 	Input_Pool(L"ButterFly_VenomShot_SubSmoke", 1000);
-	Input_Pool(L"ButterFly_VenomShot_Distortion", 300);
-	Input_Pool(L"ButterFly_VenomShot_Chunk", 100);
+	Input_Pool(L"ButterFly_VenomShot_Distortion", 500);
+	Input_Pool(L"ButterFly_VenomShot_Chunk", 500);
 	Input_Pool(L"ButterFly_VenomShot_PointParticle", 500);
 	Input_Pool(L"ButterFly_VenomShot_Tail", 500);
 	Input_Pool(L"ButterFly_VenomShot_DeadMist", 100);
@@ -311,6 +324,7 @@ void CParticleMgr::Create_AutoFindEffect(_tchar* szName, _float fLifeTime, _v3 v
 	pInfo->pFollowTrans = pFollowTrans;
 	pInfo->vCreatePos = vPos;
 	pInfo->bAutoFind = true;
+	pInfo->bFinishPos = false;
 
 	m_vecParticle.push_back(pInfo);
 }
@@ -335,6 +349,40 @@ void CParticleMgr::Create_Effect_Offset(_tchar* szName, _float fOffset, _v3 vPos
 
 	m_mapEffectOffset[szName] = 0.f;
 	Create_Effect(szName, vPos, pFollowTrans);
+}
+
+void CParticleMgr::Create_Effect_Delay(_tchar * szName, _float fDelay, _v3 vPos, CTransform * pFollowTrans)
+{
+	queue<CEffect*>* pFindedQueue = Find_Queue(szName);
+	if (pFindedQueue == nullptr)
+		return;
+
+	// 풀 안에서 미리 생성한 오브젝트 꺼내서 사용
+	for (_int i = 0; i < pFindedQueue->front()->Get_Info()->iMaxCount; ++i)
+	{
+		if (pFindedQueue->size() <= 20) // 넉넉하게... 남은게 20 이하면 생성하여 사용
+		{
+			_tchar* szEffName = pFindedQueue->front()->Get_ParticleName();
+			CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));
+
+			m_EffectList.push_back(pEffect);
+
+			pEffect->Set_ParticleName(szEffName);
+			pEffect->Set_Desc(vPos, pFollowTrans);
+			pEffect->Set_Delay(fDelay);
+			pEffect->Reset_Init();
+
+			continue;
+		}
+
+		m_EffectList.push_back(pFindedQueue->front());
+
+		pFindedQueue->front()->Set_Desc(vPos, pFollowTrans);
+		pFindedQueue->front()->Set_Delay(fDelay);
+		pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
+
+		pFindedQueue->pop();
+	}
 }
 
 void CParticleMgr::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol, CTransform* pHittedTrans, _float fPower)

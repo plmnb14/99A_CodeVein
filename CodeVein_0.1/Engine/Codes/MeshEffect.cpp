@@ -191,9 +191,12 @@ void CMeshEffect::Setup_Info()
 	m_fMoveSpeed = m_pInfo->fMoveSpeed;
 	m_fRotSpeed = m_pInfo->fRotSpeed;
 	m_fAlphaSpeed = m_pInfo->fAlphaSpeed;
-	m_fCreateDelay = m_pInfo->fCreateDelay;
 	m_pTransformCom->Set_Scale(m_pInfo->vStartScale);
 	m_pInfo->fMoveScaleSpeed = 1.f;
+	if (m_bDelay_New)
+		m_fCreateDelay = m_fDelay_New;
+	else
+		m_fCreateDelay = m_pInfo->fCreateDelay;
 
 	m_fLinearMoveSpeed = 0.f;
 	m_fLinearMovePercent = 0.f;
