@@ -402,7 +402,7 @@ void CParticleTab::Setup_EffInfo(_bool bIsMesh)
 	m_pInfo->bDissolve = m_CheckDissolve.GetCheck() ? true : false;
 
 	GetDlgItemText(IDC_EDIT52, m_EditScaleSpeed);
-	m_pInfo->fMoveScaleSpeed = _float(_tstoi(m_EditScaleSpeed));
+	m_pInfo->fMoveScaleSpeed = _float(_tstof(m_EditScaleSpeed));
 
 	if (m_bCheckUseMask.GetCheck() ? true : false)
 	{

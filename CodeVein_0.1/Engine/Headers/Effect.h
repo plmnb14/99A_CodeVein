@@ -32,7 +32,7 @@ public:
 	void Set_Dir(_v3 vDir) { m_vMyDir = vDir; }
 	void Set_AutoFind(_bool  bFind) { m_bAutoFindPos = bFind; }
 	void Set_FinishPos(_v3 vPos) { m_bFinishPos = true;  m_vFinishPos = vPos; }
-	void Set_Delay(_float fDelay) { m_bDelay_New = true;  m_fDelay_New = fDelay; }
+	void Set_Delay(_bool bDelay, _float fDelay = 0.f) { m_bDelay_New = bDelay;  m_fDelay_New = fDelay; }
 
 	void Reset_Init();
 

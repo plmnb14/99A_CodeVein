@@ -203,6 +203,9 @@ void CMeshEffect::Setup_Info()
 	m_vFollowPos = { 0.f, 0.f, 0.f };
 
 	m_bFadeOutStart = false;
+	m_bDelay_New	= false;
+	m_bAutoFindPos	= false;
+	m_bFinishPos	= false;
 	
 	if (m_pInfo->bDistortion)
 		m_iPass = 1;

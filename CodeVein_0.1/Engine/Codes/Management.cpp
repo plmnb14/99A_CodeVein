@@ -530,9 +530,9 @@ void CManagement::Create_Effect_Offset(_tchar* szName, _float fOffset, _v3 vPos,
 	CParticleMgr::Get_Instance()->Create_Effect_Offset(szName, fOffset, vPos, pFollowTrans);
 }
 
-void CManagement::Create_Effect_Delay(_tchar * szName, _float fDelay, _v3 vPos, CTransform * pFollowTrans)
+void CManagement::Create_Effect_Delay(_tchar * szName, _float fDelay, _v3 vPos, CTransform* pFollowTrans, _v3 vAngle)
 {
-	CParticleMgr::Get_Instance()->Create_Effect_Delay(szName, fDelay, vPos, pFollowTrans);
+	CParticleMgr::Get_Instance()->Create_Effect_Delay(szName, fDelay, vPos, pFollowTrans, vAngle);
 }
 
 void CManagement::Free()

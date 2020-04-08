@@ -159,6 +159,7 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 						CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));
 						pEffect->Set_ParticleName(szEffName);
 						pEffect->Set_Desc((*iter_begin)->vCreatePos, (*iter_begin)->pFollowTrans);
+						pEffect->Set_Delay(false);
 						pEffect->Set_AutoFind((*iter_begin)->bAutoFind);
 						if ((*iter_begin)->bFinishPos) pEffect->Set_FinishPos((*iter_begin)->vFinishPos);
 						pEffect->Reset_Init();
@@ -169,6 +170,7 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 
 					m_EffectList.push_back(pFindedQueue->front());
 					pFindedQueue->front()->Set_Desc((*iter_begin)->vCreatePos, (*iter_begin)->pFollowTrans);
+					pFindedQueue->front()->Set_Delay(false);
 					pFindedQueue->front()->Set_AutoFind((*iter_begin)->bAutoFind);
 					if((*iter_begin)->bFinishPos) pFindedQueue->front()->Set_FinishPos((*iter_begin)->vFinishPos);
 					pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
@@ -234,6 +236,7 @@ void CParticleMgr::Create_Effect(_tchar* szName, _v3 vPos, CTransform * pFollowT
 			CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));
 			pEffect->Set_ParticleName(szEffName);
 			pEffect->Set_Desc(vPos, pFollowTrans);
+			pEffect->Set_Delay(false);
 			pEffect->Reset_Init();
 
 			m_EffectList.push_back(pEffect);
@@ -242,6 +245,7 @@ void CParticleMgr::Create_Effect(_tchar* szName, _v3 vPos, CTransform * pFollowT
 
 		m_EffectList.push_back(pFindedQueue->front());
 		pFindedQueue->front()->Set_Desc(vPos, pFollowTrans);
+		pFindedQueue->front()->Set_Delay(false);
 		pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
 		pFindedQueue->pop();
 	}
@@ -266,6 +270,7 @@ void CParticleMgr::Create_DirEffect(_tchar * szName, _v3 vPos, _v3 vDir, CTransf
 			pEffect->Set_ParticleName(szEffName);
 			pEffect->Set_Desc(vPos, pFollowTrans);
 			pEffect->Set_Dir(vDir);
+			pEffect->Set_Delay(false);
 			pEffect->Reset_Init();
 
 			continue;
@@ -275,6 +280,7 @@ void CParticleMgr::Create_DirEffect(_tchar * szName, _v3 vPos, _v3 vDir, CTransf
 
 		pFindedQueue->front()->Set_Desc(vPos, pFollowTrans);
 		pFindedQueue->front()->Set_Dir(vDir);
+		pFindedQueue->front()->Set_Delay(false);
 		pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
 
 		pFindedQueue->pop();
@@ -299,6 +305,7 @@ void CParticleMgr::Create_AngleEffect(_tchar * szName, _v3 vPos, _v3 vAngle, CTr
 
 			pEffect->Set_ParticleName(szEffName);
 			pEffect->Set_Desc(vPos, pFollowTrans);
+			pEffect->Set_Delay(false);
 			pEffect->Set_Angle(vAngle);
 			pEffect->Reset_Init();
 
@@ -308,6 +315,7 @@ void CParticleMgr::Create_AngleEffect(_tchar * szName, _v3 vPos, _v3 vAngle, CTr
 		m_EffectList.push_back(pFindedQueue->front());
 
 		pFindedQueue->front()->Set_Desc(vPos, pFollowTrans);
+		pFindedQueue->front()->Set_Delay(false);
 		pFindedQueue->front()->Set_Angle(vAngle);
 		pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
 
@@ -333,6 +341,7 @@ void CParticleMgr::Create_Effect_NoPool(_tchar* szName, _v3 vPos, CTransform* pF
 {
 	CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szName, nullptr));
 	pEffect->Set_Desc(vPos, pFollowTrans);
+	pEffect->Set_Delay(false);
 	pEffect->Reset_Init();
 	m_pManagement->Add_GameOject_ToLayer_NoClone(pEffect, SCENE_STAGE, L"Layer_Effect", nullptr);
 }
@@ -351,7 +360,7 @@ void CParticleMgr::Create_Effect_Offset(_tchar* szName, _float fOffset, _v3 vPos
 	Create_Effect(szName, vPos, pFollowTrans);
 }
 
-void CParticleMgr::Create_Effect_Delay(_tchar * szName, _float fDelay, _v3 vPos, CTransform * pFollowTrans)
+void CParticleMgr::Create_Effect_Delay(_tchar * szName, _float fDelay, _v3 vPos, CTransform * pFollowTrans, _v3 vAngle)
 {
 	queue<CEffect*>* pFindedQueue = Find_Queue(szName);
 	if (pFindedQueue == nullptr)
@@ -369,7 +378,8 @@ void CParticleMgr::Create_Effect_Delay(_tchar * szName, _float fDelay, _v3 vPos,
 
 			pEffect->Set_ParticleName(szEffName);
 			pEffect->Set_Desc(vPos, pFollowTrans);
-			pEffect->Set_Delay(fDelay);
+			pEffect->Set_Delay(true, fDelay);
+			pEffect->Set_Angle(vAngle);
 			pEffect->Reset_Init();
 
 			continue;
@@ -378,7 +388,8 @@ void CParticleMgr::Create_Effect_Delay(_tchar * szName, _float fDelay, _v3 vPos,
 		m_EffectList.push_back(pFindedQueue->front());
 
 		pFindedQueue->front()->Set_Desc(vPos, pFollowTrans);
-		pFindedQueue->front()->Set_Delay(fDelay);
+		pFindedQueue->front()->Set_Delay(true, fDelay);
+		pFindedQueue->front()->Set_Angle(vAngle);
 		pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
 
 		pFindedQueue->pop();
