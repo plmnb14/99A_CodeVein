@@ -25,15 +25,26 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Player_Skill_Scratch_Ver", 10);
 	Input_Pool(L"Player_Skill_ScratchBlur_Hor", 10);
 	Input_Pool(L"Player_Skill_ScratchBlur_Ver", 10);
+	Input_Pool(L"Player_Skill_Ring_Hor", 10);
+	Input_Pool(L"Player_Skill_Ring_Ver", 10);
+	Input_Pool(L"Player_Skill_RedParticle_Explosion", 110);
+	Input_Pool(L"Player_Skill_RedCircle_Flash", 10);
+	Input_Pool(L"Player_Skill_Distortion_Circle", 10);
+	Input_Pool(L"Player_Skill_RedOnion", 40);
+	Input_Pool(L"Player_Skill_SplitAssert_LaserBefore", 5);
+	Input_Pool(L"Player_Skill_SplitAssert_LaserAfter", 5);
+	Input_Pool(L"Player_Skill_SplitAssert_LaserBody", 5);
+	Input_Pool(L"Player_Skill_DarkRedOnion_Explosion", 50);
+	Input_Pool(L"Player_Skill_Blood_Explosion", 100);
 
 	Input_Pool(L"ButterFly_SoftSmoke", 2000);
-	Input_Pool(L"ButterFly_PointParticle", 100);
+	Input_Pool(L"ButterFly_PointParticle", 1000);
 	Input_Pool(L"ButterFly_PointParticle_Plum", 100);
 	Input_Pool(L"ButterFly_RingLine", 10);
 	Input_Pool(L"ButterFly_RingLine_Distortion", 10);
 	Input_Pool(L"ButterFly_Distortion", 10);
 	Input_Pool(L"ButterFly_Distortion_Circle", 10);
-	Input_Pool(L"ButterFly_Distortion_Smoke", 100);
+	Input_Pool(L"ButterFly_Distortion_Smoke", 600);
 	Input_Pool(L"ButterFly_Distortion_SmokeGravity", 50);
 	Input_Pool(L"ButterFly_SoftSmoke_Bottom", 200);
 	Input_Pool(L"ButterFly_Smoke_Red_Once", 200);
@@ -48,8 +59,8 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 
 	Input_Pool(L"ButterFly_VenomShot", 1000);
 	Input_Pool(L"ButterFly_VenomShot_SubSmoke", 1000);
-	Input_Pool(L"ButterFly_VenomShot_Distortion", 300);
-	Input_Pool(L"ButterFly_VenomShot_Chunk", 100);
+	Input_Pool(L"ButterFly_VenomShot_Distortion", 500);
+	Input_Pool(L"ButterFly_VenomShot_Chunk", 500);
 	Input_Pool(L"ButterFly_VenomShot_PointParticle", 500);
 	Input_Pool(L"ButterFly_VenomShot_Tail", 500);
 	Input_Pool(L"ButterFly_VenomShot_DeadMist", 100);

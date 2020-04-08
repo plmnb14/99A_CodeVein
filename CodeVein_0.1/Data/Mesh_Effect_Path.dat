@@ -4,3 +4,6 @@ Mesh_LineRing_0|LineRing_0.X|..\..\Client\Resources\Mesh\EffectMesh\LineRing\|0
 Mesh_LineRing_1|LineRing_1.X|..\..\Client\Resources\Mesh\EffectMesh\LineRing\|0
 Mesh_RockBullet|RockBullet.X|..\..\Client\Resources\Mesh\EffectMesh\RockBullet\|0
 Mesh_SlashLine|SlashLine.X|..\..\Client\Resources\Mesh\EffectMesh\SlashLine\|0
+Mesh_Tornade|Tornade.X|..\..\Client\Resources\Mesh\EffectMesh\Tornade\|0
+Mesh_Wind|Wind.X|..\..\Client\Resources\Mesh\EffectMesh\Wind\|0
+Mesh_Wind_ZRot|Wind_ZRot.X|..\..\Client\Resources\Mesh\EffectMesh\Wind_ZRot\|0

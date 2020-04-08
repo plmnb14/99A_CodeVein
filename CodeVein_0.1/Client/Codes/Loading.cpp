@@ -282,6 +282,28 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_ScratchBlur_Ver")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Ring_Hor")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Ring_Ver")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_RedParticle_Explosion")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_RedCircle_Flash")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Distortion_Circle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_RedOnion", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_SplitAssert_LaserBefore")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_SplitAssert_LaserAfter")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_SplitAssert_LaserBody")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_DarkRedOnion_Explosion", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Blood_Explosion")))
+		return E_FAIL;
 #pragma endregion
 
 

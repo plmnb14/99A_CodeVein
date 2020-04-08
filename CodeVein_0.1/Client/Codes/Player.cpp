@@ -1269,6 +1269,17 @@ void CPlayer::Key_Skill()
 
 		else if (false == m_bOneHand)
 			m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[4]->dwAnimationIdx);
+
+		for (_int i = 0; i < 10; i++)
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion", 1.f + 0.05f * i, m_pTransform->Get_Pos() + _v3(0.f, 0.3f * i, 0.f));
+		
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_SplitAssert_LaserBefore"	, 2.1f, m_pTransform->Get_Pos() + _v3(0.f, 0.f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 2.35f);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_SplitAssert_LaserBody"	, 2.2f, m_pTransform->Get_Pos() + _v3(0.f, 0.f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 2.35f);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_DarkRedOnion_Explosion"	, 2.1f, m_pTransform->Get_Pos() + _v3(0.f, 0.f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 2.35f);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_Blood_Explosion"			, 2.1f, m_pTransform->Get_Pos() + _v3(0.f, 0.f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 2.35f);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_SplitAssert_LaserAfter"	, 2.4f, m_pTransform->Get_Pos() + _v3(0.f, 0.f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 2.35f);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion"	, 2.4f, m_pTransform->Get_Pos() + _v3(0.f, 0.f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 2.35f);
+		
 	}
 
 	// 2번 스킬
@@ -1284,6 +1295,27 @@ void CPlayer::Key_Skill()
 
 		else if (false == m_bOneHand)
 			m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[5]->dwAnimationIdx);
+
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle"	, 0.2f	, m_pTransform->Get_Pos() + _v3(0.f, 1.3f, 0.f));
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor"		, 1.f	, m_pTransform->Get_Pos() + _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor"			, 1.f	, m_pTransform->Get_Pos() + _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_0"						, 1.f	, m_pTransform->Get_Pos() + _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_1"						, 1.f	, m_pTransform->Get_Pos() + _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_2"						, 1.f	, m_pTransform->Get_Pos() + _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_3"						, 1.f	, m_pTransform->Get_Pos() + _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0"				, 1.f	, m_pTransform->Get_Pos() + _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 1.f	, m_pTransform->Get_Pos() + _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Ver"		, 1.55f	, m_pTransform->Get_Pos() + _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Ver"			, 1.55f	, m_pTransform->Get_Pos() + _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_0"						, 1.55f	, m_pTransform->Get_Pos() + _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_1"						, 1.55f	, m_pTransform->Get_Pos() + _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_2"						, 1.55f	, m_pTransform->Get_Pos() + _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_3"						, 1.55f	, m_pTransform->Get_Pos() + _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0"				, 1.55f	, m_pTransform->Get_Pos() + _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_Ring_Hor"				, 1.6f	, m_pTransform->Get_Pos() + _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_Ring_Ver"				, 1.6f	, m_pTransform->Get_Pos() + _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_RedCircle_Flash"		, 1.6f	, m_pTransform->Get_Pos() + _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 1.6f	, m_pTransform->Get_Pos() + _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f);
 	}
 
 	// 3번 스킬
@@ -1299,6 +1331,15 @@ void CPlayer::Key_Skill()
 
 		else if (false == m_bOneHand)
 			m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[6]->dwAnimationIdx);
+
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor"	, 1.0f	, m_pTransform->Get_Pos() + _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 2.0f);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor"		, 1.0f	, m_pTransform->Get_Pos() + _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 2.0f);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor"	, 1.25f	, m_pTransform->Get_Pos() + _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 4.0f);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor"		, 1.25f	, m_pTransform->Get_Pos() + _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 4.0f);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor"	, 1.50f	, m_pTransform->Get_Pos() + _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 6.0f);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor"		, 1.50f	, m_pTransform->Get_Pos() + _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 6.0f);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor"	, 1.75f	, m_pTransform->Get_Pos() + _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 8.0f);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor"		, 1.75f	, m_pTransform->Get_Pos() + _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 8.0f);
 	}
 
 	// 4번 스킬

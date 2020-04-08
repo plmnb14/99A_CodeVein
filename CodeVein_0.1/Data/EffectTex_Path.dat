@@ -22,7 +22,7 @@ Tex_FireTorch_Low2|FireTorch_Low2_%d.png|..\..\Client\Resources\Texture\Effect\F
 Tex_FireBlast1|FireBlast1_%d.png|..\..\Client\Resources\Texture\Effect\FireBlast\FireBlast1\|0|32
 Tex_FireBlast2|FireBlast2_%d.png|..\..\Client\Resources\Texture\Effect\FireBlast\FireBlast2\|0|32
 Tex_Flash|Flash_%d.tga|..\..\Client\Resources\Texture\Effect\Flash\|0|2
-Tex_Gradient|Gradient_%d.tga|..\..\Client\Resources\Texture\Effect\Gradient\|0|3
+Tex_Gradient|Gradient_%d.tga|..\..\Client\Resources\Texture\Effect\Gradient\|0|7
 Tex_Lightning1|Lightning1_%d.png|..\..\Client\Resources\Texture\Effect\Lightning\Lightning1\|0|16
 Tex_Lightning2|Lightning2_%d.png|..\..\Client\Resources\Texture\Effect\Lightning\Lightning2\|0|16
 Tex_LinePoint|LinePoint_%d.png|..\..\Client\Resources\Texture\Effect\LinePoint\|0|8
@@ -31,7 +31,7 @@ Tex_Noise|Noise_%d.tga|..\..\Client\Resources\Texture\Effect\Noise\|0|23
 Tex_Normal|Normal_%d.tga|..\..\Client\Resources\Texture\Effect\Normal\|0|10
 Tex_Crystals|Crystals_%d.png|..\..\Client\Resources\Texture\Effect\Particle\Crystals\|0|16
 Tex_Point|Point_%d.tga|..\..\Client\Resources\Texture\Effect\Particle\Point\|0|9
-Tex_Scratch|Scratch_%d.tga|..\..\Client\Resources\Texture\Effect\Scratch\|0|4
+Tex_Scratch|Scratch_%d.tga|..\..\Client\Resources\Texture\Effect\Scratch\|0|10
 Tex_ShockWave|T_FX_TC5Shockwave01.tga|..\..\Client\Resources\Texture\Effect\ShockWave\|0|4
 Tex_SlashSubUV|SlashSubUV_%d.png|..\..\Client\Resources\Texture\Effect\SlashSubUV\|0|4
 Tex_SlashSubUV_Ver|SlashSubUV_Ver_%d.png|..\..\Client\Resources\Texture\Effect\SlashSubUV_Ver\|0|4
