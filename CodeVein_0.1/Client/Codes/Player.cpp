@@ -69,7 +69,6 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 	m_pNavMesh->Goto_Next_Subset(m_pTransform->Get_Pos(), nullptr);
 
 	CScriptManager::Get_Instance()->Update_ScriptMgr(TimeDelta, m_pNavMesh->Get_SubSetIndex(), m_pNavMesh->Get_CellIndex());
-
 	return NO_EVENT;
 }
 
@@ -125,13 +124,13 @@ HRESULT CPlayer::Render_GameObject()
 		{
 			m_pShader->Begin_Pass(m_iPass);
 
-			if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pDynamicMesh->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE))))
+			if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pDynamicMesh->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
 				return E_FAIL;
 
-			if (FAILED(m_pShader->Set_Texture("g_NormalTexture", m_pDynamicMesh->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_NORMAL))))
+			if (FAILED(m_pShader->Set_Texture("g_NormalTexture", m_pDynamicMesh->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_NORMAL_MAP))))
 				return E_FAIL;
 
-			if (FAILED(m_pShader->Set_Texture("g_SpecularTexture", m_pDynamicMesh->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_SPECULAR))))
+			if (FAILED(m_pShader->Set_Texture("g_SpecularTexture", m_pDynamicMesh->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_SPECULAR_MAP))))
 				return E_FAIL;
 
 			m_pShader->Commit_Changes();
@@ -165,9 +164,9 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 		return E_FAIL;
 	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
+
 	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
-	g_pManagement->Set_LightPos(0, m_pTransform->Get_Pos() + _v3(0, 2, 2));
 
 	_uint iNumMeshContainer = _uint(m_pDynamicMesh->Get_NumMeshContainer());
 
@@ -175,11 +174,13 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 	{
 		_uint iNumSubSet = (_uint)m_pDynamicMesh->Get_NumMaterials(i);
 
-		m_pDynamicMesh->Update_SkinnedMesh(i);
+		//m_pDynamicMesh->Update_SkinnedMesh(i);
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
 			pShader->Begin_Pass(iPass);
+
+			pShader->Commit_Changes();
 
 			m_pDynamicMesh->Render_Mesh(i, j);
 
@@ -2745,7 +2746,7 @@ void CPlayer::Play_Spawn()
 	{
 		_v3 vPos = m_pTransform->Get_Pos();
 		vPos.y += m_fDissolveY;
-		g_pManagement->Create_Spawn_Effect(vPos);
+		//g_pManagement->Create_Spawn_Effect(vPos);
 		m_fDissolveY += DELTA_60 * 1.3f;
 	}
 	else
@@ -4551,7 +4552,7 @@ void CPlayer::Ready_Collider()
 
 	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 
-	fRadius = 0.4f;
+	fRadius = 0.5f;
 
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);

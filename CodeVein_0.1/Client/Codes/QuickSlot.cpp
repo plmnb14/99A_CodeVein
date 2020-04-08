@@ -87,7 +87,10 @@ _int CQuickSlot::Update_GameObject(_double TimeDelta)
 			m_iSelect = m_vecQuickSlot.size() - 1;
 	}
 
-	
+	if (g_pInput_Device->Key_Up(DIK_MULTIPLY))
+	{
+		Use_Item();
+	}
 	return NO_EVENT;
 }
 
@@ -226,6 +229,25 @@ void CQuickSlot::SetUp_Default()
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NumberUI", SCENE_STAGE, L"Layer_NumberUI", pDesc);
 	m_pNumberUI = static_cast<CNumberUI*>(g_pManagement->Get_GameObjectBack(L"Layer_NumberUI", SCENE_STAGE));
 	m_pNumberUI->Set_Active(true);
+}
+
+CExpendables::EXPEND_TYPE CQuickSlot::Use_Item()
+{
+	_uint iType = 0;
+	if (m_vecQuickSlot.size() <= 0)
+		return CExpendables::EXPEND_END;
+	if (nullptr == m_vecQuickSlot[m_iSelect])
+		return CExpendables::EXPEND_END;
+	if (m_vecQuickSlot[m_iSelect]->Get_Size() == 0)
+		return CExpendables::EXPEND_END;
+
+	
+	iType = m_vecQuickSlot[m_iSelect]->Get_Type();
+	
+	CExpendables_Inven* pExInven = static_cast<CExpendables_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendablesInven", SCENE_STAGE));
+	pExInven->Use_Expendableas(m_vecQuickSlot[m_iSelect]);
+
+	return CExpendables::EXPEND_TYPE(iType);
 }
 
 

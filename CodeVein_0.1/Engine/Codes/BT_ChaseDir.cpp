@@ -19,7 +19,7 @@ CBT_Node::BT_NODE_STATE CBT_ChaseDir::Update_Node(_double TimeDelta, vector<CBT_
 	m_dCurTime += TimeDelta;
 
 	if ( m_dCurTime > m_dMaxTime)
-		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, pBlackBoard, bDebugging);
 	else
 	{
 		Look_At_Target(TimeDelta, pBlackBoard->Get_V3Value(m_Target_Key));
@@ -50,7 +50,7 @@ void CBT_ChaseDir::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Nod
 	}
 }
 
-CBT_Node::BT_NODE_STATE CBT_ChaseDir::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_ChaseDir::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	if (pNodeStack->empty())
 		return eState;

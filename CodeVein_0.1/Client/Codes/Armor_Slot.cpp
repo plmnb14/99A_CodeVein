@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\Armor_Slot.h"
-
 #include "Select_UI.h"
+#include "CursorUI.h"
 
 CArmor_Slot::CArmor_Slot(_Device pDevice)
 	: CUI(pDevice)
@@ -29,6 +29,7 @@ HRESULT CArmor_Slot::Ready_GameObject(void * pArg)
 	
 	SetUp_Default();
 
+	m_eType = CArmor::ARMOR_END;
 	m_bIsActive = false;
 
 	return NOERROR;
@@ -52,6 +53,38 @@ _int CArmor_Slot::Update_GameObject(_double TimeDelta)
 		m_pSelectUI->Set_Select(m_bIsSelect);
 	}
 	
+	if (m_pCursorUI)
+	{
+		m_pCursorUI->Set_UI_Pos(m_fPosX, m_fPosY);
+		m_pCursorUI->Set_UI_Size(m_fSizeX, m_fSizeY);
+		m_pCursorUI->Set_ViewZ(m_fViewZ - 0.2f);
+
+		if (m_eType == CArmor::ARMOR_END)
+			m_pCursorUI->Set_Active(false);
+		else
+			m_pCursorUI->Set_Active(m_bIsActive);
+
+		m_pCursorUI->Set_CursorColl(Pt_InRect());
+	}
+
+	switch (m_eType)
+	{
+	case CArmor::ARMOR_1:
+		m_iIndex = 0;
+		break;
+	case CArmor::ARMOR_2:
+		m_iIndex = 1;
+		break;
+	case CArmor::ARMOR_3:
+		m_iIndex = 2;
+		break;
+	case CArmor::ARMOR_4:
+		m_iIndex = 3;
+		break;
+	case CArmor::ARMOR_END:
+		m_iIndex = 4;
+		break;
+	}
 
 	return NO_EVENT;
 }
@@ -115,7 +148,7 @@ _bool CArmor_Slot::Pt_InRect()
 
 CArmor::ARMOR_TYPE CArmor_Slot::Get_Type()
 {
-	return CArmor::ARMOR_TYPE(m_iIndex);
+	return CArmor::ARMOR_TYPE(m_eType);
 }
 
 HRESULT CArmor_Slot::Add_Component()
@@ -172,6 +205,16 @@ void CArmor_Slot::SetUp_Default()
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_SelectUI", SCENE_STAGE, L"Layer_SelectUI", pDesc)))
 		return;
 	m_pSelectUI = static_cast<CSelect_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_SelectUI", SCENE_STAGE));
+
+	pDesc = new CUI::UI_DESC;
+	pDesc->fPosX = m_fPosX;
+	pDesc->fPosY = m_fPosY;
+	pDesc->fSizeX = m_fSizeX;
+	pDesc->fSizeY = m_fSizeY;
+
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_CursorUI", SCENE_STAGE, L"Layer_CursorUI", pDesc)))
+		return;
+	m_pCursorUI = static_cast<CCursorUI*>(g_pManagement->Get_GameObjectBack(L"Layer_CursorUI", SCENE_STAGE));
 }
 
 CArmor_Slot * CArmor_Slot::Create(_Device pGraphic_Device)

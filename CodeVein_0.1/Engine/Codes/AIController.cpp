@@ -100,7 +100,7 @@ void CAIController::Reset_BT()
 	if (nullptr == m_pBehaviorTree)
 		return;
 
-	m_pBehaviorTree->Reset_BT();
+	m_pBehaviorTree->Reset_BT(m_pBlackBoard);
 }
 
 HRESULT CAIController::Ready_Component_Prototype()

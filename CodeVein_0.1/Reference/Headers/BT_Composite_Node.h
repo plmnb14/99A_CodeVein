@@ -22,10 +22,10 @@ public:
 
 public:
 	virtual void Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging) = 0;
-	virtual BT_NODE_STATE End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging) = 0;
+	virtual BT_NODE_STATE End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, CBlackBoard* pBlackBoard, _bool bDebugging) = 0;
 
 protected:
-	HRESULT Release_ServiceNode(list<vector<CBT_Node*>*>* m_plistNodeStack, list<vector<CBT_Node*>*>* plistServiceNode, _bool bDebugging);
+	HRESULT Release_ServiceNode(list<vector<CBT_Node*>*>* m_plistNodeStack, list<vector<CBT_Node*>*>* plistServiceNode, CBlackBoard* pBlackBoard, _bool bDebugging);
 
 protected:
 	vector<CBT_Node*>	m_pChildren;

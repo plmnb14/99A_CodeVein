@@ -54,7 +54,7 @@ CBT_Node::BT_NODE_STATE CBT_Simple_Parallel::Update_Node(_double TimeDelta, vect
 
 
 	if (2 != m_pChildren.size())
-		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, bDebugging);
+		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, pBlackBoard, bDebugging);
 
 	Start_Node(pNodeStack, plistSubNodeStack, bDebugging);
 
@@ -167,8 +167,8 @@ CBT_Node::BT_NODE_STATE CBT_Simple_Parallel::Update_Node(_double TimeDelta, vect
 	if (BT_NODE_STATE::FAILED == m_bMainState)
 	{	
 		//m_pChildren[1]->End_Node(pNodeStack, BT_NODE_STATE::FAILED, bDebugging);
-		Delete_SubNodeStack(plistSubNodeStack, bDebugging);
-		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, bDebugging);
+		Delete_SubNodeStack(plistSubNodeStack, pBlackBoard, bDebugging);
+		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, pBlackBoard, bDebugging);
 	}
 
 	switch (m_eMode)
@@ -178,8 +178,8 @@ CBT_Node::BT_NODE_STATE CBT_Simple_Parallel::Update_Node(_double TimeDelta, vect
 		if ((BT_NODE_STATE::SUCCEEDED == m_bMainState))
 		{
 			//m_pChildren[1]->End_Node(&m_pSubNodeStatck, BT_NODE_STATE::SUCCEEDED, bDebugging);
-			Delete_SubNodeStack(plistSubNodeStack, bDebugging);
-			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+			Delete_SubNodeStack(plistSubNodeStack, pBlackBoard, bDebugging);
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, pBlackBoard, bDebugging);
 		}
 
 		//서브가 끝날때까지 메인이 기다림
@@ -187,7 +187,7 @@ CBT_Node::BT_NODE_STATE CBT_Simple_Parallel::Update_Node(_double TimeDelta, vect
 		if (BT_NODE_STATE::SUCCEEDED == m_bMainState &&
 			BT_NODE_STATE::SUCCEEDED == m_bSubState)
 		{		
-			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, pBlackBoard, bDebugging);
 		}
 	}
 
@@ -227,7 +227,7 @@ void CBT_Simple_Parallel::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<
 	}
 }
 
-CBT_Node::BT_NODE_STATE CBT_Simple_Parallel::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Simple_Parallel::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	m_bInit = true;
 
@@ -241,7 +241,7 @@ CBT_Node::BT_NODE_STATE CBT_Simple_Parallel::End_Node(vector<CBT_Node*>* pNodeSt
 		Notify_Parent_Of_State(pNodeStack->back(), eState);
 
 	if (!m_listServiceNodeStack.empty())
-		Release_ServiceNode(plistSubNodeStack, &m_listServiceNodeStack, bDebugging);
+		Release_ServiceNode(plistSubNodeStack, &m_listServiceNodeStack, pBlackBoard, bDebugging);
 
 
 	if (bDebugging)
@@ -265,7 +265,7 @@ HRESULT CBT_Simple_Parallel::Ready_Clone_Node(void * pInit_Struct)
 	return NO_ERROR;
 }
 
-HRESULT CBT_Simple_Parallel::Delete_SubNodeStack(list<vector<CBT_Node*>*>* plistSubNodeStack, _bool bDebugging)
+HRESULT CBT_Simple_Parallel::Delete_SubNodeStack(list<vector<CBT_Node*>*>* plistSubNodeStack, CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	for (auto iter = plistSubNodeStack->begin(); iter != plistSubNodeStack->end(); ++iter)
 	{
@@ -273,7 +273,7 @@ HRESULT CBT_Simple_Parallel::Delete_SubNodeStack(list<vector<CBT_Node*>*>* plist
 		{
 			if (!(*iter)->empty())
 			{
-				(*iter)->front()->End_Node(*iter, plistSubNodeStack, BT_NODE_STATE::FAILED, bDebugging);
+				(*iter)->front()->End_Node(*iter, plistSubNodeStack, BT_NODE_STATE::FAILED, pBlackBoard, bDebugging);
 
 				//Safe_Release((*iter)->front());
 

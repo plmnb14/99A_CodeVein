@@ -1,4 +1,5 @@
 matrix		g_matWorld, g_matView, g_matProj;
+matrix		g_matLightView, g_matLightProj;
 matrix		g_matBias;
 matrix		g_LightVP_Close, g_LightVP_Medium, g_LightVP_Far;
 
@@ -60,27 +61,11 @@ sampler ShadowMapSampler = sampler_state
 {
 	texture = g_ShadowMapTexture;
 
-	minfilter = linear;
-	magfilter = linear;
-	mipfilter = linear;
-
-	addressU = border;
-	addressV = border;
-	
-	BorderColor = float4(1.0f, 1.0f, 1.0f, 0.0f);
+	//minfilter = linear;
+	//magfilter = linear;
+	//mipfilter = linear;
 };
-//// -------------------------------------------------------------
-//texture g_DecaleTexture;
-//sampler DecaleMapSamp = sampler_state
-//{
-//	Texture = <DecaleMap>;
-//	MinFilter = LINEAR;
-//	MagFilter = LINEAR;
-//	MipFilter = NONE;
-//
-//	AddressU = Clamp;
-//	AddressV = Clamp;
-//};
+
 
 struct VS_IN
 {
@@ -99,6 +84,7 @@ struct VS_OUT
 	float4		vShadowUV	: TEXCOORD2;
 	float4		vWorldPos   : TEXCOORD3;
 	float4		vColor		: COLOR0;
+	float		fDepth		: TEXCOORD4;
 };
 
 
@@ -110,6 +96,7 @@ struct PS_IN
 	float4		vShadowUV	: TEXCOORD2;
 	float4		vWorldPos   : TEXCOORD3;
 	float4		vColor		: COLOR0;
+	float		fDepth : TEXCOORD4;
 };
 
 struct PS_OUT
@@ -121,16 +108,11 @@ VS_OUT VS_SHADOWMAP(VS_IN In)
 {
 	VS_OUT Out = (VS_OUT)0;
 
-	float4 position = 0;
-	float4 color = 0;
-	
-	float4 vWorldPos = mul(float4(In.vPosition.xyz, 1), g_matWorld);
-	position = mul(vWorldPos, g_LightVP_Close);
-	color = position;
+	Out.vPosition = mul(float4(In.vPosition.xyz, 1.f), g_matWorld);
+	Out.vPosition = mul(Out.vPosition, g_matLightView);
+	Out.vPosition = mul(Out.vPosition, g_matLightProj);
 
-	Out.vPosition = position;
-	Out.vColor = color;
-	Out.vTexUV = In.vTexUV;
+	Out.vDepth = Out.vPosition;
 
 	return Out;
 }
@@ -145,20 +127,12 @@ VS_OUT VS_SHADOW(VS_IN In)
 	matWVP = mul(matWV, g_matProj);
 
 	Out.vPosition = mul(float4(In.vPosition.xyz, 1), matWVP);
-	Out.vDepth = mul(Out.vPosition, g_LightVP_Close);
-	Out.vShadowUV = mul(Out.vDepth, g_matBias);
-	Out.vTexUV = In.vTexUV;
-	//Out.vWorldPos = mul(float4(In.vPosition.xyz, 1), g_matWorld);
 
-	//Out.vPosition = mul(float4(In.vPosition.xyz, 1), matWVP);
-	//Out.vShadowUV = mul(float4(In.vPosition.xyz, 1), mul(mul(g_LightVP_Close, g_matWorld), g_matBias));
-	//Out.vDepth = mul(float4(In.vPosition.xyz, 1), mul(g_LightVP_Close, g_matWorld));
-	//Out.vTexUV = In.vTexUV;
-	
-	//Out.vPosition = mul(float4(In.vPosition.xyz, 1), matWVP);
-	//Out.vShadowUV = mul(mul(float4(In.vPosition.xyz, 1), g_matWorld), g_LightVP_Close);
-	//Out.vDepth = mul(float4(In.vPosition.xyz, 1), g_LightVP_Close);
-	//Out.vTexUV = In.vTexUV;
+	Out.vDepth = mul(float4(In.vPosition.xyz, 1), g_matWorld);
+	Out.vDepth = mul(Out.vDepth, g_matLightView);
+	Out.vDepth = mul(Out.vDepth, g_matLightProj);
+
+	Out.vShadowUV = mul(Out.vDepth, g_matBias);
 
 	return Out;
 }
@@ -168,9 +142,10 @@ PS_OUT PS_SHADOWMAP(PS_IN In)
 {
 	PS_OUT Out = (PS_OUT)0;
 
-	float fDepth = In.vColor.z / In.vColor.w;
+	float fDepth = In.vDepth.z;
+	//float fDepth = In.vDepth.z / In.vDepth.w;
 
-	Out.vDiffuse = float4(fDepth, 0, 0, 1.f);
+	Out.vDiffuse = float4(fDepth, fDepth, fDepth, 1.f);
 
 	//Out.vDiffuse = fDepth;
 
@@ -201,16 +176,22 @@ PS_OUT PS_SHADOW(PS_IN In)
 	
 	for (int i = 0; i < 9; i++)
 	{
-		float fDepthValue = tex2Dproj(ShadowMapSampler, vTexCoord[i]).x;
+		//float fDepthValue = tex2Dproj(ShadowMapSampler, vTexCoord[i]).x;
+		//
+		//if (fDepthValue * In.vDepth.w < In.vDepth.z - 0.001f)
+		//{
+		//	fShadowTerms[i] = 0.2f;
+		//}
+		//
+		//else
+		//	fShadowTerms[i] = 1.f;
+		//
+		//fShadowTerm += float(fShadowTerms[i]);
+
+		float A = tex2Dproj(ShadowMapSampler, vTexCoord[i]).x;
+		float B = (In.vDepth.z - 0.00125f);
 		
-		if (fDepthValue * In.vDepth.w < In.vDepth.z - 0.001f)
-		{
-			fShadowTerms[i] = 0.2f;
-		}
-		
-		else
-			fShadowTerms[i] = 1.f;
-		
+		fShadowTerms[i] = (A < B ? 0.f : 1.f);
 		fShadowTerm += float(fShadowTerms[i]);
 	}
 	

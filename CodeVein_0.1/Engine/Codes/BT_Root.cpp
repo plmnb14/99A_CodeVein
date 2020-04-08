@@ -44,7 +44,7 @@ void CBT_Root::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*
 	}
 }
 
-CBT_Node::BT_NODE_STATE CBT_Root::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Root::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	if (pNodeStack->empty())
 		return eState;

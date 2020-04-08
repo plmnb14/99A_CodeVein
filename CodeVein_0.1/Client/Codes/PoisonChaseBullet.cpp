@@ -31,12 +31,13 @@ HRESULT CPoisonChaseBullet::Ready_GameObject(void * pArg)
 	m_dLifeTime = temp.dLifeTime;
 
 	m_tObjParam.bCanHit = true;
-	//m_tObjParam.fHp_Cur = 1.f;
+	m_tObjParam.bCanAttack = true;
+	m_tObjParam.fDamage = 20.f;
 
 	m_pTransformCom->Set_Pos(temp.vCreatePos);
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
-	m_tObjParam.bCanAttack = true;
+
 
 	m_fEffectCreateOffset = 0.05f;
 
@@ -84,7 +85,8 @@ _int CPoisonChaseBullet::Update_GameObject(_double TimeDelta)
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag7, m_pTransformCom->Get_Pos(), nullptr);
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag8, m_pTransformCom->Get_Pos(), nullptr);
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag9, m_pTransformCom->Get_Pos(), nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag10, m_pTransformCom->Get_Pos(), nullptr);
+		//CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag10, m_pTransformCom->Get_Pos(), nullptr);
+		CParticleMgr::Get_Instance()->Create_ParticleEffect(m_pEffect_Tag10, 0.5f, m_pTransformCom->Get_Pos(), nullptr);
 
 		m_bDead = true;
 	}
@@ -192,7 +194,6 @@ void CPoisonChaseBullet::Check_PhyCollider()
 		else
 		{
 			m_dCurTime = 1000;	// Á×À½
-			//m_bDead = true;
 		}
 	}
 }

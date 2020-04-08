@@ -82,7 +82,7 @@ _int CTexEffect::Update_GameObject(_double TimeDelta)
 		return S_OK;
 	}
 
-	m_fLinearMovePercent += _float(TimeDelta);
+	m_fLinearMovePercent += _float(TimeDelta) * 0.2f;
 
 	Check_Frame(TimeDelta);
 	Check_LifeTime(TimeDelta);
@@ -477,6 +477,7 @@ void CTexEffect::Check_Move(_double TimeDelta)
 	{
 		if (m_pInfo->bLinearMove)
 		{
+			// Speed로 바꾸기
 			D3DXVec3Lerp(&m_vLerpPos, &m_vLerpPos, &m_pInfo->vMoveDirection, m_fLinearMovePercent);
 
 			m_pTransformCom->Set_Pos(m_vLerpPos);
@@ -488,12 +489,23 @@ void CTexEffect::Check_Move(_double TimeDelta)
 				vMove = m_vMyDir * m_fMoveSpeed * _float(TimeDelta);
 			else
 				vMove = m_pInfo->vMoveDirection * m_fMoveSpeed * _float(TimeDelta);
+			
 			if (m_pDesc->pTargetTrans && !m_bAutoFindPos)
 			{
 				_v3 vPos = m_pDesc->pTargetTrans->Get_Pos();
 				m_vFollowPos += vMove;
 				vPos += m_vFollowPos;
 				m_pTransformCom->Set_Pos(vPos);
+			}
+			else if (m_bFinishPos)
+			{
+				//D3DXVec3Lerp(&m_vLerpPos, &m_vLerpPos, &m_vFinishPos, m_fLinearMovePercent);
+
+				_v3 vDir = m_vFinishPos - m_pTransformCom->Get_Pos();
+				vMove = vDir * m_fMoveSpeed * _float(TimeDelta);
+
+				//m_pTransformCom->Set_Pos(m_vLerpPos + vMove);
+				m_pTransformCom->Add_Pos(vMove);
 			}
 			else
 			{
