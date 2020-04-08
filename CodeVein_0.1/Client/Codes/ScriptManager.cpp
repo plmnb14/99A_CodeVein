@@ -41,6 +41,7 @@ void CScriptManager::Update_ScriptEvent()
 
 	case Script_Stage01:
 	{
+		cout << "¾Æ" << endl;
 		Stage_01_Scripts();
 		break;
 	}
@@ -148,7 +149,9 @@ void CScriptManager::St01_Sub0()
 			m_vecObjectPool[0]->Set_Enable(true);
 			m_vecObjectPool[1]->Set_Enable(true);
 			m_vecObjectPool[2]->Set_Enable(true);
-			//m_vecObjectPool[3]->Set_Enable(true);
+			m_vecObjectPool[3]->Set_Enable(true);
+			m_vecObjectPool[4]->Set_Enable(true);
+
 		}
 	}
 	}
@@ -156,82 +159,18 @@ void CScriptManager::St01_Sub0()
 
 void CScriptManager::St01_Sub1()
 {
-	switch (m_dwCellIdx)
-	{
-	case 41:
-	{
-		if (m_bEventTrigger_0[1] == false)
-		{
-			m_bEventTrigger_0[1] = true;
-
-			m_vecObjectPool[4]->Set_Enable(true);
-			m_vecObjectPool[5]->Set_Enable(true);
-		}
-	}
-	}
 }
 
 void CScriptManager::St01_Sub2()
 {
-	switch (m_dwCellIdx)
-	{
-	case 0:
-	{
-		if (m_bEventTrigger_0[2] == false)
-		{
-			m_bEventTrigger_0[2] = true;
-
-			m_vecObjectPool[6]->Set_Enable(true);
-			m_vecObjectPool[7]->Set_Enable(true);
-			m_vecObjectPool[8]->Set_Enable(true);
-			m_vecObjectPool[9]->Set_Enable(true);
-			m_vecObjectPool[10]->Set_Enable(true);
-		}
-	}
-
-	case 104:
-	{
-		if (m_bEventTrigger_0[3] == false)
-		{
-			m_bEventTrigger_0[3] = true;
-
-			m_vecObjectPool[11]->Set_Enable(true);
-			m_vecObjectPool[12]->Set_Enable(true);
-		}
-	}
-	}
 }
 
 void CScriptManager::St01_Sub3()
 {
-	switch (m_dwCellIdx)
-	{
-	case 66:
-	{
-		if (m_bEventTrigger_0[4] == false)
-		{
-			m_bEventTrigger_0[4] = true;
-
-			m_vecObjectPool[13]->Set_Enable(true);
-		}
-	}
-	}
 }
 
 void CScriptManager::St01_Sub4()
 {
-	switch (m_dwCellIdx)
-	{
-	case 52:
-	{
-		if (m_bEventTrigger_0[5] == false)
-		{
-			m_bEventTrigger_0[5] = true;
-
-			m_vecObjectPool[14]->Set_Enable(true);
-		}
-	}
-	}
 }
 
 void CScriptManager::St01_Sub5()
@@ -254,31 +193,26 @@ void CScriptManager::Stage_01_Scripts()
 
 	case 1:
 	{
-		St01_Sub1();
 		break;
 	}
 
 	case 2:
 	{
-		St01_Sub2();
 		break;
 	}
 
 	case 3:
 	{
-		St01_Sub3();
 		break;
 	}
 
 	case 4:
 	{
-		St01_Sub4();
 		break;
 	}
 
 	case 5:
 	{
-		St01_Sub5();
 		break;
 	}
 
@@ -306,128 +240,81 @@ void CScriptManager::Ready_Stage01_DynamicObject()
 		_v3(144.551f, -18.08f, 79.895f),
 		_v3(145.498f, -18.08f, 84.775f),
 		_v3(150.690f, -18.08f, 94.981f),
-		_v3(117.045f, -18.08f, 111.482f),
-
+		_v3(117.045f, -18.08f, 111.482f), 
 		_v3(95.754f, -17.15f, 106.058f),
-		_v3(87.195f, -17.15f, 105.301f),
-
+		_v3(87.195f, -17.15f, 105.301f),					
 		_v3(61.826f, -17.15f, 115.219f),
 		_v3(65.298f, -17.15f, 125.649f),
 		_v3(62.689f, -17.15f, 127.093f),
 		_v3(71.845f, -17.15f, 132.392f),
 		_v3(102.201f, -17.15f, 141.943f),
-
 		_v3(85.174f, 0.1f, 154.160f),
 		_v3(87.157f, 0.1f, 167.728f), 
-
 		_v3(43.606f, 0.1f, 151.288f),
-
 		_v3(-0.955f, 0.8f, -5.525f)
 	};
 
 	CGameObject* pInstance = nullptr;
 
 	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White ,CSwordGenji::NF_Ani::Talk, 10.f, 5.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-	TARGET_TO_NAV(pInstance)->Set_Index(32);
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
 	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::Jungle, CGunGenji::NF_Ani::Sit1, 10.f, 5.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-	TARGET_TO_NAV(pInstance)->Set_Index(39);
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
 	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::NF_Ani::Talk, 10.f, 5.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-	TARGET_TO_NAV(pInstance)->Set_Index(52);
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
 	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::NF_Ani::Talk, 10.f, 5.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-	TARGET_TO_NAV(pInstance)->Set_Index(64);
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
-	//=======================================================================
-
 	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White, CSwordGenji::NF_Ani::Talk, 10.f, 5.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-	TARGET_TO_NAV(pInstance)->Set_Index(55);
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
 	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle, CSwordGenji::NF_Ani::Talk, 10.f, 5.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-	TARGET_TO_NAV(pInstance)->Set_Index(63);
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
-	//=======================================================================
-
 	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White, CSwordGenji::NF_Ani::Talk, 10.f, 5.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-	TARGET_TO_NAV(pInstance)->Set_Index(28);
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
 	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle, CSwordGenji::NF_Ani::Talk, 10.f, 5.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-	TARGET_TO_NAV(pInstance)->Set_Index(34);
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
 	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::Jungle, CGunGenji::NF_Ani::Sit1, 10.f, 5.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-	TARGET_TO_NAV(pInstance)->Set_Index(138);
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
 	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::Jungle, CGunGenji::NF_Ani::Sit1, 10.f, 5.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-	TARGET_TO_NAV(pInstance)->Set_Index(45);
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
 	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::Talk, 10.f, 5.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-	TARGET_TO_NAV(pInstance)->Set_Index(72);
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
-	//=======================================================================
-
 	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White, CSwordGenji::Talk, 10.f, 5.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
-	TARGET_TO_NAV(pInstance)->Set_Index(25);
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
 	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle, CSwordGenji::Talk, 10.f, 5.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
-	TARGET_TO_NAV(pInstance)->Set_Index(36);
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
-
-	//=======================================================================
 
 	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White, CSwordGenji::Talk, 10.f, 5.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
-	TARGET_TO_NAV(pInstance)->Set_Index(126);
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
-	//=======================================================================
-
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_PoisonButterfly", &CPoisonButterfly::INFO(45.f, 5.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(6);
-	TARGET_TO_NAV(pInstance)->Set_Index(2);
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_PoisonButterfly", &CPoisonButterfly::INFO(10.f, 5.f, 2.f));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
-
-	//=======================================================================
 
 	_ulong dwIndex = 0;
 
@@ -436,7 +323,7 @@ void CScriptManager::Ready_Stage01_DynamicObject()
 		iter->Set_Enable(false);
 		TARGET_TO_TRANS(iter)->Set_Pos(vPos[dwIndex]);
 		TARGET_TO_NAV(iter)->Ready_NaviMesh(m_pGraphicDev, L"Navmesh_Stage_01.dat");
-		//TARGET_TO_NAV(iter)->Check_OnNavMesh(&vPos[dwIndex]);
+		TARGET_TO_NAV(iter)->Check_OnNavMesh(&vPos[dwIndex]);
 
 		g_pManagement->Add_GameOject_ToLayer_NoClone(iter, SCENE_STAGE, L"Layer_Monster", nullptr);
 

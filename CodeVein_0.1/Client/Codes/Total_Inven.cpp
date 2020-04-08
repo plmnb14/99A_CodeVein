@@ -9,6 +9,7 @@
 #include "BloodCode_Icon.h"
 #include "Info_Slot.h"
 #include "Expendables_Inven.h"
+#include "FontNumManager.h"
 
 CTotal_Inven::CTotal_Inven(_Device pDevice)
 	: CUI(pDevice)
@@ -79,13 +80,15 @@ _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 	CArmor_Inven* pArmorInven = static_cast<CArmor_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ArmorInven", SCENE_STAGE));
 	m_pArmor_Slot->Set_Type(pArmorInven->Get_UseArmorType());
 	m_pArmor_Slot->Set_Active(m_bIsActive);
-	/*
+	
 	m_pBloodCode->Set_Active(m_bIsActive);
 
 	LOOP(8)
+	{
 		m_pQuickSlotInfo[i]->Set_Active(m_bIsActive);
-
-	*/
+	}
+		
+	
 	return NO_EVENT;
 }
 
@@ -234,8 +237,21 @@ void CTotal_Inven::SetUp_Default()
 		pDesc->fPosY = 651.f;
 		pDesc->fSizeX = 44.f;
 		pDesc->fSizeY = 44.f;
+		pDesc->iIndex = 0;
 		g_pManagement->Add_GameObject_ToLayer(L"GameObject_InfoSlot", SCENE_STAGE, L"Layer_InfoSlot", pDesc);
 		m_pQuickSlotInfo[i] = static_cast<CInfo_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_InfoSlot", SCENE_STAGE));
+	}
+
+	LOOP(8)
+	{
+		pDesc = new CUI::UI_DESC;
+		pDesc->fPosX = m_pQuickSlotInfo[i]->Get_UI_Pos().x - m_pQuickSlotInfo[i]->Get_UI_Size().x * 0.25f;
+		pDesc->fPosY = m_pQuickSlotInfo[i]->Get_UI_Pos().y + m_pQuickSlotInfo[i]->Get_UI_Size().y * 0.25f;
+		pDesc->fSizeX = m_pQuickSlotInfo[i]->Get_UI_Size().x * 0.25f;
+		pDesc->fSizeY = m_pQuickSlotInfo[i]->Get_UI_Size().y * 0.25f;
+		pDesc->iIndex = 0;
+		g_pManagement->Add_GameObject_ToLayer(L"GameObject_NumberUI", SCENE_STAGE, L"Layer_NumberUI", pDesc);
+		m_pNumberUI[i] = static_cast<CNumberUI*>(g_pManagement->Get_GameObjectBack(L"Layer_NumberUI", SCENE_STAGE));
 	}
 }
 
@@ -254,16 +270,20 @@ void CTotal_Inven::Click_Icon()
 	
 	vector<CExpendables_Slot*> vecQuickSlot = *static_cast<CExpendables_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendablesInven", SCENE_STAGE))->Get_QuickSlot();
 
-	/*for (_uint i = 0; i < vecQuickSlot.size(); ++i)
-	{		
-		m_pQuickSlotInfo[i]->Set_SlotInfo(CExpendables::EXPEND_TYPE(vecQuickSlot[i]->Get_Type()));
-	}*/
+	
 	for (_uint i = 0; i < 8; ++i)
 	{
 		if (i < vecQuickSlot.size())
+		{
 			m_pQuickSlotInfo[i]->Set_SlotInfo(CExpendables::EXPEND_TYPE(vecQuickSlot[i]->Get_Type()));
-		else if(i < 8)
+			m_pQuickSlotInfo[i]->Set_Number(vecQuickSlot[i]->Get_Size());	
+		}			
+		else if (i < 8)
+		{
 			m_pQuickSlotInfo[i]->Set_SlotInfo(CExpendables::EXPEND_END);
+			m_pQuickSlotInfo[i]->Set_Number(0);
+		}
+			
 	}
 }
 

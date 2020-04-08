@@ -10,6 +10,7 @@ class CWeapon_Slot;
 class CArmor_Slot;
 class CBloodCode_Icon;
 class CInfo_Slot;
+class CNumberUI;
 class CTotal_Inven final : public CUI
 {
 private:
@@ -50,6 +51,7 @@ private:
 	CBloodCode_Icon*		m_pBloodCode = nullptr;
 	//vector<CExpendables_Slot*>	m_vecQuickSlot;
 	CInfo_Slot*				m_pQuickSlotInfo[8];
+	CNumberUI*				m_pNumberUI[8];
 
 public:
 	static CTotal_Inven*	Create(_Device pGraphic_Device);

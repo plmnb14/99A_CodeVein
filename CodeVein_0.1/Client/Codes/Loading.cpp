@@ -35,6 +35,10 @@
 #include "BossDecoUI.h"
 #include "BossHP.h"
 
+#include "MonsterUI.h"
+#include "MassageUI.h"
+#include "DamegeNumUI.h"
+
 //#include "Item.h"
 
 
@@ -548,6 +552,17 @@ _uint CLoading::Loading_Stage()
 		return E_FAIL;
 	// 야차맨
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_YachaMan", CYachaMan::Create(m_pGraphicDev))))
+		return E_FAIL;
+
+	// UI - Chea
+	//============================================================================================================
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MonsterHPUI", CMonsterUI::Create(m_pGraphicDev))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MassageUI", CMassageUI::Create(m_pGraphicDev))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DamegeNumUI", CDamegeNumUI::Create(m_pGraphicDev))))
 		return E_FAIL;
 
 	// 기타

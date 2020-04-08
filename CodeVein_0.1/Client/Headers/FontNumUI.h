@@ -1,18 +1,15 @@
 #pragma once
 
-#include "Management.h"
-#include "UI.h"
 #include "Client_Defines.h"
+#include "UI.h"
 
 BEGIN(Client)
-
-class CFontNumManager;
-class CPlayerHP final : public CUI
+class CFontNumUI final : public CUI
 {
 private:
-	explicit CPlayerHP(_Device pGraphic_Device);
-	explicit CPlayerHP(const CPlayerHP& rhs);
-	virtual ~CPlayerHP() = default;
+	explicit CFontNumUI(_Device pDevice);
+	explicit CFontNumUI(const CFontNumUI& rhs);
+	virtual ~CFontNumUI() = default;
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -24,13 +21,6 @@ public:
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
-	void	SetUp_State(_double TimeDelta);
-
-private:
-	_float m_fSpeed = 0.f;
-	_float m_fPlayerHP = 0.f;
-	_float m_fTotalHP = 0.f;
-	_float m_fPercentage = 0.f;
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -38,12 +28,11 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
-	CFontNumManager*		m_pFont = nullptr;
+
 public:
-	static CPlayerHP*		Create(_Device pGraphic_Device);
+	static CFontNumUI*		Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);
 	virtual void			Free();
 };
 
 END
-
