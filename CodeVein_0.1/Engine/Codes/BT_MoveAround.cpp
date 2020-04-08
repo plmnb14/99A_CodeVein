@@ -25,7 +25,7 @@ CBT_Node::BT_NODE_STATE CBT_MoveAround::Update_Node(_double TimeDelta, vector<CB
 
 	if (m_dCurTime > m_dMaxTime)
 	{
-		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, pBlackBoard, bDebugging);
 	}
 	else
 	{
@@ -42,7 +42,10 @@ CBT_Node::BT_NODE_STATE CBT_MoveAround::Update_Node(_double TimeDelta, vector<CB
 			D3DXVec3Cross(&vRight, &vToTarget, &_v3(0.f, 1.f, 0.f));
 
 			m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &vRight, m_fMove_Speed * (_float)TimeDelta)));
-
+			
+			// BB에 스피드와 진행방향 저장
+			pBlackBoard->Set_Value(m_BB_SpeedKey, m_fMove_Speed * (_float)TimeDelta);
+			pBlackBoard->Set_Value(m_BB_MoveDir_Key, vRight);
 		}
 		else
 		{
@@ -55,6 +58,10 @@ CBT_Node::BT_NODE_STATE CBT_MoveAround::Update_Node(_double TimeDelta, vector<CB
 			vRight *= -1.f;
 
 			m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &vRight, -m_fMove_Speed * (_float)TimeDelta)));
+
+			// BB에 스피드와 진행방향 저장
+			pBlackBoard->Set_Value(m_BB_SpeedKey, m_fMove_Speed * (_float)TimeDelta);
+			pBlackBoard->Set_Value(m_BB_MoveDir_Key, vRight);
 		}
 	}
 
@@ -86,7 +93,7 @@ void CBT_MoveAround::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_N
 	}
 }
 
-CBT_Node::BT_NODE_STATE CBT_MoveAround::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_MoveAround::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	if (pNodeStack->empty())
 		return eState;
@@ -104,9 +111,6 @@ CBT_Node::BT_NODE_STATE CBT_MoveAround::End_Node(vector<CBT_Node*>* pNodeStack, 
 		Cout_Indentation(pNodeStack);
 		cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " End   { MoveAround : " << m_dMoveTime << " +- " << m_dTimeOffset << "  EndTime  " << m_dCurTime << " }" << endl;
 	}
-
-
-
 
 	return eState;
 }
@@ -127,6 +131,9 @@ HRESULT CBT_MoveAround::Ready_Clone_Node(void * pInit_Struct)
 
 	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
 	lstrcpy(m_Target_Key, temp.Target_Key);
+	lstrcpy(m_BB_SpeedKey, temp.BB_Speed_Key);
+	lstrcpy(m_BB_MoveDir_Key, temp.BB_MoveDir_Key);
+
 	m_fMove_Speed = temp.fMove_Speed;
 	m_dMoveTime = temp.dMoveTime;
 	m_dTimeOffset = temp.dTimeOffset;

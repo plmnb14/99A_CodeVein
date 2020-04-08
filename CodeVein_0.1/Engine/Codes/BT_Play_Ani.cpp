@@ -16,7 +16,7 @@ CBT_Node::BT_NODE_STATE CBT_Play_Ani::Update_Node(_double TimeDelta, vector<CBT_
 
 	if (m_pMesh_Dynamic->Is_Finish_Animation(m_fAniWeight))
 	{
-		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
+		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, pBlackBoard, bDebugging);
 	}
 
 	/*
@@ -47,7 +47,7 @@ void CBT_Play_Ani::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Nod
 
 }
 
-CBT_Node::BT_NODE_STATE CBT_Play_Ani::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_Play_Ani::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	if (pNodeStack->empty())
 		return eState;

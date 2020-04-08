@@ -69,7 +69,7 @@ private:	//패턴들
 	// 4. 오른쪽으로 베기, 이동거리 : 0.5
 	CBT_Composite_Node* Cut_To_Right();
 	// 5. 텀블링 총쏘기, 이동거리 : -1.3
-	CBT_Composite_Node* Tumbling_Shot();
+	CBT_Composite_Node* Tumbling_Shot();	// 보류
 
 	// 회피
 	// 1. 뒤로 회피
@@ -106,6 +106,7 @@ private:
 	CMesh_Dynamic*		m_pMeshCom = nullptr;
 	CAIController*		m_pAIControllerCom = nullptr;
 	CNavMesh*			m_pNavMesh = nullptr;
+	CCollider*			m_pCollider = nullptr;
 
 	CWeapon*			m_pGun = nullptr;
 
@@ -155,6 +156,7 @@ private:
 	_bool Is_InFov(_float fDegreeOfFov, _v3 vTargetPos);
 
 	void Check_PhyCollider();
+	void Push_Collider();
 
 	HRESULT Draw_Collider();
 

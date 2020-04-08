@@ -27,7 +27,8 @@ HRESULT CMaterial_Inven::Ready_GameObject(void * pArg)
 
 	m_fPosX = WINCX * 0.3f;
 	m_fPosY = WINCY * 0.5f;
-	m_fSizeX = 352.f;
+
+	m_fSizeX = 280.f;
 	m_fSizeY = 471.f;
 
 	m_fViewZ = 2.f;
@@ -42,17 +43,19 @@ HRESULT CMaterial_Inven::Ready_GameObject(void * pArg)
 		for (_uint j = 0; j < 5; ++j)
 		{
 			pDesc = new CUI::UI_DESC;
-			pDesc->fPosX = m_fPosX - 120.f + 60.f * j;
-			pDesc->fPosY = m_fPosY - 130.f + 60.f * i;
+
+			pDesc->fPosX = m_fPosX - 103.f + 52.f * j;
+			pDesc->fPosY = m_fPosY - 130.f + 52.f * i;
 			pDesc->fSizeX = 50.f;
 			pDesc->fSizeY = 50.f;
 			g_pManagement->Add_GameObject_ToLayer(L"GameObject_MaterialSlot", SCENE_STAGE, L"Layer_MaterialSlot", pDesc);
 			pSlot = static_cast<CMaterial_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_MaterialSlot", SCENE_STAGE));
 			m_vecMaterialSlot.push_back(pSlot);
+			m_vecUI_DESC.push_back(pDesc);
 		}
 
 	}
-
+	
 	LOOP(16)
 		Add_Material(CMaterial::MATERIAL_1);
 	LOOP(16)
@@ -65,17 +68,20 @@ HRESULT CMaterial_Inven::Ready_GameObject(void * pArg)
 _int CMaterial_Inven::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
-	if (m_bIsDead)
-		return DEAD_OBJ;
-	if (g_pInput_Device->Key_Up(DIK_2))
-		m_bIsActive = !m_bIsActive;
+
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
-	
+
+	Click_Inven();
+
 	for (auto& pSlot : m_vecMaterialSlot)
+	{
 		pSlot->Set_Active(m_bIsActive);
+		pSlot->Set_ViewZ(m_fViewZ - 0.1f);
+	}
+
 
 	return NO_EVENT;
 }
@@ -188,6 +194,8 @@ void CMaterial_Inven::Load_Materials(CMaterial * pMaterial, _uint iIndex)
 	else
 		Load_Materials(pMaterial, iIndex + 1);*/
 
+	
+
 	if (nullptr == pMaterial)
 		return;
 	if (m_vecMaterialSlot.size() <= iIndex)
@@ -198,6 +206,33 @@ void CMaterial_Inven::Load_Materials(CMaterial * pMaterial, _uint iIndex)
 		m_vecMaterialSlot[iIndex]->Input_Item(pMaterial);
 	else
 		Load_Materials(pMaterial, iIndex + 1);
+}
+
+void CMaterial_Inven::Click_Inven()
+{
+	if (!m_bIsActive)
+		return;
+
+	for (auto& pSlot : m_vecMaterialSlot)
+	{
+		if (pSlot->Pt_InRect())
+		{
+			if (!pSlot->Get_Select() && pSlot->Get_Size() > 0 && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+			{
+				// 마우스 왼쪽 버튼 눌렀을 때
+				
+			}
+			else if (pSlot->Get_Select() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
+			{
+				// 마우스 오른쪽 버튼 눌렀을 때
+
+			}
+		}
+	}
+	/*if(g_pInput_Device->Key_Up(DIK_8))
+		Add_MultiMaterial(CMaterial::MATERIAL_1, 1);
+	if (g_pInput_Device->Key_Up(DIK_9))
+		Sell_Material(1);*/
 }
 
 void CMaterial_Inven::Add_Material(CMaterial::MATERIAL_TYPE eType)
@@ -220,16 +255,47 @@ void CMaterial_Inven::Add_Material(CMaterial::MATERIAL_TYPE eType)
 	Load_Materials(pMaterial, 0);
 }
 
+
+
+void CMaterial_Inven::Add_MultiMaterial(CMaterial::MATERIAL_TYPE eType, _uint iCnt)
+{
+	LOOP(iCnt)
+		Add_Material(eType);
+}
+
 void CMaterial_Inven::Sell_Material(_uint iDelete)
 {
+	_ulong idx = 0;
 	for (auto& pSlot : m_vecMaterialSlot)
 	{
 		if (pSlot->Pt_InRect())
 		{
+			// 삭제하려는 수가 소지 아이템 수보다 많을 경우 예외처리
+			if (iDelete > pSlot->Get_Size())
+				return;
 			for (_uint i = 0; i < iDelete; ++i)
+			{
 				pSlot->Delete_Item();
-			return;
+			}
+			
+			if (pSlot->Get_Size() == 0)
+			{
+				m_vecMaterialSlot.erase(m_vecMaterialSlot.begin() + idx);
+				m_vecMaterialSlot.shrink_to_fit();
+				break;
+			}
 		}
+		
+		++idx;
+	}
+	
+	
+	_ulong Idx = 0;
+	for (auto& pSlot : m_vecMaterialSlot)
+	{
+		
+		pSlot->Set_UI_Pos(m_vecUI_DESC[Idx]->fPosX, m_vecUI_DESC[Idx]->fPosY);
+		++Idx;
 	}
 }
 

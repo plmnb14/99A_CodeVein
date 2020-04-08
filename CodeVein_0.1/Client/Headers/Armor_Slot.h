@@ -6,6 +6,7 @@
 
 BEGIN(Client)
 class CSelect_UI;
+class CCursorUI;
 class CArmor_Slot final : public CUI
 {
 private:
@@ -15,7 +16,11 @@ private:
 
 public:
 	bool Get_Select() { return m_bIsSelect; }
+	CArmor::ARMOR_TYPE Get_Type();
+
+public:
 	void Set_Select(_bool bIsSelect) { m_bIsSelect = bIsSelect; }
+	void Set_Type(CArmor::ARMOR_TYPE eType) { m_eType = eType; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -26,7 +31,6 @@ public:
 
 public:
 	_bool Pt_InRect();
-	CArmor::ARMOR_TYPE Get_Type();
 
 private:
 	HRESULT Add_Component();
@@ -41,7 +45,9 @@ private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 	CSelect_UI*				m_pSelectUI = nullptr;
+	CCursorUI*				m_pCursorUI = nullptr;
 	_bool					m_bIsSelect = false;
+	CArmor::ARMOR_TYPE		m_eType = CArmor::ARMOR_END;
 
 public:
 	static CArmor_Slot*		Create(_Device pGraphic_Device);

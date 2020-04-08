@@ -46,7 +46,7 @@ CBT_Node::BT_NODE_STATE CBT_UpdateGageRatio::Update_Node(_double TimeDelta, vect
 			else
 				pBlackBoard->Set_Value(m_pKey_Save_GageRatio, _float(CurGage / MaxGage));
 
-			End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, false);
+			End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, pBlackBoard, false);
 			break;
 		}
 	}
@@ -72,7 +72,7 @@ void CBT_UpdateGageRatio::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<
 	}
 }
 
-CBT_Node::BT_NODE_STATE CBT_UpdateGageRatio::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, _bool bDebugging)
+CBT_Node::BT_NODE_STATE CBT_UpdateGageRatio::End_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack, BT_NODE_STATE eState, CBlackBoard* pBlackBoard, _bool bDebugging)
 {
 	if (bDebugging)
 	{

@@ -23,6 +23,11 @@ public:
 	vector<CExpendables*> Get_Expendables() { return m_vecExpendables; }
 	_bool Get_Select() { return m_bIsSelect; }
 	CNumberUI* Get_NumberUI() { return m_pNumberUI; }
+	_uint Get_Size();
+	_uint Get_Type();
+
+public:
+	void Set_Type(CExpendables::EXPEND_TYPE eType) { m_eType = eType; }
 
 public:
 	void Set_Select(_bool bIsSelect);
@@ -37,9 +42,7 @@ public:
 public:
 	void Input_Item(CExpendables* pExpendables);
 	void Input_Items(vector<CExpendables*> vecExpend) { m_vecExpendables = vecExpend; }
-	_bool Pt_InRect();
-	_uint Get_Size();
-	_uint Get_Type();
+	_bool Pt_InRect();	
 	void Delete_Item();
 	void Delete_Items();
 
@@ -61,6 +64,7 @@ private:
 	_bool					m_bIsSelect = false;
 	CNumberUI*				m_pNumberUI = nullptr;
 	CCursorUI*				m_pCursorUI = nullptr;
+	CExpendables::EXPEND_TYPE m_eType = CExpendables::EXPEND_END;
 
 public:
 	static CExpendables_Slot*	Create(_Device pGraphic_Device);

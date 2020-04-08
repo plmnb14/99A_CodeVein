@@ -119,12 +119,11 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	// °Ë°ÕÁö
 	//====================================================================================================================================================
 	
-
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White, CSwordGenji::Sit1, 10.f, 5.f, 2.f));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(-4.f, 0.f, -4.f));
-	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	 //pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White, CSwordGenji::Sit1, 10.f, 5.f, 2.f));
+	 //TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(-4.f, 0.f, -4.f));
+	 //TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	 //TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	 //g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle));
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
@@ -239,12 +238,16 @@ HRESULT CScene_Stage_Training::Ready_LightDesc()
 	D3DLIGHT9		LightDesc;
 	ZeroMemory(&LightDesc, sizeof(D3DLIGHT9));
 
+	_v3 vLightPos = _v3(5.f, 8.f, -5.f);
+	V3_NORMAL_SELF(&vLightPos);
+
 	LightDesc.Type = D3DLIGHT_DIRECTIONAL;
 	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
 	LightDesc.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	// In.WorldSpace
-	LightDesc.Direction = _v3(1.f, 1.f, -1.f);
+	LightDesc.Direction = vLightPos;
+	//LightDesc.Direction = _v3(1.f, 1.f, -1.f);
 
 	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
 		return E_FAIL;

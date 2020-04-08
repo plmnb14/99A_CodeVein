@@ -41,6 +41,10 @@ private:
 
 	_v3						m_pVtxMin;
 	_v3						m_pVtxMax;
+
+private:
+	_bool					m_bIncludeMap[MESHTEXTURE::TYPE_END] = {};
+
 private:
 	HRESULT Change_TextureFileName(_tchar* pFilePath, _tchar * pSourMark, _tchar * pDestMark);
 public:

@@ -34,6 +34,7 @@ HRESULT CPoisonBullet::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 	m_tObjParam.bCanAttack = true;
+	m_tObjParam.fDamage = 20.f;
 
 	lstrcpy(m_pEffect_Tag0, L"ButterFly_VenomShot_Distortion");
 	lstrcpy(m_pEffect_Tag1, L"ButterFly_SoftSmoke_Mist");

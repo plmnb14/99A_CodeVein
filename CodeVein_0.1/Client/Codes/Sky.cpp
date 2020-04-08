@@ -64,7 +64,7 @@ HRESULT CSky::Render_GameObject()
 	{
 		m_pShaderCom->Begin_Pass(0);
 
-		if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_Texture(i, MESHTEXTURE::TYPE_DIFFUSE))))
+		if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_Texture(i, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
 			return E_FAIL;
 
 		m_pShaderCom->Commit_Changes();
