@@ -1,51 +1,34 @@
 #include "stdafx.h"
-#include "..\Headers\Info_Slot.h"
-#include "NumberUI.h"
+#include "..\Headers\FontNumUI.h"
 
-CInfo_Slot::CInfo_Slot(_Device pDevice)
+
+CFontNumUI::CFontNumUI(_Device pDevice)
 	: CUI(pDevice)
 {
 }
 
-CInfo_Slot::CInfo_Slot(const CInfo_Slot & rhs)
+CFontNumUI::CFontNumUI(const CFontNumUI & rhs)
 	: CUI(rhs)
 {
 }
 
-void CInfo_Slot::Set_Number(_uint iNumber)
-{
-	m_pNumberUI->Set_UI_Index(iNumber);
-}
-
-HRESULT CInfo_Slot::Ready_GameObject_Prototype()
+HRESULT CFontNumUI::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
 
 	return NOERROR;
 }
 
-HRESULT CInfo_Slot::Ready_GameObject(void * pArg)
+HRESULT CFontNumUI::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
-
 	CUI::Ready_GameObject(pArg);
 
-	m_bIsActive = false;
-
-	CUI::UI_DESC* pDesc = new CUI::UI_DESC;
-	pDesc->fPosX = m_fPosX - m_fSizeX * 0.25f;
-	pDesc->fPosY = m_fPosY + m_fSizeY * 0.25f;
-	pDesc->fSizeX = m_fSizeX * 0.25f;
-	pDesc->fSizeY = m_fSizeY * 0.25f;
-	pDesc->iIndex = 0;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NumberUI", SCENE_STAGE, L"Layer_NumberUI", pDesc);
-	m_pNumberUI = static_cast<CNumberUI*>(g_pManagement->Get_GameObjectBack(L"Layer_NumberUI", SCENE_STAGE));
-		
 	return NOERROR;
 }
 
-_int CInfo_Slot::Update_GameObject(_double TimeDelta)
+_int CFontNumUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
@@ -53,32 +36,13 @@ _int CInfo_Slot::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
-	switch (m_eInfo)
-	{
-	case CExpendables::EXPEND_1:
-		m_iIndex = 0;
-		break;
-	case CExpendables::EXPEND_2:
-		m_iIndex = 1;
-		break;
-	case CExpendables::EXPEND_3:
-		m_iIndex = 2;
-		break;
-	case CExpendables::EXPEND_4:
-		m_iIndex = 3;
-		break;
-	case CExpendables::EXPEND_END:
-		m_iIndex = 4;
-		break;
-	}
-
-	m_pNumberUI->Set_Active(m_bIsActive);
-	m_pNumberUI->Set_ViewZ(m_fViewZ - 0.1f);
+	if (m_bIsDead)
+		return DEAD_OBJ;
 
 	return NO_EVENT;
 }
 
-_int CInfo_Slot::Late_Update_GameObject(_double TimeDelta)
+_int CFontNumUI::Late_Update_GameObject(_double TimeDelta)
 {
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
@@ -89,14 +53,12 @@ _int CInfo_Slot::Late_Update_GameObject(_double TimeDelta)
 	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
 	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;
 
+
 	return NO_EVENT;
 }
 
-HRESULT CInfo_Slot::Render_GameObject()
+HRESULT CFontNumUI::Render_GameObject()
 {
-	if (!m_bIsActive)
-		return NOERROR;
-
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
@@ -131,7 +93,7 @@ HRESULT CInfo_Slot::Render_GameObject()
 	return NOERROR;
 }
 
-HRESULT CInfo_Slot::Add_Component()
+HRESULT CFontNumUI::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -142,7 +104,7 @@ HRESULT CInfo_Slot::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Expendables", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Number", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -156,7 +118,7 @@ HRESULT CInfo_Slot::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CInfo_Slot::SetUp_ConstantTable()
+HRESULT CFontNumUI::SetUp_ConstantTable()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -175,9 +137,9 @@ HRESULT CInfo_Slot::SetUp_ConstantTable()
 	return NOERROR;
 }
 
-CInfo_Slot * CInfo_Slot::Create(_Device pGraphic_Device)
+CFontNumUI * CFontNumUI::Create(_Device pGraphic_Device)
 {
-	CInfo_Slot* pInstance = new CInfo_Slot(pGraphic_Device);
+	CFontNumUI* pInstance = new CFontNumUI(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 		Safe_Release(pInstance);
@@ -185,9 +147,9 @@ CInfo_Slot * CInfo_Slot::Create(_Device pGraphic_Device)
 	return pInstance;
 }
 
-CGameObject * CInfo_Slot::Clone_GameObject(void * pArg)
+CGameObject * CFontNumUI::Clone_GameObject(void * pArg)
 {
-	CInfo_Slot* pInstance = new CInfo_Slot(*this);
+	CFontNumUI* pInstance = new CFontNumUI(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 		Safe_Release(pInstance);
@@ -195,7 +157,7 @@ CGameObject * CInfo_Slot::Clone_GameObject(void * pArg)
 	return pInstance;
 }
 
-void CInfo_Slot::Free()
+void CFontNumUI::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);

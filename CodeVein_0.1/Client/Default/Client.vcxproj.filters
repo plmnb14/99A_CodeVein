@@ -217,9 +217,6 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\04. Select_UI">
       <UniqueIdentifier>{6be15063-782e-4209-96d4-18ea99a6801b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\04. MassageUI">
-      <UniqueIdentifier>{f2feb887-81df-48e5-a824-07e92ad80fb5}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI">
       <UniqueIdentifier>{1109951a-a48a-447c-bb46-b5d93621bebb}</UniqueIdentifier>
     </Filter>
@@ -244,9 +241,6 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\04. Get_ItemUI\PickUp_ItemUI">
       <UniqueIdentifier>{350b99e5-54e8-43df-bafa-17f764a32b28}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\06. MassageUI">
-      <UniqueIdentifier>{540b3aae-02d4-4cfe-b5dc-cb949b85ba2b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\1%29 Boss\PoisonButterfly\Bullet">
       <UniqueIdentifier>{9fe0c9c4-700a-4361-889f-770896093c16}</UniqueIdentifier>
     </Filter>
@@ -270,6 +264,15 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\07. ClickUI">
       <UniqueIdentifier>{4df8b620-ca33-4900-a23f-bd20831e0c51}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\07. MassageUI">
+      <UniqueIdentifier>{540b3aae-02d4-4cfe-b5dc-cb949b85ba2b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\08. FontNumUI">
+      <UniqueIdentifier>{f54790f9-c2fc-4c6a-a639-8f88c1dd47a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\08. FontNumUI\Manager">
+      <UniqueIdentifier>{0d91f626-46bc-46dc-a493-613d6097be46}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -454,7 +457,7 @@
       <Filter>02.GameObject\Stage\5%29 UI\UI\04. Get_ItemUI\PickUp_ItemUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\MassageUI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\06. MassageUI</Filter>
+      <Filter>02.GameObject\Stage\5%29 UI\UI\07. MassageUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\MonsterUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\01.MonsterUI</Filter>
@@ -494,6 +497,12 @@
     </ClInclude>
     <ClInclude Include="..\Headers\PoisonChaseBullet.h">
       <Filter>02.GameObject\Stage\1%29 Boss\PoisonButterfly\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\FontNumUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\08. FontNumUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\FontNumManager.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\08. FontNumUI\Manager</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -650,9 +659,6 @@
     <ClCompile Include="..\Codes\Get_ItemUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\MassageUI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\04. MassageUI</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\GunGenjiBullet.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster\Genji\Gun</Filter>
     </ClCompile>
@@ -712,6 +718,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\PoisonChaseBullet.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\PoisonButterfly\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MassageUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\07. MassageUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\FontNumUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\08. FontNumUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\FontNumManager.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\08. FontNumUI\Manager</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\PlayerHP.h"
-
+#include "FontNumManager.h"
 
 
 CPlayerHP::CPlayerHP(_Device pGraphic_Device)
@@ -32,11 +32,19 @@ HRESULT CPlayerHP::Ready_GameObject(void * pArg)
 	m_fSizeX = 280.f;
 	m_fSizeY = 25.f;
 
-	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
+	m_fViewZ = 1.f;
 
-	m_fPlayerHP = m_pTarget->Get_Target_Hp();
-	m_fTotalHP = m_fPlayerHP;
+	//m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
 
+	//m_fPlayerHP = m_pTarget->Get_Target_Hp();
+	//m_fTotalHP = m_fPlayerHP;
+	m_fPlayerHP = 990.f;
+	m_fTotalHP = 1200.f;
+
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_FontNumManager", SCENE_STAGE, L"Layer_FontNumManager");
+	m_pFont = static_cast<CFontNumManager*>(g_pManagement->Get_GameObjectBack(L"Layer_FontNumManager", SCENE_STAGE));
+	
+	
 	return NOERROR;
 }
 
@@ -49,6 +57,8 @@ _int CPlayerHP::Update_GameObject(_double TimeDelta)
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
+
+	m_pFont->Calc_NumberFont(_ulong(m_fPlayerHP), m_fPosX + 100.f, m_fPosY, 30.f, 30.f, m_fViewZ - 0.1f);
 
 	return NO_EVENT;
 }
@@ -153,8 +163,6 @@ HRESULT CPlayerHP::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Value("g_fSpeed", &m_fSpeed, sizeof(_float))))
 		return E_FAIL;
 
-	
-
 	if (FAILED(m_pShaderCom->Set_Value("g_fPosX", &m_fPosX, sizeof(_float))))
 		return E_FAIL;
 
@@ -174,7 +182,7 @@ HRESULT CPlayerHP::SetUp_ConstantTable()
 
 void CPlayerHP::SetUp_State(_double TimeDelta)
 {
-	m_fPlayerHP = m_pTarget->Get_Target_Hp();
+	//m_fPlayerHP = m_pTarget->Get_Target_Hp();
 
 	if (m_fPlayerHP <= 0.f)
 		m_fPlayerHP = 0.f;

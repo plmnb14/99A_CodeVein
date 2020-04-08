@@ -5,6 +5,7 @@
 #include "Expendables.h"
 
 BEGIN(Client)
+class CNumberUI;
 class CInfo_Slot final : public CUI
 {
 private:
@@ -14,6 +15,7 @@ private:
 
 public:
 	void Set_SlotInfo(CExpendables::EXPEND_TYPE eType) { m_eInfo = eType; }
+	void Set_Number(_uint iNumber);
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -33,6 +35,8 @@ private:
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 	CExpendables::EXPEND_TYPE m_eInfo = CExpendables::EXPEND_END;
+	CNumberUI*				m_pNumberUI = nullptr;
+	_uint					m_iNumber = 0;
 
 public:
 	static CInfo_Slot*		Create(_Device pGraphic_Device);
