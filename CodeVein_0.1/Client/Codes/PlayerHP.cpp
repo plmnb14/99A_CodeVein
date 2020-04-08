@@ -38,8 +38,8 @@ HRESULT CPlayerHP::Ready_GameObject(void * pArg)
 
 	//m_fPlayerHP = m_pTarget->Get_Target_Hp();
 	//m_fTotalHP = m_fPlayerHP;
-	m_fPlayerHP = 990.f;
-	m_fTotalHP = 1200.f;
+	m_fPlayerHP = 100.f;
+	m_fTotalHP = 100.f;
 
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_FontNumManager", SCENE_STAGE, L"Layer_FontNumManager");
 	m_pFont = static_cast<CFontNumManager*>(g_pManagement->Get_GameObjectBack(L"Layer_FontNumManager", SCENE_STAGE));
