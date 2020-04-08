@@ -41,6 +41,7 @@ _int CTestObject::Update_GameObject(_double TimeDelta)
 
 	if (m_bisPlayCombo)
 	{
+		cout << m_iMaxCount << endl;
 		Play_Combo();
 	}
 

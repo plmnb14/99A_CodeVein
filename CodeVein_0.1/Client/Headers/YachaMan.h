@@ -10,7 +10,6 @@ class CYachaMan final : public CGameObject
 {
 public:
 	enum MONSTER_ANITYPE { IDLE, MOVE, ATTACK, HIT, DOWN, DEAD };
-	
 	enum YACHAMAN_IDLETYPE { IDLE_IDLE, IDLE_EAT, IDLE_LURK };
 	enum YACHAMAN_MOVETYPE {MOVE_RUN, MOVE_WALK, MOVE_DODGE};
 	enum YACHAMAN_ATKTYPE {ATK_NORMAL, ATK_COMBO};
@@ -19,11 +18,11 @@ public:
 	enum YACHAMAN_DEADTYPE { DEAD_DEAD, DEAD_DEAD_P };
 
 	enum ATK_NORMAL_TYPE { NORMAL_RIGHT, NORMAL_LEFT, NORMAL_HAMMERING, NORMAL_SHOULDER, NORMAL_TURNTWICE, NORMAL_HALFCLOCK, NORMAL_TARGETHAMMERING, NORMAL_WHEELWIND };
-	enum ATK_COMBO_TYPE { COMBO_R_L, COMBO_R_HAMMERING, COMBO_SHOULDER_TURNTWICE, COMBO_SHOULDER_HALFCLOCK, COMBO_RUNHAMMERING };
+	enum ATK_COMBO_TYPE { COMBO_R_L, COMBO_R_HAMMERING, COMBO_SHOULDE_L, COMBO_SHOULDER_TURNTWICE, COMBO_RUNHAMMERING };
 
 	enum YACHAMAN_ANI
 	{
-		Hammer_Idle,
+		Hammer_Idle = 0,
 		Atk_Ani_R,
 		Atk_Ani_L,
 		Atk_Ani_Hammering,
@@ -50,39 +49,26 @@ public:
 		LookAround,
 		Eat,
 		Eat_End,
-
-		Stun=29,
-		Stun_End,
-		Down_S_Start,
-		Down_S_End,
-		Down_P_Start,
-		Down_P_Loop, //사용x
-		Down_P_End,
-		Fall_Front,
-		Fall_Back,
-		Parried,	
-		Hit_B_WeakFly,
-		Hit_F_WeakFly,
-		Groggy,
-		Hit_S_BR,
-		Hit_S_BL,
-		Hit_S_FR,
-		Hit_S_FL,
-
-		Hit_N_BR,
-		Hit_N_BL,
-		Hit_N_FR,
-		Hit_N_FL,
-
-		Hit_W_BR,
-		Hit_W_BL,
-		Hit_W_FR,
-		Hit_W_FL,
+		//Down_HitF_Start = 31,
+		//Down_HitF_End,
+		//Down_HitB_Start,
+		//Down_HitB_Loop,
+		//Down_HitB_End,
+		//DownFly_Weak_Start = 36,
+		//DownFly_Weak_End == 32번 애니로
+		//DownFly_Strong_Start=37,
+		//DownFly_Strong_End,
+		//DownFly_Weak_End,
+		Groggy = 41
 	};
 
-	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_Head, Bone_End };
-
-	enum FBLR { FRONT, BACK, LEFT, RIGHT };
+	enum BONE_TYPE
+	{
+		Bone_Range,
+		Bone_Body,
+		Bone_Head,
+		Bone_End
+	};
 
 protected:
 	explicit CYachaMan(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -104,7 +90,6 @@ private:
 
 	//피격,회피,인식,범위,공격가능성,엇박자
 	void Check_Hit();
-	void Check_FBLR();
 	void Check_Dist();
 	void Set_AniEvent();
 
@@ -116,6 +101,8 @@ private:
 
 	void Play_Idle();
 	void Play_Lurk();
+	void Play_Glance();
+	void Play_LookAround();
 	void Play_Eat();
 
 	void Play_Walk();
@@ -166,9 +153,6 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
 	CMesh_Dynamic*		m_pMeshCom = nullptr;
-	CNavMesh*			m_pNavMesh = nullptr;
-	CCollider*			m_pCollider = nullptr;
-
 	CTransform*			m_pTargetTransform = nullptr;
 
 	_v3					m_vBirthPos;
@@ -182,12 +166,12 @@ private:
 	_float				m_fSkillMoveMultiply = 1.f;
 
 	MONSTER_ANITYPE		m_eFirstCategory; //대분류
-	YACHAMAN_IDLETYPE	m_eSecondCategory_IDLE; //중분류
-	YACHAMAN_MOVETYPE	m_eSecondCategory_MOVE;
-	YACHAMAN_ATKTYPE	m_eSecondCategory_ATK;
-	YACHAMAN_HITTYPE	m_eSecondCategory_HIT;
-	YACHAMAN_DOWNTYPE	m_eSecondCategory_DOWN;
-	YACHAMAN_DEADTYPE	m_eSecondCategory_DEAD;
+	YACHAMAN_IDLETYPE	m_eSecondCategory_Idle; //중분류
+	YACHAMAN_MOVETYPE	m_eSecondCategory_Move;
+	YACHAMAN_ATKTYPE	m_eSecondCategory_Atk;
+	YACHAMAN_HITTYPE	m_eSecondCategory_Hit;
+	YACHAMAN_DOWNTYPE	m_eSecondCategory_Down;
+	YACHAMAN_DEADTYPE	m_eSecondCategory_Dead;
 
 	ATK_COMBO_TYPE		m_eAtkCombo;
 	YACHAMAN_ANI		m_eState;
@@ -196,7 +180,7 @@ private:
 	_bool				m_bInRecognitionRange = false;
 	_bool				m_bInAttackRange = false; 
 	_bool				m_bCanChase = false;
-	_bool				m_bIsDodge = false;
+	//_bool				m_bIsDodge = false;
 	_bool				m_bIsCoolDown = false;
 
 	_bool				m_bCanRandomAtkCategory = true;

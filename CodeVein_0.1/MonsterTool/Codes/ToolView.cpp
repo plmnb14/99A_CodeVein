@@ -122,7 +122,7 @@ void CToolView::OnInitialUpdate()
 
 	//m_pDevice->GetTransform(D3DTS_WORLD, &g_matWorld);
 
-	m_pRenderer = static_cast<CRenderer*>(pManagement->Clone_Component(SCENE_STATIC, L"Renderer"));
+	//m_pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
 
 	m_pMainfrm = static_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
 	m_pSetingView = static_cast<CSetingView*>(m_pMainfrm->m_MainSplitter.GetPane(0, 1));
@@ -274,7 +274,6 @@ void CToolView::Start()
 
 void CToolView::Update(const _float & fTimeDelta)
 {
-	//CManagement::Get_Instance()->Update_Management(fTimeDelta);
 	CCameraMgr::Get_Instance()->Update();
 	CInput_Device::Get_Instance()->Set_InputDev();
 
@@ -308,8 +307,6 @@ void CToolView::Render()
 {
 	m_pDevice->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL, D3DXCOLOR(0.5f, 0.5f, 0.5f, 1.f), 1.f, 0);
 	m_pDevice->BeginScene();
-
-	//m_pRenderer->Draw_RenderList();
 
 	m_pGreed->Render_GameObject();
 	m_pSetingView->m_pMonsterTool->Render();
@@ -380,7 +377,6 @@ void CToolView::Release()
 	Engine::CFrameMgr::Get_Instance()->Destroy_Instance();
 	Engine::CTimer_Manager::Get_Instance()->Destroy_Instance();
 
-	Safe_Release(m_pRenderer);
 	Safe_Release(m_pDevice);
 	Safe_Release(m_pGreed);
 
