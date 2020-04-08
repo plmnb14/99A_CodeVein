@@ -273,6 +273,15 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"Player_SpaceBar_StepParticle")))
 		return E_FAIL;
 
+#pragma region Skills
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Scratch_Hor")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Scratch_Ver")))
+		return E_FAIL;
+#pragma endregion
+
+
+
 	return S_OK;
 }
 
