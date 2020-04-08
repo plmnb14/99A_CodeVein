@@ -67,8 +67,8 @@ _int CWeapon::Late_Update_GameObject(_double TimeDelta)
 	if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
 
-	//if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
-	//	return E_FAIL;
+	if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
+		return E_FAIL;
 
 	return _int();
 }
@@ -89,15 +89,23 @@ HRESULT CWeapon::Render_GameObject()
 
 	for (_uint i = 0; i < iNumSubSet; ++i)
 	{
+		//m_iPass = 0 == i ? 0 : 5;
+		//
+		//if (false == m_tmpEmissiveTest)
+		//	m_iPass = 0;
+		m_iPass = m_pMesh_Static->Get_MaterialPass(i);
+
 		m_pShader->Begin_Pass(m_iPass);
 
-		if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
-			return E_FAIL;
+		m_pShader->Set_StaticTexture_Auto(m_pMesh_Static, i);
 
-		if (FAILED(m_pShader->Set_Texture("g_NormalTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_NORMAL_MAP))))
-			return E_FAIL;
+		//if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
+		//	return E_FAIL;
+		//
+		//if (FAILED(m_pShader->Set_Texture("g_NormalTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_NORMAL_MAP))))
+		//	return E_FAIL;
 
-		//if (FAILED(m_pShader->Set_Texture("g_SpecularTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_SPECULAR))))
+		//if (FAILED(m_pShader->Set_Texture("g_EmissiveTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_EMISSIVE_MAP))))
 		//	return E_FAIL;
 
 		m_pShader->Commit_Changes();

@@ -57,14 +57,15 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
-	//if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
-	//	return E_FAIL;
+
+	if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
+		return E_FAIL;
 
 	IF_NOT_NULL(m_pWeapon[m_eActiveSlot])
 		m_pWeapon[m_eActiveSlot]->Update_GameObject(TimeDelta);
 
-	IF_NOT_NULL(m_pDrainWeapon)
-		m_pDrainWeapon->Update_GameObject(TimeDelta);
+	//IF_NOT_NULL(m_pDrainWeapon)
+	//	m_pDrainWeapon->Update_GameObject(TimeDelta);
 
 	m_pNavMesh->Goto_Next_Subset(m_pTransform->Get_Pos(), nullptr);
 

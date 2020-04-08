@@ -19,6 +19,7 @@ public:
 
 public:
 	_ulong Get_NumMaterials() const { return m_dwNumMaterials; }
+	_ulong Get_MaterialPass(_ulong dwPass) { return m_dwMaterialPass[dwPass]; }
 	LPDIRECT3DBASETEXTURE9 Get_Texture(_ulong dwMaterialIndex, MESHTEXTURE::TYPE eType);
 public:
 	virtual HRESULT Ready_Component_Prototype(const _tchar* pFilePath, const _tchar* pFileName, _mat PivotMatrix);
@@ -41,6 +42,8 @@ private:
 
 	_v3						m_pVtxMin;
 	_v3						m_pVtxMax;
+
+	_ulong					m_dwMaterialPass[10] = {};
 
 private:
 	_bool					m_bIncludeMap[MESHTEXTURE::TYPE_END] = {};

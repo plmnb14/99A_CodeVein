@@ -29,6 +29,16 @@ sampler SpecularSampler = sampler_state
 	mipfilter = linear;
 };
 
+texture		g_EmissiveTexture;
+sampler EmissiveSampler = sampler_state
+{
+	texture = g_EmissiveTexture;
+
+	minfilter = linear;
+	magfilter = linear;
+	mipfilter = linear;
+};
+
 texture		g_BloomTexture;
 sampler BloomSampler = sampler_state
 {
@@ -90,7 +100,8 @@ PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	vector	vDiffuse = tex2D(DiffuseSampler, In.vTexUV);
+	vector	vDiffuse	= tex2D(DiffuseSampler, In.vTexUV);
+	vector	vEmissive	= tex2D(EmissiveSampler, In.vTexUV);
 	//vector	vShade = tex2D(ShadeSampler, In.vTexUV);
 	//vector	vSpecular = tex2D(SpecularSampler, In.vTexUV);
 	//vector	vSSAO = tex2D(SSAOSampler, In.vTexUV);
@@ -100,7 +111,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	vector	vSpecular = pow(tex2D(SpecularSampler, In.vTexUV), 2.2);
 	//vector	vSSAO = pow(tex2D(SSAOSampler, In.vTexUV), 2.2);
 
-	Out.vColor = (vDiffuse + vSpecular) * vShade;
+	Out.vColor = ((vDiffuse + vSpecular) * vShade) + ( vEmissive * 20.f );
 	//Out.vColor = (vDiffuse + vSpecular - vSSAO.x) * vShade;
 
 	return Out;
@@ -117,7 +128,7 @@ PS_OUT PS_TONEMAPPING(PS_IN In)
 	if (0 == g_iToneIndex)
 	{
 		// DX Sample ========================================================================
-		float Luminance = 0.08f;
+		float Luminance = 1.08f;
 		static const float fMiddleGray = 0.18f;
 		static const float fWhiteCutoff = 0.9f;
 
@@ -278,8 +289,10 @@ PS_OUT PS_Bloom(PS_IN In) // Extract Bright Color
 
 	Out.vColor = vDiffuse;
 	Out.vColor.rgb -= 1.5f; // ÀÛÀº °ªÀÏ ¼ö·Ï ºû¿¡ ¹Î°¨ÇÑ ±¤¼±
+	// ÀÛÀº ºûµµ ºí·ëµÇ¿ä
 
 	Out.vColor = 3.0f * max(Out.vColor, 0.0f); // Å« °ªÀÏ ¼ö·Ï È®½ÇÇÑ ¸ð¾çÀÇ ±¤¼±
+	// ÀÛÀº ºûµµ ºí·ë
 
 	return Out;
 }
@@ -318,6 +331,11 @@ PS_OUT MotionBlurForObj(PS_IN In)
 	//vector	vDepthInfo = tex2D(DepthSampler, screenTexCoords);
 
 	Out.vColor = tex2D(DiffuseSampler, screenTexCoords);
+
+	// ==========================================
+	// Àá±ñ ²¨µÒ
+	return Out;
+	// ==========================================
 
 	// Á¦ÇÑ
 	velocity.xy = (clamp(velocity.x, -0.5f, 0.5f), clamp(velocity.y, -0.5f, 0.5f));

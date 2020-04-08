@@ -100,6 +100,8 @@ private:
 	_bool					m_bTrailEnable = false;
 	_bool					m_bRecordCollision = false;		// ±â·ÏÇÒ²«Áö ¸»²«Áö 
 
+	_bool					m_tmpEmissiveTest = false;
+
 private:
 	WEAPON_STATE			m_eWeaponType = WEAPON_Ssword;
 	WEAPON_DATA				m_eWeaponData = WPN_SSword_Normal;

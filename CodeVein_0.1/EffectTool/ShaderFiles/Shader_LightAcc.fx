@@ -199,11 +199,15 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	//	return Out;
 	//}
 
+	//if (fShadow < 1.f)
+	//{
+	//}
+
 	// Shadow End ====================================================================
 
 	vector		vLook = vWorldPos - g_vCamPosition;
 
-	Out.vSpecular = g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 30.f) * (g_vLightSpecular * g_vMtrlSpecular);
+	Out.vSpecular = vDepthInfo.z * g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 30.f) * (g_vLightSpecular * g_vMtrlSpecular);
 	Out.vSpecular.a = 0.f;
 
 	// RimLight ====================================================================
@@ -222,11 +226,9 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	Out.vSSAO = float4(ao, 0, 0, 1);
 	// SSAO End ====================================================================
 
+	//Out.vShade.rgb *= fShadow;
+
 	Out.vShade.rgb *= fShadow;
-	//if (fShadow < 1.f)
-	//{
-	//	Out.vShade.grb *= fShadow;
-	//}
 
 	return Out;
 }
