@@ -39,9 +39,9 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 	// MonsterHP UI
-	pMonsterHpUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
-	pMonsterHpUI->Set_Target(this);
-	pMonsterHpUI->Ready_GameObject(NULL);
+ 	pMonsterHpUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
+ 	pMonsterHpUI->Set_Target(this);
+ 	pMonsterHpUI->Ready_GameObject(NULL);
 
 	/*m_pDamegeNumUI = static_cast<CDamegeNumUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_DamegeNumUI", pArg));
 	m_pDamegeNumUI->Set_Target(this);
@@ -172,7 +172,6 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 
 	// MonsterHP UI
 	pMonsterHpUI->Update_GameObject(TimeDelta);
-	//m_pDamegeNumUI->Update_GameObject(TimeDelta);
 
 	// 플레이어 미발견
 	if (false == m_bFight)

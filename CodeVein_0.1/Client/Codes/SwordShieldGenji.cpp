@@ -324,12 +324,12 @@ _int CSwordShieldGenji::Update_GameObject(_double TimeDelta)
 
 	CGameObject::Update_GameObject(TimeDelta);
 
-	// MonsterHP UI
-	m_pMonsterUI->Update_GameObject(TimeDelta);
-
 	// 죽었을 경우
 	if (m_bIsDead)
 		return DEAD_OBJ;
+
+	// MonsterHP UI
+	m_pMonsterUI->Update_GameObject(TimeDelta);
 
 	// 플레이어 미발견
 	if (false == m_bFight)
