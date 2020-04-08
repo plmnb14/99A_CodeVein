@@ -278,6 +278,10 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Scratch_Ver")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_ScratchBlur_Hor")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_ScratchBlur_Ver")))
+		return E_FAIL;
 #pragma endregion
 
 

@@ -530,6 +530,11 @@ void CManagement::Create_Effect_Offset(_tchar* szName, _float fOffset, _v3 vPos,
 	CParticleMgr::Get_Instance()->Create_Effect_Offset(szName, fOffset, vPos, pFollowTrans);
 }
 
+void CManagement::Create_Effect_Delay(_tchar * szName, _float fDelay, _v3 vPos, CTransform * pFollowTrans)
+{
+	CParticleMgr::Get_Instance()->Create_Effect_Delay(szName, fDelay, vPos, pFollowTrans);
+}
+
 void CManagement::Free()
 {
 	Safe_Release(m_pBT_Node_Manager);
