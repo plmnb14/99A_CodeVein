@@ -649,7 +649,7 @@ _bool CCollider::Check_Sphere(CCollider * _rSrc , _v3 vDir, _float fSpeed)
 
 		if (m_tColInfo.bIsDynamic)
 		{
-			//cout << "드르오냐 " << endl;
+			//cout << "문, 콜라이더, 드르오냐 " << endl;
 			fCalcLength *= 0.5f;
 		}
 

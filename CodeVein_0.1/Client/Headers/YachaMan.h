@@ -6,6 +6,10 @@
 
 BEGIN(Client)
 
+class CDamegeNumUI;
+class CMonsterUI;
+class CWeapon;
+
 class CYachaMan final : public CGameObject
 {
 public:
@@ -15,8 +19,8 @@ public:
 	enum YACHAMAN_MOVETYPE {MOVE_RUN, MOVE_WALK, MOVE_DODGE};
 	enum YACHAMAN_ATKTYPE {ATK_NORMAL, ATK_COMBO};
 	enum YACHAMAN_HITTYPE { HIT_HIT, HIT_HIT_F, HIT_HIT_B };
-	enum YACHAMAN_DOWNTYPE { DOWN_DOWN, DOWN_DOWN_W,DOWN_DOWN_P };
-	enum YACHAMAN_DEADTYPE { DEAD_DEAD, DEAD_DEAD_P };
+	enum YACHAMAN_DOWNTYPE { DOWN_DOWN, DOWN_DOWN_S, DOWN_DOWN_W };
+	enum YACHAMAN_DEADTYPE { DEAD_DEAD, DEAD_DEAD_S };
 
 	enum ATK_NORMAL_TYPE { NORMAL_RIGHT, NORMAL_LEFT, NORMAL_HAMMERING, NORMAL_SHOULDER, NORMAL_TURNTWICE, NORMAL_HALFCLOCK, NORMAL_TARGETHAMMERING, NORMAL_WHEELWIND };
 	enum ATK_COMBO_TYPE { COMBO_R_L, COMBO_R_HAMMERING, COMBO_SHOULDER_TURNTWICE, COMBO_SHOULDER_HALFCLOCK, COMBO_RUNHAMMERING };
@@ -80,7 +84,7 @@ public:
 		Hit_W_FL,
 	};
 
-	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_Head, Bone_End };
+	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_RightArm, Bone_End };
 
 	enum FBLR { FRONT, BACK, LEFT, RIGHT };
 
@@ -99,7 +103,8 @@ public:
 private:
 	void Update_Collider();
 	void Render_Collider();
-	void Enter_CollisionEvent();
+	void Enter_Collision();
+	void Check_CollisionPush();
 	void Check_CollisionEvent(list<CGameObject*> plistGameObject);
 
 	//피격,회피,인식,범위,공격가능성,엇박자
@@ -108,11 +113,11 @@ private:
 	void Check_Dist();
 	void Set_AniEvent();
 
-	void Skill_RotateBody();
-	void Skill_CoolDown();
-	void Skill_Movement(_float _fspeed, _v3 _vDir = { V3_NULL });
-	void Decre_Skill_Movement(_float _fMutiply = 1.f);
-	void Reset_BattleState();
+	void Function_RotateBody();
+	void Function_CoolDown();
+	void Function_Movement(_float _fspeed, _v3 _vDir = { V3_NULL });
+	void Function_DecreMoveMent(_float _fMutiply = 1.f);
+	void Function_ResetAfterAtk();
 
 	void Play_Idle();
 	void Play_Lurk();
@@ -125,7 +130,7 @@ private:
 	void Play_RandomAtkNormal();
 	void Play_R(); //1.3~1.9 이동 1.8~2.0 타격
 	void Play_L(); //0.6~1.1 이동 1.2~1.4타격
-	void play_Hammering(); //0.9~1.8 이동 1.4~1.8 타격
+	void Play_Hammering(); //0.9~1.8 이동 1.4~1.8 타격
 	void Play_Shoulder(); //0.9~1.3 이동 0.9~1.3 타격
 	void Play_TurnTwice(); //0.8~2.0 2.9~3.3 이동 0.9~1.2 1.6~1.9 타격
 	void Play_HalfClock(); //0.8~2.0회전이동 2.9~3.3 짧게복귀 0.8~1.2타격
@@ -153,6 +158,7 @@ private:
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
+	HRESULT Ready_Weapon();
 	HRESULT Ready_Collider();
 	HRESULT Ready_BoneMatrix();
 
@@ -168,11 +174,13 @@ private:
 	CMesh_Dynamic*		m_pMeshCom = nullptr;
 	CNavMesh*			m_pNavMesh = nullptr;
 	CCollider*			m_pCollider = nullptr;
+	CWeapon*			m_pHammer = nullptr;
 
 	CTransform*			m_pTargetTransform = nullptr;
 
 	_v3					m_vBirthPos;
 	_mat*				m_matBone[Bone_End];
+	_double				m_dTimeDelta;
 	_double				m_dAniPlayMul = 1;
 
 	_float				m_fSkillMoveSpeed_Cur = 0.f;
@@ -194,22 +202,26 @@ private:
 	_bool				m_bEventTrigger[20] = {};
 
 	_bool				m_bInRecognitionRange = false;
-	_bool				m_bInAttackRange = false; 
+	_bool				m_bInAtkRange = false;
+	
 	_bool				m_bCanChase = false;
+	
 	_bool				m_bIsDodge = false;
+
+	_bool				m_bCanCoolDown = false;
 	_bool				m_bIsCoolDown = false;
 
-	_bool				m_bCanRandomAtkCategory = true;
+	_bool				m_bCanAtkCategoryRandom = true;
 	_bool				m_bIsAtkCombo = false;
-	_bool				m_bCanRandomIdle = true;
+	_bool				m_bCanIdleRandom = true;
 
 	_float				m_fRecognitionRange = 10.f;
-	_float				m_fAttackRange = 4.f;
-	_float				m_fCoolDown = 0.f;
+	_float				m_fAtkRange = 4.f;
+	_float				m_fCoolDownMax = 0.f;
+	_float				m_fCoolDownCur = 0.f;
+	_float				m_fSpeedForCollisionPush = 2.f;
 
-	_int				m_iAtkRandomType = 0;
-	_int				m_iAtkRandom = 0;
-	_int				m_iIdleRandomNumber = 0;
+	_int				m_iRandom = 0;
 	_int				m_iDodgeCount = 0;
 
 };
