@@ -36,7 +36,7 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 	if (false == m_bOnTool)
 	{
 		m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
-		m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this);
+		//m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this);
 
 		//if (CObject_Manager::Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))
 		//{

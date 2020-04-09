@@ -83,6 +83,6 @@ enum PHYSIC_COL
 
 enum WEAPON_STATE
 {
-	WEAPON_None, WEAPON_Ssword, WEAPON_LSword, WEAPON_Hammer, WEAPON_Halverd, WEAPON_Gun,
+	WEAPON_None, WEAPON_Ssword, WEAPON_LSword, WEAPON_Hammer, WEAPON_Halverd, WEAPON_Gun, WEAPON_Shield,
 	WEAPON_End
 };

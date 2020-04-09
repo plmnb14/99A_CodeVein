@@ -19,23 +19,34 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Player_FootSmoke", 50);
 	Input_Pool(L"Player_FootSmoke_Jump", 30);
 	Input_Pool(L"Player_FootSmoke_DodgeBack", 30);
-	Input_Pool(L"Player_SpaceBar_StepParticle", 100);
+	Input_Pool(L"Player_SpaceBar_StepParticle", 500);
 
 	Input_Pool(L"Player_Skill_Scratch_Hor", 10);
 	Input_Pool(L"Player_Skill_Scratch_Ver", 10);
 	Input_Pool(L"Player_Skill_ScratchBlur_Hor", 10);
 	Input_Pool(L"Player_Skill_ScratchBlur_Ver", 10);
+	Input_Pool(L"Player_Skill_ScratchBlur_Sub_Hor", 10);
+	Input_Pool(L"Player_Skill_ScratchBlur_Sub_Ver", 10);
 	Input_Pool(L"Player_Skill_Ring_Hor", 10);
 	Input_Pool(L"Player_Skill_Ring_Ver", 10);
 	Input_Pool(L"Player_Skill_RedParticle_Explosion", 110);
+	Input_Pool(L"Player_Skill_RedParticle_Upper", 300);
 	Input_Pool(L"Player_Skill_RedCircle_Flash", 10);
 	Input_Pool(L"Player_Skill_Distortion_Circle", 10);
 	Input_Pool(L"Player_Skill_RedOnion", 40);
+	Input_Pool(L"Player_Skill_Floor_BlackRing", 50);
+	Input_Pool(L"Player_Skill_Floor_RedRing", 50);
 	Input_Pool(L"Player_Skill_SplitAssert_LaserBefore", 5);
 	Input_Pool(L"Player_Skill_SplitAssert_LaserAfter", 5);
 	Input_Pool(L"Player_Skill_SplitAssert_LaserBody", 5);
+	Input_Pool(L"Player_Skill_SplitAssert_LaserAfter_Smoke", 5);
+	Input_Pool(L"Player_Skill_SplitAssert_LaserAfter_RingLine", 5);
 	Input_Pool(L"Player_Skill_DarkRedOnion_Explosion", 50);
 	Input_Pool(L"Player_Skill_Blood_Explosion", 100);
+	Input_Pool(L"Player_Skill_RotYRing_Black", 40);
+	Input_Pool(L"Player_Skill_RotYRing_Red", 40);
+	Input_Pool(L"Player_Skill_WindMesh", 40);
+	Input_Pool(L"Player_Skill_WindTronadeMesh", 60);
 
 	Input_Pool(L"ButterFly_SoftSmoke", 2000);
 	Input_Pool(L"ButterFly_PointParticle", 1000);
@@ -159,7 +170,7 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 						CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));
 						pEffect->Set_ParticleName(szEffName);
 						pEffect->Set_Desc((*iter_begin)->vCreatePos, (*iter_begin)->pFollowTrans);
-						pEffect->Set_Delay(false);
+						pEffect->Set_Delay(((*iter_begin)->fDelayTime != 0), (*iter_begin)->fDelayTime);
 						pEffect->Set_AutoFind((*iter_begin)->bAutoFind);
 						if ((*iter_begin)->bFinishPos) pEffect->Set_FinishPos((*iter_begin)->vFinishPos);
 						pEffect->Reset_Init();
@@ -170,7 +181,7 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 
 					m_EffectList.push_back(pFindedQueue->front());
 					pFindedQueue->front()->Set_Desc((*iter_begin)->vCreatePos, (*iter_begin)->pFollowTrans);
-					pFindedQueue->front()->Set_Delay(false);
+					pFindedQueue->front()->Set_Delay(((*iter_begin)->fDelayTime != 0), (*iter_begin)->fDelayTime);
 					pFindedQueue->front()->Set_AutoFind((*iter_begin)->bAutoFind);
 					if((*iter_begin)->bFinishPos) pFindedQueue->front()->Set_FinishPos((*iter_begin)->vFinishPos);
 					pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
@@ -195,6 +206,7 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 void CParticleMgr::Create_ParticleEffect(_tchar* szName, _float fLifeTime, _v3 vPos, CTransform* pFollowTrans)
 {
 	PARTICLE_INFO* pInfo = new PARTICLE_INFO;
+	ZeroMemory(pInfo, sizeof(PARTICLE_INFO));
 
 	lstrcpy(pInfo->szName, szName);
 	pInfo->fLifeTime = fLifeTime;
@@ -206,9 +218,26 @@ void CParticleMgr::Create_ParticleEffect(_tchar* szName, _float fLifeTime, _v3 v
 	m_vecParticle.push_back(pInfo);
 }
 
+void CParticleMgr::Create_ParticleEffect_Delay(_tchar * szName, _float fLifeTime, _float fDelay, _v3 vPos, CTransform * pFollowTrans)
+{
+	PARTICLE_INFO* pInfo = new PARTICLE_INFO;
+	ZeroMemory(pInfo, sizeof(PARTICLE_INFO));
+
+	lstrcpy(pInfo->szName, szName);
+	pInfo->fLifeTime = fLifeTime;
+	pInfo->fDelayTime = fDelay;
+	pInfo->pFollowTrans = pFollowTrans;
+	pInfo->vCreatePos = vPos;
+	pInfo->bAutoFind = false;
+	pInfo->bFinishPos = false;
+
+	m_vecParticle.push_back(pInfo);
+}
+
 void CParticleMgr::Create_ParticleEffect_FinishPos(_tchar* szName, _float fLifeTime, _v3 vPos, _v3 vFinishPos, CTransform * pFollowTrans)
 {
 	PARTICLE_INFO* pInfo = new PARTICLE_INFO;
+	ZeroMemory(pInfo, sizeof(PARTICLE_INFO));
 
 	lstrcpy(pInfo->szName, szName);
 	pInfo->fLifeTime = fLifeTime;
@@ -326,6 +355,7 @@ void CParticleMgr::Create_AngleEffect(_tchar * szName, _v3 vPos, _v3 vAngle, CTr
 void CParticleMgr::Create_AutoFindEffect(_tchar* szName, _float fLifeTime, _v3 vPos, CTransform* pFollowTrans)
 {
 	PARTICLE_INFO* pInfo = new PARTICLE_INFO;
+	ZeroMemory(pInfo, sizeof(PARTICLE_INFO));
 
 	lstrcpy(pInfo->szName, szName);
 	pInfo->fLifeTime = fLifeTime;

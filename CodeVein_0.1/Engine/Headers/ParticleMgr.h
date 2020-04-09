@@ -17,6 +17,7 @@ public:
 	HRESULT Ready_ParticleManager();
 	HRESULT Update_ParticleManager(const _double TimeDelta);
 	void Create_ParticleEffect(_tchar* szName, _float fLifeTime, _v3 vPos, CTransform* pFollowTrans = nullptr);
+	void Create_ParticleEffect_Delay(_tchar* szName, _float fLifeTime, _float fDelay, _v3 vPos, CTransform* pFollowTrans = nullptr);
 	void Create_ParticleEffect_FinishPos(_tchar* szName, _float fLifeTime, _v3 vPos, _v3 vFinishPos, CTransform* pFollowTrans = nullptr);
 	void Create_Effect(_tchar* szName, _v3 vPos, CTransform* pFollowTrans = nullptr);
 	void Create_DirEffect(_tchar* szName, _v3 vPos, _v3 vDir, CTransform* pFollowTrans = nullptr);
@@ -42,6 +43,7 @@ private:
 	{
 		_tchar	szName[256];
 		_float	fLifeTime;
+		_float	fDelayTime;
 		_v3		vCreatePos;
 		_v3		vFinishPos;
 		_bool	bAutoFind;

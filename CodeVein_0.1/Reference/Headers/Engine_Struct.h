@@ -339,7 +339,9 @@ namespace Engine
 			TYPE_ID_MAP,
 			TYPE_AO_MAP,
 			TYPE_END };
+
 		LPDIRECT3DTEXTURE9		pTextures[TYPE_END];
+		_ulong					m_dwMaterialPass;
 	}MESHTEXTURE;
 
 

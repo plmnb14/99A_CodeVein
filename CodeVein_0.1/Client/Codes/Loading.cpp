@@ -20,6 +20,7 @@
 #include "PoisonBullet.h"
 #include "PoisonChaseBullet.h"
 #include "PoisonRotationBullet.h"
+#include "PoisonTornado.h"
 #include "BlackUrchin.h"
 #include "BlackWolf.h"
 #include "GunGenji.h"
@@ -285,11 +286,17 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_ScratchBlur_Ver")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_ScratchBlur_Sub_Hor")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_ScratchBlur_Sub_Ver")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Ring_Hor")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Ring_Ver")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_RedParticle_Explosion")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_RedParticle_Upper")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_RedCircle_Flash")))
 		return E_FAIL;
@@ -306,6 +313,22 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_DarkRedOnion_Explosion", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Blood_Explosion")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_SplitAssert_LaserAfter_Smoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_SplitAssert_LaserAfter_RingLine", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Floor_BlackRing", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Floor_RedRing", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_RotYRing_Black", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_RotYRing_Red", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_WindMesh", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_WindTronadeMesh", true)))
 		return E_FAIL;
 #pragma endregion
 
@@ -527,6 +550,9 @@ _uint CLoading::Loading_Stage()
 		return E_FAIL;
 	// 독나방 4방향 투사체
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonRotationBullet", CPoisonRotationBullet::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 독나방 기모아서 쏘기 충돌체
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonTornado", CPoisonTornado::Create(m_pGraphicDev))))
 		return E_FAIL;
 	// 검은 성게
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))

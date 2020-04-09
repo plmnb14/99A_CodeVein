@@ -32,6 +32,8 @@ HRESULT CBossDecoUI::Ready_GameObject(void * pArg)
 	m_fSizeX = WINCX * 0.5f;
 	m_fSizeY = 30.f;
 
+	m_fViewZ = 1.1f;
+
 	return NOERROR;
 }
 
@@ -62,6 +64,9 @@ _int CBossDecoUI::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CBossDecoUI::Render_GameObject()
 {
+	if (!m_bIsActive)
+		return NOERROR;
+
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
