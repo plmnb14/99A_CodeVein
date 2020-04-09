@@ -69,6 +69,7 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 	m_pNavMesh->Goto_Next_Subset(m_pTransform->Get_Pos(), nullptr);
 
 	CScriptManager::Get_Instance()->Update_ScriptMgr(TimeDelta, m_pNavMesh->Get_SubSetIndex(), m_pNavMesh->Get_CellIndex());
+	
 	return NO_EVENT;
 }
 
@@ -4856,7 +4857,7 @@ HRESULT CPlayer::SetUp_Default()
 	m_tObjParam.bDodge = false;
 	m_tObjParam.fHp_Cur = 100.f;
 	m_tObjParam.fHp_Max = 100.f;
-
+	
 	// Anim
 	m_fAnimMutiply = 1.f;
 

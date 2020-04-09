@@ -58,8 +58,9 @@ Tex_ClickUI|ClickUI%d.png|..\..\Client\Resources\Texture\TestUI\ClickUI\|0|1
 Tex_Consume_Item|Consume_Item%d.tga|..\..\Client\Resources\Texture\TestUI\Consume_Item\|0|5
 Tex_CursorSelect|CursorSelect%d.tga|..\..\Client\Resources\Texture\TestUI\CursorSelect\|0|3
 Tex_CursorUI|CursorUI%d.png|..\..\Client\Resources\Texture\TestUI\CursorUI\|0|1
-Tex_DamegeNum|DamegeNum%d.png|..\..\Client\Resources\Texture\TestUI\DamegeNum\|0|10
+Tex_DamegeNum|DamegeNum%d.png|..\..\Client\Resources\Texture\TestUI\DamegeNum\|0|11
 Tex_Expendables|Expendables%d.png|..\..\Client\Resources\Texture\TestUI\Expendables\|0|5
+Tex_FontNumber|FontNumber%d.png|..\..\Client\Resources\Texture\TestUI\FontNumber\|0|11
 Tex_Get_ItemUI|Get_ItemUI%d.png|..\..\Client\Resources\Texture\TestUI\Get_ItemUI\|0|7
 Tex_Halberd_Icon|Halberd_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Halberd_Icon\|0|3
 Tex_Hammer_Icon|Hammer_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Hammer_Icon\|0|3
@@ -78,7 +79,7 @@ Tex_MonsterHPBar|MonsterHPBar%d.png|..\..\Client\Resources\Texture\TestUI\Monste
 Tex_Number|Number%d.tga|..\..\Client\Resources\Texture\TestUI\Number\|0|10
 Tex_Passive_Icon|Passive_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Passive_Icon\|0|89
 Tex_PickUp_Item|PickUp_Item%d.png|..\..\Client\Resources\Texture\TestUI\PickUp_Item\|0|3
-Tex_PlayerHPUI|PlayerHPUI%d.png|..\..\Client\Resources\Texture\TestUI\PlayerHPUI\|0|2
+Tex_PlayerHPUI|PlayerHPUI%d.png|..\..\Client\Resources\Texture\TestUI\PlayerHPUI\|0|3
 Tex_QuickSlotUI|QuickSlotUI%d.png|..\..\Client\Resources\Texture\TestUI\QuickSlotUI\|0|5
 Tex_Select_UI|Select_UI.png|..\..\Client\Resources\Texture\TestUI\Select_UI\|0|1
 Tex_SingleSword_Icon|SingleSword_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\SingleSword_Icon\|0|3

@@ -44,7 +44,7 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 _int CScene_Stage_Training::Update_Scene(_double TimeDelta)
 {
 	CUI_Manager::Get_Instance()->Update_UI();
-
+		
 	return _int();
 }
 
@@ -63,7 +63,11 @@ HRESULT CScene_Stage_Training::Ready_Layer_Player(const _tchar * pLayerTag)
 	TARGET_TO_TRANS(pInstance)->Set_Angle(V3_NULL);
 
 	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Player", nullptr);
-
+	
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerHP", SCENE_STAGE, L"Layer_PlayerHP")))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerST", SCENE_STAGE, L"Layer_PlayerST")))
+		return E_FAIL;
 	return S_OK;
 }
 

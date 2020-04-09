@@ -44,11 +44,7 @@ HRESULT CArmor_Inven::Ready_GameObject(void * pArg)
 
 	SetUp_Default();
 
-	LOOP(5)
-	Add_Armor(CArmor::ARMOR_2);
-
-	LOOP(5)
-		Add_Armor(CArmor::ARMOR_3);
+	
 	return NOERROR;
 }
 

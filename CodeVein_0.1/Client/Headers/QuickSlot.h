@@ -32,7 +32,7 @@ private:
 	void	SetUp_Default();
 
 public:
-	CExpendables::EXPEND_TYPE Use_Item();
+	CExpendables::EXPEND_TYPE Use_Item(); // 퀵슬롯에서 아이템 사용시 해당 아이템 제거 및 사용 아이템 타입 반환
 
 private:
 	CTransform*				m_pTransformCom = nullptr;

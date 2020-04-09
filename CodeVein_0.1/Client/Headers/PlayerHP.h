@@ -24,6 +24,7 @@ public:
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
+	void	SetUp_Default();
 	void	SetUp_State(_double TimeDelta);
 
 private:
@@ -38,7 +39,8 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
-	CFontNumManager*		m_pFont = nullptr;
+	CFontNumManager*		m_pFontCurHP = nullptr;
+	CFontNumManager*		m_pFontTotalHP = nullptr;
 public:
 	static CPlayerHP*		Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);
