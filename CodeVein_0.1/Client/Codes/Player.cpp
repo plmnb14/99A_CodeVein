@@ -1325,25 +1325,27 @@ void CPlayer::Key_Skill()
 		_v3 vEffPos = _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f;
 
 		g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle"	, 0.5f	, m_pTransform->Get_Pos() + _v3(0.f, 1.3f, 0.f));
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor"		, 1.f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor"			, 1.f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_0"						, 1.f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_1"						, 1.f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_2"						, 1.f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_3"						, 1.f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0"				, 1.f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 1.f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Ver"		, 1.55f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Ver"			, 1.55f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_0"						, 1.55f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_1"						, 1.55f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_2"						, 1.55f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_3"						, 1.55f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0"				, 1.55f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_Ring_Hor"				, 1.6f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_Ring_Ver"				, 1.6f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_RedCircle_Flash"		, 1.6f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 1.6f	,vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor"		, 1.f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Hor"	, 1.f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor"			, 1.f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_0"						, 1.f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_1"						, 1.f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_2"						, 1.f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_3"						, 1.f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0"				, 1.f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 1.f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Ver"		, 1.55f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Ver"	, 1.55f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Ver"			, 1.55f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_0"						, 1.55f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_1"						, 1.55f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_2"						, 1.55f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_3"						, 1.55f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0"				, 1.55f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_Ring_Hor"				, 1.6f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_Ring_Ver"				, 1.6f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_RedCircle_Flash"		, 1.6f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 1.6f	, vEffPos, m_pTransform);
 	}
 
 	// 3¹ø ½ºÅ³

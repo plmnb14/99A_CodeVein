@@ -772,5 +772,8 @@
     <FxCompile Include="..\ShaderFiles\Shader_UI.fx">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
+    <FxCompile Include="..\ShaderFiles\Shader_Blur.fx">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
   </ItemGroup>
 </Project>

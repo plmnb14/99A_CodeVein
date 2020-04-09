@@ -153,7 +153,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (nullptr == m_pShader_LightAcc)
 		return E_FAIL;
 
-	// For.Shader_LightAcc
+	// For.Shader_Blend
 	m_pShader_Blend = CShader::Create(m_pGraphic_Dev, L"../ShaderFiles/Shader_Blend.fx");
 	if (nullptr == m_pShader_Blend)
 		return E_FAIL;
@@ -166,6 +166,11 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	// For.Shader_Effect
 	m_pShader_Effect = static_cast<CShader*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Shader_Effect"));
 	if (nullptr == m_pShader_Effect)
+		return E_FAIL;
+
+	// For.Shader_Blur
+	m_pShader_Blur = static_cast<CShader*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Shader_Blur"));
+	if (nullptr == m_pShader_Blur)
 		return E_FAIL;
 	
 	// For.Buffer_ViewPort
@@ -939,6 +944,7 @@ void CRenderer::Free()
 	Safe_Release(m_pShader_LightAcc);
 	Safe_Release(m_pShader_Shadow);
 	Safe_Release(m_pShader_Effect);
+	Safe_Release(m_pShader_Blur);
 	
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pTarget_Manager);

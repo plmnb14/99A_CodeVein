@@ -326,6 +326,7 @@
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\ShaderFiles\Shader_Blur.fx" />
     <FxCompile Include="..\ShaderFiles\Shader_Default.fx" />
     <FxCompile Include="..\ShaderFiles\Shader_Effect.fx" />
     <FxCompile Include="..\ShaderFiles\Shader_Gizmo.fx" />
