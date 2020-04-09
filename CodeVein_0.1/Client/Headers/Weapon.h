@@ -17,6 +17,7 @@ public:
 		WPN_Hammer_Normal,
 		WPN_Halverd_Normal,
 		WPN_Gun_Normal,
+		WPN_Shield_Normal,
 		WPN_DATA_End
 	};
 

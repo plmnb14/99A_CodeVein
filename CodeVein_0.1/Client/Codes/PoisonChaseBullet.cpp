@@ -65,8 +65,8 @@ _int CPoisonChaseBullet::Update_GameObject(_double TimeDelta)
 	if (m_bDead)
 		return DEAD_OBJ;
 
-	OnCollisionEnter();
 	Check_PhyCollider();
+	OnCollisionEnter();
 
 	_v3 vPlayerPos = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos();
 	m_vDir = *D3DXVec3Normalize(&_v3(), &( (vPlayerPos + _v3(0.f, 1.f, 0.f)) - m_pTransformCom->Get_Pos()));
@@ -251,12 +251,18 @@ void CPoisonChaseBullet::OnCollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					cout << "응 투사체 부딪힘" << endl;
+					if (false == iter->Get_Target_Dodge())
+					{
+						iter->Set_Target_CanHit(false);
 
-					iter->Set_Target_CanHit(false);
-					iter->Add_Target_Hp(m_tObjParam.fDamage);
+						// 타겟이 피격 가능하다면
+						if (iter->Get_Target_IsHit())
+							iter->Set_HitAgain(true);
 
-					m_dCurTime = 100;	// 바로 사망시키기 위해서 현재시간 100줬음
+						iter->Add_Target_Hp(-m_tObjParam.fDamage);
+					}
+
+					m_dCurTime = 1000;	// 바로 사망시키기 위해서 현재시간 100줬음
 
 					break;
 
@@ -302,9 +308,23 @@ HRESULT CPoisonChaseBullet::Ready_Collider()
 
 	m_vecPhysicCol.reserve(1);
 
+	//경계체크용
 	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 
-	_float fRadius = 1.f;
+	_float fRadius = 1.4f;
+
+	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
+	pCollider->Set_Dynamic(true);
+	pCollider->Set_Type(COL_SPHERE);
+	pCollider->Set_CenterPos(_v3(m_pTransformCom->Get_WorldMat().m[3][0], m_pTransformCom->Get_WorldMat().m[3][1], m_pTransformCom->Get_WorldMat().m[3][2]));
+	pCollider->Set_Enabled(true);
+
+	m_vecPhysicCol.push_back(pCollider);
+
+	// 몸통
+	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
+
+	fRadius = 1.f;
 
 	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
 	pCollider->Set_Dynamic(true);
@@ -323,7 +343,7 @@ HRESULT CPoisonChaseBullet::Ready_Collider()
 	// 총알 중앙
 	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 
-	fRadius = 0.7f;
+	fRadius = 0.5f;
 
 	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
 	pCollider->Set_Dynamic(true);

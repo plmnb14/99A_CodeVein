@@ -21,6 +21,7 @@
 #include "PoisonBullet.h"
 #include "PoisonChaseBullet.h"
 #include "PoisonRotationBullet.h"
+#include "PoisonTornado.h"
 #include "BlackUrchin.h"
 #include "BlackWolf.h"
 #include "GunGenji.h"
@@ -489,6 +490,9 @@ _uint CLoading::Loading_Stage()
 		return E_FAIL;
 	// 독나방 4방향 투사체
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonRotationBullet", CPoisonRotationBullet::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 독나방 기모아서 쏘기 충돌체
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonTornado", CPoisonTornado::Create(m_pGraphicDev))))
 		return E_FAIL;
 	// 검은 성게
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))

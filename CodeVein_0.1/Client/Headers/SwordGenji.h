@@ -85,7 +85,9 @@ private:	//패턴들
 
 	CBT_Composite_Node*		RotationAndNearAttack();
 	CBT_Composite_Node*		ChaseAndNearAttack();
-	CBT_Composite_Node*		Chase();
+
+	CBT_Composite_Node*		Chase_NearOrFar();
+	CBT_Composite_Node*		Chase(_float fAcceptable_Radius);
 	CBT_Composite_Node*		NearAttack();	// 랜덤 근거리 공격
 
 	CBT_Composite_Node*		LookPlayer_FarAttack();	//플레이어 바라본 후 랜덤 원거리 공격

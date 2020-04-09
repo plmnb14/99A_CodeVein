@@ -46,14 +46,14 @@ private:	//패턴들
 	CBT_Composite_Node* Left_Eat();		//충돌완	공격 거리 5
 	// 2. 오른쪽 냠
 	CBT_Composite_Node* Right_Eat();	//충돌완	공격 거리 5
-	// 3. 냠-> 빙그르르냠
-	CBT_Composite_Node* Eat_Turn_Eat();	//충돌완 이펙트 수정 바람, 모션 수정함
+	// 3. 냠-> 뒤돌아서 덥썩
+	CBT_Composite_Node* Eat_TurnEat();	//충돌완 이펙트 수정 바람, 모션 수정함,
 	// 4. 기모아서 독 소용돌이
 	CBT_Composite_Node* Poison_Tornado_After_Charging();	// 공격범위 3 이상
 	// 5. 좁은 범위 한바퀴 독 발사
 	CBT_Composite_Node* OneTurn_Poison();	//충돌완	공격 거리 3
 	// 6. 냠 회전
-	CBT_Composite_Node* Eat_Turn();	// 충돌완	이펙트 추가 바람
+	CBT_Composite_Node* Eat_Turn();	// 충돌완
 	// 7. 트린다미어
 	CBT_Composite_Node* WhirlWind();	// 충돌완
 	// 8. 오른쪽 냠, 왼쪽 냠
@@ -98,8 +98,8 @@ private:	//패턴들
 	// 시야각내에 있으면 공격(첫 패턴부터 차례대로), 없으면 추적
 	CBT_Composite_Node*		Show_ChaseAndNearAttack();
 	CBT_Composite_Node*		Show_TurnAndFarAttack();
-	CBT_Composite_Node*		Show_NearAttack();	// 패턴 순서대로 근거리 공격	
-	CBT_Composite_Node*		Show_FarAttack();	// 패턴 순서대로 원거리 공격
+	CBT_Composite_Node*		Show_NearAttack();	// 7개, 패턴 순서대로 근거리 공격	
+	CBT_Composite_Node*		Show_FarAttack();	// 4개, 패턴 순서대로 원거리 공격
 
 	//////////////////// 
 
@@ -110,6 +110,7 @@ private:
 	CMesh_Dynamic*		m_pMeshCom = nullptr;
 	CAIController*		m_pAIControllerCom = nullptr;
 	CNavMesh*			m_pNavMesh = nullptr;
+	CCollider*			m_pCollider = nullptr;
 
 
 	//렌더에서 타임델타 쓰기위해서 저장해놓음
@@ -153,6 +154,7 @@ private:
 	_bool Is_InFov(_float fDegreeOfFov, _v3 vTargetPos);
 
 	void Check_PhyCollider();
+	void Push_Collider();
 
 	HRESULT Draw_Collider();
 

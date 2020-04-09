@@ -71,9 +71,9 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
 	//Check_ShowValue->Set_Child(Start_Show());
 	//Start_Sel->Add_Child(Check_ShowValue);
-	//Start_Sel->Add_Child(Start_Game());
+	Start_Sel->Add_Child(Start_Game());
 
-	Start_Sel->Add_Child(Shot());
+	//Start_Sel->Add_Child(Dodge_B());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -555,12 +555,18 @@ CBT_Composite_Node * CGunGenji::Upper_Slash()
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기", 0.083, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2, 0.534, 0);
+	CBT_Wait* Wait1 = Node_Wait("대기1", 0.45, 0);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 0.6f, 0.566, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani43);
 	MainSeq->Add_Child(Show_Ani42);
 
-	Root_Parallel->Set_Sub_Child(Move0);
+	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(Move1);
 
 	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pGun->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.5, 1, 0.20, 0);
 	Root_Parallel->Add_Service(pHitCol);
@@ -577,7 +583,10 @@ CBT_Composite_Node * CGunGenji::Arm_Attack()
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기", 0.25, 0);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 1, 1.05, 0);
+	//CBT_Wait* Wait0 = Node_Wait("대기", 0.35, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2, 1.05, 0);
+	CBT_Wait* Wait1 = Node_Wait("대기1", 0.317, 0);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", -0.6f, 1.066, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani45);
@@ -586,6 +595,8 @@ CBT_Composite_Node * CGunGenji::Arm_Attack()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(Move1);
 
 	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pGun->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1, 1, 0.2, 0);
 	Root_Parallel->Add_Service(pHitCol);
@@ -603,6 +614,8 @@ CBT_Composite_Node * CGunGenji::Sting_Attack()
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기", 0.42, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2.f, 0.28, 0);
+	CBT_Wait* Wait1 = Node_Wait("대기1", 0.95, 0);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 0.6f, 0.537, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani46);
@@ -611,6 +624,8 @@ CBT_Composite_Node * CGunGenji::Sting_Attack()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(Move1);
 
 	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pGun->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.7, 1, 0.083, 0);
 	Root_Parallel->Add_Service(pHitCol);
@@ -626,8 +641,11 @@ CBT_Composite_Node * CGunGenji::Cut_To_Right()
 	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.3f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
-	CBT_Wait* Wait0 = Node_Wait("대기", 0.75, 0);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2, 0.25, 0);
+	CBT_Wait* Wait0 = Node_Wait("대기0", 0.3, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 1, 0.4, 0);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 2, 0.35, 0);
+	CBT_Wait* Wait1 = Node_Wait("대기1", 0.367, 0);
+	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", -0.2f, 0.5, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani47);
@@ -636,6 +654,9 @@ CBT_Composite_Node * CGunGenji::Cut_To_Right()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(Move1);
+	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(Move2);
 
 	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pGun->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.8, 1, 0.25, 0);
 	Root_Parallel->Add_Service(pHitCol);
@@ -647,20 +668,24 @@ CBT_Composite_Node * CGunGenji::Dodge_B()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 	CBT_Sequence* MainSeq = Node_Sequence("뒤로 회피");
-	CBT_Play_Ani* Show_Ani162 = Node_Ani("뒤로 회피", 162, 0.95f);
+	CBT_Play_Ani* Show_Ani162 = Node_Ani("뒤로 회피", 159, 0.95f);
 	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.3f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
-	CBT_Wait* Wait0 = Node_Wait("대기", 0.4, 0);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", -10, 0.1, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 0.6f, 0.183, 0);
+	CBT_Wait* Wait0 = Node_Wait("대기0", 0.117, 0);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", -4, 0.483, 0);
+	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", 0.5, 0.117, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani162);
 	MainSeq->Add_Child(Show_Ani42);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
-	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(Move1);
+	SubSeq->Add_Child(Move2);
 
 	return Root_Parallel;
 }
@@ -990,10 +1015,8 @@ void CGunGenji::Check_PhyCollider()
 	{
 		m_pMeshCom->Reset_OldIndx();	//애니 인덱스 초기화
 
-		//m_tObjParam.fHp_Cur -= 0.99f;	// 체력 임의로 닳게 만듦.
-
 		m_bAIController = false;
-		cout << "나도 부딪힘 ^^" << endl;
+
 		m_tObjParam.bIsHit = true;
 		m_tObjParam.bCanHit = true;
 
@@ -1053,7 +1076,7 @@ void CGunGenji::Push_Collider()
 	{
 		CCollider* pCollider = TARGET_TO_COL(iter);
 
-		cout << m_pAIControllerCom->Get_FloatValue(L"Monster_Speed") << endl;
+		//cout << m_pAIControllerCom->Get_FloatValue(L"Monster_Speed") << endl;
 
 		// 지금 속도값 임의로 넣었는데 구해서 넣어줘야함 - 완료
 		if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_pAIControllerCom->Get_FloatValue(L"Monster_Speed")))

@@ -73,7 +73,7 @@ private:	//패턴들
 
 	// 회피
 	// 1. 뒤로 회피
-	CBT_Composite_Node* Dodge_B();
+	CBT_Composite_Node* Dodge_B();	// 보류
 
 
 	CBT_Composite_Node*		Start_Game();
