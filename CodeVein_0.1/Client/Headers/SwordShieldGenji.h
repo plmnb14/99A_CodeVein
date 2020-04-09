@@ -48,6 +48,9 @@ public:
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
 
+public:
+	_mat*	Get_Bonmatrix() { return m_matBones[Bone_Head]; }
+
 private:	//패턴들
 	// 근거리
 	// 1. 어퍼슬래쉬, 이동거리 : 1

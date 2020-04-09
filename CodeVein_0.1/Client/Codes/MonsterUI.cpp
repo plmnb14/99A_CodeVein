@@ -1,7 +1,8 @@
 #include "stdafx.h"
 #include "..\Headers\MonsterUI.h"
 
-#include "CameraMgr.h"
+#include "GunGenji.h"
+
 
 CMonsterUI::CMonsterUI(_Device Graphic_Device)
 	: CUI(Graphic_Device)
@@ -29,7 +30,6 @@ HRESULT CMonsterUI::Ready_GameObject(void* pArg)
 
 	m_fSizeX = m_pTransformCom->Get_Size().x;
 	m_fSizeY = m_pTransformCom->Get_Size().y;
-
 
 	return S_OK;
 }
@@ -82,6 +82,7 @@ _int CMonsterUI::Update_GameObject(_double TimeDelta)
 
 	
 	m_pTransformCom->Set_Pos(_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos()) + (WORLD_UP * 2.f));
+	m_pTransformCom->Set_Pos(_v3());
 
 	if (0 == m_iCheck_Renderindex)
 		m_pTransformCom->Set_Pos((_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos().x, TARGET_TO_TRANS(m_pTarget)->Get_Pos().y, (TARGET_TO_TRANS(m_pTarget)->Get_Pos().z - 0.06f)) + (WORLD_UP * 2.f)));

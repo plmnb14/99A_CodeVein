@@ -42,6 +42,7 @@ HRESULT CSwordShieldGenji::Ready_GameObject(void * pArg)
 	//// MonsterHP UI
 	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
 	m_pMonsterUI->Set_Target(this);
+	m_pMonsterUI->Set_Bonmatrix(m_matBones[Bone_Head]);
 	m_pMonsterUI->Ready_GameObject(NULL);
 
 	m_pDamegeNumUI = static_cast<CDamegeNumUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_DamegeNumUI", pArg));

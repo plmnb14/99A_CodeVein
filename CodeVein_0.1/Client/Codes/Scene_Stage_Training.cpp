@@ -45,6 +45,14 @@ _int CScene_Stage_Training::Update_Scene(_double TimeDelta)
 {
 	CUI_Manager::Get_Instance()->Update_UI();
 
+	// 임시로 보스 출현 메시지 띄워놓음
+	// 보스랑 연동할 시에 반드시 삭제해야 함
+	if (g_pInput_Device->Key_Down(DIK_I))
+	{
+		CMassageUI* pMassageUI = static_cast<CMassageUI*>(g_pManagement->Get_GameObjectBack(L"Layer_BossMassageUI", SCENE_STAGE));
+		pMassageUI->Set_Check_Play_BossnameUI(true);
+	}
+
 	return _int();
 }
 
@@ -91,11 +99,11 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 
 	CGameObject* pInstance = nullptr;
 
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossMassageUI", SCENE_STAGE, L"Layer_BossMassageUI")))
+		return E_FAIL;
+
 	/* if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Start_BossUI", SCENE_STAGE, L"Layer_MassageUI")))
 	 	return E_FAIL;*/
-
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Start_BossUI", SCENE_STAGE, L"Layer_MassageUI")))
-	//	return E_FAIL;
 
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Get_ItemUI", SCENE_STAGE, L"Layer_Get_ItemUI")))
 	//	 return E_FAIL;

@@ -47,16 +47,7 @@ _int CMassageUI::Update_GameObject(_double TimeDelta)
 	SetUp_State(TimeDelta);
 
 	if (true == m_bCheck_Play_BossnameUI)
-	{
 		m_pRendererCom->Add_RenderList(RENDER_UI, this);
-
-		/*if (m_fTimer >= 3.f)
-		{
-			m_bCheck_MassageStart = true;
-			m_bCheck_Play_BossnameUI = false;
-		}*/
-			
-	}
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
