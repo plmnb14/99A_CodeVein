@@ -199,34 +199,36 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	//	return Out;
 	//}
 
+	//if (fShadow < 1.f)
+	//{
+	//}
+
 	// Shadow End ====================================================================
 
 	vector		vLook = vWorldPos - g_vCamPosition;
 
-	Out.vSpecular = g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 30.f) * (g_vLightSpecular * g_vMtrlSpecular);
+	Out.vSpecular = vDepthInfo.z * g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 30.f) * (g_vLightSpecular * g_vMtrlSpecular);
 	Out.vSpecular.a = 0.f;
 
 	// RimLight ====================================================================
-	float fRimWidth = 1.5f;
-	vector vCamPos = normalize(g_vCamPosition - vWorldPos);
-	float fRim = smoothstep((1.f - fRimWidth), (1.f), (vDepthInfo.x) - saturate(abs(dot(vNormal, vCamPos))));
-	//float fRim = smoothstep(max(1.f - fRimWidth + vDepthInfo.x, 0.5f), max(1.f - fRimWidth + vDepthInfo.x, 0.9f), (vDepthInfo.x) - saturate(abs(dot(vNormal, vCamPos))));
-	float4 rc = g_vLightDiffuse;
-	Out.vShade += (pow(fRim, 2.f) * rc);
+	//float fRimWidth = 1.5f;
+	//vector vCamPos = normalize(g_vCamPosition - vWorldPos);
+	//float fRim = smoothstep((1.f - fRimWidth), (1.f), (vDepthInfo.x) - saturate(abs(dot(vNormal, vCamPos))));
+	////float fRim = smoothstep(max(1.f - fRimWidth + vDepthInfo.x, 0.5f), max(1.f - fRimWidth + vDepthInfo.x, 0.9f), (vDepthInfo.x) - saturate(abs(dot(vNormal, vCamPos))));
+	//float4 rc = g_vLightDiffuse;
+	//Out.vShade += (pow(fRim, 2.f) * rc);
 	// RimLight End ====================================================================
 
 
 	// SSAO ====================================================================
-	vNormal = mul(vNormal, g_matProjInv);
-	float ao = Get_SSAO(vNormal.xyz, vDepthInfo.xyz, In.vTexUV);
-	Out.vSSAO = float4(ao, 0, 0, 1);
+	//vNormal = mul(vNormal, g_matProjInv);
+	//float ao = Get_SSAO(vNormal.xyz, vDepthInfo.xyz, In.vTexUV);
+	//Out.vSSAO = float4(ao, 0, 0, 1);
 	// SSAO End ====================================================================
 
-	Out.vShade.rgb *= fShadow;
-	//if (fShadow < 1.f)
-	//{
-	//	Out.vShade.grb *= fShadow;
-	//}
+	//Out.vShade.rgb *= fShadow;
+
+	//Out.vShade.rgb *= fShadow;
 
 	return Out;
 }

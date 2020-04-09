@@ -419,7 +419,7 @@ HRESULT CRenderer::Render_ShadowMap()
 	//_v3 vLookAt = m_vLookAtPos;
 
 	D3DXMatrixLookAtLH(&matView, &vLightPos, &vLookAt, &WORLD_UP);
-	D3DXMatrixOrthoLH(&matProj, 200.f, 200.f, 0.1f, 200.f);
+	D3DXMatrixOrthoLH(&matProj, 20.f, 20.f, 0.1f, 100.f);
 
 	m_pShader_Shadow->Set_Value("g_matLightView", &matView, sizeof(_mat));
 	m_pShader_Shadow->Set_Value("g_matLightProj", &matProj, sizeof(_mat));
@@ -477,7 +477,7 @@ HRESULT CRenderer::Render_Shadow()
 
 
 	D3DXMatrixLookAtLH(&matView, &vLightPos, &vLookAt, &WORLD_UP);
-	D3DXMatrixOrthoLH(&matProj, 200.f, 200.f, 0.1f, 200.f);
+	D3DXMatrixOrthoLH(&matProj, 20.f, 20.f, 0.1f, 100.f);
 
 	m_pShader_Shadow->Set_Value("g_matLightView", &matView, sizeof(_mat));
 	m_pShader_Shadow->Set_Value("g_matLightProj", &matProj, sizeof(_mat));
@@ -663,6 +663,8 @@ HRESULT CRenderer::Render_Blend()
 	if (FAILED(m_pShader_Blend->Set_Texture("g_ShadeTexture", m_pTarget_Manager->Get_Texture(L"Target_Shade"))))
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_SpecularTexture", m_pTarget_Manager->Get_Texture(L"Target_Specular"))))
+		return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Texture("g_EmissiveTexture", m_pTarget_Manager->Get_Texture(L"Target_Velocity"))))
 		return E_FAIL;
 
 

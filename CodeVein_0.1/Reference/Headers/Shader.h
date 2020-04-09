@@ -7,6 +7,8 @@
 
 BEGIN(Engine)
 
+class CMesh_Static;
+class CMesh_Dynamic;
 class ENGINE_DLL CShader final : public CComponent
 {
 private:
@@ -17,6 +19,9 @@ public:
 	HRESULT Set_Bool(D3DXHANDLE Handle, _bool Bool);
 	HRESULT Set_Value(D3DXHANDLE Handle, const void* pData, _uint iByte);
 	HRESULT Set_Texture(D3DXHANDLE Handle, LPDIRECT3DBASETEXTURE9 pTexture);
+	HRESULT Set_StaticTexture_Auto(CMesh_Static* pMeshStatic , _ulong dwSubsetNum);
+	HRESULT Set_DynamicTexture_Auto(CMesh_Dynamic* pMeshStatic, _ulong dwSubsetNum, _ulong dwMeshContainer);
+
 	HRESULT Commit_Changes();
 public:
 	virtual HRESULT Ready_Component_Prototype(const _tchar* pFilePath);

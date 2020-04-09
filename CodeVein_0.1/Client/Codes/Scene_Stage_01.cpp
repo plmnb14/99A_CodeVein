@@ -45,8 +45,6 @@ _int CScene_Stage_01::Update_Scene(_double TimeDelta)
 
 HRESULT CScene_Stage_01::Render_Scene()
 {
-	//IF_NOT_NULL(m_pNavMesh)
-	//	m_pNavMesh->Render_NaviMesh();
 
 	return S_OK;
 }

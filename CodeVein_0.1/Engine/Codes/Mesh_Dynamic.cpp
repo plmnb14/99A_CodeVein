@@ -48,6 +48,11 @@ LPDIRECT3DTEXTURE9 CMesh_Dynamic::Get_MeshTexture(_uint iMeshContainerIndex, _ui
 	return m_MeshContainerList[iMeshContainerIndex]->pMeshTexture[iSubSetIndex].pTextures[eType];
 }
 
+_ulong CMesh_Dynamic::Get_MaterialPass(_ulong iMeshConstainerIdx , _ulong dwSubsetIdx)
+{
+	return (_uint)m_MeshContainerList[iMeshConstainerIdx]->pMeshTexture[dwSubsetIdx].m_dwMaterialPass;
+}
+
 HRESULT CMesh_Dynamic::Ready_Component_Prototype(const _tchar * pFilePath, const _tchar * pFileName, _mat PivotMatrix)
 {
 	_tchar		szFullPath[128] = L"";

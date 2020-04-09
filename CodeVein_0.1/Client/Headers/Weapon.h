@@ -17,6 +17,7 @@ public:
 		WPN_Hammer_Normal,
 		WPN_Halverd_Normal,
 		WPN_Gun_Normal,
+		WPN_Shield_Normal,
 		WPN_DATA_End
 	};
 
@@ -99,6 +100,8 @@ private:
 	_bool					m_bPlayerFriendly = false;		// 플레이어 껀지
 	_bool					m_bTrailEnable = false;
 	_bool					m_bRecordCollision = false;		// 기록할껀지 말껀지 
+
+	_bool					m_tmpEmissiveTest = false;
 
 private:
 	WEAPON_STATE			m_eWeaponType = WEAPON_Ssword;

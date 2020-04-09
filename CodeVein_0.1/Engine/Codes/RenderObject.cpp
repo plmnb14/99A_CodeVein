@@ -68,19 +68,11 @@ HRESULT CRenderObject::Render_GameObject()
 
 	for (_ulong i = 0; i < dwNumSubSet; ++i)
 	{
-		m_pShader->Begin_Pass(m_dwPassNum);
+		m_iPass = m_pMesh_Static->Get_MaterialPass(i);
 
-		if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
-			return E_FAIL;
+		m_pShader->Begin_Pass(m_iPass);
 
-		if (FAILED(m_pShader->Set_Texture("g_NormalTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_NORMAL_MAP))))
-			return E_FAIL;
-
-		//if (FAILED(m_pShader->Set_Texture("g_SpecularTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_SPECULAR))))
-		//	return E_FAIL;
-
-		//if (FAILED(m_pShader->Set_Texture("g_EmissiveTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_EMISSIVE))))
-		//	return E_FAIL;
+		m_pShader->Set_StaticTexture_Auto(m_pMesh_Static, i);
 
 		m_pShader->Commit_Changes();
 
