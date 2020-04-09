@@ -360,6 +360,7 @@ void CYachaMan::Check_Dist()
 				//인지, 범위, 공격불가능 -> 공격중은 아닌데? walk하면서 주위 맴돌기,경계상태에 가깝다
 				m_eFirstCategory = MONSTER_ANITYPE::IDLE;
 				m_eSecondCategory_IDLE = YACHAMAN_IDLETYPE::IDLE_IDLE;
+				Skill_RotateBody();
 				return;
 			}
 		}

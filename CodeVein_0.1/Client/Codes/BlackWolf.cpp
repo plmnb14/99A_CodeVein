@@ -290,6 +290,8 @@ void CBlackWolf::Check_Hit()
 				m_tObjParam.bHitAgain = false;
 				m_pMeshCom->Reset_OldIndx();
 			}
+
+			return;
 		}
 		//피격 진행중 아님
 		else
@@ -309,77 +311,6 @@ void CBlackWolf::Check_Hit()
 			}
 		}
 	}
-
-	//피격 받음
-	//if (false == m_tObjParam.bCanHit)
-	//{
-	//	//피격 진행중 아님, 처음 맞은듯
-	//	if (false == m_tObjParam.bIsHit)
-	//	{
-	//		//체력 없음
-	//		if (0 >= m_tObjParam.fHp_Cur)
-	//		{
-	//			m_eFirstCategory = MONSTER_ANITYPE::DEAD;
-	//			return;
-	//		}
-	//		//체력있음
-	//		else
-	//		{
-	//			m_eFirstCategory = MONSTER_ANITYPE::HIT;
-	//			Check_FBLR();
-	//			return;
-	//		}
-	//	}
-	//	else
-	//	{
-	//		//또 처맞았다면
-	//		if (true == m_tObjParam.bHitAgain)
-	//		{
-	//			m_eFirstCategory = MONSTER_ANITYPE::HIT;
-	//			Check_FBLR();
-	//			return;
-	//		}
-	//	}
-	//}
-	//맞고 있다
-	//if (true == m_tObjParam.bIsHit)
-	//{
-	//	Check_FBLR();
-	//	//3대 맞으면 강제로 회피 작동
-	//	//if (3 <= m_iDodgeCount)
-	//	//{
-	//	//	m_iDodgeCount = 0;
-	//	//	m_eFirstCategory = MONSTER_ANITYPE::MOVE;
-	//	//	m_eSecondCategory_MOVE = WOLF_MOVETYPE::MOVE_DODGE;
-	//	//	m_eState = WOLF_ANI::Dodge;
-	//	//	m_bIsDodge = true;
-	//	//	m_tObjParam.bDodge = false;
-	//	//	m_tObjParam.bIsHit = false;
-	//	//	return;
-	//	//}
-	//	return;
-	//}
-	//맞고 있지 않다
-	//else
-	//{
-	//	//맞을 수 없는 상태, 리액션을 할 타이밍임
-	//	if(false == m_tObjParam.bCanHit)
-	//	{
-	//		//체력 없음
-	//		if (0 >= m_tObjParam.fHp_Cur)
-	//		{
-	//			m_eFirstCategory = MONSTER_ANITYPE::DEAD;
-	//			return;
-	//		}
-	//		//체력있음
-	//		else
-	//		{
-	//			m_eFirstCategory = MONSTER_ANITYPE::HIT;
-	//			Check_FBLR();
-	//			return;
-	//		}
-	//	}
-	//}
 }
 
 void CBlackWolf::Check_FBLR()
