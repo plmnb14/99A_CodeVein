@@ -13,8 +13,14 @@ private:
 	virtual ~CFontNumManager() = default;
 
 public:
+	void Set_Number(_ulong iNum) { m_iNumber = iNum; }
+
+public:
 	virtual HRESULT Ready_GameObject_Prototype();
 	virtual HRESULT Ready_GameObject(void* pArg);
+	virtual _int	Update_GameObject(_double TimeDelta);
+	virtual _int	Late_Update_GameObject(_double TimeDelta);
+	virtual HRESULT Render_GameObject();
 
 private:
 	HRESULT Add_Component();
@@ -30,16 +36,16 @@ public:
 	//_ulong Calc_Digits();
 	_ulong Calc_Digits(_ulong dwNumber);
 	//void Calc_NumberFont();
-	void Calc_NumberFont(_ulong dwFontNum, _float fPosX, _float fPosY, _float fSizeX, _float fSizeY, _float fViewZ);
+	void Calc_NumberFont(_ulong dwFontNum/*, _float fPosX, _float fPosY, _float fSizeX, _float fSizeY, _float fViewZ*/);
 
 private:
 	CFontNumUI* Make_FontNum();
 
-//private:
-//	vector<CFontNumUI*> m_vecFontNum;
-//	_ulong m_iNumber = 0; // 숫자
-//	_ulong m_iDigits = 0; // 자릿수
-	
+private:
+	vector<CFontNumUI*> m_vecFontNum;
+	_ulong m_iNumber = 0; // 숫자
+	_ulong m_iDigits = 0; // 자릿수
+
 
 public:
 	static CFontNumManager*	Create(_Device pGraphic_Device);

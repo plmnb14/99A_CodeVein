@@ -340,6 +340,27 @@ PS_OUT PS_SSD(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_TRAIL(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
+	Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
+
+	// 소프트 이펙트 ==========================================================================================
+	float2		vTexUV;
+	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
+	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
+
+	vector		vDepthInfo = tex2D(DepthSampler, vTexUV);
+	float		fViewZ = vDepthInfo.y * 500.f;
+
+	Out.vColor.a = (Out.vColor.a * saturate(fViewZ - In.vProjPos.w)) * g_fAlpha;
+	// =========================================================================================================
+
+	return Out;
+}
+
 technique Default_Technique
 {
 	pass Default_Rendering // 0
@@ -412,6 +433,21 @@ technique Default_Technique
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_SSD();
+	}
+
+	pass TRAIL // 5
+	{
+		zwriteenable = false;
+
+		AlphablendEnable = true;
+		AlphaTestEnable = true;
+		srcblend = SrcAlpha;
+		DestBlend = InvSrcAlpha;
+		//blendop = add;
+		cullmode = none;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 PS_TRAIL();
 	}
 }
 

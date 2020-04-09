@@ -12,6 +12,8 @@
 #include "Weapon.h"
 #include "Weapon_Slot.h"
 
+#include "Armor.h"
+
 BEGIN(Client)
 
 class CItem_Manager : public CBase

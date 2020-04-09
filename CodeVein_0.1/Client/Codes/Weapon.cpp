@@ -308,6 +308,11 @@ void CWeapon::Set_Enable_Trail(_bool _bEnable)
 	}
 }
 
+void CWeapon::Set_TrailIdx(_ulong _dwIdx)
+{
+	m_pTrailEffect->Set_TrailIdx(_dwIdx);
+}
+
 void CWeapon::Set_Enable_Record(_bool _bRecord)
 {
 	m_bRecordCollision = _bRecord;

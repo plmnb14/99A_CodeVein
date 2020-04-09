@@ -25,10 +25,7 @@ HRESULT CHPBack::Ready_GameObject(void * pArg)
 
 	CUI::Ready_GameObject(pArg);
 
-	/*m_fPosX = 200.f;
-	m_fPosY = 650.f;
-	m_fSizeX = 284.f;
-	m_fSizeY = 32.f;*/
+	m_fViewZ = 1.1f;
 
 	return NOERROR;
 }
@@ -60,6 +57,9 @@ _int CHPBack::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CHPBack::Render_GameObject()
 {
+	if (!m_bIsActive)
+		return NOERROR;
+
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
@@ -79,7 +79,7 @@ HRESULT CHPBack::Render_GameObject()
 
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(0);
+	m_pShaderCom->Begin_Pass(1);
 
 	m_pBufferCom->Render_VIBuffer();
 
@@ -107,7 +107,7 @@ HRESULT CHPBack::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_HPBarBack", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_PlayerHPUI", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
