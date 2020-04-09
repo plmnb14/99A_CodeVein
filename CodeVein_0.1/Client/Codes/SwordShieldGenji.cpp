@@ -2,6 +2,8 @@
 #include "..\Headers\SwordShieldGenji.h"
 #include "..\Headers\Weapon.h"
 
+#include "MonsterUI.h"
+
 CSwordShieldGenji::CSwordShieldGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
@@ -35,6 +37,11 @@ HRESULT CSwordShieldGenji::Ready_GameObject(void * pArg)
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
+
+	//// MonsterHP UI
+	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
+	m_pMonsterUI->Set_Target(this);
+	m_pMonsterUI->Ready_GameObject(NULL);
 
 
 	/////////////// 행동트리 init
@@ -321,6 +328,9 @@ _int CSwordShieldGenji::Update_GameObject(_double TimeDelta)
 	if (m_bIsDead)
 		return DEAD_OBJ;
 
+	// MonsterHP UI
+	m_pMonsterUI->Update_GameObject(TimeDelta);
+
 	// 플레이어 미발견
 	if (false == m_bFight)
 	{
@@ -388,7 +398,7 @@ HRESULT CSwordShieldGenji::Render_GameObject()
 		{
 			m_pShaderCom->Begin_Pass(m_iPass);
 
-			if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE))))
+			if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
 				return E_FAIL;
 
 			m_pShaderCom->Commit_Changes();
@@ -896,7 +906,7 @@ void CSwordShieldGenji::Check_PhyCollider()
 			Start_Dissolve(0.5f, false, true);
 			m_pShield->Start_Dissolve();
 			m_pSword->Start_Dissolve();
-			g_pManagement->Create_Spawn_Effect(m_pTransformCom->Get_Pos());
+			//g_pManagement->Create_Spawn_Effect(m_pTransformCom->Get_Pos());
 		}
 	}
 	else
@@ -1156,6 +1166,8 @@ CGameObject * CSwordShieldGenji::Clone_GameObject(void * pArg)
 
 void CSwordShieldGenji::Free()
 {
+	Safe_Release(m_pMonsterUI);
+
 	Safe_Release(m_pShield);
 	Safe_Release(m_pSword);
 	Safe_Release(m_pNavMesh);

@@ -67,6 +67,9 @@ _int CWeapon::Late_Update_GameObject(_double TimeDelta)
 	if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
 
+	if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
+		return E_FAIL;
+
 	return _int();
 }
 
@@ -86,15 +89,23 @@ HRESULT CWeapon::Render_GameObject()
 
 	for (_uint i = 0; i < iNumSubSet; ++i)
 	{
+		//m_iPass = 0 == i ? 0 : 5;
+		//
+		//if (false == m_tmpEmissiveTest)
+		//	m_iPass = 0;
+		m_iPass = m_pMesh_Static->Get_MaterialPass(i);
+
 		m_pShader->Begin_Pass(m_iPass);
 
-		if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_DIFFUSE))))
-			return E_FAIL;
+		m_pShader->Set_StaticTexture_Auto(m_pMesh_Static, i);
 
-		if (FAILED(m_pShader->Set_Texture("g_NormalTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_NORMAL))))
-			return E_FAIL;
+		//if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
+		//	return E_FAIL;
+		//
+		//if (FAILED(m_pShader->Set_Texture("g_NormalTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_NORMAL_MAP))))
+		//	return E_FAIL;
 
-		//if (FAILED(m_pShader->Set_Texture("g_SpecularTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_SPECULAR))))
+		//if (FAILED(m_pShader->Set_Texture("g_EmissiveTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_EMISSIVE_MAP))))
 		//	return E_FAIL;
 
 		m_pShader->Commit_Changes();
@@ -107,6 +118,38 @@ HRESULT CWeapon::Render_GameObject()
 	m_pShader->End_Shader();
 
 	Draw_Collider();
+
+	return NOERROR;
+}
+
+HRESULT CWeapon::Render_GameObject_SetPass(CShader* pShader, _int iPass)
+{
+	if (nullptr == pShader ||
+		nullptr == m_pMesh_Static)
+		return E_FAIL;
+
+	_mat		ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+
+	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
+		return E_FAIL;
+
+	_ulong dwNumSubSet = m_pMesh_Static->Get_NumMaterials();
+
+	for (_ulong i = 0; i < dwNumSubSet; ++i)
+	{
+		pShader->Begin_Pass(iPass);
+
+		pShader->Commit_Changes();
+
+		m_pMesh_Static->Render_Mesh(i);
+
+		pShader->End_Pass();
+	}
 
 	return NOERROR;
 }
@@ -187,6 +230,8 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 							m_tObjParam.fDamage = m_tWeaponParam->fDamage;
 
 							// 무기 공격력의 +-20%까지 랜덤범위
+							// 몬스터 HP바 확인을 위해 데미지 추가해놓음 - Chae
+							m_tObjParam.fDamage = 10.f;
 							_uint min = (_uint)(m_tObjParam.fDamage - (m_tObjParam.fDamage * 0.2f));
 							_uint max = (_uint)(m_tObjParam.fDamage + (m_tObjParam.fDamage * 0.2f));
 

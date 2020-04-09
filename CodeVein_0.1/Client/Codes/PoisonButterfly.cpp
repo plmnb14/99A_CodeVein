@@ -64,13 +64,11 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 	//Check_ShowValue->Set_Child(Start_Show());
 	//Start_Sel->Add_Child(Check_ShowValue);
 	//Start_Sel->Add_Child(Start_Game());
-
 	////////////
 
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨.
-
-	Start_Sel->Add_Child(Eat_Turn());
+	//Start_Sel->Add_Child(Eat_Turn());
 
 	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	Start_Sel->Add_Child(Rotation0);
@@ -333,7 +331,7 @@ HRESULT CPoisonButterfly::Render_GameObject()
 		{
 			m_pShaderCom->Begin_Pass(m_iPass);
 
-			if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE))))
+			if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
 				return E_FAIL;
 
 			m_pShaderCom->Commit_Changes();
@@ -1128,7 +1126,7 @@ void CPoisonButterfly::Check_PhyCollider()
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
 			Start_Dissolve(0.7f, false, true);
-			g_pManagement->Create_Spawn_Effect(m_pTransformCom->Get_Pos());
+			//g_pManagement->Create_Spawn_Effect(m_pTransformCom->Get_Pos());
 		}
 	}
 	else

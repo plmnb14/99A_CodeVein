@@ -147,8 +147,8 @@ void CMonsterTool::Update(const _float & fTimeDelta)
 		UpdateData(TRUE);
 
 		m_pTestObject->Update_GameObject(fTimeDelta);
-		m_strAniFullTime.Format(L"%.2f", TARGET_TO_D_MESH(m_pTestObject)->Get_AnimationFullTime() * 0.5f);
-		m_strAniTime.Format(L"%.2f", TARGET_TO_D_MESH(m_pTestObject)->Get_TrackInfo().Position * 0.5f);
+		m_strAniFullTime.Format(L"%.2f", TARGET_TO_D_MESH(m_pTestObject)->Get_AnimationFullTime());
+		m_strAniTime.Format(L"%.2f", TARGET_TO_D_MESH(m_pTestObject)->Get_TrackInfo().Position);
 
 		_double NowAniTime = _wtof(m_strAniTime);
 		_double MaxAniTime = _wtof(m_strAniFullTime);

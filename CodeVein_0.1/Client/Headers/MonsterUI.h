@@ -29,9 +29,12 @@ private:
 public:
 	_float		Get_MonsterHP() { return m_fMonsterHp; }
 	_float		Get_TotalHP() { return m_fTotalHP; }
+	_v3			Get_MonsterUI_Pos() { return m_pTransformCom->Get_Pos(); }
 
 	void		Set_MonsterHP(const _float fMonsterHP) { m_fMonsterHp = fMonsterHP; }
 	void		Set_TotalHP(const _float fTotalHP) { m_fTotalHP = fTotalHP; }
+
+	void		Set_Target(CGameObject* Target) { m_pTarget = Target; }
 
 private:
 	_float		m_fSpeed = 0.f;
@@ -49,6 +52,8 @@ private:
 
 	_bool		m_bCheck_Dir = false;
 
+	_uint		m_iCheck_Renderindex = 0;
+
 private:
 	CTransform*				m_pTransformCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
@@ -56,13 +61,8 @@ private:
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
-	/*CGameObject*			m_pMonsterTatget = nullptr;*/
-
-	/*CTexture*				m_pTextrueCom_Bar1 = nullptr;
-	CBuffer_RcTex*			m_pBufferCom_Bar1 = nullptr;*/
-
 public:
-	static CMonsterUI*		Create(_Device pGraphic_Device, CGameObject* MonsterTarget);
+	static CMonsterUI*		Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);
 	virtual void			Free();
 };

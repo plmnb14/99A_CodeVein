@@ -38,6 +38,15 @@ private:
 
 	CBuffer_ViewPort*			m_pViewPortBuffer = nullptr;
 	CTexture*					m_pSSAOTexture = nullptr;
+
+public:
+	//====================
+	// 임시 타겟 변수
+	//====================
+	_v3 m_vLookAtPos = {};
+	virtual void Set_LookAtPos(_v3 _vLookAt) { m_vLookAtPos = _vLookAt; }
+	//====================
+
 private:
 	HRESULT Render_Priority();
 	HRESULT Render_NonAlpha();

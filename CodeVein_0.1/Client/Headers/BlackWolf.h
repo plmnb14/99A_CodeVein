@@ -13,7 +13,7 @@ public:
 	
 	enum WOLF_IDLETYPE { IDLE_IDLE, IDLE_EAT, IDLE_SIT };
 	enum WOLF_MOVETYPE { MOVE_RUN, MOVE_WALK, MOVE_DODGE };
-	//enum WOLF_ATKTYPE { ATK_NORMAL, ATK_COMBO };
+	enum WOLF_ATKTYPE { ATK_NORMAL, ATK_COMBO };
 	enum WOLF_HITTYPE { HIT_HIT_F, HIT_HIT_B };
 	enum WOLF_DOWNTYPE { DOWN_DOWN, DOWN_DOWN_W, DOWN_DOWN_S };
 	enum WOLF_DEADTYPE { DEAD_DEAD, DEAD_DEAD_S };
@@ -29,7 +29,7 @@ public:
 		Eat_End,
 		Eat,
 
-		Threat,
+		Threat, //IDLE에 포함되서 진행함
 		
 		Down_Weak_Start,
 		Down_Weak_Loop,
@@ -80,11 +80,11 @@ private:
 	void Check_Dist();
 	void Set_AniEvent();
 
-	void Skill_RotateBody();
-	void Skill_CoolDown();
-	void Skill_Movement(_float _fspeed, _v3 _vDir = { V3_NULL });
-	void Decre_Skill_Movement(_float _fMutiply = 1.f);
-	void Reset_BattleState();
+	void Function_RotateBody();
+	void Function_CoolDown();
+	void Function_Movement(_float _fspeed, _v3 _vDir = { V3_NULL });
+	void Function_DecreMoveMent(_float _fMutiply = 1.f);
+	void Function_ResetAfterAtk();
 
 	void Play_Idle();
 	void Play_Eat();
@@ -140,7 +140,7 @@ private:
 	MONSTER_ANITYPE		m_eFirstCategory; //대분류
 	WOLF_IDLETYPE		m_eSecondCategory_IDLE; //중분류
 	WOLF_MOVETYPE		m_eSecondCategory_MOVE;
-	//WOLF_ATKTYPE		m_eSecondCategory_ATK;
+	WOLF_ATKTYPE		m_eSecondCategory_ATK;
 	WOLF_HITTYPE		m_eSecondCategory_HIT;
 	WOLF_DOWNTYPE		m_eSecondCategory_DOWN;
 	WOLF_DEADTYPE		m_eSecondCategory_DEAD;
@@ -150,20 +150,26 @@ private:
 
 	_bool				m_bInRecognitionRange = false; //인지 범위 여부
 	_bool				m_bInAtkRange = false; //공격 범위 여부
+	
 	_bool				m_bCanChase = false; //추격 여부
+	
 	_bool				m_bIsDodge = false; //회피 진행중 여부
+	
+	_bool				m_bCanCoolDown = false; //쿨타임 여부
 	_bool				m_bIsCoolDown = false; //쿨타임 진행중 여부
 
 	_bool				m_bCanIdleRandom = true;
+	_bool				m_bCanAtkCategoryRandom = true; //미사용
+	_bool				m_bIsAtkCombo = false; //미사용
 	_bool				m_bCanAtkRandom = true;
 
 	_float				m_fRecognitionRange = 10.f;
 	_float				m_fAtkRange = 4.f;
-	_float				m_fCoolDown = 0.f;
+	_float				m_fCoolDownMax = 0.f;
+	_float				m_fCoolDownCur = 0.f;
 	_float				m_fSpeedForCollisionPush = 2.f;
 
-	_int				m_iAtkRandom = 0; //공격 랜덤
-	_int				m_iIdleRandom = 0;//일상 랜덤
+	_int				m_iRandom = 0; //랜덤 받을 숫자
 	_int				m_iDodgeCount = 0; //n회 피격시 회피
 
 };

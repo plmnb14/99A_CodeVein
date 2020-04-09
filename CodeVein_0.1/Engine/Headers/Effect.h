@@ -31,6 +31,8 @@ public:
 	void Set_Angle(_v3 vAngle) { m_vAngle = vAngle; }
 	void Set_Dir(_v3 vDir) { m_vMyDir = vDir; }
 	void Set_AutoFind(_bool  bFind) { m_bAutoFindPos = bFind; }
+	void Set_FinishPos(_v3 vPos) { m_bFinishPos = true;  m_vFinishPos = vPos; }
+	void Set_Delay(_bool bDelay, _float fDelay = 0.f) { m_bDelay_New = bDelay;  m_fDelay_New = fDelay; }
 
 	void Reset_Init();
 
@@ -60,6 +62,7 @@ protected:
 	_float					m_fCreateDelay = 0.f;
 	_float					m_fAccel = 0.f;
 	_float					m_fDissolve = 0.f;
+	_float					m_fDelay_New = 0.f;
 	_v3						m_vLerpPos = { 1.f, 1.f, 1.f };
 	_v3						m_vLerpScale = { 1.f, 1.f, 1.f };
 	_v3						m_vDir = { 0.f, 0.f, 0.f };
@@ -68,11 +71,14 @@ protected:
 	_v3						m_vFollowPos = { 1.f, 1.f, 1.f };
 	_v4						m_vColor = { 1.f, 1.f, 1.f, 1.f };
 	_v3						m_vAngle = { 0.f, 0.f, 0.f };	// For Worldmat Rot
+	_v3						m_vFinishPos = { 0.f, 0.f, 0.f };
 
 	_bool					m_bClone = false;
 	_bool					m_bFadeOutStart = false;
 	_bool					m_bDissolveToggle = false;
 	_bool					m_bAutoFindPos = false;
+	_bool					m_bFinishPos = false;
+	_bool					m_bDelay_New = false;
 
 	_int					m_iPass = 0;
 

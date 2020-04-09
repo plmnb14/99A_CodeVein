@@ -16,6 +16,9 @@ vector		g_vCamPosition;
 matrix		g_matProjInv;
 matrix		g_matViewInv;
 
+matrix		g_matLightView;
+matrix		g_matLightProj;
+
 matrix		g_LightVP_Close;
 
 // 노멀
@@ -156,49 +159,55 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	Out.vShade.a = 1.f;
 
 	vector		vReflect = reflect(normalize(g_vLightDir), vNormal);
-	vector		vWorldPos;
+	vector		vWorldPos , vProjPos;
 
 	// 1. 투영스페이스 상의 위치를 구해보자. ( 로컬위치 * 월드 * 뷰 * 투영 * 1.f / w)
-	vWorldPos.x = In.vTexUV.x * 2.f - 1.f;
-	vWorldPos.y = In.vTexUV.y * -2.f + 1.f;
-	vWorldPos.z = vDepthInfo.x;
-	vWorldPos.w = 1.f;
+	vProjPos.x = In.vTexUV.x * 2.f - 1.f;
+	vProjPos.y = In.vTexUV.y * -2.f + 1.f;
+	vProjPos.z = vDepthInfo.x;
+	vProjPos.w = 1.f;
 
-	vWorldPos = vWorldPos * fViewZ;
+	vWorldPos = vProjPos * fViewZ;
 
 	// 2. 뷰( 로컬위치 * 월드 * 뷰 )
-	vWorldPos = mul(vWorldPos, g_matProjInv);
+	vWorldPos = mul(vProjPos, g_matProjInv);
 
 	// 3. 월드( 로컬위치 * 월드)
 	vWorldPos = mul(vWorldPos, g_matViewInv);
 
 
 	// Shadow ====================================================================
+	
+	float fShadow = tex2D(ShadowMapSampler, In.vTexUV).x;
 
-	//float4 lightingPosition = mul(vWorldPos, g_LightVP_Close);
+	//float4 lightingPosition = mul(vWorldPos, g_matLightView);
+	//lightingPosition = mul(lightingPosition, g_matLightProj);
 	//
-	//float2 ShadowTexCoord = 0.5 * lightingPosition.xy /
-	//	lightingPosition.w + float2(0.5, 0.5);
-	//ShadowTexCoord.y = 1.0f - ShadowTexCoord.y;
+	//float2 vUV;
+	//vUV = lightingPosition.xy / lightingPosition.w;
+	//vUV.y = -vUV.y;
+	//vUV.y = vUV * 0.5f + 0.5f;
 	//
-	//float fShadow = tex2D(ShadowMapSampler, ShadowTexCoord).x;
+	//float fShadow = tex2D(ShadowMapSampler, vUV).x;
 	//
-	//float DepthBias = 0.001f;
-	//float ourdepth = (lightingPosition.z / lightingPosition.w) - DepthBias;
+	//float fDepth = (lightingPosition.z / lightingPosition.w);
 	//
-	////
-	//if (fShadow <= ourdepth)
+	//if (fDepth > fShadow + Bias)
 	//{
 	//	Out.vShade.rgb *= 0.2f;
 	//
 	//	return Out;
 	//}
 
+	//if (fShadow < 1.f)
+	//{
+	//}
+
 	// Shadow End ====================================================================
 
 	vector		vLook = vWorldPos - g_vCamPosition;
 
-	Out.vSpecular = g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 30.f) * (g_vLightSpecular * g_vMtrlSpecular);
+	Out.vSpecular = vDepthInfo.z * g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 30.f) * (g_vLightSpecular * g_vMtrlSpecular);
 	Out.vSpecular.a = 0.f;
 
 	// RimLight ====================================================================
@@ -207,7 +216,7 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	float fRim = smoothstep((1.f - fRimWidth), (1.f), (vDepthInfo.x) - saturate(abs(dot(vNormal, vCamPos))));
 	//float fRim = smoothstep(max(1.f - fRimWidth + vDepthInfo.x, 0.5f), max(1.f - fRimWidth + vDepthInfo.x, 0.9f), (vDepthInfo.x) - saturate(abs(dot(vNormal, vCamPos))));
 	float4 rc = g_vLightDiffuse;
-	Out.vShade += pow(fRim, 2.f) * rc;
+	Out.vShade += (pow(fRim, 2.f) * rc);
 	// RimLight End ====================================================================
 
 
@@ -216,6 +225,10 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	float ao = Get_SSAO(vNormal.xyz, vDepthInfo.xyz, In.vTexUV);
 	Out.vSSAO = float4(ao, 0, 0, 1);
 	// SSAO End ====================================================================
+
+	//Out.vShade.rgb *= fShadow;
+
+	Out.vShade.rgb *= fShadow;
 
 	return Out;
 }

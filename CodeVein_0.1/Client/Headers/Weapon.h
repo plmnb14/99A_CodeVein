@@ -32,6 +32,8 @@ public:
 	virtual _int	Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
 
+	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass);
+
 public:
 	virtual void OnCollisionEnter();
 	virtual void OnCollisionEvent(list<CGameObject*> plistGameObject);
@@ -97,6 +99,8 @@ private:
 	_bool					m_bPlayerFriendly = false;		// ÇÃ·¹ÀÌ¾î ²«Áö
 	_bool					m_bTrailEnable = false;
 	_bool					m_bRecordCollision = false;		// ±â·ÏÇÒ²«Áö ¸»²«Áö 
+
+	_bool					m_tmpEmissiveTest = false;
 
 private:
 	WEAPON_STATE			m_eWeaponType = WEAPON_Ssword;
