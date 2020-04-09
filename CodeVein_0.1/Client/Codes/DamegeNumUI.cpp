@@ -128,7 +128,7 @@ HRESULT CDamegeNumUI::Render_GameObject()
 
 			TempMat._41 += i * 0.1f;
 
-			m_pTransformCom->Set_Pos(_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos()) + (WORLD_UP * 2.f) + (WORLD_RIGHT * 0.5f));
+			//m_pTransformCom->Set_Pos(_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos()) + (WORLD_UP * 2.f) + (WORLD_RIGHT * 0.5f));
 
 			m_pShaderCom->Begin_Pass(1);
 

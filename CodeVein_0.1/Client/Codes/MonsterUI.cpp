@@ -47,6 +47,7 @@ _int CMonsterUI::Update_GameObject(_double TimeDelta)
 	if (true == m_pTarget->Get_Dead())
 		return DEAD_OBJ;
 
+	
 	//if (true == m_bIsDead)
 	//	return DEAD_OBJ;
 
@@ -76,13 +77,13 @@ _int CMonsterUI::Update_GameObject(_double TimeDelta)
 	matWorld._41 = m_fPosX - WINCX * 0.5f;
 	matWorld._42 = -m_fPosY + WINCY * 0.5f;
 
+	//_mat tmpMat;
+	//tmpMat = (*m_matMonsterBon) * (m_pTransformCom->Get_WorldMat());
 
-	if(true == m_bCheck_Dir)
-		m_pRendererCom->Add_RenderList(RENDER_UI, this);
-
-	
-	m_pTransformCom->Set_Pos(_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos()) + (WORLD_UP * 2.f));
-	m_pTransformCom->Set_Pos(_v3());
+	//
+	////m_pTransformCom->Set_Pos(_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos()) + (WORLD_UP * 1.5f));
+	//m_pTransformCom->Set_Pos(_v3(*tmpMat->_41, tmpMat->_42, tmpMat->_43) +
+	//	(_v3(m_matMonsterBon->_31, m_matMonsterBon->_32 * 1.5f, m_matMonsterBon->_33)));
 
 	if (0 == m_iCheck_Renderindex)
 		m_pTransformCom->Set_Pos((_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos().x, TARGET_TO_TRANS(m_pTarget)->Get_Pos().y, (TARGET_TO_TRANS(m_pTarget)->Get_Pos().z - 0.06f)) + (WORLD_UP * 2.f)));
@@ -90,6 +91,16 @@ _int CMonsterUI::Update_GameObject(_double TimeDelta)
 		m_pTransformCom->Set_Pos((_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos().x, TARGET_TO_TRANS(m_pTarget)->Get_Pos().y, (TARGET_TO_TRANS(m_pTarget)->Get_Pos().z - 0.02f)) + (WORLD_UP * 2.f)));
 	if (2 == m_iCheck_Renderindex)
 		m_pTransformCom->Set_Pos((_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos()) + (WORLD_UP * 2.f)));
+
+	/*if (0 == m_iCheck_Renderindex)
+		m_pTransformCom->Set_Pos((_v3(m_matMonsterBon->_41, m_matMonsterBon->_42, (m_matMonsterBon->_43 - 0.06f))) +
+		(_v3(m_matMonsterBon->_31, m_matMonsterBon->_32 * 1.5f, m_matMonsterBon->_33)));
+	if (1 == m_iCheck_Renderindex)
+		m_pTransformCom->Set_Pos((_v3(m_matMonsterBon->_41, m_matMonsterBon->_42, (m_matMonsterBon->_43 - 0.02f))) +
+		(_v3(m_matMonsterBon->_31, m_matMonsterBon->_32 * 1.5f, m_matMonsterBon->_33)));
+	if (2 == m_iCheck_Renderindex)
+		m_pTransformCom->Set_Pos((_v3(m_matMonsterBon->_41, m_matMonsterBon->_42, m_matMonsterBon->_43) +
+		(_v3(m_matMonsterBon->_31, m_matMonsterBon->_32 * 1.5f, m_matMonsterBon->_33))));*/
 
 	m_pTransformCom->Set_Scale(_v3(0.8f, 0.08f, 0.8f));
 
@@ -104,6 +115,11 @@ _int CMonsterUI::Update_GameObject(_double TimeDelta)
 		m_bCheck_Dir = true;
 	else
 		m_bCheck_Dir = false;
+
+
+	if (true == m_bCheck_Dir)
+		m_pRendererCom->Add_RenderList(RENDER_UI, this);
+
 
 	return S_OK;
 }
