@@ -50,8 +50,8 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"HP", m_tObjParam.fHp_Cur);
 	pBlackBoard->Set_Value(L"MAXHP", m_tObjParam.fHp_Max);
 	pBlackBoard->Set_Value(L"HPRatio", 100);
-	//pBlackBoard->Set_Value(L"Show", true); // 찐
-	pBlackBoard->Set_Value(L"Show", false); // 테스트
+	pBlackBoard->Set_Value(L"Show", true); // 찐
+	//pBlackBoard->Set_Value(L"Show", false); // 테스트
 	pBlackBoard->Set_Value(L"Show_Near", true);
 
 	
@@ -71,7 +71,6 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 	Start_Sel->Add_Child(Start_Game());
 
 	////////////
-
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
@@ -339,7 +338,7 @@ HRESULT CPoisonButterfly::Render_GameObject()
 		{
 			m_pShaderCom->Begin_Pass(m_iPass);
 
-			if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE))))
+			if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
 				return E_FAIL;
 
 			m_pShaderCom->Commit_Changes();
@@ -1174,7 +1173,7 @@ void CPoisonButterfly::Check_PhyCollider()
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
 			Start_Dissolve(0.7f, false, true);
-			g_pManagement->Create_Spawn_Effect(m_pTransformCom->Get_Pos());
+			//g_pManagement->Create_Spawn_Effect(m_pTransformCom->Get_Pos());
 		}
 	}
 	else

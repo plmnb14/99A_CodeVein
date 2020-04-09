@@ -122,7 +122,7 @@ HRESULT CMeshEffect::Render_GameObject()
 	{
 		m_pShaderCom->Begin_Pass(m_iPass);
 
-		if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_Texture(_ulong(j), MESHTEXTURE::TYPE_DIFFUSE))))
+		if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_Texture(_ulong(j), MESHTEXTURE::TYPE_DIFFUSE_MAP))))
 			return E_FAIL;
 
 		if (FAILED(m_pTextureCom->SetUp_OnShader("g_ColorTexture", m_pShaderCom, _uint(m_pInfo->fColorIndex))))
@@ -163,7 +163,7 @@ HRESULT CMeshEffect::Render_GameObject_SetShader(CShader * pShader)
 	pShader->Begin_Pass(m_iPass);
 	for (size_t j = 0; j < iNumSubSet; ++j)
 	{
-		if (FAILED(pShader->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_Texture(_ulong(j), MESHTEXTURE::TYPE_DIFFUSE))))
+		if (FAILED(pShader->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_Texture(_ulong(j), MESHTEXTURE::TYPE_DIFFUSE_MAP))))
 			return E_FAIL;
 
 		if (FAILED(m_pTextureCom->SetUp_OnShader("g_ColorTexture", pShader, _uint(m_pInfo->fColorIndex))))
@@ -191,15 +191,21 @@ void CMeshEffect::Setup_Info()
 	m_fMoveSpeed = m_pInfo->fMoveSpeed;
 	m_fRotSpeed = m_pInfo->fRotSpeed;
 	m_fAlphaSpeed = m_pInfo->fAlphaSpeed;
-	m_fCreateDelay = m_pInfo->fCreateDelay;
 	m_pTransformCom->Set_Scale(m_pInfo->vStartScale);
 	m_pInfo->fMoveScaleSpeed = 1.f;
+	if (m_bDelay_New)
+		m_fCreateDelay = m_fDelay_New;
+	else
+		m_fCreateDelay = m_pInfo->fCreateDelay;
 
 	m_fLinearMoveSpeed = 0.f;
 	m_fLinearMovePercent = 0.f;
 	m_vFollowPos = { 0.f, 0.f, 0.f };
 
 	m_bFadeOutStart = false;
+	m_bDelay_New	= false;
+	m_bAutoFindPos	= false;
+	m_bFinishPos	= false;
 	
 	if (m_pInfo->bDistortion)
 		m_iPass = 1;

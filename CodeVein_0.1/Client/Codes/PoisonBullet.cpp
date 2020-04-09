@@ -36,8 +36,6 @@ HRESULT CPoisonBullet::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
 
-	m_fEffectCreateOffset = 0.05f;
-
 	lstrcpy(m_pEffect_Tag0, L"ButterFly_VenomShot_Distortion");
 	lstrcpy(m_pEffect_Tag1, L"ButterFly_SoftSmoke_Mist");
 	lstrcpy(m_pEffect_Tag2, L"ButterFly_VenomShot");
@@ -78,8 +76,9 @@ _int CPoisonBullet::Update_GameObject(_double TimeDelta)
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag7, m_pTransformCom->Get_Pos(), nullptr);
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag8, m_pTransformCom->Get_Pos(), nullptr);
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag9, m_pTransformCom->Get_Pos(), nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag10, m_pTransformCom->Get_Pos(), nullptr);
-		
+		//CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag10, m_pTransformCom->Get_Pos(), nullptr);
+		CParticleMgr::Get_Instance()->Create_ParticleEffect(m_pEffect_Tag10, 0.5f, m_pTransformCom->Get_Pos(), nullptr);
+
 		m_bDead = true;
 	}
 	// ม๘วเม฿
@@ -90,18 +89,13 @@ _int CPoisonBullet::Update_GameObject(_double TimeDelta)
 			m_bEffect = false;
 		}
 
-		m_fEffectCreateOffset_Check += _float(TimeDelta);
-		if (m_fEffectCreateOffset < m_fEffectCreateOffset_Check)
-		{
-			m_fEffectCreateOffset_Check = 0.f;
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag2, _v3(), m_pTransformCom);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag3, _v3(), m_pTransformCom);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, _v3(), m_pTransformCom);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag5, _v3(), m_pTransformCom);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag0, m_pTransformCom->Get_Pos(), nullptr);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag1, m_pTransformCom->Get_Pos(), nullptr);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag6, m_pTransformCom->Get_Pos(), nullptr);
-		}
+		CParticleMgr::Get_Instance()->Create_Effect_Offset(m_pEffect_Tag2, 0.1f, _v3(), m_pTransformCom);
+		CParticleMgr::Get_Instance()->Create_Effect_Offset(m_pEffect_Tag3, 0.1f, _v3(), m_pTransformCom);
+		CParticleMgr::Get_Instance()->Create_Effect_Offset(m_pEffect_Tag4, 0.1f, _v3(), m_pTransformCom);
+		CParticleMgr::Get_Instance()->Create_Effect_Offset(m_pEffect_Tag5, 0.1f, _v3(), m_pTransformCom);
+		CParticleMgr::Get_Instance()->Create_Effect_Offset(m_pEffect_Tag0, 0.1f, m_pTransformCom->Get_Pos(), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect_Offset(m_pEffect_Tag1, 0.1f, m_pTransformCom->Get_Pos(), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect_Offset(m_pEffect_Tag6, 0.1f, m_pTransformCom->Get_Pos(), nullptr);
 	}
 
 

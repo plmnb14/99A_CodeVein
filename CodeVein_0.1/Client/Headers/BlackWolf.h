@@ -9,7 +9,14 @@ BEGIN(Client)
 class CBlackWolf final : public CGameObject
 {
 public:
-	enum MONSTER_ANITYPE {IDLE, MOVE, ATTACK, HIT, DOWN, DEAD}; //down시 많이 넘어져 있을 수도 있으니까
+	enum MONSTER_ANITYPE {IDLE, MOVE, ATTACK, HIT, DOWN, DEAD};
+	
+	enum WOLF_IDLETYPE {IDLE_IDLE, IDLE_EAT, IDLE_SIT, IDLE_THREAT};
+	enum WOLF_MOVETYPE {MOVE_WALK, MOVE_RUN, MOVE_DODGE};
+	enum WOLF_ATKTYPE {ATK_BITELRL, ATK_RDODGEATK, ATK_LDODGEATK, ATK_FRISBEE};
+	enum WOLF_HITTYPE {HIT_HIT_F, HIT_HIT_B};
+	enum WOLF_DOWNTYPE {DOWN_DOWN_W, DOWN_DOWN_S};
+	enum WOLF_DEADTYPE {DEAD_DEAD, DEAD_DEAD_S};
 
 	enum WOLF_ANI
 	{
@@ -45,21 +52,9 @@ public:
 		Frisbee
 	};
 
-	enum BONE_TYPE
-	{
-		Bone_Range,
-		Bone_Body,
-		Bone_Head,
-		Bone_End
-	};
+	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_Head, Bone_End };
 
-	enum Cardinal_Point
-	{
-		East,
-		West,
-		South,
-		North,
-	};
+	enum FBLR { FRONT, BACK, LEFT, RIGHT };
 
 protected:
 	explicit CBlackWolf(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -80,6 +75,7 @@ private:
 	void Check_CollisionEvent(list<CGameObject*> plistGameObject);
 
 	void Check_Hit();
+	void Check_FBLR();
 	void Check_Dist();
 	void Set_AniEvent();
 
@@ -89,21 +85,26 @@ private:
 	void Decre_Skill_Movement(_float _fMutiply = 1.f);
 	void Reset_BattleState();
 
-	void Play_Idle();//일상 애니
+	void Play_Idle();
 	void Play_Eat();
 	void Play_Sit();
-	void Play_Walk(); //이동 애니
+	void Play_Threat();
+
+	void Play_Walk();
 	void Play_Run();
 	void Play_Dodge();
-	void Play_RandomAtk(); //공격 애니
+
+	void Play_RandomAtk();
 	void Play_Bite_LRL();
 	void Play_RDodgeAtk();
 	void Play_LDodgeAtk();
 	void Play_Frisbee();
-	void Play_Hit(); //피격 애니
+
+	void Play_Hit();
 	void Play_Down_Strong();
 	void Play_Down_Weak();
-	void Play_Dead(); //죽음 애니
+
+	void Play_Dead();
 	void Play_Dead_Strong();
 
 private:
@@ -122,6 +123,9 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
 	CMesh_Dynamic*		m_pMeshCom = nullptr;
+	CNavMesh*			m_pNavMesh = nullptr;
+	CCollider*			m_pCollider = nullptr;
+
 	CTransform*			m_pTargetTransform = nullptr;
 
 	_v3					m_vBirthPos;
@@ -134,8 +138,15 @@ private:
 	_float				m_fSkillMoveAccel_Max = 0.f;
 	_float				m_fSkillMoveMultiply = 1.f;
 
-	MONSTER_ANITYPE		m_eFirstIdentify; //대분류
-	WOLF_ANI			m_eState; //애니 분류
+	MONSTER_ANITYPE		m_eFirstCategory; //대분류
+	WOLF_IDLETYPE		m_eSecondCategory_IDLE; //중분류
+	WOLF_MOVETYPE		m_eSecondCategory_MOVE;
+	WOLF_ATKTYPE		m_eSecondCategory_ATK;
+	WOLF_HITTYPE		m_eSecondCategory_HIT;
+	WOLF_DOWNTYPE		m_eSecondCategory_DOWN;
+	WOLF_DEADTYPE		m_eSecondCategory_DEAD;
+
+	WOLF_ANI			m_eState;
 	_bool				m_bEventTrigger[10] = {}; //이벤트 조건 조절
 
 	_bool				m_bInRecognitionRange = false; //인지 범위 여부
@@ -143,21 +154,17 @@ private:
 	_bool				m_bCanChase = false; //추격 여부
 	_bool				m_bIsCoolDown = false; //쿨타임 진행중 여부
 	_bool				m_bIsDodge = false; //회피 진행중 여부
-	_bool				m_bIdleRandom = false; //일상 랜덤 여부
+	
+	_bool				m_bCanRandomAtkCategory = true;
+	_bool				m_bCanRandomIdle = true;
 
 	_float				m_fRecognitionRange = 10.f; //인지 범위
 	_float				m_fAttackRange = 4.f; //공격 범위
-
 	_float				m_fCoolDown = 0.f; //쿨타임 //델타타임만큼 빼준다
 
-	_int				m_iAttackRandomNumber = 0; //공격애니 랜덤화
+	_int				m_iAtkRandom = 0; //공격애니 랜덤화
 	_int				m_iIdleRandomNumber = 0;//일상 애니 랜덤화
 	_int				m_iDodgeCount = 0; //n회 피격시 바로 회피
-
-	//_float			m_fHitDmgLimit = 50.f; //일정 데미지 퍼센트를 맞을 경우 강하게 쓰러짐, 역치
-	//_int				m_iHitCountLimit = 5; //5대 맞으면 약하게 쓰러짐, 역치
-	//_int				m_iHitCount = 0;  //맞을때마다 증가하기
-	//Cardinal_Point	m_eTargetCardinal; //방위
 
 };
 

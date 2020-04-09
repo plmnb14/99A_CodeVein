@@ -83,10 +83,10 @@ HRESULT CDrain_Weapon::Render_GameObject()
 		{
 			m_pShader->Begin_Pass(0);
 
-			if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pMesh_Dynamic->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE))))
+			if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pMesh_Dynamic->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
 				return E_FAIL;
 
-			if (FAILED(m_pShader->Set_Texture("g_NormalTexture", m_pMesh_Dynamic->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_NORMAL))))
+			if (FAILED(m_pShader->Set_Texture("g_NormalTexture", m_pMesh_Dynamic->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_NORMAL_MAP))))
 				return E_FAIL;
 
 			m_pShader->Commit_Changes();
