@@ -6,6 +6,7 @@
 
 BEGIN(Client)
 
+class CFontNumManager;
 class CPlayerHP final : public CUI
 {
 private:
@@ -37,7 +38,7 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
-
+	CFontNumManager*		m_pFont = nullptr;
 public:
 	static CPlayerHP*		Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);

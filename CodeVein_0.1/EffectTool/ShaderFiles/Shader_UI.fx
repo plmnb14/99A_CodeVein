@@ -16,7 +16,6 @@ sampler		DiffuseSampler = sampler_state
 	mipfilter = linear;
 };
 
-
 // 정점세개를 그리낟.
 
 // 각가의 정점을 vsmain함수의 인자로 던진다.
@@ -71,6 +70,8 @@ VS_OUT		VS_2D_UV_CTRL(VS_IN In)
 
 	return Out;
 }
+
+
 
 
 // POSITION시멘틱을 가진 멤버변수에 대해서 W값으로 XYZW를 나누는 연산을 수행.(원근 투영)

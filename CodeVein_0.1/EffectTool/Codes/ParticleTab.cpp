@@ -62,6 +62,7 @@ CParticleTab::CParticleTab(CWnd* pParent /*=NULL*/)
 	, m_EditColorIndex(_T("0.0"))
 	, m_EditMaskIndex(_T(""))
 	, m_EditDistortion(_T("0.0"))
+	, m_EditScaleSpeed(_T("1.0"))
 {
 
 }
@@ -165,6 +166,7 @@ void CParticleTab::DoDataExchange(CDataExchange* pDX)
 	DDX_Control(pDX, IDC_CHECK13, m_CheckSlowly);
 	DDX_Text(pDX, IDC_EDIT51, m_EditDistortion);
 	DDX_Control(pDX, IDC_CHECK9, m_CheckDissolve);
+	DDX_Text(pDX, IDC_EDIT52, m_EditScaleSpeed);
 }
 
 void CParticleTab::Set_GraphicDev(LPDIRECT3DDEVICE9 pDev)
@@ -398,6 +400,9 @@ void CParticleTab::Setup_EffInfo(_bool bIsMesh)
 	m_pInfo->bSlowly = m_CheckSlowly.GetCheck() ? true : false;
 
 	m_pInfo->bDissolve = m_CheckDissolve.GetCheck() ? true : false;
+
+	GetDlgItemText(IDC_EDIT52, m_EditScaleSpeed);
+	m_pInfo->fMoveScaleSpeed = _float(_tstof(m_EditScaleSpeed));
 
 	if (m_bCheckUseMask.GetCheck() ? true : false)
 	{
@@ -856,6 +861,8 @@ void CParticleTab::OnBnClickedButton_Load()
 			m_fMaxFrame = tInfo.fMaxFrame;
 
 			::ReadFile(hFile, &tInfo.fMoveScaleSpeed, sizeof(_float), &dwByte, nullptr);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fMoveScaleSpeed);
+			m_EditScaleSpeed.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.fMoveSpeed, sizeof(_float), &dwByte, nullptr);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fMoveSpeed);

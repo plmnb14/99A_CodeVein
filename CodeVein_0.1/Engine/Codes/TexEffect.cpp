@@ -74,6 +74,7 @@ _int CTexEffect::Update_GameObject(_double TimeDelta)
 	CGameObject::LateInit_GameObject();
 	
 	Check_Move(TimeDelta);
+	
 	CGameObject::Update_GameObject(TimeDelta);
 
 	if (m_fCreateDelay > 0.f)
@@ -277,8 +278,10 @@ void CTexEffect::Setup_Info()
 	m_fMoveSpeed = m_pInfo->fMoveSpeed;
 	m_fRotSpeed = m_pInfo->fRotSpeed;
 	m_fAlphaSpeed = m_pInfo->fAlphaSpeed;
-	m_fCreateDelay = m_pInfo->fCreateDelay;
-	m_pInfo->fMoveScaleSpeed = 1.f;
+	if (m_bDelay_New)
+		m_fCreateDelay = m_fDelay_New;
+	else
+		m_fCreateDelay = m_pInfo->fCreateDelay;
 
 	m_fFrame = 0.f;
 	m_fLinearMoveSpeed = 0.f;
@@ -288,6 +291,8 @@ void CTexEffect::Setup_Info()
 	m_fDissolve = 0.f;
 
 	m_bFadeOutStart = false;
+	m_bAutoFindPos	= false;
+	m_bFinishPos	= false;
 
 	if (m_pInfo->bDistortion)
 		m_iPass = 1;
@@ -358,8 +363,7 @@ void CTexEffect::Setup_Info()
 			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Y] * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f),
 			Engine::CCalculater::Random_Num(0, _int(m_pInfo->fRandStartPosRange_Max[AXIS_Z] * 100)) * 0.01f * (Engine::CCalculater::Random_Num(0, 1) ? 1.f : -1.f));
 
-		//if (m_bAutoFindPos)
-		if (m_pDesc->pTargetTrans)
+		if (m_pDesc->pTargetTrans || m_bAutoFindPos)
 			vPos += m_pDesc->pTargetTrans->Get_Pos();
 
 		vPos += m_pDesc->vWorldPos;
@@ -420,16 +424,7 @@ void CTexEffect::Setup_Billboard()
 		memset(&matBill._41, 0, sizeof(_v3));
 		D3DXMatrixInverse(&matBill, NULL, &matBill);
 
-		//m_pTransformCom->Set_WorldMat(matBill * matWorld);
-
-		_mat matRot;
-		D3DXMatrixIdentity(&matRot);
-		D3DXMatrixRotationX(&matRot, D3DXToRadian(m_vAngle.x));
-		D3DXMatrixRotationY(&matRot, D3DXToRadian(m_vAngle.y));
-		D3DXMatrixRotationZ(&matRot, D3DXToRadian(m_vAngle.z));
-		//D3DXMatrixTranslation(&matRot, m_pTransformCom->Get_Pos().x, m_pTransformCom->Get_Pos().y, m_pTransformCom->Get_Pos().z);
-
-		m_pTransformCom->Set_WorldMat((matRot) * (matBill * matWorld));
+		m_pTransformCom->Set_WorldMat((matBill * matWorld));
 	}
 	else if (m_pInfo->bOnlyYRot)
 	{
@@ -440,13 +435,7 @@ void CTexEffect::Setup_Billboard()
 
 		D3DXMatrixInverse(&matBill, NULL, &matBill);
 
-		_mat matRot;
-		D3DXMatrixIdentity(&matRot);
-		D3DXMatrixRotationX(&matRot, D3DXToRadian(m_vAngle.x));
-		D3DXMatrixRotationY(&matRot, D3DXToRadian(m_vAngle.y));
-		D3DXMatrixRotationZ(&matRot, D3DXToRadian(m_vAngle.z));
-
-		m_pTransformCom->Set_WorldMat((matRot) * (matBill * matWorld));
+		m_pTransformCom->Set_WorldMat((matBill * matWorld));
 	}
 
 	Compute_ViewZ(&m_pTransformCom->Get_Pos());
@@ -490,7 +479,7 @@ void CTexEffect::Check_Move(_double TimeDelta)
 			else
 				vMove = m_pInfo->vMoveDirection * m_fMoveSpeed * _float(TimeDelta);
 			
-			if (m_pDesc->pTargetTrans && !m_bAutoFindPos)
+ 			if (m_pDesc->pTargetTrans && !m_bAutoFindPos)
 			{
 				_v3 vPos = m_pDesc->pTargetTrans->Get_Pos();
 				m_vFollowPos += vMove;
@@ -585,6 +574,10 @@ void CTexEffect::Check_Move(_double TimeDelta)
 
 		m_pTransformCom->Add_Pos(m_fMoveSpeed * _float(TimeDelta), vDir);
 	}
+
+	if(!m_pInfo->bRotMove && !m_pInfo->bMoveWithRot
+		&& m_pInfo->vRotDirection == V3_NULL)
+		m_pTransformCom->Set_Angle(m_vAngle);
 }
 
 void CTexEffect::Check_LifeTime(_double TimeDelta)
