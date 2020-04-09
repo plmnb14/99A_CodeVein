@@ -113,12 +113,12 @@ void CToolView::OnInitialUpdate()
 	CCameraMgr::Get_Instance()->Set_MainPos(_v3{ 0,3,-5 });
 
 	m_pGreed = Engine::CTerrain_Guide::Create(m_pDevice);
-	Engine::CCollider* tmpCol = TARGET_TO_COL(m_pGreed);
+	//Engine::CCollider* tmpCol = TARGET_TO_COL(m_pGreed);
 
-	tmpCol->Set_Radius(_v3{ 1000.f , 1.f , 1000.f });
-	tmpCol->Set_CenterPos(TARGET_TO_TRANS(m_pGreed)->Get_Pos() - _v3{ 0, TARGET_TO_COL(m_pGreed)->Get_Radius().y * 0.5f,0 });
-	tmpCol->SetUp_Box();
-	tmpCol->Set_Type(COL_AABB);
+	//tmpCol->Set_Radius(_v3{ 1000.f , 1.f , 1000.f });
+	//tmpCol->Set_CenterPos(TARGET_TO_TRANS(m_pGreed)->Get_Pos() - _v3{ 0, TARGET_TO_COL(m_pGreed)->Get_Radius().y * 0.5f,0 });
+	//tmpCol->SetUp_Box();
+	//tmpCol->Set_Type(COL_AABB);
 
 	//m_pDevice->GetTransform(D3DTS_WORLD, &g_matWorld);
 

@@ -67,8 +67,8 @@ _int CWeapon::Late_Update_GameObject(_double TimeDelta)
 	if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
 
-	if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
-		return E_FAIL;
+	//if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
+	//	return E_FAIL;
 
 	return _int();
 }
@@ -426,14 +426,20 @@ void CWeapon::Change_WeaponData(WEAPON_DATA _eWpnData)
 	}
 	case WPN_Halverd_Normal:
 	{
-		lstrcpy(WeaponMeshName, L"Mesh_Sword");
-		m_eWeaponType = WEAPON_Ssword;
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_Halverd");
+		m_eWeaponType = WEAPON_Halverd;
 		break;
 	}
 	case WPN_Gun_Normal:
 	{
 		lstrcpy(WeaponMeshName, L"Mesh_Wpn_Gun");
 		m_eWeaponType = WEAPON_Gun;
+		break;
+	}
+	case WPN_Shield_Normal:
+	{
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_Shield");
+		m_eWeaponType = WEAPON_Shield;
 		break;
 	}
 	}
@@ -527,6 +533,18 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[WPN_Gun_Normal].fTrail_Min = 0.f;
 	m_tWeaponParam[WPN_Gun_Normal].fTrail_Max = 1.f;
 	m_tWeaponParam[WPN_Gun_Normal].fCol_Height = 1.2f;
+
+	m_tWeaponParam[WPN_Shield_Normal].fDamage = 25.f;
+	m_tWeaponParam[WPN_Shield_Normal].fRadius = 0.6f;
+	m_tWeaponParam[WPN_Shield_Normal].fTrail_Min = 0.f;
+	m_tWeaponParam[WPN_Shield_Normal].fTrail_Max = 1.f;
+	m_tWeaponParam[WPN_Shield_Normal].fCol_Height = 0.f;
+
+	m_tWeaponParam[WPN_Halverd_Normal].fDamage = 25.f;
+	m_tWeaponParam[WPN_Halverd_Normal].fRadius = 0.75f;
+	m_tWeaponParam[WPN_Halverd_Normal].fTrail_Min = 0.75f;
+	m_tWeaponParam[WPN_Halverd_Normal].fTrail_Max = 1.5f;
+	m_tWeaponParam[WPN_Halverd_Normal].fCol_Height = 1.3f;
 
 	return S_OK;
 }

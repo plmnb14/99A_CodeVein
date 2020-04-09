@@ -158,12 +158,18 @@ void CPoisonTornado::OnCollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					cout << "응 투사체 부딪힘" << endl;
+					if (false == iter->Get_Target_Dodge())
+					{
+						iter->Set_Target_CanHit(false);
 
-					iter->Set_Target_CanHit(false);
-					iter->Add_Target_Hp(m_tObjParam.fDamage);
+						// 타겟이 피격 가능하다면
+						if (iter->Get_Target_IsHit())
+							iter->Set_HitAgain(true);
 
-					m_dCurTime = 100;	// 바로 사망시키기 위해서 현재시간 100줬음
+						iter->Add_Target_Hp(-m_tObjParam.fDamage);
+					}
+
+					m_dCurTime = 1000;	// 바로 사망시키기 위해서 현재시간 1000줬음
 
 					break;
 
@@ -210,7 +216,7 @@ HRESULT CPoisonTornado::Ready_Collider()
 	// 총알 중앙
 	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 
-	_float fRadius = 3.0f;
+	_float fRadius = 3.3f;
 
 	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
 	pCollider->Set_Dynamic(true);
