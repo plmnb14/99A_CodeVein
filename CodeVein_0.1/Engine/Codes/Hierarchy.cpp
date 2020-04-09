@@ -89,11 +89,12 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 
 	_tchar		szFullPath[MAX_PATH] = L"";
 
-	for (_uint i = 0; i < MESHTEXTURE::TYPE_END; ++i)
-		m_bIncludeMap[i] = false;
 
 	for (size_t i = 0; i < pMeshContainer->NumMaterials; ++i)
 	{
+		for (_uint i = 0; i < MESHTEXTURE::TYPE_END; ++i)
+			m_bIncludeMap[i] = false;
+
 		lstrcpy(szFullPath, m_pFilePath);
 
 		_tchar	szTextureFileName[MAX_PATH] = L"";

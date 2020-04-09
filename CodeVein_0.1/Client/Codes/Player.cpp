@@ -131,8 +131,8 @@ HRESULT CPlayer::Render_GameObject()
 
 			m_pShader->Set_DynamicTexture_Auto(m_pDynamicMesh, i, j);
 
-			if (15 == m_iPass)
-				break;
+			//if (15 == m_iPass)
+			//	break;
 
 			//m_pShader->Set_StaticTexture_Auto(m_pDynamicMesh, i);
 
