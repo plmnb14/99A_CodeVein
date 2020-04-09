@@ -23,6 +23,7 @@ Tex_FireBlast1|FireBlast1_%d.png|..\..\Client\Resources\Texture\Effect\FireBlast
 Tex_FireBlast2|FireBlast2_%d.png|..\..\Client\Resources\Texture\Effect\FireBlast\FireBlast2\|0|32
 Tex_Flash|Flash_%d.tga|..\..\Client\Resources\Texture\Effect\Flash\|0|2
 Tex_Gradient|Gradient_%d.tga|..\..\Client\Resources\Texture\Effect\Gradient\|0|7
+Tex_Laser|Laser_%d.tga|..\..\Client\Resources\Texture\Effect\Laser\|0|1
 Tex_Lightning1|Lightning1_%d.png|..\..\Client\Resources\Texture\Effect\Lightning\Lightning1\|0|16
 Tex_Lightning2|Lightning2_%d.png|..\..\Client\Resources\Texture\Effect\Lightning\Lightning2\|0|16
 Tex_LinePoint|LinePoint_%d.png|..\..\Client\Resources\Texture\Effect\LinePoint\|0|8
@@ -31,7 +32,7 @@ Tex_Noise|Noise_%d.tga|..\..\Client\Resources\Texture\Effect\Noise\|0|23
 Tex_Normal|Normal_%d.tga|..\..\Client\Resources\Texture\Effect\Normal\|0|10
 Tex_Crystals|Crystals_%d.png|..\..\Client\Resources\Texture\Effect\Particle\Crystals\|0|16
 Tex_Point|Point_%d.tga|..\..\Client\Resources\Texture\Effect\Particle\Point\|0|9
-Tex_Scratch|Scratch_%d.tga|..\..\Client\Resources\Texture\Effect\Scratch\|0|10
+Tex_Scratch|Scratch_%d.tga|..\..\Client\Resources\Texture\Effect\Scratch\|0|4
 Tex_ShockWave|T_FX_TC5Shockwave01.tga|..\..\Client\Resources\Texture\Effect\ShockWave\|0|4
 Tex_SlashSubUV|SlashSubUV_%d.png|..\..\Client\Resources\Texture\Effect\SlashSubUV\|0|4
 Tex_SlashSubUV_Ver|SlashSubUV_Ver_%d.png|..\..\Client\Resources\Texture\Effect\SlashSubUV_Ver\|0|4
@@ -43,8 +44,8 @@ Tex_SmokeSmall|SmokeSmall_%d.png|..\..\Client\Resources\Texture\Effect\Smoke\Smo
 Tex_SmokeSoft16|SmokeSoft16_%d.png|..\..\Client\Resources\Texture\Effect\Smoke\SmokeSoft16\|0|16
 Tex_SmokeSoft64|SmokeSoft64_%d.png|..\..\Client\Resources\Texture\Effect\Smoke\SmokeSoft64\|0|64
 Tex_Splash|Splash_%d.png|..\..\Client\Resources\Texture\Effect\Splash\|0|24
-Tex_SwordTrail|SwordTrail%d.tga|..\..\Client\Resources\Texture\Effect\SwordTrail\|0|6
+Tex_SwordTrail|SwordTrail%d.tga|..\..\Client\Resources\Texture\Effect\SwordTrail\|0|7
 Tex_Tail|Tail_%d.tga|..\..\Client\Resources\Texture\Effect\Tail\|0|2
 Tex_SkyBridgeBoss_Trail|SkyBridgeBoss_Trail_%d.tga|..\..\Client\Resources\Texture\Effect\Trail\SkyBridgeBoss_Trail\|0|1
-Tex_temp|Trail_SpWeapon00_03.tga|..\..\Client\Resources\Texture\Effect\Trail\temp\|0|18
+Tex_temp|T_Enemy_DevilMiguel_Sword_Trail_01.tga|..\..\Client\Resources\Texture\Effect\Trail\temp\|0|17
 Tex_Water|Water_%d.tga|..\..\Client\Resources\Texture\Effect\Water\|0|1

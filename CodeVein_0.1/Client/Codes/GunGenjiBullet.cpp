@@ -49,7 +49,7 @@ HRESULT CGunGenjiBullet::Ready_GameObject(void * pArg)
 	lstrcpy(m_pEffect_Tag5, L"Bullet_DeadSmoke_Black");
 
 	m_pTrailEffect = static_cast<Engine::CTrail_VFX*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SwordTrail", nullptr));
-	m_pTrailEffect->Set_TrailIdx(4); // Red Tail
+	m_pTrailEffect->Set_TrailIdx(5); // Red Tail
 
 	return NOERROR;
 }

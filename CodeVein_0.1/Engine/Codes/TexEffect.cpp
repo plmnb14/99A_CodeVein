@@ -73,34 +73,25 @@ _int CTexEffect::Update_GameObject(_double TimeDelta)
 
 	CGameObject::LateInit_GameObject();
 	
-	Check_Move(TimeDelta);
-	
-	CGameObject::Update_GameObject(TimeDelta);
-
 	if (m_fCreateDelay > 0.f)
 	{
 		Check_CreateDelay(TimeDelta);
 		return S_OK;
 	}
 
+	CGameObject::Update_GameObject(TimeDelta);
+
 	m_fLinearMovePercent += _float(TimeDelta) * 0.2f;
 
 	Check_Frame(TimeDelta);
 	Check_LifeTime(TimeDelta);
 
+	Check_Move(TimeDelta);
 	Setup_Billboard();
 	Check_Alpha(TimeDelta);
 	Check_Color(TimeDelta);
 
-
-	return S_OK;
-}
-
-_int CTexEffect::Late_Update_GameObject(_double TimeDelta)
-{
-	if (nullptr == m_pRendererCom)
-		return E_FAIL;
-
+	// 어쩔수 없이 Update에서 호출
 	if (m_bIsDead || m_fCreateDelay > 0.f)
 		return S_OK;
 
@@ -113,6 +104,17 @@ _int CTexEffect::Late_Update_GameObject(_double TimeDelta)
 	if (FAILED(m_pRendererCom->Add_RenderList(eGroup, this)))
 		return E_FAIL;
 
+	return S_OK;
+}
+
+_int CTexEffect::Late_Update_GameObject(_double TimeDelta)
+{
+	if (nullptr == m_pRendererCom)
+		return E_FAIL;
+
+	if (m_bIsDead || m_fCreateDelay > 0.f)
+		return S_OK;
+		
 	return S_OK;
 }
 
@@ -222,7 +224,7 @@ HRESULT CTexEffect::Render_GameObject_SetShader(CShader* pShader)
 		return NOERROR;
 	}
 
-	m_pBufferCom->Render_Before_Instancing(m_pTransformCom->Get_WorldMat());
+ 	m_pBufferCom->Render_Before_Instancing(m_pTransformCom->Get_WorldMat());
 
 	pShader->Begin_Pass(m_iPass);
 
@@ -291,8 +293,6 @@ void CTexEffect::Setup_Info()
 	m_fDissolve = 0.f;
 
 	m_bFadeOutStart = false;
-	m_bAutoFindPos	= false;
-	m_bFinishPos	= false;
 
 	if (m_pInfo->bDistortion)
 		m_iPass = 1;
@@ -406,7 +406,6 @@ void CTexEffect::Setup_Info()
 			m_pTransformCom->Set_Angle(_v3(D3DXToRadian(m_pInfo->vRotDirection.x), D3DXToRadian(m_pInfo->vRotDirection.y), D3DXToRadian(m_pInfo->vRotDirection.z)));
 		}
 	}
-
 }
 
 void CTexEffect::Setup_Billboard()
@@ -437,6 +436,8 @@ void CTexEffect::Setup_Billboard()
 
 		m_pTransformCom->Set_WorldMat((matBill * matWorld));
 	}
+	//else
+	//	m_pTransformCom->Update_Component();
 
 	Compute_ViewZ(&m_pTransformCom->Get_Pos());
 }
@@ -462,6 +463,9 @@ void CTexEffect::Check_Move(_double TimeDelta)
 			m_fMoveSpeed = 0.f;
 	}
 
+	_v3 vTargetPos = V3_NULL;
+	if (m_pDesc->pTargetTrans) vTargetPos = m_pDesc->pTargetTrans->Get_Pos();
+
 	if (m_pInfo->bDirMove)
 	{
 		if (m_pInfo->bLinearMove)
@@ -481,7 +485,7 @@ void CTexEffect::Check_Move(_double TimeDelta)
 			
  			if (m_pDesc->pTargetTrans && !m_bAutoFindPos)
 			{
-				_v3 vPos = m_pDesc->pTargetTrans->Get_Pos();
+				_v3 vPos = vTargetPos + m_pDesc->vWorldPos;
 				m_vFollowPos += vMove;
 				vPos += m_vFollowPos;
 				m_pTransformCom->Set_Pos(vPos);
@@ -509,7 +513,7 @@ void CTexEffect::Check_Move(_double TimeDelta)
 		_v3 vMove = m_vDir * m_fMoveSpeed * _float(TimeDelta);
 		if (m_pDesc->pTargetTrans && !m_bAutoFindPos)
 		{
-			_v3 vPos = m_pDesc->pTargetTrans->Get_Pos();
+			_v3 vPos = vTargetPos + m_pDesc->vWorldPos;
 			m_vFollowPos += vMove;
 			vPos += m_vFollowPos;
 			m_pTransformCom->Set_Pos(vPos);
@@ -529,12 +533,7 @@ void CTexEffect::Check_Move(_double TimeDelta)
 		m_pTransformCom->Set_Pos(vPos);
 	}
 
-	if (m_pInfo->bScaleMove)
-	{
-		D3DXVec3Lerp(&m_vLerpScale, &m_vLerpScale, &m_pInfo->vMoveScale, m_fLinearMovePercent * m_pInfo->fMoveScaleSpeed);
-		//m_vLerpScale -= m_pInfo->vStartScale * _float(TimeDelta);
-		m_pTransformCom->Set_Scale(m_vLerpScale);
-	}
+
 
 	if (m_pInfo->bRotMove)
 	{
@@ -578,6 +577,15 @@ void CTexEffect::Check_Move(_double TimeDelta)
 	if(!m_pInfo->bRotMove && !m_pInfo->bMoveWithRot
 		&& m_pInfo->vRotDirection == V3_NULL)
 		m_pTransformCom->Set_Angle(m_vAngle);
+
+	m_pTransformCom->Update_Component();
+
+	if (m_pInfo->bScaleMove)
+	{
+		D3DXVec3Lerp(&m_vLerpScale, &m_vLerpScale, &m_pInfo->vMoveScale, m_fLinearMovePercent * m_pInfo->fMoveScaleSpeed);
+		//m_vLerpScale -= m_pInfo->vStartScale * _float(TimeDelta);
+		m_pTransformCom->Set_Scale(m_vLerpScale);
+	}
 }
 
 void CTexEffect::Check_LifeTime(_double TimeDelta)
@@ -635,7 +643,9 @@ void CTexEffect::Check_CreateDelay(_double TimeDelta)
 	m_fCreateDelay -= _float(TimeDelta);
 
 	if (m_fCreateDelay < 0.f)
+	{
 		m_fCreateDelay = 0.f;
+	}
 }
 
 HRESULT CTexEffect::Add_Component()
@@ -681,7 +691,9 @@ HRESULT CTexEffect::SetUp_ConstantTable(CShader* pShader)
 		return E_FAIL;
 
 	Safe_AddRef(pManagement);
+
 	_mat matWorld = m_pTransformCom->Get_WorldMat();
+
 	if (FAILED(pShader->Set_Value("g_matWorld", &matWorld, sizeof(_mat))))
 		return E_FAIL;
 	D3DXMatrixInverse(&matWorld, nullptr, &matWorld);
