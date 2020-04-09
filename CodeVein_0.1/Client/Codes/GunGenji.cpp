@@ -1086,11 +1086,7 @@ void CGunGenji::Push_Collider()
 	{
 		CCollider* pCollider = TARGET_TO_COL(iter);
 
-<<<<<<< HEAD
 		//cout << m_pAIControllerCom->Get_FloatValue(L"Monster_Speed") << endl;
-=======
-		/*cout << m_pAIControllerCom->Get_FloatValue(L"Monster_Speed") << endl;*/
->>>>>>> origin/Merge_Brench
 
 		// 지금 속도값 임의로 넣었는데 구해서 넣어줘야함 - 완료
 		if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_pAIControllerCom->Get_FloatValue(L"Monster_Speed")))

@@ -882,7 +882,6 @@ CBT_Composite_Node * CPoisonButterfly::Start_Show()
 	CBT_Selector* Root_Sel = Node_Selector("시연회");
 
 	CBT_CompareValue* Check_ShowValueN = Node_BOOL_A_Equal_Value("시연회 근거리 변수 체크", L"Show_Near", true);
-	CBT_CompareValue* Check_ShowValueF = Node_BOOL_A_Equal_Value("시연회 원거리 변수 체크", L"Show_Far", true);
 
 	Root_Sel->Add_Child(Check_ShowValueN);
 	Check_ShowValueN->Set_Child(Show_ChaseAndNearAttack());
