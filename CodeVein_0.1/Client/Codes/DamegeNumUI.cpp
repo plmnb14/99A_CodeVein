@@ -34,14 +34,14 @@ HRESULT CDamegeNumUI::Ready_GameObject(void * pArg)
 
 	/*for (_uint i = 0; i < 3; ++i)
 	{
-		D3DXMatrixIdentity(&m_matWorldPlus[i]);
+	D3DXMatrixIdentity(&m_matWorldPlus[i]);
 
-		m_vPosTwo[i] = WORLD_RIGHT * 0.3f;
-		m_vPosThree[i] = WORLD_RIGHT * 0.5f;
+	m_vPosTwo[i] = WORLD_RIGHT * 0.3f;
+	m_vPosThree[i] = WORLD_RIGHT * 0.5f;
 
-		memcpy(&m_matWorldPlus[i]._41, m_vPosOne[i], sizeof(_v3));
-		memcpy(&m_matWorldPlus[i]._42, m_vPosTwo[i], sizeof(_v3));
-		memcpy(&m_matWorldPlus[i]._43, m_vPosThree[i], sizeof(_v3));
+	memcpy(&m_matWorldPlus[i]._41, m_vPosOne[i], sizeof(_v3));
+	memcpy(&m_matWorldPlus[i]._42, m_vPosTwo[i], sizeof(_v3));
+	memcpy(&m_matWorldPlus[i]._43, m_vPosThree[i], sizeof(_v3));
 	}*/
 
 	return S_OK;
@@ -79,13 +79,13 @@ _int CDamegeNumUI::Update_GameObject(_double TimeDelta)
 
 	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
 	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;*/
-	
+
 	//m_pTransformCom->Set_WorldMat(m_matWorld);
 
 	// 데미지가 들어왔을 때만 랜더해야 함
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
-	
+
 
 	return S_OK;
 }
@@ -99,7 +99,7 @@ HRESULT CDamegeNumUI::LateInit_GameObject()
 {
 	m_iNowHP = (_uint)m_pTarget->Get_Target_Param().fHp_Cur;
 	m_iMaxHP = (_uint)m_pTarget->Get_Target_Param().fHp_Max;
-	
+
 	m_pTransformCom->Set_Scale(_v3(0.1f, 0.1f, 0.1f));
 
 	return S_OK;
@@ -119,7 +119,7 @@ HRESULT CDamegeNumUI::Render_GameObject()
 	m_pGraphic_Dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
 	m_pShaderCom->Begin_Shader();
-	
+
 	if (0 <= m_iSave_Damage && 9 >= m_iSave_Damage)
 	{
 		for (_uint i = 0; i < 3; ++i)
@@ -143,7 +143,7 @@ HRESULT CDamegeNumUI::Render_GameObject()
 			m_pShaderCom->End_Pass();
 		}
 	}
-	
+
 	m_pShaderCom->End_Shader();
 
 	return S_OK;
@@ -186,48 +186,48 @@ HRESULT CDamegeNumUI::SetUp_ConstantTable(_uint TextureIndex)
 
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &g_pManagement->Get_Transform(D3DTS_PROJECTION), sizeof(_mat))))
 
-	if (FAILED(m_pShaderCom->Set_Value("g_fPosX", &m_fPosX, sizeof(_float))))
-		return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_fPosX", &m_fPosX, sizeof(_float))))
+			return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_Value("g_fSizeX", &m_fSizeX, sizeof(_float))))
 		return E_FAIL;
 
 	/*if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, TextureIndex)))
-		return E_FAIL;*/
+	return E_FAIL;*/
 
 	return S_OK;
 }
 
 void CDamegeNumUI::SetUp_State(_double TimeDelta)
-{	
+{
 	if (m_pTarget == nullptr)
 		return;
 
-		if (true == m_pTarget->Get_Target_IsHit())
+	if (true == m_pTarget->Get_Target_IsHit())
+	{
+		/*m_iGet_Damege = m_iMaxHP - (_uint)m_pTarget->Get_Target_Hp();
+		m_iNowHP -= m_iGet_Damege;
+		m_iMaxHP = m_iNowHP;*/
+		//CPlayer* pPlayer = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE));
+		//m_iGet_Damege = pPlayer->Get_Target_Param().fDamage;
+
+		m_iGet_Damege = 10;
+	}
+
+	if (true == m_pTarget->Get_Target_IsHit())
+	{
+		if (9 < m_iSave_Damage)
+			m_iSave_Damage = 0;
+
+		while (0 != m_iGet_Damege)
 		{
-			/*m_iGet_Damege = m_iMaxHP - (_uint)m_pTarget->Get_Target_Hp();
-			m_iNowHP -= m_iGet_Damege;
-			m_iMaxHP = m_iNowHP;*/
-			//CPlayer* pPlayer = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE));
-			//m_iGet_Damege = pPlayer->Get_Target_Param().fDamage;
-
-			m_iGet_Damege = 10;
+			Temp_GetDamage[m_iSave_Damage] = m_iGet_Damege % 10;
+			m_iGet_Damege /= 10;
+			m_iSave_Damage += 1;
 		}
+	}
 
-		if (true == m_pTarget->Get_Target_IsHit())
-		{
-			if(9 < m_iSave_Damage)
-				m_iSave_Damage = 0;
-
-			while (0 != m_iGet_Damege)
-			{
-				Temp_GetDamage[m_iSave_Damage] = m_iGet_Damege % 10;
-				m_iGet_Damege /= 10;
-				m_iSave_Damage += 1;
-			}
-		}
-
-		cout << m_iGet_Damege << endl;
+	//cout << m_iGet_Damege << endl;
 }
 
 CDamegeNumUI* CDamegeNumUI::Create(_Device pGraphic_Device)
