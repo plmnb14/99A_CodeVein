@@ -54,7 +54,7 @@ _int CGet_ItemUI::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
-	if (true == m_bShow_Ask_Pickup && false == m_bSparkle_Box)
+	if (true == m_bShow_Ask_Pickup /*&& false == m_bSparkle_Box*/)
 		m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	return S_OK;
@@ -86,10 +86,6 @@ HRESULT CGet_ItemUI::Render_GameObject()
 		return E_FAIL;
 
 	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
-
-	m_matOldView = g_pManagement->Get_Transform(D3DTS_VIEW);
-	m_matOldProj = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
@@ -100,6 +96,9 @@ HRESULT CGet_ItemUI::Render_GameObject()
 
 	if (FAILED(SetUp_ConstantTable(0)))
 		return E_FAIL;
+
+	
+	m_pGraphic_Dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
 
 	m_pShaderCom->Begin_Shader();
 
@@ -125,7 +124,11 @@ HRESULT CGet_ItemUI::Render_GameObject()
 			pUIMgr->Set_CoundItem(m_iCount_PickUpitem);
 		}
 	}
-	
+	m_pBufferCom->Render_VIBuffer();
+
+	m_pShaderCom->End_Pass();
+
+	m_pShaderCom->End_Shader();
 	//else
 	//{
 
@@ -163,11 +166,7 @@ HRESULT CGet_ItemUI::Render_GameObject()
 
 	//	m_pShaderCom->Commit_Changes();
 	//}
-	m_pBufferCom->Render_VIBuffer();
 
-	m_pShaderCom->End_Pass();
-
-	m_pShaderCom->End_Shader();
 
 	return S_OK;
 }
@@ -244,10 +243,9 @@ void CGet_ItemUI::SetUp_State(_double TimeDelta)
 	// 지금은 더미로 했지만 나중에 아이템 생성되고 나면 생성된 아이템에 따라 아이템 이름을(enum값을?)
 	// 변수에다가 받아와서 해당 이름을 띄운다
 
-	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
-	CGameObject* pItems = g_pManagement->Get_GameObjectBack(L"Layer_Monster", SCENE_STAGE);
+	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
 
-	_v3 Player_D3 = TARGET_TO_TRANS(m_pTarget)->Get_Pos() - TARGET_TO_TRANS(pItems)->Get_Pos();
+	_v3 Player_D3 = TARGET_TO_TRANS(m_pTarget)->Get_Pos() - TARGET_TO_TRANS(pPlayer)->Get_Pos();
 
 	if (V3_LENGTH(&Player_D3) <= 2.f)
 	{

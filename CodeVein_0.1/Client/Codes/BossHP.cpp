@@ -35,22 +35,24 @@ HRESULT CBossHP::Ready_GameObject(void * pArg)
 	m_fSizeY = 20.f;
 	
 	UI_DESC* pDesc = new UI_DESC;
-	pDesc->fPosX = m_fPosX;
-	pDesc->fPosY = m_fPosY;
-	pDesc->fSizeX = m_fSizeX + 5.f;
-	pDesc->fSizeY = m_fSizeY + 5.f;
+	pDesc->fPosX = m_fPosX + 23.f;
+	pDesc->fPosY = m_fPosY + 1.7f;
+	pDesc->fSizeX = WINCX - 17.f;
+	pDesc->fSizeY = 55.f;
 	pDesc->iIndex = 2;
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_HPBack", SCENE_STAGE, L"Layer_HPBack", pDesc);
 	m_pHPBack = static_cast<CHPBack*>(g_pManagement->Get_GameObjectBack(L"Layer_HPBack", SCENE_STAGE));
+	m_pHPBack->Set_ViewZ(m_fViewZ + 0.1f);
 	
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossDecoUI", SCENE_STAGE, L"Layer_BossDecoUI");
 	m_pDecoUI = static_cast<CBossDecoUI*>(g_pManagement->Get_GameObjectBack(L"Layer_BossDecoUI", SCENE_STAGE));
+	m_pDecoUI->Set_ViewZ(m_fViewZ + 0.2f);
 
 	// 보스와 연동
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Boss", SCENE_STAGE);
 	m_fBossHP = m_pTarget->Get_Target_Hp();
 	m_fTotalHP = m_fBossHP;
-
+	
 	return NOERROR;
 }
 
@@ -194,9 +196,12 @@ HRESULT CBossHP::SetUp_ConstantTable()
 
 void CBossHP::SetUp_State(_double TimeDelta)
 {
+	if (m_fBossHP >= m_fTotalHP)
+		m_fBossHP = m_fTotalHP;
+	if (m_fBossHP <= 0.f)
+		m_fBossHP = 0.f;
+
 	m_fBossHP = m_pTarget->Get_Target_Hp();
-	m_fTotalHP = m_fBossHP;
-	
 
 	// Texture UV 흐르는 속도
 	m_fSpeed += -0.05f * _float(TimeDelta);
@@ -209,11 +214,6 @@ void CBossHP::SetUp_State(_double TimeDelta)
 		m_fBossHP += 15.f * _float(TimeDelta);
 	if (GetAsyncKeyState(VK_MULTIPLY) & 0x8000)
 		m_fBossHP -= 15.f * _float(TimeDelta);*/
-
-	if (m_fBossHP >= m_fTotalHP)
-		m_fBossHP = m_fTotalHP;
-	if (m_fBossHP <= 0.f)
-		m_fBossHP = 0.f;
 }
 
 CBossHP * CBossHP::Create(_Device pGraphic_Device)

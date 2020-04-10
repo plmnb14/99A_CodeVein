@@ -235,9 +235,6 @@ void CYachaMan::Check_CollisionPush()
 			}
 		}
 	}
-
-
-
 }
 
 void CYachaMan::Check_CollisionEvent(list<CGameObject*> plistGameObject)

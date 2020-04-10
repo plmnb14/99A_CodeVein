@@ -306,9 +306,6 @@
     <ClInclude Include="..\Headers\Sky.h">
       <Filter>02.GameObject\Stage\4%29 Sky</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\TestMonster.h">
-      <Filter>02.GameObject\Stage\2%29 Monster</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\LogoBtn.h">
       <Filter>02.GameObject\Logo\LogoButton</Filter>
     </ClInclude>
@@ -529,9 +526,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Sky.cpp">
       <Filter>02.GameObject\Stage\4%29 Sky</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\TestMonster.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\LogoBtn.cpp">
       <Filter>02.GameObject\Logo\LogoButton</Filter>
@@ -770,6 +764,9 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\ShaderFiles\Shader_UI.fx">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\ShaderFiles\Shader_Blur.fx">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

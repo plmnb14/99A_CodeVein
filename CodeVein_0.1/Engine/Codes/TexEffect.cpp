@@ -450,6 +450,13 @@ void CTexEffect::Check_Frame(_double TimeDelta)
 	m_fFrame += m_pInfo->fMaxFrame * m_pInfo->fAnimSpeed * _float(TimeDelta);
 	if (m_pInfo->fMaxFrame != 0.f && m_pInfo->fMaxFrame <= m_fFrame)
 	{
+		if (m_bLoop)
+		{
+			m_fFrame = 0.f;
+			m_fLifeTime = m_pInfo->fLifeTime;
+			m_fAlpha = m_pInfo->fMaxAlpha;
+			return;
+		}
 		m_bIsDead = true;
 	}
 }

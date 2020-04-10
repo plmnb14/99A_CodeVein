@@ -38,6 +38,8 @@
 #include "MonsterUI.h"
 #include "MassageUI.h"
 #include "DamegeNumUI.h"
+#include "Get_ItemUI.h"
+#include "PickUp_ItemUI.h"
 
 //#include "Item.h"
 
@@ -160,6 +162,8 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"ButterFly_BackStepSand_Floor")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"ButterFly_Distortion_SmokeGravity")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_Body")))
 		return E_FAIL;
 #pragma endregion
 
@@ -588,6 +592,9 @@ _uint CLoading::Loading_Stage()
 		return E_FAIL;
 
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DamegeNumUI", CDamegeNumUI::Create(m_pGraphicDev))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Get_ItemUI", CGet_ItemUI::Create(m_pGraphicDev))))
 		return E_FAIL;
 
 	// ±‚≈∏

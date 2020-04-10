@@ -32,6 +32,7 @@ public:
 	_float	Get_EndTimer() { return m_fEndTimer; }
 
 	void	Set_EndTimer(_double TimeDelta) { m_fEndTimer += (_float)TimeDelta; }
+	void	Set_ItemTarget(CGameObject* pGameObject) { m_pTarget = pGameObject; }
 
 private:
 	_bool		m_bCheck_Click = false;

@@ -18,6 +18,8 @@ HRESULT CComponent_Manager::Ready_Component_Manager(_Device _pGraphicDev)
 		return E_FAIL;
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Effect", CShader::Create(_pGraphicDev, L"../ShaderFiles/Shader_Effect.fx"))))
 		return E_FAIL;
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Blur", CShader::Create(_pGraphicDev, L"../ShaderFiles/Shader_Blur.fx"))))
+		return E_FAIL;
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_Gizmo", CShader::Create(_pGraphicDev, L"../ShaderFiles/Shader_Gizmo.fx"))))
 		return E_FAIL;
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_UI", CShader::Create(_pGraphicDev, L"../ShaderFiles/Shader_UI.fx"))))
@@ -98,7 +100,7 @@ CComponent * CComponent_Manager::Clone_Component(_uint iSceneID, const _tchar * 
 		return nullptr;
 
 	// 원본을 복제한다.
-	return pPrototype->Clone_Component(pArg);	
+	return pPrototype->Clone_Component(pArg);
 }
 
 HRESULT CComponent_Manager::Clear_Instance(_uint iSceneIndex)

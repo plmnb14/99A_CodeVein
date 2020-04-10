@@ -69,6 +69,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"ButterFly_GlitterSand", 300);
 
 	Input_Pool(L"ButterFly_VenomShot", 1000);
+	Input_Pool(L"ButterFly_VenomShot_Body", 30);
 	Input_Pool(L"ButterFly_VenomShot_SubSmoke", 1000);
 	Input_Pool(L"ButterFly_VenomShot_Distortion", 500);
 	Input_Pool(L"ButterFly_VenomShot_Chunk", 500);

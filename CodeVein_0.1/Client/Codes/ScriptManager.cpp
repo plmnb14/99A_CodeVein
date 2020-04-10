@@ -12,6 +12,7 @@
 #include "BlackWolf.h"
 #include "PoisonButterfly.h"
 // =================================
+#include "UI_Manager.h"
 
 IMPLEMENT_SINGLETON(CScriptManager)
 
@@ -227,6 +228,9 @@ void CScriptManager::St01_Sub4()
 		if (m_bEventTrigger_0[5] == false)
 		{
 			m_bEventTrigger_0[5] = true;
+
+			// 보스 HP바 생성
+			g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossHP", SCENE_STAGE, L"Layer_BossHP");
 
 			m_vecObjectPool[14]->Set_Enable(true);
 		}

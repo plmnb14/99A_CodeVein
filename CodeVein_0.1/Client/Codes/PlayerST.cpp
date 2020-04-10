@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\PlayerST.h"
-
+#include "HPBack.h"
 
 CPlayerST::CPlayerST(_Device pGraphic_Device)
 	: CUI(pGraphic_Device)
@@ -26,27 +26,28 @@ HRESULT CPlayerST::Ready_GameObject(void * pArg)
 
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = 200.f;
-	m_fPosY = 610.f;
+	m_fPosX = 202.f;
+	m_fPosY = 620.f;
 	m_fSizeX = 280.f;
 	m_fSizeY = 10.f;
+	m_fViewZ = 0.f;
 
 	m_bIsActive = true;
 
-	/*m_fPlayerST = 30.f;
-	m_fTotalST = 100.f;*/
+	
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
 
 	m_fPlayerST = m_pTarget->Get_Target_Stamina();
 	m_fTotalST = m_fPlayerST;
 
 	UI_DESC* pDesc = new UI_DESC;
-	pDesc->fPosX = m_fPosX;
+	pDesc->fPosX = 202.f;
 	pDesc->fPosY = m_fPosY;
-	pDesc->fSizeX = 285;
-	pDesc->fSizeY = 15.f;
+	pDesc->fSizeX = 345.f;
+	pDesc->fSizeY = 30.f;
 	pDesc->iIndex = 0;
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_HPBack", SCENE_STAGE, L"Layer_HPBack", pDesc);
+	static_cast<CHPBack*>(g_pManagement->Get_GameObjectBack(L"Layer_HPBack", SCENE_STAGE))->Set_Active(true);
 
 	return NOERROR;
 }
@@ -104,7 +105,7 @@ HRESULT CPlayerST::Render_GameObject()
 
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(3);
+	m_pShaderCom->Begin_Pass(2);
 
 	// 버퍼를 렌더링한다.
 	// (인덱스버퍼(012023)에 보관하고있는 인덱스를 가진 정점을 그리낟.)
@@ -185,6 +186,11 @@ HRESULT CPlayerST::SetUp_ConstantTable()
 
 void CPlayerST::SetUp_State(_double TimeDelta)
 {
+	if (m_fPlayerST >= m_fTotalST)
+		m_fPlayerST = m_fTotalST;
+	if (m_fPlayerST <= 0.f)
+		m_fPlayerST = 0.f;
+
 	m_fPlayerST = m_pTarget->Get_Target_Stamina();
 
 	// Texture UV 흐르는 속도
@@ -197,11 +203,6 @@ void CPlayerST::SetUp_State(_double TimeDelta)
 		m_fPlayerST += 15.f * _float(TimeDelta);
 	if (GetAsyncKeyState(VK_LEFT) & 0x8000)
 		m_fPlayerST -= 15.f * _float(TimeDelta);*/
-
-	if (m_fPlayerST >= m_fTotalST)
-		m_fPlayerST = m_fTotalST;
-	if (m_fPlayerST <= 0.f)
-		m_fPlayerST = 0.f;
 }
 
 CPlayerST * CPlayerST::Create(_Device pGraphic_Device)

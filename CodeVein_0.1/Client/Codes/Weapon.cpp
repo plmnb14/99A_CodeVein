@@ -233,8 +233,6 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 							_uint min = (_uint)(m_tObjParam.fDamage - (m_tObjParam.fDamage * 0.2f));
 							_uint max = (_uint)(m_tObjParam.fDamage + (m_tObjParam.fDamage * 0.2f));
 
-							//cout << m_tObjParam.fDamage << endl;
-
 							iter->Add_Target_Hp(-(_float)CALC::Random_Num(min , max) * m_fSkillPercent);
 							g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
 
@@ -513,19 +511,19 @@ HRESULT CWeapon::SetUp_Default()
 
 HRESULT CWeapon::SetUp_WeaponData()
 {
-	m_tWeaponParam[WPN_SSword_Normal].fDamage = 20.f;
+	m_tWeaponParam[WPN_SSword_Normal].fDamage = 30.f;
 	m_tWeaponParam[WPN_SSword_Normal].fRadius = 0.7f;
 	m_tWeaponParam[WPN_SSword_Normal].fTrail_Min = 0.f;
 	m_tWeaponParam[WPN_SSword_Normal].fTrail_Max = 1.f;
 	m_tWeaponParam[WPN_SSword_Normal].fCol_Height = 1.f;
 
-	m_tWeaponParam[WPN_Hammer_Normal].fDamage = 50.f;
-	m_tWeaponParam[WPN_Hammer_Normal].fRadius = 0.85f;
+	m_tWeaponParam[WPN_Hammer_Normal].fDamage = 55.f;
+	m_tWeaponParam[WPN_Hammer_Normal].fRadius = 0.75f;
 	m_tWeaponParam[WPN_Hammer_Normal].fTrail_Min = 0.75f;
 	m_tWeaponParam[WPN_Hammer_Normal].fTrail_Max = 1.5f;
 	m_tWeaponParam[WPN_Hammer_Normal].fCol_Height = 1.3f;
 
-	m_tWeaponParam[WPN_Gun_Normal].fDamage = 25.f;
+	m_tWeaponParam[WPN_Gun_Normal].fDamage = 30.f;
 	m_tWeaponParam[WPN_Gun_Normal].fRadius = 0.6f;
 	m_tWeaponParam[WPN_Gun_Normal].fTrail_Min = 0.f;
 	m_tWeaponParam[WPN_Gun_Normal].fTrail_Max = 1.f;
@@ -537,7 +535,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[WPN_Shield_Normal].fTrail_Max = 1.f;
 	m_tWeaponParam[WPN_Shield_Normal].fCol_Height = 0.f;
 
-	m_tWeaponParam[WPN_Halverd_Normal].fDamage = 25.f;
+	m_tWeaponParam[WPN_Halverd_Normal].fDamage = 60.f;
 	m_tWeaponParam[WPN_Halverd_Normal].fRadius = 0.75f;
 	m_tWeaponParam[WPN_Halverd_Normal].fTrail_Min = 0.75f;
 	m_tWeaponParam[WPN_Halverd_Normal].fTrail_Max = 1.5f;

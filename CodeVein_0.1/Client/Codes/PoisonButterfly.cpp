@@ -28,9 +28,10 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 	Ready_Collider();
 
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 100.f;
+	m_tObjParam.fHp_Cur = 150.f;
+	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
 	m_tObjParam.fDamage = 20.f;
-	m_tObjParam.fDamage = 0.f;
+	//m_tObjParam.fDamage = 0.f;
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
@@ -74,7 +75,7 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	//Start_Sel->Add_Child(Poison_Tornado_After_Charging());
+	//Start_Sel->Add_Child(Eat_TurnEat());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -280,7 +281,9 @@ _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 
 	}
 
-	Check_PhyCollider();
+	if (false == m_bReadyDead)
+		Check_PhyCollider();
+	
 	OnCollisionEnter();
 
 
@@ -336,10 +339,15 @@ HRESULT CPoisonButterfly::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
+			if (false == m_bReadyDead)
+				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+
 			m_pShaderCom->Begin_Pass(m_iPass);
 
-			if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
-				return E_FAIL;
+			m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
+
+			//if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
+			//	return E_FAIL;
 
 			m_pShaderCom->Commit_Changes();
 
@@ -426,12 +434,12 @@ CBT_Composite_Node * CPoisonButterfly::Eat_TurnEat()
 	CBT_Wait* Wait0 = Node_Wait("대기", 2.8, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 10, 0.2, 0);
 
-	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("왜곡", L"ButterFly_Distortion_Circle", L"Bone_Tail6_Tongue2", 2.0, 1, 0.01, 0);
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("왜곡", L"ButterFly_Distortion_Circle", L"Bone_Tail6_Tongue2", 1.5, 1, 0.01, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("보라 파티클", L"ButterFly_PointParticle", L"Bone_Tail6", 0.f, 160, 0.7, 0);
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Bone_Tail6", 0.f, 160, 0.7, 0);
 	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("반짝 보라 모래", L"ButterFly_GlitterSand", L"Bone_Tail6", 0.f, 160, 0.7, 0);
 	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("왜곡안개", L"ButterFly_Distortion_Smoke", L"Bone_Tail6", 0.f, 60, 0.7, 0);
-	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("왜곡", L"ButterFly_Distortion_Circle", L"Bone_Tail6_Tongue2", 4.2, 1, 0.01, 0);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("왜곡", L"ButterFly_Distortion_Circle", L"Bone_Tail6_Tongue2", 3.0, 1, 0.01, 0);
 
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
@@ -977,6 +985,64 @@ CBT_Composite_Node * CPoisonButterfly::Show_FarAttack()
 	return Root_Sel;
 }
 
+void CPoisonButterfly::Down()
+{
+	m_dDownTime += DELTA_60;
+
+	// down 시작함.
+	if (true == m_bDown_StartAni)
+	{
+		if (m_pMeshCom->Is_Finish_Animation(0.9f))
+		{
+			// 다운 끝나고 루프 시작
+			m_pMeshCom->SetUp_Animation(Ani_Down_Loop);
+			m_bDown_StartAni = false;
+			m_bDown_LoopAni = true;
+		}
+	}
+
+	// down 끝내기 시작,  누적 데미지로도 끝낼 수 있음
+	if (m_dDownTime > 4.f)
+	{
+		m_bDown_LoopAni = false;
+
+		m_pMeshCom->SetUp_Animation(Ani_Down_End);
+
+		if (m_pMeshCom->Is_Finish_Animation(0.9f))
+		{
+			m_tObjParam.bDown = false;
+
+			m_bDown_Start = false;
+			m_bDown_Finish = true;
+			m_bAIController = true;
+			
+			m_pMeshCom->SetUp_Animation(Ani_Idle);
+		}
+	}
+
+
+	// 충돌처리, bCanHit를 무기가 false시켜줄것임.
+	if (false == m_tObjParam.bCanHit && m_tObjParam.bIsHit == false)
+	{
+		m_tObjParam.bIsHit = true;
+		m_tObjParam.bCanHit = true;
+
+		if (true == m_bDown_LoopAni)
+			m_pMeshCom->Reset_OldIndx();	//루프 애니 초기화
+
+		m_pAIControllerCom->Reset_BT();
+	}
+	else
+	{
+		m_dHitTime += DELTA_60;
+
+		if (m_dHitTime > 0.5)
+		{
+			m_tObjParam.bIsHit = false;		// 재충돌 가능
+		}
+	}
+}
+
 HRESULT CPoisonButterfly::Update_Bone_Of_BlackBoard()
 {
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Tail6");
@@ -1117,6 +1183,7 @@ HRESULT CPoisonButterfly::Update_Collider()
 	m_vecAttackCol[1]->Update(m_vTail4);
 	m_vecAttackCol[2]->Update(m_vTail2);
 
+	m_pCollider->Update(m_pTransformCom->Get_Pos() + _v3(0.f, m_pCollider->Get_Radius().y, 0.f));
 	return S_OK;
 }
 
@@ -1144,29 +1211,47 @@ _bool CPoisonButterfly::Is_InFov(_float fDegreeOfFov, _v3 vTargetPos)
 
 void CPoisonButterfly::Check_PhyCollider()
 {
-	// 충돌처리, bCanHit를 무기가 false시켜줄것임.
-	if (false == m_tObjParam.bCanHit && m_tObjParam.bIsHit == false)
+	// 다운상태일 때는 이함수만 탄다.
+	if (true == m_bDown_Start)
 	{
-		m_pMeshCom->Reset_OldIndx();	//애니 인덱스 초기화
+		// 이 안에서 충돌처리도 할 것임.
+		Down();
+	}
 
-		m_bAIController = false;
+
+	// 일반 충돌처리, bCanHit를 무기가 false시켜줄것임.
+	else if (false == m_tObjParam.bCanHit && m_tObjParam.bIsHit == false)
+	{
+		//m_pMeshCom->Reset_OldIndx();	//애니 인덱스 초기화
+
+		//m_bAIController = false;
 		
 		m_tObjParam.bIsHit = true;
 		m_tObjParam.bCanHit = true;
+		
+		m_dHitTime = 0;	// 피격가능 타임 초기화
 
 		m_bFight = true;		// 싸움 시작
 
-		m_pAIControllerCom->Reset_BT();
-
 		if (m_tObjParam.fHp_Cur > 0.f)
 		{
-			//++m_iHitCount;
+			// 체력 비율 70 이하되면 스턴
+			if (false == m_bDown_Finish)
+			{
+				if (0.7 >= (m_tObjParam.fHp_Cur / m_tObjParam.fHp_Max))
+				{
+					m_bDown_Start = true;
 
-			//if (m_iHitCount == 3)
-			//{
-			//	m_pMeshCom->SetUp_Animation(Ani_Dmg01_B);	//방향에 따른 모션 해줘야함.
-			//	m_iHitCount = 0;
-			//}
+					m_tObjParam.bDown = true;
+
+					m_pMeshCom->SetUp_Animation(Ani_Down_Start);
+					m_bDown_StartAni = true;	//down 함수 내부에서 쓸 것임.
+					m_pAIControllerCom->Reset_BT();
+					m_bAIController = false;
+
+				}
+			}
+
 		}
 		else
 		{
@@ -1177,47 +1262,59 @@ void CPoisonButterfly::Check_PhyCollider()
 	}
 	else
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.9f))
-		{
-			m_bAIController = true;
-			m_tObjParam.bIsHit = false;
+		m_dHitTime += DELTA_60;
 
-			//m_pMeshCom->SetUp_Animation(Ani_Idle);
+		if (m_dHitTime > 0.5)
+		{
+			m_tObjParam.bIsHit = false;		// 재충돌 가능
 		}
 
-		else if (m_pMeshCom->Is_Finish_Animation(0.5f))	// 이때부터 재충돌 가능
-		{
-			m_tObjParam.bIsHit = false;
-		}
 
+		//if (m_pMeshCom->Is_Finish_Animation(0.9f))
+		//{
+		//	//m_bAIController = true;
+		//	m_tObjParam.bIsHit = false;
+
+		//	//m_pMeshCom->SetUp_Animation(Ani_Idle);
+		//}
+
+		//else if (m_pMeshCom->Is_Finish_Animation(0.5f))	// 이때부터 재충돌 가능
+		//{
+		//	m_tObjParam.bIsHit = false;
+		//}
 	}
 }
 
 void CPoisonButterfly::Push_Collider()
 {
-	list<CGameObject*> tmpList = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_STAGE);
+	list<CGameObject*> tmpList[3];
 
-	for (auto& iter : tmpList)
+	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_STAGE);
+	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
+	tmpList[2] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
+
+	for (auto& ListObj : tmpList)
 	{
-		CCollider* pCollider = TARGET_TO_COL(iter);
-
-		//cout << m_pAIControllerCom->Get_FloatValue(L"Monster_Speed") << endl;
-
-		// 지금 속도값 임의로 넣었는데 구해서 넣어줘야함 - 완료
-		if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_pAIControllerCom->Get_FloatValue(L"Monster_Speed")))
+		for (auto& iter : ListObj)
 		{
-			CTransform* pTrans = TARGET_TO_TRANS(iter);
-			CNavMesh*   pNav = TARGET_TO_NAV(iter);
+			CCollider* pCollider = TARGET_TO_COL(iter);
 
-			// 방향 구해주고
-			_v3 vDir = m_pTransformCom->Get_Pos() - pTrans->Get_Pos();
-			V3_NORMAL_SELF(&vDir);
+			// 지금 속도값 임의로 넣었는데 구해서 넣어줘야함 - 완료
+			if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_pAIControllerCom->Get_FloatValue(L"Monster_Speed")))
+			{
+				CTransform* pTrans = TARGET_TO_TRANS(iter);
+				CNavMesh*   pNav = TARGET_TO_NAV(iter);
 
-			// y축 이동은 하지말자
-			vDir.y = 0;
+				// 방향 구해주고
+				_v3 vDir = m_pTransformCom->Get_Pos() - pTrans->Get_Pos();
+				V3_NORMAL_SELF(&vDir);
 
-			// 네비 메쉬타게 끔 세팅
-			pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pCollider->Get_Length().x));
+				// y축 이동은 하지말자
+				vDir.y = 0;
+
+				// 네비 메쉬타게 끔 세팅
+				pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pCollider->Get_Length().x));
+			}
 		}
 	}
 }

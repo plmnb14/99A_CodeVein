@@ -57,6 +57,9 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
+	
+	if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+		return E_FAIL;
 
 	//if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
 	//	return E_FAIL;
@@ -64,8 +67,8 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 	IF_NOT_NULL(m_pWeapon[m_eActiveSlot])
 		m_pWeapon[m_eActiveSlot]->Update_GameObject(TimeDelta);
 
-	//IF_NOT_NULL(m_pDrainWeapon)
-	//	m_pDrainWeapon->Update_GameObject(TimeDelta);
+	IF_NOT_NULL(m_pDrainWeapon)
+		m_pDrainWeapon->Update_GameObject(TimeDelta);
 
 	m_pNavMesh->Goto_Next_Subset(m_pTransform->Get_Pos(), nullptr);
 
@@ -132,20 +135,6 @@ HRESULT CPlayer::Render_GameObject()
 
 			m_pShader->Set_DynamicTexture_Auto(m_pDynamicMesh, i, j);
 
-			//if (15 == m_iPass)
-			//	break;
-
-			//m_pShader->Set_StaticTexture_Auto(m_pDynamicMesh, i);
-
-			//if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pDynamicMesh->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
-			//	return E_FAIL;
-			//
-			//if (FAILED(m_pShader->Set_Texture("g_NormalTexture", m_pDynamicMesh->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_NORMAL_MAP))))
-			//	return E_FAIL;
-			//
-			//if (FAILED(m_pShader->Set_Texture("g_SpecularTexture", m_pDynamicMesh->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_SPECULAR_MAP))))
-			//	return E_FAIL;
-
 			m_pShader->Commit_Changes();
 
 			m_pDynamicMesh->Render_Mesh(i, j);
@@ -180,6 +169,11 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 
 	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
+
+	if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
+		return E_FAIL;
+
+	m_matLastWVP = m_pTransform->Get_WorldMat() * ViewMatrix * ProjMatrix;
 
 	_uint iNumMeshContainer = _uint(m_pDynamicMesh->Get_NumMeshContainer());
 
@@ -1325,25 +1319,27 @@ void CPlayer::Key_Skill()
 		_v3 vEffPos = _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f;
 
 		g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle"	, 0.5f	, m_pTransform->Get_Pos() + _v3(0.f, 1.3f, 0.f));
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor"		, 1.f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor"			, 1.f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_0"						, 1.f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_1"						, 1.f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_2"						, 1.f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_3"						, 1.f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0"				, 1.f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 1.f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Ver"		, 1.55f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Ver"			, 1.55f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_0"						, 1.55f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_1"						, 1.55f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_2"						, 1.55f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_3"						, 1.55f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0"				, 1.55f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_Ring_Hor"				, 1.6f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_Ring_Ver"				, 1.6f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_RedCircle_Flash"		, 1.6f	,vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 1.6f	,vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor"		, 1.f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Hor"	, 1.f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor"			, 1.f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_0"						, 1.f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_1"						, 1.f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_2"						, 1.f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_3"						, 1.f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0"				, 1.f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 1.f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Ver"		, 1.55f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Ver"	, 1.55f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Ver"			, 1.55f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_0"						, 1.55f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_1"						, 1.55f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_2"						, 1.55f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_3"						, 1.55f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0"				, 1.55f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_Ring_Hor"				, 1.6f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_Ring_Ver"				, 1.6f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_RedCircle_Flash"		, 1.6f	, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 1.6f	, vEffPos, m_pTransform);
 	}
 
 	// 3¹ø ½ºÅ³
@@ -2801,7 +2797,7 @@ void CPlayer::Play_Dead()
 
 		else if (m_eAnim_Upper == Cmn_Dying_End)
 		{
-			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.99f))
+			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.98f))
 			{
 				m_fAnimMutiply = 0.f;
 				m_eActState = ACT_Dead;
@@ -2923,6 +2919,9 @@ void CPlayer::Play_BloodSuck()
 	{
 		if (false == m_bOnChargeSuck)
 		{
+			m_pDrainWeapon->Set_Target_CanAttack(true);
+			m_pDrainWeapon->Set_Enable_Record(true);
+
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.95f))
 			{
 				m_eAnim_Upper = LongCoat_ChargeSuck_End;
@@ -2936,6 +2935,9 @@ void CPlayer::Play_BloodSuck()
 					m_pDrainWeapon->Set_AnimIdx(m_eAnim_Upper);
 					m_pDrainWeapon->Set_ActiveCollider(true);
 					m_pDrainWeapon->Set_Active(true);
+
+					m_pDrainWeapon->Set_Target_CanAttack(true);
+					m_pDrainWeapon->Set_Enable_Record(true);
 				}
 			}
 
@@ -2955,6 +2957,9 @@ void CPlayer::Play_BloodSuck()
 						m_pDrainWeapon->Set_AnimIdx(m_eAnim_Upper);
 						m_pDrainWeapon->Set_ActiveCollider(true);
 						m_pDrainWeapon->Set_Active(true);
+
+						m_pDrainWeapon->Set_Target_CanAttack(true);
+						m_pDrainWeapon->Set_Enable_Record(true);
 					}
 				}
 
@@ -2972,6 +2977,9 @@ void CPlayer::Play_BloodSuck()
 						m_pDrainWeapon->Set_ActiveCollider(false);
 						m_pDrainWeapon->Set_Active(false);
 						m_pDrainWeapon->Set_ResetOldAnimIdx();
+
+						m_pDrainWeapon->Set_Target_CanAttack(false);
+						m_pDrainWeapon->Set_Enable_Record(false);
 					}
 				}
 			}
@@ -3013,6 +3021,9 @@ void CPlayer::Play_BloodSuckCount()
 			m_pDrainWeapon->Set_ActiveCollider(true);
 			m_pDrainWeapon->Set_Active(true);
 			m_pDrainWeapon->Set_ResetOldAnimIdx();
+
+			m_pDrainWeapon->Set_Target_CanAttack(true);
+			m_pDrainWeapon->Set_Enable_Record(true);
 		}
 	}
 
@@ -3028,6 +3039,9 @@ void CPlayer::Play_BloodSuckCount()
 			{
 				m_pDrainWeapon->Set_ActiveCollider(false);
 				m_pDrainWeapon->Set_Active(false);
+
+				m_pDrainWeapon->Set_Target_CanAttack(false);
+				m_pDrainWeapon->Set_Enable_Record(false);
 			}
 		}
 	}
@@ -5011,7 +5025,7 @@ HRESULT CPlayer::SetUp_ConstantTable()
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
-
+	
 	return NOERROR;
 }
 

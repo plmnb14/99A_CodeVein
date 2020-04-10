@@ -31,8 +31,12 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Depth", ViewPort.Width, ViewPort.Height, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.f, 1.f, 0.f, 0.f))))
 		return E_FAIL;
 
+	// Target_Emissive
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Emissive", ViewPort.Width, ViewPort.Height, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.f, 0.f, 1.f, 0.f))))
+		return E_FAIL;
+
 	// Target_Velocity
-	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Velocity", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.0f, 0.0f, 1.0f, 0.f))))
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Velocity", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
 		return E_FAIL;
 
 	// 명암을 저장한다.
@@ -89,6 +93,10 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Bloom", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
 		return E_FAIL;
 
+	// Target_Rim
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Rim", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
+		return E_FAIL;
+
 	// Target_ToneMapping
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_ToneMapping", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
@@ -102,7 +110,10 @@ HRESULT CRenderer::Ready_Component_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Deferred", L"Target_Depth")))
 		return E_FAIL;
-	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Deferred", L"Target_Velocity")))
+	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Deferred", L"Target_Emissive")))
+		return E_FAIL;
+
+	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Velocity", L"Target_Velocity")))
 		return E_FAIL;
 
 	// For.MRT_LightAcc
@@ -111,6 +122,8 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_LightAcc", L"Target_Specular")))
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_LightAcc", L"Target_SSAO")))
+		return E_FAIL;
+	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_LightAcc", L"Target_Rim")))
 		return E_FAIL;
 	
 	// For.MRT_Distortion
@@ -153,7 +166,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (nullptr == m_pShader_LightAcc)
 		return E_FAIL;
 
-	// For.Shader_LightAcc
+	// For.Shader_Blend
 	m_pShader_Blend = CShader::Create(m_pGraphic_Dev, L"../ShaderFiles/Shader_Blend.fx");
 	if (nullptr == m_pShader_Blend)
 		return E_FAIL;
@@ -166,6 +179,11 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	// For.Shader_Effect
 	m_pShader_Effect = static_cast<CShader*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Shader_Effect"));
 	if (nullptr == m_pShader_Effect)
+		return E_FAIL;
+
+	// For.Shader_Blur
+	m_pShader_Blur = static_cast<CShader*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Shader_Blur"));
+	if (nullptr == m_pShader_Blur)
 		return E_FAIL;
 	
 	// For.Buffer_ViewPort
@@ -195,7 +213,11 @@ HRESULT CRenderer::Ready_Component_Prototype()
 		return E_FAIL;
 
 	// For.Target_Depth`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Velocity", 0.0f, fTargetSize * 3, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Emissive", 0.0f, fTargetSize * 3, fTargetSize, fTargetSize)))
+		return E_FAIL;
+
+	// For.Target_Depth`s Debug Buffer
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Velocity", 0.0f, fTargetSize * 4, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_Shade`s Debug Buffer
@@ -208,6 +230,10 @@ HRESULT CRenderer::Ready_Component_Prototype()
 
 	// For.Target_SSAO`s Debug Buffer
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_SSAO", fTargetSize, fTargetSize * 2, fTargetSize, fTargetSize)))
+		return E_FAIL;
+
+	// For.Target_Rim`s Debug Buffer
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Rim", fTargetSize, fTargetSize * 4, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_ShadowMap`s Debug Buffer
@@ -288,6 +314,10 @@ HRESULT CRenderer::Draw_RenderList()
 	if (FAILED(Render_LightAcc()))
 		return E_FAIL;
 
+	// 속도맵 만들기
+	if (FAILED(Render_MotionBlurTarget()))
+		return E_FAIL;
+	
 	// 디퓨즈, 셰이드 두 타겟을 혼합하여 백버퍼에 찍는다. // With Skybox(priority), With Alpha
 	if (FAILED(Render_Blend()))
 		return E_FAIL;
@@ -334,6 +364,7 @@ HRESULT CRenderer::Draw_RenderList()
 			return E_FAIL;
 
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Deferred");
+		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Velocity");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_LightAcc");
 		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_ShadowMap");
 		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_Shadow");
@@ -525,6 +556,37 @@ HRESULT CRenderer::Render_Shadow()
 	return NOERROR;
 }
 
+HRESULT CRenderer::Render_MotionBlurTarget()
+{
+	if (nullptr == m_pTarget_Manager)
+		return E_FAIL;
+
+	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Velocity")))
+		return E_FAIL;
+
+	m_pShader_Blur->Begin_Shader();
+
+	for (auto& pGameObject : m_RenderList[RENDER_MOTIONBLURTARGET])
+	{
+		if (nullptr != pGameObject)
+		{
+			if (FAILED(pGameObject->Render_GameObject_SetPass(m_pShader_Blur, 0)))
+			{
+				Safe_Release(pGameObject);
+				return E_FAIL;
+			}
+			Safe_Release(pGameObject);
+		}
+	}
+
+	m_RenderList[RENDER_MOTIONBLURTARGET].clear();
+
+	m_pShader_Blur->End_Shader();
+
+	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_Velocity")))
+		return E_FAIL;
+}
+
 HRESULT CRenderer::Render_Distortion()
 {
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Distortion")))
@@ -626,7 +688,14 @@ HRESULT CRenderer::Render_LightAcc()
 	//m_pShader_LightAcc->Set_Value("g_matLightProj", &matProj, sizeof(_mat));
 	//m_pShader_LightAcc->Set_Value("g_vLightPos", &vLightPos, sizeof(_v3));
 
+	_v3 vLightDir = _v3(0.2f, 1.f, 0.9f);
+	V3_NORMAL_SELF(&vLightDir);
 
+	// 임시로 추가라 나중에 고쳐야함
+	_v4 vLightDiffuse = _v4(1.f, 0.882f, 0.801f, 1.f);
+
+	m_pShader_LightAcc->Set_Value("g_vLightDiffuse", &_v4(vLightDir.x, vLightDir.y, vLightDir.x, 0.f), sizeof(_v4));
+    m_pShader_LightAcc->Set_Value("g_vLightDir", &_v4(vLightDir.x , vLightDir.y, vLightDir.x, 0.f), sizeof(_v4));
 	m_pShader_LightAcc->Set_Texture("g_NormalTexture", m_pTarget_Manager->Get_Texture(L"Target_Normal"));
 	m_pShader_LightAcc->Set_Texture("g_DepthTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"));
 	m_pShader_LightAcc->Set_Texture("g_ShadowMapTexture", m_pTarget_Manager->Get_Texture(L"Target_Shadow"));
@@ -635,8 +704,9 @@ HRESULT CRenderer::Render_LightAcc()
 	m_pShader_LightAcc->Set_Value("g_matProjInv", &pPipeLine->Get_Transform_Inverse(D3DTS_PROJECTION), sizeof(_mat));
 	m_pShader_LightAcc->Set_Value("g_matViewInv", &pPipeLine->Get_Transform_Inverse(D3DTS_VIEW), sizeof(_mat));
 
-	m_pShader_LightAcc->Set_Value("g_vCamPosition", &_v4(pPipeLine->Get_CamPosition(), 1.f), sizeof(_v4));
-	m_pShader_LightAcc->Set_Value("g_LightVP_Close", &CManagement::Get_Instance()->Get_LightViewProj(), sizeof(_mat));
+	_v3 CamPos = pPipeLine->Get_CamPosition();
+
+	m_pShader_LightAcc->Set_Value("g_vCamPosition", &_v4(CamPos, 1.f), sizeof(_v4));
 
 	m_pShader_LightAcc->Begin_Shader();
 
@@ -664,7 +734,7 @@ HRESULT CRenderer::Render_Blend()
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_SpecularTexture", m_pTarget_Manager->Get_Texture(L"Target_Specular"))))
 		return E_FAIL;
-	if (FAILED(m_pShader_Blend->Set_Texture("g_EmissiveTexture", m_pTarget_Manager->Get_Texture(L"Target_Velocity"))))
+	if (FAILED(m_pShader_Blend->Set_Texture("g_EmissiveTexture", m_pTarget_Manager->Get_Texture(L"Target_Emissive"))))
 		return E_FAIL;
 
 
@@ -682,6 +752,16 @@ HRESULT CRenderer::Render_Blend()
 	m_pViewPortBuffer->Render_VIBuffer();
 
 	m_pShader_Blend->End_Pass();
+
+	// Rim ====================================
+	//m_pShader_Blend->Begin_Pass(5);
+	//if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_Rim"))))
+	//	return E_FAIL;
+	//m_pShader_Blend->Commit_Changes();
+	//m_pViewPortBuffer->Render_VIBuffer();
+	//m_pShader_Blend->End_Pass();
+	// ====================================
+
 	m_pShader_Blend->End_Shader();
 
 	// Alpha
@@ -765,9 +845,9 @@ HRESULT CRenderer::Render_MotionBlurObj()
 	_mat		ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
 	_mat		matWVP;
 	matWVP = ViewMatrix * ProjMatrix;
-	D3DXMatrixInverse(&matWVP, nullptr, &matWVP);
-	if (FAILED(m_pShader_Blend->Set_Value("g_matInvVP", &matWVP, sizeof(_mat))))
-		return E_FAIL;
+	//D3DXMatrixInverse(&matWVP, nullptr, &matWVP);
+	//if (FAILED(m_pShader_Blend->Set_Value("g_matInvVP", &matWVP, sizeof(_mat))))
+	//	return E_FAIL;
 
 	Safe_Release(pManagement);
 
@@ -939,6 +1019,7 @@ void CRenderer::Free()
 	Safe_Release(m_pShader_LightAcc);
 	Safe_Release(m_pShader_Shadow);
 	Safe_Release(m_pShader_Effect);
+	Safe_Release(m_pShader_Blur);
 	
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pTarget_Manager);

@@ -35,6 +35,7 @@ private:
 	CShader*					m_pShader_Blend = nullptr;
 	CShader*					m_pShader_Shadow = nullptr;
 	CShader*					m_pShader_Effect = nullptr;
+	CShader*					m_pShader_Blur = nullptr;
 
 	CBuffer_ViewPort*			m_pViewPortBuffer = nullptr;
 	CTexture*					m_pSSAOTexture = nullptr;
@@ -52,6 +53,7 @@ private:
 	HRESULT Render_NonAlpha();
 	HRESULT Render_ShadowMap();
 	HRESULT Render_Shadow();
+	HRESULT Render_MotionBlurTarget();
 	HRESULT Render_Distortion();
 	HRESULT Render_Alpha();
 	HRESULT Render_UI();

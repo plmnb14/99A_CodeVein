@@ -285,7 +285,7 @@ PS_OUT_ADVENCE PS_Default_DN(PS_IN In)
 	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 0.f);
 
 	//========================================================================================================================
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.1f, 0.f);
 	// Depth.z == SpecularIntensity.x ( ½ºÆåÅ§·¯ÀÇ x )
 
 	Out.vEmissive = 0;
@@ -315,7 +315,7 @@ PS_OUT_ADVENCE PS_Default_DNT(PS_IN In)
 	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 0.f);
 
 	//========================================================================================================================
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.1f, 0.f);
 	// Depth.z == SpecularIntensity.x ( ½ºÆåÅ§·¯ÀÇ x )
 
 	Out.vEmissive = 0;
@@ -344,7 +344,7 @@ PS_OUT_ADVENCE PS_Default_DNS(PS_IN In)
 
 	float3 worldNormal = mul(TBN, TanNormal);
 
-	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 1.f);
+	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, SpecularIntensity.z * 1.f);
 	// SpecularIntensity.y °¡ ½ºÆåÅ§·¯ °°À½
 
 	//========================================================================================================================
@@ -394,6 +394,8 @@ PS_OUT_ADVENCE PS_Default_DNE(PS_IN In)
 
 PS_OUT_ADVENCE PS_Default_DNSE(PS_IN In)
 {
+	// À¯´Ï¿Â ¾ÆÁ÷ ¾ÈÇÔ
+
 	PS_OUT_ADVENCE			Out = (PS_OUT_ADVENCE)0;
 
 	Out.vDiffuse = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
@@ -411,16 +413,18 @@ PS_OUT_ADVENCE PS_Default_DNSE(PS_IN In)
 
 	float3 worldNormal = mul(TBN, TanNormal);
 
-	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, SpecularIntensity.z * 1.f);
 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x * 2.f, SpecularIntensity.y * 2.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x * 5.f, SpecularIntensity.y * 1.f);
 
 	//========================================================================================================================
 
 	Out.vEmissive = pow(tex2D(EmissiveSampler, In.vTexUV), 2.2);
 	Out.vEmissive.a = 1.f;
+
+	//========================================================================================================================
 
 	return Out;
 }
@@ -444,11 +448,11 @@ PS_OUT_ADVENCE PS_Default_DNR(PS_IN In)
 
 	float3 worldNormal = mul(TBN, TanNormal);
 
-	Out.vNormal = vector(-worldNormal.xyz * 0.5f + 0.5f, 2.f);
+	Out.vNormal = vector(-worldNormal.xyz * 0.5f + 0.5f, 0.f);
 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.1f, 0.f);
 
 	Out.vEmissive = 0;
 
@@ -480,7 +484,7 @@ PS_OUT_ADVENCE PS_Default_DNU(PS_IN In)
 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, g_fSpecularPower, 1.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.1f, 0.f);
 
 	Out.vEmissive = 0;
 
@@ -510,7 +514,7 @@ PS_OUT_ADVENCE PS_Default_DNI(PS_IN In)
 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.1f, 0.f);
 
 	Out.vEmissive = 0;
 
@@ -536,7 +540,7 @@ PS_OUT_ADVENCE PS_Default_DNSU(PS_IN In)
 
 	float3 worldNormal = mul(TBN, TanNormal);
 
-	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, SpecularIntensity.z * 1.f);
 
 	//========================================================================================================================
 
@@ -544,7 +548,7 @@ PS_OUT_ADVENCE PS_Default_DNSU(PS_IN In)
 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x * 2.f, SpecularIntensity.y * 2.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x * 1.f, SpecularIntensity.y * 1.f);
 
 	Out.vEmissive = 0;
 
@@ -572,7 +576,7 @@ PS_OUT_ADVENCE PS_Default_DNSEU(PS_IN In)
 
 	float3 worldNormal = mul(TBN, TanNormal);
 
-	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 1.f);
+	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, SpecularIntensity.z * 1.f);
 
 	//========================================================================================================================
 
@@ -580,7 +584,7 @@ PS_OUT_ADVENCE PS_Default_DNSEU(PS_IN In)
 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x * 3.f, SpecularIntensity.y * 10.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x * 5.f, SpecularIntensity.y * 1.f);
 
 	//========================================================================================================================
 

@@ -77,7 +77,7 @@ _int CExpendables_Slot::Update_GameObject(_double TimeDelta)
 		if (m_vecExpendables.size() == 0)
 			m_pNumberUI->Set_Active(false);
 
-		m_pNumberUI->Set_UI_Index(m_vecExpendables.size());
+		m_pNumberUI->Set_UI_Index(_uint(m_vecExpendables.size()));
 		m_pNumberUI->Set_UI_Pos(m_fPosX - m_fSizeX * 0.25f, m_fPosY + m_fSizeY * 0.25f);
 	}
 		
