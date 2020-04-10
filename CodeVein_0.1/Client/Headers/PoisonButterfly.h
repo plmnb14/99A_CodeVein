@@ -51,7 +51,7 @@ private:	//패턴들
 	// 3. 냠-> 뒤돌아서 덥썩
 	CBT_Composite_Node* Eat_TurnEat();	//충돌완 이펙트 수정 바람, 모션 수정함,
 	// 4. 기모아서 독 소용돌이
-	CBT_Composite_Node* Poison_Tornado_After_Charging();	// 공격범위 3 이상
+	CBT_Composite_Node* Poison_Tornado_After_Charging();	//충돌완 공격범위 3 이상
 	// 5. 좁은 범위 한바퀴 독 발사
 	CBT_Composite_Node* OneTurn_Poison();	//충돌완	공격 거리 3
 	// 6. 냠 회전
@@ -70,7 +70,7 @@ private:	//패턴들
 	// 3. 저격 샷
 	CBT_Composite_Node* Fire_ChaseBullet();	// 발사체 추가 완
 	// 4. 돌면서 사방으로 독 날리기
-	CBT_Composite_Node* Turn_4PoisonShot();
+	CBT_Composite_Node* Turn_4PoisonShot(); // 충돌완
 
 	//
 	/*

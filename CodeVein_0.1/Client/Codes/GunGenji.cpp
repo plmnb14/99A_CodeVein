@@ -81,7 +81,7 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	//Start_Sel->Add_Child(Check_ShowValue);
 	Start_Sel->Add_Child(Start_Game());
 
-	//Start_Sel->Add_Child(Dodge_B());
+	//Start_Sel->Add_Child(Arm_Attack());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("µ¹±â", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -418,10 +418,15 @@ HRESULT CGunGenji::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
+			if(false ==  m_bReadyDead)
+				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+
 			m_pShaderCom->Begin_Pass(m_iPass);
 
-			if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
-				return E_FAIL;
+			m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
+
+			//if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
+			//	return E_FAIL;
 
 			m_pShaderCom->Commit_Changes();
 

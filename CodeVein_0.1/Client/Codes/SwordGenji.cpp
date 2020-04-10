@@ -254,10 +254,15 @@ HRESULT CSwordGenji::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
+			if (false == m_bReadyDead)
+				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+
 			m_pShaderCom->Begin_Pass(m_iPass);
 
-			if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
-				return E_FAIL;
+			m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
+
+			//if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
+			//	return E_FAIL;
 
 			m_pShaderCom->Commit_Changes();
 
