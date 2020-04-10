@@ -49,6 +49,8 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 	LPD3DXMESH		pMesh = pMeshData->pMesh;
 	Safe_AddRef(pMesh);
 
+	_ulong dwMeshContainerCnt = pMesh->GetNumFaces();
+
 	pMeshContainer->pAdjacency = new _ulong[pMesh->GetNumFaces() * 3];
 	memcpy(pMeshContainer->pAdjacency, pAdjacency, sizeof(_ulong) * pMesh->GetNumFaces() * 3);
 
@@ -87,8 +89,12 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 
 	_tchar		szFullPath[MAX_PATH] = L"";
 
+
 	for (size_t i = 0; i < pMeshContainer->NumMaterials; ++i)
 	{
+		for (_uint i = 0; i < MESHTEXTURE::TYPE_END; ++i)
+			m_bIncludeMap[i] = false;
+
 		lstrcpy(szFullPath, m_pFilePath);
 
 		_tchar	szTextureFileName[MAX_PATH] = L"";
@@ -101,21 +107,117 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 		if (FAILED(D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_DIFFUSE_MAP])))
 			return E_FAIL;
 
+		pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 14;
+
+		if (!lstrcmp(szTextureFileName, L"T_Eyelash_Female1.tga"))
+		{
+			pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 15;
+		}
+
+		//==================================================================================================================================
+		// C - Color
+		//==================================================================================================================================
+		if (SUCCEEDED(D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_DIFFUSE_MAP])))
+			m_bIncludeMap[MESHTEXTURE::TYPE_DIFFUSE_MAP] = true;
+		//==================================================================================================================================
+		// N - Normal
+		//==================================================================================================================================
 		Change_TextureFileName(szFullPath, L"C", L"N");
-
-		D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_NORMAL_MAP]);
-
+		if (SUCCEEDED(D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_NORMAL_MAP])))
+			m_bIncludeMap[MESHTEXTURE::TYPE_NORMAL_MAP] = true;
+		//==================================================================================================================================
+		// S - Specular
+		//==================================================================================================================================
 		Change_TextureFileName(szFullPath, L"N", L"S");
+		if (SUCCEEDED(D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_SPECULAR_MAP])))
+			m_bIncludeMap[MESHTEXTURE::TYPE_SPECULAR_MAP] = true;
+		//==================================================================================================================================
+		// E - Emissive
+		//==================================================================================================================================
+		Change_TextureFileName(szFullPath, L"S", L"E");
+		if (SUCCEEDED(D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_EMISSIVE_MAP])))
+			m_bIncludeMap[MESHTEXTURE::TYPE_EMISSIVE_MAP] = true;
+		//==================================================================================================================================
+		// R - Roughness
+		//==================================================================================================================================
+		Change_TextureFileName(szFullPath, L"E", L"R");
+		if (SUCCEEDED(D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_ROUGHNESS_MAP])))
+			m_bIncludeMap[MESHTEXTURE::TYPE_ROUGHNESS_MAP] = true;
+		//==================================================================================================================================
+		// U - Union
+		//==================================================================================================================================
+		Change_TextureFileName(szFullPath, L"R", L"U");
+		if (SUCCEEDED(D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_UNION_MAP])))
+			m_bIncludeMap[MESHTEXTURE::TYPE_UNION_MAP] = true;
+		//==================================================================================================================================
+		// T - Transparency Map
+		//==================================================================================================================================
+		Change_TextureFileName(szFullPath, L"U", L"T");
+		if (SUCCEEDED(D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_TRANSPARENCY_MAP])))
+			m_bIncludeMap[MESHTEXTURE::TYPE_TRANSPARENCY_MAP] = true;
+		////==================================================================================================================================
+		//// ID - Material ID
+		////==================================================================================================================================
+		//Change_TextureFileName(szFullPath, L"T", L"I");
+		//if (SUCCEEDED(D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &m_ppTextures[i].pTextures[MESHTEXTURE::TYPE_ID_MAP])))
+		//	m_bIncludeMap[MESHTEXTURE::TYPE_ID_MAP] = true;
+		////==================================================================================================================================
+		//// AO - Ambient Occlusion
+		////==================================================================================================================================
+		//Change_TextureFileName(szFullPath, L"D", L"O");
+		//Change_TextureFileName(szFullPath, L"I", L"A");
+		//if (SUCCEEDED(D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &m_ppTextures[i].pTextures[MESHTEXTURE::TYPE_AO_MAP])))
+		//	m_bIncludeMap[MESHTEXTURE::TYPE_AO_MAP] = true;
 
-		D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_SPECULAR_MAP]);
+		if (m_bIncludeMap[MESHTEXTURE::TYPE_NORMAL_MAP] == true)
+		{
+			// D N
+			pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 4;
 
-		//Change_TextureFileName(szFullPath, L"S", L"U");
-		//
-		//D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_UNION]);
+			if (m_bIncludeMap[MESHTEXTURE::TYPE_SPECULAR_MAP] == true)
+			{
+				// D N S
+				pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 13;
 
-		//Change_TextureFileName(szFullPath, L"S", L"E");
-		//
-		//D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_EMISSIVE]);
+				if (m_bIncludeMap[MESHTEXTURE::TYPE_EMISSIVE_MAP] == true)
+				{
+					// D N S E
+					pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 6;
+					continue;
+				}
+
+				continue;
+			}
+
+			else if (m_bIncludeMap[MESHTEXTURE::TYPE_EMISSIVE_MAP] == true)
+			{
+				// D N E
+				pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 5;
+				continue;
+			}
+
+			else if (m_bIncludeMap[MESHTEXTURE::TYPE_UNION_MAP] == true)
+			{
+				// D N U
+				pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 7;
+				continue;
+			}
+
+			else if (m_bIncludeMap[MESHTEXTURE::TYPE_TRANSPARENCY_MAP] == true)
+			{
+				// D N T
+				pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 9;
+				continue;
+			}
+
+			else if (m_bIncludeMap[MESHTEXTURE::TYPE_ROUGHNESS_MAP] == true)
+			{
+				// D N R
+				pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 10;
+				continue;
+			}
+		}
+
 	}
 
 	pMeshContainer->pSkinInfo = pSkinInfo;

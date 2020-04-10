@@ -1,5 +1,9 @@
 #include "stdafx.h"
 #include "..\Headers\YachaMan.h"
+#include "..\Headers\Weapon.h"
+
+//#include "MonsterUI.h"
+//#include "DamegeNumUI.h"
 
 CYachaMan::CYachaMan(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
@@ -26,6 +30,7 @@ HRESULT CYachaMan::Ready_GameObject(void * pArg)
 
 	Ready_BoneMatrix();
 	Ready_Collider();
+	Ready_Weapon();
 
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
 	m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE));
@@ -41,6 +46,25 @@ HRESULT CYachaMan::Ready_GameObject(void * pArg)
 	m_tObjParam.bIsAttack = false; //공격 진행중 아님
 	m_tObjParam.bDodge = false; //첫 생성시 회피 비활성
 
+	m_bInRecognitionRange = false; //인지 범위 여부
+	m_bInAtkRange = false; //공격 범위 여부
+	m_bCanChase = false; //추격 여부
+	m_bIsDodge = false; //회피 진행중 여부
+	m_bCanCoolDown = false; //쿨타임 여부
+	m_bIsCoolDown = false; //쿨타임 진행중 여부
+
+	m_bCanAtkCategoryRandom = true;
+	m_bIsAtkCombo = false;
+	m_bCanIdleRandom = true;
+
+	m_fRecognitionRange = 10.f; //인지범위
+	m_fAtkRange = 4.f; //공격범위
+	m_fCoolDownMax = 1.5f; //쿨타임 맥스값은 유동적
+	m_fCoolDownCur = 0.f; //쿨타임 시간을 더함
+	m_fSpeedForCollisionPush = 2.f;
+	m_iRandom = 0;
+	m_iDodgeCount = 0; //n회 피격시 바로 회피
+
 	return NOERROR;
 }
 
@@ -51,16 +75,14 @@ _int CYachaMan::Update_GameObject(_double TimeDelta)
 	if (m_bIsDead)
 		return DEAD_OBJ;
 
-	cout << "심, 야차맨 체력 " << m_tObjParam.fHp_Cur << endl;
-
 	Check_Hit();
 	Check_Dist();
 	Set_AniEvent();
-	Skill_CoolDown();
+	Function_CoolDown();
 
 	m_pMeshCom->SetUp_Animation(m_eState);
 
-	Enter_CollisionEvent();
+	Enter_Collision();
 
 	return NOERROR;
 }
@@ -71,6 +93,10 @@ _int CYachaMan::Late_Update_GameObject(_double TimeDelta)
 
 	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
+
+	m_dTimeDelta = TimeDelta;
+
+	m_pHammer->Late_Update_GameObject(TimeDelta);
 
 	return NOERROR;
 }
@@ -112,6 +138,7 @@ HRESULT CYachaMan::Render_GameObject()
 
 	m_pShaderCom->End_Shader();
 
+	m_pHammer->Update_GameObject(m_dTimeDelta);
 	Update_Collider();
 	Render_Collider();
 
@@ -120,10 +147,9 @@ HRESULT CYachaMan::Render_GameObject()
 
 void CYachaMan::Update_Collider()
 {
-
 	for (auto& vector_iter : m_vecAttackCol)
 	{
-		_mat matTemp = *m_matBone[Bone_Head] * m_pTransformCom->Get_WorldMat();
+		_mat matTemp = *m_matBone[Bone_RightArm] * m_pTransformCom->Get_WorldMat();
 
 		_v3 ColPos = _v3(matTemp._41, matTemp._42, matTemp._43);
 
@@ -142,6 +168,10 @@ void CYachaMan::Update_Collider()
 
 		++matrixIdx;
 	}
+
+	m_pCollider->Update(m_pTransformCom->Get_Pos() + _v3(0.f, m_pCollider->Get_Radius().y, 0.f));
+
+	return;
 }
 
 void CYachaMan::Render_Collider()
@@ -157,9 +187,39 @@ void CYachaMan::Render_Collider()
 	}
 }
 
-void CYachaMan::Enter_CollisionEvent()
+void CYachaMan::Enter_Collision()
 {
+	Check_CollisionPush();
 	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_STAGE));
+}
+
+void CYachaMan::Check_CollisionPush()
+{
+	//플레이어
+	list<CGameObject*> tmpList = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_STAGE);
+	//몬스터
+
+	for (auto& iter : tmpList)
+	{
+		CCollider* pCollider = TARGET_TO_COL(iter);
+
+		// 지금 속도값 임의로 넣었는데 구해서 넣어줘야함 - 완료
+		if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_fSpeedForCollisionPush * DELTA_60))
+		{
+			CTransform* pTrans = TARGET_TO_TRANS(iter);
+			CNavMesh*   pNav = TARGET_TO_NAV(iter);
+
+			// 방향 구해주고
+			_v3 vDir = m_pTransformCom->Get_Pos() - pTrans->Get_Pos();
+			V3_NORMAL_SELF(&vDir);
+
+			// y축 이동은 하지말자
+			vDir.y = 0;
+
+			// 네비 메쉬타게 끔 세팅
+			pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pCollider->Get_Length().x));
+		}
+	}
 }
 
 void CYachaMan::Check_CollisionEvent(list<CGameObject*> plistGameObject)
@@ -169,12 +229,10 @@ void CYachaMan::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 	_bool bFirst = true;
 
 	for (auto& iter : plistGameObject)
-	{
-		
+	{	
 		if (false == iter->Get_Target_CanHit())
 			continue;
-
-		
+	
 		for (auto& vecIter : m_vecAttackCol)
 		{
 			if (false == vecIter->Get_Enabled())
@@ -193,8 +251,11 @@ void CYachaMan::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 					}
 
 					//회피 중이 아니라면 충돌 체크
-					iter->Set_Target_CanHit(false);
-					iter->Add_Target_Hp(m_tObjParam.fDamage);
+					if (false == m_bIsDodge)
+					{
+						iter->Set_Target_CanHit(false);
+						iter->Add_Target_Hp(m_tObjParam.fDamage);
+					}
 
 					g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
 
@@ -214,35 +275,42 @@ void CYachaMan::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 
 void CYachaMan::Check_Hit()
 {
-	if (DEAD == m_eFirstCategory)
-		return;
-
-	if (true == m_tObjParam.bIsHit)
+	if (MONSTER_ANITYPE::DEAD == m_eFirstCategory)
 	{
-		if (3 <= m_iDodgeCount)
-		{
-			m_iDodgeCount = 0;
-			m_tObjParam.bIsHit = false; //3대 맞으면 강제로 회피 작동
-			m_tObjParam.bDodge = true;
-			return;
-		}
-
 		return;
 	}
 	else
 	{
-		if (false == m_tObjParam.bCanHit)
+		if (false == m_tObjParam.bCanHit) //피격o
 		{
-			if (0 >= m_tObjParam.fHp_Cur)
+			if (true == m_tObjParam.bIsHit) //피격 진행중o
 			{
-				m_eFirstCategory = MONSTER_ANITYPE::DEAD;
-				return;
+				if (true == m_tObjParam.bHitAgain) //추가 피격o
+				{
+					m_eFirstCategory = MONSTER_ANITYPE::HIT;
+					Check_FBLR();
+					m_tObjParam.bHitAgain = false;
+					m_pMeshCom->Reset_OldIndx();
+				}
+				else //추가 피격x
+				{
+					return;
+				}
 			}
-			else
+			else //피격 진행중x
 			{
-				m_eFirstCategory = MONSTER_ANITYPE::HIT;
-				Check_FBLR();
-				return;
+				if (0 >= m_tObjParam.fHp_Cur) //체력없음
+				{
+					//Down인 경우 Dead_Strong을 진행
+					m_eFirstCategory = MONSTER_ANITYPE::DEAD;
+					return;
+				}
+				else //체력 있음
+				{
+					m_eFirstCategory = MONSTER_ANITYPE::HIT;
+					Check_FBLR();
+					return;
+				}
 			}
 		}
 	}
@@ -258,77 +326,77 @@ void CYachaMan::Check_FBLR()
 
 void CYachaMan::Check_Dist()
 {
-	if (HIT == m_eFirstCategory ||
-		DOWN == m_eFirstCategory ||
-		DEAD == m_eFirstCategory)
+	if (MONSTER_ANITYPE::HIT == m_eFirstCategory ||
+		MONSTER_ANITYPE::DOWN == m_eFirstCategory ||
+		MONSTER_ANITYPE::DEAD == m_eFirstCategory)
 		return;
 
 	if (true == m_tObjParam.bIsAttack ||
-		true == m_bIsAtkCombo)
+		true == m_bIsAtkCombo ||
+		true == m_bIsDodge ||
+		true == m_tObjParam.bIsHit)
 		return;
 
 	_float fLenth = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransform->Get_Pos()));
 
 	m_fRecognitionRange >= fLenth ? m_bInRecognitionRange = true : m_bInRecognitionRange = false;
-	m_fAttackRange >= fLenth ? m_bInAttackRange = true : m_bInAttackRange = false;
+	m_fAtkRange >= fLenth ? m_bInAtkRange = true : m_bInAtkRange = false;
 
 	if (true == m_bInRecognitionRange)
 	{
-		if (YACHAMAN_ANI::Lurk == m_eState ||
-			YACHAMAN_ANI::Lurk_End == m_eState ||
-			YACHAMAN_ANI::Eat == m_eState ||
-			YACHAMAN_ANI::Eat_End == m_eState)
+		if (YACHAMAN_ANI::Lurk == m_eState || YACHAMAN_ANI::Lurk_End == m_eState ||
+			YACHAMAN_ANI::Eat == m_eState || YACHAMAN_ANI::Eat_End == m_eState)
 		{
 			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
 			return;
 		}
-
-		if (true == m_bInAttackRange)
+		else
 		{
-			if (true == m_tObjParam.bCanAttack)
+			if (true == m_bInAtkRange)
 			{
-				if (true == m_bIsCoolDown)
+				if (true == m_tObjParam.bCanAttack)
 				{
-					//인지,범위,공격가능,쿨타임 -> 대기패턴
-					m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-					m_eSecondCategory_IDLE = YACHAMAN_IDLETYPE::IDLE_IDLE;
-					Skill_RotateBody();
-					return;
+					if (true == m_bIsCoolDown)
+					{
+						//인지,범위,공격가능,쿨타임 -> 대기패턴, 경계패턴
+						m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+						m_eSecondCategory_IDLE = YACHAMAN_IDLETYPE::IDLE_IDLE;
+						Function_RotateBody();
+						return;
+					}
+					else
+					{
+						//인지,범위,공격가능,쿨타임아님->공격 패턴
+						m_bCanAtkCategoryRandom = true;
+						m_eFirstCategory = MONSTER_ANITYPE::ATTACK;
+						Function_RotateBody();
+						return;
+					}
 				}
 				else
 				{
-					//인지,범위,공격가능,쿨타임아님->공격 패턴
-					m_eFirstCategory = MONSTER_ANITYPE::ATTACK;
-					Skill_RotateBody();
+					//인지, 범위, 공격불가능 -> 공격중은 아닌데? walk하면서 주위 맴돌기,경계상태에 가깝다
+					m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+					m_eSecondCategory_IDLE = YACHAMAN_IDLETYPE::IDLE_IDLE;
+					Function_RotateBody();
 					return;
 				}
 			}
 			else
-			{
-				//인지, 범위, 공격불가능 -> 공격중은 아닌데? walk하면서 주위 맴돌기,경계상태에 가깝다
-				m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-				m_eSecondCategory_IDLE = YACHAMAN_IDLETYPE::IDLE_IDLE;
+			{			
+				m_bCanChase = true;
+				m_eFirstCategory = MONSTER_ANITYPE::MOVE;
+				m_eSecondCategory_MOVE = YACHAMAN_MOVETYPE::MOVE_RUN;
 				return;
 			}
 		}
-		else
-		{			
-			//인지o, 공격범위x->추격
-			m_bCanChase = true;
-			m_eFirstCategory = MONSTER_ANITYPE::MOVE;
-			m_eSecondCategory_MOVE = YACHAMAN_MOVETYPE::MOVE_RUN;
-			return;
-		}
 	}
-	else
+	else 
 	{
-		//인지x -> 일상행동
 		m_bCanChase = false;
 		m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-		if (true == m_bCanRandomIdle)
+		if (true == m_bCanIdleRandom)
 		{
-			m_bCanRandomIdle = false;
-
 			switch (CALC::Random_Num(YACHAMAN_IDLETYPE::IDLE_IDLE, YACHAMAN_IDLETYPE::IDLE_LURK))
 			{
 			case YACHAMAN_IDLETYPE::IDLE_IDLE:
@@ -342,6 +410,7 @@ void CYachaMan::Check_Dist()
 				break;
 			}
 		}
+
 		return;
 	}
 }
@@ -351,19 +420,40 @@ void CYachaMan::Set_AniEvent()
 	switch (m_eFirstCategory)
 	{
 	case MONSTER_ANITYPE::IDLE:
-		switch (m_eSecondCategory_IDLE)
+		if (true == m_bCanIdleRandom)
 		{
-		case YACHAMAN_IDLETYPE::IDLE_IDLE:
-			Play_Idle();
-			break;
-		case YACHAMAN_IDLETYPE::IDLE_EAT:
-			Play_Eat();
-			break;
-		case YACHAMAN_IDLETYPE::IDLE_LURK:
-			Play_Lurk();
-			break;
+			m_bCanIdleRandom = false;
+
+			switch (m_eSecondCategory_IDLE)
+			{
+			case YACHAMAN_IDLETYPE::IDLE_IDLE:
+				m_eState = YACHAMAN_ANI::Hammer_Idle;
+				break;
+			case YACHAMAN_IDLETYPE::IDLE_EAT:
+				m_eState = YACHAMAN_ANI::Eat;
+				break;
+			case YACHAMAN_IDLETYPE::IDLE_LURK:
+				m_eState = YACHAMAN_ANI::Lurk;
+				break;
+			}
+		}
+		else
+		{
+			switch (m_eSecondCategory_IDLE)
+			{
+			case Client::CYachaMan::IDLE_IDLE:
+				Play_Idle();
+				break;
+			case Client::CYachaMan::IDLE_EAT:
+				Play_Eat();
+				break;
+			case Client::CYachaMan::IDLE_LURK:
+				Play_Lurk();
+				break;
+			}
 		}
 		break;
+
 	case MONSTER_ANITYPE::MOVE:
 		switch (m_eSecondCategory_MOVE)
 		{
@@ -378,27 +468,28 @@ void CYachaMan::Set_AniEvent()
 			break;
 		}
 		break;
+
 	case MONSTER_ANITYPE::ATTACK:
-		if (true == m_bCanRandomAtkCategory)
+		if (true == m_bCanAtkCategoryRandom)
 		{
 			m_tObjParam.bCanAttack = false;
 			m_tObjParam.bIsAttack = true;
-			m_bCanRandomAtkCategory = false;
-			m_bIsAtkCombo = true;
+			m_bCanAtkCategoryRandom = false;
 
-			m_iAtkRandomType = CALC::Random_Num(YACHAMAN_ATKTYPE::ATK_NORMAL, YACHAMAN_ATKTYPE::ATK_COMBO);
+			m_iRandom = CALC::Random_Num(YACHAMAN_ATKTYPE::ATK_NORMAL, YACHAMAN_ATKTYPE::ATK_COMBO);
 
-			switch (m_iAtkRandomType)
+			m_iRandom = 1; //이동값 수치 조절용 임시 변수값
+
+			switch (m_iRandom)
 			{
 			case YACHAMAN_ATKTYPE::ATK_NORMAL:
 				m_eSecondCategory_ATK = YACHAMAN_ATKTYPE::ATK_NORMAL;
-				cout << "심, 랜덤 노말 공격" << endl;
 				Play_RandomAtkNormal();
 				break;
 			case YACHAMAN_ATKTYPE::ATK_COMBO:
 				m_eSecondCategory_ATK = YACHAMAN_ATKTYPE::ATK_COMBO;
-				cout << "심, 랜덤 콤보 공격" << endl;
 				Play_RandomAtkCombo();
+				m_bIsAtkCombo = true;
 				break;
 			}
 
@@ -417,7 +508,7 @@ void CYachaMan::Set_AniEvent()
 					Play_L();
 					break;
 				case YACHAMAN_ANI::Atk_Ani_Hammering:
-					play_Hammering();
+					Play_Hammering();
 					break;
 				case YACHAMAN_ANI::Atk_Ani_Shoulder:
 					Play_Shoulder();
@@ -464,11 +555,14 @@ void CYachaMan::Set_AniEvent()
 			}
 		}
 		break;
+
 	case MONSTER_ANITYPE::HIT:
 		Play_Hit();
 		break;
+
 	case MONSTER_ANITYPE::DOWN:
 		break;
+
 	case MONSTER_ANITYPE::DEAD:
 		Play_Dead();
 		break;
@@ -477,7 +571,7 @@ void CYachaMan::Set_AniEvent()
 	return;
 }
 
-void CYachaMan::Skill_RotateBody()
+void CYachaMan::Function_RotateBody()
 {
 	_float fTargetAngle = m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos());
 
@@ -546,42 +640,36 @@ void CYachaMan::Skill_RotateBody()
 	m_pTransformCom->Set_Angle(AXIS_Y, fYAngle);
 }
 
-void CYachaMan::Skill_CoolDown()
+void CYachaMan::Function_CoolDown()
 {
-	//좀더 생각해서 넣어봅시다
-	if (false == m_tObjParam.bIsAttack && false == m_tObjParam.bCanAttack && false == m_bIsAtkCombo)
+	if (true == m_bCanCoolDown) //공격 직후 상태
 	{
-		m_fCoolDown += DELTA_60;
-		m_bIsCoolDown = true;
+		m_fCoolDownCur += DELTA_60;
 
-		if (2.f <= m_fCoolDown)
+		if (m_fCoolDownCur >= m_fCoolDownMax) //누적시간이 쿨타임보다 크다면
 		{
-			m_fCoolDown = 0.f;
+			m_fCoolDownCur = 0.f;
+			m_bCanCoolDown = false;
 			m_bIsCoolDown = false;
 			m_tObjParam.bCanAttack = true;
-			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
 		}
 	}
 }
 
-void CYachaMan::Skill_Movement(_float _fspeed, _v3 _vDir)
+void CYachaMan::Function_Movement(_float _fspeed, _v3 _vDir)
 {
 	V3_NORMAL(&_vDir, &_vDir);
 
-	// 네비 없이
+	// 네비 미적용
 	//m_pTransformCom->Add_Pos(_fspeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"), _vDir);
 
-	// 네비게이션 적용하면 
-	_v3 tmpLook;
-	_float fSpeed = _fspeed;
+	// 네비 적용 
+	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &_vDir, _fspeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
 
-	tmpLook = _vDir;
-	D3DXVec3Normalize(&tmpLook, &tmpLook);
-
-	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &tmpLook, fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
+	return;
 }
 
-void CYachaMan::Decre_Skill_Movement(_float _fMutiply)
+void CYachaMan::Function_DecreMoveMent(_float _fMutiply)
 {
 	m_fSkillMoveSpeed_Cur -= (0.3f - m_fSkillMoveAccel_Cur * m_fSkillMoveAccel_Cur * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60")) * _fMutiply;
 	m_fSkillMoveAccel_Cur += g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60");
@@ -593,13 +681,19 @@ void CYachaMan::Decre_Skill_Movement(_float _fMutiply)
 	}
 }
 
-void CYachaMan::Reset_BattleState()
+void CYachaMan::Function_ResetAfterAtk()
 {
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.bIsHit = false;
-	m_tObjParam.bIsAttack = false; //공격중 아님
-	m_bCanRandomAtkCategory = true; //랜덤공격 가능하게끔
-	m_bIsAtkCombo = false; //콤보공격중 아님
+
+	m_tObjParam.bDodge = false;
+	m_bIsDodge = false;
+
+	m_tObjParam.bIsAttack = false;
+	m_bCanAtkCategoryRandom = true;
+	m_bIsAtkCombo = false;
+
+	m_vecAttackCol[0]->Set_Enabled(false);
 
 	LOOP(20)
 		m_bEventTrigger[i] = false;
@@ -611,46 +705,24 @@ void CYachaMan::Play_Idle()
 {
 	if (true == m_bInRecognitionRange)
 	{
-		m_bCanRandomIdle = true;
 		if (true == m_tObjParam.bCanAttack)
 		{
 			//인지, 공격 가능->대기
 			m_eState = YACHAMAN_ANI::Hammer_Idle;
+			return;
 		}
 		else
 		{
 			//인지, 공격 불가->경계
-			Skill_RotateBody();
+			Function_RotateBody();
 			m_eState = YACHAMAN_ANI::Hammer_Idle;
+			return;
 		}
 	}
 	else
 	{
+		m_bCanIdleRandom = true;
 		m_eState = YACHAMAN_ANI::Hammer_Idle;
-	}
-}
-
-void CYachaMan::Play_Lurk()
-{
-	if (true == m_bInRecognitionRange)
-	{
-		if (YACHAMAN_ANI::Lurk == m_eState)
-		{
-			if(m_pMeshCom->Is_Finish_Animation())
-				m_eState = YACHAMAN_ANI::Lurk_End;
-
-			return;
-		}
-		else if (YACHAMAN_ANI::Lurk_End == m_eState && m_pMeshCom->Is_Finish_Animation(0.98f))
-		{
-			m_bCanRandomIdle = true;
-			m_eState = YACHAMAN_ANI::Hammer_Idle;
-			return;
-		}
-	}
-	else
-	{
-		m_eState = YACHAMAN_ANI::Lurk;
 		return;
 	}
 }
@@ -666,7 +738,7 @@ void CYachaMan::Play_Eat()
 		}
 		else if (YACHAMAN_ANI::Eat_End == m_eState && m_pMeshCom->Is_Finish_Animation(0.98f))
 		{
-			m_bCanRandomIdle = true;
+			m_bCanIdleRandom = true;
 			m_eState = YACHAMAN_ANI::Hammer_Idle;
 			return;
 		}
@@ -678,15 +750,45 @@ void CYachaMan::Play_Eat()
 	}
 }
 
+void CYachaMan::Play_Lurk()
+{
+	if (true == m_bInRecognitionRange)
+	{
+		if (YACHAMAN_ANI::Lurk == m_eState)
+		{
+			if(m_pMeshCom->Is_Finish_Animation())
+				m_eState = YACHAMAN_ANI::Lurk_End;
+
+			return;
+		}
+		else if (YACHAMAN_ANI::Lurk_End == m_eState)
+		{
+			if (m_pMeshCom->Is_Finish_Animation(0.98f))
+			{
+				m_bCanIdleRandom = true;
+				m_eState = YACHAMAN_ANI::Hammer_Idle;
+			}
+			
+			return;
+		}
+	}
+	else
+	{
+		m_eState = YACHAMAN_ANI::Lurk;
+
+		return;
+	}
+}
+
 void CYachaMan::Play_Walk()
 {
 	m_eState = YACHAMAN_ANI::Walk;
 
-	Skill_RotateBody();
+	Function_RotateBody();
 
-	Skill_Movement(2.f, m_pTransformCom->Get_Axis(AXIS_Z));
+	Function_Movement(2.f, m_pTransformCom->Get_Axis(AXIS_Z));
 
-	Decre_Skill_Movement(0.1f);
+	Function_DecreMoveMent(0.1f);
 
 	return;
 }
@@ -695,11 +797,11 @@ void CYachaMan::Play_Run()
 {
 	m_eState = YACHAMAN_ANI::Run;
 
-	Skill_RotateBody();
+	Function_RotateBody();
 
-	Skill_Movement(4.f, m_pTransformCom->Get_Axis(AXIS_Z));
+	Function_Movement(4.f, m_pTransformCom->Get_Axis(AXIS_Z));
 
-	Decre_Skill_Movement(0.1f);
+	Function_DecreMoveMent(0.1f);
 
 	return;
 }
@@ -708,12 +810,13 @@ void CYachaMan::Play_Dodge()
 {
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
 
-	if (true == m_tObjParam.bDodge)
+	//회피는 변수가 좀 이상하니 일단 제외
+	if (false == m_tObjParam.bDodge)
 	{
 		m_eState = YACHAMAN_ANI::Dodge;
-		m_tObjParam.bDodge = false;
-		m_bIsDodge = true;
-		Reset_BattleState();
+		m_tObjParam.bDodge = true; //회피임
+		m_bIsDodge = true; //회피중
+		Function_ResetAfterAtk();
 	}
 	else
 	{
@@ -722,12 +825,11 @@ void CYachaMan::Play_Dodge()
 			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
 			m_bIsDodge = false;
 			m_tObjParam.bDodge = true;
-			LOOP(10)
-				m_bEventTrigger[i] = false;
+			Function_ResetAfterAtk();
 
 			return;
 		}
-		else if (0.8f < AniTime && 2.f> AniTime)
+		else if (0.3f < AniTime && 0.8f> AniTime)
 		{
 			if (m_bEventTrigger[0] == false)
 			{
@@ -737,11 +839,11 @@ void CYachaMan::Play_Dodge()
 				m_fSkillMoveMultiply = 0.1f;
 			}
 
-			Skill_RotateBody();
+			Function_RotateBody();
 
-			Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
 
-			Decre_Skill_Movement(m_fSkillMoveMultiply);
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
 			return;
 		}
 	}
@@ -749,9 +851,15 @@ void CYachaMan::Play_Dodge()
 
 void CYachaMan::Play_RandomAtkNormal()
 {
-	m_iAtkRandom = CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_RIGHT, ATK_NORMAL_TYPE::NORMAL_WHEELWIND);
+	//프로토 검사용
+	m_iRandom = CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_RIGHT, ATK_NORMAL_TYPE::NORMAL_SHOULDER);
 
-	switch (m_iAtkRandom)
+	//완전 랜덤 추후 특정 상황에 맞워서 적절하게
+	//m_iRandom = CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_RIGHT, ATK_NORMAL_TYPE::NORMAL_WHEELWIND);
+
+	m_iRandom = 3; //이동값 수치 조절용 임시 변수값
+
+	switch (m_iRandom)
 	{
 	case ATK_NORMAL_TYPE::NORMAL_RIGHT:
 		m_eState = YACHAMAN_ANI::Atk_Ani_R;
@@ -793,30 +901,32 @@ void CYachaMan::Play_R()
 	}
 	else
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.98f))
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			cout << "심, 랜덤 노말->우치기 종료" << endl;
-			Reset_BattleState();
+			m_fCoolDownMax = 0.8f;
+			m_bCanCoolDown = true;
+			Function_ResetAfterAtk();
 
 			return;
 		}
 		else
 		{
-			//1.3~1.9 이동 1.8~2.0 타격
-			if (1.3f < AniTime && 1.9f > AniTime)
+			//1.3~1.9 이동 1.8~2.0 타격 이건 폐기
+			//맥스로 보정한 수치임
+			if (2.833f < AniTime && 4.233f > AniTime)
 			{
 				if (m_bEventTrigger[0] == false)
 				{
 					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 3.f;
+					m_fSkillMoveSpeed_Cur = 8.f;
 					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 0.1f;
+					m_fSkillMoveMultiply = 1.5f;
 				}
 
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
-			if (1.8f < AniTime && 2.0f > AniTime)
+			else if (3.50f < AniTime && 3.93f > AniTime)
 			{
 				if (m_bEventTrigger[1] == false)
 				{
@@ -824,7 +934,7 @@ void CYachaMan::Play_R()
 					m_vecAttackCol[0]->Set_Enabled(true);
 				}
 			}
-			if (2.0f <= AniTime)
+			else if (3.93f <= AniTime)
 			{
 				m_vecAttackCol[0]->Set_Enabled(false);
 				return;
@@ -844,30 +954,31 @@ void CYachaMan::Play_L()
 	}
 	else
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.98f))
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			cout << "심, 랜덤 노말->좌치기 종료" << endl;
-			Reset_BattleState();
+			m_fCoolDownMax = 0.8f;
+			m_bCanCoolDown = true;
+			Function_ResetAfterAtk();
 
 			return;
 		}
 		else
 		{
 			//0.6~1.1 이동 1.2~1.4타격
-			if (0.6f < AniTime && 1.1f > AniTime)
+			if (0.9f < AniTime && 2.833f > AniTime)
 			{
 				if (m_bEventTrigger[0] == false)
 				{
 					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 3.f;
+					m_fSkillMoveSpeed_Cur = 5.f;
 					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 0.1f;
+					m_fSkillMoveMultiply = 0.3f;
 				}
 
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
-			if (1.2f < AniTime && 1.4f > AniTime)
+			else if (2.4f < AniTime && 2.7f > AniTime)
 			{
 				if (m_bEventTrigger[1] == false)
 				{
@@ -875,16 +986,21 @@ void CYachaMan::Play_L()
 					m_vecAttackCol[0]->Set_Enabled(true);
 				}
 			}
-			if ( 1.4f <= AniTime)
+			else if ( 2.7f <= AniTime)
 			{
-				m_vecAttackCol[0]->Set_Enabled(false);
-				return;
+				if (m_bEventTrigger[2] == false)
+				{
+					m_bEventTrigger[2] = true;
+					m_vecAttackCol[0]->Set_Enabled(false);
+				}
 			}
 		}
 	}
+
+	return;
 }
 
-void CYachaMan::play_Hammering()
+void CYachaMan::Play_Hammering()
 {
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
 
@@ -895,30 +1011,31 @@ void CYachaMan::play_Hammering()
 	}
 	else
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.98f))
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			cout << "심, 랜덤 노말->해머링 종료" << endl;
-			Reset_BattleState();
+			m_fCoolDownMax = 1.3f;
+			m_bCanCoolDown = true;
+			Function_ResetAfterAtk();
 
 			return;
 		}
 		else
 		{
 			//0.9~1.8 이동 1.4~1.8 타격
-			if (0.9f < AniTime && 1.8f > AniTime)
+			if (2.167f < AniTime && 3.267f > AniTime)
 			{
 				if (m_bEventTrigger[0] == false)
 				{
 					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 3.f;
+					m_fSkillMoveSpeed_Cur = 4.f;
 					m_fSkillMoveAccel_Cur = 0.f;
 					m_fSkillMoveMultiply = 0.1f;
 				}
 
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
-			if (1.4f < AniTime && 1.8f > AniTime)
+			else if (3.267f < AniTime && 3.633f > AniTime)
 			{
 				if (m_bEventTrigger[1] == false)
 				{
@@ -926,7 +1043,7 @@ void CYachaMan::play_Hammering()
 					m_vecAttackCol[0]->Set_Enabled(true); 
 				}
 			}
-			if (1.8f <= AniTime)
+			else if (3.633f <= AniTime)
 			{
 				m_vecAttackCol[0]->Set_Enabled(false);
 				return;
@@ -948,32 +1065,44 @@ void CYachaMan::Play_Shoulder()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.98f))
 		{
-			cout << "심, 랜덤 노말->어깨치기 종료" << endl;
-			Reset_BattleState();
+			m_fCoolDownMax = 0.3f;
+			m_bCanCoolDown = true;
+			Function_ResetAfterAtk();
 
 			return;
 		}
 		else
 		{
-			//0.9~1.3 이동 0.9~1.3 타격
-			if (0.9f < AniTime && 1.3f < AniTime)
+			//2.5인가 4.3인가?
+			if (1.500f < AniTime && 2.10f < AniTime)
 			{
 				if (m_bEventTrigger[0] == false)
 				{
 					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 3.f;
+					m_fSkillMoveSpeed_Cur = 2.f;
 					m_fSkillMoveAccel_Cur = 0.f;
 					m_fSkillMoveMultiply = 0.1f;
-					m_vecAttackCol[0]->Set_Enabled(true); 
 				}
 
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 				return;
 			}
-			if (1.3f <= AniTime)
+			else if (2.067f < AniTime && 2.50f < AniTime)
 			{
-				m_vecAttackCol[0]->Set_Enabled(false);
+				if (m_bEventTrigger[1] == false)
+				{
+					m_bEventTrigger[1] = true;
+					m_vecAttackCol[0]->Set_Enabled(true);
+				}
+			}
+			else if (2.50f <= AniTime)
+			{
+				if (m_bEventTrigger[2] == false)
+				{
+					m_bEventTrigger[2] = true;
+					m_vecAttackCol[0]->Set_Enabled(false);
+				}
 				return;
 			}
 		}
@@ -993,15 +1122,16 @@ void CYachaMan::Play_TurnTwice()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.98f))
 		{
-			cout << "심, 랜덤 노말->2회전 종료" << endl;
-			Reset_BattleState();
+			m_fCoolDownMax = 1.5f;
+			m_bCanCoolDown = true;
+			Function_ResetAfterAtk();
 
 			return;
 		}
 		else
 		{
 			//0.8~2.0 2.9~3.3 이동 0.9~1.2 1.6~1.9 타격
-			if (0.8f < AniTime && 2.0f < AniTime)
+			if (1.6f < AniTime && 4.0f < AniTime)
 			{
 				if (m_bEventTrigger[0] == false)
 				{
@@ -1012,10 +1142,10 @@ void CYachaMan::Play_TurnTwice()
 					m_vecAttackCol[0]->Set_Enabled(false);
 				}
 
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
-			if (0.9f < AniTime && 1.2f > AniTime)
+			else if (1.8f < AniTime && 4.8f > AniTime)
 			{
 				if (m_bEventTrigger[1] == false)
 				{
@@ -1023,7 +1153,7 @@ void CYachaMan::Play_TurnTwice()
 					m_vecAttackCol[0]->Set_Enabled(true);
 				}
 			}
-			if (1.2f <= AniTime)
+			else if (2.4f <= AniTime)
 			{
 				if (m_bEventTrigger[2] == false)
 				{
@@ -1031,7 +1161,7 @@ void CYachaMan::Play_TurnTwice()
 					m_vecAttackCol[0]->Set_Enabled(false);
 				}
 			}
-			if (1.6f < AniTime && 1.9f > AniTime)
+			else if (3.2f < AniTime && 3.8f > AniTime)
 			{
 				if (m_bEventTrigger[3] == false)
 				{
@@ -1039,11 +1169,11 @@ void CYachaMan::Play_TurnTwice()
 					m_vecAttackCol[0]->Set_Enabled(true);
 				}
 			}
-			if (1.9f <= AniTime)
+			else if (3.8f <= AniTime)
 			{
 				m_vecAttackCol[0]->Set_Enabled(false);
 			}
-			if (2.9f < AniTime && 3.3f < AniTime)
+			else if (5.8f < AniTime && 6.6f < AniTime)
 			{
 				if (m_bEventTrigger[4] == false)
 				{
@@ -1053,8 +1183,8 @@ void CYachaMan::Play_TurnTwice()
 					m_fSkillMoveMultiply = 0.1f;
 				}
 
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
 		}
 	}
@@ -1073,28 +1203,29 @@ void CYachaMan::Play_HalfClock()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.98f))
 		{
-			cout << "심, 랜덤 노말->반시계공격 종료" << endl;
-			Reset_BattleState();
+			m_fCoolDownMax = 0.8f;
+			m_bCanCoolDown = true;
+			Function_ResetAfterAtk();
 
 			return;
 		}
 		else
 		{
 			//0.8~2.0회전이동 2.9~3.3 짧게복귀 0.8~1.2타격
-			if (0.8f < AniTime && 2.0f > AniTime)
+			if (1.6f < AniTime && 4.0f > AniTime)
 			{
 				if (m_bEventTrigger[0] == false)
 				{
 					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 3.f;
+					m_fSkillMoveSpeed_Cur = 2.f;
 					m_fSkillMoveAccel_Cur = 0.f;
 					m_fSkillMoveMultiply = 0.1f;
 				}
 
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
-			if (0.8f < AniTime && 1.2f > AniTime)
+			else if (1.6f < AniTime && 2.4f > AniTime)
 			{
 				if (m_bEventTrigger[1] == false)
 				{
@@ -1102,11 +1233,11 @@ void CYachaMan::Play_HalfClock()
 					m_vecAttackCol[0]->Set_Enabled(true); 
 				}
 			}
-			if (1.2f <= AniTime)
+			else if (2.4f <= AniTime)
 			{
 				m_vecAttackCol[0]->Set_Enabled(false);
 			}
-			if (2.9f < AniTime && 3.3f > AniTime)
+			else if (5.8f < AniTime && 6.6f > AniTime)
 			{
 				if (m_bEventTrigger[2] == false)
 				{
@@ -1116,8 +1247,8 @@ void CYachaMan::Play_HalfClock()
 					m_fSkillMoveMultiply = 0.1f;
 				}
 
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
 		}
 	}
@@ -1136,15 +1267,16 @@ void CYachaMan::Play_TargetHammering()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.98f))
 		{
-			cout << "심, 랜덤 노말->파리치기 종료" << endl;
-			Reset_BattleState();
+			m_fCoolDownMax = 1.7f;
+			m_bCanCoolDown = true;
+			Function_ResetAfterAtk();
 
 			return;
 		}
 		else
 		{
 			//1.9~3.0 이동 3.9~5.6 짧게복귀 1.9~2.6 타격
-			if (1.9f < AniTime && 3.0f > AniTime)
+			if (3.8f < AniTime && 6.0f > AniTime)
 			{
 				if (m_bEventTrigger[0] == false)
 				{
@@ -1154,10 +1286,10 @@ void CYachaMan::Play_TargetHammering()
 					m_fSkillMoveMultiply = 0.1f;
 				}
 
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
-			if (1.9f < AniTime && 2.6f > AniTime)
+			else if (3.8f < AniTime && 5.2f > AniTime)
 			{
 				if (m_bEventTrigger[1] == false)
 				{
@@ -1165,11 +1297,11 @@ void CYachaMan::Play_TargetHammering()
 					m_vecAttackCol[0]->Set_Enabled(true);
 				}
 			}
-			if (2.6f <= AniTime)
+			else if (5.2f <= AniTime)
 			{
 				m_vecAttackCol[0]->Set_Enabled(false);
 			}
-			if (3.9f<AniTime && 5.6f > AniTime)
+			else if (7.8f<AniTime && 11.2f > AniTime)
 			{
 				if (m_bEventTrigger[2] == false)
 				{
@@ -1179,8 +1311,8 @@ void CYachaMan::Play_TargetHammering()
 					m_fSkillMoveMultiply = 0.5f;
 				}
 
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
 		}
 	}
@@ -1199,14 +1331,15 @@ void CYachaMan::Play_WheelWind()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.98f))
 		{
-			cout << "심, 랜덤 노말->휠윈드 종료" << endl;
-			Reset_BattleState();
+			m_fCoolDownMax = 1.8f;
+			m_bCanCoolDown = true;
+			Function_ResetAfterAtk();
 
 			return;
 		}
 		else
 		{
-			if (1.4f < AniTime && 1.8f > AniTime)
+			if (2.8f < AniTime && 3.6f > AniTime)
 			{
 				if (false == m_bEventTrigger[0])
 				{
@@ -1218,10 +1351,10 @@ void CYachaMan::Play_WheelWind()
 					m_vecAttackCol[0]->Set_Enabled(true);
 				}
 
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
-			if (1.8f <= AniTime)
+			else if (3.6f <= AniTime)
 			{
 				if (false == m_bEventTrigger[1])
 				{
@@ -1229,7 +1362,7 @@ void CYachaMan::Play_WheelWind()
 					m_vecAttackCol[0]->Set_Enabled(false);
 				}
 			}
-			if (1.9f < AniTime && 2.2f > AniTime)
+			else if (3.8f < AniTime && 4.4f > AniTime)
 			{
 				if (m_bEventTrigger[2] == false)
 				{
@@ -1240,10 +1373,10 @@ void CYachaMan::Play_WheelWind()
 					m_fSkillMoveMultiply = 0.1f;
 				}
 
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
-			if (2.1f < AniTime && 2.4f > AniTime)
+			else if (4.2f < AniTime && 4.8f > AniTime)
 			{
 				//2.1~2.4 타격
 				if (false == m_bEventTrigger[3])
@@ -1252,7 +1385,7 @@ void CYachaMan::Play_WheelWind()
 					m_vecAttackCol[0]->Set_Enabled(true);
 				}
 			}
-			if (2.4f <= AniTime)
+			else if (4.8f <= AniTime)
 			{
 				if (false == m_bEventTrigger[4])
 				{
@@ -1260,7 +1393,7 @@ void CYachaMan::Play_WheelWind()
 					m_vecAttackCol[0]->Set_Enabled(false);
 				}
 			}
-			if (2.3f < AniTime && 2.6f > AniTime)
+			else if (4.6f < AniTime && 5.2f > AniTime)
 			{
 				if (m_bEventTrigger[5] == false)
 				{
@@ -1271,10 +1404,10 @@ void CYachaMan::Play_WheelWind()
 					m_fSkillMoveMultiply = 0.1f;
 				}
 
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
-			if (2.7f < AniTime && 2.8f > AniTime)
+			else if (5.4f < AniTime && 5.6f > AniTime)
 			{
 				//2.7~2.8 타격
 				if (false == m_bEventTrigger[6])
@@ -1283,7 +1416,7 @@ void CYachaMan::Play_WheelWind()
 					m_vecAttackCol[0]->Set_Enabled(true);
 				}
 			}
-			if (2.8f <= AniTime)
+			else if (5.6f <= AniTime)
 			{
 				if (false == m_bEventTrigger[7])
 				{
@@ -1291,7 +1424,7 @@ void CYachaMan::Play_WheelWind()
 					m_vecAttackCol[0]->Set_Enabled(false);
 				}
 			}
-			if (2.7f < AniTime && 2.9f < AniTime)
+			else if (5.4f < AniTime && 5.8f < AniTime)
 			{
 				if (m_bEventTrigger[8] == false)
 				{
@@ -1302,39 +1435,31 @@ void CYachaMan::Play_WheelWind()
 					m_fSkillMoveMultiply = 0.1f;
 				}
 
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
-			if (3.1f < AniTime && 3.3f < AniTime)
+			else if (6.0f < AniTime && 6.6f < AniTime)
 			{
-				//3.1~3.3 타격
-				if (false == m_bEventTrigger[9])
+				if (m_bEventTrigger[9] == false)
 				{
+					//3.0~3.1 이동, 타격
 					m_bEventTrigger[9] = true;
-					m_vecAttackCol[0]->Set_Enabled(true);
-				}
-			}
-			if (3.0f < AniTime && 3.3f < AniTime)
-			{
-				if (m_bEventTrigger[10] == false)
-				{
-					//3.0~3.1 이동
-					m_bEventTrigger[10] = true;
 					m_fSkillMoveSpeed_Cur = 3.f;
 					m_fSkillMoveAccel_Cur = 0.f;
 					m_fSkillMoveMultiply = 0.1f;
+					m_vecAttackCol[0]->Set_Enabled(true);
 				}
 
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 
 			}
-			if (3.3f <= AniTime)
+			else if (6.6f <= AniTime)
 			{
-				if (false == m_bEventTrigger[11])
+				if (false == m_bEventTrigger[10])
 				{
-					m_bEventTrigger[11] = true;
-					m_vecAttackCol[0]->Set_Enabled(true);
+					m_bEventTrigger[10] = true;
+					m_vecAttackCol[0]->Set_Enabled(false);
 				}
 			}
 		}
@@ -1343,9 +1468,15 @@ void CYachaMan::Play_WheelWind()
 
 void CYachaMan::Play_RandomAtkCombo()
 {
-	m_iAtkRandom = CALC::Random_Num(ATK_COMBO_TYPE::COMBO_R_L, ATK_COMBO_TYPE::COMBO_RUNHAMMERING);
+	//프로토 검사용
+	m_iRandom = CALC::Random_Num(ATK_COMBO_TYPE::COMBO_R_L, ATK_COMBO_TYPE::COMBO_R_HAMMERING);
 
-	switch (m_iAtkRandom)
+	//완점 랜덤 콤보용
+	//m_iRandom = CALC::Random_Num(ATK_COMBO_TYPE::COMBO_R_L, ATK_COMBO_TYPE::COMBO_RUNHAMMERING);
+
+	m_iRandom = ATK_COMBO_TYPE::COMBO_R_L;
+
+	switch (m_iRandom)
 	{
 	case ATK_COMBO_TYPE::COMBO_R_L:
 		m_eAtkCombo = ATK_COMBO_TYPE::COMBO_R_L;
@@ -1380,27 +1511,26 @@ void CYachaMan::Play_Combo_R_L()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.45f))
 		{
-			cout << "심, 랜덤 콤보->좌치기 우치기, 좌치기 종료" << endl;
 			m_vecAttackCol[0]->Set_Enabled(false);
 			m_eState = Atk_Ani_L;
 			return;
 		}
 		else
 		{
-			if (AniTime > 1.3f && AniTime < 1.9f)
+			if (2.833f < AniTime && 4.233f > AniTime)
 			{
 				if (m_bEventTrigger[0] == false)
 				{
 					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 3.f;
+					m_fSkillMoveSpeed_Cur = 8.f;
 					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 0.1f;
+					m_fSkillMoveMultiply = 1.5f;
 				}
 
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
-			if (AniTime > 1.8f && AniTime < 2.0f)
+			else if (3.50f < AniTime && 3.93f > AniTime)
 			{
 				if (m_bEventTrigger[1] == false)
 				{
@@ -1408,7 +1538,7 @@ void CYachaMan::Play_Combo_R_L()
 					m_vecAttackCol[0]->Set_Enabled(true);
 				}
 			}
-			if (AniTime >= 2.0f)
+			else if (3.93f <= AniTime)
 			{
 				m_vecAttackCol[0]->Set_Enabled(false);
 				return;
@@ -1419,38 +1549,42 @@ void CYachaMan::Play_Combo_R_L()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			cout << "심, 랜덤 콤보->좌치기 우치기 종료" << endl;
-			Reset_BattleState();
+			m_fCoolDownMax = 0.5f;
+			m_bCanCoolDown = true;
+			Function_ResetAfterAtk();
 			return;
 		}
 		else
 		{
 			//0.6~1.1 이동 1.2~1.4타격
-			if (0.6f < AniTime && 1.1f > AniTime)
+			if (0.9f < AniTime && 2.833f > AniTime)
 			{
-				if (m_bEventTrigger[0] == false)
+				if (m_bEventTrigger[2] == false)
 				{
-					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 3.f;
+					m_bEventTrigger[2] = true;
+					m_fSkillMoveSpeed_Cur = 6.f; //6
 					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 0.1f;
+					m_fSkillMoveMultiply = 1.5f; //0.3
 				}
 
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
-			if (1.2f < AniTime && 1.4f > AniTime)
+			else if (2.4f < AniTime && 2.7f > AniTime)
 			{
-				if (m_bEventTrigger[1] == false)
+				if (m_bEventTrigger[3] == false)
 				{
-					m_bEventTrigger[1] = true;
+					m_bEventTrigger[3] = true;
 					m_vecAttackCol[0]->Set_Enabled(true);
 				}
 			}
-			if (1.4f <= AniTime)
+			else if (2.7f <= AniTime)
 			{
-				m_vecAttackCol[0]->Set_Enabled(false);
-				return;
+				if (m_bEventTrigger[4] == false)
+				{
+					m_bEventTrigger[4] = true;
+					m_vecAttackCol[0]->Set_Enabled(false);
+				}
 			}
 		}
 	}
@@ -1466,14 +1600,13 @@ void CYachaMan::Play_Combo_R_Hammering()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.45f))
 		{
-			cout << "심, 랜덤 콤보->우치기 어깨치기, 우치기 종료" << endl;
 			m_vecAttackCol[0]->Set_Enabled(false);
 			m_eState = Atk_Ani_Hammering;
 			return;
 		}
 		else
 		{
-			if (AniTime > 1.3f && AniTime < 1.9f)
+			if (1.3f < AniTime && 1.8f > AniTime)
 			{
 				if (m_bEventTrigger[0] == false)
 				{
@@ -1483,10 +1616,10 @@ void CYachaMan::Play_Combo_R_Hammering()
 					m_fSkillMoveMultiply = 0.1f;
 				}
 
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
-			if (AniTime > 1.8f && AniTime < 2.0f)
+			else if (1.8f <= AniTime && 2.0f > AniTime)
 			{
 				if (m_bEventTrigger[1] == false)
 				{
@@ -1494,7 +1627,7 @@ void CYachaMan::Play_Combo_R_Hammering()
 					m_vecAttackCol[0]->Set_Enabled(true);
 				}
 			}
-			if (AniTime >= 2.0f)
+			else if (2.0f <= AniTime)
 			{
 				if (m_bEventTrigger[2] == false)
 				{
@@ -1509,9 +1642,9 @@ void CYachaMan::Play_Combo_R_Hammering()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			cout << "심, 랜덤 콤보->우치기 어깨치기 종료" << endl;
-			Reset_BattleState();
-
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = 1.2f;
+			Function_ResetAfterAtk();
 			return;
 		}
 		else
@@ -1527,10 +1660,10 @@ void CYachaMan::Play_Combo_R_Hammering()
 					m_fSkillMoveMultiply = 0.1f;
 				}
 
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
-			if (1.4f < AniTime && 1.8f > AniTime)
+			else if (1.4f < AniTime && 1.8f > AniTime)
 			{
 				if (m_bEventTrigger[1] == false)
 				{
@@ -1538,7 +1671,7 @@ void CYachaMan::Play_Combo_R_Hammering()
 					m_vecAttackCol[0]->Set_Enabled(true); 
 				}
 			}
-			if (1.8f <= AniTime)
+			else if (1.8f <= AniTime)
 			{
 				m_vecAttackCol[0]->Set_Enabled(false);
 				return;
@@ -1557,7 +1690,6 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.28f))
 		{
-			cout << "심, 랜덤 콤보->어깨치기 2회전, 어깨치기 종료" << endl;
 			m_vecAttackCol[0]->Set_Enabled(false);
 			m_eState = Atk_Ani_TurnTwice;
 			return;
@@ -1576,8 +1708,8 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 					m_vecAttackCol[0]->Set_Enabled(true);
 				}
 
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 				return;
 			}
 			else if (1.3f <= AniTime)
@@ -1591,8 +1723,10 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.9f))
 		{
-			cout << "심, 랜덤 콤보->어깨치기 2회전 종료" << endl;
-			Reset_BattleState();
+			m_fCoolDownMax = 1.4f;
+			m_bCanCoolDown = true;
+			Function_ResetAfterAtk();
+			return;
 
 			return;
 		}
@@ -1610,10 +1744,10 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 					m_vecAttackCol[0]->Set_Enabled(false);
 				}
 
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
-			if (0.9f < AniTime && 1.2f > AniTime)
+			else if (0.9f < AniTime && 1.2f > AniTime)
 			{
 				if (m_bEventTrigger[1] == false)
 				{
@@ -1621,7 +1755,7 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 					m_vecAttackCol[0]->Set_Enabled(true);
 				}
 			}
-			if (1.2f <= AniTime)
+			else if (1.2f <= AniTime)
 			{
 				if (m_bEventTrigger[2] == false)
 				{
@@ -1630,7 +1764,7 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 				}
 
 			}
-			if (1.6f < AniTime && 1.9f > AniTime)
+			else if (1.6f < AniTime && 1.9f > AniTime)
 			{
 				if (m_bEventTrigger[3] == false)
 				{
@@ -1638,7 +1772,7 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 					m_vecAttackCol[0]->Set_Enabled(true);
 				}
 			}
-			if (1.9f <= AniTime)
+			else if (1.9f <= AniTime)
 			{
 				if (m_bEventTrigger[4] == false)
 				{
@@ -1646,7 +1780,7 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 					m_vecAttackCol[0]->Set_Enabled(false);
 				}
 			}
-			if (2.9f < AniTime && 3.3f < AniTime)
+			else if (2.9f < AniTime && 3.3f < AniTime)
 			{
 				if (m_bEventTrigger[5] == false)
 				{
@@ -1656,8 +1790,8 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 					m_fSkillMoveMultiply = 0.1f;
 				}
 
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
 		}
 	}
@@ -1673,7 +1807,6 @@ void CYachaMan::Play_Combo_Shoulder_HalfClock()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.28f))
 		{
-			cout << "심, 랜덤 콤보->어깨치기 반시계, 어깨치기 종료" << endl;
 			m_vecAttackCol[0]->Set_Enabled(false);
 			m_eState = Atk_Ani_HalfClock;
 			return;
@@ -1692,8 +1825,8 @@ void CYachaMan::Play_Combo_Shoulder_HalfClock()
 					m_vecAttackCol[0]->Set_Enabled(true);
 				}
 
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 				return;
 			}
 			else if (1.3f <= AniTime)
@@ -1707,8 +1840,9 @@ void CYachaMan::Play_Combo_Shoulder_HalfClock()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			cout << "심, 랜덤 콤보->어깨치기 반시계 종료" << endl;
-			Reset_BattleState();
+			m_fCoolDownMax = 0.7f;
+			m_bCanCoolDown = true;
+			Function_ResetAfterAtk();
 
 			return;
 		}
@@ -1725,10 +1859,10 @@ void CYachaMan::Play_Combo_Shoulder_HalfClock()
 					m_fSkillMoveMultiply = 0.1f;
 				}
 
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
-			if (0.8f < AniTime && 1.2f > AniTime)
+			else if (0.8f < AniTime && 1.2f > AniTime)
 			{
 				if (m_bEventTrigger[1] == false)
 				{
@@ -1737,11 +1871,11 @@ void CYachaMan::Play_Combo_Shoulder_HalfClock()
 				}
 
 			}
-			if (1.2f <= AniTime)
+			else if (1.2f <= AniTime)
 			{
 				m_vecAttackCol[0]->Set_Enabled(false);
 			}
-			if (2.9f < AniTime && 3.3f > AniTime)
+			else if (2.9f < AniTime && 3.3f > AniTime)
 			{
 				if (m_bEventTrigger[2] == false)
 				{
@@ -1751,8 +1885,8 @@ void CYachaMan::Play_Combo_Shoulder_HalfClock()
 					m_fSkillMoveMultiply = 0.1f;
 				}
 
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
 		}
 	}
@@ -1766,7 +1900,6 @@ void CYachaMan::Play_Combo_RunHammering()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.9f))
 		{
-			cout << "심, 랜덤 콤보->달려가 내리치기,시작 종료" << endl;
 			m_eState = Atk_Ani_Run_Loop;
 			return;
 		}
@@ -1777,13 +1910,13 @@ void CYachaMan::Play_Combo_RunHammering()
 				if (m_bEventTrigger[0] == false)
 				{
 					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 10.f;
+					m_fSkillMoveSpeed_Cur = 15.f;
 					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 4.f;
+					m_fSkillMoveMultiply = 3.f;
 				}
 
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
 		}
 	}
@@ -1791,7 +1924,6 @@ void CYachaMan::Play_Combo_RunHammering()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.9f))
 		{
-			cout << "심, 랜덤 콤보->달려가 내리치기,루프 종료" << endl;
 			m_eState = Atk_Ani_Run_End;
 			return;
 		}
@@ -1802,19 +1934,20 @@ void CYachaMan::Play_Combo_RunHammering()
 				m_bEventTrigger[0] = true;
 				m_fSkillMoveSpeed_Cur = 20.f;
 				m_fSkillMoveAccel_Cur = 0.f;
-				m_fSkillMoveMultiply = 4.f;
+				m_fSkillMoveMultiply = 3.f;
 			}
 
-			Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-			Decre_Skill_Movement(m_fSkillMoveMultiply);
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
 	}
 	else if (Atk_Ani_Run_End == m_eState)
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.9f))
 		{
-			cout << "심, 랜덤 콤보->달려가 내리치기,종료 종료" << endl;
-			Reset_BattleState();
+			m_fCoolDownMax = 1.4f;
+			m_bCanCoolDown = true;
+			Function_ResetAfterAtk();
 			return;
 		}
 		else
@@ -1827,7 +1960,7 @@ void CYachaMan::Play_Combo_RunHammering()
 					m_vecAttackCol[0]->Set_Enabled(true);
 				}
 			}
-			if (2.6f < AniTime && 3.2f > AniTime)
+			else if (2.6f < AniTime && 3.2f > AniTime)
 			{
 				if (m_bEventTrigger[1] == false)
 				{
@@ -1837,8 +1970,8 @@ void CYachaMan::Play_Combo_RunHammering()
 					m_fSkillMoveMultiply = 0.1f;
 				}
 
-				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
 		}
 	}
@@ -1848,39 +1981,38 @@ void CYachaMan::Play_Combo_RunHammering()
 
 void CYachaMan::Play_Hit()
 {
+	
 	if (false == m_tObjParam.bIsHit)
 	{
-		cout << "심, Hit" << endl;
+		Function_ResetAfterAtk();
 		m_tObjParam.bIsHit = true;
 		m_eState = YACHAMAN_ANI::Hit_S_FL;
-		Reset_BattleState();
 	}
 	else
 	{
-		//맞는 애니중, 70퍼이상 애니 재생됬다면 또 처맞기 가능
-		if (true == m_tObjParam.bIsHit && m_pMeshCom->Is_Finish_Animation(0.7f))
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		{
+			m_tObjParam.bCanHit = true;
+			m_tObjParam.bIsHit = false;
+
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = 0.5f;
+
+			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+		}
+		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
 		{
 			if (false == m_tObjParam.bCanHit)
 			{
-				cout << "심, 또 Hit" << endl;
-				++m_iDodgeCount; //200406 수정
 				m_tObjParam.bCanHit = true;
+				Check_FBLR();
 
 				return;
 			}
 		}
-		//맞는 애니중, 95퍼 이상 재생, 행동 종료
-		if (m_pMeshCom->Is_Finish_Animation(0.95f))
-		{
-			cout << "심, Hit 종료" << endl;
-			++m_iDodgeCount;
-			m_tObjParam.bIsHit = false;
-			m_tObjParam.bCanHit = true;
-			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-
-			return;
-		}
 	}
+
+	return;
 }
 
 void CYachaMan::Play_Down_Strong()
@@ -1895,6 +2027,9 @@ void CYachaMan::Play_Dead()
 {
 	m_eState = YACHAMAN_ANI::Dead;
 
+	m_pHammer->Start_Dissolve();
+	//이동 이벤트 처리를 해줍시다^^
+	//이 친구 사극에서 죽듯이 죽습니다, 이동처리하세요
 	if (m_pMeshCom->Is_Finish_Animation(0.95f))
 	{
 		//봐서 1.f인가 아니면 새로운 배수인가를 확인합시다
@@ -1968,6 +2103,18 @@ HRESULT CYachaMan::SetUp_ConstantTable()
 	return NOERROR;
 }
 
+HRESULT CYachaMan::Ready_Weapon()
+{
+	m_pHammer = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
+	m_pHammer->Change_WeaponData(CWeapon::WPN_Hammer_Normal);
+
+	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
+	m_pHammer->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
+	m_pHammer->Set_ParentMatrix(&m_pTransformCom->Get_WorldMat());
+
+	return S_OK;
+}
+
 HRESULT CYachaMan::Ready_Collider()
 {
 	m_vecPhysicCol.reserve(3); //3칸의 공간 할당
@@ -1992,7 +2139,7 @@ HRESULT CYachaMan::Ready_Collider()
 	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 	IF_NULL_VALUE_RETURN(pCollider, E_FAIL);
 
-	fRadius = 0.3f;
+	fRadius = 0.7f;
 
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
@@ -2012,7 +2159,7 @@ HRESULT CYachaMan::Ready_Collider()
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
 	pCollider->Set_Type(COL_SPHERE);
-	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Head]->_41, m_matBone[Bone_Head]->_42, m_matBone[Bone_Head]->_43));
+	pCollider->Set_CenterPos(_v3(m_matBone[Bone_RightArm]->_41, m_matBone[Bone_RightArm]->_42, m_matBone[Bone_RightArm]->_43));
 	pCollider->Set_Enabled(true);
 
 	m_vecPhysicCol.push_back(pCollider);
@@ -2028,7 +2175,7 @@ HRESULT CYachaMan::Ready_Collider()
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
 	pCollider->Set_Type(COL_SPHERE);
-	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Head]->_41, m_matBone[Bone_Head]->_42, m_matBone[Bone_Head]->_43));
+	pCollider->Set_CenterPos(_v3(m_matBone[Bone_RightArm]->_41, m_matBone[Bone_RightArm]->_42, m_matBone[Bone_RightArm]->_43));
 	pCollider->Set_Enabled(true);
 
 	m_vecAttackCol.push_back(pCollider);
@@ -2038,10 +2185,10 @@ HRESULT CYachaMan::Ready_Collider()
 
 HRESULT CYachaMan::Ready_BoneMatrix()
 {
-	D3DXFRAME_DERIVED*	pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head", 0);
+	D3DXFRAME_DERIVED*	pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightArm", 0);
 	IF_NULL_VALUE_RETURN(pFrame, E_FAIL);
 
-	m_matBone[Bone_Head] = &pFrame->CombinedTransformationMatrix;
+	m_matBone[Bone_RightArm] = &pFrame->CombinedTransformationMatrix;
 
 	pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Spine", 0);
 	IF_NULL_VALUE_RETURN(pFrame, E_FAIL);
@@ -2080,6 +2227,7 @@ CGameObject* CYachaMan::Clone_GameObject(void * pArg)
 
 void CYachaMan::Free()
 {
+	Safe_Release(m_pHammer);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pNavMesh);
 	Safe_Release(m_pTransformCom);

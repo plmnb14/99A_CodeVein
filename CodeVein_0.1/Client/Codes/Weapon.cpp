@@ -67,8 +67,8 @@ _int CWeapon::Late_Update_GameObject(_double TimeDelta)
 	if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
 
-	if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
-		return E_FAIL;
+	//if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
+	//	return E_FAIL;
 
 	return _int();
 }
@@ -306,6 +306,11 @@ void CWeapon::Set_Enable_Trail(_bool _bEnable)
 		m_pTrailEffect->Clear_TrailInfo();
 		m_pDistortionEffect->Clear_TrailInfo();
 	}
+}
+
+void CWeapon::Set_TrailIdx(_ulong _dwIdx)
+{
+	m_pTrailEffect->Set_TrailIdx(_dwIdx);
 }
 
 void CWeapon::Set_Enable_Record(_bool _bRecord)

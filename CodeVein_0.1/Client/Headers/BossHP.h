@@ -5,13 +5,17 @@
 #include "Client_Defines.h"
 
 BEGIN(Client)
-
+class CHPBack;
+class CBossDecoUI;
 class CBossHP final : public CUI
 {
 private:
 	explicit CBossHP(_Device pGraphic_Device);
 	explicit CBossHP(const CBossHP& rhs);
 	virtual ~CBossHP() = default;
+
+public:
+	void Set_Target(CGameObject* pTarget) { m_pTarget = pTarget; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -30,6 +34,8 @@ private:
 	_float m_fBossHP = 0.f;
 	_float m_fTotalHP = 0.f;
 	_float m_fPercentage = 0.f;
+	CHPBack* m_pHPBack = nullptr;
+	CBossDecoUI* m_pDecoUI = nullptr;
 
 private:
 	CTransform*				m_pTransformCom = nullptr;

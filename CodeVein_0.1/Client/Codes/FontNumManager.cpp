@@ -24,7 +24,41 @@ HRESULT CFontNumManager::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
+	CUI::Ready_GameObject(pArg);
 	
+
+	return NOERROR;
+}
+
+_int CFontNumManager::Update_GameObject(_double TimeDelta)
+{
+	CUI::Update_GameObject(TimeDelta);
+
+	Calc_NumberFont(m_iNumber);
+
+	/*for (_uint i = 0; i < m_vecFontNum.size(); ++i)
+	{
+	m_vecFontNum[i]->Set_UI_Pos(m_fPosX + m_fSizeX * i, m_fPosY);
+	m_vecFontNum[i]->Set_UI_Size(m_fSizeX, m_fSizeY);
+	m_vecFontNum[i]->Set_ViewZ(m_fViewZ);
+	}*/
+	return _int();
+}
+
+_int CFontNumManager::Late_Update_GameObject(_double TimeDelta)
+{
+	if (GetAsyncKeyState(VK_F1) & 0x8000)
+		m_iNumber -= 10.f * TimeDelta;
+	return _int();
+}
+
+HRESULT CFontNumManager::Render_GameObject()
+{
+	/*for (_ulong i = 0; i < m_vecFontNum.size(); ++i)
+	{
+	m_vecFontNum[i]->Set_Dead();
+	}
+	m_vecFontNum.shrink_to_fit();*/
 	return NOERROR;
 }
 
@@ -74,39 +108,52 @@ _ulong CFontNumManager::Calc_Digits(_ulong dwNumber)
 	return dwDigits;
 }
 
-void CFontNumManager::Calc_NumberFont(_ulong dwFontNum, _float fPosX, _float fPosY, _float fSizeX, _float fSizeY, _float fViewZ)
+void CFontNumManager::Calc_NumberFont(_ulong dwFontNum/*, _float fPosX, _float fPosY, _float fSizeX, _float fSizeY, _float fViewZ*/)
 {
-	vector<CFontNumUI*> vecFontNum;
+	vector<CFontNumUI*> vecFontNumUI;
 	_ulong dwNumDigits = Calc_Digits(dwFontNum);
-	
+
 	LOOP(dwNumDigits)
 	{
-		vecFontNum.push_back(Make_FontNum());
+		vecFontNumUI.push_back(Make_FontNum());
 	}
 
 	_ulong iIdx = 0;
 	while (dwFontNum != 0)
 	{
-		vecFontNum[iIdx]->Set_UI_Index(dwFontNum % 10);
+		vecFontNumUI[iIdx]->Set_UI_Index(dwFontNum % 10);
 		dwFontNum /= 10;
 
 		++iIdx;
 	}
 
-	_uint num = 0;
-	for (auto& pNum : vecFontNum)
-	{
-		pNum->Set_UI_Pos(fPosX - fSizeX * num, fPosY);
-		pNum->Set_UI_Size(fSizeX, fSizeY);
-		pNum->Set_ViewZ(fViewZ);
-		++num;
-	}
-	
+	reverse(vecFontNumUI.begin(), vecFontNumUI.end());
 
-	for (_ulong i = 0; i < vecFontNum.size(); ++i)
+	for (_uint i = 0; i < vecFontNumUI.size(); ++i)
 	{
-		vecFontNum[i]->Set_Dead();
+		vecFontNumUI[i]->Set_UI_Pos(m_fPosX + m_fSizeX * i, m_fPosY);
+		vecFontNumUI[i]->Set_UI_Size(m_fSizeX, m_fSizeY);
+		vecFontNumUI[i]->Set_ViewZ(m_fViewZ);
 	}
+
+	/*_uint num = 0;
+	for (auto& pNum : vecFontNumUI)
+	{
+	pNum->Set_UI_Pos(fPosX - fSizeX * num, fPosY);
+	pNum->Set_UI_Size(fSizeX, fSizeY);
+	pNum->Set_ViewZ(fViewZ);
+	++num;
+	}*/
+
+
+	for (_ulong i = 0; i < vecFontNumUI.size(); ++i)
+	{
+		vecFontNumUI[i]->Set_Dead();
+	}
+
+
+	/*reverse(vecFontNumUI.begin(), vecFontNumUI.end());
+	m_vecFontNum = vecFontNumUI;*/
 }
 
 CFontNumUI* CFontNumManager::Make_FontNum()
@@ -114,7 +161,7 @@ CFontNumUI* CFontNumManager::Make_FontNum()
 	CUI::UI_DESC* pDesc = nullptr;
 
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_FontNumUI", SCENE_STAGE, L"Layer_FontNumUI", pDesc);
-	
+
 	CFontNumUI* pFontNumUI = static_cast<CFontNumUI*>(g_pManagement->Get_GameObjectBack(L"Layer_FontNumUI", SCENE_STAGE));
 
 	return pFontNumUI;
@@ -150,3 +197,4 @@ void CFontNumManager::Free()
 
 	CUI::Free();
 }
+

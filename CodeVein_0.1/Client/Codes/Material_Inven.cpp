@@ -56,12 +56,7 @@ HRESULT CMaterial_Inven::Ready_GameObject(void * pArg)
 
 	}
 	
-	LOOP(16)
-		Add_Material(CMaterial::MATERIAL_1);
-	LOOP(16)
-		Add_Material(CMaterial::MATERIAL_2);
-	LOOP(16)
-		Add_Material(CMaterial::MATERIAL_3);
+	
 	return NOERROR;
 }
 
