@@ -3,6 +3,7 @@
 #include "Client_Defines.h"
 #include "GameObject.h"
 #include "Management.h"
+#include "Effect.h"
 
 BEGIN(Client)
 
@@ -24,6 +25,8 @@ private:
 	CTransform*			m_pTransformCom = nullptr;
 	CCollider*			m_pCollider = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
+	CEffect*			m_pBulletBody = nullptr;
+
 	_v3					m_vDir = _v3(0.f, 0.f, 0.f);
 	_float				m_fSpeed = 0.f;
 
@@ -45,6 +48,7 @@ private:
 	_bool				m_bDead = false;
 
 	_bool				m_bEffect = true;
+	_float				m_fOffset = 0.f;
 private:
 	_bool				m_bPlayerFriendly = false;		// 플레이어 껀지
 

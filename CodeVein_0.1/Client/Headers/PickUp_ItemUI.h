@@ -28,8 +28,8 @@ private:
 
 private:
 	_uint		m_uiRenderNumber = 0;
-
 	_uint		m_iRenderNum = 0;
+	_uint		m_iCheckPos = 0;
 
 	_bool		m_bOne_PickupUIEnd = false;
 	_bool		m_bTwo_PickupUIEnd = false;

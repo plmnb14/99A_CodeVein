@@ -3,6 +3,7 @@
 #include "..\Headers\Weapon.h"
 
 #include "MonsterUI.h"
+#include "DamegeNumUI.h"
 
 CSwordShieldGenji::CSwordShieldGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
@@ -41,8 +42,12 @@ HRESULT CSwordShieldGenji::Ready_GameObject(void * pArg)
 	//// MonsterHP UI
 	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
 	m_pMonsterUI->Set_Target(this);
+	m_pMonsterUI->Set_Bonmatrix(m_matBones[Bone_Head]);
 	m_pMonsterUI->Ready_GameObject(NULL);
 
+	/*m_pDamegeNumUI = static_cast<CDamegeNumUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_DamegeNumUI", pArg));
+	m_pDamegeNumUI->Set_Target(this);
+	m_pDamegeNumUI->Ready_GameObject(pArg);*/
 
 	/////////////// 행동트리 init
 
@@ -329,6 +334,7 @@ _int CSwordShieldGenji::Update_GameObject(_double TimeDelta)
 
 	// MonsterHP UI
 	m_pMonsterUI->Update_GameObject(TimeDelta);
+	//m_pDamegeNumUI->Update_GameObject(TimeDelta);
 
 	// 플레이어 미발견
 	if (false == m_bFight)
@@ -1242,6 +1248,7 @@ CGameObject * CSwordShieldGenji::Clone_GameObject(void * pArg)
 void CSwordShieldGenji::Free()
 {
 	Safe_Release(m_pMonsterUI);
+	Safe_Release(m_pDamegeNumUI);
 
 	Safe_Release(m_pShield);
 	Safe_Release(m_pSword);

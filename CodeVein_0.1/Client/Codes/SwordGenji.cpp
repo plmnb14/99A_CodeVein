@@ -41,11 +41,12 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	// MonsterHP UI
  	pMonsterHpUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
  	pMonsterHpUI->Set_Target(this);
+	pMonsterHpUI->Set_Bonmatrix(m_matBones[Bone_Head]);
  	pMonsterHpUI->Ready_GameObject(NULL);
 
 	/*m_pDamegeNumUI = static_cast<CDamegeNumUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_DamegeNumUI", pArg));
 	m_pDamegeNumUI->Set_Target(this);
-	m_pDamegeNumUI->Ready_GameObject(pArg);*/
+	m_pDamegeNumUI->Ready_GameObject(NULL);*/
 
 	//////////////////// 행동트리 init
 
@@ -172,6 +173,7 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 
 	// MonsterHP UI
 	pMonsterHpUI->Update_GameObject(TimeDelta);
+	//m_pDamegeNumUI->Update_GameObject(TimeDelta);
 
 	// 플레이어 미발견
 	if (false == m_bFight)
@@ -1294,7 +1296,7 @@ CGameObject * CSwordGenji::Clone_GameObject(void * pArg)
 void CSwordGenji::Free()
 {
 	Safe_Release(pMonsterHpUI);
-	//Safe_Release(m_pDamegeNumUI);
+	Safe_Release(m_pDamegeNumUI);
 
 	Safe_Release(m_pSword);
 	Safe_Release(m_pNavMesh);

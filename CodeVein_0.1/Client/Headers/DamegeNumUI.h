@@ -36,9 +36,18 @@ private:
 
 	_uint	m_iGet_Damege = 0;
 
+	_uint	m_iSave_Damage = 0;
+
 	_uint	Temp_GetDamage[3] = {};
 
-	_uint	m_iSave_Damage = 0;
+	_uint	m_iCheck_DamagePos = 0;
+
+	_v3		m_vPosOne[3] = { V3_NULL, V3_NULL, V3_NULL };
+	_v3		m_vPosTwo[3] = { V3_NULL, V3_NULL, V3_NULL };
+	_v3		m_vPosThree[3] = { V3_NULL, V3_NULL, V3_NULL };
+
+	_mat	m_matWorld;
+	_mat	m_matWorldPlus[3];
 
 private:
 	CTransform*				m_pTransformCom = nullptr;

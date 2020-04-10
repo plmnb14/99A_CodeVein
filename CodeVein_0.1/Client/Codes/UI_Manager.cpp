@@ -30,6 +30,10 @@
 #include "FontNumUI.h"
 #include "FontNumManager.h"
 
+#include "MassageUI.h"
+#include "Get_ItemUI.h"
+#include "PickUp_ItemUI.h"
+
 IMPLEMENT_SINGLETON(CUI_Manager)
 
 CUI_Manager::CUI_Manager()
@@ -57,8 +61,6 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_QuickSlot", CQuickSlot::Create(pDevice))))
 		return E_FAIL;
-	
-
 	
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SelectUI", CSelect_UI::Create(pDevice))))
 		return E_FAIL;
@@ -100,6 +102,17 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_FontNumUI", CFontNumUI::Create(pDevice))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_FontNumManager", CFontNumManager::Create(pDevice))))
+		return E_FAIL;
+
+
+	//////////////// Chae
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BossMassageUI", CMassageUI::Create(pDevice))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Get_Item", CMassageUI::Create(pDevice))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Pickup_Item", CMassageUI::Create(pDevice))))
 		return E_FAIL;
 
 	return NOERROR;

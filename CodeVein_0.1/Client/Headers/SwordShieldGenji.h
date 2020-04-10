@@ -7,6 +7,7 @@
 BEGIN(Client)
 
 class CMonsterUI;
+class CDamegeNumUI;
 class CWeapon;
 class CSwordShieldGenji final : public CGameObject
 {
@@ -47,6 +48,9 @@ public:
 	virtual _int Update_GameObject(_double TimeDelta);
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
+
+public:
+	_mat*	Get_Bonmatrix() { return m_matBones[Bone_Head]; }
 
 private:	//패턴들
 	// 근거리
@@ -107,6 +111,7 @@ private:
 	//////////채유미
 	// MonsterHP UI
 	CMonsterUI*			m_pMonsterUI = nullptr;
+	CDamegeNumUI*		m_pDamegeNumUI = nullptr;
 
 	//렌더에서 타임델타 쓰기위해서 저장해놓음
 	_double				m_dTimeDelta = 0;

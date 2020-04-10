@@ -3,6 +3,7 @@
 #include "..\Headers\Weapon.h"
 
 #include "MonsterUI.h"
+#include "DamegeNumUI.h"
 
 CGunGenji::CGunGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
@@ -28,7 +29,14 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 
 	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
 	m_pMonsterUI->Set_Target(this);
+	m_pMonsterUI->Set_Bonmatrix(m_matBones[Bone_Head]);
 	m_pMonsterUI->Ready_GameObject(NULL);
+	
+	/*m_pMonDamegeUI = static_cast<CDamegeNumUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_DamegeNumUI", pArg));
+	m_pMonDamegeUI->Set_Target(this);
+	m_pMonDamegeUI->Ready_GameObject(NULL);*/
+
+	/////////////////////////////////////////////////////////
 
 	Ready_NF(pArg);
 
@@ -335,6 +343,7 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 
 	// MonsterHP UI
 	m_pMonsterUI->Update_GameObject(TimeDelta);
+	//m_pMonDamegeUI->Update_GameObject(TimeDelta);
 
 	// Á×¾úÀ» °æ¿ì
 	if (m_bIsDead)
@@ -1329,6 +1338,7 @@ CGameObject * CGunGenji::Clone_GameObject(void * pArg)
 void CGunGenji::Free()
 {
 	Safe_Release(m_pMonsterUI);
+	Safe_Release(m_pMonDamegeUI);
 
 	Safe_Release(m_pNavMesh);
 	Safe_Release(m_pGun);
