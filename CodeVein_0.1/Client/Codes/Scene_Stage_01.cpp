@@ -89,11 +89,16 @@ HRESULT CScene_Stage_01::Ready_LightDesc()
 	ZeroMemory(&LightDesc, sizeof(D3DLIGHT9));
 
 	LightDesc.Type = D3DLIGHT_DIRECTIONAL;
-	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
+	LightDesc.Diffuse = D3DXCOLOR(1.f, 0.882f, 0.701f, 1.f);
 	LightDesc.Ambient = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	// In.WorldSpace
-	LightDesc.Direction = _v3(0.0f, 0.f, 1.f);
+	_v3 vLightDir = _v3(0.2f, 1.f, 0.9f);
+
+	V3_NORMAL_SELF(&vLightDir);
+
+	LightDesc.Direction = vLightDir;
+	//LightDesc.Direction = _v3(0.0f, 0.f, 1.f);
 
 	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
 		return E_FAIL;
