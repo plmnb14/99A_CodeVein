@@ -31,8 +31,12 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Depth", ViewPort.Width, ViewPort.Height, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.f, 1.f, 0.f, 0.f))))
 		return E_FAIL;
 
+	// Target_Emissive
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Emissive", ViewPort.Width, ViewPort.Height, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.f, 0.f, 1.f, 0.f))))
+		return E_FAIL;
+
 	// Target_Velocity
-	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Velocity", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.0f, 0.0f, 1.0f, 0.f))))
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Velocity", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
 		return E_FAIL;
 
 	// 명암을 저장한다.
@@ -106,7 +110,10 @@ HRESULT CRenderer::Ready_Component_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Deferred", L"Target_Depth")))
 		return E_FAIL;
-	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Deferred", L"Target_Velocity")))
+	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Deferred", L"Target_Emissive")))
+		return E_FAIL;
+
+	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Velocity", L"Target_Velocity")))
 		return E_FAIL;
 
 	// For.MRT_LightAcc
@@ -206,7 +213,11 @@ HRESULT CRenderer::Ready_Component_Prototype()
 		return E_FAIL;
 
 	// For.Target_Depth`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Velocity", 0.0f, fTargetSize * 3, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Emissive", 0.0f, fTargetSize * 3, fTargetSize, fTargetSize)))
+		return E_FAIL;
+
+	// For.Target_Depth`s Debug Buffer
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Velocity", 0.0f, fTargetSize * 4, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_Shade`s Debug Buffer
@@ -303,6 +314,10 @@ HRESULT CRenderer::Draw_RenderList()
 	if (FAILED(Render_LightAcc()))
 		return E_FAIL;
 
+	// 속도맵 만들기
+	if (FAILED(Render_MotionBlurTarget()))
+		return E_FAIL;
+	
 	// 디퓨즈, 셰이드 두 타겟을 혼합하여 백버퍼에 찍는다. // With Skybox(priority), With Alpha
 	if (FAILED(Render_Blend()))
 		return E_FAIL;
@@ -349,6 +364,7 @@ HRESULT CRenderer::Draw_RenderList()
 			return E_FAIL;
 
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Deferred");
+		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Velocity");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_LightAcc");
 		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_ShadowMap");
 		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_Shadow");
@@ -540,6 +556,37 @@ HRESULT CRenderer::Render_Shadow()
 	return NOERROR;
 }
 
+HRESULT CRenderer::Render_MotionBlurTarget()
+{
+	if (nullptr == m_pTarget_Manager)
+		return E_FAIL;
+
+	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Velocity")))
+		return E_FAIL;
+
+	m_pShader_Blur->Begin_Shader();
+
+	for (auto& pGameObject : m_RenderList[RENDER_MOTIONBLURTARGET])
+	{
+		if (nullptr != pGameObject)
+		{
+			if (FAILED(pGameObject->Render_GameObject_SetPass(m_pShader_Blur, 0)))
+			{
+				Safe_Release(pGameObject);
+				return E_FAIL;
+			}
+			Safe_Release(pGameObject);
+		}
+	}
+
+	m_RenderList[RENDER_MOTIONBLURTARGET].clear();
+
+	m_pShader_Blur->End_Shader();
+
+	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_Velocity")))
+		return E_FAIL;
+}
+
 HRESULT CRenderer::Render_Distortion()
 {
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Distortion")))
@@ -687,7 +734,7 @@ HRESULT CRenderer::Render_Blend()
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_SpecularTexture", m_pTarget_Manager->Get_Texture(L"Target_Specular"))))
 		return E_FAIL;
-	if (FAILED(m_pShader_Blend->Set_Texture("g_EmissiveTexture", m_pTarget_Manager->Get_Texture(L"Target_Velocity"))))
+	if (FAILED(m_pShader_Blend->Set_Texture("g_EmissiveTexture", m_pTarget_Manager->Get_Texture(L"Target_Emissive"))))
 		return E_FAIL;
 
 
@@ -798,9 +845,9 @@ HRESULT CRenderer::Render_MotionBlurObj()
 	_mat		ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
 	_mat		matWVP;
 	matWVP = ViewMatrix * ProjMatrix;
-	D3DXMatrixInverse(&matWVP, nullptr, &matWVP);
-	if (FAILED(m_pShader_Blend->Set_Value("g_matInvVP", &matWVP, sizeof(_mat))))
-		return E_FAIL;
+	//D3DXMatrixInverse(&matWVP, nullptr, &matWVP);
+	//if (FAILED(m_pShader_Blend->Set_Value("g_matInvVP", &matWVP, sizeof(_mat))))
+	//	return E_FAIL;
 
 	Safe_Release(pManagement);
 
@@ -869,7 +916,7 @@ HRESULT CRenderer::Render_ToneMapping()
 		nullptr == m_pShader_Blend)
 		return E_FAIL;
 
-	if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_Blend")))) //Target_Blend 임시로 모션블러 꺼둠. 키려면 Target_MotionBlurBlend
+	if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_MotionBlurBlend")))) //Target_Blend 임시로 모션블러 꺼둠. 키려면 Target_MotionBlurBlend
 		return E_FAIL;
 
 	// Blur

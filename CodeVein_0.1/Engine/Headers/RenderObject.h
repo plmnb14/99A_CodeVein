@@ -58,6 +58,9 @@ protected:
 	_int			m_iIndex = 0;
 	_ulong			m_dwPassNum = 0;
 
+	// For	MotionBlur
+	_mat	m_matLastWVP;
+
 	// 툴에서 사용되는 변수
 protected:
 	_bool			m_bIsSelected = false;
