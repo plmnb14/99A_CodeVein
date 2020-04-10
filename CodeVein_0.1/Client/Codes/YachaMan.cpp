@@ -31,6 +31,8 @@ HRESULT CYachaMan::Ready_GameObject(void * pArg)
 
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
 	m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE));
+	
+	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
 
 	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
 
