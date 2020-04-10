@@ -32,10 +32,11 @@ HRESULT CYachaMan::Ready_GameObject(void * pArg)
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
 	m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE));
 
+	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+
 	m_tObjParam.fHp_Max = 180.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
-
-	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+	m_tObjParam.fDamage = 25.f;
 
 	m_tObjParam.bCanHit = true; //맞기 가능
 	m_tObjParam.bIsHit = false;	//맞기 진행중 아님
@@ -128,7 +129,7 @@ HRESULT CYachaMan::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			if(MONSTER_ANITYPE::DEAD != m_eFirstCategory)
+			if (MONSTER_ANITYPE::DEAD != m_eFirstCategory)
 				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
 
 			m_pShaderCom->Begin_Pass(m_iPass);
@@ -295,10 +296,10 @@ void CYachaMan::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 	_bool bFirst = true;
 
 	for (auto& iter : plistGameObject)
-	{	
+	{
 		if (false == iter->Get_Target_CanHit())
 			continue;
-	
+
 		for (auto& vecIter : m_vecAttackCol)
 		{
 			if (false == vecIter->Get_Enabled())
@@ -316,11 +317,15 @@ void CYachaMan::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					//회피 중이 아니라면 충돌 체크
-					if (false == m_bIsDodge)
+					if (false == iter->Get_Target_Dodge())
 					{
 						iter->Set_Target_CanHit(false);
 						iter->Add_Target_Hp(m_tObjParam.fDamage);
+
+						if (iter->Get_Target_IsHit())
+						{
+							iter->Set_HitAgain(true);
+						}
 					}
 
 					vecIter->Set_Enabled(false);
@@ -451,7 +456,7 @@ void CYachaMan::Check_Dist()
 				}
 			}
 			else
-			{			
+			{
 				m_bCanChase = true;
 				m_eFirstCategory = MONSTER_ANITYPE::MOVE;
 				m_eSecondCategory_MOVE = YACHAMAN_MOVETYPE::MOVE_RUN;
@@ -459,7 +464,7 @@ void CYachaMan::Check_Dist()
 			}
 		}
 	}
-	else 
+	else
 	{
 		m_bCanChase = false;
 		m_eFirstCategory = MONSTER_ANITYPE::IDLE;
@@ -827,7 +832,7 @@ void CYachaMan::Play_Lurk()
 	{
 		if (YACHAMAN_ANI::Lurk == m_eState)
 		{
-			if(m_pMeshCom->Is_Finish_Animation())
+			if (m_pMeshCom->Is_Finish_Animation())
 				m_eState = YACHAMAN_ANI::Lurk_End;
 
 			return;
@@ -839,7 +844,7 @@ void CYachaMan::Play_Lurk()
 				m_bCanIdleRandom = true;
 				m_eState = YACHAMAN_ANI::Hammer_Idle;
 			}
-			
+
 			return;
 		}
 	}
@@ -1414,7 +1419,7 @@ void CYachaMan::Play_HalfClock()
 				if (m_bEventTrigger[1] == false)
 				{
 					m_bEventTrigger[1] = true;
-					m_vecAttackCol[0]->Set_Enabled(true); 
+					m_vecAttackCol[0]->Set_Enabled(true);
 				}
 			}
 			else if (2.4f <= AniTime)
@@ -1871,7 +1876,7 @@ void CYachaMan::Play_Combo_R_Hammering()
 				if (m_bEventTrigger[1] == false)
 				{
 					m_bEventTrigger[1] = true;
-					m_vecAttackCol[0]->Set_Enabled(true); 
+					m_vecAttackCol[0]->Set_Enabled(true);
 				}
 			}
 			else if (1.8f <= AniTime)
@@ -2070,7 +2075,7 @@ void CYachaMan::Play_Combo_Shoulder_HalfClock()
 				if (m_bEventTrigger[1] == false)
 				{
 					m_bEventTrigger[1] = true;
-					m_vecAttackCol[0]->Set_Enabled(true); 
+					m_vecAttackCol[0]->Set_Enabled(true);
 				}
 
 			}
@@ -2219,10 +2224,12 @@ void CYachaMan::Play_Hit()
 
 void CYachaMan::Play_Down_Strong()
 {
+	return;
 }
 
 void CYachaMan::Play_Down_Weak()
 {
+	return;
 }
 
 void CYachaMan::Play_Dead()
@@ -2276,6 +2283,7 @@ void CYachaMan::Play_Dead()
 
 void CYachaMan::Play_Dead_Strong()
 {
+	return;
 }
 
 HRESULT CYachaMan::Add_Component()
