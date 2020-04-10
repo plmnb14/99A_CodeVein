@@ -26,7 +26,7 @@ HRESULT CBossHP::Ready_GameObject(void * pArg)
 		return E_FAIL;
 
 	CUI::Ready_GameObject(pArg);
-	m_bIsActive = true;
+	m_bIsActive = false;
 
 	m_fPosX = WINCX * 0.5f;
 	m_fPosY = 80.f + 10.f;
@@ -47,6 +47,7 @@ HRESULT CBossHP::Ready_GameObject(void * pArg)
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossDecoUI", SCENE_STAGE, L"Layer_BossDecoUI");
 	m_pDecoUI = static_cast<CBossDecoUI*>(g_pManagement->Get_GameObjectBack(L"Layer_BossDecoUI", SCENE_STAGE));
 	m_pDecoUI->Set_ViewZ(m_fViewZ + 0.2f);
+
 	// 보스와 연동
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Boss", SCENE_STAGE);
 	m_fBossHP = m_pTarget->Get_Target_Hp();
