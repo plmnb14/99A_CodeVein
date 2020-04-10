@@ -89,6 +89,10 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Bloom", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
 		return E_FAIL;
 
+	// Target_Rim
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Rim", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
+		return E_FAIL;
+
 	// Target_ToneMapping
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_ToneMapping", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
@@ -111,6 +115,8 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_LightAcc", L"Target_Specular")))
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_LightAcc", L"Target_SSAO")))
+		return E_FAIL;
+	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_LightAcc", L"Target_Rim")))
 		return E_FAIL;
 	
 	// For.MRT_Distortion
@@ -213,6 +219,10 @@ HRESULT CRenderer::Ready_Component_Prototype()
 
 	// For.Target_SSAO`s Debug Buffer
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_SSAO", fTargetSize, fTargetSize * 2, fTargetSize, fTargetSize)))
+		return E_FAIL;
+
+	// For.Target_Rim`s Debug Buffer
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Rim", fTargetSize, fTargetSize * 4, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_ShadowMap`s Debug Buffer
@@ -687,6 +697,16 @@ HRESULT CRenderer::Render_Blend()
 	m_pViewPortBuffer->Render_VIBuffer();
 
 	m_pShader_Blend->End_Pass();
+
+	// Rim ====================================
+	//m_pShader_Blend->Begin_Pass(5);
+	//if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_Rim"))))
+	//	return E_FAIL;
+	//m_pShader_Blend->Commit_Changes();
+	//m_pViewPortBuffer->Render_VIBuffer();
+	//m_pShader_Blend->End_Pass();
+	// ====================================
+
 	m_pShader_Blend->End_Shader();
 
 	// Alpha
@@ -841,7 +861,7 @@ HRESULT CRenderer::Render_ToneMapping()
 		nullptr == m_pShader_Blend)
 		return E_FAIL;
 
-	if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_MotionBlurBlend")))) //Target_Blend 임시로 모션블러 꺼둠. 키려면 Target_MotionBlurBlend
+	if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_Blend")))) //Target_Blend 임시로 모션블러 꺼둠. 키려면 Target_MotionBlurBlend
 		return E_FAIL;
 
 	// Blur
