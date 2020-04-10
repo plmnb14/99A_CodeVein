@@ -29,7 +29,8 @@ public:
 private:
 	enum Ani {
 		Ani_Idle = 42, Ani_Death = 64, Ani_Dmg01_FL = 122,
-		Ani_StandUp1 = 140, Ani_StandUp2 = 153
+		Ani_StandUp1 = 140, Ani_StandUp2 = 153,
+		Ani_GuardHit_Weak = 2, Ani_GuardHit_Strong = 1, Ani_GuardBreak = 0
 	};
 
 private:
@@ -59,6 +60,7 @@ private:	//패턴들
 	CBT_Composite_Node* Turning_Cut();
 	// 5. 짧은 딜레이 찌르기, 이동거리 : 0.6
 	CBT_Composite_Node* ShortDelay_Sting();
+	// 6. 길게 찌르기, 같은 모션이지만 길게 이동
 
 	// 맞음
 	// 1. 방패들고 약하게 맞음
@@ -68,24 +70,25 @@ private:	//패턴들
 
 	// 가드
 	CBT_Composite_Node* Guard(_double dGuardTime);
-	CBT_Composite_Node*	Guard_LeftMoveAround();
-	CBT_Composite_Node*	Guard_RightMoveAround();
 
-
-	// 방패들고 걷기	플레이어와 거리 계산 후 걷는다.
+	CBT_Composite_Node* LGuard_MoveAround();
+	CBT_Composite_Node* RGuard_MoveAround();
 
 	CBT_Composite_Node*		Start_Game();
 
 	CBT_Composite_Node*		Dist_Attack();
 
 	CBT_Composite_Node*		RotationAndNearAttack();
+	CBT_Composite_Node*		RotationAndNearAttack_NotShield();
 	CBT_Composite_Node*		Chase_Guard_NearAttack();
-	CBT_Composite_Node*		MoveAround_NearAttack();
+	CBT_Composite_Node*		MoveAround();
 
-	CBT_Composite_Node*		Guard_MoveAround();
+	CBT_Composite_Node*		LeftMoveAround();
+	CBT_Composite_Node*		RightMoveAround();
 
 	CBT_Composite_Node*		Chase();
-	CBT_Composite_Node*		NearAttack();	// 랜덤 근접 공격
+	CBT_Composite_Node*		NearAttack_Except_Shield_Attack();	// 랜덤 근접 공격, 방패치기는 뻄
+	CBT_Composite_Node*		NearAttack();
 
 	// 방패들고 이동 -> 방향별로 행동 나눠야함.
 

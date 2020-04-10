@@ -22,7 +22,8 @@ public:
 
 private:
 	enum Ani {
-		Ani_Idle = 6, Ani_Death = 12, Ani_Dmg01_B = 14, Ani_Appearance = 16
+		Ani_Idle = 6, Ani_Death = 12, Ani_Dmg01_B = 14, Ani_Appearance = 16, Ani_Down_Start = 7,
+		Ani_Down_Loop = 8, Ani_Down_End = 9
 	};
 
 private:
@@ -104,6 +105,9 @@ private:	//패턴들
 	//////////////////// 
 
 private:
+	void	Down();		// 체력 70퍼 이하면 다운
+
+private:
 	CTransform*			m_pTransformCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
@@ -112,6 +116,8 @@ private:
 	CNavMesh*			m_pNavMesh = nullptr;
 	CCollider*			m_pCollider = nullptr;
 
+	// 피격가능 현재 시간
+	_double				m_dHitTime = 0;
 
 	//렌더에서 타임델타 쓰기위해서 저장해놓음
 	_double				m_dTimeDelta = 0;
@@ -119,13 +125,20 @@ private:
 	_bool				m_bFindPlayer = false;	// 플레이어 발견 못한 상태
 	_bool				m_bFight = false;
 
-private:
-	_int				m_iHitCount = 0;
+	
+private:	// 다운 상태를 위한 변수
+	_bool				m_bDown_Start = false;
+	_bool				m_bDown_Finish = false;
+	
+	_bool				m_bDown_StartAni = false;
+	_bool				m_bDown_LoopAni = false;
+	_bool				m_bDown_EndAni = false;
+	_double				m_dDownTime = 0;
 
 private:
 	// 충돌체를 위한 뼈다귀
 	_mat*				m_matBones[Bone_End];
-	_bool				m_bAIController = false;
+	_bool				m_bAIController = true;
 
 	// 블랙보드에서 뼈의 Pos 저장소
 	_v3					m_vTail2 = _v3(0.f, 0.f, 0.f);	//Tail2
