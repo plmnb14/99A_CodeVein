@@ -30,7 +30,7 @@ HRESULT CBlackWolf::Ready_GameObject(void * pArg)
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
 	m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE));
 
-	m_tObjParam.fHp_Max = 100.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
+	m_tObjParam.fHp_Max = 80.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
 
 	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
@@ -65,11 +65,11 @@ HRESULT CBlackWolf::Ready_GameObject(void * pArg)
 
 _int CBlackWolf::Update_GameObject(_double TimeDelta)
 {
+	if (false == m_bEnable)
+		return NO_EVENT;
+
 	CGameObject::Update_GameObject(TimeDelta);
 	
-	if (m_bIsDead)
-		return DEAD_OBJ;
-
 	Check_Hit();
 	Check_Dist();
 	Set_AniEvent();
@@ -84,12 +84,15 @@ _int CBlackWolf::Update_GameObject(_double TimeDelta)
 
 _int CBlackWolf::Late_Update_GameObject(_double TimeDelta)
 {
-	CGameObject::Late_Update_GameObject(TimeDelta);
+	if (false == m_bEnable)
+		return NO_EVENT;
 
 	IF_NULL_VALUE_RETURN(m_pRendererCom, E_FAIL);
 
 	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
+
+	m_dTimeDelta = TimeDelta;
 
 	return NOERROR;
 }
@@ -116,10 +119,12 @@ HRESULT CBlackWolf::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			m_pShaderCom->Begin_Pass(0);
+			if (MONSTER_ANITYPE::DEAD != m_eFirstCategory)
+				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
 
-			if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
-				return E_FAIL;
+			m_pShaderCom->Begin_Pass(m_iPass);
+
+			m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
 
 			m_pShaderCom->Commit_Changes();
 
@@ -187,29 +192,34 @@ void CBlackWolf::Enter_Collision()
 
 void CBlackWolf::Check_CollisionPush()
 {
-	//플레이어
-	list<CGameObject*> tmpList = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_STAGE);
-	//몬스터
+	list<CGameObject*> tmpList[3];
 
-	for (auto& iter : tmpList)
+	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_STAGE);
+	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
+	tmpList[2] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
+
+	for (auto& list_iter : tmpList)
 	{
-		CCollider* pCollider = TARGET_TO_COL(iter);
-
-		// 지금 속도값 임의로 넣었는데 구해서 넣어줘야함 - 완료
-		if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_fSpeedForCollisionPush * DELTA_60))
+		for (auto& Obj_iter : list_iter)
 		{
-			CTransform* pTrans = TARGET_TO_TRANS(iter);
-			CNavMesh*   pNav = TARGET_TO_NAV(iter);
+			CCollider* pCollider = TARGET_TO_COL(Obj_iter);
 
-			// 방향 구해주고
-			_v3 vDir = m_pTransformCom->Get_Pos() - pTrans->Get_Pos();
-			V3_NORMAL_SELF(&vDir);
+			// 지금 속도값 임의로 넣었는데 구해서 넣어줘야함 - 완료
+			if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_fSpeedForCollisionPush * DELTA_60))
+			{
+				CTransform* pTrans = TARGET_TO_TRANS(Obj_iter);
+				CNavMesh*   pNav = TARGET_TO_NAV(Obj_iter);
 
-			// y축 이동은 하지말자
-			vDir.y = 0;
+				// 방향 구해주고
+				_v3 vDir = m_pTransformCom->Get_Pos() - pTrans->Get_Pos();
+				V3_NORMAL_SELF(&vDir);
 
-			// 네비 메쉬타게 끔 세팅
-			pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pCollider->Get_Length().x));
+				// y축 이동은 하지말자
+				vDir.y = 0;
+
+				// 네비 메쉬타게 끔 세팅
+				pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pCollider->Get_Length().x));
+			}
 		}
 	}
 }
@@ -251,12 +261,14 @@ void CBlackWolf::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					//회피 중이 아니라면, 피격 판정 발생
+					//회피 중이 아니라면 충돌 체크
 					if (false == m_bIsDodge)
 					{
 						iter->Set_Target_CanHit(false);
 						iter->Add_Target_Hp(m_tObjParam.fDamage);
 					}
+
+					vecIter->Set_Enabled(false);
 
 					g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
 					break;
@@ -883,7 +895,7 @@ void CBlackWolf::Play_Bite_LRL()
 				//Function_RotateBody();
 				return;
 			}
-			else if (AniTime > 2.8f && AniTime < 3.8f)
+			else if (2.8f < AniTime && 3.8f > AniTime)
 			{
 				if (m_bEventTrigger[2] == false)
 				{
@@ -907,7 +919,7 @@ void CBlackWolf::Play_Bite_LRL()
 				Function_RotateBody();
 				return;
 			}
-			else if (AniTime > 4.4f && AniTime < 4.9f)
+			else if (4.4f < AniTime && 4.9f > AniTime)
 			{
 				if (m_bEventTrigger[4] == false)
 				{
@@ -1200,14 +1212,25 @@ void CBlackWolf::Play_Down_Weak()
 
 void CBlackWolf::Play_Dead()
 {
-	m_eState = WOLF_ANI::Dead;
-
-	if (m_pMeshCom->Is_Finish_Animation(0.95f))
+	if (false == m_bCanDead)
 	{
-		//봐서 1.f인가 아니면 새로운 배수인가를 확인합시다
-		m_bIsDead = true;
-		m_dAniPlayMul = 0;
-		//디졸브 작동
+		m_bCanDead = true;
+		m_bCanDissolve = true;
+		m_eState = WOLF_ANI::Dead;
+	}
+	else
+	{
+		if (true == m_bCanDissolve && m_pMeshCom->Is_Finish_Animation(0.35f))
+		{
+			Start_Dissolve(0.5f, false, true);
+			m_bCanDissolve = false;
+		}
+
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		{
+			m_bEnable = false;
+			m_dAniPlayMul = 0;
+		}
 	}
 
 }
@@ -1275,6 +1298,10 @@ HRESULT CBlackWolf::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShaderCom)))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	Safe_Release(pManagement);

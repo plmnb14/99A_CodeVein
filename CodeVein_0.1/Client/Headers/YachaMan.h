@@ -6,8 +6,6 @@
 
 BEGIN(Client)
 
-class CDamegeNumUI;
-class CMonsterUI;
 class CWeapon;
 
 class CYachaMan final : public CGameObject
@@ -32,8 +30,8 @@ public:
 		Atk_Ani_L,
 		Atk_Ani_Hammering,
 		Atk_Ani_Shoulder,
-		Atk_Ani_HalfClock,
 		Atk_Ani_TurnTwice,
+		Atk_Ani_HalfClock,
 		Atk_Ani_TargetHammering,
 		Atk_Ani_WheelWind,
 		Atk_Ani_Run_Start,
@@ -84,7 +82,7 @@ public:
 		Hit_W_FL,
 	};
 
-	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_RightArm, Bone_End };
+	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_LeftArm, Bone_End };
 
 	enum FBLR { FRONT, BACK, LEFT, RIGHT };
 
@@ -174,7 +172,7 @@ private:
 	CMesh_Dynamic*		m_pMeshCom = nullptr;
 	CNavMesh*			m_pNavMesh = nullptr;
 	CCollider*			m_pCollider = nullptr;
-	CWeapon*			m_pHammer = nullptr;
+	CWeapon*			m_pWeapon = nullptr;
 
 	CTransform*			m_pTargetTransform = nullptr;
 
@@ -200,6 +198,9 @@ private:
 	ATK_COMBO_TYPE		m_eAtkCombo;
 	YACHAMAN_ANI		m_eState;
 	_bool				m_bEventTrigger[20] = {};
+
+	_bool				m_bCanPlayDeadAni = false;
+	_bool				m_bIsPlayDeadAni = false;
 
 	_bool				m_bInRecognitionRange = false;
 	_bool				m_bInAtkRange = false;

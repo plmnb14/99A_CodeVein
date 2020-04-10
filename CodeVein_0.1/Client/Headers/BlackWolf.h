@@ -9,8 +9,7 @@ BEGIN(Client)
 class CBlackWolf final : public CGameObject
 {
 public:
-	enum MONSTER_ANITYPE {IDLE, MOVE, ATTACK, HIT, DOWN, DEAD}; //down시 많이 넘어져 있을 수도 있으니까
-	
+	enum MONSTER_ANITYPE {IDLE, MOVE, ATTACK, HIT, DOWN, DEAD}; //dow도 특수하게 생각하자
 	enum WOLF_IDLETYPE { IDLE_IDLE, IDLE_EAT, IDLE_SIT };
 	enum WOLF_MOVETYPE { MOVE_RUN, MOVE_WALK, MOVE_DODGE };
 	enum WOLF_ATKTYPE { ATK_NORMAL, ATK_COMBO };
@@ -129,6 +128,7 @@ private:
 
 	_v3					m_vBirthPos;
 	_mat*				m_matBone[Bone_End];
+	_double				m_dTimeDelta;
 	_double				m_dAniPlayMul = 1;
 
 	_float				m_fSkillMoveSpeed_Cur = 0.f;
@@ -147,6 +147,8 @@ private:
 
 	WOLF_ANI			m_eState; //애니 분류
 	_bool				m_bEventTrigger[10] = {}; //이벤트 조건 조절
+	_bool				m_bCanDead = false;
+	_bool				m_bCanDissolve = false;
 
 	_bool				m_bInRecognitionRange = false; //인지 범위 여부
 	_bool				m_bInAtkRange = false; //공격 범위 여부

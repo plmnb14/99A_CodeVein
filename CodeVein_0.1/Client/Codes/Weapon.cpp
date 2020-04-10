@@ -230,12 +230,10 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 							m_tObjParam.fDamage = m_tWeaponParam->fDamage;
 
 							// 무기 공격력의 +-20%까지 랜덤범위
-							// 몬스터 HP바 확인을 위해 데미지 추가해놓음 - Chae
-							m_tObjParam.fDamage = 10.f;
 							_uint min = (_uint)(m_tObjParam.fDamage - (m_tObjParam.fDamage * 0.2f));
 							_uint max = (_uint)(m_tObjParam.fDamage + (m_tObjParam.fDamage * 0.2f));
 
-							cout << m_tObjParam.fDamage << endl;
+							//cout << m_tObjParam.fDamage << endl;
 
 							iter->Add_Target_Hp(-(_float)CALC::Random_Num(min , max) * m_fSkillPercent);
 							g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
@@ -522,11 +520,10 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[WPN_SSword_Normal].fCol_Height = 1.f;
 
 	m_tWeaponParam[WPN_Hammer_Normal].fDamage = 50.f;
-	m_tWeaponParam[WPN_Hammer_Normal].fRadius = 0.75f;
+	m_tWeaponParam[WPN_Hammer_Normal].fRadius = 0.85f;
 	m_tWeaponParam[WPN_Hammer_Normal].fTrail_Min = 0.75f;
 	m_tWeaponParam[WPN_Hammer_Normal].fTrail_Max = 1.5f;
 	m_tWeaponParam[WPN_Hammer_Normal].fCol_Height = 1.3f;
-
 
 	m_tWeaponParam[WPN_Gun_Normal].fDamage = 25.f;
 	m_tWeaponParam[WPN_Gun_Normal].fRadius = 0.6f;
