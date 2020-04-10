@@ -47,8 +47,7 @@ _int CFontNumManager::Update_GameObject(_double TimeDelta)
 
 _int CFontNumManager::Late_Update_GameObject(_double TimeDelta)
 {
-	if (GetAsyncKeyState(VK_F1) & 0x8000)
-		m_iNumber -= 10.f * TimeDelta;
+	
 	return _int();
 }
 
@@ -113,7 +112,7 @@ void CFontNumManager::Calc_NumberFont(_ulong dwFontNum/*, _float fPosX, _float f
 	vector<CFontNumUI*> vecFontNumUI;
 	_ulong dwNumDigits = Calc_Digits(dwFontNum);
 
-	LOOP(dwNumDigits)
+	LOOP(_int(dwNumDigits))
 	{
 		vecFontNumUI.push_back(Make_FontNum());
 	}

@@ -98,7 +98,7 @@ _int CMaterial_Slot::Update_GameObject(_double TimeDelta)
 		if (m_vecMaterial.size() == 0)
 			m_pNumberUI->Set_Active(false);
 
-		m_pNumberUI->Set_UI_Index(m_vecMaterial.size());
+		m_pNumberUI->Set_UI_Index(_uint(m_vecMaterial.size()));
 		m_pNumberUI->Set_ViewZ(m_fViewZ - 0.1f);
 	}
 

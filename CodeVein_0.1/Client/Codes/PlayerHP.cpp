@@ -28,10 +28,10 @@ HRESULT CPlayerHP::Ready_GameObject(void * pArg)
 
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = 200.f;
-	m_fPosY = 650.f;
-	m_fSizeX = 280.f;
-	m_fSizeY = 40.f;
+	m_fPosX = 202.f;
+	m_fPosY = 658.f;
+	m_fSizeX = 285.f;
+	m_fSizeY = 30.1f;
 
 	m_fViewZ = 1.f;
 	m_bIsActive = true;
@@ -52,8 +52,8 @@ _int CPlayerHP::Update_GameObject(_double TimeDelta)
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
 
-	m_pFontCurHP->Set_Number(m_fPlayerHP);
-	m_pFontTotalHP->Set_Number(m_fTotalHP);
+	m_pFontCurHP->Set_Number(_uint(m_fPlayerHP));
+	m_pFontTotalHP->Set_Number(_uint(m_fTotalHP));
 
 	return NO_EVENT;
 }
@@ -181,8 +181,6 @@ void CPlayerHP::SetUp_Default()
 
 	m_fPlayerHP = m_pTarget->Get_Target_Hp();
 	m_fTotalHP = m_fPlayerHP;
-	/*m_fPlayerHP = 1200.f;
-	m_fTotalHP = 1200.f;*/
 
 	// HP 숫자 폰트 사이의 슬래시
 	UI_DESC* pDesc = new UI_DESC;
@@ -206,11 +204,12 @@ void CPlayerHP::SetUp_Default()
 	m_pFontTotalHP->Set_UI_Size(10.f, 20.f);
 	m_pFontTotalHP->Set_ViewZ(m_fViewZ - 0.1f);
 
+
 	pDesc = new UI_DESC;
 	pDesc->fPosX = m_fPosX;
-	pDesc->fPosY = m_fPosY;
-	pDesc->fSizeX = 285;
-	pDesc->fSizeY = 45.f;
+	pDesc->fPosY = m_fPosY - 0.8f;
+	pDesc->fSizeX = m_fSizeX + 63.f;
+	pDesc->fSizeY = m_fSizeY + 26.f;
 	pDesc->iIndex = 0;
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_HPBack", SCENE_STAGE, L"Layer_HPBack", pDesc);
 	static_cast<CHPBack*>(g_pManagement->Get_GameObjectBack(L"Layer_HPBack", SCENE_STAGE))->Set_Active(true);
@@ -218,6 +217,11 @@ void CPlayerHP::SetUp_Default()
 
 void CPlayerHP::SetUp_State(_double TimeDelta)
 {
+	if (m_fPlayerHP >= m_fTotalHP)
+		m_fPlayerHP = m_fTotalHP;
+	if (m_fPlayerHP <= 0.f)
+		m_fPlayerHP = 0.f;
+
 	m_fPlayerHP = m_pTarget->Get_Target_Hp();
 
 	// Texture UV 흐르는 속도
@@ -231,12 +235,6 @@ void CPlayerHP::SetUp_State(_double TimeDelta)
 		m_fPlayerHP += 15.f * _float(TimeDelta);
 	if (GetAsyncKeyState(VK_DOWN) & 0x8000)
 		m_fPlayerHP -= 15.f * _float(TimeDelta);*/
-
-
-	if (m_fPlayerHP >= m_fTotalHP)
-		m_fPlayerHP = m_fTotalHP;
-	if (m_fPlayerHP <= 0.f)
-		m_fPlayerHP = 0.f;
 }
 
 CPlayerHP * CPlayerHP::Create(_Device pGraphic_Device)
