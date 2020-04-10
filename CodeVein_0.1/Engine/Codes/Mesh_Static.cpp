@@ -60,7 +60,7 @@ HRESULT CMesh_Static::Ready_Component_Prototype(const _tchar * pFilePath, const 
 		return E_FAIL;
 
 	m_pMaterials = (D3DXMATERIAL*)m_pMaterialsBuff->GetBufferPointer();
-
+	
 	m_ppTextures = new MESHTEXTURE[m_dwNumMaterials];
 	ZeroMemory(m_ppTextures, sizeof(MESHTEXTURE) * m_dwNumMaterials);
 

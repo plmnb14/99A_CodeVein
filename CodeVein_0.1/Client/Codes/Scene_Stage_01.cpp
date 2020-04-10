@@ -89,7 +89,7 @@ HRESULT CScene_Stage_01::Ready_LightDesc()
 	ZeroMemory(&LightDesc, sizeof(D3DLIGHT9));
 
 	LightDesc.Type = D3DLIGHT_DIRECTIONAL;
-	LightDesc.Diffuse = D3DXCOLOR(1.f, 0.882f, 0.701f, 1.f);
+	LightDesc.Diffuse = D3DXCOLOR(1.f, 0.882f, 0.801f, 1.f);
 	LightDesc.Ambient = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	// In.WorldSpace

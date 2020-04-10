@@ -53,6 +53,7 @@ private:
 	HRESULT Render_NonAlpha();
 	HRESULT Render_ShadowMap();
 	HRESULT Render_Shadow();
+	HRESULT Render_MotionBlurTarget();
 	HRESULT Render_Distortion();
 	HRESULT Render_Alpha();
 	HRESULT Render_UI();

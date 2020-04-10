@@ -163,6 +163,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"ButterFly_Distortion_SmokeGravity")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_Body")))
+		return E_FAIL;
 #pragma endregion
 
 	if (FAILED(Add_EffectPrototype(L"Boss_KnockDown_Dust")))
