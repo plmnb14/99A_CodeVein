@@ -26,11 +26,6 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component(pArg)))
 		return E_FAIL;
-
-	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
-	m_pMonsterUI->Set_Target(this);
-	m_pMonsterUI->Set_Bonmatrix(m_matBones[Bone_Head]);
-	m_pMonsterUI->Ready_GameObject(NULL);
 	
 	/*m_pMonDamegeUI = static_cast<CDamegeNumUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_DamegeNumUI", pArg));
 	m_pMonDamegeUI->Set_Target(this);
@@ -328,6 +323,11 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	//pSequence->Add_Child(pAni49);
 
 	m_pMeshCom->SetUp_Animation(Ani_Idle);
+
+	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
+	m_pMonsterUI->Set_Target(this);
+	m_pMonsterUI->Set_Bonmatrix(m_matBones[Bone_Head]);
+	m_pMonsterUI->Ready_GameObject(NULL);
 
 	return NOERROR;
 }

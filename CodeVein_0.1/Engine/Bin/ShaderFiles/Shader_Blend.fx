@@ -307,8 +307,6 @@ PS_OUT PS_Default(PS_IN In)
 	return Out;
 }
 
-matrix		g_matInvVP, g_matLastVP;
-//float g_fCurFrame, g_fTargetFrame;
 PS_OUT MotionBlurForObj(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
@@ -331,11 +329,6 @@ PS_OUT MotionBlurForObj(PS_IN In)
 	//vector	vDepthInfo = tex2D(DepthSampler, screenTexCoords);
 
 	Out.vColor = tex2D(DiffuseSampler, screenTexCoords);
-
-	// ==========================================
-	// ¿·±Ò ≤®µ“
-	return Out;
-	// ==========================================
 
 	// ¡¶«—
 	velocity.xy = (clamp(velocity.x, -0.5f, 0.5f), clamp(velocity.y, -0.5f, 0.5f));
