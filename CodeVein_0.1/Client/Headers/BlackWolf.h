@@ -6,6 +6,7 @@
 
 BEGIN(Client)
 
+class CMonsterUI;
 class CBlackWolf final : public CGameObject
 {
 public:
@@ -116,6 +117,11 @@ public:
 	static CBlackWolf* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
 	virtual CGameObject* Clone_GameObject(void* pArg);
 	virtual void Free();
+
+private:
+	//////////// 채유미
+	// 몬스터 HP바 UI
+	CMonsterUI*			m_pMonsterUI = nullptr;
 
 private:
 	CTransform*			m_pTransformCom = nullptr;

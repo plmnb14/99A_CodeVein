@@ -2,17 +2,19 @@
 #include "..\Headers\YachaMan.h"
 #include "..\Headers\Weapon.h"
 
-//#include "MonsterUI.h"
+#include "MonsterUI.h"
 //#include "DamegeNumUI.h"
 
 CYachaMan::CYachaMan(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
+	ZeroMemory(m_matBone, sizeof(_mat*) * Bone_End);
 }
 
 CYachaMan::CYachaMan(const CYachaMan & rhs)
 	: CGameObject(rhs)
 {
+	ZeroMemory(m_matBone, sizeof(_mat*) * Bone_End);
 }
 
 HRESULT CYachaMan::Ready_GameObject_Prototype()
@@ -31,6 +33,11 @@ HRESULT CYachaMan::Ready_GameObject(void * pArg)
 	Ready_BoneMatrix();
 	Ready_Collider();
 	Ready_Weapon();
+
+	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
+	m_pMonsterUI->Set_Target(this);
+	m_pMonsterUI->Set_Bonmatrix(m_matHeadBone_for_YM);
+	m_pMonsterUI->Ready_GameObject(NULL);
 
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
 	m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE));
@@ -83,6 +90,9 @@ _int CYachaMan::Update_GameObject(_double TimeDelta)
 	m_pMeshCom->SetUp_Animation(m_eState);
 
 	Enter_Collision();
+
+	// MonsterHP UI
+	m_pMonsterUI->Update_GameObject(TimeDelta);
 
 	return NOERROR;
 }
@@ -2196,6 +2206,11 @@ HRESULT CYachaMan::Ready_BoneMatrix()
 	m_matBone[Bone_Range] = &pFrame->CombinedTransformationMatrix;
 	m_matBone[Bone_Body] = &pFrame->CombinedTransformationMatrix;
 
+	D3DXFRAME_DERIVED* pFrame_Head = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head", 0);
+	IF_NULL_VALUE_RETURN(pFrame_Head, E_FAIL);
+
+	m_matHeadBone_for_YM = &pFrame_Head->CombinedTransformationMatrix;
+
 	return S_OK;
 }
 
@@ -2227,6 +2242,8 @@ CGameObject* CYachaMan::Clone_GameObject(void * pArg)
 
 void CYachaMan::Free()
 {
+	Safe_Release(m_pMonsterUI);
+
 	Safe_Release(m_pHammer);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pNavMesh);
