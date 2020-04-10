@@ -137,7 +137,7 @@ float Get_SSAO(in float3 vNormal, in float3 vDepth, in float2 uv)
 		ao += doAmbientOcclusion(vDepth, uv, coord2, p, n);
 	}
 
-	ao /= (float)iterations * 4.0;
+	ao /= (float)iterations * 4.0f;
 
 	return ao;
 }
@@ -209,12 +209,12 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	vector		vLook = vWorldPos - g_vCamPosition;
 
-	Out.vSpecular = g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 20.f) * (vSpecularIntensity.x);
+	Out.vSpecular = g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 20.f) * vSpecularIntensity.x;
 	Out.vSpecular.a = 0.f;
 
 	// RimLight ====================================================================
 	float fRimWidth = 1.5f;
-	vector vCamPos = normalize(g_vCamPosition - vWorldPos);
+	vector vCamPos = normalize(vWorldPos - g_vCamPosition);
 	float fRim = smoothstep((1.f - fRimWidth), (1.f), (vDepthInfo.x) - saturate(abs(dot(vNormal, vCamPos))));
 	//float fRim = smoothstep(max(1.f - fRimWidth + vDepthInfo.x, 0.5f), max(1.f - fRimWidth + vDepthInfo.x, 0.9f), (vDepthInfo.x) - saturate(abs(dot(vNormal, vCamPos))));
 	float4 rc = g_vLightDiffuse;
@@ -223,9 +223,10 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 
 	// SSAO ====================================================================
-	vNormal = mul(vNormal, g_matProjInv);
-	float ao = Get_SSAO(vNormal.xyz, vDepthInfo.xyz, In.vTexUV);
-	Out.vSSAO = float4(ao, 0, 0, 1);
+	//vNormal = mul(vNormal, g_matProjInv);
+	//float ao = Get_SSAO(vNormal.xyz, vDepthInfo.xyz, In.vTexUV);
+	//Out.vSSAO = float4(ao, 0, 0, 1);
+	//Out.vShade -= ao;
 	// SSAO End ====================================================================
 
 	//Out.vShade.rgb *= fShadow;

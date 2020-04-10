@@ -635,7 +635,7 @@ HRESULT CRenderer::Render_LightAcc()
 	V3_NORMAL_SELF(&vLightDir);
 
 	// 임시로 추가라 나중에 고쳐야함
-	_v4 vLightDiffuse = _v4(1.f, 0.882f, 0.701f, 1.f);
+	_v4 vLightDiffuse = _v4(1.f, 0.882f, 0.801f, 1.f);
 
 	m_pShader_LightAcc->Set_Value("g_vLightDiffuse", &_v4(vLightDir.x, vLightDir.y, vLightDir.x, 0.f), sizeof(_v4));
     m_pShader_LightAcc->Set_Value("g_vLightDir", &_v4(vLightDir.x , vLightDir.y, vLightDir.x, 0.f), sizeof(_v4));

@@ -50,6 +50,23 @@ public:
 	virtual void			Set_ActiveCollider(_bool _bActiveCollider);
 	virtual void			Set_ResetOldAnimIdx();
 	virtual void			Set_AnimIdx(_ulong _eAnimState);
+	virtual void			Set_Enable_Record(_bool _bOnRecord);
+
+public:
+	virtual void			Find_TailHeadBone();
+
+public:
+	virtual void OnCollisionEnter();
+	virtual void OnCollisionEvent(list<CGameObject*> plistGameObject);
+
+public:
+	virtual void Update_Trails(_double TimeDelta);
+	virtual void Update_Collider();
+	virtual void Draw_Collider();
+
+public:
+	virtual _bool Update_CollisionRecord(CGameObject* pObject);
+	virtual void Clear_CollisionRecordList();
 
 private:
 	// 애니메이션 인덱스는 공유함.
@@ -57,7 +74,11 @@ private:
 	DRAIN_TYPE				meDrainType = Drain_Tail;
 
 private:
+	list<CGameObject*>		m_listCollisionRecord;
+
+private:
 	_bool					m_bActive = false;
+	_bool					m_bRecordCollision = false;
 
 private:
 	CTransform*				m_pTransform = nullptr;
@@ -65,6 +86,9 @@ private:
 	CShader*				m_pShader = nullptr;
 	CMesh_Dynamic*			m_pMesh_Dynamic = nullptr;
 	CCollider*				m_pCollider = nullptr;
+
+private:
+	_mat*					m_matTailHead = nullptr;
 
 private:
 	_tchar					m_szName[MAX_STR] = L"";

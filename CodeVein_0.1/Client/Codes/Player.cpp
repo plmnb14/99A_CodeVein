@@ -64,8 +64,8 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 	IF_NOT_NULL(m_pWeapon[m_eActiveSlot])
 		m_pWeapon[m_eActiveSlot]->Update_GameObject(TimeDelta);
 
-	//IF_NOT_NULL(m_pDrainWeapon)
-	//	m_pDrainWeapon->Update_GameObject(TimeDelta);
+	IF_NOT_NULL(m_pDrainWeapon)
+		m_pDrainWeapon->Update_GameObject(TimeDelta);
 
 	m_pNavMesh->Goto_Next_Subset(m_pTransform->Get_Pos(), nullptr);
 
@@ -131,20 +131,6 @@ HRESULT CPlayer::Render_GameObject()
 			m_pShader->Begin_Pass(m_iPass);
 
 			m_pShader->Set_DynamicTexture_Auto(m_pDynamicMesh, i, j);
-
-			//if (15 == m_iPass)
-			//	break;
-
-			//m_pShader->Set_StaticTexture_Auto(m_pDynamicMesh, i);
-
-			//if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pDynamicMesh->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
-			//	return E_FAIL;
-			//
-			//if (FAILED(m_pShader->Set_Texture("g_NormalTexture", m_pDynamicMesh->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_NORMAL_MAP))))
-			//	return E_FAIL;
-			//
-			//if (FAILED(m_pShader->Set_Texture("g_SpecularTexture", m_pDynamicMesh->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_SPECULAR_MAP))))
-			//	return E_FAIL;
 
 			m_pShader->Commit_Changes();
 
@@ -2803,7 +2789,7 @@ void CPlayer::Play_Dead()
 
 		else if (m_eAnim_Upper == Cmn_Dying_End)
 		{
-			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.99f))
+			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.98f))
 			{
 				m_fAnimMutiply = 0.f;
 				m_eActState = ACT_Dead;
@@ -2925,6 +2911,9 @@ void CPlayer::Play_BloodSuck()
 	{
 		if (false == m_bOnChargeSuck)
 		{
+			m_pDrainWeapon->Set_Target_CanAttack(true);
+			m_pDrainWeapon->Set_Enable_Record(true);
+
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.95f))
 			{
 				m_eAnim_Upper = LongCoat_ChargeSuck_End;
@@ -2938,6 +2927,9 @@ void CPlayer::Play_BloodSuck()
 					m_pDrainWeapon->Set_AnimIdx(m_eAnim_Upper);
 					m_pDrainWeapon->Set_ActiveCollider(true);
 					m_pDrainWeapon->Set_Active(true);
+
+					m_pDrainWeapon->Set_Target_CanAttack(true);
+					m_pDrainWeapon->Set_Enable_Record(true);
 				}
 			}
 
@@ -2957,6 +2949,9 @@ void CPlayer::Play_BloodSuck()
 						m_pDrainWeapon->Set_AnimIdx(m_eAnim_Upper);
 						m_pDrainWeapon->Set_ActiveCollider(true);
 						m_pDrainWeapon->Set_Active(true);
+
+						m_pDrainWeapon->Set_Target_CanAttack(true);
+						m_pDrainWeapon->Set_Enable_Record(true);
 					}
 				}
 
@@ -2974,6 +2969,9 @@ void CPlayer::Play_BloodSuck()
 						m_pDrainWeapon->Set_ActiveCollider(false);
 						m_pDrainWeapon->Set_Active(false);
 						m_pDrainWeapon->Set_ResetOldAnimIdx();
+
+						m_pDrainWeapon->Set_Target_CanAttack(false);
+						m_pDrainWeapon->Set_Enable_Record(false);
 					}
 				}
 			}
@@ -3015,6 +3013,9 @@ void CPlayer::Play_BloodSuckCount()
 			m_pDrainWeapon->Set_ActiveCollider(true);
 			m_pDrainWeapon->Set_Active(true);
 			m_pDrainWeapon->Set_ResetOldAnimIdx();
+
+			m_pDrainWeapon->Set_Target_CanAttack(true);
+			m_pDrainWeapon->Set_Enable_Record(true);
 		}
 	}
 
@@ -3030,6 +3031,9 @@ void CPlayer::Play_BloodSuckCount()
 			{
 				m_pDrainWeapon->Set_ActiveCollider(false);
 				m_pDrainWeapon->Set_Active(false);
+
+				m_pDrainWeapon->Set_Target_CanAttack(false);
+				m_pDrainWeapon->Set_Enable_Record(false);
 			}
 		}
 	}

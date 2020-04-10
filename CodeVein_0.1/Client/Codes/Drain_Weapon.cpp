@@ -28,6 +28,8 @@ HRESULT CDrain_Weapon::Ready_GameObject(void * pArg)
 	m_fAnimMultiply = 1.f;
 	m_pMesh_Dynamic->SetUp_Animation(m_eAnimnum);
 
+	Find_TailHeadBone();
+
 	return NOERROR;
 }
 
@@ -36,6 +38,8 @@ _int CDrain_Weapon::Update_GameObject(_double TimeDelta)
 	CGameObject::Update_GameObject(TimeDelta);
 
 	Cacl_AttachBoneTransform();
+
+	OnCollisionEnter();
 
 	return NO_EVENT;
 }
@@ -81,13 +85,11 @@ HRESULT CDrain_Weapon::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			m_pShader->Begin_Pass(0);
+			m_iPass = m_pMesh_Dynamic->Get_MaterialPass(i, j);
 
-			if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pMesh_Dynamic->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
-				return E_FAIL;
+			m_pShader->Begin_Pass(m_iPass);
 
-			if (FAILED(m_pShader->Set_Texture("g_NormalTexture", m_pMesh_Dynamic->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_NORMAL_MAP))))
-				return E_FAIL;
+			m_pShader->Set_DynamicTexture_Auto(m_pMesh_Dynamic, i, j);
 
 			m_pShader->Commit_Changes();
 
@@ -99,7 +101,9 @@ HRESULT CDrain_Weapon::Render_GameObject()
 
 	m_pShader->End_Shader();
 
-	g_pManagement->Gizmo_Draw_Capsule(m_pCollider->Get_CenterPos(), m_pCollider->Get_Radius());
+	Draw_Collider();
+
+	//g_pManagement->Gizmo_Draw_Capsule(m_pCollider->Get_CenterPos(), m_pCollider->Get_Radius());
 
 	return NOERROR;
 }
@@ -181,6 +185,148 @@ void CDrain_Weapon::Set_AnimIdx(_ulong _eAnimState)
 	}
 }
 
+void CDrain_Weapon::Set_Enable_Record(_bool _bOnRecord)
+{
+	m_bRecordCollision = _bOnRecord;
+
+	if (false == m_bRecordCollision)
+	{
+		Clear_CollisionRecordList();
+	}
+}
+
+void CDrain_Weapon::Find_TailHeadBone()
+{
+	LPCSTR tmpChar = "GCTailSword";
+
+	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMesh_Dynamic->Get_BonInfo(tmpChar, 0);
+
+	m_matTailHead = &pFamre->CombinedTransformationMatrix;
+}
+
+void CDrain_Weapon::OnCollisionEnter()
+{
+	if (false == m_tObjParam.bCanAttack)
+		return;
+
+	OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE));
+}
+
+void CDrain_Weapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
+{
+	_bool bFirst = true;
+	//게임 오브젝트를 받아와서
+	for (auto& iter : plistGameObject)
+	{
+		// 1 : 다 의 기술일 경우, 기록을 켜야 한대만 맞는다.
+		if (m_bRecordCollision)
+		{
+			if (false == Update_CollisionRecord(iter))
+				continue;
+		}
+
+		// 맞을 수 없다면 리턴
+		if (false == iter->Get_Target_CanHit())
+			continue;
+
+		// 내가 가진 Vec 콜라이더와 비교한다.
+		for (auto& vecIter : m_vecAttackCol)
+		{
+			bFirst = true;
+
+			// 피직콜라이더랑 비교
+			for (auto& vecCol : iter->Get_PhysicColVector())
+			{
+				// 물체 전체를 대표할 콜라이더.
+				if (vecIter->Check_Sphere(vecCol))
+				{
+					// 첫번째는 경계구 콜라이더니까 다음 콜라이더와 충돌처리 한다.
+					if (bFirst)
+					{
+						bFirst = false;
+						continue;
+					}
+
+					if (false == iter->Get_Target_Dodge())
+					{
+						iter->Set_Target_CanHit(false);
+
+						if (iter->Get_Target_IsHit())
+						{
+							iter->Set_HitAgain(true);
+						}
+
+						if (false == iter->Get_Target_Dodge())
+						{
+							m_tObjParam.fDamage = 100.f;
+
+							// 무기 공격력의 +-20%까지 랜덤범위
+							// 몬스터 HP바 확인을 위해 데미지 추가해놓음 - Chae
+							_uint min = (_uint)(m_tObjParam.fDamage - (m_tObjParam.fDamage * 0.2f));
+							_uint max = (_uint)(m_tObjParam.fDamage + (m_tObjParam.fDamage * 0.2f));
+
+							iter->Add_Target_Hp(-(_float)CALC::Random_Num(min, max) * 1.f);
+							g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
+
+							if (m_bRecordCollision)
+							{
+								m_listCollisionRecord.push_back(iter);
+							}
+						}
+					}
+
+					break;
+				}
+
+				else
+				{
+					if (bFirst)
+					{
+						break;
+					}
+				}
+			}
+		}
+	}
+}
+
+void CDrain_Weapon::Update_Trails(_double TimeDelta)
+{
+}
+
+void CDrain_Weapon::Update_Collider()
+{
+	_v3 tmpPos;
+	memcpy(tmpPos, &m_matTailHead->_41, sizeof(_v3));
+
+	m_pCollider->Update(tmpPos);
+}
+
+void CDrain_Weapon::Draw_Collider()
+{
+	g_pManagement->Gizmo_Draw_Sphere(m_pCollider->Get_CenterPos(), m_pCollider->Get_Radius().x);
+}
+
+_bool CDrain_Weapon::Update_CollisionRecord(CGameObject * pObject)
+{
+	for (auto& iter : m_listCollisionRecord)
+	{
+		// 순회하다가 같으면
+		if (iter == pObject)
+			return false;
+	}
+
+	return true;
+}
+
+void CDrain_Weapon::Clear_CollisionRecordList()
+{
+	for (auto& iter : m_listCollisionRecord)
+	{
+		iter = nullptr;
+	}
+}
+
 void CDrain_Weapon::Change_WeaponMesh(const _tchar* _MeshName)
 {
 	// 이름 비교해서 같으면 Return
@@ -225,7 +371,7 @@ HRESULT CDrain_Weapon::Add_Component()
 
 	lstrcpy(m_szName, L"Mesh_Drain_LongTail");
 
-	m_pCollider->Set_Radius(_v3{ 0.2f, 0.5f, 0.2f });
+	m_pCollider->Set_Radius(_v3{ 0.6f, 0.6f, 0.6f });
 	m_pCollider->Set_Dynamic(true);
 	m_pCollider->Set_Type(COL_SPHERE);
 	m_pCollider->Set_CapsuleLength(1.8f);
@@ -239,8 +385,6 @@ HRESULT CDrain_Weapon::SetUp_Default()
 	// Transform
 	m_pTransform->Set_Pos(V3_NULL);
 	m_pTransform->Set_Scale(V3_ONE);
-	//m_pTransform->Set_Angle(AXIS_X, -D3DXToRadian(90.f));
-	//m_pTransform->Set_Angle(AXIS_Z, D3DXToRadian(45.f));
 	return S_OK;
 }
 
@@ -270,7 +414,7 @@ void CDrain_Weapon::Cacl_AttachBoneTransform()
 
 	memcpy(&tmpMat._41, &(*m_pmatAttach)._41, sizeof(_v3));
 
-	m_pTransform->Calc_ParentMat(&(tmpMat * *m_pmatParent));
+	m_pTransform->Calc_ParentMat(&(*m_pmatParent));
 }
 
 CDrain_Weapon * CDrain_Weapon::Create(_Device pGraphic_Device)

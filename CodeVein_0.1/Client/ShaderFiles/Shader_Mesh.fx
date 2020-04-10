@@ -285,7 +285,7 @@ PS_OUT_ADVENCE PS_Default_DN(PS_IN In)
 	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 0.f);
 
 	//========================================================================================================================
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.1f, 0.f);
 	// Depth.z == SpecularIntensity.x ( ½ºÆåÅ§·¯ÀÇ x )
 
 	Out.vEmissive = 0;
@@ -315,7 +315,7 @@ PS_OUT_ADVENCE PS_Default_DNT(PS_IN In)
 	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 0.f);
 
 	//========================================================================================================================
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.1f, 0.f);
 	// Depth.z == SpecularIntensity.x ( ½ºÆåÅ§·¯ÀÇ x )
 
 	Out.vEmissive = 0;
@@ -349,7 +349,7 @@ PS_OUT_ADVENCE PS_Default_DNS(PS_IN In)
 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x * 1.f, SpecularIntensity.y * 1.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x * 5.f, SpecularIntensity.y * 1.f);
 
 	Out.vEmissive = 0;
 
@@ -394,6 +394,8 @@ PS_OUT_ADVENCE PS_Default_DNE(PS_IN In)
 
 PS_OUT_ADVENCE PS_Default_DNSE(PS_IN In)
 {
+	// À¯´Ï¿Â ¾ÆÁ÷ ¾ÈÇÔ
+
 	PS_OUT_ADVENCE			Out = (PS_OUT_ADVENCE)0;
 
 	Out.vDiffuse = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
@@ -415,12 +417,14 @@ PS_OUT_ADVENCE PS_Default_DNSE(PS_IN In)
 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x * 1.f, SpecularIntensity.y * 1.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x * 5.f, SpecularIntensity.y * 1.f);
 
 	//========================================================================================================================
 
 	Out.vEmissive = pow(tex2D(EmissiveSampler, In.vTexUV), 2.2);
 	Out.vEmissive.a = 1.f;
+
+	//========================================================================================================================
 
 	return Out;
 }
@@ -448,7 +452,7 @@ PS_OUT_ADVENCE PS_Default_DNR(PS_IN In)
 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.1f, 0.f);
 
 	Out.vEmissive = 0;
 
@@ -480,7 +484,7 @@ PS_OUT_ADVENCE PS_Default_DNU(PS_IN In)
 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.1f, 0.f);
 
 	Out.vEmissive = 0;
 
@@ -510,7 +514,7 @@ PS_OUT_ADVENCE PS_Default_DNI(PS_IN In)
 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.1f, 0.f);
 
 	Out.vEmissive = 0;
 
@@ -580,7 +584,7 @@ PS_OUT_ADVENCE PS_Default_DNSEU(PS_IN In)
 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x * 1.f, SpecularIntensity.y * 1.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x * 5.f, SpecularIntensity.y * 1.f);
 
 	//========================================================================================================================
 
