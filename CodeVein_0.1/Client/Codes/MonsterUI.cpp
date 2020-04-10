@@ -82,25 +82,21 @@ _int CMonsterUI::Update_GameObject(_double TimeDelta)
 
 	//
 	////m_pTransformCom->Set_Pos(_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos()) + (WORLD_UP * 1.5f));
-	//m_pTransformCom->Set_Pos(_v3(*tmpMat->_41, tmpMat->_42, tmpMat->_43) +
-	//	(_v3(m_matMonsterBon->_31, m_matMonsterBon->_32 * 1.5f, m_matMonsterBon->_33)));
+	m_pTransformCom->Set_Pos(_v3(m_matMonsterBon->_41, m_matMonsterBon->_42, m_matMonsterBon->_43));
 
-	if (0 == m_iCheck_Renderindex)
+	/*if (0 == m_iCheck_Renderindex)
 		m_pTransformCom->Set_Pos((_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos().x, TARGET_TO_TRANS(m_pTarget)->Get_Pos().y, (TARGET_TO_TRANS(m_pTarget)->Get_Pos().z - 0.06f)) + (WORLD_UP * 2.f)));
 	if (1 == m_iCheck_Renderindex)
 		m_pTransformCom->Set_Pos((_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos().x, TARGET_TO_TRANS(m_pTarget)->Get_Pos().y, (TARGET_TO_TRANS(m_pTarget)->Get_Pos().z - 0.02f)) + (WORLD_UP * 2.f)));
 	if (2 == m_iCheck_Renderindex)
 		m_pTransformCom->Set_Pos((_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos()) + (WORLD_UP * 2.f)));
-
-	/*if (0 == m_iCheck_Renderindex)
-		m_pTransformCom->Set_Pos((_v3(m_matMonsterBon->_41, m_matMonsterBon->_42, (m_matMonsterBon->_43 - 0.06f))) +
-		(_v3(m_matMonsterBon->_31, m_matMonsterBon->_32 * 1.5f, m_matMonsterBon->_33)));
+*/
+	if (0 == m_iCheck_Renderindex)
+		m_pTransformCom->Set_Pos((_v3(m_matMonsterBon->_41, m_matMonsterBon->_42 * 1.5f, (m_matMonsterBon->_43 - 0.06f))));
 	if (1 == m_iCheck_Renderindex)
-		m_pTransformCom->Set_Pos((_v3(m_matMonsterBon->_41, m_matMonsterBon->_42, (m_matMonsterBon->_43 - 0.02f))) +
-		(_v3(m_matMonsterBon->_31, m_matMonsterBon->_32 * 1.5f, m_matMonsterBon->_33)));
+		m_pTransformCom->Set_Pos((_v3(m_matMonsterBon->_41, m_matMonsterBon->_42, (m_matMonsterBon->_43 - 0.02f))));
 	if (2 == m_iCheck_Renderindex)
-		m_pTransformCom->Set_Pos((_v3(m_matMonsterBon->_41, m_matMonsterBon->_42, m_matMonsterBon->_43) +
-		(_v3(m_matMonsterBon->_31, m_matMonsterBon->_32 * 1.5f, m_matMonsterBon->_33))));*/
+		m_pTransformCom->Set_Pos((_v3(m_matMonsterBon->_41, m_matMonsterBon->_42 * 1.5f, m_matMonsterBon->_43)));
 
 	m_pTransformCom->Set_Scale(_v3(0.8f, 0.08f, 0.8f));
 
