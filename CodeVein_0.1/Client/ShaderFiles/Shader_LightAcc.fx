@@ -215,20 +215,20 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	// RimLight ======================================================================
 	float fRimWidth = 1.5f;
-
 	vector vCamPos = normalize(g_vCamPosition - vWorldPos);
 	float fRim = smoothstep((1.f - fRimWidth), (1.f), (vDepthInfo.x) - saturate(abs(dot(vNormal, vCamPos))));
 	//float fRim = smoothstep(max(1.f - fRimWidth + vDepthInfo.x, 0.5f), max(1.f - fRimWidth + vDepthInfo.x, 0.9f), (vDepthInfo.x) - saturate(abs(dot(vNormal, vCamPos))));
 	float4 rc = g_vLightDiffuse;
-	Out.vShade += (pow(fRim, 2.f) * rc);
+	//Out.vShade += (pow(fRim, 2.f) * rc);
 	Out.vRim = (pow(fRim, 2.f) * rc);
-	// RimLight End 
+	// RimLight End ==================================================================
 
 	// SSAO ====================================================================
 	//vNormal = mul(vNormal, g_matProjInv);
 	//float ao = Get_SSAO(vNormal.xyz, vDepthInfo.xyz, In.vTexUV);
 	//Out.vSSAO = float4(ao, 0, 0, 1);
 	//Out.vShade -= ao;
+	// SSAO End ====================================================================
 
 	//Out.vShade.rgb *= fShadow;
 
