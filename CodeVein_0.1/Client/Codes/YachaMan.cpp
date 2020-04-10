@@ -31,11 +31,12 @@ HRESULT CYachaMan::Ready_GameObject(void * pArg)
 
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
 	m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE));
+	
+	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
 
 	m_tObjParam.fHp_Max = 180.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
-
-	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+	m_tObjParam.fDamage = 25.f;
 
 	m_tObjParam.bCanHit = true; //맞기 가능
 	m_tObjParam.bIsHit = false;	//맞기 진행중 아님
@@ -316,11 +317,15 @@ void CYachaMan::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					//회피 중이 아니라면 충돌 체크
-					if (false == m_bIsDodge)
+					if (false == iter->Get_Target_Dodge())
 					{
 						iter->Set_Target_CanHit(false);
 						iter->Add_Target_Hp(m_tObjParam.fDamage);
+
+						if (iter->Get_Target_IsHit())
+						{
+							iter->Set_HitAgain(true);
+						}
 					}
 
 					vecIter->Set_Enabled(false);
@@ -2219,10 +2224,12 @@ void CYachaMan::Play_Hit()
 
 void CYachaMan::Play_Down_Strong()
 {
+	return;
 }
 
 void CYachaMan::Play_Down_Weak()
 {
+	return;
 }
 
 void CYachaMan::Play_Dead()
@@ -2276,6 +2283,7 @@ void CYachaMan::Play_Dead()
 
 void CYachaMan::Play_Dead_Strong()
 {
+	return;
 }
 
 HRESULT CYachaMan::Add_Component()
