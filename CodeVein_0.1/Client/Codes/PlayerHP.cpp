@@ -200,7 +200,7 @@ void CPlayerHP::SetUp_Default()
 
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_FontNumManager", SCENE_STAGE, L"Layer_FontPlayerUI");
 	m_pFontTotalHP = static_cast<CFontNumManager*>(g_pManagement->Get_GameObjectBack(L"Layer_FontPlayerUI", SCENE_STAGE));
-	m_pFontTotalHP->Set_UI_Pos(m_fPosX + 90.f, m_fPosY);
+	m_pFontTotalHP->Set_UI_Pos(m_fPosX + 100.f, m_fPosY);
 	m_pFontTotalHP->Set_UI_Size(10.f, 20.f);
 	m_pFontTotalHP->Set_ViewZ(m_fViewZ - 0.1f);
 
