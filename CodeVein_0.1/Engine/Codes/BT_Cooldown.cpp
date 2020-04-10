@@ -147,12 +147,6 @@ CBT_Node * CBT_Cooldown::Clone(void * pInit_Struct)
 
 void CBT_Cooldown::Free()
 {
-	for (auto child : m_pSubNodeStack)
-	{
-		Safe_Release(child);
-	}
-	m_pSubNodeStack.clear();
-
 	if (false == m_bInit)
 	{
 		// this

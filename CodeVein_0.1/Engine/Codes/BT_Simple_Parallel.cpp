@@ -166,7 +166,6 @@ CBT_Node::BT_NODE_STATE CBT_Simple_Parallel::Update_Node(_double TimeDelta, vect
 
 	if (BT_NODE_STATE::FAILED == m_bMainState)
 	{	
-		//m_pChildren[1]->End_Node(pNodeStack, BT_NODE_STATE::FAILED, bDebugging);
 		Delete_SubNodeStack(plistSubNodeStack, pBlackBoard, bDebugging);
 		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, pBlackBoard, bDebugging);
 	}
@@ -177,7 +176,6 @@ CBT_Node::BT_NODE_STATE CBT_Simple_Parallel::Update_Node(_double TimeDelta, vect
 	case Mode::Immediate:
 		if ((BT_NODE_STATE::SUCCEEDED == m_bMainState))
 		{
-			//m_pChildren[1]->End_Node(&m_pSubNodeStatck, BT_NODE_STATE::SUCCEEDED, bDebugging);
 			Delete_SubNodeStack(plistSubNodeStack, pBlackBoard, bDebugging);
 			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, pBlackBoard, bDebugging);
 		}
@@ -236,6 +234,7 @@ CBT_Node::BT_NODE_STATE CBT_Simple_Parallel::End_Node(vector<CBT_Node*>* pNodeSt
 
 	Safe_Release(pNodeStack->back());
 	pNodeStack->pop_back();
+
 
 	if (!pNodeStack->empty())
 		Notify_Parent_Of_State(pNodeStack->back(), eState);

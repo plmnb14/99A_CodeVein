@@ -53,6 +53,9 @@ public:
 	virtual HRESULT Render_GameObject();
 	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass);
 
+public:
+	_mat*	Get_Bonmatrix() { return m_matBones[Bone_End]; }
+
 private:	//ÆÐÅÏµé
 	// ¿ø°Å¸®
 	// 1. ÃÑ½î±â

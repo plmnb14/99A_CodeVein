@@ -26,6 +26,12 @@ private:
 	HRESULT SetUp_ConstantTable(_uint TextureIndex);
 	void	SetUp_State(_double TimeDelta);
 
+public:
+	_bool	Get_Check_Play_BossnameUI() { return m_bCheck_Play_BossnameUI; }
+
+public:
+	void	Set_Check_Play_BossnameUI(_bool Check_Bossname) { m_bCheck_Play_BossnameUI = Check_Bossname; }
+
 private:
 	_bool		m_bCheck_MassageStart = false;
 	_bool		m_bCheck_Play_BossnameUI = false;
