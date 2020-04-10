@@ -17,6 +17,7 @@ public:
 		WPN_Hammer_Normal,
 		WPN_Halverd_Normal,
 		WPN_Gun_Normal,
+		WPN_Shield_Normal,
 		WPN_DATA_End
 	};
 
@@ -64,6 +65,7 @@ public:
 	virtual void			Set_Friendly(_bool _bFriendly) { m_bPlayerFriendly = _bFriendly; }
 	// ∆Æ∑π¿œ On/Off
 	virtual void			Set_Enable_Trail(_bool _bEnable);
+	virtual void			Set_TrailIdx(_ulong _dwIdx);
 	virtual void			Set_Enable_Record(_bool _bRecord);
 	virtual void			Set_SkillPercent(_float _fPercent);
 

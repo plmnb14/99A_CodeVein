@@ -17,6 +17,9 @@ public:
 
 	STDMETHOD(DestroyFrame)(THIS_ LPD3DXFRAME pFrameToFree);
 	STDMETHOD(DestroyMeshContainer)(THIS_ LPD3DXMESHCONTAINER pMeshContainerToFree);
+public:
+	_ulong Get_MaterialPass(_ulong dwPass) { return m_dwMaterialPass[dwPass]; }
+
 private:
 	LPDIRECT3DDEVICE9	m_pGraphic_Device = nullptr;
 private:
@@ -27,6 +30,11 @@ private:
 public:
 	static CHierarchy* Create(LPDIRECT3DDEVICE9 pGraphic_Device, const _tchar* pFilePath);
 	virtual void Free();
+
+	_ulong		m_dwMaterialPass[10] = {};
+
+private:
+	_bool		m_bIncludeMap[MESHTEXTURE::TYPE_END] = {};
 
 };
 

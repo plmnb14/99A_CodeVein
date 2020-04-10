@@ -41,6 +41,7 @@ _int CTestObject::Update_GameObject(_double TimeDelta)
 
 	if (m_bisPlayCombo)
 	{
+		cout << m_iMaxCount << endl;
 		Play_Combo();
 	}
 
@@ -84,7 +85,7 @@ HRESULT CTestObject::Render_GameObject()
 		{
 			m_pShader->Begin_Pass(0);
 
-			if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pMesh->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE))))
+			if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pMesh->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
 				return E_FAIL;
 
 			m_pShader->Commit_Changes();

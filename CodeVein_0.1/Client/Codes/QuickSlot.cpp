@@ -87,10 +87,10 @@ _int CQuickSlot::Update_GameObject(_double TimeDelta)
 			m_iSelect = m_vecQuickSlot.size() - 1;
 	}
 
-	if (g_pInput_Device->Key_Up(DIK_MULTIPLY))
+	/*if (g_pInput_Device->Key_Up(DIK_MULTIPLY))
 	{
-		Use_Item();
-	}
+		_uint inum = Use_Item();
+	}*/
 	return NO_EVENT;
 }
 

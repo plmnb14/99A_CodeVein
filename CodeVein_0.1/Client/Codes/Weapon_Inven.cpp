@@ -57,12 +57,7 @@ HRESULT CWeapon_Inven::Ready_GameObject(void * pArg)
 	LOOP(2)
 		m_UseWeapon[i] = WEAPON_None;
 
-	Add_Weapon(WEAPON_Gun);
-	Add_Weapon(WEAPON_Halverd);
-	Add_Weapon(WEAPON_Hammer);
-	Add_Weapon(WEAPON_LSword);
-	Add_Weapon(WEAPON_Ssword);
-
+	
 		
 	return NOERROR;
 }

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\BossHP.h"
-
+#include "HPBack.h"
+#include "BossDecoUI.h"
 
 CBossHP::CBossHP(_Device pGraphic_Device)
 	: CUI(pGraphic_Device)
@@ -25,15 +26,30 @@ HRESULT CBossHP::Ready_GameObject(void * pArg)
 		return E_FAIL;
 
 	CUI::Ready_GameObject(pArg);
+	m_bIsActive = false;
 
 	m_fPosX = WINCX * 0.5f;
 	m_fPosY = 80.f + 10.f;
 
-	m_fSizeX = WINCX * 0.5f - 5.f;
-	m_fSizeY = 30.f;
+	m_fSizeX = WINCX * 0.5f - 10.f;
+	m_fSizeY = 20.f;
+	
+	UI_DESC* pDesc = new UI_DESC;
+	pDesc->fPosX = m_fPosX;
+	pDesc->fPosY = m_fPosY;
+	pDesc->fSizeX = m_fSizeX + 5.f;
+	pDesc->fSizeY = m_fSizeY + 5.f;
+	pDesc->iIndex = 2;
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_HPBack", SCENE_STAGE, L"Layer_HPBack", pDesc);
+	m_pHPBack = static_cast<CHPBack*>(g_pManagement->Get_GameObjectBack(L"Layer_HPBack", SCENE_STAGE));
+	
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossDecoUI", SCENE_STAGE, L"Layer_BossDecoUI");
+	m_pDecoUI = static_cast<CBossDecoUI*>(g_pManagement->Get_GameObjectBack(L"Layer_BossDecoUI", SCENE_STAGE));
 
-	m_fBossHP = 100.f;
-	m_fTotalHP = 100.f;
+	// 보스와 연동
+	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Boss", SCENE_STAGE);
+	m_fBossHP = m_pTarget->Get_Target_Hp();
+	m_fTotalHP = m_fBossHP;
 
 	return NOERROR;
 }
@@ -47,6 +63,9 @@ _int CBossHP::Update_GameObject(_double TimeDelta)
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
+
+	m_pHPBack->Set_Active(m_bIsActive);
+	m_pDecoUI->Set_Active(m_bIsActive);
 
 	return NO_EVENT;
 }
@@ -67,6 +86,9 @@ _int CBossHP::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CBossHP::Render_GameObject()
 {
+	if (!m_bIsActive)
+		return NOERROR;
+
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
@@ -172,6 +194,10 @@ HRESULT CBossHP::SetUp_ConstantTable()
 
 void CBossHP::SetUp_State(_double TimeDelta)
 {
+	m_fBossHP = m_pTarget->Get_Target_Hp();
+	m_fTotalHP = m_fBossHP;
+	
+
 	// Texture UV 흐르는 속도
 	m_fSpeed += -0.05f * _float(TimeDelta);
 
@@ -179,9 +205,9 @@ void CBossHP::SetUp_State(_double TimeDelta)
 
 
 	// ----------임시(Boss HP조절)------------------------------------------------
-	/*if (GetAsyncKeyState('O') & 0x8000)
+	/*if (GetAsyncKeyState(VK_DIVIDE) & 0x8000)
 		m_fBossHP += 15.f * _float(TimeDelta);
-	if (GetAsyncKeyState('P') & 0x8000)
+	if (GetAsyncKeyState(VK_MULTIPLY) & 0x8000)
 		m_fBossHP -= 15.f * _float(TimeDelta);*/
 
 	if (m_fBossHP >= m_fTotalHP)

@@ -20,7 +20,7 @@ public:
 	HRESULT Set_Value(D3DXHANDLE Handle, const void* pData, _uint iByte);
 	HRESULT Set_Texture(D3DXHANDLE Handle, LPDIRECT3DBASETEXTURE9 pTexture);
 	HRESULT Set_StaticTexture_Auto(CMesh_Static* pMeshStatic , _ulong dwSubsetNum);
-	HRESULT Set_DynamicTexture_Auto(CMesh_Dynamic* pMeshStatic, _ulong dwSubsetNum);
+	HRESULT Set_DynamicTexture_Auto(CMesh_Dynamic* pMeshStatic, _ulong dwSubsetNum, _ulong dwMeshContainer);
 
 	HRESULT Commit_Changes();
 public:

@@ -9,14 +9,14 @@ BEGIN(Client)
 class CBlackWolf final : public CGameObject
 {
 public:
-	enum MONSTER_ANITYPE {IDLE, MOVE, ATTACK, HIT, DOWN, DEAD};
+	enum MONSTER_ANITYPE {IDLE, MOVE, ATTACK, HIT, DOWN, DEAD}; //down시 많이 넘어져 있을 수도 있으니까
 	
-	enum WOLF_IDLETYPE {IDLE_IDLE, IDLE_EAT, IDLE_SIT, IDLE_THREAT};
-	enum WOLF_MOVETYPE {MOVE_WALK, MOVE_RUN, MOVE_DODGE};
-	enum WOLF_ATKTYPE {ATK_BITELRL, ATK_RDODGEATK, ATK_LDODGEATK, ATK_FRISBEE};
-	enum WOLF_HITTYPE {HIT_HIT_F, HIT_HIT_B};
-	enum WOLF_DOWNTYPE {DOWN_DOWN_W, DOWN_DOWN_S};
-	enum WOLF_DEADTYPE {DEAD_DEAD, DEAD_DEAD_S};
+	enum WOLF_IDLETYPE { IDLE_IDLE, IDLE_EAT, IDLE_SIT };
+	enum WOLF_MOVETYPE { MOVE_RUN, MOVE_WALK, MOVE_DODGE };
+	enum WOLF_ATKTYPE { ATK_NORMAL, ATK_COMBO };
+	enum WOLF_HITTYPE { HIT_HIT_F, HIT_HIT_B };
+	enum WOLF_DOWNTYPE { DOWN_DOWN, DOWN_DOWN_W, DOWN_DOWN_S };
+	enum WOLF_DEADTYPE { DEAD_DEAD, DEAD_DEAD_S };
 
 	enum WOLF_ANI
 	{
@@ -29,7 +29,7 @@ public:
 		Eat_End,
 		Eat,
 
-		Threat,
+		Threat, //IDLE에 포함되서 진행함
 		
 		Down_Weak_Start,
 		Down_Weak_Loop,
@@ -51,7 +51,7 @@ public:
 		LDodgeAtk,
 		Frisbee
 	};
-
+	
 	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_Head, Bone_End };
 
 	enum FBLR { FRONT, BACK, LEFT, RIGHT };
@@ -71,7 +71,8 @@ public:
 private:
 	void Update_Collider();
 	void Render_Collider();
-	void Enter_CollisionEvent();
+	void Enter_Collision();
+	void Check_CollisionPush();
 	void Check_CollisionEvent(list<CGameObject*> plistGameObject);
 
 	void Check_Hit();
@@ -79,22 +80,20 @@ private:
 	void Check_Dist();
 	void Set_AniEvent();
 
-	void Skill_RotateBody();
-	void Skill_CoolDown();
-	void Skill_Movement(_float _fspeed, _v3 _vDir = { V3_NULL });
-	void Decre_Skill_Movement(_float _fMutiply = 1.f);
-	void Reset_BattleState();
+	void Function_RotateBody();
+	void Function_CoolDown();
+	void Function_Movement(_float _fspeed, _v3 _vDir = { V3_NULL });
+	void Function_DecreMoveMent(_float _fMutiply = 1.f);
+	void Function_ResetAfterAtk();
 
 	void Play_Idle();
 	void Play_Eat();
 	void Play_Sit();
-	void Play_Threat();
 
 	void Play_Walk();
 	void Play_Run();
 	void Play_Dodge();
 
-	void Play_RandomAtk();
 	void Play_Bite_LRL();
 	void Play_RDodgeAtk();
 	void Play_LDodgeAtk();
@@ -146,25 +145,32 @@ private:
 	WOLF_DOWNTYPE		m_eSecondCategory_DOWN;
 	WOLF_DEADTYPE		m_eSecondCategory_DEAD;
 
-	WOLF_ANI			m_eState;
+	WOLF_ANI			m_eState; //애니 분류
 	_bool				m_bEventTrigger[10] = {}; //이벤트 조건 조절
 
 	_bool				m_bInRecognitionRange = false; //인지 범위 여부
-	_bool				m_bInAttackRange = false; //공격 범위 여부
+	_bool				m_bInAtkRange = false; //공격 범위 여부
+	
 	_bool				m_bCanChase = false; //추격 여부
-	_bool				m_bIsCoolDown = false; //쿨타임 진행중 여부
+	
 	_bool				m_bIsDodge = false; //회피 진행중 여부
 	
-	_bool				m_bCanRandomAtkCategory = true;
-	_bool				m_bCanRandomIdle = true;
+	_bool				m_bCanCoolDown = false; //쿨타임 여부
+	_bool				m_bIsCoolDown = false; //쿨타임 진행중 여부
 
-	_float				m_fRecognitionRange = 10.f; //인지 범위
-	_float				m_fAttackRange = 4.f; //공격 범위
-	_float				m_fCoolDown = 0.f; //쿨타임 //델타타임만큼 빼준다
+	_bool				m_bCanIdleRandom = true;
+	_bool				m_bCanAtkCategoryRandom = true; //미사용
+	_bool				m_bIsAtkCombo = false; //미사용
+	_bool				m_bCanAtkRandom = true;
 
-	_int				m_iAtkRandom = 0; //공격애니 랜덤화
-	_int				m_iIdleRandomNumber = 0;//일상 애니 랜덤화
-	_int				m_iDodgeCount = 0; //n회 피격시 바로 회피
+	_float				m_fRecognitionRange = 10.f;
+	_float				m_fAtkRange = 4.f;
+	_float				m_fCoolDownMax = 0.f;
+	_float				m_fCoolDownCur = 0.f;
+	_float				m_fSpeedForCollisionPush = 2.f;
+
+	_int				m_iRandom = 0; //랜덤 받을 숫자
+	_int				m_iDodgeCount = 0; //n회 피격시 회피
 
 };
 

@@ -123,7 +123,7 @@ HRESULT CTrail_VFX::Render_GameObject_SetShader(CShader * pShader)
 
 	m_pGraphic_Dev->SetFVF(m_dwVtxFVF);
 
-	_int iPass = (m_eType == Trail_Normal ? 0 : 1);
+	_int iPass = (m_eType == Trail_Normal ? 5 : 1);
 
 	Shader_Init(pShader, m_iTrailIdx);
 

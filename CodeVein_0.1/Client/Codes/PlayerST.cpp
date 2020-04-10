@@ -31,8 +31,22 @@ HRESULT CPlayerST::Ready_GameObject(void * pArg)
 	m_fSizeX = 280.f;
 	m_fSizeY = 10.f;
 
-	m_fPlayerST = 30.f;
-	m_fTotalST = 100.f;
+	m_bIsActive = true;
+
+	/*m_fPlayerST = 30.f;
+	m_fTotalST = 100.f;*/
+	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
+
+	m_fPlayerST = m_pTarget->Get_Target_Stamina();
+	m_fTotalST = m_fPlayerST;
+
+	UI_DESC* pDesc = new UI_DESC;
+	pDesc->fPosX = m_fPosX;
+	pDesc->fPosY = m_fPosY;
+	pDesc->fSizeX = 285;
+	pDesc->fSizeY = 15.f;
+	pDesc->iIndex = 0;
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_HPBack", SCENE_STAGE, L"Layer_HPBack", pDesc);
 
 	return NOERROR;
 }
@@ -171,9 +185,10 @@ HRESULT CPlayerST::SetUp_ConstantTable()
 
 void CPlayerST::SetUp_State(_double TimeDelta)
 {
-	// Texture UV 흐르는 속도
-	m_fSpeed += -0.2f * _float(TimeDelta);
+	m_fPlayerST = m_pTarget->Get_Target_Stamina();
 
+	// Texture UV 흐르는 속도
+	m_fSpeed += 0.f;
 	m_fPercentage = m_fPlayerST / m_fTotalST;
 
 

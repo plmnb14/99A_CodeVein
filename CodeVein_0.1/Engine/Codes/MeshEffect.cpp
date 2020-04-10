@@ -65,16 +65,16 @@ _int CMeshEffect::Update_GameObject(_double TimeDelta)
 
 	CGameObject::LateInit_GameObject();
 
-	Check_Move(TimeDelta);
-	CGameObject::Update_GameObject(TimeDelta);
-
 	if (m_fCreateDelay > 0.f)
 	{
 		Check_CreateDelay(TimeDelta);
 		return S_OK;
 	}
+	Check_Move(TimeDelta);
 
-	m_fLinearMovePercent += _float(TimeDelta);
+	CGameObject::Update_GameObject(TimeDelta);
+
+	m_fLinearMovePercent += _float(TimeDelta) * 0.2f;
 
 	Check_LifeTime(TimeDelta);
 
@@ -192,7 +192,6 @@ void CMeshEffect::Setup_Info()
 	m_fRotSpeed = m_pInfo->fRotSpeed;
 	m_fAlphaSpeed = m_pInfo->fAlphaSpeed;
 	m_pTransformCom->Set_Scale(m_pInfo->vStartScale);
-	m_pInfo->fMoveScaleSpeed = 1.f;
 	if (m_bDelay_New)
 		m_fCreateDelay = m_fDelay_New;
 	else
@@ -201,16 +200,18 @@ void CMeshEffect::Setup_Info()
 	m_fLinearMoveSpeed = 0.f;
 	m_fLinearMovePercent = 0.f;
 	m_vFollowPos = { 0.f, 0.f, 0.f };
+	m_fAccel = 0.f;
+	m_fDissolve = 0.f;
 
 	m_bFadeOutStart = false;
-	m_bDelay_New	= false;
-	m_bAutoFindPos	= false;
-	m_bFinishPos	= false;
 	
 	if (m_pInfo->bDistortion)
 		m_iPass = 1;
 	else
 		m_iPass = 2; // For Mesh Pass
+
+	if (m_pInfo->fDistortionPower <= 0.f || m_pInfo->fDistortionPower > 2.f)
+		m_pInfo->fDistortionPower = 0.09f;
 
 	if (m_pInfo->bFadeIn)
 		m_fAlpha = 0.f;
@@ -325,6 +326,9 @@ void CMeshEffect::Check_Move(_double TimeDelta)
 			m_fMoveSpeed = 0.f;
 	}
 
+	_v3 vTargetPos = V3_NULL;
+	if (m_pDesc->pTargetTrans) vTargetPos = m_pDesc->pTargetTrans->Get_Pos();
+
 	if (m_pInfo->bDirMove)
 	{
 		if (m_pInfo->bLinearMove)
@@ -335,13 +339,25 @@ void CMeshEffect::Check_Move(_double TimeDelta)
 		}
 		else
 		{
-			_v3 vMove = m_pInfo->vMoveDirection * m_fMoveSpeed * _float(TimeDelta);
-			if (m_pDesc->pTargetTrans)
+			_v3 vMove = V3_NULL;
+			if (m_vMyDir != V3_NULL)
+				vMove = m_vMyDir * m_fMoveSpeed * _float(TimeDelta);
+			else
+				vMove = m_pInfo->vMoveDirection * m_fMoveSpeed * _float(TimeDelta);
+
+			if (m_pDesc->pTargetTrans && !m_bAutoFindPos)
 			{
-				_v3 vPos = m_pDesc->pTargetTrans->Get_Pos();
+				_v3 vPos = vTargetPos + m_pDesc->vWorldPos;
 				m_vFollowPos += vMove;
 				vPos += m_vFollowPos;
 				m_pTransformCom->Set_Pos(vPos);
+			}
+			else if (m_bFinishPos)
+			{
+				_v3 vDir = m_vFinishPos - m_pTransformCom->Get_Pos();
+				vMove = vDir * m_fMoveSpeed * _float(TimeDelta);
+
+				m_pTransformCom->Add_Pos(vMove);
 			}
 			else
 			{
@@ -353,9 +369,9 @@ void CMeshEffect::Check_Move(_double TimeDelta)
 	if (m_pInfo->bRandomMove)
 	{
 		_v3 vMove = m_vDir * m_fMoveSpeed * _float(TimeDelta);
-		if (m_pDesc->pTargetTrans)
+		if (m_pDesc->pTargetTrans && !m_bAutoFindPos)
 		{
-			_v3 vPos = m_pDesc->pTargetTrans->Get_Pos();
+			_v3 vPos = vTargetPos + m_pDesc->vWorldPos;
 			m_vFollowPos += vMove;
 			vPos += m_vFollowPos;
 			m_pTransformCom->Set_Pos(vPos);
@@ -417,6 +433,12 @@ void CMeshEffect::Check_Move(_double TimeDelta)
 
 		m_pTransformCom->Add_Pos(m_fMoveSpeed * _float(TimeDelta), vDir);
 	}
+
+	if (!m_pInfo->bRotMove && !m_pInfo->bMoveWithRot
+		&& m_pInfo->vRotDirection == V3_NULL)
+		m_pTransformCom->Set_Angle(m_vAngle);
+
+	m_pTransformCom->Update_Component();
 }
 
 void CMeshEffect::Check_LifeTime(_double TimeDelta)

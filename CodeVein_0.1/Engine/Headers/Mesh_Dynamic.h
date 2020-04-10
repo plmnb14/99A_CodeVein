@@ -23,6 +23,8 @@ public:
 	_mat Get_FrameMatrix(const char* pFrameName);
 	LPDIRECT3DTEXTURE9 Get_MeshTexture(_uint iMeshContainerIndex, _uint iSubSetIndex, MESHTEXTURE::TYPE eType);
 
+	_ulong Get_MaterialPass(_ulong iMeshConstainerIdx , _ulong dwSubsetIdx);
+
 public:
 	virtual HRESULT Ready_Component_Prototype(const _tchar* pFilePath, const _tchar* pFileName, _mat PivotMatrix);
 	virtual HRESULT Ready_Component(void* pArg);

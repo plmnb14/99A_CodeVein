@@ -257,12 +257,18 @@ void CPoisonRotationBullet::OnCollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					cout << "응 투사체 부딪힘" << endl;
+					if (false == iter->Get_Target_Dodge())
+					{
+						iter->Set_Target_CanHit(false);
 
-					iter->Set_Target_CanHit(false);
-					iter->Add_Target_Hp(m_tObjParam.fDamage);
+						// 타겟이 피격 가능하다면
+						if (iter->Get_Target_IsHit())
+							iter->Set_HitAgain(true);
 
-					m_dCurTime = 100;	// 바로 사망시키기 위해서 현재시간 100줬음
+						iter->Add_Target_Hp(-m_tObjParam.fDamage);
+					}
+
+					m_dCurTime = 1000;	// 바로 사망시키기 위해서 현재시간 1000줬음
 
 					break;
 
