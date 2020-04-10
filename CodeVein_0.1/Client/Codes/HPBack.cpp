@@ -23,9 +23,10 @@ HRESULT CHPBack::Ready_GameObject(void * pArg)
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 
+	
 	CUI::Ready_GameObject(pArg);
-
 	m_fViewZ = 1.1f;
+	
 
 	return NOERROR;
 }
@@ -134,7 +135,7 @@ HRESULT CHPBack::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 0)))
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, m_iIndex)))
 		return E_FAIL;
 
 	return NOERROR;

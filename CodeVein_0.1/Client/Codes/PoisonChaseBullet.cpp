@@ -37,7 +37,11 @@ HRESULT CPoisonChaseBullet::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Pos(temp.vCreatePos);
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
-
+	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"ButterFly_VenomShot_Body", nullptr));
+	m_pBulletBody->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
+	m_pBulletBody->Set_Loop(true);
+	m_pBulletBody->Reset_Init();
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
 
 	m_fEffectCreateOffset = 0.05f;
 
@@ -87,7 +91,8 @@ _int CPoisonChaseBullet::Update_GameObject(_double TimeDelta)
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag9, m_pTransformCom->Get_Pos(), nullptr);
 		//CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag10, m_pTransformCom->Get_Pos(), nullptr);
 		CParticleMgr::Get_Instance()->Create_ParticleEffect(m_pEffect_Tag10, 0.5f, m_pTransformCom->Get_Pos(), nullptr);
-
+		
+		m_pBulletBody->Set_Dead();
 		m_bDead = true;
 	}
 	// ม๘วเม฿
@@ -102,10 +107,10 @@ _int CPoisonChaseBullet::Update_GameObject(_double TimeDelta)
 		if (m_fEffectCreateOffset < m_fEffectCreateOffset_Check)
 		{
 			m_fEffectCreateOffset_Check = 0.f;
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag2, _v3(), m_pTransformCom);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag3, _v3(), m_pTransformCom);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, _v3(), m_pTransformCom);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag5, _v3(), m_pTransformCom);
+			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag2, m_pTransformCom->Get_Pos(), nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag3, m_pTransformCom->Get_Pos(), nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, m_pTransformCom->Get_Pos(), nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag5, m_pTransformCom->Get_Pos(), nullptr);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag0, m_pTransformCom->Get_Pos(), nullptr);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag1, m_pTransformCom->Get_Pos(), nullptr);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag6, m_pTransformCom->Get_Pos(), nullptr);

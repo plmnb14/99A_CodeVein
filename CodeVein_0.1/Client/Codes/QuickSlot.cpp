@@ -84,7 +84,7 @@ _int CQuickSlot::Update_GameObject(_double TimeDelta)
 		if (m_iSelect > 0)
 			--m_iSelect;
 		else
-			m_iSelect = m_vecQuickSlot.size() - 1;
+			m_iSelect = _uint(m_vecQuickSlot.size()) - 1;
 	}
 
 	/*if (g_pInput_Device->Key_Up(DIK_MULTIPLY))

@@ -4,6 +4,7 @@
 
 #include "MonsterUI.h"
 #include "DamegeNumUI.h"
+#include "Get_ItemUI.h"
 
 CSwordGenji::CSwordGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
@@ -41,11 +42,17 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	// MonsterHP UI
  	pMonsterHpUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
  	pMonsterHpUI->Set_Target(this);
- 	pMonsterHpUI->Ready_GameObject(NULL);
+	pMonsterHpUI->Set_Bonmatrix(m_matBones[Bone_Head]);
+ 	pMonsterHpUI->Ready_GameObject(pArg);
 
 	/*m_pDamegeNumUI = static_cast<CDamegeNumUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_DamegeNumUI", pArg));
 	m_pDamegeNumUI->Set_Target(this);
-	m_pDamegeNumUI->Ready_GameObject(pArg);*/
+	m_pDamegeNumUI->Ready_GameObject(NULL);*/
+
+	//m_pGet_Item = static_cast<CGet_ItemUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Get_ItemUI", pArg));
+	//m_pGet_Item->Set_ItemTarget(this);
+	//m_pGet_Item->Ready_GameObject(pArg);
+
 
 	//////////////////// 행동트리 init
 
@@ -172,6 +179,8 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 
 	// MonsterHP UI
 	pMonsterHpUI->Update_GameObject(TimeDelta);
+	//m_pDamegeNumUI->Update_GameObject(TimeDelta);
+	//m_pGet_Item->Update_GameObject(TimeDelta);
 
 	// 플레이어 미발견
 	if (false == m_bFight)
@@ -223,6 +232,7 @@ HRESULT CSwordGenji::Render_GameObject()
 		nullptr == m_pMeshCom)
 		return E_FAIL;
 
+	
 	m_pMeshCom->Play_Animation(_float(m_dTimeDelta)); // * alpha
 
 	if (FAILED(SetUp_ConstantTable()))
@@ -1300,6 +1310,7 @@ void CSwordGenji::Free()
 {
 	Safe_Release(pMonsterHpUI);
 	//Safe_Release(m_pDamegeNumUI);
+	//Safe_Release(m_pGet_Item);
 
 	Safe_Release(m_pSword);
 	Safe_Release(m_pNavMesh);

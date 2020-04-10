@@ -100,7 +100,7 @@ CComponent * CComponent_Manager::Clone_Component(_uint iSceneID, const _tchar * 
 		return nullptr;
 
 	// 원본을 복제한다.
-	return pPrototype->Clone_Component(pArg);	
+	return pPrototype->Clone_Component(pArg);
 }
 
 HRESULT CComponent_Manager::Clear_Instance(_uint iSceneIndex)

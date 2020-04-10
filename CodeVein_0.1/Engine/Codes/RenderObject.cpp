@@ -31,11 +31,12 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 	CGameObject::LateInit_GameObject();
 	CGameObject::Update_GameObject(_TimeDelta);
 
-	//Update_Collider();
+	Update_Collider();
 
 	if (false == m_bOnTool)
 	{
 		m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
+		m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this);
 		//m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this);
 
 		//if (CObject_Manager::Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))
@@ -107,6 +108,11 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 		return E_FAIL;
 	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
+
+	if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
+		return E_FAIL;
+
+	m_matLastWVP = m_pTransform->Get_WorldMat() * ViewMatrix * ProjMatrix;
 
 	_ulong dwNumSubSet = m_pMesh_Static->Get_NumMaterials();
 
