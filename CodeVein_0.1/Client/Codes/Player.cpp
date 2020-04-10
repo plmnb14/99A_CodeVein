@@ -164,6 +164,7 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 
 	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
+
 	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
 
@@ -4992,8 +4993,8 @@ HRESULT CPlayer::SetUp_Default()
 	// Parameter
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.bDodge = false;
-	m_tObjParam.fHp_Cur = 100.f;
-	m_tObjParam.fHp_Max = 100.f;
+	m_tObjParam.fHp_Cur = 1000.f;
+	m_tObjParam.fHp_Max = 1000.f;
 	
 	// Anim
 	m_fAnimMutiply = 1.f;
