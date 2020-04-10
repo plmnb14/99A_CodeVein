@@ -283,6 +283,9 @@ void CScriptManager::St01_Sub4()
 			m_bEventTrigger_0[9] = true;
 
 			m_vecObjectPool[28]->Set_Enable(true);
+
+			// 보스 HP바 생성
+			g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossHP", SCENE_STAGE, L"Layer_BossHP");
 		}
 	}
 	}

@@ -310,6 +310,10 @@ _int CPoisonButterfly::Late_Update_GameObject(_double TimeDelta)
 
 	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
+	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
+	//	return E_FAIL;
+	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+		return E_FAIL;
 
 	m_dTimeDelta = TimeDelta;
 
@@ -339,11 +343,15 @@ HRESULT CPoisonButterfly::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+			if (false == m_bReadyDead)
+				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
 
 			m_pShaderCom->Begin_Pass(m_iPass);
 
 			m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
+
+			//if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
+			//	return E_FAIL;
 
 			m_pShaderCom->Commit_Changes();
 
@@ -357,6 +365,50 @@ HRESULT CPoisonButterfly::Render_GameObject()
 
 	Update_Collider();
 	Draw_Collider();
+
+	return NOERROR;
+}
+
+HRESULT CPoisonButterfly::Render_GameObject_SetPass(CShader * pShader, _int iPass)
+{
+	if (nullptr == pShader ||
+		nullptr == m_pMeshCom)
+		return E_FAIL;
+
+	if (FAILED(SetUp_ConstantTable()))
+		return E_FAIL;
+
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
+		return E_FAIL;
+
+	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+	if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
+		return E_FAIL;
+
+	m_matLastWVP = m_pTransformCom->Get_WorldMat() * ViewMatrix * ProjMatrix;
+
+	//_mat matLightVP = g_pManagement->Get_LightViewProj();
+	//if (FAILED(pShader->Set_Value("g_LightVP_Close", &matLightVP, sizeof(_mat))))
+	//	return E_FAIL;
+
+	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+
+	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+	{
+		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+
+		m_pMeshCom->Update_SkinnedMesh(i);
+
+		for (_uint j = 0; j < iNumSubSet; ++j)
+		{
+			pShader->Begin_Pass(iPass);
+
+			m_pMeshCom->Render_Mesh(i, j);
+
+			pShader->End_Pass();
+		}
+	}
 
 	return NOERROR;
 }

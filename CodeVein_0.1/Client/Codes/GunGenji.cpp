@@ -26,12 +26,6 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component(pArg)))
 		return E_FAIL;
-	
-	/*m_pMonDamegeUI = static_cast<CDamegeNumUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_DamegeNumUI", pArg));
-	m_pMonDamegeUI->Set_Target(this);
-	m_pMonDamegeUI->Ready_GameObject(NULL);*/
-
-	/////////////////////////////////////////////////////////
 
 	Ready_NF(pArg);
 
@@ -46,6 +40,16 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 
+	/////////////////////////////////////////////////////////
+
+	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
+	m_pMonsterUI->Set_Target(this);
+	m_pMonsterUI->Set_Bonmatrix(m_matBones[Bone_Head]);
+	m_pMonsterUI->Ready_GameObject(NULL);
+
+	/*m_pMonDamegeUI = static_cast<CDamegeNumUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_DamegeNumUI", pArg));
+	m_pMonDamegeUI->Set_Target(this);
+	m_pMonDamegeUI->Ready_GameObject(NULL);*/
 
 	////////////////// 행동트리 init
 
@@ -77,7 +81,7 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	//Start_Sel->Add_Child(Check_ShowValue);
 	Start_Sel->Add_Child(Start_Game());
 
-	//Start_Sel->Add_Child(Dodge_B());
+	//Start_Sel->Add_Child(Arm_Attack());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -324,11 +328,6 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 
 	m_pMeshCom->SetUp_Animation(Ani_Idle);
 
-	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
-	m_pMonsterUI->Set_Target(this);
-	m_pMonsterUI->Set_Bonmatrix(m_matBones[Bone_Head]);
-	m_pMonsterUI->Ready_GameObject(NULL);
-
 	return NOERROR;
 }
 
@@ -383,6 +382,8 @@ _int CGunGenji::Late_Update_GameObject(_double TimeDelta)
 
 	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
+	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+		return E_FAIL;
 	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
 	//	return E_FAIL;
 
@@ -417,10 +418,15 @@ HRESULT CGunGenji::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
+			if(false ==  m_bReadyDead)
+				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+
 			m_pShaderCom->Begin_Pass(m_iPass);
 
-			if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
-				return E_FAIL;
+			m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
+
+			//if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
+			//	return E_FAIL;
 
 			m_pShaderCom->Commit_Changes();
 
@@ -450,9 +456,17 @@ HRESULT CGunGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 
 	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
-	_mat matLightVP = g_pManagement->Get_LightViewProj();
-	if (FAILED(pShader->Set_Value("g_LightVP_Close", &matLightVP, sizeof(_mat))))
+
+	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+	if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 		return E_FAIL;
+
+	m_matLastWVP = m_pTransformCom->Get_WorldMat() * ViewMatrix * ProjMatrix;
+
+	//_mat matLightVP = g_pManagement->Get_LightViewProj();
+	//if (FAILED(pShader->Set_Value("g_LightVP_Close", &matLightVP, sizeof(_mat))))
+	//	return E_FAIL;
 
 	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
 
