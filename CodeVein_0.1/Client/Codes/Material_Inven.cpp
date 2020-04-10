@@ -254,7 +254,7 @@ void CMaterial_Inven::Add_Material(CMaterial::MATERIAL_TYPE eType)
 
 void CMaterial_Inven::Add_MultiMaterial(CMaterial::MATERIAL_TYPE eType, _uint iCnt)
 {
-	LOOP(iCnt)
+	LOOP(_int(iCnt))
 		Add_Material(eType);
 }
 
