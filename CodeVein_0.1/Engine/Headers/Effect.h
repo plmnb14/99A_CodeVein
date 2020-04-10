@@ -33,6 +33,7 @@ public:
 	void Set_AutoFind(_bool  bFind) { m_bAutoFindPos = bFind; }
 	void Set_FinishPos(_v3 vPos) { m_bFinishPos = true;  m_vFinishPos = vPos; }
 	void Set_Delay(_bool bDelay, _float fDelay = 0.f) { m_bDelay_New = bDelay;  m_fDelay_New = fDelay; }
+	void Set_Loop(_bool bLoop) { m_bLoop = bLoop; }
 
 	void Reset_Init();
 
@@ -79,6 +80,7 @@ protected:
 	_bool					m_bAutoFindPos = false;
 	_bool					m_bFinishPos = false;
 	_bool					m_bDelay_New = false;
+	_bool					m_bLoop = false;
 
 	_int					m_iPass = 0;
 
