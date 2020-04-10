@@ -218,7 +218,7 @@ PS_OUT PS_BLUR(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	vector	vDiffuse = tex2D(DiffuseSampler, In.vTexUV);
-	vector	vSSAO = pow(tex2D(SSAOSampler, In.vTexUV), 2.2);
+	//vector	vSSAO = pow(tex2D(SSAOSampler, In.vTexUV), 2.2);
 
 	float4 color = 0;
 	float2 samp = In.vTexUV;
@@ -230,7 +230,7 @@ PS_OUT PS_BLUR(PS_IN In)
 		samp.x = In.vTexUV.x + PixelKernel[i] * pixelWidthX;
 		samp.y = In.vTexUV.y + PixelKernel[i] * pixelWidthY;
 		color += tex2D(DiffuseSampler, samp) * BlurWeights[i] * 1.3f;
-		color -= tex2D(SSAOSampler, samp).x * BlurWeights[i] * 1.3f;
+		//color -= tex2D(SSAOSampler, samp).x * BlurWeights[i] * 1.3f;
 	}
 
 	color.a = 1;

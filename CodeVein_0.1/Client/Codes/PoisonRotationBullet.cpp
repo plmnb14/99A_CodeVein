@@ -41,6 +41,18 @@ HRESULT CPoisonRotationBullet::Ready_GameObject(void * pArg)
 	m_pBulletTransformCom1 = CTransform::Create(m_pGraphic_Dev);
 	m_pBulletTransformCom2 = CTransform::Create(m_pGraphic_Dev);
 
+	m_pBulletBody1 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"ButterFly_VenomShot_Body", nullptr));
+	m_pBulletBody1->Set_Desc(_v3(0, 0, 0), m_pBulletTransformCom1);
+	m_pBulletBody1->Set_Loop(true);
+	m_pBulletBody1->Reset_Init();
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody1, SCENE_STAGE, L"Layer_Effect", nullptr);
+
+	m_pBulletBody2 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"ButterFly_VenomShot_Body", nullptr));
+	m_pBulletBody2->Set_Desc(_v3(0, 0, 0), m_pBulletTransformCom2);
+	m_pBulletBody2->Set_Loop(true);
+	m_pBulletBody2->Reset_Init();
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody2, SCENE_STAGE, L"Layer_Effect", nullptr);
+
 	lstrcpy(m_pEffect_Tag0, L"ButterFly_VenomShot_Distortion");
 	lstrcpy(m_pEffect_Tag1, L"ButterFly_SoftSmoke_Mist");
 	lstrcpy(m_pEffect_Tag2, L"ButterFly_VenomShot");
@@ -78,11 +90,18 @@ _int CPoisonRotationBullet::Update_GameObject(_double TimeDelta)
 	if (m_dCurTime > m_dLifeTime)
 	{
 		//¡◊¿Ω ¿Ã∆Â∆Æ
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag7, m_pTransformCom->Get_Pos(), nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag8, m_pTransformCom->Get_Pos(), nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag9, m_pTransformCom->Get_Pos(), nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag10, m_pTransformCom->Get_Pos(), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag7	, m_pBulletTransformCom1->Get_Pos(), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag8	, m_pBulletTransformCom1->Get_Pos(), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag9	, m_pBulletTransformCom1->Get_Pos(), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag10	, m_pBulletTransformCom1->Get_Pos(), nullptr);
 		
+		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag7	, m_pBulletTransformCom2->Get_Pos(), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag8	, m_pBulletTransformCom2->Get_Pos(), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag9	, m_pBulletTransformCom2->Get_Pos(), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag10	, m_pBulletTransformCom2->Get_Pos(), nullptr);
+
+		m_pBulletBody1->Set_Dead();
+		m_pBulletBody2->Set_Dead();
 		m_bDead = true;
 	}
 	// ¡¯«‡¡ﬂ
@@ -97,18 +116,18 @@ _int CPoisonRotationBullet::Update_GameObject(_double TimeDelta)
 		if (m_fEffectCreateOffset < m_fEffectCreateOffset_Check)
 		{
 			m_fEffectCreateOffset_Check = 0.f;
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag2, _v3(), m_pBulletTransformCom1);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag3, _v3(), m_pBulletTransformCom1);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, _v3(), m_pBulletTransformCom1);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag5, _v3(), m_pBulletTransformCom1);
+			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag2, m_pBulletTransformCom1->Get_Pos(), nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag3, m_pBulletTransformCom1->Get_Pos(), nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, m_pBulletTransformCom1->Get_Pos(), nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag5, m_pBulletTransformCom1->Get_Pos(), nullptr);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag0, m_pBulletTransformCom1->Get_Pos(), nullptr);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag1, m_pBulletTransformCom1->Get_Pos(), nullptr);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag6, m_pBulletTransformCom1->Get_Pos(), nullptr);
 
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag2, _v3(), m_pBulletTransformCom2);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag3, _v3(), m_pBulletTransformCom2);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, _v3(), m_pBulletTransformCom2);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag5, _v3(), m_pBulletTransformCom2);
+			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag2, m_pBulletTransformCom2->Get_Pos(), nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag3, m_pBulletTransformCom2->Get_Pos(), nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, m_pBulletTransformCom2->Get_Pos(), nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag5, m_pBulletTransformCom2->Get_Pos(), nullptr);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag0, m_pBulletTransformCom2->Get_Pos(), nullptr);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag1, m_pBulletTransformCom2->Get_Pos(), nullptr);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag6, m_pBulletTransformCom2->Get_Pos(), nullptr);
