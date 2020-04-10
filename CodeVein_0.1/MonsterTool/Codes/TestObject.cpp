@@ -41,7 +41,6 @@ _int CTestObject::Update_GameObject(_double TimeDelta)
 
 	if (m_bisPlayCombo)
 	{
-		cout << m_iMaxCount << endl;
 		Play_Combo();
 	}
 
@@ -99,6 +98,37 @@ HRESULT CTestObject::Render_GameObject()
 	m_pShader->End_Shader();
 
 	return NOERROR;
+}
+
+void CTestObject::Set_Combo(_uint _Idx, _float _Ratio)
+{
+	m_vectorIndexAniRatio.push_back(pair<_uint, _float>(_Idx, _Ratio));
+
+	m_iMaxCount = (_int)m_vectorIndexAniRatio.size();
+
+}
+
+void CTestObject::Reset_Combo()
+{
+
+	if (!m_vectorIndexAniRatio.empty())
+		m_vectorIndexAniRatio.clear();
+}
+
+void CTestObject::Play_Combo()
+{
+
+	if (m_iMaxCount <= m_iComboCount)
+	{
+		m_iComboCount = 0;
+	}
+	
+	m_pMesh->SetUp_Animation(m_vectorIndexAniRatio[m_iComboCount].first);
+
+	if (m_pMesh->Is_Finish_Animation(m_vectorIndexAniRatio[m_iComboCount].second))
+	{
+		++m_iComboCount;
+	}
 }
 
 HRESULT CTestObject::Add_Component()
@@ -187,35 +217,5 @@ void CTestObject::Free()
 	return;
 }
 
-void CTestObject::Set_Combo(_uint _Idx, _float _Ratio)
-{
-	m_vectorIndexAniRatio.push_back(pair<_uint, _float>(_Idx, _Ratio));
-
-	m_iMaxCount = (_int)m_vectorIndexAniRatio.size();
-
-}
-
-void CTestObject::Reset_Combo()
-{
-
-	if (!m_vectorIndexAniRatio.empty())
-		m_vectorIndexAniRatio.clear();
-}
-
-void CTestObject::Play_Combo()
-{
-
-	if (m_iMaxCount <= m_iComboCount)
-	{
-		m_iComboCount = 0;
-	}
-	
-	m_pMesh->SetUp_Animation(m_vectorIndexAniRatio[m_iComboCount].first);
-
-	if (m_pMesh->Is_Finish_Animation(m_vectorIndexAniRatio[m_iComboCount].second))
-	{
-		++m_iComboCount;
-	}
-}
 
 
