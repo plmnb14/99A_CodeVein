@@ -31,7 +31,7 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 	CGameObject::LateInit_GameObject();
 	CGameObject::Update_GameObject(_TimeDelta);
 
-	//Update_Collider();
+	Update_Collider();
 
 	if (false == m_bOnTool)
 	{

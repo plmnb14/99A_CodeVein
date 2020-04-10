@@ -108,14 +108,9 @@ HRESULT CPickUp_ItemUI::Render_GameObject()
 
 	for (_uint i = 0; i < pUIManager->Get_CoundItem(); ++i)
 	{
-		_mat tmpMat = m_matWorld;
-
-		tmpMat._42 += i * 0.1f;
+		//m_fPosY += i * 0.2f;
 
 		m_pShaderCom->Begin_Pass(2);
-
-		if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &(tmpMat), sizeof(_mat))))
-			return E_FAIL;
 
 		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, i + 4)))
 			return E_FAIL;

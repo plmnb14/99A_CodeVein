@@ -1248,7 +1248,7 @@ CGameObject * CSwordShieldGenji::Clone_GameObject(void * pArg)
 void CSwordShieldGenji::Free()
 {
 	Safe_Release(m_pMonsterUI);
-	Safe_Release(m_pDamegeNumUI);
+	//Safe_Release(m_pDamegeNumUI);
 
 	Safe_Release(m_pShield);
 	Safe_Release(m_pSword);
