@@ -3,6 +3,7 @@
 #include "..\Headers\Weapon.h"
 
 #include "MonsterUI.h"
+#include "DamegeNumUI.h"
 
 CGunGenji::CGunGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
@@ -28,7 +29,14 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 
 	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
 	m_pMonsterUI->Set_Target(this);
+	m_pMonsterUI->Set_Bonmatrix(m_matBones[Bone_Head]);
 	m_pMonsterUI->Ready_GameObject(NULL);
+	
+	/*m_pMonDamegeUI = static_cast<CDamegeNumUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_DamegeNumUI", pArg));
+	m_pMonDamegeUI->Set_Target(this);
+	m_pMonDamegeUI->Ready_GameObject(NULL);*/
+
+	/////////////////////////////////////////////////////////
 
 	Ready_NF(pArg);
 
@@ -335,6 +343,7 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 
 	// MonsterHP UI
 	m_pMonsterUI->Update_GameObject(TimeDelta);
+	//m_pMonDamegeUI->Update_GameObject(TimeDelta);
 
 	// 죽었을 경우
 	if (m_bIsDead)
@@ -358,7 +367,8 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 
 	}
 
-	Check_PhyCollider();
+	if (false == m_bReadyDead)
+		Check_PhyCollider();
 
 	return _int();
 }
@@ -1080,29 +1090,34 @@ void CGunGenji::Check_PhyCollider()
 
 void CGunGenji::Push_Collider()
 {
-	list<CGameObject*> tmpList = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_STAGE);
+	list<CGameObject*> tmpList[3];
 
-	for (auto& iter : tmpList)
+	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_STAGE);
+	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
+	tmpList[2] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
+
+	for (auto& ListObj : tmpList)
 	{
-		CCollider* pCollider = TARGET_TO_COL(iter);
-
-		//cout << m_pAIControllerCom->Get_FloatValue(L"Monster_Speed") << endl;
-
-		// 지금 속도값 임의로 넣었는데 구해서 넣어줘야함 - 완료
-		if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_pAIControllerCom->Get_FloatValue(L"Monster_Speed")))
+		for (auto& iter : ListObj)
 		{
-			CTransform* pTrans = TARGET_TO_TRANS(iter);
-			CNavMesh*   pNav = TARGET_TO_NAV(iter);
+			CCollider* pCollider = TARGET_TO_COL(iter);
 
-			// 방향 구해주고
-			_v3 vDir = m_pTransformCom->Get_Pos() - pTrans->Get_Pos();
-			V3_NORMAL_SELF(&vDir);
+			// 지금 속도값 임의로 넣었는데 구해서 넣어줘야함 - 완료
+			if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_pAIControllerCom->Get_FloatValue(L"Monster_Speed")))
+			{
+				CTransform* pTrans = TARGET_TO_TRANS(iter);
+				CNavMesh*   pNav = TARGET_TO_NAV(iter);
 
-			// y축 이동은 하지말자
-			vDir.y = 0;
+				// 방향 구해주고
+				_v3 vDir = m_pTransformCom->Get_Pos() - pTrans->Get_Pos();
+				V3_NORMAL_SELF(&vDir);
 
-			// 네비 메쉬타게 끔 세팅
-			pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pCollider->Get_Length().x));
+				// y축 이동은 하지말자
+				vDir.y = 0;
+
+				// 네비 메쉬타게 끔 세팅
+				pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pCollider->Get_Length().x));
+			}
 		}
 	}
 }
@@ -1323,6 +1338,7 @@ CGameObject * CGunGenji::Clone_GameObject(void * pArg)
 void CGunGenji::Free()
 {
 	Safe_Release(m_pMonsterUI);
+	Safe_Release(m_pMonDamegeUI);
 
 	Safe_Release(m_pNavMesh);
 	Safe_Release(m_pGun);
