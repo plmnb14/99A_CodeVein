@@ -30,6 +30,7 @@ HRESULT CYachaMan::Ready_GameObject(void * pArg)
 
 	Ready_BoneMatrix();
 	Ready_Collider();
+	Ready_Weapon();
 
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
 	m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE));
@@ -2105,7 +2106,7 @@ HRESULT CYachaMan::SetUp_ConstantTable()
 HRESULT CYachaMan::Ready_Weapon()
 {
 	m_pHammer = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pHammer->Change_WeaponData(CWeapon::WPN_SSword_Normal);
+	m_pHammer->Change_WeaponData(CWeapon::WPN_Hammer_Normal);
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
 	m_pHammer->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
