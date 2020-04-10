@@ -32,9 +32,9 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	m_pMonsterUI->Set_Bonmatrix(m_matBones[Bone_Head]);
 	m_pMonsterUI->Ready_GameObject(NULL);
 	
-	m_pMonDamegeUI = static_cast<CDamegeNumUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_DamegeNumUI", pArg));
+	/*m_pMonDamegeUI = static_cast<CDamegeNumUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_DamegeNumUI", pArg));
 	m_pMonDamegeUI->Set_Target(this);
-	m_pMonDamegeUI->Ready_GameObject(NULL);
+	m_pMonDamegeUI->Ready_GameObject(NULL);*/
 
 	/////////////////////////////////////////////////////////
 
@@ -343,7 +343,7 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 
 	// MonsterHP UI
 	m_pMonsterUI->Update_GameObject(TimeDelta);
-	m_pMonDamegeUI->Update_GameObject(TimeDelta);
+	//m_pMonDamegeUI->Update_GameObject(TimeDelta);
 
 	// 죽었을 경우
 	if (m_bIsDead)
