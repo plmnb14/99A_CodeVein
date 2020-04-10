@@ -131,13 +131,14 @@ void CFontNumManager::Calc_NumberFont(_ulong dwFontNum/*, _float fPosX, _float f
 
 	for (_uint i = 0; i < vecFontNumUI.size(); ++i)
 	{
-		if(dwNumDigits <= 3)
+		if (dwNumDigits <= 3)
 			vecFontNumUI[i]->Set_UI_Pos(m_fPosX + m_fSizeX * i, m_fPosY);
-		else if(dwNumDigits == 4)
-			vecFontNumUI[i]->Set_UI_Pos(m_fPosX + m_fSizeX * (i + 1), m_fPosY);
-		else if(dwNumDigits == 5)
+		else if (dwNumDigits == 4)
+			vecFontNumUI[i]->Set_UI_Pos(m_fPosX + m_fSizeX * i - m_fSizeX, m_fPosY);
+		else if (dwNumDigits == 5)
 			vecFontNumUI[i]->Set_UI_Pos(m_fPosX + m_fSizeX * i - m_fSizeX * 2.f, m_fPosY);
-
+		else
+			return;
 		vecFontNumUI[i]->Set_UI_Size(m_fSizeX, m_fSizeY);
 		vecFontNumUI[i]->Set_ViewZ(m_fViewZ);
 	}
