@@ -51,8 +51,11 @@ _int CPlayerHP::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
+	if(m_fPlayerHP <= 0.f)
+		m_pFontCurHP->Set_Number(0);
+	else
+		m_pFontCurHP->Set_Number(_uint(m_fPlayerHP));
 
-	m_pFontCurHP->Set_Number(_uint(m_fPlayerHP));
 	m_pFontTotalHP->Set_Number(_uint(m_fTotalHP));
 
 	return NO_EVENT;
