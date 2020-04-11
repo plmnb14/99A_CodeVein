@@ -966,7 +966,6 @@ void CMonsterTool::Stop_Ani()
 	UpdateData(FALSE);
 }
 
-/////////////////////////////////////////////이벤트 관련 함순
 void CMonsterTool::Add_AniEvent()
 {
 	if (TRUE == m_ButtonMove.GetCheck())
@@ -1522,7 +1521,6 @@ void CMonsterTool::Load_AniEvent()
 	UpdateData(FALSE);
 }
 
-/////////////////////////////////////////콤보 구현 관련 함수
 void CMonsterTool::Add_AniCombo()
 {
 	UpdateData(TRUE);

@@ -1,5 +1,5 @@
 #include "stdafx.h"
-#include "Drain_Weapon.h"
+#include "..\Headers\Drain_Weapon.h"
 
 CDrain_Weapon::CDrain_Weapon(_Device pGraphic_Device)
 	: CGameObject(pGraphic_Device)
@@ -56,6 +56,10 @@ _int CDrain_Weapon::Late_Update_GameObject(_double TimeDelta)
 
 		if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
 			return E_FAIL;
+		if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+			return E_FAIL;
+		//if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
+		//	return E_FAIL;
 	}
 
 	return NO_EVENT;
@@ -104,6 +108,54 @@ HRESULT CDrain_Weapon::Render_GameObject()
 	Draw_Collider();
 
 	//g_pManagement->Gizmo_Draw_Capsule(m_pCollider->Get_CenterPos(), m_pCollider->Get_Radius());
+
+	return NOERROR;
+}
+
+HRESULT CDrain_Weapon::Render_GameObject_SetPass(CShader * pShader, _int iPass)
+{
+	if (nullptr == pShader ||
+		nullptr == m_pMesh_Dynamic)
+		return E_FAIL;
+
+	_mat		ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+
+	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
+		return E_FAIL;
+
+	m_matLastWVP = m_pTransform->Get_WorldMat() * ViewMatrix * ProjMatrix;
+
+	_uint iNumMeshContainer = _uint(m_pMesh_Dynamic->Get_NumMeshContainer());
+
+	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+	{
+		_uint iNumSubSet = (_uint)m_pMesh_Dynamic->Get_NumMaterials(i);
+
+		// 메시를 뼈에 붙인다.
+		m_pMesh_Dynamic->Update_SkinnedMesh(i);
+
+		for (_uint j = 0; j < iNumSubSet; ++j)
+		{
+			m_iPass = m_pMesh_Dynamic->Get_MaterialPass(i, j);
+
+			pShader->Begin_Pass(iPass);
+
+			pShader->Set_DynamicTexture_Auto(m_pMesh_Dynamic, i, j);
+
+			pShader->Commit_Changes();
+
+			m_pMesh_Dynamic->Render_Mesh(i, j);
+
+			pShader->End_Pass();
+		}
+	}
 
 	return NOERROR;
 }
