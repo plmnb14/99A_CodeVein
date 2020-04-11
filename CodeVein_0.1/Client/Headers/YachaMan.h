@@ -20,7 +20,13 @@ public:
 	enum YACHAMAN_DOWNTYPE { DOWN_DOWN, DOWN_DOWN_S, DOWN_DOWN_W };
 	enum YACHAMAN_DEADTYPE { DEAD_DEAD, DEAD_DEAD_S };
 
-	enum ATK_NORMAL_TYPE { NORMAL_RIGHT, NORMAL_LEFT, NORMAL_HAMMERING, NORMAL_SHOULDER, NORMAL_TURNTWICE, NORMAL_HALFCLOCK, NORMAL_TARGETHAMMERING, NORMAL_WHEELWIND };
+	enum ATK_NORMAL_TYPE 
+	{
+		NORMAL_RIGHT, NORMAL_LEFT, 
+		NORMAL_HAMMERING, NORMAL_SHOULDER, 
+		NORMAL_TURNTWICE, NORMAL_HALFCLOCK, 
+		NORMAL_TARGETHAMMERING, NORMAL_WHEELWIND 
+	};
 	enum ATK_COMBO_TYPE { COMBO_R_L, COMBO_R_HAMMERING, COMBO_SHOULDER_TURNTWICE, COMBO_SHOULDER_HALFCLOCK, COMBO_RUNHAMMERING };
 
 	enum YACHAMAN_ANI
@@ -127,25 +133,21 @@ private:
 	void Play_Dodge();
 
 	void Play_RandomAtkNormal();
-	void Play_R(); //1.3~1.9 이동 1.8~2.0 타격
-	void Play_L(); //0.6~1.1 이동 1.2~1.4타격
-	void Play_Hammering(); //0.9~1.8 이동 1.4~1.8 타격
-	void Play_Shoulder(); //0.9~1.3 이동 0.9~1.3 타격
-	void Play_TurnTwice(); //0.8~2.0 2.9~3.3 이동 0.9~1.2 1.6~1.9 타격
-	void Play_HalfClock(); //0.8~2.0회전이동 2.9~3.3 짧게복귀 0.8~1.2타격
-	void Play_TargetHammering(); //1.9~3.0 회전이동 3.9~5.6짧게복귀 1.9~2.7 타격
+	void Play_R();
+	void Play_L();
+	void Play_Hammering();
+	void Play_Shoulder();
+	void Play_TurnTwice();
+	void Play_HalfClock();
+	void Play_TargetHammering();
 	void Play_WheelWind();
-	//1.4~1.8 이동 1.4~1.8 타격
-	//	1.9~2.2 이동 2.1~2.4 타격
-	//	2.3~2.6 이동 2.7~2.8 타격
-	//	2.7~2.9 이동 3.1~3.3 타격
-	//	3.0~3.3 이동
+
 	void Play_RandomAtkCombo();
-	void Play_Combo_R_L(); //1,2 0.45 0.95
-	void Play_Combo_R_Hammering(); //1,3 0.5 0.95
-	void Play_Combo_Shoulder_TurnTwice(); //4,5 0.28 0.95
-	void Play_Combo_Shoulder_HalfClock(); //4,6 0.28 0.95
-	void Play_Combo_RunHammering(); //9,10,11 달려가서 내리치기 0.9 0.9 0.9
+	void Play_Combo_R_L();
+	void Play_Combo_R_Hammering();
+	void Play_Combo_Shoulder_TurnTwice();
+	void Play_Combo_Shoulder_HalfClock();
+	void Play_Combo_RunHammering();
 
 	void Play_Hit();
 	void Play_Down_Strong();
@@ -225,7 +227,6 @@ private:
 
 	_int				m_iRandom = 0;
 	_int				m_iDodgeCount = 0;
-
 };
 
 END

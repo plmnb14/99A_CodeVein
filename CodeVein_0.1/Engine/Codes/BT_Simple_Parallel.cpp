@@ -243,6 +243,17 @@ CBT_Node::BT_NODE_STATE CBT_Simple_Parallel::End_Node(vector<CBT_Node*>* pNodeSt
 		Release_ServiceNode(plistSubNodeStack, &m_listServiceNodeStack, pBlackBoard, bDebugging);
 
 
+	///////////
+	//Delete_SubNodeStack(plistSubNodeStack, pBlackBoard, bDebugging);	//추가사항
+	if (!m_pSubNodeStack.empty())
+	{
+		for (_int iNode = _int(m_pSubNodeStack.size() - 1); iNode > 0; --iNode)
+		{
+			m_pSubNodeStack[iNode]->End_Node(&m_pSubNodeStack, plistSubNodeStack, CBT_Node::BT_NODE_STATE::FAILED, pBlackBoard, bDebugging);
+		}
+	}
+	//////////////
+
 	if (bDebugging)
 	{
 		Cout_Indentation(pNodeStack);
@@ -272,10 +283,10 @@ HRESULT CBT_Simple_Parallel::Delete_SubNodeStack(list<vector<CBT_Node*>*>* plist
 		{
 			if (!(*iter)->empty())
 			{
-				(*iter)->front()->End_Node(*iter, plistSubNodeStack, BT_NODE_STATE::FAILED, pBlackBoard, bDebugging);
-
-				//Safe_Release((*iter)->front());
-
+				for (_int iNode = _int((*iter)->size() - 1); iNode >= 0; --iNode)
+				{
+					(*(*iter))[iNode]->End_Node(*iter, plistSubNodeStack, BT_NODE_STATE::FAILED, pBlackBoard, bDebugging);
+				}
 			}
 
 			plistSubNodeStack->erase(iter);

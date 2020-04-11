@@ -501,6 +501,9 @@
     <ClInclude Include="..\Headers\DamegeNumUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\01.MonsterUI\DamegeNumUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Monster.h">
+      <Filter>02.GameObject\Stage\2%29 Monster</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -724,6 +727,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\MassageUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\07. MassageUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Monster.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

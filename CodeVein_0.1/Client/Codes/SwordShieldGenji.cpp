@@ -6,13 +6,13 @@
 #include "DamegeNumUI.h"
 
 CSwordShieldGenji::CSwordShieldGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
-	: CGameObject(pGraphic_Device)
+	: CMonster(pGraphic_Device)
 {
 	ZeroMemory(m_matBones, sizeof(_mat*) * Bone_End);
 }
 
 CSwordShieldGenji::CSwordShieldGenji(const CSwordShieldGenji & rhs)
-	: CGameObject(rhs)
+	: CMonster(rhs)
 {
 	ZeroMemory(m_matBones, sizeof(_mat*) * Bone_End);
 }
@@ -689,7 +689,7 @@ HRESULT CSwordShieldGenji::Update_NF()
 		else if (fLength < m_fMaxLength)
 		{
 			// 플레이어가 시야각 안에 있는가?
-			if (Is_InFov(m_fFov, vPlayer_Pos))
+			if (Is_InFov(m_fFov, m_pTransformCom, vPlayer_Pos))
 			{
 				// 플레이어 발견
 				m_bFindPlayer = true;
@@ -775,28 +775,6 @@ void CSwordShieldGenji::Decre_Skill_Movement(_float _fMutiply)
 	}
 }
 
-_bool CSwordShieldGenji::Is_InFov(_float fDegreeOfFov, _v3 vTargetPos)
-{
-	_v3 vThisLook = *(_v3*)(&m_pTransformCom->Get_WorldMat().m[2]);
-	vThisLook.y = 0.f;
-	D3DXVec3Normalize(&vThisLook, &vThisLook);
-
-	_v3 FromThisToTarget = vTargetPos - m_pTransformCom->Get_Pos();
-	FromThisToTarget.y = 0.f;
-	D3DXVec3Normalize(&FromThisToTarget, &FromThisToTarget);
-
-
-	_float fDot_Temp = D3DXVec3Dot(&vThisLook, &FromThisToTarget);
-	_float fRadian = acosf(fDot_Temp);
-
-	//cout << "시야각 : " << D3DXToDegree(fRadian) << endl;
-
-	if (D3DXToDegree(fRadian) < fDegreeOfFov * 0.5f)
-		return true;
-
-	return false;
-}
-
 void CSwordShieldGenji::Check_PhyCollider()
 {
 	if (false == m_tObjParam.bCanHit && m_tObjParam.bIsHit == false)
@@ -823,7 +801,7 @@ void CSwordShieldGenji::Check_PhyCollider()
 
 		if (m_tObjParam.fHp_Cur > 0.f)
 		{
-			if (true == m_pAIControllerCom->Get_BoolValue(L"Block") && Is_InFov(150, *(_v3*)&matPlayer.m[3]))
+			if (true == m_pAIControllerCom->Get_BoolValue(L"Block") && Is_InFov(150, m_pTransformCom, *(_v3*)&matPlayer.m[3]))
 			{
 				m_pMeshCom->SetUp_Animation(Ani_GuardHit_Weak);
 
@@ -903,16 +881,6 @@ void CSwordShieldGenji::Push_Collider()
 	}
 	
 
-}
-
-HRESULT CSwordShieldGenji::Draw_Collider()
-{
-	for (auto& iter : m_vecPhysicCol)
-	{
-		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
-	}
-
-	return S_OK;
 }
 
 HRESULT CSwordShieldGenji::Add_Component(void* pArg)
