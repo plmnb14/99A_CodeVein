@@ -52,7 +52,7 @@ Tex_Water|Water_%d.tga|..\..\Client\Resources\Texture\Effect\Water\|0|1
 Tex_Armor_Icon|Armor_Icon%d.png|..\..\Client\Resources\Texture\TestUI\Armor_Icon\|0|5
 Tex_Bayonet_Icon|Bayonet_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Bayonet_Icon\|0|3
 Tex_BloodCodeIcon|BloodCodeIcon%d.tga|..\..\Client\Resources\Texture\TestUI\BloodCodeIcon\|0|9
-Tex_BossUI|BossUI%d.tga|..\..\Client\Resources\Texture\TestUI\BossUI\|0|2
+Tex_BossUI|BossUI%d.png|..\..\Client\Resources\Texture\TestUI\BossUI\|0|3
 Tex_Button|Button%d.png|..\..\Client\Resources\Texture\TestUI\Button\|0|1
 Tex_ButtonUI|ButtonUI%d.tga|..\..\Client\Resources\Texture\TestUI\ButtonUI\|0|8
 Tex_ClickUI|ClickUI%d.png|..\..\Client\Resources\Texture\TestUI\ClickUI\|0|1
@@ -81,6 +81,7 @@ Tex_Number|Number%d.tga|..\..\Client\Resources\Texture\TestUI\Number\|0|10
 Tex_Passive_Icon|Passive_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Passive_Icon\|0|89
 Tex_PickUp_Item|PickUp_Item%d.png|..\..\Client\Resources\Texture\TestUI\PickUp_Item\|0|3
 Tex_PlayerHPUI|PlayerHPUI%d.png|..\..\Client\Resources\Texture\TestUI\PlayerHPUI\|0|3
+Tex_PlayerST|PlayerST%d.png|..\..\Client\Resources\Texture\TestUI\PlayerST\|0|3
 Tex_QuickSlotUI|QuickSlotUI%d.png|..\..\Client\Resources\Texture\TestUI\QuickSlotUI\|0|5
 Tex_Select_UI|Select_UI.png|..\..\Client\Resources\Texture\TestUI\Select_UI\|0|1
 Tex_SingleSword_Icon|SingleSword_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\SingleSword_Icon\|0|3

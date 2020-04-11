@@ -6,7 +6,6 @@
 #include "TexEffect.h"
 #include "MeshEffect.h"
 #include "Player.h"
-#include "HPBack.h"
 #include "Weapon.h"
 #include "Drain_Weapon.h"
 

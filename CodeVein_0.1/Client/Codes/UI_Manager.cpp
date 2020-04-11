@@ -2,7 +2,6 @@
 #include "..\Headers\UI_Manager.h"
 
 #include "Button_UI.h"
-#include "HPBack.h"
 #include "PlayerHP.h"
 #include "PlayerST.h"
 #include "BossDecoUI.h"
@@ -47,8 +46,6 @@ CUI_Manager::~CUI_Manager()
 
 HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 {
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_HPBack", CHPBack::Create(pDevice))))
-		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_PlayerHP", CPlayerHP::Create(pDevice))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_PlayerST", CPlayerST::Create(pDevice))))
@@ -128,6 +125,7 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_TotalInven", SCENE_STAGE, L"Layer_TotalInven");
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_Inventory", SCENE_STAGE, L"Layer_Inventory");
 
+	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossHP", SCENE_STAGE, L"Layer_BossHP");
 	return NOERROR;
 }
 
@@ -224,6 +222,17 @@ _bool CUI_Manager::Get_UI_Active(const _tchar * pLayerTag)
 void CUI_Manager::Set_UI_Active(const _tchar * pLayerTag, _bool bIsActive)
 {
 	static_cast<CUI*>(g_pManagement->Get_GameObjectBack(pLayerTag, SCENE_STAGE))->Set_Active(bIsActive);
+}
+
+void CUI_Manager::Set_BossHP_Active(_bool bIsActive)
+{
+	CBossHP* pBossUI = nullptr;
+
+	pBossUI = static_cast<CBossHP*>(g_pManagement->Get_GameObjectBack(L"Layer_BossHP", SCENE_STAGE));
+	if (nullptr == pBossUI)
+		return;
+
+	pBossUI->Set_Active(false);
 }
 
 void CUI_Manager::Free()

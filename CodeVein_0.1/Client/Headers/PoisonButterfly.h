@@ -5,7 +5,7 @@
 #include "Management.h"
 
 BEGIN(Client)
-
+class CBossHP;
 class CPoisonButterfly final : public CGameObject
 {
 public:
@@ -157,6 +157,8 @@ private:	// 최초상태 세팅
 private:
 	_bool				m_bPlayerFriendly = false;		// 플레이어 껀지
 
+private:
+	CBossHP* m_pBossHP = nullptr;
 private:
 	HRESULT Update_Bone_Of_BlackBoard();
 	HRESULT Update_Value_Of_BB();

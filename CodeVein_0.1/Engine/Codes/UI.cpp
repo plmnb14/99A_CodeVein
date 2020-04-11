@@ -75,8 +75,6 @@ HRESULT CUI::Render_GameObject()
 	return NOERROR;
 }
 
-
-
 void CUI::Free()
 {
 	Safe_Delete(m_pUIDesc);

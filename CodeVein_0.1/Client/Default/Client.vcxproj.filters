@@ -136,9 +136,6 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\99.Public">
       <UniqueIdentifier>{7c37cd0b-3aa1-4f2a-98a4-27c93e364280}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\99.Public\HPBack">
-      <UniqueIdentifier>{fa879426-186e-47c8-b86a-a658c605a61a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\99.Public\Button_UI">
       <UniqueIdentifier>{f4308e4f-0a96-460c-ba32-24c91ab05ac0}</UniqueIdentifier>
     </Filter>
@@ -326,9 +323,6 @@
     </ClInclude>
     <ClInclude Include="..\Headers\UI_Manager.h">
       <Filter>02.GameObject\Stage\5%29 UI\Manager\UI_Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\HPBack.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\HPBack</Filter>
     </ClInclude>
     <ClInclude Include="StageLoader.h">
       <Filter>01.Scene\98.StageLoader</Filter>
@@ -547,9 +541,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\UI_Manager.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\Manager\UI_Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\HPBack.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\HPBack</Filter>
     </ClCompile>
     <ClCompile Include="StageLoader.cpp">
       <Filter>01.Scene\98.StageLoader</Filter>

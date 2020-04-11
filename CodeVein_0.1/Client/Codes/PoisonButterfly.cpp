@@ -2,6 +2,7 @@
 #include "..\Headers\PoisonButterfly.h"
 #include "..\Headers\PoisonBullet.h"
 #include "..\Headers\PoisonRotationBullet.h"
+#include "BossHP.h"
 
 CPoisonButterfly::CPoisonButterfly(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
@@ -35,7 +36,9 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
-
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossHP", SCENE_STAGE, L"Layer_BossHP")))
+		return E_FAIL;
+	m_pBossHP = static_cast<CBossHP*>(g_pManagement->Get_GameObjectBack(L"Layer_BossHP", SCENE_STAGE));
 
 	///////////////// 행동트리 init
 
@@ -245,7 +248,6 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 
 	m_pMeshCom->SetUp_Animation(Ani_Idle);
 
-
 	return NOERROR;
 }
 
@@ -261,7 +263,13 @@ _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 
 	// 죽었을 경우
 	if (m_bIsDead)
+	{
+		m_pBossHP->Set_BossHPInfo(0.f, 0.f);
+		m_pBossHP->Set_Active(false);
 		return DEAD_OBJ;
+	}
+	
+	m_pBossHP->Set_BossHPInfo(m_tObjParam.fHp_Cur, m_tObjParam.fHp_Max);
 
 	// 플레이어 미발견
 	if (false == m_bFight)
@@ -271,6 +279,9 @@ _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 	// 플레이어 발견
 	else
 	{
+		// 플레이어 발견하면 HP바 활성화
+		m_pBossHP->Set_Active(true);
+
 		// 뼈 위치 업데이트
 		Update_Bone_Of_BlackBoard();
 		// BB 직접 업데이트
@@ -278,7 +289,6 @@ _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 
 		if (true == m_bAIController)
 			m_pAIControllerCom->Update_AIController(TimeDelta);
-
 	}
 
 	if (false == m_bReadyDead)
