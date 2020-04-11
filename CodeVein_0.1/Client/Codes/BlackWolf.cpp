@@ -70,7 +70,7 @@ _int CBlackWolf::Update_GameObject(_double TimeDelta)
 		return NO_EVENT;
 
 	CGameObject::Update_GameObject(TimeDelta);
-	
+
 	Check_Hit();
 	Check_Dist();
 	Set_AniEvent();
@@ -292,7 +292,7 @@ void CBlackWolf::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 		// 내가 가진 Vec 콜라이더와 비교한다.
 		for (auto& vecIter : m_vecAttackCol)
 		{
-			if(false == vecIter->Get_Enabled())
+			if (false == vecIter->Get_Enabled())
 				continue;
 
 			bFirst = true;
@@ -310,7 +310,7 @@ void CBlackWolf::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					if(false == iter->Get_Target_Dodge())
+					if (false == iter->Get_Target_Dodge())
 					{
 						iter->Set_Target_CanHit(false);
 						iter->Add_Target_Hp(m_tObjParam.fDamage);
@@ -406,7 +406,7 @@ void CBlackWolf::Check_Dist()
 		return;
 
 	//회피중, 공격중, 맞는중 체크 안함
-	if (true == m_bIsDodge || 
+	if (true == m_bIsDodge ||
 		true == m_tObjParam.bIsAttack ||
 		true == m_tObjParam.bIsHit)
 		return;
@@ -499,7 +499,7 @@ void CBlackWolf::Set_AniEvent()
 		if (true == m_bCanIdleRandom)
 		{
 			m_bCanIdleRandom = false;
-			
+
 			switch (m_eSecondCategory_IDLE)
 			{
 			case Client::CBlackWolf::IDLE_IDLE:
@@ -785,7 +785,7 @@ void CBlackWolf::Play_Eat()
 	{
 		if (WOLF_ANI::Eat == m_eState)
 		{
-			if(m_pMeshCom->Is_Finish_Animation())
+			if (m_pMeshCom->Is_Finish_Animation())
 				m_eState = WOLF_ANI::Eat_End;
 
 			return;
@@ -872,7 +872,7 @@ void CBlackWolf::Play_Run()
 void CBlackWolf::Play_Dodge()
 {
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
-	
+
 	//회피는 변수가 좀 이상하니 일단 제외
 	if (false == m_tObjParam.bDodge) //회피아님?
 	{
@@ -1372,7 +1372,7 @@ HRESULT CBlackWolf::Ready_Collider()
 	m_vecPhysicCol.push_back(pCollider);
 
 	//==============================================================================================================
-	
+
 	//공격 구 넣기
 	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 	IF_NULL_VALUE_RETURN(pCollider, E_FAIL);

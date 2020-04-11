@@ -61,6 +61,10 @@ private:
 	_bool			m_bEventTrigger_3[64] = {};
 
 private:
+	_bool			m_bTimer = false;
+	_float			m_fTimer = 0.f;
+
+private:
 	virtual void St01_Sub0();
 	virtual void St01_Sub1();
 	virtual void St01_Sub2();

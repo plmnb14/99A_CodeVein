@@ -17,11 +17,11 @@ void CBehaviorTree::Reset_BT(CBlackBoard* pBlackBoard)
 	if (m_pNodeStack.empty())
 		return;
 
-	for (size_t iNode = m_pNodeStack.size() - 1; iNode > 0; --iNode)
+	for (_int iNode = _int(m_pNodeStack.size() - 1); iNode >= 0; --iNode)
 	{
 		m_pNodeStack[iNode]->End_Node(&m_pNodeStack, &m_plistNodeStack, CBT_Node::BT_NODE_STATE::FAILED, pBlackBoard, false);
 	}
-	m_pNodeStack[0]->End_Node(&m_pNodeStack, &m_plistNodeStack, CBT_Node::BT_NODE_STATE::FAILED, pBlackBoard, false);
+	//m_pNodeStack[0]->End_Node(&m_pNodeStack, &m_plistNodeStack, CBT_Node::BT_NODE_STATE::FAILED, pBlackBoard, false);
 }
 
 

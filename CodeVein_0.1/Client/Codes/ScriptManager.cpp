@@ -15,6 +15,7 @@
 #include "YachaMan.h"
 // =================================
 #include "UI_Manager.h"
+#include "MassageUI.h"
 
 IMPLEMENT_SINGLETON(CScriptManager)
 
@@ -30,6 +31,22 @@ void CScriptManager::Update_ScriptMgr(_double _dDeltaTime, _ulong _dwSubsetIdx, 
 	m_dwCellIdx = _dwCellIdx;
 
 	Update_ScriptEvent();
+
+	if (m_bTimer)
+	{
+		if (m_fTimer < 2.5f)
+		{
+			m_fTimer += DELTA_60;
+
+			if (m_fTimer >= 2.5f)
+			{
+				m_fTimer = 0.f;
+				m_fTimer = false;
+
+				CUI_Manager::Get_Instance()->Set_UI_Active(L"Layer_BossHP", true);
+			}
+		}
+	}
 }
 
 void CScriptManager::Update_ScriptEvent()
@@ -283,6 +300,7 @@ void CScriptManager::St01_Sub4()
 			m_bEventTrigger_0[9] = true;
 
 			m_vecObjectPool[28]->Set_Enable(true);
+			//m_vecObjectPool[29]->Set_Enable(true);
 
 			// 보스 HP바 생성
 			g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossHP", SCENE_STAGE, L"Layer_BossHP");
@@ -299,14 +317,18 @@ void CScriptManager::St01_Sub6()
 {
 	switch (m_dwCellIdx)
 	{
-	case 48:
+	case 0:
 	{
-		if (m_bEventTrigger_0[10] == false)
+		if (m_bEventTrigger_0[11] == false)
 		{
-			m_bEventTrigger_0[10] = true;
+			m_bEventTrigger_0[11] = true;
+			m_bTimer = true;
 
-			m_vecObjectPool[29]->Set_Enable(true);
+			CMassageUI* pMassageUI = static_cast<CMassageUI*>(g_pManagement->Get_GameObjectBack(L"Layer_BossMassageUI", SCENE_STAGE));
+			pMassageUI->Set_Check_Play_BossnameUI(true);
 		}
+
+		break;
 	}
 	}
 }
@@ -352,6 +374,12 @@ void CScriptManager::Stage_01_Scripts()
 	case 5:
 	{
 		St01_Sub5();
+		break;
+	}
+
+	case 6:
+	{
+		St01_Sub6();
 		break;
 	}
 

@@ -7,13 +7,13 @@
 #include "Get_ItemUI.h"
 
 CSwordGenji::CSwordGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
-	: CGameObject(pGraphic_Device)
+	: CMonster(pGraphic_Device)
 {
 	ZeroMemory(m_matBones, sizeof(_mat*) * Bone_End);
 }
 
 CSwordGenji::CSwordGenji(const CSwordGenji & rhs)
-	: CGameObject(rhs)
+	: CMonster(rhs)
 {
 	ZeroMemory(m_matBones, sizeof(_mat*) * Bone_End);
 }
@@ -936,7 +936,7 @@ HRESULT CSwordGenji::Update_NF()
 		else if (fLength < m_fMaxLength)
 		{
 			// 플레이어가 시야각 안에 있는가?
-			if (Is_InFov(m_fFov, vPlayer_Pos))
+			if (Is_InFov(m_fFov, m_pTransformCom, vPlayer_Pos))
 			{
 				// 플레이어 발견
 				m_bFindPlayer = true;
@@ -1022,29 +1022,6 @@ void CSwordGenji::Decre_Skill_Movement(_float _fMutiply)
 	}
 }
 
-
-_bool CSwordGenji::Is_InFov(_float fDegreeOfFov, _v3 vTargetPos)
-{
-	_v3 vThisLook = *(_v3*)(&m_pTransformCom->Get_WorldMat().m[2]);
-	vThisLook.y = 0.f;
-	D3DXVec3Normalize(&vThisLook, &vThisLook);
-
-	_v3 FromThisToTarget = vTargetPos - m_pTransformCom->Get_Pos();
-	FromThisToTarget.y = 0.f;
-	D3DXVec3Normalize(&FromThisToTarget, &FromThisToTarget);
-
-
-	_float fDot_Temp = D3DXVec3Dot(&vThisLook, &FromThisToTarget);
-	_float fRadian = acosf(fDot_Temp);
-
-	//cout << "시야각 : " << D3DXToDegree(fRadian) << endl;
-
-	if (D3DXToDegree(fRadian) < fDegreeOfFov * 0.5f)
-		return true;
-
-	return false;
-}
-
 void CSwordGenji::Check_PhyCollider()
 {
 	// 충돌처리, bCanHit를 무기가 false시켜줄것임.
@@ -1094,7 +1071,7 @@ void CSwordGenji::Check_PhyCollider()
 
 			//m_pMeshCom->SetUp_Animation(Ani_Idle);
 		}
-		else if (m_pMeshCom->Is_Finish_Animation(0.5f))	// 이때부터 재충돌 가능
+		else if (m_pMeshCom->Is_Finish_Animation(0.4f))	// 이때부터 재충돌 가능
 		{
 			m_tObjParam.bIsHit = false;
 		}
@@ -1142,16 +1119,6 @@ void CSwordGenji::Push_Collider()
 			}
 		}
 	}
-}
-
-HRESULT CSwordGenji::Draw_Collider()
-{
-	for (auto& iter : m_vecPhysicCol)
-	{
-		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
-	}
-
-	return S_OK;
 }
 
 HRESULT CSwordGenji::Add_Component(void* pArg)
