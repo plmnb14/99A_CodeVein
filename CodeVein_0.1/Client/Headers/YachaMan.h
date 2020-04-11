@@ -7,7 +7,7 @@
 BEGIN(Client)
 
 class CWeapon;
-
+class CMonsterUI;
 class CYachaMan final : public CGameObject
 {
 public:
