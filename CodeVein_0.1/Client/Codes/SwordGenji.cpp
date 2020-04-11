@@ -7,13 +7,13 @@
 #include "Get_ItemUI.h"
 
 CSwordGenji::CSwordGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
-	: CGameObject(pGraphic_Device)
+	: CMonster(pGraphic_Device)
 {
 	ZeroMemory(m_matBones, sizeof(_mat*) * Bone_End);
 }
 
 CSwordGenji::CSwordGenji(const CSwordGenji & rhs)
-	: CGameObject(rhs)
+	: CMonster(rhs)
 {
 	ZeroMemory(m_matBones, sizeof(_mat*) * Bone_End);
 }
@@ -218,6 +218,10 @@ _int CSwordGenji::Late_Update_GameObject(_double TimeDelta)
 
 	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
+	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+		return E_FAIL;
+	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
+	//	return E_FAIL;
 
 	m_dTimeDelta = TimeDelta;
 
@@ -250,10 +254,15 @@ HRESULT CSwordGenji::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
+			if (false == m_bReadyDead)
+				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+
 			m_pShaderCom->Begin_Pass(m_iPass);
 
-			if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
-				return E_FAIL;
+			m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
+
+			//if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
+			//	return E_FAIL;
 
 			m_pShaderCom->Commit_Changes();
 
@@ -268,6 +277,50 @@ HRESULT CSwordGenji::Render_GameObject()
 	m_pSword->Update_GameObject(m_dTimeDelta);
 	Update_Collider();
 	Draw_Collider();
+
+	return NOERROR;
+}
+
+HRESULT CSwordGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass)
+{
+	if (nullptr == pShader ||
+		nullptr == m_pMeshCom)
+		return E_FAIL;
+
+	if (FAILED(SetUp_ConstantTable()))
+		return E_FAIL;
+
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
+		return E_FAIL;
+
+	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+	if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
+		return E_FAIL;
+
+	m_matLastWVP = m_pTransformCom->Get_WorldMat() * ViewMatrix * ProjMatrix;
+
+	//_mat matLightVP = g_pManagement->Get_LightViewProj();
+	//if (FAILED(pShader->Set_Value("g_LightVP_Close", &matLightVP, sizeof(_mat))))
+	//	return E_FAIL;
+
+	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+
+	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+	{
+		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+
+		m_pMeshCom->Update_SkinnedMesh(i);
+
+		for (_uint j = 0; j < iNumSubSet; ++j)
+		{
+			pShader->Begin_Pass(iPass);
+
+			m_pMeshCom->Render_Mesh(i, j);
+
+			pShader->End_Pass();
+		}
+	}
 
 	return NOERROR;
 }
@@ -883,7 +936,7 @@ HRESULT CSwordGenji::Update_NF()
 		else if (fLength < m_fMaxLength)
 		{
 			// 플레이어가 시야각 안에 있는가?
-			if (Is_InFov(m_fFov, vPlayer_Pos))
+			if (Is_InFov(m_fFov, m_pTransformCom, vPlayer_Pos))
 			{
 				// 플레이어 발견
 				m_bFindPlayer = true;
@@ -969,29 +1022,6 @@ void CSwordGenji::Decre_Skill_Movement(_float _fMutiply)
 	}
 }
 
-
-_bool CSwordGenji::Is_InFov(_float fDegreeOfFov, _v3 vTargetPos)
-{
-	_v3 vThisLook = *(_v3*)(&m_pTransformCom->Get_WorldMat().m[2]);
-	vThisLook.y = 0.f;
-	D3DXVec3Normalize(&vThisLook, &vThisLook);
-
-	_v3 FromThisToTarget = vTargetPos - m_pTransformCom->Get_Pos();
-	FromThisToTarget.y = 0.f;
-	D3DXVec3Normalize(&FromThisToTarget, &FromThisToTarget);
-
-
-	_float fDot_Temp = D3DXVec3Dot(&vThisLook, &FromThisToTarget);
-	_float fRadian = acosf(fDot_Temp);
-
-	//cout << "시야각 : " << D3DXToDegree(fRadian) << endl;
-
-	if (D3DXToDegree(fRadian) < fDegreeOfFov * 0.5f)
-		return true;
-
-	return false;
-}
-
 void CSwordGenji::Check_PhyCollider()
 {
 	// 충돌처리, bCanHit를 무기가 false시켜줄것임.
@@ -1041,7 +1071,7 @@ void CSwordGenji::Check_PhyCollider()
 
 			//m_pMeshCom->SetUp_Animation(Ani_Idle);
 		}
-		else if (m_pMeshCom->Is_Finish_Animation(0.5f))	// 이때부터 재충돌 가능
+		else if (m_pMeshCom->Is_Finish_Animation(0.4f))	// 이때부터 재충돌 가능
 		{
 			m_tObjParam.bIsHit = false;
 		}
@@ -1089,16 +1119,6 @@ void CSwordGenji::Push_Collider()
 			}
 		}
 	}
-}
-
-HRESULT CSwordGenji::Draw_Collider()
-{
-	for (auto& iter : m_vecPhysicCol)
-	{
-		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
-	}
-
-	return S_OK;
 }
 
 HRESULT CSwordGenji::Add_Component(void* pArg)

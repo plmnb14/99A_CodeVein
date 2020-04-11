@@ -178,7 +178,6 @@ HRESULT CQuickSlot::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
-
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
@@ -210,15 +209,6 @@ void CQuickSlot::SetUp_Default()
 	pDesc->iIndex = 6;
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ButtonUI", SCENE_STAGE, L"Layer_DecoUI", pDesc);
 	m_vecDecoUI.push_back(static_cast<CButton_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_DecoUI", SCENE_STAGE)));
-
-	/*pDesc = new CUI::UI_DESC;
-	pDesc->fPosX = m_fPosX - 15.f;
-	pDesc->fPosY = m_fPosY + 70.f;
-	pDesc->fSizeX = 30.f;
-	pDesc->fSizeY = 30.f;
-	pDesc->iIndex = 7;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ButtonUI", SCENE_STAGE, L"Layer_DecoUI", pDesc);
-	m_vecDecoUI.push_back(static_cast<CButton_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_DecoUI", SCENE_STAGE)));*/
 
 	pDesc = new CUI::UI_DESC;
 	pDesc->fPosX = m_fPosX;

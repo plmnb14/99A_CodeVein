@@ -1,15 +1,13 @@
 #pragma once
 
-#include "Client_Defines.h"
-#include "GameObject.h"
-#include "Management.h"
+#include "Monster.h"
 
 BEGIN(Client)
 
 class CMonsterUI;
 class CDamegeNumUI;
 class CWeapon;
-class CSwordShieldGenji final : public CGameObject
+class CSwordShieldGenji final : public CMonster
 {
 public:
 	enum Color { White, Jungle, Normal };
@@ -48,6 +46,7 @@ public:
 	virtual _int Update_GameObject(_double TimeDelta);
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
+	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass);
 
 public:
 	_mat*	Get_Bonmatrix() { return m_matBones[Bone_Head]; }
@@ -64,13 +63,11 @@ private:	//패턴들
 	CBT_Composite_Node* Turning_Cut();
 	// 5. 짧은 딜레이 찌르기, 이동거리 : 0.6
 	CBT_Composite_Node* ShortDelay_Sting();
-	// 6. 길게 찌르기, 같은 모션이지만 길게 이동
 
-	// 맞음
-	// 1. 방패들고 약하게 맞음
-	CBT_Composite_Node* Hit_Weakly();
-	// 2. 방패들고 강하게 맞음
-	CBT_Composite_Node* Hit_Strongly();
+	// 변칙패턴
+	// 1. 찌르는 모션 진행하다가  플레이어가 멀면 멀리 찌르고, 가까우면 가까이 찌르고
+	CBT_Composite_Node* Anomaly_LongSting();
+
 
 	// 가드
 	CBT_Composite_Node* Guard(_double dGuardTime);
@@ -149,12 +146,8 @@ private:
 	void Skill_Movement(_float _fspeed, _v3 _vDir = { 0.f , 0.f , 0.f });
 	void Decre_Skill_Movement(_float _fMutiply = 1.f);
 
-	_bool Is_InFov(_float fDegreeOfFov, _v3 vTargetPos);
-
 	void Check_PhyCollider();
 	void Push_Collider();
-
-	HRESULT Draw_Collider();
 
 private:
 	HRESULT Add_Component(void* pArg);

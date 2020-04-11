@@ -51,8 +51,11 @@ _int CPlayerHP::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
+	if(m_fPlayerHP <= 0.f)
+		m_pFontCurHP->Set_Number(0);
+	else
+		m_pFontCurHP->Set_Number(_uint(m_fPlayerHP));
 
-	m_pFontCurHP->Set_Number(_uint(m_fPlayerHP));
 	m_pFontTotalHP->Set_Number(_uint(m_fTotalHP));
 
 	return NO_EVENT;
@@ -200,7 +203,7 @@ void CPlayerHP::SetUp_Default()
 
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_FontNumManager", SCENE_STAGE, L"Layer_FontPlayerUI");
 	m_pFontTotalHP = static_cast<CFontNumManager*>(g_pManagement->Get_GameObjectBack(L"Layer_FontPlayerUI", SCENE_STAGE));
-	m_pFontTotalHP->Set_UI_Pos(m_fPosX + 90.f, m_fPosY);
+	m_pFontTotalHP->Set_UI_Pos(m_fPosX + 100.f, m_fPosY);
 	m_pFontTotalHP->Set_UI_Size(10.f, 20.f);
 	m_pFontTotalHP->Set_ViewZ(m_fViewZ - 0.1f);
 
