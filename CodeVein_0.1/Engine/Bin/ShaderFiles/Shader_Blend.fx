@@ -119,7 +119,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	vector	vRim		= tex2D(RimSampler, In.vTexUV);
 	//vector	vSSAO	= tex2D(SSAOSampler, In.vTexUV);
 
-	Out.vColor = ((vDiffuse + vSpecular) * vShade) + ( vEmissive * 20.f ) + vRim;
+	Out.vColor = ((vDiffuse + vSpecular) * vShade) + (vEmissive * 20.f);// +vRim;
 	//Out.vColor = (vDiffuse + vSpecular - vSSAO.x) * vShade;
 
 	return Out;
@@ -339,7 +339,7 @@ PS_OUT MotionBlurForObj(PS_IN In)
 	Out.vColor = tex2D(DiffuseSampler, screenTexCoords);
 
 	// 제한
-	velocity.xy = (clamp(velocity.x, -0.5f, 0.5f), clamp(velocity.y, -0.5f, 0.5f));
+	velocity.xy = (clamp(velocity.x, -0.5f, 0.5f), clamp(velocity.y, -0.25f, 0.25f));
 
 	for (int i = 1; i < MAX_SAMPLES; ++i) {
 		// 앞의 물체는 블러에서 제외. 뒤의 것들만 처리해라
