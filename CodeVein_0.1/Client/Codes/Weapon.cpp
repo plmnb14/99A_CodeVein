@@ -282,14 +282,14 @@ void CWeapon::Update_Trails(_double TimeDelta)
 		m_pTrailEffect->Update_GameObject(TimeDelta);
 	}
 
-	if (m_pDistortionEffect)
+	if (m_pDistortionEffect && !m_bSkillMode)
 	{
 		m_pDistortionEffect->Set_ParentTransform(&matWorld);
 		m_pDistortionEffect->Ready_Info(vBegin + vDir * 0.2f, vBegin + vDir * 1.5f);
 		m_pDistortionEffect->Update_GameObject(TimeDelta);
 	}
 
-	if (m_pStaticTrailEffect)
+	if (m_pStaticTrailEffect && !m_bSkillMode)
 	{
 		m_pStaticTrailEffect->Set_ParentTransform(&matWorld);
 		m_pStaticTrailEffect->Ready_Info(vBegin + vDir * 0.2f, vBegin + vDir * 1.6f);
@@ -309,9 +309,14 @@ void CWeapon::Set_Enable_Trail(_bool _bEnable)
 	}
 }
 
-void CWeapon::Set_TrailIdx(_ulong _dwIdx)
+void CWeapon::Set_SkillMode(_bool _bSkill)
 {
-	m_pTrailEffect->Set_TrailIdx(_dwIdx);
+	m_bSkillMode = _bSkill;
+
+	if (_bSkill)
+		m_pTrailEffect->Set_TrailIdx(6);
+	else
+		m_pTrailEffect->Set_TrailIdx(0);
 }
 
 void CWeapon::Set_Enable_Record(_bool _bRecord)

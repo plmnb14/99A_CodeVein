@@ -32,11 +32,14 @@ HRESULT CRenderer::Ready_Component_Prototype()
 		return E_FAIL;
 
 	// Target_Emissive
-	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Emissive", ViewPort.Width, ViewPort.Height, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.f, 0.f, 1.f, 0.f))))
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Emissive", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.f, 0.f, 1.f, 0.f))))
 		return E_FAIL;
 
 	// Target_Velocity
-	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Velocity", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Velocity", ViewPort.Width, ViewPort.Height, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
+		return E_FAIL;
+	// Target_NormalForRim
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_RimNormal", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.f))))
 		return E_FAIL;
 
 	// 명암을 저장한다.
@@ -115,7 +118,9 @@ HRESULT CRenderer::Ready_Component_Prototype()
 
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Velocity", L"Target_Velocity")))
 		return E_FAIL;
-
+	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Velocity", L"Target_RimNormal")))
+		return E_FAIL;
+	
 	// For.MRT_LightAcc
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_LightAcc", L"Target_Shade")))
 		return E_FAIL;
@@ -307,6 +312,10 @@ HRESULT CRenderer::Draw_RenderList()
 	if (FAILED(Render_NonAlpha()))
 		return E_FAIL;
 
+	// VelocityMap, NormalMap For Rim-light
+	if (FAILED(Render_MotionBlurTarget()))
+		return E_FAIL;
+
 	if (FAILED(Render_ShadowMap()))
 		return E_FAIL;
 
@@ -314,10 +323,6 @@ HRESULT CRenderer::Draw_RenderList()
 	if (FAILED(Render_LightAcc()))
 		return E_FAIL;
 
-	// 속도맵 만들기
-	if (FAILED(Render_MotionBlurTarget()))
-		return E_FAIL;
-	
 	// 디퓨즈, 셰이드 두 타겟을 혼합하여 백버퍼에 찍는다. // With Skybox(priority), With Alpha
 	if (FAILED(Render_Blend()))
 		return E_FAIL;
@@ -585,6 +590,8 @@ HRESULT CRenderer::Render_MotionBlurTarget()
 
 	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_Velocity")))
 		return E_FAIL;
+
+	return NOERROR;
 }
 
 HRESULT CRenderer::Render_Distortion()
@@ -699,13 +706,20 @@ HRESULT CRenderer::Render_LightAcc()
 	m_pShader_LightAcc->Set_Texture("g_NormalTexture", m_pTarget_Manager->Get_Texture(L"Target_Normal"));
 	m_pShader_LightAcc->Set_Texture("g_DepthTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"));
 	m_pShader_LightAcc->Set_Texture("g_ShadowMapTexture", m_pTarget_Manager->Get_Texture(L"Target_Shadow"));
+	m_pShader_LightAcc->Set_Texture("g_RimNormalTexture", m_pTarget_Manager->Get_Texture(L"Target_RimNormal"));
 	m_pSSAOTexture->SetUp_OnShader("g_SSAOTexture", m_pShader_LightAcc, 9);
 	
 	m_pShader_LightAcc->Set_Value("g_matProjInv", &pPipeLine->Get_Transform_Inverse(D3DTS_PROJECTION), sizeof(_mat));
 	m_pShader_LightAcc->Set_Value("g_matViewInv", &pPipeLine->Get_Transform_Inverse(D3DTS_VIEW), sizeof(_mat));
 
-	_v3 CamPos = pPipeLine->Get_CamPosition();
+	_bool bTest = false;
+	if (GetAsyncKeyState('L') & 0x8000)
+		bTest = false;
+	else
+		bTest = true;
+	m_pShader_LightAcc->Set_Bool("g_bTest", bTest);
 
+	_v3 CamPos = pPipeLine->Get_CamPosition();
 	m_pShader_LightAcc->Set_Value("g_vCamPosition", &_v4(CamPos, 1.f), sizeof(_v4));
 
 	m_pShader_LightAcc->Begin_Shader();
@@ -736,7 +750,8 @@ HRESULT CRenderer::Render_Blend()
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_EmissiveTexture", m_pTarget_Manager->Get_Texture(L"Target_Emissive"))))
 		return E_FAIL;
-
+	if (FAILED(m_pShader_Blend->Set_Texture("g_RimTexture", m_pTarget_Manager->Get_Texture(L"Target_Rim"))))
+		return E_FAIL;
 
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Blend")))
 		return E_FAIL;
@@ -752,16 +767,6 @@ HRESULT CRenderer::Render_Blend()
 	m_pViewPortBuffer->Render_VIBuffer();
 
 	m_pShader_Blend->End_Pass();
-
-	// Rim ====================================
-	//m_pShader_Blend->Begin_Pass(5);
-	//if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_Rim"))))
-	//	return E_FAIL;
-	//m_pShader_Blend->Commit_Changes();
-	//m_pViewPortBuffer->Render_VIBuffer();
-	//m_pShader_Blend->End_Pass();
-	// ====================================
-
 	m_pShader_Blend->End_Shader();
 
 	// Alpha

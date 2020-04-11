@@ -1279,27 +1279,6 @@ void CPlayer::Key_Skill()
 			m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[4]->dwAnimationIdx);
 
 
-		g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing"				, 0.1f	, 0.1f	, V3_NULL, m_pTransform);
-		g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing"				, 0.1f	, 0.1f	, V3_NULL, m_pTransform);
-		g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red"					, 0.3f	, 0.2f	, V3_NULL, m_pTransform);
-		g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black"				, 0.3f	, 0.3f	, V3_NULL, m_pTransform);
-		g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RedParticle_Explosion"		, 0.15f	, 1.f	, V3_NULL, m_pTransform);
-
-		for (_int i = 0; i < 10; i++)
-			g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion"	, 1.f + 0.05f * i, m_pTransform->Get_Pos() + _v3(0.f, 0.3f * i, 0.f));
-
-		_v3 vEffPos = _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 2.7f;
-		_v3 vEffGroundPos = m_pTransform->Get_Axis(AXIS_Z) * 2.7f;
-		_v3 vPlayerPos = m_pTransform->Get_Pos();
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_DarkRedOnion_Explosion"						, 2.0f, vPlayerPos + vEffPos		, nullptr);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_SplitAssert_LaserBefore"						, 2.1f, vPlayerPos + vEffGroundPos	, nullptr);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_SplitAssert_LaserAfter_RingLine"				, 2.1f, vPlayerPos + vEffGroundPos	, nullptr);
-		g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_SplitAssert_LaserBody"		, 0.05f	, 2.1f, vPlayerPos + vEffGroundPos	, nullptr);
-		g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Blood_Explosion"				, 0.5f	, 2.1f, vPlayerPos + vEffGroundPos	, nullptr);
-		g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RedParticle_Upper"			, 0.5f  , 2.1f, vPlayerPos + vEffGroundPos	, nullptr);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion"						, 2.2f, vPlayerPos + vEffGroundPos	, nullptr);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_SplitAssert_LaserAfter_RingLine"				, 2.2f, vPlayerPos + vEffGroundPos	, nullptr);
-		g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_SplitAssert_LaserAfter_Smoke"	, 0.3f  , 2.2f, vPlayerPos + vEffGroundPos	, nullptr);
 		
 	}
 
@@ -1356,65 +1335,6 @@ void CPlayer::Key_Skill()
 
 		else if (false == m_bOneHand)
 			m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[6]->dwAnimationIdx);
-
-		g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing"		, 0.1f	, 0.1f, V3_NULL, m_pTransform);
-		g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing"		, 0.1f	, 0.1f, V3_NULL, m_pTransform);
-		g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red"			, 0.3f	, 0.2f, V3_NULL, m_pTransform);
-		g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black"		, 0.3f	, 0.3f, V3_NULL, m_pTransform);
-		//g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_WindTronadeMesh"		, 0.3f	, 0.45f, m_pTransform->Get_Pos() + _v3(0.f, 0.f, 0.f));
-		g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RedParticle_Explosion", 0.15f	, 1.0f, V3_NULL, m_pTransform);
-
-		_v3 vEffPos = _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 2.3f;
-		_v3 vEffWindPos = _v3(0.f, 1.5f, 0.f);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Hor"	, 0.85f	, vEffPos							, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor"		, 0.85f	, vEffPos							, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor"			, 0.85f	, vEffPos							, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh"				, 0.85f	, vEffWindPos						, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh"				, 0.95f	, vEffWindPos						, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh"				, 1.05f	, vEffWindPos						, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh"				, 1.15f	, vEffWindPos						, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh"				, 1.25f	, vEffWindPos						, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_0"						, 0.85f	, vEffPos							, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_1"						, 0.85f	, vEffPos							, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_2"						, 0.85f	, vEffPos							, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_3"						, 0.85f	, vEffPos							, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0"				, 0.85f	, vEffPos							, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.85f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Hor"	, 1.3f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform, _v3(0.f, 0.f, 45.f));
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor"		, 1.3f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform, _v3(0.f, 0.f, 45.f));
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor"			, 1.3f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform, _v3(0.f, 0.f, 45.f));
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh"				, 1.3f	, vEffWindPos + _v3(0, 0.4f, 0.f)	, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh"				, 1.4f	, vEffWindPos + _v3(0, 0.4f, 0.f)	, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh"				, 1.5f	, vEffWindPos + _v3(0, 0.4f, 0.f)	, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_0"						, 1.3f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_1"						, 1.3f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_2"						, 1.3f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_3"						, 1.3f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0"				, 1.3f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 1.3f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Hor"	, 1.60f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform, _v3(0.f, 0.f, -45.f));
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor"		, 1.60f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform, _v3(0.f, 0.f, -45.f));
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor"			, 1.60f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform, _v3(0.f, 0.f, -45.f));
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh"				, 1.60f	, vEffWindPos + _v3(0, 0.4f, 0.f)	, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh"				, 1.70f	, vEffWindPos + _v3(0, 0.4f, 0.f)	, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh"				, 1.80f	, vEffWindPos + _v3(0, 0.4f, 0.f)	, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_0"						, 1.60f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_1"						, 1.60f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_2"						, 1.60f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_3"						, 1.60f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0"				, 1.60f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 1.60f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Hor"	, 1.90f	, vEffPos + _v3(0, 0.3f, 0.f)		, m_pTransform, _v3(0.f, 0.f, -65.f));
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor"		, 1.90f	, vEffPos + _v3(0, 0.3f, 0.f)		, m_pTransform, _v3(0.f, 0.f, -65.f));
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor"			, 1.90f	, vEffPos + _v3(0, 0.3f, 0.f)		, m_pTransform, _v3(0.f, 0.f, -65.f));
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_0"						, 1.90f	, vEffPos + _v3(0, 0.3f, 0.f)		, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_1"						, 1.90f	, vEffPos + _v3(0, 0.3f, 0.f)		, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_2"						, 1.90f	, vEffPos + _v3(0, 0.3f, 0.f)		, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_3"						, 1.90f	, vEffPos + _v3(0, 0.3f, 0.f)		, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0"				, 1.90f	, vEffPos + _v3(0, 0.3f, 0.f)		, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 1.90f	, vEffPos + _v3(0, 0.3f, 0.f)		, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh"				, 1.90f	, vEffWindPos + _v3(0, 0.3f, 0.f)	, m_pTransform);
-
 	}
 
 	// 4번 스킬
@@ -1430,6 +1350,14 @@ void CPlayer::Key_Skill()
 
 		else if (false == m_bOneHand)
 			m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[7]->dwAnimationIdx);
+
+		g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing"		, 0.1f, 0.1f, V3_NULL, m_pTransform);
+		g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing"		, 0.1f, 0.1f, V3_NULL, m_pTransform);
+		g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red"			, 0.3f, 0.2f, V3_NULL, m_pTransform);
+		g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black"		, 0.3f, 0.3f, V3_NULL, m_pTransform);
+		g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RedParticle_Explosion", 0.1f, 0.5f, V3_NULL, m_pTransform);
+		
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.7f, _v3(0, 1.5f, 0.f), m_pTransform);
 	}
 
 	// 1번 버프
@@ -1521,7 +1449,6 @@ void CPlayer::Play_Idle()
 
 	m_eAnim_Upper = m_eAnim_Lower;
 	m_eAnim_RightArm = m_eAnim_Lower;
-	m_pWeapon[m_eActiveSlot]->Set_TrailIdx(0); // WhiteColor
 }
 
 void CPlayer::Play_Run()
@@ -3094,7 +3021,7 @@ void CPlayer::Play_Skills()
 		m_eAnim_RightArm = m_eAnim_Lower;
 		m_eAnim_LeftArm = m_eAnim_Lower;
 
-		m_pWeapon[m_eActiveSlot]->Set_TrailIdx(6); // RedColor
+		m_pWeapon[m_eActiveSlot]->Set_SkillMode(true); // RedColor
 	}
 
 	else
@@ -3103,8 +3030,6 @@ void CPlayer::Play_Skills()
 		{
 		case Renketsu_StrongAtk_01:
 		{
-
-
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
 				Reset_BattleState();
@@ -3165,6 +3090,20 @@ void CPlayer::Play_Skills()
 					m_fSkillMoveMultiply = 1.f;
 
 					m_fAnimMutiply = 1.f;
+
+					_v3 vEffPos = _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 2.7f;
+					_v3 vEffGroundPos = m_pTransform->Get_Axis(AXIS_Z) * 2.7f;
+					_v3 vPlayerPos = m_pTransform->Get_Pos();
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_DarkRedOnion_Explosion"						, 0.f, vPlayerPos + vEffPos			, nullptr);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_SplitAssert_LaserBefore"						, 0.f, vPlayerPos + vEffGroundPos	, nullptr);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_SplitAssert_LaserAfter_RingLine"				, 0.f, vPlayerPos + vEffGroundPos	, nullptr);
+					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_SplitAssert_LaserBody"		, 0.05f	, 0.f, vPlayerPos + vEffGroundPos	, nullptr);
+					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Blood_Explosion"				, 0.5f	, 0.f, vPlayerPos + vEffGroundPos	, nullptr);
+					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RedParticle_Upper"			, 0.5f  , 0.f, vPlayerPos + vEffGroundPos	, nullptr);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion"						, 0.f, vPlayerPos + vEffGroundPos	, nullptr);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_SplitAssert_LaserAfter_RingLine"				, 0.f, vPlayerPos + vEffGroundPos	, nullptr);
+					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_SplitAssert_LaserAfter_Smoke"	, 0.3f  , 0.f, vPlayerPos + vEffGroundPos	, nullptr);
+		
 				}
 
 				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
@@ -3180,6 +3119,10 @@ void CPlayer::Play_Skills()
 					m_fSkillMoveSpeed_Cur = 6.f;
 					m_fSkillMoveAccel_Cur = 0.f;
 					m_fSkillMoveMultiply = 1.f;
+
+					for (_int i = 0; i < 10; i++)
+						g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion", 0.f, m_pTransform->Get_Pos());
+
 				}
 
 				if (m_fAnimMutiply > 0.5f)
@@ -3196,7 +3139,16 @@ void CPlayer::Play_Skills()
 				Decre_Skill_Movement(m_fSkillMoveMultiply);
 			}
 
-				break;
+			else if (m_pDynamicMesh->Get_TrackInfo().Position <= DELTA_60 + 0.1f)
+			{
+				g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing"				, 0.1f	, 0.1f	, V3_NULL, m_pTransform);
+				g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing"				, 0.1f	, 0.1f	, V3_NULL, m_pTransform);
+				g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red"					, 0.3f	, 0.2f	, V3_NULL, m_pTransform);
+				g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black"				, 0.3f	, 0.3f	, V3_NULL, m_pTransform);
+				g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RedParticle_Explosion"		, 0.15f	, 1.f	, V3_NULL, m_pTransform);
+			}
+
+			break;
 		}
 		case Renketsu_StrongAtk_02:
 		{
@@ -3204,6 +3156,9 @@ void CPlayer::Play_Skills()
 		}
 		case Renketsu_StrongAtk_03:
 		{
+			_v3 vEffPos = _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 2.3f;
+			_v3 vEffWindPos = _v3(0.f, 1.5f, 0.f);
+
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
 				Reset_BattleState();
@@ -3212,7 +3167,6 @@ void CPlayer::Play_Skills()
 
 				return;
 			}
-
 			else if (m_pDynamicMesh->Get_TrackInfo().Position > 4.067f)
 			{
 				if (m_bEventTrigger[10] == false)
@@ -3232,6 +3186,17 @@ void CPlayer::Play_Skills()
 
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
+
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Hor"	, 0.f	, vEffPos + _v3(0, 0.3f, 0.f)		, m_pTransform, _v3(0.f, 0.f, -65.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor"		, 0.f	, vEffPos + _v3(0, 0.3f, 0.f)		, m_pTransform, _v3(0.f, 0.f, -65.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor"			, 0.f	, vEffPos + _v3(0, 0.3f, 0.f)		, m_pTransform, _v3(0.f, 0.f, -65.f));
+					g_pManagement->Create_Effect_Delay(L"Hit_Slash_0"						, 0.f	, vEffPos + _v3(0, 0.3f, 0.f)		, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Hit_Slash_1"						, 0.f	, vEffPos + _v3(0, 0.3f, 0.f)		, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Hit_Slash_2"						, 0.f	, vEffPos + _v3(0, 0.3f, 0.f)		, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Hit_Slash_3"						, 0.f	, vEffPos + _v3(0, 0.3f, 0.f)		, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0"				, 0.f	, vEffPos + _v3(0, 0.3f, 0.f)		, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f	, vEffPos + _v3(0, 0.3f, 0.f)		, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh"				, 0.f	, vEffWindPos + _v3(0, 0.3f, 0.f)	, m_pTransform);
 				}
 			}
 
@@ -3254,6 +3219,19 @@ void CPlayer::Play_Skills()
 
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
+
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Hor"	, 0.f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform, _v3(0.f, 0.f, -45.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor"		, 0.f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform, _v3(0.f, 0.f, -45.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor"			, 0.f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform, _v3(0.f, 0.f, -45.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh"				, 0.f	, vEffWindPos + _v3(0, 0.4f, 0.f)	, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh"				, 0.1f	, vEffWindPos + _v3(0, 0.4f, 0.f)	, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh"				, 0.2f	, vEffWindPos + _v3(0, 0.4f, 0.f)	, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Hit_Slash_0"						, 0.f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Hit_Slash_1"						, 0.f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Hit_Slash_2"						, 0.f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Hit_Slash_3"						, 0.f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0"				, 0.f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform);
 				}
 			}
 
@@ -3276,6 +3254,19 @@ void CPlayer::Play_Skills()
 
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
+
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Hor"	, 0.f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform, _v3(0.f, 0.f, 45.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor"		, 0.f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform, _v3(0.f, 0.f, 45.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor"			, 0.f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform, _v3(0.f, 0.f, 45.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh"				, 0.f	, vEffWindPos + _v3(0, 0.4f, 0.f)	, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh"				, 0.1f	, vEffWindPos + _v3(0, 0.4f, 0.f)	, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh"				, 0.2f	, vEffWindPos + _v3(0, 0.4f, 0.f)	, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Hit_Slash_0"						, 0.f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Hit_Slash_1"						, 0.f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Hit_Slash_2"						, 0.f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Hit_Slash_3"						, 0.f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0"				, 0.f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform);
 				}
 			}
 
@@ -3298,6 +3289,21 @@ void CPlayer::Play_Skills()
 
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
+
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Hor"	, 0.f	, vEffPos							, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor"		, 0.f	, vEffPos							, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor"			, 0.f	, vEffPos							, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh"				, 0.f	, vEffWindPos						, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh"				, 0.1f	, vEffWindPos						, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh"				, 0.2f	, vEffWindPos						, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh"				, 0.3f	, vEffWindPos						, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh"				, 0.4f	, vEffWindPos						, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Hit_Slash_0"						, 0.f	, vEffPos							, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Hit_Slash_1"						, 0.f	, vEffPos							, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Hit_Slash_2"						, 0.f	, vEffPos							, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Hit_Slash_3"						, 0.f	, vEffPos							, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0"				, 0.f	, vEffPos							, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f	, vEffPos + _v3(0, 0.4f, 0.f)		, m_pTransform);
 				}
 			}
 
@@ -3321,7 +3327,17 @@ void CPlayer::Play_Skills()
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(true);
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
+					
+					//g_pManagement->Create_AngleEffect(L"Player_Skill_WindTornadeMesh", m_pTransform->Get_Pos() + vEffPos, m_pTransform->Get_Angle());
 				}
+			}
+			else if (m_pDynamicMesh->Get_TrackInfo().Position <= DELTA_60 + 0.1f)
+			{
+				g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing"		, 0.1f	, 0.1f, V3_NULL, m_pTransform);
+				g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing"		, 0.1f	, 0.1f, V3_NULL, m_pTransform);
+				g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red"			, 0.3f	, 0.2f, V3_NULL, m_pTransform);
+				g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black"		, 0.3f	, 0.3f, V3_NULL, m_pTransform);
+				g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RedParticle_Explosion", 0.15f	, 1.0f, V3_NULL, m_pTransform);
 			}
 
 			if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.367f && m_pDynamicMesh->Get_TrackInfo().Position < 4.633f)
@@ -5099,6 +5115,7 @@ void CPlayer::Reset_BattleState()
 	m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 	m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(false);
 	m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
+	m_pWeapon[m_eActiveSlot]->Set_SkillMode(false); // WhiteColor
 
 	LOOP(16)
 		m_bEventTrigger[i] = false;

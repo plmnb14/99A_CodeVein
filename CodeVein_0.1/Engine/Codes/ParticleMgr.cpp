@@ -46,7 +46,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Player_Skill_RotYRing_Black", 40);
 	Input_Pool(L"Player_Skill_RotYRing_Red", 40);
 	Input_Pool(L"Player_Skill_WindMesh", 40);
-	Input_Pool(L"Player_Skill_WindTronadeMesh", 60);
+	Input_Pool(L"Player_Skill_WindTornadeMesh", 60);
 
 	Input_Pool(L"ButterFly_SoftSmoke", 2000);
 	Input_Pool(L"ButterFly_PointParticle", 1000);

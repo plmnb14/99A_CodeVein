@@ -85,6 +85,18 @@ sampler	SSAOSampler = sampler_state
 	addressV = clamp;
 };
 
+texture		g_RimTexture;
+sampler	RimSampler = sampler_state
+{
+	texture = g_RimTexture;
+	minfilter = linear;
+	magfilter = linear;
+	mipfilter = linear;
+
+	addressU = clamp;
+	addressV = clamp;
+};
+
 struct PS_IN
 {
 	float4		vPosition : POSITION;
@@ -102,16 +114,12 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	vector	vDiffuse	= tex2D(DiffuseSampler, In.vTexUV);
 	vector	vEmissive	= tex2D(EmissiveSampler, In.vTexUV);
-	//vector	vShade = tex2D(ShadeSampler, In.vTexUV);
-	//vector	vSpecular = tex2D(SpecularSampler, In.vTexUV);
-	//vector	vSSAO = tex2D(SSAOSampler, In.vTexUV);
+	vector	vShade		= tex2D(ShadeSampler, In.vTexUV);
+	vector	vSpecular	= tex2D(SpecularSampler, In.vTexUV);
+	vector	vRim		= tex2D(RimSampler, In.vTexUV);
+	//vector	vSSAO	= tex2D(SSAOSampler, In.vTexUV);
 
-	//vector	vDiffuse = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
-	vector	vShade = pow(tex2D(ShadeSampler, In.vTexUV), 2.2);
-	vector	vSpecular = pow(tex2D(SpecularSampler, In.vTexUV), 2.2);
-	//vector	vSSAO = pow(tex2D(SSAOSampler, In.vTexUV), 2.2);
-
-	Out.vColor = ((vDiffuse + vSpecular) * vShade) + ( vEmissive * 20.f );
+	Out.vColor = ((vDiffuse + vSpecular) * vShade) + ( vEmissive * 20.f ) + vRim;
 	//Out.vColor = (vDiffuse + vSpecular - vSSAO.x) * vShade;
 
 	return Out;
@@ -312,7 +320,7 @@ PS_OUT MotionBlurForObj(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	//float uVelocityScale = g_fCurFrame / g_fTargetFrame;
-	int MAX_SAMPLES = 15;
+	int MAX_SAMPLES = 10;
 
 	//float2 texelSize = float2(1.f / 1280.f, 1.f / 720.f);
 	float2 screenTexCoords = In.vTexUV.xy;// *texelSize;
