@@ -219,7 +219,7 @@ private:
 	_bool				m_bIsAtkCombo = false;
 	_bool				m_bCanIdleRandom = true;
 
-	_float				m_fRecognitionRange = 10.f;
+	_float				m_fRecognitionRange = 15.f;
 	_float				m_fAtkRange = 4.f;
 	_float				m_fCoolDownMax = 0.f;
 	_float				m_fCoolDownCur = 0.f;
