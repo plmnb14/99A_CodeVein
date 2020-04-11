@@ -6,13 +6,13 @@
 #include "DamegeNumUI.h"
 
 CGunGenji::CGunGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
-	: CGameObject(pGraphic_Device)
+	: CMonster(pGraphic_Device)
 {
 	ZeroMemory(m_matBones, sizeof(_mat*) * Bone_End);
 }
 
 CGunGenji::CGunGenji(const CGunGenji & rhs)
-	: CGameObject(rhs)
+	: CMonster(rhs)
 {
 	ZeroMemory(m_matBones, sizeof(_mat*) * Bone_End);
 }
@@ -35,7 +35,7 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.fHp_Cur = 100.f;
-	m_tObjParam.fHp_Max = 100.f;
+	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
@@ -124,207 +124,6 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	//Start_Sel->Add_Child(Cut_To_Right());
 
 	////////////////////////
-
-
-	////방패 벗겨짐
-	//CBT_Play_Ani* pAni0 = Node_Ani("방패 벗겨짐 ", 0, 0.9f);
-	//pSequence->Add_Child(pAni0);
-
-	////방패 풀림
-	//CBT_Play_Ani* pAni1 = Node_Ani("방패 풀림 ", 1, 0.9f);
-	//pSequence->Add_Child(pAni1);
-
-	////방패 틱틱
-	//CBT_Play_Ani* pAni2 = Node_Ani("방패 틱틱 ", 2, 0.9f);
-	//pSequence->Add_Child(pAni2);
-
-	////가드 시작
-	//CBT_Play_Ani* pAni3 = Node_Ani("가드 시작 ", 3, 0.9f);
-	//pSequence->Add_Child(pAni3);
-
-	////가드 루프
-	//CBT_Play_Ani* pAni4 = Node_Ani("가드 루프 ", 4, 0.9f);
-	//pSequence->Add_Child(pAni4);
-
-	////가드 끝
-	//CBT_Play_Ani* pAni5 = Node_Ani("가드 끝 ", 5, 0.9f);
-	//pSequence->Add_Child(pAni5);
-
-	////가드 달리기
-	//CBT_Play_Ani* pAni6 = Node_Ani("가드 달리기 ", 6, 0.9f);
-	//pSequence->Add_Child(pAni6);
-
-	////가드 오른쪽 걷기
-	//CBT_Play_Ani* pAni7 = Node_Ani("가드 뒤로 걷기 ", 7, 0.9f);
-	//pSequence->Add_Child(pAni7);
-
-	////가드 왼쪽 걷기
-	//CBT_Play_Ani* pAni8 = Node_Ani("가드 왼쪽 걷기 ", 8, 0.9f);
-	//pSequence->Add_Child(pAni8);
-
-	////가드 앞오른쪾 걷기
-	//CBT_Play_Ani* pAni9 = Node_Ani("가드 앞오른쪾 걷기 ", 9, 0.9f);
-	//pSequence->Add_Child(pAni9);
-
-	////가드 앞왼쪽오른발 걷기
-	//CBT_Play_Ani* pAni10 = Node_Ani("가드 앞왼쪽오른발 걷기 ", 10, 0.9f);
-	//pSequence->Add_Child(pAni10);
-
-	////가드 앞왼쪽왼발 걷기
-	//CBT_Play_Ani* pAni11 = Node_Ani("가드 앞왼쪽왼발 걷기 ", 11, 0.9f);
-	//pSequence->Add_Child(pAni11);
-
-	////가드 앞으로 걷기
-	//CBT_Play_Ani* pAni12 = Node_Ani("가드 앞으로 걷기 ", 12, 0.9f);
-	//pSequence->Add_Child(pAni12);
-
-	////가드 뒤오른쪽오른발 걷기
-	//CBT_Play_Ani* pAni13 = Node_Ani("가드 뒤오른쪽오른발 걷기 ", 13, 0.9f);
-	//pSequence->Add_Child(pAni13);
-
-	////가드 뒤 오른쪽왼발 걷기
-	//CBT_Play_Ani* pAni14 = Node_Ani("가드 뒤 오른쪽왼발 걷기 ", 14, 0.9f);
-	//pSequence->Add_Child(pAni14);
-
-	////가드 뒤 왼쪽 걷기
-	//CBT_Play_Ani* pAni15 = Node_Ani("가드 뒤 왼쪽 걷기 ", 15, 0.9f);
-	//pSequence->Add_Child(pAni15);
-
-	////가드 뒤 걷기
-	//CBT_Play_Ani* pAni16 = Node_Ani("가드 뒤 걷기 ", 16, 0.9f);
-	//pSequence->Add_Child(pAni16);
-
-	////가드 오른쪽180도
-	//CBT_Play_Ani* pAni17 = Node_Ani("가드 오른쪽180도 ", 17, 0.9f);
-	//pSequence->Add_Child(pAni17);
-
-	////가드 오른쪽 90도
-	//CBT_Play_Ani* pAni18 = Node_Ani("가드 오른쪽 90도 ", 18, 0.9f);
-	//pSequence->Add_Child(pAni18);
-
-	////가드 왼쪽 180도
-	//CBT_Play_Ani* pAni19 = Node_Ani("가드 왼쪽 180도 ", 19, 0.9f);
-	//pSequence->Add_Child(pAni19);
-
-	////가드 왼쪽 90도
-	//CBT_Play_Ani* pAni20 = Node_Ani("가드 왼쪽 90도 ", 20, 0.9f);
-	//pSequence->Add_Child(pAni20);
-
-	////막고 지르기
-	//CBT_Play_Ani* pAni21 = Node_Ani("막고 지르기 ", 21, 0.9f);
-	//pSequence->Add_Child(pAni21);
-
-	////방패들고 휘돌아치기
-	//CBT_Play_Ani* pAni22 = Node_Ani("방패들고 휘돌아치기 ", 22, 0.9f);
-	//pSequence->Add_Child(pAni22);
-
-	////방패로 후려치기
-	//CBT_Play_Ani* pAni23 = Node_Ani("방패로 후려치기 ", 23, 0.9f);
-	//pSequence->Add_Child(pAni23);
-
-	////방패들고 지르기
-	//CBT_Play_Ani* pAni24 = Node_Ani("방패들고 지르기 ", 24, 0.9f);
-	//pSequence->Add_Child(pAni24);
-
-	////방패로 치고 어퍼치기
-	//CBT_Play_Ani* pAni25 = Node_Ani("방패로 치고 어퍼치기 ", 25, 0.9f);
-	//pSequence->Add_Child(pAni25);
-
-	////주머니에서 표창
-	//CBT_Play_Ani* pAni26 = Node_Ani("주머니에서 표창 ", 26, 0.9f);
-	//pSequence->Add_Child(pAni26);
-
-	////등에서 표창내던지기
-	//CBT_Play_Ani* pAni27 = Node_Ani("등에서 표창 내던지기 ", 27, 0.9f);
-	//pSequence->Add_Child(pAni27);
-
-	////사선후려베기
-	//CBT_Play_Ani* pAni28 = Node_Ani("사선 후려베기 ", 28, 0.9f);
-	//pSequence->Add_Child(pAni28);
-
-	////크게 옆구리베기
-	//CBT_Play_Ani* pAni29 = Node_Ani("크게 옆구리 베기", 29, 0.9f);
-	//pSequence->Add_Child(pAni29);
-
-	////테니스 토스 두번베기
-	//CBT_Play_Ani* pAni30 = Node_Ani("테니스 토스 두번베기 ", 30, 0.9f);
-	//pSequence->Add_Child(pAni30);
-
-	////힘껏 내려배는척하면서 찌르기
-	//CBT_Play_Ani* pAni31 = Node_Ani("힘껏 내려배는척 하면서 찌르기 ", 31, 0.9f);
-	//pSequence->Add_Child(pAni31);
-
-	////앉아서 왼쪽옆구리 베기
-	//CBT_Play_Ani* pAni32 = Node_Ani("앉아서 왼쪽옆구리베기 ", 32, 0.9f);
-	//pSequence->Add_Child(pAni32);
-
-	////백스텝하며 표창
-	//CBT_Play_Ani* pAni33 = Node_Ani("백스텝하며 표창 ", 33, 0.9f);
-	//pSequence->Add_Child(pAni33);
-
-	////달려가 지르기 시작
-	//CBT_Play_Ani* pAni34 = Node_Ani("달려가 지르기 시작 ", 34, 0.9f);
-	//pSequence->Add_Child(pAni34);
-
-	////달려가 지르기 루프
-	//CBT_Play_Ani* pAni35 = Node_Ani("달려가 지르기 루프 ", 35, 0.9f);
-	//pSequence->Add_Child(pAni35);
-
-	////달려가 지르기 끝
-	//CBT_Play_Ani* pAni36 = Node_Ani("달려가 지르기 끝 ", 36, 0.9f);
-	//pSequence->Add_Child(pAni36);
-
-	////테니스 토스 세번베기
-	//CBT_Play_Ani* pAni37 = Node_Ani("테니스 토스 세번베기 ", 37, 0.9f);
-	//pSequence->Add_Child(pAni37);
-
-	////휘청거리게 크게 베기
-	//CBT_Play_Ani* pAni38 = Node_Ani("휘청거리게 크게 베기 ", 38, 0.9f);
-	//pSequence->Add_Child(pAni38);
-
-	////손날치듯이
-	//CBT_Play_Ani* pAni39 = Node_Ani("손날치듯이 ", 39, 0.9f);
-	//pSequence->Add_Child(pAni39);
-
-	////손등으로 뺨치듯이
-	//CBT_Play_Ani* pAni40 = Node_Ani("손등으로 뺨치듯이 ", 40, 0.9f);
-	//pSequence->Add_Child(pAni40);
-
-	////미운놈 꿀밤패듯이
-	//CBT_Play_Ani* pAni41 = Node_Ani("미운놈 꿀밤패듯이", 41, 0.9f);
-	//pSequence->Add_Child(pAni41);
-
-	////총 기본
-	//CBT_Play_Ani* pAni42 = Node_Ani("총 기본", 42, 0.9f);
-	//pSequence->Add_Child(pAni42);
-
-	////개머리판 치기
-	//CBT_Play_Ani* pAni43 = Node_Ani("개머리판 치기 ", 43, 0.9f);
-	//pSequence->Add_Child(pAni43);
-
-	////정조준
-	//CBT_Play_Ani* pAni44 = Node_Ani("정조준 ", 44, 0.9f);
-	//pSequence->Add_Child(pAni44);
-
-	////팔꿈치 치기
-	//CBT_Play_Ani* pAni45 = Node_Ani("팔꿈치 치기 ", 45, 0.9f);
-	//pSequence->Add_Child(pAni45);
-
-	////한손 총 찌르기
-	//CBT_Play_Ani* pAni46 = Node_Ani("한손 총 찌르기 ", 46, 0.9f);
-	//pSequence->Add_Child(pAni46);
-
-	////총 왼쪽부터 베기
-	//CBT_Play_Ani* pAni47 = Node_Ani("총 왼쪽부터 베기 ", 47, 0.9f);
-	//pSequence->Add_Child(pAni47);
-
-	////백덤블링중 2회 쏘기
-	//CBT_Play_Ani* pAni48 = Node_Ani("백덤블링중 2회 쏘기 ", 48, 0.9f);
-	//pSequence->Add_Child(pAni48);
-
-	////총 쏘기
-	//CBT_Play_Ani* pAni49 = Node_Ani("총 쏘기 ", 49, 0.9f);
-	//pSequence->Add_Child(pAni49);
 
 	m_pMeshCom->SetUp_Animation(Ani_Idle);
 
@@ -598,9 +397,9 @@ CBT_Composite_Node * CGunGenji::Arm_Attack()
 	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.3f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
-	CBT_Wait* Wait0 = Node_Wait("대기", 0.25, 0);
+	CBT_Wait* Wait0 = Node_Wait("대기0", 0.25, 0);
 	//CBT_Wait* Wait0 = Node_Wait("대기", 0.35, 0);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2, 1.05, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 2, 1.05, 0);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.317, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", -0.6f, 1.066, 0);
 
@@ -924,7 +723,7 @@ HRESULT CGunGenji::Update_NF()
 		else if (fLength < m_fMaxLength)
 		{
 			// 플레이어가 시야각 안에 있는가?
-			if (Is_InFov(m_fFov, vPlayer_Pos))
+			if (Is_InFov(m_fFov, m_pTransformCom, vPlayer_Pos))
 			{
 				// 플레이어 발견
 				m_bFindPlayer = true;
@@ -1008,28 +807,6 @@ void CGunGenji::Decre_Skill_Movement(_float _fMutiply)
 		m_fSkillMoveAccel_Cur = 0.5f;
 		m_fSkillMoveSpeed_Cur = 0.f;
 	}
-}
-
-_bool CGunGenji::Is_InFov(_float fDegreeOfFov, _v3 vTargetPos)
-{
-	_v3 vThisLook = *(_v3*)(&m_pTransformCom->Get_WorldMat().m[2]);
-	vThisLook.y = 0.f;
-	D3DXVec3Normalize(&vThisLook, &vThisLook);
-
-	_v3 FromThisToTarget = vTargetPos - m_pTransformCom->Get_Pos();
-	FromThisToTarget.y = 0.f;
-	D3DXVec3Normalize(&FromThisToTarget, &FromThisToTarget);
-
-
-	_float fDot_Temp = D3DXVec3Dot(&vThisLook, &FromThisToTarget);
-	_float fRadian = acosf(fDot_Temp);
-
-	//cout << "시야각 : " << D3DXToDegree(fRadian) << endl;
-
-	if (D3DXToDegree(fRadian) < fDegreeOfFov * 0.5f)
-		return true;
-
-	return false;
 }
 
 void CGunGenji::Check_PhyCollider()
@@ -1124,16 +901,6 @@ void CGunGenji::Push_Collider()
 			}
 		}
 	}
-}
-
-HRESULT CGunGenji::Draw_Collider()
-{
-	for (auto& iter : m_vecPhysicCol)
-	{
-		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
-	}
-
-	return S_OK;
 }
 
 HRESULT CGunGenji::Add_Component(void* pArg)

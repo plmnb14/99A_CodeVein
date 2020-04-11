@@ -4,12 +4,12 @@
 #include "..\Headers\PoisonRotationBullet.h"
 
 CPoisonButterfly::CPoisonButterfly(LPDIRECT3DDEVICE9 pGraphic_Device)
-	: CGameObject(pGraphic_Device)
+	: CMonster(pGraphic_Device)
 {
 }
 
 CPoisonButterfly::CPoisonButterfly(const CPoisonButterfly & rhs)
-	: CGameObject(rhs)
+	: CMonster(rhs)
 {
 }
 
@@ -1133,7 +1133,7 @@ HRESULT CPoisonButterfly::Update_NF()
 		else if (fLength < m_fMaxLength)
 		{
 			// 플레이어가 시야각 안에 있는가?
-			if (Is_InFov(m_fFov, vPlayer_Pos))
+			if (Is_InFov(m_fFov, m_pTransformCom, vPlayer_Pos))
 			{
 				// 플레이어 발견
 				m_bFindPlayer = true;
@@ -1185,28 +1185,6 @@ HRESULT CPoisonButterfly::Update_Collider()
 
 	m_pCollider->Update(m_pTransformCom->Get_Pos() + _v3(0.f, m_pCollider->Get_Radius().y, 0.f));
 	return S_OK;
-}
-
-_bool CPoisonButterfly::Is_InFov(_float fDegreeOfFov, _v3 vTargetPos)
-{
-	_v3 vThisLook = *(_v3*)(&m_pTransformCom->Get_WorldMat().m[2]);
-	vThisLook.y = 0.f;
-	D3DXVec3Normalize(&vThisLook, &vThisLook);
-
-	_v3 FromThisToTarget = vTargetPos - m_pTransformCom->Get_Pos();
-	FromThisToTarget.y = 0.f;
-	D3DXVec3Normalize(&FromThisToTarget, &FromThisToTarget);
-
-
-	_float fDot_Temp = D3DXVec3Dot(&vThisLook, &FromThisToTarget);
-	_float fRadian = acosf(fDot_Temp);
-
-	//cout << "시야각 : " << D3DXToDegree(fRadian) << endl;
-
-	if (D3DXToDegree(fRadian) < fDegreeOfFov * 0.5f)
-		return true;
-
-	return false;
 }
 
 void CPoisonButterfly::Check_PhyCollider()
@@ -1317,21 +1295,6 @@ void CPoisonButterfly::Push_Collider()
 			}
 		}
 	}
-}
-
-HRESULT CPoisonButterfly::Draw_Collider()
-{
-	for (auto& iter : m_vecPhysicCol)
-	{
-		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
-	}
-
-	for (auto& iter : m_vecAttackCol)
-	{
-		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
-	}
-
-	return S_OK;
 }
 
 void CPoisonButterfly::OnCollisionEnter()

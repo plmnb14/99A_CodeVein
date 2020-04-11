@@ -1,12 +1,10 @@
 #pragma once
 
-#include "Client_Defines.h"
-#include "GameObject.h"
-#include "Management.h"
+#include "Monster.h"
 
 BEGIN(Client)
 
-class CPoisonButterfly final : public CGameObject
+class CPoisonButterfly final : public CMonster
 {
 public:
 	typedef struct tagInitInfo
@@ -164,12 +162,8 @@ private:
 	HRESULT Update_Collider();
 
 private:
-	_bool Is_InFov(_float fDegreeOfFov, _v3 vTargetPos);
-
 	void Check_PhyCollider();
 	void Push_Collider();
-
-	HRESULT Draw_Collider();
 
 private:
 	void OnCollisionEnter();

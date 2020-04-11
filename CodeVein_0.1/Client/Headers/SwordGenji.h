@@ -1,8 +1,6 @@
 #pragma once
 
-#include "Client_Defines.h"
-#include "GameObject.h"
-#include "Management.h"
+#include "Monster.h"
 
 BEGIN(Client)
 
@@ -10,7 +8,7 @@ class CDamegeNumUI;
 class CMonsterUI;
 class CGet_ItemUI;
 class CWeapon;
-class CSwordGenji final : public CGameObject
+class CSwordGenji final : public CMonster
 {
 public:
 	enum Color { White, Jungle, Normal };
@@ -162,12 +160,8 @@ private:
 	void Skill_Movement(_float _fspeed, _v3 _vDir = { 0.f , 0.f , 0.f });
 	void Decre_Skill_Movement(_float _fMutiply = 1.f);
 
-	_bool Is_InFov(_float fDegreeOfFov, _v3 vTargetPos);
-
 	void Check_PhyCollider();
 	void Push_Collider();
-
-	HRESULT Draw_Collider();
 
 private:
 	HRESULT Add_Component(void* pArg);
