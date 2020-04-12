@@ -213,7 +213,7 @@ void CPlayer_Colleague::Colleague_Movement(_float fSpeed, _v3 vDir)
 void CPlayer_Colleague::ColleagueMove_Walk()
 {
 	if (true == Checking_Player())
-		Colleague_Movement(2.f, m_pTargetTransformCom->Get_Axis(AXIS_Z));
+		Colleague_Movement(2.f, m_pTargetTransformCom->Get_Pos());
 	if (false == Checking_Player())
 		return;
 
