@@ -15,6 +15,8 @@
 #include "SwordShieldGenji.h"
 #include "PoisonButterfly.h"
 
+#include "Player_Colleague.h"
+
 CScene_Stage_Training::CScene_Stage_Training(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
 {
@@ -218,7 +220,6 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//	return E_FAIL;
 
 
-
 	// 독나방
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_PoisonButterfly", SCENE_STAGE, L"Layer_Monster")))
 	//	return E_FAIL;
@@ -229,6 +230,14 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
 	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
+
+
+	// 네모네모 동료
+	pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague", nullptr);
+	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(5.f, 0.f, 5.f));
+	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
 
 
 	// 투사체 레이어만 미리 추가

@@ -41,6 +41,8 @@
 #include "Get_ItemUI.h"
 #include "PickUp_ItemUI.h"
 
+#include "Player_Colleague.h"
+
 //#include "Item.h"
 
 
@@ -585,6 +587,10 @@ _uint CLoading::Loading_Stage()
 
 	// UI - Chea
 	//============================================================================================================
+	
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Colleague", CPlayer_Colleague::Create(m_pGraphicDev))))
+		return E_FAIL;
+
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MonsterHPUI", CMonsterUI::Create(m_pGraphicDev))))
 		return E_FAIL;
 
