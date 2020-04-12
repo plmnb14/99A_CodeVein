@@ -97,9 +97,6 @@ HRESULT CGet_ItemUI::Render_GameObject()
 	if (FAILED(SetUp_ConstantTable(0)))
 		return E_FAIL;
 
-	
-	m_pGraphic_Dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-
 	m_pShaderCom->Begin_Shader();
 
 	if (3 == m_iUINumber)
@@ -129,43 +126,7 @@ HRESULT CGet_ItemUI::Render_GameObject()
 	m_pShaderCom->End_Pass();
 
 	m_pShaderCom->End_Shader();
-	//else
-	//{
 
-	//}
-	//// 여기 사이에 아이템 박스 반짝
-	//if (true == m_bSparkle_Box && false == m_bShow_GetItemName)
-	//{
-	//	m_iUINumber = 4;
-
-	//	m_fSparkleBox -= 0.01f;
-
-	//	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 4)))
-	//		return E_FAIL;
-
-	//	m_pShaderCom->Commit_Changes();
-
-	//	if (0.f >= m_fSparkleBox)
-	//	{
-	//		m_bShow_GetItemName = true;
-	//	}
-	//}
-	//else
-	//{
-	//	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 2)))
-	//		return E_FAIL;
-	//}
-
-	//if (true == m_bShow_GetItemName)
-	//{
-	//	m_iUINumber = 3;
-	//	m_bShow_Ask_Pickup = true;
-
-	//	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 3)))
-	//		return E_FAIL;
-
-	//	m_pShaderCom->Commit_Changes();
-	//}
 
 
 	return S_OK;
@@ -200,7 +161,7 @@ HRESULT CGet_ItemUI::SetUp_ConstantTable(_uint TextureIndex)
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
+	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
