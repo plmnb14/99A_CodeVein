@@ -448,6 +448,12 @@ void CWeapon::Change_WeaponData(WEAPON_DATA _eWpnData)
 		m_eWeaponType = WEAPON_Shield;
 		break;
 	}
+	case WPN_Hammer_YachaMan:
+	{
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_Hammer_YachaMan");
+		m_eWeaponType = WEAPON_Hammer;
+		break;
+	}
 	}
 
 	Change_WeaponMesh(WeaponMeshName);
@@ -550,6 +556,12 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[WPN_Halverd_Normal].fTrail_Min = 0.75f;
 	m_tWeaponParam[WPN_Halverd_Normal].fTrail_Max = 1.5f;
 	m_tWeaponParam[WPN_Halverd_Normal].fCol_Height = 1.3f;
+
+	m_tWeaponParam[WPN_Hammer_YachaMan].fDamage = 55.f;
+	m_tWeaponParam[WPN_Hammer_YachaMan].fRadius = 1.2f;
+	m_tWeaponParam[WPN_Hammer_YachaMan].fTrail_Min = 0.75f;
+	m_tWeaponParam[WPN_Hammer_YachaMan].fTrail_Max = 1.5f;
+	m_tWeaponParam[WPN_Hammer_YachaMan].fCol_Height = 1.0f;
 
 	return S_OK;
 }

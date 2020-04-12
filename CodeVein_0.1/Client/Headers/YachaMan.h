@@ -181,7 +181,7 @@ private:
 
 	_v3					m_vBirthPos;
 	_mat*				m_matBone[Bone_End];
-	_double				m_dTimeDelta;
+	_double				m_dTimeDelta = 0;
 	_double				m_dAniPlayMul = 1;
 
 	_float				m_fSkillMoveSpeed_Cur = 0.f;
@@ -201,7 +201,10 @@ private:
 	ATK_COMBO_TYPE		m_eAtkCombo;
 	YACHAMAN_ANI		m_eState;
 	_bool				m_bEventTrigger[20] = {};
-
+	/////////Test
+	_bool				m_bCanDead = false;
+	_bool				m_bCanDissolve = false;
+	//////////////
 	_bool				m_bCanPlayDeadAni = false;
 	_bool				m_bIsPlayDeadAni = false;
 
@@ -209,8 +212,6 @@ private:
 	_bool				m_bInAtkRange = false;
 	
 	_bool				m_bCanChase = false;
-	
-	_bool				m_bIsDodge = false;
 
 	_bool				m_bCanCoolDown = false;
 	_bool				m_bIsCoolDown = false;
@@ -226,7 +227,9 @@ private:
 	_float				m_fSpeedForCollisionPush = 2.f;
 
 	_int				m_iRandom = 0;
-	_int				m_iDodgeCount = 0;
+	_int				m_iDodgeCountMax = 3; //3회 피격시 회피
+	_int				m_iDodgeCount = 0; //n회 피격시 회피
+
 };
 
 END

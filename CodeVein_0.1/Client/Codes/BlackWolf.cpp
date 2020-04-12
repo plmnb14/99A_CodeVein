@@ -32,7 +32,7 @@ HRESULT CBlackWolf::Ready_GameObject(void * pArg)
 
 	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
 
-	m_tObjParam.fHp_Max = 1075.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
+	m_tObjParam.fHp_Max = 75.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
 	m_tObjParam.fDamage = 20.f;
 
@@ -347,7 +347,7 @@ void CBlackWolf::Check_Hit()
 	{
 		if (false == m_tObjParam.bCanHit) //피격o
 		{
-			m_iDodgeCount++;
+			++m_iDodgeCount;
 
 			if (m_iDodgeCount >= m_iDodgeCountMax) //3회 이상의 피격
 			{
@@ -894,12 +894,14 @@ void CBlackWolf::Play_Dodge()
 
 			return;
 		}
-		else if (0.667f < AniTime && 1.867f > AniTime)
+		else
+		{
+			if (0.667f < AniTime && 1.867f > AniTime)
 		{
 			if (m_bEventTrigger[0] == false)
 			{
 				m_bEventTrigger[0] = true;
-				m_fSkillMoveSpeed_Cur = 12.f;
+				m_fSkillMoveSpeed_Cur = 10.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 0.5f;
 			}
@@ -907,6 +909,7 @@ void CBlackWolf::Play_Dodge()
 			Function_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
 
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
 		}
 	}
 
@@ -1255,24 +1258,31 @@ void CBlackWolf::Play_Down_Weak()
 
 void CBlackWolf::Play_Dead()
 {
-	if (false == m_bCanDead)
+	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+
+	if (false == m_bCanPlayDeadAni)
 	{
-		m_bCanDead = true;
-		m_bCanDissolve = true;
+		Function_ResetAfterAtk();
+		m_bCanPlayDeadAni = true;
 		m_eState = WOLF_ANI::Dead;
 	}
 	else
 	{
-		if (true == m_bCanDissolve && m_pMeshCom->Is_Finish_Animation(0.35f))
-		{
-			Start_Dissolve(0.5f, false, true);
-			m_bCanDissolve = false;
-		}
-
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
 			m_bEnable = false;
 			m_dAniPlayMul = 0;
+		}
+		else
+		{
+			if (4.73f < AniTime)
+			{
+				if (false == m_bEventTrigger[0])
+				{
+					m_bEventTrigger[0] = true;
+					Start_Dissolve(0.8f, false, true);
+				}
+			}
 		}
 	}
 

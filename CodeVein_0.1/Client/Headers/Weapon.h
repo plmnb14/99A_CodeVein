@@ -18,6 +18,7 @@ public:
 		WPN_Halverd_Normal,
 		WPN_Gun_Normal,
 		WPN_Shield_Normal,
+		WPN_Hammer_YachaMan,
 		WPN_DATA_End
 	};
 
