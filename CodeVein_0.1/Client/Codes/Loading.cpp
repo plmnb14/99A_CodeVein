@@ -334,7 +334,7 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_WindMesh", true)))
 		return E_FAIL;
-	if (FAILED(Add_EffectPrototype(L"Player_Skill_WindTronadeMesh", true)))
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_WindTornadeMesh", true)))
 		return E_FAIL;
 #pragma endregion
 

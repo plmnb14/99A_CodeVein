@@ -282,14 +282,14 @@ void CWeapon::Update_Trails(_double TimeDelta)
 		m_pTrailEffect->Update_GameObject(TimeDelta);
 	}
 
-	if (m_pDistortionEffect)
+	if (m_pDistortionEffect && !m_bSkillMode)
 	{
 		m_pDistortionEffect->Set_ParentTransform(&matWorld);
 		m_pDistortionEffect->Ready_Info(vBegin + vDir * 0.2f, vBegin + vDir * 1.5f);
 		m_pDistortionEffect->Update_GameObject(TimeDelta);
 	}
 
-	if (m_pStaticTrailEffect)
+	if (m_pStaticTrailEffect && !m_bSkillMode)
 	{
 		m_pStaticTrailEffect->Set_ParentTransform(&matWorld);
 		m_pStaticTrailEffect->Ready_Info(vBegin + vDir * 0.2f, vBegin + vDir * 1.6f);
@@ -309,9 +309,14 @@ void CWeapon::Set_Enable_Trail(_bool _bEnable)
 	}
 }
 
-void CWeapon::Set_TrailIdx(_ulong _dwIdx)
+void CWeapon::Set_SkillMode(_bool _bSkill)
 {
-	m_pTrailEffect->Set_TrailIdx(_dwIdx);
+	m_bSkillMode = _bSkill;
+
+	if (_bSkill)
+		m_pTrailEffect->Set_TrailIdx(6);
+	else
+		m_pTrailEffect->Set_TrailIdx(0);
 }
 
 void CWeapon::Set_Enable_Record(_bool _bRecord)
@@ -443,6 +448,12 @@ void CWeapon::Change_WeaponData(WEAPON_DATA _eWpnData)
 		m_eWeaponType = WEAPON_Shield;
 		break;
 	}
+	case WPN_Hammer_YachaMan:
+	{
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_Hammer_YachaMan");
+		m_eWeaponType = WEAPON_Hammer;
+		break;
+	}
 	}
 
 	Change_WeaponMesh(WeaponMeshName);
@@ -545,6 +556,12 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[WPN_Halverd_Normal].fTrail_Min = 0.75f;
 	m_tWeaponParam[WPN_Halverd_Normal].fTrail_Max = 1.5f;
 	m_tWeaponParam[WPN_Halverd_Normal].fCol_Height = 1.3f;
+
+	m_tWeaponParam[WPN_Hammer_YachaMan].fDamage = 55.f;
+	m_tWeaponParam[WPN_Hammer_YachaMan].fRadius = 1.2f;
+	m_tWeaponParam[WPN_Hammer_YachaMan].fTrail_Min = 0.75f;
+	m_tWeaponParam[WPN_Hammer_YachaMan].fTrail_Max = 1.5f;
+	m_tWeaponParam[WPN_Hammer_YachaMan].fCol_Height = 1.0f;
 
 	return S_OK;
 }

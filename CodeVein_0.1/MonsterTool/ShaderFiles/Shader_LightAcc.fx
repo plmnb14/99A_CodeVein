@@ -29,6 +29,14 @@ sampler NormalSampler = sampler_state
 	texture = g_NormalTexture;
 };
 
+// 노멀 for Rim
+texture		g_RimNormalTexture;
+
+sampler RimNormalSampler = sampler_state
+{
+	texture = g_RimNormalTexture;
+};
+
 // 뎁스
 texture		g_DepthTexture;
 
@@ -81,10 +89,11 @@ struct PS_OUT
 	vector		vRim : COLOR3;
 };
 
-float g_sample_rad = 2.f;		// 샘플링 반경
-float g_intensity = 1.5f;		// ao 강도
-float g_scale = 0.3f;			// 사이 거리
-float g_bias = 0.3f;			// 너비 제어
+bool g_bTest;
+float g_sample_rad = 0.1f;		// 샘플링 반경
+float g_intensity = 0.35f;		// ao 강도
+float g_scale = 0.1f;			// 사이 거리
+float g_bias = 0.0f;			// 너비 제어
 float3 getPosition(in float3 vDepth, in float2 uv)
 {
 	float		fViewZ = vDepth.g * 500.f;
@@ -214,20 +223,28 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	Out.vSpecular.a = 0.f;
 
 	// RimLight ======================================================================
-	float fRimWidth = 1.5f;
-	vector vCamPos = normalize(g_vCamPosition - vWorldPos);
-	float fRim = smoothstep((1.f - fRimWidth), (1.f), (vDepthInfo.x) - saturate(abs(dot(vNormal, vCamPos))));
-	//float fRim = smoothstep(max(1.f - fRimWidth + vDepthInfo.x, 0.5f), max(1.f - fRimWidth + vDepthInfo.x, 0.9f), (vDepthInfo.x) - saturate(abs(dot(vNormal, vCamPos))));
-	float4 rc = g_vLightDiffuse;
-	Out.vShade += (pow(fRim, 2.f) * rc);
-	Out.vRim = (pow(fRim, 2.f) * rc);
+	//vector	vRimNormalInfo = tex2D(RimNormalSampler, In.vTexUV);
+	//vector	vRimNormal = vector(vRimNormalInfo.xyz * 2.f - 1.f, 0.f);
+	float	fRimWidth = 0.5f;
+	
+	vector	vCamPos = normalize(g_vCamPosition - vWorldPos);
+	//vector vCamPos = normalize(vWorldPos - g_vCamPosition);
+	float fRim = smoothstep((1.f - fRimWidth), (1.f), 1.f - max(0, abs(dot(vNormal.xyz, vCamPos.xyz))));// *fViewZ;
+	float4 rc = g_vLightDiffuse * 0.7f;
+
+	float4 fRimLight = (pow(fRim, 5.f) * rc);
+
+	//Out.vShade.xyz += fRimLight;
+	Out.vRim = fRimLight; // Blend에서 더해줌
+	Out.vRim.a = 0;
 	// RimLight End ==================================================================
 
 	// SSAO ====================================================================
-	//vNormal = mul(vNormal, g_matProjInv);
-	//float ao = Get_SSAO(vNormal.xyz, vDepthInfo.xyz, In.vTexUV);
-	//Out.vSSAO = float4(ao, 0, 0, 1);
-	//Out.vShade -= ao;
+	vNormal = mul(vNormal, g_matProjInv);
+	float ao = Get_SSAO(vNormal.xyz, vDepthInfo.xyz, In.vTexUV);
+	Out.vSSAO = float4(ao, 0, 0, 1);
+	if(g_bTest)
+		Out.vShade.xyz -= Out.vSSAO.x;
 	// SSAO End ====================================================================
 
 	//Out.vShade.rgb *= fShadow;

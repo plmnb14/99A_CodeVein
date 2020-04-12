@@ -154,16 +154,14 @@ private:
 
 	WOLF_ANI			m_eState; //애니 분류
 	_bool				m_bEventTrigger[10] = {}; //이벤트 조건 조절
-	_bool				m_bCanDead = false;
-	_bool				m_bCanDissolve = false;
+	_bool				m_bCanPlayDeadAni = false;
+	_bool				m_bIsPlayDeadAni = false;
 
 	_bool				m_bInRecognitionRange = false; //인지 범위 여부
 	_bool				m_bInAtkRange = false; //공격 범위 여부
 	
 	_bool				m_bCanChase = false; //추격 여부
-	
-	_bool				m_bIsDodge = false; //회피 진행중 여부
-	
+
 	_bool				m_bCanCoolDown = false; //쿨타임 여부
 	_bool				m_bIsCoolDown = false; //쿨타임 진행중 여부
 
@@ -172,13 +170,15 @@ private:
 	_bool				m_bIsAtkCombo = false; //미사용
 	_bool				m_bCanAtkRandom = true;
 
-	_float				m_fRecognitionRange = 10.f;
+	_float				m_fRecognitionRange = 15.f;
 	_float				m_fAtkRange = 4.f;
 	_float				m_fCoolDownMax = 0.f;
 	_float				m_fCoolDownCur = 0.f;
 	_float				m_fSpeedForCollisionPush = 2.f;
 
 	_int				m_iRandom = 0; //랜덤 받을 숫자
+
+	_int				m_iDodgeCountMax = 3; //3회 피격시 회피
 	_int				m_iDodgeCount = 0; //n회 피격시 회피
 
 };

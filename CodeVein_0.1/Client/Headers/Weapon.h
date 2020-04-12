@@ -18,6 +18,7 @@ public:
 		WPN_Halverd_Normal,
 		WPN_Gun_Normal,
 		WPN_Shield_Normal,
+		WPN_Hammer_YachaMan,
 		WPN_DATA_End
 	};
 
@@ -64,7 +65,7 @@ public:
 	virtual void			Set_Friendly(_bool _bFriendly) { m_bPlayerFriendly = _bFriendly; }
 	// 트레일 On/Off
 	virtual void			Set_Enable_Trail(_bool _bEnable);
-	virtual void			Set_TrailIdx(_ulong _dwIdx);
+	virtual void			Set_SkillMode(_bool _bSkill);
 	virtual void			Set_Enable_Record(_bool _bRecord);
 	virtual void			Set_SkillPercent(_float _fPercent);
 
@@ -99,6 +100,7 @@ private:
 	_bool					m_bEquip = false;				// 무기 장착 여부
 	_bool					m_bPlayerFriendly = false;		// 플레이어 껀지
 	_bool					m_bTrailEnable = false;
+	_bool					m_bSkillMode = false;			// 스킬 사용중
 	_bool					m_bRecordCollision = false;		// 기록할껀지 말껀지 
 
 	_bool					m_tmpEmissiveTest = false;
