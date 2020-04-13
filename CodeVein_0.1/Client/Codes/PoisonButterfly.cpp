@@ -6,11 +6,13 @@
 CPoisonButterfly::CPoisonButterfly(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CMonster(pGraphic_Device)
 {
+	ZeroMemory(m_matBones, sizeof(_mat*) * Bone_End);
 }
 
 CPoisonButterfly::CPoisonButterfly(const CPoisonButterfly & rhs)
 	: CMonster(rhs)
 {
+	ZeroMemory(m_matBones, sizeof(_mat*) * Bone_End);
 }
 
 HRESULT CPoisonButterfly::Ready_GameObject_Prototype()
@@ -349,9 +351,6 @@ HRESULT CPoisonButterfly::Render_GameObject()
 			m_pShaderCom->Begin_Pass(m_iPass);
 
 			m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
-
-			//if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
-			//	return E_FAIL;
 
 			m_pShaderCom->Commit_Changes();
 
@@ -1554,7 +1553,7 @@ HRESULT CPoisonButterfly::Ready_Collider()
 
 
 	//////////// 공격용 콜라이더
-	m_vecAttackCol.reserve(10);
+	m_vecAttackCol.reserve(5);
 
 	// 꼬리 끝
 	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));

@@ -226,7 +226,7 @@ CGameObject* CManagement::Get_GameObjectBack(const _tchar* pLayerTag, _uint iSce
 	return m_pObject_Manager->Get_GameObjectBack(pLayerTag, iSceneID);
 }
 
-list<CGameObject*> CManagement::Get_GameObjectList(const _tchar * pLayerTag, _uint iSceneID)
+list<CGameObject*>& CManagement::Get_GameObjectList(const _tchar * pLayerTag, _uint iSceneID)
 {
 	return m_pObject_Manager->Get_GameObjectList(pLayerTag, iSceneID);
 }

@@ -22,6 +22,7 @@
 #include "PoisonRotationBullet.h"
 #include "PoisonTornado.h"
 #include "BlackUrchin.h"
+#include "QueensKnight.h"
 #include "BlackWolf.h"
 #include "GunGenji.h"
 #include "GunGenjiBullet.h"
@@ -557,6 +558,9 @@ _uint CLoading::Loading_Stage()
 		return E_FAIL;
 	// 독나방 기모아서 쏘기 충돌체
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonTornado", CPoisonTornado::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 여왕의 기사
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_QueensKnight", CQueensKnight::Create(m_pGraphicDev))))
 		return E_FAIL;
 	// 검은 성게
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))

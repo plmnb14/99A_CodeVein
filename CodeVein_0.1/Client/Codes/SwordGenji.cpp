@@ -617,7 +617,7 @@ CBT_Composite_Node * CSwordGenji::NearAttack()
 	Root_Sel->Add_Child(Strong_RightCut());
 	Root_Sel->Add_Child(Strong_LeftCut());
 	Root_Sel->Add_Child(ThreeCombo_Cut());
-	Root_Sel->Add_Child(Horizon_Cut());
+	Root_Sel->Add_Child(Horizontal_Cut());
 	Root_Sel->Add_Child(Sting_Attack());
 	Root_Sel->Add_Child(TwoCombo_Cut());
 	Root_Sel->Add_Child(Run_Straight_Cut());
@@ -650,7 +650,7 @@ CBT_Composite_Node * CSwordGenji::FarAttack()
 	return Root_Sel;
 }
 
-CBT_Composite_Node * CSwordGenji::Horizon_Cut()
+CBT_Composite_Node * CSwordGenji::Horizontal_Cut()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 	CBT_Sequence* MainSeq = Node_Sequence("수평베기");
@@ -877,7 +877,7 @@ CBT_Composite_Node * CSwordGenji::Show_NearAttack()
 	Root_Sel->Add_Child(Cool6);
 	Cool6->Set_Child(Run_Straight_Cut());
 	Root_Sel->Add_Child(Cool7);
-	Cool7->Set_Child(Horizon_Cut());
+	Cool7->Set_Child(Horizontal_Cut());
 	Root_Sel->Add_Child(Cool8);
 	Cool8->Set_Child(Sting_Attack());
 	Root_Sel->Add_Child(Cool9);
