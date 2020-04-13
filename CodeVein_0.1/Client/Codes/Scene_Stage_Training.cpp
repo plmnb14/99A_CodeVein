@@ -16,6 +16,8 @@
 #include "PoisonButterfly.h"
 #include "QueensKnight.h"
 
+#include "Player_Colleague.h"
+
 CScene_Stage_Training::CScene_Stage_Training(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
 {
@@ -45,14 +47,6 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 _int CScene_Stage_Training::Update_Scene(_double TimeDelta)
 {
 	CUI_Manager::Get_Instance()->Update_UI();
-
-	// 임시로 보스 출현 메시지 띄워놓음
-	// 보스랑 연동할 시에 반드시 삭제해야 함
-	if (g_pInput_Device->Key_Down(DIK_I))
-	{
-		CMassageUI* pMassageUI = static_cast<CMassageUI*>(g_pManagement->Get_GameObjectBack(L"Layer_BossMassageUI", SCENE_STAGE));
-		pMassageUI->Set_Check_Play_BossnameUI(true);
-	}
 		
 	return _int();
 }
@@ -64,19 +58,20 @@ HRESULT CScene_Stage_Training::Render_Scene()
 
 HRESULT CScene_Stage_Training::Ready_Layer_Player(const _tchar * pLayerTag)
 {
-	CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Player" , nullptr);
-	
+	CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Player", nullptr);
+
 	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
 	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 	TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
 	TARGET_TO_TRANS(pInstance)->Set_Angle(V3_NULL);
 
 	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Player", nullptr);
-	
+
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerHP", SCENE_STAGE, L"Layer_PlayerHP")))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerST", SCENE_STAGE, L"Layer_PlayerST")))
 		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -219,7 +214,6 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//	return E_FAIL;
 
 
-
 	// 독나방
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_PoisonButterfly", SCENE_STAGE, L"Layer_Monster")))
 	//	return E_FAIL;
@@ -231,6 +225,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
+	// 여왕의 기사
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_QueensKnight", &CQueensKnight::INFO(10.f, 5.f, 2.f));
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(3.f, 0.f, 3.f));
 	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
@@ -238,6 +233,12 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
+	// 네모네모 동료
+	pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague", nullptr);
+	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(5.f, 0.f, 5.f));
+	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
 
 
 	// 투사체 레이어만 미리 추가

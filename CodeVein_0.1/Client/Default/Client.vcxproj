@@ -202,6 +202,7 @@
     <ClInclude Include="..\Headers\MonsterUI.h" />
     <ClInclude Include="..\Headers\NumberUI.h" />
     <ClInclude Include="..\Headers\PickUp_ItemUI.h" />
+    <ClInclude Include="..\Headers\Player_Colleague.h" />
     <ClInclude Include="..\Headers\PoisonBullet.h" />
     <ClInclude Include="..\Headers\GunGenji.h" />
     <ClInclude Include="..\Headers\PoisonButterfly.h" />
@@ -277,6 +278,7 @@
     <ClCompile Include="..\Codes\MonsterUI.cpp" />
     <ClCompile Include="..\Codes\NumberUI.cpp" />
     <ClCompile Include="..\Codes\PickUp_ItemUI.cpp" />
+    <ClCompile Include="..\Codes\Player_Colleague.cpp" />
     <ClCompile Include="..\Codes\PoisonBullet.cpp" />
     <ClCompile Include="..\Codes\GunGenji.cpp" />
     <ClCompile Include="..\Codes\PoisonButterfly.cpp" />

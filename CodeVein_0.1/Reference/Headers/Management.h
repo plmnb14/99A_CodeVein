@@ -115,6 +115,7 @@ public: // For.ParticleManager
 	void Create_Spawn_Effect(_v3 vPos, _v3 vFinishPos, CTransform* pFollowTrans = nullptr);
 	void Create_Effect_Offset(_tchar* szName, _float fOffset, _v3 vPos, CTransform* pFollowTrans = nullptr);
 	void Create_Effect_Delay(_tchar* szName, _float fDelay, _v3 vPos, CTransform* pFollowTrans = nullptr, _v3 vAngle = V3_NULL);
+	void Create_Effect_Delay(_tchar * szName, _float fDelay, CTransform* pFollowTrans, _mat* pTargetMat);
 	void Create_ParticleEffect_Delay(_tchar* szName, _float fLifeTime, _float fDelay, _v3 vPos, CTransform* pFollowTrans = nullptr);
 
 private:

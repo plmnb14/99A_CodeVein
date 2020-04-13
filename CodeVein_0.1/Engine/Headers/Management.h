@@ -37,7 +37,8 @@ public:
 
 public: // For.Graphic_Device
 	HRESULT	Ready_GraphicDev(HWND hWnd, CGraphic_Device::WINMODE eMode, const _uint& iSizeX, const _uint& iSizeY, LPDIRECT3DDEVICE9* ppGraphicDev = nullptr);
-
+	void Render_Sprite_Begin();
+	void Render_Sprite_End();
 
 public: // for.Input_Device
 	_byte	Get_DIKeyState(_ubyte byKeyID);
@@ -115,7 +116,9 @@ public: // For.ParticleManager
 	void Create_Spawn_Effect(_v3 vPos, _v3 vFinishPos, CTransform* pFollowTrans = nullptr);
 	void Create_Effect_Offset(_tchar* szName, _float fOffset, _v3 vPos, CTransform* pFollowTrans = nullptr);
 	void Create_Effect_Delay(_tchar* szName, _float fDelay, _v3 vPos, CTransform* pFollowTrans = nullptr, _v3 vAngle = V3_NULL);
+	void Create_Effect_Delay(_tchar * szName, _float fDelay, CTransform* pFollowTrans, _mat* pTargetMat);
 	void Create_ParticleEffect_Delay(_tchar* szName, _float fLifeTime, _float fDelay, _v3 vPos, CTransform* pFollowTrans = nullptr);
+	void Create_ParticleEffect_Delay(_tchar* szName, _float fLifeTime, _float fDelay, CTransform* pFollowTrans, _mat* pTargetMat);
 
 private:
 	CGraphic_Device*			m_pGraphic_Device = nullptr;

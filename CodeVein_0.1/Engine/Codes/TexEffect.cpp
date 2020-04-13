@@ -366,6 +366,9 @@ void CTexEffect::Setup_Info()
 		if (m_pDesc->pTargetTrans || m_bAutoFindPos)
 			vPos += m_pDesc->pTargetTrans->Get_Pos();
 
+		if (m_pTargetMatrix)
+			vPos += _v3(m_pTargetMatrix->_41, m_pTargetMatrix->_42, m_pTargetMatrix->_43);
+
 		vPos += m_pDesc->vWorldPos;
 		m_pTransformCom->Set_Pos(vPos);
 		m_vLerpPos = (vPos);
@@ -375,6 +378,9 @@ void CTexEffect::Setup_Info()
 		_v3 vPos = m_pInfo->vStartPos + m_pDesc->vWorldPos;
 		if (m_pDesc->pTargetTrans)
 			vPos += m_pDesc->pTargetTrans->Get_Pos();
+
+		if (m_pTargetMatrix)
+			vPos += _v3(m_pTargetMatrix->_41, m_pTargetMatrix->_42, m_pTargetMatrix->_43);
 
 		m_pTransformCom->Set_Pos(vPos);
 		m_vLerpPos = (vPos);
@@ -472,6 +478,7 @@ void CTexEffect::Check_Move(_double TimeDelta)
 
 	_v3 vTargetPos = V3_NULL;
 	if (m_pDesc->pTargetTrans) vTargetPos = m_pDesc->pTargetTrans->Get_Pos();
+	if (m_pTargetMatrix) vTargetPos += _v3(m_pTargetMatrix->_41, m_pTargetMatrix->_42, m_pTargetMatrix->_43);
 
 	if (m_pInfo->bDirMove)
 	{
@@ -490,7 +497,8 @@ void CTexEffect::Check_Move(_double TimeDelta)
 			else
 				vMove = m_pInfo->vMoveDirection * m_fMoveSpeed * _float(TimeDelta);
 			
- 			if (m_pDesc->pTargetTrans && !m_bAutoFindPos)
+ 			if ((m_pDesc->pTargetTrans && !m_bAutoFindPos)
+				|| m_pTargetMatrix)
 			{
 				_v3 vPos = vTargetPos + m_pDesc->vWorldPos;
 				m_vFollowPos += vMove;
@@ -518,7 +526,8 @@ void CTexEffect::Check_Move(_double TimeDelta)
 	if (m_pInfo->bRandomMove)
 	{
 		_v3 vMove = m_vDir * m_fMoveSpeed * _float(TimeDelta);
-		if (m_pDesc->pTargetTrans && !m_bAutoFindPos)
+		if ((m_pDesc->pTargetTrans && !m_bAutoFindPos)
+			|| m_pTargetMatrix)
 		{
 			_v3 vPos = vTargetPos + m_pDesc->vWorldPos;
 			m_vFollowPos += vMove;

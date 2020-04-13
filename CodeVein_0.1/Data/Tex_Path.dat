@@ -1,4 +1,5 @@
 Tex_Aura|Aura_%d.png|..\..\Client\Resources\Texture\Effect\Aura\|0|25
+Tex_Blaster|Blaster_%d.tga|..\..\Client\Resources\Texture\Effect\Blaster\|0|1
 Tex_BloodDecal|BloodDecal_%d.tga|..\..\Client\Resources\Texture\Effect\Blood\BloodDecal\|0|5
 Tex_BloodMist|BloodMist_%d.tga|..\..\Client\Resources\Texture\Effect\Blood\BloodMist\|0|2
 Tex_BloodParticle|BloodParticle_%d.tga|..\..\Client\Resources\Texture\Effect\Blood\BloodParticle\|0|7
@@ -33,7 +34,7 @@ Tex_Normal|Normal_%d.tga|..\..\Client\Resources\Texture\Effect\Normal\|0|10
 Tex_Crystals|Crystals_%d.png|..\..\Client\Resources\Texture\Effect\Particle\Crystals\|0|16
 Tex_Point|Point_%d.tga|..\..\Client\Resources\Texture\Effect\Particle\Point\|0|9
 Tex_Scratch|Scratch_%d.tga|..\..\Client\Resources\Texture\Effect\Scratch\|0|4
-Tex_ShockWave|T_FX_TC5Shockwave01.tga|..\..\Client\Resources\Texture\Effect\ShockWave\|0|4
+Tex_ShockWave|ShockWave_%d.tga|..\..\Client\Resources\Texture\Effect\ShockWave\|0|4
 Tex_SlashSubUV|SlashSubUV_%d.png|..\..\Client\Resources\Texture\Effect\SlashSubUV\|0|4
 Tex_SlashSubUV_Ver|SlashSubUV_Ver_%d.png|..\..\Client\Resources\Texture\Effect\SlashSubUV_Ver\|0|4
 Tex_Smoke16|Smoke16_%d.png|..\..\Client\Resources\Texture\Effect\Smoke\Smoke16\|0|16

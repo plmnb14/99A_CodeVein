@@ -145,6 +145,22 @@ HRESULT CManagement::Ready_GraphicDev(HWND hWnd, CGraphic_Device::WINMODE eMode,
 	return m_pGraphic_Device->Ready_GraphicDev(hWnd, eMode, iSizeX, iSizeY, ppGraphicDev);
 }
 
+void CManagement::Render_Sprite_Begin()
+{
+	if (nullptr == m_pGraphic_Device)
+		return;
+
+	m_pGraphic_Device->Render_Sprite_Begin();
+}
+
+void CManagement::Render_Sprite_End()
+{
+	if (nullptr == m_pGraphic_Device)
+		return; 
+
+	m_pGraphic_Device->Render_Sprite_End();
+}
+
 _byte CManagement::Get_DIKeyState(_ubyte byKeyID)
 {
 	if (nullptr == m_pInput_Device)
@@ -535,9 +551,19 @@ void CManagement::Create_Effect_Delay(_tchar * szName, _float fDelay, _v3 vPos, 
 	CParticleMgr::Get_Instance()->Create_Effect_Delay(szName, fDelay, vPos, pFollowTrans, vAngle);
 }
 
+void CManagement::Create_Effect_Delay(_tchar * szName, _float fDelay, CTransform* pFollowTrans, _mat * pTargetMat)
+{
+	CParticleMgr::Get_Instance()->Create_Effect_Delay(szName, fDelay, _v3(0,0,0), pFollowTrans, pTargetMat);
+}
+
 void CManagement::Create_ParticleEffect_Delay(_tchar * szName, _float fLifeTime, _float fDelay, _v3 vPos, CTransform * pFollowTrans)
 {
 	CParticleMgr::Get_Instance()->Create_ParticleEffect_Delay(szName, fLifeTime, fDelay, vPos, pFollowTrans);
+}
+
+void CManagement::Create_ParticleEffect_Delay(_tchar * szName, _float fLifeTime, _float fDelay, CTransform * pFollowTrans, _mat * pTargetMat)
+{
+	CParticleMgr::Get_Instance()->Create_ParticleEffect_Delay(szName, fLifeTime, fDelay, _v3(0, 0, 0), pFollowTrans, pTargetMat);
 }
 
 void CManagement::Free()
