@@ -104,9 +104,6 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 
 		lstrcat(szFullPath, szTextureFileName);
 
-		if (FAILED(D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_DIFFUSE_MAP])))
-			return E_FAIL;
-
 		pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 14;
 
 		if (!lstrcmp(szTextureFileName, L"T_Eyelash_Female1.tga"))
@@ -142,7 +139,6 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 		//==================================================================================================================================
 		Change_TextureFileName(szFullPath, L"E", L"R");
 		if (SUCCEEDED(D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_ROUGHNESS_MAP])))
-			m_bIncludeMap[MESHTEXTURE::TYPE_ROUGHNESS_MAP] = true;
 		//==================================================================================================================================
 		// U - Union
 		//==================================================================================================================================
@@ -155,18 +151,18 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 		Change_TextureFileName(szFullPath, L"U", L"T");
 		if (SUCCEEDED(D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_TRANSPARENCY_MAP])))
 			m_bIncludeMap[MESHTEXTURE::TYPE_TRANSPARENCY_MAP] = true;
-		////==================================================================================================================================
-		//// ID - Material ID
-		////==================================================================================================================================
+		//==================================================================================================================================
+		// ID - Material ID
+		//==================================================================================================================================
 		//Change_TextureFileName(szFullPath, L"T", L"I");
-		//if (SUCCEEDED(D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &m_ppTextures[i].pTextures[MESHTEXTURE::TYPE_ID_MAP])))
+		//if (SUCCEEDED(D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_ID_MAP])))
 		//	m_bIncludeMap[MESHTEXTURE::TYPE_ID_MAP] = true;
-		////==================================================================================================================================
-		//// AO - Ambient Occlusion
-		////==================================================================================================================================
+		//==================================================================================================================================
+		// AO - Ambient Occlusion
+		//==================================================================================================================================
 		//Change_TextureFileName(szFullPath, L"D", L"O");
 		//Change_TextureFileName(szFullPath, L"I", L"A");
-		//if (SUCCEEDED(D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &m_ppTextures[i].pTextures[MESHTEXTURE::TYPE_AO_MAP])))
+		//if (SUCCEEDED(D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_AO_MAP])))
 		//	m_bIncludeMap[MESHTEXTURE::TYPE_AO_MAP] = true;
 
 		if (m_bIncludeMap[MESHTEXTURE::TYPE_NORMAL_MAP] == true)
@@ -232,14 +228,9 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 	for (_ulong i = 0; i < pMeshContainer->dwNumBones; i++)
 		pMeshContainer->pOffsetMatrices[i] = *pMeshContainer->pSkinInfo->GetBoneOffsetMatrix(i);
 
-	//if (FAILED(pMeshContainer->MeshData.pMesh->CloneMeshFVF(pMeshContainer->MeshData.pMesh->GetOptions(), pMeshContainer->MeshData.pMesh->GetFVF(), m_pGraphic_Device, &pMeshContainer->pOriginalMesh)))
-	//	return E_FAIL;
-
 	if (FAILED(pMeshContainer->MeshData.pMesh->CloneMesh(pMesh->GetOptions(), Decl, m_pGraphic_Device, &pMeshContainer->pOriginalMesh)))
 		return E_FAIL;
 
-	//if (FAILED(pMeshContainer->MeshData.pMesh->CloneMeshFVF(pMeshContainer->MeshData.pMesh->GetOptions(), pMeshContainer->MeshData.pMesh->GetFVF(), m_pGraphic_Device, &pMeshContainer->pOriginalMesh)))
-	//	return E_FAIL;
 
 	*ppNewMeshContainer = pMeshContainer;
 
@@ -316,6 +307,12 @@ HRESULT CHierarchy::Change_TextureFileName(_tchar * pFilePath, _tchar * pSourMar
 		if (pFilePath[i] == *pSourMark)
 		{
 			pFilePath[i] = *pDestMark;
+
+			if (!lstrcmp(pDestMark, L"I"))
+			{
+				lstrcpy(&pFilePath[i], L"ID.tga");
+			}
+
 			break;
 		}
 	}

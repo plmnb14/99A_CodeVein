@@ -5,6 +5,7 @@
 
 BEGIN(Engine)
 
+class CShader;
 class ENGINE_DLL CFrameMgr : public CBase
 {
 
@@ -15,8 +16,12 @@ private:
 	virtual ~CFrameMgr();
 
 public:
-	bool Lock_Frame(_float _LockValue , _float _DeltaTime);
-	void Render_Frame(_float _DeltaTime);
+	_bool Lock_Frame(_float _LockValue , _float _DeltaTime);
+	HRESULT Render_Frame(_float _DeltaTime);
+
+public:
+	HRESULT Init_ShaderConstant();
+	HRESULT Ready_FrameShader();
 
 private:
 	_int		m_iFrame;
@@ -30,6 +35,16 @@ private:
 	LARGE_INTEGER	m_CPU_Tick;
 
 	_float			m_fDeltaTime;
+
+	_v4				m_vColor;
+
+private:
+	CShader*		m_pRenderShader = nullptr;
+
+private:
+	_mat			m_matWorld;
+	_mat			m_matProj;
+	_mat			m_matView;
 
 public:
 	virtual void Free();

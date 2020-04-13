@@ -145,6 +145,22 @@ HRESULT CManagement::Ready_GraphicDev(HWND hWnd, CGraphic_Device::WINMODE eMode,
 	return m_pGraphic_Device->Ready_GraphicDev(hWnd, eMode, iSizeX, iSizeY, ppGraphicDev);
 }
 
+void CManagement::Render_Sprite_Begin()
+{
+	if (nullptr == m_pGraphic_Device)
+		return;
+
+	m_pGraphic_Device->Render_Sprite_Begin();
+}
+
+void CManagement::Render_Sprite_End()
+{
+	if (nullptr == m_pGraphic_Device)
+		return; 
+
+	m_pGraphic_Device->Render_Sprite_End();
+}
+
 _byte CManagement::Get_DIKeyState(_ubyte byKeyID)
 {
 	if (nullptr == m_pInput_Device)

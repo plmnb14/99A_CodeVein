@@ -30,6 +30,8 @@ _int CMainApp::Update_MainApp(_double TimeDelta)
 	if (nullptr == g_pManagement)
 		return -1;
 	
+	m_fFrameDeltaTimer = (_float)TimeDelta;
+
 	CCameraMgr::Get_Instance()->Update();
 	CParticleMgr::Get_Instance()->Update_ParticleManager(TimeDelta);
 
@@ -51,13 +53,25 @@ HRESULT CMainApp::Render_MainApp()
 	m_pGraphic_Dev->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL, D3DXCOLOR(0.f, 0.f, 1.f, 1.f), 1.f, 0);
 	m_pGraphic_Dev->BeginScene();
 	
+	//if (m_bFrameRender)
+	//	g_pManagement->Render_Sprite_Begin();
+
 	if (FAILED(m_pRenderer->Draw_RenderList()))
 		return E_FAIL;
-	
+
 	// ¾ÀÀÇ ·»´õ.(µð¹ö±ëÀû¿ä¼Ò, ´õ¹Ì)
 	if (FAILED(g_pManagement->Render_Management()))
 		return E_FAIL;
-	
+
+	if (m_bFrameRender)
+		g_pManagement->Render_Sprite_Begin();
+
+	if (m_bFrameRender)
+	{
+		g_pFrame_Manager->Render_Frame(m_fFrameDeltaTimer);
+		g_pManagement->Render_Sprite_End();
+	}
+
 	m_pGraphic_Dev->EndScene();
 	m_pGraphic_Dev->Present(nullptr, nullptr, 0, nullptr);
 	
@@ -101,6 +115,8 @@ HRESULT CMainApp::Ready_Component_Prototype()
 	g_pManagement->Ready_Gizmo(m_pGraphic_Dev);
 
 	m_pRenderer = static_cast<CRenderer*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Renderer"));
+
+	g_pFrame_Manager->Ready_FrameShader();
 	
 	return S_OK;
 }
@@ -163,6 +179,11 @@ void CMainApp::Global_KeyInput()
 		g_pManagement->Gizmo_ColliderEnable();
 	}
 
+	// Frame Toggle On / Off
+	if (g_pInput_Device->Key_Down(DIK_SLASH))
+	{
+		m_bFrameRender = m_bFrameRender ? false : true;
+	}
 }
 
 CMainApp * CMainApp::Create()
