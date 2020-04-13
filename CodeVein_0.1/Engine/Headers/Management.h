@@ -117,6 +117,7 @@ public: // For.ParticleManager
 	void Create_Effect_Delay(_tchar* szName, _float fDelay, _v3 vPos, CTransform* pFollowTrans = nullptr, _v3 vAngle = V3_NULL);
 	void Create_Effect_Delay(_tchar * szName, _float fDelay, CTransform* pFollowTrans, _mat* pTargetMat);
 	void Create_ParticleEffect_Delay(_tchar* szName, _float fLifeTime, _float fDelay, _v3 vPos, CTransform* pFollowTrans = nullptr);
+	void Create_ParticleEffect_Delay(_tchar* szName, _float fLifeTime, _float fDelay, CTransform* pFollowTrans, _mat* pTargetMat);
 
 private:
 	CGraphic_Device*			m_pGraphic_Device = nullptr;

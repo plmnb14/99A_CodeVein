@@ -18,6 +18,7 @@ public:
 	HRESULT Update_ParticleManager(const _double TimeDelta);
 	void Create_ParticleEffect(_tchar* szName, _float fLifeTime, _v3 vPos, CTransform* pFollowTrans = nullptr);
 	void Create_ParticleEffect_Delay(_tchar* szName, _float fLifeTime, _float fDelay, _v3 vPos, CTransform* pFollowTrans = nullptr);
+	void Create_ParticleEffect_Delay(_tchar* szName, _float fLifeTime, _float fDelay, _v3 vPos, CTransform* pFollowTrans, _mat* pTargetMat);
 	void Create_ParticleEffect_FinishPos(_tchar* szName, _float fLifeTime, _v3 vPos, _v3 vFinishPos, CTransform* pFollowTrans = nullptr);
 	void Create_Effect(_tchar* szName, _v3 vPos, CTransform* pFollowTrans = nullptr);
 	void Create_DirEffect(_tchar* szName, _v3 vPos, _v3 vDir, CTransform* pFollowTrans = nullptr);
@@ -50,6 +51,7 @@ private:
 		_bool	bAutoFind;
 		_bool	bFinishPos;
 		Engine::CTransform* pFollowTrans;
+		_mat*				pTargetMatrix;
 	}PARTICLE_INFO;
 
 private:

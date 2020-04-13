@@ -545,6 +545,11 @@ void CManagement::Create_ParticleEffect_Delay(_tchar * szName, _float fLifeTime,
 	CParticleMgr::Get_Instance()->Create_ParticleEffect_Delay(szName, fLifeTime, fDelay, vPos, pFollowTrans);
 }
 
+void CManagement::Create_ParticleEffect_Delay(_tchar * szName, _float fLifeTime, _float fDelay, CTransform * pFollowTrans, _mat * pTargetMat)
+{
+	CParticleMgr::Get_Instance()->Create_ParticleEffect_Delay(szName, fLifeTime, fDelay, _v3(0, 0, 0), pFollowTrans, pTargetMat);
+}
+
 void CManagement::Free()
 {
 	Safe_Release(m_pBT_Node_Manager);

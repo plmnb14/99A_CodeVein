@@ -38,14 +38,21 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Player_ChargeSpark_ShockWave", 10);
 	Input_Pool(L"Player_ChargeSpark_Particle", 10);
 	Input_Pool(L"Player_ChargeSpark_BlastMesh", 10);
+	Input_Pool(L"Player_Heal_RedLight", 3);
+	Input_Pool(L"Player_Heal_Particle", 40);
 	Input_Pool(L"Player_Buff_HandLight", 3);
+	Input_Pool(L"Player_Buff_HandSmoke", 30);
+	Input_Pool(L"Player_Buff_Particle", 40);
+	Input_Pool(L"Player_Buff_Flash", 70);
 	Input_Pool(L"Player_Skill_Ring_Hor", 10);
 	Input_Pool(L"Player_Skill_Ring_Ver", 10);
+	Input_Pool(L"Player_Skill_Particle_Explosion", 110);
 	Input_Pool(L"Player_Skill_RedParticle_Explosion", 110);
 	Input_Pool(L"Player_Skill_RedParticle_Upper", 300);
 	Input_Pool(L"Player_Skill_RedCircle_Flash", 10);
 	Input_Pool(L"Player_Skill_Distortion_Circle", 10);
 	Input_Pool(L"Player_Skill_Distortion_Water", 10);
+	Input_Pool(L"Player_Skill_Distortion_Blaster", 10);
 	Input_Pool(L"Player_Skill_RedOnion", 40);
 	Input_Pool(L"Player_Skill_Floor_BlackRing", 50);
 	Input_Pool(L"Player_Skill_Floor_RedRing", 50);
@@ -184,6 +191,7 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 						CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));
 						pEffect->Set_ParticleName(szEffName);
 						pEffect->Set_Desc((*iter_begin)->vCreatePos, (*iter_begin)->pFollowTrans);
+						pEffect->Set_TargetMatrix((*iter_begin)->pTargetMatrix);
 						pEffect->Set_Delay(((*iter_begin)->fDelayTime != 0), (*iter_begin)->fDelayTime);
 						pEffect->Set_AutoFind((*iter_begin)->bAutoFind);
 						if ((*iter_begin)->bFinishPos) pEffect->Set_FinishPos((*iter_begin)->vFinishPos);
@@ -195,6 +203,7 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 
 					m_EffectList.push_back(pFindedQueue->front());
 					pFindedQueue->front()->Set_Desc((*iter_begin)->vCreatePos, (*iter_begin)->pFollowTrans);
+					pFindedQueue->front()->Set_TargetMatrix((*iter_begin)->pTargetMatrix);
 					pFindedQueue->front()->Set_Delay(((*iter_begin)->fDelayTime != 0), (*iter_begin)->fDelayTime);
 					pFindedQueue->front()->Set_AutoFind((*iter_begin)->bAutoFind);
 					if((*iter_begin)->bFinishPos) pFindedQueue->front()->Set_FinishPos((*iter_begin)->vFinishPos);
@@ -241,6 +250,23 @@ void CParticleMgr::Create_ParticleEffect_Delay(_tchar * szName, _float fLifeTime
 	pInfo->fLifeTime = fLifeTime;
 	pInfo->fDelayTime = fDelay;
 	pInfo->pFollowTrans = pFollowTrans;
+	pInfo->vCreatePos = vPos;
+	pInfo->bAutoFind = false;
+	pInfo->bFinishPos = false;
+
+	m_vecParticle.push_back(pInfo);
+}
+
+void CParticleMgr::Create_ParticleEffect_Delay(_tchar * szName, _float fLifeTime, _float fDelay, _v3 vPos, CTransform * pFollowTrans, _mat * pTargetMat)
+{
+	PARTICLE_INFO* pInfo = new PARTICLE_INFO;
+	ZeroMemory(pInfo, sizeof(PARTICLE_INFO));
+
+	lstrcpy(pInfo->szName, szName);
+	pInfo->fLifeTime = fLifeTime;
+	pInfo->fDelayTime = fDelay;
+	pInfo->pFollowTrans = pFollowTrans;
+	pInfo->pTargetMatrix = pTargetMat;
 	pInfo->vCreatePos = vPos;
 	pInfo->bAutoFind = false;
 	pInfo->bFinishPos = false;

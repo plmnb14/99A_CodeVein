@@ -319,11 +319,23 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Buff_HandLight")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Buff_HandSmoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Buff_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Buff_Flash")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Heal_RedLight")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Heal_Particle")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_ChargeSpark_BlastMesh", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Ring_Hor")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Ring_Ver")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Particle_Explosion")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_RedParticle_Explosion")))
 		return E_FAIL;
@@ -334,6 +346,8 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Distortion_Circle")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Distortion_Water")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Distortion_Blaster")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_RedOnion", true)))
 		return E_FAIL;
