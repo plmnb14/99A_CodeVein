@@ -1,22 +1,22 @@
 #include "stdafx.h"
-#include "..\Headers\BlackWolf.h"
+#include "..\Headers\Cocoon.h"
 
-CBlackWolf::CBlackWolf(LPDIRECT3DDEVICE9 pGraphic_Device)
-	: CGameObject(pGraphic_Device)
+CCocoon::CCocoon(LPDIRECT3DDEVICE9 pGraphic_Device)
+	:CGameObject(pGraphic_Device)
 {
 }
 
-CBlackWolf::CBlackWolf(const CBlackWolf & rhs)
+CCocoon::CCocoon(const CCocoon & rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CBlackWolf::Ready_GameObject_Prototype()
+HRESULT CCocoon::Ready_GameObject_Prototype()
 {
 	return NOERROR;
 }
 
-HRESULT CBlackWolf::Ready_GameObject(void * pArg)
+HRESULT CCocoon::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
@@ -32,38 +32,34 @@ HRESULT CBlackWolf::Ready_GameObject(void * pArg)
 
 	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
 
-	m_tObjParam.fHp_Max = 75.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
+	m_tObjParam.fHp_Max = 70.f;
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
-	m_tObjParam.fDamage = 20.f;
-
-	m_tObjParam.bCanHit = true; //맞기 가능
-	m_tObjParam.bIsHit = false;	//맞기 진행중 아님
-	m_tObjParam.bCanAttack = true; //공격 가능
-	m_tObjParam.bIsAttack = false; //공격 진행중 아님
-	m_tObjParam.bDodge = false; //첫 생성시 false임
+	m_tObjParam.fDamage = 20.f; //투사체가 필요한가?
+	m_tObjParam.bCanHit = true;
+	m_tObjParam.bIsHit = false;
+	m_tObjParam.bHitAgain = false;
+	m_tObjParam.bCanAttack = true;
+	m_tObjParam.bIsAttack = false;
 
 	m_bInRecognitionRange = false; //인지 범위 여부
-	m_bInAtkRange = false; //공격 범위 여부
-	m_bCanChase = false; //추격 여부
+	m_bInMistAtkRange = false;
+	m_bInShotAtkRange = false;
+
 	m_bCanCoolDown = false; //쿨타임 여부
 	m_bIsCoolDown = false; //쿨타임 진행중 여부
 
-	m_bCanIdleRandom = true;
-	m_bCanAtkRandom = true;
-
-	m_fRecognitionRange = 15.f; //인지범위
-	m_fAtkRange = 4.f; //공격범위
-	m_fCoolDownMax = 1.5f; //쿨타임 맥스값은 유동적
-	m_fCoolDownCur = 0.f; //쿨타임 시간을 더함
-	m_iRandom = 0; //랜덤 저장 변수
-	m_iDodgeCount = 0; //n회 피격시 바로 회피
-
+	m_fRecognitionRange = 20.f;
+	m_fMistAtkRange = 5.f;
+	m_fShotAtkRange = 10.f;
+	m_fCoolDownMax = 0.f;
+	m_fCoolDownCur = 0.f;
 	m_fSpeedForCollisionPush = 2.f;
+	m_iRandom = 0;
 
 	return NOERROR;
 }
 
-_int CBlackWolf::Update_GameObject(_double TimeDelta)
+_int CCocoon::Update_GameObject(_double TimeDelta)
 {
 	if (false == m_bEnable)
 		return NO_EVENT;
@@ -82,7 +78,7 @@ _int CBlackWolf::Update_GameObject(_double TimeDelta)
 	return NOERROR;
 }
 
-_int CBlackWolf::Late_Update_GameObject(_double TimeDelta)
+_int CCocoon::Late_Update_GameObject(_double TimeDelta)
 {
 	if (false == m_bEnable)
 		return NO_EVENT;
@@ -101,7 +97,7 @@ _int CBlackWolf::Late_Update_GameObject(_double TimeDelta)
 	return NOERROR;
 }
 
-HRESULT CBlackWolf::Render_GameObject()
+HRESULT CCocoon::Render_GameObject()
 {
 	IF_NULL_VALUE_RETURN(m_pShaderCom, E_FAIL);
 	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
@@ -146,7 +142,7 @@ HRESULT CBlackWolf::Render_GameObject()
 	return NOERROR;
 }
 
-HRESULT CBlackWolf::Render_GameObject_SetPass(CShader * pShader, _int iPass)
+HRESULT CCocoon::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 {
 	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
 	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
@@ -185,7 +181,7 @@ HRESULT CBlackWolf::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 	return NOERROR;
 }
 
-void CBlackWolf::Update_Collider()
+void CCocoon::Update_Collider()
 {
 	for (auto& vector_iter : m_vecAttackCol)
 	{
@@ -214,7 +210,7 @@ void CBlackWolf::Update_Collider()
 	return;
 }
 
-void CBlackWolf::Render_Collider()
+void CCocoon::Render_Collider()
 {
 	for (auto& iter : m_vecAttackCol)
 	{
@@ -229,7 +225,7 @@ void CBlackWolf::Render_Collider()
 	return;
 }
 
-void CBlackWolf::Enter_Collision()
+void CCocoon::Enter_Collision()
 {
 	Check_CollisionPush();
 	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_STAGE));
@@ -237,7 +233,7 @@ void CBlackWolf::Enter_Collision()
 	return;
 }
 
-void CBlackWolf::Check_CollisionPush()
+void CCocoon::Check_CollisionPush()
 {
 	list<CGameObject*> tmpList[3];
 
@@ -272,23 +268,20 @@ void CBlackWolf::Check_CollisionPush()
 	return;
 }
 
-void CBlackWolf::Check_CollisionEvent(list<CGameObject*> plistGameObject)
+void CCocoon::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 {
-	// 공격 불가능이면 체크 안함
 	if (false == m_tObjParam.bIsAttack)
 	{
 		return;
 	}
 
 	_bool bFirst = true;
-	//게임 오브젝트를 받아와서
+
 	for (auto& iter : plistGameObject)
 	{
-		// 맞을 수 없다면 리턴
 		if (false == iter->Get_Target_CanHit())
 			continue;
 
-		// 내가 가진 Vec 콜라이더와 비교한다.
 		for (auto& vecIter : m_vecAttackCol)
 		{
 			if (false == vecIter->Get_Enabled())
@@ -296,13 +289,10 @@ void CBlackWolf::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 
 			bFirst = true;
 
-			// 피직콜라이더랑 비교
 			for (auto& vecCol : iter->Get_PhysicColVector())
 			{
-				// 물체 전체를 대표할 콜라이더.
 				if (vecIter->Check_Sphere(vecCol))
 				{
-					// 첫번째는 경계구 콜라이더니까 다음 콜라이더와 충돌처리 한다.
 					if (bFirst)
 					{
 						bFirst = false;
@@ -339,50 +329,36 @@ void CBlackWolf::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 	return;
 }
 
-void CBlackWolf::Check_Hit()
+void CCocoon::Check_Hit()
 {
 	if (MONSTER_ANITYPE::DEAD == m_eFirstCategory)
 	{
 		return;
 	}
-	else //죽음 상태 아님
+	else
 	{
-		if (false == m_tObjParam.bCanHit) //피격o
+		if (false == m_tObjParam.bCanHit)
 		{
-			++m_iDodgeCount;
-
-			if (m_iDodgeCount >= m_iDodgeCountMax) //3회 이상의 피격
+			if (true == m_tObjParam.bIsHit)
 			{
-				m_iDodgeCount = 0;
-				m_eFirstCategory = MONSTER_ANITYPE::MOVE;
-				m_eSecondCategory_MOVE = WOLF_MOVETYPE::MOVE_DODGE;
-				m_pMeshCom->Reset_OldIndx();
-				Function_RotateBody();
-			}
-			else //3회 미만의 피격
-			{
-				if (true == m_tObjParam.bIsHit) //피격 진행중o
+				if (true == m_tObjParam.bHitAgain)
 				{
-					if (true == m_tObjParam.bHitAgain) //추가 피격o
-					{
-						m_eFirstCategory = MONSTER_ANITYPE::HIT;
-						Check_FBLR();
-						m_tObjParam.bHitAgain = false;
-						m_pMeshCom->Reset_OldIndx();
-					}
+					m_eFirstCategory = MONSTER_ANITYPE::HIT;
+					Check_FBLR();
+					m_tObjParam.bHitAgain = false;
+					m_pMeshCom->Reset_OldIndx();
 				}
-				else //피격 진행중x
+			}
+			else
+			{
+				if (0 >= m_tObjParam.fHp_Cur)
 				{
-					if (0 >= m_tObjParam.fHp_Cur) //체력없음
-					{
-						//Down인 경우 Dead_Strong을 진행
-						m_eFirstCategory = MONSTER_ANITYPE::DEAD;
-					}
-					else //체력 있음
-					{
-						m_eFirstCategory = MONSTER_ANITYPE::HIT;
-						Check_FBLR();
-					}
+					m_eFirstCategory = MONSTER_ANITYPE::DEAD;
+				}
+				else
+				{
+					m_eFirstCategory = MONSTER_ANITYPE::HIT;
+					Check_FBLR();
 				}
 			}
 		}
@@ -391,230 +367,139 @@ void CBlackWolf::Check_Hit()
 	return;
 }
 
-void CBlackWolf::Check_FBLR()
-{
+void CCocoon::Check_FBLR()
+{	
 	//피격 앞,뒤 체크
-	m_eSecondCategory_HIT = WOLF_HITTYPE::HIT_HIT_F;
+	m_eSecondCategory_HIT = Cocoon_HITTYPE::HIT_HIT_F;
 	//m_eSecondCategory_HIT = WOLF_HITTYPE::HIT_HIT_B;
 
 	return;
 }
 
-void CBlackWolf::Check_Dist()
+void CCocoon::Check_Dist()
 {
-	//아래 상태시 체크 안함
 	if (MONSTER_ANITYPE::HIT == m_eFirstCategory ||
-		MONSTER_ANITYPE::DOWN == m_eFirstCategory ||
 		MONSTER_ANITYPE::DEAD == m_eFirstCategory)
 		return;
 
-	//회피 시작인 경우 체크 안함
-	if (MONSTER_ANITYPE::MOVE == m_eFirstCategory &&
-		WOLF_MOVETYPE::MOVE_DODGE == m_eSecondCategory_MOVE)
-		return;
-
-	//회피, 공격중, 맞는중 체크 안함
-	if (true == m_tObjParam.bDodge ||
-		true == m_tObjParam.bIsAttack ||
+	if (true == m_tObjParam.bIsAttack ||
 		true == m_tObjParam.bIsHit)
 		return;
 
 	_float fLenth = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransform->Get_Pos()));
 
 	m_fRecognitionRange >= fLenth ? m_bInRecognitionRange = true : m_bInRecognitionRange = false;
-	m_fAtkRange >= fLenth ? m_bInAtkRange = true : m_bInAtkRange = false;
+	m_fShotAtkRange >= fLenth ? m_bInShotAtkRange = true : m_bInShotAtkRange = false;
+	m_fMistAtkRange >= fLenth ? m_bInMistAtkRange = true : m_bInMistAtkRange = false;
+
 
 	if (true == m_bInRecognitionRange) //인지o
 	{
-		//일상 애니 작동중o
-		if (WOLF_ANI::Sit_End == m_eState || WOLF_ANI::Sit == m_eState || WOLF_ANI::Eat_End == m_eState || WOLF_ANI::Eat == m_eState)
+		if (true == m_bInShotAtkRange) //원거리공격범위 o
 		{
-			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-			return;
-		}
-		else //일상 애니 작동중x
-		{
-			if (true == m_bInAtkRange) //공격범위 o
+			if (true == m_bInMistAtkRange) //방사공격범위o
 			{
-				if (true == m_tObjParam.bCanAttack) //공격 가능
+				if (true == m_tObjParam.bCanAttack) //공격가능
 				{
 					if (true == m_bIsCoolDown) //쿨타임중o
 					{
-						//경계,응시
-						m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-						m_eSecondCategory_IDLE = WOLF_IDLETYPE::IDLE_IDLE;
+						m_eFirstCategory = MONSTER_ANITYPE::IDLE; //회피 대기 경계
+						m_eSecondCategory_IDLE = Cocoon_IDLETYPE::IDLE_THREAT;
 						Function_RotateBody();
-						return;
+					}
+					else //쿨타임x
+					{
+						m_eFirstCategory = MONSTER_ANITYPE::ATTACK;
+						m_eState = COCOON_ANI::Mist;
+						Function_RotateBody();
+					}
+				}
+				else
+				{
+					m_eFirstCategory = MONSTER_ANITYPE::IDLE; //회피 대기 경계
+					m_eSecondCategory_IDLE = Cocoon_IDLETYPE::IDLE_THREAT;
+					Function_RotateBody();
+				}
+			}
+			else //방사공격범위x
+			{
+				if (true == m_tObjParam.bCanAttack) //공격가능
+				{
+					if (true == m_bIsCoolDown) //쿨타임중o
+					{
+						m_eFirstCategory = MONSTER_ANITYPE::IDLE; //회피 대기 경계
+						m_eSecondCategory_IDLE = Cocoon_IDLETYPE::IDLE_THREAT;
+						Function_RotateBody();
 					}
 					else //쿨타임중x
 					{
-						m_bCanAtkRandom = true;
 						m_eFirstCategory = MONSTER_ANITYPE::ATTACK;
+						m_eState = COCOON_ANI::Shot;
 						Function_RotateBody();
-						return;
 					}
 				}
-				else //공격 불가
+				else //공격불가
 				{
-					//몸을 회전하면서 경계한다
 					m_eFirstCategory = MONSTER_ANITYPE::IDLE; //회피 대기 경계
-					m_eSecondCategory_IDLE = WOLF_IDLETYPE::IDLE_IDLE;
+					m_eSecondCategory_IDLE = Cocoon_IDLETYPE::IDLE_THREAT;
 					Function_RotateBody();
-					return;
 				}
 			}
-			else //공격범위x
-			{
-				m_bCanChase = true;
-				m_eFirstCategory = MONSTER_ANITYPE::MOVE;
-				m_eSecondCategory_MOVE = WOLF_MOVETYPE::MOVE_RUN;
-				return;
-			}
+		}
+		else //공격범위x
+		{
+			m_eFirstCategory = MONSTER_ANITYPE::IDLE; //회피 대기 경계
+			m_eSecondCategory_IDLE = Cocoon_IDLETYPE::IDLE_IDLE;
+			Function_RotateBody();
 		}
 	}
 	else //인지x
 	{
-		//일상
-		m_bCanChase = false;
 		m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-		if (true == m_bCanIdleRandom) //일상 랜덤
-		{
-			switch (CALC::Random_Num(WOLF_IDLETYPE::IDLE_IDLE, WOLF_IDLETYPE::IDLE_SIT))
-			{
-			case WOLF_IDLETYPE::IDLE_IDLE:
-				m_eSecondCategory_IDLE = WOLF_IDLETYPE::IDLE_IDLE;
-				break;
-			case WOLF_IDLETYPE::IDLE_EAT:
-				m_eSecondCategory_IDLE = WOLF_IDLETYPE::IDLE_EAT;
-				break;
-			case WOLF_IDLETYPE::IDLE_SIT:
-				m_eSecondCategory_IDLE = WOLF_IDLETYPE::IDLE_SIT;
-				break;
-			}
-		}
-
-		return;
+		m_eSecondCategory_IDLE = Cocoon_IDLETYPE::IDLE_IDLE;
 	}
 
 	return;
 }
 
-void CBlackWolf::Set_AniEvent()
+void CCocoon::Set_AniEvent()
 {
 	switch (m_eFirstCategory)
 	{
 	case MONSTER_ANITYPE::IDLE:
-		if (true == m_bCanIdleRandom)
+		switch (m_eSecondCategory_IDLE)
 		{
-			m_bCanIdleRandom = false;
-
-			switch (m_eSecondCategory_IDLE)
-			{
-			case Client::CBlackWolf::IDLE_IDLE:
-				m_eState = WOLF_ANI::Idle;
-				break;
-			case Client::CBlackWolf::IDLE_EAT:
-				m_eState = WOLF_ANI::Eat;
-				break;
-			case Client::CBlackWolf::IDLE_SIT:
-				m_eState = WOLF_ANI::Sit;
-				break;
-			}
-		}
-		else
-		{
-			switch (m_eSecondCategory_IDLE)
-			{
-			case Client::CBlackWolf::IDLE_IDLE:
-				Play_Idle();
-				break;
-			case Client::CBlackWolf::IDLE_EAT:
-				Play_Eat();
-				break;
-			case Client::CBlackWolf::IDLE_SIT:
-				Play_Sit();
-				break;
-			}
-		}
-		break;
-
-	case MONSTER_ANITYPE::MOVE:
-		switch (m_eSecondCategory_MOVE)
-		{
-		case WOLF_MOVETYPE::MOVE_RUN:
-			Play_Run();
+		case Client::CCocoon::IDLE_IDLE:
+			Play_Idle();
 			break;
-		case WOLF_MOVETYPE::MOVE_WALK:
-			Play_Walk();
-			break;
-		case WOLF_MOVETYPE::MOVE_DODGE:
-			Play_Dodge();
+		case Client::CCocoon::IDLE_THREAT:
+			m_eState = Threat;
 			break;
 		}
 		break;
 
 	case MONSTER_ANITYPE::ATTACK:
-		if (true == m_bCanAtkRandom)
+		switch (m_eState)
 		{
-			m_bCanAtkRandom = false; //랜덤 공격 불가
-			m_tObjParam.bCanAttack = false; //공격불가
-			m_tObjParam.bIsAttack = true; //공격중
-
-			m_iRandom = CALC::Random_Num(BiteLRL, Frisbee);
-
-			switch (m_iRandom)
-			{
-			case WOLF_ANI::BiteLRL:
-				m_eState = WOLF_ANI::BiteLRL;
-				break;
-			case WOLF_ANI::RDodgeAtk:
-				m_eState = WOLF_ANI::RDodgeAtk;
-				break;
-			case WOLF_ANI::LDodgeAtk:
-				m_eState = WOLF_ANI::LDodgeAtk;
-				break;
-			case WOLF_ANI::Frisbee:
-				m_eState = WOLF_ANI::Frisbee;
-				break;
-			}
-
-			return;
-		}
-		else
-		{
-			switch (m_eState)
-			{
-			case Client::CBlackWolf::BiteLRL:
-				Play_Bite_LRL();
-				break;
-			case Client::CBlackWolf::RDodgeAtk:
-				Play_RDodgeAtk();
-				break;
-			case Client::CBlackWolf::LDodgeAtk:
-				Play_LDodgeAtk();
-				break;
-			case Client::CBlackWolf::Frisbee:
-				Play_Frisbee();
-				break;
-			}
+		case Client::CCocoon::Shot:
+			Play_Shot();
+			break;
+		case Client::CCocoon::Mist:
+			Play_Mist();
+			break;
 		}
 		break;
 
 	case MONSTER_ANITYPE::HIT:
-		Play_Hit();
-		//if (WOLF_HITTYPE::HIT_HIT_F == m_eSecondCategory_IDLE)
-		//{
-		//	Play_Hit_F();
-		//	break;
-		//}
-		//if (WOLF_HITTYPE::HIT_HIT_B == m_eSecondCategory_IDLE)
-		//{
-		//	Play_Hit_B();
-		//	break;
-		//}
-		break;
-
-	case MONSTER_ANITYPE::DOWN:
+		switch (m_eSecondCategory_HIT)
+		{
+		case Client::CCocoon::HIT_HIT_F:
+			Play_Hit();
+			break;
+		case Client::CCocoon::HIT_HIT_B:
+			Play_Hit();
+			break;
+		}
 		break;
 
 	case MONSTER_ANITYPE::DEAD:
@@ -625,7 +510,7 @@ void CBlackWolf::Set_AniEvent()
 	return;
 }
 
-void CBlackWolf::Function_RotateBody()
+void CCocoon::Function_RotateBody()
 {
 	_float fTargetAngle = m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos());
 
@@ -696,13 +581,13 @@ void CBlackWolf::Function_RotateBody()
 	return;
 }
 
-void CBlackWolf::Function_CoolDown()
+void CCocoon::Function_CoolDown()
 {
-	if (true == m_bCanCoolDown) //공격 직후 상태
+	if (true == m_bCanCoolDown)
 	{
 		m_fCoolDownCur += DELTA_60;
 
-		if (m_fCoolDownCur >= m_fCoolDownMax) //누적시간이 쿨타임보다 크다면
+		if (m_fCoolDownCur >= m_fCoolDownMax)
 		{
 			m_fCoolDownCur = 0.f;
 			m_bCanCoolDown = false;
@@ -714,20 +599,16 @@ void CBlackWolf::Function_CoolDown()
 	return;
 }
 
-void CBlackWolf::Function_Movement(_float _fspeed, _v3 _vDir)
+void CCocoon::Function_Movement(_float _fspeed, _v3 _vDir)
 {
 	V3_NORMAL(&_vDir, &_vDir);
 
-	// 네비 미적용
-	//m_pTransformCom->Add_Pos(_fspeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"), _vDir);
-
-	// 네비 적용
 	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &_vDir, _fspeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
 
 	return;
 }
 
-void CBlackWolf::Function_DecreMoveMent(_float _fMutiply)
+void CCocoon::Function_DecreMoveMent(_float _fMutiply)
 {
 	m_fSkillMoveSpeed_Cur -= (0.3f - m_fSkillMoveAccel_Cur * m_fSkillMoveAccel_Cur * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60")) * _fMutiply;
 	m_fSkillMoveAccel_Cur += g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60");
@@ -741,7 +622,7 @@ void CBlackWolf::Function_DecreMoveMent(_float _fMutiply)
 	return;
 }
 
-void CBlackWolf::Function_ResetAfterAtk()
+void CCocoon::Function_ResetAfterAtk()
 {
 	m_tObjParam.bCanHit = true; //피격 가능
 	m_tObjParam.bIsHit = false; //피격중 x
@@ -749,7 +630,6 @@ void CBlackWolf::Function_ResetAfterAtk()
 	m_tObjParam.bDodge = false;  //회피아님
 
 	m_tObjParam.bIsAttack = false; //공격중x
-	m_bCanAtkRandom = true;//랜덤 공격 가능
 
 	m_vecAttackCol[0]->Set_Enabled(false);
 
@@ -759,400 +639,27 @@ void CBlackWolf::Function_ResetAfterAtk()
 	return;
 }
 
-void CBlackWolf::Play_Idle()
+void CCocoon::Play_Idle()
 {
 	if (true == m_bInRecognitionRange) //인지o
 	{
 		if (true == m_tObjParam.bCanAttack)
 		{
 			//인지, 공격 가능->대기
-			m_eState = WOLF_ANI::Idle;
-			return;
-		}
-		else
-		{
-			//인지, 공격 불가->경계
-			m_eState = WOLF_ANI::Threat;
+			m_eState = COCOON_ANI::Idle;
 			return;
 		}
 	}
 	else //인지x
 	{
-		m_bCanIdleRandom = true;
-		m_eState = WOLF_ANI::Idle;
+		m_eState = COCOON_ANI::Idle;
 		return;
 	}
 
 	return;
 }
 
-void CBlackWolf::Play_Eat()
-{
-	if (true == m_bInRecognitionRange)
-	{
-		if (WOLF_ANI::Eat == m_eState)
-		{
-			if (m_pMeshCom->Is_Finish_Animation())
-				m_eState = WOLF_ANI::Eat_End;
-
-			return;
-		}
-		else if (WOLF_ANI::Eat_End == m_eState)
-		{
-			if (m_pMeshCom->Is_Finish_Animation(0.98f))
-			{
-				m_bCanIdleRandom = true;
-				m_eState = WOLF_ANI::Idle;
-			}
-
-			return;
-		}
-	}
-	else
-	{
-		m_eState = WOLF_ANI::Eat;
-
-		return;
-	}
-
-	return;
-}
-
-void CBlackWolf::Play_Sit()
-{
-	if (true == m_bInRecognitionRange)
-	{
-		if (WOLF_ANI::Sit == m_eState)
-		{
-			if (m_pMeshCom->Is_Finish_Animation())
-				m_eState = WOLF_ANI::Sit_End;
-
-			return;
-		}
-		else if (WOLF_ANI::Sit_End == m_eState)
-		{
-			if (m_pMeshCom->Is_Finish_Animation(0.98f))
-			{
-				m_bCanIdleRandom = true;
-				m_eState = WOLF_ANI::Idle;
-			}
-
-			return;
-		}
-	}
-	else
-	{
-		m_eState = WOLF_ANI::Sit;
-
-		return;
-	}
-
-	return;
-}
-
-void CBlackWolf::Play_Walk()
-{
-	m_eState = WOLF_ANI::Walk;
-
-	Function_RotateBody();
-
-	Function_Movement(2.f, m_pTransformCom->Get_Axis(AXIS_Z));
-
-	Function_DecreMoveMent(0.1f);
-
-	return;
-}
-
-void CBlackWolf::Play_Run()
-{
-	m_eState = WOLF_ANI::Run;
-
-	Function_RotateBody();
-
-	Function_Movement(4.f, m_pTransformCom->Get_Axis(AXIS_Z));
-
-	Function_DecreMoveMent(0.1f);
-
-	return;
-}
-
-void CBlackWolf::Play_Dodge()
-{
-	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
-
-	if (false == m_tObjParam.bDodge) //회피상태x
-	{
-		Function_ResetAfterAtk();
-		m_tObjParam.bDodge = true; //회피상태o
-		m_eState = WOLF_ANI::Dodge;
-	}
-	else //회피상태o
-	{
-		if (m_pMeshCom->Is_Finish_Animation(0.98f))
-		{
-			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-			m_tObjParam.bCanAttack = true;
-			Function_ResetAfterAtk();
-
-			return;
-		}
-		else
-		{
-			if (0.667f < AniTime && 1.867f > AniTime)
-		{
-			if (m_bEventTrigger[0] == false)
-			{
-				m_bEventTrigger[0] = true;
-				m_fSkillMoveSpeed_Cur = 10.f;
-				m_fSkillMoveAccel_Cur = 0.f;
-				m_fSkillMoveMultiply = 0.5f;
-			}
-
-			Function_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
-
-			Function_DecreMoveMent(m_fSkillMoveMultiply);
-		}
-		}
-	}
-
-	return;
-}
-
-void CBlackWolf::Play_Bite_LRL()
-{
-	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
-
-	if (true == m_tObjParam.bCanAttack) //공격가능
-	{
-		m_tObjParam.bCanAttack = false;
-		m_tObjParam.bIsAttack = true;
-	}
-	else
-	{
-		if (m_pMeshCom->Is_Finish_Animation(0.95f))
-		{
-			m_bCanCoolDown = true;
-			m_fCoolDownMax = 2.f;
-			Function_ResetAfterAtk();
-
-			return;
-		}
-		else
-		{
-			if (1.367f < AniTime && 1.967f > AniTime)
-			{
-				if (false == m_bEventTrigger[0])
-				{
-					m_bEventTrigger[0] = true;
-					m_vecAttackCol[0]->Set_Enabled(true);
-					Function_RotateBody();
-				}
-			}
-			else if (1.967f <= AniTime && 2.467f > AniTime)
-			{
-				if (m_bEventTrigger[1] == false)
-				{
-					m_bEventTrigger[1] = true;
-					m_fSkillMoveSpeed_Cur = 4.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 0.1f;
-				}
-				if (2.167f <= AniTime)
-				{
-					if (false == m_bEventTrigger[2])
-					{
-						m_bEventTrigger[2] = true;
-						m_vecAttackCol[0]->Set_Enabled(false);
-					}
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-			else if (3.167f < AniTime && 3.233f > AniTime)
-			{
-				if (false == m_bEventTrigger[3])
-				{
-					m_bEventTrigger[3] = true;
-					m_vecAttackCol[0]->Set_Enabled(true);
-					Function_RotateBody();
-				}
-			}
-			else if (3.233f <= AniTime && 3.567f > AniTime)
-			{
-				if (m_bEventTrigger[4] == false)
-				{
-					m_bEventTrigger[4] = true;
-					m_fSkillMoveSpeed_Cur = 6.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 0.3f;
-				}
-				if (3.367f <= AniTime)
-				{
-					if (false == m_bEventTrigger[5])
-					{
-						m_bEventTrigger[5] = true;
-						m_vecAttackCol[0]->Set_Enabled(false);
-					}
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-			else if (4.200f < AniTime && 4.433 > AniTime)
-			{
-				if (false == m_bEventTrigger[6])
-				{
-					m_bEventTrigger[6] = true;
-					m_vecAttackCol[0]->Set_Enabled(true);
-					Function_RotateBody();
-				}
-			}
-			else if (4.433f <= AniTime && 4.933f > AniTime)
-			{
-				if (m_bEventTrigger[7] == false)
-				{
-					m_bEventTrigger[7] = true;
-					m_fSkillMoveSpeed_Cur = 6.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 0.3f;
-				}
-				if (4.600f <= AniTime)
-				{
-					if (false == m_bEventTrigger[8])
-					{
-						m_bEventTrigger[8] = true;
-						m_vecAttackCol[0]->Set_Enabled(false);
-					}
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-		}
-	}
-
-	return;
-}
-
-void CBlackWolf::Play_RDodgeAtk()
-{
-	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
-
-	if (true == m_tObjParam.bCanAttack)
-	{
-		m_tObjParam.bCanAttack = false;
-		m_tObjParam.bIsAttack = true;
-	}
-	else
-	{
-		if (m_pMeshCom->Is_Finish_Animation(0.95f))
-		{
-			m_bCanCoolDown = true;
-			m_fCoolDownMax = 1.5f;
-			Function_ResetAfterAtk();
-
-			return;
-		}
-		else
-		{
-			if (0.467f < AniTime && 1.233f > AniTime)
-			{
-				if (m_bEventTrigger[0] == false)
-				{
-					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 4.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 0.1f;
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-			else if (1.533f < AniTime && 2.700f > AniTime)
-			{
-				if (m_bEventTrigger[1] == false)
-				{
-					m_bEventTrigger[1] = true;
-					m_fSkillMoveSpeed_Cur = 6.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 0.1f;
-					m_vecAttackCol[0]->Set_Enabled(true);
-					Function_RotateBody();
-				}
-				if (2.367f < AniTime)
-				{
-					if (m_bEventTrigger[2] == false)
-					{
-						m_bEventTrigger[2] = true;
-						m_vecAttackCol[0]->Set_Enabled(false);
-					}
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-		}
-	}
-}
-
-void CBlackWolf::Play_LDodgeAtk()
-{
-	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
-
-	if (true == m_tObjParam.bCanAttack)
-	{
-		m_tObjParam.bCanAttack = false;
-		m_tObjParam.bIsAttack = true;
-	}
-	else
-	{
-		if (m_pMeshCom->Is_Finish_Animation(0.95f))
-		{
-			m_bCanCoolDown = true;
-			m_fCoolDownMax = 1.5f;
-			Function_ResetAfterAtk();
-
-			return;
-		}
-		else
-		{
-			if (0.467f < AniTime && 1.233f > AniTime)
-			{
-				if (m_bEventTrigger[0] == false)
-				{
-					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 4.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 0.1f;
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-			else if (1.533f < AniTime && 2.700f > AniTime)
-			{
-				if (m_bEventTrigger[1] == false)
-				{
-					m_bEventTrigger[1] = true;
-					m_fSkillMoveSpeed_Cur = 6.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 0.1f;
-					m_vecAttackCol[0]->Set_Enabled(true);
-					Function_RotateBody();
-				}
-				if (2.367f < AniTime)
-				{
-					if (m_bEventTrigger[2] == false)
-					{
-						m_bEventTrigger[2] = true;
-						m_vecAttackCol[0]->Set_Enabled(false);
-					}
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-		}
-	}
-
-	return;
-}
-
-void CBlackWolf::Play_Frisbee()
+void CCocoon::Play_Shot()
 {
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
 
@@ -1173,34 +680,13 @@ void CBlackWolf::Play_Frisbee()
 		}
 		else
 		{
-			if (0.733f < AniTime && 2.667f > AniTime)
+			//5733 생성, //6267 발사
+			if (5.733f < AniTime && 6.267f > AniTime)
 			{
-				if (m_bEventTrigger[0] == false)
-				{
-					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 6.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 0.1f;
-				}
-				if (1.533f < AniTime && 2.467f > AniTime)
-				{
-					if (false == m_bEventTrigger[1])
-					{
-						//안광 트레일
-						m_bEventTrigger[1] = true;
-						m_vecAttackCol[0]->Set_Enabled(true);
-					}
-				}
-				else if (2.467f <= AniTime)
-				{
-					if (false == m_bEventTrigger[2])
-					{
-						m_bEventTrigger[2] = true;
-						m_vecAttackCol[0]->Set_Enabled(false);
-					}
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
+			}
+			else if (6.267f <= AniTime)
+			{
+
 			}
 		}
 	}
@@ -1208,20 +694,54 @@ void CBlackWolf::Play_Frisbee()
 	return;
 }
 
-void CBlackWolf::Play_Hit()
+void CCocoon::Play_Mist()
 {
-	//최초 피격
+	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+
+	if (true == m_tObjParam.bCanAttack)
+	{
+		m_tObjParam.bCanAttack = false;
+		m_tObjParam.bIsAttack = true;
+	}
+	else
+	{
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		{
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = 0.8f;
+			Function_ResetAfterAtk();
+
+			return;
+		}
+		else
+		{
+			//현재 시간만 따둠
+			//3.033 생성 3.567 방사 6.900 종료
+			if (3.033f < AniTime && 3.567f > AniTime)
+			{
+				//입안에 머금고 있다
+			}
+			else if (3.567f < AniTime && 6.900f > AniTime)
+			{
+				//방사
+			}
+			else if (6.900f <= AniTime)
+			{
+				//종료
+			}
+		}
+	}
+
+	return;
+}
+
+void CCocoon::Play_Hit()
+{
 	if (false == m_tObjParam.bIsHit)
 	{
 		Function_ResetAfterAtk();
 		m_tObjParam.bIsHit = true;
-		m_eState = WOLF_ANI::Dmg_F;
-		//if (WOLF_HITTYPE::HIT_HIT_F == m_eSecondCategory_HIT)
-		//{
-		//}
-		//else
-		//{
-		//}
+		m_eState = COCOON_ANI::Dmg_F;
 	}
 	else
 	{
@@ -1248,17 +768,7 @@ void CBlackWolf::Play_Hit()
 	return;
 }
 
-void CBlackWolf::Play_Down_Strong()
-{
-	return;
-}
-
-void CBlackWolf::Play_Down_Weak()
-{
-	return;
-}
-
-void CBlackWolf::Play_Dead()
+void CCocoon::Play_Dead()
 {
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
 
@@ -1266,7 +776,7 @@ void CBlackWolf::Play_Dead()
 	{
 		Function_ResetAfterAtk();
 		m_bCanPlayDeadAni = true;
-		m_eState = WOLF_ANI::Dead;
+		m_eState = COCOON_ANI::Dead;
 	}
 	else
 	{
@@ -1277,12 +787,12 @@ void CBlackWolf::Play_Dead()
 		}
 		else
 		{
-			if (4.73f < AniTime)
+			if (4.467f < AniTime)
 			{
 				if (false == m_bEventTrigger[0])
 				{
 					m_bEventTrigger[0] = true;
-					Start_Dissolve(0.8f, false, true);
+					Start_Dissolve(0.6f, false, true);
 				}
 			}
 		}
@@ -1291,20 +801,7 @@ void CBlackWolf::Play_Dead()
 	return;
 }
 
-void CBlackWolf::Play_Dead_Strong()
-{
-	m_eState = WOLF_ANI::Dead_Strong;
-
-	if (m_pMeshCom->Is_Finish_Animation(0.95f))
-	{
-		m_bIsDead = true;
-		m_dAniPlayMul = 0.f;
-	}
-
-	return;
-}
-
-HRESULT CBlackWolf::Add_Component()
+HRESULT CCocoon::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -1319,7 +816,7 @@ HRESULT CBlackWolf::Add_Component()
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Wolf_Black", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Cocoon_Normal", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
 		return E_FAIL;
 
 	// for.Com_NavMesh
@@ -1338,7 +835,7 @@ HRESULT CBlackWolf::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CBlackWolf::SetUp_ConstantTable()
+HRESULT CCocoon::SetUp_ConstantTable()
 {
 	IF_NULL_VALUE_RETURN(m_pShaderCom, E_FAIL);
 
@@ -1367,7 +864,7 @@ HRESULT CBlackWolf::SetUp_ConstantTable()
 	return NOERROR;
 }
 
-HRESULT CBlackWolf::Ready_Collider()
+HRESULT CCocoon::Ready_Collider()
 {
 	m_vecPhysicCol.reserve(3); //2칸의 공간 할당
 	m_vecAttackCol.reserve(2); //2칸의 공간 할당
@@ -1435,14 +932,14 @@ HRESULT CBlackWolf::Ready_Collider()
 	return S_OK;
 }
 
-HRESULT CBlackWolf::Ready_BoneMatrix()
+HRESULT CCocoon::Ready_BoneMatrix()
 {
-	D3DXFRAME_DERIVED*	pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head", 0);
+	D3DXFRAME_DERIVED*	pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Jaw_Tongue1", 0);
 	IF_NULL_VALUE_RETURN(pFrame, E_FAIL);
 
 	m_matBone[Bone_Head] = &pFrame->CombinedTransformationMatrix;
 
-	pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Spine1", 0);
+	pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Spine3", 0);
 	IF_NULL_VALUE_RETURN(pFrame, E_FAIL);
 
 	m_matBone[Bone_Range] = &pFrame->CombinedTransformationMatrix;
@@ -1451,33 +948,33 @@ HRESULT CBlackWolf::Ready_BoneMatrix()
 	return S_OK;
 }
 
-CBlackWolf* CBlackWolf::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
+CCocoon* CCocoon::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 {
-	CBlackWolf* pInstance = new CBlackWolf(pGraphic_Device);
+	CCocoon* pInstance = new CCocoon(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 	{
-		MSG_BOX("Failed To Creating CBlackWolf");
+		MSG_BOX("Failed To Creating CCocoon");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CBlackWolf::Clone_GameObject(void * pArg)
+CGameObject* CCocoon::Clone_GameObject(void * pArg)
 {
-	CBlackWolf* pInstance = new CBlackWolf(*this);
+	CCocoon* pInstance = new CCocoon(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
-		MSG_BOX("Failed To Cloned CBlackWolf");
+		MSG_BOX("Failed To Cloned CCocoon");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CBlackWolf::Free()
+void CCocoon::Free()
 {
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pNavMesh);

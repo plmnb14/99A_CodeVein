@@ -72,6 +72,15 @@
 #define IDC_ANiCOMBOSAVE                1310
 #define IDC_ANiCOMBOLOAD                1311
 #define IDC_ANICOMBOTREE                1312
+#define IDC_WPCOMBOBOX                  1315
+#define IDC_WPCREATE                    1316
+#define IDC_WPATTACH                    1317
+#define IDC_ATTACHNAME                  1318
+#define IDC_WPRADIUS                    1319
+#define IDC_WPHEIGHT                    1320
+#define IDC_WPNAME                      1321
+#define IDC_RADIUSSPIN                  1322
+#define IDC_HEIGHTSPIN                  1323
 
 // Next default values for new objects
 // 
@@ -79,7 +88,7 @@
 #ifndef APSTUDIO_READONLY_SYMBOLS
 #define _APS_NEXT_RESOURCE_VALUE        337
 #define _APS_NEXT_COMMAND_VALUE         32771
-#define _APS_NEXT_CONTROL_VALUE         1313
+#define _APS_NEXT_CONTROL_VALUE         1323
 #define _APS_NEXT_SYMED_VALUE           318
 #endif
 #endif
