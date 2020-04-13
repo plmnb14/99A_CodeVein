@@ -259,7 +259,7 @@ PS_OUT PS_BLURH(PS_IN In)
 		0.2270270270, 0.1945945946, 0.1216216216,
 		0.0540540541, 0.0162162162
 	};
-	float3 ppColour = tex2D(DiffuseSampler, In.vTexUV / 1280).xyz * weight[0];
+	float3 ppColour = 0;
 	float3 FragmentColor = float3(0.0f, 0.0f, 0.0f);
 	
 	float hstep = dir.x;
@@ -268,7 +268,7 @@ PS_OUT PS_BLURH(PS_IN In)
 	float pixelWidthX = 1.f / 1280.f;
 	float pixelWidthY = 1.f / 720.f;
 
-	float fBlurColor = 1.3f; // 클 수록 블러 색이 진해짐 (넓어지진 않음)
+	float fBlurColor = 1.3f; // 클 수록 블러 색이 진해짐
 
 	for (int i = 1; i < 5; i++) {
 		FragmentColor +=
@@ -296,7 +296,7 @@ PS_OUT PS_BLURV(PS_IN In)
 		0.2270270270, 0.1945945946, 0.1216216216,
 		0.0540540541, 0.0162162162
 	};
-	float3 ppColour = tex2D(DiffuseSampler, In.vTexUV / 720.0).xyz * weight[0];
+	float3 ppColour = 0;
 	float3 FragmentColor = float3(0.0f, 0.0f, 0.0f);
 	
 	float hstep = dir.x;
@@ -305,7 +305,7 @@ PS_OUT PS_BLURV(PS_IN In)
 	float pixelWidthX = 1.f / 1280.f;
 	float pixelWidthY = 1.f / 720.f;
 
-	float fBlurColor = 1.3f; // 클 수록 블러 색이 진해짐 (넓어지진 않음)
+	float fBlurColor = 1.3f; // 클 수록 블러 색이 진해짐
 
 	for (int i = 1; i < 5; i++) {
 		FragmentColor +=

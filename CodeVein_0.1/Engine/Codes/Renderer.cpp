@@ -551,19 +551,6 @@ HRESULT CRenderer::Render_Shadow()
 	m_pTarget_Manager->Origin_Stencil(L"Target_Shadow");
 	
 
-	//m_pTarget_Manager->Begin_Render_Target(L"Target_Shadow");
-	//
-	//m_pShader_Blend->Begin_Shader();
-	//m_pShader_Blend->Begin_Pass(5);
-	//if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_Shadow"))))
-	//	return E_FAIL;
-	//m_pShader_Blend->Commit_Changes();
-	//m_pViewPortBuffer->Render_VIBuffer();
-	//m_pShader_Blend->End_Shader();
-	//m_pShader_Blend->End_Pass();
-	//
-	//m_pTarget_Manager->End_Render_Target(L"Target_Shadow");
-
 	return NOERROR;
 }
 
