@@ -6,12 +6,9 @@
 #include "SetingView.h"
 #include "MonsterTool.h"
 #include "AniCtrl.h"
-#include "TestMonster.h"
-#include "TestWeapon.h"
+#include "TestObject.h"
 
 IMPLEMENT_DYNAMIC(CMonsterTool, CDialog)
-
-USING(Engine)
 
 CMonsterTool::CMonsterTool(CWnd* pParent /*=NULL*/)
 	: CDialog(IDD_MONSTERTOOL, pParent), m_strObjPosX(_T("")), m_strObjPosY(_T("")), m_strObjPosZ(_T(""))
@@ -21,8 +18,6 @@ CMonsterTool::CMonsterTool(CWnd* pParent /*=NULL*/)
 	, m_strSoundStartTime(_T("")), m_strSoundEndTime(_T("")), m_strSoundLoopTime(_T("")), m_strSoundAniRatio(_T(""))
 	, m_strCollisionStartTime(_T("")), m_strCollisionEndTime(_T("")), m_strCollisionRange(_T("")), m_strCollisionAniRatio(_T(""))
 	, m_strPlayAniRatio(_T("")), m_strAniComboRatio(_T("")), m_strAniComboNumber(_T(""))
-	, m_strAttachName(_T("")), m_strRadius(_T("")), m_strWpHeight(_T(""))
-	, m_strWeaponName(_T(""))
 {
 }
 
@@ -49,11 +44,6 @@ CMonsterTool::~CMonsterTool()
 
 	m_listMeshName.clear();
 
-	for (auto& list_iter : m_listWeaponName)
-		Safe_Delete(list_iter);
-
-	m_listWeaponName.clear();
-
 }
 
 void CMonsterTool::DoDataExchange(CDataExchange* pDX)
@@ -65,11 +55,10 @@ void CMonsterTool::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_ObjPosZ, m_strObjPosZ);
 
 	DDX_Control(pDX, IDC_MESHLIST, m_ListBoxMesh);
-	DDX_Control(pDX, IDC_ANILIST, m_ListBoxAni);
+	DDX_Control(pDX, IDC_ANILIST, m_ListhBoxAni);
 	DDX_Control(pDX, IDC_BONELIST, m_ListBoxBone);
 	DDX_Control(pDX, IDC_ANICOMBOTREE, m_TreeCtrlAniCombo);
 	DDX_Control(pDX, IDC_ANIEVENTTREE, m_TreeCtrlAniEvent);
-	DDX_Control(pDX, IDC_WPCOMBOBOX, m_ComboBoxWeapon);
 
 	DDX_Text(pDX, IDC_MESHNAME, m_strMeshName);
 	DDX_Text(pDX, IDC_BONENAME, m_strBoneName);
@@ -109,11 +98,6 @@ void CMonsterTool::DoDataExchange(CDataExchange* pDX)
 	DDX_Text(pDX, IDC_PLAYANIRATIO, m_strPlayAniRatio);
 	DDX_Text(pDX, IDC_ANICOMBORATIO, m_strAniComboRatio);
 	DDX_Text(pDX, IDC_ANICOMBONUMBER, m_strAniComboNumber);
-
-	DDX_Text(pDX, IDC_ATTACHNAME, m_strAttachName);
-	DDX_Text(pDX, IDC_WPRADIUS, m_strRadius);
-	DDX_Text(pDX, IDC_WPHEIGHT, m_strWpHeight);
-	DDX_Text(pDX, IDC_WPNAME, m_strWeaponName);
 }
 
 BOOL CMonsterTool::OnInitDialog()
@@ -121,7 +105,6 @@ BOOL CMonsterTool::OnInitDialog()
 	CDialog::OnInitDialog();
 
 	Seting_ListBoxMesh();
-	Seting_ComboBoxWeapon();
 
 	return TRUE;
 }
@@ -155,23 +138,17 @@ BEGIN_MESSAGE_MAP(CMonsterTool, CDialog)
 	ON_BN_CLICKED(IDC_ANiCOMBOSAVE, &CMonsterTool::Save_AniCombo)
 	ON_BN_CLICKED(IDC_ANiCOMBOLOAD, &CMonsterTool::Load_AniCombo)
 	ON_BN_CLICKED(IDC_PLAYANICOMBO, &CMonsterTool::Play_AniCombo)
-	ON_BN_CLICKED(IDC_WPCREATE, &CMonsterTool::Create_Weapon)
-	ON_BN_CLICKED(IDC_WPATTACH, &CMonsterTool::Attach_Weapon)
-	ON_EN_CHANGE(IDC_WPRADIUS, &CMonsterTool::Change_Radius)
-	ON_EN_CHANGE(IDC_WPHEIGHT, &CMonsterTool::Change_Height)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_RADIUSSPIN, &CMonsterTool::Spin_Radius)
-	ON_NOTIFY(UDN_DELTAPOS, IDC_HEIGHTSPIN, &CMonsterTool::Spin_Height)
 END_MESSAGE_MAP()
 
 void CMonsterTool::Update(const _float & fTimeDelta)
 {
-	if(nullptr != m_pMonster)
+	IF_NOT_NULL(m_pTestObject)
 	{
 		UpdateData(TRUE);
 
-		m_pMonster->Update_GameObject(fTimeDelta);
-		m_strAniFullTime.Format(L"%.2f", TARGET_TO_D_MESH(m_pMonster)->Get_AnimationFullTime());
-		m_strAniTime.Format(L"%.2f", TARGET_TO_D_MESH(m_pMonster)->Get_TrackInfo().Position);
+		m_pTestObject->Update_GameObject(fTimeDelta);
+		m_strAniFullTime.Format(L"%.2f", TARGET_TO_D_MESH(m_pTestObject)->Get_AnimationFullTime());
+		m_strAniTime.Format(L"%.2f", TARGET_TO_D_MESH(m_pTestObject)->Get_TrackInfo().Position);
 
 		_double NowAniTime = _wtof(m_strAniTime);
 		_double MaxAniTime = _wtof(m_strAniFullTime);
@@ -181,14 +158,12 @@ void CMonsterTool::Update(const _float & fTimeDelta)
 		m_strAniTime.Format( L"%.2f", NowAniTime - (MaxAniTime * x) );
 		m_strPlayAniRatio.Format(L"%.2f", (NowAniTime / MaxAniTime) - x);
 
-		m_strObjPosX.Format(L"%.2f", TARGET_TO_TRANS(m_pMonster)->Get_Pos().x);
-		m_strObjPosY.Format(L"%.2f", TARGET_TO_TRANS(m_pMonster)->Get_Pos().y);
-		m_strObjPosZ.Format(L"%.2f", TARGET_TO_TRANS(m_pMonster)->Get_Pos().z);
+		m_strObjPosX.Format(L"%.2f", TARGET_TO_TRANS(m_pTestObject)->Get_Pos().x);
+		m_strObjPosY.Format(L"%.2f", TARGET_TO_TRANS(m_pTestObject)->Get_Pos().y);
+		m_strObjPosZ.Format(L"%.2f", TARGET_TO_TRANS(m_pTestObject)->Get_Pos().z);
 		
 		UpdateData(FALSE);
 	}
-
-	IF_NOT_NULL(m_pWeapon) m_pWeapon->Update_GameObject(fTimeDelta);
 
 	return;
 }
@@ -197,9 +172,10 @@ void CMonsterTool::LateUpdate(const _float & fTimeDelta)
 {
 	UpdateData(TRUE);
 
-	IF_NOT_NULL(m_pMonster) m_pMonster->Late_Update_GameObject(fTimeDelta);
-
-	IF_NOT_NULL(m_pWeapon) m_pWeapon->Late_Update_GameObject(fTimeDelta);
+	IF_NOT_NULL(m_pTestObject)
+	{
+		m_pTestObject->Late_Update_GameObject(fTimeDelta);
+	}
 
 	if (FALSE == m_ButtonMove.GetCheck())
 	{
@@ -302,44 +278,20 @@ void CMonsterTool::LateUpdate(const _float & fTimeDelta)
 
 void CMonsterTool::Render()
 {
-	IF_NOT_NULL(m_pMonster)
-		m_pMonster->Render_GameObject();
-	IF_NOT_NULL(m_pWeapon)
-		m_pWeapon->Render_GameObject();
+	IF_NOT_NULL(m_pTestObject)
+	{
+		m_pTestObject->Render_GameObject();
+	}
 
 	return;
 }
 
 void CMonsterTool::Release()
 {
-	IF_NOT_NULL(m_pMonster)
-		Safe_Release(m_pMonster);
-
-	IF_NOT_NULL(m_pWeapon)
-		Safe_Release(m_pWeapon);
-}
-
-void CMonsterTool::Seting_ComboBoxWeapon()
-{
-	CMainFrame* pFrameWnd = static_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
-	CToolView* pToolView = static_cast<CToolView*>(pFrameWnd->m_MainSplitter.GetPane(0, 0));
-
-	m_ComboBoxWeapon.ResetContent();
-
-	list<Engine::MESH_INFO*> listTemp = pToolView->Get_Weaponlist();
-	
-	for (auto& list_iter : listTemp)
+	IF_NOT_NULL(m_pTestObject)
 	{
-		CString temp(list_iter->wstrStateKey.c_str());
-
-		_tchar* szTemp = new _tchar[MAX_STR];
-		lstrcpy(szTemp, temp);
-		m_listWeaponName.push_back(szTemp);
-
-		m_ComboBoxWeapon.AddString(temp);
+		Safe_Release(m_pTestObject);
 	}
-
-	return;
 }
 
 void CMonsterTool::Seting_ListBoxMesh()
@@ -369,11 +321,11 @@ void CMonsterTool::Seting_ListBoxAni()
 {
 	UpdateData(TRUE);
 
-	m_ListBoxAni.ResetContent(); //모두 지우기
+	m_ListhBoxAni.ResetContent(); //모두 지우기
 
-	if(nullptr != m_pMonster)
+	IF_NOT_NULL(m_pTestObject)
 	{
-		CAniCtrl* pAniCtrl = TARGET_TO_D_MESH(m_pMonster)->Get_AniCtrl();
+		CAniCtrl* pAniCtrl = TARGET_TO_D_MESH(m_pTestObject)->Get_AniCtrl();
 		_uint iCount = pAniCtrl->Get_AniCtrl()->GetMaxNumAnimationSets();
 
 		LPD3DXANIMATIONSET	pAS = nullptr;
@@ -388,7 +340,7 @@ void CMonsterTool::Seting_ListBoxAni()
 			szRootName = new _tchar[strSize];
 			MultiByteToWideChar(CP_ACP, 0, charName, _int(strlen(charName) + 1), szRootName, strSize);
 
-			m_ListBoxAni.AddString(szRootName);
+			m_ListhBoxAni.AddString(szRootName);
 
 			Safe_Delete_Array(szRootName);
 		}
@@ -403,17 +355,17 @@ void CMonsterTool::Seting_ListBoxBone()
 {
 	UpdateData(TRUE);
 
-	m_strAttachName = L"";
 	m_ListBoxBone.ResetContent();
-	if (nullptr != m_pMonster)
+
+	IF_NOT_NULL(m_pTestObject)
 	{
 		_tchar* szBoneName;
 
-		for (auto vector_iter : TARGET_TO_D_MESH(m_pMonster)->Get_MeshContainer())
+		for (auto vector_iter : TARGET_TO_D_MESH(m_pTestObject)->Get_MeshContainer())
 		{
 			for (_uint i = 0; i < vector_iter->dwNumBones; ++i)
 			{
-				const char*	pBoneName = vector_iter->pSkinInfo->GetBoneName(i);
+ 				const char*	pBoneName = vector_iter->pSkinInfo->GetBoneName(i);
 				_uint strSize = MultiByteToWideChar(CP_ACP, 0, pBoneName, -1, NULL, NULL);
 				szBoneName = new _tchar[strSize];
 				MultiByteToWideChar(CP_ACP, 0, pBoneName, _int(strlen(pBoneName) + 1), szBoneName, strSize);
@@ -434,7 +386,7 @@ void CMonsterTool::Seting_TreeCtrlAniEvent()
 {
 	UpdateData(TRUE);
 
-	if (nullptr != m_pMonster)
+	IF_NOT_NULL(m_pTestObject)
 	{
 		HTREEITEM Root;
 		CString temp;
@@ -565,7 +517,7 @@ void CMonsterTool::Seting_TreeCtrlAniCombo()
 {
 	UpdateData(TRUE);
 
-	if(nullptr != m_pMonster)
+	IF_NOT_NULL(m_pTestObject)
 	{
 		m_TreeCtrlAniCombo.DeleteAllItems();
 
@@ -590,13 +542,39 @@ void CMonsterTool::Seting_TreeCtrlAniCombo()
 					{
 						strTempAniIndex.Format(L"%d", AniIdx_iter.first);
 						strTempAniRatio.Format(L"%.2f", AniIdx_iter.second);
-						m_ListBoxAni.GetText(AniIdx_iter.first, strTempAniName);
+						m_ListhBoxAni.GetText(AniIdx_iter.first, strTempAniName);
 						m_TreeCtrlAniCombo.InsertItem(strTempAniIndex + L"/" + strTempAniRatio + L"/ " + strTempAniName, 0, 0, Root, TVI_LAST);
 					}
 				}
 			}
 		}
 	}
+
+	//for (auto& list_iter : m_listMeshName)
+	//{
+	//	if (0 == lstrcmp(list_iter, (_tchar*)(LPCTSTR)m_strMeshName))
+	//	{
+	//		auto& Mesh_iter = find_if(m_mapmapmapAniCombo.begin(), m_mapmapmapAniCombo.end(), CTag_Finder(list_iter));
+
+	//		if (Mesh_iter == m_mapmapmapAniCombo.end())
+	//			return;
+
+	//		for (auto& AniComboNumber_iter : Mesh_iter->second) //_uint, 콤보번호
+	//		{
+	//			strTempComboNumber.Format(L"%d", AniComboNumber_iter.first);
+	//			Root = m_TreeCtrlAniCombo.InsertItem(strTempComboNumber, 0, 0, TVI_ROOT, TVI_LAST);
+
+	//			for (auto& AniIndex_iter : AniComboNumber_iter.second) //_uint, 애니인덱스
+	//			{
+	//				strTempAniIndex.Format(L"%d", AniIndex_iter.first);
+	//				strTempAniRatio.Format(L"%.2f", AniIndex_iter.second);
+	//				m_ListhBoxAni.GetText(AniIndex_iter.first, strTempAniName);
+	//				m_TreeCtrlAniCombo.InsertItem(strTempAniIndex + L"/" + strTempAniRatio + L"/ " + strTempAniName, 0, 0, Root, TVI_LAST);
+	//			}
+	//		}
+	//		break;
+	//	}
+	//}
 
 	UpdateData(FALSE);
 
@@ -608,18 +586,15 @@ void CMonsterTool::LDBClick_MeshList()
 	CMainFrame* pFrameWnd = static_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
 	CToolView* pToolView = static_cast<CToolView*>(pFrameWnd->m_MainSplitter.GetPane(0, 0));
 
-	if (nullptr == m_pMonster)
-	{
-		if (nullptr != m_pWeapon)
-			Safe_Release(m_pWeapon);
-
+	IF_NULL(m_pTestObject)
+	{	
 		UpdateData(TRUE);
 		m_ListBoxMesh.GetText(m_ListBoxMesh.GetCurSel(), m_strMeshName);
 		UpdateData(FALSE);
 
 		_tchar szTemp[MAX_STR];
 		lstrcpy(szTemp, m_strMeshName);
-		m_pMonster = CTestMonster::Create(pToolView->Get_Device(), szTemp);
+		m_pTestObject = CTestObject::Create(pToolView->Get_Device(), szTemp);
 
 		Seting_ListBoxAni();
 		Seting_ListBoxBone();
@@ -629,10 +604,7 @@ void CMonsterTool::LDBClick_MeshList()
 	}
 	else
 	{
-		Safe_Release(m_pMonster);
-
-		if (nullptr != m_pWeapon)
-			Safe_Release(m_pWeapon);
+		Safe_Release(m_pTestObject);
 
 		UpdateData(TRUE);
 		m_ListBoxMesh.GetText(m_ListBoxMesh.GetCurSel(), m_strMeshName);
@@ -640,7 +612,7 @@ void CMonsterTool::LDBClick_MeshList()
 
 		_tchar szTemp[MAX_STR];
 		lstrcpy(szTemp, m_strMeshName);
-		m_pMonster = CTestMonster::Create(pToolView->Get_Device(), szTemp);
+		m_pTestObject = CTestObject::Create(pToolView->Get_Device(), szTemp);
 
 		Seting_ListBoxAni();
 		Seting_ListBoxBone();
@@ -658,12 +630,12 @@ void CMonsterTool::LDBClick_BoneList()
 
 	if (LB_ERR != m_ListBoxBone.GetCurSel())
 	{
-		if (nullptr != m_pMonster)
+		IF_NOT_NULL(m_pTestObject)
 		{
 			m_ListBoxBone.GetText(m_ListBoxBone.GetCurSel(), m_strBoneName);
-			m_ListBoxBone.GetText(m_ListBoxBone.GetCurSel(), m_strAttachName);
 		}
 	}
+
 	UpdateData(FALSE);
 
 	return;
@@ -673,13 +645,13 @@ void CMonsterTool::LDBClick_AniList()
 {
 	UpdateData(TRUE);
 
-	if (LB_ERR != m_ListBoxAni.GetCurSel())
+	if (LB_ERR != m_ListhBoxAni.GetCurSel())
 	{
-		if(nullptr != m_pMonster)
+		IF_NOT_NULL(m_pTestObject)
 		{
 			UpdateData(TRUE);
-			m_ListBoxAni.GetText(m_ListBoxAni.GetCurSel(), m_strAniName);
-			m_strAniIndex.Format(L"%d", m_ListBoxAni.GetCurSel());
+			m_ListhBoxAni.GetText(m_ListhBoxAni.GetCurSel(), m_strAniName);
+			m_strAniIndex.Format(L"%d", m_ListhBoxAni.GetCurSel());
 			UpdateData(FALSE);
 
 			Seting_TreeCtrlAniEvent();
@@ -907,6 +879,50 @@ void CMonsterTool::LDBClick_TreeCtrlAniCombo(NMHDR *pNMHDR, LRESULT *pResult)
 	*pResult = 0;
 }
 
+HTREEITEM CMonsterTool::Find_Node_By_Name(CTreeCtrl & _TreeCtrl, const _tchar * _szTargetName, HTREEITEM _RootNode)
+{
+	HTREEITEM NodeFinder;
+	HTREEITEM treeNext;
+
+	// 시작 노드가 없다면, 최상위 부모를 받아온다.
+	IF_NULL(_RootNode)
+	{
+		NodeFinder = _TreeCtrl.GetRootItem();
+	}
+	else // 아니라면 시작 위치를 인자값 노드로 설정한다.
+	{
+		NodeFinder = _RootNode;
+	}
+
+	// 찾는 이름과 같다면,
+	if (_szTargetName == _TreeCtrl.GetItemText(NodeFinder))
+		return NodeFinder;
+
+	// 만약 형제가 있다면
+	IF_NOT_NULL(treeNext = _TreeCtrl.GetNextSiblingItem(NodeFinder))
+	{
+		// 형제를 노드 인자값으로 넣고 다시 찾기.
+		NodeFinder = Find_Node_By_Name(_TreeCtrl, _szTargetName, treeNext);
+
+		// 만약 찾으면 반환
+		IF_NOT_NULL(NodeFinder)
+			return NodeFinder;
+	}
+
+	// 만약 자식이 있다면
+	IF_NOT_NULL(treeNext = _TreeCtrl.GetChildItem(NodeFinder))
+	{
+		// 자식 노드 인자값으로 넣고 다시 찾기.
+		NodeFinder = Find_Node_By_Name(_TreeCtrl, _szTargetName, treeNext);
+
+		// 만약 찾으면 반환
+		IF_NOT_NULL(NodeFinder)
+			return NodeFinder;
+	}
+
+	return NULL;
+}
+
 void CMonsterTool::Change_AniSpeed()
 {
 	UpdateData(TRUE);
@@ -920,16 +936,16 @@ void CMonsterTool::Play_Ani()
 {
 	UpdateData(TRUE);
 
-	if (LB_ERR != m_ListBoxAni.GetCurSel())
+	if (LB_ERR != m_ListhBoxAni.GetCurSel())
 	{
-		if(nullptr != m_pMonster)
+		IF_NOT_NULL(m_pTestObject)
 		{
-			m_pMonster->Check_ComboPlayBtn(false);
+			m_pTestObject->Check_ComboPlayBtn(false);
 
-			m_strAniFullTime.Format(L"%.2f", TARGET_TO_D_MESH(m_pMonster)->Get_AnimationFullTime());
-			m_strAniTime.Format(L"%.2f", TARGET_TO_D_MESH(m_pMonster)->Get_TrackInfo().Position);
-			TARGET_TO_D_MESH(m_pMonster)->SetUp_Animation(_ttoi(m_strAniIndex));
-			m_pMonster->Set_AniSpeed((_float)_wtof(m_strAniPlayMul));
+			m_strAniFullTime.Format(L"%.2f", TARGET_TO_D_MESH(m_pTestObject)->Get_AnimationFullTime());
+			m_strAniTime.Format(L"%.2f", TARGET_TO_D_MESH(m_pTestObject)->Get_TrackInfo().Position);
+			TARGET_TO_D_MESH(m_pTestObject)->SetUp_Animation(_ttoi(m_strAniIndex));
+			m_pTestObject->Set_AniSpeed((_float)_wtof(m_strAniPlayMul));
 		}
 	}
 
@@ -940,11 +956,11 @@ void CMonsterTool::Stop_Ani()
 {
 	UpdateData(TRUE);
 
-	if(nullptr != m_pMonster)
+	IF_NOT_NULL(m_pTestObject)
 	{
-		m_pMonster->Set_AniSpeed(0.f);
-		m_strAniFullTime.Format(L"%.2f", TARGET_TO_D_MESH(m_pMonster)->Get_AnimationFullTime());
-		m_strAniTime.Format(L"%.2f", TARGET_TO_D_MESH(m_pMonster)->Get_TrackInfo().Position);
+		m_pTestObject->Set_AniSpeed(0.f);
+		m_strAniFullTime.Format(L"%.2f", TARGET_TO_D_MESH(m_pTestObject)->Get_AnimationFullTime());
+		m_strAniTime.Format(L"%.2f", TARGET_TO_D_MESH(m_pTestObject)->Get_TrackInfo().Position);
 	}
 
 	UpdateData(FALSE);
@@ -1577,9 +1593,9 @@ void CMonsterTool::Add_AniCombo()
 
 void CMonsterTool::Play_AniCombo()
 {
-	if (nullptr != m_pMonster)
+	IF_NOT_NULL(m_pTestObject)
 	{
-		m_pMonster->Check_ComboPlayBtn(false);
+		m_pTestObject->Check_ComboPlayBtn(false);
 
 		_uint TempAniComboNumber = _ttoi(m_strAniComboNumber);
 
@@ -1587,6 +1603,7 @@ void CMonsterTool::Play_AniCombo()
 		{
 			if (!lstrcmp(list_iter, (_tchar*)(LPCTSTR)m_strMeshName))
 			{
+				//해당 몬스터 찾기
 				auto& Mesh_Finder = find_if(m_STLAniCombo.begin(), m_STLAniCombo.end(), CTag_Finder(list_iter));
 
 				if (Mesh_Finder == m_STLAniCombo.end()) return;
@@ -1595,20 +1612,18 @@ void CMonsterTool::Play_AniCombo()
 
 				if (ComboNumber_Finder == Mesh_Finder->second.end()) return;
 
-				m_pMonster->Reset_Combo();
+				m_pTestObject->Reset_Combo();
 
 				for (auto& vector_iter : ComboNumber_Finder->second)
 				{
-					m_pMonster->Set_Combo(vector_iter.first, vector_iter.second);
+					m_pTestObject->Set_Combo(vector_iter.first, vector_iter.second);
 				}
 			}
 		}
-		m_pMonster->Set_AniSpeed((_float)_wtof(m_strAniPlayMul));
+		m_pTestObject->Set_AniSpeed((_float)_wtof(m_strAniPlayMul));
 
-		m_pMonster->Check_ComboPlayBtn(true);
+		m_pTestObject->Check_ComboPlayBtn(true);
 	}
-
-	return;
 }
 
 void CMonsterTool::Save_AniCombo()
@@ -1754,117 +1769,4 @@ void CMonsterTool::Load_AniCombo()
 	}
 
 	UpdateData(FALSE);
-}
-
-void CMonsterTool::Create_Weapon()
-{
-	CMainFrame* pFrameWnd = static_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
-	CToolView* pToolView = static_cast<CToolView*>(pFrameWnd->m_MainSplitter.GetPane(0, 0));
-
-	if (nullptr == m_pWeapon)
-	{
-		UpdateData(TRUE);
-
-		m_ComboBoxWeapon.GetLBText(m_ComboBoxWeapon.GetCurSel(), m_strWeaponName);
-
-		UpdateData(FALSE);
-
-		_tchar szTemp[MAX_STR];
-		lstrcpy(szTemp, m_strWeaponName);
-		m_pWeapon = CTestWeapon::Create(pToolView->Get_Device(), szTemp);
-	}
-	else
-	{
-		Safe_Release(m_pWeapon);
-
-		UpdateData(TRUE);
-
-		m_ComboBoxWeapon.GetLBText(m_ComboBoxWeapon.GetCurSel(), m_strWeaponName);
-
-		UpdateData(FALSE);
-
-		_tchar szTemp[MAX_STR];
-		lstrcpy(szTemp, m_strWeaponName);
-		m_pWeapon = CTestWeapon::Create(pToolView->Get_Device(), szTemp);
-	}
-
-	return;
-}
-
-void CMonsterTool::Attach_Weapon()
-{
-	UpdateData(TRUE);
-
-	if (nullptr != m_pMonster && nullptr != m_pWeapon)
-	{
-		D3DXFRAME_DERIVED* pFrame = (D3DXFRAME_DERIVED*)TARGET_TO_D_MESH(m_pMonster)->Get_BonInfo((CStringA)m_strAttachName);
-		m_pWeapon->Change_Matrix(&TARGET_TO_TRANS(m_pMonster)->Get_WorldMat(), &pFrame->CombinedTransformationMatrix);
-	}
-
-	UpdateData(FALSE);
-	return;
-}
-
-void CMonsterTool::Change_Radius()
-{
-	UpdateData(TRUE);
-
-	if (nullptr != m_pWeapon)
-	{
-		_float Radius = (_float)_wtof(m_strRadius);
-		m_pWeapon->Change_Radius(Radius);
-	}
-
-	UpdateData(FALSE);
-
-	return;
-}
-
-void CMonsterTool::Change_Height()
-{
-	UpdateData(TRUE);
-
-	if (nullptr != m_pWeapon)
-	{
-		_float Height = (_float)_wtof(m_strWpHeight);
-		m_pWeapon->Change_Height(Height);
-	}
-
-	UpdateData(FALSE);
-
-	return;
-}
-
-
-void CMonsterTool::Spin_Radius(NMHDR *pNMHDR, LRESULT *pResult)
-{
-	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
-
-	UpdateData(TRUE);
-
-	_float fBuff = (_float)_wtof(m_strRadius);
-	fBuff += -(pNMUpDown->iDelta * 0.1f);
-	m_strRadius.Format(L"%.2f", fBuff);
-	GetDlgItem(IDC_WPRADIUS)->SetWindowText(m_strRadius);
-
-	UpdateData(FALSE);
-
-	*pResult = 0;
-}
-
-
-void CMonsterTool::Spin_Height(NMHDR *pNMHDR, LRESULT *pResult)
-{
-	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
-
-	UpdateData(TRUE);
-
-	_float fBuff = (_float)_wtof(m_strWpHeight);
-	fBuff += -(pNMUpDown->iDelta * 0.1f);
-	m_strWpHeight.Format(L"%.2f", fBuff);
-	GetDlgItem(IDC_WPHEIGHT)->SetWindowText(m_strWpHeight);
-
-	UpdateData(FALSE);
-
-	*pResult = 0;
 }

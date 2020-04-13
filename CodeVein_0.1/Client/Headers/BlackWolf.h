@@ -56,7 +56,6 @@ public:
 
 	enum FBLR { FRONT, BACK, LEFT, RIGHT };
 
-
 protected:
 	explicit CBlackWolf(LPDIRECT3DDEVICE9 pGraphic_Device);
 	explicit CBlackWolf(const CBlackWolf& rhs);
