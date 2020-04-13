@@ -259,7 +259,7 @@ PS_OUT PS_BLURH(PS_IN In)
 		0.2270270270, 0.1945945946, 0.1216216216,
 		0.0540540541, 0.0162162162
 	};
-	float3 ppColour = 0;// tex2D(DiffuseSampler, In.vTexUV / 1280).xyz * weight[0];
+	float3 ppColour = 0;
 	float3 FragmentColor = float3(0.0f, 0.0f, 0.0f);
 	
 	float hstep = dir.x;
@@ -296,7 +296,7 @@ PS_OUT PS_BLURV(PS_IN In)
 		0.2270270270, 0.1945945946, 0.1216216216,
 		0.0540540541, 0.0162162162
 	};
-	float3 ppColour = 0;// tex2D(DiffuseSampler, In.vTexUV / 720.0).xyz * weight[0];
+	float3 ppColour = 0;
 	float3 FragmentColor = float3(0.0f, 0.0f, 0.0f);
 	
 	float hstep = dir.x;

@@ -171,7 +171,9 @@ HRESULT CLoading::Ready_Effect(void)
 
 	if (FAILED(Add_EffectPrototype(L"Boss_KnockDown_Dust")))
 		return E_FAIL;
-	
+	if (FAILED(Add_EffectPrototype(L"Boss_Dead_Particle")))
+		return E_FAIL;
+
 #pragma region Blood
 	if (FAILED(Add_EffectPrototype(L"Hit_Blood_0")))
 		return E_FAIL;
