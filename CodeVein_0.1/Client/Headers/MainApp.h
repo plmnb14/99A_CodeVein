@@ -23,6 +23,10 @@ public:
 	HRESULT Render_MainApp();
 
 private:
+	_float					m_fFrameDeltaTimer = 0.f;
+	_bool					m_bFrameRender = true;
+
+private:
 	CRenderer*				m_pRenderer = nullptr;
 	LPDIRECT3DDEVICE9		m_pGraphic_Dev = nullptr;
 

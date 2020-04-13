@@ -23,7 +23,7 @@ public:
 private:
 	LPDIRECT3DDEVICE9	m_pGraphic_Device = nullptr;
 private:
-	const _tchar*				m_pFilePath = nullptr;
+	const _tchar*		m_pFilePath = nullptr;
 private:
 	HRESULT SetUp_Name(char** ppSourName, const char* pDestName);
 	HRESULT Change_TextureFileName(_tchar* pFilePath, _tchar * pSourMark, _tchar * pDestMark);
