@@ -91,7 +91,7 @@ struct PS_OUT
 
 bool g_bTest;
 float g_sample_rad = 0.1f;		// 샘플링 반경
-float g_intensity = 0.45f;		// ao 강도
+float g_intensity = 0.35f;		// ao 강도
 float g_scale = 0.1f;			// 사이 거리
 float g_bias = 0.0f;			// 너비 제어
 float3 getPosition(in float3 vDepth, in float2 uv)

@@ -15,6 +15,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 		return E_FAIL;
 
 	//Safe_AddRef(m_pManagement);
+	Input_Pool(L"ItemGet_Particle", 50);
 
 	Input_Pool(L"Player_FootSmoke", 50);
 	Input_Pool(L"Player_FootSmoke_Jump", 30);
@@ -27,12 +28,24 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Player_Skill_ScratchBlur_Ver", 10);
 	Input_Pool(L"Player_Skill_ScratchBlur_Sub_Hor", 10);
 	Input_Pool(L"Player_Skill_ScratchBlur_Sub_Ver", 10);
+	Input_Pool(L"Player_Skill_ShadowAssault_ScratchBlur", 10);
+	Input_Pool(L"Player_Skill_ShadowAssault_Scratch", 10);
+	Input_Pool(L"Player_Skill_DarkSmokeAura", 50);
+	Input_Pool(L"Player_ChargeSpark_Small", 10);
+	Input_Pool(L"Player_ChargeSpark_Big", 10);
+	Input_Pool(L"Player_ChargeSpark_Circle", 30);
+	Input_Pool(L"Player_ChargeSpark_Flash", 10);
+	Input_Pool(L"Player_ChargeSpark_ShockWave", 10);
+	Input_Pool(L"Player_ChargeSpark_Particle", 10);
+	Input_Pool(L"Player_ChargeSpark_BlastMesh", 10);
+	Input_Pool(L"Player_Buff_HandLight", 3);
 	Input_Pool(L"Player_Skill_Ring_Hor", 10);
 	Input_Pool(L"Player_Skill_Ring_Ver", 10);
 	Input_Pool(L"Player_Skill_RedParticle_Explosion", 110);
 	Input_Pool(L"Player_Skill_RedParticle_Upper", 300);
 	Input_Pool(L"Player_Skill_RedCircle_Flash", 10);
 	Input_Pool(L"Player_Skill_Distortion_Circle", 10);
+	Input_Pool(L"Player_Skill_Distortion_Water", 10);
 	Input_Pool(L"Player_Skill_RedOnion", 40);
 	Input_Pool(L"Player_Skill_Floor_BlackRing", 50);
 	Input_Pool(L"Player_Skill_Floor_RedRing", 50);
@@ -421,6 +434,42 @@ void CParticleMgr::Create_Effect_Delay(_tchar * szName, _float fDelay, _v3 vPos,
 		pFindedQueue->front()->Set_Desc(vPos, pFollowTrans);
 		pFindedQueue->front()->Set_Delay(true, fDelay);
 		pFindedQueue->front()->Set_Angle(vAngle);
+		pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
+
+		pFindedQueue->pop();
+	}
+}
+
+void CParticleMgr::Create_Effect_Delay(_tchar * szName, _float fDelay, _v3 vPos, CTransform* pFollowTrans, _mat * pTargetMat)
+{
+	queue<CEffect*>* pFindedQueue = Find_Queue(szName);
+	if (pFindedQueue == nullptr)
+		return;
+
+	// 풀 안에서 미리 생성한 오브젝트 꺼내서 사용
+	for (_int i = 0; i < pFindedQueue->front()->Get_Info()->iMaxCount; ++i)
+	{
+		if (pFindedQueue->size() <= 20) // 넉넉하게... 남은게 20 이하면 생성하여 사용
+		{
+			_tchar* szEffName = pFindedQueue->front()->Get_ParticleName();
+			CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));
+
+			m_EffectList.push_back(pEffect);
+
+			pEffect->Set_ParticleName(szEffName);
+			pEffect->Set_Desc(vPos, pFollowTrans);
+			pEffect->Set_TargetMatrix(pTargetMat);
+			pEffect->Set_Delay(true, fDelay);
+			pEffect->Reset_Init();
+
+			continue;
+		}
+
+		m_EffectList.push_back(pFindedQueue->front());
+
+		pFindedQueue->front()->Set_Desc(vPos, pFollowTrans);
+		pFindedQueue->front()->Set_TargetMatrix(pTargetMat);
+		pFindedQueue->front()->Set_Delay(true, fDelay);
 		pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
 
 		pFindedQueue->pop();

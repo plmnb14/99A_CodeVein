@@ -6,6 +6,7 @@
 
 BEGIN(Client)
 
+class CMonsterUI;
 class CBlackWolf final : public CGameObject
 {
 public:
@@ -118,6 +119,11 @@ public:
 	virtual void Free();
 
 private:
+	//////////// 채유미
+	// 몬스터 HP바 UI
+	CMonsterUI*			m_pMonsterUI = nullptr;
+
+private:
 	CTransform*			m_pTransformCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
@@ -148,8 +154,8 @@ private:
 
 	WOLF_ANI			m_eState; //애니 분류
 	_bool				m_bEventTrigger[10] = {}; //이벤트 조건 조절
-	_bool				m_bCanDead = false;
-	_bool				m_bCanDissolve = false;
+	_bool				m_bCanPlayDeadAni = false;
+	_bool				m_bIsPlayDeadAni = false;
 
 	_bool				m_bInRecognitionRange = false; //인지 범위 여부
 	_bool				m_bInAtkRange = false; //공격 범위 여부

@@ -46,7 +46,6 @@ HRESULT CYachaMan::Ready_GameObject(void * pArg)
 	m_bInRecognitionRange = false; //인지 범위 여부
 	m_bInAtkRange = false; //공격 범위 여부
 	m_bCanChase = false; //추격 여부
-	m_bIsDodge = false; //회피 진행중 여부
 	m_bCanCoolDown = false; //쿨타임 여부
 	m_bIsCoolDown = false; //쿨타임 진행중 여부
 
@@ -161,9 +160,8 @@ HRESULT CYachaMan::Render_GameObject()
 
 HRESULT CYachaMan::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 {
-	if (nullptr == pShader ||
-		nullptr == m_pMeshCom)
-		return E_FAIL;
+	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
+	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
 
 	if (FAILED(SetUp_ConstantTable()))
 		return E_FAIL;
@@ -171,8 +169,8 @@ HRESULT CYachaMan::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
 
-	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+	_mat ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 	if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 		return E_FAIL;
 
@@ -351,9 +349,19 @@ void CYachaMan::Check_Hit()
 	{
 		return;
 	}
-	else
+
+	if (false == m_tObjParam.bCanHit) //피격o
 	{
-		if (false == m_tObjParam.bCanHit) //피격o
+		++m_iDodgeCount;
+		if (m_iDodgeCount >= m_iDodgeCountMax) //3회 이상의 피격
+		{
+			m_iDodgeCount = 0;
+			m_eFirstCategory = MONSTER_ANITYPE::MOVE;
+			m_eSecondCategory_MOVE = YACHAMAN_MOVETYPE::MOVE_DODGE;
+			m_pMeshCom->Reset_OldIndx();
+			Function_RotateBody();
+		}
+		else 
 		{
 			if (true == m_tObjParam.bIsHit) //피격 진행중o
 			{
@@ -364,28 +372,23 @@ void CYachaMan::Check_Hit()
 					m_tObjParam.bHitAgain = false;
 					m_pMeshCom->Reset_OldIndx();
 				}
-				else //추가 피격x
-				{
-					return;
-				}
 			}
 			else //피격 진행중x
 			{
 				if (0 >= m_tObjParam.fHp_Cur) //체력없음
 				{
-					//Down인 경우 Dead_Strong을 진행
 					m_eFirstCategory = MONSTER_ANITYPE::DEAD;
-					return;
 				}
 				else //체력 있음
 				{
 					m_eFirstCategory = MONSTER_ANITYPE::HIT;
 					Check_FBLR();
-					return;
 				}
 			}
 		}
 	}
+
+	return;
 }
 
 void CYachaMan::Check_FBLR()
@@ -403,9 +406,14 @@ void CYachaMan::Check_Dist()
 		MONSTER_ANITYPE::DEAD == m_eFirstCategory)
 		return;
 
+
+	if (MONSTER_ANITYPE::MOVE == m_eFirstCategory &&
+		YACHAMAN_MOVETYPE::MOVE_DODGE == m_eSecondCategory_MOVE)
+		return;
+
 	if (true == m_tObjParam.bIsAttack ||
 		true == m_bIsAtkCombo ||
-		true == m_bIsDodge ||
+		true == m_tObjParam.bDodge ||
 		true == m_tObjParam.bIsHit)
 		return;
 
@@ -482,9 +490,9 @@ void CYachaMan::Check_Dist()
 				break;
 			}
 		}
-
-		return;
 	}
+
+	return;
 }
 
 void CYachaMan::Set_AniEvent()
@@ -726,6 +734,8 @@ void CYachaMan::Function_CoolDown()
 			m_tObjParam.bCanAttack = true;
 		}
 	}
+
+	return;
 }
 
 void CYachaMan::Function_Movement(_float _fspeed, _v3 _vDir)
@@ -759,7 +769,6 @@ void CYachaMan::Function_ResetAfterAtk()
 	m_tObjParam.bIsHit = false;
 
 	m_tObjParam.bDodge = false;
-	m_bIsDodge = false;
 
 	m_tObjParam.bIsAttack = false;
 	m_bCanAtkCategoryRandom = true;
@@ -767,7 +776,9 @@ void CYachaMan::Function_ResetAfterAtk()
 
 	m_vecAttackCol[0]->Set_Enabled(false);
 
-	IF_NOT_NULL(m_pWeapon) m_pWeapon->Set_Target_CanAttack(false);
+	IF_NOT_NULL(m_pWeapon) 
+		m_pWeapon->Set_Target_CanAttack(false);
+	IF_NOT_NULL(m_pWeapon) 
 		m_pWeapon->Set_Enable_Trail(false);
 
 	LOOP(20)
@@ -885,43 +896,43 @@ void CYachaMan::Play_Dodge()
 {
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
 
-	//회피는 변수가 좀 이상하니 일단 제외
 	if (false == m_tObjParam.bDodge)
 	{
-		m_eState = YACHAMAN_ANI::Dodge;
-		m_tObjParam.bDodge = true; //회피임
-		m_bIsDodge = true; //회피중
 		Function_ResetAfterAtk();
+		m_tObjParam.bDodge = true;
+		m_eState = YACHAMAN_ANI::Dodge;
 	}
 	else
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.98f))
 		{
 			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-			m_bIsDodge = false;
-			m_tObjParam.bDodge = true;
+			m_tObjParam.bCanAttack = true;
 			Function_ResetAfterAtk();
 
 			return;
 		}
-		else if (0.3f < AniTime && 0.8f> AniTime)
+		else
 		{
-			if (m_bEventTrigger[0] == false)
+			if (0.600f < AniTime && 1.500f> AniTime)
 			{
-				m_bEventTrigger[0] = true;
-				m_fSkillMoveSpeed_Cur = 4.f;
-				m_fSkillMoveAccel_Cur = 0.f;
-				m_fSkillMoveMultiply = 0.1f;
+				if (m_bEventTrigger[0] == false)
+				{
+					m_bEventTrigger[0] = true;
+					m_fSkillMoveSpeed_Cur = 10.f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.5f;
+					Function_RotateBody();
+				}
+
+				Function_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
+
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
-
-			Function_RotateBody();
-
-			Function_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
-
-			Function_DecreMoveMent(m_fSkillMoveMultiply);
-			return;
 		}
 	}
+
+	return;
 }
 
 void CYachaMan::Play_RandomAtkNormal()
@@ -2418,7 +2429,7 @@ HRESULT CYachaMan::SetUp_ConstantTable()
 HRESULT CYachaMan::Ready_Weapon()
 {
 	m_pWeapon = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon->Change_WeaponData(CWeapon::WPN_Hammer_Normal);
+	m_pWeapon->Change_WeaponData(CWeapon::WPN_Hammer_YachaMan);
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
 	m_pWeapon->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);

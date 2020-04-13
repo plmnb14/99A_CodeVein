@@ -62,6 +62,11 @@ void CEffect::Set_Desc(_v3 vPos, CTransform* pTrans)
 	m_pDesc->pTargetTrans = pTrans;
 }
 
+void CEffect::Set_TargetMatrix(_mat* pMat)
+{
+	m_pTargetMatrix = pMat;
+}
+
 
 void CEffect::Free()
 {
