@@ -11,20 +11,17 @@ D3DVERTEXELEMENT9 g_VertexElemHardware[] =
 	{ 1, 16, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 2 },
 	{ 1, 32, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 3 },
 	{ 1, 48, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 4 },
+	{ 1, 64, D3DDECLTYPE_FLOAT4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 5 }, // Color
+	{ 1, 80, D3DDECLTYPE_FLOAT3, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 6 }, // Distortion, Alpha, Dissolve
+	{ 1, 92, D3DDECLTYPE_UBYTE4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 7 }, //
+	{ 1, 96, D3DDECLTYPE_UBYTE4, D3DDECLMETHOD_DEFAULT, D3DDECLUSAGE_TEXCOORD, 8 }, //
 	D3DDECL_END()
 };
 
 
-// 인스턴스 데이터
-struct BOX_INSTANCEDATA_POS
-{
-	float fRight[4];
-	float fUp[4];
-	float fLook[4];
-	float fPos[4];
-};
 
-_int g_iNumofInstance = 160;
+
+_int g_iNumofInstance = 50;
 
 
 CBuffer_RcTex::CBuffer_RcTex(LPDIRECT3DDEVICE9 pGraphic_Device)
@@ -95,7 +92,7 @@ HRESULT CBuffer_RcTex::Ready_Component_Prototype()
 	m_pIB->Unlock();
 
 	 // 3)  Create a VB for the instancing data
-	m_pGraphic_Dev->CreateVertexBuffer(g_iNumofInstance * sizeof(BOX_INSTANCEDATA_POS), D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, 0, D3DPOOL_DEFAULT, &m_pVBInstanceData, 0);
+	m_pGraphic_Dev->CreateVertexBuffer(g_iNumofInstance * sizeof(INSTANCEDATA), D3DUSAGE_DYNAMIC | D3DUSAGE_WRITEONLY, 0, D3DPOOL_DEFAULT, &m_pVBInstanceData, 0);
 	
 	return NOERROR;
 }
@@ -114,18 +111,29 @@ void CBuffer_RcTex::Render_VIBuffer()
 	m_pGraphic_Dev->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_iNumVertices, 0, m_iNumPolygons);
 }
 
-void CBuffer_RcTex::Render_Before_Instancing(_mat matInstance)
+void CBuffer_RcTex::Render_Before_Instancing(INSTANCEDATA* pInstanceDataArr)
 {
-	BOX_INSTANCEDATA_POS* pIPos;
+	INSTANCEDATA* pIPos;
 	m_pVBInstanceData->Lock(0, NULL, (void**)&pIPos, D3DLOCK_DISCARD);
 	
-	BOX_INSTANCEDATA_POS instanceBox;
-	memcpy(&instanceBox.fRight	, &matInstance.m[0][0], sizeof(_float) * 4);
-	memcpy(&instanceBox.fUp		, &matInstance.m[1][0], sizeof(_float) * 4);
-	memcpy(&instanceBox.fLook	, &matInstance.m[2][0], sizeof(_float) * 4);
-	memcpy(&instanceBox.fPos	, &matInstance.m[3][0], sizeof(_float) * 4);
-	*pIPos = instanceBox;
-	
+	INSTANCEDATA instanceBox;
+	for (_int i = 0; i < g_iNumofInstance; ++i)
+	{
+		memcpy(&instanceBox.fRight	, &pInstanceDataArr[i].fRight, sizeof(_float) * 4);
+		memcpy(&instanceBox.fUp		, &pInstanceDataArr[i].fUp, sizeof(_float) * 4);
+		memcpy(&instanceBox.fLook	, &pInstanceDataArr[i].fLook, sizeof(_float) * 4);
+		memcpy(&instanceBox.fPos	, &pInstanceDataArr[i].fPos, sizeof(_float) * 4);
+		memcpy(&instanceBox.fColor	, &pInstanceDataArr[i].fColor, sizeof(_float) * 4);
+		memcpy(&instanceBox.fDistortion	, &pInstanceDataArr[i].fDistortion, sizeof(_float));
+		memcpy(&instanceBox.fAlpha		, &pInstanceDataArr[i].fAlpha, sizeof(_float));
+		memcpy(&instanceBox.fDissolve	, &pInstanceDataArr[i].fDissolve, sizeof(_float));
+		memcpy(&instanceBox.bDissolve	, &pInstanceDataArr[i].bDissolve, sizeof(_bool));
+		memcpy(&instanceBox.bUseColorTex, &pInstanceDataArr[i].bUseColorTex, sizeof(_bool));
+		memcpy(&instanceBox.bReverseColor, &pInstanceDataArr[i].bReverseColor, sizeof(_bool));
+		memcpy(&instanceBox.bUseRGBA	, &pInstanceDataArr[i].bUseRGBA, sizeof(_bool));
+		memcpy(&instanceBox.bUseMaskTex	, &pInstanceDataArr[i].bUseMaskTex, sizeof(_bool));
+		*pIPos = instanceBox;
+	}
 	m_pVBInstanceData->Unlock();
 
 	m_pGraphic_Dev->SetVertexDeclaration(m_pVertexDeclHardware);
@@ -133,7 +141,7 @@ void CBuffer_RcTex::Render_Before_Instancing(_mat matInstance)
 	m_pGraphic_Dev->SetStreamSource(0, m_pVB, 0, m_iStride);
 
 	m_pGraphic_Dev->SetStreamSourceFreq(1, D3DSTREAMSOURCE_INSTANCEDATA | 1ul);
-	m_pGraphic_Dev->SetStreamSource(1, m_pVBInstanceData, 0, sizeof(BOX_INSTANCEDATA_POS));
+	m_pGraphic_Dev->SetStreamSource(1, m_pVBInstanceData, 0, sizeof(INSTANCEDATA));
 
 	m_pGraphic_Dev->SetIndices(m_pIB);
 }

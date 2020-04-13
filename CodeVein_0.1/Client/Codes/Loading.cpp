@@ -169,6 +169,73 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 #pragma endregion
 
+#pragma region Queens Knight
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_2Phase_SwordCrash_Chunk")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_2Phase_SwordCrash_ShockWave")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DistortionCircle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Intro_Smoke_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Intro_Smoke_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_JumpDown_Particle_Red")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_JumpDown_ShockWave")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_JumpDown_Smoke_Black")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_JumpDown_Smoke_Red")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lava_Floor_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lava_Floor_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_Hand")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lightning_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lightning_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lightning_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lightning_3")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lightning_4")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lightning_5")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_LightningBody_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_ShieldAttack_Distortion")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_ShieldAttack_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_ShieldAttack_RedLight")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_SwordCrash_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Smoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Trail_Lightning_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Trail_Lightning_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Trail_Lightning_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_WhirlWind_Smoke")))
+		return E_FAIL;
+#pragma endregion
+	
 	if (FAILED(Add_EffectPrototype(L"Boss_KnockDown_Dust")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Boss_Dead_Particle")))

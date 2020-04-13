@@ -14,6 +14,49 @@ CTexEffect::CTexEffect(const CTexEffect& rhs)
 	m_bClone = true;
 }
 
+INSTANCEDATA* CTexEffect::Get_InstanceData()
+{
+	INSTANCEDATA* pData = new INSTANCEDATA;
+
+	memcpy(&pData->fRight, &m_pTransformCom->Get_WorldMat()._11, sizeof(_float) * 4);
+	memcpy(&pData->fUp, &m_pTransformCom->Get_WorldMat()._21, sizeof(_float) * 4);
+	memcpy(&pData->fLook, &m_pTransformCom->Get_WorldMat()._31, sizeof(_float) * 4);
+	memcpy(&pData->fPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_float) * 4);
+	memcpy(&pData->fColor, &m_vColor, sizeof(_float) * 4);
+	pData->fDissolve = m_fDissolve;
+	pData->fDistortion = m_pInfo->fDistortionPower;
+	pData->fAlpha = m_fAlpha;
+	pData->bDissolve = m_pInfo->bDissolve;
+	pData->bReverseColor = m_pInfo->bRevColor;
+	pData->bUseColorTex = m_pInfo->bUseColorTex;
+	pData->bUseMaskTex = (m_pInfo->fMaskIndex != -1.f);
+	pData->bUseRGBA = m_pInfo->bUseRGBA;
+
+	return pData;
+}
+
+HRESULT CTexEffect::SetUp_ConstantTable_Instance(CShader * pShader)
+{
+	_float fMaskIndex = 0.f;
+	if ((m_pInfo->fMaskIndex != -1.f))
+		fMaskIndex = m_pInfo->fMaskIndex;
+
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", pShader, _uint(m_fFrame))))
+		return E_FAIL;
+	if (FAILED(m_pGradientTextureCom->SetUp_OnShader("g_GradientTexture", pShader, _uint(fMaskIndex))))
+		return E_FAIL;
+	if (FAILED(m_pColorTextureCom->SetUp_OnShader("g_ColorTexture", pShader, _uint(m_pInfo->fColorIndex))))
+		return E_FAIL;	if ((m_pInfo->fMaskIndex != -1.f))
+		fMaskIndex = m_pInfo->fMaskIndex;
+
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", pShader, _uint(m_fFrame))))
+		return E_FAIL;
+	if (FAILED(m_pGradientTextureCom->SetUp_OnShader("g_GradientTexture", pShader, _uint(fMaskIndex))))
+		return E_FAIL;
+	if (FAILED(m_pColorTextureCom->SetUp_OnShader("g_ColorTexture", pShader, _uint(m_pInfo->fColorIndex))))
+		return E_FAIL;
+}
+
 HRESULT CTexEffect::Ready_GameObject_Prototype()
 {
 	// 생성 시, 오래 걸릴 수 있는 작업들을 수행한다.
@@ -23,7 +66,6 @@ HRESULT CTexEffect::Ready_GameObject_Prototype()
 		m_pInfo = new EFFECT_INFO;
 		ZeroMemory(m_pInfo, sizeof(EFFECT_INFO));
 	}
-
 	return NOERROR;
 }
 
@@ -96,10 +138,16 @@ _int CTexEffect::Update_GameObject(_double TimeDelta)
 		return S_OK;
 
 	RENDERID eGroup = RENDERID::RENDER_ALPHA;
-	if (m_iPass == 3)
+	if (m_iPass == 0)
 		eGroup = RENDERID::RENDER_ALPHA;
 	else
 		eGroup = RENDERID::RENDER_DISTORTION;
+
+	if (!lstrcmp(L"QueensKnight_Teleport_Particle", m_szParticleName))
+	{
+		eGroup = RENDERID::RENDER_INSTANCE;
+		m_iPass = 3;
+	}
 
 	if (FAILED(m_pRendererCom->Add_RenderList(eGroup, this)))
 		return E_FAIL;
@@ -217,30 +265,18 @@ HRESULT CTexEffect::Render_GameObject_SetShader(CShader* pShader)
 	if (nullptr == pShader ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
-
-	if (m_iPass == 0)
-	{
-		cout << "J : Tex Pass is Zero" << endl;
-		return NOERROR;
-	}
-
- 	m_pBufferCom->Render_Before_Instancing(m_pTransformCom->Get_WorldMat());
-
+		
 	pShader->Begin_Pass(m_iPass);
-
+	
 	// Set Texture
 	if (FAILED(SetUp_ConstantTable(pShader)))
 		return E_FAIL;
-
-	// Begin Pass 사이에 SetTexture 할 경우 바로 적용시키기 위해
+	
 	pShader->Commit_Changes();
-
-	m_pBufferCom->Render_DrawPrimitive_Instancing();
-
+	
+	m_pBufferCom->Render_VIBuffer();
 	pShader->End_Pass();
-
-	m_pBufferCom->Render_After_Instancing();
-
+	
 	return S_OK;
 }
 
@@ -250,7 +286,7 @@ HRESULT CTexEffect::Render_GameObject_HWInstance()
 		nullptr == m_pBufferCom)
 		return E_FAIL;
 	
-	m_pBufferCom->Render_Before_Instancing(m_pTransformCom->Get_WorldMat());
+	//m_pBufferCom->Render_Before_Instancing(m_pTransformCom->Get_WorldMat());
 	
 	m_pShaderCom->Begin_Shader();
 	m_pShaderCom->Begin_Pass(m_iPass);
@@ -297,7 +333,7 @@ void CTexEffect::Setup_Info()
 	if (m_pInfo->bDistortion)
 		m_iPass = 1;
 	else
-		m_iPass = 3; // For Instancing Pass
+		m_iPass = 0;
 
 	if(m_pInfo->fDistortionPower <= 0.f || m_pInfo->fDistortionPower > 2.f)
 		m_pInfo->fDistortionPower = 0.09f;

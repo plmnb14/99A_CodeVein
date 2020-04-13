@@ -2,6 +2,8 @@
 #include "PipeLine.h"
 #include "Management.h"
 
+//test
+#include"TexEffect.h"
 CRenderer::CRenderer(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CComponent(pGraphic_Device)
 	, m_pTarget_Manager(CTarget_Manager::Get_Instance())
@@ -207,6 +209,9 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	// For.m_pSSAOTexture
 	m_pSSAOTexture = CTexture::Create(m_pGraphic_Dev, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Effect/Normal/Normal_4.tga");
 	// static_cast<CTexture*>(CComponent_Manager::Get_Instance()->Clone_Component(SCENE_STATIC, L"Tex_Noise", nullptr));
+
+	const _int INSTANCE_CNT = 50;
+	m_pInstanceData = new INSTANCEDATA[INSTANCE_CNT];
 
 #ifdef _DEBUG
 
@@ -635,6 +640,74 @@ HRESULT CRenderer::Render_Alpha()
 	}
 
 	m_RenderList[RENDER_ALPHA].clear();
+
+	m_pShader_Effect->End_Shader();
+
+	Render_Instance();
+
+	return NOERROR;
+}
+
+
+HRESULT CRenderer::Render_Instance()
+{
+	m_pShader_Effect->Begin_Shader();
+
+	_int iIdx = 0;
+	_int iSizeCheck = m_RenderList[RENDER_INSTANCE].size();
+	ZeroMemory(m_pInstanceData, sizeof(INSTANCEDATA) * 50);
+
+	for (auto& pGameObject : m_RenderList[RENDER_INSTANCE])
+	{
+		if (nullptr != pGameObject)
+		{
+			CTexEffect* pEff = static_cast<CTexEffect*>(pGameObject);
+			m_pInstanceData[iIdx] = *pEff->Get_InstanceData();
+			Safe_Release(pGameObject);
+			++iIdx;
+			--iSizeCheck;
+
+			if (iIdx >= 50 || iSizeCheck == 0)
+			{
+				iIdx = 0;
+				CBuffer_RcTex* pBuffer = static_cast<CBuffer_RcTex*>(pGameObject->Get_Component(L"Com_VIBuffer"));
+				pBuffer->Render_Before_Instancing(m_pInstanceData);
+
+				_mat		ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+				_mat		ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+
+				if (FAILED(m_pShader_Effect->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+					return E_FAIL;
+				if (FAILED(m_pShader_Effect->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+					return E_FAIL;
+
+				D3DXMatrixInverse(&ViewMatrix, nullptr, &ViewMatrix);
+				D3DXMatrixInverse(&ProjMatrix, nullptr, &ProjMatrix);
+
+				if (FAILED(m_pShader_Effect->Set_Value("g_matProjInv", &ViewMatrix, sizeof(_mat))))
+					return E_FAIL;
+				if (FAILED(m_pShader_Effect->Set_Value("g_matViewInv", &ProjMatrix, sizeof(_mat))))
+					return E_FAIL;
+				m_pShader_Effect->Set_Texture("g_DepthTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"));
+
+				pEff->SetUp_ConstantTable_Instance(m_pShader_Effect);
+
+				m_pShader_Effect->Begin_Pass(3);
+
+				m_pShader_Effect->Commit_Changes();
+
+				pBuffer->Render_DrawPrimitive_Instancing();
+
+				m_pShader_Effect->End_Pass();
+
+				pBuffer->Render_After_Instancing();
+
+				ZeroMemory(m_pInstanceData, sizeof(INSTANCEDATA) * 50);
+			}
+		}
+	}
+
+	m_RenderList[RENDER_INSTANCE].clear();
 
 	m_pShader_Effect->End_Shader();
 

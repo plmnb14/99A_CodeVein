@@ -104,6 +104,39 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"ButterFly_BackStepSand_Floor", 50);
 	Input_Pool(L"ButterFly_PopSand", 50);
 
+	Input_Pool(L"QueensKnight_2Phase_SwordCrash_Chunk", 50);
+	Input_Pool(L"QueensKnight_2Phase_SwordCrash_ShockWave", 50);
+	Input_Pool(L"QueensKnight_DistortionCircle", 50);
+	Input_Pool(L"QueensKnight_Intro_Smoke_0", 500);
+	Input_Pool(L"QueensKnight_Intro_Smoke_1", 500);
+	Input_Pool(L"QueensKnight_JumpDown_Particle_Red", 50);
+	Input_Pool(L"QueensKnight_JumpDown_ShockWave", 50);
+	Input_Pool(L"QueensKnight_JumpDown_Smoke_Black", 50);
+	Input_Pool(L"QueensKnight_JumpDown_Smoke_Red", 50);
+	Input_Pool(L"QueensKnight_Lava_Floor_0", 50);
+	Input_Pool(L"QueensKnight_Lava_Floor_1", 50);
+	Input_Pool(L"QueensKnight_LeakField_0", 50);
+	Input_Pool(L"QueensKnight_LeakField_1", 50);
+	Input_Pool(L"QueensKnight_LeakField_Hand", 50);
+	Input_Pool(L"QueensKnight_LeakField_Particle", 50);
+	Input_Pool(L"QueensKnight_Lightning_0", 50);
+	Input_Pool(L"QueensKnight_Lightning_1", 50);
+	Input_Pool(L"QueensKnight_Lightning_2", 50);
+	Input_Pool(L"QueensKnight_Lightning_3", 50);
+	Input_Pool(L"QueensKnight_Lightning_4", 50);
+	Input_Pool(L"QueensKnight_Lightning_5", 50);
+	Input_Pool(L"QueensKnight_LightningBody_0", 50);
+	Input_Pool(L"QueensKnight_ShieldAttack_Distortion", 50);
+	Input_Pool(L"QueensKnight_ShieldAttack_Particle", 50);
+	Input_Pool(L"QueensKnight_ShieldAttack_RedLight", 50);
+	Input_Pool(L"QueensKnight_SwordCrash_Particle", 50);
+	Input_Pool(L"QueensKnight_Teleport_Particle", 1000);
+	Input_Pool(L"QueensKnight_Teleport_Smoke", 50);
+	Input_Pool(L"QueensKnight_Trail_Lightning_0", 50);
+	Input_Pool(L"QueensKnight_Trail_Lightning_1", 50);
+	Input_Pool(L"QueensKnight_Trail_Lightning_2", 50);
+	Input_Pool(L"QueensKnight_WhirlWind_Smoke", 50);
+
 	Input_Pool(L"Boss_KnockDown_Dust", 10);
 	Input_Pool(L"Boss_Dead_Particle", 1000);
 
@@ -157,7 +190,21 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 
 HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 {
-	static _int iCnt = 0;
+	//eff test
+	_v3 vPos = _v3(0.f, 1.5f, 0.f);
+	if (GetAsyncKeyState('B') & 0x8000)
+	{
+		Create_Effect_Delay(L"QueensKnight_Teleport_Particle", 0.f, vPos, nullptr);
+	}
+	if (GetAsyncKeyState('N') & 0x8000)
+	{
+		Create_Effect_Delay(L"QueensKnight_Teleport_Smoke", 0.f, V3_NULL, nullptr);
+	}
+	if (GetAsyncKeyState('M') & 0x8000)
+	{
+		Create_Effect_Delay(L"QueensKnight_Intro_Smoke_0"	, 0.f, vPos, nullptr);
+		Create_Effect_Delay(L"QueensKnight_Intro_Smoke_1"	, 0.f, vPos, nullptr);
+	}
 
 	auto& iter_begin = m_vecParticle.begin();
 	auto& iter_end = m_vecParticle.end();
@@ -188,11 +235,11 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 				{
 					if (pFindedQueue->size() <= 20) // 넉넉하게... 남은게 20 이하면 생성하여 사용
 					{
-						_tchar szTemp[256];
-						lstrcpy(szTemp, pFindedQueue->front()->Get_ParticleName());
-						CHAR szForPrint[MAX_STR] = "";
-						WideCharToMultiByte(CP_ACP, 0, szTemp, MAX_STR, szForPrint, MAX_STR, NULL, NULL);
-						cout << "Particle Create" << szForPrint << endl;
+						//_tchar szTemp[256];
+						//lstrcpy(szTemp, pFindedQueue->front()->Get_ParticleName());
+						//CHAR szForPrint[MAX_STR] = "";
+						//WideCharToMultiByte(CP_ACP, 0, szTemp, MAX_STR, szForPrint, MAX_STR, NULL, NULL);
+						//cout << "Particle Create" << szForPrint << endl;
 
 						_tchar* szEffName = pFindedQueue->front()->Get_ParticleName();
 						CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));
@@ -308,12 +355,11 @@ void CParticleMgr::Create_Effect(_tchar* szName, _v3 vPos, CTransform * pFollowT
 	{
 		if (pFindedQueue->size() <= 20) // 넉넉하게... 남은게 20 이하면 생성하여 사용
 		{
-			_tchar szTemp[256];
-			lstrcpy(szTemp, pFindedQueue->front()->Get_ParticleName());
-
-			CHAR szForPrint[MAX_STR] = "";
-			WideCharToMultiByte(CP_ACP, 0, szTemp, MAX_STR, szForPrint, MAX_STR, NULL, NULL);
-			cout << "Effect Create : " << szForPrint << endl;
+			//_tchar szTemp[256];
+			//lstrcpy(szTemp, pFindedQueue->front()->Get_ParticleName());
+			//CHAR szForPrint[MAX_STR] = "";
+			//WideCharToMultiByte(CP_ACP, 0, szTemp, MAX_STR, szForPrint, MAX_STR, NULL, NULL);
+			//cout << "Effect Create : " << szForPrint << endl;
 
 			_tchar* szEffName = pFindedQueue->front()->Get_ParticleName();
 			CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));
