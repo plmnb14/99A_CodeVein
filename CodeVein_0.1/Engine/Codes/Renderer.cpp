@@ -79,6 +79,12 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	// Target_Blur
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Blur", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
 		return E_FAIL;
+	// Target_BlurH
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_BlurH", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
+		return E_FAIL;
+	// Target_BlurV
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_BlurV", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
+		return E_FAIL;
 
 	//// Target_MotionBlur
 	//if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_MotionBlur", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.0f, 0.0f, 1.0f, 0.f))))
@@ -545,19 +551,6 @@ HRESULT CRenderer::Render_Shadow()
 	m_pTarget_Manager->Origin_Stencil(L"Target_Shadow");
 	
 
-	//m_pTarget_Manager->Begin_Render_Target(L"Target_Shadow");
-	//
-	//m_pShader_Blend->Begin_Shader();
-	//m_pShader_Blend->Begin_Pass(5);
-	//if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_Shadow"))))
-	//	return E_FAIL;
-	//m_pShader_Blend->Commit_Changes();
-	//m_pViewPortBuffer->Render_VIBuffer();
-	//m_pShader_Blend->End_Shader();
-	//m_pShader_Blend->End_Pass();
-	//
-	//m_pTarget_Manager->End_Render_Target(L"Target_Shadow");
-
 	return NOERROR;
 }
 
@@ -812,13 +805,13 @@ HRESULT CRenderer::Render_Blur()
 		nullptr == m_pShader_Blend)
 		return E_FAIL;
 
+	// Blur H ==================================================
 	if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_Bloom"))))
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_SSAOTexture", m_pTarget_Manager->Get_Texture(L"Target_SSAO"))))
 		return E_FAIL;
 
-	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Blur")))
-		return E_FAIL;
+	m_pTarget_Manager->Begin_Render_Target(L"Target_BlurH");
 
 	m_pShader_Blend->Begin_Shader();
 	m_pShader_Blend->Begin_Pass(2);
@@ -828,8 +821,63 @@ HRESULT CRenderer::Render_Blur()
 	m_pShader_Blend->End_Pass();
 	m_pShader_Blend->End_Shader();
 
+	m_pTarget_Manager->End_Render_Target(L"Target_BlurH");
+	// Blur H ==================================================
+
+	for (_int i = 0; i < 9; ++i) // È¦¼ö¸¸
+	{
+		if (i % 2 == 0)
+		{
+			m_pTarget_Manager->Begin_Render_Target(L"Target_BlurV");
+
+			if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_BlurH"))))
+				return E_FAIL;
+			m_pShader_Blend->Begin_Shader();
+			m_pShader_Blend->Begin_Pass(8);
+
+			m_pViewPortBuffer->Render_VIBuffer();
+
+			m_pShader_Blend->End_Pass();
+			m_pShader_Blend->End_Shader();
+			m_pTarget_Manager->End_Render_Target(L"Target_BlurV");
+		}
+		else
+		{
+			// Blur H ==================================================
+			if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_BlurV"))))
+				return E_FAIL;
+
+			m_pTarget_Manager->Begin_Render_Target(L"Target_BlurH");
+
+			m_pShader_Blend->Begin_Shader();
+			m_pShader_Blend->Begin_Pass(7);
+
+			m_pViewPortBuffer->Render_VIBuffer();
+
+			m_pShader_Blend->End_Pass();
+			m_pShader_Blend->End_Shader();
+
+			m_pTarget_Manager->End_Render_Target(L"Target_BlurH");
+			// Blur H ==================================================
+
+		}
+	}
+	
+	// Blur ==================================================
+	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Blur")))
+		return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_BlurV"))))
+		return E_FAIL;
+	m_pShader_Blend->Begin_Shader();
+	m_pShader_Blend->Begin_Pass(2);
+
+	m_pViewPortBuffer->Render_VIBuffer();
+
+	m_pShader_Blend->End_Pass();
+	m_pShader_Blend->End_Shader();
 	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_Blur")))
 		return E_FAIL;
+	// Blur ==================================================
 
 	return NOERROR;
 }

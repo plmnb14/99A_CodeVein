@@ -18,7 +18,7 @@ CGameObject* CObject_Manager::Get_GameObjectBack(const _tchar* pLayerTag, _uint 
 	return pLayer->Get_GameObjectBack();
 }
 
-list<CGameObject*> CObject_Manager::Get_GameObjectList(const _tchar * pLayerTag, _uint iSceneID)
+list<CGameObject*>& CObject_Manager::Get_GameObjectList(const _tchar * pLayerTag, _uint iSceneID)
 {
 	CLayer* pLayer = Find_Layer(iSceneID, pLayerTag);
 

@@ -11,7 +11,7 @@ private:
 	virtual ~CLayer() = default;
 public:
 	CGameObject* Get_GameObjectBack();
-	list<CGameObject*> Get_GameObjectList();
+	list<CGameObject*>& Get_GameObjectList();
 
 public: 
 	HRESULT Ready_Layer();

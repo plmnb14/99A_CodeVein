@@ -271,6 +271,12 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\05.QuickSlot">
       <UniqueIdentifier>{c9068e77-c3c0-46a6-806f-2bc35d7df3b2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\1%29 Boss\QueensKnight">
+      <UniqueIdentifier>{56eb2454-6ae7-4808-8b79-23b6f0bab7d0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\9%29 Player_Colleague">
+      <UniqueIdentifier>{1f602b6c-aa64-4d4c-bacd-47f6e9664c69}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -504,6 +510,12 @@
     <ClInclude Include="..\Headers\Monster.h">
       <Filter>02.GameObject\Stage\2%29 Monster</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\QueensKnight.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\QueensKnight</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Player_Colleague.h">
+      <Filter>02.GameObject\Stage\9%29 Player_Colleague</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -730,6 +742,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Monster.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\QueensKnight.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\QueensKnight</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Player_Colleague.cpp">
+      <Filter>02.GameObject\Stage\9%29 Player_Colleague</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

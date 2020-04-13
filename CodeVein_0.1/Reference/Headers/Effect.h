@@ -28,6 +28,7 @@ public:
 public:
 	void Set_ParticleName(_tchar* szBuff) { lstrcpy(m_szParticleName, szBuff); }
 	void Set_Desc(_v3 vPos, CTransform* pTrans = nullptr);
+	void Set_TargetMatrix(_mat* pMat);
 	void Set_Angle(_v3 vAngle) { m_vAngle = vAngle; }
 	void Set_Dir(_v3 vDir) { m_vMyDir = vDir; }
 	void Set_AutoFind(_bool  bFind) { m_bAutoFindPos = bFind; }
@@ -52,6 +53,7 @@ protected:
 	EFFECT_INFO*			m_pInfo = nullptr;
 	EFFECT_DESC*			m_pDesc = nullptr;
 
+	_mat*					m_pTargetMatrix = nullptr;
 	_float					m_fFrame = 0.f;
 	_float					m_fAlpha = 1.f;
 	_float					m_fLifeTime = 0.f;

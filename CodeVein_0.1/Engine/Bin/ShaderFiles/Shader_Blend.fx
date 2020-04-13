@@ -119,7 +119,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	vector	vRim		= tex2D(RimSampler, In.vTexUV);
 	//vector	vSSAO	= tex2D(SSAOSampler, In.vTexUV);
 
-	Out.vColor = ((vDiffuse + vSpecular) * vShade) + (vEmissive * 20.f);// +vRim;
+	Out.vColor = ((vDiffuse + vSpecular) * vShade) + (vEmissive * 20.f) + vRim;
 	//Out.vColor = (vDiffuse + vSpecular - vSSAO.x) * vShade;
 
 	return Out;
@@ -246,6 +246,80 @@ PS_OUT PS_BLUR(PS_IN In)
 
 	return Out;
 }
+
+PS_OUT PS_BLURH(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+	
+	//(1.0, 0.0) -> horizontal blur
+	float2 dir = float2(1.0, 0.0);
+	
+	const float offset[] = { 0.0, 1.0, 2.0, 3.0, 4.0 };
+	const float weight[] = {
+		0.2270270270, 0.1945945946, 0.1216216216,
+		0.0540540541, 0.0162162162
+	};
+	float3 ppColour = 0;
+	float3 FragmentColor = float3(0.0f, 0.0f, 0.0f);
+	
+	float hstep = dir.x;
+	float vstep = dir.y;
+	
+	float pixelWidthX = 1.f / 1280.f;
+	float pixelWidthY = 1.f / 720.f;
+
+	float fBlurColor = 1.3f; // 클 수록 블러 색이 진해짐
+
+	for (int i = 1; i < 5; i++) {
+		FragmentColor +=
+			tex2D(DiffuseSampler, (float2(In.vTexUV) + float2(hstep*offset[i], vstep*offset[i]) * pixelWidthX)).xyz * weight[i] * fBlurColor;
+		FragmentColor +=
+			tex2D(DiffuseSampler, (float2(In.vTexUV) - float2(hstep*offset[i], vstep*offset[i]) * pixelWidthX)).xyz * weight[i] * fBlurColor;
+	}
+
+	ppColour += FragmentColor;
+	
+	Out.vColor = float4(ppColour, 1.0);
+	
+	return Out;
+}
+
+PS_OUT PS_BLURV(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+	
+	//(0.0, 1.0) -> vertical blur
+	float2 dir = float2(0.0, 1.0);
+	
+	const float offset[] = { 0.0, 1.0, 2.0, 3.0, 4.0 };
+	const float weight[] = {
+		0.2270270270, 0.1945945946, 0.1216216216,
+		0.0540540541, 0.0162162162
+	};
+	float3 ppColour = 0;
+	float3 FragmentColor = float3(0.0f, 0.0f, 0.0f);
+	
+	float hstep = dir.x;
+	float vstep = dir.y;
+
+	float pixelWidthX = 1.f / 1280.f;
+	float pixelWidthY = 1.f / 720.f;
+
+	float fBlurColor = 1.3f; // 클 수록 블러 색이 진해짐
+
+	for (int i = 1; i < 5; i++) {
+		FragmentColor +=
+			tex2D(DiffuseSampler, (float2(In.vTexUV) + float2(hstep*offset[i], vstep*offset[i]) * pixelWidthY)).xyz * weight[i] * fBlurColor;
+		FragmentColor +=
+			tex2D(DiffuseSampler, (float2(In.vTexUV) - float2(hstep*offset[i], vstep*offset[i]) * pixelWidthY)).xyz * weight[i] * fBlurColor;
+	}
+	ppColour += FragmentColor;
+	
+	Out.vColor = float4(ppColour, 1.0);
+
+	return Out;
+}
+
 
 PS_OUT PS_AFTER(PS_IN In)
 {
@@ -451,6 +525,31 @@ technique Default_Technique
 
 		VertexShader = NULL;
 		PixelShader = compile ps_3_0 MotionBlurForObj();
+	}
+
+
+	pass BlurH // 7
+	{
+		ZWriteEnable = false;
+	
+		AlphatestEnable = true;
+		AlphaRef = 0;
+		AlphaFunc = Greater;
+	
+		VertexShader = NULL;
+		PixelShader = compile ps_3_0 PS_BLURH();
+	}
+	
+	pass BlurV // 8
+	{
+		ZWriteEnable = false;
+	
+		AlphatestEnable = true;
+		AlphaRef = 0;
+		AlphaFunc = Greater;
+	
+		VertexShader = NULL;
+		PixelShader = compile ps_3_0 PS_BLURV();
 	}
 }
 

@@ -7,7 +7,7 @@
 BEGIN(Client)
 
 class CWeapon;
-
+class CMonsterUI;
 class CYachaMan final : public CGameObject
 {
 public:
@@ -161,6 +161,13 @@ public:
 	static CYachaMan* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
 	virtual CGameObject* Clone_GameObject(void* pArg);
 	virtual void Free();
+
+private:
+	//////////// 채유미
+	// 몬스터 HP바 UI
+	CMonsterUI*			m_pMonsterUI = nullptr;
+
+	_mat*				m_matHeadBone_for_YM;
 
 private:
 	CTransform*			m_pTransformCom = nullptr;

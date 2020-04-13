@@ -1,5 +1,6 @@
 #include "../Headers/BT_MoveTo.h"
 #include "../Headers/Transform.h"
+#include "..\Headers\NavMesh.h"
 
 CBT_MoveTo::CBT_MoveTo()
 {
@@ -11,6 +12,9 @@ CBT_MoveTo::CBT_MoveTo(const CBT_MoveTo & rhs)
 
 CBT_Node::BT_NODE_STATE CBT_MoveTo::Update_Node(_double TimeDelta, vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*>*>* plistSubNodeStack,CBlackBoard* pBlackBoard, _bool bDebugging)
 {
+	if (m_bInit)
+		Cal_MoveSpeed(pBlackBoard);
+
 	Start_Node(pNodeStack, plistSubNodeStack, bDebugging);
 
 	m_dCurTime += TimeDelta;
@@ -19,7 +23,8 @@ CBT_Node::BT_NODE_STATE CBT_MoveTo::Update_Node(_double TimeDelta, vector<CBT_No
 	{
 		return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, pBlackBoard, bDebugging);
 	}
-	m_pTransform->Add_Pos(_float(m_dMoveSpeed * TimeDelta));
+	//m_pTransform->Add_Pos(m_fMoveSpeed);
+	m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &m_vMoveDir, m_fMoveSpeed * _float(TimeDelta))));
 
 	return BT_NODE_STATE::INPROGRESS;
 }
@@ -31,7 +36,7 @@ void CBT_MoveTo::Start_Node(vector<CBT_Node*>* pNodeStack, list<vector<CBT_Node*
 		if (bDebugging)
 		{
 			Cout_Indentation(pNodeStack);
-			cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " Start   { Move : " << "Speed " << m_dMoveSpeed << ", Time " << m_dMovingTime << " }" << endl;
+			cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " Start   { Move : }" << endl;
 		}
 
 		pNodeStack->push_back(this);
@@ -58,7 +63,7 @@ CBT_Node::BT_NODE_STATE CBT_MoveTo::End_Node(vector<CBT_Node*>* pNodeStack, list
 	if (bDebugging)
 	{
 		Cout_Indentation(pNodeStack);
-		cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " End   { Move : " << "Speed " << m_dMoveSpeed << ", Time " << m_dMovingTime << " }" << endl;
+		cout << "[" << m_iNodeNumber << "] " << m_pNodeName << " End   { MoveTo : " << m_fMoveSpeed << " }" << endl;
 	}
 
 	return eState;
@@ -70,13 +75,32 @@ HRESULT CBT_MoveTo::Ready_Clone_Node(void * pInit_Struct)
 
 	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
 
-	m_pTransform = temp.Target_pTargetTransform;
+	m_pTransform = temp.pTargetTransform;
 	Safe_AddRef(m_pTransform);
 
-	m_dMoveSpeed = temp.Target_dMoveSpeed;
+	m_pNavMesh = temp.pNavMesh;
+	Safe_AddRef(m_pNavMesh);
+
+	lstrcpy(m_pPosKey, temp.Pos_Key);
+
 	m_dMovingTime = temp.Target_dMovingTime;
 
 	CBT_Node::_Set_Auto_Number(&m_iNodeNumber);
+	return S_OK;
+}
+
+HRESULT CBT_MoveTo::Cal_MoveSpeed(CBlackBoard * pBB)
+{
+	_v3 Target_Pos = pBB->Get_V3Value(m_pPosKey);
+
+	m_fMoveSpeed = D3DXVec3Length(&(Target_Pos - m_pTransform->Get_Pos())) / _float(m_dMovingTime);
+	m_vMoveDir = *D3DXVec3Normalize(&_v3(), &(Target_Pos - m_pTransform->Get_Pos()));
+
+	//cout << m_fMoveSpeed << endl;
+	//cout << Target_Pos.x << ", " << Target_Pos.z << endl;
+
+	_v3 temp = (Target_Pos - m_pTransform->Get_Pos());
+	_float fTemp = D3DXVec3Length(&temp);
 	return S_OK;
 }
 
@@ -100,4 +124,5 @@ CBT_Node * CBT_MoveTo::Clone(void* pInit_Struct)
 void CBT_MoveTo::Free()
 {
 	Safe_Release(m_pTransform);
+	Safe_Release(m_pNavMesh);
 }

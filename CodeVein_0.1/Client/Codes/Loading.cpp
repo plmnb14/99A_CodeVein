@@ -22,6 +22,7 @@
 #include "PoisonRotationBullet.h"
 #include "PoisonTornado.h"
 #include "BlackUrchin.h"
+#include "QueensKnight.h"
 #include "BlackWolf.h"
 #include "GunGenji.h"
 #include "GunGenjiBullet.h"
@@ -40,6 +41,8 @@
 #include "DamegeNumUI.h"
 #include "Get_ItemUI.h"
 #include "PickUp_ItemUI.h"
+
+#include "Player_Colleague.h"
 
 //#include "Item.h"
 
@@ -169,7 +172,9 @@ HRESULT CLoading::Ready_Effect(void)
 
 	if (FAILED(Add_EffectPrototype(L"Boss_KnockDown_Dust")))
 		return E_FAIL;
-	
+	if (FAILED(Add_EffectPrototype(L"Boss_Dead_Particle")))
+		return E_FAIL;
+
 #pragma region Blood
 	if (FAILED(Add_EffectPrototype(L"Hit_Blood_0")))
 		return E_FAIL;
@@ -271,6 +276,9 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"MistletoeParticle_Sub")))
 		return E_FAIL;
 
+	if (FAILED(Add_EffectPrototype(L"ItemGet_Particle")))
+		return E_FAIL;
+
 	if (FAILED(Add_EffectPrototype(L"Player_FootSmoke")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_FootSmoke_Jump")))
@@ -294,9 +302,43 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_ScratchBlur_Sub_Ver")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_ShadowAssault_Scratch")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_ShadowAssault_ScratchBlur")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_DarkSmokeAura")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_ChargeSpark_Small")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_ChargeSpark_Big")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_ChargeSpark_Circle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_ChargeSpark_Flash")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_ChargeSpark_ShockWave")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_ChargeSpark_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Buff_HandLight")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Buff_HandSmoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Buff_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Buff_Flash")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Heal_RedLight")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Heal_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_ChargeSpark_BlastMesh", true)))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Ring_Hor")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Ring_Ver")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Particle_Explosion")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_RedParticle_Explosion")))
 		return E_FAIL;
@@ -305,6 +347,10 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_RedCircle_Flash")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Distortion_Circle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Distortion_Water")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Distortion_Blaster")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_RedOnion", true)))
 		return E_FAIL;
@@ -558,6 +604,9 @@ _uint CLoading::Loading_Stage()
 	// 독나방 기모아서 쏘기 충돌체
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonTornado", CPoisonTornado::Create(m_pGraphicDev))))
 		return E_FAIL;
+	// 여왕의 기사
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_QueensKnight", CQueensKnight::Create(m_pGraphicDev))))
+		return E_FAIL;
 	// 검은 성게
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))
 		return E_FAIL;
@@ -585,6 +634,10 @@ _uint CLoading::Loading_Stage()
 
 	// UI - Chea
 	//============================================================================================================
+	
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Colleague", CPlayer_Colleague::Create(m_pGraphicDev))))
+		return E_FAIL;
+
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MonsterHPUI", CMonsterUI::Create(m_pGraphicDev))))
 		return E_FAIL;
 

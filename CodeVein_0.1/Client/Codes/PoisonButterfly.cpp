@@ -6,11 +6,13 @@
 CPoisonButterfly::CPoisonButterfly(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CMonster(pGraphic_Device)
 {
+	ZeroMemory(m_matBones, sizeof(_mat*) * Bone_End);
 }
 
 CPoisonButterfly::CPoisonButterfly(const CPoisonButterfly & rhs)
 	: CMonster(rhs)
 {
+	ZeroMemory(m_matBones, sizeof(_mat*) * Bone_End);
 }
 
 HRESULT CPoisonButterfly::Ready_GameObject_Prototype()
@@ -75,7 +77,7 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	//Start_Sel->Add_Child(Eat_TurnEat());
+	//Start_Sel->Add_Child(Eat_Turn());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -350,9 +352,6 @@ HRESULT CPoisonButterfly::Render_GameObject()
 
 			m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
 
-			//if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
-			//	return E_FAIL;
-
 			m_pShaderCom->Commit_Changes();
 
 			m_pMeshCom->Render_Mesh(i, j);
@@ -602,12 +601,15 @@ CBT_Composite_Node * CPoisonButterfly::Eat_Turn()
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("전체적으로 쓰이는 옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Bone_Tail6", 0, 300, 0.01, 0);
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("반짝이는 보라색 모래", L"ButterFly_GlitterSand", L"Bone_Tail6", 0, 300, 0.01, 0);
 	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("안개와 같이 나오는 왜곡", L"ButterFly_Distortion_Smoke", L"Bone_Tail6", 0, 300, 0.01, 0);
-	//CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("왜곡", L"ButterFly_Distortion_Circle", L"Bone_Tail6_Tongue2", 0.5, 1, 0.01, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("왜곡", L"ButterFly_Distortion_Circle", L"Bone_Tail6", 1.8, 1, 0.01, 0);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("왜곡", L"ButterFly_Distortion_Circle", L"Bone_Tail6", 3.7, 1, 0.01, 0);
 
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
 	Root_Parallel->Add_Service(Effect2);
 	Root_Parallel->Add_Service(Effect3);
+	Root_Parallel->Add_Service(Effect4);
+	Root_Parallel->Add_Service(Effect5);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani25);
@@ -1283,7 +1285,8 @@ void CPoisonButterfly::Check_PhyCollider()
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
 			Start_Dissolve(0.7f, false, true);
-			//g_pManagement->Create_Spawn_Effect(m_pTransformCom->Get_Pos());
+			g_pManagement->Create_ParticleEffect_Delay(L"Boss_Dead_Particle", 2.f, 0.f, m_pTransformCom->Get_Pos(), nullptr);
+			//g_pManagement->Create_Spawn_Effect(m_vTail6, m_vHead, nullptr);
 		}
 	}
 	else
@@ -1554,7 +1557,7 @@ HRESULT CPoisonButterfly::Ready_Collider()
 
 
 	//////////// 공격용 콜라이더
-	m_vecAttackCol.reserve(10);
+	m_vecAttackCol.reserve(5);
 
 	// 꼬리 끝
 	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));

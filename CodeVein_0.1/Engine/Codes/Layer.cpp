@@ -9,7 +9,7 @@ CGameObject* CLayer::Get_GameObjectBack()
 	return m_ObjectList.back();
 }
 
-list<CGameObject*> CLayer::Get_GameObjectList()
+list<CGameObject*>& CLayer::Get_GameObjectList()
 {
 	return m_ObjectList;
 }
