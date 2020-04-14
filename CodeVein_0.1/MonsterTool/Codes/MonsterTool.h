@@ -1,7 +1,8 @@
 #include "afxcmn.h"
 #include "afxwin.h"
 
-class CTestObject;
+class CTestMonster;
+class CTestWeapon;
 
 class CMonsterTool : public CDialog
 {
@@ -65,14 +66,14 @@ public:
 	void LateUpdate(const _float& fTimeDelta);
 	void Render();
 	void Release();
+	void Seting_ComboBoxWeapon();
 	void Seting_ListBoxMesh();
 	void Seting_ListBoxAni();
 	void Seting_ListBoxBone();
 	void Seting_TreeCtrlAniEvent();
 	void Seting_TreeCtrlAniCombo();
 
-	HTREEITEM Find_Node_By_Name(CTreeCtrl& _TreeCtrl, const _tchar* _szTargetName, HTREEITEM _RootNode = NULL);
-
+public:
 	afx_msg void LDBClick_MeshList();
 	afx_msg void LDBClick_BoneList();
 	afx_msg void LDBClick_AniList();
@@ -92,6 +93,14 @@ public:
 	afx_msg void Save_AniCombo();
 	afx_msg void Load_AniCombo();
 
+	afx_msg void Create_Weapon();
+	afx_msg void Attach_Weapon();
+	afx_msg void Change_Radius();
+	afx_msg void Change_Height();
+
+	afx_msg void Spin_Radius(NMHDR *pNMHDR, LRESULT *pResult);
+	afx_msg void Spin_Height(NMHDR *pNMHDR, LRESULT *pResult);
+
 public:
 	//몬스터 종류, 애니인덱스, 이벤트종류, 이벤트 값
 	map<const _tchar*, map<_uint, map<ANI_EVENT_TYPE, ANI_EVENT_VALUE*>>> m_mapmapmapAniEvent;
@@ -99,15 +108,18 @@ public:
 	//몬스터 종류, 콤보번호, 애니인덱스, 애니재생비율
 	typedef pair<_uint, _float> IdxRatio;
 	map<const _tchar*, map<_uint, vector<IdxRatio>>> m_STLAniCombo;
-	list<const _tchar*>						m_listMeshName; //글자 저장소
-	CTestObject*							m_pTestObject = nullptr;
+	list<const _tchar*>				m_listMeshName; //글자 저장소
+	list<const _tchar*>				m_listWeaponName;
+	CTestMonster*					m_pMonster = nullptr;
+	CTestWeapon*					m_pWeapon = nullptr;
 
 	CListBox	m_ListBoxMesh;
-	CListBox	m_ListhBoxAni;
+	CListBox	m_ListBoxAni;
 	CListBox	m_ListBoxBone;
 	CListBox	m_ListBoxAniComboList;
 	CTreeCtrl	m_TreeCtrlAniEvent;
 	CTreeCtrl	m_TreeCtrlAniCombo;
+	CComboBox	m_ComboBoxWeapon;
 
 	//데이터 표기 관련 변수
 	CString		m_strMeshName;
@@ -120,6 +132,12 @@ public:
 	CString		m_strAniPlayMul;
 	CString		m_strAniComboRatio;
 	CString		m_strAniComboNumber;
+
+	//무기 변수
+	CString		m_strWeaponName;
+	CString		m_strAttachName;
+	CString		m_strRadius;
+	CString		m_strWpHeight;
 
 	//버튼 체크 관련 변수
 	CButton		m_ButtonMove;

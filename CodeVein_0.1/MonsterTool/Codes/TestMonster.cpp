@@ -1,24 +1,24 @@
 #include "stdafx.h"
-#include "TestObject.h"
+#include "TestMonster.h"
 
-CTestObject::CTestObject(LPDIRECT3DDEVICE9 pGraphic_Device)
+CTestMonster::CTestMonster(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
 }
 
-CTestObject::CTestObject(LPDIRECT3DDEVICE9 pGraphic_Device, _tchar* szMeshname)
+CTestMonster::CTestMonster(LPDIRECT3DDEVICE9 pGraphic_Device, _tchar* szMeshname)
 	: CGameObject(pGraphic_Device)
 {
 	m_pszMeshName = new _tchar[MAX_STR];
 	lstrcpy(m_pszMeshName, szMeshname);
 }
 
-CTestObject::CTestObject(const CTestObject & rhs)
+CTestMonster::CTestMonster(const CTestMonster & rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CTestObject::Ready_GameObject_Prototype()
+HRESULT CTestMonster::Ready_GameObject_Prototype()
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
@@ -30,12 +30,12 @@ HRESULT CTestObject::Ready_GameObject_Prototype()
 	return NOERROR;
 }
 
-HRESULT CTestObject::Ready_GameObject(void * pArg)
+HRESULT CTestMonster::Ready_GameObject(void * pArg)
 {
 	return NOERROR;
 } 
 
-_int CTestObject::Update_GameObject(_double TimeDelta)
+_int CTestMonster::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
 
@@ -47,7 +47,7 @@ _int CTestObject::Update_GameObject(_double TimeDelta)
 	return _int();
 }
 
-_int CTestObject::Late_Update_GameObject(_double TimeDelta)
+_int CTestMonster::Late_Update_GameObject(_double TimeDelta)
 {
 	IF_NULL_VALUE_RETURN(m_pRenderer, E_FAIL);
 
@@ -56,10 +56,10 @@ _int CTestObject::Late_Update_GameObject(_double TimeDelta)
 
 	m_dTimeDelta = TimeDelta;
 
-	return _int();
+	return NO_EVENT;
 }
 
-HRESULT CTestObject::Render_GameObject()
+HRESULT CTestMonster::Render_GameObject()
 {
 	if (nullptr == m_pShader ||
 		nullptr == m_pMesh)
@@ -100,7 +100,7 @@ HRESULT CTestObject::Render_GameObject()
 	return NOERROR;
 }
 
-void CTestObject::Set_Combo(_uint _Idx, _float _Ratio)
+void CTestMonster::Set_Combo(_uint _Idx, _float _Ratio)
 {
 	m_vectorIndexAniRatio.push_back(pair<_uint, _float>(_Idx, _Ratio));
 
@@ -108,14 +108,14 @@ void CTestObject::Set_Combo(_uint _Idx, _float _Ratio)
 
 }
 
-void CTestObject::Reset_Combo()
+void CTestMonster::Reset_Combo()
 {
 
 	if (!m_vectorIndexAniRatio.empty())
 		m_vectorIndexAniRatio.clear();
 }
 
-void CTestObject::Play_Combo()
+void CTestMonster::Play_Combo()
 {
 
 	if (m_iMaxCount <= m_iComboCount)
@@ -131,7 +131,7 @@ void CTestObject::Play_Combo()
 	}
 }
 
-HRESULT CTestObject::Add_Component()
+HRESULT CTestMonster::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransform)))
@@ -152,13 +152,12 @@ HRESULT CTestObject::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CTestObject::SetUp_ConstantTable()
+HRESULT CTestMonster::SetUp_ConstantTable()
 {
 	IF_NULL_VALUE_RETURN(m_pShader, E_FAIL);
 
 	CManagement* pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
+	IF_NULL_VALUE_RETURN(pManagement, E_FAIL);
 
 	Safe_AddRef(pManagement);
 
@@ -178,33 +177,33 @@ HRESULT CTestObject::SetUp_ConstantTable()
 	return NOERROR;
 }
 
-CTestObject * CTestObject::Create(LPDIRECT3DDEVICE9 pGraphic_Device, _tchar* szMeshname)
+CTestMonster * CTestMonster::Create(LPDIRECT3DDEVICE9 pGraphic_Device, _tchar* szMeshname)
 {
-	CTestObject* pInstance = new CTestObject(pGraphic_Device, szMeshname);
+	CTestMonster* pInstance = new CTestMonster(pGraphic_Device, szMeshname);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 	{
-		MSG_BOX("Failed To Creating CTestObject");
+		MSG_BOX("Failed To Creating CTestMonster");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject * CTestObject::Clone_GameObject(void * pArg)
+CGameObject * CTestMonster::Clone_GameObject(void * pArg)
 {
-	CTestObject* pInstance = new CTestObject(*this);
+	CTestMonster* pInstance = new CTestMonster(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
-		MSG_BOX("Failed To Cloned CTestObject");
+		MSG_BOX("Failed To Cloned CTestMonster");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CTestObject::Free()
+void CTestMonster::Free()
 {
 	Safe_Delete_Array(m_pszMeshName);
 	Safe_Release(m_pTransform);

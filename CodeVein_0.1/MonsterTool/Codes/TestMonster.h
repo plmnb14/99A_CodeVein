@@ -3,13 +3,13 @@
 #include "GameObject.h"
 #include "Management.h"
 
-class CTestObject final : public Engine::CGameObject
+class CTestMonster final : public Engine::CGameObject
 {
 protected:
-	explicit CTestObject(LPDIRECT3DDEVICE9 pGraphic_Device);
-	explicit CTestObject(LPDIRECT3DDEVICE9 pGraphic_Device, _tchar* szMeshname);
-	explicit CTestObject(const CTestObject& rhs);
-	virtual ~CTestObject() = default;
+	explicit CTestMonster(LPDIRECT3DDEVICE9 pGraphic_Device);
+	explicit CTestMonster(LPDIRECT3DDEVICE9 pGraphic_Device, _tchar* szMeshname);
+	explicit CTestMonster(const CTestMonster& rhs);
+	virtual ~CTestMonster() = default;
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -25,7 +25,7 @@ public:
 	void	Play_Combo();
 
 public:
-	static CTestObject* Create(LPDIRECT3DDEVICE9 pGraphic_Device, _tchar* szMeshname);
+	static CTestMonster* Create(LPDIRECT3DDEVICE9 pGraphic_Device, _tchar* szMeshname);
 	virtual CGameObject* Clone_GameObject(void* pArg);
 	virtual void Free();
 
