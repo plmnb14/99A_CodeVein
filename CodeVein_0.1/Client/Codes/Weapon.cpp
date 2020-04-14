@@ -460,6 +460,18 @@ void CWeapon::Change_WeaponData(WEAPON_DATA _eWpnData)
 		m_eWeaponType = WEAPON_Hammer;
 		break;
 	}
+	case WPN_QueenLance:
+	{
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_QueenLance");
+		m_eWeaponType = WEAPON_Halverd;
+		break;
+	}
+	case WPN_QueenShield:
+	{
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_QueenShield");
+		m_eWeaponType = WEAPON_Shield;
+		break;
+	}
 	}
 
 	Change_WeaponMesh(WeaponMeshName);
@@ -568,6 +580,18 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[WPN_Hammer_YachaMan].fTrail_Min = 0.75f;
 	m_tWeaponParam[WPN_Hammer_YachaMan].fTrail_Max = 1.5f;
 	m_tWeaponParam[WPN_Hammer_YachaMan].fCol_Height = 1.0f;
+
+	m_tWeaponParam[WPN_QueenLance].fDamage = 25.f;
+	m_tWeaponParam[WPN_QueenLance].fRadius = 1.3f;
+	m_tWeaponParam[WPN_QueenLance].fTrail_Min = 0.75f;
+	m_tWeaponParam[WPN_QueenLance].fTrail_Max = 1.5f;
+	m_tWeaponParam[WPN_QueenLance].fCol_Height = 1.6f;
+
+	m_tWeaponParam[WPN_QueenShield].fDamage = 25.f;
+	m_tWeaponParam[WPN_QueenShield].fRadius = 0.7f;
+	m_tWeaponParam[WPN_QueenShield].fTrail_Min = 0.f;
+	m_tWeaponParam[WPN_QueenShield].fTrail_Max = 1.f;
+	m_tWeaponParam[WPN_QueenShield].fCol_Height = 0.f;
 
 	return S_OK;
 }
