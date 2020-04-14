@@ -69,6 +69,7 @@ public:
 	virtual void			Set_Enable_Trail(_bool _bEnable);
 	virtual void			Set_SkillMode(_bool _bSkill);
 	virtual void			Set_TrailIndex(_int iIdx);
+	virtual void			Set_TrailSize(_float fBegin, _float fEnd);
 	virtual void			Set_Enable_Record(_bool _bRecord);
 	virtual void			Set_SkillPercent(_float _fPercent);
 
@@ -89,6 +90,8 @@ private:
 private:
 	_float					m_fTrailHeight_Min = 0.f;		// 트레일 시작점 보정수치
 	_float					m_fTrailHeight_Max = 1.f;		// 트레일 끝점 보정수치
+	_float					m_fTrailBegin = 0.5f;
+	_float					m_fTrailEnd = 1.4f;
 	_float					m_fSkillPercent = 1.f;
 
 

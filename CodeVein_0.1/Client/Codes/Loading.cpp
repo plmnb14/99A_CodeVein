@@ -183,7 +183,7 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_JumpDown_Particle_Red")))
 		return E_FAIL;
-	if (FAILED(Add_EffectPrototype(L"QueensKnight_JumpDown_ShockWave")))
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_JumpDown_ShockWave", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_JumpDown_Smoke_Black")))
 		return E_FAIL;

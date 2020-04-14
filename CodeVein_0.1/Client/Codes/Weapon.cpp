@@ -278,7 +278,7 @@ void CWeapon::Update_Trails(_double TimeDelta)
 	if (m_pTrailEffect)
 	{
 		m_pTrailEffect->Set_ParentTransform(&matWorld);
-		m_pTrailEffect->Ready_Info(vBegin + vDir * 0.5f, vBegin + vDir * 1.4f);
+		m_pTrailEffect->Ready_Info(vBegin + vDir * m_fTrailBegin, vBegin + vDir * m_fTrailEnd);
 		m_pTrailEffect->Update_GameObject(TimeDelta);
 	}
 
@@ -323,6 +323,12 @@ void CWeapon::Set_TrailIndex(_int iIdx)
 {
 	m_bSingleTrail = true;
 	m_pTrailEffect->Set_TrailIdx(iIdx);
+}
+
+void CWeapon::Set_TrailSize(_float fBegin, _float fEnd)
+{
+	m_fTrailBegin = fBegin;
+	m_fTrailEnd = fEnd;
 }
 
 void CWeapon::Set_Enable_Record(_bool _bRecord)
