@@ -135,7 +135,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"QueensKnight_Trail_Lightning_0", 50);
 	Input_Pool(L"QueensKnight_Trail_Lightning_1", 50);
 	Input_Pool(L"QueensKnight_Trail_Lightning_2", 50);
-	Input_Pool(L"QueensKnight_WhirlWind_Smoke", 50);
+	Input_Pool(L"QueensKnight_WhirlWind_Smoke", 100);
 
 	Input_Pool(L"Boss_KnockDown_Dust", 10);
 	Input_Pool(L"Boss_Dead_Particle", 1000);

@@ -1,9 +1,13 @@
 Mesh_ARBloodAura01|ARBloodAura01.X|..\..\Client\Resources\Mesh\EffectMesh\ARBloodAura01\|0
 Mesh_ARBloodAura02|ARBloodAura02.X|..\..\Client\Resources\Mesh\EffectMesh\ARBloodAura02\|0
 Mesh_Blast|Blast.X|..\..\Client\Resources\Mesh\EffectMesh\Blast\|0
+Mesh_Cone02|Cone02.X|..\..\Client\Resources\Mesh\EffectMesh\Cone02\|0
+Mesh_Cone02r|Cone02r.X|..\..\Client\Resources\Mesh\EffectMesh\Cone02r\|0
 Mesh_FloorRing|FloorRing.X|..\..\Client\Resources\Mesh\EffectMesh\FloorRing\|0
 Mesh_LineRing_0|LineRing_0.X|..\..\Client\Resources\Mesh\EffectMesh\LineRing\|0
 Mesh_LineRing_1|LineRing_1.X|..\..\Client\Resources\Mesh\EffectMesh\LineRing\|0
+Mesh_Ring02|Ring02.X|..\..\Client\Resources\Mesh\EffectMesh\Ring02\|0
+Mesh_Ring07|Ring07.X|..\..\Client\Resources\Mesh\EffectMesh\Ring07\|0
 Mesh_RockBullet|RockBullet.X|..\..\Client\Resources\Mesh\EffectMesh\RockBullet\|0
 Mesh_SlashLine|SlashLine.X|..\..\Client\Resources\Mesh\EffectMesh\SlashLine\|0
 Mesh_Tornade|Tornade.X|..\..\Client\Resources\Mesh\EffectMesh\Tornade\|0

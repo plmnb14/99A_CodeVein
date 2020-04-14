@@ -55,6 +55,8 @@ HRESULT CTexEffect::SetUp_ConstantTable_Instance(CShader * pShader)
 		return E_FAIL;
 	if (FAILED(m_pColorTextureCom->SetUp_OnShader("g_ColorTexture", pShader, _uint(m_pInfo->fColorIndex))))
 		return E_FAIL;
+
+	return S_OK;
 }
 
 HRESULT CTexEffect::Ready_GameObject_Prototype()
@@ -143,11 +145,11 @@ _int CTexEffect::Update_GameObject(_double TimeDelta)
 	else
 		eGroup = RENDERID::RENDER_DISTORTION;
 
-	if (!lstrcmp(L"QueensKnight_Teleport_Particle", m_szParticleName))
-	{
-		eGroup = RENDERID::RENDER_INSTANCE;
-		m_iPass = 3;
-	}
+	//if (!lstrcmp(L"QueensKnight_Teleport_Particle", m_szParticleName))
+	//{
+	//	eGroup = RENDERID::RENDER_INSTANCE;
+	//	m_iPass = 3;
+	//}
 
 	if (FAILED(m_pRendererCom->Add_RenderList(eGroup, this)))
 		return E_FAIL;

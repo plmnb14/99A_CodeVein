@@ -235,6 +235,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_WhirlWind_Smoke")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Sting_Tornade", true)))
+		return E_FAIL;
 #pragma endregion
 	
 	if (FAILED(Add_EffectPrototype(L"Boss_KnockDown_Dust")))

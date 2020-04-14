@@ -654,7 +654,7 @@ HRESULT CRenderer::Render_Instance()
 	m_pShader_Effect->Begin_Shader();
 
 	_int iIdx = 0;
-	_int iSizeCheck = m_RenderList[RENDER_INSTANCE].size();
+	_ULonglong iSizeCheck = m_RenderList[RENDER_INSTANCE].size();
 	ZeroMemory(m_pInstanceData, sizeof(INSTANCEDATA) * 50);
 
 	for (auto& pGameObject : m_RenderList[RENDER_INSTANCE])
@@ -1138,6 +1138,8 @@ CComponent * CRenderer::Clone_Component(void * pArg)
 
 void CRenderer::Free()
 {
+	Safe_Delete_Array(m_pInstanceData);
+
 	Safe_Release(m_pSSAOTexture);
 	Safe_Release(m_pViewPortBuffer);
 
