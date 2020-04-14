@@ -126,13 +126,15 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"QueensKnight_Lightning_4", 50);
 	Input_Pool(L"QueensKnight_Lightning_5", 50);
 	Input_Pool(L"QueensKnight_LightningBody_0", 50);
-	Input_Pool(L"QueensKnight_ShieldAttack_Distortion", 10);
+	Input_Pool(L"QueensKnight_ShieldAttack_Distortion", 30);
 	Input_Pool(L"QueensKnight_ShieldAttack_Particle", 100);
 	Input_Pool(L"QueensKnight_ShieldAttack_RedLight", 10);
 	Input_Pool(L"QueensKnight_SwordCrash_Particle", 50);
 	Input_Pool(L"QueensKnight_Teleport_Particle", 1000);
-	Input_Pool(L"QueensKnight_Teleport_Smoke", 100);
-	Input_Pool(L"QueensKnight_Teleport_Smoke_Red", 100);
+	Input_Pool(L"QueensKnight_Teleport_Particle_Black", 100);
+	Input_Pool(L"QueensKnight_Teleport_Smoke", 200);
+	Input_Pool(L"QueensKnight_Teleport_Smoke_Red", 200);
+	Input_Pool(L"QueensKnight_Teleport_DistortionSmoke", 300);
 	Input_Pool(L"QueensKnight_Trail_Lightning_0", 50);
 	Input_Pool(L"QueensKnight_Trail_Lightning_1", 50);
 	Input_Pool(L"QueensKnight_Trail_Lightning_2", 200);
@@ -192,22 +194,6 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 
 HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 {
-	//eff test
-	_v3 vPos = _v3(0.f, 1.5f, 0.f);
-	if (GetAsyncKeyState('B') & 0x8000)
-	{
-		Create_Effect_Delay(L"QueensKnight_Teleport_Particle", 0.f, vPos, nullptr);
-	}
-	if (GetAsyncKeyState('N') & 0x8000)
-	{
-		Create_Effect_Delay(L"QueensKnight_Teleport_Smoke", 0.f, V3_NULL, nullptr);
-	}
-	if (GetAsyncKeyState('M') & 0x8000)
-	{
-		Create_Effect_Delay(L"QueensKnight_Intro_Smoke_0"	, 0.f, vPos, nullptr);
-		Create_Effect_Delay(L"QueensKnight_Intro_Smoke_1"	, 0.f, vPos, nullptr);
-	}
-
 	auto& iter_begin = m_vecParticle.begin();
 	auto& iter_end = m_vecParticle.end();
 
