@@ -798,6 +798,7 @@ void CSwordShieldGenji::Check_PhyCollider()
 		m_vPushDir_forHitting = *(_v3*)&matPlayer.m[2];
 
 		m_pAIControllerCom->Reset_BT();
+		m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Block", false);
 
 		if (m_tObjParam.fHp_Cur > 0.f)
 		{
@@ -962,7 +963,7 @@ HRESULT CSwordShieldGenji::Ready_Weapon()
 	m_pSword->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
 	m_pSword->Set_ParentMatrix(&m_pTransformCom->Get_WorldMat());
 
-	// ¿Þ¼Õ ¹«±â
+	// ¿Þ¼Õ ¹æÆÐ
 	m_pShield = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
 	m_pShield->Change_WeaponData(CWeapon::WPN_Shield_Normal);
 

@@ -89,8 +89,8 @@ public:
 	virtual void Set_Target_DodgeTimer(_float _fDodgeTimer) { m_tObjParam.fDodgeTimer = _fDodgeTimer; }
 	
 public:
-	vector<CCollider*>		Get_PhysicColVector() { return m_vecPhysicCol; };	// 충돌 체크용 콜라이더 벡터
-	vector<CCollider*>		Get_AtkColVector() { return m_vecAttackCol; };		// 공격용 콜라이더 벡터
+	vector<CCollider*>&		Get_PhysicColVector() { return m_vecPhysicCol; };	// 충돌 체크용 콜라이더 벡터
+	vector<CCollider*>&		Get_AtkColVector() { return m_vecAttackCol; };		// 공격용 콜라이더 벡터
 
 protected:
 	vector<CCollider*>		m_vecPhysicCol;		// 충돌 체크용 콜라이더 벡터

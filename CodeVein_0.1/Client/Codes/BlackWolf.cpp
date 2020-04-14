@@ -225,6 +225,8 @@ void CBlackWolf::Render_Collider()
 	{
 		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
 	}
+
+	return;
 }
 
 void CBlackWolf::Enter_Collision()

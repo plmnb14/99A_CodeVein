@@ -67,7 +67,7 @@ private:	//패턴들
 	// 6. 3연속 베기, 이동거리 : 1
 	CBT_Composite_Node* ThreeCombo_Cut();
 	// 7. 수평베기, 이동거리 : 1
-	CBT_Composite_Node* Horizon_Cut();
+	CBT_Composite_Node* Horizontal_Cut();
 	// 8. 찌르기, 이동거리 : 1
 	CBT_Composite_Node* Sting_Attack();
 	// 9. 2연속 베기, 이동거리 : 0.5 + 0.5

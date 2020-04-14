@@ -97,6 +97,7 @@
 #define Node_ChaseDir(_name, _Target_Key, _dRunTime, _dTimeOffset) static_cast<CBT_ChaseDir*>(CManagement::Get_Instance()->Clone_Node(L"ChaseDir", CBT_Node_Manager::TASK, &CBT_ChaseDir::INFO(_name, m_pTransformCom, _Target_Key, _dRunTime, _dTimeOffset)))
 
 #include "..\Headers\BT_MoveTo.h"
+#define Node_MoveTo(_name, _Pos_Key, _dMovingTime) static_cast<CBT_MoveTo*>(CManagement::Get_Instance()->Clone_Node(L"MoveTo", CBT_Node_Manager::TASK, &CBT_MoveTo::INFO(_name, m_pTransformCom, m_pNavMesh, _Pos_Key, _dMovingTime)))
 
 #include "..\Headers\BT_Play_Ani.h"
 #define Node_Ani(_name, _Index, _fWeight) static_cast<CBT_Play_Ani*>(CManagement::Get_Instance()->Clone_Node(L"Play_Ani", CBT_Node_Manager::TASK, &CBT_Play_Ani::INFO(_name, m_pMeshCom, _Index, _fWeight)))
