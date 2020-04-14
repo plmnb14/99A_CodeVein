@@ -40,7 +40,7 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 	///////////////// 행동트리 init
 
 	CBlackBoard* pBlackBoard = CBlackBoard::Create();
-	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create(true);	//인자에 true 주면 콘솔창에 디버깅정보 뜸, default = false
+	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create();	//인자에 true 주면 콘솔창에 디버깅정보 뜸, default = false
 
 	m_pAIControllerCom->Set_BeHaviorTree(pBehaviorTree);
 	m_pAIControllerCom->Set_BlackBoard(pBlackBoard);
@@ -75,13 +75,13 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Start_Show());
+	Start_Sel->Add_Child(Flash());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
 
-	//CBT_Wait* Wait0 = Node_Wait("대기", 1, 0);
-	//Start_Sel->Add_Child(Wait0);
+	CBT_Wait* Wait0 = Node_Wait("대기", 1, 0);
+	Start_Sel->Add_Child(Wait0);
 
 	return S_OK;
 }
@@ -506,31 +506,31 @@ CBT_Composite_Node * CQueensKnight::Rush()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("돌진 찌르기");
-	CBT_SetValue* PushColOff = Node_BOOL_SetValue("PushColOff", L"PushCol", false);
 	CBT_Play_Ani* Show_Ani42 = Node_Ani("돌진 찌르기", 42, 0.95f);
 	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.1f);
-	CBT_SetValue* PushColOn = Node_BOOL_SetValue("PushColOn", L"PushCol", true);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
-	CBT_Wait* Wait0 = Node_Wait("대기0", 0.276, 0);
-	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적1", L"Player_Pos", 0.1, 0);
+	CBT_SetValue* PushColOff = Node_BOOL_SetValue("PushColOff", L"PushCol", false);
+	CBT_Wait* Wait0 = Node_Wait("대기0", 0.376, 0);
+	//CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적1", L"Player_Pos", 0.1, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 추적2", L"Player_Pos", 0.1);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 30, 0.307, 0);
+	CBT_SetValue* PushColOn = Node_BOOL_SetValue("PushColOn", L"PushCol", true);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.983, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", -1, 0.317, 0);
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", 1, 0.35, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(PushColOff);
 	MainSeq->Add_Child(Show_Ani42);
 	MainSeq->Add_Child(Show_Ani15);
-	MainSeq->Add_Child(PushColOn);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(PushColOff);
 	SubSeq->Add_Child(Wait0);
-	SubSeq->Add_Child(ChaseDir0);
+	//SubSeq->Add_Child(ChaseDir0);
 	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(PushColOn);
 	SubSeq->Add_Child(Wait1);
 	SubSeq->Add_Child(Move1);
 	SubSeq->Add_Child(Move2);
@@ -550,7 +550,12 @@ CBT_Composite_Node * CQueensKnight::Flash()
 
 	MainSeq->Add_Child(MoveTo0);
 
-		//FlashPos
+	//CBT_StartDissolve* Dissolve0 = Node_StartDissolve("디졸브", 0.7f, false, 0.01);
+	//MainSeq->Add_Service(Dissolve0);
+
+	//CBT_StartDissolve* Dissolve1 = Node_StartDissolve("디졸브", 0.7f, true, 0.15);
+	//MainSeq->Add_Service(Dissolve1);
+
 	return MainSeq;
 }
 
@@ -587,9 +592,6 @@ CBT_Composite_Node * CQueensKnight::Flash_Wing_Attack()
 	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
-
-
-	return nullptr;
 }
 
 CBT_Composite_Node * CQueensKnight::Flash_Rush()

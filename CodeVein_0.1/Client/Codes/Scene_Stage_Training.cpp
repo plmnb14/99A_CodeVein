@@ -215,9 +215,6 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 
 
 	// 독나방
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_PoisonButterfly", SCENE_STAGE, L"Layer_Monster")))
-	//	return E_FAIL;
-
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_PoisonButterfly", &CPoisonButterfly::INFO(10.f, 5.f, 2.f));
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(8.f, 0.f, 8.f));
 	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
@@ -234,11 +231,11 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
 	// 네모네모 동료
-	pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague", nullptr);
-	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(5.f, 0.f, 5.f));
-	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague", nullptr);
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(5.f, 0.f, 5.f));
+	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
 
 
 	// 투사체 레이어만 미리 추가

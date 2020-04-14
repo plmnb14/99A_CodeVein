@@ -534,6 +534,9 @@
     <ClInclude Include="..\Headers\BT_MoveAround.h">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\BT_StartDissolve.h">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Service\Derive</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Base.cpp">
@@ -796,6 +799,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\BT_MoveAround.cpp">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Task\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BT_StartDissolve.cpp">
+      <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Service\Derive</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
