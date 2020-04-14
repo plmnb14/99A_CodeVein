@@ -227,6 +227,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Smoke")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Smoke_Red")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Trail_Lightning_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Trail_Lightning_1")))

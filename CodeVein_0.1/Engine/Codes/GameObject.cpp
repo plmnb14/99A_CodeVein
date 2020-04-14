@@ -84,6 +84,7 @@ void CGameObject::Set_Dead()
 
 void CGameObject::Start_Dissolve(_float fFxSpeed, _bool bFadeIn, _bool bReadyDead)
 {
+	m_bDissolve = true;
 	m_iTempPass = m_iPass;
 	m_iPass = 3;
 	m_bFadeIn = bFadeIn;
@@ -94,20 +95,6 @@ void CGameObject::Start_Dissolve(_float fFxSpeed, _bool bFadeIn, _bool bReadyDea
 		m_fFXAlpha = 1.f;
 	else
 		m_fFXAlpha = 0.f;
-}
-
-void CGameObject::Set_Dissolve_OutIn(_float fFxSpeed, _float fOutDelay, _float fInDelay)
-{
-	m_iTempPass = m_iPass;
-	m_iPass = 3;
-	m_fFXAlpha = 1.f;
-	m_bFadeIn = true;
-	m_bFadeInOut = true;
-	m_fFXSpeed = fFxSpeed;
-	m_bReadyDead = false;
-
-	m_fFXDelay[0] = fOutDelay;
-	m_fFXDelay[1] = fInDelay;
 }
 
 HRESULT CGameObject::Add_Component(_uint iSceneID, const _tchar * pPrototypeTag, const _tchar * pComponentTag, CComponent** ppComponent, void * pArg)
@@ -171,23 +158,8 @@ void CGameObject::Compute_ViewZ(const _v3* pPos)
 
 void CGameObject::Check_Dissolve(_double TimeDelta)
 {
-	if (m_iPass != 3)
+	if (!m_bDissolve)
 		return;
-
-	if (m_bFadeInOut)
-	{
-		m_fFXDelay[0] -= _float(TimeDelta);
-		m_fFXDelay[1] -= _float(TimeDelta);
-
-		if (m_fFXDelay[0] > 0.f)
-			return;
-
-		if (m_fFXDelay[1] < 0.f)
-		{
-			m_bFadeIn = false;
-			m_bFadeInOut = false;
-		}
-	}
 
 	if(!m_bFadeIn)
 	{
@@ -199,7 +171,9 @@ void CGameObject::Check_Dissolve(_double TimeDelta)
 				m_bIsDead = true;
 
 			m_fFXAlpha = 1.f;
-			m_iPass = m_iTempPass;
+			//m_iPass = m_iTempPass;
+			//m_iTempPass = 0;
+			//m_bDissolve = false;
 		}
 	}
 	else
@@ -209,9 +183,9 @@ void CGameObject::Check_Dissolve(_double TimeDelta)
 		if (m_fFXAlpha <= 0.f)
 		{
 			m_fFXAlpha = 0.f;
-
-			if(!m_bFadeInOut)
-				m_iPass = m_iTempPass;
+			m_iPass = m_iTempPass;
+			m_iTempPass = 0;
+			//m_bDissolve = false;
 		}
 	}
 }
