@@ -19,6 +19,8 @@ public:
 		WPN_Gun_Normal,
 		WPN_Shield_Normal,
 		WPN_Hammer_YachaMan,
+		WPN_QueenLance,
+		WPN_QueenShield,
 		WPN_DATA_End
 	};
 

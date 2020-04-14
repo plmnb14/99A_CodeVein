@@ -40,7 +40,7 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 	///////////////// 행동트리 init
 
 	CBlackBoard* pBlackBoard = CBlackBoard::Create();
-	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create();	//인자에 true 주면 콘솔창에 디버깅정보 뜸, default = false
+	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create(true);	//인자에 true 주면 콘솔창에 디버깅정보 뜸, default = false
 
 	m_pAIControllerCom->Set_BeHaviorTree(pBehaviorTree);
 	m_pAIControllerCom->Set_BlackBoard(pBlackBoard);
@@ -55,14 +55,13 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"Show_Near", true);
 
 	pBlackBoard->Set_Value(L"PushCol", true);	// 충돌여부 제어변수
+	pBlackBoard->Set_Value(L"PhyCol", true); // 피격판정 제어 변수
 
 	//CBT_Selector* Start_Sel = Node_Selector("행동 시작");
 	CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
-	CBT_UpdateGageRatio* UpdateHPRatioService = Node_UpdateGageRatio("체력 비율", L"HPRatio", L"MAXHP", L"HP", 1, 0.01, 0, CBT_Service_Node::Infinite);
 
 	pBehaviorTree->Set_Child(Start_Sel);
 
-	Start_Sel->Add_Service(UpdateHPRatioService);
 
 	//////////// 아래에 주석해놓은 4줄이 본게임에서 쓸 것임, 차례대로 공격함.
 
@@ -75,13 +74,13 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Flash());
+	Start_Sel->Add_Child(Start_Game());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
 
-	CBT_Wait* Wait0 = Node_Wait("대기", 1, 0);
-	Start_Sel->Add_Child(Wait0);
+	//CBT_Wait* Wait0 = Node_Wait("대기", 1, 0);
+	//Start_Sel->Add_Child(Wait0);
 
 	return S_OK;
 }
@@ -118,7 +117,7 @@ _int CQueensKnight::Update_GameObject(_double TimeDelta)
 
 	}
 
-	if (false == m_bReadyDead)
+	if (false == m_bReadyDead && true == m_pAIControllerCom->Get_BoolValue(L"PhyCol"))
 		Check_PhyCollider();
 
 	OnCollisionEnter();
@@ -250,9 +249,11 @@ CBT_Composite_Node * CQueensKnight::Normal_HorizontalCut1()
 	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.1f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
-	CBT_Wait* Wait0 = Node_Wait("대기0", 0.266, 0);
+	CBT_Wait* Wait0 = Node_Wait("대기0", 0.166, 0);
+	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.1);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 2.f, 0.567, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 7.f, 0.333, 0);
+
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani50);
@@ -260,6 +261,7 @@ CBT_Composite_Node * CQueensKnight::Normal_HorizontalCut1()
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(Move0);
 	SubSeq->Add_Child(Move1);
 
@@ -278,12 +280,14 @@ CBT_Composite_Node * CQueensKnight::Normal_VerticalCut1()
 	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.1f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
-	CBT_Wait* Wait0 = Node_Wait("대기0", 0.433, 0);
+	CBT_Wait* Wait0 = Node_Wait("대기0", 0.333, 0);
+	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.1);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 6, 0.4, 0);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 1.117, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", -2, 0.216, 0);
 	CBT_Wait* Wait2 = Node_Wait("대기2", 0.15, 0);
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", 1, 0.484, 0);
+
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani49);
@@ -291,6 +295,7 @@ CBT_Composite_Node * CQueensKnight::Normal_VerticalCut1()
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(Move0);
 	SubSeq->Add_Child(Wait1);
 	SubSeq->Add_Child(Move1);
@@ -313,18 +318,20 @@ CBT_Composite_Node * CQueensKnight::TwoCombo_Cut()
 	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.1f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
-	CBT_Wait* Wait0 = Node_Wait("대기0", 0.266, 0);
+	CBT_Wait* Wait0 = Node_Wait("대기0", 0.166, 0);
+	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.1);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 2.f, 0.567, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 7.f, 0.333, 0);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.45, 0);
 	//50번애니 * 0.5 = 1.616
-	CBT_RotationDir* Rotation0 = Node_RotationDir("플레이어 바라보기", L"Player_Pos", 0.09);
+	CBT_RotationDir* Rotation1 = Node_RotationDir("플레이어 바라보기", L"Player_Pos", 0.09);
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("플레이어 바라보기", L"Player_Pos", 0.01, 0);
 	CBT_Wait* Wait2 = Node_Wait("대기2", 0.15, 0);
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", 6.f, 0.366, 0);
 	CBT_Wait* Wait3 = Node_Wait("대기3", 0.934, 0);
 	CBT_MoveDirectly* Move3 = Node_MoveDirectly_Rush("이동3", L"Monster_Speed", L"Monster_Dir", -1.f, 0.483, 0);
 	CBT_MoveDirectly* Move4 = Node_MoveDirectly_Rush("이동4", L"Monster_Speed", L"Monster_Dir", 1.f, 0.5, 0);
+
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani50);
@@ -333,10 +340,11 @@ CBT_Composite_Node * CQueensKnight::TwoCombo_Cut()
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(Move0);
 	SubSeq->Add_Child(Move1);
 	SubSeq->Add_Child(Wait1);
-	SubSeq->Add_Child(Rotation0);
+	SubSeq->Add_Child(Rotation1);
 	SubSeq->Add_Child(ChaseDir0);
 	SubSeq->Add_Child(Wait2);
 	SubSeq->Add_Child(Move2);
@@ -345,7 +353,7 @@ CBT_Composite_Node * CQueensKnight::TwoCombo_Cut()
 	SubSeq->Add_Child(Move4);
 
 	CBT_UpdateParam* pHitCol0 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.866, 1, 0.317, 0);
-	CBT_UpdateParam* pHitCol1 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.616 + 0.533, 1, 0.683, 0);
+	CBT_UpdateParam* pHitCol1 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.616 + 0.533, 1, 0.15, 0);
 	Root_Parallel->Add_Service(pHitCol0);
 	Root_Parallel->Add_Service(pHitCol1);
 	
@@ -363,20 +371,22 @@ CBT_Composite_Node * CQueensKnight::ThreeCombo_Cut()
 	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.1f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
-	CBT_Wait* Wait0 = Node_Wait("대기0", 0.266, 0);
+	CBT_Wait* Wait0 = Node_Wait("대기0", 0.166, 0);
+	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.1);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 2.f, 0.567, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 7.f, 0.333, 0);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.45, 0);
 	//50번애니 * 0.5 = 1.616
-	CBT_RotationDir* Rotation0 = Node_RotationDir("플레이어 바라보기", L"Player_Pos", 0.09);
+	CBT_RotationDir* Rotation1 = Node_RotationDir("플레이어 바라보기1", L"Player_Pos", 0.09);
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("플레이어 바라보기", L"Player_Pos", 0.01, 0);
 	CBT_Wait* Wait2 = Node_Wait("대기2", 0.15, 0);
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", 6.f, 0.366, 0);
 	CBT_Wait* Wait3 = Node_Wait("대기3", 0.857, 0);
-	CBT_RotationDir* Rotation1 = Node_RotationDir("플레이어 바라보기1", L"Player_Pos", 0.09);
+	CBT_RotationDir* Rotation2 = Node_RotationDir("플레이어 바라보기2", L"Player_Pos", 0.09);
 	CBT_ChaseDir* ChaseDir1 = Node_ChaseDir("플레이어 바라보기1", L"Player_Pos", 0.01, 0);
 	//48번애니 * 0.4 = 1.473
 	CBT_MoveDirectly* Move3 = Node_MoveDirectly_Rush("이동3", L"Monster_Speed", L"Monster_Dir", 6.f, 0.45, 0);
+
 
 
 	Root_Parallel->Set_Main_Child(MainSeq);
@@ -387,21 +397,22 @@ CBT_Composite_Node * CQueensKnight::ThreeCombo_Cut()
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(Move0);
 	SubSeq->Add_Child(Move1);
 	SubSeq->Add_Child(Wait1);
-	SubSeq->Add_Child(Rotation0);
+	SubSeq->Add_Child(Rotation1);
 	SubSeq->Add_Child(ChaseDir0);
 	SubSeq->Add_Child(Wait2);
 	SubSeq->Add_Child(Move2);
 	SubSeq->Add_Child(Wait3);
-	SubSeq->Add_Child(Rotation1);
+	SubSeq->Add_Child(Rotation2);
 	SubSeq->Add_Child(ChaseDir1);
 	SubSeq->Add_Child(Move3);
 
 	CBT_UpdateParam* pHitCol0 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.866, 1, 0.317, 0);
-	CBT_UpdateParam* pHitCol1 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.616 + 0.533, 1, 0.683, 0);
-	CBT_UpdateParam* pHitCol2 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.616 + 1.473 + 0.333, 1, 0.167, 0);
+	CBT_UpdateParam* pHitCol1 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.616 + 0.533, 1, 0.15, 0);
+	CBT_UpdateParam* pHitCol2 = Node_UpdateParam("무기 히트 On", m_pShield->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.616 + 1.473 + 0.333, 1, 0.167, 0);
 	Root_Parallel->Add_Service(pHitCol0);
 	Root_Parallel->Add_Service(pHitCol1);
 	Root_Parallel->Add_Service(pHitCol2);
@@ -418,8 +429,10 @@ CBT_Composite_Node * CQueensKnight::BackStep_Cut()
 	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.1f);
 	
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
-	CBT_Wait* Wait0 = Node_Wait("대기", 0.966, 0);
+	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.1);
+	CBT_Wait* Wait0 = Node_Wait("대기", 0.866, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", -8, 0.484, 0);
+
 
 
 	Root_Parallel->Set_Main_Child(MainSeq);
@@ -427,6 +440,7 @@ CBT_Composite_Node * CQueensKnight::BackStep_Cut()
 	MainSeq->Add_Child(Show_Ani15);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 
@@ -445,17 +459,20 @@ CBT_Composite_Node * CQueensKnight::Sting()
 	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.1f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
-	CBT_Wait* Wait0 = Node_Wait("대기0", 0.466, 0);
+	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.1);
+	CBT_Wait* Wait0 = Node_Wait("대기0", 0.366, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 6, 0.317, 0);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.983, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", -1, 0.317, 0);
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", 1, 0.35, 0);
+
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani42);
 	MainSeq->Add_Child(Show_Ani15);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 	SubSeq->Add_Child(Wait1);
@@ -476,23 +493,26 @@ CBT_Composite_Node * CQueensKnight::Wing_Attack()
 	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.1f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
-	CBT_Wait* Wait0 = Node_Wait("대기0", 0.15, 0);
+	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.1);
+	CBT_Wait* Wait0 = Node_Wait("대기0", 0.05, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", -6, 0.25, 0);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.85, 0);
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적1", L"Player_Pos", 0.1, 0);
-	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 추적2", L"Player_Pos", 0.1);
+	CBT_RotationDir* Rotation1 = Node_RotationDir("방향 추적2", L"Player_Pos", 0.1);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 8, 0.483, 0);
+
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani43);
 	MainSeq->Add_Child(Show_Ani15);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 	SubSeq->Add_Child(Wait1);
 	SubSeq->Add_Child(ChaseDir0);
-	SubSeq->Add_Child(Rotation0);
+	SubSeq->Add_Child(Rotation1);
 	SubSeq->Add_Child(Move1);
 
 	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 1.533, 1, 0.45, 0);
@@ -511,9 +531,8 @@ CBT_Composite_Node * CQueensKnight::Rush()
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_SetValue* PushColOff = Node_BOOL_SetValue("PushColOff", L"PushCol", false);
-	CBT_Wait* Wait0 = Node_Wait("대기0", 0.376, 0);
-	//CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적1", L"Player_Pos", 0.1, 0);
-	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 추적2", L"Player_Pos", 0.1);
+	CBT_Wait* Wait0 = Node_Wait("대기0", 0.276, 0);
+	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 추적2", L"Player_Pos", 0.2);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 30, 0.307, 0);
 	CBT_SetValue* PushColOn = Node_BOOL_SetValue("PushColOn", L"PushCol", true);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.983, 0);
@@ -527,7 +546,6 @@ CBT_Composite_Node * CQueensKnight::Rush()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(PushColOff);
 	SubSeq->Add_Child(Wait0);
-	//SubSeq->Add_Child(ChaseDir0);
 	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(Move0);
 	SubSeq->Add_Child(PushColOn);
@@ -546,9 +564,16 @@ CBT_Composite_Node * CQueensKnight::Flash()
 	//CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("이동");
-	CBT_MoveTo* MoveTo0 = Node_MoveTo("이동", L"FlashPos", 0.2);
 
+	CBT_SetValue* PhyColOff = Node_BOOL_SetValue("PhyColOff", L"PhyCol", false);
+	CBT_MoveTo* MoveTo0 = Node_MoveTo("이동", L"FlashPos", 0.2);
+	CBT_SetValue* PhyColOn = Node_BOOL_SetValue("PhyColOff", L"PhyCol", true);
+
+	MainSeq->Add_Child(PhyColOff);
 	MainSeq->Add_Child(MoveTo0);
+	MainSeq->Add_Child(PhyColOn);
+
+	
 
 	//CBT_StartDissolve* Dissolve0 = Node_StartDissolve("디졸브", 0.7f, false, 0.01);
 	//MainSeq->Add_Service(Dissolve0);
@@ -570,7 +595,9 @@ CBT_Composite_Node * CQueensKnight::Flash_Wing_Attack()
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.15, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", -6, 0.25, 0);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.75, 0);
+	CBT_SetValue* PhyColOff = Node_BOOL_SetValue("PhyColOff", L"PhyCol", false);
 	CBT_MoveTo* MoveTo0 = Node_MoveTo("점멸 이동", L"FlashPos", 0.1);
+	CBT_SetValue* PhyColOn = Node_BOOL_SetValue("PhyColOff", L"PhyCol", true);
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적1", L"Player_Pos", 0.1, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 추적2", L"Player_Pos", 0.1);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 8, 0.483, 0);
@@ -583,7 +610,9 @@ CBT_Composite_Node * CQueensKnight::Flash_Wing_Attack()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(PhyColOff);
 	SubSeq->Add_Child(MoveTo0);
+	SubSeq->Add_Child(PhyColOn);
 	SubSeq->Add_Child(ChaseDir0);
 	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(Move1);
@@ -605,7 +634,9 @@ CBT_Composite_Node * CQueensKnight::Flash_Rush()
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_SetValue* PushColOff = Node_BOOL_SetValue("PushColOff", L"PushCol", false);
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.176, 0);
+	CBT_SetValue* PhyColOff = Node_BOOL_SetValue("PhyColOff", L"PhyCol", false);
 	CBT_MoveTo* MoveTo0 = Node_MoveTo("점멸 이동", L"FlashPos", 0.1);
+	CBT_SetValue* PhyColOn = Node_BOOL_SetValue("PhyColOff", L"PhyCol", true);
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적1", L"Player_Pos", 0.1, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 추적2", L"Player_Pos", 0.1);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 30, 0.307, 0);
@@ -613,6 +644,8 @@ CBT_Composite_Node * CQueensKnight::Flash_Rush()
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", -1, 0.317, 0);
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", 1, 0.35, 0);
 	CBT_SetValue* PushColOn = Node_BOOL_SetValue("PushColOn", L"PushCol", true);
+
+
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani42);
@@ -622,7 +655,9 @@ CBT_Composite_Node * CQueensKnight::Flash_Rush()
 	SubSeq->Add_Child(PushColOff);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(ChaseDir0);
+	SubSeq->Add_Child(PhyColOff);
 	SubSeq->Add_Child(MoveTo0);
+	SubSeq->Add_Child(PhyColOn);
 	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(Move0);
 	SubSeq->Add_Child(Wait1);
@@ -647,7 +682,9 @@ CBT_Composite_Node * CQueensKnight::Flash_Jump_Attack()
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.871, 0);
+	CBT_SetValue* PhyColOff = Node_BOOL_SetValue("PhyColOff", L"PhyCol", false);
 	CBT_MoveTo* MoveTo0 = Node_MoveTo("점멸 이동", L"FlashPos", 0.05);
+	CBT_SetValue* PhyColOn = Node_BOOL_SetValue("PhyColOff", L"PhyCol", true);
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적1", L"Player_Pos", 0.1, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 추적2", L"Player_Pos", 0.1);
 
@@ -658,7 +695,9 @@ CBT_Composite_Node * CQueensKnight::Flash_Jump_Attack()
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(PhyColOff);
 	SubSeq->Add_Child(MoveTo0);
+	SubSeq->Add_Child(PhyColOn);
 	SubSeq->Add_Child(ChaseDir0);
 	SubSeq->Add_Child(Rotation0);
 
@@ -678,12 +717,16 @@ CBT_Composite_Node * CQueensKnight::Flash_Cut()
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.733, 0);
+	CBT_SetValue* PhyColOff = Node_BOOL_SetValue("PhyColOff", L"PhyCol", false);
 	CBT_MoveTo* MoveTo0 = Node_MoveTo("점멸 이동", L"FlashPos", 0.1);
+	CBT_SetValue* PhyColOn = Node_BOOL_SetValue("PhyColOff", L"PhyCol", true);
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적1", L"Player_Pos", 0.1, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 추적2", L"Player_Pos", 0.1);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 5.f, 0.267, 0);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 1.55, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", -0.3f, 0.667, 0);
+
+
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani37);
@@ -691,7 +734,9 @@ CBT_Composite_Node * CQueensKnight::Flash_Cut()
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(PhyColOff);
 	SubSeq->Add_Child(MoveTo0);
+	SubSeq->Add_Child(PhyColOn);
 	SubSeq->Add_Child(ChaseDir0);
 	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(Move0);
@@ -702,6 +747,147 @@ CBT_Composite_Node * CQueensKnight::Flash_Cut()
 	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
+}
+
+CBT_Composite_Node * CQueensKnight::Start_Game()
+{
+	CBT_Selector* Root_Sel = Node_Selector("게임 시작");
+
+	CBT_CompareValue* Check_Upper_HPRatio40 = Node_FLOAT_A_Smaller_Than_Value("체력 40퍼 미만", L"HPRatio", 40.f);
+	CBT_CompareValue* Check_Upper_HPRatio70 = Node_FLOAT_A_Smaller_Than_Value("체력 70퍼 미만", L"HPRatio", 70.f);
+
+	Root_Sel->Add_Child(Check_Upper_HPRatio40);
+	Check_Upper_HPRatio40->Set_Child(HP_Final());
+	Root_Sel->Add_Child(Check_Upper_HPRatio70);
+	Check_Upper_HPRatio70->Set_Child(More_Than_HP_40());
+	Root_Sel->Add_Child(More_Than_HP_70());
+
+	return Root_Sel;
+}
+
+CBT_Composite_Node * CQueensKnight::More_Than_HP_70()
+{
+	CBT_Selector* Root_Sel = Node_Selector("근거리 원거리 구분 공격");
+
+	CBT_DistCheck* Dist0 = Node_DistCheck("거리 체크", L"Player_Pos", 5);
+
+	Root_Sel->Add_Child(Dist0);
+	Dist0->Set_Child(NearAttack_Dist3_More_Than_HP70());
+
+	Root_Sel->Add_Child(FarAttack_More_Than_HP70());
+
+	return Root_Sel;
+}
+
+CBT_Composite_Node * CQueensKnight::NearAttack_Dist3_More_Than_HP70()
+{
+	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 근접 공격");
+
+	Root_Sel->Add_Child(Normal_HorizontalCut1());
+	Root_Sel->Add_Child(Normal_VerticalCut1());
+	Root_Sel->Add_Child(TwoCombo_Cut());
+	Root_Sel->Add_Child(ThreeCombo_Cut());
+	Root_Sel->Add_Child(BackStep_Cut());
+	Root_Sel->Add_Child(Sting());
+	Root_Sel->Add_Child(Wing_Attack());
+
+	return Root_Sel;
+}
+
+CBT_Composite_Node * CQueensKnight::FarAttack_More_Than_HP70()
+{
+	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 원거리 공격");
+
+	Root_Sel->Add_Child(Rush());
+
+	return Root_Sel;
+}
+
+CBT_Composite_Node * CQueensKnight::More_Than_HP_40()
+{
+	CBT_Selector* Root_Sel = Node_Selector("근거리 원거리 구분 공격");
+
+	CBT_DistCheck* Dist0 = Node_DistCheck("거리 체크", L"Player_Pos", 3);
+
+	Root_Sel->Add_Child(Dist0);
+	Dist0->Set_Child(NearAttack_Dist5_More_Than_HP40());
+
+	Root_Sel->Add_Child(FarAttack_More_Than_HP40());
+
+	return Root_Sel;
+}
+
+CBT_Composite_Node * CQueensKnight::NearAttack_Dist5_More_Than_HP40()
+{
+	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 근접 공격");
+
+	Root_Sel->Add_Child(Normal_HorizontalCut1());
+	Root_Sel->Add_Child(Normal_VerticalCut1());
+	Root_Sel->Add_Child(TwoCombo_Cut());
+	Root_Sel->Add_Child(ThreeCombo_Cut());
+	Root_Sel->Add_Child(BackStep_Cut());
+	Root_Sel->Add_Child(Sting());
+	Root_Sel->Add_Child(Wing_Attack());
+	Root_Sel->Add_Child(Flash());
+
+	return Root_Sel;
+}
+
+CBT_Composite_Node * CQueensKnight::FarAttack_More_Than_HP40()
+{
+	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 원거리 공격");
+	
+	Root_Sel->Add_Child(Rush());
+	Root_Sel->Add_Child(Flash_Rush());
+	Root_Sel->Add_Child(Flash_Jump_Attack());
+	Root_Sel->Add_Child(Flash_Cut());
+	Root_Sel->Add_Child(Flash());
+
+	return Root_Sel;
+}
+
+CBT_Composite_Node * CQueensKnight::HP_Final()
+{
+	CBT_Selector* Root_Sel = Node_Selector("근거리 원거리 구분 공격");
+
+	CBT_DistCheck* Dist0 = Node_DistCheck("거리 체크", L"Player_Pos", 3);
+
+	Root_Sel->Add_Child(Dist0);
+	Dist0->Set_Child(NearAttack_Dist3_Final());
+
+	Root_Sel->Add_Child(FarAttack_Fianl());
+
+	return Root_Sel;
+}
+
+CBT_Composite_Node * CQueensKnight::NearAttack_Dist3_Final()
+{
+	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 근접 공격");
+
+	Root_Sel->Add_Child(Normal_HorizontalCut1());
+	Root_Sel->Add_Child(Normal_VerticalCut1());
+	Root_Sel->Add_Child(TwoCombo_Cut());
+	Root_Sel->Add_Child(ThreeCombo_Cut());
+	Root_Sel->Add_Child(BackStep_Cut());
+	Root_Sel->Add_Child(Sting());
+	Root_Sel->Add_Child(Wing_Attack());
+	Root_Sel->Add_Child(Flash());
+	Root_Sel->Add_Child(Flash());
+	Root_Sel->Add_Child(Flash());
+
+	return Root_Sel;
+}
+
+CBT_Composite_Node * CQueensKnight::FarAttack_Fianl()
+{
+	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 원거리 공격");
+
+	Root_Sel->Add_Child(Flash_Rush());
+	Root_Sel->Add_Child(Flash_Jump_Attack());
+	Root_Sel->Add_Child(Flash_Cut());
+	Root_Sel->Add_Child(Flash());
+
+	return Root_Sel;
 }
 
 CBT_Composite_Node * CQueensKnight::Start_Show()
@@ -872,6 +1058,8 @@ HRESULT CQueensKnight::Update_Value_Of_BB()
 	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos());
 	// 2. 체력 업데이트
 	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"HP", m_tObjParam.fHp_Cur);
+	// 3. 체력 비율 업데이트
+	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"HPRatio", _float(m_tObjParam.fHp_Cur / m_tObjParam.fHp_Max) * 100);
 
 
 	// 1. 점멸을 위한 플레이어 4방 위치.
@@ -1230,7 +1418,7 @@ HRESULT CQueensKnight::Ready_Weapon()
 {
 	// 오른손 무기
 	m_pSword = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pSword->Change_WeaponData(CWeapon::WPN_Halverd_Normal);
+	m_pSword->Change_WeaponData(CWeapon::WPN_QueenLance);
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
 	m_pSword->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
@@ -1238,7 +1426,7 @@ HRESULT CQueensKnight::Ready_Weapon()
 
 	// 왼손 방패
 	m_pShield = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pShield->Change_WeaponData(CWeapon::WPN_Shield_Normal);
+	m_pShield->Change_WeaponData(CWeapon::WPN_QueenShield);
 
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHandAttach");
 	m_pShield->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
@@ -1268,7 +1456,7 @@ HRESULT CQueensKnight::Ready_Collider()
 	//경계체크용
 	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 
-	_float fRadius = 1.2f;
+	_float fRadius = 1.4f;
 
 	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
 	pCollider->Set_Dynamic(true);
@@ -1281,7 +1469,7 @@ HRESULT CQueensKnight::Ready_Collider()
 	//몸
 	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 
-	fRadius = 0.5f;
+	fRadius = 0.95f;
 
 	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
 	pCollider->Set_Dynamic(true);
