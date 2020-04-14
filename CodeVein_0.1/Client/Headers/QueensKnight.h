@@ -54,10 +54,11 @@ private:	// 패턴들
 	CBT_Composite_Node* BackStep_Cut();
 	// 6. 찌르기
 	CBT_Composite_Node* Sting();
-	// 7. 돌진
-	CBT_Composite_Node* Rush();
-	// 8. 회전 날개치기
+	// 7. 회전 날개치기
 	CBT_Composite_Node* Wing_Attack();
+	// 8. 돌진
+	CBT_Composite_Node* Rush();
+
 
 	// 점멸 패턴
 	// 1. 점멸
@@ -72,6 +73,17 @@ private:	// 패턴들
 	// 4. 한번 베기 
 	CBT_Composite_Node* Flash_Cut();
 	// 5. 백스탭
+
+
+	////
+	CBT_Composite_Node* Start_Game();
+	CBT_Composite_Node* Dist_Attack();
+
+	//////// 시연회용
+	CBT_Composite_Node* Start_Show();
+	CBT_Composite_Node* Show_ChaseAndNearAttack();
+	CBT_Composite_Node* Show_NearAttack();	// 7개
+	CBT_Composite_Node* Show_FarAttack();	// 5개, 일반돌진 포함
 
 
 private:
