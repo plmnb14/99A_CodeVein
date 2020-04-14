@@ -108,9 +108,9 @@ VS_INSTANCE_OUT VS_INSTANCE(VS_IN In)
 
 	float4x4 matWorld, matWVP;
 	matWorld = float4x4(In.vInstanceRight,
-		In.vInstanceUp,
-		In.vInstanceLook,
-		float4(In.vInstancePos.xyz, 1.f));
+						In.vInstanceUp,
+						In.vInstanceLook,
+						float4(In.vInstancePos.xyz, 1.f));
 
 	matWVP = mul(matWorld, g_matView);
 	matWVP = mul(matWVP, g_matProj);
@@ -261,8 +261,8 @@ PS_OUT PS_INSTANCE(PS_INSTANCE_IN In)
 
 	float4 vColor		= In.vColor;
 	float fDistortion	= In.vOption01.x;
-	float fDissolve		= In.vOption01.y;
-	float fAlpha		= In.vOption01.z;
+	float fAlpha		= In.vOption01.y;
+	float fDissolve		= In.vOption01.z; 
 	 bool bDissolve		= In.vOption02.x;
 	 bool bUseColorTex	= In.vOption02.y;
 	 bool bReverseColor = In.vOption02.z;
@@ -560,13 +560,10 @@ technique Default_Technique
 
 	pass TRAIL // 5
 	{
-		zwriteenable = false;
-
+		ZWriteEnable = false;
 		AlphablendEnable = true;
-		AlphaTestEnable = true;
 		srcblend = SrcAlpha;
 		DestBlend = InvSrcAlpha;
-		//blendop = add;
 		cullmode = none;
 
 		VertexShader = compile vs_3_0 VS_MAIN();

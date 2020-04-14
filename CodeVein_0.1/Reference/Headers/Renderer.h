@@ -29,6 +29,7 @@ private:
 	typedef list<CGameObject*>	RENDERLIST;
 private:
 	INSTANCEDATA* m_pInstanceData = nullptr;
+	_int m_iInstanceCnt = 0;
 private:
 	CTarget_Manager*			m_pTarget_Manager = nullptr;
 	CLight_Manager*				m_pLight_Manager = nullptr;

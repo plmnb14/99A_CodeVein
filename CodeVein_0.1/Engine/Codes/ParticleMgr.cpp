@@ -104,12 +104,13 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"ButterFly_BackStepSand_Floor", 50);
 	Input_Pool(L"ButterFly_PopSand", 50);
 
-	Input_Pool(L"QueensKnight_2Phase_SwordCrash_Chunk", 50);
-	Input_Pool(L"QueensKnight_2Phase_SwordCrash_ShockWave", 50);
+	Input_Pool(L"QueensKnight_2Phase_SwordCrash_Chunk", 100);
+	Input_Pool(L"QueensKnight_2Phase_SwordCrash_Chunk_Dark", 100);
+	Input_Pool(L"QueensKnight_2Phase_SwordCrash_ShockWave", 10);
 	Input_Pool(L"QueensKnight_DistortionCircle", 50);
 	Input_Pool(L"QueensKnight_Intro_Smoke_0", 500);
 	Input_Pool(L"QueensKnight_Intro_Smoke_1", 500);
-	Input_Pool(L"QueensKnight_JumpDown_Particle_Red", 50);
+	Input_Pool(L"QueensKnight_JumpDown_Particle_Red", 500);
 	Input_Pool(L"QueensKnight_JumpDown_ShockWave", 50);
 	Input_Pool(L"QueensKnight_JumpDown_Smoke_Black", 50);
 	Input_Pool(L"QueensKnight_JumpDown_Smoke_Red", 50);
@@ -127,18 +128,19 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"QueensKnight_Lightning_5", 50);
 	Input_Pool(L"QueensKnight_LightningBody_0", 50);
 	Input_Pool(L"QueensKnight_ShieldAttack_Distortion", 30);
-	Input_Pool(L"QueensKnight_ShieldAttack_Particle", 100);
+	Input_Pool(L"QueensKnight_ShieldAttack_Particle", 300);
 	Input_Pool(L"QueensKnight_ShieldAttack_RedLight", 10);
-	Input_Pool(L"QueensKnight_SwordCrash_Particle", 50);
-	Input_Pool(L"QueensKnight_Teleport_Particle", 1000);
-	Input_Pool(L"QueensKnight_Teleport_Particle_Black", 100);
+	Input_Pool(L"QueensKnight_SwordCrash_Particle", 600);
+	Input_Pool(L"QueensKnight_Teleport_Particle", 3000);
+	Input_Pool(L"QueensKnight_Teleport_Particle_Black", 1000);
 	Input_Pool(L"QueensKnight_Teleport_Smoke", 200);
 	Input_Pool(L"QueensKnight_Teleport_Smoke_Red", 200);
 	Input_Pool(L"QueensKnight_Teleport_DistortionSmoke", 300);
 	Input_Pool(L"QueensKnight_Trail_Lightning_0", 200);
 	Input_Pool(L"QueensKnight_Trail_Lightning_1", 200);
 	Input_Pool(L"QueensKnight_Trail_Lightning_2", 200);
-	Input_Pool(L"QueensKnight_WhirlWind_Smoke", 100);
+	Input_Pool(L"QueensKnight_Trail_Lightning_2_Dark", 200);
+	Input_Pool(L"QueensKnight_WhirlWind_Smoke", 300);
 	Input_Pool(L"QueensKnight_Sting_Tornade", 5);
 
 	Input_Pool(L"Boss_KnockDown_Dust", 10);
@@ -194,6 +196,12 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 
 HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 {
+	if (GetAsyncKeyState('B') & 0x8000)
+	{
+		Create_Effect(L"QueensKnight_Teleport_Particle", V3_NULL, nullptr);
+		Create_Effect(L"QueensKnight_SwordCrash_Particle", V3_NULL, nullptr);
+	}
+
 	auto& iter_begin = m_vecParticle.begin();
 	auto& iter_end = m_vecParticle.end();
 

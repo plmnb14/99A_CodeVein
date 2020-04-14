@@ -15,7 +15,7 @@ public:
 	virtual HRESULT Ready_Component_Prototype();
 	virtual HRESULT Ready_Component(void* pArg);
 	void Render_VIBuffer();
-	void Render_Before_Instancing(INSTANCEDATA* pInstanceDataArr);
+	void Render_Before_Instancing(INSTANCEDATA* pInstanceDataArr, _int iSize);
 	void Render_DrawPrimitive_Instancing();
 	void Render_After_Instancing();
 

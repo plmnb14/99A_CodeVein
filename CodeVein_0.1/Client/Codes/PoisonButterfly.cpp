@@ -1285,8 +1285,9 @@ void CPoisonButterfly::Check_PhyCollider()
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
 			Start_Dissolve(0.7f, false, true);
-			g_pManagement->Create_ParticleEffect_Delay(L"Boss_Dead_Particle", 2.f, 0.f, m_pTransformCom->Get_Pos(), nullptr);
-			//g_pManagement->Create_Spawn_Effect(m_vTail6, m_vHead, nullptr);
+			g_pManagement->Create_ParticleEffect_Delay(L"Boss_Dead_Particle", 2.f, 0.f, m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), nullptr);
+			g_pManagement->Create_Spawn_Effect(m_pTransformCom->Get_Pos(), m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f));
+			g_pManagement->Create_Spawn_Effect(m_vTail6, m_vHead, nullptr);
 		}
 	}
 	else

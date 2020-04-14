@@ -94,7 +94,9 @@ HRESULT CWeapon::Render_GameObject()
 		//
 		//if (false == m_tmpEmissiveTest)
 		//	m_iPass = 0;
-		m_iPass = m_pMesh_Static->Get_MaterialPass(i);
+
+		if (false == m_bReadyDead && !m_bDissolve)
+			m_iPass = m_pMesh_Static->Get_MaterialPass(i);
 
 		m_pShader->Begin_Pass(m_iPass);
 
@@ -289,7 +291,7 @@ void CWeapon::Update_Trails(_double TimeDelta)
 		m_pDistortionEffect->Update_GameObject(TimeDelta);
 	}
 
-	if (m_pStaticTrailEffect && !m_bSingleTrail)
+	if (m_pStaticTrailEffect)
 	{
 		m_pStaticTrailEffect->Set_ParentTransform(&matWorld);
 		m_pStaticTrailEffect->Ready_Info(vBegin + vDir * 0.2f, vBegin + vDir * 1.6f);

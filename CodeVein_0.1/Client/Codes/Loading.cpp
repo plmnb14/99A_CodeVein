@@ -173,6 +173,8 @@ HRESULT CLoading::Ready_Effect(void)
 #pragma region Queens Knight
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_2Phase_SwordCrash_Chunk")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_2Phase_SwordCrash_Chunk_Dark")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_2Phase_SwordCrash_ShockWave")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DistortionCircle")))
@@ -238,6 +240,8 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Trail_Lightning_1")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Trail_Lightning_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Trail_Lightning_2_Dark")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_WhirlWind_Smoke")))
 		return E_FAIL;

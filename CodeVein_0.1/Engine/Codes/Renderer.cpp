@@ -210,8 +210,8 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	m_pSSAOTexture = CTexture::Create(m_pGraphic_Dev, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Effect/Normal/Normal_4.tga");
 	// static_cast<CTexture*>(CComponent_Manager::Get_Instance()->Clone_Component(SCENE_STATIC, L"Tex_Noise", nullptr));
 
-	const _int INSTANCE_CNT = 50;
-	m_pInstanceData = new INSTANCEDATA[INSTANCE_CNT];
+	m_iInstanceCnt = 200;
+	m_pInstanceData = new INSTANCEDATA[m_iInstanceCnt];
 
 #ifdef _DEBUG
 
@@ -655,7 +655,7 @@ HRESULT CRenderer::Render_Instance()
 
 	_int iIdx = 0;
 	_ULonglong iSizeCheck = m_RenderList[RENDER_INSTANCE].size();
-	ZeroMemory(m_pInstanceData, sizeof(INSTANCEDATA) * 50);
+	ZeroMemory(m_pInstanceData, sizeof(INSTANCEDATA) * m_iInstanceCnt);
 
 	for (auto& pGameObject : m_RenderList[RENDER_INSTANCE])
 	{
@@ -667,11 +667,10 @@ HRESULT CRenderer::Render_Instance()
 			++iIdx;
 			--iSizeCheck;
 
-			if (iIdx >= 50 || iSizeCheck == 0)
+			if (iIdx >= m_iInstanceCnt || iSizeCheck == 0)
 			{
-				iIdx = 0;
 				CBuffer_RcTex* pBuffer = static_cast<CBuffer_RcTex*>(pGameObject->Get_Component(L"Com_VIBuffer"));
-				pBuffer->Render_Before_Instancing(m_pInstanceData);
+				pBuffer->Render_Before_Instancing(m_pInstanceData, iIdx);
 
 				_mat		ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
 				_mat		ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
@@ -702,7 +701,8 @@ HRESULT CRenderer::Render_Instance()
 
 				pBuffer->Render_After_Instancing();
 
-				ZeroMemory(m_pInstanceData, sizeof(INSTANCEDATA) * 50);
+				ZeroMemory(m_pInstanceData, sizeof(INSTANCEDATA) * m_iInstanceCnt);
+				iIdx = 0;
 			}
 		}
 	}
@@ -897,7 +897,7 @@ HRESULT CRenderer::Render_Blur()
 	m_pTarget_Manager->End_Render_Target(L"Target_BlurH");
 	// Blur H ==================================================
 
-	for (_int i = 0; i < 9; ++i) // È¦¼ö¸¸
+	for (_int i = 0; i < 13; ++i) // È¦¼ö¸¸
 	{
 		if (i % 2 == 0)
 		{

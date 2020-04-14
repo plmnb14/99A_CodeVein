@@ -21,7 +21,7 @@ D3DVERTEXELEMENT9 g_VertexElemHardware[] =
 
 
 
-_int g_iNumofInstance = 50;
+_int g_iNumofInstance = 200;
 
 
 CBuffer_RcTex::CBuffer_RcTex(LPDIRECT3DDEVICE9 pGraphic_Device)
@@ -111,33 +111,34 @@ void CBuffer_RcTex::Render_VIBuffer()
 	m_pGraphic_Dev->DrawIndexedPrimitive(D3DPT_TRIANGLELIST, 0, 0, m_iNumVertices, 0, m_iNumPolygons);
 }
 
-void CBuffer_RcTex::Render_Before_Instancing(INSTANCEDATA* pInstanceDataArr)
+void CBuffer_RcTex::Render_Before_Instancing(INSTANCEDATA* pInstanceDataArr, _int iSize)
 {
 	INSTANCEDATA* pIPos;
 	m_pVBInstanceData->Lock(0, NULL, (void**)&pIPos, D3DLOCK_DISCARD);
 	
 	INSTANCEDATA instanceBox;
-	for (_int i = 0; i < g_iNumofInstance; ++i)
+	for (_int i = 0; i < iSize; ++i)
 	{
-		memcpy(&instanceBox.fRight	, &pInstanceDataArr[i].fRight, sizeof(_float) * 4);
-		memcpy(&instanceBox.fUp		, &pInstanceDataArr[i].fUp, sizeof(_float) * 4);
-		memcpy(&instanceBox.fLook	, &pInstanceDataArr[i].fLook, sizeof(_float) * 4);
-		memcpy(&instanceBox.fPos	, &pInstanceDataArr[i].fPos, sizeof(_float) * 4);
-		memcpy(&instanceBox.fColor	, &pInstanceDataArr[i].fColor, sizeof(_float) * 4);
-		memcpy(&instanceBox.fDistortion	, &pInstanceDataArr[i].fDistortion, sizeof(_float));
-		memcpy(&instanceBox.fAlpha		, &pInstanceDataArr[i].fAlpha, sizeof(_float));
-		memcpy(&instanceBox.fDissolve	, &pInstanceDataArr[i].fDissolve, sizeof(_float));
-		memcpy(&instanceBox.bDissolve	, &pInstanceDataArr[i].bDissolve, sizeof(_bool));
-		memcpy(&instanceBox.bUseColorTex, &pInstanceDataArr[i].bUseColorTex, sizeof(_bool));
+		memcpy(&instanceBox.fRight		, &pInstanceDataArr[i].fRight		, sizeof(_float) * 4);
+		memcpy(&instanceBox.fUp			, &pInstanceDataArr[i].fUp			, sizeof(_float) * 4);
+		memcpy(&instanceBox.fLook		, &pInstanceDataArr[i].fLook		, sizeof(_float) * 4);
+		memcpy(&instanceBox.fPos		, &pInstanceDataArr[i].fPos			, sizeof(_float) * 4);
+		memcpy(&instanceBox.fColor		, &pInstanceDataArr[i].fColor		, sizeof(_float) * 4);
+		memcpy(&instanceBox.fDistortion	, &pInstanceDataArr[i].fDistortion	, sizeof(_float));
+		memcpy(&instanceBox.fAlpha		, &pInstanceDataArr[i].fAlpha		, sizeof(_float));
+		memcpy(&instanceBox.fDissolve	, &pInstanceDataArr[i].fDissolve	, sizeof(_float));
+		memcpy(&instanceBox.bDissolve	, &pInstanceDataArr[i].bDissolve	, sizeof(_bool));
+		memcpy(&instanceBox.bUseColorTex, &pInstanceDataArr[i].bUseColorTex	, sizeof(_bool));
 		memcpy(&instanceBox.bReverseColor, &pInstanceDataArr[i].bReverseColor, sizeof(_bool));
-		memcpy(&instanceBox.bUseRGBA	, &pInstanceDataArr[i].bUseRGBA, sizeof(_bool));
-		memcpy(&instanceBox.bUseMaskTex	, &pInstanceDataArr[i].bUseMaskTex, sizeof(_bool));
+		memcpy(&instanceBox.bUseRGBA	, &pInstanceDataArr[i].bUseRGBA		, sizeof(_bool));
+		memcpy(&instanceBox.bUseMaskTex	, &pInstanceDataArr[i].bUseMaskTex	, sizeof(_bool));
 		*pIPos = instanceBox;
+		pIPos++;
 	}
 	m_pVBInstanceData->Unlock();
 
 	m_pGraphic_Dev->SetVertexDeclaration(m_pVertexDeclHardware);
-	m_pGraphic_Dev->SetStreamSourceFreq(0, D3DSTREAMSOURCE_INDEXEDDATA | g_iNumofInstance);
+	m_pGraphic_Dev->SetStreamSourceFreq(0, D3DSTREAMSOURCE_INDEXEDDATA | iSize);
 	m_pGraphic_Dev->SetStreamSource(0, m_pVB, 0, m_iStride);
 
 	m_pGraphic_Dev->SetStreamSourceFreq(1, D3DSTREAMSOURCE_INSTANCEDATA | 1ul);
