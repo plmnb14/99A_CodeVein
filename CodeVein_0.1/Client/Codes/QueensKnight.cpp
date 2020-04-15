@@ -703,8 +703,6 @@ CBT_Composite_Node * CQueensKnight::Rush()
 
 CBT_Composite_Node * CQueensKnight::Flash()
 {
-	//CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
-
 	CBT_Sequence* MainSeq = Node_Sequence("이동");
 
 	CBT_SetValue* PhyColOff = Node_BOOL_SetValue("PhyColOff", L"PhyCol", false);
@@ -715,13 +713,19 @@ CBT_Composite_Node * CQueensKnight::Flash()
 	MainSeq->Add_Child(MoveTo0);
 	MainSeq->Add_Child(PhyColOn);
 
-	
+	CBT_StartDissolve* Dissolve0 = Node_StartDissolve("디졸브", this, 3.7f, false, 0.01);
+	CBT_StartDissolve* Dissolve1 = Node_StartDissolve("디졸브", this, 3.7f, true, 0.17);
+	CBT_StartDissolve* Dissolve2 = Node_StartDissolve("디졸브", m_pSword, 3.7f, false, 0.01);
+	CBT_StartDissolve* Dissolve3 = Node_StartDissolve("디졸브", m_pSword, 3.7f, true, 0.17);
+	CBT_StartDissolve* Dissolve4 = Node_StartDissolve("디졸브", m_pShield, 3.7f, false, 0.01);
+	CBT_StartDissolve* Dissolve5 = Node_StartDissolve("디졸브", m_pShield, 3.7f, true, 0.17);
 
-	//CBT_StartDissolve* Dissolve0 = Node_StartDissolve("디졸브", 0.7f, false, 0.01);
-	//MainSeq->Add_Service(Dissolve0);
-	//
-	//CBT_StartDissolve* Dissolve1 = Node_StartDissolve("디졸브", 0.7f, true, 0.15);
-	//MainSeq->Add_Service(Dissolve1);
+	MainSeq->Add_Service(Dissolve0);
+	MainSeq->Add_Service(Dissolve1);
+	MainSeq->Add_Service(Dissolve2);
+	MainSeq->Add_Service(Dissolve3);
+	MainSeq->Add_Service(Dissolve4);
+	MainSeq->Add_Service(Dissolve5);
 
 	return MainSeq;
 }
@@ -1364,30 +1368,30 @@ HRESULT CQueensKnight::Update_Value_Of_BB()
 	}
 
 	// 2. 본인 좌표
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_Pos", m_pTransformCom->Get_Pos());
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_Pos", m_pTransformCom->Get_Pos());
 
 	// 2-1. 본인 좌표 + Y 가운데
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_MidPos", m_pTransformCom->Get_Pos() + _v3(0, 1.3f, 0.f));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_MidPos", m_pTransformCom->Get_Pos() + _v3(0, 1.3f, 0.f));
 
 	// 3. 칼 손잡이쪽
 	CTransform* pSwordTrans = static_cast<CTransform*>(m_pSword->Get_Component(L"Com_Transform"));
 	_mat matSword = pSwordTrans->Get_WorldMat();
 	_v3 vSwordPos = _v3(matSword.m[3][0], matSword.m[3][1], matSword.m[3][2]);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Sword_BottomPos", vSwordPos);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Sword_BottomPos", vSwordPos);
 
 	// 3-1. 칼 끝 쪽
 	vSwordPos = _v3(matSword.m[3][0], matSword.m[3][1], matSword.m[3][2]) + _v3(matSword.m[2][0], matSword.m[2][1], matSword.m[2][2]) * 3.75f;
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Sword_TopPos", vSwordPos);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Sword_TopPos", vSwordPos);
 
 	// 3-2. 칼 가운데
 	vSwordPos = _v3(matSword.m[3][0], matSword.m[3][1], matSword.m[3][2]) + _v3(matSword.m[2][0], matSword.m[2][1], matSword.m[2][2]) * 2.35f;
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Sword_MidPos", vSwordPos);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Sword_MidPos", vSwordPos);
 
 	// 4. 방패
 	CTransform* pShieldTrans = static_cast<CTransform*>(m_pShield->Get_Component(L"Com_Transform"));
 	_mat matShield = pShieldTrans->Get_WorldMat();
 	_v3 vShieldPos = _v3(matShield.m[3][0], matShield.m[3][1], matShield.m[3][2]);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"ShieldPos", vShieldPos);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ShieldPos", vShieldPos);
 
 	return S_OK;
 }
