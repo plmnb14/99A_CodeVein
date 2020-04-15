@@ -658,15 +658,15 @@ HRESULT CGunGenji::Update_Bone_Of_BlackBoard()
 {
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
 	m_vRightHandAttach = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"RightHandAttach", m_vRightHandAttach);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"RightHandAttach", m_vRightHandAttach);
 
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
 	m_vHead = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Bone_Head", m_vHead);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Head", m_vHead);
 
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightToeBase");
 	m_vRightToeBase = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Bone_RightToeBase", m_vRightToeBase);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_RightToeBase", m_vRightToeBase);
 
 	return S_OK;
 }
@@ -674,16 +674,16 @@ HRESULT CGunGenji::Update_Bone_Of_BlackBoard()
 HRESULT CGunGenji::Update_Value_Of_BB()
 {
 	// 1. 플레이어 좌표 업데이트
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos());
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos());
 	// 2. 체력 업데이트
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"HP", m_tObjParam.fHp_Cur);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"HP", m_tObjParam.fHp_Cur);
 
 
 
 
 	// 1. 평상시 총 발사 방향
 	_mat matGunDir = m_pTransformCom->Get_WorldMat();
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"NormalShotDir", _v3(matGunDir.m[2][0], matGunDir.m[2][1], matGunDir.m[2][2]));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"NormalShotDir", _v3(matGunDir.m[2][0], matGunDir.m[2][1], matGunDir.m[2][2]));
 
 	// 2. 텀블링시 총 발사 방향
 	_v3 vSelfDir = *(_v3*)&m_pTransformCom->Get_WorldMat().m[2];	// 본인 Look
@@ -696,14 +696,14 @@ HRESULT CGunGenji::Update_Value_Of_BB()
 		D3DXVec3TransformNormal(&vTumblingShotDir, &vSelfDir, D3DXMatrixRotationX(&_mat(), D3DXToRadian(30)));
 	else if (fRadian < 0)
 		D3DXVec3TransformNormal(&vTumblingShotDir, &vSelfDir, D3DXMatrixRotationX(&_mat(), D3DXToRadian(-30)));
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"TumblingShotDir", vTumblingShotDir);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"TumblingShotDir", vTumblingShotDir);
 
 	// 3. 총알의 생성 위치
 	_mat matBulletCreate = static_cast<CTransform*>(m_pGun->Get_Component(L"Com_Transform"))->Get_WorldMat();
 	// 총의 월드좌표 + 위로 조금 더 올려서 보정
 	_v3 vCreateBulletPos = _v3(matBulletCreate.m[3][0], matBulletCreate.m[3][1], matBulletCreate.m[3][2]) + (_v3(0.f, 0.3f, 0.f));
 
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"CreateBulletPos", vCreateBulletPos);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"CreateBulletPos", vCreateBulletPos);
 
 	return S_OK;
 }

@@ -200,6 +200,7 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\BT_Composite_Node.h" />
     <ClInclude Include="..\Headers\BT_ConeCheck.h" />
     <ClInclude Include="..\Headers\BT_Cooldown.h" />
+    <ClInclude Include="..\Headers\BT_CreateBuff.h" />
     <ClInclude Include="..\Headers\BT_CreateEffect.h" />
     <ClInclude Include="..\Headers\BT_CreateBullet.h" />
     <ClInclude Include="..\Headers\BT_Decorator_Node.h" />
@@ -297,6 +298,7 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\BT_Composite_Node.cpp" />
     <ClCompile Include="..\Codes\BT_ConeCheck.cpp" />
     <ClCompile Include="..\Codes\BT_Cooldown.cpp" />
+    <ClCompile Include="..\Codes\BT_CreateBuff.cpp" />
     <ClCompile Include="..\Codes\BT_CreateEffect.cpp" />
     <ClCompile Include="..\Codes\BT_CreateBullet.cpp" />
     <ClCompile Include="..\Codes\BT_Decorator_Node.cpp" />

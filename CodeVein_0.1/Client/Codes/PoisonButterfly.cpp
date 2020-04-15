@@ -1101,23 +1101,23 @@ HRESULT CPoisonButterfly::Update_Bone_Of_BlackBoard()
 {
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Tail6");
 	m_vTail6 = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Bone_Tail6", m_vTail6);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Tail6", m_vTail6);
 
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Tail4");
 	m_vTail4 = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Bone_Tail4", m_vTail4);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Tail4", m_vTail4);
 
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Tail2");
 	m_vTail2 = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Bone_Tail2", m_vTail2);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Tail2", m_vTail2);
 
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
 	m_vHead = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Bone_Head", m_vHead);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Head", m_vHead);
 
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Tail6_Tongue2");
 	m_vTail6_Tongue2 = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Bone_Tail6_Tongue2", m_vTail6_Tongue2);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Tail6_Tongue2", m_vTail6_Tongue2);
 	
 	return S_OK;
 }
@@ -1125,9 +1125,9 @@ HRESULT CPoisonButterfly::Update_Bone_Of_BlackBoard()
 HRESULT CPoisonButterfly::Update_Value_Of_BB()
 {
 	// 1. 플레이어 좌표 업데이트
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos());
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos());
 	// 2. 체력 업데이트
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"HP", m_tObjParam.fHp_Cur);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"HP", m_tObjParam.fHp_Cur);
 
 
 	// 1. 5샷 방향
@@ -1142,22 +1142,22 @@ HRESULT CPoisonButterfly::Update_Value_Of_BB()
 	else if (fRadian < 0)
 		D3DXVec3TransformNormal(&vDirTemp0, &vSelfDir, D3DXMatrixRotationX(&_mat(), D3DXToRadian(-15)));
 
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_PoisonDir0", *D3DXVec3TransformNormal(&_v3(), &vDirTemp0, D3DXMatrixRotationY(&_mat(), D3DXToRadian(25))));
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_PoisonDir1", *D3DXVec3TransformNormal(&_v3(), &vDirTemp0, D3DXMatrixRotationY(&_mat(), D3DXToRadian(12.5f))));
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_PoisonDir2", vDirTemp0);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_PoisonDir3", *D3DXVec3TransformNormal(&_v3(), &vDirTemp0, D3DXMatrixRotationY(&_mat(), D3DXToRadian(-12.5f))));
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_PoisonDir4", *D3DXVec3TransformNormal(&_v3(), &vDirTemp0, D3DXMatrixRotationY(&_mat(), D3DXToRadian(-25))));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_PoisonDir0", *D3DXVec3TransformNormal(&_v3(), &vDirTemp0, D3DXMatrixRotationY(&_mat(), D3DXToRadian(25))));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_PoisonDir1", *D3DXVec3TransformNormal(&_v3(), &vDirTemp0, D3DXMatrixRotationY(&_mat(), D3DXToRadian(12.5f))));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_PoisonDir2", vDirTemp0);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_PoisonDir3", *D3DXVec3TransformNormal(&_v3(), &vDirTemp0, D3DXMatrixRotationY(&_mat(), D3DXToRadian(-12.5f))));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_PoisonDir4", *D3DXVec3TransformNormal(&_v3(), &vDirTemp0, D3DXMatrixRotationY(&_mat(), D3DXToRadian(-25))));
 
 	// 2. 본인 좌표
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_Pos", m_pTransformCom->Get_Pos());
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_Pos", m_pTransformCom->Get_Pos());
 
 	// 3. 로테이션 총알 4방향
 	_v3 vFrontDir = *D3DXVec3Normalize(&_v3(), (_v3*)m_pTransformCom->Get_WorldMat().m[2]);
 	_v3 vRightDir = *D3DXVec3Normalize(&_v3(), (_v3*)m_pTransformCom->Get_WorldMat().m[0]);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_Front", vFrontDir);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_Back", -vFrontDir);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_Right", vRightDir);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_Left", -vRightDir);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_Front", vFrontDir);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_Back", -vFrontDir);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_Right", vRightDir);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_Left", -vRightDir);
 
 	return S_OK;
 }

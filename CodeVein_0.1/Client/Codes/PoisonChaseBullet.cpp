@@ -33,6 +33,7 @@ HRESULT CPoisonChaseBullet::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
+	m_tObjParam.fHp_Cur = 1.f;
 
 	m_pTransformCom->Set_Pos(temp.vCreatePos);
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
@@ -186,27 +187,15 @@ void CPoisonChaseBullet::Check_PhyCollider()
 {
 	if (false == m_tObjParam.bCanHit && m_tObjParam.bIsHit == false)
 	{
-		
-		cout << "추적 총알 사망" << endl;
-
 		m_tObjParam.bIsHit = true;
 		m_tObjParam.bCanHit = true;
 
-		if (m_tObjParam.fHp_Cur > 0.f)
-		{
-			m_bDead = false;
-		}
-		else
-		{
-			m_dCurTime = 1000;	// 죽음
-		}
+		m_dCurTime = 1000;	// 죽음
 	}
 }
 
 void CPoisonChaseBullet::OnCollisionEnter()
 {
-	Update_Collider();
-
 	// =============================================================================================
 	// 충돌
 	// =============================================================================================
@@ -312,7 +301,7 @@ HRESULT CPoisonChaseBullet::Ready_Collider()
 {
 	////////// 피직 콜라이더
 
-	m_vecPhysicCol.reserve(1);
+	m_vecPhysicCol.reserve(2);
 
 	//경계체크용
 	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));

@@ -48,10 +48,11 @@
     <ClInclude Include="SetingView.h">
       <Filter>03.View\SetingView</Filter>
     </ClInclude>
-    <ClInclude Include="TestObject.h" />
     <ClInclude Include="MonsterTool.h">
       <Filter>03.View\SetingView\00.Monster</Filter>
     </ClInclude>
+    <ClInclude Include="TestWeapon.h" />
+    <ClInclude Include="TestMonster.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -72,10 +73,11 @@
     <ClCompile Include="ToolView.cpp">
       <Filter>03.View</Filter>
     </ClCompile>
-    <ClCompile Include="TestObject.cpp" />
     <ClCompile Include="MonsterTool.cpp">
       <Filter>03.View\SetingView\00.Monster</Filter>
     </ClCompile>
+    <ClCompile Include="TestMonster.cpp" />
+    <ClCompile Include="TestWeapon.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\res\Tool.ico">

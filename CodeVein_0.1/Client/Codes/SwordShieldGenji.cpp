@@ -652,13 +652,13 @@ HRESULT CSwordShieldGenji::Update_Bone_Of_BlackBoard()
 HRESULT CSwordShieldGenji::Update_Value_Of_BB()
 {
 	// 1. 플레이어 좌표 업데이트
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos());
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos());
 	// 2. 체력 업데이트
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"HP", m_tObjParam.fHp_Cur);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"HP", m_tObjParam.fHp_Cur);
 
 	//// 1. 몬스터 뒤쪽 방향 저장
 	//_v3 vBackDir = -(*(_v3*)&m_pTransformCom->Get_WorldMat().m[2]);
-	//m_pAIControllerCom->Set_Value_Of_BloackBoard(L"BackDir", vBackDir);
+	//m_pAIControllerCom->Set_Value_Of_BlackBoard(L"BackDir", vBackDir);
 
 
 	return E_NOTIMPL;
@@ -798,7 +798,7 @@ void CSwordShieldGenji::Check_PhyCollider()
 		m_vPushDir_forHitting = *(_v3*)&matPlayer.m[2];
 
 		m_pAIControllerCom->Reset_BT();
-		m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Block", false);
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Block", false);
 
 		if (m_tObjParam.fHp_Cur > 0.f)
 		{

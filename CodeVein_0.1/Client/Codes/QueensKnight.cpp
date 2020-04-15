@@ -48,7 +48,7 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos());
 	pBlackBoard->Set_Value(L"HP", m_tObjParam.fHp_Cur);
 	pBlackBoard->Set_Value(L"MAXHP", m_tObjParam.fHp_Max);
-	pBlackBoard->Set_Value(L"HPRatio", 100);
+	//pBlackBoard->Set_Value(L"HPRatio", 100);
 	pBlackBoard->Set_Value(L"Show", true);
 	pBlackBoard->Set_Value(L"Show_Near", true);
 
@@ -430,7 +430,7 @@ CBT_Composite_Node * CQueensKnight::ThreeCombo_Cut()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("2연속 베기");
-	CBT_Play_Ani* Show_Ani50 = Node_Ani("일반 가로베기1", 50, 0.5);
+	CBT_Play_Ani* Show_Ani50 = Node_Ani("일반 가로베기1", 50, 0.5f);
 	CBT_Play_Ani* Show_Ani48 = Node_Ani("일반 세로베기", 48, 0.4f);
 	CBT_Play_Ani* Show_Ani45 = Node_Ani("방패치기", 45, 0.95f);
 	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.1f);
@@ -703,25 +703,29 @@ CBT_Composite_Node * CQueensKnight::Rush()
 
 CBT_Composite_Node * CQueensKnight::Flash()
 {
-	//CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
-
 	CBT_Sequence* MainSeq = Node_Sequence("이동");
 
 	CBT_SetValue* PhyColOff = Node_BOOL_SetValue("PhyColOff", L"PhyCol", false);
 	CBT_MoveTo* MoveTo0 = Node_MoveTo("이동", L"FlashPos", 0.2);
-	CBT_SetValue* PhyColOn = Node_BOOL_SetValue("PhyColOff", L"PhyCol", true);
+	CBT_SetValue* PhyColOn = Node_BOOL_SetValue("PhyColOn", L"PhyCol", true);
 
 	MainSeq->Add_Child(PhyColOff);
 	MainSeq->Add_Child(MoveTo0);
 	MainSeq->Add_Child(PhyColOn);
 
-	
+	CBT_StartDissolve* Dissolve0 = Node_StartDissolve("디졸브", this, 3.7f, false, 0.01);
+	CBT_StartDissolve* Dissolve1 = Node_StartDissolve("디졸브", this, 3.7f, true, 0.17);
+	CBT_StartDissolve* Dissolve2 = Node_StartDissolve("디졸브", m_pSword, 3.7f, false, 0.01);
+	CBT_StartDissolve* Dissolve3 = Node_StartDissolve("디졸브", m_pSword, 3.7f, true, 0.17);
+	CBT_StartDissolve* Dissolve4 = Node_StartDissolve("디졸브", m_pShield, 3.7f, false, 0.01);
+	CBT_StartDissolve* Dissolve5 = Node_StartDissolve("디졸브", m_pShield, 3.7f, true, 0.17);
 
-	//CBT_StartDissolve* Dissolve0 = Node_StartDissolve("디졸브", 0.7f, false, 0.01);
-	//MainSeq->Add_Service(Dissolve0);
-	//
-	//CBT_StartDissolve* Dissolve1 = Node_StartDissolve("디졸브", 0.7f, true, 0.15);
-	//MainSeq->Add_Service(Dissolve1);
+	MainSeq->Add_Service(Dissolve0);
+	MainSeq->Add_Service(Dissolve1);
+	MainSeq->Add_Service(Dissolve2);
+	MainSeq->Add_Service(Dissolve3);
+	MainSeq->Add_Service(Dissolve4);
+	MainSeq->Add_Service(Dissolve5);
 
 	return MainSeq;
 }
@@ -1050,14 +1054,14 @@ CBT_Composite_Node * CQueensKnight::More_Than_HP_70()
 	CBT_DistCheck* Dist0 = Node_DistCheck("거리 체크", L"Player_Pos", 5);
 
 	Root_Sel->Add_Child(Dist0);
-	Dist0->Set_Child(NearAttack_Dist3_More_Than_HP70());
+	Dist0->Set_Child(NearAttack_Dist5_More_Than_HP70());
 
 	Root_Sel->Add_Child(FarAttack_More_Than_HP70());
 
 	return Root_Sel;
 }
 
-CBT_Composite_Node * CQueensKnight::NearAttack_Dist3_More_Than_HP70()
+CBT_Composite_Node * CQueensKnight::NearAttack_Dist5_More_Than_HP70()
 {
 	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 근접 공격");
 
@@ -1085,7 +1089,7 @@ CBT_Composite_Node * CQueensKnight::More_Than_HP_40()
 {
 	CBT_Selector* Root_Sel = Node_Selector("근거리 원거리 구분 공격");
 
-	CBT_DistCheck* Dist0 = Node_DistCheck("거리 체크", L"Player_Pos", 3);
+	CBT_DistCheck* Dist0 = Node_DistCheck("거리 체크", L"Player_Pos", 5);
 
 	Root_Sel->Add_Child(Dist0);
 	Dist0->Set_Child(NearAttack_Dist5_More_Than_HP40());
@@ -1128,17 +1132,17 @@ CBT_Composite_Node * CQueensKnight::HP_Final()
 {
 	CBT_Selector* Root_Sel = Node_Selector("근거리 원거리 구분 공격");
 
-	CBT_DistCheck* Dist0 = Node_DistCheck("거리 체크", L"Player_Pos", 3);
+	CBT_DistCheck* Dist0 = Node_DistCheck("거리 체크", L"Player_Pos", 5);
 
 	Root_Sel->Add_Child(Dist0);
-	Dist0->Set_Child(NearAttack_Dist3_Final());
+	Dist0->Set_Child(NearAttack_Dist5_Final());
 
 	Root_Sel->Add_Child(FarAttack_Fianl());
 
 	return Root_Sel;
 }
 
-CBT_Composite_Node * CQueensKnight::NearAttack_Dist3_Final()
+CBT_Composite_Node * CQueensKnight::NearAttack_Dist5_Final()
 {
 	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 근접 공격");
 
@@ -1180,8 +1184,6 @@ CBT_Composite_Node * CQueensKnight::Start_Show()
 	Root_Sel->Add_Child(Show_FarAttack());
 
 	return Root_Sel;
-
-	return nullptr;
 }
 
 CBT_Composite_Node * CQueensKnight::Show_ChaseAndNearAttack()
@@ -1210,7 +1212,6 @@ CBT_Composite_Node * CQueensKnight::Show_NearAttack()
 	CBT_Cooldown* Cool4 = Node_Cooldown("쿨4", 300);
 	CBT_Cooldown* Cool5 = Node_Cooldown("쿨5", 300);
 	CBT_Cooldown* Cool6 = Node_Cooldown("쿨6", 300);
-	CBT_Cooldown* Cool7 = Node_Cooldown("쿨7", 300);
 
 	CBT_SetValue* Show_OffNearAttack = Node_BOOL_SetValue("시연회 OFF", L"Show_Near", false);
 
@@ -1324,7 +1325,7 @@ HRESULT CQueensKnight::Update_Bone_Of_BlackBoard()
 {
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Spine3_WingB4");
 	m_vWing = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Bone_Wing", m_vWing);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Wing", m_vWing);
 
 	
 	return S_OK;
@@ -1333,11 +1334,11 @@ HRESULT CQueensKnight::Update_Bone_Of_BlackBoard()
 HRESULT CQueensKnight::Update_Value_Of_BB()
 {
 	// 1. 플레이어 좌표 업데이트
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos());
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos());
 	// 2. 체력 업데이트
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"HP", m_tObjParam.fHp_Cur);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"HP", m_tObjParam.fHp_Cur);
 	// 3. 체력 비율 업데이트
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"HPRatio", _float(m_tObjParam.fHp_Cur / m_tObjParam.fHp_Max) * 100);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"HPRatio", _float(m_tObjParam.fHp_Cur / m_tObjParam.fHp_Max) * 100);
 
 
 	// 1. 점멸을 위한 플레이어 4방 위치.
@@ -1351,46 +1352,46 @@ HRESULT CQueensKnight::Update_Value_Of_BB()
 	switch (CALC::Random_Num(0, 3))
 	{
 	case 0:
-		m_pAIControllerCom->Set_Value_Of_BloackBoard(L"FlashPos", vPlayerPos + fLength * vPlayerLook);
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlashPos", vPlayerPos + fLength * vPlayerLook);
 		break;
 	case 1:
-		m_pAIControllerCom->Set_Value_Of_BloackBoard(L"FlashPos", vPlayerPos - fLength * vPlayerLook);
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlashPos", vPlayerPos - fLength * vPlayerLook);
 		break;
 	case 2:
-		m_pAIControllerCom->Set_Value_Of_BloackBoard(L"FlashPos", vPlayerPos + fLength * vPlayerRight);
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlashPos", vPlayerPos + fLength * vPlayerRight);
 		break;
 	case 3:
-		m_pAIControllerCom->Set_Value_Of_BloackBoard(L"FlashPos", vPlayerPos - fLength * vPlayerRight);
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlashPos", vPlayerPos - fLength * vPlayerRight);
 		break;
 	default:
 		break;
 	}
 
 	// 2. 본인 좌표
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_Pos", m_pTransformCom->Get_Pos());
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_Pos", m_pTransformCom->Get_Pos());
 
 	// 2-1. 본인 좌표 + Y 가운데
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_MidPos", m_pTransformCom->Get_Pos() + _v3(0, 1.3f, 0.f));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_MidPos", m_pTransformCom->Get_Pos() + _v3(0, 1.3f, 0.f));
 
 	// 3. 칼 손잡이쪽
 	CTransform* pSwordTrans = static_cast<CTransform*>(m_pSword->Get_Component(L"Com_Transform"));
 	_mat matSword = pSwordTrans->Get_WorldMat();
 	_v3 vSwordPos = _v3(matSword.m[3][0], matSword.m[3][1], matSword.m[3][2]);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Sword_BottomPos", vSwordPos);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Sword_BottomPos", vSwordPos);
 
 	// 3-1. 칼 끝 쪽
 	vSwordPos = _v3(matSword.m[3][0], matSword.m[3][1], matSword.m[3][2]) + _v3(matSword.m[2][0], matSword.m[2][1], matSword.m[2][2]) * 3.75f;
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Sword_TopPos", vSwordPos);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Sword_TopPos", vSwordPos);
 
 	// 3-2. 칼 가운데
 	vSwordPos = _v3(matSword.m[3][0], matSword.m[3][1], matSword.m[3][2]) + _v3(matSword.m[2][0], matSword.m[2][1], matSword.m[2][2]) * 2.35f;
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Sword_MidPos", vSwordPos);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Sword_MidPos", vSwordPos);
 
 	// 4. 방패
 	CTransform* pShieldTrans = static_cast<CTransform*>(m_pShield->Get_Component(L"Com_Transform"));
 	_mat matShield = pShieldTrans->Get_WorldMat();
 	_v3 vShieldPos = _v3(matShield.m[3][0], matShield.m[3][1], matShield.m[3][2]);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"ShieldPos", vShieldPos);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ShieldPos", vShieldPos);
 
 	return S_OK;
 }
