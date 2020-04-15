@@ -16,19 +16,7 @@
 #include "UI_Manager.h"
 #include "Item_Manager.h"
 
-#include "PoisonButterfly.h"
-#include "PoisonBullet.h"
-#include "PoisonChaseBullet.h"
-#include "PoisonRotationBullet.h"
-#include "PoisonTornado.h"
-#include "BlackUrchin.h"
-#include "QueensKnight.h"
-#include "BlackWolf.h"
-#include "GunGenji.h"
-#include "GunGenjiBullet.h"
-#include "SwordGenji.h"
-#include "SwordGenjiBullet.h"
-#include "SwordShieldGenji.h"
+#include "MonsterHeaders.h"
 #include "YachaMan.h"
 
 #include "PlayerHP.h"
@@ -606,6 +594,18 @@ _uint CLoading::Loading_Stage()
 		return E_FAIL;
 	// 여왕의 기사
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_QueensKnight", CQueensKnight::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 얼음여자
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceGirl", CIceGirl::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 얼음여자 콜드빔
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeam", CColdBeam::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 얼음여자 검기발사
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordBullet", CSwordBullet::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 얼음여자 얼음보호막
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceBarrier", CIceBarrier::Create(m_pGraphicDev))))
 		return E_FAIL;
 	// 검은 성게
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))

@@ -42,6 +42,7 @@ CBT_Node::BT_NODE_STATE CBT_UpdateParam::Update_Node(_double TimeDelta, vector<C
 					case CBT_UpdateParam::Collider:
 						m_pTarget_ObjParam->bCanAttack = false;
 						break;
+
 					}
 
 					m_bService_End = true;
@@ -53,6 +54,10 @@ CBT_Node::BT_NODE_STATE CBT_UpdateParam::Update_Node(_double TimeDelta, vector<C
 					case Engine::CBT_UpdateParam::Collider:
 						m_pTarget_ObjParam->bCanAttack = true;
 						//cout << "HIt On" << endl;
+						break;
+
+					case CBT_UpdateParam::Dodge:
+						m_pTarget_ObjParam->bDodge = true;
 						break;
 					}
 

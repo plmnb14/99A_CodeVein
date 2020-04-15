@@ -80,7 +80,7 @@ private:	// 패턴들
 
 	// 체력 70퍼 이상	// 점멸 없음
 	CBT_Composite_Node* More_Than_HP_70();
-	CBT_Composite_Node* NearAttack_Dist3_More_Than_HP70();
+	CBT_Composite_Node* NearAttack_Dist5_More_Than_HP70();
 	CBT_Composite_Node* FarAttack_More_Than_HP70();
 
 	// 체력 70퍼 미만	// 점멸 추가
@@ -90,7 +90,7 @@ private:	// 패턴들
 
 	// 체력 30퍼 미만	// 점멸 자주 씀
 	CBT_Composite_Node* HP_Final();
-	CBT_Composite_Node* NearAttack_Dist3_Final();
+	CBT_Composite_Node* NearAttack_Dist5_Final();
 	CBT_Composite_Node* FarAttack_Fianl();
 
 	//////// 시연회용

@@ -71,6 +71,8 @@ HRESULT CBT_Node_Manager::Ready_BT_Node()
 		return E_FAIL;
 	if (FAILED(Add_Prototype_Node(L"CreateBullet", CBT_CreateBullet::Create_Prototype(), CBT_Node_Manager::SERVICE)))
 		return E_FAIL;
+	if (FAILED(Add_Prototype_Node(L"CreateBuff", CBT_CreateBuff::Create_Prototype(), CBT_Node_Manager::SERVICE)))
+		return E_FAIL;
 	if (FAILED(Add_Prototype_Node(L"StartDissolve", CBT_StartDissolve::Create_Prototype(), CBT_Node_Manager::SERVICE)))
 		return E_FAIL;
 
