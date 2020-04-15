@@ -47,7 +47,9 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 _int CScene_Stage_Training::Update_Scene(_double TimeDelta)
 {
 	CUI_Manager::Get_Instance()->Update_UI();
-		
+	
+	//Create_Fog(TimeDelta);
+
 	return _int();
 }
 
@@ -223,12 +225,12 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
 	// 여왕의 기사
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_QueensKnight", &CQueensKnight::INFO(10.f, 5.f, 2.f));
-	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(3.f, 0.f, 3.f));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
-	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_QueensKnight", &CQueensKnight::INFO(10.f, 5.f, 2.f));
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(3.f, 0.f, 3.f));
+	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
+	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
 	// 네모네모 동료
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague", nullptr);
@@ -252,6 +254,34 @@ HRESULT CScene_Stage_Training::Ready_Layer_Environment()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CScene_Stage_Training::Create_Fog(_double TimeDelta)
+{
+	const _float FOG_OFFSET = 10.f;
+
+	m_fMapFogDelay += _float(TimeDelta);
+	if (m_fMapFogDelay > FOG_OFFSET)
+	{
+		m_fMapFogDelay = 0.f;
+
+		for (_int i = 0; i < 100; ++i)
+		{
+			_mat matRotY;
+			_v3 vDir = _v3(1.f, 0.f, 1.f);
+			D3DXMatrixIdentity(&matRotY);
+
+			D3DXMatrixRotationY(&matRotY, D3DXToRadian(_float(CCalculater::Random_Num_Double(0, 360))));
+			D3DXVec3TransformNormal(&vDir, &vDir, &matRotY);
+			D3DXVec3Normalize(&vDir, &vDir);
+
+			_float fMinRange = 40.f;
+			_float fRandRange = _float(CCalculater::Random_Num_Double(0, 30));
+			_v3 vRandPos = vDir * (fMinRange + fRandRange);
+
+			g_pManagement->Create_Effect(L"MapMist", vRandPos + _v3(0.f, -0.5f, 0.f), nullptr);
+		}
+	}
 }
 
 

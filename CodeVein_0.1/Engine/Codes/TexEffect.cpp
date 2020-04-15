@@ -99,6 +99,41 @@ HRESULT CTexEffect::LateInit_GameObject()
 	Change_GradientTexture(m_pInfo->szGradientName);
 	Change_ColorTexture(m_pInfo->szColorName);
 
+	// Check Instance Target
+	if (!lstrcmp(L"QueensKnight_Teleport_Particle", m_szParticleName) ||
+		!lstrcmp(L"QueensKnight_SwordCrash_Particle", m_szParticleName) ||
+		!lstrcmp(L"QueensKnight_JumpDown_Particle_Red", m_szParticleName) ||
+		!lstrcmp(L"QueensKnight_ShieldAttack_Particle", m_szParticleName) ||
+		!lstrcmp(L"Boss_Dead_Particle", m_szParticleName) ||
+		!lstrcmp(L"ButterFly_PointParticle", m_szParticleName) ||
+		!lstrcmp(L"ButterFly_PointParticle_Plum", m_szParticleName) ||
+		!lstrcmp(L"ButterFly_VenomShot_PointParticle", m_szParticleName) ||
+		!lstrcmp(L"Hit_Slash_Particle_0", m_szParticleName) ||
+		!lstrcmp(L"Hit_Slash_Particle_1", m_szParticleName) ||
+		!lstrcmp(L"Hit_Slash_Particle_2", m_szParticleName) ||
+		!lstrcmp(L"Hit_Slash_Particle_3", m_szParticleName) ||
+		!lstrcmp(L"MistletoeParticle", m_szParticleName) ||
+		!lstrcmp(L"MistletoeParticle_Sub", m_szParticleName) ||
+		!lstrcmp(L"Player_Buff_Particle", m_szParticleName) ||
+		!lstrcmp(L"Player_ChargeSpark_Particle", m_szParticleName) ||
+		!lstrcmp(L"Player_Heal_Particle", m_szParticleName) ||
+		!lstrcmp(L"Player_Skill_Particle_Explosion", m_szParticleName) ||
+		!lstrcmp(L"Player_Skill_RedParticle_Explosion", m_szParticleName) ||
+		!lstrcmp(L"Player_Skill_RedParticle_Upper", m_szParticleName) ||
+		!lstrcmp(L"Player_SpaceBar_StepParticle", m_szParticleName) ||
+		//!lstrcmp(L"SpawnParticle", m_szParticleName) ||
+		//!lstrcmp(L"SpawnParticle_Sub", m_szParticleName) ||
+		!lstrcmp(L"SpawnParticle_ForBoss", m_szParticleName) ||
+		!lstrcmp(L"ItemObject", m_szParticleName) ||
+		!lstrcmp(L"ItemObject_Red", m_szParticleName) ||
+		!lstrcmp(L"ItemObject_Blue", m_szParticleName) ||
+		!lstrcmp(L"ItemObject_Purple", m_szParticleName) ||
+		!lstrcmp(L"ItemObject_Yellow", m_szParticleName) ||
+		!lstrcmp(L"ItemObject_Green", m_szParticleName)
+		//!lstrcmp(L"MapMist", m_szParticleName)
+		)
+		m_bInstanceTarget = true;
+
 	return S_OK;
 }
 
@@ -137,32 +172,7 @@ _int CTexEffect::Update_GameObject(_double TimeDelta)
 	else
 		eGroup = RENDERID::RENDER_DISTORTION;
 
-	if (!lstrcmp(L"QueensKnight_Teleport_Particle", m_szParticleName)||
-		!lstrcmp(L"QueensKnight_SwordCrash_Particle", m_szParticleName)||
-		!lstrcmp(L"QueensKnight_JumpDown_Particle_Red", m_szParticleName) ||
-		!lstrcmp(L"QueensKnight_ShieldAttack_Particle", m_szParticleName)||
-		!lstrcmp(L"Boss_Dead_Particle", m_szParticleName) ||
-		!lstrcmp(L"ButterFly_PointParticle", m_szParticleName) ||
-		!lstrcmp(L"ButterFly_PointParticle_Plum", m_szParticleName) ||
-		!lstrcmp(L"ButterFly_VenomShot_PointParticle", m_szParticleName) ||
-		!lstrcmp(L"Hit_Slash_Particle_0", m_szParticleName) ||
-		!lstrcmp(L"Hit_Slash_Particle_1", m_szParticleName) ||
-		!lstrcmp(L"Hit_Slash_Particle_2", m_szParticleName) ||
-		!lstrcmp(L"Hit_Slash_Particle_3", m_szParticleName) ||
-		!lstrcmp(L"MistletoeParticle", m_szParticleName) ||
-		!lstrcmp(L"MistletoeParticle_Sub", m_szParticleName) ||
-		!lstrcmp(L"Player_Buff_Particle", m_szParticleName) ||
-		!lstrcmp(L"Player_ChargeSpark_Particle", m_szParticleName) ||
-		!lstrcmp(L"Player_Heal_Particle", m_szParticleName) ||
-		!lstrcmp(L"Player_Skill_Particle_Explosion", m_szParticleName) ||
-		!lstrcmp(L"Player_Skill_RedParticle_Explosion", m_szParticleName) ||
-		!lstrcmp(L"Player_Skill_RedParticle_Upper", m_szParticleName) ||
-		!lstrcmp(L"Player_SpaceBar_StepParticle", m_szParticleName) ||
-		//!lstrcmp(L"SpawnParticle", m_szParticleName) ||
-		//!lstrcmp(L"SpawnParticle_Sub", m_szParticleName) ||
-		!lstrcmp(L"SpawnParticle_ForBoss", m_szParticleName) ||
-		!lstrcmp(L"QueensKnight_JumpDown_Smoke_Red", m_szParticleName) ||
-		!lstrcmp(L"Bullet_Tail_Particle", m_szParticleName))
+	if(m_bInstanceTarget)
 		eGroup = RENDERID::RENDER_INSTANCE;
 	
 	if (FAILED(m_pRendererCom->Add_RenderList(eGroup, this)))

@@ -69,6 +69,7 @@ public:
 	virtual void			Set_Enable_Trail(_bool _bEnable);
 	virtual void			Set_SkillMode(_bool _bSkill);
 	virtual void			Set_TrailIndex(_int iIdx);
+	virtual void			Set_TrailUseMask(_int iIdx);
 	virtual void			Set_TrailSize(_float fBegin, _float fEnd);
 	virtual void			Set_Enable_Record(_bool _bRecord);
 	virtual void			Set_SkillPercent(_float _fPercent);

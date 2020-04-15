@@ -327,6 +327,11 @@ void CWeapon::Set_TrailIndex(_int iIdx)
 	m_pTrailEffect->Set_TrailIdx(iIdx);
 }
 
+void CWeapon::Set_TrailUseMask(_int iIdx)
+{
+	m_pTrailEffect->Set_UseMask(iIdx);
+}
+
 void CWeapon::Set_TrailSize(_float fBegin, _float fEnd)
 {
 	m_fTrailBegin = fBegin;

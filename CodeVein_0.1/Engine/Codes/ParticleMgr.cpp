@@ -19,7 +19,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 
 	Input_Pool(L"Player_FootSmoke", 50);
 	Input_Pool(L"Player_FootSmoke_Jump", 30);
-	Input_Pool(L"Player_FootSmoke_DodgeBack", 30);
+	Input_Pool(L"Player_FootSmoke_DodgeBack", 90);
 	Input_Pool(L"Player_SpaceBar_StepParticle", 500);
 
 	Input_Pool(L"Player_Skill_Scratch_Hor", 10);
@@ -69,12 +69,12 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Player_Skill_WindTornadeMesh", 60);
 
 	Input_Pool(L"ButterFly_SoftSmoke", 2000);
-	Input_Pool(L"ButterFly_PointParticle", 1000);
-	Input_Pool(L"ButterFly_PointParticle_Plum", 300);
+	Input_Pool(L"ButterFly_PointParticle", 3500);
+	Input_Pool(L"ButterFly_PointParticle_Plum", 1000);
 	Input_Pool(L"ButterFly_RingLine", 10);
 	Input_Pool(L"ButterFly_RingLine_Distortion", 10);
 	Input_Pool(L"ButterFly_Distortion", 10);
-	Input_Pool(L"ButterFly_Distortion_Circle", 10);
+	Input_Pool(L"ButterFly_Distortion_Circle", 50);
 	Input_Pool(L"ButterFly_Distortion_Smoke", 600);
 	Input_Pool(L"ButterFly_Distortion_SmokeGravity", 50);
 	Input_Pool(L"ButterFly_SoftSmoke_Bottom", 600);
@@ -83,7 +83,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"ButterFly_SoftSmoke_Floor", 1000);
 	Input_Pool(L"ButterFly_SoftSmoke_Ready_1", 200);
 	Input_Pool(L"ButterFly_SoftSmoke_Ready_2", 200);
-	Input_Pool(L"ButterFly_SoftSmoke_Mist", 1000);
+	Input_Pool(L"ButterFly_SoftSmoke_Mist", 1500);
 	Input_Pool(L"ButterFly_SoftSmoke_Chunk", 500);
 	Input_Pool(L"ButterFly_WaterSplash", 100);
 	Input_Pool(L"ButterFly_GlitterSand", 300);
@@ -93,7 +93,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"ButterFly_VenomShot_SubSmoke", 1000);
 	Input_Pool(L"ButterFly_VenomShot_Distortion", 500);
 	Input_Pool(L"ButterFly_VenomShot_Chunk", 1000);
-	Input_Pool(L"ButterFly_VenomShot_PointParticle", 1000);
+	Input_Pool(L"ButterFly_VenomShot_PointParticle", 2500);
 	Input_Pool(L"ButterFly_VenomShot_Tail", 500);
 	Input_Pool(L"ButterFly_VenomShot_DeadMist", 100);
 	Input_Pool(L"ButterFly_VenomShot_DeadSmoke", 100);
@@ -192,15 +192,26 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	
 	Input_Pool(L"MistletoeParticle", 80);
 	Input_Pool(L"MistletoeParticle_Sub", 80);
+
+	Input_Pool(L"ItemObject"		, 100);
+	Input_Pool(L"ItemObject_Red"	, 100);
+	Input_Pool(L"ItemObject_Green"	, 100);
+	Input_Pool(L"ItemObject_Blue"	, 100);
+	Input_Pool(L"ItemObject_Purple"	, 100);
+	Input_Pool(L"ItemObject_Yellow"	, 100);
+
+	Input_Pool(L"MapDust", 100);
+	Input_Pool(L"MapDust_2", 100);
+	Input_Pool(L"MapMist", 3000);
 	
 	return S_OK;
 }
 HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 {
-	if (GetAsyncKeyState('B') & 0x8000)
-	{
-		Create_Effect_Delay(L"QueensKnight_JumpDown_Smoke_Red", 0.f, _v3(0.f, 1.3f, 0.f), nullptr);
-	}
+	//if (GetAsyncKeyState('B') & 0x8000)
+	//{
+	//	Create_Effect_Delay(L"QueensKnight_Sting_Tornade", 0.f, _v3(0.f, 1.3f, 0.f), nullptr);
+	//}
 
 	auto& iter_begin = m_vecParticle.begin();
 	auto& iter_end = m_vecParticle.end();

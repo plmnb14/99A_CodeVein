@@ -33,6 +33,7 @@ public:
 
 public:
 	virtual void	Set_TrailIdx(_ulong _dwIdx) { m_iTrailIdx = _dwIdx; }
+	virtual void	Set_UseMask(_ulong _dwIdx) { m_bUseMask = true;  m_iTrailMaskIdx = _dwIdx; }
 
 public:
 	virtual void	Change_Tex(const _tchar* _TexName);
@@ -61,6 +62,7 @@ private:
 	CTransform*		m_pTransform = nullptr;
 	CRenderer*		m_pRenderer = nullptr;
 	CTexture*		m_pTexture = nullptr;
+	CTexture*		m_pMaskTexture = nullptr;
 	CShader*		m_pShader = nullptr;
 
 private:
@@ -77,6 +79,7 @@ private:
 
 private:
 	_ulong		m_iTrailIdx = 0;
+	_ulong		m_iTrailMaskIdx = 0;
 
 
 	// 스플라인 선들간의 간격
@@ -97,6 +100,7 @@ private:
 private:
 	_bool		m_bUpdateVtx = false;
 	_bool		m_bDrawTrail = true;
+	_bool		m_bUseMask = false;
 
 private:
 	_float		m_fUpdateTime_Cur = 0.f;
