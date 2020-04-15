@@ -97,6 +97,10 @@ _int CQueensKnight::Update_GameObject(_double TimeDelta)
 	if (m_bIsDead)
 		return DEAD_OBJ;
 
+	// 죽음 애니메이션
+	if (m_bReadyDead)
+		return NO_EVENT;
+
 	// 플레이어 미발견
 	if (false == m_bFight)
 	{
@@ -131,7 +135,11 @@ _int CQueensKnight::Late_Update_GameObject(_double TimeDelta)
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
 
-	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
+	RENDERID eRenderID = RENDER_NONALPHA;
+	//if (m_bDissolve)
+	//	eRenderID = RENDER_ALPHA;
+
+	if (FAILED(m_pRendererCom->Add_RenderList(eRenderID, this)))
 		return E_FAIL;
 	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
 	//	return E_FAIL;
@@ -170,7 +178,7 @@ HRESULT CQueensKnight::Render_GameObject()
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
 			if (false == m_bReadyDead && !m_bDissolve)
-				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+				m_iPass  = m_iTempPass = m_pMeshCom->Get_MaterialPass(i, j);
 
 			m_pShaderCom->Begin_Pass(m_iPass);
 
@@ -304,8 +312,9 @@ CBT_Composite_Node * CQueensKnight::Normal_VerticalCut1()
 	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_0", L"Sword_BottomPos", 0.3, 20, 0.1, 0);
 	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_TopPos", 0.3, 13, 0.1, 0);
 	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_MidPos", 0.3, 13, 0.1, 0);
-	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("내려찍기 파티클", L"QueensKnight_SwordCrash_Particle", L"Sword_TopPos", 1.0, 5, 0.01, 0);
-	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("내려찍기 파티클", L"QueensKnight_SwordCrash_Particle", L"Sword_MidPos", 1.0, 5, 0.01, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("내려찍기 파티클", L"QueensKnight_SwordCrash_Particle", L"Sword_TopPos"		, 0.9, 5, 0.01, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("내려찍기 파티클", L"QueensKnight_SwordCrash_Particle", L"Sword_MidPos"		, 0.9, 5, 0.01, 0);
+	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("내려찍기 파티클", L"QueensKnight_SwordCrash_Particle_Orange", L"Sword_MidPos"	, 0.9, 5, 0.01, 0);
 
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
@@ -314,6 +323,7 @@ CBT_Composite_Node * CQueensKnight::Normal_VerticalCut1()
 	Root_Parallel->Add_Service(Effect4);
 	Root_Parallel->Add_Service(Effect5);
 	Root_Parallel->Add_Service(Effect6);
+	Root_Parallel->Add_Service(Effect7);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani49);
@@ -875,7 +885,7 @@ CBT_Composite_Node * CQueensKnight::Flash_Jump_Attack()
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 추적2", L"Player_Pos", 0.1);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("점멸 파티클", L"QueensKnight_Teleport_Particle", L"Self_MidPos", 0, 150, 0.15, 0);
-	//CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("점멸 검은 연기", L"QueensKnight_Teleport_Smoke", L"Self_MidPos", 0, 50, 0.35, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("점멸 검은 연기", L"QueensKnight_Teleport_Smoke", L"Self_MidPos", 0, 50, 0.35, 0);
 	//CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("점멸 붉은 연기", L"QueensKnight_Teleport_Smoke_Red", L"Self_MidPos", 0, 50, 0.35, 0);
 	//CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("점멸 왜곡 연기", L"QueensKnight_Teleport_DistortionSmoke", L"Self_MidPos", 0.3, 20, 0.1, 0);
 	
@@ -887,6 +897,8 @@ CBT_Composite_Node * CQueensKnight::Flash_Jump_Attack()
 	CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("내려찍기 파티클", L"QueensKnight_JumpDown_Particle_Red", L"Sword_MidPos"	, 1.45, 5, 0.01, 0);
 	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("내려찍기 파티클", L"QueensKnight_SwordCrash_Particle", L"Sword_TopPos"	, 1.45, 10, 0.01, 0);
 	CBT_CreateEffect* Effect10 = Node_CreateEffect_Finite("내려찍기 파티클", L"QueensKnight_SwordCrash_Particle", L"Sword_MidPos"	, 1.45, 10, 0.01, 0);
+	//CBT_CreateEffect* Effect12 = Node_CreateEffect_Finite("스모크", L"QueensKnight_JumpDown_Smoke_Black"	, L"Sword_MidPos"	, 1.45, 10, 0.01, 0);
+	//CBT_CreateEffect* Effect13 = Node_CreateEffect_Finite("스모크", L"QueensKnight_JumpDown_Smoke_Red"		, L"Sword_MidPos"	, 1.45, 10, 0.01, 0);
 	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_MidPos", 1.12, 20, 0.01, 0);
 
 	CBT_StartDissolve* Dissolve0 = Node_StartDissolve("디졸브", this		, 3.7f, false, 0.45);
@@ -897,7 +909,7 @@ CBT_Composite_Node * CQueensKnight::Flash_Jump_Attack()
 	CBT_StartDissolve* Dissolve5 = Node_StartDissolve("디졸브", m_pShield	, 3.7f, true, 0.7);
 
 	Root_Parallel->Add_Service(Effect0);
-	//Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect1);
 	//Root_Parallel->Add_Service(Effect2);
 	//Root_Parallel->Add_Service(Effect3);
 	Root_Parallel->Add_Service(Effect4);
@@ -908,6 +920,8 @@ CBT_Composite_Node * CQueensKnight::Flash_Jump_Attack()
 	Root_Parallel->Add_Service(Effect9);
 	Root_Parallel->Add_Service(Effect10);
 	Root_Parallel->Add_Service(Effect11);
+	//Root_Parallel->Add_Service(Effect12);
+	//Root_Parallel->Add_Service(Effect13);
 	Root_Parallel->Add_Service(Dissolve0);
 	Root_Parallel->Add_Service(Dissolve1);
 	Root_Parallel->Add_Service(Dissolve2);
@@ -1505,11 +1519,11 @@ void CQueensKnight::Check_PhyCollider()
 		else
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
-			Start_Dissolve(0.3f, false, true);
-			m_pSword->Start_Dissolve(0.3f, false);
-			m_pShield->Start_Dissolve(0.3f, false);
-			g_pManagement->Create_ParticleEffect_Delay(L"Boss_Dead_Particle", 1.5f, 0.f, m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), nullptr);
-			g_pManagement->Create_Spawn_Effect(m_pTransformCom->Get_Pos(), m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f));
+			Start_Dissolve(				0.4f, false, true	, 2.7f);
+			m_pSword->Start_Dissolve(	0.4f, false, false	, 2.7f);
+			m_pShield->Start_Dissolve(	0.4f, false, false	, 2.7f);
+			g_pManagement->Create_Effect_Delay(L"Boss_Dead_Particle"					, 2.5f, _v3(0.f, 1.3f, 0.f), m_pTransformCom);
+			g_pManagement->Create_ParticleEffect_Delay(L"SpawnParticle_ForBoss"	, 2.5f	,  3.f, m_pTransformCom->Get_Pos() + _v3(0.f, 0.5f, 0.f));
 		}
 	}
 	else

@@ -213,6 +213,9 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	m_iInstanceCnt = 200;
 	m_pInstanceData = new INSTANCEDATA[m_iInstanceCnt];
 
+	m_pGraphic_Dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+
+
 #ifdef _DEBUG
 
 	_float fTargetSize = 150.f;
@@ -334,7 +337,8 @@ HRESULT CRenderer::Draw_RenderList()
 	if (FAILED(Render_LightAcc()))
 		return E_FAIL;
 
-	// µðÇ»Áî, ¼ÎÀÌµå µÎ Å¸°ÙÀ» È¥ÇÕÇÏ¿© ¹é¹öÆÛ¿¡ Âï´Â´Ù. // With Skybox(priority), With Alpha
+	// µðÇ»Áî, ¼ÎÀÌµå µÎ Å¸°ÙÀ» È¥ÇÕÇÏ¿© ¹é¹öÆÛ¿¡ Âï´Â´Ù.
+	// With Skybox(priority), With Alpha
 	if (FAILED(Render_Blend()))
 		return E_FAIL;
 
@@ -624,9 +628,32 @@ HRESULT CRenderer::Render_Distortion()
 
 HRESULT CRenderer::Render_Alpha()
 {
-	m_pShader_Effect->Begin_Shader();
+	if (nullptr == m_pTarget_Manager)
+		return E_FAIL;
 
 	for (auto& pGameObject : m_RenderList[RENDER_ALPHA])
+	{
+		if (nullptr != pGameObject)
+		{
+			if (FAILED(pGameObject->Render_GameObject()))
+			{
+				Safe_Release(pGameObject);
+				return E_FAIL;
+			}
+			Safe_Release(pGameObject);
+		}
+	}
+
+	m_RenderList[RENDER_ALPHA].clear();
+
+	return NOERROR;
+}
+
+HRESULT CRenderer::Render_Effect()
+{
+	m_pShader_Effect->Begin_Shader();
+
+	for (auto& pGameObject : m_RenderList[RENDER_EFFECT])
 	{
 		if (nullptr != pGameObject)
 		{
@@ -639,7 +666,7 @@ HRESULT CRenderer::Render_Alpha()
 		}
 	}
 
-	m_RenderList[RENDER_ALPHA].clear();
+	m_RenderList[RENDER_EFFECT].clear();
 
 	m_pShader_Effect->End_Shader();
 
@@ -837,6 +864,10 @@ HRESULT CRenderer::Render_Blend()
 
 	// Alpha
 	if (FAILED(Render_Alpha()))
+		return E_FAIL;
+
+	// Effect
+	if (FAILED(Render_Effect()))
 		return E_FAIL;
 
 	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_Blend")))

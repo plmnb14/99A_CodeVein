@@ -93,9 +93,9 @@ _int CMeshEffect::Late_Update_GameObject(_double TimeDelta)
 	if (m_bIsDead || m_fCreateDelay > 0.f)
 		return S_OK;
 
-	RENDERID eGroup = RENDERID::RENDER_ALPHA;
+	RENDERID eGroup = RENDERID::RENDER_EFFECT;
 	if (m_iPass == 2)
-		eGroup = RENDERID::RENDER_ALPHA;
+		eGroup = RENDERID::RENDER_EFFECT;
 	else
 		eGroup = RENDERID::RENDER_DISTORTION;
 
@@ -315,6 +315,14 @@ void CMeshEffect::Setup_Info()
 			m_pTransformCom->Set_Angle(_v3(D3DXToRadian(m_pInfo->vRotDirection.x), D3DXToRadian(m_pInfo->vRotDirection.y), D3DXToRadian(m_pInfo->vRotDirection.z)));
 		}
 	}
+
+	//if (m_vAngle != V3_NULL)
+	//{
+	//	m_pTransformCom->Set_Angle(m_vAngle);
+	//
+	//	//_v3 vAngle;
+	//	//m_pInfo->vRotDirection = vAngle;
+	//}
 }
 
 void CMeshEffect::Check_Move(_double TimeDelta)
@@ -436,9 +444,24 @@ void CMeshEffect::Check_Move(_double TimeDelta)
 
 	if (!m_pInfo->bRotMove && !m_pInfo->bMoveWithRot
 		&& m_pInfo->vRotDirection == V3_NULL)
+	{
 		m_pTransformCom->Set_Angle(m_vAngle);
+		m_pTransformCom->Update_Component();
+	}
+	else
+	{
+		//m_pTransformCom->Update_Component();
+		//
+		//_mat matRotX, matRotY, matRotZ;
+		//D3DXMatrixRotationX(&matRotX, m_vAngle.x);
+		//D3DXMatrixRotationY(&matRotY, m_vAngle.y);
+		//D3DXMatrixRotationZ(&matRotZ, m_vAngle.z);
+		//
+		//_mat matWorld = m_pTransformCom->Get_WorldMat();
+		//matWorld = matWorld * (matRotX + matRotY + matRotZ);
+		//m_pTransformCom->Set_WorldMat(matWorld);
+	}
 
-	m_pTransformCom->Update_Component();
 }
 
 void CMeshEffect::Check_LifeTime(_double TimeDelta)

@@ -131,9 +131,9 @@ _int CTexEffect::Update_GameObject(_double TimeDelta)
 	if (m_bIsDead || m_fCreateDelay > 0.f)
 		return S_OK;
 
-	RENDERID eGroup = RENDERID::RENDER_ALPHA;
+	RENDERID eGroup = RENDERID::RENDER_EFFECT;
 	if (m_iPass == 0)
-		eGroup = RENDERID::RENDER_ALPHA;
+		eGroup = RENDERID::RENDER_EFFECT;
 	else
 		eGroup = RENDERID::RENDER_DISTORTION;
 
@@ -158,8 +158,10 @@ _int CTexEffect::Update_GameObject(_double TimeDelta)
 		!lstrcmp(L"Player_Skill_RedParticle_Explosion", m_szParticleName) ||
 		!lstrcmp(L"Player_Skill_RedParticle_Upper", m_szParticleName) ||
 		!lstrcmp(L"Player_SpaceBar_StepParticle", m_szParticleName) ||
-		!lstrcmp(L"SpawnParticle", m_szParticleName) ||
-		!lstrcmp(L"SpawnParticle_Sub", m_szParticleName) ||
+		//!lstrcmp(L"SpawnParticle", m_szParticleName) ||
+		//!lstrcmp(L"SpawnParticle_Sub", m_szParticleName) ||
+		!lstrcmp(L"SpawnParticle_ForBoss", m_szParticleName) ||
+		!lstrcmp(L"QueensKnight_JumpDown_Smoke_Red", m_szParticleName) ||
 		!lstrcmp(L"Bullet_Tail_Particle", m_szParticleName))
 		eGroup = RENDERID::RENDER_INSTANCE;
 	
@@ -401,7 +403,7 @@ void CTexEffect::Setup_Info()
 
 	if (m_pInfo->fCreateDelay_Max > 0.f)
 	{
-		m_fCreateDelay = Engine::CCalculater::Random_Num(0, _int(m_pInfo->fCreateDelay_Max * 100)) * 0.01f;
+		m_fCreateDelay += Engine::CCalculater::Random_Num(0, _int(m_pInfo->fCreateDelay_Max * 100)) * 0.01f;
 		m_fCreateDelay += _int(m_pInfo->fCreateDelay_Min);
 	}
 

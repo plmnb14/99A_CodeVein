@@ -225,6 +225,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_SwordCrash_Particle")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_SwordCrash_Particle_Orange")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Particle")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Particle_Black")))
@@ -252,6 +254,8 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"Boss_KnockDown_Dust")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Boss_Dead_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"SpawnParticle_ForBoss")))
 		return E_FAIL;
 
 #pragma region Blood

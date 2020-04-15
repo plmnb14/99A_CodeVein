@@ -59,6 +59,7 @@ private:
 	HRESULT Render_MotionBlurTarget();
 	HRESULT Render_Distortion();
 	HRESULT Render_Alpha();
+	HRESULT Render_Effect();
 	HRESULT Render_Instance();
 	HRESULT Render_UI();
 private:

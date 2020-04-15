@@ -112,8 +112,8 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"QueensKnight_Intro_Smoke_1", 500);
 	Input_Pool(L"QueensKnight_JumpDown_Particle_Red", 500);
 	Input_Pool(L"QueensKnight_JumpDown_ShockWave", 50);
-	Input_Pool(L"QueensKnight_JumpDown_Smoke_Black", 50);
-	Input_Pool(L"QueensKnight_JumpDown_Smoke_Red", 50);
+	Input_Pool(L"QueensKnight_JumpDown_Smoke_Black", 500);
+	Input_Pool(L"QueensKnight_JumpDown_Smoke_Red", 500);
 	Input_Pool(L"QueensKnight_Lava_Floor_0", 50);
 	Input_Pool(L"QueensKnight_Lava_Floor_1", 50);
 	Input_Pool(L"QueensKnight_LeakField_0", 50);
@@ -131,6 +131,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"QueensKnight_ShieldAttack_Particle", 300);
 	Input_Pool(L"QueensKnight_ShieldAttack_RedLight", 10);
 	Input_Pool(L"QueensKnight_SwordCrash_Particle", 600);
+	Input_Pool(L"QueensKnight_SwordCrash_Particle_Orange", 600);
 	Input_Pool(L"QueensKnight_Teleport_Particle", 3000);
 	Input_Pool(L"QueensKnight_Teleport_Particle_Black", 1000);
 	Input_Pool(L"QueensKnight_Teleport_Smoke", 200);
@@ -176,6 +177,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 
 	Input_Pool(L"SpawnParticle", 1000);
 	Input_Pool(L"SpawnParticle_Sub", 1000);
+	Input_Pool(L"SpawnParticle_ForBoss", 1000);
 
 	Input_Pool(L"Bullet_Body", 30);
 	Input_Pool(L"Bullet_Body_Aura", 100);
@@ -193,13 +195,11 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	
 	return S_OK;
 }
-
 HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 {
 	if (GetAsyncKeyState('B') & 0x8000)
 	{
-		Create_Effect(L"QueensKnight_Teleport_Particle", V3_NULL, nullptr);
-		Create_Effect(L"QueensKnight_SwordCrash_Particle", V3_NULL, nullptr);
+		Create_Effect_Delay(L"QueensKnight_JumpDown_Smoke_Red", 0.f, _v3(0.f, 1.3f, 0.f), nullptr);
 	}
 
 	auto& iter_begin = m_vecParticle.begin();
