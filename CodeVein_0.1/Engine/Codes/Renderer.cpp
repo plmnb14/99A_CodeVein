@@ -689,7 +689,7 @@ HRESULT CRenderer::Render_Instance()
 		if (nullptr != pGameObject)
 		{
 			CTexEffect* pEff = static_cast<CTexEffect*>(pGameObject);
-			m_pInstanceData[iIdx] = *pEff->Get_InstanceData();
+			m_pInstanceData[iIdx] = pEff->Get_InstanceData();
 			Safe_Release(pGameObject);
 			++iIdx;
 			--iSizeCheck;

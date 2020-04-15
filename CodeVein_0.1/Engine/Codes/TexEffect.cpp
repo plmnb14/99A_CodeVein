@@ -14,25 +14,25 @@ CTexEffect::CTexEffect(const CTexEffect& rhs)
 	m_bClone = true;
 }
 
-INSTANCEDATA* CTexEffect::Get_InstanceData()
+INSTANCEDATA CTexEffect::Get_InstanceData()
 {
-	INSTANCEDATA* pData = new INSTANCEDATA;
+	INSTANCEDATA tData;
 
-	memcpy(&pData->fRight, &m_pTransformCom->Get_WorldMat()._11, sizeof(_float) * 4);
-	memcpy(&pData->fUp, &m_pTransformCom->Get_WorldMat()._21, sizeof(_float) * 4);
-	memcpy(&pData->fLook, &m_pTransformCom->Get_WorldMat()._31, sizeof(_float) * 4);
-	memcpy(&pData->fPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_float) * 4);
-	memcpy(&pData->fColor, &m_vColor, sizeof(_float) * 4);
-	pData->fDissolve = m_fDissolve;
-	pData->fDistortion = m_pInfo->fDistortionPower;
-	pData->fAlpha = m_fAlpha;
-	pData->bDissolve = m_pInfo->bDissolve;
-	pData->bReverseColor = m_pInfo->bRevColor;
-	pData->bUseColorTex = m_pInfo->bUseColorTex;
-	pData->bUseMaskTex = (m_pInfo->fMaskIndex != -1.f);
-	pData->bUseRGBA = m_pInfo->bUseRGBA;
+	memcpy(&tData.fRight, &m_pTransformCom->Get_WorldMat()._11, sizeof(_float) * 4);
+	memcpy(&tData.fUp, &m_pTransformCom->Get_WorldMat()._21, sizeof(_float) * 4);
+	memcpy(&tData.fLook, &m_pTransformCom->Get_WorldMat()._31, sizeof(_float) * 4);
+	memcpy(&tData.fPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_float) * 4);
+	memcpy(&tData.fColor, &m_vColor, sizeof(_float) * 4);
+	tData.fDissolve = m_fDissolve;
+	tData.fDistortion = m_pInfo->fDistortionPower;
+	tData.fAlpha = m_fAlpha;
+	tData.bDissolve = m_pInfo->bDissolve;
+	tData.bReverseColor = m_pInfo->bRevColor;
+	tData.bUseColorTex = m_pInfo->bUseColorTex;
+	tData.bUseMaskTex = (m_pInfo->fMaskIndex != -1.f);
+	tData.bUseRGBA = m_pInfo->bUseRGBA;
 
-	return pData;
+	return tData;
 }
 
 HRESULT CTexEffect::SetUp_ConstantTable_Instance(CShader* pShader)
