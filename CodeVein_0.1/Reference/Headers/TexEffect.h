@@ -16,6 +16,12 @@ protected:
 	virtual ~CTexEffect() = default;
 
 public:
+	INSTANCEDATA* Get_InstanceData();
+
+public:
+	HRESULT SetUp_ConstantTable_Instance(CShader* pShader);
+
+public:
 	virtual HRESULT Ready_GameObject_Prototype();
 	virtual HRESULT Ready_GameObject(void* pArg);
 	virtual HRESULT LateInit_GameObject();
@@ -41,6 +47,7 @@ protected:
 	CManagement*			m_pManagement = nullptr;
 
 private:
+
 
 protected:
 	void Check_Frame(_double TimeDelta);

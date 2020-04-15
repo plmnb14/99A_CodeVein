@@ -39,7 +39,7 @@ public:
 	void			Set_ViewZ(_float fViewZ) { m_fViewZ = fViewZ; }
 
 public:
-	void			Start_Dissolve(_float fFxSpeed = 0.7f, _bool bFadeIn = false, _bool bReadyDead = false);
+	void			Start_Dissolve(_float fFxSpeed = 0.7f, _bool bFadeIn = false, _bool bReadyDead = false, _float fDelay = 0.f);
 
 public:
 	HRESULT			Add_Component(_uint iSceneID, const _tchar* pPrototypeTag, const _tchar* pComponentTag, CComponent** ppComponent, void* pArg = nullptr);
@@ -120,11 +120,14 @@ protected:
 
 	// For Dissolve
 	_bool	m_bFadeIn = false;
+	_bool	m_bDissolve = false;
 	_bool	m_bReadyDead = false;
 	_float	m_fFXSpeed = 0.f;
 	_float	m_fFXAlpha = 0.f;
-	_int	m_iPass = 0;
+	_float	m_fFXDelay = 0.f;
 
+	_int	m_iPass = 0;
+	_int    m_iTempPass = 0;
 protected:
 	_ulong			m_dwLayerIdx = 0;			// 생성될 레이어 번호
 

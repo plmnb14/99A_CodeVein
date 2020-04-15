@@ -265,6 +265,10 @@ _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 	if (m_bIsDead)
 		return DEAD_OBJ;
 
+	// 죽음 애니메이션
+	if (m_bReadyDead)
+		return NO_EVENT;
+
 	// 플레이어 미발견
 	if (false == m_bFight)
 	{
@@ -310,7 +314,11 @@ _int CPoisonButterfly::Late_Update_GameObject(_double TimeDelta)
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
 
-	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
+	RENDERID eRenderID = RENDER_NONALPHA;
+	//if (m_bDissolve)
+	//	eRenderID = RENDER_ALPHA;
+	
+	if (FAILED(m_pRendererCom->Add_RenderList(eRenderID, this)))
 		return E_FAIL;
 	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
 	//	return E_FAIL;
@@ -386,10 +394,6 @@ HRESULT CPoisonButterfly::Render_GameObject_SetPass(CShader * pShader, _int iPas
 		return E_FAIL;
 
 	m_matLastWVP = m_pTransformCom->Get_WorldMat() * ViewMatrix * ProjMatrix;
-
-	//_mat matLightVP = g_pManagement->Get_LightViewProj();
-	//if (FAILED(pShader->Set_Value("g_LightVP_Close", &matLightVP, sizeof(_mat))))
-	//	return E_FAIL;
 
 	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
 
@@ -1284,9 +1288,9 @@ void CPoisonButterfly::Check_PhyCollider()
 		else
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
-			Start_Dissolve(0.7f, false, true);
-			g_pManagement->Create_ParticleEffect_Delay(L"Boss_Dead_Particle", 2.f, 0.f, m_pTransformCom->Get_Pos(), nullptr);
-			//g_pManagement->Create_Spawn_Effect(m_vTail6, m_vHead, nullptr);
+			Start_Dissolve(0.7f, false, true, 0.6f);
+			g_pManagement->Create_Effect_Delay(L"Boss_Dead_Particle", 0.6f, _v3(0.f, 1.3f, 0.f), m_pTransformCom);
+			g_pManagement->Create_ParticleEffect_Delay(L"SpawnParticle_ForBoss", 1.f, 0.6f, m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f));
 		}
 	}
 	else

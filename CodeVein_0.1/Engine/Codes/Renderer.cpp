@@ -2,6 +2,8 @@
 #include "PipeLine.h"
 #include "Management.h"
 
+//test
+#include"TexEffect.h"
 CRenderer::CRenderer(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CComponent(pGraphic_Device)
 	, m_pTarget_Manager(CTarget_Manager::Get_Instance())
@@ -208,6 +210,12 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	m_pSSAOTexture = CTexture::Create(m_pGraphic_Dev, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Effect/Normal/Normal_4.tga");
 	// static_cast<CTexture*>(CComponent_Manager::Get_Instance()->Clone_Component(SCENE_STATIC, L"Tex_Noise", nullptr));
 
+	m_iInstanceCnt = 200;
+	m_pInstanceData = new INSTANCEDATA[m_iInstanceCnt];
+
+	m_pGraphic_Dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
+
+
 #ifdef _DEBUG
 
 	_float fTargetSize = 150.f;
@@ -329,7 +337,8 @@ HRESULT CRenderer::Draw_RenderList()
 	if (FAILED(Render_LightAcc()))
 		return E_FAIL;
 
-	// µðÇ»Áî, ¼ÎÀÌµå µÎ Å¸°ÙÀ» È¥ÇÕÇÏ¿© ¹é¹öÆÛ¿¡ Âï´Â´Ù. // With Skybox(priority), With Alpha
+	// µðÇ»Áî, ¼ÎÀÌµå µÎ Å¸°ÙÀ» È¥ÇÕÇÏ¿© ¹é¹öÆÛ¿¡ Âï´Â´Ù.
+	// With Skybox(priority), With Alpha
 	if (FAILED(Render_Blend()))
 		return E_FAIL;
 
@@ -619,9 +628,32 @@ HRESULT CRenderer::Render_Distortion()
 
 HRESULT CRenderer::Render_Alpha()
 {
-	m_pShader_Effect->Begin_Shader();
+	if (nullptr == m_pTarget_Manager)
+		return E_FAIL;
 
 	for (auto& pGameObject : m_RenderList[RENDER_ALPHA])
+	{
+		if (nullptr != pGameObject)
+		{
+			if (FAILED(pGameObject->Render_GameObject()))
+			{
+				Safe_Release(pGameObject);
+				return E_FAIL;
+			}
+			Safe_Release(pGameObject);
+		}
+	}
+
+	m_RenderList[RENDER_ALPHA].clear();
+
+	return NOERROR;
+}
+
+HRESULT CRenderer::Render_Effect()
+{
+	m_pShader_Effect->Begin_Shader();
+
+	for (auto& pGameObject : m_RenderList[RENDER_EFFECT])
 	{
 		if (nullptr != pGameObject)
 		{
@@ -634,7 +666,75 @@ HRESULT CRenderer::Render_Alpha()
 		}
 	}
 
-	m_RenderList[RENDER_ALPHA].clear();
+	m_RenderList[RENDER_EFFECT].clear();
+
+	m_pShader_Effect->End_Shader();
+
+	Render_Instance();
+
+	return NOERROR;
+}
+
+
+HRESULT CRenderer::Render_Instance()
+{
+	m_pShader_Effect->Begin_Shader();
+
+	_int iIdx = 0;
+	_ULonglong iSizeCheck = m_RenderList[RENDER_INSTANCE].size();
+	ZeroMemory(m_pInstanceData, sizeof(INSTANCEDATA) * m_iInstanceCnt);
+
+	for (auto& pGameObject : m_RenderList[RENDER_INSTANCE])
+	{
+		if (nullptr != pGameObject)
+		{
+			CTexEffect* pEff = static_cast<CTexEffect*>(pGameObject);
+			m_pInstanceData[iIdx] = *pEff->Get_InstanceData();
+			Safe_Release(pGameObject);
+			++iIdx;
+			--iSizeCheck;
+
+			if (iIdx >= m_iInstanceCnt || iSizeCheck == 0)
+			{
+				CBuffer_RcTex* pBuffer = static_cast<CBuffer_RcTex*>(pGameObject->Get_Component(L"Com_VIBuffer"));
+				pBuffer->Render_Before_Instancing(m_pInstanceData, iIdx);
+
+				_mat		ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+				_mat		ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+
+				if (FAILED(m_pShader_Effect->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+					return E_FAIL;
+				if (FAILED(m_pShader_Effect->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+					return E_FAIL;
+
+				D3DXMatrixInverse(&ViewMatrix, nullptr, &ViewMatrix);
+				D3DXMatrixInverse(&ProjMatrix, nullptr, &ProjMatrix);
+
+				if (FAILED(m_pShader_Effect->Set_Value("g_matProjInv", &ViewMatrix, sizeof(_mat))))
+					return E_FAIL;
+				if (FAILED(m_pShader_Effect->Set_Value("g_matViewInv", &ProjMatrix, sizeof(_mat))))
+					return E_FAIL;
+				m_pShader_Effect->Set_Texture("g_DepthTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"));
+
+				pEff->SetUp_ConstantTable_Instance(m_pShader_Effect);
+
+				m_pShader_Effect->Begin_Pass(3);
+
+				m_pShader_Effect->Commit_Changes();
+
+				pBuffer->Render_DrawPrimitive_Instancing();
+
+				m_pShader_Effect->End_Pass();
+
+				pBuffer->Render_After_Instancing();
+
+				ZeroMemory(m_pInstanceData, sizeof(INSTANCEDATA) * m_iInstanceCnt);
+				iIdx = 0;
+			}
+		}
+	}
+
+	m_RenderList[RENDER_INSTANCE].clear();
 
 	m_pShader_Effect->End_Shader();
 
@@ -766,6 +866,10 @@ HRESULT CRenderer::Render_Blend()
 	if (FAILED(Render_Alpha()))
 		return E_FAIL;
 
+	// Effect
+	if (FAILED(Render_Effect()))
+		return E_FAIL;
+
 	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_Blend")))
 		return E_FAIL;
 
@@ -824,7 +928,7 @@ HRESULT CRenderer::Render_Blur()
 	m_pTarget_Manager->End_Render_Target(L"Target_BlurH");
 	// Blur H ==================================================
 
-	for (_int i = 0; i < 9; ++i) // È¦¼ö¸¸
+	for (_int i = 0; i < 13; ++i) // È¦¼ö¸¸
 	{
 		if (i % 2 == 0)
 		{
@@ -1065,6 +1169,8 @@ CComponent * CRenderer::Clone_Component(void * pArg)
 
 void CRenderer::Free()
 {
+	Safe_Delete_Array(m_pInstanceData);
+
 	Safe_Release(m_pSSAOTexture);
 	Safe_Release(m_pViewPortBuffer);
 

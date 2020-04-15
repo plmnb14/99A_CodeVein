@@ -79,7 +79,7 @@
 #define Node_CreateBuff(_name, _Object_Tag, _dBuffLifeTime, _dService_Start_Time, _MaxCount_Of_Execution, _dCoolTime, _dOffset, _Service_Mode) static_cast<CBT_CreateBuff*>(CManagement::Get_Instance()->Clone_Node(L"CreateBuff", CBT_Node_Manager::SERVICE, &CBT_CreateBuff::INFO(_name, _Object_Tag, m_pTransformCom, m_pAIControllerCom, _dBuffLifeTime, _dService_Start_Time, _MaxCount_Of_Execution, _dCoolTime, _dOffset, _Service_Mode)))
 
 #include "..\Headers\BT_StartDissolve.h"
-#define Node_StartDissolve(_name, _fFxSpeed, _bFadeIn, _dService_Start_Time) static_cast<CBT_StartDissolve*>(CManagement::Get_Instance()->Clone_Node(L"StartDissolve", CBT_Node_Manager::SERVICE, &CBT_StartDissolve::INFO(_name, this, _fFxSpeed, _bFadeIn, _dService_Start_Time, CBT_Service_Node::Finite)))
+#define Node_StartDissolve(_name, _pTarget, _fFxSpeed, _bFadeIn, _dService_Start_Time) static_cast<CBT_StartDissolve*>(CManagement::Get_Instance()->Clone_Node(L"StartDissolve", CBT_Node_Manager::SERVICE, &CBT_StartDissolve::INFO(_name, _pTarget, _fFxSpeed, _bFadeIn, _dService_Start_Time, CBT_Service_Node::Finite)))
 
 
 // Task

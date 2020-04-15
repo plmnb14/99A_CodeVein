@@ -13,7 +13,7 @@ public:
 	typedef struct tagInitInfo
 	{
 		tagInitInfo(char* pNodeName, CGameObject* pThisObject, _float _fFxSpeed, _bool _bFadeIn, _double _Service_Start_Time, CBT_Service_Node::Mode _eMode)
-			: Target_Object(pThisObject), fFxSpeed(_fFxSpeed), Service_Start_Time(_Service_Start_Time), eMode(_eMode)
+			: Target_Object(pThisObject), fFxSpeed(_fFxSpeed), _bFadeIn(_bFadeIn), Service_Start_Time(_Service_Start_Time), eMode(_eMode)
 		{ strcpy_s<256>(Target_NodeName, pNodeName);
 		}
 

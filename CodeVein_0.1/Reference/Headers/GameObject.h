@@ -120,11 +120,13 @@ protected:
 
 	// For Dissolve
 	_bool	m_bFadeIn = false;
+	_bool	m_bDissolve = false;
 	_bool	m_bReadyDead = false;
 	_float	m_fFXSpeed = 0.f;
 	_float	m_fFXAlpha = 0.f;
-	_int	m_iPass = 0;
 
+	_int	m_iPass = 0;
+	_int    m_iTempPass = 0;
 protected:
 	_ulong			m_dwLayerIdx = 0;			// 생성될 레이어 번호
 
