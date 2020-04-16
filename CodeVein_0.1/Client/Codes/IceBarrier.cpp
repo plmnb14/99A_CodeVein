@@ -65,6 +65,10 @@ _int CIceBarrier::Update_GameObject(_double TimeDelta)
 	// ¹æ¾î¸·Àº ÀÏÁ¤½Ã°£ Áö³ª¸é ¾Ë¾Æ¼­ ²¨Áü
 	if (m_dCurTime > m_dLifeTime)
 	{
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Break_1", m_pTransformCom->Get_Pos(), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Break_2", m_pTransformCom->Get_Pos(), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Break_Lightning", m_pTransformCom->Get_Pos(), nullptr);
+	
 		m_bBarrierOff = true;	// ¹æ¾î¸· ²¨Áü ½ÃÀÛ
 	}
 	else
@@ -75,6 +79,8 @@ _int CIceBarrier::Update_GameObject(_double TimeDelta)
 		{
 			m_fEffectOffset = 0.f;
 			CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Aura", m_pTransformCom->Get_Pos(), nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Aura_2", m_pTransformCom->Get_Pos(), nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Aura_3", m_pTransformCom->Get_Pos(), nullptr);
 		}
 	}
 
@@ -155,6 +161,11 @@ void CIceBarrier::Check_PhyCollider()
 		m_tObjParam.bCanHit = true;
 
 		m_bBarrierOff = true;
+
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Break_1", m_pTransformCom->Get_Pos(), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Break_2", m_pTransformCom->Get_Pos(), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Break_Lightning", m_pTransformCom->Get_Pos(), nullptr);
+
 		cout << "CIceBarrier - Check_PhyCollider: º¸È£¸· ±úÁü" << endl;
 	}
 }

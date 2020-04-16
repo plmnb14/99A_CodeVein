@@ -129,11 +129,11 @@ HRESULT CTexEffect::LateInit_GameObject()
 		!lstrcmp(L"ItemObject_Blue", m_szParticleName) ||
 		!lstrcmp(L"ItemObject_Purple", m_szParticleName) ||
 		!lstrcmp(L"ItemObject_Yellow", m_szParticleName) ||
-		!lstrcmp(L"ItemObject_Green", m_szParticleName) ||
-		!lstrcmp(L"IceGirl_PointParticle_Blue", m_szParticleName) ||
-		!lstrcmp(L"IceGirl_PointParticle_Green", m_szParticleName) ||
-		!lstrcmp(L"IceGirl_FlashParticle_Blue", m_szParticleName) ||
-		!lstrcmp(L"IceGirl_FlashParticle_Green", m_szParticleName)
+		!lstrcmp(L"ItemObject_Green", m_szParticleName)
+		//!lstrcmp(L"IceGirl_PointParticle_Blue", m_szParticleName) ||
+		//!lstrcmp(L"IceGirl_PointParticle_Green", m_szParticleName) ||
+		//!lstrcmp(L"IceGirl_FlashParticle_Blue", m_szParticleName) ||
+		//!lstrcmp(L"IceGirl_FlashParticle_Green", m_szParticleName)
 		//!lstrcmp(L"MapMist", m_szParticleName)
 		)
 		m_bInstanceTarget = true;
@@ -411,8 +411,8 @@ void CTexEffect::Setup_Info()
 
 	if (m_pInfo->fAlphaSpeed_Max > 0.f)
 	{
-		m_fAlphaSpeed = Engine::CCalculater::Random_Num(0, _int(m_pInfo->fAlphaSpeed_Max * 100)) * 0.01f;
-		m_fAlphaSpeed += _int(m_pInfo->fAlphaSpeed_Min);
+		m_fAlphaSpeed = Engine::CCalculater::Random_Num(_int(m_pInfo->fAlphaSpeed_Min * 100), _int(m_pInfo->fAlphaSpeed_Max * 100)) * 0.01f;
+		//m_fAlphaSpeed += _int(m_pInfo->fAlphaSpeed_Min);
 	}
 
 	if (m_pInfo->fCreateDelay_Max > 0.f)

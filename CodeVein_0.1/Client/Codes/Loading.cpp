@@ -282,6 +282,30 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Aura")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Aura_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Aura_3")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Break_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Break_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_FloorAura_01")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_FloorAura_02")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_FloorAura_03")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_Smoke_01")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_Smoke_02")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Break_Lightning")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Charge_Smoke_01")))
+		return E_FAIL;
 #pragma endregion
 
 	if (FAILED(Add_EffectPrototype(L"Boss_KnockDown_Dust")))

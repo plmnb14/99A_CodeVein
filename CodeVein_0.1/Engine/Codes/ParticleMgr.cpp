@@ -164,7 +164,19 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"IceGirl_Charge_Hand_Particle"	, 300);
 	Input_Pool(L"IceGirl_Charge_Hand_Smoke"		, 300);
 	Input_Pool(L"IceGirl_Charge_Hand_Smoke_2", 300);
-	Input_Pool(L"IceGirl_Buff_Aura"	, 300);
+	Input_Pool(L"IceGirl_Buff_Aura", 300);
+	Input_Pool(L"IceGirl_Buff_Aura_2", 300);
+	Input_Pool(L"IceGirl_Buff_Aura_3", 300);
+	Input_Pool(L"IceBlock_Particle", 300);
+	Input_Pool(L"IceGirl_Buff_Break_1"	, 300);
+	Input_Pool(L"IceGirl_Buff_Break_2"	, 300);
+	Input_Pool(L"IceBlock_FloorAura_01", 300);
+	Input_Pool(L"IceBlock_FloorAura_02", 300);
+	Input_Pool(L"IceBlock_FloorAura_03", 300);
+	Input_Pool(L"IceBlock_Smoke_01", 300);
+	Input_Pool(L"IceBlock_Smoke_02", 300);
+	Input_Pool(L"IceGirl_Buff_Break_Lightning", 100);
+	Input_Pool(L"IceGirl_Buff_Charge_Smoke_01", 100);
 
 	Input_Pool(L"Boss_KnockDown_Dust", 10);
 	Input_Pool(L"Boss_Dead_Particle", 1000);
