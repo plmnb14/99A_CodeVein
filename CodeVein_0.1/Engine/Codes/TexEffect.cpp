@@ -129,7 +129,11 @@ HRESULT CTexEffect::LateInit_GameObject()
 		!lstrcmp(L"ItemObject_Blue", m_szParticleName) ||
 		!lstrcmp(L"ItemObject_Purple", m_szParticleName) ||
 		!lstrcmp(L"ItemObject_Yellow", m_szParticleName) ||
-		!lstrcmp(L"ItemObject_Green", m_szParticleName)
+		!lstrcmp(L"ItemObject_Green", m_szParticleName) ||
+		!lstrcmp(L"IceGirl_PointParticle_Blue", m_szParticleName) ||
+		!lstrcmp(L"IceGirl_PointParticle_Green", m_szParticleName) ||
+		!lstrcmp(L"IceGirl_FlashParticle_Blue", m_szParticleName) ||
+		!lstrcmp(L"IceGirl_FlashParticle_Green", m_szParticleName)
 		//!lstrcmp(L"MapMist", m_szParticleName)
 		)
 		m_bInstanceTarget = true;

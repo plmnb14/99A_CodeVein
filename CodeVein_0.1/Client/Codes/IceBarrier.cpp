@@ -69,9 +69,13 @@ _int CIceBarrier::Update_GameObject(_double TimeDelta)
 	}
 	else
 	{
+		m_fEffectOffset += _float(TimeDelta);
 		// 일정시간마다 방어막 이펙트 발생
-
-
+		if (m_fEffectOffset > 0.1f)
+		{
+			m_fEffectOffset = 0.f;
+			CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Aura", m_pTransformCom->Get_Pos(), nullptr);
+		}
 	}
 
 

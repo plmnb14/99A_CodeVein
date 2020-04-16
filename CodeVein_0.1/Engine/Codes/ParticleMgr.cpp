@@ -144,6 +144,28 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"QueensKnight_WhirlWind_Smoke", 300);
 	Input_Pool(L"QueensKnight_Sting_Tornade", 5);
 
+	Input_Pool(L"IceFloorAura_01", 100);
+	Input_Pool(L"IceFloorAura_02", 100);
+	Input_Pool(L"IceFloorAura_03", 100);
+	Input_Pool(L"IceSmoke_01", 100);
+	Input_Pool(L"IceSmoke_02", 100);
+	Input_Pool(L"IceGirl_FlashParticle_Blue", 500);
+	Input_Pool(L"IceGirl_FlashParticle_Green", 500);
+	Input_Pool(L"IceGirl_PointParticle_Blue", 500);
+	Input_Pool(L"IceGirl_PointParticle_Green", 500);
+	Input_Pool(L"IceBlock_Main", 30);
+	Input_Pool(L"IceBlock_Sub_01", 30);
+	Input_Pool(L"IceBlock_Sub_02", 30);
+	Input_Pool(L"IceCrystal_01", 100);
+	Input_Pool(L"IceCrystal_02", 100);
+	Input_Pool(L"IceCrystal_03", 100);
+	Input_Pool(L"IceGirl_SwordBullet_Mesh", 10);
+	Input_Pool(L"IceGirl_SwordBullet_Mesh_2", 10);
+	Input_Pool(L"IceGirl_Charge_Hand_Particle"	, 300);
+	Input_Pool(L"IceGirl_Charge_Hand_Smoke"		, 300);
+	Input_Pool(L"IceGirl_Charge_Hand_Smoke_2", 300);
+	Input_Pool(L"IceGirl_Buff_Aura"	, 300);
+
 	Input_Pool(L"Boss_KnockDown_Dust", 10);
 	Input_Pool(L"Boss_Dead_Particle", 1000);
 
