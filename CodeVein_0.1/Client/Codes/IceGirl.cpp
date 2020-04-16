@@ -118,7 +118,7 @@ _int CIceGirl::Update_GameObject(_double TimeDelta)
 	}
 
 	if (false == m_pAIControllerCom->Get_BoolValue(L"Ice_Barrier_On"))
-		m_tObjParam.bDodge = false;
+		m_tObjParam.bIsDodge = false;
 
 	if (false == m_bReadyDead && true == m_pAIControllerCom->Get_BoolValue(L"PhyCol"))
 		Check_PhyCollider();
@@ -1135,7 +1135,7 @@ void CIceGirl::OnCollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					if (false == iter->Get_Target_Dodge())
+					if (false == iter->Get_Target_IsDodge())
 					{
 						iter->Set_Target_CanHit(false);
 

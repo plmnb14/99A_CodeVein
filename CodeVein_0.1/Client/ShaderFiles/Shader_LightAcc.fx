@@ -237,7 +237,6 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	//Out.vShade.xyz += fRimLight;
 	//Out.vRim = fRimLight; // Blendø°º≠ ¥ı«ÿ¡‹
 	//Out.vRim.a = 0;
-
 	// RimLight End ==================================================================
 
 	// SSAO ====================================================================

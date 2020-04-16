@@ -1636,7 +1636,7 @@ void CQueensKnight::OnCollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					if (false == iter->Get_Target_Dodge())
+					if (false == iter->Get_Target_IsDodge())
 					{
 						iter->Set_Target_CanHit(false);
 

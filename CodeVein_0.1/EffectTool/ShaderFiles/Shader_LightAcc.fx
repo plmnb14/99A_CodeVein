@@ -234,14 +234,9 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	float4 fRimLight = (pow(fRim, 5.f) * rc);
 
-<<<<<<< HEAD
 	//Out.vShade.xyz += fRimLight;
 	//Out.vRim = fRimLight; // Blend¿¡¼­ ´õÇØÁÜ
-	Out.vRim.a = 0;
-=======
-	//Out.vRim = fRimLight; // Blend¿¡¼­ ´õÇØÁÜ
 	//Out.vRim.a = 0;
->>>>>>> f24047d4962cf6d9c185f6625085d078b1919efe
 	// RimLight End ==================================================================
 
 	// SSAO ====================================================================
