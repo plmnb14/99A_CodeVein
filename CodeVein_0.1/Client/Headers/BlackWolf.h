@@ -10,7 +10,8 @@ class CMonsterUI;
 class CBlackWolf final : public CGameObject
 {
 public:
-	enum MONSTER_ANITYPE {IDLE, MOVE, ATTACK, HIT, DOWN, DEAD}; //dow도 특수하게 생각하자
+	enum MONSTER_ANITYPE {IDLE, MOVE, ATTACK, HIT, CC, DEAD};
+
 	enum WOLF_IDLETYPE { IDLE_IDLE, IDLE_EAT, IDLE_SIT };
 	enum WOLF_MOVETYPE { MOVE_RUN, MOVE_WALK, MOVE_DODGE };
 	enum WOLF_ATKTYPE { ATK_NORMAL, ATK_COMBO };
@@ -76,16 +77,16 @@ private:
 	void Check_CollisionPush();
 	void Check_CollisionEvent(list<CGameObject*> plistGameObject);
 
-	void Check_Hit();
-	void Check_FBLR();
-	void Check_Dist();
-	void Set_AniEvent();
-
 	void Function_RotateBody();
 	void Function_CoolDown();
 	void Function_Movement(_float _fspeed, _v3 _vDir = { V3_NULL });
 	void Function_DecreMoveMent(_float _fMutiply = 1.f);
 	void Function_ResetAfterAtk();
+
+	void Check_Hit();
+	void Check_FBLR();
+	void Check_Dist();
+	void Set_AniEvent();
 
 	void Play_Idle();
 	void Play_Eat();

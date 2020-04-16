@@ -8,8 +8,6 @@
 #include "SetingView.h"
 #include "MonsterTool.h"
 
-#include "TestObject.h"
-
 #include "Management.h"
 #include "Terrain_Guide.h"
 #include "CollisionMgr.h"
@@ -17,6 +15,8 @@
 #include "FrameMgr.h"
 #include "CameraMgr.h"
 #include "Terrain_Guide.h"
+
+#include "TestMonster.h"
 
 #ifdef _DEBUG
 #define new DEBUG_NEW
@@ -38,10 +38,15 @@ CToolView::CToolView()
 
 CToolView::~CToolView()
 {
-	for (auto& list_iter : m_listPathInfo)
+	for (auto& list_iter : m_listMeshPathInfo)
 		Engine::Safe_Delete(list_iter);
 
-	m_listPathInfo.clear();
+	m_listMeshPathInfo.clear();
+	
+	for (auto& list_iter : m_listWeaponPathInfo)
+		Engine::Safe_Delete(list_iter);
+	
+	m_listWeaponPathInfo.clear();
 
 	Release();
 }
@@ -105,8 +110,8 @@ void CToolView::OnInitialUpdate()
 
 	Create_Mesh_PathInfo();
 
-	pManagement->LoadTex_FromPath(m_pDevice, L"../../Data/Tex_Path.dat");
 	pManagement->LoadMesh_FromPath(m_pDevice, L"../../Data/Mesh_Dynamic_Path.dat");
+	pManagement->LoadMesh_FromPath(m_pDevice, L"../../Data/Mesh_Weapon_Path.dat");
 	CCameraMgr::Get_Instance()->Reserve_ContainerSize(2);
 	CCameraMgr::Get_Instance()->Ready_Camera(m_pDevice, DYNAMIC_CAM, L"Tool_FreeCam", TOOL_VIEW, DEFAULT_MODE);
 	CCameraMgr::Get_Instance()->Set_MainCamera(DYNAMIC_CAM, L"Tool_FreeCam");
@@ -119,9 +124,6 @@ void CToolView::OnInitialUpdate()
 	//tmpCol->Set_CenterPos(TARGET_TO_TRANS(m_pGreed)->Get_Pos() - _v3{ 0, TARGET_TO_COL(m_pGreed)->Get_Radius().y * 0.5f,0 });
 	//tmpCol->SetUp_Box();
 	//tmpCol->Set_Type(COL_AABB);
-
-	//m_pDevice->GetTransform(D3DTS_WORLD, &g_matWorld);
-
 	//m_pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
 
 	m_pMainfrm = static_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
@@ -146,21 +148,29 @@ CString CToolView::Convert_RelativePath(const _tchar * pFullPath)
 
 void CToolView::Create_Mesh_PathInfo()
 {
+	_tchar szPath[MAX_STR] = L"";
+
 	_tchar szDynamicPath[MAX_STR] = L"";
 	cout << "Extracting DynamicMesh Path . . ." << endl;
-	lstrcpy(szDynamicPath, L"..\\..\\Client\\Resources\\Mesh\\");	// 문자열 복사
-	lstrcat(szDynamicPath, L"DynamicMesh");								// 문자열 결합
-	Extract_Mesh_PathInfo(szDynamicPath, m_listPathInfo, true);
+	lstrcpy(szDynamicPath, L"..\\..\\Client\\Resources\\Mesh\\DynamicMesh");	// 문자열 복사
+	Extract_Mesh_PathInfo(szDynamicPath, m_listMeshPathInfo, true);
 	cout << "Extracting Complete . . ." << endl;
-	Save_Mesh_PathInfo(m_listPathInfo);
+	lstrcpy(szPath, L"../../Data/Mesh_Dynamic_Path.dat");
+	Save_Mesh_PathInfo(m_listMeshPathInfo, szPath);
+
+	_tchar szWeaponPath[MAX_STR] = L"";
+	cout << "Extracting WeaponMesh Path . . ." << endl;
+	lstrcpy(szWeaponPath, L"..\\..\\Client\\Resources\\Mesh\\Weapons");	// 문자열 복사
+	Extract_Mesh_PathInfo(szWeaponPath, m_listWeaponPathInfo, false);
+	cout << "Extracting Complete . . ." << endl;
+	lstrcpy(szPath, L"../../Data/Mesh_Weapon_Path.dat");
+	Save_Mesh_PathInfo(m_listWeaponPathInfo, szPath);
 
 	return;
 }
 
 void CToolView::Extract_Mesh_PathInfo(const _tchar * pPath, list<MESH_INFO*>& rPathInfoLst, _bool _bIsDynamic)
 {
-	cout << "Extracting Path . . ." << endl;
-
 	wstring wstrFindPath = wstring(pPath) + L"\\*";
 
 	CFileFind find;
@@ -219,20 +229,22 @@ void CToolView::Extract_Mesh_PathInfo(const _tchar * pPath, list<MESH_INFO*>& rP
 
 			pPathInfo->szIsDynamic = szBuf_2;
 
+			wcout << pPathInfo->wstrStateKey<<"를 추출했습니다" << endl;
 			rPathInfoLst.push_back(pPathInfo);
 		}
 	}
 
+	system("cls");
+	cout << "Extract Done . . . !" << endl;
+
 	return;
 }
 
-void CToolView::Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst)
+void CToolView::Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst, _tchar* szPath)
 {
-	cout << "Saving MeshPath . . ." << endl;
-
 	wofstream fout;
 
-	fout.open(L"../../Data/Mesh_Dynamic_Path.dat");
+	fout.open(szPath/*L"../../Data/Mesh_Dynamic_Path.dat"*/);
 
 	if (fout.fail())
 		return;
@@ -249,11 +261,13 @@ void CToolView::Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst)
 			pPathInfo->szIsDynamic;
 
 		fout << wstrCombined << endl;
+		wcout << pPathInfo->wstrStateKey<<"를 저장했습니다" << endl;
 	}
 
 	fout.close();
 
-	cout << "Done . . . !" << endl;
+	system("cls");
+	cout << "Save Done . . . !" << endl;
 
 	return;
 }

@@ -32,14 +32,14 @@ protected:
 	DECLARE_MESSAGE_MAP()
 
 public:
-	//오브젝트 띄우기
 	CString Convert_RelativePath(const _tchar* pFullPath);
-	list<Engine::MESH_INFO*> Get_Meshlist() { return m_listPathInfo; }
+	list<Engine::MESH_INFO*> Get_Meshlist() { return m_listMeshPathInfo; }
+	list<Engine::MESH_INFO*> Get_Weaponlist() { return m_listWeaponPathInfo; }
 	LPDIRECT3DDEVICE9 Get_Device() { return m_pDevice; }
 
 	void Create_Mesh_PathInfo();
 	void Extract_Mesh_PathInfo(const _tchar* pPath, list<MESH_INFO*>& rPathInfoLst, _bool _bIsDynamic = false);
-	void Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst);
+	void Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst, _tchar* szPath);
 
 	void Start();
 	void Update(const _float& fTimeDelta);
@@ -51,9 +51,10 @@ public:
 	void Release();
 
 public:
-	list<Engine::MESH_INFO*>		m_listPathInfo; //리스트 박스에 저장될 메쉬이름들
+	list<Engine::MESH_INFO*>		m_listMeshPathInfo; //몬스터 이름들
+	list<Engine::MESH_INFO*>		m_listWeaponPathInfo; //무기 이름들
 	LPDIRECT3DDEVICE9				m_pDevice = nullptr; //엔진의 그래픽 디바이스를 받을 변수
-	Engine::CGameObject*			m_pGreed = nullptr; //지형
+	Engine::CGameObject*			m_pGreed = nullptr; 
 	CRenderer*						m_pRenderer = nullptr;
 
 	CMainFrame*						m_pMainfrm;
