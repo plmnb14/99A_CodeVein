@@ -225,8 +225,6 @@ void CBlackWolf::Render_Collider()
 	{
 		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
 	}
-
-	return;
 }
 
 void CBlackWolf::Enter_Collision()
@@ -404,7 +402,7 @@ void CBlackWolf::Check_Dist()
 {
 	//아래 상태시 체크 안함
 	if (MONSTER_ANITYPE::HIT == m_eFirstCategory ||
-		MONSTER_ANITYPE::DOWN == m_eFirstCategory ||
+		MONSTER_ANITYPE::CC == m_eFirstCategory ||
 		MONSTER_ANITYPE::DEAD == m_eFirstCategory)
 		return;
 
@@ -614,7 +612,7 @@ void CBlackWolf::Set_AniEvent()
 		//}
 		break;
 
-	case MONSTER_ANITYPE::DOWN:
+	case MONSTER_ANITYPE::CC:
 		break;
 
 	case MONSTER_ANITYPE::DEAD:

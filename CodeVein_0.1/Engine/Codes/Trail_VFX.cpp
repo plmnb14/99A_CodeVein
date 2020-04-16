@@ -96,6 +96,8 @@ HRESULT CTrail_VFX::Render_GameObject()
 	m_pGraphic_Dev->SetFVF(m_dwVtxFVF);
 
 	_int iPass = (m_eType == Trail_Normal ? 5 : 1);
+	if (m_bUseMask)
+		iPass = 6;
 
 	Shader_Init(m_pShader, m_iTrailIdx);
 
@@ -124,6 +126,7 @@ HRESULT CTrail_VFX::Render_GameObject_SetShader(CShader * pShader)
 	m_pGraphic_Dev->SetFVF(m_dwVtxFVF);
 
 	_int iPass = (m_eType == Trail_Normal ? 5 : 1);
+	if (m_bUseMask) iPass = 6;
 
 	Shader_Init(pShader, m_iTrailIdx);
 
@@ -303,6 +306,7 @@ HRESULT CTrail_VFX::Shader_Init(CShader* pShader, const _uint & iIndex)
 	pShader->Set_Bool("g_bDissolve", bDefaultOption);
 
 	m_pTexture->SetUp_OnShader("g_DiffuseTexture", pShader, iIndex);
+	m_pMaskTexture->SetUp_OnShader("g_GradientTexture", pShader, m_iTrailMaskIdx);
 	pShader->Set_Texture("g_DepthTexture", pManagement->Get_Target_Texture(L"Target_Depth"));
 
 	//m_pTexture->SetUp_OnShader("g_DiffuseTexture_2", pShader, iIndex);
@@ -329,6 +333,10 @@ HRESULT CTrail_VFX::Add_Component()
 
 	// For.Texture
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_SwordTrail", L"Texture", (CComponent**)&m_pTexture)))
+		return E_FAIL;
+
+	// For.MaskTexture
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_SwordTrail", L"MaskTexture", (CComponent**)&m_pMaskTexture)))
 		return E_FAIL;
 
 	m_pTransform->Set_Pos({ 0, 0, 0 });
@@ -375,6 +383,7 @@ void CTrail_VFX::Free()
 
 	Safe_Release(m_pTransform);
 	Safe_Release(m_pTexture);
+	Safe_Release(m_pMaskTexture);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pRenderer);
 }

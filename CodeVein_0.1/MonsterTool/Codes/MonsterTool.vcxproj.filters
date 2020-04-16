@@ -22,6 +22,12 @@
     <Filter Include="03.View\SetingView\00.Monster">
       <UniqueIdentifier>{9bbdc2b6-f30c-4a83-951c-300abdb13a16}</UniqueIdentifier>
     </Filter>
+    <Filter Include="04.Monster">
+      <UniqueIdentifier>{cd31ca61-a4b8-4786-af34-8e9979ba6641}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="05.Weapon">
+      <UniqueIdentifier>{289179c6-ac3d-42eb-ba55-6ee653385479}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="stdafx.h">
@@ -51,8 +57,12 @@
     <ClInclude Include="MonsterTool.h">
       <Filter>03.View\SetingView\00.Monster</Filter>
     </ClInclude>
-    <ClInclude Include="TestWeapon.h" />
-    <ClInclude Include="TestMonster.h" />
+    <ClInclude Include="TestMonster.h">
+      <Filter>04.Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="TestWeapon.h">
+      <Filter>05.Weapon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -76,8 +86,12 @@
     <ClCompile Include="MonsterTool.cpp">
       <Filter>03.View\SetingView\00.Monster</Filter>
     </ClCompile>
-    <ClCompile Include="TestMonster.cpp" />
-    <ClCompile Include="TestWeapon.cpp" />
+    <ClCompile Include="TestMonster.cpp">
+      <Filter>04.Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="TestWeapon.cpp">
+      <Filter>05.Weapon</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\res\Tool.ico">

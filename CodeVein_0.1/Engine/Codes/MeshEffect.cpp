@@ -316,13 +316,13 @@ void CMeshEffect::Setup_Info()
 		}
 	}
 
-	//if (m_vAngle != V3_NULL)
-	//{
-	//	m_pTransformCom->Set_Angle(m_vAngle);
-	//
-	//	//_v3 vAngle;
-	//	//m_pInfo->vRotDirection = vAngle;
-	//}
+	if (m_vAngle != V3_NULL)
+	{
+		m_pTransformCom->Set_Angle(m_vAngle);
+	
+		//_v3 vAngle;
+		//m_pInfo->vRotDirection = vAngle;
+	}
 }
 
 void CMeshEffect::Check_Move(_double TimeDelta)

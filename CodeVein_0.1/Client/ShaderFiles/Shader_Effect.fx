@@ -468,7 +468,31 @@ PS_OUT PS_TRAIL(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
-	Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
+	Out.vColor.a = Out.vColor.x;
+
+	// 소프트 이펙트 ==========================================================================================
+	float2		vTexUV;
+	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
+	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
+	
+	vector		vDepthInfo = tex2D(DepthSampler, vTexUV);
+	float		fViewZ = vDepthInfo.y * 500.f;
+	
+	Out.vColor.a = (Out.vColor.a * saturate(fViewZ - In.vProjPos.w)) * g_fAlpha;
+	// =========================================================================================================
+
+	return Out;
+}
+
+PS_OUT PS_TRAIL_MASK(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
+
+	// Mask
+	float4 vMask = tex2D(GradientSampler, In.vTexUV);
+	Out.vColor.a *= vMask.x;
 
 	// 소프트 이펙트 ==========================================================================================
 	float2		vTexUV;
@@ -558,16 +582,30 @@ technique Default_Technique
 		PixelShader = compile ps_3_0 PS_SSD();
 	}
 
-	pass TRAIL // 5
+	pass TRAIL_DEFAULT // 5
 	{
 		ZWriteEnable = false;
 		AlphablendEnable = true;
 		srcblend = SrcAlpha;
 		DestBlend = InvSrcAlpha;
 		cullmode = none;
+		blendop = add;
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_TRAIL();
+	}
+
+	pass TRAIL_MASK // 6
+	{
+		ZWriteEnable = false;
+		AlphablendEnable = true;
+		srcblend = SrcAlpha;
+		DestBlend = InvSrcAlpha;
+		cullmode = none;
+		blendop = add;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 PS_TRAIL_MASK();
 	}
 }
 

@@ -349,6 +349,25 @@ HRESULT CLoading::Ready_Effect(void)
 
 	if (FAILED(Add_EffectPrototype(L"ItemGet_Particle")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ItemObject")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ItemObject_Red")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ItemObject_Green")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ItemObject_Blue")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ItemObject_Purple")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ItemObject_Yellow")))
+		return E_FAIL;
+
+	if (FAILED(Add_EffectPrototype(L"MapDust")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"MapDust_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"MapMist")))
+		return E_FAIL;
 
 	if (FAILED(Add_EffectPrototype(L"Player_FootSmoke")))
 		return E_FAIL;

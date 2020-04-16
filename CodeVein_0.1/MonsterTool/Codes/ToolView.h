@@ -39,7 +39,7 @@ public:
 
 	void Create_Mesh_PathInfo();
 	void Extract_Mesh_PathInfo(const _tchar* pPath, list<MESH_INFO*>& rPathInfoLst, _bool _bIsDynamic = false);
-	void Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst, _tchar szPath);
+	void Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst, _tchar* szPath);
 
 	void Start();
 	void Update(const _float& fTimeDelta);
