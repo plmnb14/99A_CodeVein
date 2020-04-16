@@ -43,35 +43,61 @@ public:
 
 private:	// 패턴들
 	// 1. 칼 가로로 휘두르기
-	CBT_Composite_Node* Normal_HorizontalCut1();
+	CBT_Composite_Node* Normal_HorizontalCut1();	// 충돌완
 	// 2. 칼 세로로 내려치기
-	CBT_Composite_Node* Normal_VerticalCut1();
+	CBT_Composite_Node* Normal_VerticalCut1();		//충돌완
 	// 3. 칼 두번 휘두르기
-	CBT_Composite_Node* TwoCombo_Cut();
+	CBT_Composite_Node* TwoCombo_Cut();	//충돌완
 	// 4. 칼 두번 휘두르고 방패치기
-	CBT_Composite_Node* ThreeCombo_Cut();
+	CBT_Composite_Node* ThreeCombo_Cut();	// 충돌완
 	// 5. 뒤로 빠지면서 공격
-	CBT_Composite_Node* BackStep_Cut();
+	CBT_Composite_Node* BackStep_Cut();	// 충돌완,  가까이 붙어야만 맞음
 	// 6. 찌르기
-	CBT_Composite_Node* Sting();
-	// 7. 돌진
-	CBT_Composite_Node* Rush();
-	// 8. 회전 날개치기
-	CBT_Composite_Node* Wing_Attack();
+	CBT_Composite_Node* Sting();	// 충돌완
+	// 7. 회전 날개치기
+	CBT_Composite_Node* Wing_Attack();	//충돌완
+	// 8. 돌진
+	CBT_Composite_Node* Rush();	//충돌완
+
 
 	// 점멸 패턴
 	// 1. 점멸
 	CBT_Composite_Node* Flash();
 
 	// 1. 날개치기
-	CBT_Composite_Node* Flash_Wing_Attack();
+	CBT_Composite_Node* Flash_Wing_Attack();	//충돌완
 	// 2. 돌진
-	CBT_Composite_Node* Flash_Rush();
+	CBT_Composite_Node* Flash_Rush();	// 충돌완
 	// 3. 위에서 내려찍기
-	CBT_Composite_Node* Flash_Jump_Attack();
+	CBT_Composite_Node* Flash_Jump_Attack();	// 충돌완
 	// 4. 한번 베기 
-	CBT_Composite_Node* Flash_Cut();
-	// 5. 백스탭
+	CBT_Composite_Node* Flash_Cut();	// 충돌완
+
+	// 5. 점멸 후 중앙으로 내려치기
+
+	//// 게임 시작
+	CBT_Composite_Node* Start_Game();
+
+	// 체력 70퍼 이상	// 점멸 없음
+	CBT_Composite_Node* More_Than_HP_70();
+	CBT_Composite_Node* NearAttack_Dist5_More_Than_HP70();
+	CBT_Composite_Node* FarAttack_More_Than_HP70();
+
+	// 체력 70퍼 미만	// 점멸 추가
+	CBT_Composite_Node* More_Than_HP_40();
+	CBT_Composite_Node* NearAttack_Dist5_More_Than_HP40();
+	CBT_Composite_Node* FarAttack_More_Than_HP40();
+
+	// 체력 30퍼 미만	// 점멸 자주 씀
+	CBT_Composite_Node* HP_Final();
+	CBT_Composite_Node* NearAttack_Dist5_Final();
+	CBT_Composite_Node* FarAttack_Fianl();
+
+	//////// 시연회용
+	CBT_Composite_Node* Start_Show();
+	CBT_Composite_Node* Show_ChaseAndNearAttack();
+	CBT_Composite_Node* Show_NearAttack();	// 7개
+	CBT_Composite_Node* Show_FarAttack();	// 5개, 일반돌진 포함
 
 
 private:

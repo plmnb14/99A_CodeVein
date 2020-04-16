@@ -33,136 +33,28 @@ CBT_Node::BT_NODE_STATE CBT_CompareValue::Update_Node(_double TimeDelta, vector<
 
 		switch (m_eMode)
 		{
-		case Value::BOOL:
-			m_bTargetBool = pBlackBoard->Get_BoolValue(m_pTargetKey_A);
+		case Mode::EQUAL:
 
 			switch (m_eValue)
 			{
-			case Mode::EQUAL:
+			case Value::BOOL:
+				m_bTargetBool = pBlackBoard->Get_BoolValue(m_pTargetKey_A);
+
 				if (m_bTargetBool == m_bValue)
 					return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
 
 				break;
-			case Mode::NOT_EQUAL:
-				if (m_bTargetBool != m_bValue)
-					return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
+			case Value::FLOAT:
+				m_fTargetValue = pBlackBoard->Get_FloatValue(m_pTargetKey_A);
 
-				break;
-			case Mode::GREATER_THAN:
-			case Mode::SMALLER_THAN:
-				break;
-			}
-
-			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, pBlackBoard, bDebugging);
-
-		case Value::FLOAT:
-			m_fTargetValue = pBlackBoard->Get_FloatValue(m_pTargetKey_A);
-
-			switch (m_eValue)
-			{
-			case Mode::EQUAL:
-				if ( abs( m_fTargetValue - m_fValue) < 0.0001)
-					return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
-
-				break;
-			case Mode::NOT_EQUAL:
-				if (m_fTargetValue != m_fValue)
-					return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
-
-				break;
-			case Mode::GREATER_THAN:
-				if (m_fTargetValue > m_fValue)
-					return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
-
-				break;
-			case Mode::SMALLER_THAN:
-				if (m_fTargetValue < m_fValue)
-					return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
-
-				break;
-			}
-
-			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, pBlackBoard, bDebugging);
-
-		case Value::INT:
-			m_iTargetValue = pBlackBoard->Get_IntValue(m_pTargetKey_A);
-			
-			switch (m_eValue)
-			{
-			case Mode::EQUAL:
-				if (m_iTargetValue == m_iValue)
-					return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
-
-				break;
-			case Mode::NOT_EQUAL:
-				if (m_iTargetValue != m_iValue)
-					return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
-
-				break;
-			case Mode::GREATER_THAN:
-				if (m_iTargetValue > m_iValue)
-					return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
-
-				break;
-			case Mode::SMALLER_THAN:
-				if (m_iTargetValue < m_iValue)
-					return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
-
-				break;
-			}
-
-			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, pBlackBoard, bDebugging);
-
-		}
-	}
-	else
-	{
-		switch (m_eMode)
-		{
-		case Value::BOOL:
-			m_bTargetBool = pBlackBoard->Get_BoolValue(m_pTargetKey_A);
-
-			switch (m_eValue)
-			{
-			case Mode::EQUAL:
-				if (m_bTargetBool == m_bValue)
-					return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
-
-				break;
-			case Mode::NOT_EQUAL:
-				if (m_bTargetBool != m_bValue)
-					return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
-
-				break;
-			case Mode::GREATER_THAN:
-			case Mode::SMALLER_THAN:
-				break;
-			}
-
-			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, pBlackBoard, bDebugging);
-
-		case Value::FLOAT:
-			m_fTargetValue = pBlackBoard->Get_FloatValue(m_pTargetKey_A);
-
-			switch (m_eValue)
-			{
-			case Mode::EQUAL:
 				if (abs(m_fTargetValue - m_fValue) < 0.0001)
 					return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
 
 				break;
-			case Mode::NOT_EQUAL:
-				if (m_fTargetValue != m_fValue)
-					return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
+			case Value::INT:
+				m_iTargetValue = pBlackBoard->Get_IntValue(m_pTargetKey_A);
 
-				break;
-			case Mode::GREATER_THAN:
-				if (m_fTargetValue > m_fValue)
-					return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
-
-				break;
-			case Mode::SMALLER_THAN:
-				if (m_fTargetValue < m_fValue)
+				if (m_iTargetValue == m_iValue)
 					return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
 
 				break;
@@ -170,27 +62,77 @@ CBT_Node::BT_NODE_STATE CBT_CompareValue::Update_Node(_double TimeDelta, vector<
 
 			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, pBlackBoard, bDebugging);
 
-		case Value::INT:
-			m_iTargetValue = pBlackBoard->Get_IntValue(m_pTargetKey_A);
+		case Mode::NOT_EQUAL:
 
 			switch (m_eValue)
 			{
-			case Mode::EQUAL:
-				if (m_iTargetValue == m_iValue)
+			case Value::BOOL:
+				m_bTargetBool = pBlackBoard->Get_BoolValue(m_pTargetKey_A);
+
+				if (m_bTargetBool != m_bValue)
 					return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
 
 				break;
-			case Mode::NOT_EQUAL:
+			case Value::FLOAT:
+				m_fTargetValue = pBlackBoard->Get_FloatValue(m_pTargetKey_A);
+
+				if (m_fTargetValue != m_fValue)
+					return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
+
+				break;
+			case Value::INT:
+				m_iTargetValue = pBlackBoard->Get_IntValue(m_pTargetKey_A);
+
 				if (m_iTargetValue != m_iValue)
 					return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
 
 				break;
-			case Mode::GREATER_THAN:
+			}
+
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, pBlackBoard, bDebugging);
+
+		case Mode::GREATER_THAN:
+
+			switch (m_eValue)
+			{
+			case Value::BOOL:
+
+				break;
+			case Value::FLOAT:
+				m_fTargetValue = pBlackBoard->Get_FloatValue(m_pTargetKey_A);
+
+				if (m_fTargetValue > m_fValue)
+					return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
+
+				break;
+			case Value::INT:
+				m_iTargetValue = pBlackBoard->Get_IntValue(m_pTargetKey_A);
+
 				if (m_iTargetValue > m_iValue)
 					return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
 
 				break;
-			case Mode::SMALLER_THAN:
+			}
+
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, pBlackBoard, bDebugging);
+
+		case Mode::SMALLER_THAN:
+
+			switch (m_eValue)
+			{
+			case Value::BOOL:
+
+				break;
+			case Value::FLOAT:
+				m_fTargetValue = pBlackBoard->Get_FloatValue(m_pTargetKey_A);
+
+				if (m_fTargetValue < m_fValue)
+					return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
+
+				break;
+			case Value::INT:
+				m_iTargetValue = pBlackBoard->Get_IntValue(m_pTargetKey_A);
+
 				if (m_iTargetValue < m_iValue)
 					return m_pChild->Update_Node(TimeDelta, pNodeStack, plistSubNodeStack, pBlackBoard, bDebugging);
 
@@ -198,21 +140,22 @@ CBT_Node::BT_NODE_STATE CBT_CompareValue::Update_Node(_double TimeDelta, vector<
 			}
 
 			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, pBlackBoard, bDebugging);
-
 		}
+	}
+	else
+	{
+		switch (m_eChild_State)
+		{
+		case BT_NODE_STATE::SERVICE:
+		case BT_NODE_STATE::FAILED:
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, pBlackBoard, bDebugging);
 
-		//switch (m_eChild_State)
-		//{
-		//case BT_NODE_STATE::SERVICE:
-		//case BT_NODE_STATE::FAILED:
-		//	return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::FAILED, bDebugging);
+		case BT_NODE_STATE::INPROGRESS:
+			return BT_NODE_STATE::INPROGRESS;
 
-		//case BT_NODE_STATE::INPROGRESS:
-		//	return BT_NODE_STATE::INPROGRESS;
-
-		//case BT_NODE_STATE::SUCCEEDED:
-		//	return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, bDebugging);
-		//}
+		case BT_NODE_STATE::SUCCEEDED:
+			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, pBlackBoard, bDebugging);
+		}
 	}
 
 	return BT_NODE_STATE::INPROGRESS;

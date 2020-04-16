@@ -1,13 +1,11 @@
 #pragma once
 
-#include "Client_Defines.h"
-#include "GameObject.h"
-#include "Management.h"
-#include "Effect.h"
+#include "Monster.h"
 
 BEGIN(Client)
 
-class CPoisonBullet final : public CGameObject
+class Engine::CEffect;
+class CPoisonBullet final : public CMonster
 {
 protected:
 	explicit CPoisonBullet(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -55,8 +53,6 @@ private:
 
 private:
 	HRESULT Update_Collider();
-
-	HRESULT Draw_Collider();
 
 private:
 	virtual void OnCollisionEnter();

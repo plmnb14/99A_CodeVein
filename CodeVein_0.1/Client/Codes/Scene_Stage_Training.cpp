@@ -10,11 +10,7 @@
 #include "MassageUI.h"
 #include "MonsterUI.h"
 
-#include "SwordGenji.h"
-#include "GunGenji.h"
-#include "SwordShieldGenji.h"
-#include "PoisonButterfly.h"
-#include "QueensKnight.h"
+#include "MonsterHeaders.h"
 
 #include "Player_Colleague.h"
 
@@ -47,7 +43,9 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 _int CScene_Stage_Training::Update_Scene(_double TimeDelta)
 {
 	CUI_Manager::Get_Instance()->Update_UI();
-		
+	
+	//Create_Fog(TimeDelta);
+
 	return _int();
 }
 
@@ -215,9 +213,6 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 
 
 	// 독나방
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_PoisonButterfly", SCENE_STAGE, L"Layer_Monster")))
-	//	return E_FAIL;
-
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_PoisonButterfly", &CPoisonButterfly::INFO(10.f, 5.f, 2.f));
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(8.f, 0.f, 8.f));
 	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
@@ -233,12 +228,20 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
+	// 얼음여자
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_IceGirl", &CIceGirl::INFO(10.f, 5.f, 2.f));
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(3.f, 0.f, 3.f));
+	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
+	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
+
 	// 네모네모 동료
-	pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague", nullptr);
-	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(5.f, 0.f, 5.f));
-	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague", nullptr);
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(5.f, 0.f, 5.f));
+	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
 
 
 	// 투사체 레이어만 미리 추가
@@ -255,6 +258,34 @@ HRESULT CScene_Stage_Training::Ready_Layer_Environment()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CScene_Stage_Training::Create_Fog(_double TimeDelta)
+{
+	const _float FOG_OFFSET = 10.f;
+
+	m_fMapFogDelay += _float(TimeDelta);
+	if (m_fMapFogDelay > FOG_OFFSET)
+	{
+		m_fMapFogDelay = 0.f;
+
+		for (_int i = 0; i < 100; ++i)
+		{
+			_mat matRotY;
+			_v3 vDir = _v3(1.f, 0.f, 1.f);
+			D3DXMatrixIdentity(&matRotY);
+
+			D3DXMatrixRotationY(&matRotY, D3DXToRadian(_float(CCalculater::Random_Num_Double(0, 360))));
+			D3DXVec3TransformNormal(&vDir, &vDir, &matRotY);
+			D3DXVec3Normalize(&vDir, &vDir);
+
+			_float fMinRange = 40.f;
+			_float fRandRange = _float(CCalculater::Random_Num_Double(0, 30));
+			_v3 vRandPos = vDir * (fMinRange + fRandRange);
+
+			g_pManagement->Create_Effect(L"MapMist", vRandPos + _v3(0.f, -0.5f, 0.f), nullptr);
+		}
+	}
 }
 
 

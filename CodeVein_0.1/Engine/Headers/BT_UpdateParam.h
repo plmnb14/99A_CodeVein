@@ -7,7 +7,7 @@ class CCollider;
 class ENGINE_DLL CBT_UpdateParam final : public CBT_Service_Node
 {
 public:
-	enum Param { Collider};
+	enum Param { Collider, Dodge};
 
 	typedef struct tagInitInfo
 	{

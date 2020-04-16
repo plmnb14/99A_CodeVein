@@ -16,19 +16,7 @@
 #include "UI_Manager.h"
 #include "Item_Manager.h"
 
-#include "PoisonButterfly.h"
-#include "PoisonBullet.h"
-#include "PoisonChaseBullet.h"
-#include "PoisonRotationBullet.h"
-#include "PoisonTornado.h"
-#include "BlackUrchin.h"
-#include "QueensKnight.h"
-#include "BlackWolf.h"
-#include "GunGenji.h"
-#include "GunGenjiBullet.h"
-#include "SwordGenji.h"
-#include "SwordGenjiBullet.h"
-#include "SwordShieldGenji.h"
+#include "MonsterHeaders.h"
 #include "YachaMan.h"
 
 #include "PlayerHP.h"
@@ -170,9 +158,92 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 #pragma endregion
 
+#pragma region Queens Knight
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_2Phase_SwordCrash_Chunk")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_2Phase_SwordCrash_Chunk_Dark")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_2Phase_SwordCrash_ShockWave")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DistortionCircle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Intro_Smoke_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Intro_Smoke_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_JumpDown_Particle_Red")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_JumpDown_ShockWave", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_JumpDown_Smoke_Black")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_JumpDown_Smoke_Red")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lava_Floor_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lava_Floor_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_Hand")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lightning_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lightning_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lightning_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lightning_3")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lightning_4")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lightning_5")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_LightningBody_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_ShieldAttack_Distortion")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_ShieldAttack_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_ShieldAttack_RedLight")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_SwordCrash_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_SwordCrash_Particle_Orange")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Particle_Black")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Smoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Smoke_Red")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_DistortionSmoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Trail_Lightning_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Trail_Lightning_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Trail_Lightning_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Trail_Lightning_2_Dark")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_WhirlWind_Smoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Sting_Tornade", true)))
+		return E_FAIL;
+#pragma endregion
+	
 	if (FAILED(Add_EffectPrototype(L"Boss_KnockDown_Dust")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Boss_Dead_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"SpawnParticle_ForBoss")))
 		return E_FAIL;
 
 #pragma region Blood
@@ -277,6 +348,25 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 
 	if (FAILED(Add_EffectPrototype(L"ItemGet_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ItemObject")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ItemObject_Red")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ItemObject_Green")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ItemObject_Blue")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ItemObject_Purple")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ItemObject_Yellow")))
+		return E_FAIL;
+
+	if (FAILED(Add_EffectPrototype(L"MapDust")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"MapDust_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"MapMist")))
 		return E_FAIL;
 
 	if (FAILED(Add_EffectPrototype(L"Player_FootSmoke")))
@@ -606,6 +696,18 @@ _uint CLoading::Loading_Stage()
 		return E_FAIL;
 	// 여왕의 기사
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_QueensKnight", CQueensKnight::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 얼음여자
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceGirl", CIceGirl::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 얼음여자 콜드빔
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeam", CColdBeam::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 얼음여자 검기발사
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordBullet", CSwordBullet::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// 얼음여자 얼음보호막
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceBarrier", CIceBarrier::Create(m_pGraphicDev))))
 		return E_FAIL;
 	// 검은 성게
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))

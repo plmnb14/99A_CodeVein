@@ -24,8 +24,8 @@ CBT_Node::BT_NODE_STATE CBT_UpdateGageRatio::Update_Node(_double TimeDelta, vect
 				break;
 			else
 			{
-				_int CurGage = pBlackBoard->Get_IntValue(m_pTargetKey_CurGage);
-				_int MaxGage = pBlackBoard->Get_IntValue(m_pTargetKey_MaxGage);
+				_float CurGage = pBlackBoard->Get_FloatValue(m_pTargetKey_CurGage);
+				_float MaxGage = pBlackBoard->Get_FloatValue(m_pTargetKey_MaxGage);
 
 				if (0 <= CurGage || 0 <= MaxGage)
 					pBlackBoard->Set_Value(m_pKey_Save_GageRatio, 0);
@@ -38,8 +38,8 @@ CBT_Node::BT_NODE_STATE CBT_UpdateGageRatio::Update_Node(_double TimeDelta, vect
 
 			// 积己 冉荐 公力茄
 		case CBT_Service_Node::Infinite:
-			_int CurGage = pBlackBoard->Get_IntValue(m_pTargetKey_CurGage);
-			_int MaxGage = pBlackBoard->Get_IntValue(m_pTargetKey_MaxGage);
+			_float CurGage = pBlackBoard->Get_FloatValue(m_pTargetKey_CurGage);
+			_float MaxGage = pBlackBoard->Get_FloatValue(m_pTargetKey_MaxGage);
 
 			if (0 <= CurGage || 0 <= MaxGage)
 				pBlackBoard->Set_Value(m_pKey_Save_GageRatio, 0);

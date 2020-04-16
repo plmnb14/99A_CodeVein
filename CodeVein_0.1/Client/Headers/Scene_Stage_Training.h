@@ -26,10 +26,16 @@ public:
 	HRESULT Ready_Layer_Environment();
 
 private:
+	void Create_Fog(_double TimeDelta);
+
+private:
 	CNavMesh*		m_pNavMesh = nullptr;
 
 private:
 	HRESULT Ready_LightDesc();
+
+private:
+	_float m_fMapFogDelay = 10.f;
 
 public:
 	static CScene_Stage_Training* Create(LPDIRECT3DDEVICE9 pGraphic_Device, _bool _bLoadStatic);

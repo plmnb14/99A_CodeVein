@@ -28,6 +28,9 @@ private:
 	list<CGameObject*>			m_RenderList[RENDER_END];
 	typedef list<CGameObject*>	RENDERLIST;
 private:
+	INSTANCEDATA* m_pInstanceData = nullptr;
+	_int m_iInstanceCnt = 0;
+private:
 	CTarget_Manager*			m_pTarget_Manager = nullptr;
 	CLight_Manager*				m_pLight_Manager = nullptr;
 private:
@@ -56,6 +59,8 @@ private:
 	HRESULT Render_MotionBlurTarget();
 	HRESULT Render_Distortion();
 	HRESULT Render_Alpha();
+	HRESULT Render_Effect();
+	HRESULT Render_Instance();
 	HRESULT Render_UI();
 private:
 	HRESULT Render_LightAcc();

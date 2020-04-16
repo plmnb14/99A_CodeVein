@@ -94,7 +94,9 @@ HRESULT CWeapon::Render_GameObject()
 		//
 		//if (false == m_tmpEmissiveTest)
 		//	m_iPass = 0;
-		m_iPass = m_pMesh_Static->Get_MaterialPass(i);
+
+		if (false == m_bReadyDead && !m_bDissolve)
+			m_iPass = m_pMesh_Static->Get_MaterialPass(i);
 
 		m_pShader->Begin_Pass(m_iPass);
 
@@ -278,18 +280,18 @@ void CWeapon::Update_Trails(_double TimeDelta)
 	if (m_pTrailEffect)
 	{
 		m_pTrailEffect->Set_ParentTransform(&matWorld);
-		m_pTrailEffect->Ready_Info(vBegin + vDir * 0.5f, vBegin + vDir * 1.4f);
+		m_pTrailEffect->Ready_Info(vBegin + vDir * m_fTrailBegin, vBegin + vDir * m_fTrailEnd);
 		m_pTrailEffect->Update_GameObject(TimeDelta);
 	}
 
-	if (m_pDistortionEffect && !m_bSkillMode)
+	if (m_pDistortionEffect && !m_bSingleTrail)
 	{
 		m_pDistortionEffect->Set_ParentTransform(&matWorld);
 		m_pDistortionEffect->Ready_Info(vBegin + vDir * 0.2f, vBegin + vDir * 1.5f);
 		m_pDistortionEffect->Update_GameObject(TimeDelta);
 	}
 
-	if (m_pStaticTrailEffect && !m_bSkillMode)
+	if (m_pStaticTrailEffect)
 	{
 		m_pStaticTrailEffect->Set_ParentTransform(&matWorld);
 		m_pStaticTrailEffect->Ready_Info(vBegin + vDir * 0.2f, vBegin + vDir * 1.6f);
@@ -311,12 +313,29 @@ void CWeapon::Set_Enable_Trail(_bool _bEnable)
 
 void CWeapon::Set_SkillMode(_bool _bSkill)
 {
-	m_bSkillMode = _bSkill;
+	m_bSingleTrail = _bSkill;
 
 	if (_bSkill)
 		m_pTrailEffect->Set_TrailIdx(6);
 	else
 		m_pTrailEffect->Set_TrailIdx(0);
+}
+
+void CWeapon::Set_TrailIndex(_int iIdx)
+{
+	m_bSingleTrail = true;
+	m_pTrailEffect->Set_TrailIdx(iIdx);
+}
+
+void CWeapon::Set_TrailUseMask(_int iIdx)
+{
+	m_pTrailEffect->Set_UseMask(iIdx);
+}
+
+void CWeapon::Set_TrailSize(_float fBegin, _float fEnd)
+{
+	m_fTrailBegin = fBegin;
+	m_fTrailEnd = fEnd;
 }
 
 void CWeapon::Set_Enable_Record(_bool _bRecord)
@@ -454,6 +473,18 @@ void CWeapon::Change_WeaponData(WEAPON_DATA _eWpnData)
 		m_eWeaponType = WEAPON_Hammer;
 		break;
 	}
+	case WPN_QueenLance:
+	{
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_QueenLance");
+		m_eWeaponType = WEAPON_Halverd;
+		break;
+	}
+	case WPN_QueenShield:
+	{
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_QueenShield");
+		m_eWeaponType = WEAPON_Shield;
+		break;
+	}
 	}
 
 	Change_WeaponMesh(WeaponMeshName);
@@ -562,6 +593,18 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[WPN_Hammer_YachaMan].fTrail_Min = 0.75f;
 	m_tWeaponParam[WPN_Hammer_YachaMan].fTrail_Max = 1.5f;
 	m_tWeaponParam[WPN_Hammer_YachaMan].fCol_Height = 1.0f;
+
+	m_tWeaponParam[WPN_QueenLance].fDamage = 25.f;
+	m_tWeaponParam[WPN_QueenLance].fRadius = 1.3f;
+	m_tWeaponParam[WPN_QueenLance].fTrail_Min = 0.75f;
+	m_tWeaponParam[WPN_QueenLance].fTrail_Max = 1.5f;
+	m_tWeaponParam[WPN_QueenLance].fCol_Height = 1.6f;
+
+	m_tWeaponParam[WPN_QueenShield].fDamage = 25.f;
+	m_tWeaponParam[WPN_QueenShield].fRadius = 0.7f;
+	m_tWeaponParam[WPN_QueenShield].fTrail_Min = 0.f;
+	m_tWeaponParam[WPN_QueenShield].fTrail_Max = 1.f;
+	m_tWeaponParam[WPN_QueenShield].fCol_Height = 0.f;
 
 	return S_OK;
 }

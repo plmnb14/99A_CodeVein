@@ -451,4 +451,22 @@ namespace Engine
 		_float		fSpeed = 0.f;
 		_double		dLifeTime = 0;
 	}BULLET_INFO;
+
+	// 인스턴스 데이터
+	typedef struct tagInstanceData
+	{
+		float fRight[4];
+		float fUp[4];
+		float fLook[4];
+		float fPos[4];
+		float fColor[4];
+		float fDistortion;
+		float fAlpha;
+		float fDissolve;
+		bool bDissolve;
+		bool bUseColorTex;
+		bool bReverseColor;
+		bool bUseRGBA;
+		bool bUseMaskTex;
+	}INSTANCEDATA;
 }

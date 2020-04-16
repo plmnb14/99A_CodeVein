@@ -669,7 +669,7 @@ PS_OUT PS_DISSOLVE(PS_IN In)
 		vColor.a = 0;
 
 	if (fxColor.r >= g_fFxAlpha - 0.01 && fxColor.r <= g_fFxAlpha + 0.01)
-		vColor = pow(float4(0.9, 0.75, 0.65, 1), 2.2); //
+		vColor = pow(float4(1.7, 0.95, 0.85, 1), 2.2); //
 
 	Out.vDiffuse = vColor;
 	Out.vNormal = vector(In.N.xyz * 0.5f + 0.5f, 0.f);
@@ -730,6 +730,8 @@ technique Default_Technique
 		AlphaTestEnable = true;
 		AlphaRef = 0;
 		AlphaFunc = Greater;
+
+		cullmode = ccw;
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_DISSOLVE();
