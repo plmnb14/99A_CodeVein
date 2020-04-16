@@ -111,6 +111,11 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 			pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 15;
 		}
 
+		if (!lstrcmp(szTextureFileName, L"T_Inner_Female1_C.tga"))
+		{
+			cout << "1" << endl;
+		}
+
 		//==================================================================================================================================
 		// C - Color
 		//==================================================================================================================================
@@ -139,6 +144,7 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 		//==================================================================================================================================
 		Change_TextureFileName(szFullPath, L"E", L"R");
 		if (SUCCEEDED(D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_ROUGHNESS_MAP])))
+			m_bIncludeMap[MESHTEXTURE::TYPE_ROUGHNESS_MAP] = true;
 		//==================================================================================================================================
 		// U - Union
 		//==================================================================================================================================
@@ -154,9 +160,9 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 		//==================================================================================================================================
 		// ID - Material ID
 		//==================================================================================================================================
-		//Change_TextureFileName(szFullPath, L"T", L"I");
-		//if (SUCCEEDED(D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_ID_MAP])))
-		//	m_bIncludeMap[MESHTEXTURE::TYPE_ID_MAP] = true;
+		Change_TextureFileName(szFullPath, L"T", L"I");
+		if (SUCCEEDED(D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_ID_MAP])))
+			m_bIncludeMap[MESHTEXTURE::TYPE_ID_MAP] = true;
 		//==================================================================================================================================
 		// AO - Ambient Occlusion
 		//==================================================================================================================================
@@ -164,6 +170,8 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 		//Change_TextureFileName(szFullPath, L"I", L"A");
 		//if (SUCCEEDED(D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_AO_MAP])))
 		//	m_bIncludeMap[MESHTEXTURE::TYPE_AO_MAP] = true;
+
+		// D N S U ID
 
 		if (m_bIncludeMap[MESHTEXTURE::TYPE_NORMAL_MAP] == true)
 		{
@@ -179,6 +187,21 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 				{
 					// D N S E
 					pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 6;
+					continue;
+				}
+
+				else if (m_bIncludeMap[MESHTEXTURE::TYPE_UNION_MAP] == true)
+				{
+					// D N S U
+					pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 11;
+
+					if (m_bIncludeMap[MESHTEXTURE::TYPE_ID_MAP] == true)
+					{
+						// D N S U ID
+						pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 12;
+						continue;
+					}
+
 					continue;
 				}
 

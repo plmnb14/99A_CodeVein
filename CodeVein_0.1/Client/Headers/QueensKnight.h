@@ -59,6 +59,7 @@ private:	// 패턴들
 	// 8. 돌진
 	CBT_Composite_Node* Rush();	//충돌완
 
+	//000
 
 	// 점멸 패턴
 	// 1. 점멸
@@ -88,7 +89,7 @@ private:	// 패턴들
 	CBT_Composite_Node* NearAttack_Dist5_More_Than_HP40();
 	CBT_Composite_Node* FarAttack_More_Than_HP40();
 
-	// 체력 30퍼 미만	// 점멸 자주 씀
+	// 체력 40퍼 미만	// 점멸 자주 씀
 	CBT_Composite_Node* HP_Final();
 	CBT_Composite_Node* NearAttack_Dist5_Final();
 	CBT_Composite_Node* FarAttack_Fianl();

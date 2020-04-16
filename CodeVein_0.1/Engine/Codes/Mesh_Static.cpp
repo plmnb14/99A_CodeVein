@@ -116,13 +116,13 @@ HRESULT CMesh_Static::Ready_Component_Prototype(const _tchar * pFilePath, const 
 		Change_TextureFileName(szFullPath, L"U", L"T");
 		if (SUCCEEDED(D3DXCreateTextureFromFile(m_pGraphic_Dev, szFullPath, &m_ppTextures[i].pTextures[MESHTEXTURE::TYPE_TRANSPARENCY_MAP])))
 			m_bIncludeMap[MESHTEXTURE::TYPE_TRANSPARENCY_MAP] = true;
-		////==================================================================================================================================
-		//// ID - Material ID
-		////==================================================================================================================================
-		//Change_TextureFileName(szFullPath, L"T", L"I");
-		//if (SUCCEEDED(D3DXCreateTextureFromFile(m_pGraphic_Dev, szFullPath, &m_ppTextures[i].pTextures[MESHTEXTURE::TYPE_ID_MAP])))
-		//	m_bIncludeMap[MESHTEXTURE::TYPE_ID_MAP] = true;
-		////==================================================================================================================================
+		//==================================================================================================================================
+		// ID - Material ID
+		//==================================================================================================================================
+		Change_TextureFileName(szFullPath, L"T", L"I");
+		if (SUCCEEDED(D3DXCreateTextureFromFile(m_pGraphic_Dev, szFullPath, &m_ppTextures[i].pTextures[MESHTEXTURE::TYPE_ID_MAP])))
+			m_bIncludeMap[MESHTEXTURE::TYPE_ID_MAP] = true;
+		//==================================================================================================================================
 		//// AO - Ambient Occlusion
 		////==================================================================================================================================
 		//Change_TextureFileName(szFullPath, L"D", L"O");
@@ -156,6 +156,12 @@ HRESULT CMesh_Static::Ready_Component_Prototype(const _tchar * pFilePath, const 
 			{
 				// D N E
 				m_dwMaterialPass[i] = 5;
+
+				if (m_bIncludeMap[MESHTEXTURE::TYPE_ID_MAP] == true)
+				{
+					m_dwMaterialPass[i] = 17;
+				}
+
 				continue;
 			}
 
@@ -178,6 +184,11 @@ HRESULT CMesh_Static::Ready_Component_Prototype(const _tchar * pFilePath, const 
 				// D N R
 				m_dwMaterialPass[i] = 10;
 				continue;
+			}
+
+			else if (m_bIncludeMap[MESHTEXTURE::TYPE_ID_MAP] == true)
+			{
+				m_dwMaterialPass[i] = 16;
 			}
 		}
 	}
@@ -294,17 +305,19 @@ HRESULT CMesh_Static::Change_TextureFileName(_tchar* pFilePath, _tchar * pSourMa
 
 	for (_int i = iLength; i >= 0; --i)
 	{
-		if (!lstrcmp(&pFilePath[i], L"_"))
-			break;
-
 		if (pFilePath[i] == *pSourMark)
 		{
 			pFilePath[i] = *pDestMark;
+
+			if (!lstrcmp(pDestMark, L"I"))
+			{
+				lstrcpy(&pFilePath[i], L"ID.tga");
+			}
+
 			break;
 		}
 	}
-
-	return NOERROR;
+	return S_OK;
 }
 
 CMesh_Static * CMesh_Static::Create(LPDIRECT3DDEVICE9 pGraphic_Device, const _tchar * pFilePath, const _tchar * pFileName, _mat PivotMatrix)

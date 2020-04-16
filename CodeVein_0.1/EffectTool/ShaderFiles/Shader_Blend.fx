@@ -370,7 +370,7 @@ PS_OUT PS_Bloom(PS_IN In) // Extract Bright Color
 	// Bloom 3====================================================================
 
 	Out.vColor = vDiffuse;
-	Out.vColor.rgb -= 1.5f; // 작은 값일 수록 빛에 민감한 광선
+	Out.vColor.rgb -= 0.5f; // 작은 값일 수록 빛에 민감한 광선
 	// 작은 빛도 블룸되요
 
 	Out.vColor = 3.0f * max(Out.vColor, 0.0f); // 큰 값일 수록 확실한 모양의 광선

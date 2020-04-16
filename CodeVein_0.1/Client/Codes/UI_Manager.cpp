@@ -1,8 +1,8 @@
 #include "stdafx.h"
 #include "..\Headers\UI_Manager.h"
 
-#include "Button_UI.h"
-#include "HPBack.h"
+//#include "Button_UI.h"
+//#include "HPBack.h"
 #include "PlayerHP.h"
 #include "PlayerST.h"
 #include "BossDecoUI.h"
@@ -47,8 +47,8 @@ CUI_Manager::~CUI_Manager()
 
 HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 {
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_HPBack", CHPBack::Create(pDevice))))
-		return E_FAIL;
+	//if (FAILED(g_pManagement->Add_Prototype(L"GameObject_HPBack", CHPBack::Create(pDevice))))
+	//	return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_PlayerHP", CPlayerHP::Create(pDevice))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_PlayerST", CPlayerST::Create(pDevice))))
@@ -57,8 +57,8 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BossHP", CBossHP::Create(pDevice))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ButtonUI", CButton_UI::Create(pDevice))))
-		return E_FAIL;
+	//if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ButtonUI", CButton_UI::Create(pDevice))))
+	//	return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_QuickSlot", CQuickSlot::Create(pDevice))))
 		return E_FAIL;
 	

@@ -1082,7 +1082,10 @@ void CPoisonButterfly::Down()
 		m_tObjParam.bCanHit = true;
 
 		if (true == m_bDown_LoopAni)
+		{
 			m_pMeshCom->Reset_OldIndx();	//루프 애니 초기화
+			m_pMeshCom->SetUp_Animation(Ani_Down_Loop);
+		}
 
 		m_pAIControllerCom->Reset_BT();
 	}
@@ -1404,7 +1407,7 @@ void CPoisonButterfly::OnCollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					if (false == iter->Get_Target_Dodge())
+					if (false == iter->Get_Target_IsDodge())
 					{
 						iter->Set_Target_CanHit(false);
 

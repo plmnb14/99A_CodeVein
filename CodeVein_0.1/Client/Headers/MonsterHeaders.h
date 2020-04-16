@@ -12,6 +12,8 @@
 #include "SwordBullet.h"
 #include "IceBarrier.h"
 
+#include "FireBoy.h"
+
 #include "BlackWolf.h"
 
 #include "GunGenji.h"

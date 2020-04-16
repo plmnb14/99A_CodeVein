@@ -165,7 +165,7 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	// 0 ~ 1
 	// -1 ~ 1
-	vector		vNormal = vector(vNormalInfo.xyz * 2.f - 1.f, 0.f);
+	vector		vNormal = vector(vNormalInfo.xyz * 2.f - 1.f, 0.f) ;
 
 	Out.vShade = g_vLightDiffuse * (saturate(dot(normalize(g_vLightDir) * -1.f, vNormal)) + saturate(g_vLightAmbient * g_vMtrlAmbient));
 	Out.vShade.a = 1.f;
@@ -219,7 +219,7 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	vector		vLook = vWorldPos - g_vCamPosition;
 
-	Out.vSpecular = g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 20.f) * vSpecularIntensity.x;
+	Out.vSpecular = g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 20.f) * vSpecularIntensity.y;
 	Out.vSpecular.a = 0.f;
 
 	// RimLight ======================================================================
@@ -234,6 +234,7 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	float4 fRimLight = (pow(fRim, 5.f) * rc);
 
+	//Out.vShade.xyz += fRimLight;
 	//Out.vRim = fRimLight; // Blendø°º≠ ¥ı«ÿ¡‹
 	//Out.vRim.a = 0;
 	// RimLight End ==================================================================

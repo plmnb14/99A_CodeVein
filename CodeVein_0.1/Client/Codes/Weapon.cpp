@@ -64,10 +64,14 @@ _int CWeapon::Late_Update_GameObject(_double TimeDelta)
 		nullptr == m_pMesh_Static)
 		return E_FAIL;
 
-	if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
-		return E_FAIL;
-	if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-		return E_FAIL;
+	if (false == m_tObjParam.bInvisible)
+	{
+		if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
+			return E_FAIL;
+		if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+			return E_FAIL;
+	}
+
 	//if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
 	//	return E_FAIL;
 
@@ -90,26 +94,12 @@ HRESULT CWeapon::Render_GameObject()
 
 	for (_uint i = 0; i < iNumSubSet; ++i)
 	{
-		//m_iPass = 0 == i ? 0 : 5;
-		//
-		//if (false == m_tmpEmissiveTest)
-		//	m_iPass = 0;
-
 		if (false == m_bReadyDead && !m_bDissolve)
 			m_iPass = m_pMesh_Static->Get_MaterialPass(i);
 
 		m_pShader->Begin_Pass(m_iPass);
 
 		m_pShader->Set_StaticTexture_Auto(m_pMesh_Static, i);
-
-		//if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
-		//	return E_FAIL;
-		//
-		//if (FAILED(m_pShader->Set_Texture("g_NormalTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_NORMAL_MAP))))
-		//	return E_FAIL;
-
-		//if (FAILED(m_pShader->Set_Texture("g_EmissiveTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_EMISSIVE_MAP))))
-		//	return E_FAIL;
 
 		m_pShader->Commit_Changes();
 
@@ -188,8 +178,6 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 	if (false == m_tObjParam.bCanAttack)
 		return;
 
-	//cout << "uykiuyuh" << endl;
-
 	_bool bFirst = true;
 	//게임 오브젝트를 받아와서
 	for (auto& iter : plistGameObject)
@@ -223,7 +211,7 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					if (false == iter->Get_Target_Dodge())
+					if (false == iter->Get_Target_IsDodge())
 					{
 						iter->Set_Target_CanHit(false);
 
@@ -232,7 +220,7 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 							iter->Set_HitAgain(true);
 						}
 
-						if (false == iter->Get_Target_Dodge())
+						if (false == iter->Get_Target_IsDodge())
 						{
 							m_tObjParam.fDamage = m_tWeaponParam->fDamage;
 
@@ -273,6 +261,10 @@ void CWeapon::Update_Trails(_double TimeDelta)
 
 	_mat matWorld = m_pTransform->Get_WorldMat();
 	_v3 vBegin, vDir;
+	_float fBeginValue, fEndValue;
+
+	fBeginValue = m_tWeaponParam[m_eWeaponData].fTrail_Min;
+	fEndValue = m_tWeaponParam[m_eWeaponData].fTrail_Max;
 
 	memcpy(vBegin, &m_pTransform->Get_WorldMat()._41, sizeof(_v3));
 	memcpy(vDir, &m_pTransform->Get_WorldMat()._31, sizeof(_v3));
@@ -280,21 +272,21 @@ void CWeapon::Update_Trails(_double TimeDelta)
 	if (m_pTrailEffect)
 	{
 		m_pTrailEffect->Set_ParentTransform(&matWorld);
-		m_pTrailEffect->Ready_Info(vBegin + vDir * m_fTrailBegin, vBegin + vDir * m_fTrailEnd);
+		m_pTrailEffect->Ready_Info(vBegin + vDir * fBeginValue, vBegin + vDir * fEndValue);
 		m_pTrailEffect->Update_GameObject(TimeDelta);
 	}
 
 	if (m_pDistortionEffect && !m_bSingleTrail)
 	{
 		m_pDistortionEffect->Set_ParentTransform(&matWorld);
-		m_pDistortionEffect->Ready_Info(vBegin + vDir * 0.2f, vBegin + vDir * 1.5f);
+		m_pDistortionEffect->Ready_Info(vBegin + vDir * fBeginValue, vBegin + vDir * fEndValue);
 		m_pDistortionEffect->Update_GameObject(TimeDelta);
 	}
 
 	if (m_pStaticTrailEffect)
 	{
 		m_pStaticTrailEffect->Set_ParentTransform(&matWorld);
-		m_pStaticTrailEffect->Ready_Info(vBegin + vDir * 0.2f, vBegin + vDir * 1.6f);
+		m_pStaticTrailEffect->Ready_Info(vBegin + vDir * fBeginValue, vBegin + vDir * fEndValue);
 		m_pStaticTrailEffect->Update_GameObject(TimeDelta);
 	}
 }
@@ -433,14 +425,22 @@ void CWeapon::Change_WeaponData(WEAPON_DATA _eWpnData)
 	{
 	case WPN_SSword_Normal:
 	{
-		lstrcpy(WeaponMeshName, L"Mesh_Sword");
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_Sword");
 		m_eWeaponType = WEAPON_Ssword;
 		break;
 	}
+
+	case WPN_SSword_Military:
+	{
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_Sword_Military");
+		m_eWeaponType = WEAPON_Ssword;
+		break;
+	}
+
 	case WPN_LSword_Normal:
 	{
-		lstrcpy(WeaponMeshName, L"Mesh_Sword");
-		m_eWeaponType = WEAPON_Ssword;
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_LSword");
+		m_eWeaponType = WEAPON_LSword;
 		break;
 	}
 	case WPN_Hammer_Normal:
@@ -513,11 +513,11 @@ HRESULT CWeapon::Add_Component()
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Wpn_Sword", L"Com_StaticMesh", (CComponent**)&m_pMesh_Static)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Wpn_Sword_Military", L"Com_StaticMesh", (CComponent**)&m_pMesh_Static)))
 		return E_FAIL;
 
 	// 최초 무기 이름
-	lstrcpy(m_szName, L"Mesh_Wpn_Sword");
+	lstrcpy(m_szName, L"Mesh_Wpn_Sword_Military");
 
 
 	//==============================================================================================================
@@ -558,11 +558,35 @@ HRESULT CWeapon::SetUp_Default()
 
 HRESULT CWeapon::SetUp_WeaponData()
 {
+	//===========================================================================================
+	// 한손검
+	//===========================================================================================
+
 	m_tWeaponParam[WPN_SSword_Normal].fDamage = 30.f;
 	m_tWeaponParam[WPN_SSword_Normal].fRadius = 0.7f;
-	m_tWeaponParam[WPN_SSword_Normal].fTrail_Min = 0.f;
-	m_tWeaponParam[WPN_SSword_Normal].fTrail_Max = 1.f;
+	m_tWeaponParam[WPN_SSword_Normal].fTrail_Min = 0.6f;
+	m_tWeaponParam[WPN_SSword_Normal].fTrail_Max = 1.8f;
 	m_tWeaponParam[WPN_SSword_Normal].fCol_Height = 1.f;
+
+
+	m_tWeaponParam[WPN_SSword_Military].fDamage = 30.f;
+	m_tWeaponParam[WPN_SSword_Military].fRadius = 0.7f;
+	m_tWeaponParam[WPN_SSword_Military].fTrail_Min = 0.6f;
+	m_tWeaponParam[WPN_SSword_Military].fTrail_Max = 1.8f;
+	m_tWeaponParam[WPN_SSword_Military].fCol_Height = 1.f;
+
+	//===========================================================================================
+	// 대검
+	//===========================================================================================
+
+	m_tWeaponParam[WPN_LSword_Normal].fRadius = 0.8f;
+	m_tWeaponParam[WPN_LSword_Normal].fTrail_Min = 0.8f;
+	m_tWeaponParam[WPN_LSword_Normal].fTrail_Max = 2.1f;
+	m_tWeaponParam[WPN_LSword_Normal].fCol_Height = 1.3f;
+
+	//===========================================================================================
+	// 해머
+	//===========================================================================================
 
 	m_tWeaponParam[WPN_Hammer_Normal].fDamage = 55.f;
 	m_tWeaponParam[WPN_Hammer_Normal].fRadius = 0.75f;
@@ -570,11 +594,25 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[WPN_Hammer_Normal].fTrail_Max = 1.5f;
 	m_tWeaponParam[WPN_Hammer_Normal].fCol_Height = 1.3f;
 
+	m_tWeaponParam[WPN_Hammer_YachaMan].fDamage = 55.f;
+	m_tWeaponParam[WPN_Hammer_YachaMan].fRadius = 1.2f;
+	m_tWeaponParam[WPN_Hammer_YachaMan].fTrail_Min = 0.75f;
+	m_tWeaponParam[WPN_Hammer_YachaMan].fTrail_Max = 1.5f;
+	m_tWeaponParam[WPN_Hammer_YachaMan].fCol_Height = 1.0f;
+
+	//===========================================================================================
+	// 총검
+	//===========================================================================================
+
 	m_tWeaponParam[WPN_Gun_Normal].fDamage = 30.f;
 	m_tWeaponParam[WPN_Gun_Normal].fRadius = 0.6f;
-	m_tWeaponParam[WPN_Gun_Normal].fTrail_Min = 0.f;
-	m_tWeaponParam[WPN_Gun_Normal].fTrail_Max = 1.f;
+	m_tWeaponParam[WPN_Gun_Normal].fTrail_Min = 0.75f;
+	m_tWeaponParam[WPN_Gun_Normal].fTrail_Max = 1.5f;
 	m_tWeaponParam[WPN_Gun_Normal].fCol_Height = 1.2f;
+
+	//===========================================================================================
+	// 빙페
+	//===========================================================================================
 
 	m_tWeaponParam[WPN_Shield_Normal].fDamage = 25.f;
 	m_tWeaponParam[WPN_Shield_Normal].fRadius = 0.6f;
@@ -582,17 +620,17 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[WPN_Shield_Normal].fTrail_Max = 1.f;
 	m_tWeaponParam[WPN_Shield_Normal].fCol_Height = 0.f;
 
+	//===========================================================================================
+	// 도끼창
+	//===========================================================================================
+
 	m_tWeaponParam[WPN_Halverd_Normal].fDamage = 60.f;
 	m_tWeaponParam[WPN_Halverd_Normal].fRadius = 0.75f;
-	m_tWeaponParam[WPN_Halverd_Normal].fTrail_Min = 0.75f;
-	m_tWeaponParam[WPN_Halverd_Normal].fTrail_Max = 1.5f;
-	m_tWeaponParam[WPN_Halverd_Normal].fCol_Height = 1.3f;
+	m_tWeaponParam[WPN_Halverd_Normal].fTrail_Min = 1.2f;
+	m_tWeaponParam[WPN_Halverd_Normal].fTrail_Max = 2.3f;
+	m_tWeaponParam[WPN_Halverd_Normal].fCol_Height = 1.8f;
 
-	m_tWeaponParam[WPN_Hammer_YachaMan].fDamage = 55.f;
-	m_tWeaponParam[WPN_Hammer_YachaMan].fRadius = 1.2f;
-	m_tWeaponParam[WPN_Hammer_YachaMan].fTrail_Min = 0.75f;
-	m_tWeaponParam[WPN_Hammer_YachaMan].fTrail_Max = 1.5f;
-	m_tWeaponParam[WPN_Hammer_YachaMan].fCol_Height = 1.0f;
+	//===========================================================================================
 
 	m_tWeaponParam[WPN_QueenLance].fDamage = 25.f;
 	m_tWeaponParam[WPN_QueenLance].fRadius = 1.3f;

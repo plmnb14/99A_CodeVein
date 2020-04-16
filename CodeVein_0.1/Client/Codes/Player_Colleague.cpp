@@ -174,7 +174,7 @@ HRESULT CPlayer_Colleague::SetUp_Default()
 
 
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.bDodge = false;
+	m_tObjParam.bIsDodge = false;
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.bIsAttack = false;
 

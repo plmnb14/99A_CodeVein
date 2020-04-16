@@ -214,8 +214,8 @@ void CPlayerHP::SetUp_Default()
 	pDesc->fSizeX = m_fSizeX + 63.f;
 	pDesc->fSizeY = m_fSizeY + 26.f;
 	pDesc->iIndex = 0;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_HPBack", SCENE_STAGE, L"Layer_HPBack", pDesc);
-	static_cast<CHPBack*>(g_pManagement->Get_GameObjectBack(L"Layer_HPBack", SCENE_STAGE))->Set_Active(true);
+	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_HPBack", SCENE_STAGE, L"Layer_HPBack", pDesc);
+	//static_cast<CHPBack*>(g_pManagement->Get_GameObjectBack(L"Layer_HPBack", SCENE_STAGE))->Set_Active(true);
 }
 
 void CPlayerHP::SetUp_State(_double TimeDelta)

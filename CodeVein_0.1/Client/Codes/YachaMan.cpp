@@ -41,7 +41,7 @@ HRESULT CYachaMan::Ready_GameObject(void * pArg)
 	m_tObjParam.bIsHit = false;	//맞기 진행중 아님
 	m_tObjParam.bCanAttack = true; //공격 가능
 	m_tObjParam.bIsAttack = false; //공격 진행중 아님
-	m_tObjParam.bDodge = false; //첫 생성시 회피 비활성
+	m_tObjParam.bIsDodge = false; //첫 생성시 회피 비활성
 
 	m_bInRecognitionRange = false; //인지 범위 여부
 	m_bInAtkRange = false; //공격 범위 여부
@@ -80,7 +80,7 @@ _int CYachaMan::Update_GameObject(_double TimeDelta)
 
 	Enter_Collision();
 
-	return NOERROR;
+	return NO_EVENT;
 }
 
 _int CYachaMan::Late_Update_GameObject(_double TimeDelta)
@@ -314,7 +314,7 @@ void CYachaMan::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					if (false == iter->Get_Target_Dodge())
+					if (false == iter->Get_Target_IsDodge())
 					{
 						iter->Set_Target_CanHit(false);
 						iter->Add_Target_Hp(m_tObjParam.fDamage);
@@ -402,7 +402,7 @@ void CYachaMan::Check_FBLR()
 void CYachaMan::Check_Dist()
 {
 	if (MONSTER_ANITYPE::HIT == m_eFirstCategory ||
-		MONSTER_ANITYPE::DOWN == m_eFirstCategory ||
+		MONSTER_ANITYPE::CC == m_eFirstCategory ||
 		MONSTER_ANITYPE::DEAD == m_eFirstCategory)
 		return;
 
@@ -413,7 +413,7 @@ void CYachaMan::Check_Dist()
 
 	if (true == m_tObjParam.bIsAttack ||
 		true == m_bIsAtkCombo ||
-		true == m_tObjParam.bDodge ||
+		true == m_tObjParam.bIsDodge ||
 		true == m_tObjParam.bIsHit)
 		return;
 
@@ -640,7 +640,7 @@ void CYachaMan::Set_AniEvent()
 		Play_Hit();
 		break;
 
-	case MONSTER_ANITYPE::DOWN:
+	case MONSTER_ANITYPE::CC:
 		break;
 
 	case MONSTER_ANITYPE::DEAD:
@@ -768,7 +768,7 @@ void CYachaMan::Function_ResetAfterAtk()
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.bIsHit = false;
 
-	m_tObjParam.bDodge = false;
+	m_tObjParam.bIsDodge = false;
 
 	m_tObjParam.bIsAttack = false;
 	m_bCanAtkCategoryRandom = true;
@@ -896,10 +896,10 @@ void CYachaMan::Play_Dodge()
 {
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
 
-	if (false == m_tObjParam.bDodge)
+	if (false == m_tObjParam.bIsDodge)
 	{
 		Function_ResetAfterAtk();
-		m_tObjParam.bDodge = true;
+		m_tObjParam.bIsDodge = true;
 		m_eState = YACHAMAN_ANI::Dodge;
 	}
 	else
@@ -2569,4 +2569,6 @@ void CYachaMan::Free()
 	}
 
 	CGameObject::Free();
+
+	return;
 }
