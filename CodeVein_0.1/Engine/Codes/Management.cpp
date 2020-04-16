@@ -242,7 +242,7 @@ CGameObject* CManagement::Get_GameObjectBack(const _tchar* pLayerTag, _uint iSce
 	return m_pObject_Manager->Get_GameObjectBack(pLayerTag, iSceneID);
 }
 
-list<CGameObject*> CManagement::Get_GameObjectList(const _tchar * pLayerTag, _uint iSceneID)
+list<CGameObject*>& CManagement::Get_GameObjectList(const _tchar * pLayerTag, _uint iSceneID)
 {
 	return m_pObject_Manager->Get_GameObjectList(pLayerTag, iSceneID);
 }
@@ -559,6 +559,11 @@ void CManagement::Create_Effect_Delay(_tchar * szName, _float fDelay, CTransform
 void CManagement::Create_ParticleEffect_Delay(_tchar * szName, _float fLifeTime, _float fDelay, _v3 vPos, CTransform * pFollowTrans)
 {
 	CParticleMgr::Get_Instance()->Create_ParticleEffect_Delay(szName, fLifeTime, fDelay, vPos, pFollowTrans);
+}
+
+void CManagement::Create_ParticleEffect_Delay(_tchar * szName, _float fLifeTime, _float fDelay, CTransform * pFollowTrans, _mat * pTargetMat)
+{
+	CParticleMgr::Get_Instance()->Create_ParticleEffect_Delay(szName, fLifeTime, fDelay, _v3(0, 0, 0), pFollowTrans, pTargetMat);
 }
 
 void CManagement::Free()

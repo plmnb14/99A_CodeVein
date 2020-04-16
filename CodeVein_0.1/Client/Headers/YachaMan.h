@@ -8,10 +8,11 @@ BEGIN(Client)
 
 class CWeapon;
 class CMonsterUI;
+
 class CYachaMan final : public CGameObject
 {
 public:
-	enum MONSTER_ANITYPE { IDLE, MOVE, ATTACK, HIT, DOWN, DEAD };
+	enum MONSTER_ANITYPE { IDLE, MOVE, ATTACK, HIT, CC, DEAD };
 	
 	enum YACHAMAN_IDLETYPE { IDLE_IDLE, IDLE_EAT, IDLE_LURK };
 	enum YACHAMAN_MOVETYPE {MOVE_RUN, MOVE_WALK, MOVE_DODGE};

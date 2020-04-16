@@ -54,7 +54,10 @@ struct VS_IN
 	float4		vInstanceUp		: TEXCOORD2;
 	float4		vInstanceLook	: TEXCOORD3;
 	float4		vInstancePos	: TEXCOORD4;
-	//float4		vColor			: COLOR0;
+	float4		vColor			: TEXCOORD5;
+	float3		vOption01		: TEXCOORD6;
+	bool4		vOption02		: TEXCOORD7;
+	bool4		vOption03		: TEXCOORD8;
 
 };
 
@@ -63,7 +66,24 @@ struct VS_OUT
 	float4		vPosition : POSITION;
 	float2		vTexUV : TEXCOORD0;
 	float4		vProjPos : TEXCOORD1;
-	//float4		vColor : COLOR0;
+
+	
+};
+
+struct VS_INSTANCE_OUT
+{
+	float4		vPosition : POSITION;
+	float2		vTexUV : TEXCOORD0;
+	float4		vProjPos : TEXCOORD9;
+
+	float4		vInstanceRight	: TEXCOORD1;
+	float4		vInstanceUp		: TEXCOORD2;
+	float4		vInstanceLook	: TEXCOORD3;
+	float4		vInstancePos	: TEXCOORD4;
+	float4		vColor			: TEXCOORD5;
+	float3		vOption01		: TEXCOORD6;
+	bool4		vOption02		: TEXCOORD7;
+	bool4		vOption03		: TEXCOORD8;
 };
 
 VS_OUT VS_MAIN(VS_IN In)
@@ -82,15 +102,15 @@ VS_OUT VS_MAIN(VS_IN In)
 	return Out;		
 }
 
-VS_OUT VS_INSTANCE(VS_IN In)
+VS_INSTANCE_OUT VS_INSTANCE(VS_IN In)
 {
-	VS_OUT			Out = (VS_OUT)0;
+	VS_INSTANCE_OUT		Out = (VS_INSTANCE_OUT)0;
 
 	float4x4 matWorld, matWVP;
 	matWorld = float4x4(In.vInstanceRight,
-		In.vInstanceUp,
-		In.vInstanceLook,
-		float4(In.vInstancePos.xyz, 1.f));
+						In.vInstanceUp,
+						In.vInstanceLook,
+						float4(In.vInstancePos.xyz, 1.f));
 
 	matWVP = mul(matWorld, g_matView);
 	matWVP = mul(matWVP, g_matProj);
@@ -99,7 +119,11 @@ VS_OUT VS_INSTANCE(VS_IN In)
 
 	Out.vProjPos = Out.vPosition;
 	Out.vTexUV = In.vTexUV;
-
+	Out.vColor		    = In.vColor		   ;
+	Out.vOption01	    = In.vOption01	   ;
+	Out.vOption02	    = In.vOption02	   ;
+	Out.vOption03	    = In.vOption03	   ;
+	
 	return Out;
 }
 
@@ -109,6 +133,22 @@ struct PS_IN
 	float2		vTexUV : TEXCOORD0;
 	float4		vProjPos : TEXCOORD1;
 	//float4		vColor : COLOR0;
+};
+
+struct PS_INSTANCE_IN
+{
+	float4		vPosition : POSITION;
+	float2		vTexUV : TEXCOORD0;
+	float4		vProjPos : TEXCOORD9;
+
+	float4		vInstanceRight	: TEXCOORD1;
+	float4		vInstanceUp		: TEXCOORD2;
+	float4		vInstanceLook	: TEXCOORD3;
+	float4		vInstancePos	: TEXCOORD4;
+	float4		vColor			: TEXCOORD5;
+	float3		vOption01		: TEXCOORD6;
+	bool4		vOption02		: TEXCOORD7;
+	bool4		vOption03		: TEXCOORD8;
 };
 
 struct PS_OUT
@@ -211,6 +251,89 @@ PS_OUT PS_MAIN(PS_IN In)
 	// =========================================================================================================
 
 
+
+	return Out;
+}
+
+PS_OUT PS_INSTANCE(PS_INSTANCE_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float4 vColor		= In.vColor;
+	float fDistortion	= In.vOption01.x;
+	float fAlpha		= In.vOption01.y;
+	float fDissolve		= In.vOption01.z; 
+	 bool bDissolve		= In.vOption02.x;
+	 bool bUseColorTex	= In.vOption02.y;
+	 bool bReverseColor = In.vOption02.z;
+	 bool bUseRGBA		= In.vOption02.w;
+	 bool bUseMaskTex	= In.vOption03.x;
+
+	if (bUseColorTex)
+	{
+		Out.vColor = pow(tex2D(ColorSampler, In.vTexUV), 2.2);
+		Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
+	}
+	else
+	{
+		Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
+		Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
+	}
+
+	if (bUseRGBA)
+	{
+		Out.vColor.xyz = vColor.xyz;
+		Out.vColor.a *= vColor.a;
+	}
+	else
+	{
+		// ==============================================================================================
+		// [Memo]  g_vColor.x = Hue / g_vColor.y = Contrast / g_vColor.z = Brightness / g_vColor.w = Saturation
+		// ==============================================================================================
+		float3 intensity;
+		float half_angle = 0.5 * radians(vColor.x); // Hue is radians of 0 tp 360 degree
+		float4 rot_quat = float4((root3 * sin(half_angle)), cos(half_angle));
+		float3x3 rot_Matrix = QuaternionToMatrix(rot_quat);
+		Out.vColor.rgb = mul(rot_Matrix, Out.vColor.rgb);
+		Out.vColor.rgb = (Out.vColor.rgb - 0.5) *(vColor.y + 1.0) + 0.5;
+		Out.vColor.rgb = Out.vColor.rgb + vColor.z;
+		intensity = float(dot(Out.vColor.rgb, lumCoeff));
+		Out.vColor.rgb = lerp(intensity, Out.vColor.rgb, vColor.w);
+		// End ==========================================================================================
+	}
+
+	if (bUseMaskTex)
+	{
+		vector vGradientMask = tex2D(GradientSampler, In.vTexUV);
+		Out.vColor.a *= vGradientMask.x;
+	}
+
+	if (bDissolve)
+	{
+		float4 fxColor = tex2D(DiffuseSampler, In.vTexUV);
+
+		if (Out.vColor.a == 0.f)
+			clip(-1);
+
+		if (fxColor.r >= fDissolve)
+			Out.vColor.a = 1;
+		else
+			Out.vColor.a = 0;
+	}
+
+	if (bReverseColor)
+		Out.vColor.rgb = 1 - Out.vColor.rgb;
+
+	// 소프트 이펙트 ==========================================================================================
+	float2		vTexUV;
+	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
+	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
+
+	vector		vDepthInfo = tex2D(DepthSampler, vTexUV);
+	float		fViewZ = vDepthInfo.y * 500.f;
+
+	Out.vColor.a = (Out.vColor.a * saturate(fViewZ - In.vProjPos.w)) * fAlpha;
+	// =========================================================================================================
 
 	return Out;
 }
@@ -345,7 +468,31 @@ PS_OUT PS_TRAIL(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
-	Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
+	Out.vColor.a = Out.vColor.x;
+
+	// 소프트 이펙트 ==========================================================================================
+	float2		vTexUV;
+	vTexUV.x = (In.vProjPos.x / In.vProjPos.w) * 0.5f + 0.5f;
+	vTexUV.y = (In.vProjPos.y / In.vProjPos.w) * -0.5f + 0.5f;
+	
+	vector		vDepthInfo = tex2D(DepthSampler, vTexUV);
+	float		fViewZ = vDepthInfo.y * 500.f;
+	
+	Out.vColor.a = (Out.vColor.a * saturate(fViewZ - In.vProjPos.w)) * g_fAlpha;
+	// =========================================================================================================
+
+	return Out;
+}
+
+PS_OUT PS_TRAIL_MASK(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
+
+	// Mask
+	float4 vMask = tex2D(GradientSampler, In.vTexUV);
+	Out.vColor.a *= vMask.x;
 
 	// 소프트 이펙트 ==========================================================================================
 	float2		vTexUV;
@@ -417,7 +564,7 @@ technique Default_Technique
 		cullmode = none;
 
 		VertexShader = compile vs_3_0 VS_INSTANCE();
-		PixelShader = compile ps_3_0 PS_MAIN();
+		PixelShader = compile ps_3_0 PS_INSTANCE();
 	}
 
 	pass SSD // 4
@@ -435,19 +582,30 @@ technique Default_Technique
 		PixelShader = compile ps_3_0 PS_SSD();
 	}
 
-	pass TRAIL // 5
+	pass TRAIL_DEFAULT // 5
 	{
-		zwriteenable = false;
-
+		ZWriteEnable = false;
 		AlphablendEnable = true;
-		AlphaTestEnable = true;
 		srcblend = SrcAlpha;
 		DestBlend = InvSrcAlpha;
-		//blendop = add;
 		cullmode = none;
+		blendop = add;
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_TRAIL();
+	}
+
+	pass TRAIL_MASK // 6
+	{
+		ZWriteEnable = false;
+		AlphablendEnable = true;
+		srcblend = SrcAlpha;
+		DestBlend = InvSrcAlpha;
+		cullmode = none;
+		blendop = add;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 PS_TRAIL_MASK();
 	}
 }
 

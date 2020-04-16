@@ -914,6 +914,8 @@ void CPlayer::KeyDown()
 
 		// »óÈ£ÀÛ¿ë
 		Key_InterAct();
+
+		Key_Utility();
 	}
 
 	// Æ¯¼öµ¿ÀÛ
@@ -1296,7 +1298,7 @@ void CPlayer::Key_Attack()
 					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_ShockWave"				, 0.7f	, vEffPos, m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_Small"					, 0.75f	, vEffPos, m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_Big"					, 0.75f	, vEffPos, m_pTransform);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_ChargeSpark_Circle"	, 0.12f	, 0.85f	, vEffPos, m_pTransform);
+					//g_pManagement->Create_ParticleEffect_Delay(L"Player_ChargeSpark_Circle"	, 0.12f	, 0.85f	, vEffPos, m_pTransform);
 				}
 			}
 		}
@@ -1385,17 +1387,35 @@ void CPlayer::Key_Skill()
 
 		m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[8]->dwAnimationIdx);
 
-		LPCSTR tmpChar = "Head"; // ¿Þ¼Õ »ÀÀÌ¸§À¸·Î ¹Ù²ã¾ßÇÔ
+		LPCSTR tmpChar = "Head"; // ¿Þ¼Õ »À·Î ¹Ù²ã¾ßÇÔ
 		D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 1);
 		_mat* pLeftHand= &pFamre->CombinedTransformationMatrix;
 
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Water"		, 0.6f, m_pTransform, pLeftHand);
-		g_pManagement->Create_Effect_Delay(L"Player_Buff_HandLight"				, 0.6f, m_pTransform, pLeftHand);
+		g_pManagement->Create_Effect_Delay(L"Player_Buff_Particle"							, 0.4f, _v3(0.f, 1.25f, 0.f), m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Blaster"				, 0.6f, m_pTransform, pLeftHand);
+		g_pManagement->Create_Effect_Delay(L"Player_Buff_HandLight"							, 0.4f, m_pTransform, pLeftHand);
+		g_pManagement->Create_ParticleEffect_Delay(L"Player_Buff_Flash"				, 0.1f	, 0.6f, m_pTransform, pLeftHand);
+		g_pManagement->Create_ParticleEffect_Delay(L"Player_Buff_HandSmoke"		, 0.65f	, 0.6f, m_pTransform, pLeftHand);
 	}
 }
 
 void CPlayer::Key_Utility()
 {
+	if (g_pInput_Device->Key_Down(DIK_DOWNARROW))
+	{
+		//m_eActState = ACT_PickUp;
+
+		//===========================================
+		// ¾ÆÀÌÅÛ »ç¿ë
+		//===========================================
+
+		_v3 vEffPos = _v3(0.f, 1.5f, 0.f);
+
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle"			, 0.2f, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Player_Heal_RedLight"						, 0.2f, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Player_Heal_Particle"						, 0.2f, vEffPos, m_pTransform);
+		g_pManagement->Create_ParticleEffect_Delay(L"Player_Buff_HandSmoke"		, 0.2f	, 0.2f, vEffPos, m_pTransform);
+	}
 }
 
 void CPlayer::Key_InterAct()

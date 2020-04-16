@@ -83,6 +83,7 @@ protected:
 	_bool					m_bFinishPos = false;
 	_bool					m_bDelay_New = false;
 	_bool					m_bLoop = false;
+	_bool					m_bInstanceTarget = false;
 
 	_int					m_iPass = 0;
 

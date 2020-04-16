@@ -6,11 +6,13 @@
 CPoisonButterfly::CPoisonButterfly(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CMonster(pGraphic_Device)
 {
+	ZeroMemory(m_matBones, sizeof(_mat*) * Bone_End);
 }
 
 CPoisonButterfly::CPoisonButterfly(const CPoisonButterfly & rhs)
 	: CMonster(rhs)
 {
+	ZeroMemory(m_matBones, sizeof(_mat*) * Bone_End);
 }
 
 HRESULT CPoisonButterfly::Ready_GameObject_Prototype()
@@ -75,7 +77,7 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	//Start_Sel->Add_Child(Eat_TurnEat());
+	//Start_Sel->Add_Child(Eat_Turn());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -263,6 +265,10 @@ _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 	if (m_bIsDead)
 		return DEAD_OBJ;
 
+	// 죽음 애니메이션
+	if (m_bReadyDead)
+		return NO_EVENT;
+
 	// 플레이어 미발견
 	if (false == m_bFight)
 	{
@@ -308,7 +314,11 @@ _int CPoisonButterfly::Late_Update_GameObject(_double TimeDelta)
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
 
-	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
+	RENDERID eRenderID = RENDER_NONALPHA;
+	//if (m_bDissolve)
+	//	eRenderID = RENDER_ALPHA;
+	
+	if (FAILED(m_pRendererCom->Add_RenderList(eRenderID, this)))
 		return E_FAIL;
 	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
 	//	return E_FAIL;
@@ -350,9 +360,6 @@ HRESULT CPoisonButterfly::Render_GameObject()
 
 			m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
 
-			//if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
-			//	return E_FAIL;
-
 			m_pShaderCom->Commit_Changes();
 
 			m_pMeshCom->Render_Mesh(i, j);
@@ -387,10 +394,6 @@ HRESULT CPoisonButterfly::Render_GameObject_SetPass(CShader * pShader, _int iPas
 		return E_FAIL;
 
 	m_matLastWVP = m_pTransformCom->Get_WorldMat() * ViewMatrix * ProjMatrix;
-
-	//_mat matLightVP = g_pManagement->Get_LightViewProj();
-	//if (FAILED(pShader->Set_Value("g_LightVP_Close", &matLightVP, sizeof(_mat))))
-	//	return E_FAIL;
 
 	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
 
@@ -602,12 +605,15 @@ CBT_Composite_Node * CPoisonButterfly::Eat_Turn()
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("전체적으로 쓰이는 옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Bone_Tail6", 0, 300, 0.01, 0);
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("반짝이는 보라색 모래", L"ButterFly_GlitterSand", L"Bone_Tail6", 0, 300, 0.01, 0);
 	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("안개와 같이 나오는 왜곡", L"ButterFly_Distortion_Smoke", L"Bone_Tail6", 0, 300, 0.01, 0);
-	//CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("왜곡", L"ButterFly_Distortion_Circle", L"Bone_Tail6_Tongue2", 0.5, 1, 0.01, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("왜곡", L"ButterFly_Distortion_Circle", L"Bone_Tail6", 1.8, 1, 0.01, 0);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("왜곡", L"ButterFly_Distortion_Circle", L"Bone_Tail6", 3.7, 1, 0.01, 0);
 
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
 	Root_Parallel->Add_Service(Effect2);
 	Root_Parallel->Add_Service(Effect3);
+	Root_Parallel->Add_Service(Effect4);
+	Root_Parallel->Add_Service(Effect5);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani25);
@@ -1076,7 +1082,10 @@ void CPoisonButterfly::Down()
 		m_tObjParam.bCanHit = true;
 
 		if (true == m_bDown_LoopAni)
+		{
 			m_pMeshCom->Reset_OldIndx();	//루프 애니 초기화
+			m_pMeshCom->SetUp_Animation(Ani_Down_Loop);
+		}
 
 		m_pAIControllerCom->Reset_BT();
 	}
@@ -1095,23 +1104,23 @@ HRESULT CPoisonButterfly::Update_Bone_Of_BlackBoard()
 {
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Tail6");
 	m_vTail6 = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Bone_Tail6", m_vTail6);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Tail6", m_vTail6);
 
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Tail4");
 	m_vTail4 = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Bone_Tail4", m_vTail4);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Tail4", m_vTail4);
 
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Tail2");
 	m_vTail2 = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Bone_Tail2", m_vTail2);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Tail2", m_vTail2);
 
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
 	m_vHead = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Bone_Head", m_vHead);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Head", m_vHead);
 
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Tail6_Tongue2");
 	m_vTail6_Tongue2 = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Bone_Tail6_Tongue2", m_vTail6_Tongue2);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Tail6_Tongue2", m_vTail6_Tongue2);
 	
 	return S_OK;
 }
@@ -1119,9 +1128,9 @@ HRESULT CPoisonButterfly::Update_Bone_Of_BlackBoard()
 HRESULT CPoisonButterfly::Update_Value_Of_BB()
 {
 	// 1. 플레이어 좌표 업데이트
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos());
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos());
 	// 2. 체력 업데이트
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"HP", m_tObjParam.fHp_Cur);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"HP", m_tObjParam.fHp_Cur);
 
 
 	// 1. 5샷 방향
@@ -1136,22 +1145,22 @@ HRESULT CPoisonButterfly::Update_Value_Of_BB()
 	else if (fRadian < 0)
 		D3DXVec3TransformNormal(&vDirTemp0, &vSelfDir, D3DXMatrixRotationX(&_mat(), D3DXToRadian(-15)));
 
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_PoisonDir0", *D3DXVec3TransformNormal(&_v3(), &vDirTemp0, D3DXMatrixRotationY(&_mat(), D3DXToRadian(25))));
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_PoisonDir1", *D3DXVec3TransformNormal(&_v3(), &vDirTemp0, D3DXMatrixRotationY(&_mat(), D3DXToRadian(12.5f))));
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_PoisonDir2", vDirTemp0);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_PoisonDir3", *D3DXVec3TransformNormal(&_v3(), &vDirTemp0, D3DXMatrixRotationY(&_mat(), D3DXToRadian(-12.5f))));
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_PoisonDir4", *D3DXVec3TransformNormal(&_v3(), &vDirTemp0, D3DXMatrixRotationY(&_mat(), D3DXToRadian(-25))));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_PoisonDir0", *D3DXVec3TransformNormal(&_v3(), &vDirTemp0, D3DXMatrixRotationY(&_mat(), D3DXToRadian(25))));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_PoisonDir1", *D3DXVec3TransformNormal(&_v3(), &vDirTemp0, D3DXMatrixRotationY(&_mat(), D3DXToRadian(12.5f))));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_PoisonDir2", vDirTemp0);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_PoisonDir3", *D3DXVec3TransformNormal(&_v3(), &vDirTemp0, D3DXMatrixRotationY(&_mat(), D3DXToRadian(-12.5f))));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_PoisonDir4", *D3DXVec3TransformNormal(&_v3(), &vDirTemp0, D3DXMatrixRotationY(&_mat(), D3DXToRadian(-25))));
 
 	// 2. 본인 좌표
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_Pos", m_pTransformCom->Get_Pos());
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_Pos", m_pTransformCom->Get_Pos());
 
 	// 3. 로테이션 총알 4방향
 	_v3 vFrontDir = *D3DXVec3Normalize(&_v3(), (_v3*)m_pTransformCom->Get_WorldMat().m[2]);
 	_v3 vRightDir = *D3DXVec3Normalize(&_v3(), (_v3*)m_pTransformCom->Get_WorldMat().m[0]);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_Front", vFrontDir);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_Back", -vFrontDir);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_Right", vRightDir);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Self_Left", -vRightDir);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_Front", vFrontDir);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_Back", -vFrontDir);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_Right", vRightDir);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_Left", -vRightDir);
 
 	return S_OK;
 }
@@ -1282,8 +1291,9 @@ void CPoisonButterfly::Check_PhyCollider()
 		else
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
-			Start_Dissolve(0.7f, false, true);
-			//g_pManagement->Create_Spawn_Effect(m_pTransformCom->Get_Pos());
+			Start_Dissolve(0.7f, false, true, 0.6f);
+			g_pManagement->Create_Effect_Delay(L"Boss_Dead_Particle", 0.6f, _v3(0.f, 1.3f, 0.f), m_pTransformCom);
+			g_pManagement->Create_ParticleEffect_Delay(L"SpawnParticle_ForBoss", 1.f, 0.6f, m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f));
 		}
 	}
 	else
@@ -1554,7 +1564,7 @@ HRESULT CPoisonButterfly::Ready_Collider()
 
 
 	//////////// 공격용 콜라이더
-	m_vecAttackCol.reserve(10);
+	m_vecAttackCol.reserve(5);
 
 	// 꼬리 끝
 	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));

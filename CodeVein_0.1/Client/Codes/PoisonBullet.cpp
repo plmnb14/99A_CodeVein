@@ -1,14 +1,15 @@
 #include "stdafx.h"
 #include "..\Headers\PoisonBullet.h"
 #include "ParticleMgr.h"
+#include "Effect.h"
 
 CPoisonBullet::CPoisonBullet(LPDIRECT3DDEVICE9 pGraphic_Device)
-	: CGameObject(pGraphic_Device)
+	: CMonster(pGraphic_Device)
 {
 }
 
 CPoisonBullet::CPoisonBullet(const CPoisonBullet & rhs)
-	: CGameObject(rhs)
+	: CMonster(rhs)
 {
 }
 
@@ -30,6 +31,8 @@ HRESULT CPoisonBullet::Ready_GameObject(void * pArg)
 	m_fSpeed = temp.fSpeed;
 	m_dLifeTime = temp.dLifeTime;
 	
+
+
 	m_pTransformCom->Set_Pos(temp.vCreatePos);
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
@@ -146,16 +149,6 @@ HRESULT CPoisonBullet::Update_Collider()
 		iter->Update(ColPos);
 
 		++matrixIdx;
-	}
-
-	return S_OK;
-}
-
-HRESULT CPoisonBullet::Draw_Collider()
-{
-	for (auto& iter : m_vecAttackCol)
-	{
-		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
 	}
 
 	return S_OK;

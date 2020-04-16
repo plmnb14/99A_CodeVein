@@ -82,13 +82,14 @@ void CGameObject::Set_Dead()
 	m_bIsDead = true;
 }
 
-void CGameObject::Start_Dissolve(_float fFxSpeed, _bool bFadeIn, _bool bReadyDead)
+void CGameObject::Start_Dissolve(_float fFxSpeed, _bool bFadeIn, _bool bReadyDead, _float fDelay)
 {
-	m_bOnDissolve = true;
+	m_bDissolve = true;
 	m_iPass = 3;
 	m_bFadeIn = bFadeIn;
 	m_fFXSpeed = fFxSpeed;
 	m_bReadyDead = bReadyDead;
+	m_fFXDelay = fDelay;
 
 	if (bFadeIn)
 		m_fFXAlpha = 1.f;
@@ -157,7 +158,11 @@ void CGameObject::Compute_ViewZ(const _v3* pPos)
 
 void CGameObject::Check_Dissolve(_double TimeDelta)
 {
-	if (m_iPass != 3)
+	if (!m_bDissolve)
+		return;
+
+	m_fFXDelay -= _float(TimeDelta);
+	if (m_fFXDelay > 0.f)
 		return;
 
 	if(!m_bFadeIn)
@@ -168,8 +173,10 @@ void CGameObject::Check_Dissolve(_double TimeDelta)
 		{
 			if (m_bReadyDead)
 				m_bIsDead = true;
+
 			m_fFXAlpha = 1.f;
-			m_iPass = 0;
+			//m_iPass = m_iTempPass;
+			//m_bDissolve = false;
 		}
 	}
 	else
@@ -179,7 +186,8 @@ void CGameObject::Check_Dissolve(_double TimeDelta)
 		if (m_fFXAlpha <= 0.f)
 		{
 			m_fFXAlpha = 0.f;
-			m_iPass = 0;
+			m_iPass = m_iTempPass;
+			m_bDissolve = false;
 		}
 	}
 }

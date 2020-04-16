@@ -271,8 +271,20 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\05.QuickSlot">
       <UniqueIdentifier>{c9068e77-c3c0-46a6-806f-2bc35d7df3b2}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\1%29 Boss\QueensKnight">
+      <UniqueIdentifier>{56eb2454-6ae7-4808-8b79-23b6f0bab7d0}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObject\Stage\9%29 Player_Colleague">
       <UniqueIdentifier>{1f602b6c-aa64-4d4c-bacd-47f6e9664c69}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\1%29 Boss\IceGirl">
+      <UniqueIdentifier>{0ab9c86b-2185-4121-8c5c-00c09b1d1224}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\1%29 Boss\IceGirl\Bullet">
+      <UniqueIdentifier>{c3b3ceff-e5cb-4a51-9a99-9ee6263b5ede}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\1%29 Boss\FireBoy">
+      <UniqueIdentifier>{513f084f-d270-4483-b705-d20c5f6c1dcd}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -507,8 +519,29 @@
     <ClInclude Include="..\Headers\Monster.h">
       <Filter>02.GameObject\Stage\2%29 Monster</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\QueensKnight.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\QueensKnight</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\Player_Colleague.h">
       <Filter>02.GameObject\Stage\9%29 Player_Colleague</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\IceGirl.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ColdBeam.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\SwordBullet.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\IceBarrier.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MonsterHeaders.h">
+      <Filter>01.Scene\99.Loading</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\FireBoy.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -737,8 +770,26 @@
     <ClCompile Include="..\Codes\Monster.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\QueensKnight.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\QueensKnight</Filter>
+    </ClCompile>
     <ClCompile Include="..\Codes\Player_Colleague.cpp">
       <Filter>02.GameObject\Stage\9%29 Player_Colleague</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\IceGirl.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ColdBeam.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SwordBullet.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\IceBarrier.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\FireBoy.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

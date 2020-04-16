@@ -55,7 +55,7 @@ public: // For.Object_Manager
 	HRESULT				Add_Layer(_uint iSceneID, const _tchar* pLayerTag);
 	HRESULT				Add_GameObject_ToLayer(const _tchar* pPrototypeTag, _uint iSceneID, const _tchar* pLayerTag, void* pArg = nullptr);
 	CGameObject*		Get_GameObjectBack(const _tchar* pLayerTag, _uint iSceneID);
-	list<CGameObject*>	Get_GameObjectList(const _tchar* pLayerTag, _uint iSceneID);
+	list<CGameObject*>&	Get_GameObjectList(const _tchar* pLayerTag, _uint iSceneID);
 	CGameObject*		Clone_GameObject_Return(const _tchar* pPrototypeTag, void* pArg);
 	HRESULT				Add_GameOject_ToLayer_NoClone(CGameObject* _pGameObject, _uint iSceneID, const _tchar* pLayerTag, void* pArg);
 	HRESULT				LoadCreateObject_FromPath(_Device _pGraphicDev, const _tchar* _FilePath);
@@ -118,6 +118,7 @@ public: // For.ParticleManager
 	void Create_Effect_Delay(_tchar* szName, _float fDelay, _v3 vPos, CTransform* pFollowTrans = nullptr, _v3 vAngle = V3_NULL);
 	void Create_Effect_Delay(_tchar * szName, _float fDelay, CTransform* pFollowTrans, _mat* pTargetMat);
 	void Create_ParticleEffect_Delay(_tchar* szName, _float fLifeTime, _float fDelay, _v3 vPos, CTransform* pFollowTrans = nullptr);
+	void Create_ParticleEffect_Delay(_tchar* szName, _float fLifeTime, _float fDelay, CTransform* pFollowTrans, _mat* pTargetMat);
 
 private:
 	CGraphic_Device*			m_pGraphic_Device = nullptr;

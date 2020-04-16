@@ -200,6 +200,7 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\BT_Composite_Node.h" />
     <ClInclude Include="..\Headers\BT_ConeCheck.h" />
     <ClInclude Include="..\Headers\BT_Cooldown.h" />
+    <ClInclude Include="..\Headers\BT_CreateBuff.h" />
     <ClInclude Include="..\Headers\BT_CreateEffect.h" />
     <ClInclude Include="..\Headers\BT_CreateBullet.h" />
     <ClInclude Include="..\Headers\BT_Decorator_Node.h" />
@@ -221,6 +222,7 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\BT_Service_Node.h" />
     <ClInclude Include="..\Headers\BT_SetValue.h" />
     <ClInclude Include="..\Headers\BT_Simple_Parallel.h" />
+    <ClInclude Include="..\Headers\BT_StartDissolve.h" />
     <ClInclude Include="..\Headers\BT_Task_Node.h" />
     <ClInclude Include="..\Headers\BT_UpdateParam.h" />
     <ClInclude Include="..\Headers\BT_UpdateGageRatio.h" />
@@ -296,6 +298,7 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\BT_Composite_Node.cpp" />
     <ClCompile Include="..\Codes\BT_ConeCheck.cpp" />
     <ClCompile Include="..\Codes\BT_Cooldown.cpp" />
+    <ClCompile Include="..\Codes\BT_CreateBuff.cpp" />
     <ClCompile Include="..\Codes\BT_CreateEffect.cpp" />
     <ClCompile Include="..\Codes\BT_CreateBullet.cpp" />
     <ClCompile Include="..\Codes\BT_Decorator_Node.cpp" />
@@ -317,6 +320,7 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\BT_Service_Node.cpp" />
     <ClCompile Include="..\Codes\BT_SetValue.cpp" />
     <ClCompile Include="..\Codes\BT_Simple_Parallel.cpp" />
+    <ClCompile Include="..\Codes\BT_StartDissolve.cpp" />
     <ClCompile Include="..\Codes\BT_Task_Node.cpp" />
     <ClCompile Include="..\Codes\BT_UpdateParam.cpp" />
     <ClCompile Include="..\Codes\BT_UpdateGageRatio.cpp" />

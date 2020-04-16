@@ -652,13 +652,13 @@ HRESULT CSwordShieldGenji::Update_Bone_Of_BlackBoard()
 HRESULT CSwordShieldGenji::Update_Value_Of_BB()
 {
 	// 1. 플레이어 좌표 업데이트
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos());
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos());
 	// 2. 체력 업데이트
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"HP", m_tObjParam.fHp_Cur);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"HP", m_tObjParam.fHp_Cur);
 
 	//// 1. 몬스터 뒤쪽 방향 저장
 	//_v3 vBackDir = -(*(_v3*)&m_pTransformCom->Get_WorldMat().m[2]);
-	//m_pAIControllerCom->Set_Value_Of_BloackBoard(L"BackDir", vBackDir);
+	//m_pAIControllerCom->Set_Value_Of_BlackBoard(L"BackDir", vBackDir);
 
 
 	return E_NOTIMPL;
@@ -798,6 +798,7 @@ void CSwordShieldGenji::Check_PhyCollider()
 		m_vPushDir_forHitting = *(_v3*)&matPlayer.m[2];
 
 		m_pAIControllerCom->Reset_BT();
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Block", false);
 
 		if (m_tObjParam.fHp_Cur > 0.f)
 		{
@@ -962,7 +963,7 @@ HRESULT CSwordShieldGenji::Ready_Weapon()
 	m_pSword->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
 	m_pSword->Set_ParentMatrix(&m_pTransformCom->Get_WorldMat());
 
-	// 왼손 무기
+	// 왼손 방패
 	m_pShield = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
 	m_pShield->Change_WeaponData(CWeapon::WPN_Shield_Normal);
 

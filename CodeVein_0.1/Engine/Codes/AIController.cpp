@@ -43,7 +43,7 @@ HRESULT CAIController::Set_BlackBoard(CBlackBoard * pBlackBoard)
 	return S_OK;
 }
 
-CBlackBoard::OUTPUT CAIController::Set_Value_Of_BloackBoard(const _tchar * pName, _bool bValue)
+CBlackBoard::OUTPUT CAIController::Set_Value_Of_BlackBoard(const _tchar * pName, _bool bValue)
 {
 	if (nullptr == m_pBlackBoard)
 		return CBlackBoard::NONE;
@@ -51,7 +51,7 @@ CBlackBoard::OUTPUT CAIController::Set_Value_Of_BloackBoard(const _tchar * pName
 	return m_pBlackBoard->Set_Value(pName, bValue);
 }
 
-CBlackBoard::OUTPUT CAIController::Set_Value_Of_BloackBoard(const _tchar * pName, _float fValue)
+CBlackBoard::OUTPUT CAIController::Set_Value_Of_BlackBoard(const _tchar * pName, _float fValue)
 {
 	if (nullptr == m_pBlackBoard)
 		return CBlackBoard::NONE;
@@ -59,7 +59,7 @@ CBlackBoard::OUTPUT CAIController::Set_Value_Of_BloackBoard(const _tchar * pName
 	return m_pBlackBoard->Set_Value(pName, fValue);
 }
 
-CBlackBoard::OUTPUT CAIController::Set_Value_Of_BloackBoard(const _tchar * pName, _int iValue)
+CBlackBoard::OUTPUT CAIController::Set_Value_Of_BlackBoard(const _tchar * pName, _int iValue)
 {
 	if (nullptr == m_pBlackBoard)
 		return CBlackBoard::NONE;
@@ -67,7 +67,7 @@ CBlackBoard::OUTPUT CAIController::Set_Value_Of_BloackBoard(const _tchar * pName
 	return m_pBlackBoard->Set_Value(pName, iValue);
 }
 
-CBlackBoard::OUTPUT CAIController::Set_Value_Of_BloackBoard(const _tchar* pName, _v3 vValue)
+CBlackBoard::OUTPUT CAIController::Set_Value_Of_BlackBoard(const _tchar* pName, _v3 vValue)
 {
 	if (nullptr == m_pBlackBoard)
 		return CBlackBoard::NONE;

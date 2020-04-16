@@ -80,7 +80,7 @@ _int CYachaMan::Update_GameObject(_double TimeDelta)
 
 	Enter_Collision();
 
-	return NOERROR;
+	return NO_EVENT;
 }
 
 _int CYachaMan::Late_Update_GameObject(_double TimeDelta)
@@ -402,7 +402,7 @@ void CYachaMan::Check_FBLR()
 void CYachaMan::Check_Dist()
 {
 	if (MONSTER_ANITYPE::HIT == m_eFirstCategory ||
-		MONSTER_ANITYPE::DOWN == m_eFirstCategory ||
+		MONSTER_ANITYPE::CC == m_eFirstCategory ||
 		MONSTER_ANITYPE::DEAD == m_eFirstCategory)
 		return;
 
@@ -640,7 +640,7 @@ void CYachaMan::Set_AniEvent()
 		Play_Hit();
 		break;
 
-	case MONSTER_ANITYPE::DOWN:
+	case MONSTER_ANITYPE::CC:
 		break;
 
 	case MONSTER_ANITYPE::DEAD:
@@ -2569,4 +2569,6 @@ void CYachaMan::Free()
 	}
 
 	CGameObject::Free();
+
+	return;
 }

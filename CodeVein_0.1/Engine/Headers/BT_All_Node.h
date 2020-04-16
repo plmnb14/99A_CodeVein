@@ -75,6 +75,12 @@
 #include "..\Headers\BT_CreateBullet.h"
 #define Node_CreateBullet(_name, _Object_Tag, _Create_Pos_Key, _Dir_Key, _fSpeed, _dBulletLifeTime, _dService_Start_Time, _MaxCount_Of_Execution, _dCoolTime, _dOffset, _Service_Mode) static_cast<CBT_CreateBullet*>(CManagement::Get_Instance()->Clone_Node(L"CreateBullet", CBT_Node_Manager::SERVICE, &CBT_CreateBullet::INFO(_name, _Object_Tag, _Create_Pos_Key, _Dir_Key, _fSpeed, _dBulletLifeTime, _dService_Start_Time, _MaxCount_Of_Execution, _dCoolTime, _dOffset, _Service_Mode)))
 
+#include "..\Headers\BT_CreateBuff.h"
+#define Node_CreateBuff(_name, _Object_Tag, _dBuffLifeTime, _dService_Start_Time, _MaxCount_Of_Execution, _dCoolTime, _dOffset, _Service_Mode) static_cast<CBT_CreateBuff*>(CManagement::Get_Instance()->Clone_Node(L"CreateBuff", CBT_Node_Manager::SERVICE, &CBT_CreateBuff::INFO(_name, _Object_Tag, m_pTransformCom, m_pAIControllerCom, _dBuffLifeTime, _dService_Start_Time, _MaxCount_Of_Execution, _dCoolTime, _dOffset, _Service_Mode)))
+
+#include "..\Headers\BT_StartDissolve.h"
+#define Node_StartDissolve(_name, _pTarget, _fFxSpeed, _bFadeIn, _dService_Start_Time) static_cast<CBT_StartDissolve*>(CManagement::Get_Instance()->Clone_Node(L"StartDissolve", CBT_Node_Manager::SERVICE, &CBT_StartDissolve::INFO(_name, _pTarget, _fFxSpeed, _bFadeIn, _dService_Start_Time, CBT_Service_Node::Finite)))
+
 
 // Task
 #include "..\Headers\BT_Wait.h"
@@ -97,6 +103,7 @@
 #define Node_ChaseDir(_name, _Target_Key, _dRunTime, _dTimeOffset) static_cast<CBT_ChaseDir*>(CManagement::Get_Instance()->Clone_Node(L"ChaseDir", CBT_Node_Manager::TASK, &CBT_ChaseDir::INFO(_name, m_pTransformCom, _Target_Key, _dRunTime, _dTimeOffset)))
 
 #include "..\Headers\BT_MoveTo.h"
+#define Node_MoveTo(_name, _Pos_Key, _dMovingTime) static_cast<CBT_MoveTo*>(CManagement::Get_Instance()->Clone_Node(L"MoveTo", CBT_Node_Manager::TASK, &CBT_MoveTo::INFO(_name, m_pTransformCom, m_pNavMesh, _Pos_Key, _dMovingTime)))
 
 #include "..\Headers\BT_Play_Ani.h"
 #define Node_Ani(_name, _Index, _fWeight) static_cast<CBT_Play_Ani*>(CManagement::Get_Instance()->Clone_Node(L"Play_Ani", CBT_Node_Manager::TASK, &CBT_Play_Ani::INFO(_name, m_pMeshCom, _Index, _fWeight)))

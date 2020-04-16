@@ -70,6 +70,9 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"HPRatio", 100);
 	pBlackBoard->Set_Value(L"Show", true);
 
+	pBlackBoard->Set_Value(L"TrailOn", false);
+	pBlackBoard->Set_Value(L"TrailOff", false);
+
 	//CBT_Selector* Start_Sel = Node_Selector("행동 시작"); // 찐
 	CBT_Sequence* Start_Sel = Node_Sequence("행동 시작"); // 테스트
 	CBT_UpdateGageRatio* UpdateHPRatioService = Node_UpdateGageRatio("체력 비율", L"HPRatio", L"MAXHP", L"HP", 1, 0.01, 0, CBT_Service_Node::Infinite);
@@ -81,8 +84,8 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
 	//Check_ShowValue->Set_Child(Start_Show());
 	//Start_Sel->Add_Child(Check_ShowValue);
-	Start_Sel->Add_Child(Start_Game());
-	//Start_Sel->Add_Child(Left_Cut());
+	//Start_Sel->Add_Child(Start_Game());
+	Start_Sel->Add_Child(Normal_Cut1());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -336,7 +339,9 @@ CBT_Composite_Node * CSwordGenji::Normal_Cut1()
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.366, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 1.f, 0.584, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 2.f, 0.353, 0);
+	//CBT_SetValue* TrailOn = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 1.084, 0);
+	//CBT_SetValue* TrailOff = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", 0.6f, 0.633, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
@@ -347,7 +352,9 @@ CBT_Composite_Node * CSwordGenji::Normal_Cut1()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 	SubSeq->Add_Child(Move1);
+	//SubSeq->Add_Child(TrailOn);
 	SubSeq->Add_Child(Wait1);
+	//SubSeq->Add_Child(TrailOff);
 	SubSeq->Add_Child(Move2);
 
 	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.167, 1, 0.233, 0);
@@ -617,7 +624,7 @@ CBT_Composite_Node * CSwordGenji::NearAttack()
 	Root_Sel->Add_Child(Strong_RightCut());
 	Root_Sel->Add_Child(Strong_LeftCut());
 	Root_Sel->Add_Child(ThreeCombo_Cut());
-	Root_Sel->Add_Child(Horizon_Cut());
+	Root_Sel->Add_Child(Horizontal_Cut());
 	Root_Sel->Add_Child(Sting_Attack());
 	Root_Sel->Add_Child(TwoCombo_Cut());
 	Root_Sel->Add_Child(Run_Straight_Cut());
@@ -650,7 +657,7 @@ CBT_Composite_Node * CSwordGenji::FarAttack()
 	return Root_Sel;
 }
 
-CBT_Composite_Node * CSwordGenji::Horizon_Cut()
+CBT_Composite_Node * CSwordGenji::Horizontal_Cut()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 	CBT_Sequence* MainSeq = Node_Sequence("수평베기");
@@ -877,7 +884,7 @@ CBT_Composite_Node * CSwordGenji::Show_NearAttack()
 	Root_Sel->Add_Child(Cool6);
 	Cool6->Set_Child(Run_Straight_Cut());
 	Root_Sel->Add_Child(Cool7);
-	Cool7->Set_Child(Horizon_Cut());
+	Cool7->Set_Child(Horizontal_Cut());
 	Root_Sel->Add_Child(Cool8);
 	Cool8->Set_Child(Sting_Attack());
 	Root_Sel->Add_Child(Cool9);
@@ -890,7 +897,7 @@ HRESULT CSwordGenji::Update_Bone_Of_BlackBoard()
 {
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHandAttach");
 	m_vLeftHand = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Bone_LeftHandAttach", m_vLeftHand);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftHandAttach", m_vLeftHand);
 
 	return S_OK;
 }
@@ -898,14 +905,29 @@ HRESULT CSwordGenji::Update_Bone_Of_BlackBoard()
 HRESULT CSwordGenji::Update_Value_Of_BB()
 {
 	// 1. 플레이어 좌표 업데이트
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos());
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos());
 	// 2. 체력 업데이트
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"HP", m_tObjParam.fHp_Cur);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"HP", m_tObjParam.fHp_Cur);
 
 
 	// 1. 평상시 총 발사 방향
 	_mat matGunDir = m_pTransformCom->Get_WorldMat();
-	m_pAIControllerCom->Set_Value_Of_BloackBoard(L"ShotDir", _v3(matGunDir.m[2][0], matGunDir.m[2][1], matGunDir.m[2][2]));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ShotDir", _v3(matGunDir.m[2][0], matGunDir.m[2][1], matGunDir.m[2][2]));
+
+
+
+	// 1. 트레일 업데이트
+	if (true == m_pAIControllerCom->Get_BoolValue(L"TrailOn"))
+	{
+		m_pSword->Set_Enable_Trail(true);
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"TrailOn", false);
+	}
+
+	if (true == m_pAIControllerCom->Get_BoolValue(L"TrailOff"))
+	{
+		m_pSword->Set_Enable_Trail(false);
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"TrailOff", false);
+	}
 
 
 	return S_OK;
