@@ -71,6 +71,9 @@ _int CColdBeam::Update_GameObject(_double TimeDelta)
 		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Smoke_01", m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), nullptr);
 		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Smoke_01", m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), nullptr);
 		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Particle", m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Break", m_pTransformCom->Get_Pos() + _v3(0.f, 0.6f, 0.f), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Break", m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Break", m_pTransformCom->Get_Pos() + _v3(0.f, 1.8f, 0.f), nullptr);
 		m_pBulletBody_01->Set_Dead();
 		m_pBulletBody_02->Set_Dead();
 

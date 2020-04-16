@@ -65,9 +65,9 @@ _int CIceBarrier::Update_GameObject(_double TimeDelta)
 	// 방어막은 일정시간 지나면 알아서 꺼짐
 	if (m_dCurTime > m_dLifeTime)
 	{
-		CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Break_1", m_pTransformCom->Get_Pos(), nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Break_2", m_pTransformCom->Get_Pos(), nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Break_Lightning", m_pTransformCom->Get_Pos(), nullptr);
+		//CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Break_1", m_pTransformCom->Get_Pos(), nullptr);
+		//CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Break_2", m_pTransformCom->Get_Pos(), nullptr);
+		//CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Break_Lightning", m_pTransformCom->Get_Pos(), nullptr);
 	
 		m_bBarrierOff = true;	// 방어막 꺼짐 시작
 	}

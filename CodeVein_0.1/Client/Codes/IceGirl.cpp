@@ -74,7 +74,7 @@ HRESULT CIceGirl::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Turn_Cut());
+	Start_Sel->Add_Child(Start_Game());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -258,6 +258,28 @@ CBT_Composite_Node * CIceGirl::Turn_Cut()
 	CBT_Wait* Wait0 = Node_Wait("대기", 0.116, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기2", L"Player_Pos", 0.1);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", 3.f, 0.534, 0);
+
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_01", L"Self_Foot", 0.2, 25, 0, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_02", L"Self_Foot", 0.2, 25, 0, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_03", L"Self_Foot", 0.2, 25, 0, 0);
+
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("칼 냉기 스모크1", L"IceSmoke_01", L"Sword_MidPos", 0.2, 150, 0, 0);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("칼 냉기 스모크2", L"IceSmoke_02", L"Sword_MidPos", 0.2, 150, 0, 0);
+
+	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("파랑 원 파티클", L"IceGirl_PointParticle_Blue", L"Sword_MidPos"		, 0.38, 80, 0, 0);
+	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("초록 원 파티클", L"IceGirl_PointParticle_Green", L"Sword_MidPos"		, 0.38, 80, 0, 0);
+	CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("파랑 반짝이 파티클", L"IceGirl_FlashParticle_Blue", L"Sword_MidPos"	, 0.38, 80, 0, 0);
+	CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("초록 반짝이 파티클", L"IceGirl_FlashParticle_Green", L"Sword_MidPos"	, 0.38, 80, 0, 0);
+
+	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
+	Root_Parallel->Add_Service(Effect3);
+	Root_Parallel->Add_Service(Effect4);
+	Root_Parallel->Add_Service(Effect5);
+	Root_Parallel->Add_Service(Effect6);
+	Root_Parallel->Add_Service(Effect7);
+	Root_Parallel->Add_Service(Effect8);
+	Root_Parallel->Add_Service(Effect9);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani34);;
@@ -597,6 +619,10 @@ CBT_Composite_Node * CIceGirl::Ice_Barrier()
 	Root_Parallel->Add_Service(Barrier0);
 	CBT_UpdateParam* BarrierValue0 = Node_UpdateParam("닷지 On", &m_tObjParam, CBT_UpdateParam::Dodge, 1.5, 1, 0, 0);
 	Root_Parallel->Add_Service(BarrierValue0);
+
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("버프 전 오른손 오오라", L"IceGirl_Buff_Charge_Smoke_01", L"Bone_LeftHand", 0.1, 45, 0, 0);
+
+	Root_Parallel->Add_Service(Effect0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani29);
@@ -978,7 +1004,9 @@ void CIceGirl::Down()
 
 HRESULT CIceGirl::Update_Bone_Of_BlackBoard()
 {
-
+	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHand");
+	m_vLeftHand = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftHand", m_vLeftHand);
 
 	return S_OK;
 }
@@ -1375,7 +1403,6 @@ HRESULT CIceGirl::Ready_Weapon()
 	// Trail
 	m_pSword->Set_Enable_Trail(true);
 	m_pSword->Set_TrailIndex(8);
-	m_pSword->Set_TrailSize(0.3f, 3.4f);
 	m_pSword->Set_TrailUseMask(0);
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");

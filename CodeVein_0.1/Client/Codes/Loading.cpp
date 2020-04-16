@@ -264,6 +264,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceBlock_Sub_02", true)))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_Break", true)))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceGirl_SwordBullet_Mesh", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceGirl_SwordBullet_Mesh_2", true)))

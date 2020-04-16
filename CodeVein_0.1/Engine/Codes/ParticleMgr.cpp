@@ -159,6 +159,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"IceCrystal_01", 100);
 	Input_Pool(L"IceCrystal_02", 100);
 	Input_Pool(L"IceCrystal_03", 100);
+	Input_Pool(L"IceBlock_Break", 100);
 	Input_Pool(L"IceGirl_SwordBullet_Mesh", 10);
 	Input_Pool(L"IceGirl_SwordBullet_Mesh_2", 10);
 	Input_Pool(L"IceGirl_Charge_Hand_Particle"	, 300);

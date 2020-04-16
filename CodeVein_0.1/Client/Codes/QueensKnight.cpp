@@ -1747,7 +1747,6 @@ HRESULT CQueensKnight::Ready_Weapon()
 	// Trail
 	m_pSword->Set_Enable_Trail(true);
 	m_pSword->Set_TrailIndex(7);
-	m_pSword->Set_TrailSize(0.3f, 3.4f);
 	m_pSword->Set_TrailUseMask(0);
 
 	// øﬁº’ πÊ∆–
