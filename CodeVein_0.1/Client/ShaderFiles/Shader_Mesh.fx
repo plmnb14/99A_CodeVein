@@ -256,7 +256,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	//========================================================================================================================
 
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 0.f);
 
 	Out.vVelocity = 0;
 
@@ -285,7 +285,7 @@ PS_OUT_ADVENCE PS_Default_DN(PS_IN In)
 	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 0.f);
 
 	//========================================================================================================================
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.1f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 0.f);
 	// Depth.z == SpecularIntensity.x ( 스펙큘러의 x )
 
 	Out.vEmissive = 0;
@@ -315,7 +315,7 @@ PS_OUT_ADVENCE PS_Default_DNT(PS_IN In)
 	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 0.f);
 
 	//========================================================================================================================
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.1f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 0.f);
 	// Depth.z == SpecularIntensity.x ( 스펙큘러의 x )
 
 	Out.vEmissive = 0;
@@ -349,7 +349,7 @@ PS_OUT_ADVENCE PS_Default_DNS(PS_IN In)
 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x * 5.f, SpecularIntensity.y * 1.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x * 1.f, SpecularIntensity.y * 1.f);
 
 	Out.vEmissive = 0;
 
@@ -381,7 +381,7 @@ PS_OUT_ADVENCE PS_Default_DNE(PS_IN In)
 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 0.f);
 
 	//========================================================================================================================
 
@@ -417,7 +417,7 @@ PS_OUT_ADVENCE PS_Default_DNSE(PS_IN In)
 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x * 5.f, SpecularIntensity.y * 1.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x * 1.f, SpecularIntensity.y * 1.f);
 
 	//========================================================================================================================
 
@@ -452,7 +452,7 @@ PS_OUT_ADVENCE PS_Default_DNR(PS_IN In)
 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.1f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 0.f);
 
 	Out.vEmissive = 0;
 
@@ -484,7 +484,7 @@ PS_OUT_ADVENCE PS_Default_DNU(PS_IN In)
 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.1f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 0.f);
 
 	Out.vEmissive = 0;
 
@@ -514,7 +514,7 @@ PS_OUT_ADVENCE PS_Default_DNI(PS_IN In)
 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.1f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 0.f);
 
 	Out.vEmissive = 0;
 
@@ -555,7 +555,7 @@ PS_OUT_ADVENCE PS_Default_DNSU(PS_IN In)
 	return Out;
 }
 
-PS_OUT_ADVENCE PS_Default_DNSEU(PS_IN In)
+PS_OUT_ADVENCE PS_Default_DNSUID(PS_IN In)
 {
 	// 유니온 아직 안함
 
@@ -564,6 +564,10 @@ PS_OUT_ADVENCE PS_Default_DNSEU(PS_IN In)
 	Out.vDiffuse = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
 
 	float3 SpecularIntensity = tex2D(SpecularSampler, In.vTexUV).xyz;
+
+	//========================================================================================================================
+
+	float3 vUnion = tex2D(UnionSampler, In.vTexUV).xyz;
 
 	//========================================================================================================================
 
@@ -576,20 +580,24 @@ PS_OUT_ADVENCE PS_Default_DNSEU(PS_IN In)
 
 	float3 worldNormal = mul(TBN, TanNormal);
 
-	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, SpecularIntensity.z * 1.f);
+	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 0.f);
 
 	//========================================================================================================================
 
-	float3 vUnion = tex2D(UnionSampler, In.vTexUV).xyz;
+	float3 vIDValue = tex2D(IDSampler, In.vTexUV).xyz;
 
+	float fDefaultSpecular = 0.1f * vIDValue.r;
+	float fSpecularPower = vIDValue.g;
+	float fReducePower = vIDValue.b;
+	float fFinalSpecular = (fDefaultSpecular + fSpecularPower) - fReducePower;
+
+	fFinalSpecular = fFinalSpecular * SpecularIntensity.y;
+
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x, fFinalSpecular * 2.f);
+	 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x * 5.f, SpecularIntensity.y * 1.f);
-
-	//========================================================================================================================
-
-	Out.vEmissive = pow(tex2D(EmissiveSampler, In.vTexUV), 2.2);
-	Out.vEmissive.a = 1.f;
+	Out.vEmissive = 0;
 
 	//========================================================================================================================
 
@@ -627,6 +635,89 @@ PS_OUT_ADVENCE PS_Default_D(PS_IN In)
 
 	//========================================================================================================================
 
+	return Out;
+}
+
+PS_OUT_ADVENCE PS_Default_DNID(PS_IN In)
+{
+	// 디퓨즈 | 노말 | 이미시브
+
+	PS_OUT_ADVENCE			Out = (PS_OUT_ADVENCE)0;
+
+	//========================================================================================================================
+
+	Out.vDiffuse = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
+
+	//========================================================================================================================
+
+	float3 TanNormal = tex2D(NormalSampler, In.vTexUV).xyz;
+
+	TanNormal = normalize(TanNormal * 2.f - 1.f);
+
+	float3x3 TBN = float3x3(normalize(In.T), normalize(In.B), normalize(In.N));
+	TBN = transpose(TBN);
+
+	float3 worldNormal = mul(TBN, TanNormal);
+
+	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 0.f);
+
+	//========================================================================================================================
+
+	float3 vIDValue = tex2D(IDSampler, In.vTexUV).xyz;
+
+	float fDefaultSpecular = 0.1f * vIDValue.r;
+	float fSpecularPower = vIDValue.g;
+	float fReducePower = vIDValue.b;
+	float fFinalSpecular = (fDefaultSpecular + fSpecularPower) - fReducePower;
+
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.f, fFinalSpecular * 5.f);
+
+	//========================================================================================================================
+
+	Out.vEmissive = 0;
+
+	//========================================================================================================================
+	return Out;
+}
+
+PS_OUT_ADVENCE PS_Default_DNEID(PS_IN In)
+{
+	// 디퓨즈 | 노말 | 이미시브
+
+	PS_OUT_ADVENCE			Out = (PS_OUT_ADVENCE)0;
+
+	//========================================================================================================================
+
+	Out.vDiffuse = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
+
+	//========================================================================================================================
+
+	float3 TanNormal = tex2D(NormalSampler, In.vTexUV).xyz;
+
+	TanNormal = normalize(TanNormal * 2.f - 1.f);
+
+	float3x3 TBN = float3x3(normalize(In.T), normalize(In.B), normalize(In.N));
+	TBN = transpose(TBN);
+
+	float3 worldNormal = mul(TBN, TanNormal);
+
+	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 0.f);
+
+	//========================================================================================================================
+
+	float3 vIDValue = tex2D(IDSampler, In.vTexUV).xyz;
+
+	float fDefaultSpecular = 0.5f;
+	float fSpecularPower = fDefaultSpecular + (vIDValue.g * 5.f);
+
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, fSpecularPower, 1.f);
+
+	//========================================================================================================================
+
+	Out.vEmissive = pow(tex2D(EmissiveSampler, In.vTexUV), 2.2);
+	Out.vEmissive.a = 1.f;
+
+	//========================================================================================================================
 	return Out;
 }
 
@@ -861,7 +952,7 @@ technique Default_Technique
 		AlphaFunc = Greater;
 
 		VertexShader = compile vs_3_0 VS_MAIN();
-		PixelShader = compile ps_3_0 PS_Default_DNSEU();
+		PixelShader = compile ps_3_0 PS_Default_DNSUID();
 	}
 
 	//====================================================================================================
@@ -913,6 +1004,36 @@ technique Default_Technique
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_Default_D();
+	}
+
+	//====================================================================================================
+	// 16 - Default ( D N ID )
+	//====================================================================================================
+	pass Default_DNE
+	{
+		AlphablendEnable = false;
+
+		AlphaTestEnable = true;
+		AlphaRef = 0;
+		AlphaFunc = Greater;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 PS_Default_DNID();
+	}
+
+	//====================================================================================================
+	// 17 - Default ( D N E ID )
+	//====================================================================================================
+	pass Default_DNE
+	{
+		AlphablendEnable = false;
+
+		AlphaTestEnable = true;
+		AlphaRef = 0;
+		AlphaFunc = Greater;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 PS_Default_DNEID();
 	}
 }
 

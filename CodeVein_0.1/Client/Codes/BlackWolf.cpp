@@ -40,7 +40,7 @@ HRESULT CBlackWolf::Ready_GameObject(void * pArg)
 	m_tObjParam.bIsHit = false;	//맞기 진행중 아님
 	m_tObjParam.bCanAttack = true; //공격 가능
 	m_tObjParam.bIsAttack = false; //공격 진행중 아님
-	m_tObjParam.bDodge = false; //첫 생성시 false임
+	m_tObjParam.bIsDodge = false; //첫 생성시 false임
 
 	m_bInRecognitionRange = false; //인지 범위 여부
 	m_bInAtkRange = false; //공격 범위 여부
@@ -307,7 +307,7 @@ void CBlackWolf::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					if (false == iter->Get_Target_Dodge())
+					if (false == iter->Get_Target_IsDodge())
 					{
 						iter->Set_Target_CanHit(false);
 						iter->Add_Target_Hp(m_tObjParam.fDamage);
@@ -412,7 +412,7 @@ void CBlackWolf::Check_Dist()
 		return;
 
 	//회피, 공격중, 맞는중 체크 안함
-	if (true == m_tObjParam.bDodge ||
+	if (true == m_tObjParam.bIsDodge ||
 		true == m_tObjParam.bIsAttack ||
 		true == m_tObjParam.bIsHit)
 		return;
@@ -744,7 +744,7 @@ void CBlackWolf::Function_ResetAfterAtk()
 	m_tObjParam.bCanHit = true; //피격 가능
 	m_tObjParam.bIsHit = false; //피격중 x
 
-	m_tObjParam.bDodge = false;  //회피아님
+	m_tObjParam.bIsDodge = false;  //회피아님
 
 	m_tObjParam.bIsAttack = false; //공격중x
 	m_bCanAtkRandom = true;//랜덤 공격 가능
@@ -878,10 +878,10 @@ void CBlackWolf::Play_Dodge()
 {
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
 
-	if (false == m_tObjParam.bDodge) //회피상태x
+	if (false == m_tObjParam.bIsDodge) //회피상태x
 	{
 		Function_ResetAfterAtk();
-		m_tObjParam.bDodge = true; //회피상태o
+		m_tObjParam.bIsDodge = true; //회피상태o
 		m_eState = WOLF_ANI::Dodge;
 	}
 	else //회피상태o

@@ -37,7 +37,8 @@ public:
 
 public: // For.Graphic_Device
 	HRESULT	Ready_GraphicDev(HWND hWnd, CGraphic_Device::WINMODE eMode, const _uint& iSizeX, const _uint& iSizeY, LPDIRECT3DDEVICE9* ppGraphicDev = nullptr);
-
+	void Render_Sprite_Begin();
+	void Render_Sprite_End();
 
 public: // for.Input_Device
 	_byte	Get_DIKeyState(_ubyte byKeyID);

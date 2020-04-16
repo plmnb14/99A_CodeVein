@@ -259,7 +259,7 @@ PS_OUT PS_BLURH(PS_IN In)
 		0.2270270270, 0.1945945946, 0.1216216216,
 		0.0540540541, 0.0162162162
 	};
-	float3 ppColour = 0;// tex2D(DiffuseSampler, In.vTexUV / 1280).xyz * weight[0];
+	float3 ppColour = 0;
 	float3 FragmentColor = float3(0.0f, 0.0f, 0.0f);
 	
 	float hstep = dir.x;
@@ -296,7 +296,7 @@ PS_OUT PS_BLURV(PS_IN In)
 		0.2270270270, 0.1945945946, 0.1216216216,
 		0.0540540541, 0.0162162162
 	};
-	float3 ppColour = 0;// tex2D(DiffuseSampler, In.vTexUV / 720.0).xyz * weight[0];
+	float3 ppColour = 0;
 	float3 FragmentColor = float3(0.0f, 0.0f, 0.0f);
 	
 	float hstep = dir.x;
@@ -370,7 +370,7 @@ PS_OUT PS_Bloom(PS_IN In) // Extract Bright Color
 	// Bloom 3====================================================================
 
 	Out.vColor = vDiffuse;
-	Out.vColor.rgb -= 1.5f; // 작은 값일 수록 빛에 민감한 광선
+	Out.vColor.rgb -= 0.5f; // 작은 값일 수록 빛에 민감한 광선
 	// 작은 빛도 블룸되요
 
 	Out.vColor = 3.0f * max(Out.vColor, 0.0f); // 큰 값일 수록 확실한 모양의 광선

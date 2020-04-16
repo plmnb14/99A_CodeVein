@@ -355,7 +355,7 @@ PS_OUT PS_TRAIL(PS_IN In)
 	vector		vDepthInfo = tex2D(DepthSampler, vTexUV);
 	float		fViewZ = vDepthInfo.y * 500.f;
 
-	Out.vColor.a = (Out.vColor.a * saturate(fViewZ - In.vProjPos.w)) * g_fAlpha;
+	Out.vColor.a = (Out.vColor.a * saturate(fViewZ - In.vProjPos.w)) * 1.f; // g_fAlpha;
 	// =========================================================================================================
 
 	return Out;
@@ -443,7 +443,7 @@ technique Default_Technique
 		AlphaTestEnable = true;
 		srcblend = SrcAlpha;
 		DestBlend = InvSrcAlpha;
-		//blendop = add;
+		blendop = add;
 		cullmode = none;
 
 		VertexShader = compile vs_3_0 VS_MAIN();

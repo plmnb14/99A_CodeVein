@@ -46,8 +46,9 @@ HRESULT CPlayerST::Ready_GameObject(void * pArg)
 	pDesc->fSizeX = 345.f;
 	pDesc->fSizeY = 30.f;
 	pDesc->iIndex = 0;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_HPBack", SCENE_STAGE, L"Layer_HPBack", pDesc);
-	static_cast<CHPBack*>(g_pManagement->Get_GameObjectBack(L"Layer_HPBack", SCENE_STAGE))->Set_Active(true);
+
+	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_HPBack", SCENE_STAGE, L"Layer_HPBack", pDesc);
+	//static_cast<CHPBack*>(g_pManagement->Get_GameObjectBack(L"Layer_HPBack", SCENE_STAGE))->Set_Active(true);
 
 	return NOERROR;
 }

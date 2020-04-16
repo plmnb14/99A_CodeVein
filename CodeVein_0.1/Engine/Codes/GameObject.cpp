@@ -84,6 +84,7 @@ void CGameObject::Set_Dead()
 
 void CGameObject::Start_Dissolve(_float fFxSpeed, _bool bFadeIn, _bool bReadyDead)
 {
+	m_bOnDissolve = true;
 	m_iPass = 3;
 	m_bFadeIn = bFadeIn;
 	m_fFXSpeed = fFxSpeed;

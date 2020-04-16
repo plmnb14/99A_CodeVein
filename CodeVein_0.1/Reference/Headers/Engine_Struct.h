@@ -31,13 +31,20 @@ namespace Engine
 		_float		fHp_Max;		// 최대 HP_Max
 		_float		fStamina_Cur;	// 현재 스테미나
 		_float		fStamina_Max;	// 최대 스테미나
+
 		_float		fArmor_Cur;		// 현재 방어도
 		_float		fArmor_Max;		// 최대 방어도
 		_float		fHoldGage_Cur;	// 현재 경직도
 		_float		fHoldGage_Max;	// 최대 경직도
+
 		_float		fDamage;		// 공격력
 
 		_float		fLength;		// 충돌 대상과의 거리
+
+		_float		fDodgeTimer_Cur;	// 회피 중 무적 시간
+		_float		fDodgeTimer_Max;	// 회피 중 최대 무적 시간
+		_float		fGuardTimer_Cur;	// 가드 중 무적 시간
+		_float		fGuardTimer_Max;	// 가드 중 최대 무적 시간
 
 		_bool		bDown;			// 넘어진 상태일 때
 		_bool		bAir;			// 공중인 상태일 때
@@ -50,8 +57,15 @@ namespace Engine
 		_bool		bIsAttack;		// 공격 중인지.
 		_bool		bCanAttack;		// 공격가능한지
 
-		_bool		bDodge;			// 회피 상태인지
-		_float		fDodgeTimer;	// 회피 중 무적 시간
+		_bool		bCanGuard;		// 가드 가능한 상태인지
+		_bool		bIsGuard;		// 가드 가능한 상태인지
+
+		_bool		bCanDodge;		// 회피 가능 상태인지
+		_bool		bIsDodge;		// 회피 중인 상태인지
+
+		_bool		bInvisible;		// 투명 상태인지 ( 애니메이션은 재생되지만, 메쉬 랜더는 안되고, 충돌처리도 안되는 상태 )
+
+		_bool		bSuperArmor;	// true 일 시 넉백, 피격모션 출력, 다운 상태를 받을 수 없음
 
 		_v3			vHitDir;		// 맞은 방향
 

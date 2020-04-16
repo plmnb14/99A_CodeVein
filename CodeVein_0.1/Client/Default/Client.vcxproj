@@ -175,7 +175,9 @@
     <ClInclude Include="..\Headers\BloodCode_Icon.h" />
     <ClInclude Include="..\Headers\BossDecoUI.h" />
     <ClInclude Include="..\Headers\BossHP.h" />
-    <ClInclude Include="..\Headers\Button_UI.h" />
+    <ClInclude Include="..\Headers\Button_UI.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\Headers\ClickUI.h" />
     <ClInclude Include="..\Headers\Client_Defines.h" />
     <ClInclude Include="..\Headers\CursorUI.h" />
@@ -189,7 +191,9 @@
     <ClInclude Include="..\Headers\FontNumUI.h" />
     <ClInclude Include="..\Headers\GunGenjiBullet.h" />
     <ClInclude Include="..\Headers\Get_ItemUI.h" />
-    <ClInclude Include="..\Headers\HPBack.h" />
+    <ClInclude Include="..\Headers\HPBack.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\Headers\Info_Slot.h" />
     <ClInclude Include="..\Headers\Inventory.h" />
     <ClInclude Include="..\Headers\Inventory_Icon.h" />
@@ -251,7 +255,9 @@
     <ClCompile Include="..\Codes\BloodCode_Icon.cpp" />
     <ClCompile Include="..\Codes\BossDecoUI.cpp" />
     <ClCompile Include="..\Codes\BossHP.cpp" />
-    <ClCompile Include="..\Codes\Button_UI.cpp" />
+    <ClCompile Include="..\Codes\Button_UI.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\Codes\ClickUI.cpp" />
     <ClCompile Include="..\Codes\CursorUI.cpp" />
     <ClCompile Include="..\Codes\DamegeNumUI.cpp" />
@@ -264,7 +270,9 @@
     <ClCompile Include="..\Codes\FontNumUI.cpp" />
     <ClCompile Include="..\Codes\GunGenjiBullet.cpp" />
     <ClCompile Include="..\Codes\Get_ItemUI.cpp" />
-    <ClCompile Include="..\Codes\HPBack.cpp" />
+    <ClCompile Include="..\Codes\HPBack.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\Codes\Info_Slot.cpp" />
     <ClCompile Include="..\Codes\Inventory.cpp" />
     <ClCompile Include="..\Codes\Inventory_Icon.cpp" />

@@ -13,6 +13,7 @@ public:
 	enum WEAPON_DATA
 	{
 		WPN_SSword_Normal,
+		WPN_SSword_Military,
 		WPN_LSword_Normal,
 		WPN_Hammer_Normal,
 		WPN_Halverd_Normal,
@@ -68,6 +69,7 @@ public:
 	virtual void			Set_SkillMode(_bool _bSkill);
 	virtual void			Set_Enable_Record(_bool _bRecord);
 	virtual void			Set_SkillPercent(_float _fPercent);
+	virtual void			Set_Invisible(_bool _bInvisible) { m_tObjParam.bInvisible = _bInvisible; }
 
 private:
 	list<CGameObject*>		m_listCollisionRecord;

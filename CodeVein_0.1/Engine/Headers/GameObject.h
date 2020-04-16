@@ -59,17 +59,22 @@ public:
 	virtual OBJECT_PARAM* Get_pTarget_Param() { return &m_tObjParam; }
 	virtual _bool Get_Target_IsAir() { return m_tObjParam.bAir; }
 	virtual _bool Get_Target_IsDown() { return m_tObjParam.bDown; }
-	virtual _bool Get_Target_Dodge() { return m_tObjParam.bDodge; };
+	virtual _bool Get_Target_IsDodge() { return m_tObjParam.bIsDodge; };
+	virtual _bool Get_Target_CanDodge() { return m_tObjParam.bCanDodge; };
 	virtual _bool Get_Target_IsHit() { return m_tObjParam.bIsHit; }
 	virtual _bool Get_Target_CanHit() { return m_tObjParam.bCanHit; }
 	virtual _bool Get_Target_HitAgain() { return m_tObjParam.bHitAgain; }
 	virtual _bool Get_Target_KnockBack() { return m_tObjParam.bKnockBack; }
 	virtual _bool Get_Target_IsAttack() { return m_tObjParam.bIsAttack; }
 	virtual _bool Get_Target_CanAttack() { return m_tObjParam.bCanAttack; }
+	virtual _bool Get_Target_SuperArmor() { return m_tObjParam.bSuperArmor; };
 	virtual _float Get_Target_Hp() { return m_tObjParam.fHp_Cur; };
 	virtual _float Get_Target_Stamina() { return m_tObjParam.fStamina_Cur; };
 	virtual _float Get_Target_HoldGage() { return m_tObjParam.fHoldGage_Cur; };
-	virtual _float Get_DodgeTimer() { return m_tObjParam.fDodgeTimer; }
+	virtual _float Get_DodgeTimer_Cur() { return m_tObjParam.fDodgeTimer_Cur; };
+	virtual _float Get_DodgeTimer_Max() { return m_tObjParam.fDodgeTimer_Max; };
+	virtual _float Get_GuardTimer_Cur() { return m_tObjParam.fGuardTimer_Cur; };
+	virtual _float Get_GuardTimer_Max() { return m_tObjParam.fGuardTimer_Max; };
 
 public:
 	virtual void Add_Target_Hp(_float _fHp) { m_tObjParam.fHp_Cur += _fHp; };
@@ -85,8 +90,13 @@ public:
 	virtual void Set_Target_IsAttack(_bool _bIsAttack) { m_tObjParam.bIsAttack = _bIsAttack; }
 	virtual void Set_Target_CanAttack(_bool _bCanAttack) { m_tObjParam.bCanAttack = _bCanAttack; }
 	virtual void Set_Target_KnockBack(_bool _bKnockBack) { m_tObjParam.bKnockBack = _bKnockBack; }
-	virtual void Set_Target_Dodge(_bool _bDodge) { m_tObjParam.bDodge = _bDodge; }
-	virtual void Set_Target_DodgeTimer(_float _fDodgeTimer) { m_tObjParam.fDodgeTimer = _fDodgeTimer; }
+	virtual void Set_Target_IsDodge(_bool _bDodge) { m_tObjParam.bIsDodge = _bDodge; }
+	virtual void Set_Target_CanDodge(_bool _bDodge) { m_tObjParam.bCanDodge = _bDodge; }
+	virtual void Set_Target_SuperArmor(_bool _bSuperArmor) { m_tObjParam.bSuperArmor = _bSuperArmor; }
+	virtual void Set_Target_DodgeTimer_Cur(_float _fDodgeTimer) { m_tObjParam.fDodgeTimer_Cur = _fDodgeTimer; }
+	virtual void Set_Target_DodgeTimer_Max(_float _fDodgeTimer) { m_tObjParam.fDodgeTimer_Max = _fDodgeTimer; }
+	virtual void Set_Target_GuardTimer_Cur(_float _fDodgeTimer) { m_tObjParam.fGuardTimer_Cur = _fDodgeTimer; }
+	virtual void Set_Target_GuardTimer_Max(_float _fDodgeTimer) { m_tObjParam.fGuardTimer_Max = _fDodgeTimer; }
 	
 public:
 	vector<CCollider*>		Get_PhysicColVector() { return m_vecPhysicCol; };	// 충돌 체크용 콜라이더 벡터
@@ -119,6 +129,7 @@ protected:
 	_mat	m_matLastWVP;
 
 	// For Dissolve
+	_bool	m_bOnDissolve = false;
 	_bool	m_bFadeIn = false;
 	_bool	m_bReadyDead = false;
 	_float	m_fFXSpeed = 0.f;
