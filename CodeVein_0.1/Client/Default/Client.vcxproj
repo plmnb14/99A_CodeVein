@@ -186,6 +186,7 @@
     <ClInclude Include="..\Headers\Expendables.h" />
     <ClInclude Include="..\Headers\Expendables_Inven.h" />
     <ClInclude Include="..\Headers\Expendables_Slot.h" />
+    <ClInclude Include="..\Headers\FireBoy.h" />
     <ClInclude Include="..\Headers\FontNumManager.h" />
     <ClInclude Include="..\Headers\FontNumUI.h" />
     <ClInclude Include="..\Headers\GunGenjiBullet.h" />
@@ -267,6 +268,7 @@
     <ClCompile Include="..\Codes\Expendables.cpp" />
     <ClCompile Include="..\Codes\Expendables_Inven.cpp" />
     <ClCompile Include="..\Codes\Expendables_Slot.cpp" />
+    <ClCompile Include="..\Codes\FireBoy.cpp" />
     <ClCompile Include="..\Codes\FontNumManager.cpp" />
     <ClCompile Include="..\Codes\FontNumUI.cpp" />
     <ClCompile Include="..\Codes\GunGenjiBullet.cpp" />

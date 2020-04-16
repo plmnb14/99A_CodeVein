@@ -65,16 +65,16 @@ HRESULT CIceGirl::Ready_GameObject(void * pArg)
 
 	//////////// 아래에 주석해놓은 4줄이 본게임에서 쓸 것임, 차례대로 공격함.
 
-	CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
-	Check_ShowValue->Set_Child(Start_Show());
-	Start_Sel->Add_Child(Check_ShowValue);
-	Start_Sel->Add_Child(Start_Game());
+	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
+	//Check_ShowValue->Set_Child(Start_Show());
+	//Start_Sel->Add_Child(Check_ShowValue);
+	//Start_Sel->Add_Child(Start_Game());
 
 	////////////
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	//Start_Sel->Add_Child(Create_IceBarrier_Or_Not());
+	Start_Sel->Add_Child(Turn_Cut());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -242,6 +242,34 @@ HRESULT CIceGirl::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 	return NOERROR;
 }
 
+CBT_Composite_Node * CIceGirl::Turn_Cut()
+{
+	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
+
+	CBT_Sequence* MainSeq = Node_Sequence("회전 베기");
+	CBT_Play_Ani* Show_Ani34 = Node_Ani("돌면서 베기", 34, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.1f);
+
+	CBT_Sequence* SubSeq = Node_Sequence("이동");
+	CBT_Wait* Wait0 = Node_Wait("대기", 0.116, 0);
+	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기2", L"Player_Pos", 0.1);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", 3.f, 0.534, 0);
+
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(Show_Ani34);;
+	MainSeq->Add_Child(Show_Ani0);;
+
+	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(Rotation0);
+	SubSeq->Add_Child(Move0);
+
+	CBT_UpdateParam* pHitCol0 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.833, 1, 0.217, 0);
+	Root_Parallel->Add_Service(pHitCol0);
+
+	return Root_Parallel;
+}
+
 CBT_Composite_Node * CIceGirl::ThreeCombo_Cut1()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
@@ -250,6 +278,7 @@ CBT_Composite_Node * CIceGirl::ThreeCombo_Cut1()
 	CBT_Play_Ani* Show_Ani38 = Node_Ani("베기1", 38, 0.4f);
 	CBT_Play_Ani* Show_Ani37 = Node_Ani("베기2", 37, 0.4f);
 	CBT_Play_Ani* Show_Ani35 = Node_Ani("베기3", 35, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.1f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.083, 0);
@@ -272,6 +301,7 @@ CBT_Composite_Node * CIceGirl::ThreeCombo_Cut1()
 	MainSeq->Add_Child(Show_Ani38);
 	MainSeq->Add_Child(Show_Ani37);
 	MainSeq->Add_Child(Show_Ani35);
+	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);

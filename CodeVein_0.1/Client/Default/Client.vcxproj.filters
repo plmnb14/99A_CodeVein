@@ -283,6 +283,9 @@
     <Filter Include="02.GameObject\Stage\1%29 Boss\IceGirl\Bullet">
       <UniqueIdentifier>{c3b3ceff-e5cb-4a51-9a99-9ee6263b5ede}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\1%29 Boss\FireBoy">
+      <UniqueIdentifier>{513f084f-d270-4483-b705-d20c5f6c1dcd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -537,6 +540,9 @@
     <ClInclude Include="..\Headers\MonsterHeaders.h">
       <Filter>01.Scene\99.Loading</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\FireBoy.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -781,6 +787,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\IceBarrier.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\FireBoy.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

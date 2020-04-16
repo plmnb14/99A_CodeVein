@@ -1306,7 +1306,10 @@ void CQueensKnight::Down()
 		m_tObjParam.bCanHit = true;
 
 		if (true == m_bDown_LoopAni)
+		{
 			m_pMeshCom->Reset_OldIndx();	//루프 애니 초기화
+			m_pMeshCom->SetUp_Animation(Ani_Down_Loop);
+		}
 
 		m_pAIControllerCom->Reset_BT();
 	}
@@ -1317,6 +1320,15 @@ void CQueensKnight::Down()
 		if (m_dHitTime > 0.5)
 		{
 			m_tObjParam.bIsHit = false;		// 재충돌 가능
+		}
+	}
+
+	if (true == m_bDown_LoopAni)
+	{
+		if (m_pMeshCom->Is_Finish_Animation(0.5f))
+		{
+			m_pMeshCom->Reset_OldIndx();
+			m_pMeshCom->SetUp_Animation(Ani_Down_Loop);
 		}
 	}
 }

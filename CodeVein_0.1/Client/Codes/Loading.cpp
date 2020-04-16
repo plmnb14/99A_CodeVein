@@ -690,6 +690,9 @@ _uint CLoading::Loading_Stage()
 	// 얼음여자 얼음보호막
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceBarrier", CIceBarrier::Create(m_pGraphicDev))))
 		return E_FAIL;
+	// 불남자
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireBoy", CFireBoy::Create(m_pGraphicDev))))
+		return E_FAIL;
 	// 검은 성게
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))
 		return E_FAIL;
