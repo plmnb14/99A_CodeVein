@@ -112,14 +112,21 @@ public:
 		Groggy_Loop,
 		Groggy_End,
 		DmgRepel, //사용 안하는 걸로
-		DmgBlow_B, //Down에서 일어나는 모션을 안 넣어서 미룸
-		DmgBlow_F, //Down에서 일어나는 모션을 안 넣어서 미룸
-		Dmg02_FR,
-		Dmg02_FL,
+
+		Down_S_End,
+		Down_S_Loop,
+		Down_S_Start, //자빠짐
+
+		Down_P_End,
+		Down_P_Loop,
+		Down_P_Start, //엎어짐
+
+		Dmg02_FR, //좀 느리게 돌아옴
+		Dmg02_FL, //씨게 맞음
 		Dmg02_BR,
 		Dmg02_BL,
-		Dmg01_FR,
-		Dmg01_FL,
+		Dmg01_FR, //빠르게 돌아옴
+		Dmg01_FL, //가볍게 맞음
 		Dmg01_BR,
 		Dmg01_BL,
 
@@ -322,7 +329,7 @@ private:
 	HUNTER_CCTYPE		m_eSecondCategory_CC;
 	HUNTER_DEADTYPE		m_eSecondCategory_DEAD;
 
-	WEAPON_ANITYPE		m_eWeaponState = WEAPON_ANITYPE::GUN;
+	WEAPON_ANITYPE		m_eWeaponState = WEAPON_ANITYPE::HALBERD;
 	ATK_COMBO_TYPE		m_eAtkCombo;
 	HUNTER_ANI			m_eState;
 	FBLR				m_eFBLR;

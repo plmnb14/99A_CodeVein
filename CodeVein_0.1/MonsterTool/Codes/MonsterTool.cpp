@@ -170,8 +170,8 @@ void CMonsterTool::Update(const _float & fTimeDelta)
 		UpdateData(TRUE);
 
 		m_pMonster->Update_GameObject(fTimeDelta);
-		m_strAniFullTime.Format(L"%.2f", TARGET_TO_D_MESH(m_pMonster)->Get_AnimationFullTime());
-		m_strAniTime.Format(L"%.2f", TARGET_TO_D_MESH(m_pMonster)->Get_TrackInfo().Position);
+		m_strAniFullTime.Format(L"%.3f", TARGET_TO_D_MESH(m_pMonster)->Get_AnimationFullTime());
+		m_strAniTime.Format(L"%.3f", TARGET_TO_D_MESH(m_pMonster)->Get_TrackInfo().Position);
 
 		_double NowAniTime = _wtof(m_strAniTime);
 		_double MaxAniTime = _wtof(m_strAniFullTime);
@@ -179,11 +179,11 @@ void CMonsterTool::Update(const _float & fTimeDelta)
 		_int x = _int(NowAniTime / MaxAniTime);
 		
 		m_strAniTime.Format( L"%.2f", NowAniTime - (MaxAniTime * x) );
-		m_strPlayAniRatio.Format(L"%.2f", (NowAniTime / MaxAniTime) - x);
+		m_strPlayAniRatio.Format(L"%.3f", (NowAniTime / MaxAniTime) - x);
 
-		m_strObjPosX.Format(L"%.2f", TARGET_TO_TRANS(m_pMonster)->Get_Pos().x);
-		m_strObjPosY.Format(L"%.2f", TARGET_TO_TRANS(m_pMonster)->Get_Pos().y);
-		m_strObjPosZ.Format(L"%.2f", TARGET_TO_TRANS(m_pMonster)->Get_Pos().z);
+		m_strObjPosX.Format(L"%.3f", TARGET_TO_TRANS(m_pMonster)->Get_Pos().x);
+		m_strObjPosY.Format(L"%.3f", TARGET_TO_TRANS(m_pMonster)->Get_Pos().y);
+		m_strObjPosZ.Format(L"%.3f", TARGET_TO_TRANS(m_pMonster)->Get_Pos().z);
 		
 		UpdateData(FALSE);
 	}
@@ -458,100 +458,100 @@ void CMonsterTool::Seting_TreeCtrlAniEvent()
 		{
 			Root = m_TreeCtrlAniEvent.InsertItem(L"MOVE", 0, 0, TVI_ROOT, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE)->second->m_dStartTime);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE)->second->m_dStartTime);
 			m_TreeCtrlAniEvent.InsertItem(L"Start " + temp, 0, 0, Root, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE)->second->m_dEndTime);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE)->second->m_dEndTime);
 			m_TreeCtrlAniEvent.InsertItem(L"End " + temp, 0, 0, Root, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE)->second->m_dLoopTime);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE)->second->m_dLoopTime);
 			m_TreeCtrlAniEvent.InsertItem(L"Loop " + temp, 0, 0, Root, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE)->second->m_dRange);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE)->second->m_dRange);
 			m_TreeCtrlAniEvent.InsertItem(L"Range " + temp, 0, 0, Root, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE)->second->m_dMoveSpeed);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE)->second->m_dMoveSpeed);
 			m_TreeCtrlAniEvent.InsertItem(L"MoveSpeed " + temp, 0, 0, Root, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE)->second->m_dMoveAccel);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE)->second->m_dMoveAccel);
 			m_TreeCtrlAniEvent.InsertItem(L"MoveAccel " + temp, 0, 0, Root, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE)->second->m_dAniRatio);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::MOVE)->second->m_dAniRatio);
 			m_TreeCtrlAniEvent.InsertItem(L"AniRatio " + temp, 0, 0, Root, TVI_LAST);
 		}
 		if (Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::EFFECT) != Mesh_iter->second.find(num)->second.end())
 		{
 			Root = m_TreeCtrlAniEvent.InsertItem(L"EFFECT", 0, 0, TVI_ROOT, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::EFFECT)->second->m_dStartTime);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::EFFECT)->second->m_dStartTime);
 			m_TreeCtrlAniEvent.InsertItem(L"Start " + temp, 0, 0, Root, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::EFFECT)->second->m_dEndTime);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::EFFECT)->second->m_dEndTime);
 			m_TreeCtrlAniEvent.InsertItem(L"End " + temp, 0, 0, Root, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::EFFECT)->second->m_dLoopTime);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::EFFECT)->second->m_dLoopTime);
 			m_TreeCtrlAniEvent.InsertItem(L"Loop " + temp, 0, 0, Root, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::EFFECT)->second->m_dRange);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::EFFECT)->second->m_dRange);
 			m_TreeCtrlAniEvent.InsertItem(L"Range " + temp, 0, 0, Root, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::EFFECT)->second->m_dMoveSpeed);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::EFFECT)->second->m_dMoveSpeed);
 			m_TreeCtrlAniEvent.InsertItem(L"MoveSpeed " + temp, 0, 0, Root, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::EFFECT)->second->m_dMoveAccel);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::EFFECT)->second->m_dMoveAccel);
 			m_TreeCtrlAniEvent.InsertItem(L"MoveAccel " + temp, 0, 0, Root, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::EFFECT)->second->m_dAniRatio);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::EFFECT)->second->m_dAniRatio);
 			m_TreeCtrlAniEvent.InsertItem(L"AniRatio " + temp, 0, 0, Root, TVI_LAST);
 		}
 		if (Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::SOUND) != Mesh_iter->second.find(num)->second.end())
 		{
 			Root = m_TreeCtrlAniEvent.InsertItem(L"SOUND", 0, 0, TVI_ROOT, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::SOUND)->second->m_dStartTime);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::SOUND)->second->m_dStartTime);
 			m_TreeCtrlAniEvent.InsertItem(L"Start " + temp, 0, 0, Root, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::SOUND)->second->m_dEndTime);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::SOUND)->second->m_dEndTime);
 			m_TreeCtrlAniEvent.InsertItem(L"End " + temp, 0, 0, Root, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::SOUND)->second->m_dLoopTime);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::SOUND)->second->m_dLoopTime);
 			m_TreeCtrlAniEvent.InsertItem(L"Loop " + temp, 0, 0, Root, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::SOUND)->second->m_dRange);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::SOUND)->second->m_dRange);
 			m_TreeCtrlAniEvent.InsertItem(L"Range " + temp, 0, 0, Root, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::SOUND)->second->m_dMoveSpeed);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::SOUND)->second->m_dMoveSpeed);
 			m_TreeCtrlAniEvent.InsertItem(L"MoveSpeed " + temp, 0, 0, Root, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::SOUND)->second->m_dMoveAccel);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::SOUND)->second->m_dMoveAccel);
 			m_TreeCtrlAniEvent.InsertItem(L"MoveAccel " + temp, 0, 0, Root, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::SOUND)->second->m_dAniRatio);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::SOUND)->second->m_dAniRatio);
 			m_TreeCtrlAniEvent.InsertItem(L"AniRatio " + temp, 0, 0, Root, TVI_LAST);
 		}
 		if (Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::COLLISION) != Mesh_iter->second.find(num)->second.end())
 		{
 			Root = m_TreeCtrlAniEvent.InsertItem(L"COLLISION", 0, 0, TVI_ROOT, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::COLLISION)->second->m_dStartTime);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::COLLISION)->second->m_dStartTime);
 			m_TreeCtrlAniEvent.InsertItem(L"Start " + temp, 0, 0, Root, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::COLLISION)->second->m_dEndTime);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::COLLISION)->second->m_dEndTime);
 			m_TreeCtrlAniEvent.InsertItem(L"End " + temp, 0, 0, Root, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::COLLISION)->second->m_dLoopTime);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::COLLISION)->second->m_dLoopTime);
 			m_TreeCtrlAniEvent.InsertItem(L"Loop " + temp, 0, 0, Root, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::COLLISION)->second->m_dRange);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::COLLISION)->second->m_dRange);
 			m_TreeCtrlAniEvent.InsertItem(L"Range " + temp, 0, 0, Root, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::COLLISION)->second->m_dMoveSpeed);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::COLLISION)->second->m_dMoveSpeed);
 			m_TreeCtrlAniEvent.InsertItem(L"MoveSpeed " + temp, 0, 0, Root, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::COLLISION)->second->m_dMoveAccel);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::COLLISION)->second->m_dMoveAccel);
 			m_TreeCtrlAniEvent.InsertItem(L"MoveAccel " + temp, 0, 0, Root, TVI_LAST);
 
-			temp.Format(L"%.2f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::COLLISION)->second->m_dAniRatio);
+			temp.Format(L"%.3f", Mesh_iter->second.find(num)->second.find(ANI_EVENT_TYPE::COLLISION)->second->m_dAniRatio);
 			m_TreeCtrlAniEvent.InsertItem(L"AniRatio " + temp, 0, 0, Root, TVI_LAST);
 		}
 	}
@@ -589,7 +589,7 @@ void CMonsterTool::Seting_TreeCtrlAniCombo()
 					for (auto& AniIdx_iter : ComboNumber_iter.second) //vector
 					{
 						strTempAniIndex.Format(L"%d", AniIdx_iter.first);
-						strTempAniRatio.Format(L"%.2f", AniIdx_iter.second);
+						strTempAniRatio.Format(L"%.3f", AniIdx_iter.second);
 						m_ListBoxAni.GetText(AniIdx_iter.first, strTempAniName);
 						m_TreeCtrlAniCombo.InsertItem(strTempAniIndex + L"/" + strTempAniRatio + L"/ " + strTempAniName, 0, 0, Root, TVI_LAST);
 					}
@@ -926,8 +926,8 @@ void CMonsterTool::Play_Ani()
 		{
 			m_pMonster->Check_ComboPlayBtn(false);
 
-			m_strAniFullTime.Format(L"%.2f", TARGET_TO_D_MESH(m_pMonster)->Get_AnimationFullTime());
-			m_strAniTime.Format(L"%.2f", TARGET_TO_D_MESH(m_pMonster)->Get_TrackInfo().Position);
+			m_strAniFullTime.Format(L"%.3f", TARGET_TO_D_MESH(m_pMonster)->Get_AnimationFullTime());
+			m_strAniTime.Format(L"%.3f", TARGET_TO_D_MESH(m_pMonster)->Get_TrackInfo().Position);
 			TARGET_TO_D_MESH(m_pMonster)->SetUp_Animation(_ttoi(m_strAniIndex));
 			m_pMonster->Set_AniSpeed((_float)_wtof(m_strAniPlayMul));
 		}
@@ -943,8 +943,8 @@ void CMonsterTool::Stop_Ani()
 	if(nullptr != m_pMonster)
 	{
 		m_pMonster->Set_AniSpeed(0.f);
-		m_strAniFullTime.Format(L"%.2f", TARGET_TO_D_MESH(m_pMonster)->Get_AnimationFullTime());
-		m_strAniTime.Format(L"%.2f", TARGET_TO_D_MESH(m_pMonster)->Get_TrackInfo().Position);
+		m_strAniFullTime.Format(L"%.3f", TARGET_TO_D_MESH(m_pMonster)->Get_AnimationFullTime());
+		m_strAniTime.Format(L"%.3f", TARGET_TO_D_MESH(m_pMonster)->Get_TrackInfo().Position);
 	}
 
 	UpdateData(FALSE);
@@ -1835,7 +1835,6 @@ void CMonsterTool::Change_Height()
 	return;
 }
 
-
 void CMonsterTool::Spin_Radius(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	LPNMUPDOWN pNMUpDown = reinterpret_cast<LPNMUPDOWN>(pNMHDR);
@@ -1844,14 +1843,13 @@ void CMonsterTool::Spin_Radius(NMHDR *pNMHDR, LRESULT *pResult)
 
 	_float fBuff = (_float)_wtof(m_strRadius);
 	fBuff += -(pNMUpDown->iDelta * 0.1f);
-	m_strRadius.Format(L"%.2f", fBuff);
+	m_strRadius.Format(L"%.3f", fBuff);
 	GetDlgItem(IDC_WPRADIUS)->SetWindowText(m_strRadius);
 
 	UpdateData(FALSE);
 
 	*pResult = 0;
 }
-
 
 void CMonsterTool::Spin_Height(NMHDR *pNMHDR, LRESULT *pResult)
 {
@@ -1861,7 +1859,7 @@ void CMonsterTool::Spin_Height(NMHDR *pNMHDR, LRESULT *pResult)
 
 	_float fBuff = (_float)_wtof(m_strWpHeight);
 	fBuff += -(pNMUpDown->iDelta * 0.1f);
-	m_strWpHeight.Format(L"%.2f", fBuff);
+	m_strWpHeight.Format(L"%.3f", fBuff);
 	GetDlgItem(IDC_WPHEIGHT)->SetWindowText(m_strWpHeight);
 
 	UpdateData(FALSE);
