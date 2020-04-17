@@ -55,7 +55,7 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"PushCol", true);	// 충돌여부 제어변수
 	pBlackBoard->Set_Value(L"PhyCol", true);	// 피격판정 제어 변수
 	pBlackBoard->Set_Value(L"TrailOn", false);	// 트레일 시작
-	pBlackBoard->Set_Value(L"TrailOff", false);	// 트레일 끝
+	pBlackBoard->Set_Value(L"TrailOff", true);	// 트레일 끝
 
 	//CBT_Selector* Start_Sel = Node_Selector("행동 시작");
 	CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
@@ -370,14 +370,19 @@ CBT_Composite_Node * CQueensKnight::TwoCombo_Cut()
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.166, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.1);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 2.f, 0.567, 0);
+	CBT_SetValue* TrailOn0 = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 7.f, 0.333, 0);
+	CBT_SetValue* TrailOff0 = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.45, 0);
 	//50번애니 * 0.5 = 1.616
 	CBT_RotationDir* Rotation1 = Node_RotationDir("플레이어 바라보기", L"Player_Pos", 0.09);
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("플레이어 바라보기", L"Player_Pos", 0.01, 0);
 	CBT_Wait* Wait2 = Node_Wait("대기2", 0.15, 0);
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", 6.f, 0.366, 0);
-	CBT_Wait* Wait3 = Node_Wait("대기3", 0.934, 0);
+	CBT_SetValue* TrailOn1 = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
+	CBT_Wait* Wait3 = Node_Wait("대기3", 0.15, 0);
+	CBT_SetValue* TrailOff1 = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
+	CBT_Wait* Wait4 = Node_Wait("대기4", 0.784, 0);
 	CBT_MoveDirectly* Move3 = Node_MoveDirectly_Rush("이동3", L"Monster_Speed", L"Monster_Dir", -1.f, 0.483, 0);
 	CBT_MoveDirectly* Move4 = Node_MoveDirectly_Rush("이동4", L"Monster_Speed", L"Monster_Dir", 1.f, 0.5, 0);
 
@@ -420,13 +425,18 @@ CBT_Composite_Node * CQueensKnight::TwoCombo_Cut()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(TrailOn0);
 	SubSeq->Add_Child(Move1);
+	SubSeq->Add_Child(TrailOff0);
 	SubSeq->Add_Child(Wait1);
 	SubSeq->Add_Child(Rotation1);
 	SubSeq->Add_Child(ChaseDir0);
 	SubSeq->Add_Child(Wait2);
 	SubSeq->Add_Child(Move2);
+	SubSeq->Add_Child(TrailOn1);
 	SubSeq->Add_Child(Wait3);
+	SubSeq->Add_Child(TrailOff1);
+	SubSeq->Add_Child(Wait4);
 	SubSeq->Add_Child(Move3);
 	SubSeq->Add_Child(Move4);
 
@@ -452,14 +462,18 @@ CBT_Composite_Node * CQueensKnight::ThreeCombo_Cut()
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.166, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.1);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 2.f, 0.567, 0);
+	CBT_SetValue* TrailOn0 = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 7.f, 0.333, 0);
+	CBT_SetValue* TrailOff0 = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.45, 0);
 	//50번애니 * 0.5 = 1.616
 	CBT_RotationDir* Rotation1 = Node_RotationDir("플레이어 바라보기1", L"Player_Pos", 0.09);
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("플레이어 바라보기", L"Player_Pos", 0.01, 0);
 	CBT_Wait* Wait2 = Node_Wait("대기2", 0.15, 0);
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", 6.f, 0.366, 0);
+	CBT_SetValue* TrailOn1 = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
 	CBT_Wait* Wait3 = Node_Wait("대기3", 0.857, 0);
+	CBT_SetValue* TrailOff1 = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
 	CBT_RotationDir* Rotation2 = Node_RotationDir("플레이어 바라보기2", L"Player_Pos", 0.09);
 	CBT_ChaseDir* ChaseDir1 = Node_ChaseDir("플레이어 바라보기1", L"Player_Pos", 0.01, 0);
 	//48번애니 * 0.4 = 1.473
@@ -511,14 +525,18 @@ CBT_Composite_Node * CQueensKnight::ThreeCombo_Cut()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Rotation0);
-	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(Move0);	
+	SubSeq->Add_Child(TrailOn0);
 	SubSeq->Add_Child(Move1);
+	SubSeq->Add_Child(TrailOff0);
 	SubSeq->Add_Child(Wait1);
 	SubSeq->Add_Child(Rotation1);
 	SubSeq->Add_Child(ChaseDir0);
 	SubSeq->Add_Child(Wait2);
 	SubSeq->Add_Child(Move2);
+	SubSeq->Add_Child(TrailOn1);
 	SubSeq->Add_Child(Wait3);
+	SubSeq->Add_Child(TrailOff1);
 	SubSeq->Add_Child(Rotation2);
 	SubSeq->Add_Child(ChaseDir1);
 	SubSeq->Add_Child(Move3);
@@ -543,8 +561,11 @@ CBT_Composite_Node * CQueensKnight::BackStep_Cut()
 	
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.1);
-	CBT_Wait* Wait0 = Node_Wait("대기", 0.866, 0);
+	CBT_Wait* Wait0 = Node_Wait("대기0", 0.8, 0);
+	CBT_SetValue* TrailOn0 = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
+	CBT_Wait* Wait1 = Node_Wait("대기1", 0.066, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", -8, 0.484, 0);
+	CBT_SetValue* TrailOff0 = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_TopPos"			, 0.6, 30, 0.8, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_MidPos"			, 0.6, 30, 0.8, 0);
@@ -567,7 +588,10 @@ CBT_Composite_Node * CQueensKnight::BackStep_Cut()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(TrailOn0);
+	SubSeq->Add_Child(Wait1);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(TrailOff0);
 
 	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.9, 1, 0.183, 0);
 	Root_Parallel->Add_Service(pHitCol);
@@ -587,7 +611,10 @@ CBT_Composite_Node * CQueensKnight::Sting()
 	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.1);
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.366, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 6, 0.317, 0);
-	CBT_Wait* Wait1 = Node_Wait("대기1", 0.983, 0);
+	CBT_SetValue* TrailOn0 = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
+	CBT_Wait* Wait1 = Node_Wait("대기1", 0.133, 0);
+	CBT_SetValue* TrailOff0 = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
+	CBT_Wait* Wait2 = Node_Wait("대기2", 0.85, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", -1, 0.317, 0);
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", 1, 0.35, 0);
 
@@ -611,7 +638,10 @@ CBT_Composite_Node * CQueensKnight::Sting()
 	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(TrailOn0);
 	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(TrailOff0);
+	SubSeq->Add_Child(Wait2);
 	SubSeq->Add_Child(Move1);
 	SubSeq->Add_Child(Move2);
 
@@ -800,9 +830,9 @@ CBT_Composite_Node * CQueensKnight::Flash_Wing_Attack()
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.15, 0);
+	CBT_SetValue* PhyColOff = Node_BOOL_SetValue("PhyColOff", L"PhyCol", false);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", -6, 0.25, 0);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.75, 0);
-	CBT_SetValue* PhyColOff = Node_BOOL_SetValue("PhyColOff", L"PhyCol", false);
 	CBT_SetValue* PushColOff = Node_BOOL_SetValue("PushColOff", L"PushCol", false);
 	CBT_MoveTo* MoveTo0 = Node_MoveTo("점멸 이동", L"FlashPos", 0.1);
 	CBT_SetValue* PhyColOn = Node_BOOL_SetValue("PhyColOn", L"PhyCol", true);
@@ -840,9 +870,9 @@ CBT_Composite_Node * CQueensKnight::Flash_Wing_Attack()
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(PhyColOff);
 	SubSeq->Add_Child(Move0);
 	SubSeq->Add_Child(Wait1);
-	SubSeq->Add_Child(PhyColOff);
 	SubSeq->Add_Child(PushColOff);
 	SubSeq->Add_Child(MoveTo0);
 	SubSeq->Add_Child(PhyColOn);
@@ -1030,16 +1060,19 @@ CBT_Composite_Node * CQueensKnight::Flash_Cut()
 	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
-	CBT_Wait* Wait0 = Node_Wait("대기0", 0.733, 0);
-	CBT_SetValue* PushColOff = Node_BOOL_SetValue("PushColOff", L"PushCol", false);
+	CBT_Wait* Wait0 = Node_Wait("대기0", 0.2, 0);
 	CBT_SetValue* PhyColOff = Node_BOOL_SetValue("PhyColOff", L"PhyCol", false);
+	CBT_Wait* Wait1 = Node_Wait("대기1", 0.533, 0);
+	CBT_SetValue* PushColOff = Node_BOOL_SetValue("PushColOff", L"PushCol", false);
 	CBT_MoveTo* MoveTo0 = Node_MoveTo("점멸 이동", L"FlashPos", 0.1);
+	CBT_SetValue* TrailOn = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
 	CBT_SetValue* PushColOn = Node_BOOL_SetValue("PushColOn", L"PushCol", true);
 	CBT_SetValue* PhyColOn = Node_BOOL_SetValue("PhyColOff", L"PhyCol", true);
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적1", L"Player_Pos", 0.1, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 추적2", L"Player_Pos", 0.1);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 5.f, 0.267, 0);
-	CBT_Wait* Wait1 = Node_Wait("대기1", 1.55, 0);
+	CBT_Wait* Wait2 = Node_Wait("대기2", 1.55, 0);
+	CBT_SetValue* TrailOff = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", -0.3f, 0.667, 0);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("점멸 파티클", L"QueensKnight_Teleport_Particle", L"Self_MidPos", 0, 50, 0.15, 0);
@@ -1087,15 +1120,18 @@ CBT_Composite_Node * CQueensKnight::Flash_Cut()
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
-	SubSeq->Add_Child(PushColOff);
 	SubSeq->Add_Child(PhyColOff);
+	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(PushColOff);
 	SubSeq->Add_Child(MoveTo0);
+	SubSeq->Add_Child(TrailOn);	
 	SubSeq->Add_Child(PushColOn);
 	SubSeq->Add_Child(PhyColOn);
 	SubSeq->Add_Child(ChaseDir0);
 	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(Move0);
-	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(Wait2);
+	SubSeq->Add_Child(TrailOff);
 	SubSeq->Add_Child(Move1);
 
 	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.283, 1, 0.133, 0);
@@ -1176,14 +1212,18 @@ CBT_Composite_Node * CQueensKnight::Smart_ThreeCombo_Cut()
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.166, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.1);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 2.f, 0.567, 0);
+	CBT_SetValue* TrailOn0 = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 7.f, 0.333, 0);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.45, 0);
+	CBT_SetValue* TrailOff0 = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
 	//50번애니 * 0.5 = 1.616
 	CBT_RotationDir* Rotation1 = Node_RotationDir("플레이어 바라보기1", L"Player_Pos", 0.09);
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("플레이어 바라보기", L"Player_Pos", 0.01, 0);
 	CBT_Wait* Wait2 = Node_Wait("대기2", 0.15, 0);
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", 6.f, 0.366, 0);
+	CBT_SetValue* TrailOn1 = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
 	CBT_Wait* Wait3 = Node_Wait("대기3", 0.857, 0);
+	CBT_SetValue* TrailOff1 = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
 	CBT_RotationDir* Rotation2 = Node_RotationDir("플레이어 바라보기2", L"Player_Pos", 0.09);
 	CBT_ChaseDir* ChaseDir1 = Node_ChaseDir("플레이어 바라보기1", L"Player_Pos", 0.01, 0);
 	//48번애니 * 0.4 = 1.473
@@ -1238,13 +1278,17 @@ CBT_Composite_Node * CQueensKnight::Smart_ThreeCombo_Cut()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(TrailOn0);
 	SubSeq->Add_Child(Move1);
 	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(TrailOff0);
 	SubSeq->Add_Child(Rotation1);
 	SubSeq->Add_Child(ChaseDir0);
 	SubSeq->Add_Child(Wait2);
 	SubSeq->Add_Child(Move2);
+	SubSeq->Add_Child(TrailOn1);
 	SubSeq->Add_Child(Wait3);
+	SubSeq->Add_Child(TrailOff1);
 	SubSeq->Add_Child(Rotation2);
 	SubSeq->Add_Child(ChaseDir1);
 	SubSeq->Add_Child(Move3);
@@ -1808,7 +1852,7 @@ void CQueensKnight::Check_PhyCollider()
 				}
 			}
 		
-			cout << "QueensKnight - Check_PhyCollider : " << m_tObjParam.fHp_Cur << endl;
+			//cout << "QueensKnight - Check_PhyCollider : " << m_tObjParam.fHp_Cur << endl;
 
 		}
 		else
