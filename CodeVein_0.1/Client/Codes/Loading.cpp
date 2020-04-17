@@ -712,6 +712,21 @@ _uint CLoading::Loading_Stage()
 	// ºÒ³²ÀÚ
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireBoy", CFireBoy::Create(m_pGraphicDev))))
 		return E_FAIL;
+	// Æ÷½Å ¶§¸®±â ÄÝ¶óÀÌ´õ
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunAttackCol", CGunAttackCol::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// ºÒ ÃÑ¾Ë
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireBullet", CFireBullet::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// È­¿°±¸
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireSphere", CFireSphere::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// Å¸°ÙÀÇ ¹Ù´Ú¿¡ È­¿°Æø¹ß
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireGround", CFireGround::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// Å¸°ÙÀÇ ¹Ù´Ú¿¡ È­¿°Æø¹ß
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireTornadoCol", CFireTornadoCol::Create(m_pGraphicDev))))
+		return E_FAIL;
 	// °ËÀº ¼º°Ô
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))
 		return E_FAIL;

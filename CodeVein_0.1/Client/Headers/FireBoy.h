@@ -44,6 +44,8 @@ private:	// 패턴
 	CBT_Composite_Node* Arm_Attack();
 	// 2. 포신으로 치기
 	CBT_Composite_Node* Gun_Attack();
+	// 3. 자신 주위에 불 소용돌이 발생
+	CBT_Composite_Node* Fire_Tornado();
 
 	////// 원거리
 	// 1. 추적하면서 지속적으로 불 발사
@@ -53,11 +55,23 @@ private:	// 패턴
 	// 3. 추적 화염구 발사
 	CBT_Composite_Node* Fire_BigSphere();
 	// 4. 플레이어 바닥에서 화염
-	CBT_Composite_Node* Fire_Under_Target();
-	// 5. 위로 불쏘고 폭죽마냥 떨어짐
+	CBT_Composite_Node* Fire_Ground();
+	// 5. 위로 불쏘고 폭죽마냥 십자가 모양으로 떨어짐
 	CBT_Composite_Node* Fire_Flame();
-	// 6. 자신 주위에 불 소용돌이 발생
-	CBT_Composite_Node* Fire_Tornado();
+
+
+	///// 게임 시작
+	CBT_Composite_Node* Start_Game();
+
+	CBT_Composite_Node* NearAttack_Dist4();
+
+	CBT_Composite_Node* NearAttack();	//랜덤 공격
+	CBT_Composite_Node*	FarAttack();	//랜덤 공격
+
+	//// 시연회용
+	CBT_Composite_Node* Start_Show();
+	CBT_Composite_Node* Show_NearAttack();
+	CBT_Composite_Node* Show_FarAttack();
 
 private:
 	void Down();
@@ -96,7 +110,7 @@ private:
 
 	// 블랙보드에서 뼈의 Pos 저장소
 	_v3					m_vMuzzle = _v3(0.f, 0.f, 0.f);	// 총구 뼈
-	_v3					m_vArm = _v3(0.f, 0.f, 0.f);	// 팔꿈치 뼈
+	_v3					m_vLeftForeArm = _v3(0.f, 0.f, 0.f);	// 팔꿈치 뼈
 
 private:	// 최초상태 세팅
 	_float				m_fFov = 0.f;

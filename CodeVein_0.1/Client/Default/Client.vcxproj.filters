@@ -151,9 +151,6 @@
     <Filter Include="02.GameObject\Stage\7%29 Item">
       <UniqueIdentifier>{f36caa92-e13e-47aa-a03d-0ac0628f233a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\2%29 Monster\YachaMan">
-      <UniqueIdentifier>{bfc4fef8-8742-4708-90db-12cc5deea4bc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\1%29 Boss">
       <UniqueIdentifier>{116cc399-c4de-4bec-8f77-4cb25d5806e9}</UniqueIdentifier>
     </Filter>
@@ -285,6 +282,12 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\1%29 Boss\FireBoy">
       <UniqueIdentifier>{513f084f-d270-4483-b705-d20c5f6c1dcd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\1%29 Boss\FireBoy\Bullet">
+      <UniqueIdentifier>{1d51d55f-d3ac-469e-87df-0681117bbe47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Monster\YachaMan">
+      <UniqueIdentifier>{bfc4fef8-8742-4708-90db-12cc5deea4bc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -543,6 +546,21 @@
     <ClInclude Include="..\Headers\FireBoy.h">
       <Filter>02.GameObject\Stage\1%29 Boss\FireBoy</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\GunAttackCol.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\FireBullet.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\FireSphere.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\FireGround.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\FireTornadoCol.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -790,6 +808,21 @@
     </ClCompile>
     <ClCompile Include="..\Codes\FireBoy.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\FireBoy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GunAttackCol.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\FireBullet.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\FireSphere.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\FireGround.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\FireTornadoCol.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
