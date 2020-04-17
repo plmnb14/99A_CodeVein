@@ -27,10 +27,10 @@ HRESULT CBossDecoUI::Ready_GameObject(void * pArg)
 	CUI::Ready_GameObject(pArg);
 
 	m_fPosX = WINCX * 0.5f;
-	m_fPosY = 80.f;
+	m_fPosY =WINCY * 0.1f;
 
-	m_fSizeX = WINCX * 0.5f;
-	m_fSizeY = 30.f;
+	m_fSizeX = WINCX;
+	m_fSizeY = 64.f;
 
 	m_fViewZ = 1.1f;
 
@@ -149,7 +149,7 @@ HRESULT CBossDecoUI::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 0)))
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 2)))
 		return E_FAIL;
 
 	return NOERROR;

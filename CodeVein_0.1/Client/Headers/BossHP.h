@@ -16,6 +16,11 @@ private:
 
 public:
 	void Set_Target(CGameObject* pTarget) { m_pTarget = pTarget; }
+	void Set_BossHP(_float fHP) { m_fBossHP = fHP; }
+	void Set_BossHPInfo(_float fHP, _float fMaxHP) {
+		m_fBossHP = fHP;
+		m_fTotalHP = fMaxHP;
+	}
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -26,7 +31,7 @@ public:
 
 private:
 	HRESULT Add_Component();
-	HRESULT SetUp_ConstantTable();
+	HRESULT SetUp_ConstantTable(_uint iIndex);
 	void	SetUp_State(_double TimeDelta);
 
 private:
@@ -36,6 +41,7 @@ private:
 	_float m_fPercentage = 0.f;
 	CHPBack* m_pHPBack = nullptr;
 	CBossDecoUI* m_pDecoUI = nullptr;
+	_uint m_iPass = 0;
 
 private:
 	CTransform*				m_pTransformCom = nullptr;

@@ -14,7 +14,7 @@ class CHunter final : public CGameObject
 public:
 	enum MONSTER_ANITYPE { IDLE, MOVE, ATTACK, HIT, CC, DEAD };
 
-	enum WEAPON_ANITYPE	 {GUN, HALVERD, HAMMER, LSWORD, SSWORD, WEAPON_ANITYPE_END};
+	enum WEAPON_ANITYPE	 {GUN, HALBERD, HAMMER, LSWORD, SWORD, WEAPON_ANITYPE_END};
 
 	enum HUNTER_IDLETYPE { IDLE_IDLE, IDLE_STAND, IDLE_CROUCH, IDLE_SIT };
 	enum HUNTER_MOVETYPE { MOVE_RUN, MOVE_WALK, MOVE_DODGE }; //다양한 이동, 회피
@@ -30,15 +30,15 @@ public:
 		NORMAL_GUN_SHOOT, 
 		NORMAL_GUN_SNIPE,
 
-		NORMAL_HALVERD_STEPPIERCE,
-		NORMAL_HALVERD_RISEUP,
-		NORMAL_HALVERD_PIERCE,
-		NORMAL_HALVERD_DEEPPIERCE,
-		NORMAL_HALVERD_CLOCKTWICE,
-		NORMAL_HALVERD_SWING_JUMP,
-		NORMAL_HALVERD_SWEAP,
-		NORMAL_HALVERD_SLASHFORTH,
-		NORMAL_HALVERD_TWOUPPER,
+		NORMAL_HALBERD_STEPPIERCE,
+		NORMAL_HALBERD_RISEUP,
+		NORMAL_HALBERD_PIERCE,
+		NORMAL_HALBERD_DEEPPIERCE,
+		NORMAL_HALBERD_CLOCKTWICE,
+		NORMAL_HALBERD_SWING_JUMP,
+		NORMAL_HALBERD_SWEAP,
+		NORMAL_HALBERD_SLASHFORTH,
+		NORMAL_HALBERD_TWOUPPER,
 
 		NORMAL_HAMMER_UPPER,
 		NORMAL_HAMMER_SLASH,
@@ -51,28 +51,33 @@ public:
 		NORMAL_LSWORD_SMASH,
 		//NORMAL_LSWORD_SWING, //폐기
 
-		NORMAL_SSWORD_JUMP,
-		NORMAL_SSWORD_RAISEUP,
-		NORMAL_SSWORD_UPPER,
-		NORMAL_SSWORD_Upper_L,
-		NORMAL_SSWORD_WOODCHOP,
-		NORMAL_SSWORD_ELBOW,
-		NORMAL_SSWORD_HELMETBREAK,
-		NORMAL_SSWORD_CRITICALDRAW
+		NORMAL_SWORD_JUMP,
+		NORMAL_SWORD_RAISEUP,
+		NORMAL_SWORD_UPPER,
+		NORMAL_SWORD_Upper_L,
+		NORMAL_SWORD_WOODCHOP,
+		NORMAL_SWORD_ELBOW,
+		NORMAL_SWORD_HELMETBREAK,
+		NORMAL_SWORD_CRITICALDRAW
 
 	};
 	enum ATK_COMBO_TYPE 
 	{
 		COMBO_GUN_SHOT, COMBO_GUN_CQC,
-		COMBO_HALVERD_THIRDATK, COMBO_HALVERD_PIERCETWICE, COMBO_HALVERD_PIERCEWIND,
+		COMBO_HALBERD_THIRDATK, COMBO_HALBERD_PIERCETWICE, COMBO_HALBERD_PIERCEWIND,
 		COMBO_LSWORD_NORMAL, COMBO_LSWORD_STRONG,
-		COMBO_SSWORD_STEPPIERCE, COMBO_SSWORD_STRONG, COMBO_SSWORD_Diagonal_L
+		COMBO_SWORD_STEPPIERCE, COMBO_SWORD_STRONG, COMBO_SWORD_Diagonal_L
 
 	};
 
 	enum HUNTER_ANI
 	{
 		Idle,
+		Bayonet_Idle,
+		Halberd_Idle,
+		Hammer_Idle,
+		LSword_Idle,
+		Sword_Idle,
 		Deformation,
 		Stand,
 		Stand_End,
@@ -107,8 +112,8 @@ public:
 		Groggy_Loop,
 		Groggy_End,
 		DmgRepel, //사용 안하는 걸로
-		DmgBlow_B,
-		DmgBlow_F,
+		DmgBlow_B, //Down에서 일어나는 모션을 안 넣어서 미룸
+		DmgBlow_F, //Down에서 일어나는 모션을 안 넣어서 미룸
 		Dmg02_FR,
 		Dmg02_FL,
 		Dmg02_BR,
@@ -188,7 +193,7 @@ public:
 
 	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_Head, Bone_RightForeArm, Bone_LeftKnee, Bone_LeftToe, Bone_End };
 
-	enum FBLR { FRONT, BACK, LEFT, RIGHT };
+	enum FBLR { FRONT, FRONTLEFT, FRONTRIGHT, BACK, BACKLEFT, BACKRIGHT, LEFT, RIGHT };
 
 protected:
 	explicit CHunter(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -220,67 +225,60 @@ private:
 	void Check_Hit();
 	void Check_FBLR();
 	void Check_Dist();
-	void Set_AniEvent();
+	void Check_AniEvent();
 
 	void Play_RandomAtkNormal();
 	void Play_RandomAtkCombo();
 
 	void Play_Gun_Kick();
-	void Play_Gun_R();
-	void Play_Gun_Shoot();
+	void Play_Gun_R(); //n1
+	void Play_Gun_Shoot(); 
 	void Play_Gun_Snipe();
-	void Play_Gun_Combo_Shot();
-	void Play_Gun_Combo_CQC();
+	void Play_Gun_Combo_Shot(); //원거리 3동작 0.3 0.62 0.9
+	void Play_Gun_Combo_CQC(); //n1,2,3 0.3 0.65 0.9
 
-	void Play_Halverd_StepPierce();
-	void Play_Halverd_RiseUp();
-	void Play_Halverd_Pierce(); //단일 기술n01
-	void Play_Halverd_DeepPierce(); //양손으로 찌름s01
-	void Play_Halverd_ClockTwice(); //2회전 sp2
-	void Play_Halverd_Swing_Jump(); //휘두르고 점프해서 내리치기 sp3
-	void Play_Halverd_Sweap(); //5타격
-	void Play_Halverd_SlashForth(); //4타격
-	void Play_Halverd_TwoUpper(); //좌,우 어퍼 1회식
-	void Play_Halverd_Combo_ThirdAtk(); //피어스,횡베기,휘둘고베기 n1 0.6 n2 0.6 n3 0.95
-	void Play_Halverd_Combo_PierceTwice(); //양손,한손 찌르기 s1 0.5 s3 0.95
-	void Play_Halverd_Combo_PierceWind(); //찌르고 휘두르고 s1 0.4 s2 0.95
+	void Play_Halberd_StepPierce();
+	void Play_Halberd_RiseUp();
+	void Play_Halberd_Pierce(); //n01 0.9
+	void Play_Halberd_DeepPierce(); //양손으로 찌름s01 0.9
+	void Play_Halberd_ClockTwice(); //2회전 sp2 0.95
+	void Play_Halberd_Swing_Jump(); //휘두르고 점프해서 내리치기 sp3 0.95
+	void Play_Halberd_Sweap(); //5타격 0.95
+	void Play_Halberd_SlashForth(); //4타격 0.95
+	void Play_Halberd_TwoUpper(); //좌,우 어퍼 1회식 0.95
+	void Play_Halberd_Combo_ThirdAtk(); //피어스,횡베기,휘둘고베기 n1 0.6 n2 0.6 n3 0.95
+	void Play_Halberd_Combo_PierceTwice(); //양손,한손 찌르기 s1 0.5 s3 0.9
+	void Play_Halberd_Combo_PierceWind(); //찌르고 휘두르고 s1 0.4 s2 0.9
 
-	void Play_Hammer_Upper();
-	void Play_Hammer_Slash();
-	void Play_Hammer_Smash();
-	void Play_Hammer_TwoUpper();
+	void Play_Hammer_Upper(); //n
+	void Play_Hammer_Slash(); //slash
+	void Play_Hammer_Smash(); //smash
+	void Play_Hammer_TwoUpper(); //twoupper
 
-	void Play_LSword_KneeKick(); 
-	void Play_LSword_Right(); //n1
-	void Play_LSword_RDiagonal(); //s1
-	void Play_LSword_Smash();
-	void Play_LSword_Combo_Normal(); //우,좌,휘두르기 0.6 0.55 0.9 n1,2,3
-	void Play_LSword_Combo_Strong(); //우대각, 찌르기, 돌려베기 0.45 0.45 0.9 s1,2,3
+	void Play_LSword_KneeKick(); //0.95
+	void Play_LSword_Right(); //n1 0.9
+	void Play_LSword_RDiagonal(); //s1 0.9
+	void Play_LSword_Smash(); //smash 0.95
+	void Play_LSword_Combo_Normal(); //우,좌,휘두르기 0.6 0.55 0.95 n1,2,3
+	void Play_LSword_Combo_Strong(); //우대각, 찌르기, 돌려베기 0.45 0.45 0.95 s1,2,3
 	
-	void Play_SSword_Jump();
-	void Play_SSword_RaiseUp();
-	void Play_SSword_Upper(); //N1
-	void Play_SSword_Upper_L(); //n4
-	void Play_SSword_WoodChop();//n5 딱지치기
-	void Play_SSword_Elbow(); //s1
-	void Play_SSword_HelmetBreak(); //sp1
-	void Play_SSword_CriticalDraw(); //sp2
-	void Play_SSword_Combo_StepPierce(); //sp3 st,loop, end
-	void Play_SSword_Combo_Strong(); //s1 0.35 s2 0.65 s3 0.9 팔꿈치, 내리베기횡베기, 모아 찌르기
-	void Play_SSword_Combo_Diagonal_L(); //n2 n3
+	void Play_SSword_Jump(); //0.95
+	void Play_SSword_RaiseUp(); //0.95
+	void Play_SSword_Upper(); //N1 0.9
+	void Play_SSword_Upper_L(); //n4 0.9
+	void Play_SSword_WoodChop();//n5 딱지치기 0.95
+	void Play_SSword_Elbow(); //s1 0.95
+	void Play_SSword_HelmetBreak(); //sp1 0.95
+	void Play_SSword_CriticalDraw(); //sp2 0.95
+	void Play_SSword_Combo_StepPierce(); //sp3 0.9 0.9 0.9
+	void Play_SSword_Combo_Strong(); //s1 0.35 s2 0.65 s3 0.95 팔꿈치, 내리베기횡베기, 모아 찌르기
+	void Play_SSword_Combo_Diagonal_L(); //n2 n3 0.5 0.9
 
 	void Play_Idle();
-	void Play_Stand();
-	void Play_Crouch();
-	void Play_Sit();
-
-	void Play_Run();
-	void Play_Walk();
-	void Play_Dodge();
-
+	void Play_Move(); //달리기, 걷기 방향별로, 회피
 	void Play_Hit(); //피격 방향,데미지에 따른 다양한 모션
-	void Play_CC(); //스턴,넘어짐 같은 다양한 애니들 진행
-	void Play_Dead();
+	void Play_CC(); //스턴,넘어짐 같은 다양한 애니들 진행->이떄 히트 동작으로 넘어가지 않고 데미지만 입음
+	void Play_Dead(); //cc상태에서 죽을 경우 다양한 모션 진행
 
 private:
 	HRESULT Add_Component();
@@ -295,11 +293,6 @@ public:
 	virtual void Free();
 
 private:
-	//CMonsterUI*			m_pMonsterUI = nullptr;
-
-	//_mat*				m_matHeadBone_for_YM;
-
-private:
 	CTransform*			m_pTransformCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
@@ -307,7 +300,6 @@ private:
 	CNavMesh*			m_pNavMesh = nullptr;
 	CCollider*			m_pCollider = nullptr;
 	CWeapon*			m_pWeapon = nullptr;
-	CMonsterUI*			m_pMonsterUI = nullptr;
 
 	CTransform*			m_pTargetTransform = nullptr;
 
@@ -330,18 +322,15 @@ private:
 	HUNTER_CCTYPE		m_eSecondCategory_CC;
 	HUNTER_DEADTYPE		m_eSecondCategory_DEAD;
 
+	WEAPON_ANITYPE		m_eWeaponState = WEAPON_ANITYPE::GUN;
 	ATK_COMBO_TYPE		m_eAtkCombo;
-
-	WEAPON_ANITYPE		m_eWeaponState = WEAPON_ANITYPE::SSWORD; //해당 값에 따라 모든 애니들이 바뀌는 느낌으로 합시다
 	HUNTER_ANI			m_eState;
+	FBLR				m_eFBLR;
 
 	_bool				m_bEventTrigger[20] = {};
-	/////////Test
-	_bool				m_bCanDead = false;
+
+	_bool				m_bCanPlayDead = false;
 	_bool				m_bCanDissolve = false;
-	//////////////
-	_bool				m_bCanPlayDeadAni = false;
-	_bool				m_bIsPlayDeadAni = false;
 
 	_bool				m_bInRecognitionRange = false;
 	_bool				m_bInAtkRange = false;
@@ -352,7 +341,8 @@ private:
 	_bool				m_bIsCoolDown = false;
 
 	_bool				m_bCanAtkCategoryRandom = true;
-	_bool				m_bIsAtkCombo = false;
+	_bool				m_bIsCombo = false;
+	_bool				m_bCanComboInterrupt = true; 	//항상True 콤보 진행후 특정 애니구간마다 true를 줘서 
 	_bool				m_bCanIdleRandom = true;
 
 	//총타입의 경우 shot레인지 이내에서는 원거리 공격위주

@@ -6,7 +6,7 @@
 #include "TexEffect.h"
 #include "MeshEffect.h"
 #include "Player.h"
-#include "HPBack.h"
+
 #include "Weapon.h"
 #include "Drain_Weapon.h"
 
@@ -830,6 +830,9 @@ _uint CLoading::Loading_Stage()
 		return E_FAIL;
 	// ¾ßÂ÷¸Ç
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_YachaMan", CYachaMan::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// ±èÇåÅÍ
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_Hunter", CHunter::Create(m_pGraphicDev))))
 		return E_FAIL;
 
 	// UI - Chea

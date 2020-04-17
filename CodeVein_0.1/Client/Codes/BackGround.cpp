@@ -31,7 +31,8 @@ HRESULT CBackGround::Ready_GameObject(void * pArg)
 	m_fPosY = WINCY * 0.5f;
 	m_fSizeX = WINCX;
 	m_fSizeY = WINCY;
-
+	m_iIndex = 3;
+	m_fViewZ = 10.f;
 	return NOERROR;
 }
 
@@ -39,10 +40,11 @@ _int CBackGround::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
-	m_pRendererCom->Add_RenderList(RENDER_UI
-		, this);
+	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
+
+	m_fSpeed += -0.02f * _float(TimeDelta);
 
 	return NO_EVENT;
 }
@@ -69,32 +71,38 @@ HRESULT CBackGround::Render_GameObject()
 
 	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
 
-	m_matOldView = g_pManagement->Get_Transform(D3DTS_VIEW);
-	m_matOldProj = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
+	_uint iTexNum = 0;
+	_uint iPass = 0;
+	
+	LOOP(2)
+	{
+		if (1 == i)
+		{
+			iTexNum = 1;
+			iPass = 1;
+		}
+		else
+		{
+			iTexNum = m_iIndex;
+			iPass = 6;
+		}
+		if (FAILED(SetUp_ConstantTable(iTexNum)))
+			return E_FAIL;
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
+		m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Shader();
+		m_pShaderCom->Begin_Pass(iPass);
 
-	m_pShaderCom->Begin_Pass(0);
+		m_pBufferCom->Render_VIBuffer();
 
-	// 버퍼를 렌더링한다.
-	// (인덱스버퍼(012023)에 보관하고있는 인덱스를 가진 정점을 그리낟.)
-	// 삼각형 두개를 그리낟.각각의 삼각형마다 정점세개, 각각의 정점을 버텍스 셰이더의 인자로 던진다.
-	m_pBufferCom->Render_VIBuffer();
+		m_pShaderCom->End_Pass();
 
-	m_pShaderCom->End_Pass();
-
-	m_pShaderCom->End_Shader();
-
-	g_pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
-	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
-
+		m_pShaderCom->End_Shader();
+	}
+	
 	return NOERROR;
 }
 
@@ -109,7 +117,7 @@ HRESULT CBackGround::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_TestLogo", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"DefaultTex_LogoBackGround", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -120,25 +128,40 @@ HRESULT CBackGround::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Rect", L"Com_VIBuffer", (CComponent**)&m_pBufferCom)))
 		return E_FAIL;
 	
-	
 	return NOERROR;
 }
 
-HRESULT CBackGround::SetUp_ConstantTable()
+HRESULT CBackGround::SetUp_ConstantTable(_uint iIndex)
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
+	if (iIndex == 1)
+	{
+		if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
 
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
-		return E_FAIL;
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
+			return E_FAIL;
 
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 0)))
-		return E_FAIL;
+		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_fSpeed", &m_fSpeed, sizeof(_float))))
+			return E_FAIL;
+		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
+			return E_FAIL;
+	}
 
 	return NOERROR;
 }

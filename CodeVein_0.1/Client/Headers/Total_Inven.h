@@ -11,6 +11,7 @@ class CArmor_Slot;
 class CBloodCode_Icon;
 class CInfo_Slot;
 class CNumberUI;
+class CQuickSlot;
 class CTotal_Inven final : public CUI
 {
 private:
