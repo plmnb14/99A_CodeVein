@@ -6,7 +6,7 @@
 
 
 BEGIN(Client)
-
+class CCursorEffect;
 class CLogoBtn final : public CUI
 {
 private:
@@ -26,8 +26,8 @@ public:
 
 private:
 	HRESULT Add_Component();
-	HRESULT SetUp_ConstantTable();
-	void	Make_CursorBar();
+	HRESULT SetUp_ConstantTable(_uint iIndex);
+	HRESULT SetUp_CursorEffect();
 
 public:
 	_bool Coll_Mouse();
@@ -40,6 +40,7 @@ private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 	_bool					m_bIsColl = false;
+	CCursorEffect*			m_pCursorEffect = nullptr;
 
 public:
 	static CLogoBtn*		Create(_Device pGraphic_Device);

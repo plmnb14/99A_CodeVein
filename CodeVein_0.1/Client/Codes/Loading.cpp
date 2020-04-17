@@ -6,7 +6,7 @@
 #include "TexEffect.h"
 #include "MeshEffect.h"
 #include "Player.h"
-#include "HPBack.h"
+
 #include "Weapon.h"
 #include "Drain_Weapon.h"
 
@@ -836,6 +836,15 @@ _uint CLoading::Loading_Stage()
 	// ¿©¿ÕÀÇ ±â»ç
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_QueensKnight", CQueensKnight::Create(m_pGraphicDev))))
 		return E_FAIL;
+	// ¶¥¿¡¼­ Âî¸´Âî¸´ ¿òÁ÷ÀÌ´Â ÃÑ¾Ë
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkGroundBullet", CDarkGroundBullet::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// ¾îµÒ Æø¹ß
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkBoom", CDarkBoom::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// ±â»ç ÁÖÀ§ °á°è
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkMidCol", CDarkMidCol::Create(m_pGraphicDev))))
+		return E_FAIL;
 	// ¾óÀ½¿©ÀÚ
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceGirl", CIceGirl::Create(m_pGraphicDev))))
 		return E_FAIL;
@@ -851,7 +860,7 @@ _uint CLoading::Loading_Stage()
 	// ºÒ³²ÀÚ
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireBoy", CFireBoy::Create(m_pGraphicDev))))
 		return E_FAIL;
-	// Æ÷½Å ¶§¸®±â ÄÝ¶óÀÌ´õ
+	// Æ÷½ÅÀ¸·Î ¶§¸®±â ÄÝ¶óÀÌ´õ
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunAttackCol", CGunAttackCol::Create(m_pGraphicDev))))
 		return E_FAIL;
 	// ºÒ ÃÑ¾Ë
@@ -863,7 +872,7 @@ _uint CLoading::Loading_Stage()
 	// Å¸°ÙÀÇ ¹Ù´Ú¿¡ È­¿°Æø¹ß
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireGround", CFireGround::Create(m_pGraphicDev))))
 		return E_FAIL;
-	// Å¸°ÙÀÇ ¹Ù´Ú¿¡ È­¿°Æø¹ß
+	// È­¿° Åä³×ÀÌµµ ÄÝ¶óÀÌ´õ
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireTornadoCol", CFireTornadoCol::Create(m_pGraphicDev))))
 		return E_FAIL;
 	// °ËÀº ¼º°Ô
@@ -889,6 +898,9 @@ _uint CLoading::Loading_Stage()
 		return E_FAIL;
 	// ¾ßÂ÷¸Ç
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_YachaMan", CYachaMan::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// ±èÇåÅÍ
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_Hunter", CHunter::Create(m_pGraphicDev))))
 		return E_FAIL;
 
 	// UI - Chea

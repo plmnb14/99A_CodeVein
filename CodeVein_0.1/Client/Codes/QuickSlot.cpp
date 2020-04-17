@@ -17,8 +17,6 @@ CQuickSlot::CQuickSlot(const CQuickSlot & rhs)
 	
 }
 
-
-
 HRESULT CQuickSlot::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
@@ -37,7 +35,7 @@ HRESULT CQuickSlot::Ready_GameObject(void * pArg)
 	m_fPosY = 500.f;
 	m_fSizeX = 50.f;
 	m_fSizeY = 50.f;
-
+	m_bIsActive = true;
 
 	SetUp_Default();
 
@@ -87,10 +85,10 @@ _int CQuickSlot::Update_GameObject(_double TimeDelta)
 			m_iSelect = _uint(m_vecQuickSlot.size()) - 1;
 	}
 
-	/*if (g_pInput_Device->Key_Up(DIK_MULTIPLY))
-	{
-		_uint inum = Use_Item();
-	}*/
+	LOOP(2)
+		m_vecDecoUI[i]->Set_Active(m_bIsActive);
+	m_pNumberUI->Set_Active(m_bIsActive);
+
 	return NO_EVENT;
 }
 
@@ -111,6 +109,9 @@ _int CQuickSlot::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CQuickSlot::Render_GameObject()
 {
+	if (!m_bIsActive)
+		return NOERROR;
+
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;

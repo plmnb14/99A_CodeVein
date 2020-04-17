@@ -57,6 +57,8 @@ _int CButton_UI::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CButton_UI::Render_GameObject()
 {
+	if (!m_bIsActive)
+		return NOERROR;
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
