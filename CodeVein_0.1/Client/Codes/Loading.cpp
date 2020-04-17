@@ -768,6 +768,15 @@ _uint CLoading::Loading_Stage()
 	// ø©ø’¿« ±‚ªÁ
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_QueensKnight", CQueensKnight::Create(m_pGraphicDev))))
 		return E_FAIL;
+	// ∂•ø°º≠ ¬Ó∏¥¬Ó∏¥ øÚ¡˜¿Ã¥¬ √—æÀ
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkGroundBullet", CDarkGroundBullet::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// æÓµ“ ∆¯πﬂ
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkBoom", CDarkBoom::Create(m_pGraphicDev))))
+		return E_FAIL;
+	// ±‚ªÁ ¡÷¿ß ∞·∞Ë
+	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkMidCol", CDarkMidCol::Create(m_pGraphicDev))))
+		return E_FAIL;
 	// æÛ¿Ωø©¿⁄
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceGirl", CIceGirl::Create(m_pGraphicDev))))
 		return E_FAIL;
@@ -783,7 +792,7 @@ _uint CLoading::Loading_Stage()
 	// ∫“≥≤¿⁄
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireBoy", CFireBoy::Create(m_pGraphicDev))))
 		return E_FAIL;
-	// ∆˜Ω≈ ∂ß∏Æ±‚ ƒ›∂Û¿Ã¥ı
+	// ∆˜Ω≈¿∏∑Œ ∂ß∏Æ±‚ ƒ›∂Û¿Ã¥ı
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunAttackCol", CGunAttackCol::Create(m_pGraphicDev))))
 		return E_FAIL;
 	// ∫“ √—æÀ
@@ -795,7 +804,7 @@ _uint CLoading::Loading_Stage()
 	// ≈∏∞Ÿ¿« πŸ¥⁄ø° »≠ø∞∆¯πﬂ
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireGround", CFireGround::Create(m_pGraphicDev))))
 		return E_FAIL;
-	// ≈∏∞Ÿ¿« πŸ¥⁄ø° »≠ø∞∆¯πﬂ
+	// »≠ø∞ ≈‰≥◊¿Ãµµ ƒ›∂Û¿Ã¥ı
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireTornadoCol", CFireTornadoCol::Create(m_pGraphicDev))))
 		return E_FAIL;
 	// ∞À¿∫ º∫∞‘
