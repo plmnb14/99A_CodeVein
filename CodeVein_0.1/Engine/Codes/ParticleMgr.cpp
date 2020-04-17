@@ -174,10 +174,14 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"IceBlock_FloorAura_01", 300);
 	Input_Pool(L"IceBlock_FloorAura_02", 300);
 	Input_Pool(L"IceBlock_FloorAura_03", 300);
-	Input_Pool(L"IceBlock_Smoke_01", 300);
-	Input_Pool(L"IceBlock_Smoke_02", 300);
+	Input_Pool(L"IceBlock_Smoke_01", 600);
+	Input_Pool(L"IceBlock_Smoke_02", 600);
 	Input_Pool(L"IceGirl_Buff_Break_Lightning", 100);
 	Input_Pool(L"IceGirl_Buff_Charge_Smoke_01", 100);
+
+	Input_Pool(L"FireBoy_Charge_Hand_Fire", 100);
+	Input_Pool(L"FireBoy_FireTornade_ReadyFire", 50);
+	Input_Pool(L"FireBoy_FireTornade_Mesh", 10);
 
 	Input_Pool(L"Boss_KnockDown_Dust", 10);
 	Input_Pool(L"Boss_Dead_Particle", 1000);
@@ -397,11 +401,11 @@ void CParticleMgr::Create_Effect(_tchar* szName, _v3 vPos, CTransform * pFollowT
 	{
 		if (pFindedQueue->size() <= 20) // 넉넉하게... 남은게 20 이하면 생성하여 사용
 		{
-			//_tchar szTemp[256];
-			//lstrcpy(szTemp, pFindedQueue->front()->Get_ParticleName());
-			//CHAR szForPrint[MAX_STR] = "";
-			//WideCharToMultiByte(CP_ACP, 0, szTemp, MAX_STR, szForPrint, MAX_STR, NULL, NULL);
-			//cout << "Effect Create : " << szForPrint << endl;
+			_tchar szTemp[256];
+			lstrcpy(szTemp, pFindedQueue->front()->Get_ParticleName());
+			CHAR szForPrint[MAX_STR] = "";
+			WideCharToMultiByte(CP_ACP, 0, szTemp, MAX_STR, szForPrint, MAX_STR, NULL, NULL);
+			cout << "Effect Create : " << szForPrint << endl;
 
 			_tchar* szEffName = pFindedQueue->front()->Get_ParticleName();
 			CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));

@@ -310,6 +310,17 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 #pragma endregion
 
+#pragma region FireBoy
+	if (FAILED(Add_EffectPrototype(L"FireBoy_Charge_Hand_Fire")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireTornade_ReadyFire")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireTornade_Mesh", true)))
+		return E_FAIL;
+	
+#pragma endregion
+
+
 	if (FAILED(Add_EffectPrototype(L"Boss_KnockDown_Dust")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Boss_Dead_Particle")))

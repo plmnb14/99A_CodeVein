@@ -101,6 +101,8 @@ _int CMeshEffect::Late_Update_GameObject(_double TimeDelta)
 
 	if (FAILED(m_pRendererCom->Add_RenderList(eGroup, this)))
 		return E_FAIL;
+	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+		return E_FAIL;
 
 	return _int();
 }
@@ -178,6 +180,47 @@ HRESULT CMeshEffect::Render_GameObject_SetShader(CShader * pShader)
 
 	}
 	pShader->End_Pass();
+
+	return NOERROR;
+}
+
+HRESULT CMeshEffect::Render_GameObject_SetPass(CShader* pShader, _int iPass)
+{
+	if (nullptr == pShader ||
+		nullptr == m_pMeshCom)
+		return E_FAIL;
+
+	_mat		ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+
+	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
+		return E_FAIL;
+
+	if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
+		return E_FAIL;
+
+	m_matLastWVP = m_pTransformCom->Get_WorldMat() * ViewMatrix * ProjMatrix;
+
+	_float fBloomPower = 1.5f;
+	if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
+		return E_FAIL;
+
+	_ulong dwNumSubSet = m_pMeshCom->Get_NumMaterials();
+
+	for (_ulong i = 0; i < dwNumSubSet; ++i)
+	{
+		pShader->Begin_Pass(iPass);
+
+		pShader->Commit_Changes();
+
+		m_pMeshCom->Render_Mesh(i);
+
+		pShader->End_Pass();
+	}
 
 	return NOERROR;
 }
@@ -285,6 +328,9 @@ void CMeshEffect::Setup_Info()
 		if (m_pDesc->pTargetTrans)
 			vPos += m_pDesc->pTargetTrans->Get_Pos();
 
+		if (m_pTargetMatrix)
+			vPos += _v3(m_pTargetMatrix->_41, m_pTargetMatrix->_42, m_pTargetMatrix->_43);
+
 		m_pTransformCom->Set_Pos(vPos);
 		m_vLerpPos = (vPos);
 	}
@@ -336,6 +382,7 @@ void CMeshEffect::Check_Move(_double TimeDelta)
 
 	_v3 vTargetPos = V3_NULL;
 	if (m_pDesc->pTargetTrans) vTargetPos = m_pDesc->pTargetTrans->Get_Pos();
+	if (m_pTargetMatrix) vTargetPos += _v3(m_pTargetMatrix->_41, m_pTargetMatrix->_42, m_pTargetMatrix->_43);
 
 	if (m_pInfo->bDirMove)
 	{

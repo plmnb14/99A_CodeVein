@@ -182,6 +182,10 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 
 	m_matLastWVP = m_pTransform->Get_WorldMat() * ViewMatrix * ProjMatrix;
 
+	_float fBloomPower = 0.5f;
+	if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
+		return E_FAIL;
+
 	_uint iNumMeshContainer = _uint(m_pDynamicMesh->Get_NumMeshContainer());
 
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
