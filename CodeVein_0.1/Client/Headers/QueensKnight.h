@@ -51,15 +51,15 @@ private:	// 패턴들
 	// 4. 칼 두번 휘두르고 방패치기
 	CBT_Composite_Node* ThreeCombo_Cut();	// 충돌완
 	// 5. 뒤로 빠지면서 공격
-	CBT_Composite_Node* BackStep_Cut();	// 충돌완,  가까이 붙어야만 맞음
+	CBT_Composite_Node* BackStep_Cut();	// 충돌완
 	// 6. 찌르기
 	CBT_Composite_Node* Sting();	// 충돌완
 	// 7. 회전 날개치기
 	CBT_Composite_Node* Wing_Attack();	//충돌완
 	// 8. 돌진
 	CBT_Composite_Node* Rush();	//충돌완
-
-	//000
+	// 9. 방패치기
+	CBT_Composite_Node* Shield_Attack();
 
 	// 점멸 패턴
 	// 1. 점멸
@@ -73,8 +73,14 @@ private:	// 패턴들
 	CBT_Composite_Node* Flash_Jump_Attack();	// 충돌완
 	// 4. 한번 베기 
 	CBT_Composite_Node* Flash_Cut();	// 충돌완
-
 	// 5. 점멸 후 중앙으로 내려치기
+	CBT_Composite_Node* Flash_Middle_Ground();	// 이펙트 넣어야함
+
+
+	///////////// 응용
+	CBT_Composite_Node* Smart_ThreeCombo_Cut();
+
+
 
 	//// 게임 시작
 	CBT_Composite_Node* Start_Game();

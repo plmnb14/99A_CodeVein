@@ -183,6 +183,8 @@
     <ClInclude Include="..\Headers\ColdBeam.h" />
     <ClInclude Include="..\Headers\CursorUI.h" />
     <ClInclude Include="..\Headers\DamegeNumUI.h" />
+    <ClInclude Include="..\Headers\DarkBoom.h" />
+    <ClInclude Include="..\Headers\DarkMidCol.h" />
     <ClInclude Include="..\Headers\Drain_Weapon.h" />
     <ClInclude Include="..\Headers\Dummy_Target.h" />
     <ClInclude Include="..\Headers\Expendables.h" />
@@ -208,6 +210,7 @@
     <ClInclude Include="..\Headers\Inventory.h" />
     <ClInclude Include="..\Headers\Inventory_Icon.h" />
     <ClInclude Include="..\Headers\Item_Manager.h" />
+    <ClInclude Include="..\Headers\DarkGroundBullet.h" />
     <ClInclude Include="..\Headers\MassageUI.h" />
     <ClInclude Include="..\Headers\Material.h" />
     <ClInclude Include="..\Headers\Material_Inven.h" />
@@ -275,6 +278,8 @@
     <ClCompile Include="..\Codes\ColdBeam.cpp" />
     <ClCompile Include="..\Codes\CursorUI.cpp" />
     <ClCompile Include="..\Codes\DamegeNumUI.cpp" />
+    <ClCompile Include="..\Codes\DarkBoom.cpp" />
+    <ClCompile Include="..\Codes\DarkMidCol.cpp" />
     <ClCompile Include="..\Codes\Drain_Weapon.cpp" />
     <ClCompile Include="..\Codes\Dummy_Target.cpp" />
     <ClCompile Include="..\Codes\Expendables.cpp" />
@@ -300,6 +305,7 @@
     <ClCompile Include="..\Codes\Inventory.cpp" />
     <ClCompile Include="..\Codes\Inventory_Icon.cpp" />
     <ClCompile Include="..\Codes\Item_Manager.cpp" />
+    <ClCompile Include="..\Codes\DarkGroundBullet.cpp" />
     <ClCompile Include="..\Codes\MassageUI.cpp" />
     <ClCompile Include="..\Codes\Material.cpp" />
     <ClCompile Include="..\Codes\Material_Inven.cpp" />

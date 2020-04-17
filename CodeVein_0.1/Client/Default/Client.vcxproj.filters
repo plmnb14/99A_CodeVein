@@ -289,6 +289,9 @@
     <Filter Include="02.GameObject\Stage\2%29 Monster\YachaMan">
       <UniqueIdentifier>{bfc4fef8-8742-4708-90db-12cc5deea4bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\1%29 Boss\QueensKnight\Bullet">
+      <UniqueIdentifier>{02557925-0ab4-4d6f-acd5-074c828df50f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -561,6 +564,16 @@
     <ClInclude Include="..\Headers\FireTornadoCol.h">
       <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\HPBack.h" />
+    <ClInclude Include="..\Headers\DarkGroundBullet.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\QueensKnight\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\DarkBoom.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\QueensKnight\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\DarkMidCol.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\QueensKnight\Bullet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -823,6 +836,16 @@
     </ClCompile>
     <ClCompile Include="..\Codes\FireTornadoCol.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HPBack.cpp" />
+    <ClCompile Include="..\Codes\DarkGroundBullet.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\QueensKnight\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DarkBoom.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\QueensKnight\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DarkMidCol.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\QueensKnight\Bullet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
