@@ -11,7 +11,8 @@
 #include "Management.h"
 #include "CameraMgr.h"
 #include "UI_Manager.h"
-
+#include "LoadingScreen.h"
+#include "LoadingBar.h"
 
 CScene_Title::CScene_Title(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
@@ -25,6 +26,9 @@ HRESULT CScene_Title::Ready_Scene()
 	system("cls");
 
 	if (FAILED(Ready_Prototype_GameObject()))
+		return E_FAIL;
+	
+	if (FAILED(Ready_Layer_LoadingUI(L"Layer_LoadingUI")))
 		return E_FAIL;
 
 	// 파티클
@@ -41,7 +45,7 @@ HRESULT CScene_Title::Ready_Scene()
 	m_pLoading->Set_LoadStaticMesh(m_bLoadStaticMesh);
 
 	CUI_Manager::Get_Instance()->SetUp_UILayer();
-
+	
 	return S_OK;
 }
 
@@ -51,6 +55,8 @@ _int CScene_Title::Update_Scene(_double TimeDelta)
 
 	if (true == m_pLoading->Get_Finish())
 	{
+		static_cast<CLoadingBar*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingUI", SCENE_TITLE))->Set_Finish();
+
 		cout << "로드 되었습니다!! 넘어가세요!!" << endl;
 	}
 
@@ -131,12 +137,21 @@ HRESULT CScene_Title::Ready_Prototype_GameObject()
 	CCameraMgr::Get_Instance()->Set_MainCamera(DYNAMIC_CAM, L"Tool_FreeCam");
 	CCameraMgr::Get_Instance()->Set_MainPos(_v3{ 0,3,-5 });
 
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LoadingScreen", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LoadingScreen/LoadingScreen0.tga", 1))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LoadingScreen", CLoadingScreen::Create(m_pGraphic_Device))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LoadingBar", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LoadingBar/LoadingBar%d.png", 10))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LoadingBar", CLoadingBar::Create(m_pGraphic_Device))))
+		return E_FAIL;
+	
 	return S_OK;
 }
 
 HRESULT CScene_Title::Ready_Layer_LoadingUI(const _tchar * pLayerTag)
 {
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LoadingScreen", SCENE_TITLE, pLayerTag)))
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LoadingScreen", SCENE_TITLE, L"Layer_LoadingScreen")))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LoadingBar", SCENE_TITLE, pLayerTag)))
 		return E_FAIL;

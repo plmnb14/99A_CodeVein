@@ -87,7 +87,7 @@ HRESULT CBackGround::Render_GameObject()
 		else
 		{
 			iTexNum = m_iIndex;
-			iPass = 7;
+			iPass = 6;
 		}
 		if (FAILED(SetUp_ConstantTable(iTexNum)))
 			return E_FAIL;
@@ -117,7 +117,7 @@ HRESULT CBackGround::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_LogoBack", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"DefaultTex_LogoBackGround", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader

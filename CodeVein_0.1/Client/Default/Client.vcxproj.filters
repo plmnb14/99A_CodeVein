@@ -304,6 +304,15 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\09. SkillUI\02. Skill_Gauge">
       <UniqueIdentifier>{9344aeea-9f00-4a6a-9f3b-7ed70201211c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\99.Public\CursorEffect">
+      <UniqueIdentifier>{ec8321fa-e6ad-47b6-961a-500dcfb5f253}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\10. StageSelectUI">
+      <UniqueIdentifier>{ca9cdb7b-a42d-4c16-b7f2-f06efa0c308a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\10. StageSelectUI\00. StageUI">
+      <UniqueIdentifier>{505498ed-7266-43d8-a958-b58b7f9a17ca}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -573,7 +582,6 @@
     <ClInclude Include="..\Headers\FireTornadoCol.h">
       <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\HPBack.h" />
     <ClInclude Include="..\Headers\Active_Icon.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\00. Active_Icon</Filter>
     </ClInclude>
@@ -591,6 +599,15 @@
     </ClInclude>
     <ClInclude Include="..\Headers\SkillGauge.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\02. Skill_Gauge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\CursorEffect.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\CursorEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\StageUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\10. StageSelectUI\00. StageUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\StageSelectUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\10. StageSelectUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -852,7 +869,6 @@
     <ClCompile Include="..\Codes\FireTornadoCol.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\HPBack.cpp" />
     <ClCompile Include="..\Codes\Active_Icon.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\00. Active_Icon</Filter>
     </ClCompile>
@@ -870,6 +886,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\SkillGauge.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\02. Skill_Gauge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\CursorEffect.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\CursorEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\StageUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\10. StageSelectUI\00. StageUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\StageSelectUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\10. StageSelectUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

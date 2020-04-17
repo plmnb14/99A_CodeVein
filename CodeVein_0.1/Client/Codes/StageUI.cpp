@@ -23,7 +23,8 @@ HRESULT CStageUI::Ready_GameObject(void * pArg)
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
-	m_fAlpha = 1.f;
+	m_fAlpha = 0.f;
+	m_bIsActive = false;
 	m_eTeleportMenu = Teleport_Home;
 
 	return NOERROR;
@@ -34,8 +35,8 @@ _int CStageUI::Update_GameObject(_double TimeDelta)
 	CUI::Update_GameObject(TimeDelta);
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
-	//if (1.f > m_fAlpha)
-	//	m_fAlpha += _float(TimeDelta);
+	if (1.f > m_fAlpha && m_bIsActive)
+		m_fAlpha += _float(TimeDelta);
 	m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE));
 
 	if (m_pTarget)
@@ -46,21 +47,7 @@ _int CStageUI::Update_GameObject(_double TimeDelta)
 		m_pTransformCom->Set_Scale(_v3(2.f, 1.f, 0.f));
 	}
 
-	/*if (g_pInput_Device->Key_Up(DIK_LEFT))
-	{
-		if (0 == m_eTeleportMenu)
-			m_eTeleportMenu = Teleport_St03;
-		else
-			m_eTeleportMenu = Teleport_Menu(m_eTeleportMenu - 1);
-	}
-	else if (g_pInput_Device->Key_Up(DIK_RIGHT))
-	{
-		if (Teleport_St03 == m_eTeleportMenu)
-			m_eTeleportMenu = Teleport_Empty;
-		else
-			m_eTeleportMenu = Teleport_Menu(m_eTeleportMenu + 1);
-	}*/
-
+	
 	switch (m_eTeleportMenu)
 	{
 	case Teleport_Home:
@@ -80,14 +67,12 @@ _int CStageUI::Update_GameObject(_double TimeDelta)
 		break;
 	}
 
-	/*if (m_bIsDead)
+	if (!m_bIsActive && m_fAlpha > 0.f)
 	{
 		m_fAlpha -= _float(TimeDelta) * 2.f;
-
-		if(0.f <= m_fAlpha)
-			return DEAD_OBJ;
-	}*/
+	}
 	
+	Compute_ViewZ(&m_pTransformCom->Get_Pos());
 	return NO_EVENT;
 }
 

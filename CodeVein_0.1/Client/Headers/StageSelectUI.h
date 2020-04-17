@@ -7,13 +7,6 @@ BEGIN(Client)
 class CStageUI;
 class CStageSelectUI final : public CUI
 {
-public:
-	enum StageUI_Pos
-	{
-		Pos_Left,
-		Pos_Center,
-		Pos_Right
-	};
 private:
 	explicit CStageSelectUI(_Device pDevice);
 	explicit CStageSelectUI(const CStageSelectUI& rhs);

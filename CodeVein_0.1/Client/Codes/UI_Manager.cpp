@@ -111,14 +111,10 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SkillUI", CSkillUI::Create(pDevice))))
 		return E_FAIL;
 	
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LoadingScreen", CLoadingScreen::Create(pDevice))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LoadingBar", CLoadingBar::Create(pDevice))))
-		return E_FAIL;
-	/*if (FAILED(g_pManagement->Add_Prototype(L"GameObject_StageUI", CStageUI::Create(pDevice))))
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_StageUI", CStageUI::Create(pDevice))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_StageSelectUI", CStageSelectUI::Create(pDevice))))
-		return E_FAIL;*/
+		return E_FAIL;
 	
 	//////////////// Chae
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BossMassageUI", CMassageUI::Create(pDevice))))
@@ -145,7 +141,7 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_SkillUI", SCENE_STAGE, L"Layer_SkillUI");
 	
-	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_StageUI", SCENE_STAGE, L"Layer_StageSelectUI");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_StageSelectUI", SCENE_STAGE, L"Layer_StageSelectUI");
 	return NOERROR;
 }
 

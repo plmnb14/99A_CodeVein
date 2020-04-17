@@ -182,7 +182,7 @@ HRESULT CActive_Icon::Render_GameObject()
 		if (FAILED(SetUp_ConstantTable(15)))
 			return E_FAIL;
 		m_pShaderCom->Begin_Shader();
-		m_pShaderCom->Begin_Pass(6); // 흰색 프레임 UV값 변경
+		m_pShaderCom->Begin_Pass(1); // 흰색 프레임 UV값 변경
 		m_pBufferCom->Render_VIBuffer();
 		m_pShaderCom->End_Pass();
 		m_pShaderCom->End_Shader();
@@ -201,7 +201,7 @@ HRESULT CActive_Icon::Render_GameObject()
 		if (FAILED(SetUp_ConstantTable(14)))
 			return E_FAIL;
 		m_pShaderCom->Begin_Shader();
-		m_pShaderCom->Begin_Pass(6); // 붉은색 프레임 UV값 변경
+		m_pShaderCom->Begin_Pass(1); // 붉은색 프레임 UV값 변경
 		m_pBufferCom->Render_VIBuffer();
 		m_pShaderCom->End_Pass();
 		m_pShaderCom->End_Shader();
@@ -216,8 +216,6 @@ HRESULT CActive_Icon::Render_GameObject()
 	}
 		break;
 	}
-	
-	
 	
 	return NOERROR;
 }
