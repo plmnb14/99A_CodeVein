@@ -31,6 +31,8 @@ private:
 	_double				m_dLifeTime = 0;
 	_bool				m_bDead = false;
 
+	_float				m_fEffectOffset = 0.f;
+
 	// 베러어 변수들
 	_bool				m_bBarrierOff = false;
 	_double				m_dTime_BarrierOff = 0;

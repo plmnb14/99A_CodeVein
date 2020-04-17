@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "..\Headers\BossHP.h"
-#include "HPBack.h"
 #include "BossDecoUI.h"
 
 CBossHP::CBossHP(_Device pGraphic_Device)
@@ -26,32 +25,17 @@ HRESULT CBossHP::Ready_GameObject(void * pArg)
 		return E_FAIL;
 
 	CUI::Ready_GameObject(pArg);
-	m_bIsActive = false;
 
 	m_fPosX = WINCX * 0.5f;
-	m_fPosY = 80.f + 10.f;
+	m_fPosY = WINCY * 0.1f;
+	m_fSizeX = 840;
+	m_fSizeY = 64.f;
 
-	m_fSizeX = WINCX * 0.5f - 10.f;
-	m_fSizeY = 20.f;
-	
-	UI_DESC* pDesc = new UI_DESC;
-	pDesc->fPosX = m_fPosX + 23.f;
-	pDesc->fPosY = m_fPosY + 1.7f;
-	pDesc->fSizeX = WINCX - 17.f;
-	pDesc->fSizeY = 55.f;
-	pDesc->iIndex = 2;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_HPBack", SCENE_STAGE, L"Layer_HPBack", pDesc);
-	m_pHPBack = static_cast<CHPBack*>(g_pManagement->Get_GameObjectBack(L"Layer_HPBack", SCENE_STAGE));
-	m_pHPBack->Set_ViewZ(m_fViewZ + 0.1f);
+	m_bIsActive = false;
 	
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossDecoUI", SCENE_STAGE, L"Layer_BossDecoUI");
 	m_pDecoUI = static_cast<CBossDecoUI*>(g_pManagement->Get_GameObjectBack(L"Layer_BossDecoUI", SCENE_STAGE));
 	m_pDecoUI->Set_ViewZ(m_fViewZ + 0.2f);
-
-	// 보스와 연동
-	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Boss", SCENE_STAGE);
-	m_fBossHP = m_pTarget->Get_Target_Hp();
-	m_fTotalHP = m_fBossHP;
 	
 	return NOERROR;
 }
@@ -66,7 +50,7 @@ _int CBossHP::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
-	m_pHPBack->Set_Active(m_bIsActive);
+	
 	m_pDecoUI->Set_Active(m_bIsActive);
 
 	return NO_EVENT;
@@ -95,43 +79,33 @@ HRESULT CBossHP::Render_GameObject()
 		nullptr == m_pBufferCom)
 		return E_FAIL;
 
-	CManagement* pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
 
-	Safe_AddRef(pManagement);
+	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
 
-	pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
+	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
+	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
-	m_matOldView = pManagement->Get_Transform(D3DTS_VIEW);
-	m_matOldProj = pManagement->Get_Transform(D3DTS_PROJECTION);
+	_uint iPass = 0;
+	for (_uint i = 0; i < 2; ++i)
+	{
+		if (i == 0)
+			iPass = 1;
+		else if (i == 1)
+			iPass = 2;
+		if (FAILED(SetUp_ConstantTable(i)))
+			return E_FAIL;
+		m_pShaderCom->Begin_Shader();
+		m_pShaderCom->Begin_Pass(iPass);
+		
+		m_pBufferCom->Render_VIBuffer();
 
-	pManagement->Set_Transform(D3DTS_VIEW, m_matView);
-	pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
+		m_pShaderCom->End_Pass();
+		m_pShaderCom->End_Shader();
+	}
 
+	
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
-
-	m_pShaderCom->Begin_Shader();
-
-	m_pShaderCom->Begin_Pass(2);
-
-	// 버퍼를 렌더링한다.
-	// (인덱스버퍼(012023)에 보관하고있는 인덱스를 가진 정점을 그리낟.)
-	// 삼각형 두개를 그리낟.각각의 삼각형마다 정점세개, 각각의 정점을 버텍스 셰이더의 인자로 던진다.
-	m_pBufferCom->Render_VIBuffer();
-
-	m_pShaderCom->End_Pass();
-
-	m_pShaderCom->End_Shader();
-
-
-	pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
-	pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
-
-	Safe_Release(pManagement);
-
+	
 	return NOERROR;
 }
 
@@ -160,36 +134,44 @@ HRESULT CBossHP::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CBossHP::SetUp_ConstantTable()
+HRESULT CBossHP::SetUp_ConstantTable(_uint iIndex)
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
+	if (iIndex == 0)
+	{
+		if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
 
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fSpeed", &m_fSpeed, sizeof(_float))))
-		return E_FAIL;
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
+			return E_FAIL;
 
-
-
-	if (FAILED(m_pShaderCom->Set_Value("g_fPosX", &m_fPosX, sizeof(_float))))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Set_Value("g_fSizeX", &m_fSizeX, sizeof(_float))))
-		return E_FAIL;
-
-
-
-	if (FAILED(m_pShaderCom->Set_Value("g_fPercentage", &m_fPercentage, sizeof(_float))))
-		return E_FAIL;
-
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 1)))
-		return E_FAIL;
+		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
+			return E_FAIL;
+	}
+	else if (iIndex == 1)
+	{
+		if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_fSpeed", &m_fSpeed, sizeof(_float))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_fPosX", &m_fPosX, sizeof(_float))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_fSizeX", &m_fSizeX, sizeof(_float))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_fPercentage", &m_fPercentage, sizeof(_float))))
+			return E_FAIL;
+		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
+			return E_FAIL;
+	}
+	
 
 	return NOERROR;
 }
@@ -201,19 +183,10 @@ void CBossHP::SetUp_State(_double TimeDelta)
 	if (m_fBossHP <= 0.f)
 		m_fBossHP = 0.f;
 
-	m_fBossHP = m_pTarget->Get_Target_Hp();
-
 	// Texture UV 흐르는 속도
 	m_fSpeed += -0.05f * _float(TimeDelta);
 
 	m_fPercentage = m_fBossHP / m_fTotalHP;
-
-
-	// ----------임시(Boss HP조절)------------------------------------------------
-	/*if (GetAsyncKeyState(VK_DIVIDE) & 0x8000)
-		m_fBossHP += 15.f * _float(TimeDelta);
-	if (GetAsyncKeyState(VK_MULTIPLY) & 0x8000)
-		m_fBossHP -= 15.f * _float(TimeDelta);*/
 }
 
 CBossHP * CBossHP::Create(_Device pGraphic_Device)

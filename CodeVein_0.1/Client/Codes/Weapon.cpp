@@ -324,12 +324,6 @@ void CWeapon::Set_TrailUseMask(_int iIdx)
 	m_pTrailEffect->Set_UseMask(iIdx);
 }
 
-void CWeapon::Set_TrailSize(_float fBegin, _float fEnd)
-{
-	m_fTrailBegin = fBegin;
-	m_fTrailEnd = fEnd;
-}
-
 void CWeapon::Set_Enable_Record(_bool _bRecord)
 {
 	m_bRecordCollision = _bRecord;
@@ -615,7 +609,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	//===========================================================================================
 
 	m_tWeaponParam[WPN_Shield_Normal].fDamage = 25.f;
-	m_tWeaponParam[WPN_Shield_Normal].fRadius = 0.6f;
+	m_tWeaponParam[WPN_Shield_Normal].fRadius = 0.7f;
 	m_tWeaponParam[WPN_Shield_Normal].fTrail_Min = 0.f;
 	m_tWeaponParam[WPN_Shield_Normal].fTrail_Max = 1.f;
 	m_tWeaponParam[WPN_Shield_Normal].fCol_Height = 0.f;
@@ -634,8 +628,8 @@ HRESULT CWeapon::SetUp_WeaponData()
 
 	m_tWeaponParam[WPN_QueenLance].fDamage = 25.f;
 	m_tWeaponParam[WPN_QueenLance].fRadius = 1.3f;
-	m_tWeaponParam[WPN_QueenLance].fTrail_Min = 0.75f;
-	m_tWeaponParam[WPN_QueenLance].fTrail_Max = 1.5f;
+	m_tWeaponParam[WPN_QueenLance].fTrail_Min = 0.3f;
+	m_tWeaponParam[WPN_QueenLance].fTrail_Max = 3.4f;
 	m_tWeaponParam[WPN_QueenLance].fCol_Height = 1.6f;
 
 	m_tWeaponParam[WPN_QueenShield].fDamage = 25.f;

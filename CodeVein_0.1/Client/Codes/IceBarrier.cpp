@@ -65,13 +65,23 @@ _int CIceBarrier::Update_GameObject(_double TimeDelta)
 	// 방어막은 일정시간 지나면 알아서 꺼짐
 	if (m_dCurTime > m_dLifeTime)
 	{
+		//CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Break_1", m_pTransformCom->Get_Pos(), nullptr);
+		//CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Break_2", m_pTransformCom->Get_Pos(), nullptr);
+		//CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Break_Lightning", m_pTransformCom->Get_Pos(), nullptr);
+	
 		m_bBarrierOff = true;	// 방어막 꺼짐 시작
 	}
 	else
 	{
+		m_fEffectOffset += _float(TimeDelta);
 		// 일정시간마다 방어막 이펙트 발생
-
-
+		if (m_fEffectOffset > 0.1f)
+		{
+			m_fEffectOffset = 0.f;
+			CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Aura", m_pTransformCom->Get_Pos(), nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Aura_2", m_pTransformCom->Get_Pos(), nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Aura_3", m_pTransformCom->Get_Pos(), nullptr);
+		}
 	}
 
 
@@ -151,6 +161,11 @@ void CIceBarrier::Check_PhyCollider()
 		m_tObjParam.bCanHit = true;
 
 		m_bBarrierOff = true;
+
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Break_1", m_pTransformCom->Get_Pos(), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Break_2", m_pTransformCom->Get_Pos(), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Break_Lightning", m_pTransformCom->Get_Pos(), nullptr);
+
 		cout << "CIceBarrier - Check_PhyCollider: 보호막 깨짐" << endl;
 	}
 }

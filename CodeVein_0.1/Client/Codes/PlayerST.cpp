@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "..\Headers\PlayerST.h"
-#include "HPBack.h"
 
 CPlayerST::CPlayerST(_Device pGraphic_Device)
 	: CUI(pGraphic_Device)
@@ -26,11 +25,11 @@ HRESULT CPlayerST::Ready_GameObject(void * pArg)
 
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = 202.f;
-	m_fPosY = 620.f;
-	m_fSizeX = 280.f;
-	m_fSizeY = 10.f;
-	m_fViewZ = 0.f;
+	m_fPosX = 200.f;
+	m_fPosY = 607.f;
+	m_fSizeX = 301.f;
+	m_fSizeY = 64.f;
+	m_fViewZ = 1.f;
 
 	m_bIsActive = true;
 
@@ -39,17 +38,7 @@ HRESULT CPlayerST::Ready_GameObject(void * pArg)
 
 	m_fPlayerST = m_pTarget->Get_Target_Stamina();
 	m_fTotalST = m_fPlayerST;
-
-	UI_DESC* pDesc = new UI_DESC;
-	pDesc->fPosX = 202.f;
-	pDesc->fPosY = m_fPosY;
-	pDesc->fSizeX = 345.f;
-	pDesc->fSizeY = 30.f;
-	pDesc->iIndex = 0;
-
-	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_HPBack", SCENE_STAGE, L"Layer_HPBack", pDesc);
-	//static_cast<CHPBack*>(g_pManagement->Get_GameObjectBack(L"Layer_HPBack", SCENE_STAGE))->Set_Active(true);
-
+	
 	return NOERROR;
 }
 
@@ -86,42 +75,29 @@ HRESULT CPlayerST::Render_GameObject()
 		nullptr == m_pBufferCom)
 		return E_FAIL;
 
-	CManagement* pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
+	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
 
-	Safe_AddRef(pManagement);
+	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
+	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
-	pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
+	_uint iPass = 0;
+	for (_uint i = 0; i < 3; ++i)
+	{
+		if (FAILED(SetUp_ConstantTable(i)))
+			return E_FAIL;
 
-	m_matOldView = pManagement->Get_Transform(D3DTS_VIEW);
-	m_matOldProj = pManagement->Get_Transform(D3DTS_PROJECTION);
+		(i == 1) ? (iPass = 3) : (iPass = 1);
 
-	pManagement->Set_Transform(D3DTS_VIEW, m_matView);
-	pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
+		m_pShaderCom->Begin_Shader();
 
+		m_pShaderCom->Begin_Pass(iPass);
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
+		m_pBufferCom->Render_VIBuffer();
 
-	m_pShaderCom->Begin_Shader();
+		m_pShaderCom->End_Pass();
 
-	m_pShaderCom->Begin_Pass(2);
-
-	// 버퍼를 렌더링한다.
-	// (인덱스버퍼(012023)에 보관하고있는 인덱스를 가진 정점을 그리낟.)
-	// 삼각형 두개를 그리낟.각각의 삼각형마다 정점세개, 각각의 정점을 버텍스 셰이더의 인자로 던진다.
-	m_pBufferCom->Render_VIBuffer();
-
-	m_pShaderCom->End_Pass();
-
-	m_pShaderCom->End_Shader();
-
-
-	pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
-	pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
-
-	Safe_Release(pManagement);
+		m_pShaderCom->End_Shader();
+	}
 
 	return NOERROR;
 }
@@ -137,7 +113,7 @@ HRESULT CPlayerST::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_STBar", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_PlayerST", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -151,36 +127,42 @@ HRESULT CPlayerST::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CPlayerST::SetUp_ConstantTable()
+HRESULT CPlayerST::SetUp_ConstantTable(_uint iIndex)
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
-
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fSpeed", &m_fSpeed, sizeof(_float))))
-		return E_FAIL;
-
-
-
-	if (FAILED(m_pShaderCom->Set_Value("g_fPosX", &m_fPosX, sizeof(_float))))
-		return E_FAIL;
-
-	if (FAILED(m_pShaderCom->Set_Value("g_fSizeX", &m_fSizeX, sizeof(_float))))
-		return E_FAIL;
-
-
-
-	if (FAILED(m_pShaderCom->Set_Value("g_fPercentage", &m_fPercentage, sizeof(_float))))
-		return E_FAIL;
-
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 0)))
-		return E_FAIL;
+	if (iIndex == 0 || iIndex == 2)
+	{
+		if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
+			return E_FAIL;
+	}
+	else if (iIndex == 1)
+	{
+		if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_fSpeed", &m_fSpeed, sizeof(_float))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_fPosX", &m_fPosX, sizeof(_float))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_fSizeX", &m_fSizeX, sizeof(_float))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_fPercentage", &m_fPercentage, sizeof(_float))))
+			return E_FAIL;
+		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
+			return E_FAIL;
+	}
+	
 
 	return NOERROR;
 }
@@ -191,19 +173,12 @@ void CPlayerST::SetUp_State(_double TimeDelta)
 		m_fPlayerST = m_fTotalST;
 	if (m_fPlayerST <= 0.f)
 		m_fPlayerST = 0.f;
-
+	
 	m_fPlayerST = m_pTarget->Get_Target_Stamina();
 
 	// Texture UV 흐르는 속도
 	m_fSpeed += 0.f;
 	m_fPercentage = m_fPlayerST / m_fTotalST;
-
-
-	// ----------임시(플레이어 ST조절)------------------------------------------------
-	/*if (GetAsyncKeyState(VK_RIGHT) & 0x8000)
-		m_fPlayerST += 15.f * _float(TimeDelta);
-	if (GetAsyncKeyState(VK_LEFT) & 0x8000)
-		m_fPlayerST -= 15.f * _float(TimeDelta);*/
 }
 
 CPlayerST * CPlayerST::Create(_Device pGraphic_Device)

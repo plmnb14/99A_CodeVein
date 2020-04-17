@@ -2,7 +2,6 @@
 #include "..\Headers\PlayerHP.h"
 #include "FontNumManager.h"
 #include "FontNumUI.h"
-#include "HPBack.h"
 
 CPlayerHP::CPlayerHP(_Device pGraphic_Device)
 	: CUI(pGraphic_Device)
@@ -28,12 +27,11 @@ HRESULT CPlayerHP::Ready_GameObject(void * pArg)
 
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = 202.f;
-	m_fPosY = 658.f;
-	m_fSizeX = 285.f;
-	m_fSizeY = 30.1f;
+	m_fPosX = 200.f;
+	m_fPosY = 637.f;
+	m_fSizeX = 301.f;
+	m_fSizeY = 64.f;
 
-	m_fViewZ = 1.f;
 	m_bIsActive = true;
 
 	SetUp_Default();
@@ -81,42 +79,29 @@ HRESULT CPlayerHP::Render_GameObject()
 		nullptr == m_pBufferCom)
 		return E_FAIL;
 
-	CManagement* pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
+	
+	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
 
-	Safe_AddRef(pManagement);
+	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
+	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
-	pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
+	_uint iPass = 0;
+	for (_uint i = 0; i < 4; ++i)
+	{
+		if (FAILED(SetUp_ConstantTable(i)))
+			return E_FAIL;
+		(i == 1) ? (iPass = 2) : (iPass = 1);
+		m_pShaderCom->Begin_Shader();
 
-	m_matOldView = pManagement->Get_Transform(D3DTS_VIEW);
-	m_matOldProj = pManagement->Get_Transform(D3DTS_PROJECTION);
+		m_pShaderCom->Begin_Pass(iPass);
 
-	pManagement->Set_Transform(D3DTS_VIEW, m_matView);
-	pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
+		m_pBufferCom->Render_VIBuffer();
 
+		m_pShaderCom->End_Pass();
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
-
-	m_pShaderCom->Begin_Shader();
-
-	m_pShaderCom->Begin_Pass(2);
-
-	// 버퍼를 렌더링한다.
-	// (인덱스버퍼(012023)에 보관하고있는 인덱스를 가진 정점을 그리낟.)
-	// 삼각형 두개를 그리낟.각각의 삼각형마다 정점세개, 각각의 정점을 버텍스 셰이더의 인자로 던진다.
-	m_pBufferCom->Render_VIBuffer();
-
-	m_pShaderCom->End_Pass();
-
-	m_pShaderCom->End_Shader();
-
-
-	pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
-	pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
-
-	Safe_Release(pManagement);
+		m_pShaderCom->End_Shader();
+	}
+	
 
 	return NOERROR;
 }
@@ -146,34 +131,46 @@ HRESULT CPlayerHP::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CPlayerHP::SetUp_ConstantTable()
+HRESULT CPlayerHP::SetUp_ConstantTable(_uint iIndex)
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
+	if (iIndex == 1)
+	{
+		if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
 
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fSpeed", &m_fSpeed, sizeof(_float))))
-		return E_FAIL;
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_fSpeed", &m_fSpeed, sizeof(_float))))
+			return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_Value("g_fPosX", &m_fPosX, sizeof(_float))))
-		return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_fPosX", &m_fPosX, sizeof(_float))))
+			return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_Value("g_fSizeX", &m_fSizeX, sizeof(_float))))
-		return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_fSizeX", &m_fSizeX, sizeof(_float))))
+			return E_FAIL;
 
+		if (FAILED(m_pShaderCom->Set_Value("g_fPercentage", &m_fPercentage, sizeof(_float))))
+			return E_FAIL;
 
-
-	if (FAILED(m_pShaderCom->Set_Value("g_fPercentage", &m_fPercentage, sizeof(_float))))
-		return E_FAIL;
-
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 1)))
-		return E_FAIL;
+		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
+			return E_FAIL;
+	}
 
 	return NOERROR;
 }
@@ -190,37 +187,17 @@ void CPlayerHP::SetUp_Default()
 
 	m_fTotalHP = m_fPlayerHP;
 
-	// HP 숫자 폰트 사이의 슬래시
-	UI_DESC* pDesc = new UI_DESC;
-	pDesc->fPosX = m_fPosX + 80.f;
-	pDesc->fPosY = m_fPosY;
-	pDesc->fSizeX = 10.f;
-	pDesc->fSizeY = 20.f;
-	pDesc->iIndex = 10;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_FontNumUI", SCENE_STAGE, L"Layer_FontNumUI", pDesc);
-	static_cast<CFontNumUI*>(g_pManagement->Get_GameObjectBack(L"Layer_FontNumUI", SCENE_STAGE))->Set_ViewZ(m_fViewZ - 0.1f);
-
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_FontNumManager", SCENE_STAGE, L"Layer_FontPlayerUI");
 	m_pFontCurHP = static_cast<CFontNumManager*>(g_pManagement->Get_GameObjectBack(L"Layer_FontPlayerUI", SCENE_STAGE));
-	m_pFontCurHP->Set_UI_Pos(m_fPosX + 35.f, m_fPosY);
-	m_pFontCurHP->Set_UI_Size(15.f, 30.f);
+	m_pFontCurHP->Set_UI_Pos(m_fPosX + 68.f, m_fPosY);
+	m_pFontCurHP->Set_UI_Size(50.f, 50.f);
 	m_pFontCurHP->Set_ViewZ(m_fViewZ - 0.1f);
 
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_FontNumManager", SCENE_STAGE, L"Layer_FontPlayerUI");
 	m_pFontTotalHP = static_cast<CFontNumManager*>(g_pManagement->Get_GameObjectBack(L"Layer_FontPlayerUI", SCENE_STAGE));
-	m_pFontTotalHP->Set_UI_Pos(m_fPosX + 100.f, m_fPosY);
-	m_pFontTotalHP->Set_UI_Size(10.f, 20.f);
+	m_pFontTotalHP->Set_UI_Pos(m_fPosX + 126.f, m_fPosY - 3.f);
+	m_pFontTotalHP->Set_UI_Size(25.f, 25.f);
 	m_pFontTotalHP->Set_ViewZ(m_fViewZ - 0.1f);
-
-
-	pDesc = new UI_DESC;
-	pDesc->fPosX = m_fPosX;
-	pDesc->fPosY = m_fPosY - 0.8f;
-	pDesc->fSizeX = m_fSizeX + 63.f;
-	pDesc->fSizeY = m_fSizeY + 26.f;
-	pDesc->iIndex = 0;
-	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_HPBack", SCENE_STAGE, L"Layer_HPBack", pDesc);
-	//static_cast<CHPBack*>(g_pManagement->Get_GameObjectBack(L"Layer_HPBack", SCENE_STAGE))->Set_Active(true);
 }
 
 void CPlayerHP::SetUp_State(_double TimeDelta)
@@ -236,13 +213,6 @@ void CPlayerHP::SetUp_State(_double TimeDelta)
 	m_fSpeed += -0.2f * _float(TimeDelta);
 
 	m_fPercentage = m_fPlayerHP / m_fTotalHP;
-
-
-	// ----------임시(플레이어HP조절)------------------------------------------------
-	/*if (GetAsyncKeyState(VK_UP) & 0x8000)
-		m_fPlayerHP += 15.f * _float(TimeDelta);
-	if (GetAsyncKeyState(VK_DOWN) & 0x8000)
-		m_fPlayerHP -= 15.f * _float(TimeDelta);*/
 }
 
 CPlayerHP * CPlayerHP::Create(_Device pGraphic_Device)

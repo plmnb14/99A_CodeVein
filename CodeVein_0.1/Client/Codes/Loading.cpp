@@ -6,7 +6,7 @@
 #include "TexEffect.h"
 #include "MeshEffect.h"
 #include "Player.h"
-#include "HPBack.h"
+
 #include "Weapon.h"
 #include "Drain_Weapon.h"
 
@@ -239,6 +239,77 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 #pragma endregion
 	
+#pragma region IceGirl
+	if (FAILED(Add_EffectPrototype(L"IceFloorAura_01")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceFloorAura_02")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceFloorAura_03")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceSmoke_01")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceSmoke_02")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_FlashParticle_Blue")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_FlashParticle_Green")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_PointParticle_Blue")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_PointParticle_Green")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_Main", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_Sub_01", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_Sub_02", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_Break", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_SwordBullet_Mesh", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_SwordBullet_Mesh_2", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceCrystal_01")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceCrystal_02")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceCrystal_03")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_Charge_Hand_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_Charge_Hand_Smoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_Charge_Hand_Smoke_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Aura")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Aura_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Aura_3")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Break_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Break_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_FloorAura_01")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_FloorAura_02")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_FloorAura_03")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_Smoke_01")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_Smoke_02")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Break_Lightning")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Charge_Smoke_01")))
+		return E_FAIL;
+#pragma endregion
+
 	if (FAILED(Add_EffectPrototype(L"Boss_KnockDown_Dust")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Boss_Dead_Particle")))
@@ -749,7 +820,6 @@ _uint CLoading::Loading_Stage()
 
 			g_bOnStage[5] = true;
 		}
-
 		break;
 	}
 	}
@@ -796,6 +866,15 @@ _uint CLoading::Loading_Stage()
 		// ¿©¿ÕÀÇ ±â»ç
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_QueensKnight", CQueensKnight::Create(m_pGraphicDev))))
 			return E_FAIL;
+		// ¶¥¿¡¼­ Âî¸´Âî¸´ ¿òÁ÷ÀÌ´Â ÃÑ¾Ë
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkGroundBullet", CDarkGroundBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ¾îµÒ Æø¹ß
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkBoom", CDarkBoom::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ±â»ç ÁÖÀ§ °á°è
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkMidCol", CDarkMidCol::Create(m_pGraphicDev))))
+			return E_FAIL;
 		// ¾óÀ½¿©ÀÚ
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceGirl", CIceGirl::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -810,6 +889,21 @@ _uint CLoading::Loading_Stage()
 			return E_FAIL;
 		// ºÒ³²ÀÚ
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireBoy", CFireBoy::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// Æ÷½ÅÀ¸·Î ¶§¸®±â ÄÝ¶óÀÌ´õ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunAttackCol", CGunAttackCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ºÒ ÃÑ¾Ë
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireBullet", CFireBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// È­¿°±¸
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireSphere", CFireSphere::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// Å¸°ÙÀÇ ¹Ù´Ú¿¡ È­¿°Æø¹ß
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireGround", CFireGround::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// È­¿° Åä³×ÀÌµµ ÄÝ¶óÀÌ´õ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireTornadoCol", CFireTornadoCol::Create(m_pGraphicDev))))
 			return E_FAIL;
 		// °ËÀº ¼º°Ô
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))
@@ -834,6 +928,9 @@ _uint CLoading::Loading_Stage()
 			return E_FAIL;
 		// ¾ßÂ÷¸Ç
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_YachaMan", CYachaMan::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ±èÇåÅÍ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Hunter", CHunter::Create(m_pGraphicDev))))
 			return E_FAIL;
 
 		// UI - Chea

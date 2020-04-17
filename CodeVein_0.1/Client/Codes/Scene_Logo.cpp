@@ -3,6 +3,11 @@
 #include "Scene_Title.h"
 
 #include "Management.h"
+#include "BackGround.h"
+#include "LogoBtn.h"
+#include "LoadingScreen.h"
+#include "LoadingBar.h"
+#include "CursorEffect.h"
 
 CScene_Logo::CScene_Logo(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
@@ -16,10 +21,13 @@ HRESULT CScene_Logo::Ready_Scene()
 	if (FAILED(Ready_Essential_Prototype_GameObject()))
 		return E_FAIL;
 
+	if (FAILED(Ready_Layer_Logo(L"Layer_LogoUI")))
+		return E_FAIL;
+
 	m_pLoading = CLoading::Create(m_pGraphic_Device, SCENE_TITLE);
 	if (nullptr == m_pLoading)
 		return E_FAIL;
-
+	
 	return S_OK;
 }
 
@@ -76,11 +84,28 @@ void CScene_Logo::Free()
 
 HRESULT CScene_Logo::Ready_Essential_Prototype_GameObject()
 {
+
 	return S_OK;
 }
 
 HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 {
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LogoBackGround", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LogoBack/LogoBack%d.png", 4))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LogoButton", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Button/Button%d.png", 3))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_CursorEffect", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/CursorEffect/CursorEffect%d.png", 1))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LogoBackGround", CBackGround::Create(m_pGraphic_Device))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LogoButton", CLogoBtn::Create(m_pGraphic_Device))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CursorEffect", CCursorEffect::Create(m_pGraphic_Device))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LogoBackGround", SCENE_LOGO, L"Layer_LogoBackGround")))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LogoButton", SCENE_LOGO, L"Layer_LogoButton")))
+		return E_FAIL;
 	return S_OK;
 }
 
