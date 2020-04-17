@@ -543,6 +543,7 @@
     <ClInclude Include="..\Headers\FireBoy.h">
       <Filter>02.GameObject\Stage\1%29 Boss\FireBoy</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\HPBack.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -791,6 +792,7 @@
     <ClCompile Include="..\Codes\FireBoy.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\FireBoy</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\HPBack.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">

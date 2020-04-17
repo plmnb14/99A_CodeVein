@@ -208,7 +208,7 @@ void CDamegeNumUI::SetUp_State(_double TimeDelta)
 		/*m_iGet_Damege = m_iMaxHP - (_uint)m_pTarget->Get_Target_Hp();
 		m_iNowHP -= m_iGet_Damege;
 		m_iMaxHP = m_iNowHP;*/
-		//CPlayer* pPlayer = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE));
+		//CPlayer* pPlayer = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 		//m_iGet_Damege = pPlayer->Get_Target_Param().fDamage;
 
 		m_iGet_Damege = 10;

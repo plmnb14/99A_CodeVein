@@ -43,6 +43,9 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 
 _int CPlayer::Update_GameObject(_double TimeDelta)
 {
+	if (false == m_bEnable)
+		return NO_EVENT;
+
 	CGameObject::Update_GameObject(TimeDelta);
 
 	KeyInput();
@@ -79,12 +82,15 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 _int CPlayer::Late_Update_GameObject(_double TimeDelta)
 {
+	if (false == m_bEnable)
+		return NO_EVENT;
+
 	if (nullptr == m_pRenderer ||
 		nullptr == m_pDynamicMesh)
 		return E_FAIL;
 
 	Reset_BloodSuck_Options();
-	Reset_Attack_Bool();
+	//Reset_Attack_Bool();
 
 	m_pDynamicMesh->SetUp_Animation_Lower(m_eAnim_Lower);
 	m_pDynamicMesh->SetUp_Animation_Upper(m_eAnim_Upper);
@@ -102,13 +108,16 @@ _int CPlayer::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CPlayer::Render_GameObject()
 {
+	if (false == m_bEnable)
+		return S_OK;
+
 	if (nullptr == m_pShader ||
 		nullptr == m_pDynamicMesh)
 		return E_FAIL;
 
 	m_pDynamicMesh->Play_Animation_Lower(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply);
 	m_pDynamicMesh->Play_Animation_Upper(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply);
-	m_pDynamicMesh->Play_Animation_RightArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply, !m_bOneHand);
+	m_pDynamicMesh->Play_Animation_RightArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply, false);
 	m_pDynamicMesh->Play_Animation_LeftArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply);
 
 	if (m_tObjParam.bInvisible)
@@ -161,6 +170,9 @@ HRESULT CPlayer::Render_GameObject()
 
 HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 {
+	if (false == m_bEnable)
+		return S_OK;
+
 	if (nullptr == pShader ||
 		nullptr == m_pDynamicMesh)
 		return E_FAIL;
@@ -328,6 +340,15 @@ void CPlayer::Parameter_Movement()
 	if (m_eActState == ACT_Skill)
 		return;
 
+	if (m_eActState == ACT_BloodSuck_Count)
+		return;
+
+	if (m_eActState == ACT_BloodSuck_Combo)
+		return;
+
+	if (m_eActState == ACT_BloodSuck)
+		return;
+
 	if (m_bOnDodge)
 	{
 		if (m_pTarget != nullptr)
@@ -403,6 +424,7 @@ void CPlayer::Parameter_Aiming()
 
 				CCameraMgr::Get_Instance()->Set_AimingTarget(nullptr);
 				CCameraMgr::Get_Instance()->Set_OnAimingTarget(false);
+				CCameraMgr::Get_Instance()->Set_LockAngleX(D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)));
 
 				return;
 			}
@@ -411,6 +433,8 @@ void CPlayer::Parameter_Aiming()
 		Target_AimChasing();
 
 		m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(m_pTarget)->Get_Pos()));
+
+		//cout << D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)) << endl;
 	}
 
 	else if (false == m_bOnAiming)
@@ -946,6 +970,15 @@ void CPlayer::Key_Movement_Down()
 	if (m_eActState == ACT_Skill)
 		return;
 
+	if (m_eActState == ACT_BloodSuck_Count)
+		return;
+
+	if (m_eActState == ACT_BloodSuck_Combo)
+		return;
+
+	if (m_eActState == ACT_BloodSuck)
+		return;
+
 	if (g_pInput_Device->Key_Down(DIK_W))
 	{
 		m_bMove[MOVE_Front] = true;
@@ -1075,8 +1108,14 @@ void CPlayer::Key_Movement_Down()
 
 		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.001f))
 		{
-			m_eActState = (m_eActState == ACT_Run ? ACT_MoveDelay : ACT_Idle);
+			cout << "이 안에 옵니까" << endl;
 
+			if (m_eActState != ACT_Idle)
+				Reset_BattleState();
+
+			m_eActState = m_tInfo.fMoveSpeed_Cur > 0.f ? ACT_MoveDelay : ACT_Idle;
+
+			m_bOnMoveDelay = false;
 			m_bOnDodge = false;
 		}
 	}
@@ -1128,10 +1167,11 @@ void CPlayer::Key_Special()
 		{
 			m_bOnDodge = false;
 
-			LOOP(3)
-				m_pDynamicMesh->Reset_OldIndx(i);
+			m_pDynamicMesh->Reset_OldIndx(1);
 
 			m_eActState = ACT_Dodge;
+
+			Reset_BattleState();
 		}
 	}
 
@@ -1158,7 +1198,7 @@ void CPlayer::Key_Attack()
 	{
 		if (m_bReadyChargeSuck == true)
 		{
-			if (m_bOnAttack && m_bSprint)
+			if (m_bOnAttack)
 			{
 				m_eActState = ACT_BloodSuck_Combo;
 			}
@@ -1728,6 +1768,8 @@ void CPlayer::Play_MoveDelay()
 {
 	if (false == m_bOnMoveDelay)
 	{
+		cout << "딜레이!" << endl;
+
 		m_bOnMoveDelay = true;
 
 		if (m_bOnAiming)
@@ -1804,37 +1846,43 @@ void CPlayer::Play_MoveDelay()
 				}
 			}
 		}
+
 		else
+		{
 			m_eAnim_Lower = Cmn_Run_F_End_L;
+		}
 
 		m_eAnim_Upper = m_eAnim_Lower;
 
+		// 한손 일때
 		if (m_bOneHand)
 		{
-			if (m_eMainWpnState == WEAPON_Gun)
-			{
-				m_eAnim_RightArm = Gun_Blend_Walk;
-				m_eAnim_LeftArm = Gun_Blend_Walk;
-			}
-			else
-			{
-				m_eAnim_RightArm = m_eAnim_Lower;
-				m_eAnim_LeftArm = m_eAnim_RightArm;
-			}
+			m_eAnim_LeftArm = m_eAnim_RightArm =
+				(m_eMainWpnState == WEAPON_Gun ? Gun_Blend_Walk :
+					m_eMainWpnState == WEAPON_Halverd ? Halverd_Walk_Blend: m_eAnim_Lower);
+		}
+		// 양손 일때
+		else
+		{
+			m_eAnim_LeftArm = m_eAnim_RightArm =
+				(m_eMainWpnState == WEAPON_Hammer ? 
+					Hammer_Blend_Walk : Lsword_Blend_Walk);
 		}
 
 		m_fSkillMoveAccel_Cur = 0.f;
 		m_fSkillMoveSpeed_Cur = m_tInfo.fMoveSpeed_Cur;
+		m_fSkillMoveMultiply = 0.75f;
 	}
 
 	else if (true == m_bOnMoveDelay)
 	{
-		Decre_Skill_Movement(0.75f);
+		Decre_Skill_Movement(m_fSkillMoveMultiply);
 		Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
 
 		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.8f))
 		{
 			m_eActState = ACT_Idle;
+
 			m_bOnMoveDelay = false;
 		}
 	}
@@ -2431,7 +2479,7 @@ void CPlayer::Play_Dodge()
 			(m_eMainWpnState == WEAPON_LSword ? 0.8f :
 				m_eMainWpnState == WEAPON_Hammer ? 0.8f :
 				m_eMainWpnState == WEAPON_Halverd ? 0.8f :
-				m_eMainWpnState == WEAPON_Ssword ? 2.f :
+				m_eMainWpnState == WEAPON_Ssword ? 2.3f :
 				m_eMainWpnState == WEAPON_Gun ? 0.6f : 1.2f);
 
 		m_fSkillMoveAccel_Cur = 0.f;
@@ -2513,13 +2561,10 @@ void CPlayer::Play_Dodge()
 				m_bDodgeBack = true;
 		}
 
-		else
+		else if (false == m_bOnAiming)
 			vDir = (m_bDodgeBack ? -m_pTransform->Get_Axis(AXIS_Z) : m_pTransform->Get_Axis(AXIS_Z));
 
-		Decre_Skill_Movement(m_fSkillMoveMultiply);
-		Skill_Movement(m_fSkillMoveSpeed_Cur, vDir);
-
-		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.75f))
+		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 		{
 			m_bDodgeBack = false;
 			m_bAFK = false;
@@ -2538,6 +2583,8 @@ void CPlayer::Play_Dodge()
 				m_eActState = ACT_Idle;
 
 			Reset_BattleState();
+
+			return;
 		}
 
 		else if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.25f))
@@ -2545,6 +2592,142 @@ void CPlayer::Play_Dodge()
 			m_bCanDodge = true;
 			m_bStopMovementKeyInput = false;
 		}
+
+		switch (m_eAnim_Lower)
+		{
+		case Cmn_RealLightDodge_F:
+		{
+			if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.1f && m_pDynamicMesh->Get_TrackInfo().Position < 2.f)
+			{
+				if (m_bEventTrigger[2] == false)
+				{
+					m_bEventTrigger[2] = true;
+
+					m_fSkillMoveMultiply = 0.f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveSpeed_Cur = 1.f;
+				}
+
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.267f && m_pDynamicMesh->Get_TrackInfo().Position < 1.1f)
+			{
+				if (m_bEventTrigger[1] == false)
+				{
+					m_bEventTrigger[1] = true;
+
+					m_fSkillMoveMultiply = 1.f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveSpeed_Cur = 14.f;
+				}
+
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.f && m_pDynamicMesh->Get_TrackInfo().Position < 0.267f)
+			{
+				if (m_bEventTrigger[0] == false)
+				{
+					m_bEventTrigger[0] = true;
+
+					m_fSkillMoveMultiply = 0.f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveSpeed_Cur = 0.3f;
+				}
+
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
+			}
+
+			return;
+		}
+
+		case Cmn_RealLightDodge_B:
+		{
+			if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.333f && m_pDynamicMesh->Get_TrackInfo().Position < 2.867f)
+			{
+				if (m_bEventTrigger[4] == false)
+				{
+					m_bEventTrigger[4] = true;
+
+					m_fSkillMoveMultiply = 0.f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveSpeed_Cur = 0.3f;
+				}
+
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_Z));
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.933f && m_pDynamicMesh->Get_TrackInfo().Position < 2.167f)
+			{
+				if (m_bEventTrigger[3] == false)
+				{
+					m_bEventTrigger[3] = true;
+
+					m_fSkillMoveMultiply = 0.f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveSpeed_Cur = 0.3f;
+				}
+
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.567f && m_pDynamicMesh->Get_TrackInfo().Position < 1.867f)
+			{
+				if (m_bEventTrigger[2] == false)
+				{
+					m_bEventTrigger[2] = true;
+
+					m_fSkillMoveMultiply = 0.f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveSpeed_Cur = 0.3f;
+				}
+
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_Z));
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.267f && m_pDynamicMesh->Get_TrackInfo().Position < 1.467f)
+			{
+				if (m_bEventTrigger[1] == false)
+				{
+					m_bEventTrigger[1] = true;
+
+					m_fSkillMoveMultiply = 1.f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveSpeed_Cur = 12.f;
+				}
+
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_Z));
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.f && m_pDynamicMesh->Get_TrackInfo().Position < 0.267f)
+			{
+				if (m_bEventTrigger[0] == false)
+				{
+					m_bEventTrigger[0] = true;
+
+					m_fSkillMoveMultiply = 0.f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveSpeed_Cur = 0.3f;
+				}
+
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+				Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_Z));
+			}
+
+			return;
+		}
+		}
+
+		Decre_Skill_Movement(m_fSkillMoveMultiply);
+		Skill_Movement(m_fSkillMoveSpeed_Cur, vDir);
 	}
 }
 
@@ -2899,6 +3082,8 @@ void CPlayer::Play_BloodSuck()
 		m_eAnim_Lower = m_eAnim_Upper;
 		m_eAnim_RightArm = m_eAnim_Upper;
 
+		Reset_BattleState();
+
 		IF_NOT_NULL(m_pDrainWeapon)
 		{
 			m_pDrainWeapon->Set_AnimIdx(m_eAnim_Upper);
@@ -2910,9 +3095,6 @@ void CPlayer::Play_BloodSuck()
 	{
 		if (false == m_bOnChargeSuck)
 		{
-			m_pDrainWeapon->Set_Target_CanAttack(true);
-			m_pDrainWeapon->Set_Enable_Record(true);
-
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.95f))
 			{
 				m_eAnim_Upper = LongCoat_ChargeSuck_End;
@@ -2932,9 +3114,23 @@ void CPlayer::Play_BloodSuck()
 				}
 			}
 
+			if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.6f && m_pDynamicMesh->Get_TrackInfo().Position < 1.533f)
+			{
+				if (m_bEventTrigger[0] == false)
+				{
+					m_bEventTrigger[0] = true;
+
+					m_fSkillMoveSpeed_Cur = 0.7f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_Z));
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
 			else if (false == m_bReadyChargeSuck)
 			{
-
 				if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.f)
 				{
 					m_eAnim_Upper = LongCoat_ChargeSuck_End;
@@ -2992,6 +3188,58 @@ void CPlayer::Play_BloodSuck()
 					m_pDrainWeapon->Set_Active(false);
 				}
 			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.433f)
+			{
+				if (m_bEventTrigger[4] == false)
+				{
+					m_bEventTrigger[4] = true;
+
+					m_pDrainWeapon->Set_Target_CanAttack(false);
+					m_pDrainWeapon->Set_Enable_Record(false);
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.933f)
+			{
+				if (m_bEventTrigger[3] == false)
+				{
+					m_bEventTrigger[3] = true;
+
+					m_pDrainWeapon->Set_Target_CanAttack(true);
+					m_pDrainWeapon->Set_Enable_Record(true);
+				}
+			}
+
+			if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.3f && m_pDynamicMesh->Get_TrackInfo().Position < 4.333f)
+			{
+				if (m_bEventTrigger[2] == false)
+				{
+					m_bEventTrigger[2] = true;
+
+					m_fSkillMoveSpeed_Cur = 1.4f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_Z));
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.467f && m_pDynamicMesh->Get_TrackInfo().Position < 1.067f)
+			{
+				if (m_bEventTrigger[1] == false)
+				{
+					m_bEventTrigger[1] = true;
+
+					m_fSkillMoveSpeed_Cur = 4.f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
 		}
 	}
 }
@@ -3033,6 +3281,8 @@ void CPlayer::Play_BloodSuckCount()
 
 				m_pDrainWeapon->Set_Target_CanAttack(false);
 				m_pDrainWeapon->Set_Enable_Record(false);
+
+				Reset_BattleState();
 			}
 		}
 	}
@@ -3047,11 +3297,15 @@ void CPlayer::Play_BloodSuckCombo()
 		m_eAnim_Upper = LongCoat_ComboSuck;
 		m_eAnim_Lower = m_eAnim_Upper;
 		m_eAnim_RightArm = m_eAnim_Upper;
+		m_eAnim_LeftArm = m_eAnim_Upper;
 
 		IF_NOT_NULL(m_pDrainWeapon)
 		{
 			m_pDrainWeapon->Set_AnimIdx(m_eAnim_Upper);
 			m_pDrainWeapon->Set_Active(true);
+
+			m_pDrainWeapon->Set_Target_CanAttack(true);
+			m_pDrainWeapon->Set_Enable_Record(true);
 		}
 	}
 
@@ -3064,11 +3318,15 @@ void CPlayer::Play_BloodSuckCombo()
 			m_bOnBloodSuck = false;
 			m_bReadyChargeSuck = false;
 
+			Reset_BattleState();
+
 			IF_NOT_NULL(m_pDrainWeapon)
 			{
-				m_pDrainWeapon->Set_AnimIdx(m_eAnim_Upper);
-				m_pDrainWeapon->Set_ActiveCollider(true);
-				m_pDrainWeapon->Set_Active(true);
+				m_pDrainWeapon->Set_ActiveCollider(false);
+				m_pDrainWeapon->Set_Active(false);
+
+				m_pDrainWeapon->Set_Target_CanAttack(false);
+				m_pDrainWeapon->Set_Enable_Record(false);
 			}
 		}
 	}
@@ -3233,6 +3491,8 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f, vPlayerPos + vEffGroundPos, nullptr);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_SplitAssert_LaserAfter_RingLine", 0.f, vPlayerPos + vEffGroundPos, nullptr);
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_SplitAssert_LaserAfter_Smoke", 0.3f, 0.f, vPlayerPos + vEffGroundPos, nullptr);
+
+					SHAKE_CAM_lv4
 				}
 			}
 
@@ -3774,6 +4034,8 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos, m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos, m_pTransform);
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RedParticle_Explosion", 0.1f, 0.f, vEffPos, m_pTransform);
+
+					SHAKE_CAM_lv2;
 				}
 			}
 
@@ -3837,6 +4099,8 @@ void CPlayer::Play_Skills()
 
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
+
+					SHAKE_CAM_lv3
 				}
 			}
 
@@ -4024,6 +4288,8 @@ void CPlayer::Play_Skills()
 
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
+
+					SHAKE_CAM_lv3
 				}
 			}
 
@@ -4046,6 +4312,8 @@ void CPlayer::Play_Skills()
 
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
+
+					SHAKE_CAM_lv1
 				}
 			}
 
@@ -6551,6 +6819,8 @@ void CPlayer::Play_Hammer_WeakAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
+
+					SHAKE_CAM_lv2
 				}
 			}
 
@@ -6613,6 +6883,17 @@ void CPlayer::Play_Hammer_WeakAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
+
+					SHAKE_CAM_lv2
+
+					// 진동 - 강
+					//CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(10.f, 30.f, 1.f, 0.95f, CCamera::CAM_OSC_TYPE::POS_OSC);
+
+					// 진동 - 중
+					//CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(5.f, 20.f, 0.5f, 0.85f, CCamera::CAM_OSC_TYPE::POS_OSC);
+
+					// 진동 - 약
+					//CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(3.f, 10.f, 0.3f, 0.8f, CCamera::CAM_OSC_TYPE::POS_OSC);
 				}
 			}
 
@@ -6675,6 +6956,8 @@ void CPlayer::Play_Hammer_WeakAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
+
+					SHAKE_CAM_lv2
 				}
 			}
 
@@ -6841,6 +7124,8 @@ void CPlayer::Play_Hammer_HeavyAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
+
+					SHAKE_CAM_lv2
 				}
 			}
 
@@ -6863,6 +7148,8 @@ void CPlayer::Play_Hammer_HeavyAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
+
+					SHAKE_CAM_lv2
 				}
 			}
 
@@ -6885,6 +7172,8 @@ void CPlayer::Play_Hammer_HeavyAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
+
+					SHAKE_CAM_lv2
 				}
 			}
 
@@ -6977,6 +7266,8 @@ void CPlayer::Play_Hammer_HeavyAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
+
+					SHAKE_CAM_lv3
 				}
 			}
 
@@ -7069,6 +7360,8 @@ void CPlayer::Play_Hammer_DashAtk()
 
 			m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 			m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
+
+			SHAKE_CAM_lv2
 		}
 	}
 
@@ -7301,6 +7594,8 @@ void CPlayer::Play_Lsword_WeakAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
+
+					SHAKE_CAM_lv2
 				}
 			}
 
@@ -8386,7 +8681,7 @@ void CPlayer::Reset_BattleState()
 	m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 	m_pWeapon[m_eActiveSlot]->Set_SkillMode(false); // WhiteColor
 
-	LOOP(16)
+	LOOP(32)
 		m_bEventTrigger[i] = false;
 }
 

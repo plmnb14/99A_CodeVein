@@ -29,6 +29,13 @@ _int CScene_Logo::Update_Scene(_double TimeDelta)
 
 	if (true == m_pLoading->Get_Finish() && g_pInput_Device->Key_Down(DIK_SPACE))
 	{
+		if (g_bReleaseMode)
+		{
+			// 베이스 스테이지 고정
+			g_sStageIdx_Cur = 1;
+			m_eSceneChange = Stage_Base;
+		}
+
 		if (FAILED(g_pManagement->SetUp_CurrentScene(CScene_Title::Create(m_pGraphic_Device, m_eSceneChange, m_bLoadStaticMesh))))
 			return -1;
 
@@ -86,7 +93,9 @@ void CScene_Logo::Update_DebugStage_Console()
 	cout << " 3. Space 를 누르면 다음 스테이지로 넘어갑니다." << endl;
 	cout << " 4. 트레이닝 맵은 별도로 Load_StaticMesh 안해도 넘어갑니다." << endl;
 	cout << " 5. 기본 설정된 맵은 Stage_Traing 입니다." << endl;
-
+	cout << "-------------------------------------------------------------------------------" << endl;
+	cout << " #  [ 릴리즈 모드 ] 는 메쉬로드와 스테이지 진행이 실제 게임처럼 됩니다." << endl;
+	cout << " #  [ 릴리즈 모드 ] 는 강제로 [ Stage_Base ] 부터 시작하게 됩니다." << endl;
 	cout << "-------------------------------------------------------------------------------" << endl;
 	cout << "[1] Stage_Base = ";
 	cout << (m_eSceneChange == CScene_Logo::Stage_Base ? "true" : "false") << endl;
@@ -106,6 +115,9 @@ void CScene_Logo::Update_DebugStage_Console()
 	cout << "[6] Load_StaticMesh = ";
 	cout << (m_bLoadStaticMesh ? "true" : "false") << endl;
 	cout << "-------------------------------------------------------------------------------" << endl;
+	cout << "[7] # 릴리즈 모드 # ";
+	cout << (g_bReleaseMode ? "true" : "false") << endl;
+	cout << "-------------------------------------------------------------------------------" << endl;
 }
 
 void CScene_Logo::Logo_KeyInput()
@@ -114,35 +126,47 @@ void CScene_Logo::Logo_KeyInput()
 	{
 		m_eSceneChange = Stage_Base;
 		Update_DebugStage_Console();
+		g_sStageIdx_Cur = 0;
 	}
 
 	if (g_pInput_Device->Key_Down(DIK_2))
 	{
 		m_eSceneChange = Stage_Training;
 		Update_DebugStage_Console();
+		g_sStageIdx_Cur = 1;
 	}
 
 	else if (g_pInput_Device->Key_Down(DIK_3))
 	{
 		m_eSceneChange = Stage_01;
 		Update_DebugStage_Console();
+		g_sStageIdx_Cur = 2;
 	}
 
 	else if (g_pInput_Device->Key_Down(DIK_4))
 	{
 		m_eSceneChange = Stage_02;
 		Update_DebugStage_Console();
+		g_sStageIdx_Cur = 3;
 	}
 
 	else if (g_pInput_Device->Key_Down(DIK_5))
 	{
 		m_eSceneChange = Stage_03;
 		Update_DebugStage_Console();
+		g_sStageIdx_Cur = 4;
 	}
 
 	else if (g_pInput_Device->Key_Down(DIK_6))
 	{
 		m_bLoadStaticMesh = (m_bLoadStaticMesh ? false : true);
+
+		Update_DebugStage_Console();
+	}
+
+	else if (g_pInput_Device->Key_Down(DIK_7))
+	{
+		g_bReleaseMode = (g_bReleaseMode ? false : true);
 
 		Update_DebugStage_Console();
 	}

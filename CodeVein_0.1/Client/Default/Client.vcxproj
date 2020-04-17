@@ -196,7 +196,9 @@
     <ClInclude Include="..\Headers\HPBack.h">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClInclude>
-    <ClInclude Include="..\Headers\HPBack.h" />
+    <ClInclude Include="..\Headers\HPBack.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\Headers\IceBarrier.h" />
     <ClInclude Include="..\Headers\IceGirl.h" />
     <ClInclude Include="..\Headers\Info_Slot.h" />
@@ -283,7 +285,9 @@
     <ClCompile Include="..\Codes\HPBack.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
     </ClCompile>
-    <ClCompile Include="..\Codes\HPBack.cpp" />
+    <ClCompile Include="..\Codes\HPBack.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\Codes\IceBarrier.cpp" />
     <ClCompile Include="..\Codes\IceGirl.cpp" />
     <ClCompile Include="..\Codes\Info_Slot.cpp" />

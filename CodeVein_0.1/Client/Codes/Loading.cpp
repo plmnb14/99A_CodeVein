@@ -595,21 +595,35 @@ _uint CLoading::Loading_Title()
 
 	// 필수 메쉬 불러오는중
 	//============================================================================================================
-	cout << "필수 메쉬 불러오는중" << endl;
-	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_Essential_Path.dat");
+	cout << "Essential Static 메쉬 불러오는중" << endl;
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Path.dat");
+
+	// 다이나믹 메쉬 불러오는 중
+	//============================================================================================================
+	cout << "Essential Dynamic 메쉬 불러오는중" << endl;
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Dynamic_Path.dat");
+
+	// 무기 불러오는 중
+	//============================================================================================================
+	cout << "Weapon 메쉬 불러오는 중" << endl;
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Weapon_Path.dat");
+	// 일반 무기
+	cout << "DrainWeapon 메쉬 불러오는 중" << endl;
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_DrainWeapon_Path.dat");
+	// 흡혈 무기
 
 	// 텍스쳐 불러오는 중
 	//============================================================================================================
-	cout << "텍스쳐 불러오는중" << endl;
-	g_pManagement->LoadTex_FromPath(m_pGraphicDev, L"../../Data/Tex_Path.dat");
+	cout << "All Texture 불러오는중" << endl;
+	g_pManagement->LoadTex_FromPath(m_pGraphicDev, L"../../Data/Load_TexData/Tex_Path.dat");
 
 	//============================================================================================================
 
 	// 이펙트 메쉬 불러오는중
-	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_Effect_Path.dat");
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Effect_Path.dat");
 	// 이펙트 원형 생성
 	//============================================================================================================
-	cout << "이펙트 원형 생성중" << endl;
+	cout << "Effect 원형 생성중" << endl;
 	Ready_Effect();
 
 	// UI 원형 생성
@@ -617,143 +631,6 @@ _uint CLoading::Loading_Title()
 	cout << " UI 원형 생성중" << endl;
 	CUI_Manager::Get_Instance()->Add_UI_Prototype(m_pGraphicDev);
 	CItem_Manager::Get_Instance()->Add_Item_Prototype(m_pGraphicDev);
-
-	//============================================================================================================
-
-	m_bFinish = true;
-
-	system("cls");
-	cout << "===============================================================================" << endl;
-	cout << "타이틀 로딩 완료" << endl;
-	cout << "===============================================================================" << endl;
-	cout << " 1. 위 숫자 키를 누르면 옵션이 활성화 됩니다." << endl;
-	cout << " 2. (Load_StaticMesh) 가 (false) 이면 스테이지 들어가도 생성 안됩니다." << endl;
-	cout << " 3. Space 를 누르면 다음 스테이지로 넘어갑니다." << endl;
-	cout << " 4. 현재 Stage_(n) 은 실행되지 않고 자동으로 Training Stage 로 넘어갑니다." << endl;
-	cout << "-------------------------------------------------------------------------------" << endl;
-	cout << "[1] Stage_Base = true " << endl;
-	cout << "[2] Stage_Training = false " << endl;
-	cout << "[3] Stage_01 = false " << endl;
-	cout << "[4] Stage_02 = false " << endl;
-	cout << "[5] Stage_03 = false " << endl;
-	cout << "-------------------------------------------------------------------------------" << endl;
-	cout << "[6] Load_StaticMesh = false " << endl;
-	cout << "-------------------------------------------------------------------------------" << endl;
-
-
-	return NO_EVENT;
-}
-
-_uint CLoading::Loading_Stage()
-{
-	// 스태틱 메쉬 불러오는 중
-	//============================================================================================================
-	if (m_bLoadStaticMesh)
-		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_Static_Path.dat");
-
-	// 다이나믹 메쉬 불러오는 중
-	//============================================================================================================
-	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_Dynamic_Path.dat");
-
-
-	// 무기 불러오는 중
-	//============================================================================================================
-	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_Weapon_Path.dat");
-	// 일반 무기
-	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Mesh_DrainWeapon_Path.dat");
-	// 흡혈 무기
-
-	// BT_Node 생성 중
-	//============================================================================================================
-	if (FAILED(g_pManagement->Ready_BT_Node()))
-		return E_FAIL;
-
-
-	// 오브젝트 원형 생성
-	//============================================================================================================
-
-	// 플레이어
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Player", CPlayer::Create(m_pGraphicDev))))
-		return E_FAIL;
-
-	// 몬스터
-	//============================================================================================================
-
-	// 독나방
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonButterfly", CPoisonButterfly::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 독나방 5발 투사체
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonBullet", CPoisonBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 독나방 추적 투사체
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonChaseBullet", CPoisonChaseBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 독나방 4방향 투사체
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonRotationBullet", CPoisonRotationBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 독나방 기모아서 쏘기 충돌체
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonTornado", CPoisonTornado::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 여왕의 기사
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_QueensKnight", CQueensKnight::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 얼음여자
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceGirl", CIceGirl::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 얼음여자 콜드빔
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeam", CColdBeam::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 얼음여자 검기발사
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordBullet", CSwordBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 얼음여자 얼음보호막
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceBarrier", CIceBarrier::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 불남자
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireBoy", CFireBoy::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 검은 성게
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 검은 늑대
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackWolf", CBlackWolf::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 검겐지
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenji", CSwordGenji::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 검겐지 총알
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenjiBullet", CSwordGenjiBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 총겐지
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenji", CGunGenji::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 총겐지 총알
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenjiBullet", CGunGenjiBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 검방패겐지
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordShieldGenji", CSwordShieldGenji::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 야차맨
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_YachaMan", CYachaMan::Create(m_pGraphicDev))))
-		return E_FAIL;
-
-	// UI - Chea
-	//============================================================================================================
-	
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Colleague", CPlayer_Colleague::Create(m_pGraphicDev))))
-		return E_FAIL;
-
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MonsterHPUI", CMonsterUI::Create(m_pGraphicDev))))
-		return E_FAIL;
-
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MassageUI", CMassageUI::Create(m_pGraphicDev))))
-		return E_FAIL;
-
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DamegeNumUI", CDamegeNumUI::Create(m_pGraphicDev))))
-		return E_FAIL;
-
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Get_ItemUI", CGet_ItemUI::Create(m_pGraphicDev))))
-		return E_FAIL;
 
 	// 기타
 	//============================================================================================================
@@ -764,16 +641,224 @@ _uint CLoading::Loading_Stage()
 	//무기
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon", CWeapon::Create(m_pGraphicDev))))
 		return E_FAIL;
-	//더미
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Dummy", CDummy_Target::Create(m_pGraphicDev))))
-		return E_FAIL;
+
 	// 트레일
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SwordTrail", Engine::CTrail_VFX::Create(m_pGraphicDev))))
 		return E_FAIL;
 	// 스카이
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Sky", CSky::Create(m_pGraphicDev))))
 		return E_FAIL;
+
 	//============================================================================================================
+
+	m_bFinish = true;
+
+	system("cls");
+	cout << "===============================================================================" << endl;
+	cout << " 1. 위 숫자 키를 누르면 옵션이 활성화 됩니다." << endl;
+	cout << " 2. (Load_StaticMesh) 가 (false) 이면 스테이지 들어가도 생성 안됩니다." << endl;
+	cout << " 3. Space 를 누르면 다음 스테이지로 넘어갑니다." << endl;
+	cout << " 4. 트레이닝 맵은 별도로 Load_StaticMesh 안해도 넘어갑니다." << endl;
+	cout << " 5. 기본 설정된 맵은 Stage_Traing 입니다." << endl;
+	cout << "-------------------------------------------------------------------------------" << endl;
+	cout << " #  [ 릴리즈 모드 ] 는 메쉬로드와 스테이지 진행이 실제 게임처럼 됩니다." << endl;
+	cout << " #  [ 릴리즈 모드 ] 는 강제로 [ Stage_Base ] 부터 시작하게 됩니다." << endl;
+	cout << "-------------------------------------------------------------------------------" << endl;
+	cout << "[1] Stage_Base = true " << endl;
+	cout << "[2] Stage_Training = false " << endl;
+	cout << "[3] Stage_01 = false " << endl;
+	cout << "[4] Stage_02 = false " << endl;
+	cout << "[5] Stage_03 = false " << endl;
+	cout << "-------------------------------------------------------------------------------" << endl;
+	cout << "[6] Load_StaticMesh = ";
+	cout << (m_bLoadStaticMesh ? "true" : "false") << endl;
+	cout << "-------------------------------------------------------------------------------" << endl;
+	cout << "[7] # 릴리즈 모드 # ";
+	cout << (g_bReleaseMode ? "true" : "false") << endl;
+	cout << "-------------------------------------------------------------------------------" << endl;
+
+	return NO_EVENT;
+}
+
+_uint CLoading::Loading_Stage()
+{
+	switch (g_sStageIdx_Cur)
+	{
+	// 스테이지 - 트레이닝
+	case 0:
+	{
+		// 1번 - 트레이닝
+		if (false == g_bOnStage[1])
+		{
+			g_bOnStage[1] = true;
+		}
+
+		break;
+	}
+	// 스테이지 - 베이스
+	case 1:
+	{
+		// 2번 - 베이스
+		if (false == g_bOnStage[2])
+		{
+			if (false == g_bReleaseMode)
+			{
+				g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
+			}
+
+			g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage00_Path.dat");
+
+			g_bOnStage[2] = true;
+		}
+
+		break;
+	}
+	// 스테이지 - 01
+	case 2:
+	{
+		// 3번 - 스테이지 01
+		if (false == g_bOnStage[3])
+		{
+			g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage01_Path.dat");
+
+			g_bOnStage[3] = true;
+		}
+
+		break;
+	}
+	// 스테이지 - 02
+	case 3:
+	{
+		// 4번 - 스테이지 02
+		if (false == g_bOnStage[4])
+		{
+			g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage02_Path.dat");
+
+			g_bOnStage[4] = true;
+		}
+
+		break;
+	}
+	// 스테이지 - 03
+	case 4:
+	{
+		// 4번 - 스테이지 03
+		if (false == g_bOnStage[5])
+		{
+			g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage03_Path.dat");
+
+			g_bOnStage[5] = true;
+		}
+
+		break;
+	}
+	}
+
+	// 최초 로딩 호출 시 1번만 불러옵니다.
+	if (false == g_bOnStage[0])
+	{
+		// 공통 스테틱 메쉬 불러오는 중
+		//============================================================================================================
+		if(g_bReleaseMode)
+			g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
+
+		// 다이나믹 메쉬 불러오는 중
+		//============================================================================================================
+		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
+
+		// BT_Node 생성 중
+		//============================================================================================================
+		if (FAILED(g_pManagement->Ready_BT_Node()))
+			return E_FAIL;
+
+
+		// 오브젝트 원형 생성
+		//============================================================================================================
+
+		// 몬스터
+		//============================================================================================================
+
+		// 독나방
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonButterfly", CPoisonButterfly::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 독나방 5발 투사체
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonBullet", CPoisonBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 독나방 추적 투사체
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonChaseBullet", CPoisonChaseBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 독나방 4방향 투사체
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonRotationBullet", CPoisonRotationBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 독나방 기모아서 쏘기 충돌체
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonTornado", CPoisonTornado::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 여왕의 기사
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_QueensKnight", CQueensKnight::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 얼음여자
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceGirl", CIceGirl::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 얼음여자 콜드빔
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeam", CColdBeam::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 얼음여자 검기발사
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordBullet", CSwordBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 얼음여자 얼음보호막
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceBarrier", CIceBarrier::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 불남자
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireBoy", CFireBoy::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 검은 성게
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 검은 늑대
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackWolf", CBlackWolf::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 검겐지
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenji", CSwordGenji::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 검겐지 총알
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenjiBullet", CSwordGenjiBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 총겐지
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenji", CGunGenji::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 총겐지 총알
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenjiBullet", CGunGenjiBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 검방패겐지
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordShieldGenji", CSwordShieldGenji::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 야차맨
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_YachaMan", CYachaMan::Create(m_pGraphicDev))))
+			return E_FAIL;
+
+		// UI - Chea
+		//============================================================================================================
+
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Colleague", CPlayer_Colleague::Create(m_pGraphicDev))))
+			return E_FAIL;
+
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MonsterHPUI", CMonsterUI::Create(m_pGraphicDev))))
+			return E_FAIL;
+
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MassageUI", CMassageUI::Create(m_pGraphicDev))))
+			return E_FAIL;
+
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DamegeNumUI", CDamegeNumUI::Create(m_pGraphicDev))))
+			return E_FAIL;
+
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Get_ItemUI", CGet_ItemUI::Create(m_pGraphicDev))))
+			return E_FAIL;
+
+		//============================================================================================================
+
+		g_bOnStage[0] = true;
+	}
+
 	m_bFinish = true;
 
 	cout << "로딩 완료" << endl;
