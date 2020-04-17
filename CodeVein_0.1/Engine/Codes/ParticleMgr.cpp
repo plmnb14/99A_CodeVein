@@ -182,6 +182,9 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"FireBoy_Charge_Hand_Fire", 100);
 	Input_Pool(L"FireBoy_FireTornade_ReadyFire", 50);
 	Input_Pool(L"FireBoy_FireTornade_Mesh", 10);
+	Input_Pool(L"FireBoy_FireTornade_Floor_01", 100);
+	Input_Pool(L"FireBoy_FireTornade_Floor_02", 100);
+	//Input_Pool(L"FireBoy_FireTornade_Floor_03", 100);
 
 	Input_Pool(L"Boss_KnockDown_Dust", 10);
 	Input_Pool(L"Boss_Dead_Particle", 1000);

@@ -60,16 +60,16 @@ HRESULT CFireBoy::Ready_GameObject(void * pArg)
 
 	//////////// 아래에 주석해놓은 4줄이 본게임에서 쓸 것임, 차례대로 공격함.
 
-	CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
-	Check_ShowValue->Set_Child(Start_Show());
-	Start_Sel->Add_Child(Check_ShowValue);
-	Start_Sel->Add_Child(Start_Game());
+	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
+	//Check_ShowValue->Set_Child(Start_Show());
+	//Start_Sel->Add_Child(Check_ShowValue);
+	//Start_Sel->Add_Child(Start_Game());
 
 	////////////
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	//Start_Sel->Add_Child(Fire_Tornado());
+	Start_Sel->Add_Child(Fire_Tornado());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -309,6 +309,21 @@ CBT_Composite_Node * CFireBoy::Fire_Tornado()
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 2.5f, 0.233, 0);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 1.85, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 0.7f, 0.3, 0);
+
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("시전 준비 - 왼손에 불"	, L"FireBoy_Charge_Hand_Fire"		, L"Bone_LeftHand"	, 0.38, 80, 0, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("시전 직전 - 바닥에 불"	, L"FireBoy_FireTornade_ReadyFire"	, L"SelfPos"		, 1.0, 1, 0, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("토네이도"				, L"FireBoy_FireTornade_Mesh"		, L"SelfPos"		, 1.0, 1, 0, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("바닥에 용암같은거", L"FireBoy_FireTornade_Floor_01", L"SelfPos", 1.5, 30, 0, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("바닥에 용암같은거", L"FireBoy_FireTornade_Floor_02", L"SelfPos", 1.5, 30, 0, 0);
+
+	// 불똥파티클
+	// 직전 불기둥?
+
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
+	Root_Parallel->Add_Service(Effect3);
+	Root_Parallel->Add_Service(Effect4);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani30);
@@ -680,6 +695,10 @@ HRESULT CFireBoy::Update_Bone_Of_BlackBoard()
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftForeArm");
 	m_vLeftForeArm = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftForeArm", m_vLeftForeArm);
+
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHand");
+	m_vLeftHand = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftHand", m_vLeftHand);
 
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Muzzle");
 	m_vMuzzle = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);

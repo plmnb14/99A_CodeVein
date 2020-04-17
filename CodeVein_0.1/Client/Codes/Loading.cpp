@@ -317,7 +317,10 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireTornade_Mesh", true)))
 		return E_FAIL;
-	
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireTornade_Floor_01")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireTornade_Floor_02")))
+		return E_FAIL;
 #pragma endregion
 
 
