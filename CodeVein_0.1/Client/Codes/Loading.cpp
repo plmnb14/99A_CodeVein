@@ -183,6 +183,12 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lava_Floor_1")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lava_Smoke_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_Smoke_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_LineRing_0", true)))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_1")))

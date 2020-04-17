@@ -114,8 +114,11 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"QueensKnight_JumpDown_ShockWave", 50);
 	Input_Pool(L"QueensKnight_JumpDown_Smoke_Black", 500);
 	Input_Pool(L"QueensKnight_JumpDown_Smoke_Red", 500);
-	Input_Pool(L"QueensKnight_Lava_Floor_0", 50);
-	Input_Pool(L"QueensKnight_Lava_Floor_1", 50);
+	Input_Pool(L"QueensKnight_Lava_Floor_0", 550);
+	Input_Pool(L"QueensKnight_Lava_Floor_1", 550);
+	Input_Pool(L"QueensKnight_Lava_Smoke_0", 550);
+	Input_Pool(L"QueensKnight_DarkBoom_Smoke_0", 550);
+	Input_Pool(L"QueensKnight_DarkBoom_LineRing_0", 100);
 	Input_Pool(L"QueensKnight_LeakField_0", 50);
 	Input_Pool(L"QueensKnight_LeakField_1", 50);
 	Input_Pool(L"QueensKnight_LeakField_Hand", 50);
@@ -430,11 +433,11 @@ void CParticleMgr::Create_Effect(_tchar* szName, _v3 vPos, CTransform * pFollowT
 	{
 		if (pFindedQueue->size() <= 20) // 넉넉하게... 남은게 20 이하면 생성하여 사용
 		{
-			_tchar szTemp[256];
-			lstrcpy(szTemp, pFindedQueue->front()->Get_ParticleName());
-			CHAR szForPrint[MAX_STR] = "";
-			WideCharToMultiByte(CP_ACP, 0, szTemp, MAX_STR, szForPrint, MAX_STR, NULL, NULL);
-			cout << "Effect Create : " << szForPrint << endl;
+			//_tchar szTemp[256];
+			//lstrcpy(szTemp, pFindedQueue->front()->Get_ParticleName());
+			//CHAR szForPrint[MAX_STR] = "";
+			//WideCharToMultiByte(CP_ACP, 0, szTemp, MAX_STR, szForPrint, MAX_STR, NULL, NULL);
+			//cout << "Effect Create : " << szForPrint << endl;
 
 			_tchar* szEffName = pFindedQueue->front()->Get_ParticleName();
 			CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));

@@ -74,7 +74,7 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Start_Game());
+	Start_Sel->Add_Child(Flash_Middle_Ground());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -1156,6 +1156,24 @@ CBT_Composite_Node * CQueensKnight::Flash_Middle_Ground()
 	CBT_MoveTo* MoveTo0 = Node_MoveTo("점멸 이동", L"Field_MidPos", 0.1);
 	CBT_SetValue* PushColOn = Node_BOOL_SetValue("PushColOn", L"PushCol", true);
 	CBT_SetValue* PhyColOn = Node_BOOL_SetValue("PhyColOn", L"PhyCol", true);
+
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("점멸 파티클", L"QueensKnight_Teleport_Particle", L"Self_MidPos", 0, 50, 0.15, 0);
+
+	CBT_StartDissolve* Dissolve0 = Node_StartDissolve("디졸브", this, 3.7f, false		, 0.2);
+	CBT_StartDissolve* Dissolve2 = Node_StartDissolve("디졸브", m_pSword, 3.7f, false	, 0.2);
+	CBT_StartDissolve* Dissolve4 = Node_StartDissolve("디졸브", m_pShield, 3.7f, false	, 0.2);
+	CBT_StartDissolve* Dissolve1 = Node_StartDissolve("디졸브", this, 3.7f, true		, 1.25);
+	CBT_StartDissolve* Dissolve3 = Node_StartDissolve("디졸브", m_pSword, 3.7f, true	, 1.25);
+	CBT_StartDissolve* Dissolve5 = Node_StartDissolve("디졸브", m_pShield, 3.7f, true	, 1.25);
+
+	Root_Parallel->Add_Service(Effect0);
+
+	Root_Parallel->Add_Service(Dissolve0);
+	Root_Parallel->Add_Service(Dissolve1);
+	Root_Parallel->Add_Service(Dissolve2);
+	Root_Parallel->Add_Service(Dissolve3);
+	Root_Parallel->Add_Service(Dissolve4);
+	Root_Parallel->Add_Service(Dissolve5);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani38);
