@@ -33,7 +33,7 @@ HRESULT CHunter::Ready_GameObject(void * pArg)
 	m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE));
 
 	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-	m_tObjParam.fHp_Max = 180.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
+	m_tObjParam.fHp_Max = 9999180.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
 	m_tObjParam.fDamage = 25.f;
 
@@ -41,7 +41,7 @@ HRESULT CHunter::Ready_GameObject(void * pArg)
 	m_tObjParam.bIsHit = false;	//맞기 진행중 아님
 	m_tObjParam.bCanAttack = true; //공격 가능
 	m_tObjParam.bIsAttack = false; //공격 진행중 아님
-	m_tObjParam.bDodge = false; //첫 생성시 회피 비활성
+	m_tObjParam.bIsDodge = false; //첫 생성시 회피 비활성
 
 	m_bInRecognitionRange = false; //인지 범위 여부
 	m_bInAtkRange = false; //공격 범위 여부
@@ -72,7 +72,7 @@ _int CHunter::Update_GameObject(_double TimeDelta)
 	CGameObject::Update_GameObject(TimeDelta);
 
 	Check_Hit();
-	Check_Dist();
+	//Check_Dist();
 	Check_AniEvent();
 	Function_CoolDown();
 
@@ -309,7 +309,7 @@ void CHunter::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					if (false == iter->Get_Target_Dodge())
+					if (false == iter->Get_Target_IsDodge())
 					{
 						iter->Set_Target_CanHit(false);
 						iter->Add_Target_Hp(m_tObjParam.fDamage);
@@ -453,7 +453,7 @@ void CHunter::Function_ResetAfterAtk()
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.bIsHit = false;
 
-	m_tObjParam.bDodge = false;
+	m_tObjParam.bIsDodge = false;
 
 	m_tObjParam.bIsAttack = false;
 	m_bCanAtkCategoryRandom = true;
@@ -484,7 +484,7 @@ void CHunter::Check_Hit()
 	{
 		if (true == m_bCanComboInterrupt) //콤보 끊을 수 있음
 		{
-			++m_iDodgeCount;
+			//++m_iDodgeCount;
 
 			if (m_iDodgeCount >= m_iDodgeCountMax) //회피 가능 값 n회의 피격
 			{
@@ -546,50 +546,56 @@ void CHunter::Check_FBLR()
 		_float angle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos()));
 
 		cout << "피격시 각도 == " << angle << endl;
-
-		if (-22.5f <= angle && 22.5f >= angle)
+		
+		if (-22.5f <= angle && 22.5f > angle)
 		{
 			cout << "F" << endl;
 			m_eSecondCategory_HIT = HUNTER_HITTYPE::HIT_NORMAL;
 			m_eFBLR = FBLR::FRONT;
 		}
-		else if (22.5f <= angle && 67.5f >= angle)
+		else if (22.5f <= angle && 67.5f > angle)
 		{
 			cout << "FR" << endl;
 			m_eSecondCategory_HIT = HUNTER_HITTYPE::HIT_NORMAL;
 			m_eFBLR = FBLR::FRONTRIGHT;
 		}
-		else if (67.5f <= angle && 112.5f >= angle)
+		else if (67.5f <= angle && 112.5f > angle)
 		{
 			cout << "R" << endl;
 			m_eSecondCategory_HIT = HUNTER_HITTYPE::HIT_NORMAL;
 			m_eFBLR = FBLR::RIGHT;
 		}
-		else if (112.5f <= angle && 157.5f >= angle)
+		else if (112.5f <= angle && 157.5f > angle)
 		{
 			cout << "BR" << endl;
 			m_eSecondCategory_HIT = HUNTER_HITTYPE::HIT_NORMAL;
 			m_eFBLR = FBLR::BACKRIGHT;
 		}
-		else if (157.5f <= angle && -157.5f >= angle)
+		else if (157.5f <= angle && 180.f > angle)
 		{
 			cout << "B" << endl;
 			m_eSecondCategory_HIT = HUNTER_HITTYPE::HIT_NORMAL;
 			m_eFBLR = FBLR::BACK;
 		}
-		else if (-157.5f <= angle && -112.5f >= angle)
+		else if (-180.f <= angle && -157.f > angle)
+		{
+			cout << "B" << endl;
+			m_eSecondCategory_HIT = HUNTER_HITTYPE::HIT_NORMAL;
+			m_eFBLR = FBLR::BACK;
+		}
+		else if (-157.5f <= angle && -112.5f > angle)
 		{
 			cout << "BL" << endl;
 			m_eSecondCategory_HIT = HUNTER_HITTYPE::HIT_NORMAL;
 			m_eFBLR = FBLR::BACKLEFT;
 		}
-		else if (-112.5f <= angle && -67.5f >= angle)
+		else if (-112.5f <= angle && -67.5f > angle)
 		{
 			cout << "L" << endl;
 			m_eSecondCategory_HIT = HUNTER_HITTYPE::HIT_NORMAL;
 			m_eFBLR = FBLR::LEFT;
 		}
-		else if (-67.5f <= angle && -22.5f >= angle)
+		else if (-67.5f <= angle && -22.5f > angle)
 		{
 			cout << "FL" << endl;
 			m_eSecondCategory_HIT = HUNTER_HITTYPE::HIT_NORMAL;
@@ -613,7 +619,7 @@ void CHunter::Check_Dist()
 
 	if (true == m_tObjParam.bIsAttack ||
 		true == m_bIsCombo ||
-		true == m_tObjParam.bDodge ||
+		true == m_tObjParam.bIsDodge ||
 		true == m_tObjParam.bIsHit)
 		return;
 
@@ -5317,10 +5323,10 @@ void CHunter::Play_Move()
 
 		break;
 	case HUNTER_MOVETYPE::MOVE_DODGE:
-		if (false == m_tObjParam.bDodge)
+		if (false == m_tObjParam.bIsDodge)
 		{
 			Function_ResetAfterAtk();
-			m_tObjParam.bDodge = true;
+			m_tObjParam.bIsDodge = true;
 			m_eState = HUNTER_ANI::Dodge;
 		}
 		else

@@ -167,6 +167,7 @@
     <Text Include="ReadMe.txt" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="..\Headers\Active_Icon.h" />
     <ClInclude Include="..\Headers\Armor.h" />
     <ClInclude Include="..\Headers\Armor_Inven.h" />
     <ClInclude Include="..\Headers\Armor_Slot.h" />
@@ -175,10 +176,13 @@
     <ClInclude Include="..\Headers\BloodCode_Icon.h" />
     <ClInclude Include="..\Headers\BossDecoUI.h" />
     <ClInclude Include="..\Headers\BossHP.h" />
-    <ClInclude Include="..\Headers\Button_UI.h" />
+    <ClInclude Include="..\Headers\Button_UI.h">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClInclude>
     <ClInclude Include="..\Headers\ClickUI.h" />
     <ClInclude Include="..\Headers\Client_Defines.h" />
     <ClInclude Include="..\Headers\ColdBeam.h" />
+    <ClInclude Include="..\Headers\CursorEffect.h" />
     <ClInclude Include="..\Headers\CursorUI.h" />
     <ClInclude Include="..\Headers\DamegeNumUI.h" />
     <ClInclude Include="..\Headers\Drain_Weapon.h" />
@@ -186,8 +190,14 @@
     <ClInclude Include="..\Headers\Expendables.h" />
     <ClInclude Include="..\Headers\Expendables_Inven.h" />
     <ClInclude Include="..\Headers\Expendables_Slot.h" />
+    <ClInclude Include="..\Headers\FireBoy.h" />
+    <ClInclude Include="..\Headers\FireBullet.h" />
+    <ClInclude Include="..\Headers\FireGround.h" />
+    <ClInclude Include="..\Headers\FireSphere.h" />
+    <ClInclude Include="..\Headers\FireTornadoCol.h" />
     <ClInclude Include="..\Headers\FontNumManager.h" />
     <ClInclude Include="..\Headers\FontNumUI.h" />
+    <ClInclude Include="..\Headers\GunAttackCol.h" />
     <ClInclude Include="..\Headers\GunGenjiBullet.h" />
     <ClInclude Include="..\Headers\Get_ItemUI.h" />
     <ClInclude Include="..\Headers\HPBack.h" />
@@ -198,6 +208,8 @@
     <ClInclude Include="..\Headers\Inventory.h" />
     <ClInclude Include="..\Headers\Inventory_Icon.h" />
     <ClInclude Include="..\Headers\Item_Manager.h" />
+    <ClInclude Include="..\Headers\LoadingBar.h" />
+    <ClInclude Include="..\Headers\LoadingScreen.h" />
     <ClInclude Include="..\Headers\MassageUI.h" />
     <ClInclude Include="..\Headers\Material.h" />
     <ClInclude Include="..\Headers\Material_Inven.h" />
@@ -207,6 +219,7 @@
     <ClInclude Include="..\Headers\MonsterHeaders.h" />
     <ClInclude Include="..\Headers\MonsterUI.h" />
     <ClInclude Include="..\Headers\NumberUI.h" />
+    <ClInclude Include="..\Headers\Passive_Icon.h" />
     <ClInclude Include="..\Headers\PickUp_ItemUI.h" />
     <ClInclude Include="..\Headers\Player_Colleague.h" />
     <ClInclude Include="..\Headers\PoisonBullet.h" />
@@ -224,6 +237,10 @@
     <ClInclude Include="..\Headers\Scene_Title.h" />
     <ClInclude Include="..\Headers\ScriptManager.h" />
     <ClInclude Include="..\Headers\Select_UI.h" />
+    <ClInclude Include="..\Headers\SkillGauge.h" />
+    <ClInclude Include="..\Headers\SkillUI.h" />
+    <ClInclude Include="..\Headers\StageSelectUI.h" />
+    <ClInclude Include="..\Headers\StageUI.h" />
     <ClInclude Include="..\Headers\SwordBullet.h" />
     <ClInclude Include="..\Headers\SwordGenji.h" />
     <ClInclude Include="..\Headers\SwordGenjiBullet.h" />
@@ -252,6 +269,7 @@
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\Codes\Active_Icon.cpp" />
     <ClCompile Include="..\Codes\Armor.cpp" />
     <ClCompile Include="..\Codes\Armor_Inven.cpp" />
     <ClCompile Include="..\Codes\Armor_Slot.cpp" />
@@ -260,9 +278,12 @@
     <ClCompile Include="..\Codes\BloodCode_Icon.cpp" />
     <ClCompile Include="..\Codes\BossDecoUI.cpp" />
     <ClCompile Include="..\Codes\BossHP.cpp" />
-    <ClCompile Include="..\Codes\Button_UI.cpp" />
+    <ClCompile Include="..\Codes\Button_UI.cpp">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\Codes\ClickUI.cpp" />
     <ClCompile Include="..\Codes\ColdBeam.cpp" />
+    <ClCompile Include="..\Codes\CursorEffect.cpp" />
     <ClCompile Include="..\Codes\CursorUI.cpp" />
     <ClCompile Include="..\Codes\DamegeNumUI.cpp" />
     <ClCompile Include="..\Codes\Drain_Weapon.cpp" />
@@ -270,11 +291,16 @@
     <ClCompile Include="..\Codes\Expendables.cpp" />
     <ClCompile Include="..\Codes\Expendables_Inven.cpp" />
     <ClCompile Include="..\Codes\Expendables_Slot.cpp" />
+    <ClCompile Include="..\Codes\FireBoy.cpp" />
+    <ClCompile Include="..\Codes\FireBullet.cpp" />
+    <ClCompile Include="..\Codes\FireGround.cpp" />
+    <ClCompile Include="..\Codes\FireSphere.cpp" />
+    <ClCompile Include="..\Codes\FireTornadoCol.cpp" />
     <ClCompile Include="..\Codes\FontNumManager.cpp" />
     <ClCompile Include="..\Codes\FontNumUI.cpp" />
+    <ClCompile Include="..\Codes\GunAttackCol.cpp" />
     <ClCompile Include="..\Codes\GunGenjiBullet.cpp" />
     <ClCompile Include="..\Codes\Get_ItemUI.cpp" />
-    <ClCompile Include="..\Codes\HPBack.cpp" />
     <ClCompile Include="..\Codes\Hunter.cpp" />
     <ClCompile Include="..\Codes\IceBarrier.cpp" />
     <ClCompile Include="..\Codes\IceGirl.cpp" />
@@ -282,6 +308,8 @@
     <ClCompile Include="..\Codes\Inventory.cpp" />
     <ClCompile Include="..\Codes\Inventory_Icon.cpp" />
     <ClCompile Include="..\Codes\Item_Manager.cpp" />
+    <ClCompile Include="..\Codes\LoadingBar.cpp" />
+    <ClCompile Include="..\Codes\LoadingScreen.cpp" />
     <ClCompile Include="..\Codes\MassageUI.cpp" />
     <ClCompile Include="..\Codes\Material.cpp" />
     <ClCompile Include="..\Codes\Material_Inven.cpp" />
@@ -290,6 +318,7 @@
     <ClCompile Include="..\Codes\Monster.cpp" />
     <ClCompile Include="..\Codes\MonsterUI.cpp" />
     <ClCompile Include="..\Codes\NumberUI.cpp" />
+    <ClCompile Include="..\Codes\Passive_Icon.cpp" />
     <ClCompile Include="..\Codes\PickUp_ItemUI.cpp" />
     <ClCompile Include="..\Codes\Player_Colleague.cpp" />
     <ClCompile Include="..\Codes\PoisonBullet.cpp" />
@@ -307,6 +336,10 @@
     <ClCompile Include="..\Codes\Scene_Title.cpp" />
     <ClCompile Include="..\Codes\ScriptManager.cpp" />
     <ClCompile Include="..\Codes\Select_UI.cpp" />
+    <ClCompile Include="..\Codes\SkillGauge.cpp" />
+    <ClCompile Include="..\Codes\SkillUI.cpp" />
+    <ClCompile Include="..\Codes\StageSelectUI.cpp" />
+    <ClCompile Include="..\Codes\StageUI.cpp" />
     <ClCompile Include="..\Codes\SwordBullet.cpp" />
     <ClCompile Include="..\Codes\SwordGenji.cpp" />
     <ClCompile Include="..\Codes\SwordGenjiBullet.cpp" />

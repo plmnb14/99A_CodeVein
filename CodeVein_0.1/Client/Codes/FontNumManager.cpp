@@ -36,12 +36,7 @@ _int CFontNumManager::Update_GameObject(_double TimeDelta)
 
 	Calc_NumberFont(m_iNumber);
 
-	/*for (_uint i = 0; i < m_vecFontNum.size(); ++i)
-	{
-	m_vecFontNum[i]->Set_UI_Pos(m_fPosX + m_fSizeX * i, m_fPosY);
-	m_vecFontNum[i]->Set_UI_Size(m_fSizeX, m_fSizeY);
-	m_vecFontNum[i]->Set_ViewZ(m_fViewZ);
-	}*/
+	
 	return _int();
 }
 
@@ -53,11 +48,7 @@ _int CFontNumManager::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CFontNumManager::Render_GameObject()
 {
-	/*for (_ulong i = 0; i < m_vecFontNum.size(); ++i)
-	{
-	m_vecFontNum[i]->Set_Dead();
-	}
-	m_vecFontNum.shrink_to_fit();*/
+	
 	return NOERROR;
 }
 
@@ -107,7 +98,7 @@ _ulong CFontNumManager::Calc_Digits(_ulong dwNumber)
 	return dwDigits;
 }
 
-void CFontNumManager::Calc_NumberFont(_ulong dwFontNum/*, _float fPosX, _float fPosY, _float fSizeX, _float fSizeY, _float fViewZ*/)
+void CFontNumManager::Calc_NumberFont(_ulong dwFontNum)
 {
 	vector<CFontNumUI*> vecFontNumUI;
 	_ulong dwNumDigits = Calc_Digits(dwFontNum);
@@ -132,35 +123,21 @@ void CFontNumManager::Calc_NumberFont(_ulong dwFontNum/*, _float fPosX, _float f
 	for (_uint i = 0; i < vecFontNumUI.size(); ++i)
 	{
 		if (dwNumDigits <= 3)
-			vecFontNumUI[i]->Set_UI_Pos(m_fPosX + m_fSizeX * i, m_fPosY);
+			vecFontNumUI[i]->Set_UI_Pos(m_fPosX + m_fSizeX * i * 0.3f, m_fPosY);
 		else if (dwNumDigits == 4)
-			vecFontNumUI[i]->Set_UI_Pos(m_fPosX + m_fSizeX * i - m_fSizeX, m_fPosY);
+			vecFontNumUI[i]->Set_UI_Pos(m_fPosX + m_fSizeX * i * 0.3f - m_fSizeX * 0.3f, m_fPosY);
 		else if (dwNumDigits == 5)
-			vecFontNumUI[i]->Set_UI_Pos(m_fPosX + m_fSizeX * i - m_fSizeX * 2.f, m_fPosY);
+			vecFontNumUI[i]->Set_UI_Pos(m_fPosX + m_fSizeX * i * 0.3f - m_fSizeX * 0.3f, m_fPosY);
 		else
 			return;
 		vecFontNumUI[i]->Set_UI_Size(m_fSizeX, m_fSizeY);
 		vecFontNumUI[i]->Set_ViewZ(m_fViewZ);
 	}
 
-	/*_uint num = 0;
-	for (auto& pNum : vecFontNumUI)
-	{
-	pNum->Set_UI_Pos(fPosX - fSizeX * num, fPosY);
-	pNum->Set_UI_Size(fSizeX, fSizeY);
-	pNum->Set_ViewZ(fViewZ);
-	++num;
-	}*/
-
-
 	for (_ulong i = 0; i < vecFontNumUI.size(); ++i)
 	{
 		vecFontNumUI[i]->Set_Dead();
 	}
-
-
-	/*reverse(vecFontNumUI.begin(), vecFontNumUI.end());
-	m_vecFontNum = vecFontNumUI;*/
 }
 
 CFontNumUI* CFontNumManager::Make_FontNum()

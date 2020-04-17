@@ -38,6 +38,16 @@ HRESULT CSwordBullet::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
 
+	m_pBulletBody_01 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"IceGirl_SwordBullet_Mesh", nullptr));
+	m_pBulletBody_01->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
+	m_pBulletBody_01->Reset_Init();
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody_01, SCENE_STAGE, L"Layer_Effect", nullptr);
+
+	m_pBulletBody_02 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"IceGirl_SwordBullet_Mesh_2", nullptr));
+	m_pBulletBody_02->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
+	m_pBulletBody_02->Reset_Init();
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody_02, SCENE_STAGE, L"Layer_Effect", nullptr);
+
 	return NOERROR;
 }
 
@@ -56,7 +66,8 @@ _int CSwordBullet::Update_GameObject(_double TimeDelta)
 
 	if (m_dCurTime > m_dLifeTime)
 	{
-
+		m_pBulletBody_01->Set_Dead();
+		m_pBulletBody_02->Set_Dead();
 
 		m_bDead = true;
 	}
@@ -161,7 +172,7 @@ void CSwordBullet::OnCollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					if (false == iter->Get_Target_Dodge())
+					if (false == iter->Get_Target_IsDodge())
 					{
 						iter->Set_Target_CanHit(false);
 

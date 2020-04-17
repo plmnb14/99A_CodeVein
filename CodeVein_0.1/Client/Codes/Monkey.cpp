@@ -41,7 +41,7 @@ HRESULT CMonkey::Ready_GameObject(void * pArg)
 	m_tObjParam.bIsHit = false;	//맞기 진행중 아님
 	m_tObjParam.bCanAttack = true; //공격 가능
 	m_tObjParam.bIsAttack = false; //공격 진행중 아님
-	m_tObjParam.bDodge = false; //첫 생성시 회피 비활성
+	m_tObjParam.bIsDodge = false; //첫 생성시 회피 비활성
 
 	m_bInRecognitionRange = false; //인지 범위 여부
 	m_bInAtkRange = false; //공격 범위 여부
@@ -301,7 +301,7 @@ void CMonkey::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					if (false == iter->Get_Target_Dodge())
+					if (false == iter->Get_Target_IsDodge())
 					{
 						iter->Set_Target_CanHit(false);
 						iter->Add_Target_Hp(m_tObjParam.fDamage);
@@ -445,7 +445,7 @@ void CMonkey::Function_ResetAfterAtk()
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.bIsHit = false;
 
-	m_tObjParam.bDodge = false;
+	m_tObjParam.bIsDodge = false;
 
 	m_tObjParam.bIsAttack = false;
 	m_bCanAtkCategoryRandom = true;
@@ -535,7 +535,7 @@ void CMonkey::Check_Dist()
 
 	if (true == m_tObjParam.bIsAttack ||
 		true == m_bIsAtkCombo ||
-		true == m_tObjParam.bDodge ||
+		true == m_tObjParam.bIsDodge ||
 		true == m_tObjParam.bIsHit)
 		return;
 
@@ -1458,10 +1458,10 @@ void CMonkey::Play_Move()
 		Function_DecreMoveMent(0.1f);
 		break;
 	case MONKEY_MOVETYPE::MOVE_DODGE:
-		if (false == m_tObjParam.bDodge)
+		if (false == m_tObjParam.bIsDodge)
 		{
 			Function_ResetAfterAtk();
-			m_tObjParam.bDodge = true;
+			m_tObjParam.bIsDodge = true;
 			m_eState = MONKEY_ANI::Dodge;
 		}
 		else

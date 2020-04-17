@@ -57,7 +57,7 @@ CBT_Node::BT_NODE_STATE CBT_UpdateParam::Update_Node(_double TimeDelta, vector<C
 						break;
 
 					case CBT_UpdateParam::Dodge:
-						m_pTarget_ObjParam->bDodge = true;
+						m_pTarget_ObjParam->bIsDodge = true;
 						break;
 					}
 

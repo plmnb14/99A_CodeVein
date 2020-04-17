@@ -16,7 +16,7 @@ protected:
 	virtual ~CTexEffect() = default;
 
 public:
-	INSTANCEDATA* Get_InstanceData();
+	INSTANCEDATA Get_InstanceData();
 
 public:
 	HRESULT SetUp_ConstantTable_Instance(CShader* pShader);

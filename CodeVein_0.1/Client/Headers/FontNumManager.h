@@ -13,6 +13,9 @@ private:
 	virtual ~CFontNumManager() = default;
 
 public:
+	_ulong Get_Number() { return m_iNumber; }
+
+public:
 	void Set_Number(_ulong iNum) { m_iNumber = iNum; }
 
 public:
@@ -36,7 +39,7 @@ public:
 	//_ulong Calc_Digits();
 	_ulong Calc_Digits(_ulong dwNumber);
 	//void Calc_NumberFont();
-	void Calc_NumberFont(_ulong dwFontNum/*, _float fPosX, _float fPosY, _float fSizeX, _float fSizeY, _float fViewZ*/);
+	void Calc_NumberFont(_ulong dwFontNum);
 
 private:
 	CFontNumUI* Make_FontNum();
