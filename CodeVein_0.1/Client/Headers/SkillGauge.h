@@ -1,17 +1,15 @@
 #pragma once
 
-#include "Management.h"
-#include "UI.h"
 #include "Client_Defines.h"
+#include "UI.h"
 
 BEGIN(Client)
-
-class CHPBack final : public CUI
+class CSkillGauge final : public CUI
 {
 private:
-	explicit CHPBack(_Device pGraphic_Device);
-	explicit CHPBack(const CHPBack& rhs);
-	virtual ~CHPBack() = default;
+	explicit CSkillGauge(_Device pDevice);
+	explicit CSkillGauge(const CSkillGauge& rhs);
+	virtual ~CSkillGauge() = default;
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -32,9 +30,8 @@ private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 public:
-	static CHPBack*			Create(_Device pGraphic_Device);
+	static CSkillGauge*		Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);
 	virtual void			Free();
 };
-
 END

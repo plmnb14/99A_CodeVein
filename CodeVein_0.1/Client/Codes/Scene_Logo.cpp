@@ -3,6 +3,8 @@
 #include "Scene_Title.h"
 
 #include "Management.h"
+#include "LoadingScreen.h"
+#include "LoadingBar.h"
 
 CScene_Logo::CScene_Logo(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
@@ -19,7 +21,7 @@ HRESULT CScene_Logo::Ready_Scene()
 	m_pLoading = CLoading::Create(m_pGraphic_Device, SCENE_TITLE);
 	if (nullptr == m_pLoading)
 		return E_FAIL;
-
+	
 	return S_OK;
 }
 

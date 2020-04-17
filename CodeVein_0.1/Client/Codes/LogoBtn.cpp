@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\LogoBtn.h"
+#include "CursorEffect.h"
 
 CLogoBtn::CLogoBtn(_Device pGraphic_Device)
 	: CUI(pGraphic_Device)
@@ -26,10 +27,16 @@ HRESULT CLogoBtn::Ready_GameObject(void * pArg)
 	CUI::Ready_GameObject(pArg);
 
 	m_fPosX = WINCX * 0.5f;
-	m_fPosY = WINCY * 0.8f;
+	m_fPosY = 466.f;
 
-	m_fSizeX = 100.f;
-	m_fSizeY = 50.f;
+	m_fSizeX = 256.f;
+	m_fSizeY = 64.f;
+	m_fViewZ = 0.1f;
+
+	if (FAILED(SetUp_CursorEffect()))
+		return E_FAIL;
+	m_pCursorEffect->Set_Active(false);
+	m_pCursorEffect->Set_ViewZ(m_fViewZ - 0.1f);
 
 	return NOERROR;
 }
@@ -44,7 +51,8 @@ _int CLogoBtn::Update_GameObject(_double TimeDelta)
 
 	m_bIsColl = Coll_Mouse();
 
-	//Make_CursorBar();
+	m_pCursorEffect->Set_Active(m_bIsColl);
+	
 
 	return NO_EVENT;
 }
@@ -69,43 +77,20 @@ HRESULT CLogoBtn::Render_GameObject()
 		nullptr == m_pBufferCom)
 		return E_FAIL;
 
-	CManagement* pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
+	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
 
-	Safe_AddRef(pManagement);
+	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
+	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
-	pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
-
-	m_matOldView = pManagement->Get_Transform(D3DTS_VIEW);
-	m_matOldProj = pManagement->Get_Transform(D3DTS_PROJECTION);
-
-	pManagement->Set_Transform(D3DTS_VIEW, m_matView);
-	pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
-
-
-	if (FAILED(SetUp_ConstantTable()))
+	if (FAILED(SetUp_ConstantTable(1)))
 		return E_FAIL;
 
 	m_pShaderCom->Begin_Shader();
-
-	m_pShaderCom->Begin_Pass(0);
-
-	// 버퍼를 렌더링한다.
-	// (인덱스버퍼(012023)에 보관하고있는 인덱스를 가진 정점을 그리낟.)
-	// 삼각형 두개를 그리낟.각각의 삼각형마다 정점세개, 각각의 정점을 버텍스 셰이더의 인자로 던진다.
+	m_pShaderCom->Begin_Pass(1);
 	m_pBufferCom->Render_VIBuffer();
-
 	m_pShaderCom->End_Pass();
-
 	m_pShaderCom->End_Shader();
-
-
-	pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
-	pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
-
-	Safe_Release(pManagement);
-
+	
 	return NOERROR;
 }
 
@@ -134,7 +119,7 @@ HRESULT CLogoBtn::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CLogoBtn::SetUp_ConstantTable()
+HRESULT CLogoBtn::SetUp_ConstantTable(_uint iIndex)
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -146,33 +131,28 @@ HRESULT CLogoBtn::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 0)))
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
 		return E_FAIL;
 
 	return NOERROR;
 }
 
-void CLogoBtn::Make_CursorBar()
+HRESULT CLogoBtn::SetUp_CursorEffect()
 {
-	CManagement* pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return;
-
-	Safe_AddRef(pManagement);
-
-	if (true == m_bIsColl)
-	{
-		CUI::UI_DESC* pDesc = new CUI::UI_DESC;
-		pDesc->fPosX = WINCX * 0.5f - 60.f;
-		pDesc->fPosY = WINCY * 0.8f;
-		pDesc->fSizeX = 20.f;
-		pDesc->fSizeY = 50.f;
-
-		pManagement->Add_GameObject_ToLayer(L"GameObject_CursorBar", SCENE_LOGO, L"Layer_CursorUI", pDesc);
-	}
-
-	Safe_Release(pManagement);
+	UI_DESC* pDesc = new UI_DESC;
+	pDesc->fPosX = m_fPosX;
+	pDesc->fPosY = m_fPosY + 5.f;
+	pDesc->fSizeX = 512.f;
+	pDesc->fSizeY = 64.f;
+	pDesc->iIndex = 0;
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_CursorEffect", SCENE_LOGO, L"Layer_CursorEffect", pDesc)))
+		return E_FAIL;
+	m_pCursorEffect = static_cast<CCursorEffect*>(g_pManagement->Get_GameObjectBack(L"Layer_CursorEffect", SCENE_LOGO));
+	if (nullptr == m_pCursorEffect)
+		return E_FAIL;
+	return NOERROR;
 }
+
 
 _bool CLogoBtn::Coll_Mouse()
 {

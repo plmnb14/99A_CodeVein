@@ -10,9 +10,8 @@
 #include "BackGround.h"
 #include "Management.h"
 #include "CameraMgr.h"
-#include "LogoBtn.h"
-
 #include "UI_Manager.h"
+
 
 CScene_Title::CScene_Title(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
@@ -26,9 +25,6 @@ HRESULT CScene_Title::Ready_Scene()
 	system("cls");
 
 	if (FAILED(Ready_Prototype_GameObject()))
-		return E_FAIL;
-
-	if (FAILED(Ready_Layer_LogoBtn(L"Layer_LogoBtn")))
 		return E_FAIL;
 
 	// ÆÄÆ¼Å¬
@@ -130,9 +126,6 @@ HRESULT CScene_Title::Render_Scene()
 
 HRESULT CScene_Title::Ready_Prototype_GameObject()
 {
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LogoBtn", CLogoBtn::Create(m_pGraphic_Device))))
-		return E_FAIL;
-
 	CCameraMgr::Get_Instance()->Reserve_ContainerSize(2);
 	CCameraMgr::Get_Instance()->Ready_Camera(m_pGraphic_Device, DYNAMIC_CAM, L"Tool_FreeCam", TOOL_VIEW, DEFAULT_MODE);
 	CCameraMgr::Get_Instance()->Set_MainCamera(DYNAMIC_CAM, L"Tool_FreeCam");
@@ -141,18 +134,15 @@ HRESULT CScene_Title::Ready_Prototype_GameObject()
 	return S_OK;
 }
 
-HRESULT CScene_Title::Ready_Layer_BackGround(const _tchar * pLayerTag)
+HRESULT CScene_Title::Ready_Layer_LoadingUI(const _tchar * pLayerTag)
 {
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LoadingScreen", SCENE_TITLE, pLayerTag)))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LoadingBar", SCENE_TITLE, pLayerTag)))
+		return E_FAIL;
 	return S_OK;
 }
 
-HRESULT CScene_Title::Ready_Layer_LogoBtn(const _tchar * pLayerTag)
-{
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LogoBtn", SCENE_TITLE, pLayerTag)))
-		return E_FAIL;
-
-	return NOERROR;
-}
 
 HRESULT CScene_Title::Temp_Stage_Loader(const _tchar * _DatPath)
 {

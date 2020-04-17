@@ -136,9 +136,6 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\99.Public">
       <UniqueIdentifier>{7c37cd0b-3aa1-4f2a-98a4-27c93e364280}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\99.Public\HPBack">
-      <UniqueIdentifier>{fa879426-186e-47c8-b86a-a658c605a61a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\99.Public\Button_UI">
       <UniqueIdentifier>{f4308e4f-0a96-460c-ba32-24c91ab05ac0}</UniqueIdentifier>
     </Filter>
@@ -289,6 +286,24 @@
     <Filter Include="02.GameObject\Stage\2%29 Monster\YachaMan">
       <UniqueIdentifier>{bfc4fef8-8742-4708-90db-12cc5deea4bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\09. SkillUI">
+      <UniqueIdentifier>{697f7d9c-48af-442b-945c-1fdf1a73e82c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\09. SkillUI\01. Passive_Icon">
+      <UniqueIdentifier>{c4ae27f0-86e5-4227-8174-2affb7b92bc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\09. SkillUI\00. Active_Icon">
+      <UniqueIdentifier>{85537e19-2320-4379-9761-438389ebdc4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Public\0%29 Loading_Screen">
+      <UniqueIdentifier>{848c0091-6900-439e-a3ff-a2574ee579d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Public\1%29 Loading_Bar">
+      <UniqueIdentifier>{9027abf8-6974-4ec1-89be-91d9e1136281}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\09. SkillUI\02. Skill_Gauge">
+      <UniqueIdentifier>{9344aeea-9f00-4a6a-9f3b-7ed70201211c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -344,9 +359,6 @@
     </ClInclude>
     <ClInclude Include="..\Headers\UI_Manager.h">
       <Filter>02.GameObject\Stage\5%29 UI\Manager\UI_Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\HPBack.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\HPBack</Filter>
     </ClInclude>
     <ClInclude Include="StageLoader.h">
       <Filter>01.Scene\98.StageLoader</Filter>
@@ -561,6 +573,25 @@
     <ClInclude Include="..\Headers\FireTornadoCol.h">
       <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\HPBack.h" />
+    <ClInclude Include="..\Headers\Active_Icon.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\00. Active_Icon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Passive_Icon.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\01. Passive_Icon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\LoadingScreen.h">
+      <Filter>02.GameObject\Public\0%29 Loading_Screen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\LoadingBar.h">
+      <Filter>02.GameObject\Public\1%29 Loading_Bar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\SkillUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\SkillGauge.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\02. Skill_Gauge</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -607,9 +638,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\UI_Manager.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\Manager\UI_Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\HPBack.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\HPBack</Filter>
     </ClCompile>
     <ClCompile Include="StageLoader.cpp">
       <Filter>01.Scene\98.StageLoader</Filter>
@@ -823,6 +851,25 @@
     </ClCompile>
     <ClCompile Include="..\Codes\FireTornadoCol.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HPBack.cpp" />
+    <ClCompile Include="..\Codes\Active_Icon.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\00. Active_Icon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Passive_Icon.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\01. Passive_Icon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\LoadingScreen.cpp">
+      <Filter>02.GameObject\Public\0%29 Loading_Screen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\LoadingBar.cpp">
+      <Filter>02.GameObject\Public\1%29 Loading_Bar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SkillUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SkillGauge.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\02. Skill_Gauge</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

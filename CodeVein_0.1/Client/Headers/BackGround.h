@@ -24,9 +24,11 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
+	_float					m_fSpeed = 0.f;
+
 private:
 	HRESULT Add_Component();
-	HRESULT SetUp_ConstantTable();
+	HRESULT SetUp_ConstantTable(_uint iIndex);
 public:
 	static CBackGround* Create(LPDIRECT3DDEVICE9 pGraphic_Device); // 盔屈按眉 积己.
 	virtual CGameObject* Clone_GameObject(void* pArg); // 汗荤按眉 积己.

@@ -1,8 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\UI_Manager.h"
 
-//#include "Button_UI.h"
-//#include "HPBack.h"
+#include "Button_UI.h"
 #include "PlayerHP.h"
 #include "PlayerST.h"
 #include "BossDecoUI.h"
@@ -29,6 +28,12 @@
 #include "Info_Slot.h"
 #include "FontNumUI.h"
 #include "FontNumManager.h"
+#include "Active_Icon.h"
+#include "SkillUI.h"
+#include "LoadingScreen.h"
+#include "LoadingBar.h"
+#include "StageUI.h"
+#include "StageSelectUI.h"
 
 #include "MassageUI.h"
 #include "Get_ItemUI.h"
@@ -47,8 +52,6 @@ CUI_Manager::~CUI_Manager()
 
 HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 {
-	//if (FAILED(g_pManagement->Add_Prototype(L"GameObject_HPBack", CHPBack::Create(pDevice))))
-	//	return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_PlayerHP", CPlayerHP::Create(pDevice))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_PlayerST", CPlayerST::Create(pDevice))))
@@ -57,8 +60,8 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BossHP", CBossHP::Create(pDevice))))
 		return E_FAIL;
-	//if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ButtonUI", CButton_UI::Create(pDevice))))
-	//	return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ButtonUI", CButton_UI::Create(pDevice))))
+		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_QuickSlot", CQuickSlot::Create(pDevice))))
 		return E_FAIL;
 	
@@ -103,8 +106,20 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_FontNumManager", CFontNumManager::Create(pDevice))))
 		return E_FAIL;
-
-
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ActiveIcon", CActive_Icon::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SkillUI", CSkillUI::Create(pDevice))))
+		return E_FAIL;
+	
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LoadingScreen", CLoadingScreen::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LoadingBar", CLoadingBar::Create(pDevice))))
+		return E_FAIL;
+	/*if (FAILED(g_pManagement->Add_Prototype(L"GameObject_StageUI", CStageUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_StageSelectUI", CStageSelectUI::Create(pDevice))))
+		return E_FAIL;*/
+	
 	//////////////// Chae
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BossMassageUI", CMassageUI::Create(pDevice))))
 		return E_FAIL;
@@ -127,7 +142,10 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ArmorInven", SCENE_STAGE, L"Layer_ArmorInven");
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_TotalInven", SCENE_STAGE, L"Layer_TotalInven");
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_Inventory", SCENE_STAGE, L"Layer_Inventory");
-
+	
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_SkillUI", SCENE_STAGE, L"Layer_SkillUI");
+	
+	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_StageUI", SCENE_STAGE, L"Layer_StageSelectUI");
 	return NOERROR;
 }
 
@@ -224,6 +242,17 @@ _bool CUI_Manager::Get_UI_Active(const _tchar * pLayerTag)
 void CUI_Manager::Set_UI_Active(const _tchar * pLayerTag, _bool bIsActive)
 {
 	static_cast<CUI*>(g_pManagement->Get_GameObjectBack(pLayerTag, SCENE_STAGE))->Set_Active(bIsActive);
+}
+
+void CUI_Manager::Set_BossHP_Active(_bool bIsActive)
+{
+	CBossHP* pBossUI = nullptr;
+
+	pBossUI = static_cast<CBossHP*>(g_pManagement->Get_GameObjectBack(L"Layer_BossHP", SCENE_STAGE));
+	if (nullptr == pBossUI)
+		return;
+
+	pBossUI->Set_Active(false);
 }
 
 void CUI_Manager::Free()
