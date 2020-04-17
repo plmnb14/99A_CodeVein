@@ -37,6 +37,18 @@ HRESULT CColdBeam::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
 
+	m_pBulletBody_01 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"IceBlock_Main", nullptr));
+	m_pBulletBody_01->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
+	m_pBulletBody_01->Reset_Init();
+	//m_pBulletBody_01->Set_Angle(m_pBulletBody_01->Get_Info()->vRotDirection + _v3(0.f, 20.f, 0.f) + m_vDir);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody_01, SCENE_STAGE, L"Layer_Effect", nullptr);
+
+	m_pBulletBody_02 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"IceBlock_Sub_02", nullptr));
+	m_pBulletBody_02->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
+	m_pBulletBody_02->Reset_Init();
+	//m_pBulletBody_02->Set_Angle(m_pBulletBody_01->Get_Info()->vRotDirection + _v3(0.f, 20.f, 0.f) + m_vDir);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody_02, SCENE_STAGE, L"Layer_Effect", nullptr);
+
 	return NOERROR;
 }
 
@@ -53,16 +65,44 @@ _int CColdBeam::Update_GameObject(_double TimeDelta)
 
 	if (m_dCurTime > m_dLifeTime)
 	{
-
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceCrystal_01", m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceCrystal_02", m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceCrystal_03", m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Smoke_01", m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Smoke_01", m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Particle", m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Break", m_pTransformCom->Get_Pos() + _v3(0.f, 0.6f, 0.f), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Break", m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Break", m_pTransformCom->Get_Pos() + _v3(0.f, 1.8f, 0.f), nullptr);
+		m_pBulletBody_01->Set_Dead();
+		m_pBulletBody_02->Set_Dead();
 
 		m_bDead = true;
 	}
 	else
 	{
 		// 얼음기둥 소환 최초 한번
+		if (m_bEffect)
+		{
+			m_bEffect = false;
+		
+			CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Smoke_01", m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Smoke_02", m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Particle", m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), nullptr);
+		}
 
+		m_fEffectOffset += _float(TimeDelta);
+		if (m_fEffectOffset > 0.3f)
+		{
+			m_fEffectOffset = 0.f;
 
+			CParticleMgr::Get_Instance()->Create_Effect(L"IceSmoke_01", m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(L"IceSmoke_02", m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), nullptr);
 
+			CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_FloorAura_01", m_pTransformCom->Get_Pos(), nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_FloorAura_02", m_pTransformCom->Get_Pos(), nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_FloorAura_03", m_pTransformCom->Get_Pos(), nullptr);
+		}
 	}
 
 	return NOERROR;
