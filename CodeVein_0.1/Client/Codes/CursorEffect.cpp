@@ -25,6 +25,9 @@ HRESULT CCursorEffect::Ready_GameObject(void * pArg)
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
+	m_fOldSizeX = m_fSizeX;
+	m_fOldSizeY = m_fSizeY;
+
 	return NOERROR;
 }
 
@@ -36,6 +39,14 @@ _int CCursorEffect::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
+	if (m_bIsActive)
+	{
+		if (m_fSizeX < m_fOldSizeX * 2.f)
+			m_fSizeX += 3.f;
+	}
+	else
+		m_fSizeX = m_fOldSizeX;
+	
 	return NO_EVENT;
 }
 
