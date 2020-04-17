@@ -201,6 +201,8 @@
     <ClInclude Include="..\Headers\GunAttackCol.h" />
     <ClInclude Include="..\Headers\GunGenjiBullet.h" />
     <ClInclude Include="..\Headers\Get_ItemUI.h" />
+    <ClInclude Include="..\Headers\HPBack.h" />
+    <ClInclude Include="..\Headers\Hunter.h" />
     <ClInclude Include="..\Headers\IceBarrier.h" />
     <ClInclude Include="..\Headers\IceGirl.h" />
     <ClInclude Include="..\Headers\Info_Slot.h" />
@@ -213,6 +215,7 @@
     <ClInclude Include="..\Headers\Material.h" />
     <ClInclude Include="..\Headers\Material_Inven.h" />
     <ClInclude Include="..\Headers\Material_Slot.h" />
+    <ClInclude Include="..\Headers\Monkey.h" />
     <ClInclude Include="..\Headers\Monster.h" />
     <ClInclude Include="..\Headers\MonsterHeaders.h" />
     <ClInclude Include="..\Headers\MonsterUI.h" />
@@ -259,6 +262,7 @@
     <ClInclude Include="..\Headers\Weapon_Inven.h" />
     <ClInclude Include="..\Headers\Weapon_Slot.h" />
     <ClInclude Include="..\Headers\YachaMan.h" />
+    <ClInclude Include="..\Headers\Yeti.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StageLoader.h" />
@@ -299,6 +303,7 @@
     <ClCompile Include="..\Codes\GunAttackCol.cpp" />
     <ClCompile Include="..\Codes\GunGenjiBullet.cpp" />
     <ClCompile Include="..\Codes\Get_ItemUI.cpp" />
+    <ClCompile Include="..\Codes\Hunter.cpp" />
     <ClCompile Include="..\Codes\IceBarrier.cpp" />
     <ClCompile Include="..\Codes\IceGirl.cpp" />
     <ClCompile Include="..\Codes\Info_Slot.cpp" />
@@ -311,6 +316,7 @@
     <ClCompile Include="..\Codes\Material.cpp" />
     <ClCompile Include="..\Codes\Material_Inven.cpp" />
     <ClCompile Include="..\Codes\Material_Slot.cpp" />
+    <ClCompile Include="..\Codes\Monkey.cpp" />
     <ClCompile Include="..\Codes\Monster.cpp" />
     <ClCompile Include="..\Codes\MonsterUI.cpp" />
     <ClCompile Include="..\Codes\NumberUI.cpp" />
@@ -356,6 +362,7 @@
     <ClCompile Include="..\Codes\Weapon_Inven.cpp" />
     <ClCompile Include="..\Codes\Weapon_Slot.cpp" />
     <ClCompile Include="..\Codes\YachaMan.cpp" />
+    <ClCompile Include="..\Codes\Yeti.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="StageLoader.cpp" />
     <ClCompile Include="stdafx.cpp">
