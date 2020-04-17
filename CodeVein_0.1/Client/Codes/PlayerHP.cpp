@@ -177,9 +177,14 @@ HRESULT CPlayerHP::SetUp_ConstantTable(_uint iIndex)
 
 void CPlayerHP::SetUp_Default()
 {
-	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
+	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
-	m_fPlayerHP = m_pTarget->Get_Target_Hp();
+	if (nullptr != m_pTarget)
+		m_fPlayerHP = m_pTarget->Get_Target_Hp();
+
+	else
+		m_fPlayerHP = 0.f;
+
 	m_fTotalHP = m_fPlayerHP;
 
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_FontNumManager", SCENE_STAGE, L"Layer_FontPlayerUI");

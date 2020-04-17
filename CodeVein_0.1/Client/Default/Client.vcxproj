@@ -176,15 +176,15 @@
     <ClInclude Include="..\Headers\BloodCode_Icon.h" />
     <ClInclude Include="..\Headers\BossDecoUI.h" />
     <ClInclude Include="..\Headers\BossHP.h" />
-    <ClInclude Include="..\Headers\Button_UI.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="..\Headers\Button_UI.h" />
     <ClInclude Include="..\Headers\ClickUI.h" />
     <ClInclude Include="..\Headers\Client_Defines.h" />
     <ClInclude Include="..\Headers\ColdBeam.h" />
     <ClInclude Include="..\Headers\CursorEffect.h" />
     <ClInclude Include="..\Headers\CursorUI.h" />
     <ClInclude Include="..\Headers\DamegeNumUI.h" />
+    <ClInclude Include="..\Headers\DarkBoom.h" />
+    <ClInclude Include="..\Headers\DarkMidCol.h" />
     <ClInclude Include="..\Headers\Drain_Weapon.h" />
     <ClInclude Include="..\Headers\Dummy_Target.h" />
     <ClInclude Include="..\Headers\Expendables.h" />
@@ -200,7 +200,6 @@
     <ClInclude Include="..\Headers\GunAttackCol.h" />
     <ClInclude Include="..\Headers\GunGenjiBullet.h" />
     <ClInclude Include="..\Headers\Get_ItemUI.h" />
-    <ClInclude Include="..\Headers\HPBack.h" />
     <ClInclude Include="..\Headers\Hunter.h" />
     <ClInclude Include="..\Headers\IceBarrier.h" />
     <ClInclude Include="..\Headers\IceGirl.h" />
@@ -208,6 +207,7 @@
     <ClInclude Include="..\Headers\Inventory.h" />
     <ClInclude Include="..\Headers\Inventory_Icon.h" />
     <ClInclude Include="..\Headers\Item_Manager.h" />
+    <ClInclude Include="..\Headers\DarkGroundBullet.h" />
     <ClInclude Include="..\Headers\LoadingBar.h" />
     <ClInclude Include="..\Headers\LoadingScreen.h" />
     <ClInclude Include="..\Headers\MassageUI.h" />
@@ -278,14 +278,14 @@
     <ClCompile Include="..\Codes\BloodCode_Icon.cpp" />
     <ClCompile Include="..\Codes\BossDecoUI.cpp" />
     <ClCompile Include="..\Codes\BossHP.cpp" />
-    <ClCompile Include="..\Codes\Button_UI.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">true</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="..\Codes\Button_UI.cpp" />
     <ClCompile Include="..\Codes\ClickUI.cpp" />
     <ClCompile Include="..\Codes\ColdBeam.cpp" />
     <ClCompile Include="..\Codes\CursorEffect.cpp" />
     <ClCompile Include="..\Codes\CursorUI.cpp" />
     <ClCompile Include="..\Codes\DamegeNumUI.cpp" />
+    <ClCompile Include="..\Codes\DarkBoom.cpp" />
+    <ClCompile Include="..\Codes\DarkMidCol.cpp" />
     <ClCompile Include="..\Codes\Drain_Weapon.cpp" />
     <ClCompile Include="..\Codes\Dummy_Target.cpp" />
     <ClCompile Include="..\Codes\Expendables.cpp" />
@@ -308,6 +308,7 @@
     <ClCompile Include="..\Codes\Inventory.cpp" />
     <ClCompile Include="..\Codes\Inventory_Icon.cpp" />
     <ClCompile Include="..\Codes\Item_Manager.cpp" />
+    <ClCompile Include="..\Codes\DarkGroundBullet.cpp" />
     <ClCompile Include="..\Codes\LoadingBar.cpp" />
     <ClCompile Include="..\Codes\LoadingScreen.cpp" />
     <ClCompile Include="..\Codes\MassageUI.cpp" />

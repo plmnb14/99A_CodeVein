@@ -159,8 +159,7 @@ void CCamera::Camera_Oscillate_Rotate()
 
 void CCamera::Camera_Oscillate_Position()
 {
-
-	if (m_fOSC_Frequency <= 0 || m_fOSC_Duration < m_fOSC_Timer[0])
+	if (m_fOSC_Frequency <= 0.001f || m_fOSC_Duration <= m_fOSC_Timer[0] || 0.001f >= m_fOSC_Power)
 	{
 		m_eOSCType = OSC_END;
 
@@ -174,6 +173,9 @@ void CCamera::Camera_Oscillate_Position()
 		m_fOSC_Power = 0.f;
 		m_fOSC_Frequency = 0.f;
 		m_fOSC_Duration = 0.f;
+		m_fOSC_Mutiply = 0.f;
+
+		m_bOSCOrigin = false;
 
 		m_fMidDist = 3.f;
 
@@ -308,66 +310,6 @@ void CCamera::Camera_Oscillate_Position()
 			}
 		}
 	}
-
-	/*
-	if (true == m_bOSCReverse[1])
-	{
-	if (false == m_bOSCOrigin)
-	{
-	m_fOSCAxis_Gap[1] += DELTA_60 * (m_fOSC_Frequency * 0.5f);
-
-	if (m_fOSCAxis_Gap[1] >= m_fOSC_Power * 0.5f)
-	{
-	m_bOSCOrigin = true;
-	m_fOSC_Frequency *= m_fOSC_Mutiply;
-
-	m_fOSCAxis_Gap[1] = m_fOSC_Power * 0.5f;
-	}
-	}
-
-	else
-	{
-	m_fOSCAxis_Gap[1] -= DELTA_60 * (m_fOSC_Frequency * 0.5f);
-
-	if (m_fOSCAxis_Gap[1] <= 0)
-	{
-	m_bOSCOrigin = false;
-	m_fOSC_Power *= m_fOSC_Mutiply;
-
-	m_bOSCReverse[1] = false;
-	}
-	}
-	}
-
-	else if (false == m_bOSCReverse[1])
-	{
-	if (false == m_bOSCOrigin)
-	{
-	m_fOSCAxis_Gap[1] -= DELTA_60 * (m_fOSC_Frequency * 0.5f);
-
-	if (m_fOSCAxis_Gap[1] <= -m_fOSC_Power * 0.5f)
-	{
-	m_bOSCOrigin = true;
-	m_fOSC_Frequency *= m_fOSC_Mutiply;
-
-	m_fOSCAxis_Gap[1] = -m_fOSC_Power * 0.5f;
-	}
-	}
-
-	else
-	{
-	m_fOSCAxis_Gap[1] += DELTA_60 * (m_fOSC_Frequency * 0.5f);
-
-	if (m_fOSCAxis_Gap[1] >= 0)
-	{
-	m_bOSCOrigin = false;
-	m_fOSC_Power *= m_fOSC_Mutiply;
-
-	m_bOSCReverse[1] = true;
-	}
-	}
-	}
-	*/
 }
 
 void CCamera::Camera_Oscillate_FOV()
@@ -462,7 +404,7 @@ void CCamera::Change_Type_Option(CameraView _CameraViewType)
 	case BACK_VIEW:
 	{
 		m_fDistance = 2.f;
-		m_pTarget = CManagement::Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
+		m_pTarget = CManagement::Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 		break;
 	}
 	}
@@ -533,6 +475,9 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 
 	case BACK_VIEW:
 	{
+		if (nullptr == m_pTarget)
+			return S_OK;
+
 		CTransform* vTrans = TARGET_TO_TRANS(m_pTarget);
 
 		D3DXMATRIX matRotAxis;
@@ -558,58 +503,13 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 			V3_NORMAL_SELF(&vEyePos);
 
 			vEyePos *= m_fDistance;
-
-			/*if (m_fY_LateLockAngle != m_fX_LockAngle)
-			{
-				if (m_fY_LateLateLockAngle != m_fY_LateLockAngle)
-				{
-					m_fY_LateLateLockAngle = m_fY_LateLockAngle;
-					m_fPosLerpValue = 0.f;
-				}
-
-				if (m_fPosLerpValue >= 1.f)
-				{
-					m_fPosLerpValue = 0.f;
-					m_fY_LateLockAngle = m_fX_LockAngle;
-				}
-
-				else
-				{
-					m_fPosLerpValue += DELTA_60;
-					_v3 tmpLerp1 = _v3(0.f, m_fY_LateLockAngle, 0.f);
-					_v3 tmpLerp2 = _v3(0.f, m_fX_LockAngle, 0.f);
-					_v3 tmpLerp3 = _v3(0.f, 0.f, 0.f);
-
-					if (m_fPosLerpValue >= 1.f)
-					{
-						m_fPosLerpValue = 1.f;
-					}
-
-					D3DXVec3Lerp(&tmpLerp3, &tmpLerp1, &tmpLerp2, m_fPosLerpValue);
-					fLerpAngle = tmpLerp3.y;
-				}
-			}
-
-			else
-			{
-				fLerpAngle = m_fX_LockAngle;
-			}*/
 			
 			CALC::V3_Axis_Normal(&matRotAxis, &vEyePos, &WORLD_RIGHT, m_fY_LockAngle, true);
 			CALC::V3_Axis_Normal(&matRotAxis, &vEyePos, &WORLD_UP, m_fX_LockAngle, true);
 
-			vEyePos += vTransPos + _v3{ 0,1,0 };
-			vAt = vTransPos + (WORLD_UP * 1.5f);
+			vEyePos += vTransPos + _v3{ 0,1,0 } +(vRight * m_fOSCAxis_Gap[AXIS_X]) + (WORLD_UP * m_fOSCAxis_Gap[AXIS_Y]);
+			vAt = vTransPos + (WORLD_UP * 1.5f) + (vRight * m_fOSCAxis_Gap[AXIS_X]) + (WORLD_UP * m_fOSCAxis_Gap[AXIS_Y]);
 
-			//===========================================
-
-			//if (m_pTransform->Get_Pos() != m_vOldPos)
-			//{
-			//	m_vOldPos = m_pTransform->Get_Pos();
-			//	m_bOnLerpPos = true;
-
-			//	m_fPosLerpValue = 0.f;
-			//}
 
 			if (m_bOnLerpAt)
 			{

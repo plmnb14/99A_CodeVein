@@ -52,6 +52,61 @@ void CFileInfo::Create_Mesh_PathInfo(Extract_Mesh _eExtract_Mesh)
 		break;
 	}
 
+	case Extract_Static_Common:
+	{
+		cout << "Extracting StaticMesh_Common Path . . ." << endl;
+		cout << "=============================================================" << endl;
+
+		lstrcpy(szStaticPath, L"..\\..\\Client\\Resources\\Mesh\\StaticMesh\\");
+		lstrcat(szStaticPath, L"Common");
+
+		break;
+	}
+
+	case Extract_Static_Stage00:
+	{
+		cout << "Extracting StaticMesh_Stage00 Path . . ." << endl;
+		cout << "=============================================================" << endl;
+
+		lstrcpy(szStaticPath, L"..\\..\\Client\\Resources\\Mesh\\StaticMesh\\");
+		lstrcat(szStaticPath, L"Stage_00");
+
+		break;
+	}
+
+	case Extract_Static_Stage01:
+	{
+		cout << "Extracting StaticMesh_Stage01 Path . . ." << endl;
+		cout << "=============================================================" << endl;
+
+		lstrcpy(szStaticPath, L"..\\..\\Client\\Resources\\Mesh\\StaticMesh\\");
+		lstrcat(szStaticPath, L"Stage_01");
+
+		break;
+	}
+
+	case Extract_Static_Stage02:
+	{
+		cout << "Extracting StaticMesh_Stage02 Path . . ." << endl;
+		cout << "=============================================================" << endl;
+
+		lstrcpy(szStaticPath, L"..\\..\\Client\\Resources\\Mesh\\StaticMesh\\");
+		lstrcat(szStaticPath, L"Stage_02");
+
+		break;
+	}
+
+	case Extract_Static_Stage03:
+	{
+		cout << "Extracting StaticMesh_Stage03 Path . . ." << endl;
+		cout << "=============================================================" << endl;
+
+		lstrcpy(szStaticPath, L"..\\..\\Client\\Resources\\Mesh\\StaticMesh\\");
+		lstrcat(szStaticPath, L"Stage_03");
+
+		break;
+	}
+
 	case Extract_Dynamic:
 	{
 		cout << "Extracting DynamicMesh Path . . ." << endl;
@@ -61,17 +116,6 @@ void CFileInfo::Create_Mesh_PathInfo(Extract_Mesh _eExtract_Mesh)
 		lstrcat(szStaticPath, L"DynamicMesh");						
 
 		bDynamic = true;
-
-		break;
-	}
-
-	case Extract_Static:
-	{
-		cout << "Extracting StaticMesh Path . . ." << endl;
-		cout << "=============================================================" << endl;
-
-		lstrcpy(szStaticPath, L"..\\..\\Client\\Resources\\Mesh\\");
-		lstrcat(szStaticPath, L"StaticMesh");
 
 		break;
 	}
@@ -127,36 +171,65 @@ void CFileInfo::Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst, Extract_Mesh 
 	{
 	case Extract_Essential:
 	{
-		lstrcpy(szDataPath, L"../../Data/Mesh_Essential_Path.dat");
+		lstrcpy(szDataPath, L"../../Data/Load_MeshData/Mesh_Essential_Path.dat");
 		break;
 	}
 
 	case Extract_Dynamic:
 	{
-		lstrcpy(szDataPath, L"../../Data/Mesh_Dynamic_Path.dat");
+		lstrcpy(szDataPath, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
 
 		break;
 	}
 
-	case Extract_Static:
+	case Extract_Static_Common:
 	{
-		lstrcpy(szDataPath, L"../../Data/Mesh_Static_Path.dat");
+		lstrcpy(szDataPath, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
 
 		break;
 	}
+
+	case Extract_Static_Stage00:
+	{
+		lstrcpy(szDataPath, L"../../Data/Load_MeshData/Mesh_Static_Stage00_Path.dat");
+
+		break;
+	}
+
+	case Extract_Static_Stage01:
+	{
+		lstrcpy(szDataPath, L"../../Data/Load_MeshData/Mesh_Static_Stage01_Path.dat");
+
+		break;
+	}
+
+	case Extract_Static_Stage02:
+	{
+		lstrcpy(szDataPath, L"../../Data/Load_MeshData/Mesh_Static_Stage02_Path.dat");
+
+		break;
+	}
+
+	case Extract_Static_Stage03:
+	{
+		lstrcpy(szDataPath, L"../../Data/Load_MeshData/Mesh_Static_Stage03_Path.dat");
+
+		break;
+	}
+
 	case Extract_Weapon:
 	{
-		lstrcpy(szDataPath, L"../../Data/Mesh_Weapon_Path.dat");
+		lstrcpy(szDataPath, L"../../Data/Load_MeshData/Mesh_Weapon_Path.dat");
 		break;
 	}
 	case Extract_DrainWeapon:
 	{
-		lstrcpy(szDataPath, L"../../Data/Mesh_DrainWeapon_Path.dat");
+		lstrcpy(szDataPath, L"../../Data/Load_MeshData/Mesh_DrainWeapon_Path.dat");
 		break;
 	}
 	case Extract_Effect:
 	{
-		lstrcpy(szDataPath, L"../../Data/Mesh_Effect_Path.dat");
+		lstrcpy(szDataPath, L"../../Data/Load_MeshData/Mesh_Effect_Path.dat");
 		break;
 	}
 	}
@@ -292,7 +365,7 @@ void CFileInfo::Save_Texture_PathInfo(list<Engine::TEX_INFO*>& rPathInfoLst)
 
 	wofstream fout;
 
-	fout.open(L"../../Data/Tex_Path.dat");
+	fout.open(L"../../Data/Load_TexData/Tex_Path.dat");
 
 	if (fout.fail())
 		return;

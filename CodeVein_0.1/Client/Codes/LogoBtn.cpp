@@ -142,8 +142,10 @@ HRESULT CLogoBtn::SetUp_CursorEffect()
 	UI_DESC* pDesc = new UI_DESC;
 	pDesc->fPosX = m_fPosX;
 	pDesc->fPosY = m_fPosY + 5.f;
-	pDesc->fSizeX = 512.f;
-	pDesc->fSizeY = 64.f;
+	//pDesc->fSizeX = 512.f;
+	//pDesc->fSizeY = 64.f;
+	pDesc->fSizeX = m_fSizeX;
+	pDesc->fSizeY = m_fSizeY;
 	pDesc->iIndex = 0;
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_CursorEffect", SCENE_LOGO, L"Layer_CursorEffect", pDesc)))
 		return E_FAIL;

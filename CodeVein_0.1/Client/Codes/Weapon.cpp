@@ -166,7 +166,7 @@ void CWeapon::OnCollisionEnter()
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_MonsterProjectile", SCENE_STAGE));
 	}
 	else
-		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_STAGE));
+		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
 
 
 	// =============================================================================================
@@ -609,7 +609,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	//===========================================================================================
 
 	m_tWeaponParam[WPN_Shield_Normal].fDamage = 25.f;
-	m_tWeaponParam[WPN_Shield_Normal].fRadius = 0.6f;
+	m_tWeaponParam[WPN_Shield_Normal].fRadius = 0.7f;
 	m_tWeaponParam[WPN_Shield_Normal].fTrail_Min = 0.f;
 	m_tWeaponParam[WPN_Shield_Normal].fTrail_Max = 1.f;
 	m_tWeaponParam[WPN_Shield_Normal].fCol_Height = 0.f;

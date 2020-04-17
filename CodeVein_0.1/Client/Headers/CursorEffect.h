@@ -29,6 +29,10 @@ private:
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
+private:
+	_float m_fOldSizeX = 0.f;
+	_float m_fOldSizeY = 0.f;
+
 public:
 	static CCursorEffect*	Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);

@@ -21,6 +21,21 @@ CFrameMgr*			g_pFrame_Manager;
 CInput_Device*		g_pInput_Device;
 CTexture*			g_pDissolveTexture;
 
+// ================================================
+// 스테이지를 한번이라도 들렸는지 확인하는 전역변수 (MeshLoad를 위해)
+// ================================================
+bool				g_bOnStage[6]	= {};
+bool				g_bReleaseMode	= false;
+short				g_sStageIdx_Cur = 0;
+
+// [0] - 최초 로딩 타이틀
+// [1] - 트레이닝
+// [2] - 베이스 Stage_00
+// [3] - 스테이지 1 Stage_01
+// [4] - 스테이지 2 Stage_02
+// [5] - 스테이지 3 Stage_03
+// ================================================
+
 // 이 코드 모듈에 들어 있는 함수의 정방향 선언입니다.
 ATOM                MyRegisterClass(HINSTANCE hInstance);
 BOOL                InitInstance(HINSTANCE, int);

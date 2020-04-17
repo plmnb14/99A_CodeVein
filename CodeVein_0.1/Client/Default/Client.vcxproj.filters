@@ -295,6 +295,9 @@
     <Filter Include="02.GameObject\Stage\2%29 Monster\YachaMan">
       <UniqueIdentifier>{bfc4fef8-8742-4708-90db-12cc5deea4bc}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\1%29 Boss\QueensKnight\Bullet">
+      <UniqueIdentifier>{02557925-0ab4-4d6f-acd5-074c828df50f}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\09. SkillUI">
       <UniqueIdentifier>{697f7d9c-48af-442b-945c-1fdf1a73e82c}</UniqueIdentifier>
     </Filter>
@@ -413,9 +416,6 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Scene_Stage_03.h">
       <Filter>01.Scene\06.Stage_03</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Button_UI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\Button_UI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\YachaMan.h">
       <Filter>02.GameObject\Stage\2%29 Monster\YachaMan</Filter>
@@ -600,6 +600,15 @@
     <ClInclude Include="..\Headers\FireTornadoCol.h">
       <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\DarkGroundBullet.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\QueensKnight\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\DarkBoom.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\QueensKnight\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\DarkMidCol.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\QueensKnight\Bullet</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\Active_Icon.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\00. Active_Icon</Filter>
     </ClInclude>
@@ -626,6 +635,9 @@
     </ClInclude>
     <ClInclude Include="..\Headers\StageSelectUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\10. StageSelectUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Button_UI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\Button_UI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -709,9 +721,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Scene_Stage_03.cpp">
       <Filter>01.Scene\06.Stage_03</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Button_UI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\Button_UI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\YachaMan.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster\YachaMan</Filter>
@@ -896,6 +905,15 @@
     <ClCompile Include="..\Codes\FireTornadoCol.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\DarkGroundBullet.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\QueensKnight\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DarkBoom.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\QueensKnight\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DarkMidCol.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\QueensKnight\Bullet</Filter>
+    </ClCompile>
     <ClCompile Include="..\Codes\Active_Icon.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\00. Active_Icon</Filter>
     </ClCompile>
@@ -922,6 +940,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\StageSelectUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\10. StageSelectUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Button_UI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\Button_UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -34,7 +34,7 @@ HRESULT CPlayerST::Ready_GameObject(void * pArg)
 	m_bIsActive = true;
 
 	
-	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
+	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
 	m_fPlayerST = m_pTarget->Get_Target_Stamina();
 	m_fTotalST = m_fPlayerST;
