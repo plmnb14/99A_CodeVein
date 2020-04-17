@@ -11,8 +11,10 @@ class CWeapon;
 class CPlayer_Colleague final : public CGameObject
 {
 public:
+	// 차후 Attack에 스킬을 추가할 시 enum으로 나눠줘야 함
 	enum Colleague_MoveType { Coll_Idle, Coll_Move, Coll_Attack, Coll_Hit, Coll_Dead };
-	enum Colleague_Movement { Move_Walk, Move_Run, Move_Dodge };
+	enum Coll_Movement { Move_Walk, Move_Run, Move_Dodge };
+	enum Coll_IdleMoment { Idle_Waiting, Idle_Attwaiting, Idle_Guard };
 	enum Move_Direction { Move_Front, Move_Back, Move_Left, Move_Right, Move_End };
 
 private:
@@ -40,9 +42,15 @@ private:
 	HRESULT	Ready_Weapon();
 
 private:
-	_bool	Checking_Player();
+	void	Check_Do_List();
+	void	Set_AniEvent();
 
+private:
 	void	Colleague_Movement(_float fSpeed, _v3 vDir);
+
+	void	Colleague_Idle();
+	void	Colleague_Move();
+	void	Colleague_Dead();
 
 	void	ColleagueMove_Walk();
 	void	ColleagueMove_Run();
@@ -64,6 +72,8 @@ private:
 
 private:
 	Colleague_MoveType		m_eMovetype;
+	Coll_Movement			m_eColl_Movement;
+	Coll_IdleMoment			m_eColl_IdleMoment;
 	Move_Direction			m_eMoveDirection;
 
 private:
