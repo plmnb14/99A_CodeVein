@@ -24,6 +24,7 @@ public:
 	EFFECT_INFO* Get_Info() { return m_pInfo; }
 	_tchar* Get_ParticleName() { return m_szParticleName; }
 	_float	Get_CreateDelay() { return m_fCreateDelay; }
+	_v3 Get_Angle() { return m_vAngle; }
 
 public:
 	void Set_ParticleName(_tchar* szBuff) { lstrcpy(m_szParticleName, szBuff); }

@@ -299,7 +299,7 @@ void CDrain_Weapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					if (false == iter->Get_Target_Dodge())
+					if (false == iter->Get_Target_IsDodge())
 					{
 						iter->Set_Target_CanHit(false);
 
@@ -308,7 +308,7 @@ void CDrain_Weapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 							iter->Set_HitAgain(true);
 						}
 
-						if (false == iter->Get_Target_Dodge())
+						if (false == iter->Get_Target_IsDodge())
 						{
 							m_tObjParam.fDamage = 100.f;
 

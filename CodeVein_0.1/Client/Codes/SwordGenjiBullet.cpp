@@ -224,7 +224,7 @@ void CSwordGenjiBullet::OnCollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					if (false == iter->Get_Target_Dodge())
+					if (false == iter->Get_Target_IsDodge())
 					{
 						iter->Set_Target_CanHit(false);
 
@@ -233,7 +233,7 @@ void CSwordGenjiBullet::OnCollisionEvent(list<CGameObject*> plistGameObject)
 							iter->Set_HitAgain(true);
 						}
 
-						if (false == iter->Get_Target_Dodge())
+						if (false == iter->Get_Target_IsDodge())
 						{
 							// 무기 공격력의 +-20%까지 랜덤범위
 							_uint min = (_uint)(m_tObjParam.fDamage - (m_tObjParam.fDamage * 0.2f));
