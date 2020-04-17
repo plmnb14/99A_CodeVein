@@ -81,15 +81,8 @@ _int CMeshEffect::Update_GameObject(_double TimeDelta)
 	Check_Alpha(TimeDelta);
 	Check_Color(TimeDelta);
 
-	return S_OK;
-}
 
-_int CMeshEffect::Late_Update_GameObject(_double TimeDelta)
-{
-	if (nullptr == m_pRendererCom ||
-		nullptr == m_pMeshCom)
-		return E_FAIL;
-
+	// 어쩔수 없이 Update에서 호출
 	if (m_bIsDead || m_fCreateDelay > 0.f)
 		return S_OK;
 
@@ -104,7 +97,19 @@ _int CMeshEffect::Late_Update_GameObject(_double TimeDelta)
 	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
 		return E_FAIL;
 
-	return _int();
+	return S_OK;
+}
+
+_int CMeshEffect::Late_Update_GameObject(_double TimeDelta)
+{
+	if (nullptr == m_pRendererCom ||
+		nullptr == m_pMeshCom)
+		return E_FAIL;
+
+	if (m_bIsDead || m_fCreateDelay > 0.f)
+		return S_OK;
+
+	return S_OK;
 }
 
 HRESULT CMeshEffect::Render_GameObject()
@@ -204,6 +209,10 @@ HRESULT CMeshEffect::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 		return E_FAIL;
 
 	m_matLastWVP = m_pTransformCom->Get_WorldMat() * ViewMatrix * ProjMatrix;
+
+	_bool bMotionBlur = false;
+	if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+		return E_FAIL;
 
 	_float fBloomPower = 1.5f;
 	if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
@@ -538,6 +547,14 @@ void CMeshEffect::Check_Alpha(_double TimeDelta)
 		m_fAlpha = 0.f;
 	if (m_pInfo->fMaxAlpha < m_fAlpha)
 		m_fAlpha = m_pInfo->fMaxAlpha;
+
+	m_fDissolve += _float(TimeDelta) * m_fAlphaSpeed;
+
+	if (m_fDissolve > 1.f)
+	{
+		m_fDissolve = 1.f;
+		m_bDissolveToggle = !m_bDissolveToggle;
+	}
 }
 
 void CMeshEffect::Check_Color(_double TimeDelta)
@@ -617,6 +634,11 @@ HRESULT CMeshEffect::SetUp_ConstantTable(CShader* pShader)
 	if (FAILED(pShader->Set_Bool("g_bReverseColor", m_pInfo->bRevColor)))
 		return E_FAIL;
 	if (FAILED(pShader->Set_Bool("g_bUseRGBA", m_pInfo->bUseRGBA)))
+		return E_FAIL;
+
+	if (FAILED(pShader->Set_Bool("g_bDissolve", m_pInfo->bDissolve)))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_fDissolve", &m_fDissolve, sizeof(_float))))
 		return E_FAIL;
 
 	Safe_Release(pManagement);

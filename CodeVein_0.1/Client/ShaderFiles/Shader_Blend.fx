@@ -350,7 +350,8 @@ PS_OUT PS_Bloom(PS_IN In) // Extract Bright Color
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	vector	vDiffuse = tex2D(DiffuseSampler, In.vTexUV);
+	vector	vDiffuse	= tex2D(DiffuseSampler, In.vTexUV);
+	vector	vBloomPower = tex2D(BloomSampler, In.vTexUV);
 
 	//// Bloom 1====================================================================
 	//float fThreshold = 0.5;	 // 이 기준점보다 밝으면 Bloom 타겟
@@ -369,8 +370,13 @@ PS_OUT PS_Bloom(PS_IN In) // Extract Bright Color
 
 	// Bloom 3====================================================================
 
+	float fBloomPower = vBloomPower.x;
+	if (fBloomPower == 0.f)
+		fBloomPower = 1.5f;
+	//fBloomPower = 1.5f; // 너무 밝아서 임시
+
 	Out.vColor = vDiffuse;
-	Out.vColor.rgb -= 0.5f; // 작은 값일 수록 빛에 민감한 광선
+	Out.vColor.rgb -= fBloomPower; // 작은 값일 수록 빛에 민감한 광선
 	// 작은 빛도 블룸되요
 
 	Out.vColor = 3.0f * max(Out.vColor, 0.0f); // 큰 값일 수록 확실한 모양의 광선

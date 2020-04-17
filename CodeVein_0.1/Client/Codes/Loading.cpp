@@ -321,6 +321,60 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireTornade_Floor_02")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireTornade_Floor_03")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_Fire_Particle_01")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_Fire_Particle_02")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireTornade_ReadyFire_Up")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireBullet")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireBullet_GunEff")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireBullet_Particle_01")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireBullet_Particle_02")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireGround_Floor")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireGround_ReadyFire")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireGround_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireGround_BoomCircle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireGround_BoomParticle_01")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireGround_BoomParticle_02")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireGround_BoomFire")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireGround_AfterFire_01")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireGround_AfterFire_02")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireSphere")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireSphere_BreakFire")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireSphere_BreakParticle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireSphere_OuterFire")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireSphere_BodyFire")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireSphere_BodyFire_Sub")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireSphere_Tail")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireSphere_ShotCircle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_ArmAttack_Dust")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_ArmAttack_FloorDust")))
+		return E_FAIL;
 #pragma endregion
 
 

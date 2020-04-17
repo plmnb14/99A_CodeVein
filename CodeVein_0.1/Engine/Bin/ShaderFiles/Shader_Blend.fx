@@ -373,6 +373,7 @@ PS_OUT PS_Bloom(PS_IN In) // Extract Bright Color
 	float fBloomPower = vBloomPower.x;
 	if (fBloomPower == 0.f)
 		fBloomPower = 1.5f;
+	//fBloomPower = 1.5f; // 너무 밝아서 임시
 
 	Out.vColor = vDiffuse;
 	Out.vColor.rgb -= fBloomPower; // 작은 값일 수록 빛에 민감한 광선

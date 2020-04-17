@@ -44,20 +44,20 @@ HRESULT CSwordBullet::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
 
-	//m_pBulletBody_01 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"IceGirl_SwordBullet_Mesh", nullptr));
-	//m_pBulletBody_01->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
-	//m_pBulletBody_01->Set_Angle(_v3(0.f, fDot, 0.f));
-	//m_pBulletBody_01->Reset_Init();
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody_01, SCENE_STAGE, L"Layer_Effect", nullptr);
-	//
-	//m_pBulletBody_02 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"IceGirl_SwordBullet_Mesh", nullptr));
-	//m_pBulletBody_02->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
-	//m_pBulletBody_02->Set_Angle(_v3(0.f, fDot, 0.f));
-	//m_pBulletBody_02->Reset_Init();
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody_02, SCENE_STAGE, L"Layer_Effect", nullptr);
+	m_pBulletBody_01 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"IceGirl_SwordBullet_Mesh", nullptr));
+	m_pBulletBody_01->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
+	m_pBulletBody_01->Set_Angle(_v3(0.f, fDot, 0.f));
+	m_pBulletBody_01->Reset_Init();
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody_01, SCENE_STAGE, L"Layer_Effect", nullptr);
 	
-	m_fDelay = 0.05f;
-	g_pManagement->Create_AngleEffect(L"IceGirl_SwordBullet_Mesh", _v3(0, 0, 0), _v3(0.f, fDot, 0.f), m_pTransformCom);
+	m_pBulletBody_02 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"IceGirl_SwordBullet_Mesh", nullptr));
+	m_pBulletBody_02->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
+	m_pBulletBody_02->Set_Angle(_v3(0.f, fDot, 0.f));
+	m_pBulletBody_02->Reset_Init();
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody_02, SCENE_STAGE, L"Layer_Effect", nullptr);
+	
+	//m_fDelay = 0.05f;
+	//g_pManagement->Create_AngleEffect(L"IceGirl_SwordBullet_Mesh", _v3(0, 0, 0), _v3(0.f, fDot, 0.f), m_pTransformCom);
 
 	return NOERROR;
 }
@@ -77,8 +77,8 @@ _int CSwordBullet::Update_GameObject(_double TimeDelta)
 
 	if (m_dCurTime > m_dLifeTime)
 	{
-		//m_pBulletBody_01->Set_Dead();
-		//m_pBulletBody_02->Set_Dead();
+		m_pBulletBody_01->Set_Dead();
+		m_pBulletBody_02->Set_Dead();
 
 		m_bDead = true;
 	}
@@ -86,20 +86,25 @@ _int CSwordBullet::Update_GameObject(_double TimeDelta)
 	{
 		m_fDelay_Check += (_float)TimeDelta;
 
-		if(m_fDelay_Check > m_fDelay)
-		{
-			m_fDelay_Check = 0.f;
-			m_fDelay = 1000.f;
+		g_pManagement->Create_Effect_Offset(L"IceGirl_PointParticle_Blue", 0.1f, m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect_Offset(L"IceGirl_PointParticle_Green", 0.1f, m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect_Offset(L"IceGirl_FlashParticle_Blue", 0.1f, m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect_Offset(L"IceGirl_FlashParticle_Green", 0.1f, m_pTransformCom->Get_Pos(), nullptr);
 
-			// Calc Angle
-			_v3	vRight = *D3DXVec3Cross(&vRight, &_v3(0.f, 1.f, 0.f), &m_vDir);
-			V3_NORMAL_SELF(&vRight);
-			_float	fDot = acosf(D3DXVec3Dot(&_v3{ 0,0,1 }, &m_vDir));
-			if (vRight.z > 0)
-				fDot *= -1.f;
-
-			g_pManagement->Create_AngleEffect(L"IceGirl_SwordBullet_Mesh", _v3(0, 0, 0), _v3(0.f, fDot, 0.f), m_pTransformCom);
-		}
+		//if(m_fDelay_Check > m_fDelay)
+		//{
+		//	m_fDelay_Check = 0.f;
+		//	m_fDelay = 1000.f;
+		//
+		//	// Calc Angle
+		//	_v3	vRight = *D3DXVec3Cross(&vRight, &_v3(0.f, 1.f, 0.f), &m_vDir);
+		//	V3_NORMAL_SELF(&vRight);
+		//	_float	fDot = acosf(D3DXVec3Dot(&_v3{ 0,0,1 }, &m_vDir));
+		//	if (vRight.z > 0)
+		//		fDot *= -1.f;
+		//
+		//	g_pManagement->Create_AngleEffect(L"IceGirl_SwordBullet_Mesh", _v3(0, 0, 0), _v3(0.f, fDot, 0.f), m_pTransformCom);
+		//}
 
 	}
 

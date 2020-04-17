@@ -38,6 +38,9 @@ private:
 
 	_bool				m_bFinishCol = false;
 
+	_bool				m_bEffectReadyFireOn = false;
+	_bool				m_bEffectFloorOn = false;
+	_float				m_fEffectOffset = false;
 
 private:
 	_bool				m_bPlayerFriendly = false;		// 플레이어 껀지
