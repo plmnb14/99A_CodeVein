@@ -96,6 +96,7 @@ HRESULT CTrail_VFX::Render_GameObject()
 	m_pGraphic_Dev->SetFVF(m_dwVtxFVF);
 
 	_int iPass = (m_eType == Trail_Normal ? 5 : 1);
+
 	if (m_bUseMask)
 		iPass = 6;
 

@@ -133,9 +133,6 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\99.Public">
       <UniqueIdentifier>{7c37cd0b-3aa1-4f2a-98a4-27c93e364280}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\99.Public\HPBack">
-      <UniqueIdentifier>{fa879426-186e-47c8-b86a-a658c605a61a}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\99.Public\Button_UI">
       <UniqueIdentifier>{f4308e4f-0a96-460c-ba32-24c91ab05ac0}</UniqueIdentifier>
     </Filter>
@@ -147,9 +144,6 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\7%29 Item">
       <UniqueIdentifier>{f36caa92-e13e-47aa-a03d-0ac0628f233a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\2%29 Monster\YachaMan">
-      <UniqueIdentifier>{bfc4fef8-8742-4708-90db-12cc5deea4bc}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\Stage\1%29 Boss">
       <UniqueIdentifier>{116cc399-c4de-4bec-8f77-4cb25d5806e9}</UniqueIdentifier>
@@ -291,6 +285,41 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\2%29 Monster\Urchin 보류">
       <UniqueIdentifier>{d5078eb0-dcf5-4078-8ad4-dfe766841a1d}</UniqueIdentifier>
+    <Filter Include="02.GameObject\Stage\1%29 Boss\FireBoy">
+      <UniqueIdentifier>{513f084f-d270-4483-b705-d20c5f6c1dcd}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\1%29 Boss\FireBoy\Bullet">
+      <UniqueIdentifier>{1d51d55f-d3ac-469e-87df-0681117bbe47}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Monster\YachaMan">
+      <UniqueIdentifier>{bfc4fef8-8742-4708-90db-12cc5deea4bc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\09. SkillUI">
+      <UniqueIdentifier>{697f7d9c-48af-442b-945c-1fdf1a73e82c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\09. SkillUI\01. Passive_Icon">
+      <UniqueIdentifier>{c4ae27f0-86e5-4227-8174-2affb7b92bc7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\09. SkillUI\00. Active_Icon">
+      <UniqueIdentifier>{85537e19-2320-4379-9761-438389ebdc4e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Public\0%29 Loading_Screen">
+      <UniqueIdentifier>{848c0091-6900-439e-a3ff-a2574ee579d9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Public\1%29 Loading_Bar">
+      <UniqueIdentifier>{9027abf8-6974-4ec1-89be-91d9e1136281}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\09. SkillUI\02. Skill_Gauge">
+      <UniqueIdentifier>{9344aeea-9f00-4a6a-9f3b-7ed70201211c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\99.Public\CursorEffect">
+      <UniqueIdentifier>{ec8321fa-e6ad-47b6-961a-500dcfb5f253}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\10. StageSelectUI">
+      <UniqueIdentifier>{ca9cdb7b-a42d-4c16-b7f2-f06efa0c308a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\10. StageSelectUI\00. StageUI">
+      <UniqueIdentifier>{505498ed-7266-43d8-a958-b58b7f9a17ca}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -347,9 +376,6 @@
     </ClInclude>
     <ClInclude Include="..\Headers\UI_Manager.h">
       <Filter>02.GameObject\Stage\5%29 UI\Manager\UI_Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\HPBack.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\HPBack</Filter>
     </ClInclude>
     <ClInclude Include="StageLoader.h">
       <Filter>01.Scene\98.StageLoader</Filter>
@@ -554,6 +580,50 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Yeti.h">
       <Filter>02.GameObject\Stage\2%29 Monster\Yeti 보류</Filter>
+    <ClInclude Include="..\Headers\FireBoy.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GunAttackCol.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\FireBullet.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\FireSphere.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\FireGround.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\FireTornadoCol.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Active_Icon.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\00. Active_Icon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Passive_Icon.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\01. Passive_Icon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\LoadingScreen.h">
+      <Filter>02.GameObject\Public\0%29 Loading_Screen</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\LoadingBar.h">
+      <Filter>02.GameObject\Public\1%29 Loading_Bar</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\SkillUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\SkillGauge.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\02. Skill_Gauge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\CursorEffect.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\CursorEffect</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\StageUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\10. StageSelectUI\00. StageUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\StageSelectUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\10. StageSelectUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -601,9 +671,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\UI_Manager.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\Manager\UI_Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\HPBack.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\HPBack</Filter>
     </ClCompile>
     <ClCompile Include="StageLoader.cpp">
       <Filter>01.Scene\98.StageLoader</Filter>
@@ -808,6 +875,50 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Yeti.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster\Yeti 보류</Filter>
+    <ClCompile Include="..\Codes\FireBoy.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GunAttackCol.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\FireBullet.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\FireSphere.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\FireGround.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\FireTornadoCol.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Active_Icon.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\00. Active_Icon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Passive_Icon.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\01. Passive_Icon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\LoadingScreen.cpp">
+      <Filter>02.GameObject\Public\0%29 Loading_Screen</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\LoadingBar.cpp">
+      <Filter>02.GameObject\Public\1%29 Loading_Bar</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SkillUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SkillGauge.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\02. Skill_Gauge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\CursorEffect.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\CursorEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\StageUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\10. StageSelectUI\00. StageUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\StageSelectUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\10. StageSelectUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

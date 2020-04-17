@@ -21,8 +21,7 @@ public:
 
 private:
 	enum Ani {
-		Ani_Idle = 0, Ani_Death = 26, Ani_Appearance = 3, Ani_Down_Start = 18, Ani_Down_Loop = 19, Ani_Down_End = 20,
-
+		Ani_Idle = 0, Ani_Death = 26, Ani_Appearance = 3, Ani_Down_Start = 18, Ani_Down_Loop = 19, Ani_Down_End = 20
 	};
 
 private:
@@ -42,23 +41,29 @@ public:
 	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass);
 
 private:	// 패턴들
-	// 1. 삼단베기,  슉 + 슉 + 슉
+	// 1. 회전베기
+	CBT_Composite_Node* Turn_Cut();
+	// 2. 삼단베기,  슉 + 슉 + 슉
 	CBT_Composite_Node* ThreeCombo_Cut1();
-	// 2. 삼단베기,  슉 + 슉 + 회전베기
+	// 3. 삼단베기,  슉 + 슉 + 회전베기
 	CBT_Composite_Node* ThreeCombo_Cut2();
-	// 3. 점프찌르기
+	// 4. 점프찌르기
 	CBT_Composite_Node* Jump_Attack();
-	// 4. 검 휘두르고 얼음 소환
+	// 5. 검 휘두르고 얼음 소환
 	CBT_Composite_Node* Ice_Cut();
-	// 5. 얼음 보호막
+	// 6. 얼음 보호막
 	CBT_Composite_Node* Ice_Barrier();
+
+	// 7. 삼단베기, 두번째 세번째 는 추적하고 공격
 
 
 	// 원거리
-	// 6. 차지 후 돌진 찌르기
+	// 1. 차지 후 돌진 찌르기
 	CBT_Composite_Node* Charge_Rush();
 
+	// 2. 플레이어 주위에 콜드빔, 31번 애니
 	
+
 	// 회피
 	// 좌
 	CBT_Composite_Node* Dodge_Left();
@@ -129,6 +134,7 @@ private:
 	_bool				m_bAIController = true;
 
 	// 블랙보드에서 뼈의 Pos 저장소
+	_v3					m_vLeftHand = _v3(0.f, 0.f, 0.f);	//LeftHand
 
 private:	// 최초상태 세팅
 	_float				m_fFov = 0.f;

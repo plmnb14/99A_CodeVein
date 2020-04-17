@@ -14,6 +14,12 @@ private:
 	virtual ~CPlayerST() = default;
 
 public:
+	void Set_Stamina_Info(_float fSTCur, _float fSTMax) {
+		m_fPlayerST = fSTCur;
+		m_fTotalST = fSTMax;
+	}
+	
+public:
 	virtual HRESULT Ready_GameObject_Prototype();
 	virtual HRESULT Ready_GameObject(void* pArg);
 	virtual _int	Update_GameObject(_double TimeDelta);
@@ -22,7 +28,7 @@ public:
 
 private:
 	HRESULT Add_Component();
-	HRESULT SetUp_ConstantTable();
+	HRESULT SetUp_ConstantTable(_uint iIndex);
 	void	SetUp_State(_double TimeDelta);
 
 private:

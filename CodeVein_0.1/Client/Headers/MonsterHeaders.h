@@ -12,6 +12,13 @@
 #include "SwordBullet.h"
 #include "IceBarrier.h"
 
+#include "FireBoy.h"
+#include "GunAttackCol.h"
+#include "FireBullet.h"
+#include "FireSphere.h"
+#include "FireGround.h"
+#include "FireTornadoCol.h"
+
 #include "BlackWolf.h"
 #include "YachaMan.h"
 #include "Hunter.h"
