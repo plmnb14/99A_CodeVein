@@ -419,7 +419,8 @@ PS_OUT MotionBlurForObj(PS_IN In)
 	Out.vColor = tex2D(DiffuseSampler, screenTexCoords);
 
 	// 제한
-	velocity.xy = (clamp(velocity.x, -0.25f, 0.25f), clamp(velocity.y, -0.15f, 0.15f));
+	velocity.y *= 0.5f;
+	velocity.xy = (clamp(velocity.x, -0.25f, 0.25f), clamp(velocity.y, -0.25f, 0.25f));
 
 	for (int i = 1; i < MAX_SAMPLES; ++i) {
 		// 앞의 물체는 블러에서 제외. 뒤의 것들만 처리해라

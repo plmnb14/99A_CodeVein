@@ -507,19 +507,27 @@ void CMeshEffect::Check_Move(_double TimeDelta)
 	
 	if(m_vAngle != V3_NULL)
 	{
-		_mat matParent;
-		_mat matWorld = m_pTransformCom->Get_WorldMat();
+		_mat matParent, matScale, matRotX, matRotY, matRotZ, matTrans;
+		_mat matWorld;// = m_pTransformCom->Get_WorldMat();
+		m_vAddedAngle += (m_pInfo->vRotDirection) * _float(TimeDelta) * m_fRotSpeed;
 
-		_mat matRotX, matRotY, matRotZ;
+		D3DXMatrixIdentity(&matWorld);
+		D3DXMatrixRotationX(&matRotX, D3DXToRadian(m_vAddedAngle.x));
+		D3DXMatrixRotationY(&matRotY, D3DXToRadian(m_vAddedAngle.y));
+		D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(m_vAddedAngle.z));
+		matWorld = matRotX * matRotY * matRotZ;
+
 		D3DXMatrixIdentity(&matRotX);
 		D3DXMatrixIdentity(&matRotY);
 		D3DXMatrixIdentity(&matRotZ);
-
+		D3DXMatrixScaling(&matScale, m_vLerpScale.x, m_vLerpScale.y, m_vLerpScale.z);
 		D3DXMatrixRotationX(&matRotX, D3DXToRadian(m_vAngle.x));
 		D3DXMatrixRotationY(&matRotY, D3DXToRadian(m_vAngle.y));
 		D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(m_vAngle.z));
-		matParent = matRotX + matRotY + matRotZ;
-		m_pTransformCom->Set_WorldMat( matParent * matWorld);
+		D3DXMatrixTranslation(&matTrans, m_pTransformCom->Get_Pos().x, m_pTransformCom->Get_Pos().y, m_pTransformCom->Get_Pos().z);
+		matParent = matScale * matRotX * matRotY * matRotZ * matTrans;
+
+		m_pTransformCom->Set_WorldMat(matWorld * matParent);
 	}
 
 	if (m_pParentObject && !m_pParentObject->Get_Dead())

@@ -39,6 +39,7 @@ HRESULT CDarkBoom::Ready_GameObject(void * pArg)
 	//g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_LineRing_0", 0.3f, m_pTransformCom->Get_Pos(), nullptr);
 	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_Particle", 0.0f, m_pTransformCom->Get_Pos(), nullptr);
 	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_Sphere_1", 0.0f, m_pTransformCom->Get_Pos(), nullptr);
+	//g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_Ring", 0.55f, m_pTransformCom->Get_Pos(), nullptr);
 
 	for (_int i = 0; i < 10; i++)
 	{
@@ -53,8 +54,8 @@ HRESULT CDarkBoom::Ready_GameObject(void * pArg)
 		_float fMinRange = 2.f;
 		_v3 vRandPos = vDir * (fMinRange);
 
-		g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_BlackFire_0", i * 0.015f, m_pTransformCom->Get_Pos() + vRandPos + _v3(0.f, 0.45f, 0.f), nullptr);
-		g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_Smoke_0", i * 0.015f, m_pTransformCom->Get_Pos() + vRandPos + _v3(0.f, 0.45f, 0.f), nullptr);
+		g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_BlackFire_0", 0.48f + i * 0.015f, m_pTransformCom->Get_Pos() + vRandPos + _v3(0.f, 0.45f, 0.f), nullptr);
+		g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_Smoke_0", 0.48f + i * 0.015f, m_pTransformCom->Get_Pos() + vRandPos + _v3(0.f, 0.45f, 0.f), nullptr);
 	}
 
 	return NOERROR;
