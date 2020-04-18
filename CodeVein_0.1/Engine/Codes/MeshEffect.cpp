@@ -71,8 +71,8 @@ _int CMeshEffect::Update_GameObject(_double TimeDelta)
 		return S_OK;
 	}
 
-	Check_Move(TimeDelta);
 	CGameObject::Update_GameObject(TimeDelta);
+	Check_Move(TimeDelta);
 
 	m_fLinearMovePercent += _float(TimeDelta) * 0.2f;
 
@@ -504,19 +504,33 @@ void CMeshEffect::Check_Move(_double TimeDelta)
 		m_pTransformCom->Set_Angle(m_vAngle);
 		m_pTransformCom->Update_Component();
 	}
-	else
+	
+	if(m_vAngle != V3_NULL)
 	{
-		////cout << m_pTransformCom->Get_Angle().x << ",	" << m_pTransformCom->Get_Angle().y << ",	" << m_pTransformCom->Get_Angle().z << endl;
-		//_mat matRot;
-		//_v3 vAngle = V3_ONE;
-		//_mat matWorld = m_pTransformCom->Get_WorldMat();
-		//
-		//m_vAddedAngle += (m_pInfo->vRotDirection) * _float(TimeDelta) * m_fRotSpeed;
-		//m_pTransformCom->Set_Angle(D3DXToRadian(m_vAddedAngle));
-		//
-		//D3DXMatrixRotationY(&matRot, m_vAngle.y);
-		//
-		//m_pTransformCom->Set_WorldMat(_mat(matRot * matWorld));
+		_mat matParent;
+		_mat matWorld = m_pTransformCom->Get_WorldMat();
+
+		_mat matRotX, matRotY, matRotZ;
+		D3DXMatrixIdentity(&matRotX);
+		D3DXMatrixIdentity(&matRotY);
+		D3DXMatrixIdentity(&matRotZ);
+
+		D3DXMatrixRotationX(&matRotX, D3DXToRadian(m_vAngle.x));
+		D3DXMatrixRotationY(&matRotY, D3DXToRadian(m_vAngle.y));
+		D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(m_vAngle.z));
+		matParent = matRotX + matRotY + matRotZ;
+		m_pTransformCom->Set_WorldMat( matParent * matWorld);
+	}
+
+	if (m_pParentObject && !m_pParentObject->Get_Dead())
+	{
+		CTransform* pTargetTrans = TARGET_TO_TRANS(m_pParentObject);
+		if (!pTargetTrans)
+			return;
+
+		_mat matParent = pTargetTrans->Get_WorldMat();
+		_mat matWorld = m_pTransformCom->Get_WorldMat();
+		m_pTransformCom->Set_WorldMat(matWorld * matParent);
 	}
 
 }

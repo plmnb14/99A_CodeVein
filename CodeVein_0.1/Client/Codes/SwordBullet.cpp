@@ -41,12 +41,14 @@ HRESULT CSwordBullet::Ready_GameObject(void * pArg)
 	if (vRight.z > 0)
 		fDot *= -1.f;
 
+	m_pTransformCom->Set_Angle(_v3(0.f, fDot, 0.f));
+
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
 
 	m_pBulletBody_01 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"IceGirl_SwordBullet_Mesh", nullptr));
-	m_pBulletBody_01->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
-	m_pBulletBody_01->Set_Angle(_v3(0.f, fDot, 0.f));
+	m_pBulletBody_01->Set_Desc(_v3(0, 0, 0), nullptr);
+	m_pBulletBody_01->Set_ParentObject(this);
 	m_pBulletBody_01->Reset_Init();
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody_01, SCENE_STAGE, L"Layer_Effect", nullptr);
 	
@@ -76,13 +78,13 @@ _int CSwordBullet::Update_GameObject(_double TimeDelta)
 	{
 		m_fEffectOffset += (_float)TimeDelta;
 
-		if (m_fEffectOffset > 0.1f)
+		if (m_fEffectOffset > 0.01f)
 		{
 			m_fEffectOffset = 0.f;
-			g_pManagement->Create_Effect_Offset(L"IceGirl_PointParticle_Blue", 0.1f, m_pTransformCom->Get_Pos(), nullptr);
-			g_pManagement->Create_Effect_Offset(L"IceGirl_PointParticle_Green", 0.1f, m_pTransformCom->Get_Pos(), nullptr);
-			g_pManagement->Create_Effect_Offset(L"IceGirl_FlashParticle_Blue", 0.1f, m_pTransformCom->Get_Pos(), nullptr);
-			g_pManagement->Create_Effect_Offset(L"IceGirl_FlashParticle_Green", 0.1f, m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"IceGirl_PointParticle_Blue", m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"IceGirl_PointParticle_Green", m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"IceGirl_FlashParticle_Blue", m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"IceGirl_FlashParticle_Green", m_pTransformCom->Get_Pos(), nullptr);
 		}
 		
 	}

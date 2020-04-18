@@ -3756,7 +3756,7 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos + _v3(0, 0.3f, 0.f), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos + _v3(0, 0.3f, 0.f), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f, vEffPos + _v3(0, 0.3f, 0.f), m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.f, vEffWindPos + _v3(0, 0.3f, 0.f), m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.f, vEffWindPos + _v3(0, 0.3f, 0.f), m_pTransform, _v3(0.f, 0.f, -65.f));
 				}
 			}
 
@@ -3783,9 +3783,9 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Hor", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform, _v3(0.f, 0.f, -45.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform, _v3(0.f, 0.f, -45.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform, _v3(0.f, 0.f, -45.f));
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.f, vEffWindPos + _v3(0, 0.4f, 0.f), m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.1f, vEffWindPos + _v3(0, 0.4f, 0.f), m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.2f, vEffWindPos + _v3(0, 0.4f, 0.f), m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.f, vEffWindPos + _v3(0, 0.4f, 0.f), m_pTransform, _v3(0.f, 0.f, -45.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.1f, vEffWindPos + _v3(0, 0.4f, 0.f), m_pTransform, _v3(0.f, 0.f, -45.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.2f, vEffWindPos + _v3(0, 0.4f, 0.f), m_pTransform, _v3(0.f, 0.f, -45.f));
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_0", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_1", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_2", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform);
@@ -3818,9 +3818,9 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Hor", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform, _v3(0.f, 0.f, 45.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform, _v3(0.f, 0.f, 45.f));
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform, _v3(0.f, 0.f, 45.f));
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.f, vEffWindPos, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.1f, vEffWindPos, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.2f, vEffWindPos, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.f, vEffWindPos, m_pTransform, _v3(0.f, 0.f, 45.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.1f, vEffWindPos, m_pTransform, _v3(0.f, 0.f, 45.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.2f, vEffWindPos, m_pTransform, _v3(0.f, 0.f, 45.f));
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_0", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_1", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_2", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform);
