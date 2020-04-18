@@ -74,7 +74,7 @@ HRESULT CIceGirl::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Start_Game());
+	Start_Sel->Add_Child(Charge_Rush());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -650,7 +650,7 @@ CBT_Composite_Node * CIceGirl::Charge_Rush()
 	CBT_SetValue* PushColOn = Node_BOOL_SetValue("PushColOn", L"PushCol", true);
 
 
-	CBT_CreateBullet* Bullet0 = Node_CreateBullet("검기 발사",L"Monster_SwordBullet", L"CreateSwordBulletPos", L"IceCut_Dir2"/*뱡향 같음*/, 20, 0.5, 2.3, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Bullet0 = Node_CreateBullet("검기 발사",L"Monster_SwordBullet", L"CreateSwordBulletPos", L"IceCut_Dir2"/*뱡향 같음*/, 1, 0.5, 2.3, 1, 0, 0, CBT_Service_Node::Finite);
 	Root_Parallel->Add_Service(Bullet0);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("차징 오른손 파티클", L"IceGirl_Charge_Hand_Particle", L"CreateSwordBulletPos", 0.1, 60, 0, 0);
