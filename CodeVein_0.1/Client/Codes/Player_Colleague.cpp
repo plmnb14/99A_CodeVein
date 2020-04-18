@@ -183,6 +183,9 @@ void CPlayer_Colleague::Update_Collider()
 
 void CPlayer_Colleague::Check_Do_List()
 {
+	if(nullptr == m_pTargetTransformCom)
+		return;
+
 	// 플레이어 쪽으로 몸 돌릴 때, 4.f 이상 떨어져있으면 플레이어가 보는 쪽으로 돌린다.
 	//// 4.f 이하면 몸을 돌리지 않고 그냥 온다
 	// 아니다 Idle 상태일 때만 돌리지 않는다.
@@ -194,6 +197,9 @@ void CPlayer_Colleague::Check_Do_List()
 	// - 없으면 플레이어가 있는지
 
 	CGameObject* pMon_Target = g_pManagement->Get_GameObjectBack(L"Layer_Monster", SCENE_STAGE);
+
+	IF_NULL_RETURN(pMon_Target);
+
 	_float My_MonLength = V3_LENGTH(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(pMon_Target)->Get_Pos()));
 
 	_v3 pPlayerPos = m_pTargetTransformCom->Get_Pos();
@@ -353,7 +359,14 @@ HRESULT CPlayer_Colleague::SetUp_Default()
 	// 플레이어에서 10.f 떨어진 위치에서 최초 생성
 	//m_pTransformCom->Set_Pos(_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos().x - 1.f, TARGET_TO_TRANS(m_pTarget)->Get_Pos().y, TARGET_TO_TRANS(m_pTarget)->Get_Pos().z - 1.f));
 	m_pTransformCom->Set_Scale(V3_ONE);
-	m_pTargetTransformCom = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
+
+	if (nullptr != m_pTarget)
+	{
+		Safe_AddRef(m_pTarget);
+
+		m_pTargetTransformCom = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
+		Safe_AddRef(m_pTargetTransformCom);
+	}
 
 	m_tObjParam.fHp_Cur = 1000.f;
 	m_tObjParam.fHp_Max = 1000.f;
@@ -529,10 +542,15 @@ CGameObject* CPlayer_Colleague::Clone_GameObject(void* pArg)
 
 void CPlayer_Colleague::Free()
 {
+	// 타겟
+	Safe_Release(m_pTarget);
+
+	// 타겟의 트랜스폼
+	Safe_Release(m_pTargetTransformCom);
+
 	Safe_Release(m_pSword);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pTargetTransformCom);
 	Safe_Release(m_pStaticMesh);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
