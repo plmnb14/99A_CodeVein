@@ -26,6 +26,8 @@ private:
 	vector<CStageUI*>		m_vecStageUI;
 	_uint					m_iSelectIndex = 0;
 
+	_bool					m_bIsMove = false;
+
 public:
 	static CStageSelectUI*	Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);
