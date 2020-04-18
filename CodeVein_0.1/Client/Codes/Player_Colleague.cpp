@@ -26,8 +26,8 @@ HRESULT CPlayer_Colleague::Ready_GameObject(void * pArg)
 
 	SetUp_Default();
 
-	Ready_BoneMatrix();
-	Ready_Collider();
+	//Ready_BoneMatrix();
+	//Ready_Collider();
 
 	return S_OK;
 }
@@ -180,7 +180,7 @@ HRESULT CPlayer_Colleague::Ready_Collider()
 
 	// 경계 체크용 Collider - 범위 내에 있는지? -> 있으면 바로 공격하고 멀리있으면 간 좀 보다가 가서 때린다던지 하는겅
 	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
-	IF_NULL_VALUE_RETURN(pCollider);
+	IF_NULL_VALUE_RETURN(pCollider, E_FAIL);
 
 	_float fRadius = 1.f;
 
@@ -216,6 +216,7 @@ void CPlayer_Colleague::Check_Do_List()
 	// - 범위 내에 몬스터가 있는지
 	// - 없으면 플레이어가 있는지
 
+	IF_NULL_VALUE_RETURN(pMon_Target)
 	
 	CGameObject* pMon_Target = g_pManagement->Get_GameObjectBack(L"Layer_Monster", SCENE_STAGE);
 
@@ -376,8 +377,8 @@ void CPlayer_Colleague::Set_AniEvent()
 
 HRESULT CPlayer_Colleague::SetUp_Default()
 {
-	IF_NULL_VALUE_RETURN(m_pTarget);
 	m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
+	IF_NULL_VALUE_RETURN(m_pTarget, E_FAIL);
 
 	// 플레이어에서 10.f 떨어진 위치에서 최초 생성
 	//m_pTransformCom->Set_Pos(_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos().x - 1.f, TARGET_TO_TRANS(m_pTarget)->Get_Pos().y, TARGET_TO_TRANS(m_pTarget)->Get_Pos().z - 1.f));
