@@ -39,7 +39,7 @@ _int CStageSelectUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
-	m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE));
+	m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 
 	if (m_pTarget)
 	{

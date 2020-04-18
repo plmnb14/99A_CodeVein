@@ -73,11 +73,6 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Blend", ViewPort.Width, ViewPort.Height, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
-	//// Blend¿¡ Âï±â À§ÇÑ Alpha Å¸°Ù
-	//// Target_Alpha
-	//if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Alpha", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
-	//	return E_FAIL;
-
 	// Target_Blur
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Blur", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
 		return E_FAIL;
@@ -87,10 +82,6 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	// Target_BlurV
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_BlurV", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
 		return E_FAIL;
-
-	//// Target_MotionBlur
-	//if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_MotionBlur", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.0f, 0.0f, 1.0f, 0.f))))
-	//	return E_FAIL;
 
 	// Target_MotionBlurObj
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_MotionBlurObj", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(1.0f, 0.0f, 0.0f, 0.f))))
@@ -102,6 +93,9 @@ HRESULT CRenderer::Ready_Component_Prototype()
 
 	// Target_Bloom (BrightPass)
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Bloom", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
+		return E_FAIL;
+	// Target_BloomPower
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_BloomPower", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
 		return E_FAIL;
 
 	// Target_Rim
@@ -128,7 +122,9 @@ HRESULT CRenderer::Ready_Component_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Velocity", L"Target_RimNormal")))
 		return E_FAIL;
-	
+	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Velocity", L"Target_BloomPower")))
+		return E_FAIL;
+
 	// For.MRT_LightAcc
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_LightAcc", L"Target_Shade")))
 		return E_FAIL;
@@ -147,19 +143,13 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Blend", L"Target_Blend")))
 		return E_FAIL;
 
-	//// For.MRT_MotionBlur
-	//if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_MotionBlur", L"Target_MotionBlur")))
-	//	return E_FAIL;
 	// For.MRT_MotionBlur
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_MotionBlurObj", L"Target_MotionBlurObj")))
 		return E_FAIL;
+
 	// For.MRT_MotionBlurBlend
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_MotionBlurBlend", L"Target_MotionBlurBlend")))
 		return E_FAIL;
-
-	//// For.MRT_Alpha
-	//if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Alpha", L"Target_Alpha")))
-	//	return E_FAIL;
 
 	// For.MRT_BrightPass
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_BrightPass", L"Target_Bloom")))
@@ -172,7 +162,6 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	// For.MRT_HDR
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_HDR", L"Target_ToneMapping")))
 		return E_FAIL;
-
 
 	// For.Shader_LightAcc
 	m_pShader_LightAcc = CShader::Create(m_pGraphic_Dev, L"../ShaderFiles/Shader_LightAcc.fx");
@@ -275,17 +264,9 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Distortion", fTargetSize * 2, 0.f, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
-	//// For.Target_Alpha`s Debug Buffer
-	//if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Alpha", fTargetSize * 2, fTargetSize, fTargetSize, fTargetSize)))
-	//	return E_FAIL;
-
 	// For.Target_Blur`s Debug Buffer
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Blur", fTargetSize * 2, fTargetSize, fTargetSize, fTargetSize)))
 		return E_FAIL;
-
-	//// For.Target_MotionBlur`s Debug Buffer
-	//if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_MotionBlur", fTargetSize * 2, fTargetSize * 2, fTargetSize, fTargetSize)))
-	//	return E_FAIL;
 
 	// For.Target_MotionBlur`s Debug Buffer
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_MotionBlurObj", fTargetSize * 2, fTargetSize * 2, fTargetSize, fTargetSize)))
@@ -375,7 +356,7 @@ HRESULT CRenderer::Draw_RenderList()
 
 #ifdef _DEBUG
 
-	if (CInput_Device::Get_Instance()->Key_Down(DIK_NUMPAD9))
+	if (CInput_Device::Get_Instance()->Key_Down(DIKEYBOARD_9))
 		m_bOnRenderTarget = !m_bOnRenderTarget;
 
 	if (m_bOnRenderTarget)
@@ -390,9 +371,7 @@ HRESULT CRenderer::Draw_RenderList()
 		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_Shadow");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Blend");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Distortion");
-		//m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Alpha");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Blur");
-		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_MotionBlur");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_MotionBlurObj");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_HDR");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_BrightPass");
@@ -883,6 +862,8 @@ HRESULT CRenderer::Render_BrightPass()
 		return E_FAIL;
 
 	if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_Blend"))))
+		return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Texture("g_BloomTexture", m_pTarget_Manager->Get_Texture(L"Target_BloomPower"))))
 		return E_FAIL;
 
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_BrightPass")))

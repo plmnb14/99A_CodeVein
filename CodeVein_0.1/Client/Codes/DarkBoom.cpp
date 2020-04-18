@@ -35,6 +35,9 @@ HRESULT CDarkBoom::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
 
+	g_pManagement->Create_Effect(L"QueensKnight_DarkBoom_Smoke_0", m_pTransformCom->Get_Pos(), nullptr);
+	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_LineRing_0", 0.0f, m_pTransformCom->Get_Pos(), nullptr);
+	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_LineRing_0", 0.3f, m_pTransformCom->Get_Pos(), nullptr);
 
 	return NOERROR;
 }
@@ -119,7 +122,7 @@ void CDarkBoom::OnCollisionEnter()
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_MonsterProjectile", SCENE_STAGE));
 	}
 	else
-		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_STAGE));
+		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
 
 
 	// =============================================================================================

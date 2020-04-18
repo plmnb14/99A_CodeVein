@@ -39,9 +39,9 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 		m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this);
 		//m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this);
 
-		//if (CObject_Manager::Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))
+		//if (CObject_Manager::Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))
 		//{
-		//	if (50.f > D3DXVec3Length(&(m_pTransform->Get_Pos() - TARGET_TO_TRANS(CObject_Manager::Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos())))
+		//	if (50.f > D3DXVec3Length(&(m_pTransform->Get_Pos() - TARGET_TO_TRANS(CObject_Manager::Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos())))
 		//	{
 		//		m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
 		//	}
@@ -113,6 +113,14 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 		return E_FAIL;
 
 	m_matLastWVP = m_pTransform->Get_WorldMat() * ViewMatrix * ProjMatrix;
+
+	_bool bMotionBlur = true;
+	if (FAILED(pShader->Set_Bool("g_bMotionBlur", &bMotionBlur)))
+		return E_FAIL;
+
+	_float fBloomPower = 0.5f;
+	if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
+		return E_FAIL;
 
 	_ulong dwNumSubSet = m_pMesh_Static->Get_NumMaterials();
 

@@ -29,8 +29,8 @@ HRESULT CHunter::Ready_GameObject(void * pArg)
 	Ready_Collider();
 	Ready_Weapon();
 
-	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
-	m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE));
+	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 
 	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
 	m_tObjParam.fHp_Max = 9999180.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
@@ -245,14 +245,14 @@ void CHunter::Render_Collider()
 void CHunter::Enter_Collision()
 {
 	Check_CollisionPush();
-	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_STAGE));
+	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
 }
 
 void CHunter::Check_CollisionPush()
 {
 	list<CGameObject*> tmpList[3];
 
-	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_STAGE);
+	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
 	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
 	tmpList[2] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
 

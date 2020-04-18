@@ -113,7 +113,7 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 
 		if (!lstrcmp(szTextureFileName, L"T_Inner_Female1_C.tga"))
 		{
-			cout << "1" << endl;
+			//cout << "1" << endl;
 		}
 
 		//==================================================================================================================================

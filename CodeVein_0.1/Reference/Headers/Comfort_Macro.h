@@ -107,3 +107,11 @@
 #define TARGET_TO_TRANS(_Target)	static_cast<Engine::CTransform*>((_Target)->Get_Component(L"Com_Transform"))
 #define TARGET_TO_COL(_Target)		static_cast<Engine::CCollider*>((_Target)->Get_Component(L"Com_Collider"))
 #define TARGET_TO_NAV(_Target)		static_cast<Engine::CNavMesh*>((_Target)->Get_Component(L"Com_NavMesh"))
+
+////////////////////////////////////////////////////////////////////////////////////////////////////	
+
+#define SHAKE_CAM_lv1 CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(2.f, 10.f, 0.4f, 0.75f, CCamera::CAM_OSC_TYPE::POS_OSC);
+#define SHAKE_CAM_lv2 CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(4.f, 15.f, 0.7f, 0.8f, CCamera::CAM_OSC_TYPE::POS_OSC);
+#define SHAKE_CAM_lv3 CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(6.f, 20.f, 0.9f, 0.85f, CCamera::CAM_OSC_TYPE::POS_OSC);
+#define SHAKE_CAM_lv4 CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(8.f, 25.f, 1.1f, 0.85f, CCamera::CAM_OSC_TYPE::POS_OSC);
+#define SHAKE_CAM_lv5 CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(10.f, 30.f, 1.3f, 0.95f, CCamera::CAM_OSC_TYPE::POS_OSC);

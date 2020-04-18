@@ -35,7 +35,6 @@ HRESULT CFireGround::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
 
-
 	return NOERROR;
 }
 
@@ -61,10 +60,64 @@ _int CFireGround::Update_GameObject(_double TimeDelta)
 	// 진행중
 	else
 	{
-		// 생성 후 0.75초 뒤 폭발 시작
-		if (m_dCurTime > 0.75f)
-			m_bStartBoom = true;
+		if (m_dCurTime > 0.01f && !m_bEffectReadyFireOn)
+		{
+			for (_int i = 0; i < 14; i++)
+			{
+				_mat matRotY;
+				_v3 vDir = _v3(1.f, 0.f, 1.f);
+				D3DXMatrixIdentity(&matRotY);
 
+				D3DXMatrixRotationY(&matRotY, D3DXToRadian(_float(25.7 * i)));
+				D3DXVec3TransformNormal(&vDir, &vDir, &matRotY);
+				D3DXVec3Normalize(&vDir, &vDir);
+
+				_float fMinRange = 2.f;
+				_v3 vRandPos = vDir * (fMinRange);
+
+				CParticleMgr::Get_Instance()->Create_Effect_Delay(L"FireBoy_FireGround_ReadyFire", i * 0.03f, m_pTransformCom->Get_Pos() + vRandPos + _v3(0.f, 0.45f, 0.f), nullptr);
+			}
+			m_bEffectReadyFireOn = true;
+		}
+
+		if (m_dCurTime > 0.25f && !m_bEffectFloorOn)
+		{
+			CParticleMgr::Get_Instance()->Create_Effect(L"FireBoy_FireGround_Floor", m_pTransformCom->Get_Pos() + _v3(0.f, 0.2f, 0.f), nullptr);
+			m_bEffectFloorOn = true;
+		}
+
+		// 생성 후 0.75초 뒤 폭발 시작
+		if (m_dCurTime > 0.75f && !m_bStartBoom)
+		{
+			CParticleMgr::Get_Instance()->Create_Effect(L"FireBoy_FireGround_BoomCircle", m_pTransformCom->Get_Pos() + _v3(0.f, 0.f, 0.f), nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(L"FireBoy_FireGround_BoomParticle_01", m_pTransformCom->Get_Pos() + _v3(0.f, 0.f, 0.f), nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(L"FireBoy_FireGround_BoomParticle_02", m_pTransformCom->Get_Pos() + _v3(0.f, 0.f, 0.f), nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect_Delay(L"FireBoy_FireGround_BoomFire", 0.1f, m_pTransformCom->Get_Pos() + _v3(0.f, 0.f, 0.f), nullptr);
+			m_bStartBoom = true;
+		}
+
+		m_fEffectOffset += _float(TimeDelta);
+		if (m_bStartBoom && m_fEffectOffset > 0.6f)
+		{
+			m_fEffectOffset = 0.f;
+			for (_int i = 0; i < 10; i++)
+			{
+				_mat matRotY;
+				_v3 vDir = _v3(1.f, 0.f, 1.f);
+				D3DXMatrixIdentity(&matRotY);
+
+				D3DXMatrixRotationY(&matRotY, _float(D3DXToRadian(CCalculater::Random_Num_Double(0, 360))));
+				D3DXVec3TransformNormal(&vDir, &vDir, &matRotY);
+				D3DXVec3Normalize(&vDir, &vDir);
+
+				_float fMinRange = 2.f;
+				_v3 vRandPos = vDir * _float(CCalculater::Random_Num_Double(0, _double(fMinRange)));
+				
+				CParticleMgr::Get_Instance()->Create_Effect_Delay(L"FireBoy_FireGround_AfterFire_01", _float(CCalculater::Random_Num_Double(0, 1.0)), m_pTransformCom->Get_Pos() + vRandPos + _v3(0.f, 0.45f, 0.f), nullptr);
+				CParticleMgr::Get_Instance()->Create_Effect_Delay(L"FireBoy_FireGround_AfterFire_02", _float(CCalculater::Random_Num_Double(0, 1.0)), m_pTransformCom->Get_Pos() + vRandPos + _v3(0.f, 0.45f, 0.f), nullptr);
+				CParticleMgr::Get_Instance()->Create_Effect(L"FireBoy_FireGround_Particle",m_pTransformCom->Get_Pos(), nullptr);
+			}
+		}
 	}
 
 	//최초로 바닥에 불을 생성한 후  일정시간 뒤 불덩어리가 터지면서 순간적으로 충돌처리
@@ -82,9 +135,6 @@ _int CFireGround::Update_GameObject(_double TimeDelta)
 		{
 			m_bFinishCol = true;	// 충돌처리 End
 		}
-
-
-
 	}
 
 
@@ -145,7 +195,7 @@ void CFireGround::OnCollisionEnter()
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_MonsterProjectile", SCENE_STAGE));
 	}
 	else
-		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_STAGE));
+		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
 
 
 	// =============================================================================================

@@ -45,7 +45,7 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 
 	Update_Bone_Of_BlackBoard();
 
-	pBlackBoard->Set_Value(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos());
+	pBlackBoard->Set_Value(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos());
 	pBlackBoard->Set_Value(L"HP", m_tObjParam.fHp_Cur);
 	pBlackBoard->Set_Value(L"MAXHP", m_tObjParam.fHp_Max);
 	//pBlackBoard->Set_Value(L"HPRatio", 100);
@@ -74,7 +74,7 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Start_Game());
+	Start_Sel->Add_Child(Flash_Middle_Ground());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -1157,6 +1157,24 @@ CBT_Composite_Node * CQueensKnight::Flash_Middle_Ground()
 	CBT_SetValue* PushColOn = Node_BOOL_SetValue("PushColOn", L"PushCol", true);
 	CBT_SetValue* PhyColOn = Node_BOOL_SetValue("PhyColOn", L"PhyCol", true);
 
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("점멸 파티클", L"QueensKnight_Teleport_Particle", L"Self_MidPos", 0, 50, 0.15, 0);
+
+	CBT_StartDissolve* Dissolve0 = Node_StartDissolve("디졸브", this, 3.7f, false		, 0.2);
+	CBT_StartDissolve* Dissolve2 = Node_StartDissolve("디졸브", m_pSword, 3.7f, false	, 0.2);
+	CBT_StartDissolve* Dissolve4 = Node_StartDissolve("디졸브", m_pShield, 3.7f, false	, 0.2);
+	CBT_StartDissolve* Dissolve1 = Node_StartDissolve("디졸브", this, 3.7f, true		, 1.25);
+	CBT_StartDissolve* Dissolve3 = Node_StartDissolve("디졸브", m_pSword, 3.7f, true	, 1.25);
+	CBT_StartDissolve* Dissolve5 = Node_StartDissolve("디졸브", m_pShield, 3.7f, true	, 1.25);
+
+	Root_Parallel->Add_Service(Effect0);
+
+	Root_Parallel->Add_Service(Dissolve0);
+	Root_Parallel->Add_Service(Dissolve1);
+	Root_Parallel->Add_Service(Dissolve2);
+	Root_Parallel->Add_Service(Dissolve3);
+	Root_Parallel->Add_Service(Dissolve4);
+	Root_Parallel->Add_Service(Dissolve5);
+
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani38);
 	MainSeq->Add_Child(Show_Ani40);
@@ -1623,7 +1641,7 @@ HRESULT CQueensKnight::Update_Bone_Of_BlackBoard()
 HRESULT CQueensKnight::Update_Value_Of_BB()
 {
 	// 1. 플레이어 좌표 업데이트
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos());
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos());
 	// 2. 체력 업데이트
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"HP", m_tObjParam.fHp_Cur);
 	// 3. 체력 비율 업데이트
@@ -1655,7 +1673,7 @@ HRESULT CQueensKnight::Update_Value_Of_BB()
 	_v3 vSelfRight = *D3DXVec3Normalize(&_v3(), (_v3*)&matSelf.m[0]);
 
 	// 1. 점멸을 위한 플레이어 4방 위치.
-	_mat matPlayer = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_WorldMat();
+	_mat matPlayer = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_WorldMat();
 	_v3 vPlayerPos = *(_v3*)&matPlayer.m[3];
 	_v3 vPlayerLook = *D3DXVec3Normalize(&_v3(), (_v3*)&matPlayer.m[2]);
 	_v3 vPlayerRight = *D3DXVec3Normalize(&_v3(), (_v3*)&matPlayer.m[0]);
@@ -1738,7 +1756,7 @@ HRESULT CQueensKnight::Update_NF()
 	if (false == m_bFindPlayer)
 	{
 		// 플레이어 좌표 구함.
-		_v3 vPlayer_Pos = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos();
+		_v3 vPlayer_Pos = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos();
 
 		// 플레이어와 몬스터의 거리
 		_v3 vLengthTemp = vPlayer_Pos - m_pTransformCom->Get_Pos();
@@ -1880,7 +1898,7 @@ void CQueensKnight::Push_Collider()
 {
 	list<CGameObject*> tmpList[3];
 
-	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_STAGE);
+	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
 	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
 	tmpList[2] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
 
@@ -1923,7 +1941,7 @@ void CQueensKnight::OnCollisionEnter()
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_MonsterProjectile", SCENE_STAGE));
 	}
 	else
-		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_STAGE));
+		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
 
 
 	// =============================================================================================

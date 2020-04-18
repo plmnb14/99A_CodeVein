@@ -1,11 +1,7 @@
 #include "stdafx.h"
 #include "Scene_Stage_Base.h"
 
-#include "CameraMgr.h"
-#include "Effect.h"
-#include "UI.h"
 #include "UI_Manager.h"
-#include "ParticleMgr.h"
 
 CScene_Stage_Base::CScene_Stage_Base(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
@@ -15,24 +11,22 @@ CScene_Stage_Base::CScene_Stage_Base(LPDIRECT3DDEVICE9 pGraphic_Device)
 
 HRESULT CScene_Stage_Base::Ready_Scene()
 {
+	// 빛 세팅
 	if (FAILED(Ready_LightDesc()))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Player(L"Layer_Player")))
-		return E_FAIL;
+	// 메쉬 생성합니다.
+	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_00.dat");
 
-	if (m_bLoadStaticMesh)
-		g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Stage_Base.dat");
-
+	// 네비 메쉬 세팅 해주고요
 	m_pNavMesh = static_cast<Engine::CNavMesh*>(g_pManagement->Clone_Component(SCENE_STATIC, L"NavMesh"));
 	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_StageBase.dat");
 
-	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
+	// 플레이어의 네비 메쉬도 바꿔줍니다.
+	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	TARGET_TO_NAV(pPlayer)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_StageBase.dat");
 
-	static_cast<CNavMesh*>(pPlayer->Get_Component(L"NavMesh"))->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_StageBase.dat");
-	
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"Monster_PoisonButterfly", SCENE_STAGE, L"Layer_Monster")))
-		return E_FAIL;
+	pPlayer = nullptr;;
 
 	return S_OK;
 }
@@ -52,17 +46,6 @@ HRESULT CScene_Stage_Base::Render_Scene()
 	return S_OK;
 }
 
-HRESULT CScene_Stage_Base::Ready_Layer_Player(const _tchar * pLayerTag)
-{
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Player", SCENE_STAGE, pLayerTag)))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerHP", SCENE_STAGE, L"Layer_PlayerHP")))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerST", SCENE_STAGE, L"Layer_PlayerST")))
-		return E_FAIL;
-	return S_OK;
-}
-
 HRESULT CScene_Stage_Base::Ready_Layer_BackGround(const _tchar * pLayerTag)
 {
 	// For.Sky
@@ -75,6 +58,8 @@ HRESULT CScene_Stage_Base::Ready_Layer_BackGround(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage_Base::Ready_LightDesc()
 {
+	//디렉셔널 + 포인트 라이트로 바꿉니다.
+
 	D3DLIGHT9		LightDesc;
 	ZeroMemory(&LightDesc, sizeof(D3DLIGHT9));
 
