@@ -183,6 +183,9 @@ void CPlayer_Colleague::Update_Collider()
 
 void CPlayer_Colleague::Check_Do_List()
 {
+	if(nullptr == m_pTargetTransformCom)
+		return;
+
 	// 플레이어 쪽으로 몸 돌릴 때, 4.f 이상 떨어져있으면 플레이어가 보는 쪽으로 돌린다.
 	//// 4.f 이하면 몸을 돌리지 않고 그냥 온다
 	// 아니다 Idle 상태일 때만 돌리지 않는다.
@@ -353,7 +356,9 @@ HRESULT CPlayer_Colleague::SetUp_Default()
 	// 플레이어에서 10.f 떨어진 위치에서 최초 생성
 	//m_pTransformCom->Set_Pos(_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos().x - 1.f, TARGET_TO_TRANS(m_pTarget)->Get_Pos().y, TARGET_TO_TRANS(m_pTarget)->Get_Pos().z - 1.f));
 	m_pTransformCom->Set_Scale(V3_ONE);
-	m_pTargetTransformCom = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
+
+	if(nullptr != m_pTarget)
+		m_pTargetTransformCom = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 
 	m_tObjParam.fHp_Cur = 1000.f;
 	m_tObjParam.fHp_Max = 1000.f;

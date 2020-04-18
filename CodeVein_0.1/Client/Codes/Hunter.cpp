@@ -30,7 +30,9 @@ HRESULT CHunter::Ready_GameObject(void * pArg)
 	Ready_Weapon();
 
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
-	m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
+
+	if(nullptr != m_pTarget)
+		m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 
 	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
 	m_tObjParam.fHp_Max = 9999180.f; //4~5대 사망, 기본공격력 20+-5에서 피감소

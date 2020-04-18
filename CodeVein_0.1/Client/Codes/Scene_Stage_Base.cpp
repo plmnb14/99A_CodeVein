@@ -18,15 +18,8 @@ HRESULT CScene_Stage_Base::Ready_Scene()
 	// 메쉬 생성합니다.
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_00.dat");
 
-	// 네비 메쉬 세팅 해주고요
-	m_pNavMesh = static_cast<Engine::CNavMesh*>(g_pManagement->Clone_Component(SCENE_STATIC, L"NavMesh"));
-	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_StageBase.dat");
-
 	// 플레이어의 네비 메쉬도 바꿔줍니다.
-	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
-	TARGET_TO_NAV(pPlayer)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_StageBase.dat");
-
-	pPlayer = nullptr;;
+	Ready_Player();
 
 	return S_OK;
 }
@@ -40,8 +33,22 @@ _int CScene_Stage_Base::Update_Scene(_double TimeDelta)
 
 HRESULT CScene_Stage_Base::Render_Scene()
 {
-	IF_NOT_NULL(m_pNavMesh)
-		m_pNavMesh->Render_NaviMesh();
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage_Base::Ready_Player()
+{
+	CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+
+	pInstance->Set_Enable(true);
+
+	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_StageBase.dat");
+	TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
+	TARGET_TO_TRANS(pInstance)->Set_Angle(V3_NULL);
+
+	pInstance = nullptr;;
 
 	return S_OK;
 }
