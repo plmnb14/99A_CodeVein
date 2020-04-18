@@ -58,7 +58,7 @@ _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 
 	Click_Icon();
 	
-	CQuickSlot* pQuickSlot = static_cast<CQuickSlot*>(g_pManagement->Get_GameObjectBack(L"Layer_QuickSlot", SCENE_STAGE));
+	CQuickSlot* pQuickSlot = static_cast<CQuickSlot*>(g_pManagement->Get_GameObjectBack(L"Layer_QuickSlot", SCENE_MORTAL));
 
 	if (g_pInput_Device->Key_Up(DIK_ESCAPE))
 	{
@@ -66,8 +66,8 @@ _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 
 		if (m_bIsActive)
 		{
-			static_cast<CInventory*>(g_pManagement->Get_GameObjectBack(L"Layer_Inventory", SCENE_STAGE))->Set_Active(false);
-			static_cast<CInventory*>(g_pManagement->Get_GameObjectBack(L"Layer_Inventory", SCENE_STAGE))->Set_Detail(false);
+			static_cast<CInventory*>(g_pManagement->Get_GameObjectBack(L"Layer_Inventory", SCENE_MORTAL))->Set_Active(false);
+			static_cast<CInventory*>(g_pManagement->Get_GameObjectBack(L"Layer_Inventory", SCENE_MORTAL))->Set_Detail(false);
 			pQuickSlot->Set_Active(false);
 		}
 		else
@@ -79,12 +79,12 @@ _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 	
 	LOOP(2)
 	{
-		CWeapon_Inven* pWeaponInven = static_cast<CWeapon_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponInven", SCENE_STAGE));
+		CWeapon_Inven* pWeaponInven = static_cast<CWeapon_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponInven", SCENE_MORTAL));
 		m_pWeapon_Slot[i]->Set_Type(pWeaponInven->Get_UseWeaponState(i));
 		m_pWeapon_Slot[i]->Set_Active(m_bIsActive);
 	}
 	
-	CArmor_Inven* pArmorInven = static_cast<CArmor_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ArmorInven", SCENE_STAGE));
+	CArmor_Inven* pArmorInven = static_cast<CArmor_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ArmorInven", SCENE_MORTAL));
 	m_pArmor_Slot->Set_Type(pArmorInven->Get_UseArmorType());
 	m_pArmor_Slot->Set_Active(m_bIsActive);
 	
@@ -201,8 +201,8 @@ void CTotal_Inven::SetUp_Default()
 	pDesc->fPosY = 100.f;
 	pDesc->fSizeX = 40.f;
 	pDesc->fSizeY = 50.f;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_InvenIcon", SCENE_STAGE, L"Layer_InvenIcon", pDesc);
-	m_pIcon = static_cast<CInventory_Icon*>(g_pManagement->Get_GameObjectBack(L"Layer_InvenIcon", SCENE_STAGE));
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_InvenIcon", SCENE_MORTAL, L"Layer_InvenIcon", pDesc);
+	m_pIcon = static_cast<CInventory_Icon*>(g_pManagement->Get_GameObjectBack(L"Layer_InvenIcon", SCENE_MORTAL));
 	m_pIcon->Set_Type(CInventory_Icon::ICON_ALL);
 
 	LOOP(3)
@@ -215,14 +215,14 @@ void CTotal_Inven::SetUp_Default()
 
 		if (2 > i)
 		{
-			g_pManagement->Add_GameObject_ToLayer(L"GameObject_WeaponSlot", SCENE_STAGE, L"Layer_WeaponSlot", pDesc);
-			m_pWeapon_Slot[i] = static_cast<CWeapon_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponSlot", SCENE_STAGE));
+			g_pManagement->Add_GameObject_ToLayer(L"GameObject_WeaponSlot", SCENE_MORTAL, L"Layer_WeaponSlot", pDesc);
+			m_pWeapon_Slot[i] = static_cast<CWeapon_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponSlot", SCENE_MORTAL));
 			m_pWeapon_Slot[i]->Set_Type(WEAPON_None);
 		}
 		else if (2 == i)
 		{
-			g_pManagement->Add_GameObject_ToLayer(L"GameObject_ArmorSlot", SCENE_STAGE, L"Layer_ArmorSlot", pDesc);
-			m_pArmor_Slot = static_cast<CArmor_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_ArmorSlot", SCENE_STAGE));
+			g_pManagement->Add_GameObject_ToLayer(L"GameObject_ArmorSlot", SCENE_MORTAL, L"Layer_ArmorSlot", pDesc);
+			m_pArmor_Slot = static_cast<CArmor_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_ArmorSlot", SCENE_MORTAL));
 			m_pArmor_Slot->Set_Type(CArmor::ARMOR_END);
 		}
 	}
@@ -233,8 +233,8 @@ void CTotal_Inven::SetUp_Default()
 	pDesc->fSizeX = 90.f;
 	pDesc->fSizeY = 67.f;
 	pDesc->iIndex = 8;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_BloodCodeIcon", SCENE_STAGE, L"Layer_BloodCodeIcon", pDesc);
-	m_pBloodCode = static_cast<CBloodCode_Icon*>(g_pManagement->Get_GameObjectBack(L"Layer_BloodCodeIcon", SCENE_STAGE));
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_BloodCodeIcon", SCENE_MORTAL, L"Layer_BloodCodeIcon", pDesc);
+	m_pBloodCode = static_cast<CBloodCode_Icon*>(g_pManagement->Get_GameObjectBack(L"Layer_BloodCodeIcon", SCENE_MORTAL));
 
 	LOOP(8)
 	{
@@ -244,8 +244,8 @@ void CTotal_Inven::SetUp_Default()
 		pDesc->fSizeX = 40.f;
 		pDesc->fSizeY = 40.f;
 		pDesc->iIndex = 0;
-		g_pManagement->Add_GameObject_ToLayer(L"GameObject_InfoSlot", SCENE_STAGE, L"Layer_InfoSlot", pDesc);
-		m_pQuickSlotInfo[i] = static_cast<CInfo_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_InfoSlot", SCENE_STAGE));
+		g_pManagement->Add_GameObject_ToLayer(L"GameObject_InfoSlot", SCENE_MORTAL, L"Layer_InfoSlot", pDesc);
+		m_pQuickSlotInfo[i] = static_cast<CInfo_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_InfoSlot", SCENE_MORTAL));
 	}
 
 	LOOP(8)
@@ -271,12 +271,12 @@ void CTotal_Inven::Click_Icon()
 	if (m_pIcon->Pt_InRect() &&
 		g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
-		m_pInventory = static_cast<CInventory*>(g_pManagement->Get_GameObjectBack(L"Layer_Inventory", SCENE_STAGE));
+		m_pInventory = static_cast<CInventory*>(g_pManagement->Get_GameObjectBack(L"Layer_Inventory", SCENE_MORTAL));
 		m_pInventory->Set_Active(true);
 		m_bIsActive = false;
 	}
 	
-	vector<CExpendables_Slot*> vecQuickSlot = *static_cast<CExpendables_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendablesInven", SCENE_STAGE))->Get_QuickSlot();
+	vector<CExpendables_Slot*> vecQuickSlot = *static_cast<CExpendables_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendablesInven", SCENE_MORTAL))->Get_QuickSlot();
 
 	
 	for (_uint i = 0; i < 8; ++i)

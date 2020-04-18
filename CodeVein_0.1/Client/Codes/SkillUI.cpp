@@ -43,8 +43,8 @@ void CSkillUI::SetUp_Default()
 	
 	for (_uint i = 0; i < 8; ++i)
 	{
-		g_pManagement->Add_GameObject_ToLayer(L"GameObject_ActiveIcon", SCENE_STAGE, L"Layer_ActiveIcon");
-		m_pActive[i] = static_cast<CActive_Icon*>(g_pManagement->Get_GameObjectBack(L"Layer_ActiveIcon", SCENE_STAGE));
+		g_pManagement->Add_GameObject_ToLayer(L"GameObject_ActiveIcon", SCENE_MORTAL, L"Layer_ActiveIcon");
+		m_pActive[i] = static_cast<CActive_Icon*>(g_pManagement->Get_GameObjectBack(L"Layer_ActiveIcon", SCENE_MORTAL));
 		
 		if (i < 4)
 			m_pActive[i]->Set_UI_Size(64.f, 64.f);

@@ -131,17 +131,17 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 
 HRESULT CUI_Manager::SetUp_UILayer()
 {
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_QuickSlot", SCENE_STAGE, L"Layer_QuickSlot");
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ExpendablesInven", SCENE_STAGE, L"Layer_ExpendablesInven");
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_MaterialInven", SCENE_STAGE, L"Layer_MaterialInven");
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_WeaponInven", SCENE_STAGE, L"Layer_WeaponInven");
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ArmorInven", SCENE_STAGE, L"Layer_ArmorInven");
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_TotalInven", SCENE_STAGE, L"Layer_TotalInven");
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_Inventory", SCENE_STAGE, L"Layer_Inventory");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_QuickSlot", SCENE_MORTAL, L"Layer_QuickSlot");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ExpendablesInven", SCENE_MORTAL, L"Layer_ExpendablesInven");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_MaterialInven", SCENE_MORTAL, L"Layer_MaterialInven");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_WeaponInven", SCENE_MORTAL, L"Layer_WeaponInven");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ArmorInven", SCENE_MORTAL, L"Layer_ArmorInven");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_TotalInven", SCENE_MORTAL, L"Layer_TotalInven");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_Inventory", SCENE_MORTAL, L"Layer_Inventory");
 	
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_SkillUI", SCENE_STAGE, L"Layer_SkillUI");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_SkillUI", SCENE_MORTAL, L"Layer_SkillUI");
 	
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_StageSelectUI", SCENE_STAGE, L"Layer_StageSelectUI");
+	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_StageSelectUI", SCENE_STAGE, L"Layer_StageSelectUI");
 	return NOERROR;
 }
 
@@ -154,7 +154,7 @@ _int CUI_Manager::Update_UI()
 CExpendables::EXPEND_TYPE CUI_Manager::Use_Item()
 {
 	CQuickSlot* pQuickSlot = nullptr;
-	pQuickSlot = static_cast<CQuickSlot*>(g_pManagement->Get_GameObjectBack(L"Layer_QuickSlot", SCENE_STAGE));
+	pQuickSlot = static_cast<CQuickSlot*>(g_pManagement->Get_GameObjectBack(L"Layer_QuickSlot", SCENE_MORTAL));
 	if (nullptr == pQuickSlot)
 		return CExpendables::EXPEND_END;
 
@@ -164,7 +164,7 @@ CExpendables::EXPEND_TYPE CUI_Manager::Use_Item()
 WEAPON_STATE CUI_Manager::Get_UseWeaponState(_uint iIndex)
 {
 	CWeapon_Inven* pWeaponInven = nullptr;
-	pWeaponInven = static_cast<CWeapon_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponInven", SCENE_STAGE));
+	pWeaponInven = static_cast<CWeapon_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponInven", SCENE_MORTAL));
 	if (nullptr == pWeaponInven)
 		return WEAPON_None;
 
@@ -174,7 +174,7 @@ WEAPON_STATE CUI_Manager::Get_UseWeaponState(_uint iIndex)
 CArmor::ARMOR_TYPE CUI_Manager::Get_UseArmorType()
 {
 	CArmor_Inven* pArmorInven = nullptr;
-	pArmorInven = static_cast<CArmor_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ArmorInven", SCENE_STAGE));
+	pArmorInven = static_cast<CArmor_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ArmorInven", SCENE_MORTAL));
 	if (nullptr == pArmorInven)
 		return CArmor::ARMOR_END;
 	
@@ -193,7 +193,7 @@ void CUI_Manager::OnOff_BossUI(_bool bIsActive)
 void CUI_Manager::Add_Expendables(CExpendables::EXPEND_TYPE eType, _uint iCnt)
 {
 	CExpendables_Inven* pExInven = nullptr;
-	pExInven = static_cast<CExpendables_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendablesInven", SCENE_STAGE));
+	pExInven = static_cast<CExpendables_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendablesInven", SCENE_MORTAL));
 	if (nullptr == pExInven)
 		return;
 
@@ -203,7 +203,7 @@ void CUI_Manager::Add_Expendables(CExpendables::EXPEND_TYPE eType, _uint iCnt)
 void CUI_Manager::Add_Material(CMaterial::MATERIAL_TYPE eType, _uint iCnt)
 {
 	CMaterial_Inven* pMatInven = nullptr;
-	pMatInven = static_cast<CMaterial_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_MaterialInven", SCENE_STAGE));
+	pMatInven = static_cast<CMaterial_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_MaterialInven", SCENE_MORTAL));
 	if (nullptr == pMatInven)
 		return;
 
@@ -213,7 +213,7 @@ void CUI_Manager::Add_Material(CMaterial::MATERIAL_TYPE eType, _uint iCnt)
 void CUI_Manager::Add_Weapon(WEAPON_STATE eType)
 {
 	CWeapon_Inven* pWeaponInven = nullptr;
-	pWeaponInven = static_cast<CWeapon_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponInven", SCENE_STAGE));
+	pWeaponInven = static_cast<CWeapon_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponInven", SCENE_MORTAL));
 	if (nullptr == pWeaponInven)
 		return;
 
@@ -223,7 +223,7 @@ void CUI_Manager::Add_Weapon(WEAPON_STATE eType)
 void CUI_Manager::Add_Armor(CArmor::ARMOR_TYPE eType)
 {
 	CArmor_Inven* pArmorInven = nullptr;
-	pArmorInven = static_cast<CArmor_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ArmorInven", SCENE_STAGE));
+	pArmorInven = static_cast<CArmor_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ArmorInven", SCENE_MORTAL));
 	if (nullptr == pArmorInven)
 		return;
 

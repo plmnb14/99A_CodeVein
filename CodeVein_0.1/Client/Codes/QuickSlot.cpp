@@ -64,7 +64,7 @@ _int CQuickSlot::Update_GameObject(_double TimeDelta)
 	}
 	
 	// 소비템 창에서 실시간으로 퀵슬롯 등록 정보를 얻어와서 벡터에 저장	
-	m_vecQuickSlot = *static_cast<CExpendables_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendablesInven", SCENE_STAGE))->Get_QuickSlot();
+	m_vecQuickSlot = *static_cast<CExpendables_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendablesInven", SCENE_MORTAL))->Get_QuickSlot();
 	
 	
 	// ADD: 퀵슬롯 ->  방향으로 
@@ -199,8 +199,8 @@ void CQuickSlot::SetUp_Default()
 	pDesc->fSizeX = 20.f;
 	pDesc->fSizeY = 20.f;
 	pDesc->iIndex = 5;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ButtonUI", SCENE_STAGE, L"Layer_DecoUI", pDesc);
-	m_vecDecoUI.push_back(static_cast<CButton_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_DecoUI", SCENE_STAGE)));
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ButtonUI", SCENE_MORTAL, L"Layer_DecoUI", pDesc);
+	m_vecDecoUI.push_back(static_cast<CButton_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_DecoUI", SCENE_MORTAL)));
 
 	pDesc = new CUI::UI_DESC;
 	pDesc->fPosX = m_fPosX + 30.f;
@@ -208,8 +208,8 @@ void CQuickSlot::SetUp_Default()
 	pDesc->fSizeX = 20.f;
 	pDesc->fSizeY = 20.f;
 	pDesc->iIndex = 6;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ButtonUI", SCENE_STAGE, L"Layer_DecoUI", pDesc);
-	m_vecDecoUI.push_back(static_cast<CButton_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_DecoUI", SCENE_STAGE)));
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ButtonUI", SCENE_MORTAL, L"Layer_DecoUI", pDesc);
+	m_vecDecoUI.push_back(static_cast<CButton_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_DecoUI", SCENE_MORTAL)));
 
 	pDesc = new CUI::UI_DESC;
 	pDesc->fPosX = m_fPosX;
@@ -217,8 +217,8 @@ void CQuickSlot::SetUp_Default()
 	pDesc->fSizeX = 20.f;
 	pDesc->fSizeY = 20.f;
 	pDesc->iIndex = 0;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NumberUI", SCENE_STAGE, L"Layer_NumberUI", pDesc);
-	m_pNumberUI = static_cast<CNumberUI*>(g_pManagement->Get_GameObjectBack(L"Layer_NumberUI", SCENE_STAGE));
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NumberUI", SCENE_MORTAL, L"Layer_NumberUI", pDesc);
+	m_pNumberUI = static_cast<CNumberUI*>(g_pManagement->Get_GameObjectBack(L"Layer_NumberUI", SCENE_MORTAL));
 	m_pNumberUI->Set_Active(true);
 }
 
@@ -235,7 +235,7 @@ CExpendables::EXPEND_TYPE CQuickSlot::Use_Item()
 	
 	iType = m_vecQuickSlot[m_iSelect]->Get_Type();
 	
-	CExpendables_Inven* pExInven = static_cast<CExpendables_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendablesInven", SCENE_STAGE));
+	CExpendables_Inven* pExInven = static_cast<CExpendables_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendablesInven", SCENE_MORTAL));
 	pExInven->Use_Expendableas(m_vecQuickSlot[m_iSelect]);
 
 	return CExpendables::EXPEND_TYPE(iType);
