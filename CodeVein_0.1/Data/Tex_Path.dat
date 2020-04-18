@@ -87,6 +87,7 @@ Tex_MapPattern|MapPattern%d.tga|..\..\Client\Resources\Texture\TestUI\MapPattern
 Tex_Materials|Materials%d.tga|..\..\Client\Resources\Texture\TestUI\Materials\|0|5
 Tex_MenuWindow|MenuWindow%d.png|..\..\Client\Resources\Texture\TestUI\MenuWindow\|0|6
 Tex_Menu_Icon|Menu_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Menu_Icon\|0|8
+Tex_MistletoeUI|MistletoeUI%d.png|..\..\Client\Resources\Texture\TestUI\MistletoeUI\|0|1
 Tex_MonsterHPBar|MonsterHPBar%d.png|..\..\Client\Resources\Texture\TestUI\MonsterHPBar\|0|3
 Tex_Number|Number%d.tga|..\..\Client\Resources\Texture\TestUI\Number\|0|10
 Tex_Passive_Icon|Passive_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Passive_Icon\|0|89

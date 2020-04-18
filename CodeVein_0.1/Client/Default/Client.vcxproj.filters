@@ -325,6 +325,9 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\10. StageSelectUI\00. StageUI">
       <UniqueIdentifier>{505498ed-7266-43d8-a958-b58b7f9a17ca}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\11. MistletoeUI">
+      <UniqueIdentifier>{2802b2ac-0ec1-41b3-aadf-0bdde2ae11e1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -639,6 +642,9 @@
     <ClInclude Include="..\Headers\StageSelectUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\10. StageSelectUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\MistletoeUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\11. MistletoeUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -943,6 +949,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\StageSelectUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\10. StageSelectUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MistletoeUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\11. MistletoeUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
