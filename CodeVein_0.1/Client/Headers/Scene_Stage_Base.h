@@ -20,7 +20,6 @@ public:
 	virtual HRESULT Render_Scene();
 
 public:	
-	HRESULT Ready_Layer_Player(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_BackGround(const _tchar* pLayerTag); 
 
 private:

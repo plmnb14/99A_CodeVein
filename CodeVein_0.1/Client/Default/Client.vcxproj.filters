@@ -417,9 +417,6 @@
     <ClInclude Include="..\Headers\Scene_Stage_03.h">
       <Filter>01.Scene\06.Stage_03</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Button_UI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\Button_UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\YachaMan.h">
       <Filter>02.GameObject\Stage\2%29 Monster\YachaMan</Filter>
     </ClInclude>
@@ -639,6 +636,9 @@
     <ClInclude Include="..\Headers\StageSelectUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\10. StageSelectUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Button_UI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\Button_UI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -721,9 +721,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Scene_Stage_03.cpp">
       <Filter>01.Scene\06.Stage_03</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Button_UI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\Button_UI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\YachaMan.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster\YachaMan</Filter>
@@ -943,6 +940,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\StageSelectUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\10. StageSelectUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Button_UI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\Button_UI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

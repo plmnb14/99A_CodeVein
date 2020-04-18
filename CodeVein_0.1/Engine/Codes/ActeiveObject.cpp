@@ -49,7 +49,7 @@ _int CActiveObject::Update_GameObject(_double _TimeDelta)
 		if (nullptr != pManagement)
 		{
 			_v3 Test = V3_NULL;
-			Test = TARGET_TO_TRANS(pManagement->Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos();
+			Test = TARGET_TO_TRANS(pManagement->Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos();
 			_v3 TestVec3 = m_pTransform->Get_Pos() - Test;
 			if (V3_LENGTH(&TestVec3) <= 2.f && false == m_bCheck_Mistletoe)
 			{
@@ -107,7 +107,7 @@ _int CActiveObject::Update_GameObject(_double _TimeDelta)
 		float TestAngle = m_pTransform->Get_Angle(AXIS_X);
 		cout << TestAngle << endl;
 		_v3 Test = V3_NULL;
-		Test = TARGET_TO_TRANS(pManagement->Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos();
+		Test = TARGET_TO_TRANS(pManagement->Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos();
 		_v3 TestVec3 = m_pTransform->Get_Pos() - Test;
 
 		if (V3_LENGTH(&TestVec3) <= 5.f && true == m_bCheck_BoxLid)

@@ -176,10 +176,7 @@
     <ClInclude Include="..\Headers\BloodCode_Icon.h" />
     <ClInclude Include="..\Headers\BossDecoUI.h" />
     <ClInclude Include="..\Headers\BossHP.h" />
-    <ClInclude Include="..\Headers\Button_UI.h">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-    </ClInclude>
+    <ClInclude Include="..\Headers\Button_UI.h" />
     <ClInclude Include="..\Headers\ClickUI.h" />
     <ClInclude Include="..\Headers\Client_Defines.h" />
     <ClInclude Include="..\Headers\ColdBeam.h" />
@@ -281,10 +278,7 @@
     <ClCompile Include="..\Codes\BloodCode_Icon.cpp" />
     <ClCompile Include="..\Codes\BossDecoUI.cpp" />
     <ClCompile Include="..\Codes\BossHP.cpp" />
-    <ClCompile Include="..\Codes\Button_UI.cpp">
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
-      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
-    </ClCompile>
+    <ClCompile Include="..\Codes\Button_UI.cpp" />
     <ClCompile Include="..\Codes\ClickUI.cpp" />
     <ClCompile Include="..\Codes\ColdBeam.cpp" />
     <ClCompile Include="..\Codes\CursorEffect.cpp" />

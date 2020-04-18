@@ -119,7 +119,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	vector	vRim		= tex2D(RimSampler, In.vTexUV);
 	//vector	vSSAO	= tex2D(SSAOSampler, In.vTexUV);
 
-	Out.vColor = ((vDiffuse + vSpecular) * vShade) + (vEmissive * 20.f) + vRim;
+	Out.vColor = ((vDiffuse + vSpecular) * vShade) + (vEmissive * 5.f) + vRim;
 	//Out.vColor = (vDiffuse + vSpecular - vSSAO.x) * vShade;
 
 	return Out;

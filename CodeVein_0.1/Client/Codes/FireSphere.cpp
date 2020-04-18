@@ -151,7 +151,7 @@ void CFireSphere::OnCollisionEnter()
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_MonsterProjectile", SCENE_STAGE));
 	}
 	else
-		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_STAGE));
+		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
 
 
 	// =============================================================================================
@@ -224,7 +224,7 @@ void CFireSphere::Look_At_Target(_double dTimeDelta)
 	//  잠시 보류
 
 
-	//_v3 vPlayer_Pos = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos();
+	//_v3 vPlayer_Pos = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos();
 
 
 	//_v3 vOriginDir = *(_v3*)(&m_pTransformCom->Get_WorldMat().m[2]);

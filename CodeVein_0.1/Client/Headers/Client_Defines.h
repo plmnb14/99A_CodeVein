@@ -8,11 +8,6 @@ extern HWND			g_hWnd;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-//extern Engine::CManagement*			g_pManagement;
-//extern Engine::CTimer_Manager*		g_pTimer_Manager;
-//extern Engine::CFrameMgr*			g_pFrame_Manager;
-//extern Engine::CGraphic_Device*		g_pGraphic_Device;
-
 namespace Engine
 {
 	class CGraphic_Device;
@@ -32,6 +27,10 @@ extern Engine::CTexture*			g_pDissolveTexture;
 ///////////////////////////////////////////////////////////////////////////////
 
 //enum SCENEID { SCENE_STATIC, SCENE_LOGO, SCENE_STAGE, SCENE_END };
+
+extern bool		g_bOnStage[6];
+extern bool		g_bReleaseMode;
+extern short	g_sStageIdx_Cur;
 
 namespace Client {}
 

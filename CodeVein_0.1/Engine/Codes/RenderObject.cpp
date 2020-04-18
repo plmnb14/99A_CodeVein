@@ -39,9 +39,9 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 		m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this);
 		//m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this);
 
-		//if (CObject_Manager::Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))
+		//if (CObject_Manager::Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))
 		//{
-		//	if (50.f > D3DXVec3Length(&(m_pTransform->Get_Pos() - TARGET_TO_TRANS(CObject_Manager::Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos())))
+		//	if (50.f > D3DXVec3Length(&(m_pTransform->Get_Pos() - TARGET_TO_TRANS(CObject_Manager::Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos())))
 		//	{
 		//		m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
 		//	}

@@ -107,7 +107,7 @@ _int CMonsterUI::Update_GameObject(_double TimeDelta)
 	m_fMonsterHp = m_pTarget->Get_Target_Param().fHp_Cur;
 	m_fTotalHP = m_pTarget->Get_Target_Param().fHp_Max;
 
-	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
+	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
 	_v3 Player_D3 = TARGET_TO_TRANS(pPlayer)->Get_Pos() - TARGET_TO_TRANS(m_pTarget)->Get_Pos();
 

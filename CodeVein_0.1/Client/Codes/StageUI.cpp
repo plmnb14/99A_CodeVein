@@ -37,7 +37,7 @@ _int CStageUI::Update_GameObject(_double TimeDelta)
 
 	if (1.f > m_fAlpha && m_bIsActive)
 		m_fAlpha += _float(TimeDelta);
-	m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE));
+	m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 
 	if (m_pTarget)
 	{

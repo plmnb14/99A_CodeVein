@@ -31,7 +31,7 @@ public:
 	void Rotate_Z(_float _Angle);
 
 public:
-	void Camera_Oscillatation_SetUp(_float _fDuration, _float _fFrequency, _float _fPower, _float _fMuliply, CAM_OSC_TYPE _eOSCType);
+	void Camera_Oscillatation_SetUp(_float _fDuration, _float _fFrequency, _float _fPower, _float _fMuliply, CAM_OSC_TYPE _eOSCType = POS_OSC);
 	void Camera_Oscillate();
 	void Camera_Oscillate_Rotate();
 	void Camera_Oscillate_Position();
@@ -149,10 +149,10 @@ protected:
 	_float	m_fOSC_Power = 0.f; // °­µµ
 	_float	m_fOSC_Mutiply = 0.f;
 
-	_float	m_fOSC_Timer[3] = { 0.f };
+	_float	m_fOSC_Timer[3] = {};
 
-	_float  m_fOSCAxis_Gap[3] = { 0.f };
-	_bool  m_bOSCReverse[3] = { 0 };
+	_float  m_fOSCAxis_Gap[3] = {};
+	_bool  m_bOSCReverse[3] = {};
 	_bool  m_bOSCOrigin = false;
 
 	CAM_OSC_TYPE m_eOSCType = OSC_END;

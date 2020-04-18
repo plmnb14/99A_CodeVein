@@ -165,12 +165,12 @@ HRESULT CPlayer_Colleague::Ready_Weapon()
 
 HRESULT CPlayer_Colleague::SetUp_Default()
 {
-	m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE));
+	m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 
 	// 플레이어에서 10.f 떨어진 위치에서 최초 생성
 	m_pTransformCom->Set_Pos(_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos().x - 1.f, TARGET_TO_TRANS(m_pTarget)->Get_Pos().y, TARGET_TO_TRANS(m_pTarget)->Get_Pos().z - 1.f));
 	m_pTransformCom->Set_Scale(V3_ONE);
-	m_pTargetTransformCom = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE));
+	m_pTargetTransformCom = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 
 
 	m_tObjParam.bCanHit = true;
@@ -192,7 +192,7 @@ _bool CPlayer_Colleague::Checking_Player()
 
 	// 만약 네비메쉬를 벗어났다면 긴급탈출하는 것도 있어야 함
 
-	_v3 pPlayerPos = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos();
+	_v3 pPlayerPos = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos();
 
 	if (V3_LENGTH(&(m_pTransformCom->Get_Pos() - pPlayerPos)) > 4.f)
 		m_bChecking_With_Player = true;

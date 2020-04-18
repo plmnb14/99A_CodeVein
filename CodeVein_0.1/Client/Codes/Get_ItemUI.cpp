@@ -204,7 +204,7 @@ void CGet_ItemUI::SetUp_State(_double TimeDelta)
 	// 지금은 더미로 했지만 나중에 아이템 생성되고 나면 생성된 아이템에 따라 아이템 이름을(enum값을?)
 	// 변수에다가 받아와서 해당 이름을 띄운다
 
-	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
+	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
 	_v3 Player_D3 = TARGET_TO_TRANS(m_pTarget)->Get_Pos() - TARGET_TO_TRANS(pPlayer)->Get_Pos();
 
