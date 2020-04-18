@@ -1,5 +1,8 @@
 #include "stdafx.h"
 #include "..\Headers\MistletoeUI.h"
+#include "Player.h"
+#include "MistletoeOptionUI.h"
+#include "StageSelectUI.h"
 
 CMistletoeUI::CMistletoeUI(_Device pDevice)
 	: CUI(pDevice)
@@ -23,6 +26,21 @@ HRESULT CMistletoeUI::Ready_GameObject(void * pArg)
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 	m_bIsActive = false;
+	m_fAlpha = 1.f;
+
+	LOOP(3)
+	{
+		g_pManagement->Add_GameObject_ToLayer(L"GameObject_MistletoeOptionUI", SCENE_STAGE, L"Layer_MistletoeOptionUI");
+		CMistletoeOptionUI* pOption = static_cast<CMistletoeOptionUI*>(g_pManagement->Get_GameObjectBack(L"Layer_MistletoeOptionUI", SCENE_STAGE));
+		if (nullptr == pOption)
+			return E_FAIL;
+		pOption->Set_UI_Index(i + 1);
+
+		m_vecOption.push_back(pOption);
+	}
+	
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_StageSelectUI", SCENE_STAGE, L"Layer_StageSelectUI");
+	m_pStageSelectUI = static_cast<CStageSelectUI*>(g_pManagement->Get_GameObjectBack(L"Layer_StageSelectUI", SCENE_STAGE));
 	return NOERROR;
 }
 
@@ -31,6 +49,56 @@ _int CMistletoeUI::Update_GameObject(_double TimeDelta)
 	CUI::Update_GameObject(TimeDelta);
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 	Compute_ViewZ(&m_pTransformCom->Get_Pos());
+
+	m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
+	if (nullptr == m_pTarget)
+		return NO_EVENT;
+
+	if (g_pInput_Device->Key_Up(DIK_O))
+		m_bIsActive = !m_bIsActive;
+
+	_v3 vAngle = TARGET_TO_TRANS(m_pTarget)->Get_Angle();
+	vAngle.y = vAngle.y + D3DXToRadian(45.f);
+	m_pTransformCom->Set_Angle(vAngle);
+	_v3 vLookZ = TARGET_TO_TRANS(m_pTarget)->Get_Axis(AXIS_Z);
+	_v3 vLookX = TARGET_TO_TRANS(m_pTarget)->Get_Axis(AXIS_X);
+	
+	_v3 vDir = *V3_NORMAL_SELF(&(*V3_NORMAL_SELF(&vLookX)+ *V3_NORMAL_SELF(&vLookZ) + _v3(0.f, 1.5f, 0.f))) * 1.2f;
+	_v3 vPosition = TARGET_TO_TRANS(m_pTarget)->Get_Pos() + vDir;
+	m_pTransformCom->Set_Pos(vPosition);
+	m_pTransformCom->Set_Scale(_v3(0.87f, 1.f, 0.f));
+	
+
+	_v3 vLength = TARGET_TO_TRANS(m_pTarget)->Get_Pos() + vDir * 0.999f;
+
+	
+	LOOP(3)
+	{
+		TARGET_TO_TRANS(m_vecOption[i])->Set_Angle(m_pTransformCom->Get_Angle());
+		TARGET_TO_TRANS(m_vecOption[i])->Set_Scale(_v3(1.f, 0.1476f, 0.f));
+		TARGET_TO_TRANS(m_vecOption[i])->Set_Pos(vLength + _v3(0.f, _float(i) * -0.2f + 0.2f, 0.f));
+		m_vecOption[i]->Set_ViewZ(m_fViewZ - 0.1f);
+		m_vecOption[i]->Set_Active(m_bIsActive);
+
+		(i == m_iSelectIndex) ? (m_vecOption[i]->Set_Select(true)) : (m_vecOption[i]->Set_Select(false));
+	}
+
+	if (g_pInput_Device->Key_Up(DIK_K) && m_iSelectIndex < m_vecOption.size() - 1)
+		m_iSelectIndex++;
+	if (g_pInput_Device->Key_Up(DIK_J) && m_iSelectIndex > 0)
+		m_iSelectIndex--;
+
+	if (g_pInput_Device->Key_Up(DIK_P) && m_bIsActive)
+	{
+		switch (m_iSelectIndex)
+		{
+		case 0:
+			m_pStageSelectUI->Set_Active(!m_pStageSelectUI->Get_Active());
+			break;
+		}
+		
+	}
+	
 	return NO_EVENT;
 }
 
@@ -47,6 +115,8 @@ _int CMistletoeUI::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CMistletoeUI::Render_GameObject()
 {
+	if (!m_bIsActive)
+		return NOERROR;
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
@@ -101,7 +171,7 @@ HRESULT CMistletoeUI::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, m_iIndex)))
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 0)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
 		return E_FAIL;

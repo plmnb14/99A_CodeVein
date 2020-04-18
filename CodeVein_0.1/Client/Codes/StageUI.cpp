@@ -33,6 +33,8 @@ HRESULT CStageUI::Ready_GameObject(void * pArg)
 _int CStageUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
+	if (m_bIsDead)
+		return DEAD_OBJ;
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	if (1.f > m_fAlpha && m_bIsActive)
@@ -89,6 +91,8 @@ _int CStageUI::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CStageUI::Render_GameObject()
 {
+	if (m_fAlpha <= 0.f)
+		return NOERROR;
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;

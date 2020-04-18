@@ -4,6 +4,8 @@
 #include "UI.h"
 
 BEGIN(Client)
+class CMistletoeOptionUI;
+class CStageSelectUI;
 class CMistletoeUI final : public CUI
 {
 private:
@@ -31,6 +33,9 @@ private:
 
 private:
 	_float					m_fAlpha = 0.f;
+	vector<CMistletoeOptionUI*> m_vecOption;
+	_uint					m_iSelectIndex = 0;
+	CStageSelectUI*			m_pStageSelectUI = nullptr;
 
 public:
 	static CMistletoeUI*	Create(_Device pGraphic_Device);

@@ -34,6 +34,8 @@
 #include "LoadingBar.h"
 #include "StageUI.h"
 #include "StageSelectUI.h"
+#include "MistletoeUI.h"
+#include "MistletoeOptionUI.h"
 
 #include "MassageUI.h"
 #include "Get_ItemUI.h"
@@ -115,6 +117,10 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_StageSelectUI", CStageSelectUI::Create(pDevice))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MistletoeUI", CMistletoeUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MistletoeOptionUI", CMistletoeOptionUI::Create(pDevice))))
+		return E_FAIL;
 	
 	//////////////// Chae
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BossMassageUI", CMassageUI::Create(pDevice))))
@@ -141,7 +147,9 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_SkillUI", SCENE_MORTAL, L"Layer_SkillUI");
 	
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_MistletoeUI", SCENE_STAGE, L"Layer_MistletoeUI");
 	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_StageSelectUI", SCENE_STAGE, L"Layer_StageSelectUI");
+
 	return NOERROR;
 }
 
@@ -249,6 +257,12 @@ void CUI_Manager::Set_BossHP_Active(_bool bIsActive)
 		return;
 
 	pBossUI->Set_Active(false);
+}
+
+void CUI_Manager::Active_StageUI()
+{
+	static_cast<CStageSelectUI*>(g_pManagement->Get_GameObjectBack(L"Layer_StageSelectUI", SCENE_STAGE))->Set_Active(
+		!static_cast<CStageSelectUI*>(g_pManagement->Get_GameObjectBack(L"Layer_StageSelectUI", SCENE_STAGE))->Get_Active());
 }
 
 void CUI_Manager::Free()
