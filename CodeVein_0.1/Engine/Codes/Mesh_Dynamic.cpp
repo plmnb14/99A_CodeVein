@@ -255,6 +255,7 @@ void CMesh_Dynamic::Reset_OldIndx(_short _sAniCtrlNum)
 	{
 		m_pAniCtrl_Upper->Reset_OldIdx();
 		m_pAniCtrl_RightArm->Reset_OldIdx();
+		m_pAniCtrl_LeftArm->Reset_OldIdx();
 	}
 }
 

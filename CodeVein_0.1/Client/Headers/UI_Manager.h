@@ -33,6 +33,7 @@ public:
 	void Add_Armor(CArmor::ARMOR_TYPE eType); // 아장 획득
 	_bool Get_UI_Active(const _tchar* pLayerTag); // 해당 레이어 태그 입력하면 UI 활성화 여부 반환
 	void Set_UI_Active(const _tchar* pLayerTag, _bool bIsActive); // 해당 레이어의 UI 활성화/비활성화
+	void Set_BossHP_Active(_bool bIsActive);
 
 private:
 	_uint m_uiCoundItem = 0;

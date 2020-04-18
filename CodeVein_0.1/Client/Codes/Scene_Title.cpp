@@ -10,9 +10,13 @@
 #include "BackGround.h"
 #include "Management.h"
 #include "CameraMgr.h"
+
 #include "LogoBtn.h"
+#include "Player.h"
 
 #include "UI_Manager.h"
+#include "LoadingScreen.h"
+#include "LoadingBar.h"
 
 CScene_Title::CScene_Title(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
@@ -27,8 +31,8 @@ HRESULT CScene_Title::Ready_Scene()
 
 	if (FAILED(Ready_Prototype_GameObject()))
 		return E_FAIL;
-
-	if (FAILED(Ready_Layer_LogoBtn(L"Layer_LogoBtn")))
+	
+	if (FAILED(Ready_Layer_LoadingUI(L"Layer_LoadingUI")))
 		return E_FAIL;
 
 	// 파티클
@@ -39,12 +43,16 @@ HRESULT CScene_Title::Ready_Scene()
 	g_pDissolveTexture = CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Effect/Noise/Noise_13.tga");
 
 	m_pLoading = CLoading::Create(m_pGraphic_Device, SCENE_STAGE);
+
 	if (nullptr == m_pLoading)
 		return E_FAIL;
 
 	m_pLoading->Set_LoadStaticMesh(m_bLoadStaticMesh);
 
 	CUI_Manager::Get_Instance()->SetUp_UILayer();
+
+	if (FAILED(Ready_Player()))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -55,6 +63,8 @@ _int CScene_Title::Update_Scene(_double TimeDelta)
 
 	if (true == m_pLoading->Get_Finish())
 	{
+		static_cast<CLoadingBar*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingUI", SCENE_TITLE))->Set_Finish();
+
 		cout << "로드 되었습니다!! 넘어가세요!!" << endl;
 	}
 
@@ -130,35 +140,60 @@ HRESULT CScene_Title::Render_Scene()
 
 HRESULT CScene_Title::Ready_Prototype_GameObject()
 {
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LogoBtn", CLogoBtn::Create(m_pGraphic_Device))))
-		return E_FAIL;
-
 	CCameraMgr::Get_Instance()->Reserve_ContainerSize(2);
 	CCameraMgr::Get_Instance()->Ready_Camera(m_pGraphic_Device, DYNAMIC_CAM, L"Tool_FreeCam", TOOL_VIEW, DEFAULT_MODE);
 	CCameraMgr::Get_Instance()->Set_MainCamera(DYNAMIC_CAM, L"Tool_FreeCam");
 	CCameraMgr::Get_Instance()->Set_MainPos(_v3{ 0,3,-5 });
 
-	return S_OK;
-}
-
-HRESULT CScene_Title::Ready_Layer_BackGround(const _tchar * pLayerTag)
-{
-	return S_OK;
-}
-
-HRESULT CScene_Title::Ready_Layer_LogoBtn(const _tchar * pLayerTag)
-{
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LogoBtn", SCENE_TITLE, pLayerTag)))
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LoadingScreen", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LoadingScreen/LoadingScreen0.tga", 1))))
 		return E_FAIL;
-
-	return NOERROR;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LoadingScreen", CLoadingScreen::Create(m_pGraphic_Device))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LoadingBar", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LoadingBar/LoadingBar%d.png", 10))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LoadingBar", CLoadingBar::Create(m_pGraphic_Device))))
+		return E_FAIL;
+	
+	return S_OK;
 }
+
+HRESULT CScene_Title::Ready_Layer_LoadingUI(const _tchar * pLayerTag)
+{
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LoadingScreen", SCENE_TITLE, L"Layer_LoadingScreen")))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LoadingBar", SCENE_TITLE, pLayerTag)))
+		return E_FAIL;
+	return S_OK;
+}
+
 
 HRESULT CScene_Title::Temp_Stage_Loader(const _tchar * _DatPath)
 {
 	return S_OK;
 }
 
+
+HRESULT CScene_Title::Ready_Player()
+{
+	// 일단 플레이어 레이어 우선 추가
+	if (FAILED(g_pManagement->Add_Layer(SCENE_MORTAL, L"Layer_Player")))
+		return E_FAIL;
+
+	// 플레이어 원형 생성
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Player", CPlayer::Create(m_pGraphic_Device))))
+		return E_FAIL;
+
+	// 플레이어 생성 하고
+	CGameObject* pPlayer =  g_pManagement->Clone_GameObject_Return(L"GameObject_Player", nullptr);
+
+	// 현재 스테이지가 아니니, 꺼둔다.
+	pPlayer->Set_Enable(false);
+
+	// Mortal 레이어는 스테틱보단 아래 단계이지만, 스테이지가 지나도 삭제되지 않습니다.
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pPlayer, SCENE_MORTAL, L"Layer_Player", nullptr);
+
+	return S_OK;
+}
 
 CScene_Title * CScene_Title::Create(_Device pGraphic_Device , _short _sStageNum, _bool _bLoadStatic)
 {

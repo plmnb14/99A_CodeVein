@@ -410,6 +410,19 @@ PS_OUT PS_MESHEFFECT(PS_IN In)
 		// End ==========================================================================================
 	}
 
+	if (g_bDissolve)
+	{
+		float4 fxColor = tex2D(DiffuseSampler, In.vTexUV);
+
+		if (Out.vColor.a == 0.f)
+			clip(-1);
+
+		if (fxColor.r >= g_fDissolve)
+			Out.vColor.a = 1;
+		else
+			Out.vColor.a = 0;
+	}
+
 	Out.vColor.a *= g_fAlpha;
 
 	if(g_bReverseColor)

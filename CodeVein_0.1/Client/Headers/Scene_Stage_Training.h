@@ -21,7 +21,6 @@ public:
 
 public:
 	HRESULT Ready_Layer_Player(const _tchar* pLayerTag);
-	HRESULT Ready_Layer_Dummy(const _tchar* pLayerTag);
 	HRESULT Ready_Layer_Enemies();
 	HRESULT Ready_Layer_Environment();
 

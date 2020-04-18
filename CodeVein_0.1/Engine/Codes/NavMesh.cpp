@@ -39,7 +39,7 @@ HRESULT CNavMesh::Ready_NaviMesh(_Device _pGraphicDev, const _tchar * _NavMeshPa
 {
 	m_vecSubset_Cell.reserve(1000);
 
-	_tchar FullPathName[MAX_STR] = L"../../Data/";
+	_tchar FullPathName[MAX_STR] = L"../../Data/Load_NavData/";
 	lstrcat(FullPathName, _NavMeshPath);
 
 	wifstream fin;

@@ -189,7 +189,7 @@ HRESULT CObject_Manager::LoadObjectPrototypes_FromPath(_Device pGraphicDev, cons
 
 	_v3    vVtx[3];
 
-	_tchar  szPath[MAX_STR] = L"../../Data/";
+	_tchar  szPath[MAX_STR] = L"../../Data/Load_StageData/";
 
 	// 파일명과 경로를 조합하여 최종 파일경로 산출 
 	lstrcat(szPath, szImgPath);

@@ -73,7 +73,7 @@ _int CPoisonChaseBullet::Update_GameObject(_double TimeDelta)
 	Check_PhyCollider();
 	OnCollisionEnter();
 
-	_v3 vPlayerPos = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE))->Get_Pos();
+	_v3 vPlayerPos = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos();
 	m_vDir = *D3DXVec3Normalize(&_v3(), &( (vPlayerPos + _v3(0.f, 1.f, 0.f)) - m_pTransformCom->Get_Pos()));
 
 	m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
@@ -207,7 +207,7 @@ void CPoisonChaseBullet::OnCollisionEnter()
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_MonsterProjectile", SCENE_STAGE));
 	}
 	else
-		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_STAGE));
+		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
 
 
 	// =============================================================================================

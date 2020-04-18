@@ -81,6 +81,22 @@ _int CMeshEffect::Update_GameObject(_double TimeDelta)
 	Check_Alpha(TimeDelta);
 	Check_Color(TimeDelta);
 
+
+	// 어쩔수 없이 Update에서 호출
+	if (m_bIsDead || m_fCreateDelay > 0.f)
+		return S_OK;
+
+	RENDERID eGroup = RENDERID::RENDER_EFFECT;
+	if (m_iPass == 2)
+		eGroup = RENDERID::RENDER_EFFECT;
+	else
+		eGroup = RENDERID::RENDER_DISTORTION;
+
+	if (FAILED(m_pRendererCom->Add_RenderList(eGroup, this)))
+		return E_FAIL;
+	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -93,16 +109,7 @@ _int CMeshEffect::Late_Update_GameObject(_double TimeDelta)
 	if (m_bIsDead || m_fCreateDelay > 0.f)
 		return S_OK;
 
-	RENDERID eGroup = RENDERID::RENDER_EFFECT;
-	if (m_iPass == 2)
-		eGroup = RENDERID::RENDER_EFFECT;
-	else
-		eGroup = RENDERID::RENDER_DISTORTION;
-
-	if (FAILED(m_pRendererCom->Add_RenderList(eGroup, this)))
-		return E_FAIL;
-
-	return _int();
+	return S_OK;
 }
 
 HRESULT CMeshEffect::Render_GameObject()
@@ -178,6 +185,51 @@ HRESULT CMeshEffect::Render_GameObject_SetShader(CShader * pShader)
 
 	}
 	pShader->End_Pass();
+
+	return NOERROR;
+}
+
+HRESULT CMeshEffect::Render_GameObject_SetPass(CShader* pShader, _int iPass)
+{
+	if (nullptr == pShader ||
+		nullptr == m_pMeshCom)
+		return E_FAIL;
+
+	_mat		ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+
+	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
+		return E_FAIL;
+
+	if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
+		return E_FAIL;
+
+	m_matLastWVP = m_pTransformCom->Get_WorldMat() * ViewMatrix * ProjMatrix;
+
+	_bool bMotionBlur = false;
+	if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+		return E_FAIL;
+
+	_float fBloomPower = 1.5f;
+	if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
+		return E_FAIL;
+
+	_ulong dwNumSubSet = m_pMeshCom->Get_NumMaterials();
+
+	for (_ulong i = 0; i < dwNumSubSet; ++i)
+	{
+		pShader->Begin_Pass(iPass);
+
+		pShader->Commit_Changes();
+
+		m_pMeshCom->Render_Mesh(i);
+
+		pShader->End_Pass();
+	}
 
 	return NOERROR;
 }
@@ -285,6 +337,9 @@ void CMeshEffect::Setup_Info()
 		if (m_pDesc->pTargetTrans)
 			vPos += m_pDesc->pTargetTrans->Get_Pos();
 
+		if (m_pTargetMatrix)
+			vPos += _v3(m_pTargetMatrix->_41, m_pTargetMatrix->_42, m_pTargetMatrix->_43);
+
 		m_pTransformCom->Set_Pos(vPos);
 		m_vLerpPos = (vPos);
 	}
@@ -336,6 +391,7 @@ void CMeshEffect::Check_Move(_double TimeDelta)
 
 	_v3 vTargetPos = V3_NULL;
 	if (m_pDesc->pTargetTrans) vTargetPos = m_pDesc->pTargetTrans->Get_Pos();
+	if (m_pTargetMatrix) vTargetPos += _v3(m_pTargetMatrix->_41, m_pTargetMatrix->_42, m_pTargetMatrix->_43);
 
 	if (m_pInfo->bDirMove)
 	{
@@ -491,6 +547,14 @@ void CMeshEffect::Check_Alpha(_double TimeDelta)
 		m_fAlpha = 0.f;
 	if (m_pInfo->fMaxAlpha < m_fAlpha)
 		m_fAlpha = m_pInfo->fMaxAlpha;
+
+	m_fDissolve += _float(TimeDelta) * m_fAlphaSpeed;
+
+	if (m_fDissolve > 1.f)
+	{
+		m_fDissolve = 1.f;
+		m_bDissolveToggle = !m_bDissolveToggle;
+	}
 }
 
 void CMeshEffect::Check_Color(_double TimeDelta)
@@ -570,6 +634,11 @@ HRESULT CMeshEffect::SetUp_ConstantTable(CShader* pShader)
 	if (FAILED(pShader->Set_Bool("g_bReverseColor", m_pInfo->bRevColor)))
 		return E_FAIL;
 	if (FAILED(pShader->Set_Bool("g_bUseRGBA", m_pInfo->bUseRGBA)))
+		return E_FAIL;
+
+	if (FAILED(pShader->Set_Bool("g_bDissolve", m_pInfo->bDissolve)))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_fDissolve", &m_fDissolve, sizeof(_float))))
 		return E_FAIL;
 
 	Safe_Release(pManagement);

@@ -90,6 +90,7 @@ HRESULT CManagement::Clear_Instance(_uint iSceneIndex)
 
 	if (FAILED(m_pObject_Manager->Clear_Instance(iSceneIndex)))
 		return E_FAIL;
+
 	if (FAILED(m_pComponent_Manager->Clear_Instance(iSceneIndex)))
 		return E_FAIL;
 

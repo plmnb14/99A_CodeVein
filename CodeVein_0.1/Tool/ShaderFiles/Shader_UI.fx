@@ -198,4 +198,13 @@ technique Default_Technique
 		vertexshader = compile vs_3_0 VS_MAIN();
 		pixelshader = compile ps_3_0 PS_UI_FADE();
 	}
+	pass	Logo_BackUI_Rendering
+	{
+		AlphaBlendEnable = true;
+		srcblend = srcalpha;
+		destblend = invsrcalpha;
+
+		vertexshader = compile vs_3_0 VS_MAIN();
+		pixelshader = compile ps_3_0 PS_TRANSLATION_TEX_UV();
+	}
 }

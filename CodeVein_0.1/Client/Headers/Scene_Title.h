@@ -17,8 +17,7 @@ public:
 	virtual HRESULT Render_Scene();
 public:
 	HRESULT Ready_Prototype_GameObject();
-	HRESULT Ready_Layer_BackGround(const _tchar* pLayerTag);
-	HRESULT Ready_Layer_LogoBtn(const _tchar* pLayerTag);
+	HRESULT Ready_Layer_LoadingUI(const _tchar* pLayerTag);
 
 public:
 	HRESULT Temp_Stage_Loader(const _tchar* _DatPath);
@@ -28,6 +27,9 @@ private:
 
 private:
 	CLoading*			m_pLoading = nullptr;
+
+private:
+	HRESULT Ready_Player();
 
 public:
 	static CScene_Title* Create(_Device pGraphic_Device, _short _sStageNum, _bool _bLoadStatic);
