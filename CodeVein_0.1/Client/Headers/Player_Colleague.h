@@ -38,12 +38,16 @@ private:
 	HRESULT Add_Component();
 	HRESULT	SetUp_Default();
 	HRESULT SetUp_ConstantTable();
+
+private:
 	HRESULT	Ready_BoneMatrix();
 	HRESULT	Ready_Collider();
 	HRESULT	Ready_Weapon();
 
+
 private:
 	void	Update_Collider();
+	void	Render_Collider();
 
 private:
 	void	Check_Do_List();

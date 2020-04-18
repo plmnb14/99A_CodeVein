@@ -111,6 +111,10 @@ HRESULT CPlayer_Colleague::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_DefaultBox", L"Com_StaticMesh", (CComponent**)&m_pStaticMesh)))
 		return E_FAIL;
 
+	//// for.Com_Mesh
+	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Louis", L"Com_StaticMesh", (CComponent**)&m_pDynamicMesh)))
+	//	return E_FAIL;
+
 	// for.Com_NavMesh
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMesh)))
 		return E_FAIL;
@@ -169,6 +173,21 @@ HRESULT CPlayer_Colleague::Ready_BoneMatrix()
 
 HRESULT CPlayer_Colleague::Ready_Collider()
 {
+	//m_vecPhysicCol;		// 충돌 체크용 콜라이더 벡터
+	//m_vecAttackCol;		// 공격용 콜라이더 벡터
+	m_vecPhysicCol.reserve(3);
+	m_vecAttackCol.reserve(1);
+
+	// 경계 체크용 Collider - 범위 내에 있는지? -> 있으면 바로 공격하고 멀리있으면 간 좀 보다가 가서 때린다던지 하는겅
+	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
+	IF_NULL_VALUE_RETURN(pCollider);
+
+	_float fRadius = 1.f;
+
+	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
+	pCollider->Set_Dynamic(true);
+	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Range]->_41, m_matBone[Bone_Range]->_42, m_matBone[Bone_Range]->_43));
+
 	return S_OK;
 }
 
@@ -178,6 +197,10 @@ HRESULT CPlayer_Colleague::Ready_Weapon()
 }
 
 void CPlayer_Colleague::Update_Collider()
+{
+}
+
+void CPlayer_Colleague::Render_Collider()
 {
 }
 
@@ -193,7 +216,12 @@ void CPlayer_Colleague::Check_Do_List()
 	// - 범위 내에 몬스터가 있는지
 	// - 없으면 플레이어가 있는지
 
+	
 	CGameObject* pMon_Target = g_pManagement->Get_GameObjectBack(L"Layer_Monster", SCENE_STAGE);
+
+	if (nullptr == pMon_Target)
+		return;
+
 	_float My_MonLength = V3_LENGTH(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(pMon_Target)->Get_Pos()));
 
 	_v3 pPlayerPos = m_pTargetTransformCom->Get_Pos();
@@ -348,6 +376,7 @@ void CPlayer_Colleague::Set_AniEvent()
 
 HRESULT CPlayer_Colleague::SetUp_Default()
 {
+	IF_NULL_VALUE_RETURN(m_pTarget);
 	m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 
 	// 플레이어에서 10.f 떨어진 위치에서 최초 생성
