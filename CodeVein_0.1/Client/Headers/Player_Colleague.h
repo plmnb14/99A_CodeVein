@@ -15,6 +15,7 @@ public:
 	enum Colleague_MoveType { Coll_Idle, Coll_Move, Coll_Attack, Coll_Hit, Coll_Dead };
 	enum Coll_Movement { Move_Walk, Move_Run, Move_Dodge };
 	enum Coll_IdleMoment { Idle_Waiting, Idle_Attwaiting, Idle_Guard };
+	enum Coll_Attackmoment { Att_Idle, Att_Skill };
 	enum Move_Direction { Move_Front, Move_Back, Move_Left, Move_Right, Move_End };
 
 private:
@@ -42,20 +43,28 @@ private:
 	HRESULT	Ready_Weapon();
 
 private:
+	void	Update_Collider();
+
+private:
 	void	Check_Do_List();
 	void	Set_AniEvent();
 
 private:
 	void	Colleague_Movement(_float fSpeed, _v3 vDir);
 
-	void	Colleague_Idle();
-	void	Colleague_Move();
+private:
 	void	Colleague_Dead();
 
-	void	ColleagueMove_Walk();
-	void	ColleagueMove_Run();
-	void	ColleagueMove_Dodge();	// 구르기 or 막기
+private:
+	void	CollMove_Walk();
+	void	CollMove_Run();
+	void	CollMove_Dodge();	// 구르기 or 막기
 
+	void	CollIIdle_Waiting();
+
+	void	CollAtt_Idle();
+
+private:
 	void	Funtion_RotateBody();
 
 private:
@@ -71,9 +80,13 @@ private:
 	CTransform*				m_pTargetTransformCom = nullptr;
 
 private:
+	//ACTOR_INFO				m_tActorinfo;
+
+private:
 	Colleague_MoveType		m_eMovetype;
 	Coll_Movement			m_eColl_Movement;
 	Coll_IdleMoment			m_eColl_IdleMoment;
+	Coll_Attackmoment		m_eColl_AttackMoment;
 	Move_Direction			m_eMoveDirection;
 
 private:
@@ -81,7 +94,8 @@ private:
 
 	_float	m_fSpeed = 0.f;
 
-	_bool	m_bChecking_With_Player = false;
+	_bool	m_bNear_byMonster = false;
+
 
 public:
 	static	CPlayer_Colleague* Create(_Device pGraphic_Device);

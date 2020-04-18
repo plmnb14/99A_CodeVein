@@ -37,12 +37,18 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 	CGameObject::Late_Update_GameObject(TimeDelta);
 	CGameObject::Update_GameObject(TimeDelta);
 
-	//ColleagueMove_Walk();
+	// 우선 순위
+	// - 플레이어가 30.f 안에 있는지
+	// - 범위 내에 몬스터가 있는지
+	// - 없으면 플레이어가 있는지
 	Check_Do_List();
 	Set_AniEvent();
 
 	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
+
+	cout << "동료 위치: " << m_pTransformCom->Get_Pos().x << ", " << m_pTransformCom->Get_Pos().y << ", " << m_pTransformCom->Get_Pos().z << endl;
+	cout << "MoveType: " << m_eMovetype << ": Att는 2" << endl;
 
 	return S_OK;
 }
@@ -102,7 +108,7 @@ HRESULT CPlayer_Colleague::Add_Component()
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Test_Io", L"Com_StaticMesh", (CComponent**)&m_pStaticMesh)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_DefaultBox", L"Com_StaticMesh", (CComponent**)&m_pStaticMesh)))
 		return E_FAIL;
 
 	// for.Com_NavMesh
@@ -112,6 +118,12 @@ HRESULT CPlayer_Colleague::Add_Component()
 	// for.Com_Collider
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
+
+	// 콜라이더 설정
+	m_pCollider->Set_Radius(_v3(0.35f, 0.35f, 0.35f));
+	m_pCollider->Set_Type(COL_SPHERE);
+	m_pCollider->Set_Dynamic(true);		// 움직이는지
+	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos());
 
 	return S_OK;
 }
@@ -165,11 +177,83 @@ HRESULT CPlayer_Colleague::Ready_Weapon()
 	return S_OK;
 }
 
+void CPlayer_Colleague::Update_Collider()
+{
+}
+
 void CPlayer_Colleague::Check_Do_List()
 {
 	// 플레이어 쪽으로 몸 돌릴 때, 4.f 이상 떨어져있으면 플레이어가 보는 쪽으로 돌린다.
 	//// 4.f 이하면 몸을 돌리지 않고 그냥 온다
 	// 아니다 Idle 상태일 때만 돌리지 않는다.
+	// 아니다 다 돌린다
+
+	// 우선 순위
+	// - 플레이어가 30.f 안에 있는지
+	// - 범위 내에 몬스터가 있는지
+	// - 없으면 플레이어가 있는지
+
+	CGameObject* pMon_Target = g_pManagement->Get_GameObjectBack(L"Layer_Monster", SCENE_STAGE);
+	_float My_MonLength = V3_LENGTH(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(pMon_Target)->Get_Pos()));
+
+	_v3 pPlayerPos = m_pTargetTransformCom->Get_Pos();
+	_float MyLength = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransformCom->Get_Pos()));
+
+
+	if (MyLength < 30.f)	// - 플레이어가 30.f 안에 있는지 먼저 체크
+	{
+		//// - 범위 내에 몬스터가 있는지
+		if (My_MonLength < 10.f && 0 < pMon_Target->Get_Target_Hp()/*false == pMon_Target->Get_Dead()*/)
+		{
+			// 몬스터가 근처에 있을 때 몬스터 쪽으로 이동하여 공격한다.
+			// 루이스의 경우 플레이어보다 먼저 튀어나간다
+			// 슝
+			// 지금은 기본 공격만
+			// 후에 거리 계산해서 스킬 사용 여부도 정해야 함
+			m_bNear_byMonster = true;
+
+			m_eMovetype = CPlayer_Colleague::Coll_Attack;
+			m_eColl_AttackMoment = CPlayer_Colleague::Att_Idle;
+		}
+		if (My_MonLength > 10.f || 0 >= pMon_Target->Get_Target_Hp())
+		{
+			// 전투모드 해제 후 플레이어가 근처에 없으면 순간이동 혹은 플레이어 근처로 이동
+			// 조건이 맞을테니 아래에 탈 것이다
+			m_bNear_byMonster = false;
+		}
+
+		// - 범위 내 몬스터가 없으면 플레이어가 있는지
+		if (MyLength > 3.f && false == m_bNear_byMonster)
+		{
+			// no
+			// 플레이어와 얼마나 거리가 떨어져있는가?
+			// 7.f 이하면 걷고, 이상이면 뛰어라
+			if (MyLength > 3.f && MyLength < 7.f)
+			{
+				m_eMovetype = CPlayer_Colleague::Coll_Move;
+				m_eColl_Movement = CPlayer_Colleague::Move_Walk;
+			}
+			if (MyLength > 7.f)
+			{
+				m_eMovetype = CPlayer_Colleague::Coll_Move;
+				m_eColl_Movement = CPlayer_Colleague::Move_Run;
+			}
+		}
+		if (MyLength < 3.f && false == m_bNear_byMonster)
+		{
+			// 이 조건일 때 주위에 몬스터가 있는지 체크, 없을 시 Idle_Waiting
+			// 플레이어 HP도 여기서 고려 해볼 법도 한가?
+			// yes
+			m_eMovetype = CPlayer_Colleague::Coll_Idle;
+			m_eColl_IdleMoment = CPlayer_Colleague::Idle_Waiting;
+		}
+	}
+	if (MyLength > 30.f)
+	{
+		// 플레이어가 범위 내를 벗어났으니까 플레이어 근처로 강제 소환해야 함
+		// 위치를 플레이어에서 한 3.f 정도 떨어진 곳으로 설정해주자
+		m_pTargetTransformCom->Set_Pos(_v3(m_pTargetTransformCom->Get_Pos().x - 3.f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 2.f));
+	}
 
 	// 기본 조건 먼저
 	// Hit, Att, Dead 이면 return 시킨다
@@ -179,38 +263,6 @@ void CPlayer_Colleague::Check_Do_List()
 
 	if (true == m_tObjParam.bIsHit || true == m_tObjParam.bIsAttack || true == m_tObjParam.bIsDodge)
 		return;
-
-	// 플레이어가 주변에 있는가?
-	// - 플레이어가 동료로부터 3.f 거리만큼 떨어져있는지 체크한다
-	
-	_v3 pPlayerPos = m_pTargetTransformCom->Get_Pos();
-
-	_float MyLength = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransformCom->Get_Pos()));
-
-	if (MyLength < 4.f)
-	{
-		// 이 조건일 때 주위에 몬스터가 있는지 체크, 없을 시 Idle_Waiting
-		// 플레이어 HP도 여기서 고려 해볼 법도 한가?
-		// yes
-		m_eMovetype = CPlayer_Colleague::Coll_Idle;
-		m_eColl_IdleMoment = CPlayer_Colleague::Idle_Waiting;
-	}
-	else
-	{
-		// no
-		// 플레이어와 얼마나 거리가 떨어져있는가?
-		// 6.f 이하면 걷고, 이상이면 뛰어라
-		if (MyLength > 4.f && MyLength < 7.f)
-		{
-			m_eMovetype = Coll_Move;
-			m_eColl_Movement = Move_Walk;
-		}
-		if (MyLength > 7.f)
-		{
-			m_eMovetype = Coll_Move;
-			m_eColl_Movement = Move_Run;
-		}	
-	}
 }
 
 void CPlayer_Colleague::Set_AniEvent()
@@ -221,16 +273,65 @@ void CPlayer_Colleague::Set_AniEvent()
 	{
 		case Client::CPlayer_Colleague::Coll_Idle:
 		{
-			Colleague_Idle();
+			switch (m_eColl_IdleMoment)
+			{
+			case Client::CPlayer_Colleague::Idle_Waiting:
+			{
+				CollIIdle_Waiting();
+				// Idle_Waiting - 플레이어가 범위 안에 있고 주위에 몬스터도 없을 때
+				break;
+			}
+			case Client::CPlayer_Colleague::Idle_Attwaiting:
+			{
+				// Idle_Attwaiting - 플레이어와 적이 범위 내에 있고 공격할 준비를 할 때
+				break;
+			}
+			case Client::CPlayer_Colleague::Idle_Guard:
+			{
+				// Idle_Guard - 플레이어와 적이 범위 내 존재하고 가드 중일 때
+				break;
+			}
+			}
 			break;
 		}
 		case Client::CPlayer_Colleague::Coll_Move:
 		{
-			Colleague_Move();
-			break;
+			switch (m_eColl_Movement)
+			{
+			case Client::CPlayer_Colleague::Move_Walk:
+			{
+				// 플레이어와 일정 거리 이상으로 가까워졌을 때 걷는다
+				CollMove_Walk();
+				break;
+			}
+			case Client::CPlayer_Colleague::Move_Run:
+			{
+				// 플레이어와 일정 거리 이상 떨어져 있을 때 뛰어서 쫒아간다
+				CollMove_Run();
+				break;
+			}
+			case Client::CPlayer_Colleague::Move_Dodge:
+			{
+				// 이건 회피
+				break;
+			}
+			}
+			break; 
 		}
 		case Client::CPlayer_Colleague::Coll_Attack:
 		{
+			switch (m_eColl_AttackMoment)
+			{
+			case Client::CPlayer_Colleague::Att_Idle:
+			{
+				CollAtt_Idle();
+				break;
+			}
+			case Client::CPlayer_Colleague::Att_Skill:
+			{
+				break;
+			}
+			}
 			break;
 		}
 		case Client::CPlayer_Colleague::Coll_Hit:
@@ -254,16 +355,22 @@ HRESULT CPlayer_Colleague::SetUp_Default()
 	m_pTransformCom->Set_Scale(V3_ONE);
 	m_pTargetTransformCom = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE));
 
-
 	m_tObjParam.fHp_Cur = 1000.f;
 	m_tObjParam.fHp_Max = 1000.f;
 	m_tObjParam.fDamage = 200.f;
 
 	m_tObjParam.bCanHit = true;		// 맞을 수 있는지
-	m_tObjParam.bCanDodge = true;	// 회피 가능한지
-	m_tObjParam.bCanAttack = true;	// 공격 가능한지
-	m_tObjParam.bCanGuard = true;	// 가드를 할 수 있는지
+	m_tObjParam.bIsHit = false;		// 맞는 도중인지
+	m_tObjParam.bHitAgain = false;
 
+	m_tObjParam.bCanAttack = false;	// 공격 가능한지
+	m_tObjParam.bIsAttack = false;	// 공격 중인지
+
+	m_tObjParam.bCanDodge = true;	// 회피 가능한지
+	m_tObjParam.bIsDodge = false;	// 회피 중인지
+
+	m_tObjParam.bCanGuard = true;	// 가드 가능?
+	m_tObjParam.bIsGuard = false;	// 가드 중인지
 
 	return S_OK;
 }
@@ -273,78 +380,56 @@ void CPlayer_Colleague::Colleague_Movement(_float fSpeed, _v3 vDir)
 	V3_NORMAL(&vDir, &vDir);
 
 	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &vDir, fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
-	//m_pTransformCom->Set_Angle(TARGET_TO_TRANS(m_pTarget)->Chase_Target());
-}
-
-void CPlayer_Colleague::Colleague_Idle()
-{
-	// 여기서 Idle 상태를 나눈다.
-	switch (m_eColl_IdleMoment)
-	{
-	case Client::CPlayer_Colleague::Idle_Waiting:
-	{
-		// Idle_Waiting - 플레이어가 범위 안에 있고 주위에 몬스터도 없을 때
-		break;
-	}
-	case Client::CPlayer_Colleague::Idle_Attwaiting:
-	{
-		// Idle_Attwaiting - 플레이어와 적이 범위 내에 있고 공격할 준비를 할 때
-		break;
-	}
-	case Client::CPlayer_Colleague::Idle_Guard:
-	{
-		// Idle_Guard - 플레이어와 적이 범위 내 존재하고 가드 중일 때
-		break;
-	}
-	}
-}
-
-void CPlayer_Colleague::Colleague_Move()
-{
-	switch (m_eColl_Movement)
-	{
-	case Client::CPlayer_Colleague::Move_Walk:
-	{
-		// 플레이어와 일정 거리 이상으로 가까워졌을 때 걷는다
-		ColleagueMove_Walk();
-		break;
-	}
-	case Client::CPlayer_Colleague::Move_Run:
-	{
-		// 플레이어와 일정 거리 이상 떨어져 있을 때 뛰어서 쫒아간다
-		ColleagueMove_Run();
-		break;
-	}
-	case Client::CPlayer_Colleague::Move_Dodge:
-	{
-		// 이건 회피
-		break;
-	}
-	}
+	m_pTransformCom->Set_Pos_Axis(m_pNavMesh->Axis_Y_OnNavMesh(m_pTargetTransformCom->Get_Pos()), AXIS_Y);
 }
 
 void CPlayer_Colleague::Colleague_Dead()
 {
 }
 
-void CPlayer_Colleague::ColleagueMove_Walk()
+void CPlayer_Colleague::CollMove_Walk()
 {
 	m_eColl_Movement = CPlayer_Colleague::Move_Walk;
 	Funtion_RotateBody();
-	Colleague_Movement(2.f, _v3(m_pTargetTransformCom->Get_Pos().x, 0.f, m_pTargetTransformCom->Get_Pos().z));
+	Colleague_Movement(2.f, m_pTransformCom->Get_Axis(AXIS_Z));
 }
 
-void CPlayer_Colleague::ColleagueMove_Run()
+void CPlayer_Colleague::CollMove_Run()
 {
 	// 뛸 때 속도조절하는건데 일시적으로 이렇게 두고 나중에 꼭 수정해야 함
 	m_eColl_Movement = CPlayer_Colleague::Move_Run;
 	Funtion_RotateBody();
-	Colleague_Movement(4.f, _v3(m_pTargetTransformCom->Get_Pos().x, 0.f, m_pTargetTransformCom->Get_Pos().z));
+	Colleague_Movement(4.f, m_pTransformCom->Get_Axis(AXIS_Z));
 }
 
-void CPlayer_Colleague::ColleagueMove_Dodge()
+void CPlayer_Colleague::CollMove_Dodge()
 {
 	// 구르기나 피할 수 있는 요소를 담을 함수
+}
+
+void CPlayer_Colleague::CollIIdle_Waiting()
+{
+	m_eColl_IdleMoment = CPlayer_Colleague::Idle_Waiting;
+	Funtion_RotateBody();
+	Colleague_Movement(0.f, m_pTransformCom->Get_Axis(AXIS_Z));
+}
+
+void CPlayer_Colleague::CollAtt_Idle()
+{
+	// 기본 공격만 하는 함수
+	// 루이 기본 공격
+	// 기본 4타
+	// 몬스터가 공격 범위 밖이면 공격을 잠깐 중지한다.
+	// 보스도 생각해야 함
+
+	CGameObject* pMon_Target = g_pManagement->Get_GameObjectBack(L"Layer_Monster", SCENE_STAGE);
+	_float TempDir = V3_LENGTH(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(pMon_Target)->Get_Pos()));
+
+	// 처음에는 괜찮은데 야차맨이 한번 뒤로 펄쩍 뛰고 난 뒤로부터 부들대며 접근하지 못함
+	// 왜일까? -> 야차만 부들대면서 접근 못하고 댕댕이는 잘 함
+	// 떨어져있으면 근접공격을 위해 가까이 간다
+	if (TempDir > 2.3f)
+		Colleague_Movement(4.f, TARGET_TO_TRANS(pMon_Target)->Get_Axis(AXIS_Z));
 }
 
 void CPlayer_Colleague::Funtion_RotateBody()
@@ -356,7 +441,6 @@ void CPlayer_Colleague::Funtion_RotateBody()
 	_v3 vTargetDir = m_pTransformCom->Get_Axis(AXIS_Z);
 	V3_NORMAL_SELF(&vTargetDir);
 
-	// 플레이어의 각도가 0 보다 크고, 내 각도가 0보다 작을 때
 	if (fTargetAngle > 0)
 	{
 		if (fYAngle < 0)
