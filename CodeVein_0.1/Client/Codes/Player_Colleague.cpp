@@ -197,6 +197,9 @@ void CPlayer_Colleague::Check_Do_List()
 	// - 없으면 플레이어가 있는지
 
 	CGameObject* pMon_Target = g_pManagement->Get_GameObjectBack(L"Layer_Monster", SCENE_STAGE);
+
+	IF_NULL_RETURN(pMon_Target);
+
 	_float My_MonLength = V3_LENGTH(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(pMon_Target)->Get_Pos()));
 
 	_v3 pPlayerPos = m_pTargetTransformCom->Get_Pos();
@@ -357,8 +360,13 @@ HRESULT CPlayer_Colleague::SetUp_Default()
 	//m_pTransformCom->Set_Pos(_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos().x - 1.f, TARGET_TO_TRANS(m_pTarget)->Get_Pos().y, TARGET_TO_TRANS(m_pTarget)->Get_Pos().z - 1.f));
 	m_pTransformCom->Set_Scale(V3_ONE);
 
-	if(nullptr != m_pTarget)
+	if (nullptr != m_pTarget)
+	{
+		Safe_AddRef(m_pTarget);
+
 		m_pTargetTransformCom = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
+		Safe_AddRef(m_pTargetTransformCom);
+	}
 
 	m_tObjParam.fHp_Cur = 1000.f;
 	m_tObjParam.fHp_Max = 1000.f;
@@ -534,10 +542,15 @@ CGameObject* CPlayer_Colleague::Clone_GameObject(void* pArg)
 
 void CPlayer_Colleague::Free()
 {
+	// 타겟
+	Safe_Release(m_pTarget);
+
+	// 타겟의 트랜스폼
+	Safe_Release(m_pTargetTransformCom);
+
 	Safe_Release(m_pSword);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pTargetTransformCom);
 	Safe_Release(m_pStaticMesh);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);

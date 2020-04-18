@@ -31,8 +31,13 @@ HRESULT CHunter::Ready_GameObject(void * pArg)
 
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
-	if(nullptr != m_pTarget)
+	if (nullptr != m_pTarget)
+	{
+		Safe_AddRef(m_pTarget);
+
 		m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
+		Safe_AddRef(m_pTargetTransform);
+	}
 
 	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
 	m_tObjParam.fHp_Max = 9999180.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
@@ -5692,6 +5697,12 @@ CGameObject* CHunter::Clone_GameObject(void * pArg)
 
 void CHunter::Free()
 {
+	// 타겟의 트랜스폼
+	Safe_Release(m_pTargetTransform);
+
+	// 타겟
+	Safe_Release(m_pTarget);
+
 	Safe_Release(m_pWeapon);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pNavMesh);
