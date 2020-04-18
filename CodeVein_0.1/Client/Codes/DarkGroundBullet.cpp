@@ -69,10 +69,15 @@ _int CDarkGroundBullet::Update_GameObject(_double TimeDelta)
 		{
 			m_fEffectOffset = 0.f;
 			
-			g_pManagement->Create_Effect(L"QueensKnight_Lava_Floor_0", m_pTransformCom->Get_Pos(), nullptr);
-			g_pManagement->Create_Effect(L"QueensKnight_Lava_Floor_1", m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"QueensKnight_Lava_Floor_0", m_pTransformCom->Get_Pos() + _v3(0.f, 0.25f, 0.f), nullptr);
+			g_pManagement->Create_Effect(L"QueensKnight_Lava_Floor_1", m_pTransformCom->Get_Pos() + _v3(0.f, 0.25f, 0.f), nullptr);
+			
+			g_pManagement->Create_Effect(L"QueensKnight_Lava_Lightning_0", m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"QueensKnight_Lava_Lightning_1", m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"QueensKnight_Lava_Lightning_2", m_pTransformCom->Get_Pos(), nullptr);
+
 			//g_pManagement->Create_Effect(L"QueensKnight_SwordCrash_Particle", m_pTransformCom->Get_Pos(), nullptr);
-			g_pManagement->Create_Effect(L"QueensKnight_Trail_Lightning_2", m_pTransformCom->Get_Pos(), nullptr);
+			//g_pManagement->Create_Effect(L"QueensKnight_Trail_Lightning_2", m_pTransformCom->Get_Pos(), nullptr);
 			//g_pManagement->Create_Effect(L"QueensKnight_Trail_Lightning_2_Dark", m_pTransformCom->Get_Pos(), nullptr);
 		
 			//for (_int i = 0; i < 10; i++)

@@ -117,8 +117,18 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"QueensKnight_Lava_Floor_0", 550);
 	Input_Pool(L"QueensKnight_Lava_Floor_1", 550);
 	Input_Pool(L"QueensKnight_Lava_Smoke_0", 550);
+	Input_Pool(L"QueensKnight_DarkBoom_PopSmoke_0", 150);
+	Input_Pool(L"QueensKnight_DarkBoom_PopSmoke_1", 150);
 	Input_Pool(L"QueensKnight_DarkBoom_Smoke_0", 550);
 	Input_Pool(L"QueensKnight_DarkBoom_LineRing_0", 100);
+	Input_Pool(L"QueensKnight_DarkBoom_Sphere_0", 20);
+	Input_Pool(L"QueensKnight_DarkBoom_Sphere_1", 50);
+	Input_Pool(L"QueensKnight_DarkBoom_BlackFire_0", 600);
+	Input_Pool(L"QueensKnight_Lava_Lightning_0", 600);
+	Input_Pool(L"QueensKnight_Lava_Lightning_1", 600);
+	Input_Pool(L"QueensKnight_Lava_Lightning_2", 600);
+	Input_Pool(L"QueensKnight_DarkBoom_Floor_0", 600);
+	Input_Pool(L"QueensKnight_DarkBoom_Particle", 1000);
 	Input_Pool(L"QueensKnight_LeakField_0", 50);
 	Input_Pool(L"QueensKnight_LeakField_1", 50);
 	Input_Pool(L"QueensKnight_LeakField_Hand", 50);

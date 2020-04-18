@@ -35,9 +35,27 @@ HRESULT CDarkBoom::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
 
-	g_pManagement->Create_Effect(L"QueensKnight_DarkBoom_Smoke_0", m_pTransformCom->Get_Pos(), nullptr);
-	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_LineRing_0", 0.0f, m_pTransformCom->Get_Pos(), nullptr);
-	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_LineRing_0", 0.3f, m_pTransformCom->Get_Pos(), nullptr);
+	//g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_LineRing_0", 0.0f, m_pTransformCom->Get_Pos(), nullptr);
+	//g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_LineRing_0", 0.3f, m_pTransformCom->Get_Pos(), nullptr);
+	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_Particle", 0.0f, m_pTransformCom->Get_Pos(), nullptr);
+	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_Sphere_1", 0.0f, m_pTransformCom->Get_Pos(), nullptr);
+
+	for (_int i = 0; i < 10; i++)
+	{
+		_mat matRotY;
+		_v3 vDir = _v3(1.f, 0.f, 1.f);
+		D3DXMatrixIdentity(&matRotY);
+
+		D3DXMatrixRotationY(&matRotY, D3DXToRadian(_float(36 * i)));
+		D3DXVec3TransformNormal(&vDir, &vDir, &matRotY);
+		D3DXVec3Normalize(&vDir, &vDir);
+
+		_float fMinRange = 2.f;
+		_v3 vRandPos = vDir * (fMinRange);
+
+		g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_BlackFire_0", i * 0.015f, m_pTransformCom->Get_Pos() + vRandPos + _v3(0.f, 0.45f, 0.f), nullptr);
+		g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_Smoke_0", i * 0.015f, m_pTransformCom->Get_Pos() + vRandPos + _v3(0.f, 0.45f, 0.f), nullptr);
+	}
 
 	return NOERROR;
 }
@@ -57,13 +75,17 @@ _int CDarkBoom::Update_GameObject(_double TimeDelta)
 	// 시간 초과
 	if (m_dCurTime > m_dLifeTime)
 	{
-
 		m_bDead = true;
 	}
 	// 진행중
 	else
 	{
-		
+		m_fEffectOffset += _float(TimeDelta);
+		if (m_fEffectOffset > 0.1f)
+		{
+			m_fEffectOffset = 0.f;
+			g_pManagement->Create_Effect(L"QueensKnight_DarkBoom_Floor_0", m_pTransformCom->Get_Pos(), nullptr);
+		}
 	}
 
 	return NOERROR;
