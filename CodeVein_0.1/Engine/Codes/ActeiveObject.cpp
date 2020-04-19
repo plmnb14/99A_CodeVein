@@ -34,8 +34,10 @@ _int CActiveObject::Update_GameObject(_double _TimeDelta)
 
 	CGameObject::LateInit_GameObject();
 	CGameObject::Update_GameObject(_TimeDelta);
+
 	m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
 	// 모든 패턴은 최초 1회만 실행하며 그 이후로 애니메이션이 idle 상태로 고정되어 있어야 함
+
 	CManagement* pManagement = CManagement::Get_Instance();
 
 	switch (m_iAtvNumber)
@@ -46,30 +48,31 @@ _int CActiveObject::Update_GameObject(_double _TimeDelta)
 		// 플레이어와 겨우살이의 거리를 측정해서 가까이 가서 E키를 누르면
 		// 상호작용을 한다.
 		// 겨우살이 활성화 시 몬스터 리젠되어야 함
-		if (nullptr != pManagement)
-		{
-			_v3 Test = V3_NULL;
-			Test = TARGET_TO_TRANS(pManagement->Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos();
-			_v3 TestVec3 = m_pTransform->Get_Pos() - Test;
-			if (V3_LENGTH(&TestVec3) <= 2.f && false == m_bCheck_Mistletoe)
-			{
-				//	cout << "상호작용 가능" << endl;
-			}
-			if (pManagement->Get_DIKeyState(DIK_E))
-			{
-				if (m_bCheck_Mistletoe == false)
-					cout << "겻우살이 활성화" << endl;
+		//if (nullptr != pManagement)
+		//{
+		//	_v3 Test = V3_NULL;
+		//	Test = TARGET_TO_TRANS(pManagement->Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos();
+		//	_v3 TestVec3 = m_pTransform->Get_Pos() - Test;
+		//	if (V3_LENGTH(&TestVec3) <= 2.f && false == m_bCheck_Mistletoe)
+		//	{
+		//		//	cout << "상호작용 가능" << endl;
+		//	}
+		//	if (pManagement->Get_DIKeyState(DIK_E))
+		//	{
+		//		if (m_bCheck_Mistletoe == false)
+		//			cout << "겻우살이 활성화" << endl;
 
-				m_bCheck_Mistletoe = true;
-			}
+		//		m_bCheck_Mistletoe = true;
+		//	}
 
-			// Effect
-			_v3 vEffPos = m_pTransform->Get_Pos();
-			vEffPos.y += 0.3f; // 뿌리
-			pManagement->Create_Effect_Offset(L"MistletoeParticle_Sub", 0.1f, vEffPos);
-			vEffPos.y += 0.3f; // 꽃
-			pManagement->Create_Effect_Offset(L"MistletoeParticle", 0.1f, vEffPos);
-		}
+		// Effect
+		_v3 vEffPos = m_pTransform->Get_Pos();
+		vEffPos.y += 0.3f; // 뿌리
+		pManagement->Create_Effect_Offset(L"MistletoeParticle_Sub", 0.1f, vEffPos);
+		vEffPos.y += 0.3f; // 꽃
+		pManagement->Create_Effect_Offset(L"MistletoeParticle", 0.1f, vEffPos);
+
+		//}
 		break;
 	}
 	case ATV_DOOR:
@@ -105,7 +108,7 @@ _int CActiveObject::Update_GameObject(_double _TimeDelta)
 	{
 		// 플레이어가 박스 앞에서 E키를 눌렀을 때 박스의 뚜껑이 일정 속도로 45도? 정도 돌린다.
 		float TestAngle = m_pTransform->Get_Angle(AXIS_X);
-		cout << TestAngle << endl;
+
 		_v3 Test = V3_NULL;
 		Test = TARGET_TO_TRANS(pManagement->Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos();
 		_v3 TestVec3 = m_pTransform->Get_Pos() - Test;
@@ -141,10 +144,11 @@ HRESULT CActiveObject::Render_GameObject()
 
 	for (_ulong i = 0; i < dwNum; ++i)
 	{
-		m_pShader->Begin_Pass(m_PassNum);
+		m_iPass = m_pMesh_Static->Get_MaterialPass(i);
 
-		if (FAILED(m_pShader->Set_Texture("g_DiffuseTexture", m_pMesh_Static->Get_Texture(i, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
-			return E_FAIL;
+		m_pShader->Begin_Pass(m_iPass);
+
+		m_pShader->Set_StaticTexture_Auto(m_pMesh_Static, i);
 
 		m_pShader->Commit_Changes();
 
@@ -239,7 +243,6 @@ HRESULT CActiveObject::Initialize()
 
 HRESULT CActiveObject::LateInit_GameObject()
 {
-
 	m_pTransform->Set_Angle(AXIS_Y, D3DXToRadian(45.f));
 	return S_OK;
 }

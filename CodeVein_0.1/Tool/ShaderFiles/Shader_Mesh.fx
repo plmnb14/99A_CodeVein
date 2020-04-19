@@ -285,7 +285,7 @@ PS_OUT_ADVENCE PS_Default_DN(PS_IN In)
 	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 0.f);
 
 	//========================================================================================================================
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 0.2f);
 	// Depth.z == SpecularIntensity.x ( Ω∫∆Â≈ß∑Ø¿« x )
 
 	Out.vEmissive = 0;
@@ -448,7 +448,7 @@ PS_OUT_ADVENCE PS_Default_DNR(PS_IN In)
 
 	float3 worldNormal = mul(TBN, TanNormal);
 
-	Out.vNormal = vector(-worldNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 0.f);
 
 	//========================================================================================================================
 

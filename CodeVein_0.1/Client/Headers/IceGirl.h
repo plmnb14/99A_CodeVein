@@ -42,7 +42,7 @@ public:
 
 private:	// 패턴들
 	// 1. 회전베기
-	CBT_Composite_Node* Turn_Cut();
+	CBT_Composite_Node* Turn_Cut(_float fWeight);
 	// 2. 삼단베기,  슉 + 슉 + 슉
 	CBT_Composite_Node* ThreeCombo_Cut1();
 	// 3. 삼단베기,  슉 + 슉 + 회전베기
@@ -53,16 +53,13 @@ private:	// 패턴들
 	CBT_Composite_Node* Ice_Cut();
 	// 6. 얼음 보호막
 	CBT_Composite_Node* Ice_Barrier();
-
-	// 7. 삼단베기, 두번째 세번째 는 추적하고 공격
+	// 7. 플레이어 주위에 콜드빔, 31번 애니
 
 
 	// 원거리
 	// 1. 차지 후 돌진 찌르기
 	CBT_Composite_Node* Charge_Rush();
 
-	// 2. 플레이어 주위에 콜드빔, 31번 애니
-	
 
 	// 회피
 	// 좌
@@ -75,18 +72,36 @@ private:	// 패턴들
 	CBT_Composite_Node* Dodge_Back();
 
 
-	///// 게임 시작
-	CBT_Composite_Node* Start_Game();
+	//////////////// 응용
+	CBT_Composite_Node* Chase_ThreeCombo_Cut1();	// 추적하면서 베기
+	CBT_Composite_Node* Chase_ThreeCombo_Cut2();	// 추적하면서 베기
+	CBT_Composite_Node* Create_IceBarrier_Or_Not();	// 얼음보호막 없으면 생성
+	CBT_Composite_Node* Cut_BackDodge();			// 베고 뒤로 점프
+	CBT_Composite_Node* Dash_To_Target();			// 타겟에게 대쉬
+	
 
-	CBT_Composite_Node*	NearAttack_Dist5();
-
-	CBT_Composite_Node* NearAttack();	//랜덤 공격
-	CBT_Composite_Node*	FarAttack();	//랜덤 공격
-
-	CBT_Composite_Node* Create_IceBarrier_Or_Not();
+	CBT_Composite_Node* Chase_Timer(_double dRunTime, _float fSpeed);
 
 	// 랜덤 위치 회피
 	CBT_Composite_Node* Random_Dodge();
+
+	///// 게임 시작
+	CBT_Composite_Node* Start_Game();
+
+	// 체력 70퍼 이상	// 단순 베기
+	CBT_Composite_Node* More_Than_HP_70();
+	CBT_Composite_Node* NearAttack_Dist5_More_Than_HP70();
+	CBT_Composite_Node* FarAttack_More_Than_HP70();
+
+	// 체력 70퍼 미만	// 추적 베기, 회피, 얼음 보호막 추가
+	CBT_Composite_Node* More_Than_HP_40();
+	CBT_Composite_Node* NearAttack_Dist5_More_Than_HP40();
+	CBT_Composite_Node* FarAttack_More_Than_HP40();
+
+	// 체력 40퍼 미만	// 점멸 자주 씀
+	CBT_Composite_Node* HP_Final();
+	CBT_Composite_Node* NearAttack_Dist5_Final();
+	CBT_Composite_Node* FarAttack_Fianl();
 
 
 	//// 시연회용
@@ -121,12 +136,13 @@ private:
 
 private:	// 다운 상태를 위한 변수
 	_bool				m_bDown_Start = false;
-	_bool				m_bDown_Finish = false;
 
 	_bool				m_bDown_StartAni = false;
 	_bool				m_bDown_LoopAni = false;
 	_bool				m_bDown_EndAni = false;
 	_double				m_dDownTime = 0;
+
+	_byte				m_iDownCount = 0;
 
 private:
 	// 충돌체를 위한 뼈다귀

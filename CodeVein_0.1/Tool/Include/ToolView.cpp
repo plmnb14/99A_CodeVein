@@ -181,9 +181,11 @@ void CToolView::Setup_Default()
 	CInput_Device::Get_Instance()->Ready_Input_Dev(AfxGetInstanceHandle(), g_hWnd);
 	CInput_Device::Get_Instance()->Set_InputDev();
 
-	CManagement::Get_Instance()->LoadMesh_FromPath(g_pGraphicDev, L"../../Data/Mesh_Essential_Path.dat");
-	CManagement::Get_Instance()->LoadMesh_FromPath(g_pGraphicDev, L"../../Data/Mesh_Static_Path.dat");
-	CManagement::Get_Instance()->LoadMesh_FromPath(g_pGraphicDev, L"../../Data/Mesh_Weapon_Path.dat");
+	CManagement::Get_Instance()->LoadMesh_FromPath(g_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Path.dat");
+	CManagement::Get_Instance()->LoadMesh_FromPath(g_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
+	CManagement::Get_Instance()->LoadMesh_FromPath(g_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage00_Path.dat");
+	CManagement::Get_Instance()->LoadMesh_FromPath(g_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage01_Path.dat");
+	CManagement::Get_Instance()->LoadMesh_FromPath(g_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Weapon_Path.dat");
 
 	SetUp_Cam();
 	SetUp_Layer();

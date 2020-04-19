@@ -94,15 +94,19 @@ float g_sample_rad = 0.1f;		// 샘플링 반경
 float g_intensity = 0.35f;		// ao 강도
 float g_scale = 1.f;			// 사이 거리
 float g_bias = 0.0f;			// 너비 제어
+
 float3 getPosition(in float3 vDepth, in float2 uv)
 {
 	float		fViewZ = vDepth.g * 500.f;
 	vector		vWorldPos;
+
 	vWorldPos.x = uv.x * 2.f - 1.f;
 	vWorldPos.y = uv.y * -2.f + 1.f;
 	vWorldPos.z = vDepth.x;
 	vWorldPos.w = 1.f;
+
 	vWorldPos = vWorldPos * fViewZ;
+
 	vWorldPos = mul(vWorldPos, g_matProjInv);
 	//vWorldPos = mul(vWorldPos, g_matViewInv);
 
@@ -121,7 +125,7 @@ float doAmbientOcclusion(in float3 vDepth, in float2 tcoord, in float2 uv, in fl
 	float3 diff = getPosition(vDepth, tcoord + uv) - p;
 	const float3 v = normalize(diff);
 	const float d = length(diff)*g_scale;
-	return max(0.0, dot(cnorm, v) - g_bias)*(1.0 / (1.0 + d))*g_intensity;
+	return max(0.0, dot(cnorm, v) - g_bias)*(1.0 / (1.0 + d)) * g_intensity;
 }
 
 float Get_SSAO(in float3 vNormal, in float3 vDepth, in float2 uv)
@@ -134,8 +138,8 @@ float Get_SSAO(in float3 vNormal, in float3 vDepth, in float2 uv)
 	float rad = g_sample_rad / p.z;
 
 	//**SSAO Calculation**// 
-	//int iterations = 4;
-	int iterations = lerp(6.0, 2.0, p.z / 500.f);
+	int iterations = 4;
+	//int iterations = lerp(6.0, 2.0, p.z / 500.f);
 	for (int j = 0; j < iterations; ++j)
 	{
 		float2 coord1 = reflect(vec[j], rand)*rad;
@@ -272,13 +276,19 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
 	vWorldPos = mul(vWorldPos, g_matProjInv);
 	vWorldPos = mul(vWorldPos, g_matViewInv);
 
+
+	float4		vSpecularIntensity = float4(vDepthInfo.z, vDepthInfo.w, vNormalInfo.w, 1.f);
+
 	vector		vLightDir = vWorldPos - g_vLightPos;
 	float		fLength = length(vLightDir);
 	float		fAtt = saturate((g_fRange - fLength) / g_fRange);
 
 	vector		vNormal = vector(vNormalInfo.xyz * 2.f - 1.f, 0.f);
 
-	Out.vShade = fAtt * g_vLightDiffuse * saturate(dot(normalize(vLightDir) * -1.f, vNormal)) + saturate(g_vLightAmbient * g_vMtrlAmbient);
+	vector		vReflect = reflect(normalize(vLightDir), vNormal);
+
+
+	Out.vShade = fAtt * g_vLightDiffuse * saturate(dot(normalize(vLightDir) * -1.f, vNormal)) + (g_vLightAmbient * g_vMtrlAmbient);
 	Out.vShade.a = 1.f;
 
 
@@ -329,26 +339,32 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
 
 	// Shadow ====================================================================
 
-
-
-	vector		vReflect = reflect(normalize(vLightDir), vNormal);
 	vector		vLook = vWorldPos - g_vCamPosition;
 
-	Out.vSpecular = fAtt * g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 30.f) * (g_vLightSpecular * g_vMtrlSpecular);
+	Out.vSpecular = fAtt * g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 30.f) * vSpecularIntensity.y;
 	Out.vSpecular.a = 0.f;
 
 	// RimLight ====================================================================
-	float fRimWidth = 1.5f;
-	vector vCamPos = normalize(g_vCamPosition - vWorldPos);
-	float fRim = smoothstep((1.f - fRimWidth), (1.f), (vDepthInfo.x) - saturate(abs(dot(vNormal, vCamPos))));
-	float4 rc = g_vLightDiffuse;
-	Out.vShade += pow(fRim, 2.f) * rc;
+	float	fRimWidth = 0.5f;
+	
+	vector	vCamPos = normalize(g_vCamPosition - vWorldPos);
+	float fRim = smoothstep((1.f - fRimWidth), (1.f), 1.f - max(0, abs(dot(vNormal.xyz, vCamPos.xyz))));
+	float4 rc = g_vLightDiffuse * 0.7f;
+	
+	float4 fRimLight = (pow(fRim, 5.f) * rc);
 	// RimLight End ====================================================================
 
 	// SSAO ====================================================================
 	vNormal = mul(vNormal, g_matProjInv);
-	float ao = Get_SSAO(vNormal.xyz, vDepthInfo.xyz, In.vTexUV);
+	float ao = Get_SSAO(vNormal.xyz, float3(vDepthInfo.xy , 1.f), In.vTexUV);
 	Out.vSSAO = float4(ao, 0, 0, 1);
+	
+	if (g_bTest)
+	{
+		saturate(Out.vSSAO.x);
+		Out.vShade.xyz -= pow(Out.vSSAO.x, 1.5f);
+		//Out.vShade.xyz = max(Out.vShade.xyz, Out.vSSAO.x * 0.5f);
+	}
 	// SSAO End ====================================================================
 
 

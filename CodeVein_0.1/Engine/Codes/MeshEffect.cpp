@@ -70,9 +70,9 @@ _int CMeshEffect::Update_GameObject(_double TimeDelta)
 		Check_CreateDelay(TimeDelta);
 		return S_OK;
 	}
-	Check_Move(TimeDelta);
 
 	CGameObject::Update_GameObject(TimeDelta);
+	Check_Move(TimeDelta);
 
 	m_fLinearMovePercent += _float(TimeDelta) * 0.2f;
 
@@ -504,18 +504,41 @@ void CMeshEffect::Check_Move(_double TimeDelta)
 		m_pTransformCom->Set_Angle(m_vAngle);
 		m_pTransformCom->Update_Component();
 	}
-	else
+	
+	if(m_vAngle != V3_NULL)
 	{
-		//m_pTransformCom->Update_Component();
-		//
-		//_mat matRotX, matRotY, matRotZ;
-		//D3DXMatrixRotationX(&matRotX, m_vAngle.x);
-		//D3DXMatrixRotationY(&matRotY, m_vAngle.y);
-		//D3DXMatrixRotationZ(&matRotZ, m_vAngle.z);
-		//
-		//_mat matWorld = m_pTransformCom->Get_WorldMat();
-		//matWorld = matWorld * (matRotX + matRotY + matRotZ);
-		//m_pTransformCom->Set_WorldMat(matWorld);
+		_mat matParent, matScale, matRotX, matRotY, matRotZ, matTrans;
+		_mat matWorld;// = m_pTransformCom->Get_WorldMat();
+		m_vAddedAngle += (m_pInfo->vRotDirection) * _float(TimeDelta) * m_fRotSpeed;
+
+		D3DXMatrixIdentity(&matWorld);
+		D3DXMatrixRotationX(&matRotX, D3DXToRadian(m_vAddedAngle.x));
+		D3DXMatrixRotationY(&matRotY, D3DXToRadian(m_vAddedAngle.y));
+		D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(m_vAddedAngle.z));
+		matWorld = matRotX * matRotY * matRotZ;
+
+		D3DXMatrixIdentity(&matRotX);
+		D3DXMatrixIdentity(&matRotY);
+		D3DXMatrixIdentity(&matRotZ);
+		D3DXMatrixScaling(&matScale, m_vLerpScale.x, m_vLerpScale.y, m_vLerpScale.z);
+		D3DXMatrixRotationX(&matRotX, D3DXToRadian(m_vAngle.x));
+		D3DXMatrixRotationY(&matRotY, D3DXToRadian(m_vAngle.y));
+		D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(m_vAngle.z));
+		D3DXMatrixTranslation(&matTrans, m_pTransformCom->Get_Pos().x, m_pTransformCom->Get_Pos().y, m_pTransformCom->Get_Pos().z);
+		matParent = matScale * matRotX * matRotY * matRotZ * matTrans;
+
+		m_pTransformCom->Set_WorldMat(matWorld * matParent);
+	}
+
+	if (m_pParentObject && !m_pParentObject->Get_Dead())
+	{
+		CTransform* pTargetTrans = TARGET_TO_TRANS(m_pParentObject);
+		if (!pTargetTrans)
+			return;
+
+		_mat matParent = pTargetTrans->Get_WorldMat();
+		_mat matWorld = m_pTransformCom->Get_WorldMat();
+		m_pTransformCom->Set_WorldMat(matWorld * matParent);
 	}
 
 }

@@ -35,6 +35,7 @@ public:
 		ACT_WeaponChange,
 		ACT_Hit, ACT_Jump, ACT_Fall, ACT_Down,
 		ACT_PickUp, ACT_OpenDoor, ACT_Cinematic,
+		ACT_Mistoletoe,
 		ACT_Dead,
 		ACT_STATE_END
 	};
@@ -125,6 +126,9 @@ private:
 	_bool					m_bOnChargeSuck = false;
 	_bool					m_bOnPickUp = false;
 	_bool					m_bCanSprintAtk = false;
+	_bool					m_bCanMistletoe = false;
+	_bool					m_bOnMistletoe = false;
+	_bool					m_bActiveUI = false;
 
 private:
 	_short					m_sHeavyAtkCnt = 0;
@@ -184,6 +188,9 @@ private:
 
 private:
 	virtual void Reset_BattleState();
+
+private:
+	virtual void Check_Mistletoe();
 
 private:
 	virtual void Parameter_State();

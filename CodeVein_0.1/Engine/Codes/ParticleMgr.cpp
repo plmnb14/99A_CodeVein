@@ -34,6 +34,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Player_ChargeSpark_Small", 10);
 	Input_Pool(L"Player_ChargeSpark_Big", 10);
 	Input_Pool(L"Player_ChargeSpark_Circle", 30);
+	Input_Pool(L"Player_ChargeSpark_HalfCircle", 50);
 	Input_Pool(L"Player_ChargeSpark_Flash", 10);
 	Input_Pool(L"Player_ChargeSpark_ShockWave", 10);
 	Input_Pool(L"Player_ChargeSpark_Particle", 10);
@@ -117,8 +118,20 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"QueensKnight_Lava_Floor_0", 550);
 	Input_Pool(L"QueensKnight_Lava_Floor_1", 550);
 	Input_Pool(L"QueensKnight_Lava_Smoke_0", 550);
+	Input_Pool(L"QueensKnight_DarkBoom_PopSmoke_0", 150);
+	Input_Pool(L"QueensKnight_DarkBoom_PopSmoke_1", 150);
 	Input_Pool(L"QueensKnight_DarkBoom_Smoke_0", 550);
 	Input_Pool(L"QueensKnight_DarkBoom_LineRing_0", 100);
+	Input_Pool(L"QueensKnight_DarkBoom_Sphere_0", 20);
+	Input_Pool(L"QueensKnight_DarkBoom_Sphere_1", 50);
+	Input_Pool(L"QueensKnight_DarkBoom_Ring", 50);
+	Input_Pool(L"QueensKnight_DarkBoom_RingBottom", 50);
+	Input_Pool(L"QueensKnight_DarkBoom_BlackFire_0", 600);
+	Input_Pool(L"QueensKnight_Lava_Lightning_0", 600);
+	Input_Pool(L"QueensKnight_Lava_Lightning_1", 600);
+	Input_Pool(L"QueensKnight_Lava_Lightning_2", 600);
+	Input_Pool(L"QueensKnight_DarkBoom_Floor_0", 600);
+	Input_Pool(L"QueensKnight_DarkBoom_Particle", 1000);
 	Input_Pool(L"QueensKnight_LeakField_0", 50);
 	Input_Pool(L"QueensKnight_LeakField_1", 50);
 	Input_Pool(L"QueensKnight_LeakField_Hand", 50);
@@ -422,7 +435,7 @@ void CParticleMgr::Create_ParticleEffect_FinishPos(_tchar* szName, _float fLifeT
 	m_vecParticle.push_back(pInfo);
 }
 
-void CParticleMgr::Create_Effect(_tchar* szName, _v3 vPos, CTransform * pFollowTrans)
+void CParticleMgr::Create_Effect(_tchar* szName, _v3 vPos, CTransform * pFollowTrans, _v3 vDir, _v3 vAngle)
 {
 	queue<CEffect*>* pFindedQueue = Find_Queue(szName);
 	if (pFindedQueue == nullptr)
@@ -443,6 +456,8 @@ void CParticleMgr::Create_Effect(_tchar* szName, _v3 vPos, CTransform * pFollowT
 			CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));
 			pEffect->Set_ParticleName(szEffName);
 			pEffect->Set_Desc(vPos, pFollowTrans);
+			pEffect->Set_Dir(vDir);
+			pEffect->Set_Angle(vAngle);
 			pEffect->Set_Delay(false);
 			pEffect->Reset_Init();
 
@@ -452,6 +467,8 @@ void CParticleMgr::Create_Effect(_tchar* szName, _v3 vPos, CTransform * pFollowT
 
 		m_EffectList.push_back(pFindedQueue->front());
 		pFindedQueue->front()->Set_Desc(vPos, pFollowTrans);
+		pFindedQueue->front()->Set_Dir(vDir);
+		pFindedQueue->front()->Set_Angle(vAngle);
 		pFindedQueue->front()->Set_Delay(false);
 		pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
 		pFindedQueue->pop();

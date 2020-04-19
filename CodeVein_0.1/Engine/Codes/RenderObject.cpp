@@ -31,12 +31,15 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 	CGameObject::LateInit_GameObject();
 	CGameObject::Update_GameObject(_TimeDelta);
 
-	Update_Collider();
+	if (true == m_bOnTool)
+	{
+		Update_Collider();
+	}
 
-	if (false == m_bOnTool)
+	else if (false == m_bOnTool)
 	{
 		m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
-		m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this);
+		//m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this);
 		//m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this);
 
 		//if (CObject_Manager::Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))
@@ -115,7 +118,7 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 	m_matLastWVP = m_pTransform->Get_WorldMat() * ViewMatrix * ProjMatrix;
 
 	_bool bMotionBlur = true;
-	if (FAILED(pShader->Set_Bool("g_bMotionBlur", &bMotionBlur)))
+	if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
 		return E_FAIL;
 
 	_float fBloomPower = 0.5f;

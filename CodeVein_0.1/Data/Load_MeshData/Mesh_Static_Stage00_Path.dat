@@ -16,6 +16,7 @@ Mesh_Ceiling_finsh|Ceiling_finsh.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_
 Mesh_Clusterd_pillar|Clusterd_pillar.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_00\Clusterd_pillar\|0
 Mesh_Display_Rebar|Display_Rebar.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_00\Display_Rebar\|0
 Mesh_Floorframe|Floorframe.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_00\Floorframe\|0
+Mesh_Floorframe_curve|Floorframe_curve.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_00\Floorframe_curve\|0
 Mesh_Floorstone_bighafl|Floorstone_bighafl.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_00\Floorstone_bighafl\|0
 Mesh_Floorstone_halfA|Floorstone_halfA.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_00\Floorstone_halfA\|0
 Mesh_Floorstone_pice|Floorstone_pice.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_00\Floorstone_pice\|0
@@ -49,6 +50,7 @@ Mesh_Home_SmallCeiling|Home_SmallCeiling.X|..\..\Client\Resources\Mesh\StaticMes
 Mesh_Home_stairs|Home_stairs.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_00\Home_stairs\|0
 Mesh_Ironfloor|Ironfloor.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_00\Ironfloor\|0
 Mesh_Locker|Locker.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_00\Locker\|0
+Mesh_Longcarpet|Longcarpet.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_00\Longcarpet\|0
 Mesh_Long_Sofa|Long_Sofa.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_00\Long_Sofa\|0
 Mesh_Mapframe|Mapframe.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_00\Mapframe\|0
 Mesh_Mistletoe|Mistletoe.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_00\Mistletoe\|0
@@ -78,3 +80,4 @@ Mesh_Windowwall|Windowwall.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_00\Win
 Mesh_Windowwall_Botton|Windowwall_Botton.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_00\Windowwall_Botton\|0
 Mesh_Windowwall_Left|Windowwall_Left.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_00\Windowwall_Left\|0
 Mesh_Windowwall_Right|Windowwall_Right.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_00\Windowwall_Right\|0
+Mesh_Windowwall_Up|Windowwall_Up.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_00\Windowwall_Up\|0
