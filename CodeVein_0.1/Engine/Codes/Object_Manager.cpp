@@ -260,7 +260,7 @@ HRESULT CObject_Manager::LoadObjectPrototypes_FromPath(_Device pGraphicDev, cons
 				TARGET_TO_TRANS(pActiveObj)->Set_Angle(vVtx[1]);
 				TARGET_TO_TRANS(pActiveObj)->Set_Scale(vVtx[2]);
 
-				Add_GameOject_ToLayer_NoClone(pActiveObj, SCENE_STAGE, L"Layer_Render", NULL);
+				Add_GameOject_ToLayer_NoClone(pActiveObj, SCENE_STAGE, L"Layer_Mistletoe", NULL);
 				lstrcat(szObjName, ObjInfo->szIndex);
 
 				pActiveObj = nullptr;
@@ -276,7 +276,7 @@ HRESULT CObject_Manager::LoadObjectPrototypes_FromPath(_Device pGraphicDev, cons
 				TARGET_TO_TRANS(pActiveObj)->Set_Angle(vVtx[1]);
 				TARGET_TO_TRANS(pActiveObj)->Set_Scale(vVtx[2]);
 
-				Add_GameOject_ToLayer_NoClone(pActiveObj, SCENE_STAGE, L"Layer_Render", NULL);
+				Add_GameOject_ToLayer_NoClone(pActiveObj, SCENE_STAGE, L"Layer_ItemBox", NULL);
 				lstrcat(szObjName, ObjInfo->szIndex);
 
 				pActiveObj = nullptr;

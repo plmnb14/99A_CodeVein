@@ -29,6 +29,9 @@ private:
 	CNavMesh*		m_pNavMesh = nullptr;
 
 private:
+	CLoading*			m_pLoading = nullptr;
+
+private:
 	HRESULT Ready_LightDesc();
 
 public:

@@ -11,10 +11,12 @@ public:
 	{
 		Extract_Essential,
 		Extract_Static_Common,
+		Extract_Field_Gimmick,
 		Extract_Static_Stage00,
 		Extract_Static_Stage01,
 		Extract_Static_Stage02,
 		Extract_Static_Stage03,
+		Extract_Static_Stage04,
 		Extract_Dynamic, 
 		Extract_DrainWeapon, 
 		Extract_Weapon, 

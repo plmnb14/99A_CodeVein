@@ -43,7 +43,7 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
 
-	//cout << "동료 위치: " << m_pTransformCom->Get_Pos().x << ", " << m_pTransformCom->Get_Pos().y << ", " << m_pTransformCom->Get_Pos().z << endl;
+	cout << "동료 위치: " << m_pTransformCom->Get_Pos().x << ", " << m_pTransformCom->Get_Pos().y << ", " << m_pTransformCom->Get_Pos().z << endl;
 	//cout << "MoveType: " << m_eMovetype << ": Att는 2" << endl;
 
 	return S_OK;
@@ -53,7 +53,7 @@ _int CPlayer_Colleague::Late_Update_GameObject(_double TimeDelta)
 {
 
 	return S_OK;
-}
+} 
 
 HRESULT CPlayer_Colleague::LateInit_GameObject()
 {
@@ -62,28 +62,40 @@ HRESULT CPlayer_Colleague::LateInit_GameObject()
 
 HRESULT CPlayer_Colleague::Render_GameObject()
 {
-	if (nullptr == m_pShaderCom || nullptr == m_pStaticMesh)
+	if (nullptr == m_pShaderCom || nullptr == m_pDynamicMesh)
 		return E_FAIL;
 
 	if (FAILED(SetUp_ConstantTable()))
 		return E_FAIL;
 
+	m_pDynamicMesh->Play_Animation(m_dPlayAni_Time * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"));
+
 	m_pShaderCom->Begin_Shader();
 
-	_ulong dwNumSubset = m_pStaticMesh->Get_NumMaterials();
+	_uint iNumMeshContainer = _uint(m_pDynamicMesh->Get_NumMeshContainer());
 
-	for (_ulong i = 0; i < dwNumSubset; ++i)
+	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 	{
-		m_pShaderCom->Begin_Pass(0);
-		m_pShaderCom->Set_StaticTexture_Auto(m_pStaticMesh, i);
+		_uint iNumSubSet = (_uint)m_pDynamicMesh->Get_NumMaterials(i);
 
-		m_pShaderCom->Commit_Changes();
+		m_pDynamicMesh->Update_SkinnedMesh(i);
 
-		m_pStaticMesh->Render_Mesh(i);
+		for (_uint j = 0; j < iNumSubSet; ++j)
+		{
+			if (CPlayer_Colleague::Coll_Dead != m_eMovetype)
+				m_iPass = m_pDynamicMesh->Get_MaterialPass(i, j);
 
-		m_pShaderCom->End_Pass();
+			m_pShaderCom->Begin_Pass(m_iPass);
+
+			m_pShaderCom->Set_DynamicTexture_Auto(m_pDynamicMesh, i, j);
+
+			m_pShaderCom->Commit_Changes();
+
+			m_pDynamicMesh->Render_Mesh(i, j);
+
+			m_pShaderCom->End_Pass();
+		}
 	}
-
 	m_pShaderCom->End_Shader();
 
 	return S_OK;
@@ -103,13 +115,13 @@ HRESULT CPlayer_Colleague::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
-	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_DefaultBox", L"Com_StaticMesh", (CComponent**)&m_pStaticMesh)))
-		return E_FAIL;
-
 	//// for.Com_Mesh
-	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Jack", L"Com_DynamicMesh", (CComponent**)&m_pDynamicMesh)))
+	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_DefaultBox", L"Com_StaticMesh", (CComponent**)&m_pStaticMesh)))
 	//	return E_FAIL;
+
+	// for.Com_Mesh
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Test_Jack", L"Com_DynamicMesh", (CComponent**)&m_pDynamicMesh)))
+		return E_FAIL;
 
 	// for.Com_NavMesh
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMesh)))
@@ -169,12 +181,9 @@ HRESULT CPlayer_Colleague::Ready_BoneMatrix()
 
 HRESULT CPlayer_Colleague::Ready_Collider()
 {
-	//m_vecPhysicCol;		// 충돌 체크용 콜라이더 벡터
-	//m_vecAttackCol;		// 공격용 콜라이더 벡터
 	m_vecPhysicCol.reserve(3);
-	m_vecAttackCol.reserve(1);
 
-	// 경계 체크용 Collider - 범위 내에 있는지? -> 있으면 바로 공격하고 멀리있으면 간 좀 보다가 가서 때린다던지 하는겅
+	// 경계 체크용 Collider - 밀어내기 구
 	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 	IF_NULL_VALUE_RETURN(pCollider, E_FAIL);
 
@@ -183,6 +192,30 @@ HRESULT CPlayer_Colleague::Ready_Collider()
 	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
 	pCollider->Set_Dynamic(true);
 	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Range]->_41, m_matBone[Bone_Range]->_42, m_matBone[Bone_Range]->_43));
+	pCollider->Set_Enabled(true);
+	pCollider->Set_Type(COL_SPHERE);
+	m_vecPhysicCol.push_back(pCollider);
+
+	//=====================================
+
+	// 맞는 용도 구
+	// 몸통
+	fRadius = 0.4f;
+
+	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
+	pCollider->Set_Dynamic(true);
+	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Body]->_41, m_matBone[Bone_Body]->_42, m_matBone[Bone_Body]->_43));
+	pCollider->Set_Enabled(true);
+	pCollider->Set_Type(COL_SPHERE);
+	m_vecPhysicCol.push_back(pCollider);
+
+	//=====================================
+	// 머리
+	fRadius = 0.4f;
+
+	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
+	pCollider->Set_Dynamic(true);
+	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Head]->_41, m_matBone[Bone_Head]->_42, m_matBone[Bone_Head]->_43));
 	pCollider->Set_Enabled(true);
 	pCollider->Set_Type(COL_SPHERE);
 	m_vecPhysicCol.push_back(pCollider);
@@ -216,6 +249,17 @@ void CPlayer_Colleague::Check_Do_List()
 	_v3 pPlayerPos = m_pTargetTransformCom->Get_Pos();
 	_float MyLength = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransformCom->Get_Pos()));
 
+	m_List_pMonTarget[0] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
+	m_List_pMonTarget[1] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
+
+	_v3 vecMonpos = V3_NULL;
+
+	for (auto& iter : m_List_pMonTarget[0])
+		vecMonpos = TARGET_TO_TRANS(iter)->Get_Pos();
+
+	m_fAll_Length = V3_LENGTH(&(m_pTransformCom->Get_Pos() - vecMonpos));
+
+
 
 	if (MyLength < 30.f)	// - 플레이어가 30.f 안에 있는지 먼저 체크
 	{
@@ -227,8 +271,6 @@ void CPlayer_Colleague::Check_Do_List()
 		{
 			// 전투 상황이 아니라면 가장 가까운 몬스터를 찾는다
 
-			m_List_pMonTarget[0] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
-			m_List_pMonTarget[1] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
 			
 			if (m_List_pMonTarget[0].empty())
 				m_bMonExistence = true;
@@ -237,18 +279,10 @@ void CPlayer_Colleague::Check_Do_List()
 
 			if (false == m_bMonExistence)
 			{
-				_v3 vecMonpos = V3_NULL;
-
-				for (auto& iter : m_List_pMonTarget[0])
-					vecMonpos = TARGET_TO_TRANS(iter)->Get_Pos();
-
-				m_fAll_Length = V3_LENGTH(&(m_pTransformCom->Get_Pos() - vecMonpos));
-
 				if (m_fAll_Length < 15.f)
-				{
 					m_bStart_Fighting = true;
-					
-				}
+				if (m_fAll_Length > 15.f)
+					m_bStart_Fighting = false;
 			}
 		}
 		if (true == m_bStart_Fighting)
@@ -261,12 +295,21 @@ void CPlayer_Colleague::Check_Do_List()
 			if (m_fAll_Length < 15.f)
 			{
 				m_eMovetype = CPlayer_Colleague::Coll_Attack;
-				m_eColl_AttackMoment = CPlayer_Colleague::Att_Idle;
+
+				if (m_fAll_Length < 3.f)
+				{
+					m_eColl_AttackMoment = CPlayer_Colleague::Att_Normal;
+				}
+					
 			}
 				
 
-			if (0 >= MonHP)
+			if (0 >= MonHP || m_fAll_Length > 20.f)
+			{
+				// 몬스터가 죽었거나 일정 범위를 벗어나서 전투 종료
 				m_bStart_Fighting = false;
+			}
+				
 		}
 
 		// - 범위 내 몬스터가 없으면 플레이어가 있는지
@@ -386,11 +429,14 @@ void CPlayer_Colleague::Set_AniEvent()
 			case CPlayer_Colleague::Att_waiting:
 			{
 				// 전투 대기 상태 - 간보는 상태?
+				CollAtt_Waiting();
+				//m_pDynamicMesh->SetUp_Animation();
 				break;
 			}
-			case CPlayer_Colleague::Att_Idle:
+			case CPlayer_Colleague::Att_Normal:
 			{
-				CollAtt_Idle();
+				// 일반 공격
+				CollAtt_Normal();
 				break;
 			}
 			case CPlayer_Colleague::Att_Skill:
@@ -421,7 +467,7 @@ HRESULT CPlayer_Colleague::SetUp_Default()
 
 	// 플레이어에서 10.f 떨어진 위치에서 최초 생성
 	//m_pTransformCom->Set_Pos(_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos().x - 1.f, TARGET_TO_TRANS(m_pTarget)->Get_Pos().y, TARGET_TO_TRANS(m_pTarget)->Get_Pos().z - 1.f));
-	m_pTransformCom->Set_Scale(V3_ONE);
+	m_pTransformCom->Set_Scale(_v3(1.2f, 1.1f, 1.2f));
 	m_pTargetTransformCom = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 
 	m_tObjParam.fHp_Cur = 1000.f;
@@ -494,7 +540,11 @@ void CPlayer_Colleague::CollIdle_Waiting()
 	Colleague_Movement(0.f, m_pTransformCom->Get_Axis(AXIS_Z));
 }
 
-void CPlayer_Colleague::CollAtt_Idle()
+void CPlayer_Colleague::CollAtt_Waiting()
+{
+}
+
+void CPlayer_Colleague::CollAtt_Normal()
 {
 	// 기본 공격만 하는 함수
 	// 루이 기본 공격

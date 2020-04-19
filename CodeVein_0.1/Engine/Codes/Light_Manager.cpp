@@ -78,6 +78,16 @@ void CLight_Manager::Update_Light()
 			pLight->Update_Light();
 }
 
+HRESULT CLight_Manager::Clear_LightList()
+{
+	for (auto& pLight : m_LightList)
+		Safe_Release(pLight);
+
+	m_LightList.clear();
+
+	return S_OK;
+}
+
 void CLight_Manager::Free()
 {
 	for (auto& pLight : m_LightList)

@@ -21,10 +21,17 @@ public:
 private:
 	HRESULT Add_Component();
 
+public:
+	_uint Select_Stage();
+	void Move_Right();
+	void Move_Left();
+
 private:
 	CTransform*				m_pTransformCom = nullptr;
 	vector<CStageUI*>		m_vecStageUI;
 	_uint					m_iSelectIndex = 0;
+
+	_bool					m_bIsMove = false;
 
 public:
 	static CStageSelectUI*	Create(_Device pGraphic_Device);

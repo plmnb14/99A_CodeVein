@@ -21,6 +21,7 @@ public:
 
 public:
 	HRESULT Ready_Layer_Player(const _tchar* pLayerTag);
+	HRESULT Ready_Layer_Environment(const _tchar* pLayerTag);
 
 private:
 	CNavMesh*		m_pNavMesh = nullptr;
