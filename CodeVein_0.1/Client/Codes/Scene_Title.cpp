@@ -6,6 +6,7 @@
 #include "Scene_Stage_01.h"
 #include "Scene_Stage_02.h"
 #include "Scene_Stage_03.h"
+#include "Scene_Stage_04.h"
 
 #include "BackGround.h"
 #include "Management.h"
@@ -112,6 +113,12 @@ _int CScene_Title::Update_Scene(_double TimeDelta)
 		case CScene_Logo::Stage_03:
 		{
 			pScene = CScene_Stage_03::Create(m_pGraphic_Device, m_bLoadStaticMesh);
+			break;
+		}
+
+		case CScene_Logo::Stage_04:
+		{
+			pScene = CScene_Stage_04::Create(m_pGraphic_Device, m_bLoadStaticMesh);
 			break;
 		}
 		}

@@ -850,11 +850,12 @@ _uint CLoading::Loading_Title()
 	cout << "[3] Stage_01 = false " << endl;
 	cout << "[4] Stage_02 = false " << endl;
 	cout << "[5] Stage_03 = false " << endl;
+	cout << "[6] Stage_04 = false " << endl;
 	cout << "-------------------------------------------------------------------------------" << endl;
-	cout << "[6] Load_StaticMesh = ";
+	cout << "[8] Load_StaticMesh = ";
 	cout << (m_bLoadStaticMesh ? "true" : "false") << endl;
 	cout << "-------------------------------------------------------------------------------" << endl;
-	cout << "[7] # 릴리즈 모드 # ";
+	cout << "[9] # 릴리즈 모드 # ";
 	cout << (g_bReleaseMode ? "true" : "false") << endl;
 	cout << "-------------------------------------------------------------------------------" << endl;
 
@@ -929,6 +930,19 @@ _uint CLoading::Loading_Stage()
 			g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage03_Path.dat");
 
 			g_bOnStage[5] = true;
+		}
+		break;
+	}
+
+	// 스테이지 - 04
+	case 5:
+	{
+		// 4번 - 스테이지 03
+		if (false == g_bOnStage[6])
+		{
+			g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage04_Path.dat");
+
+			g_bOnStage[6] = true;
 		}
 		break;
 	}
@@ -1081,7 +1095,7 @@ _uint CLoading::Loading_MainStages()
 	// 3번 - 스테이지 01
 	if (false == g_bOnStage[3])
 	{
-		cout << "스테이지 1 리소스 로딩중" << endl;
+		cout << "스테이지 1 리소스 로딩중  . . . " << endl;
 		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage01_Path.dat");
 
 		g_bOnStage[3] = true;
@@ -1090,7 +1104,7 @@ _uint CLoading::Loading_MainStages()
 	// 3번 - 스테이지 01
 	if (false == g_bOnStage[4])
 	{
-		cout << "스테이지 2 리소스 로딩중" << endl;
+		cout << "스테이지 2 리소스 로딩중  . . . (리소스 없음)" << endl;
 		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage02_Path.dat");
 
 		g_bOnStage[4] = true;
@@ -1099,15 +1113,24 @@ _uint CLoading::Loading_MainStages()
 	// 3번 - 스테이지 01
 	if (false == g_bOnStage[5])
 	{
-		cout << "스테이지 3 리소스 로딩중" << endl;
+		cout << "스테이지 3 리소스 로딩중 . . . " << endl;
 		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage03_Path.dat");
 
 		g_bOnStage[5] = true;
 	}
 
+	// 3번 - 스테이지 01
+	if (false == g_bOnStage[6])
+	{
+		cout << "스테이지 4 리소스 로딩중  . . . " << endl;
+		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage04_Path.dat");
+
+		g_bOnStage[6] = true;
+	}
+
 	m_bFinish = true;
 
-	cout << "전부 로딩 완료" << endl;
+	cout << "전부 로딩 완료 . . . !!!" << endl;
 
 	return NO_EVENT;
 }

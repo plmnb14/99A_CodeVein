@@ -122,7 +122,7 @@ void CScene_Logo::Update_DebugStage_Console()
 	cout << " #  [ 릴리즈 모드 ] 는 메쉬로드와 스테이지 진행이 실제 게임처럼 됩니다." << endl;
 	cout << " #  [ 릴리즈 모드 ] 는 강제로 [ Stage_Base ] 부터 시작하게 됩니다." << endl;
 	cout << "-------------------------------------------------------------------------------" << endl;
-	cout << "[2] Stage_Training = ";
+	cout << "[1] Stage_Training = ";
 	cout << (m_eSceneChange == CScene_Logo::Stage_Training ? "true" : "false") << endl;
 
 	cout << "[2] Stage_Base = ";
@@ -136,11 +136,14 @@ void CScene_Logo::Update_DebugStage_Console()
 
 	cout << "[5] Stage_03 = ";
 	cout << (m_eSceneChange == CScene_Logo::Stage_03 ? "true" : "false") << endl;
+
+	cout << "[6] Stage_04 = ";
+	cout << (m_eSceneChange == CScene_Logo::Stage_04 ? "true" : "false") << endl;
 	cout << "-------------------------------------------------------------------------------" << endl;
-	cout << "[6] Load_StaticMesh = ";
+	cout << "[8] Load_StaticMesh = ";
 	cout << (m_bLoadStaticMesh ? "true" : "false") << endl;
 	cout << "-------------------------------------------------------------------------------" << endl;
-	cout << "[7] # 릴리즈 모드 # ";
+	cout << "[9] # 릴리즈 모드 # ";
 	cout << (g_bReleaseMode ? "true" : "false") << endl;
 	cout << "-------------------------------------------------------------------------------" << endl;
 }
@@ -184,12 +187,19 @@ void CScene_Logo::Logo_KeyInput()
 
 	else if (g_pInput_Device->Key_Down(DIK_6))
 	{
+		m_eSceneChange = Stage_04;
+		Update_DebugStage_Console();
+		g_sStageIdx_Cur = 5;
+	}
+
+	else if (g_pInput_Device->Key_Down(DIK_8))
+	{
 		m_bLoadStaticMesh = (m_bLoadStaticMesh ? false : true);
 
 		Update_DebugStage_Console();
 	}
 
-	else if (g_pInput_Device->Key_Down(DIK_7))
+	else if (g_pInput_Device->Key_Down(DIK_9))
 	{
 		g_bReleaseMode = (g_bReleaseMode ? false : true);
 

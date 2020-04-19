@@ -331,6 +331,9 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\11. MistletoeUI\MistletoeOptionUI">
       <UniqueIdentifier>{0b0ee04a-19b5-4b1b-af33-a73a1ca5b1d7}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Scene\07.Stage_04">
+      <UniqueIdentifier>{611068cf-9c1d-4742-a02d-bc7dcc4c9523}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -648,12 +651,14 @@
     <ClInclude Include="..\Headers\Button_UI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\Button_UI</Filter>
     </ClInclude>
-
     <ClInclude Include="..\Headers\MistletoeOptionUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\11. MistletoeUI\MistletoeOptionUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\LeakField.h">
       <Filter>02.GameObject\Stage\1%29 Boss\QueensKnight\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Scene_Stage_04.h">
+      <Filter>01.Scene\07.Stage_04</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -968,6 +973,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\LeakField.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\QueensKnight\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Scene_Stage_04.cpp">
+      <Filter>01.Scene\07.Stage_04</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
