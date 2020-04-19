@@ -43,7 +43,7 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
 
-	//cout << "동료 위치: " << m_pTransformCom->Get_Pos().x << ", " << m_pTransformCom->Get_Pos().y << ", " << m_pTransformCom->Get_Pos().z << endl;
+	cout << "동료 위치: " << m_pTransformCom->Get_Pos().x << ", " << m_pTransformCom->Get_Pos().y << ", " << m_pTransformCom->Get_Pos().z << endl;
 	//cout << "MoveType: " << m_eMovetype << ": Att는 2" << endl;
 
 	return S_OK;
@@ -53,7 +53,7 @@ _int CPlayer_Colleague::Late_Update_GameObject(_double TimeDelta)
 {
 
 	return S_OK;
-}
+} 
 
 HRESULT CPlayer_Colleague::LateInit_GameObject()
 {
@@ -62,28 +62,40 @@ HRESULT CPlayer_Colleague::LateInit_GameObject()
 
 HRESULT CPlayer_Colleague::Render_GameObject()
 {
-	if (nullptr == m_pShaderCom || nullptr == m_pStaticMesh)
+	if (nullptr == m_pShaderCom || nullptr == m_pDynamicMesh)
 		return E_FAIL;
 
 	if (FAILED(SetUp_ConstantTable()))
 		return E_FAIL;
 
+	m_pDynamicMesh->Play_Animation(m_dPlayAni_Time * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"));
+
 	m_pShaderCom->Begin_Shader();
 
-	_ulong dwNumSubset = m_pStaticMesh->Get_NumMaterials();
+	_uint iNumMeshContainer = _uint(m_pDynamicMesh->Get_NumMeshContainer());
 
-	for (_ulong i = 0; i < dwNumSubset; ++i)
+	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 	{
-		m_pShaderCom->Begin_Pass(0);
-		m_pShaderCom->Set_StaticTexture_Auto(m_pStaticMesh, i);
+		_uint iNumSubSet = (_uint)m_pDynamicMesh->Get_NumMaterials(i);
 
-		m_pShaderCom->Commit_Changes();
+		m_pDynamicMesh->Update_SkinnedMesh(i);
 
-		m_pStaticMesh->Render_Mesh(i);
+		for (_uint j = 0; j < iNumSubSet; ++j)
+		{
+			if (CPlayer_Colleague::Coll_Dead != m_eMovetype)
+				m_iPass = m_pDynamicMesh->Get_MaterialPass(i, j);
 
-		m_pShaderCom->End_Pass();
+			m_pShaderCom->Begin_Pass(m_iPass);
+
+			m_pShaderCom->Set_DynamicTexture_Auto(m_pDynamicMesh, i, j);
+
+			m_pShaderCom->Commit_Changes();
+
+			m_pDynamicMesh->Render_Mesh(i, j);
+
+			m_pShaderCom->End_Pass();
+		}
 	}
-
 	m_pShaderCom->End_Shader();
 
 	return S_OK;
@@ -103,13 +115,13 @@ HRESULT CPlayer_Colleague::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
-	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_DefaultBox", L"Com_StaticMesh", (CComponent**)&m_pStaticMesh)))
-		return E_FAIL;
-
 	//// for.Com_Mesh
-	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Jack", L"Com_DynamicMesh", (CComponent**)&m_pDynamicMesh)))
+	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_DefaultBox", L"Com_StaticMesh", (CComponent**)&m_pStaticMesh)))
 	//	return E_FAIL;
+
+	// for.Com_Mesh
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Test_Jack", L"Com_DynamicMesh", (CComponent**)&m_pDynamicMesh)))
+		return E_FAIL;
 
 	// for.Com_NavMesh
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMesh)))
@@ -417,6 +429,8 @@ void CPlayer_Colleague::Set_AniEvent()
 			case CPlayer_Colleague::Att_waiting:
 			{
 				// 전투 대기 상태 - 간보는 상태?
+				CollAtt_Waiting();
+				m_pDynamicMesh->SetUp_Animation()
 				break;
 			}
 			case CPlayer_Colleague::Att_Normal:
@@ -453,7 +467,7 @@ HRESULT CPlayer_Colleague::SetUp_Default()
 
 	// 플레이어에서 10.f 떨어진 위치에서 최초 생성
 	//m_pTransformCom->Set_Pos(_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos().x - 1.f, TARGET_TO_TRANS(m_pTarget)->Get_Pos().y, TARGET_TO_TRANS(m_pTarget)->Get_Pos().z - 1.f));
-	m_pTransformCom->Set_Scale(V3_ONE);
+	m_pTransformCom->Set_Scale(_v3(1.2f, 1.1f, 1.2f));
 	m_pTargetTransformCom = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 
 	m_tObjParam.fHp_Cur = 1000.f;
@@ -524,6 +538,10 @@ void CPlayer_Colleague::CollIdle_Waiting()
 	m_eColl_IdleMoment = CPlayer_Colleague::Idle_Waiting;
 	Funtion_RotateBody();
 	Colleague_Movement(0.f, m_pTransformCom->Get_Axis(AXIS_Z));
+}
+
+void CPlayer_Colleague::CollAtt_Waiting()
+{
 }
 
 void CPlayer_Colleague::CollAtt_Normal()

@@ -55,8 +55,8 @@ _int CStageSelectUI::Update_GameObject(_double TimeDelta)
 	if (nullptr == m_pTarget)
 		return NO_EVENT;
 
-	/*LOOP(5)
-		m_vecStageUI[i]->Set_Active(m_bIsActive);*/
+	LOOP(5)
+		m_vecStageUI[i]->Set_Active(m_bIsActive);
 
 	
 	m_pTransformCom->Set_Angle(TARGET_TO_TRANS(m_pTarget)->Get_Angle());
@@ -71,7 +71,7 @@ _int CStageSelectUI::Update_GameObject(_double TimeDelta)
 	}
 	
 	
-	if (g_pInput_Device->Key_Up(DIK_LEFT) && m_bIsActive)
+	/*if (g_pInput_Device->Key_Up(DIK_LEFT) && m_bIsActive)
 	{
 		if (0 != m_iSelectIndex)
 		{
@@ -90,7 +90,7 @@ _int CStageSelectUI::Update_GameObject(_double TimeDelta)
 				m_vecStageUI[i]->Set_Alpha(0.1f);
 		}
 			
-	}
+	}*/
 
 	for (_uint i = 0; i < m_vecStageUI.size(); ++i)
 	{
@@ -102,14 +102,13 @@ _int CStageSelectUI::Update_GameObject(_double TimeDelta)
 			TARGET_TO_TRANS(m_vecStageUI[i])->Set_Scale(_v3(2.1567f, 1.3f, 0.f)) : TARGET_TO_TRANS(m_vecStageUI[i])->Set_Scale(_v3(1.72536f, 1.04f, 0.f));
 	}
 			
-	if (g_pInput_Device->Key_Up(DIK_P))
-	{
-		m_bIsActive = !m_bIsActive;
-		LOOP(5)
-			m_vecStageUI[i]->Set_Active(m_bIsActive);
-		/*LOOP(5)
-			m_vecStageUI[i]->Set_Active(!m_vecStageUI[i]->Get_Active());*/
-	}
+	//if (g_pInput_Device->Key_Up(DIK_P))
+	//{
+	//	m_bIsActive = !m_bIsActive;
+	//	
+	//	/*LOOP(5)
+	//		m_vecStageUI[i]->Set_Active(!m_vecStageUI[i]->Get_Active());*/
+	//}
 	
 	return NO_EVENT;
 }
@@ -132,7 +131,41 @@ _uint CStageSelectUI::Select_Stage()
 {
 	if (!m_bIsActive)
 		return _uint(CStageUI::Teleport_End);
+
+	m_bIsActive = false;
 	return _uint(m_vecStageUI[m_iSelectIndex]->Get_Teleport_Menu());
+}
+
+void CStageSelectUI::Move_Right()
+{
+	if (!m_bIsActive)
+		return;
+	//if (g_pInput_Device->Key_Up(DIK_RIGHT) && m_bIsActive)
+	{
+		if (CStageUI::Teleport_End - 1 != m_iSelectIndex)
+		{
+			m_iSelectIndex++;
+			LOOP(_int(m_vecStageUI.size()))
+				m_vecStageUI[i]->Set_Alpha(0.1f);
+		}
+
+	}
+}
+
+void CStageSelectUI::Move_Left()
+{
+	if (!m_bIsActive)
+		return;
+	//if (g_pInput_Device->Key_Up(DIK_LEFT))
+	{
+		if (0 != m_iSelectIndex)
+		{
+			m_iSelectIndex--;
+
+			LOOP(_int(m_vecStageUI.size()))
+				m_vecStageUI[i]->Set_Alpha(0.1f);
+		}
+	}
 }
 
 

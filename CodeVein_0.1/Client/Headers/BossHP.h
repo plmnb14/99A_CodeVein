@@ -37,7 +37,7 @@ private:
 private:
 	_float m_fSpeed = 0.f;
 	_float m_fBossHP = 0.f;
-	_float m_fTotalHP = 0.f;
+	_float m_fTotalHP = 100.f;
 	_float m_fPercentage = 0.f;
 	CHPBack* m_pHPBack = nullptr;
 	CBossDecoUI* m_pDecoUI = nullptr;

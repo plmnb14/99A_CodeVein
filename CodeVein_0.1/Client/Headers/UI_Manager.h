@@ -35,6 +35,12 @@ public:
 	void Set_UI_Active(const _tchar* pLayerTag, _bool bIsActive); // 해당 레이어의 UI 활성화/비활성화
 	void Set_BossHP_Active(_bool bIsActive);
 	_uint Select_Stage(); // StageUI : 스테이지 선택하면 해당 스테이지 값 반환
+	void Move_StageUI_Right(); // StageUI 오른쪽 이동
+	void Move_StageUI_Left(); // StageUI 왼쪽 이동
+	void Active_MistletoeUI(_bool bIsActive); // 겨우살이 UI 활성화(On / Off)
+	void Active_Mistletoe_SubUI(); // 겨우살이 하위UI(StageUI 등) 활성화(On / Off)
+	void Move_MistletoeUI_Up();
+	void Move_MistletoeUI_Down();
 
 private:
 	_uint m_uiCoundItem = 0;

@@ -23,6 +23,8 @@ private:
 
 public:
 	_uint Select_Stage();
+	void Move_Right();
+	void Move_Left();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
