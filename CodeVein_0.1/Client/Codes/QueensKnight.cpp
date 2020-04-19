@@ -30,7 +30,7 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 	Ready_Collider();
 
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 1000.f;
+	m_tObjParam.fHp_Cur = 2000.f;
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
 	m_tObjParam.fDamage = 20.f;
 
@@ -49,7 +49,6 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos());
 	pBlackBoard->Set_Value(L"HP", m_tObjParam.fHp_Cur);
 	pBlackBoard->Set_Value(L"MAXHP", m_tObjParam.fHp_Max);
-	//pBlackBoard->Set_Value(L"HPRatio", 100);
 	pBlackBoard->Set_Value(L"Show", true);
 	pBlackBoard->Set_Value(L"Show_Near", true);
 
@@ -149,6 +148,8 @@ _int CQueensKnight::Update_GameObject(_double TimeDelta)
 		Check_PhyCollider();
 
 	OnCollisionEnter();
+
+	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
 	return NOERROR;
 }
@@ -841,7 +842,7 @@ CBT_Composite_Node * CQueensKnight::LeakField()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("리크필드");
-	CBT_Play_Ani* Show_Ani52 = Node_Ani("방패치기", 52, 0.95f);
+	CBT_Play_Ani* Show_Ani52 = Node_Ani("리크필드", 52, 0.95f);
 	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("보호막 변수 On");
@@ -988,7 +989,7 @@ CBT_Composite_Node * CQueensKnight::Flash_Rush()
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.176, 0);
 	CBT_SetValue* PhyColOff = Node_BOOL_SetValue("PhyColOff", L"PhyCol", false);
 	CBT_MoveTo* MoveTo0 = Node_MoveTo("점멸 이동", L"FlashPos", 0.1);
-	CBT_SetValue* PhyColOn = Node_BOOL_SetValue("PhyColOff", L"PhyCol", true);
+	CBT_SetValue* PhyColOn = Node_BOOL_SetValue("PhyColOn", L"PhyCol", true);
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적1", L"Player_Pos", 0.1, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 추적2", L"Player_Pos", 0.1);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 30, 0.307, 0);
@@ -1583,7 +1584,8 @@ CBT_Composite_Node * CQueensKnight::NearAttack_Dist5_Final()
 	Root_Sel->Add_Child(Flash());
 	Root_Sel->Add_Child(Flash());
 	Root_Sel->Add_Child(Shield_Attack());
-
+	Root_Sel->Add_Child(Create_LeakField_Or_Not());
+	
 	return Root_Sel;
 }
 
@@ -1596,6 +1598,7 @@ CBT_Composite_Node * CQueensKnight::FarAttack_Fianl()
 	Root_Sel->Add_Child(Flash_Cut());
 	Root_Sel->Add_Child(Flash());
 	Root_Sel->Add_Child(Flash_Middle_Ground());
+	Root_Sel->Add_Child(Create_LeakField_Or_Not());
 
 	return Root_Sel;
 }

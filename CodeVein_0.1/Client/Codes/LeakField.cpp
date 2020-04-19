@@ -51,7 +51,7 @@ _int CLeakField::Update_GameObject(_double TimeDelta)
 	if (m_bDead)
 		return DEAD_OBJ;
 
-	m_pTransformCom->Add_Pos(m_fSpeed * TimeDelta, *D3DXVec3Normalize(&_v3(), &_v3(m_pTarget_Transform->Get_Pos() - m_pTransformCom->Get_Pos())));
+	m_pTransformCom->Add_Pos(_float(m_fSpeed * TimeDelta), *D3DXVec3Normalize(&_v3(), &_v3(m_pTarget_Transform->Get_Pos() - m_pTransformCom->Get_Pos())));
 	// 충돌처리는 이펙트 넣고 나서 할 것임.
 	//OnCollisionEnter();
 

@@ -206,7 +206,7 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 	if (false == m_bReadyDead)
 		Check_PhyCollider();
 
-	// 네비매쉬로 y올려줘야함
+	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
 	return NOERROR;
 }
@@ -1070,9 +1070,16 @@ void CSwordGenji::Check_PhyCollider()
 
 		if (m_tObjParam.fHp_Cur > 0.f)
 		{
-			m_pMeshCom->SetUp_Animation(Ani_Dmg01_FL);	//방향에 따른 모션 해줘야함.
+			_float fAngle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos()));
 
-			// 디졸브 시작
+			if (0.f <= fAngle && fAngle < 90.f)
+				m_pMeshCom->SetUp_Animation(Ani_Dmg01_FR);
+			else if (90.f <= fAngle && fAngle < 180.f)
+				m_pMeshCom->SetUp_Animation(Ani_Dmg01_BR);
+			else if (-90.f <= fAngle && fAngle < 0)
+				m_pMeshCom->SetUp_Animation(Ani_Dmg01_FL);
+			else
+				m_pMeshCom->SetUp_Animation(Ani_Dmg01_BL);
 		}
 		else
 		{

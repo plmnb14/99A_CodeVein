@@ -64,17 +64,12 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos());
 	pBlackBoard->Set_Value(L"HP", m_tObjParam.fHp_Cur);
 	pBlackBoard->Set_Value(L"MAXHP", m_tObjParam.fHp_Max);
-	pBlackBoard->Set_Value(L"HPRatio", 100);
 	pBlackBoard->Set_Value(L"Show", true);
 
 	CBT_Selector* Start_Sel = Node_Selector("행동 시작");
 	//CBT_Sequence* Start_Sel = Node_Sequence("행동 시작"); // 테스트
 
-	CBT_UpdateGageRatio* UpdateHPRatioService = Node_UpdateGageRatio("체력 비율", L"HPRatio", L"MAXHP", L"HP", 1, 0.01, 0, CBT_Service_Node::Infinite);
-
 	pBehaviorTree->Set_Child(Start_Sel);
-
-	Start_Sel->Add_Service(UpdateHPRatioService);
 
 	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
 	//Check_ShowValue->Set_Child(Start_Show());
@@ -182,7 +177,9 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 	if (false == m_bReadyDead)
 		Check_PhyCollider();
 
-	return _int();
+	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
+
+	return NO_EVENT;
 }
 
 _int CGunGenji::Late_Update_GameObject(_double TimeDelta)
@@ -858,7 +855,16 @@ void CGunGenji::Check_PhyCollider()
 
 		if (m_tObjParam.fHp_Cur > 0.f)
 		{
-			m_pMeshCom->SetUp_Animation(Ani_Dmg01_FL);	//방향에 따른 모션 해줘야함.
+			_float fAngle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos()));
+
+			if (0.f <= fAngle && fAngle < 90.f)
+				m_pMeshCom->SetUp_Animation(Ani_Dmg01_FR);
+			else if (90.f <= fAngle && fAngle < 180.f)
+				m_pMeshCom->SetUp_Animation(Ani_Dmg01_BR);
+			else if (-90.f <= fAngle && fAngle < 0)
+				m_pMeshCom->SetUp_Animation(Ani_Dmg01_FL);
+			else
+				m_pMeshCom->SetUp_Animation(Ani_Dmg01_BL);
 		}
 		else
 		{

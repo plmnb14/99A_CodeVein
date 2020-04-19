@@ -33,6 +33,8 @@ private:
 	_double				m_dLifeTime = 0;
 	_bool				m_bDead = false;
 
+	_bool				m_bIceBoom = false;
+
 	_float				m_fEffectOffset = 0.3f;
 	_bool				m_bEffect = true;
 
