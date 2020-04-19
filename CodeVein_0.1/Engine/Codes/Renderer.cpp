@@ -767,14 +767,11 @@ HRESULT CRenderer::Render_LightAcc()
 	//m_pShader_LightAcc->Set_Value("g_matLightProj", &matProj, sizeof(_mat));
 	//m_pShader_LightAcc->Set_Value("g_vLightPos", &vLightPos, sizeof(_v3));
 
+	// 스테이지 1
 	_v3 vLightDir = _v3(0.2f, 1.f, 0.9f);
 	V3_NORMAL_SELF(&vLightDir);
 
-	// 임시로 추가라 나중에 고쳐야함
-	_v4 vLightDiffuse = _v4(1.f, 0.882f, 0.801f, 1.f);
 
-	m_pShader_LightAcc->Set_Value("g_vLightDiffuse", &_v4(vLightDir.x, vLightDir.y, vLightDir.x, 0.f), sizeof(_v4));
-    m_pShader_LightAcc->Set_Value("g_vLightDir", &_v4(vLightDir.x , vLightDir.y, vLightDir.x, 0.f), sizeof(_v4));
 	m_pShader_LightAcc->Set_Texture("g_NormalTexture", m_pTarget_Manager->Get_Texture(L"Target_Normal"));
 	m_pShader_LightAcc->Set_Texture("g_DepthTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"));
 	m_pShader_LightAcc->Set_Texture("g_ShadowMapTexture", m_pTarget_Manager->Get_Texture(L"Target_Shadow"));

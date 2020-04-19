@@ -19,6 +19,10 @@ public:
 	HRESULT Add_Light(LPDIRECT3DDEVICE9 pGraphic_Device, D3DLIGHT9 LightDesc);
 	HRESULT Render_Light(CShader* pShader);
 	void	Update_Light();
+
+public:
+	HRESULT Clear_LightList();
+
 public:
 	list<CLight*>			m_LightList;
 	typedef list<CLight*>	LIGHTLIST;

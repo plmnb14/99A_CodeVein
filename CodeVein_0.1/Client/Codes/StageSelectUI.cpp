@@ -32,6 +32,7 @@ HRESULT CStageSelectUI::Ready_GameObject(void * pArg)
 		pStageUI->Set_Teleport_Menu(i);
 		m_vecStageUI.push_back(pStageUI);
 	}
+
 	return NOERROR;
 }
 

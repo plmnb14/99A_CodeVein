@@ -122,11 +122,11 @@ void CScene_Logo::Update_DebugStage_Console()
 	cout << " #  [ 릴리즈 모드 ] 는 메쉬로드와 스테이지 진행이 실제 게임처럼 됩니다." << endl;
 	cout << " #  [ 릴리즈 모드 ] 는 강제로 [ Stage_Base ] 부터 시작하게 됩니다." << endl;
 	cout << "-------------------------------------------------------------------------------" << endl;
-	cout << "[1] Stage_Base = ";
-	cout << (m_eSceneChange == CScene_Logo::Stage_Base ? "true" : "false") << endl;
-
 	cout << "[2] Stage_Training = ";
 	cout << (m_eSceneChange == CScene_Logo::Stage_Training ? "true" : "false") << endl;
+
+	cout << "[2] Stage_Base = ";
+	cout << (m_eSceneChange == CScene_Logo::Stage_Base ? "true" : "false") << endl;
 
 	cout << "[3] Stage_01 = ";
 	cout << (m_eSceneChange == CScene_Logo::Stage_01 ? "true" : "false") << endl;
@@ -149,14 +149,14 @@ void CScene_Logo::Logo_KeyInput()
 {
 	if (g_pInput_Device->Key_Down(DIK_1))
 	{
-		m_eSceneChange = Stage_Base;
+		m_eSceneChange = Stage_Training;
 		Update_DebugStage_Console();
 		g_sStageIdx_Cur = 0;
 	}
 
 	if (g_pInput_Device->Key_Down(DIK_2))
 	{
-		m_eSceneChange = Stage_Training;
+		m_eSceneChange = Stage_Base;
 		Update_DebugStage_Console();
 		g_sStageIdx_Cur = 1;
 	}
