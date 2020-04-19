@@ -33,6 +33,8 @@ HRESULT CStageUI::Ready_GameObject(void * pArg)
 _int CStageUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
+	if (m_bIsDead)
+		return DEAD_OBJ;
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	if (1.f > m_fAlpha && m_bIsActive)
@@ -56,12 +58,27 @@ _int CStageUI::Update_GameObject(_double TimeDelta)
 	case Teleport_St01:
 		m_iIndex = 1;
 		break;
+	/*case Teleport_St01_2:
+		m_iIndex = 1;
+		break;
+	case Teleport_St01_3:
+		m_iIndex = 1;
+		break;*/
 	case Teleport_St02:
 		m_iIndex = 2;
 		break;
+	/*case Teleport_St02_2:
+		m_iIndex = 2;
+		break;
+	case Teleport_St02_3:
+		m_iIndex = 2;
+		break;*/
 	case Teleport_St03:
 		m_iIndex = 3;
 		break;
+	/*case Teleport_St03_2:
+		m_iIndex = 3;
+		break;*/
 	case Teleport_St04:
 		m_iIndex = 4;
 		break;
@@ -89,6 +106,8 @@ _int CStageUI::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CStageUI::Render_GameObject()
 {
+	if (m_fAlpha <= 0.f)
+		return NOERROR;
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
@@ -132,7 +151,7 @@ HRESULT CStageUI::Render_GameObject()
 			}
 			
 		}
-		else if (m_eTeleportMenu == Teleport_St04)
+		else if (m_eTeleportMenu == Teleport_End - 1)
 		{
 			LOOP(3)
 			{

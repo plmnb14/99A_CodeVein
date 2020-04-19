@@ -15,7 +15,7 @@ public:
 	enum Colleague_MoveType { Coll_Idle, Coll_Move, Coll_Guard, Coll_Attack, Coll_Hit, Coll_Dead };
 	enum Coll_Movement { Move_Walk, Move_Run, Move_Dodge };
 	enum Coll_IdleMoment { Idle_Waiting, Idle_Guard };
-	enum Coll_Attackmoment { Att_waiting, Att_Idle, Att_Skill };
+	enum Coll_Attackmoment { Att_waiting, Att_Normal, Att_Skill };
 	enum Coll_Guardmoment { Guard_Idle, Gurad_Walk, Gurad_Hit };
 	enum Move_Direction { Move_Front, Move_Back, Move_Left, Move_Right, Move_End };
 
@@ -73,7 +73,7 @@ private:
 
 	void	CollIdle_Waiting();
 
-	void	CollAtt_Idle();
+	void	CollAtt_Normal();
 
 private:
 	void	Funtion_RotateBody();
@@ -105,6 +105,8 @@ private:
 
 	_float	m_fSpeed = 0.f;
 	_float	m_fAll_Length = 0.f;
+
+	_float	m_fCoolTimer = 3.f;
 
 	_bool	m_bNear_byMonster = false;
 	_bool	m_bStart_Fighting = false;

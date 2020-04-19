@@ -259,8 +259,8 @@ void CWeapon_Inven::Add_Weapon(WEAPON_STATE eType)
 	
 	pDesc->fSizeX = 50.f;
 	pDesc->fSizeY = 50.f;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_WeaponSlot", SCENE_STAGE, L"Layer_WeaponSlot", pDesc);
-	pSlot = static_cast<CWeapon_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponSlot", SCENE_STAGE));
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_WeaponSlot", SCENE_MORTAL, L"Layer_WeaponSlot", pDesc);
+	pSlot = static_cast<CWeapon_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponSlot", SCENE_MORTAL));
 	pSlot->Set_Type(eType);
 	m_vecWeaponSlot.push_back(pSlot);
 
