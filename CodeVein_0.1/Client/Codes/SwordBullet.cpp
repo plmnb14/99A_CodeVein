@@ -81,10 +81,16 @@ _int CSwordBullet::Update_GameObject(_double TimeDelta)
 		if (m_fEffectOffset > 0.01f)
 		{
 			m_fEffectOffset = 0.f;
-			g_pManagement->Create_Effect(L"IceGirl_PointParticle_Blue", m_pTransformCom->Get_Pos(), nullptr);
-			g_pManagement->Create_Effect(L"IceGirl_PointParticle_Green", m_pTransformCom->Get_Pos(), nullptr);
-			g_pManagement->Create_Effect(L"IceGirl_FlashParticle_Blue", m_pTransformCom->Get_Pos(), nullptr);
-			g_pManagement->Create_Effect(L"IceGirl_FlashParticle_Green", m_pTransformCom->Get_Pos(), nullptr);
+
+			for (_int i = 0; i < 3; i++)
+			{
+				g_pManagement->Create_Effect(L"IceGirl_PointParticle_Blue", m_pTransformCom->Get_Pos(), nullptr);
+				g_pManagement->Create_Effect(L"IceGirl_PointParticle_Green", m_pTransformCom->Get_Pos(), nullptr);
+				g_pManagement->Create_Effect(L"IceGirl_FlashParticle_Blue", m_pTransformCom->Get_Pos(), nullptr);
+				g_pManagement->Create_Effect(L"IceGirl_FlashParticle_Green", m_pTransformCom->Get_Pos(), nullptr);
+				g_pManagement->Create_Effect(L"IceSmoke_01", m_pTransformCom->Get_Pos(), nullptr);
+				g_pManagement->Create_Effect(L"IceSmoke_02", m_pTransformCom->Get_Pos(), nullptr);
+			}
 		}
 		
 	}

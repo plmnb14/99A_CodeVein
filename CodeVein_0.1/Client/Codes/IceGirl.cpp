@@ -621,8 +621,10 @@ CBT_Composite_Node * CIceGirl::Ice_Barrier()
 	Root_Parallel->Add_Service(BarrierValue0);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("버프 전 오른손 오오라", L"IceGirl_Buff_Charge_Smoke_01", L"Bone_LeftHand", 0.1, 45, 0, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("스모크1", L"IceGirl_Buff_Bubble_BreakSmoke", L"Self_Foot", 0.8, 30, 0, 0);
 
 	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani29);
@@ -656,10 +658,20 @@ CBT_Composite_Node * CIceGirl::Charge_Rush()
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("차징 오른손 파티클", L"IceGirl_Charge_Hand_Particle", L"CreateSwordBulletPos", 0.1, 60, 0, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("차징 오른손 스모크1", L"IceGirl_Charge_Hand_Smoke", L"CreateSwordBulletPos", 0.1, 60, 0, 0);
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("차징 오른손 스모크2", L"IceGirl_Charge_Hand_Smoke_2", L"CreateSwordBulletPos", 0.1, 60, 0, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_01", L"Self_Foot", 1.9, 25, 0, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_02", L"Self_Foot", 1.9, 25, 0, 0);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_03", L"Self_Foot", 1.9, 25, 0, 0);
+	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("칼 냉기 스모크1", L"IceSmoke_01", L"Sword_MidPos", 0.1, 160, 0, 0);
+	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("칼 냉기 스모크2", L"IceSmoke_02", L"Sword_MidPos", 0.1, 160, 0, 0);
 
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
 	Root_Parallel->Add_Service(Effect2);
+	Root_Parallel->Add_Service(Effect3);
+	Root_Parallel->Add_Service(Effect4);
+	Root_Parallel->Add_Service(Effect5);
+	Root_Parallel->Add_Service(Effect6);
+	Root_Parallel->Add_Service(Effect7);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani32);

@@ -27,6 +27,8 @@ private:
 	CTransform*			m_pTarget_Transform = nullptr;
 	CAIController*		m_pTarget_AIController = nullptr;
 
+	CEffect*			m_pBarrierBody = nullptr;
+
 	_double				m_dCurTime = 0;
 	_double				m_dLifeTime = 0;
 	_bool				m_bDead = false;

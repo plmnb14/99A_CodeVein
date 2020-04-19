@@ -1237,6 +1237,14 @@ CBT_Composite_Node * CQueensKnight::Flash_Middle_Ground()
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("Á¡¸ê ÆÄÆ¼Å¬", L"QueensKnight_Teleport_Particle", L"Self_MidPos", 0, 70, 0.0, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("Á¡¸ê ¿Ö°î", L"QueensKnight_DistortionCircle", L"Self_MidPos", 0.2, 1, 0.35, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("³»·ÁÂï±â ½º¸ðÅ©", L"QueensKnight_JumpDown_Smoke", L"Self_Pos", 1.6, 1, 0.35, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("³»·ÁÂï±â ÀåÆÇ", L"QueensKnight_Ultimate_Floor", L"Self_Pos", 1.6, 6, 0.35, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("³»·ÁÂï±â ÄÜ1", L"QueensKnight_Ultimate_Cone_0", L"Self_Pos", 1.58, 1, 0.35, 0);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("³»·ÁÂï±â ÄÜ2", L"QueensKnight_Ultimate_Cone_1", L"Self_Pos", 1.65, 1, 0.35, 0);
+	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("³»·ÁÂï±â ÄÜ3", L"QueensKnight_Ultimate_Cone_2", L"Self_Pos", 1.7, 1, 0.35, 0);
+	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("³»·ÁÂï±â ÄÜ4", L"QueensKnight_Ultimate_Cone_3", L"Self_Pos", 1.75, 1, 0.35, 0);
+	CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("³»·ÁÂï±â ÄÜ5 - ¹Ù±ù", L"QueensKnight_Ultimate_Cone_4", L"Self_Pos", 1.6, 1, 0.35, 0);
+	CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("»¡°£ ±â¿î", L"QueensKnight_Ultimate_Smoke", L"Self_Pos", 1.6, 10, 0.35, 0);
 
 	CBT_StartDissolve* Dissolve0 = Node_StartDissolve("µðÁ¹ºê", this, 3.7f, false		, 0.2);
 	CBT_StartDissolve* Dissolve2 = Node_StartDissolve("µðÁ¹ºê", m_pSword, 3.7f, false	, 0.2);
@@ -1247,6 +1255,14 @@ CBT_Composite_Node * CQueensKnight::Flash_Middle_Ground()
 
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
+	Root_Parallel->Add_Service(Effect3);
+	Root_Parallel->Add_Service(Effect4);
+	Root_Parallel->Add_Service(Effect5);
+	Root_Parallel->Add_Service(Effect6);
+	Root_Parallel->Add_Service(Effect7);
+	Root_Parallel->Add_Service(Effect8);
+	Root_Parallel->Add_Service(Effect9);
 
 	Root_Parallel->Add_Service(Dissolve0);
 	Root_Parallel->Add_Service(Dissolve1);

@@ -73,6 +73,13 @@ _int CFireBullet::Update_GameObject(_double TimeDelta)
 		{
 			m_fEffectOffset = 0.f;
 			g_pManagement->Create_Effect(L"FireBoy_FireBullet", m_pTransformCom->Get_Pos(), nullptr);
+			
+			_int iRand = CCalculater::Random_Num(0, 2); // 33%
+			if(0 == iRand)
+				g_pManagement->Create_Effect(L"FireBoy_FireBullet_Sub_0", m_pTransformCom->Get_Pos(), nullptr);
+			else if(1 == iRand)
+				g_pManagement->Create_Effect(L"FireBoy_FireBullet_Sub_1", m_pTransformCom->Get_Pos(), nullptr);
+
 			g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_01", m_pTransformCom->Get_Pos(), nullptr);
 			g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_02", m_pTransformCom->Get_Pos(), nullptr);
 		}
