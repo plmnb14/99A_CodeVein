@@ -155,8 +155,7 @@ HRESULT CUI_Manager::SetUp_UILayer()
 
 _int CUI_Manager::Update_UI()
 {
-	if (g_pInput_Device->Key_Up(DIK_RETURN))
-		cout << Select_Stage() << endl;
+	
 	return 0;
 }
 
