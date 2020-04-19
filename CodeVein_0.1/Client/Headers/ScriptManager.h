@@ -1,5 +1,7 @@
 #pragma once
 
+#define MaxTriggerCnt 64
+
 #include "Base.h"
 #include "Client_Defines.h"
 
@@ -17,7 +19,7 @@ class CScriptManager : public CBase
 private:
 	typedef enum Script_Info
 	{
-		Script_Base , Script_Stage01, Script_Stage02, Script_Stage03, Script_Stage_Training, Script_Stage_End,
+		Script_Base , Script_Stage01, Script_Stage02, Script_Stage03, Script_Stage04, Script_Stage_Training, Script_Stage_End,
 	}SCRIPT_SCENE;
 
 private:
@@ -30,8 +32,11 @@ public:
 public:
 	virtual void Ready_ScriptManager(_Device _pGraphicDev);
 	virtual void Ready_Script_DynamicObject(_ulong _dwStageIdx);
-	virtual void Reset_ScriptEvent();
+	virtual void Reset_ScriptEvent(_ushort _sScriptStageIdx , _bool _bResetAll = false);
+
+public:
 	virtual void Reset_Script_DynmicObject();
+	virtual void Reset_ObjectPoolVector();
 
 public:
 	virtual void Update_ScriptMgr(_double _dDeltaTime , _ulong _dwSubsetIdx , _ulong _dwCellIdx);
@@ -55,10 +60,7 @@ private:
 	_ulong			m_dwCellIdx = 0;
 
 private:
-	_bool			m_bEventTrigger_0[64] = {};
-	_bool			m_bEventTrigger_1[64] = {};
-	_bool			m_bEventTrigger_2[64] = {};
-	_bool			m_bEventTrigger_3[64] = {};
+	_bool			m_bEventTrigger[Script_Stage_End][MaxTriggerCnt] = {};
 
 private:
 	_bool			m_bTimer = false;
@@ -78,12 +80,14 @@ private:
 	virtual void Stage_01_Scripts();
 	virtual void Stage_02_Scripts();
 	virtual void Stage_03_Scripts();
+	virtual void Stage_04_Scripts();
 
 private:
 	virtual void Ready_Base_DynamicObject();
 	virtual void Ready_Stage01_DynamicObject();
 	virtual void Ready_Stage02_DynamicObject();
 	virtual void Ready_Stage03_DynamicObject();
+	virtual void Ready_Stage04_DynamicObject();
 
 private:
 	virtual void Update_ScriptEvent();

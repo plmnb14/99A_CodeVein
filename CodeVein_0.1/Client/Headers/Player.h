@@ -36,6 +36,7 @@ public:
 		ACT_Hit, ACT_Jump, ACT_Fall, ACT_Down,
 		ACT_PickUp, ACT_OpenDoor, ACT_Cinematic,
 		ACT_Mistoletoe,
+		ACT_Summon, ACT_Disappear,
 		ACT_Dead,
 		ACT_STATE_END
 	};
@@ -67,13 +68,11 @@ public:
 
 private:
 	ACTOR_INFO				m_tInfo = {};
-	ACT_STATE				m_eActState = ACT_Idle;
-	ACT_STATE				m_eActState_Upper = ACT_Idle;
+	ACT_STATE				m_eActState = ACT_Summon;
 	WEAPON_STATE			m_eMainWpnState = WEAPON_None;
 	WEAPON_STATE			m_eSubWpnState = WEAPON_None;
 	DRAIN_STATE				m_eDrainState = DRAIN_END;
 	ACTIVE_WEAPON_SLOT		m_eActiveSlot = WPN_SLOT_A;
-	DODGE_TYPE				m_eDodgeType = DODGE_light;
 
 private:
 	CWeapon*				m_pWeapon[WPN_SLOT_End] = {};
@@ -129,6 +128,10 @@ private:
 	_bool					m_bCanMistletoe = false;
 	_bool					m_bOnMistletoe = false;
 	_bool					m_bActiveUI = false;
+	_bool					m_bCanSummon = true;
+	_bool					m_bCanDisappear = true;
+	_bool					m_bOnSummon = false;
+	_bool					m_bOnDisappear = false;
 
 private:
 	_short					m_sHeavyAtkCnt = 0;
@@ -231,6 +234,10 @@ private:
 	virtual void Play_WeaponChange();
 	virtual void Play_Spawn();
 	virtual void Play_PickUp();
+
+private:
+	virtual void Play_Summon();
+	virtual void Play_Disappear();
 
 private:
 	virtual void Play_BloodSuck();
@@ -735,10 +742,10 @@ private:
 	}P_ANI;
 
 private:
-	P_ANI	m_eAnim_Upper = Cmn_Idle;
-	P_ANI	m_eAnim_Lower = Cmn_Idle;
-	P_ANI	m_eAnim_RightArm = Cmn_Idle;
-	P_ANI	m_eAnim_LeftArm = Cmn_Idle;
+	P_ANI	m_eAnim_Upper = Cmn_GameStart;
+	P_ANI	m_eAnim_Lower = Cmn_GameStart;
+	P_ANI	m_eAnim_RightArm = Cmn_GameStart;
+	P_ANI	m_eAnim_LeftArm = Cmn_GameStart;
 
 private:
 	_long	m_lDebugValue = 0;
