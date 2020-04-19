@@ -53,8 +53,10 @@ private:	// 패턴들
 	CBT_Composite_Node* Ice_Cut();
 	// 6. 얼음 보호막
 	CBT_Composite_Node* Ice_Barrier();
-	// 7. 플레이어 주위에 콜드빔, 31번 애니
-
+	// 7. 플레이어 주위에 콜드빔, 31번 애니,	얼음기둥 등장시간 조정필요
+	CBT_Composite_Node* ColdBeam_RandomPos();
+	// 8. 자신 주위 4방향 콜드빔, 30번 애니
+	CBT_Composite_Node* ColdBeam_Around_Me();
 
 	// 원거리
 	// 1. 차지 후 돌진 찌르기

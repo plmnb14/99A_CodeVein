@@ -46,7 +46,7 @@ _int CFireGround::Update_GameObject(_double TimeDelta)
 		return DEAD_OBJ;
 
 	
-
+	m_dTimeDelta = TimeDelta;
 	m_dCurTime += TimeDelta;
 
 	// 시간 초과
@@ -127,8 +127,11 @@ _int CFireGround::Update_GameObject(_double TimeDelta)
 	{
 		m_dCurBoomTime += TimeDelta;
 
-		if(false == m_bFinishCol)	//충돌하면 true로 바뀜
+		if (false == m_bFinishCol)	//충돌하면 true로 바뀜
+		{
 			OnCollisionEnter();
+			m_bFireTickDmg = true;	// 장판 충돌 On
+		}
 
 		// 불 폭발 시작 후 잠깐만 콜라이더 On 시킴
 		if (m_dCurBoomTime > 0.2f)
@@ -137,6 +140,11 @@ _int CFireGround::Update_GameObject(_double TimeDelta)
 		}
 	}
 
+	// 폭발 후 장판 틱 데미지
+	if (true == m_bFireTickDmg)
+	{
+		OnCollisionEnter();
+	}
 
 
 	return NOERROR;
@@ -182,7 +190,6 @@ HRESULT CFireGround::Update_Collider()
 
 void CFireGround::OnCollisionEnter()
 {
-	Update_Collider();
 
 	// =============================================================================================
 	// 충돌
@@ -234,21 +241,29 @@ void CFireGround::OnCollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					if (false == iter->Get_Target_IsDodge())
+					// 폭발 충돌
+					if (false == m_bFireTickDmg)
 					{
-						iter->Set_Target_CanHit(false);
+						if (false == iter->Get_Target_IsDodge())
+						{
+							iter->Set_Target_CanHit(false);
 
-						// 타겟이 피격 가능하다면
-						if (iter->Get_Target_IsHit())
-							iter->Set_HitAgain(true);
+							// 타겟이 피격 가능하다면
+							if (iter->Get_Target_IsHit())
+								iter->Set_HitAgain(true);
 
-						iter->Add_Target_Hp(-m_tObjParam.fDamage);
+							iter->Add_Target_Hp(-m_tObjParam.fDamage);
+						}
+
+						m_bFinishCol = true;	// 충돌 완료
+
+						break;
 					}
-
-					m_bFinishCol = true;	// 충돌 완료
-
-					break;
-
+					// 장판 충돌
+					else
+					{
+						iter->Add_Target_Hp(-m_tObjParam.fDamage * m_dTimeDelta);
+					}
 				}
 
 				else

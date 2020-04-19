@@ -66,8 +66,6 @@ _int CColdBeam::Update_GameObject(_double TimeDelta)
 	if (m_bDead)
 		return DEAD_OBJ;
 
-	OnCollisionEnter();
-
 	m_dCurTime += TimeDelta;
 
 	if (m_dCurTime > m_dLifeTime)
@@ -111,6 +109,9 @@ _int CColdBeam::Update_GameObject(_double TimeDelta)
 			CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_FloorAura_03", m_pTransformCom->Get_Pos(), nullptr);
 		}
 	}
+
+	if ( 0.5 < m_dCurTime )
+		OnCollisionEnter();
 
 	return NOERROR;
 }
@@ -214,9 +215,10 @@ void CColdBeam::OnCollisionEvent(list<CGameObject*> plistGameObject)
 							iter->Set_HitAgain(true);
 
 						iter->Add_Target_Hp(-m_tObjParam.fDamage);
+
+						m_dCurTime = 1000;	// 바로 사망시키기 위해서 현재시간 100줬음
 					}
 
-					m_dCurTime = 1000;	// 바로 사망시키기 위해서 현재시간 100줬음
 
 					break;
 
@@ -263,7 +265,7 @@ HRESULT CColdBeam::Ready_Collider()
 	// 총알 중앙
 	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 
-	_float fRadius = 0.9f;
+	_float fRadius = 1.1f;
 
 	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
 	pCollider->Set_Dynamic(true);

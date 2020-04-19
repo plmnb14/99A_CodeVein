@@ -30,7 +30,7 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 	Ready_Collider();
 
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 150.f;
+	m_tObjParam.fHp_Cur = 2000.f;
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
 	m_tObjParam.fDamage = 20.f;
 	//m_tObjParam.fDamage = 0.f;
@@ -52,201 +52,31 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos());
 	pBlackBoard->Set_Value(L"HP", m_tObjParam.fHp_Cur);
 	pBlackBoard->Set_Value(L"MAXHP", m_tObjParam.fHp_Max);
-	pBlackBoard->Set_Value(L"HPRatio", 100);
-	pBlackBoard->Set_Value(L"Show", true); // 찐
-	//pBlackBoard->Set_Value(L"Show", false); // 테스트
+	pBlackBoard->Set_Value(L"Show", true);
 	pBlackBoard->Set_Value(L"Show_Near", true);
 
-	
+	pBlackBoard->Set_Value(L"PushCol", true);	// 충돌여부 제어변수
+
 	CBT_Selector* Start_Sel = Node_Selector("행동 시작");
 	//CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
-	CBT_UpdateGageRatio* UpdateHPRatioService = Node_UpdateGageRatio("체력 비율", L"HPRatio", L"MAXHP", L"HP", 1, 0.01, 0, CBT_Service_Node::Infinite);
 
 	pBehaviorTree->Set_Child(Start_Sel);
 
-	Start_Sel->Add_Service(UpdateHPRatioService);
-
 	//////////// 아래에 주석해놓은 4줄이 본게임에서 쓸 것임, 차례대로 공격함.
 
-	CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
-	Check_ShowValue->Set_Child(Start_Show());
-	Start_Sel->Add_Child(Check_ShowValue);
-	Start_Sel->Add_Child(Start_Game());
+	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
+	//Check_ShowValue->Set_Child(Start_Show());
+	//Start_Sel->Add_Child(Check_ShowValue);
+	//Start_Sel->Add_Child(Start_Game());
 
 	////////////
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	//Start_Sel->Add_Child(Eat_Turn());
+	Start_Sel->Add_Child(Start_Game());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
-
-
-	//나무위키
-
-	/////////////////////////////////////////////////////////////////////////////일반 공격
-	/*
-	뒤부터 시작, 물고 한바퀴 돌아서 독 Y OR N , 다시 물고 원래대로
-	22 -> 23
-
-	24   왼쪽 냠
-	25	오른쪽 냠
-
-	냠 -> 빙그르르냠
-	27 -> 26   0.5에서 넘어가야 돼
-
-	*/
-	/////////////////////////////////////////////////////////////////////////////특수 공격
-	/*
-	19  저격샷
-	20   좁은 범위 한바퀴 독살포
-	21   전방에 살랑살랑 독 살포
-	28  기모아서 독 소용돌이
-	29  오발탄
-
-	*/
-	/////////////////////////////////////////////////////////////////////////////단독 공격
-	/*
-	17   돌진 5번
-	18   트린다미어 , Y OR N
-
-	*/
-
-	/////////////////////////////////////////////////////////////////////////////일반 동작
-	/*
-	0번    오른쪽 걷기
-	1번		왼쪽 걷기
-	2		앞으로 걷기
-	3		뒤로 걷기
-
-
-
-
-	*/
-
-	/////////////////////////////////////////////////////////////////////////////일반 동작
-	/*
-	4		오른쪽 90도
-	5		왼쪽 90도
-	6		기본
-
-	7		그로기 시작
-	8		그로기 루프
-	9		그로기 끝
-
-
-	11		반피 2페이즈 시작
-
-	12		데쑤  페이퍼번 디졸브  중앙이늦게 사라짐
-
-	//   누적치
-	13		뒤에서  맞음
-	14		앞에서  맞음
-
-	// 항상 15번 상태하다가 16번이 되어야한다.  그리고 다음부터는 만날일이 없음
-	15		조우 전 대기
-	16		조우
-	*/
-
-
-
-
-
-
-
-
-
-
-
-
-	/////////////////////////////////////////////////////////////////////////////일반 공격
-
-
-	/////////////////////////////////////////////////////////////////////////////특수 공격
-	//// 20 -> 뒤돌아서 덥썩
-	//CBT_Play_Ani* pAni20 = Node_Ani("뒤돌아서 덥썩", 20, 0.9f);
-	//pSequence->Add_Child(pAni20);
-
-
-	/////////////////////////////////////////////////////////////////////////////단독 공격
-
-	//저격
-	//// 19 -> 좌회전 한바퀴  덥썩
-	//CBT_Play_Ani* pAni19 = Node_Ani("좌회전 한바퀴 덥썩", 19, 0.9f);
-	//pSequence->Add_Child(pAni19);
-
-
-	//독기 폭발
-	// 28 -> 좁은 범위 독안개
-	//CBT_Play_Ani* pAni28 = Node_Ani("좁은 범위 독안개", 28, 0.9f);
-	//pSequence->Add_Child(pAni28);
-
-
-	//돌진
-	//// 17 -> 돌진하면서 5번 타격 후 텀블링
-	//CBT_Play_Ani* pAni17 = Node_Ani("돌진하면서 5번 타격 후 텀블링", 17, 0.9f);
-	//pSequence->Add_Child(pAni17);
-
-
-	//// 29 -> 오발탄
-	//CBT_Play_Ani* pAni29 = Node_Ani("5발쏘기", 29, 0.9f);
-	//pSequence->Add_Child(pAni29);
-
-
-	//// 18 -> 트린다미어
-	//CBT_Play_Ani* pAni18 = Node_Ani("트린다미어", 18, 0.9f);
-	//pSequence->Add_Child(pAni18);
-
-
-
-
-
-
-
-
-	//// 21 -> 꼬리살상 독 살포
-	//CBT_Play_Ani* pAni21 = Node_Ani("꼬리살상 독 살포", 21, 0.9f);
-	//pSequence->Add_Child(pAni21);
-
-
-	////최초 조우시
-	//// 15 -> 혼자 있을 때 idle상태
-	//CBT_Play_Ani* pAni15 = Node_Ani("혼자 있을 때 IDLE상태", 15, 0.9f);
-	//pSequence->Add_Child(pAni15);
-
-	//// 16 -> 보스존 진입 시
-	//CBT_Play_Ani* pAni16 = Node_Ani("보스존 진입 시", 16, 0.9f);
-	//pSequence->Add_Child(pAni16);
-
-	//// 움찔
-	////13 -> 뒤맞고 움찔
-	//CBT_Play_Ani* pAni13 = Node_Ani("뒤맞고 움찔", 13, 0.9f);
-	//pSequence->Add_Child(pAni13);
-
-	////14 -> 앞맞고 움찔
-	//CBT_Play_Ani* pAni14 = Node_Ani("앞맞고 움찔", 14, 0.9f);
-	//pSequence->Add_Child(pAni14);
-
-
-	////12 -> 페이퍼번 , 디졸브 로 사망
-	//CBT_Play_Ani* pAni12 = Node_Ani("사망", 12, 0.9f);
-	//pSequence->Add_Child(pAni12);
-
-	////11 -> 반피되면  2페이지 시작 시
-	//CBT_Play_Ani* pAni11 = Node_Ani("반피되면 2페이지", 11, 0.9f);
-	//pSequence->Add_Child(pAni11);
-
-
-	///////////////////////////아웃
-	////10 -> 회피
-	//CBT_Play_Ani* pAni10 = Node_Ani("회피", 10, 0.9f);
-	//pSequence->Add_Child(pAni10);
-
-
-
-	m_pMeshCom->SetUp_Animation(Ani_Idle);
-
 
 	return NOERROR;
 }
@@ -256,8 +86,8 @@ _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 	if (false == m_bEnable)
 		return NO_EVENT;
 
-	//cout << "M : 업데이트 타?" << endl;
-	Push_Collider();
+	if (true == m_pAIControllerCom->Get_BoolValue(L"PushCol"))
+		Push_Collider();
 
 	CGameObject::Update_GameObject(TimeDelta);
 
@@ -302,6 +132,8 @@ _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 	//_float fLength = D3DXVec3Length(&vLengthTemp);
 
 	//cout << fLength << endl;
+
+	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
 	return NOERROR;
 }
@@ -416,12 +248,17 @@ HRESULT CPoisonButterfly::Render_GameObject_SetPass(CShader * pShader, _int iPas
 	return NOERROR;
 }
 
-CBT_Composite_Node * CPoisonButterfly::Left_Eat()
+CBT_Composite_Node * CPoisonButterfly::Left_Eat(_float fWeight)
 {
-	CBT_Sequence* Root_Seq = Node_Sequence("왼쪽 냠");
+	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
-	CBT_Play_Ani* Show_Ani27 = Node_Ani("왼쪽 냠", 27, 0.95f);//27
-	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 6, 0.3f);
+	CBT_Sequence* MainSeq = Node_Sequence("왼쪽 냠");
+	CBT_Play_Ani* Show_Ani27 = Node_Ani("왼쪽 냠", 27, fWeight);//27
+	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 6, 0.f);
+
+	CBT_Sequence* SubSeq = Node_Sequence("이동");
+	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적", L"Player_Pos", 1.4, 0);
+	CBT_RotationDir* RotationDir0 = Node_RotationDir("방향 회전", L"Player_Pos", 0.156);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("왜곡", L"ButterFly_Distortion_Circle", L"Bone_Tail6", 1.75f, 1, 0.01, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("보라 파티클", L"ButterFly_PointParticle", L"Bone_Tail6", 0.f, 160, 0.7, 0);
@@ -429,27 +266,37 @@ CBT_Composite_Node * CPoisonButterfly::Left_Eat()
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Bone_Tail6", 0.f, 160, 0.7, 0);
 	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("왜곡안개", L"ButterFly_Distortion_Smoke", L"Bone_Tail6", 0.f, 60, 0.7, 0);
 
-	Root_Seq->Add_Service(Effect0);
-	Root_Seq->Add_Service(Effect1);
-	Root_Seq->Add_Service(Effect2);
-	Root_Seq->Add_Service(Effect3);
-	Root_Seq->Add_Service(Effect4);
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
+	Root_Parallel->Add_Service(Effect3);
+	Root_Parallel->Add_Service(Effect4);
 
-	Root_Seq->Add_Child(Show_Ani27);
-	Root_Seq->Add_Child(Show_Ani6);
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(Show_Ani27);
+	MainSeq->Add_Child(Show_Ani6);
 
-	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 1.5, 1, 0.25, 0);
-	Root_Seq->Add_Service(pHitCol);
+	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(ChaseDir0);
+	SubSeq->Add_Child(RotationDir0);
 
-	return Root_Seq;
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 1.566, 1, 0.234, 0);
+	Root_Parallel->Add_Service(pHitCol);
+
+	return Root_Parallel;
 }
 
-CBT_Composite_Node * CPoisonButterfly::Right_Eat()
+CBT_Composite_Node * CPoisonButterfly::Right_Eat(_float fWeight)
 {
-	CBT_Sequence* Root_Seq = Node_Sequence("오른쪽 냠");
+	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
-	CBT_Play_Ani* Show_Ani22 = Node_Ani("오른쪽 냠", 22, 0.95f);//22
-	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 6, 0.3f);
+	CBT_Sequence* MainSeq = Node_Sequence("오른쪽 냠");
+	CBT_Play_Ani* Show_Ani22 = Node_Ani("오른쪽 냠", 22, fWeight);//22
+	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 6, 0.f);
+
+	CBT_Sequence* SubSeq = Node_Sequence("이동");
+	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적", L"Player_Pos", 1.2, 0);
+	CBT_RotationDir* RotationDir0 = Node_RotationDir("방향 회전", L"Player_Pos", 0.183);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("왜곡", L"ButterFly_Distortion_Circle", L"Bone_Tail6", 1.65f, 1, 0.01, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("보라 파티클", L"ButterFly_PointParticle", L"Bone_Tail6", 0.f, 160, 0.7, 0);
@@ -457,19 +304,24 @@ CBT_Composite_Node * CPoisonButterfly::Right_Eat()
 	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("반짝 보라 모래", L"ButterFly_GlitterSand", L"Bone_Tail6", 0.f, 160, 0.7, 0);
 	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("왜곡안개", L"ButterFly_Distortion_Smoke", L"Bone_Tail6", 0.f, 60, 0.7, 0);
 
-	Root_Seq->Add_Service(Effect0);
-	Root_Seq->Add_Service(Effect1);
-	Root_Seq->Add_Service(Effect2);
-	Root_Seq->Add_Service(Effect3);
-	Root_Seq->Add_Service(Effect4);
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
+	Root_Parallel->Add_Service(Effect3);
+	Root_Parallel->Add_Service(Effect4);
 
-	Root_Seq->Add_Child(Show_Ani22);
-	Root_Seq->Add_Child(Show_Ani6);
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(Show_Ani22);
+	MainSeq->Add_Child(Show_Ani6);
 
-	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 1.5, 1, 0.25, 0);
-	Root_Seq->Add_Service(pHitCol);
+	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(ChaseDir0);
+	SubSeq->Add_Child(RotationDir0);
 
-	return Root_Seq;
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 1.383, 1, 0.2, 0);
+	Root_Parallel->Add_Service(pHitCol);
+
+	return Root_Parallel;
 }
 
 CBT_Composite_Node * CPoisonButterfly::Eat_TurnEat()
@@ -479,10 +331,15 @@ CBT_Composite_Node * CPoisonButterfly::Eat_TurnEat()
 	CBT_Sequence* MainSeq = Node_Sequence("냠 뒤돌아서 냠");
 	CBT_Play_Ani* Show_Ani22 = Node_Ani("좌회전 한바퀴 덥썩", 22, 0.6f);//22
 	CBT_Play_Ani* Show_Ani20 = Node_Ani("뒤돌아서 덥썩", 20, 0.95f);//20
-	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 6, 0.3f);
+	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 6, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
-	CBT_Wait* Wait0 = Node_Wait("대기", 2.8, 0);
+	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적0", L"Player_Pos", 1.2, 0);
+	CBT_RotationDir* RotationDir0 = Node_RotationDir("방향 회전0", L"Player_Pos", 0.183);
+	CBT_Wait* Wait0 = Node_Wait("대기0", 0.417, 0);
+	// 22번 애니 * 0.6 = 1.8
+	CBT_Wait* Wait1 = Node_Wait("대기1", 0.6, 0);
+	CBT_RotationDir* RotationDir1 = Node_RotationDir("방향 회전1", L"Player_Pos", 0.216);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 10, 0.2, 0);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("왜곡", L"ButterFly_Distortion_Circle", L"Bone_Tail6_Tongue2", 1.5, 1, 0.01, 0);
@@ -505,14 +362,18 @@ CBT_Composite_Node * CPoisonButterfly::Eat_TurnEat()
 	MainSeq->Add_Child(Show_Ani6);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(ChaseDir0);
+	SubSeq->Add_Child(RotationDir0);
 	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(RotationDir1);
 	SubSeq->Add_Child(Move0);
 
-	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 1.5, 1, 0.25, 0);
-	Root_Parallel->Add_Service(pHitCol);
+	CBT_UpdateParam* pHitCol0 = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 1.383, 1, 0.2, 0);
+	CBT_UpdateParam* pHitCol1 = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 1.8 + 0.816, 1, 0.45, 0);
+	Root_Parallel->Add_Service(pHitCol0);
+	Root_Parallel->Add_Service(pHitCol1);
 
-	pHitCol = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 2.616, 1, 0.45, 0);
-	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
 }
@@ -522,7 +383,7 @@ CBT_Composite_Node * CPoisonButterfly::Poison_Tornado_After_Charging()
 	CBT_Sequence* Root_Seq = Node_Sequence("기모아서 독 소용돌이");
 
 	CBT_Play_Ani* Show_Ani28 = Node_Ani("기모아서 독 소용돌이", 28, 0.95f);
-	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 6, 0.3f);
+	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 6, 0.f);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("폭발할 때 처음 스모크 01", L"ButterFly_SoftSmoke_Ready_1", L"Self_Pos", 3.2, 1, 0.01, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("폭발할 때 처음 스모크 02", L"ButterFly_SoftSmoke_Ready_2", L"Self_Pos", 3.2, 1, 0.01, 0);
@@ -565,41 +426,56 @@ CBT_Composite_Node * CPoisonButterfly::Poison_Tornado_After_Charging()
 
 CBT_Composite_Node * CPoisonButterfly::OneTurn_Poison()
 {
-	CBT_Sequence* Root_Seq = Node_Sequence("좁은 범위 한바퀴 독 발사");
+	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
-	CBT_Play_Ani* Show_Ani20 = Node_Ani("좁은 범위 한바퀴 독 발사", 24, 0.95f);//24
-	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 6, 0.3f);
+	CBT_Sequence* MainSeq = Node_Sequence("좁은 범위 독 발사");
+	CBT_Play_Ani* Show_Ani24 = Node_Ani("좁은 범위 한바퀴 독 발사", 24, 0.95f);//24
+	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 6, 0.f);
+
+	CBT_Sequence* SubSeq = Node_Sequence("이동");
+	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적0", L"Player_Pos", 1.2, 0);
+	CBT_RotationDir* RotationDir0 = Node_RotationDir("방향 회전0", L"Player_Pos", 0.2);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("전체적으로 보라 동그라미 파티클", L"ButterFly_PointParticle", L"Bone_Tail6", 0, 150, 0.01, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("전체적으로 쓰이는 옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Bone_Tail6", 0, 150, 0.01, 0);
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("반짝이는 보라색 모래", L"ButterFly_GlitterSand", L"Bone_Tail6", 0, 150, 0.01, 0);
 	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("안개와 같이 나오는 왜곡", L"ButterFly_Distortion_Smoke", L"Bone_Tail6", 0, 150, 0.01, 0);
 
-	Root_Seq->Add_Service(Effect0);
-	Root_Seq->Add_Service(Effect1);
-	Root_Seq->Add_Service(Effect2);
-	Root_Seq->Add_Service(Effect3);
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
+	Root_Parallel->Add_Service(Effect3);
 
-	Root_Seq->Add_Child(Show_Ani20);
-	Root_Seq->Add_Child(Show_Ani6);
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(Show_Ani24);
+	MainSeq->Add_Child(Show_Ani6);
 
-	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 1.25, 1, 0.983, 0);
-	Root_Seq->Add_Service(pHitCol);
+	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(ChaseDir0);
+	SubSeq->Add_Child(RotationDir0);
 
-	return Root_Seq;
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 1.25, 1, 1.816, 0);
+	Root_Parallel->Add_Service(pHitCol);
+
+	return Root_Parallel;
 }
 
 CBT_Composite_Node * CPoisonButterfly::Eat_Turn()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("냠 돌기");
 	CBT_Sequence* MainSeq = Node_Sequence("냠 돌기");
-	CBT_Play_Ani* Show_Ani25 = Node_Ani("냠", 27, 0.5f);//27, 0.5
-	CBT_Play_Ani* Show_Ani23 = Node_Ani("돌기", 26, 0.95f);//26
-	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 6, 0.3f);
+	CBT_Play_Ani* Show_Ani27 = Node_Ani("냠", 27, 0.5f);//27, 0.5
+	CBT_Play_Ani* Show_Ani26 = Node_Ani("돌기", 26, 0.95f);//26
+	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 6, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
-	CBT_Wait* Wait0 = Node_Wait("대기", 3, 0);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 10, 0.2, 0);
+	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적0", L"Player_Pos", 1.4, 0);
+	CBT_RotationDir* RotationDir0 = Node_RotationDir("방향 회전0", L"Player_Pos", 0.156);
+	CBT_Wait* Wait0 = Node_Wait("대기", 0.319, 0);
+	// 27번 애니 * 0.5 = 1.875
+	CBT_ChaseDir* ChaseDir1 = Node_ChaseDir("방향 추적1", L"Player_Pos", 1, 0);
+	CBT_RotationDir* RotationDir1 = Node_RotationDir("방향 회전1", L"Player_Pos", 0.166);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 10, 0.734, 0);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("전체적으로 보라 동그라미 파티클", L"ButterFly_PointParticle", L"Bone_Tail6", 0, 300, 0.01, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("전체적으로 쓰이는 옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Bone_Tail6", 0, 300, 0.01, 0);
@@ -616,18 +492,24 @@ CBT_Composite_Node * CPoisonButterfly::Eat_Turn()
 	Root_Parallel->Add_Service(Effect5);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani25);
-	MainSeq->Add_Child(Show_Ani23);
+	MainSeq->Add_Child(Show_Ani27);
+	MainSeq->Add_Child(Show_Ani26);
 	MainSeq->Add_Child(Show_Ani6);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(ChaseDir0);
+	SubSeq->Add_Child(RotationDir0);
 	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(ChaseDir1);
+	SubSeq->Add_Child(RotationDir1);
 	SubSeq->Add_Child(Move0);
 
-	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 1.3, 1, 0.5, 0);
-	Root_Parallel->Add_Service(pHitCol);
-	pHitCol = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 3, 1, 0.3, 0);
-	Root_Parallel->Add_Service(pHitCol);
+
+	CBT_UpdateParam* pHitCol0 = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 1.566, 1, 0.234, 0);
+	CBT_UpdateParam* pHitCol1 = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 1.875 + 1.166, 1, 0.734, 0);
+
+	Root_Parallel->Add_Service(pHitCol0);
+	Root_Parallel->Add_Service(pHitCol1);
 
 	return Root_Parallel;
 }
@@ -636,14 +518,17 @@ CBT_Composite_Node * CPoisonButterfly::Rush()
 {
 	CBT_Simple_Parallel* RushParallel = Node_Parallel_Immediate("돌진 병렬");
 	CBT_Sequence* RushAniSeq = Node_Sequence("RushSequence");
-	CBT_Play_Ani* Show_Ani17 = Node_Ani("5회 타격후 덤블링", 17, 0.95f);
-	CBT_Play_Ani* Show_Ani6_9 = Node_Ani("기본", 6, 0.3f);
+	CBT_Play_Ani* Show_Ani17 = Node_Ani("돌진", 17, 0.95f);
+	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 6, 0.f);
 
 	CBT_Sequence* MoveSequence = Node_Sequence("돌진 이동");
-	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적1", L"Player_Pos", 1.5, 0);
-	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 추적2", L"Player_Pos", 0.2);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("돌진", L"Monster_Speed", L"Monster_Dir", 13, 1, 0);
-	CBT_Wait* RushWaitB = Node_Wait("RushWait1", 0.2, 0);
+	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 추적0", L"Player_Pos", 0.2);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("뒤로 이동", L"Monster_Speed", L"Monster_Dir", -3.f, 1.083, 0);
+	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적1", L"Player_Pos", 0.3, 0);
+	CBT_RotationDir* Rotation1 = Node_RotationDir("방향 추적1", L"Player_Pos", 0.267);
+	CBT_SetValue* PushColOff = Node_BOOL_SetValue("PushColOff", L"PushCol", false);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("돌진", L"Monster_Speed", L"Monster_Dir", 13, 1.1, 0);
+	CBT_SetValue* PushColOn = Node_BOOL_SetValue("PushColOn", L"PushCol", true);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("전체적으로 보라 동그라미 파티클", L"ButterFly_PointParticle", L"Bone_Tail6", 0, 150, 0, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("전체적으로 옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Bone_Tail6", 0, 200, 0, 0);
@@ -657,18 +542,20 @@ CBT_Composite_Node * CPoisonButterfly::Rush()
 	RushParallel->Add_Service(Effect3);
 	RushParallel->Add_Service(Effect4);
 
+	RushParallel->Set_Main_Child(RushAniSeq);
+	RushAniSeq->Add_Child(Show_Ani17);
+	RushAniSeq->Add_Child(Show_Ani6);
+
 	RushParallel->Set_Sub_Child(MoveSequence);
-	MoveSequence->Add_Child(ChaseDir0);
 	MoveSequence->Add_Child(Rotation0);
 	MoveSequence->Add_Child(Move0);
-	MoveSequence->Add_Child(RushWaitB);
+	MoveSequence->Add_Child(ChaseDir0);
+	MoveSequence->Add_Child(Rotation1);
+	MoveSequence->Add_Child(PushColOff);
+	MoveSequence->Add_Child(Move1);
+	MoveSequence->Add_Child(PushColOn);
 
-	RushParallel->Set_Main_Child(RushAniSeq);
-
-	RushAniSeq->Add_Child(Show_Ani17);
-	RushAniSeq->Add_Child(Show_Ani6_9);
-
-	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 1.5, 1, 1.3, 0);
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 1.85, 1, 1.1, 0);
 	RushParallel->Add_Service(pHitCol);
 
 	return RushParallel;
@@ -676,27 +563,37 @@ CBT_Composite_Node * CPoisonButterfly::Rush()
 
 CBT_Composite_Node * CPoisonButterfly::Fire_5Bullet()
 {
-	CBT_Sequence* Root_Seq = Node_Sequence("5발탄");
-
+	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
+		
+	CBT_Sequence* MainSeq = Node_Sequence("5발탄");
 	CBT_Play_Ani* Show_Ani29 = Node_Ani("5발탄", 29, 0.95f);
-	CBT_Play_Ani* Show_Ani6_0 = Node_Ani("기본", 6, 0.3f);
+	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 6, 0.f);
 
-	CBT_CreateBullet* PoisonBullet0 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Bone_Head", L"Self_PoisonDir0", 5, 5, 1.3, 1, 1, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* PoisonBullet1 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Bone_Head", L"Self_PoisonDir1", 5, 5, 1.3, 1, 1, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* PoisonBullet2 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Bone_Head", L"Self_PoisonDir2", 5, 5, 1.3, 1, 1, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* PoisonBullet3 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Bone_Head", L"Self_PoisonDir3", 5, 5, 1.3, 1, 1, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* PoisonBullet4 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Bone_Head", L"Self_PoisonDir4", 5, 5, 1.3, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_Sequence* SubSeq = Node_Sequence("발사준비");
+	CBT_ChaseDir* Chase0 = Node_ChaseDir("방향 추적", L"Player_Pos", 1.25, 0);
+	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 회전", L"Player_Pos", 0.2);
 
-	Root_Seq->Add_Service(PoisonBullet0);
-	Root_Seq->Add_Service(PoisonBullet1);
-	Root_Seq->Add_Service(PoisonBullet2);
-	Root_Seq->Add_Service(PoisonBullet3);
-	Root_Seq->Add_Service(PoisonBullet4);
+	CBT_CreateBullet* PoisonBullet0 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Bone_Head", L"Self_PoisonDir0", 5, 5, 1.45, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* PoisonBullet1 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Bone_Head", L"Self_PoisonDir1", 5, 5, 1.45, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* PoisonBullet2 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Bone_Head", L"Self_PoisonDir2", 5, 5, 1.45, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* PoisonBullet3 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Bone_Head", L"Self_PoisonDir3", 5, 5, 1.45, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* PoisonBullet4 = Node_CreateBullet("독 총알", L"Monster_PoisonBullet", L"Bone_Head", L"Self_PoisonDir4", 5, 5, 1.45, 1, 1, 0, CBT_Service_Node::Finite);
 
-	Root_Seq->Add_Child(Show_Ani29);
-	Root_Seq->Add_Child(Show_Ani6_0);
+	Root_Parallel->Add_Service(PoisonBullet0);
+	Root_Parallel->Add_Service(PoisonBullet1);
+	Root_Parallel->Add_Service(PoisonBullet2);
+	Root_Parallel->Add_Service(PoisonBullet3);
+	Root_Parallel->Add_Service(PoisonBullet4);
 
-	return Root_Seq;
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(Show_Ani29);
+	MainSeq->Add_Child(Show_Ani6);
+
+	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(Chase0);
+	SubSeq->Add_Child(Rotation0);
+
+	return Root_Parallel;
 }
 
 CBT_Composite_Node * CPoisonButterfly::Fire_ChaseBullet()
@@ -761,6 +658,69 @@ CBT_Composite_Node * CPoisonButterfly::Turn_4PoisonShot()
 	return Root_Seq;
 }
 
+CBT_Composite_Node * CPoisonButterfly::Smart_Eat()
+{
+	CBT_Sequence* Root_Seq = Node_Sequence("똑똑한 왼쪽 냠, 오른쪽 냠");
+	
+	CBT_DistCheck* Dist0 = Node_DistCheck("거리 체크", L"Player_Pos", 5);
+
+	Root_Seq->Add_Child(Right_Eat(0.85f));
+	Root_Seq->Add_Child(Dist0);
+	Dist0->Set_Child(Left_Eat(0.85f));
+
+	return Root_Seq;
+}
+
+CBT_Composite_Node * CPoisonButterfly::Rush_And_ChaseBullet()
+{
+	CBT_Simple_Parallel* RushParallel = Node_Parallel_Immediate("돌진 병렬");
+	CBT_Sequence* RushAniSeq = Node_Sequence("RushSequence");
+	CBT_Play_Ani* Show_Ani17 = Node_Ani("돌진", 17, 0.95f);
+	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 6, 0.f);
+
+	CBT_Sequence* MoveSequence = Node_Sequence("돌진 이동");
+	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 추적0", L"Player_Pos", 0.2);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("뒤로 이동", L"Monster_Speed", L"Monster_Dir", -3.f, 1.083, 0);
+	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적1", L"Player_Pos", 0.3, 0);
+	CBT_RotationDir* Rotation1 = Node_RotationDir("방향 추적1", L"Player_Pos", 0.267);
+	CBT_SetValue* PushColOff = Node_BOOL_SetValue("PushColOff", L"PushCol", false);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("돌진", L"Monster_Speed", L"Monster_Dir", 13, 1.1, 0);
+	CBT_SetValue* PushColOn = Node_BOOL_SetValue("PushColOn", L"PushCol", true);
+
+	CBT_CreateBullet* PoisonBullet0 = Node_CreateBullet("독 총알", L"Monster_PoisonChaseBullet", L"Bone_Tail6", L"Self_PoisonDir2", 5, 5, 1.85, 1, 1, 0, CBT_Service_Node::Finite);
+	RushParallel->Add_Service(PoisonBullet0);
+
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("전체적으로 보라 동그라미 파티클", L"ButterFly_PointParticle", L"Bone_Tail6", 0, 150, 0, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("전체적으로 옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Bone_Tail6", 0, 200, 0, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("보라색 투명한 물방울", L"ButterFly_WaterSplash", L"Bone_Tail6", 0, 150, 0, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("반짝이는 보라색 모래", L"ButterFly_GlitterSand", L"Bone_Tail6", 0, 150, 0, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("안개와 같이 나오는 왜곡", L"ButterFly_Distortion_Smoke", L"Bone_Tail6", 0, 150, 0, 0);
+
+	RushParallel->Add_Service(Effect0);
+	RushParallel->Add_Service(Effect1);
+	RushParallel->Add_Service(Effect2);
+	RushParallel->Add_Service(Effect3);
+	RushParallel->Add_Service(Effect4);
+
+	RushParallel->Set_Main_Child(RushAniSeq);
+	RushAniSeq->Add_Child(Show_Ani17);
+	RushAniSeq->Add_Child(Show_Ani6);
+
+	RushParallel->Set_Sub_Child(MoveSequence);
+	MoveSequence->Add_Child(Rotation0);
+	MoveSequence->Add_Child(Move0);
+	MoveSequence->Add_Child(ChaseDir0);
+	MoveSequence->Add_Child(Rotation1);
+	MoveSequence->Add_Child(PushColOff);
+	MoveSequence->Add_Child(Move1);
+	MoveSequence->Add_Child(PushColOn);
+
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 1.85, 1, 1.1, 0);
+	RushParallel->Add_Service(pHitCol);
+
+	return RushParallel;
+}
+
 CBT_Composite_Node * CPoisonButterfly::WhirlWind()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("휠윈드");
@@ -791,152 +751,139 @@ CBT_Composite_Node * CPoisonButterfly::WhirlWind()
 	SubSeq->Add_Child(ChaseDir0);
 	SubSeq->Add_Child(Move0);
 
-	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 1, 1, 1.7, 0);
-	Root_Parallel->Add_Service(pHitCol);
-	pHitCol = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 1.6, 1, 1.1, 0);
-	Root_Parallel->Add_Service(pHitCol);
+	CBT_UpdateParam* pHitCol0 = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 1, 1, 1.7, 0);
+	CBT_UpdateParam* pHitCol1 = Node_UpdateParam("무기 히트 On", &m_tObjParam, CBT_UpdateParam::Collider, 1.6, 1, 1.1, 0);
+	Root_Parallel->Add_Service(pHitCol0);
+	Root_Parallel->Add_Service(pHitCol1);
 
 	return Root_Parallel;
 }
 
-CBT_Composite_Node * CPoisonButterfly::Right_Eat_Left_Eat()
+CBT_Composite_Node * CPoisonButterfly::Start_Game()
 {
-	CBT_Sequence* Root_Seq = Node_Sequence("왼쪽 냠, 오른쪽 냠");
+	CBT_Selector* Root_Sel = Node_Selector("게임 시작");
 
-	Root_Seq->Add_Child(Right_Eat());
-	Root_Seq->Add_Child(Left_Eat());
+	CBT_CompareValue* Check_Upper_HPRatio40 = Node_FLOAT_A_Smaller_Than_Value("체력 40퍼 미만", L"HPRatio", 40.f);
+	CBT_CompareValue* Check_Upper_HPRatio70 = Node_FLOAT_A_Smaller_Than_Value("체력 70퍼 미만", L"HPRatio", 70.f);
 
-	return Root_Seq;
-}
-
-CBT_Composite_Node * CPoisonButterfly::NearAttack()
-{
-	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 근거리 공격");
-
-	Root_Sel->Add_Child(Left_Eat());
-	Root_Sel->Add_Child(Right_Eat());
-	Root_Sel->Add_Child(Eat_TurnEat());
-	Root_Sel->Add_Child(Poison_Tornado_After_Charging());
-	Root_Sel->Add_Child(OneTurn_Poison());
-	Root_Sel->Add_Child(WhirlWind());
+	Root_Sel->Add_Child(Check_Upper_HPRatio40);
+	Check_Upper_HPRatio40->Set_Child(HP_Final());
+	Root_Sel->Add_Child(Check_Upper_HPRatio70);
+	Check_Upper_HPRatio70->Set_Child(More_Than_HP_40());
+	Root_Sel->Add_Child(More_Than_HP_70());
 
 	return Root_Sel;
 }
 
-CBT_Composite_Node * CPoisonButterfly::FarAttack()
+CBT_Composite_Node * CPoisonButterfly::More_Than_HP_70()
 {
-	CBT_Selector* Root_Sel = Node_Selector_Random("순서대로 원거리 공격");
+	CBT_Selector* Root_Sel = Node_Selector("근거리 원거리 구분 공격");
+
+	CBT_DistCheck* Dist0 = Node_DistCheck("거리 체크", L"Player_Pos", 5);
+
+	Root_Sel->Add_Child(Dist0);
+	Dist0->Set_Child(NearAttack_Dist5_More_Than_HP70());
+
+	Root_Sel->Add_Child(FarAttack_More_Than_HP70());
+
+	return Root_Sel;
+}
+
+CBT_Composite_Node * CPoisonButterfly::NearAttack_Dist5_More_Than_HP70()
+{
+	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 근접 공격");
+
+	Root_Sel->Add_Child(Poison_Tornado_After_Charging());
+	Root_Sel->Add_Child(OneTurn_Poison());
+	Root_Sel->Add_Child(Eat_Turn());
+	Root_Sel->Add_Child(Left_Eat());
+	Root_Sel->Add_Child(Right_Eat());
+
+	return Root_Sel;
+}
+
+CBT_Composite_Node * CPoisonButterfly::FarAttack_More_Than_HP70()
+{
+	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 원거리 공격");
 
 	Root_Sel->Add_Child(Rush());
 	Root_Sel->Add_Child(Fire_5Bullet());
-	Root_Sel->Add_Child(Fire_ChaseBullet());
+
+	return Root_Sel;
+}
+
+CBT_Composite_Node * CPoisonButterfly::More_Than_HP_40()
+{
+	CBT_Selector* Root_Sel = Node_Selector("근거리 원거리 구분 공격");
+
+	CBT_DistCheck* Dist0 = Node_DistCheck("거리 체크", L"Player_Pos", 5);
+
+	Root_Sel->Add_Child(Dist0);
+	Dist0->Set_Child(NearAttack_Dist5_More_Than_HP40());
+
+	Root_Sel->Add_Child(FarAttack_More_Than_HP40());
+
+	return Root_Sel;
+}
+
+CBT_Composite_Node * CPoisonButterfly::NearAttack_Dist5_More_Than_HP40()
+{
+	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 근접 공격");
+
+	Root_Sel->Add_Child(Poison_Tornado_After_Charging());
+	Root_Sel->Add_Child(Eat_TurnEat());
+	Root_Sel->Add_Child(WhirlWind());
 	Root_Sel->Add_Child(Turn_4PoisonShot());
 
 	return Root_Sel;
 }
 
-CBT_Composite_Node * CPoisonButterfly::Start_Game()
+CBT_Composite_Node * CPoisonButterfly::FarAttack_More_Than_HP40()
 {
-	CBT_Sequence* Root_Seq = Node_Sequence("게임 시작");
-
-	Root_Seq->Add_Child(Dist_Attack());
-
-	return Root_Seq;
-}
-
-CBT_Composite_Node * CPoisonButterfly::Dist_Attack()
-{
-	CBT_Selector* Root_Sel = Node_Selector("근거리 원거리 구분 공격");
-
-	CBT_DistCheck* Dist0 = Node_DistCheck("거리 체크", L"Player_Pos", 3);
-	CBT_DistCheck* Dist1 = Node_DistCheck("거리 체크", L"Player_Pos", 6);
-	CBT_DistCheck* Dist2 = Node_DistCheck("거리 체크", L"Player_Pos", 8);
-
-	Root_Sel->Add_Child(Dist0);
-	Dist0->Set_Child(NearAttack_Dist3());
-
-	Root_Sel->Add_Child(Dist1);
-	Dist1->Set_Child(NearAttack_Dist6());
-
-	Root_Sel->Add_Child(Dist2);
-	Dist2->Set_Child(FarAttack());
+	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 원거리 공격");
 
 	Root_Sel->Add_Child(Rush());
+	Root_Sel->Add_Child(Fire_5Bullet());
+	Root_Sel->Add_Child(Fire_ChaseBullet());
 
 	return Root_Sel;
 }
 
-CBT_Composite_Node * CPoisonButterfly::ChaseAndNearAttack()
+CBT_Composite_Node * CPoisonButterfly::HP_Final()
 {
-	CBT_Sequence* Root_Seq = Node_Sequence("랜덤 공격 또는 추적");
-	CBT_MoveDirectly* Chase = Node_MoveDirectly_Chase("추적", L"Monster_Dir", L"Player_Pos", L"Monster_Speed", 3.f, 2.f);
+	CBT_Selector* Root_Sel = Node_Selector("근거리 원거리 구분 공격");
 
-	Root_Seq->Add_Child(Chase);
-	Root_Seq->Add_Child(NearAttack());
+	CBT_DistCheck* Dist0 = Node_DistCheck("거리 체크", L"Player_Pos", 5);
 
-	return Root_Seq;
+	Root_Sel->Add_Child(Dist0);
+	Dist0->Set_Child(NearAttack_Dist5_Final());
+
+	Root_Sel->Add_Child(FarAttack_Fianl());
+
+	return Root_Sel;
 }
 
-CBT_Composite_Node * CPoisonButterfly::TurnAndFarAttack()
+CBT_Composite_Node * CPoisonButterfly::NearAttack_Dist5_Final()
 {
-	CBT_Sequence* Root_Seq = Node_Sequence("랜덤 원거리 공격");
-	CBT_RotationDir* TurnDir = Node_RotationDir("Look 회전", L"Player_Pos", 0.2);
+	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 근접 공격");
 
-	Root_Seq->Add_Child(TurnDir);
-	Root_Seq->Add_Child(FarAttack());
+	Root_Sel->Add_Child(Poison_Tornado_After_Charging());
+	Root_Sel->Add_Child(Eat_TurnEat());
+	Root_Sel->Add_Child(WhirlWind());
+	Root_Sel->Add_Child(Smart_Eat());
+	Root_Sel->Add_Child(Turn_4PoisonShot());
 
-	return Root_Seq;
+	return Root_Sel;
 }
 
-CBT_Composite_Node * CPoisonButterfly::Chase()
+CBT_Composite_Node * CPoisonButterfly::FarAttack_Fianl()
 {
-	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
+	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 원거리 공격");
 
-	CBT_MoveDirectly* pChase = Node_MoveDirectly_Chase("추적", L"Player_Pos", L"Monster_Speed", L"Monster_Dir", 3.f, 2.5f);
+	Root_Sel->Add_Child(Fire_5Bullet());
+	Root_Sel->Add_Child(Rush_And_ChaseBullet());
 
-	CBT_Play_Ani* Show_Ani139 = Node_Ani("추적", 139, 1.f);
-
-	Root_Parallel->Set_Main_Child(pChase);
-
-	Root_Parallel->Set_Sub_Child(Show_Ani139);
-
-	return Root_Parallel;
-}
-
-CBT_Composite_Node * CPoisonButterfly::NearAttack_Dist3()
-{
-	CBT_Sequence* Root_Seq = Node_Sequence("랜덤 Dist3 공격");
-
-	CBT_RotationDir* Rotation0 = Node_RotationDir("플레이어 바라보기", L"Player_Pos", 0.5);
-	CBT_Selector* Attack_Sel = Node_Selector_Random("랜덤 Dist3 공격");
-
-	Root_Seq->Add_Child(Rotation0);
-
-	Root_Seq->Add_Child(Attack_Sel);
-	Attack_Sel->Add_Child(OneTurn_Poison());
-	Attack_Sel->Add_Child(Poison_Tornado_After_Charging());
-	Attack_Sel->Add_Child(WhirlWind());
-
-	return Root_Seq;
-}
-
-CBT_Composite_Node * CPoisonButterfly::NearAttack_Dist6()
-{
-	CBT_Sequence* Root_Seq = Node_Sequence("랜덤 Dist6 공격");
-
-	CBT_RotationDir* Rotation0 = Node_RotationDir("플레이어 바라보기", L"Player_Pos", 0.5);
-	CBT_Selector* Attack_Sel = Node_Selector_Random("랜덤 Dist6 공격");
-
-	Root_Seq->Add_Child(Rotation0);
-
-	Root_Seq->Add_Child(Attack_Sel);
-	Attack_Sel->Add_Child(Left_Eat());
-	Attack_Sel->Add_Child(Right_Eat());
-	Attack_Sel->Add_Child(Eat_TurnEat());
-	Attack_Sel->Add_Child(Eat_Turn());
-	Attack_Sel->Add_Child(Right_Eat_Left_Eat());
-
-	return Root_Seq;
+	return Root_Sel;
 }
 
 CBT_Composite_Node * CPoisonButterfly::Start_Show()
@@ -988,7 +935,6 @@ CBT_Composite_Node * CPoisonButterfly::Show_NearAttack()
 	CBT_Cooldown* Cool4 = Node_Cooldown("쿨4", 300);
 	CBT_Cooldown* Cool5 = Node_Cooldown("쿨5", 300);
 	CBT_Cooldown* Cool6 = Node_Cooldown("쿨6", 300);
-	CBT_Cooldown* Cool7 = Node_Cooldown("쿨7", 300);
 
 	CBT_SetValue* Show_OffNearAttack = Node_BOOL_SetValue("시연회 OFF", L"Show_Near", false);
 
@@ -1006,8 +952,6 @@ CBT_Composite_Node * CPoisonButterfly::Show_NearAttack()
 	Cool5->Set_Child(Eat_Turn());
 	Root_Sel->Add_Child(Cool6);
 	Cool6->Set_Child(WhirlWind());
-	Root_Sel->Add_Child(Cool7);
-	Cool7->Set_Child(Right_Eat_Left_Eat());
 
 	Root_Sel->Add_Child(Show_OffNearAttack);
 
@@ -1067,9 +1011,14 @@ void CPoisonButterfly::Down()
 			m_tObjParam.bDown = false;
 
 			m_bDown_Start = false;
-			m_bDown_Finish = true;
 			m_bAIController = true;
 			
+			++m_iDownCount;
+
+			// Down 안에서 쓰는 bool 리셋
+			m_bDown_StartAni = true;
+			m_dDownTime = 0;
+
 			m_pMeshCom->SetUp_Animation(Ani_Idle);
 		}
 	}
@@ -1096,6 +1045,15 @@ void CPoisonButterfly::Down()
 		if (m_dHitTime > 0.5)
 		{
 			m_tObjParam.bIsHit = false;		// 재충돌 가능
+		}
+	}
+
+	if (true == m_bDown_LoopAni)
+	{
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		{
+			m_pMeshCom->Reset_OldIndx();
+			m_pMeshCom->SetUp_Animation(Ani_Down_Loop);
 		}
 	}
 }
@@ -1127,30 +1085,27 @@ HRESULT CPoisonButterfly::Update_Bone_Of_BlackBoard()
 
 HRESULT CPoisonButterfly::Update_Value_Of_BB()
 {
+	CTransform* pPlayer_Trans = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
+
 	// 1. 플레이어 좌표 업데이트
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos());
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Player_Pos", pPlayer_Trans->Get_Pos());
 	// 2. 체력 업데이트
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"HP", m_tObjParam.fHp_Cur);
+	// 3. 체력 비율 업데이트
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"HPRatio", _float(m_tObjParam.fHp_Cur / m_tObjParam.fHp_Max) * 100);
+
 
 
 	// 1. 5샷 방향
-	_v3 vSelfDir = *(_v3*)&m_pTransformCom->Get_WorldMat().m[2];
-	_v3 vDirTemp0;
-
-	_v3 vTempFrontDir = _v3(0.f, 0.f, 1.f);
-	_float fRadian = D3DXVec3Dot(&vSelfDir, &vTempFrontDir);
-
-	if(fRadian >= 0)
-		D3DXVec3TransformNormal(&vDirTemp0, &vSelfDir, D3DXMatrixRotationX(&_mat(), D3DXToRadian(15)));
-	else if (fRadian < 0)
-		D3DXVec3TransformNormal(&vDirTemp0, &vSelfDir, D3DXMatrixRotationX(&_mat(), D3DXToRadian(-15)));
+	_v3 pPlayerPos = pPlayer_Trans->Get_Pos();
+	_v3 vDirTemp0 = *D3DXVec3Normalize(&_v3(), &_v3(pPlayerPos - m_vHead));
 
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_PoisonDir0", *D3DXVec3TransformNormal(&_v3(), &vDirTemp0, D3DXMatrixRotationY(&_mat(), D3DXToRadian(25))));
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_PoisonDir1", *D3DXVec3TransformNormal(&_v3(), &vDirTemp0, D3DXMatrixRotationY(&_mat(), D3DXToRadian(12.5f))));
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_PoisonDir2", vDirTemp0);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_PoisonDir3", *D3DXVec3TransformNormal(&_v3(), &vDirTemp0, D3DXMatrixRotationY(&_mat(), D3DXToRadian(-12.5f))));
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_PoisonDir4", *D3DXVec3TransformNormal(&_v3(), &vDirTemp0, D3DXMatrixRotationY(&_mat(), D3DXToRadian(-25))));
-
+	
 	// 2. 본인 좌표
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_Pos", m_pTransformCom->Get_Pos());
 
@@ -1271,7 +1226,7 @@ void CPoisonButterfly::Check_PhyCollider()
 		if (m_tObjParam.fHp_Cur > 0.f)
 		{
 			// 체력 비율 70 이하되면 스턴
-			if (false == m_bDown_Finish)
+			if (0 == m_iDownCount)
 			{
 				if (0.7 >= (m_tObjParam.fHp_Cur / m_tObjParam.fHp_Max))
 				{
@@ -1286,6 +1241,25 @@ void CPoisonButterfly::Check_PhyCollider()
 
 				}
 			}
+
+			if (1 == m_iDownCount)
+			{
+				if (0.4 >= (m_tObjParam.fHp_Cur / m_tObjParam.fHp_Max))
+				{
+					m_bDown_Start = true;
+
+					m_tObjParam.bDown = true;
+
+					m_pMeshCom->SetUp_Animation(Ani_Down_Start);
+					m_bDown_StartAni = true;	//down 함수 내부에서 쓸 것임.
+					m_pAIControllerCom->Reset_BT();
+					m_bAIController = false;
+
+				}
+			}
+
+			
+
 
 		}
 		else
@@ -1304,20 +1278,6 @@ void CPoisonButterfly::Check_PhyCollider()
 		{
 			m_tObjParam.bIsHit = false;		// 재충돌 가능
 		}
-
-
-		//if (m_pMeshCom->Is_Finish_Animation(0.9f))
-		//{
-		//	//m_bAIController = true;
-		//	m_tObjParam.bIsHit = false;
-
-		//	//m_pMeshCom->SetUp_Animation(Ani_Idle);
-		//}
-
-		//else if (m_pMeshCom->Is_Finish_Animation(0.5f))	// 이때부터 재충돌 가능
-		//{
-		//	m_tObjParam.bIsHit = false;
-		//}
 	}
 }
 

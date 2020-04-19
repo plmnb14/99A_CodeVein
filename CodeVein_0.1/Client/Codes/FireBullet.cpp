@@ -122,7 +122,6 @@ HRESULT CFireBullet::Update_Collider()
 
 void CFireBullet::OnCollisionEnter()
 {
-	Update_Collider();
 
 	// =============================================================================================
 	// 충돌
@@ -183,9 +182,10 @@ void CFireBullet::OnCollisionEvent(list<CGameObject*> plistGameObject)
 							iter->Set_HitAgain(true);
 
 						iter->Add_Target_Hp(-m_tObjParam.fDamage);
+
+						m_dCurTime = 1000;	// 바로 사망시키기 위해서 현재시간 100줬음
 					}
 
-					m_dCurTime = 1000;	// 바로 사망시키기 위해서 현재시간 100줬음
 
 					break;
 

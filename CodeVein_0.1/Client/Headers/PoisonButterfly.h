@@ -43,9 +43,9 @@ public:
 private:	//패턴들
 	// 근거리
 	// 1. 왼쪽 냠
-	CBT_Composite_Node* Left_Eat();		//충돌완	공격 거리 5
+	CBT_Composite_Node* Left_Eat(_float fWeight = 0.95f);		//충돌완	공격 거리 5
 	// 2. 오른쪽 냠
-	CBT_Composite_Node* Right_Eat();	//충돌완	공격 거리 5
+	CBT_Composite_Node* Right_Eat(_float fWeight = 0.95f);	//충돌완	공격 거리 5
 	// 3. 냠-> 뒤돌아서 덥썩
 	CBT_Composite_Node* Eat_TurnEat();	//충돌완 이펙트 수정 바람, 모션 수정함,
 	// 4. 기모아서 독 소용돌이
@@ -56,9 +56,6 @@ private:	//패턴들
 	CBT_Composite_Node* Eat_Turn();	// 충돌완
 	// 7. 트린다미어
 	CBT_Composite_Node* WhirlWind();	// 충돌완
-	// 8. 오른쪽 냠, 왼쪽 냠
-	CBT_Composite_Node* Right_Eat_Left_Eat();
-
 
 	// 원거리
 	// 1. 돌진, 이동거리 : 13
@@ -70,26 +67,27 @@ private:	//패턴들
 	// 4. 돌면서 사방으로 독 날리기
 	CBT_Composite_Node* Turn_4PoisonShot(); // 충돌완
 
+	/////// 응용
+	CBT_Composite_Node* Smart_Eat();
+	CBT_Composite_Node* Rush_And_ChaseBullet();
+
 	//
-	/*
-	방향 조절 -> 패턴 선택  -> 근거리 패턴, 추적 후 공격 or 그냥 그 자리에서 공격
-							-> 원거리 패턴, 제자리에서 공격
-	*/
 	CBT_Composite_Node*		Start_Game();
 
-	CBT_Composite_Node*		Dist_Attack();
+	// 체력 70퍼 이상	
+	CBT_Composite_Node* More_Than_HP_70();
+	CBT_Composite_Node* NearAttack_Dist5_More_Than_HP70();
+	CBT_Composite_Node* FarAttack_More_Than_HP70();
 
-	CBT_Composite_Node*		ChaseAndNearAttack();
-	CBT_Composite_Node*		TurnAndFarAttack();
-	CBT_Composite_Node*		Chase();
+	// 체력 70퍼 미만
+	CBT_Composite_Node* More_Than_HP_40();
+	CBT_Composite_Node* NearAttack_Dist5_More_Than_HP40();
+	CBT_Composite_Node* FarAttack_More_Than_HP40();
 
-	CBT_Composite_Node*		NearAttack_Dist3();
-	CBT_Composite_Node*		NearAttack_Dist6();
-
-	CBT_Composite_Node*		NearAttack();	//랜덤 공격
-	CBT_Composite_Node*		FarAttack();	//랜덤 공격
-
-
+	// 체력 40퍼 미만
+	CBT_Composite_Node* HP_Final();
+	CBT_Composite_Node* NearAttack_Dist5_Final();
+	CBT_Composite_Node* FarAttack_Fianl();
 
 	//////////////////// 시연회용
 
@@ -127,12 +125,13 @@ private:
 	
 private:	// 다운 상태를 위한 변수
 	_bool				m_bDown_Start = false;
-	_bool				m_bDown_Finish = false;
 	
 	_bool				m_bDown_StartAni = false;
 	_bool				m_bDown_LoopAni = false;
 	_bool				m_bDown_EndAni = false;
 	_double				m_dDownTime = 0;
+
+	_byte				m_iDownCount = 0;
 
 private:
 	// 충돌체를 위한 뼈다귀

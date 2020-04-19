@@ -46,6 +46,8 @@ private:	// 패턴
 	CBT_Composite_Node* Gun_Attack();
 	// 3. 자신 주위에 불 소용돌이 발생
 	CBT_Composite_Node* Fire_Tornado();
+	// 4. 백 대쉬
+	CBT_Composite_Node* Back_Dash();
 
 	////// 원거리
 	// 1. 추적하면서 지속적으로 불 발사
@@ -59,7 +61,6 @@ private:	// 패턴
 	// 5. 위로 불쏘고 폭죽마냥 십자가 모양으로 떨어짐
 	CBT_Composite_Node* Fire_Flame();
 
-	// 백 대쉬
 
 
 	///// 게임 시작

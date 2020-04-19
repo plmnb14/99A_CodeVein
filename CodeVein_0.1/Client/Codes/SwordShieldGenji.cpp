@@ -157,7 +157,9 @@ _int CSwordShieldGenji::Update_GameObject(_double TimeDelta)
 	if(false == m_bReadyDead)
 		Check_PhyCollider();
 
-	return _int();
+	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
+
+	return NO_EVENT;
 }
 
 _int CSwordShieldGenji::Late_Update_GameObject(_double TimeDelta)
@@ -813,7 +815,18 @@ void CSwordShieldGenji::Check_PhyCollider()
 				m_fSkillMoveMultiply = 0.5f;
 			}
 			else
-				m_pMeshCom->SetUp_Animation(Ani_Dmg01_FL);	//방향에 따른 모션 해줘야함.
+			{
+				_float fAngle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos()));
+
+				if (0.f <= fAngle && fAngle < 90.f)
+					m_pMeshCom->SetUp_Animation(Ani_Dmg01_FR);
+				else if (90.f <= fAngle && fAngle < 180.f)
+					m_pMeshCom->SetUp_Animation(Ani_Dmg01_BR);
+				else if (-90.f <= fAngle && fAngle < 0)
+					m_pMeshCom->SetUp_Animation(Ani_Dmg01_FL);
+				else
+					m_pMeshCom->SetUp_Animation(Ani_Dmg01_BL);
+			}
 		}
 		else
 		{

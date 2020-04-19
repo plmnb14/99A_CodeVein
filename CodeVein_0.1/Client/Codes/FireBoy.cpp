@@ -28,7 +28,7 @@ HRESULT CFireBoy::Ready_GameObject(void * pArg)
 	Ready_Collider();
 
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 150.f;
+	m_tObjParam.fHp_Cur = 2000.f;
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
 	m_tObjParam.fDamage = 20.f;
 
@@ -119,6 +119,8 @@ _int CFireBoy::Update_GameObject(_double TimeDelta)
 		Check_PhyCollider();
 
 	OnCollisionEnter();
+
+	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
 	return NOERROR;
 }
@@ -359,6 +361,31 @@ CBT_Composite_Node * CFireBoy::Fire_Tornado()
 	return Root_Parallel;
 }
 
+CBT_Composite_Node * CFireBoy::Back_Dash()
+{
+	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
+
+	CBT_Sequence* MainSeq = Node_Sequence("뒤로 대쉬");
+	CBT_Play_Ani* Show_Ani14 = Node_Ani("뒤로 대쉬", 14, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
+
+	CBT_Sequence* SubSeq = Node_Sequence("이동");
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", -5.f, 0.333, 0);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", -7.f, 0.433, 0);
+	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", -3.f, 0.517, 0);
+
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(Show_Ani14);
+	MainSeq->Add_Child(Show_Ani0);
+
+	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(Move1);
+	SubSeq->Add_Child(Move2);
+
+	return Root_Parallel;
+}
+
 CBT_Composite_Node * CFireBoy::Fire_Tracking()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
@@ -584,6 +611,7 @@ CBT_Composite_Node * CFireBoy::NearAttack()
 	Root_Sel->Add_Child(Arm_Attack());
 	Root_Sel->Add_Child(Gun_Attack());
 	Root_Sel->Add_Child(Fire_Tornado());
+	Root_Sel->Add_Child(Back_Dash());
 
 	return Root_Sel;
 }
