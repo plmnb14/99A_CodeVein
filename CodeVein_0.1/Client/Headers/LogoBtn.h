@@ -41,6 +41,7 @@ private:
 
 	_bool					m_bIsColl = false;
 	CCursorEffect*			m_pCursorEffect = nullptr;
+	_float					m_fAlpha = 0.f;
 
 public:
 	static CLogoBtn*		Create(_Device pGraphic_Device);
