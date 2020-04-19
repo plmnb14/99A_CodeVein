@@ -31,12 +31,12 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 	CGameObject::LateInit_GameObject();
 	CGameObject::Update_GameObject(_TimeDelta);
 
-	if (true == m_bOnTool)
-	{
+	//if (true == m_bOnTool)
+	//{
 		Update_Collider();
-	}
+	//}
 
-	else if (false == m_bOnTool)
+	if (false == m_bOnTool)
 	{
 		m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
 		//m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this);

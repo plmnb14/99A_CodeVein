@@ -774,6 +774,11 @@ _uint CLoading::Loading_Title()
 	cout << "Essential Static 메쉬 불러오는중" << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Path.dat");
 
+	// 기믹 메쉬 불러오는중
+	//============================================================================================================
+	cout << "Field Gimmick Static 메쉬 불러오는중" << endl;
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Field_Gimmick_Path.dat");
+
 	// 다이나믹 메쉬 불러오는 중
 	//============================================================================================================
 	cout << "Essential Dynamic 메쉬 불러오는중" << endl;

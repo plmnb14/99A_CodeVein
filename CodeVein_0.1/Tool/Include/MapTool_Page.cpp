@@ -797,7 +797,8 @@ _bool CMapTool_Page::CheckObject()
 
 void CMapTool_Page::LoadFilePath(const wstring & wstrImgPath)
 {
-	HTREEITEM hStaticRoot, hDynamicRoot;
+	HTREEITEM hStaticRoot = nullptr;
+	HTREEITEM hDynamicRoot = nullptr;
 
 	wifstream fin;
 
@@ -805,9 +806,9 @@ void CMapTool_Page::LoadFilePath(const wstring & wstrImgPath)
 
 	if (fin.fail())
 		return;
+	
+	hStaticRoot = CTreeFinder::Find_Node_By_Name(m_Tree, L"StaticMesh");
 
-	hStaticRoot = m_Tree.InsertItem(TEXT("StaticMesh"), 0, 0, TVI_ROOT);
-	hDynamicRoot = m_Tree.InsertItem(TEXT("DynamicMesh"), 0, 0, TVI_ROOT);
 
 	//cout << sizeof(PATH_INFO) << endl;
 
@@ -1233,7 +1234,11 @@ BOOL CMapTool_Page::OnInitDialog()
 {
 	CPropertyPage::OnInitDialog();
 
-	LoadFilePath(L"../../Data/Mesh_Static_Path.dat");
+	m_Tree.InsertItem(TEXT("StaticMesh"), 0, 0, TVI_ROOT);
+
+	LoadFilePath(L"../../Data/Load_MeshData/Mesh_Static_Stage03_Path.dat");
+	LoadFilePath(L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
+	LoadFilePath(L"../../Data/Load_MeshData/Mesh_Field_Gimmick_Path.dat");
 
 	hObjectRoot = m_pObjectTree.InsertItem(TEXT("Object"), 0, 0, TVI_ROOT , TVI_LAST);
 

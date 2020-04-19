@@ -8692,9 +8692,9 @@ HRESULT CPlayer::SetUp_Default()
 	m_fAnimMutiply = 1.f;
 
 	// Navi
-	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_03.dat");
 	m_pNavMesh->Set_SubsetIndex(0);
-	//m_pNavMesh->Set_Index(14);
+	m_pNavMesh->Set_Index(0);
 
 	return S_OK;
 }
