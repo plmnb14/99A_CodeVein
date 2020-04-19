@@ -17,10 +17,41 @@ public:
 	enum Coll_IdleMoment { Idle_Waiting, Idle_Guard };
 	enum Coll_Attackmoment { Att_waiting, Att_Normal, Att_Skill };
 	enum Coll_Guardmoment { Guard_Idle, Gurad_Walk, Gurad_Hit };
-	enum Move_Direction { Move_Front, Move_Back, Move_Left, Move_Right, Move_End };
+	
+	//enum Move_Direction { Move_Front, Move_Back, Move_Left, Move_Right, Move_End };
 
 private:
 	enum Bonematrix_Type { Bone_Range, Bone_Body, Bone_Head, Bone_End };
+
+private:
+	enum Colleague_Ani
+	{
+		Ani_Idle,
+		Ani_PlayerDead,
+		Ani_Trun_Left90,
+		Ani_Front_Walk,
+		Ani_Back_Walk,
+		Ani_Front_Run,
+		Ani_Back_Run,
+		Ani_Start_Gurad,
+		Ani_Loop_Gruad,
+		Ani_End_Gruad,
+		Ani_Hit_Gruad,
+		Ani_Walk_Gruad,
+		Ani_Front_Hit,
+		Ani_Back_Hit,
+		Ani_Front_Roll,
+		Ani_Back_Roll,
+		One_Att,
+		Two_Att,
+		Three_Att,
+		Four_Att,
+		Ani_Dead,
+		Ani_Heal,
+		Ani_PlayerHeal,
+		Ani_ThreeAtt_Skil,
+		Ani_CenterAtt_Skil
+	};
 
 protected:
 	explicit CPlayer_Colleague(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -73,6 +104,7 @@ private:
 
 	void	CollIdle_Waiting();
 
+	void	CollAtt_Waiting();
 	void	CollAtt_Normal();
 
 private:
@@ -92,14 +124,20 @@ private:
 
 private:
 	Colleague_MoveType		m_eMovetype;
+
 	Coll_Movement			m_eColl_Movement;
 	Coll_IdleMoment			m_eColl_IdleMoment;
 	Coll_Attackmoment		m_eColl_AttackMoment;
 	Coll_Guardmoment		m_eColl_GuardMoment;
-	Move_Direction			m_eMoveDirection;
+
+	Colleague_Ani			m_eColleague_Ani;
+
+	//Move_Direction			m_eMoveDirection;
 
 private:
 	list<CGameObject*>	m_List_pMonTarget[2];
+
+	_double	m_dPlayAni_Time = 1;
 
 	_mat*	m_matBone[Bone_End];
 
