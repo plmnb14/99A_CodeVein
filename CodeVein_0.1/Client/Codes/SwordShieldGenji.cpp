@@ -457,6 +457,7 @@ CBT_Composite_Node * CSwordShieldGenji::Guard(_double dGuardTime)
 	CBT_Wait* Wait0 = Node_Wait("루프 대기", dGuardTime, 0);
 	CBT_Play_Ani* Show_Ani5 = Node_Ani("끝", 5, 0.8f);
 
+	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_ChaseDir* RotationDir0 = Node_ChaseDir("이동", L"Player_Pos", dGuardTime + 1, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
@@ -465,7 +466,8 @@ CBT_Composite_Node * CSwordShieldGenji::Guard(_double dGuardTime)
 	MainSeq->Add_Child(Wait0);
 	MainSeq->Add_Child(Show_Ani5);
 
-	Root_Parallel->Set_Sub_Child(RotationDir0);
+	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(RotationDir0);
 
 	return Root_Parallel;
 }

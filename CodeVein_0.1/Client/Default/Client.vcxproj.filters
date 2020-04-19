@@ -639,6 +639,9 @@
     <ClInclude Include="..\Headers\Button_UI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\Button_UI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\LeakField.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\QueensKnight\Bullet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -943,6 +946,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Button_UI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\Button_UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\LeakField.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\QueensKnight\Bullet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -208,6 +208,7 @@
     <ClInclude Include="..\Headers\Inventory_Icon.h" />
     <ClInclude Include="..\Headers\Item_Manager.h" />
     <ClInclude Include="..\Headers\DarkGroundBullet.h" />
+    <ClInclude Include="..\Headers\LeakField.h" />
     <ClInclude Include="..\Headers\LoadingBar.h" />
     <ClInclude Include="..\Headers\LoadingScreen.h" />
     <ClInclude Include="..\Headers\MassageUI.h" />
@@ -309,6 +310,7 @@
     <ClCompile Include="..\Codes\Inventory_Icon.cpp" />
     <ClCompile Include="..\Codes\Item_Manager.cpp" />
     <ClCompile Include="..\Codes\DarkGroundBullet.cpp" />
+    <ClCompile Include="..\Codes\LeakField.cpp" />
     <ClCompile Include="..\Codes\LoadingBar.cpp" />
     <ClCompile Include="..\Codes\LoadingScreen.cpp" />
     <ClCompile Include="..\Codes\MassageUI.cpp" />
