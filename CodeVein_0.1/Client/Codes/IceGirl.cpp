@@ -644,7 +644,7 @@ CBT_Composite_Node * CIceGirl::Ice_Barrier()
 	CBT_UpdateParam* BarrierValue0 = Node_UpdateParam("닷지 On", &m_tObjParam, CBT_UpdateParam::Dodge, 1.5, 1, 0, 0);
 	Root_Parallel->Add_Service(BarrierValue0);
 
-	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("버프 전 오른손 오오라", L"IceGirl_Buff_Charge_Smoke_01", L"Bone_LeftHand", 0.1, 45, 0, 0);
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("버프 전 손 오오라", L"IceGirl_Buff_Charge_Smoke_01", L"Bone_LeftHand", 0.1, 45, 0, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("스모크1", L"IceGirl_Buff_Bubble_BreakSmoke", L"Self_Foot", 0.8, 30, 0, 0);
 
 	Root_Parallel->Add_Service(Effect0);
@@ -679,6 +679,12 @@ CBT_Composite_Node * CIceGirl::ColdBeam_RandomPos()
 	CBT_CreateBullet* Ice2 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeam", L"Random_ColdBeam_Pos2", L"", 0, 7.f, 2.283, 1, 1, 0, CBT_Service_Node::Finite);
 	CBT_CreateBullet* Ice3 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeam", L"Random_ColdBeam_Pos3", L"", 0, 7.f, 2.283, 1, 1, 0, CBT_Service_Node::Finite);
 	CBT_CreateBullet* Ice4 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeam", L"Random_ColdBeam_Pos4", L"", 0, 7.f, 2.283, 1, 1, 0, CBT_Service_Node::Finite);
+
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("버프 전 손 오오라", L"IceGirl_Buff_Charge_Smoke_01", L"Bone_LeftHand", 0.1, 45, 0, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("스모크1", L"IceSmoke_01", L"Bone_LeftHand", 0.8, 30, 0, 0);
+
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
 
 	Root_Parallel->Add_Service(Ice0);
 	Root_Parallel->Add_Service(Ice1);
@@ -720,6 +726,12 @@ CBT_Composite_Node * CIceGirl::ColdBeam_Around_Me()
 	CBT_CreateBullet* Ice1 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeam", L"Self_ColdBeam_Pos1", L"", 0, 1.f, 2.65, 1, 1, 0, CBT_Service_Node::Finite);
 	CBT_CreateBullet* Ice2 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeam", L"Self_ColdBeam_Pos2", L"", 0, 1.f, 2.65, 1, 1, 0, CBT_Service_Node::Finite);
 	CBT_CreateBullet* Ice3 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeam", L"Self_ColdBeam_Pos3", L"", 0, 1.f, 2.65, 1, 1, 0, CBT_Service_Node::Finite);
+
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("버프 전 손 오오라", L"IceGirl_Buff_Charge_Smoke_01", L"Bone_LeftHand", 0.1, 45, 0, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("스모크1", L"IceSmoke_01", L"Bone_LeftHand", 0.8, 30, 0, 0);
+
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
 
 	Root_Parallel->Add_Service(Ice0);
 	Root_Parallel->Add_Service(Ice1);
