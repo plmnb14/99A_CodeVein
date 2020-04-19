@@ -24,6 +24,11 @@ private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
 
+public:
+	void Active_SubUI();
+	void Move_Up();
+	void Move_Down();
+
 private:
 	CTransform*				m_pTransformCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;

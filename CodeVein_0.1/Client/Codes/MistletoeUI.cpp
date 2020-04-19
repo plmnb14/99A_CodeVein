@@ -54,8 +54,8 @@ _int CMistletoeUI::Update_GameObject(_double TimeDelta)
 	if (nullptr == m_pTarget)
 		return NO_EVENT;
 
-	if (g_pInput_Device->Key_Up(DIK_O))
-		m_bIsActive = !m_bIsActive;
+	/*if (g_pInput_Device->Key_Up(DIK_O))
+		m_bIsActive = !m_bIsActive;*/
 
 	_v3 vAngle = TARGET_TO_TRANS(m_pTarget)->Get_Angle();
 	vAngle.y = vAngle.y + D3DXToRadian(45.f);
@@ -83,20 +83,17 @@ _int CMistletoeUI::Update_GameObject(_double TimeDelta)
 		(i == m_iSelectIndex) ? (m_vecOption[i]->Set_Select(true)) : (m_vecOption[i]->Set_Select(false));
 	}
 
-	if (g_pInput_Device->Key_Up(DIK_K) && m_iSelectIndex < m_vecOption.size() - 1)
+	/*if (g_pInput_Device->Key_Up(DIK_K) && m_iSelectIndex < m_vecOption.size() - 1)
 		m_iSelectIndex++;
 	if (g_pInput_Device->Key_Up(DIK_J) && m_iSelectIndex > 0)
 		m_iSelectIndex--;
 
-	if (g_pInput_Device->Key_Up(DIK_P) && m_bIsActive)
+	if (g_pInput_Device->Key_Up(DIK_P))
+		Active_SubUI();*/
+
+	if (!m_bIsActive)
 	{
-		switch (m_iSelectIndex)
-		{
-		case 0:
-			m_pStageSelectUI->Set_Active(!m_pStageSelectUI->Get_Active());
-			break;
-		}
-		
+		m_pStageSelectUI->Set_Active(false);
 	}
 	
 	return NO_EVENT;
@@ -176,6 +173,43 @@ HRESULT CMistletoeUI::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
 		return E_FAIL;
 	return NOERROR;
+}
+
+void CMistletoeUI::Active_SubUI()
+{
+	if (!m_bIsActive)
+		return;
+	//if (g_pInput_Device->Key_Up(DIK_P) && m_bIsActive)
+	//{
+	//	switch (m_iSelectIndex)
+	//	{
+	//	case 0:
+	//		m_pStageSelectUI->Set_Active(!m_pStageSelectUI->Get_Active());
+	//		break;
+	//	}
+	//
+	//}
+
+	if (0 == m_iSelectIndex)
+		m_pStageSelectUI->Set_Active(!m_pStageSelectUI->Get_Active());
+	else
+		m_pStageSelectUI->Set_Active(false);
+}
+
+void CMistletoeUI::Move_Up()
+{
+	if (!m_bIsActive)
+		return;
+	if (m_iSelectIndex > 0)
+		m_iSelectIndex--;
+}
+
+void CMistletoeUI::Move_Down()
+{
+	if (!m_bIsActive)
+		return;
+	if (m_iSelectIndex < m_vecOption.size() - 1)
+			m_iSelectIndex++;
 }
 
 CMistletoeUI * CMistletoeUI::Create(_Device pGraphic_Device)
