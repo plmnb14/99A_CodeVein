@@ -75,13 +75,9 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-<<<<<<< HEAD
-	Start_Sel->Add_Child(Create_LeakField_Or_Not());
-	Start_Sel->Add_Child(Flash());
-=======
+
 	Start_Sel->Add_Child(Flash_Middle_Ground());
 
->>>>>>> 0eae7b61539e31d58822809657b5b7836ac4133e
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
 
