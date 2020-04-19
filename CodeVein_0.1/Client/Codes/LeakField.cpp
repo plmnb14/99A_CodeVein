@@ -51,7 +51,7 @@ _int CLeakField::Update_GameObject(_double TimeDelta)
 	if (m_bDead)
 		return DEAD_OBJ;
 
-	m_pTransformCom->Add_Pos(m_fSpeed * TimeDelta, *D3DXVec3Normalize(&_v3(), &_v3(m_pTarget_Transform->Get_Pos() - m_pTransformCom->Get_Pos())));
+	m_pTransformCom->Add_Pos(_float(m_fSpeed * TimeDelta), *D3DXVec3Normalize(&_v3(), &_v3(m_pTarget_Transform->Get_Pos() - m_pTransformCom->Get_Pos())));
 	// 충돌처리는 이펙트 넣고 나서 할 것임.
 	//OnCollisionEnter();
 
@@ -67,7 +67,16 @@ _int CLeakField::Update_GameObject(_double TimeDelta)
 	// 진행중
 	else
 	{
-		
+		m_fEffectOffset += _float(TimeDelta);
+		if (m_fEffectOffset > 0.02f)
+		{
+			m_fEffectOffset = 0.f;
+
+			g_pManagement->Create_Effect(L"QueensKnight_LeakField_0", m_pTransformCom->Get_Pos() + _v3(0.f, 0.35f, 0.f), nullptr);
+			g_pManagement->Create_Effect(L"QueensKnight_LeakField_1", m_pTransformCom->Get_Pos() + _v3(0.f, 0.35f, 0.f), nullptr);
+
+			g_pManagement->Create_Effect(L"QueensKnight_LeakField_Particle", m_pTransformCom->Get_Pos(), nullptr);
+		}
 	}
 
 	return NOERROR;

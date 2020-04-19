@@ -73,6 +73,13 @@ _int CFireBullet::Update_GameObject(_double TimeDelta)
 		{
 			m_fEffectOffset = 0.f;
 			g_pManagement->Create_Effect(L"FireBoy_FireBullet", m_pTransformCom->Get_Pos(), nullptr);
+			
+			_int iRand = CCalculater::Random_Num(0, 2); // 33%
+			if(0 == iRand)
+				g_pManagement->Create_Effect(L"FireBoy_FireBullet_Sub_0", m_pTransformCom->Get_Pos(), nullptr);
+			else if(1 == iRand)
+				g_pManagement->Create_Effect(L"FireBoy_FireBullet_Sub_1", m_pTransformCom->Get_Pos(), nullptr);
+
 			g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_01", m_pTransformCom->Get_Pos(), nullptr);
 			g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_02", m_pTransformCom->Get_Pos(), nullptr);
 		}
@@ -122,7 +129,6 @@ HRESULT CFireBullet::Update_Collider()
 
 void CFireBullet::OnCollisionEnter()
 {
-	Update_Collider();
 
 	// =============================================================================================
 	// 충돌
@@ -183,9 +189,10 @@ void CFireBullet::OnCollisionEvent(list<CGameObject*> plistGameObject)
 							iter->Set_HitAgain(true);
 
 						iter->Add_Target_Hp(-m_tObjParam.fDamage);
+
+						m_dCurTime = 1000;	// 바로 사망시키기 위해서 현재시간 100줬음
 					}
 
-					m_dCurTime = 1000;	// 바로 사망시키기 위해서 현재시간 100줬음
 
 					break;
 

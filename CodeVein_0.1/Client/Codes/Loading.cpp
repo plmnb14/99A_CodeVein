@@ -185,6 +185,10 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_JumpDown_Smoke_Red")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_JumpDown_Smoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Ultimate_Floor")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lava_Floor_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lava_Floor_1")))
@@ -193,11 +197,25 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_Smoke_0")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_BlackSmoke")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_LineRing_0", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_Sphere_0", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_Sphere_1", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Ultimate_Cone_0", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Ultimate_Cone_1", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Ultimate_Cone_2", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Ultimate_Cone_3", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Ultimate_Cone_4", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Ultimate_Smoke")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_BlackFire_0")))
 		return E_FAIL;
@@ -208,6 +226,8 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lava_Lightning_2")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_Floor_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_Floor_1")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_Particle")))
 		return E_FAIL;
@@ -220,6 +240,8 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_1")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_Hand")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_Hand_Aura")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_Particle")))
 		return E_FAIL;
@@ -273,6 +295,10 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_RingBottom", true)))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_RingRed", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_RingReady", true)))
+		return E_FAIL;
 #pragma endregion
 	
 #pragma region IceGirl
@@ -324,6 +350,10 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Aura_3")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Bubble", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Bubble_BreakSmoke")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceBlock_Particle")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Break_1")))
@@ -353,6 +383,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireTornade_Mesh", true)))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireTornade_Mesh_2", true)))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireTornade_Floor_01")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireTornade_Floor_02")))
@@ -366,6 +398,10 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireTornade_ReadyFire_Up")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireBullet")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireBullet_Sub_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireBullet_Sub_1")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireBullet_GunEff")))
 		return E_FAIL;
