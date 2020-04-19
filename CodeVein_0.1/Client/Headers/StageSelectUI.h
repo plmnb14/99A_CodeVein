@@ -21,6 +21,9 @@ public:
 private:
 	HRESULT Add_Component();
 
+public:
+	_uint Select_Stage();
+
 private:
 	CTransform*				m_pTransformCom = nullptr;
 	vector<CStageUI*>		m_vecStageUI;

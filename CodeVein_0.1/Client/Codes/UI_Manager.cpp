@@ -147,15 +147,16 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_SkillUI", SCENE_MORTAL, L"Layer_SkillUI");
 	
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_MistletoeUI", SCENE_STAGE, L"Layer_MistletoeUI");
-	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_StageSelectUI", SCENE_STAGE, L"Layer_StageSelectUI");
+	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_MistletoeUI", SCENE_STAGE, L"Layer_MistletoeUI");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_StageSelectUI", SCENE_STAGE, L"Layer_StageSelectUI");
 
 	return NOERROR;
 }
 
 _int CUI_Manager::Update_UI()
 {
-	
+	if (g_pInput_Device->Key_Up(DIK_RETURN))
+		cout << Select_Stage() << endl;
 	return 0;
 }
 
@@ -259,10 +260,13 @@ void CUI_Manager::Set_BossHP_Active(_bool bIsActive)
 	pBossUI->Set_Active(false);
 }
 
-void CUI_Manager::Active_StageUI()
+_uint CUI_Manager::Select_Stage()
 {
-	static_cast<CStageSelectUI*>(g_pManagement->Get_GameObjectBack(L"Layer_StageSelectUI", SCENE_STAGE))->Set_Active(
-		!static_cast<CStageSelectUI*>(g_pManagement->Get_GameObjectBack(L"Layer_StageSelectUI", SCENE_STAGE))->Get_Active());
+	CStageSelectUI* pStageUI = static_cast<CStageSelectUI*>(g_pManagement->Get_GameObjectBack(L"Layer_StageSelectUI", SCENE_STAGE));
+	if (nullptr == pStageUI)
+		return _uint(CStageUI::Teleport_End);
+
+	return _uint(pStageUI->Select_Stage());
 }
 
 void CUI_Manager::Free()

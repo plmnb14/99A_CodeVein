@@ -58,12 +58,27 @@ _int CStageUI::Update_GameObject(_double TimeDelta)
 	case Teleport_St01:
 		m_iIndex = 1;
 		break;
+	/*case Teleport_St01_2:
+		m_iIndex = 1;
+		break;
+	case Teleport_St01_3:
+		m_iIndex = 1;
+		break;*/
 	case Teleport_St02:
 		m_iIndex = 2;
 		break;
+	/*case Teleport_St02_2:
+		m_iIndex = 2;
+		break;
+	case Teleport_St02_3:
+		m_iIndex = 2;
+		break;*/
 	case Teleport_St03:
 		m_iIndex = 3;
 		break;
+	/*case Teleport_St03_2:
+		m_iIndex = 3;
+		break;*/
 	case Teleport_St04:
 		m_iIndex = 4;
 		break;
@@ -136,7 +151,7 @@ HRESULT CStageUI::Render_GameObject()
 			}
 			
 		}
-		else if (m_eTeleportMenu == Teleport_St04)
+		else if (m_eTeleportMenu == Teleport_End - 1)
 		{
 			LOOP(3)
 			{

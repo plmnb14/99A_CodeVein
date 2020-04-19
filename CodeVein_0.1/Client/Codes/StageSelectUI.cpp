@@ -34,6 +34,13 @@ HRESULT CStageSelectUI::Ready_GameObject(void * pArg)
 	}
 
 	m_bIsActive = false;
+
+	/*m_vecStageUI[0]->Set_Teleport_Menu(CStageUI::Teleport_Home_1);
+	m_vecStageUI[1]->Set_Teleport_Menu(CStageUI::Teleport_St01_1);
+	m_vecStageUI[2]->Set_Teleport_Menu(CStageUI::Teleport_St02_1);
+	m_vecStageUI[3]->Set_Teleport_Menu(CStageUI::Teleport_St03_1);
+	m_vecStageUI[4]->Set_Teleport_Menu(CStageUI::Teleport_St04_1);*/
+
 	return NOERROR;
 }
 
@@ -47,6 +54,10 @@ _int CStageSelectUI::Update_GameObject(_double TimeDelta)
 	m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 	if (nullptr == m_pTarget)
 		return NO_EVENT;
+
+	/*LOOP(5)
+		m_vecStageUI[i]->Set_Active(m_bIsActive);*/
+
 	
 	m_pTransformCom->Set_Angle(TARGET_TO_TRANS(m_pTarget)->Get_Angle());
 	_v3 vLookZ = TARGET_TO_TRANS(m_pTarget)->Get_Axis(AXIS_Z);
@@ -60,7 +71,7 @@ _int CStageSelectUI::Update_GameObject(_double TimeDelta)
 	}
 	
 	
-	if (g_pInput_Device->Key_Up(DIK_LEFT))
+	if (g_pInput_Device->Key_Up(DIK_LEFT) && m_bIsActive)
 	{
 		if (0 != m_iSelectIndex)
 		{
@@ -70,7 +81,7 @@ _int CStageSelectUI::Update_GameObject(_double TimeDelta)
 				m_vecStageUI[i]->Set_Alpha(0.1f);
 		}
 	}
-	else if (g_pInput_Device->Key_Up(DIK_RIGHT))
+	else if (g_pInput_Device->Key_Up(DIK_RIGHT) && m_bIsActive)
 	{
 		if (CStageUI::Teleport_End - 1 != m_iSelectIndex)
 		{
@@ -80,6 +91,7 @@ _int CStageSelectUI::Update_GameObject(_double TimeDelta)
 		}
 			
 	}
+
 	for (_uint i = 0; i < m_vecStageUI.size(); ++i)
 	{
 		(i == m_iSelectIndex) ? m_vecStageUI[i]->Set_Select(true) : m_vecStageUI[i]->Set_Select(false);
@@ -90,13 +102,15 @@ _int CStageSelectUI::Update_GameObject(_double TimeDelta)
 			TARGET_TO_TRANS(m_vecStageUI[i])->Set_Scale(_v3(2.1567f, 1.3f, 0.f)) : TARGET_TO_TRANS(m_vecStageUI[i])->Set_Scale(_v3(1.72536f, 1.04f, 0.f));
 	}
 			
-	/*if (g_pInput_Device->Key_Up(DIK_P))
+	if (g_pInput_Device->Key_Up(DIK_P))
 	{
+		m_bIsActive = !m_bIsActive;
 		LOOP(5)
-			m_vecStageUI[i]->Set_Active(!m_vecStageUI[i]->Get_Active());
-	}*/
-	LOOP(5)
-		m_vecStageUI[i]->Set_Active(m_bIsActive);
+			m_vecStageUI[i]->Set_Active(m_bIsActive);
+		/*LOOP(5)
+			m_vecStageUI[i]->Set_Active(!m_vecStageUI[i]->Get_Active());*/
+	}
+	
 	return NO_EVENT;
 }
 
@@ -113,6 +127,14 @@ HRESULT CStageSelectUI::Add_Component()
 
 	return NOERROR;
 }
+
+_uint CStageSelectUI::Select_Stage()
+{
+	if (!m_bIsActive)
+		return _uint(CStageUI::Teleport_End);
+	return _uint(m_vecStageUI[m_iSelectIndex]->Get_Teleport_Menu());
+}
+
 
 CStageSelectUI * CStageSelectUI::Create(_Device pGraphic_Device)
 {
