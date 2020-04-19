@@ -59,6 +59,8 @@ private:	// 패턴
 	// 5. 위로 불쏘고 폭죽마냥 십자가 모양으로 떨어짐
 	CBT_Composite_Node* Fire_Flame();
 
+	// 백 대쉬
+
 
 	///// 게임 시작
 	CBT_Composite_Node* Start_Game();

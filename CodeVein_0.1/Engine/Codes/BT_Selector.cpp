@@ -114,7 +114,7 @@ CBT_Node::BT_NODE_STATE CBT_Selector::End_Node(vector<CBT_Node*>* pNodeStack, li
 		Notify_Parent_Of_State(pNodeStack->back(), eState);
 
 	if (!m_listServiceNodeStack.empty())
-		Release_ServiceNode(plistSubNodeStack, &m_listServiceNodeStack, pBlackBoard, bDebugging);
+		Release_ServiceNode(plistSubNodeStack, &m_listServiceNodeStack, pBlackBoard, false);
 
 	if (bDebugging)
 	{

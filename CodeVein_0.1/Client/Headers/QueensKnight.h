@@ -59,7 +59,10 @@ private:	// 패턴들
 	// 8. 돌진
 	CBT_Composite_Node* Rush();	//충돌완
 	// 9. 방패치기
-	CBT_Composite_Node* Shield_Attack();
+	CBT_Composite_Node* Shield_Attack();	//충돌완
+
+	// 10. 리크 필드
+	CBT_Composite_Node* LeakField();
 
 	// 점멸 패턴
 	// 1. 점멸
@@ -79,7 +82,7 @@ private:	// 패턴들
 
 	///////////// 응용
 	CBT_Composite_Node* Smart_ThreeCombo_Cut();
-
+	CBT_Composite_Node* Create_LeakField_Or_Not();
 
 
 	//// 게임 시작
@@ -133,12 +136,13 @@ private:
 
 private:	// 다운 상태를 위한 변수
 	_bool				m_bDown_Start = false;
-	_bool				m_bDown_Finish = false;
 
 	_bool				m_bDown_StartAni = false;
 	_bool				m_bDown_LoopAni = false;
 	_bool				m_bDown_EndAni = false;
 	_double				m_dDownTime = 0;
+
+	_byte				m_iDownCount = 0;
 
 private:
 	// 충돌체를 위한 뼈다귀

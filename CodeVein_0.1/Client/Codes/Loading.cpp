@@ -875,6 +875,9 @@ _uint CLoading::Loading_Stage()
 		// 기사 주위 결계
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkMidCol", CDarkMidCol::Create(m_pGraphicDev))))
 			return E_FAIL;
+		// 리크 필드
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_LeakField", CLeakField::Create(m_pGraphicDev))))
+			return E_FAIL;
 		// 얼음여자
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceGirl", CIceGirl::Create(m_pGraphicDev))))
 			return E_FAIL;

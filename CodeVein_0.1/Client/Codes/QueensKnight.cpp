@@ -56,6 +56,7 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"PhyCol", true);	// 피격판정 제어 변수
 	pBlackBoard->Set_Value(L"TrailOn", false);	// 트레일 시작
 	pBlackBoard->Set_Value(L"TrailOff", true);	// 트레일 끝
+	pBlackBoard->Set_Value(L"LeakField_On", false);	// 리크필드 변수
 
 	//CBT_Selector* Start_Sel = Node_Selector("행동 시작");
 	CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
@@ -74,8 +75,8 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Start_Game());
-
+	Start_Sel->Add_Child(Create_LeakField_Or_Not());
+	Start_Sel->Add_Child(Flash());
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
 
@@ -788,6 +789,30 @@ CBT_Composite_Node * CQueensKnight::Shield_Attack()
 	return Root_Parallel;
 }
 
+CBT_Composite_Node * CQueensKnight::LeakField()
+{
+	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
+
+	CBT_Sequence* MainSeq = Node_Sequence("리크필드");
+	CBT_Play_Ani* Show_Ani52 = Node_Ani("방패치기", 52, 0.95f);
+	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.f);
+
+	CBT_Sequence* SubSeq = Node_Sequence("보호막 변수 On");
+	CBT_SetValue* LeakFieldOn = Node_BOOL_SetValue("리크필드 변수 On", L"LeakField_On", true);
+
+	CBT_CreateBuff* LeakField0 = Node_CreateBuff("리크필드 생성", L"Monster_LeakField", 13, 2.533, 1, 0, 0, CBT_Service_Node::Finite);
+	Root_Parallel->Add_Service(LeakField0);
+
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(Show_Ani52);
+	MainSeq->Add_Child(Show_Ani15);
+
+	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(LeakFieldOn);
+
+	return Root_Parallel;
+}
+
 CBT_Composite_Node * CQueensKnight::Flash()
 {
 	CBT_Sequence* MainSeq = Node_Sequence("이동");
@@ -1303,6 +1328,21 @@ CBT_Composite_Node * CQueensKnight::Smart_ThreeCombo_Cut()
 	return Root_Parallel;
 }
 
+CBT_Composite_Node * CQueensKnight::Create_LeakField_Or_Not()
+{
+	CBT_Selector* Root_Sel = Node_Selector("리크필드 시전");
+
+	CBT_CompareValue* Check_Ice_Barrier = Node_BOOL_A_Equal_Value("리크필드 사용중임?", L"LeakField_On", true);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본1", 0, 0.f);
+
+	Root_Sel->Add_Child(Check_Ice_Barrier);
+	Check_Ice_Barrier->Set_Child(Show_Ani0);
+
+	Root_Sel->Add_Child(LeakField());
+
+	return Root_Sel;
+}
+
 CBT_Composite_Node * CQueensKnight::Start_Game()
 {
 	CBT_Selector* Root_Sel = Node_Selector("게임 시작");
@@ -1568,8 +1608,13 @@ void CQueensKnight::Down()
 			m_tObjParam.bDown = false;
 
 			m_bDown_Start = false;
-			m_bDown_Finish = true;
 			m_bAIController = true;
+
+			++m_iDownCount;
+
+			// Down 안에서 쓰는 bool 리셋
+			m_bDown_StartAni = true;
+			m_dDownTime = 0;
 
 			m_pMeshCom->SetUp_Animation(Ani_Idle);
 		}
@@ -1836,9 +1881,25 @@ void CQueensKnight::Check_PhyCollider()
 		if (m_tObjParam.fHp_Cur > 0.f)
 		{
 			// 체력 비율 70 이하되면 스턴
-			if (false == m_bDown_Finish)
+			if (0 == m_iDownCount)
 			{
 				if (0.7 >= (m_tObjParam.fHp_Cur / m_tObjParam.fHp_Max))
+				{
+					m_bDown_Start = true;
+
+					m_tObjParam.bDown = true;
+
+					m_pMeshCom->SetUp_Animation(Ani_Down_Start);
+					m_bDown_StartAni = true;	//down 함수 내부에서 쓸 것임.
+					m_pAIControllerCom->Reset_BT();
+					m_bAIController = false;
+
+				}
+			}
+
+			if (1 == m_iDownCount)
+			{
+				if (0.4 >= (m_tObjParam.fHp_Cur / m_tObjParam.fHp_Max))
 				{
 					m_bDown_Start = true;
 
