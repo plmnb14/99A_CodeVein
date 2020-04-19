@@ -56,6 +56,7 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"PhyCol", true);	// ÇÇ°ÝÆÇÁ¤ Á¦¾î º¯¼ö
 	pBlackBoard->Set_Value(L"TrailOn", false);	// Æ®·¹ÀÏ ½ÃÀÛ
 	pBlackBoard->Set_Value(L"TrailOff", true);	// Æ®·¹ÀÏ ³¡
+	pBlackBoard->Set_Value(L"LeakField_On", false);	// ¸®Å©ÇÊµå º¯¼ö
 
 	//CBT_Selector* Start_Sel = Node_Selector("Çàµ¿ ½ÃÀÛ");
 	CBT_Sequence* Start_Sel = Node_Sequence("Çàµ¿ ½ÃÀÛ");	//Å×½ºÆ®
@@ -73,6 +74,7 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 	////////////
 
 	// ÆÐÅÏ È®ÀÎ¿ë,  °¢ ÆÐÅÏ ÇÔ¼ö¸¦ ¾Æ·¡¿¡ ³ÖÀ¸¸é Àç»ýµÊ
+
 
 	Start_Sel->Add_Child(Flash_Middle_Ground());
 
@@ -788,6 +790,30 @@ CBT_Composite_Node * CQueensKnight::Shield_Attack()
 	return Root_Parallel;
 }
 
+CBT_Composite_Node * CQueensKnight::LeakField()
+{
+	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("º´·Ä");
+
+	CBT_Sequence* MainSeq = Node_Sequence("¸®Å©ÇÊµå");
+	CBT_Play_Ani* Show_Ani52 = Node_Ani("¹æÆÐÄ¡±â", 52, 0.95f);
+	CBT_Play_Ani* Show_Ani15 = Node_Ani("±âº»", 15, 0.f);
+
+	CBT_Sequence* SubSeq = Node_Sequence("º¸È£¸· º¯¼ö On");
+	CBT_SetValue* LeakFieldOn = Node_BOOL_SetValue("¸®Å©ÇÊµå º¯¼ö On", L"LeakField_On", true);
+
+	CBT_CreateBuff* LeakField0 = Node_CreateBuff("¸®Å©ÇÊµå »ý¼º", L"Monster_LeakField", 13, 2.533, 1, 0, 0, CBT_Service_Node::Finite);
+	Root_Parallel->Add_Service(LeakField0);
+
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(Show_Ani52);
+	MainSeq->Add_Child(Show_Ani15);
+
+	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(LeakFieldOn);
+
+	return Root_Parallel;
+}
+
 CBT_Composite_Node * CQueensKnight::Flash()
 {
 	CBT_Sequence* MainSeq = Node_Sequence("ÀÌµ¿");
@@ -804,12 +830,18 @@ CBT_Composite_Node * CQueensKnight::Flash()
 	MainSeq->Add_Child(PhyColOn);
 	MainSeq->Add_Child(PushColOn);
 
-	CBT_StartDissolve* Dissolve0 = Node_StartDissolve("µðÁ¹ºê", this, 3.7f, false, 0.01);
-	CBT_StartDissolve* Dissolve1 = Node_StartDissolve("µðÁ¹ºê", this, 3.7f, true, 0.17);
-	CBT_StartDissolve* Dissolve2 = Node_StartDissolve("µðÁ¹ºê", m_pSword, 3.7f, false, 0.01);
-	CBT_StartDissolve* Dissolve3 = Node_StartDissolve("µðÁ¹ºê", m_pSword, 3.7f, true, 0.17);
-	CBT_StartDissolve* Dissolve4 = Node_StartDissolve("µðÁ¹ºê", m_pShield, 3.7f, false, 0.01);
-	CBT_StartDissolve* Dissolve5 = Node_StartDissolve("µðÁ¹ºê", m_pShield, 3.7f, true, 0.17);
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("Á¡¸ê ¿Ö°î", L"QueensKnight_DistortionCircle", L"Self_MidPos", 0.0, 1, 0, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("Á¡¸ê ¿Ö°î", L"QueensKnight_DistortionCircle", L"Self_MidPos", 0.16, 1, 0, 0);
+
+	CBT_StartDissolve* Dissolve0 = Node_StartDissolve("µðÁ¹ºê", this, 12.7f, false, 0.01);
+	CBT_StartDissolve* Dissolve1 = Node_StartDissolve("µðÁ¹ºê", this, 12.7f, true, 0.17);
+	CBT_StartDissolve* Dissolve2 = Node_StartDissolve("µðÁ¹ºê", m_pSword, 12.7f, false, 0.01);
+	CBT_StartDissolve* Dissolve3 = Node_StartDissolve("µðÁ¹ºê", m_pSword, 12.7f, true, 0.17);
+	CBT_StartDissolve* Dissolve4 = Node_StartDissolve("µðÁ¹ºê", m_pShield, 12.7f, false, 0.01);
+	CBT_StartDissolve* Dissolve5 = Node_StartDissolve("µðÁ¹ºê", m_pShield, 12.7f, true, 0.17);
+
+	MainSeq->Add_Service(Effect0);
+	MainSeq->Add_Service(Effect1);
 
 	MainSeq->Add_Service(Dissolve0);
 	MainSeq->Add_Service(Dissolve1);
@@ -845,6 +877,8 @@ CBT_Composite_Node * CQueensKnight::Flash_Wing_Attack()
 	//CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("Á¡¸ê °ËÀº ¿¬±â", L"QueensKnight_Teleport_Smoke", L"Self_MidPos", 0, 50, 0.35, 0);
 	//CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("Á¡¸ê ºÓÀº ¿¬±â", L"QueensKnight_Teleport_Smoke_Red", L"Self_MidPos", 0, 50, 0.35, 0);
 	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("¸ÕÁö", L"QueensKnight_WhirlWind_Smoke", L"Self_Pos", 1.3, 20, 0.1, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("Á¡¸ê ¿Ö°î", L"QueensKnight_DistortionCircle", L"Self_MidPos", 0.2, 1, 0, 0);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("Á¡¸ê ¿Ö°î", L"QueensKnight_DistortionCircle", L"Self_MidPos", 1.3, 1, 0, 0);
 
 	CBT_StartDissolve* Dissolve0 = Node_StartDissolve("µðÁ¹ºê", this		, 3.7f, false, 0.2);
 	CBT_StartDissolve* Dissolve1 = Node_StartDissolve("µðÁ¹ºê", this		, 3.7f, true, 1.3);
@@ -857,6 +891,8 @@ CBT_Composite_Node * CQueensKnight::Flash_Wing_Attack()
 	//Root_Parallel->Add_Service(Effect1);
 	//Root_Parallel->Add_Service(Effect2);
 	Root_Parallel->Add_Service(Effect3);
+	Root_Parallel->Add_Service(Effect4);
+	Root_Parallel->Add_Service(Effect5);
 	Root_Parallel->Add_Service(Dissolve0);
 	Root_Parallel->Add_Service(Dissolve1);
 	Root_Parallel->Add_Service(Dissolve2);
@@ -918,6 +954,8 @@ CBT_Composite_Node * CQueensKnight::Flash_Rush()
 	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("°ËºÓÀº ¹ø°³", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_TopPos"		, 0.2, 13, 0.1, 0);
 	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("°ËºÓÀº ¹ø°³", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_MidPos"		, 0.2, 13, 0.1, 0);
 	CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("°ËºÓÀº ¹ø°³", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_BottomPos"	, 0.2, 13, 0.1, 0);
+	CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("Á¡¸ê ¿Ö°î", L"QueensKnight_DistortionCircle", L"Self_MidPos", 0.17, 1, 0, 0);
+	CBT_CreateEffect* Effect10 = Node_CreateEffect_Finite("Á¡¸ê ¿Ö°î", L"QueensKnight_DistortionCircle", L"Self_MidPos", 0.6, 1, 0, 0);
 
 	CBT_StartDissolve* Dissolve0 = Node_StartDissolve("µðÁ¹ºê", this,  3.7f, false, 0.17);
 	CBT_StartDissolve* Dissolve1 = Node_StartDissolve("µðÁ¹ºê", this, 3.7f, true, 0.6);
@@ -935,6 +973,8 @@ CBT_Composite_Node * CQueensKnight::Flash_Rush()
 	Root_Parallel->Add_Service(Effect6);
 	Root_Parallel->Add_Service(Effect7);
 	Root_Parallel->Add_Service(Effect8);
+	Root_Parallel->Add_Service(Effect9);
+	Root_Parallel->Add_Service(Effect10);
 	Root_Parallel->Add_Service(Dissolve0);
 	Root_Parallel->Add_Service(Dissolve1);
 	Root_Parallel->Add_Service(Dissolve2);
@@ -987,9 +1027,9 @@ CBT_Composite_Node * CQueensKnight::Flash_Jump_Attack()
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("Á¡¸ê ÆÄÆ¼Å¬", L"QueensKnight_Teleport_Particle", L"Self_MidPos", 0, 150, 0.15, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("Á¡¸ê °ËÀº ¿¬±â", L"QueensKnight_Teleport_Smoke", L"Self_MidPos", 0, 10, 0.35, 0);
-	//CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("Á¡¸ê ºÓÀº ¿¬±â", L"QueensKnight_Teleport_Smoke_Red", L"Self_MidPos", 0, 50, 0.35, 0);
+	CBT_CreateEffect* Effect14 = Node_CreateEffect_Finite("Á¡¸ê ¿Ö°î", L"QueensKnight_DistortionCircle", L"Self_MidPos", 0.42, 1, 0, 0);
+	CBT_CreateEffect* Effect15 = Node_CreateEffect_Finite("Á¡¸ê ¿Ö°î", L"QueensKnight_DistortionCircle", L"Self_MidPos", 0.68, 1, 0, 0);
 	//CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("Á¡¸ê ¿Ö°î ¿¬±â", L"QueensKnight_Teleport_DistortionSmoke", L"Self_MidPos", 0.3, 20, 0.1, 0);
-	
 	//CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("³»·ÁÂï±â ÆÄÀå", L"QueensKnight_JumpDown_ShockWave", L"Self_Pos"			, 1.45, 1, 0.01, 0);
 	//CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("³»·ÁÂï±â µ¢¾î¸®", L"QueensKnight_2Phase_SwordCrash_Chunk", L"Sword_TopPos", 1.45, 2, 0.01, 0);
 	CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("³»·ÁÂï±â µ¢¾î¸®", L"QueensKnight_2Phase_SwordCrash_Chunk", L"Sword_MidPos", 1.45, 2, 0.01, 0);
@@ -1023,6 +1063,8 @@ CBT_Composite_Node * CQueensKnight::Flash_Jump_Attack()
 	Root_Parallel->Add_Service(Effect11);
 	//Root_Parallel->Add_Service(Effect12);
 	//Root_Parallel->Add_Service(Effect13);
+	Root_Parallel->Add_Service(Effect14);
+	Root_Parallel->Add_Service(Effect15);
 	Root_Parallel->Add_Service(Dissolve0);
 	Root_Parallel->Add_Service(Dissolve1);
 	Root_Parallel->Add_Service(Dissolve2);
@@ -1079,6 +1121,7 @@ CBT_Composite_Node * CQueensKnight::Flash_Cut()
 	//CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("Á¡¸ê °ËÀº ¿¬±â", L"QueensKnight_Teleport_Smoke", L"Self_MidPos", 0, 40, 0, 0);
 	//CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("Á¡¸ê ºÓÀº ¿¬±â", L"QueensKnight_Teleport_Smoke_Red", L"Self_MidPos", 0, 40, 0, 0);
 	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("Á¡¸ê ¿Ö°î", L"QueensKnight_DistortionCircle", L"Self_MidPos", 0.2, 1, 0.35, 0);
+	CBT_CreateEffect* Effect12 = Node_CreateEffect_Finite("Á¡¸ê ¿Ö°î", L"QueensKnight_DistortionCircle", L"Self_MidPos", 0.8, 1, 0.35, 0);
 	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("Á¡¸ê ÆÄÆ¼Å¬ ºí·¢", L"QueensKnight_Teleport_Particle_Black", L"Self_MidPos", 0, 2, 0, 0);
 	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("Á¡¸ê ÆÄÆ¼Å¬ ºí·¢", L"QueensKnight_Teleport_Particle_Black", L"Self_MidPos", 0.8, 2, 0, 0);
 	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("ºÓÀº ¹ø°³", L"QueensKnight_Trail_Lightning_2", L"Sword_BottomPos"		, 0.85, 17, 0, 0);
@@ -1107,6 +1150,7 @@ CBT_Composite_Node * CQueensKnight::Flash_Cut()
 	Root_Parallel->Add_Service(Effect9);
 	Root_Parallel->Add_Service(Effect10);
 	Root_Parallel->Add_Service(Effect11);
+	Root_Parallel->Add_Service(Effect12);
 	Root_Parallel->Add_Service(Dissolve0);
 	Root_Parallel->Add_Service(Dissolve1);
 	Root_Parallel->Add_Service(Dissolve2);
@@ -1157,7 +1201,8 @@ CBT_Composite_Node * CQueensKnight::Flash_Middle_Ground()
 	CBT_SetValue* PushColOn = Node_BOOL_SetValue("PushColOn", L"PushCol", true);
 	CBT_SetValue* PhyColOn = Node_BOOL_SetValue("PhyColOn", L"PhyCol", true);
 
-	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("Á¡¸ê ÆÄÆ¼Å¬", L"QueensKnight_Teleport_Particle", L"Self_MidPos", 0, 50, 0.15, 0);
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("Á¡¸ê ÆÄÆ¼Å¬", L"QueensKnight_Teleport_Particle", L"Self_MidPos", 0, 70, 0.0, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("Á¡¸ê ¿Ö°î", L"QueensKnight_DistortionCircle", L"Self_MidPos", 0.2, 1, 0.35, 0);
 
 	CBT_StartDissolve* Dissolve0 = Node_StartDissolve("µðÁ¹ºê", this, 3.7f, false		, 0.2);
 	CBT_StartDissolve* Dissolve2 = Node_StartDissolve("µðÁ¹ºê", m_pSword, 3.7f, false	, 0.2);
@@ -1167,6 +1212,7 @@ CBT_Composite_Node * CQueensKnight::Flash_Middle_Ground()
 	CBT_StartDissolve* Dissolve5 = Node_StartDissolve("µðÁ¹ºê", m_pShield, 3.7f, true	, 1.25);
 
 	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
 
 	Root_Parallel->Add_Service(Dissolve0);
 	Root_Parallel->Add_Service(Dissolve1);
@@ -1319,6 +1365,21 @@ CBT_Composite_Node * CQueensKnight::Smart_ThreeCombo_Cut()
 	Root_Parallel->Add_Service(pHitCol2);
 
 	return Root_Parallel;
+}
+
+CBT_Composite_Node * CQueensKnight::Create_LeakField_Or_Not()
+{
+	CBT_Selector* Root_Sel = Node_Selector("¸®Å©ÇÊµå ½ÃÀü");
+
+	CBT_CompareValue* Check_Ice_Barrier = Node_BOOL_A_Equal_Value("¸®Å©ÇÊµå »ç¿ëÁßÀÓ?", L"LeakField_On", true);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("±âº»1", 0, 0.f);
+
+	Root_Sel->Add_Child(Check_Ice_Barrier);
+	Check_Ice_Barrier->Set_Child(Show_Ani0);
+
+	Root_Sel->Add_Child(LeakField());
+
+	return Root_Sel;
 }
 
 CBT_Composite_Node * CQueensKnight::Start_Game()
@@ -1586,8 +1647,13 @@ void CQueensKnight::Down()
 			m_tObjParam.bDown = false;
 
 			m_bDown_Start = false;
-			m_bDown_Finish = true;
 			m_bAIController = true;
+
+			++m_iDownCount;
+
+			// Down ¾È¿¡¼­ ¾²´Â bool ¸®¼Â
+			m_bDown_StartAni = true;
+			m_dDownTime = 0;
 
 			m_pMeshCom->SetUp_Animation(Ani_Idle);
 		}
@@ -1854,9 +1920,25 @@ void CQueensKnight::Check_PhyCollider()
 		if (m_tObjParam.fHp_Cur > 0.f)
 		{
 			// Ã¼·Â ºñÀ² 70 ÀÌÇÏµÇ¸é ½ºÅÏ
-			if (false == m_bDown_Finish)
+			if (0 == m_iDownCount)
 			{
 				if (0.7 >= (m_tObjParam.fHp_Cur / m_tObjParam.fHp_Max))
+				{
+					m_bDown_Start = true;
+
+					m_tObjParam.bDown = true;
+
+					m_pMeshCom->SetUp_Animation(Ani_Down_Start);
+					m_bDown_StartAni = true;	//down ÇÔ¼ö ³»ºÎ¿¡¼­ ¾µ °ÍÀÓ.
+					m_pAIControllerCom->Reset_BT();
+					m_bAIController = false;
+
+				}
+			}
+
+			if (1 == m_iDownCount)
+			{
+				if (0.4 >= (m_tObjParam.fHp_Cur / m_tObjParam.fHp_Max))
 				{
 					m_bDown_Start = true;
 

@@ -179,7 +179,7 @@ CBT_Node::BT_NODE_STATE CBT_Simple_Parallel::Update_Node(_double TimeDelta, vect
 			Delete_SubNodeStack(plistSubNodeStack, pBlackBoard, bDebugging);
 			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, pBlackBoard, bDebugging);
 		}
-
+		break;	//추가
 		//서브가 끝날때까지 메인이 기다림
 	case Mode::Delayed:
 		if (BT_NODE_STATE::SUCCEEDED == m_bMainState &&
@@ -187,6 +187,7 @@ CBT_Node::BT_NODE_STATE CBT_Simple_Parallel::Update_Node(_double TimeDelta, vect
 		{		
 			return End_Node(pNodeStack, plistSubNodeStack, BT_NODE_STATE::SUCCEEDED, pBlackBoard, bDebugging);
 		}
+		break;	//추가
 	}
 
 	return BT_NODE_STATE::INPROGRESS;
@@ -240,7 +241,7 @@ CBT_Node::BT_NODE_STATE CBT_Simple_Parallel::End_Node(vector<CBT_Node*>* pNodeSt
 		Notify_Parent_Of_State(pNodeStack->back(), eState);
 
 	if (!m_listServiceNodeStack.empty())
-		Release_ServiceNode(plistSubNodeStack, &m_listServiceNodeStack, pBlackBoard, bDebugging);
+		Release_ServiceNode(plistSubNodeStack, &m_listServiceNodeStack, pBlackBoard, false);
 
 
 	///////////

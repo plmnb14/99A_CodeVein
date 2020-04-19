@@ -400,7 +400,7 @@ PS_OUT MotionBlurForObj(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	//float uVelocityScale = g_fCurFrame / g_fTargetFrame;
-	int MAX_SAMPLES = 10;
+	int MAX_SAMPLES = 9;
 
 	//float2 texelSize = float2(1.f / 1280.f, 1.f / 720.f);
 	float2 screenTexCoords = In.vTexUV.xy;// *texelSize;
@@ -419,13 +419,14 @@ PS_OUT MotionBlurForObj(PS_IN In)
 	Out.vColor = tex2D(DiffuseSampler, screenTexCoords);
 
 	// 제한
-	velocity.xy = (clamp(velocity.x, -0.5f, 0.5f), clamp(velocity.y, -0.25f, 0.25f));
+	velocity.y *= 0.5f;
+	velocity.xy = (clamp(velocity.x, -0.25f, 0.25f), clamp(velocity.y, -0.25f, 0.25f));
 
 	for (int i = 1; i < MAX_SAMPLES; ++i) {
 		// 앞의 물체는 블러에서 제외. 뒤의 것들만 처리해라
 		//if (velocity.z < vDepthInfo.x + 0.34f)
 		{
-			float2 offset = velocity.xy * (float(i) / float(MAX_SAMPLES - 1) - 0.5);
+			float2 offset = velocity.xy * (float(i) / float(MAX_SAMPLES - 1) - 0.4);
 			Out.vColor += tex2D(DiffuseSampler, screenTexCoords + offset);
 		}
 	}

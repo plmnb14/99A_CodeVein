@@ -109,7 +109,7 @@ public: // For.BT_Node_Manager
 
 public: // For.ParticleManager
 	void Create_ParticleEffect(_tchar* szName, _float fLifeTime, _v3 vPos, CTransform* pFollowTrans = nullptr);
-	void Create_Effect(_tchar* szName, _v3 vPos, CTransform* pFollowTrans = nullptr);
+	void Create_Effect(_tchar* szName, _v3 vPos, CTransform* pFollowTrans = nullptr, _v3 vDir = V3_NULL, _v3 vAngle = V3_NULL);
 	void Create_DirEffect(_tchar* szName, _v3 vPos, _v3 vDir, CTransform* pFollowTrans = nullptr);
 	void Create_AngleEffect(_tchar* szName, _v3 vPos, _v3 vAngle, CTransform* pFollowTrans = nullptr);
 	void Create_AutoFindEffect(_tchar* szName, _float fLifeTime, CTransform* pFollowTrans, _v3 vPos = V3_NULL);

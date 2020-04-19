@@ -78,9 +78,16 @@ PS_OUT PS_MOTIONBLUR(PS_MOTIONBLUR_IN In)
 
 	velocity = pow(velocity, 3.0);
 
+	float fMinValue = 0.45f;
+	if (velocity.x < fMinValue &&
+		velocity.y < fMinValue)
+		Out.vVelocity.w = 0.f;
+
 	Out.vVelocity = vector(velocity.xy, In.vProjPos.z / In.vProjPos.w, 1.f);
+	
 	if (!g_bMotionBlur)
 		Out.vVelocity.w = 0;
+	
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, g_fRimPower);
 	Out.vBloomPower = vector(g_fBloomPower,0,0,0);
 

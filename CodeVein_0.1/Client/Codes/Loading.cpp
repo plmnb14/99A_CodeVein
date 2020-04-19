@@ -195,6 +195,26 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_LineRing_0", true)))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_Sphere_0", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_Sphere_1", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_BlackFire_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lava_Lightning_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lava_Lightning_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lava_Lightning_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_Floor_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_PopSmoke_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_PopSmoke_1")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_1")))
@@ -248,6 +268,10 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_WhirlWind_Smoke")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Sting_Tornade", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_Ring", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_RingBottom", true)))
 		return E_FAIL;
 #pragma endregion
 	
@@ -367,7 +391,7 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireGround_AfterFire_02")))
 		return E_FAIL;
-	if (FAILED(Add_EffectPrototype(L"FireBoy_FireSphere")))
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireSphere", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireSphere_BreakFire")))
 		return E_FAIL;
@@ -388,7 +412,6 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"FireBoy_ArmAttack_FloorDust")))
 		return E_FAIL;
 #pragma endregion
-
 
 	if (FAILED(Add_EffectPrototype(L"Boss_KnockDown_Dust")))
 		return E_FAIL;
@@ -554,6 +577,8 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"Player_ChargeSpark_Big")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_ChargeSpark_Circle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_ChargeSpark_HalfCircle", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_ChargeSpark_Flash")))
 		return E_FAIL;
@@ -954,6 +979,9 @@ _uint CLoading::Loading_Stage()
 			return E_FAIL;
 		// 기사 주위 결계
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkMidCol", CDarkMidCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 리크 필드
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_LeakField", CLeakField::Create(m_pGraphicDev))))
 			return E_FAIL;
 		// 얼음여자
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceGirl", CIceGirl::Create(m_pGraphicDev))))
