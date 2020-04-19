@@ -183,6 +183,9 @@ HRESULT CPlayer_Colleague::Ready_Collider()
 	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
 	pCollider->Set_Dynamic(true);
 	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Range]->_41, m_matBone[Bone_Range]->_42, m_matBone[Bone_Range]->_43));
+	pCollider->Set_Enabled(true);
+	pCollider->Set_Type(COL_SPHERE);
+	m_vecPhysicCol.push_back(pCollider);
 
 	return S_OK;
 }
