@@ -51,11 +51,11 @@ HRESULT CDarkBoom::Ready_GameObject(void * pArg)
 		D3DXVec3TransformNormal(&vDir, &vDir, &matRotY);
 		D3DXVec3Normalize(&vDir, &vDir);
 
-		_float fMinRange = 2.f;
+		_float fMinRange = 1.7f;
 		_v3 vRandPos = vDir * (fMinRange);
 
-		g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_BlackFire_0", 0.48f + i * 0.015f, m_pTransformCom->Get_Pos() + vRandPos + _v3(0.f, 0.45f, 0.f), nullptr);
-		g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_Smoke_0", 0.48f + i * 0.015f, m_pTransformCom->Get_Pos() + vRandPos + _v3(0.f, 0.45f, 0.f), nullptr);
+		//g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_BlackFire_0", 0.38f + i * 0.015f, m_pTransformCom->Get_Pos() + vRandPos + _v3(0.f, 0.45f, 0.f), nullptr);
+		//g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_Smoke_0", 0.38f + i * 0.015f, m_pTransformCom->Get_Pos() + vRandPos + _v3(0.f, 0.45f, 0.f), nullptr);
 	}
 
 	return NOERROR;

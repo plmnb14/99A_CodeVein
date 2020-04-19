@@ -215,6 +215,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_Hand")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_Hand_Aura")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_Particle")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lightning_0")))

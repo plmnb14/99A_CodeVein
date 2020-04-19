@@ -67,7 +67,16 @@ _int CLeakField::Update_GameObject(_double TimeDelta)
 	// ÁøÇàÁß
 	else
 	{
-		
+		m_fEffectOffset += _float(TimeDelta);
+		if (m_fEffectOffset > 0.02f)
+		{
+			m_fEffectOffset = 0.f;
+
+			g_pManagement->Create_Effect(L"QueensKnight_LeakField_0", m_pTransformCom->Get_Pos() + _v3(0.f, 0.35f, 0.f), nullptr);
+			g_pManagement->Create_Effect(L"QueensKnight_LeakField_1", m_pTransformCom->Get_Pos() + _v3(0.f, 0.35f, 0.f), nullptr);
+
+			g_pManagement->Create_Effect(L"QueensKnight_LeakField_Particle", m_pTransformCom->Get_Pos(), nullptr);
+		}
 	}
 
 	return NOERROR;

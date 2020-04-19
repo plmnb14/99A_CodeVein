@@ -132,10 +132,11 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"QueensKnight_Lava_Lightning_2", 600);
 	Input_Pool(L"QueensKnight_DarkBoom_Floor_0", 600);
 	Input_Pool(L"QueensKnight_DarkBoom_Particle", 1000);
-	Input_Pool(L"QueensKnight_LeakField_0", 50);
-	Input_Pool(L"QueensKnight_LeakField_1", 50);
-	Input_Pool(L"QueensKnight_LeakField_Hand", 50);
-	Input_Pool(L"QueensKnight_LeakField_Particle", 50);
+	Input_Pool(L"QueensKnight_LeakField_0", 350);
+	Input_Pool(L"QueensKnight_LeakField_1", 350);
+	Input_Pool(L"QueensKnight_LeakField_Hand", 150);
+	Input_Pool(L"QueensKnight_LeakField_Hand_Aura", 150);
+	Input_Pool(L"QueensKnight_LeakField_Particle", 450);
 	Input_Pool(L"QueensKnight_Lightning_0", 50);
 	Input_Pool(L"QueensKnight_Lightning_1", 50);
 	Input_Pool(L"QueensKnight_Lightning_2", 50);
@@ -155,7 +156,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"QueensKnight_Teleport_DistortionSmoke", 300);
 	Input_Pool(L"QueensKnight_Trail_Lightning_0", 200);
 	Input_Pool(L"QueensKnight_Trail_Lightning_1", 200);
-	Input_Pool(L"QueensKnight_Trail_Lightning_2", 200);
+	Input_Pool(L"QueensKnight_Trail_Lightning_2", 500);
 	Input_Pool(L"QueensKnight_Trail_Lightning_2_Dark", 200);
 	Input_Pool(L"QueensKnight_WhirlWind_Smoke", 300);
 	Input_Pool(L"QueensKnight_Sting_Tornade", 5);

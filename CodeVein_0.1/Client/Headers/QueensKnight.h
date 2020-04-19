@@ -151,6 +151,7 @@ private:
 
 	// 블랙보드에서 뼈의 Pos 저장소
 	_v3					m_vWing = _v3(0.f, 0.f, 0.f);
+	_v3					m_vLeftHand = _v3(0.f, 0.f, 0.f);
 
 private:	// 최초상태 세팅
 	_float				m_fFov = 0.f;
