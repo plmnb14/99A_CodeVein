@@ -10,10 +10,22 @@ public:
 	enum Teleport_Menu
 	{
 		Teleport_Home,
+		//Teleport_Home_1, // 거점2 - 활동 거점, 수련의 영역 
+		//Teleport_Home_2,
 		Teleport_St01,
+		//Teleport_St01_1, // St01 붕괴도시 시가지3 - 시가지 입구, 공원 부지, 독나비의 둥지
+		//Teleport_St01_2,
+		//Teleport_St01_3,
 		Teleport_St02,
+		//Teleport_St02_1, // St02 - 3
+		//Teleport_St02_2,
+		//Teleport_St02_3,
 		Teleport_St03,
+		//Teleport_St03_1, // St03 - 2
+		//Teleport_St03_2,
 		Teleport_St04,
+		//Teleport_St04_1, // St04 - 2
+		//Teleport_St04_2,
 		Teleport_End
 	};
 private:

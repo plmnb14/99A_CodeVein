@@ -34,10 +34,12 @@ public:
 	_bool Get_UI_Active(const _tchar* pLayerTag); // 해당 레이어 태그 입력하면 UI 활성화 여부 반환
 	void Set_UI_Active(const _tchar* pLayerTag, _bool bIsActive); // 해당 레이어의 UI 활성화/비활성화
 	void Set_BossHP_Active(_bool bIsActive);
+	_uint Select_Stage(); // StageUI : 스테이지 선택하면 해당 스테이지 값 반환
 
 private:
 	_uint m_uiCoundItem = 0;
 	_bool m_bTest = false;
+	
 public:
 	virtual void Free();
 };
