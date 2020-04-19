@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\QueensKnight.h"
 #include "..\Headers\Weapon.h"
+#include "..\Headers\BossHP.h"
 
 
 CQueensKnight::CQueensKnight(LPDIRECT3DDEVICE9 pGraphic_Device)
@@ -83,6 +84,13 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 	//CBT_Wait* Wait0 = Node_Wait("대기", 1, 0);
 	//Start_Sel->Add_Child(Wait0);
 
+	/////////////
+	// UI 추가(지원)
+	m_pBossUI = static_cast<CBossHP*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BossHP", nullptr));
+	m_pBossUI->Set_UI_Pos(WINCX * 0.5f, WINCY * 0.2f);
+	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBossUI, SCENE_STAGE, L"Layer_BossHP", nullptr)))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -102,7 +110,12 @@ _int CQueensKnight::Update_GameObject(_double TimeDelta)
 
 	// 죽음 애니메이션
 	if (m_bReadyDead)
+	{
+		// 죽으면서 UI 비활성화
+		m_pBossUI->Set_Active(false);
 		return NO_EVENT;
+	}
+		
 
 	// 플레이어 미발견
 	if (false == m_bFight)
@@ -120,6 +133,15 @@ _int CQueensKnight::Update_GameObject(_double TimeDelta)
 		if (true == m_bAIController)
 			m_pAIControllerCom->Update_AIController(TimeDelta);
 
+		// 플레이어 발견 시, UI 활성화(지원)
+		m_pBossUI->Set_Active(true);
+
+		// 보스UI 업데이트
+		// 체력이 0이 되었을때 밀림현상 방지.
+		if (0 >= m_tObjParam.fHp_Cur)
+			m_pBossUI->Set_BossHPInfo(0, 100);
+		else
+			m_pBossUI->Set_BossHPInfo(m_tObjParam.fHp_Cur, m_tObjParam.fHp_Max);
 	}
 
 	if (false == m_bReadyDead && true == m_pAIControllerCom->Get_BoolValue(L"PhyCol"))
@@ -269,8 +291,8 @@ CBT_Composite_Node * CQueensKnight::Normal_HorizontalCut1()
 	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_BottomPos", 0.5, 13, 0.1, 0);
 	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_MidPos"	, 0.5, 13, 0.1, 0);
 	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_TopPos"	, 0.5, 13, 0.1, 0);
-	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_0", L"Sword_BottomPos"	, 0.5, 25, 0.1, 0);
-	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_1", L"Sword_BottomPos"	, 0.5, 25, 0.1, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_0", L"Sword_MidPos"	, 0.5, 25, 0.1, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_1", L"Sword_MidPos"	, 0.5, 25, 0.1, 0);
 
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
@@ -321,7 +343,8 @@ CBT_Composite_Node * CQueensKnight::Normal_VerticalCut1()
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_TopPos", 0.3, 13, 0.1, 0);
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_MidPos", 0.3, 13, 0.1, 0);
-	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_0", L"Sword_BottomPos", 0.3, 20, 0.1, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_0", L"Sword_MidPos", 0.3, 20, 0.1, 0);
+	CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_1", L"Sword_MidPos", 0.3, 20, 0.1, 0);
 	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_TopPos", 0.3, 13, 0.1, 0);
 	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_MidPos", 0.3, 13, 0.1, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("내려찍기 파티클", L"QueensKnight_SwordCrash_Particle", L"Sword_TopPos"		, 0.9, 5, 0.01, 0);
@@ -336,6 +359,7 @@ CBT_Composite_Node * CQueensKnight::Normal_VerticalCut1()
 	Root_Parallel->Add_Service(Effect5);
 	Root_Parallel->Add_Service(Effect6);
 	Root_Parallel->Add_Service(Effect7);
+	Root_Parallel->Add_Service(Effect8);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani49);
@@ -392,9 +416,13 @@ CBT_Composite_Node * CQueensKnight::TwoCombo_Cut()
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_BottomPos"	, 0.6, 15, 0.5, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_MidPos"	, 0.6, 15, 0.5, 0);
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_TopPos"	, 0.6, 15, 0.5, 0);
+	CBT_CreateEffect* Effect14 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_0", L"Sword_MidPos"	, 0.6, 15, 0.5, 0);
+	CBT_CreateEffect* Effect15 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_1", L"Sword_MidPos"	, 0.6, 15, 0.5, 0);
 	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_BottomPos"	, 2.1, 15, 0.5, 0);
 	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_MidPos"	, 2.1, 15, 0.5, 0);
 	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_TopPos"	, 2.1, 15, 0.5, 0);
+	CBT_CreateEffect* Effect16 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_0", L"Sword_MidPos"	, 2.1, 15, 0.5, 0);
+	CBT_CreateEffect* Effect17 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_1", L"Sword_MidPos"	, 2.1, 15, 0.5, 0);
 	CBT_CreateEffect* Effect8  = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_BottomPos"	, 0.6, 10, 0.5, 0);
 	CBT_CreateEffect* Effect9  = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_MidPos"	, 0.6, 10, 0.5, 0);
 	CBT_CreateEffect* Effect10 = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_TopPos"	, 0.6, 10, 0.5, 0);
@@ -418,6 +446,10 @@ CBT_Composite_Node * CQueensKnight::TwoCombo_Cut()
 	Root_Parallel->Add_Service(Effect11);
 	Root_Parallel->Add_Service(Effect12);
 	Root_Parallel->Add_Service(Effect13);
+	Root_Parallel->Add_Service(Effect14);
+	Root_Parallel->Add_Service(Effect15);
+	Root_Parallel->Add_Service(Effect16);
+	Root_Parallel->Add_Service(Effect17);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani50);
@@ -485,9 +517,13 @@ CBT_Composite_Node * CQueensKnight::ThreeCombo_Cut()
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_BottomPos"	, 0.6, 15, 0.1, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_MidPos"	, 0.6, 15, 0.1, 0);
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_TopPos"	, 0.6, 15, 0.1, 0);
+	CBT_CreateEffect* Effect17 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_0", L"Sword_MidPos"	, 0.6, 15, 0.1, 0);
+	CBT_CreateEffect* Effect18 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_1", L"Sword_MidPos"	, 0.6, 15, 0.1, 0);
 	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_BottomPos"	, 2.1, 15, 0.1, 0);
 	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_MidPos"	, 2.1, 15, 0.1, 0);
 	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_TopPos"	, 2.1, 15, 0.1, 0);
+	CBT_CreateEffect* Effect19 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_0", L"Sword_MidPos"	, 2.1, 15, 0.1, 0);
+	CBT_CreateEffect* Effect20 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_1", L"Sword_MidPos"	, 2.1, 15, 0.1, 0);
 	CBT_CreateEffect* Effect11 = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_BottomPos"	, 0.6, 12, 0.1, 0);
 	CBT_CreateEffect* Effect12 = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_MidPos"	, 0.6, 12, 0.1, 0);
 	CBT_CreateEffect* Effect13 = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_TopPos"	, 0.6, 12, 0.1, 0);
@@ -518,6 +554,10 @@ CBT_Composite_Node * CQueensKnight::ThreeCombo_Cut()
 	Root_Parallel->Add_Service(Effect14);
 	Root_Parallel->Add_Service(Effect15);
 	Root_Parallel->Add_Service(Effect16);
+	Root_Parallel->Add_Service(Effect17);
+	Root_Parallel->Add_Service(Effect18);
+	Root_Parallel->Add_Service(Effect19);
+	Root_Parallel->Add_Service(Effect20);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani50);
@@ -570,12 +610,13 @@ CBT_Composite_Node * CQueensKnight::BackStep_Cut()
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", -8, 0.484, 0);
 	CBT_SetValue* TrailOff0 = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
 
-	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_TopPos"			, 0.6, 30, 0.8, 0);
-	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_MidPos"			, 0.6, 30, 0.8, 0);
-	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_BottomPos"			, 0.6, 30, 0.8, 0);
-	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_TopPos"		, 0.6, 22, 0.8, 0);
-	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_MidPos"		, 0.6, 22, 0.8, 0);
-	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_BottomPos"	, 0.6, 22, 0.8, 0);
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_1", L"Sword_MidPos"			, 0.5, 17, 0.8, 0);
+	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_0", L"Sword_MidPos"			, 0.5, 17, 0.8, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_MidPos"			, 0.5, 17, 0.8, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_BottomPos"			, 0.5, 17, 0.8, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_TopPos"		, 0.5, 17, 0.8, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_MidPos"		, 0.5, 17, 0.8, 0);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_BottomPos"	, 0.5, 17, 0.8, 0);
 	
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
@@ -583,6 +624,7 @@ CBT_Composite_Node * CQueensKnight::BackStep_Cut()
 	Root_Parallel->Add_Service(Effect3);
 	Root_Parallel->Add_Service(Effect4);
 	Root_Parallel->Add_Service(Effect5);
+	Root_Parallel->Add_Service(Effect6);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani55);
@@ -623,6 +665,8 @@ CBT_Composite_Node * CQueensKnight::Sting()
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_TopPos", 0.6, 17, 0.1, 0);
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_MidPos", 0.6, 17, 0.1, 0);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_0", L"Sword_MidPos", 0.6, 17, 0.1, 0);
+	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_1", L"Sword_MidPos", 0.6, 17, 0.1, 0);
 	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_TopPos", 0.6, 7, 0.1, 0);
 	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_MidPos", 0.6, 7, 0.1, 0);
 	//CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("피 소용돌이", L"QueensKnight_Sting_Tornade", L"Sword_TopPos", 0.65, 1, 0.01, 0);
@@ -632,6 +676,8 @@ CBT_Composite_Node * CQueensKnight::Sting()
 	Root_Parallel->Add_Service(Effect2);
 	Root_Parallel->Add_Service(Effect3);
 	Root_Parallel->Add_Service(Effect4);
+	Root_Parallel->Add_Service(Effect5);
+	Root_Parallel->Add_Service(Effect6);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani42);
@@ -805,6 +851,12 @@ CBT_Composite_Node * CQueensKnight::LeakField()
 	CBT_CreateBuff* LeakField0 = Node_CreateBuff("리크필드 생성", L"Monster_LeakField", 13, 2.533, 1, 0, 0, CBT_Service_Node::Finite);
 	Root_Parallel->Add_Service(LeakField0);
 
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("손에 초록 기운", L"QueensKnight_LeakField_Hand", L"Bone_LeftHand", 0.55, 40, 0, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("손에 초록 기운2", L"QueensKnight_LeakField_Hand_Aura", L"Bone_LeftHand", 0.55, 40, 0, 0);
+
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani52);
 	MainSeq->Add_Child(Show_Ani15);
@@ -952,6 +1004,8 @@ CBT_Composite_Node * CQueensKnight::Flash_Rush()
 	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_TopPos"			, 0.2, 17, 0.1, 0);
 	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_MidPos"			, 0.2, 17, 0.1, 0);
 	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_BottomPos"			, 0.2, 17, 0.1, 0);
+	CBT_CreateEffect* Effect11 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_0", L"Sword_MidPos"			, 0.2, 17, 0.1, 0);
+	CBT_CreateEffect* Effect12 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_1", L"Sword_MidPos"			, 0.2, 17, 0.1, 0);
 	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_TopPos"		, 0.2, 13, 0.1, 0);
 	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_MidPos"		, 0.2, 13, 0.1, 0);
 	CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_BottomPos"	, 0.2, 13, 0.1, 0);
@@ -976,6 +1030,8 @@ CBT_Composite_Node * CQueensKnight::Flash_Rush()
 	Root_Parallel->Add_Service(Effect8);
 	Root_Parallel->Add_Service(Effect9);
 	Root_Parallel->Add_Service(Effect10);
+	Root_Parallel->Add_Service(Effect11);
+	Root_Parallel->Add_Service(Effect12);
 	Root_Parallel->Add_Service(Dissolve0);
 	Root_Parallel->Add_Service(Dissolve1);
 	Root_Parallel->Add_Service(Dissolve2);
@@ -1204,6 +1260,14 @@ CBT_Composite_Node * CQueensKnight::Flash_Middle_Ground()
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("점멸 파티클", L"QueensKnight_Teleport_Particle", L"Self_MidPos", 0, 70, 0.0, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("점멸 왜곡", L"QueensKnight_DistortionCircle", L"Self_MidPos", 0.2, 1, 0.35, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("내려찍기 스모크", L"QueensKnight_JumpDown_Smoke", L"Self_Pos", 1.6, 1, 0.35, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("내려찍기 장판", L"QueensKnight_Ultimate_Floor", L"Self_Pos", 1.6, 6, 0.35, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("내려찍기 콘1", L"QueensKnight_Ultimate_Cone_0", L"Self_Pos", 1.58, 1, 0.35, 0);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("내려찍기 콘2", L"QueensKnight_Ultimate_Cone_1", L"Self_Pos", 1.65, 1, 0.35, 0);
+	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("내려찍기 콘3", L"QueensKnight_Ultimate_Cone_2", L"Self_Pos", 1.7, 1, 0.35, 0);
+	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("내려찍기 콘4", L"QueensKnight_Ultimate_Cone_3", L"Self_Pos", 1.75, 1, 0.35, 0);
+	CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("내려찍기 콘5 - 바깥", L"QueensKnight_Ultimate_Cone_4", L"Self_Pos", 1.6, 1, 0.35, 0);
+	CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("빨간 기운", L"QueensKnight_Ultimate_Smoke", L"Self_Pos", 1.6, 10, 0.35, 0);
 
 	CBT_StartDissolve* Dissolve0 = Node_StartDissolve("디졸브", this, 3.7f, false		, 0.2);
 	CBT_StartDissolve* Dissolve2 = Node_StartDissolve("디졸브", m_pSword, 3.7f, false	, 0.2);
@@ -1214,6 +1278,14 @@ CBT_Composite_Node * CQueensKnight::Flash_Middle_Ground()
 
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
+	Root_Parallel->Add_Service(Effect3);
+	Root_Parallel->Add_Service(Effect4);
+	Root_Parallel->Add_Service(Effect5);
+	Root_Parallel->Add_Service(Effect6);
+	Root_Parallel->Add_Service(Effect7);
+	Root_Parallel->Add_Service(Effect8);
+	Root_Parallel->Add_Service(Effect9);
 
 	Root_Parallel->Add_Service(Dissolve0);
 	Root_Parallel->Add_Service(Dissolve1);
@@ -1703,6 +1775,9 @@ HRESULT CQueensKnight::Update_Bone_Of_BlackBoard()
 	m_vWing = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Wing", m_vWing);
 
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHand");
+	m_vLeftHand = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftHand", m_vLeftHand);
 	
 	return S_OK;
 }

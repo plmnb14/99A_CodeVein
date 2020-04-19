@@ -5,6 +5,7 @@
 BEGIN(Client)
 
 class CWeapon;
+class CBossHP;
 class CIceGirl final : public CMonster
 {
 public:
@@ -135,6 +136,9 @@ private:
 
 	_bool				m_bFindPlayer = false;	// 플레이어 발견 못한 상태
 	_bool				m_bFight = false;
+
+private:	// UI(지원)
+	CBossHP*			m_pBossUI = nullptr;
 
 private:	// 다운 상태를 위한 변수
 	_bool				m_bDown_Start = false;

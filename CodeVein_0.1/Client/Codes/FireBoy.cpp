@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\FireBoy.h"
-
+#include "..\Headers\BossHP.h"
 
 CFireBoy::CFireBoy(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CMonster(pGraphic_Device)
@@ -77,6 +77,13 @@ HRESULT CFireBoy::Ready_GameObject(void * pArg)
 	//CBT_Wait* Wait0 = Node_Wait("대기", 1, 0);
 	//Start_Sel->Add_Child(Wait0);
 
+
+	/////////////
+	// UI 추가(지원)
+	m_pBossUI = static_cast<CBossHP*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BossHP", nullptr));
+	m_pBossUI->Set_UI_Pos(WINCX * 0.5f, WINCY * 0.1f);
+	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBossUI, SCENE_STAGE, L"Layer_BossHP", nullptr)))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -92,10 +99,15 @@ _int CFireBoy::Update_GameObject(_double TimeDelta)
 	// 죽었을 경우
 	if (m_bIsDead)
 		return DEAD_OBJ;
-
+	
 	// 죽음 애니메이션
 	if (m_bReadyDead)
+	{
+		// 죽기전 UI 비활성화
+		m_pBossUI->Set_Active(false);
 		return NO_EVENT;
+	}
+		
 
 	// 플레이어 미발견
 	if (false == m_bFight)
@@ -113,6 +125,15 @@ _int CFireBoy::Update_GameObject(_double TimeDelta)
 		if (true == m_bAIController)
 			m_pAIControllerCom->Update_AIController(TimeDelta);
 
+		// 플레이어 발견 시, UI 활성화(지원)
+		m_pBossUI->Set_Active(true);
+			
+		// 보스UI 업데이트
+		// 체력이 0이 되었을때 밀림현상 방지.
+		if(0 >= m_tObjParam.fHp_Cur)
+			m_pBossUI->Set_BossHPInfo(0, 100);
+		else
+			m_pBossUI->Set_BossHPInfo(m_tObjParam.fHp_Cur, m_tObjParam.fHp_Max);
 	}
 
 	if (false == m_bReadyDead)
@@ -323,18 +344,22 @@ CBT_Composite_Node * CFireBoy::Fire_Tornado()
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 0.7f, 0.3, 0);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("시전 준비 - 왼손에 불"	, L"FireBoy_Charge_Hand_Fire"		, L"Bone_LeftHand"	, 0.6, 50, 0, 0);
-	//CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("시전 직전 - 바닥에 불"	, L"FireBoy_FireTornade_ReadyFire"	, L"SelfPos"		, 1.0, 1, 0, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("시전 직전 - 바닥에 불"	, L"FireBoy_FireTornade_ReadyFire"	, L"SelfPos"		, 0.55, 1, 0, 0);
 	CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("시전 직전 - 불기둥"		, L"FireBoy_FireTornade_ReadyFire_Up", L"SelfPos"		, 1.15, 3, 0, 0);
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("토네이도"					, L"FireBoy_FireTornade_Mesh"		, L"SelfPos"		, 1.3, 1, 0, 0);
-	CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("토네이도"					, L"FireBoy_FireTornade_Mesh"		, L"SelfPos"		, 1.65, 1, 0, 0);
-	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("바닥에 용암같은거"		, L"FireBoy_FireTornade_Floor_01"	, L"SelfPos"		, 1.5, 30, 0, 0);
-	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("바닥에 용암같은거"		, L"FireBoy_FireTornade_Floor_02"	, L"SelfPos"		, 1.5, 30, 0, 0);
-	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("바닥에 용암같은거"		, L"FireBoy_FireTornade_Floor_03"	, L"SelfPos"		, 1.5, 30, 0, 0);
-	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("불똥"						, L"FireBoy_Fire_Particle_01"		, L"SelfPos"		, 1.0, 60, 0, 0);
-	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("불똥"						, L"FireBoy_Fire_Particle_02"		, L"SelfPos"		, 1.0, 60, 0, 0);
+	CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("토네이도"					, L"FireBoy_FireTornade_Mesh"		, L"SelfPos"		, 1.5, 1, 0, 0);
+	CBT_CreateEffect* Effect12 = Node_CreateEffect_Finite("토네이도"				, L"FireBoy_FireTornade_Mesh"		, L"SelfPos"		, 1.7, 1, 0, 0);
+	CBT_CreateEffect* Effect10 = Node_CreateEffect_Finite("토네이도"				, L"FireBoy_FireTornade_Mesh_2"		, L"SelfPos"		, 1.4, 1, 0, 0);
+	CBT_CreateEffect* Effect11 = Node_CreateEffect_Finite("토네이도"				, L"FireBoy_FireTornade_Mesh_2"		, L"SelfPos"		, 1.6, 1, 0, 0);
+	CBT_CreateEffect* Effect13 = Node_CreateEffect_Finite("토네이도"				, L"FireBoy_FireTornade_Mesh_2"		, L"SelfPos"		, 1.8, 1, 0, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("바닥에 용암같은거"		, L"FireBoy_FireTornade_Floor_01"	, L"SelfPos"		, 1.1, 30, 0, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("바닥에 용암같은거"		, L"FireBoy_FireTornade_Floor_02"	, L"SelfPos"		, 1.1, 30, 0, 0);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("바닥에 용암같은거"		, L"FireBoy_FireTornade_Floor_03"	, L"SelfPos"		, 1.1, 30, 0, 0);
+	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("불똥"						, L"FireBoy_Fire_Particle_01"		, L"SelfPos"		, 0.95, 60, 0, 0);
+	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("불똥"						, L"FireBoy_Fire_Particle_02"		, L"SelfPos"		, 0.95, 60, 0, 0);
 
 	Root_Parallel->Add_Service(Effect0);
-	//Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect1);
 	Root_Parallel->Add_Service(Effect2);
 	Root_Parallel->Add_Service(Effect3);
 	Root_Parallel->Add_Service(Effect4);
@@ -343,6 +368,10 @@ CBT_Composite_Node * CFireBoy::Fire_Tornado()
 	Root_Parallel->Add_Service(Effect7);
 	Root_Parallel->Add_Service(Effect8);
 	Root_Parallel->Add_Service(Effect9);
+	Root_Parallel->Add_Service(Effect10);
+	Root_Parallel->Add_Service(Effect11);
+	Root_Parallel->Add_Service(Effect12);
+	Root_Parallel->Add_Service(Effect13);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani30);

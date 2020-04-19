@@ -5,6 +5,7 @@
 BEGIN(Client)
 
 class CWeapon;
+class CBossHP;
 class CQueensKnight final : public CMonster
 {
 public:
@@ -134,6 +135,9 @@ private:
 	_bool				m_bFindPlayer = false;	// 플레이어 발견 못한 상태
 	_bool				m_bFight = false;
 
+private:	// UI(지원)
+	CBossHP*			m_pBossUI = nullptr;
+
 private:	// 다운 상태를 위한 변수
 	_bool				m_bDown_Start = false;
 
@@ -151,6 +155,7 @@ private:
 
 	// 블랙보드에서 뼈의 Pos 저장소
 	_v3					m_vWing = _v3(0.f, 0.f, 0.f);
+	_v3					m_vLeftHand = _v3(0.f, 0.f, 0.f);
 
 private:	// 최초상태 세팅
 	_float				m_fFov = 0.f;

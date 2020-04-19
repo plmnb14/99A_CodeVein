@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\IceGirl.h"
 #include "..\Headers\Weapon.h"
-
+#include "..\Headers\BossHP.h"
 
 CIceGirl::CIceGirl(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CMonster(pGraphic_Device)
@@ -82,6 +82,12 @@ HRESULT CIceGirl::Ready_GameObject(void * pArg)
 	//CBT_Wait* Wait0 = Node_Wait("대기", 1, 0);
 	//Start_Sel->Add_Child(Wait0);
 
+	/////////////
+	// UI 추가(지원)
+	m_pBossUI = static_cast<CBossHP*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BossHP", nullptr));
+	m_pBossUI->Set_UI_Pos(WINCX * 0.5f, WINCY * 0.2f);
+	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBossUI, SCENE_STAGE, L"Layer_BossHP", nullptr)))
+		return E_FAIL;
 	return S_OK;
 }
 
@@ -98,10 +104,17 @@ _int CIceGirl::Update_GameObject(_double TimeDelta)
 	// 죽었을 경우
 	if (m_bIsDead)
 		return DEAD_OBJ;
+	
+		
 
 	// 죽음 애니메이션
 	if (m_bReadyDead)
+	{
+		// 죽으면서 UI 비활성화
+		m_pBossUI->Set_Active(false);
 		return NO_EVENT;
+	}
+		
 
 	// 플레이어 미발견
 	if (false == m_bFight)
@@ -119,6 +132,15 @@ _int CIceGirl::Update_GameObject(_double TimeDelta)
 		if (true == m_bAIController)
 			m_pAIControllerCom->Update_AIController(TimeDelta);
 
+		// 플레이어 발견 시, UI 활성화(지원)
+		m_pBossUI->Set_Active(true);
+
+		// 보스UI 업데이트
+		// 체력이 0이 되었을때 밀림현상 방지.
+		if (0 >= m_tObjParam.fHp_Cur)
+			m_pBossUI->Set_BossHPInfo(0, 100);
+		else
+			m_pBossUI->Set_BossHPInfo(m_tObjParam.fHp_Cur, m_tObjParam.fHp_Max);
 	}
 
 	if (false == m_pAIControllerCom->Get_BoolValue(L"Ice_Barrier_On"))
@@ -623,8 +645,10 @@ CBT_Composite_Node * CIceGirl::Ice_Barrier()
 	Root_Parallel->Add_Service(BarrierValue0);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("버프 전 오른손 오오라", L"IceGirl_Buff_Charge_Smoke_01", L"Bone_LeftHand", 0.1, 45, 0, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("스모크1", L"IceGirl_Buff_Bubble_BreakSmoke", L"Self_Foot", 0.8, 30, 0, 0);
 
 	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani29);
@@ -739,10 +763,20 @@ CBT_Composite_Node * CIceGirl::Charge_Rush()
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("차징 오른손 파티클", L"IceGirl_Charge_Hand_Particle", L"CreateSwordBulletPos", 0.1, 60, 0, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("차징 오른손 스모크1", L"IceGirl_Charge_Hand_Smoke", L"CreateSwordBulletPos", 0.1, 60, 0, 0);
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("차징 오른손 스모크2", L"IceGirl_Charge_Hand_Smoke_2", L"CreateSwordBulletPos", 0.1, 60, 0, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_01", L"Self_Foot", 1.9, 25, 0, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_02", L"Self_Foot", 1.9, 25, 0, 0);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_03", L"Self_Foot", 1.9, 25, 0, 0);
+	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("칼 냉기 스모크1", L"IceSmoke_01", L"Sword_MidPos", 0.1, 160, 0, 0);
+	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("칼 냉기 스모크2", L"IceSmoke_02", L"Sword_MidPos", 0.1, 160, 0, 0);
 
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
 	Root_Parallel->Add_Service(Effect2);
+	Root_Parallel->Add_Service(Effect3);
+	Root_Parallel->Add_Service(Effect4);
+	Root_Parallel->Add_Service(Effect5);
+	Root_Parallel->Add_Service(Effect6);
+	Root_Parallel->Add_Service(Effect7);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani32);

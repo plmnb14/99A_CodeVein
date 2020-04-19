@@ -2,6 +2,7 @@
 #include "..\Headers\PoisonButterfly.h"
 #include "..\Headers\PoisonBullet.h"
 #include "..\Headers\PoisonRotationBullet.h"
+#include "..\Headers\BossHP.h"
 
 CPoisonButterfly::CPoisonButterfly(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CMonster(pGraphic_Device)
@@ -78,6 +79,13 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
 
+	/////////////
+	// UI 추가(지원)
+	m_pBossUI = static_cast<CBossHP*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BossHP", nullptr));
+	m_pBossUI->Set_UI_Pos(WINCX * 0.5f, WINCY * 0.2f);
+	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBossUI, SCENE_STAGE, L"Layer_BossHP", nullptr)))
+		return E_FAIL;
+
 	return NOERROR;
 }
 
@@ -97,7 +105,12 @@ _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 
 	// 죽음 애니메이션
 	if (m_bReadyDead)
+	{
+		// 죽으면서 UI 비활성화
+		m_pBossUI->Set_Active(false);
 		return NO_EVENT;
+	}
+		
 
 	// 플레이어 미발견
 	if (false == m_bFight)
@@ -115,6 +128,15 @@ _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 		if (true == m_bAIController)
 			m_pAIControllerCom->Update_AIController(TimeDelta);
 
+		// 플레이어 발견 시, UI 활성화(지원)
+		m_pBossUI->Set_Active(true);
+
+		// 보스UI 업데이트
+		// 체력이 0이 되었을때 밀림현상 방지.
+		if (0 >= m_tObjParam.fHp_Cur)
+			m_pBossUI->Set_BossHPInfo(0, 100);
+		else
+			m_pBossUI->Set_BossHPInfo(m_tObjParam.fHp_Cur, m_tObjParam.fHp_Max);
 	}
 
 	if (false == m_bReadyDead)

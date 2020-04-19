@@ -61,8 +61,8 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 	if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
 
-	if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-		return E_FAIL;
+	//if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+	//	return E_FAIL;
 
 	//if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
 	//	return E_FAIL;
@@ -143,7 +143,7 @@ HRESULT CPlayer::Render_GameObject()
 		{
 			m_iPass = m_pDynamicMesh->Get_MaterialPass(i , j);
 
-			if (m_bOnDissolve)
+			if (m_bDissolve)
 				m_iPass = 3;
 
 			m_pShader->Begin_Pass(m_iPass);
@@ -162,8 +162,8 @@ HRESULT CPlayer::Render_GameObject()
 
 	Draw_Collider();
 
-	//IF_NOT_NULL(m_pNavMesh)
-	m_pNavMesh->Render_NaviMesh();
+	IF_NOT_NULL(m_pNavMesh)
+		m_pNavMesh->Render_NaviMesh();
 
 	return NOERROR;
 }
@@ -225,7 +225,25 @@ void CPlayer::Parameter_State()
 {
 	switch (m_eActState)
 	{
+	case ACT_Summon:
+	{
+		Play_Summon();
+		break;
+	}
+
+	case ACT_Disappear:
+	{
+		Play_Idle();
+		break;
+	}
+
 	case ACT_Idle:
+	{
+		Play_Idle();
+		break;
+	}
+
+	case ACT_Mistoletoe :
 	{
 		Play_Idle();
 		break;
@@ -876,6 +894,31 @@ void CPlayer::Target_AimChasing()
 	if (m_bHaveAimingTarget)
 		return;
 
+	for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE))
+	{
+		if (true == iter->Get_Dead())
+			continue;
+
+		if (false == iter->Get_Enable())
+			continue;
+
+		_float fLength = D3DXVec3Length(&(TARGET_TO_TRANS(iter)->Get_Pos() - m_pTransform->Get_Pos()));
+
+		if (fLength > m_fAmingRange)
+			continue;
+
+		m_bHaveAimingTarget = true;
+
+		m_pTarget = iter;
+
+		CCameraMgr::Get_Instance()->Set_AimingTarget(m_pTarget);
+		CCameraMgr::Get_Instance()->Set_OnAimingTarget(true);
+
+		m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(m_pTarget)->Get_Pos()));
+
+		return;
+	}
+
 	for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE))
 	{
 		if(true == iter->Get_Dead())
@@ -908,7 +951,16 @@ void CPlayer::Target_AimChasing()
 
 void CPlayer::KeyInput()
 {
+	// 디버그 할때만 사용됩니다.
+	//=====================================================================
 	if (CCameraMgr::Get_Instance()->Get_CamView() == TOOL_VIEW)
+		return;
+	//=====================================================================
+
+	if (m_eActState == ACT_Disappear)
+		return;
+
+	if (m_eActState == ACT_Summon)
 		return;
 
 	if (m_eActState == ACT_Hit)
@@ -968,6 +1020,12 @@ void CPlayer::KeyUp()
 
 void CPlayer::Key_Movement_Down()
 {
+	if (m_eActState == ACT_Disappear)
+		return;
+
+	if (m_eActState == ACT_Summon)
+		return;
+
 	if (m_eActState == ACT_Hit)
 		return;
 
@@ -1186,6 +1244,19 @@ void CPlayer::Key_Special()
 		if (false == m_bOnAiming)
 		{
 			CCameraMgr::Get_Instance()->Set_LockAngleX(D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)));
+		}
+	}
+
+	if (g_pInput_Device->Key_Down(DIK_X))
+	{
+		if (m_bCanMistletoe)
+		{
+			m_bCanMistletoe = false;
+
+			m_bActiveUI = true;
+
+			m_bOnMistletoe = true;
+			m_eActState = ACT_Mistoletoe;
 		}
 	}
 }
@@ -3075,6 +3146,42 @@ void CPlayer::Play_PickUp()
 			// 아이템 줍는 이벤트가 있다면 여기 추가
 		}
 	}
+}
+
+void CPlayer::Play_Summon()
+{
+	if (false == m_bOnSummon)
+	{
+		m_bOnSummon = true;
+
+		m_eAnim_Upper = Cmn_GameStart;
+		m_eAnim_Lower = m_eAnim_Upper;
+		m_eAnim_RightArm = m_eAnim_Upper;
+		m_eAnim_LeftArm = m_eAnim_Upper;
+
+		Reset_BattleState();
+
+		Start_Dissolve(0.2f, true, false);
+	}
+
+	else if (true == m_bOnSummon)
+	{
+		m_fAnimMutiply = 0.5f;
+
+		if (m_pDynamicMesh->Is_Finish_Animation(0.9f))
+		{
+			m_eActState = ACT_Idle;
+
+			m_bOnSummon = false;
+			m_bCanSummon = false;
+
+			m_fAnimMutiply = 1.f; 
+		}
+	}
+}
+
+void CPlayer::Play_Disappear()
+{
 }
 
 void CPlayer::Play_BloodSuck()
@@ -8585,9 +8692,9 @@ HRESULT CPlayer::SetUp_Default()
 	m_fAnimMutiply = 1.f;
 
 	// Navi
-	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_03.dat");
 	m_pNavMesh->Set_SubsetIndex(0);
-	//m_pNavMesh->Set_Index(14);
+	m_pNavMesh->Set_Index(0);
 
 	return S_OK;
 }
@@ -8688,6 +8795,31 @@ void CPlayer::Reset_BattleState()
 
 	LOOP(32)
 		m_bEventTrigger[i] = false;
+}
+
+void CPlayer::Check_Mistletoe()
+{
+	if (m_bOnMistletoe)
+		return;
+
+	size_t sSTLSize = g_pManagement->Get_GameObjectList(L"Layer_Mistletoe", SCENE_STAGE).size();
+
+	if (sSTLSize > 0)
+	{
+		for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Mistletoe", SCENE_STAGE))
+		{
+			if(false == iter->Get_Enable())
+				continue;
+
+			CTransform* pIterTrans = TARGET_TO_TRANS(iter);
+
+			if (1.5f >= V3_LENGTH(&(m_pTransform->Get_Pos() - pIterTrans->Get_Pos())))
+			{
+				m_bCanMistletoe = true;
+				return;
+			}
+		}
+	}
 }
 
 CPlayer * CPlayer::Create(_Device pGraphic_Device)

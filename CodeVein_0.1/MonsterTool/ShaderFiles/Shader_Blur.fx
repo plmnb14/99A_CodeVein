@@ -75,6 +75,7 @@ PS_OUT PS_MOTIONBLUR(PS_MOTIONBLUR_IN In)
 	float2 b = (In.vLastPos.xy / In.vLastPos.w) * 0.5 + 0.5;
 	//float2 velocity = pow(abs(a - b), 1 / 3.0)*sign(a - b) * 0.5 + 0.5;
 	float2 velocity = (a - b) * 0.5 + 0.5;
+
 	velocity = pow(velocity, 3.0);
 
 	float fMinValue = 0.45f;

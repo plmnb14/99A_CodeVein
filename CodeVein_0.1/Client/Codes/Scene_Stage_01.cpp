@@ -63,13 +63,26 @@ HRESULT CScene_Stage_01::Ready_Layer_Player(const _tchar * pLayerTag)
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_MonsterProjectile")))
 		return E_FAIL;
 
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Player", SCENE_MORTAL, pLayerTag)))
-		return E_FAIL;
+	CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
-	if(FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerHP", SCENE_STAGE, L"Layer_PlayerHP")))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerST", SCENE_STAGE, L"Layer_PlayerST")))
-		return E_FAIL;
+	pInstance->Set_Enable(true);
+
+	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Stage_01.dat");
+	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
+	TARGET_TO_NAV(pInstance)->Set_Index(5);
+	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(150.484f, -18.08f, 70.417f));
+	TARGET_TO_TRANS(pInstance)->Set_Angle(V3_NULL);
+
+	pInstance = nullptr;;
+
+	return S_OK;
+
+
+	//if(FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerHP", SCENE_STAGE, L"Layer_PlayerHP")))
+	//	return E_FAIL;
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerST", SCENE_STAGE, L"Layer_PlayerST")))
+	//	return E_FAIL;
 
 	return S_OK;
 }

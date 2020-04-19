@@ -77,6 +77,12 @@ void CScriptManager::Update_ScriptEvent()
 		break;
 	}
 
+	case Script_Stage04:
+	{
+		Stage_04_Scripts();
+		break;
+	}
+
 	case Script_Stage_Training:
 	{
 		break;
@@ -92,11 +98,32 @@ void CScriptManager::Update_ScriptEvent()
 	}
 }
 
-void CScriptManager::Reset_ScriptEvent()
+void CScriptManager::Reset_ScriptEvent(_ushort _sScriptStageIdx, _bool _bResetAll)
 {
+	if (_bResetAll)
+	{
+		for (_uint i = 0; i < Script_Stage_End; ++i)
+		{
+			for (_uint j = 0; j < MaxTriggerCnt; ++i)
+			{
+				m_bEventTrigger[i][j] = false;
+			}
+		}
+	}
 }
 
 void CScriptManager::Reset_Script_DynmicObject()
+{
+	for (auto& iter : m_vecObjectPool)
+	{
+		Safe_Release(iter);
+	}
+
+	m_vecObjectPool.shrink_to_fit();
+	m_vecObjectPool.clear();
+}
+
+void CScriptManager::Reset_ObjectPoolVector()
 {
 	for (auto& iter : m_vecObjectPool)
 	{
@@ -140,6 +167,12 @@ void CScriptManager::Ready_Script_DynamicObject(_ulong _dwStageIdx)
 		break;
 	}
 
+	case Script_Stage04:
+	{
+		Ready_Stage04_DynamicObject();
+		break;
+	}
+
 	case Script_Stage_Training:
 	{
 		break;
@@ -161,9 +194,9 @@ void CScriptManager::St01_Sub0()
 	{
 	case 5 :
 	{
-		if (m_bEventTrigger_0[0] == false)
+		if (m_bEventTrigger[Script_Stage01][0] == false)
 		{
-			m_bEventTrigger_0[0] = true;
+			m_bEventTrigger[Script_Stage01][0] = true;
 
 			m_vecObjectPool[0]->Set_Enable(true);
 			m_vecObjectPool[1]->Set_Enable(true);
@@ -173,9 +206,9 @@ void CScriptManager::St01_Sub0()
 
 	case 36:
 	{
-		if (m_bEventTrigger_0[1] == false)
+		if (m_bEventTrigger[Script_Stage01][1] == false)
 		{
-			m_bEventTrigger_0[1] = true;
+			m_bEventTrigger[Script_Stage01][1] = true;
 
 			m_vecObjectPool[3]->Set_Enable(true);
 			m_vecObjectPool[4]->Set_Enable(true);
@@ -193,9 +226,9 @@ void CScriptManager::St01_Sub1()
 	{
 	case 41:
 	{
-		if (m_bEventTrigger_0[2] == false)
+		if (m_bEventTrigger[Script_Stage01][2] == false)
 		{
-			m_bEventTrigger_0[2] = true;
+			m_bEventTrigger[Script_Stage01][2] = true;
 
 			m_vecObjectPool[8]->Set_Enable(true);
 			m_vecObjectPool[9]->Set_Enable(true);
@@ -210,9 +243,9 @@ void CScriptManager::St01_Sub2()
 	{
 	case 18:
 	{
-		if (m_bEventTrigger_0[3] == false)
+		if (m_bEventTrigger[Script_Stage01][3] == false)
 		{
-			m_bEventTrigger_0[3] = true;
+			m_bEventTrigger[Script_Stage01][3] = true;
 
 			m_vecObjectPool[10]->Set_Enable(true);
 		}
@@ -220,9 +253,9 @@ void CScriptManager::St01_Sub2()
 
 	case 0:
 	{
-		if (m_bEventTrigger_0[4] == false)
+		if (m_bEventTrigger[Script_Stage01][4] == false)
 		{
-			m_bEventTrigger_0[4] = true;
+			m_bEventTrigger[Script_Stage01][4] = true;
 
 			m_vecObjectPool[11]->Set_Enable(true);
 			m_vecObjectPool[12]->Set_Enable(true);
@@ -234,9 +267,9 @@ void CScriptManager::St01_Sub2()
 
 	case 93:
 	{
-		if (m_bEventTrigger_0[5] == false)
+		if (m_bEventTrigger[Script_Stage01][5] == false)
 		{
-			m_bEventTrigger_0[5] = true;
+			m_bEventTrigger[Script_Stage01][5] = true;
 
 			m_vecObjectPool[16]->Set_Enable(true);
 			m_vecObjectPool[17]->Set_Enable(true);
@@ -248,9 +281,9 @@ void CScriptManager::St01_Sub2()
 
 	case 104:
 	{
-		if (m_bEventTrigger_0[6] == false)
+		if (m_bEventTrigger[Script_Stage01][6] == false)
 		{
-			m_bEventTrigger_0[6] = true;
+			m_bEventTrigger[Script_Stage01][6] = true;
 
 			m_vecObjectPool[20]->Set_Enable(true);
 			m_vecObjectPool[21]->Set_Enable(true);
@@ -265,9 +298,9 @@ void CScriptManager::St01_Sub3()
 	{
 	case 126:
 	{
-		if (m_bEventTrigger_0[7] == false)
+		if (m_bEventTrigger[Script_Stage01][7] == false)
 		{
-			m_bEventTrigger_0[7] = true;
+			m_bEventTrigger[Script_Stage01][7] = true;
 
 			m_vecObjectPool[22]->Set_Enable(true);
 			m_vecObjectPool[23]->Set_Enable(true);
@@ -279,9 +312,9 @@ void CScriptManager::St01_Sub3()
 
 	case 66:
 	{
-		if (m_bEventTrigger_0[8] == false)
+		if (m_bEventTrigger[Script_Stage01][8] == false)
 		{
-			m_bEventTrigger_0[8] = true;
+			m_bEventTrigger[Script_Stage01][8] = true;
 
 			m_vecObjectPool[27]->Set_Enable(true);
 		}
@@ -295,9 +328,9 @@ void CScriptManager::St01_Sub4()
 	{
 	case 52:
 	{
-		if (m_bEventTrigger_0[9] == false)
+		if (m_bEventTrigger[Script_Stage01][9] == false)
 		{
-			m_bEventTrigger_0[9] = true;
+			m_bEventTrigger[Script_Stage01][9] = true;
 
 			m_vecObjectPool[28]->Set_Enable(true);
 			//m_vecObjectPool[29]->Set_Enable(true);
@@ -319,9 +352,9 @@ void CScriptManager::St01_Sub6()
 	{
 	case 0:
 	{
-		if (m_bEventTrigger_0[11] == false)
+		if (m_bEventTrigger[Script_Stage01][11] == false)
 		{
-			m_bEventTrigger_0[11] = true;
+			m_bEventTrigger[Script_Stage01][11] = true;
 			m_bTimer = true;
 
 			CMassageUI* pMassageUI = static_cast<CMassageUI*>(g_pManagement->Get_GameObjectBack(L"Layer_BossMassageUI", SCENE_STAGE));
@@ -391,6 +424,10 @@ void CScriptManager::Stage_02_Scripts()
 }
 
 void CScriptManager::Stage_03_Scripts()
+{
+}
+
+void CScriptManager::Stage_04_Scripts()
 {
 }
 
@@ -691,6 +728,10 @@ void CScriptManager::Ready_Stage02_DynamicObject()
 }
 
 void CScriptManager::Ready_Stage03_DynamicObject()
+{
+}
+
+void CScriptManager::Ready_Stage04_DynamicObject()
 {
 }
 

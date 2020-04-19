@@ -27,17 +27,16 @@ HRESULT CLogoBtn::Ready_GameObject(void * pArg)
 	CUI::Ready_GameObject(pArg);
 
 	m_fPosX = WINCX * 0.5f;
-	m_fPosY = 466.f;
-
-	m_fSizeX = 256.f;
-	m_fSizeY = 64.f;
+	m_fPosY = 470.f;
+	m_fSizeX = 237.f;
+	m_fSizeY = 44.f;
+	
 	m_fViewZ = 0.1f;
-
+	m_fAlpha = 0.f;
+	m_bIsActive = false;
 	if (FAILED(SetUp_CursorEffect()))
 		return E_FAIL;
-	m_pCursorEffect->Set_Active(false);
-	m_pCursorEffect->Set_ViewZ(m_fViewZ - 0.1f);
-
+	
 	return NOERROR;
 }
 
@@ -51,8 +50,13 @@ _int CLogoBtn::Update_GameObject(_double TimeDelta)
 
 	m_bIsColl = Coll_Mouse();
 
-	m_pCursorEffect->Set_Active(m_bIsColl);
+	m_pCursorEffect->Set_Active(m_bIsColl && m_bIsActive);
 	
+	if (m_bIsActive)
+	{
+		if (m_fAlpha < 1.f)
+			m_fAlpha += 0.2f * (_float)TimeDelta;
+	}
 
 	return NO_EVENT;
 }
@@ -82,13 +86,17 @@ HRESULT CLogoBtn::Render_GameObject()
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
-	if (FAILED(SetUp_ConstantTable(1)))
+	if (FAILED(SetUp_ConstantTable(3)))
 		return E_FAIL;
 
 	m_pShaderCom->Begin_Shader();
-	m_pShaderCom->Begin_Pass(1);
+
+	m_pShaderCom->Begin_Pass(5);
+
 	m_pBufferCom->Render_VIBuffer();
+
 	m_pShaderCom->End_Pass();
+
 	m_pShaderCom->End_Shader();
 	
 	return NOERROR;
@@ -109,12 +117,14 @@ HRESULT CLogoBtn::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Shader
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Default", L"Com_Shader", (CComponent**)&m_pShaderCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_UI", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
 	// for.Com_VIBuffer
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Rect", L"Com_VIBuffer", (CComponent**)&m_pBufferCom)))
 		return E_FAIL;
+
+	
 
 	return NOERROR;
 }
@@ -127,13 +137,15 @@ HRESULT CLogoBtn::SetUp_ConstantTable(_uint iIndex)
 	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
+
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
 
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
 		return E_FAIL;
-
+	if (FAILED(m_pShaderCom->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
+		return E_FAIL;
 	return NOERROR;
 }
 
@@ -142,8 +154,6 @@ HRESULT CLogoBtn::SetUp_CursorEffect()
 	UI_DESC* pDesc = new UI_DESC;
 	pDesc->fPosX = m_fPosX;
 	pDesc->fPosY = m_fPosY + 5.f;
-	//pDesc->fSizeX = 512.f;
-	//pDesc->fSizeY = 64.f;
 	pDesc->fSizeX = m_fSizeX;
 	pDesc->fSizeY = m_fSizeY;
 	pDesc->iIndex = 0;
@@ -152,6 +162,9 @@ HRESULT CLogoBtn::SetUp_CursorEffect()
 	m_pCursorEffect = static_cast<CCursorEffect*>(g_pManagement->Get_GameObjectBack(L"Layer_CursorEffect", SCENE_LOGO));
 	if (nullptr == m_pCursorEffect)
 		return E_FAIL;
+
+	m_pCursorEffect->Set_Active(false);
+	m_pCursorEffect->Set_ViewZ(m_fViewZ + 0.1f);
 	return NOERROR;
 }
 

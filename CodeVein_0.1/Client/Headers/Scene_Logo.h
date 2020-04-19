@@ -5,7 +5,7 @@
 #include "Loading.h"
 
 BEGIN(Client)
-
+class CLogoBtn;
 class CScene_Logo final : public CScene
 {
 public:
@@ -32,6 +32,7 @@ private:
 
 private:
 	CLoading*			m_pLoading = nullptr;
+	CLogoBtn*			m_pLogoBtn = nullptr;
 
 private:
 	DEBUG_SceneChange   m_eSceneChange = Stage_Training;

@@ -385,6 +385,14 @@ HRESULT CManagement::Add_Light(LPDIRECT3DDEVICE9 pGraphic_Device, D3DLIGHT9 Ligh
 	return m_pLight_Manager->Add_Light(pGraphic_Device, LightDesc);
 }
 
+HRESULT CManagement::Clear_LightList()
+{
+	if (nullptr == m_pLight_Manager)
+		return E_FAIL;
+
+	return m_pLight_Manager->Clear_LightList();
+}
+
 LPDIRECT3DTEXTURE9 CManagement::Get_Target_Texture(const _tchar * pTargetTag)
 {
 	if (nullptr == m_pTarget_Manager)

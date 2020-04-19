@@ -77,6 +77,12 @@ unsigned int CALLBACK CLoading::Thread_Main(void* pArg)
 		iFlag = pLoading->Loading_Stage();
 		break;
 	}
+
+	case SCENE_PREPARE_ALL:
+	{
+		iFlag = pLoading->Loading_MainStages();
+		break;
+	}
 	}
 
 	LeaveCriticalSection(pLoading->Get_Crt());
@@ -179,6 +185,10 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_JumpDown_Smoke_Red")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_JumpDown_Smoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Ultimate_Floor")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lava_Floor_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lava_Floor_1")))
@@ -187,11 +197,25 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_Smoke_0")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_BlackSmoke")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_LineRing_0", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_Sphere_0", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_Sphere_1", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Ultimate_Cone_0", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Ultimate_Cone_1", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Ultimate_Cone_2", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Ultimate_Cone_3", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Ultimate_Cone_4", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Ultimate_Smoke")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_BlackFire_0")))
 		return E_FAIL;
@@ -202,6 +226,8 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lava_Lightning_2")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_Floor_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_Floor_1")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_Particle")))
 		return E_FAIL;
@@ -214,6 +240,8 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_1")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_Hand")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_Hand_Aura")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_Particle")))
 		return E_FAIL;
@@ -267,6 +295,10 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_RingBottom", true)))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_RingRed", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_RingReady", true)))
+		return E_FAIL;
 #pragma endregion
 	
 #pragma region IceGirl
@@ -318,6 +350,10 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Aura_3")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Bubble", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Bubble_BreakSmoke")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceBlock_Particle")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Break_1")))
@@ -347,6 +383,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireTornade_Mesh", true)))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireTornade_Mesh_2", true)))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireTornade_Floor_01")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireTornade_Floor_02")))
@@ -360,6 +398,10 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireTornade_ReadyFire_Up")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireBullet")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireBullet_Sub_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireBullet_Sub_1")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireBullet_GunEff")))
 		return E_FAIL;
@@ -768,6 +810,11 @@ _uint CLoading::Loading_Title()
 	cout << "Essential Static 메쉬 불러오는중" << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Path.dat");
 
+	// 기믹 메쉬 불러오는중
+	//============================================================================================================
+	cout << "Field Gimmick Static 메쉬 불러오는중" << endl;
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Field_Gimmick_Path.dat");
+
 	// 다이나믹 메쉬 불러오는 중
 	//============================================================================================================
 	cout << "Essential Dynamic 메쉬 불러오는중" << endl;
@@ -834,8 +881,8 @@ _uint CLoading::Loading_Title()
 	cout << " #  [ 릴리즈 모드 ] 는 메쉬로드와 스테이지 진행이 실제 게임처럼 됩니다." << endl;
 	cout << " #  [ 릴리즈 모드 ] 는 강제로 [ Stage_Base ] 부터 시작하게 됩니다." << endl;
 	cout << "-------------------------------------------------------------------------------" << endl;
-	cout << "[1] Stage_Base = true " << endl;
-	cout << "[2] Stage_Training = false " << endl;
+	cout << "[1] Stage_Training = true " << endl;
+	cout << "[2] Stage_Base = false " << endl;
 	cout << "[3] Stage_01 = false " << endl;
 	cout << "[4] Stage_02 = false " << endl;
 	cout << "[5] Stage_03 = false " << endl;
@@ -1061,6 +1108,42 @@ _uint CLoading::Loading_Stage()
 	m_bFinish = true;
 
 	cout << "로딩 완료" << endl;
+
+	return NO_EVENT;
+}
+
+_uint CLoading::Loading_MainStages()
+{
+	// 3번 - 스테이지 01
+	if (false == g_bOnStage[3])
+	{
+		cout << "스테이지 1 리소스 로딩중" << endl;
+		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage01_Path.dat");
+
+		g_bOnStage[3] = true;
+	}
+
+	// 3번 - 스테이지 01
+	if (false == g_bOnStage[4])
+	{
+		cout << "스테이지 2 리소스 로딩중" << endl;
+		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage02_Path.dat");
+
+		g_bOnStage[4] = true;
+	}
+
+	// 3번 - 스테이지 01
+	if (false == g_bOnStage[5])
+	{
+		cout << "스테이지 3 리소스 로딩중" << endl;
+		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage03_Path.dat");
+
+		g_bOnStage[5] = true;
+	}
+
+	m_bFinish = true;
+
+	cout << "전부 로딩 완료" << endl;
 
 	return NO_EVENT;
 }

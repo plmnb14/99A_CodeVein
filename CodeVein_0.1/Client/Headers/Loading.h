@@ -39,6 +39,7 @@ private:
 private:
 	_uint Loading_Title();
 	_uint Loading_Stage();
+	_uint Loading_MainStages();
 
 private:
 	HANDLE				m_hThread;

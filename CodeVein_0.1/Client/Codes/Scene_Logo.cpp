@@ -35,6 +35,8 @@ _int CScene_Logo::Update_Scene(_double TimeDelta)
 {
 	Logo_KeyInput();
 
+	if (true == m_pLoading->Get_Finish())
+		m_pLogoBtn->Set_Active(true);
 	if (true == m_pLoading->Get_Finish() && g_pInput_Device->Key_Down(DIK_SPACE))
 	{
 		if (g_bReleaseMode)
@@ -92,7 +94,7 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 {
 	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LogoBackGround", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LogoBack/LogoBack%d.png", 4))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LogoButton", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Button/Button%d.png", 3))))
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LogoButton", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Button/Button%d.png", 4))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_CursorEffect", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/CursorEffect/CursorEffect%d.png", 1))))
 		return E_FAIL;
@@ -106,6 +108,7 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LogoButton", SCENE_LOGO, L"Layer_LogoButton")))
 		return E_FAIL;
+	m_pLogoBtn = static_cast<CLogoBtn*>(g_pManagement->Get_GameObjectBack(L"Layer_LogoButton", SCENE_LOGO));
 	return S_OK;
 }
 
@@ -122,11 +125,11 @@ void CScene_Logo::Update_DebugStage_Console()
 	cout << " #  [ 릴리즈 모드 ] 는 메쉬로드와 스테이지 진행이 실제 게임처럼 됩니다." << endl;
 	cout << " #  [ 릴리즈 모드 ] 는 강제로 [ Stage_Base ] 부터 시작하게 됩니다." << endl;
 	cout << "-------------------------------------------------------------------------------" << endl;
-	cout << "[1] Stage_Base = ";
-	cout << (m_eSceneChange == CScene_Logo::Stage_Base ? "true" : "false") << endl;
-
 	cout << "[2] Stage_Training = ";
 	cout << (m_eSceneChange == CScene_Logo::Stage_Training ? "true" : "false") << endl;
+
+	cout << "[2] Stage_Base = ";
+	cout << (m_eSceneChange == CScene_Logo::Stage_Base ? "true" : "false") << endl;
 
 	cout << "[3] Stage_01 = ";
 	cout << (m_eSceneChange == CScene_Logo::Stage_01 ? "true" : "false") << endl;
@@ -149,14 +152,14 @@ void CScene_Logo::Logo_KeyInput()
 {
 	if (g_pInput_Device->Key_Down(DIK_1))
 	{
-		m_eSceneChange = Stage_Base;
+		m_eSceneChange = Stage_Training;
 		Update_DebugStage_Console();
 		g_sStageIdx_Cur = 0;
 	}
 
 	if (g_pInput_Device->Key_Down(DIK_2))
 	{
-		m_eSceneChange = Stage_Training;
+		m_eSceneChange = Stage_Base;
 		Update_DebugStage_Console();
 		g_sStageIdx_Cur = 1;
 	}

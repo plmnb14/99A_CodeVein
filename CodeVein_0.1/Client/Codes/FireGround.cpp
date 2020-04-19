@@ -111,10 +111,10 @@ _int CFireGround::Update_GameObject(_double TimeDelta)
 				D3DXVec3Normalize(&vDir, &vDir);
 
 				_float fMinRange = 2.f;
-				_v3 vRandPos = vDir * _float(CCalculater::Random_Num_Double(0, _double(fMinRange)));
+				_v3 vRandPos = vDir * _float(CCalculater::Random_Num_Double(1.7, _double(fMinRange)));
 				
-				CParticleMgr::Get_Instance()->Create_Effect_Delay(L"FireBoy_FireGround_AfterFire_01", _float(CCalculater::Random_Num_Double(0, 1.0)), m_pTransformCom->Get_Pos() + vRandPos + _v3(0.f, 0.45f, 0.f), nullptr);
-				CParticleMgr::Get_Instance()->Create_Effect_Delay(L"FireBoy_FireGround_AfterFire_02", _float(CCalculater::Random_Num_Double(0, 1.0)), m_pTransformCom->Get_Pos() + vRandPos + _v3(0.f, 0.45f, 0.f), nullptr);
+				CParticleMgr::Get_Instance()->Create_Effect_Delay(L"FireBoy_FireGround_AfterFire_01", _float(CCalculater::Random_Num_Double(0, 1.0)), m_pTransformCom->Get_Pos() + vRandPos + _v3(0.f, _float(CCalculater::Random_Num_Double(0.6, 1.5)), 0.f), nullptr);
+				CParticleMgr::Get_Instance()->Create_Effect_Delay(L"FireBoy_FireGround_AfterFire_02", _float(CCalculater::Random_Num_Double(0, 1.0)), m_pTransformCom->Get_Pos() + vRandPos + _v3(0.f, _float(CCalculater::Random_Num_Double(0.6, 1.5)), 0.f), nullptr);
 				CParticleMgr::Get_Instance()->Create_Effect(L"FireBoy_FireGround_Particle",m_pTransformCom->Get_Pos(), nullptr);
 			}
 		}
