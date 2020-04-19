@@ -5,6 +5,7 @@
 #include "Effect.h"
 #include "UI.h"
 #include "UI_Manager.h"
+#include "BossHP.h"
 #include "ParticleMgr.h"
 
 #include "MassageUI.h"
@@ -77,6 +78,9 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 		return E_FAIL;
 
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_MonsterProjectile")))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_BossUI")))
 		return E_FAIL;
 
 	CGameObject* pInstance = nullptr;

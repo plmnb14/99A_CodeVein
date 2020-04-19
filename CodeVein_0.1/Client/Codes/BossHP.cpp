@@ -26,8 +26,8 @@ HRESULT CBossHP::Ready_GameObject(void * pArg)
 
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = WINCX * 0.5f;
-	m_fPosY = WINCY * 0.1f;
+	/*m_fPosX = WINCX * 0.5f;*/
+	/*m_fPosY = WINCY * 0.1f;*/
 	m_fSizeX = 840;
 	m_fSizeY = 64.f;
 
@@ -35,7 +35,7 @@ HRESULT CBossHP::Ready_GameObject(void * pArg)
 	
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossDecoUI", SCENE_STAGE, L"Layer_BossDecoUI");
 	m_pDecoUI = static_cast<CBossDecoUI*>(g_pManagement->Get_GameObjectBack(L"Layer_BossDecoUI", SCENE_STAGE));
-	m_pDecoUI->Set_ViewZ(m_fViewZ + 0.2f);
+	
 	
 	return NOERROR;
 }
@@ -44,14 +44,19 @@ _int CBossHP::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
+	//if (nullptr == m_pTarget)
+	//	return NO_EVENT;
+
 	SetUp_State(TimeDelta);
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
-
 	
 	m_pDecoUI->Set_Active(m_bIsActive);
+	m_pDecoUI->Set_UI_Pos(m_fPosX, m_fPosY);
+	m_pDecoUI->Set_UI_Size(WINCX, 64.f);
+	m_pDecoUI->Set_ViewZ(m_fViewZ + 0.1f);
 
 	return NO_EVENT;
 }
@@ -182,6 +187,10 @@ void CBossHP::SetUp_State(_double TimeDelta)
 		m_fBossHP = m_fTotalHP;
 	if (m_fBossHP <= 0.f)
 		m_fBossHP = 0.f;
+	if (!m_bIsActive)
+		return;
+	//m_fBossHP = m_pTarget->Get_Target_Hp();
+	//m_fTotalHP = m_pTarget->Get_Target_Param().fHp_Max;
 
 	// Texture UV Èå¸£´Â ¼Óµµ
 	m_fSpeed += -0.05f * _float(TimeDelta);
