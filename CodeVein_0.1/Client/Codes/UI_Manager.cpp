@@ -155,7 +155,7 @@ HRESULT CUI_Manager::SetUp_UILayer()
 
 _int CUI_Manager::Update_UI()
 {
-	/*if (g_pInput_Device->Key_Up(DIK_O))
+	if (g_pInput_Device->Key_Up(DIK_O))
 	{
 		m_bTest = !m_bTest;
 		Active_MistletoeUI(m_bTest); // 겨우살이 UI On/Off
@@ -168,12 +168,12 @@ _int CUI_Manager::Update_UI()
 		Move_StageUI_Left(); // 스테이지UI 왼쪽이동
 	if (g_pInput_Device->Key_Up(DIK_RIGHT))
 		Move_StageUI_Right(); // 스테이지UI 오른쪽 이동
-	if (g_pInput_Device->Key_Up(DIK_J))
-		Move_MistletoeUI_Up(); // 겨우살이UI 위쪽 이동
-	if (g_pInput_Device->Key_Up(DIK_K))
-		Move_MistletoeUI_Down(); // 겨우살이UI 아래쪽 이동
+	//if (g_pInput_Device->Key_Up(DIK_J))
+	//	Move_MistletoeUI_Up(); // 겨우살이UI 위쪽 이동
+	//if (g_pInput_Device->Key_Up(DIK_K))
+	//	Move_MistletoeUI_Down(); // 겨우살이UI 아래쪽 이동
 	if (g_pInput_Device->Key_Up(DIK_RETURN))
-		cout << Select_Stage() << endl;*/ // 스테이지 선택시, 각각 다른 _uint값 반환
+		cout << Select_Stage() << endl; // 스테이지 선택시, 각각 다른 _uint값 반환
 	return 0;
 }
 
