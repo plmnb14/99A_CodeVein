@@ -169,12 +169,9 @@ HRESULT CPlayer_Colleague::Ready_BoneMatrix()
 
 HRESULT CPlayer_Colleague::Ready_Collider()
 {
-	//m_vecPhysicCol;		// 충돌 체크용 콜라이더 벡터
-	//m_vecAttackCol;		// 공격용 콜라이더 벡터
 	m_vecPhysicCol.reserve(3);
-	m_vecAttackCol.reserve(1);
 
-	// 경계 체크용 Collider - 범위 내에 있는지? -> 있으면 바로 공격하고 멀리있으면 간 좀 보다가 가서 때린다던지 하는겅
+	// 경계 체크용 Collider - 밀어내기 구
 	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 	IF_NULL_VALUE_RETURN(pCollider, E_FAIL);
 
@@ -183,6 +180,30 @@ HRESULT CPlayer_Colleague::Ready_Collider()
 	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
 	pCollider->Set_Dynamic(true);
 	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Range]->_41, m_matBone[Bone_Range]->_42, m_matBone[Bone_Range]->_43));
+	pCollider->Set_Enabled(true);
+	pCollider->Set_Type(COL_SPHERE);
+	m_vecPhysicCol.push_back(pCollider);
+
+	//=====================================
+
+	// 맞는 용도 구
+	// 몸통
+	fRadius = 0.4f;
+
+	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
+	pCollider->Set_Dynamic(true);
+	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Body]->_41, m_matBone[Bone_Body]->_42, m_matBone[Bone_Body]->_43));
+	pCollider->Set_Enabled(true);
+	pCollider->Set_Type(COL_SPHERE);
+	m_vecPhysicCol.push_back(pCollider);
+
+	//=====================================
+	// 머리
+	fRadius = 0.4f;
+
+	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
+	pCollider->Set_Dynamic(true);
+	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Head]->_41, m_matBone[Bone_Head]->_42, m_matBone[Bone_Head]->_43));
 	pCollider->Set_Enabled(true);
 	pCollider->Set_Type(COL_SPHERE);
 	m_vecPhysicCol.push_back(pCollider);
@@ -216,6 +237,17 @@ void CPlayer_Colleague::Check_Do_List()
 	_v3 pPlayerPos = m_pTargetTransformCom->Get_Pos();
 	_float MyLength = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransformCom->Get_Pos()));
 
+	m_List_pMonTarget[0] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
+	m_List_pMonTarget[1] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
+
+	_v3 vecMonpos = V3_NULL;
+
+	for (auto& iter : m_List_pMonTarget[0])
+		vecMonpos = TARGET_TO_TRANS(iter)->Get_Pos();
+
+	m_fAll_Length = V3_LENGTH(&(m_pTransformCom->Get_Pos() - vecMonpos));
+
+
 
 	if (MyLength < 30.f)	// - 플레이어가 30.f 안에 있는지 먼저 체크
 	{
@@ -227,8 +259,6 @@ void CPlayer_Colleague::Check_Do_List()
 		{
 			// 전투 상황이 아니라면 가장 가까운 몬스터를 찾는다
 
-			m_List_pMonTarget[0] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
-			m_List_pMonTarget[1] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
 			
 			if (m_List_pMonTarget[0].empty())
 				m_bMonExistence = true;
@@ -237,18 +267,10 @@ void CPlayer_Colleague::Check_Do_List()
 
 			if (false == m_bMonExistence)
 			{
-				_v3 vecMonpos = V3_NULL;
-
-				for (auto& iter : m_List_pMonTarget[0])
-					vecMonpos = TARGET_TO_TRANS(iter)->Get_Pos();
-
-				m_fAll_Length = V3_LENGTH(&(m_pTransformCom->Get_Pos() - vecMonpos));
-
 				if (m_fAll_Length < 15.f)
-				{
 					m_bStart_Fighting = true;
-					
-				}
+				if (m_fAll_Length > 15.f)
+					m_bStart_Fighting = false;
 			}
 		}
 		if (true == m_bStart_Fighting)
@@ -261,12 +283,21 @@ void CPlayer_Colleague::Check_Do_List()
 			if (m_fAll_Length < 15.f)
 			{
 				m_eMovetype = CPlayer_Colleague::Coll_Attack;
-				m_eColl_AttackMoment = CPlayer_Colleague::Att_Idle;
+
+				if (m_fAll_Length < 3.f)
+				{
+					m_eColl_AttackMoment = CPlayer_Colleague::Att_Normal;
+				}
+					
 			}
 				
 
-			if (0 >= MonHP)
+			if (0 >= MonHP || m_fAll_Length > 20.f)
+			{
+				// 몬스터가 죽었거나 일정 범위를 벗어나서 전투 종료
 				m_bStart_Fighting = false;
+			}
+				
 		}
 
 		// - 범위 내 몬스터가 없으면 플레이어가 있는지
@@ -388,9 +419,10 @@ void CPlayer_Colleague::Set_AniEvent()
 				// 전투 대기 상태 - 간보는 상태?
 				break;
 			}
-			case CPlayer_Colleague::Att_Idle:
+			case CPlayer_Colleague::Att_Normal:
 			{
-				CollAtt_Idle();
+				// 일반 공격
+				CollAtt_Normal();
 				break;
 			}
 			case CPlayer_Colleague::Att_Skill:
@@ -494,7 +526,7 @@ void CPlayer_Colleague::CollIdle_Waiting()
 	Colleague_Movement(0.f, m_pTransformCom->Get_Axis(AXIS_Z));
 }
 
-void CPlayer_Colleague::CollAtt_Idle()
+void CPlayer_Colleague::CollAtt_Normal()
 {
 	// 기본 공격만 하는 함수
 	// 루이 기본 공격
