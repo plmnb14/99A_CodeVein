@@ -430,7 +430,7 @@ void CPlayer_Colleague::Set_AniEvent()
 			{
 				// 전투 대기 상태 - 간보는 상태?
 				CollAtt_Waiting();
-				m_pDynamicMesh->SetUp_Animation()
+				//m_pDynamicMesh->SetUp_Animation();
 				break;
 			}
 			case CPlayer_Colleague::Att_Normal:
