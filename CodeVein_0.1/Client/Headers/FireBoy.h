@@ -111,8 +111,9 @@ private:
 	_bool				m_bAIController = true;
 
 	// ºí·¢º¸µå¿¡¼­ »ÀÀÇ Pos ÀúÀå¼Ò
-	_v3					m_vMuzzle = _v3(0.f, 0.f, 0.f);	// ÃÑ±¸ »À
-	_v3					m_vLeftForeArm = _v3(0.f, 0.f, 0.f);	// ÆÈ²ÞÄ¡ »À
+	_v3					m_vMuzzle		= _v3(0.f, 0.f, 0.f);	// ÃÑ±¸ »À
+	_v3					m_vLeftForeArm	= _v3(0.f, 0.f, 0.f);	// ÆÈ²ÞÄ¡ »À
+	_v3					m_vLeftHand		= _v3(0.f, 0.f, 0.f);	// ¿Þ¼Õ »À
 
 private:	// ÃÖÃÊ»óÅÂ ¼¼ÆÃ
 	_float				m_fFov = 0.f;

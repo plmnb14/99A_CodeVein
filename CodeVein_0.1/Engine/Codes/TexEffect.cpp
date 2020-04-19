@@ -129,7 +129,12 @@ HRESULT CTexEffect::LateInit_GameObject()
 		!lstrcmp(L"ItemObject_Blue", m_szParticleName) ||
 		!lstrcmp(L"ItemObject_Purple", m_szParticleName) ||
 		!lstrcmp(L"ItemObject_Yellow", m_szParticleName) ||
-		!lstrcmp(L"ItemObject_Green", m_szParticleName)
+		!lstrcmp(L"ItemObject_Green", m_szParticleName) ||
+		!lstrcmp(L"FireBoy_FireBullet_Particle_01", m_szParticleName) ||
+		!lstrcmp(L"FireBoy_FireBullet_Particle_02", m_szParticleName) ||
+		!lstrcmp(L"FireBoy_FireGround_Particle", m_szParticleName) ||
+		!lstrcmp(L"FireBoy_FireGround_BoomParticle_01", m_szParticleName) ||
+		!lstrcmp(L"FireBoy_FireGround_BoomParticle_02", m_szParticleName)
 		//!lstrcmp(L"IceGirl_PointParticle_Blue", m_szParticleName) ||
 		//!lstrcmp(L"IceGirl_PointParticle_Green", m_szParticleName) ||
 		//!lstrcmp(L"IceGirl_FlashParticle_Blue", m_szParticleName) ||
@@ -399,8 +404,8 @@ void CTexEffect::Setup_Info()
 
 	if (m_pInfo->fMoveSpeed_Max > 0.f)
 	{
-		m_fMoveSpeed = Engine::CCalculater::Random_Num(0, _int(m_pInfo->fMoveSpeed_Max * 100)) * 0.01f;
-		m_fMoveSpeed += _int(m_pInfo->fMoveSpeed_Min);
+		m_fMoveSpeed = Engine::CCalculater::Random_Num(_int(m_pInfo->fMoveSpeed_Min * 100), _int(m_pInfo->fMoveSpeed_Max * 100)) * 0.01f;
+		//m_fMoveSpeed += _int(m_pInfo->fMoveSpeed_Min);
 	}
 
 	if (m_pInfo->fRotSpeed_Max > 0.f)
@@ -698,13 +703,8 @@ void CTexEffect::Check_Alpha(_double TimeDelta)
 	if (m_pInfo->fMaxAlpha < m_fAlpha)
 		m_fAlpha = m_pInfo->fMaxAlpha;
 
-	//if(m_bDissolveToggle)
-	//	m_fDissolve -= _float(TimeDelta) * m_fAlphaSpeed;
-	//else
-		m_fDissolve += _float(TimeDelta) * m_fAlphaSpeed;
-
-	//if (m_fDissolve < 0.f)
-	//	m_bDissolveToggle = !m_bDissolveToggle;
+	m_fDissolve += _float(TimeDelta) * m_fAlphaSpeed;
+		
 	if (m_fDissolve > 1.f)
 	{
 		m_fDissolve = 1.f;

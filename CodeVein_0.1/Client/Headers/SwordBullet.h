@@ -25,11 +25,11 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 
 	CEffect*			m_pBulletBody_01 = nullptr;
-	CEffect*			m_pBulletBody_02 = nullptr;
-
 
 	_v3					m_vDir = _v3(0.f, 0.f, 0.f);
 	_float				m_fSpeed = 0.f;
+
+	_float				m_fEffectOffset = 0.0f;
 
 	_double				m_dCurTime = 0;
 	_double				m_dLifeTime = 0;
