@@ -12,10 +12,11 @@ class CPlayer_Colleague final : public CGameObject
 {
 public:
 	// 차후 Attack에 스킬을 추가할 시 enum으로 나눠줘야 함
-	enum Colleague_MoveType { Coll_Idle, Coll_Move, Coll_Attack, Coll_Hit, Coll_Dead };
+	enum Colleague_MoveType { Coll_Idle, Coll_Move, Coll_Guard, Coll_Attack, Coll_Hit, Coll_Dead };
 	enum Coll_Movement { Move_Walk, Move_Run, Move_Dodge };
-	enum Coll_IdleMoment { Idle_Waiting, Idle_Attwaiting, Idle_Guard };
-	enum Coll_Attackmoment { Att_Idle, Att_Skill };
+	enum Coll_IdleMoment { Idle_Waiting, Idle_Guard };
+	enum Coll_Attackmoment { Att_waiting, Att_Idle, Att_Skill };
+	enum Coll_Guardmoment { Guard_Idle, Gurad_Walk, Gurad_Hit };
 	enum Move_Direction { Move_Front, Move_Back, Move_Left, Move_Right, Move_End };
 
 private:
@@ -44,6 +45,8 @@ private:
 	HRESULT	Ready_Collider();
 	HRESULT	Ready_Weapon();
 
+private:
+	void	Set_Length(_float Length) { m_fAll_Length = Length; }
 
 private:
 	void	Update_Collider();
@@ -59,12 +62,16 @@ private:
 private:
 	void	Colleague_Dead();
 
+	void	Colleague_Guard();
+
+	void	Colleague_Hit();
+
 private:
 	void	CollMove_Walk();
 	void	CollMove_Run();
 	void	CollMove_Dodge();	// 구르기 or 막기
 
-	void	CollIIdle_Waiting();
+	void	CollIdle_Waiting();
 
 	void	CollAtt_Idle();
 
@@ -84,22 +91,24 @@ private:
 	CTransform*				m_pTargetTransformCom = nullptr;
 
 private:
-	//ACTOR_INFO				m_tActorinfo;
-
-private:
 	Colleague_MoveType		m_eMovetype;
 	Coll_Movement			m_eColl_Movement;
 	Coll_IdleMoment			m_eColl_IdleMoment;
 	Coll_Attackmoment		m_eColl_AttackMoment;
+	Coll_Guardmoment		m_eColl_GuardMoment;
 	Move_Direction			m_eMoveDirection;
 
 private:
+	list<CGameObject*>	m_List_pMonTarget[2];
+
 	_mat*	m_matBone[Bone_End];
 
 	_float	m_fSpeed = 0.f;
+	_float	m_fAll_Length = 0.f;
 
 	_bool	m_bNear_byMonster = false;
-
+	_bool	m_bStart_Fighting = false;
+	_bool	m_bMonExistence = false; // 몬스터 존재 유무
 
 public:
 	static	CPlayer_Colleague* Create(_Device pGraphic_Device);

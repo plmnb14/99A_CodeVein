@@ -37,10 +37,6 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 	CGameObject::Late_Update_GameObject(TimeDelta);
 	CGameObject::Update_GameObject(TimeDelta);
 
-	// 우선 순위
-	// - 플레이어가 30.f 안에 있는지
-	// - 범위 내에 몬스터가 있는지
-	// - 없으면 플레이어가 있는지
 	Check_Do_List();
 	Set_AniEvent();
 
@@ -112,7 +108,7 @@ HRESULT CPlayer_Colleague::Add_Component()
 		return E_FAIL;
 
 	//// for.Com_Mesh
-	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Louis", L"Com_StaticMesh", (CComponent**)&m_pDynamicMesh)))
+	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Jack", L"Com_DynamicMesh", (CComponent**)&m_pDynamicMesh)))
 	//	return E_FAIL;
 
 	// for.Com_NavMesh
@@ -207,23 +203,12 @@ void CPlayer_Colleague::Render_Collider()
 void CPlayer_Colleague::Check_Do_List()
 {
 	// 플레이어 쪽으로 몸 돌릴 때, 4.f 이상 떨어져있으면 플레이어가 보는 쪽으로 돌린다.
-	//// 4.f 이하면 몸을 돌리지 않고 그냥 온다
-	// 아니다 Idle 상태일 때만 돌리지 않는다.
-	// 아니다 다 돌린다
 
 	// 우선 순위
 	// - 플레이어가 30.f 안에 있는지
+	// - 전투상황이 아니라면 가장 가까운 몬스터 한 마리를 찾는다
 	// - 범위 내에 몬스터가 있는지
 	// - 없으면 플레이어가 있는지
-
-	IF_NULL_VALUE_RETURN(pMon_Target)
-	
-	CGameObject* pMon_Target = g_pManagement->Get_GameObjectBack(L"Layer_Monster", SCENE_STAGE);
-
-	if (nullptr == pMon_Target)
-		return;
-
-	_float My_MonLength = V3_LENGTH(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(pMon_Target)->Get_Pos()));
 
 	_v3 pPlayerPos = m_pTargetTransformCom->Get_Pos();
 	_float MyLength = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransformCom->Get_Pos()));
@@ -231,28 +216,58 @@ void CPlayer_Colleague::Check_Do_List()
 
 	if (MyLength < 30.f)	// - 플레이어가 30.f 안에 있는지 먼저 체크
 	{
-		//// - 범위 내에 몬스터가 있는지
-		if (My_MonLength < 10.f && 0 < pMon_Target->Get_Target_Hp()/*false == pMon_Target->Get_Dead()*/)
+		//	// 몬스터가 근처에 있을 때 몬스터 쪽으로 이동하여 공격한다.
+		//	// 루이스의 경우 플레이어보다 먼저 튀어나간다
+		//	// 지금은 기본 공격만
+		//	// 후에 거리 계산해서 스킬 사용 여부도 정해야 함
+		if (false == m_bStart_Fighting)
 		{
-			// 몬스터가 근처에 있을 때 몬스터 쪽으로 이동하여 공격한다.
-			// 루이스의 경우 플레이어보다 먼저 튀어나간다
-			// 슝
-			// 지금은 기본 공격만
-			// 후에 거리 계산해서 스킬 사용 여부도 정해야 함
-			m_bNear_byMonster = true;
+			// 전투 상황이 아니라면 가장 가까운 몬스터를 찾는다
 
-			m_eMovetype = CPlayer_Colleague::Coll_Attack;
-			m_eColl_AttackMoment = CPlayer_Colleague::Att_Idle;
+			m_List_pMonTarget[0] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
+			m_List_pMonTarget[1] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
+			
+			if (m_List_pMonTarget[0].empty())
+				m_bMonExistence = true;
+			else
+				m_bMonExistence = false;
+
+			if (false == m_bMonExistence)
+			{
+				_v3 vecMonpos = V3_NULL;
+
+				for (auto& iter : m_List_pMonTarget[0])
+					vecMonpos = TARGET_TO_TRANS(iter)->Get_Pos();
+
+				m_fAll_Length = V3_LENGTH(&(m_pTransformCom->Get_Pos() - vecMonpos));
+
+				if (m_fAll_Length < 15.f)
+				{
+					m_bStart_Fighting = true;
+					
+				}
+			}
 		}
-		if (My_MonLength > 10.f || 0 >= pMon_Target->Get_Target_Hp())
+		if (true == m_bStart_Fighting)
 		{
-			// 전투모드 해제 후 플레이어가 근처에 없으면 순간이동 혹은 플레이어 근처로 이동
-			// 조건이 맞을테니 아래에 탈 것이다
-			m_bNear_byMonster = false;
+			_float MonHP;
+			for (auto& iter : m_List_pMonTarget[0])
+				MonHP = iter->Get_Target_Hp();
+
+			// 여기서 전투 시작
+			if (m_fAll_Length < 15.f)
+			{
+				m_eMovetype = CPlayer_Colleague::Coll_Attack;
+				m_eColl_AttackMoment = CPlayer_Colleague::Att_Idle;
+			}
+				
+
+			if (0 >= MonHP)
+				m_bStart_Fighting = false;
 		}
 
 		// - 범위 내 몬스터가 없으면 플레이어가 있는지
-		if (MyLength > 3.f && false == m_bNear_byMonster)
+		if (MyLength > 3.f && false == m_bStart_Fighting)
 		{
 			// no
 			// 플레이어와 얼마나 거리가 떨어져있는가?
@@ -300,22 +315,17 @@ void CPlayer_Colleague::Set_AniEvent()
 
 	switch (m_eMovetype)
 	{
-		case Client::CPlayer_Colleague::Coll_Idle:
+		case CPlayer_Colleague::Coll_Idle:
 		{
 			switch (m_eColl_IdleMoment)
 			{
-			case Client::CPlayer_Colleague::Idle_Waiting:
+			case CPlayer_Colleague::Idle_Waiting:
 			{
-				CollIIdle_Waiting();
+				CollIdle_Waiting();
 				// Idle_Waiting - 플레이어가 범위 안에 있고 주위에 몬스터도 없을 때
 				break;
 			}
-			case Client::CPlayer_Colleague::Idle_Attwaiting:
-			{
-				// Idle_Attwaiting - 플레이어와 적이 범위 내에 있고 공격할 준비를 할 때
-				break;
-			}
-			case Client::CPlayer_Colleague::Idle_Guard:
+			case CPlayer_Colleague::Idle_Guard:
 			{
 				// Idle_Guard - 플레이어와 적이 범위 내 존재하고 가드 중일 때
 				break;
@@ -323,7 +333,7 @@ void CPlayer_Colleague::Set_AniEvent()
 			}
 			break;
 		}
-		case Client::CPlayer_Colleague::Coll_Move:
+		case CPlayer_Colleague::Coll_Move:
 		{
 			switch (m_eColl_Movement)
 			{
@@ -333,13 +343,13 @@ void CPlayer_Colleague::Set_AniEvent()
 				CollMove_Walk();
 				break;
 			}
-			case Client::CPlayer_Colleague::Move_Run:
+			case CPlayer_Colleague::Move_Run:
 			{
 				// 플레이어와 일정 거리 이상 떨어져 있을 때 뛰어서 쫒아간다
 				CollMove_Run();
 				break;
 			}
-			case Client::CPlayer_Colleague::Move_Dodge:
+			case CPlayer_Colleague::Move_Dodge:
 			{
 				// 이건 회피
 				break;
@@ -347,27 +357,53 @@ void CPlayer_Colleague::Set_AniEvent()
 			}
 			break; 
 		}
-		case Client::CPlayer_Colleague::Coll_Attack:
+		case CPlayer_Colleague::Coll_Guard:
+		{
+			switch (m_eColl_GuardMoment)
+			{
+			case Client::CPlayer_Colleague::Guard_Idle:
+			{
+				break;
+			}
+			case Client::CPlayer_Colleague::Gurad_Walk:
+			{
+				break;
+			}
+			case Client::CPlayer_Colleague::Gurad_Hit:
+			{
+				break;
+			}
+			}
+			break;
+		}
+		case CPlayer_Colleague::Coll_Attack:
 		{
 			switch (m_eColl_AttackMoment)
 			{
-			case Client::CPlayer_Colleague::Att_Idle:
+			case CPlayer_Colleague::Att_waiting:
+			{
+				// 전투 대기 상태 - 간보는 상태?
+				break;
+			}
+			case CPlayer_Colleague::Att_Idle:
 			{
 				CollAtt_Idle();
 				break;
 			}
-			case Client::CPlayer_Colleague::Att_Skill:
+			case CPlayer_Colleague::Att_Skill:
 			{
+
 				break;
 			}
 			}
 			break;
 		}
-		case Client::CPlayer_Colleague::Coll_Hit:
+		case CPlayer_Colleague::Coll_Hit:
 		{
+			Colleague_Hit();
 			break;
 		}
-		case Client::CPlayer_Colleague::Coll_Dead:
+		case CPlayer_Colleague::Coll_Dead:
 		{
 			Colleague_Dead();
 			break;
@@ -393,7 +429,7 @@ HRESULT CPlayer_Colleague::SetUp_Default()
 	m_tObjParam.bIsHit = false;		// 맞는 도중인지
 	m_tObjParam.bHitAgain = false;
 
-	m_tObjParam.bCanAttack = false;	// 공격 가능한지
+	m_tObjParam.bCanAttack = true;	// 공격 가능한지
 	m_tObjParam.bIsAttack = false;	// 공격 중인지
 
 	m_tObjParam.bCanDodge = true;	// 회피 가능한지
@@ -415,6 +451,17 @@ void CPlayer_Colleague::Colleague_Movement(_float fSpeed, _v3 vDir)
 
 void CPlayer_Colleague::Colleague_Dead()
 {
+	// 데드 애니메이션 모션
+	
+}
+
+void CPlayer_Colleague::Colleague_Guard()
+{
+}
+
+void CPlayer_Colleague::Colleague_Hit()
+{
+	// 맞았다!
 }
 
 void CPlayer_Colleague::CollMove_Walk()
@@ -437,7 +484,7 @@ void CPlayer_Colleague::CollMove_Dodge()
 	// 구르기나 피할 수 있는 요소를 담을 함수
 }
 
-void CPlayer_Colleague::CollIIdle_Waiting()
+void CPlayer_Colleague::CollIdle_Waiting()
 {
 	m_eColl_IdleMoment = CPlayer_Colleague::Idle_Waiting;
 	Funtion_RotateBody();
@@ -451,15 +498,39 @@ void CPlayer_Colleague::CollAtt_Idle()
 	// 기본 4타
 	// 몬스터가 공격 범위 밖이면 공격을 잠깐 중지한다.
 	// 보스도 생각해야 함
+	CTransform* pMonTrans = nullptr;
+	CGameObject* pMonster = nullptr;
 
-	CGameObject* pMon_Target = g_pManagement->Get_GameObjectBack(L"Layer_Monster", SCENE_STAGE);
-	_float TempDir = V3_LENGTH(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(pMon_Target)->Get_Pos()));
+	for (auto& Moniter : m_List_pMonTarget[0])
+		pMonster = Moniter;
 
-	// 처음에는 괜찮은데 야차맨이 한번 뒤로 펄쩍 뛰고 난 뒤로부터 부들대며 접근하지 못함
-	// 왜일까? -> 야차만 부들대면서 접근 못하고 댕댕이는 잘 함
+	for (auto& iter : m_List_pMonTarget[0])
+		pMonTrans = TARGET_TO_TRANS(iter);
+
+	if (nullptr == pMonTrans)
+		return;
+
+
+	Funtion_RotateBody();
+
+	_float fMonLenght = V3_LENGTH(&(m_pTransformCom->Get_Pos() - pMonTrans->Get_Pos()));
+
 	// 떨어져있으면 근접공격을 위해 가까이 간다
-	if (TempDir > 2.3f)
-		Colleague_Movement(4.f, TARGET_TO_TRANS(pMon_Target)->Get_Axis(AXIS_Z));
+	if (fMonLenght > 2.3f)
+	{
+		// 근접공격을 위해 쫒아간다
+		Colleague_Movement(4.f, pMonTrans->Get_Axis(AXIS_Z));
+	}
+		
+	if (fMonLenght < 2.3f)
+	{
+		// 범위 내에 들어왔으니 간보다가 슉퍽
+		if (true == pMonster->Get_Target_Param().bIsAttack)
+		{
+			// 몬스터가 공격 시 가드를 올림
+			m_eMovetype = CPlayer_Colleague::Coll_Guard;
+		}
+	}
 }
 
 void CPlayer_Colleague::Funtion_RotateBody()
@@ -531,7 +602,7 @@ void CPlayer_Colleague::Funtion_RotateBody()
 	m_pTransformCom->Set_Angle(AXIS_Y, fYAngle);
 }
 
-CPlayer_Colleague * CPlayer_Colleague::Create(_Device pGraphic_Device)
+CPlayer_Colleague* CPlayer_Colleague::Create(_Device pGraphic_Device)
 {
 	CPlayer_Colleague*	pInstance = new CPlayer_Colleague(pGraphic_Device);
 
@@ -561,8 +632,12 @@ void CPlayer_Colleague::Free()
 {
 	Safe_Release(m_pSword);
 	Safe_Release(m_pCollider);
+
+	// 동료 Transfrom
 	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pTargetTransformCom);
+
+	// 플레이어 Ransform
+	//Safe_Release(m_pTargetTransformCom);
 	Safe_Release(m_pStaticMesh);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
