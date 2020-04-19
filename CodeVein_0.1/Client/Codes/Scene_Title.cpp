@@ -175,9 +175,24 @@ HRESULT CScene_Title::Temp_Stage_Loader(const _tchar * _DatPath)
 
 HRESULT CScene_Title::Ready_Player()
 {
-	// 일단 플레이어 레이어 우선 추가
+	//========================================================================================
+	// 레이어만 미리 준비
+	//========================================================================================
+
 	if (FAILED(g_pManagement->Add_Layer(SCENE_MORTAL, L"Layer_Player")))
 		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Monster")))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Boss")))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_MonsterProjectile")))
+		return E_FAIL;
+
+	//========================================================================================
+
 
 	// 플레이어 원형 생성
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Player", CPlayer::Create(m_pGraphic_Device))))
@@ -191,6 +206,7 @@ HRESULT CScene_Title::Ready_Player()
 
 	// Mortal 레이어는 스테틱보단 아래 단계이지만, 스테이지가 지나도 삭제되지 않습니다.
 	g_pManagement->Add_GameOject_ToLayer_NoClone(pPlayer, SCENE_MORTAL, L"Layer_Player", nullptr);
+
 
 	return S_OK;
 }

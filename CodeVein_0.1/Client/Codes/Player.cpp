@@ -231,6 +231,12 @@ void CPlayer::Parameter_State()
 		break;
 	}
 
+	case ACT_Mistoletoe :
+	{
+		Play_Idle();
+		break;
+	}
+
 	case ACT_Run:
 	{
 		Play_Run();
@@ -1186,6 +1192,19 @@ void CPlayer::Key_Special()
 		if (false == m_bOnAiming)
 		{
 			CCameraMgr::Get_Instance()->Set_LockAngleX(D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)));
+		}
+	}
+
+	if (g_pInput_Device->Key_Down(DIK_X))
+	{
+		if (m_bCanMistletoe)
+		{
+			m_bCanMistletoe = false;
+
+			m_bActiveUI = true;
+
+			m_bOnMistletoe = true;
+			m_eActState = ACT_Mistoletoe;
 		}
 	}
 }
@@ -8687,6 +8706,31 @@ void CPlayer::Reset_BattleState()
 
 	LOOP(32)
 		m_bEventTrigger[i] = false;
+}
+
+void CPlayer::Check_Mistletoe()
+{
+	if (m_bOnMistletoe)
+		return;
+
+	_ushort sSTLSize = g_pManagement->Get_GameObjectList(L"Layer_Mistletoe", SCENE_STAGE).size();
+
+	if (sSTLSize > 0)
+	{
+		for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Mistletoe", SCENE_STAGE))
+		{
+			if(false == iter->Get_Enable())
+				continue;
+
+			CTransform* pIterTrans = TARGET_TO_TRANS(iter);
+
+			if (1.5f >= V3_LENGTH(&(m_pTransform->Get_Pos() - pIterTrans->Get_Pos())))
+			{
+				m_bCanMistletoe = true;
+				return;
+			}
+		}
+	}
 }
 
 CPlayer * CPlayer::Create(_Device pGraphic_Device)

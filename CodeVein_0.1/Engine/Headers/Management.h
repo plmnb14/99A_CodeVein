@@ -82,6 +82,7 @@ public: // For.Light_Manager
 	const _mat Get_LightViewProj(_uint iIndex = 0);
 	void Set_LightPos(_uint iIndex, _v3 vPos);
 	HRESULT Add_Light(LPDIRECT3DDEVICE9 pGraphic_Device, D3DLIGHT9 LightDesc);
+	HRESULT Clear_LightList();
 
 public: // For.Target_Manager
 	LPDIRECT3DTEXTURE9 Get_Target_Texture(const _tchar* pTargetTag);
