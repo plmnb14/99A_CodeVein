@@ -23,6 +23,11 @@ private:
 
 public:
 	_uint Get_Teleport_Menu() { return _uint(m_eTeleportMenu); }
+	_uint Get_SubStage() { return m_iSubStage; }
+	_uint Get_MaxSubStage() { return m_iMaxSubStage; }
+
+public:
+	void Set_SubStage(_uint iSubStage);
 
 public:
 	void Set_Teleport_Menu(_uint eMenu) { m_eTeleportMenu = Teleport_Menu(eMenu); }

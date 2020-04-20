@@ -12,6 +12,11 @@ CStageUI::CStageUI(const CStageUI & rhs)
 {
 }
 
+void CStageUI::Set_SubStage(_uint iSubStage)
+{
+	m_iSubStage = iSubStage;
+}
+
 HRESULT CStageUI::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
@@ -54,10 +59,11 @@ _int CStageUI::Update_GameObject(_double TimeDelta)
 	{
 	case Teleport_Home:
 		m_iIndex = 0;
-		m_iMaxSubStage = 2;
+		m_iMaxSubStage = 1;
 		break;
 	case Teleport_St01:
 	{
+		m_iMaxSubStage = 2;
 		if (0 == m_iSubStage)
 			m_iIndex = 1;
 		else if (1 == m_iSubStage)
@@ -68,6 +74,7 @@ _int CStageUI::Update_GameObject(_double TimeDelta)
 		break;
 	case Teleport_St02:
 	{
+		m_iMaxSubStage = 2;
 		if (0 == m_iSubStage)
 			m_iIndex = 2;
 		else if (1 == m_iSubStage)
@@ -78,6 +85,7 @@ _int CStageUI::Update_GameObject(_double TimeDelta)
 		break;
 	case Teleport_St03:
 	{
+		m_iMaxSubStage = 1;
 		if (0 == m_iSubStage)
 			m_iIndex = 3;
 		else if (1 == m_iSubStage)
@@ -86,6 +94,7 @@ _int CStageUI::Update_GameObject(_double TimeDelta)
 		break;
 	case Teleport_St04:
 	{
+		m_iMaxSubStage = 1;
 		if (0 == m_iSubStage)
 			m_iIndex = 4;
 		else if (1 == m_iSubStage)
@@ -100,6 +109,8 @@ _int CStageUI::Update_GameObject(_double TimeDelta)
 	}
 	
 	Compute_ViewZ(&m_pTransformCom->Get_Pos());
+
+	
 	return NO_EVENT;
 }
 

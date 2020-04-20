@@ -244,6 +244,7 @@
     <ClInclude Include="..\Headers\SkillUI.h" />
     <ClInclude Include="..\Headers\StageSelectUI.h" />
     <ClInclude Include="..\Headers\StageUI.h" />
+    <ClInclude Include="..\Headers\SubStageUI.h" />
     <ClInclude Include="..\Headers\SwordBullet.h" />
     <ClInclude Include="..\Headers\SwordGenji.h" />
     <ClInclude Include="..\Headers\SwordGenjiBullet.h" />
@@ -347,6 +348,7 @@
     <ClCompile Include="..\Codes\SkillUI.cpp" />
     <ClCompile Include="..\Codes\StageSelectUI.cpp" />
     <ClCompile Include="..\Codes\StageUI.cpp" />
+    <ClCompile Include="..\Codes\SubStageUI.cpp" />
     <ClCompile Include="..\Codes\SwordBullet.cpp" />
     <ClCompile Include="..\Codes\SwordGenji.cpp" />
     <ClCompile Include="..\Codes\SwordGenjiBullet.cpp" />

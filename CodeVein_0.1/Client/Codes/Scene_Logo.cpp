@@ -36,9 +36,21 @@ _int CScene_Logo::Update_Scene(_double TimeDelta)
 	Logo_KeyInput();
 
 	if (true == m_pLoading->Get_Finish())
-		m_pLogoBtn->Set_Active(true);
-	if (true == m_pLoading->Get_Finish() && g_pInput_Device->Key_Down(DIK_SPACE))
 	{
+		m_pLogoBtn->Set_Active(true);
+
+		if (g_pInput_Device->Key_Down(DIK_SPACE))
+		{
+			m_pLoadingScreen->Set_Active(true);
+		}
+		if (m_pLoadingScreen->Get_Alpha() >= 1.f)
+			m_bIsChangeStage = true;
+	}
+		
+	if (true == m_pLoading->Get_Finish() && /*g_pInput_Device->Key_Down(DIK_SPACE)*/m_bIsChangeStage)
+	{
+		
+
 		if (g_bReleaseMode)
 		{
 			// 베이스 스테이지 고정
@@ -98,6 +110,10 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_CursorEffect", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/CursorEffect/CursorEffect%d.png", 1))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LoadingScreen", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LoadingScreen/LoadingScreen%d.png", 2))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LoadingScreen", CLoadingScreen::Create(m_pGraphic_Device))))
+		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LogoBackGround", CBackGround::Create(m_pGraphic_Device))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LogoButton", CLogoBtn::Create(m_pGraphic_Device))))
@@ -109,6 +125,11 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LogoButton", SCENE_LOGO, L"Layer_LogoButton")))
 		return E_FAIL;
 	m_pLogoBtn = static_cast<CLogoBtn*>(g_pManagement->Get_GameObjectBack(L"Layer_LogoButton", SCENE_LOGO));
+
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LoadingScreen", SCENE_STATIC, L"Layer_LoadingScreen")))
+		return E_FAIL;
+	m_pLoadingScreen = static_cast<CLoadingScreen*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingScreen", SCENE_STATIC));
+	m_pLoadingScreen->Set_FadeSpeed(0.3f);
 	return S_OK;
 }
 

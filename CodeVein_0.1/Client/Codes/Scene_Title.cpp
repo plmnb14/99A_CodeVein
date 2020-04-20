@@ -34,7 +34,7 @@ HRESULT CScene_Title::Ready_Scene()
 	
 	if (FAILED(Ready_Layer_LoadingUI(L"Layer_LoadingUI")))
 		return E_FAIL;
-
+	
 	// 파티클
 	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
 		return E_FAIL;
@@ -64,7 +64,7 @@ _int CScene_Title::Update_Scene(_double TimeDelta)
 	if (true == m_pLoading->Get_Finish())
 	{
 		static_cast<CLoadingBar*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingUI", SCENE_TITLE))->Set_Finish();
-
+		
 		cout << "로드 되었습니다!! 넘어가세요!!" << endl;
 	}
 
@@ -75,12 +75,15 @@ _int CScene_Title::Update_Scene(_double TimeDelta)
 
 	if (true == m_pLoading->Get_Finish() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
+		static_cast<CLoadingScreen*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingScreen", SCENE_STATIC))->Set_Active(false);
+		static_cast<CLoadingScreen*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingScreen", SCENE_STATIC))->Set_UI_Index(1);
 		// =======================================================
 		// UI 버튼 막아놓음.
 		// =======================================================
 		//if (false == Coll_ToButton)
 		//	return 0;
-	
+		//m_pLoadingScreen->Set_Active(false);	
+
 		CScene* pScene = nullptr;
 	
 		switch (m_sStageOptionIdx)
@@ -145,10 +148,7 @@ HRESULT CScene_Title::Ready_Prototype_GameObject()
 	CCameraMgr::Get_Instance()->Set_MainCamera(DYNAMIC_CAM, L"Tool_FreeCam");
 	CCameraMgr::Get_Instance()->Set_MainPos(_v3{ 0,3,-5 });
 
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LoadingScreen", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LoadingScreen/LoadingScreen0.tga", 1))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LoadingScreen", CLoadingScreen::Create(m_pGraphic_Device))))
-		return E_FAIL;
+	
 	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LoadingBar", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LoadingBar/LoadingBar%d.png", 10))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LoadingBar", CLoadingBar::Create(m_pGraphic_Device))))
@@ -159,10 +159,9 @@ HRESULT CScene_Title::Ready_Prototype_GameObject()
 
 HRESULT CScene_Title::Ready_Layer_LoadingUI(const _tchar * pLayerTag)
 {
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LoadingScreen", SCENE_TITLE, L"Layer_LoadingScreen")))
-		return E_FAIL;
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LoadingBar", SCENE_TITLE, pLayerTag)))
 		return E_FAIL;
+	static_cast<CLoadingScreen*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingScreen", SCENE_STATIC))->Set_UI_Index(0);
 	return S_OK;
 }
 
