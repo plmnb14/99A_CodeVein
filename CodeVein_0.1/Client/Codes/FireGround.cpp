@@ -262,7 +262,7 @@ void CFireGround::OnCollisionEvent(list<CGameObject*> plistGameObject)
 					// 장판 충돌
 					else
 					{
-						iter->Add_Target_Hp(-m_tObjParam.fDamage * m_dTimeDelta);
+						iter->Add_Target_Hp(_float(-m_tObjParam.fDamage * m_dTimeDelta));
 					}
 				}
 

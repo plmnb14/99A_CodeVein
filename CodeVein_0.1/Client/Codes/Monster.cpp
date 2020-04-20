@@ -26,6 +26,16 @@ HRESULT CMonster::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 	return S_OK;
 }
 
+void CMonster::Set_Target_To_Player()
+{
+	lstrcpy(m_pLayerTag_Of_Target, L"Layer_Player");
+}
+
+void CMonster::Set_Target_To_Colleague()
+{
+	lstrcpy(m_pLayerTag_Of_Target, L"Layer_Colleague");
+}
+
 _bool CMonster::Is_InFov(_float fDegreeOfFov, CTransform* pSelfTransform, _v3 vTargetPos)
 {
 	_v3 vThisLook = *(_v3*)(&pSelfTransform->Get_WorldMat().m[2]);

@@ -22,6 +22,7 @@ public:
 		WPN_Hammer_YachaMan,
 		WPN_QueenLance,
 		WPN_QueenShield,
+		WPN_FrostBlood_IceGirl,
 		WPN_DATA_End
 	};
 
@@ -69,8 +70,8 @@ public:
 	// ∆Æ∑π¿œ On/Off
 	virtual void			Set_Enable_Trail(_bool _bEnable);
 	virtual void			Set_SkillMode(_bool _bSkill);
-	virtual void			Set_TrailIndex(_int iIdx);
-	virtual void			Set_TrailUseMask(_int iIdx);
+	virtual void			Set_TrailIndex(_int iIdx, _bool bStaticTrail = false);
+	virtual void			Set_TrailUseMask(_int iIdx, _bool bStaticTrail = false);
 	virtual void			Set_Enable_Record(_bool _bRecord);
 	virtual void			Set_SkillPercent(_float _fPercent);
 	virtual void			Set_Invisible(_bool _bInvisible) { m_tObjParam.bInvisible = _bInvisible; }

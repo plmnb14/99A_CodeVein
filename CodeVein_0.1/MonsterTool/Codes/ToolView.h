@@ -37,9 +37,10 @@ public:
 	list<Engine::MESH_INFO*> Get_Weaponlist() { return m_listWeaponPathInfo; }
 	LPDIRECT3DDEVICE9 Get_Device() { return m_pDevice; }
 
-	void Create_Mesh_PathInfo();
+	void Create_Mesh_PathInfo(const _tchar* szDynamicExtractPath, const _tchar* szDynamicSavePath,
+							 const _tchar* szWeaponExtractPath, const _tchar* szWeaponSavePath);
 	void Extract_Mesh_PathInfo(const _tchar* pPath, list<MESH_INFO*>& rPathInfoLst, _bool _bIsDynamic = false);
-	void Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst, _tchar* szPath);
+	void Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst, const _tchar* szPath);
 
 	void Start();
 	void Update(const _float& fTimeDelta);

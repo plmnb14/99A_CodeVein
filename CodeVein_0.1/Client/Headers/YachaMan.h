@@ -12,13 +12,14 @@ class CMonsterUI;
 class CYachaMan final : public CGameObject
 {
 public:
+	enum FBLR { FRONT, FRONTLEFT, FRONTRIGHT, BACK, BACKLEFT, BACKRIGHT, LEFT, RIGHT };
 	enum MONSTER_ANITYPE { IDLE, MOVE, ATTACK, HIT, CC, DEAD };
-	
+
 	enum YACHAMAN_IDLETYPE { IDLE_IDLE, IDLE_EAT, IDLE_LURK };
 	enum YACHAMAN_MOVETYPE {MOVE_RUN, MOVE_WALK, MOVE_DODGE};
 	enum YACHAMAN_ATKTYPE {ATK_NORMAL, ATK_COMBO};
-	enum YACHAMAN_HITTYPE { HIT_HIT, HIT_HIT_F, HIT_HIT_B };
-	enum YACHAMAN_DOWNTYPE { DOWN_DOWN, DOWN_DOWN_S, DOWN_DOWN_W };
+	enum YACHAMAN_HITTYPE { HIT_STRONG, HIT_NORMAL, HIT_WEAK };
+	enum YACHAMAN_CCTYPE { CC_STUN, CC_DOWN };
 	enum YACHAMAN_DEADTYPE { DEAD_DEAD, DEAD_DEAD_S };
 
 	enum ATK_NORMAL_TYPE 
@@ -45,9 +46,9 @@ public:
 		Atk_Ani_Run_Loop,
 		Atk_Ani_Run_End,
 
-		Dead_B,
-		Dead_F,
-		Dead,
+		Death_B,
+		Death_F,
+		Death,
 
 		Run = 64,
 		Dodge,
@@ -72,7 +73,8 @@ public:
 		Parried,	
 		Hit_B_WeakFly,
 		Hit_F_WeakFly,
-		Groggy,
+		Groggy, //->Stun
+
 		Hit_S_BR,
 		Hit_S_BL,
 		Hit_S_FR,
@@ -90,8 +92,6 @@ public:
 	};
 
 	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_LeftArm, Bone_End };
-
-	enum FBLR { FRONT, BACK, LEFT, RIGHT };
 
 protected:
 	explicit CYachaMan(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -113,27 +113,20 @@ private:
 	void Check_CollisionPush();
 	void Check_CollisionEvent(list<CGameObject*> plistGameObject);
 
-	//피격,회피,인식,범위,공격가능성,엇박자
-	void Check_Hit();
-	void Check_FBLR();
-	void Check_Dist();
-	void Set_AniEvent();
-
 	void Function_RotateBody();
 	void Function_CoolDown();
 	void Function_Movement(_float _fspeed, _v3 _vDir = { V3_NULL });
 	void Function_DecreMoveMent(_float _fMutiply = 1.f);
 	void Function_ResetAfterAtk();
 
-	void Play_Idle();
-	void Play_Lurk();
-	void Play_Eat();
-
-	void Play_Walk();
-	void Play_Run();
-	void Play_Dodge();
+	void Check_Hit();
+	void Check_FBLR();
+	void Check_Dist();
+	void Check_AniEvent();
 
 	void Play_RandomAtkNormal();
+	void Play_RandomAtkCombo();
+
 	void Play_R();
 	void Play_L();
 	void Play_Hammering();
@@ -142,20 +135,17 @@ private:
 	void Play_HalfClock();
 	void Play_TargetHammering();
 	void Play_WheelWind();
-
-	void Play_RandomAtkCombo();
 	void Play_Combo_R_L();
 	void Play_Combo_R_Hammering();
 	void Play_Combo_Shoulder_TurnTwice();
 	void Play_Combo_Shoulder_HalfClock();
 	void Play_Combo_RunHammering();
 
+	void Play_Idle();
+	void Play_Move();
 	void Play_Hit();
-	void Play_Down_Strong();
-	void Play_Down_Weak();
-
+	void Play_CC();
 	void Play_Dead();
-	void Play_Dead_Strong();
 
 private:
 	HRESULT Add_Component();
@@ -198,23 +188,22 @@ private:
 	_float				m_fSkillMoveAccel_Max = 0.f;
 	_float				m_fSkillMoveMultiply = 1.f;
 
-	MONSTER_ANITYPE		m_eFirstCategory; //대분류
-	YACHAMAN_IDLETYPE	m_eSecondCategory_IDLE; //중분류
+	MONSTER_ANITYPE		m_eFirstCategory;
+	YACHAMAN_IDLETYPE	m_eSecondCategory_IDLE;
 	YACHAMAN_MOVETYPE	m_eSecondCategory_MOVE;
 	YACHAMAN_ATKTYPE	m_eSecondCategory_ATK;
 	YACHAMAN_HITTYPE	m_eSecondCategory_HIT;
-	YACHAMAN_DOWNTYPE	m_eSecondCategory_DOWN;
+	YACHAMAN_CCTYPE		m_eSecondCategory_CC;
 	YACHAMAN_DEADTYPE	m_eSecondCategory_DEAD;
 
 	ATK_COMBO_TYPE		m_eAtkCombo;
 	YACHAMAN_ANI		m_eState;
+	FBLR				m_eFBLR;
+
 	_bool				m_bEventTrigger[20] = {};
-	/////////Test
-	_bool				m_bCanDead = false;
+
+	_bool				m_bCanPlayDead = false;
 	_bool				m_bCanDissolve = false;
-	//////////////
-	_bool				m_bCanPlayDeadAni = false;
-	_bool				m_bIsPlayDeadAni = false;
 
 	_bool				m_bInRecognitionRange = false;
 	_bool				m_bInAtkRange = false;
@@ -224,9 +213,13 @@ private:
 	_bool				m_bCanCoolDown = false;
 	_bool				m_bIsCoolDown = false;
 
-	_bool				m_bCanAtkCategoryRandom = true;
-	_bool				m_bIsAtkCombo = false;
-	_bool				m_bCanIdleRandom = true;
+	_bool				m_bAtkCategory = true;
+	_bool				m_bCanInterrupt = true;
+	_bool				m_bCanCombo = true;
+	_bool				m_bIsCombo = false;
+
+	_bool				m_bCanIdle = true;
+	_bool				m_bIsIdle = false;
 
 	_float				m_fRecognitionRange = 15.f;
 	_float				m_fAtkRange = 4.f;

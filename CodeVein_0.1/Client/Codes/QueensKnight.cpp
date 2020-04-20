@@ -1822,7 +1822,7 @@ HRESULT CQueensKnight::Update_Value_Of_BB()
 	_v3 vPlayerLook = *D3DXVec3Normalize(&_v3(), (_v3*)&matPlayer.m[2]);
 	_v3 vPlayerRight = *D3DXVec3Normalize(&_v3(), (_v3*)&matPlayer.m[0]);
 
-	_float fLength = 3.f;
+	_float fLength = 3.6f;
 
 	switch (CALC::Random_Num(0, 3))
 	{
