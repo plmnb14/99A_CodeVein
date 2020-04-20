@@ -74,7 +74,7 @@ HRESULT CIceGirl::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Jump_Attack_And_ColdBeam());
+	Start_Sel->Add_Child(Start_Game());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -1318,6 +1318,7 @@ CBT_Composite_Node * CIceGirl::NearAttack_Dist5_More_Than_HP40()
 	Root_Sel->Add_Child(Ice_Cut());
 	Root_Sel->Add_Child(Turn_Cut(0.95f));
 	Root_Sel->Add_Child(Random_Dodge());
+	Root_Sel->Add_Child(Jump_Attack_And_ColdBeam());
 	
 	return Root_Sel;
 }

@@ -83,6 +83,9 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_BossUI")))
 		return E_FAIL;
 
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Mistletoe")))
+		return E_FAIL;
+
 	CGameObject* pInstance = nullptr;
 
 	// 네모네모 동료
