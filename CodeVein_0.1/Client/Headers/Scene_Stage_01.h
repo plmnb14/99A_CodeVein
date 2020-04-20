@@ -34,7 +34,6 @@ private:
 
 private:
 	HRESULT Ready_LightDesc();
-	void	Create_Fog(_double TimeDelta);
 
 public:
 	static CScene_Stage_01* Create(LPDIRECT3DDEVICE9 pGraphic_Device, _bool _bLoadStatic);
