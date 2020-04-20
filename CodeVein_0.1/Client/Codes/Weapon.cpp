@@ -178,7 +178,9 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 	if (false == m_tObjParam.bCanAttack)
 		return;
 
+	_v3 vHitDir = V3_NULL;
 	_bool bFirst = true;
+
 	//게임 오브젝트를 받아와서
 	for (auto& iter : plistGameObject)
 	{
@@ -227,6 +229,13 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 							// 무기 공격력의 +-20%까지 랜덤범위
 							_uint min = (_uint)(m_tObjParam.fDamage - (m_tObjParam.fDamage * 0.2f));
 							_uint max = (_uint)(m_tObjParam.fDamage + (m_tObjParam.fDamage * 0.2f));
+
+							//피격시 밀림처리.....
+							//memcpy(vHitDir, &(m_pmatParent->_41), sizeof(_v3));
+
+							//V3_NORMAL(&m_tObjParam.vHitDir, &(ExceptY - vHitDir));
+
+							//iter->Set_Target_HitDir(m_tObjParam.vHitDir);
 
 							iter->Add_Target_Hp(-(_float)CALC::Random_Num(min , max) * m_fSkillPercent);
 							g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));

@@ -6,12 +6,15 @@
 
 BEGIN(Client)
 
+class CHunterBullet;
 class CWeapon;
 class CMonsterUI;
 
 class CHunter final : public CGameObject
 {
+
 public:
+	enum FBLR { FRONT, FRONTLEFT, FRONTRIGHT, BACK, BACKLEFT, BACKRIGHT, LEFT, RIGHT };
 	enum MONSTER_ANITYPE { IDLE, MOVE, ATTACK, HIT, CC, DEAD };
 
 	enum WEAPON_ANITYPE	 {GUN, HALBERD, HAMMER, LSWORD, SWORD, WEAPON_ANITYPE_END};
@@ -20,8 +23,8 @@ public:
 	enum HUNTER_MOVETYPE { MOVE_RUN, MOVE_WALK, MOVE_DODGE }; //다양한 이동, 회피
 	enum HUNTER_ATKTYPE  { ATK_NORMAL, ATK_COMBO }; //일반공격, 콤보공격
 	enum HUNTER_HITTYPE  { HIT_STRONG, HIT_NORMAL, HIT_WEAK }; //피격 방향, 데미지에 따른 피격 모션
-	enum HUNTER_CCTYPE { CC_DOWN, CC_STUN, CC_BLOW }; //다운,스턴,날아감
-	enum HUNTER_DEADTYPE { DEAD_DEAD, DEAD_DEAD_S }; //일반, 특정 상황에서 죽었을 경우
+	enum HUNTER_CCTYPE	 { CC_STUN, CC_DOWN };
+	enum HUNTER_DEADTYPE { DEAD_DEAD, DEAD_DEAD_S, DEAD_DEAD_P}; //일반, 특정 상황에서 죽었을 경우
 
 	enum ATK_NORMAL_TYPE
 	{
@@ -49,7 +52,6 @@ public:
 		NORMAL_LSWORD_RIGHT,
 		NORMAL_LSWORD_RDIAGONAL,
 		NORMAL_LSWORD_SMASH,
-		//NORMAL_LSWORD_SWING, //폐기
 
 		NORMAL_SWORD_JUMP,
 		NORMAL_SWORD_RAISEUP,
@@ -111,7 +113,7 @@ public:
 		Groggy_Start,
 		Groggy_Loop,
 		Groggy_End,
-		DmgRepel, //사용 안하는 걸로
+		DmgRepel, //폐기
 
 		Down_S_End,
 		Down_S_Loop,
@@ -133,13 +135,13 @@ public:
 		Death_F,
 		Death_B,
 		Death,
-
+		///////////////////////////////////
 		KetsugiGroundRange,
 		KetsugiEnchant,
-		KetsugiBuffSelf,
+		KetsugiBuffSelf,	//미사용
 		KetsugiAllRangeShoot,
 		KetsugiAimShoot,
-
+		///////////////////////////////////
 		SSword_Atk_Sp03_Start,
 		SSword_Atk_Sp03_Loop,
 		SSword_Atk_Sp03_End,
@@ -198,9 +200,31 @@ public:
 
 	};
 
-	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_Head, Bone_RightForeArm, Bone_LeftKnee, Bone_LeftToe, Bone_End };
+	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_Head, Bone_RightForeArm, Bone_LeftKnee, Bone_LeftToe, Bone_RightHandAttach, Bone_End };
 
-	enum FBLR { FRONT, FRONTLEFT, FRONTRIGHT, BACK, BACKLEFT, BACKRIGHT, LEFT, RIGHT };
+public:
+		typedef struct tagHunterInfo
+		{
+			tagHunterInfo(_float _fDMG, _float _fHpMax,
+				_float _fKnowRange, _float _fAtkRange,
+				_float _ShotRange, _int iDodgeMax, WEAPON_ANITYPE eWeapon)
+				:
+				fKonwingRange(_fKnowRange),
+				fCanAttackRange(_fAtkRange),
+				fCanShotRangeIfGunChooose(_ShotRange), 
+				fDodgeCountMax(iDodgeMax),
+				eUseWhatWeapon(eWeapon)
+			{
+				tMonterStatus.fDamage = _fDMG;
+				tMonterStatus.fHp_Max = _fHpMax;
+			}
+			OBJECT_PARAM		tMonterStatus;
+			_float				fKonwingRange = 20.f;
+			_float				fCanShotRangeIfGunChooose = 10.f;
+			_float				fCanAttackRange = 5.f;
+			_int				fDodgeCountMax = 3;
+			WEAPON_ANITYPE		eUseWhatWeapon = WEAPON_ANITYPE::SWORD;
+		}HUNTER_INFO;
 
 protected:
 	explicit CHunter(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -290,6 +314,7 @@ private:
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
+	HRESULT Ready_Status(void* pArg); //추후 공격력 방어력 등등의 세부 수치도 받을 예정
 	HRESULT Ready_Weapon();
 	HRESULT Ready_Collider();
 	HRESULT Ready_BoneMatrix();
@@ -321,15 +346,15 @@ private:
 	_float				m_fSkillMoveAccel_Max = 0.f;
 	_float				m_fSkillMoveMultiply = 1.f;
 
-	MONSTER_ANITYPE		m_eFirstCategory; //대분류
-	HUNTER_IDLETYPE		m_eSecondCategory_IDLE; //중분류
+	MONSTER_ANITYPE		m_eFirstCategory;
+	HUNTER_IDLETYPE		m_eSecondCategory_IDLE;
 	HUNTER_MOVETYPE		m_eSecondCategory_MOVE;
 	HUNTER_ATKTYPE		m_eSecondCategory_ATK;
 	HUNTER_HITTYPE		m_eSecondCategory_HIT;
 	HUNTER_CCTYPE		m_eSecondCategory_CC;
 	HUNTER_DEADTYPE		m_eSecondCategory_DEAD;
 
-	WEAPON_ANITYPE		m_eWeaponState = WEAPON_ANITYPE::HALBERD;
+	WEAPON_ANITYPE		m_eWeaponState = WEAPON_ANITYPE::SWORD;
 	ATK_COMBO_TYPE		m_eAtkCombo;
 	HUNTER_ANI			m_eState;
 	FBLR				m_eFBLR;
@@ -347,10 +372,13 @@ private:
 	_bool				m_bCanCoolDown = false;
 	_bool				m_bIsCoolDown = false;
 
-	_bool				m_bCanAtkCategoryRandom = true;
+	_bool				m_bAtkCategory = true;
+	_bool				m_bCanInterrupt = true;
+	_bool				m_bCanCombo = true;
 	_bool				m_bIsCombo = false;
-	_bool				m_bCanComboInterrupt = true; 	//항상True 콤보 진행후 특정 애니구간마다 true를 줘서 
-	_bool				m_bCanIdleRandom = true;
+
+	_bool				m_bCanIdle = true;
+	_bool				m_bIsIdle = false;
 
 	//총타입의 경우 shot레인지 이내에서는 원거리 공격위주
 	//fatkrange 범위에 들어온 경우 kick,r,cqc 중 하나를 랜덤하게 진행한다
