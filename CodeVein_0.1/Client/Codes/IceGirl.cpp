@@ -1954,12 +1954,14 @@ HRESULT CIceGirl::Ready_Weapon()
 {
 	// 오른손 무기
 	m_pSword = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pSword->Change_WeaponData(CWeapon::WPN_QueenLance);
-
+	m_pSword->Change_WeaponData(CWeapon::WPN_FrostBlood_IceGirl);
+	
 	// Trail
 	m_pSword->Set_Enable_Trail(true);
 	m_pSword->Set_TrailIndex(8);
+	m_pSword->Set_TrailIndex(9, true);
 	m_pSword->Set_TrailUseMask(0);
+	m_pSword->Set_TrailUseMask(0, true);
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
 	m_pSword->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
