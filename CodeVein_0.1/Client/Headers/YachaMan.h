@@ -119,6 +119,7 @@ private:
 	void Function_DecreMoveMent(_float _fMutiply = 1.f);
 	void Function_ResetAfterAtk();
 
+	void Check_PosY();
 	void Check_Hit();
 	void Check_FBLR();
 	void Check_Dist();

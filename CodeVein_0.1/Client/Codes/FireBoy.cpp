@@ -465,7 +465,7 @@ CBT_Composite_Node * CFireBoy::Fire_Cone()
 	CBT_Wait* Wait0 = Node_Wait("´ë±â0", 1.166, 0);
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("¹æÇâ ÃßÀû", L"Player_Pos", 4.05, 0);
 
-	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("ÃÑ±â ÀÔ±¸ ÀÌÆåÆ®", L"FireBoy_FireBullet_GunEff", L"Bone_Muzzle", 1.0, 70, 0, 0);
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("ÃÑ±â ÀÔ±¸ ÀÌÆåÆ®", L"FireBoy_FireBullet_GunEff", L"Bone_Muzzle", 1.0, 210, 0, 0);
 
 	Root_Parallel->Add_Service(Effect0);
 
@@ -479,7 +479,7 @@ CBT_Composite_Node * CFireBoy::Fire_Cone()
 
 
 
-	CBT_CreateBullet* Col0 = Node_CreateBullet("È­¿° ¹ß»ç", L"Monster_FireBullet", L"Bone_Muzzle", L"FireDir", 8, 1, 1.166, 20, 0.2, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Col0 = Node_CreateBullet("È­¿° ¹ß»ç", L"Monster_FireBullet", L"Bone_Muzzle", L"FireDir", 8, 1, 1.166, 160, 0.025, 0, CBT_Service_Node::Finite);
 	Root_Parallel->Add_Service(Col0);
 
 	return Root_Parallel;

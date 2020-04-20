@@ -73,6 +73,7 @@ _int CYeti::Update_GameObject(_double TimeDelta)
 
 	CGameObject::Update_GameObject(TimeDelta);
 
+	Check_PosY();
 	Check_Hit();
 	Check_Dist();
 	Check_AniEvent();
@@ -456,6 +457,13 @@ void CYeti::Function_ResetAfterAtk()
 
 	LOOP(20)
 		m_bEventTrigger[i] = false;
+
+	return;
+}
+
+void CYeti::Check_PosY()
+{
+	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
 	return;
 }
