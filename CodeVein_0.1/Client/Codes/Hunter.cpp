@@ -32,9 +32,6 @@ HRESULT CHunter::Ready_GameObject(void * pArg)
 	Ready_Weapon();
 
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
-	m_pTarget->AddRef();
-	m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
-	m_pTargetTransform->AddRef();
 
 	if (nullptr != m_pTarget)
 	{
@@ -743,8 +740,6 @@ void CHunter::Check_AniEvent()
 			if (WEAPON_ANITYPE::HAMMER == m_eWeaponState)
 				m_iRandom = 0;
 
-			m_iRandom = 1; //Test
-			
 			switch (m_iRandom)
 			{
 			case HUNTER_ATKTYPE::ATK_NORMAL:
@@ -1405,6 +1400,7 @@ void CHunter::Play_Gun_Combo_Shot()
 
 				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &CHunterBullet::HUNTERBULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 3.f, 1.5));
 			}
+			Function_RotateBody();
 		}
 
 		if (m_pMeshCom->Is_Finish_Animation(0.3f))
@@ -5639,6 +5635,7 @@ void CHunter::Free()
 {
 	Safe_Release(m_pTarget);
 	Safe_Release(m_pTargetTransform);
+
 	Safe_Release(m_pWeapon);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pNavMesh);
