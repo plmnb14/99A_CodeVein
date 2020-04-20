@@ -326,6 +326,20 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceBlock_Sub_02", true)))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_Main_Big", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_Sub_01_Big", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_Sub_02_Big", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_Main_Mid", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_Sub_01_Mid", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_Sub_02_Mid", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_Main_Small", true)))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceBlock_Break", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceGirl_SwordBullet_Mesh", true)))
@@ -398,6 +412,10 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireTornade_ReadyFire_Up")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireBullet")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireBullet_Mid")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireBullet_Big")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireBullet_Sub_0")))
 		return E_FAIL;
