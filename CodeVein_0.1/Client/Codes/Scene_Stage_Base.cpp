@@ -26,11 +26,11 @@ HRESULT CScene_Stage_Base::Ready_Scene()
 	// 플레이어의 네비 메쉬도 바꿔줍니다.
 	Ready_Player();
 
-	if (false == g_bOnStage[6])
+	if (false == g_bOnStage[7])
 	{
 		m_pLoading = CLoading::Create(m_pGraphic_Device, SCENE_PREPARE_ALL);
 
-		g_bOnStage[6] = true;
+		g_bOnStage[7] = true;
 	}
 
 	return S_OK;

@@ -41,18 +41,22 @@ HRESULT CColdBeamBig::Ready_GameObject(void * pArg)
 	if (vRight.z > 0)
 		fDot *= -1.f;
 
+	m_pTransformCom->Set_Angle(_v3(0.f, fDot, 0.f));
+
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
 
 	m_pBulletBody_01 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"IceBlock_Main", nullptr));
-	m_pBulletBody_01->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
-	m_pBulletBody_01->Set_Angle(_v3(D3DXToRadian(20.f), fDot, 0.f));
+	m_pBulletBody_01->Set_Desc(_v3(0, 0, 0), nullptr);
+	//m_pBulletBody_01->Set_Angle(_v3(20.f, 0.f, 0.f));
+	m_pBulletBody_01->Set_ParentObject(this);
 	m_pBulletBody_01->Reset_Init();
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody_01, SCENE_STAGE, L"Layer_Effect", nullptr);
 
-	m_pBulletBody_02 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"IceBlock_Sub_02", nullptr));
-	m_pBulletBody_02->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
-	m_pBulletBody_02->Set_Angle(_v3(D3DXToRadian(20.f), fDot, 0.f));
+	m_pBulletBody_02 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"IceBlock_Sub_01", nullptr));
+	m_pBulletBody_02->Set_Desc(_v3(0, 0, 0), nullptr);
+	//m_pBulletBody_02->Set_Angle(_v3(20.f, 0.f, 0.f));
+	m_pBulletBody_02->Set_ParentObject(this);
 	m_pBulletBody_02->Reset_Init();
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody_02, SCENE_STAGE, L"Layer_Effect", nullptr);
 
@@ -74,7 +78,7 @@ _int CColdBeamBig::Update_GameObject(_double TimeDelta)
 		CParticleMgr::Get_Instance()->Create_Effect(L"IceCrystal_02", m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), nullptr);
 		CParticleMgr::Get_Instance()->Create_Effect(L"IceCrystal_03", m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), nullptr);
 		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Smoke_01", m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Smoke_01", m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Smoke_02", m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), nullptr);
 		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Particle", m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), nullptr);
 		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Break", m_pTransformCom->Get_Pos() + _v3(0.f, 0.6f, 0.f), nullptr);
 		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Break", m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), nullptr);

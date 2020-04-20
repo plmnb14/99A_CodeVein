@@ -313,15 +313,22 @@ void CWeapon::Set_SkillMode(_bool _bSkill)
 		m_pTrailEffect->Set_TrailIdx(0);
 }
 
-void CWeapon::Set_TrailIndex(_int iIdx)
+void CWeapon::Set_TrailIndex(_int iIdx, _bool bStaticTrail)
 {
 	m_bSingleTrail = true;
-	m_pTrailEffect->Set_TrailIdx(iIdx);
+
+	if(!bStaticTrail)
+		m_pTrailEffect->Set_TrailIdx(iIdx);
+	else
+		m_pStaticTrailEffect->Set_TrailIdx(iIdx);
 }
 
-void CWeapon::Set_TrailUseMask(_int iIdx)
+void CWeapon::Set_TrailUseMask(_int iIdx, _bool bStaticTrail)
 {
-	m_pTrailEffect->Set_UseMask(iIdx);
+	if (!bStaticTrail)
+		m_pTrailEffect->Set_UseMask(iIdx);
+	else
+		m_pStaticTrailEffect->Set_UseMask(iIdx);
 }
 
 void CWeapon::Set_Enable_Record(_bool _bRecord)
@@ -473,10 +480,10 @@ void CWeapon::Change_WeaponData(WEAPON_DATA _eWpnData)
 		m_eWeaponType = WEAPON_Halverd;
 		break;
 	}
-	case WPN_QueenShield:
+	case WPN_FrostBlood_IceGirl:
 	{
-		lstrcpy(WeaponMeshName, L"Mesh_Wpn_QueenShield");
-		m_eWeaponType = WEAPON_Shield;
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_FrostBlood_IceGirl");
+		m_eWeaponType = WEAPON_Halverd;
 		break;
 	}
 	}
@@ -637,6 +644,14 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[WPN_QueenShield].fTrail_Min = 0.f;
 	m_tWeaponParam[WPN_QueenShield].fTrail_Max = 1.f;
 	m_tWeaponParam[WPN_QueenShield].fCol_Height = 0.f;
+
+	//===========================================================================================
+
+	m_tWeaponParam[WPN_FrostBlood_IceGirl].fDamage = 25.f;
+	m_tWeaponParam[WPN_FrostBlood_IceGirl].fRadius = 1.3f;
+	m_tWeaponParam[WPN_FrostBlood_IceGirl].fTrail_Min = 0.3f;
+	m_tWeaponParam[WPN_FrostBlood_IceGirl].fTrail_Max = 1.6f;
+	m_tWeaponParam[WPN_FrostBlood_IceGirl].fCol_Height = 1.6f;
 
 	return S_OK;
 }
