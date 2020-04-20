@@ -26,9 +26,14 @@ HRESULT CMonster::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 	return S_OK;
 }
 
-void CMonster::Set_Target_LayerTag(_tchar * pLayerTag)
+void CMonster::Set_Target_To_Player()
 {
-	lstrcpy(m_pLayerTag_Of_Target, pLayerTag);
+	lstrcpy(m_pLayerTag_Of_Target, L"Layer_Player");
+}
+
+void CMonster::Set_Target_To_Colleague()
+{
+	lstrcpy(m_pLayerTag_Of_Target, L"Layer_Colleague");
 }
 
 _bool CMonster::Is_InFov(_float fDegreeOfFov, CTransform* pSelfTransform, _v3 vTargetPos)

@@ -185,6 +185,13 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"IceBlock_Main", 30);
 	Input_Pool(L"IceBlock_Sub_01", 30);
 	Input_Pool(L"IceBlock_Sub_02", 30);
+	Input_Pool(L"IceBlock_Main_Big", 30);
+	Input_Pool(L"IceBlock_Sub_01_Big", 30);
+	Input_Pool(L"IceBlock_Sub_02_Big", 30);
+	Input_Pool(L"IceBlock_Main_Mid", 30);
+	Input_Pool(L"IceBlock_Sub_01_Mid", 30);
+	Input_Pool(L"IceBlock_Sub_02_Mid", 30);
+	Input_Pool(L"IceBlock_Main_Small", 30);
 	Input_Pool(L"IceCrystal_01", 100);
 	Input_Pool(L"IceCrystal_02", 100);
 	Input_Pool(L"IceCrystal_03", 100);
@@ -221,6 +228,8 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"FireBoy_Fire_Particle_02", 500);
 	Input_Pool(L"FireBoy_FireTornade_ReadyFire_Up", 100);
 	Input_Pool(L"FireBoy_FireBullet", 500);
+	Input_Pool(L"FireBoy_FireBullet_Mid", 500);
+	Input_Pool(L"FireBoy_FireBullet_Big", 500);
 	Input_Pool(L"FireBoy_FireBullet_Sub_0", 500);
 	Input_Pool(L"FireBoy_FireBullet_Sub_1", 500);
 	Input_Pool(L"FireBoy_FireBullet_GunEff", 300);

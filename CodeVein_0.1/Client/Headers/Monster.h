@@ -24,11 +24,11 @@ protected:
 	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass);
 
 protected:	// DJ
-	_tchar m_pLayerTag_Of_Target[256] = { 0, };
+	_tchar m_pLayerTag_Of_Target[256] = { L"Layer_Player" };
 
-	void Set_Target_LayerTag(_tchar* pTarget_LayerTag);
-
-
+protected:
+	void Set_Target_To_Player();
+	void Set_Target_To_Colleague();
 
 	_bool Is_InFov(_float fDegreeOfFov, CTransform* pSelfTransform, _v3 vTargetPos);
 

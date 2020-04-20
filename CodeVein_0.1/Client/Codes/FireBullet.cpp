@@ -39,6 +39,11 @@ HRESULT CFireBullet::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
 
+	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"FireBoy_FireBullet_Mid", nullptr));
+	m_pBulletBody->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
+	m_pBulletBody->Reset_Init();
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
+
 
 	return NOERROR;
 }
@@ -50,7 +55,6 @@ _int CFireBullet::Update_GameObject(_double TimeDelta)
 	if (m_bDead)
 		return DEAD_OBJ;
 
-	OnCollisionEnter();
 		
 	m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
 
@@ -62,29 +66,26 @@ _int CFireBullet::Update_GameObject(_double TimeDelta)
 	// 시간 초과
 	if (m_dCurTime > m_dLifeTime)
 	{
-
+		m_pBulletBody->Set_Dead();
 		m_bDead = true;
 	}
 	// 진행중
 	else
 	{
 		m_fEffectOffset += (_float)TimeDelta;
-		if (m_fEffectOffset > 0.05f)
+		if (m_fEffectOffset > 0.08f)
 		{
 			m_fEffectOffset = 0.f;
-			g_pManagement->Create_Effect(L"FireBoy_FireBullet", m_pTransformCom->Get_Pos(), nullptr);
-			
-			_int iRand = CCalculater::Random_Num(0, 2); // 33%
-			if(0 == iRand)
-				g_pManagement->Create_Effect(L"FireBoy_FireBullet_Sub_0", m_pTransformCom->Get_Pos(), nullptr);
-			else if(1 == iRand)
-				g_pManagement->Create_Effect(L"FireBoy_FireBullet_Sub_1", m_pTransformCom->Get_Pos(), nullptr);
 
 			g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_01", m_pTransformCom->Get_Pos(), nullptr);
 			g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_02", m_pTransformCom->Get_Pos(), nullptr);
 		}
-			
 	}
+
+	// 가까이가면 바로 사라지는 것 방지, 불을 잠깐이라도 보여주고 충돌시키자.
+	if(0.1f < m_dCurTime)
+		OnCollisionEnter();
+
 
 	return NOERROR;
 }
@@ -239,7 +240,7 @@ HRESULT CFireBullet::Ready_Collider()
 	// 총알 중앙
 	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 
-	_float fRadius = 0.85f;
+	_float fRadius = 0.9f;
 
 	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
 	pCollider->Set_Dynamic(true);

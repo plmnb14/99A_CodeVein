@@ -50,7 +50,7 @@ private:	// 패턴
 	CBT_Composite_Node* Back_Dash();
 
 	////// 원거리
-	// 1. 추적하면서 지속적으로 불 발사
+	// 1. 추적하면서 지속적으로 불 발사,	불 이펙트 크기 키우기
 	CBT_Composite_Node* Fire_Tracking();
 	// 2. 불 부채꼴로 발사
 	CBT_Composite_Node* Fire_Cone();
@@ -118,6 +118,7 @@ private:
 	_v3					m_vMuzzle		= _v3(0.f, 0.f, 0.f);	// 총구 뼈
 	_v3					m_vLeftForeArm	= _v3(0.f, 0.f, 0.f);	// 팔꿈치 뼈
 	_v3					m_vLeftHand		= _v3(0.f, 0.f, 0.f);	// 왼손 뼈
+	_v3					m_vRightHand	= _v3(0.f, 0.f, 0.f);	// 오른손 뼈
 
 private:	// 최초상태 세팅
 	_float				m_fFov = 0.f;
