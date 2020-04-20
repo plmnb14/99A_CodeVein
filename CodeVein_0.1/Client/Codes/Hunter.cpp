@@ -83,6 +83,7 @@ _int CHunter::Update_GameObject(_double TimeDelta)
 
 	CGameObject::Update_GameObject(TimeDelta);
 
+	Check_PosY();
 	Check_Hit();
 	Check_Dist();
 	Check_AniEvent();
@@ -431,7 +432,7 @@ void CHunter::Function_CoolDown()
 void CHunter::Function_Movement(_float _fspeed, _v3 _vDir)
 {
 	V3_NORMAL(&_vDir, &_vDir);
-
+	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &_vDir, _fspeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
 
 	return;
@@ -478,6 +479,13 @@ void CHunter::Function_ResetAfterAtk()
 
 	LOOP(20)
 		m_bEventTrigger[i] = false;
+
+	return;
+}
+
+void CHunter::Check_PosY()
+{
+	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
 	return;
 }

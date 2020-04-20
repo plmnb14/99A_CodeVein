@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\Monkey.h"
 #include "..\Headers\Weapon.h"
+#include "..\Headers\MonkeyBullet.h"
 
 CMonkey::CMonkey(LPDIRECT3DDEVICE9 pGraphic_Device)
 	:CGameObject(pGraphic_Device)
@@ -76,6 +77,7 @@ _int CMonkey::Update_GameObject(_double TimeDelta)
 
 	CGameObject::Update_GameObject(TimeDelta);
 
+	Checkk_PosY();
 	Check_Hit();
 	Check_Dist();
 	Check_AniEvent();
@@ -426,6 +428,7 @@ void CMonkey::Function_Movement(_float _fspeed, _v3 _vDir)
 {
 	V3_NORMAL(&_vDir, &_vDir);
 
+	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &_vDir, _fspeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
 
 	return;
@@ -472,6 +475,13 @@ void CMonkey::Function_ResetAfterAtk()
 
 	LOOP(20)
 		m_bEventTrigger[i] = false;
+
+	return;
+}
+
+void CMonkey::Checkk_PosY()
+{
+	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
 	return;
 }
@@ -686,9 +696,16 @@ void CMonkey::Check_AniEvent()
 	case MONSTER_ANITYPE::ATTACK:
 		if (true == m_bAtkCategory)
 		{
+			m_tObjParam.bCanAttack = false;
+			m_tObjParam.bIsAttack = true;
+
 			m_bAtkCategory = false;
 
-			switch (CALC::Random_Num(MONKEY_ATKTYPE::ATK_NORMAL, MONKEY_ATKTYPE::ATK_COMBO))
+			m_iRandom = CALC::Random_Num(MONKEY_ATKTYPE::ATK_NORMAL, MONKEY_ATKTYPE::ATK_COMBO);
+
+			m_iRandom = 0;
+
+			switch (m_iRandom)
 			{
 			case MONKEY_ATKTYPE::ATK_NORMAL:
 				m_eSecondCategory_ATK = MONKEY_ATKTYPE::ATK_NORMAL;
@@ -767,10 +784,12 @@ void CMonkey::Play_RandomAtkNormal()
 {
 	_float fLenth = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransform->Get_Pos()));
 
-	if (m_fShotRange >= fLenth)
-		m_iRandom = ATK_NORMAL_TYPE::NORMAL_FANGSHOOT;
-	else
-		m_iRandom = CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_ATK_ROTBODY, ATK_NORMAL_TYPE::NORMAL_JUMP_ROTBODY);
+	m_iRandom = ATK_NORMAL_TYPE::NORMAL_FANGSHOOT;
+
+	//if (m_fShotRange >= fLenth)
+	//	m_iRandom = ATK_NORMAL_TYPE::NORMAL_FANGSHOOT;
+	//else
+	//	m_iRandom = CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_ATK_ROTBODY, ATK_NORMAL_TYPE::NORMAL_JUMP_ROTBODY);
 
 	switch (m_iRandom)
 	{
@@ -822,6 +841,50 @@ void CMonkey::Play_RandomAtkCombo()
 
 void CMonkey::Play_FangShot()
 {
+	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+	_mat matBone;
+	_v3 vBirth;
+
+	if (true == m_tObjParam.bCanAttack)
+	{
+		m_tObjParam.bCanAttack = false;
+		m_tObjParam.bIsAttack = true;
+	}
+	else
+	{
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		{
+			m_fCoolDownMax = 0.3f;
+			m_bCanCoolDown = true;
+			Function_ResetAfterAtk();
+
+			return;
+		}
+		else if (3.133f <= AniTime && 3.287 > AniTime)
+		{
+
+			matBone = *m_matBone[Bone_LeftHand] * m_pTransformCom->Get_WorldMat();
+			memcpy(vBirth, &matBone._41, sizeof(_v3));
+			g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &CMonkeyBullet::tagMonkeyBulletInfo(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 3.f, 1.5));
+
+			//m_fShotDelay += DELTA_60;
+			//if (m_fShotDelay >= 0.0005f)
+			//{
+			//	m_fShotDelay = 0.f;
+
+			//	matBone = *m_matBone[Bone_LeftHand] * m_pTransformCom->Get_WorldMat();
+			//	memcpy(vBirth, &matBone._41, sizeof(_v3));
+
+			//	g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &CMonkeyBullet::tagMonkeyBulletInfo(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 3.f, 1.5));
+			//}
+		}
+		else if (0.f <= AniTime)
+		{
+			Function_RotateBody();
+		}
+	}
+
+	return;
 }
 
 void CMonkey::Play_Jump_RotBody()
@@ -1789,6 +1852,20 @@ HRESULT CMonkey::SetUp_ConstantTable()
 		return E_FAIL;
 
 	Safe_Release(pManagement);
+
+	return S_OK;
+}
+
+HRESULT CMonkey::Ready_Status(void * pArg)
+{
+	MONKEY_INFO Info = *(MONKEY_INFO*)pArg;
+	
+	m_tObjParam.fDamage = Info.tMonterStatus.fDamage;
+	m_tObjParam.fHp_Max = Info.tMonterStatus.fHp_Max;
+	m_fRecognitionRange = Info.fKonwingRange;
+	m_fAtkRange = Info.fCanAttackRange;
+	m_fShotRange = Info.fCanShotRangeIfGunChooose;
+	m_iDodgeCountMax = Info.fDodgeCountMax;
 
 	return S_OK;
 }

@@ -37,6 +37,11 @@ HRESULT CFireBoy::Ready_GameObject(void * pArg)
 
 	///////////////// 행동트리 init
 
+	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL);
+
+	if (nullptr == pPlayer)
+		return E_FAIL;
+
 	CBlackBoard* pBlackBoard = CBlackBoard::Create();
 	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create();	//인자에 true 주면 콘솔창에 디버깅정보 뜸, default = false
 
@@ -45,7 +50,7 @@ HRESULT CFireBoy::Ready_GameObject(void * pArg)
 
 	Update_Bone_Of_BlackBoard();
 
-	pBlackBoard->Set_Value(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos());
+	pBlackBoard->Set_Value(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))->Get_Pos());
 	pBlackBoard->Set_Value(L"HP", m_tObjParam.fHp_Cur);
 	pBlackBoard->Set_Value(L"MAXHP", m_tObjParam.fHp_Max);
 
@@ -69,7 +74,7 @@ HRESULT CFireBoy::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Start_Game());
+	Start_Sel->Add_Child(Fire_Ground());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -460,7 +465,7 @@ CBT_Composite_Node * CFireBoy::Fire_Cone()
 	CBT_Wait* Wait0 = Node_Wait("대기0", 1.166, 0);
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적", L"Player_Pos", 4.05, 0);
 
-	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("총기 입구 이펙트", L"FireBoy_FireBullet_GunEff", L"Bone_Muzzle", 1.0, 70, 0, 0);
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("총기 입구 이펙트", L"FireBoy_FireBullet_GunEff", L"Bone_Muzzle", 1.0, 210, 0, 0);
 
 	Root_Parallel->Add_Service(Effect0);
 
@@ -474,7 +479,7 @@ CBT_Composite_Node * CFireBoy::Fire_Cone()
 
 
 
-	CBT_CreateBullet* Col0 = Node_CreateBullet("화염 발사", L"Monster_FireBullet", L"Bone_Muzzle", L"FireDir", 8, 1, 1.166, 20, 0.2, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Col0 = Node_CreateBullet("화염 발사", L"Monster_FireBullet", L"Bone_Muzzle", L"FireDir", 8, 1, 1.166, 160, 0.025, 0, CBT_Service_Node::Finite);
 	Root_Parallel->Add_Service(Col0);
 
 	return Root_Parallel;
@@ -550,10 +555,13 @@ CBT_Composite_Node * CFireBoy::Fire_Ground()
 	SubSeq->Add_Child(Move1);
 
 
-
-
 	CBT_CreateBullet* Col0 = Node_CreateBullet("타겟 바닥에 불냄", L"Monster_FireGround", L"Player_Pos", L"", 0, 5, 1.266, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Col1 = Node_CreateBullet("타겟 바닥에 불냄", L"Monster_FireGround", L"Random_FireGround_Pos0", L"", 0, 5, 1.266, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Col2 = Node_CreateBullet("타겟 바닥에 불냄", L"Monster_FireGround", L"Random_FireGround_Pos1", L"", 0, 5, 1.266, 1, 0, 0, CBT_Service_Node::Finite);
+
 	Root_Parallel->Add_Service(Col0);
+	Root_Parallel->Add_Service(Col1);
+	Root_Parallel->Add_Service(Col2);
 
 	return Root_Parallel;
 }
@@ -654,6 +662,7 @@ CBT_Composite_Node * CFireBoy::FarAttack()
 	Root_Sel->Add_Child(Fire_BigSphere());
 	Root_Sel->Add_Child(Fire_Ground());
 	Root_Sel->Add_Child(Fire_Flame());
+	Root_Sel->Add_Child(Fire_BigSphere());
 
 	return Root_Sel;
 }
@@ -804,7 +813,7 @@ HRESULT CFireBoy::Update_Bone_Of_BlackBoard()
 HRESULT CFireBoy::Update_Value_Of_BB()
 {
 	// 1. 플레이어 좌표 업데이트
-	CTransform* pPlayerTransCom = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
+	CTransform* pPlayerTransCom = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL));
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Player_Pos", pPlayerTransCom->Get_Pos());
 	// 2. 체력 업데이트
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"HP", m_tObjParam.fHp_Cur);
@@ -872,6 +881,11 @@ HRESULT CFireBoy::Update_Value_Of_BB()
 	// 5. 화염 토이네도
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"SelfPos", vSelfPos);
 
+	// 6. 불 바닥에 까리, 플레이어 + 주위 랜덤 좌표
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Random_FireGround_Pos0", pPlayerTransCom->Get_Pos() + _v3(_float(CALC::Random_Num_Double(-8, 8)), 0.f, _float(CALC::Random_Num_Double(-8, 8))));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Random_FireGround_Pos1", pPlayerTransCom->Get_Pos() + _v3(_float(CALC::Random_Num_Double(-8, 8)), 0.f, _float(CALC::Random_Num_Double(-8, 8))));
+
+
 	return S_OK;
 }
 
@@ -881,7 +895,7 @@ HRESULT CFireBoy::Update_NF()
 	if (false == m_bFindPlayer)
 	{
 		// 플레이어 좌표 구함.
-		_v3 vPlayer_Pos = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos();
+		_v3 vPlayer_Pos = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))->Get_Pos();
 
 		// 플레이어와 몬스터의 거리
 		_v3 vLengthTemp = vPlayer_Pos - m_pTransformCom->Get_Pos();

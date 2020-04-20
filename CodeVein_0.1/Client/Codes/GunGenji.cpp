@@ -844,7 +844,7 @@ void CGunGenji::Check_PhyCollider()
 		m_fSkillMoveMultiply = 0.5f;
 
 		// 맞을때 플레이어의 룩을 받아와서 그 방향으로 밈.
-		m_vPushDir_forHitting = (*(_v3*)&TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_WorldMat().m[2]);
+		m_vPushDir_forHitting = (*(_v3*)&TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))->Get_WorldMat().m[2]);
 
 		m_pAIControllerCom->Reset_BT();
 

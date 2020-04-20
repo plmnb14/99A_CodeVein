@@ -44,15 +44,17 @@ HRESULT CColdBeamMiddle::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
 
-	m_pBulletBody_01 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"IceBlock_Main", nullptr));
-	m_pBulletBody_01->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
-	m_pBulletBody_01->Set_Angle(_v3(D3DXToRadian(20.f), fDot, 0.f));
+	m_pBulletBody_01 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"IceBlock_Main_Mid", nullptr));
+	m_pBulletBody_01->Set_Desc(_v3(0, -1.f, 0), m_pTransformCom);
+	m_pBulletBody_01->Set_ZWrite();
+	//m_pBulletBody_01->Set_Angle(_v3(D3DXToRadian(20.f), fDot, 0.f));
 	m_pBulletBody_01->Reset_Init();
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody_01, SCENE_STAGE, L"Layer_Effect", nullptr);
 
-	m_pBulletBody_02 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"IceBlock_Sub_02", nullptr));
+	m_pBulletBody_02 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"IceBlock_Sub_01_Mid", nullptr));
 	m_pBulletBody_02->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
-	m_pBulletBody_02->Set_Angle(_v3(D3DXToRadian(20.f), fDot, 0.f));
+	m_pBulletBody_02->Set_ZWrite();
+	//m_pBulletBody_02->Set_Angle(_v3(D3DXToRadian(20.f), fDot, 0.f));
 	m_pBulletBody_02->Reset_Init();
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody_02, SCENE_STAGE, L"Layer_Effect", nullptr);
 

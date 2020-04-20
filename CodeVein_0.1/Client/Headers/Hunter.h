@@ -253,6 +253,7 @@ private:
 	void Function_ResetAfterAtk();
 	void Function_TargetAround();
 
+	void Check_PosY();
 	void Check_Hit();
 	void Check_FBLR();
 	void Check_Dist();

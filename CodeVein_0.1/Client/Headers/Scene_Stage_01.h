@@ -24,6 +24,9 @@ public:
 	HRESULT Ready_Layer_Environment(const _tchar* pLayerTag);
 
 private:
+	void Create_Fog(_double TimeDelta);
+
+private:
 	CNavMesh*		m_pNavMesh = nullptr;
 
 private:

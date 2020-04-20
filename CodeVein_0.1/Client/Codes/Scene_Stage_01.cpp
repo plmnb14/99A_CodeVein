@@ -37,6 +37,7 @@ HRESULT CScene_Stage_01::Ready_Scene()
 _int CScene_Stage_01::Update_Scene(_double TimeDelta)
 {
 	CUI_Manager::Get_Instance()->Update_UI();
+	Create_Fog(TimeDelta);
 
 	if (g_pInput_Device->Key_Down(DIK_H))
 	{
@@ -140,6 +141,40 @@ HRESULT CScene_Stage_01::Ready_Layer_Environment(const _tchar* pLayerTag)
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CScene_Stage_01::Create_Fog(_double TimeDelta)
+{
+	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	if (!pPlayer) 
+		return;
+
+	_v3 vPlayerPos = TARGET_TO_TRANS(pPlayer)->Get_Pos();
+
+	const _float FOG_OFFSET = 10.f;
+
+	m_fMapFogDelay += _float(TimeDelta);
+	if (m_fMapFogDelay > FOG_OFFSET)
+	{
+		m_fMapFogDelay = 0.f;
+
+		for (_int i = 0; i < 50; ++i)
+		{
+			_mat matRotY;
+			_v3 vDir = _v3(1.f, 0.f, 1.f);
+			D3DXMatrixIdentity(&matRotY);
+
+			D3DXMatrixRotationY(&matRotY, D3DXToRadian(_float(CCalculater::Random_Num_Double(0, 360))));
+			D3DXVec3TransformNormal(&vDir, &vDir, &matRotY);
+			D3DXVec3Normalize(&vDir, &vDir);
+
+			_float fMinRange = 0.f;
+			_float fRandRange = _float(CCalculater::Random_Num_Double(0, 20));
+			_v3 vRandPos = vDir * (fMinRange + fRandRange);
+
+			g_pManagement->Create_Effect(L"MapMist", vRandPos + _v3(0.f, -0.5f, 0.f), nullptr);
+		}
+	}
 }
 
 
