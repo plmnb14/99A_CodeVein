@@ -75,6 +75,28 @@ public:
 
 	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_Head, Bone_LeftHand, Bone_End };
 
+public:
+	typedef struct tagMonkeyInfo
+	{
+		tagMonkeyInfo(_float _fDMG, _float _fHpMax,
+			_float _fKnowRange, _float _fAtkRange,
+			_float _ShotRange, _int iDodgeMax)
+			:
+			fKonwingRange(_fKnowRange),
+			fCanAttackRange(_fAtkRange),
+			fCanShotRangeIfGunChooose(_ShotRange),
+			fDodgeCountMax(iDodgeMax)
+		{
+			tMonterStatus.fDamage = _fDMG;
+			tMonterStatus.fHp_Max = _fHpMax;
+		}
+		OBJECT_PARAM		tMonterStatus;
+		_float				fKonwingRange = 20.f;
+		_float				fCanShotRangeIfGunChooose = 10.f;
+		_float				fCanAttackRange = 5.f;
+		_int				fDodgeCountMax = 3;
+	}MONKEY_INFO;
+
 protected:
 	explicit CMonkey(LPDIRECT3DDEVICE9 pGraphic_Device);
 	explicit CMonkey(const CMonkey& rhs);
@@ -101,6 +123,7 @@ private:
 	void Function_DecreMoveMent(_float _fMutiply = 1.f);
 	void Function_ResetAfterAtk();
 
+	void Checkk_PosY();
 	void Check_Hit();
 	void Check_FBLR();
 	void Check_Dist();
@@ -128,6 +151,7 @@ private:
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
+	HRESULT Ready_Status(void* pArg);
 	HRESULT Ready_Weapon();
 	HRESULT Ready_Collider();
 	HRESULT Ready_BoneMatrix();
@@ -202,6 +226,8 @@ private:
 	_int				m_iRandom = 0;
 	_int				m_iDodgeCountMax = 3; //3회 피격시 회피
 	_int				m_iDodgeCount = 0; //n회 피격시 회피
+
+	_float				m_fShotDelay = 0.f;
 
 };
 
