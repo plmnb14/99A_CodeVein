@@ -17,7 +17,6 @@
 #include "Item_Manager.h"
 
 #include "MonsterHeaders.h"
-#include "YachaMan.h"
 
 #include "PlayerHP.h"
 #include "PlayerST.h"
@@ -1121,6 +1120,15 @@ _uint CLoading::Loading_Stage()
 			return E_FAIL;
 		// ±èÇåÅÍ
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Hunter", CHunter::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ±èÇåÅÍÃÑ¾Ë
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_HunterBullet", CHunterBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ¸ùÅ°.D.·çÇÇ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Monkey", CMonkey::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ¿¹Æ¼
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Yeti", CYeti::Create(m_pGraphicDev))))
 			return E_FAIL;
 
 		// UI - Chea

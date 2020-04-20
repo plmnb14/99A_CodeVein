@@ -794,6 +794,10 @@ HRESULT CFireBoy::Update_Bone_Of_BlackBoard()
 	m_vMuzzle = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Muzzle", m_vMuzzle);
 
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHand");
+	m_vRightHand = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_RightHand", m_vRightHand);
+
 	return S_OK;
 }
 
@@ -819,26 +823,30 @@ HRESULT CFireBoy::Update_Value_Of_BB()
 	
 	// 2. 포신에서 일자로 불 발사하는 방향
 
-	_v3 vDirTemp0;
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"StraightFireDir", *D3DXVec3Normalize (&_v3(), &(m_vMuzzle - m_vRightHand + _v3(0.f, -0.2f, 0.f))));
 
-	_v3 vTempFrontDir = _v3(0.f, 0.f, 1.f);
-	_float fRadian = D3DXVec3Dot(&vSelfLook, &vTempFrontDir);
+	//_v3 vDirTemp0;
 
-	if (fRadian >= 0)
-		D3DXVec3TransformNormal(&vDirTemp0, &vSelfLook, D3DXMatrixRotationX(&_mat(), D3DXToRadian(15)));
-	else if (fRadian < 0)
-		D3DXVec3TransformNormal(&vDirTemp0, &vSelfLook, D3DXMatrixRotationX(&_mat(), D3DXToRadian(-15)));
+	//_v3 vTempFrontDir = _v3(0.f, 0.f, 1.f);
+	//_float fRadian = D3DXVec3Dot(&vSelfLook, &vTempFrontDir);
 
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"StraightFireDir", vDirTemp0);
+	//if (fRadian >= 0)
+	//	D3DXVec3TransformNormal(&vDirTemp0, &vSelfLook, D3DXMatrixRotationX(&_mat(), D3DXToRadian(15)));
+	//else if (fRadian < 0)
+	//	D3DXVec3TransformNormal(&vDirTemp0, &vSelfLook, D3DXMatrixRotationX(&_mat(), D3DXToRadian(-15)));
+
+	//m_pAIControllerCom->Set_Value_Of_BlackBoard(L"StraightFireDir", vDirTemp0);
 
 	// 3. 포신에서 부채꼴, 화염구 발사하는 방향
 
-	if (fRadian >= 0)
-		D3DXVec3TransformNormal(&vDirTemp0, &vSelfLook, D3DXMatrixRotationX(&_mat(), D3DXToRadian(3)));
-	else if (fRadian < 0)
-		D3DXVec3TransformNormal(&vDirTemp0, &vSelfLook, D3DXMatrixRotationX(&_mat(), D3DXToRadian(-3)));
+	//if (fRadian >= 0)
+	//	D3DXVec3TransformNormal(&vDirTemp0, &vSelfLook, D3DXMatrixRotationX(&_mat(), D3DXToRadian(3)));
+	//else if (fRadian < 0)
+	//	D3DXVec3TransformNormal(&vDirTemp0, &vSelfLook, D3DXMatrixRotationX(&_mat(), D3DXToRadian(-3)));
 
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FireDir", vDirTemp0);
+	//m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FireDir", vDirTemp0);
+
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FireDir", *D3DXVec3Normalize(&_v3(), &(m_vMuzzle - m_vRightHand)));
 
 
 	// 4. Flame, 플레이어 위에서 십자가로 불 떨어짐

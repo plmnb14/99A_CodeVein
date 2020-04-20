@@ -27,10 +27,11 @@
 #include "FireGround.h"
 #include "FireTornadoCol.h"
 
-#include "BlackWolf.h"
-#include "YachaMan.h"
 #include "Hunter.h"
+#include "HunterBullet.h"
 #include "Monkey.h"
+#include "YachaMan.h"
+#include "BlackWolf.h"
 #include "Yeti.h"
 
 #include "GunGenji.h"

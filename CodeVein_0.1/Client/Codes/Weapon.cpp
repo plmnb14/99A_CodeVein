@@ -178,7 +178,9 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 	if (false == m_tObjParam.bCanAttack)
 		return;
 
+	_v3 vHitDir = V3_NULL;
 	_bool bFirst = true;
+
 	//게임 오브젝트를 받아와서
 	for (auto& iter : plistGameObject)
 	{
@@ -227,6 +229,13 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 							// 무기 공격력의 +-20%까지 랜덤범위
 							_uint min = (_uint)(m_tObjParam.fDamage - (m_tObjParam.fDamage * 0.2f));
 							_uint max = (_uint)(m_tObjParam.fDamage + (m_tObjParam.fDamage * 0.2f));
+
+							//피격시 밀림처리.....
+							//memcpy(vHitDir, &(m_pmatParent->_41), sizeof(_v3));
+
+							//V3_NORMAL(&m_tObjParam.vHitDir, &(ExceptY - vHitDir));
+
+							//iter->Set_Target_HitDir(m_tObjParam.vHitDir);
 
 							iter->Add_Target_Hp(-(_float)CALC::Random_Num(min , max) * m_fSkillPercent);
 							g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
@@ -480,6 +489,12 @@ void CWeapon::Change_WeaponData(WEAPON_DATA _eWpnData)
 		m_eWeaponType = WEAPON_Halverd;
 		break;
 	}
+	case WPN_QueenShield:
+	{
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_QueenShield");
+		m_eWeaponType = WEAPON_Shield;
+		break;
+	}
 	case WPN_FrostBlood_IceGirl:
 	{
 		lstrcpy(WeaponMeshName, L"Mesh_Wpn_FrostBlood_IceGirl");
@@ -634,13 +649,13 @@ HRESULT CWeapon::SetUp_WeaponData()
 	//===========================================================================================
 
 	m_tWeaponParam[WPN_QueenLance].fDamage = 25.f;
-	m_tWeaponParam[WPN_QueenLance].fRadius = 1.3f;
+	m_tWeaponParam[WPN_QueenLance].fRadius = 1.4f;
 	m_tWeaponParam[WPN_QueenLance].fTrail_Min = 0.3f;
 	m_tWeaponParam[WPN_QueenLance].fTrail_Max = 3.4f;
-	m_tWeaponParam[WPN_QueenLance].fCol_Height = 1.6f;
+	m_tWeaponParam[WPN_QueenLance].fCol_Height = 1.7f;
 
 	m_tWeaponParam[WPN_QueenShield].fDamage = 25.f;
-	m_tWeaponParam[WPN_QueenShield].fRadius = 0.7f;
+	m_tWeaponParam[WPN_QueenShield].fRadius = 0.8f;
 	m_tWeaponParam[WPN_QueenShield].fTrail_Min = 0.f;
 	m_tWeaponParam[WPN_QueenShield].fTrail_Max = 1.f;
 	m_tWeaponParam[WPN_QueenShield].fCol_Height = 0.f;
@@ -648,10 +663,10 @@ HRESULT CWeapon::SetUp_WeaponData()
 	//===========================================================================================
 
 	m_tWeaponParam[WPN_FrostBlood_IceGirl].fDamage = 25.f;
-	m_tWeaponParam[WPN_FrostBlood_IceGirl].fRadius = 1.3f;
+	m_tWeaponParam[WPN_FrostBlood_IceGirl].fRadius = 0.7f;
 	m_tWeaponParam[WPN_FrostBlood_IceGirl].fTrail_Min = 0.3f;
 	m_tWeaponParam[WPN_FrostBlood_IceGirl].fTrail_Max = 1.6f;
-	m_tWeaponParam[WPN_FrostBlood_IceGirl].fCol_Height = 1.6f;
+	m_tWeaponParam[WPN_FrostBlood_IceGirl].fCol_Height = 0.9f;
 
 	return S_OK;
 }

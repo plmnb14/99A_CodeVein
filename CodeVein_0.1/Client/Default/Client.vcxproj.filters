@@ -669,6 +669,9 @@
     <ClInclude Include="..\Headers\Scene_Stage_04.h">
       <Filter>01.Scene\07.Stage_04</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\HunterBullet.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Hunter</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -994,6 +997,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Scene_Stage_04.cpp">
       <Filter>01.Scene\07.Stage_04</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HunterBullet.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Hunter</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

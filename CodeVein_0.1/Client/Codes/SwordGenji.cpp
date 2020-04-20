@@ -33,8 +33,6 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	Ready_BoneMatrix();
 	Ready_Collider();
 
-	Set_Target_LayerTag(L"Layer_Player");
-
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.fHp_Cur = 100.f;
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;

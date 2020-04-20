@@ -55,7 +55,6 @@ _int CFireBullet::Update_GameObject(_double TimeDelta)
 	if (m_bDead)
 		return DEAD_OBJ;
 
-	OnCollisionEnter();
 		
 	m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
 
@@ -82,6 +81,11 @@ _int CFireBullet::Update_GameObject(_double TimeDelta)
 			g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_02", m_pTransformCom->Get_Pos(), nullptr);
 		}
 	}
+
+	// 가까이가면 바로 사라지는 것 방지, 불을 잠깐이라도 보여주고 충돌시키자.
+	if(0.1f < m_dCurTime)
+		OnCollisionEnter();
+
 
 	return NOERROR;
 }
@@ -236,7 +240,7 @@ HRESULT CFireBullet::Ready_Collider()
 	// 총알 중앙
 	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 
-	_float fRadius = 0.85f;
+	_float fRadius = 0.9f;
 
 	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
 	pCollider->Set_Dynamic(true);
