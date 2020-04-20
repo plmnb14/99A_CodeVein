@@ -5,6 +5,7 @@
 #include "Effect.h"
 #include "UI.h"
 #include "UI_Manager.h"
+#include "BossHP.h"
 #include "ParticleMgr.h"
 
 #include "MassageUI.h"
@@ -56,7 +57,7 @@ HRESULT CScene_Stage_Training::Render_Scene()
 
 HRESULT CScene_Stage_Training::Ready_Layer_Player(const _tchar * pLayerTag)
 {
-	CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	CGameObject* pInstance = g_pManagement->Get_GameObjectBack(pLayerTag, SCENE_MORTAL);
 
 	pInstance->Set_Enable(true);
 
@@ -76,7 +77,23 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Boss")))
 		return E_FAIL;
 
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_MonsterProjectile")))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_BossUI")))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Mistletoe")))
+		return E_FAIL;
+
 	CGameObject* pInstance = nullptr;
+
+	// 네모네모 동료
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague", nullptr);
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(5.f, 0.f, 5.f));
+	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
 
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossMassageUI", SCENE_STAGE, L"Layer_BossMassageUI")))
 	//	return E_FAIL;
@@ -102,11 +119,20 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	// 김헌터
+<<<<<<< HEAD
 	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CHunter::tagHunterInfo(25.f, 99999.f, 15.f, 5.f, 10.f, 10, CHunter::WEAPON_ANITYPE::GUN));
 	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
 	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
 	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+=======
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", nullptr);
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
+	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
+	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+>>>>>>> 58e8deeb77aaa777b333ec6756acd3cb909f63c1
 
 	// 몽키.D.루피
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Monkey", nullptr);
@@ -220,7 +246,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
 	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
 	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	// 얼음여자
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_IceGirl", &CIceGirl::INFO(10.f, 5.f, 2.f));
@@ -243,21 +269,18 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(5.f, 0.f, 5.f));
 	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
 	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
-
-
-	// 투사체 레이어만 미리 추가
-	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_MonsterProjectile")))
-		return E_FAIL;
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
 	return S_OK;
 }
 
 HRESULT CScene_Stage_Training::Ready_Layer_Environment()
 {
+	CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Sky", nullptr);
 
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Sky", SCENE_STAGE, L"Layer_Sky")))
-		return E_FAIL;
+	TARGET_TO_TRANS(pInstance)->Set_Angle(AXIS_Y, D3DXToRadian(0.f));
+
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Sky", nullptr);
 
 	return S_OK;
 }
@@ -296,16 +319,15 @@ HRESULT CScene_Stage_Training::Ready_LightDesc()
 	D3DLIGHT9		LightDesc;
 	ZeroMemory(&LightDesc, sizeof(D3DLIGHT9));
 
-	_v3 vLightPos = _v3(5.f, 8.f, -5.f);
+	_v3 vLightPos = _v3(5.f, -8.f, -5.f);
 	V3_NORMAL_SELF(&vLightPos);
 
 	LightDesc.Type = D3DLIGHT_DIRECTIONAL;
 	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	LightDesc.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.f);
+	LightDesc.Ambient = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	// In.WorldSpace
 	LightDesc.Direction = vLightPos;
-	//LightDesc.Direction = _v3(1.f, 1.f, -1.f);
 
 	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
 		return E_FAIL;

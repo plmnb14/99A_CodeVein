@@ -35,6 +35,14 @@ HRESULT CDarkBoom::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
 
+	//g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_Sphere_1", 0.0f, m_pTransformCom->Get_Pos(), nullptr);
+	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_Particle", 0.0f, m_pTransformCom->Get_Pos(), nullptr);
+	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_RingReady", 0.0f, m_pTransformCom->Get_Pos(), nullptr);
+	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_RingReady", 0.15f, m_pTransformCom->Get_Pos(), nullptr);
+	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_Particle", 0.55f, m_pTransformCom->Get_Pos(), nullptr);
+	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_Ring", 0.55f, m_pTransformCom->Get_Pos(), nullptr);
+	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_RingRed", 0.6f, m_pTransformCom->Get_Pos(), nullptr);
+	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_RingBottom", 0.65f, m_pTransformCom->Get_Pos(), nullptr);
 
 	return NOERROR;
 }
@@ -54,13 +62,35 @@ _int CDarkBoom::Update_GameObject(_double TimeDelta)
 	// 시간 초과
 	if (m_dCurTime > m_dLifeTime)
 	{
-
 		m_bDead = true;
 	}
 	// 진행중
 	else
 	{
-		
+		m_fEffectOffset += _float(TimeDelta);
+		if (m_fEffectOffset > 0.01f)
+		{
+			m_fEffectOffset = 0.f;
+
+			for (_int i = 0; i < 5; i++)
+			{
+				_mat matRotY;
+				_v3 vDir = _v3(1.f, 0.f, 1.f);
+				D3DXMatrixIdentity(&matRotY);
+
+				D3DXMatrixRotationY(&matRotY, _float(D3DXToRadian(CCalculater::Random_Num_Double(0, 360))));
+				D3DXVec3TransformNormal(&vDir, &vDir, &matRotY);
+				D3DXVec3Normalize(&vDir, &vDir);
+
+				_float fMinRange = 2.f;
+				_v3 vRandPos = vDir * _float(CCalculater::Random_Num_Double(1.7, _double(fMinRange)));
+
+				CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"QueensKnight_DarkBoom_Floor_0", m_pTransformCom->Get_Pos() + vRandPos, m_pTransformCom->Get_Pos(), nullptr);
+				CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"QueensKnight_DarkBoom_Floor_1", m_pTransformCom->Get_Pos() + vRandPos, m_pTransformCom->Get_Pos(), nullptr);
+			}
+			//g_pManagement->Create_Effect(L"QueensKnight_DarkBoom_Floor_0", m_pTransformCom->Get_Pos(), nullptr);
+			//g_pManagement->Create_Effect(L"QueensKnight_DarkBoom_Floor_1", m_pTransformCom->Get_Pos(), nullptr);
+		}
 	}
 
 	return NOERROR;

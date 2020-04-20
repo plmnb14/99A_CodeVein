@@ -27,7 +27,7 @@ public:
 
 private:
 	enum Ani {
-		Ani_Idle = 42, Ani_Death = 64, Ani_Dmg01_FL = 122,
+		Ani_Idle = 42, Ani_Death = 64, Ani_Dmg01_FL = 124, Ani_Dmg01_FR = 123, Ani_Dmg01_BL = 122, Ani_Dmg01_BR = 121,
 		Ani_StandUp1 = 140, Ani_StandUp2 = 153,
 		Ani_GuardHit_Weak = 2, Ani_GuardHit_Strong = 1, Ani_GuardBreak = 0
 	};

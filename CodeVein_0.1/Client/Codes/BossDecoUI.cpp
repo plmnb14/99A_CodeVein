@@ -26,14 +26,14 @@ HRESULT CBossDecoUI::Ready_GameObject(void * pArg)
 
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = WINCX * 0.5f;
-	m_fPosY =WINCY * 0.1f;
+	//m_fPosX = WINCX * 0.5f;
+	//m_fPosY = WINCY * 0.1f;
 
 	m_fSizeX = WINCX;
 	m_fSizeY = 64.f;
 
-	m_fViewZ = 1.1f;
-
+	//m_fViewZ = 1.1f;
+	
 	return NOERROR;
 }
 

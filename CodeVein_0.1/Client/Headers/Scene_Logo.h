@@ -5,13 +5,13 @@
 #include "Loading.h"
 
 BEGIN(Client)
-
+class CLogoBtn;
 class CScene_Logo final : public CScene
 {
 public:
 	enum DEBUG_SceneChange
 	{
-		Stage_Base, Stage_Training, Stage_01, Stage_02, Stage_03, Stage_End
+		Stage_Base, Stage_Training, Stage_01, Stage_02, Stage_03, Stage_04, Stage_End
 	};
 
 private:
@@ -32,6 +32,7 @@ private:
 
 private:
 	CLoading*			m_pLoading = nullptr;
+	CLogoBtn*			m_pLogoBtn = nullptr;
 
 private:
 	DEBUG_SceneChange   m_eSceneChange = Stage_Training;

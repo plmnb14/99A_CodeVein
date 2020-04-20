@@ -58,11 +58,13 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 	Parameter_Collision();
 	Parameter_Aiming();
 
+	Check_Mistletoe();
+
 	if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
 
-	if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-		return E_FAIL;
+	//if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+	//	return E_FAIL;
 
 	//if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
 	//	return E_FAIL;
@@ -143,7 +145,7 @@ HRESULT CPlayer::Render_GameObject()
 		{
 			m_iPass = m_pDynamicMesh->Get_MaterialPass(i , j);
 
-			if (m_bOnDissolve)
+			if (m_bDissolve)
 				m_iPass = 3;
 
 			m_pShader->Begin_Pass(m_iPass);
@@ -162,8 +164,8 @@ HRESULT CPlayer::Render_GameObject()
 
 	Draw_Collider();
 
-	//IF_NOT_NULL(m_pNavMesh)
-	m_pNavMesh->Render_NaviMesh();
+	IF_NOT_NULL(m_pNavMesh)
+		m_pNavMesh->Render_NaviMesh();
 
 	return NOERROR;
 }
@@ -194,6 +196,10 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 
 	m_matLastWVP = m_pTransform->Get_WorldMat() * ViewMatrix * ProjMatrix;
 
+	_float fBloomPower = 0.5f;
+	if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
+		return E_FAIL;
+
 	_uint iNumMeshContainer = _uint(m_pDynamicMesh->Get_NumMeshContainer());
 
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
@@ -221,7 +227,25 @@ void CPlayer::Parameter_State()
 {
 	switch (m_eActState)
 	{
+	case ACT_Summon:
+	{
+		Play_Summon();
+		break;
+	}
+
+	case ACT_Disappear:
+	{
+		Play_Idle();
+		break;
+	}
+
 	case ACT_Idle:
+	{
+		Play_Idle();
+		break;
+	}
+
+	case ACT_Mistoletoe :
 	{
 		Play_Idle();
 		break;
@@ -433,14 +457,10 @@ void CPlayer::Parameter_Aiming()
 		Target_AimChasing();
 
 		m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(m_pTarget)->Get_Pos()));
-
-		//cout << D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)) << endl;
 	}
 
 	else if (false == m_bOnAiming)
 	{
-		//cout << "타겟팅 해제" << endl;
-
 		if (nullptr != m_pTarget)
 		{
 			m_pTarget = nullptr;
@@ -872,6 +892,31 @@ void CPlayer::Target_AimChasing()
 	if (m_bHaveAimingTarget)
 		return;
 
+	for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE))
+	{
+		if (true == iter->Get_Dead())
+			continue;
+
+		if (false == iter->Get_Enable())
+			continue;
+
+		_float fLength = D3DXVec3Length(&(TARGET_TO_TRANS(iter)->Get_Pos() - m_pTransform->Get_Pos()));
+
+		if (fLength > m_fAmingRange)
+			continue;
+
+		m_bHaveAimingTarget = true;
+
+		m_pTarget = iter;
+
+		CCameraMgr::Get_Instance()->Set_AimingTarget(m_pTarget);
+		CCameraMgr::Get_Instance()->Set_OnAimingTarget(true);
+
+		m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(m_pTarget)->Get_Pos()));
+
+		return;
+	}
+
 	for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE))
 	{
 		if(true == iter->Get_Dead())
@@ -904,7 +949,16 @@ void CPlayer::Target_AimChasing()
 
 void CPlayer::KeyInput()
 {
+	// 디버그 할때만 사용됩니다.
+	//=====================================================================
 	if (CCameraMgr::Get_Instance()->Get_CamView() == TOOL_VIEW)
+		return;
+	//=====================================================================
+
+	if (m_eActState == ACT_Disappear)
+		return;
+
+	if (m_eActState == ACT_Summon)
 		return;
 
 	if (m_eActState == ACT_Hit)
@@ -964,6 +1018,12 @@ void CPlayer::KeyUp()
 
 void CPlayer::Key_Movement_Down()
 {
+	if (m_eActState == ACT_Disappear)
+		return;
+
+	if (m_eActState == ACT_Summon)
+		return;
+
 	if (m_eActState == ACT_Hit)
 		return;
 
@@ -1108,8 +1168,6 @@ void CPlayer::Key_Movement_Down()
 
 		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.001f))
 		{
-			cout << "이 안에 옵니까" << endl;
-
 			if (m_eActState != ACT_Idle)
 				Reset_BattleState();
 
@@ -1182,6 +1240,19 @@ void CPlayer::Key_Special()
 		if (false == m_bOnAiming)
 		{
 			CCameraMgr::Get_Instance()->Set_LockAngleX(D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)));
+		}
+	}
+
+	if (g_pInput_Device->Key_Down(DIK_X))
+	{
+		if (m_bCanMistletoe)
+		{
+			m_bCanMistletoe = false;
+
+			m_bActiveUI = true;
+
+			m_bOnMistletoe = true;
+			m_eActState = ACT_Mistoletoe;
 		}
 	}
 }
@@ -1331,14 +1402,15 @@ void CPlayer::Key_Attack()
 
 					m_bCharging = true;
 
-					_v3 vEffPos = _v3(0, 1.f, 0.f) + m_pTransform->Get_Axis(AXIS_X) * -0.42f;
-					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_BlastMesh"				, 0.65f	, vEffPos, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0"						, 0.7f	, vEffPos, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_Particle"				, 0.7f	, vEffPos, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_ShockWave"				, 0.7f	, vEffPos, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_Small"					, 0.75f	, vEffPos, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_Big"					, 0.75f	, vEffPos, m_pTransform);
-					//g_pManagement->Create_ParticleEffect_Delay(L"Player_ChargeSpark_Circle"	, 0.12f	, 0.85f	, vEffPos, m_pTransform);
+					LPCSTR tmpChar = "RightHandAttach";
+					_mat   matAttach;
+					D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 2);
+					matAttach = pFamre->CombinedTransformationMatrix * m_pTransform->Get_WorldMat();
+					_v3 vEffPos = _v3(matAttach._41, matAttach._42, matAttach._43);
+
+					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_Particle", 0.f	, vEffPos, nullptr);
+					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_Small"	 , 0.f	, vEffPos, nullptr);
+					g_pManagement->Create_Effect_Delay(L"Player_ChargeSpark_Big"	 , 0.f	, vEffPos, nullptr);
 				}
 			}
 		}
@@ -1768,8 +1840,6 @@ void CPlayer::Play_MoveDelay()
 {
 	if (false == m_bOnMoveDelay)
 	{
-		cout << "딜레이!" << endl;
-
 		m_bOnMoveDelay = true;
 
 		if (m_bOnAiming)
@@ -2922,8 +2992,6 @@ void CPlayer::Play_Hit()
 			m_tObjParam.bCanHit = true;
 
 			Reset_BattleState();
-
-			//cout << "여긴 탑니까" << endl;
 		}
 
 		else if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.2f))
@@ -3070,6 +3138,42 @@ void CPlayer::Play_PickUp()
 			// 아이템 줍는 이벤트가 있다면 여기 추가
 		}
 	}
+}
+
+void CPlayer::Play_Summon()
+{
+	if (false == m_bOnSummon)
+	{
+		m_bOnSummon = true;
+
+		m_eAnim_Upper = Cmn_GameStart;
+		m_eAnim_Lower = m_eAnim_Upper;
+		m_eAnim_RightArm = m_eAnim_Upper;
+		m_eAnim_LeftArm = m_eAnim_Upper;
+
+		Reset_BattleState();
+
+		Start_Dissolve(0.2f, true, false);
+	}
+
+	else if (true == m_bOnSummon)
+	{
+		m_fAnimMutiply = 0.5f;
+
+		if (m_pDynamicMesh->Is_Finish_Animation(0.9f))
+		{
+			m_eActState = ACT_Idle;
+
+			m_bOnSummon = false;
+			m_bCanSummon = false;
+
+			m_fAnimMutiply = 1.f; 
+		}
+	}
+}
+
+void CPlayer::Play_Disappear()
+{
 }
 
 void CPlayer::Play_BloodSuck()
@@ -3705,6 +3809,7 @@ void CPlayer::Play_Skills()
 		{
 			_v3 vEffPos = _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 2.3f;
 			_v3 vEffWindPos = _v3(0.f, 1.5f, 0.f);
+			_v3 vPlayerAngleDeg = D3DXToDegree(m_pTransform->Get_Angle());
 
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 			{
@@ -3743,16 +3848,16 @@ void CPlayer::Play_Skills()
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Hor", 0.f, vEffPos + _v3(0, 0.3f, 0.f), m_pTransform, _v3(0.f, 0.f, -65.f));
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor", 0.f, vEffPos + _v3(0, 0.3f, 0.f), m_pTransform, _v3(0.f, 0.f, -65.f));
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor", 0.f, vEffPos + _v3(0, 0.3f, 0.f), m_pTransform, _v3(0.f, 0.f, -65.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Hor", 0.f, vEffPos + _v3(0, 0.3f, 0.f), m_pTransform, _v3(0.f, vPlayerAngleDeg.y, -65.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor", 0.f, vEffPos + _v3(0, 0.3f, 0.f), m_pTransform, _v3(0.f, vPlayerAngleDeg.y, -65.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor", 0.f, vEffPos + _v3(0, 0.3f, 0.f), m_pTransform, _v3(0.f, vPlayerAngleDeg.y, -65.f));
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_0", 0.f, vEffPos + _v3(0, 0.3f, 0.f), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_1", 0.f, vEffPos + _v3(0, 0.3f, 0.f), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_2", 0.f, vEffPos + _v3(0, 0.3f, 0.f), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos + _v3(0, 0.3f, 0.f), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos + _v3(0, 0.3f, 0.f), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f, vEffPos + _v3(0, 0.3f, 0.f), m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.f, vEffWindPos + _v3(0, 0.3f, 0.f), m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.f, vEffWindPos + _v3(0, 0.3f, 0.f), m_pTransform, _v3(0.f, vPlayerAngleDeg.y, -65.f));
 				}
 			}
 
@@ -3776,12 +3881,12 @@ void CPlayer::Play_Skills()
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Hor", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform, _v3(0.f, 0.f, -45.f));
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform, _v3(0.f, 0.f, -45.f));
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform, _v3(0.f, 0.f, -45.f));
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.f, vEffWindPos + _v3(0, 0.4f, 0.f), m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.1f, vEffWindPos + _v3(0, 0.4f, 0.f), m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.2f, vEffWindPos + _v3(0, 0.4f, 0.f), m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Hor", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform, _v3(0.f, vPlayerAngleDeg.y, -45.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform, _v3(0.f, vPlayerAngleDeg.y, -45.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform, _v3(0.f, vPlayerAngleDeg.y, -45.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.f, vEffWindPos + _v3(0, 0.4f, 0.f), m_pTransform, _v3(0.f, vPlayerAngleDeg.y, -45.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.1f, vEffWindPos + _v3(0, 0.4f, 0.f), m_pTransform, _v3(0.f, vPlayerAngleDeg.y, -45.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.2f, vEffWindPos + _v3(0, 0.4f, 0.f), m_pTransform, _v3(0.f, vPlayerAngleDeg.y, -45.f));
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_0", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_1", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_2", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform);
@@ -3811,12 +3916,12 @@ void CPlayer::Play_Skills()
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(true);
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Hor", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform, _v3(0.f, 0.f, 45.f));
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform, _v3(0.f, 0.f, 45.f));
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform, _v3(0.f, 0.f, 45.f));
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.f, vEffWindPos, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.1f, vEffWindPos, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.2f, vEffWindPos, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Hor", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform, _v3(0.f, vPlayerAngleDeg.y, 45.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform, _v3(0.f, vPlayerAngleDeg.y, 45.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform, _v3(0.f, vPlayerAngleDeg.y, 45.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.f, vEffWindPos, m_pTransform, _v3(0.f, vPlayerAngleDeg.y, 45.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.1f, vEffWindPos, m_pTransform, _v3(0.f, vPlayerAngleDeg.y, 45.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.2f, vEffWindPos, m_pTransform, _v3(0.f, vPlayerAngleDeg.y, 45.f));
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_0", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_1", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Hit_Slash_2", 0.f, vEffPos + _v3(0, 0.4f, 0.f), m_pTransform);
@@ -3884,7 +3989,7 @@ void CPlayer::Play_Skills()
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(true);
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 
-					//g_pManagement->Create_AngleEffect(L"Player_Skill_WindTornadeMesh", m_pTransform->Get_Pos() + vEffPos, m_pTransform->Get_Angle());
+					g_pManagement->Create_Effect(L"Player_Skill_WindTornadeMesh", m_pTransform->Get_Pos() + vEffPos, nullptr, -m_pTransform->Get_Axis(AXIS_Z), vPlayerAngleDeg);
 				}
 			}
 			else if (m_pDynamicMesh->Get_TrackInfo().Position <= 0.1f)
@@ -3897,7 +4002,6 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing", 0.1f, 0.1f, m_pTransform->Get_Pos());
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red", 0.3f, 0.2f, m_pTransform->Get_Pos());
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black", 0.3f, 0.3f, m_pTransform->Get_Pos());
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RedParticle_Explosion", 0.15f, 1.0f, m_pTransform->Get_Pos());
 
 				}
 			}
@@ -8580,9 +8684,9 @@ HRESULT CPlayer::SetUp_Default()
 	m_fAnimMutiply = 1.f;
 
 	// Navi
-	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_01.dat");
+	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_03.dat");
 	m_pNavMesh->Set_SubsetIndex(0);
-	//m_pNavMesh->Set_Index(14);
+	m_pNavMesh->Set_Index(0);
 
 	return S_OK;
 }
@@ -8683,6 +8787,33 @@ void CPlayer::Reset_BattleState()
 
 	LOOP(32)
 		m_bEventTrigger[i] = false;
+}
+
+void CPlayer::Check_Mistletoe()
+{
+	if (m_bOnMistletoe)
+		return;
+
+	size_t sSTLSize = g_pManagement->Get_GameObjectList(L"Layer_Mistletoe", SCENE_STAGE).size();
+
+	if (sSTLSize > 0)
+	{
+		for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Mistletoe", SCENE_STAGE))
+		{
+			if(false == iter->Get_Enable())
+				continue;
+
+			CTransform* pIterTrans = TARGET_TO_TRANS(iter);
+
+			if (1.5f >= V3_LENGTH(&(m_pTransform->Get_Pos() - pIterTrans->Get_Pos())))
+			{
+				cout << "Moon  : 겨우살이 체크 되요" << endl;
+
+				m_bCanMistletoe = true;
+				return;
+			}
+		}
+	}
 }
 
 CPlayer * CPlayer::Create(_Device pGraphic_Device)

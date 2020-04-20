@@ -350,7 +350,8 @@ PS_OUT PS_Bloom(PS_IN In) // Extract Bright Color
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	vector	vDiffuse = tex2D(DiffuseSampler, In.vTexUV);
+	vector	vDiffuse	= tex2D(DiffuseSampler, In.vTexUV);
+	vector	vBloomPower = tex2D(BloomSampler, In.vTexUV);
 
 	//// Bloom 1====================================================================
 	//float fThreshold = 0.5;	 // 이 기준점보다 밝으면 Bloom 타겟
@@ -369,8 +370,13 @@ PS_OUT PS_Bloom(PS_IN In) // Extract Bright Color
 
 	// Bloom 3====================================================================
 
+	float fBloomPower = vBloomPower.x;
+	if (fBloomPower == 0.f)
+		fBloomPower = 0.75f;
+	//fBloomPower = 1.5f; // 너무 밝아서 임시
+
 	Out.vColor = vDiffuse;
-	Out.vColor.rgb -= 0.5f; // 작은 값일 수록 빛에 민감한 광선
+	Out.vColor.rgb -= fBloomPower; // 작은 값일 수록 빛에 민감한 광선
 	// 작은 빛도 블룸되요
 
 	Out.vColor = 3.0f * max(Out.vColor, 0.0f); // 큰 값일 수록 확실한 모양의 광선
@@ -394,7 +400,7 @@ PS_OUT MotionBlurForObj(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	//float uVelocityScale = g_fCurFrame / g_fTargetFrame;
-	int MAX_SAMPLES = 10;
+	int MAX_SAMPLES = 9;
 
 	//float2 texelSize = float2(1.f / 1280.f, 1.f / 720.f);
 	float2 screenTexCoords = In.vTexUV.xy;// *texelSize;
@@ -413,13 +419,14 @@ PS_OUT MotionBlurForObj(PS_IN In)
 	Out.vColor = tex2D(DiffuseSampler, screenTexCoords);
 
 	// 제한
-	velocity.xy = (clamp(velocity.x, -0.5f, 0.5f), clamp(velocity.y, -0.25f, 0.25f));
+	velocity.y *= 0.5f;
+	velocity.xy = (clamp(velocity.x, -0.25f, 0.25f), clamp(velocity.y, -0.25f, 0.25f));
 
 	for (int i = 1; i < MAX_SAMPLES; ++i) {
 		// 앞의 물체는 블러에서 제외. 뒤의 것들만 처리해라
 		//if (velocity.z < vDepthInfo.x + 0.34f)
 		{
-			float2 offset = velocity.xy * (float(i) / float(MAX_SAMPLES - 1) - 0.5);
+			float2 offset = velocity.xy * (float(i) / float(MAX_SAMPLES - 1) - 0.4);
 			Out.vColor += tex2D(DiffuseSampler, screenTexCoords + offset);
 		}
 	}

@@ -36,10 +36,18 @@ HRESULT CHunter::Ready_GameObject(void * pArg)
 	m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 	m_pTargetTransform->AddRef();
 
+	if (nullptr != m_pTarget)
+	{
+		Safe_AddRef(m_pTarget);
+
+		m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
+		Safe_AddRef(m_pTargetTransform);
+	}
+
 	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-	m_tObjParam.fHp_Max = 200.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
+	//m_tObjParam.fHp_Max = 200.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
+	//m_tObjParam.fDamage = 25.f;
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
-	m_tObjParam.fDamage = 25.f;
 
 	m_tObjParam.bCanHit = true; //맞기 가능
 	m_tObjParam.bIsHit = false;	//맞기 진행중 아님
@@ -138,11 +146,6 @@ HRESULT CHunter::Render_GameObject()
 			m_pShaderCom->Begin_Pass(m_iPass);
 
 			m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
-
-			//m_pShaderCom->Begin_Pass(m_iPass);
-
-			//if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
-			//	return E_FAIL;
 
 			m_pShaderCom->Commit_Changes();
 

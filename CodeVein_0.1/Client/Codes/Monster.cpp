@@ -26,6 +26,11 @@ HRESULT CMonster::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 	return S_OK;
 }
 
+void CMonster::Set_Target_LayerTag(_tchar * pLayerTag)
+{
+	lstrcpy(m_pLayerTag_Of_Target, pLayerTag);
+}
+
 _bool CMonster::Is_InFov(_float fDegreeOfFov, CTransform* pSelfTransform, _v3 vTargetPos)
 {
 	_v3 vThisLook = *(_v3*)(&pSelfTransform->Get_WorldMat().m[2]);

@@ -34,6 +34,8 @@
 #include "LoadingBar.h"
 #include "StageUI.h"
 #include "StageSelectUI.h"
+#include "MistletoeUI.h"
+#include "MistletoeOptionUI.h"
 
 #include "MassageUI.h"
 #include "Get_ItemUI.h"
@@ -115,6 +117,10 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_StageSelectUI", CStageSelectUI::Create(pDevice))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MistletoeUI", CMistletoeUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MistletoeOptionUI", CMistletoeOptionUI::Create(pDevice))))
+		return E_FAIL;
 	
 	//////////////// Chae
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BossMassageUI", CMassageUI::Create(pDevice))))
@@ -131,30 +137,50 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 
 HRESULT CUI_Manager::SetUp_UILayer()
 {
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_QuickSlot", SCENE_STAGE, L"Layer_QuickSlot");
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ExpendablesInven", SCENE_STAGE, L"Layer_ExpendablesInven");
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_MaterialInven", SCENE_STAGE, L"Layer_MaterialInven");
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_WeaponInven", SCENE_STAGE, L"Layer_WeaponInven");
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ArmorInven", SCENE_STAGE, L"Layer_ArmorInven");
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_TotalInven", SCENE_STAGE, L"Layer_TotalInven");
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_Inventory", SCENE_STAGE, L"Layer_Inventory");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_QuickSlot", SCENE_MORTAL, L"Layer_QuickSlot");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ExpendablesInven", SCENE_MORTAL, L"Layer_ExpendablesInven");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_MaterialInven", SCENE_MORTAL, L"Layer_MaterialInven");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_WeaponInven", SCENE_MORTAL, L"Layer_WeaponInven");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ArmorInven", SCENE_MORTAL, L"Layer_ArmorInven");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_TotalInven", SCENE_MORTAL, L"Layer_TotalInven");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_Inventory", SCENE_MORTAL, L"Layer_Inventory");
 	
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_SkillUI", SCENE_STAGE, L"Layer_SkillUI");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_SkillUI", SCENE_MORTAL, L"Layer_SkillUI");
 	
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_StageSelectUI", SCENE_STAGE, L"Layer_StageSelectUI");
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_MistletoeUI", SCENE_STAGE, L"Layer_MistletoeUI");
+	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_StageSelectUI", SCENE_STAGE, L"Layer_StageSelectUI");
+
 	return NOERROR;
 }
 
 _int CUI_Manager::Update_UI()
 {
-	
+	/*if (g_pInput_Device->Key_Up(DIK_O))
+	{
+		m_bTest = !m_bTest;
+		Active_MistletoeUI(m_bTest); // 겨우살이 UI On/Off
+	}
+	if (g_pInput_Device->Key_Up(DIK_P))
+	{
+		Active_Mistletoe_SubUI(); // 선택된 항목의 UI On/Off
+	}
+	if (g_pInput_Device->Key_Up(DIK_LEFT))
+		Move_StageUI_Left(); // 스테이지UI 왼쪽이동
+	if (g_pInput_Device->Key_Up(DIK_RIGHT))
+		Move_StageUI_Right(); // 스테이지UI 오른쪽 이동
+	if (g_pInput_Device->Key_Up(DIK_J))
+		Move_MistletoeUI_Up(); // 겨우살이UI 위쪽 이동
+	if (g_pInput_Device->Key_Up(DIK_K))
+		Move_MistletoeUI_Down(); // 겨우살이UI 아래쪽 이동
+	if (g_pInput_Device->Key_Up(DIK_RETURN))
+		cout << Select_Stage() << endl;*/ // 스테이지 선택시, 각각 다른 _uint값 반환
 	return 0;
 }
 
 CExpendables::EXPEND_TYPE CUI_Manager::Use_Item()
 {
 	CQuickSlot* pQuickSlot = nullptr;
-	pQuickSlot = static_cast<CQuickSlot*>(g_pManagement->Get_GameObjectBack(L"Layer_QuickSlot", SCENE_STAGE));
+	pQuickSlot = static_cast<CQuickSlot*>(g_pManagement->Get_GameObjectBack(L"Layer_QuickSlot", SCENE_MORTAL));
 	if (nullptr == pQuickSlot)
 		return CExpendables::EXPEND_END;
 
@@ -164,7 +190,7 @@ CExpendables::EXPEND_TYPE CUI_Manager::Use_Item()
 WEAPON_STATE CUI_Manager::Get_UseWeaponState(_uint iIndex)
 {
 	CWeapon_Inven* pWeaponInven = nullptr;
-	pWeaponInven = static_cast<CWeapon_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponInven", SCENE_STAGE));
+	pWeaponInven = static_cast<CWeapon_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponInven", SCENE_MORTAL));
 	if (nullptr == pWeaponInven)
 		return WEAPON_None;
 
@@ -174,7 +200,7 @@ WEAPON_STATE CUI_Manager::Get_UseWeaponState(_uint iIndex)
 CArmor::ARMOR_TYPE CUI_Manager::Get_UseArmorType()
 {
 	CArmor_Inven* pArmorInven = nullptr;
-	pArmorInven = static_cast<CArmor_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ArmorInven", SCENE_STAGE));
+	pArmorInven = static_cast<CArmor_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ArmorInven", SCENE_MORTAL));
 	if (nullptr == pArmorInven)
 		return CArmor::ARMOR_END;
 	
@@ -193,7 +219,7 @@ void CUI_Manager::OnOff_BossUI(_bool bIsActive)
 void CUI_Manager::Add_Expendables(CExpendables::EXPEND_TYPE eType, _uint iCnt)
 {
 	CExpendables_Inven* pExInven = nullptr;
-	pExInven = static_cast<CExpendables_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendablesInven", SCENE_STAGE));
+	pExInven = static_cast<CExpendables_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendablesInven", SCENE_MORTAL));
 	if (nullptr == pExInven)
 		return;
 
@@ -203,7 +229,7 @@ void CUI_Manager::Add_Expendables(CExpendables::EXPEND_TYPE eType, _uint iCnt)
 void CUI_Manager::Add_Material(CMaterial::MATERIAL_TYPE eType, _uint iCnt)
 {
 	CMaterial_Inven* pMatInven = nullptr;
-	pMatInven = static_cast<CMaterial_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_MaterialInven", SCENE_STAGE));
+	pMatInven = static_cast<CMaterial_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_MaterialInven", SCENE_MORTAL));
 	if (nullptr == pMatInven)
 		return;
 
@@ -213,7 +239,7 @@ void CUI_Manager::Add_Material(CMaterial::MATERIAL_TYPE eType, _uint iCnt)
 void CUI_Manager::Add_Weapon(WEAPON_STATE eType)
 {
 	CWeapon_Inven* pWeaponInven = nullptr;
-	pWeaponInven = static_cast<CWeapon_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponInven", SCENE_STAGE));
+	pWeaponInven = static_cast<CWeapon_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponInven", SCENE_MORTAL));
 	if (nullptr == pWeaponInven)
 		return;
 
@@ -223,7 +249,7 @@ void CUI_Manager::Add_Weapon(WEAPON_STATE eType)
 void CUI_Manager::Add_Armor(CArmor::ARMOR_TYPE eType)
 {
 	CArmor_Inven* pArmorInven = nullptr;
-	pArmorInven = static_cast<CArmor_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ArmorInven", SCENE_STAGE));
+	pArmorInven = static_cast<CArmor_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ArmorInven", SCENE_MORTAL));
 	if (nullptr == pArmorInven)
 		return;
 
@@ -249,6 +275,69 @@ void CUI_Manager::Set_BossHP_Active(_bool bIsActive)
 		return;
 
 	pBossUI->Set_Active(false);
+}
+
+_uint CUI_Manager::Select_Stage()
+{
+	CStageSelectUI* pStageUI = static_cast<CStageSelectUI*>(g_pManagement->Get_GameObjectBack(L"Layer_StageSelectUI", SCENE_STAGE));
+	if (nullptr == pStageUI)
+		return _uint(CStageUI::Teleport_End);
+	Active_MistletoeUI(false);
+	return _uint(pStageUI->Select_Stage());
+}
+
+void CUI_Manager::Move_StageUI_Right()
+{
+	CStageSelectUI* pStageUI = static_cast<CStageSelectUI*>(g_pManagement->Get_GameObjectBack(L"Layer_StageSelectUI", SCENE_STAGE));
+	if (nullptr == pStageUI)
+		return;
+
+	pStageUI->Move_Right();
+}
+
+void CUI_Manager::Move_StageUI_Left()
+{
+	CStageSelectUI* pStageUI = static_cast<CStageSelectUI*>(g_pManagement->Get_GameObjectBack(L"Layer_StageSelectUI", SCENE_STAGE));
+	if (nullptr == pStageUI)
+		return;
+
+	pStageUI->Move_Left();
+}
+
+void CUI_Manager::Active_MistletoeUI(_bool bIsActive)
+{
+	CMistletoeUI* pMistletoeUI = static_cast<CMistletoeUI*>(g_pManagement->Get_GameObjectBack(L"Layer_MistletoeUI", SCENE_STAGE));
+	if (nullptr == pMistletoeUI)
+		return;
+
+	pMistletoeUI->Set_Active(bIsActive);
+}
+
+void CUI_Manager::Active_Mistletoe_SubUI()
+{
+	CMistletoeUI* pMistletoeUI = static_cast<CMistletoeUI*>(g_pManagement->Get_GameObjectBack(L"Layer_MistletoeUI", SCENE_STAGE));
+	if (nullptr == pMistletoeUI)
+		return;
+
+	pMistletoeUI->Active_SubUI();
+}
+
+void CUI_Manager::Move_MistletoeUI_Up()
+{
+	CMistletoeUI* pMistletoeUI = static_cast<CMistletoeUI*>(g_pManagement->Get_GameObjectBack(L"Layer_MistletoeUI", SCENE_STAGE));
+	if (nullptr == pMistletoeUI)
+		return;
+
+	pMistletoeUI->Move_Up();
+}
+
+void CUI_Manager::Move_MistletoeUI_Down()
+{
+	CMistletoeUI* pMistletoeUI = static_cast<CMistletoeUI*>(g_pManagement->Get_GameObjectBack(L"Layer_MistletoeUI", SCENE_STAGE));
+	if (nullptr == pMistletoeUI)
+		return;
+
+	pMistletoeUI->Move_Down();
 }
 
 void CUI_Manager::Free()

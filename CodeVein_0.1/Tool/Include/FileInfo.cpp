@@ -63,6 +63,17 @@ void CFileInfo::Create_Mesh_PathInfo(Extract_Mesh _eExtract_Mesh)
 		break;
 	}
 
+	case Extract_Field_Gimmick:
+	{
+		cout << "Extracting Field_Gimmick Path . . ." << endl;
+		cout << "=============================================================" << endl;
+
+		lstrcpy(szStaticPath, L"..\\..\\Client\\Resources\\Mesh\\StaticMesh\\");
+		lstrcat(szStaticPath, L"Field_Gimmick");
+
+		break;
+	}
+
 	case Extract_Static_Stage00:
 	{
 		cout << "Extracting StaticMesh_Stage00 Path . . ." << endl;
@@ -103,6 +114,17 @@ void CFileInfo::Create_Mesh_PathInfo(Extract_Mesh _eExtract_Mesh)
 
 		lstrcpy(szStaticPath, L"..\\..\\Client\\Resources\\Mesh\\StaticMesh\\");
 		lstrcat(szStaticPath, L"Stage_03");
+
+		break;
+	}
+
+	case Extract_Static_Stage04:
+	{
+		cout << "Extracting StaticMesh_Stage04 Path . . ." << endl;
+		cout << "=============================================================" << endl;
+
+		lstrcpy(szStaticPath, L"..\\..\\Client\\Resources\\Mesh\\StaticMesh\\");
+		lstrcat(szStaticPath, L"Stage_04");
 
 		break;
 	}
@@ -189,6 +211,13 @@ void CFileInfo::Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst, Extract_Mesh 
 		break;
 	}
 
+	case Extract_Field_Gimmick:
+	{
+		lstrcpy(szDataPath, L"../../Data/Load_MeshData/Mesh_Field_Gimmick_Path.dat");
+
+		break;
+	}
+
 	case Extract_Static_Stage00:
 	{
 		lstrcpy(szDataPath, L"../../Data/Load_MeshData/Mesh_Static_Stage00_Path.dat");
@@ -213,6 +242,13 @@ void CFileInfo::Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst, Extract_Mesh 
 	case Extract_Static_Stage03:
 	{
 		lstrcpy(szDataPath, L"../../Data/Load_MeshData/Mesh_Static_Stage03_Path.dat");
+
+		break;
+	}
+
+	case Extract_Static_Stage04:
+	{
+		lstrcpy(szDataPath, L"../../Data/Load_MeshData/Mesh_Static_Stage04_Path.dat");
 
 		break;
 	}

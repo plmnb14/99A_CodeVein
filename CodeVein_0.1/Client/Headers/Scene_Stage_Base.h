@@ -19,11 +19,17 @@ public:
 	virtual _int Update_Scene(_double TimeDelta);
 	virtual HRESULT Render_Scene();
 
+public:
+	virtual HRESULT Ready_Player();
+
 public:	
 	HRESULT Ready_Layer_BackGround(const _tchar* pLayerTag); 
 
 private:
 	CNavMesh*		m_pNavMesh = nullptr;
+
+private:
+	CLoading*			m_pLoading = nullptr;
 
 private:
 	HRESULT Ready_LightDesc();

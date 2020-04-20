@@ -10,9 +10,13 @@
 #include "DarkGroundBullet.h"
 #include "DarkBoom.h"
 #include "DarkMidCol.h"
+#include "LeakField.h"
 
 #include "IceGirl.h"
-#include "ColdBeam.h"
+#include "ColdBeamSmall.h"
+#include "ColdBeamMiddle.h"
+#include "ColdBeamBig.h"
+#include "ColdBeamSharp.h"
 #include "SwordBullet.h"
 #include "IceBarrier.h"
 

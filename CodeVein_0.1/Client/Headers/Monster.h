@@ -24,11 +24,17 @@ protected:
 	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass);
 
 protected:	// DJ
+	_tchar m_pLayerTag_Of_Target[256] = { 0, };
+
+	void Set_Target_LayerTag(_tchar* pTarget_LayerTag);
+
+
 
 	_bool Is_InFov(_float fDegreeOfFov, CTransform* pSelfTransform, _v3 vTargetPos);
 
 	HRESULT Draw_Collider();
-	
+
+
 
 
 protected:

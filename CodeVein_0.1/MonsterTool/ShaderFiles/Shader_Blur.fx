@@ -1,7 +1,8 @@
 
 
 matrix		g_matWorld, g_matView, g_matProj, g_matLastWVP;
-float		g_fRimPower;
+bool		g_bMotionBlur;
+float		g_fRimPower, g_fBloomPower = 0.75f;
 
 struct VS_IN
 {
@@ -62,6 +63,7 @@ struct PS_OUT
 {
 	vector		vVelocity : COLOR0;
 	vector		vNormal : COLOR1; // For RimLight
+	vector		vBloomPower : COLOR2;
 };
 
 // 픽셀의 색을 결정한다.
@@ -73,10 +75,21 @@ PS_OUT PS_MOTIONBLUR(PS_MOTIONBLUR_IN In)
 	float2 b = (In.vLastPos.xy / In.vLastPos.w) * 0.5 + 0.5;
 	//float2 velocity = pow(abs(a - b), 1 / 3.0)*sign(a - b) * 0.5 + 0.5;
 	float2 velocity = (a - b) * 0.5 + 0.5;
+
 	velocity = pow(velocity, 3.0);
 
+	float fMinValue = 0.45f;
+	if (velocity.x < fMinValue &&
+		velocity.y < fMinValue)
+		Out.vVelocity.w = 0.f;
+
 	Out.vVelocity = vector(velocity.xy, In.vProjPos.z / In.vProjPos.w, 1.f);
+	
+	if (!g_bMotionBlur)
+		Out.vVelocity.w = 0;
+	
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, g_fRimPower);
+	Out.vBloomPower = vector(g_fBloomPower,0,0,0);
 
 	return Out;
 }
