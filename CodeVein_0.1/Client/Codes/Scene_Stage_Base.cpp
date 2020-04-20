@@ -224,14 +224,14 @@ HRESULT CScene_Stage_Base::Ready_LightDesc()
 	//if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
 	//	return E_FAIL;
 
-	float fAmbient = 0.1f;
+	float fAmbient = 0.05f;
 
 	LightDesc.Type = D3DLIGHT_POINT;
 	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
 	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	LightDesc.Position = _v3(-0.f, 3.f, -10.f);
-	LightDesc.Range = 8.f;
+	LightDesc.Range = 7.f;
 
 	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
 		return E_FAIL;
@@ -241,7 +241,7 @@ HRESULT CScene_Stage_Base::Ready_LightDesc()
 	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	LightDesc.Position = _v3(-0.f, 3.f, -5.f);
-	LightDesc.Range = 8.f;
+	LightDesc.Range = 7.f;
 
 	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
 		return E_FAIL;
@@ -251,7 +251,7 @@ HRESULT CScene_Stage_Base::Ready_LightDesc()
 	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	LightDesc.Position = _v3(-0.f, 3.f, 0.f);
-	LightDesc.Range = 8.f;
+	LightDesc.Range = 7.f;
 
 	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
 		return E_FAIL;
@@ -262,7 +262,7 @@ HRESULT CScene_Stage_Base::Ready_LightDesc()
 	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	LightDesc.Position = _v3(-0.f, 3.f, 5.f);
-	LightDesc.Range = 8.f;
+	LightDesc.Range = 7.f;
 
 	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
 		return E_FAIL;
@@ -272,7 +272,7 @@ HRESULT CScene_Stage_Base::Ready_LightDesc()
 	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	LightDesc.Position = _v3(-0.f, 4.f, 10.f);
-	LightDesc.Range = 8.f;
+	LightDesc.Range = 7.f;
 
 	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
 		return E_FAIL;
@@ -282,7 +282,7 @@ HRESULT CScene_Stage_Base::Ready_LightDesc()
 	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	LightDesc.Position = _v3(-0.f, 4.f, 15.f);
-	LightDesc.Range = 8.f;
+	LightDesc.Range = 7.f;
 
 	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
 		return E_FAIL;
@@ -292,7 +292,7 @@ HRESULT CScene_Stage_Base::Ready_LightDesc()
 	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	LightDesc.Position = _v3(-0.f, 4.f, 20.f);
-	LightDesc.Range = 8.f;
+	LightDesc.Range = 7.f;
 
 	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
 		return E_FAIL;

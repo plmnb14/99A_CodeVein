@@ -103,7 +103,7 @@ HRESULT CScene_Stage_01::Ready_Layer_Player(const _tchar * pLayerTag)
 }
 
 
-void CScene_Stage_Training::Create_Fog(_double TimeDelta)
+void CScene_Stage_01::Create_Fog(_double TimeDelta)
 {
 	const _float FOG_OFFSET = 10.f;
 

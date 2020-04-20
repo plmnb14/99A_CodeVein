@@ -578,14 +578,14 @@ HRESULT CWeapon::SetUp_WeaponData()
 	// 한손검
 	//===========================================================================================
 
-	m_tWeaponParam[WPN_SSword_Normal].fDamage = 30.f;
+	m_tWeaponParam[WPN_SSword_Normal].fDamage = 100.f;
 	m_tWeaponParam[WPN_SSword_Normal].fRadius = 0.7f;
 	m_tWeaponParam[WPN_SSword_Normal].fTrail_Min = 0.6f;
 	m_tWeaponParam[WPN_SSword_Normal].fTrail_Max = 1.8f;
 	m_tWeaponParam[WPN_SSword_Normal].fCol_Height = 1.f;
 
 
-	m_tWeaponParam[WPN_SSword_Military].fDamage = 30.f;
+	m_tWeaponParam[WPN_SSword_Military].fDamage = 100.f;
 	m_tWeaponParam[WPN_SSword_Military].fRadius = 0.7f;
 	m_tWeaponParam[WPN_SSword_Military].fTrail_Min = 0.6f;
 	m_tWeaponParam[WPN_SSword_Military].fTrail_Max = 1.8f;
@@ -595,6 +595,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	// 대검
 	//===========================================================================================
 
+	m_tWeaponParam[WPN_Hammer_Normal].fDamage = 55.f;
 	m_tWeaponParam[WPN_LSword_Normal].fRadius = 0.8f;
 	m_tWeaponParam[WPN_LSword_Normal].fTrail_Min = 0.8f;
 	m_tWeaponParam[WPN_LSword_Normal].fTrail_Max = 2.1f;

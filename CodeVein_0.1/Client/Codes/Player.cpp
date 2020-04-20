@@ -8652,8 +8652,8 @@ HRESULT CPlayer::SetUp_Default()
 	// Parameter
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.bIsDodge = false;
-	m_tObjParam.fHp_Cur = 1000.f;
-	m_tObjParam.fHp_Max = 1000.f;
+	m_tObjParam.fHp_Cur = 5000.f;
+	m_tObjParam.fHp_Max = 5000.f;
 	
 	// Anim
 	m_fAnimMutiply = 1.f;

@@ -31,6 +31,7 @@ extern Engine::CTexture*			g_pDissolveTexture;
 extern bool		g_bOnStage[8];
 extern bool		g_bReleaseMode;
 extern short	g_sStageIdx_Cur;
+extern short	g_sPlayerLevel;
 
 namespace Client {}
 
