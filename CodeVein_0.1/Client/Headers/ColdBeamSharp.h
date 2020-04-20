@@ -5,12 +5,12 @@
 BEGIN(Client)
 
 class Engine::CEffect;
-class CColdBeam final : public CMonster
+class CColdBeamSharp final : public CMonster
 {
 protected:
-	explicit CColdBeam(LPDIRECT3DDEVICE9 pGraphic_Device);
-	explicit CColdBeam(const CColdBeam& rhs);
-	virtual ~CColdBeam() = default;
+	explicit CColdBeamSharp(LPDIRECT3DDEVICE9 pGraphic_Device);
+	explicit CColdBeamSharp(const CColdBeamSharp& rhs);
+	virtual ~CColdBeamSharp() = default;
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -56,7 +56,7 @@ private:
 	HRESULT Ready_Collider();
 
 public:
-	static CColdBeam* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
+	static CColdBeamSharp* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
 	virtual CGameObject* Clone_GameObject(void* pArg);
 	virtual void Free();
 };

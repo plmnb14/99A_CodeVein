@@ -1027,8 +1027,17 @@ _uint CLoading::Loading_Stage()
 		// 얼음여자
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceGirl", CIceGirl::Create(m_pGraphicDev))))
 			return E_FAIL;
-		// 얼음여자 콜드빔
-		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeam", CColdBeam::Create(m_pGraphicDev))))
+		// 얼음여자 콜드빔 작은 크기
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamSmall", CColdBeamSmall::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 얼음여자 콜드빔 중간 크기
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamMiddle", CColdBeamMiddle::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 얼음여자 콜드빔 큰 크기
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamBig", CColdBeamBig::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 얼음여자 콜드빔 날카로운것
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamSharp", CColdBeamSharp::Create(m_pGraphicDev))))
 			return E_FAIL;
 		// 얼음여자 검기발사
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordBullet", CSwordBullet::Create(m_pGraphicDev))))

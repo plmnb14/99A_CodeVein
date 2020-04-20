@@ -1,24 +1,24 @@
 #include "stdafx.h"
-#include "..\Headers\ColdBeam.h"
+#include "..\Headers\ColdBeamMiddle.h"
 #include "ParticleMgr.h"
 #include "Effect.h"
 
-CColdBeam::CColdBeam(LPDIRECT3DDEVICE9 pGraphic_Device)
+CColdBeamMiddle::CColdBeamMiddle(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CMonster(pGraphic_Device)
 {
 }
 
-CColdBeam::CColdBeam(const CColdBeam & rhs)
+CColdBeamMiddle::CColdBeamMiddle(const CColdBeamMiddle & rhs)
 	: CMonster(rhs)
 {
 }
 
-HRESULT CColdBeam::Ready_GameObject_Prototype()
+HRESULT CColdBeamMiddle::Ready_GameObject_Prototype()
 {
 	return NOERROR;
 }
 
-HRESULT CColdBeam::Ready_GameObject(void * pArg)
+HRESULT CColdBeamMiddle::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
@@ -59,7 +59,7 @@ HRESULT CColdBeam::Ready_GameObject(void * pArg)
 	return NOERROR;
 }
 
-_int CColdBeam::Update_GameObject(_double TimeDelta)
+_int CColdBeamMiddle::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
 
@@ -116,7 +116,7 @@ _int CColdBeam::Update_GameObject(_double TimeDelta)
 	return NOERROR;
 }
 
-_int CColdBeam::Late_Update_GameObject(_double TimeDelta)
+_int CColdBeamMiddle::Late_Update_GameObject(_double TimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
@@ -127,7 +127,7 @@ _int CColdBeam::Late_Update_GameObject(_double TimeDelta)
 	return NOERROR;
 }
 
-HRESULT CColdBeam::Render_GameObject()
+HRESULT CColdBeamMiddle::Render_GameObject()
 {
 	Update_Collider();
 	Draw_Collider();
@@ -135,7 +135,7 @@ HRESULT CColdBeam::Render_GameObject()
 	return NOERROR;
 }
 
-HRESULT CColdBeam::Update_Collider()
+HRESULT CColdBeamMiddle::Update_Collider()
 {
 	_ulong matrixIdx = 0;
 
@@ -154,7 +154,7 @@ HRESULT CColdBeam::Update_Collider()
 	return NOERROR;
 }
 
-void CColdBeam::OnCollisionEnter()
+void CColdBeamMiddle::OnCollisionEnter()
 {
 	// =============================================================================================
 	// 충돌
@@ -174,7 +174,7 @@ void CColdBeam::OnCollisionEnter()
 
 }
 
-void CColdBeam::OnCollisionEvent(list<CGameObject*> plistGameObject)
+void CColdBeamMiddle::OnCollisionEvent(list<CGameObject*> plistGameObject)
 {
 	// 공격 불가능이면 체크 안함
 	if (false == m_tObjParam.bCanAttack)
@@ -236,7 +236,7 @@ void CColdBeam::OnCollisionEvent(list<CGameObject*> plistGameObject)
 	}
 }
 
-HRESULT CColdBeam::Add_Component()
+HRESULT CColdBeamMiddle::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -253,12 +253,12 @@ HRESULT CColdBeam::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CColdBeam::SetUp_ConstantTable()
+HRESULT CColdBeamMiddle::SetUp_ConstantTable()
 {
 	return NOERROR;
 }
 
-HRESULT CColdBeam::Ready_Collider()
+HRESULT CColdBeamMiddle::Ready_Collider()
 {
 	m_vecAttackCol.reserve(1);
 
@@ -278,33 +278,33 @@ HRESULT CColdBeam::Ready_Collider()
 	return NOERROR;
 }
 
-CColdBeam * CColdBeam::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
+CColdBeamMiddle * CColdBeamMiddle::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 {
-	CColdBeam* pInstance = new CColdBeam(pGraphic_Device);
+	CColdBeamMiddle* pInstance = new CColdBeamMiddle(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 	{
-		MSG_BOX("Failed To Creating CColdBeam");
+		MSG_BOX("Failed To Creating CColdBeamMiddle");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject * CColdBeam::Clone_GameObject(void * pArg)
+CGameObject * CColdBeamMiddle::Clone_GameObject(void * pArg)
 {
-	CColdBeam* pInstance = new CColdBeam(*this);
+	CColdBeamMiddle* pInstance = new CColdBeamMiddle(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
-		MSG_BOX("Failed To Cloned CColdBeam");
+		MSG_BOX("Failed To Cloned CColdBeamMiddle");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CColdBeam::Free()
+void CColdBeamMiddle::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pCollider);

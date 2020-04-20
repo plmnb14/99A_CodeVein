@@ -179,7 +179,10 @@
     <ClInclude Include="..\Headers\Button_UI.h" />
     <ClInclude Include="..\Headers\ClickUI.h" />
     <ClInclude Include="..\Headers\Client_Defines.h" />
-    <ClInclude Include="..\Headers\ColdBeam.h" />
+    <ClInclude Include="..\Headers\ColdBeamSharp.h" />
+    <ClInclude Include="..\Headers\ColdBeamSmall.h" />
+    <ClInclude Include="..\Headers\ColdBeamBig.h" />
+    <ClInclude Include="..\Headers\ColdBeamMiddle.h" />
     <ClInclude Include="..\Headers\CursorEffect.h" />
     <ClInclude Include="..\Headers\CursorUI.h" />
     <ClInclude Include="..\Headers\DamegeNumUI.h" />
@@ -283,7 +286,10 @@
     <ClCompile Include="..\Codes\BossHP.cpp" />
     <ClCompile Include="..\Codes\Button_UI.cpp" />
     <ClCompile Include="..\Codes\ClickUI.cpp" />
-    <ClCompile Include="..\Codes\ColdBeam.cpp" />
+    <ClCompile Include="..\Codes\ColdBeamSharp.cpp" />
+    <ClCompile Include="..\Codes\ColdBeamSmall.cpp" />
+    <ClCompile Include="..\Codes\ColdBeamBig.cpp" />
+    <ClCompile Include="..\Codes\ColdBeamMiddle.cpp" />
     <ClCompile Include="..\Codes\CursorEffect.cpp" />
     <ClCompile Include="..\Codes\CursorUI.cpp" />
     <ClCompile Include="..\Codes\DamegeNumUI.cpp" />

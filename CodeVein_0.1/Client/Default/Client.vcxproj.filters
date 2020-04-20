@@ -567,9 +567,6 @@
     <ClInclude Include="..\Headers\IceGirl.h">
       <Filter>02.GameObject\Stage\1%29 Boss\IceGirl</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\ColdBeam.h">
-      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\SwordBullet.h">
       <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
     </ClInclude>
@@ -648,12 +645,23 @@
     <ClInclude Include="..\Headers\Button_UI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\Button_UI</Filter>
     </ClInclude>
-
     <ClInclude Include="..\Headers\MistletoeOptionUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\11. MistletoeUI\MistletoeOptionUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\LeakField.h">
       <Filter>02.GameObject\Stage\1%29 Boss\QueensKnight\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ColdBeamBig.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ColdBeamMiddle.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ColdBeamSmall.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ColdBeamSharp.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -885,9 +893,6 @@
     <ClCompile Include="..\Codes\IceGirl.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\IceGirl</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\ColdBeam.cpp">
-      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\SwordBullet.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
     </ClCompile>
@@ -968,6 +973,18 @@
     </ClCompile>
     <ClCompile Include="..\Codes\LeakField.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\QueensKnight\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ColdBeamBig.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ColdBeamMiddle.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ColdBeamSmall.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ColdBeamSharp.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

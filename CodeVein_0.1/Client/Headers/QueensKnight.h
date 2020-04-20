@@ -78,7 +78,7 @@ private:	// 패턴들
 	// 4. 한번 베기 
 	CBT_Composite_Node* Flash_Cut();	// 충돌완
 	// 5. 점멸 후 중앙으로 내려치기
-	CBT_Composite_Node* Flash_Middle_Ground();	// 이펙트 넣어야함
+	CBT_Composite_Node* Flash_Middle_Ground();	// 충돌완
 
 
 	///////////// 응용
