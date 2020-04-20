@@ -30,7 +30,9 @@ HRESULT CMonkey::Ready_GameObject(void * pArg)
 	Ready_Weapon();
 
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	m_pTarget->AddRef();
 	m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
+	m_pTargetTransform->AddRef();
 
 	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
 	m_tObjParam.fHp_Max = 120.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
@@ -41,7 +43,8 @@ HRESULT CMonkey::Ready_GameObject(void * pArg)
 	m_tObjParam.bIsHit = false;	//맞기 진행중 아님
 	m_tObjParam.bCanAttack = true; //공격 가능
 	m_tObjParam.bIsAttack = false; //공격 진행중 아님
-	m_tObjParam.bIsDodge = false; //첫 생성시 회피 비활성
+	m_tObjParam.bCanDodge = true; //회피 가능
+	m_tObjParam.bIsDodge = false;  //회피 진행중 아님
 
 	m_bInRecognitionRange = false; //인지 범위 여부
 	m_bInAtkRange = false; //공격 범위 여부
@@ -49,9 +52,11 @@ HRESULT CMonkey::Ready_GameObject(void * pArg)
 	m_bCanCoolDown = false; //쿨타임 여부
 	m_bIsCoolDown = false; //쿨타임 진행중 여부
 
-	m_bCanAtkCategoryRandom = true;
-	m_bIsAtkCombo = false;
-	m_bCanIdleRandom = true;
+	m_bAtkCategory = true; //공격타입 고정용
+	m_bIsCombo = false; //콤보 진행중
+
+	m_bCanIdle = true; //일상 가능
+	m_bIsIdle = false; //일상 진행중 아님
 
 	m_fRecognitionRange = 20.f; //인지범위
 	m_fAtkRange = 5.f; //공격범위
@@ -73,7 +78,7 @@ _int CMonkey::Update_GameObject(_double TimeDelta)
 
 	Check_Hit();
 	Check_Dist();
-	Set_AniEvent();
+	Check_AniEvent();
 	Function_CoolDown();
 
 	m_pMeshCom->SetUp_Animation(m_eState);
@@ -445,11 +450,17 @@ void CMonkey::Function_ResetAfterAtk()
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.bIsHit = false;
 
+	m_tObjParam.bCanDodge = true;
 	m_tObjParam.bIsDodge = false;
 
+	m_bCanIdle = true;
+	m_bIsIdle = false;
+
 	m_tObjParam.bIsAttack = false;
-	m_bCanAtkCategoryRandom = true;
-	m_bIsAtkCombo = false;
+
+	m_bAtkCategory = true;
+	m_bCanInterrupt = true;
+	m_bIsCombo = false;
 
 	for (auto& vetor_iter : m_vecAttackCol)
 		vetor_iter->Set_Enabled(false);
@@ -470,56 +481,101 @@ void CMonkey::Check_Hit()
 	if (MONSTER_ANITYPE::DEAD == m_eFirstCategory)
 		return;
 
-	if (false == m_tObjParam.bCanHit)
+	if (0 < m_tObjParam.fHp_Cur)
 	{
-		++m_iDodgeCount;
-		//피격시 불값을 온하고 카운트 해주고 불값 오프
-		//콤보1->콤보2 연결도중에 맞으면 콤보 바로 종료
-		//지금은 바로 피격시 off해버림
-		//특수기,강공격,다운기 등등이 발동시 바로 콤보 off
-		//머리에 생각이 떠돌고 있으니 새벽에 가능성 있음
-		if (m_iDodgeCount >= m_iDodgeCountMax)
+		if (false == m_tObjParam.bCanHit)
 		{
-			m_iDodgeCount = 0;
-			m_eFirstCategory = MONSTER_ANITYPE::MOVE;
-			m_eSecondCategory_MOVE = MONKEY_MOVETYPE::MOVE_DODGE;
-			m_pMeshCom->Reset_OldIndx();
-			Function_RotateBody();
-		}
-		else
-		{
-			if (true == m_tObjParam.bIsHit)
+			if (true == m_bCanInterrupt)
 			{
-				if (true == m_tObjParam.bHitAgain)
+				++m_iDodgeCount;
+				if (m_iDodgeCount >= m_iDodgeCountMax)
 				{
-					m_eFirstCategory = MONSTER_ANITYPE::HIT;
-					Check_FBLR();
-					m_tObjParam.bHitAgain = false;
+					m_iDodgeCount = 0;
+					m_tObjParam.bCanDodge = true;
+					m_eFirstCategory = MONSTER_ANITYPE::MOVE;
+					m_eSecondCategory_MOVE = MONKEY_MOVETYPE::MOVE_DODGE;
 					m_pMeshCom->Reset_OldIndx();
-				}
-			}
-			else
-			{
-				if (0 >= m_tObjParam.fHp_Cur)
-				{
-					m_eFirstCategory = MONSTER_ANITYPE::DEAD;
+					Function_RotateBody();
 				}
 				else
 				{
-					m_eFirstCategory = MONSTER_ANITYPE::HIT;
-					Check_FBLR();
+					if (true == m_tObjParam.bIsHit)
+					{
+						if (true == m_tObjParam.bHitAgain)
+						{
+							m_eFirstCategory = MONSTER_ANITYPE::HIT;
+							//이떄 특수 공격 관련으로 불값이 참인 경우 cc기로
+							/*if(특수 공격)
+							else
+							데미지 측정 float 혹은 bool*/
+							//	m_eFirstCategory = MONSTER_ANITYPE::CC;
+							Check_FBLR();
+							m_tObjParam.bHitAgain = false;
+							m_pMeshCom->Reset_OldIndx();
+						}
+					}
+					else
+					{
+						m_eFirstCategory = MONSTER_ANITYPE::HIT;
+						//데미지 측정, 특수 공격 측정
+						/*if(특수 공격)
+						else
+						데미지 측정 float 혹은 bool*/
+						//	m_eFirstCategory = MONSTER_ANITYPE::CC;
+						Check_FBLR();
+					}
 				}
 			}
 		}
 	}
+	else
+		m_eFirstCategory = MONSTER_ANITYPE::DEAD;
 
 	return;
 }
 
 void CMonkey::Check_FBLR()
 {
-	//충돌 위치에 따라 f,b,l,r로 나눈다
-	m_eFBLR = CMonkey::FRONT;
+	_float angle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos()));
+
+	if (MONSTER_ANITYPE::HIT == m_eFirstCategory)
+	{
+		m_eSecondCategory_HIT = MONKEY_HITTYPE::HIT_NORMAL;
+
+		if (0.f <= angle && 90.f > angle)
+			m_eFBLR = FBLR::FRONT;
+		else if (-90.f <= angle && 0.f > angle)
+			m_eFBLR = FBLR::FRONT;
+		else if (90.f <= angle && 180.f > angle)
+			m_eFBLR = FBLR::BACK;
+		else if (-180.f <= angle && -90.f > angle)
+			m_eFBLR = FBLR::BACK;
+	}
+	else if (MONSTER_ANITYPE::CC == m_eFirstCategory)
+	{
+		if (0.f <= angle && 90.f > angle)
+		{
+			m_eSecondCategory_CC = MONKEY_CCTYPE::CC_DOWN_P;
+			m_eFBLR = FBLR::FRONT;
+		}
+		else if (-90.f <= angle && 0.f > angle)
+		{
+			m_eSecondCategory_CC = MONKEY_CCTYPE::CC_DOWN_P;
+			m_eFBLR = FBLR::FRONT;			
+		}
+		else if (90.f <= angle && 180.f > angle)
+		{
+			m_eSecondCategory_CC = MONKEY_CCTYPE::CC_DOWN_S;
+			m_eFBLR = FBLR::BACK;
+		}
+		else if (-180.f <= angle && -90.f > angle)
+		{
+			m_eSecondCategory_CC = MONKEY_CCTYPE::CC_DOWN_S;
+			m_eFBLR = FBLR::BACK;
+		}
+	}
+
+	return;
 }
 
 void CMonkey::Check_Dist()
@@ -529,80 +585,85 @@ void CMonkey::Check_Dist()
 		MONSTER_ANITYPE::DEAD == m_eFirstCategory)
 		return;
 
-	if (MONSTER_ANITYPE::MOVE == m_eFirstCategory &&
-		MONKEY_MOVETYPE::MOVE_DODGE == m_eSecondCategory_MOVE)
-		return;
-
-	if (true == m_tObjParam.bIsAttack ||
-		true == m_bIsAtkCombo ||
+	if (true == m_bIsCombo ||
+		true == m_tObjParam.bIsAttack ||
 		true == m_tObjParam.bIsDodge ||
 		true == m_tObjParam.bIsHit)
 		return;
 
-	_float fLenth = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransform->Get_Pos()));
-
-	m_fRecognitionRange >= fLenth ? m_bInRecognitionRange = true : m_bInRecognitionRange = false;
-	m_fAtkRange >= fLenth ? m_bInAtkRange = true : m_bInAtkRange = false;
-
-	if (true == m_bInRecognitionRange)
+	if (nullptr == m_pTargetTransform)
 	{
-		if (MONKEY_ANI::NF_Sit == m_eState || MONKEY_ANI::NF_Sit_End == m_eState)
+		//유저를 잡았거나, 생성되지 않았거나
+		//동료, 플레이어 레이어 찾기 또는 일상행동을 반복한다
+		Function_ResetAfterAtk();
+
+		m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+
+		return;
+	}
+	else
+	{
+		_float fLenth = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransform->Get_Pos()));
+
+		m_fRecognitionRange >= fLenth ? m_bInRecognitionRange = true : m_bInRecognitionRange = false;
+		m_fAtkRange >= fLenth ? m_bInAtkRange = true : m_bInAtkRange = false;
+
+		if (true == m_bInRecognitionRange)
 		{
-			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-		}
-		else
-		{
-			if (true == m_bInAtkRange)
+			if (true == m_bIsIdle)
 			{
-				if (true == m_tObjParam.bCanAttack)
+				m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+			}
+			else
+			{
+				if (true == m_bInAtkRange)
 				{
-					if (true == m_bIsCoolDown)
+					if (true == m_tObjParam.bCanAttack)
 					{
-						//해당 플레이어 주위를 배회
-						m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-						m_eSecondCategory_IDLE = MONKEY_IDLETYPE::IDLE_IDLE;
-						Function_RotateBody();
+						if (true == m_bIsCoolDown)
+						{
+							//막기,회피
+							m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+							m_eSecondCategory_IDLE = MONKEY_IDLETYPE::IDLE_IDLE;
+							Function_RotateBody();
+						}
+						else
+						{
+							m_bAtkCategory = true;
+							m_eFirstCategory = MONSTER_ANITYPE::ATTACK;
+							Function_RotateBody();
+						}
 					}
 					else
 					{
-						//인지,범위,공격가능,쿨타임아님->공격 패턴
-						m_bCanAtkCategoryRandom = true;
-						m_eFirstCategory = MONSTER_ANITYPE::ATTACK;
+						m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+						m_eSecondCategory_IDLE = MONKEY_IDLETYPE::IDLE_IDLE;
 						Function_RotateBody();
 					}
 				}
 				else
 				{
-					//인지, 범위, 공격불가능 -> 공격중은 아닌데? walk하면서 주위 맴돌기,경계상태에 가깝다
-					//버프, 동료
-					m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-					m_eSecondCategory_IDLE = MONKEY_IDLETYPE::IDLE_IDLE;
+					m_bCanChase = true;
+					m_eFirstCategory = MONSTER_ANITYPE::MOVE;
+					m_eSecondCategory_MOVE = MONKEY_MOVETYPE::MOVE_RUN;
 					Function_RotateBody();
 				}
 			}
-			else
-			{
-				//인지 ->추적,동료,도망,버프 다양한 선택지 생성
-				m_bCanChase = true;
-				m_eFirstCategory = MONSTER_ANITYPE::MOVE;
-				m_eSecondCategory_MOVE = MONKEY_MOVETYPE::MOVE_RUN;
-			}
 		}
-	}
-	else
-	{
-		m_bCanChase = false;
-		m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-		if (true == m_bCanIdleRandom)
+		else
 		{
-			switch (CALC::Random_Num(MONKEY_IDLETYPE::IDLE_IDLE, MONKEY_IDLETYPE::IDLE_SIT))
+			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+			if (false == m_bIsIdle)
 			{
-			case MONKEY_IDLETYPE::IDLE_IDLE:
-				m_eSecondCategory_IDLE = MONKEY_IDLETYPE::IDLE_IDLE;
-				break;
-			case MONKEY_IDLETYPE::IDLE_SIT:
-				m_eSecondCategory_IDLE = MONKEY_IDLETYPE::IDLE_SIT;
-				break;
+				switch (CALC::Random_Num(MONKEY_IDLETYPE::IDLE_IDLE, MONKEY_IDLETYPE::IDLE_SIT))
+				{
+				case MONKEY_IDLETYPE::IDLE_IDLE:
+					m_eSecondCategory_IDLE = MONKEY_IDLETYPE::IDLE_IDLE;
+					break;
+				case MONKEY_IDLETYPE::IDLE_SIT:
+					m_eSecondCategory_IDLE = MONKEY_IDLETYPE::IDLE_SIT;
+					break;
+				}
 			}
 		}
 	}
@@ -610,26 +671,11 @@ void CMonkey::Check_Dist()
 	return;
 }
 
-void CMonkey::Set_AniEvent()
+void CMonkey::Check_AniEvent()
 {
 	switch (m_eFirstCategory)
 	{
 	case MONSTER_ANITYPE::IDLE:
-		if (true == m_bCanIdleRandom)
-		{
-			m_bCanIdleRandom = false;
-
-			switch (m_eSecondCategory_IDLE)
-			{
-			case MONKEY_IDLETYPE::IDLE_IDLE:
-				m_eState = MONKEY_ANI::Idle;
-				break;
-			case MONKEY_IDLETYPE::IDLE_SIT:
-				m_eState = MONKEY_ANI::NF_Sit;
-				break;
-			}
-		}
-		else
 			Play_Idle();
 		break;
 
@@ -638,15 +684,11 @@ void CMonkey::Set_AniEvent()
 		break;
 
 	case MONSTER_ANITYPE::ATTACK:
-		if (true == m_bCanAtkCategoryRandom)
+		if (true == m_bAtkCategory)
 		{
-			m_tObjParam.bCanAttack = false;
-			m_tObjParam.bIsAttack = true;
-			m_bCanAtkCategoryRandom = false;
+			m_bAtkCategory = false;
 
-			m_iRandom = CALC::Random_Num(MONKEY_ATKTYPE::ATK_NORMAL, MONKEY_ATKTYPE::ATK_COMBO);
-
-			switch (m_iRandom)
+			switch (CALC::Random_Num(MONKEY_ATKTYPE::ATK_NORMAL, MONKEY_ATKTYPE::ATK_COMBO))
 			{
 			case MONKEY_ATKTYPE::ATK_NORMAL:
 				m_eSecondCategory_ATK = MONKEY_ATKTYPE::ATK_NORMAL;
@@ -654,7 +696,7 @@ void CMonkey::Set_AniEvent()
 				break;
 			case MONKEY_ATKTYPE::ATK_COMBO:
 				m_eSecondCategory_ATK = MONKEY_ATKTYPE::ATK_COMBO;
-				m_bIsAtkCombo = true;
+				m_bIsCombo = true;
 				Play_RandomAtkCombo();
 				break;
 			}
@@ -687,7 +729,7 @@ void CMonkey::Set_AniEvent()
 					break;
 				}
 			}
-			if (MONKEY_ATKTYPE::ATK_COMBO == m_eSecondCategory_ATK)
+			else if (MONKEY_ATKTYPE::ATK_COMBO == m_eSecondCategory_ATK)
 			{
 				switch (m_eAtkCombo)
 				{
@@ -723,7 +765,14 @@ void CMonkey::Set_AniEvent()
 
 void CMonkey::Play_RandomAtkNormal()
 {
-	switch (CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_ATK_ROTBODY, ATK_NORMAL_TYPE::NORMAL_FANGSHOOT))
+	_float fLenth = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransform->Get_Pos()));
+
+	if (m_fShotRange >= fLenth)
+		m_iRandom = ATK_NORMAL_TYPE::NORMAL_FANGSHOOT;
+	else
+		m_iRandom = CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_ATK_ROTBODY, ATK_NORMAL_TYPE::NORMAL_JUMP_ROTBODY);
+
+	switch (m_iRandom)
 	{
 	case ATK_NORMAL_TYPE::NORMAL_ATK_ROTBODY:
 		m_eState = MONKEY_ANI::Atk_N02;
@@ -750,6 +799,8 @@ void CMonkey::Play_RandomAtkNormal()
 
 void CMonkey::Play_RandomAtkCombo()
 {
+	_float fLenth = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransform->Get_Pos()));
+
 	switch (CALC::Random_Num(ATK_COMBO_TYPE::COMBO_JUMP_CLOCK, ATK_COMBO_TYPE::COMBO_RUNATK))
 	{
 	case ATK_COMBO_TYPE::COMBO_JUMP_CLOCK:
@@ -1087,6 +1138,7 @@ void CMonkey::Play_Combo_Normal()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.85f))
 		{
+			m_bCanInterrupt = true;
 			m_eState = MONKEY_ANI::Atk_N02;
 
 			return;
@@ -1116,6 +1168,9 @@ void CMonkey::Play_Combo_Normal()
 				m_pWeapon->Set_Enable_Trail(true);
 			}
 		}
+
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
 
 		if (0.767f < AniTime && 1.133f > AniTime)
 		{
@@ -1167,6 +1222,9 @@ void CMonkey::Play_Combo_Normal()
 			}
 		}
 
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
+
 		if (0.833f < AniTime && 1.300f > AniTime)
 		{
 			if (false == m_bEventTrigger[7])
@@ -1193,6 +1251,7 @@ void CMonkey::Play_Combo_Jump_Clock()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.85f))
 		{
+			m_bCanInterrupt = false;
 			m_eState = MONKEY_ANI::Atk_N02;
 
 			return;
@@ -1222,6 +1281,9 @@ void CMonkey::Play_Combo_Jump_Clock()
 				m_pWeapon->Set_Enable_Trail(true);
 			}
 		}
+
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
 
 		if (0.967f < AniTime && 1.733f > AniTime)
 		{
@@ -1299,11 +1361,13 @@ void CMonkey::Play_Combo_RunAtk()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.8f))
 		{
+			m_bCanInterrupt = true;
 			m_eState = MONKEY_ANI::Atk_Sp_Loop;
 
 			return;
 		}
-
+		else if (m_pMeshCom->Is_Finish_Animation(0.3f))
+				m_bCanInterrupt = false;
 		if (0.600f < AniTime)
 		{
 			if (false == m_bEventTrigger[0])
@@ -1322,10 +1386,13 @@ void CMonkey::Play_Combo_RunAtk()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.9f))
 		{
+			m_bCanInterrupt = true;
 			m_eState = MONKEY_ANI::Atk_Sp_End;
 
 			return;
 		}
+		else if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
 
 		Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 		Function_DecreMoveMent(m_fSkillMoveMultiply);
@@ -1366,6 +1433,9 @@ void CMonkey::Play_Combo_RunAtk()
 			}
 		}
 
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
+
 		if (0.267f < AniTime && 0.800f > AniTime)
 		{
 			if (false == m_bEventTrigger[3])
@@ -1389,21 +1459,21 @@ void CMonkey::Play_Idle()
 	case MONKEY_IDLETYPE::IDLE_IDLE:
 		if (true == m_bInRecognitionRange)
 		{
+			m_bIsIdle = false;
+
 			if (true == m_tObjParam.bCanAttack)
 			{
-				//인지, 공격 가능->대기
 				m_eState = MONKEY_ANI::Idle;
 			}
 			else
 			{
-				//인지, 공격 불가->경계
 				Function_RotateBody();
 				m_eState = MONKEY_ANI::Idle;
 			}
 		}
 		else
 		{
-			m_bCanIdleRandom = true;
+			m_bIsIdle = true;
 			m_eState = MONKEY_ANI::Idle;
 		}
 		break;
@@ -1412,20 +1482,24 @@ void CMonkey::Play_Idle()
 		{
 			if (MONKEY_ANI::NF_Sit == m_eState)
 			{
-				if (m_pMeshCom->Is_Finish_Animation())
+				m_bIsIdle = true;
+
+				if (m_pMeshCom->Is_Finish_Animation(0.5f))
 					m_eState = MONKEY_ANI::NF_Sit_End;
 			}
 			else if (MONKEY_ANI::NF_Sit_End == m_eState)
 			{
 				if (m_pMeshCom->Is_Finish_Animation(0.95f))
 				{
-					m_bCanIdleRandom = true;
+					m_bCanIdle = true;
+					m_bIsIdle = false;
 					m_eState = MONKEY_ANI::Idle;
 				}
 			}
 		}
 		else
 		{
+			m_bIsIdle = true;
 			m_eState = MONKEY_ANI::NF_Sit;
 		}
 
@@ -1458,9 +1532,10 @@ void CMonkey::Play_Move()
 		Function_DecreMoveMent(0.1f);
 		break;
 	case MONKEY_MOVETYPE::MOVE_DODGE:
-		if (false == m_tObjParam.bIsDodge)
+		if (true == m_tObjParam.bCanDodge)
 		{
 			Function_ResetAfterAtk();
+			m_tObjParam.bCanDodge = false;
 			m_tObjParam.bIsDodge = true;
 			m_eState = MONKEY_ANI::Dodge;
 		}
@@ -1563,6 +1638,7 @@ void CMonkey::Play_Hit()
 	{
 		Function_ResetAfterAtk();
 		m_tObjParam.bIsHit = true;
+
 		switch (m_eFBLR)
 		{
 		case FBLR::FRONT:
@@ -1570,12 +1646,6 @@ void CMonkey::Play_Hit()
 			break;
 		case FBLR::BACK:
 			m_eState = MONKEY_ANI::Dmg_B;
-			break;
-		case FBLR::LEFT:
-			m_eState = MONKEY_ANI::Dmg_F;
-			break;
-		case FBLR::RIGHT:
-			m_eState = MONKEY_ANI::Dmg_F;
 			break;
 		}
 	}
@@ -1612,11 +1682,11 @@ void CMonkey::Play_Dead()
 {
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
 
-	if (false == m_bCanPlayDeadAni)
+	if (false == m_bCanPlayDead)
 	{
 		Function_ResetAfterAtk();
 
-		m_bCanPlayDeadAni = true;
+		m_bCanPlayDead = true;
 
 		if (MONKEY_ANI::Down_P_End == m_eState ||
 			MONKEY_ANI::Down_P_Loop == m_eState ||
@@ -1656,8 +1726,8 @@ void CMonkey::Play_Dead()
 				if (false == m_bEventTrigger[1])
 				{
 					m_bEventTrigger[1] = true;
-					Start_Dissolve(0.8f, false, true);
-					m_pWeapon->Start_Dissolve(0.8f, false, true);
+					Start_Dissolve(0.7f, false, true);
+					m_pWeapon->Start_Dissolve(0.7f, false, true);
 				}
 			}
 		}
@@ -1668,27 +1738,21 @@ void CMonkey::Play_Dead()
 
 HRESULT CMonkey::Add_Component()
 {
-	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
 		return E_FAIL;
 
-	// For.Com_Renderer
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
-	// For.Com_Shader
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
-	// for.Com_Mesh
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Monkey", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
 		return E_FAIL;
 
-	// for.Com_NavMesh
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMesh)))
 		return E_FAIL;
 
-	// for.Com_Collider
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
 
@@ -1746,10 +1810,11 @@ HRESULT CMonkey::Ready_Collider()
 	m_vecPhysicCol.reserve(2);
 	m_vecAttackCol.reserve(1);
 
-	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
-	IF_NULL_VALUE_RETURN(pCollider, E_FAIL);
-
-	_float fRadius = 1.2f;
+	_float fRadius;
+	CCollider* pCollider = nullptr;
+	
+	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
+	fRadius = 1.2f;
 
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
@@ -1759,9 +1824,7 @@ HRESULT CMonkey::Ready_Collider()
 
 	m_vecPhysicCol.push_back(pCollider);
 
-	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
-	IF_NULL_VALUE_RETURN(pCollider, E_FAIL);
-
+	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
 	fRadius = 0.7f;
 
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
@@ -1772,10 +1835,8 @@ HRESULT CMonkey::Ready_Collider()
 
 	m_vecPhysicCol.push_back(pCollider);
 
-	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
-	IF_NULL_VALUE_RETURN(pCollider, E_FAIL);
-
-	fRadius = 0.6f; //크기 확인
+	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
+	fRadius = 0.6f;
 
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
@@ -1791,25 +1852,22 @@ HRESULT CMonkey::Ready_Collider()
 
 HRESULT CMonkey::Ready_BoneMatrix()
 {
-	D3DXFRAME_DERIVED*	pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHand", 0);
-	IF_NULL_VALUE_RETURN(pFrame, E_FAIL);
+	D3DXFRAME_DERIVED*	pFrame = nullptr;
+
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHand", 0), E_FAIL);
 	m_matBone[Bone_LeftHand] = &pFrame->CombinedTransformationMatrix;
 
-
-	pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head", 0);
-	IF_NULL_VALUE_RETURN(pFrame, E_FAIL);
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head", 0), E_FAIL);
 	m_matBone[Bone_Head] = &pFrame->CombinedTransformationMatrix;
 
-
-	pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Spine", 0);
-	IF_NULL_VALUE_RETURN(pFrame, E_FAIL);
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Spine", 0), E_FAIL);
 	m_matBone[Bone_Range] = &pFrame->CombinedTransformationMatrix;
 	m_matBone[Bone_Body] = &pFrame->CombinedTransformationMatrix;
 
 	return S_OK;
 }
 
-CMonkey * CMonkey::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
+CMonkey* CMonkey::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 {
 	CMonkey* pInstance = new CMonkey(pGraphic_Device);
 
@@ -1837,6 +1895,8 @@ CGameObject* CMonkey::Clone_GameObject(void * pArg)
 
 void CMonkey::Free()
 {
+	Safe_Release(m_pTarget);
+	Safe_Release(m_pTargetTransform);
 	Safe_Release(m_pWeapon);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pNavMesh);

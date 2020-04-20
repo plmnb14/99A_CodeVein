@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\Hunter.h"
 #include "..\Headers\Weapon.h"
+#include "..\Headers\\HunterBullet.h"
 
 CHunter::CHunter(LPDIRECT3DDEVICE9 pGraphic_Device)
 	:CGameObject(pGraphic_Device)
@@ -25,6 +26,7 @@ HRESULT CHunter::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Pos(_v3(1.f, 0.f, 1.f));
 	m_pTransformCom->Set_Scale(V3_ONE);
 
+	Ready_Status(pArg);
 	Ready_BoneMatrix();
 	Ready_Collider();
 	Ready_Weapon();
@@ -40,15 +42,16 @@ HRESULT CHunter::Ready_GameObject(void * pArg)
 	}
 
 	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-	m_tObjParam.fHp_Max = 9999180.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
+	//m_tObjParam.fHp_Max = 200.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
+	//m_tObjParam.fDamage = 25.f;
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
-	m_tObjParam.fDamage = 25.f;
 
 	m_tObjParam.bCanHit = true; //맞기 가능
 	m_tObjParam.bIsHit = false;	//맞기 진행중 아님
 	m_tObjParam.bCanAttack = true; //공격 가능
 	m_tObjParam.bIsAttack = false; //공격 진행중 아님
-	m_tObjParam.bIsDodge = false; //첫 생성시 회피 비활성
+	m_tObjParam.bCanDodge = true; //회피 가능
+	m_tObjParam.bIsDodge = false;  //회피 진행중 아님
 
 	m_bInRecognitionRange = false; //인지 범위 여부
 	m_bInAtkRange = false; //공격 범위 여부
@@ -56,17 +59,19 @@ HRESULT CHunter::Ready_GameObject(void * pArg)
 	m_bCanCoolDown = false; //쿨타임 여부
 	m_bIsCoolDown = false; //쿨타임 진행중 여부
 
-	m_bCanAtkCategoryRandom = true;
-	m_bIsCombo = false;
-	m_bCanIdleRandom = true;
+	m_bAtkCategory = true; //공격타입 고정용
+	m_bIsCombo = false; //콤보 진행중
 
-	m_fRecognitionRange = 20.f; //인지범위
-	m_fAtkRange = 5.f; //공격범위
-	m_fCoolDownMax = 0.f; //쿨타임 맥스값은 유동적
+	m_bCanIdle = true; //일상 가능
+	m_bIsIdle = false; //일상 진행중 아님
+
 	m_fCoolDownCur = 0.f; //쿨타임 시간을 더함
 	m_fSpeedForCollisionPush = 2.f;
-	m_iRandom = 0;
-	m_iDodgeCount = 0; //n회 피격시 바로 회피
+	//m_fRecognitionRange = 20.f; //인지범위
+	//m_fAtkRange = 5.f; //공격범위
+	//m_fCoolDownMax = 0.f; //쿨타임 맥스값은 유동적
+	//m_iRandom = 0;
+	//m_iDodgeCount = 0; //n회 피격시 바로 회피
 
 	return S_OK;
 }
@@ -79,7 +84,7 @@ _int CHunter::Update_GameObject(_double TimeDelta)
 	CGameObject::Update_GameObject(TimeDelta);
 
 	Check_Hit();
-	//Check_Dist();
+	Check_Dist();
 	Check_AniEvent();
 	Function_CoolDown();
 
@@ -138,11 +143,6 @@ HRESULT CHunter::Render_GameObject()
 			m_pShaderCom->Begin_Pass(m_iPass);
 
 			m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
-
-			//m_pShaderCom->Begin_Pass(m_iPass);
-
-			//if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
-			//	return E_FAIL;
 
 			m_pShaderCom->Commit_Changes();
 
@@ -288,9 +288,7 @@ void CHunter::Check_CollisionPush()
 void CHunter::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 {
 	if (false == m_tObjParam.bIsAttack)
-	{
 		return;
-	}
 
 	_bool bFirst = true;
 
@@ -336,9 +334,7 @@ void CHunter::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 				else
 				{
 					if (bFirst)
-					{
 						break;
-					}
 				}
 			}
 		}
@@ -416,11 +412,11 @@ void CHunter::Function_RotateBody()
 
 void CHunter::Function_CoolDown()
 {
-	if (true == m_bCanCoolDown) //공격 직후 상태
+	if (true == m_bCanCoolDown)
 	{
 		m_fCoolDownCur += DELTA_60;
 
-		if (m_fCoolDownCur >= m_fCoolDownMax) //누적시간이 쿨타임보다 크다면
+		if (m_fCoolDownCur >= m_fCoolDownMax)
 		{
 			m_fCoolDownCur = 0.f;
 			m_bCanCoolDown = false;
@@ -460,11 +456,16 @@ void CHunter::Function_ResetAfterAtk()
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.bIsHit = false;
 
+	m_tObjParam.bCanDodge = true;
 	m_tObjParam.bIsDodge = false;
 
+	m_bCanIdle = true;
+	m_bIsIdle = false;
+
 	m_tObjParam.bIsAttack = false;
-	m_bCanAtkCategoryRandom = true;
-	m_bCanComboInterrupt = true;
+
+	m_bAtkCategory = true;
+	m_bCanInterrupt = true;
 	m_bIsCombo = false;
 
 	for (auto& vetor_iter : m_vecAttackCol)
@@ -483,131 +484,121 @@ void CHunter::Function_ResetAfterAtk()
 
 void CHunter::Check_Hit()
 {
-	//특수기,강공격,다운기 등등이 발동시 바로 콤보 off->미정
 	if (MONSTER_ANITYPE::DEAD == m_eFirstCategory)
 		return;
-
-	if (false == m_tObjParam.bCanHit) //피격
+	//체력o
+	if (0 < m_tObjParam.fHp_Cur)
 	{
-		if (true == m_bCanComboInterrupt) //콤보 끊을 수 있음
+		//피격o
+		if (false == m_tObjParam.bCanHit)
 		{
-			//++m_iDodgeCount;
-
-			if (m_iDodgeCount >= m_iDodgeCountMax) //회피 가능 값 n회의 피격
+			//콤보 방해가능
+			if (true == m_bCanInterrupt)
 			{
-				m_iDodgeCount = 0;
-				m_eFirstCategory = MONSTER_ANITYPE::MOVE;
-				m_eSecondCategory_MOVE = HUNTER_MOVETYPE::MOVE_DODGE;
-				m_pMeshCom->Reset_OldIndx();
-				Function_RotateBody();
-			}
-			else //회피할 정도로 안 맞음
-			{
-				if (true == m_tObjParam.bIsHit) //맞는 도중
+				++m_iDodgeCount;
+				//회피 수치 누적o
+				if (m_iDodgeCount >= m_iDodgeCountMax)
 				{
-					if (true == m_tObjParam.bHitAgain)
-					{
-						m_eFirstCategory = MONSTER_ANITYPE::HIT;
-						Check_FBLR();
-						m_tObjParam.bHitAgain = false;
-						m_pMeshCom->Reset_OldIndx();
-					}
+					m_iDodgeCount = 0;
+					m_tObjParam.bCanDodge = true;
+					m_eFirstCategory = MONSTER_ANITYPE::MOVE;
+					m_eSecondCategory_MOVE = HUNTER_MOVETYPE::MOVE_DODGE;
+					m_pMeshCom->Reset_OldIndx();
+					Function_RotateBody();
 				}
-				else //처음으로 맞는, 맞은지 꽤 됨
+				//회피 수치 누적x
+				else
 				{
-					if (0 >= m_tObjParam.fHp_Cur)
+					//맞는 도중이라면
+					if (true == m_tObjParam.bIsHit)
 					{
-						m_eFirstCategory = MONSTER_ANITYPE::DEAD;
+						//연속 피격 가능
+						if (true == m_tObjParam.bHitAgain)
+						{
+							m_eFirstCategory = MONSTER_ANITYPE::HIT;
+							//이떄 특수 공격 관련으로 불값이 참인 경우 cc기로
+							//if(특수 공격)
+							//else
+							//데미지 측정 float 혹은 bool
+							//	m_eFirstCategory = MONSTER_ANITYPE::CC;
+							Check_FBLR();
+							m_tObjParam.bHitAgain = false;
+							m_pMeshCom->Reset_OldIndx();
+						}
 					}
+					//처음 맞음 또는 맞은지 오래됨
 					else
 					{
 						m_eFirstCategory = MONSTER_ANITYPE::HIT;
+						//데미지 측정, 특수 공격 측정
+						//if(특수 공격)
+						//else
+						//데미지 측정 float 혹은 bool
+						//	m_eFirstCategory = MONSTER_ANITYPE::CC;
 						Check_FBLR();
 					}
 				}
 			}
 		}
-		else //콤보 끊을수 없음
-		{
-			if (0 >= m_tObjParam.fHp_Cur) //콤보 공격은 진행하는데 체력이 음수임
-			{
-				m_eFirstCategory = MONSTER_ANITYPE::DEAD;
-			}
-		}
 	}
+	//체력x
+	else
+		m_eFirstCategory = MONSTER_ANITYPE::DEAD;
 
 	return;
 }
 
 void CHunter::Check_FBLR()
 {
-	//1 데미지에 따라
-	//_float fDamagePercent;
-	//DmgBlow_B, DmgBlow_F,
-	//if(fDamagePercent>30.f)
-	//if(fDamagePercent >10.f)
-	//else
-	//2 피격 방향에 따라
+	_float angle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos()));
+
 	if (MONSTER_ANITYPE::HIT == m_eFirstCategory)
 	{
-		_float angle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos()));
+		m_eSecondCategory_HIT = HUNTER_HITTYPE::HIT_WEAK; //hit01
 
-		cout << "피격시 각도 == " << angle << endl;
-		
-		if (-22.5f <= angle && 22.5f > angle)
-		{
-			cout << "F" << endl;
-			m_eSecondCategory_HIT = HUNTER_HITTYPE::HIT_NORMAL;
-			m_eFBLR = FBLR::FRONT;
-		}
-		else if (22.5f <= angle && 67.5f > angle)
-		{
-			cout << "FR" << endl;
-			m_eSecondCategory_HIT = HUNTER_HITTYPE::HIT_NORMAL;
+		if (0.f <= angle && 90.f > angle)
 			m_eFBLR = FBLR::FRONTRIGHT;
-		}
-		else if (67.5f <= angle && 112.5f > angle)
-		{
-			cout << "R" << endl;
-			m_eSecondCategory_HIT = HUNTER_HITTYPE::HIT_NORMAL;
-			m_eFBLR = FBLR::RIGHT;
-		}
-		else if (112.5f <= angle && 157.5f > angle)
-		{
-			cout << "BR" << endl;
-			m_eSecondCategory_HIT = HUNTER_HITTYPE::HIT_NORMAL;
+		else if (90.f <= angle && 180.f > angle)
 			m_eFBLR = FBLR::BACKRIGHT;
-		}
-		else if (157.5f <= angle && 180.f > angle)
-		{
-			cout << "B" << endl;
-			m_eSecondCategory_HIT = HUNTER_HITTYPE::HIT_NORMAL;
-			m_eFBLR = FBLR::BACK;
-		}
-		else if (-180.f <= angle && -157.f > angle)
-		{
-			cout << "B" << endl;
-			m_eSecondCategory_HIT = HUNTER_HITTYPE::HIT_NORMAL;
-			m_eFBLR = FBLR::BACK;
-		}
-		else if (-157.5f <= angle && -112.5f > angle)
-		{
-			cout << "BL" << endl;
-			m_eSecondCategory_HIT = HUNTER_HITTYPE::HIT_NORMAL;
+		else if (-180.f <= angle && -90.f > angle)
 			m_eFBLR = FBLR::BACKLEFT;
-		}
-		else if (-112.5f <= angle && -67.5f > angle)
-		{
-			cout << "L" << endl;
-			m_eSecondCategory_HIT = HUNTER_HITTYPE::HIT_NORMAL;
-			m_eFBLR = FBLR::LEFT;
-		}
-		else if (-67.5f <= angle && -22.5f > angle)
-		{
-			cout << "FL" << endl;
-			m_eSecondCategory_HIT = HUNTER_HITTYPE::HIT_NORMAL;
+		else if (-90.f <= angle && 0.f > angle)
 			m_eFBLR = FBLR::FRONTLEFT;
-		}
+
+		//if(데미지 변수) 또는 if(데미지 >= xxx.f)
+		//m_eSecondCategory_HIT = HUNTER_HITTYPE::HIT_NORMAL; //hit02
+		//if (-22.5f <= angle && 22.5f > angle)
+		//	m_eFBLR = FBLR::FRONT;
+		//else if (22.5f <= angle && 67.5f > angle)
+		//	m_eFBLR = FBLR::FRONTRIGHT;
+		//else if (67.5f <= angle && 112.5f > angle)
+		//	m_eFBLR = FBLR::RIGHT;
+		//else if (112.5f <= angle && 157.5f > angle)
+		//	m_eFBLR = FBLR::BACKRIGHT;
+		//else if (157.5f <= angle && 180.f > angle)
+		//	m_eFBLR = FBLR::BACK;
+		//else if (-180.f <= angle && -157.f > angle)
+		//	m_eFBLR = FBLR::BACK;
+		//else if (-157.5f <= angle && -112.5f > angle)
+		//	m_eFBLR = FBLR::BACKLEFT;
+		//else if (-112.5f <= angle && -67.5f > angle)
+		//	m_eFBLR = FBLR::LEFT;
+		//else if (-67.5f <= angle && -22.5f > angle)
+		//	m_eFBLR = FBLR::FRONTLEFT;
+	}
+	else if (MONSTER_ANITYPE::CC == m_eFirstCategory)
+	{
+		//m_eSecondCategory_CC = HUNTER_CCTYPE::CC_STUN;
+		m_eSecondCategory_CC = HUNTER_CCTYPE::CC_DOWN;
+		//자빠짐Down_S, 엎어짐Down_P
+		if (0.f <= angle && 90.f > angle)
+			m_eFBLR = FBLR::FRONT;
+		else if (-90.f <= angle && 0.f > angle)
+			m_eFBLR = FBLR::FRONT;
+		else if (90.f <= angle && 180.f > angle)
+			m_eFBLR = FBLR::BACK;
+		else if (-180.f <= angle && -90.f > angle)
+			m_eFBLR = FBLR::BACK;
 	}
 
 	return;
@@ -620,88 +611,103 @@ void CHunter::Check_Dist()
 		MONSTER_ANITYPE::DEAD == m_eFirstCategory)
 		return;
 
-	if (MONSTER_ANITYPE::MOVE == m_eFirstCategory &&
-		HUNTER_MOVETYPE::MOVE_DODGE == m_eSecondCategory_MOVE)
-		return;
-
-	if (true == m_tObjParam.bIsAttack ||
-		true == m_bIsCombo ||
+	if (true == m_bIsCombo ||
+		true == m_tObjParam.bIsAttack ||
 		true == m_tObjParam.bIsDodge ||
 		true == m_tObjParam.bIsHit)
 		return;
 
-	_float fLenth = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransform->Get_Pos()));
-
-	m_fRecognitionRange >= fLenth ? m_bInRecognitionRange = true : m_bInRecognitionRange = false;
-	m_fAtkRange >= fLenth ? m_bInAtkRange = true : m_bInAtkRange = false;
-
-	if (true == m_bInRecognitionRange)
+	if (nullptr == m_pTargetTransform)
 	{
-		if (HUNTER_ANI::Stand == m_eState || HUNTER_ANI::Stand_End == m_eState ||
-			HUNTER_ANI::Crouch == m_eState || HUNTER_ANI::Crouch_End == m_eState ||
-			HUNTER_ANI::Sit == m_eState || HUNTER_ANI::Sit_End == m_eState)
+		//유저를 잡았거나, 생성되지 않았거나
+		//동료, 플레이어 레이어 찾기 또는 일상행동을 반복한다
+		Function_ResetAfterAtk();
+
+		m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+
+		return;
+	}
+	else
+	{
+		_float fLenth = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransform->Get_Pos()));
+
+		m_fRecognitionRange >= fLenth ? m_bInRecognitionRange = true : m_bInRecognitionRange = false;
+		m_fAtkRange >= fLenth ? m_bInAtkRange = true : m_bInAtkRange = false;
+
+		//인지o
+		if (true == m_bInRecognitionRange)
 		{
-			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-		}
-		else
-		{
-			if (true == m_bInAtkRange)
+			//일상 진행중
+			if (true == m_bIsIdle)
 			{
-				if (true == m_tObjParam.bCanAttack)
+				m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+			}
+			//일상 진행중 아님
+			else
+			{
+				//범위o
+				if (true == m_bInAtkRange)
 				{
-					if (true == m_bIsCoolDown)
+					//공격가능성o
+					if (true == m_tObjParam.bCanAttack)
 					{
-						//해당 플레이어 주위를 배회
+						//쿨타임o
+						if (true == m_bIsCoolDown)
+						{
+							//막기나 회피를 통해 쿨타임 시간을 벌어보자
+							m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+							m_eSecondCategory_IDLE = HUNTER_IDLETYPE::IDLE_IDLE;
+							Function_RotateBody();
+						}
+						//쿹타임x
+						else
+						{
+							m_bAtkCategory = true;
+							m_eFirstCategory = MONSTER_ANITYPE::ATTACK;
+							Function_RotateBody();
+						}
+					}
+					//공격가능성x
+					else
+					{
+						//인지, 범위, 공격불가능 -> 공격중은 아닌데? walk하면서 주위 맴돌기, 버프, 동료
 						m_eFirstCategory = MONSTER_ANITYPE::IDLE;
 						m_eSecondCategory_IDLE = HUNTER_IDLETYPE::IDLE_IDLE;
 						Function_RotateBody();
 					}
-					else
-					{
-						//인지,범위,공격가능,쿨타임아님->공격 패턴
-						m_bCanAtkCategoryRandom = true;
-						m_eFirstCategory = MONSTER_ANITYPE::ATTACK;
-						Function_RotateBody();
-					}
 				}
+				//범위x
 				else
 				{
-					//인지, 범위, 공격불가능 -> 공격중은 아닌데? walk하면서 주위 맴돌기,경계상태에 가깝다, 버프, 동료
-					m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-					m_eSecondCategory_IDLE = HUNTER_IDLETYPE::IDLE_IDLE;
+					m_bCanChase = true;
+					m_eFirstCategory = MONSTER_ANITYPE::MOVE;
+					m_eSecondCategory_MOVE = HUNTER_MOVETYPE::MOVE_RUN;
 					Function_RotateBody();
 				}
 			}
-			else
-			{
-				//인지 ->추적,동료,도망,버프 다양한 선택지 생성
-				m_bCanChase = true;
-				m_eFirstCategory = MONSTER_ANITYPE::MOVE;
-				m_eSecondCategory_MOVE = HUNTER_MOVETYPE::MOVE_RUN;
-				Function_RotateBody();
-			}
 		}
-	}
-	else
-	{
-		m_bCanChase = false;
-		m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-		if (true == m_bCanIdleRandom)
+		//인지x
+		else
 		{
-			switch (CALC::Random_Num(HUNTER_IDLETYPE::IDLE_IDLE, HUNTER_IDLETYPE::IDLE_SIT))
+			//타겟은 있으나 인지범위에 없음
+			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+			if (false == m_bIsIdle)
 			{
-			case HUNTER_IDLETYPE::IDLE_IDLE:
-				m_eSecondCategory_IDLE = HUNTER_IDLETYPE::IDLE_IDLE;
-				break;
-			case HUNTER_IDLETYPE::IDLE_STAND:
-				m_eSecondCategory_IDLE = HUNTER_IDLETYPE::IDLE_STAND;
-				break;
-			case HUNTER_IDLETYPE::IDLE_CROUCH:
-				m_eSecondCategory_IDLE = HUNTER_IDLETYPE::IDLE_CROUCH;
-				break;
-			case HUNTER_IDLETYPE::IDLE_SIT:
-				m_eSecondCategory_IDLE = HUNTER_IDLETYPE::IDLE_SIT;
-				break;
+				switch (CALC::Random_Num(HUNTER_IDLETYPE::IDLE_IDLE, HUNTER_IDLETYPE::IDLE_SIT))
+				{
+				case HUNTER_IDLETYPE::IDLE_IDLE:
+					m_eSecondCategory_IDLE = HUNTER_IDLETYPE::IDLE_IDLE;
+					break;
+				case HUNTER_IDLETYPE::IDLE_STAND:
+					m_eSecondCategory_IDLE = HUNTER_IDLETYPE::IDLE_STAND;
+					break;
+				case HUNTER_IDLETYPE::IDLE_CROUCH:
+					m_eSecondCategory_IDLE = HUNTER_IDLETYPE::IDLE_CROUCH;
+					break;
+				case HUNTER_IDLETYPE::IDLE_SIT:
+					m_eSecondCategory_IDLE = HUNTER_IDLETYPE::IDLE_SIT;
+					break;
+				}
 			}
 		}
 	}
@@ -714,28 +720,7 @@ void CHunter::Check_AniEvent()
 	switch (m_eFirstCategory)
 	{
 	case MONSTER_ANITYPE::IDLE:
-		if (true == m_bCanIdleRandom)
-		{
-			m_bCanIdleRandom = false;
-
-			switch (m_eSecondCategory_IDLE)
-			{
-			case HUNTER_IDLETYPE::IDLE_IDLE:
-				m_eState = HUNTER_ANI::Idle;
-				break;
-			case HUNTER_IDLETYPE::IDLE_STAND:
-				m_eState = HUNTER_ANI::Stand;
-				break;
-			case HUNTER_IDLETYPE::IDLE_CROUCH:
-				m_eState = HUNTER_ANI::Crouch;
-				break;
-			case HUNTER_IDLETYPE::IDLE_SIT:
-				m_eState = HUNTER_ANI::Sit;
-				break;
-			}
-		}
-		else
-			Play_Idle();
+		Play_Idle();
 		break;
 
 	case MONSTER_ANITYPE::MOVE:
@@ -743,11 +728,12 @@ void CHunter::Check_AniEvent()
 		break;
 
 	case MONSTER_ANITYPE::ATTACK:
-		if (true == m_bCanAtkCategoryRandom)
+		if (true == m_bAtkCategory)
 		{
 			m_tObjParam.bCanAttack = false;
 			m_tObjParam.bIsAttack = true;
-			m_bCanAtkCategoryRandom = false;
+
+			m_bAtkCategory = false;
 
 			m_iRandom = CALC::Random_Num(HUNTER_ATKTYPE::ATK_NORMAL, HUNTER_ATKTYPE::ATK_COMBO);
 
@@ -762,8 +748,8 @@ void CHunter::Check_AniEvent()
 				break;
 			case HUNTER_ATKTYPE::ATK_COMBO:
 				m_eSecondCategory_ATK = HUNTER_ATKTYPE::ATK_COMBO;
-				m_bIsCombo = true;
 				Play_RandomAtkCombo();
+				m_bIsCombo = true;
 				break;
 			}
 
@@ -866,7 +852,7 @@ void CHunter::Check_AniEvent()
 					break;
 				}
 			}
-			if (HUNTER_ATKTYPE::ATK_COMBO == m_eSecondCategory_ATK)
+			else if (HUNTER_ATKTYPE::ATK_COMBO == m_eSecondCategory_ATK)
 			{
 				switch (m_eAtkCombo)
 				{
@@ -1049,16 +1035,18 @@ void CHunter::Play_RandomAtkCombo()
 	switch (m_eWeaponState)
 	{
 	case WEAPON_ANITYPE::GUN:
-		if (m_fShotRange >= fLenth)
-		{
-			m_eAtkCombo = ATK_COMBO_TYPE::COMBO_GUN_CQC;
-			m_eState = HUNTER_ANI::Bayonet_Atk_N01;
-		}
-		else
-		{
-			m_eAtkCombo = ATK_COMBO_TYPE::COMBO_GUN_SHOT;
-			m_eState = HUNTER_ANI::Bayonet_Atk_Shoot01;
-		}
+		m_eAtkCombo = ATK_COMBO_TYPE::COMBO_GUN_SHOT;
+		m_eState = HUNTER_ANI::Bayonet_Atk_Shoot01;
+		//if (m_fShotRange >= fLenth)
+		//{
+		//	m_eAtkCombo = ATK_COMBO_TYPE::COMBO_GUN_CQC;
+		//	m_eState = HUNTER_ANI::Bayonet_Atk_N01;
+		//}
+		//else
+		//{
+		//	m_eAtkCombo = ATK_COMBO_TYPE::COMBO_GUN_SHOT;
+		//	m_eState = HUNTER_ANI::Bayonet_Atk_Shoot01;
+		//}
 		break;
 	case WEAPON_ANITYPE::HALBERD:
 		switch (CALC::Random_Num(ATK_COMBO_TYPE::COMBO_HALBERD_THIRDATK, ATK_COMBO_TYPE::COMBO_HALBERD_PIERCEWIND))
@@ -1229,8 +1217,8 @@ void CHunter::Play_Gun_R()
 
 void CHunter::Play_Gun_Shoot()
 {
-	//3.467 발사 3.367 연기 3.967 연기끝
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+	_v3 Birth;
 
 	if (true == m_tObjParam.bCanAttack)
 	{
@@ -1247,58 +1235,36 @@ void CHunter::Play_Gun_Shoot()
 
 			return;
 		}
-		else
+		else if (3.333f <= AniTime)
 		{
-			if (1.500f < AniTime && 1.800f > AniTime)
+			if (false == m_bEventTrigger[0])
 			{
-				if (m_bEventTrigger[0] == false)
-				{
-					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 8.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 1.5f;
-				}
+				m_bEventTrigger[0] = true;
 
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-			else if (2.067f < AniTime && 2.500f > AniTime)
-			{
-				if (m_bEventTrigger[1] == false)
-				{
-					m_bEventTrigger[1] = true;
-					m_vecAttackCol[0]->Set_Enabled(true);
-				}
-			}
-			else if (2.500f <= AniTime)
-			{
-				if (m_bEventTrigger[2] == false)
-				{
-					m_bEventTrigger[2] = true;
-					m_vecAttackCol[0]->Set_Enabled(false);
-				}
-			}
-			else if (4.773f < AniTime && 6.800f > AniTime)
-			{
-				if (m_bEventTrigger[3] == false)
-				{
-					m_bEventTrigger[3] = true;
-					m_fSkillMoveSpeed_Cur = 0.2f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 0.1f;
-				}
+				_mat matTemp = *m_matBone[Bone_RightHandAttach] * m_pTransformCom->Get_WorldMat(); //뼈위치* 월드
+				_v3 TestLook;
+				_float TestLength = 1.0f;
 
-				Function_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
+				memcpy(&Birth, &matTemp._41, sizeof(_v3)); //생성위치
+				memcpy(&TestLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
+				Birth = Birth + (TestLook * TestLength); //생성위치 = 생성위치 +(룩*길이)
+
+				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &CHunterBullet::HUNTERBULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 3.f, 1.5));
 			}
 		}
+		else if (0.f <= AniTime)
+		{
+			Function_RotateBody();
+		}
 	}
+
+	return;
 }
 
 void CHunter::Play_Gun_Snipe()
 {
-	//3.467 발사 3.467연기 4.133 연기끝
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+	_v3 Birth;
 
 	if (true == m_tObjParam.bCanAttack)
 	{
@@ -1315,166 +1281,130 @@ void CHunter::Play_Gun_Snipe()
 
 			return;
 		}
-		else
+		else if (2.100f <= AniTime)
 		{
-			if (1.500f < AniTime && 1.800f > AniTime)
+			if (false == m_bEventTrigger[0])
 			{
-				if (m_bEventTrigger[0] == false)
-				{
-					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 8.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 1.5f;
-				}
+				m_bEventTrigger[0] = true;
 
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-			else if (2.067f < AniTime && 2.500f > AniTime)
-			{
-				if (m_bEventTrigger[1] == false)
-				{
-					m_bEventTrigger[1] = true;
-					m_vecAttackCol[0]->Set_Enabled(true);
-				}
-			}
-			else if (2.500f <= AniTime)
-			{
-				if (m_bEventTrigger[2] == false)
-				{
-					m_bEventTrigger[2] = true;
-					m_vecAttackCol[0]->Set_Enabled(false);
-				}
-			}
-			else if (4.773f < AniTime && 6.800f > AniTime)
-			{
-				if (m_bEventTrigger[3] == false)
-				{
-					m_bEventTrigger[3] = true;
-					m_fSkillMoveSpeed_Cur = 0.2f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 0.1f;
-				}
+				_mat matTemp = *m_matBone[Bone_RightHandAttach] * m_pTransformCom->Get_WorldMat(); //뼈위치* 월드
+				_v3 TestLook;
+				_float TestLength = 1.0f;
 
-				Function_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
+				memcpy(&Birth, &matTemp._41, sizeof(_v3)); //생성위치
+				memcpy(&TestLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
+				Birth = Birth + (TestLook * TestLength); //생성위치 = 생성위치 +(룩*길이)
+
+				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &CHunterBullet::HUNTERBULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 3.f, 1.5));
+			}
+		}
+		else if (0.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+
+				_mat matTemp = *m_matBone[Bone_RightHandAttach] * m_pTransformCom->Get_WorldMat(); //뼈위치* 월드
+				_v3 TestLook;
+				_float TestLength = 1.0f;
+
+				memcpy(&Birth, &matTemp._41, sizeof(_v3)); //생성위치
+				memcpy(&TestLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
+				Birth = Birth + (TestLook * TestLength); //생성위치 = 생성위치 +(룩*길이)
+
+				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &CHunterBullet::HUNTERBULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 3.f, 1.5));
 			}
 		}
 	}
+
+	return;
 }
 
 void CHunter::Play_Gun_Combo_Shot()
 {
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+	_v3 Birth;
 
-	//3.467 발사 3.367 연기 3.967 연기끝
-	//발사,연기 0.667 연기끝 2.267발사 2.267연기 2.833 연기끝
-	//3.467 발사 3.467연기 4.133 연기끝
 	if (HUNTER_ANI::Bayonet_Atk_Shoot01 == m_eState)
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.7f))
 		{
-			m_bCanComboInterrupt = true;
+			m_bCanInterrupt = true;
 			m_eState = HUNTER_ANI::Bayonet_Atk_Shoot02;
 
 			return;
 		}
-		else if (m_pMeshCom->Is_Finish_Animation(0.3f))
-		{
-			m_bCanComboInterrupt = false;
-		}
-		else if (1.967f <= AniTime)
+		else if (3.333f <= AniTime)
 		{
 			if (false == m_bEventTrigger[0])
 			{
 				m_bEventTrigger[0] = true;
-				m_pWeapon->Set_Enable_Trail(false);
-			}
-		}
-		else if (1.667f <= AniTime)
-		{
-			if (false == m_bEventTrigger[1])
-			{
-				m_bEventTrigger[1] = true;
-				m_pWeapon->Set_Target_CanAttack(false);
-			}
-		}
-		else if (1.533f <= AniTime)
-		{
-			if (false == m_bEventTrigger[2])
-			{
-				m_bEventTrigger[2] = true;
-				m_pWeapon->Set_Target_CanAttack(true);
-				m_pWeapon->Set_Enable_Trail(true);
-			}
-		}
 
-		if (1.267f < AniTime && 1.767f > AniTime)
-		{
-			if (false == m_bEventTrigger[3])
-			{
-				m_bEventTrigger[3] = true;
-				m_fSkillMoveSpeed_Cur = 6.f;
-				m_fSkillMoveAccel_Cur = 0.f;
-				m_fSkillMoveMultiply = 1.5f;
-			}
+				_mat matTemp = *m_matBone[Bone_RightHandAttach] * m_pTransformCom->Get_WorldMat(); //뼈위치* 월드
+				_v3 TestLook;
+				_float TestLength = 1.0f;
 
-			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-			Function_DecreMoveMent(m_fSkillMoveMultiply);
+				memcpy(&Birth, &matTemp._41, sizeof(_v3)); //생성위치
+				memcpy(&TestLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
+				Birth = Birth + (TestLook * TestLength); //생성위치 = 생성위치 +(룩*길이)
+
+				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &CHunterBullet::HUNTERBULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 3.f, 1.5));
+			}
 		}
+		else if (0.f <= AniTime)
+		{
+			Function_RotateBody();
+		}
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
 	}
 	else if (HUNTER_ANI::Bayonet_Atk_Shoot02 == m_eState)
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.62f))
 		{
-			m_bCanComboInterrupt = true;
+			m_bCanInterrupt = true;
 			m_eState = HUNTER_ANI::Bayonet_Atk_Snipe;
 
 			return;
 		}
-		else if (m_pMeshCom->Is_Finish_Animation(0.3f))
+		else if (2.100f <= AniTime)
 		{
-			m_bCanComboInterrupt = false;
-		}
-		else if (1.700f <= AniTime)
-		{
-			if (false == m_bEventTrigger[5])
+			if (false == m_bEventTrigger[1])
 			{
-				m_bEventTrigger[5] = true;
-				m_pWeapon->Set_Enable_Trail(false);
+				m_bEventTrigger[1] = true;
+
+				_mat matTemp = *m_matBone[Bone_RightHandAttach] * m_pTransformCom->Get_WorldMat(); //뼈위치* 월드
+				_v3 TestLook;
+				_float TestLength = 1.0f;
+
+				memcpy(&Birth, &matTemp._41, sizeof(_v3)); //생성위치
+				memcpy(&TestLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
+				Birth = Birth + (TestLook * TestLength); //생성위치 = 생성위치 +(룩*길이)
+
+				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &CHunterBullet::HUNTERBULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 3.f, 1.5));
 			}
 		}
-		else if (1.400f <= AniTime)
+		else if (0.f <= AniTime)
 		{
-			if (false == m_bEventTrigger[6])
+			if (false == m_bEventTrigger[2])
 			{
-				m_bEventTrigger[6] = true;
-				m_pWeapon->Set_Target_CanAttack(false);
+				m_bEventTrigger[2] = true;
+
+				_mat matTemp = *m_matBone[Bone_RightHandAttach] * m_pTransformCom->Get_WorldMat(); //뼈위치* 월드
+				_v3 TestLook;
+				_float TestLength = 1.0f;
+
+				memcpy(&Birth, &matTemp._41, sizeof(_v3)); //생성위치
+				memcpy(&TestLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
+				Birth = Birth + (TestLook * TestLength); //생성위치 = 생성위치 +(룩*길이)
+
+				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &CHunterBullet::HUNTERBULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 3.f, 1.5));
 			}
-		}
-		else if (1.133f <= AniTime)
-		{
-			if (false == m_bEventTrigger[7])
-			{
-				m_bEventTrigger[7] = true;
-				m_pWeapon->Set_Target_CanAttack(true);
-				m_pWeapon->Set_Enable_Trail(true);
-			}
+			Function_RotateBody();
 		}
 
-		if (0.600f < AniTime && 3.627f > AniTime)
-		{
-			if (false == m_bEventTrigger[8])
-			{
-				m_bEventTrigger[8] = true;
-				m_fSkillMoveSpeed_Cur = 6.f;
-				m_fSkillMoveAccel_Cur = 0.f;
-				m_fSkillMoveMultiply = 1.f;
-			}
-
-			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-			Function_DecreMoveMent(m_fSkillMoveMultiply);
-		}
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
 	}
 	else if (HUNTER_ANI::Bayonet_Atk_Snipe == m_eState)
 	{
@@ -1486,49 +1416,29 @@ void CHunter::Play_Gun_Combo_Shot()
 
 			return;
 		}
-		else if (m_pMeshCom->Is_Finish_Animation(0.3f))
+		else if (3.333f < AniTime)
 		{
-			m_bCanComboInterrupt = false;
-		}
-		else if (2.067f < AniTime)
-		{
-			if (false == m_bEventTrigger[9])
+			if (false == m_bEventTrigger[3])
 			{
-				m_bEventTrigger[9] = true;
-				m_pWeapon->Set_Enable_Trail(false);
+				m_bEventTrigger[3] = true;
+				_mat matTemp = *m_matBone[Bone_RightHandAttach] * m_pTransformCom->Get_WorldMat(); //뼈위치* 월드
+				_v3 TestLook;
+				_float TestLength = 1.0f;
+
+				memcpy(&Birth, &matTemp._41, sizeof(_v3)); //생성위치
+				memcpy(&TestLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
+				Birth = Birth + (TestLook * TestLength); //생성위치 = 생성위치 +(룩*길이)
+
+				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &CHunterBullet::HUNTERBULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 3.f, 1.5));
 			}
 		}
-		else if (1.767f <= AniTime)
+		else if (0.f < AniTime)
 		{
-			if (false == m_bEventTrigger[10])
-			{
-				m_bEventTrigger[10] = true;
-				m_pWeapon->Set_Target_CanAttack(false);
-			}
-		}
-		else if (1.567f <= AniTime)
-		{
-			if (false == m_bEventTrigger[11])
-			{
-				m_bEventTrigger[11] = true;
-				m_pWeapon->Set_Target_CanAttack(true);
-				m_pWeapon->Set_Enable_Trail(true);
-			}
+			Function_RotateBody();
 		}
 
-		if (0.367f < AniTime && 1.867f >AniTime)
-		{
-			if (false == m_bEventTrigger[15])
-			{
-				m_bEventTrigger[15] = true;
-				m_fSkillMoveSpeed_Cur = 6.f;
-				m_fSkillMoveAccel_Cur = 0.f;
-				m_fSkillMoveMultiply = 1.f;
-			}
-
-			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-			Function_DecreMoveMent(m_fSkillMoveMultiply);
-		}
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
 	}
 
 	return;
@@ -1540,8 +1450,11 @@ void CHunter::Play_Gun_Combo_CQC()
 
 	if (HUNTER_ANI::Bayonet_Atk_N01 == m_eState)
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+		if (m_pMeshCom->Is_Finish_Animation(0.438f))
 		{
+			m_bCanInterrupt = true;
+			m_pWeapon->Set_Target_CanAttack(false);
+			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::Bayonet_Atk_N02;
 
 			return;
@@ -1572,6 +1485,9 @@ void CHunter::Play_Gun_Combo_CQC()
 			}
 		}
 
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
+
 		if (1.267f < AniTime && 1.767f > AniTime)
 		{
 			if (false == m_bEventTrigger[3])
@@ -1590,14 +1506,12 @@ void CHunter::Play_Gun_Combo_CQC()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.65f))
 		{
-			m_bCanComboInterrupt = true;
+			m_bCanInterrupt = true;
+			m_pWeapon->Set_Target_CanAttack(false);
+			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::Bayonet_Atk_N03;
 
 			return;
-		}
-		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
-		{
-			m_bCanComboInterrupt = false;
 		}
 		else if (1.700f <= AniTime)
 		{
@@ -1625,6 +1539,9 @@ void CHunter::Play_Gun_Combo_CQC()
 			}
 		}
 
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
+
 		if (0.600f < AniTime && 3.627f > AniTime)
 		{
 			if (false == m_bEventTrigger[8])
@@ -1648,10 +1565,6 @@ void CHunter::Play_Gun_Combo_CQC()
 			Function_ResetAfterAtk();
 
 			return;
-		}
-		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
-		{
-			m_bCanComboInterrupt = false;
 		}
 		else if (2.067f < AniTime)
 		{
@@ -1678,6 +1591,9 @@ void CHunter::Play_Gun_Combo_CQC()
 				m_pWeapon->Set_Enable_Trail(true);
 			}
 		}
+
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
 
 		if (0.367f < AniTime && 1.867f >AniTime)
 		{
@@ -2718,14 +2634,12 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.6f))
 		{
-			m_bCanComboInterrupt = true;
+			m_bCanInterrupt = true;
+			m_pWeapon->Set_Target_CanAttack(false);
+			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::Halberd_Atk_N02;
 
 			return;
-		}
-		else if (m_pMeshCom->Is_Finish_Animation(0.3f))
-		{
-			m_bCanComboInterrupt = false;
 		}
 		else if (4.233f <= AniTime)
 		{
@@ -2752,6 +2666,9 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 				m_pWeapon->Set_Enable_Trail(true);
 			}
 		}
+
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
 
 		if (2.333f < AniTime && 2.700f > AniTime)
 		{
@@ -2784,14 +2701,12 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.6f))
 		{
-			m_bCanComboInterrupt = true;
+			m_bCanInterrupt = true;
+			m_pWeapon->Set_Target_CanAttack(false);
+			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::Halberd_Atk_N03;
 
 			return;
-		}
-		else if (m_pMeshCom->Is_Finish_Animation(0.3f))
-		{
-			m_bCanComboInterrupt = false;
 		}
 		else if (2.433f <= AniTime)
 		{
@@ -2819,6 +2734,9 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 			}
 		}
 
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
+
 		if (0.833f < AniTime && 1.900f > AniTime)
 		{
 			if (false == m_bEventTrigger[8])
@@ -2835,7 +2753,7 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 	}
 	else if (HUNTER_ANI::Halberd_Atk_N03 == m_eState)
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		if (m_pMeshCom->Is_Finish_Animation(0.935f))
 		{
 			m_fCoolDownMax = 1.2f;
 			m_bCanCoolDown = true;
@@ -2843,11 +2761,7 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 
 			return;
 		}
-		else if (m_pMeshCom->Is_Finish_Animation(0.3f))
-		{
-			m_bCanComboInterrupt = false;
-		}
-		else if (3.867f < AniTime)
+		else if (2.767f < AniTime)
 		{
 			if (false == m_bEventTrigger[9])
 			{
@@ -2855,7 +2769,7 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
-		else if (3.567f <= AniTime)
+		else if (2.467f <= AniTime)
 		{
 			if (false == m_bEventTrigger[10])
 			{
@@ -2863,7 +2777,7 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 				m_pWeapon->Set_Target_CanAttack(false);
 			}
 		}
-		else if (2.467f <= AniTime)
+		else if (2.167f <= AniTime)
 		{
 			if (false == m_bEventTrigger[11])
 			{
@@ -2900,6 +2814,9 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 			}
 		}
 
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
+
 		if (2.133f < AniTime && 2.433f >AniTime)
 		{
 			if (false == m_bEventTrigger[15])
@@ -2924,16 +2841,14 @@ void CHunter::Play_Halberd_Combo_PierceTwice()
 
 	if (HUNTER_ANI::Halberd_Atk_S01 == m_eState)
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.5f))
+		if (m_pMeshCom->Is_Finish_Animation(0.625f))
 		{
-			m_bCanComboInterrupt = true;
+			m_bCanInterrupt = true;
+			m_pWeapon->Set_Target_CanAttack(false);
+			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::Halberd_Atk_S03;
 
 			return;
-		}
-		else if (m_pMeshCom->Is_Finish_Animation(0.3f))
-		{
-			m_bCanComboInterrupt = false;
 		}
 		else if (3.867f <= AniTime)
 		{
@@ -2961,6 +2876,9 @@ void CHunter::Play_Halberd_Combo_PierceTwice()
 			}
 		}
 
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = true;
+
 		if (1.133f < AniTime && 1.800f >AniTime)
 		{
 			if (false == m_bEventTrigger[3])
@@ -2977,17 +2895,13 @@ void CHunter::Play_Halberd_Combo_PierceTwice()
 	}
 	else if (HUNTER_ANI::Halberd_Atk_S03 == m_eState)
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		if (m_pMeshCom->Is_Finish_Animation(0.93f))
 		{
 			m_fCoolDownMax = 0.8f;
 			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
 
 			return;
-		}
-		else if (m_pMeshCom->Is_Finish_Animation(0.3f))
-		{
-			m_bCanComboInterrupt = false;
 		}
 		else if (2.733f <= AniTime)
 		{
@@ -3016,6 +2930,9 @@ void CHunter::Play_Halberd_Combo_PierceTwice()
 			}
 		}
 
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
+
 		if (1.333f < AniTime && 1.700f > AniTime)
 		{
 			if (false == m_bEventTrigger[7])
@@ -3040,8 +2957,11 @@ void CHunter::Play_Halberd_Combo_PierceWind()
 
 	if (HUNTER_ANI::Halberd_Atk_S01 == m_eState)
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.4f))
+		if (m_pMeshCom->Is_Finish_Animation(0.625f))
 		{
+			m_bCanInterrupt = true;
+			m_pWeapon->Set_Target_CanAttack(false);
+			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::Halberd_Atk_S02;
 
 			return;
@@ -3072,6 +2992,9 @@ void CHunter::Play_Halberd_Combo_PierceWind()
 			}
 		}
 
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
+
 		if (1.133f < AniTime && 1.800f >AniTime)
 		{
 			if (false == m_bEventTrigger[3])
@@ -3088,17 +3011,13 @@ void CHunter::Play_Halberd_Combo_PierceWind()
 	}
 	else if (HUNTER_ANI::Halberd_Atk_S02 == m_eState)
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		if (m_pMeshCom->Is_Finish_Animation(0.945f))
 		{
 			m_fCoolDownMax = 0.8f;
 			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
 
 			return;
-		}
-		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
-		{
-			m_bCanComboInterrupt = false;
 		}
 		else if (2.467f <= AniTime)
 		{
@@ -3126,6 +3045,9 @@ void CHunter::Play_Halberd_Combo_PierceWind()
 			}
 		}
 
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
+
 		if (0.667f < AniTime && 1.833f > AniTime)
 		{
 			if (false == m_bEventTrigger[7])
@@ -3140,6 +3062,8 @@ void CHunter::Play_Halberd_Combo_PierceWind()
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
 	}
+
+	return;
 }
 
 void CHunter::Play_Hammer_Upper()
@@ -3757,69 +3681,68 @@ void CHunter::Play_LSword_Combo_Normal()
 
 	if (HUNTER_ANI::LSword_Atk_N01 == m_eState)
 	{
-			if (m_pMeshCom->Is_Finish_Animation(0.6f))
-			{
-				m_bCanComboInterrupt = true;
-				m_eState = HUNTER_ANI::LSword_Atk_N02;
+		if (m_pMeshCom->Is_Finish_Animation(0.6f))
+		{
+			m_bCanInterrupt = true;
+			m_pWeapon->Set_Target_CanAttack(false);
+			m_pWeapon->Set_Enable_Trail(false);
+			m_eState = HUNTER_ANI::LSword_Atk_N02;
 
-				return;
-			}
-			else if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			return;
+		}
+		else if (2.000f <= AniTime)
+		{
+			if (false == m_bEventTrigger[0])
 			{
-				m_bCanComboInterrupt = false;
+				m_bEventTrigger[0] = true;
+				m_pWeapon->Set_Enable_Trail(false);
 			}
-			else if (2.000f <= AniTime)
+		}
+		else if (1.700f <= AniTime)
+		{
+			if (false == m_bEventTrigger[1])
 			{
-				if (false == m_bEventTrigger[0])
-				{
-					m_bEventTrigger[0] = true;
-					m_pWeapon->Set_Enable_Trail(false);
-				}
+				m_bEventTrigger[1] = true;
+				m_pWeapon->Set_Target_CanAttack(false);
 			}
-			else if (1.700f <= AniTime)
+		}
+		else if (1.600f <= AniTime)
+		{
+			if (false == m_bEventTrigger[2])
 			{
-				if (false == m_bEventTrigger[1])
-				{
-					m_bEventTrigger[1] = true;
-					m_pWeapon->Set_Target_CanAttack(false);
-				}
+				m_bEventTrigger[2] = true;
+				m_pWeapon->Set_Target_CanAttack(true);
+				m_pWeapon->Set_Enable_Trail(true);
 			}
-			else if (1.600f <= AniTime)
+		}
+
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
+
+		if (0.700f < AniTime && 1.233f > AniTime)
+		{
+			if (false == m_bEventTrigger[3])
 			{
-				if (false == m_bEventTrigger[2])
-				{
-					m_bEventTrigger[2] = true;
-					m_pWeapon->Set_Target_CanAttack(true);
-					m_pWeapon->Set_Enable_Trail(true);
-				}
+				m_bEventTrigger[3] = true;
+				m_fSkillMoveSpeed_Cur = 6.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.f;
 			}
 
-			if (0.700f < AniTime && 1.233f > AniTime)
-			{
-				if (false == m_bEventTrigger[3])
-				{
-					m_bEventTrigger[3] = true;
-					m_fSkillMoveSpeed_Cur = 6.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 1.f;
-				}
-
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
 	}
 	else if (HUNTER_ANI::LSword_Atk_N02 == m_eState)
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.55f))
 		{
-			m_bCanComboInterrupt = true;
+			m_bCanInterrupt = true;
+			m_pWeapon->Set_Target_CanAttack(false);
+			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::LSword_Atk_N03;
 
 			return;
-		}
-		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
-		{
-			m_bCanComboInterrupt = false;
 		}
 		else if (2.033f <= AniTime)
 		{
@@ -3847,6 +3770,9 @@ void CHunter::Play_LSword_Combo_Normal()
 			}
 		}
 
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
+
 		if (0.433f < AniTime && 1.333f > AniTime)
 		{
 			if (false == m_bEventTrigger[7])
@@ -3863,7 +3789,7 @@ void CHunter::Play_LSword_Combo_Normal()
 	}
 	else if (HUNTER_ANI::LSword_Atk_N03 == m_eState)
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		if (m_pMeshCom->Is_Finish_Animation(0.935f))
 		{
 			m_fCoolDownMax = 1.2f;
 			m_bCanCoolDown = true;
@@ -3871,11 +3797,7 @@ void CHunter::Play_LSword_Combo_Normal()
 
 			return;
 		}
-		else if (m_pMeshCom->Is_Finish_Animation(0.3f))
-		{
-			m_bCanComboInterrupt = false;
-		}
-		else if (7.467f < AniTime)
+		else if (2.200f < AniTime)
 		{
 			if (false == m_bEventTrigger[8])
 			{
@@ -3883,7 +3805,7 @@ void CHunter::Play_LSword_Combo_Normal()
 				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
-		else if (7.167f <= AniTime)
+		else if (1.900f <= AniTime)
 		{
 			if (false == m_bEventTrigger[9])
 			{
@@ -3891,7 +3813,7 @@ void CHunter::Play_LSword_Combo_Normal()
 				m_pWeapon->Set_Target_CanAttack(false);
 			}
 		}
-		else if (7.000f <= AniTime)
+		else if (1.733f <= AniTime)
 		{
 			if (false == m_bEventTrigger[10])
 			{
@@ -3901,7 +3823,10 @@ void CHunter::Play_LSword_Combo_Normal()
 			}
 		}
 
-		if (6.900f < AniTime && 7.767f > AniTime)
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
+
+		if (1.633f < AniTime && 2.500f > AniTime)
 		{
 			if (false == m_bEventTrigger[11])
 			{
@@ -3914,7 +3839,7 @@ void CHunter::Play_LSword_Combo_Normal()
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
-		else if (5.800f < AniTime && 6.733f > AniTime)
+		else if (0.533f < AniTime && 1.467f > AniTime)
 		{
 			if (false == m_bEventTrigger[12])
 			{
@@ -3940,14 +3865,12 @@ void CHunter::Play_LSword_Combo_Strong()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.45f))
 		{
-			m_bCanComboInterrupt = true;
+			m_bCanInterrupt = true;
+			m_pWeapon->Set_Target_CanAttack(false);
+			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::LSword_Atk_S02;
 
 			return;
-		}
-		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
-		{
-			m_bCanComboInterrupt = false;
 		}
 		else if (1.967f <= AniTime)
 		{
@@ -3975,6 +3898,9 @@ void CHunter::Play_LSword_Combo_Strong()
 			}
 		}
 
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
+
 		if (0.533f < AniTime && 1.300f > AniTime)
 		{
 			if (false == m_bEventTrigger[3])
@@ -3993,14 +3919,12 @@ void CHunter::Play_LSword_Combo_Strong()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.45f))
 		{
-			m_bCanComboInterrupt = true;
+			m_bCanInterrupt = true;
+			m_pWeapon->Set_Target_CanAttack(false);
+			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::LSword_Atk_S03;
 
 			return;
-		}
-		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
-		{
-			m_bCanComboInterrupt = false;
 		}
 		else if (2.200f <= AniTime)
 		{
@@ -4028,6 +3952,9 @@ void CHunter::Play_LSword_Combo_Strong()
 			}
 		}
 
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
+
 		if (0.767f < AniTime && 1.500f > AniTime)
 		{
 			if (false == m_bEventTrigger[7])
@@ -4044,17 +3971,13 @@ void CHunter::Play_LSword_Combo_Strong()
 	}
 	else if (HUNTER_ANI::LSword_Atk_S03 == m_eState)
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		if (m_pMeshCom->Is_Finish_Animation(0.945f))
 		{
 			m_fCoolDownMax = 1.2f;
 			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
 
 			return;
-		}
-		else if (m_pMeshCom->Is_Finish_Animation(0.3f))
-		{
-			m_bCanComboInterrupt = false;
 		}
 		else if (2.067f < AniTime)
 		{
@@ -4081,6 +4004,9 @@ void CHunter::Play_LSword_Combo_Strong()
 				m_pWeapon->Set_Enable_Trail(true);
 			}
 		}
+
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
 
 		if (1.700f < AniTime && 2.367f > AniTime)
 		{
@@ -4623,20 +4549,17 @@ void CHunter::Play_SSword_CriticalDraw()
 
 void CHunter::Play_SSword_Combo_StepPierce()
 {
-	//sp3 st,loop, end 0.9 0.9 0.9
+	//sp3 st,loop, end 0.935 0.9 0.915
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
 
 	if (HUNTER_ANI::SSword_Atk_Sp03_Start == m_eState)
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.9f))
+		if (m_pMeshCom->Is_Finish_Animation(0.935f))
 		{
+			m_bCanInterrupt = true;
 			m_eState = HUNTER_ANI::SSword_Atk_Sp03_Loop;
 
 			return;
-		}
-		else if (m_pMeshCom->Is_Finish_Animation(0.3f))
-		{
-			m_bCanComboInterrupt = false;
 		}
 		else if (4.367f <= AniTime)
 		{
@@ -4647,6 +4570,9 @@ void CHunter::Play_SSword_Combo_StepPierce()
 				m_pWeapon->Set_Enable_Trail(true);
 			}
 		}
+
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
 
 		if (3.967f < AniTime && 4.367f > AniTime)
 		{
@@ -4683,7 +4609,7 @@ void CHunter::Play_SSword_Combo_StepPierce()
 	}
 	else if (HUNTER_ANI::SSword_Atk_Sp03_End == m_eState)
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.9f))
+		if (m_pMeshCom->Is_Finish_Animation(0.915f))
 		{
 			m_fCoolDownMax = 1.2f;
 			m_bCanCoolDown = true;
@@ -4796,7 +4722,10 @@ void CHunter::Play_SSword_Combo_StepPierce()
 			}
 		}
 
-		if (0.267f >AniTime)
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
+
+		if (0.267f > AniTime)
 		{
 			if (false == m_bEventTrigger[16])
 			{
@@ -4816,64 +4745,43 @@ void CHunter::Play_SSword_Combo_StepPierce()
 
 void CHunter::Play_SSword_Combo_Strong()
 {
-	//s1 0.35 s2 0.65 s3 0.9
+	//s1 0.308 s2 0.65 s3 0.9
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
 
 	if (HUNTER_ANI::SSword_Atk_S01 == m_eState)
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.35f))
+		if (m_pMeshCom->Is_Finish_Animation(0.400f))
 		{
+			m_bCanInterrupt = true;
 			m_eState = HUNTER_ANI::SSword_Atk_S02;
 
 			return;
 		}
-		else if (4.233f <= AniTime)
-		{
-			if (false == m_bEventTrigger[0])
-			{
-				m_bEventTrigger[0] = true;
-				m_pWeapon->Set_Enable_Trail(false);
-			}
-		}
-		else if (3.933f <= AniTime)
+		else if (1.433f <= AniTime)
 		{
 			if (false == m_bEventTrigger[1])
 			{
 				m_bEventTrigger[1] = true;
-				m_pWeapon->Set_Target_CanAttack(false);
+				m_vecAttackCol[0]->Set_Enabled(false);
 			}
 		}
-		else if (2.467f <= AniTime)
+		else if (1.333f <= AniTime)
 		{
 			if (false == m_bEventTrigger[2])
 			{
 				m_bEventTrigger[2] = true;
-				m_pWeapon->Set_Target_CanAttack(true);
-				m_pWeapon->Set_Enable_Trail(true);
+				m_vecAttackCol[0]->Set_Enabled(true);
 			}
 		}
 
-		if (2.333f < AniTime && 2.700f > AniTime)
+		if (0.667f < AniTime && 1.267f > AniTime)
 		{
 			if (false == m_bEventTrigger[3])
 			{
 				m_bEventTrigger[3] = true;
-				m_fSkillMoveSpeed_Cur = 6.f;
+				m_fSkillMoveSpeed_Cur = 5.f;
 				m_fSkillMoveAccel_Cur = 0.f;
-				m_fSkillMoveMultiply = 1.5f;
-			}
-
-			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-			Function_DecreMoveMent(m_fSkillMoveMultiply);
-		}
-		else if (2.267f < AniTime && 1.733f > AniTime)
-		{
-			if (false == m_bEventTrigger[4])
-			{
-				m_bEventTrigger[4] = true;
-				m_fSkillMoveSpeed_Cur = 8.f;
-				m_fSkillMoveAccel_Cur = 0.f;
-				m_fSkillMoveMultiply = 1.5f;
+				m_fSkillMoveMultiply = 1.f;
 			}
 
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
@@ -4884,41 +4792,85 @@ void CHunter::Play_SSword_Combo_Strong()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.65f))
 		{
+			m_bCanInterrupt = true;
+			m_pWeapon->Set_Target_CanAttack(false);
+			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::SSword_Atk_S03;
 
 			return;
 		}
-		else if (2.433f <= AniTime)
+		else if (3.900f <= AniTime)
+		{
+			if (false == m_bEventTrigger[4])
+			{
+				m_bEventTrigger[4] = true;
+				m_pWeapon->Set_Enable_Trail(false);
+			}
+		}
+		else if (3.600f <= AniTime)
 		{
 			if (false == m_bEventTrigger[5])
 			{
 				m_bEventTrigger[5] = true;
-				m_pWeapon->Set_Enable_Trail(false);
+				m_pWeapon->Set_Target_CanAttack(false);
 			}
 		}
-		else if (2.133f <= AniTime)
+		else if (3.533f <= AniTime)
 		{
 			if (false == m_bEventTrigger[6])
 			{
 				m_bEventTrigger[6] = true;
-				m_pWeapon->Set_Target_CanAttack(false);
+				m_pWeapon->Set_Target_CanAttack(true);
+				m_pWeapon->Set_Enable_Trail(true);
 			}
 		}
-		else if (2.033f <= AniTime)
+		else if (1.900f <= AniTime)
 		{
 			if (false == m_bEventTrigger[7])
 			{
 				m_bEventTrigger[7] = true;
+				m_pWeapon->Set_Enable_Trail(false);
+			}
+		}
+		else if (1.600f <= AniTime)
+		{
+			if (false == m_bEventTrigger[8])
+			{
+				m_bEventTrigger[8] = true;
+				m_pWeapon->Set_Target_CanAttack(false);
+			}
+		}
+		else if (1.500f <= AniTime)
+		{
+			if (false == m_bEventTrigger[9])
+			{
+				m_bEventTrigger[9] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 			}
 		}
 
-		if (0.833f < AniTime && 1.900f > AniTime)
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
+
+		if (2.733f < AniTime && 3.500f > AniTime)
 		{
-			if (false == m_bEventTrigger[8])
+			if (false == m_bEventTrigger[10])
 			{
-				m_bEventTrigger[8] = true;
+				m_bEventTrigger[10] = true;
+				m_fSkillMoveSpeed_Cur = 6.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.f;
+			}
+
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+		else if (0.533f < AniTime && 1.300f > AniTime)
+		{
+			if (false == m_bEventTrigger[11])
+			{
+				m_bEventTrigger[11] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -4930,7 +4882,7 @@ void CHunter::Play_SSword_Combo_Strong()
 	}
 	else if (HUNTER_ANI::SSword_Atk_S03 == m_eState)
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.9f))
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
 			m_fCoolDownMax = 1.2f;
 			m_bCanCoolDown = true;
@@ -4938,32 +4890,7 @@ void CHunter::Play_SSword_Combo_Strong()
 
 			return;
 		}
-		else if (3.867f < AniTime)
-		{
-			if (false == m_bEventTrigger[9])
-			{
-				m_bEventTrigger[9] = true;
-				m_pWeapon->Set_Enable_Trail(false);
-			}
-		}
-		else if (3.567f <= AniTime)
-		{
-			if (false == m_bEventTrigger[10])
-			{
-				m_bEventTrigger[10] = true;
-				m_pWeapon->Set_Target_CanAttack(false);
-			}
-		}
-		else if (2.467f <= AniTime)
-		{
-			if (false == m_bEventTrigger[11])
-			{
-				m_bEventTrigger[11] = true;
-				m_pWeapon->Set_Target_CanAttack(true);
-				m_pWeapon->Set_Enable_Trail(true);
-			}
-		}
-		else if (1.267f <= AniTime)
+		else if (3.433f <= AniTime)
 		{
 			if (false == m_bEventTrigger[12])
 			{
@@ -4972,7 +4899,7 @@ void CHunter::Play_SSword_Combo_Strong()
 				m_pWeapon->Set_Enable_Trail(true);
 			}
 		}
-		else if (0.967f <= AniTime)
+		else if (3.133f <= AniTime)
 		{
 			if (false == m_bEventTrigger[13])
 			{
@@ -4981,7 +4908,7 @@ void CHunter::Play_SSword_Combo_Strong()
 				m_pWeapon->Set_Enable_Trail(true);
 			}
 		}
-		else if (0.633f <= AniTime)
+		else if (2.867f <= AniTime)
 		{
 			if (false == m_bEventTrigger[14])
 			{
@@ -4991,19 +4918,8 @@ void CHunter::Play_SSword_Combo_Strong()
 			}
 		}
 
-		if (2.133f < AniTime && 2.433f >AniTime)
-		{
-			if (false == m_bEventTrigger[15])
-			{
-				m_bEventTrigger[15] = true;
-				m_fSkillMoveSpeed_Cur = 6.f;
-				m_fSkillMoveAccel_Cur = 0.f;
-				m_fSkillMoveMultiply = 1.f;
-			}
-
-			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-			Function_DecreMoveMent(m_fSkillMoveMultiply);
-		}
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
 	}
 
 	return;
@@ -5017,16 +4933,14 @@ void CHunter::Play_SSword_Combo_Diagonal_L()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.5f))
 		{
-			m_bCanComboInterrupt = true;
+			m_bCanInterrupt = true;
+			m_pWeapon->Set_Enable_Trail(false);
+			m_pWeapon->Set_Target_CanAttack(false);
 			m_eState = HUNTER_ANI::SSword_Atk_N03;
 
 			return;
 		}
-		else if (m_pMeshCom->Is_Finish_Animation(0.3f))
-		{
-			m_bCanComboInterrupt = false;
-		}
-		else if (1.967f <= AniTime)
+		else if (1.667f <= AniTime)
 		{
 			if (false == m_bEventTrigger[0])
 			{
@@ -5052,6 +4966,9 @@ void CHunter::Play_SSword_Combo_Diagonal_L()
 			}
 		}
 
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
+
 		if (0.900f < AniTime && 1.333f > AniTime)
 		{
 			if (false == m_bEventTrigger[3])
@@ -5068,17 +4985,13 @@ void CHunter::Play_SSword_Combo_Diagonal_L()
 	}
 	else if (HUNTER_ANI::SSword_Atk_N03 == m_eState)
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.9f))
+		if (m_pMeshCom->Is_Finish_Animation(0.915f))
 		{
 			m_fCoolDownMax = 1.2f;
 			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
 
 			return;
-		}
-		else if (m_pMeshCom->Is_Finish_Animation(0.3f))
-		{
-			m_bCanComboInterrupt = false;
 		}
 		else if (1.700f <= AniTime)
 		{
@@ -5106,6 +5019,9 @@ void CHunter::Play_SSword_Combo_Diagonal_L()
 			}
 		}
 
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
+
 		if (1.000f < AniTime && 1.567f > AniTime)
 		{
 			if (false == m_bEventTrigger[8])
@@ -5131,6 +5047,8 @@ void CHunter::Play_Idle()
 	case HUNTER_IDLETYPE::IDLE_IDLE:
 		if (true == m_bInRecognitionRange)
 		{
+			m_bIsIdle = false;
+
 			if (true == m_tObjParam.bCanAttack)
 			{
 				//인지, 공격 가능->대기
@@ -5179,7 +5097,7 @@ void CHunter::Play_Idle()
 		}
 		else
 		{
-			m_bCanIdleRandom = true;
+			m_bIsIdle = true;
 			m_eState = HUNTER_ANI::Idle;
 		}
 		break;
@@ -5188,14 +5106,17 @@ void CHunter::Play_Idle()
 		{
 			if (HUNTER_ANI::Stand == m_eState)
 			{
-				if (m_pMeshCom->Is_Finish_Animation())
+				m_bIsIdle = true;
+
+				if (m_pMeshCom->Is_Finish_Animation(0.5f))
 					m_eState = HUNTER_ANI::Stand_End;
 			}
 			else if (HUNTER_ANI::Stand_End == m_eState)
 			{
 				if (m_pMeshCom->Is_Finish_Animation(0.95f))
 				{
-					m_bCanIdleRandom = true;
+					m_bCanIdle = true;
+					m_bIsIdle = false;
 					switch (m_eWeaponState)
 					{
 					case WEAPON_ANITYPE::GUN:
@@ -5219,6 +5140,7 @@ void CHunter::Play_Idle()
 		}
 		else
 		{
+			m_bIsIdle = true;
 			m_eState = HUNTER_ANI::Stand;
 		}
 		break;
@@ -5227,14 +5149,17 @@ void CHunter::Play_Idle()
 		{
 			if (HUNTER_ANI::Crouch == m_eState)
 			{
-				if (m_pMeshCom->Is_Finish_Animation())
+				m_bIsIdle = true;
+
+				if (m_pMeshCom->Is_Finish_Animation(0.5f))
 					m_eState = HUNTER_ANI::Crouch_End;
 			}
 			else if (HUNTER_ANI::Crouch_End == m_eState)
 			{
 				if (m_pMeshCom->Is_Finish_Animation(0.95f))
 				{
-					m_bCanIdleRandom = true;
+					m_bCanIdle = true;
+					m_bIsIdle = false;
 					switch (m_eWeaponState)
 					{
 					case WEAPON_ANITYPE::GUN:
@@ -5257,23 +5182,24 @@ void CHunter::Play_Idle()
 			}
 		}
 		else
-		{
 			m_eState = HUNTER_ANI::Crouch;
-		}
 		break;
 	case HUNTER_IDLETYPE::IDLE_SIT:
 		if (true == m_bInRecognitionRange)
 		{
 			if (HUNTER_ANI::Sit == m_eState)
 			{
-				if (m_pMeshCom->Is_Finish_Animation())
+				m_bIsIdle = true;
+
+				if (m_pMeshCom->Is_Finish_Animation(0.5f))
 					m_eState = HUNTER_ANI::Sit_End;
 			}
 			else if (HUNTER_ANI::Sit_End == m_eState)
 			{
 				if (m_pMeshCom->Is_Finish_Animation(0.95f))
 				{
-					m_bCanIdleRandom = true;
+					m_bCanIdle = true;
+					m_bIsIdle = false;
 					switch (m_eWeaponState)
 					{
 					case WEAPON_ANITYPE::GUN:
@@ -5297,10 +5223,9 @@ void CHunter::Play_Idle()
 		}
 		else
 		{
+			m_bIsIdle = true;
 			m_eState = HUNTER_ANI::Sit;
 		}
-		break;
-	default:
 		break;
 	}
 
@@ -5330,9 +5255,10 @@ void CHunter::Play_Move()
 
 		break;
 	case HUNTER_MOVETYPE::MOVE_DODGE:
-		if (false == m_tObjParam.bIsDodge)
+		if (true == m_tObjParam.bCanDodge)
 		{
 			Function_ResetAfterAtk();
+			m_tObjParam.bCanDodge = false;
 			m_tObjParam.bIsDodge = true;
 			m_eState = HUNTER_ANI::Dodge;
 		}
@@ -5355,7 +5281,7 @@ void CHunter::Play_Move()
 						m_bEventTrigger[0] = true;
 						m_fSkillMoveSpeed_Cur = 10.f;
 						m_fSkillMoveAccel_Cur = 0.f;
-						m_fSkillMoveMultiply = 0.5f;
+						m_fSkillMoveMultiply = 0.25f;
 					}
 
 					Function_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
@@ -5365,6 +5291,8 @@ void CHunter::Play_Move()
 		}
 		break;
 	}
+
+	return;
 }
 
 void CHunter::Play_Hit()
@@ -5374,19 +5302,17 @@ void CHunter::Play_Hit()
 		Function_ResetAfterAtk();
 		m_tObjParam.bIsHit = true;
 
+		m_fSkillMoveAccel_Cur = 0.f;
+		m_fSkillMoveSpeed_Cur = 5.f;
+		m_fSkillMoveMultiply = 0.5f;
+
 		switch (m_eFBLR)
 		{
-		case FBLR::FRONT:
-			m_eState = HUNTER_ANI::Dmg01_FR;
-			break;
 		case FBLR::FRONTLEFT:
 			m_eState = HUNTER_ANI::Dmg01_FL;
 			break;
 		case FBLR::FRONTRIGHT:
 			m_eState = HUNTER_ANI::Dmg01_FR;
-			break;
-		case FBLR::BACK:
-			m_eState = HUNTER_ANI::Dmg01_BR;
 			break;
 		case FBLR::BACKLEFT:
 			m_eState = HUNTER_ANI::Dmg01_BL;
@@ -5394,18 +5320,14 @@ void CHunter::Play_Hit()
 		case FBLR::BACKRIGHT:
 			m_eState = HUNTER_ANI::Dmg01_BR;
 			break;
-		case FBLR::LEFT:
-			m_eState = HUNTER_ANI::Dmg01_FL;
-			break;
-		case FBLR::RIGHT:
-			m_eState = HUNTER_ANI::Dmg01_FR;
-			break;
 		}
+
 	}
 	else
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		if (m_pMeshCom->Is_Finish_Animation(0.9f))
 		{
+			Function_ResetAfterAtk();
 			m_tObjParam.bCanHit = true;
 			m_tObjParam.bIsHit = false;
 
@@ -5422,6 +5344,9 @@ void CHunter::Play_Hit()
 				Check_FBLR();
 			}
 		}
+
+		Function_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+		Function_DecreMoveMent(m_fSkillMoveMultiply);
 	}
 
 	return;
@@ -5441,9 +5366,13 @@ void CHunter::Play_Dead()
 
 		m_bCanPlayDead = true;
 
-		if (HUNTER_ANI::DmgBlow_B == m_eState)
+		if (HUNTER_ANI::Down_S_Start == m_eState ||
+			HUNTER_ANI::Down_S_Loop == m_eState ||
+			HUNTER_ANI::Down_S_End == m_eState)
 			m_eState = HUNTER_ANI::Death_B;
-		else if (HUNTER_ANI::DmgBlow_F == m_eState)
+		else if (HUNTER_ANI::Down_P_Start == m_eState ||
+				HUNTER_ANI::Down_P_Loop == m_eState ||
+				HUNTER_ANI::Down_P_End == m_eState)
 			m_eState = HUNTER_ANI::Death_F;
 		else
 			m_eState = HUNTER_ANI::Death;
@@ -5475,8 +5404,8 @@ void CHunter::Play_Dead()
 				if (false == m_bEventTrigger[1])
 				{
 					m_bEventTrigger[1] = true;
-					Start_Dissolve(0.8f, false, true);
-					m_pWeapon->Start_Dissolve(0.8f, false, true);
+					Start_Dissolve(0.6f, false, true);
+					m_pWeapon->Start_Dissolve(0.6f, false, true);
 				}
 			}
 		}
@@ -5542,6 +5471,21 @@ HRESULT CHunter::SetUp_ConstantTable()
 	return S_OK;
 }
 
+HRESULT CHunter::Ready_Status(void* pArg)
+{
+	HUNTER_INFO Info = *(HUNTER_INFO*)pArg;
+
+	m_tObjParam.fDamage = Info.tMonterStatus.fDamage;
+	m_tObjParam.fHp_Max = Info.tMonterStatus.fHp_Max;
+	m_fRecognitionRange = Info.fKonwingRange;
+	m_fAtkRange = Info.fCanAttackRange;
+	m_fShotRange = Info.fCanShotRangeIfGunChooose;
+	m_iDodgeCountMax = Info.fDodgeCountMax;
+	m_eWeaponState = Info.eUseWhatWeapon;
+
+	return S_OK;
+}
+
 HRESULT CHunter::Ready_Weapon()
 {
 	//흑의의 무기들
@@ -5578,23 +5522,22 @@ HRESULT CHunter::Ready_Collider()
 	m_vecPhysicCol.reserve(3);
 	m_vecAttackCol.reserve(3);
 
-	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
-	IF_NULL_VALUE_RETURN(pCollider, E_FAIL);
-
-	_float fRadius = 1.2f;
+	_float fRadius;
+	CCollider* pCollider = nullptr;
 
 	// 첫번째 콜라이더는 경계 체크용 콜라이더
+	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
+	fRadius = 1.2f;
+
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
 	pCollider->Set_Type(COL_SPHERE);
 	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Range]->_41, m_matBone[Bone_Range]->_42, m_matBone[Bone_Range]->_43));
 	pCollider->Set_Enabled(true);
-
 	m_vecPhysicCol.push_back(pCollider);
 
-	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
-	IF_NULL_VALUE_RETURN(pCollider, E_FAIL);
 
+	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
 	fRadius = 0.7f;
 
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
@@ -5602,12 +5545,9 @@ HRESULT CHunter::Ready_Collider()
 	pCollider->Set_Type(COL_SPHERE);
 	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Body]->_41, m_matBone[Bone_Body]->_42, m_matBone[Bone_Body]->_43));
 	pCollider->Set_Enabled(true);
-
 	m_vecPhysicCol.push_back(pCollider);
 
-	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
-	IF_NULL_VALUE_RETURN(pCollider, E_FAIL);
-
+	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
 	fRadius = 0.6f;
 
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
@@ -5615,12 +5555,9 @@ HRESULT CHunter::Ready_Collider()
 	pCollider->Set_Type(COL_SPHERE);
 	pCollider->Set_CenterPos(_v3(m_matBone[Bone_RightForeArm]->_41, m_matBone[Bone_RightForeArm]->_42, m_matBone[Bone_RightForeArm]->_43));
 	pCollider->Set_Enabled(true);
-
 	m_vecAttackCol.push_back(pCollider);
 
-	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
-	IF_NULL_VALUE_RETURN(pCollider, E_FAIL);
-
+	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
 	fRadius = 0.6f;
 
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
@@ -5628,12 +5565,9 @@ HRESULT CHunter::Ready_Collider()
 	pCollider->Set_Type(COL_SPHERE);
 	pCollider->Set_CenterPos(_v3(m_matBone[Bone_LeftKnee]->_41, m_matBone[Bone_LeftKnee]->_42, m_matBone[Bone_LeftKnee]->_43));
 	pCollider->Set_Enabled(true);
-
 	m_vecAttackCol.push_back(pCollider);
 
-	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
-	IF_NULL_VALUE_RETURN(pCollider, E_FAIL);
-
+	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
 	fRadius = 0.6f;
 
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
@@ -5641,7 +5575,6 @@ HRESULT CHunter::Ready_Collider()
 	pCollider->Set_Type(COL_SPHERE);
 	pCollider->Set_CenterPos(_v3(m_matBone[Bone_LeftToe]->_41, m_matBone[Bone_LeftToe]->_42, m_matBone[Bone_LeftToe]->_43));
 	pCollider->Set_Enabled(true);
-
 	m_vecAttackCol.push_back(pCollider);
 
 	return S_OK;
@@ -5665,6 +5598,9 @@ HRESULT CHunter::Ready_BoneMatrix()
 
 	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftToeBase", 0), E_FAIL);
 	m_matBone[Bone_LeftToe] = &pFrame->CombinedTransformationMatrix; // 발끝
+
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach", 0), E_FAIL);
+	m_matBone[Bone_RightHandAttach] = &pFrame->CombinedTransformationMatrix; // 투사체 발사용 손뼈
 
 	return S_OK;
 }
@@ -5697,11 +5633,8 @@ CGameObject* CHunter::Clone_GameObject(void * pArg)
 
 void CHunter::Free()
 {
-	// 타겟의 트랜스폼
-	Safe_Release(m_pTargetTransform);
-
-	// 타겟
 	Safe_Release(m_pTarget);
+	Safe_Release(m_pTargetTransform);
 
 	Safe_Release(m_pWeapon);
 	Safe_Release(m_pCollider);
@@ -5712,14 +5645,10 @@ void CHunter::Free()
 	Safe_Release(m_pRendererCom);
 
 	for (auto& iter : m_vecPhysicCol)
-	{
 		Safe_Release(iter);
-	}
 
 	for (auto& iter : m_matBone)
-	{
 		iter = nullptr;
-	}
 
 	CGameObject::Free();
 

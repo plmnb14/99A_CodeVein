@@ -108,23 +108,25 @@ void CToolView::OnInitialUpdate()
 	CInput_Device::Get_Instance()->Ready_Input_Dev(g_hInst, g_hWnd);
 	CInput_Device::Get_Instance()->Set_InputDev();
 
-	Create_Mesh_PathInfo();
+	_tchar szDynamicExtractPath[MAX_STR] = L"";
+	_tchar szDynamicSavePath[MAX_STR] = L"";
+	_tchar szWeaponExtractPath[MAX_STR] = L"";
+	_tchar szWeaponSavePath[MAX_STR] = L"";
+	lstrcpy(szDynamicExtractPath, L"..\\..\\Client\\Resources\\Mesh\\DynamicMesh");
+	lstrcpy(szDynamicSavePath, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
+	lstrcpy(szWeaponExtractPath, L"..\\..\\Client\\Resources\\Mesh\\Weapons");
+	lstrcpy(szWeaponSavePath, L"../../Data/Load_MeshData/Mesh_Weapon_Path.dat");
 
-	pManagement->LoadMesh_FromPath(m_pDevice, L"../../Data/Mesh_Dynamic_Path.dat");
-	pManagement->LoadMesh_FromPath(m_pDevice, L"../../Data/Mesh_Weapon_Path.dat");
+	Create_Mesh_PathInfo(szDynamicExtractPath, szDynamicSavePath, szWeaponExtractPath, szWeaponSavePath);
+
+	pManagement->LoadMesh_FromPath(m_pDevice, szDynamicSavePath);
+	pManagement->LoadMesh_FromPath(m_pDevice, szWeaponSavePath);
 	CCameraMgr::Get_Instance()->Reserve_ContainerSize(2);
 	CCameraMgr::Get_Instance()->Ready_Camera(m_pDevice, DYNAMIC_CAM, L"Tool_FreeCam", TOOL_VIEW, DEFAULT_MODE);
 	CCameraMgr::Get_Instance()->Set_MainCamera(DYNAMIC_CAM, L"Tool_FreeCam");
 	CCameraMgr::Get_Instance()->Set_MainPos(_v3{ 0,3,-5 });
 
 	m_pGreed = Engine::CTerrain_Guide::Create(m_pDevice);
-	//Engine::CCollider* tmpCol = TARGET_TO_COL(m_pGreed);
-
-	//tmpCol->Set_Radius(_v3{ 1000.f , 1.f , 1000.f });
-	//tmpCol->Set_CenterPos(TARGET_TO_TRANS(m_pGreed)->Get_Pos() - _v3{ 0, TARGET_TO_COL(m_pGreed)->Get_Radius().y * 0.5f,0 });
-	//tmpCol->SetUp_Box();
-	//tmpCol->Set_Type(COL_AABB);
-	//m_pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
 
 	m_pMainfrm = static_cast<CMainFrame*>(::AfxGetApp()->GetMainWnd());
 	m_pSetingView = static_cast<CSetingView*>(m_pMainfrm->m_MainSplitter.GetPane(0, 1));
@@ -146,25 +148,24 @@ CString CToolView::Convert_RelativePath(const _tchar * pFullPath)
 	return CString(szRelativePath);
 }
 
-void CToolView::Create_Mesh_PathInfo()
+void CToolView::Create_Mesh_PathInfo(const _tchar* szDynamicExtractPath, const _tchar* szDynamicSavePath,
+									const _tchar* szWeaponExtractPath, const _tchar* szWeaponSavePath)
 {
-	_tchar szPath[MAX_STR] = L"";
+	cout << "DynamicMesh 추출 . . ." << endl;
+	cout << endl;
+	Extract_Mesh_PathInfo(szDynamicExtractPath, m_listMeshPathInfo, true);
 
-	_tchar szDynamicPath[MAX_STR] = L"";
-	cout << "Extracting DynamicMesh Path . . ." << endl;
-	lstrcpy(szDynamicPath, L"..\\..\\Client\\Resources\\Mesh\\DynamicMesh");	// 문자열 복사
-	Extract_Mesh_PathInfo(szDynamicPath, m_listMeshPathInfo, true);
-	cout << "Extracting Complete . . ." << endl;
-	lstrcpy(szPath, L"../../Data/Mesh_Dynamic_Path.dat");
-	Save_Mesh_PathInfo(m_listMeshPathInfo, szPath);
+	cout << endl;
+	cout << "DynamicMesh 추출 완료 . . ." << endl;
+	Save_Mesh_PathInfo(m_listMeshPathInfo, szDynamicSavePath);
 
-	_tchar szWeaponPath[MAX_STR] = L"";
-	cout << "Extracting WeaponMesh Path . . ." << endl;
-	lstrcpy(szWeaponPath, L"..\\..\\Client\\Resources\\Mesh\\Weapons");	// 문자열 복사
-	Extract_Mesh_PathInfo(szWeaponPath, m_listWeaponPathInfo, false);
-	cout << "Extracting Complete . . ." << endl;
-	lstrcpy(szPath, L"../../Data/Mesh_Weapon_Path.dat");
-	Save_Mesh_PathInfo(m_listWeaponPathInfo, szPath);
+	cout << "WeaponMesh 추출 . . ." << endl;
+	cout << endl;
+	Extract_Mesh_PathInfo(szWeaponExtractPath, m_listWeaponPathInfo, false);
+
+	cout << endl;
+	cout << "WeaponMesh 추출 완료 . . ." << endl;
+	Save_Mesh_PathInfo(m_listWeaponPathInfo, szWeaponSavePath);
 
 	return;
 }
@@ -234,17 +235,14 @@ void CToolView::Extract_Mesh_PathInfo(const _tchar * pPath, list<MESH_INFO*>& rP
 		}
 	}
 
-	system("cls");
-	cout << "Extract Done . . . !" << endl;
-
 	return;
 }
 
-void CToolView::Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst, _tchar* szPath)
+void CToolView::Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst, const _tchar* szPath)
 {
 	wofstream fout;
 
-	fout.open(szPath/*L"../../Data/Mesh_Dynamic_Path.dat"*/);
+	fout.open(szPath);
 
 	if (fout.fail())
 		return;
@@ -266,8 +264,8 @@ void CToolView::Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst, _tchar* szPat
 
 	fout.close();
 
-	system("cls");
-	cout << "Save Done . . . !" << endl;
+	cout << endl;
+	cout << "저장 완료 . . . !" << endl;
 
 	return;
 }
