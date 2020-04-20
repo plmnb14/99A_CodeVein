@@ -40,7 +40,7 @@ HRESULT CHunter::Ready_GameObject(void * pArg)
 	}
 
 	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-	m_tObjParam.fHp_Max = 9999180.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
+	m_tObjParam.fHp_Max = 180.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
 	m_tObjParam.fDamage = 25.f;
 
@@ -79,7 +79,7 @@ _int CHunter::Update_GameObject(_double TimeDelta)
 	CGameObject::Update_GameObject(TimeDelta);
 
 	Check_Hit();
-	//Check_Dist();
+	Check_Dist();
 	Check_AniEvent();
 	Function_CoolDown();
 
@@ -861,8 +861,6 @@ void CHunter::Check_AniEvent()
 					break;
 				case HUNTER_ANI::Bayonet_Atk_Kick:
 					Play_Gun_Kick();
-					break;
-				default:
 					break;
 				}
 			}

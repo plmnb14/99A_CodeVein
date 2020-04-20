@@ -16,7 +16,7 @@ Tex_BloodVarious05|BloodVarious05_%d.png|..\..\Client\Resources\Texture\Effect\B
 Tex_BloodVarious06|BloodVarious06_%d.png|..\..\Client\Resources\Texture\Effect\Blood\BloodVarious06\|0|8
 Tex_BloodVarious07|BloodVarious07_%d.png|..\..\Client\Resources\Texture\Effect\Blood\BloodVarious07\|0|8
 Tex_BloodVarious08|BloodVarious08_%d.png|..\..\Client\Resources\Texture\Effect\Blood\BloodVarious08\|0|8
-Tex_Colors|Colors_%d.tga|..\..\Client\Resources\Texture\Effect\Colors\|0|14
+Tex_Colors|Colors_%d.tga|..\..\Client\Resources\Texture\Effect\Colors\|0|15
 Tex_ElemSplash|ElemSplash_%d.tga|..\..\Client\Resources\Texture\Effect\ElemSplash\|0|2
 Tex_BrightFire|BrightFire_%d.png|..\..\Client\Resources\Texture\Effect\Fire\BrightFire\|0|16
 Tex_ExernalFlames|ExternalFlames_%d.png|..\..\Client\Resources\Texture\Effect\Fire\ExernalFlames\|0|32
