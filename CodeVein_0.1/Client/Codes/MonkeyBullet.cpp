@@ -1,23 +1,22 @@
 #include "stdafx.h"
-#include "..\Headers\HunterBullet.h"
-#include "ParticleMgr.h"
+#include "..\Headers\MonkeyBullet.h"
 
-CHunterBullet::CHunterBullet(LPDIRECT3DDEVICE9 pGraphic_Device)
+CMonkeyBullet::CMonkeyBullet(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
 }
 
-CHunterBullet::CHunterBullet(const CHunterBullet & rhs)
+CMonkeyBullet::CMonkeyBullet(const CMonkeyBullet & rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CHunterBullet::Ready_GameObject_Prototype()
+HRESULT CMonkeyBullet::Ready_GameObject_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CHunterBullet::Ready_GameObject(void * pArg)
+HRESULT CMonkeyBullet::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
@@ -53,9 +52,10 @@ HRESULT CHunterBullet::Ready_GameObject(void * pArg)
 	m_pTrailEffect->Set_TrailIdx(5); // Red Tail
 
 	return S_OK;
+	return S_OK;
 }
 
-_int CHunterBullet::Update_GameObject(_double TimeDelta)
+_int CMonkeyBullet::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
 
@@ -69,10 +69,8 @@ _int CHunterBullet::Update_GameObject(_double TimeDelta)
 
 	m_dCurTime += TimeDelta;
 
-	// 시간 초과
 	if (m_dCurTime > m_dLifeTime)
 	{
-		//죽음 이펙트
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag3, m_pTransformCom->Get_Pos());
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, m_pTransformCom->Get_Pos());
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag5, m_pTransformCom->Get_Pos());
@@ -80,12 +78,10 @@ _int CHunterBullet::Update_GameObject(_double TimeDelta)
 
 		m_bDead = true;
 	}
-	// 진행중
 	else
 	{
 		if (m_bEffect)
 		{
-			//CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag0, _v3(), m_pTransformCom);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag1, _v3(), m_pTransformCom);
 
 			m_bEffect = false;
@@ -94,10 +90,10 @@ _int CHunterBullet::Update_GameObject(_double TimeDelta)
 		CParticleMgr::Get_Instance()->Create_Effect_Offset(m_pEffect_Tag2, 0.1f, m_pTransformCom->Get_Pos());
 	}
 
-	return S_OK;
+	return NO_EVENT;
 }
 
-_int CHunterBullet::Late_Update_GameObject(_double TimeDelta)
+_int CMonkeyBullet::Late_Update_GameObject(_double TimeDelta)
 {
 	IF_NULL_VALUE_RETURN(m_pRendererCom, E_FAIL);
 
@@ -107,7 +103,7 @@ _int CHunterBullet::Late_Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-HRESULT CHunterBullet::Render_GameObject()
+HRESULT CMonkeyBullet::Render_GameObject()
 {
 	Update_Collider();
 	Render_Collider();
@@ -115,7 +111,7 @@ HRESULT CHunterBullet::Render_GameObject()
 	return S_OK;
 }
 
-void CHunterBullet::Update_Collider()
+void CMonkeyBullet::Update_Collider()
 {
 	_ulong matrixIdx = 0;
 
@@ -134,7 +130,7 @@ void CHunterBullet::Update_Collider()
 	return;
 }
 
-void CHunterBullet::Render_Collider()
+void CMonkeyBullet::Render_Collider()
 {
 	for (auto& iter : m_vecAttackCol)
 		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
@@ -142,15 +138,7 @@ void CHunterBullet::Render_Collider()
 	return;
 }
 
-void CHunterBullet::Enter_Collision()
-{
-	Update_Collider();
-	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
-
-	return;
-}
-
-void CHunterBullet::Update_Trails(_double TimeDelta)
+void CMonkeyBullet::Update_Trails(_double TimeDelta)
 {
 	_mat matWorld = m_pTransformCom->Get_WorldMat();
 	_v3 vBegin, vDir;
@@ -168,7 +156,15 @@ void CHunterBullet::Update_Trails(_double TimeDelta)
 	return;
 }
 
-void CHunterBullet::Check_CollisionEvent(list<CGameObject*> plistGameObject)
+void CMonkeyBullet::Enter_Collision()
+{
+	Update_Collider();
+	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
+
+	return;
+}
+
+void CMonkeyBullet::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 {
 	if (false == m_tObjParam.bCanAttack)
 		return;
@@ -197,7 +193,7 @@ void CHunterBullet::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 					iter->Set_Target_CanHit(false);
 					iter->Add_Target_Hp(m_tObjParam.fDamage);
 
-					m_dCurTime = 100;
+					m_dCurTime = 100;	// 바로 사망시키기 위해서 현재시간 100줬음
 
 					break;
 
@@ -214,28 +210,29 @@ void CHunterBullet::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 	return;
 }
 
-HRESULT CHunterBullet::Add_Component()
+HRESULT CMonkeyBullet::Add_Component()
 {
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
 		return E_FAIL;
+
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom)))
 		return E_FAIL;
+
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-HRESULT CHunterBullet::SetUp_ConstantTable()
+HRESULT CMonkeyBullet::SetUp_ConstantTable()
 {
 	return S_OK;
 }
 
-HRESULT CHunterBullet::Ready_Collider()
+HRESULT CMonkeyBullet::Ready_Collider()
 {
 	m_vecAttackCol.reserve(1);
 
-	// 총알 중앙
 	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 
 	_float fRadius = 0.4f;
@@ -251,33 +248,33 @@ HRESULT CHunterBullet::Ready_Collider()
 	return S_OK;
 }
 
-CHunterBullet* CHunterBullet::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
+CMonkeyBullet * CMonkeyBullet::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 {
-	CHunterBullet* pInstance = new CHunterBullet(pGraphic_Device);
+	CMonkeyBullet* pInstance = new CMonkeyBullet(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 	{
-		MSG_BOX("Failed To Creating CHunterBullet");
+		MSG_BOX("Failed To Creating CMonkeyBullet");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject* CHunterBullet::Clone_GameObject(void * pArg)
+CGameObject * CMonkeyBullet::Clone_GameObject(void * pArg)
 {
-	CHunterBullet* pInstance = new CHunterBullet(*this);
+	CMonkeyBullet* pInstance = new CMonkeyBullet(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
-		MSG_BOX("Failed To Cloned CHunterBullet");
+		MSG_BOX("Failed To Cloned CMonkeyBullet");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CHunterBullet::Free()
+void CMonkeyBullet::Free()
 {
 	Safe_Release(m_pTrailEffect);
 	Safe_Release(m_pTransformCom);
@@ -288,4 +285,3 @@ void CHunterBullet::Free()
 
 	return;
 }
-

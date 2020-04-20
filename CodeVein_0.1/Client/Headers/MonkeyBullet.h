@@ -8,12 +8,14 @@
 
 BEGIN(Client)
 
-class CHunterBullet final : public CGameObject
+class CWeapon;
+
+class CMonkeyBullet final : public CGameObject
 {
 public:
-	typedef struct tagHunterBulletInfo
+	typedef struct tagMonkeyBulletInfo
 	{
-		tagHunterBulletInfo(_v3 _vBirthPos, _v3 _vDir, _float _fSpeed, _double _dLifeTime)
+		tagMonkeyBulletInfo(_v3 _vBirthPos, _v3 _vDir, _float _fSpeed, _double _dLifeTime)
 			:vBirthPos(_vBirthPos), vDir(_vDir), fSpeed(_fSpeed), dLifeTime(_dLifeTime)
 		{
 		}
@@ -25,9 +27,9 @@ public:
 	}HUNTERBULLET_INFO;
 
 protected:
-	explicit CHunterBullet(LPDIRECT3DDEVICE9 pGraphic_Device);
-	explicit CHunterBullet(const CHunterBullet& rhs);
-	virtual ~CHunterBullet() = default;
+	explicit CMonkeyBullet(LPDIRECT3DDEVICE9 pGraphic_Device);
+	explicit CMonkeyBullet(const CMonkeyBullet& rhs);
+	virtual ~CMonkeyBullet() = default;
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -49,7 +51,7 @@ private:
 	HRESULT Ready_Collider();
 
 public:
-	static CHunterBullet* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
+	static CMonkeyBullet* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
 	virtual CGameObject* Clone_GameObject(void* pArg);
 	virtual void Free();
 
@@ -59,6 +61,7 @@ private:
 	CRenderer*			m_pRendererCom = nullptr;
 	CTrail_VFX*			m_pTrailEffect = nullptr;
 	CEffect*			m_pBulletBody = nullptr;
+	//CWeapon*			m_pWeapon = nullptr; //ÅõÃ´¹°·Î ¹Ù²ß½Ã´Ù
 
 	_tchar				m_pEffect_Tag0[MAX_STR] = { 0, };
 	_tchar				m_pEffect_Tag1[MAX_STR] = { 0, };
@@ -69,13 +72,15 @@ private:
 
 	_v3					m_vDir = _v3(0.f, 0.f, 0.f);
 	_float				m_fSpeed = 0.f;
+
 	_double				m_dCurTime = 0;
 	_double				m_dLifeTime = 0;
-	_bool				m_bDead = false;
 
+	_bool				m_bDead = false;
 	_bool				m_bEffect = true;
-	_bool				m_bPlayerFriendly = false;		// ÇÃ·¹ÀÌ¾î ²«Áö
 
 };
 
 END
+
+
