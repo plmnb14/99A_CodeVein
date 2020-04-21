@@ -341,6 +341,10 @@ void CPlayer_Colleague::Check_Do_List()
 				if (fLength < 2.3f)
 					m_eColl_AttackMoment = CPlayer_Colleague::Att_Normal;
 			}
+			if (true == m_pObject_Mon->Get_Dead())
+			{
+				
+			}
 			if (fLength > 30.f || nullptr == m_pObject_Mon || true == m_pObject_Mon->Get_Dead())
 			{
 				m_bStart_Fighting = false;
