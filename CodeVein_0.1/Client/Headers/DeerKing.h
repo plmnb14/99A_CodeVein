@@ -45,7 +45,7 @@ private:	// 패턴들
 	// 1페이지, 방패들고 있음
 	// 1. 왼팔 휘두르기
 	CBT_Composite_Node* LeftHand_Attack(_float fWeight = 0.95f);
-	// 2. 오른발로 찍고 돌진
+	// 2. 오른발로 찍기
 	CBT_Composite_Node* RightFoot_Attack(_float fWeight = 0.95f);
 	// 3. 돌진, 오른발 찍기와 연계
 	CBT_Composite_Node* Rush_RightFoot();
