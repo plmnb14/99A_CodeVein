@@ -129,6 +129,10 @@ PS_OUT PS_MAIN(PS_IN In)
 	//vector	vSSAO	= tex2D(SSAOSampler, In.vTexUV);
 
 	//Out.vColor = vDiffuse;
+
+	// SSAO ¼öÁ¤Áß
+	//float3 vFinalShade = max(vShade.rgb, vSSAO.r * 0.5f);
+	//Out.vColor = ((vDiffuse + vSpecular) * float4(vFinalShade, 1.f)) + (vEmissive * 5.f) + vRim;
 	Out.vColor = ((vDiffuse + vSpecular) * vShade) + (vEmissive * 5.f) + vRim;
 	//Out.vColor = (vDiffuse + vSpecular - vSSAO.x) * vShade;
 

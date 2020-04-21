@@ -68,12 +68,25 @@ private:	// 패턴들
 	CBT_Composite_Node* Rush_Body();
 	// 3. 윈스턴처럼 점프 찍기
 	CBT_Composite_Node* Jump_fist();
-
+	// 4. 왼손에 얼음칼 베기
+	CBT_Composite_Node* Blade_Attack();	// 보류
 
 	//////////// 응용
 
 	CBT_Composite_Node* Chase_Timer(_double dRunTime, _float fSpeed);
 
+	//// 게임 시작
+	CBT_Composite_Node* Start_Game();
+
+	// 체력 60퍼 이상
+	CBT_Composite_Node* More_Than_HP_60();
+	CBT_Composite_Node* NearAttack_Dist5_More_Than_HP60();
+	CBT_Composite_Node* FarAttack_More_Than_HP60();
+
+	// 체력 60퍼 미만
+	CBT_Composite_Node* HP_Final();
+	CBT_Composite_Node* NearAttack_Dist5_Final();
+	CBT_Composite_Node* FarAttack_Fianl();
 
 private:
 	void Down();	// 방패 집어던짐

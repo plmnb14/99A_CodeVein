@@ -37,7 +37,7 @@ HRESULT CScene_Stage_01::Ready_Scene()
 _int CScene_Stage_01::Update_Scene(_double TimeDelta)
 {
 	CUI_Manager::Get_Instance()->Update_UI();
-	Create_Fog(TimeDelta);
+	//Create_Fog(TimeDelta);
 
 	if (g_pInput_Device->Key_Down(DIK_H))
 	{
@@ -46,7 +46,7 @@ _int CScene_Stage_01::Update_Scene(_double TimeDelta)
 		pInstance->Set_Enable(false);
 
 		g_pManagement->Clear_LightList();
-
+		
 		CScriptManager::Get_Instance()->Reset_Script_DynmicObject();
 		CScriptManager::Get_Instance()->Reset_ScriptEvent(0, true);
 

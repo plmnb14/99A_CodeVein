@@ -15,6 +15,8 @@ private:
 
 public:
 	_float	Get_DeltaTime(const _tchar* _TimerTag);
+	void	Set_MutiplyTime(const _tchar* _TimerTag, const _float _fMutiplyTime);
+	void	Set_MutiplyResetTime(const _tchar* _TimerTag, const _float _fMutiplyResetTime);
 
 public:
 	void	Set_DeltaTime(const _tchar* _TimerTag);

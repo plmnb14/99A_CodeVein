@@ -1049,11 +1049,6 @@ _uint CLoading::Loading_Stage()
 	// 최초 로딩 호출 시 1번만 불러옵니다.
 	if (false == g_bOnStage[0])
 	{
-		// 공통 스테틱 메쉬 불러오는 중
-		//============================================================================================================
-		if(g_bReleaseMode)
-			g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
-
 		// 다이나믹 메쉬 불러오는 중
 		//============================================================================================================
 		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
@@ -1166,6 +1161,12 @@ _uint CLoading::Loading_Stage()
 		// 야차맨
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_YachaMan", CYachaMan::Create(m_pGraphicDev))))
 			return E_FAIL;
+		// 토템
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Cocoon", CCocoon::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 토템 총알
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBullet", CCocoonBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
 		// 김헌터
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Hunter", CHunter::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1174,6 +1175,9 @@ _uint CLoading::Loading_Stage()
 			return E_FAIL;
 		// 몽키.D.루피
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Monkey", CMonkey::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 몽키.D.총알
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_MonkeyBullet", CMonkey::Create(m_pGraphicDev))))
 			return E_FAIL;
 		// 예티
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Yeti", CYeti::Create(m_pGraphicDev))))

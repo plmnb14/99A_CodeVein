@@ -1287,7 +1287,7 @@ HRESULT CBlackWolf::Ready_Status(void * pArg)
 		
 		m_fRecognitionRange = 15.f;
 		m_fAtkRange = 5.f;
-		m_iDodgeCountMax = 5.f;
+		m_iDodgeCountMax = 5;
 	}
 	else
 	{

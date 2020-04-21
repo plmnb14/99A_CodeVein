@@ -179,6 +179,8 @@
     <ClInclude Include="..\Headers\Button_UI.h" />
     <ClInclude Include="..\Headers\ClickUI.h" />
     <ClInclude Include="..\Headers\Client_Defines.h" />
+    <ClInclude Include="..\Headers\Cocoon.h" />
+    <ClInclude Include="..\Headers\CocoonBullet.h" />
     <ClInclude Include="..\Headers\ColdBeamSharp.h" />
     <ClInclude Include="..\Headers\ColdBeamSmall.h" />
     <ClInclude Include="..\Headers\ColdBeamBig.h" />
@@ -290,6 +292,8 @@
     <ClCompile Include="..\Codes\BossHP.cpp" />
     <ClCompile Include="..\Codes\Button_UI.cpp" />
     <ClCompile Include="..\Codes\ClickUI.cpp" />
+    <ClCompile Include="..\Codes\Cocoon.cpp" />
+    <ClCompile Include="..\Codes\CocoonBullet.cpp" />
     <ClCompile Include="..\Codes\ColdBeamSharp.cpp" />
     <ClCompile Include="..\Codes\ColdBeamSmall.cpp" />
     <ClCompile Include="..\Codes\ColdBeamBig.cpp" />
@@ -405,6 +409,7 @@
     <FxCompile Include="..\ShaderFiles\Shader_Gizmo.fx" />
     <FxCompile Include="..\ShaderFiles\Shader_Mesh.fx" />
     <FxCompile Include="..\ShaderFiles\Shader_Sky.fx" />
+    <FxCompile Include="..\ShaderFiles\Shader_SSAO.fx" />
     <FxCompile Include="..\ShaderFiles\Shader_Terrain.fx" />
     <FxCompile Include="..\ShaderFiles\Shader_UI.fx" />
   </ItemGroup>

@@ -224,7 +224,7 @@ HRESULT CScene_Stage_Base::Ready_LightDesc()
 	//if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
 	//	return E_FAIL;
 
-	float fAmbient = 0.05f;
+	float fAmbient = 0.1f;
 
 	LightDesc.Type = D3DLIGHT_POINT;
 	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);

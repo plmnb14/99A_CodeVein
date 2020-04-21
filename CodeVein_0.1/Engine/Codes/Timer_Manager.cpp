@@ -22,6 +22,26 @@ void CTimer_Manager::Set_DeltaTime(const _tchar * _TimerTag)
 	pInstance->Set_DeltaTime();
 }
 
+void CTimer_Manager::Set_MutiplyTime(const _tchar * _TimerTag, const _float _fMutiplyTime)
+{
+	CTimer* pInstance = Find_Timer(_TimerTag);
+
+	if (nullptr == pInstance)
+		return;
+
+	pInstance->Set_TimeMultiply(_fMutiplyTime);
+}
+
+void CTimer_Manager::Set_MutiplyResetTime(const _tchar * _TimerTag, const _float _fMutiplyResetTime)
+{
+	CTimer* pInstance = Find_Timer(_TimerTag);
+
+	if (nullptr == pInstance)
+		return;
+
+	pInstance->Set_ResetMutiplyAccTime(_fMutiplyResetTime);
+}
+
 _float CTimer_Manager::Get_DeltaTime(const _tchar * _TimerTag)
 {
 	CTimer* pInstance = Find_Timer(_TimerTag);
