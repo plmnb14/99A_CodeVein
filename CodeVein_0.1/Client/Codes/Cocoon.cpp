@@ -676,6 +676,15 @@ void CCocoon::Play_Shot()
 				g_pManagement->Add_GameObject_ToLayer(L"Monster_CocoonBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 6.f, 2.f));
 			}
 		}
+		else if (3.7f <= AniTime && 5.8f >= AniTime)
+		{
+			matBone = *m_matBone[Bone_Jaw_Tongue] * m_pTransformCom->Get_WorldMat();
+			memcpy(vBirth, &matBone._41, sizeof(_v3));
+
+			g_pManagement->Create_Effect_Offset(L"Cocoon_TongueFire", 0.05f, vBirth, nullptr);
+			g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_01", 0.1f, vBirth, nullptr);
+			g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_02", 0.1f, vBirth, nullptr);
+		}
 		else if (0.f <= AniTime)
 		{
 			Function_RotateBody();
@@ -729,6 +738,15 @@ void CCocoon::Play_Mist()
 
 				g_pManagement->Add_GameObject_ToLayer(L"Monster_CocoonBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, vShotDir, 4.f, 1.f));
 			}
+		}
+		else if (0.5f <= AniTime && 2.6f >= AniTime)
+		{
+			matBone = *m_matBone[Bone_Jaw_Tongue] * m_pTransformCom->Get_WorldMat();
+			memcpy(vBirth, &matBone._41, sizeof(_v3));
+
+			g_pManagement->Create_Effect_Offset(L"Cocoon_TongueFire", 0.05f, vBirth, nullptr);
+			g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_01", 0.1f, vBirth, nullptr);
+			g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_02", 0.1f, vBirth, nullptr);
 		}
 	}
 

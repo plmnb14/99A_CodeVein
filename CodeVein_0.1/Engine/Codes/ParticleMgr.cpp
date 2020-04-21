@@ -265,8 +265,20 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"FireBoy_ArmAttack_Dust", 100);
 	Input_Pool(L"FireBoy_ArmAttack_FloorDust", 100);
 
+	Input_Pool(L"DeerKing_IceStone_Up_Particle_0", 100);
+	Input_Pool(L"DeerKing_SnowChunk_Up_Particle_0", 100);
+	Input_Pool(L"DeerKing_SnowChunk_Up_Particle_1", 100);
+	Input_Pool(L"DeerKing_Snow_Up_Particle_0", 500);
+	Input_Pool(L"DeerKing_IceSmoke_0", 100);
+	Input_Pool(L"DeerKing_IceSmoke_1", 100);
+	Input_Pool(L"DeerKing_IceSmoke_2", 100);
+	Input_Pool(L"DeerKing_IceSmoke_Small_0", 100);
+	Input_Pool(L"DeerKing_IceSmoke_Small_1", 100);
+
 	Input_Pool(L"Boss_KnockDown_Dust", 10);
 	Input_Pool(L"Boss_Dead_Particle", 7000);
+
+	Input_Pool(L"Cocoon_TongueFire", 200);
 
 	Input_Pool(L"Hit_BloodParticle_0", 200);
 	Input_Pool(L"Hit_BloodParticle_1", 200);
