@@ -182,14 +182,14 @@ void CCamera::Camera_Oscillate_Position()
 		return;
 	}
 
-	m_fOSC_Timer[0] += DELTA_60;
+	m_fOSC_Timer[0] += Engine::CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60_2");
 
 	// AXIS_X
 	if (true == m_bOSCReverse[0])
 	{
 		if (false == m_bOSCOrigin)
 		{
-			m_fOSCAxis_Gap[0] += DELTA_60 * m_fOSC_Frequency;
+			m_fOSCAxis_Gap[0] += Engine::CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60_2") * m_fOSC_Frequency;
 
 			if (m_fOSCAxis_Gap[0] >= m_fOSC_Power)
 			{
@@ -202,7 +202,7 @@ void CCamera::Camera_Oscillate_Position()
 
 		else
 		{
-			m_fOSCAxis_Gap[0] -= DELTA_60 * m_fOSC_Frequency;
+			m_fOSCAxis_Gap[0] -= Engine::CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60_2") * m_fOSC_Frequency;
 
 			if (m_fOSCAxis_Gap[0] <= 0)
 			{
@@ -218,7 +218,7 @@ void CCamera::Camera_Oscillate_Position()
 	{
 		if (false == m_bOSCOrigin)
 		{
-			m_fOSCAxis_Gap[0] -= DELTA_60 * m_fOSC_Frequency;
+			m_fOSCAxis_Gap[0] -= Engine::CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60_2") * m_fOSC_Frequency;
 
 			if (m_fOSCAxis_Gap[0] <= -m_fOSC_Power)
 			{
@@ -231,7 +231,7 @@ void CCamera::Camera_Oscillate_Position()
 
 		else
 		{
-			m_fOSCAxis_Gap[0] += DELTA_60 * m_fOSC_Frequency;
+			m_fOSCAxis_Gap[0] += Engine::CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60_2") * m_fOSC_Frequency;
 
 			if (m_fOSCAxis_Gap[0] >= 0)
 			{
@@ -249,7 +249,7 @@ void CCamera::Camera_Oscillate_Position()
 	{
 		if (false == m_bOSCOrigin)
 		{
-			m_fOSCAxis_Gap[1] += DELTA_60 * (m_fOSC_Frequency);
+			m_fOSCAxis_Gap[1] += Engine::CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60_2") * (m_fOSC_Frequency);
 
 			if (m_fOSCAxis_Gap[1] >= m_fOSC_Power)
 			{
@@ -264,7 +264,7 @@ void CCamera::Camera_Oscillate_Position()
 
 		else
 		{
-			m_fOSCAxis_Gap[1] -= DELTA_60 * (m_fOSC_Frequency);
+			m_fOSCAxis_Gap[1] -= Engine::CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60_2") * (m_fOSC_Frequency);
 
 			if (m_fOSCAxis_Gap[1] <= 0)
 			{
@@ -282,7 +282,7 @@ void CCamera::Camera_Oscillate_Position()
 	{
 		if (false == m_bOSCOrigin)
 		{
-			m_fOSCAxis_Gap[1] -= DELTA_60 * (m_fOSC_Frequency);
+			m_fOSCAxis_Gap[1] -= Engine::CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60_2") * (m_fOSC_Frequency);
 
 			if (m_fOSCAxis_Gap[1] <= -m_fOSC_Power)
 			{
@@ -297,7 +297,7 @@ void CCamera::Camera_Oscillate_Position()
 
 		else
 		{
-			m_fOSCAxis_Gap[1] += DELTA_60 * (m_fOSC_Frequency);
+			m_fOSCAxis_Gap[1] += Engine::CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60_2") * (m_fOSC_Frequency);
 
 			if (m_fOSCAxis_Gap[1] >= 0)
 			{
@@ -523,7 +523,7 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 
 				else
 				{
-					m_fAtLerpValue += DELTA_60;
+					m_fAtLerpValue += Engine::CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60_2");
 					D3DXVec3Lerp(&vLerpTargetAt, &m_vOldAt, &vAt, m_fAtLerpValue);
 					m_vOldAt = vLerpTargetAt;
 				}
@@ -546,7 +546,7 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 
 				else
 				{
-					m_fPosLerpValue += DELTA_60 * 0.5f;
+					m_fPosLerpValue += Engine::CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60_2") * 0.5f;
 					D3DXVec3Lerp(&vLerpTargetPos, &m_vOldPos, &vEyePos, m_fPosLerpValue);
 
 					//V3_NORMAL_SELF(&vLerpTargetPos);
@@ -595,7 +595,7 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 
 				else
 				{
-					m_fAtLerpValue += DELTA_60 * 2.f;
+					m_fAtLerpValue += Engine::CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60_2") * 2.f;
 					D3DXVec3Lerp(&vLerpTargetAt, &m_vOldAt, &vAimAt, m_fAtLerpValue);
 					m_vOldAt = vLerpTargetAt;
 				}
@@ -618,7 +618,7 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 			
 				else
 				{
-					m_fPosLerpValue += DELTA_60 * 2.f;
+					m_fPosLerpValue += Engine::CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60_2") * 2.f;
 					D3DXVec3Lerp(&vLerpTargetPos, &m_vOldPos, &vEyePos, m_fPosLerpValue);
 					m_vOldPos = vLerpTargetPos;
 				}

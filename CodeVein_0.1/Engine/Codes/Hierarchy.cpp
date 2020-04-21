@@ -212,6 +212,12 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 			{
 				// D N E
 				pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 5;
+
+				if (m_bIncludeMap[MESHTEXTURE::TYPE_UNION_MAP] == true)
+				{
+					pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 18;
+				}
+
 				continue;
 			}
 
@@ -219,6 +225,12 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 			{
 				// D N U
 				pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 7;
+
+				if (m_bIncludeMap[MESHTEXTURE::TYPE_EMISSIVE_MAP] == true)
+				{
+					pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 18;
+				}
+
 				continue;
 			}
 

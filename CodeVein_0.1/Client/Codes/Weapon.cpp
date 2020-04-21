@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\Weapon.h"
 #include "Management.h"
+#include "CameraMgr.h"
 
 CWeapon::CWeapon(_Device pGraphic_Device)
 	: CGameObject(pGraphic_Device)
@@ -184,6 +185,9 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 	//게임 오브젝트를 받아와서
 	for (auto& iter : plistGameObject)
 	{
+		if(false == iter->Get_Enable())
+			continue;
+
 		// 1 : 다 의 기술일 경우, 기록을 켜야 한대만 맞는다.
 		if (m_bRecordCollision)
 		{
@@ -224,21 +228,27 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 
 						if (false == iter->Get_Target_IsDodge())
 						{
-							m_tObjParam.fDamage = m_tWeaponParam->fDamage;
+							m_tObjParam.fDamage = m_tWeaponParam[m_eWeaponData].fDamage;
 
 							// 무기 공격력의 +-20%까지 랜덤범위
 							_uint min = (_uint)(m_tObjParam.fDamage - (m_tObjParam.fDamage * 0.2f));
 							_uint max = (_uint)(m_tObjParam.fDamage + (m_tObjParam.fDamage * 0.2f));
 
 							//피격시 밀림처리.....
-							//memcpy(vHitDir, &(m_pmatParent->_41), sizeof(_v3));
+							memcpy(vHitDir, &(m_pmatParent->_41), sizeof(_v3));
 
-							//V3_NORMAL(&m_tObjParam.vHitDir, &(ExceptY - vHitDir));
+							V3_NORMAL(&m_tObjParam.vHitDir, &(TARGET_TO_TRANS(iter)->Get_Pos() - vHitDir));
 
-							//iter->Set_Target_HitDir(m_tObjParam.vHitDir);
+							iter->Set_Target_HitDir(m_tObjParam.vHitDir);
+
+							g_pTimer_Manager->Set_MutiplyTime(L"Timer_Fps_60", 0.025f);
+							g_pTimer_Manager->Set_MutiplyResetTime(L"Timer_Fps_60", 0.1f);
 
 							iter->Add_Target_Hp(-(_float)CALC::Random_Num(min , max) * m_fSkillPercent);
 							g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
+
+							CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(2.f, 20.f, 0.5f, 0.6f, CCamera::CAM_OSC_TYPE::POS_OSC);
+							//SHAKE_CAM_lv0;
 
 							if (m_bRecordCollision)
 							{
@@ -578,14 +588,14 @@ HRESULT CWeapon::SetUp_WeaponData()
 	// 한손검
 	//===========================================================================================
 
-	m_tWeaponParam[WPN_SSword_Normal].fDamage = 30.f;
+	m_tWeaponParam[WPN_SSword_Normal].fDamage = 100.f;
 	m_tWeaponParam[WPN_SSword_Normal].fRadius = 0.7f;
 	m_tWeaponParam[WPN_SSword_Normal].fTrail_Min = 0.6f;
 	m_tWeaponParam[WPN_SSword_Normal].fTrail_Max = 1.8f;
 	m_tWeaponParam[WPN_SSword_Normal].fCol_Height = 1.f;
 
 
-	m_tWeaponParam[WPN_SSword_Military].fDamage = 30.f;
+	m_tWeaponParam[WPN_SSword_Military].fDamage = 100.f;
 	m_tWeaponParam[WPN_SSword_Military].fRadius = 0.7f;
 	m_tWeaponParam[WPN_SSword_Military].fTrail_Min = 0.6f;
 	m_tWeaponParam[WPN_SSword_Military].fTrail_Max = 1.8f;
@@ -595,6 +605,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	// 대검
 	//===========================================================================================
 
+	m_tWeaponParam[WPN_Hammer_Normal].fDamage = 55.f;
 	m_tWeaponParam[WPN_LSword_Normal].fRadius = 0.8f;
 	m_tWeaponParam[WPN_LSword_Normal].fTrail_Min = 0.8f;
 	m_tWeaponParam[WPN_LSword_Normal].fTrail_Max = 2.1f;

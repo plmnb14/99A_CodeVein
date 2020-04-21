@@ -31,6 +31,7 @@ private:
 
 private:
 	_float m_fMapFogDelay = 10.f;
+	_float m_fMapWindDustDelay = 1.f;
 
 private:
 	HRESULT Ready_LightDesc();
