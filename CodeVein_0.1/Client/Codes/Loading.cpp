@@ -902,6 +902,7 @@ _uint CLoading::Loading_Title()
 	cout << "Weapon 메쉬 불러오는 중" << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Weapon_Path.dat");
 	// 일반 무기
+
 	cout << "DrainWeapon 메쉬 불러오는 중" << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_DrainWeapon_Path.dat");
 	// 흡혈 무기
