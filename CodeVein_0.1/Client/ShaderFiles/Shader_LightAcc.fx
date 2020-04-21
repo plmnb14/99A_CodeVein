@@ -171,18 +171,6 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	// -1 ~ 1
 	vector		vNormal = vector(vNormalInfo.xyz * 2.f - 1.f, 0.f) ;
 
-	// SSAO ====================================================================
-	vNormal = mul(vNormal, g_matProjInv);
-	float ao = Get_SSAO(vNormal.xyz, vDepthInfo.xyz, In.vTexUV);
-	//Out.vSSAO = float4(ao, 0, 0, 1);
-
-	if (g_bTest)
-	{
-		Out.vShade.xyz -= saturate(ao);
-		saturate(Out.vShade.xyz);
-	}
-	// SSAO End ====================================================================
-
 
 	Out.vShade = g_vLightDiffuse * (saturate(dot(normalize(g_vLightDir) * -1.f, vNormal)) + saturate(g_vLightAmbient * g_vMtrlAmbient));
 	Out.vShade.a = 1.f;
@@ -236,7 +224,7 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	vector		vLook = vWorldPos - g_vCamPosition;
 
-	Out.vSpecular = g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 20.f) * 1.f; // * saturate(vSpecularIntensity.y);
+	Out.vSpecular = g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 20.f); // * saturate(vSpecularIntensity.y);
 	Out.vSpecular.a = 0.f;
 
 	// RimLight ======================================================================
@@ -257,6 +245,18 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	// RimLight End ==================================================================
 
 	//Out.vShade.rgb *= fShadow;
+
+	// SSAO ====================================================================
+	vNormal = mul(vNormal, g_matProjInv);
+	float ao = Get_SSAO(vNormal.xyz, vDepthInfo.xyz, In.vTexUV);
+	//Out.vSSAO = float4(ao, 0, 0, 1);
+
+	if (g_bTest)
+	{
+		Out.vShade.xyz -= saturate(ao);
+		saturate(Out.vShade.xyz);
+	}
+	// SSAO End ====================================================================
 
 	return Out;
 }
