@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Drain_Weapon.h"
+#include "CameraMgr.h"
 
 CDrain_Weapon::CDrain_Weapon(_Device pGraphic_Device)
 	: CGameObject(pGraphic_Device)
@@ -313,7 +314,7 @@ void CDrain_Weapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 
 						if (false == iter->Get_Target_IsDodge())
 						{
-							m_tObjParam.fDamage = 100.f;
+							m_tObjParam.fDamage = 500.f;
 
 							// 무기 공격력의 +-20%까지 랜덤범위
 							// 몬스터 HP바 확인을 위해 데미지 추가해놓음 - Chae
@@ -322,6 +323,10 @@ void CDrain_Weapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 
 							iter->Add_Target_Hp(-(_float)CALC::Random_Num(min, max) * 1.f);
 							g_pManagement->Create_Hit_Effect(m_pCollider, vecCol, TARGET_TO_TRANS(iter));
+
+							g_pTimer_Manager->Set_MutiplyTime(L"Timer_Fps_60", 0.025f);
+							g_pTimer_Manager->Set_MutiplyResetTime(L"Timer_Fps_60", 0.1f);
+							SHAKE_CAM_lv2;
 
 							if (m_bRecordCollision)
 							{
