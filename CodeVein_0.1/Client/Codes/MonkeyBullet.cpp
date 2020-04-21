@@ -32,26 +32,27 @@ HRESULT CMonkeyBullet::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Pos(temp.vCreatePos);
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
+	// Calc Angle
+	_v3	vRight = *D3DXVec3Cross(&vRight, &_v3(0.f, 1.f, 0.f), &m_vDir);
+	V3_NORMAL_SELF(&vRight);
+	_float	fDot = acosf(D3DXVec3Dot(&_v3{ 0,0,1 }, &m_vDir));
+	if (vRight.z > 0)
+		fDot *= -1.f;
+
+	m_pTransformCom->Set_Angle(_v3(0.f, fDot, 0.f));
+
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
 
-	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Bullet_Body", nullptr));
-	m_pBulletBody->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
-	m_pBulletBody->Reset_Init();
+	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Monkey_Knife", nullptr));
+	m_pBulletBody->Set_Desc(_v3(0, 0, 0), nullptr);
+	m_pBulletBody->Set_ParentObject(this);
+	m_pBulletBody->Reset_Init();;
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
-
-	//lstrcpy(m_pEffect_Tag0, L"Bullet_Body");
-	lstrcpy(m_pEffect_Tag1, L"Bullet_Body_Aura");
-	lstrcpy(m_pEffect_Tag2, L"Bullet_Tail_Particle");
-
-	lstrcpy(m_pEffect_Tag3, L"Bullet_DeadFlash");
-	lstrcpy(m_pEffect_Tag4, L"Bullet_DeadSmoke_Base");
-	lstrcpy(m_pEffect_Tag5, L"Bullet_DeadSmoke_Black");
 
 	m_pTrailEffect = static_cast<Engine::CTrail_VFX*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SwordTrail", nullptr));
 	m_pTrailEffect->Set_TrailIdx(5); // Red Tail
 
-	return S_OK;
 	return S_OK;
 }
 
@@ -63,7 +64,7 @@ _int CMonkeyBullet::Update_GameObject(_double TimeDelta)
 		return DEAD_OBJ;
 
 	Enter_Collision();
-	Update_Trails(TimeDelta);
+	//Update_Trails(TimeDelta);
 
 	m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
 
@@ -71,9 +72,6 @@ _int CMonkeyBullet::Update_GameObject(_double TimeDelta)
 
 	if (m_dCurTime > m_dLifeTime)
 	{
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag3, m_pTransformCom->Get_Pos());
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, m_pTransformCom->Get_Pos());
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag5, m_pTransformCom->Get_Pos());
 		m_pBulletBody->Set_Dead();
 
 		m_bDead = true;
@@ -82,12 +80,8 @@ _int CMonkeyBullet::Update_GameObject(_double TimeDelta)
 	{
 		if (m_bEffect)
 		{
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag1, _v3(), m_pTransformCom);
-
 			m_bEffect = false;
 		}
-
-		CParticleMgr::Get_Instance()->Create_Effect_Offset(m_pEffect_Tag2, 0.1f, m_pTransformCom->Get_Pos());
 	}
 
 	return NO_EVENT;
