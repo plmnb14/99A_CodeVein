@@ -24,44 +24,45 @@ HRESULT CYeti::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Pos(_v3(1.f, 0.f, 1.f));
 	m_pTransformCom->Set_Scale(V3_ONE);
 
+	Ready_Status(pArg);
 	Ready_BoneMatrix();
 	Ready_Collider();
 
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
-	m_pTarget->AddRef();
-	m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
-	m_pTargetTransform->AddRef();
+	if (nullptr != m_pTarget)
+	{
+		Safe_AddRef(m_pTarget);
+
+		m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
+		Safe_AddRef(m_pTargetTransform);
+	}
 
 	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-	m_tObjParam.fHp_Max = 200.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
-	m_tObjParam.fDamage = 25.f;
+	m_tObjParam.fArmor_Cur = m_tObjParam.fArmor_Max;
 
-	m_tObjParam.bCanHit = true; //맞기 가능
-	m_tObjParam.bIsHit = false;	//맞기 진행중 아님
-	m_tObjParam.bCanAttack = true; //공격 가능
-	m_tObjParam.bIsAttack = false; //공격 진행중 아님
-	m_tObjParam.bCanDodge = true; //회피 가능
-	m_tObjParam.bIsDodge = false;  //회피 진행중 아님
+	m_tObjParam.bCanHit = true;
+	m_tObjParam.bIsHit = false;
+	m_tObjParam.bCanAttack = true;
+	m_tObjParam.bIsAttack = false;
+	m_tObjParam.bCanDodge = true;
+	m_tObjParam.bIsDodge = false;
 
-	m_bInRecognitionRange = false; //인지 범위 여부
-	m_bInAtkRange = false; //공격 범위 여부
-	m_bCanChase = false; //추격 여부
-	m_bCanCoolDown = false; //쿨타임 여부
-	m_bIsCoolDown = false; //쿨타임 진행중 여부
+	m_bCanPlayDead = false;
+	m_bInRecognitionRange = false;
+	m_bInAtkRange = false;
+	m_bCanChase = false;
+	m_bCanCoolDown = false;
+	m_bIsCoolDown = false;
+	m_bAtkCategory = true;
+	m_bCanInterrupt = true;
+	m_bCanCombo = true;
+	m_bIsCombo = false;
+	m_bCanIdle = true;
+	m_bIsIdle = false;
 
-	m_bAtkCategory = true; //공격타입 고정용
-	m_bIsCombo = false; //콤보 진행중
-
-	m_bCanIdle = true; //일상 가능
-	m_bIsIdle = false; //일상 진행중 아님
-
-	m_fRecognitionRange = 20.f; //인지범위
-	m_fAtkRange = 5.f; //공격범위
-	m_fCoolDownMax = 0.f; //쿨타임 맥스값은 유동적
-	m_fCoolDownCur = 0.f; //쿨타임 시간을 더함
 	m_fSpeedForCollisionPush = 2.f;
-	m_iRandom = 0;
+	m_fCoolDownCur = 0.f;
 
 	return S_OK;
 }
@@ -235,8 +236,13 @@ void CYeti::Render_Collider()
 
 void CYeti::Enter_Collision()
 {
-	Check_CollisionPush();
-	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
+	if (MONSTER_ANITYPE::DEAD != m_eFirstCategory)
+	{
+		Check_CollisionPush();
+		Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
+	}
+
+	return;
 }
 
 void CYeti::Check_CollisionPush()
@@ -1836,6 +1842,7 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 				m_fSkillMoveMultiply = 1.f;
 			}
 
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -2028,6 +2035,7 @@ void CYeti::Play_Combo_RLRL_Smash()
 				m_fSkillMoveMultiply = 1.f;
 			}
 
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -2220,6 +2228,7 @@ void CYeti::Play_Combo_RLRL_Swing()
 				m_fSkillMoveMultiply = 1.f;
 			}
 
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -2444,6 +2453,34 @@ HRESULT CYeti::SetUp_ConstantTable()
 	return S_OK;
 }
 
+HRESULT CYeti::Ready_Status(void * pArg)
+{
+	if (nullptr == pArg)
+	{
+		m_tObjParam.fDamage = 50.f;
+		m_tObjParam.fHp_Max = 300.f;
+		m_tObjParam.fArmor_Max = 10.f;
+
+		m_fRecognitionRange = 15.f;
+		m_fShotRange = 10.f;
+		m_fAtkRange = 5.f;
+	}
+	else
+	{
+		INITSTRUCT Info = *(INITSTRUCT*)pArg;
+
+		m_tObjParam.fDamage = Info.tMonterStatus.fDamage;
+		m_tObjParam.fHp_Max = Info.tMonterStatus.fHp_Max;
+		m_tObjParam.fArmor_Max = Info.tMonterStatus.fArmor_Max;
+
+		m_fRecognitionRange = Info.fKonwingRange;
+		m_fShotRange = Info.fCanShotRangeIfGunChooose;
+		m_fAtkRange = Info.fCanAttackRange;
+	}
+
+	return S_OK;
+}
+
 HRESULT CYeti::Ready_Collider()
 {
 	m_vecPhysicCol.reserve(2);
@@ -2474,7 +2511,7 @@ HRESULT CYeti::Ready_Collider()
 	m_vecAttackCol.push_back(pCollider); //뭉개기용
 
 	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
-	fRadius = 0.6f;
+	fRadius = 0.7f;
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
 	pCollider->Set_Type(COL_SPHERE);
@@ -2484,7 +2521,7 @@ HRESULT CYeti::Ready_Collider()
 	m_vecAttackCol.push_back(pCollider);
 
 	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
-	fRadius = 0.6f;
+	fRadius = 0.7f;
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
 	pCollider->Set_Type(COL_SPHERE);
@@ -2494,7 +2531,7 @@ HRESULT CYeti::Ready_Collider()
 	m_vecAttackCol.push_back(pCollider);
 
 	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
-	fRadius = 0.6f;
+	fRadius = 0.7f;
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
 	pCollider->Set_Type(COL_SPHERE);
@@ -2559,6 +2596,7 @@ void CYeti::Free()
 {
 	Safe_Release(m_pTarget);
 	Safe_Release(m_pTargetTransform);
+
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pNavMesh);
 	Safe_Release(m_pTransformCom);
@@ -2566,8 +2604,11 @@ void CYeti::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 
-	for (auto& iter : m_vecPhysicCol)
-		Safe_Release(iter);
+	for (auto& vecter_iter : m_vecPhysicCol)
+		Safe_Release(vecter_iter);
+
+	for (auto& vecter_iter : m_vecAttackCol)
+		Safe_Release(vecter_iter);
 
 	for (auto& iter : m_matBone)
 		iter = nullptr;

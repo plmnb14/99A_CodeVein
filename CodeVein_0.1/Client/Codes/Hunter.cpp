@@ -42,9 +42,8 @@ HRESULT CHunter::Ready_GameObject(void * pArg)
 	}
 
 	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-	//m_tObjParam.fHp_Max = 200.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
-	//m_tObjParam.fDamage = 25.f;
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
+	m_tObjParam.fArmor_Cur = m_tObjParam.fArmor_Max;
 
 	m_tObjParam.bCanHit = true; //맞기 가능
 	m_tObjParam.bIsHit = false;	//맞기 진행중 아님
@@ -53,6 +52,7 @@ HRESULT CHunter::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanDodge = true; //회피 가능
 	m_tObjParam.bIsDodge = false;  //회피 진행중 아님
 
+	m_bCanPlayDead = false; //죽음 애니 진행시 true;
 	m_bInRecognitionRange = false; //인지 범위 여부
 	m_bInAtkRange = false; //공격 범위 여부
 	m_bCanChase = false; //추격 여부
@@ -67,11 +67,6 @@ HRESULT CHunter::Ready_GameObject(void * pArg)
 
 	m_fCoolDownCur = 0.f; //쿨타임 시간을 더함
 	m_fSpeedForCollisionPush = 2.f;
-	//m_fRecognitionRange = 20.f; //인지범위
-	//m_fAtkRange = 5.f; //공격범위
-	//m_fCoolDownMax = 0.f; //쿨타임 맥스값은 유동적
-	//m_iRandom = 0;
-	//m_iDodgeCount = 0; //n회 피격시 바로 회피
 
 	return S_OK;
 }
@@ -252,8 +247,13 @@ void CHunter::Render_Collider()
 
 void CHunter::Enter_Collision()
 {
-	Check_CollisionPush();
-	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
+	if (MONSTER_ANITYPE::DEAD != m_eFirstCategory)
+	{
+		Check_CollisionPush();
+		Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
+	}
+
+	return;
 }
 
 void CHunter::Check_CollisionPush()
@@ -432,7 +432,6 @@ void CHunter::Function_CoolDown()
 void CHunter::Function_Movement(_float _fspeed, _v3 _vDir)
 {
 	V3_NORMAL(&_vDir, &_vDir);
-	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &_vDir, _fspeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
 
 	return;
@@ -1043,18 +1042,16 @@ void CHunter::Play_RandomAtkCombo()
 	switch (m_eWeaponState)
 	{
 	case WEAPON_ANITYPE::GUN:
-		m_eAtkCombo = ATK_COMBO_TYPE::COMBO_GUN_SHOT;
-		m_eState = HUNTER_ANI::Bayonet_Atk_Shoot01;
-		//if (m_fShotRange >= fLenth)
-		//{
-		//	m_eAtkCombo = ATK_COMBO_TYPE::COMBO_GUN_CQC;
-		//	m_eState = HUNTER_ANI::Bayonet_Atk_N01;
-		//}
-		//else
-		//{
-		//	m_eAtkCombo = ATK_COMBO_TYPE::COMBO_GUN_SHOT;
-		//	m_eState = HUNTER_ANI::Bayonet_Atk_Shoot01;
-		//}
+		if (m_fAtkRange < fLenth &&  m_fShotRange > fLenth )
+		{
+			m_eAtkCombo = ATK_COMBO_TYPE::COMBO_GUN_CQC;
+			m_eState = HUNTER_ANI::Bayonet_Atk_N01;
+		}
+		else
+		{
+			m_eAtkCombo = ATK_COMBO_TYPE::COMBO_GUN_SHOT;
+			m_eState = HUNTER_ANI::Bayonet_Atk_Shoot01;
+		}
 		break;
 	case WEAPON_ANITYPE::HALBERD:
 		switch (CALC::Random_Num(ATK_COMBO_TYPE::COMBO_HALBERD_THIRDATK, ATK_COMBO_TYPE::COMBO_HALBERD_PIERCEWIND))
@@ -2688,6 +2685,7 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 				m_fSkillMoveMultiply = 1.5f;
 			}
 
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -2700,7 +2698,7 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
 			}
-
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -2755,6 +2753,7 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 				m_fSkillMoveMultiply = 1.f;
 			}
 
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -2835,6 +2834,7 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 				m_fSkillMoveMultiply = 1.f;
 			}
 
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -2897,6 +2897,7 @@ void CHunter::Play_Halberd_Combo_PierceTwice()
 				m_fSkillMoveMultiply = 1.5f;
 			}
 
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -2951,6 +2952,7 @@ void CHunter::Play_Halberd_Combo_PierceTwice()
 				m_fSkillMoveMultiply = 1.5f;
 			}
 
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -3013,6 +3015,7 @@ void CHunter::Play_Halberd_Combo_PierceWind()
 				m_fSkillMoveMultiply = 1.5f;
 			}
 
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -3066,6 +3069,7 @@ void CHunter::Play_Halberd_Combo_PierceWind()
 				m_fSkillMoveMultiply = 1.f;
 			}
 
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -5384,38 +5388,62 @@ void CHunter::Play_Dead()
 			m_eState = HUNTER_ANI::Death_F;
 		else
 			m_eState = HUNTER_ANI::Death;
+
 	}
 	else
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		switch (m_eState)
 		{
-			m_bEnable = false;
-			m_dAniPlayMul = 0;
-		}
-		else
-		{
-			if (1.30f < AniTime && 2.80f > AniTime)
+		case HUNTER_ANI::Death_F:
+			if (m_pMeshCom->Is_Finish_Animation(0.95f))
+			{
+				m_bEnable = false;
+				m_dAniPlayMul = 0;
+			}
+			if (1.967f <= AniTime)
 			{
 				if (false == m_bEventTrigger[0])
 				{
 					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 1.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 0.1f;
+					Start_Dissolve(0.7f, false, true);
+					m_pWeapon->Start_Dissolve(0.7f, false, true);
 				}
+			}
+			break;
 
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-			else if (5.233f < AniTime)
+		case HUNTER_ANI::Death_B:
+			if (m_pMeshCom->Is_Finish_Animation(0.95f))
 			{
-				if (false == m_bEventTrigger[1])
+				m_bEnable = false;
+				m_dAniPlayMul = 0;
+			}
+			if (4.400f <= AniTime)
+			{
+				if (false == m_bEventTrigger[0])
 				{
-					m_bEventTrigger[1] = true;
-					Start_Dissolve(0.6f, false, true);
-					m_pWeapon->Start_Dissolve(0.6f, false, true);
+					m_bEventTrigger[0] = true;
+					Start_Dissolve(0.7f, false, true);
+					m_pWeapon->Start_Dissolve(0.7f, false, true);
 				}
 			}
+			break;
+
+		case HUNTER_ANI::Death:
+			if (m_pMeshCom->Is_Finish_Animation(0.95f))
+			{
+				m_bEnable = false;
+				m_dAniPlayMul = 0;
+			}
+			if (4.233f <= AniTime)
+			{
+				if (false == m_bEventTrigger[0])
+				{
+					m_bEventTrigger[0] = true;
+					Start_Dissolve(0.7f, false, true);
+					m_pWeapon->Start_Dissolve(0.7f, false, true);
+				}
+			}
+			break;
 		}
 	}
 
@@ -5481,15 +5509,32 @@ HRESULT CHunter::SetUp_ConstantTable()
 
 HRESULT CHunter::Ready_Status(void* pArg)
 {
-	HUNTER_INFO Info = *(HUNTER_INFO*)pArg;
+	if (nullptr == pArg)
+	{
+		m_tObjParam.fDamage = 25.f;
+		m_tObjParam.fHp_Max = 200.f;
+		m_tObjParam.fArmor_Max = 10.f;
 
-	m_tObjParam.fDamage = Info.tMonterStatus.fDamage;
-	m_tObjParam.fHp_Max = Info.tMonterStatus.fHp_Max;
-	m_fRecognitionRange = Info.fKonwingRange;
-	m_fAtkRange = Info.fCanAttackRange;
-	m_fShotRange = Info.fCanShotRangeIfGunChooose;
-	m_iDodgeCountMax = Info.fDodgeCountMax;
-	m_eWeaponState = Info.eUseWhatWeapon;
+		m_fRecognitionRange = 15.f;
+		m_fShotRange = 10.f;
+		m_fAtkRange = 5.f;
+		m_iDodgeCountMax = 5.f;
+		m_eWeaponState = WEAPON_ANITYPE::SWORD;
+	}
+	else
+	{
+		INITSTRUCT Info = *(INITSTRUCT*)pArg;
+
+		m_tObjParam.fDamage = Info.tMonterStatus.fDamage;
+		m_tObjParam.fHp_Max = Info.tMonterStatus.fHp_Max;
+		m_tObjParam.fArmor_Max = Info.tMonterStatus.fArmor_Max;
+
+		m_fRecognitionRange = Info.fKonwingRange;
+		m_fShotRange = Info.fCanShotRangeIfGunChooose;
+		m_fAtkRange = Info.fCanAttackRange;
+		m_iDodgeCountMax = Info.iDodgeCountMax;
+		m_eWeaponState = Info.eUseWhatWeapon;
+	}
 
 	return S_OK;
 }
@@ -5652,8 +5697,11 @@ void CHunter::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 
-	for (auto& iter : m_vecPhysicCol)
-		Safe_Release(iter);
+	for (auto& vecter_iter : m_vecPhysicCol)
+		Safe_Release(vecter_iter);
+
+	for (auto& vecter_iter : m_vecAttackCol)
+		Safe_Release(vecter_iter);
 
 	for (auto& iter : m_matBone)
 		iter = nullptr;

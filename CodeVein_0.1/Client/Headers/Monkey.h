@@ -76,26 +76,33 @@ public:
 	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_Head, Bone_LeftHand, Bone_End };
 
 public:
-	typedef struct tagMonkeyInfo
+	struct INITSTRUCT
 	{
-		tagMonkeyInfo(_float _fDMG, _float _fHpMax,
-			_float _fKnowRange, _float _fAtkRange,
-			_float _ShotRange, _int iDodgeMax)
-			:
-			fKonwingRange(_fKnowRange),
-			fCanAttackRange(_fAtkRange),
-			fCanShotRangeIfGunChooose(_ShotRange),
-			fDodgeCountMax(iDodgeMax)
+		INITSTRUCT(
+			_float _fDMG,
+			_float _fHpMax,
+			_float _fArmorMax,
+			_float _fKnowRange,
+			_float _fShotRange,
+			_float _fAtkRange,
+			_int _iDodgeMax)
 		{
 			tMonterStatus.fDamage = _fDMG;
 			tMonterStatus.fHp_Max = _fHpMax;
+			tMonterStatus.fArmor_Max = _fArmorMax;
+
+			fKonwingRange = _fKnowRange;
+			fCanShotRangeIfGunChooose = _fShotRange;
+			fCanAttackRange = _fAtkRange;
+			iDodgeCountMax = _iDodgeMax;
 		}
+
 		OBJECT_PARAM		tMonterStatus;
 		_float				fKonwingRange = 20.f;
 		_float				fCanShotRangeIfGunChooose = 10.f;
 		_float				fCanAttackRange = 5.f;
-		_int				fDodgeCountMax = 3;
-	}MONKEY_INFO;
+		_int				iDodgeCountMax = 3;
+	};
 
 protected:
 	explicit CMonkey(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -198,21 +205,15 @@ private:
 	_bool				m_bEventTrigger[20] = {};
 
 	_bool				m_bCanPlayDead = false;
-	_bool				m_bCanDissolve = false;
-
 	_bool				m_bInRecognitionRange = false;
 	_bool				m_bInAtkRange = false;
-
 	_bool				m_bCanChase = false;
-
 	_bool				m_bCanCoolDown = false;
 	_bool				m_bIsCoolDown = false;
-
 	_bool				m_bAtkCategory = true;
 	_bool				m_bCanInterrupt = true;
 	_bool				m_bCanCombo = true;
 	_bool				m_bIsCombo = false;
-
 	_bool				m_bCanIdle = true;
 	_bool				m_bIsIdle = false;
 

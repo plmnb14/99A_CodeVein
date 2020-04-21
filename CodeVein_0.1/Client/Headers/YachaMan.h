@@ -93,6 +93,31 @@ public:
 
 	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_LeftArm, Bone_End };
 
+public:
+	struct INITSTRUCT
+	{
+		INITSTRUCT(
+			_float _fDMG,
+			_float _fHpMax,
+			_float _fArmorMax,
+			_float _fKnowRange,
+			_float _fAtkRange,
+			_int _iDodgeMax)
+		{
+			tMonterStatus.fDamage = _fDMG;
+			tMonterStatus.fHp_Max = _fHpMax;
+			tMonterStatus.fArmor_Max = _fArmorMax;
+
+			fKonwingRange = _fKnowRange;
+			fCanAttackRange = _fAtkRange;
+			iDodgeCountMax = _iDodgeMax;
+		}
+
+		OBJECT_PARAM		tMonterStatus;
+		_float				fKonwingRange = 20.f;
+		_float				fCanAttackRange = 5.f;
+		_int				iDodgeCountMax = 3;
+	};
 protected:
 	explicit CYachaMan(LPDIRECT3DDEVICE9 pGraphic_Device);
 	explicit CYachaMan(const CYachaMan& rhs);
@@ -151,6 +176,7 @@ private:
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
+	HRESULT Ready_Status(void* pArg);
 	HRESULT Ready_Weapon();
 	HRESULT Ready_Collider();
 	HRESULT Ready_BoneMatrix();
@@ -229,8 +255,8 @@ private:
 	_float				m_fSpeedForCollisionPush = 2.f;
 
 	_int				m_iRandom = 0;
-	_int				m_iDodgeCountMax = 3; //3회 피격시 회피
-	_int				m_iDodgeCount = 0; //n회 피격시 회피
+	_int				m_iDodgeCountMax = 3;
+	_int				m_iDodgeCount = 0;
 
 };
 
