@@ -88,7 +88,7 @@ private:
 	void	Set_AniEvent();
 
 private:
-	void	Colleague_Movement(_float fSpeed, _v3 vDir);
+	void	Colleague_Movement(_float fSpeed, _v3 vDir/*, _v3 YDir*/);
 
 private:
 	void	Colleague_Dead();
@@ -122,6 +122,8 @@ private:
 	CWeapon*				m_pSword = nullptr;
 	CTransform*				m_pTargetTransformCom = nullptr;
 
+	CGameObject*			m_pObject_Mon = nullptr;
+
 private:
 	Colleague_MoveType		m_eMovetype;
 
@@ -135,7 +137,7 @@ private:
 	//Move_Direction			m_eMoveDirection;
 
 private:
-	list<CGameObject*>	m_List_pMonTarget[2];
+	list<CGameObject*>*	m_List_pMonTarget[2];
 
 	_double	m_dPlayAni_Time = 1;
 

@@ -4,7 +4,7 @@
 
 BEGIN(Client)
 
-class CDamegeNumUI;
+//class CDamegeNumUI;
 class CMonsterUI;
 class CWeapon;
 class CGunGenji final : public CMonster
@@ -116,7 +116,7 @@ private:
 	// 몬스터 HP바 UI
 	CMonsterUI*			m_pMonsterUI = nullptr;
 	// 몬스터 데미지 UI
-	CDamegeNumUI*		m_pMonDamegeUI = nullptr;
+	//CDamegeNumUI*		m_pMonDamegeUI = nullptr;
 	////////////
 
 	//렌더에서 타임델타 쓰기위해서 저장해놓음
