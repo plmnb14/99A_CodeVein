@@ -28,7 +28,7 @@ HRESULT CDeerKing::Ready_GameObject(void * pArg)
 	Ready_Collider();
 
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 2000.f;
+	m_tObjParam.fHp_Cur = 1000.f;
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
 	m_tObjParam.fDamage = 20.f;
 
@@ -645,6 +645,22 @@ CBT_Composite_Node * CDeerKing::Jump_fist()
 	return Root_Parallel;
 }
 
+CBT_Composite_Node * CDeerKing::Blade_Attack()
+{
+	//CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
+
+	//CBT_Sequence* MainSeq = Node_Sequence("왼손 얼음칼 베기 ");
+	//CBT_Play_Ani* Show_Ani38 = Node_Ani("왼손 얼음칼 베기", 38, 0.95f);
+	//CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
+
+	//CBT_Sequence* SubSeq = Node_Sequence("이동");
+	//CBT_Wait* Wait0 = Node_Wait("대기", 0.6, 0);
+	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기0", L"Player_Pos", 0.15);
+
+
+	return nullptr;
+}
+
 CBT_Composite_Node * CDeerKing::Chase_Timer(_double dRunTime, _float fSpeed)
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
@@ -662,6 +678,19 @@ CBT_Composite_Node * CDeerKing::Chase_Timer(_double dRunTime, _float fSpeed)
 	SubSeq->Add_Child(Chase0);
 
 	return Root_Parallel;
+}
+
+CBT_Composite_Node * CDeerKing::Start_Game()
+{
+	CBT_Selector* Root_Sel = Node_Selector("게임 시작");
+
+	CBT_CompareValue* Check_Upper_HPRatio60 = Node_FLOAT_A_Smaller_Than_Value("체력 60퍼 미만", L"HPRatio", 60.f);
+
+	Root_Sel->Add_Child(Check_Upper_HPRatio60);
+	Check_Upper_HPRatio60->Set_Child(HP_Final());
+	Root_Sel->Add_Child(More_Than_HP_60());
+
+	return Root_Sel;
 }
 
 void CDeerKing::Down()

@@ -37,6 +37,7 @@ public:
 	void Set_FinishPos(_v3 vPos) { m_bFinishPos = true;  m_vFinishPos = vPos; }
 	void Set_Delay(_bool bDelay, _float fDelay = 0.f) { m_bDelay_New = bDelay;  m_fDelay_New = fDelay; }
 	void Set_Loop(_bool bLoop) { m_bLoop = bLoop; }
+	void Set_ZWrite() { m_bZwrite = true; }
 
 	void Reset_Init();
 
@@ -67,6 +68,7 @@ protected:
 	_float					m_fAlphaSpeed = 0.f;
 	_float					m_fCreateDelay = 0.f;
 	_float					m_fAccel = 0.f;
+	_float					m_fSlowAccel = 0.f;
 	_float					m_fDissolve = 0.f;
 	_float					m_fDelay_New = 0.f;
 	_v3						m_vLerpPos = { 1.f, 1.f, 1.f };
@@ -87,6 +89,7 @@ protected:
 	_bool					m_bDelay_New = false;
 	_bool					m_bLoop = false;
 	_bool					m_bInstanceTarget = false;
+	_bool					m_bZwrite = false;
 
 	_int					m_iPass = 0;
 

@@ -31,7 +31,7 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 	Ready_Collider();
 
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 2000.f;
+	m_tObjParam.fHp_Cur = 1000.f;
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
 	m_tObjParam.fDamage = 20.f;
 	//m_tObjParam.fDamage = 0.f;
