@@ -76,7 +76,7 @@ HRESULT CDeerKing::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Smart_JumpAttack());
+	Start_Sel->Add_Child(LeftHand_Attack());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -268,6 +268,14 @@ CBT_Composite_Node * CDeerKing::LeftHand_Attack(_float fWeight)
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.134, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 5.f, 0.216, 0);
 
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("잔눈", L"DeerKing_Snow_Up_Particle_0", L"Bone_LeftHand", 0.4, 60, 0.01, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_Small_0", L"Bone_LeftHand", 0.4, 60, 0.01, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_Small_1", L"Bone_LeftHand", 0.4, 60, 0.01, 0);
+
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
+
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani31);
 	MainSeq->Add_Child(Show_Ani0);
@@ -300,6 +308,22 @@ CBT_Composite_Node * CDeerKing::RightFoot_Attack(_float fWeight)
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.567, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 1.f, 0.217, 0);
 	
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("눈 위로 폭발0", L"DeerKing_SnowChunk_Up_Particle_0", L"ShieldPos", 1.0, 1, 0.01, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("눈 위로 폭발1", L"DeerKing_SnowChunk_Up_Particle_1", L"ShieldPos", 1.0, 1, 0.01, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("얼음 위로 폭발0", L"DeerKing_IceStone_Up_Particle_0", L"ShieldPos", 1.0, 2, 0.01, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("잔눈", L"DeerKing_Snow_Up_Particle_0", L"ShieldPos", 1.0, 3, 0.01, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_0", L"ShieldPos", 1.0, 5, 0.01, 0);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_1", L"ShieldPos", 1.0, 5, 0.01, 0);
+	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_2", L"ShieldPos", 1.15, 1, 0.01, 0);
+
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
+	Root_Parallel->Add_Service(Effect3);
+	Root_Parallel->Add_Service(Effect4);
+	Root_Parallel->Add_Service(Effect5);
+	Root_Parallel->Add_Service(Effect6);
+
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani34);
 	//MainSeq->Add_Child(Show_Ani0);
@@ -836,7 +860,11 @@ HRESULT CDeerKing::Update_Value_Of_BB()
 	// 3. 체력 비율 업데이트
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"HPRatio", _float(m_tObjParam.fHp_Cur / m_tObjParam.fHp_Max) * 100);
 
-
+	// 4. 방패 찍기 좌표
+	CTransform* pShieldTrans = static_cast<CTransform*>(m_pShield->Get_Component(L"Com_Transform"));
+	_mat matShield = pShieldTrans->Get_WorldMat();
+	_v3 vShieldPos = _v3(matShield.m[3][0], matShield.m[3][1], matShield.m[3][2]);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ShieldPos", vShieldPos + _v3(0.f, -0.5f, 0.f));
 
 	return S_OK;
 }

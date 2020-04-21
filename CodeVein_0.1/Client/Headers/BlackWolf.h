@@ -140,7 +140,6 @@ public:
 	virtual void Free();
 
 private:
-	//////////// 채유미
 	// 몬스터 HP바 UI
 	CMonsterUI*			m_pMonsterUI = nullptr;
 

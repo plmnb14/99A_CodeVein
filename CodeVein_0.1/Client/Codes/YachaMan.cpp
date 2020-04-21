@@ -2,6 +2,8 @@
 #include "..\Headers\YachaMan.h"
 #include "..\Headers\Weapon.h"
 
+#include "MonsterUI.h"
+
 CYachaMan::CYachaMan(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
@@ -29,6 +31,11 @@ HRESULT CYachaMan::Ready_GameObject(void * pArg)
 	Ready_BoneMatrix();
 	Ready_Collider();
 	Ready_Weapon();
+
+	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
+	m_pMonsterUI->Set_Target(this);
+	m_pMonsterUI->Set_Bonmatrix(m_matBone[Bone_Head]);
+	m_pMonsterUI->Ready_GameObject(NULL);
 
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 	if (nullptr != m_pTarget)
@@ -73,6 +80,8 @@ _int CYachaMan::Update_GameObject(_double TimeDelta)
 		return NO_EVENT;
 
 	CGameObject::Update_GameObject(TimeDelta);
+
+	m_pMonsterUI->Update_GameObject(TimeDelta);
 
 	Check_PosY();
 	Check_Hit();
@@ -1560,9 +1569,9 @@ void CYachaMan::Play_WheelWind()
 
 		if (3.233f < AniTime && 3.733f > AniTime)
 		{
-			if (m_bEventTrigger[6] == false)
+			if (m_bEventTrigger[18] == false)
 			{
-				m_bEventTrigger[6] = true;
+				m_bEventTrigger[18] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -1572,9 +1581,9 @@ void CYachaMan::Play_WheelWind()
 		}
 		else if (2.200f < AniTime && 3.133f >AniTime)
 		{
-			if (m_bEventTrigger[7] == false)
+			if (m_bEventTrigger[19] == false)
 			{
-				m_bEventTrigger[7] = true;
+				m_bEventTrigger[19] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -1584,9 +1593,9 @@ void CYachaMan::Play_WheelWind()
 		}
 		else if (1.767f < AniTime && 2.100f > AniTime)
 		{
-			if (m_bEventTrigger[8] == false)
+			if (m_bEventTrigger[20] == false)
 			{
-				m_bEventTrigger[8] = true;
+				m_bEventTrigger[20] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -1666,25 +1675,25 @@ void CYachaMan::Play_Combo_R_L()
 		}
 		else if (3.000f <= AniTime)
 		{
-			if (false == m_bEventTrigger[0])
+			if (false == m_bEventTrigger[4])
 			{
-				m_bEventTrigger[0] = true;
+				m_bEventTrigger[4] = true;
 				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
 		else if (2.700f <= AniTime)
 		{
-			if (false == m_bEventTrigger[1])
+			if (false == m_bEventTrigger[5])
 			{
-				m_bEventTrigger[1] = true;
+				m_bEventTrigger[5] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
 			}
 		}
 		else if (2.400f <= AniTime)
 		{
-			if (false == m_bEventTrigger[2])
+			if (false == m_bEventTrigger[6])
 			{
-				m_bEventTrigger[2] = true;
+				m_bEventTrigger[6] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 			}
@@ -1695,9 +1704,9 @@ void CYachaMan::Play_Combo_R_L()
 
 		if (0.900f<AniTime && 2.833f> AniTime)
 		{
-			if (m_bEventTrigger[3] == false)
+			if (m_bEventTrigger[7] == false)
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[7] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -1752,7 +1761,7 @@ void CYachaMan::Play_Combo_R_Hammering()
 		if (m_pMeshCom->Is_Finish_Animation(0.3f))
 			m_bCanInterrupt = false;
 
-		if (2.833f<AniTime && 4.233f> AniTime)
+		if (2.833f < AniTime && 4.233f > AniTime)
 		{
 			if (m_bEventTrigger[3] == false)
 			{
@@ -1761,6 +1770,7 @@ void CYachaMan::Play_Combo_R_Hammering()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1777,25 +1787,25 @@ void CYachaMan::Play_Combo_R_Hammering()
 		}
 		else if (3.933f <= AniTime)
 		{
-			if (false == m_bEventTrigger[0])
+			if (false == m_bEventTrigger[4])
 			{
-				m_bEventTrigger[0] = true;
+				m_bEventTrigger[4] = true;
 				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
 		else if (3.633f <= AniTime)
 		{
-			if (false == m_bEventTrigger[1])
+			if (false == m_bEventTrigger[5])
 			{
-				m_bEventTrigger[1] = true;
+				m_bEventTrigger[5] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
 			}
 		}
 		else if (3.267f <= AniTime)
 	{
-		if (false == m_bEventTrigger[2])
+		if (false == m_bEventTrigger[6])
 		{
-			m_bEventTrigger[2] = true;
+			m_bEventTrigger[6] = true;
 			m_pWeapon->Set_Target_CanAttack(true);
 			m_pWeapon->Set_Enable_Trail(true);
 		}
@@ -1806,14 +1816,15 @@ void CYachaMan::Play_Combo_R_Hammering()
 
 		if (2.167f < AniTime && 3.367f > AniTime)
 	{
-		if (m_bEventTrigger[3] == false)
+		if (m_bEventTrigger[7] == false)
 		{
-			m_bEventTrigger[3] = true;
+			m_bEventTrigger[7] = true;
 			m_fSkillMoveSpeed_Cur = 8.f;
 			m_fSkillMoveAccel_Cur = 0.f;
 			m_fSkillMoveMultiply = 1.5f;
 		}
 
+		Function_RotateBody();
 		Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 		Function_DecreMoveMent(m_fSkillMoveMultiply);
 	}
@@ -1873,7 +1884,7 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
 			}
-
+			
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1890,50 +1901,50 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 		}
 		else if (4.000f <= AniTime)
 		{
-			if (false == m_bEventTrigger[0])
+			if (false == m_bEventTrigger[4])
 			{
-				m_bEventTrigger[0] = true;
+				m_bEventTrigger[4] = true;
 				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
 		else if (3.700f <= AniTime)
 		{
-			if (false == m_bEventTrigger[1])
+			if (false == m_bEventTrigger[5])
 			{
-				m_bEventTrigger[1] = true;
+				m_bEventTrigger[5] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
 			}
 		}
 		else if (3.300f <= AniTime)
 		{
-			if (false == m_bEventTrigger[2])
+			if (false == m_bEventTrigger[6])
 			{
-				m_bEventTrigger[2] = true;
+				m_bEventTrigger[6] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 			}
 		}
 		else if (2.600f <= AniTime)
 		{
-			if (false == m_bEventTrigger[3])
+			if (false == m_bEventTrigger[7])
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[7] = true;
 				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
 		else if (2.300f <= AniTime)
 		{
-			if (false == m_bEventTrigger[4])
+			if (false == m_bEventTrigger[8])
 			{
-				m_bEventTrigger[4] = true;
+				m_bEventTrigger[8] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
 			}
 		}
 		else if (1.967f <= AniTime)
 		{
-			if (false == m_bEventTrigger[5])
+			if (false == m_bEventTrigger[9])
 			{
-				m_bEventTrigger[5] = true;
+				m_bEventTrigger[9] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 			}
@@ -1944,37 +1955,43 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 
 		if (3.233f < AniTime && 3.733f > AniTime)
 		{
-			if (m_bEventTrigger[6] == false)
+			if (m_bEventTrigger[10] == false)
 			{
-				m_bEventTrigger[6] = true;
+				m_bEventTrigger[10] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
 			}
+
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
 		else if (2.200f < AniTime && 3.133f >AniTime)
 		{
-			if (m_bEventTrigger[7] == false)
+			if (m_bEventTrigger[11] == false)
 			{
-				m_bEventTrigger[7] = true;
+				m_bEventTrigger[11] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
 			}
+
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
 		else if (1.767f < AniTime && 2.100f > AniTime)
 		{
-			if (m_bEventTrigger[8] == false)
+			if (m_bEventTrigger[12] == false)
 			{
-				m_bEventTrigger[8] = true;
+				m_bEventTrigger[12] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
 			}
+
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -2051,25 +2068,25 @@ void CYachaMan::Play_Combo_Shoulder_HalfClock()
 		}
 		else if (2.433f <= AniTime)
 		{
-			if (false == m_bEventTrigger[0])
+			if (false == m_bEventTrigger[4])
 			{
-				m_bEventTrigger[0] = true;
+				m_bEventTrigger[4] = true;
 				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
 		else if (2.133f <= AniTime)
 		{
-			if (false == m_bEventTrigger[1])
+			if (false == m_bEventTrigger[5])
 			{
-				m_bEventTrigger[1] = true;
+				m_bEventTrigger[5] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
 			}
 		}
 		else if (1.800f <= AniTime)
 		{
-			if (false == m_bEventTrigger[2])
+			if (false == m_bEventTrigger[6])
 			{
-				m_bEventTrigger[2] = true;
+				m_bEventTrigger[6] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 			}
@@ -2080,25 +2097,29 @@ void CYachaMan::Play_Combo_Shoulder_HalfClock()
 
 		if (1.933f < AniTime && 3.000f> AniTime)
 		{
-			if (m_bEventTrigger[3] == false)
+			if (m_bEventTrigger[7] == false)
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[7] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
 			}
+
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
 		else if (1.000f < AniTime && 1.833f >AniTime)
 		{
-			if (m_bEventTrigger[4] == false)
+			if (m_bEventTrigger[8] == false)
 			{
-				m_bEventTrigger[4] = true;
+				m_bEventTrigger[8] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
 			}
+
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -2129,6 +2150,7 @@ void CYachaMan::Play_Combo_RunHammering()
 				m_fSkillMoveMultiply = 2.f;
 			}
 
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -2165,25 +2187,25 @@ void CYachaMan::Play_Combo_RunHammering()
 		}
 		else if (1.767f <= AniTime)
 		{
-			if (false == m_bEventTrigger[0])
+			if (false == m_bEventTrigger[2])
 			{
-				m_bEventTrigger[0] = true;
+				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
 		else if (1.467f <= AniTime)
 		{
-			if (false == m_bEventTrigger[1])
+			if (false == m_bEventTrigger[3])
 			{
-				m_bEventTrigger[1] = true;
+				m_bEventTrigger[3] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
 			}
 		}
 		else if (0.733f <= AniTime)
 		{
-			if (false == m_bEventTrigger[2])
+			if (false == m_bEventTrigger[4])
 			{
-				m_bEventTrigger[2] = true;
+				m_bEventTrigger[4] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 			}
@@ -2194,9 +2216,9 @@ void CYachaMan::Play_Combo_RunHammering()
 
 		if (0.433f > AniTime)
 		{
-			if (m_bEventTrigger[3] == false)
+			if (m_bEventTrigger[5] == false)
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[5] = true;
 				m_fSkillMoveSpeed_Cur = 12.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 4.f;
@@ -2555,7 +2577,7 @@ HRESULT CYachaMan::Ready_Status(void * pArg)
 
 		m_fRecognitionRange = 15.f;
 		m_fAtkRange = 5.f;
-		m_iDodgeCountMax = 5.f;
+		m_iDodgeCountMax = 5;
 	}
 	else
 	{
@@ -2652,6 +2674,9 @@ HRESULT CYachaMan::Ready_BoneMatrix()
 	m_matBone[Bone_Range] = &pFrame->CombinedTransformationMatrix;
 	m_matBone[Bone_Body] = &pFrame->CombinedTransformationMatrix;
 
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head", 0), E_FAIL);
+	m_matBone[Bone_Head] = &pFrame->CombinedTransformationMatrix;
+
 	return S_OK;
 }
 
@@ -2683,6 +2708,8 @@ CGameObject* CYachaMan::Clone_GameObject(void * pArg)
 
 void CYachaMan::Free()
 {
+	Safe_Release(m_pMonsterUI);
+
 	Safe_Release(m_pTarget);
 	Safe_Release(m_pTargetTransform);
 

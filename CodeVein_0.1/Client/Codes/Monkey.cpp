@@ -3,6 +3,8 @@
 #include "..\Headers\Weapon.h"
 #include "..\Headers\MonkeyBullet.h"
 
+#include "MonsterUI.h"
+
 CMonkey::CMonkey(LPDIRECT3DDEVICE9 pGraphic_Device)
 	:CGameObject(pGraphic_Device)
 {
@@ -30,6 +32,11 @@ HRESULT CMonkey::Ready_GameObject(void* pArg)
 	Ready_BoneMatrix();
 	Ready_Collider();
 	Ready_Weapon();
+
+	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
+	m_pMonsterUI->Set_Target(this);
+	m_pMonsterUI->Set_Bonmatrix(m_matBone[Bone_Head]);
+	m_pMonsterUI->Ready_GameObject(NULL);
 
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
@@ -68,6 +75,11 @@ HRESULT CMonkey::Ready_GameObject(void* pArg)
 	m_fCoolDownCur = 0.f;
 	m_fSpeedForCollisionPush = 2.f;
 
+	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
+	m_pMonsterUI->Set_Target(this);
+	m_pMonsterUI->Set_Bonmatrix(m_matBone[Bone_Head]);
+	m_pMonsterUI->Ready_GameObject(NULL);
+
 	return S_OK;
 }
 
@@ -78,6 +90,9 @@ _int CMonkey::Update_GameObject(_double TimeDelta)
 
 	CGameObject::Update_GameObject(TimeDelta);
 
+	// MonsterHP UI
+	m_pMonsterUI->Update_GameObject(TimeDelta);
+
 	Checkk_PosY();
 	Check_Hit();
 	Check_Dist();
@@ -87,6 +102,8 @@ _int CMonkey::Update_GameObject(_double TimeDelta)
 	m_pMeshCom->SetUp_Animation(m_eState);
 
 	Enter_Collision();
+
+	
 
 	return NO_EVENT;
 }
@@ -861,7 +878,7 @@ void CMonkey::Play_FangShot()
 
 			matBone = *m_matBone[Bone_LeftHand] * m_pTransformCom->Get_WorldMat();
 			memcpy(vBirth, &matBone._41, sizeof(_v3));
-			g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &CMonkeyBullet::tagMonkeyBulletInfo(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 3.f, 1.5));
+			g_pManagement->Add_GameObject_ToLayer(L"Monster_MonkeyBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 15.f, 1.5));
 
 			//m_fShotDelay += DELTA_60;
 			//if (m_fShotDelay >= 0.0005f)
@@ -1896,7 +1913,7 @@ HRESULT CMonkey::Ready_Status(void * pArg)
 		m_fRecognitionRange = 15.f;
 		m_fShotRange = 10.f;
 		m_fAtkRange = 5.f;
-		m_iDodgeCountMax = 5.f;
+		m_iDodgeCountMax = 5;
 	}
 	else
 	{
@@ -2016,6 +2033,8 @@ CGameObject* CMonkey::Clone_GameObject(void * pArg)
 
 void CMonkey::Free()
 {
+	Safe_Release(m_pMonsterUI);
+
 	Safe_Release(m_pTarget);
 	Safe_Release(m_pTargetTransform);
 	Safe_Release(m_pWeapon);

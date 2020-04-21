@@ -1,5 +1,8 @@
 #include "stdafx.h"
 #include "..\Headers\Cocoon.h"
+#include "..\Headers\CocoonBullet.h"
+
+#include "MonsterUI.h"
 
 CCocoon::CCocoon(LPDIRECT3DDEVICE9 pGraphic_Device)
 	:CGameObject(pGraphic_Device)
@@ -13,7 +16,7 @@ CCocoon::CCocoon(const CCocoon & rhs)
 
 HRESULT CCocoon::Ready_GameObject_Prototype()
 {
-	return NOERROR;
+	return S_OK;
 }
 
 HRESULT CCocoon::Ready_GameObject(void * pArg)
@@ -24,39 +27,46 @@ HRESULT CCocoon::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Pos(_v3(1.f, 0.f, 1.f));
 	m_pTransformCom->Set_Scale(V3_ONE);
 
+	Ready_Status(pArg);
 	Ready_BoneMatrix();
 	Ready_Collider();
 
-	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE);
-	m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_STAGE));
+	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
+	m_pMonsterUI->Set_Target(this);
+	m_pMonsterUI->Set_Bonmatrix(m_matBone[Bone_Head]);
+	m_pMonsterUI->Ready_GameObject(NULL);
 
+	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	if (nullptr != m_pTarget)
+	{
+		Safe_AddRef(m_pTarget);
+
+		m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
+		Safe_AddRef(m_pTargetTransform);
+	}
+	
 	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-
-	m_tObjParam.fHp_Max = 70.f;
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
-	m_tObjParam.fDamage = 20.f; //투사체가 필요한가?
+	m_tObjParam.fArmor_Cur = m_tObjParam.fArmor_Max;
+
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.bIsHit = false;
 	m_tObjParam.bHitAgain = false;
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.bIsAttack = false;
 
-	m_bInRecognitionRange = false; //인지 범위 여부
-	m_bInMistAtkRange = false;
-	m_bInShotAtkRange = false;
+	m_bCanPlayDead = false;
+	m_bInRecognitionRange = false;
+	m_bInAtkRange = false;
+	m_bCanCoolDown = false;
+	m_bIsCoolDown = false;
+	m_bCanIdle = true;
+	m_bIsIdle = false;
 
-	m_bCanCoolDown = false; //쿨타임 여부
-	m_bIsCoolDown = false; //쿨타임 진행중 여부
-
-	m_fRecognitionRange = 20.f;
-	m_fMistAtkRange = 5.f;
-	m_fShotAtkRange = 10.f;
-	m_fCoolDownMax = 0.f;
 	m_fCoolDownCur = 0.f;
 	m_fSpeedForCollisionPush = 2.f;
-	m_iRandom = 0;
 
-	return NOERROR;
+	return S_OK;
 }
 
 _int CCocoon::Update_GameObject(_double TimeDelta)
@@ -66,16 +76,20 @@ _int CCocoon::Update_GameObject(_double TimeDelta)
 
 	CGameObject::Update_GameObject(TimeDelta);
 
+	// MonsterHP UI
+	m_pMonsterUI->Update_GameObject(TimeDelta);
+
+	Check_PosY();
 	Check_Hit();
 	Check_Dist();
-	Set_AniEvent();
+	Check_AniEvent();
 	Function_CoolDown();
 
 	m_pMeshCom->SetUp_Animation(m_eState);
 
 	Enter_Collision();
 
-	return NOERROR;
+	return S_OK;
 }
 
 _int CCocoon::Late_Update_GameObject(_double TimeDelta)
@@ -89,12 +103,10 @@ _int CCocoon::Late_Update_GameObject(_double TimeDelta)
 		return E_FAIL;
 	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
 		return E_FAIL;
-	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
-	//	return E_FAIL;
 
 	m_dTimeDelta = TimeDelta;
 
-	return NOERROR;
+	return S_OK;
 }
 
 HRESULT CCocoon::Render_GameObject()
@@ -139,7 +151,7 @@ HRESULT CCocoon::Render_GameObject()
 	Update_Collider();
 	Render_Collider();
 
-	return NOERROR;
+	return S_OK;
 }
 
 HRESULT CCocoon::Render_GameObject_SetPass(CShader * pShader, _int iPass)
@@ -178,7 +190,7 @@ HRESULT CCocoon::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 		}
 	}
 
-	return NOERROR;
+	return S_OK;
 }
 
 void CCocoon::Update_Collider()
@@ -213,22 +225,17 @@ void CCocoon::Update_Collider()
 void CCocoon::Render_Collider()
 {
 	for (auto& iter : m_vecAttackCol)
-	{
 		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
-	}
 
 	for (auto& iter : m_vecPhysicCol)
-	{
 		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
-	}
 
 	return;
 }
 
 void CCocoon::Enter_Collision()
 {
-	Check_CollisionPush();
-	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_STAGE));
+	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
 
 	return;
 }
@@ -237,7 +244,7 @@ void CCocoon::Check_CollisionPush()
 {
 	list<CGameObject*> tmpList[3];
 
-	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_STAGE);
+	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
 	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
 	tmpList[2] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
 
@@ -252,14 +259,11 @@ void CCocoon::Check_CollisionPush()
 				CTransform* pTrans = TARGET_TO_TRANS(Obj_iter);
 				CNavMesh*   pNav = TARGET_TO_NAV(Obj_iter);
 
-				// 방향 구해주고
 				_v3 vDir = m_pTransformCom->Get_Pos() - pTrans->Get_Pos();
 				V3_NORMAL_SELF(&vDir);
 
-				// y축 이동은 하지말자
 				vDir.y = 0;
 
-				// 네비 메쉬타게 끔 세팅
 				pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pCollider->Get_Length().x));
 			}
 		}
@@ -271,9 +275,7 @@ void CCocoon::Check_CollisionPush()
 void CCocoon::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 {
 	if (false == m_tObjParam.bIsAttack)
-	{
 		return;
-	}
 
 	_bool bFirst = true;
 
@@ -299,7 +301,7 @@ void CCocoon::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					if (false == iter->Get_Target_Dodge())
+					if (false == iter->Get_Target_IsDodge())
 					{
 						iter->Set_Target_CanHit(false);
 						iter->Add_Target_Hp(m_tObjParam.fDamage);
@@ -318,193 +320,10 @@ void CCocoon::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 				else
 				{
 					if (bFirst)
-					{
 						break;
-					}
 				}
 			}
 		}
-	}
-
-	return;
-}
-
-void CCocoon::Check_Hit()
-{
-	if (MONSTER_ANITYPE::DEAD == m_eFirstCategory)
-	{
-		return;
-	}
-	else
-	{
-		if (false == m_tObjParam.bCanHit)
-		{
-			if (true == m_tObjParam.bIsHit)
-			{
-				if (true == m_tObjParam.bHitAgain)
-				{
-					m_eFirstCategory = MONSTER_ANITYPE::HIT;
-					Check_FBLR();
-					m_tObjParam.bHitAgain = false;
-					m_pMeshCom->Reset_OldIndx();
-				}
-			}
-			else
-			{
-				if (0 >= m_tObjParam.fHp_Cur)
-				{
-					m_eFirstCategory = MONSTER_ANITYPE::DEAD;
-				}
-				else
-				{
-					m_eFirstCategory = MONSTER_ANITYPE::HIT;
-					Check_FBLR();
-				}
-			}
-		}
-	}
-
-	return;
-}
-
-void CCocoon::Check_FBLR()
-{	
-	//피격 앞,뒤 체크
-	m_eSecondCategory_HIT = Cocoon_HITTYPE::HIT_HIT_F;
-	//m_eSecondCategory_HIT = WOLF_HITTYPE::HIT_HIT_B;
-
-	return;
-}
-
-void CCocoon::Check_Dist()
-{
-	if (MONSTER_ANITYPE::HIT == m_eFirstCategory ||
-		MONSTER_ANITYPE::DEAD == m_eFirstCategory)
-		return;
-
-	if (true == m_tObjParam.bIsAttack ||
-		true == m_tObjParam.bIsHit)
-		return;
-
-	_float fLenth = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransform->Get_Pos()));
-
-	m_fRecognitionRange >= fLenth ? m_bInRecognitionRange = true : m_bInRecognitionRange = false;
-	m_fShotAtkRange >= fLenth ? m_bInShotAtkRange = true : m_bInShotAtkRange = false;
-	m_fMistAtkRange >= fLenth ? m_bInMistAtkRange = true : m_bInMistAtkRange = false;
-
-
-	if (true == m_bInRecognitionRange) //인지o
-	{
-		if (true == m_bInShotAtkRange) //원거리공격범위 o
-		{
-			if (true == m_bInMistAtkRange) //방사공격범위o
-			{
-				if (true == m_tObjParam.bCanAttack) //공격가능
-				{
-					if (true == m_bIsCoolDown) //쿨타임중o
-					{
-						m_eFirstCategory = MONSTER_ANITYPE::IDLE; //회피 대기 경계
-						m_eSecondCategory_IDLE = Cocoon_IDLETYPE::IDLE_THREAT;
-						Function_RotateBody();
-					}
-					else //쿨타임x
-					{
-						m_eFirstCategory = MONSTER_ANITYPE::ATTACK;
-						m_eState = COCOON_ANI::Mist;
-						Function_RotateBody();
-					}
-				}
-				else
-				{
-					m_eFirstCategory = MONSTER_ANITYPE::IDLE; //회피 대기 경계
-					m_eSecondCategory_IDLE = Cocoon_IDLETYPE::IDLE_THREAT;
-					Function_RotateBody();
-				}
-			}
-			else //방사공격범위x
-			{
-				if (true == m_tObjParam.bCanAttack) //공격가능
-				{
-					if (true == m_bIsCoolDown) //쿨타임중o
-					{
-						m_eFirstCategory = MONSTER_ANITYPE::IDLE; //회피 대기 경계
-						m_eSecondCategory_IDLE = Cocoon_IDLETYPE::IDLE_THREAT;
-						Function_RotateBody();
-					}
-					else //쿨타임중x
-					{
-						m_eFirstCategory = MONSTER_ANITYPE::ATTACK;
-						m_eState = COCOON_ANI::Shot;
-						Function_RotateBody();
-					}
-				}
-				else //공격불가
-				{
-					m_eFirstCategory = MONSTER_ANITYPE::IDLE; //회피 대기 경계
-					m_eSecondCategory_IDLE = Cocoon_IDLETYPE::IDLE_THREAT;
-					Function_RotateBody();
-				}
-			}
-		}
-		else //공격범위x
-		{
-			m_eFirstCategory = MONSTER_ANITYPE::IDLE; //회피 대기 경계
-			m_eSecondCategory_IDLE = Cocoon_IDLETYPE::IDLE_IDLE;
-			Function_RotateBody();
-		}
-	}
-	else //인지x
-	{
-		m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-		m_eSecondCategory_IDLE = Cocoon_IDLETYPE::IDLE_IDLE;
-	}
-
-	return;
-}
-
-void CCocoon::Set_AniEvent()
-{
-	switch (m_eFirstCategory)
-	{
-	case MONSTER_ANITYPE::IDLE:
-		switch (m_eSecondCategory_IDLE)
-		{
-		case Client::CCocoon::IDLE_IDLE:
-			Play_Idle();
-			break;
-		case Client::CCocoon::IDLE_THREAT:
-			m_eState = Threat;
-			break;
-		}
-		break;
-
-	case MONSTER_ANITYPE::ATTACK:
-		switch (m_eState)
-		{
-		case Client::CCocoon::Shot:
-			Play_Shot();
-			break;
-		case Client::CCocoon::Mist:
-			Play_Mist();
-			break;
-		}
-		break;
-
-	case MONSTER_ANITYPE::HIT:
-		switch (m_eSecondCategory_HIT)
-		{
-		case Client::CCocoon::HIT_HIT_F:
-			Play_Hit();
-			break;
-		case Client::CCocoon::HIT_HIT_B:
-			Play_Hit();
-			break;
-		}
-		break;
-
-	case MONSTER_ANITYPE::DEAD:
-		Play_Dead();
-		break;
 	}
 
 	return;
@@ -624,14 +443,19 @@ void CCocoon::Function_DecreMoveMent(_float _fMutiply)
 
 void CCocoon::Function_ResetAfterAtk()
 {
-	m_tObjParam.bCanHit = true; //피격 가능
-	m_tObjParam.bIsHit = false; //피격중 x
+	m_tObjParam.bCanHit = true;
+	m_tObjParam.bIsHit = false;
 
-	m_tObjParam.bDodge = false;  //회피아님
+	m_tObjParam.bCanDodge = true;
+	m_tObjParam.bIsDodge = false;
 
-	m_tObjParam.bIsAttack = false; //공격중x
+	m_bCanIdle = true;
+	m_bIsIdle = false;
 
-	m_vecAttackCol[0]->Set_Enabled(false);
+	m_tObjParam.bIsAttack = false;
+
+	for (auto& vetor_iter : m_vecAttackCol)
+		vetor_iter->Set_Enabled(false);
 
 	LOOP(10)
 		m_bEventTrigger[i] = false;
@@ -639,21 +463,180 @@ void CCocoon::Function_ResetAfterAtk()
 	return;
 }
 
-void CCocoon::Play_Idle()
+void CCocoon::Check_PosY()
 {
-	if (true == m_bInRecognitionRange) //인지o
+	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
+
+	return;
+}
+
+void CCocoon::Check_Hit()
+{
+	if (MONSTER_ANITYPE::DEAD == m_eFirstCategory)
+		return;
+
+	if (0 < m_tObjParam.fHp_Cur)
 	{
-		if (true == m_tObjParam.bCanAttack)
+		if (false == m_tObjParam.bCanHit)
 		{
-			//인지, 공격 가능->대기
-			m_eState = COCOON_ANI::Idle;
-			return;
+			if (true == m_tObjParam.bIsHit)
+			{
+				if (true == m_tObjParam.bHitAgain)
+				{
+					m_eFirstCategory = MONSTER_ANITYPE::HIT;
+					Check_FBLR();
+					m_tObjParam.bHitAgain = false;
+					m_pMeshCom->Reset_OldIndx();
+				}
+				else
+				{
+					m_eFirstCategory = MONSTER_ANITYPE::HIT;
+					Check_FBLR();
+				}
+			}
 		}
 	}
-	else //인지x
+	else
+		m_eFirstCategory = MONSTER_ANITYPE::DEAD;
+
+	return;
+}
+
+void CCocoon::Check_FBLR()
+{	
+	_float angle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos()));
+
+	if (MONSTER_ANITYPE::HIT == m_eFirstCategory)
 	{
-		m_eState = COCOON_ANI::Idle;
+		if (0.f <= angle && 90.f > angle)
+			m_eFBLR = FBLR::FRONT;
+		else if (-90.f <= angle && 0.f > angle)
+			m_eFBLR = FBLR::FRONT;
+		else if (90.f <= angle && 180.f > angle)
+			m_eFBLR = FBLR::BACK;
+		else if (-180.f <= angle && -90.f > angle)
+			m_eFBLR = FBLR::BACK;
+	}
+
+	return;
+}
+
+void CCocoon::Check_Dist()
+{
+	if (MONSTER_ANITYPE::HIT == m_eFirstCategory ||
+		MONSTER_ANITYPE::CC == m_eFirstCategory ||
+		MONSTER_ANITYPE::DEAD == m_eFirstCategory)
 		return;
+
+	if (true == m_tObjParam.bIsAttack ||
+		true == m_tObjParam.bIsHit)
+		return;
+
+	if (nullptr == m_pTargetTransform)
+	{
+		Function_ResetAfterAtk();
+
+		m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+
+		return;
+	}
+	else
+	{
+		_float fLenth = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransform->Get_Pos()));
+
+		m_fRecognitionRange >= fLenth ? m_bInRecognitionRange = true : m_bInRecognitionRange = false;
+		m_fShotRange >= fLenth ? m_bInAtkRange = true : m_bInAtkRange = false;
+
+		if (true == m_bInRecognitionRange)
+		{
+			if (true == m_bInAtkRange)
+			{
+				if (true == m_tObjParam.bCanAttack)
+				{
+					if (true == m_bIsCoolDown)
+					{
+						m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+						Function_RotateBody();
+					}
+					else
+					{
+						m_eFirstCategory = MONSTER_ANITYPE::ATTACK;
+						if (m_fAtkRange < fLenth && m_fShotRange > fLenth)
+							m_eState = COCOON_ANI::Shot;
+						else
+							m_eState = COCOON_ANI::Mist;
+						Function_RotateBody();
+					}
+				}
+				else
+				{
+					m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+					Function_RotateBody();
+				}
+			}
+			else
+			{
+				m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+				Function_RotateBody();
+			}
+		}
+		else
+		{
+			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+		}
+	}
+
+	return;
+}
+
+void CCocoon::Check_AniEvent()
+{
+	switch (m_eFirstCategory)
+	{
+	case MONSTER_ANITYPE::IDLE:
+		Play_Idle();
+		break;
+
+	case MONSTER_ANITYPE::ATTACK:
+		if(COCOON_ANI::Shot== m_eState)
+			Play_Shot();
+		else if(COCOON_ANI::Mist == m_eState)
+			Play_Mist();
+		break;
+
+	case MONSTER_ANITYPE::HIT:
+		Play_Hit();
+		break;
+
+	case MONSTER_ANITYPE::DEAD:
+		Play_Dead();
+		break;
+	}
+
+	return;
+}
+
+void CCocoon::Play_Idle()
+{
+	if (true == m_bInRecognitionRange)
+	{
+		m_bIsIdle = false;
+
+		if (true == m_tObjParam.bCanAttack)
+		{
+			m_eState = COCOON_ANI::Threat;
+			Function_RotateBody();
+		}
+		else
+		{
+			m_eState = COCOON_ANI::Threat;
+			Function_RotateBody();
+		}
+	}
+	else
+	{
+		m_bIsIdle = true;
+		m_eState = COCOON_ANI::Idle;
 	}
 
 	return;
@@ -662,32 +645,49 @@ void CCocoon::Play_Idle()
 void CCocoon::Play_Shot()
 {
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+	_mat matBone;
+	_v3 vBirth;
 
 	if (true == m_tObjParam.bCanAttack)
 	{
 		m_tObjParam.bCanAttack = false;
 		m_tObjParam.bIsAttack = true;
 	}
-	else
+	else 
 	{
+		//5.733 생성(불 머금기) //6.267f 발사
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
+			m_fCoolDownMax = 1.f;
 			m_bCanCoolDown = true;
-			m_fCoolDownMax = 1.3f;
 			Function_ResetAfterAtk();
 
 			return;
 		}
-		else
+		else if (6.500f <= AniTime)
 		{
-			//5733 생성, //6267 발사
-			if (5.733f < AniTime && 6.267f > AniTime)
+			if (false == m_bEventTrigger[0])
 			{
-			}
-			else if (6.267f <= AniTime)
-			{
+				m_bEventTrigger[0] = true;
 
+				matBone = *m_matBone[Bone_Jaw_Tongue] * m_pTransformCom->Get_WorldMat();
+				memcpy(vBirth, &matBone._41, sizeof(_v3));
+
+				g_pManagement->Add_GameObject_ToLayer(L"Monster_CocoonBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 6.f, 2.f));
 			}
+		}
+		else if (3.7f <= AniTime && 5.8f >= AniTime)
+		{
+			matBone = *m_matBone[Bone_Jaw_Tongue] * m_pTransformCom->Get_WorldMat();
+			memcpy(vBirth, &matBone._41, sizeof(_v3));
+
+			g_pManagement->Create_Effect_Offset(L"Cocoon_TongueFire", 0.05f, vBirth, nullptr);
+			g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_01", 0.1f, vBirth, nullptr);
+			g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_02", 0.1f, vBirth, nullptr);
+		}
+		else if (0.f <= AniTime)
+		{
+			Function_RotateBody();
 		}
 	}
 
@@ -697,6 +697,8 @@ void CCocoon::Play_Shot()
 void CCocoon::Play_Mist()
 {
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+	_mat matBone, matBone1, matBone2;
+	_v3 vBirth, vMakeDirPoint1, vMakeDirPoint2, vShotDir;
 
 	if (true == m_tObjParam.bCanAttack)
 	{
@@ -705,6 +707,7 @@ void CCocoon::Play_Mist()
 	}
 	else
 	{
+		//3.033 생성(머금기) 3.567 방사 6.900 종료
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
 			m_bCanCoolDown = true;
@@ -713,22 +716,37 @@ void CCocoon::Play_Mist()
 
 			return;
 		}
-		else
+		else if (6.900f <= AniTime)
 		{
-			//현재 시간만 따둠
-			//3.033 생성 3.567 방사 6.900 종료
-			if (3.033f < AniTime && 3.567f > AniTime)
+			if (true == m_bEventTrigger[0])
+				m_bEventTrigger[0] = false;
+		}
+		else if (3.567f <= AniTime)
+		{
+			if (false == m_bEventTrigger[0])
+				m_bEventTrigger[0] = true;
+			if (true == m_bEventTrigger[0])
 			{
-				//입안에 머금고 있다
+				matBone1 = *m_matBone[Bone_Jaw_Tongue] * m_pTransformCom->Get_WorldMat();
+				matBone2 = *m_matBone[Bone_Neck] * m_pTransformCom->Get_WorldMat();
+				matBone = *m_matBone[Bone_Jaw_Tongue] * m_pTransformCom->Get_WorldMat();
+
+				memcpy(vMakeDirPoint1, &matBone1._41, sizeof(_v3));
+				memcpy(vMakeDirPoint2, &matBone2._41, sizeof(_v3));
+				memcpy(vBirth, &matBone._41, sizeof(_v3));
+				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
+
+				g_pManagement->Add_GameObject_ToLayer(L"Monster_CocoonBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, vShotDir, 4.f, 1.f));
 			}
-			else if (3.567f < AniTime && 6.900f > AniTime)
-			{
-				//방사
-			}
-			else if (6.900f <= AniTime)
-			{
-				//종료
-			}
+		}
+		else if (0.5f <= AniTime && 2.6f >= AniTime)
+		{
+			matBone = *m_matBone[Bone_Jaw_Tongue] * m_pTransformCom->Get_WorldMat();
+			memcpy(vBirth, &matBone._41, sizeof(_v3));
+
+			g_pManagement->Create_Effect_Offset(L"Cocoon_TongueFire", 0.05f, vBirth, nullptr);
+			g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_01", 0.1f, vBirth, nullptr);
+			g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_02", 0.1f, vBirth, nullptr);
 		}
 	}
 
@@ -741,7 +759,16 @@ void CCocoon::Play_Hit()
 	{
 		Function_ResetAfterAtk();
 		m_tObjParam.bIsHit = true;
-		m_eState = COCOON_ANI::Dmg_F;
+
+		switch (m_eFBLR)
+		{
+		case FBLR::FRONT:
+			m_eState = COCOON_ANI::Dmg_F;
+			break;
+		case FBLR::BACK:
+			m_eState = COCOON_ANI::Dmg_B;
+			break;
+		}
 	}
 	else
 	{
@@ -757,7 +784,7 @@ void CCocoon::Play_Hit()
 		}
 		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
 		{
-			if (false == m_tObjParam.bCanHit) //추가 피격인 경우
+			if (false == m_tObjParam.bCanHit)
 			{
 				m_tObjParam.bCanHit = true;
 				Check_FBLR();
@@ -772,10 +799,10 @@ void CCocoon::Play_Dead()
 {
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
 
-	if (false == m_bCanPlayDeadAni)
+	if (false == m_bCanPlayDead)
 	{
 		Function_ResetAfterAtk();
-		m_bCanPlayDeadAni = true;
+		m_bCanPlayDead = true;
 		m_eState = COCOON_ANI::Dead;
 	}
 	else
@@ -785,15 +812,13 @@ void CCocoon::Play_Dead()
 			m_bEnable = false;
 			m_dAniPlayMul = 0;
 		}
-		else
+
+		if (3.733f <= AniTime)
 		{
-			if (4.467f < AniTime)
+			if (false == m_bEventTrigger[0])
 			{
-				if (false == m_bEventTrigger[0])
-				{
-					m_bEventTrigger[0] = true;
-					Start_Dissolve(0.6f, false, true);
-				}
+				m_bEventTrigger[0] = true;
+				Start_Dissolve(0.8f, false, true);
 			}
 		}
 	}
@@ -803,27 +828,16 @@ void CCocoon::Play_Dead()
 
 HRESULT CCocoon::Add_Component()
 {
-	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
 		return E_FAIL;
-
-	// For.Com_Renderer
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom)))
 		return E_FAIL;
-
-	// For.Com_Shader
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
-
-	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Cocoon_Normal", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Cocoon_Black", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
 		return E_FAIL;
-
-	// for.Com_NavMesh
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMesh)))
 		return E_FAIL;
-
-	// for.Com_Collider
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
 
@@ -832,7 +846,7 @@ HRESULT CCocoon::Add_Component()
 	m_pCollider->Set_Type(COL_SPHERE);
 	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pCollider->Get_Radius().y , 0.f });
 
-	return NOERROR;
+	return S_OK;
 }
 
 HRESULT CCocoon::SetUp_ConstantTable()
@@ -861,20 +875,49 @@ HRESULT CCocoon::SetUp_ConstantTable()
 
 	Safe_Release(pManagement);
 
-	return NOERROR;
+	return S_OK;
+}
+
+HRESULT CCocoon::Ready_Status(void * pArg)
+{
+	if (nullptr == pArg)
+	{
+		m_tObjParam.fDamage = 25.f;
+		m_tObjParam.fHp_Max = 75.f;
+		m_tObjParam.fArmor_Max = 10.f;
+
+		m_fRecognitionRange = 30.f;
+		m_fShotRange = 20.f;
+		m_fAtkRange = 5.f;
+	}
+	else
+	{
+		INITSTRUCT Info = *(INITSTRUCT*)pArg;
+
+		m_tObjParam.fDamage = Info.tMonterStatus.fDamage;
+		m_tObjParam.fHp_Max = Info.tMonterStatus.fHp_Max;
+		m_tObjParam.fArmor_Max = Info.tMonterStatus.fArmor_Max;
+
+		m_fRecognitionRange = Info.fKonwingRange;
+		m_fShotRange = Info.fShotRange;
+		m_fAtkRange = Info.fCanAttackRange;
+	}
+
+	return S_OK;
 }
 
 HRESULT CCocoon::Ready_Collider()
 {
-	m_vecPhysicCol.reserve(3); //2칸의 공간 할당
-	m_vecAttackCol.reserve(2); //2칸의 공간 할당
+	m_vecPhysicCol.reserve(3); 
+	m_vecAttackCol.reserve(2);
 
-	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
-	IF_NULL_VALUE_RETURN(pCollider, E_FAIL);
-
-	_float fRadius = 1.2f;
+	CCollider* pCollider = nullptr;
+	_float fRadius;
 
 	// 첫번째 콜라이더는 경계 체크용 콜라이더
+	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
+	fRadius = 1.2f;
+
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
 	pCollider->Set_Type(COL_SPHERE);
@@ -883,11 +926,7 @@ HRESULT CCocoon::Ready_Collider()
 
 	m_vecPhysicCol.push_back(pCollider);
 
-	//==============================================================================================================
-
-	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
-	IF_NULL_VALUE_RETURN(pCollider, E_FAIL);
-
+	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
 	fRadius = 0.5f;
 
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
@@ -898,11 +937,7 @@ HRESULT CCocoon::Ready_Collider()
 
 	m_vecPhysicCol.push_back(pCollider);
 
-	//==============================================================================================================
-
-	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
-	IF_NULL_VALUE_RETURN(pCollider, E_FAIL);
-
+	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
 	fRadius = 0.2f;
 
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
@@ -913,35 +948,24 @@ HRESULT CCocoon::Ready_Collider()
 
 	m_vecPhysicCol.push_back(pCollider);
 
-	//==============================================================================================================
-
-	//공격 구 넣기
-	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
-	IF_NULL_VALUE_RETURN(pCollider, E_FAIL);
-
-	fRadius = 0.5f; //크기 확인
-
-	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
-	pCollider->Set_Dynamic(true);
-	pCollider->Set_Type(COL_SPHERE);
-	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Head]->_41, m_matBone[Bone_Head]->_42, m_matBone[Bone_Head]->_43));
-	pCollider->Set_Enabled(true);
-
-	m_vecAttackCol.push_back(pCollider);
 
 	return S_OK;
 }
 
 HRESULT CCocoon::Ready_BoneMatrix()
 {
-	D3DXFRAME_DERIVED*	pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Jaw_Tongue1", 0);
-	IF_NULL_VALUE_RETURN(pFrame, E_FAIL);
+	D3DXFRAME_DERIVED*	pFrame = nullptr;
 
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head", 0), E_FAIL);
 	m_matBone[Bone_Head] = &pFrame->CombinedTransformationMatrix;
 
-	pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Spine3", 0);
-	IF_NULL_VALUE_RETURN(pFrame, E_FAIL);
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Jaw_Tongue", 0), E_FAIL);
+	m_matBone[Bone_Jaw_Tongue] = &pFrame->CombinedTransformationMatrix;
 
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Neck", 0), E_FAIL);
+	m_matBone[Bone_Neck] = &pFrame->CombinedTransformationMatrix;
+
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Spine3", 0), E_FAIL);
 	m_matBone[Bone_Range] = &pFrame->CombinedTransformationMatrix;
 	m_matBone[Bone_Body] = &pFrame->CombinedTransformationMatrix;
 
@@ -976,6 +1000,11 @@ CGameObject* CCocoon::Clone_GameObject(void * pArg)
 
 void CCocoon::Free()
 {
+	Safe_Release(m_pMonsterUI);
+
+	Safe_Release(m_pTarget);
+	Safe_Release(m_pTargetTransform);
+
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pNavMesh);
 	Safe_Release(m_pTransformCom);
@@ -984,19 +1013,13 @@ void CCocoon::Free()
 	Safe_Release(m_pRendererCom);
 
 	for (auto& vecter_iter : m_vecPhysicCol)
-	{
 		Safe_Release(vecter_iter);
-	}
 
 	for (auto& vecter_iter : m_vecAttackCol)
-	{
 		Safe_Release(vecter_iter);
-	}
 
 	for (auto& iter : m_matBone)
-	{
 		iter = nullptr;
-	}
 
 	CGameObject::Free();
 }

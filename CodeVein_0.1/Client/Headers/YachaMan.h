@@ -91,7 +91,7 @@ public:
 		Hit_W_FL,
 	};
 
-	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_LeftArm, Bone_End };
+	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_LeftArm, Bone_Head, Bone_End };
 
 public:
 	struct INITSTRUCT

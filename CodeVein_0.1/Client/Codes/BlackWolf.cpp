@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\Headers\BlackWolf.h"
 
+#include "MonsterUI.h"
+
 CBlackWolf::CBlackWolf(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
@@ -27,6 +29,11 @@ HRESULT CBlackWolf::Ready_GameObject(void * pArg)
 	Ready_Status(pArg);
 	Ready_BoneMatrix();
 	Ready_Collider();
+
+	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
+	m_pMonsterUI->Set_Target(this);
+	m_pMonsterUI->Set_Bonmatrix(m_matBone[Bone_Head]);
+	m_pMonsterUI->Ready_GameObject(NULL);
 
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
@@ -71,6 +78,9 @@ _int CBlackWolf::Update_GameObject(_double TimeDelta)
 		return NO_EVENT;
 
 	CGameObject::Update_GameObject(TimeDelta);
+
+	// MonsterHP UI
+	m_pMonsterUI->Update_GameObject(TimeDelta);
 
 	Check_PosY();
 	Check_Hit();
@@ -1287,7 +1297,7 @@ HRESULT CBlackWolf::Ready_Status(void * pArg)
 		
 		m_fRecognitionRange = 15.f;
 		m_fAtkRange = 5.f;
-		m_iDodgeCountMax = 5.f;
+		m_iDodgeCountMax = 5;
 	}
 	else
 	{
@@ -1403,6 +1413,8 @@ CGameObject* CBlackWolf::Clone_GameObject(void * pArg)
 
 void CBlackWolf::Free()
 {
+	Safe_Release(m_pMonsterUI);
+
 	Safe_Release(m_pTarget);
 	Safe_Release(m_pTargetTransform);
 

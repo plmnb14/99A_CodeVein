@@ -343,6 +343,9 @@ private:
 
 	CTransform*			m_pTargetTransform = nullptr;
 
+	// 몬스터 HP바 UI
+	CMonsterUI*			m_pMonsterUI = nullptr;
+
 	_v3					m_vBirthPos;
 	_mat*				m_matBone[Bone_End];
 	_double				m_dTimeDelta = 0;
@@ -397,7 +400,6 @@ private:
 	_int				m_iRandom = 0;
 	_int				m_iDodgeCountMax = 3; //3회 피격시 회피
 	_int				m_iDodgeCount = 0; //n회 피격시 회피
-
 };
 
 END

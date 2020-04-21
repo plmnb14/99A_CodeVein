@@ -3,6 +3,8 @@
 #include "..\Headers\Weapon.h"
 #include "..\Headers\\HunterBullet.h"
 
+#include "MonsterUI.h"
+
 CHunter::CHunter(LPDIRECT3DDEVICE9 pGraphic_Device)
 	:CGameObject(pGraphic_Device)
 {
@@ -30,6 +32,11 @@ HRESULT CHunter::Ready_GameObject(void * pArg)
 	Ready_BoneMatrix();
 	Ready_Collider();
 	Ready_Weapon();
+
+	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
+	m_pMonsterUI->Set_Target(this);
+	m_pMonsterUI->Set_Bonmatrix(m_matBone[Bone_Head]);
+	m_pMonsterUI->Ready_GameObject(NULL);
 
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
@@ -77,6 +84,9 @@ _int CHunter::Update_GameObject(_double TimeDelta)
 		return NO_EVENT;
 
 	CGameObject::Update_GameObject(TimeDelta);
+
+	// MonsterHP UI
+	m_pMonsterUI->Update_GameObject(TimeDelta);
 
 	Check_PosY();
 	Check_Hit();
@@ -1254,7 +1264,7 @@ void CHunter::Play_Gun_Shoot()
 				memcpy(&TestLook, &matTemp._21, sizeof(_v3)); //»ÀÀÇ ·è
 				Birth = Birth + (TestLook * TestLength); //»ý¼ºÀ§Ä¡ = »ý¼ºÀ§Ä¡ +(·è*±æÀÌ)
 
-				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &CHunterBullet::HUNTERBULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 3.f, 1.5));
+				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 4.f, 1.5));
 			}
 		}
 		else if (0.f <= AniTime)
@@ -1300,7 +1310,7 @@ void CHunter::Play_Gun_Snipe()
 				memcpy(&TestLook, &matTemp._21, sizeof(_v3)); //»ÀÀÇ ·è
 				Birth = Birth + (TestLook * TestLength); //»ý¼ºÀ§Ä¡ = »ý¼ºÀ§Ä¡ +(·è*±æÀÌ)
 
-				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &CHunterBullet::HUNTERBULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 3.f, 1.5));
+				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 4.f, 1.5));
 			}
 		}
 		else if (0.f <= AniTime)
@@ -1317,7 +1327,7 @@ void CHunter::Play_Gun_Snipe()
 				memcpy(&TestLook, &matTemp._21, sizeof(_v3)); //»ÀÀÇ ·è
 				Birth = Birth + (TestLook * TestLength); //»ý¼ºÀ§Ä¡ = »ý¼ºÀ§Ä¡ +(·è*±æÀÌ)
 
-				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &CHunterBullet::HUNTERBULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 3.f, 1.5));
+				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 4.f, 1.5));
 			}
 		}
 	}
@@ -1353,7 +1363,7 @@ void CHunter::Play_Gun_Combo_Shot()
 				memcpy(&TestLook, &matTemp._21, sizeof(_v3)); //»ÀÀÇ ·è
 				Birth = Birth + (TestLook * TestLength); //»ý¼ºÀ§Ä¡ = »ý¼ºÀ§Ä¡ +(·è*±æÀÌ)
 
-				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &CHunterBullet::HUNTERBULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 3.f, 1.5));
+				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 4.f, 1.5));
 			}
 		}
 		else if (0.f <= AniTime)
@@ -1386,7 +1396,7 @@ void CHunter::Play_Gun_Combo_Shot()
 				memcpy(&TestLook, &matTemp._21, sizeof(_v3)); //»ÀÀÇ ·è
 				Birth = Birth + (TestLook * TestLength); //»ý¼ºÀ§Ä¡ = »ý¼ºÀ§Ä¡ +(·è*±æÀÌ)
 
-				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &CHunterBullet::HUNTERBULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 3.f, 1.5));
+				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 4.f, 1.5));
 			}
 		}
 		else if (0.f <= AniTime)
@@ -1403,7 +1413,7 @@ void CHunter::Play_Gun_Combo_Shot()
 				memcpy(&TestLook, &matTemp._21, sizeof(_v3)); //»ÀÀÇ ·è
 				Birth = Birth + (TestLook * TestLength); //»ý¼ºÀ§Ä¡ = »ý¼ºÀ§Ä¡ +(·è*±æÀÌ)
 
-				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &CHunterBullet::HUNTERBULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 3.f, 1.5));
+				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 4.f, 1.5));
 			}
 			Function_RotateBody();
 		}
@@ -1434,7 +1444,7 @@ void CHunter::Play_Gun_Combo_Shot()
 				memcpy(&TestLook, &matTemp._21, sizeof(_v3)); //»ÀÀÇ ·è
 				Birth = Birth + (TestLook * TestLength); //»ý¼ºÀ§Ä¡ = »ý¼ºÀ§Ä¡ +(·è*±æÀÌ)
 
-				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &CHunterBullet::HUNTERBULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 3.f, 1.5));
+				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 4.f, 1.5));
 			}
 		}
 		else if (0.f < AniTime)
@@ -5518,7 +5528,7 @@ HRESULT CHunter::Ready_Status(void* pArg)
 		m_fRecognitionRange = 15.f;
 		m_fShotRange = 10.f;
 		m_fAtkRange = 5.f;
-		m_iDodgeCountMax = 5.f;
+		m_iDodgeCountMax = 5;
 		m_eWeaponState = WEAPON_ANITYPE::SWORD;
 	}
 	else
@@ -5686,6 +5696,8 @@ CGameObject* CHunter::Clone_GameObject(void * pArg)
 
 void CHunter::Free()
 {
+	Safe_Release(m_pMonsterUI);
+
 	Safe_Release(m_pTarget);
 	Safe_Release(m_pTargetTransform);
 
