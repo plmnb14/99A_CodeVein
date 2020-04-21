@@ -104,6 +104,9 @@ _int CQueensKnight::Update_GameObject(_double TimeDelta)
 	if (false == m_bEnable)
 		return NO_EVENT;
 
+	if (nullptr == g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))
+		return E_FAIL;
+
 	if ( true == m_pAIControllerCom->Get_BoolValue(L"PushCol"))
 		Push_Collider();
 

@@ -188,6 +188,7 @@
     <ClInclude Include="..\Headers\DamegeNumUI.h" />
     <ClInclude Include="..\Headers\DarkBoom.h" />
     <ClInclude Include="..\Headers\DarkMidCol.h" />
+    <ClInclude Include="..\Headers\DeerKing.h" />
     <ClInclude Include="..\Headers\Drain_Weapon.h" />
     <ClInclude Include="..\Headers\Dummy_Target.h" />
     <ClInclude Include="..\Headers\Expendables.h" />
@@ -297,6 +298,7 @@
     <ClCompile Include="..\Codes\DamegeNumUI.cpp" />
     <ClCompile Include="..\Codes\DarkBoom.cpp" />
     <ClCompile Include="..\Codes\DarkMidCol.cpp" />
+    <ClCompile Include="..\Codes\DeerKing.cpp" />
     <ClCompile Include="..\Codes\Drain_Weapon.cpp" />
     <ClCompile Include="..\Codes\Dummy_Target.cpp" />
     <ClCompile Include="..\Codes\Expendables.cpp" />

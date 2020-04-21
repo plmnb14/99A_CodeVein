@@ -34,7 +34,7 @@ HRESULT CLeakField::Ready_GameObject(void * pArg)
 	Safe_AddRef(m_pTarget_AIController);
 
 	m_dLifeTime = temp.dLifeTime;
-	m_fSpeed = 8.f;
+	m_fSpeed = 13.f;
 
 	m_pTransformCom->Set_Pos(m_pTarget_Transform->Get_Pos());
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));

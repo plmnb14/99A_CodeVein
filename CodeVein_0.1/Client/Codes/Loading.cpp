@@ -1094,6 +1094,9 @@ _uint CLoading::Loading_Stage()
 		// 화염 토네이도 콜라이더
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireTornadoCol", CFireTornadoCol::Create(m_pGraphicDev))))
 			return E_FAIL;
+		// 사슴왕
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKing", CDeerKing::Create(m_pGraphicDev))))
+			return E_FAIL;
 		// 검은 성게
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))
 			return E_FAIL;

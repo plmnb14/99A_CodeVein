@@ -126,11 +126,11 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	// ¸ùÅ°.D.·çÇÇ
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Monkey", &CMonkey::tagMonkeyInfo(25.f,120.f,15.f,5.f,10.f,10));
-	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
-	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Monkey", &CMonkey::tagMonkeyInfo(25.f,120.f,15.f,5.f,10.f,10));
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
+	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	// ¿¹Æ¼
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Yeti", nullptr);
@@ -249,6 +249,14 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 
 	// ºÒ³²ÀÚ
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_FireBoy", &CIceGirl::INFO(10.f, 5.f, 2.f));
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(3.f, 0.f, 3.f));
+	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
+	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
+
+	// »ç½¿¿Õ
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_DeerKing", &CDeerKing::INFO(10.f, 5.f, 2.f));
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(3.f, 0.f, 3.f));
 	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
 	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();

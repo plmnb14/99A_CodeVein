@@ -334,6 +334,12 @@
     <Filter Include="01.Scene\07.Stage_04">
       <UniqueIdentifier>{611068cf-9c1d-4742-a02d-bc7dcc4c9523}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Monster\DeerKing">
+      <UniqueIdentifier>{9fa46d4c-a75f-4503-a4b0-aadcb2b7a341}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Monster\DeerKing\Bullet">
+      <UniqueIdentifier>{73d2ac76-9697-48fb-9005-32929a632e5c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -672,6 +678,9 @@
     <ClInclude Include="..\Headers\HunterBullet.h">
       <Filter>02.GameObject\Stage\2%29 Monster\Hunter</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\DeerKing.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\DeerKing</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1000,6 +1009,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\HunterBullet.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster\Hunter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DeerKing.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\DeerKing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
