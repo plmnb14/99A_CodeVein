@@ -31,6 +31,7 @@
 
 #include "Cocoon.h"
 #include "CocoonBullet.h"
+#include "CocoonBigBullet.h"
 #include "Hunter.h"
 #include "HunterBullet.h"
 #include "Monkey.h"

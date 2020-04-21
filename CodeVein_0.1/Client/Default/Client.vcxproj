@@ -180,6 +180,7 @@
     <ClInclude Include="..\Headers\ClickUI.h" />
     <ClInclude Include="..\Headers\Client_Defines.h" />
     <ClInclude Include="..\Headers\Cocoon.h" />
+    <ClInclude Include="..\Headers\CocoonBigBullet.h" />
     <ClInclude Include="..\Headers\CocoonBullet.h" />
     <ClInclude Include="..\Headers\ColdBeamSharp.h" />
     <ClInclude Include="..\Headers\ColdBeamSmall.h" />
@@ -293,6 +294,7 @@
     <ClCompile Include="..\Codes\Button_UI.cpp" />
     <ClCompile Include="..\Codes\ClickUI.cpp" />
     <ClCompile Include="..\Codes\Cocoon.cpp" />
+    <ClCompile Include="..\Codes\CocoonBigBullet.cpp" />
     <ClCompile Include="..\Codes\CocoonBullet.cpp" />
     <ClCompile Include="..\Codes\ColdBeamSharp.cpp" />
     <ClCompile Include="..\Codes\ColdBeamSmall.cpp" />

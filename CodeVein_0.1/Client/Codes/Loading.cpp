@@ -1142,8 +1142,11 @@ _uint CLoading::Loading_Stage()
 		// ÅäÅÛ
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Cocoon", CCocoon::Create(m_pGraphicDev))))
 			return E_FAIL;
-		// ÅäÅÛ ÃÑ¾Ë
+		// ÅäÅÛ ¹æ»çÃÑ¾Ë
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBullet", CCocoonBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ÅäÅÛ ÃÑ¾Ë
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBigBullet", CCocoonBigBullet::Create(m_pGraphicDev))))
 			return E_FAIL;
 		// ±èÇåÅÍ
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Hunter", CHunter::Create(m_pGraphicDev))))
