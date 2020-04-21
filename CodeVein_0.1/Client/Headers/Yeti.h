@@ -89,6 +89,34 @@ public:
 
 	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_Head, Bone_LeftHand, Bone_RightHand, Bone_Shoulder, Bone_End };
 
+public:
+	struct INITSTRUCT
+	{
+		INITSTRUCT(
+			_float _fDMG,
+			_float _fHpMax,
+			_float _fArmorMax,
+			_float _fKnowRange,
+			_float _fShotRange,
+			_float _fAtkRange,
+			_int _iDodgeMax
+			)
+		{
+			tMonterStatus.fDamage = _fDMG;
+			tMonterStatus.fHp_Max = _fHpMax;
+			tMonterStatus.fArmor_Max = _fArmorMax;
+
+			fKonwingRange = _fKnowRange;
+			fCanShotRangeIfGunChooose = _fShotRange;
+			fCanAttackRange = _fAtkRange;
+		}
+
+		OBJECT_PARAM		tMonterStatus;
+		_float				fKonwingRange = 20.f;
+		_float				fCanShotRangeIfGunChooose = 10.f;
+		_float				fCanAttackRange = 5.f;
+	};
+
 protected:
 	explicit CYeti(LPDIRECT3DDEVICE9 pGraphic_Device);
 	explicit CYeti(const CYeti& rhs);
@@ -148,6 +176,7 @@ private:
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
+	HRESULT Ready_Status(void* pArg);
 	HRESULT Ready_Collider();
 	HRESULT Ready_BoneMatrix();
 
@@ -177,8 +206,8 @@ private:
 	_float				m_fSkillMoveAccel_Max = 0.f;
 	_float				m_fSkillMoveMultiply = 1.f;
 
-	MONSTER_ANITYPE		m_eFirstCategory; //대분류
-	YETI_IDLETYPE		m_eSecondCategory_IDLE; //중분류
+	MONSTER_ANITYPE		m_eFirstCategory;
+	YETI_IDLETYPE		m_eSecondCategory_IDLE;
 	YETI_MOVETYPE		m_eSecondCategory_MOVE;
 	YETI_ATKTYPE		m_eSecondCategory_ATK;
 	YETI_HITTYPE		m_eSecondCategory_HIT;
@@ -192,34 +221,28 @@ private:
 	_bool				m_bEventTrigger[20] = {};
 
 	_bool				m_bCanPlayDead = false;
-	_bool				m_bCanDissolve = false;
-
 	_bool				m_bInRecognitionRange = false;
 	_bool				m_bInAtkRange = false;
-
 	_bool				m_bCanChase = false;
-
 	_bool				m_bCanCoolDown = false;
 	_bool				m_bIsCoolDown = false;
-
 	_bool				m_bAtkCategory = true;
 	_bool				m_bCanInterrupt = true;
 	_bool				m_bCanCombo = true;
 	_bool				m_bIsCombo = false;
-
 	_bool				m_bCanIdle = true;
 	_bool				m_bIsIdle = false;
 
-	_float				m_fRecognitionRange = 20.f; //유동
-	_float				m_fShotRange = 10.f; //유동
-	_float				m_fAtkRange = 5.f; //유동
-	_float				m_fCoolDownMax = 0.f; //0초기화
-	_float				m_fCoolDownCur = 0.f; //0초기화
-	_float				m_fSpeedForCollisionPush = 2.f; //선 충돌 측정용 고정값
-	_float				m_fHitCount; //피격수
-	_float				m_fHitCountMax; //피격 한계치
+	_float				m_fRecognitionRange = 20.f;
+	_float				m_fShotRange = 10.f;
+	_float				m_fAtkRange = 5.f;
+	_float				m_fCoolDownMax = 0.f;
+	_float				m_fCoolDownCur = 0.f;
+	_float				m_fSpeedForCollisionPush = 2.f;
+	_float				m_fHitCount;
+	_float				m_fHitCountMax;
 
-	_int				m_iRandom = 0; //사용할 필요 없어져가니 지울 예정
+	_int				m_iRandom = 0;
 
 };
 

@@ -550,7 +550,7 @@ technique Default_Technique
 
 	pass MeshEffect // 2
 	{
-		zwriteenable = false;
+		zwriteenable = true;
 
 		AlphablendEnable = true;
 		AlphaTestEnable = true;
@@ -558,7 +558,7 @@ technique Default_Technique
 		DestBlend = InvSrcAlpha;
 		blendop = add;
 
-		cullmode = none;
+		cullmode = ccw;
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_MESHEFFECT();

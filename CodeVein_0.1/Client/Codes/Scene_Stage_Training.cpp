@@ -104,19 +104,26 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Pickup_Item", SCENE_STAGE, L"Layer_PickUPUI")))
 	//	return E_FAIL;
 
-	// °ËÀº ´Á´ë
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_BlackWolf", nullptr);
+	//// °ËÀº ´Á´ë
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_BlackWolf", &CBlackWolf::INITSTRUCT(25.f, 75.f, 10.f, 20.f, 5.f, 5));
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
 	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
 	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
-	// ¾ßÂ÷¸Ç
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_YachaMan", nullptr);
-	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
-	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	//// ¾ßÂ÷¸Ç
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_YachaMan", &CYachaMan::INITSTRUCT(25.f, 180.f, 10.f, 20.f, 5.f, 5));
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
+	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+
+	//// ±èÇåÅÍ
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CHunter::INITSTRUCT(25.f, 200.f, 10.f,20.f,10.f,5.f, 5, CHunter::WEAPON_ANITYPE::GUN));
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
+	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	// ±èÇåÅÍ
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CHunter::tagHunterInfo(25.f, 99999.f, 15.f, 5.f, 10.f, 10, CHunter::WEAPON_ANITYPE::GUN));
@@ -127,14 +134,14 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 
 	// ¸ùÅ°.D.·çÇÇ 
 	//	¤¤> Moon : ¿ÏÁÔ ¿ô°Ü¿ä~~!!@@@
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Monkey", nullptr);
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Monkey", &CMonkey::INITSTRUCT(25.f, 100.f, 10.f, 15.f, 10.f, 5.f, 5));
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
 	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
 	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
-	// ¿¹Æ¼
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Yeti", nullptr);
+	//// ¿¹Æ¼
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Yeti", &CYeti::INITSTRUCT(25.f, 200.f, 10.f, 15.f, 10.f, 5.f, 5));
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
 	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
 	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
@@ -225,12 +232,12 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 
 
 	// µ¶³ª¹æ
-//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_PoisonButterfly", &CPoisonButterfly::INFO(10.f, 5.f, 2.f));
-//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(8.f, 0.f, 8.f));
-////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
-//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_PoisonButterfly", &CPoisonButterfly::INFO(10.f, 5.f, 2.f));
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(8.f, 0.f, 8.f));
+	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
+	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
 	// ¿©¿ÕÀÇ ±â»ç
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_QueensKnight", &CQueensKnight::INFO(10.f, 5.f, 2.f));
@@ -241,15 +248,23 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	// ¾óÀ½¿©ÀÚ
-//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_IceGirl", &CIceGirl::INFO(10.f, 5.f, 2.f));
-//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(3.f, 0.f, 3.f));
-////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
-//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_IceGirl", &CIceGirl::INFO(10.f, 5.f, 2.f));
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(3.f, 0.f, 3.f));
+	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
+	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
 	// ºÒ³²ÀÚ
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_FireBoy", &CIceGirl::INFO(10.f, 5.f, 2.f));
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(3.f, 0.f, 3.f));
+	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
+	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
+
+	// »ç½¿¿Õ
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_DeerKing", &CDeerKing::INFO(10.f, 5.f, 2.f));
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(3.f, 0.f, 3.f));
 	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
 	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
@@ -279,14 +294,46 @@ HRESULT CScene_Stage_Training::Ready_Layer_Environment()
 
 void CScene_Stage_Training::Create_Fog(_double TimeDelta)
 {
+	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	if (!pPlayer)
+		return;
+
+	CTransform* pPlayerTrans = TARGET_TO_TRANS(pPlayer);
+	_v3 vPlayerPos = pPlayerTrans->Get_Pos();
+
 	const _float FOG_OFFSET = 10.f;
 
-	m_fMapFogDelay += _float(TimeDelta);
-	if (m_fMapFogDelay > FOG_OFFSET)
-	{
-		m_fMapFogDelay = 0.f;
+	//m_fMapFogDelay += _float(TimeDelta);
+	//if (m_fMapFogDelay > FOG_OFFSET)
+	//{
+	//	m_fMapFogDelay = 0.f;
+	//
+	//	for (_int i = 0; i < 30; ++i)
+	//	{
+	//		_mat matRotY;
+	//		_v3 vDir = _v3(1.f, 0.f, 1.f);
+	//		D3DXMatrixIdentity(&matRotY);
+	//
+	//		D3DXMatrixRotationY(&matRotY, D3DXToRadian(_float(CCalculater::Random_Num_Double(0, 360))));
+	//		D3DXVec3TransformNormal(&vDir, &vDir, &matRotY);
+	//		D3DXVec3Normalize(&vDir, &vDir);
+	//
+	//		_float fMinRange = 5.f;
+	//		_float fRandRange = _float(CCalculater::Random_Num_Double(0, 20));
+	//		_v3 vRandPos = vDir * (fMinRange + fRandRange);
+	//
+	//		g_pManagement->Create_Effect(L"MapMist", vRandPos + _v3(0.f, -0.5f, 0.f), pPlayerTrans);
+	//	}
+	//}
+	//
+	const _float DUST_OFFSET = 0.3f;
 
-		for (_int i = 0; i < 100; ++i)
+	m_fMapWindDustDelay += _float(TimeDelta);
+	if (m_fMapWindDustDelay > DUST_OFFSET)
+	{
+		m_fMapWindDustDelay = 0.f;
+
+		for (_int i = 0; i < 10; ++i)
 		{
 			_mat matRotY;
 			_v3 vDir = _v3(1.f, 0.f, 1.f);
@@ -296,11 +343,15 @@ void CScene_Stage_Training::Create_Fog(_double TimeDelta)
 			D3DXVec3TransformNormal(&vDir, &vDir, &matRotY);
 			D3DXVec3Normalize(&vDir, &vDir);
 
-			_float fMinRange = 40.f;
+			_float fMinRange = 1.f;
 			_float fRandRange = _float(CCalculater::Random_Num_Double(0, 30));
-			_v3 vRandPos = vDir * (fMinRange + fRandRange);
+			_v3 vRandPos = vDir * (fMinRange + fRandRange) + _v3(0.f, 0.2f, 0.f);
 
-			g_pManagement->Create_Effect(L"MapMist", vRandPos + _v3(0.f, -0.5f, 0.f), nullptr);
+			g_pManagement->Create_Effect(L"MapDust", vPlayerPos + vRandPos + _v3(0.f, _float(CCalculater::Random_Num_Double(0, 0.5)), 0.f), nullptr);
+
+			fRandRange = _float(CCalculater::Random_Num_Double(0, 20));
+			vRandPos = vDir * (fMinRange + fRandRange);
+			g_pManagement->Create_Effect(L"MapDust_2", vPlayerPos + vRandPos + _v3(0.f, _float(CCalculater::Random_Num_Double(0, 0.5)), 0.f), nullptr);
 		}
 	}
 }

@@ -18,6 +18,9 @@ sampler ShadeSampler = sampler_state
 	minfilter = linear;
 	magfilter = linear;
 	mipfilter = linear;
+
+	addressU = clamp;
+	addressV = clamp;
 };
 
 texture		g_SpecularTexture;
@@ -27,6 +30,9 @@ sampler SpecularSampler = sampler_state
 	minfilter = linear;
 	magfilter = linear;
 	mipfilter = linear;
+
+	addressU = clamp;
+	addressV = clamp;
 };
 
 texture		g_EmissiveTexture;
@@ -37,6 +43,9 @@ sampler EmissiveSampler = sampler_state
 	minfilter = linear;
 	magfilter = linear;
 	mipfilter = linear;
+
+	addressU = clamp;
+	addressV = clamp;
 };
 
 texture		g_BloomTexture;
@@ -516,6 +525,9 @@ technique Default_Technique
 
 		VertexShader = NULL;
 		PixelShader = compile ps_3_0 PS_AFTER();
+
+		minfilter[0] = point;
+		magfilter[0] = point;
 	}
 
 	pass Default // 5

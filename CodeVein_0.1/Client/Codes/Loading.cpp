@@ -278,6 +278,26 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_DistortionSmoke")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_3")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_4")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_5")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_6")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_7")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_8")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_9")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Trail_Lightning_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Trail_Lightning_1")))
@@ -1091,6 +1111,9 @@ _uint CLoading::Loading_Stage()
 			return E_FAIL;
 		// 화염 토네이도 콜라이더
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireTornadoCol", CFireTornadoCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 사슴왕
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKing", CDeerKing::Create(m_pGraphicDev))))
 			return E_FAIL;
 		// 검은 성게
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))

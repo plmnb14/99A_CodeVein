@@ -25,47 +25,44 @@ HRESULT CYachaMan::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Pos(_v3(1.f, 0.f, 1.f));
 	m_pTransformCom->Set_Scale(V3_ONE);
 
+	Ready_Status(pArg);
 	Ready_BoneMatrix();
 	Ready_Collider();
 	Ready_Weapon();
 
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
-	m_pTarget->AddRef();
+	if (nullptr != m_pTarget)
+	{
+		Safe_AddRef(m_pTarget);
 
-	m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
-	m_pTargetTransform->AddRef();
+		m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
+		Safe_AddRef(m_pTargetTransform);
+	}
 	
 	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-	m_tObjParam.fHp_Max = 180.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
-	m_tObjParam.fDamage = 25.f;
 
-	m_tObjParam.bCanHit = true; //맞기 가능
-	m_tObjParam.bIsHit = false;	//맞기 진행중 아님
-	m_tObjParam.bCanAttack = true; //공격 가능
-	m_tObjParam.bIsAttack = false; //공격 진행중 아님
-	m_tObjParam.bCanDodge = true; //회피 가능
-	m_tObjParam.bIsDodge = false;  //회피 진행중 아님
+	m_tObjParam.bCanHit = true;
+	m_tObjParam.bIsHit = false;
+	m_tObjParam.bCanAttack = true;
+	m_tObjParam.bIsAttack = false;
+	m_tObjParam.bCanDodge = true;
+	m_tObjParam.bIsDodge = false;
 
-	m_bInRecognitionRange = false; //인지 범위 여부
-	m_bInAtkRange = false; //공격 범위 여부
-	m_bCanChase = false; //추격 여부
-	m_bCanCoolDown = false; //쿨타임 여부
-	m_bIsCoolDown = false; //쿨타임 진행중 여부
+	m_bInRecognitionRange = false;
+	m_bInAtkRange = false;
+	m_bCanChase = false;
+	m_bCanCoolDown = false;
+	m_bIsCoolDown = false;
 
-	m_bAtkCategory = true; //공격타입 고정용
-	m_bIsCombo = false; //콤보 진행중
+	m_bAtkCategory = true; 
+	m_bIsCombo = false;
 
-	m_bCanIdle = true; //일상 가능
-	m_bIsIdle = false; //일상 진행중 아님
+	m_bCanIdle = true;
+	m_bIsIdle = false;
 
-	m_fRecognitionRange = 10.f; //인지범위
-	m_fAtkRange = 4.f; //공격범위
-	m_fCoolDownMax = 1.5f; //쿨타임 맥스값은 유동적
-	m_fCoolDownCur = 0.f; //쿨타임 시간을 더함
+	m_fCoolDownCur = 0.f;
 	m_fSpeedForCollisionPush = 2.f;
-	m_iRandom = 0;
-	m_iDodgeCount = 0; //n회 피격시 바로 회피
 
 	return S_OK;
 }
@@ -243,6 +240,8 @@ void CYachaMan::Enter_Collision()
 {
 	Check_CollisionPush();
 	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
+
+	return;
 }
 
 void CYachaMan::Check_CollisionPush()
@@ -423,7 +422,7 @@ void CYachaMan::Function_CoolDown()
 void CYachaMan::Function_Movement(_float _fspeed, _v3 _vDir)
 {
 	V3_NORMAL(&_vDir, &_vDir);
-	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
+
 	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &_vDir, _fspeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
 
 	return;
@@ -1814,6 +1813,7 @@ void CYachaMan::Play_Combo_R_Hammering()
 			m_fSkillMoveAccel_Cur = 0.f;
 			m_fSkillMoveMultiply = 1.5f;
 		}
+
 		Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 		Function_DecreMoveMent(m_fSkillMoveMultiply);
 	}
@@ -2141,19 +2141,17 @@ void CYachaMan::Play_Combo_RunHammering()
 
 			return;
 		}
-		else
+		if (m_bEventTrigger[1] == false)
 		{
-			if (m_bEventTrigger[1] == false)
-			{
-				m_bEventTrigger[1] = true;
-				m_fSkillMoveSpeed_Cur = 12.f;
-				m_fSkillMoveAccel_Cur = 0.f;
-				m_fSkillMoveMultiply = 2.f;
-			}
-
-			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-			Function_DecreMoveMent(m_fSkillMoveMultiply);
+			m_bEventTrigger[1] = true;
+			m_fSkillMoveSpeed_Cur = 12.f;
+			m_fSkillMoveAccel_Cur = 0.f;
+			m_fSkillMoveMultiply = 2.f;
 		}
+
+		Function_RotateBody();
+		Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+		Function_DecreMoveMent(m_fSkillMoveMultiply);
 	}
 	else if (YACHAMAN_ANI::Atk_Ani_Run_End == m_eState)
 	{
@@ -2243,7 +2241,7 @@ void CYachaMan::Play_Idle()
 			{
 				m_bIsIdle = true;
 
-				if (m_pMeshCom->Is_Finish_Animation(0.5f))
+				if (m_pMeshCom->Is_Finish_Animation(0.25f))
 					m_eState = YACHAMAN_ANI::Eat_End;
 			}
 			else if (YACHAMAN_ANI::Eat_End == m_eState)
@@ -2416,13 +2414,50 @@ void CYachaMan::Play_Dead()
 	}
 	else
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		switch (m_eState)
 		{
-			m_bEnable = false;
-			m_dAniPlayMul = 0;
-		}
-		else
-		{
+		case YACHAMAN_ANI::Death_F:
+			if (m_pMeshCom->Is_Finish_Animation(0.95f))
+			{
+				m_bEnable = false;
+				m_dAniPlayMul = 0;
+			}
+			if (1.433f <= AniTime)
+			{
+				if (false == m_bEventTrigger[0])
+				{
+					m_bEventTrigger[0] = true;
+					Start_Dissolve(0.7f, false, true);
+					m_pWeapon->Start_Dissolve(0.7f, false, true);
+				}
+			}
+			break;
+
+		case YACHAMAN_ANI::Death_B:
+			if (m_pMeshCom->Is_Finish_Animation(0.95f))
+			{
+				m_bEnable = false;
+				m_dAniPlayMul = 0;
+			}
+			if (1.867f <= AniTime)
+			{
+				if (false == m_bEventTrigger[0])
+				{
+					m_bEventTrigger[0] = true;
+					Start_Dissolve(0.7f, false, true);
+					m_pWeapon->Start_Dissolve(0.7f, false, true);
+				}
+			}
+			break;
+
+		case YACHAMAN_ANI::Death:
+			if (m_pMeshCom->Is_Finish_Animation(0.95f))
+			{
+				m_bEnable = false;
+				m_dAniPlayMul = 0;
+			}
+
+
 			if (1.30f < AniTime && 2.80f > AniTime)
 			{
 				if (false == m_bEventTrigger[0])
@@ -2436,15 +2471,17 @@ void CYachaMan::Play_Dead()
 				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
-			else if (5.233f < AniTime)
+
+			if (3.233f <= AniTime)
 			{
 				if (false == m_bEventTrigger[1])
 				{
 					m_bEventTrigger[1] = true;
-					Start_Dissolve(0.8f, false, true);
-					m_pWeapon->Start_Dissolve(0.8f, false, true);
+					Start_Dissolve(0.7f, false, true);
+					m_pWeapon->Start_Dissolve(0.5f, false, true);
 				}
 			}
+			break;
 		}
 	}
 
@@ -2504,6 +2541,34 @@ HRESULT CYachaMan::SetUp_ConstantTable()
 		return E_FAIL;
 
 	Safe_Release(pManagement);
+
+	return S_OK;
+}
+
+HRESULT CYachaMan::Ready_Status(void * pArg)
+{
+	if (nullptr == pArg)
+	{
+		m_tObjParam.fDamage = 25.f;
+		m_tObjParam.fHp_Max = 180.f;
+		m_tObjParam.fArmor_Max = 10.f;
+
+		m_fRecognitionRange = 15.f;
+		m_fAtkRange = 5.f;
+		m_iDodgeCountMax = 5.f;
+	}
+	else
+	{
+		INITSTRUCT Info = *(INITSTRUCT*)pArg;
+
+		m_tObjParam.fDamage = Info.tMonterStatus.fDamage;
+		m_tObjParam.fHp_Max = Info.tMonterStatus.fHp_Max;
+		m_tObjParam.fArmor_Max = Info.tMonterStatus.fArmor_Max;
+
+		m_fRecognitionRange = Info.fKonwingRange;
+		m_fAtkRange = Info.fCanAttackRange;
+		m_iDodgeCountMax = Info.iDodgeCountMax;
+	}
 
 	return S_OK;
 }
@@ -2629,8 +2694,11 @@ void CYachaMan::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 
-	for (auto& iter : m_vecPhysicCol)
-		Safe_Release(iter);
+	for (auto& vecter_iter : m_vecPhysicCol)
+		Safe_Release(vecter_iter);
+
+	for (auto& vecter_iter : m_vecAttackCol)
+		Safe_Release(vecter_iter);
 
 	for (auto& iter : m_matBone)
 		iter = nullptr;

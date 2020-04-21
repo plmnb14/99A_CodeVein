@@ -188,6 +188,7 @@
     <ClInclude Include="..\Headers\DamegeNumUI.h" />
     <ClInclude Include="..\Headers\DarkBoom.h" />
     <ClInclude Include="..\Headers\DarkMidCol.h" />
+    <ClInclude Include="..\Headers\DeerKing.h" />
     <ClInclude Include="..\Headers\Drain_Weapon.h" />
     <ClInclude Include="..\Headers\Dummy_Target.h" />
     <ClInclude Include="..\Headers\Expendables.h" />
@@ -222,6 +223,7 @@
     <ClInclude Include="..\Headers\MistletoeOptionUI.h" />
     <ClInclude Include="..\Headers\MistletoeUI.h" />
     <ClInclude Include="..\Headers\Monkey.h" />
+    <ClInclude Include="..\Headers\MonkeyBullet.h" />
     <ClInclude Include="..\Headers\Monster.h" />
     <ClInclude Include="..\Headers\MonsterHeaders.h" />
     <ClInclude Include="..\Headers\MonsterUI.h" />
@@ -297,6 +299,7 @@
     <ClCompile Include="..\Codes\DamegeNumUI.cpp" />
     <ClCompile Include="..\Codes\DarkBoom.cpp" />
     <ClCompile Include="..\Codes\DarkMidCol.cpp" />
+    <ClCompile Include="..\Codes\DeerKing.cpp" />
     <ClCompile Include="..\Codes\Drain_Weapon.cpp" />
     <ClCompile Include="..\Codes\Dummy_Target.cpp" />
     <ClCompile Include="..\Codes\Expendables.cpp" />
@@ -331,6 +334,7 @@
     <ClCompile Include="..\Codes\MistletoeOptionUI.cpp" />
     <ClCompile Include="..\Codes\MistletoeUI.cpp" />
     <ClCompile Include="..\Codes\Monkey.cpp" />
+    <ClCompile Include="..\Codes\MonkeyBullet.cpp" />
     <ClCompile Include="..\Codes\Monster.cpp" />
     <ClCompile Include="..\Codes\MonsterUI.cpp" />
     <ClCompile Include="..\Codes\NumberUI.cpp" />

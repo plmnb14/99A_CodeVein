@@ -166,6 +166,16 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"QueensKnight_Teleport_Smoke", 200);
 	Input_Pool(L"QueensKnight_Teleport_Smoke_Red", 200);
 	Input_Pool(L"QueensKnight_Teleport_DistortionSmoke", 300);
+	Input_Pool(L"QueensKnight_Teleport_Ink_0", 30);
+	Input_Pool(L"QueensKnight_Teleport_Ink_1", 30);
+	Input_Pool(L"QueensKnight_Teleport_Ink_2", 30);
+	Input_Pool(L"QueensKnight_Teleport_Ink_3", 30);
+	Input_Pool(L"QueensKnight_Teleport_Ink_4", 30);
+	Input_Pool(L"QueensKnight_Teleport_Ink_5", 30);
+	Input_Pool(L"QueensKnight_Teleport_Ink_6", 30);
+	Input_Pool(L"QueensKnight_Teleport_Ink_7", 30);
+	Input_Pool(L"QueensKnight_Teleport_Ink_8", 30);
+	Input_Pool(L"QueensKnight_Teleport_Ink_9", 30);
 	Input_Pool(L"QueensKnight_Trail_Lightning_0", 200);
 	Input_Pool(L"QueensKnight_Trail_Lightning_1", 200);
 	Input_Pool(L"QueensKnight_Trail_Lightning_2", 500);
