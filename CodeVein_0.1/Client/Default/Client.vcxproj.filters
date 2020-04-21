@@ -334,6 +334,15 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\10. StageSelectUI\01. SubStageUI">
       <UniqueIdentifier>{33d8fede-e628-4693-af1c-659eeaa55cb8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\12. StatusUI">
+      <UniqueIdentifier>{83afb5d7-2e71-4c71-84db-6290b7e3e564}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\12. StatusUI\00. ExpUI">
+      <UniqueIdentifier>{fe157272-20da-4676-a76b-1ca260ddb60b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\12. StatusUI\01. ConditionUI">
+      <UniqueIdentifier>{9b339e42-94a5-4c14-a3c2-62873b190336}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -660,6 +669,15 @@
     <ClInclude Include="..\Headers\SubStageUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\10. StageSelectUI\01. SubStageUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\ConditionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\12. StatusUI\01. ConditionUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ExpUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\12. StatusUI\00. ExpUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\StatusUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\12. StatusUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -976,6 +994,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\SubStageUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\10. StageSelectUI\01. SubStageUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ExpUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\12. StatusUI\00. ExpUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ConditionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\12. StatusUI\01. ConditionUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\StatusUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\12. StatusUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
