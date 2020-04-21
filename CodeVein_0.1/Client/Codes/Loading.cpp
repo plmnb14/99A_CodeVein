@@ -278,6 +278,26 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_DistortionSmoke")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_3")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_4")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_5")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_6")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_7")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_8")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_9")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Trail_Lightning_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Trail_Lightning_1")))
