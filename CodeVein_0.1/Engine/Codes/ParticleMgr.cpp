@@ -278,6 +278,8 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Boss_KnockDown_Dust", 10);
 	Input_Pool(L"Boss_Dead_Particle", 7000);
 
+	Input_Pool(L"Cocoon_TongueFire", 200);
+
 	Input_Pool(L"Hit_BloodParticle_0", 200);
 	Input_Pool(L"Hit_BloodParticle_1", 200);
 	Input_Pool(L"Hit_BloodParticle_2", 200);
