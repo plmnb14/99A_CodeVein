@@ -837,6 +837,9 @@ _uint CLoading::Loading_Title()
 	cout << "Essential Dynamic 메쉬 불러오는중" << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Dynamic_Path.dat");
 
+	// 임시 공통 스태틱 메쉬
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
+
 	// 무기 불러오는 중
 	//============================================================================================================
 	cout << "Weapon 메쉬 불러오는 중" << endl;
@@ -936,10 +939,10 @@ _uint CLoading::Loading_Stage()
 		// 2번 - 베이스
 		if (false == g_bOnStage[2])
 		{
-			if (false == g_bReleaseMode)
-			{
-				g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
-			}
+			//if (false == g_bReleaseMode)
+			//{
+			//	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
+			//}
 
 			g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage00_Path.dat");
 

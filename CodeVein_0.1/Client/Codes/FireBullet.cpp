@@ -37,7 +37,7 @@ HRESULT CFireBullet::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 	m_tObjParam.bCanAttack = true;
-	m_tObjParam.fDamage = 20.f;
+	m_tObjParam.fDamage = 5.f;
 
 	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"FireBoy_FireBullet_Mid", nullptr));
 	m_pBulletBody->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
@@ -55,11 +55,10 @@ _int CFireBullet::Update_GameObject(_double TimeDelta)
 	if (m_bDead)
 		return DEAD_OBJ;
 
-		
-	m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
-
 	if (m_pTransformCom->Get_Pos().y < 0.f)
 		m_pTransformCom->Set_Pos_Axis(0.f, AXIS_Y);
+	else
+		m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
 
 	m_dCurTime += TimeDelta;
 

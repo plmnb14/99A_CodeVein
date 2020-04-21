@@ -542,7 +542,8 @@ void CTexEffect::Check_Move(_double TimeDelta)
 {
 	if (m_pInfo->bSlowly)
 	{
-		m_fMoveSpeed -= m_fMoveSpeed * _float(TimeDelta);
+		m_fSlowAccel += _float(TimeDelta);
+		m_fMoveSpeed -= (-GRAVITY * m_fSlowAccel * m_fSlowAccel * m_fMoveSpeed) *  _float(TimeDelta);
 		if (m_fMoveSpeed <= 0.f)
 			m_fMoveSpeed = 0.f;
 	}

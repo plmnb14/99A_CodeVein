@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Scene_Stage_01.h"
+#include "Scene_Stage_Base.h"
 
 #include "CameraMgr.h"
 #include "Effect.h"
@@ -25,13 +26,10 @@ HRESULT CScene_Stage_01::Ready_Scene()
 	if (FAILED(Ready_Layer_Environment(L"Layer_Environment")))
 		return E_FAIL;
 
-	//if (m_bLoadStaticMesh)
-		g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_01.dat");
+	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_01.dat");
 
 	CScriptManager::Get_Instance()->Set_StageIdx(1);
 	CScriptManager::Get_Instance()->Ready_Script_DynamicObject(1);
-
-	//CUI_Manager::Get_Instance()->SetUP_PlayerLayer();
 
 	return S_OK;
 }
@@ -39,6 +37,27 @@ HRESULT CScene_Stage_01::Ready_Scene()
 _int CScene_Stage_01::Update_Scene(_double TimeDelta)
 {
 	CUI_Manager::Get_Instance()->Update_UI();
+	Create_Fog(TimeDelta);
+
+	if (g_pInput_Device->Key_Down(DIK_H))
+	{
+		CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+
+		pInstance->Set_Enable(false);
+
+		g_pManagement->Clear_LightList();
+
+		CScriptManager::Get_Instance()->Reset_Script_DynmicObject();
+		CScriptManager::Get_Instance()->Reset_ScriptEvent(0, true);
+
+		if (FAILED(g_pManagement->Clear_Instance(SCENE_STAGE)))
+			return -1;
+
+		CScene* pScene = CScene_Stage_Base::Create(m_pGraphic_Device, m_bLoadStaticMesh);
+
+		if (FAILED(g_pManagement->SetUp_CurrentScene(pScene)))
+			return -1;
+	}
 
 	return _int();
 }
@@ -51,16 +70,16 @@ HRESULT CScene_Stage_01::Render_Scene()
 
 HRESULT CScene_Stage_01::Ready_Layer_Player(const _tchar * pLayerTag)
 {
-	// 몬스터 레이어만 미리 추가
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Monster")))
 		return E_FAIL;
 
-	// 보스 레이어만 미리 추가
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Boss")))
 		return E_FAIL;
 
-	// 투사체 레이어 추가
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_MonsterProjectile")))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_BossUI")))
 		return E_FAIL;
 
 	CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
@@ -76,15 +95,41 @@ HRESULT CScene_Stage_01::Ready_Layer_Player(const _tchar * pLayerTag)
 
 	pInstance = nullptr;;
 
-	return S_OK;
-
-
-	//if(FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerHP", SCENE_STAGE, L"Layer_PlayerHP")))
-	//	return E_FAIL;
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerST", SCENE_STAGE, L"Layer_PlayerST")))
-	//	return E_FAIL;
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerHP", SCENE_STAGE, L"Layer_PlayerHP")))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerST", SCENE_STAGE, L"Layer_PlayerST")))
+		return E_FAIL;
 
 	return S_OK;
+}
+
+
+void CScene_Stage_01::Create_Fog(_double TimeDelta)
+{
+	const _float FOG_OFFSET = 10.f;
+
+	m_fMapFogDelay += _float(TimeDelta);
+	if (m_fMapFogDelay > FOG_OFFSET)
+	{
+		m_fMapFogDelay = 0.f;
+
+		for (_int i = 0; i < 100; ++i)
+		{
+			_mat matRotY;
+			_v3 vDir = _v3(1.f, 0.f, 1.f);
+			D3DXMatrixIdentity(&matRotY);
+
+			D3DXMatrixRotationY(&matRotY, D3DXToRadian(_float(CCalculater::Random_Num_Double(0, 360))));
+			D3DXVec3TransformNormal(&vDir, &vDir, &matRotY);
+			D3DXVec3Normalize(&vDir, &vDir);
+
+			_float fMinRange = 40.f;
+			_float fRandRange = _float(CCalculater::Random_Num_Double(0, 200));
+			_v3 vRandPos = vDir * (fMinRange + fRandRange);
+
+			g_pManagement->Create_Effect(L"MapMist", vRandPos + _v3(0.f, -0.5f, 0.f), nullptr);
+		}
+	}
 }
 
 HRESULT CScene_Stage_01::Ready_Layer_Environment(const _tchar* pLayerTag)
@@ -98,7 +143,6 @@ HRESULT CScene_Stage_01::Ready_Layer_Environment(const _tchar* pLayerTag)
 	return S_OK;
 }
 
-
 HRESULT CScene_Stage_01::Ready_LightDesc()
 {
 	D3DLIGHT9		LightDesc;
@@ -109,7 +153,7 @@ HRESULT CScene_Stage_01::Ready_LightDesc()
 	LightDesc.Ambient = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	// In.WorldSpace
-	_v3 vLightDir = _v3(0.2f, 1.f, 0.9f);
+	_v3 vLightDir = _v3(0.2f, -1.f, 0.9f);
 
 	V3_NORMAL_SELF(&vLightDir);
 

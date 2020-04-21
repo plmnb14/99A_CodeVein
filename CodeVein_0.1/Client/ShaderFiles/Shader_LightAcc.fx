@@ -223,7 +223,7 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	vector		vLook = vWorldPos - g_vCamPosition;
 
-	Out.vSpecular = g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 20.f) * vSpecularIntensity.y;
+	Out.vSpecular = g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 20.f) * 1.f; // * saturate(vSpecularIntensity.y);
 	Out.vSpecular.a = 0.f;
 
 	// RimLight ======================================================================

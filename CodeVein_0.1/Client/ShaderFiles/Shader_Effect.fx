@@ -550,7 +550,7 @@ technique Default_Technique
 
 	pass MeshEffect // 2
 	{
-		zwriteenable = true;
+		zwriteenable = false;
 
 		AlphablendEnable = true;
 		AlphaTestEnable = true;
@@ -558,7 +558,7 @@ technique Default_Technique
 		DestBlend = InvSrcAlpha;
 		blendop = add;
 
-		cullmode = ccw;
+		cullmode = none;
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_MESHEFFECT();
@@ -619,6 +619,22 @@ technique Default_Technique
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_TRAIL_MASK();
+	}
+
+	pass MeshEffect_Zwrite // 7 - For ColdBeam.. ETC
+	{
+		zwriteenable = true;
+
+		AlphablendEnable = true;
+		AlphaTestEnable = true;
+		srcblend = SrcAlpha;
+		DestBlend = InvSrcAlpha;
+		blendop = add;
+
+		cullmode = ccw;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 PS_MESHEFFECT();
 	}
 }
 

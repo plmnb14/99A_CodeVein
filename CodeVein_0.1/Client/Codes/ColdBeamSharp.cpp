@@ -48,6 +48,7 @@ HRESULT CColdBeamSharp::Ready_GameObject(void * pArg)
 	m_pBulletBody_01 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"IceBlock_Main_Small", nullptr));
 	m_pBulletBody_01->Set_Desc(_v3(0, 0, 0), nullptr);
 	m_pBulletBody_01->Set_Angle(_v3(20.f, 0.f, 0.f));
+	m_pBulletBody_01->Set_ZWrite();
 	m_pBulletBody_01->Set_ParentObject(this);
 	m_pBulletBody_01->Reset_Init();
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody_01, SCENE_STAGE, L"Layer_Effect", nullptr);
@@ -55,6 +56,7 @@ HRESULT CColdBeamSharp::Ready_GameObject(void * pArg)
 	m_pBulletBody_02 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"IceBlock_Sub_02", nullptr));
 	m_pBulletBody_02->Set_Desc(_v3(0, 0, 0), nullptr);
 	m_pBulletBody_02->Set_Angle(_v3(20.f, 0.f, 0.f));
+	m_pBulletBody_02->Set_ZWrite();
 	m_pBulletBody_02->Set_ParentObject(this);
 	m_pBulletBody_02->Reset_Init();
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody_02, SCENE_STAGE, L"Layer_Effect", nullptr);

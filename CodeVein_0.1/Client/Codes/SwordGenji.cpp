@@ -214,6 +214,8 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 	if (false == m_bReadyDead)
 		Check_PhyCollider();
 
+	pMonsterHpUI->Update_GameObject(TimeDelta);
+
 	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
 	return NOERROR;

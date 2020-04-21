@@ -2,8 +2,12 @@
 #include "Scene_Stage_Base.h"
 #include "Scene_Stage_Training.h"
 #include "Scene_Stage_01.h"
+#include "Scene_Stage_02.h"
+#include "Scene_Stage_03.h"
+#include "Scene_Stage_04.h"
 
 #include "UI_Manager.h"
+#include "CameraMgr.h"
 
 CScene_Stage_Base::CScene_Stage_Base(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
@@ -47,7 +51,7 @@ HRESULT CScene_Stage_Base::Render_Scene()
 {
 	if (m_pLoading != nullptr)
 	{
-		if (true == m_pLoading->Get_Finish() && g_pInput_Device->Key_Down(DIK_U))
+		if (true == m_pLoading->Get_Finish() && g_pInput_Device->Key_Down(DIK_H))
 		{
 			CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
@@ -63,13 +67,46 @@ HRESULT CScene_Stage_Base::Render_Scene()
 			if (FAILED(g_pManagement->SetUp_CurrentScene(pScene)))
 				return -1;
 		}
+
+		else if (true == m_pLoading->Get_Finish() && g_pInput_Device->Key_Down(DIK_J))
+		{
+			CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+
+			pInstance->Set_Enable(false);
+
+			g_pManagement->Clear_LightList();
+
+			if (FAILED(g_pManagement->Clear_Instance(SCENE_STAGE)))
+				return -1;
+
+			CScene* pScene = CScene_Stage_03::Create(m_pGraphic_Device, m_bLoadStaticMesh);
+
+			if (FAILED(g_pManagement->SetUp_CurrentScene(pScene)))
+				return -1;
+		}
+
+		else if (true == m_pLoading->Get_Finish() && g_pInput_Device->Key_Down(DIK_K))
+		{
+			CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+
+			pInstance->Set_Enable(false);
+
+			g_pManagement->Clear_LightList();
+
+			if (FAILED(g_pManagement->Clear_Instance(SCENE_STAGE)))
+				return -1;
+
+			CScene* pScene = CScene_Stage_04::Create(m_pGraphic_Device, m_bLoadStaticMesh);
+
+			if (FAILED(g_pManagement->SetUp_CurrentScene(pScene)))
+				return -1;
+		}
+
 	}
 
 	else
 	{
-		cout << " À¸À½~?" << endl;
-
-		if (g_pInput_Device->Key_Down(DIK_U))
+		if (g_pInput_Device->Key_Down(DIK_H))
 		{
 			CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
@@ -85,12 +122,59 @@ HRESULT CScene_Stage_Base::Render_Scene()
 			if (FAILED(g_pManagement->SetUp_CurrentScene(pScene)))
 				return -1;
 		}
+
+		else if (g_pInput_Device->Key_Down(DIK_J))
+		{
+			CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+
+			pInstance->Set_Enable(false);
+
+			g_pManagement->Clear_LightList();
+
+			if (FAILED(g_pManagement->Clear_Instance(SCENE_STAGE)))
+				return -1;
+
+			CScene* pScene = CScene_Stage_03::Create(m_pGraphic_Device, m_bLoadStaticMesh);
+
+			if (FAILED(g_pManagement->SetUp_CurrentScene(pScene)))
+				return -1;
+		}
+
+		else if (g_pInput_Device->Key_Down(DIK_K))
+		{
+			CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+
+			pInstance->Set_Enable(false);
+
+			g_pManagement->Clear_LightList();
+
+			if (FAILED(g_pManagement->Clear_Instance(SCENE_STAGE)))
+				return -1;
+
+			CScene* pScene = CScene_Stage_04::Create(m_pGraphic_Device, m_bLoadStaticMesh);
+
+			if (FAILED(g_pManagement->SetUp_CurrentScene(pScene)))
+				return -1;
+		}
+
 	}
 	return S_OK;
 }
 
 HRESULT CScene_Stage_Base::Ready_Player()
 {
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Monster")))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Boss")))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_MonsterProjectile")))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_BossUI")))
+		return E_FAIL;
+
 	CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
 	pInstance->Set_Enable(true);
@@ -100,9 +184,11 @@ HRESULT CScene_Stage_Base::Ready_Player()
 	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
 	TARGET_TO_NAV(pInstance)->Set_Index(14);
 	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(-0.519f, 0.120f, 23.810f));
-	TARGET_TO_TRANS(pInstance)->Set_Angle(V3_NULL);
+	TARGET_TO_TRANS(pInstance)->Set_Angle(AXIS_Y, D3DXToRadian(180.f));
 
-	pInstance = nullptr;;
+	pInstance = nullptr;
+
+	CCameraMgr::Get_Instance()->Set_CamView(BACK_VIEW);
 
 	return S_OK;
 }
@@ -138,14 +224,34 @@ HRESULT CScene_Stage_Base::Ready_LightDesc()
 	//if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
 	//	return E_FAIL;
 
-	float fAmbient = 0.01f;
+	float fAmbient = 0.05f;
+
+	LightDesc.Type = D3DLIGHT_POINT;
+	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
+	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
+	LightDesc.Specular = LightDesc.Diffuse;
+	LightDesc.Position = _v3(-0.f, 3.f, -10.f);
+	LightDesc.Range = 7.f;
+
+	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
+		return E_FAIL;
+
+	LightDesc.Type = D3DLIGHT_POINT;
+	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
+	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
+	LightDesc.Specular = LightDesc.Diffuse;
+	LightDesc.Position = _v3(-0.f, 3.f, -5.f);
+	LightDesc.Range = 7.f;
+
+	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
+		return E_FAIL;
 
 	LightDesc.Type = D3DLIGHT_POINT;
 	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
 	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	LightDesc.Position = _v3(-0.f, 3.f, 0.f);
-	LightDesc.Range = 8.f;
+	LightDesc.Range = 7.f;
 
 	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
 		return E_FAIL;
@@ -156,7 +262,7 @@ HRESULT CScene_Stage_Base::Ready_LightDesc()
 	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	LightDesc.Position = _v3(-0.f, 3.f, 5.f);
-	LightDesc.Range = 8.f;
+	LightDesc.Range = 7.f;
 
 	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
 		return E_FAIL;
@@ -166,7 +272,7 @@ HRESULT CScene_Stage_Base::Ready_LightDesc()
 	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	LightDesc.Position = _v3(-0.f, 4.f, 10.f);
-	LightDesc.Range = 8.f;
+	LightDesc.Range = 7.f;
 
 	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
 		return E_FAIL;
@@ -176,7 +282,7 @@ HRESULT CScene_Stage_Base::Ready_LightDesc()
 	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	LightDesc.Position = _v3(-0.f, 4.f, 15.f);
-	LightDesc.Range = 8.f;
+	LightDesc.Range = 7.f;
 
 	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
 		return E_FAIL;
@@ -186,7 +292,7 @@ HRESULT CScene_Stage_Base::Ready_LightDesc()
 	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	LightDesc.Position = _v3(-0.f, 4.f, 20.f);
-	LightDesc.Range = 8.f;
+	LightDesc.Range = 7.f;
 
 	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
 		return E_FAIL;

@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "Scene_Stage_04.h"
+#include "Scene_Stage_Base.h"
 
 #include "CameraMgr.h"
 #include "Effect.h"
@@ -37,6 +38,26 @@ _int CScene_Stage_04::Update_Scene(_double TimeDelta)
 {
 	CUI_Manager::Get_Instance()->Update_UI();
 
+	if (g_pInput_Device->Key_Down(DIK_H))
+	{
+		CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+
+		pInstance->Set_Enable(false);
+
+		g_pManagement->Clear_LightList();
+
+		CScriptManager::Get_Instance()->Reset_Script_DynmicObject();
+		CScriptManager::Get_Instance()->Reset_ScriptEvent(0, true);
+
+		if (FAILED(g_pManagement->Clear_Instance(SCENE_STAGE)))
+			return -1;
+
+		CScene* pScene = CScene_Stage_Base::Create(m_pGraphic_Device, m_bLoadStaticMesh);
+
+		if (FAILED(g_pManagement->SetUp_CurrentScene(pScene)))
+			return -1;
+	}
+
 	return _int();
 }
 
@@ -73,10 +94,10 @@ HRESULT CScene_Stage_04::Ready_Layer_Player(const _tchar * pLayerTag)
 
 	pInstance = nullptr;;
 
-	//if(FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerHP", SCENE_STAGE, L"Layer_PlayerHP")))
-	//	return E_FAIL;
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerST", SCENE_STAGE, L"Layer_PlayerST")))
-	//	return E_FAIL;
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerHP", SCENE_STAGE, L"Layer_PlayerHP")))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerST", SCENE_STAGE, L"Layer_PlayerST")))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -100,7 +121,7 @@ HRESULT CScene_Stage_04::Ready_LightDesc()
 
 	LightDesc.Type = D3DLIGHT_DIRECTIONAL;
 	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	LightDesc.Ambient = D3DXCOLOR(0.2f, 0.2f, 0.2f, 1.f);
+	LightDesc.Ambient = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	// In.WorldSpace
 	_v3 vLightDir = _v3(1.f, -1.f, 0.f);

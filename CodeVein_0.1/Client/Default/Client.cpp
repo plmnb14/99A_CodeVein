@@ -27,6 +27,7 @@ CTexture*			g_pDissolveTexture;
 bool				g_bOnStage[8]	= {};
 bool				g_bReleaseMode	= false;
 short				g_sStageIdx_Cur = 0;
+short				g_sPlayerLevel = 1;
 
 // [0] - 최초 로딩 타이틀
 // [1] - 트레이닝
