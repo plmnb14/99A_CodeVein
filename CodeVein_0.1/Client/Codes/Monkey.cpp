@@ -3,6 +3,8 @@
 #include "..\Headers\Weapon.h"
 #include "..\Headers\MonkeyBullet.h"
 
+#include "MonsterUI.h"
+
 CMonkey::CMonkey(LPDIRECT3DDEVICE9 pGraphic_Device)
 	:CGameObject(pGraphic_Device)
 {
@@ -67,6 +69,11 @@ HRESULT CMonkey::Ready_GameObject(void * pArg)
 	m_iRandom = 0;
 	m_iDodgeCount = 0; //n회 피격시 바로 회피
 
+	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
+	m_pMonsterUI->Set_Target(this);
+	m_pMonsterUI->Set_Bonmatrix(m_matBone[Bone_Head]);
+	m_pMonsterUI->Ready_GameObject(NULL);
+
 	return S_OK;
 }
 
@@ -77,6 +84,9 @@ _int CMonkey::Update_GameObject(_double TimeDelta)
 
 	CGameObject::Update_GameObject(TimeDelta);
 
+	// MonsterHP UI
+	m_pMonsterUI->Update_GameObject(TimeDelta);
+
 	Checkk_PosY();
 	Check_Hit();
 	Check_Dist();
@@ -86,6 +96,8 @@ _int CMonkey::Update_GameObject(_double TimeDelta)
 	m_pMeshCom->SetUp_Animation(m_eState);
 
 	Enter_Collision();
+
+	
 
 	return NO_EVENT;
 }
@@ -1972,6 +1984,8 @@ CGameObject* CMonkey::Clone_GameObject(void * pArg)
 
 void CMonkey::Free()
 {
+	Safe_Release(m_pMonsterUI);
+
 	Safe_Release(m_pTarget);
 	Safe_Release(m_pTargetTransform);
 	Safe_Release(m_pWeapon);

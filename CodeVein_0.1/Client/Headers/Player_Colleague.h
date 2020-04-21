@@ -88,7 +88,7 @@ private:
 	void	Set_AniEvent();
 
 private:
-	void	Colleague_Movement(_float fSpeed, _v3 vDir, _v3 YDir);
+	void	Colleague_Movement(_float fSpeed, _v3 vDir/*, _v3 YDir*/);
 
 private:
 	void	Colleague_Dead();
@@ -137,7 +137,7 @@ private:
 	//Move_Direction			m_eMoveDirection;
 
 private:
-	list<CGameObject*>	m_List_pMonTarget[2];
+	list<CGameObject*>*	m_List_pMonTarget[2];
 
 	_double	m_dPlayAni_Time = 1;
 

@@ -394,6 +394,8 @@ private:
 	_int				m_iDodgeCountMax = 3; //3회 피격시 회피
 	_int				m_iDodgeCount = 0; //n회 피격시 회피
 
+										   // 몬스터 HP바 UI
+	CMonsterUI*			m_pMonsterUI = nullptr;
 };
 
 END

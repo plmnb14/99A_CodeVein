@@ -2,6 +2,8 @@
 #include "..\Headers\YachaMan.h"
 #include "..\Headers\Weapon.h"
 
+#include "MonsterUI.h"
+
 CYachaMan::CYachaMan(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
@@ -28,6 +30,11 @@ HRESULT CYachaMan::Ready_GameObject(void * pArg)
 	Ready_BoneMatrix();
 	Ready_Collider();
 	Ready_Weapon();
+
+	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
+	m_pMonsterUI->Set_Target(this);
+	m_pMonsterUI->Set_Bonmatrix(m_matBone[Bone_Head]);
+	m_pMonsterUI->Ready_GameObject(NULL);
 
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 	m_pTarget->AddRef();
@@ -76,6 +83,9 @@ _int CYachaMan::Update_GameObject(_double TimeDelta)
 		return NO_EVENT;
 
 	CGameObject::Update_GameObject(TimeDelta);
+
+	// MonsterHP UI
+	m_pMonsterUI->Update_GameObject(TimeDelta);
 
 	Check_PosY();
 	Check_Hit();
@@ -2587,6 +2597,9 @@ HRESULT CYachaMan::Ready_BoneMatrix()
 	m_matBone[Bone_Range] = &pFrame->CombinedTransformationMatrix;
 	m_matBone[Bone_Body] = &pFrame->CombinedTransformationMatrix;
 
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head", 0), E_FAIL);
+	m_matBone[Bone_Head] = &pFrame->CombinedTransformationMatrix;
+
 	return S_OK;
 }
 
@@ -2617,7 +2630,10 @@ CGameObject* CYachaMan::Clone_GameObject(void * pArg)
 }
 
 void CYachaMan::Free()
+
 {
+	Safe_Release(m_pMonsterUI);
+
 	Safe_Release(m_pTarget);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pWeapon);

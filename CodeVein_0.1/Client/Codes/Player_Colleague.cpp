@@ -263,35 +263,31 @@ void CPlayer_Colleague::Check_Do_List()
 	// - 범위 내에 몬스터가 있는지
 	// - 없으면 플레이어가 있는지
 	_float	fMinPos = 0.f;
+	_float	fLength = 0.f;
 
-	_float	MyLength = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransformCom->Get_Pos()));
+	
 
-
-
-	for (auto& iter_Mon : m_List_pMonTarget[0])
+	for (auto& iter_Mon : *m_List_pMonTarget[0])
 	{
 		if (false == iter_Mon->Get_Enable())
 			continue;
 
-		if (m_List_pMonTarget->empty())
+		if (m_List_pMonTarget[0]->empty())
 			continue;
 	}
-	for (auto& iter_Boss : m_List_pMonTarget[1])
+	for (auto& iter_Boss : *m_List_pMonTarget[1])
 	{
- 		if (false == iter_Boss->Get_Enable())
- 			continue;
+		if (false == iter_Boss->Get_Enable())
+			continue;
 
-		if (m_List_pMonTarget->empty())
+		if (m_List_pMonTarget[1]->empty())
 			continue;
 	}
 
-	_float	fLength = 0.f;
-	_float	fMinPos = 0.f;
+	if (!(m_List_pMonTarget[0]->empty()))
+		fMinPos = D3DXVec3Length(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS((*m_List_pMonTarget)->front())->Get_Pos()));
 
-	if (!(m_List_pMonTarget->empty()))
-		fMinPos = V3_LENGTH(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(m_List_pMonTarget->front())->Get_Pos()));
-
-	for (auto& iter : m_List_pMonTarget[0])
+	for (auto& iter : *m_List_pMonTarget[0])
 	{
 		fLength = D3DXVec3Length(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(iter)->Get_Pos()));
 
@@ -299,36 +295,89 @@ void CPlayer_Colleague::Check_Do_List()
 		{
 			fMinPos = fLength;
 			if (true == iter->Get_Dead())
+			{
+				m_bStart_Fighting = false;
+				m_bNear_byMonster = false;
 				continue;
+			}
 
 			if (false == iter->Get_Enable())
+				continue;
+
+			if (nullptr == iter)
 				continue;
 
 			m_pObject_Mon = iter;
 		}
 	}
 
+	_float	MyLength = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransformCom->Get_Pos()));
 
 	if (MyLength < 30.f)		// 플레이어가 범위 내에 있는지 체크
 	{
-		if (false == m_bStart_Fighting)
+		/*if (false == m_bStart_Fighting)
 			m_bMonExistence = true;
 		else
 			m_bMonExistence = false;
 
 		if (false == m_bMonExistence)
-		{
-			if (fLength < 20.f)
+		{*/
+			if (fLength < 30.f)
 				m_bStart_Fighting = true;
-			if (fLength > 20.f)
+			if (fLength > 30.f)
 				m_bStart_Fighting = false;
-		}
+		//}
 
 		if (true == m_bStart_Fighting)
 		{
+			if (fLength < 30.f)
+			{
+				m_eMovetype = CPlayer_Colleague::Coll_Attack;
+				m_bNear_byMonster = true;
+
+				if (fLength < 2.3f)
+					m_eColl_AttackMoment = CPlayer_Colleague::Att_Normal;
+			}
+			if (fLength > 30.f || nullptr == m_pObject_Mon || true == m_pObject_Mon->Get_Dead())
+			{
+				m_bStart_Fighting = false;
+				m_bNear_byMonster = false;
+			}
+		}
+
+		if (false == m_bStart_Fighting && false == m_bNear_byMonster)
+		{
+			if (MyLength > 2.f && MyLength < 5.f)
+			{
+				m_eMovetype = CPlayer_Colleague::Coll_Move;
+				m_eColl_Movement = CPlayer_Colleague::Move_Walk;
+			}
+			if (MyLength > 5.f)
+			{
+				m_eMovetype = CPlayer_Colleague::Coll_Move;
+				m_eColl_Movement = CPlayer_Colleague::Move_Run;
+			}
+			}
+			if (false == m_bStart_Fighting && false == m_bNear_byMonster && MyLength < 2.f)
+			{
+				m_eMovetype = CPlayer_Colleague::Coll_Idle;
+				m_eColl_IdleMoment = CPlayer_Colleague::Idle_Waiting;
+			}
 
 		}
-	}
+
+		if (MyLength > 30.f)
+		{
+			m_pTransformCom->Set_Pos(_v3(m_pTargetTransformCom->Get_Pos().x - 3.f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 2.f));
+		}
+
+		// Hit, Att, Dead 이면 return 시킨다
+		if (m_eMovetype == CPlayer_Colleague::Coll_Hit || m_eMovetype == CPlayer_Colleague::Coll_Attack
+			|| m_eMovetype == CPlayer_Colleague::Coll_Dead)
+			return;
+
+		if (true == m_tObjParam.bIsHit || true == m_tObjParam.bIsAttack || true == m_tObjParam.bIsDodge)
+			return;
 }
 
 void CPlayer_Colleague::Set_AniEvent()
@@ -443,8 +492,8 @@ HRESULT CPlayer_Colleague::SetUp_Default()
 	m_pTransformCom->Set_Scale(_v3(1.2f, 1.1f, 1.2f));
 	m_pTargetTransformCom = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 
-	m_List_pMonTarget[0] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
-	m_List_pMonTarget[1] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
+	m_List_pMonTarget[0] = &(g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE));
+	m_List_pMonTarget[1] = &(g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE));
 
 	m_tObjParam.fHp_Cur = 1000.f;
 	m_tObjParam.fHp_Max = 1000.f;
@@ -466,12 +515,11 @@ HRESULT CPlayer_Colleague::SetUp_Default()
 	return S_OK;
 }
 
-void CPlayer_Colleague::Colleague_Movement(_float fSpeed, _v3 vDir, _v3 YDir)
+void CPlayer_Colleague::Colleague_Movement(_float fSpeed, _v3 vDir/*, _v3 YDir*/)
 {
 	V3_NORMAL(&vDir, &vDir);
-
+	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &vDir, fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
-	m_pTransformCom->Set_Pos_Axis(m_pNavMesh->Axis_Y_OnNavMesh(YDir), AXIS_Y);
 }
 
 void CPlayer_Colleague::Colleague_Dead()
@@ -491,9 +539,8 @@ void CPlayer_Colleague::Colleague_Hit()
 
 void CPlayer_Colleague::CollMove_Walk()
 {
-	m_eColl_Movement = CPlayer_Colleague::Move_Walk;
 	Funtion_RotateBody();
-	Colleague_Movement(2.f, m_pTransformCom->Get_Axis(AXIS_Z), m_pTargetTransformCom->Get_Pos());
+	Colleague_Movement(2.f, m_pTransformCom->Get_Axis(AXIS_Z));
 	// 지금은 앞으로만 걷게
 	m_eColleague_Ani = CPlayer_Colleague::Ani_Front_Walk;
 }
@@ -501,9 +548,8 @@ void CPlayer_Colleague::CollMove_Walk()
 void CPlayer_Colleague::CollMove_Run()
 {
 	// 뛸 때 속도조절하는건데 일시적으로 이렇게 두고 나중에 꼭 수정해야 함
-	m_eColl_Movement = CPlayer_Colleague::Move_Run;
 	Funtion_RotateBody();
-	Colleague_Movement(4.f, m_pTransformCom->Get_Axis(AXIS_Z), m_pTargetTransformCom->Get_Pos());
+	Colleague_Movement(4.f, m_pTransformCom->Get_Axis(AXIS_Z));
 	// 지금은 앞으로만 뛰게
 	m_eColleague_Ani = CPlayer_Colleague::Ani_Front_Run;
 }
@@ -515,9 +561,8 @@ void CPlayer_Colleague::CollMove_Dodge()
 
 void CPlayer_Colleague::CollIdle_Waiting()
 {
-	m_eColl_IdleMoment = CPlayer_Colleague::Idle_Waiting;
 	Funtion_RotateBody();
-	Colleague_Movement(0.f, m_pTransformCom->Get_Axis(AXIS_Z), m_pTargetTransformCom->Get_Pos());
+	Colleague_Movement(0.f, m_pTransformCom->Get_Axis(AXIS_Z));
 	m_eColleague_Ani = CPlayer_Colleague::Ani_Idle;
 }
 
@@ -527,12 +572,105 @@ void CPlayer_Colleague::CollAtt_Waiting()
 
 void CPlayer_Colleague::CollAtt_Normal()
 {
+	if (nullptr == m_pObject_Mon)
+		return;
 
+	Funtion_RotateBody();
+
+	_float		fMonLenght = V3_LENGTH(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(m_pObject_Mon)->Get_Pos()));
+
+	if (fMonLenght > 8.f)
+	{
+		Colleague_Movement(4.f, TARGET_TO_TRANS(m_pObject_Mon)->Get_Pos());
+		m_eColleague_Ani = CPlayer_Colleague::Ani_Front_Run;
+	}
+	if (fMonLenght > 8.f && fMonLenght < 2.3f)
+	{
+		Colleague_Movement(2.f, TARGET_TO_TRANS(m_pObject_Mon)->Get_Pos());
+		m_eColleague_Ani = CPlayer_Colleague::Ani_Front_Walk;
+	}
+	if(fMonLenght <= 2.3f)
+		m_eColleague_Ani = CPlayer_Colleague::One_Att;
 }
 
 void CPlayer_Colleague::Funtion_RotateBody()
 {
+	if (nullptr == m_pObject_Mon)
+		return;
 
+	_float fTargetAngle = 0.f;
+
+	if (true == m_bStart_Fighting && true == m_bNear_byMonster)		// 전투 시 시선을 몬스터로 고정
+		fTargetAngle = m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(m_pObject_Mon)->Get_Pos());
+	else
+		fTargetAngle = m_pTransformCom->Chase_Target_Angle(&m_pTargetTransformCom->Get_Pos());	// 없으면 플레이어
+
+
+	_float fYAngle = m_pTransformCom->Get_Angle().y;
+
+	_v3 vTargetDir = m_pTransformCom->Get_Axis(AXIS_Z);
+	V3_NORMAL_SELF(&vTargetDir);
+
+	if (fTargetAngle > 0)
+	{
+		if (fYAngle < 0)
+		{
+			if (-D3DXToRadian(90.f) > fYAngle && -D3DXToRadian(180.f) < fYAngle)
+			{
+				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle <= -D3DXToRadian(180.f)) fYAngle = D3DXToRadian(180.f);
+			}
+			else fYAngle += DELTA_60 * D3DXToRadian(360.f);
+		}
+		else
+		{
+			if (fYAngle < fTargetAngle)
+			{
+				fYAngle += DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle >= fTargetAngle) fYAngle = fTargetAngle;
+			}
+			else
+			{
+				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle <= fTargetAngle) fYAngle = fTargetAngle;
+			}
+		}
+	}
+	else if (fTargetAngle < 0)
+	{
+		if (fYAngle > 0)
+		{
+			if (D3DXToRadian(90.f) < fYAngle && D3DXToRadian(180.f) > fYAngle)
+			{
+				fYAngle += DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle >= D3DXToRadian(180.f)) fYAngle = -D3DXToRadian(180.f);
+			}
+			else fYAngle -= DELTA_60 * D3DXToRadian(360.f);
+		}
+		else
+		{
+			if (fYAngle > fTargetAngle)
+			{
+				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle <= fTargetAngle) fYAngle = fTargetAngle;
+			}
+			else
+			{
+				fYAngle += DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle >= fTargetAngle) fYAngle = fTargetAngle;
+			}
+		}
+	}
+
+	m_pTransformCom->Set_Angle(AXIS_Y, fYAngle);
+
+	return;
 }
 
 CPlayer_Colleague* CPlayer_Colleague::Create(_Device pGraphic_Device)
@@ -563,6 +701,15 @@ CGameObject* CPlayer_Colleague::Clone_GameObject(void* pArg)
 
 void CPlayer_Colleague::Free()
 {
+	/*for (auto& Mon_iter : *m_List_pMonTarget[0])
+		Safe_Release(Mon_iter);
+
+	for (auto& Boss_iter : *m_List_pMonTarget[1])
+		Safe_Release(Boss_iter);*/
+
+	/*for (auto& iter : m_List_pMonTarget)
+		Safe_Delete_Array(iter);*/
+
 	Safe_Release(m_pSword);
 	Safe_Release(m_pCollider);
 

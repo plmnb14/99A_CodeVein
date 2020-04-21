@@ -7,7 +7,7 @@
 BEGIN(Client)
 
 class CWeapon;
-
+class CMonsterUI;
 class CMonkey final : public CGameObject
 {
 public:
@@ -228,6 +228,10 @@ private:
 	_int				m_iDodgeCount = 0; //n회 피격시 회피
 
 	_float				m_fShotDelay = 0.f;
+
+	//////////// 채유미
+	// 몬스터 HP바 UI
+	CMonsterUI*			m_pMonsterUI = nullptr;
 
 };
 
