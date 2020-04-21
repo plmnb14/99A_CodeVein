@@ -49,7 +49,7 @@ _int CCocoonBullet::Update_GameObject(_double TimeDelta)
 
 	if (m_bDead)
 		return DEAD_OBJ;
-
+	
 	Enter_Collision();
 
 	m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
