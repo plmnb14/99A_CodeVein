@@ -3,7 +3,7 @@
 #include "..\Headers\Weapon.h"
 
 #include "MonsterUI.h"
-#include "DamegeNumUI.h"
+//#include "DamegeNumUI.h"
 
 CGunGenji::CGunGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CMonster(pGraphic_Device)

@@ -294,12 +294,15 @@ void CPlayer_Colleague::Check_Do_List()
 		if (fMinPos > fLength)
 		{
 			fMinPos = fLength;
-			if (true == iter->Get_Dead())
+			if (nullptr != m_pObject_Mon && true == m_pObject_Mon->Get_Dead())
 			{
 				m_bStart_Fighting = false;
 				m_bNear_byMonster = false;
 				continue;
 			}
+
+			if (true == iter->Get_Dead())
+				continue;
 
 			if (false == iter->Get_Enable())
 				continue;

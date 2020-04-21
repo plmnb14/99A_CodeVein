@@ -25,7 +25,7 @@
 
 #include "MonsterUI.h"
 #include "MassageUI.h"
-#include "DamegeNumUI.h"
+//#include "DamegeNumUI.h"
 #include "Get_ItemUI.h"
 #include "PickUp_ItemUI.h"
 
@@ -1173,8 +1173,8 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MassageUI", CMassageUI::Create(m_pGraphicDev))))
 			return E_FAIL;
 
-		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DamegeNumUI", CDamegeNumUI::Create(m_pGraphicDev))))
-			return E_FAIL;
+		/*if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DamegeNumUI", CDamegeNumUI::Create(m_pGraphicDev))))
+			return E_FAIL;*/
 
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Get_ItemUI", CGet_ItemUI::Create(m_pGraphicDev))))
 			return E_FAIL;
