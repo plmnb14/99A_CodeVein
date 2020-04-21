@@ -27,6 +27,7 @@ CTexture*			g_pDissolveTexture;
 bool				g_bOnStage[8]	= {};
 bool				g_bReleaseMode	= false;
 short				g_sStageIdx_Cur = 0;
+short				g_sPlayerLevel = 1;
 
 // [0] - 최초 로딩 타이틀
 // [1] - 트레이닝
@@ -84,6 +85,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	g_pTimer_Manager->initialize_Timer(L"FrameTime");
 	g_pTimer_Manager->initialize_Timer(L"Timer_Fps_60");
+	g_pTimer_Manager->initialize_Timer(L"Timer_Fps_60_2");
 
 	if (nullptr == pMainApp)
 		return FALSE;
@@ -116,6 +118,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 			if (g_pFrame_Manager->Lock_Frame(60.f, g_pTimer_Manager->Get_DeltaTime(L"FrameTime")))
 			{
 				g_pTimer_Manager->Set_DeltaTime(L"Timer_Fps_60");
+				g_pTimer_Manager->Set_DeltaTime(L"Timer_Fps_60_2");
 
 				_float fFrame = g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60");
 

@@ -8,15 +8,47 @@ BEGIN(Client)
 class CCocoon final : public CGameObject
 {
 public:
-	enum MONSTER_ANITYPE { IDLE, MOVE, ATTACK, HIT, DOWN, DEAD }; //down도 특수하게 생각하자
-	enum Cocoon_IDLETYPE { IDLE_IDLE, IDLE_THREAT };
-	enum Cocoon_HITTYPE { HIT_HIT_F, HIT_HIT_B };
-	enum COCOON_ANI {Idle, Threat, Dead, Dmg_B, Dmg_F, Shot, Mist };
+	enum FBLR { FRONT, FRONTLEFT, FRONTRIGHT, BACK, BACKLEFT, BACKRIGHT, LEFT, RIGHT };
+	enum MONSTER_ANITYPE { IDLE, MOVE, ATTACK, HIT, CC, DEAD };
 
-	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_Head, Bone_End };
+	enum COCOON_ANI 
+	{
+		Idle,
+		Threat,
+		Dead,
+		Dmg_B,
+		Dmg_F,
+		Shot,
+		Mist
+	};
 
-	enum FBLR { FRONT, BACK, LEFT, RIGHT };
+	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_Head, Bone_Neck, Bone_Jaw_Tongue, Bone_End };
 
+public:
+	struct INITSTRUCT
+	{
+		INITSTRUCT(
+			_float _fDMG,
+			_float _fHpMax,
+			_float _fArmorMax,
+			_float _fKnowRange,
+			_float _fShotRange,
+			_float _fAtkRange)
+		{
+			tMonterStatus.fDamage = _fDMG;
+			tMonterStatus.fHp_Max = _fHpMax;
+			tMonterStatus.fArmor_Max = _fArmorMax;
+
+			fKonwingRange = _fKnowRange;
+			fShotRange = _fShotRange;
+			fCanAttackRange = _fAtkRange;
+		}
+
+		OBJECT_PARAM		tMonterStatus;
+		_float				fKonwingRange = 20.f;
+		_float				fShotRange = 10.f;
+		_float				fCanAttackRange = 5.f;
+	};
 protected:
 	explicit CCocoon(LPDIRECT3DDEVICE9 pGraphic_Device);
 	explicit CCocoon(const CCocoon& rhs);
@@ -37,16 +69,17 @@ private:
 	void Check_CollisionPush();
 	void Check_CollisionEvent(list<CGameObject*> plistGameObject);
 
-	void Check_Hit();
-	void Check_FBLR();
-	void Check_Dist();
-	void Set_AniEvent();
-
 	void Function_RotateBody();
 	void Function_CoolDown();
 	void Function_Movement(_float _fspeed, _v3 _vDir = { V3_NULL });
 	void Function_DecreMoveMent(_float _fMutiply = 1.f);
 	void Function_ResetAfterAtk();
+
+	void Check_PosY();
+	void Check_Hit();
+	void Check_FBLR();
+	void Check_Dist();
+	void Check_AniEvent();
 
 	void Play_Idle();
 	void Play_Shot();
@@ -57,6 +90,7 @@ private:
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
+	HRESULT Ready_Status(void* pArg);
 	HRESULT Ready_Collider();
 	HRESULT Ready_BoneMatrix();
 
@@ -86,30 +120,28 @@ private:
 	_float				m_fSkillMoveMultiply = 1.f;
 
 	MONSTER_ANITYPE		m_eFirstCategory;
-	Cocoon_IDLETYPE		m_eSecondCategory_IDLE;
-	Cocoon_HITTYPE		m_eSecondCategory_HIT;
-
+	FBLR				m_eFBLR;
 	COCOON_ANI			m_eState;
+
 	_bool				m_bEventTrigger[10] = {};
-	_bool				m_bCanPlayDeadAni = false;
-	_bool				m_bIsPlayDeadAni = false;
-
+	_bool				m_bCanPlayDead = false;
 	_bool				m_bInRecognitionRange = false;
-	_bool				m_bInMistAtkRange = false;
-	_bool				m_bInShotAtkRange = false;
-
+	_bool				m_bInAtkRange = false;
+	_bool				m_bCanChase = false;
+	_bool				m_bCanRandomAtk = true;
 	_bool				m_bCanCoolDown = false;
 	_bool				m_bIsCoolDown = false;
+	_bool				m_bCanIdle = true;
+	_bool				m_bIsIdle = false;
 
-	_float				m_fRecognitionRange = 20.f;
-	_float				m_fMistAtkRange = 5.f;
-	_float				m_fShotAtkRange = 10.f;
+	_float				m_fRecognitionRange = 25.f;
+	_float				m_fShotRange = 15.f;
+	_float				m_fAtkRange = 5.f;
 	_float				m_fCoolDownMax = 0.f;
 	_float				m_fCoolDownCur = 0.f;
 	_float				m_fSpeedForCollisionPush = 2.f;
 
 	_int				m_iRandom = 0; //랜덤 받을 숫자
-
 };
 
 END

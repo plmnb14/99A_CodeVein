@@ -620,5 +620,21 @@ technique Default_Technique
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_TRAIL_MASK();
 	}
+
+	pass MeshEffect_Zwrite // 7 - For ColdBeam.. ETC
+	{
+		zwriteenable = true;
+
+		AlphablendEnable = true;
+		AlphaTestEnable = true;
+		srcblend = SrcAlpha;
+		DestBlend = InvSrcAlpha;
+		blendop = add;
+
+		cullmode = ccw;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 PS_MESHEFFECT();
+	}
 }
 

@@ -10,20 +10,6 @@ BEGIN(Client)
 
 class CHunterBullet final : public CGameObject
 {
-public:
-	typedef struct tagHunterBulletInfo
-	{
-		tagHunterBulletInfo(_v3 _vBirthPos, _v3 _vDir, _float _fSpeed, _double _dLifeTime)
-			:vBirthPos(_vBirthPos), vDir(_vDir), fSpeed(_fSpeed), dLifeTime(_dLifeTime)
-		{
-		}
-
-		_v3						vBirthPos;
-		_v3						vDir;
-		_float					fSpeed;
-		_double					dLifeTime;
-	}HUNTERBULLET_INFO;
-
 protected:
 	explicit CHunterBullet(LPDIRECT3DDEVICE9 pGraphic_Device);
 	explicit CHunterBullet(const CHunterBullet& rhs);

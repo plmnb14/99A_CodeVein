@@ -278,6 +278,26 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_DistortionSmoke")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_3")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_4")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_5")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_6")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_7")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_8")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_9")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Trail_Lightning_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Trail_Lightning_1")))
@@ -837,6 +857,9 @@ _uint CLoading::Loading_Title()
 	cout << "Essential Dynamic 메쉬 불러오는중" << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Dynamic_Path.dat");
 
+	// 임시 공통 스태틱 메쉬
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
+
 	// 무기 불러오는 중
 	//============================================================================================================
 	cout << "Weapon 메쉬 불러오는 중" << endl;
@@ -936,10 +959,10 @@ _uint CLoading::Loading_Stage()
 		// 2번 - 베이스
 		if (false == g_bOnStage[2])
 		{
-			if (false == g_bReleaseMode)
-			{
-				g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
-			}
+			//if (false == g_bReleaseMode)
+			//{
+			//	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
+			//}
 
 			g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage00_Path.dat");
 
@@ -1004,11 +1027,6 @@ _uint CLoading::Loading_Stage()
 	// 최초 로딩 호출 시 1번만 불러옵니다.
 	if (false == g_bOnStage[0])
 	{
-		// 공통 스테틱 메쉬 불러오는 중
-		//============================================================================================================
-		if(g_bReleaseMode)
-			g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
-
 		// 다이나믹 메쉬 불러오는 중
 		//============================================================================================================
 		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
@@ -1094,6 +1112,9 @@ _uint CLoading::Loading_Stage()
 		// 화염 토네이도 콜라이더
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireTornadoCol", CFireTornadoCol::Create(m_pGraphicDev))))
 			return E_FAIL;
+		// 사슴왕
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKing", CDeerKing::Create(m_pGraphicDev))))
+			return E_FAIL;
 		// 검은 성게
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1118,6 +1139,12 @@ _uint CLoading::Loading_Stage()
 		// 야차맨
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_YachaMan", CYachaMan::Create(m_pGraphicDev))))
 			return E_FAIL;
+		// 토템
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Cocoon", CCocoon::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 토템 총알
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBullet", CCocoonBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
 		// 김헌터
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Hunter", CHunter::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1126,6 +1153,9 @@ _uint CLoading::Loading_Stage()
 			return E_FAIL;
 		// 몽키.D.루피
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Monkey", CMonkey::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 몽키.D.총알
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_MonkeyBullet", CMonkey::Create(m_pGraphicDev))))
 			return E_FAIL;
 		// 예티
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Yeti", CYeti::Create(m_pGraphicDev))))

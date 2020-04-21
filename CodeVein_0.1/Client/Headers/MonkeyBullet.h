@@ -12,20 +12,6 @@ class CWeapon;
 
 class CMonkeyBullet final : public CGameObject
 {
-public:
-	typedef struct tagMonkeyBulletInfo
-	{
-		tagMonkeyBulletInfo(_v3 _vBirthPos, _v3 _vDir, _float _fSpeed, _double _dLifeTime)
-			:vBirthPos(_vBirthPos), vDir(_vDir), fSpeed(_fSpeed), dLifeTime(_dLifeTime)
-		{
-		}
-
-		_v3						vBirthPos;
-		_v3						vDir;
-		_float					fSpeed;
-		_double					dLifeTime;
-	}HUNTERBULLET_INFO;
-
 protected:
 	explicit CMonkeyBullet(LPDIRECT3DDEVICE9 pGraphic_Device);
 	explicit CMonkeyBullet(const CMonkeyBullet& rhs);

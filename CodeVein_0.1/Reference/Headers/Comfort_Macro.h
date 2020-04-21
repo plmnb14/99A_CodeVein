@@ -110,6 +110,7 @@
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////	
 
+#define SHAKE_CAM_lv0 CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(2.f, 4.f, 0.4f, 0.6f, CCamera::CAM_OSC_TYPE::POS_OSC);
 #define SHAKE_CAM_lv1 CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(2.f, 10.f, 0.4f, 0.75f, CCamera::CAM_OSC_TYPE::POS_OSC);
 #define SHAKE_CAM_lv2 CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(4.f, 15.f, 0.7f, 0.8f, CCamera::CAM_OSC_TYPE::POS_OSC);
 #define SHAKE_CAM_lv3 CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(6.f, 20.f, 0.9f, 0.85f, CCamera::CAM_OSC_TYPE::POS_OSC);
