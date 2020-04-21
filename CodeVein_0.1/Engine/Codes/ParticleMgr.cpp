@@ -279,6 +279,11 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Boss_Dead_Particle", 7000);
 
 	Input_Pool(L"Cocoon_TongueFire", 200);
+	Input_Pool(L"Totem_Fire_Bullet_Dead_0", 200);
+	Input_Pool(L"Totem_Fire_Bullet_Dead_1", 200);
+	Input_Pool(L"Totem_Fire_BulletBody", 200);
+	Input_Pool(L"Totem_Fire_Bullet_Dead_Particle", 200);
+
 	Input_Pool(L"Monkey_Knife", 60);
 
 	Input_Pool(L"Hit_BloodParticle_0", 200);

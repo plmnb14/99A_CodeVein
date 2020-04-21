@@ -673,7 +673,7 @@ void CCocoon::Play_Shot()
 				matBone = *m_matBone[Bone_Jaw_Tongue] * m_pTransformCom->Get_WorldMat();
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 
-				g_pManagement->Add_GameObject_ToLayer(L"Monster_CocoonBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 6.f, 2.f));
+				g_pManagement->Add_GameObject_ToLayer(L"Monster_CocoonBigBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 6.f, 2.f));
 			}
 		}
 		else if (3.7f <= AniTime && 5.8f >= AniTime)
