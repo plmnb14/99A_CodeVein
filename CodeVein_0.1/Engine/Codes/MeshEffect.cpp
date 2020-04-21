@@ -87,7 +87,7 @@ _int CMeshEffect::Update_GameObject(_double TimeDelta)
 		return S_OK;
 
 	RENDERID eGroup = RENDERID::RENDER_EFFECT;
-	if (m_iPass == 2)
+	if (m_iPass == 2 || m_iPass == 7)
 		eGroup = RENDERID::RENDER_EFFECT;
 	else
 		eGroup = RENDERID::RENDER_DISTORTION;
@@ -261,6 +261,9 @@ void CMeshEffect::Setup_Info()
 		m_iPass = 1;
 	else
 		m_iPass = 2; // For Mesh Pass
+
+	if (m_bZwrite)
+		m_iPass = 7;
 
 	if (m_pInfo->fDistortionPower <= 0.f || m_pInfo->fDistortionPower > 2.f)
 		m_pInfo->fDistortionPower = 0.09f;

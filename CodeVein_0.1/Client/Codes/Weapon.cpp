@@ -184,6 +184,9 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 	//게임 오브젝트를 받아와서
 	for (auto& iter : plistGameObject)
 	{
+		if(false == iter->Get_Enable())
+			continue;
+
 		// 1 : 다 의 기술일 경우, 기록을 켜야 한대만 맞는다.
 		if (m_bRecordCollision)
 		{
@@ -231,11 +234,11 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 							_uint max = (_uint)(m_tObjParam.fDamage + (m_tObjParam.fDamage * 0.2f));
 
 							//피격시 밀림처리.....
-							//memcpy(vHitDir, &(m_pmatParent->_41), sizeof(_v3));
+							memcpy(vHitDir, &(m_pmatParent->_41), sizeof(_v3));
 
-							//V3_NORMAL(&m_tObjParam.vHitDir, &(ExceptY - vHitDir));
+							V3_NORMAL(&m_tObjParam.vHitDir, &(TARGET_TO_TRANS(iter)->Get_Pos() - vHitDir));
 
-							//iter->Set_Target_HitDir(m_tObjParam.vHitDir);
+							iter->Set_Target_HitDir(m_tObjParam.vHitDir);
 
 							iter->Add_Target_Hp(-(_float)CALC::Random_Num(min , max) * m_fSkillPercent);
 							g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
@@ -578,14 +581,14 @@ HRESULT CWeapon::SetUp_WeaponData()
 	// 한손검
 	//===========================================================================================
 
-	m_tWeaponParam[WPN_SSword_Normal].fDamage = 30.f;
+	m_tWeaponParam[WPN_SSword_Normal].fDamage = 100.f;
 	m_tWeaponParam[WPN_SSword_Normal].fRadius = 0.7f;
 	m_tWeaponParam[WPN_SSword_Normal].fTrail_Min = 0.6f;
 	m_tWeaponParam[WPN_SSword_Normal].fTrail_Max = 1.8f;
 	m_tWeaponParam[WPN_SSword_Normal].fCol_Height = 1.f;
 
 
-	m_tWeaponParam[WPN_SSword_Military].fDamage = 30.f;
+	m_tWeaponParam[WPN_SSword_Military].fDamage = 100.f;
 	m_tWeaponParam[WPN_SSword_Military].fRadius = 0.7f;
 	m_tWeaponParam[WPN_SSword_Military].fTrail_Min = 0.6f;
 	m_tWeaponParam[WPN_SSword_Military].fTrail_Max = 1.8f;
@@ -595,6 +598,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	// 대검
 	//===========================================================================================
 
+	m_tWeaponParam[WPN_Hammer_Normal].fDamage = 55.f;
 	m_tWeaponParam[WPN_LSword_Normal].fRadius = 0.8f;
 	m_tWeaponParam[WPN_LSword_Normal].fTrail_Min = 0.8f;
 	m_tWeaponParam[WPN_LSword_Normal].fTrail_Max = 2.1f;

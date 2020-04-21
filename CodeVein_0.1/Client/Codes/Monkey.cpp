@@ -18,7 +18,7 @@ HRESULT CMonkey::Ready_GameObject_Prototype()
 	return S_OK;
 }
 
-HRESULT CMonkey::Ready_GameObject(void * pArg)
+HRESULT CMonkey::Ready_GameObject(void* pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
@@ -26,46 +26,47 @@ HRESULT CMonkey::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Pos(_v3(1.f, 0.f, 1.f));
 	m_pTransformCom->Set_Scale(V3_ONE);
 
+	Ready_Status(pArg);
 	Ready_BoneMatrix();
 	Ready_Collider();
 	Ready_Weapon();
 
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
-	m_pTarget->AddRef();
-	m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
-	m_pTargetTransform->AddRef();
+
+	if (nullptr != m_pTarget)
+	{
+		Safe_AddRef(m_pTarget);
+
+		m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
+		Safe_AddRef(m_pTargetTransform);
+	}
 
 	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-	m_tObjParam.fHp_Max = 120.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
-	m_tObjParam.fDamage = 25.f;
+	m_tObjParam.fArmor_Cur = m_tObjParam.fArmor_Max;
 
-	m_tObjParam.bCanHit = true; //맞기 가능
-	m_tObjParam.bIsHit = false;	//맞기 진행중 아님
-	m_tObjParam.bCanAttack = true; //공격 가능
-	m_tObjParam.bIsAttack = false; //공격 진행중 아님
-	m_tObjParam.bCanDodge = true; //회피 가능
-	m_tObjParam.bIsDodge = false;  //회피 진행중 아님
+	m_tObjParam.bCanHit = true;
+	m_tObjParam.bIsHit = false;
+	m_tObjParam.bCanAttack = true;
+	m_tObjParam.bIsAttack = false;
+	m_tObjParam.bCanDodge = true; 
+	m_tObjParam.bIsDodge = false; 
 
-	m_bInRecognitionRange = false; //인지 범위 여부
-	m_bInAtkRange = false; //공격 범위 여부
-	m_bCanChase = false; //추격 여부
-	m_bCanCoolDown = false; //쿨타임 여부
-	m_bIsCoolDown = false; //쿨타임 진행중 여부
+	m_bCanPlayDead = false;
+	m_bInRecognitionRange = false;
+	m_bInAtkRange = false;
+	m_bCanChase = false;
+	m_bCanCoolDown = false;
+	m_bIsCoolDown = false;
+	m_bAtkCategory = true;
+	m_bCanInterrupt = true;
+	m_bCanCombo = true;
+	m_bIsCombo = false;
+	m_bCanIdle = true;
+	m_bIsIdle = false;
 
-	m_bAtkCategory = true; //공격타입 고정용
-	m_bIsCombo = false; //콤보 진행중
-
-	m_bCanIdle = true; //일상 가능
-	m_bIsIdle = false; //일상 진행중 아님
-
-	m_fRecognitionRange = 20.f; //인지범위
-	m_fAtkRange = 5.f; //공격범위
-	m_fCoolDownMax = 0.f; //쿨타임 맥스값은 유동적
-	m_fCoolDownCur = 0.f; //쿨타임 시간을 더함
+	m_fCoolDownCur = 0.f;
 	m_fSpeedForCollisionPush = 2.f;
-	m_iRandom = 0;
-	m_iDodgeCount = 0; //n회 피격시 바로 회피
 
 	return S_OK;
 }
@@ -132,7 +133,7 @@ HRESULT CMonkey::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			if (false == m_bReadyDead && !m_bDissolve)
+			if (false == m_bReadyDead && false == m_bDissolve)
 				m_iPass = m_iTempPass = m_pMeshCom->Get_MaterialPass(i, j);
 
 			m_pShaderCom->Begin_Pass(m_iPass);
@@ -428,7 +429,6 @@ void CMonkey::Function_Movement(_float _fspeed, _v3 _vDir)
 {
 	V3_NORMAL(&_vDir, &_vDir);
 
-	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &_vDir, _fspeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
 
 	return;
@@ -686,7 +686,7 @@ void CMonkey::Check_AniEvent()
 	switch (m_eFirstCategory)
 	{
 	case MONSTER_ANITYPE::IDLE:
-			Play_Idle();
+		Play_Idle();
 		break;
 
 	case MONSTER_ANITYPE::MOVE:
@@ -702,8 +702,6 @@ void CMonkey::Check_AniEvent()
 			m_bAtkCategory = false;
 
 			m_iRandom = CALC::Random_Num(MONKEY_ATKTYPE::ATK_NORMAL, MONKEY_ATKTYPE::ATK_COMBO);
-
-			m_iRandom = 0;
 
 			switch (m_iRandom)
 			{
@@ -784,12 +782,10 @@ void CMonkey::Play_RandomAtkNormal()
 {
 	_float fLenth = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransform->Get_Pos()));
 
-	m_iRandom = ATK_NORMAL_TYPE::NORMAL_FANGSHOOT;
-
-	//if (m_fShotRange >= fLenth)
-	//	m_iRandom = ATK_NORMAL_TYPE::NORMAL_FANGSHOOT;
-	//else
-	//	m_iRandom = CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_ATK_ROTBODY, ATK_NORMAL_TYPE::NORMAL_JUMP_ROTBODY);
+	if (m_fAtkRange < fLenth && m_fShotRange >= fLenth) 
+		m_iRandom = ATK_NORMAL_TYPE::NORMAL_FANGSHOOT;
+	else
+		m_iRandom = CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_ATK_ROTBODY, ATK_NORMAL_TYPE::NORMAL_JUMP_ROTBODY);
 
 	switch (m_iRandom)
 	{
@@ -900,7 +896,7 @@ void CMonkey::Play_Jump_RotBody()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_fCoolDownMax = 0.7f;
+			m_fCoolDownMax = 1.4f;
 			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
 
@@ -963,7 +959,7 @@ void CMonkey::Play_JumpLHand()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_fCoolDownMax = 0.3f;
+			m_fCoolDownMax = 0.8f;
 			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
 
@@ -1017,7 +1013,7 @@ void CMonkey::Play_JumpDown()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_fCoolDownMax = 0.5f;
+			m_fCoolDownMax = 0.7f;
 			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
 
@@ -1080,7 +1076,7 @@ void CMonkey::Play_RDiagonal()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_fCoolDownMax = 0.3f;
+			m_fCoolDownMax = 0.9f;
 			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
 
@@ -1143,7 +1139,7 @@ void CMonkey::Play_Atk_RotBody()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_fCoolDownMax = 0.3f;
+			m_fCoolDownMax = 0.7f;
 			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
 
@@ -1366,7 +1362,7 @@ void CMonkey::Play_Combo_Jump_Clock()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_fCoolDownMax = 0.8f;
+			m_fCoolDownMax = 1.2f;
 			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
 
@@ -1454,9 +1450,19 @@ void CMonkey::Play_Combo_RunAtk()
 
 			return;
 		}
-		else if (m_pMeshCom->Is_Finish_Animation(0.3f))
+
+		if (false == m_bEventTrigger[5])
+		{
+			m_bEventTrigger[5] = true;
+			m_fSkillMoveSpeed_Cur = 6.f;
+			m_fSkillMoveAccel_Cur = 0.f;
+			m_fSkillMoveMultiply = 0.0f;
+		}
+
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
 			m_bCanInterrupt = false;
 
+		Function_RotateBody();
 		Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 		Function_DecreMoveMent(m_fSkillMoveMultiply);
 	}
@@ -1764,35 +1770,58 @@ void CMonkey::Play_Dead()
 	}
 	else
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		switch (m_eState)
 		{
-			m_bEnable = false;
-			m_dAniPlayMul = 0;
-		}
-		else
-		{
-			if (1.30f < AniTime && 2.80f > AniTime)
+		case MONKEY_ANI::Death:
+			if (m_pMeshCom->Is_Finish_Animation(0.95f))
+			{
+				m_bEnable = false;
+				m_dAniPlayMul = 0;
+			}
+			if (3.233f <= AniTime)
 			{
 				if (false == m_bEventTrigger[0])
 				{
 					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 1.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 0.1f;
-				}
-
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-			else if (5.233f < AniTime)
-			{
-				if (false == m_bEventTrigger[1])
-				{
-					m_bEventTrigger[1] = true;
 					Start_Dissolve(0.7f, false, true);
 					m_pWeapon->Start_Dissolve(0.7f, false, true);
 				}
 			}
+			break;
+
+		case MONKEY_ANI::Death_F:
+			if (m_pMeshCom->Is_Finish_Animation(0.95f))
+			{
+				m_bEnable = false;
+				m_dAniPlayMul = 0;
+			}
+			if (3.167f <= AniTime)
+			{
+				if (false == m_bEventTrigger[0])
+				{
+					m_bEventTrigger[0] = true;
+					Start_Dissolve(0.7f, false, true);
+					m_pWeapon->Start_Dissolve(0.7f, false, true);
+				}
+			}
+			break;
+
+		case MONKEY_ANI::Death_B:
+			if (m_pMeshCom->Is_Finish_Animation(0.95f))
+			{
+				m_bEnable = false;
+				m_dAniPlayMul = 0;
+			}
+			if (2.867f <= AniTime)
+			{
+				if (false == m_bEventTrigger[0])
+				{
+					m_bEventTrigger[0] = true;
+					Start_Dissolve(0.7f, false, true);
+					m_pWeapon->Start_Dissolve(0.7f, false, true);
+				}
+			}
+			break;
 		}
 	}
 
@@ -1858,14 +1887,30 @@ HRESULT CMonkey::SetUp_ConstantTable()
 
 HRESULT CMonkey::Ready_Status(void * pArg)
 {
-	MONKEY_INFO Info = *(MONKEY_INFO*)pArg;
-	
-	m_tObjParam.fDamage = Info.tMonterStatus.fDamage;
-	m_tObjParam.fHp_Max = Info.tMonterStatus.fHp_Max;
-	m_fRecognitionRange = Info.fKonwingRange;
-	m_fAtkRange = Info.fCanAttackRange;
-	m_fShotRange = Info.fCanShotRangeIfGunChooose;
-	m_iDodgeCountMax = Info.fDodgeCountMax;
+	if (nullptr == pArg)
+	{
+		m_tObjParam.fDamage = 25.f;
+		m_tObjParam.fHp_Max = 120.f;
+		m_tObjParam.fArmor_Max = 10.f;
+
+		m_fRecognitionRange = 15.f;
+		m_fShotRange = 10.f;
+		m_fAtkRange = 5.f;
+		m_iDodgeCountMax = 5.f;
+	}
+	else
+	{
+		INITSTRUCT Info = *(INITSTRUCT*)pArg;
+
+		m_tObjParam.fDamage = Info.tMonterStatus.fDamage;
+		m_tObjParam.fHp_Max = Info.tMonterStatus.fHp_Max;
+		m_tObjParam.fArmor_Max = Info.tMonterStatus.fArmor_Max;
+
+		m_fRecognitionRange = Info.fKonwingRange;
+		m_fShotRange = Info.fCanShotRangeIfGunChooose;
+		m_fAtkRange = Info.fCanAttackRange;
+		m_iDodgeCountMax = Info.iDodgeCountMax;
+	}
 
 	return S_OK;
 }
@@ -1922,7 +1967,6 @@ HRESULT CMonkey::Ready_Collider()
 	pCollider->Set_Enabled(true);
 
 	m_vecAttackCol.push_back(pCollider);
-
 
 	return S_OK;
 }
@@ -1982,15 +2026,14 @@ void CMonkey::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 
-	for (auto& iter : m_vecPhysicCol)
-	{
-		Safe_Release(iter);
-	}
+	for (auto& vecter_iter : m_vecPhysicCol)
+		Safe_Release(vecter_iter);
+
+	for (auto& vecter_iter : m_vecAttackCol)
+		Safe_Release(vecter_iter);
 
 	for (auto& iter : m_matBone)
-	{
 		iter = nullptr;
-	}
 
 	CGameObject::Free();
 

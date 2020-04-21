@@ -12,7 +12,6 @@ class CMonsterUI;
 
 class CHunter final : public CGameObject
 {
-
 public:
 	enum FBLR { FRONT, FRONTLEFT, FRONTRIGHT, BACK, BACKLEFT, BACKRIGHT, LEFT, RIGHT };
 	enum MONSTER_ANITYPE { IDLE, MOVE, ATTACK, HIT, CC, DEAD };
@@ -117,11 +116,11 @@ public:
 
 		Down_S_End,
 		Down_S_Loop,
-		Down_S_Start, //자빠짐
+		Down_S_Start, //뒤 넘어짐
 
 		Down_P_End,
 		Down_P_Loop,
-		Down_P_Start, //엎어짐
+		Down_P_Start, //앞 넘어짐
 
 		Dmg02_FR, //좀 느리게 돌아옴
 		Dmg02_FL, //씨게 맞음
@@ -203,28 +202,36 @@ public:
 	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_Head, Bone_RightForeArm, Bone_LeftKnee, Bone_LeftToe, Bone_RightHandAttach, Bone_End };
 
 public:
-		typedef struct tagHunterInfo
+	struct INITSTRUCT
+	{
+		INITSTRUCT(
+			_float _fDMG,
+			_float _fHpMax,
+			_float _fArmorMax,
+			_float _fKnowRange,
+			_float _fShotRange,
+			_float _fAtkRange,
+			_int _iDodgeMax,
+			WEAPON_ANITYPE _eWeapon)
 		{
-			tagHunterInfo(_float _fDMG, _float _fHpMax,
-				_float _fKnowRange, _float _fAtkRange,
-				_float _ShotRange, _int iDodgeMax, WEAPON_ANITYPE eWeapon)
-				:
-				fKonwingRange(_fKnowRange),
-				fCanAttackRange(_fAtkRange),
-				fCanShotRangeIfGunChooose(_ShotRange), 
-				fDodgeCountMax(iDodgeMax),
-				eUseWhatWeapon(eWeapon)
-			{
-				tMonterStatus.fDamage = _fDMG;
-				tMonterStatus.fHp_Max = _fHpMax;
-			}
-			OBJECT_PARAM		tMonterStatus;
-			_float				fKonwingRange = 20.f;
-			_float				fCanShotRangeIfGunChooose = 10.f;
-			_float				fCanAttackRange = 5.f;
-			_int				fDodgeCountMax = 3;
-			WEAPON_ANITYPE		eUseWhatWeapon = WEAPON_ANITYPE::SWORD;
-		}HUNTER_INFO;
+			tMonterStatus.fDamage = _fDMG;
+			tMonterStatus.fHp_Max = _fHpMax;
+			tMonterStatus.fArmor_Max = _fArmorMax;
+
+			fKonwingRange = _fKnowRange;
+			fCanShotRangeIfGunChooose = _fShotRange;
+			fCanAttackRange = _fAtkRange;
+			iDodgeCountMax = _iDodgeMax;
+			eUseWhatWeapon = _eWeapon;
+		}
+
+		OBJECT_PARAM		tMonterStatus;
+		_float				fKonwingRange = 20.f;
+		_float				fCanShotRangeIfGunChooose = 10.f;
+		_float				fCanAttackRange = 5.f;
+		_int				iDodgeCountMax = 3;
+		WEAPON_ANITYPE		eUseWhatWeapon = WEAPON_ANITYPE::SWORD;
+	};
 
 protected:
 	explicit CHunter(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -363,7 +370,6 @@ private:
 	_bool				m_bEventTrigger[20] = {};
 
 	_bool				m_bCanPlayDead = false;
-	_bool				m_bCanDissolve = false;
 
 	_bool				m_bInRecognitionRange = false;
 	_bool				m_bInAtkRange = false;
@@ -381,8 +387,6 @@ private:
 	_bool				m_bCanIdle = true;
 	_bool				m_bIsIdle = false;
 
-	//총타입의 경우 shot레인지 이내에서는 원거리 공격위주
-	//fatkrange 범위에 들어온 경우 kick,r,cqc 중 하나를 랜덤하게 진행한다
 	_float				m_fRecognitionRange = 20.f;
 	_float				m_fShotRange = 10.f;
 	_float				m_fAtkRange = 5.f;

@@ -76,6 +76,18 @@ private:
 	virtual void St01_Sub6();
 
 private:
+	virtual void St03_Sub0();
+	virtual void St03_Sub1();
+	virtual void St03_Sub2();
+	virtual void St03_Sub3();
+	virtual void St03_Sub4();
+
+private:
+	virtual void St04_Sub0();
+	virtual void St04_Sub1();
+	virtual void St04_Sub2();
+
+private:
 	virtual void Stage_Base_Scripts();
 	virtual void Stage_01_Scripts();
 	virtual void Stage_02_Scripts();

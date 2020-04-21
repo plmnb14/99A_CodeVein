@@ -37,6 +37,7 @@ _int CScene_Logo::Update_Scene(_double TimeDelta)
 
 	if (true == m_pLoading->Get_Finish())
 		m_pLogoBtn->Set_Active(true);
+
 	if (true == m_pLoading->Get_Finish() && g_pInput_Device->Key_Down(DIK_SPACE))
 	{
 		if (g_bReleaseMode)

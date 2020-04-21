@@ -223,6 +223,7 @@
     <ClInclude Include="..\Headers\MistletoeOptionUI.h" />
     <ClInclude Include="..\Headers\MistletoeUI.h" />
     <ClInclude Include="..\Headers\Monkey.h" />
+    <ClInclude Include="..\Headers\MonkeyBullet.h" />
     <ClInclude Include="..\Headers\Monster.h" />
     <ClInclude Include="..\Headers\MonsterHeaders.h" />
     <ClInclude Include="..\Headers\MonsterUI.h" />
@@ -333,6 +334,7 @@
     <ClCompile Include="..\Codes\MistletoeOptionUI.cpp" />
     <ClCompile Include="..\Codes\MistletoeUI.cpp" />
     <ClCompile Include="..\Codes\Monkey.cpp" />
+    <ClCompile Include="..\Codes\MonkeyBullet.cpp" />
     <ClCompile Include="..\Codes\Monster.cpp" />
     <ClCompile Include="..\Codes\MonsterUI.cpp" />
     <ClCompile Include="..\Codes\NumberUI.cpp" />
