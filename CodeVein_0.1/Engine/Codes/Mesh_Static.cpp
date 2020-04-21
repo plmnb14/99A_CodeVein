@@ -75,11 +75,6 @@ HRESULT CMesh_Static::Ready_Component_Prototype(const _tchar * pFilePath, const 
 
 		lstrcat(szFullPath, szTextureFileName);
 
-		if (!lstrcmp(L"Home_Floorground.X", pFileName))
-		{
-			//cout << "1" << endl;
-		}
-
 		//==================================================================================================================================
 		// C - Color
 		//==================================================================================================================================

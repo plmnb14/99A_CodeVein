@@ -2619,7 +2619,8 @@ CGameObject* CYachaMan::Clone_GameObject(void * pArg)
 void CYachaMan::Free()
 {
 	Safe_Release(m_pTarget);
-	Safe_Release(m_pTransformCom);
+	Safe_Release(m_pTargetTransform);
+
 	Safe_Release(m_pWeapon);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pNavMesh);

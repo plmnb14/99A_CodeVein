@@ -3130,7 +3130,7 @@ void CPlayer::Play_Summon()
 
 		Start_Dissolve(0.15f, true, false);
 
-		m_fAnimMutiply = 0.3f;
+		m_fAnimMutiply = 0.5f;
 	}
 
 	else if (true == m_bOnSummon)

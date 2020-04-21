@@ -27,8 +27,14 @@ void CTimer::Set_DeltaTime()
 	}
 
 	m_fDeltaTime = (_float(m_FixedTime.QuadPart - m_OldTime.QuadPart) / m_CPU_Tick.QuadPart) * m_fTimeMul;
+	m_fOriginDeltaTime = (_float(m_FixedTime.QuadPart - m_OldTime.QuadPart) / m_CPU_Tick.QuadPart);
 
 	m_OldTime = m_FixedTime;
+
+	if (m_bResetMultiplyTime)
+	{
+		Reset_DeltaMutiply();
+	}
 }
 
 _float CTimer::Get_DeltaTime()
@@ -36,9 +42,43 @@ _float CTimer::Get_DeltaTime()
 	return m_fDeltaTime;
 }
 
-void CTimer::Set_TimeMul(_float _time)
+void CTimer::Set_TimeMultiply(_float _time)
 {
 	m_fTimeMul = _time;
+}
+
+void CTimer::Set_ResetMutiplyAccTime(_float _fDelayTime)
+{
+	// _fDelayTime 가 지난 후에 Multiply 가 초기화 됩니다.
+
+	if (_fDelayTime <= 0.f)
+	{
+		m_bResetMultiplyTime = false;
+		m_fResetMultiplyAccTime = 0.f;
+	}
+
+	else
+	{
+		m_fResetMultiplyDelayTime = _fDelayTime;
+		m_fResetMultiplyAccTime = 0.f;
+		m_bResetMultiplyTime = true;
+	}
+}
+
+void CTimer::Reset_DeltaMutiply()
+{
+	if (m_fResetMultiplyAccTime < m_fResetMultiplyDelayTime)
+	{
+		m_fResetMultiplyAccTime += m_fOriginDeltaTime;
+
+		if (m_fResetMultiplyAccTime >= m_fResetMultiplyDelayTime)
+		{
+			m_bResetMultiplyTime = false;
+			m_fResetMultiplyAccTime = 0.f;
+			m_fResetMultiplyDelayTime = 0.f;
+			m_fTimeMul = 1.f;
+		}
+	}
 }
 
 HRESULT CTimer::Initialize()

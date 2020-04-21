@@ -1007,11 +1007,6 @@ _uint CLoading::Loading_Stage()
 	// 최초 로딩 호출 시 1번만 불러옵니다.
 	if (false == g_bOnStage[0])
 	{
-		// 공통 스테틱 메쉬 불러오는 중
-		//============================================================================================================
-		if(g_bReleaseMode)
-			g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
-
 		// 다이나믹 메쉬 불러오는 중
 		//============================================================================================================
 		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
