@@ -4,7 +4,7 @@
 
 BEGIN(Client)
 
-class CDamegeNumUI;
+//class CDamegeNumUI;
 class CMonsterUI;
 class CGet_ItemUI;
 class CWeapon;
@@ -29,7 +29,7 @@ public:
 
 private:
 	enum Ani {
-		Ani_Idle = 42, Ani_Death = 64, Ani_Dmg01_FL = 122,
+		Ani_Idle = 42, Ani_Death = 64, Ani_Dmg01_FL = 124, Ani_Dmg01_FR = 123, Ani_Dmg01_BL = 122, Ani_Dmg01_BR = 121,
 		Ani_StandUp1 = 140, Ani_StandUp2 = 153
 	};
 
@@ -119,7 +119,7 @@ private:
 	CWeapon*			m_pSword = nullptr;
 
 	////////////// MonsterHP UI
-	CDamegeNumUI*		m_pDamegeNumUI = nullptr;
+	//CDamegeNumUI*		m_pDamegeNumUI = nullptr;
 	CMonsterUI*			pMonsterHpUI = nullptr;
 	CGet_ItemUI*		m_pGet_Item = nullptr;
 

@@ -2,7 +2,7 @@
 
 matrix		g_matWorld, g_matView, g_matProj, g_matLastWVP;
 bool		g_bMotionBlur;
-float		g_fRimPower, g_fBloomPower = 0.5f;
+float		g_fRimPower, g_fBloomPower = 0.75f;
 
 struct VS_IN
 {

@@ -48,14 +48,18 @@ private:	// 패턴들
 	CBT_Composite_Node* ThreeCombo_Cut1();
 	// 3. 삼단베기,  슉 + 슉 + 회전베기
 	CBT_Composite_Node* ThreeCombo_Cut2();
-	// 4. 점프찌르기
+	// 4. 일반 점프 어택
 	CBT_Composite_Node* Jump_Attack();
-	// 5. 검 휘두르고 얼음 소환
+	// 5. 검 휘두르고 작은 크기 콜드빔 소환
 	CBT_Composite_Node* Ice_Cut();
 	// 6. 얼음 보호막
 	CBT_Composite_Node* Ice_Barrier();
-	// 7. 플레이어 주위에 콜드빔, 31번 애니
-
+	// 7. 플레이어 주위에 큰 크기 콜드빔,	얼음기둥 등장시간 조정필요
+	CBT_Composite_Node* ColdBeam_RandomPos();
+	// 8. 자신 주위 4방향  중간 크기 콜드빔
+	CBT_Composite_Node* ColdBeam_Around_Me();
+	// 9. 점프 어택 + 뾰족뾰족 콜드빔
+	CBT_Composite_Node* Jump_Attack_And_ColdBeam();
 
 	// 원거리
 	// 1. 차지 후 돌진 찌르기

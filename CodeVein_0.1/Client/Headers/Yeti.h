@@ -9,24 +9,19 @@ BEGIN(Client)
 class CYeti final : public CGameObject
 {
 public:
+	enum FBLR { FRONT, FRONTLEFT, FRONTRIGHT, BACK, BACKLEFT, BACKRIGHT, LEFT, RIGHT };
 	enum MONSTER_ANITYPE { IDLE, MOVE, ATTACK, HIT, CC, DEAD };
 
-	enum YETI_IDLETYPE { IDLE_IDLE, IDLE_THREAT };
+	enum YETI_IDLETYPE { IDLE_IDLE, IDLE_THREAT }; //일반대기, 경계 대기라고 생각하고 전투시에는 threat 사용
 	enum YETI_MOVETYPE { MOVE_RUN, MOVE_WALK };
 	enum YETI_ATKTYPE { ATK_NORMAL, ATK_COMBO }; //일반공격, 콤보공격
-	enum YETI_HITTYPE { HIT_HIT_F, HIT_HIT_B };
-	enum YETI_CCTYPE { CC_DOWN, CC_STUN, CC_BLOW }; //다운,스턴,날아감
-	enum YETI_DEADTYPE { DEAD_DEAD, DEAD_DEAD_S }; //일반, 특정 상황에서 죽었을 경우
+	enum YETI_HITTYPE { HIT_STRONG, HIT_NORMAL }; //특수 피격 없음
+	enum YETI_CCTYPE { CC_DOWN }; //cc 없음
+	enum YETI_DEADTYPE { DEAD_DEAD };
 
 	enum ATK_NORMAL_TYPE
 	{
-		NORMAL_UPPER,
-		NORMAL_SMASH,
-		NORMAL_SHOULDER,
-		NORMAL_Rush_Start,
-		NORMAL_Rush_Loop,
-		NORMAL_Rush_End,
-		NORMAL_ROLL,
+		NORMAL_RUSH,
 		NORMAL_ROLLINGSLASH,
 		NORMAL_ICETHROW,
 		NORMAL_R_L_R_L,
@@ -40,9 +35,9 @@ public:
 	};
 	enum ATK_COMBO_TYPE
 	{
-		//sp6 shoulder 0.5 0.85
-		//sp6 smash 0.5 0.85
-		//sp6 swing 0.5 0.85
+		COMBO_RLRL_SHOULDER,
+		COMBO_RLRL_SMASH,
+		COMBO_RLRL_SWING
 	};
 
 	enum YETI_ANI
@@ -74,7 +69,6 @@ public:
 		Death,
 
 		Atk_Swing,
-		Atk_DonkeyKick, //폐기
 		Atk_Smash,
 		Atk_Shoulder,
 		Atk_Rush_Start,
@@ -95,7 +89,33 @@ public:
 
 	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_Head, Bone_LeftHand, Bone_RightHand, Bone_Shoulder, Bone_End };
 
-	enum FBLR { FRONT, BACK, LEFT, RIGHT };
+public:
+	struct INITSTRUCT
+	{
+		INITSTRUCT(
+			_float _fDMG,
+			_float _fHpMax,
+			_float _fArmorMax,
+			_float _fKnowRange,
+			_float _fShotRange,
+			_float _fAtkRange,
+			_int _iDodgeMax
+			)
+		{
+			tMonterStatus.fDamage = _fDMG;
+			tMonterStatus.fHp_Max = _fHpMax;
+			tMonterStatus.fArmor_Max = _fArmorMax;
+
+			fKonwingRange = _fKnowRange;
+			fCanShotRangeIfGunChooose = _fShotRange;
+			fCanAttackRange = _fAtkRange;
+		}
+
+		OBJECT_PARAM		tMonterStatus;
+		_float				fKonwingRange = 20.f;
+		_float				fCanShotRangeIfGunChooose = 10.f;
+		_float				fCanAttackRange = 5.f;
+	};
 
 protected:
 	explicit CYeti(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -122,35 +142,41 @@ private:
 	void Function_Movement(_float _fspeed, _v3 _vDir = { V3_NULL });
 	void Function_DecreMoveMent(_float _fMutiply = 1.f);
 	void Function_ResetAfterAtk();
-	void Function_TargetAround();
 
+	void Check_PosY();
 	void Check_Hit();
 	void Check_FBLR();
 	void Check_Dist();
-	void Set_AniEvent();
+	void Check_AniEvent();
 
 	void Play_RandomAtkNormal();
 	void Play_RandomAtkCombo();
 
-	void Play_FangShot();
-	void Play_Jump_RotBody(); //Jump1
-	void Play_JumpLHand(); //jump2
-	void Play_JumpDown(); //jump3
-	void Play_RDiagonal(); //n1
-	void Play_Atk_RotBody(); //n2
-	void Play_Combo_Normal(); //n1 n2 0.85 0.95
-	void Play_Combo_Jump_Clock(); //jump1 n2 0.85 0.95
-	void Play_Combo_RunAtk();  //0.8 0.9 0.92
+	void Play_BodyPress();
+	void Play_Howling();
+	void Play_SlowLR();
+	void Play_RUpperChop();
+	void Play_LRSweap();
+	void Play_FastLR();
+	void Play_WoodChop();
+	void Play_RLRL();
+	void Play_IceThrowing();
+	void Play_RollingSlash();
+	void Play_Rush();
+	void Play_Combo_RLRL_Shoulder();
+	void Play_Combo_RLRL_Smash();
+	void Play_Combo_RLRL_Swing();
 
-	void Play_Idle(); //일상 동작 전부 이곳에
-	void Play_Move(); //걷기,달리기 회피 한곳에
-	void Play_Hit();  //피격 한곳에
-	void Play_CC(); //cc 한곳에
-	void Play_Dead(); //죽음 한곳에
+	void Play_Idle();
+	void Play_Move();
+	void Play_Hit(); 
+	void Play_CC(); 
+	void Play_Dead();
 
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
+	HRESULT Ready_Status(void* pArg);
 	HRESULT Ready_Collider();
 	HRESULT Ready_BoneMatrix();
 
@@ -180,8 +206,8 @@ private:
 	_float				m_fSkillMoveAccel_Max = 0.f;
 	_float				m_fSkillMoveMultiply = 1.f;
 
-	MONSTER_ANITYPE		m_eFirstCategory; //대분류
-	YETI_IDLETYPE		m_eSecondCategory_IDLE; //중분류
+	MONSTER_ANITYPE		m_eFirstCategory;
+	YETI_IDLETYPE		m_eSecondCategory_IDLE;
 	YETI_MOVETYPE		m_eSecondCategory_MOVE;
 	YETI_ATKTYPE		m_eSecondCategory_ATK;
 	YETI_HITTYPE		m_eSecondCategory_HIT;
@@ -190,37 +216,33 @@ private:
 
 	ATK_COMBO_TYPE		m_eAtkCombo;
 	YETI_ANI			m_eState;
+	FBLR				m_eFBLR;
 
 	_bool				m_bEventTrigger[20] = {};
-	/////////Test
-	_bool				m_bCanDead = false;
-	_bool				m_bCanDissolve = false;
-	//////////////
-	_bool				m_bCanPlayDeadAni = false;
-	_bool				m_bIsPlayDeadAni = false;
 
+	_bool				m_bCanPlayDead = false;
 	_bool				m_bInRecognitionRange = false;
 	_bool				m_bInAtkRange = false;
-
 	_bool				m_bCanChase = false;
-
 	_bool				m_bCanCoolDown = false;
 	_bool				m_bIsCoolDown = false;
+	_bool				m_bAtkCategory = true;
+	_bool				m_bCanInterrupt = true;
+	_bool				m_bCanCombo = true;
+	_bool				m_bIsCombo = false;
+	_bool				m_bCanIdle = true;
+	_bool				m_bIsIdle = false;
 
-	_bool				m_bCanAtkCategoryRandom = true;
-	_bool				m_bIsAtkCombo = false;
-	_bool				m_bCanIdleRandom = true;
+	_float				m_fRecognitionRange = 20.f;
+	_float				m_fShotRange = 10.f;
+	_float				m_fAtkRange = 5.f;
+	_float				m_fCoolDownMax = 0.f;
+	_float				m_fCoolDownCur = 0.f;
+	_float				m_fSpeedForCollisionPush = 2.f;
+	_float				m_fHitCount;
+	_float				m_fHitCountMax;
 
-	_float				m_fRecognitionRange = 20.f; //유동
-	_float				m_fShotRange = 10.f; //유동
-	_float				m_fAtkRange = 5.f; //유동
-	_float				m_fCoolDownMax = 0.f; //0초기화
-	_float				m_fCoolDownCur = 0.f; //0초기화
-	_float				m_fSpeedForCollisionPush = 2.f; //선 충돌 측정용 고정값
-
-	_int				m_iRandom = 0; //사용할 필요 없어져가니 지울 예정
-	_int				m_iDodgeCountMax = 3; //3회 피격시 회피 유동값
-	_int				m_iDodgeCount = 0; //n회 피격시 회피 0초기화
+	_int				m_iRandom = 0;
 
 };
 

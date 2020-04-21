@@ -593,7 +593,7 @@ PS_OUT_ADVENCE PS_Default_DNSUID(PS_IN In)
 
 	fFinalSpecular = fFinalSpecular * SpecularIntensity.y;
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x, fFinalSpecular * 2.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x * 1.f, SpecularIntensity.y * 1.f);
 	 
 	//========================================================================================================================
 
@@ -711,6 +711,48 @@ PS_OUT_ADVENCE PS_Default_DNEID(PS_IN In)
 	float fSpecularPower = fDefaultSpecular + (vIDValue.g * 5.f);
 
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, fSpecularPower, 1.f);
+
+	//========================================================================================================================
+
+	Out.vEmissive = pow(tex2D(EmissiveSampler, In.vTexUV), 2.2);
+	Out.vEmissive.a = 1.f;
+
+	//========================================================================================================================
+	return Out;
+}
+
+PS_OUT_ADVENCE PS_Default_DNEU(PS_IN In)
+{
+	// 디퓨즈 | 노말 | 이미시브
+
+	PS_OUT_ADVENCE			Out = (PS_OUT_ADVENCE)0;
+
+	//========================================================================================================================
+
+	Out.vDiffuse = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
+
+	//========================================================================================================================
+
+	float3 TanNormal = tex2D(NormalSampler, In.vTexUV).xyz;
+
+	TanNormal = normalize(TanNormal * 2.f - 1.f);
+
+	float3x3 TBN = float3x3(normalize(In.T), normalize(In.B), normalize(In.N));
+	TBN = transpose(TBN);
+
+	float3 worldNormal = mul(TBN, TanNormal);
+
+	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 0.f);
+
+	//========================================================================================================================
+
+	float3 vUnion = tex2D(UnionSampler, In.vTexUV).xyz;
+
+	float fDefaultSpecular = 0.5f;
+	float fSpecularPower = fDefaultSpecular * 5.f * vUnion.x;
+	float fRoughnessPower = fDefaultSpecular * 5.f * vUnion.y;
+
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
 
 	//========================================================================================================================
 
@@ -1026,7 +1068,7 @@ technique Default_Technique
 	//====================================================================================================
 	// 17 - Default ( D N E ID )
 	//====================================================================================================
-	pass Default_DNE
+	pass Default_DNEID
 	{
 		AlphablendEnable = false;
 
@@ -1036,6 +1078,21 @@ technique Default_Technique
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_Default_DNEID();
+	}
+
+	//====================================================================================================
+	// 18 - Default ( D N E ID )
+	//====================================================================================================
+	pass Default_DNEU
+	{
+		AlphablendEnable = false;
+
+		AlphaTestEnable = true;
+		AlphaRef = 0;
+		AlphaFunc = Greater;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 PS_Default_DNEU();
 	}
 }
 

@@ -43,6 +43,11 @@ HRESULT CIceBarrier::Ready_GameObject(void * pArg)
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
+	m_pBarrierBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"IceGirl_Buff_Bubble", nullptr));
+	m_pBarrierBody->Set_Desc(_v3(0.f, 0.f, 0.f), m_pTransformCom);
+	m_pBarrierBody->Reset_Init();
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBarrierBody, SCENE_STAGE, L"Layer_Effect", nullptr);
+
 	return NOERROR;
 }
 
@@ -53,7 +58,6 @@ _int CIceBarrier::Update_GameObject(_double TimeDelta)
 
 	if (m_bDead)
 	{
-		
 
 		return DEAD_OBJ;
 	}
@@ -65,10 +69,9 @@ _int CIceBarrier::Update_GameObject(_double TimeDelta)
 	// ¹æ¾î¸·Àº ÀÏÁ¤½Ã°£ Áö³ª¸é ¾Ë¾Æ¼­ ²¨Áü
 	if (m_dCurTime > m_dLifeTime)
 	{
-		//CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Break_1", m_pTransformCom->Get_Pos(), nullptr);
-		//CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Break_2", m_pTransformCom->Get_Pos(), nullptr);
-		//CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Break_Lightning", m_pTransformCom->Get_Pos(), nullptr);
-	
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Bubble_BreakSmoke", m_pTransformCom->Get_Pos(), nullptr);
+		m_pBarrierBody->Set_Dead();
+
 		m_bBarrierOff = true;	// ¹æ¾î¸· ²¨Áü ½ÃÀÛ
 	}
 	else
@@ -78,9 +81,11 @@ _int CIceBarrier::Update_GameObject(_double TimeDelta)
 		if (m_fEffectOffset > 0.1f)
 		{
 			m_fEffectOffset = 0.f;
-			CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Aura", m_pTransformCom->Get_Pos(), nullptr);
-			CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Aura_2", m_pTransformCom->Get_Pos(), nullptr);
-			CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Aura_3", m_pTransformCom->Get_Pos(), nullptr);
+			//CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Aura", m_pTransformCom->Get_Pos(), nullptr);
+			//CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Aura_2", m_pTransformCom->Get_Pos(), nullptr);
+			//CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Aura_3", m_pTransformCom->Get_Pos(), nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(L"IceSmoke_01", m_pTransformCom->Get_Pos(), nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(L"IceSmoke_02", m_pTransformCom->Get_Pos(), nullptr);
 		}
 	}
 
@@ -165,6 +170,8 @@ void CIceBarrier::Check_PhyCollider()
 		CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Break_1", m_pTransformCom->Get_Pos(), nullptr);
 		CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Break_2", m_pTransformCom->Get_Pos(), nullptr);
 		CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Break_Lightning", m_pTransformCom->Get_Pos(), nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Bubble_BreakSmoke", m_pTransformCom->Get_Pos(), nullptr);
+		m_pBarrierBody->Set_Dead();
 
 		cout << "CIceBarrier - Check_PhyCollider: º¸È£¸· ±úÁü" << endl;
 	}

@@ -12,7 +12,7 @@ class CScene_Logo final : public CScene
 public:
 	enum DEBUG_SceneChange
 	{
-		Stage_Base, Stage_Training, Stage_01, Stage_02, Stage_03, Stage_End
+		Stage_Base, Stage_Training, Stage_01, Stage_02, Stage_03, Stage_04, Stage_End
 	};
 
 private:

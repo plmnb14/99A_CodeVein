@@ -38,6 +38,11 @@ HRESULT CIceGirl::Ready_GameObject(void * pArg)
 
 	///////////////// 행동트리 init
 
+	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL);
+
+	if (nullptr == pPlayer)
+		return E_FAIL;
+
 	CBlackBoard* pBlackBoard = CBlackBoard::Create();
 	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create();	//인자에 true 주면 콘솔창에 디버깅정보 뜸, default = false
 
@@ -46,7 +51,7 @@ HRESULT CIceGirl::Ready_GameObject(void * pArg)
 
 	Update_Bone_Of_BlackBoard();
 
-	pBlackBoard->Set_Value(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos());
+	pBlackBoard->Set_Value(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))->Get_Pos());
 	pBlackBoard->Set_Value(L"HP", m_tObjParam.fHp_Cur);
 	pBlackBoard->Set_Value(L"MAXHP", m_tObjParam.fHp_Max);
 
@@ -79,8 +84,8 @@ HRESULT CIceGirl::Ready_GameObject(void * pArg)
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
 
-	CBT_Wait* Wait0 = Node_Wait("대기", 1, 0);
-	Start_Sel->Add_Child(Wait0);
+	//CBT_Wait* Wait0 = Node_Wait("대기", 1, 0);
+	//Start_Sel->Add_Child(Wait0);
 
 	/////////////
 	// UI 추가(지원)
@@ -95,6 +100,9 @@ _int CIceGirl::Update_GameObject(_double TimeDelta)
 {
 	if (false == m_bEnable)
 		return NO_EVENT;
+
+	if (nullptr == g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))
+		return E_FAIL;
 
 	if (true == m_pAIControllerCom->Get_BoolValue(L"PushCol"))
 		Push_Collider();
@@ -150,6 +158,8 @@ _int CIceGirl::Update_GameObject(_double TimeDelta)
 		Check_PhyCollider();
 
 	OnCollisionEnter();
+
+	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
 	return NOERROR;
 }
@@ -596,11 +606,11 @@ CBT_Composite_Node * CIceGirl::Ice_Cut()
 
 
 	// 얼음 기둥은 칼 다 휘두르고 일괄적으로 소환(ColdBeam 클래스에서 소환)
-	CBT_CreateBullet* Ice0 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeam", L"IceCut_Pos0", L"IceCut_Dir0", 0, 1.0, 0.73, 1, 1, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Ice1 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeam", L"IceCut_Pos1", L"IceCut_Dir1", 0, 1.0, 0.76, 1, 1, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Ice2 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeam", L"IceCut_Pos2", L"IceCut_Dir2", 0, 1.0, 0.79, 1, 1, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Ice3 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeam", L"IceCut_Pos3", L"IceCut_Dir3", 0, 1.0, 0.82, 1, 1, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Ice4 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeam", L"IceCut_Pos4", L"IceCut_Dir4", 0, 1.0, 0.85, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Ice0 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeamSmall", L"IceCut_Pos0", L"IceCut_Dir0", 0, 1.0, 0.73, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Ice1 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeamSmall", L"IceCut_Pos1", L"IceCut_Dir1", 0, 1.0, 0.76, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Ice2 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeamSmall", L"IceCut_Pos2", L"IceCut_Dir2", 0, 1.0, 0.79, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Ice3 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeamSmall", L"IceCut_Pos3", L"IceCut_Dir3", 0, 1.0, 0.82, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Ice4 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeamSmall", L"IceCut_Pos4", L"IceCut_Dir4", 0, 1.0, 0.85, 1, 1, 0, CBT_Service_Node::Finite);
 
 	Root_Parallel->Add_Service(Ice0);
 	Root_Parallel->Add_Service(Ice1);
@@ -642,9 +652,11 @@ CBT_Composite_Node * CIceGirl::Ice_Barrier()
 	CBT_UpdateParam* BarrierValue0 = Node_UpdateParam("닷지 On", &m_tObjParam, CBT_UpdateParam::Dodge, 1.5, 1, 0, 0);
 	Root_Parallel->Add_Service(BarrierValue0);
 
-	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("버프 전 오른손 오오라", L"IceGirl_Buff_Charge_Smoke_01", L"Bone_LeftHand", 0.1, 45, 0, 0);
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("버프 전 손 오오라", L"IceGirl_Buff_Charge_Smoke_01", L"Bone_LeftHand", 0.1, 45, 0, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("스모크1", L"IceGirl_Buff_Bubble_BreakSmoke", L"Self_Foot", 0.8, 30, 0, 0);
 
 	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani29);
@@ -652,6 +664,154 @@ CBT_Composite_Node * CIceGirl::Ice_Barrier()
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(BarrierOn);
+
+	return Root_Parallel;
+}
+
+CBT_Composite_Node * CIceGirl::ColdBeam_RandomPos()
+{
+	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
+
+	CBT_Sequence* MainSeq = Node_Sequence("랜덤 위치 콜드빔");
+	CBT_Play_Ani* Show_Ani31 = Node_Ani("랜덤 위치 콜드빔", 31, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
+
+	CBT_Sequence* SubSeq = Node_Sequence("이동");
+	CBT_Wait* Wait0 = Node_Wait("대기0", 0.283, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 2.f, 0.3, 0);
+	CBT_Wait* Wait1 = Node_Wait("대기1", 1.8, 0);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", -1.5f, 0.333, 0);
+
+	CBT_CreateBullet* Ice0 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeamBig", L"Random_ColdBeam_Pos0", L"", 0, 7.f, 2.283, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Ice1 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeamBig", L"Random_ColdBeam_Pos1", L"", 0, 7.f, 2.283, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Ice2 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeamBig", L"Random_ColdBeam_Pos2", L"", 0, 7.f, 2.283, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Ice3 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeamBig", L"Random_ColdBeam_Pos3", L"", 0, 7.f, 2.283, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Ice4 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeamBig", L"Random_ColdBeam_Pos4", L"", 0, 7.f, 2.283, 1, 1, 0, CBT_Service_Node::Finite);
+
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("버프 전 손 오오라", L"IceGirl_Buff_Charge_Smoke_01", L"Bone_LeftHand", 0.1, 45, 0, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("스모크1", L"IceSmoke_01", L"Bone_LeftHand", 0.8, 30, 0, 0);
+
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+
+	Root_Parallel->Add_Service(Ice0);
+	Root_Parallel->Add_Service(Ice1);
+	Root_Parallel->Add_Service(Ice2);
+	Root_Parallel->Add_Service(Ice3);
+	Root_Parallel->Add_Service(Ice4);
+
+
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(Show_Ani31);
+	MainSeq->Add_Child(Show_Ani0);
+
+	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(Move1);
+
+	return Root_Parallel;
+}
+
+CBT_Composite_Node * CIceGirl::ColdBeam_Around_Me()
+{
+	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
+
+	CBT_Sequence* MainSeq = Node_Sequence("자신 주위 콜드빔");
+	CBT_Play_Ani* Show_Ani30 = Node_Ani("랜덤 위치 콜드빔", 30, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
+
+	CBT_Sequence* SubSeq = Node_Sequence("이동");
+	CBT_Wait* Wait0 = Node_Wait("대기0", 0.75, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 0.5f, 0.1, 0);
+	CBT_Wait* Wait1 = Node_Wait("대기1", 1.65, 0);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 0.5f, 0.166, 0);
+	CBT_Wait* Wait2 = Node_Wait("대기2", 0.784, 0);
+	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", -0.4f, 0.333, 0);
+
+	CBT_CreateBullet* Ice0 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeamMiddle", L"Self_ColdBeam_Pos0", L"", 0, 1.f, 2.65, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Ice1 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeamMiddle", L"Self_ColdBeam_Pos1", L"", 0, 1.f, 2.65, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Ice2 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeamMiddle", L"Self_ColdBeam_Pos2", L"", 0, 1.f, 2.65, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Ice3 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeamMiddle", L"Self_ColdBeam_Pos3", L"", 0, 1.f, 2.65, 1, 1, 0, CBT_Service_Node::Finite);
+
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("버프 전 손 오오라", L"IceGirl_Buff_Charge_Smoke_01", L"Bone_LeftHand", 0.1, 45, 0, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("스모크1", L"IceSmoke_01", L"Bone_LeftHand", 0.8, 30, 0, 0);
+
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+
+	Root_Parallel->Add_Service(Ice0);
+	Root_Parallel->Add_Service(Ice1);
+	Root_Parallel->Add_Service(Ice2);
+	Root_Parallel->Add_Service(Ice3);
+
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(Show_Ani30);
+	MainSeq->Add_Child(Show_Ani0);
+
+	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(Move1);
+	SubSeq->Add_Child(Wait2);
+	SubSeq->Add_Child(Move2);
+
+	return Root_Parallel;
+}
+
+CBT_Composite_Node * CIceGirl::Jump_Attack_And_ColdBeam()
+{
+	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
+
+	CBT_Sequence* MainSeq = Node_Sequence("점프 공격");
+	CBT_Play_Ani* Show_Ani39 = Node_Ani("점프 공격", 39, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
+
+	CBT_Sequence* SubSeq = Node_Sequence("이동");
+	CBT_Wait* Wait0 = Node_Wait("대기0", 0.1, 0);
+	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기0", L"Player_Pos", 0.1);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 2.f, 1.0, 0);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 10.f, 0.183, 0);
+
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("차징 오른손 파티클", L"IceGirl_Charge_Hand_Particle", L"CreateSwordBulletPos", 0.1, 60, 0, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("차징 오른손 스모크1", L"IceGirl_Charge_Hand_Smoke", L"CreateSwordBulletPos", 0.1, 60, 0, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("차징 오른손 스모크2", L"IceGirl_Charge_Hand_Smoke_2", L"CreateSwordBulletPos", 0.1, 60, 0, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("칼 냉기 스모크1", L"IceSmoke_01", L"Sword_MidPos", 0.2, 60, 0, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("칼 냉기 스모크2", L"IceSmoke_02", L"Sword_MidPos", 0.2, 60, 0, 0);
+
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
+	Root_Parallel->Add_Service(Effect3);
+	Root_Parallel->Add_Service(Effect4);
+
+	CBT_CreateBullet* Ice0 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeamSharp", L"IceCut_Pos0", L"IceCut_Dir0", 0, 1.f, 1.333, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Ice1 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeamSharp", L"IceCut_Pos1", L"IceCut_Dir1", 0, 1.f, 1.333, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Ice2 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeamSharp", L"IceCut_Pos2", L"IceCut_Dir2", 0, 1.f, 1.333, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Ice3 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeamSharp", L"IceCut_Pos3", L"IceCut_Dir3", 0, 1.f, 1.333, 1, 1, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Ice4 = Node_CreateBullet("얼음 소환", L"Monster_ColdBeamSharp", L"IceCut_Pos4", L"IceCut_Dir4", 0, 1.f, 1.333, 1, 1, 0, CBT_Service_Node::Finite);
+
+	Root_Parallel->Add_Service(Ice0);
+	Root_Parallel->Add_Service(Ice1);
+	Root_Parallel->Add_Service(Ice2);
+	Root_Parallel->Add_Service(Ice3);
+	Root_Parallel->Add_Service(Ice4);
+
+
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(Show_Ani39);
+	MainSeq->Add_Child(Show_Ani0);
+
+	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(Rotation0);
+	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(Move1);
+
+	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.316, 1, 0.117, 0);
+	Root_Parallel->Add_Service(pHitCol);
 
 	return Root_Parallel;
 }
@@ -668,20 +828,30 @@ CBT_Composite_Node * CIceGirl::Charge_Rush()
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("플레이어 보기", L"Player_Pos", 2, 0);
 	CBT_SetValue* PushColOff = Node_BOOL_SetValue("PushColOff", L"PushCol", false);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기0", L"Player_Pos", 0.133);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 30.f, 0.183, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 30.f, 0.183 - 0.005, 0);
 	CBT_SetValue* PushColOn = Node_BOOL_SetValue("PushColOn", L"PushCol", true);
 
 
-	CBT_CreateBullet* Bullet0 = Node_CreateBullet("검기 발사",L"Monster_SwordBullet", L"CreateSwordBulletPos", L"IceCut_Dir2"/*뱡향 같음*/, 23, 0.9, 2.3, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Bullet0 = Node_CreateBullet("검기 발사",L"Monster_SwordBullet", L"CreateSwordBulletPos", L"IceCut_Dir2"/*뱡향 같음*/, 23, 0.9, 2.1, 1, 0, 0, CBT_Service_Node::Finite);
 	Root_Parallel->Add_Service(Bullet0);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("차징 오른손 파티클", L"IceGirl_Charge_Hand_Particle", L"CreateSwordBulletPos", 0.1, 60, 0, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("차징 오른손 스모크1", L"IceGirl_Charge_Hand_Smoke", L"CreateSwordBulletPos", 0.1, 60, 0, 0);
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("차징 오른손 스모크2", L"IceGirl_Charge_Hand_Smoke_2", L"CreateSwordBulletPos", 0.1, 60, 0, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_01", L"Self_Foot", 1.9, 25, 0, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_02", L"Self_Foot", 1.9, 25, 0, 0);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_03", L"Self_Foot", 1.9, 25, 0, 0);
+	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("칼 냉기 스모크1", L"IceSmoke_01", L"Sword_MidPos", 0.1, 160, 0, 0);
+	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("칼 냉기 스모크2", L"IceSmoke_02", L"Sword_MidPos", 0.1, 160, 0, 0);
 
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
 	Root_Parallel->Add_Service(Effect2);
+	Root_Parallel->Add_Service(Effect3);
+	Root_Parallel->Add_Service(Effect4);
+	Root_Parallel->Add_Service(Effect5);
+	Root_Parallel->Add_Service(Effect6);
+	Root_Parallel->Add_Service(Effect7);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani32);
@@ -712,8 +882,8 @@ CBT_Composite_Node * CIceGirl::Dodge_Left()
 	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기0", L"Player_Pos", 0.1);
 	CBT_SetValue* PhyColOff = Node_BOOL_SetValue("PhyColOff", L"PhyCol", false);
 	CBT_SetValue* PushColOff = Node_BOOL_SetValue("PushColOff", L"PushCol", false);
-	CBT_MoveTo* MoveTo0 = Node_MoveTo("이동", L"DodgePosL", 0.4);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 5.f, 0.3, 0);
+	CBT_MoveTo* MoveTo0 = Node_MoveTo("이동", L"DodgePosL", 0.3);
+	//CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", -5.f, 0.3, 0);
 	CBT_SetValue* PhyColOn = Node_BOOL_SetValue("PhyColOn", L"PhyCol", true);
 	CBT_SetValue* PushColOn = Node_BOOL_SetValue("PushColOn", L"PushCol", true);
 
@@ -726,7 +896,7 @@ CBT_Composite_Node * CIceGirl::Dodge_Left()
 	SubSeq->Add_Child(PhyColOff);
 	SubSeq->Add_Child(PushColOff);
 	SubSeq->Add_Child(MoveTo0);
-	SubSeq->Add_Child(Move0);
+	//SubSeq->Add_Child(Move0);
 	SubSeq->Add_Child(PhyColOn);
 	SubSeq->Add_Child(PushColOn);
 
@@ -745,8 +915,8 @@ CBT_Composite_Node * CIceGirl::Dodge_Right()
 	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기0", L"Player_Pos", 0.1);
 	CBT_SetValue* PhyColOff = Node_BOOL_SetValue("PhyColOff", L"PhyCol", false);
 	CBT_SetValue* PushColOff = Node_BOOL_SetValue("PushColOff", L"PushCol", false);
-	CBT_MoveTo* MoveTo0 = Node_MoveTo("이동", L"DodgePosR", 0.4);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 5.f, 0.3, 0);
+	CBT_MoveTo* MoveTo0 = Node_MoveTo("이동", L"DodgePosR", 0.3);
+	//CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", -5.f, 0.3, 0);
 	CBT_SetValue* PhyColOn = Node_BOOL_SetValue("PhyColOn", L"PhyCol", true);
 	CBT_SetValue* PushColOn = Node_BOOL_SetValue("PushColOn", L"PushCol", true);
 
@@ -759,7 +929,7 @@ CBT_Composite_Node * CIceGirl::Dodge_Right()
 	SubSeq->Add_Child(PhyColOff);
 	SubSeq->Add_Child(PushColOff);
 	SubSeq->Add_Child(MoveTo0);
-	SubSeq->Add_Child(Move0);
+	//SubSeq->Add_Child(Move0);
 	SubSeq->Add_Child(PhyColOn);
 	SubSeq->Add_Child(PushColOn);
 
@@ -778,8 +948,8 @@ CBT_Composite_Node * CIceGirl::Dodge_Front()
 	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기0", L"Player_Pos", 0.1);
 	CBT_SetValue* PhyColOff = Node_BOOL_SetValue("PhyColOff", L"PhyCol", false);
 	CBT_SetValue* PushColOff = Node_BOOL_SetValue("PushColOff", L"PushCol", false);
-	CBT_MoveTo* MoveTo0 = Node_MoveTo("이동", L"DodgePosF", 0.4);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 5.f, 0.3, 0);
+	CBT_MoveTo* MoveTo0 = Node_MoveTo("이동", L"DodgePosF", 0.3);
+	//CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", -5.f, 0.3, 0);
 	CBT_SetValue* PhyColOn = Node_BOOL_SetValue("PhyColOn", L"PhyCol", true);
 	CBT_SetValue* PushColOn = Node_BOOL_SetValue("PushColOn", L"PushCol", true);
 
@@ -792,7 +962,7 @@ CBT_Composite_Node * CIceGirl::Dodge_Front()
 	SubSeq->Add_Child(PhyColOff);
 	SubSeq->Add_Child(PushColOff);
 	SubSeq->Add_Child(MoveTo0);
-	SubSeq->Add_Child(Move0);
+	//SubSeq->Add_Child(Move0);
 	SubSeq->Add_Child(PhyColOn);
 	SubSeq->Add_Child(PushColOn);
 
@@ -811,8 +981,8 @@ CBT_Composite_Node * CIceGirl::Dodge_Back()
 	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기0", L"Player_Pos", 0.1);
 	CBT_SetValue* PhyColOff = Node_BOOL_SetValue("PhyColOff", L"PhyCol", false);
 	CBT_SetValue* PushColOff = Node_BOOL_SetValue("PushColOff", L"PushCol", false);
-	CBT_MoveTo* MoveTo0 = Node_MoveTo("이동", L"DodgePosB", 0.4);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 5.f, 0.3, 0);
+	CBT_MoveTo* MoveTo0 = Node_MoveTo("이동", L"DodgePosB", 0.3);
+	//CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", -5.f, 0.3, 0);
 	CBT_SetValue* PhyColOn = Node_BOOL_SetValue("PhyColOn", L"PhyCol", true);
 	CBT_SetValue* PushColOn = Node_BOOL_SetValue("PushColOn", L"PushCol", true);
 
@@ -825,7 +995,7 @@ CBT_Composite_Node * CIceGirl::Dodge_Back()
 	SubSeq->Add_Child(PhyColOff);
 	SubSeq->Add_Child(PushColOff);
 	SubSeq->Add_Child(MoveTo0);
-	SubSeq->Add_Child(Move0);
+	//SubSeq->Add_Child(Move0);
 	SubSeq->Add_Child(PhyColOn);
 	SubSeq->Add_Child(PushColOn);
 
@@ -1128,6 +1298,7 @@ CBT_Composite_Node * CIceGirl::FarAttack_More_Than_HP70()
 	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 원거리 공격");
 
 	Root_Sel->Add_Child(Charge_Rush());
+	Root_Sel->Add_Child(Dash_To_Target());
 
 	return Root_Sel;
 }
@@ -1151,10 +1322,11 @@ CBT_Composite_Node * CIceGirl::NearAttack_Dist5_More_Than_HP40()
 	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 근접 공격");
 
 	Root_Sel->Add_Child(Chase_ThreeCombo_Cut1());
-	Root_Sel->Add_Child(Chase_ThreeCombo_Cut2());
+	//Root_Sel->Add_Child(Chase_ThreeCombo_Cut2());
 	Root_Sel->Add_Child(Ice_Cut());
 	Root_Sel->Add_Child(Turn_Cut(0.95f));
 	Root_Sel->Add_Child(Random_Dodge());
+	Root_Sel->Add_Child(Jump_Attack_And_ColdBeam());
 	
 	return Root_Sel;
 }
@@ -1166,7 +1338,8 @@ CBT_Composite_Node * CIceGirl::FarAttack_More_Than_HP40()
 	Root_Sel->Add_Child(Charge_Rush());
 	Root_Sel->Add_Child(Dash_To_Target());
 	Root_Sel->Add_Child(Create_IceBarrier_Or_Not());
-
+	Root_Sel->Add_Child(ColdBeam_RandomPos());
+	
 	return Root_Sel;
 }
 
@@ -1194,8 +1367,9 @@ CBT_Composite_Node * CIceGirl::NearAttack_Dist5_Final()
 	Root_Sel->Add_Child(Create_IceBarrier_Or_Not());
 	Root_Sel->Add_Child(Cut_BackDodge());
 	Root_Sel->Add_Child(Random_Dodge());
-	Root_Sel->Add_Child(Create_IceBarrier_Or_Not());
-
+	//Root_Sel->Add_Child(Create_IceBarrier_Or_Not());
+	Root_Sel->Add_Child(ColdBeam_Around_Me());
+	
 	return Root_Sel;
 }
 
@@ -1206,6 +1380,7 @@ CBT_Composite_Node * CIceGirl::FarAttack_Fianl()
 	Root_Sel->Add_Child(Charge_Rush());
 	Root_Sel->Add_Child(Create_IceBarrier_Or_Not());
 	Root_Sel->Add_Child(Dash_To_Target());
+	Root_Sel->Add_Child(ColdBeam_RandomPos());
 
 	return Root_Sel;
 }
@@ -1420,8 +1595,15 @@ HRESULT CIceGirl::Update_Bone_Of_BlackBoard()
 
 HRESULT CIceGirl::Update_Value_Of_BB()
 {
+	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL);
+
+	if (nullptr == pPlayer)
+		return E_FAIL;
+
+	CTransform* pPlayer_Trans = TARGET_TO_TRANS(pPlayer);
+
 	// 1. 플레이어 좌표 업데이트
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos());
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Player_Pos", pPlayer_Trans->Get_Pos());
 	// 2. 체력 업데이트
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"HP", m_tObjParam.fHp_Cur);
 	// 3. 체력 비율 업데이트
@@ -1476,6 +1658,22 @@ HRESULT CIceGirl::Update_Value_Of_BB()
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"DodgePosR", vSelfPos + fLength * vSelfRight);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"DodgePosL", vSelfPos - fLength * vSelfRight);
 
+	// 5. 플레이어 주위 콜드빔 좌표
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Random_ColdBeam_Pos0", pPlayer_Trans->Get_Pos() + _v3(_float(CALC::Random_Num_Double(-5, 5)), 0.f, _float(CALC::Random_Num_Double(-5, 5))));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Random_ColdBeam_Pos1", pPlayer_Trans->Get_Pos() + _v3(_float(CALC::Random_Num_Double(-5, 5)), 0.f, _float(CALC::Random_Num_Double(-5, 5))));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Random_ColdBeam_Pos2", pPlayer_Trans->Get_Pos() + _v3(_float(CALC::Random_Num_Double(-5, 5)), 0.f, _float(CALC::Random_Num_Double(-5, 5))));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Random_ColdBeam_Pos3", pPlayer_Trans->Get_Pos() + _v3(_float(CALC::Random_Num_Double(-5, 5)), 0.f, _float(CALC::Random_Num_Double(-5, 5))));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Random_ColdBeam_Pos4", pPlayer_Trans->Get_Pos() + _v3(_float(CALC::Random_Num_Double(-5, 5)), 0.f, _float(CALC::Random_Num_Double(-5, 5))));
+
+	// 6. 자신 주위 4방향, 콜드빔 좌표
+
+	fLength = 2.f;
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_ColdBeam_Pos0", vSelfPos + fLength * vSelfLook);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_ColdBeam_Pos1", vSelfPos - fLength * vSelfLook);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_ColdBeam_Pos2", vSelfPos + fLength * vSelfRight);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_ColdBeam_Pos3", vSelfPos - fLength * vSelfRight);
+
+
 	return S_OK;
 }
 
@@ -1485,7 +1683,7 @@ HRESULT CIceGirl::Update_NF()
 	if (false == m_bFindPlayer)
 	{
 		// 플레이어 좌표 구함.
-		_v3 vPlayer_Pos = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos();
+		_v3 vPlayer_Pos = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))->Get_Pos();
 
 		// 플레이어와 몬스터의 거리
 		_v3 vLengthTemp = vPlayer_Pos - m_pTransformCom->Get_Pos();
@@ -1821,12 +2019,14 @@ HRESULT CIceGirl::Ready_Weapon()
 {
 	// 오른손 무기
 	m_pSword = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pSword->Change_WeaponData(CWeapon::WPN_QueenLance);
-
+	m_pSword->Change_WeaponData(CWeapon::WPN_FrostBlood_IceGirl);
+	
 	// Trail
 	m_pSword->Set_Enable_Trail(true);
 	m_pSword->Set_TrailIndex(8);
+	m_pSword->Set_TrailIndex(9, true);
 	m_pSword->Set_TrailUseMask(0);
+	m_pSword->Set_TrailUseMask(0, true);
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
 	m_pSword->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);

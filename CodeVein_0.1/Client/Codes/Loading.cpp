@@ -17,7 +17,6 @@
 #include "Item_Manager.h"
 
 #include "MonsterHeaders.h"
-#include "YachaMan.h"
 
 #include "PlayerHP.h"
 #include "PlayerST.h"
@@ -26,7 +25,7 @@
 
 #include "MonsterUI.h"
 #include "MassageUI.h"
-#include "DamegeNumUI.h"
+//#include "DamegeNumUI.h"
 #include "Get_ItemUI.h"
 #include "PickUp_ItemUI.h"
 
@@ -185,6 +184,10 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_JumpDown_Smoke_Red")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_JumpDown_Smoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Ultimate_Floor")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lava_Floor_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Lava_Floor_1")))
@@ -193,11 +196,25 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_Smoke_0")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_BlackSmoke")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_LineRing_0", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_Sphere_0", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_Sphere_1", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Ultimate_Cone_0", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Ultimate_Cone_1", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Ultimate_Cone_2", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Ultimate_Cone_3", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Ultimate_Cone_4", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Ultimate_Smoke")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_BlackFire_0")))
 		return E_FAIL;
@@ -209,17 +226,23 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_Floor_0")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_Floor_1")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_Particle")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_PopSmoke_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_PopSmoke_1")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_LaserBody")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_1")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_Hand")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_Hand_Aura")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_Particle")))
 		return E_FAIL;
@@ -257,6 +280,26 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_DistortionSmoke")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_3")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_4")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_5")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_6")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_7")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_8")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_Teleport_Ink_9")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Trail_Lightning_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_Trail_Lightning_1")))
@@ -272,6 +315,10 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_Ring", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_RingBottom", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_RingRed", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_RingReady", true)))
 		return E_FAIL;
 #pragma endregion
 	
@@ -300,6 +347,20 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceBlock_Sub_02", true)))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_Main_Big", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_Sub_01_Big", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_Sub_02_Big", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_Main_Mid", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_Sub_01_Mid", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_Sub_02_Mid", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceBlock_Main_Small", true)))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceBlock_Break", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceGirl_SwordBullet_Mesh", true)))
@@ -323,6 +384,10 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Aura_2")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Aura_3")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Bubble", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Bubble_BreakSmoke")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceBlock_Particle")))
 		return E_FAIL;
@@ -353,6 +418,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireTornade_Mesh", true)))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireTornade_Mesh_2", true)))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireTornade_Floor_01")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireTornade_Floor_02")))
@@ -366,6 +433,14 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireTornade_ReadyFire_Up")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireBullet")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireBullet_Mid")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireBullet_Big")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireBullet_Sub_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireBullet_Sub_1")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireBullet_GunEff")))
 		return E_FAIL;
@@ -412,6 +487,43 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"FireBoy_ArmAttack_FloorDust")))
 		return E_FAIL;
 #pragma endregion
+
+#pragma region DeerKing
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceStone_Up_Particle_0", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_SnowChunk_Up_Particle_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_SnowChunk_Up_Particle_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Snow_Up_Particle_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_Small_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_Small_1")))
+		return E_FAIL;
+#pragma endregion
+
+	if (FAILED(Add_EffectPrototype(L"Cocoon_TongueFire")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Totem_Fire_Bullet_Dead_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Totem_Fire_Bullet_Dead_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Totem_Fire_BulletBody")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Totem_Fire_Bullet_Dead_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Totem_Fire_Ready")))
+		return E_FAIL;
+
+	if (FAILED(Add_EffectPrototype(L"Monkey_Knife", true)))
+		return E_FAIL;
 
 	if (FAILED(Add_EffectPrototype(L"Boss_KnockDown_Dust")))
 		return E_FAIL;
@@ -784,11 +896,15 @@ _uint CLoading::Loading_Title()
 	cout << "Essential Dynamic 메쉬 불러오는중" << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Dynamic_Path.dat");
 
+	// 임시 공통 스태틱 메쉬
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
+
 	// 무기 불러오는 중
 	//============================================================================================================
 	cout << "Weapon 메쉬 불러오는 중" << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Weapon_Path.dat");
 	// 일반 무기
+
 	cout << "DrainWeapon 메쉬 불러오는 중" << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_DrainWeapon_Path.dat");
 	// 흡혈 무기
@@ -850,11 +966,12 @@ _uint CLoading::Loading_Title()
 	cout << "[3] Stage_01 = false " << endl;
 	cout << "[4] Stage_02 = false " << endl;
 	cout << "[5] Stage_03 = false " << endl;
+	cout << "[6] Stage_04 = false " << endl;
 	cout << "-------------------------------------------------------------------------------" << endl;
-	cout << "[6] Load_StaticMesh = ";
+	cout << "[8] Load_StaticMesh = ";
 	cout << (m_bLoadStaticMesh ? "true" : "false") << endl;
 	cout << "-------------------------------------------------------------------------------" << endl;
-	cout << "[7] # 릴리즈 모드 # ";
+	cout << "[9] # 릴리즈 모드 # ";
 	cout << (g_bReleaseMode ? "true" : "false") << endl;
 	cout << "-------------------------------------------------------------------------------" << endl;
 
@@ -882,10 +999,10 @@ _uint CLoading::Loading_Stage()
 		// 2번 - 베이스
 		if (false == g_bOnStage[2])
 		{
-			if (false == g_bReleaseMode)
-			{
-				g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
-			}
+			//if (false == g_bReleaseMode)
+			//{
+			//	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
+			//}
 
 			g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage00_Path.dat");
 
@@ -932,16 +1049,24 @@ _uint CLoading::Loading_Stage()
 		}
 		break;
 	}
+
+	// 스테이지 - 04
+	case 5:
+	{
+		// 4번 - 스테이지 03
+		if (false == g_bOnStage[6])
+		{
+			g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage04_Path.dat");
+
+			g_bOnStage[6] = true;
+		}
+		break;
+	}
 	}
 
 	// 최초 로딩 호출 시 1번만 불러옵니다.
 	if (false == g_bOnStage[0])
 	{
-		// 공통 스테틱 메쉬 불러오는 중
-		//============================================================================================================
-		if(g_bReleaseMode)
-			g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
-
 		// 다이나믹 메쉬 불러오는 중
 		//============================================================================================================
 		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
@@ -991,8 +1116,17 @@ _uint CLoading::Loading_Stage()
 		// 얼음여자
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceGirl", CIceGirl::Create(m_pGraphicDev))))
 			return E_FAIL;
-		// 얼음여자 콜드빔
-		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeam", CColdBeam::Create(m_pGraphicDev))))
+		// 얼음여자 콜드빔 작은 크기
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamSmall", CColdBeamSmall::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 얼음여자 콜드빔 중간 크기
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamMiddle", CColdBeamMiddle::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 얼음여자 콜드빔 큰 크기
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamBig", CColdBeamBig::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 얼음여자 콜드빔 날카로운것
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamSharp", CColdBeamSharp::Create(m_pGraphicDev))))
 			return E_FAIL;
 		// 얼음여자 검기발사
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordBullet", CSwordBullet::Create(m_pGraphicDev))))
@@ -1018,6 +1152,9 @@ _uint CLoading::Loading_Stage()
 		// 화염 토네이도 콜라이더
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireTornadoCol", CFireTornadoCol::Create(m_pGraphicDev))))
 			return E_FAIL;
+		// 사슴왕
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKing", CDeerKing::Create(m_pGraphicDev))))
+			return E_FAIL;
 		// 검은 성게
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1042,8 +1179,29 @@ _uint CLoading::Loading_Stage()
 		// 야차맨
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_YachaMan", CYachaMan::Create(m_pGraphicDev))))
 			return E_FAIL;
+		// 토템
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Cocoon", CCocoon::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 토템 방사총알
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBullet", CCocoonBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 토템 총알
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBigBullet", CCocoonBigBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
 		// 김헌터
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Hunter", CHunter::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 김헌터총알
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_HunterBullet", CHunterBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 몽키.D.루피
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Monkey", CMonkey::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 몽키.D.총알
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_MonkeyBullet", CMonkeyBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 예티
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Yeti", CYeti::Create(m_pGraphicDev))))
 			return E_FAIL;
 
 		// UI - Chea
@@ -1058,8 +1216,8 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MassageUI", CMassageUI::Create(m_pGraphicDev))))
 			return E_FAIL;
 
-		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DamegeNumUI", CDamegeNumUI::Create(m_pGraphicDev))))
-			return E_FAIL;
+		/*if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DamegeNumUI", CDamegeNumUI::Create(m_pGraphicDev))))
+			return E_FAIL;*/
 
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Get_ItemUI", CGet_ItemUI::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1081,7 +1239,7 @@ _uint CLoading::Loading_MainStages()
 	// 3번 - 스테이지 01
 	if (false == g_bOnStage[3])
 	{
-		cout << "스테이지 1 리소스 로딩중" << endl;
+		cout << "스테이지 1 리소스 로딩중  . . . " << endl;
 		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage01_Path.dat");
 
 		g_bOnStage[3] = true;
@@ -1090,7 +1248,7 @@ _uint CLoading::Loading_MainStages()
 	// 3번 - 스테이지 01
 	if (false == g_bOnStage[4])
 	{
-		cout << "스테이지 2 리소스 로딩중" << endl;
+		cout << "스테이지 2 리소스 로딩중  . . . (리소스 없음)" << endl;
 		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage02_Path.dat");
 
 		g_bOnStage[4] = true;
@@ -1099,15 +1257,24 @@ _uint CLoading::Loading_MainStages()
 	// 3번 - 스테이지 01
 	if (false == g_bOnStage[5])
 	{
-		cout << "스테이지 3 리소스 로딩중" << endl;
+		cout << "스테이지 3 리소스 로딩중 . . . " << endl;
 		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage03_Path.dat");
 
 		g_bOnStage[5] = true;
 	}
 
+	// 3번 - 스테이지 01
+	if (false == g_bOnStage[6])
+	{
+		cout << "스테이지 4 리소스 로딩중  . . . " << endl;
+		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage04_Path.dat");
+
+		g_bOnStage[6] = true;
+	}
+
 	m_bFinish = true;
 
-	cout << "전부 로딩 완료" << endl;
+	cout << "전부 로딩 완료 . . . !!!" << endl;
 
 	return NO_EVENT;
 }

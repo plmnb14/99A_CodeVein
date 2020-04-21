@@ -24,7 +24,6 @@ private:
 	CCollider*			m_pCollider = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CEffect*			m_pBulletBody = nullptr;
-	CEffect*			m_pBulletBody_Sub = nullptr;
 
 	_v3					m_vDir = _v3(0.f, 0.f, 0.f);
 	_float				m_fSpeed = 0.f;
@@ -34,7 +33,7 @@ private:
 	_double				m_dCurTime = 0;
 	_double				m_dLifeTime = 0;
 	_bool				m_bDead = false;
-
+	_bool				m_bEffect = false;
 
 	_float				m_fMaxDegree = 0;
 

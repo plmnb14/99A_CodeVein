@@ -5,7 +5,7 @@
 BEGIN(Client)
 
 class CMonsterUI;
-class CDamegeNumUI;
+//class CDamegeNumUI;
 class CWeapon;
 class CSwordShieldGenji final : public CMonster
 {
@@ -27,7 +27,7 @@ public:
 
 private:
 	enum Ani {
-		Ani_Idle = 42, Ani_Death = 64, Ani_Dmg01_FL = 122,
+		Ani_Idle = 42, Ani_Death = 64, Ani_Dmg01_FL = 124, Ani_Dmg01_FR = 123, Ani_Dmg01_BL = 122, Ani_Dmg01_BR = 121,
 		Ani_StandUp1 = 140, Ani_StandUp2 = 153,
 		Ani_GuardHit_Weak = 2, Ani_GuardHit_Strong = 1, Ani_GuardBreak = 0
 	};
@@ -108,7 +108,7 @@ private:
 	//////////채유미
 	// MonsterHP UI
 	CMonsterUI*			m_pMonsterUI = nullptr;
-	CDamegeNumUI*		m_pDamegeNumUI = nullptr;
+	//CDamegeNumUI*		m_pDamegeNumUI = nullptr;
 
 	//렌더에서 타임델타 쓰기위해서 저장해놓음
 	_double				m_dTimeDelta = 0;

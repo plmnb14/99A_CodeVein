@@ -52,9 +52,7 @@ HRESULT CMainApp::Render_MainApp()
 	
 	m_pGraphic_Dev->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL, D3DXCOLOR(0.f, 0.f, 1.f, 1.f), 1.f, 0);
 	m_pGraphic_Dev->BeginScene();
-	
-	//if (m_bFrameRender)
-	//	g_pManagement->Render_Sprite_Begin();
+
 
 	if (FAILED(m_pRenderer->Draw_RenderList()))
 		return E_FAIL;
@@ -101,7 +99,6 @@ HRESULT CMainApp::Ready_Default_Setting(CGraphic_Device::WINMODE eMode, _ushort 
 
 	CScriptManager::Get_Instance()->Ready_ScriptManager(m_pGraphic_Dev);
 
-
 	return S_OK;
 }
 
@@ -133,6 +130,7 @@ HRESULT CMainApp::Ready_Start_Scene(SCENEID eScene)
 	case SCENE_LOGO:
 		pScene = CScene_Logo::Create(m_pGraphic_Dev);
 		break;
+
 	case SCENE_STAGE:
 		/*pScene = CScene_Logo::Create(m_pGraphic_Device);*/
 		break;
