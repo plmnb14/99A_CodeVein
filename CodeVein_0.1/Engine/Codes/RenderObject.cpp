@@ -33,7 +33,7 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 
 	//if (true == m_bOnTool)
 	//{
-		Update_Collider();
+		//Update_Collider();
 	//}
 
 	if (false == m_bOnTool)
