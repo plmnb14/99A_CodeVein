@@ -81,7 +81,6 @@ _int CYachaMan::Update_GameObject(_double TimeDelta)
 
 	CGameObject::Update_GameObject(TimeDelta);
 
-	// MonsterHP UI
 	m_pMonsterUI->Update_GameObject(TimeDelta);
 
 	Check_PosY();
@@ -1570,9 +1569,9 @@ void CYachaMan::Play_WheelWind()
 
 		if (3.233f < AniTime && 3.733f > AniTime)
 		{
-			if (m_bEventTrigger[6] == false)
+			if (m_bEventTrigger[18] == false)
 			{
-				m_bEventTrigger[6] = true;
+				m_bEventTrigger[18] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -1582,9 +1581,9 @@ void CYachaMan::Play_WheelWind()
 		}
 		else if (2.200f < AniTime && 3.133f >AniTime)
 		{
-			if (m_bEventTrigger[7] == false)
+			if (m_bEventTrigger[19] == false)
 			{
-				m_bEventTrigger[7] = true;
+				m_bEventTrigger[19] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -1594,9 +1593,9 @@ void CYachaMan::Play_WheelWind()
 		}
 		else if (1.767f < AniTime && 2.100f > AniTime)
 		{
-			if (m_bEventTrigger[8] == false)
+			if (m_bEventTrigger[20] == false)
 			{
-				m_bEventTrigger[8] = true;
+				m_bEventTrigger[20] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -2708,7 +2707,6 @@ CGameObject* CYachaMan::Clone_GameObject(void * pArg)
 }
 
 void CYachaMan::Free()
-
 {
 	Safe_Release(m_pMonsterUI);
 

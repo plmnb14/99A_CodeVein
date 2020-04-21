@@ -33,6 +33,11 @@ HRESULT CMonkey::Ready_GameObject(void* pArg)
 	Ready_Collider();
 	Ready_Weapon();
 
+	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
+	m_pMonsterUI->Set_Target(this);
+	m_pMonsterUI->Set_Bonmatrix(m_matBone[Bone_Head]);
+	m_pMonsterUI->Ready_GameObject(NULL);
+
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
 	if (nullptr != m_pTarget)

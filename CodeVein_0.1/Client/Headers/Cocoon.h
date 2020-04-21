@@ -3,6 +3,8 @@
 #include "GameObject.h"
 #include "Management.h"
 
+#include "MonsterUI.h"
+
 BEGIN(Client)
 
 class CCocoon final : public CGameObject
@@ -142,6 +144,9 @@ private:
 	_float				m_fSpeedForCollisionPush = 2.f;
 
 	_int				m_iRandom = 0; //랜덤 받을 숫자
+
+	// 몬스터 HP바 UI
+	CMonsterUI*			m_pMonsterUI = nullptr;
 };
 
 END

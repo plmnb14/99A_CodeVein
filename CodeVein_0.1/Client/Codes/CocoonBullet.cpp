@@ -61,7 +61,7 @@ _int CCocoonBullet::Update_GameObject(_double TimeDelta)
 
 	if (m_bDead)
 		return DEAD_OBJ;
-
+	
 	Enter_Collision();
 	Update_Trails(TimeDelta);
 

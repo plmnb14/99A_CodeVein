@@ -230,10 +230,8 @@ private:
 
 	_float				m_fShotDelay = 0.f;
 
-	//////////// 채유미
 	// 몬스터 HP바 UI
 	CMonsterUI*			m_pMonsterUI = nullptr;
-
 };
 
 END
