@@ -693,6 +693,36 @@ CBT_Composite_Node * CDeerKing::Start_Game()
 	return Root_Sel;
 }
 
+CBT_Composite_Node * CDeerKing::More_Than_HP_60()
+{
+	return nullptr;
+}
+
+CBT_Composite_Node * CDeerKing::NearAttack_Dist5_More_Than_HP60()
+{
+	return nullptr;
+}
+
+CBT_Composite_Node * CDeerKing::FarAttack_More_Than_HP60()
+{
+	return nullptr;
+}
+
+CBT_Composite_Node * CDeerKing::HP_Final()
+{
+	return nullptr;
+}
+
+CBT_Composite_Node * CDeerKing::NearAttack_Dist5_Final()
+{
+	return nullptr;
+}
+
+CBT_Composite_Node * CDeerKing::FarAttack_Fianl()
+{
+	return nullptr;
+}
+
 void CDeerKing::Down()
 {
 }
