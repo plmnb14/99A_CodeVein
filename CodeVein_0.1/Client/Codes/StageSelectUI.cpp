@@ -182,6 +182,7 @@ void CStageSelectUI::Move_Left()
 	}
 }
 
+// 스테이지 하위 항목까지 적용
 _uint CStageSelectUI::Teleport_Stage()
 {
 	_uint iTeleportMenu = m_vecStageUI[m_iSelectIndex]->Get_Teleport_Menu();

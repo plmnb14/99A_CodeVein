@@ -36,6 +36,9 @@
 #include "StageSelectUI.h"
 #include "MistletoeUI.h"
 #include "MistletoeOptionUI.h"
+#include "ConditionUI.h"
+#include "ExpUI.h"
+#include "StatusUI.h"
 
 #include "MassageUI.h"
 #include "Get_ItemUI.h"
@@ -121,6 +124,12 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MistletoeOptionUI", CMistletoeOptionUI::Create(pDevice))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ConditionUI", CConditionUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ExpUI", CExpUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_StatusUI", CStatusUI::Create(pDevice))))
+		return E_FAIL;
 	
 	//////////////// Chae
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BossMassageUI", CMassageUI::Create(pDevice))))
@@ -148,7 +157,7 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_SkillUI", SCENE_MORTAL, L"Layer_SkillUI");
 	
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_MistletoeUI", SCENE_STAGE, L"Layer_MistletoeUI");
-	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_StageSelectUI", SCENE_STAGE, L"Layer_StageSelectUI");
+	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_StatusUI", SCENE_STAGE, L"Layer_StatusUI");
 
 	return NOERROR;
 }
@@ -173,7 +182,7 @@ _int CUI_Manager::Update_UI()
 	//if (g_pInput_Device->Key_Up(DIK_K))
 	//	Move_MistletoeUI_Down(); // 겨우살이UI 아래쪽 이동
 	if (g_pInput_Device->Key_Up(DIK_RETURN))
-		cout << Select_Stage() << endl; // 스테이지 선택시, 각각 다른 _uint값 반환
+		cout << Teleport_Stage() << endl; // 스테이지 선택시, 각각 다른 _uint값 반환
 	return 0;
 }
 
@@ -284,6 +293,14 @@ _uint CUI_Manager::Select_Stage()
 		return _uint(CStageUI::Teleport_End);
 	Active_MistletoeUI(false);
 	return _uint(pStageUI->Select_Stage());
+}
+
+_uint CUI_Manager::Teleport_Stage()
+{
+	CStageSelectUI* pStageUI = static_cast<CStageSelectUI*>(g_pManagement->Get_GameObjectBack(L"Layer_StageSelectUI", SCENE_STAGE));
+	if (nullptr == pStageUI)
+		return 0;
+	return _uint(pStageUI->Teleport_Stage());
 }
 
 void CUI_Manager::Move_StageUI_Right()

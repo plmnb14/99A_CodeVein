@@ -4,26 +4,27 @@
 #include "UI.h"
 
 BEGIN(Client)
-class CActive_Icon final : public CUI
+class CFontNumManager;
+class CConditionUI final : public CUI
 {
 public:
-	enum ACTIVE_STATE
+	enum CONDITION_TYPE
 	{
-		ACTIVE_USE, // 사용가능
-		ACTIVE_NO_USE, // 사용 불가능
-		ACTIVE_COOL, // 쿨타임
-		ACTIVE_BUFF // 버프
+		CONDITION_HP,
+		CONDITION_ST,
+		CONDITION_BLOOD,
+		CONDITION_ATT,
+		CONDITION_DEF,
+		CONDITION_END
 	};
 private:
-	explicit CActive_Icon(_Device pDevice);
-	explicit CActive_Icon(const CActive_Icon& rhs);
-	virtual ~CActive_Icon() = default;
+	explicit CConditionUI(_Device pDevice);
+	explicit CConditionUI(const CConditionUI& rhs);
+	virtual ~CConditionUI() = default;
 
 public:
-	void Set_Skill_Index(Skill_Index eSkill_Index) {
-		m_Skill_Index = eSkill_Index;
-	}
-	void Set_Active_State(ACTIVE_STATE eState) { m_eState = eState; }
+	void Set_ConditionType(CONDITION_TYPE eType) { m_eType = eType; }
+	void Set_Condition_Info(_float fCurValue, _float fMaxValue);
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -35,6 +36,7 @@ public:
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable(_uint iIndex);
+	void	SetUp_State(_double TimeDelta);
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -44,14 +46,15 @@ private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 private:
-	Skill_Index		m_Skill_Index = Skill_End;
-	ACTIVE_STATE	m_eState = ACTIVE_USE;
-	_float			m_fPercentage = 0.f;
-	_float			m_fMaxTime = 10.f;
-	_float			m_fCurTime = 0.f;
+	_float					m_fPercentage = 0.f;
+	_float					m_fMaxValue = 0.f;
+	_float					m_fCurValue = 0.f;
+	CONDITION_TYPE			m_eType = CONDITION_END;
+	OBJECT_PARAM			m_tObjParam;
+	CFontNumManager*		m_pFontValue = nullptr;
 
 public:
-	static CActive_Icon*	Create(_Device pGraphic_Device);
+	static CConditionUI*	Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);
 	virtual void			Free();
 };

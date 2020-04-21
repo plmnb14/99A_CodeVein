@@ -334,6 +334,15 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\10. StageSelectUI\01. SubStageUI">
       <UniqueIdentifier>{33d8fede-e628-4693-af1c-659eeaa55cb8}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\12. StatusUI">
+      <UniqueIdentifier>{1aa2c897-ffcd-488f-b872-49f53dc17a1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\12. StatusUI\01. ExpUI">
+      <UniqueIdentifier>{a23b84c9-b8ca-4511-8b62-8f6b66de125f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\12. StatusUI\00. ConditionUI">
+      <UniqueIdentifier>{d9909967-c873-4f4f-95a3-67c36558ec82}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -660,6 +669,15 @@
     <ClInclude Include="..\Headers\SubStageUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\10. StageSelectUI\01. SubStageUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\StatusUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\12. StatusUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ConditionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\12. StatusUI\00. ConditionUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ExpUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\12. StatusUI\01. ExpUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -976,6 +994,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\SubStageUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\10. StageSelectUI\01. SubStageUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\StatusUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\12. StatusUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ConditionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\12. StatusUI\00. ConditionUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ExpUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\12. StatusUI\01. ExpUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

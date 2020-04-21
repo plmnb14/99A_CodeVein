@@ -76,9 +76,6 @@ VS_OUT		VS_2D_UV_CTRL(VS_IN In)
 	Out.vTexUV.y = In.vTexUV.y;
 	Out.vTexUV.x = mul(In.vTexUV.x, g_fPercentage);
 
-	Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
-	Out.vTexUV = In.vTexUV;
-
 	return Out;
 }
 

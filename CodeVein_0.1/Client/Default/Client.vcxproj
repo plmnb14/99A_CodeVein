@@ -180,6 +180,7 @@
     <ClInclude Include="..\Headers\ClickUI.h" />
     <ClInclude Include="..\Headers\Client_Defines.h" />
     <ClInclude Include="..\Headers\ColdBeam.h" />
+    <ClInclude Include="..\Headers\ConditionUI.h" />
     <ClInclude Include="..\Headers\CursorEffect.h" />
     <ClInclude Include="..\Headers\CursorUI.h" />
     <ClInclude Include="..\Headers\DamegeNumUI.h" />
@@ -190,6 +191,7 @@
     <ClInclude Include="..\Headers\Expendables.h" />
     <ClInclude Include="..\Headers\Expendables_Inven.h" />
     <ClInclude Include="..\Headers\Expendables_Slot.h" />
+    <ClInclude Include="..\Headers\ExpUI.h" />
     <ClInclude Include="..\Headers\FireBoy.h" />
     <ClInclude Include="..\Headers\FireBullet.h" />
     <ClInclude Include="..\Headers\FireGround.h" />
@@ -244,6 +246,7 @@
     <ClInclude Include="..\Headers\SkillUI.h" />
     <ClInclude Include="..\Headers\StageSelectUI.h" />
     <ClInclude Include="..\Headers\StageUI.h" />
+    <ClInclude Include="..\Headers\StatusUI.h" />
     <ClInclude Include="..\Headers\SubStageUI.h" />
     <ClInclude Include="..\Headers\SwordBullet.h" />
     <ClInclude Include="..\Headers\SwordGenji.h" />
@@ -285,6 +288,7 @@
     <ClCompile Include="..\Codes\Button_UI.cpp" />
     <ClCompile Include="..\Codes\ClickUI.cpp" />
     <ClCompile Include="..\Codes\ColdBeam.cpp" />
+    <ClCompile Include="..\Codes\ConditionUI.cpp" />
     <ClCompile Include="..\Codes\CursorEffect.cpp" />
     <ClCompile Include="..\Codes\CursorUI.cpp" />
     <ClCompile Include="..\Codes\DamegeNumUI.cpp" />
@@ -295,6 +299,7 @@
     <ClCompile Include="..\Codes\Expendables.cpp" />
     <ClCompile Include="..\Codes\Expendables_Inven.cpp" />
     <ClCompile Include="..\Codes\Expendables_Slot.cpp" />
+    <ClCompile Include="..\Codes\ExpUI.cpp" />
     <ClCompile Include="..\Codes\FireBoy.cpp" />
     <ClCompile Include="..\Codes\FireBullet.cpp" />
     <ClCompile Include="..\Codes\FireGround.cpp" />
@@ -348,6 +353,7 @@
     <ClCompile Include="..\Codes\SkillUI.cpp" />
     <ClCompile Include="..\Codes\StageSelectUI.cpp" />
     <ClCompile Include="..\Codes\StageUI.cpp" />
+    <ClCompile Include="..\Codes\StatusUI.cpp" />
     <ClCompile Include="..\Codes\SubStageUI.cpp" />
     <ClCompile Include="..\Codes\SwordBullet.cpp" />
     <ClCompile Include="..\Codes\SwordGenji.cpp" />
