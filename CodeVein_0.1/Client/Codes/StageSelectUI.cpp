@@ -109,18 +109,7 @@ _int CStageSelectUI::Update_GameObject(_double TimeDelta)
 	//	/*LOOP(5)
 	//		m_vecStageUI[i]->Set_Active(!m_vecStageUI[i]->Get_Active());*/
 	//}
-	if (g_pInput_Device->Key_Up(DIK_J))
-	{
-		if (m_vecStageUI[m_iSelectIndex]->Get_MaxSubStage() > m_vecStageUI[m_iSelectIndex]->Get_SubStage())
-			m_vecStageUI[m_iSelectIndex]->Set_SubStage(m_vecStageUI[m_iSelectIndex]->Get_SubStage() + 1);
-		
-	}
-		
-	if (g_pInput_Device->Key_Up(DIK_K))
-	{
-		if (m_vecStageUI[m_iSelectIndex]->Get_SubStage() > 0)
-			m_vecStageUI[m_iSelectIndex]->Set_SubStage(m_vecStageUI[m_iSelectIndex]->Get_SubStage() - 1);
-	}
+	
 		
 	if (g_pInput_Device->Key_Up(DIK_RETURN))
 		cout << Teleport_Stage() << endl;
@@ -236,6 +225,31 @@ _uint CStageSelectUI::Teleport_Stage()
 		break;
 	}
 	return _uint(iStageNumber);
+}
+
+void CStageSelectUI::MoveUp_SubStage()
+{
+	if (!m_bIsActive)
+		return;
+	//if (g_pInput_Device->Key_Up(DIK_J))
+	{
+		if (m_vecStageUI[m_iSelectIndex]->Get_MaxSubStage() > m_vecStageUI[m_iSelectIndex]->Get_SubStage())
+			m_vecStageUI[m_iSelectIndex]->Set_SubStage(m_vecStageUI[m_iSelectIndex]->Get_SubStage() + 1);
+
+	}
+
+
+}
+
+void CStageSelectUI::MoveDown_SubStage()
+{
+	if (!m_bIsActive)
+		return;
+	//if (g_pInput_Device->Key_Up(DIK_K))
+	{
+		if (m_vecStageUI[m_iSelectIndex]->Get_SubStage() > 0)
+			m_vecStageUI[m_iSelectIndex]->Set_SubStage(m_vecStageUI[m_iSelectIndex]->Get_SubStage() - 1);
+	}
 }
 
 CStageSelectUI * CStageSelectUI::Create(_Device pGraphic_Device)

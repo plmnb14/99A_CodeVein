@@ -134,7 +134,8 @@ HRESULT CTexEffect::LateInit_GameObject()
 		!lstrcmp(L"FireBoy_FireBullet_Particle_02", m_szParticleName) ||
 		!lstrcmp(L"FireBoy_FireGround_Particle", m_szParticleName) ||
 		!lstrcmp(L"FireBoy_FireGround_BoomParticle_01", m_szParticleName) ||
-		!lstrcmp(L"FireBoy_FireGround_BoomParticle_02", m_szParticleName)
+		!lstrcmp(L"FireBoy_FireGround_BoomParticle_02", m_szParticleName) ||
+		!lstrcmp(L"DeerKing_Snow_Up_Particle_0", m_szParticleName)
 		//!lstrcmp(L"IceGirl_PointParticle_Blue", m_szParticleName) ||
 		//!lstrcmp(L"IceGirl_PointParticle_Green", m_szParticleName) ||
 		//!lstrcmp(L"IceGirl_FlashParticle_Blue", m_szParticleName) ||
@@ -540,12 +541,13 @@ void CTexEffect::Check_Frame(_double TimeDelta)
 
 void CTexEffect::Check_Move(_double TimeDelta)
 {
-	if (m_pInfo->bSlowly)
-	{
-		m_fMoveSpeed -= m_fMoveSpeed * _float(TimeDelta);
-		if (m_fMoveSpeed <= 0.f)
-			m_fMoveSpeed = 0.f;
-	}
+	//if (m_pInfo->bSlowly)
+	//{
+	//	m_fSlowAccel += _float(TimeDelta);
+	//	m_fMoveSpeed -= (-GRAVITY * m_fSlowAccel * m_fSlowAccel * m_fMoveSpeed) *  _float(TimeDelta);
+	//	if (m_fMoveSpeed <= 0.f)
+	//		m_fMoveSpeed = 0.f;
+	//}
 
 	_v3 vTargetPos = V3_NULL;
 	if (m_pDesc->pTargetTrans) vTargetPos = m_pDesc->pTargetTrans->Get_Pos();

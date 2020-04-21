@@ -280,9 +280,6 @@
     <Filter Include="02.GameObject\Stage\2%29 Monster\Monkey">
       <UniqueIdentifier>{3476f351-4dca-4100-8afd-c35eafac557d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\2%29 Monster\Yeti 보류">
-      <UniqueIdentifier>{4c67a91e-485e-4b42-aa04-6f2f960e43cc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\2%29 Monster\Urchin 보류">
       <UniqueIdentifier>{d5078eb0-dcf5-4078-8ad4-dfe766841a1d}</UniqueIdentifier>
     </Filter>
@@ -342,6 +339,18 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\12. StatusUI\00. ConditionUI">
       <UniqueIdentifier>{d9909967-c873-4f4f-95a3-67c36558ec82}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Scene\07.Stage_04">
+      <UniqueIdentifier>{611068cf-9c1d-4742-a02d-bc7dcc4c9523}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Monster\Yeti">
+      <UniqueIdentifier>{4c67a91e-485e-4b42-aa04-6f2f960e43cc}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\1%29 Boss\DeerKing">
+      <UniqueIdentifier>{9fa46d4c-a75f-4503-a4b0-aadcb2b7a341}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\1%29 Boss\DeerKing\Bullet">
+      <UniqueIdentifier>{73d2ac76-9697-48fb-9005-32929a632e5c}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -579,9 +588,6 @@
     <ClInclude Include="..\Headers\IceGirl.h">
       <Filter>02.GameObject\Stage\1%29 Boss\IceGirl</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\ColdBeam.h">
-      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\SwordBullet.h">
       <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
     </ClInclude>
@@ -598,7 +604,7 @@
       <Filter>02.GameObject\Stage\2%29 Monster\Monkey</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Yeti.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\Yeti 보류</Filter>
+      <Filter>02.GameObject\Stage\2%29 Monster\Yeti</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\FireBoy.h">
       <Filter>02.GameObject\Stage\1%29 Boss\FireBoy</Filter>
@@ -677,6 +683,39 @@
     </ClInclude>
     <ClInclude Include="..\Headers\ExpUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\12. StatusUI\01. ExpUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ColdBeamBig.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ColdBeamMiddle.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ColdBeamSmall.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ColdBeamSharp.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Scene_Stage_04.h">
+      <Filter>01.Scene\07.Stage_04</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\HunterBullet.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Hunter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\DeerKing.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MonkeyBullet.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Monkey</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Cocoon.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Cocoon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\CocoonBullet.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Cocoon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\CocoonBigBullet.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Cocoon</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -908,9 +947,6 @@
     <ClCompile Include="..\Codes\IceGirl.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\IceGirl</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\ColdBeam.cpp">
-      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\SwordBullet.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
     </ClCompile>
@@ -924,7 +960,7 @@
       <Filter>02.GameObject\Stage\2%29 Monster\Monkey</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Yeti.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\Yeti 보류</Filter>
+      <Filter>02.GameObject\Stage\2%29 Monster\Yeti</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\FireBoy.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\FireBoy</Filter>
@@ -1004,6 +1040,39 @@
     <ClCompile Include="..\Codes\ExpUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\12. StatusUI\01. ExpUI</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\ColdBeamBig.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ColdBeamMiddle.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ColdBeamSmall.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ColdBeamSharp.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Scene_Stage_04.cpp">
+      <Filter>01.Scene\07.Stage_04</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HunterBullet.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Hunter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DeerKing.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MonkeyBullet.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Monkey</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Cocoon.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Cocoon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\CocoonBullet.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Cocoon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\CocoonBigBullet.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Cocoon</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1046,6 +1115,9 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\ShaderFiles\Shader_Blur.fx">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\ShaderFiles\Shader_SSAO.fx">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

@@ -7,16 +7,18 @@
 BEGIN(Client)
 
 class CMonsterUI;
+
 class CBlackWolf final : public CGameObject
 {
 public:
-	enum MONSTER_ANITYPE {IDLE, MOVE, ATTACK, HIT, CC, DEAD};
+	enum FBLR { FRONT, FRONTLEFT, FRONTRIGHT, BACK, BACKLEFT, BACKRIGHT, LEFT, RIGHT };
+	enum MONSTER_ANITYPE { IDLE, MOVE, ATTACK, HIT, CC, DEAD };
 
 	enum WOLF_IDLETYPE { IDLE_IDLE, IDLE_EAT, IDLE_SIT };
 	enum WOLF_MOVETYPE { MOVE_RUN, MOVE_WALK, MOVE_DODGE };
 	enum WOLF_ATKTYPE { ATK_NORMAL, ATK_COMBO };
-	enum WOLF_HITTYPE { HIT_HIT_F, HIT_HIT_B };
-	enum WOLF_DOWNTYPE { DOWN_DOWN, DOWN_DOWN_W, DOWN_DOWN_S };
+	enum WOLF_HITTYPE { HIT_STRONG, HIT_NORMAL };
+	enum WOLF_CCTYPE { CC_DOWN_P, CC_DOWN_S };
 	enum WOLF_DEADTYPE { DEAD_DEAD, DEAD_DEAD_S };
 
 	enum WOLF_ANI
@@ -35,6 +37,7 @@ public:
 		Down_Weak_Start,
 		Down_Weak_Loop,
 		Down_weak_End,
+
 		Down_Strong_Start,
 		Down_Strong_Loop,
 		Down_Strong_End,
@@ -55,7 +58,31 @@ public:
 	
 	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_Head, Bone_End };
 
-	enum FBLR { FRONT, BACK, LEFT, RIGHT };
+public:
+	struct INITSTRUCT
+	{
+		INITSTRUCT(
+			_float _fDMG,
+			_float _fHpMax,
+			_float _fArmorMax,
+			_float _fKnowRange,
+			_float _fAtkRange,
+			_int _iDodgeMax)
+		{
+			tMonterStatus.fDamage = _fDMG;
+			tMonterStatus.fHp_Max = _fHpMax;
+			tMonterStatus.fArmor_Max = _fArmorMax;
+
+			fKonwingRange = _fKnowRange;
+			fCanAttackRange = _fAtkRange;
+			iDodgeCountMax = _iDodgeMax;
+		}
+
+		OBJECT_PARAM		tMonterStatus;
+		_float				fKonwingRange = 20.f;
+		_float				fCanAttackRange = 5.f;
+		_int				iDodgeCountMax = 3;
+	};
 
 protected:
 	explicit CBlackWolf(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -83,34 +110,27 @@ private:
 	void Function_DecreMoveMent(_float _fMutiply = 1.f);
 	void Function_ResetAfterAtk();
 
+	void Check_PosY();
 	void Check_Hit();
 	void Check_FBLR();
 	void Check_Dist();
-	void Set_AniEvent();
-
-	void Play_Idle();
-	void Play_Eat();
-	void Play_Sit();
-
-	void Play_Walk();
-	void Play_Run();
-	void Play_Dodge();
+	void Check_AniEvent();
 
 	void Play_Bite_LRL();
 	void Play_RDodgeAtk();
 	void Play_LDodgeAtk();
 	void Play_Frisbee();
 
+	void Play_Idle();
+	void Play_Move();
 	void Play_Hit();
-	void Play_Down_Strong();
-	void Play_Down_Weak();
-
+	void Play_CC();
 	void Play_Dead();
-	void Play_Dead_Strong();
 
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
+	HRESULT Ready_Status(void* pArg);
 	HRESULT Ready_Collider();
 	HRESULT Ready_BoneMatrix();
 
@@ -120,7 +140,6 @@ public:
 	virtual void Free();
 
 private:
-	//////////// 채유미
 	// 몬스터 HP바 UI
 	CMonsterUI*			m_pMonsterUI = nullptr;
 
@@ -145,31 +164,27 @@ private:
 	_float				m_fSkillMoveAccel_Max = 0.f;
 	_float				m_fSkillMoveMultiply = 1.f;
 
-	MONSTER_ANITYPE		m_eFirstCategory; //대분류
-	WOLF_IDLETYPE		m_eSecondCategory_IDLE; //중분류
+	MONSTER_ANITYPE		m_eFirstCategory;
+	WOLF_IDLETYPE		m_eSecondCategory_IDLE;
 	WOLF_MOVETYPE		m_eSecondCategory_MOVE;
 	WOLF_ATKTYPE		m_eSecondCategory_ATK;
 	WOLF_HITTYPE		m_eSecondCategory_HIT;
-	WOLF_DOWNTYPE		m_eSecondCategory_DOWN;
+	WOLF_CCTYPE			m_eSecondCategory_CC;
 	WOLF_DEADTYPE		m_eSecondCategory_DEAD;
 
-	WOLF_ANI			m_eState; //애니 분류
-	_bool				m_bEventTrigger[10] = {}; //이벤트 조건 조절
-	_bool				m_bCanPlayDeadAni = false;
-	_bool				m_bIsPlayDeadAni = false;
+	WOLF_ANI			m_eState;
+	FBLR				m_eFBLR;
 
-	_bool				m_bInRecognitionRange = false; //인지 범위 여부
-	_bool				m_bInAtkRange = false; //공격 범위 여부
-	
-	_bool				m_bCanChase = false; //추격 여부
-
-	_bool				m_bCanCoolDown = false; //쿨타임 여부
-	_bool				m_bIsCoolDown = false; //쿨타임 진행중 여부
-
-	_bool				m_bCanIdleRandom = true;
-	_bool				m_bCanAtkCategoryRandom = true; //미사용
-	_bool				m_bIsAtkCombo = false; //미사용
-	_bool				m_bCanAtkRandom = true;
+	_bool				m_bEventTrigger[10] = {};
+	_bool				m_bCanPlayDead = false;
+	_bool				m_bInRecognitionRange = false;
+	_bool				m_bInAtkRange = false;
+	_bool				m_bCanChase = false;
+	_bool				m_bCanRandomAtk = true;
+	_bool				m_bCanCoolDown = false;
+	_bool				m_bIsCoolDown = false;
+	_bool				m_bCanIdle = true;
+	_bool				m_bIsIdle = false;
 
 	_float				m_fRecognitionRange = 15.f;
 	_float				m_fAtkRange = 4.f;

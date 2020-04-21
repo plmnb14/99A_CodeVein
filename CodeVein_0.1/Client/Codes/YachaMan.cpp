@@ -2,6 +2,8 @@
 #include "..\Headers\YachaMan.h"
 #include "..\Headers\Weapon.h"
 
+#include "MonsterUI.h"
+
 CYachaMan::CYachaMan(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
@@ -14,7 +16,7 @@ CYachaMan::CYachaMan(const CYachaMan & rhs)
 
 HRESULT CYachaMan::Ready_GameObject_Prototype()
 {
-	return NOERROR;
+	return S_OK;
 }
 
 HRESULT CYachaMan::Ready_GameObject(void * pArg)
@@ -25,43 +27,51 @@ HRESULT CYachaMan::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Pos(_v3(1.f, 0.f, 1.f));
 	m_pTransformCom->Set_Scale(V3_ONE);
 
+	Ready_Status(pArg);
 	Ready_BoneMatrix();
 	Ready_Collider();
 	Ready_Weapon();
 
+	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
+	m_pMonsterUI->Set_Target(this);
+	m_pMonsterUI->Set_Bonmatrix(m_matBone[Bone_Head]);
+	m_pMonsterUI->Ready_GameObject(NULL);
+
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
-	m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
+	if (nullptr != m_pTarget)
+	{
+		Safe_AddRef(m_pTarget);
+
+		m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
+		Safe_AddRef(m_pTargetTransform);
+	}
 	
 	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-	m_tObjParam.fHp_Max = 180.f; //4~5대 사망, 기본공격력 20+-5에서 피감소
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
-	m_tObjParam.fDamage = 25.f;
 
-	m_tObjParam.bCanHit = true; //맞기 가능
-	m_tObjParam.bIsHit = false;	//맞기 진행중 아님
-	m_tObjParam.bCanAttack = true; //공격 가능
-	m_tObjParam.bIsAttack = false; //공격 진행중 아님
-	m_tObjParam.bIsDodge = false; //첫 생성시 회피 비활성
+	m_tObjParam.bCanHit = true;
+	m_tObjParam.bIsHit = false;
+	m_tObjParam.bCanAttack = true;
+	m_tObjParam.bIsAttack = false;
+	m_tObjParam.bCanDodge = true;
+	m_tObjParam.bIsDodge = false;
 
-	m_bInRecognitionRange = false; //인지 범위 여부
-	m_bInAtkRange = false; //공격 범위 여부
-	m_bCanChase = false; //추격 여부
-	m_bCanCoolDown = false; //쿨타임 여부
-	m_bIsCoolDown = false; //쿨타임 진행중 여부
+	m_bInRecognitionRange = false;
+	m_bInAtkRange = false;
+	m_bCanChase = false;
+	m_bCanCoolDown = false;
+	m_bIsCoolDown = false;
 
-	m_bCanAtkCategoryRandom = true;
-	m_bIsAtkCombo = false;
-	m_bCanIdleRandom = true;
+	m_bAtkCategory = true; 
+	m_bIsCombo = false;
 
-	m_fRecognitionRange = 10.f; //인지범위
-	m_fAtkRange = 4.f; //공격범위
-	m_fCoolDownMax = 1.5f; //쿨타임 맥스값은 유동적
-	m_fCoolDownCur = 0.f; //쿨타임 시간을 더함
+	m_bCanIdle = true;
+	m_bIsIdle = false;
+
+	m_fCoolDownCur = 0.f;
 	m_fSpeedForCollisionPush = 2.f;
-	m_iRandom = 0;
-	m_iDodgeCount = 0; //n회 피격시 바로 회피
 
-	return NOERROR;
+	return S_OK;
 }
 
 _int CYachaMan::Update_GameObject(_double TimeDelta)
@@ -71,9 +81,12 @@ _int CYachaMan::Update_GameObject(_double TimeDelta)
 
 	CGameObject::Update_GameObject(TimeDelta);
 
+	m_pMonsterUI->Update_GameObject(TimeDelta);
+
+	Check_PosY();
 	Check_Hit();
 	Check_Dist();
-	Set_AniEvent();
+	Check_AniEvent();
 	Function_CoolDown();
 
 	m_pMeshCom->SetUp_Animation(m_eState);
@@ -92,8 +105,6 @@ _int CYachaMan::Late_Update_GameObject(_double TimeDelta)
 
 	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
-	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
-	//	return E_FAIL;
 	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
 		return E_FAIL;
 
@@ -102,7 +113,7 @@ _int CYachaMan::Late_Update_GameObject(_double TimeDelta)
 	IF_NOT_NULL(m_pWeapon)
 		m_pWeapon->Late_Update_GameObject(TimeDelta);
 
-	return NOERROR;
+	return S_OK;
 }
 
 HRESULT CYachaMan::Render_GameObject()
@@ -134,11 +145,6 @@ HRESULT CYachaMan::Render_GameObject()
 
 			m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
 
-			//m_pShaderCom->Begin_Pass(m_iPass);
-
-			//if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
-			//	return E_FAIL;
-
 			m_pShaderCom->Commit_Changes();
 
 			m_pMeshCom->Render_Mesh(i, j);
@@ -155,7 +161,7 @@ HRESULT CYachaMan::Render_GameObject()
 	Update_Collider();
 	Render_Collider();
 
-	return NOERROR;
+	return S_OK;
 }
 
 HRESULT CYachaMan::Render_GameObject_SetPass(CShader * pShader, _int iPass)
@@ -176,10 +182,6 @@ HRESULT CYachaMan::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 
 	m_matLastWVP = m_pTransformCom->Get_WorldMat() * ViewMatrix * ProjMatrix;
 
-	//_mat matLightVP = g_pManagement->Get_LightViewProj();
-	//if (FAILED(pShader->Set_Value("g_LightVP_Close", &matLightVP, sizeof(_mat))))
-	//	return E_FAIL;
-
 	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
 
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
@@ -198,7 +200,7 @@ HRESULT CYachaMan::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 		}
 	}
 
-	return NOERROR;
+	return S_OK;
 }
 
 void CYachaMan::Update_Collider()
@@ -247,6 +249,8 @@ void CYachaMan::Enter_Collision()
 {
 	Check_CollisionPush();
 	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
+
+	return;
 }
 
 void CYachaMan::Check_CollisionPush()
@@ -263,20 +267,16 @@ void CYachaMan::Check_CollisionPush()
 		{
 			CCollider* pCollider = TARGET_TO_COL(Obj_iter);
 
-			// 지금 속도값 임의로 넣었는데 구해서 넣어줘야함 - 완료
 			if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_fSpeedForCollisionPush * DELTA_60))
 			{
 				CTransform* pTrans = TARGET_TO_TRANS(Obj_iter);
 				CNavMesh*   pNav = TARGET_TO_NAV(Obj_iter);
 
-				// 방향 구해주고
 				_v3 vDir = m_pTransformCom->Get_Pos() - pTrans->Get_Pos();
 				V3_NORMAL_SELF(&vDir);
 
-				// y축 이동은 하지말자
 				vDir.y = 0;
 
-				// 네비 메쉬타게 끔 세팅
 				pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pCollider->Get_Length().x));
 			}
 		}
@@ -286,9 +286,7 @@ void CYachaMan::Check_CollisionPush()
 void CYachaMan::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 {
 	if (false == m_tObjParam.bIsAttack)
-	{
 		return;
-	}
 
 	_bool bFirst = true;
 
@@ -334,69 +332,266 @@ void CYachaMan::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 				else
 				{
 					if (bFirst)
-					{
 						break;
-					}
 				}
 			}
 		}
 	}
 }
 
-void CYachaMan::Check_Hit()
+void CYachaMan::Function_RotateBody()
 {
-	if (MONSTER_ANITYPE::DEAD == m_eFirstCategory)
+	_float fTargetAngle = m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos());
+
+	_float fYAngle = m_pTransformCom->Get_Angle().y;
+
+	_v3 vTargetDir = m_pTransformCom->Get_Axis(AXIS_Z);
+	V3_NORMAL_SELF(&vTargetDir);
+
+	if (fTargetAngle > 0)
 	{
-		return;
+		if (fYAngle < 0)
+		{
+			if (-D3DXToRadian(90.f) > fYAngle && -D3DXToRadian(180.f) < fYAngle)
+			{
+				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle <= -D3DXToRadian(180.f)) fYAngle = D3DXToRadian(180.f);
+			}
+			else fYAngle += DELTA_60 * D3DXToRadian(360.f);
+		}
+		else
+		{
+			if (fYAngle < fTargetAngle)
+			{
+				fYAngle += DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle >= fTargetAngle) fYAngle = fTargetAngle;
+			}
+			else
+			{
+				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle <= fTargetAngle) fYAngle = fTargetAngle;
+			}
+		}
+	}
+	else if (fTargetAngle < 0)
+	{
+		if (fYAngle > 0)
+		{
+			if (D3DXToRadian(90.f) < fYAngle && D3DXToRadian(180.f) > fYAngle)
+			{
+				fYAngle += DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle >= D3DXToRadian(180.f)) fYAngle = -D3DXToRadian(180.f);
+			}
+			else fYAngle -= DELTA_60 * D3DXToRadian(360.f);
+		}
+		else
+		{
+			if (fYAngle > fTargetAngle)
+			{
+				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle <= fTargetAngle) fYAngle = fTargetAngle;
+			}
+			else
+			{
+				fYAngle += DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle >= fTargetAngle) fYAngle = fTargetAngle;
+			}
+		}
 	}
 
-	if (false == m_tObjParam.bCanHit) //피격o
+	m_pTransformCom->Set_Angle(AXIS_Y, fYAngle);
+
+	return;
+}
+
+void CYachaMan::Function_CoolDown()
+{
+	if (true == m_bCanCoolDown)
 	{
-		++m_iDodgeCount;
-		if (m_iDodgeCount >= m_iDodgeCountMax) //3회 이상의 피격
+		m_fCoolDownCur += DELTA_60;
+
+		if (m_fCoolDownCur >= m_fCoolDownMax)
 		{
-			m_iDodgeCount = 0;
-			m_eFirstCategory = MONSTER_ANITYPE::MOVE;
-			m_eSecondCategory_MOVE = YACHAMAN_MOVETYPE::MOVE_DODGE;
-			m_pMeshCom->Reset_OldIndx();
-			Function_RotateBody();
-		}
-		else 
-		{
-			if (true == m_tObjParam.bIsHit) //피격 진행중o
-			{
-				if (true == m_tObjParam.bHitAgain) //추가 피격o
-				{
-					m_eFirstCategory = MONSTER_ANITYPE::HIT;
-					Check_FBLR();
-					m_tObjParam.bHitAgain = false;
-					m_pMeshCom->Reset_OldIndx();
-				}
-			}
-			else //피격 진행중x
-			{
-				if (0 >= m_tObjParam.fHp_Cur) //체력없음
-				{
-					m_eFirstCategory = MONSTER_ANITYPE::DEAD;
-				}
-				else //체력 있음
-				{
-					m_eFirstCategory = MONSTER_ANITYPE::HIT;
-					Check_FBLR();
-				}
-			}
+			m_fCoolDownCur = 0.f;
+			m_bCanCoolDown = false;
+			m_bIsCoolDown = false;
+			m_tObjParam.bCanAttack = true;
 		}
 	}
 
 	return;
 }
 
+void CYachaMan::Function_Movement(_float _fspeed, _v3 _vDir)
+{
+	V3_NORMAL(&_vDir, &_vDir);
+
+	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &_vDir, _fspeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
+
+	return;
+}
+
+void CYachaMan::Function_DecreMoveMent(_float _fMutiply)
+{
+	m_fSkillMoveSpeed_Cur -= (0.3f - m_fSkillMoveAccel_Cur * m_fSkillMoveAccel_Cur * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60")) * _fMutiply;
+	m_fSkillMoveAccel_Cur += g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60");
+
+	if (m_fSkillMoveSpeed_Cur < 0.f)
+	{
+		m_fSkillMoveAccel_Cur = 0.5f;
+		m_fSkillMoveSpeed_Cur = 0.f;
+	}
+
+	return;
+}
+
+void CYachaMan::Function_ResetAfterAtk()
+{
+	m_tObjParam.bCanHit = true;
+	m_tObjParam.bIsHit = false;
+
+	m_tObjParam.bCanDodge = true;
+	m_tObjParam.bIsDodge = false;
+
+	m_bCanIdle = true;
+	m_bIsIdle = false;
+
+	m_tObjParam.bIsAttack = false;
+
+	m_bAtkCategory = true;
+	m_bCanInterrupt = true;
+	m_bIsCombo = false;
+
+	m_vecAttackCol[0]->Set_Enabled(false);
+
+	IF_NOT_NULL(m_pWeapon)
+		m_pWeapon->Set_Target_CanAttack(false);
+	IF_NOT_NULL(m_pWeapon)
+		m_pWeapon->Set_Enable_Trail(false);
+
+	LOOP(20)
+		m_bEventTrigger[i] = false;
+
+	return;
+}
+
+void CYachaMan::Check_PosY()
+{
+	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
+
+	return;
+}
+
+void CYachaMan::Check_Hit()
+{
+	if (MONSTER_ANITYPE::DEAD == m_eFirstCategory)
+		return;
+
+	if (0 < m_tObjParam.fHp_Cur)
+	{
+		if (false == m_tObjParam.bCanHit)
+		{
+			if (true == m_bCanInterrupt)
+			{
+				++m_iDodgeCount;
+
+				if (m_iDodgeCount >= m_iDodgeCountMax)
+				{
+					m_iDodgeCount = 0;
+					m_tObjParam.bCanDodge = true;
+					m_eFirstCategory = MONSTER_ANITYPE::MOVE;
+					m_eSecondCategory_MOVE = YACHAMAN_MOVETYPE::MOVE_DODGE;
+					m_pMeshCom->Reset_OldIndx();
+					Function_RotateBody();
+				}
+				else
+				{
+					if (true == m_tObjParam.bIsHit)
+					{
+						if (true == m_tObjParam.bHitAgain)
+						{
+							m_eFirstCategory = MONSTER_ANITYPE::HIT;
+							//이떄 특수 공격 관련으로 불값이 참인 경우 cc기로
+							/*if(특수 공격)
+							else
+							데미지 측정 float 혹은 bool*/
+							//	m_eFirstCategory = MONSTER_ANITYPE::CC;
+							Check_FBLR();
+							m_tObjParam.bHitAgain = false;
+							m_pMeshCom->Reset_OldIndx();
+						}
+					}
+					else
+					{
+						m_eFirstCategory = MONSTER_ANITYPE::HIT;
+						//데미지 측정, 특수 공격 측정
+						/*if(특수 공격)
+						else
+						데미지 측정 float 혹은 bool*/
+						//	m_eFirstCategory = MONSTER_ANITYPE::CC;
+						Check_FBLR();
+					}
+				}
+			}
+		}
+	}
+	else
+		m_eFirstCategory = MONSTER_ANITYPE::DEAD;
+
+	return;
+}
+
 void CYachaMan::Check_FBLR()
 {
-	//추후 피격 위치에 따른 피격 모션을 다르게 하기 위한 함수
-	m_eSecondCategory_HIT = YACHAMAN_HITTYPE::HIT_HIT;
-	//m_eSecondCategory_Hit = YACHAMAN_HITTYPE::HIT_HIT_F;
-	//m_eSecondCategory_Hit = YACHAMAN_HITTYPE::HIT_HIT_B;
+	_float angle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos()));
+
+	if (MONSTER_ANITYPE::HIT == m_eFirstCategory)
+	{
+		//if(데미지 변수) 또는 if(데미지 >= xxx.f)
+		//m_eSecondCategory_HIT = HUNTER_HITTYPE::HIT_NORMAL; //hit02
+		m_eSecondCategory_HIT = YACHAMAN_HITTYPE::HIT_WEAK; //hit01
+
+		if (-22.5f <= angle && 22.5f > angle)
+			m_eFBLR = FBLR::FRONT;
+		else if (22.5f <= angle && 67.5f > angle)
+			m_eFBLR = FBLR::FRONTRIGHT;
+		else if (67.5f <= angle && 112.5f > angle)
+			m_eFBLR = FBLR::RIGHT;
+		else if (112.5f <= angle && 157.5f > angle)
+			m_eFBLR = FBLR::BACKRIGHT;
+		else if (157.5f <= angle && 180.f > angle)
+			m_eFBLR = FBLR::BACK;
+		else if (-180.f <= angle && -157.f > angle)
+			m_eFBLR = FBLR::BACK;
+		else if (-157.5f <= angle && -112.5f > angle)
+			m_eFBLR = FBLR::BACKLEFT;
+		else if (-112.5f <= angle && -67.5f > angle)
+			m_eFBLR = FBLR::LEFT;
+		else if (-67.5f <= angle && -22.5f > angle)
+			m_eFBLR = FBLR::FRONTLEFT;
+	}
+	else if (MONSTER_ANITYPE::CC == m_eFirstCategory)
+	{
+		//m_eSecondCategory_CC = HUNTER_CCTYPE::CC_STUN;
+		m_eSecondCategory_CC = YACHAMAN_CCTYPE::CC_DOWN;
+		//자빠짐Down_S, 엎어짐Down_P
+		if (0.f <= angle && 90.f > angle)
+			m_eFBLR = FBLR::FRONT;
+		else if (-90.f <= angle && 0.f > angle)
+			m_eFBLR = FBLR::FRONT;
+		else if (90.f <= angle && 180.f > angle)
+			m_eFBLR = FBLR::BACK;
+		else if (-180.f <= angle && -90.f > angle)
+			m_eFBLR = FBLR::BACK;
+	}
+
+	return;
 }
 
 void CYachaMan::Check_Dist()
@@ -406,159 +601,112 @@ void CYachaMan::Check_Dist()
 		MONSTER_ANITYPE::DEAD == m_eFirstCategory)
 		return;
 
-
-	if (MONSTER_ANITYPE::MOVE == m_eFirstCategory &&
-		YACHAMAN_MOVETYPE::MOVE_DODGE == m_eSecondCategory_MOVE)
-		return;
-
-	if (true == m_tObjParam.bIsAttack ||
-		true == m_bIsAtkCombo ||
+	if (true == m_bIsCombo ||
+		true == m_tObjParam.bIsAttack ||
 		true == m_tObjParam.bIsDodge ||
 		true == m_tObjParam.bIsHit)
 		return;
 
-	_float fLenth = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransform->Get_Pos()));
-
-	m_fRecognitionRange >= fLenth ? m_bInRecognitionRange = true : m_bInRecognitionRange = false;
-	m_fAtkRange >= fLenth ? m_bInAtkRange = true : m_bInAtkRange = false;
-
-	if (true == m_bInRecognitionRange)
+	if (nullptr == m_pTargetTransform)
 	{
-		if (YACHAMAN_ANI::Lurk == m_eState || YACHAMAN_ANI::Lurk_End == m_eState ||
-			YACHAMAN_ANI::Eat == m_eState || YACHAMAN_ANI::Eat_End == m_eState)
+		Function_ResetAfterAtk();
+
+		m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+
+		return;
+	}
+	else
+	{
+		_float fLenth = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransform->Get_Pos()));
+
+		m_fRecognitionRange >= fLenth ? m_bInRecognitionRange = true : m_bInRecognitionRange = false;
+		m_fAtkRange >= fLenth ? m_bInAtkRange = true : m_bInAtkRange = false;
+
+		if (true == m_bInRecognitionRange)
 		{
-			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-			return;
-		}
-		else
-		{
-			if (true == m_bInAtkRange)
+			if (true == m_bIsIdle)
 			{
-				if (true == m_tObjParam.bCanAttack)
+				m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+			}
+			else
+			{
+				if (true == m_bInAtkRange)
 				{
-					if (true == m_bIsCoolDown)
+					if (true == m_tObjParam.bCanAttack)
 					{
-						//인지,범위,공격가능,쿨타임 -> 대기패턴, 경계패턴
-						m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-						m_eSecondCategory_IDLE = YACHAMAN_IDLETYPE::IDLE_IDLE;
-						Function_RotateBody();
-						return;
+						if (true == m_bIsCoolDown)
+						{
+							m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+							m_eSecondCategory_IDLE = YACHAMAN_IDLETYPE::IDLE_IDLE;
+							Function_RotateBody();
+						}
+						else
+						{
+							m_bAtkCategory = true;
+							m_eFirstCategory = MONSTER_ANITYPE::ATTACK;
+							Function_RotateBody();
+						}
 					}
 					else
 					{
-						//인지,범위,공격가능,쿨타임아님->공격 패턴
-						m_bCanAtkCategoryRandom = true;
-						m_eFirstCategory = MONSTER_ANITYPE::ATTACK;
+						m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+						m_eSecondCategory_IDLE = YACHAMAN_IDLETYPE::IDLE_IDLE;
 						Function_RotateBody();
-						return;
 					}
 				}
 				else
 				{
-					//인지, 범위, 공격불가능 -> 공격중은 아닌데? walk하면서 주위 맴돌기,경계상태에 가깝다
-					m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-					m_eSecondCategory_IDLE = YACHAMAN_IDLETYPE::IDLE_IDLE;
+					m_bCanChase = true;
+					m_eFirstCategory = MONSTER_ANITYPE::MOVE;
+					m_eSecondCategory_MOVE = YACHAMAN_MOVETYPE::MOVE_RUN;
 					Function_RotateBody();
-					return;
 				}
 			}
-			else
-			{
-				m_bCanChase = true;
-				m_eFirstCategory = MONSTER_ANITYPE::MOVE;
-				m_eSecondCategory_MOVE = YACHAMAN_MOVETYPE::MOVE_RUN;
-				return;
-			}
 		}
-	}
-	else
-	{
-		m_bCanChase = false;
-		m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-		if (true == m_bCanIdleRandom)
+		else
 		{
-			switch (CALC::Random_Num(YACHAMAN_IDLETYPE::IDLE_IDLE, YACHAMAN_IDLETYPE::IDLE_LURK))
+			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+
+			if (false == m_bIsIdle)
 			{
-			case YACHAMAN_IDLETYPE::IDLE_IDLE:
-				m_eSecondCategory_IDLE = YACHAMAN_IDLETYPE::IDLE_IDLE;
-				break;
-			case YACHAMAN_IDLETYPE::IDLE_EAT:
-				m_eSecondCategory_IDLE = YACHAMAN_IDLETYPE::IDLE_EAT;
-				break;
-			case YACHAMAN_IDLETYPE::IDLE_LURK:
-				m_eSecondCategory_IDLE = YACHAMAN_IDLETYPE::IDLE_LURK;
-				break;
+				switch (CALC::Random_Num(YACHAMAN_IDLETYPE::IDLE_IDLE, YACHAMAN_IDLETYPE::IDLE_LURK))
+				{
+				case YACHAMAN_IDLETYPE::IDLE_IDLE:
+					m_eSecondCategory_IDLE = YACHAMAN_IDLETYPE::IDLE_IDLE;
+					break;
+				case YACHAMAN_IDLETYPE::IDLE_EAT:
+					m_eSecondCategory_IDLE = YACHAMAN_IDLETYPE::IDLE_EAT;
+					break;
+				case YACHAMAN_IDLETYPE::IDLE_LURK:
+					m_eSecondCategory_IDLE = YACHAMAN_IDLETYPE::IDLE_LURK;
+					break;
+				}
 			}
 		}
+		return;
 	}
 
 	return;
 }
 
-void CYachaMan::Set_AniEvent()
+void CYachaMan::Check_AniEvent()
 {
 	switch (m_eFirstCategory)
 	{
 	case MONSTER_ANITYPE::IDLE:
-		if (true == m_bCanIdleRandom)
-		{
-			m_bCanIdleRandom = false;
-
-			switch (m_eSecondCategory_IDLE)
-			{
-			case YACHAMAN_IDLETYPE::IDLE_IDLE:
-				m_eState = YACHAMAN_ANI::Hammer_Idle;
-				break;
-			case YACHAMAN_IDLETYPE::IDLE_EAT:
-				m_eState = YACHAMAN_ANI::Eat;
-				break;
-			case YACHAMAN_IDLETYPE::IDLE_LURK:
-				m_eState = YACHAMAN_ANI::Lurk;
-				break;
-			}
-		}
-		else
-		{
-			switch (m_eSecondCategory_IDLE)
-			{
-			case Client::CYachaMan::IDLE_IDLE:
-				Play_Idle();
-				break;
-			case Client::CYachaMan::IDLE_EAT:
-				Play_Eat();
-				break;
-			case Client::CYachaMan::IDLE_LURK:
-				Play_Lurk();
-				break;
-			}
-		}
+		Play_Idle();
 		break;
 
 	case MONSTER_ANITYPE::MOVE:
-		switch (m_eSecondCategory_MOVE)
-		{
-		case YACHAMAN_MOVETYPE::MOVE_RUN:
-			Play_Run();
-			break;
-		case YACHAMAN_MOVETYPE::MOVE_WALK:
-			Play_Walk();
-			break;
-		case YACHAMAN_MOVETYPE::MOVE_DODGE:
-			Play_Dodge();
-			break;
-		}
+		Play_Move();
 		break;
 
 	case MONSTER_ANITYPE::ATTACK:
-		if (true == m_bCanAtkCategoryRandom)
+		if (true == m_bAtkCategory)
 		{
-			m_tObjParam.bCanAttack = false;
-			m_tObjParam.bIsAttack = true;
-			m_bCanAtkCategoryRandom = false;
+			m_bAtkCategory = false;
 
 			m_iRandom = CALC::Random_Num(YACHAMAN_ATKTYPE::ATK_NORMAL, YACHAMAN_ATKTYPE::ATK_COMBO);
-
-			//m_iRandom = 0; //이동값 수치 조절용 임시 변수값
 
 			switch (m_iRandom)
 			{
@@ -569,7 +717,7 @@ void CYachaMan::Set_AniEvent()
 			case YACHAMAN_ATKTYPE::ATK_COMBO:
 				m_eSecondCategory_ATK = YACHAMAN_ATKTYPE::ATK_COMBO;
 				Play_RandomAtkCombo();
-				m_bIsAtkCombo = true;
+				m_bIsCombo = true;
 				break;
 			}
 
@@ -641,6 +789,7 @@ void CYachaMan::Set_AniEvent()
 		break;
 
 	case MONSTER_ANITYPE::CC:
+		Play_CC();
 		break;
 
 	case MONSTER_ANITYPE::DEAD:
@@ -651,296 +800,9 @@ void CYachaMan::Set_AniEvent()
 	return;
 }
 
-void CYachaMan::Function_RotateBody()
-{
-	_float fTargetAngle = m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos());
-
-	_float fYAngle = m_pTransformCom->Get_Angle().y;
-
-	_v3 vTargetDir = m_pTransformCom->Get_Axis(AXIS_Z);
-	V3_NORMAL_SELF(&vTargetDir);
-
-	if (fTargetAngle > 0)
-	{
-		if (fYAngle < 0)
-		{
-			if (-D3DXToRadian(90.f) > fYAngle && -D3DXToRadian(180.f) < fYAngle)
-			{
-				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
-
-				if (fYAngle <= -D3DXToRadian(180.f)) fYAngle = D3DXToRadian(180.f);
-			}
-			else fYAngle += DELTA_60 * D3DXToRadian(360.f);
-		}
-		else
-		{
-			if (fYAngle < fTargetAngle)
-			{
-				fYAngle += DELTA_60 * D3DXToRadian(360.f);
-
-				if (fYAngle >= fTargetAngle) fYAngle = fTargetAngle;
-			}
-			else
-			{
-				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
-
-				if (fYAngle <= fTargetAngle) fYAngle = fTargetAngle;
-			}
-		}
-	}
-	else if (fTargetAngle < 0)
-	{
-		if (fYAngle > 0)
-		{
-			if (D3DXToRadian(90.f) < fYAngle && D3DXToRadian(180.f) > fYAngle)
-			{
-				fYAngle += DELTA_60 * D3DXToRadian(360.f);
-
-				if (fYAngle >= D3DXToRadian(180.f)) fYAngle = -D3DXToRadian(180.f);
-			}
-			else fYAngle -= DELTA_60 * D3DXToRadian(360.f);
-		}
-		else
-		{
-			if (fYAngle > fTargetAngle)
-			{
-				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
-
-				if (fYAngle <= fTargetAngle) fYAngle = fTargetAngle;
-			}
-			else
-			{
-				fYAngle += DELTA_60 * D3DXToRadian(360.f);
-
-				if (fYAngle >= fTargetAngle) fYAngle = fTargetAngle;
-			}
-		}
-	}
-
-	m_pTransformCom->Set_Angle(AXIS_Y, fYAngle);
-}
-
-void CYachaMan::Function_CoolDown()
-{
-	if (true == m_bCanCoolDown) //공격 직후 상태
-	{
-		m_fCoolDownCur += DELTA_60;
-
-		if (m_fCoolDownCur >= m_fCoolDownMax) //누적시간이 쿨타임보다 크다면
-		{
-			m_fCoolDownCur = 0.f;
-			m_bCanCoolDown = false;
-			m_bIsCoolDown = false;
-			m_tObjParam.bCanAttack = true;
-		}
-	}
-
-	return;
-}
-
-void CYachaMan::Function_Movement(_float _fspeed, _v3 _vDir)
-{
-	V3_NORMAL(&_vDir, &_vDir);
-
-	// 네비 미적용
-	//m_pTransformCom->Add_Pos(_fspeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"), _vDir);
-
-	// 네비 적용 
-	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &_vDir, _fspeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
-
-	return;
-}
-
-void CYachaMan::Function_DecreMoveMent(_float _fMutiply)
-{
-	m_fSkillMoveSpeed_Cur -= (0.3f - m_fSkillMoveAccel_Cur * m_fSkillMoveAccel_Cur * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60")) * _fMutiply;
-	m_fSkillMoveAccel_Cur += g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60");
-
-	if (m_fSkillMoveSpeed_Cur < 0.f)
-	{
-		m_fSkillMoveAccel_Cur = 0.5f;
-		m_fSkillMoveSpeed_Cur = 0.f;
-	}
-}
-
-void CYachaMan::Function_ResetAfterAtk()
-{
-	m_tObjParam.bCanHit = true;
-	m_tObjParam.bIsHit = false;
-
-	m_tObjParam.bIsDodge = false;
-
-	m_tObjParam.bIsAttack = false;
-	m_bCanAtkCategoryRandom = true;
-	m_bIsAtkCombo = false;
-
-	m_vecAttackCol[0]->Set_Enabled(false);
-
-	IF_NOT_NULL(m_pWeapon) 
-		m_pWeapon->Set_Target_CanAttack(false);
-	IF_NOT_NULL(m_pWeapon) 
-		m_pWeapon->Set_Enable_Trail(false);
-
-	LOOP(20)
-		m_bEventTrigger[i] = false;
-
-	return;
-}
-
-void CYachaMan::Play_Idle()
-{
-	if (true == m_bInRecognitionRange)
-	{
-		if (true == m_tObjParam.bCanAttack)
-		{
-			//인지, 공격 가능->대기
-			m_eState = YACHAMAN_ANI::Hammer_Idle;
-			return;
-		}
-		else
-		{
-			//인지, 공격 불가->경계
-			Function_RotateBody();
-			m_eState = YACHAMAN_ANI::Hammer_Idle;
-			return;
-		}
-	}
-	else
-	{
-		m_bCanIdleRandom = true;
-		m_eState = YACHAMAN_ANI::Hammer_Idle;
-		return;
-	}
-}
-
-void CYachaMan::Play_Eat()
-{
-	if (true == m_bInRecognitionRange)
-	{
-		if (YACHAMAN_ANI::Eat == m_eState)
-		{
-			m_eState = YACHAMAN_ANI::Eat_End;
-			return;
-		}
-		else if (YACHAMAN_ANI::Eat_End == m_eState && m_pMeshCom->Is_Finish_Animation(0.98f))
-		{
-			m_bCanIdleRandom = true;
-			m_eState = YACHAMAN_ANI::Hammer_Idle;
-			return;
-		}
-	}
-	else
-	{
-		m_eState = YACHAMAN_ANI::Eat;
-		return;
-	}
-}
-
-void CYachaMan::Play_Lurk()
-{
-	if (true == m_bInRecognitionRange)
-	{
-		if (YACHAMAN_ANI::Lurk == m_eState)
-		{
-			if (m_pMeshCom->Is_Finish_Animation())
-				m_eState = YACHAMAN_ANI::Lurk_End;
-
-			return;
-		}
-		else if (YACHAMAN_ANI::Lurk_End == m_eState)
-		{
-			if (m_pMeshCom->Is_Finish_Animation(0.95f))
-			{
-				m_bCanIdleRandom = true;
-				m_eState = YACHAMAN_ANI::Hammer_Idle;
-			}
-
-			return;
-		}
-	}
-	else
-	{
-		m_eState = YACHAMAN_ANI::Lurk;
-
-		return;
-	}
-}
-
-void CYachaMan::Play_Walk()
-{
-	m_eState = YACHAMAN_ANI::Walk;
-
-	Function_RotateBody();
-
-	Function_Movement(2.f, m_pTransformCom->Get_Axis(AXIS_Z));
-
-	Function_DecreMoveMent(0.1f);
-
-	return;
-}
-
-void CYachaMan::Play_Run()
-{
-	m_eState = YACHAMAN_ANI::Run;
-
-	Function_RotateBody();
-
-	Function_Movement(4.f, m_pTransformCom->Get_Axis(AXIS_Z));
-
-	Function_DecreMoveMent(0.1f);
-
-	return;
-}
-
-void CYachaMan::Play_Dodge()
-{
-	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
-
-	if (false == m_tObjParam.bIsDodge)
-	{
-		Function_ResetAfterAtk();
-		m_tObjParam.bIsDodge = true;
-		m_eState = YACHAMAN_ANI::Dodge;
-	}
-	else
-	{
-		if (m_pMeshCom->Is_Finish_Animation(0.98f))
-		{
-			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-			m_tObjParam.bCanAttack = true;
-			Function_ResetAfterAtk();
-
-			return;
-		}
-		else
-		{
-			if (0.600f < AniTime && 1.500f> AniTime)
-			{
-				if (m_bEventTrigger[0] == false)
-				{
-					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 10.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 0.5f;
-					Function_RotateBody();
-				}
-
-				Function_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
-
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-		}
-	}
-
-	return;
-}
-
 void CYachaMan::Play_RandomAtkNormal()
 {
-	//완전 랜덤-> 특정 상황에 맞춰서 적절하게 공격하게끔
-	m_iRandom = CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_RIGHT, ATK_NORMAL_TYPE::NORMAL_WHEELWIND);
-
-	switch (m_iRandom)
+	switch (CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_RIGHT, ATK_NORMAL_TYPE::NORMAL_WHEELWIND))
 	{
 	case ATK_NORMAL_TYPE::NORMAL_RIGHT:
 		m_eState = YACHAMAN_ANI::Atk_Ani_R;
@@ -971,665 +833,9 @@ void CYachaMan::Play_RandomAtkNormal()
 	return;
 }
 
-void CYachaMan::Play_R()
-{
-	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
-
-	if (true == m_tObjParam.bCanAttack)
-	{
-		m_tObjParam.bCanAttack = false;
-		m_tObjParam.bIsAttack = true;
-	}
-	else
-	{
-		if (m_pMeshCom->Is_Finish_Animation(0.95f))
-		{
-			m_fCoolDownMax = 0.8f;
-			m_bCanCoolDown = true;
-			Function_ResetAfterAtk();
-
-			return;
-		}
-		else
-		{
-			if (2.833f < AniTime && 4.233f > AniTime)
-			{
-				if (m_bEventTrigger[0] == false)
-				{
-					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 8.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 1.5f;
-				}
-				if (3.50f<AniTime && 3.93f>AniTime)
-				{
-					if (m_bEventTrigger[1] == false)
-					{
-						m_bEventTrigger[1] = true;
-						m_pWeapon->Set_Target_CanAttack(true);
-						m_pWeapon->Set_Enable_Trail(true);
-					}
-				}
-				else if (3.93f <= AniTime)
-				{
-					if (m_bEventTrigger[2] == false)
-					{
-						m_bEventTrigger[2] = true;
-						m_pWeapon->Set_Target_CanAttack(false);
-					}
-				}
-				else if (4.01f <= AniTime)
-				{
-					if (m_bEventTrigger[3] == false)
-					{
-						m_bEventTrigger[3] = true;
-						m_pWeapon->Set_Enable_Trail(false);
-					}
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-		}
-	}
-}
-
-void CYachaMan::Play_L()
-{
-	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
-
-	if (true == m_tObjParam.bCanAttack)
-	{
-		m_tObjParam.bCanAttack = false;
-		m_tObjParam.bIsAttack = true;
-	}
-	else
-	{
-		if (m_pMeshCom->Is_Finish_Animation(0.95f))
-		{
-			m_fCoolDownMax = 0.8f;
-			m_bCanCoolDown = true;
-			Function_ResetAfterAtk();
-
-			return;
-		}
-		else
-		{
-			if (0.900f < AniTime && 2.833f > AniTime)
-			{
-				if (m_bEventTrigger[0] == false)
-				{
-					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 5.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 0.3f;
-				}
-				if (2.400f < AniTime && 2.700f > AniTime)
-				{
-					if (m_bEventTrigger[1] == false)
-					{
-						m_bEventTrigger[1] = true;
-						m_pWeapon->Set_Target_CanAttack(true);
-						m_pWeapon->Set_Enable_Trail(true);
-					}
-				}
-				else if (2.701f <= AniTime && 2.901f > AniTime)
-				{
-					if (m_bEventTrigger[2] == false)
-					{
-						m_bEventTrigger[2] = true;
-						m_pWeapon->Set_Target_CanAttack(false);
-					}
-				}
-				else if(2.901f <= AniTime)
-				{
-					if (m_bEventTrigger[3] == false)
-					{
-						m_bEventTrigger[3] = true;
-						m_pWeapon->Set_Enable_Trail(false);
-					}
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-		}
-	}
-
-	return;
-}
-
-void CYachaMan::Play_Hammering()
-{
-	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
-
-	if (true == m_tObjParam.bCanAttack)
-	{
-		m_tObjParam.bCanAttack = false;
-		m_tObjParam.bIsAttack = true;
-	}
-	else
-	{
-		if (m_pMeshCom->Is_Finish_Animation(0.95f))
-		{
-			m_fCoolDownMax = 1.3f;
-			m_bCanCoolDown = true;
-			Function_ResetAfterAtk();
-
-			return;
-		}
-		else
-		{
-			if (2.167f < AniTime && 3.267f > AniTime)
-			{
-				if (m_bEventTrigger[0] == false)
-				{
-					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 4.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 0.1f;
-				}
-
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-			else if (3.267f <= AniTime && 3.633f > AniTime)
-			{
-				if (m_bEventTrigger[1] == false)
-				{
-					m_bEventTrigger[1] = true;
-					m_pWeapon->Set_Target_CanAttack(true);
-					m_pWeapon->Set_Enable_Trail(true);
-				}
-			}
-			else if (3.633f <= AniTime)
-			{
-				if (m_bEventTrigger[2] == false)
-				{
-					m_bEventTrigger[2] = true;
-					m_pWeapon->Set_Target_CanAttack(false);
-				}
-			}
-			else if (3.785f < AniTime)
-			{
-				if (m_bEventTrigger[3] == false)
-				{
-					m_bEventTrigger[3] = true;
-					m_pWeapon->Set_Enable_Trail(false);
-				}
-				return;
-			}
-		}
-	}
-}
-
-void CYachaMan::Play_Shoulder()
-{
-	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
-
-	if (true == m_tObjParam.bCanAttack)
-	{
-		m_tObjParam.bCanAttack = false;
-		m_tObjParam.bIsAttack = true;
-	}
-	else
-	{
-		if (m_pMeshCom->Is_Finish_Animation(0.95f))
-		{
-			m_fCoolDownMax = 0.3f;
-			m_bCanCoolDown = true;
-			Function_ResetAfterAtk();
-
-			return;
-		}
-		else
-		{
-			if (1.500f < AniTime && 1.800f > AniTime)
-			{
-				if (m_bEventTrigger[0] == false)
-				{
-					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 8.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 1.5f;
-				}
-
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-			else if (2.067f < AniTime && 2.500f > AniTime)
-			{
-				if (m_bEventTrigger[1] == false)
-				{
-					m_bEventTrigger[1] = true;
-					m_vecAttackCol[0]->Set_Enabled(true);
-				}
-			}
-			else if (2.500f <= AniTime)
-			{
-				if (m_bEventTrigger[2] == false)
-				{
-					m_bEventTrigger[2] = true;
-					m_vecAttackCol[0]->Set_Enabled(false);
-				}
-			}
-			else if (4.773f < AniTime && 6.800f > AniTime)
-			{
-				if (m_bEventTrigger[3] == false)
-				{
-					m_bEventTrigger[3] = true;
-					m_fSkillMoveSpeed_Cur = 0.2f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 0.1f;
-				}
-
-				Function_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-		}
-	}
-}
-
-void CYachaMan::Play_TurnTwice()
-{
-	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
-
-	if (true == m_tObjParam.bCanAttack)
-	{
-		m_tObjParam.bCanAttack = false;
-		m_tObjParam.bIsAttack = true;
-	}
-	else
-	{
-		if (m_pMeshCom->Is_Finish_Animation(0.95f))
-		{
-			m_fCoolDownMax = 1.5f;
-			m_bCanCoolDown = true;
-			Function_ResetAfterAtk();
-
-			return;
-		}
-		else
-		{
-			if (1.767f < AniTime && 2.100f > AniTime)
-			{
-				if (false == m_bEventTrigger[0])
-				{
-					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 8.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 1.f;
-				}
-				if (1.967f < AniTime)
-				{
-					if (false == m_bEventTrigger[1])
-					{
-						m_bEventTrigger[1] = true;
-						m_pWeapon->Set_Target_CanAttack(true);
-						m_pWeapon->Set_Enable_Trail(true);
-					}
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-			else if (2.200f < AniTime && 3.133 > AniTime)
-			{
-				if (false == m_bEventTrigger[2])
-				{
-					m_bEventTrigger[2] = true;
-					m_fSkillMoveSpeed_Cur = 8.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 1.f;
-				}
-				if (2.3f <= AniTime)
-				{
-					if (false == m_bEventTrigger[3])
-					{
-						m_bEventTrigger[3] = true;
-						m_pWeapon->Set_Target_CanAttack(false);
-					}
-				}
-				else if (2.50f < AniTime)
-				{
-					if (false == m_bEventTrigger[4])
-					{
-						m_bEventTrigger[4] = true;
-						m_pWeapon->Set_Enable_Trail(false);
-					}
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-			else if (3.232f < AniTime && 3.733 > AniTime)
-			{
-				if (false == m_bEventTrigger[5])
-				{
-					m_bEventTrigger[5] = true;
-					m_fSkillMoveSpeed_Cur = 8.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 1.f;
-				}
-				if (3.300f < AniTime && 3.700 > AniTime)
-				{
-					if (false == m_bEventTrigger[6])
-					{
-						m_bEventTrigger[6] = true;
-						m_pWeapon->Set_Target_CanAttack(true);
-						m_pWeapon->Set_Enable_Trail(true);
-					}
-				}
-				else if (3.700f <= AniTime)
-				{
-					if (false == m_bEventTrigger[7])
-					{
-						m_bEventTrigger[7] = true;
-						m_pWeapon->Set_Target_CanAttack(false);
-					}
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-			else if (3.933f < AniTime)
-			{
-				if (false == m_bEventTrigger[8])
-				{
-					m_bEventTrigger[8] = true;
-					m_pWeapon->Set_Enable_Trail(false);
-				}
-			}
-		}
-	}
-
-	return;
-}
-
-void CYachaMan::Play_HalfClock()
-{
-	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
-
-	if (true == m_tObjParam.bCanAttack)
-	{
-		m_tObjParam.bCanAttack = false;
-		m_tObjParam.bIsAttack = true;
-	}
-	else
-	{
-		if (m_pMeshCom->Is_Finish_Animation(0.98f))
-		{
-			m_fCoolDownMax = 0.8f;
-			m_bCanCoolDown = true;
-			Function_ResetAfterAtk();
-
-			return;
-		}
-		else
-		{
-			if (1.00f<AniTime && 1.833>AniTime)
-			{
-				if (false == m_bEventTrigger[0])
-				{
-					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 8.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 1.5f;
-				}
-				if (1.800 < AniTime)
-				{
-					if (false == m_bEventTrigger[1])
-					{
-						m_bEventTrigger[1] = true;
-						m_pWeapon->Set_Target_CanAttack(true);
-						m_pWeapon->Set_Enable_Trail(true);
-					}
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-			else if (1.933<AniTime && 3.00>AniTime)
-			{
-				if (false == m_bEventTrigger[2])
-				{
-					m_bEventTrigger[2] = true;
-					m_fSkillMoveSpeed_Cur = 6.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 1.5f;
-				}
-				if (2.133f <= AniTime)
-				{
-					if (false == m_bEventTrigger[3])
-					{
-						m_bEventTrigger[3] = true;
-						m_pWeapon->Set_Target_CanAttack(false);
-					}
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-		}
-	}
-}
-
-void CYachaMan::Play_TargetHammering()
-{
-	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
-
-	if (true == m_tObjParam.bCanAttack)
-	{
-		m_tObjParam.bCanAttack = false;
-		m_tObjParam.bIsAttack = true;
-	}
-	else
-	{
-		if (m_pMeshCom->Is_Finish_Animation(0.98f))
-		{
-			m_fCoolDownMax = 1.7f;
-			m_bCanCoolDown = true;
-			Function_ResetAfterAtk();
-
-			return;
-		}
-		else
-		{
-			if (4.433 < AniTime && 4.933 > AniTime)
-			{
-				if (false == m_bEventTrigger[0])
-				{
-					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 6.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 1.5f;
-				}
-				if (4.900 < AniTime)
-				{
-					if (false == m_bEventTrigger[1])
-					{
-						m_bEventTrigger[1] = true;
-						m_pWeapon->Set_Target_CanAttack(true);
-						m_pWeapon->Set_Enable_Trail(true);
-					}
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-			else if (5.100f < AniTime)
-			{
-				if (false == m_bEventTrigger[2])
-				{
-					m_bEventTrigger[2] = true;
-					m_pWeapon->Set_Target_CanAttack(false);
-				}
-			}
-			else if (5.315 < AniTime)
-			{
-				if (false == m_bEventTrigger[3])
-				{
-					m_bEventTrigger[3] = true;
-					m_pWeapon->Set_Enable_Trail(false);
-				}
-			}
-		}
-	}
-
-	return;
-}
-
-void CYachaMan::Play_WheelWind()
-{
-	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
-
-	if (true == m_tObjParam.bCanAttack)
-	{
-		m_tObjParam.bCanAttack = false;
-		m_tObjParam.bIsAttack = true;
-	}
-	else
-	{
-		if (m_pMeshCom->Is_Finish_Animation(0.98f))
-		{
-			m_fCoolDownMax = 1.8f;
-			m_bCanCoolDown = true;
-			Function_ResetAfterAtk();
-
-			return;
-		}
-		else
-		{
-			if (2.867f < AniTime && 3.600f > AniTime)
-			{
-				if (false == m_bEventTrigger[0])
-				{
-					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 6.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 1.5f;
-				}
-				if (3.333f < AniTime)
-				{
-					if (false == m_bEventTrigger[1])
-					{
-						m_bEventTrigger[1] = true;
-						m_pWeapon->Set_Target_CanAttack(true);
-						m_pWeapon->Set_Enable_Trail(true);
-					}
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-			else if (3.700f < AniTime && 4.367f > AniTime)
-			{
-				if (false == m_bEventTrigger[2])
-				{
-					m_bEventTrigger[2] = true;
-					m_fSkillMoveSpeed_Cur = 10.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 1.f;
-					m_pWeapon->Set_Target_CanAttack(false);
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-			else if (4.633f < AniTime && 4.800f > AniTime)
-			{
-				if (false == m_bEventTrigger[3])
-				{
-					m_bEventTrigger[3] = true;
-					m_pWeapon->Set_Target_CanAttack(true);
-				}
-			}
-			else if (4.800f <= AniTime && 5.367f > AniTime)
-			{
-				if (false == m_bEventTrigger[4])
-				{
-					m_bEventTrigger[4] = true;
-					m_fSkillMoveSpeed_Cur = 6.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 1.5f;
-					m_pWeapon->Set_Target_CanAttack(false);
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-			else if (5.400f < AniTime && 5.767f > AniTime)
-			{
-				if (false == m_bEventTrigger[6])
-				{
-					m_bEventTrigger[6] = true;
-					m_fSkillMoveSpeed_Cur = 6.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 1.5f;
-				}
-				if (5.600f < AniTime && 5.733f > AniTime)
-				{
-					if (false == m_bEventTrigger[7])
-					{
-						m_bEventTrigger[7] = true;
-						m_pWeapon->Set_Target_CanAttack(true);
-					}
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-			else if (5.800f < AniTime && 6.200f > AniTime)
-			{
-				if (false == m_bEventTrigger[9])
-				{
-					m_bEventTrigger[9] = true;
-					m_fSkillMoveSpeed_Cur = 6.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 1.5f;
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-			else if (6.267f < AniTime && 6.633f > AniTime)
-			{
-				if (false == m_bEventTrigger[10])
-				{
-					m_bEventTrigger[10] = true;
-					m_fSkillMoveSpeed_Cur = 8.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 1.5f;
-				}
-				if (6.433f < AniTime && 6.567f > AniTime)
-				{
-					if (false == m_bEventTrigger[11])
-					{
-						m_bEventTrigger[11] = true;
-						m_pWeapon->Set_Target_CanAttack(true);
-					}
-				}
-				else if (6.567f <= AniTime)
-				{
-					if (false == m_bEventTrigger[12])
-					{
-						m_bEventTrigger[12] = true;
-						m_pWeapon->Set_Target_CanAttack(false);
-					}
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-			else if (6.75f < AniTime)
-			{
-				if (false == m_bEventTrigger[13])
-				{
-					m_bEventTrigger[13] = true;
-					m_pWeapon->Set_Enable_Trail(false);
-				}
-			}
-		}
-	}
-
-	return;
-}
-
 void CYachaMan::Play_RandomAtkCombo()
 {
-	//완점 랜덤 콤보용
-	m_iRandom = CALC::Random_Num(ATK_COMBO_TYPE::COMBO_R_L, ATK_COMBO_TYPE::COMBO_RUNHAMMERING);
-
-	//특정 콤보 이벤트 체크용
-	//m_iRandom = ATK_COMBO_TYPE::COMBO_RUNHAMMERING;
-
-	switch (m_iRandom)
+	switch (CALC::Random_Num(ATK_COMBO_TYPE::COMBO_R_L, ATK_COMBO_TYPE::COMBO_RUNHAMMERING))
 	{
 	case ATK_COMBO_TYPE::COMBO_R_L:
 		m_eAtkCombo = ATK_COMBO_TYPE::COMBO_R_L;
@@ -1656,107 +862,857 @@ void CYachaMan::Play_RandomAtkCombo()
 	return;
 }
 
+void CYachaMan::Play_R()
+{
+	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+
+	if (true == m_tObjParam.bCanAttack)
+	{
+		m_tObjParam.bCanAttack = false;
+		m_tObjParam.bIsAttack = true;
+	}
+	else
+	{
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		{
+			m_fCoolDownMax = 0.8f;
+			m_bCanCoolDown = true;
+			Function_ResetAfterAtk();
+
+			return;
+		}
+		else if (4.233f <= AniTime)
+		{
+			if (false == m_bEventTrigger[0])
+			{
+				m_bEventTrigger[0] = true;
+				m_pWeapon->Set_Enable_Trail(false);
+			}
+		}
+		else if (3.933f <= AniTime)
+		{
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+				m_pWeapon->Set_Target_CanAttack(false);
+			}
+		}
+		else if (3.500f <= AniTime)
+		{
+			if (false == m_bEventTrigger[2])
+			{
+				m_bEventTrigger[2] = true;
+				m_pWeapon->Set_Target_CanAttack(true);
+				m_pWeapon->Set_Enable_Trail(true);
+			}
+		}
+		
+		if (2.833f<AniTime && 4.233f> AniTime)
+		{
+			if (m_bEventTrigger[3] == false)
+			{
+				m_bEventTrigger[3] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+	}
+
+	return;
+}
+
+void CYachaMan::Play_L()
+{
+	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+
+	if (true == m_tObjParam.bCanAttack)
+	{
+		m_tObjParam.bCanAttack = false;
+		m_tObjParam.bIsAttack = true;
+	}
+	else
+	{
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		{
+			m_fCoolDownMax = 0.8f;
+			m_bCanCoolDown = true;
+			Function_ResetAfterAtk();
+
+			return;
+		}
+		else if (3.000f <= AniTime)
+		{
+			if (false == m_bEventTrigger[0])
+			{
+				m_bEventTrigger[0] = true;
+				m_pWeapon->Set_Enable_Trail(false);
+			}
+		}
+		else if (2.700f <= AniTime)
+		{
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+				m_pWeapon->Set_Target_CanAttack(false);
+			}
+		}
+		else if (2.400f <= AniTime)
+		{
+			if (false == m_bEventTrigger[2])
+			{
+				m_bEventTrigger[2] = true;
+				m_pWeapon->Set_Target_CanAttack(true);
+				m_pWeapon->Set_Enable_Trail(true);
+			}
+		}
+
+		if (0.900f<AniTime && 2.833f> AniTime)
+		{
+			if (m_bEventTrigger[3] == false)
+			{
+				m_bEventTrigger[3] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+	}
+
+	return;
+}
+
+void CYachaMan::Play_Hammering()
+{
+	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+
+	if (true == m_tObjParam.bCanAttack)
+	{
+		m_tObjParam.bCanAttack = false;
+		m_tObjParam.bIsAttack = true;
+	}
+	else
+	{
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		{
+			m_fCoolDownMax = 1.2f;
+			m_bCanCoolDown = true;
+			Function_ResetAfterAtk();
+
+			return;
+		}
+		else if (3.933f <= AniTime)
+		{
+			if (false == m_bEventTrigger[0])
+			{
+				m_bEventTrigger[0] = true;
+				m_pWeapon->Set_Enable_Trail(false);
+			}
+		}
+		else if (3.633f <= AniTime)
+		{
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+				m_pWeapon->Set_Target_CanAttack(false);
+			}
+		}
+		else if (3.267f <= AniTime)
+		{
+			if (false == m_bEventTrigger[2])
+			{
+				m_bEventTrigger[2] = true;
+				m_pWeapon->Set_Target_CanAttack(true);
+				m_pWeapon->Set_Enable_Trail(true);
+			}
+		}
+
+		if (2.167f < AniTime && 3.367f > AniTime)
+		{
+			if (m_bEventTrigger[3] == false)
+			{
+				m_bEventTrigger[3] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+	}
+
+	return;
+}
+
+void CYachaMan::Play_Shoulder()
+{
+	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+
+	if (true == m_tObjParam.bCanAttack)
+	{
+		m_tObjParam.bCanAttack = false;
+		m_tObjParam.bIsAttack = true;
+	}
+	else
+	{
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		{
+			m_fCoolDownMax = 0.3f;
+			m_bCanCoolDown = true;
+			Function_ResetAfterAtk();
+
+			return;
+		}
+		else if (2.500f <= AniTime)
+		{
+			if (false == m_bEventTrigger[0])
+			{
+				m_bEventTrigger[0] = true;
+				m_vecAttackCol[0]->Set_Enabled(false);
+			}
+		}
+		else if (2.067f <= AniTime)
+		{
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+				m_vecAttackCol[0]->Set_Enabled(true);
+			}
+		}
+
+		if (4.733f < AniTime && 5.800f >AniTime)
+		{
+			if (m_bEventTrigger[2] == false)
+			{
+				m_bEventTrigger[2] = true;
+				m_fSkillMoveSpeed_Cur = 0.2f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 0.1f;
+			}
+
+			Function_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+		else if (1.500f < AniTime && 1.800f > AniTime)
+		{
+			if (m_bEventTrigger[3] == false)
+			{
+				m_bEventTrigger[3] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+	}
+
+	return;
+}
+
+void CYachaMan::Play_TurnTwice()
+{
+	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+
+	if (true == m_tObjParam.bCanAttack)
+	{
+		m_tObjParam.bCanAttack = false;
+		m_tObjParam.bIsAttack = true;
+	}
+	else
+	{
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		{
+			m_fCoolDownMax = 1.5f;
+			m_bCanCoolDown = true;
+			Function_ResetAfterAtk();
+
+			return;
+		}
+		else if (4.000f <= AniTime)
+		{
+			if (false == m_bEventTrigger[0])
+			{
+				m_bEventTrigger[0] = true;
+				m_pWeapon->Set_Enable_Trail(false);
+			}
+		}
+		else if (3.700f <= AniTime)
+		{
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+				m_pWeapon->Set_Target_CanAttack(false);
+			}
+		}
+		else if (3.300f <= AniTime)
+		{
+			if (false == m_bEventTrigger[2])
+			{
+				m_bEventTrigger[2] = true;
+				m_pWeapon->Set_Target_CanAttack(true);
+				m_pWeapon->Set_Enable_Trail(true);
+			}
+		}
+		else if (2.600f <= AniTime)
+		{
+			if (false == m_bEventTrigger[3])
+			{
+				m_bEventTrigger[3] = true;
+				m_pWeapon->Set_Enable_Trail(false);
+			}
+		}
+		else if (2.300f <= AniTime)
+		{
+			if (false == m_bEventTrigger[4])
+			{
+				m_bEventTrigger[4] = true;
+				m_pWeapon->Set_Target_CanAttack(false);
+			}
+		}
+		else if (1.967f <= AniTime)
+		{
+			if (false == m_bEventTrigger[5])
+			{
+				m_bEventTrigger[5] = true;
+				m_pWeapon->Set_Target_CanAttack(true);
+				m_pWeapon->Set_Enable_Trail(true);
+			}
+		}
+
+		if (3.233f < AniTime && 3.733f > AniTime)
+		{
+			if (m_bEventTrigger[6] == false)
+			{
+				m_bEventTrigger[6] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+		else if (2.200f < AniTime && 3.133f >AniTime)
+		{
+			if (m_bEventTrigger[7] == false)
+			{
+				m_bEventTrigger[7] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+		else if (1.767f < AniTime && 2.100f > AniTime)
+		{
+			if (m_bEventTrigger[8] == false)
+			{
+				m_bEventTrigger[8] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+	}
+
+	return;
+}
+
+void CYachaMan::Play_HalfClock()
+{
+	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+
+	if (true == m_tObjParam.bCanAttack)
+	{
+		m_tObjParam.bCanAttack = false;
+		m_tObjParam.bIsAttack = true;
+	}
+	else
+	{
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		{
+			m_fCoolDownMax = 1.0f;
+			m_bCanCoolDown = true;
+			Function_ResetAfterAtk();
+
+			return;
+		}
+		else if (2.433f <= AniTime)
+		{
+			if (false == m_bEventTrigger[0])
+			{
+				m_bEventTrigger[0] = true;
+				m_pWeapon->Set_Enable_Trail(false);
+			}
+		}
+		else if (2.133f <= AniTime)
+		{
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+				m_pWeapon->Set_Target_CanAttack(false);
+			}
+		}
+		else if (1.800f <= AniTime)
+		{
+			if (false == m_bEventTrigger[2])
+			{
+				m_bEventTrigger[2] = true;
+				m_pWeapon->Set_Target_CanAttack(true);
+				m_pWeapon->Set_Enable_Trail(true);
+			}
+		}
+
+		if (1.933f < AniTime && 3.000f> AniTime)
+		{
+			if (m_bEventTrigger[3] == false)
+			{
+				m_bEventTrigger[3] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+		else if (1.000f < AniTime && 1.833f >AniTime)
+		{
+			if (m_bEventTrigger[4] == false)
+			{
+				m_bEventTrigger[4] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+	}
+
+	return;
+}
+
+void CYachaMan::Play_TargetHammering()
+{
+	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+
+	if (true == m_tObjParam.bCanAttack)
+	{
+		m_tObjParam.bCanAttack = false;
+		m_tObjParam.bIsAttack = true;
+	}
+	else
+	{
+		if (m_pMeshCom->Is_Finish_Animation(0.98f))
+		{
+			m_fCoolDownMax = 1.0f;
+			m_bCanCoolDown = true;
+			Function_ResetAfterAtk();
+
+			return;
+		}
+		else if (5.400f <= AniTime)
+		{
+			if (false == m_bEventTrigger[0])
+			{
+				m_bEventTrigger[0] = true;
+				m_pWeapon->Set_Enable_Trail(false);
+			}
+		}
+		else if (5.100f <= AniTime)
+		{
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+				m_pWeapon->Set_Target_CanAttack(false);
+			}
+		}
+		else if (4.900f <= AniTime)
+		{
+			if (false == m_bEventTrigger[2])
+			{
+				m_bEventTrigger[2] = true;
+				m_pWeapon->Set_Target_CanAttack(true);
+				m_pWeapon->Set_Enable_Trail(true);
+			}
+		}
+
+		if (5.267f < AniTime && 6.033f > AniTime)
+		{
+			if (m_bEventTrigger[3] == false)
+			{
+				m_bEventTrigger[3] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+		else if (4.433f < AniTime && 4.933f >AniTime)
+		{
+			if (m_bEventTrigger[4] == false)
+			{
+				m_bEventTrigger[4] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+	}
+
+	return;
+}
+
+void CYachaMan::Play_WheelWind()
+{
+	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+
+	if (true == m_tObjParam.bCanAttack)
+	{
+		m_tObjParam.bCanAttack = false;
+		m_tObjParam.bIsAttack = true;
+	}
+	else
+	{
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		{
+			m_fCoolDownMax = 1.5f;
+			m_bCanCoolDown = true;
+			Function_ResetAfterAtk();
+
+			return;
+		}
+		else if (6.867f <= AniTime)
+		{
+			if (false == m_bEventTrigger[0])
+			{
+				m_bEventTrigger[0] = true;
+				m_pWeapon->Set_Enable_Trail(false);
+			}
+		}
+		else if (6.567f <= AniTime)
+		{
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+				m_pWeapon->Set_Target_CanAttack(false);
+			}
+		}
+		else if (6.433f <= AniTime)
+		{
+			if (false == m_bEventTrigger[2])
+			{
+				m_bEventTrigger[2] = true;
+				m_pWeapon->Set_Target_CanAttack(true);
+				m_pWeapon->Set_Enable_Trail(true);
+			}
+		}
+		else if (6.333f <= AniTime)
+		{
+			if (false == m_bEventTrigger[3])
+			{
+				m_bEventTrigger[3] = true;
+				m_pWeapon->Set_Enable_Trail(false);
+			}
+		}
+		else if (5.733f <= AniTime)
+		{
+			if (false == m_bEventTrigger[4])
+			{
+				m_bEventTrigger[4] = true;
+				m_pWeapon->Set_Target_CanAttack(false);
+			}
+		}
+		else if (5.600f <= AniTime)
+		{
+			if (false == m_bEventTrigger[5])
+			{
+				m_bEventTrigger[5] = true;
+				m_pWeapon->Set_Target_CanAttack(true);
+				m_pWeapon->Set_Enable_Trail(true);
+			}
+		}
+		else if (5.100f <= AniTime)
+		{
+			if (false == m_bEventTrigger[6])
+			{
+				m_bEventTrigger[6] = true;
+				m_pWeapon->Set_Enable_Trail(false);
+			}
+		}
+		else if (4.800f <= AniTime)
+		{
+			if (false == m_bEventTrigger[7])
+			{
+				m_bEventTrigger[7] = true;
+				m_pWeapon->Set_Target_CanAttack(false);
+			}
+		}
+		else if (4.633f <= AniTime)
+		{
+			if (false == m_bEventTrigger[8])
+			{
+				m_bEventTrigger[8] = true;
+				m_pWeapon->Set_Target_CanAttack(true);
+				m_pWeapon->Set_Enable_Trail(true);
+			}
+		}
+		else if (3.900f <= AniTime)
+		{
+			if (false == m_bEventTrigger[9])
+			{
+				m_bEventTrigger[9] = true;
+				m_pWeapon->Set_Enable_Trail(false);
+			}
+		}
+		else if (3.600f <= AniTime)
+		{
+			if (false == m_bEventTrigger[10])
+			{
+				m_bEventTrigger[10] = true;
+				m_pWeapon->Set_Target_CanAttack(false);
+			}
+		}
+		else if (3.333f <= AniTime)
+		{
+			if (false == m_bEventTrigger[11])
+			{
+				m_bEventTrigger[11] = true;
+				m_pWeapon->Set_Target_CanAttack(true);
+				m_pWeapon->Set_Enable_Trail(true);
+			}
+		}
+
+		if (6.267f < AniTime && 6.633f > AniTime)
+		{
+			if (m_bEventTrigger[12] == false)
+			{
+				m_bEventTrigger[12] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+		else if (5.800f < AniTime && 6.200f > AniTime)
+		{
+			if (m_bEventTrigger[13] == false)
+			{
+				m_bEventTrigger[13] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+		else if (5.400f < AniTime && 5.767f > AniTime)
+		{
+			if (m_bEventTrigger[14] == false)
+			{
+				m_bEventTrigger[14] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+		else if (4.800f < AniTime && 5.367f > AniTime)
+		{
+			if (m_bEventTrigger[15] == false)
+			{
+				m_bEventTrigger[15] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+		else if (3.700f < AniTime && 4.367f > AniTime)
+		{
+			if (m_bEventTrigger[16] == false)
+			{
+				m_bEventTrigger[16] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+		else if (2.867f < AniTime && 3.600f > AniTime)
+		{
+			if (m_bEventTrigger[17] == false)
+			{
+				m_bEventTrigger[17] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+
+		if (3.233f < AniTime && 3.733f > AniTime)
+		{
+			if (m_bEventTrigger[18] == false)
+			{
+				m_bEventTrigger[18] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+		else if (2.200f < AniTime && 3.133f >AniTime)
+		{
+			if (m_bEventTrigger[19] == false)
+			{
+				m_bEventTrigger[19] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+		else if (1.767f < AniTime && 2.100f > AniTime)
+		{
+			if (m_bEventTrigger[20] == false)
+			{
+				m_bEventTrigger[20] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+	}
+
+	return;
+}
+
 void CYachaMan::Play_Combo_R_L()
 {
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
 
-	if (Atk_Ani_R == m_eState)
+	if (YACHAMAN_ANI::Atk_Ani_R == m_eState)
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.45f))
 		{
+			m_bCanInterrupt = true;
 			m_vecAttackCol[0]->Set_Enabled(false);
-			m_eState = Atk_Ani_L;
+			m_eState = YACHAMAN_ANI::Atk_Ani_L;
 			return;
 		}
-		else
+		else if (4.233f <= AniTime)
 		{
-			if (2.833f < AniTime && 4.233f > AniTime)
+			if (false == m_bEventTrigger[0])
 			{
-				if (m_bEventTrigger[0] == false)
-				{
-					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 8.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 1.5f;
-				}
-				if (3.50f<AniTime && 3.93f>AniTime)
-				{
-					if (m_bEventTrigger[1] == false)
-					{
-						m_bEventTrigger[1] = true;
-						m_pWeapon->Set_Target_CanAttack(true);
-						m_pWeapon->Set_Enable_Trail(true);
-					}
-				}
-				else if (3.93f <= AniTime)
-				{
-					if (m_bEventTrigger[2] == false)
-					{
-						m_bEventTrigger[2] = true;
-						m_pWeapon->Set_Target_CanAttack(false);
-					}
-				}
-				else if (4.01f <= AniTime)
-				{
-					if (m_bEventTrigger[3] == false)
-					{
-						m_bEventTrigger[3] = true;
-						m_pWeapon->Set_Enable_Trail(false);
-					}
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
+				m_bEventTrigger[0] = true;
+				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
+		else if (3.933f <= AniTime)
+		{
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+				m_pWeapon->Set_Target_CanAttack(false);
+			}
+		}
+		else if (3.500f <= AniTime)
+		{
+			if (false == m_bEventTrigger[2])
+			{
+				m_bEventTrigger[2] = true;
+				m_pWeapon->Set_Target_CanAttack(true);
+				m_pWeapon->Set_Enable_Trail(true);
+			}
+		}
+
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
+
+		if (2.833f<AniTime && 4.233f> AniTime)
+		{
+			if (m_bEventTrigger[3] == false)
+			{
+				m_bEventTrigger[3] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
 	}
-	else if (Atk_Ani_L == m_eState)
+	else if (YACHAMAN_ANI::Atk_Ani_L == m_eState)
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_fCoolDownMax = 0.5f;
+			m_fCoolDownMax = 0.6f;
 			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
+
 			return;
 		}
-		else
+		else if (3.000f <= AniTime)
 		{
-			if (0.9f < AniTime && 2.833f > AniTime)
+			if (false == m_bEventTrigger[4])
 			{
-				if (m_bEventTrigger[4] == false)
-				{
-					m_bEventTrigger[4] = true;
-					m_fSkillMoveSpeed_Cur = 5.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 0.3f;
-				}
-				if (2.400f < AniTime && 2.700f > AniTime)
-				{
-					if (m_bEventTrigger[5] == false)
-					{
-						m_bEventTrigger[5] = true;
-						m_pWeapon->Set_Target_CanAttack(true);
-						m_pWeapon->Set_Enable_Trail(true);
-					}
-				}
-				else if (2.701f <= AniTime && 2.901f > AniTime)
-				{
-					if (m_bEventTrigger[6] == false)
-					{
-						m_bEventTrigger[6] = true;
-						m_pWeapon->Set_Target_CanAttack(false);
-					}
-				}
-				else if (2.901f <= AniTime)
-				{
-					if (m_bEventTrigger[7] == false)
-					{
-						m_bEventTrigger[7] = true;
-						m_pWeapon->Set_Enable_Trail(false);
-					}
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
+				m_bEventTrigger[4] = true;
+				m_pWeapon->Set_Enable_Trail(false);
 			}
+		}
+		else if (2.700f <= AniTime)
+		{
+			if (false == m_bEventTrigger[5])
+			{
+				m_bEventTrigger[5] = true;
+				m_pWeapon->Set_Target_CanAttack(false);
+			}
+		}
+		else if (2.400f <= AniTime)
+		{
+			if (false == m_bEventTrigger[6])
+			{
+				m_bEventTrigger[6] = true;
+				m_pWeapon->Set_Target_CanAttack(true);
+				m_pWeapon->Set_Enable_Trail(true);
+			}
+		}
+
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
+
+		if (0.900f<AniTime && 2.833f> AniTime)
+		{
+			if (m_bEventTrigger[7] == false)
+			{
+				m_bEventTrigger[7] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
 	}
 
@@ -1767,67 +1723,59 @@ void CYachaMan::Play_Combo_R_Hammering()
 {
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
 
-	if (Atk_Ani_R == m_eState)
+	if (YACHAMAN_ANI::Atk_Ani_R == m_eState)
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.45f))
 		{
-			m_pWeapon->Set_Target_CanAttack(false);
-			m_eState = Atk_Ani_Hammering;
+			m_bCanInterrupt = true;
+			m_vecAttackCol[0]->Set_Enabled(false);
+			m_eState = YACHAMAN_ANI::Atk_Ani_Hammering;
 			return;
 		}
-		else
+		else if (4.233f <= AniTime)
 		{
-			if (m_pMeshCom->Is_Finish_Animation(0.95f))
+			if (false == m_bEventTrigger[0])
 			{
-				m_fCoolDownMax = 0.8f;
-				m_bCanCoolDown = true;
-				Function_ResetAfterAtk(); //어차피 애니 반절에 후속타로 감
-
-				return;
-			}
-			else
-			{
-				if (2.833f < AniTime && 4.233f > AniTime)
-				{
-					if (m_bEventTrigger[0] == false)
-					{
-						m_bEventTrigger[0] = true;
-						m_fSkillMoveSpeed_Cur = 8.f;
-						m_fSkillMoveAccel_Cur = 0.f;
-						m_fSkillMoveMultiply = 1.5f;
-					}
-					if (3.50f<AniTime && 3.93f>AniTime)
-					{
-						if (m_bEventTrigger[1] == false)
-						{
-							m_bEventTrigger[1] = true;
-							m_pWeapon->Set_Target_CanAttack(true);
-							m_pWeapon->Set_Enable_Trail(true);
-						}
-					}
-					else if (3.93f <= AniTime)
-					{
-						if (m_bEventTrigger[2] == false)
-						{
-							m_bEventTrigger[2] = true;
-							m_pWeapon->Set_Target_CanAttack(false);
-						}
-					}
-					else if (4.01f <= AniTime)
-					{
-						if (m_bEventTrigger[3] == false)
-						{
-							m_bEventTrigger[3] = true;
-							m_pWeapon->Set_Enable_Trail(false);
-						}
-					}
-					Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-					Function_DecreMoveMent(m_fSkillMoveMultiply);
-				}
+				m_bEventTrigger[0] = true;
+				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
+		else if (3.933f <= AniTime)
+		{
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+				m_pWeapon->Set_Target_CanAttack(false);
+			}
+		}
+		else if (3.500f <= AniTime)
+		{
+			if (false == m_bEventTrigger[2])
+			{
+				m_bEventTrigger[2] = true;
+				m_pWeapon->Set_Target_CanAttack(true);
+				m_pWeapon->Set_Enable_Trail(true);
+			}
+		}
+
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
+
+		if (2.833f < AniTime && 4.233f > AniTime)
+		{
+			if (m_bEventTrigger[3] == false)
+			{
+				m_bEventTrigger[3] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
 	}
-	else if (Atk_Ani_Hammering == m_eState)
+	else if (YACHAMAN_ANI::Atk_Ani_Hammering == m_eState)
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
@@ -1837,48 +1785,49 @@ void CYachaMan::Play_Combo_R_Hammering()
 
 			return;
 		}
-		else
+		else if (3.933f <= AniTime)
 		{
-			if (2.167f < AniTime && 3.267f > AniTime)
+			if (false == m_bEventTrigger[4])
 			{
-				if (m_bEventTrigger[4] == false)
-				{
-					m_bEventTrigger[4] = true;
-					m_fSkillMoveSpeed_Cur = 4.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 0.1f;
-				}
-
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-			else if (3.267f <= AniTime && 3.633f > AniTime)
-			{
-				if (m_bEventTrigger[5] == false)
-				{
-					m_bEventTrigger[5] = true;
-					m_pWeapon->Set_Target_CanAttack(true);
-					m_pWeapon->Set_Enable_Trail(true);
-				}
-			}
-			else if (3.633f <= AniTime)
-			{
-				if (m_bEventTrigger[6] == false)
-				{
-					m_bEventTrigger[6] = true;
-					m_pWeapon->Set_Target_CanAttack(false);
-				}
-			}
-			else if (3.785f < AniTime)
-			{
-				if (m_bEventTrigger[7] == false)
-				{
-					m_bEventTrigger[7] = true;
-					m_pWeapon->Set_Enable_Trail(false);
-				}
-				return;
+				m_bEventTrigger[4] = true;
+				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
+		else if (3.633f <= AniTime)
+		{
+			if (false == m_bEventTrigger[5])
+			{
+				m_bEventTrigger[5] = true;
+				m_pWeapon->Set_Target_CanAttack(false);
+			}
+		}
+		else if (3.267f <= AniTime)
+	{
+		if (false == m_bEventTrigger[6])
+		{
+			m_bEventTrigger[6] = true;
+			m_pWeapon->Set_Target_CanAttack(true);
+			m_pWeapon->Set_Enable_Trail(true);
+		}
+	}
+
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
+
+		if (2.167f < AniTime && 3.367f > AniTime)
+	{
+		if (m_bEventTrigger[7] == false)
+		{
+			m_bEventTrigger[7] = true;
+			m_fSkillMoveSpeed_Cur = 8.f;
+			m_fSkillMoveAccel_Cur = 0.f;
+			m_fSkillMoveMultiply = 1.5f;
+		}
+
+		Function_RotateBody();
+		Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+		Function_DecreMoveMent(m_fSkillMoveMultiply);
+	}
 	}
 
 	return;
@@ -1888,7 +1837,7 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 {
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
 
-	if (Atk_Ani_Shoulder == m_eState)
+	if (YACHAMAN_ANI::Atk_Ani_Shoulder == m_eState)
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.28f))
 		{
@@ -1896,52 +1845,51 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 			m_eState = Atk_Ani_TurnTwice;
 			return;
 		}
-		else
+		else if (2.500f <= AniTime)
 		{
-			if (1.500f < AniTime && 1.800f > AniTime)
+			if (false == m_bEventTrigger[0])
 			{
-				if (m_bEventTrigger[0] == false)
-				{
-					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 8.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 1.5f;
-				}
-
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-			else if (2.067f < AniTime && 2.500f > AniTime)
-			{
-				if (m_bEventTrigger[1] == false)
-				{
-					m_bEventTrigger[1] = true;
-					m_vecAttackCol[0]->Set_Enabled(true);
-				}
-			}
-			else if (2.500f <= AniTime)
-			{
-				if (m_bEventTrigger[2] == false)
-				{
-					m_bEventTrigger[2] = true;
-					m_vecAttackCol[0]->Set_Enabled(false);
-				}
-			}
-			else if (4.773f < AniTime && 6.800f > AniTime)
-			{
-				if (m_bEventTrigger[3] == false)
-				{
-					m_bEventTrigger[3] = true;
-					m_fSkillMoveSpeed_Cur = 0.2f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 0.1f;
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
+				m_bEventTrigger[0] = true;
+				m_vecAttackCol[0]->Set_Enabled(false);
 			}
 		}
+		else if (2.067f <= AniTime)
+		{
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+				m_vecAttackCol[0]->Set_Enabled(true);
+			}
+		}
+
+		if (4.733f < AniTime && 5.800f >AniTime)
+		{
+			if (m_bEventTrigger[2] == false)
+			{
+				m_bEventTrigger[2] = true;
+				m_fSkillMoveSpeed_Cur = 0.2f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 0.1f;
+			}
+
+			Function_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+		else if (1.500f < AniTime && 1.800f > AniTime)
+		{
+			if (m_bEventTrigger[3] == false)
+			{
+				m_bEventTrigger[3] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+			
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
 	}
-	else if (Atk_Ani_TurnTwice == m_eState)
+	else if (YACHAMAN_ANI::Atk_Ani_TurnTwice == m_eState)
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.9f))
 		{
@@ -1951,94 +1899,101 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 
 			return;
 		}
-		else
+		else if (4.000f <= AniTime)
 		{
-			if (1.767f < AniTime && 2.100f > AniTime)
+			if (false == m_bEventTrigger[4])
 			{
-				if (false == m_bEventTrigger[4])
-				{
-					m_bEventTrigger[4] = true;
-					m_fSkillMoveSpeed_Cur = 8.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 1.f;
-				}
-				if (1.967f < AniTime)
-				{
-					if (false == m_bEventTrigger[5])
-					{
-						m_bEventTrigger[5] = true;
-						m_pWeapon->Set_Target_CanAttack(true);
-						m_pWeapon->Set_Enable_Trail(true);
-					}
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
+				m_bEventTrigger[4] = true;
+				m_pWeapon->Set_Enable_Trail(false);
 			}
-			else if (2.200f < AniTime && 3.133f > AniTime)
+		}
+		else if (3.700f <= AniTime)
+		{
+			if (false == m_bEventTrigger[5])
 			{
-				if (false == m_bEventTrigger[6])
-				{
-					m_bEventTrigger[6] = true;
-					m_fSkillMoveSpeed_Cur = 8.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 1.f;
-				}
-				if (2.300f <= AniTime)
-				{
-					if (false == m_bEventTrigger[7])
-					{
-						m_bEventTrigger[7] = true;
-						m_pWeapon->Set_Target_CanAttack(false);
-					}
-				}
-				else if (2.500f < AniTime)
-				{
-					if (false == m_bEventTrigger[8])
-					{
-						m_bEventTrigger[8] = true;
-						m_pWeapon->Set_Enable_Trail(false);
-					}
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
+				m_bEventTrigger[5] = true;
+				m_pWeapon->Set_Target_CanAttack(false);
 			}
-			else if (3.232f < AniTime && 3.733f > AniTime)
+		}
+		else if (3.300f <= AniTime)
+		{
+			if (false == m_bEventTrigger[6])
 			{
-				if (false == m_bEventTrigger[9])
-				{
-					m_bEventTrigger[9] = true;
-					m_fSkillMoveSpeed_Cur = 8.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 1.f;
-				}
-				if (3.300f < AniTime && 3.700f > AniTime)
-				{
-					if (false == m_bEventTrigger[10])
-					{
-						m_bEventTrigger[10] = true;
-						m_pWeapon->Set_Target_CanAttack(true);
-						m_pWeapon->Set_Enable_Trail(true);
-					}
-				}
-				else if (3.700f <= AniTime)
-				{
-					if (false == m_bEventTrigger[11])
-					{
-						m_bEventTrigger[11] = true;
-						m_pWeapon->Set_Target_CanAttack(false);
-					}
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
+				m_bEventTrigger[6] = true;
+				m_pWeapon->Set_Target_CanAttack(true);
+				m_pWeapon->Set_Enable_Trail(true);
 			}
-			else if (3.933f < AniTime)
+		}
+		else if (2.600f <= AniTime)
+		{
+			if (false == m_bEventTrigger[7])
 			{
-				if (false == m_bEventTrigger[12])
-				{
-					m_bEventTrigger[12] = true;
-					m_pWeapon->Set_Enable_Trail(false);
-				}
+				m_bEventTrigger[7] = true;
+				m_pWeapon->Set_Enable_Trail(false);
 			}
+		}
+		else if (2.300f <= AniTime)
+		{
+			if (false == m_bEventTrigger[8])
+			{
+				m_bEventTrigger[8] = true;
+				m_pWeapon->Set_Target_CanAttack(false);
+			}
+		}
+		else if (1.967f <= AniTime)
+		{
+			if (false == m_bEventTrigger[9])
+			{
+				m_bEventTrigger[9] = true;
+				m_pWeapon->Set_Target_CanAttack(true);
+				m_pWeapon->Set_Enable_Trail(true);
+			}
+		}
+
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
+
+		if (3.233f < AniTime && 3.733f > AniTime)
+		{
+			if (m_bEventTrigger[10] == false)
+			{
+				m_bEventTrigger[10] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+
+			Function_RotateBody();
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+		else if (2.200f < AniTime && 3.133f >AniTime)
+		{
+			if (m_bEventTrigger[11] == false)
+			{
+				m_bEventTrigger[11] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+
+			Function_RotateBody();
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+		else if (1.767f < AniTime && 2.100f > AniTime)
+		{
+			if (m_bEventTrigger[12] == false)
+			{
+				m_bEventTrigger[12] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+
+			Function_RotateBody();
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
 	}
 
@@ -2049,7 +2004,7 @@ void CYachaMan::Play_Combo_Shoulder_HalfClock()
 {
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
 
-	if (Atk_Ani_Shoulder == m_eState)
+	if (YACHAMAN_ANI::Atk_Ani_Shoulder == m_eState)
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.28f))
 		{
@@ -2057,53 +2012,51 @@ void CYachaMan::Play_Combo_Shoulder_HalfClock()
 			m_eState = Atk_Ani_HalfClock;
 			return;
 		}
-		else
+		else if (2.500f <= AniTime)
 		{
-			if (1.500f < AniTime && 1.800f > AniTime)
+			if (false == m_bEventTrigger[0])
 			{
-				if (m_bEventTrigger[0] == false)
-				{
-					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 8.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 1.5f;
-				}
-
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-			else if (2.067f < AniTime && 2.500f > AniTime)
-			{
-				if (m_bEventTrigger[1] == false)
-				{
-					m_bEventTrigger[1] = true;
-					m_vecAttackCol[0]->Set_Enabled(true);
-				}
-			}
-			else if (2.500f <= AniTime)
-			{
-				if (m_bEventTrigger[2] == false)
-				{
-					m_bEventTrigger[2] = true;
-					m_vecAttackCol[0]->Set_Enabled(false);
-				}
-			}
-			else if (4.773f < AniTime && 6.800f > AniTime)
-			{
-				if (m_bEventTrigger[3] == false)
-				{
-					m_bEventTrigger[3] = true;
-					m_fSkillMoveSpeed_Cur = 0.2f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 0.1f;
-				}
-
-				Function_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
+				m_bEventTrigger[0] = true;
+				m_vecAttackCol[0]->Set_Enabled(false);
 			}
 		}
+		else if (2.067f <= AniTime)
+		{
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+				m_vecAttackCol[0]->Set_Enabled(true);
+			}
+		}
+
+		if (4.733f < AniTime && 5.800f >AniTime)
+		{
+			if (m_bEventTrigger[2] == false)
+			{
+				m_bEventTrigger[2] = true;
+				m_fSkillMoveSpeed_Cur = 0.2f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 0.1f;
+			}
+
+			Function_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+		else if (1.500f < AniTime && 1.800f > AniTime)
+		{
+			if (m_bEventTrigger[3] == false)
+			{
+				m_bEventTrigger[3] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
 	}
-	else if (Atk_Ani_HalfClock == m_eState)
+	else if (YACHAMAN_ANI::Atk_Ani_HalfClock == m_eState)
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
@@ -2113,49 +2066,62 @@ void CYachaMan::Play_Combo_Shoulder_HalfClock()
 
 			return;
 		}
-		else
+		else if (2.433f <= AniTime)
 		{
-			if (1.000f < AniTime && 1.833f > AniTime)
+			if (false == m_bEventTrigger[4])
 			{
-				if (false == m_bEventTrigger[4])
-				{
-					m_bEventTrigger[4] = true;
-					m_fSkillMoveSpeed_Cur = 8.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 1.5f;
-				}
-				if (1.800f < AniTime)
-				{
-					if (false == m_bEventTrigger[5])
-					{
-						m_bEventTrigger[5] = true;
-						m_pWeapon->Set_Target_CanAttack(true);
-						m_pWeapon->Set_Enable_Trail(true);
-					}
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
+				m_bEventTrigger[4] = true;
+				m_pWeapon->Set_Enable_Trail(false);
 			}
-			else if (1.933f < AniTime && 3.000f > AniTime)
+		}
+		else if (2.133f <= AniTime)
+		{
+			if (false == m_bEventTrigger[5])
 			{
-				if (false == m_bEventTrigger[6])
-				{
-					m_bEventTrigger[6] = true;
-					m_fSkillMoveSpeed_Cur = 6.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 1.5f;
-				}
-				if (2.133f <= AniTime)
-				{
-					if (false == m_bEventTrigger[7])
-					{
-						m_bEventTrigger[7] = true;
-						m_pWeapon->Set_Target_CanAttack(false);
-					}
-				}
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
+				m_bEventTrigger[5] = true;
+				m_pWeapon->Set_Target_CanAttack(false);
 			}
+		}
+		else if (1.800f <= AniTime)
+		{
+			if (false == m_bEventTrigger[6])
+			{
+				m_bEventTrigger[6] = true;
+				m_pWeapon->Set_Target_CanAttack(true);
+				m_pWeapon->Set_Enable_Trail(true);
+			}
+		}
+
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
+
+		if (1.933f < AniTime && 3.000f> AniTime)
+		{
+			if (m_bEventTrigger[7] == false)
+			{
+				m_bEventTrigger[7] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+
+			Function_RotateBody();
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+		else if (1.000f < AniTime && 1.833f >AniTime)
+		{
+			if (m_bEventTrigger[8] == false)
+			{
+				m_bEventTrigger[8] = true;
+				m_fSkillMoveSpeed_Cur = 8.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.5f;
+			}
+
+			Function_RotateBody();
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
 	}
 
@@ -2166,31 +2132,30 @@ void CYachaMan::Play_Combo_RunHammering()
 {
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
 
-	if (Atk_Ani_Run_Start == m_eState)
+	if (YACHAMAN_ANI::Atk_Ani_Run_Start == m_eState)
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.9f))
 		{
 			m_eState = Atk_Ani_Run_Loop;
 			return;
 		}
-		else
-		{
-			if (3.667f < AniTime)
-			{
-				if (m_bEventTrigger[0] == false)
-				{
-					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 12.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 2.f;
-				}
 
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
+		if (3.667f < AniTime)
+		{
+			if (m_bEventTrigger[0] == false)
+			{
+				m_bEventTrigger[0] = true;
+				m_fSkillMoveSpeed_Cur = 12.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 2.f;
 			}
+
+			Function_RotateBody();
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
 	}
-	else if (Atk_Ani_Run_Loop == m_eState)
+	else if (YACHAMAN_ANI::Atk_Ani_Run_Loop == m_eState)
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.9f))
 		{
@@ -2198,21 +2163,19 @@ void CYachaMan::Play_Combo_RunHammering()
 
 			return;
 		}
-		else
+		if (m_bEventTrigger[1] == false)
 		{
-			if (m_bEventTrigger[1] == false)
-			{
-				m_bEventTrigger[1] = true;
-				m_fSkillMoveSpeed_Cur = 12.f;
-				m_fSkillMoveAccel_Cur = 0.f;
-				m_fSkillMoveMultiply = 2.f;
-			}
-
-			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-			Function_DecreMoveMent(m_fSkillMoveMultiply);
+			m_bEventTrigger[1] = true;
+			m_fSkillMoveSpeed_Cur = 12.f;
+			m_fSkillMoveAccel_Cur = 0.f;
+			m_fSkillMoveMultiply = 2.f;
 		}
+
+		Function_RotateBody();
+		Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+		Function_DecreMoveMent(m_fSkillMoveMultiply);
 	}
-	else if (Atk_Ani_Run_End == m_eState)
+	else if (YACHAMAN_ANI::Atk_Ani_Run_End == m_eState)
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.9f))
 		{
@@ -2222,47 +2185,194 @@ void CYachaMan::Play_Combo_RunHammering()
 
 			return;
 		}
+		else if (1.767f <= AniTime)
+		{
+			if (false == m_bEventTrigger[2])
+			{
+				m_bEventTrigger[2] = true;
+				m_pWeapon->Set_Enable_Trail(false);
+			}
+		}
+		else if (1.467f <= AniTime)
+		{
+			if (false == m_bEventTrigger[3])
+			{
+				m_bEventTrigger[3] = true;
+				m_pWeapon->Set_Target_CanAttack(false);
+			}
+		}
+		else if (0.733f <= AniTime)
+		{
+			if (false == m_bEventTrigger[4])
+			{
+				m_bEventTrigger[4] = true;
+				m_pWeapon->Set_Target_CanAttack(true);
+				m_pWeapon->Set_Enable_Trail(true);
+			}
+		}
+
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_bCanInterrupt = false;
+
+		if (0.433f > AniTime)
+		{
+			if (m_bEventTrigger[5] == false)
+			{
+				m_bEventTrigger[5] = true;
+				m_fSkillMoveSpeed_Cur = 12.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 4.f;
+			}
+
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+	}
+
+	return;
+}
+
+void CYachaMan::Play_Idle()
+{
+	switch (m_eSecondCategory_IDLE)
+	{
+	case YACHAMAN_IDLETYPE::IDLE_IDLE:
+		if (true == m_bInRecognitionRange)
+		{
+			m_bIsIdle = false;
+
+			if (true == m_tObjParam.bCanAttack)
+			{
+				m_eState = YACHAMAN_ANI::Hammer_Idle;
+			}
+			else
+			{
+				m_eState = YACHAMAN_ANI::Hammer_Idle;
+			}
+		}
 		else
 		{
-			if (0.433f > AniTime)
+			m_bIsIdle = true;
+			m_eState = YACHAMAN_ANI::Hammer_Idle;
+		}
+		break;
+	case YACHAMAN_IDLETYPE::IDLE_EAT:
+		if (true == m_bInRecognitionRange)
+		{
+			if (YACHAMAN_ANI::Eat == m_eState)
 			{
-				if (m_bEventTrigger[2] == false)
-				{
-					m_bEventTrigger[2] = true;
-					m_fSkillMoveSpeed_Cur = 12.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 4.f;
-				}
+				m_bIsIdle = true;
 
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
+				if (m_pMeshCom->Is_Finish_Animation(0.25f))
+					m_eState = YACHAMAN_ANI::Eat_End;
 			}
-			else if (0.733f < AniTime && 1.467f > AniTime)
+			else if (YACHAMAN_ANI::Eat_End == m_eState)
 			{
-				if (m_bEventTrigger[3] == false)
+				if (m_pMeshCom->Is_Finish_Animation(0.95f))
 				{
-					m_bEventTrigger[3] = true;
-					m_pWeapon->Set_Target_CanAttack(true);
-					m_pWeapon->Set_Enable_Trail(true);
-				}
-			}
-			else if (1.467f < AniTime)
-			{
-				if (false == m_bEventTrigger[4])
-				{
-					m_bEventTrigger[4] = true;
-					m_pWeapon->Set_Target_CanAttack(false);
-				}
-				if (1.687f < AniTime)
-				{
-					if (false == m_bEventTrigger[5])
-					{
-						m_bEventTrigger[5] = true;
-						m_pWeapon->Set_Enable_Trail(false);
-					}
+					m_bCanIdle = true;
+					m_bIsIdle = false;
+					m_eState = YACHAMAN_ANI::Hammer_Idle;
 				}
 			}
 		}
+		else
+		{
+			m_bIsIdle = true;
+			m_eState = YACHAMAN_ANI::Eat;
+		}
+		break;
+	case YACHAMAN_IDLETYPE::IDLE_LURK:
+		if (true == m_bInRecognitionRange)
+		{
+			if (YACHAMAN_ANI::Lurk == m_eState)
+			{
+				m_bIsIdle = true;
+
+				if (m_pMeshCom->Is_Finish_Animation(0.5f))
+					m_eState = YACHAMAN_ANI::Lurk_End;
+			}
+			else if (YACHAMAN_ANI::Lurk_End == m_eState)
+			{
+				if (m_pMeshCom->Is_Finish_Animation(0.95f))
+				{
+					m_bCanIdle = true;
+					m_bIsIdle = false;
+					m_eState = YACHAMAN_ANI::Hammer_Idle;
+				}
+			}
+		}
+		else
+		{
+			m_bIsIdle = true;
+			m_eState = YACHAMAN_ANI::Lurk;
+		}
+		break;
+	}
+
+	return;
+}
+
+void CYachaMan::Play_Move()
+{
+	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+
+	switch (m_eSecondCategory_MOVE)
+	{
+	case YACHAMAN_MOVETYPE::MOVE_RUN:
+		m_eState = YACHAMAN_ANI::Run;
+
+		Function_RotateBody();
+		Function_Movement(4.f, m_pTransformCom->Get_Axis(AXIS_Z));
+		Function_DecreMoveMent(0.1f);
+
+		break;
+
+	case YACHAMAN_MOVETYPE::MOVE_WALK:
+		m_eState = YACHAMAN_ANI::Walk;
+
+		Function_RotateBody();
+		Function_Movement(2.f, m_pTransformCom->Get_Axis(AXIS_Z));
+		Function_DecreMoveMent(0.1f);
+
+		break;
+
+	case YACHAMAN_MOVETYPE::MOVE_DODGE:
+		if (false == m_tObjParam.bIsDodge)
+		{
+			Function_ResetAfterAtk();
+			m_tObjParam.bIsDodge = true;
+			m_eState = YACHAMAN_ANI::Dodge;
+		}
+		else
+		{
+			if (m_pMeshCom->Is_Finish_Animation(0.98f))
+			{
+				m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+				m_tObjParam.bCanAttack = true;
+				Function_ResetAfterAtk();
+
+				return;
+			}
+			else
+			{
+				if (0.600f < AniTime && 1.500f> AniTime)
+				{
+					if (m_bEventTrigger[0] == false)
+					{
+						m_bEventTrigger[0] = true;
+						m_fSkillMoveSpeed_Cur = 10.f;
+						m_fSkillMoveAccel_Cur = 0.f;
+						m_fSkillMoveMultiply = 0.5f;
+						Function_RotateBody();
+					}
+
+					Function_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
+					Function_DecreMoveMent(m_fSkillMoveMultiply);
+				}
+			}
+		}
+		break;
 	}
 
 	return;
@@ -2301,35 +2411,75 @@ void CYachaMan::Play_Hit()
 	return;
 }
 
-void CYachaMan::Play_Down_Strong()
+void CYachaMan::Play_CC()
 {
-	return;
-}
-
-void CYachaMan::Play_Down_Weak()
-{
-	return;
 }
 
 void CYachaMan::Play_Dead()
 {
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
 
-	if (false == m_bCanPlayDeadAni)
+	if (false == m_bCanPlayDead)
 	{
 		Function_ResetAfterAtk();
-		m_bCanPlayDeadAni = true;
-		m_eState = YACHAMAN_ANI::Dead;
+		m_bCanPlayDead = true;
+
+		if (YACHAMAN_ANI::Down_S_Start == m_eState ||
+			YACHAMAN_ANI::Down_S_End == m_eState)
+			m_eState = YACHAMAN_ANI::Death_B;
+		else if (YACHAMAN_ANI::Down_P_Start == m_eState ||
+			YACHAMAN_ANI::Down_P_Loop == m_eState ||
+			YACHAMAN_ANI::Down_P_End == m_eState)
+			m_eState = YACHAMAN_ANI::Death_F;
+		else
+			m_eState = YACHAMAN_ANI::Death;
 	}
 	else
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		switch (m_eState)
 		{
-			m_bEnable = false;
-			m_dAniPlayMul = 0;
-		}
-		else
-		{
+		case YACHAMAN_ANI::Death_F:
+			if (m_pMeshCom->Is_Finish_Animation(0.95f))
+			{
+				m_bEnable = false;
+				m_dAniPlayMul = 0;
+			}
+			if (1.433f <= AniTime)
+			{
+				if (false == m_bEventTrigger[0])
+				{
+					m_bEventTrigger[0] = true;
+					Start_Dissolve(0.7f, false, true);
+					m_pWeapon->Start_Dissolve(0.7f, false, true);
+				}
+			}
+			break;
+
+		case YACHAMAN_ANI::Death_B:
+			if (m_pMeshCom->Is_Finish_Animation(0.95f))
+			{
+				m_bEnable = false;
+				m_dAniPlayMul = 0;
+			}
+			if (1.867f <= AniTime)
+			{
+				if (false == m_bEventTrigger[0])
+				{
+					m_bEventTrigger[0] = true;
+					Start_Dissolve(0.7f, false, true);
+					m_pWeapon->Start_Dissolve(0.7f, false, true);
+				}
+			}
+			break;
+
+		case YACHAMAN_ANI::Death:
+			if (m_pMeshCom->Is_Finish_Animation(0.95f))
+			{
+				m_bEnable = false;
+				m_dAniPlayMul = 0;
+			}
+
+
 			if (1.30f < AniTime && 2.80f > AniTime)
 			{
 				if (false == m_bEventTrigger[0])
@@ -2343,49 +2493,40 @@ void CYachaMan::Play_Dead()
 				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
-			else if (5.233f < AniTime)
+
+			if (3.233f <= AniTime)
 			{
 				if (false == m_bEventTrigger[1])
 				{
 					m_bEventTrigger[1] = true;
-					Start_Dissolve(0.8f, false, true);
-					m_pWeapon->Start_Dissolve(0.8f, false, true);
+					Start_Dissolve(0.7f, false, true);
+					m_pWeapon->Start_Dissolve(0.5f, false, true);
 				}
 			}
+			break;
 		}
 	}
 
 	return;
 }
 
-void CYachaMan::Play_Dead_Strong()
-{
-	return;
-}
-
 HRESULT CYachaMan::Add_Component()
 {
-	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
 		return E_FAIL;
 
-	// For.Com_Renderer
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
-	// For.Com_Shader
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
-	// for.Com_Mesh
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_YachaMan", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
 		return E_FAIL;
 
-	// for.Com_NavMesh
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMesh)))
 		return E_FAIL;
 
-	// for.Com_Collider
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
 
@@ -2394,14 +2535,14 @@ HRESULT CYachaMan::Add_Component()
 	m_pCollider->Set_Type(COL_SPHERE);
 	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pCollider->Get_Radius().y , 0.f });
 
-	return NOERROR;
+	return S_OK;
 }
 
 HRESULT CYachaMan::SetUp_ConstantTable()
 {
 	IF_NULL_VALUE_RETURN(m_pShaderCom, E_FAIL);
 
-	CManagement*		pManagement = CManagement::Get_Instance();
+	CManagement* pManagement = CManagement::Get_Instance();
 	IF_NULL_VALUE_RETURN(pManagement, E_FAIL);
 
 	Safe_AddRef(pManagement);
@@ -2423,7 +2564,35 @@ HRESULT CYachaMan::SetUp_ConstantTable()
 
 	Safe_Release(pManagement);
 
-	return NOERROR;
+	return S_OK;
+}
+
+HRESULT CYachaMan::Ready_Status(void * pArg)
+{
+	if (nullptr == pArg)
+	{
+		m_tObjParam.fDamage = 25.f;
+		m_tObjParam.fHp_Max = 180.f;
+		m_tObjParam.fArmor_Max = 10.f;
+
+		m_fRecognitionRange = 15.f;
+		m_fAtkRange = 5.f;
+		m_iDodgeCountMax = 5;
+	}
+	else
+	{
+		INITSTRUCT Info = *(INITSTRUCT*)pArg;
+
+		m_tObjParam.fDamage = Info.tMonterStatus.fDamage;
+		m_tObjParam.fHp_Max = Info.tMonterStatus.fHp_Max;
+		m_tObjParam.fArmor_Max = Info.tMonterStatus.fArmor_Max;
+
+		m_fRecognitionRange = Info.fKonwingRange;
+		m_fAtkRange = Info.fCanAttackRange;
+		m_iDodgeCountMax = Info.iDodgeCountMax;
+	}
+
+	return S_OK;
 }
 
 HRESULT CYachaMan::Ready_Weapon()
@@ -2440,15 +2609,16 @@ HRESULT CYachaMan::Ready_Weapon()
 
 HRESULT CYachaMan::Ready_Collider()
 {
-	m_vecPhysicCol.reserve(3); //3칸의 공간 할당
-	m_vecAttackCol.reserve(2); //2칸의 공간 할당
+	m_vecPhysicCol.reserve(3);
+	m_vecAttackCol.reserve(2);
 
-	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
-	IF_NULL_VALUE_RETURN(pCollider, E_FAIL);
-
-	_float fRadius = 1.2f;
+	CCollider* pCollider = nullptr;
+	_float fRadius;
 
 	// 첫번째 콜라이더는 경계 체크용 콜라이더
+	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
+	fRadius = 1.2f;
+
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
 	pCollider->Set_Type(COL_SPHERE);
@@ -2457,11 +2627,7 @@ HRESULT CYachaMan::Ready_Collider()
 
 	m_vecPhysicCol.push_back(pCollider);
 
-	//==============================================================================================================
-
-	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
-	IF_NULL_VALUE_RETURN(pCollider, E_FAIL);
-
+	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
 	fRadius = 0.7f;
 
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
@@ -2472,11 +2638,7 @@ HRESULT CYachaMan::Ready_Collider()
 
 	m_vecPhysicCol.push_back(pCollider);
 
-	//==============================================================================================================
-
-	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
-	IF_NULL_VALUE_RETURN(pCollider, E_FAIL);
-
+	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
 	fRadius = 0.7f;
 
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
@@ -2487,13 +2649,8 @@ HRESULT CYachaMan::Ready_Collider()
 
 	m_vecPhysicCol.push_back(pCollider);
 
-	//==============================================================================================================
-	//공격 구 넣기
-
-	pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
-	IF_NULL_VALUE_RETURN(pCollider, E_FAIL);
-
-	fRadius = 0.6f; //크기 확인
+	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
+	fRadius = 0.6f;
 
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
@@ -2508,16 +2665,17 @@ HRESULT CYachaMan::Ready_Collider()
 
 HRESULT CYachaMan::Ready_BoneMatrix()
 {
-	D3DXFRAME_DERIVED*	pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftArm", 0);
-	IF_NULL_VALUE_RETURN(pFrame, E_FAIL);
+	D3DXFRAME_DERIVED*	pFrame = nullptr;
 
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftArm", 0), E_FAIL);
 	m_matBone[Bone_LeftArm] = &pFrame->CombinedTransformationMatrix;
 
-	pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Spine", 0);
-	IF_NULL_VALUE_RETURN(pFrame, E_FAIL);
-
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Spine", 0), E_FAIL);
 	m_matBone[Bone_Range] = &pFrame->CombinedTransformationMatrix;
 	m_matBone[Bone_Body] = &pFrame->CombinedTransformationMatrix;
+
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head", 0), E_FAIL);
+	m_matBone[Bone_Head] = &pFrame->CombinedTransformationMatrix;
 
 	return S_OK;
 }
@@ -2550,6 +2708,11 @@ CGameObject* CYachaMan::Clone_GameObject(void * pArg)
 
 void CYachaMan::Free()
 {
+	Safe_Release(m_pMonsterUI);
+
+	Safe_Release(m_pTarget);
+	Safe_Release(m_pTargetTransform);
+
 	Safe_Release(m_pWeapon);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pNavMesh);
@@ -2558,15 +2721,14 @@ void CYachaMan::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 
-	for (auto& iter : m_vecPhysicCol)
-	{
-		Safe_Release(iter);
-	}
+	for (auto& vecter_iter : m_vecPhysicCol)
+		Safe_Release(vecter_iter);
+
+	for (auto& vecter_iter : m_vecAttackCol)
+		Safe_Release(vecter_iter);
 
 	for (auto& iter : m_matBone)
-	{
 		iter = nullptr;
-	}
 
 	CGameObject::Free();
 

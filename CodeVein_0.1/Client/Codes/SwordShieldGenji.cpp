@@ -51,6 +51,11 @@ HRESULT CSwordShieldGenji::Ready_GameObject(void * pArg)
 
 	/////////////// 행동트리 init
 
+	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL);
+
+	if (nullptr == pPlayer)
+		return E_FAIL;
+
 	CBlackBoard* pBlackBoard = CBlackBoard::Create();
 	CBehaviorTree* pBehaviorTree = CBehaviorTree::Create();
 
@@ -59,10 +64,9 @@ HRESULT CSwordShieldGenji::Ready_GameObject(void * pArg)
 
 	Update_Bone_Of_BlackBoard();
 
-	pBlackBoard->Set_Value(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos());
+	pBlackBoard->Set_Value(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))->Get_Pos());
 	pBlackBoard->Set_Value(L"HP", m_tObjParam.fHp_Cur);
 	pBlackBoard->Set_Value(L"MAXHP", m_tObjParam.fHp_Max);
-	pBlackBoard->Set_Value(L"HPRatio", 100);
 	pBlackBoard->Set_Value(L"Show", true);
 
 	//CBT_Selector* Start_Sel = Node_Selector("행동 시작"); // 찐
@@ -124,6 +128,9 @@ _int CSwordShieldGenji::Update_GameObject(_double TimeDelta)
 	if (false == m_bEnable)
 		return NO_EVENT;
 
+	if (nullptr == g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))
+		return E_FAIL;
+
 	Push_Collider();
 
 	CGameObject::Update_GameObject(TimeDelta);
@@ -157,7 +164,9 @@ _int CSwordShieldGenji::Update_GameObject(_double TimeDelta)
 	if(false == m_bReadyDead)
 		Check_PhyCollider();
 
-	return _int();
+	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
+
+	return NO_EVENT;
 }
 
 _int CSwordShieldGenji::Late_Update_GameObject(_double TimeDelta)
@@ -654,7 +663,7 @@ HRESULT CSwordShieldGenji::Update_Bone_Of_BlackBoard()
 HRESULT CSwordShieldGenji::Update_Value_Of_BB()
 {
 	// 1. 플레이어 좌표 업데이트
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos());
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))->Get_Pos());
 	// 2. 체력 업데이트
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"HP", m_tObjParam.fHp_Cur);
 
@@ -672,7 +681,7 @@ HRESULT CSwordShieldGenji::Update_NF()
 	if (false == m_bFindPlayer)
 	{
 		// 플레이어 좌표 구함.
-		_v3 vPlayer_Pos = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos();
+		_v3 vPlayer_Pos = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))->Get_Pos();
 
 		// 플레이어와 몬스터의 거리
 		_v3 vLengthTemp = vPlayer_Pos - m_pTransformCom->Get_Pos();
@@ -796,7 +805,7 @@ void CSwordShieldGenji::Check_PhyCollider()
 
 		// 맞을때 플레이어의 룩을 받아와서 그 방향으로 밈.
 
-		_mat matPlayer = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_WorldMat();
+		_mat matPlayer = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))->Get_WorldMat();
 		m_vPushDir_forHitting = *(_v3*)&matPlayer.m[2];
 
 		m_pAIControllerCom->Reset_BT();
@@ -813,7 +822,18 @@ void CSwordShieldGenji::Check_PhyCollider()
 				m_fSkillMoveMultiply = 0.5f;
 			}
 			else
-				m_pMeshCom->SetUp_Animation(Ani_Dmg01_FL);	//방향에 따른 모션 해줘야함.
+			{
+				_float fAngle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))->Get_Pos()));
+
+				if (0.f <= fAngle && fAngle < 90.f)
+					m_pMeshCom->SetUp_Animation(Ani_Dmg01_FR);
+				else if (90.f <= fAngle && fAngle < 180.f)
+					m_pMeshCom->SetUp_Animation(Ani_Dmg01_BR);
+				else if (-90.f <= fAngle && fAngle < 0)
+					m_pMeshCom->SetUp_Animation(Ani_Dmg01_FL);
+				else
+					m_pMeshCom->SetUp_Animation(Ani_Dmg01_BL);
+			}
 		}
 		else
 		{

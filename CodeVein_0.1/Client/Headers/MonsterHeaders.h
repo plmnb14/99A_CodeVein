@@ -13,7 +13,10 @@
 #include "LeakField.h"
 
 #include "IceGirl.h"
-#include "ColdBeam.h"
+#include "ColdBeamSmall.h"
+#include "ColdBeamMiddle.h"
+#include "ColdBeamBig.h"
+#include "ColdBeamSharp.h"
 #include "SwordBullet.h"
 #include "IceBarrier.h"
 
@@ -24,10 +27,17 @@
 #include "FireGround.h"
 #include "FireTornadoCol.h"
 
-#include "BlackWolf.h"
-#include "YachaMan.h"
+#include "DeerKing.h"
+
+#include "Cocoon.h"
+#include "CocoonBullet.h"
+#include "CocoonBigBullet.h"
 #include "Hunter.h"
+#include "HunterBullet.h"
 #include "Monkey.h"
+#include "MonkeyBullet.h"
+#include "YachaMan.h"
+#include "BlackWolf.h"
 #include "Yeti.h"
 
 #include "GunGenji.h"

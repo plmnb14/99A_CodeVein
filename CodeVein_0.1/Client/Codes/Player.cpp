@@ -58,6 +58,8 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 	Parameter_Collision();
 	Parameter_Aiming();
 
+	Check_Mistletoe();
+
 	if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
 
@@ -455,14 +457,10 @@ void CPlayer::Parameter_Aiming()
 		Target_AimChasing();
 
 		m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(m_pTarget)->Get_Pos()));
-
-		//cout << D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)) << endl;
 	}
 
 	else if (false == m_bOnAiming)
 	{
-		//cout << "타겟팅 해제" << endl;
-
 		if (nullptr != m_pTarget)
 		{
 			m_pTarget = nullptr;
@@ -894,31 +892,6 @@ void CPlayer::Target_AimChasing()
 	if (m_bHaveAimingTarget)
 		return;
 
-	for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE))
-	{
-		if (true == iter->Get_Dead())
-			continue;
-
-		if (false == iter->Get_Enable())
-			continue;
-
-		_float fLength = D3DXVec3Length(&(TARGET_TO_TRANS(iter)->Get_Pos() - m_pTransform->Get_Pos()));
-
-		if (fLength > m_fAmingRange)
-			continue;
-
-		m_bHaveAimingTarget = true;
-
-		m_pTarget = iter;
-
-		CCameraMgr::Get_Instance()->Set_AimingTarget(m_pTarget);
-		CCameraMgr::Get_Instance()->Set_OnAimingTarget(true);
-
-		m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(m_pTarget)->Get_Pos()));
-
-		return;
-	}
-
 	for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE))
 	{
 		if(true == iter->Get_Dead())
@@ -1170,8 +1143,6 @@ void CPlayer::Key_Movement_Down()
 
 		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.001f))
 		{
-			cout << "이 안에 옵니까" << endl;
-
 			if (m_eActState != ACT_Idle)
 				Reset_BattleState();
 
@@ -1844,8 +1815,6 @@ void CPlayer::Play_MoveDelay()
 {
 	if (false == m_bOnMoveDelay)
 	{
-		cout << "딜레이!" << endl;
-
 		m_bOnMoveDelay = true;
 
 		if (m_bOnAiming)
@@ -2998,8 +2967,6 @@ void CPlayer::Play_Hit()
 			m_tObjParam.bCanHit = true;
 
 			Reset_BattleState();
-
-			//cout << "여긴 탑니까" << endl;
 		}
 
 		else if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.2f))
@@ -3161,13 +3128,13 @@ void CPlayer::Play_Summon()
 
 		Reset_BattleState();
 
-		Start_Dissolve(0.2f, true, false);
+		Start_Dissolve(0.15f, true, false);
+
+		m_fAnimMutiply = 0.5f;
 	}
 
 	else if (true == m_bOnSummon)
 	{
-		m_fAnimMutiply = 0.5f;
-
 		if (m_pDynamicMesh->Is_Finish_Animation(0.9f))
 		{
 			m_eActState = ACT_Idle;
@@ -8685,8 +8652,8 @@ HRESULT CPlayer::SetUp_Default()
 	// Parameter
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.bIsDodge = false;
-	m_tObjParam.fHp_Cur = 1000.f;
-	m_tObjParam.fHp_Max = 1000.f;
+	m_tObjParam.fHp_Cur = 5000.f;
+	m_tObjParam.fHp_Max = 5000.f;
 	
 	// Anim
 	m_fAnimMutiply = 1.f;
@@ -8815,6 +8782,8 @@ void CPlayer::Check_Mistletoe()
 
 			if (1.5f >= V3_LENGTH(&(m_pTransform->Get_Pos() - pIterTrans->Get_Pos())))
 			{
+				cout << "Moon  : 겨우살이 체크 되요" << endl;
+
 				m_bCanMistletoe = true;
 				return;
 			}

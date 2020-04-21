@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\Weapon.h"
 #include "Management.h"
+#include "CameraMgr.h"
 
 CWeapon::CWeapon(_Device pGraphic_Device)
 	: CGameObject(pGraphic_Device)
@@ -178,10 +179,15 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 	if (false == m_tObjParam.bCanAttack)
 		return;
 
+	_v3 vHitDir = V3_NULL;
 	_bool bFirst = true;
+
 	//게임 오브젝트를 받아와서
 	for (auto& iter : plistGameObject)
 	{
+		if(false == iter->Get_Enable())
+			continue;
+
 		// 1 : 다 의 기술일 경우, 기록을 켜야 한대만 맞는다.
 		if (m_bRecordCollision)
 		{
@@ -222,14 +228,27 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 
 						if (false == iter->Get_Target_IsDodge())
 						{
-							m_tObjParam.fDamage = m_tWeaponParam->fDamage;
+							m_tObjParam.fDamage = m_tWeaponParam[m_eWeaponData].fDamage;
 
 							// 무기 공격력의 +-20%까지 랜덤범위
 							_uint min = (_uint)(m_tObjParam.fDamage - (m_tObjParam.fDamage * 0.2f));
 							_uint max = (_uint)(m_tObjParam.fDamage + (m_tObjParam.fDamage * 0.2f));
 
+							//피격시 밀림처리.....
+							memcpy(vHitDir, &(m_pmatParent->_41), sizeof(_v3));
+
+							V3_NORMAL(&m_tObjParam.vHitDir, &(TARGET_TO_TRANS(iter)->Get_Pos() - vHitDir));
+
+							iter->Set_Target_HitDir(m_tObjParam.vHitDir);
+
+							g_pTimer_Manager->Set_MutiplyTime(L"Timer_Fps_60", 0.025f);
+							g_pTimer_Manager->Set_MutiplyResetTime(L"Timer_Fps_60", 0.1f);
+
 							iter->Add_Target_Hp(-(_float)CALC::Random_Num(min , max) * m_fSkillPercent);
 							g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
+
+							CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(2.f, 20.f, 0.5f, 0.6f, CCamera::CAM_OSC_TYPE::POS_OSC);
+							//SHAKE_CAM_lv0;
 
 							if (m_bRecordCollision)
 							{
@@ -313,15 +332,22 @@ void CWeapon::Set_SkillMode(_bool _bSkill)
 		m_pTrailEffect->Set_TrailIdx(0);
 }
 
-void CWeapon::Set_TrailIndex(_int iIdx)
+void CWeapon::Set_TrailIndex(_int iIdx, _bool bStaticTrail)
 {
 	m_bSingleTrail = true;
-	m_pTrailEffect->Set_TrailIdx(iIdx);
+
+	if(!bStaticTrail)
+		m_pTrailEffect->Set_TrailIdx(iIdx);
+	else
+		m_pStaticTrailEffect->Set_TrailIdx(iIdx);
 }
 
-void CWeapon::Set_TrailUseMask(_int iIdx)
+void CWeapon::Set_TrailUseMask(_int iIdx, _bool bStaticTrail)
 {
-	m_pTrailEffect->Set_UseMask(iIdx);
+	if (!bStaticTrail)
+		m_pTrailEffect->Set_UseMask(iIdx);
+	else
+		m_pStaticTrailEffect->Set_UseMask(iIdx);
 }
 
 void CWeapon::Set_Enable_Record(_bool _bRecord)
@@ -479,6 +505,12 @@ void CWeapon::Change_WeaponData(WEAPON_DATA _eWpnData)
 		m_eWeaponType = WEAPON_Shield;
 		break;
 	}
+	case WPN_FrostBlood_IceGirl:
+	{
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_FrostBlood_IceGirl");
+		m_eWeaponType = WEAPON_Halverd;
+		break;
+	}
 	}
 
 	Change_WeaponMesh(WeaponMeshName);
@@ -556,14 +588,14 @@ HRESULT CWeapon::SetUp_WeaponData()
 	// 한손검
 	//===========================================================================================
 
-	m_tWeaponParam[WPN_SSword_Normal].fDamage = 30.f;
+	m_tWeaponParam[WPN_SSword_Normal].fDamage = 100.f;
 	m_tWeaponParam[WPN_SSword_Normal].fRadius = 0.7f;
 	m_tWeaponParam[WPN_SSword_Normal].fTrail_Min = 0.6f;
 	m_tWeaponParam[WPN_SSword_Normal].fTrail_Max = 1.8f;
 	m_tWeaponParam[WPN_SSword_Normal].fCol_Height = 1.f;
 
 
-	m_tWeaponParam[WPN_SSword_Military].fDamage = 30.f;
+	m_tWeaponParam[WPN_SSword_Military].fDamage = 100.f;
 	m_tWeaponParam[WPN_SSword_Military].fRadius = 0.7f;
 	m_tWeaponParam[WPN_SSword_Military].fTrail_Min = 0.6f;
 	m_tWeaponParam[WPN_SSword_Military].fTrail_Max = 1.8f;
@@ -573,6 +605,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	// 대검
 	//===========================================================================================
 
+	m_tWeaponParam[WPN_Hammer_Normal].fDamage = 55.f;
 	m_tWeaponParam[WPN_LSword_Normal].fRadius = 0.8f;
 	m_tWeaponParam[WPN_LSword_Normal].fTrail_Min = 0.8f;
 	m_tWeaponParam[WPN_LSword_Normal].fTrail_Max = 2.1f;
@@ -627,16 +660,24 @@ HRESULT CWeapon::SetUp_WeaponData()
 	//===========================================================================================
 
 	m_tWeaponParam[WPN_QueenLance].fDamage = 25.f;
-	m_tWeaponParam[WPN_QueenLance].fRadius = 1.3f;
+	m_tWeaponParam[WPN_QueenLance].fRadius = 1.4f;
 	m_tWeaponParam[WPN_QueenLance].fTrail_Min = 0.3f;
 	m_tWeaponParam[WPN_QueenLance].fTrail_Max = 3.4f;
-	m_tWeaponParam[WPN_QueenLance].fCol_Height = 1.6f;
+	m_tWeaponParam[WPN_QueenLance].fCol_Height = 1.7f;
 
 	m_tWeaponParam[WPN_QueenShield].fDamage = 25.f;
-	m_tWeaponParam[WPN_QueenShield].fRadius = 0.7f;
+	m_tWeaponParam[WPN_QueenShield].fRadius = 0.8f;
 	m_tWeaponParam[WPN_QueenShield].fTrail_Min = 0.f;
 	m_tWeaponParam[WPN_QueenShield].fTrail_Max = 1.f;
 	m_tWeaponParam[WPN_QueenShield].fCol_Height = 0.f;
+
+	//===========================================================================================
+
+	m_tWeaponParam[WPN_FrostBlood_IceGirl].fDamage = 25.f;
+	m_tWeaponParam[WPN_FrostBlood_IceGirl].fRadius = 0.7f;
+	m_tWeaponParam[WPN_FrostBlood_IceGirl].fTrail_Min = 0.3f;
+	m_tWeaponParam[WPN_FrostBlood_IceGirl].fTrail_Max = 1.6f;
+	m_tWeaponParam[WPN_FrostBlood_IceGirl].fCol_Height = 0.9f;
 
 	return S_OK;
 }

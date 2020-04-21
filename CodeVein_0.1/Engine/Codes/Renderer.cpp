@@ -57,6 +57,11 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_SSAO", ViewPort.Width, ViewPort.Height, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.f, 0.f, 0.f, 1.f))))
 		return E_FAIL;
 
+	// Target_SSAO
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_SSAO_Blur", ViewPort.Width, ViewPort.Height, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.f, 0.f, 0.f, 1.f))))
+		return E_FAIL;
+
+
 	// Target_ShadowMap
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_ShadowMap", ViewPort.Width, ViewPort.Height, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.f, 0.f, 0.f, 1.f))))
 		return E_FAIL;
@@ -130,9 +135,17 @@ HRESULT CRenderer::Ready_Component_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_LightAcc", L"Target_Specular")))
 		return E_FAIL;
-	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_LightAcc", L"Target_SSAO")))
-		return E_FAIL;
+	//if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_LightAcc", L"Target_SSAO")))
+	//	return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_LightAcc", L"Target_Rim")))
+		return E_FAIL;
+
+	// For.MRT_SSAO
+	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_SSAO", L"Target_SSAO")))
+		return E_FAIL;
+
+	// For.MRT_SSAO_Blur
+	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_SSAO_Blur", L"Target_SSAO_Blur")))
 		return E_FAIL;
 	
 	// For.MRT_Distortion
@@ -187,6 +200,11 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	m_pShader_Blur = static_cast<CShader*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Shader_Blur"));
 	if (nullptr == m_pShader_Blur)
 		return E_FAIL;
+
+	// For.SSAO
+	m_pShader_SSAO = static_cast<CShader*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Shader_SSAO"));
+	if (nullptr == m_pShader_SSAO)
+		return E_FAIL;
 	
 	// For.Buffer_ViewPort
 	m_pViewPortBuffer = CBuffer_ViewPort::Create(m_pGraphic_Dev, 0.f - 0.5f, 0.f - 0.5f, (_float)ViewPort.Width, (_float)ViewPort.Height);
@@ -237,8 +255,13 @@ HRESULT CRenderer::Ready_Component_Prototype()
 		return E_FAIL;
 
 	// For.Target_SSAO`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_SSAO", fTargetSize, fTargetSize * 2, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_SSAO", fTargetSize * 6, fTargetSize * 0, fTargetSize, fTargetSize)))
 		return E_FAIL;
+
+	// For.Target_SSAO_Blur`s Debug Buffer
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_SSAO_Blur", fTargetSize * 6, fTargetSize * 1, fTargetSize, fTargetSize)))
+		return E_FAIL;
+
 
 	// For.Target_Rim`s Debug Buffer
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Rim", fTargetSize, fTargetSize * 4, fTargetSize, fTargetSize)))
@@ -306,6 +329,9 @@ HRESULT CRenderer::Draw_RenderList()
 	// 디퓨즈, 노멀타겟에 필요한 정보를 그려놓느낟.
 	if (FAILED(Render_NonAlpha()))
 		return E_FAIL;
+
+	//if (FAILED(Render_SSAO()))
+	//	return E_FAIL;
 
 	// VelocityMap, NormalMap For Rim-light
 	if (FAILED(Render_MotionBlurTarget()))
@@ -375,6 +401,8 @@ HRESULT CRenderer::Draw_RenderList()
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_MotionBlurObj");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_HDR");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_BrightPass");
+		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_SSAO");
+		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_SSAO_Blur");
 	}
 
 #endif
@@ -747,6 +775,69 @@ HRESULT CRenderer::Render_UI()
 	return NOERROR;
 }
 
+HRESULT CRenderer::Render_SSAO()
+{
+	if (nullptr == m_pViewPortBuffer ||
+		nullptr == m_pShader_SSAO)
+		return E_FAIL;
+
+	m_pSSAOTexture->SetUp_OnShader("g_RandomTexture", m_pShader_SSAO, 0);
+
+	if (FAILED(m_pShader_SSAO->Set_Texture("g_DepthTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"))))
+		return E_FAIL;
+	if (FAILED(m_pShader_SSAO->Set_Texture("g_NormalTexture", m_pTarget_Manager->Get_Texture(L"Target_Normal"))))
+		return E_FAIL;
+	//
+
+	CPipeLine*		pPipeLine = CPipeLine::Get_Instance();
+	if (nullptr == pPipeLine)
+		return E_FAIL;
+
+	Safe_AddRef(pPipeLine);
+
+	m_pShader_SSAO->Set_Value("g_matProjInv", &pPipeLine->Get_Transform_Inverse(D3DTS_PROJECTION), sizeof(_mat));
+	m_pShader_SSAO->Set_Value("g_matViewInv", &pPipeLine->Get_Transform_Inverse(D3DTS_VIEW), sizeof(_mat));
+
+	//
+	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_SSAO")))
+		return E_FAIL;
+
+	m_pShader_SSAO->Begin_Shader();
+	m_pShader_SSAO->Begin_Pass(0);
+
+	m_pViewPortBuffer->Render_VIBuffer();
+
+	m_pShader_SSAO->End_Pass();
+	m_pShader_SSAO->End_Shader();
+
+	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_SSAO")))
+		return E_FAIL;
+
+	//
+	Safe_Release(pPipeLine);
+
+
+	// SSAO 블러
+	if (FAILED(m_pShader_SSAO->Set_Texture("g_SSAOTexture", m_pTarget_Manager->Get_Texture(L"Target_SSAO"))))
+		return E_FAIL;
+
+	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_SSAO_Blur")))
+		return E_FAIL;
+
+	m_pShader_SSAO->Begin_Shader();
+	m_pShader_SSAO->Begin_Pass(1);
+
+	m_pViewPortBuffer->Render_VIBuffer();
+
+	m_pShader_SSAO->End_Pass();
+	m_pShader_SSAO->End_Shader();
+
+	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_SSAO_Blur")))
+		return E_FAIL;
+
+	return S_OK;
+}
+
 HRESULT CRenderer::Render_LightAcc()
 {
 	if (nullptr == m_pTarget_Manager ||
@@ -776,7 +867,7 @@ HRESULT CRenderer::Render_LightAcc()
 	m_pShader_LightAcc->Set_Texture("g_DepthTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"));
 	m_pShader_LightAcc->Set_Texture("g_ShadowMapTexture", m_pTarget_Manager->Get_Texture(L"Target_Shadow"));
 	m_pShader_LightAcc->Set_Texture("g_RimNormalTexture", m_pTarget_Manager->Get_Texture(L"Target_RimNormal"));
-	m_pSSAOTexture->SetUp_OnShader("g_SSAOTexture", m_pShader_LightAcc, 9);
+	m_pSSAOTexture->SetUp_OnShader("g_SSAOTexture", m_pShader_LightAcc, 0);
 	
 	m_pShader_LightAcc->Set_Value("g_matProjInv", &pPipeLine->Get_Transform_Inverse(D3DTS_PROJECTION), sizeof(_mat));
 	m_pShader_LightAcc->Set_Value("g_matViewInv", &pPipeLine->Get_Transform_Inverse(D3DTS_VIEW), sizeof(_mat));
@@ -821,6 +912,9 @@ HRESULT CRenderer::Render_Blend()
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_RimTexture", m_pTarget_Manager->Get_Texture(L"Target_Rim"))))
 		return E_FAIL;
+	// SSAO 수정중
+	//if (FAILED(m_pShader_Blend->Set_Texture("g_SSAOTexture", m_pTarget_Manager->Get_Texture(L"Target_SSAO_Blur"))))
+	//	return E_FAIL;
 
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Blend")))
 		return E_FAIL;

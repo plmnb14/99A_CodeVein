@@ -48,6 +48,11 @@ _int CLoadingScreen::Update_GameObject(_double TimeDelta)
 		if (m_fAlpha < 1.f)
 		{
 			m_fAlpha += _float(TimeDelta) * m_fFadeSpeed;
+			m_bIsLoad = false;
+		}
+		else
+		{
+			m_bIsLoad = true;
 		}
 			
 	}
@@ -57,7 +62,6 @@ _int CLoadingScreen::Update_GameObject(_double TimeDelta)
 		{
 			m_fAlpha -= _float(TimeDelta) * m_fFadeSpeed;
 		}
-			
 	}
 		
 	return NO_EVENT;

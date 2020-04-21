@@ -124,12 +124,12 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MistletoeOptionUI", CMistletoeOptionUI::Create(pDevice))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ConditionUI", CConditionUI::Create(pDevice))))
+	/*if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ConditionUI", CConditionUI::Create(pDevice))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ExpUI", CExpUI::Create(pDevice))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_StatusUI", CStatusUI::Create(pDevice))))
-		return E_FAIL;
+		return E_FAIL;*/
 	
 	//////////////// Chae
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BossMassageUI", CMassageUI::Create(pDevice))))
@@ -154,7 +154,7 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_TotalInven", SCENE_MORTAL, L"Layer_TotalInven");
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_Inventory", SCENE_MORTAL, L"Layer_Inventory");
 	
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_SkillUI", SCENE_MORTAL, L"Layer_SkillUI");
+	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_SkillUI", SCENE_MORTAL, L"Layer_SkillUI");
 	
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_MistletoeUI", SCENE_STAGE, L"Layer_MistletoeUI");
 	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_StatusUI", SCENE_STAGE, L"Layer_StatusUI");
@@ -164,25 +164,25 @@ HRESULT CUI_Manager::SetUp_UILayer()
 
 _int CUI_Manager::Update_UI()
 {
-	if (g_pInput_Device->Key_Up(DIK_O))
-	{
-		m_bTest = !m_bTest;
-		Active_MistletoeUI(m_bTest); // 겨우살이 UI On/Off
-	}
-	if (g_pInput_Device->Key_Up(DIK_P))
-	{
-		Active_Mistletoe_SubUI(); // 선택된 항목의 UI On/Off
-	}
-	if (g_pInput_Device->Key_Up(DIK_LEFT))
-		Move_StageUI_Left(); // 스테이지UI 왼쪽이동
-	if (g_pInput_Device->Key_Up(DIK_RIGHT))
-		Move_StageUI_Right(); // 스테이지UI 오른쪽 이동
+	//if (g_pInput_Device->Key_Up(DIK_O))
+	//{
+	//	m_bTest = !m_bTest;
+	//	Active_MistletoeUI(m_bTest); // 겨우살이 UI On/Off
+	//}
+	//if (g_pInput_Device->Key_Up(DIK_P))
+	//{
+	//	Active_Mistletoe_SubUI(); // 선택된 항목의 UI On/Off
+	//}
+	//if (g_pInput_Device->Key_Up(DIK_LEFT))
+	//	Move_StageUI_Left(); // 스테이지UI 왼쪽이동
+	//if (g_pInput_Device->Key_Up(DIK_RIGHT))
+	//	Move_StageUI_Right(); // 스테이지UI 오른쪽 이동
 	//if (g_pInput_Device->Key_Up(DIK_J))
-	//	Move_MistletoeUI_Up(); // 겨우살이UI 위쪽 이동
+	//	MoveUp_SubStage(); // 겨우살이UI 위쪽 이동
 	//if (g_pInput_Device->Key_Up(DIK_K))
-	//	Move_MistletoeUI_Down(); // 겨우살이UI 아래쪽 이동
-	if (g_pInput_Device->Key_Up(DIK_RETURN))
-		cout << Teleport_Stage() << endl; // 스테이지 선택시, 각각 다른 _uint값 반환
+	//	MoveDown_SubStage(); // 겨우살이UI 아래쪽 이동
+	//if (g_pInput_Device->Key_Up(DIK_RETURN))
+	//	cout << Teleport_Stage() << endl; // 스테이지 선택시, 각각 다른 _uint값 반환
 	return 0;
 }
 
@@ -301,6 +301,24 @@ _uint CUI_Manager::Teleport_Stage()
 	if (nullptr == pStageUI)
 		return 0;
 	return _uint(pStageUI->Teleport_Stage());
+}
+
+void CUI_Manager::MoveUp_SubStage()
+{
+	CStageSelectUI* pStageUI = static_cast<CStageSelectUI*>(g_pManagement->Get_GameObjectBack(L"Layer_StageSelectUI", SCENE_STAGE));
+	if (nullptr == pStageUI)
+		return;
+
+	pStageUI->MoveUp_SubStage();
+}
+
+void CUI_Manager::MoveDown_SubStage()
+{
+	CStageSelectUI* pStageUI = static_cast<CStageSelectUI*>(g_pManagement->Get_GameObjectBack(L"Layer_StageSelectUI", SCENE_STAGE));
+	if (nullptr == pStageUI)
+		return;
+
+	pStageUI->MoveDown_SubStage();
 }
 
 void CUI_Manager::Move_StageUI_Right()

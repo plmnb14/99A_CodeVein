@@ -26,6 +26,8 @@ public:
 	void Move_Right();
 	void Move_Left();
 	_uint Teleport_Stage();
+	void MoveUp_SubStage();
+	void MoveDown_SubStage();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;

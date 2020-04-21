@@ -73,12 +73,6 @@ _int CMonsterUI::Update_GameObject(_double TimeDelta)
 	m_pTransformCom->Set_WorldMat((matBill * matWorld));
 
 
-	//m_fPosX = m_pTransformCom->Get_Pos().x;
-	//m_fPosY = m_pTransformCom->Get_Pos().y;
-
-	//matWorld._41 = m_fPosX - WINCX * 0.5f;
-	//matWorld._42 = -m_fPosY + WINCY * 0.5f;
-
 	m_pTransformCom->Set_Scale(_v3(0.8f, 0.08f, 0.8f));
 
 	
@@ -86,23 +80,19 @@ _int CMonsterUI::Update_GameObject(_double TimeDelta)
 	_mat TempBonmatrix;
 	TempBonmatrix = *m_matMonsterBon * (TARGET_TO_TRANS(m_pTarget)->Get_WorldMat());
 
-	//
-	//m_pTransformCom->Set_Pos(_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos()) + (WORLD_UP * 1.5f));
-	m_pTransformCom->Set_Pos(_v3(m_matMonsterBon->_41, m_matMonsterBon->_42 * 1.3f, m_matMonsterBon->_43));
 
-	/*if (0 == m_iCheck_Renderindex)
-	m_pTransformCom->Set_Pos((_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos().x, TARGET_TO_TRANS(m_pTarget)->Get_Pos().y, (TARGET_TO_TRANS(m_pTarget)->Get_Pos().z - 0.06f)) + (WORLD_UP * 2.f)));
-	if (1 == m_iCheck_Renderindex)
-	m_pTransformCom->Set_Pos((_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos().x, TARGET_TO_TRANS(m_pTarget)->Get_Pos().y, (TARGET_TO_TRANS(m_pTarget)->Get_Pos().z - 0.02f)) + (WORLD_UP * 2.f)));
-	if (2 == m_iCheck_Renderindex)
-	m_pTransformCom->Set_Pos((_v3(TARGET_TO_TRANS(m_pTarget)->Get_Pos()) + (WORLD_UP * 2.f)));*/
+	m_pTransformCom->Set_Pos(_v3(m_matMonsterBon->_41, m_matMonsterBon->_42 + 0.7f, m_matMonsterBon->_43));
+
 
 	if (0 == m_iCheck_Renderindex)
-		m_pTransformCom->Set_Pos((_v3(TempBonmatrix._41, TempBonmatrix._42 * 1.3f, (TempBonmatrix._43 - 0.06f))));
+		m_pTransformCom->Set_Pos((_v3(TempBonmatrix._41, TempBonmatrix._42 + 0.7f, (TempBonmatrix._43 - 0.06f))));
+
 	if (1 == m_iCheck_Renderindex)
-		m_pTransformCom->Set_Pos((_v3(TempBonmatrix._41, TempBonmatrix._42 * 1.3f, (TempBonmatrix._43 - 0.02f))));
+		m_pTransformCom->Set_Pos((_v3(TempBonmatrix._41, TempBonmatrix._42 + 0.7f, (TempBonmatrix._43 - 0.02f))));
+
 	if (2 == m_iCheck_Renderindex)
-		m_pTransformCom->Set_Pos((_v3(TempBonmatrix._41, TempBonmatrix._42 * 1.3f, TempBonmatrix._43)));
+		m_pTransformCom->Set_Pos((_v3(TempBonmatrix._41, TempBonmatrix._42 + 0.7f, TempBonmatrix._43)));
+
 
 	m_fMonsterHp = m_pTarget->Get_Target_Param().fHp_Cur;
 	m_fTotalHP = m_pTarget->Get_Target_Param().fHp_Max;

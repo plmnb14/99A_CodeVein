@@ -115,27 +115,40 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"QueensKnight_JumpDown_ShockWave", 50);
 	Input_Pool(L"QueensKnight_JumpDown_Smoke_Black", 500);
 	Input_Pool(L"QueensKnight_JumpDown_Smoke_Red", 500);
+	Input_Pool(L"QueensKnight_JumpDown_Smoke", 500);
+	Input_Pool(L"QueensKnight_Ultimate_Floor", 500);
 	Input_Pool(L"QueensKnight_Lava_Floor_0", 550);
 	Input_Pool(L"QueensKnight_Lava_Floor_1", 550);
 	Input_Pool(L"QueensKnight_Lava_Smoke_0", 550);
 	Input_Pool(L"QueensKnight_DarkBoom_PopSmoke_0", 150);
 	Input_Pool(L"QueensKnight_DarkBoom_PopSmoke_1", 150);
 	Input_Pool(L"QueensKnight_DarkBoom_Smoke_0", 550);
+	Input_Pool(L"QueensKnight_DarkBoom_BlackSmoke", 550);
 	Input_Pool(L"QueensKnight_DarkBoom_LineRing_0", 100);
 	Input_Pool(L"QueensKnight_DarkBoom_Sphere_0", 20);
 	Input_Pool(L"QueensKnight_DarkBoom_Sphere_1", 50);
+	Input_Pool(L"QueensKnight_Ultimate_Cone_0", 50);
+	Input_Pool(L"QueensKnight_Ultimate_Cone_1", 50);
+	Input_Pool(L"QueensKnight_Ultimate_Cone_2", 50);
+	Input_Pool(L"QueensKnight_Ultimate_Cone_3", 50);
+	Input_Pool(L"QueensKnight_Ultimate_Cone_4", 50);
+	Input_Pool(L"QueensKnight_Ultimate_Smoke", 350);
 	Input_Pool(L"QueensKnight_DarkBoom_Ring", 50);
 	Input_Pool(L"QueensKnight_DarkBoom_RingBottom", 50);
+	Input_Pool(L"QueensKnight_DarkBoom_RingRed", 50);
+	Input_Pool(L"QueensKnight_DarkBoom_RingReady", 50);
 	Input_Pool(L"QueensKnight_DarkBoom_BlackFire_0", 600);
 	Input_Pool(L"QueensKnight_Lava_Lightning_0", 600);
 	Input_Pool(L"QueensKnight_Lava_Lightning_1", 600);
 	Input_Pool(L"QueensKnight_Lava_Lightning_2", 600);
 	Input_Pool(L"QueensKnight_DarkBoom_Floor_0", 600);
+	Input_Pool(L"QueensKnight_DarkBoom_Floor_1", 600);
 	Input_Pool(L"QueensKnight_DarkBoom_Particle", 1000);
-	Input_Pool(L"QueensKnight_LeakField_0", 50);
-	Input_Pool(L"QueensKnight_LeakField_1", 50);
-	Input_Pool(L"QueensKnight_LeakField_Hand", 50);
-	Input_Pool(L"QueensKnight_LeakField_Particle", 50);
+	Input_Pool(L"QueensKnight_LeakField_0", 350);
+	Input_Pool(L"QueensKnight_LeakField_1", 350);
+	Input_Pool(L"QueensKnight_LeakField_Hand", 150);
+	Input_Pool(L"QueensKnight_LeakField_Hand_Aura", 150);
+	Input_Pool(L"QueensKnight_LeakField_Particle", 450);
 	Input_Pool(L"QueensKnight_Lightning_0", 50);
 	Input_Pool(L"QueensKnight_Lightning_1", 50);
 	Input_Pool(L"QueensKnight_Lightning_2", 50);
@@ -148,14 +161,24 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"QueensKnight_ShieldAttack_RedLight", 10);
 	Input_Pool(L"QueensKnight_SwordCrash_Particle", 600);
 	Input_Pool(L"QueensKnight_SwordCrash_Particle_Orange", 600);
-	Input_Pool(L"QueensKnight_Teleport_Particle", 3000);
+	Input_Pool(L"QueensKnight_Teleport_Particle", 5000);
 	Input_Pool(L"QueensKnight_Teleport_Particle_Black", 1000);
 	Input_Pool(L"QueensKnight_Teleport_Smoke", 200);
 	Input_Pool(L"QueensKnight_Teleport_Smoke_Red", 200);
 	Input_Pool(L"QueensKnight_Teleport_DistortionSmoke", 300);
+	Input_Pool(L"QueensKnight_Teleport_Ink_0", 30);
+	Input_Pool(L"QueensKnight_Teleport_Ink_1", 30);
+	Input_Pool(L"QueensKnight_Teleport_Ink_2", 30);
+	Input_Pool(L"QueensKnight_Teleport_Ink_3", 30);
+	Input_Pool(L"QueensKnight_Teleport_Ink_4", 30);
+	Input_Pool(L"QueensKnight_Teleport_Ink_5", 30);
+	Input_Pool(L"QueensKnight_Teleport_Ink_6", 30);
+	Input_Pool(L"QueensKnight_Teleport_Ink_7", 30);
+	Input_Pool(L"QueensKnight_Teleport_Ink_8", 30);
+	Input_Pool(L"QueensKnight_Teleport_Ink_9", 30);
 	Input_Pool(L"QueensKnight_Trail_Lightning_0", 200);
 	Input_Pool(L"QueensKnight_Trail_Lightning_1", 200);
-	Input_Pool(L"QueensKnight_Trail_Lightning_2", 200);
+	Input_Pool(L"QueensKnight_Trail_Lightning_2", 500);
 	Input_Pool(L"QueensKnight_Trail_Lightning_2_Dark", 200);
 	Input_Pool(L"QueensKnight_WhirlWind_Smoke", 300);
 	Input_Pool(L"QueensKnight_Sting_Tornade", 5);
@@ -172,6 +195,13 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"IceBlock_Main", 30);
 	Input_Pool(L"IceBlock_Sub_01", 30);
 	Input_Pool(L"IceBlock_Sub_02", 30);
+	Input_Pool(L"IceBlock_Main_Big", 30);
+	Input_Pool(L"IceBlock_Sub_01_Big", 30);
+	Input_Pool(L"IceBlock_Sub_02_Big", 30);
+	Input_Pool(L"IceBlock_Main_Mid", 30);
+	Input_Pool(L"IceBlock_Sub_01_Mid", 30);
+	Input_Pool(L"IceBlock_Sub_02_Mid", 30);
+	Input_Pool(L"IceBlock_Main_Small", 30);
 	Input_Pool(L"IceCrystal_01", 100);
 	Input_Pool(L"IceCrystal_02", 100);
 	Input_Pool(L"IceCrystal_03", 100);
@@ -184,6 +214,8 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"IceGirl_Buff_Aura", 500);
 	Input_Pool(L"IceGirl_Buff_Aura_2", 300);
 	Input_Pool(L"IceGirl_Buff_Aura_3", 300);
+	Input_Pool(L"IceGirl_Buff_Bubble_BreakSmoke", 300);
+	Input_Pool(L"IceGirl_Buff_Bubble", 10);
 	Input_Pool(L"IceBlock_Particle", 300);
 	Input_Pool(L"IceGirl_Buff_Break_1"	, 300);
 	Input_Pool(L"IceGirl_Buff_Break_2"	, 300);
@@ -198,6 +230,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"FireBoy_Charge_Hand_Fire", 150);
 	Input_Pool(L"FireBoy_FireTornade_ReadyFire", 50);
 	Input_Pool(L"FireBoy_FireTornade_Mesh", 30);
+	Input_Pool(L"FireBoy_FireTornade_Mesh_2", 30);
 	Input_Pool(L"FireBoy_FireTornade_Floor_01", 100);
 	Input_Pool(L"FireBoy_FireTornade_Floor_02", 100);
 	Input_Pool(L"FireBoy_FireTornade_Floor_03", 100);
@@ -205,6 +238,10 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"FireBoy_Fire_Particle_02", 500);
 	Input_Pool(L"FireBoy_FireTornade_ReadyFire_Up", 100);
 	Input_Pool(L"FireBoy_FireBullet", 500);
+	Input_Pool(L"FireBoy_FireBullet_Mid", 500);
+	Input_Pool(L"FireBoy_FireBullet_Big", 500);
+	Input_Pool(L"FireBoy_FireBullet_Sub_0", 500);
+	Input_Pool(L"FireBoy_FireBullet_Sub_1", 500);
 	Input_Pool(L"FireBoy_FireBullet_GunEff", 300);
 	Input_Pool(L"FireBoy_FireBullet_Particle_01", 4000);
 	Input_Pool(L"FireBoy_FireBullet_Particle_02", 4000);
@@ -228,8 +265,20 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"FireBoy_ArmAttack_Dust", 100);
 	Input_Pool(L"FireBoy_ArmAttack_FloorDust", 100);
 
+	Input_Pool(L"DeerKing_IceStone_Up_Particle_0", 100);
+	Input_Pool(L"DeerKing_SnowChunk_Up_Particle_0", 100);
+	Input_Pool(L"DeerKing_SnowChunk_Up_Particle_1", 100);
+	Input_Pool(L"DeerKing_Snow_Up_Particle_0", 500);
+	Input_Pool(L"DeerKing_IceSmoke_0", 100);
+	Input_Pool(L"DeerKing_IceSmoke_1", 100);
+	Input_Pool(L"DeerKing_IceSmoke_2", 100);
+	Input_Pool(L"DeerKing_IceSmoke_Small_0", 100);
+	Input_Pool(L"DeerKing_IceSmoke_Small_1", 100);
+
 	Input_Pool(L"Boss_KnockDown_Dust", 10);
-	Input_Pool(L"Boss_Dead_Particle", 1000);
+	Input_Pool(L"Boss_Dead_Particle", 7000);
+
+	Input_Pool(L"Cocoon_TongueFire", 200);
 
 	Input_Pool(L"Hit_BloodParticle_0", 200);
 	Input_Pool(L"Hit_BloodParticle_1", 200);
@@ -446,11 +495,12 @@ void CParticleMgr::Create_Effect(_tchar* szName, _v3 vPos, CTransform * pFollowT
 	{
 		if (pFindedQueue->size() <= 20) // 넉넉하게... 남은게 20 이하면 생성하여 사용
 		{
-			//_tchar szTemp[256];
-			//lstrcpy(szTemp, pFindedQueue->front()->Get_ParticleName());
-			//CHAR szForPrint[MAX_STR] = "";
-			//WideCharToMultiByte(CP_ACP, 0, szTemp, MAX_STR, szForPrint, MAX_STR, NULL, NULL);
-			//cout << "Effect Create : " << szForPrint << endl;
+			_tchar szTemp[256];
+			lstrcpy(szTemp, pFindedQueue->front()->Get_ParticleName());
+			CHAR szForPrint[MAX_STR] = "";
+			WideCharToMultiByte(CP_ACP, 0, szTemp, MAX_STR, szForPrint, MAX_STR, NULL, NULL);
+			if(GetAsyncKeyState('B') & 0x8000)
+				cout << "Effect Create : " << szForPrint << endl;
 
 			_tchar* szEffName = pFindedQueue->front()->Get_ParticleName();
 			CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));
@@ -651,6 +701,40 @@ void CParticleMgr::Create_Effect_Delay(_tchar * szName, _float fDelay, _v3 vPos,
 		pFindedQueue->front()->Set_Desc(vPos, pFollowTrans);
 		pFindedQueue->front()->Set_TargetMatrix(pTargetMat);
 		pFindedQueue->front()->Set_Delay(true, fDelay);
+		pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
+
+		pFindedQueue->pop();
+	}
+}
+
+void CParticleMgr::Create_Effect_FinishPos(_tchar * szName, _v3 vPos, _v3 vFinishPos, CTransform * pFollowTrans)
+{
+	queue<CEffect*>* pFindedQueue = Find_Queue(szName);
+	if (pFindedQueue == nullptr)
+		return;
+
+	// 풀 안에서 미리 생성한 오브젝트 꺼내서 사용
+	for (_int i = 0; i < pFindedQueue->front()->Get_Info()->iMaxCount; ++i)
+	{
+		if (pFindedQueue->size() <= 20) // 넉넉하게... 남은게 20 이하면 생성하여 사용
+		{
+			_tchar* szEffName = pFindedQueue->front()->Get_ParticleName();
+			CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));
+
+			m_EffectList.push_back(pEffect);
+
+			pEffect->Set_ParticleName(szEffName);
+			pEffect->Set_Desc(vPos, pFollowTrans);
+			pEffect->Set_FinishPos(vFinishPos);
+			pEffect->Reset_Init();
+
+			continue;
+		}
+
+		m_EffectList.push_back(pFindedQueue->front());
+
+		pFindedQueue->front()->Set_Desc(vPos, pFollowTrans);
+		pFindedQueue->front()->Set_FinishPos(vFinishPos);
 		pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
 
 		pFindedQueue->pop();

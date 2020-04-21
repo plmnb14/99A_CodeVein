@@ -45,6 +45,8 @@ HRESULT CArmor_Inven::Ready_GameObject(void * pArg)
 	SetUp_Default();
 
 	Add_Armor(CArmor::ARMOR_1);
+	Add_Armor(CArmor::ARMOR_2);
+
 	return NOERROR;
 }
 
