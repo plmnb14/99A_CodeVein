@@ -4,7 +4,7 @@
 
 BEGIN(Client)
 
-class CDamegeNumUI;
+//class CDamegeNumUI;
 class CMonsterUI;
 class CGet_ItemUI;
 class CWeapon;
@@ -119,7 +119,7 @@ private:
 	CWeapon*			m_pSword = nullptr;
 
 	////////////// MonsterHP UI
-	CDamegeNumUI*		m_pDamegeNumUI = nullptr;
+	//CDamegeNumUI*		m_pDamegeNumUI = nullptr;
 	CMonsterUI*			pMonsterHpUI = nullptr;
 	CGet_ItemUI*		m_pGet_Item = nullptr;
 

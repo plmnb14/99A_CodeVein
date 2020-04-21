@@ -3,7 +3,7 @@
 #include "..\Headers\Weapon.h"
 
 #include "MonsterUI.h"
-#include "DamegeNumUI.h"
+//#include "DamegeNumUI.h"
 #include "Get_ItemUI.h"
 
 CSwordGenji::CSwordGenji(LPDIRECT3DDEVICE9 pGraphic_Device)

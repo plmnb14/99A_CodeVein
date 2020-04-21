@@ -25,7 +25,7 @@
 
 #include "MonsterUI.h"
 #include "MassageUI.h"
-#include "DamegeNumUI.h"
+//#include "DamegeNumUI.h"
 #include "Get_ItemUI.h"
 #include "PickUp_ItemUI.h"
 
@@ -508,6 +508,8 @@ HRESULT CLoading::Ready_Effect(void)
 #pragma endregion
 
 	if (FAILED(Add_EffectPrototype(L"Cocoon_TongueFire")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Monkey_Knife", true)))
 		return E_FAIL;
 
 	if (FAILED(Add_EffectPrototype(L"Boss_KnockDown_Dust")))
@@ -1182,7 +1184,7 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Monkey", CMonkey::Create(m_pGraphicDev))))
 			return E_FAIL;
 		// ¸ùÅ°.D.ÃÑ¾Ë
-		if (FAILED(g_pManagement->Add_Prototype(L"Monster_MonkeyBullet", CMonkey::Create(m_pGraphicDev))))
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_MonkeyBullet", CMonkeyBullet::Create(m_pGraphicDev))))
 			return E_FAIL;
 		// ¿¹Æ¼
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Yeti", CYeti::Create(m_pGraphicDev))))
@@ -1200,8 +1202,8 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MassageUI", CMassageUI::Create(m_pGraphicDev))))
 			return E_FAIL;
 
-		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DamegeNumUI", CDamegeNumUI::Create(m_pGraphicDev))))
-			return E_FAIL;
+		/*if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DamegeNumUI", CDamegeNumUI::Create(m_pGraphicDev))))
+			return E_FAIL;*/
 
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Get_ItemUI", CGet_ItemUI::Create(m_pGraphicDev))))
 			return E_FAIL;
