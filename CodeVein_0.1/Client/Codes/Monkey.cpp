@@ -861,7 +861,7 @@ void CMonkey::Play_FangShot()
 
 			matBone = *m_matBone[Bone_LeftHand] * m_pTransformCom->Get_WorldMat();
 			memcpy(vBirth, &matBone._41, sizeof(_v3));
-			g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &CMonkeyBullet::tagMonkeyBulletInfo(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 3.f, 1.5));
+			g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 4.f, 1.5));
 
 			//m_fShotDelay += DELTA_60;
 			//if (m_fShotDelay >= 0.0005f)
@@ -1896,7 +1896,7 @@ HRESULT CMonkey::Ready_Status(void * pArg)
 		m_fRecognitionRange = 15.f;
 		m_fShotRange = 10.f;
 		m_fAtkRange = 5.f;
-		m_iDodgeCountMax = 5.f;
+		m_iDodgeCountMax = 5;
 	}
 	else
 	{

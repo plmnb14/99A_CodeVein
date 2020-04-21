@@ -684,6 +684,12 @@
     <ClInclude Include="..\Headers\MonkeyBullet.h">
       <Filter>02.GameObject\Stage\2%29 Monster\Monkey</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Cocoon.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Cocoon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\CocoonBullet.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Cocoon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1018,6 +1024,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\MonkeyBullet.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster\Monkey</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Cocoon.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Cocoon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\CocoonBullet.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Cocoon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
