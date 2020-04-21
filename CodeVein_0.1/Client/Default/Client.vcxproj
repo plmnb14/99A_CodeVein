@@ -405,6 +405,7 @@
     <FxCompile Include="..\ShaderFiles\Shader_Gizmo.fx" />
     <FxCompile Include="..\ShaderFiles\Shader_Mesh.fx" />
     <FxCompile Include="..\ShaderFiles\Shader_Sky.fx" />
+    <FxCompile Include="..\ShaderFiles\Shader_SSAO.fx" />
     <FxCompile Include="..\ShaderFiles\Shader_Terrain.fx" />
     <FxCompile Include="..\ShaderFiles\Shader_UI.fx" />
   </ItemGroup>

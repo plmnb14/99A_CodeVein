@@ -125,6 +125,12 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
+	// ฑ่วๅลอ
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CHunter::tagHunterInfo(25.f, 99999.f, 15.f, 5.f, 10.f, 10, CHunter::WEAPON_ANITYPE::GUN));
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
+	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	// ธ๙ลฐ.D.ท็วว 
 	//	คค> Moon : ฟฯมิ ฟ๔ฐÜฟไ~~!!@@@
