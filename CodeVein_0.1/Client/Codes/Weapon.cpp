@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\Weapon.h"
 #include "Management.h"
+#include "CameraMgr.h"
 
 CWeapon::CWeapon(_Device pGraphic_Device)
 	: CGameObject(pGraphic_Device)
@@ -240,8 +241,14 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 
 							iter->Set_Target_HitDir(m_tObjParam.vHitDir);
 
+							g_pTimer_Manager->Set_MutiplyTime(L"Timer_Fps_60", 0.025f);
+							g_pTimer_Manager->Set_MutiplyResetTime(L"Timer_Fps_60", 0.1f);
+
 							iter->Add_Target_Hp(-(_float)CALC::Random_Num(min , max) * m_fSkillPercent);
 							g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
+
+							CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(2.f, 20.f, 0.5f, 0.6f, CCamera::CAM_OSC_TYPE::POS_OSC);
+							//SHAKE_CAM_lv0;
 
 							if (m_bRecordCollision)
 							{
@@ -581,7 +588,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	// ÇÑ¼Õ°Ë
 	//===========================================================================================
 
-	m_tWeaponParam[WPN_SSword_Normal].fDamage = 100.f;
+	m_tWeaponParam[WPN_SSword_Normal].fDamage = 20.f;
 	m_tWeaponParam[WPN_SSword_Normal].fRadius = 0.7f;
 	m_tWeaponParam[WPN_SSword_Normal].fTrail_Min = 0.6f;
 	m_tWeaponParam[WPN_SSword_Normal].fTrail_Max = 1.8f;

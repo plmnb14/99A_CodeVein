@@ -27,6 +27,8 @@
 #include "FireGround.h"
 #include "FireTornadoCol.h"
 
+#include "DeerKing.h"
+
 #include "Cocoon.h"
 #include "CocoonBullet.h"
 #include "Hunter.h"

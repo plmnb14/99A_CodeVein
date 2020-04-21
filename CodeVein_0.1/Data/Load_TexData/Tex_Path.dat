@@ -60,6 +60,7 @@ Tex_Scratch|Scratch_%d.tga|..\..\Client\Resources\Texture\Effect\Scratch\|0|4
 Tex_ShockWave|ShockWave_%d.tga|..\..\Client\Resources\Texture\Effect\ShockWave\|0|4
 Tex_SlashSubUV|SlashSubUV_%d.png|..\..\Client\Resources\Texture\Effect\SlashSubUV\|0|4
 Tex_SlashSubUV_Ver|SlashSubUV_Ver_%d.png|..\..\Client\Resources\Texture\Effect\SlashSubUV_Ver\|0|4
+Tex_InkSmoke|InkSmoke_%d.tga|..\..\Client\Resources\Texture\Effect\Smoke\InkSmoke\|0|10
 Tex_Smoke16|Smoke16_%d.png|..\..\Client\Resources\Texture\Effect\Smoke\Smoke16\|0|16
 Tex_Smoke64|Smoke64_%d.png|..\..\Client\Resources\Texture\Effect\Smoke\Smoke64\|0|64
 Tex_SmokeAlpha|SmokeAlpha_%d.tga|..\..\Client\Resources\Texture\Effect\Smoke\SmokeAlpha\|0|1
