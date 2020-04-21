@@ -139,6 +139,13 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
+	//// 토템
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon", &CCocoon::INITSTRUCT(25.f,25.f,10.f,20.f,10.f,5.f));
+	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
+	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+
 	//====================================================================================================================================================
 	// 검겐지
 	//====================================================================================================================================================

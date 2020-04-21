@@ -1121,6 +1121,12 @@ _uint CLoading::Loading_Stage()
 		// ¾ßÂ÷¸Ç
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_YachaMan", CYachaMan::Create(m_pGraphicDev))))
 			return E_FAIL;
+		// ÅäÅÛ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Cocoon", CCocoon::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ÅäÅÛ ÃÑ¾Ë
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBullet", CCocoonBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
 		// ±èÇåÅÍ
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Hunter", CHunter::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1129,6 +1135,9 @@ _uint CLoading::Loading_Stage()
 			return E_FAIL;
 		// ¸ùÅ°.D.·çÇÇ
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Monkey", CMonkey::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ¸ùÅ°.D.ÃÑ¾Ë
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_MonkeyBullet", CMonkey::Create(m_pGraphicDev))))
 			return E_FAIL;
 		// ¿¹Æ¼
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Yeti", CYeti::Create(m_pGraphicDev))))
