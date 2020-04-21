@@ -2,6 +2,8 @@
 #include "..\Headers\YachaMan.h"
 #include "..\Headers\Weapon.h"
 
+#include "MonsterUI.h"
+
 CYachaMan::CYachaMan(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
@@ -29,6 +31,11 @@ HRESULT CYachaMan::Ready_GameObject(void * pArg)
 	Ready_BoneMatrix();
 	Ready_Collider();
 	Ready_Weapon();
+
+	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
+	m_pMonsterUI->Set_Target(this);
+	m_pMonsterUI->Set_Bonmatrix(m_matBone[Bone_Head]);
+	m_pMonsterUI->Ready_GameObject(NULL);
 
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 	if (nullptr != m_pTarget)
@@ -73,6 +80,8 @@ _int CYachaMan::Update_GameObject(_double TimeDelta)
 		return NO_EVENT;
 
 	CGameObject::Update_GameObject(TimeDelta);
+
+	m_pMonsterUI->Update_GameObject(TimeDelta);
 
 	Check_PosY();
 	Check_Hit();
@@ -1560,9 +1569,9 @@ void CYachaMan::Play_WheelWind()
 
 		if (3.233f < AniTime && 3.733f > AniTime)
 		{
-			if (m_bEventTrigger[6] == false)
+			if (m_bEventTrigger[18] == false)
 			{
-				m_bEventTrigger[6] = true;
+				m_bEventTrigger[18] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -1572,9 +1581,9 @@ void CYachaMan::Play_WheelWind()
 		}
 		else if (2.200f < AniTime && 3.133f >AniTime)
 		{
-			if (m_bEventTrigger[7] == false)
+			if (m_bEventTrigger[19] == false)
 			{
-				m_bEventTrigger[7] = true;
+				m_bEventTrigger[19] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -1584,9 +1593,9 @@ void CYachaMan::Play_WheelWind()
 		}
 		else if (1.767f < AniTime && 2.100f > AniTime)
 		{
-			if (m_bEventTrigger[8] == false)
+			if (m_bEventTrigger[20] == false)
 			{
-				m_bEventTrigger[8] = true;
+				m_bEventTrigger[20] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
@@ -2665,6 +2674,9 @@ HRESULT CYachaMan::Ready_BoneMatrix()
 	m_matBone[Bone_Range] = &pFrame->CombinedTransformationMatrix;
 	m_matBone[Bone_Body] = &pFrame->CombinedTransformationMatrix;
 
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head", 0), E_FAIL);
+	m_matBone[Bone_Head] = &pFrame->CombinedTransformationMatrix;
+
 	return S_OK;
 }
 
@@ -2696,6 +2708,8 @@ CGameObject* CYachaMan::Clone_GameObject(void * pArg)
 
 void CYachaMan::Free()
 {
+	Safe_Release(m_pMonsterUI);
+
 	Safe_Release(m_pTarget);
 	Safe_Release(m_pTargetTransform);
 

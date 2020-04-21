@@ -7,7 +7,7 @@
 BEGIN(Client)
 
 class CWeapon;
-
+class CMonsterUI;
 class CMonkey final : public CGameObject
 {
 public:
@@ -230,6 +230,8 @@ private:
 
 	_float				m_fShotDelay = 0.f;
 
+	// 몬스터 HP바 UI
+	CMonsterUI*			m_pMonsterUI = nullptr;
 };
 
 END
