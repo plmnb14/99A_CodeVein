@@ -295,6 +295,62 @@ void CHunter::Check_CollisionPush()
 	}
 }
 
+void CHunter::Function_FBLR()
+{
+	_float angle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos()));
+
+	if (MONSTER_ANITYPE::HIT == m_eFirstCategory)
+	{
+		m_eSecondCategory_HIT = HUNTER_HITTYPE::HIT_WEAK; //hit01
+
+		if (0.f <= angle && 90.f > angle)
+			m_eFBLR = FBLR::FRONTRIGHT;
+		else if (90.f <= angle && 180.f > angle)
+			m_eFBLR = FBLR::BACKRIGHT;
+		else if (-180.f <= angle && -90.f > angle)
+			m_eFBLR = FBLR::BACKLEFT;
+		else if (-90.f <= angle && 0.f > angle)
+			m_eFBLR = FBLR::FRONTLEFT;
+
+		//if(데미지 변수) 또는 if(데미지 >= xxx.f)
+		//m_eSecondCategory_HIT = HUNTER_HITTYPE::HIT_NORMAL; //hit02
+		//if (-22.5f <= angle && 22.5f > angle)
+		//	m_eFBLR = FBLR::FRONT;
+		//else if (22.5f <= angle && 67.5f > angle)
+		//	m_eFBLR = FBLR::FRONTRIGHT;
+		//else if (67.5f <= angle && 112.5f > angle)
+		//	m_eFBLR = FBLR::RIGHT;
+		//else if (112.5f <= angle && 157.5f > angle)
+		//	m_eFBLR = FBLR::BACKRIGHT;
+		//else if (157.5f <= angle && 180.f > angle)
+		//	m_eFBLR = FBLR::BACK;
+		//else if (-180.f <= angle && -157.f > angle)
+		//	m_eFBLR = FBLR::BACK;
+		//else if (-157.5f <= angle && -112.5f > angle)
+		//	m_eFBLR = FBLR::BACKLEFT;
+		//else if (-112.5f <= angle && -67.5f > angle)
+		//	m_eFBLR = FBLR::LEFT;
+		//else if (-67.5f <= angle && -22.5f > angle)
+		//	m_eFBLR = FBLR::FRONTLEFT;
+	}
+	else if (MONSTER_ANITYPE::CC == m_eFirstCategory)
+	{
+		//m_eSecondCategory_CC = HUNTER_CCTYPE::CC_STUN;
+		m_eSecondCategory_CC = HUNTER_CCTYPE::CC_DOWN;
+		//자빠짐Down_S, 엎어짐Down_P
+		if (0.f <= angle && 90.f > angle)
+			m_eFBLR = FBLR::FRONT;
+		else if (-90.f <= angle && 0.f > angle)
+			m_eFBLR = FBLR::FRONT;
+		else if (90.f <= angle && 180.f > angle)
+			m_eFBLR = FBLR::BACK;
+		else if (-180.f <= angle && -90.f > angle)
+			m_eFBLR = FBLR::BACK;
+	}
+
+	return;
+}
+
 void CHunter::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 {
 	if (false == m_tObjParam.bIsAttack)
@@ -537,7 +593,7 @@ void CHunter::Check_Hit()
 							//else
 							//데미지 측정 float 혹은 bool
 							//	m_eFirstCategory = MONSTER_ANITYPE::CC;
-							Check_FBLR();
+							Function_FBLR();
 							m_tObjParam.bHitAgain = false;
 							m_pMeshCom->Reset_OldIndx();
 						}
@@ -551,7 +607,7 @@ void CHunter::Check_Hit()
 						//else
 						//데미지 측정 float 혹은 bool
 						//	m_eFirstCategory = MONSTER_ANITYPE::CC;
-						Check_FBLR();
+						Function_FBLR();
 					}
 				}
 			}
@@ -560,62 +616,6 @@ void CHunter::Check_Hit()
 	//체력x
 	else
 		m_eFirstCategory = MONSTER_ANITYPE::DEAD;
-
-	return;
-}
-
-void CHunter::Check_FBLR()
-{
-	_float angle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos()));
-
-	if (MONSTER_ANITYPE::HIT == m_eFirstCategory)
-	{
-		m_eSecondCategory_HIT = HUNTER_HITTYPE::HIT_WEAK; //hit01
-
-		if (0.f <= angle && 90.f > angle)
-			m_eFBLR = FBLR::FRONTRIGHT;
-		else if (90.f <= angle && 180.f > angle)
-			m_eFBLR = FBLR::BACKRIGHT;
-		else if (-180.f <= angle && -90.f > angle)
-			m_eFBLR = FBLR::BACKLEFT;
-		else if (-90.f <= angle && 0.f > angle)
-			m_eFBLR = FBLR::FRONTLEFT;
-
-		//if(데미지 변수) 또는 if(데미지 >= xxx.f)
-		//m_eSecondCategory_HIT = HUNTER_HITTYPE::HIT_NORMAL; //hit02
-		//if (-22.5f <= angle && 22.5f > angle)
-		//	m_eFBLR = FBLR::FRONT;
-		//else if (22.5f <= angle && 67.5f > angle)
-		//	m_eFBLR = FBLR::FRONTRIGHT;
-		//else if (67.5f <= angle && 112.5f > angle)
-		//	m_eFBLR = FBLR::RIGHT;
-		//else if (112.5f <= angle && 157.5f > angle)
-		//	m_eFBLR = FBLR::BACKRIGHT;
-		//else if (157.5f <= angle && 180.f > angle)
-		//	m_eFBLR = FBLR::BACK;
-		//else if (-180.f <= angle && -157.f > angle)
-		//	m_eFBLR = FBLR::BACK;
-		//else if (-157.5f <= angle && -112.5f > angle)
-		//	m_eFBLR = FBLR::BACKLEFT;
-		//else if (-112.5f <= angle && -67.5f > angle)
-		//	m_eFBLR = FBLR::LEFT;
-		//else if (-67.5f <= angle && -22.5f > angle)
-		//	m_eFBLR = FBLR::FRONTLEFT;
-	}
-	else if (MONSTER_ANITYPE::CC == m_eFirstCategory)
-	{
-		//m_eSecondCategory_CC = HUNTER_CCTYPE::CC_STUN;
-		m_eSecondCategory_CC = HUNTER_CCTYPE::CC_DOWN;
-		//자빠짐Down_S, 엎어짐Down_P
-		if (0.f <= angle && 90.f > angle)
-			m_eFBLR = FBLR::FRONT;
-		else if (-90.f <= angle && 0.f > angle)
-			m_eFBLR = FBLR::FRONT;
-		else if (90.f <= angle && 180.f > angle)
-			m_eFBLR = FBLR::BACK;
-		else if (-180.f <= angle && -90.f > angle)
-			m_eFBLR = FBLR::BACK;
-	}
 
 	return;
 }
@@ -5362,7 +5362,7 @@ void CHunter::Play_Hit()
 			if (false == m_tObjParam.bCanHit)
 			{
 				m_tObjParam.bCanHit = true;
-				Check_FBLR();
+				Function_FBLR();
 			}
 		}
 
@@ -5597,7 +5597,6 @@ HRESULT CHunter::Ready_Collider()
 	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Range]->_41, m_matBone[Bone_Range]->_42, m_matBone[Bone_Range]->_43));
 	pCollider->Set_Enabled(true);
 	m_vecPhysicCol.push_back(pCollider);
-
 
 	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
 	fRadius = 0.7f;

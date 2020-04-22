@@ -138,6 +138,7 @@ private:
 	void Check_CollisionPush();
 	void Check_CollisionEvent(list<CGameObject*> plistGameObject);
 
+	void Function_FBLR();
 	void Function_RotateBody();
 	void Function_CoolDown();
 	void Function_Movement(_float _fspeed, _v3 _vDir = { V3_NULL });
@@ -146,7 +147,6 @@ private:
 
 	void Check_PosY();
 	void Check_Hit();
-	void Check_FBLR();
 	void Check_Dist();
 	void Check_AniEvent();
 

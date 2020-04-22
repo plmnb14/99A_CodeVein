@@ -483,14 +483,14 @@ void CCocoon::Check_Hit()
 				if (true == m_tObjParam.bHitAgain)
 				{
 					m_eFirstCategory = MONSTER_ANITYPE::HIT;
-					Check_FBLR();
+					Function_FBLR();
 					m_tObjParam.bHitAgain = false;
 					m_pMeshCom->Reset_OldIndx();
 				}
 				else
 				{
 					m_eFirstCategory = MONSTER_ANITYPE::HIT;
-					Check_FBLR();
+					Function_FBLR();
 				}
 			}
 		}
@@ -501,7 +501,7 @@ void CCocoon::Check_Hit()
 	return;
 }
 
-void CCocoon::Check_FBLR()
+void CCocoon::Function_FBLR()
 {	
 	_float angle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos()));
 
@@ -786,7 +786,7 @@ void CCocoon::Play_Hit()
 			if (false == m_tObjParam.bCanHit)
 			{
 				m_tObjParam.bCanHit = true;
-				Check_FBLR();
+				Function_FBLR();
 			}
 		}
 	}

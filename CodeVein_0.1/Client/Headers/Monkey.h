@@ -125,16 +125,16 @@ private:
 	void Check_CollisionPush();
 	void Check_CollisionEvent(list<CGameObject*> plistGameObject);
 
+	void Function_FBLR();
 	void Function_RotateBody();
-	void Function_MoveAround();
 	void Function_CoolDown();
 	void Function_Movement(_float _fspeed, _v3 _vDir = { V3_NULL });
 	void Function_DecreMoveMent(_float _fMutiply = 1.f);
+	void Function_MoveAround(_float _fSpeed);
 	void Function_ResetAfterAtk();
 
-	void Checkk_PosY();
+	void Check_PosY();
 	void Check_Hit();
-	void Check_FBLR();
 	void Check_Dist();
 	void Check_AniEvent();
 
@@ -224,6 +224,7 @@ private:
 	_float				m_fRecognitionRange = 20.f;
 	_float				m_fShotRange = 10.f;
 	_float				m_fAtkRange = 5.f;
+	_float				m_fPersonalRange = 2.f;
 	_float				m_fCoolDownMax = 0.f;
 	_float				m_fCoolDownCur = 0.f;
 	_float				m_fSpeedForCollisionPush = 2.f;
@@ -231,8 +232,6 @@ private:
 	_int				m_iRandom = 0;
 	_int				m_iDodgeCountMax = 3; //3회 피격시 회피
 	_int				m_iDodgeCount = 0; //n회 피격시 회피
-
-	_float				m_fShotDelay = 0.f;
 
 };
 
