@@ -469,13 +469,32 @@ CBT_Composite_Node * CDeerKing::Head_ColdBeam()
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_IceSmoke_Small_1"					, L"Bone_LeftCorner", 0.9, 5, 0.01, 0);
 	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("¾óÀ½", L"DeerKing_IceStone_Up_Small_Particle_0"		, L"Bone_LeftCorner", 0.9, 1, 0.01, 0);
 	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("´« µ¢¾î¸®", L"DeerKing_SnowChunk_Up_Small_Particle_0", L"Bone_LeftCorner", 0.9, 2, 0.01, 0);
-	//CBT_CreateEffect* Effect0 = Node_New_CreateEffect_Finite("°íµå¸§ ÀÓ½Ã", L"IceBlock_Main", L"Bone_LeftCorner", nullptr, L"Dir_Null", L"Angle_Null", 1.2, 1, 0.1, 0);
 
+	CBT_CreateEffect* Effect5 = Node_New_CreateEffect_Finite("´« À§·Î Æø¹ß0", L"DeerKing_SnowChunk_Up_Particle_0", L"Bone_LeftCorner", nullptr, L"Self_Dir", L"Angle_Null", 1.55, 3, 0.1, 0);
+	CBT_CreateEffect* Effect6 = Node_New_CreateEffect_Finite("´« À§·Î Æø¹ß0", L"DeerKing_SnowChunk_Up_Particle_1", L"Bone_LeftCorner", nullptr, L"Self_Dir", L"Angle_Null", 1.55, 3, 0.1, 0);
+	CBT_CreateEffect* Effect7 = Node_New_CreateEffect_Finite("´« À§·Î Æø¹ß0", L"DeerKing_SnowChunk_Up_Particle_2", L"Bone_LeftCorner", nullptr, L"Self_Dir", L"Angle_Null", 1.55, 3, 0.1, 0);
+	//CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("´« À§·Î Æø¹ß0", L"DeerKing_SnowChunk_Up_Particle_0"	, L"Bone_LeftCorner"	, 1.55, 1, 0.01, 0);
+	//CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("´« À§·Î Æø¹ß1", L"DeerKing_SnowChunk_Up_Particle_1"	, L"Bone_LeftCorner"	, 1.55, 1, 0.01, 0);
+	//CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("´« À§·Î Æø¹ß2", L"DeerKing_SnowChunk_Up_Particle_2"	, L"Bone_LeftCorner"	, 1.55, 2, 0.01, 0);
+	CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("¾óÀ½ À§·Î Æø¹ß0", L"DeerKing_IceStone_Up_Particle_0"	, L"Bone_LeftCorner"	, 1.55, 2, 0.01, 0);
+	CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("ÀÜ´«", L"DeerKing_Snow_Up_Particle_0"					, L"Bone_LeftCorner"	, 1.55, 3, 0.01, 0);
+	CBT_CreateEffect* Effect10 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_IceSmoke_0"							, L"Bone_LeftCorner"	, 1.55, 1, 0.01, 0);
+	CBT_CreateEffect* Effect11 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_IceSmoke_1"							, L"Bone_LeftCorner"	, 1.55, 1, 0.01, 0);
+	CBT_CreateEffect* Effect12 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_IceSmoke_2"							, L"Bone_LeftCorner"	, 1.55, 1, 0.01, 0);
+	
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
 	Root_Parallel->Add_Service(Effect2);
 	Root_Parallel->Add_Service(Effect3);
 	Root_Parallel->Add_Service(Effect4);
+	Root_Parallel->Add_Service(Effect5);
+	Root_Parallel->Add_Service(Effect6);
+	Root_Parallel->Add_Service(Effect7);
+	Root_Parallel->Add_Service(Effect8);
+	Root_Parallel->Add_Service(Effect9);
+	Root_Parallel->Add_Service(Effect10);
+	Root_Parallel->Add_Service(Effect11);
+	Root_Parallel->Add_Service(Effect12);
 
 	// °íµå¸§ »ý¼º
 	CBT_CreateBullet* Col0 = Node_CreateBullet("Åä³×ÀÌµµ Ãæµ¹Ã¼", L"Monster_DeerKingColdBeam", L"Bone_LeftCorner", L"Self_Dir", 0, 1, 1.766, 1, 0, 0, CBT_Service_Node::Finite);
@@ -1262,7 +1281,7 @@ HRESULT CDeerKing::Update_Bone_Of_BlackBoard()
 	// ¸Ó¸® ¹Ú±â ÆÐÅÏ - °íµå¸§ »ý¼ºÀ§Ä¡
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head_LeftCorner");
 	m_vHeadColdBeamPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-	//m_vHeadColdBeamPos += (m_pTransformCom->Get_Axis(AXIS_Z) * 0.3f);
+	m_vHeadColdBeamPos += (m_pTransformCom->Get_Axis(AXIS_Z) * 0.3f);
 	m_vHeadColdBeamPos += (m_pTransformCom->Get_Axis(AXIS_Y) * -0.9f);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftCorner", m_vHeadColdBeamPos);
 	

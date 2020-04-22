@@ -541,6 +541,10 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_Small_1")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Jump_In_Place_Distortion")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBlock_0", true)))
+		return E_FAIL;
 #pragma endregion
 
 	if (FAILED(Add_EffectPrototype(L"Cocoon_TongueFire")))

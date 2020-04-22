@@ -30,6 +30,7 @@ private:
 	_double				m_dCurTime = 0;
 	_double				m_dLifeTime = 0;
 	_bool				m_bDead = false;
+	_bool				m_bEffect = false;
 
 private:
 	_bool				m_bPlayerFriendly = false;		// 플레이어 껀지

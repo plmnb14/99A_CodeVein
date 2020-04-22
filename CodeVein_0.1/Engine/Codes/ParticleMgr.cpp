@@ -292,6 +292,8 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"DeerKing_IceSmoke_Small_1", 300);
 	Input_Pool(L"DeerKing_IceBullet_DeadParticle_Stone_0", 300);
 	Input_Pool(L"DeerKing_IceBullet_DeadParticle_0", 300);
+	Input_Pool(L"DeerKing_Jump_In_Place_Distortion", 20);
+	Input_Pool(L"DeerKing_IceBlock_0", 20);
 
 	Input_Pool(L"Boss_KnockDown_Dust", 10);
 	Input_Pool(L"Boss_Dead_Particle", 7000);
