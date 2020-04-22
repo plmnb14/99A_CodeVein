@@ -36,7 +36,12 @@ HRESULT CDeerKingBullet::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
 
-
+	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"DeerKing_IceBullet_0", nullptr));
+	m_pBulletBody->Set_Desc(_v3(0, 0, 0), nullptr);
+	m_pBulletBody->Set_ParentObject(this);
+	m_pBulletBody->Reset_Init();
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
+	
 
 	return NOERROR;
 }
@@ -55,6 +60,11 @@ _int CDeerKingBullet::Update_GameObject(_double TimeDelta)
 	{
 		m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
 
+		if (!m_bFire)
+		{
+			m_bFire = true;
+			g_pManagement->Create_Effect(L"IceGirl_Buff_Break_1"		, m_pTransformCom->Get_Pos(), nullptr);
+		}
 	}
 	else
 	{
@@ -64,11 +74,30 @@ _int CDeerKingBullet::Update_GameObject(_double TimeDelta)
 
 	if (m_dCurTime > m_dLifeTime)
 	{
+		m_pBulletBody->Set_Dead();
 		m_bDead = true;
 	}
 	else
 	{
+		m_fEffectOffset += (_float)TimeDelta;
 
+		if (m_fEffectOffset > 0.1f)
+		{
+			m_fEffectOffset = 0.f;
+
+			g_pManagement->Create_Effect(L"IceSmoke_01", m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"IceSmoke_02", m_pTransformCom->Get_Pos(), nullptr);
+		}
+
+		if (!m_bEffect)
+		{
+			m_bEffect = true;
+			g_pManagement->Create_Effect(L"DeerKing_IceBullet_ReadySmoke_0", m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"IceGirl_PointParticle_Blue", m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"IceGirl_PointParticle_Green", m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"IceGirl_FlashParticle_Blue", m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"IceGirl_FlashParticle_Green", m_pTransformCom->Get_Pos(), nullptr);
+		}
 	}
 
 	OnCollisionEnter();

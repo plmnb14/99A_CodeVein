@@ -316,13 +316,15 @@ CBT_Composite_Node * CDeerKing::RightFoot_Attack(_float fWeight)
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.567, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 1.f, 0.217, 0);
 	
-	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("눈 위로 폭발0", L"DeerKing_SnowChunk_Up_Particle_0", L"ShieldPos", 1.0, 1, 0.01, 0);
-	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("눈 위로 폭발1", L"DeerKing_SnowChunk_Up_Particle_1", L"ShieldPos", 1.0, 1, 0.01, 0);
-	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("얼음 위로 폭발0", L"DeerKing_IceStone_Up_Particle_0", L"ShieldPos", 1.0, 2, 0.01, 0);
-	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("잔눈", L"DeerKing_Snow_Up_Particle_0", L"ShieldPos", 1.0, 3, 0.01, 0);
-	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_0", L"ShieldPos", 1.0, 5, 0.01, 0);
-	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_1", L"ShieldPos", 1.0, 5, 0.01, 0);
-	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_2", L"ShieldPos", 1.15, 1, 0.01, 0);
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("눈 위로 폭발0", L"DeerKing_SnowChunk_Up_Particle_0"	, L"ShieldPos"	, 0.9, 1, 0.01, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("눈 위로 폭발1", L"DeerKing_SnowChunk_Up_Particle_1"	, L"ShieldPos"	, 0.9, 1, 0.01, 0);
+	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("눈 위로 폭발2", L"DeerKing_SnowChunk_Up_Particle_2"	, L"ShieldPos"	, 0.9, 2, 0.01, 0);
+	CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("길쭉한 눈"	, L"DeerKing_Snow_Up_LongLine_0"		, L"ShieldPos"	, 0.8, 2, 0.01, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("얼음 위로 폭발0", L"DeerKing_IceStone_Up_Particle_0"	, L"ShieldPos"	, 0.9, 2, 0.01, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("잔눈", L"DeerKing_Snow_Up_Particle_0"					, L"ShieldPos"	, 0.9, 3, 0.01, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_0"							, L"ShieldPos"	, 0.9, 5, 0.01, 0);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_1"							, L"ShieldPos"	, 0.9, 5, 0.01, 0);
+	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_2"							, L"ShieldPos"	, 1.05, 1, 0.01, 0);
 
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
@@ -331,6 +333,8 @@ CBT_Composite_Node * CDeerKing::RightFoot_Attack(_float fWeight)
 	Root_Parallel->Add_Service(Effect4);
 	Root_Parallel->Add_Service(Effect5);
 	Root_Parallel->Add_Service(Effect6);
+	Root_Parallel->Add_Service(Effect7);
+	Root_Parallel->Add_Service(Effect8);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani34);
@@ -365,6 +369,22 @@ CBT_Composite_Node * CDeerKing::Rush_RightFoot()
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 13.f, 0.267, 0);
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", 1.f, 0.333, 0);
 
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("눈 위로 폭발0", L"DeerKing_SnowChunk_Up_Particle_0", L"ShieldPos"	, 0.4, 20, 0.01, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("눈 위로 폭발1", L"DeerKing_SnowChunk_Up_Particle_1", L"ShieldPos"	, 0.4, 20, 0.01, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("얼음 위로 폭발0", L"DeerKing_IceStone_Up_Particle_0", L"ShieldPos", 0.4, 10, 0.01, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("잔눈", L"DeerKing_Snow_Up_Particle_0", L"ShieldPos"				, 0.4, 25, 0.01, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_0", L"ShieldPos"						, 0.4, 20, 0.01, 0);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_1", L"ShieldPos"						, 0.4, 20, 0.01, 0);
+	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_2", L"ShieldPos"						, 0.7, 1, 0.01, 0);
+
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
+	Root_Parallel->Add_Service(Effect3);
+	Root_Parallel->Add_Service(Effect4);
+	Root_Parallel->Add_Service(Effect5);
+	Root_Parallel->Add_Service(Effect6);
+
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani33);
 	MainSeq->Add_Child(Show_Ani0);
@@ -397,6 +417,18 @@ CBT_Composite_Node * CDeerKing::WhirlWind_RightFoot()
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 5.f, 1, 0);
 	CBT_Wait* Wait1 = Node_Wait("대기", 0.417, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 2.f, 0.366, 0);
+
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("잔눈", L"DeerKing_Snow_Up_Particle_0", L"ShieldPos"	, 0.6, 40, 0.01, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_0", L"ShieldPos"			, 0.6, 40, 0.01, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_1", L"ShieldPos"			, 0.6, 40, 0.01, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_2", L"ShieldPos"			, 0.7, 1, 0.01, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_2", L"ShieldPos"			, 1.4, 1, 0.01, 0);
+
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
+	Root_Parallel->Add_Service(Effect3);
+	Root_Parallel->Add_Service(Effect4);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani32);
@@ -431,6 +463,19 @@ CBT_Composite_Node * CDeerKing::Head_ColdBeam()
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 1.f, 0.25, 0);
 	CBT_Wait* Wait2 = Node_Wait("대기", 0.616, 0);
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", 2.f, 0.234, 0);
+
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("잔눈", L"DeerKing_Snow_Up_Particle_0"					, L"Bone_LeftCorner", 0.9, 5, 0.01, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_Small_0"					, L"Bone_LeftCorner", 0.9, 5, 0.01, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_Small_1"					, L"Bone_LeftCorner", 0.9, 5, 0.01, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("얼음", L"DeerKing_IceStone_Up_Small_Particle_0"		, L"Bone_LeftCorner", 0.9, 1, 0.01, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("눈 덩어리", L"DeerKing_SnowChunk_Up_Small_Particle_0", L"Bone_LeftCorner", 0.9, 2, 0.01, 0);
+	//CBT_CreateEffect* Effect0 = Node_New_CreateEffect_Finite("고드름 임시", L"IceBlock_Main", L"Bone_LeftCorner", nullptr, L"Dir_Null", L"Angle_Null", 1.2, 1, 0.1, 0);
+
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
+	Root_Parallel->Add_Service(Effect3);
+	Root_Parallel->Add_Service(Effect4);
 
 	// 고드름 생성
 
@@ -474,6 +519,30 @@ CBT_Composite_Node * CDeerKing::Slide_Attack()
 	CBT_MoveDirectly* Move4 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 2.f, 0.1, 0);
 	CBT_MoveDirectly* Move5 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 1.f, 0.1, 0);
 
+	CBT_CreateEffect* Effect0 = Node_New_CreateEffect_Finite("눈 위로 폭발0", L"DeerKing_SnowChunk_Up_Particle_0"	, L"Self_Pos", nullptr, L"Self_Dir", L"Angle_Null", 0.6, 20, 0.1, 0.2);
+	CBT_CreateEffect* Effect1 = Node_New_CreateEffect_Finite("눈 위로 폭발0", L"DeerKing_SnowChunk_Up_Particle_1"	, L"Self_Pos", nullptr, L"Self_Dir", L"Angle_Null", 0.6, 20, 0.1, 0.2);
+	CBT_CreateEffect* Effect8 = Node_New_CreateEffect_Finite("눈 위로 폭발0", L"DeerKing_SnowChunk_Up_Particle_2"	, L"Self_Pos", nullptr, L"Self_Dir", L"Angle_Null", 0.6, 20, 0.1, 0.2);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("얼음 위로 폭발0", L"DeerKing_IceStone_Up_Small_Particle_0", L"Self_Pos"		, 0.7, 20, 0.01, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("잔눈", L"DeerKing_Snow_Up_Particle_0"						, L"Self_Pos"		, 0.6, 20, 0.01, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_0"								, L"Self_Pos_Front"	, 0.8, 2, 0.01, 0.2);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_1"								, L"Self_Pos_Front"	, 0.8, 2, 0.01, 0.2);
+	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_2"								, L"Self_Pos_Front"	, 0.8, 2, 0.01, 0.2);
+	CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_Mid_0"							, L"Self_Pos_Front"	, 0.6, 25, 0.01, 0);
+	CBT_CreateEffect* Effect10 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_Mid_1"						, L"Self_Pos_Front"	, 0.6, 25, 0.01, 0);
+	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("길쭉한 눈", L"DeerKing_Snow_Up_LongLine_0"				, L"Self_Pos"		, 0.6, 25, 0.01, 0);
+	
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
+	Root_Parallel->Add_Service(Effect3);
+	Root_Parallel->Add_Service(Effect4);
+	Root_Parallel->Add_Service(Effect5);
+	Root_Parallel->Add_Service(Effect6);
+	Root_Parallel->Add_Service(Effect7);
+	Root_Parallel->Add_Service(Effect8);
+	Root_Parallel->Add_Service(Effect9);
+	Root_Parallel->Add_Service(Effect10);
+
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani28);
 	MainSeq->Add_Child(Show_Ani29);
@@ -513,6 +582,45 @@ CBT_Composite_Node * CDeerKing::Jump_Attack(_float fWeight)
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 10.f, 0.584, 0);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.85, 0);
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", 0.7f, 0.316, 0);
+
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("눈 위로 폭발0", L"DeerKing_SnowChunk_Up_Particle_0"	, L"Self_Pos", 0.5, 3, 0.01, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("눈 위로 폭발1", L"DeerKing_SnowChunk_Up_Particle_1"	, L"Self_Pos", 0.5, 3, 0.01, 0);
+	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("눈 위로 폭발2", L"DeerKing_SnowChunk_Heavy_Particle_0", L"Self_Pos", 0.5, 1, 0.01, 0);
+	CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("길쭉한 눈", L"DeerKing_Snow_Up_LongLine_0"			, L"Self_Pos", 0.5, 2, 0.01, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("얼음 위로 폭발0", L"DeerKing_IceStone_Up_Particle_0"	, L"Self_Pos", 0.5, 2, 0.01, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("잔눈", L"DeerKing_Snow_Up_Particle_0"					, L"Self_Pos", 0.5, 3, 0.01, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_0"							, L"Self_Pos", 0.5, 5, 0.01, 0);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_1"							, L"Self_Pos", 0.5, 5, 0.01, 0);
+	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_2"							, L"Self_Pos", 0.5, 1, 0.01, 0);
+
+	CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("눈 위로 폭발0", L"DeerKing_SnowChunk_Up_Particle_0"		, L"Self_Pos", 1.4, 3, 0.01, 0);
+	CBT_CreateEffect* Effect10 = Node_CreateEffect_Finite("눈 위로 폭발1", L"DeerKing_SnowChunk_Up_Particle_1"		, L"Self_Pos", 1.4, 3, 0.01, 0);
+	CBT_CreateEffect* Effect11 = Node_CreateEffect_Finite("눈 위로 폭발2", L"DeerKing_SnowChunk_Heavy_Particle_0"	, L"Self_Pos", 1.4, 1, 0.01, 0);
+	CBT_CreateEffect* Effect12 = Node_CreateEffect_Finite("길쭉한 눈", L"DeerKing_Snow_Up_LongLine_0"				, L"Self_Pos", 1.4, 2, 0.01, 0);
+	CBT_CreateEffect* Effect13 = Node_CreateEffect_Finite("얼음 위로 폭발0", L"DeerKing_IceStone_Up_Particle_0"		, L"Self_Pos", 1.4, 2, 0.01, 0);
+	CBT_CreateEffect* Effect14 = Node_CreateEffect_Finite("잔눈", L"DeerKing_Snow_Up_Particle_0"					, L"Self_Pos", 1.4, 3, 0.01, 0);
+	CBT_CreateEffect* Effect15 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_0"							, L"Self_Pos", 1.4, 5, 0.01, 0);
+	CBT_CreateEffect* Effect16 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_1"							, L"Self_Pos", 1.4, 5, 0.01, 0);
+	CBT_CreateEffect* Effect17 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_2"							, L"Self_Pos", 1.4, 1, 0.01, 0);
+
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
+	Root_Parallel->Add_Service(Effect3);
+	Root_Parallel->Add_Service(Effect4);
+	Root_Parallel->Add_Service(Effect5);
+	Root_Parallel->Add_Service(Effect6);
+	Root_Parallel->Add_Service(Effect7);
+	Root_Parallel->Add_Service(Effect8);
+	Root_Parallel->Add_Service(Effect9);
+	Root_Parallel->Add_Service(Effect10);
+	Root_Parallel->Add_Service(Effect11);
+	Root_Parallel->Add_Service(Effect12);
+	Root_Parallel->Add_Service(Effect13);
+	Root_Parallel->Add_Service(Effect14);
+	Root_Parallel->Add_Service(Effect15);
+	Root_Parallel->Add_Service(Effect16);
+	Root_Parallel->Add_Service(Effect17);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani35);
@@ -595,6 +703,60 @@ CBT_Composite_Node * CDeerKing::Jump_In_Place()
 	// Show_Ani43 * 0.85 = 0.85
 	// Show_Ani44 * 0.9 = 0.90
 
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("눈 위로 폭발0", L"DeerKing_SnowChunk_Up_Particle_0"		, L"Self_Pos", 0.5, 3, 0.01, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("눈 위로 폭발1", L"DeerKing_SnowChunk_Up_Particle_1"		, L"Self_Pos", 0.5, 3, 0.01, 0);
+	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("눈 위로 폭발2", L"DeerKing_SnowChunk_Heavy_Particle_0"	, L"Self_Pos", 0.5, 1, 0.01, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("얼음 위로 폭발0", L"DeerKing_IceStone_Up_Particle_0"		, L"Self_Pos", 0.5, 2, 0.01, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("잔눈", L"DeerKing_Snow_Up_Particle_0"						, L"Self_Pos", 0.5, 10, 0.01, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_0"								, L"Self_Pos", 0.5, 5, 0.01, 0);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_1"								, L"Self_Pos", 0.5, 5, 0.01, 0);
+	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_2"								, L"Self_Pos", 0.5, 1, 0.01, 0);
+
+	CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet"						, L"Bone_LeftJet"	, 0.5, 35, 0.01, 0);
+	CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet"						, L"Bone_RightJet"	, 0.5, 35, 0.01, 0);
+	CBT_CreateEffect* Effect20 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet_Particle_01"			, L"Bone_LeftJet"	, 0.5, 35, 0.01, 0);
+	CBT_CreateEffect* Effect21 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet_Particle_01"			, L"Bone_RightJet"	, 0.5, 35, 0.01, 0);
+	CBT_CreateEffect* Effect22 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet_Particle_02"			, L"Bone_LeftJet"	, 0.5, 35, 0.01, 0);
+	CBT_CreateEffect* Effect23 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet_Particle_03"			, L"Bone_RightJet"	, 0.5, 35, 0.01, 0);
+	CBT_CreateEffect* Effect18 = Node_CreateEffect_Finite("손 냉기", L"DeerKing_IceSmoke_Mid_1"						, L"Bone_LeftHand"	, 0.5, 65, 0.01, 0);
+	CBT_CreateEffect* Effect19 = Node_CreateEffect_Finite("손 냉기", L"DeerKing_IceSmoke_Mid_1"						, L"Bone_RightHand"	, 0.5, 65, 0.01, 0);
+
+	CBT_CreateEffect* Effect10 = Node_CreateEffect_Finite("눈 위로 폭발0", L"DeerKing_SnowChunk_Up_Particle_0"		, L"Self_Pos", 1.5, 3, 0.01, 0);
+	CBT_CreateEffect* Effect11 = Node_CreateEffect_Finite("눈 위로 폭발1", L"DeerKing_SnowChunk_Up_Particle_1"		, L"Self_Pos", 1.5, 3, 0.01, 0);
+	CBT_CreateEffect* Effect12 = Node_CreateEffect_Finite("눈 위로 폭발2", L"DeerKing_SnowChunk_Heavy_Particle_0"	, L"Self_Pos", 1.5, 1, 0.01, 0);
+	CBT_CreateEffect* Effect13 = Node_CreateEffect_Finite("얼음 위로 폭발0", L"DeerKing_IceStone_Up_Particle_0"		, L"Self_Pos", 1.5, 2, 0.01, 0);
+	CBT_CreateEffect* Effect14 = Node_CreateEffect_Finite("잔눈", L"DeerKing_Snow_Up_Particle_0"					, L"Self_Pos", 1.5, 10, 0.01, 0);
+	CBT_CreateEffect* Effect15 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_0"							, L"Self_Pos", 1.5, 5, 0.01, 0);
+	CBT_CreateEffect* Effect16 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_1"							, L"Self_Pos", 1.5, 5, 0.01, 0);
+	CBT_CreateEffect* Effect17 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_2"							, L"Self_Pos", 1.5, 1, 0.01, 0);
+	// 콜라이더 객체 생기면 추가
+	//CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("폭죽", L"DeerKing_Point_ExplosionParticle_0", L"Self_Pos", 0.5, 3, 0.01, 0);
+	
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
+	Root_Parallel->Add_Service(Effect3);
+	Root_Parallel->Add_Service(Effect4);
+	Root_Parallel->Add_Service(Effect5);
+	Root_Parallel->Add_Service(Effect6);
+	Root_Parallel->Add_Service(Effect7);
+	Root_Parallel->Add_Service(Effect8);
+	Root_Parallel->Add_Service(Effect9);
+	Root_Parallel->Add_Service(Effect10);
+	Root_Parallel->Add_Service(Effect11);
+	Root_Parallel->Add_Service(Effect12);
+	Root_Parallel->Add_Service(Effect13);
+	Root_Parallel->Add_Service(Effect14);
+	Root_Parallel->Add_Service(Effect15);
+	Root_Parallel->Add_Service(Effect16);
+	Root_Parallel->Add_Service(Effect17);
+	Root_Parallel->Add_Service(Effect18);
+	Root_Parallel->Add_Service(Effect19);
+	Root_Parallel->Add_Service(Effect20);
+	Root_Parallel->Add_Service(Effect21);
+	Root_Parallel->Add_Service(Effect22);
+	Root_Parallel->Add_Service(Effect23);
+
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani43);
 	MainSeq->Add_Child(Show_Ani44);
@@ -641,6 +803,33 @@ CBT_Composite_Node * CDeerKing::Rush_Body()
 	// Show_Ani50 * 0.85 = 0.906
 	// Show_Ani51 * 0.95 = 0.142
 
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet_Mid"			, L"Bone_LeftJet"	, 0.5, 65, 0.01, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet_Mid"			, L"Bone_RightJet"	, 0.5, 65, 0.01, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet_Particle_01"	, L"Bone_LeftJet"	, 0.5, 65, 0.01, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet_Particle_01"	, L"Bone_RightJet"	, 0.5, 65, 0.01, 0);
+	CBT_CreateEffect* Effect10 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet_Particle_02"	, L"Bone_LeftJet"	, 0.5, 65, 0.01, 0);
+	CBT_CreateEffect* Effect11 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet_Particle_02"	, L"Bone_RightJet"	, 0.5, 65, 0.01, 0);
+
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("잔눈", L"DeerKing_Snow_Up_Particle_0"				, L"Self_Pos"		, 0.6, 20, 0.01, 0);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_0"						, L"Self_Pos_Front"	, 0.8, 2, 0.01, 0.2);
+	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_1"						, L"Self_Pos_Front"	, 0.8, 2, 0.01, 0.2);
+	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_2"						, L"Self_Pos_Front"	, 0.8, 2, 0.01, 0.2);
+	CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_Mid_0"					, L"Self_Pos_Front"	, 0.6, 25, 0.01, 0);
+	CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_Mid_1"					, L"Self_Pos_Front"	, 0.6, 25, 0.01, 0);
+
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
+	Root_Parallel->Add_Service(Effect3);
+	Root_Parallel->Add_Service(Effect4);
+	Root_Parallel->Add_Service(Effect5);
+	Root_Parallel->Add_Service(Effect6);
+	Root_Parallel->Add_Service(Effect7);
+	Root_Parallel->Add_Service(Effect8);
+	Root_Parallel->Add_Service(Effect9);
+	Root_Parallel->Add_Service(Effect10);
+	Root_Parallel->Add_Service(Effect11);
+
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani50);
 	MainSeq->Add_Child(Show_Ani51);
@@ -680,6 +869,50 @@ CBT_Composite_Node * CDeerKing::Jump_fist()
 
 	// Show_Ani47 * 0.9 = 0.99
 	// Show_Ani48 * 0.95 = 0.031
+
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet_Big"			, L"Bone_LeftJet"	, 0.2, 5, 0.01, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet_Big"			, L"Bone_RightJet"	, 0.2, 5, 0.01, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet_Particle_01"	, L"Bone_LeftJet"	, 0.2, 65, 0.01, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet_Particle_01"	, L"Bone_RightJet"	, 0.2, 65, 0.01, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet_Particle_02"	, L"Bone_LeftJet"	, 0.2, 65, 0.01, 0);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet_Particle_02"	, L"Bone_RightJet"	, 0.2, 65, 0.01, 0);
+	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet"				, L"Bone_LeftJet"	, 0.4, 48, 0.01, 0);
+	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet"				, L"Bone_RightJet"	, 0.4, 48, 0.01, 0);
+
+	CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("잔눈", L"DeerKing_Snow_Up_Particle_0"				, L"Self_Pos"		, 1.25, 20, 0.01, 0);
+	CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_0"						, L"Self_Pos_Front"	, 1.25, 2, 0.01, 0.2);
+	CBT_CreateEffect* Effect10 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_1"					, L"Self_Pos_Front"	, 1.25, 2, 0.01, 0.2);
+	CBT_CreateEffect* Effect11 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_2"					, L"Self_Pos_Front"	, 1.25, 2, 0.01, 0.2);
+	CBT_CreateEffect* Effect12 = Node_CreateEffect_Finite("연기", L"DeerKing_SnowChunk_Up_Particle_0"		, L"Self_Pos"		, 1.25, 25, 0.01, 0);
+	CBT_CreateEffect* Effect13 = Node_CreateEffect_Finite("연기", L"DeerKing_SnowChunk_Up_Particle_1"		, L"Self_Pos"		, 1.25, 25, 0.01, 0);
+
+	CBT_CreateEffect* Effect14 = Node_CreateEffect_Finite("잔눈", L"DeerKing_Snow_Up_Particle_0"			, L"Self_Pos"		, 0.53, 20, 0.01, 0);
+	CBT_CreateEffect* Effect15 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_0"					, L"Self_Pos_Front"	, 0.53, 2, 0.01, 0.2);
+	CBT_CreateEffect* Effect16 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_1"					, L"Self_Pos_Front"	, 0.53, 2, 0.01, 0.2);
+	CBT_CreateEffect* Effect17 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_2"					, L"Self_Pos_Front"	, 0.53, 2, 0.01, 0.2);
+	CBT_CreateEffect* Effect18 = Node_CreateEffect_Finite("연기", L"DeerKing_SnowChunk_Up_Particle_0"		, L"Self_Pos"		, 0.53, 25, 0.01, 0);
+	CBT_CreateEffect* Effect19 = Node_CreateEffect_Finite("연기", L"DeerKing_SnowChunk_Up_Particle_1"		, L"Self_Pos"		, 0.53, 25, 0.01, 0);
+
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
+	Root_Parallel->Add_Service(Effect3);
+	Root_Parallel->Add_Service(Effect4);
+	Root_Parallel->Add_Service(Effect5);
+	Root_Parallel->Add_Service(Effect6);
+	Root_Parallel->Add_Service(Effect7);
+	Root_Parallel->Add_Service(Effect8);
+	Root_Parallel->Add_Service(Effect9);
+	Root_Parallel->Add_Service(Effect10);
+	Root_Parallel->Add_Service(Effect11);
+	Root_Parallel->Add_Service(Effect12);
+	Root_Parallel->Add_Service(Effect13);
+	Root_Parallel->Add_Service(Effect14);
+	Root_Parallel->Add_Service(Effect15);
+	Root_Parallel->Add_Service(Effect16);
+	Root_Parallel->Add_Service(Effect17);
+	Root_Parallel->Add_Service(Effect18);
+	Root_Parallel->Add_Service(Effect19);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani47);
@@ -994,6 +1227,13 @@ HRESULT CDeerKing::Update_Bone_Of_BlackBoard()
 	m_vRightJet = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_RightJet", m_vRightJet);
 
+	// 머리 박기 패턴 - 고드름 생성위치
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head_LeftCorner");
+	m_vHeadColdBeamPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	//m_vHeadColdBeamPos += (m_pTransformCom->Get_Axis(AXIS_Z) * 0.3f);
+	m_vHeadColdBeamPos += (m_pTransformCom->Get_Axis(AXIS_Y) * -0.9f);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftCorner", m_vHeadColdBeamPos);
+	
 	// RightHandAttach는  특별히 Update_Dir_Shield_Throwing에서 업데이트 시켜줌
 
 	return S_OK;
@@ -1021,15 +1261,27 @@ HRESULT CDeerKing::Update_Value_Of_BB()
 	// 3. 체력 비율 업데이트
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"HPRatio", _float(m_tObjParam.fHp_Cur / m_tObjParam.fHp_Max) * 100);
 
+	// 4. 본인 좌표
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_Pos", m_pTransformCom->Get_Pos());
+	// 4-1. 본인 좌표 조금 앞에
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_Pos_Front", m_pTransformCom->Get_Pos() + m_pTransformCom->Get_Axis(AXIS_Z) * 1.6f);
 
-
+	/////////////////
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Angle_Null", V3_NULL);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Dir_Null", V3_NULL);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_Dir", m_pTransformCom->Get_Axis(AXIS_Z));
 	/////////////////
 
 	// 1. 방패 찍기 좌표
-	CTransform* pShieldTrans = static_cast<CTransform*>(m_pShield->Get_Component(L"Com_Transform"));
-	_mat matShield = pShieldTrans->Get_WorldMat();
-	_v3 vShieldPos = _v3(matShield.m[3][0], matShield.m[3][1], matShield.m[3][2]);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ShieldPos", vShieldPos + _v3(0.f, -0.5f, 0.f));
+	//CTransform* pShieldTrans = static_cast<CTransform*>(m_pShield->Get_Component(L"Com_Transform"));
+	//_mat matShield = pShieldTrans->Get_WorldMat();
+	//_v3 vShieldPos = _v3(matShield.m[3][0], matShield.m[3][1], matShield.m[3][2]);
+	//m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ShieldPos", vShieldPos + _v3(0.f, -0.7f, 0.f));
+	
+	//
+	_v3 vShieldPos = m_pTransformCom->Get_Pos() + m_pTransformCom->Get_Axis(AXIS_Z) * 0.5f + m_pTransformCom->Get_Axis(AXIS_X) * 0.5f;
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ShieldPos", vShieldPos);
+
 
 	// 2. 투사체 던지기 좌표
 	_float fLength = 1.f;
