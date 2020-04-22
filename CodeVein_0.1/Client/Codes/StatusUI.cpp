@@ -30,7 +30,8 @@ HRESULT CStatusUI::Ready_GameObject(void * pArg)
 	m_fSizeX = 280.f;
 	m_fSizeY = 471.f;
 	m_fViewZ = 1.f;
-	//SetUp_Default();
+
+	SetUp_Default();
 
 	return NOERROR;
 }
@@ -130,22 +131,17 @@ HRESULT CStatusUI::SetUp_ConstantTable()
 
 void CStatusUI::SetUp_Default()
 {
-	/*CConditionUI* pInstance = nullptr;
+	CConditionUI* pInstance = nullptr;
 	LOOP(2)
 	{
-		g_pManagement->Add_GameObject_ToLayer(L"GameObject_ConditionUI", SCENE_STAGE, L"Layer_ConditionUI");
-		pInstance = static_cast<CConditionUI*>(g_pManagement->Get_GameObjectBack(L"Layer_ConditionUI", SCENE_STAGE));
+		pInstance = static_cast<CConditionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ConditionUI", nullptr));
+		pInstance->Set_UI_Pos(m_fPosX, m_fPosY + 80.f * _float(i) - 130.f);
+		pInstance->Set_UI_Size(280.f, 70.f);
+		pInstance->Set_ViewZ(m_fViewZ - 0.1f);
+		pInstance->Set_ConditionType(CConditionUI::CONDITION_TYPE(i));
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 		m_vecConditionUI.push_back(pInstance);
-	}*/
-
-	/*m_vecConditionUI[0]->Set_ConditionType(CConditionUI::CONDITION_HP);
-	m_vecConditionUI[0]->Set_UI_Pos(m_fPosX, 150.f);
-	m_vecConditionUI[0]->Set_UI_Size(338.f, 84.f);
-	m_vecConditionUI[0]->Set_ViewZ(m_fViewZ - 0.1f);
-	m_vecConditionUI[1]->Set_ConditionType(CConditionUI::CONDITION_ST);
-	m_vecConditionUI[1]->Set_UI_Pos(m_fPosX, 200.f);
-	m_vecConditionUI[1]->Set_UI_Size(338.f, 84.f);
-	m_vecConditionUI[1]->Set_ViewZ(m_fViewZ - 0.1f);*/
+	}
 }
 
 CStatusUI * CStatusUI::Create(_Device pGraphic_Device)

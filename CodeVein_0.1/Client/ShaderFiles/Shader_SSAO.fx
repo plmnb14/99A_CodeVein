@@ -62,9 +62,9 @@ struct PS_OUT
 	vector		vSSAO : COLOR0;
 };
 
-float g_fSampleRad  = 0.9f;		// 샘플링 반경
-float g_fIntensity	= 1.f;		// ao 강도
-float g_fScale		= 1.f;		// 사이 거리
+float g_fSampleRad  = 8.0f;		// 샘플링 반경
+float g_fIntensity	= 6.0f;		// ao 강도
+float g_fScale		= 0.5f;		// 사이 거리
 float g_fBias		= 0.2f;		// 너비 제어
 
 //float g_fSampleRad = 0.1f;		// 샘플링 반경
@@ -121,6 +121,8 @@ PS_OUT PS_SSAO(PS_IN In)
 
 	PS_OUT			Out = (PS_OUT)0;
 
+	Out.vSSAO.rgb = 1.f;
+
 	float2 vVec[4] = { float2(1.f,0.f) , float2(-1.f,0.f), float2(0.f,1.f), float2(0.f,-1.f) };
 
 	float3 p	= Generate_Position(In.vTexUV);
@@ -130,6 +132,7 @@ PS_OUT PS_SSAO(PS_IN In)
 	float ao = 0.f;
 	float rad = g_fSampleRad / p.z;
 
+	//int	iterations = lerp(6.0 , 2.0, p.z / 500.f);
 	int	iterations = 4;
 	for (int i = 0; i < iterations; ++i)
 	{
@@ -144,7 +147,8 @@ PS_OUT PS_SSAO(PS_IN In)
 
 	ao /= (float)iterations * 4.f;
 
-	Out.vSSAO	= ao;
+	Out.vSSAO = ao;
+	//Out.vSSAO	= 1.f - ao;
 	Out.vSSAO.a = 1.f;
 
 	return Out;
