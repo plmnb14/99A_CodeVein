@@ -76,7 +76,7 @@ HRESULT CDeerKing::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Jump_Attack());
+	Start_Sel->Add_Child(Rush_Body());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -605,7 +605,8 @@ CBT_Composite_Node * CDeerKing::Jump_In_Place()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Rotation0);
 
-	// 충돌구 생성시간 : 0.85 +.0.9 + 0.2
+	CBT_CreateBullet* Col0 = Node_CreateBullet("점프 찍기 충돌체", L"Monster_DeerKingJumpInPlaceCol", L"SelfPos", L"", 0, 0.1, 1.023 + 0.239 + 0.2, 1, 0, 0, CBT_Service_Node::Finite);
+	Root_Parallel->Add_Service(Col0);
 
 	return Root_Parallel;
 }
@@ -622,8 +623,8 @@ CBT_Composite_Node * CDeerKing::Rush_Body()
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	//CBT_Wait* Wait0 = Node_Wait("대기0", 0.083, 0);
-	//CBT_ChaseDir* Chase0 = Node_ChaseDir("추적", L"Player_Pos", 0.183, 0);
-	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기0", L"Player_Pos", 0.2);
+	CBT_ChaseDir* Chase0 = Node_ChaseDir("추적", L"Player_Pos", 0.1, 0);
+	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기0", L"Player_Pos", 0.1);
 
 	CBT_SetValue* PushColOff = Node_BOOL_SetValue("PushColOff", L"PushCol", false);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 1.f, 0.1, 0);
@@ -649,7 +650,7 @@ CBT_Composite_Node * CDeerKing::Rush_Body()
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	//SubSeq->Add_Child(Wait0);
-	//SubSeq->Add_Child(Chase0);
+	SubSeq->Add_Child(Chase0);
 	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(PushColOff);
 	SubSeq->Add_Child(Move0);
@@ -661,10 +662,14 @@ CBT_Composite_Node * CDeerKing::Rush_Body()
 	SubSeq->Add_Child(Move6);
 	SubSeq->Add_Child(PushColOn);
 
+	CBT_CreateBuff* Col0 = Node_CreateBuff("몸통 충돌체", L"Monster_DeerKingRushCol", 0.475, 0.9, 1, 0, 0, CBT_Service_Node::Finite);
+	Root_Parallel->Add_Service(Col0);
+
+
 	return Root_Parallel;
 }
 
-CBT_Composite_Node * CDeerKing::Jump_fist()
+CBT_Composite_Node * CDeerKing::Jump_Fist()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
@@ -691,6 +696,10 @@ CBT_Composite_Node * CDeerKing::Jump_fist()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Rotation0);
 	SubSeq->Add_Child(Chase_Timer(0.554, 12.f));
+
+
+	CBT_CreateBullet* Col0 = Node_CreateBullet("점프 찍기 충돌체", L"Monster_DeerKingJumpFistCol", L"JumpFist_Pos", L"", 0, 0.1, 0.99 + 0.031 + 0.35, 1, 0, 0, CBT_Service_Node::Finite);
+	Root_Parallel->Add_Service(Col0);
 
 	return Root_Parallel;
 }
@@ -877,7 +886,7 @@ CBT_Composite_Node * CDeerKing::FarAttack_Fianl()
 {
 	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 원거리 공격");
 
-	Root_Sel->Add_Child(Jump_fist());
+	Root_Sel->Add_Child(Jump_Fist());
 	Root_Sel->Add_Child(Rush_Body());
 	Root_Sel->Add_Child(Throwing());
 	//Root_Sel->Add_Child(Blade_Attack());
@@ -1042,6 +1051,13 @@ HRESULT CDeerKing::Update_Value_Of_BB()
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos5", m_vLeftHand + fLength * *D3DXVec3TransformNormal(&_v3(), &vSelfUp, D3DXMatrixRotationAxis(&_mat(), &vSelfLook, D3DXToRadian(220))));
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos6", m_vLeftHand + fLength * *D3DXVec3TransformNormal(&_v3(), &vSelfUp, D3DXMatrixRotationAxis(&_mat(), &vSelfLook, D3DXToRadian(270))));
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos7", m_vLeftHand + fLength * *D3DXVec3TransformNormal(&_v3(), &vSelfUp, D3DXMatrixRotationAxis(&_mat(), &vSelfLook, D3DXToRadian(310))));
+
+	// 3. 몬스터 본인 좌표
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"SelfPos", vSelfPos);
+
+	// 4. 점프 주먹 찍기 좌표
+	fLength = 1.f;
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"JumpFist_Pos", m_vLeftHand + fLength * vSelfRight);
 
 
 	return S_OK;

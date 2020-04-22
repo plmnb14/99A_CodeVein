@@ -68,7 +68,7 @@ private:	// 패턴들
 	// 2. 돌진 몸통박치기
 	CBT_Composite_Node* Rush_Body();
 	// 3. 윈스턴처럼 점프 찍기
-	CBT_Composite_Node* Jump_fist();
+	CBT_Composite_Node* Jump_Fist();
 	// 4. 왼손에 얼음칼 베기
 	CBT_Composite_Node* Blade_Attack();	// 보류
 
