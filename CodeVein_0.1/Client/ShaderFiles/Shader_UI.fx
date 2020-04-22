@@ -36,6 +36,14 @@ struct VS_OUT
 
 };
 
+struct VS_OUT2
+{
+	float4		vPosition : POSITION;
+	float2		vTexUV : TEXCOORD0;
+	float3		vWorldPos : TEXCOORD1;
+	float		fTexPercent : TEXCOORD2;
+};
+
 // 정점의 기초적인 변환을 수행한다.
 // 정점의 구성 요소를 변형할 수 있다.
 VS_OUT VS_MAIN(VS_IN In)
@@ -71,7 +79,23 @@ VS_OUT		VS_2D_UV_CTRL(VS_IN In)
 	return Out;
 }
 
+VS_OUT2		VS_SKILL_COOL(VS_IN In)
+{
+	VS_OUT2	Out = (VS_OUT2)0;
 
+	matrix	matWV, matWVP;
+
+	matWV = mul(g_matWorld, g_matView);
+	matWVP = mul(matWV, g_matProj);
+
+	Out.vPosition = mul(vector(In.vPosition.x, In.vPosition.y, In.vPosition.z, 1.f), matWVP);
+	Out.vTexUV.x = In.vTexUV.x;
+	Out.vTexUV.y = In.vTexUV.y;
+
+	Out.fTexPercent = g_fPercentage;
+	
+	return Out;
+}
 
 
 // POSITION시멘틱을 가진 멤버변수에 대해서 W값으로 XYZW를 나누는 연산을 수행.(원근 투영)
@@ -83,6 +107,14 @@ struct PS_IN
 	float4		vPosition : POSITION;
 	float2		vTexUV : TEXCOORD0;
 	float3		vWorldPos : TEXCOORD1;
+};
+
+struct PS_IN2
+{
+	float4		vPosition : POSITION;
+	float2		vTexUV : TEXCOORD0;
+	float3		vWorldPos : TEXCOORD1;
+	float		fTexPercent : TEXCOORD2;
 };
 
 struct PS_OUT
@@ -134,6 +166,18 @@ PS_OUT PS_UI_FADE(PS_IN In)
 
 	Out.vColor.a *= g_fAlpha;
 
+	return Out;
+}
+
+PS_OUT PS_SKILL_UI(PS_IN2 In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
+
+	if (In.vTexUV.y < 1.f - In.fTexPercent)
+		Out.vColor.a = 0.f;
+	
 	return Out;
 }
 
@@ -206,5 +250,15 @@ technique Default_Technique
 
 		vertexshader = compile vs_3_0 VS_MAIN();
 		pixelshader = compile ps_3_0 PS_TRANSLATION_TEX_UV();
+	}
+
+	pass	Skill_UI_Rendering
+	{
+		AlphaBlendEnable = true;
+		srcblend = srcalpha;
+		destblend = invsrcalpha;
+
+		vertexshader = compile vs_3_0 VS_SKILL_COOL();
+		pixelshader = compile ps_3_0 PS_SKILL_UI();
 	}
 }

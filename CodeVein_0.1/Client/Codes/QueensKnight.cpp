@@ -80,9 +80,7 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-
-	Start_Sel->Add_Child(Wing_Attack());
-	Start_Sel->Add_Child(Flash_Wing_Attack());
+	Start_Sel->Add_Child(Flash_Middle_Ground());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -543,7 +541,7 @@ CBT_Composite_Node * CQueensKnight::ThreeCombo_Cut()
 	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("내려찍기 파티클", L"QueensKnight_SwordCrash_Particle", L"Sword_TopPos"	, 2.36, 5, 0.01, 0);
 	CBT_CreateEffect* Effect10 = Node_CreateEffect_Finite("내려찍기 파티클", L"QueensKnight_SwordCrash_Particle", L"Sword_MidPos"	, 2.36, 5, 0.01, 0);
 	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("방패치기 파티클", L"QueensKnight_ShieldAttack_Particle", L"ShieldPos"		, 3.45, 5, 0.01, 0);
-	CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("방패치기 왜곡", L"QueensKnight_ShieldAttack_Distortion", L"ShieldPos"		, 3.5, 10, 0.1, 0);
+	CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("방패치기 왜곡", L"QueensKnight_ShieldAttack_Distortion", L"ShieldPos"		, 3.6, 2, 0.1, 0);
 	CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("방패치기 붉은 빛", L"QueensKnight_ShieldAttack_RedLight", L"ShieldPos"	, 3.45, 1, 0.01, 0);
 
 	Root_Parallel->Add_Service(Effect0);
@@ -724,7 +722,7 @@ CBT_Composite_Node * CQueensKnight::Wing_Attack()
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적1", L"Player_Pos", 0.1, 0);
 	CBT_RotationDir* Rotation1 = Node_RotationDir("방향 추적2", L"Player_Pos", 0.1);
 	CBT_SetValue* TrailOn0 = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
-	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 8, 0.483, 0);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 16, 0.483, 0);
 	CBT_SetValue* TrailOff0 = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("먼지", L"QueensKnight_WhirlWind_Smoke", L"Self_Pos", 0.63, 10, 0.5, 0);
@@ -864,8 +862,8 @@ CBT_Composite_Node * CQueensKnight::LeakField()
 	CBT_CreateBuff* LeakField0 = Node_CreateBuff("리크필드 생성", L"Monster_LeakField", 13, 2.533, 1, 0, 0, CBT_Service_Node::Finite);
 	Root_Parallel->Add_Service(LeakField0);
 
-	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("손에 초록 기운", L"QueensKnight_LeakField_Hand", L"Bone_LeftHand", 0.55, 40, 0, 0);
-	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("손에 초록 기운2", L"QueensKnight_LeakField_Hand_Aura", L"Bone_LeftHand", 0.55, 40, 0, 0);
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("손에 초록 기운", L"QueensKnight_LeakField_Hand", L"Bone_LeftHand", 0.55, 75, 0, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("손에 초록 기운2", L"QueensKnight_LeakField_Hand_Aura", L"Bone_LeftHand", 0.55, 75, 0, 0);
 
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
@@ -953,7 +951,7 @@ CBT_Composite_Node * CQueensKnight::Flash_Wing_Attack()
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적1", L"Player_Pos", 0.1, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 추적2", L"Player_Pos", 0.1);
 	CBT_SetValue* TrailOn0 = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
-	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 8, 0.483, 0);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 16, 0.483, 0);
 	CBT_SetValue* TrailOff0 = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("점멸 파티클", L"QueensKnight_Teleport_Particle", L"Self_MidPos", 0, 150, 0.15, 0);
@@ -1414,13 +1412,13 @@ CBT_Composite_Node * CQueensKnight::Flash_Middle_Ground()
 	CBT_CreateEffect* Effect15 = Node_CreateEffect_Finite("검은 잉크 연기", L"QueensKnight_Teleport_Ink_8", L"Self_MidPos", 0.2, 1, 0, 0);
 	CBT_CreateEffect* Effect16 = Node_CreateEffect_Finite("검은 잉크 연기", L"QueensKnight_Teleport_Ink_9", L"Self_MidPos", 0.2, 1, 0, 0);
 	
-	CBT_CreateEffect* Effect17 = Node_CreateEffect_Finite("검은 잉크 연기", L"QueensKnight_Teleport_Ink_0", L"Self_MidPos", 1.25, 1, 0, 0);
-	CBT_CreateEffect* Effect18 = Node_CreateEffect_Finite("검은 잉크 연기", L"QueensKnight_Teleport_Ink_1", L"Self_MidPos", 1.25, 1, 0, 0);
-	CBT_CreateEffect* Effect19 = Node_CreateEffect_Finite("검은 잉크 연기", L"QueensKnight_Teleport_Ink_2", L"Self_MidPos", 1.25, 1, 0, 0);
-	CBT_CreateEffect* Effect20 = Node_CreateEffect_Finite("검은 잉크 연기", L"QueensKnight_Teleport_Ink_4", L"Self_MidPos", 1.25, 1, 0, 0);
-	CBT_CreateEffect* Effect21 = Node_CreateEffect_Finite("검은 잉크 연기", L"QueensKnight_Teleport_Ink_5", L"Self_MidPos", 1.25, 1, 0, 0);
-	CBT_CreateEffect* Effect22 = Node_CreateEffect_Finite("검은 잉크 연기", L"QueensKnight_Teleport_Ink_8", L"Self_MidPos", 1.25, 1, 0, 0);
-	CBT_CreateEffect* Effect23 = Node_CreateEffect_Finite("검은 잉크 연기", L"QueensKnight_Teleport_Ink_9", L"Self_MidPos", 1.25, 1, 0, 0);
+	CBT_CreateEffect* Effect17 = Node_CreateEffect_Finite("검은 잉크 연기", L"QueensKnight_Teleport_Ink_0", L"Self_MidPos", 1.27, 1, 0, 0);
+	CBT_CreateEffect* Effect18 = Node_CreateEffect_Finite("검은 잉크 연기", L"QueensKnight_Teleport_Ink_1", L"Self_MidPos", 1.27, 1, 0, 0);
+	CBT_CreateEffect* Effect19 = Node_CreateEffect_Finite("검은 잉크 연기", L"QueensKnight_Teleport_Ink_2", L"Self_MidPos", 1.27, 1, 0, 0);
+	CBT_CreateEffect* Effect20 = Node_CreateEffect_Finite("검은 잉크 연기", L"QueensKnight_Teleport_Ink_4", L"Self_MidPos", 1.27, 1, 0, 0);
+	CBT_CreateEffect* Effect21 = Node_CreateEffect_Finite("검은 잉크 연기", L"QueensKnight_Teleport_Ink_5", L"Self_MidPos", 1.27, 1, 0, 0);
+	CBT_CreateEffect* Effect22 = Node_CreateEffect_Finite("검은 잉크 연기", L"QueensKnight_Teleport_Ink_8", L"Self_MidPos", 1.27, 1, 0, 0);
+	CBT_CreateEffect* Effect23 = Node_CreateEffect_Finite("검은 잉크 연기", L"QueensKnight_Teleport_Ink_9", L"Self_MidPos", 1.27, 1, 0, 0);
 
 	CBT_StartDissolve* Dissolve0 = Node_StartDissolve("디졸브", this, 3.7f, false		, 0.2);
 	CBT_StartDissolve* Dissolve2 = Node_StartDissolve("디졸브", m_pSword, 3.7f, false	, 0.2);

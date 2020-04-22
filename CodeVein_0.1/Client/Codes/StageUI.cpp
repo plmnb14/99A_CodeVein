@@ -12,6 +12,11 @@ CStageUI::CStageUI(const CStageUI & rhs)
 {
 }
 
+void CStageUI::Set_SubStage(_uint iSubStage)
+{
+	m_iSubStage = iSubStage;
+}
+
 HRESULT CStageUI::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
@@ -26,7 +31,7 @@ HRESULT CStageUI::Ready_GameObject(void * pArg)
 	m_fAlpha = 0.f;
 	m_bIsActive = false;
 	m_eTeleportMenu = Teleport_Home;
-
+	
 	return NOERROR;
 }
 
@@ -48,39 +53,53 @@ _int CStageUI::Update_GameObject(_double TimeDelta)
 		m_pTransformCom->Set_Pos(TARGET_TO_TRANS(m_pTarget)->Get_Pos() + (*V3_NORMAL_SELF(&vLook) * 2.f + _v3(0.f, 1.5f, 0.f)));
 		m_pTransformCom->Set_Scale(_v3(2.f, 1.f, 0.f));
 	}
-
+	
 	
 	switch (m_eTeleportMenu)
 	{
 	case Teleport_Home:
 		m_iIndex = 0;
+		m_iMaxSubStage = 1;
 		break;
 	case Teleport_St01:
-		m_iIndex = 1;
+	{
+		m_iMaxSubStage = 2;
+		if (0 == m_iSubStage)
+			m_iIndex = 1;
+		else if (1 == m_iSubStage)
+			m_iIndex = 12;
+		else if (2 == m_iSubStage)
+			m_iIndex = 13;
+	}	
 		break;
-	/*case Teleport_St01_2:
-		m_iIndex = 1;
-		break;
-	case Teleport_St01_3:
-		m_iIndex = 1;
-		break;*/
 	case Teleport_St02:
-		m_iIndex = 2;
+	{
+		m_iMaxSubStage = 2;
+		if (0 == m_iSubStage)
+			m_iIndex = 2;
+		else if (1 == m_iSubStage)
+			m_iIndex = 14;
+		else if (2 == m_iSubStage)
+			m_iIndex = 15;
+	}	
 		break;
-	/*case Teleport_St02_2:
-		m_iIndex = 2;
-		break;
-	case Teleport_St02_3:
-		m_iIndex = 2;
-		break;*/
 	case Teleport_St03:
-		m_iIndex = 3;
+	{
+		m_iMaxSubStage = 1;
+		if (0 == m_iSubStage)
+			m_iIndex = 3;
+		else if (1 == m_iSubStage)
+			m_iIndex = 16;
+	}
 		break;
-	/*case Teleport_St03_2:
-		m_iIndex = 3;
-		break;*/
 	case Teleport_St04:
-		m_iIndex = 4;
+	{
+		m_iMaxSubStage = 1;
+		if (0 == m_iSubStage)
+			m_iIndex = 4;
+		else if (1 == m_iSubStage)
+			m_iIndex = 17;
+	}
 		break;
 	}
 
@@ -90,6 +109,8 @@ _int CStageUI::Update_GameObject(_double TimeDelta)
 	}
 	
 	Compute_ViewZ(&m_pTransformCom->Get_Pos());
+
+	
 	return NO_EVENT;
 }
 
@@ -183,7 +204,21 @@ HRESULT CStageUI::Render_GameObject()
 				else if (i == 1) iIndex = 11;
 				else if (i == 2)
 				{
-					iIndex = m_iIndex + 5;
+					switch (m_eTeleportMenu)
+					{
+					case Teleport_St01:
+						iIndex = 6;
+						break;
+					case Teleport_St02:
+						iIndex = 7;
+						break;
+					case Teleport_St03:
+						iIndex = 8;
+						break;
+					case Teleport_St04:
+						iIndex = 9;
+						break;
+					}
 				}
 				else if (i == 3) iIndex = m_iIndex;
 

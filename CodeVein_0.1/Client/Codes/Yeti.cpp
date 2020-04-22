@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Yeti.h"
+#include "..\Headers\MonsterUI.h"
 
 CYeti::CYeti(LPDIRECT3DDEVICE9 pGraphic_Device)
 	:CGameObject(pGraphic_Device)
@@ -27,6 +28,11 @@ HRESULT CYeti::Ready_GameObject(void * pArg)
 	Ready_Status(pArg);
 	Ready_BoneMatrix();
 	Ready_Collider();
+
+	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
+	m_pMonsterUI->Set_Target(this);
+	m_pMonsterUI->Set_Bonmatrix(m_matBone[Bone_Head]);
+	m_pMonsterUI->Ready_GameObject(NULL);
 
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 	if (nullptr != m_pTarget)
@@ -73,6 +79,8 @@ _int CYeti::Update_GameObject(_double TimeDelta)
 		return NO_EVENT;
 
 	CGameObject::Update_GameObject(TimeDelta);
+
+	m_pMonsterUI->Update_GameObject(TimeDelta);
 
 	Check_PosY();
 	Check_Hit();
@@ -2594,6 +2602,8 @@ CGameObject* CYeti::Clone_GameObject(void * pArg)
 
 void CYeti::Free()
 {
+	Safe_Release(m_pMonsterUI);
+
 	Safe_Release(m_pTarget);
 	Safe_Release(m_pTargetTransform);
 

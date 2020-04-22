@@ -138,6 +138,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"QueensKnight_DarkBoom_RingRed", 50);
 	Input_Pool(L"QueensKnight_DarkBoom_RingReady", 50);
 	Input_Pool(L"QueensKnight_DarkBoom_BlackFire_0", 600);
+	Input_Pool(L"QueensKnight_DarkBoom_LaserBody", 30);
 	Input_Pool(L"QueensKnight_Lava_Lightning_0", 600);
 	Input_Pool(L"QueensKnight_Lava_Lightning_1", 600);
 	Input_Pool(L"QueensKnight_Lava_Lightning_2", 600);

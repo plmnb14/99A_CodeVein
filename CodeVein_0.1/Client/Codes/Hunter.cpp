@@ -2,8 +2,7 @@
 #include "..\Headers\Hunter.h"
 #include "..\Headers\Weapon.h"
 #include "..\Headers\\HunterBullet.h"
-
-#include "MonsterUI.h"
+#include "..\Headers\MonsterUI.h"
 
 CHunter::CHunter(LPDIRECT3DDEVICE9 pGraphic_Device)
 	:CGameObject(pGraphic_Device)

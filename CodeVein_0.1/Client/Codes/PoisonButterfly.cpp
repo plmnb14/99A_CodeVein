@@ -444,7 +444,7 @@ CBT_Composite_Node * CPoisonButterfly::Poison_Tornado_After_Charging()
 	Root_Seq->Add_Service(Effect10);
 	Root_Seq->Add_Service(Effect11);
 
-	CBT_CreateBullet* PoisonBullet0 = Node_CreateBullet("µ∂ √—æÀ", L"Monster_PoisonTornado", L"Self_Pos", L"", 0, 2.5, 3.36, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* PoisonBullet0 = Node_CreateBullet("µ∂ √—æÀ", L"Monster_PoisonTornado", L"Self_Pos", L"", 0, 2, 3.36, 1, 0, 0, CBT_Service_Node::Finite);
 	Root_Seq->Add_Service(PoisonBullet0);
 
 
@@ -1016,7 +1016,7 @@ CBT_Composite_Node * CPoisonButterfly::Show_FarAttack()
 void CPoisonButterfly::Down()
 {
 	m_dDownTime += DELTA_60;
-
+	 
 	// down Ω√¿€«‘.
 	if (true == m_bDown_StartAni)
 	{

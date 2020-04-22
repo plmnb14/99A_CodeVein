@@ -177,7 +177,7 @@ _int CTexEffect::Update_GameObject(_double TimeDelta)
 		return S_OK;
 
 	RENDERID eGroup = RENDERID::RENDER_EFFECT;
-	if (m_iPass == 0)
+	if (m_iPass == 0 || m_iPass ==  8)
 		eGroup = RENDERID::RENDER_EFFECT;
 	else
 		eGroup = RENDERID::RENDER_DISTORTION;
@@ -370,6 +370,9 @@ void CTexEffect::Setup_Info()
 		m_iPass = 1;
 	else
 		m_iPass = 0;
+
+	if (m_bZwrite)
+		m_iPass = 8;
 
 	if(m_pInfo->fDistortionPower <= 0.f || m_pInfo->fDistortionPower > 2.f)
 		m_pInfo->fDistortionPower = 0.09f;
