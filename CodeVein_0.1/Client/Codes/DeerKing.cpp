@@ -76,7 +76,7 @@ HRESULT CDeerKing::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Start_Game());
+	Start_Sel->Add_Child(Jump_Attack());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -889,7 +889,7 @@ void CDeerKing::Down()
 {
 	if (true == m_bDown_StartAni)
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.445f))
+		if (m_pMeshCom->Is_Finish_Animation(0.410f))
 			m_bThrow_Shield = true;
 
 		if (m_pMeshCom->Is_Finish_Animation(0.9f))
@@ -930,17 +930,36 @@ void CDeerKing::Down()
 
 void CDeerKing::Update_Shield()
 {
+	if (true == m_bFinish_Throw_Shield)
+		return;
+
 	CTransform* pShieldTrans = static_cast<CTransform*>(m_pShield->Get_Component(L"Com_Transform"));
 	
-	_mat matTemp = pShieldTrans->Get_Info().matWorld;
+	TRANS_INFO transInfo = pShieldTrans->Get_Info();
 
-	if (0.f >= pShieldTrans->Get_Pos().y)
-		pShieldTrans->Set_Pos_Axis(0.f, AXIS_Y);
+	_v3 vShield_Pos = *(_v3*)&transInfo.matWorld.m[3];
+
+	if (0.8f >= transInfo.matWorld.m[3][1])
+	{
+		vShield_Pos.y = 0.8f;
+		m_bFinish_Throw_Shield = true;
+
+		// 방패 떨어진 자리에 이펙트 발생시키기
+	}
 	else
 	{
-		pShieldTrans->Add_Pos(_float(5.f * m_dTimeDelta), m_vThrowing_Dir);
+		vShield_Pos += m_vThrowing_Dir * _float(m_fThrowing_Speed * m_dTimeDelta);
+
+		m_fThrowing_Speed -= 0.05f;
+
 		m_vThrowing_Dir += _v3(0.f, -0.02f, 0.f);
 	}
+
+	transInfo.matWorld.m[3][0] = vShield_Pos.x;
+	transInfo.matWorld.m[3][1] = vShield_Pos.y;
+	transInfo.matWorld.m[3][2] = vShield_Pos.z;
+
+	pShieldTrans->Set_Info(transInfo);
 }
 
 void CDeerKing::Update_Dir_Shield_Throwing()
@@ -1080,7 +1099,7 @@ HRESULT CDeerKing::Update_NF()
 	{
 		m_pMeshCom->SetUp_Animation(Ani_Appearance);
 
-		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		if (m_pMeshCom->Is_Finish_Animation(0.97f))
 		{
 			m_pMeshCom->SetUp_Animation(Ani_AppearanceLoop);
 			m_bFight = true;
