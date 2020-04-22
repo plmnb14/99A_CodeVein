@@ -196,9 +196,9 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	m_pMistletoeUI = static_cast<CMistletoeUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MistletoeUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pMistletoeUI, SCENE_STAGE, L"Layer_StageUI", nullptr);
 	
-	// 스테이터스 UI
-	m_pStatusUI = static_cast<CStatusUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_StatusUI", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pStatusUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	//// 스테이터스 UI
+	//m_pStatusUI = static_cast<CStatusUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_StatusUI", nullptr));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(m_pStatusUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	return NOERROR;
 }
@@ -224,6 +224,16 @@ _int CUI_Manager::Update_UI()
 
 	
 	return 0;
+}
+
+void CUI_Manager::Set_BossUI_Active(_bool bIsActive)
+{
+	list<CGameObject*> listBossUI = g_pManagement->Get_GameObjectList(L"Layer_BossHP", SCENE_STAGE);
+
+	for (auto& iter : listBossUI)
+	{
+		static_cast<CBossHP*>(iter)->Set_Active(bIsActive);
+	}
 }
 
 void CUI_Manager::Free()

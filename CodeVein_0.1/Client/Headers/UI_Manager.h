@@ -44,6 +44,7 @@ public:
 	CArmor_Inven* Get_Armor_Inven() { return m_pArmor_Inven; }
 	CTotal_Inven* Get_Total_Inven() { return m_pTotal_Inven; }
 	CInventory*		Get_Inventory() { return m_pInventory; }
+	void Set_BossUI_Active(_bool bIsActive);
 
 private:
 	_uint m_uiCoundItem = 0;
