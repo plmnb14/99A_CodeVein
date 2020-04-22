@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\Headers\ExpUI.h"
 #include "Player.h"
+#include "PlayerFontUI.h"
+#include "FontNumUI.h"
 
 CExpUI::CExpUI(_Device pDevice)
 	: CUI(pDevice)
@@ -25,10 +27,15 @@ HRESULT CExpUI::Ready_GameObject(void * pArg)
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = WINCX * 0.5f;
-	m_fPosY = WINCY * 0.5f;
-	m_fSizeX = 100.f;
-	m_fSizeY = 100.f;
+	m_fCurExp = 30.f;
+	m_fMaxExp = 100.f;
+
+	m_pLevelFont = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
+	m_pLevelFont->Set_UI_Pos(m_fPosX, m_fPosY);
+	m_pLevelFont->Set_UI_Size(m_fSizeX * 0.5f, m_fSizeY * 0.5f);
+	m_pLevelFont->Set_ViewZ(m_fViewZ - 0.1f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pLevelFont, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
 	return NOERROR;
 }
 
@@ -45,6 +52,16 @@ _int CExpUI::Update_GameObject(_double TimeDelta)
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
+
+	if (m_pLevelFont)
+	{
+		m_pLevelFont->Set_Active(m_bIsActive);
+		m_pLevelFont->Set_Number(m_iLevel);
+		m_pLevelFont->Set_UI_Pos(m_fPosX, m_fPosY);
+		m_pLevelFont->Set_UI_Size(m_fSizeX, m_fSizeY);
+		m_pLevelFont->Set_ViewZ(-20.f);
+	}
+		
 
 	return NO_EVENT;
 }
@@ -65,6 +82,8 @@ _int CExpUI::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CExpUI::Render_GameObject()
 {
+	if (!m_bIsActive)
+		return NOERROR;
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
@@ -170,7 +189,10 @@ void CExpUI::SetUp_State(_double TimeDelta)
 		m_fCurExp = m_fMaxExp;
 	if (m_fCurExp <= 0.f)
 		m_fCurExp = 0.f;
-	
+	if (GetAsyncKeyState('H') & 0x8000)
+		++m_iLevel;
+	if (GetAsyncKeyState('G') & 0x8000)
+		--m_iLevel;
 	m_fPercentage = m_fCurExp / m_fMaxExp;
 }
 

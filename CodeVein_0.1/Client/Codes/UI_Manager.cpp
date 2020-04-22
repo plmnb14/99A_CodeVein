@@ -27,7 +27,7 @@
 #include "BloodCode_Icon.h"
 #include "Info_Slot.h"
 #include "FontNumUI.h"
-#include "FontNumManager.h"
+#include "PlayerFontUI.h"
 #include "Active_Icon.h"
 #include "SkillUI.h"
 #include "LoadingScreen.h"
@@ -111,7 +111,7 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_FontNumUI", CFontNumUI::Create(pDevice))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_FontNumManager", CFontNumManager::Create(pDevice))))
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_PlayerFontUI", CPlayerFontUI::Create(pDevice))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ActiveIcon", CActive_Icon::Create(pDevice))))
 		return E_FAIL;
@@ -154,7 +154,8 @@ HRESULT CUI_Manager::SetUp_UILayer()
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Layer(SCENE_MORTAL, L"Layer_PlayerUI")))
 		return E_FAIL;
-
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STATIC, L"Layer_StaticUI")))
+		return E_FAIL;
 	
 	// 소비 인벤토리
 	m_pExpendables_Inven = static_cast<CExpendables_Inven*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExpendablesInven", nullptr));
@@ -182,7 +183,7 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	
 	// 퀵슬롯
 	m_pQuickSlot = static_cast<CQuickSlot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_QuickSlot", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pQuickSlot, SCENE_MORTAL, L"Layer_Player", nullptr);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pQuickSlot, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	// 스킬 UI
 	m_pSkillUI = static_cast<CSkillUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SkillUI", nullptr));
@@ -196,31 +197,31 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	m_pMistletoeUI = static_cast<CMistletoeUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MistletoeUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pMistletoeUI, SCENE_STAGE, L"Layer_StageUI", nullptr);
 	
-	//// 스테이터스 UI
-	//m_pStatusUI = static_cast<CStatusUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_StatusUI", nullptr));
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(m_pStatusUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
-
+	// 스테이터스 UI
+	m_pStatusUI = static_cast<CStatusUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_StatusUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pStatusUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	m_pStatusUI->Set_Active(true);
 	return NOERROR;
 }
 
 _int CUI_Manager::Update_UI()
 {
-	//if (g_pInput_Device->Key_Up(DIK_O))
-	//{
-	//	m_bTest = !m_bTest;
-	//	m_pMistletoeUI->Set_Active(m_bTest);
-	//}
-	//if (g_pInput_Device->Key_Up(DIK_P))
-	//{
-	//	m_pMistletoeUI->Active_SubUI(); // 선택된 항목의 UI On/Off
-	//}
-	//if (g_pInput_Device->Key_Up(DIK_LEFT))
-	//	m_pStageSelectUI->Move_Left(); // 스테이지UI 왼쪽이동
-	//if (g_pInput_Device->Key_Up(DIK_RIGHT))
-	//	m_pStageSelectUI->Move_Right(); // 스테이지UI 오른쪽 이동
-	//
-	//if (g_pInput_Device->Key_Up(DIK_RETURN))
-	//	cout << m_pStageSelectUI->Teleport_Stage() << endl; // 스테이지 선택시, 각각 다른 _uint값 반환
+	if (g_pInput_Device->Key_Up(DIK_O))
+	{
+		m_bTest = !m_bTest;
+		m_pMistletoeUI->Set_Active(m_bTest);
+	}
+	if (g_pInput_Device->Key_Up(DIK_P))
+	{
+		m_pMistletoeUI->Active_SubUI(); // 선택된 항목의 UI On/Off
+	}
+	if (g_pInput_Device->Key_Up(DIK_LEFT))
+		m_pStageSelectUI->Move_Left(); // 스테이지UI 왼쪽이동
+	if (g_pInput_Device->Key_Up(DIK_RIGHT))
+		m_pStageSelectUI->Move_Right(); // 스테이지UI 오른쪽 이동
+	
+	if (g_pInput_Device->Key_Up(DIK_RETURN))
+		cout << m_pStageSelectUI->Teleport_Stage() << endl; // 스테이지 선택시, 각각 다른 _uint값 반환
 
 	
 	return 0;

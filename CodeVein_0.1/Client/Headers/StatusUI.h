@@ -5,6 +5,7 @@
 
 BEGIN(Client)
 class CConditionUI;
+class CExpUI;
 class CStatusUI final : public CUI
 {
 private:
@@ -33,6 +34,7 @@ private:
 
 private:
 	vector<CConditionUI*>	m_vecConditionUI;
+	CExpUI*					m_pExpUI = nullptr;
 
 public:
 	static CStatusUI*		Create(_Device pGraphic_Device);

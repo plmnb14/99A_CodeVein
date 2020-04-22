@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\PlayerHP.h"
-#include "FontNumManager.h"
+#include "PlayerFontUI.h"
 #include "FontNumUI.h"
 
 CPlayerHP::CPlayerHP(_Device pGraphic_Device)
@@ -187,17 +187,30 @@ void CPlayerHP::SetUp_Default()
 
 	m_fTotalHP = m_fPlayerHP;
 
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_FontNumManager", SCENE_STAGE, L"Layer_FontPlayerUI");
-	m_pFontCurHP = static_cast<CFontNumManager*>(g_pManagement->Get_GameObjectBack(L"Layer_FontPlayerUI", SCENE_STAGE));
+
+	m_pFontCurHP = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
 	m_pFontCurHP->Set_UI_Pos(m_fPosX + 68.f, m_fPosY);
 	m_pFontCurHP->Set_UI_Size(50.f, 50.f);
 	m_pFontCurHP->Set_ViewZ(m_fViewZ - 0.1f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontCurHP, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_FontNumManager", SCENE_STAGE, L"Layer_FontPlayerUI");
-	m_pFontTotalHP = static_cast<CFontNumManager*>(g_pManagement->Get_GameObjectBack(L"Layer_FontPlayerUI", SCENE_STAGE));
+	/*g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerFontUI", SCENE_MORTAL, L"Layer_PlayerUI");
+	m_pFontCurHP = static_cast<CPlayerFontUI*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
+	m_pFontCurHP->Set_UI_Pos(m_fPosX + 68.f, m_fPosY);
+	m_pFontCurHP->Set_UI_Size(50.f, 50.f);
+	m_pFontCurHP->Set_ViewZ(m_fViewZ - 0.1f);*/
+
+	m_pFontTotalHP = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
 	m_pFontTotalHP->Set_UI_Pos(m_fPosX + 126.f, m_fPosY - 3.f);
 	m_pFontTotalHP->Set_UI_Size(25.f, 25.f);
 	m_pFontTotalHP->Set_ViewZ(m_fViewZ - 0.1f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontTotalHP, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	/*g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerFontUI", SCENE_MORTAL, L"Layer_PlayerUI");
+	m_pFontTotalHP = static_cast<CPlayerFontUI*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
+	m_pFontTotalHP->Set_UI_Pos(m_fPosX + 126.f, m_fPosY - 3.f);
+	m_pFontTotalHP->Set_UI_Size(25.f, 25.f);
+	m_pFontTotalHP->Set_ViewZ(m_fViewZ - 0.1f);*/
 }
 
 void CPlayerHP::SetUp_State(_double TimeDelta)

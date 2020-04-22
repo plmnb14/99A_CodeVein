@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\SkillUI.h"
 #include "Active_Icon.h"
-#include "FontNumManager.h"
+#include "PlayerFontUI.h"
 
 CSkillUI::CSkillUI(_Device pDevice)
 	: CUI(pDevice)

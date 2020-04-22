@@ -220,7 +220,8 @@ HRESULT CScene_Title::Ready_Player()
 	// Mortal 레이어는 스테틱보단 아래 단계이지만, 스테이지가 지나도 삭제되지 않습니다.
 	g_pManagement->Add_GameOject_ToLayer_NoClone(pPlayer, SCENE_MORTAL, L"Layer_Player", nullptr);
 
-
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerHP", SCENE_MORTAL, L"Layer_PlayerUI")))
+		return E_FAIL;
 	return S_OK;
 }
 

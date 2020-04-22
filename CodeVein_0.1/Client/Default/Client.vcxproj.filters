@@ -250,9 +250,6 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\08. FontNumUI">
       <UniqueIdentifier>{f54790f9-c2fc-4c6a-a639-8f88c1dd47a1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\08. FontNumUI\Manager">
-      <UniqueIdentifier>{0d91f626-46bc-46dc-a493-613d6097be46}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\01.MonsterUI\DamegeNumUI">
       <UniqueIdentifier>{17a28e90-9dc3-42dc-a9ea-6b93496b8371}</UniqueIdentifier>
     </Filter>
@@ -351,6 +348,9 @@
     </Filter>
     <Filter Include="96.ScriptManager">
       <UniqueIdentifier>{9372b392-605d-4457-b3ad-1ab7fac2fc17}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\08. FontNumUI\PlayerFontUI">
+      <UniqueIdentifier>{0d91f626-46bc-46dc-a493-613d6097be46}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -570,9 +570,6 @@
     <ClInclude Include="..\Headers\FontNumUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\08. FontNumUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\FontNumManager.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\08. FontNumUI\Manager</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\DamegeNumUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\01.MonsterUI\DamegeNumUI</Filter>
     </ClInclude>
@@ -722,6 +719,9 @@
     </ClInclude>
     <ClInclude Include="..\Headers\DeerKingColdBeam.h">
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\PlayerFontUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\08. FontNumUI\PlayerFontUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -932,9 +932,6 @@
     <ClCompile Include="..\Codes\FontNumUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\08. FontNumUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\FontNumManager.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\08. FontNumUI\Manager</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\DamegeNumUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\01.MonsterUI\DamegeNumUI</Filter>
     </ClCompile>
@@ -1084,6 +1081,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\DeerKingColdBeam.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\PlayerFontUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\08. FontNumUI\PlayerFontUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

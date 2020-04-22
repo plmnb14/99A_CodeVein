@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\ConditionUI.h"
 #include "Player.h"
-#include "FontNumManager.h"
+#include "PlayerFontUI.h"
 
 CConditionUI::CConditionUI(_Device pDevice)
 	: CUI(pDevice)
@@ -112,6 +112,8 @@ _int CConditionUI::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CConditionUI::Render_GameObject()
 {
+	if (!m_bIsActive)
+		return NOERROR;
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;

@@ -9,7 +9,6 @@
 #include "BloodCode_Icon.h"
 #include "Info_Slot.h"
 #include "Expendables_Inven.h"
-#include "FontNumManager.h"
 #include "QuickSlot.h"
 #include "UI_Manager.h"
 

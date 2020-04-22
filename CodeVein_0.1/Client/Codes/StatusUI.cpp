@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\StatusUI.h"
 #include "ConditionUI.h"
+#include "ExpUI.h"
 
 CStatusUI::CStatusUI(_Device pDevice)
 	: CUI(pDevice)
@@ -43,6 +44,14 @@ _int CStatusUI::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
+	for (auto& iter : m_vecConditionUI)
+	{
+		iter->Set_Active(m_bIsActive);
+	}
+
+	if (m_pExpUI)
+		m_pExpUI->Set_Active(m_bIsActive);
+
 	return NO_EVENT;
 }
 
@@ -62,6 +71,8 @@ _int CStatusUI::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CStatusUI::Render_GameObject()
 {
+	if (!m_bIsActive)
+		return NOERROR;
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
@@ -132,7 +143,7 @@ HRESULT CStatusUI::SetUp_ConstantTable()
 void CStatusUI::SetUp_Default()
 {
 	CConditionUI* pInstance = nullptr;
-	LOOP(2)
+	LOOP(5)
 	{
 		pInstance = static_cast<CConditionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ConditionUI", nullptr));
 		pInstance->Set_UI_Pos(m_fPosX, m_fPosY + 80.f * _float(i) - 130.f);
@@ -142,6 +153,12 @@ void CStatusUI::SetUp_Default()
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 		m_vecConditionUI.push_back(pInstance);
 	}
+
+	m_pExpUI = static_cast<CExpUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExpUI", nullptr));
+	m_pExpUI->Set_UI_Pos(m_fPosX, m_fPosY - 170.f);
+	m_pExpUI->Set_UI_Size(100.f, 100.f);
+	m_pExpUI->Set_ViewZ(m_fViewZ - 0.1f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExpUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
 
 CStatusUI * CStatusUI::Create(_Device pGraphic_Device)

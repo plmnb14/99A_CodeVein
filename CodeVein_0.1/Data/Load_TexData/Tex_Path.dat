@@ -88,7 +88,7 @@ Tex_CursorUI|CursorUI%d.png|..\..\Client\Resources\Texture\TestUI\CursorUI\|0|1
 Tex_DamegeNum|DamegeNum%d.png|..\..\Client\Resources\Texture\TestUI\DamegeNum\|0|11
 Tex_Expendables|Expendables%d.png|..\..\Client\Resources\Texture\TestUI\Expendables\|0|5
 Tex_ExpUI|ExpUI%d.png|..\..\Client\Resources\Texture\TestUI\ExpUI\|0|2
-Tex_FontNumber|FontNumber%d.png|..\..\Client\Resources\Texture\TestUI\FontNumber\|0|12
+Tex_FontNumber|FontNumber%d.png|..\..\Client\Resources\Texture\TestUI\FontNumber\|0|13
 Tex_Get_ItemUI|Get_ItemUI%d.png|..\..\Client\Resources\Texture\TestUI\Get_ItemUI\|0|7
 Tex_Halberd_Icon|Halberd_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Halberd_Icon\|0|3
 Tex_Hammer_Icon|Hammer_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Hammer_Icon\|0|3
