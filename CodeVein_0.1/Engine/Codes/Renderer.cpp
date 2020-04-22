@@ -330,8 +330,8 @@ HRESULT CRenderer::Draw_RenderList()
 	if (FAILED(Render_NonAlpha()))
 		return E_FAIL;
 
-	//if (FAILED(Render_SSAO()))
-	//	return E_FAIL;
+	if (FAILED(Render_SSAO()))
+		return E_FAIL;
 
 	// VelocityMap, NormalMap For Rim-light
 	if (FAILED(Render_MotionBlurTarget()))
