@@ -14,6 +14,7 @@ private:
 
 public:
 	_float Get_Alpha() { return m_fAlpha; }
+	_bool Get_Load() { return m_bIsLoad; }
 
 public:
 	void Set_Alpha(_float fAlpha) { m_fAlpha = fAlpha; };
@@ -41,6 +42,7 @@ private:
 	CLoadingBar*			m_pLoadingBar = nullptr;
 	_float					m_fAlpha = 0.f;
 	_float					m_fFadeSpeed = 0.f;
+	_bool					m_bIsLoad = false;
 
 public:
 	static CLoadingScreen* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
