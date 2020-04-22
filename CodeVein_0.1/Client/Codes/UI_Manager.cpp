@@ -197,31 +197,37 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	m_pMistletoeUI = static_cast<CMistletoeUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MistletoeUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pMistletoeUI, SCENE_STAGE, L"Layer_StageUI", nullptr);
 	
-	// 스테이터스 UI
-	m_pStatusUI = static_cast<CStatusUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_StatusUI", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pStatusUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
-	m_pStatusUI->Set_Active(true);
+	//// 스테이터스 UI
+	//m_pStatusUI = static_cast<CStatusUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_StatusUI", nullptr));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(m_pStatusUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	//m_pStatusUI->Set_Active(true);
 	return NOERROR;
 }
 
 _int CUI_Manager::Update_UI()
 {
-	if (g_pInput_Device->Key_Up(DIK_O))
-	{
-		m_bTest = !m_bTest;
-		m_pMistletoeUI->Set_Active(m_bTest);
-	}
-	if (g_pInput_Device->Key_Up(DIK_P))
-	{
-		m_pMistletoeUI->Active_SubUI(); // 선택된 항목의 UI On/Off
-	}
-	if (g_pInput_Device->Key_Up(DIK_LEFT))
-		m_pStageSelectUI->Move_Left(); // 스테이지UI 왼쪽이동
-	if (g_pInput_Device->Key_Up(DIK_RIGHT))
-		m_pStageSelectUI->Move_Right(); // 스테이지UI 오른쪽 이동
-	
-	if (g_pInput_Device->Key_Up(DIK_RETURN))
-		cout << m_pStageSelectUI->Teleport_Stage() << endl; // 스테이지 선택시, 각각 다른 _uint값 반환
+	//if (g_pInput_Device->Key_Up(DIK_O))
+	//{
+	//	m_bTest = !m_bTest;
+	//	m_pMistletoeUI->Set_Active(m_bTest);
+	//}
+	//if (g_pInput_Device->Key_Up(DIK_P))
+	//{
+	//	m_pMistletoeUI->Active_SubUI(); // 선택된 항목의 UI On/Off
+	//}
+	//if (g_pInput_Device->Key_Up(DIK_LEFT))
+	//	m_pStageSelectUI->Move_Left(); // 스테이지UI 왼쪽이동
+	//if (g_pInput_Device->Key_Up(DIK_RIGHT))
+	//	m_pStageSelectUI->Move_Right(); // 스테이지UI 오른쪽 이동
+
+	//if (g_pInput_Device->Key_Up(DIK_J))
+	//	m_pStageSelectUI->MoveUp_SubStage();
+	//if (g_pInput_Device->Key_Up(DIK_K))
+	//	m_pStageSelectUI->MoveDown_SubStage();
+	//
+
+	//if (g_pInput_Device->Key_Up(DIK_RETURN))
+	//	cout << m_pStageSelectUI->Teleport_Stage() << endl; // 스테이지 선택시, 각각 다른 _uint값 반환
 
 	
 	return 0;

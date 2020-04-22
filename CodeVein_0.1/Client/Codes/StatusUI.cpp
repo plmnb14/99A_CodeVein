@@ -32,6 +32,8 @@ HRESULT CStatusUI::Ready_GameObject(void * pArg)
 	m_fSizeY = 471.f;
 	m_fViewZ = 1.f;
 
+	m_bIsActive = false;
+
 	SetUp_Default();
 
 	return NOERROR;
@@ -155,7 +157,7 @@ void CStatusUI::SetUp_Default()
 	}
 
 	m_pExpUI = static_cast<CExpUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExpUI", nullptr));
-	m_pExpUI->Set_UI_Pos(m_fPosX, m_fPosY - 170.f);
+	m_pExpUI->Set_UI_Pos(m_fPosX, m_fPosY - 200.f);
 	m_pExpUI->Set_UI_Size(100.f, 100.f);
 	m_pExpUI->Set_ViewZ(m_fViewZ - 0.1f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExpUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);

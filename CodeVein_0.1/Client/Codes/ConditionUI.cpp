@@ -38,6 +38,11 @@ HRESULT CConditionUI::Ready_GameObject(void * pArg)
 	m_fSizeX = 338.f;
 	m_fSizeY = 84.f;
 
+	m_pFontValue = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
+	m_pFontValue->Set_UI_Pos(m_fPosX + m_fSizeX * 0.5f, m_fPosY);
+	m_pFontValue->Set_UI_Size(m_fSizeY, m_fSizeY);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontValue, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	m_pFontValue->Set_ViewZ(-20.f);
 	return NOERROR;
 }
 
@@ -226,6 +231,14 @@ void CConditionUI::SetUp_State(_double TimeDelta)
 		m_fCurValue = 0.f;
 	
 	m_fPercentage = m_fCurValue / m_fMaxValue;
+
+	if (m_pFontValue)
+	{
+		m_pFontValue->Set_UI_Pos(m_fPosX + m_fSizeX * 0.5f, m_fPosY);
+		m_pFontValue->Set_Active(m_bIsActive);
+		m_pFontValue->Set_Number(m_fCurValue);
+	}
+		
 }
 
 CConditionUI * CConditionUI::Create(_Device pGraphic_Device)
