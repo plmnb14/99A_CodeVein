@@ -491,17 +491,29 @@ HRESULT CLoading::Ready_Effect(void)
 #pragma region DeerKing
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceStone_Up_Particle_0", true)))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceStone_Up_Small_Particle_0", true)))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_SnowChunk_Up_Particle_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_SnowChunk_Up_Particle_1")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_SnowChunk_Up_Particle_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_SnowChunk_Up_Small_Particle_0")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_Snow_Up_Particle_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Snow_Up_LongLine_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_1")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_Mid_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_Mid_1")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_Small_0")))
 		return E_FAIL;

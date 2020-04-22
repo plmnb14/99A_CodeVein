@@ -267,14 +267,20 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"FireBoy_ArmAttack_FloorDust", 100);
 
 	Input_Pool(L"DeerKing_IceStone_Up_Particle_0", 100);
+	Input_Pool(L"DeerKing_IceStone_Up_Small_Particle_0", 100);
 	Input_Pool(L"DeerKing_SnowChunk_Up_Particle_0", 100);
 	Input_Pool(L"DeerKing_SnowChunk_Up_Particle_1", 100);
+	Input_Pool(L"DeerKing_SnowChunk_Up_Particle_2", 100);
+	Input_Pool(L"DeerKing_SnowChunk_Up_Small_Particle_0", 300);
 	Input_Pool(L"DeerKing_Snow_Up_Particle_0", 500);
-	Input_Pool(L"DeerKing_IceSmoke_0", 100);
-	Input_Pool(L"DeerKing_IceSmoke_1", 100);
-	Input_Pool(L"DeerKing_IceSmoke_2", 100);
-	Input_Pool(L"DeerKing_IceSmoke_Small_0", 100);
-	Input_Pool(L"DeerKing_IceSmoke_Small_1", 100);
+	Input_Pool(L"DeerKing_Snow_Up_LongLine_0", 500);
+	Input_Pool(L"DeerKing_IceSmoke_0", 300);
+	Input_Pool(L"DeerKing_IceSmoke_1", 300);
+	Input_Pool(L"DeerKing_IceSmoke_2", 300);
+	Input_Pool(L"DeerKing_IceSmoke_Mid_0", 300);
+	Input_Pool(L"DeerKing_IceSmoke_Mid_1", 300);
+	Input_Pool(L"DeerKing_IceSmoke_Small_0", 300);
+	Input_Pool(L"DeerKing_IceSmoke_Small_1", 300);
 
 	Input_Pool(L"Boss_KnockDown_Dust", 10);
 	Input_Pool(L"Boss_Dead_Particle", 7000);

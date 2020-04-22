@@ -131,6 +131,7 @@ private:
 	_v3					m_vLeftHand = _v3(0.f, 0.f, 0.f);	//LeftHand
 	_v3					m_vLeftJet = _v3(0.f, 0.f, 0.f);	//Spine3_LeftJet
 	_v3					m_vRightJet = _v3(0.f, 0.f, 0.f);	//Spine3_RightJet
+	_v3					m_vHeadColdBeamPos = _v3(0.f, 0.f, 0.f);	//Head_LeftCorner (사슴뿔, 머리 고드름 생성위치)
 
 private:	// 최초상태 세팅
 	_float				m_fFov = 0.f;
