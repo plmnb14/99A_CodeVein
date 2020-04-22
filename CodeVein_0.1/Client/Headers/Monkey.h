@@ -8,6 +8,7 @@ BEGIN(Client)
 
 class CWeapon;
 class CMonsterUI;
+
 class CMonkey final : public CGameObject
 {
 public:
@@ -125,6 +126,7 @@ private:
 	void Check_CollisionEvent(list<CGameObject*> plistGameObject);
 
 	void Function_RotateBody();
+	void Function_MoveAround();
 	void Function_CoolDown();
 	void Function_Movement(_float _fspeed, _v3 _vDir = { V3_NULL });
 	void Function_DecreMoveMent(_float _fMutiply = 1.f);
@@ -169,6 +171,7 @@ public:
 	virtual void Free();
 
 private:
+	CMonsterUI*			m_pMonsterUI = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
@@ -216,6 +219,7 @@ private:
 	_bool				m_bIsCombo = false;
 	_bool				m_bCanIdle = true;
 	_bool				m_bIsIdle = false;
+	_bool				m_bCanMoveAround = false;
 
 	_float				m_fRecognitionRange = 20.f;
 	_float				m_fShotRange = 10.f;
@@ -230,8 +234,6 @@ private:
 
 	_float				m_fShotDelay = 0.f;
 
-	// 몬스터 HP바 UI
-	CMonsterUI*			m_pMonsterUI = nullptr;
 };
 
 END
