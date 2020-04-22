@@ -334,11 +334,11 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\12. StatusUI">
       <UniqueIdentifier>{1aa2c897-ffcd-488f-b872-49f53dc17a1f}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\12. StatusUI\01. ExpUI">
-      <UniqueIdentifier>{a23b84c9-b8ca-4511-8b62-8f6b66de125f}</UniqueIdentifier>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\12. StatusUI\00. ExpUI">
+      <UniqueIdentifier>{fe157272-20da-4676-a76b-1ca260ddb60b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\12. StatusUI\00. ConditionUI">
-      <UniqueIdentifier>{d9909967-c873-4f4f-95a3-67c36558ec82}</UniqueIdentifier>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\12. StatusUI\01. ConditionUI">
+      <UniqueIdentifier>{9b339e42-94a5-4c14-a3c2-62873b190336}</UniqueIdentifier>
     </Filter>
     <Filter Include="01.Scene\07.Stage_04">
       <UniqueIdentifier>{611068cf-9c1d-4742-a02d-bc7dcc4c9523}</UniqueIdentifier>
@@ -675,14 +675,14 @@
     <ClInclude Include="..\Headers\SubStageUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\10. StageSelectUI\01. SubStageUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\StatusUI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\12. StatusUI</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\ConditionUI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\12. StatusUI\00. ConditionUI</Filter>
+      <Filter>02.GameObject\Stage\5%29 UI\UI\12. StatusUI\01. ConditionUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\ExpUI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\12. StatusUI\01. ExpUI</Filter>
+      <Filter>02.GameObject\Stage\5%29 UI\UI\12. StatusUI\00. ExpUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\StatusUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\12. StatusUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\ColdBeamBig.h">
       <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>
@@ -1031,14 +1031,14 @@
     <ClCompile Include="..\Codes\SubStageUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\10. StageSelectUI\01. SubStageUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\StatusUI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\12. StatusUI</Filter>
+    <ClCompile Include="..\Codes\ExpUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\12. StatusUI\00. ExpUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\ConditionUI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\12. StatusUI\00. ConditionUI</Filter>
+      <Filter>02.GameObject\Stage\5%29 UI\UI\12. StatusUI\01. ConditionUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\ExpUI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\12. StatusUI\01. ExpUI</Filter>
+    <ClCompile Include="..\Codes\StatusUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\12. StatusUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\ColdBeamBig.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\IceGirl\Bullet</Filter>

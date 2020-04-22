@@ -11,6 +11,7 @@
 #include "Expendables_Inven.h"
 #include "FontNumManager.h"
 #include "QuickSlot.h"
+#include "UI_Manager.h"
 
 CTotal_Inven::CTotal_Inven(_Device pDevice)
 	: CUI(pDevice)
@@ -276,8 +277,8 @@ void CTotal_Inven::Click_Icon()
 		m_bIsActive = false;
 	}
 	
-	vector<CExpendables_Slot*> vecQuickSlot = *static_cast<CExpendables_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendablesInven", SCENE_MORTAL))->Get_QuickSlot();
-
+	//vector<CExpendables_Slot*> vecQuickSlot = *static_cast<CExpendables_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendablesInven", SCENE_MORTAL))->Get_QuickSlot();
+	vector<CExpendables_Slot*> vecQuickSlot = * CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Get_QuickSlot();
 	
 	for (_uint i = 0; i < 8; ++i)
 	{

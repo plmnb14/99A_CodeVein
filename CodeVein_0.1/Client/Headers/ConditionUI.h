@@ -49,7 +49,7 @@ private:
 	_float					m_fPercentage = 0.f;
 	_float					m_fMaxValue = 0.f;
 	_float					m_fCurValue = 0.f;
-	CONDITION_TYPE			m_eType = CONDITION_END;
+	CONDITION_TYPE			m_eType;
 	OBJECT_PARAM			m_tObjParam;
 	CFontNumManager*		m_pFontValue = nullptr;
 

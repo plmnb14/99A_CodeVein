@@ -8,6 +8,7 @@
 #include "Armor_Inven.h"
 #include "Total_Inven.h"
 #include "Inventory_Icon.h"
+#include "UI_Manager.h"
 
 CInventory::CInventory(_Device pDevice)
 	: CUI(pDevice)
@@ -138,7 +139,7 @@ HRESULT CInventory::SetUp_ConstantTable()
 void CInventory::SetUp_Default()
 {
 	m_pQuickSlot = static_cast<CQuickSlot*>(g_pManagement->Get_GameObjectBack(L"Layer_QuickSlot", SCENE_MORTAL));
-	m_pExpInven = static_cast<CExpendables_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendablesInven", SCENE_MORTAL));
+	m_pExpInven = CUI_Manager::Get_Instance()->Get_Expendables_Inven();
 	m_pMtrInven = static_cast<CMaterial_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_MaterialInven", SCENE_MORTAL));
 	m_pWeaponInven = static_cast<CWeapon_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponInven", SCENE_MORTAL));
 	m_pArmorInven = static_cast<CArmor_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ArmorInven", SCENE_MORTAL));

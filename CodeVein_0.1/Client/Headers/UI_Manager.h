@@ -6,7 +6,10 @@
 
 
 BEGIN(Client)
-
+class CStatusUI;
+class CMistletoeUI;
+class CStageSelectUI;
+class CExpendables_Inven;
 class CUI_Manager final : public CBase
 {
 	DECLARE_SINGLETON(CUI_Manager)
@@ -44,11 +47,19 @@ public:
 	void Active_Mistletoe_SubUI(); // 겨우살이 하위UI(StageUI 등) 활성화(On / Off)
 	void Move_MistletoeUI_Up();
 	void Move_MistletoeUI_Down();
+	CStatusUI* Get_StatusUI() { return m_pStatusUI; }
+	CMistletoeUI* Get_MistletoeUI() { return m_pMistletoeUI; }
+	CStageSelectUI* Get_StageSelectUI() { return m_pStageSelectUI; }
+	CExpendables_Inven* Get_Expendables_Inven() { return m_pExpendablesInven; }
 
 private:
 	_uint m_uiCoundItem = 0;
 	_bool m_bTest = false;
-	
+	CStatusUI* m_pStatusUI = nullptr;
+	CMistletoeUI* m_pMistletoeUI = nullptr;
+	CStageSelectUI* m_pStageSelectUI = nullptr;
+	CExpendables_Inven* m_pExpendablesInven = nullptr;
+
 public:
 	virtual void Free();
 };

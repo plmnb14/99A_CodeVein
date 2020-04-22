@@ -636,5 +636,21 @@ technique Default_Technique
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_MESHEFFECT();
 	}
+
+	pass Effect_Zwrite // 8
+	{
+		zwriteenable = true;
+
+		AlphablendEnable = true;
+		AlphaTestEnable = true;
+		srcblend = SrcAlpha;
+		DestBlend = InvSrcAlpha;
+		blendop = add;
+
+		cullmode = none;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 PS_MAIN();
+	}
 }
 

@@ -155,9 +155,14 @@ HRESULT CScene_Title::Ready_Prototype_GameObject()
 	CCameraMgr::Get_Instance()->Set_MainCamera(DYNAMIC_CAM, L"Tool_FreeCam");
 	CCameraMgr::Get_Instance()->Set_MainPos(_v3{ 0,3,-5 });
 
+
 	CCameraMgr::Get_Instance()->Set_CamView(BACK_VIEW);
 
-	
+	/*if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LoadingScreen", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LoadingScreen/LoadingScreen0.tga", 1))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LoadingScreen", CLoadingScreen::Create(m_pGraphic_Device))))
+		return E_FAIL;*/
+
 	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LoadingBar", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LoadingBar/LoadingBar%d.png", 10))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LoadingBar", CLoadingBar::Create(m_pGraphic_Device))))

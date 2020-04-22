@@ -6,13 +6,13 @@
 CConditionUI::CConditionUI(_Device pDevice)
 	: CUI(pDevice)
 {
-	ZeroMemory(&m_tObjParam, sizeof(OBJECT_PARAM));
+
 }
 
 CConditionUI::CConditionUI(const CConditionUI & rhs)
 	: CUI(rhs)
 {
-	ZeroMemory(&m_tObjParam, sizeof(OBJECT_PARAM));
+
 }
 
 void CConditionUI::Set_Condition_Info(_float fCurValue, _float fMaxValue)
@@ -38,8 +38,6 @@ HRESULT CConditionUI::Ready_GameObject(void * pArg)
 	m_fSizeX = 338.f;
 	m_fSizeY = 84.f;
 
-	
-	
 	return NOERROR;
 }
 
@@ -127,7 +125,16 @@ HRESULT CConditionUI::Render_GameObject()
 	_uint iIndex = 0;
 	for (_uint i = 0; i < 2; ++i)
 	{
-		(i == 1) ? (iPass = 3) && (iIndex = 5) : (iPass = 1) && (iIndex = m_iIndex);
+		if (1 == i)
+		{
+			iPass = 3;
+			iIndex = 5;
+		}
+		else if (0 == i)
+		{
+			iPass = 1;
+			iIndex = m_iIndex;
+		}
 
 		if (FAILED(SetUp_ConstantTable(iIndex)))
 			return E_FAIL;
@@ -223,7 +230,7 @@ CConditionUI * CConditionUI::Create(_Device pGraphic_Device)
 {
 	CConditionUI* pInstance = new CConditionUI(pGraphic_Device);
 
-	if (FAILED(pInstance->Ready_GameObject(pGraphic_Device)))
+	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 		Safe_Release(pInstance);
 
 	return pInstance;

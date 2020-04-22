@@ -35,23 +35,11 @@ HRESULT CCocoonBigBullet::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
 
-	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Bullet_Body", nullptr));
+	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Totem_Fire_BulletBody", nullptr));
 	m_pBulletBody->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
 	m_pBulletBody->Reset_Init();
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
-
-	//lstrcpy(m_pEffect_Tag0, L"Bullet_Body");
-	lstrcpy(m_pEffect_Tag1, L"Bullet_Body_Aura");
-	lstrcpy(m_pEffect_Tag2, L"Bullet_Tail_Particle");
-
-	lstrcpy(m_pEffect_Tag3, L"Bullet_DeadFlash");
-	lstrcpy(m_pEffect_Tag4, L"Bullet_DeadSmoke_Base");
-	lstrcpy(m_pEffect_Tag5, L"Bullet_DeadSmoke_Black");
-
-	m_pTrailEffect = static_cast<Engine::CTrail_VFX*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SwordTrail", nullptr));
-	m_pTrailEffect->Set_TrailIdx(5); // Red Tail
-
-	return S_OK;
+	
 	return S_OK;
 }
 
@@ -63,7 +51,6 @@ _int CCocoonBigBullet::Update_GameObject(_double TimeDelta)
 		return DEAD_OBJ;
 
 	Enter_Collision();
-	Update_Trails(TimeDelta);
 
 	m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
 
@@ -71,9 +58,9 @@ _int CCocoonBigBullet::Update_GameObject(_double TimeDelta)
 
 	if (m_dCurTime > m_dLifeTime)
 	{
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag3, m_pTransformCom->Get_Pos());
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, m_pTransformCom->Get_Pos());
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag5, m_pTransformCom->Get_Pos());
+		g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_0", m_pTransformCom->Get_Pos());
+		g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_1", m_pTransformCom->Get_Pos());
+		g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_Particle", m_pTransformCom->Get_Pos());
 		m_pBulletBody->Set_Dead();
 
 		m_bDead = true;
@@ -82,12 +69,17 @@ _int CCocoonBigBullet::Update_GameObject(_double TimeDelta)
 	{
 		if (m_bEffect)
 		{
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag1, _v3(), m_pTransformCom);
-
 			m_bEffect = false;
 		}
 
-		CParticleMgr::Get_Instance()->Create_Effect_Offset(m_pEffect_Tag2, 0.1f, m_pTransformCom->Get_Pos());
+		m_fEffectOffset += (_float)TimeDelta;
+		if (m_fEffectOffset > 0.06f)
+		{
+			m_fEffectOffset = 0.f;
+			g_pManagement->Create_Effect(L"Totem_Fire_BulletBody", m_pTransformCom->Get_Pos() + m_vDir * 1.3f);
+			g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_01", m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_02", m_pTransformCom->Get_Pos(), nullptr);
+		}
 	}
 
 	return NO_EVENT;
@@ -134,24 +126,6 @@ void CCocoonBigBullet::Render_Collider()
 {
 	for (auto& iter : m_vecAttackCol)
 		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
-
-	return;
-}
-
-void CCocoonBigBullet::Update_Trails(_double TimeDelta)
-{
-	_mat matWorld = m_pTransformCom->Get_WorldMat();
-	_v3 vBegin, vDir;
-
-	memcpy(vBegin, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
-	memcpy(vDir, &m_pTransformCom->Get_WorldMat()._21, sizeof(_v3));
-
-	if (m_pTrailEffect)
-	{
-		m_pTrailEffect->Set_ParentTransform(&matWorld);
-		m_pTrailEffect->Ready_Info(vBegin + vDir * -0.05f, vBegin + vDir * 0.05f);
-		m_pTrailEffect->Update_GameObject(TimeDelta);
-	}
 
 	return;
 }
@@ -276,7 +250,6 @@ CGameObject * CCocoonBigBullet::Clone_GameObject(void * pArg)
 
 void CCocoonBigBullet::Free()
 {
-	Safe_Release(m_pTrailEffect);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pRendererCom);
