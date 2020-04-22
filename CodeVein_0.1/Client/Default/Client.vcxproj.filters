@@ -211,9 +211,6 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI\PickUp_ItemUI">
       <UniqueIdentifier>{e70d6cb8-960a-4b13-88a5-ffae11c3cd3c}</UniqueIdentifier>
     </Filter>
-    <Filter Include="96. ScriptManager">
-      <UniqueIdentifier>{9372b392-605d-4457-b3ad-1ab7fac2fc17}</UniqueIdentifier>
-    </Filter>
     <Filter Include="99.Default">
       <UniqueIdentifier>{12050d82-529f-451b-a007-685621a315bf}</UniqueIdentifier>
     </Filter>
@@ -351,6 +348,9 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\1%29 Boss\DeerKing\Bullet">
       <UniqueIdentifier>{73d2ac76-9697-48fb-9005-32929a632e5c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="96.ScriptManager">
+      <UniqueIdentifier>{9372b392-605d-4457-b3ad-1ab7fac2fc17}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -511,7 +511,7 @@
       <Filter>02.GameObject\Stage\2%29 Monster\Genji\Sword</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\ScriptManager.h">
-      <Filter>96. ScriptManager</Filter>
+      <Filter>96.ScriptManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\NumberUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\05. NumberUI</Filter>
@@ -876,7 +876,7 @@
       <Filter>02.GameObject\Stage\2%29 Monster\Genji\Sword</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\ScriptManager.cpp">
-      <Filter>96. ScriptManager</Filter>
+      <Filter>96.ScriptManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\NumberUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\05. NumberUI</Filter>
