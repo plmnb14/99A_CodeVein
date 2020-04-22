@@ -13,7 +13,7 @@ class CPlayer_Colleague final : public CGameObject
 public:
 	// 차후 Attack에 스킬을 추가할 시 enum으로 나눠줘야 함
 	enum Colleague_MoveType { Coll_Idle, Coll_Move, Coll_Guard, Coll_Attack, Coll_Hit, Coll_Dead };
-	enum Coll_Movement { Move_Walk, Move_Run, Move_Dodge };
+	enum Coll_Movement { Move_Walk, Move_Run, Move_MonWalk, Move_MonRun, Move_Dodge };
 	enum Coll_IdleMoment { Idle_Waiting, Idle_Guard };
 	enum Coll_Attackmoment { Att_waiting, Att_Normal, Att_Skill };
 	enum Coll_Guardmoment { Guard_Idle, Gurad_Walk, Gurad_Hit };
@@ -37,7 +37,8 @@ private:
 		Ani_Loop_Gruad,
 		Ani_End_Gruad,
 		Ani_Hit_Gruad,
-		Ani_Walk_Gruad,
+		Ani_FrontWalk_Gruad,
+		Ani_BackWalk_Gruad,
 		Ani_Front_Hit,
 		Ani_Back_Hit,
 		Ani_Front_Roll,
@@ -100,6 +101,8 @@ private:
 private:
 	void	CollMove_Walk();
 	void	CollMove_Run();
+	void	CollMove_MonWalk();
+	void	CollMove_MonRun();
 	void	CollMove_Dodge();	// 구르기 or 막기
 
 	void	CollIdle_Waiting();
