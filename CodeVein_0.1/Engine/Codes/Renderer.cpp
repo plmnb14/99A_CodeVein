@@ -382,7 +382,7 @@ HRESULT CRenderer::Draw_RenderList()
 
 #ifdef _DEBUG
 
-	if (CInput_Device::Get_Instance()->Key_Down(DIKEYBOARD_9))
+	if (CInput_Device::Get_Instance()->Key_Down((_ubyte)DIKEYBOARD_9))
 		m_bOnRenderTarget = !m_bOnRenderTarget;
 
 	if (m_bOnRenderTarget)
@@ -1251,6 +1251,7 @@ void CRenderer::Free()
 	Safe_Release(m_pShader_Shadow);
 	Safe_Release(m_pShader_Effect);
 	Safe_Release(m_pShader_Blur);
+	Safe_Release(m_pShader_SSAO);
 	
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pTarget_Manager);

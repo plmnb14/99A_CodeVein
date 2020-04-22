@@ -2,8 +2,7 @@
 #include "..\Headers\Monkey.h"
 #include "..\Headers\Weapon.h"
 #include "..\Headers\MonkeyBullet.h"
-
-#include "MonsterUI.h"
+#include "..\Headers\MonsterUI.h"
 
 CMonkey::CMonkey(LPDIRECT3DDEVICE9 pGraphic_Device)
 	:CGameObject(pGraphic_Device)
@@ -75,11 +74,6 @@ HRESULT CMonkey::Ready_GameObject(void* pArg)
 	m_fCoolDownCur = 0.f;
 	m_fSpeedForCollisionPush = 2.f;
 
-	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
-	m_pMonsterUI->Set_Target(this);
-	m_pMonsterUI->Set_Bonmatrix(m_matBone[Bone_Head]);
-	m_pMonsterUI->Ready_GameObject(NULL);
-
 	return S_OK;
 }
 
@@ -101,8 +95,6 @@ _int CMonkey::Update_GameObject(_double TimeDelta)
 	m_pMeshCom->SetUp_Animation(m_eState);
 
 	Enter_Collision();
-
-	
 
 	return NO_EVENT;
 }
@@ -893,11 +885,6 @@ void CMonkey::Play_FangShot()
 			memcpy(vBirth, &matBone._41, sizeof(_v3));
 			g_pManagement->Add_GameObject_ToLayer(L"Monster_MonkeyBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 15.f, 1.5));
 
-			//m_fShotDelay += DELTA_60;
-			//if (m_fShotDelay >= 0.0005f)
-			//{
-			//	m_fShotDelay = 0.f;
-
 			//	matBone = *m_matBone[Bone_LeftHand] * m_pTransformCom->Get_WorldMat();
 			//	memcpy(vBirth, &matBone._41, sizeof(_v3));
 
@@ -1625,7 +1612,6 @@ void CMonkey::Play_Move()
 		m_eState = MONKEY_ANI::Walk; 
 		if (false == m_tObjParam.bCanAttack)
 		{
-			cout << "경계 움직이기" << endl;
 			Function_MoveAround();
 		}
 		else

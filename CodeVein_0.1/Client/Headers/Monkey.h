@@ -8,6 +8,7 @@ BEGIN(Client)
 
 class CWeapon;
 class CMonsterUI;
+
 class CMonkey final : public CGameObject
 {
 public:
@@ -170,6 +171,7 @@ public:
 	virtual void Free();
 
 private:
+	CMonsterUI*			m_pMonsterUI = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
@@ -232,8 +234,6 @@ private:
 
 	_float				m_fShotDelay = 0.f;
 
-	// 몬스터 HP바 UI
-	CMonsterUI*			m_pMonsterUI = nullptr;
 };
 
 END
