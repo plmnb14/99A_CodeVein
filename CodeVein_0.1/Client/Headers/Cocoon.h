@@ -3,9 +3,9 @@
 #include "GameObject.h"
 #include "Management.h"
 
-#include "MonsterUI.h"
-
 BEGIN(Client)
+
+class CMonsterUI;
 
 class CCocoon final : public CGameObject
 {
@@ -102,6 +102,7 @@ public:
 	virtual void Free();
 
 private:
+	CMonsterUI*			m_pMonsterUI = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
@@ -145,8 +146,6 @@ private:
 
 	_int				m_iRandom = 0; //랜덤 받을 숫자
 
-	// 몬스터 HP바 UI
-	CMonsterUI*			m_pMonsterUI = nullptr;
 };
 
 END

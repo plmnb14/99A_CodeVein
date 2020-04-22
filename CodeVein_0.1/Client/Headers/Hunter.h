@@ -333,6 +333,7 @@ public:
 	virtual void Free();
 
 private:
+	CMonsterUI*			m_pMonsterUI = nullptr;
 	CTransform*			m_pTransformCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
@@ -343,8 +344,6 @@ private:
 
 	CTransform*			m_pTargetTransform = nullptr;
 
-	// 몬스터 HP바 UI
-	CMonsterUI*			m_pMonsterUI = nullptr;
 
 	_v3					m_vBirthPos;
 	_mat*				m_matBone[Bone_End];
