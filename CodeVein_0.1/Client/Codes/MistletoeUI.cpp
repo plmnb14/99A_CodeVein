@@ -32,13 +32,13 @@ HRESULT CMistletoeUI::Ready_GameObject(void * pArg)
 	CMistletoeOptionUI* pInstance = nullptr;
 	LOOP(3)
 	{
-		pInstance = static_cast<CMistletoeOptionUI*>(g_pManagement->Clone_GameObject_Return(L"MistletoeOptionUI", nullptr));
+		pInstance = static_cast<CMistletoeOptionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MistletoeOptionUI", nullptr));
 		pInstance->Set_UI_Index(i + 1);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_StageUI", nullptr);
 		m_vecOption.push_back(pInstance);
 	}
 	
-	g_pManagement->Add_GameObject_ToLayer(L"StageSelectUI", SCENE_STAGE, L"Layer_StageUI");
+	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_StageSelectUI", SCENE_STAGE, L"Layer_StageUI");
 	m_pStageSelectUI = CUI_Manager::Get_Instance()->Get_StageSelectUI();
 	if (nullptr == m_pStageSelectUI)
 		return E_FAIL;

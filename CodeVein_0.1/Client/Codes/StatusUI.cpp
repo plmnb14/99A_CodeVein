@@ -134,7 +134,7 @@ void CStatusUI::SetUp_Default()
 	CConditionUI* pInstance = nullptr;
 	LOOP(2)
 	{
-		pInstance = static_cast<CConditionUI*>(g_pManagement->Clone_GameObject_Return(L"ConditionUI", nullptr));
+		pInstance = static_cast<CConditionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ConditionUI", nullptr));
 		pInstance->Set_UI_Pos(m_fPosX, m_fPosY + 80.f * _float(i) - 130.f);
 		pInstance->Set_UI_Size(280.f, 70.f);
 		pInstance->Set_ViewZ(m_fViewZ - 0.1f);

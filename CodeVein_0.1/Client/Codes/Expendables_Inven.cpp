@@ -55,7 +55,7 @@ HRESULT CExpendables_Inven::Ready_GameObject(void * pArg)
 			pDesc->fSizeX = 50.f;
 			pDesc->fSizeY = 50.f;
 			
-			g_pManagement->Add_GameObject_ToLayer(L"ExpendSlot", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
+			g_pManagement->Add_GameObject_ToLayer(L"GameObject_ExpendSlot", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
 			pExSlot = static_cast<CExpendables_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
 
 			m_vecSlot.push_back(pExSlot);

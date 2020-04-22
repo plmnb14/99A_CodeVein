@@ -138,12 +138,12 @@ HRESULT CInventory::SetUp_ConstantTable()
 
 void CInventory::SetUp_Default()
 {
-	m_pQuickSlot = static_cast<CQuickSlot*>(g_pManagement->Get_GameObjectBack(L"Layer_QuickSlot", SCENE_MORTAL));
+	m_pQuickSlot = CUI_Manager::Get_Instance()->Get_QuickSlot();
 	m_pExpInven = CUI_Manager::Get_Instance()->Get_Expendables_Inven();
-	m_pMtrInven = static_cast<CMaterial_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_MaterialInven", SCENE_MORTAL));
-	m_pWeaponInven = static_cast<CWeapon_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponInven", SCENE_MORTAL));
-	m_pArmorInven = static_cast<CArmor_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ArmorInven", SCENE_MORTAL));
-	m_pTotalInven = static_cast<CTotal_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_TotalInven", SCENE_MORTAL));
+	m_pMtrInven = CUI_Manager::Get_Instance()->Get_Material_Inven();
+	m_pWeaponInven = CUI_Manager::Get_Instance()->Get_Weapon_Inven();
+	m_pArmorInven = CUI_Manager::Get_Instance()->Get_Armor_Inven();
+	m_pTotalInven = CUI_Manager::Get_Instance()->Get_Total_Inven();
 
 	CUI::UI_DESC* pDesc = nullptr;
 	LOOP(5)
@@ -153,8 +153,8 @@ void CInventory::SetUp_Default()
 		pDesc->fPosY = m_fPosY - 203.f;
 		pDesc->fSizeX = 35.f;
 		pDesc->fSizeY = 45.f;
-		g_pManagement->Add_GameObject_ToLayer(L"GameObject_InvenIcon", SCENE_MORTAL, L"Layer_InvenIcon", pDesc);
-		CInventory_Icon* pIcon = static_cast<CInventory_Icon*>(g_pManagement->Get_GameObjectBack(L"Layer_InvenIcon", SCENE_MORTAL));
+		g_pManagement->Add_GameObject_ToLayer(L"GameObject_InvenIcon", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
+		CInventory_Icon* pIcon = static_cast<CInventory_Icon*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
 		pIcon->Set_Type(CInventory_Icon::ICON_TYPE(i));
 		m_vecIcon.push_back(pIcon);
 	}

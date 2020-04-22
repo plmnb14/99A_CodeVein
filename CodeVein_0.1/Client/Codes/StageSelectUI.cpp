@@ -34,12 +34,6 @@ HRESULT CStageSelectUI::Ready_GameObject(void * pArg)
 	}
 
 	m_bIsActive = false;
-
-	/*m_vecStageUI[0]->Set_Teleport_Menu(CStageUI::Teleport_Home_1);
-	m_vecStageUI[1]->Set_Teleport_Menu(CStageUI::Teleport_St01_1);
-	m_vecStageUI[2]->Set_Teleport_Menu(CStageUI::Teleport_St02_1);
-	m_vecStageUI[3]->Set_Teleport_Menu(CStageUI::Teleport_St03_1);
-	m_vecStageUI[4]->Set_Teleport_Menu(CStageUI::Teleport_St04_1);*/
 	
 	return NOERROR;
 }

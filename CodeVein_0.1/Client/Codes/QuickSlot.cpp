@@ -65,7 +65,6 @@ _int CQuickSlot::Update_GameObject(_double TimeDelta)
 	}
 	
 	// 소비템 창에서 실시간으로 퀵슬롯 등록 정보를 얻어와서 벡터에 저장	
-	//m_vecQuickSlot = *static_cast<CExpendables_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendablesInven", SCENE_MORTAL))->Get_QuickSlot();
 	m_vecQuickSlot = *CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Get_QuickSlot();
 	
 	// ADD: 퀵슬롯 ->  방향으로 
@@ -236,8 +235,6 @@ CExpendables::EXPEND_TYPE CQuickSlot::Use_Item()
 	
 	iType = m_vecQuickSlot[m_iSelect]->Get_Type();
 	
-	//CExpendables_Inven* pExInven = static_cast<CExpendables_Inven*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendablesInven", SCENE_MORTAL));
-	//pExInven->Use_Expendableas(m_vecQuickSlot[m_iSelect]);
 	CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Use_Expendableas(m_vecQuickSlot[m_iSelect]);
 
 	return CExpendables::EXPEND_TYPE(iType);
