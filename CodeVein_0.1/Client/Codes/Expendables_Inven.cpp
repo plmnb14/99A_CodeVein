@@ -54,15 +54,18 @@ HRESULT CExpendables_Inven::Ready_GameObject(void * pArg)
 			pDesc->fPosY = m_fPosY - 130.f + 52.f * i;
 			pDesc->fSizeX = 50.f;
 			pDesc->fSizeY = 50.f;
-			g_pManagement->Add_GameObject_ToLayer(L"GameObject_ExpendSlot", SCENE_MORTAL, L"Layer_ExpendSlot", pDesc);
-			pExSlot = static_cast<CExpendables_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_ExpendSlot", SCENE_MORTAL));
+			
+			g_pManagement->Add_GameObject_ToLayer(L"GameObject_ExpendSlot", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
+			pExSlot = static_cast<CExpendables_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
 
 			m_vecSlot.push_back(pExSlot);
 			m_vecUI_DESC.push_back(pDesc);
 		}
 	}
 
-	Add_MultiExpendables(CExpendables::EXPEND_1, 100);
+	Add_MultiExpendables(CExpendables::EXPEND_1, 9);
+	Add_MultiExpendables(CExpendables::EXPEND_2, 5);
+	Add_MultiExpendables(CExpendables::EXPEND_3, 3);
 	
 	return NOERROR;
 }

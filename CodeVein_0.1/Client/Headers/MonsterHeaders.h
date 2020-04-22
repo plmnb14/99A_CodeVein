@@ -30,6 +30,9 @@
 #include "DeerKing.h"
 #include "DeerKingBullet.h"
 #include "DeerKingColdBeam.h"
+#include "DeerKingJumpFistCol.h"
+#include "DeerKingJumpInPlaceCol.h"
+#include "DeerKingRushCol.h"
 
 #include "Cocoon.h"
 #include "CocoonBullet.h"

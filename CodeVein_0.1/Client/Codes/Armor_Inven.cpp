@@ -45,6 +45,8 @@ HRESULT CArmor_Inven::Ready_GameObject(void * pArg)
 	SetUp_Default();
 
 	Add_Armor(CArmor::ARMOR_1);
+	Add_Armor(CArmor::ARMOR_2);
+
 	return NOERROR;
 }
 
@@ -236,8 +238,8 @@ void CArmor_Inven::Add_Armor(CArmor::ARMOR_TYPE eType)
 
 	pDesc->fSizeX = 50.f;
 	pDesc->fSizeY = 50.f;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ArmorSlot", SCENE_STAGE, L"Layer_ArmorSlot", pDesc);
-	pSlot = static_cast<CArmor_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_ArmorSlot", SCENE_STAGE));
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ArmorSlot", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
+	pSlot = static_cast<CArmor_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
 	pSlot->Set_Type(eType);
 	m_vecArmorSlot.push_back(pSlot);
 

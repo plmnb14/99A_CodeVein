@@ -28,13 +28,17 @@ HRESULT CDeerKingColdBeam::Ready_GameObject(void * pArg)
 	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
 
 	m_vDir = temp.vDir;
-	m_dLifeTime = temp.dLifeTime;
+	m_dLifeTime = 1;
 
 	m_pTransformCom->Set_Pos(temp.vCreatePos);
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
+
+
+	m_vDir += _v3(0.f, 0.5f, 0.f);
+	
 
 	return NOERROR;
 }
@@ -55,6 +59,8 @@ _int CDeerKingColdBeam::Update_GameObject(_double TimeDelta)
 	}
 	else
 	{
+		if (m_dCurTime < 0.5f)
+			m_pTransformCom->Add_Pos(_float(5.f * TimeDelta), m_vDir);
 
 	}
 

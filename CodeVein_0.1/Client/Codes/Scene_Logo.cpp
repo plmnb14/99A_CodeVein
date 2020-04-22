@@ -43,14 +43,12 @@ _int CScene_Logo::Update_Scene(_double TimeDelta)
 		{
 			m_pLoadingScreen->Set_Active(true);
 		}
-		if (m_pLoadingScreen->Get_Alpha() >= 1.f)
+		if (m_pLoadingScreen->Get_Load())
 			m_bIsChangeStage = true;
 	}
 		
 	if (true == m_pLoading->Get_Finish() && /*g_pInput_Device->Key_Down(DIK_SPACE)*/m_bIsChangeStage)
 	{
-		
-
 		if (g_bReleaseMode)
 		{
 			// 베이스 스테이지 고정
@@ -130,6 +128,7 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 		return E_FAIL;
 	m_pLoadingScreen = static_cast<CLoadingScreen*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingScreen", SCENE_STATIC));
 	m_pLoadingScreen->Set_FadeSpeed(0.3f);
+
 	return S_OK;
 }
 

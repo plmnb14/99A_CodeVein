@@ -329,7 +329,7 @@
       <UniqueIdentifier>{33d8fede-e628-4693-af1c-659eeaa55cb8}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\12. StatusUI">
-      <UniqueIdentifier>{83afb5d7-2e71-4c71-84db-6290b7e3e564}</UniqueIdentifier>
+      <UniqueIdentifier>{1aa2c897-ffcd-488f-b872-49f53dc17a1f}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\12. StatusUI\00. ExpUI">
       <UniqueIdentifier>{fe157272-20da-4676-a76b-1ca260ddb60b}</UniqueIdentifier>
@@ -723,6 +723,15 @@
     <ClInclude Include="..\Headers\DeerKingColdBeam.h">
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\DeerKingJumpFistCol.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\DeerKingJumpInPlaceCol.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\DeerKingRushCol.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1083,6 +1092,15 @@
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\DeerKingColdBeam.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DeerKingJumpFistCol.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DeerKingJumpInPlaceCol.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DeerKingRushCol.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
     </ClCompile>
   </ItemGroup>
