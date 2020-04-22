@@ -10,22 +10,10 @@ public:
 	enum Teleport_Menu
 	{
 		Teleport_Home,
-		//Teleport_Home_1, // 거점2 - 활동 거점, 수련의 영역 
-		//Teleport_Home_2,
 		Teleport_St01,
-		//Teleport_St01_1, // St01 붕괴도시 시가지3 - 시가지 입구, 공원 부지, 독나비의 둥지
-		//Teleport_St01_2,
-		//Teleport_St01_3,
 		Teleport_St02,
-		//Teleport_St02_1, // St02 - 3
-		//Teleport_St02_2,
-		//Teleport_St02_3,
 		Teleport_St03,
-		//Teleport_St03_1, // St03 - 2
-		//Teleport_St03_2,
 		Teleport_St04,
-		//Teleport_St04_1, // St04 - 2
-		//Teleport_St04_2,
 		Teleport_End
 	};
 private:
@@ -35,6 +23,11 @@ private:
 
 public:
 	_uint Get_Teleport_Menu() { return _uint(m_eTeleportMenu); }
+	_uint Get_SubStage() { return m_iSubStage; }
+	_uint Get_MaxSubStage() { return m_iMaxSubStage; }
+
+public:
+	void Set_SubStage(_uint iSubStage);
 
 public:
 	void Set_Teleport_Menu(_uint eMenu) { m_eTeleportMenu = Teleport_Menu(eMenu); }
@@ -59,8 +52,10 @@ private:
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 	_float					m_fAlpha = 0.f;
-	Teleport_Menu			m_eTeleportMenu = Teleport_Home;
+	Teleport_Menu			m_eTeleportMenu = Teleport_End;
 	_bool					m_bIsSelect = false;
+	_uint					m_iSubStage = 0;
+	_uint					m_iMaxSubStage = 0;
 
 public:
 	static CStageUI*		Create(_Device pGraphic_Device);

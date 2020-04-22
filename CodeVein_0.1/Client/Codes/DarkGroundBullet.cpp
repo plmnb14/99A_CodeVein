@@ -65,7 +65,7 @@ _int CDarkGroundBullet::Update_GameObject(_double TimeDelta)
 	else
 	{
 		m_fEffectOffset += _float(TimeDelta);
-		if (m_fEffectOffset > 0.02f)
+		if (m_fEffectOffset > 0.05f)
 		{
 			m_fEffectOffset = 0.f;
 			

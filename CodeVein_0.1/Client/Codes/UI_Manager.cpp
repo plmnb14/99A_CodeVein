@@ -36,6 +36,9 @@
 #include "StageSelectUI.h"
 #include "MistletoeUI.h"
 #include "MistletoeOptionUI.h"
+#include "ConditionUI.h"
+#include "StatusUI.h"
+#include "ExpUI.h"
 
 #include "MassageUI.h"
 #include "Get_ItemUI.h"
@@ -121,6 +124,12 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MistletoeOptionUI", CMistletoeOptionUI::Create(pDevice))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ExpUI", CExpUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ConditionUI", CConditionUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_StatusUI", CStatusUI::Create(pDevice))))
+		return E_FAIL;
 	
 	//////////////// Chae
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BossMassageUI", CMassageUI::Create(pDevice))))
@@ -148,14 +157,14 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_SkillUI", SCENE_MORTAL, L"Layer_SkillUI");
 	
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_MistletoeUI", SCENE_STAGE, L"Layer_MistletoeUI");
-	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_StageSelectUI", SCENE_STAGE, L"Layer_StageSelectUI");
+	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_StatusUI", SCENE_MORTAL, L"Layer_TestUI");
 
 	return NOERROR;
 }
 
 _int CUI_Manager::Update_UI()
 {
-	/*if (g_pInput_Device->Key_Up(DIK_O))
+	if (g_pInput_Device->Key_Up(DIK_O))
 	{
 		m_bTest = !m_bTest;
 		Active_MistletoeUI(m_bTest); // 겨우살이 UI On/Off
@@ -168,12 +177,12 @@ _int CUI_Manager::Update_UI()
 		Move_StageUI_Left(); // 스테이지UI 왼쪽이동
 	if (g_pInput_Device->Key_Up(DIK_RIGHT))
 		Move_StageUI_Right(); // 스테이지UI 오른쪽 이동
-	if (g_pInput_Device->Key_Up(DIK_J))
-		Move_MistletoeUI_Up(); // 겨우살이UI 위쪽 이동
-	if (g_pInput_Device->Key_Up(DIK_K))
-		Move_MistletoeUI_Down(); // 겨우살이UI 아래쪽 이동
+	//if (g_pInput_Device->Key_Up(DIK_J))
+	//	Move_MistletoeUI_Up(); // 겨우살이UI 위쪽 이동
+	//if (g_pInput_Device->Key_Up(DIK_K))
+	//	Move_MistletoeUI_Down(); // 겨우살이UI 아래쪽 이동
 	if (g_pInput_Device->Key_Up(DIK_RETURN))
-		cout << Select_Stage() << endl;*/ // 스테이지 선택시, 각각 다른 _uint값 반환
+		cout << Select_Stage() << endl; // 스테이지 선택시, 각각 다른 _uint값 반환
 	return 0;
 }
 

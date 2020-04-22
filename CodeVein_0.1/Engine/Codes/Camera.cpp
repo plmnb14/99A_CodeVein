@@ -629,8 +629,8 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 				vLerpTargetPos = vEyePos;
 			}
 
-			m_pTransform->Set_Pos(vLerpTargetPos);
-			m_pTransform->Set_At(vLerpTargetAt);
+			m_pTransform->Set_Pos(vLerpTargetPos + (vRight * m_fOSCAxis_Gap[AXIS_X]) + (WORLD_UP * m_fOSCAxis_Gap[AXIS_Y]));
+			m_pTransform->Set_At(vLerpTargetAt + (vRight * m_fOSCAxis_Gap[AXIS_X]) + (WORLD_UP * m_fOSCAxis_Gap[AXIS_Y]));
 		}
 		break;
 

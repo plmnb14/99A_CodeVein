@@ -3733,6 +3733,7 @@ void CPlayer::Play_Skills()
 					m_bEventTrigger[10] = true;
 
 					_v3 vEffPos_Dis = _v3(0.f, 1.5f, 0.f) - m_pTransform->Get_Axis(AXIS_Z) * 1.f;
+					m_tObjParam.bCanHit = true;
 
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle", 0.f, vEffPos_Dis, m_pTransform);
 				}
@@ -3759,6 +3760,7 @@ void CPlayer::Play_Skills()
 					m_bEventTrigger[1] = true;
 
 					_v3 vEffPos_Dis = _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f;
+					m_tObjParam.bCanHit = false;
 
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle", 0.f, vEffPos_Dis, m_pTransform);
 				}

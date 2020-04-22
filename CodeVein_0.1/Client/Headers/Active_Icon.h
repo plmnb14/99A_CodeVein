@@ -45,7 +45,7 @@ private:
 
 private:
 	Skill_Index		m_Skill_Index = Skill_End;
-	ACTIVE_STATE	m_eState = ACTIVE_USE;
+	ACTIVE_STATE	m_eState = ACTIVE_COOL;
 	_float			m_fPercentage = 0.f;
 	_float			m_fMaxTime = 10.f;
 	_float			m_fCurTime = 0.f;
