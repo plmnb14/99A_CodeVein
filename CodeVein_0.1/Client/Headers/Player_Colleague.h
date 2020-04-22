@@ -17,7 +17,7 @@ public:
 	enum Coll_IdleMoment { Idle_Waiting, Idle_Guard };
 	enum Coll_Attackmoment { Att_waiting, Att_Normal, Att_Skill };
 	enum Coll_Guardmoment { Guard_Idle, Gurad_Walk, Gurad_Hit };
-	
+
 	//enum Move_Direction { Move_Front, Move_Back, Move_Left, Move_Right, Move_End };
 
 private:
