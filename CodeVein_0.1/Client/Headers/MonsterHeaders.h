@@ -28,6 +28,8 @@
 #include "FireTornadoCol.h"
 
 #include "DeerKing.h"
+#include "DeerKingBullet.h"
+#include "DeerKingColdBeam.h"
 
 #include "Cocoon.h"
 #include "CocoonBullet.h"
