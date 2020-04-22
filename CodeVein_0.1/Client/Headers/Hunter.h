@@ -6,12 +6,14 @@
 
 BEGIN(Client)
 
+class CHunterBullet;
 class CWeapon;
 class CMonsterUI;
 
 class CHunter final : public CGameObject
 {
 public:
+	enum FBLR { FRONT, FRONTLEFT, FRONTRIGHT, BACK, BACKLEFT, BACKRIGHT, LEFT, RIGHT };
 	enum MONSTER_ANITYPE { IDLE, MOVE, ATTACK, HIT, CC, DEAD };
 
 	enum WEAPON_ANITYPE	 {GUN, HALBERD, HAMMER, LSWORD, SWORD, WEAPON_ANITYPE_END};
@@ -20,8 +22,8 @@ public:
 	enum HUNTER_MOVETYPE { MOVE_RUN, MOVE_WALK, MOVE_DODGE }; //다양한 이동, 회피
 	enum HUNTER_ATKTYPE  { ATK_NORMAL, ATK_COMBO }; //일반공격, 콤보공격
 	enum HUNTER_HITTYPE  { HIT_STRONG, HIT_NORMAL, HIT_WEAK }; //피격 방향, 데미지에 따른 피격 모션
-	enum HUNTER_CCTYPE { CC_DOWN, CC_STUN, CC_BLOW }; //다운,스턴,날아감
-	enum HUNTER_DEADTYPE { DEAD_DEAD, DEAD_DEAD_S }; //일반, 특정 상황에서 죽었을 경우
+	enum HUNTER_CCTYPE	 { CC_STUN, CC_DOWN };
+	enum HUNTER_DEADTYPE { DEAD_DEAD, DEAD_DEAD_S, DEAD_DEAD_P}; //일반, 특정 상황에서 죽었을 경우
 
 	enum ATK_NORMAL_TYPE
 	{
@@ -49,7 +51,6 @@ public:
 		NORMAL_LSWORD_RIGHT,
 		NORMAL_LSWORD_RDIAGONAL,
 		NORMAL_LSWORD_SMASH,
-		//NORMAL_LSWORD_SWING, //폐기
 
 		NORMAL_SWORD_JUMP,
 		NORMAL_SWORD_RAISEUP,
@@ -111,28 +112,35 @@ public:
 		Groggy_Start,
 		Groggy_Loop,
 		Groggy_End,
-		DmgRepel, //사용 안하는 걸로
-		DmgBlow_B, //Down에서 일어나는 모션을 안 넣어서 미룸
-		DmgBlow_F, //Down에서 일어나는 모션을 안 넣어서 미룸
-		Dmg02_FR,
-		Dmg02_FL,
+		DmgRepel, //폐기
+
+		Down_S_End,
+		Down_S_Loop,
+		Down_S_Start, //뒤 넘어짐
+
+		Down_P_End,
+		Down_P_Loop,
+		Down_P_Start, //앞 넘어짐
+
+		Dmg02_FR, //좀 느리게 돌아옴
+		Dmg02_FL, //씨게 맞음
 		Dmg02_BR,
 		Dmg02_BL,
-		Dmg01_FR,
-		Dmg01_FL,
+		Dmg01_FR, //빠르게 돌아옴
+		Dmg01_FL, //가볍게 맞음
 		Dmg01_BR,
 		Dmg01_BL,
 
 		Death_F,
 		Death_B,
 		Death,
-
+		///////////////////////////////////
 		KetsugiGroundRange,
 		KetsugiEnchant,
-		KetsugiBuffSelf,
+		KetsugiBuffSelf,	//미사용
 		KetsugiAllRangeShoot,
 		KetsugiAimShoot,
-
+		///////////////////////////////////
 		SSword_Atk_Sp03_Start,
 		SSword_Atk_Sp03_Loop,
 		SSword_Atk_Sp03_End,
@@ -191,9 +199,39 @@ public:
 
 	};
 
-	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_Head, Bone_RightForeArm, Bone_LeftKnee, Bone_LeftToe, Bone_End };
+	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_Head, Bone_RightForeArm, Bone_LeftKnee, Bone_LeftToe, Bone_RightHandAttach, Bone_End };
 
-	enum FBLR { FRONT, FRONTLEFT, FRONTRIGHT, BACK, BACKLEFT, BACKRIGHT, LEFT, RIGHT };
+public:
+	struct INITSTRUCT
+	{
+		INITSTRUCT(
+			_float _fDMG,
+			_float _fHpMax,
+			_float _fArmorMax,
+			_float _fKnowRange,
+			_float _fShotRange,
+			_float _fAtkRange,
+			_int _iDodgeMax,
+			WEAPON_ANITYPE _eWeapon)
+		{
+			tMonterStatus.fDamage = _fDMG;
+			tMonterStatus.fHp_Max = _fHpMax;
+			tMonterStatus.fArmor_Max = _fArmorMax;
+
+			fKonwingRange = _fKnowRange;
+			fCanShotRangeIfGunChooose = _fShotRange;
+			fCanAttackRange = _fAtkRange;
+			iDodgeCountMax = _iDodgeMax;
+			eUseWhatWeapon = _eWeapon;
+		}
+
+		OBJECT_PARAM		tMonterStatus;
+		_float				fKonwingRange = 20.f;
+		_float				fCanShotRangeIfGunChooose = 10.f;
+		_float				fCanAttackRange = 5.f;
+		_int				iDodgeCountMax = 3;
+		WEAPON_ANITYPE		eUseWhatWeapon = WEAPON_ANITYPE::SWORD;
+	};
 
 protected:
 	explicit CHunter(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -222,6 +260,7 @@ private:
 	void Function_ResetAfterAtk();
 	void Function_TargetAround();
 
+	void Check_PosY();
 	void Check_Hit();
 	void Check_FBLR();
 	void Check_Dist();
@@ -283,6 +322,7 @@ private:
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
+	HRESULT Ready_Status(void* pArg); //추후 공격력 방어력 등등의 세부 수치도 받을 예정
 	HRESULT Ready_Weapon();
 	HRESULT Ready_Collider();
 	HRESULT Ready_BoneMatrix();
@@ -303,6 +343,9 @@ private:
 
 	CTransform*			m_pTargetTransform = nullptr;
 
+	// 몬스터 HP바 UI
+	CMonsterUI*			m_pMonsterUI = nullptr;
+
 	_v3					m_vBirthPos;
 	_mat*				m_matBone[Bone_End];
 	_double				m_dTimeDelta = 0;
@@ -314,15 +357,15 @@ private:
 	_float				m_fSkillMoveAccel_Max = 0.f;
 	_float				m_fSkillMoveMultiply = 1.f;
 
-	MONSTER_ANITYPE		m_eFirstCategory; //대분류
-	HUNTER_IDLETYPE		m_eSecondCategory_IDLE; //중분류
+	MONSTER_ANITYPE		m_eFirstCategory;
+	HUNTER_IDLETYPE		m_eSecondCategory_IDLE;
 	HUNTER_MOVETYPE		m_eSecondCategory_MOVE;
 	HUNTER_ATKTYPE		m_eSecondCategory_ATK;
 	HUNTER_HITTYPE		m_eSecondCategory_HIT;
 	HUNTER_CCTYPE		m_eSecondCategory_CC;
 	HUNTER_DEADTYPE		m_eSecondCategory_DEAD;
 
-	WEAPON_ANITYPE		m_eWeaponState = WEAPON_ANITYPE::GUN;
+	WEAPON_ANITYPE		m_eWeaponState = WEAPON_ANITYPE::SWORD;
 	ATK_COMBO_TYPE		m_eAtkCombo;
 	HUNTER_ANI			m_eState;
 	FBLR				m_eFBLR;
@@ -330,7 +373,6 @@ private:
 	_bool				m_bEventTrigger[20] = {};
 
 	_bool				m_bCanPlayDead = false;
-	_bool				m_bCanDissolve = false;
 
 	_bool				m_bInRecognitionRange = false;
 	_bool				m_bInAtkRange = false;
@@ -340,13 +382,14 @@ private:
 	_bool				m_bCanCoolDown = false;
 	_bool				m_bIsCoolDown = false;
 
-	_bool				m_bCanAtkCategoryRandom = true;
+	_bool				m_bAtkCategory = true;
+	_bool				m_bCanInterrupt = true;
+	_bool				m_bCanCombo = true;
 	_bool				m_bIsCombo = false;
-	_bool				m_bCanComboInterrupt = true; 	//항상True 콤보 진행후 특정 애니구간마다 true를 줘서 
-	_bool				m_bCanIdleRandom = true;
 
-	//총타입의 경우 shot레인지 이내에서는 원거리 공격위주
-	//fatkrange 범위에 들어온 경우 kick,r,cqc 중 하나를 랜덤하게 진행한다
+	_bool				m_bCanIdle = true;
+	_bool				m_bIsIdle = false;
+
 	_float				m_fRecognitionRange = 20.f;
 	_float				m_fShotRange = 10.f;
 	_float				m_fAtkRange = 5.f;
@@ -357,7 +400,6 @@ private:
 	_int				m_iRandom = 0;
 	_int				m_iDodgeCountMax = 3; //3회 피격시 회피
 	_int				m_iDodgeCount = 0; //n회 피격시 회피
-
 };
 
 END

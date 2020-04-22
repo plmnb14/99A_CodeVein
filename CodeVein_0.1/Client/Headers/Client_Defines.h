@@ -28,9 +28,10 @@ extern Engine::CTexture*			g_pDissolveTexture;
 
 //enum SCENEID { SCENE_STATIC, SCENE_LOGO, SCENE_STAGE, SCENE_END };
 
-extern bool		g_bOnStage[7];
+extern bool		g_bOnStage[8];
 extern bool		g_bReleaseMode;
 extern short	g_sStageIdx_Cur;
+extern short	g_sPlayerLevel;
 
 namespace Client {}
 

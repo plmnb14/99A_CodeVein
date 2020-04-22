@@ -39,6 +39,7 @@ private:
 	CShader*					m_pShader_Shadow = nullptr;
 	CShader*					m_pShader_Effect = nullptr;
 	CShader*					m_pShader_Blur = nullptr;
+	CShader*					m_pShader_SSAO = nullptr;
 
 	CBuffer_ViewPort*			m_pViewPortBuffer = nullptr;
 	CTexture*					m_pSSAOTexture = nullptr;
@@ -62,6 +63,8 @@ private:
 	HRESULT Render_Effect();
 	HRESULT Render_Instance();
 	HRESULT Render_UI();
+	HRESULT Render_SSAO();
+
 private:
 	HRESULT Render_LightAcc();
 	HRESULT Render_Blend();

@@ -7,20 +7,29 @@
 BEGIN(Client)
 
 class CWeapon;
-
+class CMonsterUI;
 class CMonkey final : public CGameObject
 {
 public:
+	enum FBLR { FRONT, FRONTLEFT, FRONTRIGHT, BACK, BACKLEFT, BACKRIGHT, LEFT, RIGHT };
 	enum MONSTER_ANITYPE { IDLE, MOVE, ATTACK, HIT, CC, DEAD };
 	
 	enum MONKEY_IDLETYPE { IDLE_IDLE, IDLE_SIT };
 	enum MONKEY_MOVETYPE { MOVE_RUN, MOVE_WALK, MOVE_DODGE };
 	enum MONKEY_ATKTYPE { ATK_NORMAL, ATK_COMBO };
-	enum MONKEY_HITTYPE { HIT_HIT_F, HIT_HIT_B };
+	enum MONKEY_HITTYPE { HIT_STRONG, HIT_NORMAL }; //s->cc n->hit
 	enum MONKEY_CCTYPE { CC_DOWN_P, CC_DOWN_S };
 	enum MONKEY_DEADTYPE { DEAD_DEAD, DEAD_DEAD_F, DEAD_DEAD_B};
 
-	enum ATK_NORMAL_TYPE { NORMAL_ATK_ROTBODY, NORMAL_RDIGONAL, NORMAL_JUMPDOWN, NORMAL_JUMPLHAND, NORMAL_JUMP_ROTBODY, NORMAL_FANGSHOOT };
+	enum ATK_NORMAL_TYPE 
+	{
+		NORMAL_ATK_ROTBODY,
+		NORMAL_RDIGONAL,
+		NORMAL_JUMPDOWN,
+		NORMAL_JUMPLHAND,
+		NORMAL_JUMP_ROTBODY,
+		NORMAL_FANGSHOOT 
+	};
 	enum ATK_COMBO_TYPE { COMBO_NORMAL, COMBO_JUMP_CLOCK, COMBO_RUNATK};
 
 	enum MONKEY_ANI 
@@ -28,6 +37,7 @@ public:
 		Idle,
 		NF_Sit,
 		NF_Sit_End,
+
 		Run,
 		Walk,
 		NF_Walk,
@@ -53,8 +63,7 @@ public:
 
 		Atk_Sp_Start,
 		Atk_Sp_Loop,
-		Atk_Sp_End,
-		
+		Atk_Sp_End,		
 		Atk_N02,
 		Atk_N01,
 		Atk_Jump03,
@@ -64,9 +73,36 @@ public:
 
 	};
 
-	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_Head, Bone_LeftHand,Bone_End };
+	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_Head, Bone_LeftHand, Bone_End };
 
-	enum FBLR { FRONT, BACK, LEFT, RIGHT };
+public:
+	struct INITSTRUCT
+	{
+		INITSTRUCT(
+			_float _fDMG,
+			_float _fHpMax,
+			_float _fArmorMax,
+			_float _fKnowRange,
+			_float _fShotRange,
+			_float _fAtkRange,
+			_int _iDodgeMax)
+		{
+			tMonterStatus.fDamage = _fDMG;
+			tMonterStatus.fHp_Max = _fHpMax;
+			tMonterStatus.fArmor_Max = _fArmorMax;
+
+			fKonwingRange = _fKnowRange;
+			fCanShotRangeIfGunChooose = _fShotRange;
+			fCanAttackRange = _fAtkRange;
+			iDodgeCountMax = _iDodgeMax;
+		}
+
+		OBJECT_PARAM		tMonterStatus;
+		_float				fKonwingRange = 20.f;
+		_float				fCanShotRangeIfGunChooose = 10.f;
+		_float				fCanAttackRange = 5.f;
+		_int				iDodgeCountMax = 3;
+	};
 
 protected:
 	explicit CMonkey(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -94,10 +130,11 @@ private:
 	void Function_DecreMoveMent(_float _fMutiply = 1.f);
 	void Function_ResetAfterAtk();
 
+	void Checkk_PosY();
 	void Check_Hit();
 	void Check_FBLR();
 	void Check_Dist();
-	void Set_AniEvent();
+	void Check_AniEvent();
 
 	void Play_RandomAtkNormal();
 	void Play_RandomAtkCombo();
@@ -112,15 +149,16 @@ private:
 	void Play_Combo_Jump_Clock(); //jump1 n2 0.85 0.95
 	void Play_Combo_RunAtk();  //0.8 0.9 0.92
 
-	void Play_Idle(); //일상 동작 전부 이곳에
-	void Play_Move(); //걷기,달리기 회피 한곳에
-	void Play_Hit();  //피격 한곳에
-	void Play_CC(); //cc 한곳에
-	void Play_Dead(); //죽음 한곳에
+	void Play_Idle(); 
+	void Play_Move(); 
+	void Play_Hit();  
+	void Play_CC(); 
+	void Play_Dead(); 
 
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
+	HRESULT Ready_Status(void* pArg);
 	HRESULT Ready_Weapon();
 	HRESULT Ready_Collider();
 	HRESULT Ready_BoneMatrix();
@@ -152,8 +190,8 @@ private:
 	_float				m_fSkillMoveAccel_Max = 0.f;
 	_float				m_fSkillMoveMultiply = 1.f;
 
-	MONSTER_ANITYPE		m_eFirstCategory; //대분류
-	MONKEY_IDLETYPE		m_eSecondCategory_IDLE; //중분류
+	MONSTER_ANITYPE		m_eFirstCategory;
+	MONKEY_IDLETYPE		m_eSecondCategory_IDLE;
 	MONKEY_MOVETYPE		m_eSecondCategory_MOVE;
 	MONKEY_ATKTYPE		m_eSecondCategory_ATK;
 	MONKEY_HITTYPE		m_eSecondCategory_HIT;
@@ -161,28 +199,23 @@ private:
 	MONKEY_DEADTYPE		m_eSecondCategory_DEAD;
 
 	ATK_COMBO_TYPE		m_eAtkCombo;
-	FBLR				m_eFBLR;
 	MONKEY_ANI			m_eState;
+	FBLR				m_eFBLR;
 
 	_bool				m_bEventTrigger[20] = {};
-	/////////Test
-	_bool				m_bCanDead = false;
-	_bool				m_bCanDissolve = false;
-	//////////////
-	_bool				m_bCanPlayDeadAni = false;
-	_bool				m_bIsPlayDeadAni = false;
 
+	_bool				m_bCanPlayDead = false;
 	_bool				m_bInRecognitionRange = false;
 	_bool				m_bInAtkRange = false;
-
 	_bool				m_bCanChase = false;
-
 	_bool				m_bCanCoolDown = false;
 	_bool				m_bIsCoolDown = false;
-
-	_bool				m_bCanAtkCategoryRandom = true;
-	_bool				m_bIsAtkCombo = false;
-	_bool				m_bCanIdleRandom = true;
+	_bool				m_bAtkCategory = true;
+	_bool				m_bCanInterrupt = true;
+	_bool				m_bCanCombo = true;
+	_bool				m_bIsCombo = false;
+	_bool				m_bCanIdle = true;
+	_bool				m_bIsIdle = false;
 
 	_float				m_fRecognitionRange = 20.f;
 	_float				m_fShotRange = 10.f;
@@ -195,6 +228,10 @@ private:
 	_int				m_iDodgeCountMax = 3; //3회 피격시 회피
 	_int				m_iDodgeCount = 0; //n회 피격시 회피
 
+	_float				m_fShotDelay = 0.f;
+
+	// 몬스터 HP바 UI
+	CMonsterUI*			m_pMonsterUI = nullptr;
 };
 
 END

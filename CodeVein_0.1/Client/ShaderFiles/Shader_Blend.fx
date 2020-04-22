@@ -18,6 +18,9 @@ sampler ShadeSampler = sampler_state
 	minfilter = linear;
 	magfilter = linear;
 	mipfilter = linear;
+
+	addressU = clamp;
+	addressV = clamp;
 };
 
 texture		g_SpecularTexture;
@@ -27,6 +30,9 @@ sampler SpecularSampler = sampler_state
 	minfilter = linear;
 	magfilter = linear;
 	mipfilter = linear;
+
+	addressU = clamp;
+	addressV = clamp;
 };
 
 texture		g_EmissiveTexture;
@@ -37,6 +43,9 @@ sampler EmissiveSampler = sampler_state
 	minfilter = linear;
 	magfilter = linear;
 	mipfilter = linear;
+
+	addressU = clamp;
+	addressV = clamp;
 };
 
 texture		g_BloomTexture;
@@ -119,6 +128,11 @@ PS_OUT PS_MAIN(PS_IN In)
 	vector	vRim		= tex2D(RimSampler, In.vTexUV);
 	//vector	vSSAO	= tex2D(SSAOSampler, In.vTexUV);
 
+	//Out.vColor = vDiffuse;
+
+	// SSAO 수정중
+	//float3 vFinalShade = max(vShade.rgb, vSSAO.r * 0.5f);
+	//Out.vColor = ((vDiffuse + vSpecular) * float4(vFinalShade, 1.f)) + (vEmissive * 5.f) + vRim;
 	Out.vColor = ((vDiffuse + vSpecular) * vShade) + (vEmissive * 5.f) + vRim;
 	//Out.vColor = (vDiffuse + vSpecular - vSSAO.x) * vShade;
 
@@ -227,6 +241,9 @@ PS_OUT PS_BLUR(PS_IN In)
 
 	vector	vDiffuse = tex2D(DiffuseSampler, In.vTexUV);
 	//vector	vSSAO = pow(tex2D(SSAOSampler, In.vTexUV), 2.2);
+
+	Out.vColor = vDiffuse;
+	return Out;
 
 	float4 color = 0;
 	float2 samp = In.vTexUV;
@@ -372,7 +389,7 @@ PS_OUT PS_Bloom(PS_IN In) // Extract Bright Color
 
 	float fBloomPower = vBloomPower.x;
 	if (fBloomPower == 0.f)
-		fBloomPower = 0.5f;
+		fBloomPower = 0.75f;
 	//fBloomPower = 1.5f; // 너무 밝아서 임시
 
 	Out.vColor = vDiffuse;
@@ -508,6 +525,9 @@ technique Default_Technique
 
 		VertexShader = NULL;
 		PixelShader = compile ps_3_0 PS_AFTER();
+
+		minfilter[0] = point;
+		magfilter[0] = point;
 	}
 
 	pass Default // 5

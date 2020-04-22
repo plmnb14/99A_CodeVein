@@ -78,7 +78,7 @@ private:	// 패턴들
 	// 4. 한번 베기 
 	CBT_Composite_Node* Flash_Cut();	// 충돌완
 	// 5. 점멸 후 중앙으로 내려치기
-	CBT_Composite_Node* Flash_Middle_Ground();	// 이펙트 넣어야함
+	CBT_Composite_Node* Flash_Middle_Ground();	// 충돌완
 
 
 	///////////// 응용
@@ -155,6 +155,7 @@ private:
 
 	// 블랙보드에서 뼈의 Pos 저장소
 	_v3					m_vWing = _v3(0.f, 0.f, 0.f);
+	_v3					m_vLeftHand = _v3(0.f, 0.f, 0.f);
 
 private:	// 최초상태 세팅
 	_float				m_fFov = 0.f;

@@ -50,8 +50,6 @@ void CSetingView::OnInitialUpdate()
 
 	m_pToolMenu.DeleteAllItems();
 	m_pToolMenu.InsertItem(0, L"몬스터 툴");
-	m_pToolMenu.InsertItem(1, L"강화 툴");
-	m_pToolMenu.InsertItem(1, L"조합 툴");
 
 	CRect rc;
 	m_pToolMenu.GetWindowRect(rc);

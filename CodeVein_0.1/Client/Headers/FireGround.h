@@ -37,6 +37,7 @@ private:
 	_double				m_dCurBoomTime = 0;
 
 	_bool				m_bFinishCol = false;
+	_bool				m_bFireTickDmg = false;
 
 	_bool				m_bEffectReadyFireOn = false;
 	_bool				m_bEffectFloorOn = false;
@@ -45,6 +46,7 @@ private:
 private:
 	_bool				m_bPlayerFriendly = false;		// 플레이어 껀지
 
+	_double				m_dTimeDelta = 0;
 
 private:
 	HRESULT Update_Collider();

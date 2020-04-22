@@ -4,7 +4,7 @@
 
 BEGIN(Client)
 
-class CDamegeNumUI;
+//class CDamegeNumUI;
 class CMonsterUI;
 class CWeapon;
 class CGunGenji final : public CMonster
@@ -31,7 +31,7 @@ public:
 
 private:
 	enum Ani {
-		Ani_Idle = 42, Ani_Death = 64, Ani_Dmg01_FL = 122,
+		Ani_Idle = 42, Ani_Death = 64, Ani_Dmg01_FL = 124, Ani_Dmg01_FR = 123, Ani_Dmg01_BL = 122, Ani_Dmg01_BR = 121,
 		Ani_StandUp1 = 140, Ani_StandUp2 = 153
 	};
 
@@ -116,7 +116,7 @@ private:
 	// 몬스터 HP바 UI
 	CMonsterUI*			m_pMonsterUI = nullptr;
 	// 몬스터 데미지 UI
-	CDamegeNumUI*		m_pMonDamegeUI = nullptr;
+	//CDamegeNumUI*		m_pMonDamegeUI = nullptr;
 	////////////
 
 	//렌더에서 타임델타 쓰기위해서 저장해놓음

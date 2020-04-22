@@ -28,6 +28,7 @@ private:
 	CAIController*		m_pTarget_AIController = nullptr;
 
 	_float				m_fSpeed = 0.f;
+	_float				m_fEffectOffset = 0.f;
 
 	_double				m_dCurTime = 0;
 	_double				m_dLifeTime = 0;
