@@ -247,6 +247,9 @@
     <Filter Include="01.Utility\[06] RenderTarget\Manager">
       <UniqueIdentifier>{d53c8ac0-8149-4b96-bcde-90ebd334d33a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\[03] Component\Component\10%29 Frustum_Culling">
+      <UniqueIdentifier>{9a0d960f-0221-409a-9c72-8da2443b62c5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Headers\Base.h">
@@ -540,6 +543,9 @@
     <ClInclude Include="..\Headers\BT_CreateBuff.h">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Service\Derive</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Frustum_Culling.h">
+      <Filter>01.Utility\[03] Component\Component\10%29 Frustum_Culling</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Base.cpp">
@@ -808,6 +814,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\BT_CreateBuff.cpp">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Service\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Frustum_Culling.cpp">
+      <Filter>01.Utility\[03] Component\Component\10%29 Frustum_Culling</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

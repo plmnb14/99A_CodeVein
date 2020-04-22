@@ -251,6 +251,7 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\Engine_Struct.h" />
     <ClInclude Include="..\Headers\Engine_Typedef.h" />
     <ClInclude Include="..\Headers\FrameMgr.h" />
+    <ClInclude Include="..\Headers\Frustum_Culling.h" />
     <ClInclude Include="..\Headers\GameObject.h" />
     <ClInclude Include="..\Headers\Gizmo.h" />
     <ClInclude Include="..\Headers\Graphic_Device.h" />
@@ -342,6 +343,7 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\Dynamic_Camera.cpp" />
     <ClCompile Include="..\Codes\Effect.cpp" />
     <ClCompile Include="..\Codes\FrameMgr.cpp" />
+    <ClCompile Include="..\Codes\Frustum_Culling.cpp" />
     <ClCompile Include="..\Codes\GameObject.cpp" />
     <ClCompile Include="..\Codes\Gizmo.cpp" />
     <ClCompile Include="..\Codes\Graphic_Device.cpp" />

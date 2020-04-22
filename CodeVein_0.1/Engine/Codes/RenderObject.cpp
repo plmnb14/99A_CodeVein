@@ -31,27 +31,19 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 	CGameObject::LateInit_GameObject();
 	CGameObject::Update_GameObject(_TimeDelta);
 
-	//if (true == m_bOnTool)
-	//{
-		//Update_Collider();
-	//}
-
-	if (false == m_bOnTool)
+	if (true == m_bOnTool)
 	{
-		m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
-		//m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this);
-		//m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this);
+		Update_Collider();
+	}
 
-		//if (CObject_Manager::Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))
-		//{
-		//	if (50.f > D3DXVec3Length(&(m_pTransform->Get_Pos() - TARGET_TO_TRANS(CObject_Manager::Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos())))
-		//	{
-		//		m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
-		//	}
-		//
-		//	//m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
-		//	//m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this);
-		//}
+	else if (false == m_bOnTool)
+	{
+		if (m_pFrustum->Check_InFrustumObj(&m_pTransform->Get_Pos(), 10.f))
+		{
+			m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
+			//m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this);
+			//m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this);
+		}
 	}
 
 	return S_OK;
@@ -173,6 +165,10 @@ HRESULT CRenderObject::Add_Essentional()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
 
+	// for.Com_Mesh
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Frustum", L"Com_Frustum", (CComponent**)& m_pFrustum)))
+		return E_FAIL;
+
 	lstrcpy(m_szName, L"Mesh_DefaultBox");
 
 	return S_OK;
@@ -263,6 +259,7 @@ void CRenderObject::Free()
 	Safe_Release(m_pMesh_Static);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pRenderer);
+	Safe_Release(m_pFrustum);
 
 	CGameObject::Free();
 }

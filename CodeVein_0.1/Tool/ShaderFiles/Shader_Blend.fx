@@ -130,7 +130,7 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	// SSAO ¼öÁ¤Áß
 	//float3 vFinalShade = 1.f;
-	float3 vFinalShade = vShade.r - vSSAO.r;
+	float3 vFinalShade = vShade.r * vSSAO.r;
 	//float3 vFinalShade = max(vShade.rgb - vSSAO.rgb);
 	//float3 vFinalShade = min(vShade.rgb , vSSAO.rgb);
 	//Out.vColor = ((vDiffuse + vSpecular) * float4(vFinalShade, 1.f)) + (vEmissive * 5.f) + vRim;

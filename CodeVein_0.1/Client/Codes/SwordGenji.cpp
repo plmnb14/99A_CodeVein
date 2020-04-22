@@ -249,40 +249,43 @@ HRESULT CSwordGenji::Render_GameObject()
 	
 	m_pMeshCom->Play_Animation(_float(m_dTimeDelta)); // * alpha
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
-
-	m_pShaderCom->Begin_Shader();
-
-	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
-
-	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+	if (m_pFrustum->Check_InFrustumObj(&m_pTransformCom->Get_Pos(), 5.f))
 	{
-		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+		if (FAILED(SetUp_ConstantTable()))
+			return E_FAIL;
 
-		m_pMeshCom->Update_SkinnedMesh(i);
+		m_pShaderCom->Begin_Shader();
 
-		for (_uint j = 0; j < iNumSubSet; ++j)
+		_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+
+		for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 		{
-			if (false == m_bReadyDead)
-				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+			_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
 
-			m_pShaderCom->Begin_Pass(m_iPass);
+			m_pMeshCom->Update_SkinnedMesh(i);
 
-			m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
+			for (_uint j = 0; j < iNumSubSet; ++j)
+			{
+				if (false == m_bReadyDead)
+					m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
 
-			//if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
-			//	return E_FAIL;
+				m_pShaderCom->Begin_Pass(m_iPass);
 
-			m_pShaderCom->Commit_Changes();
+				m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
 
-			m_pMeshCom->Render_Mesh(i, j);
+				//if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
+				//	return E_FAIL;
 
-			m_pShaderCom->End_Pass();
+				m_pShaderCom->Commit_Changes();
+
+				m_pMeshCom->Render_Mesh(i, j);
+
+				m_pShaderCom->End_Pass();
+			}
 		}
-	}
 
-	m_pShaderCom->End_Shader();
+		m_pShaderCom->End_Shader();
+	}
 
 	m_pSword->Update_GameObject(m_dTimeDelta);
 	Update_Collider();
@@ -1214,6 +1217,10 @@ HRESULT CSwordGenji::Add_Component(void* pArg)
 
 	// for.Com_Collider
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+		return E_FAIL;
+
+	// for.Com_Frustum
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Frustum", L"Com_Frustum", (CComponent**)&m_pFrustum)))
 		return E_FAIL;
 
 	m_pCollider->Set_Radius(_v3{ 0.5f, 0.5f, 0.5f });

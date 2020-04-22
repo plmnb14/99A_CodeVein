@@ -17,6 +17,7 @@
 #include "RigidBody.h"
 #include "NavMesh.h"
 #include "AIController.h"
+#include "Frustum_Culling.h"
 
 BEGIN(Engine)
 
