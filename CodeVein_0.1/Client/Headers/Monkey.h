@@ -125,6 +125,7 @@ private:
 	void Check_CollisionEvent(list<CGameObject*> plistGameObject);
 
 	void Function_RotateBody();
+	void Function_MoveAround();
 	void Function_CoolDown();
 	void Function_Movement(_float _fspeed, _v3 _vDir = { V3_NULL });
 	void Function_DecreMoveMent(_float _fMutiply = 1.f);
@@ -216,6 +217,7 @@ private:
 	_bool				m_bIsCombo = false;
 	_bool				m_bCanIdle = true;
 	_bool				m_bIsIdle = false;
+	_bool				m_bCanMoveAround = false;
 
 	_float				m_fRecognitionRange = 20.f;
 	_float				m_fShotRange = 10.f;

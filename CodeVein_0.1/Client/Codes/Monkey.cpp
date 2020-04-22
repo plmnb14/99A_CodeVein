@@ -90,7 +90,6 @@ _int CMonkey::Update_GameObject(_double TimeDelta)
 
 	CGameObject::Update_GameObject(TimeDelta);
 
-	// MonsterHP UI
 	m_pMonsterUI->Update_GameObject(TimeDelta);
 
 	Checkk_PosY();
@@ -251,20 +250,20 @@ void CMonkey::Update_Collider()
 void CMonkey::Render_Collider()
 {
 	for (auto& iter : m_vecAttackCol)
-	{
 		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
-	}
 
 	for (auto& iter : m_vecPhysicCol)
-	{
 		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
-	}
+
+	return;
 }
 
 void CMonkey::Enter_Collision()
 {
 	Check_CollisionPush();
 	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
+
+	return;
 }
 
 void CMonkey::Check_CollisionPush()
@@ -295,6 +294,8 @@ void CMonkey::Check_CollisionPush()
 			}
 		}
 	}
+
+	return;
 }
 
 void CMonkey::Check_CollisionEvent(list<CGameObject*> plistGameObject)
@@ -353,6 +354,8 @@ void CMonkey::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 			}
 		}
 	}
+
+	return;
 }
 
 void CMonkey::Function_RotateBody()
@@ -422,6 +425,17 @@ void CMonkey::Function_RotateBody()
 	}
 
 	m_pTransformCom->Set_Angle(AXIS_Y, fYAngle);
+
+	return;
+}
+
+void CMonkey::Function_MoveAround()
+{
+	Function_RotateBody();
+
+	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &m_pTransformCom->Get_Axis(AXIS_X), 2.f * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
+
+	return;
 }
 
 void CMonkey::Function_CoolDown()
@@ -652,7 +666,7 @@ void CMonkey::Check_Dist()
 							//막기,회피
 							m_eFirstCategory = MONSTER_ANITYPE::IDLE;
 							m_eSecondCategory_IDLE = MONKEY_IDLETYPE::IDLE_IDLE;
-							Function_RotateBody();
+							Function_MoveAround();
 						}
 						else
 						{
@@ -663,9 +677,8 @@ void CMonkey::Check_Dist()
 					}
 					else
 					{
-						m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-						m_eSecondCategory_IDLE = MONKEY_IDLETYPE::IDLE_IDLE;
-						Function_RotateBody();
+						m_eFirstCategory = MONSTER_ANITYPE::MOVE;
+						m_eSecondCategory_MOVE = MONKEY_MOVETYPE::MOVE_WALK;
 					}
 				}
 				else
@@ -1609,13 +1622,20 @@ void CMonkey::Play_Move()
 		Function_DecreMoveMent(0.1f);
 		break;
 	case MONKEY_MOVETYPE::MOVE_WALK:
-		m_eState = MONKEY_ANI::Walk;
+		m_eState = MONKEY_ANI::Walk; 
+		if (false == m_tObjParam.bCanAttack)
+		{
+			cout << "경계 움직이기" << endl;
+			Function_MoveAround();
+		}
+		else
+		{
+			Function_RotateBody();
 
-		Function_RotateBody();
+			Function_Movement(2.f, m_pTransformCom->Get_Axis(AXIS_Z));
 
-		Function_Movement(2.f, m_pTransformCom->Get_Axis(AXIS_Z));
-
-		Function_DecreMoveMent(0.1f);
+			Function_DecreMoveMent(0.1f);
+		}
 		break;
 	case MONKEY_MOVETYPE::MOVE_DODGE:
 		if (true == m_tObjParam.bCanDodge)
@@ -2037,6 +2057,7 @@ void CMonkey::Free()
 
 	Safe_Release(m_pTarget);
 	Safe_Release(m_pTargetTransform);
+
 	Safe_Release(m_pWeapon);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pNavMesh);
