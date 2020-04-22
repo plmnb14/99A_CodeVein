@@ -88,3 +88,12 @@ enum WEAPON_STATE
 	WEAPON_None, WEAPON_Ssword, WEAPON_LSword, WEAPON_Hammer, WEAPON_Halverd, WEAPON_Gun, WEAPON_Shield,
 	WEAPON_End
 };
+
+enum Teleport_ID
+{
+	TeleportID_Home_1, TeleportID_Home_2,
+	TeleportID_St01_1, TeleportID_St01_2, TeleportID_St01_3,
+	TeleportID_St02_1, TeleportID_St02_2, TeleportID_St02_3,
+	TeleportID_St03_1, TeleportID_St03_2,
+	TeleportID_St04_1, TeleportID_St04_2,
+};

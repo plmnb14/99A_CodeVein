@@ -25,6 +25,7 @@ public:
 	_uint Select_Stage();
 	void Move_Right();
 	void Move_Left();
+	_uint Teleport_Stage();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -32,6 +33,7 @@ private:
 	_uint					m_iSelectIndex = 0;
 
 	_bool					m_bIsMove = false;
+	_uint					m_iSubStageIndex = 0;
 
 public:
 	static CStageSelectUI*	Create(_Device pGraphic_Device);

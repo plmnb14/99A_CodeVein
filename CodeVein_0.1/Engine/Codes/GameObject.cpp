@@ -205,7 +205,7 @@ void CGameObject::Free()
 
 	for (auto& Col : m_vecAttackCol)
 		Safe_Release(Col);
-	m_vecPhysicCol.clear();
+	m_vecAttackCol.clear();
 
 	Safe_Release(m_pGraphic_Dev);
 }

@@ -234,6 +234,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_PopSmoke_1")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_LaserBody")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_1")))
@@ -509,6 +511,17 @@ HRESULT CLoading::Ready_Effect(void)
 
 	if (FAILED(Add_EffectPrototype(L"Cocoon_TongueFire")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Totem_Fire_Bullet_Dead_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Totem_Fire_Bullet_Dead_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Totem_Fire_BulletBody")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Totem_Fire_Bullet_Dead_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Totem_Fire_Ready")))
+		return E_FAIL;
+
 	if (FAILED(Add_EffectPrototype(L"Monkey_Knife", true)))
 		return E_FAIL;
 
@@ -891,6 +904,7 @@ _uint CLoading::Loading_Title()
 	cout << "Weapon 메쉬 불러오는 중" << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Weapon_Path.dat");
 	// 일반 무기
+
 	cout << "DrainWeapon 메쉬 불러오는 중" << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_DrainWeapon_Path.dat");
 	// 흡혈 무기

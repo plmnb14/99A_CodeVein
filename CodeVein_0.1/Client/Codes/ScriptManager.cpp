@@ -13,6 +13,7 @@
 #include "YachaMan.h"
 #include "Hunter.h"
 #include "Monkey.h"
+#include "Cocoon.h"
 // =================================
 #include "QueensKnight.h"
 #include "PoisonButterfly.h"
@@ -419,6 +420,7 @@ void CScriptManager::St03_Sub1()
 			m_vecObjectPool[7]->Set_Enable(true);
 			m_vecObjectPool[8]->Set_Enable(true);
 			m_vecObjectPool[9]->Set_Enable(true);
+			m_vecObjectPool[10]->Set_Enable(true);
 		}
 
 		break;
@@ -436,11 +438,11 @@ void CScriptManager::St03_Sub2()
 		{
 			m_bEventTrigger[Script_Stage03][3] = true;
 
-			m_vecObjectPool[10]->Set_Enable(true);
 			m_vecObjectPool[11]->Set_Enable(true);
 			m_vecObjectPool[12]->Set_Enable(true);
 			m_vecObjectPool[13]->Set_Enable(true);
 			m_vecObjectPool[14]->Set_Enable(true);
+			m_vecObjectPool[15]->Set_Enable(true);
 		}
 
 		break;
@@ -907,7 +909,7 @@ void CScriptManager::Ready_Stage01_DynamicObject()
 
 	//=======================================================================
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_PoisonButterfly", &CPoisonButterfly::INFO(45.f, 5.f, 2.f));
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_PoisonButterfly", &CPoisonButterfly::INFO(45.f, 15.f, 2.f));
 	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(6);
 	TARGET_TO_NAV(pInstance)->Set_Index(2);
 	m_vecObjectPool.push_back(pInstance);
@@ -939,19 +941,20 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 {
 	m_vecObjectPool.reserve(20);
 
-	_v3 vPos[15] =
+	_v3 vPos[20] =
 	{
 		// 서브셋 0 - 3마리 ( 기사 1 , 원숭 2 )
-		_v3(47.569f, -5.47f, -36.860f),
-		_v3(35.370f, -3.55f, -55.322f),
-		_v3(31.870f, -3.55f, -53.653f),
+		_v3(52.772f, -5.470f, -40.840f),
+		_v3(35.249f, -3.550f, -57.076f),
+		_v3(38.574f, -3.550f, -55.972f),
 		// =========================================
 		// 서브셋 0- 3마리 ( 기사 3 )
 		_v3(30.912f, -3.55f, -91.540f),
 		_v3(36.853f, -3.55f, -86.966f),
 		_v3(25.788f, -3.55f, -90.002f),
 		// =========================================
-		// 서브셋 1 - 4마리 ( 원숭 4 )
+		// 서브셋 1 - 5마리 ( 불토템 1, 원숭 4 )
+		_v3(35.019f, 0.15f, -131.05f),
 		_v3(35.58f, 0.15f, -129.26f),
 		_v3(17.215f, 0.15f, -127.65f),
 		_v3(-9.383f, 0.15f, -127.54f),
@@ -975,19 +978,19 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 	{
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CHunter::INITSTRUCT(25.f, 200.f, 10.f, 15.f, 10.f, 5.f, 5, CHunter::WEAPON_ANITYPE::SWORD));
 		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-		TARGET_TO_NAV(pInstance)->Set_Index(39);
+		TARGET_TO_NAV(pInstance)->Set_Index(33);
 		m_vecObjectPool.push_back(pInstance);
 		Safe_AddRef(pInstance);
 
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Monkey", nullptr);
 		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-		TARGET_TO_NAV(pInstance)->Set_Index(71);
+		TARGET_TO_NAV(pInstance)->Set_Index(59);
 		m_vecObjectPool.push_back(pInstance);
 		Safe_AddRef(pInstance);
 
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Monkey", nullptr);
 		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-		TARGET_TO_NAV(pInstance)->Set_Index(60);
+		TARGET_TO_NAV(pInstance)->Set_Index(65);
 		m_vecObjectPool.push_back(pInstance);
 		Safe_AddRef(pInstance);
 	}
@@ -1016,9 +1019,15 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 	}
 
 	//=======================================================================
-	// 서브셋 1 - 4마리 ( 원숭 4 )
+	// 서브셋 1 - 4마리 ( 불토템 1 ,원숭 4 )
 
 	{
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon", nullptr);
+		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
+		TARGET_TO_NAV(pInstance)->Set_Index(10);
+		m_vecObjectPool.push_back(pInstance);
+		Safe_AddRef(pInstance);
+
 		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Monkey", nullptr);
 		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
 		TARGET_TO_NAV(pInstance)->Set_Index(9);
@@ -1070,15 +1079,17 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 	//=======================================================================
 	// 서브셋 4 - 2마리 ( 얼음보스 1 , 불보스 1 )
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_IceGirl", &CIceGirl::INFO(10.f, 5.f, 2.f));
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_IceGirl", &CIceGirl::INFO(70.f, 20.f, 2.f));
 	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(4);
 	TARGET_TO_NAV(pInstance)->Set_Index(22);
+	TARGET_TO_TRANS(pInstance)->Set_Angle(AXIS_Y, D3DXToRadian(180.f));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_FireBoy", &CIceGirl::INFO(10.f, 5.f, 2.f));
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_FireBoy", &CIceGirl::INFO(70.f, 20.f, 2.f));
 	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(4);
 	TARGET_TO_NAV(pInstance)->Set_Index(25);
+	TARGET_TO_TRANS(pInstance)->Set_Angle(AXIS_Y, D3DXToRadian(180.f));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
@@ -1153,7 +1164,7 @@ void CScriptManager::Ready_Stage04_DynamicObject()
 	//=======================================================================
 	// 보스 1마리
 	{
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_QueensKnight", &CQueensKnight::INFO(10.f, 5.f, 2.f));
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_QueensKnight", &CQueensKnight::INFO(45.f, 20.f, 2.f));
 		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
 		TARGET_TO_NAV(pInstance)->Set_Index(10);
 		m_vecObjectPool.push_back(pInstance);
