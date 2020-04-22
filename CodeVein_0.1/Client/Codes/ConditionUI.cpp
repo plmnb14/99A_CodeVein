@@ -6,13 +6,13 @@
 CConditionUI::CConditionUI(_Device pDevice)
 	: CUI(pDevice)
 {
-	
+
 }
 
 CConditionUI::CConditionUI(const CConditionUI & rhs)
 	: CUI(rhs)
 {
-	
+
 }
 
 void CConditionUI::Set_Condition_Info(_float fCurValue, _float fMaxValue)

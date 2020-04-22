@@ -1,8 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\Cocoon.h"
 #include "..\Headers\CocoonBullet.h"
-
-#include "MonsterUI.h"
+#include "..\Headers\MonsterUI.h"
 
 CCocoon::CCocoon(LPDIRECT3DDEVICE9 pGraphic_Device)
 	:CGameObject(pGraphic_Device)
