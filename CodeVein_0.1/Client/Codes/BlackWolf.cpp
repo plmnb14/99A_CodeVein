@@ -332,50 +332,6 @@ void CBlackWolf::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 	return;
 }
 
-void CBlackWolf::Function_FBLR()
-{
-	_float angle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos()));
-
-	if (MONSTER_ANITYPE::HIT == m_eFirstCategory)
-	{
-		m_eSecondCategory_HIT = WOLF_HITTYPE::HIT_NORMAL;
-
-		if (0.f <= angle && 90.f > angle)
-			m_eFBLR = FBLR::FRONT;
-		else if (-90.f <= angle && 0.f > angle)
-			m_eFBLR = FBLR::FRONT;
-		else if (90.f <= angle && 180.f > angle)
-			m_eFBLR = FBLR::BACK;
-		else if (-180.f <= angle && -90.f > angle)
-			m_eFBLR = FBLR::BACK;
-	}
-	else if (MONSTER_ANITYPE::CC == m_eFirstCategory)
-	{
-		if (0.f <= angle && 90.f > angle)
-		{
-			m_eSecondCategory_CC = WOLF_CCTYPE::CC_DOWN_P;
-			m_eFBLR = FBLR::FRONT;
-		}
-		else if (-90.f <= angle && 0.f > angle)
-		{
-			m_eSecondCategory_CC = WOLF_CCTYPE::CC_DOWN_P;
-			m_eFBLR = FBLR::FRONT;
-		}
-		else if (90.f <= angle && 180.f > angle)
-		{
-			m_eSecondCategory_CC = WOLF_CCTYPE::CC_DOWN_S;
-			m_eFBLR = FBLR::BACK;
-		}
-		else if (-180.f <= angle && -90.f > angle)
-		{
-			m_eSecondCategory_CC = WOLF_CCTYPE::CC_DOWN_S;
-			m_eFBLR = FBLR::BACK;
-		}
-	}
-
-	return;
-}
-
 void CBlackWolf::Function_RotateBody()
 {
 	_float fTargetAngle = m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos());
@@ -544,14 +500,14 @@ void CBlackWolf::Check_Hit()
 					if (true == m_tObjParam.bHitAgain)
 					{
 						m_eFirstCategory = MONSTER_ANITYPE::HIT;
-						Function_FBLR();
+						Check_FBLR();
 						m_tObjParam.bHitAgain = false;
 						m_pMeshCom->Reset_OldIndx();
 					}
 					else
 					{
 						m_eFirstCategory = MONSTER_ANITYPE::HIT;
-						Function_FBLR();
+						Check_FBLR();
 					}
 				}
 			}
@@ -559,6 +515,50 @@ void CBlackWolf::Check_Hit()
 	}
 	else
 		m_eFirstCategory = MONSTER_ANITYPE::DEAD;
+
+	return;
+}
+
+void CBlackWolf::Check_FBLR()
+{
+	_float angle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos()));
+
+	if (MONSTER_ANITYPE::HIT == m_eFirstCategory)
+	{
+		m_eSecondCategory_HIT = WOLF_HITTYPE::HIT_NORMAL;
+
+		if (0.f <= angle && 90.f > angle)
+			m_eFBLR = FBLR::FRONT;
+		else if (-90.f <= angle && 0.f > angle)
+			m_eFBLR = FBLR::FRONT;
+		else if (90.f <= angle && 180.f > angle)
+			m_eFBLR = FBLR::BACK;
+		else if (-180.f <= angle && -90.f > angle)
+			m_eFBLR = FBLR::BACK;
+	}
+	else if (MONSTER_ANITYPE::CC == m_eFirstCategory)
+	{
+		if (0.f <= angle && 90.f > angle)
+		{
+			m_eSecondCategory_CC = WOLF_CCTYPE::CC_DOWN_P;
+			m_eFBLR = FBLR::FRONT;
+		}
+		else if (-90.f <= angle && 0.f > angle)
+		{
+			m_eSecondCategory_CC = WOLF_CCTYPE::CC_DOWN_P;
+			m_eFBLR = FBLR::FRONT;
+		}
+		else if (90.f <= angle && 180.f > angle)
+		{
+			m_eSecondCategory_CC = WOLF_CCTYPE::CC_DOWN_S;
+			m_eFBLR = FBLR::BACK;
+		}
+		else if (-180.f <= angle && -90.f > angle)
+		{
+			m_eSecondCategory_CC = WOLF_CCTYPE::CC_DOWN_S;
+			m_eFBLR = FBLR::BACK;
+		}
+	}
 
 	return;
 }
@@ -1190,7 +1190,7 @@ void CBlackWolf::Play_Hit()
 			if (false == m_tObjParam.bCanHit)
 			{
 				m_tObjParam.bCanHit = true;
-				Function_FBLR();
+				Check_FBLR();
 			}
 		}
 	}

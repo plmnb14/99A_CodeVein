@@ -79,7 +79,7 @@ private:
 
 	void Check_PosY();
 	void Check_Hit();
-	void Function_FBLR();
+	void Check_FBLR();
 	void Check_Dist();
 	void Check_AniEvent();
 
