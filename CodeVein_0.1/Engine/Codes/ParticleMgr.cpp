@@ -268,10 +268,14 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 
 	Input_Pool(L"DeerKing_IceStone_Up_Particle_0", 100);
 	Input_Pool(L"DeerKing_IceStone_Up_Small_Particle_0", 100);
+	Input_Pool(L"DeerKing_IceBullet_0", 30);
+	Input_Pool(L"DeerKing_IceBullet_ReadySmoke_0", 30);
+	Input_Pool(L"DeerKing_Point_ExplosionParticle_0", 10000);
 	Input_Pool(L"DeerKing_SnowChunk_Up_Particle_0", 100);
 	Input_Pool(L"DeerKing_SnowChunk_Up_Particle_1", 100);
 	Input_Pool(L"DeerKing_SnowChunk_Up_Particle_2", 100);
 	Input_Pool(L"DeerKing_SnowChunk_Up_Small_Particle_0", 300);
+	Input_Pool(L"DeerKing_SnowChunk_Heavy_Particle_0", 100);
 	Input_Pool(L"DeerKing_Snow_Up_Particle_0", 500);
 	Input_Pool(L"DeerKing_Snow_Up_LongLine_0", 500);
 	Input_Pool(L"DeerKing_IceSmoke_0", 300);

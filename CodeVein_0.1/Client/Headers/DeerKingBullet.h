@@ -23,15 +23,18 @@ private:
 	CTransform*			m_pTransformCom = nullptr;
 	CCollider*			m_pCollider = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
+	CEffect*			m_pBulletBody = nullptr;
 
 	_v3					m_vDir = _v3(0.f, 0.f, 0.f);
 	_float				m_fSpeed = 0.f;
+	_float				m_fEffectOffset = 0.f;
 
 	_double				m_dCurTime = 0;
 	_double				m_dLifeTime = 0;
 	_bool				m_bDead = false;
 
 	_bool				m_bFire = false;
+	_bool				m_bEffect = false;
 
 private:
 	_bool				m_bPlayerFriendly = false;		// 플레이어 껀지

@@ -493,6 +493,12 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceStone_Up_Small_Particle_0", true)))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_0", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_ReadySmoke_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Point_ExplosionParticle_0")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_SnowChunk_Up_Particle_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_SnowChunk_Up_Particle_1")))
@@ -500,6 +506,8 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"DeerKing_SnowChunk_Up_Particle_2")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_SnowChunk_Up_Small_Particle_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_SnowChunk_Heavy_Particle_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_Snow_Up_Particle_0")))
 		return E_FAIL;
