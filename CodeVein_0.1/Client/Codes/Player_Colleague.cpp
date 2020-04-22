@@ -300,12 +300,17 @@ void CPlayer_Colleague::Check_Do_List()
 			}	
 		}
 
+		if (false == iter->Get_Enable())
+			continue;
+		
 		if (fMinPos > fLength)
 		{
-			
-
-			if (nullptr != m_pObject_Mon && true == m_pObject_Mon->Get_Dead())
-				continue;
+			if (true == iter->Get_Dead())
+				if (m_pObject_Mon == iter)
+				{
+					m_pObject_Mon = nullptr;
+					continue;
+				}
 
 			if (false == iter->Get_Enable())
 				continue;
@@ -316,9 +321,11 @@ void CPlayer_Colleague::Check_Do_List()
 			fMinPos = fLength;
 
 			m_pObject_Mon = iter;
+
+			if (nullptr == m_pObject_Mon)
+				continue;
 		}
 	}
-	
 
 	cout << "몬스터 거리: " << fLength << endl;
 
@@ -337,7 +344,7 @@ void CPlayer_Colleague::Check_Do_List()
 			{
 				m_bNear_byMonster = true;
 
-				if (fLength < 2.3f)
+				/*if (fLength < 2.3f)
 				{
 					m_eMovetype = CPlayer_Colleague::Coll_Attack;
 					m_eColl_AttackMoment = CPlayer_Colleague::Att_Normal;
@@ -346,11 +353,14 @@ void CPlayer_Colleague::Check_Do_List()
 				{
 					m_eMovetype = CPlayer_Colleague::Coll_Move;
 					m_eColl_Movement = CPlayer_Colleague::Move_MonRun;
-				}
+				}*/
+				m_eMovetype = CPlayer_Colleague::Coll_Attack;
+				m_eColl_AttackMoment = CPlayer_Colleague::Att_Normal;
 					
 			}
-			if (fLength > 30.f || nullptr == m_pObject_Mon || true == m_pObject_Mon->Get_Dead())
+			if (fLength > 30.f || nullptr == m_pObject_Mon)
 			{
+				
 				m_bStart_Fighting = false;
 				m_bNear_byMonster = false;
 			}
@@ -598,7 +608,7 @@ void CPlayer_Colleague::CollMove_MonRun()
 
 	Funtion_RotateBody();
 
-	_v3 MonDir = TARGET_TO_TRANS(m_pObject_Mon)->Get_Pos() - m_pTransformCom->Get_Pos();
+	_v3 MonDir = m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(m_pObject_Mon)->Get_Pos();
 
 	D3DXVec3Normalize(&MonDir, &MonDir);
 
@@ -627,21 +637,39 @@ void CPlayer_Colleague::CollAtt_Normal()
 	if (nullptr == m_pObject_Mon)
 		return;
 
+	for (auto& iter : *m_List_pMonTarget[0])
+	{
+		if (iter == m_pObject_Mon && iter->Get_Dead())
+		{
+			m_pObject_Mon = nullptr;
+			return;
+		}
+	}
+
 	Funtion_RotateBody();
 
 	_float		fMonLenght = V3_LENGTH(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(m_pObject_Mon)->Get_Pos()));
 
-	/*if (fMonLenght > 8.f)
+	if (fMonLenght > 8.f)
 	{
-		Colleague_Movement(4.f, TARGET_TO_TRANS(m_pObject_Mon)->Get_Pos());
+		_v3 MonDir = TARGET_TO_TRANS(m_pObject_Mon)->Get_Pos() - m_pTransformCom->Get_Pos();
+
+		D3DXVec3Normalize(&MonDir, &MonDir);
+
+		Colleague_Movement(4.f, MonDir);
 		m_eColleague_Ani = CPlayer_Colleague::Ani_Front_Run;
 	}
-	if (fMonLenght > 8.f && fMonLenght < 2.3f)
+	if (fMonLenght < 8.f && fMonLenght > 2.3f)
 	{
-		Colleague_Movement(2.f, TARGET_TO_TRANS(m_pObject_Mon)->Get_Pos());
+		//Colleague_Movement(2.f, TARGET_TO_TRANS(m_pObject_Mon)->Get_Axis(AXIS_Z));
+		_v3 MonDirrun = TARGET_TO_TRANS(m_pObject_Mon)->Get_Pos() - m_pTransformCom->Get_Pos();
+
+		D3DXVec3Normalize(&MonDirrun, &MonDirrun);
+
+		Colleague_Movement(4.f, MonDirrun);
 		m_eColleague_Ani = CPlayer_Colleague::Ani_Front_Walk;
-	}*/
-	//if(fMonLenght <= 2.3f)
+	}
+	if(fMonLenght <= 2.3f)
 		m_eColleague_Ani = CPlayer_Colleague::One_Att;
 }
 
@@ -651,6 +679,16 @@ void CPlayer_Colleague::Funtion_RotateBody()
 	{
 		if (nullptr == m_pObject_Mon)
 			return;
+	}
+
+	for (auto& iter : *m_List_pMonTarget[0])
+	{
+		if (iter == m_pObject_Mon && iter->Get_Dead())
+		{
+			m_pObject_Mon = nullptr;
+			return;
+		}
+
 	}
 	
 	_float fTargetAngle = 0.f;
