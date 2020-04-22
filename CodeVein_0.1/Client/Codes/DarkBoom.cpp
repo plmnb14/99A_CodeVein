@@ -40,9 +40,9 @@ HRESULT CDarkBoom::Ready_GameObject(void * pArg)
 	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_RingReady", 0.0f, m_pTransformCom->Get_Pos(), nullptr);
 	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_RingReady", 0.15f, m_pTransformCom->Get_Pos(), nullptr);
 	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_Particle", 0.55f, m_pTransformCom->Get_Pos(), nullptr);
-	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_Ring", 0.55f, m_pTransformCom->Get_Pos(), nullptr);
-	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_RingRed", 0.6f, m_pTransformCom->Get_Pos(), nullptr);
-	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_RingBottom", 0.65f, m_pTransformCom->Get_Pos(), nullptr);
+	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_LaserBody", 0.54f, m_pTransformCom->Get_Pos(), nullptr);
+	//g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_Ring", 0.55f, m_pTransformCom->Get_Pos(), nullptr);
+	//g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_RingBottom", 0.65f, m_pTransformCom->Get_Pos(), nullptr);
 
 	return NOERROR;
 }
@@ -68,7 +68,7 @@ _int CDarkBoom::Update_GameObject(_double TimeDelta)
 	else
 	{
 		m_fEffectOffset += _float(TimeDelta);
-		if (m_fEffectOffset > 0.01f)
+		if (m_fEffectOffset > 0.05f)
 		{
 			m_fEffectOffset = 0.f;
 
@@ -85,11 +85,22 @@ _int CDarkBoom::Update_GameObject(_double TimeDelta)
 				_float fMinRange = 2.f;
 				_v3 vRandPos = vDir * _float(CCalculater::Random_Num_Double(1.7, _double(fMinRange)));
 
-				CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"QueensKnight_DarkBoom_Floor_0", m_pTransformCom->Get_Pos() + vRandPos, m_pTransformCom->Get_Pos(), nullptr);
-				CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"QueensKnight_DarkBoom_Floor_1", m_pTransformCom->Get_Pos() + vRandPos, m_pTransformCom->Get_Pos(), nullptr);
+				CEffect* pEffect = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"QueensKnight_DarkBoom_Floor_0", nullptr));
+				pEffect->Set_Desc(m_pTransformCom->Get_Pos() + vRandPos, nullptr);
+				pEffect->Set_FinishPos(m_pTransformCom->Get_Pos());
+				//pEffect->Set_ZWrite();
+				pEffect->Reset_Init();
+				g_pManagement->Add_GameOject_ToLayer_NoClone(pEffect, SCENE_STAGE, L"Layer_Effect", nullptr);
+
+				vRandPos = vDir * _float(CCalculater::Random_Num_Double(1.7, _double(fMinRange)));
+				pEffect = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"QueensKnight_DarkBoom_Floor_1", nullptr));
+				pEffect->Set_Desc(m_pTransformCom->Get_Pos() + vRandPos, nullptr);
+				pEffect->Set_FinishPos(m_pTransformCom->Get_Pos());
+				//pEffect->Set_ZWrite();
+				pEffect->Reset_Init();
+				g_pManagement->Add_GameOject_ToLayer_NoClone(pEffect, SCENE_STAGE, L"Layer_Effect", nullptr);
+
 			}
-			//g_pManagement->Create_Effect(L"QueensKnight_DarkBoom_Floor_0", m_pTransformCom->Get_Pos(), nullptr);
-			//g_pManagement->Create_Effect(L"QueensKnight_DarkBoom_Floor_1", m_pTransformCom->Get_Pos(), nullptr);
 		}
 	}
 

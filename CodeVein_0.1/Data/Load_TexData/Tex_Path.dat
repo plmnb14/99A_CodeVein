@@ -1,7 +1,7 @@
 Tex_Button|Button%d.png|..\..\Client\Resources\Texture\DefaultUI\Button\|0|4
 Tex_CursorEffect|CursorEffect%d.png|..\..\Client\Resources\Texture\DefaultUI\CursorEffect\|0|1
 Tex_LoadingBar|LoadingBar%d.png|..\..\Client\Resources\Texture\DefaultUI\LoadingBar\|0|10
-Tex_LoadingScreen|LoadingScreen%d.tga|..\..\Client\Resources\Texture\DefaultUI\LoadingScreen\|0|1
+Tex_LoadingScreen|LoadingScreen%d.png|..\..\Client\Resources\Texture\DefaultUI\LoadingScreen\|0|2
 Tex_LogoBack|LogoBack%d.png|..\..\Client\Resources\Texture\DefaultUI\LogoBack\|0|4
 Tex_Aura|Aura_%d.png|..\..\Client\Resources\Texture\Effect\Aura\|0|25
 Tex_Blaster|Blaster_%d.tga|..\..\Client\Resources\Texture\Effect\Blaster\|0|1
@@ -87,6 +87,7 @@ Tex_CursorSelect|CursorSelect%d.tga|..\..\Client\Resources\Texture\TestUI\Cursor
 Tex_CursorUI|CursorUI%d.png|..\..\Client\Resources\Texture\TestUI\CursorUI\|0|1
 Tex_DamegeNum|DamegeNum%d.png|..\..\Client\Resources\Texture\TestUI\DamegeNum\|0|11
 Tex_Expendables|Expendables%d.png|..\..\Client\Resources\Texture\TestUI\Expendables\|0|5
+Tex_ExpUI|ExpUI%d.png|..\..\Client\Resources\Texture\TestUI\ExpUI\|0|2
 Tex_FontNumber|FontNumber%d.png|..\..\Client\Resources\Texture\TestUI\FontNumber\|0|12
 Tex_Get_ItemUI|Get_ItemUI%d.png|..\..\Client\Resources\Texture\TestUI\Get_ItemUI\|0|7
 Tex_Halberd_Icon|Halberd_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Halberd_Icon\|0|3
@@ -113,8 +114,9 @@ Tex_QuickSlotUI|QuickSlotUI%d.png|..\..\Client\Resources\Texture\TestUI\QuickSlo
 Tex_Select_UI|Select_UI.png|..\..\Client\Resources\Texture\TestUI\Select_UI\|0|1
 Tex_SingleSword_Icon|SingleSword_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\SingleSword_Icon\|0|3
 Tex_Skill_ICon|Skill_ICon%d.tga|..\..\Client\Resources\Texture\TestUI\Skill_ICon\|0|157
-Tex_StageUI|StageUI%d.png|..\..\Client\Resources\Texture\TestUI\StageUI\|0|12
+Tex_StageUI|StageUI%d.png|..\..\Client\Resources\Texture\TestUI\StageUI\|0|18
 Tex_Start_BossUI|Start_BossUI%d.png|..\..\Client\Resources\Texture\TestUI\Start_BossUI\|0|4
+Tex_StatusUI|StatusUI%d.png|..\..\Client\Resources\Texture\TestUI\StatusUI\|0|6
 Tex_StatusWindow|StatusWindow%d.png|..\..\Client\Resources\Texture\TestUI\StatusWindow\|0|1
 Tex_STBar|STBar%d.tga|..\..\Client\Resources\Texture\TestUI\STBar\|0|1
 Tex_TestLogo|TestLogo%d.png|..\..\Client\Resources\Texture\TestUI\TestLogo\|0|1

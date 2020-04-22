@@ -62,15 +62,15 @@ struct PS_OUT
 	vector		vSSAO : COLOR0;
 };
 
-//float g_fSampleRad  = 0.9f;		// 샘플링 반경
-//float g_fIntensity	= 1.f;		// ao 강도
-//float g_fScale		= 1.f;		// 사이 거리
-//float g_fBias		= 0.2f;		// 너비 제어
+float g_fSampleRad  = 0.9f;		// 샘플링 반경
+float g_fIntensity	= 1.f;		// ao 강도
+float g_fScale		= 1.f;		// 사이 거리
+float g_fBias		= 0.2f;		// 너비 제어
 
-float g_fSampleRad = 0.1f;		// 샘플링 반경
-float g_fIntensity = 0.35f;		// ao 강도
-float g_fScale = 1.f;		// 사이 거리
-float g_fBias = 0.01f;		// 너비 제어
+//float g_fSampleRad = 0.1f;		// 샘플링 반경
+//float g_fIntensity = 0.35f;		// ao 강도
+//float g_fScale = 1.f;		// 사이 거리
+//float g_fBias = 0.01f;		// 너비 제어
 
 float2 Generate_Random(in float2 _vUV)
 {
@@ -80,20 +80,22 @@ float2 Generate_Random(in float2 _vUV)
 	return normalize(tex2D(RandomSampler, vScreenXY * _vUV / vRandomXY).xy * 2.f - 1.f);
 }
 
-float3 Generate_Position(in float3 _vDepth, in float2 _vUV)
+float3 Generate_Position(in float2 _vUV)
 {
-	float		fViewZ = _vDepth.y * 500.f;
+	float3		vDepthInfo = tex2D(DepthSampler, _vUV).xyz;
+
+	float		fViewZ = vDepthInfo.y * 500.f;
 
 	float4		vWorldPos;
 
 	vWorldPos.x = _vUV.x * 2.f - 1.f;
 	vWorldPos.y = _vUV.y * -2.f + 1.f;
-	vWorldPos.z = _vDepth.x;
+	vWorldPos.z = vDepthInfo.x;
 	vWorldPos.w = 1.f;
 
 	vWorldPos = vWorldPos * fViewZ;
 	vWorldPos = mul(vWorldPos, g_matProjInv);
-	//vWorldPos = mul(vWorldPos, g_matViewInv);
+	vWorldPos = mul(vWorldPos, g_matViewInv);
 
 	return vWorldPos.xyz;
 }
@@ -103,9 +105,9 @@ float3 Generate_Normal(in float2 _vUV)
 	return normalize(tex2D(NormalSampler, _vUV).xyz * 2.f - 1.f);
 }
 
-float Generate_AmbientOcclusion(in float3 _vDepth, in float2 uv, in float2 tcoord, in float3 p, in float3 cnorm)
+float Generate_AmbientOcclusion(in float2 uv, in float2 tcoord, in float3 p, in float3 cnorm)
 {
-	float3	diff = Generate_Position(_vDepth, tcoord + uv) - p;
+	float3	diff = Generate_Position(tcoord + uv) - p;
 	const float3 v = normalize(diff);
 	const float d = length(diff) * g_fScale;
 
@@ -119,11 +121,9 @@ PS_OUT PS_SSAO(PS_IN In)
 
 	PS_OUT			Out = (PS_OUT)0;
 
-	float3			vDepthInfo = tex2D(DepthSampler, In.vTexUV).xyz;
-
 	float2 vVec[4] = { float2(1.f,0.f) , float2(-1.f,0.f), float2(0.f,1.f), float2(0.f,-1.f) };
 
-	float3 p	= Generate_Position(vDepthInfo, In.vTexUV);
+	float3 p	= Generate_Position(In.vTexUV);
 	float3 n	= Generate_Normal(In.vTexUV);
 	float2 rand = Generate_Random(In.vTexUV);
 
@@ -136,10 +136,10 @@ PS_OUT PS_SSAO(PS_IN In)
 		float2 coord1 = reflect(vVec[i], rand) * rad;
 		float2 coord2 = float2(coord1.x * 0.707 - coord1.y * 0.707, coord1.x * 0.707 + coord1.y * 0.707);
 
-		ao += Generate_AmbientOcclusion(vDepthInfo, In.vTexUV, coord1 * 0.25, p, n);
-		ao += Generate_AmbientOcclusion(vDepthInfo, In.vTexUV, coord2 * 0.5, p, n);
-		ao += Generate_AmbientOcclusion(vDepthInfo, In.vTexUV, coord1 * 0.75, p, n);
-		ao += Generate_AmbientOcclusion(vDepthInfo, In.vTexUV, coord2, p, n);
+		ao += Generate_AmbientOcclusion(In.vTexUV, coord1 * 0.25, p, n);
+		ao += Generate_AmbientOcclusion(In.vTexUV, coord2 * 0.5, p, n);
+		ao += Generate_AmbientOcclusion(In.vTexUV, coord1 * 0.75, p, n);
+		ao += Generate_AmbientOcclusion(In.vTexUV, coord2, p, n);
 	}
 
 	ao /= (float)iterations * 4.f;
