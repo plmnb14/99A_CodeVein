@@ -373,9 +373,9 @@ CBT_Composite_Node * CDeerKing::Rush_RightFoot()
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("눈 위로 폭발1", L"DeerKing_SnowChunk_Up_Particle_1", L"ShieldPos"	, 0.4, 20, 0.01, 0);
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("얼음 위로 폭발0", L"DeerKing_IceStone_Up_Particle_0", L"ShieldPos", 0.4, 10, 0.01, 0);
 	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("잔눈", L"DeerKing_Snow_Up_Particle_0", L"ShieldPos"				, 0.4, 25, 0.01, 0);
-	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_0", L"ShieldPos"						, 0.4, 20, 0.01, 0);
-	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_1", L"ShieldPos"						, 0.4, 20, 0.01, 0);
-	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_2", L"ShieldPos"						, 0.7, 1, 0.01, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_0", L"ShieldPos"						, 0.4, 5, 0.01, 0);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_1", L"ShieldPos"						, 0.5, 5, 0.01, 0);
+	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_2", L"ShieldPos"						, 0.6, 5, 0.01, 0);
 
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
@@ -419,8 +419,8 @@ CBT_Composite_Node * CDeerKing::WhirlWind_RightFoot()
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 2.f, 0.366, 0);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("잔눈", L"DeerKing_Snow_Up_Particle_0", L"ShieldPos"	, 0.6, 40, 0.01, 0);
-	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_0", L"ShieldPos"			, 0.6, 40, 0.01, 0);
-	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_1", L"ShieldPos"			, 0.6, 40, 0.01, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_0", L"ShieldPos"			, 0.6, 5, 0.01, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_1", L"ShieldPos"			, 0.6, 5, 0.01, 0);
 	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_2", L"ShieldPos"			, 0.7, 1, 0.01, 0);
 	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_2", L"ShieldPos"			, 1.4, 1, 0.01, 0);
 
@@ -671,14 +671,22 @@ CBT_Composite_Node * CDeerKing::Throwing()
 	SubSeq->Add_Child(Wait1);
 	SubSeq->Add_Child(Move1);
 
-	CBT_CreateBullet* Col0 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos0", L"", 20, 4, 1.516, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col1 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos1", L"", 20, 4, 1.566, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col2 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos2", L"", 20, 4, 1.616, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col3 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos3", L"", 20, 4, 1.666, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col4 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos4", L"", 20, 4, 1.716, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col5 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos5", L"", 20, 4, 1.766, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col6 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos6", L"", 20, 4, 1.816, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col7 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos7", L"", 20, 4, 1.866, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("버프 전 손 오오라", L"DeerKing_IceBullet_Charge_Hand_Smoke_0"			, L"Bone_LeftHand", 0.1, 55, 0, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("버프 전 손 오오라", L"DeerKing_IceBullet_Charge_Hand_Smoke_After_0"	, L"Bone_LeftHand", 1.35, 10, 0, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("버프 전 손 오오라", L"DeerKing_IceBullet_Charge_Hand_Smoke_After_1"	, L"Bone_LeftHand", 1.35, 10, 0, 0);
+	
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
+
+	CBT_CreateBullet* Col0 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos0", L"", 20, 4, 1.516 + 0.8, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Col1 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos1", L"", 20, 4, 1.566 + 0.8, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Col2 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos2", L"", 20, 4, 1.616 + 0.8, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Col3 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos3", L"", 20, 4, 1.666 + 0.8, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Col4 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos4", L"", 20, 4, 1.716 + 0.8, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Col5 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos5", L"", 20, 4, 1.766 + 0.8, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Col6 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos6", L"", 20, 4, 1.816 + 0.8, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Col7 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingBullet", L"Throwing_Pos7", L"", 20, 4, 1.866 + 0.8, 1, 0, 0, CBT_Service_Node::Finite);
 
 	Root_Parallel->Add_Service(Col0);
 	Root_Parallel->Add_Service(Col1);
@@ -880,8 +888,8 @@ CBT_Composite_Node * CDeerKing::Jump_Fist()
 	// Show_Ani47 * 0.9 = 0.99
 	// Show_Ani48 * 0.95 = 0.031
 
-	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet_Big"			, L"Bone_LeftJet"	, 0.2, 5, 0.01, 0);
-	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet_Big"			, L"Bone_RightJet"	, 0.2, 5, 0.01, 0);
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet_Mid"			, L"Bone_LeftJet"	, 0.2, 5, 0.01, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet_Mid"			, L"Bone_RightJet"	, 0.2, 5, 0.01, 0);
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet_Particle_01"	, L"Bone_LeftJet"	, 0.2, 65, 0.01, 0);
 	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet_Particle_01"	, L"Bone_RightJet"	, 0.2, 65, 0.01, 0);
 	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("제트팩 불꽃", L"FireBoy_FireBullet_Particle_02"	, L"Bone_LeftJet"	, 0.2, 65, 0.01, 0);
@@ -1192,6 +1200,16 @@ void CDeerKing::Update_Shield()
 		m_bFinish_Throw_Shield = true;
 
 		// 방패 떨어진 자리에 이펙트 발생시키기
+		CTransform* pShieldTrans = static_cast<CTransform*>(m_pShield->Get_Component(L"Com_Transform"));
+		_mat matShield = pShieldTrans->Get_WorldMat();
+		_v3 vShieldPos = _v3(matShield.m[3][0], matShield.m[3][1], matShield.m[3][2]);
+
+		g_pManagement->Create_Effect(L"DeerKing_SnowChunk_Up_Particle_0", vShieldPos, nullptr);
+		g_pManagement->Create_Effect(L"DeerKing_SnowChunk_Up_Particle_1", vShieldPos, nullptr);
+		g_pManagement->Create_Effect(L"DeerKing_IceStone_Up_Particle_0", vShieldPos, nullptr);
+		g_pManagement->Create_Effect(L"DeerKing_Snow_Up_Particle_0", vShieldPos, nullptr);
+		g_pManagement->Create_Effect(L"DeerKing_IceSmoke_0", vShieldPos, nullptr);
+		g_pManagement->Create_Effect(L"DeerKing_IceSmoke_2", vShieldPos, nullptr);
 	}
 	else
 	{
@@ -1298,16 +1316,18 @@ HRESULT CDeerKing::Update_Value_Of_BB()
 
 
 	// 2. 투사체 던지기 좌표
-	_float fLength = 1.f;
+	_float fLength = 1.5f;
 
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos0", m_vLeftHand + fLength * vSelfUp);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos1", m_vLeftHand + fLength * *D3DXVec3TransformNormal(&_v3(), &vSelfUp, D3DXMatrixRotationAxis(&_mat(), &vSelfLook, D3DXToRadian(45))));
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos2", m_vLeftHand + fLength * *D3DXVec3TransformNormal(&_v3(), &vSelfUp, D3DXMatrixRotationAxis(&_mat(), &vSelfLook, D3DXToRadian(90))));
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos3", m_vLeftHand + fLength * *D3DXVec3TransformNormal(&_v3(), &vSelfUp, D3DXMatrixRotationAxis(&_mat(), &vSelfLook, D3DXToRadian(130))));
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos4", m_vLeftHand + fLength * *D3DXVec3TransformNormal(&_v3(), &vSelfUp, D3DXMatrixRotationAxis(&_mat(), &vSelfLook, D3DXToRadian(180))));
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos5", m_vLeftHand + fLength * *D3DXVec3TransformNormal(&_v3(), &vSelfUp, D3DXMatrixRotationAxis(&_mat(), &vSelfLook, D3DXToRadian(220))));
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos6", m_vLeftHand + fLength * *D3DXVec3TransformNormal(&_v3(), &vSelfUp, D3DXMatrixRotationAxis(&_mat(), &vSelfLook, D3DXToRadian(270))));
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos7", m_vLeftHand + fLength * *D3DXVec3TransformNormal(&_v3(), &vSelfUp, D3DXMatrixRotationAxis(&_mat(), &vSelfLook, D3DXToRadian(310))));
+	_v3 vBulletPos = m_pTransformCom->Get_Pos() + m_pTransformCom->Get_Axis(AXIS_Y) * 2.3f + m_pTransformCom->Get_Axis(AXIS_Z) * 1.8f + m_pTransformCom->Get_Axis(AXIS_X) * -0.5f;
+
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos0", vBulletPos + fLength * vSelfUp);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos1", vBulletPos + fLength * *D3DXVec3TransformNormal(&_v3(), &vSelfUp, D3DXMatrixRotationAxis(&_mat(), &vSelfLook, D3DXToRadian(45))));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos2", vBulletPos + fLength * *D3DXVec3TransformNormal(&_v3(), &vSelfUp, D3DXMatrixRotationAxis(&_mat(), &vSelfLook, D3DXToRadian(90))));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos3", vBulletPos + fLength * *D3DXVec3TransformNormal(&_v3(), &vSelfUp, D3DXMatrixRotationAxis(&_mat(), &vSelfLook, D3DXToRadian(130))));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos4", vBulletPos + fLength * *D3DXVec3TransformNormal(&_v3(), &vSelfUp, D3DXMatrixRotationAxis(&_mat(), &vSelfLook, D3DXToRadian(180))));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos5", vBulletPos + fLength * *D3DXVec3TransformNormal(&_v3(), &vSelfUp, D3DXMatrixRotationAxis(&_mat(), &vSelfLook, D3DXToRadian(220))));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos6", vBulletPos + fLength * *D3DXVec3TransformNormal(&_v3(), &vSelfUp, D3DXMatrixRotationAxis(&_mat(), &vSelfLook, D3DXToRadian(270))));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos7", vBulletPos + fLength * *D3DXVec3TransformNormal(&_v3(), &vSelfUp, D3DXMatrixRotationAxis(&_mat(), &vSelfLook, D3DXToRadian(310))));
 
 	// 3. 몬스터 본인 좌표
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"SelfPos", vSelfPos);
