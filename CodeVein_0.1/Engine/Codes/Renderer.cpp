@@ -1251,7 +1251,8 @@ void CRenderer::Free()
 	Safe_Release(m_pShader_Shadow);
 	Safe_Release(m_pShader_Effect);
 	Safe_Release(m_pShader_Blur);
-	
+	Safe_Release(m_pShader_SSAO);
+
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pTarget_Manager);
 

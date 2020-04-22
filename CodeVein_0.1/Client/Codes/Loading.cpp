@@ -1141,6 +1141,12 @@ _uint CLoading::Loading_Stage()
 		// »ç½¿¿Õ
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKing", CDeerKing::Create(m_pGraphicDev))))
 			return E_FAIL;
+		// »ç½¿¿Õ  Åõ»çÃ¼
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingBullet", CDeerKingBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// »ç½¿¿Õ  »ÏÁ· ¾óÀ½
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingColdBeam", CDeerKingColdBeam::Create(m_pGraphicDev))))
+			return E_FAIL;
 		// °ËÀº ¼º°Ô
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))
 			return E_FAIL;

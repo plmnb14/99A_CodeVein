@@ -34,7 +34,7 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	Ready_Collider();
 
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 100.f;
+	m_tObjParam.fHp_Cur = 1000.f;
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
@@ -87,7 +87,7 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	//Check_ShowValue->Set_Child(Start_Show());
 	//Start_Sel->Add_Child(Check_ShowValue);
 	//Start_Sel->Add_Child(Start_Game());
-	Start_Sel->Add_Child(Normal_Cut2());
+	Start_Sel->Add_Child(Start_Game());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("µ¹±â", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);

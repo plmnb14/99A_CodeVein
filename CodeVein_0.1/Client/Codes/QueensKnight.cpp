@@ -724,7 +724,7 @@ CBT_Composite_Node * CQueensKnight::Wing_Attack()
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적1", L"Player_Pos", 0.1, 0);
 	CBT_RotationDir* Rotation1 = Node_RotationDir("방향 추적2", L"Player_Pos", 0.1);
 	CBT_SetValue* TrailOn0 = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
-	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 8, 0.483, 0);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 16, 0.483, 0);
 	CBT_SetValue* TrailOff0 = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("먼지", L"QueensKnight_WhirlWind_Smoke", L"Self_Pos", 0.63, 10, 0.5, 0);
@@ -953,7 +953,7 @@ CBT_Composite_Node * CQueensKnight::Flash_Wing_Attack()
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적1", L"Player_Pos", 0.1, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 추적2", L"Player_Pos", 0.1);
 	CBT_SetValue* TrailOn0 = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
-	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 8, 0.483, 0);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 16, 0.483, 0);
 	CBT_SetValue* TrailOff0 = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("점멸 파티클", L"QueensKnight_Teleport_Particle", L"Self_MidPos", 0, 150, 0.15, 0);
