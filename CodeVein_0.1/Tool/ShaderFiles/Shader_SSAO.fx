@@ -62,9 +62,9 @@ struct PS_OUT
 	vector		vSSAO : COLOR0;
 };
 
-float g_fSampleRad  = 10.0f;		// 샘플링 반경
-float g_fIntensity	= 8.0f;		// ao 강도
-float g_fScale		= 1.0f;		// 사이 거리
+float g_fSampleRad  = 8.0f;		// 샘플링 반경
+float g_fIntensity	= 6.0f;		// ao 강도
+float g_fScale		= 0.5f;		// 사이 거리
 float g_fBias		= 0.2f;		// 너비 제어
 
 //float g_fSampleRad = 0.1f;		// 샘플링 반경

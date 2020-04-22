@@ -76,7 +76,7 @@ HRESULT CDeerKing::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Rush_Body());
+	Start_Sel->Add_Child(Head_ColdBeam());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -478,6 +478,9 @@ CBT_Composite_Node * CDeerKing::Head_ColdBeam()
 	Root_Parallel->Add_Service(Effect4);
 
 	// 고드름 생성
+	CBT_CreateBullet* Col0 = Node_CreateBullet("토네이도 충돌체", L"Monster_DeerKingColdBeam", L"Bone_LeftCorner", L"Self_Dir", 0, 1, 1.766, 1, 0, 0, CBT_Service_Node::Finite);
+
+	Root_Parallel->Add_Service(Col0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani37);
@@ -491,6 +494,8 @@ CBT_Composite_Node * CDeerKing::Head_ColdBeam()
 	SubSeq->Add_Child(Move1);
 	SubSeq->Add_Child(Wait2);
 	SubSeq->Add_Child(Move2);
+
+
 
 	return Root_Parallel;
 }
