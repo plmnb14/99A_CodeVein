@@ -23,6 +23,7 @@ public:
 		WPN_QueenLance,
 		WPN_QueenShield,
 		WPN_FrostBlood_IceGirl,
+		WPN_DeerKingShield,
 		WPN_DATA_End
 	};
 

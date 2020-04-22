@@ -717,6 +717,12 @@
     <ClInclude Include="..\Headers\CocoonBigBullet.h">
       <Filter>02.GameObject\Stage\2%29 Monster\Cocoon</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\DeerKingBullet.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\DeerKingColdBeam.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1072,6 +1078,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\CocoonBigBullet.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster\Cocoon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DeerKingBullet.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DeerKingColdBeam.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
