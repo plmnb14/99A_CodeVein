@@ -28,6 +28,7 @@ HRESULT CPlayer_Colleague::Ready_GameObject(void * pArg)
 
 	Ready_BoneMatrix();
 	Ready_Collider();
+	Ready_Weapon();
 
 	return S_OK;
 }
@@ -43,14 +44,18 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 
 	Update_Collider();
 
-	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
-		return E_FAIL;
-
 	return S_OK;
 }
 
 _int CPlayer_Colleague::Late_Update_GameObject(_double TimeDelta)
 {
+	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
+		return E_FAIL;
+
+	m_dTimeDelta = TimeDelta;
+
+	IF_NOT_NULL(m_pSword)
+		m_pSword->Late_Update_GameObject(TimeDelta);
 
 	return S_OK;
 }
@@ -97,6 +102,10 @@ HRESULT CPlayer_Colleague::Render_GameObject()
 		}
 	}
 	m_pShaderCom->End_Shader();
+
+	IF_NOT_NULL(m_pSword)
+		m_pSword->Update_GameObject(m_dTimeDelta);
+
 
 	Render_Collider();
 
@@ -161,18 +170,15 @@ HRESULT CPlayer_Colleague::SetUp_ConstantTable()
 HRESULT CPlayer_Colleague::Ready_BoneMatrix()
 {
 	// 0은 몬스터, 1은 플레이어
-	LPCSTR TempChar = "Head";
 
-	D3DXFRAME_DERIVED* pFrame = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(TempChar, 0);
+	D3DXFRAME_DERIVED*	pFrame = nullptr;
 
-	m_matBone[Bone_Head] = &pFrame->CombinedTransformationMatrix;
-
-	TempChar = "Spine";
-
-	pFrame = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(TempChar, 0);
-
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo("Spine", 0), E_FAIL);
 	m_matBone[Bone_Range] = &pFrame->CombinedTransformationMatrix;
 	m_matBone[Bone_Body] = &pFrame->CombinedTransformationMatrix;
+
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo("Head", 0), E_FAIL);
+	m_matBone[Bone_Head] = &pFrame->CombinedTransformationMatrix;
 
 	return S_OK;
 }
@@ -186,7 +192,7 @@ HRESULT CPlayer_Colleague::Ready_Collider()
 	IF_NULL_VALUE_RETURN(pCollider, E_FAIL);
 
 	_float fRadius = 1.f;
-
+	 
 	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
 	pCollider->Set_Dynamic(true);
 	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Range]->_41, m_matBone[Bone_Range]->_42, m_matBone[Bone_Range]->_43));
@@ -223,23 +229,31 @@ HRESULT CPlayer_Colleague::Ready_Collider()
 
 HRESULT CPlayer_Colleague::Ready_Weapon()
 {
+	m_pSword = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
+	m_pSword->Change_WeaponData(CWeapon::WPN_SSword_Normal);
+
+	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo("RightHandAttach");
+	m_pSword->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
+	m_pSword->Set_ParentMatrix(&m_pTransformCom->Get_WorldMat());
+	m_pSword->Set_Friendly(true);		// 무기의 아군인지 적군인지 체크한다. true는 아군
+
 	return S_OK;
 }
 
 void CPlayer_Colleague::Update_Collider()
 {
-	_ulong MatrixIdx = 0;
+	_ulong matrixIdx = 0;
 
 	for (auto& iter : m_vecPhysicCol)
 	{
-		_mat TempMatrix;
-		TempMatrix = *m_matBone[MatrixIdx] * m_pTransformCom->Get_WorldMat();
+		_mat tmpMat;
+		tmpMat = *m_matBone[matrixIdx] * m_pTransformCom->Get_WorldMat();
 
-		_v3 TempPos = _v3(m_matBone[MatrixIdx]->_41, m_matBone[MatrixIdx]->_42, m_matBone[MatrixIdx]->_43);
+		_v3 ColPos = _v3(tmpMat._41, tmpMat._42, tmpMat._43);
 
-		iter->Update(TempPos);
+		iter->Update(ColPos);
 
-		++MatrixIdx;
+		++matrixIdx;
 	}
 
 	m_pCollider->Update(m_pTransformCom->Get_Pos() + _v3(0.f, m_pCollider->Get_Radius().y, 0.f));
@@ -291,7 +305,12 @@ void CPlayer_Colleague::Check_Do_List()
 
 	for (auto& iter : *m_List_pMonTarget[0])
 	{
-		fLength = D3DXVec3Length(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(iter)->Get_Pos()));
+		if (false == iter->Get_Enable())
+		{
+			m_bStart_Fighting = false;
+			m_bNear_byMonster = false;
+			continue;
+		}
 
 		if (true == iter->Get_Dead())
 		{
@@ -302,8 +321,8 @@ void CPlayer_Colleague::Check_Do_List()
 			}
 		}
 
-		if (false == iter->Get_Enable())
-			continue;
+	
+		fLength = D3DXVec3Length(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(iter)->Get_Pos()));
 
 		if (fMinPos > fLength)
 		{
@@ -311,6 +330,10 @@ void CPlayer_Colleague::Check_Do_List()
 				if (m_pObject_Mon == iter)
 				{
 					m_pObject_Mon = nullptr;
+					fLength = 0.f;
+					m_bStart_Fighting = false;
+					m_bNear_byMonster = false;
+					m_bMonDead = true;
 					continue;
 				}
 
@@ -324,6 +347,9 @@ void CPlayer_Colleague::Check_Do_List()
 
 			m_pObject_Mon = iter;
 
+			if (nullptr != m_pObject_Mon)
+				m_bMonDead = false;
+
 			if (nullptr == m_pObject_Mon)
 				continue;
 		}
@@ -335,7 +361,9 @@ void CPlayer_Colleague::Check_Do_List()
 
 	if (MyLength < 30.f)		// 플레이어가 범위 내에 있는지 체크
 	{
-		if (fLength < 30.f)
+
+		//fLength < 30.f? ;
+		if (fLength < 30.f && 0 != fLength)
 			m_bStart_Fighting = true;
 		if (fLength > 30.f)
 			m_bStart_Fighting = false;
@@ -360,7 +388,14 @@ void CPlayer_Colleague::Check_Do_List()
 				m_eColl_AttackMoment = CPlayer_Colleague::Att_Normal;
 
 			}
-			if (fLength > 30.f || nullptr == m_pObject_Mon)
+			else
+			{
+				m_eMovetype = CPlayer_Colleague::Coll_Idle;
+				m_eColl_IdleMoment = CPlayer_Colleague::Idle_Waiting;
+				m_bStart_Fighting = false;
+				m_bNear_byMonster = false;
+			}
+			if (fLength > 30.f || nullptr == m_pObject_Mon || true == m_bMonDead || 0 == fLength)
 			{
 
 				m_bStart_Fighting = false;
@@ -546,6 +581,9 @@ HRESULT CPlayer_Colleague::SetUp_Default()
 	m_tObjParam.bCanGuard = true;	// 가드 가능?
 	m_tObjParam.bIsGuard = false;	// 가드 중인지
 
+	IF_NOT_NULL(m_pSword)
+		m_pSword->Set_Target_CanAttack(false);
+
 	return S_OK;
 }
 
@@ -637,22 +675,25 @@ void CPlayer_Colleague::CollAtt_Waiting()
 void CPlayer_Colleague::CollAtt_Normal()
 {
 	_float		fMonLenght = 0.f;
-	_v3			vMonDir = V3_NULL;
-	_v3			vMonDirrun = V3_NULL;
+	/*_v3			vMonDir = V3_NULL;
+	_v3			vMonDirrun = V3_NULL;*/
+
+	_double		AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
 
 	for (auto& iter : *m_List_pMonTarget[0])
 	{
 		if (iter == m_pObject_Mon && true == iter->Get_Dead())
 		{
-			m_pObject_Mon = NULL;
+			m_pObject_Mon = nullptr;
 			continue;
 		}
 
 		if (iter == m_pObject_Mon)
 		{
-			fMonLenght = V3_LENGTH(&(TARGET_TO_TRANS(iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
-			vMonDir = TARGET_TO_TRANS(iter)->Get_Pos() - m_pTransformCom->Get_Pos();
-			vMonDirrun = TARGET_TO_TRANS(iter)->Get_Pos() - m_pTransformCom->Get_Pos();
+			CTransform* MonTransCom = TARGET_TO_TRANS(iter);
+			fMonLenght = V3_LENGTH(&(MonTransCom->Get_Pos() - m_pTransformCom->Get_Pos()));
+			/*vMonDir = MonTransCom->Get_Pos() - m_pTransformCom->Get_Pos();
+			vMonDirrun = MonTransCom->Get_Pos() - m_pTransformCom->Get_Pos();*/
 		}
 	}
 
@@ -661,26 +702,59 @@ void CPlayer_Colleague::CollAtt_Normal()
 
 	Funtion_RotateBody();
 
+	//if (true == m_tObjParam.bCanAttack)
+	//{
+	//	m_tObjParam.bCanAttack = false;
+	//	m_tObjParam.bIsAttack = true;
+	//}
+
+	//if (m_pDynamicMesh->Is_Finish_Animation(0.95f))
+	//{
+	//	// 애니메이션이 끝나면 초기화해주는 부분
+	//}
+
+	if (false == m_bEventTrigger[0])
+	{
+
+	}
 
 	if (fMonLenght > 8.f)
 	{
-
-		D3DXVec3Normalize(&vMonDir, &vMonDir);
-
-		Colleague_Movement(4.f, vMonDir);
+		Colleague_Movement(4.f, m_pTransformCom->Get_Axis(AXIS_Z));
 		m_eColleague_Ani = CPlayer_Colleague::Ani_Front_Run;
 	}
-	if (fMonLenght < 8.f && fMonLenght > 2.3f)
+	else if (fMonLenght <= 8.f && fMonLenght > 2.3f)
 	{
 		//Colleague_Movement(2.f, TARGET_TO_TRANS(m_pObject_Mon)->Get_Axis(AXIS_Z));
 
-		D3DXVec3Normalize(&vMonDirrun, &vMonDirrun);
+		//D3DXVec3Normalize(&vMonDirrun, &vMonDirrun);
 
-		Colleague_Movement(4.f, vMonDirrun);
+		Colleague_Movement(2.f, m_pTransformCom->Get_Axis(AXIS_Z));
 		m_eColleague_Ani = CPlayer_Colleague::Ani_Front_Walk;
 	}
 	if (fMonLenght <= 2.3f)
+	{
 		m_eColleague_Ani = CPlayer_Colleague::One_Att;
+
+		if (m_eColleague_Ani == CPlayer_Colleague::One_Att &&  AniTime >= 0.6f)
+			m_pSword->Set_Target_CanAttack(true);
+		else
+			m_pSword->Set_Target_CanAttack(false);
+
+		if (0.6f <= AniTime && 0.8f >= AniTime)
+		{
+			m_pSword->Set_Target_CanAttack(true);
+			Colleague_Movement(8.f, m_pTransformCom->Get_Axis(AXIS_Z));
+		}
+		else   
+			m_pSword->Set_Target_CanAttack(false);
+	}
+
+	if (m_tObjParam.bIsAttack)
+	{
+		m_tObjParam.bCanAttack = false;
+		m_tObjParam.bIsAttack = true;
+	}
 }
 
 void CPlayer_Colleague::Funtion_RotateBody()

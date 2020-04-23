@@ -142,17 +142,24 @@ private:
 	list<CGameObject*>*	m_List_pMonTarget[2];
 
 	_double	m_dPlayAni_Time = 1;
+	_double m_dTimeDelta = 0.f;
 
 	_mat*	m_matBone[Bone_End];
 
 	_float	m_fSpeed = 0.f;
 	_float	m_fAll_Length = 0.f;
+	_float	m_fAtt_MoveSpeed_Cur = 0.f;
+	_float	m_fAtt_MoveSpeed_Max = 1.f;
 
 	_float	m_fCoolTimer = 3.f;
+
+	_bool	m_bEventTrigger[20] = {};
 
 	_bool	m_bNear_byMonster = false;
 	_bool	m_bStart_Fighting = false;
 	_bool	m_bMonExistence = false; // 몬스터 존재 유무
+	_bool	m_bLook_Monster = false;
+	_bool	m_bMonDead = false;
 
 public:
 	static	CPlayer_Colleague* Create(_Device pGraphic_Device);
