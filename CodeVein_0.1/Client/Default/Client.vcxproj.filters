@@ -340,6 +340,9 @@
     <Filter Include="02.GameObject\Stage\1%29 Boss\DeerKing\Bullet">
       <UniqueIdentifier>{73d2ac76-9697-48fb-9005-32929a632e5c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\12. Font">
+      <UniqueIdentifier>{9691fea8-3f8e-4447-bf24-3e5f1e4fa387}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -693,6 +696,9 @@
     <ClInclude Include="..\Headers\CocoonBigBullet.h">
       <Filter>02.GameObject\Stage\2%29 Monster\Cocoon</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\UI_FontNum.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\12. Font</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1036,6 +1042,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\CocoonBigBullet.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster\Cocoon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\UI_FontNum.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\12. Font</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

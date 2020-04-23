@@ -259,6 +259,7 @@
     <ClInclude Include="..\Headers\SwordGenjiBullet.h" />
     <ClInclude Include="..\Headers\SwordShieldGenji.h" />
     <ClInclude Include="..\Headers\Total_Inven.h" />
+    <ClInclude Include="..\Headers\UI_FontNum.h" />
     <ClInclude Include="..\Headers\UI_Manager.h" />
     <ClInclude Include="..\Headers\PlayerHP.h" />
     <ClInclude Include="..\Headers\Loading.h" />
@@ -372,6 +373,7 @@
     <ClCompile Include="..\Codes\SwordGenjiBullet.cpp" />
     <ClCompile Include="..\Codes\SwordShieldGenji.cpp" />
     <ClCompile Include="..\Codes\Total_Inven.cpp" />
+    <ClCompile Include="..\Codes\UI_FontNum.cpp" />
     <ClCompile Include="..\Codes\UI_Manager.cpp" />
     <ClCompile Include="..\Codes\PlayerHP.cpp" />
     <ClCompile Include="..\Codes\Loading.cpp" />
