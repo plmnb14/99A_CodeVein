@@ -124,6 +124,8 @@ HRESULT CTexEffect::LateInit_GameObject()
 		//!lstrcmp(L"SpawnParticle", m_szParticleName) ||
 		//!lstrcmp(L"SpawnParticle_Sub", m_szParticleName) ||
 		!lstrcmp(L"SpawnParticle_ForBoss", m_szParticleName) ||
+		!lstrcmp(L"SpawnParticle_ForBoss_Point", m_szParticleName) ||
+		!lstrcmp(L"SpawnParticle_ForBoss_Point_Sub", m_szParticleName) ||
 		!lstrcmp(L"ItemObject", m_szParticleName) ||
 		!lstrcmp(L"ItemObject_Red", m_szParticleName) ||
 		!lstrcmp(L"ItemObject_Blue", m_szParticleName) ||
@@ -363,6 +365,7 @@ void CTexEffect::Setup_Info()
 	m_fLinearMovePercent = 0.f;
 	m_vFollowPos = { 0.f, 0.f, 0.f };
 	m_fAccel = 0.f;
+	m_fCurveAccel = 2.f;
 	m_fDissolve = 0.f;
 
 	m_bFadeOutStart = false;
@@ -488,6 +491,19 @@ void CTexEffect::Setup_Info()
 			m_pTransformCom->Set_Angle(_v3(D3DXToRadian(m_pInfo->vRotDirection.x), D3DXToRadian(m_pInfo->vRotDirection.y), D3DXToRadian(m_pInfo->vRotDirection.z)));
 		}
 	}
+
+	if (m_bCurve)
+	{
+		_mat matRotX, matRotY, matRotZ;
+		m_vCurveRotDir = _v3(1.f, 1.f, 1.f);
+		D3DXMatrixRotationX(&matRotX, D3DXToRadian(CCalculater::Random_Num(0, 360)));
+		D3DXMatrixRotationY(&matRotY, D3DXToRadian(CCalculater::Random_Num(0, 360)));
+		D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(CCalculater::Random_Num(0, 360)));
+		D3DXVec3TransformNormal(&m_vCurveRotDir, &m_vCurveRotDir, &matRotX);
+		D3DXVec3TransformNormal(&m_vCurveRotDir, &m_vCurveRotDir, &matRotY);
+		D3DXVec3TransformNormal(&m_vCurveRotDir, &m_vCurveRotDir, &matRotZ);
+		D3DXVec3Normalize(&m_vCurveRotDir, &m_vCurveRotDir);
+	}
 }
 
 void CTexEffect::Setup_Billboard()
@@ -545,13 +561,14 @@ void CTexEffect::Check_Frame(_double TimeDelta)
 
 void CTexEffect::Check_Move(_double TimeDelta)
 {
-	//if (m_pInfo->bSlowly)
-	//{
-	//	m_fSlowAccel += _float(TimeDelta);
-	//	m_fMoveSpeed -= (-GRAVITY * m_fSlowAccel * m_fSlowAccel * m_fMoveSpeed) *  _float(TimeDelta);
-	//	if (m_fMoveSpeed <= 0.f)
-	//		m_fMoveSpeed = 0.f;
-	//}
+	if (m_pInfo->bSlowly)
+	{
+		//m_fSlowAccel += _float(TimeDelta);
+		//m_fMoveSpeed -= (-GRAVITY * m_fSlowAccel * m_fSlowAccel * m_fMoveSpeed) *  _float(TimeDelta);
+		m_fMoveSpeed -= m_fMoveSpeed * _float(TimeDelta);
+		if (m_fMoveSpeed <= 0.f)
+			m_fMoveSpeed = 0.f;
+	}
 
 	_v3 vTargetPos = V3_NULL;
 	if (m_pDesc->pTargetTrans) vTargetPos = m_pDesc->pTargetTrans->Get_Pos();
@@ -569,11 +586,11 @@ void CTexEffect::Check_Move(_double TimeDelta)
 		else
 		{
 			_v3 vMove = V3_NULL;
+			vMove = m_pInfo->vMoveDirection * m_fMoveSpeed * _float(TimeDelta);
+
 			if (m_vMyDir != V3_NULL)
-				vMove = m_vMyDir * m_fMoveSpeed * _float(TimeDelta);
-			else
-				vMove = m_pInfo->vMoveDirection * m_fMoveSpeed * _float(TimeDelta);
-			
+				vMove += m_vMyDir * m_fMoveSpeed * _float(TimeDelta);
+
  			if ((m_pDesc->pTargetTrans && !m_bAutoFindPos)
 				|| m_pTargetMatrix)
 			{
@@ -584,12 +601,28 @@ void CTexEffect::Check_Move(_double TimeDelta)
 			}
 			else if (m_bFinishPos)
 			{
-				//D3DXVec3Lerp(&m_vLerpPos, &m_vLerpPos, &m_vFinishPos, m_fLinearMovePercent);
-
 				_v3 vDir = m_vFinishPos - m_pTransformCom->Get_Pos();
 				vMove = vDir * m_fMoveSpeed * _float(TimeDelta);
 
-				//m_pTransformCom->Set_Pos(m_vLerpPos + vMove);
+				m_pTransformCom->Add_Pos(vMove);
+			}
+			else if (m_bCurve)
+			{
+				_v3 vDir = m_pCurveTargetTrans->Get_Pos() - m_pTransformCom->Get_Pos();
+				if (D3DXVec3Length(&vDir) < 0.1f)
+				{
+					Set_Dead();
+					return;
+				}
+				vMove = vDir * m_fMoveSpeed * _float(TimeDelta);
+
+				m_fCurveAccel -= _float(TimeDelta);
+				_float fCurveValue = (m_fCurvePower * m_fCurveAccel + GRAVITY * m_fCurveAccel * m_fCurveAccel * 0.5f) * _float(TimeDelta);
+
+				_v3 vCurveDir = *D3DXVec3Cross(&vCurveDir, &m_vCurveRotDir, &vDir);
+
+				vMove += fCurveValue * vCurveDir * m_fMoveSpeed * _float(TimeDelta);
+
 				m_pTransformCom->Add_Pos(vMove);
 			}
 			else

@@ -376,7 +376,7 @@ void CMeshEffect::Setup_Info()
 
 	if (m_vAngle != V3_NULL)
 	{
-		m_pTransformCom->Set_Angle(m_vAngle);
+		m_pTransformCom->Set_Angle(D3DXToRadian(m_vAngle));
 	
 		//_v3 vAngle;
 		//m_pInfo->vRotDirection = vAngle;
@@ -407,10 +407,10 @@ void CMeshEffect::Check_Move(_double TimeDelta)
 		else
 		{
 			_v3 vMove = V3_NULL;
+			vMove = m_pInfo->vMoveDirection * m_fMoveSpeed * _float(TimeDelta);
+
 			if (m_vMyDir != V3_NULL)
-				vMove = m_vMyDir * m_fMoveSpeed * _float(TimeDelta);
-			else
-				vMove = m_pInfo->vMoveDirection * m_fMoveSpeed * _float(TimeDelta);
+				vMove += m_vMyDir * m_fMoveSpeed * _float(TimeDelta);
 
 			if (m_pDesc->pTargetTrans && !m_bAutoFindPos)
 			{

@@ -62,7 +62,7 @@ _int CDeerKingJumpInPlaceCol::Update_GameObject(_double TimeDelta)
 		{
 			m_bEffect = true;
 
-			for (_int i = 0; i < 1000; i++)
+			for (_int i = 0; i < 2000; i++)
 			{
 				_mat matRotX, matRotY, matRotZ;
 				_v3 vDir = _v3(1.f, 1.f, 1.f);
@@ -78,7 +78,7 @@ _int CDeerKingJumpInPlaceCol::Update_GameObject(_double TimeDelta)
 				D3DXVec3TransformNormal(&vDir, &vDir, &matRotZ);
 				D3DXVec3Normalize(&vDir, &vDir);
 			
-				_float fMinRange = 10.f;
+				_float fMinRange = 9.f;
 				_v3 vRandPos = vDir * (fMinRange);
 			
 				CParticleMgr::Get_Instance()->Create_Effect(L"DeerKing_Point_ExplosionParticle_0", m_pTransformCom->Get_Pos() + vRandPos, nullptr);
