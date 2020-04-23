@@ -134,6 +134,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_Body_Sub")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_SubSmoke")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_PointParticle")))
@@ -143,6 +145,8 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_Distortion")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_Tail")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_Crying_Distortion")))
 		return E_FAIL;
 
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_DeadMist")))
@@ -527,6 +531,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_Snow_Up_LongLine_0")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Snow_Up_LongLine_1")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_1")))
@@ -540,6 +546,14 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_Small_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_Small_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Jump_In_Place_Distortion")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_JumpPack_Distortion")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBlock_0", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Tornade_Mesh_0", true)))
 		return E_FAIL;
 #pragma endregion
 
@@ -564,6 +578,10 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"Boss_Dead_Particle")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"SpawnParticle_ForBoss")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"SpawnParticle_ForBoss_Point")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"SpawnParticle_ForBoss_Point_Sub")))
 		return E_FAIL;
 
 #pragma region Blood

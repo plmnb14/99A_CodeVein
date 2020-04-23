@@ -121,6 +121,7 @@ private:
 
 	_bool				m_bFindPlayer = false;	// 플레이어 발견 못한 상태
 	_bool				m_bFight = false;
+	_bool				m_bAppearanceEffect = false;
 
 private:	// UI(지원)
 	CBossHP*			m_pBossUI = nullptr;

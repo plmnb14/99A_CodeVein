@@ -76,8 +76,9 @@ HRESULT CDeerKing::Ready_GameObject(void * pArg)
 
 	// ÆÐÅÏ È®ÀÎ¿ë,  °¢ ÆÐÅÏ ÇÔ¼ö¸¦ ¾Æ·¡¿¡ ³ÖÀ¸¸é Àç»ýµÊ
 
-	Start_Sel->Add_Child(Head_ColdBeam());
-
+	Start_Sel->Add_Child(Jump_Fist());
+	Start_Sel->Add_Child(Jump_In_Place());
+	
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("µ¹±â", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
 
@@ -325,6 +326,7 @@ CBT_Composite_Node * CDeerKing::RightFoot_Attack(_float fWeight)
 	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_IceSmoke_0"							, L"ShieldPos"	, 0.9, 5, 0.01, 0);
 	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_IceSmoke_1"							, L"ShieldPos"	, 0.9, 5, 0.01, 0);
 	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_IceSmoke_2"							, L"ShieldPos"	, 1.05, 1, 0.01, 0);
+	CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("´« À§·Î Æø¹ß2", L"DeerKing_SnowChunk_Heavy_Particle_0", L"ShieldPos"	, 0.9, 1, 0.01, 0);
 
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
@@ -335,6 +337,7 @@ CBT_Composite_Node * CDeerKing::RightFoot_Attack(_float fWeight)
 	Root_Parallel->Add_Service(Effect6);
 	Root_Parallel->Add_Service(Effect7);
 	Root_Parallel->Add_Service(Effect8);
+	Root_Parallel->Add_Service(Effect9);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani34);
@@ -468,19 +471,41 @@ CBT_Composite_Node * CDeerKing::Head_ColdBeam()
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_IceSmoke_Small_0"					, L"Bone_LeftCorner", 0.9, 5, 0.01, 0);
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_IceSmoke_Small_1"					, L"Bone_LeftCorner", 0.9, 5, 0.01, 0);
 	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("¾óÀ½", L"DeerKing_IceStone_Up_Small_Particle_0"		, L"Bone_LeftCorner", 0.9, 1, 0.01, 0);
-	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("´« µ¢¾î¸®", L"DeerKing_SnowChunk_Up_Small_Particle_0", L"Bone_LeftCorner", 0.9, 2, 0.01, 0);
-	//CBT_CreateEffect* Effect0 = Node_New_CreateEffect_Finite("°íµå¸§ ÀÓ½Ã", L"IceBlock_Main", L"Bone_LeftCorner", nullptr, L"Dir_Null", L"Angle_Null", 1.2, 1, 0.1, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("´« µ¢¾î¸®", L"DeerKing_SnowChunk_Up_Small_Particle_0"	, L"Bone_LeftCorner", 0.9, 2, 0.01, 0);
+
+	CBT_CreateEffect* Effect5 = Node_New_CreateEffect_Finite("´« À§·Î Æø¹ß0", L"DeerKing_SnowChunk_Up_Particle_0"	, L"Bone_LeftCorner", nullptr, L"Self_Dir", L"V3_Null", 1.55, 5, 0.1, 0);
+	CBT_CreateEffect* Effect6 = Node_New_CreateEffect_Finite("´« À§·Î Æø¹ß0", L"DeerKing_SnowChunk_Up_Particle_1"	, L"Bone_LeftCorner", nullptr, L"Self_Dir", L"V3_Null", 1.55, 5, 0.1, 0);
+	CBT_CreateEffect* Effect7 = Node_New_CreateEffect_Finite("´« À§·Î Æø¹ß0", L"DeerKing_SnowChunk_Up_Particle_2"	, L"Bone_LeftCorner", nullptr, L"Self_Dir", L"V3_Null", 1.55, 5, 0.1, 0);
+	CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("¾óÀ½ À§·Î Æø¹ß0", L"DeerKing_IceStone_Up_Particle_0"		, L"Bone_LeftCorner"	, 1.55, 2, 0.01, 0);
+	CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("ÀÜ´«", L"DeerKing_Snow_Up_Particle_0"						, L"Bone_LeftCorner"	, 1.55, 10, 0.01, 0);
+	CBT_CreateEffect* Effect10 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_IceSmoke_0"							, L"Bone_LeftCorner"	, 1.55, 2, 0.01, 0);
+	CBT_CreateEffect* Effect11 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_IceSmoke_1"							, L"Bone_LeftCorner"	, 1.55, 2, 0.01, 0);
+	CBT_CreateEffect* Effect12 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_IceSmoke_2"							, L"Bone_LeftCorner"	, 1.55, 2, 0.01, 0);
+	CBT_CreateEffect* Effect13 = Node_New_CreateEffect_Finite("", L"DeerKing_Snow_Up_LongLine_1", L"Bone_LeftCorner", nullptr, L"Self_Dir", L"V3_Null", 1.55, 8, 0.1, 0);
 
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
 	Root_Parallel->Add_Service(Effect2);
 	Root_Parallel->Add_Service(Effect3);
 	Root_Parallel->Add_Service(Effect4);
+	Root_Parallel->Add_Service(Effect5);
+	Root_Parallel->Add_Service(Effect6);
+	Root_Parallel->Add_Service(Effect7);
+	Root_Parallel->Add_Service(Effect8);
+	Root_Parallel->Add_Service(Effect9);
+	Root_Parallel->Add_Service(Effect10);
+	Root_Parallel->Add_Service(Effect11);
+	Root_Parallel->Add_Service(Effect12);
+	Root_Parallel->Add_Service(Effect13);
 
 	// °íµå¸§ »ý¼º
-	CBT_CreateBullet* Col0 = Node_CreateBullet("Åä³×ÀÌµµ Ãæµ¹Ã¼", L"Monster_DeerKingColdBeam", L"Bone_LeftCorner", L"Self_Dir", 0, 1, 1.766, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Col0 = Node_CreateBullet("Ãæµ¹Ã¼", L"Monster_DeerKingColdBeam", L"Bone_LeftCorner", L"Self_Dir"				, 0, 1, 1.766, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Col1 = Node_CreateBullet("Ãæµ¹Ã¼", L"Monster_DeerKingColdBeam", L"ColdBeam_Left_Pos", L"ColdBeam_Left_Dir"	, 0, 1, 1.766, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Col2 = Node_CreateBullet("Ãæµ¹Ã¼", L"Monster_DeerKingColdBeam", L"ColdBeam_Right_Pos", L"ColdBeam_Right_Dir"	, 0, 1, 1.766, 1, 0, 0, CBT_Service_Node::Finite);
 
 	Root_Parallel->Add_Service(Col0);
+	Root_Parallel->Add_Service(Col1);
+	Root_Parallel->Add_Service(Col2);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani37);
@@ -494,8 +519,6 @@ CBT_Composite_Node * CDeerKing::Head_ColdBeam()
 	SubSeq->Add_Child(Move1);
 	SubSeq->Add_Child(Wait2);
 	SubSeq->Add_Child(Move2);
-
-
 
 	return Root_Parallel;
 }
@@ -524,9 +547,10 @@ CBT_Composite_Node * CDeerKing::Slide_Attack()
 	CBT_MoveDirectly* Move4 = Node_MoveDirectly_Rush("ÀÌµ¿0", L"Monster_Speed", L"Monster_Dir", 2.f, 0.1, 0);
 	CBT_MoveDirectly* Move5 = Node_MoveDirectly_Rush("ÀÌµ¿0", L"Monster_Speed", L"Monster_Dir", 1.f, 0.1, 0);
 
-	CBT_CreateEffect* Effect0 = Node_New_CreateEffect_Finite("´« À§·Î Æø¹ß0", L"DeerKing_SnowChunk_Up_Particle_0"	, L"Self_Pos", nullptr, L"Self_Dir", L"Angle_Null", 0.6, 20, 0.1, 0.2);
-	CBT_CreateEffect* Effect1 = Node_New_CreateEffect_Finite("´« À§·Î Æø¹ß0", L"DeerKing_SnowChunk_Up_Particle_1"	, L"Self_Pos", nullptr, L"Self_Dir", L"Angle_Null", 0.6, 20, 0.1, 0.2);
-	CBT_CreateEffect* Effect8 = Node_New_CreateEffect_Finite("´« À§·Î Æø¹ß0", L"DeerKing_SnowChunk_Up_Particle_2"	, L"Self_Pos", nullptr, L"Self_Dir", L"Angle_Null", 0.6, 20, 0.1, 0.2);
+	CBT_CreateEffect* Effect0 = Node_New_CreateEffect_Finite("´« À§·Î Æø¹ß0", L"DeerKing_SnowChunk_Up_Particle_0"	, L"Self_Pos", nullptr, L"Self_Dir", L"V3_Null", 0.6, 20, 0.1, 0);
+	CBT_CreateEffect* Effect1 = Node_New_CreateEffect_Finite("´« À§·Î Æø¹ß0", L"DeerKing_SnowChunk_Up_Particle_1"	, L"Self_Pos", nullptr, L"Self_Dir", L"V3_Null", 0.6, 20, 0.1, 0);
+	CBT_CreateEffect* Effect8 = Node_New_CreateEffect_Finite("´« À§·Î Æø¹ß0", L"DeerKing_SnowChunk_Up_Particle_2"	, L"Self_Pos", nullptr, L"Self_Dir", L"V3_Null", 0.6, 20, 0.1, 0);
+	CBT_CreateEffect* Effect11 = Node_New_CreateEffect_Finite("", L"DeerKing_Snow_Up_LongLine_1"					, L"Self_Pos", nullptr, L"Self_Dir", L"V3_Null", 0.6, 20, 0.1, 0);
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("¾óÀ½ À§·Î Æø¹ß0", L"DeerKing_IceStone_Up_Small_Particle_0", L"Self_Pos"		, 0.7, 20, 0.01, 0);
 	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("ÀÜ´«", L"DeerKing_Snow_Up_Particle_0"						, L"Self_Pos"		, 0.6, 20, 0.01, 0);
 	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_IceSmoke_0"								, L"Self_Pos_Front"	, 0.8, 2, 0.01, 0.2);
@@ -535,7 +559,7 @@ CBT_Composite_Node * CDeerKing::Slide_Attack()
 	CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_IceSmoke_Mid_0"							, L"Self_Pos_Front"	, 0.6, 25, 0.01, 0);
 	CBT_CreateEffect* Effect10 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_IceSmoke_Mid_1"						, L"Self_Pos_Front"	, 0.6, 25, 0.01, 0);
 	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("±æÂßÇÑ ´«", L"DeerKing_Snow_Up_LongLine_0"				, L"Self_Pos"		, 0.6, 25, 0.01, 0);
-	
+
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
 	Root_Parallel->Add_Service(Effect2);
@@ -547,6 +571,7 @@ CBT_Composite_Node * CDeerKing::Slide_Attack()
 	Root_Parallel->Add_Service(Effect8);
 	Root_Parallel->Add_Service(Effect9);
 	Root_Parallel->Add_Service(Effect10);
+	Root_Parallel->Add_Service(Effect11);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani28);
@@ -590,7 +615,6 @@ CBT_Composite_Node * CDeerKing::Jump_Attack(_float fWeight)
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("´« À§·Î Æø¹ß0", L"DeerKing_SnowChunk_Up_Particle_0"	, L"Self_Pos", 0.5, 3, 0.01, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("´« À§·Î Æø¹ß1", L"DeerKing_SnowChunk_Up_Particle_1"	, L"Self_Pos", 0.5, 3, 0.01, 0);
-	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("´« À§·Î Æø¹ß2", L"DeerKing_SnowChunk_Heavy_Particle_0", L"Self_Pos", 0.5, 1, 0.01, 0);
 	CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("±æÂßÇÑ ´«", L"DeerKing_Snow_Up_LongLine_0"			, L"Self_Pos", 0.5, 2, 0.01, 0);
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("¾óÀ½ À§·Î Æø¹ß0", L"DeerKing_IceStone_Up_Particle_0"	, L"Self_Pos", 0.5, 2, 0.01, 0);
 	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("ÀÜ´«", L"DeerKing_Snow_Up_Particle_0"					, L"Self_Pos", 0.5, 3, 0.01, 0);
@@ -615,7 +639,6 @@ CBT_Composite_Node * CDeerKing::Jump_Attack(_float fWeight)
 	Root_Parallel->Add_Service(Effect4);
 	Root_Parallel->Add_Service(Effect5);
 	Root_Parallel->Add_Service(Effect6);
-	Root_Parallel->Add_Service(Effect7);
 	Root_Parallel->Add_Service(Effect8);
 	Root_Parallel->Add_Service(Effect9);
 	Root_Parallel->Add_Service(Effect10);
@@ -718,7 +741,6 @@ CBT_Composite_Node * CDeerKing::Jump_In_Place()
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("´« À§·Î Æø¹ß0", L"DeerKing_SnowChunk_Up_Particle_0"		, L"Self_Pos", 0.5, 3, 0.01, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("´« À§·Î Æø¹ß1", L"DeerKing_SnowChunk_Up_Particle_1"		, L"Self_Pos", 0.5, 3, 0.01, 0);
-	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("´« À§·Î Æø¹ß2", L"DeerKing_SnowChunk_Heavy_Particle_0"	, L"Self_Pos", 0.5, 1, 0.01, 0);
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("¾óÀ½ À§·Î Æø¹ß0", L"DeerKing_IceStone_Up_Particle_0"		, L"Self_Pos", 0.5, 2, 0.01, 0);
 	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("ÀÜ´«", L"DeerKing_Snow_Up_Particle_0"						, L"Self_Pos", 0.5, 10, 0.01, 0);
 	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_IceSmoke_0"								, L"Self_Pos", 0.5, 5, 0.01, 0);
@@ -731,6 +753,8 @@ CBT_Composite_Node * CDeerKing::Jump_In_Place()
 	CBT_CreateEffect* Effect21 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"FireBoy_FireBullet_Particle_01"			, L"Bone_RightJet"	, 0.5, 35, 0.01, 0);
 	CBT_CreateEffect* Effect22 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"FireBoy_FireBullet_Particle_02"			, L"Bone_LeftJet"	, 0.5, 35, 0.01, 0);
 	CBT_CreateEffect* Effect23 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"FireBoy_FireBullet_Particle_03"			, L"Bone_RightJet"	, 0.5, 35, 0.01, 0);
+	CBT_CreateEffect* Effect24 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"FireBoy_FireBullet_GunEff"				, L"Bone_LeftJet"	, 0.5, 35, 0.01, 0);
+	CBT_CreateEffect* Effect25 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"FireBoy_FireBullet_GunEff"				, L"Bone_RightJet"	, 0.5, 35, 0.01, 0);
 	CBT_CreateEffect* Effect18 = Node_CreateEffect_Finite("¼Õ ³Ã±â", L"DeerKing_IceSmoke_Mid_1"						, L"Bone_LeftHand"	, 0.5, 65, 0.01, 0);
 	CBT_CreateEffect* Effect19 = Node_CreateEffect_Finite("¼Õ ³Ã±â", L"DeerKing_IceSmoke_Mid_1"						, L"Bone_RightHand"	, 0.5, 65, 0.01, 0);
 
@@ -742,8 +766,6 @@ CBT_Composite_Node * CDeerKing::Jump_In_Place()
 	CBT_CreateEffect* Effect15 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_IceSmoke_0"							, L"Self_Pos", 1.5, 5, 0.01, 0);
 	CBT_CreateEffect* Effect16 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_IceSmoke_1"							, L"Self_Pos", 1.5, 5, 0.01, 0);
 	CBT_CreateEffect* Effect17 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_IceSmoke_2"							, L"Self_Pos", 1.5, 1, 0.01, 0);
-	// ÄÝ¶óÀÌ´õ °´Ã¼ »ý±â¸é Ãß°¡
-	//CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("ÆøÁ×", L"DeerKing_Point_ExplosionParticle_0", L"Self_Pos", 0.5, 3, 0.01, 0);
 	
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
@@ -752,7 +774,6 @@ CBT_Composite_Node * CDeerKing::Jump_In_Place()
 	Root_Parallel->Add_Service(Effect4);
 	Root_Parallel->Add_Service(Effect5);
 	Root_Parallel->Add_Service(Effect6);
-	Root_Parallel->Add_Service(Effect7);
 	Root_Parallel->Add_Service(Effect8);
 	Root_Parallel->Add_Service(Effect9);
 	Root_Parallel->Add_Service(Effect10);
@@ -769,6 +790,8 @@ CBT_Composite_Node * CDeerKing::Jump_In_Place()
 	Root_Parallel->Add_Service(Effect21);
 	Root_Parallel->Add_Service(Effect22);
 	Root_Parallel->Add_Service(Effect23);
+	Root_Parallel->Add_Service(Effect24);
+	Root_Parallel->Add_Service(Effect25);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani43);
@@ -888,28 +911,29 @@ CBT_Composite_Node * CDeerKing::Jump_Fist()
 	// Show_Ani47 * 0.9 = 0.99
 	// Show_Ani48 * 0.95 = 0.031
 
-	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"FireBoy_FireBullet_Mid"			, L"Bone_LeftJet"	, 0.2, 5, 0.01, 0);
-	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"FireBoy_FireBullet_Mid"			, L"Bone_RightJet"	, 0.2, 5, 0.01, 0);
-	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"FireBoy_FireBullet_Particle_01"	, L"Bone_LeftJet"	, 0.2, 65, 0.01, 0);
-	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"FireBoy_FireBullet_Particle_01"	, L"Bone_RightJet"	, 0.2, 65, 0.01, 0);
-	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"FireBoy_FireBullet_Particle_02"	, L"Bone_LeftJet"	, 0.2, 65, 0.01, 0);
-	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"FireBoy_FireBullet_Particle_02"	, L"Bone_RightJet"	, 0.2, 65, 0.01, 0);
-	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"FireBoy_FireBullet"				, L"Bone_LeftJet"	, 0.4, 48, 0.01, 0);
-	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"FireBoy_FireBullet"				, L"Bone_RightJet"	, 0.4, 48, 0.01, 0);
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"FireBoy_FireBullet"				, L"Bone_LeftJet"	, 0.2, 50, 0.01, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"FireBoy_FireBullet"				, L"Bone_RightJet"	, 0.2, 50, 0.01, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"FireBoy_FireBullet_Particle_01"	, L"Bone_LeftJet"	, 0.2, 60, 0.01, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"FireBoy_FireBullet_Particle_01"	, L"Bone_RightJet"	, 0.2, 60, 0.01, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"FireBoy_FireBullet_Particle_02"	, L"Bone_LeftJet"	, 0.2, 60, 0.01, 0);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"FireBoy_FireBullet_Particle_02"	, L"Bone_RightJet"	, 0.2, 60, 0.01, 0);
+	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"FireBoy_FireBullet"				, L"Bone_LeftJet"	, 0.2, 50, 0.01, 0.1);
+	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"FireBoy_FireBullet"				, L"Bone_RightJet"	, 0.2, 50, 0.01, 0.1);
 
 	CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("ÀÜ´«", L"DeerKing_Snow_Up_Particle_0"				, L"Self_Pos"		, 1.25, 20, 0.01, 0);
 	CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_IceSmoke_0"						, L"Self_Pos_Front"	, 1.25, 2, 0.01, 0.2);
 	CBT_CreateEffect* Effect10 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_IceSmoke_1"					, L"Self_Pos_Front"	, 1.25, 2, 0.01, 0.2);
 	CBT_CreateEffect* Effect11 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_IceSmoke_2"					, L"Self_Pos_Front"	, 1.25, 2, 0.01, 0.2);
 	CBT_CreateEffect* Effect12 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_SnowChunk_Up_Particle_0"		, L"Self_Pos"		, 1.25, 25, 0.01, 0);
-	CBT_CreateEffect* Effect13 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_SnowChunk_Up_Particle_1"		, L"Self_Pos"		, 1.25, 25, 0.01, 0);
+	//CBT_CreateEffect* Effect13 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_SnowChunk_Up_Particle_1"		, L"Self_Pos"		, 1.25, 25, 0.01, 0);
 
 	CBT_CreateEffect* Effect14 = Node_CreateEffect_Finite("ÀÜ´«", L"DeerKing_Snow_Up_Particle_0"			, L"Self_Pos"		, 0.53, 20, 0.01, 0);
 	CBT_CreateEffect* Effect15 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_IceSmoke_0"					, L"Self_Pos_Front"	, 0.53, 2, 0.01, 0.2);
 	CBT_CreateEffect* Effect16 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_IceSmoke_1"					, L"Self_Pos_Front"	, 0.53, 2, 0.01, 0.2);
 	CBT_CreateEffect* Effect17 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_IceSmoke_2"					, L"Self_Pos_Front"	, 0.53, 2, 0.01, 0.2);
 	CBT_CreateEffect* Effect18 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_SnowChunk_Up_Particle_0"		, L"Self_Pos"		, 0.53, 25, 0.01, 0);
-	CBT_CreateEffect* Effect19 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_SnowChunk_Up_Particle_1"		, L"Self_Pos"		, 0.53, 25, 0.01, 0);
+	//CBT_CreateEffect* Effect19 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_SnowChunk_Up_Particle_1"		, L"Self_Pos"		, 0.53, 25, 0.01, 0);
+	CBT_CreateEffect* Effect20 = Node_CreateEffect_Finite("¿Ö°î", L"DeerKing_JumpPack_Distortion"			, L"Self_Pos"		, 0.53, 1, 0.01, 0);
 
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
@@ -924,13 +948,14 @@ CBT_Composite_Node * CDeerKing::Jump_Fist()
 	Root_Parallel->Add_Service(Effect10);
 	Root_Parallel->Add_Service(Effect11);
 	Root_Parallel->Add_Service(Effect12);
-	Root_Parallel->Add_Service(Effect13);
+	//Root_Parallel->Add_Service(Effect13);
 	Root_Parallel->Add_Service(Effect14);
 	Root_Parallel->Add_Service(Effect15);
 	Root_Parallel->Add_Service(Effect16);
 	Root_Parallel->Add_Service(Effect17);
 	Root_Parallel->Add_Service(Effect18);
-	Root_Parallel->Add_Service(Effect19);
+	//Root_Parallel->Add_Service(Effect19);
+	Root_Parallel->Add_Service(Effect20);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani47);
@@ -1204,12 +1229,30 @@ void CDeerKing::Update_Shield()
 		_mat matShield = pShieldTrans->Get_WorldMat();
 		_v3 vShieldPos = _v3(matShield.m[3][0], matShield.m[3][1], matShield.m[3][2]);
 
-		g_pManagement->Create_Effect(L"DeerKing_SnowChunk_Up_Particle_0", vShieldPos, nullptr);
-		g_pManagement->Create_Effect(L"DeerKing_SnowChunk_Up_Particle_1", vShieldPos, nullptr);
-		g_pManagement->Create_Effect(L"DeerKing_IceStone_Up_Particle_0", vShieldPos, nullptr);
-		g_pManagement->Create_Effect(L"DeerKing_Snow_Up_Particle_0", vShieldPos, nullptr);
-		g_pManagement->Create_Effect(L"DeerKing_IceSmoke_0", vShieldPos, nullptr);
-		g_pManagement->Create_Effect(L"DeerKing_IceSmoke_2", vShieldPos, nullptr);
+		g_pManagement->Create_Effect(L"DeerKing_SnowChunk_Up_Particle_0"	, vShieldPos, nullptr);
+		g_pManagement->Create_Effect(L"DeerKing_SnowChunk_Up_Particle_1"	, vShieldPos, nullptr);
+		g_pManagement->Create_Effect(L"DeerKing_SnowChunk_Heavy_Particle_0"	, vShieldPos, nullptr);
+		g_pManagement->Create_Effect(L"DeerKing_IceStone_Up_Particle_0"		, vShieldPos, nullptr);
+		g_pManagement->Create_Effect(L"DeerKing_Snow_Up_Particle_0"			, vShieldPos, nullptr);
+		g_pManagement->Create_Effect(L"DeerKing_IceSmoke_0"					, vShieldPos, nullptr);
+		g_pManagement->Create_Effect(L"DeerKing_IceSmoke_2"					, vShieldPos, nullptr);
+
+		g_pManagement->Create_Effect_Delay(L"DeerKing_SnowChunk_Up_Particle_0"		, 0.8f	, m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect_Delay(L"DeerKing_SnowChunk_Up_Particle_1"		, 0.8f	, m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect_Delay(L"DeerKing_SnowChunk_Heavy_Particle_0"	, 0.8f	, m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect_Delay(L"DeerKing_IceStone_Up_Particle_0"		, 0.8f	, m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect_Delay(L"IceGirl_Buff_Break_1"					, 0.8f	, m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect_Delay(L"IceGirl_Buff_Break_2"					, 0.8f	, m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect_Delay(L"DeerKing_Snow_Up_Particle_0"			, 0.8f	, m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect_Delay(L"DeerKing_Snow_Up_Particle_0"			, 0.8f	, m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect_Delay(L"DeerKing_Snow_Up_Particle_0"			, 0.8f	, m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect_Delay(L"DeerKing_IceSmoke_0"					, 0.8f	, m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect_Delay(L"DeerKing_IceSmoke_1"					, 0.8f	, m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect_Delay(L"DeerKing_IceSmoke_2"					, 0.8f	, m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect_Delay(L"DeerKing_Tornade_Mesh_0"				, 0.85f	, m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_ParticleEffect_Delay(L"IceFloorAura_01", 2.0f			, 0.8f	, m_pTransformCom->Get_Pos());
+		g_pManagement->Create_ParticleEffect_Delay(L"IceFloorAura_02", 2.0f			, 0.8f	, m_pTransformCom->Get_Pos());
+		g_pManagement->Create_ParticleEffect_Delay(L"IceFloorAura_03", 2.0f			, 0.8f	, m_pTransformCom->Get_Pos());
 	}
 	else
 	{
@@ -1262,8 +1305,8 @@ HRESULT CDeerKing::Update_Bone_Of_BlackBoard()
 	// ¸Ó¸® ¹Ú±â ÆÐÅÏ - °íµå¸§ »ý¼ºÀ§Ä¡
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head_LeftCorner");
 	m_vHeadColdBeamPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-	//m_vHeadColdBeamPos += (m_pTransformCom->Get_Axis(AXIS_Z) * 0.3f);
-	m_vHeadColdBeamPos += (m_pTransformCom->Get_Axis(AXIS_Y) * -0.9f);
+	m_vHeadColdBeamPos += (m_pTransformCom->Get_Axis(AXIS_Z) * 0.5f);
+	m_vHeadColdBeamPos += (m_pTransformCom->Get_Axis(AXIS_Y) * -1.3f);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftCorner", m_vHeadColdBeamPos);
 	
 	// RightHandAttach´Â  Æ¯º°È÷ Update_Dir_Shield_Throwing¿¡¼­ ¾÷µ¥ÀÌÆ® ½ÃÄÑÁÜ
@@ -1299,8 +1342,7 @@ HRESULT CDeerKing::Update_Value_Of_BB()
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_Pos_Front", m_pTransformCom->Get_Pos() + m_pTransformCom->Get_Axis(AXIS_Z) * 1.6f);
 
 	/////////////////
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Angle_Null", V3_NULL);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Dir_Null", V3_NULL);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"V3_Null", V3_NULL);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_Dir", m_pTransformCom->Get_Axis(AXIS_Z));
 	/////////////////
 
@@ -1335,6 +1377,13 @@ HRESULT CDeerKing::Update_Value_Of_BB()
 	// 4. Á¡ÇÁ ÁÖ¸Ô Âï±â ÁÂÇ¥
 	fLength = 1.f;
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"JumpFist_Pos", m_vLeftHand + fLength * vSelfRight);
+
+	// 5. °íµå¸§ ÁÂÇ¥
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ColdBeam_Left_Dir"	, *D3DXVec3TransformNormal(&_v3(), &vSelfLook, D3DXMatrixRotationAxis(&_mat(), &vSelfUp, D3DXToRadian(-40))));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ColdBeam_Right_Dir"	, *D3DXVec3TransformNormal(&_v3(), &vSelfLook, D3DXMatrixRotationAxis(&_mat(), &vSelfUp, D3DXToRadian(40))));
+	
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ColdBeam_Left_Pos", m_vHeadColdBeamPos + m_pTransformCom->Get_Axis(AXIS_X) * -1.f);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ColdBeam_Right_Pos", m_vHeadColdBeamPos + m_pTransformCom->Get_Axis(AXIS_X) * 1.f);
 
 
 	return S_OK;
@@ -1472,10 +1521,27 @@ void CDeerKing::Check_PhyCollider()
 		else
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// Á×À½Ã³¸® ½ÃÀÛ
-			Start_Dissolve(0.4f, false, true, 4.2f);
-			m_pShield->Start_Dissolve(0.4f, false, false, 4.2f);
-			g_pManagement->Create_Effect_Delay(L"Boss_Dead_Particle", 3.9f, _v3(0.f, 1.3f, 0.f), m_pTransformCom);
-			g_pManagement->Create_ParticleEffect_Delay(L"SpawnParticle_ForBoss", 2.5f, 4.2f, m_pTransformCom->Get_Pos() + _v3(0.f, 0.5f, 0.f));
+			Start_Dissolve(0.7f, false, true, 6.9f);
+			m_pShield->Start_Dissolve(0.7f, false, false, 6.9f);
+			
+			CParticleMgr::Get_Instance()->Create_BossDeadParticle_Effect(m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), 5.2f, 1.f);
+			//g_pManagement->Create_Effect_Delay(L"Boss_Dead_Particle"					, 5.2f, _v3(0.f, 1.3f, 0.f), m_pTransformCom);
+			g_pManagement->Create_ParticleEffect_Delay(L"SpawnParticle_ForBoss"	, 2.5f	, 6.9f, m_pTransformCom->Get_Pos() + _v3(0.f, 0.5f, 0.f));
+
+			g_pManagement->Create_Effect_Offset(L"DeerKing_IceSmoke_0", 0.1f, m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect_Offset(L"DeerKing_IceSmoke_1", 0.1f, m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect_Offset(L"DeerKing_IceSmoke_2", 0.1f, m_pTransformCom->Get_Pos(), nullptr);
+
+			g_pManagement->Create_Effect_Delay(L"DeerKing_SnowChunk_Up_Particle_0"		, 7.79f	, m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect_Delay(L"DeerKing_SnowChunk_Up_Particle_1"		, 7.79f	, m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect_Delay(L"DeerKing_SnowChunk_Heavy_Particle_0"	, 7.79f	, m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect_Delay(L"DeerKing_Snow_Up_Particle_0"			, 7.79f	, m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect_Delay(L"DeerKing_Snow_Up_Particle_0"			, 7.79f	, m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect_Delay(L"DeerKing_Snow_Up_Particle_0"			, 7.79f	, m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect_Delay(L"DeerKing_IceSmoke_0"					, 7.79f	, m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect_Delay(L"DeerKing_IceSmoke_1"					, 7.79f	, m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect_Delay(L"DeerKing_IceSmoke_2"					, 7.79f	, m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect_Delay(L"DeerKing_Snow_Up_LongLine_1"			, 7.79f	, m_pTransformCom->Get_Pos(), nullptr);
 		}
 
 

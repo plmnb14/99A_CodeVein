@@ -58,7 +58,35 @@ _int CDeerKingJumpInPlaceCol::Update_GameObject(_double TimeDelta)
 	}
 	else
 	{
+		if (!m_bEffect)
+		{
+			m_bEffect = true;
 
+			for (_int i = 0; i < 2000; i++)
+			{
+				_mat matRotX, matRotY, matRotZ;
+				_v3 vDir = _v3(1.f, 1.f, 1.f);
+				D3DXMatrixIdentity(&matRotX);
+				D3DXMatrixIdentity(&matRotY);
+				D3DXMatrixIdentity(&matRotZ);
+			
+				D3DXMatrixRotationX(&matRotX, D3DXToRadian(_float(CCalculater::Random_Num_Double(0, 360))));
+				D3DXMatrixRotationY(&matRotY, D3DXToRadian(_float(CCalculater::Random_Num_Double(0, 360))));
+				D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(_float(CCalculater::Random_Num_Double(0, 360))));
+				D3DXVec3TransformNormal(&vDir, &vDir, &matRotX);
+				D3DXVec3TransformNormal(&vDir, &vDir, &matRotY);
+				D3DXVec3TransformNormal(&vDir, &vDir, &matRotZ);
+				D3DXVec3Normalize(&vDir, &vDir);
+			
+				_float fMinRange = 9.f;
+				_v3 vRandPos = vDir * (fMinRange);
+			
+				CParticleMgr::Get_Instance()->Create_Effect(L"DeerKing_Point_ExplosionParticle_0", m_pTransformCom->Get_Pos() + vRandPos, nullptr);
+			}
+			//CParticleMgr::Get_Instance()->Create_Effect_Delay(L"DeerKing_Jump_In_Place_Distortion", 0.2, m_pTransformCom->Get_Pos(), nullptr);
+			//CParticleMgr::Get_Instance()->Create_Effect_Delay(L"DeerKing_Jump_In_Place_Distortion", 0.3, m_pTransformCom->Get_Pos(), nullptr);
+			//CParticleMgr::Get_Instance()->Create_Effect_Delay(L"DeerKing_Jump_In_Place_Distortion", 0.4, m_pTransformCom->Get_Pos(), nullptr);
+		}
 	}
 
 
