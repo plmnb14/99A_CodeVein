@@ -63,16 +63,16 @@ _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 
 	if (g_pInput_Device->Key_Up(DIK_ESCAPE))
 	{
-		m_bIsActive = !m_bIsActive;
-
-		if (m_bIsActive)
+		//m_bIsActive = !m_bIsActive;
+		m_bIsActive = true;
+		//if (m_bIsActive)
 		{
 			CUI_Manager::Get_Instance()->Get_Instance()->Get_Inventory()->Set_Active(false);
 			CUI_Manager::Get_Instance()->Get_Instance()->Get_Inventory()->Set_Detail(false);
-			pQuickSlot->Set_Active(false);
+		//	pQuickSlot->Set_Active(false);
 		}
-		else
-			pQuickSlot->Set_Active(true);
+		//else
+		//	pQuickSlot->Set_Active(true);
 	}
 
 	for (auto& iter : m_vecIcon)
@@ -207,7 +207,7 @@ void CTotal_Inven::SetUp_Default()
 	m_pIcon = static_cast<CInventory_Icon*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
 	m_pIcon->Set_Type(CInventory_Icon::ICON_ALL);*/
 	CInventory_Icon* pInstance = nullptr;
-	LOOP(2)
+	LOOP(3)
 	{
 		pInstance = static_cast<CInventory_Icon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_InvenIcon",nullptr));
 		pInstance->Set_UI_Pos(220.f + 50.f * i, 100.f);
@@ -218,6 +218,7 @@ void CTotal_Inven::SetUp_Default()
 	}
 	m_vecIcon[0]->Set_Type(CInventory_Icon::ICON_ALL);
 	m_vecIcon[1]->Set_Type(CInventory_Icon::ICON_STATUS);
+	m_vecIcon[2]->Set_Type(CInventory_Icon::ICON_EXIT);
 
 	LOOP(3)
 	{
@@ -293,6 +294,11 @@ void CTotal_Inven::Click_Icon()
 		g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
 		CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(true);
+		m_bIsActive = false;
+	}
+	else if (m_vecIcon[2]->Pt_InRect() &&
+		g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+	{
 		m_bIsActive = false;
 	}
 	

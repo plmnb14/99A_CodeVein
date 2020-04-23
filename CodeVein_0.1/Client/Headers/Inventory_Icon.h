@@ -17,6 +17,7 @@ public:
 		ICON_ARMOR,
 		ICON_ALL,
 		ICON_STATUS,
+		ICON_EXIT,
 		ICON_END
 	};
 private:

@@ -84,7 +84,7 @@ HRESULT CBloodCodeMenuUI::Render_GameObject()
 			return E_FAIL;
 
 		m_pShaderCom->Begin_Shader();
-		m_pShaderCom->Begin_Pass(0);
+		m_pShaderCom->Begin_Pass(7);
 
 		m_pBufferCom->Render_VIBuffer();
 		m_pShaderCom->End_Pass();

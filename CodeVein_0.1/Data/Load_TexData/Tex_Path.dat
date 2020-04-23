@@ -97,7 +97,7 @@ Tex_Hammer_Icon|Hammer_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Hammer_I
 Tex_HPBar|HPBar%d.tga|..\..\Client\Resources\Texture\TestUI\HPBar\|0|1
 Tex_HPBarBack|HPBarBack%d.png|..\..\Client\Resources\Texture\TestUI\HPBarBack\|0|2
 Tex_Icon_Base|Icon_Base%d.png|..\..\Client\Resources\Texture\TestUI\Icon_Base\|0|2
-Tex_Inven_Icon|Inven_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Inven_Icon\|0|6
+Tex_Inven_Icon|Inven_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Inven_Icon\|0|7
 Tex_ItemIcon|ItemIcon%d.tga|..\..\Client\Resources\Texture\TestUI\ItemIcon\|0|4
 Tex_ItemPalette|ItemPalette%d.png|..\..\Client\Resources\Texture\TestUI\ItemPalette\|0|1
 Tex_LargeSword_Icon|LargeSword_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\LargeSword_Icon\|0|3
