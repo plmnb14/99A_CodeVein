@@ -917,8 +917,8 @@ CBT_Composite_Node * CDeerKing::Jump_Fist()
 	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"FireBoy_FireBullet_Particle_01"	, L"Bone_RightJet"	, 0.2, 60, 0.01, 0);
 	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"FireBoy_FireBullet_Particle_02"	, L"Bone_LeftJet"	, 0.2, 60, 0.01, 0);
 	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"FireBoy_FireBullet_Particle_02"	, L"Bone_RightJet"	, 0.2, 60, 0.01, 0);
-	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"FireBoy_FireBullet"				, L"Bone_LeftJet"	, 0.2, 50, 0.01, 0.1);
-	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"FireBoy_FireBullet"				, L"Bone_RightJet"	, 0.2, 50, 0.01, 0.1);
+	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"DeerKing_JumpPack_Fire"			, L"Bone_LeftJet"	, 0.2, 50, 0.01, 0.1);
+	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("Á¦Æ®ÆÑ ºÒ²É", L"DeerKing_JumpPack_Fire"			, L"Bone_RightJet"	, 0.2, 50, 0.01, 0.1);
 
 	CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("ÀÜ´«", L"DeerKing_Snow_Up_Particle_0"				, L"Self_Pos"		, 1.25, 20, 0.01, 0);
 	CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("¿¬±â", L"DeerKing_IceSmoke_0"						, L"Self_Pos_Front"	, 1.25, 2, 0.01, 0.2);

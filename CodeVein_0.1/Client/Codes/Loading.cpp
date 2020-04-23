@@ -551,6 +551,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_JumpPack_Distortion")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_JumpPack_Fire")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBlock_0", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_Tornade_Mesh_0", true)))
@@ -809,6 +811,8 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_WindMesh", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_WindTornadeMesh", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_BloodTornadeMesh", true)))
 		return E_FAIL;
 #pragma endregion
 

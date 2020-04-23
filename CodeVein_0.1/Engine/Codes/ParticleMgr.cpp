@@ -68,6 +68,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Player_Skill_RotYRing_Red", 40);
 	Input_Pool(L"Player_Skill_WindMesh", 40);
 	Input_Pool(L"Player_Skill_WindTornadeMesh", 60);
+	Input_Pool(L"Player_Skill_BloodTornadeMesh", 60);
 
 	Input_Pool(L"ButterFly_SoftSmoke", 2000);
 	Input_Pool(L"ButterFly_PointParticle", 3500);
@@ -299,6 +300,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"DeerKing_IceBlock_0", 20);
 	Input_Pool(L"DeerKing_Tornade_Mesh_0", 20);
 	Input_Pool(L"DeerKing_JumpPack_Distortion", 20);
+	Input_Pool(L"DeerKing_JumpPack_Fire", 700);
 
 	Input_Pool(L"Boss_KnockDown_Dust", 10);
 	Input_Pool(L"Boss_Dead_Particle", 11000);
