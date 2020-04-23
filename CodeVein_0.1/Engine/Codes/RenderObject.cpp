@@ -28,7 +28,7 @@ CRenderObject::~CRenderObject()
 
 _int CRenderObject::Update_GameObject(_double _TimeDelta)
 {
-	if (false == m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), 10.f))
+	if (false == m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), 20.f))
 		return NO_EVENT;
 
 	CGameObject::LateInit_GameObject();

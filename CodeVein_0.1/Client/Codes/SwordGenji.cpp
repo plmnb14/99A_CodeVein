@@ -251,8 +251,6 @@ HRESULT CSwordGenji::Render_GameObject()
 
 	if (m_pOptimization->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 1.5f))
 	{
-		cout << "SwordGengi : 절두체 안에 들어옴다" << endl;
-
 		if (FAILED(SetUp_ConstantTable()))
 			return E_FAIL;
 

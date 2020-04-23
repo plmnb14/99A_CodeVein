@@ -228,16 +228,19 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 
 						if (false == iter->Get_Target_IsDodge())
 						{
+							CTransform* pIterTransform = TARGET_TO_TRANS(iter);
+
+							// 무기의 공격력 받아옴
 							m_tObjParam.fDamage = m_tWeaponParam[m_eWeaponData].fDamage;
 
 							// 무기 공격력의 +-20%까지 랜덤범위
 							_uint min = (_uint)(m_tObjParam.fDamage - (m_tObjParam.fDamage * 0.2f));
 							_uint max = (_uint)(m_tObjParam.fDamage + (m_tObjParam.fDamage * 0.2f));
 
-							//피격시 밀림처리.....
+							//피격시 밀림처리..... ( 무기니까 부모의 위치값 )
 							memcpy(vHitDir, &(m_pmatParent->_41), sizeof(_v3));
 
-							V3_NORMAL(&m_tObjParam.vHitDir, &(TARGET_TO_TRANS(iter)->Get_Pos() - vHitDir));
+							V3_NORMAL(&m_tObjParam.vHitDir, &(pIterTransform->Get_Pos() - vHitDir));
 
 							iter->Set_Target_HitDir(m_tObjParam.vHitDir);
 
@@ -246,10 +249,9 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 							CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(2.f, 20.f, 0.5f, 0.6f, CCamera::CAM_OSC_TYPE::POS_OSC);
 
 							iter->Add_Target_Hp(-(_float)CALC::Random_Num(min , max) * m_fSkillPercent);
-							g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
+							g_pManagement->Create_Hit_Effect(vecIter, vecCol, pIterTransform);
 
-							//CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(2.f, 20.f, 0.5f, 0.6f, CCamera::CAM_OSC_TYPE::POS_OSC);
-							//SHAKE_CAM_lv0;
+							Create_PointLight(vecIter->Get_CenterPos());
 
 							if (m_bRecordCollision)
 							{
@@ -704,6 +706,29 @@ HRESULT CWeapon::SetUp_ConstantTable()
 		return E_FAIL;
 
 	return NOERROR;
+}
+
+void CWeapon::Create_PointLight(_v3 _vPos)
+{
+	NEW_LIGHT		LightDesc;
+	ZeroMemory(&LightDesc, sizeof(NEW_LIGHT));
+
+	float fAmbient = 0.1f;
+
+	LightDesc.Type = D3DLIGHT_POINT;
+	LightDesc.Diffuse = D3DXCOLOR(1.f, 0.5f, 0.f, 1.f);
+	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
+	LightDesc.Specular = LightDesc.Diffuse;
+	LightDesc.Position = _vPos;
+	LightDesc.Range = 10.f;
+
+	LightDesc.bLifeTime = true;
+	LightDesc.fLifeTime_Cur = 0.3f;
+	LightDesc.fLifeTime_Max = 0.3f;
+	LightDesc.fAlpha = 1.f;
+
+	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Dev, LightDesc, CLight_Manager::Dynamic_Light)))
+		return;
 }
 
 void CWeapon::Cacl_AttachBoneTransform()
