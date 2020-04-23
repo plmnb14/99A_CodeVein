@@ -187,6 +187,7 @@ call CopyEngine.bat</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Codes\QuadTreeTerrain.h" />
     <ClInclude Include="..\Headers\ActeiveObject.h" />
     <ClInclude Include="..\Headers\AIController.h" />
     <ClInclude Include="..\Headers\AniCtrl.h" />
@@ -266,8 +267,10 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\Mesh_Static.h" />
     <ClInclude Include="..\Headers\NavMesh.h" />
     <ClInclude Include="..\Headers\Object_Manager.h" />
+    <ClInclude Include="..\Headers\Optimization.h" />
     <ClInclude Include="..\Headers\ParticleMgr.h" />
     <ClInclude Include="..\Headers\PipeLine.h" />
+    <ClInclude Include="..\Headers\QuadTree.h" />
     <ClInclude Include="..\Headers\Renderer.h" />
     <ClInclude Include="..\Headers\RenderObject.h" />
     <ClInclude Include="..\Headers\RigidBody.h" />
@@ -358,8 +361,11 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\Mesh_Static.cpp" />
     <ClCompile Include="..\Codes\NavMesh.cpp" />
     <ClCompile Include="..\Codes\Object_Manager.cpp" />
+    <ClCompile Include="..\Codes\Optimization.cpp" />
     <ClCompile Include="..\Codes\ParticleMgr.cpp" />
     <ClCompile Include="..\Codes\PipeLine.cpp" />
+    <ClCompile Include="..\Codes\QuadTree.cpp" />
+    <ClCompile Include="..\Codes\QuadTreeTerrain.cpp" />
     <ClCompile Include="..\Codes\Renderer.cpp" />
     <ClCompile Include="..\Codes\RenderObject.cpp" />
     <ClCompile Include="..\Codes\RigidBody.cpp" />

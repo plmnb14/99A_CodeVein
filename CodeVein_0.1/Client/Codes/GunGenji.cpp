@@ -186,8 +186,8 @@ _int CGunGenji::Late_Update_GameObject(_double TimeDelta)
 
 	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
-	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-		return E_FAIL;
+	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+	//	return E_FAIL;
 	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
 	//	return E_FAIL;
 
@@ -207,7 +207,7 @@ HRESULT CGunGenji::Render_GameObject()
 	m_pMeshCom->Play_Animation(_float(m_dTimeDelta)); // * alpha
 
 
-	if (m_pFrustum->Check_InFrustumObj(&m_pTransformCom->Get_Pos(), 5.f))
+	if (m_pOptimization->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 5.f))
 	{
 		if (FAILED(SetUp_ConstantTable()))
 			return E_FAIL;
@@ -985,8 +985,8 @@ HRESULT CGunGenji::Add_Component(void* pArg)
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
 
-	// for.Com_Frustum
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Frustum", L"Com_Frustum", (CComponent**)&m_pFrustum)))
+	// for.Com_Optimaization
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Optimization", L"Com_Optimization", (CComponent**)&m_pOptimization)))
 		return E_FAIL;
 
 	m_pCollider->Set_Radius(_v3{ 0.5f, 0.5f, 0.5f });

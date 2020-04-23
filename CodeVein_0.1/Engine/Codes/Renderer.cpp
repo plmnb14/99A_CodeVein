@@ -337,8 +337,8 @@ HRESULT CRenderer::Draw_RenderList()
 	if (FAILED(Render_MotionBlurTarget()))
 		return E_FAIL;
 
-	if (FAILED(Render_ShadowMap()))
-		return E_FAIL;
+	//if (FAILED(Render_ShadowMap()))
+	//	return E_FAIL;
 
 	// 노멀타겟과 빛정보를 이용하여 셰이드타겟에 값을 그리낟.
 	if (FAILED(Render_LightAcc()))
@@ -867,7 +867,6 @@ HRESULT CRenderer::Render_LightAcc()
 	m_pShader_LightAcc->Set_Texture("g_DepthTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"));
 	m_pShader_LightAcc->Set_Texture("g_ShadowMapTexture", m_pTarget_Manager->Get_Texture(L"Target_Shadow"));
 	m_pShader_LightAcc->Set_Texture("g_RimNormalTexture", m_pTarget_Manager->Get_Texture(L"Target_RimNormal"));
-	m_pSSAOTexture->SetUp_OnShader("g_SSAOTexture", m_pShader_LightAcc, 0);
 	
 	m_pShader_LightAcc->Set_Value("g_matProjInv", &pPipeLine->Get_Transform_Inverse(D3DTS_PROJECTION), sizeof(_mat));
 	m_pShader_LightAcc->Set_Value("g_matViewInv", &pPipeLine->Get_Transform_Inverse(D3DTS_VIEW), sizeof(_mat));
@@ -913,8 +912,8 @@ HRESULT CRenderer::Render_Blend()
 	if (FAILED(m_pShader_Blend->Set_Texture("g_RimTexture", m_pTarget_Manager->Get_Texture(L"Target_Rim"))))
 		return E_FAIL;
 	// SSAO 수정중
-	//if (FAILED(m_pShader_Blend->Set_Texture("g_SSAOTexture", m_pTarget_Manager->Get_Texture(L"Target_SSAO_Blur"))))
-	//	return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Texture("g_SSAOTexture", m_pTarget_Manager->Get_Texture(L"Target_SSAO_Blur"))))
+		return E_FAIL;
 
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Blend")))
 		return E_FAIL;

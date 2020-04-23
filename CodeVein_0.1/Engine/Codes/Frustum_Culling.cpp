@@ -1,14 +1,8 @@
 #include "Frustum_Culling.h"
 #include "Management.h"
+#include "QuadTree.h"
 
-CFrustum_Culling::CFrustum_Culling(_Device _pGraphicDev)
-	:CComponent(_pGraphicDev)
-{
-
-}
-
-CFrustum_Culling::CFrustum_Culling(const CFrustum_Culling & rhs)
-	: CComponent(rhs)
+CFrustum_Culling::CFrustum_Culling()
 {
 
 }
@@ -22,7 +16,7 @@ HRESULT CFrustum_Culling::Ready_Component()
 	return S_OK;
 }
 
-_bool CFrustum_Culling::Check_InFrustumObj(const _v3* pPos, const _float& fRadius)
+_bool CFrustum_Culling::Check_InFrustumObj(const _v3* pPos, const _float& fRadius , CQuadTree* pQuadTree)
 {
 	Ready_Frustum();
 
@@ -55,6 +49,11 @@ _bool CFrustum_Culling::Check_InFrustumObj(const _v3* pPos, const _float& fRadiu
 
 	// z-
 	D3DXPlaneFromPoints(&m_Plane[5], &m_vPoint[0], &m_vPoint[1], &m_vPoint[2]);
+
+	if (nullptr != pQuadTree)
+	{
+		//pQuadTree->Check_QuadTree_Frustum_Object(this, pVtxPos, pIndex, pTriCnt);
+	}
 
 	return Check_InFrustum(pPos , fRadius);
 }
@@ -89,9 +88,9 @@ HRESULT CFrustum_Culling::Ready_Frustum(void)
 	return S_OK;
 }
 
-CFrustum_Culling* CFrustum_Culling::Create(_Device _pGraphicDev)
+CFrustum_Culling* CFrustum_Culling::Create()
 {
-	CFrustum_Culling* pComponent = new CFrustum_Culling(_pGraphicDev);
+	CFrustum_Culling* pComponent = new CFrustum_Culling();
 
 	if (FAILED(pComponent->Ready_Component()))
 	{
@@ -102,12 +101,6 @@ CFrustum_Culling* CFrustum_Culling::Create(_Device _pGraphicDev)
 	return pComponent;
 }
 
-CComponent * CFrustum_Culling::Clone_Component(void* pArg)
-{
-	return new CFrustum_Culling(*this);
-}
-
 void CFrustum_Culling::Free()
 {
-	CComponent::Free();
 }

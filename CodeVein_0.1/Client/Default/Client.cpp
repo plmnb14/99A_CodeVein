@@ -28,6 +28,8 @@ bool				g_bOnStage[8]	= {};
 bool				g_bReleaseMode	= false;
 short				g_sStageIdx_Cur = 0;
 short				g_sPlayerLevel = 1;
+short				g_sQuadTreeCX = 0;
+short				g_sQuadTreeCY = 0;
 
 // [0] - 최초 로딩 타이틀
 // [1] - 트레이닝

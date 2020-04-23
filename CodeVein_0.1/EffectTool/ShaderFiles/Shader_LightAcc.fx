@@ -89,73 +89,6 @@ struct PS_OUT
 	vector		vRim : COLOR2;
 };
 
-bool g_bTest;
-float g_sample_rad = 0.1f;		// 샘플링 반경
-float g_intensity = 0.35f;		// ao 강도
-float g_scale = 1.f;			// 사이 거리
-float g_bias = 0.001f;			// 너비 제어
-
-float3 getPosition(in float3 vDepth, in float2 uv)
-{
-	float		fViewZ = vDepth.g * 500.f;
-	vector		vWorldPos;
-
-	vWorldPos.x = uv.x * 2.f - 1.f;
-	vWorldPos.y = uv.y * -2.f + 1.f;
-	vWorldPos.z = vDepth.x;
-	vWorldPos.w = 1.f;
-
-	vWorldPos = vWorldPos * fViewZ;
-
-	vWorldPos = mul(vWorldPos, g_matProjInv);
-	//vWorldPos = mul(vWorldPos, g_matViewInv);
-
-	return vWorldPos.xyz;
-}
-
-float2 getRandom(in float2 uv)
-{
-	float2 g_screen_size = { 1280.f, 720.f };
-	float2 random_size = { 64.f, 64.f }; // 샘플러 텍스쳐 사이즈
-	return normalize(tex2D(SSAOSampler, g_screen_size * uv / random_size).xy * 2.0f - 1.0f);
-}
-
-float doAmbientOcclusion(in float3 vDepth, in float2 tcoord, in float2 uv, in float3 p, in float3 cnorm)
-{
-	float3 diff = getPosition(vDepth, tcoord + uv) - p;
-	const float3 v = normalize(diff);
-	const float d = length(diff)*g_scale;
-	return max(0.0, dot(cnorm, v) - g_bias)*(1.0 / (1.0 + d)) * g_intensity;
-}
-
-float Get_SSAO(in float3 vNormal, in float3 vDepth, in float2 uv)
-{
-	const float2 vec[4] = { float2(1,0),float2(-1,0), float2(0,1),float2(0,-1) };
-	float3 p = getPosition(vDepth, uv);
-	float3 n = vNormal;
-	float2 rand = getRandom(uv);
-	float ao = 0.0f;
-	float rad = g_sample_rad / p.z;
-
-	//**SSAO Calculation**// 
-	int iterations = 4;
-	//int iterations = lerp(6.0, 2.0, p.z / 500.f);
-	for (int j = 0; j < iterations; ++j)
-	{
-		float2 coord1 = reflect(vec[j], rand)*rad;
-		float2 coord2 = float2(coord1.x*0.707 - coord1.y*0.707, coord1.x*0.707 + coord1.y*0.707);
-
-		ao += doAmbientOcclusion(vDepth, uv, coord1 * 0.25, p, n);
-		ao += doAmbientOcclusion(vDepth, uv, coord2 * 0.5, p, n);
-		ao += doAmbientOcclusion(vDepth, uv, coord1 * 0.75, p, n);
-		ao += doAmbientOcclusion(vDepth, uv, coord2, p, n);
-	}
-
-	ao /= (float)iterations * 4.0f;
-
-	return ao;
-}
-
 PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
@@ -238,25 +171,6 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	float4 rc = g_vLightDiffuse * 0.7f;
 
 	float4 fRimLight = (pow(fRim, 5.f) * rc);
-
-	//Out.vShade.xyz += fRimLight;
-	//Out.vRim = fRimLight; // Blend에서 더해줌
-	//Out.vRim.a = 0;
-	// RimLight End ==================================================================
-
-	//Out.vShade.rgb *= fShadow;
-
-	// SSAO ====================================================================
-	vNormal = mul(vNormal, g_matProjInv);
-	float ao = Get_SSAO(vNormal.xyz, vDepthInfo.xyz, In.vTexUV);
-	//Out.vSSAO = float4(ao, 0, 0, 1);
-
-	if (g_bTest)
-	{
-		Out.vShade.xyz -= saturate(ao);
-		saturate(Out.vShade.xyz);
-	}
-	// SSAO End ====================================================================
 
 	return Out;
 }
@@ -358,21 +272,6 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
 	
 	float4 fRimLight = (pow(fRim, 5.f) * rc);
 	// RimLight End ====================================================================
-
-	// SSAO ====================================================================
-	vNormal = mul(vNormal, g_matProjInv);
-	float ao = Get_SSAO(vNormal.xyz, vDepthInfo.xyz, In.vTexUV);
-	//Out.vSSAO = float4(ao, 0, 0, 1);
-
-	if (g_bTest)
-	{
-		Out.vShade.xyz -= saturate(ao);
-		saturate(Out.vShade.xyz);
-	}
-	// SSAO End ====================================================================
-
-
-
 
 	return Out;
 }

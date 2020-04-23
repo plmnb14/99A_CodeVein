@@ -9,7 +9,7 @@ class CShader;
 class CMesh_Static;
 class CCollider;
 class CRenderer;
-class CFrustum_Culling;
+class COptimization;
 
 class ENGINE_DLL CRenderObject : public CGameObject
 {
@@ -52,7 +52,7 @@ protected:
 	CMesh_Static*		m_pMesh_Static = nullptr;
 	CRenderer*			m_pRenderer = nullptr;
 	CShader*			m_pShader = nullptr;
-	CFrustum_Culling*	m_pFrustum = nullptr;
+	COptimization*		m_pOptimization = nullptr;
 
 	// 텍스쳐, 메쉬 관련 변수
 protected:

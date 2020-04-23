@@ -12,10 +12,9 @@ private:
 	explicit CBuffer_Terrain(LPDIRECT3DDEVICE9 pGraphicDev);
 	explicit CBuffer_Terrain(const CBuffer_Terrain& rhs);
 	virtual ~CBuffer_Terrain(void) = default;
+
 public:
-	const _v3* Get_VtxPos(void) const {
-		return m_pPosition;
-	}
+	const _v3* Get_VtxPos(void) const { return m_pPosition; }
 	_float Get_Height(CTransform* pTransform);
 public:
 	HRESULT	Ready_Component_Prototype(_ulong dwCntX, _ulong dwCntZ, _ulong dwVtxItv);

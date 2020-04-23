@@ -1,18 +1,19 @@
 #pragma once
 
-#include "Component.h"
+#include "Engine_Defines.h"
+#include "Base.h"
 
 BEGIN(Engine)
 
-class ENGINE_DLL CFrustum_Culling : public CComponent
+class CQuadTree;
+class ENGINE_DLL CFrustum_Culling : public CBase
 {
 private:
-	explicit	CFrustum_Culling(_Device _pGraphicDev);
-	explicit	CFrustum_Culling(const CFrustum_Culling& rhs);
+	explicit	CFrustum_Culling();
 	virtual		~CFrustum_Culling();
 
 public:
-	_bool		Check_InFrustumObj(const _v3* _pPos, const _float& fRadius);
+	_bool		Check_InFrustumObj(const _v3* _pPos, const _float& fRadius , CQuadTree* pQuadTree = nullptr);
 	_bool		Check_InFrustum(const _v3* _Pos, const _float fRadius = 0.f);
 
 private:
@@ -24,8 +25,7 @@ private:
 	HRESULT		Ready_Frustum(void);
 
 public:
-	static	CFrustum_Culling*		Create(_Device _pGraphicDev);
-	virtual CComponent*		Clone_Component(void* pArg);
+	static	CFrustum_Culling*		Create();
 
 public:
 	virtual void Free();

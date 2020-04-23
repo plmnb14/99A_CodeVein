@@ -115,7 +115,7 @@ private:
 	CAIController*		m_pAIControllerCom = nullptr;
 	CNavMesh*			m_pNavMesh = nullptr;
 	CCollider*			m_pCollider = nullptr;
-	CFrustum_Culling*	m_pFrustum = nullptr;
+	COptimization*		m_pOptimization = nullptr;
 
 	CWeapon*			m_pSword = nullptr;
 
