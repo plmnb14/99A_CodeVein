@@ -28,6 +28,7 @@ HRESULT CPlayerFontUI::Ready_GameObject(void * pArg)
 	
 	CFontNumUI* pFont = nullptr;
 
+	// 5자리까지 생성
 	LOOP(5)
 	{
 		pFont = static_cast<CFontNumUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_FontNumUI", nullptr));
@@ -46,24 +47,11 @@ _int CPlayerFontUI::Update_GameObject(_double TimeDelta)
 	CUI::Update_GameObject(TimeDelta);
 	if (0 >= m_iNumber)
 		m_iNumber = 0;
-	//Calc_NumberFont(m_iNumber);
+	
 	MyNumberFont();
 	
-	return _int();
+	return 0;
 }
-
-_int CPlayerFontUI::Late_Update_GameObject(_double TimeDelta)
-{
-	
-	return _int();
-}
-
-HRESULT CPlayerFontUI::Render_GameObject()
-{
-	
-	return NOERROR;
-}
-
 
 HRESULT CPlayerFontUI::Add_Component()
 {
@@ -113,7 +101,7 @@ _ulong CPlayerFontUI::Calc_Digits(_ulong dwNumber)
 void CPlayerFontUI::MyNumberFont()
 {
 	for (auto& iter : m_vecFontNum)
-		iter->Set_UI_Index(12);
+		iter->Set_UI_Index(0);
 
 	_ulong dwDigits = Calc_Digits(m_iNumber);
 
@@ -122,93 +110,52 @@ void CPlayerFontUI::MyNumberFont()
 
 	_ulong iIdx = 0;
 
-	if (0 == m_iNumber)
-		m_vecFontNum[0]->Set_UI_Index(0);
-	else
+	
+	while (m_iNumber != 0)
 	{
-		while (m_iNumber != 0)
-		{
-			m_vecFontNum[iIdx]->Set_UI_Index(m_iNumber % 10);
-			m_iNumber /= 10;
-
+		m_vecFontNum[iIdx]->Set_UI_Index(m_iNumber % 10);
+		m_iNumber /= 10;
 			++iIdx;
-		}
 	}
 
 	reverse(m_vecFontNum.begin(), m_vecFontNum.end());
 
 	for (_uint i = 0; i < m_vecFontNum.size(); ++i)
 	{
-		if(dwDigits == 1)
-			m_vecFontNum[i]->Set_UI_Pos(m_fPosX + m_fSizeX * i * 0.3f - m_fSizeX * 0.3f, m_fPosY);
-		else if (dwDigits == 2)
-			m_vecFontNum[i]->Set_UI_Pos(m_fPosX + m_fSizeX * i * 0.3f - m_fSizeX * 0.15f, m_fPosY);
-		else if (dwDigits == 3)
-			m_vecFontNum[i]->Set_UI_Pos(m_fPosX + m_fSizeX * i * 0.3f, m_fPosY);
-		else if (dwDigits == 4)
-			m_vecFontNum[i]->Set_UI_Pos(m_fPosX + m_fSizeX * i * 0.3f - m_fSizeX * 0.15f, m_fPosY);
-		else if (dwDigits == 5)
-			m_vecFontNum[i]->Set_UI_Pos(m_fPosX + m_fSizeX * i * 0.3f - m_fSizeX * 0.3f, m_fPosY);
-		else
-			return;
-		
+		m_vecFontNum[i]->Set_UI_Pos(m_fPosX + m_fSizeX * i * 0.3f, m_fPosY);				
 		m_vecFontNum[i]->Set_UI_Size(m_fSizeX, m_fSizeY);
 		m_vecFontNum[i]->Set_ViewZ(m_fViewZ);
 		m_vecFontNum[i]->Set_Active(m_bIsActive);
 	}
-}
 
-void CPlayerFontUI::Calc_NumberFont(_ulong dwFontNum)
-{
-	vector<CFontNumUI*> vecFontNumUI;
-	_ulong dwNumDigits = Calc_Digits(dwFontNum);
-
-
-	LOOP(_int(dwNumDigits))
+	switch (dwDigits)
 	{
-		vecFontNumUI.push_back(Make_FontNum());
-	}
-
-	_ulong iIdx = 0;
-	while (dwFontNum != 0)
+	case 1:
 	{
-		vecFontNumUI[iIdx]->Set_UI_Index(dwFontNum % 10);
-		dwFontNum /= 10;
-
-		++iIdx;
+		LOOP(4)
+			m_vecFontNum[i]->Set_UI_Index(12);
 	}
-
-	reverse(vecFontNumUI.begin(), vecFontNumUI.end());
-
-	for (_uint i = 0; i < vecFontNumUI.size(); ++i)
+		break;
+	case 2:
 	{
-		if (dwNumDigits <= 3)
-			vecFontNumUI[i]->Set_UI_Pos(m_fPosX + m_fSizeX * i * 0.3f, m_fPosY);
-		else if (dwNumDigits == 4)
-			vecFontNumUI[i]->Set_UI_Pos(m_fPosX + m_fSizeX * i * 0.3f - m_fSizeX * 0.3f, m_fPosY);
-		else if (dwNumDigits == 5)
-			vecFontNumUI[i]->Set_UI_Pos(m_fPosX + m_fSizeX * i * 0.3f - m_fSizeX * 0.3f, m_fPosY);
-		else
-			return;
-		vecFontNumUI[i]->Set_UI_Size(m_fSizeX, m_fSizeY);
-		vecFontNumUI[i]->Set_ViewZ(m_fViewZ);
+		LOOP(3)
+			m_vecFontNum[i]->Set_UI_Index(12);
 	}
-
-	for (_ulong i = 0; i < vecFontNumUI.size(); ++i)
+		break;
+	case 3:
 	{
-		vecFontNumUI[i]->Set_Dead();
+		LOOP(2)
+			m_vecFontNum[i]->Set_UI_Index(12);
 	}
-}
-
-CFontNumUI* CPlayerFontUI::Make_FontNum()
-{
-	CUI::UI_DESC* pDesc = nullptr;
-
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_FontNumUI", SCENE_STATIC, L"Layer_StaticUI", pDesc);
-
-	CFontNumUI* pFontNumUI = static_cast<CFontNumUI*>(g_pManagement->Get_GameObjectBack(L"Layer_StaticUI", SCENE_STATIC));
-	
-	return pFontNumUI;
+		break;
+	case 4:
+	{		
+		m_vecFontNum[0]->Set_UI_Index(12);
+	}
+		break;
+	case 5:
+		break;
+	}
 }
 
 CPlayerFontUI * CPlayerFontUI::Create(_Device pGraphic_Device)

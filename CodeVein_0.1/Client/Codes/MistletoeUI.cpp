@@ -38,7 +38,6 @@ HRESULT CMistletoeUI::Ready_GameObject(void * pArg)
 		m_vecOption.push_back(pInstance);
 	}
 	
-	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_StageSelectUI", SCENE_STAGE, L"Layer_StageUI");
 	m_pStageSelectUI = CUI_Manager::Get_Instance()->Get_StageSelectUI();
 	if (nullptr == m_pStageSelectUI)
 		return E_FAIL;
@@ -55,9 +54,6 @@ _int CMistletoeUI::Update_GameObject(_double TimeDelta)
 	m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 	if (nullptr == m_pTarget)
 		return NO_EVENT;
-
-	/*if (g_pInput_Device->Key_Up(DIK_O))
-		m_bIsActive = !m_bIsActive;*/
 
 	_v3 vAngle = TARGET_TO_TRANS(m_pTarget)->Get_Angle();
 	vAngle.y = vAngle.y + D3DXToRadian(45.f);
@@ -196,6 +192,11 @@ void CMistletoeUI::Active_SubUI()
 		m_pStageSelectUI->Set_Active(!m_pStageSelectUI->Get_Active());
 	else
 		m_pStageSelectUI->Set_Active(false);
+
+	if (1 == m_iSelectIndex)
+		CUI_Manager::Get_Instance()->Get_BloodCode_Menu()->Set_Active(!CUI_Manager::Get_Instance()->Get_BloodCode_Menu()->Get_Active());
+	else
+		CUI_Manager::Get_Instance()->Get_BloodCode_Menu()->Set_Active(false);
 }
 
 void CMistletoeUI::Move_Up()

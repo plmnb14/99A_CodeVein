@@ -352,6 +352,12 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\08. FontNumUI\PlayerFontUI">
       <UniqueIdentifier>{0d91f626-46bc-46dc-a493-613d6097be46}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\99.Public\ExitUI">
+      <UniqueIdentifier>{278c902f-dcdd-4330-899c-f26f83df9fc2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI">
+      <UniqueIdentifier>{40a1db44-79e3-4c12-8a99-e1cc3ce1a318}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -723,6 +729,9 @@
     <ClInclude Include="..\Headers\PlayerFontUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\08. FontNumUI\PlayerFontUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\BloodCodeMenuUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1084,6 +1093,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\PlayerFontUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\08. FontNumUI\PlayerFontUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BloodCodeMenuUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

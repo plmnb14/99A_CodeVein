@@ -10,6 +10,7 @@
 #include "Info_Slot.h"
 #include "Expendables_Inven.h"
 #include "QuickSlot.h"
+#include "StatusUI.h"
 #include "UI_Manager.h"
 
 CTotal_Inven::CTotal_Inven(_Device pDevice)
@@ -74,8 +75,9 @@ _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 			pQuickSlot->Set_Active(true);
 	}
 
-	if(m_pIcon)
-		m_pIcon->Set_Active(m_bIsActive);
+	for (auto& iter : m_vecIcon)
+		iter->Set_Active(m_bIsActive);
+		
 	
 	LOOP(2)
 	{
@@ -196,14 +198,26 @@ void CTotal_Inven::SetUp_Default()
 {
 	CUI::UI_DESC* pDesc = nullptr;
 	
-	pDesc = new CUI::UI_DESC;
+	/*pDesc = new CUI::UI_DESC;
 	pDesc->fPosX = 220.f;
 	pDesc->fPosY = 100.f;
 	pDesc->fSizeX = 40.f;
 	pDesc->fSizeY = 50.f;
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_InvenIcon", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
 	m_pIcon = static_cast<CInventory_Icon*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
-	m_pIcon->Set_Type(CInventory_Icon::ICON_ALL);
+	m_pIcon->Set_Type(CInventory_Icon::ICON_ALL);*/
+	CInventory_Icon* pInstance = nullptr;
+	LOOP(2)
+	{
+		pInstance = static_cast<CInventory_Icon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_InvenIcon",nullptr));
+		pInstance->Set_UI_Pos(220.f + 50.f * i, 100.f);
+		pInstance->Set_UI_Size(40.f, 50.f);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+		
+		m_vecIcon.push_back(pInstance);
+	}
+	m_vecIcon[0]->Set_Type(CInventory_Icon::ICON_ALL);
+	m_vecIcon[1]->Set_Type(CInventory_Icon::ICON_STATUS);
 
 	LOOP(3)
 	{
@@ -268,11 +282,17 @@ void CTotal_Inven::Click_Icon()
 	if (!m_bIsActive)
 		return;
 
-	if (m_pIcon->Pt_InRect() &&
+	if (m_vecIcon[0]->Pt_InRect() &&
 		g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
 		m_pInventory = CUI_Manager::Get_Instance()->Get_Inventory();
 		m_pInventory->Set_Active(true);
+		m_bIsActive = false;
+	}
+	else if (m_vecIcon[1]->Pt_InRect() &&
+		g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+	{
+		CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(true);
 		m_bIsActive = false;
 	}
 	

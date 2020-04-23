@@ -35,14 +35,13 @@ HRESULT CConditionUI::Ready_GameObject(void * pArg)
 
 	CUI::Ready_GameObject(pArg);
 	
-	m_fSizeX = 338.f;
-	m_fSizeY = 84.f;
 
 	m_pFontValue = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
-	m_pFontValue->Set_UI_Pos(m_fPosX + m_fSizeX * 0.5f, m_fPosY);
-	m_pFontValue->Set_UI_Size(m_fSizeY, m_fSizeY);
+	m_pFontValue->Set_UI_Pos(m_fPosX + m_fSizeX * 0.5f, m_fPosY + 15.f);
+	m_pFontValue->Set_UI_Size(30.f, 30.f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontValue, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
-	m_pFontValue->Set_ViewZ(-20.f);
+	m_pFontValue->Set_ViewZ(m_fViewZ - 0.1f);
+
 	return NOERROR;
 }
 
@@ -234,9 +233,9 @@ void CConditionUI::SetUp_State(_double TimeDelta)
 
 	if (m_pFontValue)
 	{
-		m_pFontValue->Set_UI_Pos(m_fPosX + m_fSizeX * 0.5f, m_fPosY);
+		m_pFontValue->Set_UI_Pos(m_fPosX + m_fSizeX * 0.5f, m_fPosY + 15.f);
 		m_pFontValue->Set_Active(m_bIsActive);
-		m_pFontValue->Set_Number(m_fCurValue);
+		m_pFontValue->Set_Number(_ulong(m_fCurValue));
 	}
 		
 }

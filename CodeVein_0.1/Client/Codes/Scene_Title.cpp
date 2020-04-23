@@ -78,6 +78,7 @@ _int CScene_Title::Update_Scene(_double TimeDelta)
 	{
 		static_cast<CLoadingScreen*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingScreen", SCENE_STATIC))->Set_Active(false);
 		static_cast<CLoadingScreen*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingScreen", SCENE_STATIC))->Set_UI_Index(1);
+		
 		// =======================================================
 		// UI 버튼 막아놓음.
 		// =======================================================

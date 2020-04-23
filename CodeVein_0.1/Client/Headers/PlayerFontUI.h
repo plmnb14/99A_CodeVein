@@ -22,8 +22,6 @@ public:
 	virtual HRESULT Ready_GameObject_Prototype();
 	virtual HRESULT Ready_GameObject(void* pArg);
 	virtual _int	Update_GameObject(_double TimeDelta);
-	virtual _int	Late_Update_GameObject(_double TimeDelta);
-	virtual HRESULT Render_GameObject();
 
 private:
 	HRESULT Add_Component();
@@ -36,14 +34,8 @@ private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 public:
-	//_ulong Calc_Digits();
-	_ulong Calc_Digits(_ulong dwNumber);
-	//void Calc_NumberFont();
-	void Calc_NumberFont(_ulong dwFontNum);
-	void MyNumberFont();
-
-private:
-	CFontNumUI* Make_FontNum();
+	_ulong		Calc_Digits(_ulong dwNumber);
+	void		MyNumberFont();
 
 private:
 	vector<CFontNumUI*> m_vecFontNum;

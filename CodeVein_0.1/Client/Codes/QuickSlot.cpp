@@ -51,7 +51,6 @@ _int CQuickSlot::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
-
 	if (m_vecQuickSlot.size() > m_iSelect)
 	{
 		m_iIndex = m_vecQuickSlot[m_iSelect]->Get_Type();
@@ -103,7 +102,6 @@ _int CQuickSlot::Late_Update_GameObject(_double TimeDelta)
 	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
 	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;
 
-
 	return NO_EVENT;
 }
 
@@ -116,15 +114,9 @@ HRESULT CQuickSlot::Render_GameObject()
 		nullptr == m_pBufferCom)
 		return E_FAIL;
 
-
-	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
-
-	m_matOldView = g_pManagement->Get_Transform(D3DTS_VIEW);
-	m_matOldProj = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-
+	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);	
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
-
 
 	if (FAILED(SetUp_ConstantTable()))
 		return E_FAIL;
@@ -138,10 +130,6 @@ HRESULT CQuickSlot::Render_GameObject()
 	m_pShaderCom->End_Pass();
 
 	m_pShaderCom->End_Shader();
-
-
-	g_pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
-	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
 
 	return NOERROR;
 }
@@ -193,6 +181,8 @@ void CQuickSlot::SetUp_Default()
 {
 	CUI::UI_DESC* pDesc = nullptr;
 
+	// 화살표
+	//==============================================
 	pDesc = new CUI::UI_DESC;
 	pDesc->fPosX = m_fPosX - 30.f;
 	pDesc->fPosY = m_fPosY;
@@ -210,7 +200,9 @@ void CQuickSlot::SetUp_Default()
 	pDesc->iIndex = 6;
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ButtonUI", SCENE_MORTAL, L"Layer_DecoUI", pDesc);
 	m_vecDecoUI.push_back(static_cast<CButton_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_DecoUI", SCENE_MORTAL)));
+	//==============================================
 
+	// 카운트 UI
 	pDesc = new CUI::UI_DESC;
 	pDesc->fPosX = m_fPosX;
 	pDesc->fPosY = m_fPosY + 30.f;
