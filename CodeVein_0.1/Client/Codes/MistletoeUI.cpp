@@ -3,6 +3,7 @@
 #include "Player.h"
 #include "MistletoeOptionUI.h"
 #include "StageSelectUI.h"
+#include "UI_Manager.h"
 
 CMistletoeUI::CMistletoeUI(_Device pDevice)
 	: CUI(pDevice)
@@ -28,19 +29,20 @@ HRESULT CMistletoeUI::Ready_GameObject(void * pArg)
 	m_bIsActive = false;
 	m_fAlpha = 1.f;
 
+	CMistletoeOptionUI* pInstance = nullptr;
 	LOOP(3)
 	{
-		g_pManagement->Add_GameObject_ToLayer(L"GameObject_MistletoeOptionUI", SCENE_STAGE, L"Layer_MistletoeOptionUI");
-		CMistletoeOptionUI* pOption = static_cast<CMistletoeOptionUI*>(g_pManagement->Get_GameObjectBack(L"Layer_MistletoeOptionUI", SCENE_STAGE));
-		if (nullptr == pOption)
-			return E_FAIL;
-		pOption->Set_UI_Index(i + 1);
-
-		m_vecOption.push_back(pOption);
+		pInstance = static_cast<CMistletoeOptionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MistletoeOptionUI", nullptr));
+		pInstance->Set_UI_Index(i + 1);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_StageUI", nullptr);
+		m_vecOption.push_back(pInstance);
 	}
 	
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_StageSelectUI", SCENE_STAGE, L"Layer_StageSelectUI");
-	m_pStageSelectUI = static_cast<CStageSelectUI*>(g_pManagement->Get_GameObjectBack(L"Layer_StageSelectUI", SCENE_STAGE));
+	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_StageSelectUI", SCENE_STAGE, L"Layer_StageUI");
+	m_pStageSelectUI = CUI_Manager::Get_Instance()->Get_StageSelectUI();
+	if (nullptr == m_pStageSelectUI)
+		return E_FAIL;
+
 	return NOERROR;
 }
 

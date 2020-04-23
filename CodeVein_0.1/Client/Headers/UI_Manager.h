@@ -6,7 +6,17 @@
 
 
 BEGIN(Client)
-
+class CStatusUI;
+class CMistletoeUI;
+class CStageSelectUI;
+class CExpendables_Inven;
+class CSkillUI;
+class CQuickSlot;
+class CMaterial_Inven;
+class CWeapon_Inven;
+class CArmor_Inven;
+class CTotal_Inven;
+class CInventory;
 class CUI_Manager final : public CBase
 {
 	DECLARE_SINGLETON(CUI_Manager)
@@ -23,29 +33,34 @@ public:
 	HRESULT Add_UI_Prototype(_Device pDevice);
 	HRESULT SetUp_UILayer();
 	_int	Update_UI();
-	CExpendables::EXPEND_TYPE	Use_Item(); // 퀵슬롯에서 아이템 사용시 해당 아이템 제거 및 사용 아이템 타입 반환
-	WEAPON_STATE Get_UseWeaponState(_uint iIndex); // 해당 인덱스에 설정된 무기 타입 반환
-	CArmor::ARMOR_TYPE Get_UseArmorType(); // 선택한 장비(아장)타입 반환
-	void OnOff_BossUI(_bool bIsActive); // 보스UI On/Off(true일 경우 활성화)
-	void Add_Expendables(CExpendables::EXPEND_TYPE eType, _uint iCnt = 1); // 소비 아이템 획득 함수 -> 아이템 타입, 개수 입력
-	void Add_Material(CMaterial::MATERIAL_TYPE eType, _uint iCnt = 1); // 재료 아이템 획득
-	void Add_Weapon(WEAPON_STATE eType); // 무기 획득 함수
-	void Add_Armor(CArmor::ARMOR_TYPE eType); // 아장 획득
-	_bool Get_UI_Active(const _tchar* pLayerTag); // 해당 레이어 태그 입력하면 UI 활성화 여부 반환
-	void Set_UI_Active(const _tchar* pLayerTag, _bool bIsActive); // 해당 레이어의 UI 활성화/비활성화
-	void Set_BossHP_Active(_bool bIsActive);
-	_uint Select_Stage(); // StageUI : 스테이지 선택하면 해당 스테이지 값 반환
-	void Move_StageUI_Right(); // StageUI 오른쪽 이동
-	void Move_StageUI_Left(); // StageUI 왼쪽 이동
-	void Active_MistletoeUI(_bool bIsActive); // 겨우살이 UI 활성화(On / Off)
-	void Active_Mistletoe_SubUI(); // 겨우살이 하위UI(StageUI 등) 활성화(On / Off)
-	void Move_MistletoeUI_Up();
-	void Move_MistletoeUI_Down();
+	CStatusUI* Get_StatusUI() { return m_pStatusUI; }
+	CMistletoeUI* Get_MistletoeUI() { return m_pMistletoeUI; }
+	CStageSelectUI* Get_StageSelectUI() { return m_pStageSelectUI; }
+	CExpendables_Inven* Get_Expendables_Inven() { return m_pExpendables_Inven; }
+	CSkillUI* Get_Skill_UI() { return m_pSkillUI; }
+	CQuickSlot* Get_QuickSlot() { return m_pQuickSlot; }
+	CMaterial_Inven* Get_Material_Inven() { return m_pMaterial_Inven; }
+	CWeapon_Inven* Get_Weapon_Inven() { return m_pWeapon_Inven; }
+	CArmor_Inven* Get_Armor_Inven() { return m_pArmor_Inven; }
+	CTotal_Inven* Get_Total_Inven() { return m_pTotal_Inven; }
+	CInventory*		Get_Inventory() { return m_pInventory; }
+	void Set_BossUI_Active(_bool bIsActive);
 
 private:
 	_uint m_uiCoundItem = 0;
 	_bool m_bTest = false;
-	
+	CStatusUI* m_pStatusUI = nullptr;
+	CMistletoeUI* m_pMistletoeUI = nullptr;
+	CStageSelectUI* m_pStageSelectUI = nullptr;
+	CExpendables_Inven* m_pExpendables_Inven = nullptr;
+	CSkillUI* m_pSkillUI = nullptr;
+	CQuickSlot* m_pQuickSlot = nullptr;
+	CMaterial_Inven* m_pMaterial_Inven = nullptr;
+	CWeapon_Inven* m_pWeapon_Inven = nullptr;
+	CArmor_Inven* m_pArmor_Inven = nullptr;
+	CTotal_Inven* m_pTotal_Inven = nullptr;
+	CInventory*		m_pInventory = nullptr;
+
 public:
 	virtual void Free();
 };

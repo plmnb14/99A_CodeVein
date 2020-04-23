@@ -34,14 +34,21 @@ CBT_Node::BT_NODE_STATE CBT_CreateEffect::Update_Node(_double TimeDelta, vector<
 				{
 					++m_iCur_Count_Of_Execution;
 
-					switch (m_eEffectMode)
+					if (Version::Old == m_eVersion)
 					{
-					case CBT_CreateEffect::One:
-						CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag, pBlackBoard->Get_V3Value(m_vEffect_Pos_Key));
-						break;
-					case CBT_CreateEffect::Particle:
-						CParticleMgr::Get_Instance()->Create_ParticleEffect(m_pEffect_Tag, m_fEffect_lifeTime, pBlackBoard->Get_V3Value(m_vEffect_Pos_Key));
-						break;
+						switch (m_eEffectMode)
+						{
+						case CBT_CreateEffect::One:
+							CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag, pBlackBoard->Get_V3Value(m_vEffect_Pos_Key));
+							break;
+						case CBT_CreateEffect::Particle:
+							CParticleMgr::Get_Instance()->Create_ParticleEffect(m_pEffect_Tag, m_fEffect_lifeTime, pBlackBoard->Get_V3Value(m_vEffect_Pos_Key));
+							break;
+						}
+					}
+					else if (Version::New == m_eVersion)
+					{
+						CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag, pBlackBoard->Get_V3Value(m_vEffect_Pos_Key), m_pEffect_TransformCom, pBlackBoard->Get_V3Value(m_vEffect_Dir_Key), pBlackBoard->Get_V3Value(m_vEffect_Angle_Key));
 					}
 				}
 				break;
@@ -104,25 +111,60 @@ CBT_Node::BT_NODE_STATE CBT_CreateEffect::End_Node(vector<CBT_Node*>* pNodeStack
 HRESULT CBT_CreateEffect::Ready_Clone_Node(void * pInit_Struct)
 {
 	INFO temp = *(INFO*)pInit_Struct;
+	INFO2 temp2 = *(INFO2*)pInit_Struct;
 
-	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
-	lstrcpy(m_pEffect_Tag, temp.Effect_Tag);
-	lstrcpy(m_vEffect_Pos_Key, temp.Create_Pos_Key);
+	m_eVersion = temp.eVersion;
 
-	switch (m_eEffectMode)
+	// 버젼 확인
+	if (Version::Old == m_eVersion)
 	{
-	case CBT_CreateEffect::One:
-		break;
-	case CBT_CreateEffect::Particle:
-		m_fEffect_lifeTime = temp.Effect_Life_Time;
-		break;
-	}
+		strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
+		lstrcpy(m_pEffect_Tag, temp.Effect_Tag);
+		lstrcpy(m_vEffect_Pos_Key, temp.Create_Pos_Key);
 
-	m_dCreateTime = temp.Target_dCreateTime;
-	m_dOffset = temp.Target_dOffset;
-	m_iMax_Count_Of_Execution = temp.MaxCount_Of_Execution;
-	m_eMode = temp.eMode;
-	m_dService_StartTime = temp.Service_Start_Time;
+		switch (m_eEffectMode)
+		{
+		case CBT_CreateEffect::One:
+			break;
+		case CBT_CreateEffect::Particle:
+			m_fEffect_lifeTime = temp.Effect_Life_Time;
+			break;
+		}
+
+		m_dCreateTime = temp.Target_dCreateTime;
+		m_dOffset = temp.Target_dOffset;
+		m_iMax_Count_Of_Execution = temp.MaxCount_Of_Execution;
+		m_eMode = temp.eMode;
+		m_dService_StartTime = temp.Service_Start_Time;
+	}
+	else if (Version::New == m_eVersion)
+	{
+		strcpy_s<256>(m_pNodeName, temp2.Target_NodeName);
+		lstrcpy(m_pEffect_Tag, temp2.Effect_Tag);
+		lstrcpy(m_vEffect_Pos_Key, temp2.Create_Pos_Key);
+		m_pEffect_TransformCom = temp2.pTransform;
+		lstrcpy(m_vEffect_Dir_Key, temp2.Dir_Key);
+		lstrcpy(m_vEffect_Angle_Key, temp2.Angle_Key);
+
+		switch (m_eEffectMode)
+		{
+		case CBT_CreateEffect::One:
+			break;
+		case CBT_CreateEffect::Particle:
+			m_fEffect_lifeTime = temp2.Effect_Life_Time;
+			break;
+		}
+
+		m_dCreateTime = temp2.Target_dCreateTime;
+		m_dOffset = temp2.Target_dOffset;
+		m_iMax_Count_Of_Execution = temp2.MaxCount_Of_Execution;
+		m_eMode = temp2.eMode;
+		m_dService_StartTime = temp2.Service_Start_Time;
+
+	}
+	else
+		return E_FAIL;
+
 
 	CBT_Node::_Set_Auto_Number(&m_iNodeNumber);
 	return S_OK;
@@ -148,4 +190,5 @@ CBT_CreateEffect * CBT_CreateEffect::Clone(void * pInit_Struct)
 
 void CBT_CreateEffect::Free()
 {
+	//Safe_Release(m_pEffect_TransformCom);
 }
