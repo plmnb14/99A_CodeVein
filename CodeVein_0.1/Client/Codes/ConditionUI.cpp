@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\ConditionUI.h"
 #include "Player.h"
-#include "FontNumManager.h"
+#include "PlayerFontUI.h"
 
 CConditionUI::CConditionUI(_Device pDevice)
 	: CUI(pDevice)
@@ -35,8 +35,12 @@ HRESULT CConditionUI::Ready_GameObject(void * pArg)
 
 	CUI::Ready_GameObject(pArg);
 	
-	m_fSizeX = 338.f;
-	m_fSizeY = 84.f;
+
+	m_pFontValue = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
+	m_pFontValue->Set_UI_Pos(m_fPosX + m_fSizeX * 0.5f, m_fPosY + 15.f);
+	m_pFontValue->Set_UI_Size(30.f, 30.f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontValue, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	m_pFontValue->Set_ViewZ(m_fViewZ - 0.1f);
 
 	return NOERROR;
 }
@@ -112,6 +116,8 @@ _int CConditionUI::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CConditionUI::Render_GameObject()
 {
+	if (!m_bIsActive)
+		return NOERROR;
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
@@ -224,6 +230,14 @@ void CConditionUI::SetUp_State(_double TimeDelta)
 		m_fCurValue = 0.f;
 	
 	m_fPercentage = m_fCurValue / m_fMaxValue;
+
+	if (m_pFontValue)
+	{
+		m_pFontValue->Set_UI_Pos(m_fPosX + m_fSizeX * 0.5f, m_fPosY + 15.f);
+		m_pFontValue->Set_Active(m_bIsActive);
+		m_pFontValue->Set_Number(_ulong(m_fCurValue));
+	}
+		
 }
 
 CConditionUI * CConditionUI::Create(_Device pGraphic_Device)

@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "..\Headers\StatusUI.h"
 #include "ConditionUI.h"
+#include "ExpUI.h"
+#include "UI_Manager.h"
+#include "Total_Inven.h"
 
 CStatusUI::CStatusUI(_Device pDevice)
 	: CUI(pDevice)
@@ -27,9 +30,11 @@ HRESULT CStatusUI::Ready_GameObject(void * pArg)
 
 	m_fPosX = 900.f;
 	m_fPosY = 300.f;
-	m_fSizeX = 280.f;
-	m_fSizeY = 471.f;
+	m_fSizeX = 512.f;
+	m_fSizeY = 512.f;
 	m_fViewZ = 1.f;
+
+	m_bIsActive = false;
 
 	SetUp_Default();
 
@@ -42,6 +47,19 @@ _int CStatusUI::Update_GameObject(_double TimeDelta)
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
+
+	for (auto& iter : m_vecConditionUI)
+	{
+		iter->Set_Active(m_bIsActive);
+	}
+
+	if (m_pExpUI)
+		m_pExpUI->Set_Active(m_bIsActive);
+
+	if (m_pExitUI)
+		m_pExitUI->Set_Active(m_bIsActive);
+
+	Exit_This_UI();
 
 	return NO_EVENT;
 }
@@ -62,6 +80,8 @@ _int CStatusUI::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CStatusUI::Render_GameObject()
 {
+	if (!m_bIsActive)
+		return NOERROR;
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
@@ -98,7 +118,7 @@ HRESULT CStatusUI::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_MenuWindow", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_StatusUI", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -123,7 +143,7 @@ HRESULT CStatusUI::SetUp_ConstantTable()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 2)))
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 6)))
 		return E_FAIL;
 
 	return NOERROR;
@@ -132,15 +152,41 @@ HRESULT CStatusUI::SetUp_ConstantTable()
 void CStatusUI::SetUp_Default()
 {
 	CConditionUI* pInstance = nullptr;
-	LOOP(2)
+	LOOP(5)
 	{
 		pInstance = static_cast<CConditionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ConditionUI", nullptr));
-		pInstance->Set_UI_Pos(m_fPosX, m_fPosY + 80.f * _float(i) - 130.f);
-		pInstance->Set_UI_Size(280.f, 70.f);
+		pInstance->Set_UI_Pos(m_fPosX - 30.f, m_fPosY + 65.f * _float(i) - 100.f);
+		pInstance->Set_UI_Size(325.f, 53.f);
 		pInstance->Set_ViewZ(m_fViewZ - 0.1f);
 		pInstance->Set_ConditionType(CConditionUI::CONDITION_TYPE(i));
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 		m_vecConditionUI.push_back(pInstance);
+	}
+
+	m_pExpUI = static_cast<CExpUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExpUI", nullptr));
+	m_pExpUI->Set_UI_Pos(m_fPosX, m_fPosY - 180.f);
+	m_pExpUI->Set_UI_Size(100.f, 100.f);
+	m_pExpUI->Set_ViewZ(m_fViewZ - 0.1f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExpUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	// 나가기 버튼
+	m_pExitUI = static_cast<CButton_UI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ButtonUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExitUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	m_pExitUI->Set_UI_Pos(m_fPosX - 180.f, m_fPosY - 190.f);
+	m_pExitUI->Set_UI_Size(30.f, 30.f);
+	m_pExitUI->Set_UI_Index(8);
+}
+
+void CStatusUI::Exit_This_UI()
+{
+	if (!m_pExitUI->Get_Active())
+		return;
+
+	if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB) &&
+		g_pInput_Device->MousePt_InRect(m_pExitUI->Get_UI_Pos().x, m_pExitUI->Get_UI_Pos().y, m_pExitUI->Get_UI_Size().x, m_pExitUI->Get_UI_Size().y, g_hWnd))
+	{
+		CUI_Manager::Get_Instance()->Get_Total_Inven()->Set_Active(true);
+		m_bIsActive = false;
 	}
 }
 

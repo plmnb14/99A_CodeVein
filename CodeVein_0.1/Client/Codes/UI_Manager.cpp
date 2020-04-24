@@ -1,45 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\UI_Manager.h"
 
-#include "Button_UI.h"
-#include "PlayerHP.h"
-#include "PlayerST.h"
-#include "BossDecoUI.h"
-#include "BossHP.h"
-
-#include "QuickSlot.h"
-
-#include "Expendables_Inven.h"
-#include "Expendables_Slot.h"
-#include "Select_UI.h"
-#include "Material_Inven.h"
-#include "Material_Slot.h"
-#include "Weapon_Slot.h"
-#include "Weapon_Inven.h"
-#include "Armor_Slot.h"
-#include "Armor_Inven.h"
-#include "NumberUI.h"
-#include "CursorUI.h"
-#include "Inventory.h"
-#include "Inventory_Icon.h"
-#include "ClickUI.h"
-#include "Total_Inven.h"
-#include "BloodCode_Icon.h"
-#include "Info_Slot.h"
-#include "FontNumUI.h"
-#include "FontNumManager.h"
-#include "Active_Icon.h"
-#include "SkillUI.h"
-#include "LoadingScreen.h"
-#include "LoadingBar.h"
-#include "StageUI.h"
-#include "StageSelectUI.h"
-#include "MistletoeUI.h"
-#include "MistletoeOptionUI.h"
-#include "ConditionUI.h"
-#include "StatusUI.h"
-#include "ExpUI.h"
-
+// 유미
 #include "MassageUI.h"
 #include "Get_ItemUI.h"
 #include "PickUp_ItemUI.h"
@@ -111,7 +73,7 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_FontNumUI", CFontNumUI::Create(pDevice))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_FontNumManager", CFontNumManager::Create(pDevice))))
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_PlayerFontUI", CPlayerFontUI::Create(pDevice))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ActiveIcon", CActive_Icon::Create(pDevice))))
 		return E_FAIL;
@@ -134,6 +96,13 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_StatusUI", CStatusUI::Create(pDevice))))
 		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BloodCodeMenuUI", CBloodCodeMenuUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CodeOwnerUI", CCodeOwnerUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BloodCodeSlot", CBloodCodeSlot::Create(pDevice))))
+		return E_FAIL;
 	
 	//////////////// Chae
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BossMassageUI", CMassageUI::Create(pDevice))))
@@ -154,7 +123,8 @@ HRESULT CUI_Manager::SetUp_UILayer()
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Layer(SCENE_MORTAL, L"Layer_PlayerUI")))
 		return E_FAIL;
-
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STATIC, L"Layer_StaticUI")))
+		return E_FAIL;
 	
 	// 소비 인벤토리
 	m_pExpendables_Inven = static_cast<CExpendables_Inven*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExpendablesInven", nullptr));
@@ -191,15 +161,20 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	// 스테이지 선택 UI
 	m_pStageSelectUI = static_cast<CStageSelectUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_StageSelectUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pStageSelectUI, SCENE_STAGE, L"Layer_StageUI", nullptr);
+	
 
 	// 겨우살이 UI
 	m_pMistletoeUI = static_cast<CMistletoeUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MistletoeUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pMistletoeUI, SCENE_STAGE, L"Layer_StageUI", nullptr);
 	
-	//// 스테이터스 UI
-	//m_pStatusUI = static_cast<CStatusUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_StatusUI", nullptr));
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(m_pStatusUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
-
+	// 스테이터스 UI
+	m_pStatusUI = static_cast<CStatusUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_StatusUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pStatusUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	
+	// 블러드코드메뉴창 UI
+	m_pBloodCodeMenu = static_cast<CBloodCodeMenuUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodCodeMenuUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBloodCodeMenu, SCENE_STAGE, L"Layer_StageUI", nullptr);
+	m_pBloodCodeMenu->Set_Active(true);
 	return NOERROR;
 }
 
@@ -218,7 +193,13 @@ _int CUI_Manager::Update_UI()
 	//	m_pStageSelectUI->Move_Left(); // 스테이지UI 왼쪽이동
 	//if (g_pInput_Device->Key_Up(DIK_RIGHT))
 	//	m_pStageSelectUI->Move_Right(); // 스테이지UI 오른쪽 이동
+
+	//if (g_pInput_Device->Key_Up(DIK_J))
+	//	m_pMistletoeUI->Move_Up();
+	//if (g_pInput_Device->Key_Up(DIK_K))
+	//	m_pMistletoeUI->Move_Down();
 	//
+
 	//if (g_pInput_Device->Key_Up(DIK_RETURN))
 	//	cout << m_pStageSelectUI->Teleport_Stage() << endl; // 스테이지 선택시, 각각 다른 _uint값 반환
 

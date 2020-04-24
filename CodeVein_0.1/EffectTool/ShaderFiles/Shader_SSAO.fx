@@ -172,11 +172,19 @@ technique Default_Technique
 {
 	pass SSAO
 	{
+		ZWriteEnable = false;
+		AlpHaBlENdEnaBLE = true;
+		srcblend = one;
+		destblend = one;
 		PixelShader = compile ps_3_0 PS_SSAO();
 	}
 
 	pass SSAO_Blur
 	{
+		ZWriteEnable = false;
+		AlpHaBlENdEnaBLE = true;
+		srcblend = one;
+		destblend = one;
 		PixelShader = compile ps_3_0 PS_SSAO_Blur();
 	}
 

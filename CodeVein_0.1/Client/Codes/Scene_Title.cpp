@@ -78,6 +78,7 @@ _int CScene_Title::Update_Scene(_double TimeDelta)
 	{
 		static_cast<CLoadingScreen*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingScreen", SCENE_STATIC))->Set_Active(false);
 		static_cast<CLoadingScreen*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingScreen", SCENE_STATIC))->Set_UI_Index(1);
+		
 		// =======================================================
 		// UI 버튼 막아놓음.
 		// =======================================================
@@ -220,7 +221,8 @@ HRESULT CScene_Title::Ready_Player()
 	// Mortal 레이어는 스테틱보단 아래 단계이지만, 스테이지가 지나도 삭제되지 않습니다.
 	g_pManagement->Add_GameOject_ToLayer_NoClone(pPlayer, SCENE_MORTAL, L"Layer_Player", nullptr);
 
-
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerHP", SCENE_MORTAL, L"Layer_PlayerUI")))
+		return E_FAIL;
 	return S_OK;
 }
 
