@@ -4,14 +4,12 @@
 #include "UI.h"
 
 BEGIN(Client)
-class CCodeOwnerUI;
-class CBloodCodeSlot;
-class CBloodCodeMenuUI final : public CUI
+class CBloodCodeSlot final : public CUI
 {
 private:
-	explicit CBloodCodeMenuUI(_Device pDevice);
-	explicit CBloodCodeMenuUI(const CBloodCodeMenuUI& rhs);
-	virtual ~CBloodCodeMenuUI() = default;
+	explicit CBloodCodeSlot(_Device pDevice);
+	explicit CBloodCodeSlot(const CBloodCodeSlot& rhs);
+	virtual ~CBloodCodeSlot() = default;
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -33,12 +31,12 @@ private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 private:
-	CCodeOwnerUI*			m_pOwnerUI = nullptr;
-	vector<CBloodCodeSlot*> m_vecBloodCodeSlot;
+	BloodCode_ID			m_eType = BloodCode_End;
 
 public:
-	static CBloodCodeMenuUI*	Create(_Device pGraphic_Device);
+	static CBloodCodeSlot*		Create(_Device pGraphic_Device);
 	virtual CGameObject*		Clone_GameObject(void* pArg);
 	virtual void				Free();
 };
+
 END

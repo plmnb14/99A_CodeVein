@@ -358,6 +358,15 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI">
       <UniqueIdentifier>{40a1db44-79e3-4c12-8a99-e1cc3ce1a318}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\02. SkillSelectUI">
+      <UniqueIdentifier>{7d9fed8c-3193-4b82-9214-fd22a8f428d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\00. CodeOwnerUI">
+      <UniqueIdentifier>{778dd0f5-63db-41e4-8c95-c3239613598a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. BloodCodeSlot">
+      <UniqueIdentifier>{67dfd12a-2bfa-4e94-a6e3-5314377fe6b5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -732,6 +741,12 @@
     <ClInclude Include="..\Headers\BloodCodeMenuUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\CodeOwnerUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\00. CodeOwnerUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BloodCodeSlot.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. BloodCodeSlot</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1096,6 +1111,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\BloodCodeMenuUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\CodeOwnerUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\00. CodeOwnerUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BloodCodeSlot.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. BloodCodeSlot</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

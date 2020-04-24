@@ -4,14 +4,12 @@
 #include "UI.h"
 
 BEGIN(Client)
-class CCodeOwnerUI;
-class CBloodCodeSlot;
-class CBloodCodeMenuUI final : public CUI
+class CCodeOwnerUI final : public CUI
 {
 private:
-	explicit CBloodCodeMenuUI(_Device pDevice);
-	explicit CBloodCodeMenuUI(const CBloodCodeMenuUI& rhs);
-	virtual ~CBloodCodeMenuUI() = default;
+	explicit CCodeOwnerUI(_Device pDevice);
+	explicit CCodeOwnerUI(const CCodeOwnerUI& rhs);
+	virtual ~CCodeOwnerUI() = default;
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -23,7 +21,6 @@ public:
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable(_uint iIndex);
-	void SetUp_Default();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -33,11 +30,12 @@ private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 private:
-	CCodeOwnerUI*			m_pOwnerUI = nullptr;
-	vector<CBloodCodeSlot*> m_vecBloodCodeSlot;
+	BloodCode_ID			m_eBloodCode = BloodCode_End;
+	_bool					m_bIsSelect = false;
+	_float					m_fAlpha = 0.f;
 
 public:
-	static CBloodCodeMenuUI*	Create(_Device pGraphic_Device);
+	static CCodeOwnerUI*		Create(_Device pGraphic_Device);
 	virtual CGameObject*		Clone_GameObject(void* pArg);
 	virtual void				Free();
 };

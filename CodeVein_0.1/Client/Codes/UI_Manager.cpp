@@ -99,6 +99,10 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BloodCodeMenuUI", CBloodCodeMenuUI::Create(pDevice))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CodeOwnerUI", CCodeOwnerUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BloodCodeSlot", CBloodCodeSlot::Create(pDevice))))
+		return E_FAIL;
 	
 	//////////////// Chae
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BossMassageUI", CMassageUI::Create(pDevice))))
@@ -169,35 +173,35 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	
 	// 블러드코드메뉴창 UI
 	m_pBloodCodeMenu = static_cast<CBloodCodeMenuUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodCodeMenuUI", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBloodCodeMenu, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
-
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBloodCodeMenu, SCENE_STAGE, L"Layer_StageUI", nullptr);
+	m_pBloodCodeMenu->Set_Active(true);
 	return NOERROR;
 }
 
 _int CUI_Manager::Update_UI()
 {
-	if (g_pInput_Device->Key_Up(DIK_O))
-	{
-		m_bTest = !m_bTest;
-		m_pMistletoeUI->Set_Active(m_bTest);
-	}
-	if (g_pInput_Device->Key_Up(DIK_P))
-	{
-		m_pMistletoeUI->Active_SubUI(); // 선택된 항목의 UI On/Off
-	}
-	if (g_pInput_Device->Key_Up(DIK_LEFT))
-		m_pStageSelectUI->Move_Left(); // 스테이지UI 왼쪽이동
-	if (g_pInput_Device->Key_Up(DIK_RIGHT))
-		m_pStageSelectUI->Move_Right(); // 스테이지UI 오른쪽 이동
+	//if (g_pInput_Device->Key_Up(DIK_O))
+	//{
+	//	m_bTest = !m_bTest;
+	//	m_pMistletoeUI->Set_Active(m_bTest);
+	//}
+	//if (g_pInput_Device->Key_Up(DIK_P))
+	//{
+	//	m_pMistletoeUI->Active_SubUI(); // 선택된 항목의 UI On/Off
+	//}
+	//if (g_pInput_Device->Key_Up(DIK_LEFT))
+	//	m_pStageSelectUI->Move_Left(); // 스테이지UI 왼쪽이동
+	//if (g_pInput_Device->Key_Up(DIK_RIGHT))
+	//	m_pStageSelectUI->Move_Right(); // 스테이지UI 오른쪽 이동
 
-	if (g_pInput_Device->Key_Up(DIK_J))
-		m_pMistletoeUI->Move_Up();
-	if (g_pInput_Device->Key_Up(DIK_K))
-		m_pMistletoeUI->Move_Down();
-	
+	//if (g_pInput_Device->Key_Up(DIK_J))
+	//	m_pMistletoeUI->Move_Up();
+	//if (g_pInput_Device->Key_Up(DIK_K))
+	//	m_pMistletoeUI->Move_Down();
+	//
 
-	if (g_pInput_Device->Key_Up(DIK_RETURN))
-		cout << m_pStageSelectUI->Teleport_Stage() << endl; // 스테이지 선택시, 각각 다른 _uint값 반환
+	//if (g_pInput_Device->Key_Up(DIK_RETURN))
+	//	cout << m_pStageSelectUI->Teleport_Stage() << endl; // 스테이지 선택시, 각각 다른 _uint값 반환
 
 	
 	return 0;
