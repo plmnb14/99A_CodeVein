@@ -34,11 +34,10 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	Ready_Collider();
 
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 100.f;
+	m_tObjParam.fHp_Cur = 100000.f;
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
-
 
 	/////////////////////////////////////////////////////////
 

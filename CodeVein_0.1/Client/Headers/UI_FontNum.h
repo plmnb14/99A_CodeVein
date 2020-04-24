@@ -25,10 +25,16 @@ public:
 	virtual HRESULT Render_GameObject();
 
 public:
-	virtual void Set_Type(F_TYPE _eType) { m_eType = _eType; } 
+	virtual void Set_ScaleUp(_float _fSizeMultiply = 4.f);
+	virtual void Update_Scale();
+	virtual void Set_Alpha(_float _fAlpha) { m_fTimerAlpha = _fAlpha; }
 
 public:
-	virtual void Update_Number();
+	virtual void Set_Type(F_TYPE _eType) { m_eType = _eType; } 
+	virtual void Set_ParentMatrix(_mat* _pParentMatrix) {m_pMatParent = _pParentMatrix; }
+
+public:
+	virtual void Update_NumberValue(_float _fValue) { m_fValue = _fValue; }
 
 private:
 	CTransform*				m_pTransform = nullptr;
@@ -41,7 +47,17 @@ private:
 	F_TYPE					m_eType = Billboard_UI;
 
 private:
+	_mat*					m_pMatParent = nullptr;
+
+private:
+	_v3						m_vOldScale;
+
+private:
+	_short					m_arrDigitIdx[5] = {};
 	_float					m_fValue = 0.f;
+	_float					m_fTimerAlpha = 1.f;
+	_bool					m_bNegative = false;
+	_bool					m_bDecreScale = false;
 
 private:
 	HRESULT Add_Component();
@@ -50,7 +66,8 @@ private:
 private:
 	_int	Calc_Interval(_float _fValue);
 	_int	Calc_LoopCnt(_float _fValue);
-	_int	Calc_NumTexIdx(_float _fValue , _int _iLoopCnt);
+	void	Calc_NumTexIdx(_float _fValue , _int _iMaxLoopCnt);
+	void	Calc_BillBoard(_int iLoopCnt , _float _fInterval);
 
 private:
 	HRESULT Update_Matrix();

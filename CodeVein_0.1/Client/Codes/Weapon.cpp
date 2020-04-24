@@ -716,15 +716,15 @@ void CWeapon::Create_PointLight(_v3 _vPos)
 	float fAmbient = 0.1f;
 
 	LightDesc.Type = D3DLIGHT_POINT;
-	LightDesc.Diffuse = D3DXCOLOR(1.f, 0.5f, 0.f, 1.f);
+	LightDesc.Diffuse = D3DXCOLOR(0.7f, 0.5f, 0.f, 1.f);
 	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	LightDesc.Position = _vPos;
-	LightDesc.Range = 10.f;
+	LightDesc.Range = 15.f;
 
 	LightDesc.bLifeTime = true;
-	LightDesc.fLifeTime_Cur = 0.3f;
-	LightDesc.fLifeTime_Max = 0.3f;
+	LightDesc.fLifeTime_Cur = 0.1f;
+	LightDesc.fLifeTime_Max = 0.1f;
 	LightDesc.fAlpha = 1.f;
 
 	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Dev, LightDesc, CLight_Manager::Dynamic_Light)))

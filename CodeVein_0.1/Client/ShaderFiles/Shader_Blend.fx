@@ -134,7 +134,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	//float3 vFinalShade = max(vShade.rgb - vSSAO.rgb);
 	//float3 vFinalShade = min(vShade.rgb , vSSAO.rgb);
 	//Out.vColor = ((vDiffuse + vSpecular) * float4(vFinalShade, 1.f)) + (vEmissive * 5.f) + vRim;
-	Out.vColor = ((vDiffuse + vSpecular) * float4(vFinalShade, 1.f)) + (vEmissive * 5.f);// + vRim;
+	Out.vColor = ((vDiffuse) * float4(vFinalShade, 1.f)) + (vEmissive * 1.f);// + vRim;
 	//Out.vColor = (vDiffuse + vSpecular - vSSAO.x) * vShade;
 
 	return Out;
@@ -418,7 +418,7 @@ PS_OUT MotionBlurForObj(PS_IN In)
 	PS_OUT			Out = (PS_OUT)0;
 
 	//float uVelocityScale = g_fCurFrame / g_fTargetFrame;
-	int MAX_SAMPLES = 9;
+	int MAX_SAMPLES = 12;
 
 	//float2 texelSize = float2(1.f / 1280.f, 1.f / 720.f);
 	float2 screenTexCoords = In.vTexUV.xy;// *texelSize;
@@ -438,7 +438,7 @@ PS_OUT MotionBlurForObj(PS_IN In)
 
 	// 제한
 	velocity.y *= 0.5f;
-	velocity.xy = (clamp(velocity.x, -0.25f, 0.25f), clamp(velocity.y, -0.25f, 0.25f));
+	velocity.xy = (clamp(velocity.x, -0.55f, 0.55f), clamp(velocity.y, -0.25f, 0.25f));
 
 	for (int i = 1; i < MAX_SAMPLES; ++i) {
 		// 앞의 물체는 블러에서 제외. 뒤의 것들만 처리해라

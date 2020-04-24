@@ -27,6 +27,8 @@ HRESULT CComponent_Manager::Ready_Component_Manager(_Device _pGraphicDev)
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_SSAO", CShader::Create(_pGraphicDev, L"../ShaderFiles/Shader_SSAO.fx"))))
 		return E_FAIL;
 
+	//===============================================
+
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"Transform", CTransform::Create(_pGraphicDev))))
 		return E_FAIL;
 
@@ -60,6 +62,7 @@ HRESULT CComponent_Manager::Ready_Component_Manager(_Device _pGraphicDev)
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"VIBuffer_Sphere", CBuffer_Sphere::Create(_pGraphicDev))))
 		return E_FAIL;
 
+	//===============================================
 
 	_mat		LocalMatrix, ScaleMatrix, RotationMatrix;
 

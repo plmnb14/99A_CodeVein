@@ -5,6 +5,8 @@ matrix		g_LightVP_Close, g_LightVP_Medium, g_LightVP_Far;
 float		g_fFxAlpha;
 bool		g_bDissolve = false;
 
+vector		g_vCamPos;
+
 float		g_fSpecularPower = 0.0f;
 
 texture		g_DiffuseTexture;
@@ -128,6 +130,7 @@ struct VS_OUT
 	float3		B	: BINORMAL;
 	float2		vTexUV : TEXCOORD0;
 	float4		vProjPos : TEXCOORD1;
+	float4		vRimDir : TEXCOORD2;
 };
 
 struct VS_BLUROUT
@@ -159,6 +162,8 @@ VS_OUT VS_MAIN(VS_IN In)
 	Out.vTexUV = In.vTexUV;
 
 	Out.vProjPos = Out.vPosition;
+
+	Out.vRimDir = normalize(g_vCamPos - float4(In.vPosition, 1.f));
 
 	return Out;
 }
@@ -203,6 +208,7 @@ struct PS_IN
 	float3		B			: BINORMAL;
 	float2		vTexUV		: TEXCOORD0;
 	float4		vProjPos	: TEXCOORD1;
+	float4		vRimDir		: TEXCOORD2;
 };
 
 struct PS_BLURIN
@@ -286,7 +292,6 @@ PS_OUT_ADVENCE PS_Default_DN(PS_IN In)
 
 	//========================================================================================================================
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 0.2f);
-	// Depth.z == SpecularIntensity.x ( Ω∫∆Â≈ß∑Ø¿« x )
 
 	Out.vEmissive = 0;
 
@@ -571,6 +576,10 @@ PS_OUT_ADVENCE PS_Default_DNSUID(PS_IN In)
 
 	//========================================================================================================================
 
+
+
+	//========================================================================================================================
+
 	float3 TanNormal = tex2D(NormalSampler, In.vTexUV).xyz;
 
 	TanNormal = normalize(TanNormal * 2.f - 1.f);
@@ -597,8 +606,15 @@ PS_OUT_ADVENCE PS_Default_DNSUID(PS_IN In)
 	 
 	//========================================================================================================================
 
-	Out.vEmissive = 0;
+	float fRim = 1.f - saturate(abs(dot(In.N, In.vRimDir)));
+	
+	float fRimColor = float4(1.f, 0.f, 0.f, 0.f);
+	
+	float4 rc = fRimColor * saturate(abs(dot(In.N, In.vRimDir)));
 
+	float4 vRimColor = 1.f;
+
+	Out.vEmissive = pow(fRim,10.f) * rc;
 	//========================================================================================================================
 
 	return Out;

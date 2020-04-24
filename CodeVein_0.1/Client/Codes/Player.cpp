@@ -38,6 +38,9 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 
 	Ready_Skills();
 
+	//m_TmpFontNum = static_cast<CUI_FontNum*>(g_pManagement->Clone_GameObject_Return(L"GameObject_FontNum", nullptr));
+	//m_TmpFontNum->Set_Type(CUI_FontNum::Orthgrahpuic_UI);
+
 	return NOERROR;
 }
 
@@ -63,8 +66,8 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 	if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
 
-	//if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-	//	return E_FAIL;
+	if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+		return E_FAIL;
 
 	//if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
 	//	return E_FAIL;
@@ -79,6 +82,11 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	CScriptManager::Get_Instance()->Update_ScriptMgr(TimeDelta, m_pNavMesh->Get_SubSetIndex(), m_pNavMesh->Get_CellIndex());
 	
+	//===========
+	//m_TmpFontNum->Update_GameObject(TimeDelta);
+	//m_TmpFontNum->Update_NumberValue(923.f);
+	//===========
+
 	return NO_EVENT;
 }
 
@@ -104,6 +112,10 @@ _int CPlayer::Late_Update_GameObject(_double TimeDelta)
 
 	IF_NOT_NULL(m_pDrainWeapon)
 		m_pDrainWeapon->Late_Update_GameObject(TimeDelta);
+
+	//===========
+	//m_TmpFontNum->Late_Update_GameObject(TimeDelta);
+	//===========
 
 	return NO_EVENT;
 }
@@ -8679,6 +8691,9 @@ HRESULT CPlayer::SetUp_ConstantTable()
 	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
 	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 
+	_v4	vCamPos;
+	memcpy(vCamPos, &ViewMatrix._41, sizeof(_v4));
+
 	if (FAILED(m_pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
@@ -8686,6 +8701,8 @@ HRESULT CPlayer::SetUp_ConstantTable()
 	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShader)))
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Set_Value("g_vCamPos", &vCamPos, sizeof(_v4))))
 		return E_FAIL;
 	
 	return NOERROR;
@@ -8840,6 +8857,8 @@ void CPlayer::Free()
 	Safe_Release(m_pShader);
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pNavMesh);
+
+	//Safe_Release(m_TmpFontNum);
 
 	for (auto& iter : m_vecPhysicCol)
 	{

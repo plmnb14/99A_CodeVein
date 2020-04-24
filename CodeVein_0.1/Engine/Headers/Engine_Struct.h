@@ -159,8 +159,8 @@ namespace Engine
 
 	typedef struct tagViewPortVertex
 	{
-		_v4				vPosition;
-		_v2				vTexUV;
+		_v4			vPosition;
+		_v2			vTexUV;
 
 	}VTXVIEWPORT;
 

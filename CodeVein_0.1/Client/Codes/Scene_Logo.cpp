@@ -61,7 +61,6 @@ _int CScene_Logo::Update_Scene(_double TimeDelta)
 
 HRESULT CScene_Logo::Render_Scene()
 {
-
 	return S_OK;
 }
 
@@ -80,6 +79,7 @@ CScene_Logo * CScene_Logo::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 
 void CScene_Logo::Free()
 {
+	Safe_Release(m_pLogoBtn);
 	Safe_Release(m_pLoading);
 
 	CScene::Free();
@@ -110,6 +110,8 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LogoButton", SCENE_LOGO, L"Layer_LogoButton")))
 		return E_FAIL;
 	m_pLogoBtn = static_cast<CLogoBtn*>(g_pManagement->Get_GameObjectBack(L"Layer_LogoButton", SCENE_LOGO));
+	Safe_AddRef(m_pLogoBtn);
+
 	return S_OK;
 }
 

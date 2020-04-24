@@ -66,6 +66,8 @@ CComponent* COptimization::Clone_Component(void* pArg)
 
 void COptimization::Free(void)
 {
+	CComponent::Free();
+
 	if (false == m_bClone)
 	{
 		Safe_Release(m_pFrustum);

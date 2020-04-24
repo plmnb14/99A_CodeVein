@@ -42,7 +42,7 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 	else if (false == m_bOnTool)
 	{
 		m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
-		//m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this);
+		m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this);
 		//m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this);
 	}
 

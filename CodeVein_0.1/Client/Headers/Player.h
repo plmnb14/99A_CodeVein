@@ -4,12 +4,18 @@
 #include "GameObject.h"
 #include "Management.h"
 
+// 테스트용 숫자 폰트
+#include "UI_FontNum.h"
+
 BEGIN(Client)
 
 class CDrain_Weapon;
 class CWeapon;
 class CPlayer : public CGameObject
 {
+private:
+	CUI_FontNum*	m_TmpFontNum = nullptr;
+
 public:
 	enum DODGE_TYPE
 	{
