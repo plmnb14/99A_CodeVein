@@ -68,7 +68,7 @@ private:	// 패턴들
 	// 2. 돌진 몸통박치기
 	CBT_Composite_Node* Rush_Body();
 	// 3. 윈스턴처럼 점프 찍기
-	CBT_Composite_Node* Jump_fist();
+	CBT_Composite_Node* Jump_Fist();
 	// 4. 왼손에 얼음칼 베기
 	CBT_Composite_Node* Blade_Attack();	// 보류
 
@@ -149,6 +149,7 @@ private:
 	_v3					m_vLeftJet = _v3(0.f, 0.f, 0.f);	//Spine3_LeftJet
 	_v3					m_vRightJet = _v3(0.f, 0.f, 0.f);	//Spine3_RightJet
 	_v3					m_vRightHandAttach = _v3(0.f, 0.f, 0.f); //RightHandAttach
+	_v3					m_vHeadColdBeamPos = _v3(0.f, 0.f, 0.f);	//Head_LeftCorner (사슴뿔, 머리 고드름 생성위치)
 
 private:	// 최초상태 세팅
 	_float				m_fFov = 0.f;

@@ -42,8 +42,8 @@ public:
 			strcpy_s<256>(Target_NodeName, pNodeName);
 			lstrcpy(Effect_Tag, _Effect_Tag);
 			lstrcpy(Create_Pos_Key, _Create_Pos_Key);
-			lstrcpy(Dir_Key, Dir_Key);
-			lstrcpy(Angle_Key, Angle_Key);
+			lstrcpy(Dir_Key, _pDir_Key);
+			lstrcpy(Angle_Key, _pAngle_Key);
 		}
 
 		Version					eVersion = Version::New;

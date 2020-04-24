@@ -190,5 +190,5 @@ CBT_CreateEffect * CBT_CreateEffect::Clone(void * pInit_Struct)
 
 void CBT_CreateEffect::Free()
 {
-	Safe_Release(m_pEffect_TransformCom);
+	//Safe_Release(m_pEffect_TransformCom);
 }

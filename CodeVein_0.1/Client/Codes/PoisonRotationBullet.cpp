@@ -116,6 +116,8 @@ _int CPoisonRotationBullet::Update_GameObject(_double TimeDelta)
 		if (m_fEffectCreateOffset < m_fEffectCreateOffset_Check)
 		{
 			m_fEffectCreateOffset_Check = 0.f;
+
+			CParticleMgr::Get_Instance()->Create_Effect(L"ButterFly_VenomShot_Body_Sub", m_pBulletTransformCom1->Get_Pos(), nullptr);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag2, m_pBulletTransformCom1->Get_Pos(), nullptr);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag3, m_pBulletTransformCom1->Get_Pos(), nullptr);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, m_pBulletTransformCom1->Get_Pos(), nullptr);
@@ -124,6 +126,7 @@ _int CPoisonRotationBullet::Update_GameObject(_double TimeDelta)
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag1, m_pBulletTransformCom1->Get_Pos(), nullptr);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag6, m_pBulletTransformCom1->Get_Pos(), nullptr);
 
+			CParticleMgr::Get_Instance()->Create_Effect(L"ButterFly_VenomShot_Body_Sub", m_pBulletTransformCom2->Get_Pos(), nullptr);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag2, m_pBulletTransformCom2->Get_Pos(), nullptr);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag3, m_pBulletTransformCom2->Get_Pos(), nullptr);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, m_pBulletTransformCom2->Get_Pos(), nullptr);

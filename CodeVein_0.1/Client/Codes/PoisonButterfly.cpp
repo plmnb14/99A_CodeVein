@@ -1194,6 +1194,16 @@ HRESULT CPoisonButterfly::Update_NF()
 	{
 		m_pMeshCom->SetUp_Animation(Ani_Appearance);
 
+		if (!m_bAppearanceEffect && m_pMeshCom->Is_Finish_Animation(0.472f))
+		{
+			// 이펙트 나올 뼈 위치 업데이트
+			Update_Bone_Of_BlackBoard();
+
+			m_bAppearanceEffect = true;
+			for (_int i = 0; i < 6; i++)
+				g_pManagement->Create_Effect_Delay(L"ButterFly_Crying_Distortion", 0.02f * i, m_vTail6);
+		}
+
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Idle);
@@ -1296,7 +1306,7 @@ void CPoisonButterfly::Check_PhyCollider()
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
 			Start_Dissolve(0.7f, false, true, 0.6f);
-			g_pManagement->Create_Effect_Delay(L"Boss_Dead_Particle", 0.6f, _v3(0.f, 1.3f, 0.f), m_pTransformCom);
+			CParticleMgr::Get_Instance()->Create_BossDeadParticle_Effect(m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), 0.6f, 0.5f);
 			g_pManagement->Create_ParticleEffect_Delay(L"SpawnParticle_ForBoss", 1.f, 0.6f, m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f));
 		}
 	}

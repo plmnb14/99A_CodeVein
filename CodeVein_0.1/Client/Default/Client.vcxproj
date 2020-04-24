@@ -195,6 +195,9 @@
     <ClInclude Include="..\Headers\DeerKingBullet.h" />
     <ClInclude Include="..\Headers\DeerKingColdBeam.h" />
     <ClInclude Include="..\Headers\DeerKing.h" />
+    <ClInclude Include="..\Headers\DeerKingJumpFistCol.h" />
+    <ClInclude Include="..\Headers\DeerKingJumpInPlaceCol.h" />
+    <ClInclude Include="..\Headers\DeerKingRushCol.h" />
     <ClInclude Include="..\Headers\Drain_Weapon.h" />
     <ClInclude Include="..\Headers\Dummy_Target.h" />
     <ClInclude Include="..\Headers\Expendables.h" />
@@ -317,6 +320,9 @@
     <ClCompile Include="..\Codes\DeerKingBullet.cpp" />
     <ClCompile Include="..\Codes\DeerKingColdBeam.cpp" />
     <ClCompile Include="..\Codes\DeerKing.cpp" />
+    <ClCompile Include="..\Codes\DeerKingJumpFistCol.cpp" />
+    <ClCompile Include="..\Codes\DeerKingJumpInPlaceCol.cpp" />
+    <ClCompile Include="..\Codes\DeerKingRushCol.cpp" />
     <ClCompile Include="..\Codes\Drain_Weapon.cpp" />
     <ClCompile Include="..\Codes\Dummy_Target.cpp" />
     <ClCompile Include="..\Codes\Expendables.cpp" />

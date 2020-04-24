@@ -82,15 +82,15 @@ _int CSwordBullet::Update_GameObject(_double TimeDelta)
 		{
 			m_fEffectOffset = 0.f;
 
-			for (_int i = 0; i < 3; i++)
+			for (_int i = 0; i < 10; i++)
 			{
 				g_pManagement->Create_Effect(L"IceGirl_PointParticle_Blue", m_pTransformCom->Get_Pos(), nullptr);
 				g_pManagement->Create_Effect(L"IceGirl_PointParticle_Green", m_pTransformCom->Get_Pos(), nullptr);
 				g_pManagement->Create_Effect(L"IceGirl_FlashParticle_Blue", m_pTransformCom->Get_Pos(), nullptr);
 				g_pManagement->Create_Effect(L"IceGirl_FlashParticle_Green", m_pTransformCom->Get_Pos(), nullptr);
-				g_pManagement->Create_Effect(L"IceSmoke_01", m_pTransformCom->Get_Pos(), nullptr);
-				g_pManagement->Create_Effect(L"IceSmoke_02", m_pTransformCom->Get_Pos(), nullptr);
 			}
+			g_pManagement->Create_Effect(L"IceSmoke_01", m_pTransformCom->Get_Pos() + m_pTransformCom->Get_Axis(AXIS_Z) * 1.5f, nullptr);
+			g_pManagement->Create_Effect(L"IceSmoke_02", m_pTransformCom->Get_Pos() + m_pTransformCom->Get_Axis(AXIS_Z) * 1.5f, nullptr);
 		}
 		
 	}

@@ -732,6 +732,15 @@
     <ClInclude Include="..\Headers\Info_Monster.h">
       <Filter>02.GameObject\Stage\2%29 Monster</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\DeerKingJumpFistCol.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\DeerKingJumpInPlaceCol.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\DeerKingRushCol.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1091,11 +1100,21 @@
     <ClCompile Include="..\Codes\DeerKingColdBeam.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
     </ClCompile>
+<<<<<<< HEAD
     <ClCompile Include="..\Codes\Urchin.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster\Urchin</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\ThaiMan.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster\ThaiMan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DeerKingJumpFistCol.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DeerKingJumpInPlaceCol.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DeerKingRushCol.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

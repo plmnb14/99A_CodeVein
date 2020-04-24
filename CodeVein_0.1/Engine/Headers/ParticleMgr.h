@@ -29,11 +29,13 @@ public:
 	void Create_Effect_Delay(_tchar* szName, _float fDelay, _v3 vPos, CTransform* pFollowTrans = nullptr, _v3 vAngle = V3_NULL);
 	void Create_Effect_Delay(_tchar* szName, _float fDelay, _v3 vPos, CTransform* pFollowTrans, _mat* pTargetMat);
 	void Create_Effect_FinishPos(_tchar* szName, _v3 vPos, _v3 vFinishPos, CTransform* pFollowTrans = nullptr);
+	void Create_Effect_Curve(_tchar* szName, _v3 vPos, CTransform* pTargetTrans, _float fPower);
 
 public:
 	void Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol, CTransform* pHittedTrans, _float fPower = 1.5f);
 	void Create_Spawn_Effect(_v3 vPos, _v3 vFinishPos, CTransform* pFollowTrans = nullptr);
 	void Create_FootSmoke_Effect(_v3 vPos, _float fOffset); // 지금은 한 객체만 사용가능
+	void Create_BossDeadParticle_Effect(_v3 vPos, _float fDelay, _float fLength);
 
 private:
 	HRESULT Update_Effect(const _double TimeDelta);

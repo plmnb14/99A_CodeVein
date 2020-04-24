@@ -134,6 +134,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_Body_Sub")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_SubSmoke")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_PointParticle")))
@@ -143,6 +145,8 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_Distortion")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_Tail")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_Crying_Distortion")))
 		return E_FAIL;
 
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_DeadMist")))
@@ -491,11 +495,43 @@ HRESULT CLoading::Ready_Effect(void)
 #pragma region DeerKing
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceStone_Up_Particle_0", true)))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceStone_Up_Small_Particle_0", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_0", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_ReadySmoke_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_ReadySmoke_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_ReadySmoke_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_DeadParticle_Stone_0", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_DeadParticle_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_Charge_Hand_Smoke_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_Charge_Hand_Smoke_After_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_Charge_Hand_Smoke_After_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Point_ExplosionParticle_0")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_SnowChunk_Up_Particle_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_SnowChunk_Up_Particle_1")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_SnowChunk_Up_Particle_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_SnowChunk_Up_Small_Particle_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_SnowChunk_Heavy_Particle_0")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_Snow_Up_Particle_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Snow_Up_LongLine_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Snow_Up_LongLine_1")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_0")))
 		return E_FAIL;
@@ -503,9 +539,21 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_2")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_Mid_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_Mid_1")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_Small_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_Small_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Jump_In_Place_Distortion")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_JumpPack_Distortion")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBlock_0", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Tornade_Mesh_0", true)))
 		return E_FAIL;
 #pragma endregion
 
@@ -530,6 +578,10 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"Boss_Dead_Particle")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"SpawnParticle_ForBoss")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"SpawnParticle_ForBoss_Point")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"SpawnParticle_ForBoss_Point_Sub")))
 		return E_FAIL;
 
 #pragma region Blood
@@ -1067,18 +1119,14 @@ _uint CLoading::Loading_Stage()
 	// 최초 로딩 호출 시 1번만 불러옵니다.
 	if (false == g_bOnStage[0])
 	{
-		cout << "로딩 생성 진행중 몬스터 원본 만드는 중" << endl;
 		// 다이나믹 메쉬 불러오는 중
 		//============================================================================================================
 		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
 
-		cout << "몬스터 로드 완료" << endl;
 		// BT_Node 생성 중
 		//============================================================================================================
 		if (FAILED(g_pManagement->Ready_BT_Node()))
 			return E_FAIL;
-		cout << "행동트리 완료" << endl;
-
 
 		// 오브젝트 원형 생성
 		//============================================================================================================
@@ -1101,7 +1149,6 @@ _uint CLoading::Loading_Stage()
 		// 독나방 기모아서 쏘기 충돌체
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonTornado", CPoisonTornado::Create(m_pGraphicDev))))
 			return E_FAIL;
-		cout << "나비" << endl;
 		// 여왕의 기사
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_QueensKnight", CQueensKnight::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1117,7 +1164,6 @@ _uint CLoading::Loading_Stage()
 		// 리크 필드
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_LeakField", CLeakField::Create(m_pGraphicDev))))
 			return E_FAIL;
-		cout << "여왕기사" << endl;
 		// 얼음여자
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceGirl", CIceGirl::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1139,7 +1185,6 @@ _uint CLoading::Loading_Stage()
 		// 얼음여자 얼음보호막
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceBarrier", CIceBarrier::Create(m_pGraphicDev))))
 			return E_FAIL;
-		cout << "아이스걸" << endl;
 		// 불남자
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireBoy", CFireBoy::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1158,7 +1203,6 @@ _uint CLoading::Loading_Stage()
 		// 화염 토네이도 콜라이더
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireTornadoCol", CFireTornadoCol::Create(m_pGraphicDev))))
 			return E_FAIL;
-		cout << "불보이" << endl;
 		// 사슴왕
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKing", CDeerKing::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1168,7 +1212,15 @@ _uint CLoading::Loading_Stage()
 		// 사슴왕  뾰족 얼음
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingColdBeam", CDeerKingColdBeam::Create(m_pGraphicDev))))
 			return E_FAIL;
-		cout << "사슴킹" << endl;
+		// 사슴왕  점프주먹 콜라이더
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingJumpFistCol", CDeerKingJumpFistCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 사슴왕  제자리 점프 콜라이더
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingJumpInPlaceCol", CDeerKingJumpInPlaceCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 사슴왕  돌진 콜라이더
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingRushCol", CDeerKingRushCol::Create(m_pGraphicDev))))
+			return E_FAIL;
 		// 검은 성게
 		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_Urchin", CUrchin::Create(m_pGraphicDev))))
 		//	return E_FAIL;
