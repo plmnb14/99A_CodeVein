@@ -13,9 +13,10 @@ class CPlayer_Colleague final : public CGameObject
 public:
 	// 차후 Attack에 스킬을 추가할 시 enum으로 나눠줘야 함
 	enum Colleague_MoveType { Coll_Idle, Coll_Move, Coll_Guard, Coll_Attack, Coll_Hit, Coll_Dead };
-	enum Coll_Movement { Move_Walk, Move_Run, Move_MonWalk, Move_MonRun, Move_Dodge };
+	enum Coll_Movement { Move_Walk, Move_BackWalk, Move_Run, Move_BackRun, Move_MonWalk, Move_MonRun, Move_Dodge };
 	enum Coll_IdleMoment { Idle_Waiting, Idle_Guard };
-	enum Coll_Attackmoment { Att_waiting, Att_Normal, Att_Skill };
+	enum Coll_Attackmoment { Att_waiting, Att_Normal };
+	enum Coll_Sub_AttMoment { Att_Base1, Att_Base2, Att_Base3, Att_Base4, Att_ThreeCombo, Att_CenterDown };
 	enum Coll_Guardmoment { Guard_Idle, Gurad_Walk, Gurad_Hit };
 
 	//enum Move_Direction { Move_Front, Move_Back, Move_Left, Move_Right, Move_End };
@@ -89,7 +90,8 @@ private:
 	void	Set_AniEvent();
 
 private:
-	void	Colleague_Movement(_float fSpeed, _v3 vDir/*, _v3 YDir*/);
+	void	Colleague_Movement(_float fSpeed, _v3 vDir);
+	void	Colleague_SkilMovement(_float Multiply);
 
 private:
 	void	Colleague_Dead();
@@ -100,7 +102,9 @@ private:
 
 private:
 	void	CollMove_Walk();
+	void	CollMove_BackWalk();
 	void	CollMove_Run();
+	void	CollMove_BackRun();
 	void	CollMove_MonWalk();
 	void	CollMove_MonRun();
 	void	CollMove_Dodge();	// 구르기 or 막기
@@ -109,6 +113,12 @@ private:
 
 	void	CollAtt_Waiting();
 	void	CollAtt_Normal();
+	void	CollAtt_Base1();
+	void	CollAtt_Base2();
+	void	CollAtt_Base3();
+	void	CollAtt_Base4();
+	void	CollAtt_ThreeCombo();
+	void	CollAtt_CenterDown();
 
 private:
 	void	Funtion_RotateBody();
@@ -132,6 +142,7 @@ private:
 	Coll_Movement			m_eColl_Movement;
 	Coll_IdleMoment			m_eColl_IdleMoment;
 	Coll_Attackmoment		m_eColl_AttackMoment;
+	Coll_Sub_AttMoment		m_eColl_Sub_AttMoment;
 	Coll_Guardmoment		m_eColl_GuardMoment;
 
 	Colleague_Ani			m_eColleague_Ani;
@@ -148,10 +159,15 @@ private:
 
 	_float	m_fSpeed = 0.f;
 	_float	m_fAll_Length = 0.f;
+	
 	_float	m_fAtt_MoveSpeed_Cur = 0.f;
-	_float	m_fAtt_MoveSpeed_Max = 1.f;
+	_float	m_fAtt_MoveSpeed_Max = 0.f;
+	_float	m_fAtt_MoveAccel_Cur = 0.5f;
+	_float	m_fAtt_MoveAccel_Max = 0.f;
+	_float	m_fAtt_MoveMultiply = 0.f;
 
-	_float	m_fCoolTimer = 3.f;
+	_float	m_fCoolTimerCenter = 5.f;
+	_float	m_fCoolTimerThree = 5.f;
 
 	_bool	m_bEventTrigger[20] = {};
 
@@ -160,6 +176,8 @@ private:
 	_bool	m_bMonExistence = false; // 몬스터 존재 유무
 	_bool	m_bLook_Monster = false;
 	_bool	m_bMonDead = false;
+
+	_bool	m_bBase_Att[4] = {};
 
 public:
 	static	CPlayer_Colleague* Create(_Device pGraphic_Device);
