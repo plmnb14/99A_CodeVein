@@ -69,7 +69,20 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Player_Skill_WindMesh", 40);
 	Input_Pool(L"Player_Skill_WindTornadeMesh", 60);
 	Input_Pool(L"Player_Skill_BloodTornadeMesh", 60);
-
+	Input_Pool(L"Player_Skill_BloodTornadeMesh_2", 60);
+	Input_Pool(L"Player_Skill_BloodTornadeMesh_3", 60);
+	Input_Pool(L"Player_Skill_BloodConeMesh", 60);
+	Input_Pool(L"Player_Skill_Rush_Particle_Yellow"	, 300);
+	Input_Pool(L"Player_Skill_Rush_Particle_Orange"	, 300);
+	Input_Pool(L"Player_Skill_Rush_Particle_White"	, 300);
+	Input_Pool(L"Player_Skill_Rush_LaserBefore"		, 10);
+	Input_Pool(L"Player_Skill_Rush_RedParticle_LaserBefore"		, 80);
+	Input_Pool(L"Player_Skill_Rush_WhiteParticle_LaserBefore"	, 80);
+	Input_Pool(L"Player_Skill_Torment_Wind_L"	, 10);
+	Input_Pool(L"Player_Skill_Torment_Wind_R"	, 10);
+	Input_Pool(L"Player_Skill_Torment_Wind_Distortion_L"	, 10);
+	Input_Pool(L"Player_Skill_Torment_Wind_Distortion_R"	, 10);
+	
 	Input_Pool(L"ButterFly_SoftSmoke", 2000);
 	Input_Pool(L"ButterFly_PointParticle", 3500);
 	Input_Pool(L"ButterFly_PointParticle_Plum", 1000);
@@ -192,10 +205,10 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"IceFloorAura_03", 100);
 	Input_Pool(L"IceSmoke_01", 100);
 	Input_Pool(L"IceSmoke_02", 100);
-	Input_Pool(L"IceGirl_FlashParticle_Blue", 500);
-	Input_Pool(L"IceGirl_FlashParticle_Green", 500);
-	Input_Pool(L"IceGirl_PointParticle_Blue", 500);
-	Input_Pool(L"IceGirl_PointParticle_Green", 500);
+	Input_Pool(L"IceGirl_FlashParticle_Blue", 5000);
+	Input_Pool(L"IceGirl_FlashParticle_Green", 5000);
+	Input_Pool(L"IceGirl_PointParticle_Blue", 5000);
+	Input_Pool(L"IceGirl_PointParticle_Green", 5000);
 	Input_Pool(L"IceBlock_Main", 30);
 	Input_Pool(L"IceBlock_Sub_01", 30);
 	Input_Pool(L"IceBlock_Sub_02", 30);
@@ -272,19 +285,24 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"DeerKing_IceStone_Up_Particle_0", 100);
 	Input_Pool(L"DeerKing_IceStone_Up_Small_Particle_0", 100);
 	Input_Pool(L"DeerKing_IceBullet_0", 30);
-	Input_Pool(L"DeerKing_IceBullet_ReadySmoke_0", 100);
-	Input_Pool(L"DeerKing_IceBullet_ReadySmoke_1", 100);
-	Input_Pool(L"DeerKing_IceBullet_ReadySmoke_2", 100); // ºû³ª´Â ¿¬±â
+	Input_Pool(L"DeerKing_IceBullet_ReadySmoke_0", 300);
+	Input_Pool(L"DeerKing_IceBullet_ReadySmoke_1", 300);
+	Input_Pool(L"DeerKing_IceBullet_ReadySmoke_2", 300); // ºû³ª´Â ¿¬±â
+	Input_Pool(L"DeerKing_IceBullet_ReadySmoke_3", 300);
 	Input_Pool(L"DeerKing_IceBullet_Charge_Hand_Smoke_0", 100);
 	Input_Pool(L"DeerKing_IceBullet_Charge_Hand_Smoke_After_0", 100);
 	Input_Pool(L"DeerKing_IceBullet_Charge_Hand_Smoke_After_1", 100);
 	Input_Pool(L"DeerKing_Point_ExplosionParticle_0", 10000);
+	Input_Pool(L"DeerKing_Body_PointParticle", 500);
+	Input_Pool(L"DeerKing_Body_Smoke", 500);
+	Input_Pool(L"DeerKing_Body_Smoke_2", 500);
+	Input_Pool(L"DeerKing_Distortion_Circle", 10);
 	Input_Pool(L"DeerKing_SnowChunk_Up_Particle_0", 100);
 	Input_Pool(L"DeerKing_SnowChunk_Up_Particle_1", 100);
 	Input_Pool(L"DeerKing_SnowChunk_Up_Particle_2", 100);
 	Input_Pool(L"DeerKing_SnowChunk_Up_Small_Particle_0", 300);
 	Input_Pool(L"DeerKing_SnowChunk_Heavy_Particle_0", 100);
-	Input_Pool(L"DeerKing_Snow_Up_Particle_0", 500);
+	Input_Pool(L"DeerKing_Snow_Up_Particle_0", 10000);
 	Input_Pool(L"DeerKing_Snow_Up_LongLine_0", 200);
 	Input_Pool(L"DeerKing_Snow_Up_LongLine_1", 500);
 	Input_Pool(L"DeerKing_IceSmoke_0", 300);
@@ -808,6 +826,15 @@ void CParticleMgr::Create_Effect_Curve(_tchar* szName, _v3 vPos, CTransform * pT
 
 		pFindedQueue->pop();
 	}
+}
+
+void CParticleMgr::Create_Effect_Decal(_tchar* szName, _v3 vPos)
+{
+	CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szName, nullptr));
+	pEffect->Set_ParticleName(szName);
+	//m_EffectPool[szName].push(pEffect);
+
+	m_pManagement->Add_GameOject_ToLayer_NoClone(pEffect, SCENE_STAGE, L"Layer_Effect", nullptr);
 }
 
 void CParticleMgr::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol, CTransform* pHittedTrans, _float fPower)

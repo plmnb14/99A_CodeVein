@@ -5,6 +5,7 @@
 #include "Sky.h"
 #include "TexEffect.h"
 #include "MeshEffect.h"
+#include "DecalEffect.h"
 #include "Player.h"
 
 #include "Weapon.h"
@@ -505,6 +506,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_ReadySmoke_2")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_ReadySmoke_3")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_DeadParticle_Stone_0", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_DeadParticle_0")))
@@ -552,6 +555,14 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"DeerKing_JumpPack_Distortion")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_JumpPack_Fire")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Body_PointParticle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Body_Smoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Body_Smoke_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Distortion_Circle")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBlock_0", true)))
 		return E_FAIL;
@@ -798,6 +809,18 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_SplitAssert_LaserAfter_Smoke")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Rush_Particle_Yellow")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Rush_Particle_Orange")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Rush_Particle_White")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Rush_LaserBefore")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Rush_RedParticle_LaserBefore")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Rush_WhiteParticle_LaserBefore")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_SplitAssert_LaserAfter_RingLine", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Floor_BlackRing", true)))
@@ -814,9 +837,24 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_BloodTornadeMesh", true)))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_BloodTornadeMesh_2", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_BloodTornadeMesh_3", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_BloodConeMesh", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Torment_Wind_L", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Torment_Wind_R", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Torment_Wind_Distortion_L", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Torment_Wind_Distortion_R", true)))
+		return E_FAIL;
 #pragma endregion
 
-
+	//if (FAILED(g_pManagement->Add_Prototype(L"", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(szBuff)))))
+	//	return E_FAIL;
 
 	return S_OK;
 }

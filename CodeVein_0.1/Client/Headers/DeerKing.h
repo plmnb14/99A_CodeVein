@@ -166,6 +166,8 @@ private:
 	HRESULT Update_NF();
 	HRESULT Update_Collider();
 
+	HRESULT Update_Effect(); // 보스 몸에서 계속 나오는 이펙트
+
 private:
 	void Check_PhyCollider();
 	void Push_Collider();

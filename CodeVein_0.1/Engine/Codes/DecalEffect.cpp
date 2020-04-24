@@ -1,12 +1,12 @@
-#include "..\Headers\TexEffect.h"
+#include "..\Headers\DecalEffect.h"
 
-CTexEffect::CTexEffect(LPDIRECT3DDEVICE9 pGraphic_Device)
+CDecalEffect::CDecalEffect(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CEffect(pGraphic_Device)
 {
 
 }
 
-CTexEffect::CTexEffect(const CTexEffect& rhs)
+CDecalEffect::CDecalEffect(const CDecalEffect& rhs)
 	: CEffect(rhs)
 {
 	CEffect::m_pInfo = rhs.m_pInfo;
@@ -14,44 +14,7 @@ CTexEffect::CTexEffect(const CTexEffect& rhs)
 	m_bClone = true;
 }
 
-INSTANCEDATA CTexEffect::Get_InstanceData()
-{
-	INSTANCEDATA tData;
-
-	memcpy(&tData.fRight, &m_pTransformCom->Get_WorldMat()._11, sizeof(_float) * 4);
-	memcpy(&tData.fUp, &m_pTransformCom->Get_WorldMat()._21, sizeof(_float) * 4);
-	memcpy(&tData.fLook, &m_pTransformCom->Get_WorldMat()._31, sizeof(_float) * 4);
-	memcpy(&tData.fPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_float) * 4);
-	memcpy(&tData.fColor, &m_vColor, sizeof(_float) * 4);
-	tData.fDissolve = m_fDissolve;
-	tData.fDistortion = m_pInfo->fDistortionPower;
-	tData.fAlpha = m_fAlpha;
-	tData.bDissolve = m_pInfo->bDissolve;
-	tData.bReverseColor = m_pInfo->bRevColor;
-	tData.bUseColorTex = m_pInfo->bUseColorTex;
-	tData.bUseMaskTex = (m_pInfo->fMaskIndex != -1.f);
-	tData.bUseRGBA = m_pInfo->bUseRGBA;
-
-	return tData;
-}
-
-HRESULT CTexEffect::SetUp_ConstantTable_Instance(CShader* pShader)
-{
-	_float fMaskIndex = 0.f;
-	if ((m_pInfo->fMaskIndex != -1.f))
-		fMaskIndex = m_pInfo->fMaskIndex;
-
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", pShader, _uint(m_fFrame))))
-		return E_FAIL;
-	if (FAILED(m_pGradientTextureCom->SetUp_OnShader("g_GradientTexture", pShader, _uint(fMaskIndex))))
-		return E_FAIL;
-	if (FAILED(m_pColorTextureCom->SetUp_OnShader("g_ColorTexture", pShader, _uint(m_pInfo->fColorIndex))))
-		return E_FAIL;
-
-	return S_OK;
-}
-
-HRESULT CTexEffect::Ready_GameObject_Prototype()
+HRESULT CDecalEffect::Ready_GameObject_Prototype()
 {
 	// 생성 시, 오래 걸릴 수 있는 작업들을 수행한다.
 
@@ -63,7 +26,7 @@ HRESULT CTexEffect::Ready_GameObject_Prototype()
 	return NOERROR;
 }
 
-HRESULT CTexEffect::Ready_GameObject(void* pArg)
+HRESULT CDecalEffect::Ready_GameObject(void* pArg)
 {
 	// 복제해서 생성 된 후, 추가적으로 필요한 데이터들을 셋팅하낟.
 	if (FAILED(Add_Component()))
@@ -92,69 +55,17 @@ HRESULT CTexEffect::Ready_GameObject(void* pArg)
 	return NOERROR;
 }
 
-HRESULT CTexEffect::LateInit_GameObject()
+HRESULT CDecalEffect::LateInit_GameObject()
 {
 	Setup_Info();
 	Change_EffectTexture(m_pInfo->szName);
 	Change_GradientTexture(m_pInfo->szGradientName);
 	Change_ColorTexture(m_pInfo->szColorName);
 
-	// Check Instance Target
-	if (!lstrcmp(L"QueensKnight_Teleport_Particle", m_szParticleName) ||
-		!lstrcmp(L"QueensKnight_SwordCrash_Particle", m_szParticleName) ||
-		!lstrcmp(L"QueensKnight_JumpDown_Particle_Red", m_szParticleName) ||
-		!lstrcmp(L"QueensKnight_ShieldAttack_Particle", m_szParticleName) ||
-		!lstrcmp(L"Boss_Dead_Particle", m_szParticleName) ||
-		!lstrcmp(L"ButterFly_PointParticle", m_szParticleName) ||
-		!lstrcmp(L"ButterFly_PointParticle_Plum", m_szParticleName) ||
-		!lstrcmp(L"ButterFly_VenomShot_PointParticle", m_szParticleName) ||
-		!lstrcmp(L"Hit_Slash_Particle_0", m_szParticleName) ||
-		!lstrcmp(L"Hit_Slash_Particle_1", m_szParticleName) ||
-		!lstrcmp(L"Hit_Slash_Particle_2", m_szParticleName) ||
-		!lstrcmp(L"Hit_Slash_Particle_3", m_szParticleName) ||
-		!lstrcmp(L"MistletoeParticle", m_szParticleName) ||
-		!lstrcmp(L"MistletoeParticle_Sub", m_szParticleName) ||
-		!lstrcmp(L"Player_Buff_Particle", m_szParticleName) ||
-		!lstrcmp(L"Player_ChargeSpark_Particle", m_szParticleName) ||
-		!lstrcmp(L"Player_Heal_Particle", m_szParticleName) ||
-		!lstrcmp(L"Player_Skill_Particle_Explosion", m_szParticleName) ||
-		//!lstrcmp(L"Player_Skill_RedParticle_Explosion", m_szParticleName) ||
-		//!lstrcmp(L"Player_Skill_RedParticle_Upper", m_szParticleName) ||
-		!lstrcmp(L"Player_SpaceBar_StepParticle", m_szParticleName) ||
-		//!lstrcmp(L"Player_Skill_Rush_Particle_Yellow", m_szParticleName) ||
-		//!lstrcmp(L"Player_Skill_Rush_Particle_Orange", m_szParticleName) ||
-		//!lstrcmp(L"Player_Skill_Rush_Particle_White", m_szParticleName) ||
-		//!lstrcmp(L"SpawnParticle", m_szParticleName) ||
-		//!lstrcmp(L"SpawnParticle_Sub", m_szParticleName) ||
-		!lstrcmp(L"SpawnParticle_ForBoss", m_szParticleName) ||
-		!lstrcmp(L"SpawnParticle_ForBoss_Point", m_szParticleName) ||
-		!lstrcmp(L"SpawnParticle_ForBoss_Point_Sub", m_szParticleName) ||
-		!lstrcmp(L"ItemObject", m_szParticleName) ||
-		!lstrcmp(L"ItemObject_Red", m_szParticleName) ||
-		!lstrcmp(L"ItemObject_Blue", m_szParticleName) ||
-		!lstrcmp(L"ItemObject_Purple", m_szParticleName) ||
-		!lstrcmp(L"ItemObject_Yellow", m_szParticleName) ||
-		!lstrcmp(L"ItemObject_Green", m_szParticleName) ||
-		!lstrcmp(L"FireBoy_FireBullet_Particle_01", m_szParticleName) ||
-		!lstrcmp(L"FireBoy_FireBullet_Particle_02", m_szParticleName) ||
-		!lstrcmp(L"FireBoy_FireGround_Particle", m_szParticleName) ||
-		!lstrcmp(L"FireBoy_FireGround_BoomParticle_01", m_szParticleName) ||
-		!lstrcmp(L"FireBoy_FireGround_BoomParticle_02", m_szParticleName) ||
-		!lstrcmp(L"DeerKing_Snow_Up_Particle_0", m_szParticleName) ||
-		!lstrcmp(L"DeerKing_Body_PointParticle", m_szParticleName) ||
-		!lstrcmp(L"DeerKing_Point_ExplosionParticle_0", m_szParticleName)
-		//!lstrcmp(L"IceGirl_PointParticle_Blue", m_szParticleName) ||
-		//!lstrcmp(L"IceGirl_PointParticle_Green", m_szParticleName) ||
-		//!lstrcmp(L"IceGirl_FlashParticle_Blue", m_szParticleName) ||
-		//!lstrcmp(L"IceGirl_FlashParticle_Green", m_szParticleName)
-		//!lstrcmp(L"MapMist", m_szParticleName)
-		)
-		m_bInstanceTarget = true;
-
 	return S_OK;
 }
 
-_int CTexEffect::Update_GameObject(_double TimeDelta)
+_int CDecalEffect::Update_GameObject(_double TimeDelta)
 {
 	if (m_bIsDead)
 		return DEAD_OBJ;
@@ -184,13 +95,6 @@ _int CTexEffect::Update_GameObject(_double TimeDelta)
 		return S_OK;
 
 	RENDERID eGroup = RENDERID::RENDER_EFFECT;
-	if (m_iPass == 0 || m_iPass ==  8)
-		eGroup = RENDERID::RENDER_EFFECT;
-	else
-		eGroup = RENDERID::RENDER_DISTORTION;
-
-	if(m_bInstanceTarget)
-		eGroup = RENDERID::RENDER_INSTANCE;
 	
 	if (FAILED(m_pRendererCom->Add_RenderList(eGroup, this)))
 		return E_FAIL;
@@ -198,7 +102,7 @@ _int CTexEffect::Update_GameObject(_double TimeDelta)
 	return S_OK;
 }
 
-_int CTexEffect::Late_Update_GameObject(_double TimeDelta)
+_int CDecalEffect::Late_Update_GameObject(_double TimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
@@ -210,20 +114,105 @@ _int CTexEffect::Late_Update_GameObject(_double TimeDelta)
 }
 
 
-HRESULT CTexEffect::Render_GameObject()
+HRESULT CDecalEffect::Render_GameObject()
 {
-	Render_GameObject_HWInstance(); // 텍스쳐 이펙트만 인스턴싱
+	if (FAILED(SetUp_ConstantTable(m_pShaderCom)))
+		return E_FAIL;
+	
+	//m_pShaderCom->Begin_Shader();
+	//m_pShaderCom->Begin_Pass(4);
+	//
+	//VTXCUBE_COL VtxCubeCol[8];
+	//VtxCubeCol[0].vPosition = _v3(-0.5f, 0.5f, -0.5f);
+	//VtxCubeCol[0].dwColor = COLOR_GREEN(1.f);
+	//
+	//VtxCubeCol[1].vPosition = _v3(0.5f, 0.5f, -0.5f);
+	//VtxCubeCol[1].dwColor = COLOR_GREEN(1.f);
+	//
+	//VtxCubeCol[2].vPosition = _v3(0.5f, -0.5f, -0.5f);
+	//VtxCubeCol[2].dwColor = COLOR_GREEN(1.f);
+	//
+	//VtxCubeCol[3].vPosition = _v3(-0.5f, -0.5f, -0.5f);
+	//VtxCubeCol[3].dwColor = COLOR_GREEN(1.f);
+	//
+	//VtxCubeCol[4].vPosition = _v3(-0.5f, 0.5f, 0.5f);
+	//VtxCubeCol[4].dwColor = COLOR_GREEN(1.f);
+	//
+	//VtxCubeCol[5].vPosition = _v3(0.5f, 0.5f, 0.5f);
+	//VtxCubeCol[5].dwColor = COLOR_GREEN(1.f);
+	//
+	//VtxCubeCol[6].vPosition = _v3(0.5f, -0.5f, 0.5f);
+	//VtxCubeCol[6].dwColor = COLOR_GREEN(1.f);
+	//
+	//VtxCubeCol[7].vPosition = _v3(-0.5f, -0.5f, 0.5f);
+	//VtxCubeCol[7].dwColor = COLOR_GREEN(1.f);
+	//
+	//POLYGON32 wIdx[12] = {};
+	//
+	//wIdx[0]._0 = 1;
+	//wIdx[0]._1 = 5;
+	//wIdx[0]._2 = 6;
+	//
+	//wIdx[1]._0 = 1;
+	//wIdx[1]._1 = 6;
+	//wIdx[1]._2 = 2;
+	//
+	//wIdx[2]._0 = 4;
+	//wIdx[2]._1 = 0;
+	//wIdx[2]._2 = 3;
+	//
+	//wIdx[3]._0 = 4;
+	//wIdx[3]._1 = 3;
+	//wIdx[3]._2 = 7;
+	//
+	//wIdx[4]._0 = 4;
+	//wIdx[4]._1 = 5;
+	//wIdx[4]._2 = 1;
+	//
+	//wIdx[5]._0 = 4;
+	//wIdx[5]._1 = 1;
+	//wIdx[5]._2 = 0;
+	//
+	//wIdx[6]._0 = 3;
+	//wIdx[6]._1 = 2;
+	//wIdx[6]._2 = 6;
+	//
+	//wIdx[7]._0 = 3;
+	//wIdx[7]._1 = 6;
+	//wIdx[7]._2 = 7;
+	//
+	//wIdx[8]._0 = 5;
+	//wIdx[8]._1 = 4;
+	//wIdx[8]._2 = 7;
+	//
+	//wIdx[9]._0 = 5;
+	//wIdx[9]._1 = 7;
+	//wIdx[9]._2 = 6;
+	//
+	//wIdx[10]._0 = 0;
+	//wIdx[10]._1 = 1;
+	//wIdx[10]._2 = 2;
+	//
+	//wIdx[11]._0 = 0;
+	//wIdx[11]._1 = 2;
+	//wIdx[11]._2 = 3;
+	//
+	//m_pGraphic_Dev->SetFVF(VTXFVF_COL);
+	//m_pGraphic_Dev->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, 8, 12, wIdx, D3DFMT_INDEX32, VtxCubeCol, sizeof(VTX_COL));
+	//
+	//m_pShaderCom->End_Pass();
+	//m_pShaderCom->End_Shader();
 
 	return NOERROR;
 }
 
-HRESULT CTexEffect::Render_GameObject_SetShader(CShader* pShader)
+HRESULT CDecalEffect::Render_GameObject_SetShader(CShader* pShader)
 {
 	if (nullptr == pShader ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
 		
-	pShader->Begin_Pass(m_iPass);
+	pShader->Begin_Pass(4);
 	
 	// Set Texture
 	if (FAILED(SetUp_ConstantTable(pShader)))
@@ -237,35 +226,7 @@ HRESULT CTexEffect::Render_GameObject_SetShader(CShader* pShader)
 	return S_OK;
 }
 
-HRESULT CTexEffect::Render_GameObject_HWInstance()
-{
-	if (nullptr == m_pShaderCom ||
-		nullptr == m_pBufferCom)
-		return E_FAIL;
-	
-	//m_pBufferCom->Render_Before_Instancing(m_pTransformCom->Get_WorldMat());
-	
-	m_pShaderCom->Begin_Shader();
-	m_pShaderCom->Begin_Pass(m_iPass);
-	
-	// Set Texture
-	if (FAILED(SetUp_ConstantTable(m_pShaderCom)))
-		return E_FAIL;
-	
-	// Begin Pass 사이에 SetTexture 할 경우 바로 적용시키기 위해
-	m_pShaderCom->Commit_Changes();
-	
-	m_pBufferCom->Render_DrawPrimitive_Instancing();
-	
-	m_pShaderCom->End_Pass();
-	m_pShaderCom->End_Shader();
-	
-	m_pBufferCom->Render_After_Instancing();
-
-	return NOERROR;
-}
-
-void CTexEffect::Setup_Info()
+void CDecalEffect::Setup_Info()
 {
 	m_fLifeTime = m_pInfo->fLifeTime;
 	m_vColor = m_pInfo->vStartColor;
@@ -424,7 +385,7 @@ void CTexEffect::Setup_Info()
 	}
 }
 
-void CTexEffect::Setup_Billboard()
+void CDecalEffect::Setup_Billboard()
 {
 	_mat matBill, matView, matWorld;
 
@@ -458,7 +419,7 @@ void CTexEffect::Setup_Billboard()
 	Compute_ViewZ(&m_pTransformCom->Get_Pos());
 }
 
-void CTexEffect::Check_Frame(_double TimeDelta)
+void CDecalEffect::Check_Frame(_double TimeDelta)
 {
 	if (m_pInfo->bStaticFrame)
 		return;
@@ -477,7 +438,7 @@ void CTexEffect::Check_Frame(_double TimeDelta)
 	}
 }
 
-void CTexEffect::Check_Move(_double TimeDelta)
+void CDecalEffect::Check_Move(_double TimeDelta)
 {
 	if (m_pInfo->bSlowly)
 	{
@@ -632,7 +593,7 @@ void CTexEffect::Check_Move(_double TimeDelta)
 	}
 }
 
-void CTexEffect::Check_LifeTime(_double TimeDelta)
+void CDecalEffect::Check_LifeTime(_double TimeDelta)
 {
 	m_fLifeTime -= _float(TimeDelta);
 
@@ -640,7 +601,7 @@ void CTexEffect::Check_LifeTime(_double TimeDelta)
 		m_bIsDead = true;
 }
 
-void CTexEffect::Check_Alpha(_double TimeDelta)
+void CDecalEffect::Check_Alpha(_double TimeDelta)
 {
 	if (!m_bFadeOutStart && m_pInfo->bFadeIn)
 	{
@@ -669,7 +630,7 @@ void CTexEffect::Check_Alpha(_double TimeDelta)
 	}
 }
 
-void CTexEffect::Check_Color(_double TimeDelta)
+void CDecalEffect::Check_Color(_double TimeDelta)
 {
 	if (m_pInfo->bColorMove)
 	{
@@ -677,7 +638,7 @@ void CTexEffect::Check_Color(_double TimeDelta)
 	}
 }
 
-void CTexEffect::Check_CreateDelay(_double TimeDelta)
+void CDecalEffect::Check_CreateDelay(_double TimeDelta)
 {
 	m_fCreateDelay -= _float(TimeDelta);
 
@@ -687,7 +648,7 @@ void CTexEffect::Check_CreateDelay(_double TimeDelta)
 	}
 }
 
-HRESULT CTexEffect::Add_Component()
+HRESULT CDecalEffect::Add_Component()
 {
 	// For.Com_Renderer
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom)))
@@ -705,12 +666,15 @@ HRESULT CTexEffect::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Colors", L"Com_ColorTexture", (CComponent**)&m_pColorTextureCom)))
 		return E_FAIL;
 
-	//// For.Com_Shader
-	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Effect", L"Com_Shader", (CComponent**)&m_pShaderCom)))
-	//	return E_FAIL;
+	// For.Com_Shader
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Effect", L"Com_Shader", (CComponent**)&m_pShaderCom)))
+		return E_FAIL;
 
+	//// for.Com_VIBuffer
+	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Rect", L"Com_VIBuffer", (CComponent**)&m_pBufferCom)))
+	//	return E_FAIL;
 	// for.Com_VIBuffer
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Rect", L"Com_VIBuffer", (CComponent**)&m_pBufferCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Cube", L"Com_VIBuffer", (CComponent**)&m_pBufferCom)))
 		return E_FAIL;
 
 	// For.Com_Transform
@@ -720,7 +684,7 @@ HRESULT CTexEffect::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CTexEffect::SetUp_ConstantTable(CShader* pShader)
+HRESULT CDecalEffect::SetUp_ConstantTable(CShader* pShader)
 {
 	if (nullptr == pShader)
 		return E_FAIL;
@@ -795,7 +759,7 @@ HRESULT CTexEffect::SetUp_ConstantTable(CShader* pShader)
 	return NOERROR;
 }
 
-void CTexEffect::Change_EffectTexture(const _tchar* _Name)
+void CDecalEffect::Change_EffectTexture(const _tchar* _Name)
 {
 	auto& iter = m_pmapComponents.find(L"Com_Texture");
 
@@ -806,7 +770,7 @@ void CTexEffect::Change_EffectTexture(const _tchar* _Name)
 	Safe_AddRef(iter->second);
 }
 
-void CTexEffect::Change_GradientTexture(const _tchar * _Name)
+void CDecalEffect::Change_GradientTexture(const _tchar * _Name)
 {
 	auto& iter = m_pmapComponents.find(L"Com_GradientTexture");
 
@@ -819,7 +783,7 @@ void CTexEffect::Change_GradientTexture(const _tchar * _Name)
 	Safe_AddRef(iter->second);
 }
 
-void CTexEffect::Change_ColorTexture(const _tchar* _Name)
+void CDecalEffect::Change_ColorTexture(const _tchar* _Name)
 {
 	auto& iter = m_pmapComponents.find(L"Com_ColorTexture");
 
@@ -830,9 +794,9 @@ void CTexEffect::Change_ColorTexture(const _tchar* _Name)
 	Safe_AddRef(iter->second);
 }
 
-CTexEffect* CTexEffect::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
+CDecalEffect* CDecalEffect::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 {
-	CTexEffect*	pInstance = new CTexEffect(pGraphic_Device);
+	CDecalEffect*	pInstance = new CDecalEffect(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 	{
@@ -844,9 +808,9 @@ CTexEffect* CTexEffect::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 
 }
 
-CTexEffect* CTexEffect::Create(LPDIRECT3DDEVICE9 pGraphic_Device, EFFECT_INFO* pInfo)
+CDecalEffect* CDecalEffect::Create(LPDIRECT3DDEVICE9 pGraphic_Device, EFFECT_INFO* pInfo)
 {
-	CTexEffect*	pInstance = new CTexEffect(pGraphic_Device);
+	CDecalEffect*	pInstance = new CDecalEffect(pGraphic_Device);
 
 	pInstance->m_pInfo = pInfo;
 
@@ -859,9 +823,9 @@ CTexEffect* CTexEffect::Create(LPDIRECT3DDEVICE9 pGraphic_Device, EFFECT_INFO* p
 	return pInstance;
 }
 
-CGameObject* CTexEffect::Clone_GameObject(void* pArg)
+CGameObject* CDecalEffect::Clone_GameObject(void* pArg)
 {
-	CTexEffect*	pInstance = new CTexEffect(*this);
+	CDecalEffect*	pInstance = new CDecalEffect(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
@@ -872,11 +836,11 @@ CGameObject* CTexEffect::Clone_GameObject(void* pArg)
 	return pInstance;
 }
 
-void CTexEffect::Free()
+void CDecalEffect::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
-	//Safe_Release(m_pShaderCom);
+	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pColorTextureCom);
 	Safe_Release(m_pGradientTextureCom);
