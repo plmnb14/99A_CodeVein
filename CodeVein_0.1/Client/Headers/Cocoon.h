@@ -1,56 +1,15 @@
 #pragma once
-#include "Client_Defines.h"
-#include "GameObject.h"
-#include "Management.h"
+
+#include "Info_Monster.h"
 
 BEGIN(Client)
-
-class CMonsterUI;
 
 class CCocoon final : public CGameObject
 {
 public:
-	enum FBLR { FRONT, FRONTLEFT, FRONTRIGHT, BACK, BACKLEFT, BACKRIGHT, LEFT, RIGHT };
-	enum MONSTER_ANITYPE { IDLE, MOVE, ATTACK, HIT, CC, DEAD };
-
-	enum COCOON_ANI 
-	{
-		Idle,
-		Threat,
-		Dead,
-		Dmg_B,
-		Dmg_F,
-		Shot,
-		Mist
-	};
-
+	enum COCOON_ANI { Idle, Threat, Dead, Dmg_B, Dmg_F, Shot, Mist };
 	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_Head, Bone_Neck, Bone_Jaw_Tongue, Bone_End };
 
-public:
-	struct INITSTRUCT
-	{
-		INITSTRUCT(
-			_float _fDMG,
-			_float _fHpMax,
-			_float _fArmorMax,
-			_float _fKnowRange,
-			_float _fShotRange,
-			_float _fAtkRange)
-		{
-			tMonterStatus.fDamage = _fDMG;
-			tMonterStatus.fHp_Max = _fHpMax;
-			tMonterStatus.fArmor_Max = _fArmorMax;
-
-			fKonwingRange = _fKnowRange;
-			fShotRange = _fShotRange;
-			fCanAttackRange = _fAtkRange;
-		}
-
-		OBJECT_PARAM		tMonterStatus;
-		_float				fKonwingRange = 20.f;
-		_float				fShotRange = 10.f;
-		_float				fCanAttackRange = 5.f;
-	};
 protected:
 	explicit CCocoon(LPDIRECT3DDEVICE9 pGraphic_Device);
 	explicit CCocoon(const CCocoon& rhs);
@@ -111,7 +70,7 @@ private:
 	CCollider*			m_pCollider = nullptr;
 
 	CTransform*			m_pTargetTransform = nullptr;
-	_v3					m_vBirthPos;
+
 	_mat*				m_matBone[Bone_End];
 	_double				m_dTimeDelta;
 	_double				m_dAniPlayMul = 1;
@@ -140,11 +99,12 @@ private:
 	_float				m_fRecognitionRange = 25.f;
 	_float				m_fShotRange = 15.f;
 	_float				m_fAtkRange = 5.f;
+	_float				m_fPersonalRange = 2.f;
 	_float				m_fCoolDownMax = 0.f;
 	_float				m_fCoolDownCur = 0.f;
 	_float				m_fSpeedForCollisionPush = 2.f;
 
-	_int				m_iRandom = 0; //랜덤 받을 숫자
+	_int				m_iRandom = 0;
 
 };
 

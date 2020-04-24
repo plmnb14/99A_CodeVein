@@ -1,7 +1,5 @@
 #include "stdafx.h"
 #include "..\Headers\YachaMan.h"
-#include "..\Headers\Weapon.h"
-#include "..\Headers\MonsterUI.h"
 
 CYachaMan::CYachaMan(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)

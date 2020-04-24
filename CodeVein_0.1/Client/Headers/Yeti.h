@@ -1,12 +1,8 @@
 #pragma once
 
-#include "Client_Defines.h"
-#include "GameObject.h"
-#include "Management.h"
+#include "Info_Monster.h"
 
 BEGIN(Client)
-
-class CMonsterUI;
 
 class CYeti final : public CGameObject
 {
@@ -14,10 +10,10 @@ public:
 	enum FBLR { FRONT, FRONTLEFT, FRONTRIGHT, BACK, BACKLEFT, BACKRIGHT, LEFT, RIGHT };
 	enum MONSTER_ANITYPE { IDLE, MOVE, ATTACK, HIT, CC, DEAD };
 
-	enum YETI_IDLETYPE { IDLE_IDLE, IDLE_THREAT }; //일반대기, 경계 대기라고 생각하고 전투시에는 threat 사용
+	enum YETI_IDLETYPE { IDLE_IDLE, IDLE_THREAT };
 	enum YETI_MOVETYPE { MOVE_RUN, MOVE_WALK };
-	enum YETI_ATKTYPE { ATK_NORMAL, ATK_COMBO }; //일반공격, 콤보공격
-	enum YETI_HITTYPE { HIT_STRONG, HIT_NORMAL }; //특수 피격 없음
+	enum YETI_ATKTYPE { ATK_NORMAL, ATK_COMBO };
+	enum YETI_HITTYPE { HIT_STRONG, HIT_NORMAL };
 	enum YETI_CCTYPE { CC_DOWN }; //cc 없음
 	enum YETI_DEADTYPE { DEAD_DEAD };
 
@@ -89,34 +85,15 @@ public:
 		Atk_BodyPress
 	};
 
-	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_Head, Bone_LeftHand, Bone_RightHand, Bone_Shoulder, Bone_End };
-
-public:
-	struct INITSTRUCT
-	{
-		INITSTRUCT(
-			_float _fDMG,
-			_float _fHpMax,
-			_float _fArmorMax,
-			_float _fKnowRange,
-			_float _fShotRange,
-			_float _fAtkRange,
-			_int _iDodgeMax
-			)
-		{
-			tMonterStatus.fDamage = _fDMG;
-			tMonterStatus.fHp_Max = _fHpMax;
-			tMonterStatus.fArmor_Max = _fArmorMax;
-
-			fKonwingRange = _fKnowRange;
-			fCanShotRangeIfGunChooose = _fShotRange;
-			fCanAttackRange = _fAtkRange;
-		}
-
-		OBJECT_PARAM		tMonterStatus;
-		_float				fKonwingRange = 20.f;
-		_float				fCanShotRangeIfGunChooose = 10.f;
-		_float				fCanAttackRange = 5.f;
+	enum BONE_TYPE 
+	{ 
+		Bone_Range, 
+		Bone_Body, 
+		Bone_Head, 
+		Bone_LeftHand, 
+		Bone_RightHand, 
+		Bone_Shoulder, 
+		Bone_End
 	};
 
 protected:
@@ -198,7 +175,6 @@ private:
 
 	CTransform*			m_pTargetTransform = nullptr;
 
-	_v3					m_vBirthPos;
 	_mat*				m_matBone[Bone_End];
 	_double				m_dTimeDelta = 0;
 	_double				m_dAniPlayMul = 1;

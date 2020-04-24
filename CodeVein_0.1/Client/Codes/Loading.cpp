@@ -889,7 +889,7 @@ _uint CLoading::Loading_Title()
 	// 기믹 메쉬 불러오는중
 	//============================================================================================================
 	cout << "Field Gimmick Static 메쉬 불러오는중" << endl;
-	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Field_Gimmick_Path.dat");
+	//g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Field_Gimmick_Path.dat");
 
 	// 다이나믹 메쉬 불러오는 중
 	//============================================================================================================
@@ -897,7 +897,7 @@ _uint CLoading::Loading_Title()
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Dynamic_Path.dat");
 
 	// 임시 공통 스태틱 메쉬
-	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
+	//g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
 
 	// 무기 불러오는 중
 	//============================================================================================================
@@ -1067,14 +1067,17 @@ _uint CLoading::Loading_Stage()
 	// 최초 로딩 호출 시 1번만 불러옵니다.
 	if (false == g_bOnStage[0])
 	{
+		cout << "로딩 생성 진행중 몬스터 원본 만드는 중" << endl;
 		// 다이나믹 메쉬 불러오는 중
 		//============================================================================================================
 		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
 
+		cout << "몬스터 로드 완료" << endl;
 		// BT_Node 생성 중
 		//============================================================================================================
 		if (FAILED(g_pManagement->Ready_BT_Node()))
 			return E_FAIL;
+		cout << "행동트리 완료" << endl;
 
 
 		// 오브젝트 원형 생성
@@ -1098,6 +1101,7 @@ _uint CLoading::Loading_Stage()
 		// 독나방 기모아서 쏘기 충돌체
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonTornado", CPoisonTornado::Create(m_pGraphicDev))))
 			return E_FAIL;
+		cout << "나비" << endl;
 		// 여왕의 기사
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_QueensKnight", CQueensKnight::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1113,6 +1117,7 @@ _uint CLoading::Loading_Stage()
 		// 리크 필드
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_LeakField", CLeakField::Create(m_pGraphicDev))))
 			return E_FAIL;
+		cout << "여왕기사" << endl;
 		// 얼음여자
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceGirl", CIceGirl::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1134,6 +1139,7 @@ _uint CLoading::Loading_Stage()
 		// 얼음여자 얼음보호막
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceBarrier", CIceBarrier::Create(m_pGraphicDev))))
 			return E_FAIL;
+		cout << "아이스걸" << endl;
 		// 불남자
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireBoy", CFireBoy::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1152,6 +1158,7 @@ _uint CLoading::Loading_Stage()
 		// 화염 토네이도 콜라이더
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireTornadoCol", CFireTornadoCol::Create(m_pGraphicDev))))
 			return E_FAIL;
+		cout << "불보이" << endl;
 		// 사슴왕
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKing", CDeerKing::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1161,8 +1168,9 @@ _uint CLoading::Loading_Stage()
 		// 사슴왕  뾰족 얼음
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingColdBeam", CDeerKingColdBeam::Create(m_pGraphicDev))))
 			return E_FAIL;
+		cout << "사슴킹" << endl;
 		// 검은 성게
-		if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Urchin", CUrchin::Create(m_pGraphicDev))))
 			return E_FAIL;
 		// 검은 늑대
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackWolf", CBlackWolf::Create(m_pGraphicDev))))
@@ -1208,6 +1216,9 @@ _uint CLoading::Loading_Stage()
 			return E_FAIL;
 		// 예티
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Yeti", CYeti::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 따이맨
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ThaiMan", CThaiMan::Create(m_pGraphicDev))))
 			return E_FAIL;
 
 		// UI - Chea

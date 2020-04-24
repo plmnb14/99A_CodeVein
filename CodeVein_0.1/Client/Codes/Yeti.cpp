@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "..\Headers\Yeti.h"
-#include "..\Headers\MonsterUI.h"
 
 CYeti::CYeti(LPDIRECT3DDEVICE9 pGraphic_Device)
 	:CGameObject(pGraphic_Device)
@@ -456,6 +455,8 @@ void CYeti::Function_ResetAfterAtk()
 
 	m_tObjParam.bCanDodge = true;
 	m_tObjParam.bIsDodge = false;
+
+	m_tObjParam.bSuperArmor = false;
 
 	m_bCanIdle = true;
 	m_bIsIdle = false;
@@ -1010,7 +1011,7 @@ void CYeti::Play_RUpperChop()
 		}
 
 		if (m_pMeshCom->Is_Finish_Animation(0.5f))
-			m_bCanInterrupt = false;
+			m_tObjParam.bSuperArmor = true;
 
 		if (3.233f < AniTime && 4.400f > AniTime)
 		{
@@ -1371,7 +1372,7 @@ void CYeti::Play_RLRL()
 		}
 
 		if (m_pMeshCom->Is_Finish_Animation(0.5f))
-			m_bCanInterrupt = false;
+			m_tObjParam.bSuperArmor = true;
 
 		if (4.333f < AniTime && 4.567f > AniTime)
 		{
@@ -1747,7 +1748,7 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 		}
 
 		if (m_pMeshCom->Is_Finish_Animation(0.5f))
-			m_bCanInterrupt = false;
+			m_tObjParam.bSuperArmor = true;
 
 		if (4.333f < AniTime && 4.567f > AniTime)
 		{
@@ -1838,7 +1839,7 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 		}
 
 		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
+			m_tObjParam.bSuperArmor = true;
 
 		if (0.400f < AniTime && 0.967f > AniTime)
 		{
@@ -1940,7 +1941,7 @@ void CYeti::Play_Combo_RLRL_Smash()
 		}
 
 		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
+			m_tObjParam.bSuperArmor = true;
 
 		if (4.333f < AniTime && 4.567f > AniTime)
 		{
@@ -2031,7 +2032,7 @@ void CYeti::Play_Combo_RLRL_Smash()
 		}
 
 		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
+			m_tObjParam.bSuperArmor = true;
 
 		if (1.033f < AniTime && 2.633f > AniTime)
 		{
@@ -2133,7 +2134,7 @@ void CYeti::Play_Combo_RLRL_Swing()
 		}
 
 		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
+			m_tObjParam.bSuperArmor = true;
 
 		if (4.333f < AniTime && 4.567f > AniTime)
 		{
@@ -2224,7 +2225,7 @@ void CYeti::Play_Combo_RLRL_Swing()
 		}
 
 		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
+			m_tObjParam.bSuperArmor = true;
 
 		if (1.267f < AniTime && 1.667f > AniTime)
 		{
@@ -2475,15 +2476,15 @@ HRESULT CYeti::Ready_Status(void * pArg)
 	}
 	else
 	{
-		INITSTRUCT Info = *(INITSTRUCT*)pArg;
+		MONSTER_STATUS Info = *(MONSTER_STATUS*)pArg;
 
 		m_tObjParam.fDamage = Info.tMonterStatus.fDamage;
 		m_tObjParam.fHp_Max = Info.tMonterStatus.fHp_Max;
 		m_tObjParam.fArmor_Max = Info.tMonterStatus.fArmor_Max;
 
-		m_fRecognitionRange = Info.fKonwingRange;
-		m_fShotRange = Info.fCanShotRangeIfGunChooose;
-		m_fAtkRange = Info.fCanAttackRange;
+		m_fRecognitionRange = Info.fCanKonwRange;
+		m_fShotRange = Info.fCanShotRange;
+		m_fAtkRange = Info.fCanAtkRange;
 	}
 
 	return S_OK;

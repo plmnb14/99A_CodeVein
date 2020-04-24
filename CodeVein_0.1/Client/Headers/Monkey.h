@@ -1,20 +1,12 @@
 #pragma once
 
-#include "Client_Defines.h"
-#include "GameObject.h"
-#include "Management.h"
+#include "Info_Monster.h"
 
 BEGIN(Client)
-
-class CWeapon;
-class CMonsterUI;
 
 class CMonkey final : public CGameObject
 {
 public:
-	enum FBLR { FRONT, FRONTLEFT, FRONTRIGHT, BACK, BACKLEFT, BACKRIGHT, LEFT, RIGHT };
-	enum MONSTER_ANITYPE { IDLE, MOVE, ATTACK, HIT, CC, DEAD };
-	
 	enum MONKEY_IDLETYPE { IDLE_IDLE, IDLE_SIT };
 	enum MONKEY_MOVETYPE { MOVE_RUN, MOVE_WALK, MOVE_DODGE };
 	enum MONKEY_ATKTYPE { ATK_NORMAL, ATK_COMBO };
@@ -75,35 +67,6 @@ public:
 	};
 
 	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_Head, Bone_LeftHand, Bone_End };
-
-public:
-	struct INITSTRUCT
-	{
-		INITSTRUCT(
-			_float _fDMG,
-			_float _fHpMax,
-			_float _fArmorMax,
-			_float _fKnowRange,
-			_float _fShotRange,
-			_float _fAtkRange,
-			_int _iDodgeMax)
-		{
-			tMonterStatus.fDamage = _fDMG;
-			tMonterStatus.fHp_Max = _fHpMax;
-			tMonterStatus.fArmor_Max = _fArmorMax;
-
-			fKonwingRange = _fKnowRange;
-			fCanShotRangeIfGunChooose = _fShotRange;
-			fCanAttackRange = _fAtkRange;
-			iDodgeCountMax = _iDodgeMax;
-		}
-
-		OBJECT_PARAM		tMonterStatus;
-		_float				fKonwingRange = 20.f;
-		_float				fCanShotRangeIfGunChooose = 10.f;
-		_float				fCanAttackRange = 5.f;
-		_int				iDodgeCountMax = 3;
-	};
 
 protected:
 	explicit CMonkey(LPDIRECT3DDEVICE9 pGraphic_Device);

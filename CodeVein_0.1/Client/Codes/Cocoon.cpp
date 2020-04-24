@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Cocoon.h"
 #include "..\Headers\CocoonBullet.h"
-#include "..\Headers\MonsterUI.h"
 
 CCocoon::CCocoon(LPDIRECT3DDEVICE9 pGraphic_Device)
 	:CGameObject(pGraphic_Device)
@@ -75,7 +74,6 @@ _int CCocoon::Update_GameObject(_double TimeDelta)
 
 	CGameObject::Update_GameObject(TimeDelta);
 
-	// MonsterHP UI
 	m_pMonsterUI->Update_GameObject(TimeDelta);
 
 	Check_PosY();
@@ -448,13 +446,12 @@ void CCocoon::Function_ResetAfterAtk()
 	m_tObjParam.bCanDodge = true;
 	m_tObjParam.bIsDodge = false;
 
+	m_tObjParam.bSuperArmor = false;
+
 	m_bCanIdle = true;
 	m_bIsIdle = false;
 
 	m_tObjParam.bIsAttack = false;
-
-	for (auto& vetor_iter : m_vecAttackCol)
-		vetor_iter->Set_Enabled(false);
 
 	LOOP(10)
 		m_bEventTrigger[i] = false;
@@ -654,7 +651,6 @@ void CCocoon::Play_Shot()
 	}
 	else 
 	{
-		//5.733 생성(불 머금기) //6.267f 발사
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
 			m_fCoolDownMax = 1.f;
@@ -688,6 +684,9 @@ void CCocoon::Play_Shot()
 		{
 			Function_RotateBody();
 		}
+
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_tObjParam.bSuperArmor = true;
 	}
 
 	return;
@@ -747,6 +746,9 @@ void CCocoon::Play_Mist()
 			g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_01", 0.1f, vBirth, nullptr);
 			g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_02", 0.1f, vBirth, nullptr);
 		}
+
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_tObjParam.bSuperArmor = true;
 	}
 
 	return;
@@ -891,15 +893,15 @@ HRESULT CCocoon::Ready_Status(void * pArg)
 	}
 	else
 	{
-		INITSTRUCT Info = *(INITSTRUCT*)pArg;
+		MONSTER_STATUS Info = *(MONSTER_STATUS*)pArg;
 
 		m_tObjParam.fDamage = Info.tMonterStatus.fDamage;
 		m_tObjParam.fHp_Max = Info.tMonterStatus.fHp_Max;
 		m_tObjParam.fArmor_Max = Info.tMonterStatus.fArmor_Max;
 
-		m_fRecognitionRange = Info.fKonwingRange;
-		m_fShotRange = Info.fShotRange;
-		m_fAtkRange = Info.fCanAttackRange;
+		m_fRecognitionRange = Info.fCanKonwRange;
+		m_fShotRange = Info.fCanShotRange;
+		m_fAtkRange = Info.fCanAtkRange;
 	}
 
 	return S_OK;
@@ -908,7 +910,6 @@ HRESULT CCocoon::Ready_Status(void * pArg)
 HRESULT CCocoon::Ready_Collider()
 {
 	m_vecPhysicCol.reserve(3); 
-	m_vecAttackCol.reserve(2);
 
 	CCollider* pCollider = nullptr;
 	_float fRadius;
@@ -1011,14 +1012,7 @@ void CCocoon::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 
-	for (auto& vecter_iter : m_vecPhysicCol)
-		Safe_Release(vecter_iter);
-
-	for (auto& vecter_iter : m_vecAttackCol)
-		Safe_Release(vecter_iter);
-
-	for (auto& iter : m_matBone)
-		iter = nullptr;
-
 	CGameObject::Free();
+
+	return;
 }

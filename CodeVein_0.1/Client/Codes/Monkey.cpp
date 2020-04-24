@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Monkey.h"
-#include "..\Headers\Weapon.h"
 #include "..\Headers\MonkeyBullet.h"
-#include "..\Headers\MonsterUI.h"
 
 CMonkey::CMonkey(LPDIRECT3DDEVICE9 pGraphic_Device)
 	:CGameObject(pGraphic_Device)
@@ -1591,6 +1589,8 @@ void CMonkey::Play_Idle()
 
 		break;
 	}
+
+	return;
 }
 
 void CMonkey::Play_Move()
@@ -1768,6 +1768,7 @@ void CMonkey::Play_Hit()
 
 void CMonkey::Play_CC()
 {
+	return;
 }
 
 void CMonkey::Play_Dead()
@@ -1923,15 +1924,15 @@ HRESULT CMonkey::Ready_Status(void * pArg)
 	}
 	else
 	{
-		INITSTRUCT Info = *(INITSTRUCT*)pArg;
+		MONSTER_STATUS Info = *(MONSTER_STATUS*)pArg;
 
 		m_tObjParam.fDamage = Info.tMonterStatus.fDamage;
 		m_tObjParam.fHp_Max = Info.tMonterStatus.fHp_Max;
 		m_tObjParam.fArmor_Max = Info.tMonterStatus.fArmor_Max;
 
-		m_fRecognitionRange = Info.fKonwingRange;
-		m_fShotRange = Info.fCanShotRangeIfGunChooose;
-		m_fAtkRange = Info.fCanAttackRange;
+		m_fRecognitionRange = Info.fCanKonwRange;
+		m_fShotRange = Info.fCanShotRange;
+		m_fAtkRange = Info.fCanAtkRange;
 		m_iDodgeCountMax = Info.iDodgeCountMax;
 	}
 

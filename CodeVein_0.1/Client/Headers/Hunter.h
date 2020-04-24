@@ -1,14 +1,10 @@
 #pragma once
 
-#include "Client_Defines.h"
-#include "GameObject.h"
-#include "Management.h"
+#include "Info_Monster.h"
 
 BEGIN(Client)
 
 class CHunterBullet;
-class CWeapon;
-class CMonsterUI;
 
 class CHunter final : public CGameObject
 {
@@ -258,7 +254,6 @@ private:
 	void Function_Movement(_float _fspeed, _v3 _vDir = { V3_NULL });
 	void Function_DecreMoveMent(_float _fMutiply = 1.f);
 	void Function_ResetAfterAtk();
-	void Function_TargetAround();
 
 	void Check_PosY();
 	void Check_Hit();
@@ -344,8 +339,6 @@ private:
 
 	CTransform*			m_pTargetTransform = nullptr;
 
-
-	_v3					m_vBirthPos;
 	_mat*				m_matBone[Bone_End];
 	_double				m_dTimeDelta = 0;
 	_double				m_dAniPlayMul = 1;
@@ -372,7 +365,6 @@ private:
 	_bool				m_bEventTrigger[20] = {};
 
 	_bool				m_bCanPlayDead = false;
-
 	_bool				m_bInRecognitionRange = false;
 	_bool				m_bInAtkRange = false;
 

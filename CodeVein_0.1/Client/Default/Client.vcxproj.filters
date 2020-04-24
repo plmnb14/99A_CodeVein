@@ -277,9 +277,6 @@
     <Filter Include="02.GameObject\Stage\2%29 Monster\Monkey">
       <UniqueIdentifier>{3476f351-4dca-4100-8afd-c35eafac557d}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\2%29 Monster\Urchin 보류">
-      <UniqueIdentifier>{d5078eb0-dcf5-4078-8ad4-dfe766841a1d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\1%29 Boss\FireBoy">
       <UniqueIdentifier>{513f084f-d270-4483-b705-d20c5f6c1dcd}</UniqueIdentifier>
     </Filter>
@@ -352,6 +349,12 @@
     <Filter Include="96.ScriptManager">
       <UniqueIdentifier>{9372b392-605d-4457-b3ad-1ab7fac2fc17}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Monster\Urchin">
+      <UniqueIdentifier>{d5078eb0-dcf5-4078-8ad4-dfe766841a1d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\2%29 Monster\ThaiMan">
+      <UniqueIdentifier>{a84f0e54-8d5e-4ead-973c-244a2a95b65a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -416,9 +419,6 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Dummy_Target.h">
       <Filter>02.GameObject\Stage\2%29 Monster\00%29 Dummy_Target</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\BlackUrchin.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\Urchin 보류</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\BlackWolf.h">
       <Filter>02.GameObject\Stage\2%29 Monster\Wolf</Filter>
@@ -723,6 +723,15 @@
     <ClInclude Include="..\Headers\DeerKingColdBeam.h">
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Urchin.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Urchin</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ThaiMan.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\ThaiMan</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Info_Monster.h">
+      <Filter>02.GameObject\Stage\2%29 Monster</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -781,9 +790,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\PoisonButterfly.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\PoisonButterfly</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\BlackUrchin.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\Urchin 보류</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\BlackWolf.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster\Wolf</Filter>
@@ -1084,6 +1090,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\DeerKingColdBeam.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Urchin.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Urchin</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ThaiMan.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\ThaiMan</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

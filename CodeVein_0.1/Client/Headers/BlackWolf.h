@@ -1,12 +1,8 @@
 #pragma once
 
-#include "Client_Defines.h"
-#include "GameObject.h"
-#include "Management.h"
+#include "Info_Monster.h"
 
 BEGIN(Client)
-
-class CMonsterUI;
 
 class CBlackWolf final : public CGameObject
 {

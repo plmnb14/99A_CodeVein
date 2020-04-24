@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Hunter.h"
-#include "..\Headers\Weapon.h"
 #include "..\Headers\\HunterBullet.h"
-#include "..\Headers\MonsterUI.h"
 
 CHunter::CHunter(LPDIRECT3DDEVICE9 pGraphic_Device)
 	:CGameObject(pGraphic_Device)
@@ -252,6 +250,8 @@ void CHunter::Render_Collider()
 	{
 		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
 	}
+
+	return;
 }
 
 void CHunter::Enter_Collision()
@@ -293,6 +293,8 @@ void CHunter::Check_CollisionPush()
 			}
 		}
 	}
+
+	return;
 }
 
 void CHunter::Check_CollisionEvent(list<CGameObject*> plistGameObject)
@@ -349,6 +351,8 @@ void CHunter::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 			}
 		}
 	}
+
+	return;
 }
 
 void CHunter::Function_RotateBody()
@@ -418,6 +422,8 @@ void CHunter::Function_RotateBody()
 	}
 
 	m_pTransformCom->Set_Angle(AXIS_Y, fYAngle);
+
+	return;
 }
 
 void CHunter::Function_CoolDown()
@@ -5375,6 +5381,7 @@ void CHunter::Play_Hit()
 
 void CHunter::Play_CC()
 {
+	return;
 }
 
 void CHunter::Play_Dead()

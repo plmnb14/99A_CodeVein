@@ -4,8 +4,6 @@
 #include "PoisonRotationBullet.h"
 #include "PoisonTornado.h"
 
-#include "BlackUrchin.h"
-
 #include "QueensKnight.h"
 #include "DarkGroundBullet.h"
 #include "DarkBoom.h"
@@ -36,6 +34,8 @@
 #include "CocoonBigBullet.h"
 #include "Hunter.h"
 #include "HunterBullet.h"
+#include "ThaiMan.h"
+#include "Urchin.h"
 #include "Monkey.h"
 #include "MonkeyBullet.h"
 #include "YachaMan.h"
