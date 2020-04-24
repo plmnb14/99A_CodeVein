@@ -1170,8 +1170,8 @@ _uint CLoading::Loading_Stage()
 			return E_FAIL;
 		cout << "사슴킹" << endl;
 		// 검은 성게
-		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Urchin", CUrchin::Create(m_pGraphicDev))))
-			return E_FAIL;
+		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_Urchin", CUrchin::Create(m_pGraphicDev))))
+		//	return E_FAIL;
 		// 검은 늑대
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackWolf", CBlackWolf::Create(m_pGraphicDev))))
 			return E_FAIL;

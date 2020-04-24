@@ -948,7 +948,6 @@ HRESULT CCocoon::Ready_Collider()
 
 	m_vecPhysicCol.push_back(pCollider);
 
-
 	return S_OK;
 }
 

@@ -2033,8 +2033,8 @@ HRESULT CThaiMan::Ready_Status(void * pArg)
 
 HRESULT CThaiMan::Ready_Collider()
 {
-	m_vecPhysicCol.reserve(2);
-	m_vecAttackCol.reserve(4);
+	m_vecPhysicCol.reserve(3);
+	m_vecAttackCol.reserve(5);
 
 	_float fRadius;
 	CCollider* pCollider = nullptr;
@@ -2101,7 +2101,6 @@ HRESULT CThaiMan::Ready_Collider()
 	pCollider->Set_Enabled(true);
 	m_vecAttackCol.push_back(pCollider);
 
-
 	return S_OK;
 }
 
@@ -2116,10 +2115,10 @@ HRESULT CThaiMan::Ready_BoneMatrix()
 	m_matBone[Bone_Range] = &pFrame->CombinedTransformationMatrix;
 	m_matBone[Bone_Body] = &pFrame->CombinedTransformationMatrix;
 
-	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHandAttach", 0), E_FAIL);
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHand", 0), E_FAIL);
 	m_matBone[Bone_LeftHand] = &pFrame->CombinedTransformationMatrix;
 
-	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach", 0), E_FAIL);
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHand", 0), E_FAIL);
 	m_matBone[Bone_RightHand] = &pFrame->CombinedTransformationMatrix;
 
 	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftToeBase", 0), E_FAIL);

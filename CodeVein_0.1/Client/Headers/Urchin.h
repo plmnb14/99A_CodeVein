@@ -1,18 +1,21 @@
 #pragma once
 
-#include "Client_Defines.h"
-#include "GameObject.h"
-#include "Management.h"
 #include "Info_Monster.h"
 
 BEGIN(Client)
 
-class CMonsterUI;
-
 class CUrchin final : public CGameObject
 {
 public:
-	enum URCHIN_ANI {};
+	enum URCHIN_ANI 
+	{
+		Idle,
+		Death,
+		Dmg,
+		Run_F,
+		AttackStep,
+		AttackRush
+	};
 	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_Head, Bone_End };
 
 protected:
@@ -35,6 +38,7 @@ private:
 	void Check_CollisionPush();
 	void Check_CollisionEvent(list<CGameObject*> plistGameObject);
 
+	void Function_FBLR();
 	void Function_RotateBody();
 	void Function_CoolDown();
 	void Function_Movement(_float _fspeed, _v3 _vDir = { V3_NULL });
@@ -43,13 +47,13 @@ private:
 
 	void Check_PosY();
 	void Check_Hit();
-	void Check_FBLR();
 	void Check_Dist();
 	void Check_AniEvent();
 
+	void Play_Rolling();
+	void Play_RollingRush();
+
 	void Play_Idle();
-	void Play_Shot();
-	void Play_Mist();
 	void Play_Hit();
 	void Play_Dead();
 
