@@ -818,89 +818,89 @@ void CParticleTab::OnBnClickedButton_Load()
 			m_CheckMoveScale.SetCheck(tInfo.bScaleMove);
 
 			::ReadFile(hFile, &tInfo.fAlphaSpeed, sizeof(_float), &dwByte, nullptr);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fAlphaSpeed);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.fAlphaSpeed);
 			m_EditAlphaSpeed.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.fAlphaSpeed_Max, sizeof(_float), &dwByte, nullptr);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fAlphaSpeed_Max);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.fAlphaSpeed_Max);
 			m_EditAlphaSpeed_Max.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.fAlphaSpeed_Min, sizeof(_float), &dwByte, nullptr);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fAlphaSpeed_Min);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.fAlphaSpeed_Min);
 			m_EditAlphaSpeed_Min.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.fColorSpeed, sizeof(_float), &dwByte, nullptr);
 
 			::ReadFile(hFile, &tInfo.fCreateDelay, sizeof(_float), &dwByte, nullptr);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fCreateDelay);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.fCreateDelay);
 			m_EditCreateDelay.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.fCreateDelay_Max, sizeof(_float), &dwByte, nullptr);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fCreateDelay_Max);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.fCreateDelay_Max);
 			m_EditCreateDelay_Max.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.fCreateDelay_Min, sizeof(_float), &dwByte, nullptr);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fCreateDelay_Min);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.fCreateDelay_Min);
 			m_EditCreateDelay_Min.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.fLifeTime, sizeof(_float), &dwByte, nullptr);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fLifeTime);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.fLifeTime);
 			m_EditLifeTime.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.fMaxAlpha, sizeof(_float), &dwByte, nullptr);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fMaxAlpha);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.fMaxAlpha);
 			m_EditMaxAlpha.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.fAnimSpeed, sizeof(_float), &dwByte, nullptr);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fAnimSpeed);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.fAnimSpeed);
 			m_EditAnimSpeed.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.fMaxFrame, sizeof(_float), &dwByte, nullptr);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fMaxFrame);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.fMaxFrame);
 			m_EditMaxCount.SetString(szBuff);
 			m_fMaxFrame = tInfo.fMaxFrame;
 
 			::ReadFile(hFile, &tInfo.fMoveScaleSpeed, sizeof(_float), &dwByte, nullptr);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fMoveScaleSpeed);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.fMoveScaleSpeed);
 			m_EditScaleSpeed.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.fMoveSpeed, sizeof(_float), &dwByte, nullptr);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fMoveSpeed);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.fMoveSpeed);
 			m_EditMoveSpeed.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.fMoveSpeed_Max, sizeof(_float), &dwByte, nullptr);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fMoveSpeed_Max);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.fMoveSpeed_Max);
 			m_EditMoveSpeed_Max.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.fMoveSpeed_Min, sizeof(_float), &dwByte, nullptr);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fMoveSpeed_Min);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.fMoveSpeed_Min);
 			m_EditMoveSpeed_Min.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.fRandStartPosRange_Max, sizeof(_float) * 3, &dwByte, nullptr);
 			if (tInfo.bRandStartPos)
 			{
-				_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fRandStartPosRange_Max[0]);
+				_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.fRandStartPosRange_Max[0]);
 				m_EditPosX.SetString(szBuff);
 
-				_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fRandStartPosRange_Max[1]);
+				_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.fRandStartPosRange_Max[1]);
 				m_EditPosY.SetString(szBuff);
 
-				_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fRandStartPosRange_Max[2]);
+				_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.fRandStartPosRange_Max[2]);
 				m_EditPosZ.SetString(szBuff);
 			}
 
 			::ReadFile(hFile, &tInfo.fRandStartPosRange_Min, sizeof(_float) * 3, &dwByte, nullptr);
 
 			::ReadFile(hFile, &tInfo.fRotSpeed, sizeof(_float), &dwByte, nullptr);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fRotSpeed);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.fRotSpeed);
 			m_EditRotSpeed.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.fRotSpeed_Max, sizeof(_float), &dwByte, nullptr);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fRotSpeed_Max);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.fRotSpeed_Max);
 			m_EditRotSpeed_Max.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.fRotSpeed_Min, sizeof(_float), &dwByte, nullptr);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fRotSpeed_Min);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.fRotSpeed_Min);
 			m_EditRotSpeed_Min.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.iMaxCount, sizeof(_int), &dwByte, nullptr);
@@ -927,82 +927,82 @@ void CParticleTab::OnBnClickedButton_Load()
 			::ReadFile(hFile, &tInfo.szGradientName, sizeof(TCHAR) * MAX_STR, &dwByte, nullptr);
 
 			::ReadFile(hFile, &tInfo.vEndColor, sizeof(_v4), &dwByte, nullptr);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vEndColor.x);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.vEndColor.x);
 			m_EditHueEnd.SetString(szBuff);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vEndColor.y);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.vEndColor.y);
 			m_EditContrastEnd.SetString(szBuff);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vEndColor.z);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.vEndColor.z);
 			m_EditBrightnessEnd.SetString(szBuff);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vEndColor.w);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.vEndColor.w);
 			m_EditSaturationEnd.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.vMoveDirection, sizeof(_v3), &dwByte, nullptr);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vMoveDirection.x);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.vMoveDirection.x);
 			m_EditDirX.SetString(szBuff);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vMoveDirection.y);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.vMoveDirection.y);
 			m_EditDirY.SetString(szBuff);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vMoveDirection.z);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.vMoveDirection.z);
 			m_EditDirZ.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.vMoveScale, sizeof(_v3), &dwByte, nullptr);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vMoveScale.x);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.vMoveScale.x);
 			m_EditMoveScaleX.SetString(szBuff);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vMoveScale.y);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.vMoveScale.y);
 			m_EditMoveScaleY.SetString(szBuff);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vMoveScale.z);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.vMoveScale.z);
 			m_EditMoveScaleZ.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.vRandDirectionRange, sizeof(_v3), &dwByte, nullptr);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vRandDirectionRange.x);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.vRandDirectionRange.x);
 			m_EditRandDirX.SetString(szBuff);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vRandDirectionRange.y);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.vRandDirectionRange.y);
 			m_EditRandDirY.SetString(szBuff);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vRandDirectionRange.z);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.vRandDirectionRange.z);
 			m_EditRandDirZ.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.vRotDirection, sizeof(_v3), &dwByte, nullptr);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vRotDirection.x);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.vRotDirection.x);
 			m_EditRotX.SetString(szBuff);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vRotDirection.y);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.vRotDirection.y);
 			m_EditRotY.SetString(szBuff);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vRotDirection.z);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.vRotDirection.z);
 			m_EditRotZ.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.vStartColor, sizeof(_v4), &dwByte, nullptr);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vStartColor.x);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.vStartColor.x);
 			m_EditHueStart.SetString(szBuff);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vStartColor.y);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.vStartColor.y);
 			m_EditContrastStart.SetString(szBuff);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vStartColor.z);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.vStartColor.z);
 			m_EditBrightnessStart.SetString(szBuff);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vStartColor.w);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.vStartColor.w);
 			m_EditSaturationStart.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.vStartPos, sizeof(_v3), &dwByte, nullptr);
 			if (!tInfo.bRandStartPos)
 			{
-				_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vStartPos.x);
+				_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.vStartPos.x);
 				m_EditPosX.SetString(szBuff);
-				_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vStartPos.y);
+				_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.vStartPos.y);
 				m_EditPosY.SetString(szBuff);
-				_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vStartPos.z);
+				_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.vStartPos.z);
 				m_EditPosZ.SetString(szBuff);
 			}
 
 			::ReadFile(hFile, &tInfo.vStartScale, sizeof(_v3), &dwByte, nullptr);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vStartScale.x);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.vStartScale.x);
 			m_EditSizeX.SetString(szBuff);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vStartScale.y);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.vStartScale.y);
 			m_EditSizeY.SetString(szBuff);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.vStartScale.z);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.vStartScale.z);
 			m_EditSizeZ.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.fColorIndex, sizeof(_float), &dwByte, nullptr);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fColorIndex);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.fColorIndex);
 			m_EditColorIndex.SetString(szBuff);
 
 			::ReadFile(hFile, &tInfo.fMaskIndex, sizeof(_float), &dwByte, nullptr);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fMaskIndex);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.fMaskIndex);
 			m_EditMaskIndex.SetString(szBuff);
 
 			_bool bRandRotSpeed = false;
@@ -1038,7 +1038,7 @@ void CParticleTab::OnBnClickedButton_Load()
 			m_CheckSlowly.SetCheck(bSlowly);
 
 			::ReadFile(hFile, &tInfo.fDistortionPower, sizeof(_float), &dwByte, nullptr);
-			_stprintf_s(szBuff, _countof(szBuff), L"%.2f", tInfo.fDistortionPower);
+			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.fDistortionPower);
 			m_EditDistortion.SetString(szBuff);
 
 			_bool bDissolve = false;

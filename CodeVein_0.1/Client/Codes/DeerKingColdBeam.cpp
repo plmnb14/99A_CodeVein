@@ -54,6 +54,9 @@ HRESULT CDeerKingColdBeam::Ready_GameObject(void * pArg)
 	m_pEffect->Reset_Init();
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pEffect, SCENE_STAGE, L"Layer_Effect", nullptr);
 
+	for (_int i = 0; i < 5; i++)
+		CParticleMgr::Get_Instance()->Create_Effect_Delay(L"DeerKing_Snow_Up_LongLine_1", 0.15f, m_pTransformCom->Get_Pos() + _v3(0.f, 1.f, 0.f) + m_vDir * 0.3f, nullptr);
+
 	return NOERROR;
 }
 
