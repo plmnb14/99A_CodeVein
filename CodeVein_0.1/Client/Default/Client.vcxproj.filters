@@ -420,9 +420,6 @@
     <ClInclude Include="..\Headers\Dummy_Target.h">
       <Filter>02.GameObject\Stage\2%29 Monster\00%29 Dummy_Target</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\BlackWolf.h">
-      <Filter>02.GameObject\Stage\2%29 Monster\Wolf</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\PoisonButterfly.h">
       <Filter>02.GameObject\Stage\1%29 Boss\PoisonButterfly</Filter>
     </ClInclude>
@@ -741,6 +738,9 @@
     <ClInclude Include="..\Headers\DeerKingRushCol.h">
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Wolf.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Wolf</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -799,9 +799,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\PoisonButterfly.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\PoisonButterfly</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\BlackWolf.cpp">
-      <Filter>02.GameObject\Stage\2%29 Monster\Wolf</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Scene_Title.cpp">
       <Filter>01.Scene\01.Title</Filter>
@@ -1100,7 +1097,6 @@
     <ClCompile Include="..\Codes\DeerKingColdBeam.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
     </ClCompile>
-<<<<<<< HEAD
     <ClCompile Include="..\Codes\Urchin.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster\Urchin</Filter>
     </ClCompile>
@@ -1115,6 +1111,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\DeerKingRushCol.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Wolf.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Wolf</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

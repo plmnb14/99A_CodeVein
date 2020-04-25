@@ -172,7 +172,6 @@
     <ClInclude Include="..\Headers\Armor_Inven.h" />
     <ClInclude Include="..\Headers\Armor_Slot.h" />
     <ClInclude Include="..\Headers\BackGround.h" />
-    <ClInclude Include="..\Headers\BlackWolf.h" />
     <ClInclude Include="..\Headers\BloodCode_Icon.h" />
     <ClInclude Include="..\Headers\BossDecoUI.h" />
     <ClInclude Include="..\Headers\BossHP.h" />
@@ -284,6 +283,7 @@
     <ClInclude Include="..\Headers\Weapon.h" />
     <ClInclude Include="..\Headers\Weapon_Inven.h" />
     <ClInclude Include="..\Headers\Weapon_Slot.h" />
+    <ClInclude Include="..\Headers\Wolf.h" />
     <ClInclude Include="..\Headers\YachaMan.h" />
     <ClInclude Include="..\Headers\Yeti.h" />
     <ClInclude Include="Client.h" />
@@ -298,7 +298,6 @@
     <ClCompile Include="..\Codes\Armor_Inven.cpp" />
     <ClCompile Include="..\Codes\Armor_Slot.cpp" />
     <ClCompile Include="..\Codes\BackGround.cpp" />
-    <ClCompile Include="..\Codes\BlackWolf.cpp" />
     <ClCompile Include="..\Codes\BloodCode_Icon.cpp" />
     <ClCompile Include="..\Codes\BossDecoUI.cpp" />
     <ClCompile Include="..\Codes\BossHP.cpp" />
@@ -407,6 +406,7 @@
     <ClCompile Include="..\Codes\Weapon.cpp" />
     <ClCompile Include="..\Codes\Weapon_Inven.cpp" />
     <ClCompile Include="..\Codes\Weapon_Slot.cpp" />
+    <ClCompile Include="..\Codes\Wolf.cpp" />
     <ClCompile Include="..\Codes\YachaMan.cpp" />
     <ClCompile Include="..\Codes\Yeti.cpp" />
     <ClCompile Include="Client.cpp" />

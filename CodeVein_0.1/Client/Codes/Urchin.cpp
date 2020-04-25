@@ -568,16 +568,30 @@ void CUrchin::Check_AniEvent()
 		break;
 
 	case MONSTER_STATETYPE::ATTACK:
-		switch (CALC::Random_Num(URCHIN_ANI::Atk_Step, URCHIN_ANI::Atk_Rush))
+		if (false == m_tObjParam.bIsAttack)
 		{
-		case URCHIN_ANI::Atk_Rush:
-			m_eState = Atk_Rush;
-			Play_RollingRush();
-			break;
-		case URCHIN_ANI::Atk_Step:
-			m_eState = Atk_Step;
-			Play_Rolling();
-			break;
+			m_tObjParam.bCanAttack = false;
+			m_tObjParam.bIsAttack = true;
+
+			switch (CALC::Random_Num(URCHIN_ANI::Atk_Step, URCHIN_ANI::Atk_Rush))
+			{
+			case URCHIN_ANI::Atk_Rush:
+				m_eState = Atk_Rush;
+			case URCHIN_ANI::Atk_Step:
+				m_eState = Atk_Step;
+			}
+		}
+		else
+		{
+			switch (m_eState)
+			{
+			case URCHIN_ANI::Atk_Step:
+				Play_Rolling();
+				break;
+			case URCHIN_ANI::Atk_Rush:
+				Play_RollingRush();
+				break;
+			}
 		}
 		break;
 

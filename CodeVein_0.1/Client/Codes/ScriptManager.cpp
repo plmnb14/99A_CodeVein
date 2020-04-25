@@ -829,25 +829,25 @@ void CScriptManager::Ready_Stage01_DynamicObject()
 
 	//=======================================================================
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_BlackWolf", NULL);
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Wolf", NULL);
 	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
 	TARGET_TO_NAV(pInstance)->Set_Index(84);
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_BlackWolf", NULL);
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Wolf", NULL);
 	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
 	TARGET_TO_NAV(pInstance)->Set_Index(126);
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_BlackWolf", NULL);
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Wolf", NULL);
 	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
 	TARGET_TO_NAV(pInstance)->Set_Index(129);
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_BlackWolf", NULL);
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Wolf", NULL);
 	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
 	TARGET_TO_NAV(pInstance)->Set_Index(120);
 	m_vecObjectPool.push_back(pInstance);
