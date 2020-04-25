@@ -1,54 +1,94 @@
 #pragma once
-
 #include "Client_Defines.h"
 #include "GameObject.h"
 #include "Management.h"
 #include "MonsterUI.h"
 #include "Weapon.h"
 
-enum FBLR { FRONT, FRONTLEFT, FRONTRIGHT, BACK, BACKLEFT, BACKRIGHT, LEFT, RIGHT };
+enum FBLR 
+{ 
+	FRONT,
+	FRONTLEFT,
+	FRONTRIGHT,
+	BACK,
+	BACKLEFT,
+	BACKRIGHT,
+	LEFT,
+	RIGHT
+};
 
-enum MONSTER_ANITYPE { IDLE, MOVE, ATTACK, HIT, CC, DEAD };
+enum MONSTER_STATETYPE
+{
+	IDLE,
+	MOVE,
+	ATTACK,
+	HIT,
+	CC,
+	DEAD 
+};
 
-enum MONSTER_WEAPONTYPE { GUN, HALBERD, HAMMER, LSWORD, SWORD, WEAPON_NONE };
+enum MONSTER_COLORTYPE
+{
+	RED,
+	BLUE,
+	YELLOW,
+	BLACK,
+	WHITE,
+	COLOR_NONE
+};
 
-enum MONSTER_COLORTYPE {RED, BLUE, YELLOW, BLACK, WHITE, COLOR_NONE};
+enum MONSTER_IDLETYPE
+{
+	IDLE_IDLE,
+	IDLE_CROUCH,
+	IDLE_EAT,
+	IDLE_LURK,
+	IDLE_SCRATCH,
+	IDLE_SIT,
+	IDLE_STAND
+};
+
+enum MONSTER_MOVETYPE
+{
+	MOVE_WALK,
+	MOVE_RUN,
+	MOVE_DODGE
+};
+
+enum MONSTER_ATKTYPE
+{
+	ATK_NORMAL,
+	ATK_COMBO
+};
+
+enum MONSTER_HITTYPE
+{
+	HIT_STRONG,
+	HIT_NORMAL,
+	HIT_WEAK
+};
+
+enum MONSTER_CCTYPE
+{
+	CC_STUN,
+	CC_DOWN,
+	CC_BLOW
+};
+
+enum MONSTER_DEADTYPE
+{
+	DEAD_DEAD, 
+	DEAD_EXCUTION
+};
 
 struct MONSTER_STATUS
 {
-	MONSTER_STATUS(
-		_float _fDMG,
-		_float _fHpMax,
-		_float _fArmorMax,
-		_float _fKnowRange,
-		_float _fShotRange,
-		_float _fAtkRange,
-		_float _fPesonalRange,
-		_int _iDodgeMax = 5,
-		MONSTER_COLORTYPE _eColor = MONSTER_COLORTYPE::COLOR_NONE,
-		MONSTER_WEAPONTYPE _eWeapon = MONSTER_WEAPONTYPE::WEAPON_NONE)
-	{
-		tMonterStatus.fDamage = _fDMG;
-		tMonterStatus.fHp_Max = _fHpMax;
-		tMonterStatus.fArmor_Max = _fArmorMax;
+	MONSTER_COLORTYPE	eMonsterColor = MONSTER_COLORTYPE::COLOR_NONE;
+	WEAPON_STATE		eUseWhatWeapon = WEAPON_STATE::WEAPON_None;
 
+	MONSTER_STATUS(MONSTER_COLORTYPE _eColor, WEAPON_STATE _eWeapon)
+	{
 		eMonsterColor = _eColor;
 		eUseWhatWeapon = _eWeapon;
-
-		fCanKonwRange = _fKnowRange;
-		fCanShotRange = _fShotRange;
-		fCanAtkRange = _fAtkRange;
-		fPersonalRange = _fPesonalRange;
-		iDodgeCountMax = _iDodgeMax;
 	}
-
-	OBJECT_PARAM		tMonterStatus;
-	MONSTER_COLORTYPE	eMonsterColor;
-	MONSTER_WEAPONTYPE	eUseWhatWeapon;
-	_float				fCanKonwRange;
-	_float				fCanShotRange;
-	_float				fCanAtkRange;
-	_float				fPersonalRange;
-	_int				iDodgeCountMax;
-
 };

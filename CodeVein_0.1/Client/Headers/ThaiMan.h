@@ -7,13 +7,6 @@ BEGIN(Client)
 class CThaiMan final : public CGameObject
 {
 public:
-	enum THAIMAN_IDLETYPE { IDLE_IDLE, IDLE_SIT, IDLE_SCRATCH, IDLE_CROUCH };
-	enum THAIMAN_MOVETYPE { MOVE_RUN, MOVE_WALK, MOVE_DODGE };
-	enum THAIMAN_ATKTYPE { ATK_NORMAL, ATK_COMBO };
-	enum THAIMAN_HITTYPE { HIT_STRONG, HIT_NORMAL, HIT_WEAK };
-	enum THAIMAN_CCTYPE { CC_STUN, CC_DOWN, CC_BLOW };
-	enum THAIMAN_DEADTYPE { DEAD_DEAD, DEAD_DEAD_S, DEAD_DEAD_P };
-
 	enum ATK_NORMAL_TYPE
 	{
 		NORMAL_RDIAGONAL, //n1
@@ -183,54 +176,54 @@ private:
 
 	CTransform*			m_pTargetTransform = nullptr;
 
-	_mat*				m_matBone[Bone_End];
-	_double				m_dTimeDelta = 0;
-	_double				m_dAniPlayMul = 1;
+	_mat*					m_matBone[Bone_End];
+	MONSTER_STATETYPE		m_eFirstCategory;
+	MONSTER_IDLETYPE		m_eSecondCategory_IDLE;
+	MONSTER_MOVETYPE		m_eSecondCategory_MOVE;
+	MONSTER_ATKTYPE			m_eSecondCategory_ATK;
+	MONSTER_HITTYPE			m_eSecondCategory_HIT;
+	MONSTER_CCTYPE			m_eSecondCategory_CC;
+	MONSTER_DEADTYPE		m_eSecondCategory_DEAD;
 
-	_float				m_fSkillMoveSpeed_Cur = 0.f;
-	_float				m_fSkillMoveSpeed_Max = 0.f;
-	_float				m_fSkillMoveAccel_Cur = 0.5f;
-	_float				m_fSkillMoveAccel_Max = 0.f;
-	_float				m_fSkillMoveMultiply = 1.f;
+	WEAPON_STATE			m_eWeaponState;
+	FBLR					m_eFBLR;
+	ATK_COMBO_TYPE			m_eAtkCombo;
+	THAIMAN_ANI				m_eState;
 
-	MONSTER_ANITYPE		m_eFirstCategory;
-	THAIMAN_IDLETYPE	m_eSecondCategory_IDLE;
-	THAIMAN_MOVETYPE	m_eSecondCategory_MOVE;
-	THAIMAN_ATKTYPE		m_eSecondCategory_ATK;
-	THAIMAN_HITTYPE		m_eSecondCategory_HIT;
-	THAIMAN_CCTYPE		m_eSecondCategory_CC;
-	THAIMAN_DEADTYPE	m_eSecondCategory_DEAD;
+	_bool	m_bEventTrigger[20] = {};
+	_bool	m_bCanPlayDead;
+	_bool	m_bInRecognitionRange;
+	_bool	m_bInAtkRange;
+	_bool	m_bCanChase;
+	_bool	m_bCanCoolDown;
+	_bool	m_bIsCoolDown;
+	_bool	m_bCanChooseAtkType;
+	_bool	m_bIsCombo;
+	_bool	m_bCanIdle;
+	_bool	m_bIsIdle;
+	_bool	m_bCanMoveAround;
+	_bool	m_bIsMoveAround;
 
-	MONSTER_WEAPONTYPE	m_eWeaponState = MONSTER_WEAPONTYPE::WEAPON_NONE;
-	MONSTER_COLORTYPE	m_eColorState = MONSTER_COLORTYPE::COLOR_NONE;
-	ATK_COMBO_TYPE		m_eAtkCombo;
-	THAIMAN_ANI			m_eState;
-	FBLR				m_eFBLR;
+	_double	m_dTimeDelta;
+	_double	m_dAniPlayMul;
 
-	_bool				m_bEventTrigger[20] = {};
-	_bool				m_bCanPlayDead = false;
-	_bool				m_bInRecognitionRange = false;
-	_bool				m_bInAtkRange = false;
-	_bool				m_bCanChase = false;
-	_bool				m_bCanCoolDown = false;
-	_bool				m_bIsCoolDown = false;
-	_bool				m_bAtkCategory = true;
-	_bool				m_bCanCombo = true;
-	_bool				m_bIsCombo = false;
-	_bool				m_bCanIdle = true;
-	_bool				m_bIsIdle = false;
+	_float	m_fSkillMoveSpeed_Cur;
+	_float	m_fSkillMoveSpeed_Max;
+	_float	m_fSkillMoveAccel_Cur;
+	_float	m_fSkillMoveAccel_Max;
+	_float	m_fSkillMoveMultiply;
 
-	_float				m_fRecognitionRange = 20.f;
-	_float				m_fShotRange = 10.f;
-	_float				m_fAtkRange = 5.f;
-	_float				m_fPersonalRange = 2.f;
-	_float				m_fCoolDownMax = 0.f;
-	_float				m_fCoolDownCur = 0.f;
-	_float				m_fSpeedForCollisionPush = 2.f;
+	_float	m_fRecognitionRange;
+	_float	m_fShotRange;
+	_float	m_fAtkRange;
+	_float	m_fPersonalRange;
+	_float	m_fCoolDownMax;
+	_float	m_fCoolDownCur;
 
-	_int				m_iRandom = 0;
-	_int				m_iDodgeCountMax = 3;
-	_int				m_iDodgeCount = 0;
+	_int	m_iRandom;
+	_int	m_iDodgeCount;
+	_int	m_iDodgeCountMax;
+
 };
 
 END

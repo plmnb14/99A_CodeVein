@@ -15,5 +15,7 @@ Mesh_Urchin_Black|Urchin_Black.X|..\..\Client\Resources\Mesh\DynamicMesh\Urchin_
 Mesh_Urchin_White|Urchin_White.X|..\..\Client\Resources\Mesh\DynamicMesh\Urchin_White\|1
 Mesh_WhiteGenji|WhiteGenji.X|..\..\Client\Resources\Mesh\DynamicMesh\WhiteGenji\|1
 Mesh_Wolf_Black|Wolf_Black.X|..\..\Client\Resources\Mesh\DynamicMesh\Wolf_Black\|1
-Mesh_YachaMan|YachaMan.X|..\..\Client\Resources\Mesh\DynamicMesh\YachaMan\|1
+Mesh_Wolf_White|Wolf_White.X|..\..\Client\Resources\Mesh\DynamicMesh\Wolf_White\|1
+Mesh_YachaMan_Black|YachaMan_Black.X|..\..\Client\Resources\Mesh\DynamicMesh\YachaMan_Black\|1
+Mesh_YachaMan_Red|YachaMan_Red.X|..\..\Client\Resources\Mesh\DynamicMesh\YachaMan_Red\|1
 Mesh_Yeti|Yeti.X|..\..\Client\Resources\Mesh\DynamicMesh\Yeti\|1

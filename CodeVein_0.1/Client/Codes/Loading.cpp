@@ -1221,12 +1221,6 @@ _uint CLoading::Loading_Stage()
 		// »ç½¿¿Õ  µ¹Áø Äİ¶óÀÌ´õ
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingRushCol", CDeerKingRushCol::Create(m_pGraphicDev))))
 			return E_FAIL;
-		// °ËÀº ¼º°Ô
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_Urchin", CUrchin::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		// °ËÀº ´Á´ë
-		if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackWolf", CBlackWolf::Create(m_pGraphicDev))))
-			return E_FAIL;
 		// °Ë°ÕÁö
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenji", CSwordGenji::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1241,6 +1235,12 @@ _uint CLoading::Loading_Stage()
 			return E_FAIL;
 		// °Ë¹æÆĞ°ÕÁö
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordShieldGenji", CSwordShieldGenji::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ¼º°Ô
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Urchin", CUrchin::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ´Á´ë
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Wolf", CWolf::Create(m_pGraphicDev))))
 			return E_FAIL;
 		// ¾ßÂ÷¸Ç
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_YachaMan", CYachaMan::Create(m_pGraphicDev))))
@@ -1257,7 +1257,7 @@ _uint CLoading::Loading_Stage()
 		// ±èÇåÅÍ
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Hunter", CHunter::Create(m_pGraphicDev))))
 			return E_FAIL;
-		// ±èÇåÅÍÃÑ¾Ë
+		// ±èÇåÅÍ ÃÑ¾Ë
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_HunterBullet", CHunterBullet::Create(m_pGraphicDev))))
 			return E_FAIL;
 		// ¸ùÅ°.D.·çÇÇ

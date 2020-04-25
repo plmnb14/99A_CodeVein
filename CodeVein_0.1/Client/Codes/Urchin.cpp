@@ -18,7 +18,7 @@ HRESULT CUrchin::Ready_GameObject_Prototype()
 
 HRESULT CUrchin::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component()))
+	if (FAILED(Add_Component(pArg)))
 		return E_FAIL;
 
 	m_pTransformCom->Set_Pos(_v3(1.f, 0.f, 1.f));
@@ -41,27 +41,6 @@ HRESULT CUrchin::Ready_GameObject(void * pArg)
 		m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 		Safe_AddRef(m_pTargetTransform);
 	}
-
-	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
-	m_tObjParam.fArmor_Cur = m_tObjParam.fArmor_Max;
-
-	m_tObjParam.bCanHit = true;
-	m_tObjParam.bIsHit = false;
-	m_tObjParam.bHitAgain = false;
-	m_tObjParam.bCanAttack = true;
-	m_tObjParam.bIsAttack = false;
-
-	m_bCanPlayDead = false;
-	m_bInRecognitionRange = false;
-	m_bInAtkRange = false;
-	m_bCanCoolDown = false;
-	m_bIsCoolDown = false;
-	m_bCanIdle = true;
-	m_bIsIdle = false;
-
-	m_fCoolDownCur = 0.f;
-	m_fSpeedForCollisionPush = 2.f;
 
 	return S_OK;
 }
@@ -127,7 +106,7 @@ HRESULT CUrchin::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			if (MONSTER_ANITYPE::DEAD != m_eFirstCategory)
+			if (MONSTER_STATETYPE::DEAD != m_eFirstCategory)
 				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
 
 			m_pShaderCom->Begin_Pass(m_iPass);
@@ -250,7 +229,7 @@ void CUrchin::Check_CollisionPush()
 		{
 			CCollider* pCollider = TARGET_TO_COL(Obj_iter);
 
-			if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_fSpeedForCollisionPush * DELTA_60))
+			if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_fSkillMoveSpeed_Cur * DELTA_60))
 			{
 				CTransform* pTrans = TARGET_TO_TRANS(Obj_iter);
 				CNavMesh*   pNav = TARGET_TO_NAV(Obj_iter);
@@ -329,7 +308,7 @@ void CUrchin::Function_FBLR()
 {
 	_float angle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos()));
 
-	if (MONSTER_ANITYPE::HIT == m_eFirstCategory)
+	if (MONSTER_STATETYPE::HIT == m_eFirstCategory)
 	{
 		if (0.f <= angle && 90.f > angle)
 			m_eFBLR = FBLR::FRONT;
@@ -471,7 +450,7 @@ void CUrchin::Function_ResetAfterAtk()
 
 	m_tObjParam.bIsAttack = false;
 
-	LOOP(10)
+	LOOP(20)
 		m_bEventTrigger[i] = false;
 
 	return;
@@ -486,7 +465,7 @@ void CUrchin::Check_PosY()
 
 void CUrchin::Check_Hit()
 {
-	if (MONSTER_ANITYPE::DEAD == m_eFirstCategory)
+	if (MONSTER_STATETYPE::DEAD == m_eFirstCategory)
 		return;
 
 	if (0 < m_tObjParam.fHp_Cur)
@@ -497,30 +476,30 @@ void CUrchin::Check_Hit()
 			{
 				if (true == m_tObjParam.bHitAgain)
 				{
-					m_eFirstCategory = MONSTER_ANITYPE::HIT;
+					m_eFirstCategory = MONSTER_STATETYPE::HIT;
 					Function_FBLR();
 					m_tObjParam.bHitAgain = false;
 					m_pMeshCom->Reset_OldIndx();
 				}
 				else
 				{
-					m_eFirstCategory = MONSTER_ANITYPE::HIT;
+					m_eFirstCategory = MONSTER_STATETYPE::HIT;
 					Function_FBLR();
 				}
 			}
 		}
 	}
 	else
-		m_eFirstCategory = MONSTER_ANITYPE::DEAD;
+		m_eFirstCategory = MONSTER_STATETYPE::DEAD;
 
 	return;
 }
 
 void CUrchin::Check_Dist()
 {
-	if (MONSTER_ANITYPE::HIT == m_eFirstCategory ||
-		MONSTER_ANITYPE::CC == m_eFirstCategory ||
-		MONSTER_ANITYPE::DEAD == m_eFirstCategory)
+	if (MONSTER_STATETYPE::HIT == m_eFirstCategory ||
+		MONSTER_STATETYPE::CC == m_eFirstCategory ||
+		MONSTER_STATETYPE::DEAD == m_eFirstCategory)
 		return;
 
 	if (true == m_tObjParam.bIsAttack ||
@@ -531,7 +510,7 @@ void CUrchin::Check_Dist()
 	{
 		Function_ResetAfterAtk();
 
-		m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+		m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 
 		return;
 	}
@@ -550,31 +529,30 @@ void CUrchin::Check_Dist()
 				{
 					if (true == m_bIsCoolDown)
 					{
-						m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+						m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 						Function_RotateBody();
 					}
 					else
 					{
-						m_eFirstCategory = MONSTER_ANITYPE::ATTACK;
-						m_eState = URCHIN_ANI::AttackRush;
+						m_eFirstCategory = MONSTER_STATETYPE::ATTACK;
 						Function_RotateBody();
 					}
 				}
 				else
 				{
-					m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 					Function_RotateBody();
 				}
 			}
 			else
 			{
-				m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+				m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 				Function_RotateBody();
 			}
 		}
 		else
 		{
-			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+			m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 		}
 	}
 
@@ -585,22 +563,32 @@ void CUrchin::Check_AniEvent()
 {
 	switch (m_eFirstCategory)
 	{
-	case MONSTER_ANITYPE::IDLE:
+	case MONSTER_STATETYPE::IDLE:
 		Play_Idle();
 		break;
 
-	case MONSTER_ANITYPE::ATTACK:
-		if (URCHIN_ANI::AttackRush == m_eState)
+	case MONSTER_STATETYPE::ATTACK:
+		switch (CALC::Random_Num(URCHIN_ANI::Atk_Step, URCHIN_ANI::Atk_Rush))
+		{
+		case URCHIN_ANI::Atk_Rush:
+			m_eState = Atk_Rush;
 			Play_RollingRush();
-		else if (URCHIN_ANI::AttackStep == m_eState)
+			break;
+		case URCHIN_ANI::Atk_Step:
+			m_eState = Atk_Step;
 			Play_Rolling();
+			break;
+		}
 		break;
 
-	case MONSTER_ANITYPE::HIT:
+	case MONSTER_STATETYPE::HIT:
 		Play_Hit();
 		break;
 
-	case MONSTER_ANITYPE::DEAD:
+	case MONSTER_STATETYPE::CC:
+		break;
+
+	case MONSTER_STATETYPE::DEAD:
 		Play_Dead();
 		break;
 	}
@@ -610,10 +598,287 @@ void CUrchin::Check_AniEvent()
 
 void CUrchin::Play_Rolling()
 {
+	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+
+	if (true == m_tObjParam.bCanAttack)
+	{
+		m_tObjParam.bCanAttack = false;
+		m_tObjParam.bIsAttack = true;
+	}
+	else
+	{
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		{
+			m_fCoolDownMax = 1.f;
+			m_bCanCoolDown = true;
+			Function_ResetAfterAtk();
+
+			return;
+		}
+		else if (2.467f <= AniTime)
+		{
+			if (false == m_bEventTrigger[0])
+			{
+				m_bEventTrigger[0] = true;
+				m_vecAttackCol[0]->Set_Enabled(false);
+				m_tObjParam.bSuperArmor = false;
+			}
+		}
+		else if (1.900f <= AniTime)
+		{
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+				m_vecAttackCol[0]->Set_Enabled(true);
+				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (1.700f <= AniTime)
+		{
+			if (false == m_bEventTrigger[2])
+			{
+				m_bEventTrigger[2] = true;
+				m_vecAttackCol[0]->Set_Enabled(false);
+				m_tObjParam.bSuperArmor = false;
+			}
+		}
+		else if (1.527f <= AniTime)
+		{
+			if (false == m_bEventTrigger[3])
+			{
+				m_bEventTrigger[3] = true;
+				m_vecAttackCol[0]->Set_Enabled(true);
+				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (1.433f <= AniTime)
+		{
+			if (false == m_bEventTrigger[11])
+			{
+				m_bEventTrigger[11] = true;
+				m_vecAttackCol[0]->Set_Enabled(false);
+				m_tObjParam.bSuperArmor = false;
+			}
+		}
+		else if (1.113f <= AniTime)
+		{
+			if (false == m_bEventTrigger[4])
+			{
+				m_bEventTrigger[4] = true;
+				m_vecAttackCol[0]->Set_Enabled(true);
+				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (1.100f <= AniTime)
+		{
+			if (false == m_bEventTrigger[5])
+			{
+				m_bEventTrigger[5] = true;
+				m_vecAttackCol[0]->Set_Enabled(false);
+				m_tObjParam.bSuperArmor = false;
+			}
+		}
+		else if (0.813f <= AniTime)
+		{
+			if (false == m_bEventTrigger[6])
+			{
+				m_bEventTrigger[6] = true;
+				m_vecAttackCol[0]->Set_Enabled(true);
+				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (0.800f <= AniTime)
+		{
+			if (false == m_bEventTrigger[7])
+			{
+				m_bEventTrigger[7] = true;
+				m_vecAttackCol[0]->Set_Enabled(false);
+				m_tObjParam.bSuperArmor = false;
+			}
+		}
+		else if (0.533f <= AniTime)
+		{
+			if (false == m_bEventTrigger[8])
+			{
+				m_bEventTrigger[8] = true;
+				m_vecAttackCol[0]->Set_Enabled(true);
+				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (0.500f <= AniTime)
+		{
+			if (false == m_bEventTrigger[9])
+			{
+				m_bEventTrigger[9] = true;
+				m_vecAttackCol[0]->Set_Enabled(false);
+				m_tObjParam.bSuperArmor = false;
+			}
+		}
+		else if (0.200f <= AniTime)
+		{
+			if (false == m_bEventTrigger[10])
+			{
+				m_bEventTrigger[10] = true;
+				m_vecAttackCol[0]->Set_Enabled(true);
+				m_tObjParam.bSuperArmor = true;
+			}
+		}
+
+		if (1.900f < AniTime && 2.467f > AniTime)
+		{
+			if (false == m_bEventTrigger[12])
+			{
+				m_bEventTrigger[12] = true;
+				m_fSkillMoveSpeed_Cur = 10.f;
+				m_fSkillMoveAccel_Cur = 1.f;
+				m_fSkillMoveMultiply = 0.5f;
+			}
+
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+		else if (0.200f < AniTime && 1.700f > AniTime)
+		{
+			if (false == m_bEventTrigger[13])
+			{
+				m_bEventTrigger[13] = true;
+				m_fSkillMoveSpeed_Cur = 10.f;
+				m_fSkillMoveAccel_Cur = 1.f;
+				m_fSkillMoveMultiply = 0.5f;
+			}
+
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+	}
+
+	return;
 }
 
 void CUrchin::Play_RollingRush()
 {
+	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+
+	if (true == m_tObjParam.bCanAttack)
+	{
+		m_tObjParam.bCanAttack = false;
+		m_tObjParam.bIsAttack = true;
+	}
+	else
+	{
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		{
+			m_fCoolDownMax = 1.3f;
+			m_bCanCoolDown = true;
+			Function_ResetAfterAtk();
+
+			return;
+		}
+		else if (1.733f <= AniTime)
+		{
+			if (false == m_bEventTrigger[0])
+			{
+				m_bEventTrigger[0] = true;
+				m_vecAttackCol[0]->Set_Enabled(false);
+				m_tObjParam.bSuperArmor = false;
+			}
+		}
+		else if (1.503f <= AniTime)
+		{
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+				m_vecAttackCol[0]->Set_Enabled(true);
+				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (1.465f <= AniTime)
+		{
+			if (false == m_bEventTrigger[2])
+			{
+				m_bEventTrigger[2] = true;
+				m_vecAttackCol[0]->Set_Enabled(false);
+				m_tObjParam.bSuperArmor = false;
+			}
+		}
+		else if (1.107f <= AniTime)
+		{
+			if (false == m_bEventTrigger[3])
+			{
+				m_bEventTrigger[3] = true;
+				m_vecAttackCol[0]->Set_Enabled(true);
+				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (1.001f <= AniTime)
+		{
+			if (false == m_bEventTrigger[4])
+			{
+				m_bEventTrigger[4] = true;
+				m_vecAttackCol[0]->Set_Enabled(false);
+				m_tObjParam.bSuperArmor = false;
+			}
+		}
+		else if (0.703f <= AniTime)
+		{
+			if (false == m_bEventTrigger[5])
+			{
+				m_bEventTrigger[5] = true;
+				m_vecAttackCol[0]->Set_Enabled(true);
+				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (0.633f <= AniTime)
+		{
+			if (false == m_bEventTrigger[6])
+			{
+				m_bEventTrigger[6] = true;
+				m_vecAttackCol[0]->Set_Enabled(false);
+				m_tObjParam.bSuperArmor = false;
+			}
+		}
+		else if (0.378f <= AniTime)
+		{
+			if (false == m_bEventTrigger[7])
+			{
+				m_bEventTrigger[7] = true;
+				m_vecAttackCol[0]->Set_Enabled(true);
+				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (0.313f <= AniTime)
+		{
+			if (false == m_bEventTrigger[8])
+			{
+				m_bEventTrigger[8] = true;
+				m_vecAttackCol[0]->Set_Enabled(false);
+				m_tObjParam.bSuperArmor = false;
+			}
+		}
+		else if (0.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[9])
+			{
+				m_bEventTrigger[9] = true;
+				m_vecAttackCol[0]->Set_Enabled(true);
+				m_tObjParam.bSuperArmor = true;
+			}
+		}
+
+		if (2.467f > AniTime)
+		{
+			if (false == m_bEventTrigger[10])
+			{
+				m_bEventTrigger[10] = true;
+				m_fSkillMoveSpeed_Cur = 10.f;
+				m_fSkillMoveAccel_Cur = 1.f;
+				m_fSkillMoveMultiply = 0.5f;
+			}
+
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+	}
 }
 
 void CUrchin::Play_Idle()
@@ -660,7 +925,7 @@ void CUrchin::Play_Hit()
 
 			m_fCoolDownMax = 0.5f;
 
-			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+			m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 		}
 		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
 		{
@@ -692,7 +957,7 @@ void CUrchin::Play_Dead()
 			m_dAniPlayMul = 0;
 		}
 
-		if (3.733f <= AniTime)
+		if (1.967f <= AniTime)
 		{
 			if (false == m_bEventTrigger[0])
 			{
@@ -705,15 +970,38 @@ void CUrchin::Play_Dead()
 	return;
 }
 
-HRESULT CUrchin::Add_Component()
+HRESULT CUrchin::Add_Component(void * pArg)
 {
+	_tchar MeshName[MAX_STR] = L"";
+
+	MONSTER_STATUS eTemp = *(MONSTER_STATUS*)pArg;
+
+	if (nullptr == pArg)
+		lstrcpy(MeshName, L"Mesh_Urchin_Black");
+	else
+	{
+		switch (eTemp.eMonsterColor)
+		{
+		case MONSTER_COLORTYPE::RED:
+		case MONSTER_COLORTYPE::BLUE:
+		case MONSTER_COLORTYPE::YELLOW:
+		case MONSTER_COLORTYPE::COLOR_NONE:
+		case MONSTER_COLORTYPE::BLACK:
+			lstrcpy(MeshName, L"Mesh_Urchin_Black");
+			break;
+		case MONSTER_COLORTYPE::WHITE:
+			lstrcpy(MeshName, L"Mesh_Urchin_White");
+			break;
+		}
+	}
+
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
 		return E_FAIL;
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Urchin_White", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, MeshName, L"Com_Mesh", (CComponent**)&m_pMeshCom)))
 		return E_FAIL;
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMesh)))
 		return E_FAIL;
@@ -759,35 +1047,57 @@ HRESULT CUrchin::SetUp_ConstantTable()
 
 HRESULT CUrchin::Ready_Status(void * pArg)
 {
-	if (nullptr == pArg)
-	{
-		m_tObjParam.fDamage = 25.f;
-		m_tObjParam.fHp_Max = 75.f;
-		m_tObjParam.fArmor_Max = 10.f;
+	m_tObjParam.fDamage = 100.f;
+	m_tObjParam.fHp_Max = 750.f;
+	m_tObjParam.fArmor_Max = 10.f;
 
-		m_fRecognitionRange = 30.f;
-		m_fShotRange = 20.f;
-		m_fAtkRange = 5.f;
-	}
-	else
-	{
-		MONSTER_STATUS Info = *(MONSTER_STATUS*)pArg;
+	m_fRecognitionRange = 30.f;
+	m_fShotRange = 20.f;
+	m_fAtkRange = 5.f;
+	m_fPersonalRange = 2.f;
+	m_iDodgeCountMax = 5;
 
-		m_tObjParam.fDamage = Info.tMonterStatus.fDamage;
-		m_tObjParam.fHp_Max = Info.tMonterStatus.fHp_Max;
-		m_tObjParam.fArmor_Max = Info.tMonterStatus.fArmor_Max;
+	m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
+	m_tObjParam.fArmor_Cur = m_tObjParam.fArmor_Max;
 
-		m_fRecognitionRange = Info.fCanKonwRange;
-		m_fShotRange = Info.fCanShotRange;
-		m_fAtkRange = Info.fCanAtkRange;
-	}
+	m_tObjParam.bCanHit = true;
+	m_tObjParam.bIsHit = false;
+	m_tObjParam.bCanAttack = true;
+	m_tObjParam.bIsAttack = false;
+	m_tObjParam.bCanDodge = true;
+	m_tObjParam.bIsDodge = false;
+	m_bCanPlayDead = false;
+	m_bInRecognitionRange = false;
+	m_bInAtkRange = false;
+	m_bCanChase = false;
+	m_bCanCoolDown = false;
+	m_bIsCoolDown = false;
+	m_bCanChooseAtkType = true;
+	m_bIsCombo = false;
+	m_bCanIdle = true;
+	m_bIsIdle = false;
+	m_bCanMoveAround = true;
+	m_bIsMoveAround = false;
+
+	m_dTimeDelta = 0;
+	m_dAniPlayMul = 1;
+
+	m_fSkillMoveSpeed_Cur = 0.f;
+	m_fSkillMoveSpeed_Max = 0.f;
+	m_fSkillMoveAccel_Cur = 0.5f;
+	m_fSkillMoveAccel_Max = 0.f;
+	m_fSkillMoveMultiply = 1.f;
+
+	m_fCoolDownMax = 0.f;
+	m_fCoolDownCur = 0.f;
 
 	return S_OK;
 }
 
 HRESULT CUrchin::Ready_Collider()
 {
-	m_vecAttackCol.reserve(1);
+	m_vecAttackCol.reserve(2);
 	m_vecPhysicCol.reserve(3);
 
 	CCollider* pCollider = nullptr;
@@ -802,7 +1112,6 @@ HRESULT CUrchin::Ready_Collider()
 	pCollider->Set_Type(COL_SPHERE);
 	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Range]->_41, m_matBone[Bone_Range]->_42, m_matBone[Bone_Range]->_43));
 	pCollider->Set_Enabled(true);
-
 	m_vecPhysicCol.push_back(pCollider);
 
 	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
@@ -813,9 +1122,7 @@ HRESULT CUrchin::Ready_Collider()
 	pCollider->Set_Type(COL_SPHERE);
 	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Body]->_41, m_matBone[Bone_Body]->_42, m_matBone[Bone_Body]->_43));
 	pCollider->Set_Enabled(true);
-
 	m_vecPhysicCol.push_back(pCollider);
-	m_vecAttackCol.push_back(pCollider);
 
 	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
 	fRadius = 0.2f;
@@ -825,8 +1132,17 @@ HRESULT CUrchin::Ready_Collider()
 	pCollider->Set_Type(COL_SPHERE);
 	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Head]->_41, m_matBone[Bone_Head]->_42, m_matBone[Bone_Head]->_43));
 	pCollider->Set_Enabled(true);
-
 	m_vecPhysicCol.push_back(pCollider);
+
+	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
+	fRadius = 0.7f;
+
+	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
+	pCollider->Set_Dynamic(true);
+	pCollider->Set_Type(COL_SPHERE);
+	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Body]->_41, m_matBone[Bone_Body]->_42, m_matBone[Bone_Body]->_43));
+	pCollider->Set_Enabled(true);
+	m_vecAttackCol.push_back(pCollider);
 
 	return S_OK;
 }
@@ -835,10 +1151,8 @@ HRESULT CUrchin::Ready_BoneMatrix()
 {
 	D3DXFRAME_DERIVED*	pFrame = nullptr;
 
-	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head", 0), E_FAIL);
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips", 0), E_FAIL);
 	m_matBone[Bone_Head] = &pFrame->CombinedTransformationMatrix;
-
-	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Spine3", 0), E_FAIL);
 	m_matBone[Bone_Range] = &pFrame->CombinedTransformationMatrix;
 	m_matBone[Bone_Body] = &pFrame->CombinedTransformationMatrix;
 

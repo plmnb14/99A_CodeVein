@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "..\Headers\ThaiMan.h"
-#include "..\Headers\MonsterUI.h"
 
 CThaiMan::CThaiMan(LPDIRECT3DDEVICE9 pGraphic_Device)
 	:CGameObject(pGraphic_Device)
@@ -42,27 +41,6 @@ HRESULT CThaiMan::Ready_GameObject(void * pArg)
 		m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 		Safe_AddRef(m_pTargetTransform);
 	}
-
-	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
-	m_tObjParam.fArmor_Cur = m_tObjParam.fArmor_Max;
-
-	m_tObjParam.bCanHit = true;
-	m_tObjParam.bIsHit = false;
-	m_tObjParam.bHitAgain = false;
-	m_tObjParam.bCanAttack = true;
-	m_tObjParam.bIsAttack = false;
-
-	m_bCanPlayDead = false;
-	m_bInRecognitionRange = false;
-	m_bInAtkRange = false;
-	m_bCanCoolDown = false;
-	m_bIsCoolDown = false;
-	m_bCanIdle = true;
-	m_bIsIdle = false;
-
-	m_fCoolDownCur = 0.f;
-	m_fSpeedForCollisionPush = 2.f;
 
 	return S_OK;
 }
@@ -128,7 +106,7 @@ HRESULT CThaiMan::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			if (MONSTER_ANITYPE::DEAD != m_eFirstCategory)
+			if (MONSTER_STATETYPE::DEAD != m_eFirstCategory)
 				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
 
 			m_pShaderCom->Begin_Pass(m_iPass);
@@ -192,7 +170,7 @@ HRESULT CThaiMan::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 
 void CThaiMan::Update_Collider()
 {
-	_ulong matrixIdx = 0;
+	_ulong matrixIdx = Bone_LeftHand;
 
 	for (auto& vector_iter : m_vecAttackCol)
 	{
@@ -205,7 +183,7 @@ void CThaiMan::Update_Collider()
 		++matrixIdx;
 	}
 
-	matrixIdx = 0;
+	matrixIdx = Bone_Range;
 
 	for (auto& iter : m_vecPhysicCol)
 	{
@@ -236,7 +214,7 @@ void CThaiMan::Render_Collider()
 
 void CThaiMan::Enter_Collision()
 {
-	if (MONSTER_ANITYPE::DEAD != m_eFirstCategory)
+	if (MONSTER_STATETYPE::DEAD != m_eFirstCategory)
 	{
 		Check_CollisionPush();
 		Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
@@ -339,9 +317,9 @@ void CThaiMan::Function_FBLR()
 {
 	_float angle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos()));
 
-	if (MONSTER_ANITYPE::HIT == m_eFirstCategory)
+	if (MONSTER_STATETYPE::HIT == m_eFirstCategory)
 	{
-		m_eSecondCategory_HIT = THAIMAN_HITTYPE::HIT_WEAK;
+		m_eSecondCategory_HIT = MONSTER_HITTYPE::HIT_WEAK;
 
 		if (0.f <= angle && 90.f > angle)
 			m_eFBLR = FBLR::FRONTRIGHT;
@@ -486,7 +464,7 @@ void CThaiMan::Function_ResetAfterAtk()
 
 	m_tObjParam.bIsAttack = false;
 
-	m_bAtkCategory = true;
+	m_bCanChooseAtkType = true;
 	m_bIsCombo = false;
 
 	for (auto& vetor_iter : m_vecAttackCol)
@@ -507,7 +485,7 @@ void CThaiMan::Check_PosY()
 
 void CThaiMan::Check_Hit()
 {
-	if (MONSTER_ANITYPE::DEAD == m_eFirstCategory)
+	if (MONSTER_STATETYPE::DEAD == m_eFirstCategory)
 		return;
 
 	if (0 < m_tObjParam.fHp_Cur)
@@ -521,8 +499,8 @@ void CThaiMan::Check_Hit()
 				{
 					m_iDodgeCount = 0;
 					m_tObjParam.bCanDodge = true;
-					m_eFirstCategory = MONSTER_ANITYPE::MOVE;
-					m_eSecondCategory_MOVE = THAIMAN_MOVETYPE::MOVE_DODGE;
+					m_eFirstCategory = MONSTER_STATETYPE::MOVE;
+					m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_DODGE;
 					m_pMeshCom->Reset_OldIndx();
 					Function_RotateBody();
 				}
@@ -532,12 +510,12 @@ void CThaiMan::Check_Hit()
 					{
 						if (true == m_tObjParam.bHitAgain)
 						{
-							m_eFirstCategory = MONSTER_ANITYPE::HIT;
+							m_eFirstCategory = MONSTER_STATETYPE::HIT;
 							//이떄 특수 공격 관련으로 불값이 참인 경우 cc기로
 							/*if(특수 공격)
 							else
 							데미지 측정 float 혹은 bool*/
-							//	m_eFirstCategory = MONSTER_ANITYPE::CC;
+							//	m_eFirstCategory = MONSTER_STATETYPE::CC;
 							Function_FBLR();
 							m_tObjParam.bHitAgain = false;
 							m_pMeshCom->Reset_OldIndx();
@@ -545,12 +523,12 @@ void CThaiMan::Check_Hit()
 					}
 					else
 					{
-						m_eFirstCategory = MONSTER_ANITYPE::HIT;
+						m_eFirstCategory = MONSTER_STATETYPE::HIT;
 						//데미지 측정, 특수 공격 측정
 						/*if(특수 공격)
 						else
 						데미지 측정 float 혹은 bool*/
-						//	m_eFirstCategory = MONSTER_ANITYPE::CC;
+						//	m_eFirstCategory = MONSTER_STATETYPE::CC;
 						Function_FBLR();
 					}
 				}
@@ -558,16 +536,16 @@ void CThaiMan::Check_Hit()
 		}
 	}
 	else
-		m_eFirstCategory = MONSTER_ANITYPE::DEAD;
+		m_eFirstCategory = MONSTER_STATETYPE::DEAD;
 
 	return;
 }
 
 void CThaiMan::Check_Dist()
 {
-	if (MONSTER_ANITYPE::HIT == m_eFirstCategory ||
-		MONSTER_ANITYPE::CC == m_eFirstCategory ||
-		MONSTER_ANITYPE::DEAD == m_eFirstCategory)
+	if (MONSTER_STATETYPE::HIT == m_eFirstCategory ||
+		MONSTER_STATETYPE::CC == m_eFirstCategory ||
+		MONSTER_STATETYPE::DEAD == m_eFirstCategory)
 		return;
 
 	if (true == m_bIsCombo ||
@@ -582,7 +560,7 @@ void CThaiMan::Check_Dist()
 		//동료, 플레이어 레이어 찾기 또는 일상행동을 반복한다
 		Function_ResetAfterAtk();
 
-		m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+		m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 
 		return;
 	}
@@ -597,7 +575,7 @@ void CThaiMan::Check_Dist()
 		{
 			if (true == m_bIsIdle)
 			{
-				m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+				m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 			}
 			else
 			{
@@ -607,44 +585,44 @@ void CThaiMan::Check_Dist()
 					{
 						if (true == m_bIsCoolDown)
 						{
-							m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-							m_eSecondCategory_IDLE = THAIMAN_IDLETYPE::IDLE_IDLE;
+							m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
 							Function_MoveAround();
 						}
 						else
 						{
-							m_bAtkCategory = true;
-							m_eFirstCategory = MONSTER_ANITYPE::ATTACK;
+							m_bCanChooseAtkType = true;
+							m_eFirstCategory = MONSTER_STATETYPE::ATTACK;
 							Function_RotateBody();
 						}
 					}
 					else
 					{
-						m_eFirstCategory = MONSTER_ANITYPE::MOVE;
-						m_eSecondCategory_MOVE = THAIMAN_MOVETYPE::MOVE_WALK;
+						m_eFirstCategory = MONSTER_STATETYPE::MOVE;
+						m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_WALK;
 					}
 				}
 				else
 				{
 					m_bCanChase = true;
-					m_eFirstCategory = MONSTER_ANITYPE::MOVE;
-					m_eSecondCategory_MOVE = THAIMAN_MOVETYPE::MOVE_RUN;
+					m_eFirstCategory = MONSTER_STATETYPE::MOVE;
+					m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_RUN;
 					Function_RotateBody();
 				}
 			}
 		}
 		else
 		{
-			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+			m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 			if (false == m_bIsIdle)
 			{
-				switch (CALC::Random_Num(THAIMAN_IDLETYPE::IDLE_IDLE, THAIMAN_IDLETYPE::IDLE_SIT))
+				switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_SIT))
 				{
-				case THAIMAN_IDLETYPE::IDLE_IDLE:
-					m_eSecondCategory_IDLE = THAIMAN_IDLETYPE::IDLE_IDLE;
+				case MONSTER_IDLETYPE::IDLE_IDLE:
+					m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
 					break;
-				case THAIMAN_IDLETYPE::IDLE_SIT:
-					m_eSecondCategory_IDLE = THAIMAN_IDLETYPE::IDLE_SIT;
+				case MONSTER_IDLETYPE::IDLE_SIT:
+					m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
 					break;
 				}
 			}
@@ -658,34 +636,34 @@ void CThaiMan::Check_AniEvent()
 {
 	switch (m_eFirstCategory)
 	{
-	case MONSTER_ANITYPE::IDLE:
+	case MONSTER_STATETYPE::IDLE:
 		Play_Idle();
 		break;
 
-	case MONSTER_ANITYPE::MOVE:
+	case MONSTER_STATETYPE::MOVE:
 		Play_Move();
 		break;
 
-	case MONSTER_ANITYPE::ATTACK:
-		if (true == m_bAtkCategory)
+	case MONSTER_STATETYPE::ATTACK:
+		if (true == m_bCanChooseAtkType)
 		{
 			m_tObjParam.bCanAttack = false;
 			m_tObjParam.bIsAttack = true;
 
-			m_bAtkCategory = false;
+			m_bCanChooseAtkType = false;
 
-			m_iRandom = CALC::Random_Num(THAIMAN_ATKTYPE::ATK_NORMAL, THAIMAN_ATKTYPE::ATK_COMBO);
+			m_iRandom = CALC::Random_Num(MONSTER_ATKTYPE::ATK_NORMAL, MONSTER_ATKTYPE::ATK_COMBO);
 
-			m_iRandom = THAIMAN_ATKTYPE::ATK_NORMAL;
+			m_iRandom = MONSTER_ATKTYPE::ATK_NORMAL;
 
 			switch (m_iRandom)
 			{
-			case THAIMAN_ATKTYPE::ATK_NORMAL:
-				m_eSecondCategory_ATK = THAIMAN_ATKTYPE::ATK_NORMAL;
+			case MONSTER_ATKTYPE::ATK_NORMAL:
+				m_eSecondCategory_ATK = MONSTER_ATKTYPE::ATK_NORMAL;
 				Play_RandomAtkNormal();
 				break;
-			case THAIMAN_ATKTYPE::ATK_COMBO:
-				m_eSecondCategory_ATK = THAIMAN_ATKTYPE::ATK_COMBO;
+			case MONSTER_ATKTYPE::ATK_COMBO:
+				m_eSecondCategory_ATK = MONSTER_ATKTYPE::ATK_COMBO;
 				m_bIsCombo = true;
 				Play_RandomAtkCombo();
 				break;
@@ -695,7 +673,7 @@ void CThaiMan::Check_AniEvent()
 		}
 		else
 		{
-			if (THAIMAN_ATKTYPE::ATK_NORMAL == m_eSecondCategory_ATK)
+			if (MONSTER_ATKTYPE::ATK_NORMAL == m_eSecondCategory_ATK)
 			{
 				switch (m_eState)
 				{
@@ -728,21 +706,21 @@ void CThaiMan::Check_AniEvent()
 					break;
 				}
 			}
-			else if (THAIMAN_ATKTYPE::ATK_COMBO == m_eSecondCategory_ATK)
+			else if (MONSTER_ATKTYPE::ATK_COMBO == m_eSecondCategory_ATK)
 			{
 			}
 		}
 		break;
 
-	case MONSTER_ANITYPE::HIT:
+	case MONSTER_STATETYPE::HIT:
 		Play_Hit();
 		break;
 
-	case MONSTER_ANITYPE::CC:
+	case MONSTER_STATETYPE::CC:
 		Play_CC();
 		break;
 
-	case MONSTER_ANITYPE::DEAD:
+	case MONSTER_STATETYPE::DEAD:
 		Play_Dead();
 		break;
 	}
@@ -1564,7 +1542,7 @@ void CThaiMan::Play_Idle()
 {
 	switch (m_eSecondCategory_IDLE)
 	{
-	case THAIMAN_IDLETYPE::IDLE_IDLE:
+	case MONSTER_IDLETYPE::IDLE_IDLE:
 		if (true == m_bInRecognitionRange)
 		{
 			m_bIsIdle = false;
@@ -1586,7 +1564,7 @@ void CThaiMan::Play_Idle()
 		}
 		break;
 
-	case THAIMAN_IDLETYPE::IDLE_SIT:
+	case MONSTER_IDLETYPE::IDLE_SIT:
 		if (true == m_bInRecognitionRange)
 		{
 			if (THAIMAN_ANI::NF_Sit == m_eState)
@@ -1613,7 +1591,7 @@ void CThaiMan::Play_Idle()
 		}
 		break;
 
-	case THAIMAN_IDLETYPE::IDLE_SCRATCH:
+	case MONSTER_IDLETYPE::IDLE_SCRATCH:
 		if (true == m_bInRecognitionRange)
 		{
 			if (THAIMAN_ANI::NF_Sit == m_eState)
@@ -1640,7 +1618,7 @@ void CThaiMan::Play_Idle()
 		}
 		break;
 
-	case THAIMAN_IDLETYPE::IDLE_CROUCH:
+	case MONSTER_IDLETYPE::IDLE_CROUCH:
 		if (true == m_bInRecognitionRange)
 		{
 			if (THAIMAN_ANI::NF_Sit == m_eState)
@@ -1677,7 +1655,7 @@ void CThaiMan::Play_Move()
 
 	switch (m_eSecondCategory_MOVE)
 	{
-	case THAIMAN_MOVETYPE::MOVE_RUN:
+	case MONSTER_MOVETYPE::MOVE_RUN:
 		m_eState = THAIMAN_ANI::Run;
 
 		Function_RotateBody();
@@ -1686,7 +1664,7 @@ void CThaiMan::Play_Move()
 
 		Function_DecreMoveMent(0.1f);
 		break;
-	case THAIMAN_MOVETYPE::MOVE_WALK:
+	case MONSTER_MOVETYPE::MOVE_WALK:
 		if (false == m_tObjParam.bCanAttack)
 		{
 			m_eState = THAIMAN_ANI::Walk_R;
@@ -1702,7 +1680,7 @@ void CThaiMan::Play_Move()
 			Function_DecreMoveMent(0.1f);
 		}
 		break;
-	case THAIMAN_MOVETYPE::MOVE_DODGE:
+	case MONSTER_MOVETYPE::MOVE_DODGE:
 		if (true == m_tObjParam.bCanDodge)
 		{
 			Function_ResetAfterAtk();
@@ -1717,7 +1695,7 @@ void CThaiMan::Play_Move()
 			case THAIMAN_ANI::Dodge:
 				if (m_pMeshCom->Is_Finish_Animation(0.95f))
 				{
-					m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 					m_tObjParam.bCanAttack = true;
 					Function_ResetAfterAtk();
 
@@ -1744,7 +1722,7 @@ void CThaiMan::Play_Move()
 			case THAIMAN_ANI::Dodge_L:
 				if (m_pMeshCom->Is_Finish_Animation(0.95f))
 				{
-					m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 					m_tObjParam.bCanAttack = true;
 					Function_ResetAfterAtk();
 
@@ -1771,7 +1749,7 @@ void CThaiMan::Play_Move()
 			case THAIMAN_ANI::Dodge_R:
 				if (m_pMeshCom->Is_Finish_Animation(0.95f))
 				{
-					m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 					m_tObjParam.bCanAttack = true;
 					Function_ResetAfterAtk();
 
@@ -1836,7 +1814,7 @@ void CThaiMan::Play_Hit()
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 0.5f;
 
-			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+			m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 		}
 		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
 		{
@@ -1995,38 +1973,50 @@ HRESULT CThaiMan::SetUp_ConstantTable()
 
 HRESULT CThaiMan::Ready_Status(void * pArg)
 {
-	if (nullptr == pArg)
-	{
-		m_eWeaponState = MONSTER_WEAPONTYPE::WEAPON_NONE;
-		m_eColorState = MONSTER_COLORTYPE::COLOR_NONE;
+	m_tObjParam.fDamage = 450.f;
+	m_tObjParam.fHp_Max = 2400.f;
+	m_tObjParam.fArmor_Max = 10.f;
 
-		m_tObjParam.fDamage = 50.f;
-		m_tObjParam.fHp_Max = 240.f;
-		m_tObjParam.fArmor_Max = 10.f;
+	m_fRecognitionRange = 15.f;
+	m_fShotRange = 10.f;
+	m_fAtkRange = 5.f;
+	m_fPersonalRange = 2.f;
+	m_iDodgeCountMax = 5;
 
-		m_fRecognitionRange = 15.f;
-		m_fShotRange = 10.f;
-		m_fAtkRange = 5.f;
-		m_fPersonalRange = 2.f;
-		m_iDodgeCountMax = 5;
-	}
-	else
-	{
-		MONSTER_STATUS Info = *(MONSTER_STATUS*)pArg;
+	m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
+	m_tObjParam.fArmor_Cur = m_tObjParam.fArmor_Max;
 
-		m_eWeaponState = MONSTER_WEAPONTYPE::WEAPON_NONE;
-		m_eColorState = MONSTER_COLORTYPE::COLOR_NONE;
+	m_tObjParam.bCanHit = true;
+	m_tObjParam.bIsHit = false;
+	m_tObjParam.bCanAttack = true;
+	m_tObjParam.bIsAttack = false;
+	m_tObjParam.bCanDodge = true;
+	m_tObjParam.bIsDodge = false;
+	m_bCanPlayDead = false;
+	m_bInRecognitionRange = false;
+	m_bInAtkRange = false;
+	m_bCanChase = false;
+	m_bCanCoolDown = false;
+	m_bIsCoolDown = false;
+	m_bCanChooseAtkType = true;
+	m_bIsCombo = false;
+	m_bCanIdle = true;
+	m_bIsIdle = false;
+	m_bCanMoveAround = true;
+	m_bIsMoveAround = false;
 
-		m_tObjParam.fDamage = Info.tMonterStatus.fDamage;
-		m_tObjParam.fHp_Max = Info.tMonterStatus.fHp_Max;
-		m_tObjParam.fArmor_Max = Info.tMonterStatus.fArmor_Max;
+	m_dTimeDelta = 0;
+	m_dAniPlayMul = 1;
 
-		m_fRecognitionRange = Info.fCanKonwRange;
-		m_fShotRange = Info.fCanShotRange;
-		m_fAtkRange = Info.fCanAtkRange;
-		m_fPersonalRange = Info.fPersonalRange;
-		m_iDodgeCountMax = Info.iDodgeCountMax;
-	}
+	m_fSkillMoveSpeed_Cur = 0.f;
+	m_fSkillMoveSpeed_Max = 0.f;
+	m_fSkillMoveAccel_Cur = 0.5f;
+	m_fSkillMoveAccel_Max = 0.f;
+	m_fSkillMoveMultiply = 1.f;
+
+	m_fCoolDownMax = 0.f;
+	m_fCoolDownCur = 0.f;
 
 	return S_OK;
 }
@@ -2047,7 +2037,6 @@ HRESULT CThaiMan::Ready_Collider()
 	pCollider->Set_Type(COL_SPHERE);
 	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Range]->_41, m_matBone[Bone_Range]->_42, m_matBone[Bone_Range]->_43));
 	pCollider->Set_Enabled(true);
-
 	m_vecPhysicCol.push_back(pCollider);
 
 	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
@@ -2058,11 +2047,10 @@ HRESULT CThaiMan::Ready_Collider()
 	pCollider->Set_Type(COL_SPHERE);
 	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Body]->_41, m_matBone[Bone_Body]->_42, m_matBone[Bone_Body]->_43));
 	pCollider->Set_Enabled(true);
-
 	m_vecPhysicCol.push_back(pCollider);
 
 	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
-	fRadius = 0.6f;
+	fRadius = 0.7f;
 
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
@@ -2072,7 +2060,7 @@ HRESULT CThaiMan::Ready_Collider()
 	m_vecAttackCol.push_back(pCollider);
 
 	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
-	fRadius = 0.6f;
+	fRadius = 0.7f;
 
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
@@ -2082,7 +2070,7 @@ HRESULT CThaiMan::Ready_Collider()
 	m_vecAttackCol.push_back(pCollider);
 
 	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
-	fRadius = 0.6f;
+	fRadius = 0.7f;
 
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
@@ -2092,7 +2080,7 @@ HRESULT CThaiMan::Ready_Collider()
 	m_vecAttackCol.push_back(pCollider);
 
 	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
-	fRadius = 0.6f;
+	fRadius = 0.7f;
 
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);

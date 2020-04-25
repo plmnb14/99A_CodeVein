@@ -9,18 +9,6 @@ class CHunterBullet;
 class CHunter final : public CGameObject
 {
 public:
-	enum FBLR { FRONT, FRONTLEFT, FRONTRIGHT, BACK, BACKLEFT, BACKRIGHT, LEFT, RIGHT };
-	enum MONSTER_ANITYPE { IDLE, MOVE, ATTACK, HIT, CC, DEAD };
-
-	enum WEAPON_ANITYPE	 {GUN, HALBERD, HAMMER, LSWORD, SWORD, WEAPON_ANITYPE_END};
-
-	enum HUNTER_IDLETYPE { IDLE_IDLE, IDLE_STAND, IDLE_CROUCH, IDLE_SIT };
-	enum HUNTER_MOVETYPE { MOVE_RUN, MOVE_WALK, MOVE_DODGE }; //다양한 이동, 회피
-	enum HUNTER_ATKTYPE  { ATK_NORMAL, ATK_COMBO }; //일반공격, 콤보공격
-	enum HUNTER_HITTYPE  { HIT_STRONG, HIT_NORMAL, HIT_WEAK }; //피격 방향, 데미지에 따른 피격 모션
-	enum HUNTER_CCTYPE	 { CC_STUN, CC_DOWN };
-	enum HUNTER_DEADTYPE { DEAD_DEAD, DEAD_DEAD_S, DEAD_DEAD_P}; //일반, 특정 상황에서 죽었을 경우
-
 	enum ATK_NORMAL_TYPE
 	{
 		NORMAL_GUN_KICK, 
@@ -58,6 +46,7 @@ public:
 		NORMAL_SWORD_CRITICALDRAW
 
 	};
+	
 	enum ATK_COMBO_TYPE 
 	{
 		COMBO_GUN_SHOT, COMBO_GUN_CQC,
@@ -195,38 +184,16 @@ public:
 
 	};
 
-	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_Head, Bone_RightForeArm, Bone_LeftKnee, Bone_LeftToe, Bone_RightHandAttach, Bone_End };
-
-public:
-	struct INITSTRUCT
-	{
-		INITSTRUCT(
-			_float _fDMG,
-			_float _fHpMax,
-			_float _fArmorMax,
-			_float _fKnowRange,
-			_float _fShotRange,
-			_float _fAtkRange,
-			_int _iDodgeMax,
-			WEAPON_ANITYPE _eWeapon)
-		{
-			tMonterStatus.fDamage = _fDMG;
-			tMonterStatus.fHp_Max = _fHpMax;
-			tMonterStatus.fArmor_Max = _fArmorMax;
-
-			fKonwingRange = _fKnowRange;
-			fCanShotRangeIfGunChooose = _fShotRange;
-			fCanAttackRange = _fAtkRange;
-			iDodgeCountMax = _iDodgeMax;
-			eUseWhatWeapon = _eWeapon;
-		}
-
-		OBJECT_PARAM		tMonterStatus;
-		_float				fKonwingRange = 20.f;
-		_float				fCanShotRangeIfGunChooose = 10.f;
-		_float				fCanAttackRange = 5.f;
-		_int				iDodgeCountMax = 3;
-		WEAPON_ANITYPE		eUseWhatWeapon = WEAPON_ANITYPE::SWORD;
+	enum BONE_TYPE 
+	{ 
+		Bone_Range,
+		Bone_Head,
+		Bone_Body,
+		Bone_RightForeArm,
+		Bone_LeftKnee,
+		Bone_LeftToe,
+		Bone_RightHandAttach,
+		Bone_End
 	};
 
 protected:
@@ -249,6 +216,7 @@ private:
 	void Check_CollisionPush();
 	void Check_CollisionEvent(list<CGameObject*> plistGameObject);
 
+	void Function_FBLR();
 	void Function_RotateBody();
 	void Function_CoolDown();
 	void Function_Movement(_float _fspeed, _v3 _vDir = { V3_NULL });
@@ -257,7 +225,6 @@ private:
 
 	void Check_PosY();
 	void Check_Hit();
-	void Check_FBLR();
 	void Check_Dist();
 	void Check_AniEvent();
 
@@ -304,8 +271,8 @@ private:
 	void Play_SSword_Elbow(); //s1 0.95
 	void Play_SSword_HelmetBreak(); //sp1 0.95
 	void Play_SSword_CriticalDraw(); //sp2 0.95
-	void Play_SSword_Combo_StepPierce(); //sp3 0.9 0.9 0.9
-	void Play_SSword_Combo_Strong(); //s1 0.35 s2 0.65 s3 0.95 팔꿈치, 내리베기횡베기, 모아 찌르기
+	void Play_SSword_Combo_StepPierce(); //sp3 st,loop, end 0.935 0.9 0.915
+	void Play_SSword_Combo_Strong(); //s1 0.308 s2 0.65 s3 0.9 팔꿈치, 내리베기횡베기, 모아 찌르기
 	void Play_SSword_Combo_Diagonal_L(); //n2 n3 0.5 0.9
 
 	void Play_Idle();
@@ -315,9 +282,9 @@ private:
 	void Play_Dead(); //cc상태에서 죽을 경우 다양한 모션 진행
 
 private:
-	HRESULT Add_Component();
+	HRESULT Add_Component(void* pArg);
 	HRESULT SetUp_ConstantTable();
-	HRESULT Ready_Status(void* pArg); //추후 공격력 방어력 등등의 세부 수치도 받을 예정
+	HRESULT Ready_Status(void* pArg);
 	HRESULT Ready_Weapon();
 	HRESULT Ready_Collider();
 	HRESULT Ready_BoneMatrix();
@@ -339,58 +306,54 @@ private:
 
 	CTransform*			m_pTargetTransform = nullptr;
 
-	_mat*				m_matBone[Bone_End];
-	_double				m_dTimeDelta = 0;
-	_double				m_dAniPlayMul = 1;
+	_mat*					m_matBone[Bone_End];
+	MONSTER_STATETYPE		m_eFirstCategory;
+	MONSTER_IDLETYPE		m_eSecondCategory_IDLE;
+	MONSTER_MOVETYPE		m_eSecondCategory_MOVE;
+	MONSTER_ATKTYPE			m_eSecondCategory_ATK;
+	MONSTER_HITTYPE			m_eSecondCategory_HIT;
+	MONSTER_CCTYPE			m_eSecondCategory_CC;
+	MONSTER_DEADTYPE		m_eSecondCategory_DEAD;
 
-	_float				m_fSkillMoveSpeed_Cur = 0.f;
-	_float				m_fSkillMoveSpeed_Max = 0.f;
-	_float				m_fSkillMoveAccel_Cur = 0.5f;
-	_float				m_fSkillMoveAccel_Max = 0.f;
-	_float				m_fSkillMoveMultiply = 1.f;
+	WEAPON_STATE			m_eWeaponState;
+	FBLR					m_eFBLR;
+	ATK_COMBO_TYPE			m_eAtkCombo;
+	HUNTER_ANI				m_eState;
 
-	MONSTER_ANITYPE		m_eFirstCategory;
-	HUNTER_IDLETYPE		m_eSecondCategory_IDLE;
-	HUNTER_MOVETYPE		m_eSecondCategory_MOVE;
-	HUNTER_ATKTYPE		m_eSecondCategory_ATK;
-	HUNTER_HITTYPE		m_eSecondCategory_HIT;
-	HUNTER_CCTYPE		m_eSecondCategory_CC;
-	HUNTER_DEADTYPE		m_eSecondCategory_DEAD;
+	_bool	m_bEventTrigger[20] = {};
+	_bool	m_bCanPlayDead; //죽음 애니 재생
+	_bool	m_bInRecognitionRange; //인지범위ox
+	_bool	m_bInAtkRange; //공격범위ox
+	_bool	m_bCanChase; //추적ox
+	_bool	m_bCanCoolDown; //쿨타임ox
+	_bool	m_bIsCoolDown; //쿨타임 진행중ox
+	_bool	m_bCanChooseAtkType; //노말,콤보 가능ox
+	_bool	m_bIsCombo; //콤보공격 진행중ox
+	_bool	m_bCanIdle; //일상ox
+	_bool	m_bIsIdle; //일상 진행중ox
+	_bool	m_bCanMoveAround; //경계ox
+	_bool	m_bIsMoveAround; //경계동작 진행중
 
-	WEAPON_ANITYPE		m_eWeaponState = WEAPON_ANITYPE::SWORD;
-	ATK_COMBO_TYPE		m_eAtkCombo;
-	HUNTER_ANI			m_eState;
-	FBLR				m_eFBLR;
+	_double	m_dTimeDelta;
+	_double	m_dAniPlayMul;
 
-	_bool				m_bEventTrigger[20] = {};
+	_float	m_fSkillMoveSpeed_Cur;
+	_float	m_fSkillMoveSpeed_Max;
+	_float	m_fSkillMoveAccel_Cur;
+	_float	m_fSkillMoveAccel_Max;
+	_float	m_fSkillMoveMultiply;
 
-	_bool				m_bCanPlayDead = false;
-	_bool				m_bInRecognitionRange = false;
-	_bool				m_bInAtkRange = false;
+	_float	m_fRecognitionRange;
+	_float	m_fShotRange;
+	_float	m_fAtkRange;
+	_float	m_fPersonalRange;
+	_float	m_fCoolDownMax;
+	_float	m_fCoolDownCur;
 
-	_bool				m_bCanChase = false;
+	_int	m_iRandom;
+	_int	m_iDodgeCount;
+	_int	m_iDodgeCountMax;
 
-	_bool				m_bCanCoolDown = false;
-	_bool				m_bIsCoolDown = false;
-
-	_bool				m_bAtkCategory = true;
-	_bool				m_bCanInterrupt = true;
-	_bool				m_bCanCombo = true;
-	_bool				m_bIsCombo = false;
-
-	_bool				m_bCanIdle = true;
-	_bool				m_bIsIdle = false;
-
-	_float				m_fRecognitionRange = 20.f;
-	_float				m_fShotRange = 10.f;
-	_float				m_fAtkRange = 5.f;
-	_float				m_fCoolDownMax = 0.f;
-	_float				m_fCoolDownCur = 0.f;
-	_float				m_fSpeedForCollisionPush = 2.f;
-
-	_int				m_iRandom = 0;
-	_int				m_iDodgeCountMax = 3; //3회 피격시 회피
-	_int				m_iDodgeCount = 0; //n회 피격시 회피
 };
 
 END

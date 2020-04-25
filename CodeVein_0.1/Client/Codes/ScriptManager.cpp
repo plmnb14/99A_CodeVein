@@ -9,7 +9,7 @@
 #include "SwordGenji.h"
 #include "SwordShieldGenji.h"
 #include "YachaMan.h"
-#include "BlackWolf.h"
+#include "Wolf.h"
 #include "YachaMan.h"
 #include "Hunter.h"
 #include "Monkey.h"
@@ -976,7 +976,7 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 	// 서브셋 0 - 3마리 ( 기사 1 , 원숭 2 )
 
 	{
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CHunter::INITSTRUCT(25.f, 200.f, 10.f, 15.f, 10.f, 5.f, 5, CHunter::WEAPON_ANITYPE::SWORD));
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &MONSTER_STATUS(MONSTER_COLORTYPE::BLACK, WEAPON_STATE::WEAPON_SSword));
 		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
 		TARGET_TO_NAV(pInstance)->Set_Index(33);
 		m_vecObjectPool.push_back(pInstance);
@@ -999,19 +999,19 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 	// 서브셋 0- 3마리 ( 기사 3 )
 
 	{
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CHunter::INITSTRUCT(25.f, 200.f, 10.f, 15.f, 10.f, 5.f, 5, CHunter::WEAPON_ANITYPE::LSWORD));
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &MONSTER_STATUS(MONSTER_COLORTYPE::BLACK, WEAPON_STATE::WEAPON_LSword));
 		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
 		TARGET_TO_NAV(pInstance)->Set_Index(17);
 		m_vecObjectPool.push_back(pInstance);
 		Safe_AddRef(pInstance);
 
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CHunter::INITSTRUCT(25.f, 200.f, 10.f, 15.f, 10.f, 5.f, 5, CHunter::WEAPON_ANITYPE::SWORD));
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &MONSTER_STATUS(MONSTER_COLORTYPE::BLACK, WEAPON_STATE::WEAPON_SSword));
 		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
 		TARGET_TO_NAV(pInstance)->Set_Index(18);
 		m_vecObjectPool.push_back(pInstance);
 		Safe_AddRef(pInstance);
 
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CHunter::INITSTRUCT(25.f, 200.f, 10.f, 15.f, 10.f, 5.f, 5, CHunter::WEAPON_ANITYPE::HALBERD));
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &MONSTER_STATUS(MONSTER_COLORTYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
 		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
 		TARGET_TO_NAV(pInstance)->Set_Index(14);
 		m_vecObjectPool.push_back(pInstance);
@@ -1063,13 +1063,13 @@ void CScriptManager::Ready_Stage03_DynamicObject()
 		m_vecObjectPool.push_back(pInstance);
 		Safe_AddRef(pInstance);
 
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CHunter::INITSTRUCT(25.f, 200.f, 10.f, 15.f, 10.f, 5.f, 5, CHunter::WEAPON_ANITYPE::HALBERD));
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &MONSTER_STATUS(MONSTER_COLORTYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
 		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
 		TARGET_TO_NAV(pInstance)->Set_Index(46);
 		m_vecObjectPool.push_back(pInstance);
 		Safe_AddRef(pInstance);
 
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CHunter::INITSTRUCT(25.f, 200.f, 10.f, 15.f, 10.f, 5.f, 5, CHunter::WEAPON_ANITYPE::HALBERD));
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &MONSTER_STATUS(MONSTER_COLORTYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
 		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
 		TARGET_TO_NAV(pInstance)->Set_Index(44);
 		m_vecObjectPool.push_back(pInstance);
@@ -1130,31 +1130,31 @@ void CScriptManager::Ready_Stage04_DynamicObject()
 	// 4 마리 + 언덕 1마리
 
 	{
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CHunter::INITSTRUCT(25.f, 200.f, 10.f, 15.f, 10.f, 5.f, 5, CHunter::WEAPON_ANITYPE::HALBERD));
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &MONSTER_STATUS(MONSTER_COLORTYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
 		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
 		TARGET_TO_NAV(pInstance)->Set_Index(46);
 		m_vecObjectPool.push_back(pInstance);
 		Safe_AddRef(pInstance);
 
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CHunter::INITSTRUCT(25.f, 200.f, 10.f, 15.f, 10.f, 5.f, 5, CHunter::WEAPON_ANITYPE::HALBERD));
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &MONSTER_STATUS(MONSTER_COLORTYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
 		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
 		TARGET_TO_NAV(pInstance)->Set_Index(33);
 		m_vecObjectPool.push_back(pInstance);
 		Safe_AddRef(pInstance);
 
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CHunter::INITSTRUCT(25.f, 200.f, 10.f, 15.f, 10.f, 5.f, 5, CHunter::WEAPON_ANITYPE::HALBERD));
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &MONSTER_STATUS(MONSTER_COLORTYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
 		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
 		TARGET_TO_NAV(pInstance)->Set_Index(76);
 		m_vecObjectPool.push_back(pInstance);
 		Safe_AddRef(pInstance);
 
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CHunter::INITSTRUCT(25.f, 200.f, 10.f, 15.f, 10.f, 5.f, 5, CHunter::WEAPON_ANITYPE::HALBERD));
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &MONSTER_STATUS(MONSTER_COLORTYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
 		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
 		TARGET_TO_NAV(pInstance)->Set_Index(66);
 		m_vecObjectPool.push_back(pInstance);
 		Safe_AddRef(pInstance);
 
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CHunter::INITSTRUCT(25.f, 200.f, 10.f, 15.f, 10.f, 5.f, 5, CHunter::WEAPON_ANITYPE::HALBERD));
+		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &MONSTER_STATUS(MONSTER_COLORTYPE::BLACK, WEAPON_STATE::WEAPON_Halberd));
 		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
 		TARGET_TO_NAV(pInstance)->Set_Index(88);
 		m_vecObjectPool.push_back(pInstance);
