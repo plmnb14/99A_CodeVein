@@ -18,6 +18,7 @@
 #include "Item_Manager.h"
 
 #include "MonsterHeaders.h"
+#include "Flag.h"
 
 #include "PlayerHP.h"
 #include "PlayerST.h"
@@ -92,6 +93,7 @@ unsigned int CALLBACK CLoading::Thread_Main(void* pArg)
 
 HRESULT CLoading::Ready_Effect(void)
 {
+
 #pragma region ButterFly
 	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke")))
 		return E_FAIL;
@@ -1182,6 +1184,13 @@ _uint CLoading::Loading_Stage()
 
 		// 오브젝트 원형 생성
 		//============================================================================================================
+
+		// 환경
+		//============================================================================================================
+		// 깃발
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Flag", CFlag::Create(m_pGraphicDev))))
+			return E_FAIL;
+
 
 		// 몬스터
 		//============================================================================================================

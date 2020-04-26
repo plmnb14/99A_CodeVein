@@ -797,11 +797,11 @@ void CWeapon::Free()
 	Safe_Release(m_pShader);
 	Safe_Release(m_pRenderer);
 
-	for (auto& iter : m_vecAttackCol)
-		Safe_Release(iter);
+	//for (auto& iter : m_vecAttackCol)
+	//	Safe_Release(iter);
 
-	m_vecAttackCol.shrink_to_fit();
-	m_vecAttackCol.clear();
+	//m_vecAttackCol.shrink_to_fit();
+	//m_vecAttackCol.clear();
 
 	//for (auto& iter : m_listCollisionRecord)
 	//	iter = nullptr;
