@@ -5,6 +5,7 @@
 #include "Sky.h"
 #include "TexEffect.h"
 #include "MeshEffect.h"
+#include "DecalEffect.h"
 #include "Player.h"
 
 #include "Weapon.h"
@@ -134,6 +135,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_Body_Sub")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_SubSmoke")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_PointParticle")))
@@ -143,6 +146,8 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_Distortion")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_Tail")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_Crying_Distortion")))
 		return E_FAIL;
 
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_DeadMist")))
@@ -491,11 +496,45 @@ HRESULT CLoading::Ready_Effect(void)
 #pragma region DeerKing
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceStone_Up_Particle_0", true)))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceStone_Up_Small_Particle_0", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_0", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_ReadySmoke_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_ReadySmoke_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_ReadySmoke_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_ReadySmoke_3")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_DeadParticle_Stone_0", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_DeadParticle_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_Charge_Hand_Smoke_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_Charge_Hand_Smoke_After_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_Charge_Hand_Smoke_After_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Point_ExplosionParticle_0")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_SnowChunk_Up_Particle_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_SnowChunk_Up_Particle_1")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_SnowChunk_Up_Particle_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_SnowChunk_Up_Small_Particle_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_SnowChunk_Heavy_Particle_0")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_Snow_Up_Particle_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Snow_Up_LongLine_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Snow_Up_LongLine_1")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_0")))
 		return E_FAIL;
@@ -503,9 +542,31 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_2")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_Mid_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_Mid_1")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_Small_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_Small_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Jump_In_Place_Distortion")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_JumpPack_Distortion")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_JumpPack_Fire")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Body_PointParticle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Body_Smoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Body_Smoke_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Distortion_Circle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBlock_0", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Tornade_Mesh_0", true)))
 		return E_FAIL;
 #pragma endregion
 
@@ -530,6 +591,10 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"Boss_Dead_Particle")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"SpawnParticle_ForBoss")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"SpawnParticle_ForBoss_Point")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"SpawnParticle_ForBoss_Point_Sub")))
 		return E_FAIL;
 
 #pragma region Blood
@@ -744,6 +809,18 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_SplitAssert_LaserAfter_Smoke")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Rush_Particle_Yellow")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Rush_Particle_Orange")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Rush_Particle_White")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Rush_LaserBefore")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Rush_RedParticle_LaserBefore")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Rush_WhiteParticle_LaserBefore")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_SplitAssert_LaserAfter_RingLine", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Floor_BlackRing", true)))
@@ -758,9 +835,26 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_WindTornadeMesh", true)))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_BloodTornadeMesh", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_BloodTornadeMesh_2", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_BloodTornadeMesh_3", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_BloodConeMesh", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Torment_Wind_L", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Torment_Wind_R", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Torment_Wind_Distortion_L", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Torment_Wind_Distortion_R", true)))
+		return E_FAIL;
 #pragma endregion
 
-
+	//if (FAILED(g_pManagement->Add_Prototype(L"", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(szBuff)))))
+	//	return E_FAIL;
 
 	return S_OK;
 }
@@ -1154,6 +1248,21 @@ _uint CLoading::Loading_Stage()
 			return E_FAIL;
 		// »ç½¿¿Õ
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKing", CDeerKing::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// »ç½¿¿Õ  Åõ»çÃ¼
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingBullet", CDeerKingBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// »ç½¿¿Õ  »ÏÁ· ¾óÀ½
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingColdBeam", CDeerKingColdBeam::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// »ç½¿¿Õ  Á¡ÇÁÁÖ¸Ô ÄÝ¶óÀÌ´õ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingJumpFistCol", CDeerKingJumpFistCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// »ç½¿¿Õ  Á¦ÀÚ¸® Á¡ÇÁ ÄÝ¶óÀÌ´õ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingJumpInPlaceCol", CDeerKingJumpInPlaceCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// »ç½¿¿Õ  µ¹Áø ÄÝ¶óÀÌ´õ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingRushCol", CDeerKingRushCol::Create(m_pGraphicDev))))
 			return E_FAIL;
 		// °ËÀº ¼º°Ô
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))

@@ -30,6 +30,9 @@ HRESULT CLoadingScreen::Ready_GameObject(void * pArg)
 	m_fSizeY = WINCY;
 	m_fViewZ = -1.f;
 	
+	m_iIndex = 1;
+	m_fAlpha = 0.f;
+	m_fFadeSpeed = 0.3f;
 	return NOERROR;
 }
 
@@ -40,6 +43,27 @@ _int CLoadingScreen::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
+	if (m_bIsActive)
+	{
+		if (m_fAlpha < 1.f)
+		{
+			m_fAlpha += _float(TimeDelta) * m_fFadeSpeed;
+			m_bIsLoad = false;
+		}
+		else
+		{
+			m_bIsLoad = true;
+		}
+			
+	}
+	else
+	{
+		if (m_fAlpha > 0.f)
+		{
+			m_fAlpha -= _float(TimeDelta) * m_fFadeSpeed;
+		}
+	}
+		
 	return NO_EVENT;
 }
 
@@ -59,6 +83,8 @@ _int CLoadingScreen::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CLoadingScreen::Render_GameObject()
 {
+	if (!m_bIsActive && m_fAlpha <= 0.f)
+		return NOERROR;
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
@@ -73,7 +99,7 @@ HRESULT CLoadingScreen::Render_GameObject()
 
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(0);
+	m_pShaderCom->Begin_Pass(5);
 
 	m_pBufferCom->Render_VIBuffer();
 
@@ -120,7 +146,9 @@ HRESULT CLoadingScreen::SetUp_ConstantTable()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 0)))
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, m_iIndex)))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	return NOERROR;

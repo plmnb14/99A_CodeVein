@@ -19,9 +19,8 @@ public:
 	_bool		Check_InFrustumforObject(const _v3* pPos, const _float& fRadius);
 
 private:
-	CFrustum_Culling*		m_pFrustum;
-	CQuadTree*				m_pQuadTree;
-	_bool					m_bClone;
+	CFrustum_Culling*		m_pFrustum = nullptr;
+	CQuadTree*				m_pQuadTree = nullptr;
 
 public:
 	static COptimization*		Create(_Device _pGraphicDev, _bool bChoice = false, _ulong dwCntX = 0, _ulong dwCntZ = 0);

@@ -86,6 +86,7 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
 	//Check_ShowValue->Set_Child(Start_Show());
 	//Start_Sel->Add_Child(Check_ShowValue);
+
 	Start_Sel->Add_Child(Start_Game());
 	//Start_Sel->Add_Child(Normal_Cut2());
 
@@ -1384,6 +1385,7 @@ void CSwordGenji::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pCollider);
+	Safe_Release(m_pOptimization);
 
 	CGameObject::Free();
 }

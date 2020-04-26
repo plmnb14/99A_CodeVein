@@ -262,6 +262,9 @@
     <Filter Include="01.Utility\[03] Component\Component\11%29 BattleAgent">
       <UniqueIdentifier>{4b41f9e2-aadc-4eaf-93ca-945cc5286c7a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\[02] GameObject\4%29 Effect\3%29 DecalEffect">
+      <UniqueIdentifier>{ca93fa62-40a5-49a6-ad61-487e1255bfca}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Headers\Base.h">
@@ -570,6 +573,9 @@
     <ClInclude Include="..\Headers\BattleAgent.h">
       <Filter>01.Utility\[03] Component\Component\11%29 BattleAgent</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\DecalEffect.h">
+      <Filter>01.Utility\[02] GameObject\4%29 Effect\3%29 DecalEffect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Base.cpp">
@@ -853,6 +859,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\BattleAgent.cpp">
       <Filter>01.Utility\[03] Component\Component\11%29 BattleAgent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DecalEffect.cpp">
+      <Filter>01.Utility\[02] GameObject\4%29 Effect\3%29 DecalEffect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

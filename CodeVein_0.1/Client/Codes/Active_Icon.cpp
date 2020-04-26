@@ -182,7 +182,7 @@ HRESULT CActive_Icon::Render_GameObject()
 		if (FAILED(SetUp_ConstantTable(15)))
 			return E_FAIL;
 		m_pShaderCom->Begin_Shader();
-		m_pShaderCom->Begin_Pass(1); // 흰색 프레임 UV값 변경
+		m_pShaderCom->Begin_Pass(7); // 흰색 프레임 UV값 변경
 		m_pBufferCom->Render_VIBuffer();
 		m_pShaderCom->End_Pass();
 		m_pShaderCom->End_Shader();
@@ -201,7 +201,7 @@ HRESULT CActive_Icon::Render_GameObject()
 		if (FAILED(SetUp_ConstantTable(14)))
 			return E_FAIL;
 		m_pShaderCom->Begin_Shader();
-		m_pShaderCom->Begin_Pass(1); // 붉은색 프레임 UV값 변경
+		m_pShaderCom->Begin_Pass(7); // 붉은색 프레임 UV값 변경
 		m_pBufferCom->Render_VIBuffer();
 		m_pShaderCom->End_Pass();
 		m_pShaderCom->End_Shader();
@@ -258,8 +258,7 @@ HRESULT CActive_Icon::SetUp_ConstantTable(_uint iIndex)
 			return E_FAIL;
 		if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 			return E_FAIL;
-		/*if (FAILED(m_pShaderCom->Set_Value("g_fSpeed", &m_fSpeed, sizeof(_float))))
-			return E_FAIL;*/
+		
 		if (FAILED(m_pShaderCom->Set_Value("g_fPosX", &m_fPosX, sizeof(_float))))
 			return E_FAIL;
 		if (FAILED(m_pShaderCom->Set_Value("g_fSizeX", &m_fSizeX, sizeof(_float))))
@@ -277,8 +276,6 @@ HRESULT CActive_Icon::SetUp_ConstantTable(_uint iIndex)
 			return E_FAIL;
 		if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 			return E_FAIL;
-		/*if (FAILED(m_pShaderCom->Set_Value("g_fSpeed", &m_fSpeed, sizeof(_float))))
-		return E_FAIL;*/
 		if (FAILED(m_pShaderCom->Set_Value("g_fPosX", &m_fPosX, sizeof(_float))))
 			return E_FAIL;
 		if (FAILED(m_pShaderCom->Set_Value("g_fSizeX", &m_fSizeX, sizeof(_float))))

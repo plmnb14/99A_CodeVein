@@ -382,7 +382,7 @@ HRESULT CRenderer::Draw_RenderList()
 
 #ifdef _DEBUG
 
-	if (CInput_Device::Get_Instance()->Key_Down(DIKEYBOARD_9))
+	if (CInput_Device::Get_Instance()->Key_Down((_ubyte)DIKEYBOARD_9))
 		m_bOnRenderTarget = !m_bOnRenderTarget;
 
 	if (m_bOnRenderTarget)

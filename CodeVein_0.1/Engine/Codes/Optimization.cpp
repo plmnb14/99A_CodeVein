@@ -4,7 +4,6 @@ COptimization::COptimization(_Device _pGraphicDev)
 	:CComponent(_pGraphicDev)
 	, m_pFrustum(nullptr)
 	, m_pQuadTree(nullptr)
-	, m_bClone(false)
 {
 }
 
@@ -12,7 +11,6 @@ COptimization::COptimization(const COptimization& rhs)
 	:CComponent(rhs)
 	, m_pFrustum(rhs.m_pFrustum)
 	, m_pQuadTree(rhs.m_pQuadTree)
-	, m_bClone(true)
 {
 }
 
@@ -68,10 +66,7 @@ void COptimization::Free(void)
 {
 	CComponent::Free();
 
-	if (false == m_bClone)
-	{
-		Safe_Release(m_pFrustum);
-		Safe_Release(m_pQuadTree);
-	}
+	Safe_Release(m_pFrustum);
+	Safe_Release(m_pQuadTree);
 }
 

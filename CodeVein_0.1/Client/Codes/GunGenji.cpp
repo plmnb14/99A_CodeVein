@@ -1161,6 +1161,8 @@ void CGunGenji::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pCollider);
+	Safe_Release(m_pOptimization);
+	Safe_Release(m_pBattleAgent);
 
 	CGameObject::Free();
 }

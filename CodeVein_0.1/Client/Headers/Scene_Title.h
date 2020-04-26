@@ -5,7 +5,7 @@
 #include "Loading.h"
 
 BEGIN(Client)
-
+class CLoadingScreen;
 class CScene_Title final : public CScene
 {
 private:
@@ -27,6 +27,7 @@ private:
 
 private:
 	CLoading*			m_pLoading = nullptr;
+	CLoadingScreen*		m_pLoadingScreen = nullptr;
 
 private:
 	HRESULT Ready_Player();

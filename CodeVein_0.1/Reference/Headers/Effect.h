@@ -34,7 +34,8 @@ public:
 	void Set_Angle(_v3 vAngle) { m_vAngle = vAngle; }
 	void Set_Dir(_v3 vDir) { m_vMyDir = vDir; }
 	void Set_AutoFind(_bool  bFind) { m_bAutoFindPos = bFind; }
-	void Set_FinishPos(_v3 vPos) { m_bFinishPos = true;  m_vFinishPos = vPos; }
+	void Set_FinishPos(_v3 vPos) { m_bFinishPos = true; m_vFinishPos = vPos; }
+	void Set_Curve(CTransform* pTargetTrans, _float fPower) { m_bCurve = true; m_pCurveTargetTrans = pTargetTrans;  m_fCurvePower = fPower; }
 	void Set_Delay(_bool bDelay, _float fDelay = 0.f) { m_bDelay_New = bDelay;  m_fDelay_New = fDelay; }
 	void Set_Loop(_bool bLoop) { m_bLoop = bLoop; }
 	void Set_ZWrite() { m_bZwrite = true; }
@@ -58,6 +59,7 @@ protected:
 
 	CGameObject*			m_pParentObject = nullptr;
 	_mat*					m_pTargetMatrix = nullptr;
+	CTransform*				m_pCurveTargetTrans = nullptr;
 	_float					m_fFrame = 0.f;
 	_float					m_fAlpha = 1.f;
 	_float					m_fLifeTime = 0.f;
@@ -67,10 +69,12 @@ protected:
 	_float					m_fRotSpeed = 0.f;
 	_float					m_fAlphaSpeed = 0.f;
 	_float					m_fCreateDelay = 0.f;
-	_float					m_fAccel = 0.f;
+	_float					m_fAccel = 1.f;
 	_float					m_fSlowAccel = 0.f;
 	_float					m_fDissolve = 0.f;
 	_float					m_fDelay_New = 0.f;
+	_float					m_fCurveAccel = 0.f;
+	_float					m_fCurvePower = 0.f;
 	_v3						m_vLerpPos = { 1.f, 1.f, 1.f };
 	_v3						m_vLerpScale = { 1.f, 1.f, 1.f };
 	_v3						m_vDir = { 0.f, 0.f, 0.f };
@@ -79,6 +83,7 @@ protected:
 	_v3						m_vFollowPos = { 1.f, 1.f, 1.f };
 	_v4						m_vColor = { 1.f, 1.f, 1.f, 1.f };
 	_v3						m_vAngle = { 0.f, 0.f, 0.f };	// For Worldmat Rot
+	_v3						m_vCurveRotDir = { 0.f, 0.f, 0.f };	// For Curve Rot
 	_v3						m_vFinishPos = { 0.f, 0.f, 0.f };
 
 	_bool					m_bClone = false;
@@ -90,6 +95,7 @@ protected:
 	_bool					m_bLoop = false;
 	_bool					m_bInstanceTarget = false;
 	_bool					m_bZwrite = false;
+	_bool					m_bCurve = false;
 
 	_int					m_iPass = 0;
 

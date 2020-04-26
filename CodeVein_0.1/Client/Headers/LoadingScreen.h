@@ -13,6 +13,14 @@ private:
 	virtual ~CLoadingScreen() = default;
 
 public:
+	_float Get_Alpha() { return m_fAlpha; }
+	_bool Get_Load() { return m_bIsLoad; }
+
+public:
+	void Set_Alpha(_float fAlpha) { m_fAlpha = fAlpha; };
+	void Set_FadeSpeed(_float fFadeSpeed) { m_fFadeSpeed = fFadeSpeed; }
+
+public:
 	virtual HRESULT Ready_GameObject_Prototype();
 	virtual HRESULT Ready_GameObject(void* pArg);
 	virtual _int Update_GameObject(_double TimeDelta);
@@ -32,6 +40,9 @@ private:
 
 private:
 	CLoadingBar*			m_pLoadingBar = nullptr;
+	_float					m_fAlpha = 0.f;
+	_float					m_fFadeSpeed = 0.f;
+	_bool					m_bIsLoad = false;
 
 public:
 	static CLoadingScreen* Create(LPDIRECT3DDEVICE9 pGraphic_Device);

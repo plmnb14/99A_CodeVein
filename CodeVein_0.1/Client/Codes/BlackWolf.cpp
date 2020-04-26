@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\BlackWolf.h"
-
-#include "MonsterUI.h"
+#include "..\Headers\MonsterUI.h"
 
 CBlackWolf::CBlackWolf(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)

@@ -43,8 +43,8 @@ void CSkillUI::SetUp_Default()
 	
 	for (_uint i = 0; i < 8; ++i)
 	{
-		g_pManagement->Add_GameObject_ToLayer(L"GameObject_ActiveIcon", SCENE_MORTAL, L"Layer_ActiveIcon");
-		m_pActive[i] = static_cast<CActive_Icon*>(g_pManagement->Get_GameObjectBack(L"Layer_ActiveIcon", SCENE_MORTAL));
+		g_pManagement->Add_GameObject_ToLayer(L"ActiveIcon", SCENE_MORTAL, L"Layer_PlayerUI");
+		m_pActive[i] = static_cast<CActive_Icon*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
 		
 		if (i < 4)
 			m_pActive[i]->Set_UI_Size(64.f, 64.f);
@@ -61,8 +61,8 @@ void CSkillUI::SetUp_Default()
 	m_pActive[6]->Set_UI_Pos(fPosX2 + 30.f, fPosY2);
 	m_pActive[7]->Set_UI_Pos(fPosX2, fPosY2 + 30.f);
 
-	m_pActive[0]->Set_Skill_Index(Skill_OneHand_Active_01);
-	m_pActive[0]->Set_Active_State(CActive_Icon::ACTIVE_NO_USE);
+	/*m_pActive[0]->Set_Skill_Index(Skill_OneHand_Active_01);
+	m_pActive[0]->Set_Active_State(CActive_Icon::ACTIVE_BUFF);*/
 }
 
 void CSkillUI::Set_SkillIcon(_uint iIndex, Skill_Index eSkill_Index)

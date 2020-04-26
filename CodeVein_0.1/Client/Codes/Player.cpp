@@ -3707,6 +3707,17 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red", 0.3f, 0.2f, m_pTransform->Get_Pos() );
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black", 0.3f, 0.3f, m_pTransform->Get_Pos() );
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RedParticle_Explosion", 0.15f, 1.f, m_pTransform->Get_Pos() );
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"		, 0.05f, m_pTransform->Get_Pos());
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"	, 0.12f, m_pTransform->Get_Pos());
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"		, 0.2f, m_pTransform->Get_Pos());
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"	, 0.27f, m_pTransform->Get_Pos());
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"	, 0.31f, m_pTransform->Get_Pos());
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"		, 0.35f, m_pTransform->Get_Pos());
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"	, 0.42f, m_pTransform->Get_Pos());
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"	, 0.46f, m_pTransform->Get_Pos());
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"		, 0.5f, m_pTransform->Get_Pos());
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"	, 0.62f, m_pTransform->Get_Pos());
+					
 				}
 			}
 
@@ -4086,7 +4097,8 @@ void CPlayer::Play_Skills()
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(true);
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(true);
 
-					g_pManagement->Create_Effect(L"Player_Skill_WindTornadeMesh", m_pTransform->Get_Pos() + vEffPos, nullptr, -m_pTransform->Get_Axis(AXIS_Z), vPlayerAngleDeg);
+					_v3 vDir = *D3DXVec3Normalize(&_v3(), &-m_pTransform->Get_Axis(AXIS_Z));
+					g_pManagement->Create_Effect(L"Player_Skill_WindTornadeMesh", m_pTransform->Get_Pos() + vEffPos, nullptr, vDir, vPlayerAngleDeg);
 				}
 			}
 			else if (m_pDynamicMesh->Get_TrackInfo().Position <= 0.1f)
@@ -4099,6 +4111,16 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing", 0.1f, 0.1f, m_pTransform->Get_Pos());
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red", 0.3f, 0.2f, m_pTransform->Get_Pos());
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black", 0.3f, 0.3f, m_pTransform->Get_Pos());
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh", 0.05f, m_pTransform->Get_Pos());
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2", 0.12f, m_pTransform->Get_Pos());
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh", 0.2f, m_pTransform->Get_Pos());
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2", 0.27f, m_pTransform->Get_Pos());
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3", 0.31f, m_pTransform->Get_Pos());
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh", 0.35f, m_pTransform->Get_Pos());
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2", 0.42f, m_pTransform->Get_Pos());
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3", 0.46f, m_pTransform->Get_Pos());
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh", 0.5f, m_pTransform->Get_Pos());
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2", 0.62f, m_pTransform->Get_Pos());
 
 				}
 			}
@@ -4250,17 +4272,27 @@ void CPlayer::Play_Skills()
 				}
 			}
 
-			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.8f)
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.1f)
 			{
 				if (m_bEventTrigger[7] == false)
 				{
 					m_bEventTrigger[7] = true;
 
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing", 0.1f, 0.f, m_pTransform->Get_Pos() + m_pTransform->Get_Axis(AXIS_Z) * 1.f);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing", 0.1f, 0.f, m_pTransform->Get_Pos() + m_pTransform->Get_Axis(AXIS_Z) * 1.f);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red", 0.3f, 0.f, m_pTransform->Get_Pos() + m_pTransform->Get_Axis(AXIS_Z) * 1.f);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black", 0.3f, 0.f, m_pTransform->Get_Pos() + m_pTransform->Get_Axis(AXIS_Z) * 1.f);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_DarkSmokeAura", 0.5f, 0.f, m_pTransform->Get_Pos() + _v3(0, 1.1f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.f);
+					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red"		, 0.3f	, 0.f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black"	, 0.3f	, 0.f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_DarkSmokeAura"	, 0.5f	, 0.f	, _v3(0, 1.1f, 0.f), m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.05f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.12f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.2f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.27f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"				, 0.31f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.35f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.42f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"				, 0.46f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.5f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.62f	, V3_NULL, m_pTransform);
 				}
 			}
 
@@ -4373,7 +4405,65 @@ void CPlayer::Play_Skills()
 			//==========================================================================================================================
 			// ¿Ã∆Â∆Æ
 			//==========================================================================================================================
+			_v3 vEffWindPos = _v3(0.f, 1.5f, 0.f);
+			_v3 vPlayerAngleDeg = D3DXToDegree(m_pTransform->Get_Angle());
 
+			if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.2f)
+			{
+				if (m_bEventTrigger[16] == false)
+				{
+					m_bEventTrigger[16] = true;
+
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.f, vEffWindPos, m_pTransform, _v3(0.f, vPlayerAngleDeg.y, -80.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.1f, vEffWindPos + _v3(0.f, -0.3f, 0.f), m_pTransform, _v3(0.f, vPlayerAngleDeg.y, 0.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.2f, vEffWindPos + _v3(0.f, -0.f, 0.f), m_pTransform, _v3(0.f, vPlayerAngleDeg.y, 0.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodConeMesh", 0.1f, V3_NULL, m_pTransform);
+				}
+			}
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.067f)
+			{
+				if (m_bEventTrigger[15] == false)
+				{
+					m_bEventTrigger[15] = true;
+
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.f, vEffWindPos, m_pTransform, _v3(0.f, vPlayerAngleDeg.y, -45.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.1f, vEffWindPos, m_pTransform, _v3(0.f, vPlayerAngleDeg.y, -45.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.2f, vEffWindPos, m_pTransform, _v3(0.f, vPlayerAngleDeg.y, -45.f));
+				}
+			}
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.1f)
+			{
+				if (m_bEventTrigger[14] == false)
+				{
+					m_bEventTrigger[14] = true;
+
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.f, vEffWindPos, m_pTransform, _v3(-10.f, vPlayerAngleDeg.y, 0.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.1f, vEffWindPos, m_pTransform, _v3(-10.f, vPlayerAngleDeg.y, 0.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.2f, vEffWindPos, m_pTransform, _v3(-10.f, vPlayerAngleDeg.y, 0.f));
+				}
+			}
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.1f)
+			{
+				if (m_bEventTrigger[13] == false)
+				{
+					m_bEventTrigger[13] = true;
+
+					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red"		, 0.3f	, 0.f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black"	, 0.3f	, 0.f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.05f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.12f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.2f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.27f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"				, 0.31f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.35f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.42f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"				, 0.46f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.5f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.62f	, V3_NULL, m_pTransform);
+				}
+			}
 
 			//==========================================================================================================================
 			// ¿Ãµø
@@ -4542,7 +4632,82 @@ void CPlayer::Play_Skills()
 			//==========================================================================================================================
 			// ¿Ã∆Â∆Æ
 			//==========================================================================================================================
+			_v3 vEffPos = _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 2.3f;
+			_v3 vEffWindPos = _v3(0.f, 1.5f, 0.f);
+			_v3 vEffGroundPos = m_pTransform->Get_Axis(AXIS_Z) * 1.7f;
+			_v3 vPlayerPos = m_pTransform->Get_Pos();
+			_v3 vPlayerAngleDeg = D3DXToDegree(m_pTransform->Get_Angle());
 
+			if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.967f)
+			{
+				if (m_bEventTrigger[15] == false)
+				{
+					m_bEventTrigger[15] = true;
+
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_DarkRedOnion_Explosion"			, 0.f			, vPlayerPos + vEffPos, nullptr);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_SplitAssert_LaserBefore"			, 0.f			, vPlayerPos + vEffGroundPos, nullptr);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_SplitAssert_LaserAfter_RingLine"	, 0.f			, vPlayerPos + vEffGroundPos, nullptr);
+					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_SplitAssert_LaserBody"	, 0.05f, 0.f	, vPlayerPos + vEffGroundPos, nullptr);
+					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Blood_Explosion"			, 0.5f, 0.f		, vPlayerPos + vEffGroundPos, nullptr);
+					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RedParticle_Upper"		, 0.5f, 0.f		, vPlayerPos + vEffGroundPos, nullptr);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion"			, 0.f			, vPlayerPos + vEffGroundPos, nullptr);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_SplitAssert_LaserAfter_RingLine"	, 0.f			, vPlayerPos + vEffGroundPos, nullptr);
+					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_SplitAssert_LaserAfter_Smoke", 0.3f, 0.f	, vPlayerPos + vEffGroundPos, nullptr);
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.5f)
+			{
+				if (m_bEventTrigger[14] == false)
+				{
+					m_bEventTrigger[14] = true;
+
+					g_pManagement->Create_Effect(L"Player_Skill_Rush_Particle_White"			, _v3(0.f, 0.5f, 0.f), m_pTransform, -m_pTransform->Get_Axis(AXIS_Z) * 2.5f);
+					g_pManagement->Create_Effect(L"Player_Skill_Rush_LaserBefore"				, vPlayerPos + vEffGroundPos, nullptr, m_pTransform->Get_Axis(AXIS_Y));
+					g_pManagement->Create_Effect(L"Player_Skill_Rush_RedParticle_LaserBefore"	, vPlayerPos + vEffGroundPos, nullptr, m_pTransform->Get_Axis(AXIS_Y));
+					g_pManagement->Create_Effect(L"Player_Skill_Rush_WhiteParticle_LaserBefore"	, vPlayerPos + vEffGroundPos, nullptr, m_pTransform->Get_Axis(AXIS_Y));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.1f	, vEffWindPos + _v3(0, 0.3f, 0.f), m_pTransform, _v3(-30.f, vPlayerAngleDeg.y, 30.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.15f	, vEffWindPos + _v3(0, 0.3f, 0.f), m_pTransform, _v3(30.f, vPlayerAngleDeg.y, 30.f));
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.9f)
+			{
+				if (m_bEventTrigger[13] == false)
+				{
+					m_bEventTrigger[13] = true;
+
+					g_pManagement->Create_AutoFindEffect(L"Player_Skill_Rush_Particle_Yellow"	, 0.9f, m_pTransform, _v3(0.f, 0.5f, 0.f));
+					g_pManagement->Create_AutoFindEffect(L"Player_Skill_Rush_Particle_Orange"	, 0.9f, m_pTransform, _v3(0.f, 0.5f, 0.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.25f	, vPlayerPos + vEffWindPos + _v3(0, -0.3f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f, nullptr, _v3(-90.f, vPlayerAngleDeg.y, 0.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.36f	, vPlayerPos + vEffWindPos + _v3(0, -0.3f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 2.2f, nullptr, _v3(-90.f, vPlayerAngleDeg.y, 0.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.45f	, vPlayerPos + vEffWindPos + _v3(0, -0.3f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 3.2f, nullptr, _v3(-90.f, vPlayerAngleDeg.y, 0.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.5f	, vPlayerPos + vEffWindPos + _v3(0, -0.3f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 3.8f, nullptr, _v3(-90.f, vPlayerAngleDeg.y, 0.f));
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.1f)
+			{
+				if (m_bEventTrigger[12] == false)
+				{
+					m_bEventTrigger[12] = true;
+
+					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red"		, 0.3f	, 0.f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black"	, 0.3f	, 0.f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.05f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.12f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.2f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.27f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"				, 0.31f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.35f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.42f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"				, 0.46f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.5f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.62f	, V3_NULL, m_pTransform);
+				}
+			}
 
 			//==========================================================================================================================
 			// ¿Ãµø
@@ -4722,7 +4887,58 @@ void CPlayer::Play_Skills()
 			//==========================================================================================================================
 			// ¿Ã∆Â∆Æ
 			//==========================================================================================================================
+			_v3 vEffPos = _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 2.3f;
+			_v3 vEffWindPos = _v3(0.f, 1.5f, 0.f);
+			_v3 vEffGroundPos = m_pTransform->Get_Axis(AXIS_Z) * 1.7f;
+			_v3 vPlayerPos = m_pTransform->Get_Pos();
+			_v3 vPlayerAngleDeg = D3DXToDegree(m_pTransform->Get_Angle());
 
+			if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.2f)
+			{
+				if (m_bEventTrigger[14] == false)
+				{
+					m_bEventTrigger[14] = true;
+
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_Torment_Wind_L", 0.10f, vEffWindPos, m_pTransform, _v3(0.f, vPlayerAngleDeg.y, -10.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_Torment_Wind_R", 0.11f, vEffWindPos, m_pTransform, _v3(0.f, vPlayerAngleDeg.y, 10.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_Torment_Wind_Distortion_L", 0.10f, vEffWindPos, m_pTransform, _v3(0.f, vPlayerAngleDeg.y, -10.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_Torment_Wind_Distortion_R", 0.11f, vEffWindPos, m_pTransform, _v3(0.f, vPlayerAngleDeg.y, 10.f));
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.1f)
+			{
+				if (m_bEventTrigger[13] == false)
+				{
+					m_bEventTrigger[13] = true;
+
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.10f, vEffWindPos , m_pTransform, _v3(10.f, vPlayerAngleDeg.y, 10.f));
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.15f, vEffWindPos , m_pTransform, _v3(10.f, vPlayerAngleDeg.y, 10.f));
+				}
+			}
+
+			else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.1f)
+			{
+				if (m_bEventTrigger[12] == false)
+				{
+					m_bEventTrigger[12] = true;
+
+					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red"		, 0.3f	, 0.f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black"	, 0.3f	, 0.f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.05f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.12f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.2f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.27f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"				, 0.31f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.35f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.42f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"				, 0.46f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.5f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.62f	, V3_NULL, m_pTransform);
+				}
+			}
 
 			//==========================================================================================================================
 			// ¿Ãµø

@@ -34,13 +34,7 @@ HRESULT CStageSelectUI::Ready_GameObject(void * pArg)
 	}
 
 	m_bIsActive = false;
-
-	/*m_vecStageUI[0]->Set_Teleport_Menu(CStageUI::Teleport_Home_1);
-	m_vecStageUI[1]->Set_Teleport_Menu(CStageUI::Teleport_St01_1);
-	m_vecStageUI[2]->Set_Teleport_Menu(CStageUI::Teleport_St02_1);
-	m_vecStageUI[3]->Set_Teleport_Menu(CStageUI::Teleport_St03_1);
-	m_vecStageUI[4]->Set_Teleport_Menu(CStageUI::Teleport_St04_1);*/
-
+	
 	return NOERROR;
 }
 
@@ -110,6 +104,9 @@ _int CStageSelectUI::Update_GameObject(_double TimeDelta)
 	//		m_vecStageUI[i]->Set_Active(!m_vecStageUI[i]->Get_Active());*/
 	//}
 	
+		
+	if (g_pInput_Device->Key_Up(DIK_RETURN))
+		cout << Teleport_Stage() << endl;
 	return NO_EVENT;
 }
 
@@ -168,6 +165,86 @@ void CStageSelectUI::Move_Left()
 	}
 }
 
+// 스테이지 하위 항목까지 적용
+_uint CStageSelectUI::Teleport_Stage()
+{
+	_uint iTeleportMenu = m_vecStageUI[m_iSelectIndex]->Get_Teleport_Menu();
+	_uint iSubStage = m_vecStageUI[m_iSelectIndex]->Get_SubStage();
+	_uint iStageNumber = 0;
+	switch (iTeleportMenu)
+	{
+	case CStageUI::Teleport_Home:
+	{
+		if (0 == iSubStage)
+			iStageNumber = TeleportID_Home_1;
+		else if(1 == iSubStage)
+			iStageNumber = TeleportID_Home_2;
+	}
+		break;
+	case CStageUI::Teleport_St01:
+	{
+		if(0 == iSubStage)
+			iStageNumber = TeleportID_St01_1;
+		else if(1 == iSubStage)
+			iStageNumber = TeleportID_St01_2;
+		else if(2 == iSubStage)
+			iStageNumber = TeleportID_St01_3;
+	}
+		break;
+	case CStageUI::Teleport_St02:
+	{
+		if(0 == iSubStage)
+			iStageNumber = TeleportID_St02_1;
+		else if(1 == iSubStage)
+			iStageNumber = TeleportID_St02_2;
+		else if(2 == iSubStage)
+			iStageNumber = TeleportID_St02_3;
+	}
+		break;
+	case CStageUI::Teleport_St03:
+	{
+		if(0 == iSubStage)
+			iStageNumber = TeleportID_St03_1;
+		else if(1 == iSubStage)
+			iStageNumber = TeleportID_St03_2;
+	}
+		break;
+	case CStageUI::Teleport_St04:
+	{
+		if(0 == iSubStage)
+			iStageNumber = TeleportID_St04_1;
+		else if(1 == iSubStage)
+			iStageNumber = TeleportID_St04_2;
+	}
+		break;
+	}
+	return _uint(iStageNumber);
+}
+
+void CStageSelectUI::MoveUp_SubStage()
+{
+	if (!m_bIsActive)
+		return;
+	//if (g_pInput_Device->Key_Up(DIK_J))
+	{
+		if (m_vecStageUI[m_iSelectIndex]->Get_MaxSubStage() > m_vecStageUI[m_iSelectIndex]->Get_SubStage())
+			m_vecStageUI[m_iSelectIndex]->Set_SubStage(m_vecStageUI[m_iSelectIndex]->Get_SubStage() + 1);
+
+	}
+
+
+}
+
+void CStageSelectUI::MoveDown_SubStage()
+{
+	if (!m_bIsActive)
+		return;
+	//if (g_pInput_Device->Key_Up(DIK_K))
+	{
+		if (m_vecStageUI[m_iSelectIndex]->Get_SubStage() > 0)
+			m_vecStageUI[m_iSelectIndex]->Set_SubStage(m_vecStageUI[m_iSelectIndex]->Get_SubStage() - 1);
+	}
+}
 
 CStageSelectUI * CStageSelectUI::Create(_Device pGraphic_Device)
 {

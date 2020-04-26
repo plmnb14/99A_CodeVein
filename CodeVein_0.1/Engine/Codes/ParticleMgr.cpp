@@ -68,7 +68,21 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Player_Skill_RotYRing_Red", 40);
 	Input_Pool(L"Player_Skill_WindMesh", 40);
 	Input_Pool(L"Player_Skill_WindTornadeMesh", 60);
-
+	Input_Pool(L"Player_Skill_BloodTornadeMesh", 60);
+	Input_Pool(L"Player_Skill_BloodTornadeMesh_2", 60);
+	Input_Pool(L"Player_Skill_BloodTornadeMesh_3", 60);
+	Input_Pool(L"Player_Skill_BloodConeMesh", 60);
+	Input_Pool(L"Player_Skill_Rush_Particle_Yellow"	, 300);
+	Input_Pool(L"Player_Skill_Rush_Particle_Orange"	, 300);
+	Input_Pool(L"Player_Skill_Rush_Particle_White"	, 300);
+	Input_Pool(L"Player_Skill_Rush_LaserBefore"		, 10);
+	Input_Pool(L"Player_Skill_Rush_RedParticle_LaserBefore"		, 80);
+	Input_Pool(L"Player_Skill_Rush_WhiteParticle_LaserBefore"	, 80);
+	Input_Pool(L"Player_Skill_Torment_Wind_L"	, 10);
+	Input_Pool(L"Player_Skill_Torment_Wind_R"	, 10);
+	Input_Pool(L"Player_Skill_Torment_Wind_Distortion_L"	, 10);
+	Input_Pool(L"Player_Skill_Torment_Wind_Distortion_R"	, 10);
+	
 	Input_Pool(L"ButterFly_SoftSmoke", 2000);
 	Input_Pool(L"ButterFly_PointParticle", 3500);
 	Input_Pool(L"ButterFly_PointParticle_Plum", 1000);
@@ -90,7 +104,8 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"ButterFly_GlitterSand", 300);
 
 	Input_Pool(L"ButterFly_VenomShot", 1000);
-	Input_Pool(L"ButterFly_VenomShot_Body", 30);
+	Input_Pool(L"ButterFly_VenomShot_Body", 100);
+	Input_Pool(L"ButterFly_VenomShot_Body_Sub", 800);
 	Input_Pool(L"ButterFly_VenomShot_SubSmoke", 1000);
 	Input_Pool(L"ButterFly_VenomShot_Distortion", 500);
 	Input_Pool(L"ButterFly_VenomShot_Chunk", 1000);
@@ -99,6 +114,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"ButterFly_VenomShot_DeadMist", 100);
 	Input_Pool(L"ButterFly_VenomShot_DeadSmoke", 100);
 	Input_Pool(L"ButterFly_VenomShot_DeadSplash", 100);
+	Input_Pool(L"ButterFly_Crying_Distortion", 100);
 	
 	Input_Pool(L"ButterFly_BackStepSand01", 50);
 	Input_Pool(L"ButterFly_BackStepSand02", 50);
@@ -189,10 +205,10 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"IceFloorAura_03", 100);
 	Input_Pool(L"IceSmoke_01", 100);
 	Input_Pool(L"IceSmoke_02", 100);
-	Input_Pool(L"IceGirl_FlashParticle_Blue", 500);
-	Input_Pool(L"IceGirl_FlashParticle_Green", 500);
-	Input_Pool(L"IceGirl_PointParticle_Blue", 500);
-	Input_Pool(L"IceGirl_PointParticle_Green", 500);
+	Input_Pool(L"IceGirl_FlashParticle_Blue", 5000);
+	Input_Pool(L"IceGirl_FlashParticle_Green", 5000);
+	Input_Pool(L"IceGirl_PointParticle_Blue", 5000);
+	Input_Pool(L"IceGirl_PointParticle_Green", 5000);
 	Input_Pool(L"IceBlock_Main", 30);
 	Input_Pool(L"IceBlock_Sub_01", 30);
 	Input_Pool(L"IceBlock_Sub_02", 30);
@@ -267,17 +283,45 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"FireBoy_ArmAttack_FloorDust", 100);
 
 	Input_Pool(L"DeerKing_IceStone_Up_Particle_0", 100);
+	Input_Pool(L"DeerKing_IceStone_Up_Small_Particle_0", 100);
+	Input_Pool(L"DeerKing_IceBullet_0", 30);
+	Input_Pool(L"DeerKing_IceBullet_ReadySmoke_0", 300);
+	Input_Pool(L"DeerKing_IceBullet_ReadySmoke_1", 300);
+	Input_Pool(L"DeerKing_IceBullet_ReadySmoke_2", 300); // 빛나는 연기
+	Input_Pool(L"DeerKing_IceBullet_ReadySmoke_3", 300);
+	Input_Pool(L"DeerKing_IceBullet_Charge_Hand_Smoke_0", 100);
+	Input_Pool(L"DeerKing_IceBullet_Charge_Hand_Smoke_After_0", 100);
+	Input_Pool(L"DeerKing_IceBullet_Charge_Hand_Smoke_After_1", 100);
+	Input_Pool(L"DeerKing_Point_ExplosionParticle_0", 10000);
+	Input_Pool(L"DeerKing_Body_PointParticle", 500);
+	Input_Pool(L"DeerKing_Body_Smoke", 500);
+	Input_Pool(L"DeerKing_Body_Smoke_2", 500);
+	Input_Pool(L"DeerKing_Distortion_Circle", 10);
 	Input_Pool(L"DeerKing_SnowChunk_Up_Particle_0", 100);
 	Input_Pool(L"DeerKing_SnowChunk_Up_Particle_1", 100);
-	Input_Pool(L"DeerKing_Snow_Up_Particle_0", 500);
-	Input_Pool(L"DeerKing_IceSmoke_0", 100);
-	Input_Pool(L"DeerKing_IceSmoke_1", 100);
-	Input_Pool(L"DeerKing_IceSmoke_2", 100);
-	Input_Pool(L"DeerKing_IceSmoke_Small_0", 100);
-	Input_Pool(L"DeerKing_IceSmoke_Small_1", 100);
+	Input_Pool(L"DeerKing_SnowChunk_Up_Particle_2", 100);
+	Input_Pool(L"DeerKing_SnowChunk_Up_Small_Particle_0", 300);
+	Input_Pool(L"DeerKing_SnowChunk_Heavy_Particle_0", 100);
+	Input_Pool(L"DeerKing_Snow_Up_Particle_0", 10000);
+	Input_Pool(L"DeerKing_Snow_Up_LongLine_0", 200);
+	Input_Pool(L"DeerKing_Snow_Up_LongLine_1", 500);
+	Input_Pool(L"DeerKing_IceSmoke_0", 300);
+	Input_Pool(L"DeerKing_IceSmoke_1", 300);
+	Input_Pool(L"DeerKing_IceSmoke_2", 300);
+	Input_Pool(L"DeerKing_IceSmoke_Mid_0", 300);
+	Input_Pool(L"DeerKing_IceSmoke_Mid_1", 300);
+	Input_Pool(L"DeerKing_IceSmoke_Small_0", 300);
+	Input_Pool(L"DeerKing_IceSmoke_Small_1", 300);
+	Input_Pool(L"DeerKing_IceBullet_DeadParticle_Stone_0", 300);
+	Input_Pool(L"DeerKing_IceBullet_DeadParticle_0", 300);
+	Input_Pool(L"DeerKing_Jump_In_Place_Distortion", 20);
+	Input_Pool(L"DeerKing_IceBlock_0", 20);
+	Input_Pool(L"DeerKing_Tornade_Mesh_0", 20);
+	Input_Pool(L"DeerKing_JumpPack_Distortion", 20);
+	Input_Pool(L"DeerKing_JumpPack_Fire", 700);
 
 	Input_Pool(L"Boss_KnockDown_Dust", 10);
-	Input_Pool(L"Boss_Dead_Particle", 7000);
+	Input_Pool(L"Boss_Dead_Particle", 11000);
 
 	Input_Pool(L"Cocoon_TongueFire", 200);
 	Input_Pool(L"Totem_Fire_Bullet_Dead_0", 200);
@@ -317,8 +361,10 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 
 	Input_Pool(L"SpawnParticle", 1000);
 	Input_Pool(L"SpawnParticle_Sub", 1000);
-	Input_Pool(L"SpawnParticle_ForBoss", 1000);
-
+	Input_Pool(L"SpawnParticle_ForBoss", 5000);
+	Input_Pool(L"SpawnParticle_ForBoss_Point", 5000);
+	Input_Pool(L"SpawnParticle_ForBoss_Point_Sub", 5000);
+	
 	Input_Pool(L"Bullet_Body", 30);
 	Input_Pool(L"Bullet_Body_Aura", 100);
 	Input_Pool(L"Bullet_DeadFlash", 10);
@@ -748,6 +794,49 @@ void CParticleMgr::Create_Effect_FinishPos(_tchar * szName, _v3 vPos, _v3 vFinis
 	}
 }
 
+void CParticleMgr::Create_Effect_Curve(_tchar* szName, _v3 vPos, CTransform * pTargetTrans, _float fPower)
+{
+	queue<CEffect*>* pFindedQueue = Find_Queue(szName);
+	if (pFindedQueue == nullptr)
+		return;
+
+	// 풀 안에서 미리 생성한 오브젝트 꺼내서 사용
+	for (_int i = 0; i < pFindedQueue->front()->Get_Info()->iMaxCount; ++i)
+	{
+		if (pFindedQueue->size() <= 20) // 넉넉하게... 남은게 20 이하면 생성하여 사용
+		{
+			_tchar* szEffName = pFindedQueue->front()->Get_ParticleName();
+			CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));
+
+			m_EffectList.push_back(pEffect);
+
+			pEffect->Set_ParticleName(szEffName);
+			pEffect->Set_Desc(vPos, nullptr);
+			pEffect->Set_Curve(pTargetTrans, fPower);
+			pEffect->Reset_Init();
+
+			continue;
+		}
+
+		m_EffectList.push_back(pFindedQueue->front());
+
+		pFindedQueue->front()->Set_Desc(vPos, nullptr);
+		pFindedQueue->front()->Set_Curve(pTargetTrans, fPower);
+		pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
+
+		pFindedQueue->pop();
+	}
+}
+
+void CParticleMgr::Create_Effect_Decal(_tchar* szName, _v3 vPos)
+{
+	CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szName, nullptr));
+	pEffect->Set_ParticleName(szName);
+	//m_EffectPool[szName].push(pEffect);
+
+	m_pManagement->Add_GameOject_ToLayer_NoClone(pEffect, SCENE_STAGE, L"Layer_Effect", nullptr);
+}
+
 void CParticleMgr::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol, CTransform* pHittedTrans, _float fPower)
 {
 	_v3 vAttackPos = pAttackCol->Get_CenterPos();
@@ -822,6 +911,44 @@ void CParticleMgr::Create_FootSmoke_Effect(_v3 vPos, _float fOffset)
 	Create_Effect(L"Player_FootSmoke", vPos);
 }
 
+void CParticleMgr::Create_BossDeadParticle_Effect(_v3 vPos, _float fDelay, _float fLength)
+{
+	queue<CEffect*>* pFindedQueue = Find_Queue(L"Boss_Dead_Particle");
+	if (pFindedQueue == nullptr)
+		return;
+
+	for (_int i = 0; i < 5000; i++)
+	{
+		if (pFindedQueue->size() < 20)
+			return;
+
+		_mat matRotX, matRotY, matRotZ;
+		_v3 vDir = _v3(1.f, 1.f, 1.f);
+		D3DXMatrixIdentity(&matRotX);
+		D3DXMatrixIdentity(&matRotY);
+		D3DXMatrixIdentity(&matRotZ);
+
+		D3DXMatrixRotationX(&matRotX, D3DXToRadian(_float(CCalculater::Random_Num_Double(0, 360))));
+		D3DXMatrixRotationY(&matRotY, D3DXToRadian(_float(CCalculater::Random_Num_Double(0, 360))));
+		D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(_float(CCalculater::Random_Num_Double(0, 360))));
+		D3DXVec3TransformNormal(&vDir, &vDir, &matRotX);
+		D3DXVec3TransformNormal(&vDir, &vDir, &matRotY);
+		D3DXVec3TransformNormal(&vDir, &vDir, &matRotZ);
+		D3DXVec3Normalize(&vDir, &vDir);
+
+		_v3 vRandPos = vDir * (fLength);
+
+		m_EffectList.push_back(pFindedQueue->front());
+
+		pFindedQueue->front()->Set_Desc(vPos + vRandPos, nullptr);
+		pFindedQueue->front()->Set_Delay(true, fDelay);
+		pFindedQueue->front()->Set_Dir(vDir);
+		pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
+
+		pFindedQueue->pop();
+	}
+}
+
 HRESULT CParticleMgr::Update_Effect(const _double TimeDelta)
 {
 	_int iProgress;
@@ -842,7 +969,7 @@ HRESULT CParticleMgr::Update_Effect(const _double TimeDelta)
 				//cout << "Queue Size : " << Find_Queue((*iter_begin)->Get_ParticleName())->size() << endl;
 
 				// 삭제하지 않고 큐에 다시 넣기
-				if (pFindedQueue->size() < 1000) // 임시...
+				if (pFindedQueue->size() < 11000) // 임시...
 					pFindedQueue->push((*iter_begin));
 				else
 					Safe_Release((*iter_begin));

@@ -519,6 +519,12 @@ void CWeapon::Change_WeaponData(WEAPON_DATA _eWpnData)
 		m_eWeaponType = WEAPON_Halverd;
 		break;
 	}
+	case WPN_DeerKingShield:
+	{
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_DeerKingShield");
+		m_eWeaponType = WEAPON_Shield;
+		break;
+	}
 	}
 
 	Change_WeaponMesh(WeaponMeshName);
@@ -686,6 +692,15 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[WPN_FrostBlood_IceGirl].fTrail_Min = 0.3f;
 	m_tWeaponParam[WPN_FrostBlood_IceGirl].fTrail_Max = 1.6f;
 	m_tWeaponParam[WPN_FrostBlood_IceGirl].fCol_Height = 0.9f;
+
+	//===========================================================================================
+
+	m_tWeaponParam[WPN_DeerKingShield].fDamage = 25.f;
+	m_tWeaponParam[WPN_DeerKingShield].fRadius = 1.4f;
+	m_tWeaponParam[WPN_DeerKingShield].fTrail_Min = 0.f;
+	m_tWeaponParam[WPN_DeerKingShield].fTrail_Max = 1.f;
+	m_tWeaponParam[WPN_DeerKingShield].fCol_Height = 0.f;
+
 
 	return S_OK;
 }

@@ -80,7 +80,7 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Flash_Middle_Ground());
+	Start_Sel->Add_Child(Sting());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -670,16 +670,16 @@ CBT_Composite_Node * CQueensKnight::Sting()
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", -1, 0.317, 0);
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", 1, 0.35, 0);
 
-	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_TopPos", 0.6, 17, 0.1, 0);
-	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2", L"Sword_MidPos", 0.6, 17, 0.1, 0);
-	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_0", L"Sword_MidPos", 0.6, 17, 0.1, 0);
-	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_1", L"Sword_MidPos", 0.6, 17, 0.1, 0);
-	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_TopPos", 0.6, 7, 0.1, 0);
-	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark", L"Sword_MidPos", 0.6, 7, 0.1, 0);
-	//CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("피 소용돌이", L"QueensKnight_Sting_Tornade", L"Sword_TopPos", 0.65, 1, 0.01, 0);
-
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2"			, L"Sword_TopPos"										, 0.6, 17, 0.1, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_2"			, L"Sword_MidPos"										, 0.6, 17, 0.1, 0);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_0"			, L"Sword_MidPos"										, 0.6, 17, 0.1, 0);
+	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("붉은 번개", L"QueensKnight_Trail_Lightning_1"			, L"Sword_MidPos"										, 0.6, 17, 0.1, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark"	, L"Sword_TopPos"										, 0.6, 7, 0.1, 0);
+	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("검붉은 번개", L"QueensKnight_Trail_Lightning_2_Dark"	, L"Sword_MidPos"										, 0.6, 7, 0.1, 0);
+	CBT_CreateEffect* Effect1 = Node_New_CreateEffect_Finite("피 소용돌이", L"QueensKnight_Sting_Tornade"		, L"Sword_TopPos"	, nullptr, L"V3_Null", L"Self_Angle", 0.75, 1, 0.01, 0);
+	
 	Root_Parallel->Add_Service(Effect0);
-	//Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect1);
 	Root_Parallel->Add_Service(Effect2);
 	Root_Parallel->Add_Service(Effect3);
 	Root_Parallel->Add_Service(Effect4);
@@ -722,7 +722,7 @@ CBT_Composite_Node * CQueensKnight::Wing_Attack()
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적1", L"Player_Pos", 0.1, 0);
 	CBT_RotationDir* Rotation1 = Node_RotationDir("방향 추적2", L"Player_Pos", 0.1);
 	CBT_SetValue* TrailOn0 = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
-	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 8, 0.483, 0);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 16, 0.483, 0);
 	CBT_SetValue* TrailOff0 = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("먼지", L"QueensKnight_WhirlWind_Smoke", L"Self_Pos", 0.63, 10, 0.5, 0);
@@ -951,7 +951,7 @@ CBT_Composite_Node * CQueensKnight::Flash_Wing_Attack()
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적1", L"Player_Pos", 0.1, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 추적2", L"Player_Pos", 0.1);
 	CBT_SetValue* TrailOn0 = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
-	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 8, 0.483, 0);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 16, 0.483, 0);
 	CBT_SetValue* TrailOff0 = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("점멸 파티클", L"QueensKnight_Teleport_Particle", L"Self_MidPos", 0, 150, 0.15, 0);
@@ -2054,7 +2054,11 @@ HRESULT CQueensKnight::Update_Value_Of_BB()
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"DarkBulletDir6", vDir5);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"DarkBulletDir7", vDir6);
 
-
+	/////////////////
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"V3_Null", V3_NULL);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_Dir", m_pTransformCom->Get_Axis(AXIS_Z));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_Angle", D3DXToDegree(m_pTransformCom->Get_Angle()));
+	/////////////////
 
 	return S_OK;
 }
@@ -2212,7 +2216,7 @@ void CQueensKnight::Check_PhyCollider()
 			Start_Dissolve(				0.4f, false, true	, 2.7f);
 			m_pSword->Start_Dissolve(	0.4f, false, false	, 2.7f);
 			m_pShield->Start_Dissolve(	0.4f, false, false	, 2.7f);
-			g_pManagement->Create_Effect_Delay(L"Boss_Dead_Particle"					, 2.5f, _v3(0.f, 1.3f, 0.f), m_pTransformCom);
+			CParticleMgr::Get_Instance()->Create_BossDeadParticle_Effect(m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), 2.5f, 0.5f);
 			g_pManagement->Create_ParticleEffect_Delay(L"SpawnParticle_ForBoss"	, 2.5f	,  3.f, m_pTransformCom->Get_Pos() + _v3(0.f, 0.5f, 0.f));
 		}
 	}

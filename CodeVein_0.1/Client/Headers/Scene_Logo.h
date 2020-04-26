@@ -6,6 +6,7 @@
 
 BEGIN(Client)
 class CLogoBtn;
+class CLoadingScreen;
 class CScene_Logo final : public CScene
 {
 public:
@@ -33,6 +34,8 @@ private:
 private:
 	CLoading*			m_pLoading = nullptr;
 	CLogoBtn*			m_pLogoBtn = nullptr;
+	CLoadingScreen*		m_pLoadingScreen = nullptr;
+	_bool				m_bIsChangeStage = false;
 
 private:
 	DEBUG_SceneChange   m_eSceneChange = Stage_Training;
