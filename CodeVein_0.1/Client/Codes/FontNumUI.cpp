@@ -60,6 +60,8 @@ _int CFontNumUI::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CFontNumUI::Render_GameObject()
 {
+	if (!m_bIsActive)
+		return NOERROR;
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;

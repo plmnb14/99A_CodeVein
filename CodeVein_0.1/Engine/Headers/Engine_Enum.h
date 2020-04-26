@@ -97,3 +97,13 @@ enum Teleport_ID
 	TeleportID_St03_1, TeleportID_St03_2,
 	TeleportID_St04_1, TeleportID_St04_2,
 };
+
+enum BloodCode_ID
+{
+	BloodCode_Fighter, // 파이터
+	BloodCode_Caster, // 캐스터
+	BloodCode_Berserker, // 광전사(올리버)
+	BloodCode_Prometheus, // 프로메테우스(루이)
+	BloodCode_Eos, // 에오스(이오)
+	BloodCode_End
+};

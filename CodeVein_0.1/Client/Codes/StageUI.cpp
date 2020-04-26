@@ -38,13 +38,12 @@ HRESULT CStageUI::Ready_GameObject(void * pArg)
 _int CStageUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
-	if (m_bIsDead)
-		return DEAD_OBJ;
+	
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	if (1.f > m_fAlpha && m_bIsActive)
 		m_fAlpha += _float(TimeDelta);
-	m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
+	/*m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 
 	if (m_pTarget)
 	{
@@ -52,7 +51,7 @@ _int CStageUI::Update_GameObject(_double TimeDelta)
 		_v3 vLook = TARGET_TO_TRANS(m_pTarget)->Get_Axis(AXIS_Z);
 		m_pTransformCom->Set_Pos(TARGET_TO_TRANS(m_pTarget)->Get_Pos() + (*V3_NORMAL_SELF(&vLook) * 2.f + _v3(0.f, 1.5f, 0.f)));
 		m_pTransformCom->Set_Scale(_v3(2.f, 1.f, 0.f));
-	}
+	}*/
 	
 	
 	switch (m_eTeleportMenu)

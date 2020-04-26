@@ -4,6 +4,7 @@
 #include "UI.h"
 
 BEGIN(Client)
+class CPlayerFontUI;
 class CExpUI final : public CUI
 {
 private:
@@ -34,6 +35,8 @@ private:
 	_float					m_fPercentage = 0.f;
 	_float					m_fMaxExp = 50.f;
 	_float					m_fCurExp = 0.f;
+	CPlayerFontUI*			m_pLevelFont = nullptr;
+	_uint					m_iLevel = 10;
 
 public:
 	static CExpUI*			Create(_Device pGraphic_Device);

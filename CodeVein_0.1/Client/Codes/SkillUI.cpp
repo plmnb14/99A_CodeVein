@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\SkillUI.h"
 #include "Active_Icon.h"
-#include "FontNumManager.h"
+#include "PlayerFontUI.h"
 
 CSkillUI::CSkillUI(_Device pDevice)
 	: CUI(pDevice)
@@ -40,11 +40,10 @@ void CSkillUI::SetUp_Default()
 	_float fPosX1 = WINCX * 0.9f, fPosY1 = WINCY * 0.75f;
 	_float fPosX2 = WINCX * 0.83f, fPosY2 = WINCY * 0.89f;
 
-	
 	for (_uint i = 0; i < 8; ++i)
 	{
-		g_pManagement->Add_GameObject_ToLayer(L"ActiveIcon", SCENE_MORTAL, L"Layer_PlayerUI");
-		m_pActive[i] = static_cast<CActive_Icon*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
+		m_pActive[i] = static_cast<CActive_Icon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ActiveIcon", nullptr));
+		g_pManagement->Add_GameOject_ToLayer_NoClone(m_pActive[i], SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 		
 		if (i < 4)
 			m_pActive[i]->Set_UI_Size(64.f, 64.f);
