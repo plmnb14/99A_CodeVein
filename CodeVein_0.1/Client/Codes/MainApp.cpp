@@ -15,7 +15,7 @@ HRESULT CMainApp::Ready_MainApp()
 {
 	if (FAILED(Ready_Default_Setting(CGraphic_Device::WINMODE_WIN, g_nWinCX, g_nWinCY)))
 		return E_FAIL;
-	
+
 	if (FAILED(Ready_Component_Prototype()))
 		return E_FAIL;
 
@@ -72,8 +72,6 @@ HRESULT CMainApp::Render_MainApp()
 
 	m_pGraphic_Dev->EndScene();
 	m_pGraphic_Dev->Present(nullptr, nullptr, 0, nullptr);
-	
-	
 	
 	return S_OK;
 }

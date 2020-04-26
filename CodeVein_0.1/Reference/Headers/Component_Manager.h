@@ -17,6 +17,8 @@
 #include "RigidBody.h"
 #include "NavMesh.h"
 #include "AIController.h"
+#include "Optimization.h"
+#include "BattleAgent.h"
 
 BEGIN(Engine)
 

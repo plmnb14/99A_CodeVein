@@ -36,6 +36,20 @@
 
 #endif
 
+#ifdef _DEBUG
+#pragma comment(lib, "PhysX3DEBUG_x64.lib")
+#pragma comment(lib, "PhysX3CommonDEBUG_x64.lib")
+#pragma comment(lib, "PxFoundationDEBUG_x64.lib")
+#pragma comment(lib, "PhysX3ExtensionsDEBUG.lib")
+#pragma comment(lib, "PhysX3CookingDEBUG_x64.lib")
+#else
+#pragma comment(lib, "PhysX3_x64.lib")
+#pragma comment(lib, "PhysX3Common_x64.lib")
+#pragma comment(lib, "PxFoundation_x64.lib")
+#pragma comment(lib, "PhysX3Extensions.lib")
+#pragma comment(lib, "PhysX3Cooking_x64.lib")
+#endif
+
 #include "Engine_Macro.h"
 #include "Engine_Typedef.h"
 #include "Engine_Enum.h"

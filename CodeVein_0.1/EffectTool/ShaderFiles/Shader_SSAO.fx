@@ -62,10 +62,10 @@ struct PS_OUT
 	vector		vSSAO : COLOR0;
 };
 
-float g_fSampleRad  = 8.0f;		// 샘플링 반경
-float g_fIntensity	= 6.0f;		// ao 강도
-float g_fScale		= 0.5f;		// 사이 거리
-float g_fBias		= 0.2f;		// 너비 제어
+float g_fSampleRad  = 6.0f;		// 샘플링 반경
+float g_fIntensity	= 20.0f;		// ao 강도
+float g_fScale		= 1.0f;		// 사이 거리
+float g_fBias		= 0.6f;		// 너비 제어
 
 //float g_fSampleRad = 0.1f;		// 샘플링 반경
 //float g_fIntensity = 0.35f;		// ao 강도
@@ -147,8 +147,8 @@ PS_OUT PS_SSAO(PS_IN In)
 
 	ao /= (float)iterations * 4.f;
 
-	Out.vSSAO = ao;
-	//Out.vSSAO	= 1.f - ao;
+	//Out.vSSAO = ao;
+	Out.vSSAO	= 1.f - ao;
 	Out.vSSAO.a = 1.f;
 
 	return Out;
@@ -172,11 +172,23 @@ technique Default_Technique
 {
 	pass SSAO
 	{
+		ZWriteEnable = false;
+
+		AlphaBlendEnable = true;
+		SrcBlend = one;
+		DestBlend = one;
+
 		PixelShader = compile ps_3_0 PS_SSAO();
 	}
 
 	pass SSAO_Blur
 	{
+		ZWriteEnable = false;
+
+		AlphaBlendEnable = true;
+		SrcBlend = one;
+		DestBlend = one;
+
 		PixelShader = compile ps_3_0 PS_SSAO_Blur();
 	}
 

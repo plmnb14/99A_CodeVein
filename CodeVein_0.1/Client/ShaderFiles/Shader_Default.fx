@@ -103,6 +103,14 @@ technique Default_Technique
 		PixelShader = compile ps_3_0 PS_MAIN();
 	}
 
+	pass Default_Rendering_None_Cull
+	{
+		// RenderState		
+		AlphablendEnable = false;
+		CullMode = none;
 
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 PS_MAIN();
+	}
 }
 

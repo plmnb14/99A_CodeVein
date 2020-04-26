@@ -19,6 +19,7 @@
 #include "FrameMgr.h"
 #include "ParticleMgr.h"
 #include "Renderer.h"
+#include "MyPhysx.h"
 
 BEGIN(Engine)
 
@@ -81,7 +82,7 @@ public: // For.Light_Manager
 	const D3DLIGHT9* Get_LightDesc(_uint iIndex = 0);
 	const _mat Get_LightViewProj(_uint iIndex = 0);
 	void Set_LightPos(_uint iIndex, _v3 vPos);
-	HRESULT Add_Light(LPDIRECT3DDEVICE9 pGraphic_Device, D3DLIGHT9 LightDesc);
+	HRESULT Add_Light(LPDIRECT3DDEVICE9 pGraphic_Device, NEW_LIGHT LightDesc, CLight_Manager::Light_Type _eLightType);
 	HRESULT Clear_LightList();
 
 public: // For.Target_Manager
@@ -133,6 +134,7 @@ private:
 	CGizmo*						m_pGizmo = nullptr;
 	CBT_Node_Manager*			m_pBT_Node_Manager = nullptr;
 	CNavMesh*					m_pNavMesh = nullptr;
+	CMyPhysx*					m_pMyPhysx = nullptr;
 
 public:
 	virtual void Free();

@@ -12,6 +12,7 @@
 #include "MonsterUI.h"
 
 #include "MonsterHeaders.h"
+#include "Flag.h"
 
 #include "Player_Colleague.h"
 
@@ -165,11 +166,11 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	// 검겐지
 	//====================================================================================================================================================
 	
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White, CSwordGenji::Sit1, 10.f, 5.f, 2.f));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(-8.f, 0.f, -8.f));
-	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White, CSwordGenji::Sit1, 10.f, 5.f, 2.f));
+	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(-8.f, 0.f, -8.f));
+	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle, CSwordGenji::Sit2, 10.f, 5.f, 2.f));
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
@@ -303,6 +304,11 @@ HRESULT CScene_Stage_Training::Ready_Layer_Environment()
 
 	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Sky", nullptr);
 
+	pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Flag", &CFlag::INFO(5, 5, 2.f, 1.f));
+	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(0.f, 3.f, 3.f));
+	//static_cast<CFlag*>(pInstance)->Set_Wind();	// 설정안하면 디폴트 설정
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Sky", nullptr);
+
 	return S_OK;
 }
 
@@ -373,8 +379,8 @@ void CScene_Stage_Training::Create_Fog(_double TimeDelta)
 
 HRESULT CScene_Stage_Training::Ready_LightDesc()
 {
-	D3DLIGHT9		LightDesc;
-	ZeroMemory(&LightDesc, sizeof(D3DLIGHT9));
+	NEW_LIGHT		LightDesc;
+	ZeroMemory(&LightDesc, sizeof(NEW_LIGHT));
 
 	_v3 vLightPos = _v3(5.f, -8.f, -5.f);
 	V3_NORMAL_SELF(&vLightPos);
@@ -386,7 +392,9 @@ HRESULT CScene_Stage_Training::Ready_LightDesc()
 	// In.WorldSpace
 	LightDesc.Direction = vLightPos;
 
-	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
+	LightDesc.fAlpha = 1.f;
+
+	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
 		return E_FAIL;
 
 	return NOERROR;

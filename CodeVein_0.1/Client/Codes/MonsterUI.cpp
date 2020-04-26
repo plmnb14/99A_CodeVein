@@ -28,6 +28,9 @@ HRESULT CMonsterUI::Ready_GameObject(void* pArg)
 
 	CUI::Ready_GameObject(pArg);
 
+	m_pFontNum = static_cast<CUI_FontNum*>(g_pManagement->Clone_GameObject_Return(L"GameObject_FontNum", nullptr));
+	m_pFontNum->Set_Type(CUI_FontNum::Billboard_UI);
+
 	m_fSizeX = m_pTransformCom->Get_Size().x;
 	m_fSizeY = m_pTransformCom->Get_Size().y;
 
@@ -47,12 +50,7 @@ _int CMonsterUI::Update_GameObject(_double TimeDelta)
 	if (true == m_pTarget->Get_Dead())
 		return DEAD_OBJ;
 
-	
-	//if (true == m_bIsDead)
-	//	return DEAD_OBJ;
-
 	SetUp_State(TimeDelta);
-
 
 
 	_mat matBill, matWorld, matView;
@@ -68,11 +66,7 @@ _int CMonsterUI::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixInverse(&matBill, NULL, &matBill);
 
-	Compute_ViewZ(&m_pTransformCom->Get_Pos());
-
 	m_pTransformCom->Set_WorldMat((matBill * matWorld));
-
-
 	m_pTransformCom->Set_Scale(_v3(0.8f, 0.08f, 0.8f));
 
 	
@@ -80,6 +74,15 @@ _int CMonsterUI::Update_GameObject(_double TimeDelta)
 	_mat TempBonmatrix;
 	TempBonmatrix = *m_matMonsterBon * (TARGET_TO_TRANS(m_pTarget)->Get_WorldMat());
 
+	//==================================================
+	if (m_bShowFont)
+	{
+		m_pFontNum->Set_ParentMatrix(&TempBonmatrix);
+		m_pFontNum->Update_GameObject(TimeDelta);
+		m_pFontNum->Update_NumberValue(m_fValueGap_Acc);
+		m_pFontNum->Set_Alpha(m_fTimerAlpha);
+	}
+	//==================================================
 
 	m_pTransformCom->Set_Pos(_v3(m_matMonsterBon->_41, m_matMonsterBon->_42 + 0.7f, m_matMonsterBon->_43));
 
@@ -91,10 +94,24 @@ _int CMonsterUI::Update_GameObject(_double TimeDelta)
 		m_pTransformCom->Set_Pos((_v3(TempBonmatrix._41, TempBonmatrix._42 + 0.7f, (TempBonmatrix._43 - 0.02f))));
 
 	if (2 == m_iCheck_Renderindex)
-		m_pTransformCom->Set_Pos((_v3(TempBonmatrix._41, TempBonmatrix._42 + 0.7f, TempBonmatrix._43)));
+		m_pTransformCom->Set_Pos((_v3(TempBonmatrix._41, TempBonmatrix._42 + 0.7f, TempBonmatrix._43 - 0.01f)));
 
+	//========================================================================
+	_float fNewTargetHp = m_pTarget->Get_Target_Param().fHp_Cur;
 
-	m_fMonsterHp = m_pTarget->Get_Target_Param().fHp_Cur;
+	if (fNewTargetHp < m_fMonsterHp)
+	{
+		_float fGapHp = m_fMonsterHp - fNewTargetHp;
+		m_fValueGap_Acc += fGapHp;
+
+		m_bShowFont = true;
+		m_fTimerAlpha = 1.f;
+		m_fShowFontTimer = 0.f;
+		m_pFontNum->Set_ScaleUp(10.f);
+	}
+
+	m_fMonsterHp = fNewTargetHp;
+	//========================================================================
 	m_fTotalHP = m_pTarget->Get_Target_Param().fHp_Max;
 
 	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
@@ -103,6 +120,7 @@ _int CMonsterUI::Update_GameObject(_double TimeDelta)
 
 	if (V3_LENGTH(&Player_D3) <= 10.f)
 		m_bCheck_Dir = true;
+
 	else
 		m_bCheck_Dir = false;
 
@@ -110,6 +128,18 @@ _int CMonsterUI::Update_GameObject(_double TimeDelta)
 	if (true == m_bCheck_Dir)
 		m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
+
+	if (m_fMonsterHp <= 0)
+	{
+		m_bShowFont = false;
+	}
+
+	if (m_bShowFont)
+	{
+		Update_ShowFont();
+	}
+
+	Compute_ViewZ(&m_pTransformCom->Get_Pos());
 
 	return S_OK;
 }
@@ -249,6 +279,20 @@ void CMonsterUI::SetUp_State(_double TimeDelta)
 		m_fMonsterHp = 0.f;
 }
 
+void CMonsterUI::Update_ShowFont()
+{
+	m_fShowFontTimer += g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60");
+	m_fTimerAlpha = 1.f - (m_fShowFontTimer / m_fShowFontTimer_Max);
+
+	if (m_fShowFontTimer >= m_fShowFontTimer_Max)
+	{
+		m_fShowFontTimer = 0.f;
+		m_bShowFont = false;
+		m_fValueGap_Acc = 0.f;
+		m_fTimerAlpha = 0.f;
+	}
+}
+
 CMonsterUI* CMonsterUI::Create(_Device pGraphic_Device)
 {
 	CMonsterUI* pInstance = new CMonsterUI(pGraphic_Device);
@@ -271,6 +315,8 @@ CGameObject* CMonsterUI::Clone_GameObject(void * pArg)
 
 void CMonsterUI::Free()
 {
+	Safe_Release(m_pFontNum);
+
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom);
