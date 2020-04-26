@@ -142,12 +142,13 @@ HRESULT CTexEffect::LateInit_GameObject()
 		!lstrcmp(L"FireBoy_FireGround_BoomParticle_02", m_szParticleName) ||
 		!lstrcmp(L"DeerKing_Snow_Up_Particle_0", m_szParticleName) ||
 		!lstrcmp(L"DeerKing_Body_PointParticle", m_szParticleName) ||
-		!lstrcmp(L"DeerKing_Point_ExplosionParticle_0", m_szParticleName)
+		!lstrcmp(L"DeerKing_Point_ExplosionParticle_0", m_szParticleName) ||
 		//!lstrcmp(L"IceGirl_PointParticle_Blue", m_szParticleName) ||
 		//!lstrcmp(L"IceGirl_PointParticle_Green", m_szParticleName) ||
 		//!lstrcmp(L"IceGirl_FlashParticle_Blue", m_szParticleName) ||
 		//!lstrcmp(L"IceGirl_FlashParticle_Green", m_szParticleName)
 		//!lstrcmp(L"MapMist", m_szParticleName)
+		!lstrcmp(L"MapSnow", m_szParticleName)
 		)
 		m_bInstanceTarget = true;
 

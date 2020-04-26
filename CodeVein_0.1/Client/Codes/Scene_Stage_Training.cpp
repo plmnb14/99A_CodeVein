@@ -47,6 +47,7 @@ _int CScene_Stage_Training::Update_Scene(_double TimeDelta)
 	CUI_Manager::Get_Instance()->Update_UI();
 	
 	//Create_Fog(TimeDelta);
+	Create_Snow(TimeDelta);
 
 	return _int();
 }
@@ -106,13 +107,13 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//	return E_FAIL;
 
 	// 검은 늑대
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_BlackWolf", &CBlackWolf::INITSTRUCT(25.f, 75.f, 10.f, 20.f, 5.f, 5));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
-	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_BlackWolf", &CBlackWolf::INITSTRUCT(25.f, 75.f, 10.f, 20.f, 5.f, 5));
+	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
+	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
-	// 야차맨
+	//// 야차맨
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_YachaMan", &CYachaMan::INITSTRUCT(25.f, 180.f, 10.f, 20.f, 5.f, 5));
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
 	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
@@ -128,13 +129,13 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 
 	// 몽키.D.루피 
 	//	ㄴ> Moon : 완죤 웃겨요~~!!@@@
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Monkey", &CMonkey::INITSTRUCT(25.f, 100.f, 10.f, 15.f, 10.f, 5.f, 5));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
-	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Monkey", &CMonkey::INITSTRUCT(25.f, 100.f, 10.f, 15.f, 10.f, 5.f, 5));
+	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
+	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
-	//// 예티
+	////// 예티
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Yeti", &CYeti::INITSTRUCT(25.f, 200.f, 10.f, 15.f, 10.f, 5.f, 5));
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
 	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
@@ -359,6 +360,26 @@ void CScene_Stage_Training::Create_Fog(_double TimeDelta)
 			vRandPos = vDir * (fMinRange + fRandRange);
 			g_pManagement->Create_Effect(L"MapDust_2", vPlayerPos + vRandPos + _v3(0.f, _float(CCalculater::Random_Num_Double(0, 0.5)), 0.f), nullptr);
 		}
+	}
+}
+
+void CScene_Stage_Training::Create_Snow(_double TimeDelta)
+{
+	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	if (!pPlayer)
+		return;
+
+	const _float SNOW_OFFSET = 0.3f;
+
+	m_fMapSnowDelay += _float(TimeDelta);
+	if (m_fMapSnowDelay > SNOW_OFFSET)
+	{
+		m_fMapSnowDelay = 0.f;
+
+		CTransform* pPlayerTrans = TARGET_TO_TRANS(pPlayer);
+		_v3 vPlayerPos = pPlayerTrans->Get_Pos();
+
+		g_pManagement->Create_Effect(L"MapSnow", vPlayerPos + _v3(0.f, 10.f, 0.f), nullptr);
 	}
 }
 

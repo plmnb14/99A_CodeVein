@@ -600,6 +600,12 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"SpawnParticle_ForBoss_Point_Sub")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Monster_DeadSmoke_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Monster_DeadSmoke_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Monster_DeadSmoke_2")))
+		return E_FAIL;
 
 #pragma region Blood
 	if (FAILED(Add_EffectPrototype(L"Hit_Blood_0")))
@@ -701,6 +707,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"MistletoeParticle_Sub")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"MistletoeParticle_Active")))
+		return E_FAIL;
 
 	if (FAILED(Add_EffectPrototype(L"ItemGet_Particle")))
 		return E_FAIL;
@@ -727,6 +735,8 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"MapDust_2")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"MapMist")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"MapSnow")))
 		return E_FAIL;
 
 	if (FAILED(Add_EffectPrototype(L"Player_FootSmoke")))

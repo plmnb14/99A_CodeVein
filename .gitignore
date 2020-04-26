@@ -1,7 +1,6 @@
 *.db
 *.suo
 *.ilk
-*.dll
 *.cso
 *.zip
 *.tlog
@@ -13,7 +12,6 @@
 *.idb
 *.log
 *.meta
-*.lib
 *.opendb
 *.ipch
 *.enc

@@ -324,6 +324,9 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 
 	Input_Pool(L"Boss_KnockDown_Dust", 10);
 	Input_Pool(L"Boss_Dead_Particle", 11000);
+	Input_Pool(L"Monster_DeadSmoke_0", 1000);
+	Input_Pool(L"Monster_DeadSmoke_1", 1000);
+	Input_Pool(L"Monster_DeadSmoke_2", 1000);
 
 	Input_Pool(L"Cocoon_TongueFire", 200);
 	Input_Pool(L"Totem_Fire_Bullet_Dead_0", 200);
@@ -378,8 +381,9 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Bullet_Tail_Particle", 100);
 	Input_Pool(L"RockBullet_Body", 10);
 	
-	Input_Pool(L"MistletoeParticle", 80);
-	Input_Pool(L"MistletoeParticle_Sub", 80);
+	Input_Pool(L"MistletoeParticle", 500);
+	Input_Pool(L"MistletoeParticle_Sub", 500);
+	Input_Pool(L"MistletoeParticle_Active", 500);
 
 	Input_Pool(L"ItemObject"		, 100);
 	Input_Pool(L"ItemObject_Red"	, 100);
@@ -394,6 +398,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"MapDust", 100);
 	Input_Pool(L"MapDust_2", 100);
 	Input_Pool(L"MapMist", 3000);
+	Input_Pool(L"MapSnow", 5000);
 
 	Input_Pool(L"Decal_Test", 100);
 

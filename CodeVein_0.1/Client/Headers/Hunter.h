@@ -320,6 +320,9 @@ private:
 	void Play_Dead(); //cc상태에서 죽을 경우 다양한 모션 진행
 
 private:
+	void Check_DeadEffect(_double TimeDelta);
+
+private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
 	HRESULT Ready_Status(void* pArg); //추후 공격력 방어력 등등의 세부 수치도 받을 예정
@@ -399,6 +402,11 @@ private:
 	_int				m_iRandom = 0;
 	_int				m_iDodgeCountMax = 3; //3회 피격시 회피
 	_int				m_iDodgeCount = 0; //n회 피격시 회피
+
+private: // For Effect
+	_float			m_fDeadEffect_Delay = 0.f;
+	_float			m_fDeadEffect_Offset = 0.f;
+
 };
 
 END
