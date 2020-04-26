@@ -218,6 +218,7 @@ private:
 
 	void Function_FBLR();
 	void Function_RotateBody();
+	void Function_MoveAround(_float _fSpeed, _v3 _vDir = { V3_NULL });
 	void Function_CoolDown();
 	void Function_Movement(_float _fspeed, _v3 _vDir = { V3_NULL });
 	void Function_DecreMoveMent(_float _fMutiply = 1.f);

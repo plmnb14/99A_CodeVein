@@ -497,7 +497,7 @@ void CMonkey::Function_MoveAround()
 
 	m_pTransformCom->Set_Angle(AXIS_Y, fYAngle);
 
-	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &m_pTransformCom->Get_Axis(AXIS_X), 2.f * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
+	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &m_pTransformCom->Get_Axis(AXIS_X), m_fSkillMoveSpeed_Cur * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
 
 	return;
 }

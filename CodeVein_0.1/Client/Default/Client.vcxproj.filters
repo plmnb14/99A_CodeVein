@@ -741,6 +741,9 @@
     <ClInclude Include="..\Headers\Wolf.h">
       <Filter>02.GameObject\Stage\2%29 Monster\Wolf</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\YetiBullet.h">
+      <Filter>02.GameObject\Stage\2%29 Monster\Yeti</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1114,6 +1117,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Wolf.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster\Wolf</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\YetiBullet.cpp">
+      <Filter>02.GameObject\Stage\2%29 Monster\Yeti</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

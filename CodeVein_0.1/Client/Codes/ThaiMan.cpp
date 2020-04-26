@@ -405,8 +405,77 @@ void CThaiMan::Function_RotateBody()
 	return;
 }
 
-void CThaiMan::Function_MoveAround()
+void CThaiMan::Function_MoveAround(_float _fSpeed, _v3 _vDir)
 {
+	_float fTargetAngle = m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos());
+
+	_float fYAngle = m_pTransformCom->Get_Angle().y;
+
+	_v3 vTargetDir = m_pTransformCom->Get_Axis(AXIS_Z);
+	V3_NORMAL_SELF(&vTargetDir);
+
+	if (fTargetAngle > 0)
+	{
+		if (fYAngle < 0)
+		{
+			if (-D3DXToRadian(90.f) > fYAngle && -D3DXToRadian(180.f) < fYAngle)
+			{
+				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle <= -D3DXToRadian(180.f)) fYAngle = D3DXToRadian(180.f);
+			}
+			else fYAngle += DELTA_60 * D3DXToRadian(360.f);
+		}
+		else
+		{
+			if (fYAngle < fTargetAngle)
+			{
+				fYAngle += DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle >= fTargetAngle) fYAngle = fTargetAngle;
+			}
+			else
+			{
+				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle <= fTargetAngle) fYAngle = fTargetAngle;
+			}
+		}
+	}
+	else if (fTargetAngle < 0)
+	{
+		if (fYAngle > 0)
+		{
+			if (D3DXToRadian(90.f) < fYAngle && D3DXToRadian(180.f) > fYAngle)
+			{
+				fYAngle += DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle >= D3DXToRadian(180.f)) fYAngle = -D3DXToRadian(180.f);
+			}
+			else fYAngle -= DELTA_60 * D3DXToRadian(360.f);
+		}
+		else
+		{
+			if (fYAngle > fTargetAngle)
+			{
+				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle <= fTargetAngle) fYAngle = fTargetAngle;
+			}
+			else
+			{
+				fYAngle += DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle >= fTargetAngle) fYAngle = fTargetAngle;
+			}
+		}
+	}
+
+	m_pTransformCom->Set_Angle(AXIS_Y, fYAngle);
+
+	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &_vDir, _fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
+
+	return;
 }
 
 void CThaiMan::Function_CoolDown()
@@ -420,6 +489,7 @@ void CThaiMan::Function_CoolDown()
 			m_fCoolDownCur = 0.f;
 			m_bCanCoolDown = false;
 			m_bIsCoolDown = false;
+			m_bIsMoveAround = false;
 			m_tObjParam.bCanAttack = true;
 		}
 	}
@@ -458,11 +528,13 @@ void CThaiMan::Function_ResetAfterAtk()
 	m_tObjParam.bIsDodge = false;
 
 	m_tObjParam.bSuperArmor = false;
+	m_tObjParam.bIsAttack = false;
 
 	m_bCanIdle = true;
 	m_bIsIdle = false;
 
-	m_tObjParam.bIsAttack = false;
+	m_bCanMoveAround = true;
+	m_bIsMoveAround = false;
 
 	m_bCanChooseAtkType = true;
 	m_bIsCombo = false;
@@ -502,7 +574,6 @@ void CThaiMan::Check_Hit()
 					m_eFirstCategory = MONSTER_STATETYPE::MOVE;
 					m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_DODGE;
 					m_pMeshCom->Reset_OldIndx();
-					Function_RotateBody();
 				}
 				else
 				{
@@ -516,9 +587,9 @@ void CThaiMan::Check_Hit()
 							else
 							데미지 측정 float 혹은 bool*/
 							//	m_eFirstCategory = MONSTER_STATETYPE::CC;
-							Function_FBLR();
-							m_tObjParam.bHitAgain = false;
 							m_pMeshCom->Reset_OldIndx();
+							m_tObjParam.bHitAgain = false;
+							Function_FBLR();
 						}
 					}
 					else
@@ -549,6 +620,7 @@ void CThaiMan::Check_Dist()
 		return;
 
 	if (true == m_bIsCombo ||
+		true == m_bIsMoveAround ||
 		true == m_tObjParam.bIsAttack ||
 		true == m_tObjParam.bIsDodge ||
 		true == m_tObjParam.bIsHit)
@@ -583,21 +655,12 @@ void CThaiMan::Check_Dist()
 				{
 					if (true == m_tObjParam.bCanAttack)
 					{
-						if (true == m_bIsCoolDown)
-						{
-							m_eFirstCategory = MONSTER_STATETYPE::IDLE;
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
-							Function_MoveAround();
-						}
-						else
-						{
-							m_bCanChooseAtkType = true;
-							m_eFirstCategory = MONSTER_STATETYPE::ATTACK;
-							Function_RotateBody();
-						}
+						m_bCanChooseAtkType = true;
+						m_eFirstCategory = MONSTER_STATETYPE::ATTACK;
 					}
 					else
 					{
+						m_bCanMoveAround = true;
 						m_eFirstCategory = MONSTER_STATETYPE::MOVE;
 						m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_WALK;
 					}
@@ -607,13 +670,13 @@ void CThaiMan::Check_Dist()
 					m_bCanChase = true;
 					m_eFirstCategory = MONSTER_STATETYPE::MOVE;
 					m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_RUN;
-					Function_RotateBody();
 				}
 			}
 		}
 		else
 		{
 			m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+
 			if (false == m_bIsIdle)
 			{
 				switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_SIT))
@@ -652,62 +715,68 @@ void CThaiMan::Check_AniEvent()
 
 			m_bCanChooseAtkType = false;
 
-			m_iRandom = CALC::Random_Num(MONSTER_ATKTYPE::ATK_NORMAL, MONSTER_ATKTYPE::ATK_COMBO);
-
-			m_iRandom = MONSTER_ATKTYPE::ATK_NORMAL;
-
-			switch (m_iRandom)
+			switch (CALC::Random_Num(THAIMAN_ANI::Atk_N01,THAIMAN_ANI::Atk_SP03))
 			{
-			case MONSTER_ATKTYPE::ATK_NORMAL:
-				m_eSecondCategory_ATK = MONSTER_ATKTYPE::ATK_NORMAL;
-				Play_RandomAtkNormal();
+			case THAIMAN_ANI::Atk_N01:
+				m_eState = Atk_N01;
 				break;
-			case MONSTER_ATKTYPE::ATK_COMBO:
-				m_eSecondCategory_ATK = MONSTER_ATKTYPE::ATK_COMBO;
-				m_bIsCombo = true;
-				Play_RandomAtkCombo();
+			case THAIMAN_ANI::Atk_N02:
+				m_eState = Atk_N02;
+				break;
+			case THAIMAN_ANI::Atk_N03:
+				m_eState = Atk_N03;
+				break;
+			case THAIMAN_ANI::Atk_N04:
+				m_eState = Atk_N04;
+				break;
+			case THAIMAN_ANI::Atk_S01:
+				m_eState = Atk_S01;
+				break;
+			case THAIMAN_ANI::Atk_S02:
+				m_eState = Atk_S02;
+				break;
+			case THAIMAN_ANI::Atk_SP01:
+				m_eState = Atk_SP01;
+				break;
+			case THAIMAN_ANI::Atk_SP02:
+				m_eState = Atk_SP02;
+				break;
+			case THAIMAN_ANI::Atk_SP03:
+				m_eState = Atk_SP03;
 				break;
 			}
-
-			return;
 		}
 		else
 		{
-			if (MONSTER_ATKTYPE::ATK_NORMAL == m_eSecondCategory_ATK)
+			switch (m_eState)
 			{
-				switch (m_eState)
-				{
-				case THAIMAN_ANI::Atk_N01:
-					Play_RDiagonal();
-					break;
-				case THAIMAN_ANI::Atk_N02:
-					Play_L();
-					break;
-				case THAIMAN_ANI::Atk_N03:
-					Play_BackDumpling();
-					break;
-				case THAIMAN_ANI::Atk_N04:
-					Play_DropKick();
-					break;
-				case THAIMAN_ANI::Atk_S01:
-					Play_LkBk();
-					break;
-				case THAIMAN_ANI::Atk_S02:
-					Play_Capoeira();
-					break;
-				case THAIMAN_ANI::Atk_SP01:
-					Play_RDigonalLUpperRAccel();
-					break;
-				case THAIMAN_ANI::Atk_SP02:
-					Play_RkBkFk();
-					break;
-				case THAIMAN_ANI::Atk_SP03:
-					Play_RDigonalRRScrewRchop();
-					break;
-				}
-			}
-			else if (MONSTER_ATKTYPE::ATK_COMBO == m_eSecondCategory_ATK)
-			{
+			case THAIMAN_ANI::Atk_N01:
+				Play_RDiagonal();
+				break;
+			case THAIMAN_ANI::Atk_N02:
+				Play_L();
+				break;
+			case THAIMAN_ANI::Atk_N03:
+				Play_BackDumpling();
+				break;
+			case THAIMAN_ANI::Atk_N04:
+				Play_DropKick();
+				break;
+			case THAIMAN_ANI::Atk_S01:
+				Play_LkBk();
+				break;
+			case THAIMAN_ANI::Atk_S02:
+				Play_Capoeira();
+				break;
+			case THAIMAN_ANI::Atk_SP01:
+				Play_RDigonalLUpperRAccel();
+				break;
+			case THAIMAN_ANI::Atk_SP02:
+				Play_RkBkFk();
+				break;
+			case THAIMAN_ANI::Atk_SP03:
+				Play_RDigonalRRScrewRchop();
+				break;
 			}
 		}
 		break;
@@ -764,27 +833,6 @@ void CThaiMan::Play_RandomAtkNormal()
 	return;
 }
 
-void CThaiMan::Play_RandomAtkCombo()
-{
-	//switch (CALC::Random_Num(ATK_COMBO_TYPE::COMBO_RLRL_SHOULDER, ATK_COMBO_TYPE::COMBO_RLRL_SWING))
-	//{
-	//case ATK_COMBO_TYPE::COMBO_RLRL_SHOULDER:
-	//	m_eAtkCombo = ATK_COMBO_TYPE::COMBO_RLRL_SHOULDER;
-	//	m_eState = THAIMAN_ANI::Atk_Sp06;
-	//	break;
-	//case ATK_COMBO_TYPE::COMBO_RLRL_SMASH:
-	//	m_eAtkCombo = ATK_COMBO_TYPE::COMBO_RLRL_SMASH;
-	//	m_eState = THAIMAN_ANI::Atk_Sp06;
-	//	break;
-	//case ATK_COMBO_TYPE::COMBO_RLRL_SWING:
-	//	m_eAtkCombo = ATK_COMBO_TYPE::COMBO_RLRL_SWING;
-	//	m_eState = THAIMAN_ANI::Atk_Sp06;
-	//	break;
-	//}
-
-	return;
-}
-
 void CThaiMan::Play_RDiagonal()
 {
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
@@ -832,6 +880,8 @@ void CThaiMan::Play_RDiagonal()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+			
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -887,6 +937,8 @@ void CThaiMan::Play_L()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1082,6 +1134,8 @@ void CThaiMan::Play_LkBk()
 				m_fSkillMoveAccel_Cur = 2.f;
 				m_fSkillMoveMultiply = 0.5f;
 			}
+
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1094,6 +1148,8 @@ void CThaiMan::Play_LkBk()
 				m_fSkillMoveAccel_Cur = 2.f;
 				m_fSkillMoveMultiply = 0.5f;
 			}
+
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1258,6 +1314,8 @@ void CThaiMan::Play_RDigonalLUpperRAccel()
 				m_fSkillMoveAccel_Cur = 2.f;
 				m_fSkillMoveMultiply = 0.5f;
 			}
+
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1270,6 +1328,8 @@ void CThaiMan::Play_RDigonalLUpperRAccel()
 				m_fSkillMoveAccel_Cur = 2.f;
 				m_fSkillMoveMultiply = 0.5f;
 			}
+
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1282,6 +1342,8 @@ void CThaiMan::Play_RDigonalLUpperRAccel()
 				m_fSkillMoveAccel_Cur = 2.f;
 				m_fSkillMoveMultiply = 0.5f;
 			}
+
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1373,6 +1435,8 @@ void CThaiMan::Play_RkBkFk()
 				m_fSkillMoveAccel_Cur = 2.f;
 				m_fSkillMoveMultiply = 0.5f;
 			}
+			
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1385,6 +1449,8 @@ void CThaiMan::Play_RkBkFk()
 				m_fSkillMoveAccel_Cur = 2.f;
 				m_fSkillMoveMultiply = 0.5f;
 			}
+
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1397,6 +1463,8 @@ void CThaiMan::Play_RkBkFk()
 				m_fSkillMoveAccel_Cur = 2.f;
 				m_fSkillMoveMultiply = 0.5f;
 			}
+
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1506,6 +1574,8 @@ void CThaiMan::Play_RDigonalRRScrewRchop()
 				m_fSkillMoveAccel_Cur = 2.f;
 				m_fSkillMoveMultiply = 0.5f;
 			}
+
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1518,6 +1588,8 @@ void CThaiMan::Play_RDigonalRRScrewRchop()
 				m_fSkillMoveAccel_Cur = 2.f;
 				m_fSkillMoveMultiply = 0.5f;
 			}
+
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1530,6 +1602,8 @@ void CThaiMan::Play_RDigonalRRScrewRchop()
 				m_fSkillMoveAccel_Cur = 2.f;
 				m_fSkillMoveMultiply = 0.5f;
 			}
+
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1656,28 +1730,50 @@ void CThaiMan::Play_Move()
 	switch (m_eSecondCategory_MOVE)
 	{
 	case MONSTER_MOVETYPE::MOVE_RUN:
-		m_eState = THAIMAN_ANI::Run;
+		if (true == m_bCanChase)
+		{
+			m_bCanChase = false;
+			m_eState = THAIMAN_ANI::Run;
+			m_fSkillMoveSpeed_Cur = 4.f;
+			m_fSkillMoveAccel_Cur = 0.f;
+			m_fSkillMoveMultiply = 0.5f;
+		}
 
 		Function_RotateBody();
-
-		Function_Movement(4.f, m_pTransformCom->Get_Axis(AXIS_Z));
-
-		Function_DecreMoveMent(0.1f);
+		Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+		Function_DecreMoveMent(m_fSkillMoveMultiply);
 		break;
 	case MONSTER_MOVETYPE::MOVE_WALK:
-		if (false == m_tObjParam.bCanAttack)
+		if (true == m_bCanMoveAround)
 		{
-			m_eState = THAIMAN_ANI::Walk_R;
-			Function_MoveAround();
+			m_bCanMoveAround = false;
+			m_bIsMoveAround = true;
+
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = 4.f;
+
+			m_fSkillMoveSpeed_Cur = 2.5f;
+			m_fSkillMoveAccel_Cur = 0.f;
+			m_fSkillMoveMultiply = 0.5f;
+
+			switch (CALC::Random_Num(THAIMAN_ANI::Walk_R, THAIMAN_ANI::Walk_B))
+			{
+			case THAIMAN_ANI::Walk_R:
+			case THAIMAN_ANI::Walk_B:
+				m_eState = THAIMAN_ANI::Walk_R;
+				break;
+			case THAIMAN_ANI::Walk_F:
+			case THAIMAN_ANI::Walk_L:
+				m_eState = THAIMAN_ANI::Walk_L;
+				break;
+			}
 		}
 		else
 		{
-			m_eState = THAIMAN_ANI::Walk_F;
-			Function_RotateBody();
-
-			Function_Movement(2.f, m_pTransformCom->Get_Axis(AXIS_Z));
-
-			Function_DecreMoveMent(0.1f);
+			if (THAIMAN_ANI::Walk_R == m_eState)
+				Function_MoveAround(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_X));
+			else if (THAIMAN_ANI::Walk_L == m_eState)
+				Function_MoveAround(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_X));
 		}
 		break;
 	case MONSTER_MOVETYPE::MOVE_DODGE:

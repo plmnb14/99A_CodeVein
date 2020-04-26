@@ -286,6 +286,7 @@
     <ClInclude Include="..\Headers\Wolf.h" />
     <ClInclude Include="..\Headers\YachaMan.h" />
     <ClInclude Include="..\Headers\Yeti.h" />
+    <ClInclude Include="..\Headers\YetiBullet.h" />
     <ClInclude Include="Client.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StageLoader.h" />
@@ -409,6 +410,7 @@
     <ClCompile Include="..\Codes\Wolf.cpp" />
     <ClCompile Include="..\Codes\YachaMan.cpp" />
     <ClCompile Include="..\Codes\Yeti.cpp" />
+    <ClCompile Include="..\Codes\YetiBullet.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="StageLoader.cpp" />
     <ClCompile Include="stdafx.cpp">

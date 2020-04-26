@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Yeti.h"
+#include "..\Headers\YetiBullet.h"
 
 CYeti::CYeti(LPDIRECT3DDEVICE9 pGraphic_Device)
 	:CGameObject(pGraphic_Device)
@@ -1430,54 +1431,58 @@ void CYeti::Play_RLRL()
 
 void CYeti::Play_IceThrowing()
 {
-	//Àá½Ã º¸·ù
+	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+	_v3 vBirth, vLook;
+	_float fLength = 1.f;
 
-	//_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
-	//if (true == m_tObjParam.bCanAttack)
-	//{
-	//	m_tObjParam.bCanAttack = false;
-	//	m_tObjParam.bIsAttack = true;
-	//}
-	//else
-	//{
-	//	//1.500 ¶¥¿¡¼­ Áý¾îµé°í ÀÕÀ½
-	//	//4.400 ÅõÃ´
-	//	if (m_pMeshCom->Is_Finish_Animation(0.95f))
-	//	{
-	//		m_fCoolDownMax = 0.4f;
-	//		m_bCanCoolDown = true;
-	//		Function_ResetAfterAtk();
-	//		return;
-	//	}
-	//	else if (4.567f <= AniTime)
-	//	{
-	//		if (false == m_bEventTrigger[0])
-	//		{
-	//			m_bEventTrigger[0] = true;
-	//			m_vecAttackCol[0]->Set_Enabled(false);
-	//		}
-	//	}
-	//	else if (4.200f <= AniTime)
-	//	{
-	//		if (false == m_bEventTrigger[1])
-	//		{
-	//			m_bEventTrigger[1] = true;
-	//			m_vecAttackCol[0]->Set_Enabled(true);
-	//		}
-	//	}
-	//	if (3.400f < AniTime && 4.133f > AniTime)
-	//	{
-	//		if (false == m_bEventTrigger[3])
-	//		{
-	//			m_bEventTrigger[3] = true;
-	//			m_fSkillMoveSpeed_Cur = 6.f;
-	//			m_fSkillMoveAccel_Cur = 0.f;
-	//			m_fSkillMoveMultiply = 1.f;
-	//		}
-	//		Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-	//		Function_DecreMoveMent(m_fSkillMoveMultiply);
-	//	}
-	//}
+	if (true == m_tObjParam.bCanAttack)
+	{
+		m_tObjParam.bCanAttack = false;
+		m_tObjParam.bIsAttack = true;
+	}
+	else
+	{
+		//1.500 ¶¥¿¡¼­ Áý¾îµé°í ÀÕÀ½
+		//4.400 ÅõÃ´
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		{
+			m_fCoolDownMax = 0.6f;
+			m_bCanCoolDown = true;
+			Function_ResetAfterAtk();
+			return;
+		}
+		else if (4.400f <= AniTime)
+		{
+			if (false == m_bEventTrigger[0])
+			{
+				m_bEventTrigger[0] = true;
+				m_tObjParam.bSuperArmor = true;
+
+				_mat matTemp = *m_matBone[Bone_RightHand] * m_pTransformCom->Get_WorldMat(); //»ÀÀ§Ä¡* ¿ùµå
+
+				memcpy(&vBirth, &matTemp._41, sizeof(_v3)); //»ý¼ºÀ§Ä¡
+				memcpy(&vLook, &matTemp._21, sizeof(_v3)); //»ÀÀÇ ·è
+				vBirth += (vLook * fLength); //»ý¼ºÀ§Ä¡ = »ý¼ºÀ§Ä¡ +(·è*±æÀÌ)
+
+				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
+			}
+		}
+
+		if (3.400f < AniTime && 4.133f > AniTime)
+		{
+			if (false == m_bEventTrigger[3])
+			{
+				m_bEventTrigger[3] = true;
+				m_fSkillMoveSpeed_Cur = 6.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.f;
+			}
+
+			Function_RotateBody();
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+	}
 
 	return;
 }

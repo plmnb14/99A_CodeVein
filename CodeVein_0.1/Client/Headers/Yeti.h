@@ -4,6 +4,8 @@
 
 BEGIN(Client)
 
+class CYetiBullet;
+
 class CYeti final : public CGameObject
 {
 public:

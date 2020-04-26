@@ -569,23 +569,12 @@ void CWolf::Check_Dist()
 				{
 					if (true == m_tObjParam.bCanAttack)
 					{
-						if (true == m_bIsCoolDown)
-						{
-							m_eFirstCategory = MONSTER_STATETYPE::IDLE;
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
-							Function_RotateBody();
-						}
-						else
-						{
-							m_eFirstCategory = MONSTER_STATETYPE::ATTACK;
-							Function_RotateBody();
-						}
+						m_eFirstCategory = MONSTER_STATETYPE::ATTACK;
 					}
 					else
 					{
 						m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 						m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
-						Function_RotateBody();
 					}
 				}
 				else
@@ -593,7 +582,6 @@ void CWolf::Check_Dist()
 					m_bCanChase = true;
 					m_eFirstCategory = MONSTER_STATETYPE::MOVE;
 					m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_RUN;
-					Function_RotateBody();
 				}
 			}
 		}

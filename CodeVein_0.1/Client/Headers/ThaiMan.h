@@ -20,10 +20,6 @@ public:
 		NORMAL_RDigonalRRScrewRchop
 	};
 
-	enum ATK_COMBO_TYPE
-	{
-	};
-
 	enum THAIMAN_ANI 
 	{
 		Idle,
@@ -124,7 +120,7 @@ private:
 
 	void Function_FBLR();
 	void Function_RotateBody();
-	void Function_MoveAround();
+	void Function_MoveAround(_float _fSpeed, _v3 _vDir = { V3_NULL });
 	void Function_CoolDown();
 	void Function_Movement(_float _fspeed, _v3 _vDir = { V3_NULL });
 	void Function_DecreMoveMent(_float _fMutiply = 1.f);
@@ -136,7 +132,6 @@ private:
 	void Check_AniEvent();
 	
 	void Play_RandomAtkNormal();
-	void Play_RandomAtkCombo();
 	void Play_RDiagonal(); //n1 ¿ì´ë°¢
 	void Play_L(); //n2 ÁÂÈ¾
 	void Play_BackDumpling(); //n3 ¹é´ýºí¸µ
@@ -187,7 +182,6 @@ private:
 
 	WEAPON_STATE			m_eWeaponState;
 	FBLR					m_eFBLR;
-	ATK_COMBO_TYPE			m_eAtkCombo;
 	THAIMAN_ANI				m_eState;
 
 	_bool	m_bEventTrigger[20] = {};
