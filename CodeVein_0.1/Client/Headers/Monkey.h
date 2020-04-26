@@ -158,6 +158,9 @@ private:
 	void Play_Dead(); 
 
 private:
+	void Check_DeadEffect(_double TimeDelta);
+
+private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
 	HRESULT Ready_Status(void* pArg);
@@ -233,6 +236,10 @@ private:
 	_int				m_iDodgeCount = 0; //n회 피격시 회피
 
 	_float				m_fShotDelay = 0.f;
+
+private: // For Effect
+	_float			m_fDeadEffect_Delay = 0.f;
+	_float			m_fDeadEffect_Offset = 0.f;
 
 };
 

@@ -78,7 +78,7 @@ PS_OUT PS_MOTIONBLUR(PS_MOTIONBLUR_IN In)
 
 	velocity = pow(velocity, 3.0);
 
-	float fMinValue = 0.45f;
+	float fMinValue = 0.25f;
 	if (velocity.x < fMinValue &&
 		velocity.y < fMinValue)
 		Out.vVelocity.w = 0.f;

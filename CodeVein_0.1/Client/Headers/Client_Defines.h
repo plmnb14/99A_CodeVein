@@ -16,6 +16,7 @@ namespace Engine
 	class CInput_Device;
 	class CFrameMgr;
 	class CTexture;
+	class CMyPhysx;
 }
 
 extern Engine::CInput_Device*		g_pInput_Device;
@@ -23,6 +24,7 @@ extern Engine::CManagement*			g_pManagement;
 extern Engine::CTimer_Manager*		g_pTimer_Manager;
 extern Engine::CFrameMgr*			g_pFrame_Manager;
 extern Engine::CTexture*			g_pDissolveTexture;
+extern Engine::CMyPhysx*			g_pPhysx;
 
 ///////////////////////////////////////////////////////////////////////////////
 

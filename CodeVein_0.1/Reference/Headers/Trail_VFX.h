@@ -33,7 +33,7 @@ public:
 
 public:
 	virtual void	Set_TrailIdx(_ulong _dwIdx) { m_iTrailIdx = _dwIdx; }
-	virtual void	Set_UseMask(_ulong _dwIdx) { m_bUseMask = true;  m_iTrailMaskIdx = _dwIdx; }
+	virtual void	Set_UseMask(_bool _bUse, _ulong _dwIdx) { m_bUseMask = _bUse;  m_iTrailMaskIdx = _dwIdx; }
 
 public:
 	virtual void	Change_Tex(const _tchar* _TexName);

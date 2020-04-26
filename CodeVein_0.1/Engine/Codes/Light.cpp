@@ -1,5 +1,6 @@
 #include "..\Headers\Light.h"
 #include "Management.h"
+#include "Timer_Manager.h"
 
 CLight::CLight(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: m_pGraphic_Device(pGraphic_Device)
@@ -7,7 +8,7 @@ CLight::CLight(LPDIRECT3DDEVICE9 pGraphic_Device)
 	Safe_AddRef(m_pGraphic_Device);
 }
 
-HRESULT CLight::Ready_Light(D3DLIGHT9 LightDesc)
+HRESULT CLight::Ready_Light(NEW_LIGHT LightDesc)
 {
 	D3DVIEWPORT9		ViewPort;
 
@@ -27,6 +28,11 @@ HRESULT CLight::Render_Light(CShader* pShader)
 	if (nullptr == m_pViewPortBuffer)
 		return E_FAIL;
 
+	m_LightDesc.Diffuse.a *= m_LightDesc.fAlpha;
+	m_LightDesc.Ambient.a *= m_LightDesc.fAlpha;
+	m_LightDesc.Specular.a *= m_LightDesc.fAlpha;
+	m_LightDesc.Range *= m_LightDesc.fAlpha;
+
 	_uint			iPassIndex = 0;
 
 	if (D3DLIGHT_DIRECTIONAL == m_LightDesc.Type)
@@ -43,7 +49,17 @@ HRESULT CLight::Render_Light(CShader* pShader)
 		pShader->Set_Value("g_vLightPos", &_v4(m_LightDesc.Position, 1.f), sizeof(_v4));
 		pShader->Set_Value("g_fRange", &m_LightDesc.Range, sizeof(_float));
 	}
-	
+
+	//m_LightDesc.Diffuse.r *= m_LightDesc.fAlpha;
+	//m_LightDesc.Ambient.r *= m_LightDesc.fAlpha;
+	//m_LightDesc.Diffuse.r *= m_LightDesc.fAlpha;
+	//m_LightDesc.Ambient.g *= m_LightDesc.fAlpha;
+	//m_LightDesc.Diffuse.g *= m_LightDesc.fAlpha;
+	//m_LightDesc.Ambient.g *= m_LightDesc.fAlpha;
+	//m_LightDesc.Specular.b *= m_LightDesc.fAlpha;
+	//m_LightDesc.Specular.b *= m_LightDesc.fAlpha;
+	//m_LightDesc.Specular.b *= m_LightDesc.fAlpha;
+
 	pShader->Set_Value("g_vLightDiffuse", (_v4*)&m_LightDesc.Diffuse, sizeof(_v4));
 	pShader->Set_Value("g_vLightAmbient", (_v4*)&m_LightDesc.Ambient, sizeof(_v4));	
 	pShader->Set_Value("g_vLightSpecular", (_v4*)&m_LightDesc.Specular, sizeof(_v4));
@@ -56,6 +72,19 @@ HRESULT CLight::Render_Light(CShader* pShader)
 	m_pViewPortBuffer->Render_VIBuffer();
 
 	pShader->End_Pass();
+
+	if (m_LightDesc.bLifeTime)
+	{
+		m_LightDesc.fLifeTime_Cur -= CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60");
+		m_LightDesc.fAlpha = m_LightDesc.fLifeTime_Cur / m_LightDesc.fLifeTime_Max ;
+
+		if (m_LightDesc.fLifeTime_Cur <= 0.f || m_LightDesc.fAlpha <= 0.f)
+		{
+			m_bDead = true;
+			m_LightDesc.bLifeTime = false;
+			m_LightDesc.fAlpha = 0.f;
+		}
+	}
 
 	return NOERROR;
 }
@@ -120,7 +149,7 @@ void CLight::Update_Light()
 	//D3DXMatrixOrthoLH(&m_matView, fWidth, fWidth, fNear, fFar);
 }
 
-CLight * CLight::Create(LPDIRECT3DDEVICE9 pGraphic_Device, D3DLIGHT9 LightDesc)
+CLight * CLight::Create(LPDIRECT3DDEVICE9 pGraphic_Device, NEW_LIGHT LightDesc)
 {
 	CLight*	pInstance = new CLight(pGraphic_Device);
 

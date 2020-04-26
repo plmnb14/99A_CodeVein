@@ -6,6 +6,10 @@
 #include "Get_ItemUI.h"
 #include "PickUp_ItemUI.h"
 
+//============================
+#include "UI_FontNum.h"
+//============================
+
 IMPLEMENT_SINGLETON(CUI_Manager)
 
 CUI_Manager::CUI_Manager()
@@ -117,6 +121,12 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Pickup_Item", CPickUp_ItemUI::Create(pDevice))))
 		return E_FAIL;
+
+
+	//=======================================================
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_FontNum", CUI_FontNum::Create(pDevice))))
+		return E_FAIL;
+	//=======================================================
 
 	return NOERROR;
 }

@@ -29,9 +29,19 @@ HRESULT CDeerKingBullet::Ready_GameObject(void * pArg)
 
 	m_fSpeed = temp.fSpeed;
 	m_dLifeTime = temp.dLifeTime;
+	m_vDir = temp.vDir;
 
 	m_pTransformCom->Set_Pos(temp.vCreatePos);
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
+
+	// Calc Angle
+	_v3	vRight = *D3DXVec3Cross(&vRight, &_v3(0.f, 1.f, 0.f), &m_vDir);
+	V3_NORMAL_SELF(&vRight);
+	_float	fDot = acosf(D3DXVec3Dot(&_v3{ 0,0,1 }, &m_vDir));
+	if (vRight.z > 0)
+		fDot *= -1.f;
+
+	m_pTransformCom->Set_Angle(_v3(0.f, fDot, 0.f));
 
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
@@ -54,16 +64,29 @@ _int CDeerKingBullet::Update_GameObject(_double TimeDelta)
 		return DEAD_OBJ;
 
 	m_dCurTime += TimeDelta;
-	
+
 	// 3초 뒤에 발사
 	if (3.f < m_dCurTime)
 	{
+		// Calc Angle
+		_v3	vRight = *D3DXVec3Cross(&vRight, &_v3(0.f, 1.f, 0.f), &m_vDir);
+		V3_NORMAL_SELF(&vRight);
+		//_float	fDotX = acosf(D3DXVec3Dot(&_v3{ 0,1,0 }, &m_pTransformCom->Get_Axis(AXIS_Z)));
+		_float	fDotY = acosf(D3DXVec3Dot(&_v3{ 0,0,1 }, &m_vDir));
+		if (vRight.z > 0)
+			fDotY *= -1.f;
+
+		m_pTransformCom->Set_Angle(_v3(0.f, fDotY, 0.f));
+
 		m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
 
 		if (!m_bFire)
 		{
 			m_bFire = true;
-			g_pManagement->Create_Effect(L"IceGirl_Buff_Break_1"		, m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"IceGirl_Buff_Break_1"					, m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"IceBlock_Particle"						, m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"DeerKing_IceBullet_DeadParticle_Stone_0"	, m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"DeerKing_IceBullet_DeadParticle_0"		, m_pTransformCom->Get_Pos(), nullptr);
 		}
 	}
 	else
@@ -74,6 +97,11 @@ _int CDeerKingBullet::Update_GameObject(_double TimeDelta)
 
 	if (m_dCurTime > m_dLifeTime)
 	{
+		g_pManagement->Create_Effect(L"DeerKing_IceBullet_DeadParticle_Stone_0", m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect(L"DeerKing_SnowChunk_Up_Small_Particle_0", m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect(L"DeerKing_IceSmoke_Small_0", m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect(L"DeerKing_IceSmoke_Small_1", m_pTransformCom->Get_Pos(), nullptr);
+
 		m_pBulletBody->Set_Dead();
 		m_bDead = true;
 	}
@@ -81,22 +109,46 @@ _int CDeerKingBullet::Update_GameObject(_double TimeDelta)
 	{
 		m_fEffectOffset += (_float)TimeDelta;
 
-		if (m_fEffectOffset > 0.1f)
+		if (m_fEffectOffset > 0.3f && !m_bFire)
 		{
 			m_fEffectOffset = 0.f;
+			
+			g_pManagement->Create_Effect(L"IceSmoke_01"					, m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"IceSmoke_02"					, m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"IceGirl_Charge_Hand_Smoke"	, m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"IceGirl_Charge_Hand_Smoke_2"	, m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"IceGirl_Charge_Hand_Particle", m_pTransformCom->Get_Pos(), nullptr);
 
-			g_pManagement->Create_Effect(L"IceSmoke_01", m_pTransformCom->Get_Pos(), nullptr);
-			g_pManagement->Create_Effect(L"IceSmoke_02", m_pTransformCom->Get_Pos(), nullptr);
+
+			_int iRand = CCalculater::Random_Num(0, 1);
+			if(iRand)
+				g_pManagement->Create_Effect(L"DeerKing_IceBullet_ReadySmoke_0", m_pTransformCom->Get_Pos(), nullptr);
+			else
+				g_pManagement->Create_Effect(L"DeerKing_IceBullet_ReadySmoke_1", m_pTransformCom->Get_Pos(), nullptr);
+
+			g_pManagement->Create_Effect(L"DeerKing_IceBullet_ReadySmoke_2", m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"DeerKing_IceBullet_ReadySmoke_3", m_pTransformCom->Get_Pos(), nullptr);
+
+			for (_int i = 0; i < 5; i++)
+			{
+				g_pManagement->Create_Effect(L"IceGirl_PointParticle_Blue", m_pTransformCom->Get_Pos(), nullptr);
+				g_pManagement->Create_Effect(L"IceGirl_PointParticle_Green", m_pTransformCom->Get_Pos(), nullptr);
+				g_pManagement->Create_Effect(L"IceGirl_FlashParticle_Blue", m_pTransformCom->Get_Pos(), nullptr);
+				g_pManagement->Create_Effect(L"IceGirl_FlashParticle_Green", m_pTransformCom->Get_Pos(), nullptr);
+			}
+			
 		}
 
 		if (!m_bEffect)
 		{
 			m_bEffect = true;
-			g_pManagement->Create_Effect(L"DeerKing_IceBullet_ReadySmoke_0", m_pTransformCom->Get_Pos(), nullptr);
-			g_pManagement->Create_Effect(L"IceGirl_PointParticle_Blue", m_pTransformCom->Get_Pos(), nullptr);
-			g_pManagement->Create_Effect(L"IceGirl_PointParticle_Green", m_pTransformCom->Get_Pos(), nullptr);
-			g_pManagement->Create_Effect(L"IceGirl_FlashParticle_Blue", m_pTransformCom->Get_Pos(), nullptr);
-			g_pManagement->Create_Effect(L"IceGirl_FlashParticle_Green", m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"DeerKing_IceBullet_ReadySmoke_0"	, m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"DeerKing_IceSmoke_Small_0"		, m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"DeerKing_IceSmoke_Small_1"		, m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"IceGirl_PointParticle_Blue"		, m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"IceGirl_PointParticle_Green"		, m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"IceGirl_FlashParticle_Blue"		, m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"IceGirl_FlashParticle_Green"		, m_pTransformCom->Get_Pos(), nullptr);
 		}
 	}
 

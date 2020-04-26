@@ -174,6 +174,9 @@ private:
 	void Play_Dead();
 
 private:
+	void Check_DeadEffect(_double TimeDelta);
+
+private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
 	HRESULT Ready_Status(void* pArg);
@@ -251,6 +254,10 @@ private:
 	_int				m_iRandom = 0;
 	_int				m_iDodgeCountMax = 3;
 	_int				m_iDodgeCount = 0;
+
+private: // For Effect
+	_float			m_fDeadEffect_Delay = 0.f;
+	_float			m_fDeadEffect_Offset = 0.f;
 
 };
 

@@ -5,6 +5,7 @@
 #include "Sky.h"
 #include "TexEffect.h"
 #include "MeshEffect.h"
+#include "DecalEffect.h"
 #include "Player.h"
 
 #include "Weapon.h"
@@ -17,6 +18,7 @@
 #include "Item_Manager.h"
 
 #include "MonsterHeaders.h"
+#include "Flag.h"
 
 #include "PlayerHP.h"
 #include "PlayerST.h"
@@ -32,7 +34,7 @@
 #include "Player_Colleague.h"
 
 //#include "Item.h"
-
+#include "Haze.h"
 
 USING(Client)
 
@@ -91,6 +93,7 @@ unsigned int CALLBACK CLoading::Thread_Main(void* pArg)
 
 HRESULT CLoading::Ready_Effect(void)
 {
+
 #pragma region ButterFly
 	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke")))
 		return E_FAIL;
@@ -134,6 +137,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_Body_Sub")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_SubSmoke")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_PointParticle")))
@@ -143,6 +148,8 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_Distortion")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_Tail")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"ButterFly_Crying_Distortion")))
 		return E_FAIL;
 
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_DeadMist")))
@@ -235,6 +242,8 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_PopSmoke_1")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_LaserBody")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_ReadyDistortion")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_0")))
 		return E_FAIL;
@@ -497,6 +506,22 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_ReadySmoke_0")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_ReadySmoke_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_ReadySmoke_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_ReadySmoke_3")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_DeadParticle_Stone_0", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_DeadParticle_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_Charge_Hand_Smoke_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_Charge_Hand_Smoke_After_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBullet_Charge_Hand_Smoke_After_1")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_Point_ExplosionParticle_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_SnowChunk_Up_Particle_0")))
@@ -513,6 +538,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_Snow_Up_LongLine_0")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Snow_Up_LongLine_1")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_1")))
@@ -526,6 +553,24 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_Small_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSmoke_Small_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Jump_In_Place_Distortion")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_JumpPack_Distortion")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_JumpPack_Fire")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Body_PointParticle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Body_Smoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Body_Smoke_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Distortion_Circle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBlock_0", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_Tornade_Mesh_0", true)))
 		return E_FAIL;
 #pragma endregion
 
@@ -550,6 +595,16 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"Boss_Dead_Particle")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"SpawnParticle_ForBoss")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"SpawnParticle_ForBoss_Point")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"SpawnParticle_ForBoss_Point_Sub")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Monster_DeadSmoke_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Monster_DeadSmoke_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Monster_DeadSmoke_2")))
 		return E_FAIL;
 
 #pragma region Blood
@@ -652,6 +707,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"MistletoeParticle_Sub")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"MistletoeParticle_Active")))
+		return E_FAIL;
 
 	if (FAILED(Add_EffectPrototype(L"ItemGet_Particle")))
 		return E_FAIL;
@@ -668,11 +725,18 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"ItemObject_Yellow")))
 		return E_FAIL;
 
+	if (FAILED(Add_EffectPrototype(L"Haze_Body")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Haze_FlashParticle")))
+		return E_FAIL;
+
 	if (FAILED(Add_EffectPrototype(L"MapDust")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"MapDust_2")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"MapMist")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"MapSnow")))
 		return E_FAIL;
 
 	if (FAILED(Add_EffectPrototype(L"Player_FootSmoke")))
@@ -752,6 +816,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_RedOnion", true)))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_RedOnion_3", true)))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_SplitAssert_LaserBefore")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_SplitAssert_LaserAfter")))
@@ -763,6 +829,18 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Blood_Explosion")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_SplitAssert_LaserAfter_Smoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Rush_Particle_Yellow")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Rush_Particle_Orange")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Rush_Particle_White")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Rush_LaserBefore")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Rush_RedParticle_LaserBefore")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Rush_WhiteParticle_LaserBefore")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_SplitAssert_LaserAfter_RingLine", true)))
 		return E_FAIL;
@@ -778,9 +856,26 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_WindTornadeMesh", true)))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_BloodTornadeMesh", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_BloodTornadeMesh_2", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_BloodTornadeMesh_3", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_BloodConeMesh", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Torment_Wind_L", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Torment_Wind_R", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Torment_Wind_Distortion_L", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Torment_Wind_Distortion_R", true)))
+		return E_FAIL;
 #pragma endregion
 
-
+	if (FAILED(g_pManagement->Add_Prototype(L"Decal_Test", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Decal_Test.dat")))))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -1100,135 +1195,151 @@ _uint CLoading::Loading_Stage()
 		// ¿ÀºêÁ§Æ® ¿øÇü »ý¼º
 		//============================================================================================================
 
+		// È¯°æ
+		//============================================================================================================
+		// ±ê¹ß
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Flag", CFlag::Create(m_pGraphicDev))))
+			return E_FAIL;
+
+
 		// ¸ó½ºÅÍ
 		//============================================================================================================
 
-		//// µ¶³ª¹æ
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonButterfly", CPoisonButterfly::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// µ¶³ª¹æ 5¹ß Åõ»çÃ¼
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonBullet", CPoisonBullet::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// µ¶³ª¹æ ÃßÀû Åõ»çÃ¼
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonChaseBullet", CPoisonChaseBullet::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// µ¶³ª¹æ 4¹æÇâ Åõ»çÃ¼
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonRotationBullet", CPoisonRotationBullet::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// µ¶³ª¹æ ±â¸ð¾Æ¼­ ½î±â Ãæµ¹Ã¼
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonTornado", CPoisonTornado::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// ¿©¿ÕÀÇ ±â»ç
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_QueensKnight", CQueensKnight::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// ¶¥¿¡¼­ Âî¸´Âî¸´ ¿òÁ÷ÀÌ´Â ÃÑ¾Ë
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkGroundBullet", CDarkGroundBullet::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// ¾îµÒ Æø¹ß
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkBoom", CDarkBoom::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// ±â»ç ÁÖÀ§ °á°è
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkMidCol", CDarkMidCol::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// ¸®Å© ÇÊµå
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_LeakField", CLeakField::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// ¾óÀ½¿©ÀÚ
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceGirl", CIceGirl::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// ¾óÀ½¿©ÀÚ ÄÝµåºö ÀÛÀº Å©±â
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamSmall", CColdBeamSmall::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// ¾óÀ½¿©ÀÚ ÄÝµåºö Áß°£ Å©±â
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamMiddle", CColdBeamMiddle::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// ¾óÀ½¿©ÀÚ ÄÝµåºö Å« Å©±â
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamBig", CColdBeamBig::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// ¾óÀ½¿©ÀÚ ÄÝµåºö ³¯Ä«·Î¿î°Í
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamSharp", CColdBeamSharp::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// ¾óÀ½¿©ÀÚ °Ë±â¹ß»ç
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordBullet", CSwordBullet::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// ¾óÀ½¿©ÀÚ ¾óÀ½º¸È£¸·
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceBarrier", CIceBarrier::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// ºÒ³²ÀÚ
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireBoy", CFireBoy::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// Æ÷½ÅÀ¸·Î ¶§¸®±â ÄÝ¶óÀÌ´õ
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunAttackCol", CGunAttackCol::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// ºÒ ÃÑ¾Ë
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireBullet", CFireBullet::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// È­¿°±¸
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireSphere", CFireSphere::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// Å¸°ÙÀÇ ¹Ù´Ú¿¡ È­¿°Æø¹ß
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireGround", CFireGround::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// È­¿° Åä³×ÀÌµµ ÄÝ¶óÀÌ´õ
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireTornadoCol", CFireTornadoCol::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// »ç½¿¿Õ
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKing", CDeerKing::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// »ç½¿¿Õ  Åõ»çÃ¼
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingBullet", CDeerKingBullet::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// »ç½¿¿Õ  »ÏÁ· ¾óÀ½
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingColdBeam", CDeerKingColdBeam::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// °ËÀº ¼º°Ô
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// °ËÀº ´Á´ë
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackWolf", CBlackWolf::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// °Ë°ÕÁö
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenji", CSwordGenji::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// °Ë°ÕÁö ÃÑ¾Ë
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenjiBullet", CSwordGenjiBullet::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// ÃÑ°ÕÁö
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenji", CGunGenji::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// ÃÑ°ÕÁö ÃÑ¾Ë
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenjiBullet", CGunGenjiBullet::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// °Ë¹æÆÐ°ÕÁö
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordShieldGenji", CSwordShieldGenji::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// ¾ßÂ÷¸Ç
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_YachaMan", CYachaMan::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// ÅäÅÛ
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_Cocoon", CCocoon::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// ÅäÅÛ ¹æ»çÃÑ¾Ë
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBullet", CCocoonBullet::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// ÅäÅÛ ÃÑ¾Ë
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBigBullet", CCocoonBigBullet::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// ±èÇåÅÍ
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_Hunter", CHunter::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// ±èÇåÅÍÃÑ¾Ë
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_HunterBullet", CHunterBullet::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// ¸ùÅ°.D.·çÇÇ
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_Monkey", CMonkey::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// ¸ùÅ°.D.ÃÑ¾Ë
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_MonkeyBullet", CMonkeyBullet::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// ¿¹Æ¼
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_Yeti", CYeti::Create(m_pGraphicDev))))
-		//	return E_FAIL;
+		// µ¶³ª¹æ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonButterfly", CPoisonButterfly::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// µ¶³ª¹æ 5¹ß Åõ»çÃ¼
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonBullet", CPoisonBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// µ¶³ª¹æ ÃßÀû Åõ»çÃ¼
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonChaseBullet", CPoisonChaseBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// µ¶³ª¹æ 4¹æÇâ Åõ»çÃ¼
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonRotationBullet", CPoisonRotationBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// µ¶³ª¹æ ±â¸ð¾Æ¼­ ½î±â Ãæµ¹Ã¼
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonTornado", CPoisonTornado::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ¿©¿ÕÀÇ ±â»ç
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_QueensKnight", CQueensKnight::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ¶¥¿¡¼­ Âî¸´Âî¸´ ¿òÁ÷ÀÌ´Â ÃÑ¾Ë
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkGroundBullet", CDarkGroundBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ¾îµÒ Æø¹ß
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkBoom", CDarkBoom::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ±â»ç ÁÖÀ§ °á°è
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkMidCol", CDarkMidCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ¸®Å© ÇÊµå
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_LeakField", CLeakField::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ¾óÀ½¿©ÀÚ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceGirl", CIceGirl::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ¾óÀ½¿©ÀÚ ÄÝµåºö ÀÛÀº Å©±â
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamSmall", CColdBeamSmall::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ¾óÀ½¿©ÀÚ ÄÝµåºö Áß°£ Å©±â
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamMiddle", CColdBeamMiddle::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ¾óÀ½¿©ÀÚ ÄÝµåºö Å« Å©±â
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamBig", CColdBeamBig::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ¾óÀ½¿©ÀÚ ÄÝµåºö ³¯Ä«·Î¿î°Í
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamSharp", CColdBeamSharp::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ¾óÀ½¿©ÀÚ °Ë±â¹ß»ç
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordBullet", CSwordBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ¾óÀ½¿©ÀÚ ¾óÀ½º¸È£¸·
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceBarrier", CIceBarrier::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ºÒ³²ÀÚ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireBoy", CFireBoy::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// Æ÷½ÅÀ¸·Î ¶§¸®±â ÄÝ¶óÀÌ´õ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunAttackCol", CGunAttackCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ºÒ ÃÑ¾Ë
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireBullet", CFireBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// È­¿°±¸
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireSphere", CFireSphere::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// Å¸°ÙÀÇ ¹Ù´Ú¿¡ È­¿°Æø¹ß
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireGround", CFireGround::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// È­¿° Åä³×ÀÌµµ ÄÝ¶óÀÌ´õ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireTornadoCol", CFireTornadoCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// »ç½¿¿Õ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKing", CDeerKing::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// »ç½¿¿Õ  Åõ»çÃ¼
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingBullet", CDeerKingBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// »ç½¿¿Õ  »ÏÁ· ¾óÀ½
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingColdBeam", CDeerKingColdBeam::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// »ç½¿¿Õ  Á¡ÇÁÁÖ¸Ô ÄÝ¶óÀÌ´õ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingJumpFistCol", CDeerKingJumpFistCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// »ç½¿¿Õ  Á¦ÀÚ¸® Á¡ÇÁ ÄÝ¶óÀÌ´õ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingJumpInPlaceCol", CDeerKingJumpInPlaceCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// »ç½¿¿Õ  µ¹Áø ÄÝ¶óÀÌ´õ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingRushCol", CDeerKingRushCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// °ËÀº ¼º°Ô
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// °ËÀº ´Á´ë
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackWolf", CBlackWolf::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// °Ë°ÕÁö
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenji", CSwordGenji::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// °Ë°ÕÁö ÃÑ¾Ë
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenjiBullet", CSwordGenjiBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ÃÑ°ÕÁö
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenji", CGunGenji::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ÃÑ°ÕÁö ÃÑ¾Ë
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenjiBullet", CGunGenjiBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// °Ë¹æÆÐ°ÕÁö
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordShieldGenji", CSwordShieldGenji::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ¾ßÂ÷¸Ç
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_YachaMan", CYachaMan::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ÅäÅÛ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Cocoon", CCocoon::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ÅäÅÛ ¹æ»çÃÑ¾Ë
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBullet", CCocoonBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ÅäÅÛ ÃÑ¾Ë
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBigBullet", CCocoonBigBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ±èÇåÅÍ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Hunter", CHunter::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ±èÇåÅÍÃÑ¾Ë
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_HunterBullet", CHunterBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ¸ùÅ°.D.·çÇÇ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Monkey", CMonkey::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ¸ùÅ°.D.ÃÑ¾Ë
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_MonkeyBullet", CMonkeyBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ¿¹Æ¼
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Yeti", CYeti::Create(m_pGraphicDev))))
+			return E_FAIL;
 
 		// UI - Chea
 		//============================================================================================================
@@ -1248,7 +1359,13 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Get_ItemUI", CGet_ItemUI::Create(m_pGraphicDev))))
 			return E_FAIL;
 
+		// ETC
 		//============================================================================================================
+		// Haze
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Haze", CHaze::Create(m_pGraphicDev))))
+			return E_FAIL;
+		//============================================================================================================
+
 
 		g_bOnStage[0] = true;
 	}

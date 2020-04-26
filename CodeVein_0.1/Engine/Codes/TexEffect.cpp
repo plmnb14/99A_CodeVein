@@ -108,22 +108,27 @@ HRESULT CTexEffect::LateInit_GameObject()
 		!lstrcmp(L"ButterFly_PointParticle", m_szParticleName) ||
 		!lstrcmp(L"ButterFly_PointParticle_Plum", m_szParticleName) ||
 		!lstrcmp(L"ButterFly_VenomShot_PointParticle", m_szParticleName) ||
-		!lstrcmp(L"Hit_Slash_Particle_0", m_szParticleName) ||
-		!lstrcmp(L"Hit_Slash_Particle_1", m_szParticleName) ||
-		!lstrcmp(L"Hit_Slash_Particle_2", m_szParticleName) ||
-		!lstrcmp(L"Hit_Slash_Particle_3", m_szParticleName) ||
+		//!lstrcmp(L"Hit_Slash_Particle_0", m_szParticleName) ||
+		//!lstrcmp(L"Hit_Slash_Particle_1", m_szParticleName) ||
+		//!lstrcmp(L"Hit_Slash_Particle_2", m_szParticleName) ||
+		//!lstrcmp(L"Hit_Slash_Particle_3", m_szParticleName) ||
 		!lstrcmp(L"MistletoeParticle", m_szParticleName) ||
 		!lstrcmp(L"MistletoeParticle_Sub", m_szParticleName) ||
 		!lstrcmp(L"Player_Buff_Particle", m_szParticleName) ||
 		!lstrcmp(L"Player_ChargeSpark_Particle", m_szParticleName) ||
 		!lstrcmp(L"Player_Heal_Particle", m_szParticleName) ||
 		!lstrcmp(L"Player_Skill_Particle_Explosion", m_szParticleName) ||
-		!lstrcmp(L"Player_Skill_RedParticle_Explosion", m_szParticleName) ||
-		!lstrcmp(L"Player_Skill_RedParticle_Upper", m_szParticleName) ||
+		//!lstrcmp(L"Player_Skill_RedParticle_Explosion", m_szParticleName) ||
+		//!lstrcmp(L"Player_Skill_RedParticle_Upper", m_szParticleName) ||
 		!lstrcmp(L"Player_SpaceBar_StepParticle", m_szParticleName) ||
-		//!lstrcmp(L"SpawnParticle", m_szParticleName) ||
-		//!lstrcmp(L"SpawnParticle_Sub", m_szParticleName) ||
+		!lstrcmp(L"Player_Skill_Rush_Particle_Yellow", m_szParticleName) ||
+		!lstrcmp(L"Player_Skill_Rush_Particle_Orange", m_szParticleName) ||
+		!lstrcmp(L"Player_Skill_Rush_Particle_White", m_szParticleName) ||
+		!lstrcmp(L"SpawnParticle", m_szParticleName) ||
+		!lstrcmp(L"SpawnParticle_Sub", m_szParticleName) ||
 		!lstrcmp(L"SpawnParticle_ForBoss", m_szParticleName) ||
+		!lstrcmp(L"SpawnParticle_ForBoss_Point", m_szParticleName) ||
+		!lstrcmp(L"SpawnParticle_ForBoss_Point_Sub", m_szParticleName) ||
 		!lstrcmp(L"ItemObject", m_szParticleName) ||
 		!lstrcmp(L"ItemObject_Red", m_szParticleName) ||
 		!lstrcmp(L"ItemObject_Blue", m_szParticleName) ||
@@ -136,12 +141,14 @@ HRESULT CTexEffect::LateInit_GameObject()
 		!lstrcmp(L"FireBoy_FireGround_BoomParticle_01", m_szParticleName) ||
 		!lstrcmp(L"FireBoy_FireGround_BoomParticle_02", m_szParticleName) ||
 		!lstrcmp(L"DeerKing_Snow_Up_Particle_0", m_szParticleName) ||
-		!lstrcmp(L"DeerKing_Point_ExplosionParticle_0", m_szParticleName)
+		!lstrcmp(L"DeerKing_Body_PointParticle", m_szParticleName) ||
+		!lstrcmp(L"DeerKing_Point_ExplosionParticle_0", m_szParticleName) ||
 		//!lstrcmp(L"IceGirl_PointParticle_Blue", m_szParticleName) ||
 		//!lstrcmp(L"IceGirl_PointParticle_Green", m_szParticleName) ||
 		//!lstrcmp(L"IceGirl_FlashParticle_Blue", m_szParticleName) ||
 		//!lstrcmp(L"IceGirl_FlashParticle_Green", m_szParticleName)
 		//!lstrcmp(L"MapMist", m_szParticleName)
+		!lstrcmp(L"MapSnow", m_szParticleName)
 		)
 		m_bInstanceTarget = true;
 
@@ -208,92 +215,6 @@ HRESULT CTexEffect::Render_GameObject()
 {
 	Render_GameObject_HWInstance(); // 텍스쳐 이펙트만 인스턴싱
 
-	//if (FAILED(SetUp_ConstantTable()))
-	//	return E_FAIL;
-	//
-	//m_pShaderCom->Begin_Shader();
-	//m_pShaderCom->Begin_Pass(4);
-	//
-	//VTXCUBE_COL VtxCubeCol[8];
-	//VtxCubeCol[0].vPosition = _v3(-0.5f, 0.5f, -0.5f);
-	//VtxCubeCol[0].dwColor = COLOR_GREEN(1.f);
-	//
-	//VtxCubeCol[1].vPosition = _v3(0.5f, 0.5f, -0.5f);
-	//VtxCubeCol[1].dwColor = COLOR_GREEN(1.f);
-	//
-	//VtxCubeCol[2].vPosition = _v3(0.5f, -0.5f, -0.5f);
-	//VtxCubeCol[2].dwColor = COLOR_GREEN(1.f);
-	//
-	//VtxCubeCol[3].vPosition = _v3(-0.5f, -0.5f, -0.5f);
-	//VtxCubeCol[3].dwColor = COLOR_GREEN(1.f);
-	//
-	//VtxCubeCol[4].vPosition = _v3(-0.5f, 0.5f, 0.5f);
-	//VtxCubeCol[4].dwColor = COLOR_GREEN(1.f);
-	//
-	//VtxCubeCol[5].vPosition = _v3(0.5f, 0.5f, 0.5f);
-	//VtxCubeCol[5].dwColor = COLOR_GREEN(1.f);
-	//
-	//VtxCubeCol[6].vPosition = _v3(0.5f, -0.5f, 0.5f);
-	//VtxCubeCol[6].dwColor = COLOR_GREEN(1.f);
-	//
-	//VtxCubeCol[7].vPosition = _v3(-0.5f, -0.5f, 0.5f);
-	//VtxCubeCol[7].dwColor = COLOR_GREEN(1.f);
-	//
-	//POLYGON32 wIdx[12] = {};
-	//
-	//wIdx[0]._0 = 1;
-	//wIdx[0]._1 = 5;
-	//wIdx[0]._2 = 6;
-	//
-	//wIdx[1]._0 = 1;
-	//wIdx[1]._1 = 6;
-	//wIdx[1]._2 = 2;
-	//
-	//wIdx[2]._0 = 4;
-	//wIdx[2]._1 = 0;
-	//wIdx[2]._2 = 3;
-	//
-	//wIdx[3]._0 = 4;
-	//wIdx[3]._1 = 3;
-	//wIdx[3]._2 = 7;
-	//
-	//wIdx[4]._0 = 4;
-	//wIdx[4]._1 = 5;
-	//wIdx[4]._2 = 1;
-	//
-	//wIdx[5]._0 = 4;
-	//wIdx[5]._1 = 1;
-	//wIdx[5]._2 = 0;
-	//
-	//wIdx[6]._0 = 3;
-	//wIdx[6]._1 = 2;
-	//wIdx[6]._2 = 6;
-	//
-	//wIdx[7]._0 = 3;
-	//wIdx[7]._1 = 6;
-	//wIdx[7]._2 = 7;
-	//
-	//wIdx[8]._0 = 5;
-	//wIdx[8]._1 = 4;
-	//wIdx[8]._2 = 7;
-	//
-	//wIdx[9]._0 = 5;
-	//wIdx[9]._1 = 7;
-	//wIdx[9]._2 = 6;
-	//
-	//wIdx[10]._0 = 0;
-	//wIdx[10]._1 = 1;
-	//wIdx[10]._2 = 2;
-	//
-	//wIdx[11]._0 = 0;
-	//wIdx[11]._1 = 2;
-	//wIdx[11]._2 = 3;
-	//
-	//m_pGraphic_Dev->SetFVF(VTXFVF_COL);
-	//m_pGraphic_Dev->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, 8, 12, wIdx, D3DFMT_INDEX32, VtxCubeCol, sizeof(VTX_COL));
-	//
-	//m_pShaderCom->End_Pass();
-	//m_pShaderCom->End_Shader();
 	return NOERROR;
 }
 
@@ -363,6 +284,7 @@ void CTexEffect::Setup_Info()
 	m_fLinearMovePercent = 0.f;
 	m_vFollowPos = { 0.f, 0.f, 0.f };
 	m_fAccel = 0.f;
+	m_fCurveAccel = 2.f;
 	m_fDissolve = 0.f;
 
 	m_bFadeOutStart = false;
@@ -488,6 +410,19 @@ void CTexEffect::Setup_Info()
 			m_pTransformCom->Set_Angle(_v3(D3DXToRadian(m_pInfo->vRotDirection.x), D3DXToRadian(m_pInfo->vRotDirection.y), D3DXToRadian(m_pInfo->vRotDirection.z)));
 		}
 	}
+
+	if (m_bCurve)
+	{
+		_mat matRotX, matRotY, matRotZ;
+		m_vCurveRotDir = _v3(1.f, 1.f, 1.f);
+		D3DXMatrixRotationX(&matRotX, D3DXToRadian(CCalculater::Random_Num(0, 360)));
+		D3DXMatrixRotationY(&matRotY, D3DXToRadian(CCalculater::Random_Num(0, 360)));
+		D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(CCalculater::Random_Num(0, 360)));
+		D3DXVec3TransformNormal(&m_vCurveRotDir, &m_vCurveRotDir, &matRotX);
+		D3DXVec3TransformNormal(&m_vCurveRotDir, &m_vCurveRotDir, &matRotY);
+		D3DXVec3TransformNormal(&m_vCurveRotDir, &m_vCurveRotDir, &matRotZ);
+		D3DXVec3Normalize(&m_vCurveRotDir, &m_vCurveRotDir);
+	}
 }
 
 void CTexEffect::Setup_Billboard()
@@ -545,13 +480,14 @@ void CTexEffect::Check_Frame(_double TimeDelta)
 
 void CTexEffect::Check_Move(_double TimeDelta)
 {
-	//if (m_pInfo->bSlowly)
-	//{
-	//	m_fSlowAccel += _float(TimeDelta);
-	//	m_fMoveSpeed -= (-GRAVITY * m_fSlowAccel * m_fSlowAccel * m_fMoveSpeed) *  _float(TimeDelta);
-	//	if (m_fMoveSpeed <= 0.f)
-	//		m_fMoveSpeed = 0.f;
-	//}
+	if (m_pInfo->bSlowly)
+	{
+		//m_fSlowAccel += _float(TimeDelta);
+		//m_fMoveSpeed -= (-GRAVITY * m_fSlowAccel * m_fSlowAccel * m_fMoveSpeed) *  _float(TimeDelta);
+		m_fMoveSpeed -= m_fMoveSpeed * _float(TimeDelta);
+		if (m_fMoveSpeed <= 0.f)
+			m_fMoveSpeed = 0.f;
+	}
 
 	_v3 vTargetPos = V3_NULL;
 	if (m_pDesc->pTargetTrans) vTargetPos = m_pDesc->pTargetTrans->Get_Pos();
@@ -569,11 +505,11 @@ void CTexEffect::Check_Move(_double TimeDelta)
 		else
 		{
 			_v3 vMove = V3_NULL;
+			vMove = m_pInfo->vMoveDirection * m_fMoveSpeed * _float(TimeDelta);
+
 			if (m_vMyDir != V3_NULL)
-				vMove = m_vMyDir * m_fMoveSpeed * _float(TimeDelta);
-			else
-				vMove = m_pInfo->vMoveDirection * m_fMoveSpeed * _float(TimeDelta);
-			
+				vMove += m_vMyDir * m_fMoveSpeed * _float(TimeDelta);
+
  			if ((m_pDesc->pTargetTrans && !m_bAutoFindPos)
 				|| m_pTargetMatrix)
 			{
@@ -584,12 +520,29 @@ void CTexEffect::Check_Move(_double TimeDelta)
 			}
 			else if (m_bFinishPos)
 			{
-				//D3DXVec3Lerp(&m_vLerpPos, &m_vLerpPos, &m_vFinishPos, m_fLinearMovePercent);
-
 				_v3 vDir = m_vFinishPos - m_pTransformCom->Get_Pos();
+				D3DXVec3Normalize(&vDir, &vDir);
+				vMove = (vDir * m_fMoveSpeed * 1.5f) * _float(TimeDelta);
+
+				m_pTransformCom->Add_Pos(vMove);
+			}
+			else if (m_bCurve)
+			{
+				_v3 vDir = m_pCurveTargetTrans->Get_Pos() - m_pTransformCom->Get_Pos();
+				if (D3DXVec3Length(&vDir) < 0.1f)
+				{
+					Set_Dead();
+					return;
+				}
 				vMove = vDir * m_fMoveSpeed * _float(TimeDelta);
 
-				//m_pTransformCom->Set_Pos(m_vLerpPos + vMove);
+				m_fCurveAccel -= _float(TimeDelta);
+				_float fCurveValue = (m_fCurvePower * m_fCurveAccel + GRAVITY * m_fCurveAccel * m_fCurveAccel * 0.5f) * _float(TimeDelta);
+
+				_v3 vCurveDir = *D3DXVec3Cross(&vCurveDir, &m_vCurveRotDir, &vDir);
+
+				vMove += fCurveValue * vCurveDir * m_fMoveSpeed * _float(TimeDelta);
+
 				m_pTransformCom->Add_Pos(vMove);
 			}
 			else

@@ -109,14 +109,14 @@ private:
 	CAIController*		m_pAIControllerCom = nullptr;
 	CNavMesh*			m_pNavMesh = nullptr;
 	CCollider*			m_pCollider = nullptr;
+	COptimization*		m_pOptimization = nullptr;
+	CBattleAgent*		m_pBattleAgent = nullptr;
 
 	CWeapon*			m_pGun = nullptr;
 
 	//////////// 채유미
 	// 몬스터 HP바 UI
 	CMonsterUI*			m_pMonsterUI = nullptr;
-	// 몬스터 데미지 UI
-	//CDamegeNumUI*		m_pMonDamegeUI = nullptr;
 	////////////
 
 	//렌더에서 타임델타 쓰기위해서 저장해놓음
@@ -149,6 +149,10 @@ private:	// 최초상태 세팅
 	_float				m_fMaxLength = 0.f;
 	_float				m_fMinLength = 0.f;
 
+private: // For Effect
+	_float			m_fDeadEffect_Delay = 0.f;
+	_float			m_fDeadEffect_Offset = 0.f;
+
 private:
 	HRESULT Update_Bone_Of_BlackBoard();
 	HRESULT Update_Value_Of_BB();
@@ -162,6 +166,9 @@ private:
 
 	void Check_PhyCollider();
 	void Push_Collider();
+
+private:
+	void Check_DeadEffect(_double TimeDelta);
 
 private:
 	HRESULT Add_Component(void* pArg);

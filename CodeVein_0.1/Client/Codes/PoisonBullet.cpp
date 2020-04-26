@@ -103,6 +103,7 @@ _int CPoisonBullet::Update_GameObject(_double TimeDelta)
 		{
 			m_fOffset = 0.f;
 
+			CParticleMgr::Get_Instance()->Create_Effect(L"ButterFly_VenomShot_Body_Sub", m_pTransformCom->Get_Pos() + m_vDir * 1.9f, nullptr);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag2, m_pTransformCom->Get_Pos(), nullptr);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag3, m_pTransformCom->Get_Pos(), nullptr);
 			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, m_pTransformCom->Get_Pos(), nullptr);

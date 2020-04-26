@@ -5,6 +5,7 @@
 #include "MonsterUI.h"
 //#include "DamegeNumUI.h"
 #include "Get_ItemUI.h"
+#include "Haze.h"
 
 CSwordGenji::CSwordGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CMonster(pGraphic_Device)
@@ -86,8 +87,9 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
 	//Check_ShowValue->Set_Child(Start_Show());
 	//Start_Sel->Add_Child(Check_ShowValue);
-	//Start_Sel->Add_Child(Start_Game());
+
 	Start_Sel->Add_Child(Start_Game());
+	//Start_Sel->Add_Child(Normal_Cut2());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -185,6 +187,12 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 	if (m_bIsDead)
 		m_bEnable = false;
 
+	if (m_bReadyDead)
+	{
+		CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle", 0.1f, m_vRightToeBase, m_vHead);
+		CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle_Sub", 0.1f, m_vRightToeBase, m_vHead);
+	}
+
 	// MonsterHP UI
 	pMonsterHpUI->Update_GameObject(TimeDelta);
 	//m_pDamegeNumUI->Update_GameObject(TimeDelta);
@@ -210,8 +218,8 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 
 	if (false == m_bReadyDead)
 		Check_PhyCollider();
-
-	pMonsterHpUI->Update_GameObject(TimeDelta);
+	else
+		Check_DeadEffect(TimeDelta);
 
 	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
@@ -226,10 +234,11 @@ _int CSwordGenji::Late_Update_GameObject(_double TimeDelta)
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
 
+	
 	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
-	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-		return E_FAIL;
+	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+	//	return E_FAIL;
 	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
 	//	return E_FAIL;
 
@@ -246,43 +255,45 @@ HRESULT CSwordGenji::Render_GameObject()
 		nullptr == m_pMeshCom)
 		return E_FAIL;
 
-	
 	m_pMeshCom->Play_Animation(_float(m_dTimeDelta)); // * alpha
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
-
-	m_pShaderCom->Begin_Shader();
-
-	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
-
-	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+	if (m_pOptimization->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 1.5f))
 	{
-		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+		if (FAILED(SetUp_ConstantTable()))
+			return E_FAIL;
 
-		m_pMeshCom->Update_SkinnedMesh(i);
+		m_pShaderCom->Begin_Shader();
 
-		for (_uint j = 0; j < iNumSubSet; ++j)
+		_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+
+		for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 		{
-			if (false == m_bReadyDead)
-				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+			_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
 
-			m_pShaderCom->Begin_Pass(m_iPass);
+			m_pMeshCom->Update_SkinnedMesh(i);
 
-			m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
+			for (_uint j = 0; j < iNumSubSet; ++j)
+			{
+				if (false == m_bReadyDead)
+					m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
 
-			//if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
-			//	return E_FAIL;
+				m_pShaderCom->Begin_Pass(m_iPass);
 
-			m_pShaderCom->Commit_Changes();
+				m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
 
-			m_pMeshCom->Render_Mesh(i, j);
+				//if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
+				//	return E_FAIL;
 
-			m_pShaderCom->End_Pass();
+				m_pShaderCom->Commit_Changes();
+
+				m_pMeshCom->Render_Mesh(i, j);
+
+				m_pShaderCom->End_Pass();
+			}
 		}
-	}
 
-	m_pShaderCom->End_Shader();
+		m_pShaderCom->End_Shader();
+	}
 
 	m_pSword->Update_GameObject(m_dTimeDelta);
 	Update_Collider();
@@ -913,6 +924,14 @@ HRESULT CSwordGenji::Update_Bone_Of_BlackBoard()
 	m_vLeftHand = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftHandAttach", m_vLeftHand);
 
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
+	m_vHead = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Head", m_vHead);
+
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightToeBase");
+	m_vRightToeBase = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_RightToeBase", m_vRightToeBase);
+
 	return S_OK;
 }
 
@@ -1099,10 +1118,10 @@ void CSwordGenji::Check_PhyCollider()
 		else
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
-
-			Start_Dissolve(0.7f, false, true);
-			m_pSword->Start_Dissolve();
-			//g_pManagement->Create_Spawn_Effect(m_pTransformCom->Get_Pos());
+			Start_Dissolve(0.6f, false, true, 0.5f);
+			m_pSword->Start_Dissolve(0.6f, false, false, 0.5f);
+			m_fDeadEffect_Delay = 0.5f;
+			g_pManagement->Add_GameObject_ToLayer(L"GameObject_Haze", SCENE_STAGE, L"Layer_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.5f));
 		}
 	}
 	// 맞았을 때
@@ -1165,6 +1184,29 @@ void CSwordGenji::Push_Collider()
 	}
 }
 
+void CSwordGenji::Check_DeadEffect(_double TimeDelta)
+{
+	m_fDeadEffect_Delay -= _float(TimeDelta);
+	if (m_fDeadEffect_Delay > 0.f)
+		return;
+
+	m_fDeadEffect_Offset -= _float(TimeDelta);
+	if (m_fDeadEffect_Offset > 0.f)
+		return;
+
+	m_fDeadEffect_Offset = 0.1f;
+
+	D3DXFRAME_DERIVED* pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips");
+	_v3 vHipPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle", 0.1f, m_vRightToeBase, m_vHead);
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle_Sub", 0.1f, m_vRightToeBase, m_vHead);
+
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", m_vHead);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHipPos);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", m_vRightToeBase);
+}
+
 HRESULT CSwordGenji::Add_Component(void* pArg)
 {
 	// For.Com_Transform
@@ -1214,6 +1256,10 @@ HRESULT CSwordGenji::Add_Component(void* pArg)
 
 	// for.Com_Collider
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+		return E_FAIL;
+
+	// for.Com_Optimaization
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Optimization", L"Com_Optimization", (CComponent**)&m_pOptimization)))
 		return E_FAIL;
 
 	m_pCollider->Set_Radius(_v3{ 0.5f, 0.5f, 0.5f });
@@ -1379,6 +1425,7 @@ void CSwordGenji::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pCollider);
+	Safe_Release(m_pOptimization);
 
 	CGameObject::Free();
 }

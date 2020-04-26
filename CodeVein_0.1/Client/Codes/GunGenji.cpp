@@ -4,6 +4,7 @@
 
 #include "MonsterUI.h"
 //#include "DamegeNumUI.h"
+#include "Haze.h"
 
 CGunGenji::CGunGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CMonster(pGraphic_Device)
@@ -34,11 +35,10 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	Ready_Collider();
 
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 100.f;
+	m_tObjParam.fHp_Cur = 100000.f;
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
-
 
 	/////////////////////////////////////////////////////////
 
@@ -139,12 +139,11 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 		return E_FAIL;
 
 	Push_Collider();
-
+	
 	CGameObject::Update_GameObject(TimeDelta);
 
 	// MonsterHP UI
 	m_pMonsterUI->Update_GameObject(TimeDelta);
-	//m_pMonDamegeUI->Update_GameObject(TimeDelta);
 
 	// 죽었을 경우
 	if (m_bIsDead)
@@ -170,6 +169,8 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 
 	if (false == m_bReadyDead)
 		Check_PhyCollider();
+	else
+		Check_DeadEffect(TimeDelta);
 
 	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
@@ -186,8 +187,8 @@ _int CGunGenji::Late_Update_GameObject(_double TimeDelta)
 
 	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
-	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-		return E_FAIL;
+	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+	//	return E_FAIL;
 	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
 	//	return E_FAIL;
 
@@ -206,41 +207,44 @@ HRESULT CGunGenji::Render_GameObject()
 
 	m_pMeshCom->Play_Animation(_float(m_dTimeDelta)); // * alpha
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
 
-
-	m_pShaderCom->Begin_Shader();
-
-	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
-
-	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+	if (m_pOptimization->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 5.f))
 	{
-		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+		if (FAILED(SetUp_ConstantTable()))
+			return E_FAIL;
 
-		m_pMeshCom->Update_SkinnedMesh(i);
+		m_pShaderCom->Begin_Shader();
 
-		for (_uint j = 0; j < iNumSubSet; ++j)
+		_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+
+		for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 		{
-			if(false ==  m_bReadyDead)
-				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+			_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
 
-			m_pShaderCom->Begin_Pass(m_iPass);
+			m_pMeshCom->Update_SkinnedMesh(i);
 
-			m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
+			for (_uint j = 0; j < iNumSubSet; ++j)
+			{
+				if (false == m_bReadyDead)
+					m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
 
-			//if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
-			//	return E_FAIL;
+				m_pShaderCom->Begin_Pass(m_iPass);
 
-			m_pShaderCom->Commit_Changes();
+				m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
 
-			m_pMeshCom->Render_Mesh(i, j);
+				//if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
+				//	return E_FAIL;
 
-			m_pShaderCom->End_Pass();
+				m_pShaderCom->Commit_Changes();
+
+				m_pMeshCom->Render_Mesh(i, j);
+
+				m_pShaderCom->End_Pass();
+			}
 		}
-	}
 
-	m_pShaderCom->End_Shader();
+		m_pShaderCom->End_Shader();
+	}
 
 	m_pGun->Update_GameObject(m_dTimeDelta);
 	Update_Collider();
@@ -727,8 +731,6 @@ HRESULT CGunGenji::Update_NF()
 		vLengthTemp.y = 0.f;
 		_float fLength = D3DXVec3Length(&vLengthTemp);
 
-		//cout << "거리 : " << fLength << endl;
-
 		// 플레이어가 최소거리안에 있는가?
 		if (fLength < m_fMinLength)
 		{
@@ -830,6 +832,11 @@ void CGunGenji::Check_PhyCollider()
 	// 충돌처리, bCanHit를 무기가 false시켜줄것임.
 	if (false == m_tObjParam.bCanHit && m_tObjParam.bIsHit == false)
 	{
+		//===========================================================
+		// 맞을 때 마다 림라이트 값을 초기화 시킴
+		m_pBattleAgent->Set_RimChangeData();
+		//===========================================================
+
 		m_pMeshCom->Reset_OldIndx();	//애니 인덱스 초기화
 
 		m_bAIController = false;
@@ -864,9 +871,10 @@ void CGunGenji::Check_PhyCollider()
 		else
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
-			Start_Dissolve(0.7f, false, true);
-			m_pGun->Start_Dissolve();
-			g_pManagement->Create_Spawn_Effect(m_vRightToeBase, m_vHead);
+			Start_Dissolve(0.7f, false, true, 0.5f);
+			m_pGun->Start_Dissolve(0.7f, false, false, 0.5f);
+			m_fDeadEffect_Delay = 0.5f;
+			g_pManagement->Add_GameObject_ToLayer(L"GameObject_Haze", SCENE_STAGE, L"Layer_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.5f));
 		}
 	}
 	// 맞았을 때
@@ -889,7 +897,6 @@ void CGunGenji::Check_PhyCollider()
 		{
 			Decre_Skill_Movement(m_fSkillMoveMultiply);
 			Skill_Movement(m_fSkillMoveSpeed_Cur, m_vPushDir_forHitting);
-			//cout << "밀리는 중" << endl;
 		}
 	}
 }
@@ -926,6 +933,32 @@ void CGunGenji::Push_Collider()
 			}
 		}
 	}
+}
+
+void CGunGenji::Check_DeadEffect(_double TimeDelta)
+{
+	m_fDeadEffect_Delay -= _float(TimeDelta);
+	if (m_fDeadEffect_Delay > 0.f)
+		return;
+
+	m_fDeadEffect_Offset -= _float(TimeDelta);
+	if (m_fDeadEffect_Offset > 0.f)
+		return;
+
+	m_fDeadEffect_Offset = 0.1f;
+
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle", 0.1f, m_vRightToeBase, m_vHead);
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle_Sub", 0.1f, m_vRightToeBase, m_vHead);
+
+	D3DXFRAME_DERIVED* pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips");
+	_v3 vHipPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle", 0.1f, m_vRightToeBase, m_vHead);
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle_Sub", 0.1f, m_vRightToeBase, m_vHead);
+
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", m_vHead);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHipPos);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", m_vRightToeBase);
 }
 
 HRESULT CGunGenji::Add_Component(void* pArg)
@@ -982,6 +1015,16 @@ HRESULT CGunGenji::Add_Component(void* pArg)
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
 
+//=================================================================================
+	// for.Com_Optimaization
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Optimization", L"Com_Optimization", (CComponent**)&m_pOptimization)))
+		return E_FAIL;
+
+	// for.Com_BattleAgent
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"BattleAgent", L"Com_BattleAgent", (CComponent**)&m_pBattleAgent)))
+		return E_FAIL;
+//=================================================================================
+
 	m_pCollider->Set_Radius(_v3{ 0.5f, 0.5f, 0.5f });
 	m_pCollider->Set_Dynamic(true);
 	m_pCollider->Set_Type(COL_SPHERE);
@@ -1015,6 +1058,11 @@ HRESULT CGunGenji::SetUp_ConstantTable()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
+
+	//===========================================================
+	// 림라이트 값들을 쉐이더에 등록시킴
+	m_pBattleAgent->Update_RimParam_OnShader(m_pShaderCom);
+	//===========================================================
 
 	Safe_Release(pManagement);
 
@@ -1134,7 +1182,6 @@ CGameObject * CGunGenji::Clone_GameObject(void * pArg)
 void CGunGenji::Free()
 {
 	Safe_Release(m_pMonsterUI);
-	//Safe_Release(m_pMonDamegeUI);
 
 	Safe_Release(m_pNavMesh);
 	Safe_Release(m_pGun);
@@ -1144,6 +1191,8 @@ void CGunGenji::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pCollider);
+	Safe_Release(m_pOptimization);
+	Safe_Release(m_pBattleAgent);
 
 	CGameObject::Free();
 }

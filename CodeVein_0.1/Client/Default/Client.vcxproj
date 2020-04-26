@@ -105,13 +105,14 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Default/;../Headers/;../../Reference/Headers/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Default/;../Headers/;../../Reference/Headers/;../../Physx/Include/;../../Physx/src/foundation/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalLibraryDirectories>../../Reference/Librarys/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../Reference/Librarys/;../../Physx/LibDebug/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>EngineDEBUG.lib;d3d9.lib;d3dx9.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
@@ -145,7 +146,8 @@
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Default/;../Headers/;../../Reference/Headers/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Default/;../Headers/;../../Reference/Headers/;../../Physx/Include/;../../Physx/src/foundation/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -153,7 +155,7 @@
       <OptimizeReferences>true</OptimizeReferences>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <LargeAddressAware>true</LargeAddressAware>
-      <AdditionalLibraryDirectories>../../Reference/Librarys/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>../../Reference/Librarys/;../../Physx/LibRelease/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Engine.lib;d3d9.lib;d3dx9.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
     <FxCompile>
@@ -199,6 +201,9 @@
     <ClInclude Include="..\Headers\DeerKingBullet.h" />
     <ClInclude Include="..\Headers\DeerKingColdBeam.h" />
     <ClInclude Include="..\Headers\DeerKing.h" />
+    <ClInclude Include="..\Headers\DeerKingJumpFistCol.h" />
+    <ClInclude Include="..\Headers\DeerKingJumpInPlaceCol.h" />
+    <ClInclude Include="..\Headers\DeerKingRushCol.h" />
     <ClInclude Include="..\Headers\Drain_Weapon.h" />
     <ClInclude Include="..\Headers\Dummy_Target.h" />
     <ClInclude Include="..\Headers\Expendables.h" />
@@ -215,6 +220,7 @@
     <ClInclude Include="..\Headers\GunAttackCol.h" />
     <ClInclude Include="..\Headers\GunGenjiBullet.h" />
     <ClInclude Include="..\Headers\Get_ItemUI.h" />
+    <ClInclude Include="..\Headers\Haze.h" />
     <ClInclude Include="..\Headers\Hunter.h" />
     <ClInclude Include="..\Headers\HunterBullet.h" />
     <ClInclude Include="..\Headers\IceBarrier.h" />
@@ -248,6 +254,7 @@
     <ClInclude Include="..\Headers\PoisonChaseBullet.h" />
     <ClInclude Include="..\Headers\PoisonRotationBullet.h" />
     <ClInclude Include="..\Headers\PoisonTornado.h" />
+    <ClInclude Include="..\Headers\Flag.h" />
     <ClInclude Include="..\Headers\QueensKnight.h" />
     <ClInclude Include="..\Headers\QuickSlot.h" />
     <ClInclude Include="..\Headers\Scene_Stage_01.h" />
@@ -270,6 +277,7 @@
     <ClInclude Include="..\Headers\SwordGenjiBullet.h" />
     <ClInclude Include="..\Headers\SwordShieldGenji.h" />
     <ClInclude Include="..\Headers\Total_Inven.h" />
+    <ClInclude Include="..\Headers\UI_FontNum.h" />
     <ClInclude Include="..\Headers\UI_Manager.h" />
     <ClInclude Include="..\Headers\PlayerHP.h" />
     <ClInclude Include="..\Headers\Loading.h" />
@@ -324,6 +332,9 @@
     <ClCompile Include="..\Codes\DeerKingBullet.cpp" />
     <ClCompile Include="..\Codes\DeerKingColdBeam.cpp" />
     <ClCompile Include="..\Codes\DeerKing.cpp" />
+    <ClCompile Include="..\Codes\DeerKingJumpFistCol.cpp" />
+    <ClCompile Include="..\Codes\DeerKingJumpInPlaceCol.cpp" />
+    <ClCompile Include="..\Codes\DeerKingRushCol.cpp" />
     <ClCompile Include="..\Codes\Drain_Weapon.cpp" />
     <ClCompile Include="..\Codes\Dummy_Target.cpp" />
     <ClCompile Include="..\Codes\Expendables.cpp" />
@@ -340,6 +351,7 @@
     <ClCompile Include="..\Codes\GunAttackCol.cpp" />
     <ClCompile Include="..\Codes\GunGenjiBullet.cpp" />
     <ClCompile Include="..\Codes\Get_ItemUI.cpp" />
+    <ClCompile Include="..\Codes\Haze.cpp" />
     <ClCompile Include="..\Codes\Hunter.cpp" />
     <ClCompile Include="..\Codes\HunterBullet.cpp" />
     <ClCompile Include="..\Codes\IceBarrier.cpp" />
@@ -372,6 +384,7 @@
     <ClCompile Include="..\Codes\PoisonChaseBullet.cpp" />
     <ClCompile Include="..\Codes\PoisonRotationBullet.cpp" />
     <ClCompile Include="..\Codes\PoisonTornado.cpp" />
+    <ClCompile Include="..\Codes\Flag.cpp" />
     <ClCompile Include="..\Codes\QueensKnight.cpp" />
     <ClCompile Include="..\Codes\QuickSlot.cpp" />
     <ClCompile Include="..\Codes\Scene_Stage_01.cpp" />
@@ -394,6 +407,7 @@
     <ClCompile Include="..\Codes\SwordGenjiBullet.cpp" />
     <ClCompile Include="..\Codes\SwordShieldGenji.cpp" />
     <ClCompile Include="..\Codes\Total_Inven.cpp" />
+    <ClCompile Include="..\Codes\UI_FontNum.cpp" />
     <ClCompile Include="..\Codes\UI_Manager.cpp" />
     <ClCompile Include="..\Codes\PlayerHP.cpp" />
     <ClCompile Include="..\Codes\Loading.cpp" />

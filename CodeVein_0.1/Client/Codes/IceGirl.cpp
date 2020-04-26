@@ -887,6 +887,14 @@ CBT_Composite_Node * CIceGirl::Dodge_Left()
 	CBT_SetValue* PhyColOn = Node_BOOL_SetValue("PhyColOn", L"PhyCol", true);
 	CBT_SetValue* PushColOn = Node_BOOL_SetValue("PushColOn", L"PushCol", true);
 
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_01", L"Self_Foot", 0.1, 15, 0, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_02", L"Self_Foot", 0.1, 15, 0, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_03", L"Self_Foot", 0.1, 15, 0, 0);
+
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
+
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani15);
 	MainSeq->Add_Child(Show_Ani0);
@@ -919,6 +927,14 @@ CBT_Composite_Node * CIceGirl::Dodge_Right()
 	//CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", -5.f, 0.3, 0);
 	CBT_SetValue* PhyColOn = Node_BOOL_SetValue("PhyColOn", L"PhyCol", true);
 	CBT_SetValue* PushColOn = Node_BOOL_SetValue("PushColOn", L"PushCol", true);
+
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_01", L"Self_Foot", 0.1, 15, 0, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_02", L"Self_Foot", 0.1, 15, 0, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_03", L"Self_Foot", 0.1, 15, 0, 0);
+
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani14);
@@ -953,6 +969,14 @@ CBT_Composite_Node * CIceGirl::Dodge_Front()
 	CBT_SetValue* PhyColOn = Node_BOOL_SetValue("PhyColOn", L"PhyCol", true);
 	CBT_SetValue* PushColOn = Node_BOOL_SetValue("PushColOn", L"PushCol", true);
 
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_01", L"Self_Foot", 0.1, 15, 0, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_02", L"Self_Foot", 0.1, 15, 0, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_03", L"Self_Foot", 0.1, 15, 0, 0);
+
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
+
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani16);
 	MainSeq->Add_Child(Show_Ani0);
@@ -985,6 +1009,14 @@ CBT_Composite_Node * CIceGirl::Dodge_Back()
 	//CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", -5.f, 0.3, 0);
 	CBT_SetValue* PhyColOn = Node_BOOL_SetValue("PhyColOn", L"PhyCol", true);
 	CBT_SetValue* PushColOn = Node_BOOL_SetValue("PushColOn", L"PushCol", true);
+
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_01", L"Self_Foot", 0.1, 15, 0, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_02", L"Self_Foot", 0.1, 15, 0, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_03", L"Self_Foot", 0.1, 15, 0, 0);
+
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani17);
@@ -1590,6 +1622,10 @@ HRESULT CIceGirl::Update_Bone_Of_BlackBoard()
 	m_vLeftHand = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftHand", m_vLeftHand);
 
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips");
+	m_vHips = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Hips", m_vHips);
+	
 	return S_OK;
 }
 
@@ -1814,7 +1850,7 @@ void CIceGirl::Check_PhyCollider()
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
 			Start_Dissolve(0.4f, false, true, 4.2f);
 			m_pSword->Start_Dissolve(0.4f, false, false, 4.2f);
-			g_pManagement->Create_Effect_Delay(L"Boss_Dead_Particle", 3.9f, _v3(0.f, 1.3f, 0.f), m_pTransformCom);
+			CParticleMgr::Get_Instance()->Create_BossDeadParticle_Effect(m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f), 3.9f, 0.5f);
 			g_pManagement->Create_ParticleEffect_Delay(L"SpawnParticle_ForBoss", 2.5f, 4.2f, m_pTransformCom->Get_Pos() + _v3(0.f, 0.5f, 0.f));
 		}
 
@@ -2025,8 +2061,8 @@ HRESULT CIceGirl::Ready_Weapon()
 	m_pSword->Set_Enable_Trail(true);
 	m_pSword->Set_TrailIndex(8);
 	m_pSword->Set_TrailIndex(9, true);
-	m_pSword->Set_TrailUseMask(0);
-	m_pSword->Set_TrailUseMask(0, true);
+	m_pSword->Set_TrailUseMask(true, 0);
+	m_pSword->Set_TrailUseMask(true, 0, true);
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
 	m_pSword->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
