@@ -33,7 +33,7 @@
 #include "Player_Colleague.h"
 
 //#include "Item.h"
-
+#include "Haze.h"
 
 USING(Client)
 
@@ -240,6 +240,8 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_PopSmoke_1")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_LaserBody")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_ReadyDistortion")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_0")))
 		return E_FAIL;
@@ -713,6 +715,11 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"ItemObject_Yellow")))
 		return E_FAIL;
 
+	if (FAILED(Add_EffectPrototype(L"Haze_Body")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Haze_FlashParticle")))
+		return E_FAIL;
+
 	if (FAILED(Add_EffectPrototype(L"MapDust")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"MapDust_2")))
@@ -796,6 +803,8 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Distortion_Blaster")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_RedOnion", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_RedOnion_3", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_SplitAssert_LaserBefore")))
 		return E_FAIL;
@@ -1331,7 +1340,13 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Get_ItemUI", CGet_ItemUI::Create(m_pGraphicDev))))
 			return E_FAIL;
 
+		// ETC
 		//============================================================================================================
+		// Haze
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Haze", CHaze::Create(m_pGraphicDev))))
+			return E_FAIL;
+		//============================================================================================================
+
 
 		g_bOnStage[0] = true;
 	}

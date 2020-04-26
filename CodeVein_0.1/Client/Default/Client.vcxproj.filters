@@ -355,6 +355,9 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. Font">
       <UniqueIdentifier>{9691fea8-3f8e-4447-bf24-3e5f1e4fa387}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\7%29 Item\Haze">
+      <UniqueIdentifier>{c9d108fb-1149-4118-9ee2-ca3f032f5f37}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -738,6 +741,9 @@
     <ClInclude Include="..\Headers\DeerKingRushCol.h">
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Haze.h">
+      <Filter>02.GameObject\Stage\7%29 Item\Haze</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1111,6 +1117,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\DeerKingRushCol.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Haze.cpp">
+      <Filter>02.GameObject\Stage\7%29 Item\Haze</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -47,7 +47,7 @@ Tex_Lightning3|Lightning3_%d.png|..\..\Client\Resources\Texture\Effect\Lightning
 Tex_Lightning4|Lightning4_%d.png|..\..\Client\Resources\Texture\Effect\Lightning\Lightning4\|0|16
 Tex_Lightning_NoAnim|Lightning_NoAnim_%d.png|..\..\Client\Resources\Texture\Effect\Lightning\Lightning_NoAnim\|0|3
 Tex_LinePoint|LinePoint_%d.png|..\..\Client\Resources\Texture\Effect\LinePoint\|0|8
-Tex_Mask|Mask_%d.tga|..\..\Client\Resources\Texture\Effect\Mask\|0|16
+Tex_Mask|Mask_%d.tga|..\..\Client\Resources\Texture\Effect\Mask\|0|17
 Tex_Noise|Noise_%d.tga|..\..\Client\Resources\Texture\Effect\Noise\|0|25
 Tex_Normal|Normal_%d.tga|..\..\Client\Resources\Texture\Effect\Normal\|0|10
 Tex_Crystals|Crystals_%d.png|..\..\Client\Resources\Texture\Effect\Particle\Crystals\|0|16

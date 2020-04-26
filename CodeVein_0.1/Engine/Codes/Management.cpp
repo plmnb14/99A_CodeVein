@@ -545,9 +545,9 @@ void CManagement::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol
 	CParticleMgr::Get_Instance()->Create_Hit_Effect(pAttackCol, pHittedCol, pHittedTrans, fPower);
 }
 
-void CManagement::Create_Spawn_Effect(_v3 vPos, _v3 vFinishPos, CTransform* pFollowTrans)
+void CManagement::Create_Spawn_Effect(_float fDelay, _v3 vPos, _v3 vFinishPos, CTransform* pFollowTrans)
 {
-	CParticleMgr::Get_Instance()->Create_Spawn_Effect(vPos, vFinishPos, pFollowTrans);
+	CParticleMgr::Get_Instance()->Create_Spawn_Effect(fDelay, vPos, vFinishPos, pFollowTrans);
 }
 
 void CManagement::Create_Effect_Offset(_tchar* szName, _float fOffset, _v3 vPos, CTransform * pFollowTrans)
