@@ -16,6 +16,8 @@
 *.ipch
 *.enc
 *.rej
+*.dll
+*.lib
 CodeVein_0.1/Tool/ShaderFiles/Shader_Default.fx~HEAD
 CodeVein_0.1/Tool/ShaderFiles/Shader_Default.fx~4b846dcba110ad5a2ec6148e5c12ad62af974374
 CodeVein_0.1/Client/Resources/Mesh/Player/Player.X
