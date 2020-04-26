@@ -28,30 +28,22 @@ CRenderObject::~CRenderObject()
 
 _int CRenderObject::Update_GameObject(_double _TimeDelta)
 {
+	if (false == m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), 20.f))
+		return NO_EVENT;
+
 	CGameObject::LateInit_GameObject();
 	CGameObject::Update_GameObject(_TimeDelta);
 
-	//if (true == m_bOnTool)
-	//{
-		//Update_Collider();
-	//}
+	if (true == m_bOnTool)
+	{
+		Update_Collider();
+	}
 
-	if (false == m_bOnTool)
+	else if (false == m_bOnTool)
 	{
 		m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
-		//m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this);
+		m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this);
 		//m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this);
-
-		//if (CObject_Manager::Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))
-		//{
-		//	if (50.f > D3DXVec3Length(&(m_pTransform->Get_Pos() - TARGET_TO_TRANS(CObject_Manager::Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos())))
-		//	{
-		//		m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
-		//	}
-		//
-		//	//m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
-		//	//m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this);
-		//}
 	}
 
 	return S_OK;
@@ -173,6 +165,10 @@ HRESULT CRenderObject::Add_Essentional()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
 
+	// for.Com_Optimization
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Optimization", L"Com_Opimaization", (CComponent**)& m_pOptimization)))
+		return E_FAIL;
+
 	lstrcpy(m_szName, L"Mesh_DefaultBox");
 
 	return S_OK;
@@ -198,6 +194,10 @@ HRESULT CRenderObject::Add_Essentional_Copy()
 
 	// for.Com_Mesh
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+		return E_FAIL;
+
+	// for.Com_Optimization
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Optimization", L"Com_Opimaization", (CComponent**)& m_pOptimization)))
 		return E_FAIL;
 
 	return S_OK;
@@ -263,6 +263,7 @@ void CRenderObject::Free()
 	Safe_Release(m_pMesh_Static);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pRenderer);
+	Safe_Release(m_pOptimization);
 
 	CGameObject::Free();
 }
@@ -296,4 +297,7 @@ void CRenderObject::Init_Shader()
 	m_pShader->Set_Value("g_matWorld", &matWorld, sizeof(_mat));
 	m_pShader->Set_Value("g_matView", &matView, sizeof(_mat));
 	m_pShader->Set_Value("g_matProj", &matProj, sizeof(_mat));
+
+	float fRimValue = 0.f;
+	m_pShader->Set_Value("g_fRimAlpha", &fRimValue, sizeof(_float));
 }

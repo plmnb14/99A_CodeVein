@@ -86,8 +86,9 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
 	//Check_ShowValue->Set_Child(Start_Show());
 	//Start_Sel->Add_Child(Check_ShowValue);
-	//Start_Sel->Add_Child(Start_Game());
+
 	Start_Sel->Add_Child(Start_Game());
+	//Start_Sel->Add_Child(Normal_Cut2());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -211,8 +212,6 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 	if (false == m_bReadyDead)
 		Check_PhyCollider();
 
-	pMonsterHpUI->Update_GameObject(TimeDelta);
-
 	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
 	return NOERROR;
@@ -226,10 +225,11 @@ _int CSwordGenji::Late_Update_GameObject(_double TimeDelta)
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
 
+	
 	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
-	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-		return E_FAIL;
+	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+	//	return E_FAIL;
 	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
 	//	return E_FAIL;
 
@@ -246,43 +246,45 @@ HRESULT CSwordGenji::Render_GameObject()
 		nullptr == m_pMeshCom)
 		return E_FAIL;
 
-	
 	m_pMeshCom->Play_Animation(_float(m_dTimeDelta)); // * alpha
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
-
-	m_pShaderCom->Begin_Shader();
-
-	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
-
-	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+	if (m_pOptimization->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 1.5f))
 	{
-		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+		if (FAILED(SetUp_ConstantTable()))
+			return E_FAIL;
 
-		m_pMeshCom->Update_SkinnedMesh(i);
+		m_pShaderCom->Begin_Shader();
 
-		for (_uint j = 0; j < iNumSubSet; ++j)
+		_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+
+		for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 		{
-			if (false == m_bReadyDead)
-				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+			_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
 
-			m_pShaderCom->Begin_Pass(m_iPass);
+			m_pMeshCom->Update_SkinnedMesh(i);
 
-			m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
+			for (_uint j = 0; j < iNumSubSet; ++j)
+			{
+				if (false == m_bReadyDead)
+					m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
 
-			//if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
-			//	return E_FAIL;
+				m_pShaderCom->Begin_Pass(m_iPass);
 
-			m_pShaderCom->Commit_Changes();
+				m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
 
-			m_pMeshCom->Render_Mesh(i, j);
+				//if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
+				//	return E_FAIL;
 
-			m_pShaderCom->End_Pass();
+				m_pShaderCom->Commit_Changes();
+
+				m_pMeshCom->Render_Mesh(i, j);
+
+				m_pShaderCom->End_Pass();
+			}
 		}
-	}
 
-	m_pShaderCom->End_Shader();
+		m_pShaderCom->End_Shader();
+	}
 
 	m_pSword->Update_GameObject(m_dTimeDelta);
 	Update_Collider();
@@ -1216,6 +1218,10 @@ HRESULT CSwordGenji::Add_Component(void* pArg)
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
 
+	// for.Com_Optimaization
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Optimization", L"Com_Optimization", (CComponent**)&m_pOptimization)))
+		return E_FAIL;
+
 	m_pCollider->Set_Radius(_v3{ 0.5f, 0.5f, 0.5f });
 	m_pCollider->Set_Dynamic(true);
 	m_pCollider->Set_Type(COL_SPHERE);
@@ -1379,6 +1385,7 @@ void CSwordGenji::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pCollider);
+	Safe_Release(m_pOptimization);
 
 	CGameObject::Free();
 }

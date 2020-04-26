@@ -191,10 +191,12 @@ call CopyEngine.bat</Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\Codes\QuadTreeTerrain.h" />
     <ClInclude Include="..\Headers\ActeiveObject.h" />
     <ClInclude Include="..\Headers\AIController.h" />
     <ClInclude Include="..\Headers\AniCtrl.h" />
     <ClInclude Include="..\Headers\Base.h" />
+    <ClInclude Include="..\Headers\BattleAgent.h" />
     <ClInclude Include="..\Headers\BehaviorTree.h" />
     <ClInclude Include="..\Headers\BlackBoard.h" />
     <ClInclude Include="..\Headers\BT_All_Node.h" />
@@ -256,6 +258,7 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\Engine_Struct.h" />
     <ClInclude Include="..\Headers\Engine_Typedef.h" />
     <ClInclude Include="..\Headers\FrameMgr.h" />
+    <ClInclude Include="..\Headers\Frustum_Culling.h" />
     <ClInclude Include="..\Headers\GameObject.h" />
     <ClInclude Include="..\Headers\Gizmo.h" />
     <ClInclude Include="..\Headers\Graphic_Device.h" />
@@ -271,8 +274,10 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\MyPhysx.h" />
     <ClInclude Include="..\Headers\NavMesh.h" />
     <ClInclude Include="..\Headers\Object_Manager.h" />
+    <ClInclude Include="..\Headers\Optimization.h" />
     <ClInclude Include="..\Headers\ParticleMgr.h" />
     <ClInclude Include="..\Headers\PipeLine.h" />
+    <ClInclude Include="..\Headers\QuadTree.h" />
     <ClInclude Include="..\Headers\Renderer.h" />
     <ClInclude Include="..\Headers\RenderObject.h" />
     <ClInclude Include="..\Headers\RigidBody.h" />
@@ -296,6 +301,7 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\AIController.cpp" />
     <ClCompile Include="..\Codes\AniCtrl.cpp" />
     <ClCompile Include="..\Codes\Base.cpp" />
+    <ClCompile Include="..\Codes\BattleAgent.cpp" />
     <ClCompile Include="..\Codes\BehaviorTree.cpp" />
     <ClCompile Include="..\Codes\BlackBoard.cpp" />
     <ClCompile Include="..\Codes\BT_BlackBoard_Mgr.cpp" />
@@ -349,6 +355,7 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\Dynamic_Camera.cpp" />
     <ClCompile Include="..\Codes\Effect.cpp" />
     <ClCompile Include="..\Codes\FrameMgr.cpp" />
+    <ClCompile Include="..\Codes\Frustum_Culling.cpp" />
     <ClCompile Include="..\Codes\GameObject.cpp" />
     <ClCompile Include="..\Codes\Gizmo.cpp" />
     <ClCompile Include="..\Codes\Graphic_Device.cpp" />
@@ -364,8 +371,11 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\MyPhysx.cpp" />
     <ClCompile Include="..\Codes\NavMesh.cpp" />
     <ClCompile Include="..\Codes\Object_Manager.cpp" />
+    <ClCompile Include="..\Codes\Optimization.cpp" />
     <ClCompile Include="..\Codes\ParticleMgr.cpp" />
     <ClCompile Include="..\Codes\PipeLine.cpp" />
+    <ClCompile Include="..\Codes\QuadTree.cpp" />
+    <ClCompile Include="..\Codes\QuadTreeTerrain.cpp" />
     <ClCompile Include="..\Codes\Renderer.cpp" />
     <ClCompile Include="..\Codes\RenderObject.cpp" />
     <ClCompile Include="..\Codes\RigidBody.cpp" />

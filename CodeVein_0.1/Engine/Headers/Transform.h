@@ -63,6 +63,9 @@ public:
 	// 해당 Vector 방향으로의 각도를 계산
 	const _float Chase_Target_Angle(const _v3 * pTargetPos);
 
+	// 내 위치로 부터 때린 대상으로의 각도
+	const _float Calc_HitTarget_Angle(const _v3 pHitTargetPos);
+
 public:
 	const _mat * CTransform::Compute_LookAtTarget(const _v3 * _pTargetDir);
 

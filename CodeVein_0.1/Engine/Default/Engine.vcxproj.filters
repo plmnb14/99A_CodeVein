@@ -247,6 +247,21 @@
     <Filter Include="01.Utility\[06] RenderTarget\Manager">
       <UniqueIdentifier>{d53c8ac0-8149-4b96-bcde-90ebd334d33a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\[03] Component\Component\10%29 Optimization">
+      <UniqueIdentifier>{711dc17b-d3a0-4c90-b73f-747e1a975b73}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\[03] Component\Component\10%29 Optimization\Frustum_Culling">
+      <UniqueIdentifier>{9a0d960f-0221-409a-9c72-8da2443b62c5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\[03] Component\Component\10%29 Optimization\QuadTree">
+      <UniqueIdentifier>{4648ed60-3ae8-4c08-9eca-106c8fbc353e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\[02] GameObject\0%29 GameObject\1%29 QuadTreeTerrain">
+      <UniqueIdentifier>{5704bbcb-8027-40c6-87de-d28bc99d6f9e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\[03] Component\Component\11%29 BattleAgent">
+      <UniqueIdentifier>{4b41f9e2-aadc-4eaf-93ca-945cc5286c7a}</UniqueIdentifier>
+    </Filter>
     <Filter Include="01.Utility\[02] GameObject\4%29 Effect\3%29 DecalEffect">
       <UniqueIdentifier>{ca93fa62-40a5-49a6-ad61-487e1255bfca}</UniqueIdentifier>
     </Filter>
@@ -546,6 +561,21 @@
     <ClInclude Include="..\Headers\BT_CreateBuff.h">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Service\Derive</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Frustum_Culling.h">
+      <Filter>01.Utility\[03] Component\Component\10%29 Optimization\Frustum_Culling</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\QuadTree.h">
+      <Filter>01.Utility\[03] Component\Component\10%29 Optimization\QuadTree</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Optimization.h">
+      <Filter>01.Utility\[03] Component\Component\10%29 Optimization</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Codes\QuadTreeTerrain.h">
+      <Filter>01.Utility\[02] GameObject\0%29 GameObject\1%29 QuadTreeTerrain</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BattleAgent.h">
+      <Filter>01.Utility\[03] Component\Component\11%29 BattleAgent</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\DecalEffect.h">
       <Filter>01.Utility\[02] GameObject\4%29 Effect\3%29 DecalEffect</Filter>
     </ClInclude>
@@ -820,6 +850,21 @@
     </ClCompile>
     <ClCompile Include="..\Codes\BT_CreateBuff.cpp">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Service\Derive</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Frustum_Culling.cpp">
+      <Filter>01.Utility\[03] Component\Component\10%29 Optimization\Frustum_Culling</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\QuadTree.cpp">
+      <Filter>01.Utility\[03] Component\Component\10%29 Optimization\QuadTree</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Optimization.cpp">
+      <Filter>01.Utility\[03] Component\Component\10%29 Optimization</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\QuadTreeTerrain.cpp">
+      <Filter>01.Utility\[02] GameObject\0%29 GameObject\1%29 QuadTreeTerrain</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BattleAgent.cpp">
+      <Filter>01.Utility\[03] Component\Component\11%29 BattleAgent</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\DecalEffect.cpp">
       <Filter>01.Utility\[02] GameObject\4%29 Effect\3%29 DecalEffect</Filter>

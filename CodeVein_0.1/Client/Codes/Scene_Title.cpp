@@ -175,6 +175,7 @@ HRESULT CScene_Title::Ready_Layer_LoadingUI(const _tchar * pLayerTag)
 {
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LoadingBar", SCENE_TITLE, pLayerTag)))
 		return E_FAIL;
+
 	static_cast<CLoadingScreen*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingScreen", SCENE_STATIC))->Set_UI_Index(0);
 	return S_OK;
 }

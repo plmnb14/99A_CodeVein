@@ -382,12 +382,12 @@ void CManagement::Set_LightPos(_uint iIndex, _v3 vPos)
 	return m_pLight_Manager->Set_Pos(iIndex, vPos);
 }
 
-HRESULT CManagement::Add_Light(LPDIRECT3DDEVICE9 pGraphic_Device, D3DLIGHT9 LightDesc)
+HRESULT CManagement::Add_Light(LPDIRECT3DDEVICE9 pGraphic_Device, NEW_LIGHT LightDesc , CLight_Manager::Light_Type _eLightType)
 {
 	if (nullptr == m_pLight_Manager)
 		return E_FAIL;
 
-	return m_pLight_Manager->Add_Light(pGraphic_Device, LightDesc);
+	return m_pLight_Manager->Add_Light(pGraphic_Device, LightDesc, _eLightType);
 }
 
 HRESULT CManagement::Clear_LightList()
