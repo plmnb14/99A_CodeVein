@@ -1,122 +1,88 @@
 #include "stdafx.h"
-#include "..\Headers\CodeOwnerUI.h"
+#include "..\Headers\BloodSkillSlot.h"
 
 
-CCodeOwnerUI::CCodeOwnerUI(_Device pDevice)
+CBloodSkillSlot::CBloodSkillSlot(_Device pDevice)
 	: CUI(pDevice)
 {
 }
 
-CCodeOwnerUI::CCodeOwnerUI(const CCodeOwnerUI & rhs)
+CBloodSkillSlot::CBloodSkillSlot(const CBloodSkillSlot & rhs)
 	: CUI(rhs)
 {
 }
 
-HRESULT CCodeOwnerUI::Ready_GameObject_Prototype()
+HRESULT CBloodSkillSlot::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
-
 	return NOERROR;
 }
 
-HRESULT CCodeOwnerUI::Ready_GameObject(void * pArg)
+HRESULT CBloodSkillSlot::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
-
-	m_eBloodCode = BloodCode_Prometheus;
-	m_bIsSelect = true;
-
-	m_fAlpha = 1.f;
 	return NOERROR;
 }
 
-_int CCodeOwnerUI::Update_GameObject(_double TimeDelta)
+_int CBloodSkillSlot::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
-
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	
 
-	Compute_ViewZ(&m_pTransformCom->Get_Pos());
-
-	switch (m_eBloodCode)
+	switch (m_eSkillIndex)
 	{
-	case BloodCode_Fighter:
-	{
-		if (!m_bIsSelect)
-		{
-			m_iIndex = 0;
-		}
-		else
-		{
-			m_iIndex = 1;
-		}
-	}
-	break;
-	case BloodCode_Caster:
-	{
-		if (!m_bIsSelect)
-		{
-			m_iIndex = 2;
-		}
-		else
-		{
-			m_iIndex = 3;
-		}
-	}
-	break;
-
-	case BloodCode_Berserker:
-	{
-		if (!m_bIsSelect)
-		{
-			m_iIndex = 4;
-		}
-		else
-		{
-			m_iIndex = 5;
-		}
-	}
-	break;
-
-	case BloodCode_Prometheus:
-	{
-		if (!m_bIsSelect)
-		{
-			m_iIndex = 6;
-		}
-		else
-		{
-			m_iIndex = 7;
-		}
-	}
-	break;
-
-	case BloodCode_Eos:
-	{
-		if (!m_bIsSelect)
-		{
-			m_iIndex = 8;
-		}
-		else
-		{
-			m_iIndex = 9;
-		}
-	}
-	break;
-
-	default:
-		
+	case Skill_OneHand_Active_01:
+		m_iIndex = 1;
+		break;
+	case Skill_OneHand_Active_02:
+		m_iIndex = 2;
+		break;
+	case Skill_OneHand_Active_03:
+		m_iIndex = 3;
+		break;
+	case Skill_OneHand_Active_04:
+		m_iIndex = 4;
+		break;
+	case Skill_TwoHand_Active_01:
+		m_iIndex = 5;
+		break;
+	case Skill_TwoHand_Active_02:
+		m_iIndex = 6;
+		break;
+	case Skill_TwoHand_Active_03:
+		m_iIndex = 7;
+		break;
+	case Skill_TwoHand_Active_04:
+		m_iIndex = 8;
+		break;
+	case Skill_Halverd_Single:
+		m_iIndex = 9;
+		break;
+	case Skill_Gun_Single:
+		m_iIndex = 10;
+		break;
+	case Skill_Buff_Enchant_01:
+		m_iIndex = 11;
+		break;
+	case Skill_Buff_Enchant_02:
+		m_iIndex = 12;
+		break;
+	case Skill_Buff_Enchant_03:
+		m_iIndex = 13;
+		break;
+	case Skill_End:
+		m_iIndex = 0;
 		break;
 	}
-
+	Compute_ViewZ(&m_pTransformCom->Get_Pos());
 	return NO_EVENT;
 }
 
-_int CCodeOwnerUI::Late_Update_GameObject(_double TimeDelta)
+_int CBloodSkillSlot::Late_Update_GameObject(_double TimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
@@ -127,32 +93,45 @@ _int CCodeOwnerUI::Late_Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-HRESULT CCodeOwnerUI::Render_GameObject()
+HRESULT CBloodSkillSlot::Render_GameObject()
 {
 	if (!m_bIsActive)
 		return NOERROR;
-
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
 
+	_uint iIndex = 0;
+	_uint iPass = 0;
+	LOOP(2)
+	{
+		if (0 == i)
+		{
+			iIndex = 14;
+			iPass = 1;
+		}
+		else if(1 == i)
+		{
+			iIndex = m_iIndex;
+			iPass = 1;
+		}
 
-	if (FAILED(SetUp_ConstantTable(0)))
-		return E_FAIL;
+		if (FAILED(SetUp_ConstantTable(iIndex)))
+			return E_FAIL;
 
-	m_pShaderCom->Begin_Shader();
-	m_pShaderCom->Begin_Pass(8);
+		m_pShaderCom->Begin_Shader();
+		m_pShaderCom->Begin_Pass(iPass);
 
-	m_pBufferCom->Render_VIBuffer();
-	m_pShaderCom->End_Pass();
-	m_pShaderCom->End_Shader();
+		m_pBufferCom->Render_VIBuffer();
+		m_pShaderCom->End_Pass();
+		m_pShaderCom->End_Shader();
+	}
 	
 
-
-	return NOERROR;
+	return S_OK;
 }
 
-HRESULT CCodeOwnerUI::Add_Component()
+HRESULT CBloodSkillSlot::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -163,7 +142,7 @@ HRESULT CCodeOwnerUI::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_BloodCodeOwner", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_BloodSkillSlot", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -177,7 +156,7 @@ HRESULT CCodeOwnerUI::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CCodeOwnerUI::SetUp_ConstantTable(_uint iIndex)
+HRESULT CBloodSkillSlot::SetUp_ConstantTable(_uint iIndex)
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -190,15 +169,13 @@ HRESULT CCodeOwnerUI::SetUp_ConstantTable(_uint iIndex)
 		return E_FAIL;
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
-		return E_FAIL;
 
 	return NOERROR;
 }
 
-CCodeOwnerUI * CCodeOwnerUI::Create(_Device pGraphic_Device)
+CBloodSkillSlot * CBloodSkillSlot::Create(_Device pGraphic_Device)
 {
-	CCodeOwnerUI* pInstance = new CCodeOwnerUI(pGraphic_Device);
+	CBloodSkillSlot* pInstance = new CBloodSkillSlot(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 		Safe_Release(pInstance);
@@ -206,9 +183,9 @@ CCodeOwnerUI * CCodeOwnerUI::Create(_Device pGraphic_Device)
 	return pInstance;
 }
 
-CGameObject * CCodeOwnerUI::Clone_GameObject(void * pArg)
+CGameObject * CBloodSkillSlot::Clone_GameObject(void * pArg)
 {
-	CCodeOwnerUI* pInstance = new CCodeOwnerUI(*this);
+	CBloodSkillSlot* pInstance = new CBloodSkillSlot(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 		Safe_Release(pInstance);
@@ -216,7 +193,7 @@ CGameObject * CCodeOwnerUI::Clone_GameObject(void * pArg)
 	return pInstance;
 }
 
-void CCodeOwnerUI::Free()
+void CBloodSkillSlot::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);

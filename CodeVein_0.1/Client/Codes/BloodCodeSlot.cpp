@@ -33,30 +33,30 @@ _int CBloodCodeSlot::Update_GameObject(_double TimeDelta)
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
-	Compute_ViewZ(&m_pTransformCom->Get_Pos());
+	
 
 	switch (m_eType)
 	{
 	case BloodCode_Fighter:
-		m_iIndex = 1;
-		break;
-	case BloodCode_Caster:
 		m_iIndex = 2;
 		break;
-	case BloodCode_Berserker:
+	case BloodCode_Caster:
 		m_iIndex = 3;
 		break;
-	case BloodCode_Prometheus:
+	case BloodCode_Berserker:
 		m_iIndex = 4;
 		break;
-	case BloodCode_Eos:
+	case BloodCode_Prometheus:
 		m_iIndex = 5;
+		break;
+	case BloodCode_Eos:
+		m_iIndex = 6;
 		break;
 	default:
 		m_iIndex = 0;
 		break;
 	}
-
+	Compute_ViewZ(&m_pTransformCom->Get_Pos());
 	return NO_EVENT;
 }
 
@@ -83,19 +83,52 @@ HRESULT CBloodCodeSlot::Render_GameObject()
 	_uint iIndex = 0;
 	_uint iPass = 0;
 
-	LOOP(2)
+	if (!m_bIsSelect)
 	{
-		(0 == i) ? (iIndex = 0) && (iPass = 1) : (iIndex = m_iIndex) && (iPass = 1);
+		LOOP(2)
+		{
+			(0 == i) ? (iIndex = 0) && (iPass = 1) : (iIndex = m_iIndex) && (iPass = 1);
 
-		if (FAILED(SetUp_ConstantTable(iIndex)))
-			return E_FAIL;
+			if (FAILED(SetUp_ConstantTable(iIndex)))
+				return E_FAIL;
 
-		m_pShaderCom->Begin_Shader();
-		m_pShaderCom->Begin_Pass(iPass);
+			m_pShaderCom->Begin_Shader();
+			m_pShaderCom->Begin_Pass(iPass);
 
-		m_pBufferCom->Render_VIBuffer();
-		m_pShaderCom->End_Pass();
-		m_pShaderCom->End_Shader();
+			m_pBufferCom->Render_VIBuffer();
+			m_pShaderCom->End_Pass();
+			m_pShaderCom->End_Shader();
+		}
+	}
+	else
+	{
+		LOOP(3)
+		{
+			if (0 == i)
+			{
+				iIndex = 0;
+				iPass = 1;
+			}
+			else if (1 == i)
+			{
+				iIndex = m_iIndex;
+				iPass = 1;
+			}
+			else if (2 == i)
+			{
+				iIndex = 1;
+				iPass = 1;
+			}
+			if (FAILED(SetUp_ConstantTable(iIndex)))
+				return E_FAIL;
+
+			m_pShaderCom->Begin_Shader();
+			m_pShaderCom->Begin_Pass(iPass);
+
+			m_pBufferCom->Render_VIBuffer();
+			m_pShaderCom->End_Pass();
+			m_pShaderCom->End_Shader();
+		}
 	}
 	
 
@@ -113,7 +146,7 @@ HRESULT CBloodCodeSlot::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_BloodCodeSlot", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_BloodCodeIcon", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -140,7 +173,8 @@ HRESULT CBloodCodeSlot::SetUp_ConstantTable(_uint iIndex)
 		return E_FAIL;
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
 		return E_FAIL;
-
+	if (FAILED(m_pShaderCom->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
+		return E_FAIL;
 	return NOERROR;
 }
 

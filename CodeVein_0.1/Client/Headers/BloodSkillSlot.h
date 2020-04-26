@@ -4,12 +4,15 @@
 #include "UI.h"
 
 BEGIN(Client)
-class CCodeOwnerUI final : public CUI
+class CBloodSkillSlot final : public CUI
 {
 private:
-	explicit CCodeOwnerUI(_Device pDevice);
-	explicit CCodeOwnerUI(const CCodeOwnerUI& rhs);
-	virtual ~CCodeOwnerUI() = default;
+	explicit CBloodSkillSlot(_Device pDevice);
+	explicit CBloodSkillSlot(const CBloodSkillSlot& rhs);
+	virtual ~CBloodSkillSlot() = default;
+
+public:
+	void Set_SkillIndex(Skill_Index eSkillIndex) { m_eSkillIndex = eSkillIndex; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -30,12 +33,10 @@ private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 private:
-	BloodCode_ID			m_eBloodCode = BloodCode_End;
-	_bool					m_bIsSelect = false;
-	_float					m_fAlpha = 0.f;
+	Skill_Index				m_eSkillIndex = Skill_End;
 
 public:
-	static CCodeOwnerUI*		Create(_Device pGraphic_Device);
+	static CBloodSkillSlot*		Create(_Device pGraphic_Device);
 	virtual CGameObject*		Clone_GameObject(void* pArg);
 	virtual void				Free();
 };

@@ -64,9 +64,6 @@ HRESULT CBloodCode_Icon::Render_GameObject()
 
 	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
 
-	m_matOldView = g_pManagement->Get_Transform(D3DTS_VIEW);
-	m_matOldProj = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
@@ -82,10 +79,6 @@ HRESULT CBloodCode_Icon::Render_GameObject()
 	m_pShaderCom->End_Pass();
 
 	m_pShaderCom->End_Shader();
-
-
-	g_pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
-	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
 
 	return NOERROR;
 }

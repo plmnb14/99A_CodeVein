@@ -28,7 +28,8 @@ HRESULT CBloodCodeMenuUI::Ready_GameObject(void * pArg)
 
 	SetUp_Default();
 
-	
+	m_pTransformCom->Set_Scale(_v3(3.555555f, 2.f, 0.f));
+
 	return NOERROR;
 }
 
@@ -40,6 +41,7 @@ _int CBloodCodeMenuUI::Update_GameObject(_double TimeDelta)
 
 	Compute_ViewZ(&m_pTransformCom->Get_Pos());
 
+	
 	m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 	if (nullptr == m_pTarget)
 		return NO_EVENT;
@@ -47,26 +49,67 @@ _int CBloodCodeMenuUI::Update_GameObject(_double TimeDelta)
 	_v3 vAngle = TARGET_TO_TRANS(m_pTarget)->Get_Angle();
 	
 	m_pTransformCom->Set_Angle(vAngle);
-	_v3 vLookZ = TARGET_TO_TRANS(m_pTarget)->Get_Axis(AXIS_Z);
 	_v3 vLookX = TARGET_TO_TRANS(m_pTarget)->Get_Axis(AXIS_X);
+	_v3 vLookY = TARGET_TO_TRANS(m_pTarget)->Get_Axis(AXIS_Y);
+	_v3 vLookZ = TARGET_TO_TRANS(m_pTarget)->Get_Axis(AXIS_Z);
 
 	_v3 vDir = *V3_NORMAL_SELF(&(-*V3_NORMAL_SELF(&vLookX) + *V3_NORMAL_SELF(&vLookZ) + _v3(0.f, 2.f, 0.f))) * 2.f;
 	_v3 vPosition = TARGET_TO_TRANS(m_pTarget)->Get_Pos() + vDir;
 	m_pTransformCom->Set_Pos(vPosition);
-	m_pTransformCom->Set_Scale(_v3(3.555555f, 2.f, 0.f));
 
-	_v3 vMyAxisX = m_pTransformCom->Get_Axis(AXIS_X);
+	TARGET_TO_TRANS(m_pBloodCodeSelectUI)->Set_Pos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookZ) * -0.0002f);
+	TARGET_TO_TRANS(m_pBloodCodeSelectUI)->Set_Angle(m_pTransformCom->Get_Angle());
+	m_pBloodCodeSelectUI->Set_Active(m_bIsActive);
+	m_pBloodCodeSelectUI->Set_SlotPos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookZ) * -0.0003f);
+
+	TARGET_TO_TRANS(m_pSkillReleaseUI)->Set_Pos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookZ) * -0.0005f);
+	TARGET_TO_TRANS(m_pSkillReleaseUI)->Set_Angle(m_pTransformCom->Get_Angle());
+	m_pSkillReleaseUI->Set_Active(m_bIsActive);
+	m_pSkillReleaseUI->Set_SlotPos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookZ) * -0.0006f);
 	
-	_v3 vLength = TARGET_TO_TRANS(m_pTarget)->Get_Pos() + vDir * 0.95f - *V3_NORMAL_SELF(&vMyAxisX) * m_pTransformCom->Get_Size().x * 0.22f;
+	if (g_pInput_Device->Key_Up(DIK_RIGHT))
+	{
+		m_pBloodCodeSelectUI->MoveRight();	
+	}
+	
 
+	if (!m_bIsActive)
+	{
+		m_pBloodCodeSelectUI->Set_Active(false);
+		m_pSkillReleaseUI->Set_Active(false);
+	}
+	else
+	{
+		if (m_bIsChoiseBloodCode)
+		{
+			m_pBloodCodeSelectUI->Set_Active(false);
+			m_pSkillReleaseUI->Set_Active(true);
 
-	TARGET_TO_TRANS(m_pOwnerUI)->Set_Angle(m_pTransformCom->Get_Angle());
-	TARGET_TO_TRANS(m_pOwnerUI)->Set_Scale(_v3(2.f, 2.f, 0.f));
-	TARGET_TO_TRANS(m_pOwnerUI)->Set_Pos(vLength);
-	m_pOwnerUI->Set_ViewZ(m_fViewZ - 0.1f);
-	m_pOwnerUI->Set_Active(m_bIsActive);
+			if (g_pInput_Device->Key_Up(DIK_RETURN))
+				m_bIsChoiseBloodCode = false;
+		}
+		else
+		{
+			m_pBloodCodeSelectUI->Set_Active(true);
+			m_pSkillReleaseUI->Set_Active(false);
 
-		
+			if (g_pInput_Device->Key_Up(DIK_LEFT))
+			{
+				m_pBloodCodeSelectUI->MoveLeft();
+			}
+			if (g_pInput_Device->Key_Up(DIK_RETURN))
+			{
+
+				m_pBloodCodeSelectUI->Select_BloodCode();
+				m_pSkillReleaseUI->Set_Type(m_pBloodCodeSelectUI->Get_Type());
+				m_bIsChoiseBloodCode = true;
+
+			}
+		}
+	}
+	
+	
+	
 	return NO_EVENT;
 }
 
@@ -90,7 +133,7 @@ HRESULT CBloodCodeMenuUI::Render_GameObject()
 		nullptr == m_pBufferCom)
 		return E_FAIL;
 
-
+	
 	if (FAILED(SetUp_ConstantTable(0)))
 		return E_FAIL;
 
@@ -100,6 +143,7 @@ HRESULT CBloodCodeMenuUI::Render_GameObject()
 	m_pBufferCom->Render_VIBuffer();
 	m_pShaderCom->End_Pass();
 	m_pShaderCom->End_Shader();
+	
 
 	return NOERROR;
 }
@@ -142,23 +186,20 @@ HRESULT CBloodCodeMenuUI::SetUp_ConstantTable(_uint iIndex)
 		return E_FAIL;
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
 		return E_FAIL;
-	
+	if (FAILED(m_pShaderCom->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
+		return E_FAIL;
 	return NOERROR;
 }
 
 void CBloodCodeMenuUI::SetUp_Default()
 {
-	m_pOwnerUI = static_cast<CCodeOwnerUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_CodeOwnerUI", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pOwnerUI, SCENE_STAGE, L"Layer_StageUI", nullptr);
-	TARGET_TO_TRANS(m_pOwnerUI)->Set_Scale(_v3(2.f, 2.f, 0.f));
+	m_pBloodCodeSelectUI = static_cast<CBloodCodeSelectUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodCodeSelectUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBloodCodeSelectUI, SCENE_STAGE, L"Layer_StageUI", nullptr);
+	TARGET_TO_TRANS(m_pBloodCodeSelectUI)->Set_Scale(_v3(3.555555f, 2.f, 0.f));
 
-	CBloodCodeSlot* pInstance = nullptr;
-	LOOP(5)
-	{
-		pInstance = static_cast<CBloodCodeSlot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodCodeSlot", nullptr));
-		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_StageUI", nullptr);
-		m_vecBloodCodeSlot.push_back(pInstance);
-	}
+	m_pSkillReleaseUI = static_cast<CSkillReleaseUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SkillReleaseUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pSkillReleaseUI, SCENE_STAGE, L"Layer_StageUI", nullptr);
+	TARGET_TO_TRANS(m_pSkillReleaseUI)->Set_Scale(_v3(3.555555f, 2.f, 0.f));
 }
 
 

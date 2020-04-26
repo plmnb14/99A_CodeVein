@@ -44,8 +44,10 @@
 #include "StatusUI.h"
 #include "ExpUI.h"
 #include "BloodCodeMenuUI.h"
-#include "CodeOwnerUI.h"
 #include "BloodCodeSlot.h"
+#include "BloodCodeSelectUI.h"
+#include "SkillReleaseUI.h"
+#include "BloodSkillSlot.h"
 
 BEGIN(Client)
 class CStatusUI;

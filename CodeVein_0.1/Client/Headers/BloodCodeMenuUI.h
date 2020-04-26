@@ -6,6 +6,8 @@
 BEGIN(Client)
 class CCodeOwnerUI;
 class CBloodCodeSlot;
+class CBloodCodeSelectUI;
+class CSkillReleaseUI;
 class CBloodCodeMenuUI final : public CUI
 {
 private:
@@ -24,6 +26,7 @@ private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable(_uint iIndex);
 	void SetUp_Default();
+	
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -33,8 +36,15 @@ private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 private:
-	CCodeOwnerUI*			m_pOwnerUI = nullptr;
+	BloodCode_ID			m_eBloodCodeType = BloodCode_End;
 	vector<CBloodCodeSlot*> m_vecBloodCodeSlot;
+	_bool					m_bIsCodeSelect = false;
+	_uint					m_iSelectIndex = 0;
+	//CCodeOwnerUI*			m_pCodeOwnerUI = nullptr;
+	_float					m_fAlpha = 0.f;
+	CBloodCodeSelectUI*		m_pBloodCodeSelectUI = nullptr;
+	CSkillReleaseUI*		m_pSkillReleaseUI = nullptr;
+	_bool					m_bIsChoiseBloodCode = false;
 
 public:
 	static CBloodCodeMenuUI*	Create(_Device pGraphic_Device);
