@@ -125,17 +125,12 @@ PS_OUT PS_MAIN(PS_IN In)
 	vector	vEmissive	= tex2D(EmissiveSampler, In.vTexUV);
 	vector	vShade		= tex2D(ShadeSampler, In.vTexUV);
 	vector	vSpecular	= tex2D(SpecularSampler, In.vTexUV);
-	vector	vRim		= tex2D(RimSampler, In.vTexUV);
 	vector	vSSAO		= tex2D(SSAOSampler, In.vTexUV);
 
-	// SSAO ¼öÁ¤Áß
-	//float3 vFinalShade = 1.f;
+
 	float3 vFinalShade = vShade.r * vSSAO.r;
-	//float3 vFinalShade = max(vShade.rgb - vSSAO.rgb);
-	//float3 vFinalShade = min(vShade.rgb , vSSAO.rgb);
-	//Out.vColor = ((vDiffuse + vSpecular) * float4(vFinalShade, 1.f)) + (vEmissive * 5.f) + vRim;
-	Out.vColor = ((vDiffuse) * float4(vFinalShade, 1.f)) + (vEmissive * 1.f);// + vRim;
-	//Out.vColor = (vDiffuse + vSpecular - vSSAO.x) * vShade;
+
+	Out.vColor = ((vDiffuse + vSpecular) * float4(vFinalShade, 1.f)) + vEmissive;
 
 	return Out;
 }

@@ -5,8 +5,11 @@ matrix		g_LightVP_Close, g_LightVP_Medium, g_LightVP_Far;
 float		g_fFxAlpha;
 bool		g_bDissolve = false;
 
-vector		g_vCamPos;
+float3		g_vCamPos;
 
+vector		g_vRimColor = (1.f, 1.f, 1.f, 1.f);
+float		g_fRimPower = 3.f;
+float		g_fRimAlpha = 0.f;
 float		g_fSpecularPower = 0.0f;
 
 texture		g_DiffuseTexture;
@@ -131,6 +134,7 @@ struct VS_OUT
 	float2		vTexUV : TEXCOORD0;
 	float4		vProjPos : TEXCOORD1;
 	float4		vRimDir : TEXCOORD2;
+	float4		vRimNormal : TEXCOORD3;
 };
 
 struct VS_BLUROUT
@@ -163,7 +167,10 @@ VS_OUT VS_MAIN(VS_IN In)
 
 	Out.vProjPos = Out.vPosition;
 
-	Out.vRimDir = normalize(g_vCamPos - float4(In.vPosition, 1.f));
+	float4 vWorldPos = mul(vector(In.vPosition, 1.f), g_matWorld);
+
+	Out.vRimDir = float4(normalize(g_vCamPos - vWorldPos.xyz), 1.f);
+	Out.vRimNormal = float4(normalize(In.vNormal) , 0.f);
 
 	return Out;
 }
@@ -209,6 +216,7 @@ struct PS_IN
 	float2		vTexUV		: TEXCOORD0;
 	float4		vProjPos	: TEXCOORD1;
 	float4		vRimDir		: TEXCOORD2;
+	float4		vRimNormal : TEXCOORD3;
 };
 
 struct PS_BLURIN
@@ -237,9 +245,9 @@ struct PS_OUT_ADVENCE
 };
 
 // «»ºø¿« ªˆ¿ª ∞·¡§«—¥Ÿ.
-PS_OUT PS_MAIN(PS_IN In)
+PS_OUT_ADVENCE PS_MAIN(PS_IN In)
 {
-	PS_OUT			Out = (PS_OUT)0;
+	PS_OUT_ADVENCE			Out = (PS_OUT_ADVENCE)0;
 
 	Out.vDiffuse = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
 
@@ -264,7 +272,14 @@ PS_OUT PS_MAIN(PS_IN In)
 
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 0.f);
 
-	Out.vVelocity = 0;
+	//========================================================================================================================
+	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
+
+	float4 fFinalRimColor = g_vRimColor;
+	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
+
+	Out.vEmissive = fFinalRim;
+	//========================================================================================================================
 
 	return Out;
 }
@@ -293,7 +308,14 @@ PS_OUT_ADVENCE PS_Default_DN(PS_IN In)
 	//========================================================================================================================
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 0.2f);
 
-	Out.vEmissive = 0;
+	//========================================================================================================================
+	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
+
+	float4 fFinalRimColor = g_vRimColor;
+	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
+
+	Out.vEmissive = fFinalRim;
+	//========================================================================================================================
 
 	return Out;
 }
@@ -323,7 +345,14 @@ PS_OUT_ADVENCE PS_Default_DNT(PS_IN In)
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 0.f);
 	// Depth.z == SpecularIntensity.x ( Ω∫∆Â≈ß∑Ø¿« x )
 
-	Out.vEmissive = 0;
+	//========================================================================================================================
+	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
+
+	float4 fFinalRimColor = g_vRimColor;
+	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
+
+	Out.vEmissive = fFinalRim;
+	//========================================================================================================================
 
 	return Out;
 }
@@ -356,7 +385,14 @@ PS_OUT_ADVENCE PS_Default_DNS(PS_IN In)
 
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x * 1.f, SpecularIntensity.y * 1.f);
 
-	Out.vEmissive = 0;
+	//========================================================================================================================
+	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
+
+	float4 fFinalRimColor = g_vRimColor;
+	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
+
+	Out.vEmissive = fFinalRim;
+	//========================================================================================================================
 
 	return Out;
 }
@@ -389,10 +425,13 @@ PS_OUT_ADVENCE PS_Default_DNE(PS_IN In)
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 0.f);
 
 	//========================================================================================================================
+	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
 
-	Out.vEmissive = pow(tex2D(EmissiveSampler, In.vTexUV), 2.2);
+	float4 fFinalRimColor = g_vRimColor;
+	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
+
+	Out.vEmissive = saturate(pow(tex2D(EmissiveSampler, In.vTexUV), 2.2) + fFinalRim);
 	Out.vEmissive.a = 1.f;
-
 	//========================================================================================================================
 	return Out;
 }
@@ -425,10 +464,13 @@ PS_OUT_ADVENCE PS_Default_DNSE(PS_IN In)
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x * 1.f, SpecularIntensity.y * 1.f);
 
 	//========================================================================================================================
+	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
 
-	Out.vEmissive = pow(tex2D(EmissiveSampler, In.vTexUV), 2.2);
+	float4 fFinalRimColor = g_vRimColor;
+	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
+
+	Out.vEmissive = saturate(pow(tex2D(EmissiveSampler, In.vTexUV), 2.2) + fFinalRim);
 	Out.vEmissive.a = 1.f;
-
 	//========================================================================================================================
 
 	return Out;
@@ -459,7 +501,14 @@ PS_OUT_ADVENCE PS_Default_DNR(PS_IN In)
 
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 0.f);
 
-	Out.vEmissive = 0;
+	//========================================================================================================================
+	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
+
+	float4 fFinalRimColor = g_vRimColor;
+	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
+
+	Out.vEmissive = fFinalRim;
+	//========================================================================================================================
 
 	return Out;
 }
@@ -491,7 +540,14 @@ PS_OUT_ADVENCE PS_Default_DNU(PS_IN In)
 
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 0.f);
 
-	Out.vEmissive = 0;
+	//========================================================================================================================
+	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
+
+	float4 fFinalRimColor = g_vRimColor;
+	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
+
+	Out.vEmissive = fFinalRim;
+	//========================================================================================================================
 
 	return Out;
 }
@@ -521,7 +577,14 @@ PS_OUT_ADVENCE PS_Default_DNI(PS_IN In)
 
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 0.f);
 
-	Out.vEmissive = 0;
+	//========================================================================================================================
+	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
+
+	float4 fFinalRimColor = g_vRimColor;
+	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
+
+	Out.vEmissive = fFinalRim;
+	//========================================================================================================================
 
 	return Out;
 }
@@ -555,7 +618,14 @@ PS_OUT_ADVENCE PS_Default_DNSU(PS_IN In)
 
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x * 1.f, SpecularIntensity.y * 1.f);
 
-	Out.vEmissive = 0;
+	//========================================================================================================================
+	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
+
+	float4 fFinalRimColor = g_vRimColor;
+	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
+
+	Out.vEmissive = fFinalRim;
+	//========================================================================================================================
 
 	return Out;
 }
@@ -573,10 +643,6 @@ PS_OUT_ADVENCE PS_Default_DNSUID(PS_IN In)
 	//========================================================================================================================
 
 	float3 vUnion = tex2D(UnionSampler, In.vTexUV).xyz;
-
-	//========================================================================================================================
-
-
 
 	//========================================================================================================================
 
@@ -605,16 +671,12 @@ PS_OUT_ADVENCE PS_Default_DNSUID(PS_IN In)
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x * 1.f, SpecularIntensity.y * 1.f);
 	 
 	//========================================================================================================================
-
-	float fRim = 1.f - saturate(abs(dot(In.N, In.vRimDir)));
+	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
 	
-	float fRimColor = float4(1.f, 0.f, 0.f, 0.f);
+	float4 fFinalRimColor = g_vRimColor;
+	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
 	
-	float4 rc = fRimColor * saturate(abs(dot(In.N, In.vRimDir)));
-
-	float4 vRimColor = 1.f;
-
-	Out.vEmissive = pow(fRim,10.f) * rc;
+	Out.vEmissive = fFinalRim;
 	//========================================================================================================================
 
 	return Out;
@@ -646,9 +708,12 @@ PS_OUT_ADVENCE PS_Default_D(PS_IN In)
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
 
 	//========================================================================================================================
+	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
 
-	Out.vEmissive = 0;
+	float4 fFinalRimColor = g_vRimColor;
+	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
 
+	Out.vEmissive = fFinalRim;
 	//========================================================================================================================
 
 	return Out;
@@ -689,9 +754,12 @@ PS_OUT_ADVENCE PS_Default_DNID(PS_IN In)
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.f, fFinalSpecular * 5.f);
 
 	//========================================================================================================================
+	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
 
-	Out.vEmissive = 0;
+	float4 fFinalRimColor = g_vRimColor;
+	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
 
+	Out.vEmissive = fFinalRim;
 	//========================================================================================================================
 	return Out;
 }
@@ -729,10 +797,13 @@ PS_OUT_ADVENCE PS_Default_DNEID(PS_IN In)
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, fSpecularPower, 1.f);
 
 	//========================================================================================================================
+	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
 
-	Out.vEmissive = pow(tex2D(EmissiveSampler, In.vTexUV), 2.2);
+	float4 fFinalRimColor = g_vRimColor;
+	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
+
+	Out.vEmissive = saturate(pow(tex2D(EmissiveSampler, In.vTexUV), 2.2) + fFinalRim);
 	Out.vEmissive.a = 1.f;
-
 	//========================================================================================================================
 	return Out;
 }
@@ -771,10 +842,13 @@ PS_OUT_ADVENCE PS_Default_DNEU(PS_IN In)
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
 
 	//========================================================================================================================
+	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
 
-	Out.vEmissive = pow(tex2D(EmissiveSampler, In.vTexUV), 2.2);
+	float4 fFinalRimColor = g_vRimColor;
+	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
+
+	Out.vEmissive = saturate(pow(tex2D(EmissiveSampler, In.vTexUV), 2.2) + fFinalRim);
 	Out.vEmissive.a = 1.f;
-
 	//========================================================================================================================
 	return Out;
 }

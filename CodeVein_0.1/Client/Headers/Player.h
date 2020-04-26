@@ -91,6 +91,7 @@ private:
 	CMesh_Dynamic*			m_pDynamicMesh = nullptr;
 	CNavMesh*				m_pNavMesh = nullptr;
 	CCollider*				m_pCollider = nullptr;
+	CBattleAgent*			m_pBattleAgent = nullptr;
 
 private:
 	vector<CCollider*>		m_vecPhsycColl;
@@ -200,6 +201,7 @@ private:
 
 private:
 	virtual void Check_Mistletoe();
+	virtual _int Check_HitDirection();
 
 private:
 	virtual void Parameter_State();

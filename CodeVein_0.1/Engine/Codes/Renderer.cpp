@@ -853,16 +853,6 @@ HRESULT CRenderer::Render_LightAcc()
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_LightAcc")))
 		return E_FAIL;
 
-
-	//m_pShader_LightAcc->Set_Value("g_matLightView", &matView, sizeof(_mat));
-	//m_pShader_LightAcc->Set_Value("g_matLightProj", &matProj, sizeof(_mat));
-	//m_pShader_LightAcc->Set_Value("g_vLightPos", &vLightPos, sizeof(_v3));
-
-	// 스테이지 1
-	_v3 vLightDir = _v3(0.2f, 1.f, 0.9f);
-	V3_NORMAL_SELF(&vLightDir);
-
-
 	m_pShader_LightAcc->Set_Texture("g_NormalTexture", m_pTarget_Manager->Get_Texture(L"Target_Normal"));
 	m_pShader_LightAcc->Set_Texture("g_DepthTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"));
 	m_pShader_LightAcc->Set_Texture("g_ShadowMapTexture", m_pTarget_Manager->Get_Texture(L"Target_Shadow"));
@@ -871,12 +861,6 @@ HRESULT CRenderer::Render_LightAcc()
 	m_pShader_LightAcc->Set_Value("g_matProjInv", &pPipeLine->Get_Transform_Inverse(D3DTS_PROJECTION), sizeof(_mat));
 	m_pShader_LightAcc->Set_Value("g_matViewInv", &pPipeLine->Get_Transform_Inverse(D3DTS_VIEW), sizeof(_mat));
 
-	_bool bTest = false;
-	if (GetAsyncKeyState('L') & 0x8000)
-		bTest = false;
-	else
-		bTest = true;
-	m_pShader_LightAcc->Set_Bool("g_bTest", bTest);
 
 	_v3 CamPos = pPipeLine->Get_CamPosition();
 	m_pShader_LightAcc->Set_Value("g_vCamPosition", &_v4(CamPos, 1.f), sizeof(_v4));

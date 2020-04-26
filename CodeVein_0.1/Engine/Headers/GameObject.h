@@ -99,7 +99,8 @@ public:
 	virtual void Set_Target_GuardTimer_Max(_float _fDodgeTimer) { m_tObjParam.fGuardTimer_Max = _fDodgeTimer; }
 
 	virtual void Set_Target_HitDir(_v3 _vHitDir) { m_tObjParam.vHitDir = _vHitDir; }
-	
+	virtual void Set_Target_HitPos(_v3 _vHitPos) { m_tObjParam.vHitPos = _vHitPos; }
+
 public:
 	vector<CCollider*>&		Get_PhysicColVector() { return m_vecPhysicCol; };	// 충돌 체크용 콜라이더 벡터
 	vector<CCollider*>&		Get_AtkColVector() { return m_vecAttackCol; };		// 공격용 콜라이더 벡터

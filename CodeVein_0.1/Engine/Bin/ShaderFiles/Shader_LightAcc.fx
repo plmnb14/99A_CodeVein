@@ -85,8 +85,6 @@ struct PS_OUT
 {
 	vector		vShade : COLOR0;
 	vector		vSpecular : COLOR1;
-	//vector		vSSAO : COLOR2;
-	vector		vRim : COLOR2;
 };
 
 PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
@@ -105,7 +103,7 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	vector		vNormal = vector(vNormalInfo.xyz * 2.f - 1.f, 0.f) ;
 
 
-	Out.vShade = g_vLightDiffuse * (saturate(dot(normalize(g_vLightDir) * -1.f, vNormal)) + saturate(g_vLightAmbient * g_vMtrlAmbient));
+	Out.vShade = g_vLightDiffuse * saturate(dot(normalize(g_vLightDir) * -1.f, vNormal)) + saturate(g_vLightAmbient * g_vMtrlAmbient);
 	Out.vShade.a = 1.f;
 
 	vector		vReflect = reflect(normalize(g_vLightDir), vNormal);
@@ -159,18 +157,6 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	Out.vSpecular = g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 20.f); // * saturate(vSpecularIntensity.y);
 	Out.vSpecular.a = 0.f;
-
-	// RimLight ======================================================================
-	//vector	vRimNormalInfo = tex2D(RimNormalSampler, In.vTexUV);
-	//vector	vRimNormal = vector(vRimNormalInfo.xyz * 2.f - 1.f, 0.f);
-	float	fRimWidth = 0.5f;
-	
-	vector	vCamPos = normalize(g_vCamPosition - vWorldPos);
-	//vector vCamPos = normalize(vWorldPos - g_vCamPosition);
-	float fRim = smoothstep((1.f - fRimWidth), (1.f), 1.f - max(0, abs(dot(vNormal.xyz, vCamPos.xyz))));// *fViewZ;
-	float4 rc = g_vLightDiffuse * 0.7f;
-
-	float4 fRimLight = (pow(fRim, 5.f) * rc);
 
 	return Out;
 }
@@ -264,14 +250,6 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
 	Out.vSpecular.a = 0.f;
 
 	// RimLight ====================================================================
-	float	fRimWidth = 0.5f;
-	
-	vector	vCamPos = normalize(g_vCamPosition - vWorldPos);
-	float fRim = smoothstep((1.f - fRimWidth), (1.f), 1.f - max(0, abs(dot(vNormal.xyz, vCamPos.xyz))));
-	float4 rc = g_vLightDiffuse * 0.7f;
-	
-	float4 fRimLight = (pow(fRim, 5.f) * rc);
-	// RimLight End ====================================================================
 
 	return Out;
 }

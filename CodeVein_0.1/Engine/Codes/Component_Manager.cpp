@@ -50,6 +50,9 @@ HRESULT CComponent_Manager::Ready_Component_Manager(_Device _pGraphicDev)
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"Optimization", COptimization::Create(_pGraphicDev))))
 		return E_FAIL;
 
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"BattleAgent", CBattleAgent::Create(_pGraphicDev))))
+		return E_FAIL;
+
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"VIBuffer_Rect", CBuffer_RcTex::Create(_pGraphicDev))))
 		return E_FAIL;
 

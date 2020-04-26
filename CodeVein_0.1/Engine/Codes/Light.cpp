@@ -78,12 +78,8 @@ HRESULT CLight::Render_Light(CShader* pShader)
 		m_LightDesc.fLifeTime_Cur -= CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60");
 		m_LightDesc.fAlpha = m_LightDesc.fLifeTime_Cur / m_LightDesc.fLifeTime_Max ;
 
-		cout << "Lifetime : " << m_LightDesc.fAlpha << endl;
-
 		if (m_LightDesc.fLifeTime_Cur <= 0.f || m_LightDesc.fAlpha <= 0.f)
 		{
-			cout << "End Light" << endl;
-
 			m_bDead = true;
 			m_LightDesc.bLifeTime = false;
 			m_LightDesc.fAlpha = 0.f;

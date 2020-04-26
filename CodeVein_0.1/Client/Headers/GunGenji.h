@@ -110,14 +110,13 @@ private:
 	CNavMesh*			m_pNavMesh = nullptr;
 	CCollider*			m_pCollider = nullptr;
 	COptimization*		m_pOptimization = nullptr;
+	CBattleAgent*		m_pBattleAgent = nullptr;
 
 	CWeapon*			m_pGun = nullptr;
 
 	//////////// 채유미
 	// 몬스터 HP바 UI
 	CMonsterUI*			m_pMonsterUI = nullptr;
-	// 몬스터 데미지 UI
-	//CDamegeNumUI*		m_pMonDamegeUI = nullptr;
 	////////////
 
 	//렌더에서 타임델타 쓰기위해서 저장해놓음

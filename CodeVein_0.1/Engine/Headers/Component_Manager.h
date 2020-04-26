@@ -18,6 +18,7 @@
 #include "NavMesh.h"
 #include "AIController.h"
 #include "Optimization.h"
+#include "BattleAgent.h"
 
 BEGIN(Engine)
 

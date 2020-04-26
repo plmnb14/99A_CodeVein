@@ -240,14 +240,19 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 							//피격시 밀림처리..... ( 무기니까 부모의 위치값 )
 							memcpy(vHitDir, &(m_pmatParent->_41), sizeof(_v3));
 
-							V3_NORMAL(&m_tObjParam.vHitDir, &(pIterTransform->Get_Pos() - vHitDir));
+							// 때린놈의 위치 값
+							iter->Set_Target_HitPos(vHitDir);
 
+							// 때린놈으로 부터의 방향벡터
+							V3_NORMAL(&m_tObjParam.vHitDir, &(pIterTransform->Get_Pos() - vHitDir));
 							iter->Set_Target_HitDir(m_tObjParam.vHitDir);
 
+							// 시간정지 & 화면흔들림
 							g_pTimer_Manager->Set_MutiplyTime(L"Timer_Fps_60", 0.025f);
 							g_pTimer_Manager->Set_MutiplyResetTime(L"Timer_Fps_60", 0.1f);
 							CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(2.f, 20.f, 0.5f, 0.6f, CCamera::CAM_OSC_TYPE::POS_OSC);
 
+							// HP 감소
 							iter->Add_Target_Hp(-(_float)CALC::Random_Num(min , max) * m_fSkillPercent);
 							g_pManagement->Create_Hit_Effect(vecIter, vecCol, pIterTransform);
 

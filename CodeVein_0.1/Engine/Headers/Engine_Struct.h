@@ -36,6 +36,20 @@ namespace Engine
 		_float		fRadius;
 	}WPN_PARAM;
 
+	typedef struct tagRimParam
+	{
+		_bool		bDecreRim;			// 림라이트가 가능한지
+		_float		fRimValue;			// 림라이트 수치
+		_float		fRimChangeValue;	// 림라이트 컬러 보간 수치
+		_float		fRimTimer_Max;		// 림라이트 지속시간
+		_float		fRimTimer_Cur;		// 림라이트 지속시간
+
+		_v4			vRimColor_Cur;		// 현재 림라이트 색상
+		_v4			vRimColor_Change;	// 바뀌길 원하는 림라이트 색상
+		_v4			vRimColor_Old;		// 최초 림라이트 색상
+
+	}RIM_PARAM;
+
 	typedef struct tagObjectParameter
 	{
 		_float		fHp_Cur;		// 현재 HP
@@ -80,6 +94,7 @@ namespace Engine
 		_bool		bSuperArmor;	// true 일 시 넉백, 피격모션 출력, 다운 상태를 받을 수 없음
 
 		_v3			vHitDir;		// 맞은 방향
+		_v3			vHitPos;		// 때린놈 위치
 
 	}OBJECT_PARAM;
 

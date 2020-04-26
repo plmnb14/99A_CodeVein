@@ -242,17 +242,42 @@ const _float CTransform::Chase_Target_Angle(const _v3 * pTargetPos)
 	_v3	vRight = *D3DXVec3Cross(&vRight, &m_tInfo.vAxisDir[AXIS_Y], &vDirection);
 	V3_NORMAL_SELF(&vRight);
 
-	_mat matRotY;
-
 	_v3	vLook;
 	D3DXVec3Normalize(&vLook, &m_tInfo.vAxisDir[AXIS_Z]);
 
-	_float	fDot = acosf(D3DXVec3Dot(&_v3{ 0,0,1 }, &vDirection));
+	_float	fDot = acosf(D3DXVec3Dot(&WORLD_LOOK, &vDirection));
 
 	if (vRight.z > 0)
 		fDot *= -1.f;
 
 	return fDot;
+}
+
+const _float CTransform::Calc_HitTarget_Angle(const _v3 pHitTargetPos)
+{
+	_v3 vMyPos = m_tInfo.vPos;
+	_v3 vTargetPos = pHitTargetPos;
+	_v3 vMyLook = m_tInfo.vAxisDir[AXIS_Z];
+
+	// 내 위치로 부터 대상 까지의 방향 벡터
+	_v3 vDirection = vTargetPos - vMyPos;
+	V3_NORMAL_SELF(&vDirection);
+
+	_float fDotRadian = acosf(D3DXVec3Dot(&vMyLook, &vDirection));
+
+	_v3 vVertical;
+	D3DXVec3Cross(&vVertical, &vMyLook, &vDirection);
+	V3_NORMAL_SELF(&vVertical);
+
+	if (vVertical.y < 0)
+		fDotRadian *= -1.f;
+	//_v3	vRight = *D3DXVec3Cross(&vRight, &WORLD_UP, &vDirection);
+	//V3_NORMAL_SELF(&vRight);
+
+	//if (vRight.z > 0)
+	//	fDotRadian *= -1.f;
+
+	return fDotRadian;
 }
 
 const _mat * CTransform::Compute_LookAtTarget(const _v3 * _pTargetDir)

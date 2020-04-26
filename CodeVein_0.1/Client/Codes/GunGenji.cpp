@@ -143,7 +143,6 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 
 	// MonsterHP UI
 	m_pMonsterUI->Update_GameObject(TimeDelta);
-	//m_pMonDamegeUI->Update_GameObject(TimeDelta);
 
 	// 죽었을 경우
 	if (m_bIsDead)
@@ -729,8 +728,6 @@ HRESULT CGunGenji::Update_NF()
 		vLengthTemp.y = 0.f;
 		_float fLength = D3DXVec3Length(&vLengthTemp);
 
-		//cout << "거리 : " << fLength << endl;
-
 		// 플레이어가 최소거리안에 있는가?
 		if (fLength < m_fMinLength)
 		{
@@ -832,6 +829,11 @@ void CGunGenji::Check_PhyCollider()
 	// 충돌처리, bCanHit를 무기가 false시켜줄것임.
 	if (false == m_tObjParam.bCanHit && m_tObjParam.bIsHit == false)
 	{
+		//===========================================================
+		// 맞을 때 마다 림라이트 값을 초기화 시킴
+		m_pBattleAgent->Set_RimChangeData();
+		//===========================================================
+
 		m_pMeshCom->Reset_OldIndx();	//애니 인덱스 초기화
 
 		m_bAIController = false;
@@ -891,7 +893,6 @@ void CGunGenji::Check_PhyCollider()
 		{
 			Decre_Skill_Movement(m_fSkillMoveMultiply);
 			Skill_Movement(m_fSkillMoveSpeed_Cur, m_vPushDir_forHitting);
-			//cout << "밀리는 중" << endl;
 		}
 	}
 }
@@ -984,9 +985,15 @@ HRESULT CGunGenji::Add_Component(void* pArg)
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
 
+//=================================================================================
 	// for.Com_Optimaization
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Optimization", L"Com_Optimization", (CComponent**)&m_pOptimization)))
 		return E_FAIL;
+
+	// for.Com_BattleAgent
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"BattleAgent", L"Com_BattleAgent", (CComponent**)&m_pBattleAgent)))
+		return E_FAIL;
+//=================================================================================
 
 	m_pCollider->Set_Radius(_v3{ 0.5f, 0.5f, 0.5f });
 	m_pCollider->Set_Dynamic(true);
@@ -1021,6 +1028,11 @@ HRESULT CGunGenji::SetUp_ConstantTable()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
+
+	//===========================================================
+	// 림라이트 값들을 쉐이더에 등록시킴
+	m_pBattleAgent->Update_RimParam_OnShader(m_pShaderCom);
+	//===========================================================
 
 	Safe_Release(pManagement);
 
@@ -1140,7 +1152,6 @@ CGameObject * CGunGenji::Clone_GameObject(void * pArg)
 void CGunGenji::Free()
 {
 	Safe_Release(m_pMonsterUI);
-	//Safe_Release(m_pMonDamegeUI);
 
 	Safe_Release(m_pNavMesh);
 	Safe_Release(m_pGun);

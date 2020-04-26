@@ -297,4 +297,7 @@ void CRenderObject::Init_Shader()
 	m_pShader->Set_Value("g_matWorld", &matWorld, sizeof(_mat));
 	m_pShader->Set_Value("g_matView", &matView, sizeof(_mat));
 	m_pShader->Set_Value("g_matProj", &matProj, sizeof(_mat));
+
+	float fRimValue = 0.f;
+	m_pShader->Set_Value("g_fRimAlpha", &fRimValue, sizeof(_float));
 }
