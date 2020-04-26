@@ -853,8 +853,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 #pragma endregion
 
-	//if (FAILED(g_pManagement->Add_Prototype(L"", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(szBuff)))))
-	//	return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Decal_Test", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Decal_Test.dat")))))
+		return E_FAIL;
 
 	return S_OK;
 }

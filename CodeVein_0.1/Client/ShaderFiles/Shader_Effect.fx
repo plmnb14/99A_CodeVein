@@ -66,6 +66,7 @@ struct VS_OUT
 	float4		vPosition : POSITION;
 	float2		vTexUV : TEXCOORD0;
 	float4		vProjPos : TEXCOORD1;
+	float4		vViewPos : TEXCOORD2;
 
 	
 };
@@ -98,7 +99,7 @@ VS_OUT VS_MAIN(VS_IN In)
 	Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);	
 	Out.vTexUV = In.vTexUV;
 	Out.vProjPos = Out.vPosition;
-
+	Out.vViewPos = mul(vector(In.vPosition, 1.f), matWV);
 	return Out;		
 }
 
@@ -133,6 +134,8 @@ struct PS_IN
 	float2		vTexUV : TEXCOORD0;
 	float4		vProjPos : TEXCOORD1;
 	//float4		vColor : COLOR0;
+	float4		vViewPos : TEXCOORD2;
+
 };
 
 struct PS_INSTANCE_IN
@@ -432,11 +435,38 @@ PS_OUT PS_MESHEFFECT(PS_IN In)
 }
 matrix		g_matProjInv;
 matrix		g_matViewInv;
+float4		g_vInvProj;
 PS_OUT PS_SSD(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	vector		vDepthInfo = tex2D(DepthSampler, In.vTexUV); //Depth값을 알아옵니다.  
+	float2 screenposition = In.vProjPos.xy / In.vProjPos.w;
+	screenposition.x = screenposition.x * 0.5 + 0.5;
+	screenposition.y = -screenposition.y * 0.5 + 0.5;
+	float2 depthUV = float2(screenposition.x, screenposition.y);
+	//float2 depthUV = float2(
+	//	(1 + screenposition.x) / 2 + (0.5 / 1280.0f),
+	//	(1 - screenposition.y) / 2 + (0.5 / 720.0f)
+	//	);
+	//vector vDepthInfo = tex2D(DepthSampler, depthUV.xy);
+	//
+	//
+	////vector ScenePosView = float4(In.vProjPos.xy * vDepthInfo.x / (g_DeProject.xy * In.vProjPos.w), -vDepthInfo.g * 500.f, 1);
+	//vector positionVS = In.vViewPos;
+	////float3 viewRay = positionVS.xyz * (500.f / -positionVS.z);
+	//float3 viewRay = float3(lerp(-g_vInvProj.xy, g_vInvProj.xy, depthUV), g_vInvProj.z);
+	//float3 viewPosition = viewRay * vDepthInfo.x;
+	//float3 vWorldPos = mul(float4(viewPosition, 1), g_matViewInv).xyz;
+	//float3 decalLocalPos = mul(float4(vWorldPos.xyz, 1), g_matInvWorld).xyz;
+	//
+	////clip(0.5 - abs(decalLocalPos.xyz));
+	//float2 decalUV = decalLocalPos.xz + 0.5f;
+
+	//vector ScenePosView = vector(screenposition * 2.0 - 1.0, vDepthInfo.x, 1.0);
+	//ScenePosView = mul(mul(g_matProjInv, g_matViewInv), ScenePosView);
+	//vector		vWorldPos = ((ScenePosView.xyz / ScenePosView.w), ScenePosView.w);
+
+	vector vDepthInfo = tex2D(DepthSampler, depthUV);
 	float		fViewZ = vDepthInfo.g * 500.f;
 	vector		vWorldPos;
 	vWorldPos.x = In.vTexUV.x * 2.f - 1.f;
@@ -446,33 +476,33 @@ PS_OUT PS_SSD(PS_IN In)
 	vWorldPos = vWorldPos * fViewZ;
 	vWorldPos = mul(vWorldPos, g_matProjInv);
 	vWorldPos = mul(vWorldPos, g_matViewInv);
-
+	
 	float3 decalLocalPos = float3(0, 0, 0);
-	decalLocalPos = mul(vWorldPos, g_matInvWorld).xyz;
+	decalLocalPos = mul(float4(vWorldPos.xyz, 1), g_matInvWorld).xyz;
+	
+	//clip(0.5 - abs(decalLocalPos.xyz));
 	
 	float2 decalUV = decalLocalPos.xy + 0.5f;
 	
-	//float dist = abs(decalLocalPos.z); //decal의 local 깊이
-	//float scaleDistance = max(dist * 2.0f, 1.0f);//Local깊이를 0.0과 1.0으로 맵핑시킵니다. 
-	//float fadeOut = 1.0f - scaleDistance;
-
+	float dist = abs(decalLocalPos.z); //decal의 local 깊이
+	float scaleDistance = max(dist * 2.0f, 1.0f);//Local깊이를 0.0과 1.0으로 맵핑시킵니다. 
+	float fadeOut = 1.0f - scaleDistance;
+	
 	float4 Color = float4(1, 1, 1, 1);
 	if (g_bUseColorTex)
 	{
-		Color = tex2D(ColorSampler, In.vTexUV);
-		Color *= tex2D(DiffuseSampler, In.vTexUV).x;
+		Color = tex2D(ColorSampler, decalUV);
+		Color *= tex2D(DiffuseSampler, decalUV).x;
 	}
 	else
 	{
-		Color = tex2D(DiffuseSampler, In.vTexUV);
+		Color = tex2D(DiffuseSampler, decalUV);
 	}
 
-	//Color.a *= fadeOut; // FadeOut값을 곱해주면 표면의 부분 이외는 사라지게 됩니다.  
-	
+	Color.a *= fadeOut; // FadeOut값을 곱해주면 표면의 부분 이외는 사라지게 됩니다.  
+
 	Out.vColor = Color;
 	
-	//Out.vColor = float4(1, 1, 1, 1);
-
 	return Out;
 }
 
@@ -584,10 +614,10 @@ technique Default_Technique
 	{
 		zwriteenable = false;
 
-		AlphablendEnable = true;
-		AlphaTestEnable = true;
-		srcblend = SrcAlpha;
-		DestBlend = InvSrcAlpha;
+		//AlphablendEnable = true;
+		//AlphaTestEnable = true;
+		//srcblend = SrcAlpha;
+		//DestBlend = InvSrcAlpha;
 		//blendop = add;
 		cullmode = none;
 

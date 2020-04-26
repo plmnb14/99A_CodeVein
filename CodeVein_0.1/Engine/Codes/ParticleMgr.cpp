@@ -389,7 +389,9 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"MapDust", 100);
 	Input_Pool(L"MapDust_2", 100);
 	Input_Pool(L"MapMist", 3000);
-	
+
+	Input_Pool(L"Decal_Test", 100);
+
 	return S_OK;
 }
 HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
@@ -398,6 +400,11 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 	//{
 	//	Create_Effect_Delay(L"QueensKnight_Sting_Tornade", 0.f, _v3(0.f, 1.3f, 0.f), nullptr);
 	//}
+
+	if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_LB))
+	{
+		CParticleMgr::Get_Instance()->Create_Effect_Decal(L"Decal_Test", _v3(0, 0, CCalculater::Random_Num(0, 1)));
+	}
 
 	auto& iter_begin = m_vecParticle.begin();
 	auto& iter_end = m_vecParticle.end();
@@ -830,11 +837,22 @@ void CParticleMgr::Create_Effect_Curve(_tchar* szName, _v3 vPos, CTransform * pT
 
 void CParticleMgr::Create_Effect_Decal(_tchar* szName, _v3 vPos)
 {
-	CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szName, nullptr));
-	pEffect->Set_ParticleName(szName);
+	//CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szName, nullptr));
+	//pEffect->Set_ParticleName(szName);
 	//m_EffectPool[szName].push(pEffect);
 
-	m_pManagement->Add_GameOject_ToLayer_NoClone(pEffect, SCENE_STAGE, L"Layer_Effect", nullptr);
+	queue<CEffect*>* pFindedQueue = Find_Queue(szName);
+	if (pFindedQueue == nullptr)
+		return;
+
+	m_EffectList.push_back(pFindedQueue->front());
+
+	pFindedQueue->front()->Set_Desc(vPos, nullptr);
+	pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
+
+	pFindedQueue->pop();
+
+	//m_pManagement->Add_GameOject_ToLayer_NoClone(pEffect, SCENE_STAGE, L"Layer_Effect", nullptr);
 }
 
 void CParticleMgr::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol, CTransform* pHittedTrans, _float fPower)

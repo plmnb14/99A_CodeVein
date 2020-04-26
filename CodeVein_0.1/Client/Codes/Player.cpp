@@ -3422,6 +3422,8 @@ void CPlayer::Play_Skills()
 		m_eAnim_LeftArm = m_eAnim_Lower;
 
 		m_pWeapon[m_eActiveSlot]->Set_SkillMode(true); // RedColor
+		m_pWeapon[m_eActiveSlot]->Set_TrailUseMask(true, 6);
+
 	}
 
 	else
@@ -8977,6 +8979,7 @@ void CPlayer::Reset_BattleState()
 	m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(false);
 	m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 	m_pWeapon[m_eActiveSlot]->Set_SkillMode(false); // WhiteColor
+	m_pWeapon[m_eActiveSlot]->Set_TrailUseMask(false, 6);
 
 	LOOP(32)
 		m_bEventTrigger[i] = false;

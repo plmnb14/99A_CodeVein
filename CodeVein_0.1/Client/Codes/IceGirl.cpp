@@ -2061,8 +2061,8 @@ HRESULT CIceGirl::Ready_Weapon()
 	m_pSword->Set_Enable_Trail(true);
 	m_pSword->Set_TrailIndex(8);
 	m_pSword->Set_TrailIndex(9, true);
-	m_pSword->Set_TrailUseMask(0);
-	m_pSword->Set_TrailUseMask(0, true);
+	m_pSword->Set_TrailUseMask(true, 0);
+	m_pSword->Set_TrailUseMask(true, 0, true);
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
 	m_pSword->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);

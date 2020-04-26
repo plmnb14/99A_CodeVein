@@ -2428,7 +2428,7 @@ HRESULT CQueensKnight::Ready_Weapon()
 	// Trail
 	m_pSword->Set_Enable_Trail(true);
 	m_pSword->Set_TrailIndex(7);
-	m_pSword->Set_TrailUseMask(0);
+	m_pSword->Set_TrailUseMask(true, 0);
 
 	// øﬁº’ πÊ∆–
 	m_pShield = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));

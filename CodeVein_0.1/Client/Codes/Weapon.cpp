@@ -343,12 +343,12 @@ void CWeapon::Set_TrailIndex(_int iIdx, _bool bStaticTrail)
 		m_pStaticTrailEffect->Set_TrailIdx(iIdx);
 }
 
-void CWeapon::Set_TrailUseMask(_int iIdx, _bool bStaticTrail)
+void CWeapon::Set_TrailUseMask(_bool bUse, _int iIdx, _bool bStaticTrail)
 {
 	if (!bStaticTrail)
-		m_pTrailEffect->Set_UseMask(iIdx);
+		m_pTrailEffect->Set_UseMask(bUse, iIdx);
 	else
-		m_pStaticTrailEffect->Set_UseMask(iIdx);
+		m_pStaticTrailEffect->Set_UseMask(bUse, iIdx);
 }
 
 void CWeapon::Set_Enable_Record(_bool _bRecord)
