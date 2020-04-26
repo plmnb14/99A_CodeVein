@@ -12,6 +12,7 @@
 #include "MonsterUI.h"
 
 #include "MonsterHeaders.h"
+#include "Flag.h"
 
 #include "Player_Colleague.h"
 
@@ -287,6 +288,11 @@ HRESULT CScene_Stage_Training::Ready_Layer_Environment()
 
 	TARGET_TO_TRANS(pInstance)->Set_Angle(AXIS_Y, D3DXToRadian(0.f));
 
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Sky", nullptr);
+
+	pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Flag", &CFlag::INFO(5, 5, 2.f, 1.f));
+	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(0.f, 3.f, 3.f));
+	//static_cast<CFlag*>(pInstance)->Set_Wind();	// 설정안하면 디폴트 설정
 	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Sky", nullptr);
 
 	return S_OK;

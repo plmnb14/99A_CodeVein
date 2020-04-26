@@ -19,6 +19,7 @@
 #include "FrameMgr.h"
 #include "ParticleMgr.h"
 #include "Renderer.h"
+#include "MyPhysx.h"
 
 BEGIN(Engine)
 
@@ -133,6 +134,7 @@ private:
 	CGizmo*						m_pGizmo = nullptr;
 	CBT_Node_Manager*			m_pBT_Node_Manager = nullptr;
 	CNavMesh*					m_pNavMesh = nullptr;
+	CMyPhysx*					m_pMyPhysx = nullptr;
 
 public:
 	virtual void Free();

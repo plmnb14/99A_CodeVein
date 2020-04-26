@@ -250,6 +250,9 @@
     <Filter Include="01.Utility\[02] GameObject\4%29 Effect\3%29 DecalEffect">
       <UniqueIdentifier>{ca93fa62-40a5-49a6-ad61-487e1255bfca}</UniqueIdentifier>
     </Filter>
+    <Filter Include="00.System\[04] MyPhysx">
+      <UniqueIdentifier>{fa94167d-8a4d-4d09-84cc-35dfc918068d}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Headers\Base.h">
@@ -546,6 +549,9 @@
     <ClInclude Include="..\Headers\DecalEffect.h">
       <Filter>01.Utility\[02] GameObject\4%29 Effect\3%29 DecalEffect</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\MyPhysx.h">
+      <Filter>00.System\[04] MyPhysx</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Base.cpp">
@@ -817,6 +823,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\DecalEffect.cpp">
       <Filter>01.Utility\[02] GameObject\4%29 Effect\3%29 DecalEffect</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MyPhysx.cpp">
+      <Filter>00.System\[04] MyPhysx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

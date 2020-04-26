@@ -20,6 +20,7 @@ CTimer_Manager*		g_pTimer_Manager;
 CFrameMgr*			g_pFrame_Manager;
 CInput_Device*		g_pInput_Device;
 CTexture*			g_pDissolveTexture;
+CMyPhysx*			g_pPhysx;
 
 // ================================================
 // 스테이지를 한번이라도 들렸는지 확인하는 전역변수 (MeshLoad를 위해)
@@ -79,7 +80,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	g_pFrame_Manager = CFrameMgr::Get_Instance();
 	g_pInput_Device = CInput_Device::Get_Instance();
+	g_pPhysx = CMyPhysx::Get_Instance();
 
+	g_pPhysx->Ready_MyPhysx();
 
 	pMainApp = CMainApp::Create();
 
@@ -121,6 +124,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 				g_pTimer_Manager->Set_DeltaTime(L"Timer_Fps_60_2");
 
 				_float fFrame = g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60");
+
+				g_pPhysx->Update_MyPhysx(1.f / 60.f);
 
 				if (pMainApp->Update_MainApp(fFrame) < 0)
 					break;

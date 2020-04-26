@@ -352,6 +352,9 @@
     <Filter Include="96.ScriptManager">
       <UniqueIdentifier>{9372b392-605d-4457-b3ad-1ab7fac2fc17}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\Physx">
+      <UniqueIdentifier>{f938be75-5d5f-48db-a32a-8200fcf0c724}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -732,6 +735,9 @@
     <ClInclude Include="..\Headers\DeerKingRushCol.h">
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Flag.h">
+      <Filter>02.GameObject\Stage\Physx</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1102,6 +1108,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\DeerKingRushCol.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Flag.cpp">
+      <Filter>02.GameObject\Stage\Physx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
