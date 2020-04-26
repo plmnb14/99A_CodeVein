@@ -747,8 +747,6 @@ void CPlayer_Colleague::CollAtt_Normal()
 
 	for (auto& iter : *m_List_pMonTarget[0])
 	{
-		
-
 		if (iter == m_pObject_Mon && false == iter->Get_Dead())
 		{
 			CTransform* MonTransCom = TARGET_TO_TRANS(iter);
@@ -777,7 +775,6 @@ void CPlayer_Colleague::CollAtt_Normal()
 			}
 			else
 				return;
-			
 		}
 	}
 
@@ -788,6 +785,10 @@ void CPlayer_Colleague::CollAtt_Normal()
 
 	if (false == m_bMyHiting)
 		Funtion_RotateBody();
+
+	// 몬스터를 쫒아가기 전에 때리고 있는지 체크
+// 	if (true == m_tObjParam.bIsAttack || true == m_tObjParam.bIsDodge || true == m_tObjParam.bIsHit || true == m_tObjParam.bIsGuard)
+// 		return;
 
 	if (fMonLenght > 3.f)
 	{
@@ -870,7 +871,7 @@ void CPlayer_Colleague::CollAtt_Base1()
 	if (true == m_tObjParam.bCanAttack)
 	{
 		m_tObjParam.bCanAttack = false;
-		m_tObjParam.bIsHit = true;
+		m_tObjParam.bIsAttack = true;
 	}
 	else
 	{
@@ -1116,6 +1117,7 @@ void CPlayer_Colleague::Funtion_RotateBody()
 	}
 	if (false == m_bStart_Fighting)
 		m_bLook_Monster = false;
+
 	for (auto& iter : *m_List_pMonTarget[0])
 	{
 		if (iter == m_pObject_Mon && true == iter->Get_Dead())
@@ -1278,6 +1280,16 @@ void CPlayer_Colleague::Free()
 	for (auto& iter : m_matBone)
 	{
 		iter = nullptr;
+	}
+
+	for (auto& Moniter : *m_List_pMonTarget[0])
+	{
+		Safe_Release(Moniter);
+	}
+
+	for (auto& Bossiter : *m_List_pMonTarget[1])
+	{
+		Safe_Release(Bossiter);
 	}
 
 	CGameObject::Free();
