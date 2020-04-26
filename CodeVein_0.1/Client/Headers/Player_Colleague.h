@@ -122,6 +122,7 @@ private:
 
 private:
 	void	Funtion_RotateBody();
+	void	Reset_Motion_State();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -154,20 +155,27 @@ private:
 
 	_double	m_dPlayAni_Time = 1;
 	_double m_dTimeDelta = 0.f;
+	
+	_uint	m_iNormalAtt_Count = 0;
 
 	_mat*	m_matBone[Bone_End];
 
+
+
 	_float	m_fSpeed = 0.f;
 	_float	m_fAll_Length = 0.f;
+	_float	fLength = 0.f;
 	
 	_float	m_fAtt_MoveSpeed_Cur = 0.f;
 	_float	m_fAtt_MoveSpeed_Max = 0.f;
 	_float	m_fAtt_MoveAccel_Cur = 0.5f;
 	_float	m_fAtt_MoveAccel_Max = 0.f;
-	_float	m_fAtt_MoveMultiply = 0.f;
+	_float	m_fAni_Multiply = 0.f;
 
 	_float	m_fCoolTimerCenter = 5.f;
 	_float	m_fCoolTimerThree = 5.f;
+
+
 
 	_bool	m_bEventTrigger[20] = {};
 
@@ -176,6 +184,9 @@ private:
 	_bool	m_bMonExistence = false; // 몬스터 존재 유무
 	_bool	m_bLook_Monster = false;
 	_bool	m_bMonDead = false;
+
+	_bool	m_bNot_AttcaingMon = false;
+	_bool	m_bMyHiting = false;
 
 	_bool	m_bBase_Att[4] = {};
 
