@@ -3,6 +3,7 @@
 #include "Client_Defines.h"
 #include "Management.h"
 #include "UI.h"
+#include "UI_FontNum.h"
 
 BEGIN(Client)
 
@@ -27,6 +28,9 @@ private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable(_uint TextureIndex);
 	void	SetUp_State(_double TimeDelta);
+
+private:
+	void	Update_ShowFont();
 
 private:
 	void	Ready_HPBonMatrix();
@@ -67,6 +71,21 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
+
+//================================================================
+private:
+	CUI_FontNum*			m_pFontNum = nullptr;
+
+private:
+	_bool					m_bShowFont = false;
+
+private:
+	_float					m_fValueGap_Cur = 0.f;
+	_float					m_fValueGap_Acc = 0.f;
+	_float					m_fShowFontTimer = 0.f;
+	_float					m_fShowFontTimer_Max = 2.5f;
+	_float					m_fTimerAlpha = 0.f;
+//================================================================
 
 public:
 	static CMonsterUI*		Create(_Device pGraphic_Device);

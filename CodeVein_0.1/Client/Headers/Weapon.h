@@ -74,7 +74,9 @@ public:
 	virtual void			Set_TrailIndex(_int iIdx, _bool bStaticTrail = false);
 	virtual void			Set_TrailUseMask(_bool bUse, _int iIdx, _bool bStaticTrail = false);
 	virtual void			Set_Enable_Record(_bool _bRecord);
+	// 스킬일 경우, 퍼센트 데미지 적용
 	virtual void			Set_SkillPercent(_float _fPercent);
+	// 무기를 렌더할지 말지
 	virtual void			Set_Invisible(_bool _bInvisible) { m_tObjParam.bInvisible = _bInvisible; }
 
 private:
@@ -123,6 +125,9 @@ private:
 	HRESULT SetUp_Default();
 	HRESULT SetUp_WeaponData();
 	HRESULT SetUp_ConstantTable();
+
+private:
+	virtual void Create_PointLight(_v3 _vPos);
 
 private:
 	virtual void Cacl_AttachBoneTransform();
