@@ -99,8 +99,8 @@ HRESULT CScene_Stage_02::Ready_Layer_Environment(const _tchar* pLayerTag)
 
 HRESULT CScene_Stage_02::Ready_LightDesc()
 {
-	D3DLIGHT9		LightDesc;
-	ZeroMemory(&LightDesc, sizeof(D3DLIGHT9));
+	NEW_LIGHT		LightDesc;
+	ZeroMemory(&LightDesc, sizeof(NEW_LIGHT));
 
 	LightDesc.Type = D3DLIGHT_DIRECTIONAL;
 	LightDesc.Diffuse = D3DXCOLOR(1.f, 0.882f, 0.801f, 1.f);
@@ -109,12 +109,14 @@ HRESULT CScene_Stage_02::Ready_LightDesc()
 	// In.WorldSpace
 	_v3 vLightDir = _v3(0.2f, 1.f, 0.9f);
 
+	LightDesc.fAlpha = 1.f;
+
 	V3_NORMAL_SELF(&vLightDir);
 
 	LightDesc.Direction = vLightDir;
 	//LightDesc.Direction = _v3(0.0f, 0.f, 1.f);
 
-	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc)))
+	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
 		return E_FAIL;
 
 	return NOERROR;

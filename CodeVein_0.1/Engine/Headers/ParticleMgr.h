@@ -30,6 +30,7 @@ public:
 	void Create_Effect_Delay(_tchar* szName, _float fDelay, _v3 vPos, CTransform* pFollowTrans, _mat* pTargetMat);
 	void Create_Effect_FinishPos(_tchar* szName, _v3 vPos, _v3 vFinishPos, CTransform* pFollowTrans = nullptr);
 	void Create_Effect_Curve(_tchar* szName, _v3 vPos, CTransform* pTargetTrans, _float fPower);
+	void Create_Effect_Decal(_tchar* szName, _v3 vPos);
 
 public:
 	void Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol, CTransform* pHittedTrans, _float fPower = 1.5f);

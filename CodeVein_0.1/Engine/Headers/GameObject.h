@@ -64,7 +64,7 @@ public:
 	virtual _bool Get_Target_IsHit() { return m_tObjParam.bIsHit; }
 	virtual _bool Get_Target_CanHit() { return m_tObjParam.bCanHit; }
 	virtual _bool Get_Target_HitAgain() { return m_tObjParam.bHitAgain; }
-	virtual _bool Get_Target_KnockBack() { return m_tObjParam.bKnockBack; }
+	virtual _bool Get_Target_IsKnockBack() { return m_tObjParam.bIsKnockBack; }
 	virtual _bool Get_Target_IsAttack() { return m_tObjParam.bIsAttack; }
 	virtual _bool Get_Target_CanAttack() { return m_tObjParam.bCanAttack; }
 	virtual _bool Get_Target_SuperArmor() { return m_tObjParam.bSuperArmor; };
@@ -89,7 +89,7 @@ public:
 	virtual void Set_HitAgain(_bool _bHitAgain) { m_tObjParam.bHitAgain = _bHitAgain; }
 	virtual void Set_Target_IsAttack(_bool _bIsAttack) { m_tObjParam.bIsAttack = _bIsAttack; }
 	virtual void Set_Target_CanAttack(_bool _bCanAttack) { m_tObjParam.bCanAttack = _bCanAttack; }
-	virtual void Set_Target_KnockBack(_bool _bKnockBack) { m_tObjParam.bKnockBack = _bKnockBack; }
+	virtual void Set_Target_IsKnockBack(_bool _bKnockBack) { m_tObjParam.bIsKnockBack = _bKnockBack; }
 	virtual void Set_Target_IsDodge(_bool _bDodge) { m_tObjParam.bIsDodge = _bDodge; }
 	virtual void Set_Target_CanDodge(_bool _bDodge) { m_tObjParam.bCanDodge = _bDodge; }
 	virtual void Set_Target_SuperArmor(_bool _bSuperArmor) { m_tObjParam.bSuperArmor = _bSuperArmor; }
@@ -99,7 +99,8 @@ public:
 	virtual void Set_Target_GuardTimer_Max(_float _fDodgeTimer) { m_tObjParam.fGuardTimer_Max = _fDodgeTimer; }
 
 	virtual void Set_Target_HitDir(_v3 _vHitDir) { m_tObjParam.vHitDir = _vHitDir; }
-	
+	virtual void Set_Target_HitPos(_v3 _vHitPos) { m_tObjParam.vHitPos = _vHitPos; }
+
 public:
 	vector<CCollider*>&		Get_PhysicColVector() { return m_vecPhysicCol; };	// 충돌 체크용 콜라이더 벡터
 	vector<CCollider*>&		Get_AtkColVector() { return m_vecAttackCol; };		// 공격용 콜라이더 벡터

@@ -4,12 +4,18 @@
 #include "GameObject.h"
 #include "Management.h"
 
+// 테스트용 숫자 폰트
+#include "UI_FontNum.h"
+
 BEGIN(Client)
 
 class CDrain_Weapon;
 class CWeapon;
 class CPlayer : public CGameObject
 {
+private:
+	CUI_FontNum*	m_TmpFontNum = nullptr;
+
 public:
 	enum DODGE_TYPE
 	{
@@ -85,6 +91,7 @@ private:
 	CMesh_Dynamic*			m_pDynamicMesh = nullptr;
 	CNavMesh*				m_pNavMesh = nullptr;
 	CCollider*				m_pCollider = nullptr;
+	CBattleAgent*			m_pBattleAgent = nullptr;
 
 private:
 	vector<CCollider*>		m_vecPhsycColl;
@@ -194,6 +201,7 @@ private:
 
 private:
 	virtual void Check_Mistletoe();
+	virtual _int Check_HitDirection();
 
 private:
 	virtual void Parameter_State();
