@@ -139,6 +139,8 @@ private:
 	_bool					m_bCanDisappear = true;
 	_bool					m_bOnSummon = false;
 	_bool					m_bOnDisappear = false;
+	_bool					m_bOnDown = false;
+	_bool					m_bOffLerp = false; // 애니 보간 끄기
 
 private:
 	_short					m_sHeavyAtkCnt = 0;
@@ -242,6 +244,7 @@ private:
 	virtual void Play_WeaponChange();
 	virtual void Play_Spawn();
 	virtual void Play_PickUp();
+	virtual void Play_Down();
 
 private:
 	virtual void Play_Summon();

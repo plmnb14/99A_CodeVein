@@ -874,9 +874,9 @@ PS_OUT PS_MOTIONBLUR(PS_BLURIN In)
 }
 
 // 최적화를 위해 main과 따로 나눔
-PS_OUT PS_DISSOLVE(PS_IN In)
+PS_OUT_ADVENCE PS_DISSOLVE(PS_IN In)
 {
-	PS_OUT			Out = (PS_OUT)0;
+	PS_OUT_ADVENCE			Out = (PS_OUT_ADVENCE)0;
 
 	float4 vColor = (float4)0.f;
 
@@ -891,13 +891,43 @@ PS_OUT PS_DISSOLVE(PS_IN In)
 	else
 		vColor.a = 0;
 
-	if (fxColor.r >= g_fFxAlpha - 0.01 && fxColor.r <= g_fFxAlpha + 0.01)
+
+	if (fxColor.r >= g_fFxAlpha - 0.05 && fxColor.r <= g_fFxAlpha + 0.05)
 		vColor = pow(float4(1.7, 0.95, 0.85, 1), 2.2); //
 
+	//if (fxColor.r >= g_fFxAlpha - 0.02 && fxColor.r <= g_WfFxAlpha + 0.02)
+	//	vColor = pow(float4(1.7, 1.7, 1.7, 1), 2.2); //
+
+	//if (fxColor.r >= g_fFxAlpha - 0.03 && fxColor.r <= g_fFxAlpha + 0.03)
+	//	vColor = pow(float4(1.7f, 0.8f, 0.2f, 1.f), 2.2); //
+
 	Out.vDiffuse = vColor;
-	Out.vNormal = vector(In.N.xyz * 0.5f + 0.5f, 0.f);
+
+	//====================================================================================================
+
+	float3 TanNormal = tex2D(NormalSampler, In.vTexUV).xyz;
+
+	TanNormal = normalize(TanNormal * 2.f - 1.f);
+
+	float3x3 TBN = float3x3(normalize(In.T), normalize(In.B), normalize(In.N));
+	TBN = transpose(TBN);
+
+	float3 worldNormal = mul(TBN, TanNormal);
+
+	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 0.f);
+
+	//====================================================================================================
+
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
-	Out.vVelocity = 0;
+
+	//====================================================================================================
+	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
+
+	float4 fFinalRimColor = g_vRimColor;
+	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
+
+	Out.vEmissive = fFinalRim;
+	//====================================================================================================
 
 	return Out;
 }
