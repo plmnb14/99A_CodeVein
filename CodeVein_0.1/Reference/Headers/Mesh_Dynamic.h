@@ -13,7 +13,7 @@ private:
 	explicit CMesh_Dynamic(const CMesh_Dynamic& rhs);
 	virtual  ~CMesh_Dynamic() = default;
 public:
-	vector<D3DXMESHCONTAINER_DERIVED*> Get_MeshContainer() { return m_MeshContainerList; }
+	vector<D3DXMESHCONTAINER_DERIVED*> &Get_MeshContainer() { return m_MeshContainerList; }
 	_uint Get_NumMeshContainer() const {
 		return (_uint)m_MeshContainerList.size();
 	}

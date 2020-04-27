@@ -1,27 +1,12 @@
 #pragma once
 
-#include "Client_Defines.h"
-#include "GameObject.h"
-#include "Management.h"
+#include "Info_Monster.h"
 
 BEGIN(Client)
-
-class CWeapon;
-class CMonsterUI;
 
 class CMonkey final : public CGameObject
 {
 public:
-	enum FBLR { FRONT, FRONTLEFT, FRONTRIGHT, BACK, BACKLEFT, BACKRIGHT, LEFT, RIGHT };
-	enum MONSTER_ANITYPE { IDLE, MOVE, ATTACK, HIT, CC, DEAD };
-	
-	enum MONKEY_IDLETYPE { IDLE_IDLE, IDLE_SIT };
-	enum MONKEY_MOVETYPE { MOVE_RUN, MOVE_WALK, MOVE_DODGE };
-	enum MONKEY_ATKTYPE { ATK_NORMAL, ATK_COMBO };
-	enum MONKEY_HITTYPE { HIT_STRONG, HIT_NORMAL }; //s->cc n->hit
-	enum MONKEY_CCTYPE { CC_DOWN_P, CC_DOWN_S };
-	enum MONKEY_DEADTYPE { DEAD_DEAD, DEAD_DEAD_F, DEAD_DEAD_B};
-
 	enum ATK_NORMAL_TYPE 
 	{
 		NORMAL_ATK_ROTBODY,
@@ -31,7 +16,13 @@ public:
 		NORMAL_JUMP_ROTBODY,
 		NORMAL_FANGSHOOT 
 	};
-	enum ATK_COMBO_TYPE { COMBO_NORMAL, COMBO_JUMP_CLOCK, COMBO_RUNATK};
+
+	enum ATK_COMBO_TYPE 
+	{ 
+		COMBO_NORMAL,
+		COMBO_JUMP_CLOCK,
+		COMBO_RUNATK
+	};
 
 	enum MONKEY_ANI 
 	{
@@ -74,35 +65,13 @@ public:
 
 	};
 
-	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_Head, Bone_LeftHand, Bone_End };
-
-public:
-	struct INITSTRUCT
-	{
-		INITSTRUCT(
-			_float _fDMG,
-			_float _fHpMax,
-			_float _fArmorMax,
-			_float _fKnowRange,
-			_float _fShotRange,
-			_float _fAtkRange,
-			_int _iDodgeMax)
-		{
-			tMonterStatus.fDamage = _fDMG;
-			tMonterStatus.fHp_Max = _fHpMax;
-			tMonterStatus.fArmor_Max = _fArmorMax;
-
-			fKonwingRange = _fKnowRange;
-			fCanShotRangeIfGunChooose = _fShotRange;
-			fCanAttackRange = _fAtkRange;
-			iDodgeCountMax = _iDodgeMax;
-		}
-
-		OBJECT_PARAM		tMonterStatus;
-		_float				fKonwingRange = 20.f;
-		_float				fCanShotRangeIfGunChooose = 10.f;
-		_float				fCanAttackRange = 5.f;
-		_int				iDodgeCountMax = 3;
+	enum BONE_TYPE 
+	{ 
+		Bone_Range,
+		Bone_Head,
+		Bone_Body,
+		Bone_LeftHand,
+		Bone_End
 	};
 
 protected:
@@ -125,6 +94,7 @@ private:
 	void Check_CollisionPush();
 	void Check_CollisionEvent(list<CGameObject*> plistGameObject);
 
+	void Function_FBLR();
 	void Function_RotateBody();
 	void Function_MoveAround();
 	void Function_CoolDown();
@@ -134,9 +104,9 @@ private:
 
 	void Checkk_PosY();
 	void Check_Hit();
-	void Check_FBLR();
 	void Check_Dist();
 	void Check_AniEvent();
+	void Check_DeadEffect(_double TimeDelta);
 
 	void Play_RandomAtkNormal();
 	void Play_RandomAtkCombo();
@@ -156,9 +126,6 @@ private:
 	void Play_Hit();  
 	void Play_CC(); 
 	void Play_Dead(); 
-
-private:
-	void Check_DeadEffect(_double TimeDelta);
 
 private:
 	HRESULT Add_Component();
@@ -185,57 +152,53 @@ private:
 
 	CTransform*			m_pTargetTransform = nullptr;
 
-	_v3					m_vBirthPos;
-	_mat*				m_matBone[Bone_End];
-	_double				m_dTimeDelta = 0;
-	_double				m_dAniPlayMul = 1;
+	_mat*					m_matBone[Bone_End];
+	MONSTER_STATETYPE		m_eFirstCategory;
+	MONSTER_IDLETYPE		m_eSecondCategory_IDLE;
+	MONSTER_MOVETYPE		m_eSecondCategory_MOVE;
+	MONSTER_ATKTYPE			m_eSecondCategory_ATK;
+	MONSTER_HITTYPE			m_eSecondCategory_HIT;
+	MONSTER_CCTYPE			m_eSecondCategory_CC;
+	MONSTER_DEADTYPE		m_eSecondCategory_DEAD;
 
-	_float				m_fSkillMoveSpeed_Cur = 0.f;
-	_float				m_fSkillMoveSpeed_Max = 0.f;
-	_float				m_fSkillMoveAccel_Cur = 0.5f;
-	_float				m_fSkillMoveAccel_Max = 0.f;
-	_float				m_fSkillMoveMultiply = 1.f;
+	WEAPON_STATE			m_eWeaponState;
+	FBLR					m_eFBLR;
+	ATK_COMBO_TYPE			m_eAtkCombo;
+	MONKEY_ANI				m_eState;
 
-	MONSTER_ANITYPE		m_eFirstCategory;
-	MONKEY_IDLETYPE		m_eSecondCategory_IDLE;
-	MONKEY_MOVETYPE		m_eSecondCategory_MOVE;
-	MONKEY_ATKTYPE		m_eSecondCategory_ATK;
-	MONKEY_HITTYPE		m_eSecondCategory_HIT;
-	MONKEY_CCTYPE		m_eSecondCategory_CC;
-	MONKEY_DEADTYPE		m_eSecondCategory_DEAD;
+	_bool	m_bEventTrigger[20] = {};
+	_bool	m_bCanPlayDead;
+	_bool	m_bInRecognitionRange;
+	_bool	m_bInAtkRange;
+	_bool	m_bCanChase;
+	_bool	m_bCanCoolDown;
+	_bool	m_bIsCoolDown;
+	_bool	m_bCanChooseAtkType; 
+	_bool	m_bIsCombo;
+	_bool	m_bCanIdle;
+	_bool	m_bIsIdle;
+	_bool	m_bCanMoveAround;
+	_bool	m_bIsMoveAround;
 
-	ATK_COMBO_TYPE		m_eAtkCombo;
-	MONKEY_ANI			m_eState;
-	FBLR				m_eFBLR;
+	_double	m_dTimeDelta;
+	_double	m_dAniPlayMul;
 
-	_bool				m_bEventTrigger[20] = {};
+	_float	m_fSkillMoveSpeed_Cur;
+	_float	m_fSkillMoveSpeed_Max;
+	_float	m_fSkillMoveAccel_Cur;
+	_float	m_fSkillMoveAccel_Max;
+	_float	m_fSkillMoveMultiply;
 
-	_bool				m_bCanPlayDead = false;
-	_bool				m_bInRecognitionRange = false;
-	_bool				m_bInAtkRange = false;
-	_bool				m_bCanChase = false;
-	_bool				m_bCanCoolDown = false;
-	_bool				m_bIsCoolDown = false;
-	_bool				m_bAtkCategory = true;
-	_bool				m_bCanInterrupt = true;
-	_bool				m_bCanCombo = true;
-	_bool				m_bIsCombo = false;
-	_bool				m_bCanIdle = true;
-	_bool				m_bIsIdle = false;
-	_bool				m_bCanMoveAround = false;
+	_float	m_fRecognitionRange;
+	_float	m_fShotRange;
+	_float	m_fAtkRange;
+	_float	m_fPersonalRange;
+	_float	m_fCoolDownMax;
+	_float	m_fCoolDownCur;
 
-	_float				m_fRecognitionRange = 20.f;
-	_float				m_fShotRange = 10.f;
-	_float				m_fAtkRange = 5.f;
-	_float				m_fCoolDownMax = 0.f;
-	_float				m_fCoolDownCur = 0.f;
-	_float				m_fSpeedForCollisionPush = 2.f;
-
-	_int				m_iRandom = 0;
-	_int				m_iDodgeCountMax = 3; //3회 피격시 회피
-	_int				m_iDodgeCount = 0; //n회 피격시 회피
-
-	_float				m_fShotDelay = 0.f;
+	_int	m_iRandom;
+	_int	m_iDodgeCount;
+	_int	m_iDodgeCountMax;
 
 private: // For Effect
 	_float			m_fDeadEffect_Delay = 0.f;

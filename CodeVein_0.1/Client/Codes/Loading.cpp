@@ -1021,7 +1021,7 @@ _uint CLoading::Loading_Title()
 	// 기믹 메쉬 불러오는중
 	//============================================================================================================
 	cout << "Field Gimmick Static 메쉬 불러오는중" << endl;
-	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Field_Gimmick_Path.dat");
+	//g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Field_Gimmick_Path.dat");
 
 	// 다이나믹 메쉬 불러오는 중
 	//============================================================================================================
@@ -1029,7 +1029,7 @@ _uint CLoading::Loading_Title()
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Dynamic_Path.dat");
 
 	// 임시 공통 스태틱 메쉬
-	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
+	//g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
 
 	// 무기 불러오는 중
 	//============================================================================================================
@@ -1208,7 +1208,6 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Ready_BT_Node()))
 			return E_FAIL;
 
-
 		// 오브젝트 원형 생성
 		//============================================================================================================
 
@@ -1309,12 +1308,6 @@ _uint CLoading::Loading_Stage()
 		// 사슴왕  돌진 콜라이더
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingRushCol", CDeerKingRushCol::Create(m_pGraphicDev))))
 			return E_FAIL;
-		// 검은 성게
-		if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackUrchin", CBlackUrchin::Create(m_pGraphicDev))))
-			return E_FAIL;
-		// 검은 늑대
-		if (FAILED(g_pManagement->Add_Prototype(L"Monster_BlackWolf", CBlackWolf::Create(m_pGraphicDev))))
-			return E_FAIL;
 		// 검겐지
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenji", CSwordGenji::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1330,9 +1323,6 @@ _uint CLoading::Loading_Stage()
 		// 검방패겐지
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordShieldGenji", CSwordShieldGenji::Create(m_pGraphicDev))))
 			return E_FAIL;
-		// 야차맨
-		if (FAILED(g_pManagement->Add_Prototype(L"Monster_YachaMan", CYachaMan::Create(m_pGraphicDev))))
-			return E_FAIL;
 		// 토템
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Cocoon", CCocoon::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1345,7 +1335,7 @@ _uint CLoading::Loading_Stage()
 		// 김헌터
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Hunter", CHunter::Create(m_pGraphicDev))))
 			return E_FAIL;
-		// 김헌터총알
+		// 김헌터 총알
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_HunterBullet", CHunterBullet::Create(m_pGraphicDev))))
 			return E_FAIL;
 		// 몽키.D.루피
@@ -1354,10 +1344,23 @@ _uint CLoading::Loading_Stage()
 		// 몽키.D.총알
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_MonkeyBullet", CMonkeyBullet::Create(m_pGraphicDev))))
 			return E_FAIL;
+		// 따이맨
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ThaiMan", CThaiMan::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 성게
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Urchin", CUrchin::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 늑대
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Wolf", CWolf::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 야차맨
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_YachaMan", CYachaMan::Create(m_pGraphicDev))))
+			return E_FAIL;
 		// 예티
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Yeti", CYeti::Create(m_pGraphicDev))))
 			return E_FAIL;
-
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_YetiBullet", CYetiBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
 		// UI - Chea
 		//============================================================================================================
 

@@ -451,80 +451,91 @@ void CWeapon::Change_WeaponData(WEAPON_DATA _eWpnData)
 
 	switch (_eWpnData)
 	{
-	case WPN_SSword_Normal:
-	{
-		lstrcpy(WeaponMeshName, L"Mesh_Wpn_Sword");
-		m_eWeaponType = WEAPON_Ssword;
+	case WEAPON_DATA::Wpn_SSword:
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_SSword");
+		m_eWeaponType = WEAPON_SSword;
 		break;
-	}
-
-	case WPN_SSword_Military:
-	{
-		lstrcpy(WeaponMeshName, L"Mesh_Wpn_Sword_Military");
-		m_eWeaponType = WEAPON_Ssword;
+	case WEAPON_DATA::Wpn_SSword_Black:
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_SSword_Black");
+		m_eWeaponType = WEAPON_SSword;
 		break;
-	}
+	case WEAPON_DATA::Wpn_SSword_Military:
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_SSword_Military");
+		m_eWeaponType = WEAPON_SSword;
+		break;
+	case WEAPON_DATA::Wpn_SSword_Slave:
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_SSword_Slave");
+		m_eWeaponType = WEAPON_SSword;
+		break;
 
-	case WPN_LSword_Normal:
-	{
+	case WEAPON_DATA::Wpn_LSword:
 		lstrcpy(WeaponMeshName, L"Mesh_Wpn_LSword");
 		m_eWeaponType = WEAPON_LSword;
 		break;
-	}
-	case WPN_Hammer_Normal:
-	{
+	case WEAPON_DATA::Wpn_LSword_Black:
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_LSword_Black");
+		m_eWeaponType = WEAPON_LSword;
+		break;
+	case WEAPON_DATA::Wpn_LSword_Military:
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_LSword_Military");
+		m_eWeaponType = WEAPON_LSword;
+		break;
+	case WEAPON_DATA::Wpn_LSword_Slave:
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_LSword_Slave");
+		m_eWeaponType = WEAPON_LSword;
+		break;
+
+	case WEAPON_DATA::Wpn_Halberd:
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_Halberd");
+		m_eWeaponType = WEAPON_Halberd;
+		break;
+	case WEAPON_DATA::Wpn_Halberd_Black:
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_Halberd_Black");
+		m_eWeaponType = WEAPON_Halberd;
+		break;
+	case WEAPON_DATA::Wpn_Halberd_Military:
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_Halberd_Military");
+		m_eWeaponType = WEAPON_Halberd;
+		break;
+	case WEAPON_DATA::Wpn_Halberd_Slave:
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_Halberd_Slave");
+		m_eWeaponType = WEAPON_Halberd;
+		break;
+
+	case WEAPON_DATA::Wpn_Hammer:
 		lstrcpy(WeaponMeshName, L"Mesh_Wpn_Hammer");
 		m_eWeaponType = WEAPON_Hammer;
 		break;
-	}
-	case WPN_Halverd_Normal:
-	{
-		lstrcpy(WeaponMeshName, L"Mesh_Wpn_Halverd");
-		m_eWeaponType = WEAPON_Halverd;
+	case WEAPON_DATA::Wpn_Hammer_Black:
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_Hammer_Black");
+		m_eWeaponType = WEAPON_Hammer;
 		break;
-	}
-	case WPN_Gun_Normal:
-	{
+	case WEAPON_DATA::Wpn_Hammer_Military:
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_Hammer_Military");
+		m_eWeaponType = WEAPON_Hammer;
+		break;
+	case WEAPON_DATA::Wpn_Hammer_Slave:
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_Hammer_Slave");
+		m_eWeaponType = WEAPON_Hammer;
+		break;
+
+	case WEAPON_DATA::Wpn_Gun:
 		lstrcpy(WeaponMeshName, L"Mesh_Wpn_Gun");
 		m_eWeaponType = WEAPON_Gun;
 		break;
-	}
-	case WPN_Shield_Normal:
-	{
-		lstrcpy(WeaponMeshName, L"Mesh_Wpn_Shield");
-		m_eWeaponType = WEAPON_Shield;
+	case WEAPON_DATA::Wpn_Gun_Black:
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_Gun_Black");
+		m_eWeaponType = WEAPON_Gun;
 		break;
-	}
-	case WPN_Hammer_YachaMan:
-	{
-		lstrcpy(WeaponMeshName, L"Mesh_Wpn_Hammer_YachaMan");
-		m_eWeaponType = WEAPON_Hammer;
+	case WEAPON_DATA::Wpn_Gun_Military:
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_Gun_Military");
+		m_eWeaponType = WEAPON_Gun;
 		break;
-	}
-	case WPN_QueenLance:
-	{
-		lstrcpy(WeaponMeshName, L"Mesh_Wpn_QueenLance");
-		m_eWeaponType = WEAPON_Halverd;
+	case WEAPON_DATA::Wpn_Gun_Slave:
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_Gun_Slave");
+		m_eWeaponType = WEAPON_Gun;
 		break;
-	}
-	case WPN_QueenShield:
-	{
-		lstrcpy(WeaponMeshName, L"Mesh_Wpn_QueenShield");
-		m_eWeaponType = WEAPON_Shield;
-		break;
-	}
-	case WPN_FrostBlood_IceGirl:
-	{
-		lstrcpy(WeaponMeshName, L"Mesh_Wpn_FrostBlood_IceGirl");
-		m_eWeaponType = WEAPON_Halverd;
-		break;
-	}
-	case WPN_DeerKingShield:
-	{
-		lstrcpy(WeaponMeshName, L"Mesh_Wpn_DeerKingShield");
-		m_eWeaponType = WEAPON_Shield;
-		break;
-	}
+
 	}
 
 	Change_WeaponMesh(WeaponMeshName);
@@ -564,11 +575,11 @@ HRESULT CWeapon::Add_Component()
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Wpn_Sword_Military", L"Com_StaticMesh", (CComponent**)&m_pMesh_Static)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Wpn_SSword", L"Com_StaticMesh", (CComponent**)&m_pMesh_Static)))
 		return E_FAIL;
 
 	// 최초 무기 이름
-	lstrcpy(m_szName, L"Mesh_Wpn_Sword_Military");
+	lstrcpy(m_szName, L"Mesh_Wpn_SSword");
 
 
 	//==============================================================================================================
@@ -613,57 +624,144 @@ HRESULT CWeapon::SetUp_WeaponData()
 	// 한손검
 	//===========================================================================================
 
-	m_tWeaponParam[WPN_SSword_Normal].fDamage = 100.f;
-	m_tWeaponParam[WPN_SSword_Normal].fRadius = 0.7f;
-	m_tWeaponParam[WPN_SSword_Normal].fTrail_Min = 0.6f;
-	m_tWeaponParam[WPN_SSword_Normal].fTrail_Max = 1.8f;
-	m_tWeaponParam[WPN_SSword_Normal].fCol_Height = 1.f;
+	m_tWeaponParam[Wpn_SSword].fDamage = 100.f;
+	m_tWeaponParam[Wpn_SSword].fRadius = 0.6f;
+	m_tWeaponParam[Wpn_SSword].fTrail_Min = 0.6f;
+	m_tWeaponParam[Wpn_SSword].fTrail_Max = 1.8f;
+	m_tWeaponParam[Wpn_SSword].fCol_Height = 1.1f;
 
+	m_tWeaponParam[Wpn_SSword_Black].fDamage = 100.f;
+	m_tWeaponParam[Wpn_SSword_Black].fRadius = 0.9f;
+	m_tWeaponParam[Wpn_SSword_Black].fTrail_Min = 0.6f;
+	m_tWeaponParam[Wpn_SSword_Black].fTrail_Max = 1.8f;
+	m_tWeaponParam[Wpn_SSword_Black].fCol_Height = 0.6f;
 
-	m_tWeaponParam[WPN_SSword_Military].fDamage = 100.f;
-	m_tWeaponParam[WPN_SSword_Military].fRadius = 0.7f;
-	m_tWeaponParam[WPN_SSword_Military].fTrail_Min = 0.6f;
-	m_tWeaponParam[WPN_SSword_Military].fTrail_Max = 1.8f;
-	m_tWeaponParam[WPN_SSword_Military].fCol_Height = 1.f;
+	m_tWeaponParam[Wpn_SSword_Military].fDamage = 100.f;
+	m_tWeaponParam[Wpn_SSword_Military].fRadius = 0.6f;
+	m_tWeaponParam[Wpn_SSword_Military].fTrail_Min = 0.6f;
+	m_tWeaponParam[Wpn_SSword_Military].fTrail_Max = 1.8f;
+	m_tWeaponParam[Wpn_SSword_Military].fCol_Height = 1.1f;
+
+	m_tWeaponParam[Wpn_SSword_Slave].fDamage = 100.f;
+	m_tWeaponParam[Wpn_SSword_Slave].fRadius = 0.7f;
+	m_tWeaponParam[Wpn_SSword_Slave].fTrail_Min = 0.6f;
+	m_tWeaponParam[Wpn_SSword_Slave].fTrail_Max = 1.8f;
+	m_tWeaponParam[Wpn_SSword_Slave].fCol_Height = 1.2f;
 
 	//===========================================================================================
 	// 대검
 	//===========================================================================================
 
-	m_tWeaponParam[WPN_Hammer_Normal].fDamage = 55.f;
-	m_tWeaponParam[WPN_LSword_Normal].fRadius = 0.8f;
-	m_tWeaponParam[WPN_LSword_Normal].fTrail_Min = 0.8f;
-	m_tWeaponParam[WPN_LSword_Normal].fTrail_Max = 2.1f;
-	m_tWeaponParam[WPN_LSword_Normal].fCol_Height = 1.3f;
+	m_tWeaponParam[Wpn_LSword].fDamage = 155.f;
+	m_tWeaponParam[Wpn_LSword].fRadius = 0.9f;
+	m_tWeaponParam[Wpn_LSword].fTrail_Min = 0.8f;
+	m_tWeaponParam[Wpn_LSword].fTrail_Max = 2.1f;
+	m_tWeaponParam[Wpn_LSword].fCol_Height = 1.4f;
+
+	m_tWeaponParam[Wpn_LSword_Black].fDamage = 155.f;
+	m_tWeaponParam[Wpn_LSword_Black].fRadius = 0.8f;
+	m_tWeaponParam[Wpn_LSword_Black].fTrail_Min = 0.8f;
+	m_tWeaponParam[Wpn_LSword_Black].fTrail_Max = 2.1f;
+	m_tWeaponParam[Wpn_LSword_Black].fCol_Height = 1.3f;
+
+	m_tWeaponParam[Wpn_LSword_Military].fDamage = 155.f;
+	m_tWeaponParam[Wpn_LSword_Military].fRadius = 0.8f;
+	m_tWeaponParam[Wpn_LSword_Military].fTrail_Min = 0.8f;
+	m_tWeaponParam[Wpn_LSword_Military].fTrail_Max = 2.1f;
+	m_tWeaponParam[Wpn_LSword_Military].fCol_Height = 1.5f;
+
+	m_tWeaponParam[Wpn_LSword_Slave].fDamage = 155.f;
+	m_tWeaponParam[Wpn_LSword_Slave].fRadius = 0.8f;
+	m_tWeaponParam[Wpn_LSword_Slave].fTrail_Min = 0.8f;
+	m_tWeaponParam[Wpn_LSword_Slave].fTrail_Max = 2.1f;
+	m_tWeaponParam[Wpn_LSword_Slave].fCol_Height = 1.5f;
+
+	//===========================================================================================
+	// 도끼창
+	//===========================================================================================
+
+	m_tWeaponParam[Wpn_Halberd].fDamage = 160.f;
+	m_tWeaponParam[Wpn_Halberd].fRadius = 0.7f;
+	m_tWeaponParam[Wpn_Halberd].fTrail_Min = 1.2f;
+	m_tWeaponParam[Wpn_Halberd].fTrail_Max = 2.3f;
+	m_tWeaponParam[Wpn_Halberd].fCol_Height = 1.6f;
+
+	m_tWeaponParam[Wpn_Halberd_Black].fDamage = 160.f;
+	m_tWeaponParam[Wpn_Halberd_Black].fRadius = 0.7f;
+	m_tWeaponParam[Wpn_Halberd_Black].fTrail_Min = 1.2f;
+	m_tWeaponParam[Wpn_Halberd_Black].fTrail_Max = 2.3f;
+	m_tWeaponParam[Wpn_Halberd_Black].fCol_Height = 1.4f;
+
+	m_tWeaponParam[Wpn_Halberd_Military].fDamage = 160.f;
+	m_tWeaponParam[Wpn_Halberd_Military].fRadius = 0.7f;
+	m_tWeaponParam[Wpn_Halberd_Military].fTrail_Min = 1.2f;
+	m_tWeaponParam[Wpn_Halberd_Military].fTrail_Max = 2.3f;
+	m_tWeaponParam[Wpn_Halberd_Military].fCol_Height = 1.4f;
+
+	m_tWeaponParam[Wpn_Halberd_Slave].fDamage = 160.f;
+	m_tWeaponParam[Wpn_Halberd_Slave].fRadius = 0.8f;
+	m_tWeaponParam[Wpn_Halberd_Slave].fTrail_Min = 1.2f;
+	m_tWeaponParam[Wpn_Halberd_Slave].fTrail_Max = 2.3f;
+	m_tWeaponParam[Wpn_Halberd_Slave].fCol_Height = 1.3f;
 
 	//===========================================================================================
 	// 해머
 	//===========================================================================================
 
-	m_tWeaponParam[WPN_Hammer_Normal].fDamage = 55.f;
-	m_tWeaponParam[WPN_Hammer_Normal].fRadius = 0.75f;
-	m_tWeaponParam[WPN_Hammer_Normal].fTrail_Min = 0.75f;
-	m_tWeaponParam[WPN_Hammer_Normal].fTrail_Max = 1.5f;
-	m_tWeaponParam[WPN_Hammer_Normal].fCol_Height = 1.3f;
+	m_tWeaponParam[Wpn_Hammer].fDamage = 155.f;
+	m_tWeaponParam[Wpn_Hammer].fRadius = 0.7f;
+	m_tWeaponParam[Wpn_Hammer].fTrail_Min = 0.75f;
+	m_tWeaponParam[Wpn_Hammer].fTrail_Max = 1.5f;
+	m_tWeaponParam[Wpn_Hammer].fCol_Height = 1.1f;
 
-	m_tWeaponParam[WPN_Hammer_YachaMan].fDamage = 55.f;
-	m_tWeaponParam[WPN_Hammer_YachaMan].fRadius = 1.2f;
-	m_tWeaponParam[WPN_Hammer_YachaMan].fTrail_Min = 0.75f;
-	m_tWeaponParam[WPN_Hammer_YachaMan].fTrail_Max = 1.5f;
-	m_tWeaponParam[WPN_Hammer_YachaMan].fCol_Height = 1.0f;
+	m_tWeaponParam[Wpn_Hammer_Black].fDamage = 155.f;
+	m_tWeaponParam[Wpn_Hammer_Black].fRadius = 0.75f;
+	m_tWeaponParam[Wpn_Hammer_Black].fTrail_Min = 0.75f;
+	m_tWeaponParam[Wpn_Hammer_Black].fTrail_Max = 1.5f;
+	m_tWeaponParam[Wpn_Hammer_Black].fCol_Height = 1.0f;
+
+	m_tWeaponParam[Wpn_Hammer_Military].fDamage = 155.f;
+	m_tWeaponParam[Wpn_Hammer_Military].fRadius = 0.7f;
+	m_tWeaponParam[Wpn_Hammer_Military].fTrail_Min = 0.75f;
+	m_tWeaponParam[Wpn_Hammer_Military].fTrail_Max = 1.5f;
+	m_tWeaponParam[Wpn_Hammer_Military].fCol_Height = 1.0f;
+
+	m_tWeaponParam[Wpn_Hammer_Slave].fDamage = 155.f;
+	m_tWeaponParam[Wpn_Hammer_Slave].fRadius = 0.7f;
+	m_tWeaponParam[Wpn_Hammer_Slave].fTrail_Min = 0.75f;
+	m_tWeaponParam[Wpn_Hammer_Slave].fTrail_Max = 1.5f;
+	m_tWeaponParam[Wpn_Hammer_Slave].fCol_Height = 0.9f;
 
 	//===========================================================================================
 	// 총검
 	//===========================================================================================
 
-	m_tWeaponParam[WPN_Gun_Normal].fDamage = 30.f;
-	m_tWeaponParam[WPN_Gun_Normal].fRadius = 0.6f;
-	m_tWeaponParam[WPN_Gun_Normal].fTrail_Min = 0.75f;
-	m_tWeaponParam[WPN_Gun_Normal].fTrail_Max = 1.5f;
-	m_tWeaponParam[WPN_Gun_Normal].fCol_Height = 1.2f;
+	m_tWeaponParam[Wpn_Gun].fDamage = 70.f;
+	m_tWeaponParam[Wpn_Gun].fRadius = 0.5f;
+	m_tWeaponParam[Wpn_Gun].fTrail_Min = 0.75f;
+	m_tWeaponParam[Wpn_Gun].fTrail_Max = 1.5f;
+	m_tWeaponParam[Wpn_Gun].fCol_Height = 1.0f;
+
+	m_tWeaponParam[Wpn_Gun_Black].fDamage = 70.f;
+	m_tWeaponParam[Wpn_Gun_Black].fRadius = 0.5f;
+	m_tWeaponParam[Wpn_Gun_Black].fTrail_Min = 0.75f;
+	m_tWeaponParam[Wpn_Gun_Black].fTrail_Max = 1.5f;
+	m_tWeaponParam[Wpn_Gun_Black].fCol_Height = 1.1f;
+
+	m_tWeaponParam[Wpn_Gun_Military].fDamage = 70.f;
+	m_tWeaponParam[Wpn_Gun_Military].fRadius = 0.5f;
+	m_tWeaponParam[Wpn_Gun_Military].fTrail_Min = 0.75f;
+	m_tWeaponParam[Wpn_Gun_Military].fTrail_Max = 1.5f;
+	m_tWeaponParam[Wpn_Gun_Military].fCol_Height = 1.1f;
+
+	m_tWeaponParam[Wpn_Gun_Slave].fDamage = 70.f;
+	m_tWeaponParam[Wpn_Gun_Slave].fRadius = 0.5f;
+	m_tWeaponParam[Wpn_Gun_Slave].fTrail_Min = 0.75f;
+	m_tWeaponParam[Wpn_Gun_Slave].fTrail_Max = 1.5f;
+	m_tWeaponParam[Wpn_Gun_Slave].fCol_Height = 1.1f;
 
 	//===========================================================================================
-	// 빙페
+	// 방패
 	//===========================================================================================
 
 	m_tWeaponParam[WPN_Shield_Normal].fDamage = 25.f;
@@ -671,16 +769,6 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[WPN_Shield_Normal].fTrail_Min = 0.f;
 	m_tWeaponParam[WPN_Shield_Normal].fTrail_Max = 1.f;
 	m_tWeaponParam[WPN_Shield_Normal].fCol_Height = 0.f;
-
-	//===========================================================================================
-	// 도끼창
-	//===========================================================================================
-
-	m_tWeaponParam[WPN_Halverd_Normal].fDamage = 60.f;
-	m_tWeaponParam[WPN_Halverd_Normal].fRadius = 0.75f;
-	m_tWeaponParam[WPN_Halverd_Normal].fTrail_Min = 1.2f;
-	m_tWeaponParam[WPN_Halverd_Normal].fTrail_Max = 2.3f;
-	m_tWeaponParam[WPN_Halverd_Normal].fCol_Height = 1.8f;
 
 	//===========================================================================================
 
@@ -773,7 +861,7 @@ CWeapon * CWeapon::Create(_Device pGraphic_Device)
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 	{
-		MSG_BOX("Failed To Creating CMainApp");
+		MSG_BOX("Failed To Creating CWeapon");
 		Safe_Release(pInstance);
 	}
 
@@ -787,7 +875,7 @@ CGameObject * CWeapon::Clone_GameObject(void * pArg)
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
-		MSG_BOX("Failed To Cloned CMainApp");
+		MSG_BOX("Failed To Cloned CWeapon");
 		Safe_Release(pInstance);
 	}
 

@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Cocoon.h"
 #include "..\Headers\CocoonBullet.h"
-#include "..\Headers\MonsterUI.h"
-#include "Haze.h"
 
 CCocoon::CCocoon(LPDIRECT3DDEVICE9 pGraphic_Device)
 	:CGameObject(pGraphic_Device)
@@ -21,7 +19,7 @@ HRESULT CCocoon::Ready_GameObject_Prototype()
 
 HRESULT CCocoon::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component()))
+	if (FAILED(Add_Component(pArg)))
 		return E_FAIL;
 
 	m_pTransformCom->Set_Pos(_v3(1.f, 0.f, 1.f));
@@ -44,27 +42,6 @@ HRESULT CCocoon::Ready_GameObject(void * pArg)
 		m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 		Safe_AddRef(m_pTargetTransform);
 	}
-	
-	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
-	m_tObjParam.fArmor_Cur = m_tObjParam.fArmor_Max;
-
-	m_tObjParam.bCanHit = true;
-	m_tObjParam.bIsHit = false;
-	m_tObjParam.bHitAgain = false;
-	m_tObjParam.bCanAttack = true;
-	m_tObjParam.bIsAttack = false;
-
-	m_bCanPlayDead = false;
-	m_bInRecognitionRange = false;
-	m_bInAtkRange = false;
-	m_bCanCoolDown = false;
-	m_bIsCoolDown = false;
-	m_bCanIdle = true;
-	m_bIsIdle = false;
-
-	m_fCoolDownCur = 0.f;
-	m_fSpeedForCollisionPush = 2.f;
 
 	return S_OK;
 }
@@ -76,7 +53,6 @@ _int CCocoon::Update_GameObject(_double TimeDelta)
 
 	CGameObject::Update_GameObject(TimeDelta);
 
-	// MonsterHP UI
 	m_pMonsterUI->Update_GameObject(TimeDelta);
 
 	Check_PosY();
@@ -87,10 +63,7 @@ _int CCocoon::Update_GameObject(_double TimeDelta)
 
 	m_pMeshCom->SetUp_Animation(m_eState);
 
-	if (false == m_bReadyDead)
-		Enter_Collision();
-	else
-		Check_DeadEffect(TimeDelta);
+	MONSTER_STATETYPE::DEAD != m_eFirstCategory ? Enter_Collision() : Check_DeadEffect(TimeDelta);
 
 	return S_OK;
 }
@@ -134,7 +107,7 @@ HRESULT CCocoon::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			if (MONSTER_ANITYPE::DEAD != m_eFirstCategory)
+			if (MONSTER_STATETYPE::DEAD != m_eFirstCategory)
 				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
 
 			m_pShaderCom->Begin_Pass(m_iPass);
@@ -238,7 +211,11 @@ void CCocoon::Render_Collider()
 
 void CCocoon::Enter_Collision()
 {
-	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
+	if (MONSTER_STATETYPE::DEAD != m_eFirstCategory)
+	{
+		Check_CollisionPush();
+		Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
+	}
 
 	return;
 }
@@ -257,7 +234,7 @@ void CCocoon::Check_CollisionPush()
 		{
 			CCollider* pCollider = TARGET_TO_COL(Obj_iter);
 
-			if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_fSpeedForCollisionPush * DELTA_60))
+			if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_fSkillMoveSpeed_Cur * DELTA_60))
 			{
 				CTransform* pTrans = TARGET_TO_TRANS(Obj_iter);
 				CNavMesh*   pNav = TARGET_TO_NAV(Obj_iter);
@@ -327,6 +304,25 @@ void CCocoon::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 				}
 			}
 		}
+	}
+
+	return;
+}
+
+void CCocoon::Function_FBLR()
+{	
+	_float angle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos()));
+
+	if (MONSTER_STATETYPE::HIT == m_eFirstCategory)
+	{
+		if (0.f <= angle && 90.f > angle)
+			m_eFBLR = FBLR::FRONT;
+		else if (-90.f <= angle && 0.f > angle)
+			m_eFBLR = FBLR::FRONT;
+		else if (90.f <= angle && 180.f > angle)
+			m_eFBLR = FBLR::BACK;
+		else if (-180.f <= angle && -90.f > angle)
+			m_eFBLR = FBLR::BACK;
 	}
 
 	return;
@@ -452,15 +448,14 @@ void CCocoon::Function_ResetAfterAtk()
 	m_tObjParam.bCanDodge = true;
 	m_tObjParam.bIsDodge = false;
 
+	m_tObjParam.bSuperArmor = false;
+
 	m_bCanIdle = true;
 	m_bIsIdle = false;
 
 	m_tObjParam.bIsAttack = false;
 
-	for (auto& vetor_iter : m_vecAttackCol)
-		vetor_iter->Set_Enabled(false);
-
-	LOOP(10)
+	LOOP(20)
 		m_bEventTrigger[i] = false;
 
 	return;
@@ -475,7 +470,7 @@ void CCocoon::Check_PosY()
 
 void CCocoon::Check_Hit()
 {
-	if (MONSTER_ANITYPE::DEAD == m_eFirstCategory)
+	if (MONSTER_STATETYPE::DEAD == m_eFirstCategory)
 		return;
 
 	if (0 < m_tObjParam.fHp_Cur)
@@ -486,49 +481,30 @@ void CCocoon::Check_Hit()
 			{
 				if (true == m_tObjParam.bHitAgain)
 				{
-					m_eFirstCategory = MONSTER_ANITYPE::HIT;
-					Check_FBLR();
+					m_eFirstCategory = MONSTER_STATETYPE::HIT;
+					Function_FBLR();
 					m_tObjParam.bHitAgain = false;
 					m_pMeshCom->Reset_OldIndx();
 				}
 				else
 				{
-					m_eFirstCategory = MONSTER_ANITYPE::HIT;
-					Check_FBLR();
+					m_eFirstCategory = MONSTER_STATETYPE::HIT;
+					Function_FBLR();
 				}
 			}
 		}
 	}
 	else
-		m_eFirstCategory = MONSTER_ANITYPE::DEAD;
-
-	return;
-}
-
-void CCocoon::Check_FBLR()
-{	
-	_float angle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos()));
-
-	if (MONSTER_ANITYPE::HIT == m_eFirstCategory)
-	{
-		if (0.f <= angle && 90.f > angle)
-			m_eFBLR = FBLR::FRONT;
-		else if (-90.f <= angle && 0.f > angle)
-			m_eFBLR = FBLR::FRONT;
-		else if (90.f <= angle && 180.f > angle)
-			m_eFBLR = FBLR::BACK;
-		else if (-180.f <= angle && -90.f > angle)
-			m_eFBLR = FBLR::BACK;
-	}
+		m_eFirstCategory = MONSTER_STATETYPE::DEAD;
 
 	return;
 }
 
 void CCocoon::Check_Dist()
 {
-	if (MONSTER_ANITYPE::HIT == m_eFirstCategory ||
-		MONSTER_ANITYPE::CC == m_eFirstCategory ||
-		MONSTER_ANITYPE::DEAD == m_eFirstCategory)
+	if (MONSTER_STATETYPE::HIT == m_eFirstCategory ||
+		MONSTER_STATETYPE::CC == m_eFirstCategory ||
+		MONSTER_STATETYPE::DEAD == m_eFirstCategory)
 		return;
 
 	if (true == m_tObjParam.bIsAttack ||
@@ -539,7 +515,7 @@ void CCocoon::Check_Dist()
 	{
 		Function_ResetAfterAtk();
 
-		m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+		m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 
 		return;
 	}
@@ -558,12 +534,12 @@ void CCocoon::Check_Dist()
 				{
 					if (true == m_bIsCoolDown)
 					{
-						m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+						m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 						Function_RotateBody();
 					}
 					else
 					{
-						m_eFirstCategory = MONSTER_ANITYPE::ATTACK;
+						m_eFirstCategory = MONSTER_STATETYPE::ATTACK;
 						if (m_fAtkRange < fLenth && m_fShotRange > fLenth)
 							m_eState = COCOON_ANI::Shot;
 						else
@@ -573,19 +549,19 @@ void CCocoon::Check_Dist()
 				}
 				else
 				{
-					m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 					Function_RotateBody();
 				}
 			}
 			else
 			{
-				m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+				m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 				Function_RotateBody();
 			}
 		}
 		else
 		{
-			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+			m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 		}
 	}
 
@@ -596,22 +572,22 @@ void CCocoon::Check_AniEvent()
 {
 	switch (m_eFirstCategory)
 	{
-	case MONSTER_ANITYPE::IDLE:
+	case MONSTER_STATETYPE::IDLE:
 		Play_Idle();
 		break;
 
-	case MONSTER_ANITYPE::ATTACK:
+	case MONSTER_STATETYPE::ATTACK:
 		if(COCOON_ANI::Shot== m_eState)
 			Play_Shot();
 		else if(COCOON_ANI::Mist == m_eState)
 			Play_Mist();
 		break;
 
-	case MONSTER_ANITYPE::HIT:
+	case MONSTER_STATETYPE::HIT:
 		Play_Hit();
 		break;
 
-	case MONSTER_ANITYPE::DEAD:
+	case MONSTER_STATETYPE::DEAD:
 		Play_Dead();
 		break;
 	}
@@ -619,28 +595,30 @@ void CCocoon::Check_AniEvent()
 	return;
 }
 
-void CCocoon::Play_Idle()
+void CCocoon::Check_DeadEffect(_double TimeDelta)
 {
-	if (true == m_bInRecognitionRange)
-	{
-		m_bIsIdle = false;
+	m_fDeadEffect_Delay -= _float(TimeDelta);
+	if (m_fDeadEffect_Delay > 0.f)
+		return;
 
-		if (true == m_tObjParam.bCanAttack)
-		{
-			m_eState = COCOON_ANI::Threat;
-			Function_RotateBody();
-		}
-		else
-		{
-			m_eState = COCOON_ANI::Threat;
-			Function_RotateBody();
-		}
-	}
-	else
-	{
-		m_bIsIdle = true;
-		m_eState = COCOON_ANI::Idle;
-	}
+	m_fDeadEffect_Offset -= _float(TimeDelta);
+	if (m_fDeadEffect_Offset > 0.f)
+		return;
+
+	m_fDeadEffect_Offset = 0.1f;
+
+	_v3 vPos = m_pTransformCom->Get_Pos();
+	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
+	_v3 vHeadPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips");
+	_v3 vHipPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle", 0.1f, vPos, vHeadPos);
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle_Sub", 0.1f, vPos, vHeadPos);
+
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHeadPos);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHipPos);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vPos);
 
 	return;
 }
@@ -658,7 +636,6 @@ void CCocoon::Play_Shot()
 	}
 	else 
 	{
-		//5.733 생성(불 머금기) //6.267f 발사
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
 			m_fCoolDownMax = 1.f;
@@ -692,6 +669,9 @@ void CCocoon::Play_Shot()
 		{
 			Function_RotateBody();
 		}
+
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_tObjParam.bSuperArmor = true;
 	}
 
 	return;
@@ -751,6 +731,35 @@ void CCocoon::Play_Mist()
 			g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_01", 0.1f, vBirth, nullptr);
 			g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_02", 0.1f, vBirth, nullptr);
 		}
+
+		if (m_pMeshCom->Is_Finish_Animation(0.3f))
+			m_tObjParam.bSuperArmor = true;
+	}
+
+	return;
+}
+
+void CCocoon::Play_Idle()
+{
+	if (true == m_bInRecognitionRange)
+	{
+		m_bIsIdle = false;
+
+		if (true == m_tObjParam.bCanAttack)
+		{
+			m_eState = COCOON_ANI::Threat;
+			Function_RotateBody();
+		}
+		else
+		{
+			m_eState = COCOON_ANI::Threat;
+			Function_RotateBody();
+		}
+	}
+	else
+	{
+		m_bIsIdle = true;
+		m_eState = COCOON_ANI::Idle;
 	}
 
 	return;
@@ -783,14 +792,14 @@ void CCocoon::Play_Hit()
 
 			m_fCoolDownMax = 0.5f;
 
-			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+			m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 		}
 		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
 		{
 			if (false == m_tObjParam.bCanHit)
 			{
 				m_tObjParam.bCanHit = true;
-				Check_FBLR();
+				Function_FBLR();
 			}
 		}
 	}
@@ -832,41 +841,37 @@ void CCocoon::Play_Dead()
 	return;
 }
 
-void CCocoon::Check_DeadEffect(_double TimeDelta)
+HRESULT CCocoon::Add_Component(void* pArg)
 {
-	m_fDeadEffect_Delay -= _float(TimeDelta);
-	if (m_fDeadEffect_Delay > 0.f)
-		return;
+	_tchar MeshName[MAX_STR] = L"";
 
-	m_fDeadEffect_Offset -= _float(TimeDelta);
-	if (m_fDeadEffect_Offset > 0.f)
-		return;
+	MONSTER_STATUS eTemp = *(MONSTER_STATUS*)pArg;
 
-	m_fDeadEffect_Offset = 0.1f;
-
-	_v3 vPos = m_pTransformCom->Get_Pos();
-	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
-	_v3 vHeadPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips");
-	_v3 vHipPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-
-	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle", 0.1f, vPos, vHeadPos);
-	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle_Sub", 0.1f, vPos, vHeadPos);
-
-	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHeadPos);
-	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHipPos);
-	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vPos);
-}
-
-HRESULT CCocoon::Add_Component()
-{
+	if (nullptr == pArg)
+		lstrcpy(MeshName, L"Mesh_Cocoon_Black");
+	else
+	{
+		switch (eTemp.eMonsterColor)
+		{
+		case MONSTER_COLORTYPE::WHITE:
+			lstrcpy(MeshName, L"Mesh_Cocoon_White");
+			break;
+		case MONSTER_COLORTYPE::RED:
+		case MONSTER_COLORTYPE::BLUE:
+		case MONSTER_COLORTYPE::YELLOW:
+		case MONSTER_COLORTYPE::COLOR_NONE:
+		case MONSTER_COLORTYPE::BLACK:
+			lstrcpy(MeshName, L"Mesh_Cocoon_Black");
+			break;
+		}
+	}
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
 		return E_FAIL;
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Cocoon_Black", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, MeshName, L"Com_Mesh", (CComponent**)&m_pMeshCom)))
 		return E_FAIL;
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMesh)))
 		return E_FAIL;
@@ -912,28 +917,49 @@ HRESULT CCocoon::SetUp_ConstantTable()
 
 HRESULT CCocoon::Ready_Status(void * pArg)
 {
-	if (nullptr == pArg)
-	{
-		m_tObjParam.fDamage = 25.f;
-		m_tObjParam.fHp_Max = 75.f;
-		m_tObjParam.fArmor_Max = 10.f;
+	m_tObjParam.fDamage = 250.f;
+	m_tObjParam.fHp_Max = 750.f;
+	m_tObjParam.fArmor_Max = 100.f;
 
-		m_fRecognitionRange = 30.f;
-		m_fShotRange = 20.f;
-		m_fAtkRange = 5.f;
-	}
-	else
-	{
-		INITSTRUCT Info = *(INITSTRUCT*)pArg;
+	m_fRecognitionRange = 30.f;
+	m_fShotRange = 20.f;
+	m_fAtkRange = 5.f;
+	m_fPersonalRange = 2.f;
 
-		m_tObjParam.fDamage = Info.tMonterStatus.fDamage;
-		m_tObjParam.fHp_Max = Info.tMonterStatus.fHp_Max;
-		m_tObjParam.fArmor_Max = Info.tMonterStatus.fArmor_Max;
+	m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
+	m_tObjParam.fArmor_Cur = m_tObjParam.fArmor_Max;
 
-		m_fRecognitionRange = Info.fKonwingRange;
-		m_fShotRange = Info.fShotRange;
-		m_fAtkRange = Info.fCanAttackRange;
-	}
+	m_tObjParam.bCanHit = true;
+	m_tObjParam.bIsHit = false;
+	m_tObjParam.bCanAttack = true;
+	m_tObjParam.bIsAttack = false;
+	m_tObjParam.bCanDodge = true;
+	m_tObjParam.bIsDodge = false;
+	m_bCanPlayDead = false;
+	m_bInRecognitionRange = false;
+	m_bInAtkRange = false;
+	m_bCanChase = false;
+	m_bCanCoolDown = false;
+	m_bIsCoolDown = false;
+	m_bCanChooseAtkType = true;
+	m_bIsCombo = false;
+	m_bCanIdle = true;
+	m_bIsIdle = false;
+	m_bCanMoveAround = true;
+	m_bIsMoveAround = false;
+
+	m_dTimeDelta = 0;
+	m_dAniPlayMul = 1;
+
+	m_fSkillMoveSpeed_Cur = 0.f;
+	m_fSkillMoveSpeed_Max = 0.f;
+	m_fSkillMoveAccel_Cur = 0.5f;
+	m_fSkillMoveAccel_Max = 0.f;
+	m_fSkillMoveMultiply = 1.f;
+
+	m_fCoolDownMax = 0.f;
+	m_fCoolDownCur = 0.f;
 
 	return S_OK;
 }
@@ -941,7 +967,6 @@ HRESULT CCocoon::Ready_Status(void * pArg)
 HRESULT CCocoon::Ready_Collider()
 {
 	m_vecPhysicCol.reserve(3); 
-	m_vecAttackCol.reserve(2);
 
 	CCollider* pCollider = nullptr;
 	_float fRadius;
@@ -979,7 +1004,6 @@ HRESULT CCocoon::Ready_Collider()
 	pCollider->Set_Enabled(true);
 
 	m_vecPhysicCol.push_back(pCollider);
-
 
 	return S_OK;
 }
@@ -1044,14 +1068,7 @@ void CCocoon::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
 
-	for (auto& vecter_iter : m_vecPhysicCol)
-		Safe_Release(vecter_iter);
-
-	for (auto& vecter_iter : m_vecAttackCol)
-		Safe_Release(vecter_iter);
-
-	for (auto& iter : m_matBone)
-		iter = nullptr;
-
 	CGameObject::Free();
+
+	return;
 }
