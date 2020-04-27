@@ -95,7 +95,7 @@ _int CFlag::Late_Update_GameObject(_double TimeDelta)
 		_v3 temp = *(_v3*)(pData->particles + i);
 
 		pVtx[i].Position = temp;
-		pVtx[i].UV = _v2(m_UVs[i].x, m_UVs[i].y);
+		pVtx[i].UV = _v2(m_UVs[i].x, 1.f - m_UVs[i].y);
 	}
 
 	m_pVB->Unlock();
