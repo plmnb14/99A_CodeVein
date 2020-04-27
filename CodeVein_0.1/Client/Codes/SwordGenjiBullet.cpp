@@ -19,10 +19,16 @@ HRESULT CSwordGenjiBullet::Ready_GameObject_Prototype()
 
 HRESULT CSwordGenjiBullet::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component()))
-		return E_FAIL;
+	if (nullptr == pArg)
+	{
+		if (FAILED(Add_Component()))
+			return E_FAIL;
 
-	Ready_Collider();
+		Ready_Collider();
+
+		return S_OK;
+	}
+
 
 	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
 
@@ -35,6 +41,10 @@ HRESULT CSwordGenjiBullet::Ready_GameObject(void * pArg)
 
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
+
+	m_dCurTime = 0;
+	m_bDead = false;
+	m_bEffect = true;
 
 	m_fEffectCreateOffset = 0.05f;
 
@@ -114,6 +124,7 @@ _int CSwordGenjiBullet::Late_Update_GameObject(_double TimeDelta)
 
 	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
+
 
 	return NOERROR;
 }
