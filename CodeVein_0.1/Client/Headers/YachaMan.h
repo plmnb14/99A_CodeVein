@@ -150,13 +150,15 @@ private:
 	void Play_CC();
 	void Play_Dead();
 
+
 private:
-	HRESULT Add_Component(void* pArg);
+	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
 	HRESULT Ready_Status(void* pArg);
 	HRESULT Ready_Weapon();
 	HRESULT Ready_Collider();
 	HRESULT Ready_BoneMatrix();
+	void Check_DeadEffect(_double TimeDelta);
 
 public:
 	static CYachaMan* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -222,6 +224,10 @@ private:
 	_int	m_iRandom;
 	_int	m_iDodgeCount;
 	_int	m_iDodgeCountMax;
+
+private: // For Effect
+	_float			m_fDeadEffect_Delay = 0.f;
+	_float			m_fDeadEffect_Offset = 0.f;
 
 };
 

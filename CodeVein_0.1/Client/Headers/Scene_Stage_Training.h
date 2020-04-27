@@ -26,6 +26,7 @@ public:
 
 private:
 	void Create_Fog(_double TimeDelta);
+	void Create_Snow(_double TimeDelta);
 
 private:
 	CNavMesh*		m_pNavMesh = nullptr;
@@ -36,6 +37,7 @@ private:
 private:
 	_float m_fMapFogDelay = 10.f;
 	_float m_fMapWindDustDelay = 1.f;
+	_float m_fMapSnowDelay = 1.f;
 
 public:
 	static CScene_Stage_Training* Create(LPDIRECT3DDEVICE9 pGraphic_Device, _bool _bLoadStatic);

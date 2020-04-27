@@ -215,6 +215,7 @@
     <ClInclude Include="..\Headers\GunAttackCol.h" />
     <ClInclude Include="..\Headers\GunGenjiBullet.h" />
     <ClInclude Include="..\Headers\Get_ItemUI.h" />
+    <ClInclude Include="..\Headers\Haze.h" />
     <ClInclude Include="..\Headers\Hunter.h" />
     <ClInclude Include="..\Headers\HunterBullet.h" />
     <ClInclude Include="..\Headers\IceBarrier.h" />
@@ -241,6 +242,7 @@
     <ClInclude Include="..\Headers\MonsterUI.h" />
     <ClInclude Include="..\Headers\NumberUI.h" />
     <ClInclude Include="..\Headers\Passive_Icon.h" />
+    <ClInclude Include="..\Headers\Pet.h" />
     <ClInclude Include="..\Headers\PickUp_ItemUI.h" />
     <ClInclude Include="..\Headers\Player_Colleague.h" />
     <ClInclude Include="..\Headers\PoisonBullet.h" />
@@ -343,6 +345,7 @@
     <ClCompile Include="..\Codes\GunAttackCol.cpp" />
     <ClCompile Include="..\Codes\GunGenjiBullet.cpp" />
     <ClCompile Include="..\Codes\Get_ItemUI.cpp" />
+    <ClCompile Include="..\Codes\Haze.cpp" />
     <ClCompile Include="..\Codes\Hunter.cpp" />
     <ClCompile Include="..\Codes\HunterBullet.cpp" />
     <ClCompile Include="..\Codes\IceBarrier.cpp" />
@@ -367,6 +370,7 @@
     <ClCompile Include="..\Codes\MonsterUI.cpp" />
     <ClCompile Include="..\Codes\NumberUI.cpp" />
     <ClCompile Include="..\Codes\Passive_Icon.cpp" />
+    <ClCompile Include="..\Codes\Pet.cpp" />
     <ClCompile Include="..\Codes\PickUp_ItemUI.cpp" />
     <ClCompile Include="..\Codes\Player_Colleague.cpp" />
     <ClCompile Include="..\Codes\PoisonBullet.cpp" />

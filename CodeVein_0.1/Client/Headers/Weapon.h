@@ -91,7 +91,7 @@ public:
 	virtual void			Set_Enable_Trail(_bool _bEnable);
 	virtual void			Set_SkillMode(_bool _bSkill);
 	virtual void			Set_TrailIndex(_int iIdx, _bool bStaticTrail = false);
-	virtual void			Set_TrailUseMask(_int iIdx, _bool bStaticTrail = false);
+	virtual void			Set_TrailUseMask(_bool bUse, _int iIdx, _bool bStaticTrail = false);
 	virtual void			Set_Enable_Record(_bool _bRecord);
 	// 스킬일 경우, 퍼센트 데미지 적용
 	virtual void			Set_SkillPercent(_float _fPercent);

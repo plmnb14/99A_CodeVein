@@ -361,6 +361,12 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. Font">
       <UniqueIdentifier>{9691fea8-3f8e-4447-bf24-3e5f1e4fa387}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\7%29 Item\Haze">
+      <UniqueIdentifier>{c9d108fb-1149-4118-9ee2-ca3f032f5f37}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\10%29 Pet">
+      <UniqueIdentifier>{b1bb6ae7-348a-4f21-ab97-a86a07b67818}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -753,8 +759,14 @@
     <ClInclude Include="..\Headers\YetiBullet.h">
       <Filter>02.GameObject\Stage\2%29 Monster\Yeti</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Haze.h">
+      <Filter>02.GameObject\Stage\7%29 Item\Haze</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\Flag.h">
       <Filter>02.GameObject\Stage\Physx</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Pet.h">
+      <Filter>02.GameObject\Stage\10%29 Pet</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1136,8 +1148,14 @@
     <ClCompile Include="..\Codes\YetiBullet.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster\Yeti</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\Haze.cpp">
+      <Filter>02.GameObject\Stage\7%29 Item\Haze</Filter>
+    </ClCompile>
     <ClCompile Include="..\Codes\Flag.cpp">
       <Filter>02.GameObject\Stage\Physx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Pet.cpp">
+      <Filter>02.GameObject\Stage\10%29 Pet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -47,6 +47,7 @@ _int CScene_Stage_Training::Update_Scene(_double TimeDelta)
 	CUI_Manager::Get_Instance()->Update_UI();
 	
 	//Create_Fog(TimeDelta);
+	Create_Snow(TimeDelta);
 
 	return _int();
 }
@@ -119,13 +120,6 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
-	// ±èÇåÅÍ
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &MONSTER_STATUS(MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_Halberd));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
-	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-
 	//// ¸ùÅ°.D.·çÇÇ 
 	////	¤¤> Moon : ¿ÏÁÔ ¿ô°Ü¿ä~~!!@@@
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Monkey", &MONSTER_STATUS(MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None));
@@ -136,13 +130,6 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 
 	//// ¿¹Æ¼
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Yeti", &MONSTER_STATUS(MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
-	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-
-	//// ÅäÅÛ
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon", &MONSTER_STATUS(MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None));
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
 	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
 	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
@@ -373,6 +360,26 @@ void CScene_Stage_Training::Create_Fog(_double TimeDelta)
 			vRandPos = vDir * (fMinRange + fRandRange);
 			g_pManagement->Create_Effect(L"MapDust_2", vPlayerPos + vRandPos + _v3(0.f, _float(CCalculater::Random_Num_Double(0, 0.5)), 0.f), nullptr);
 		}
+	}
+}
+
+void CScene_Stage_Training::Create_Snow(_double TimeDelta)
+{
+	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	if (!pPlayer)
+		return;
+
+	const _float SNOW_OFFSET = 0.3f;
+
+	m_fMapSnowDelay += _float(TimeDelta);
+	if (m_fMapSnowDelay > SNOW_OFFSET)
+	{
+		m_fMapSnowDelay = 0.f;
+
+		CTransform* pPlayerTrans = TARGET_TO_TRANS(pPlayer);
+		_v3 vPlayerPos = pPlayerTrans->Get_Pos();
+
+		g_pManagement->Create_Effect(L"MapSnow", vPlayerPos + _v3(0.f, 10.f, 0.f), nullptr);
 	}
 }
 

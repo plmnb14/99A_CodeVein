@@ -55,6 +55,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Player_Skill_Distortion_Water", 10);
 	Input_Pool(L"Player_Skill_Distortion_Blaster", 10);
 	Input_Pool(L"Player_Skill_RedOnion", 40);
+	Input_Pool(L"Player_Skill_RedOnion_3", 100);
 	Input_Pool(L"Player_Skill_Floor_BlackRing", 50);
 	Input_Pool(L"Player_Skill_Floor_RedRing", 50);
 	Input_Pool(L"Player_Skill_SplitAssert_LaserBefore", 5);
@@ -161,6 +162,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"QueensKnight_DarkBoom_Floor_0", 600);
 	Input_Pool(L"QueensKnight_DarkBoom_Floor_1", 600);
 	Input_Pool(L"QueensKnight_DarkBoom_Particle", 1000);
+	Input_Pool(L"QueensKnight_DarkBoom_ReadyDistortion", 200);
 	Input_Pool(L"QueensKnight_LeakField_0", 350);
 	Input_Pool(L"QueensKnight_LeakField_1", 350);
 	Input_Pool(L"QueensKnight_LeakField_Hand", 150);
@@ -322,6 +324,9 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 
 	Input_Pool(L"Boss_KnockDown_Dust", 10);
 	Input_Pool(L"Boss_Dead_Particle", 11000);
+	Input_Pool(L"Monster_DeadSmoke_0", 1000);
+	Input_Pool(L"Monster_DeadSmoke_1", 1000);
+	Input_Pool(L"Monster_DeadSmoke_2", 1000);
 
 	Input_Pool(L"Cocoon_TongueFire", 200);
 	Input_Pool(L"Totem_Fire_Bullet_Dead_0", 200);
@@ -367,7 +372,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	
 	Input_Pool(L"Bullet_Body", 30);
 	Input_Pool(L"Bullet_Body_Aura", 100);
-	Input_Pool(L"Bullet_DeadFlash", 10);
+	Input_Pool(L"Bullet_DeadFlash", 30);
 	Input_Pool(L"Bullet_DeadSmoke_Base", 50);
 	Input_Pool(L"Bullet_DeadSmoke_Black", 100);
 	Input_Pool(L"Bullet_Fire_Flash", 10);
@@ -376,8 +381,9 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Bullet_Tail_Particle", 100);
 	Input_Pool(L"RockBullet_Body", 10);
 	
-	Input_Pool(L"MistletoeParticle", 80);
-	Input_Pool(L"MistletoeParticle_Sub", 80);
+	Input_Pool(L"MistletoeParticle", 500);
+	Input_Pool(L"MistletoeParticle_Sub", 500);
+	Input_Pool(L"MistletoeParticle_Active", 500);
 
 	Input_Pool(L"ItemObject"		, 100);
 	Input_Pool(L"ItemObject_Red"	, 100);
@@ -386,10 +392,16 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"ItemObject_Purple"	, 100);
 	Input_Pool(L"ItemObject_Yellow"	, 100);
 
+	Input_Pool(L"Haze_Body", 50);
+	Input_Pool(L"Haze_FlashParticle", 5000);
+
 	Input_Pool(L"MapDust", 100);
 	Input_Pool(L"MapDust_2", 100);
 	Input_Pool(L"MapMist", 3000);
-	
+	Input_Pool(L"MapSnow", 5000);
+
+	Input_Pool(L"Decal_Test", 100);
+
 	return S_OK;
 }
 HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
@@ -397,6 +409,11 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 	//if (GetAsyncKeyState('B') & 0x8000)
 	//{
 	//	Create_Effect_Delay(L"QueensKnight_Sting_Tornade", 0.f, _v3(0.f, 1.3f, 0.f), nullptr);
+	//}
+
+	//if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_LB))
+	//{
+	//	CParticleMgr::Get_Instance()->Create_Effect_Decal(L"Decal_Test", _v3(0, 0, CCalculater::Random_Num(0, 1)));
 	//}
 
 	auto& iter_begin = m_vecParticle.begin();
@@ -521,13 +538,14 @@ void CParticleMgr::Create_ParticleEffect_Delay(_tchar * szName, _float fLifeTime
 	m_vecParticle.push_back(pInfo);
 }
 
-void CParticleMgr::Create_ParticleEffect_FinishPos(_tchar* szName, _float fLifeTime, _v3 vPos, _v3 vFinishPos, CTransform * pFollowTrans)
+void CParticleMgr::Create_ParticleEffect_FinishPos(_tchar* szName, _float fLifeTime, _float fDelay, _v3 vPos, _v3 vFinishPos, CTransform * pFollowTrans)
 {
 	PARTICLE_INFO* pInfo = new PARTICLE_INFO;
 	ZeroMemory(pInfo, sizeof(PARTICLE_INFO));
 
 	lstrcpy(pInfo->szName, szName);
 	pInfo->fLifeTime = fLifeTime;
+	pInfo->fDelayTime = fDelay;
 	pInfo->pFollowTrans = pFollowTrans;
 	pInfo->vCreatePos = vPos;
 	pInfo->vFinishPos = vFinishPos;
@@ -760,7 +778,7 @@ void CParticleMgr::Create_Effect_Delay(_tchar * szName, _float fDelay, _v3 vPos,
 	}
 }
 
-void CParticleMgr::Create_Effect_FinishPos(_tchar * szName, _v3 vPos, _v3 vFinishPos, CTransform * pFollowTrans)
+void CParticleMgr::Create_Effect_FinishPos(_tchar * szName, _float fDelay, _v3 vPos, _v3 vFinishPos, CTransform * pFollowTrans)
 {
 	queue<CEffect*>* pFindedQueue = Find_Queue(szName);
 	if (pFindedQueue == nullptr)
@@ -778,6 +796,7 @@ void CParticleMgr::Create_Effect_FinishPos(_tchar * szName, _v3 vPos, _v3 vFinis
 
 			pEffect->Set_ParticleName(szEffName);
 			pEffect->Set_Desc(vPos, pFollowTrans);
+			pEffect->Set_Delay(true, fDelay);
 			pEffect->Set_FinishPos(vFinishPos);
 			pEffect->Reset_Init();
 
@@ -787,6 +806,7 @@ void CParticleMgr::Create_Effect_FinishPos(_tchar * szName, _v3 vPos, _v3 vFinis
 		m_EffectList.push_back(pFindedQueue->front());
 
 		pFindedQueue->front()->Set_Desc(vPos, pFollowTrans);
+		pFindedQueue->front()->Set_Delay(true, fDelay);
 		pFindedQueue->front()->Set_FinishPos(vFinishPos);
 		pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
 
@@ -830,11 +850,22 @@ void CParticleMgr::Create_Effect_Curve(_tchar* szName, _v3 vPos, CTransform * pT
 
 void CParticleMgr::Create_Effect_Decal(_tchar* szName, _v3 vPos)
 {
-	CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szName, nullptr));
-	pEffect->Set_ParticleName(szName);
+	//CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szName, nullptr));
+	//pEffect->Set_ParticleName(szName);
 	//m_EffectPool[szName].push(pEffect);
 
-	m_pManagement->Add_GameOject_ToLayer_NoClone(pEffect, SCENE_STAGE, L"Layer_Effect", nullptr);
+	queue<CEffect*>* pFindedQueue = Find_Queue(szName);
+	if (pFindedQueue == nullptr)
+		return;
+
+	m_EffectList.push_back(pFindedQueue->front());
+
+	pFindedQueue->front()->Set_Desc(vPos, nullptr);
+	pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
+
+	pFindedQueue->pop();
+
+	//m_pManagement->Add_GameOject_ToLayer_NoClone(pEffect, SCENE_STAGE, L"Layer_Effect", nullptr);
 }
 
 void CParticleMgr::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol, CTransform* pHittedTrans, _float fPower)
@@ -893,11 +924,10 @@ void CParticleMgr::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCo
 	Create_DirEffect(L"Hit_Blood_Direction_6", vAttackPos, vBloodDir);
 }
 
-void CParticleMgr::Create_Spawn_Effect(_v3 vPos, _v3 vFinishPos, CTransform* pFollowTrans)
+void CParticleMgr::Create_Spawn_Effect(_float fDelay, _v3 vPos, _v3 vFinishPos, CTransform* pFollowTrans)
 {
-	/// 렉걸려서 막아둠
-	Create_ParticleEffect_FinishPos(L"SpawnParticle", 2.f, vPos, vFinishPos, pFollowTrans);
-	Create_ParticleEffect_FinishPos(L"SpawnParticle_Sub", 2.f, vPos, vFinishPos, pFollowTrans);
+	Create_ParticleEffect_FinishPos(L"SpawnParticle", 2.f, fDelay, vPos, vFinishPos, pFollowTrans);
+	Create_ParticleEffect_FinishPos(L"SpawnParticle_Sub", 2.f, fDelay, vPos, vFinishPos, pFollowTrans);
 
 }
 

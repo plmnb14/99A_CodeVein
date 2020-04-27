@@ -4,6 +4,7 @@
 
 #include "MonsterUI.h"
 //#include "DamegeNumUI.h"
+#include "Haze.h"
 
 CSwordShieldGenji::CSwordShieldGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CMonster(pGraphic_Device)
@@ -161,8 +162,10 @@ _int CSwordShieldGenji::Update_GameObject(_double TimeDelta)
 
 	}
 
-	if(false == m_bReadyDead)
+	if (false == m_bReadyDead)
 		Check_PhyCollider();
+	else
+		Check_DeadEffect(TimeDelta);
 
 	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
@@ -657,6 +660,14 @@ CBT_Composite_Node * CSwordShieldGenji::NearAttack()
 
 HRESULT CSwordShieldGenji::Update_Bone_Of_BlackBoard()
 {
+	D3DXFRAME_DERIVED* pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
+	m_vHead = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Head", m_vHead);
+
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightToeBase");
+	m_vRightToeBase = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_RightToeBase", m_vRightToeBase);
+
 	return E_NOTIMPL;
 }
 
@@ -838,10 +849,11 @@ void CSwordShieldGenji::Check_PhyCollider()
 		else
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
-			Start_Dissolve(0.5f, false, true);
-			m_pShield->Start_Dissolve();
-			m_pSword->Start_Dissolve();
-			//g_pManagement->Create_Spawn_Effect(m_pTransformCom->Get_Pos());
+			Start_Dissolve(0.6f, false, true, 0.5f);
+			m_pSword->Start_Dissolve(0.6f, false, false, 0.5f);
+			m_pShield->Start_Dissolve(0.6f, false, false, 0.5f);
+			m_fDeadEffect_Delay = 0.5f;
+			g_pManagement->Add_GameObject_ToLayer(L"GameObject_Haze", SCENE_STAGE, L"Layer_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.5f));
 		}
 	}
 	else
@@ -904,6 +916,29 @@ void CSwordShieldGenji::Push_Collider()
 	}
 	
 
+}
+
+void CSwordShieldGenji::Check_DeadEffect(_double TimeDelta)
+{
+	m_fDeadEffect_Delay -= _float(TimeDelta);
+	if (m_fDeadEffect_Delay > 0.f)
+		return;
+
+	m_fDeadEffect_Offset -= _float(TimeDelta);
+	if (m_fDeadEffect_Offset > 0.f)
+		return;
+
+	m_fDeadEffect_Offset = 0.1f;
+
+	D3DXFRAME_DERIVED* pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips");
+	_v3 vHipPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle", 0.1f, m_vRightToeBase, m_vHead);
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle_Sub", 0.1f, m_vRightToeBase, m_vHead);
+
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", m_vHead);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHipPos);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", m_vRightToeBase);
 }
 
 HRESULT CSwordShieldGenji::Add_Component(void* pArg)

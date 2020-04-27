@@ -34,7 +34,7 @@
 #include "Player_Colleague.h"
 
 //#include "Item.h"
-
+#include "Haze.h"
 
 USING(Client)
 
@@ -242,6 +242,8 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_PopSmoke_1")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_LaserBody")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_ReadyDistortion")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_0")))
 		return E_FAIL;
@@ -598,6 +600,12 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"SpawnParticle_ForBoss_Point_Sub")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Monster_DeadSmoke_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Monster_DeadSmoke_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Monster_DeadSmoke_2")))
+		return E_FAIL;
 
 #pragma region Blood
 	if (FAILED(Add_EffectPrototype(L"Hit_Blood_0")))
@@ -699,6 +707,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"MistletoeParticle_Sub")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"MistletoeParticle_Active")))
+		return E_FAIL;
 
 	if (FAILED(Add_EffectPrototype(L"ItemGet_Particle")))
 		return E_FAIL;
@@ -715,11 +725,18 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"ItemObject_Yellow")))
 		return E_FAIL;
 
+	if (FAILED(Add_EffectPrototype(L"Haze_Body")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Haze_FlashParticle")))
+		return E_FAIL;
+
 	if (FAILED(Add_EffectPrototype(L"MapDust")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"MapDust_2")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"MapMist")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"MapSnow")))
 		return E_FAIL;
 
 	if (FAILED(Add_EffectPrototype(L"Player_FootSmoke")))
@@ -799,6 +816,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_RedOnion", true)))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_RedOnion_3", true)))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_SplitAssert_LaserBefore")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_SplitAssert_LaserAfter")))
@@ -855,8 +874,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 #pragma endregion
 
-	//if (FAILED(g_pManagement->Add_Prototype(L"", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(szBuff)))))
-	//	return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Decal_Test", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Decal_Test.dat")))))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -1342,7 +1361,13 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Get_ItemUI", CGet_ItemUI::Create(m_pGraphicDev))))
 			return E_FAIL;
 
+		// ETC
 		//============================================================================================================
+		// Haze
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Haze", CHaze::Create(m_pGraphicDev))))
+			return E_FAIL;
+		//============================================================================================================
+
 
 		g_bOnStage[0] = true;
 	}

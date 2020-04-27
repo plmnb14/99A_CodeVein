@@ -282,13 +282,15 @@ private:
 	void Play_CC(); //스턴,넘어짐 같은 다양한 애니들 진행->이떄 히트 동작으로 넘어가지 않고 데미지만 입음
 	void Play_Dead(); //cc상태에서 죽을 경우 다양한 모션 진행
 
+
 private:
-	HRESULT Add_Component(void* pArg);
+	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
 	HRESULT Ready_Status(void* pArg);
 	HRESULT Ready_Weapon();
 	HRESULT Ready_Collider();
 	HRESULT Ready_BoneMatrix();
+	void Check_DeadEffect(_double TimeDelta);
 
 public:
 	static CHunter* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -354,6 +356,10 @@ private:
 	_int	m_iRandom;
 	_int	m_iDodgeCount;
 	_int	m_iDodgeCountMax;
+
+private: // For Effect
+	_float			m_fDeadEffect_Delay = 0.f;
+	_float			m_fDeadEffect_Offset = 0.f;
 
 };
 

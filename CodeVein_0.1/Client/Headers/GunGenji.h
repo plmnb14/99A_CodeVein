@@ -149,6 +149,10 @@ private:	// 최초상태 세팅
 	_float				m_fMaxLength = 0.f;
 	_float				m_fMinLength = 0.f;
 
+private: // For Effect
+	_float			m_fDeadEffect_Delay = 0.f;
+	_float			m_fDeadEffect_Offset = 0.f;
+
 private:
 	HRESULT Update_Bone_Of_BlackBoard();
 	HRESULT Update_Value_Of_BB();
@@ -162,6 +166,9 @@ private:
 
 	void Check_PhyCollider();
 	void Push_Collider();
+
+private:
+	void Check_DeadEffect(_double TimeDelta);
 
 private:
 	HRESULT Add_Component(void* pArg);
