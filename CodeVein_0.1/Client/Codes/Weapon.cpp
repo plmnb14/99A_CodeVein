@@ -232,28 +232,35 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 
 						if (false == iter->Get_Target_IsDodge())
 						{
+							CTransform* pIterTransform = TARGET_TO_TRANS(iter);
+
+							// 무기의 공격력 받아옴
 							m_tObjParam.fDamage = m_tWeaponParam[m_eWeaponData].fDamage;
 
 							// 무기 공격력의 +-20%까지 랜덤범위
 							_uint min = (_uint)(m_tObjParam.fDamage - (m_tObjParam.fDamage * 0.2f));
 							_uint max = (_uint)(m_tObjParam.fDamage + (m_tObjParam.fDamage * 0.2f));
 
-							//피격시 밀림처리.....
+							//피격시 밀림처리..... ( 무기니까 부모의 위치값 )
 							memcpy(vHitDir, &(m_pmatParent->_41), sizeof(_v3));
 
-							V3_NORMAL(&m_tObjParam.vHitDir, &(TARGET_TO_TRANS(iter)->Get_Pos() - vHitDir));
+							// 때린놈의 위치 값
+							iter->Set_Target_HitPos(vHitDir);
 
+							// 때린놈으로 부터의 방향벡터
+							V3_NORMAL(&m_tObjParam.vHitDir, &(pIterTransform->Get_Pos() - vHitDir));
 							iter->Set_Target_HitDir(m_tObjParam.vHitDir);
 
+							// 시간정지 & 화면흔들림
 							g_pTimer_Manager->Set_MutiplyTime(L"Timer_Fps_60", 0.025f);
 							g_pTimer_Manager->Set_MutiplyResetTime(L"Timer_Fps_60", 0.1f);
 							CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(2.f, 20.f, 0.5f, 0.6f, CCamera::CAM_OSC_TYPE::POS_OSC);
 
+							// HP 감소
 							iter->Add_Target_Hp(-(_float)CALC::Random_Num(min , max) * m_fSkillPercent);
-							g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
+							g_pManagement->Create_Hit_Effect(vecIter, vecCol, pIterTransform);
 
-							//CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(2.f, 20.f, 0.5f, 0.6f, CCamera::CAM_OSC_TYPE::POS_OSC);
-							//SHAKE_CAM_lv0;
+							Create_PointLight(vecIter->Get_CenterPos());
 
 							if (m_bRecordCollision)
 							{
@@ -347,12 +354,12 @@ void CWeapon::Set_TrailIndex(_int iIdx, _bool bStaticTrail)
 		m_pStaticTrailEffect->Set_TrailIdx(iIdx);
 }
 
-void CWeapon::Set_TrailUseMask(_int iIdx, _bool bStaticTrail)
+void CWeapon::Set_TrailUseMask(_bool bUse, _int iIdx, _bool bStaticTrail)
 {
 	if (!bStaticTrail)
-		m_pTrailEffect->Set_UseMask(iIdx);
+		m_pTrailEffect->Set_UseMask(bUse, iIdx);
 	else
-		m_pStaticTrailEffect->Set_UseMask(iIdx);
+		m_pStaticTrailEffect->Set_UseMask(bUse, iIdx);
 }
 
 void CWeapon::Set_Enable_Record(_bool _bRecord)
@@ -725,6 +732,29 @@ HRESULT CWeapon::SetUp_ConstantTable()
 	return NOERROR;
 }
 
+void CWeapon::Create_PointLight(_v3 _vPos)
+{
+	NEW_LIGHT		LightDesc;
+	ZeroMemory(&LightDesc, sizeof(NEW_LIGHT));
+
+	float fAmbient = 0.1f;
+
+	LightDesc.Type = D3DLIGHT_POINT;
+	LightDesc.Diffuse = D3DXCOLOR(0.7f, 0.5f, 0.f, 1.f);
+	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
+	LightDesc.Specular = LightDesc.Diffuse;
+	LightDesc.Position = _vPos;
+	LightDesc.Range = 15.f;
+
+	LightDesc.bLifeTime = true;
+	LightDesc.fLifeTime_Cur = 0.1f;
+	LightDesc.fLifeTime_Max = 0.1f;
+	LightDesc.fAlpha = 1.f;
+
+	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Dev, LightDesc, CLight_Manager::Dynamic_Light)))
+		return;
+}
+
 void CWeapon::Cacl_AttachBoneTransform()
 {
 	m_pTransform->Calc_ParentMat(&(*m_pmatAttach * *m_pmatParent));
@@ -771,11 +801,11 @@ void CWeapon::Free()
 	Safe_Release(m_pShader);
 	Safe_Release(m_pRenderer);
 
-	for (auto& iter : m_vecAttackCol)
-		Safe_Release(iter);
+	//for (auto& iter : m_vecAttackCol)
+	//	Safe_Release(iter);
 
-	m_vecAttackCol.shrink_to_fit();
-	m_vecAttackCol.clear();
+	//m_vecAttackCol.shrink_to_fit();
+	//m_vecAttackCol.clear();
 
 	//for (auto& iter : m_listCollisionRecord)
 	//	iter = nullptr;

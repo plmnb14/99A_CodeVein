@@ -12,6 +12,12 @@ private:
 	virtual ~CBloodCodeSlot() = default;
 
 public:
+	BloodCode_ID Get_Type() { return m_eType; }
+public:
+	void Set_Type(BloodCode_ID eID) { m_eType = eID; }
+	void Set_Select(_bool bIsSelect) { m_bIsSelect = bIsSelect; }
+
+public:
 	virtual HRESULT Ready_GameObject_Prototype();
 	virtual HRESULT Ready_GameObject(void* pArg);
 	virtual _int	Update_GameObject(_double TimeDelta);
@@ -22,7 +28,7 @@ private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable(_uint iIndex);
 	void SetUp_Default();
-
+	
 private:
 	CTransform*				m_pTransformCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
@@ -32,6 +38,8 @@ private:
 
 private:
 	BloodCode_ID			m_eType = BloodCode_End;
+	_bool					m_bIsSelect = false;
+	_float					m_fAlpha = 0.f;
 
 public:
 	static CBloodCodeSlot*		Create(_Device pGraphic_Device);

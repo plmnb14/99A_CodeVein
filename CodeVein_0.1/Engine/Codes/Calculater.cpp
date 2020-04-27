@@ -118,6 +118,13 @@ const _double CCalculater::Random_Num_Double(_double dBegin, _double _dEnd)
 	random_device rd;
 	mt19937_64 rng(rd());
 
+	if (dBegin > _dEnd)
+	{
+		_double dTemp = dBegin;
+		dBegin = _dEnd;
+		_dEnd = dTemp;
+	}
+
 	uniform_real<> Value(dBegin, _dEnd);
 
 	return Value(rng);

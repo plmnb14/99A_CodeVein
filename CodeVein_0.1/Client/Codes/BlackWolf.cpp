@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\BlackWolf.h"
 #include "..\Headers\MonsterUI.h"
+#include "Haze.h"
 
 CBlackWolf::CBlackWolf(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
@@ -89,7 +90,10 @@ _int CBlackWolf::Update_GameObject(_double TimeDelta)
 
 	m_pMeshCom->SetUp_Animation(m_eState);
 
-	Enter_Collision();
+	if (false == m_bReadyDead)
+		Enter_Collision();
+	else
+		Check_DeadEffect(TimeDelta);
 
 	return S_OK;
 }
@@ -1226,12 +1230,41 @@ void CBlackWolf::Play_Dead()
 			if (false == m_bEventTrigger[0])
 			{
 				m_bEventTrigger[0] = true;
-				Start_Dissolve(0.7f, false, true);
+
+				Start_Dissolve(0.7f, false, true, 0.0f);
+				m_fDeadEffect_Delay = 0.f;
+				g_pManagement->Add_GameObject_ToLayer(L"GameObject_Haze", SCENE_STAGE, L"Layer_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 			}
 		}
 	}
 
 	return;
+}
+
+void CBlackWolf::Check_DeadEffect(_double TimeDelta)
+{
+	m_fDeadEffect_Delay -= _float(TimeDelta);
+	if (m_fDeadEffect_Delay > 0.f)
+		return;
+
+	m_fDeadEffect_Offset -= _float(TimeDelta);
+	if (m_fDeadEffect_Offset > 0.f)
+		return;
+
+	m_fDeadEffect_Offset = 0.1f;
+
+	_v3 vPos = m_pTransformCom->Get_Pos();
+	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
+	_v3 vHeadPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips");
+	_v3 vHipPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle", 0.1f, vPos, vHeadPos);
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle_Sub", 0.1f, vPos, vHeadPos);
+
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHeadPos);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHipPos);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vPos);
 }
 
 HRESULT CBlackWolf::Add_Component()

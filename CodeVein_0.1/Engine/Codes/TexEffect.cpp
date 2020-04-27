@@ -108,10 +108,10 @@ HRESULT CTexEffect::LateInit_GameObject()
 		!lstrcmp(L"ButterFly_PointParticle", m_szParticleName) ||
 		!lstrcmp(L"ButterFly_PointParticle_Plum", m_szParticleName) ||
 		!lstrcmp(L"ButterFly_VenomShot_PointParticle", m_szParticleName) ||
-		!lstrcmp(L"Hit_Slash_Particle_0", m_szParticleName) ||
-		!lstrcmp(L"Hit_Slash_Particle_1", m_szParticleName) ||
-		!lstrcmp(L"Hit_Slash_Particle_2", m_szParticleName) ||
-		!lstrcmp(L"Hit_Slash_Particle_3", m_szParticleName) ||
+		//!lstrcmp(L"Hit_Slash_Particle_0", m_szParticleName) ||
+		//!lstrcmp(L"Hit_Slash_Particle_1", m_szParticleName) ||
+		//!lstrcmp(L"Hit_Slash_Particle_2", m_szParticleName) ||
+		//!lstrcmp(L"Hit_Slash_Particle_3", m_szParticleName) ||
 		!lstrcmp(L"MistletoeParticle", m_szParticleName) ||
 		!lstrcmp(L"MistletoeParticle_Sub", m_szParticleName) ||
 		!lstrcmp(L"Player_Buff_Particle", m_szParticleName) ||
@@ -121,11 +121,11 @@ HRESULT CTexEffect::LateInit_GameObject()
 		//!lstrcmp(L"Player_Skill_RedParticle_Explosion", m_szParticleName) ||
 		//!lstrcmp(L"Player_Skill_RedParticle_Upper", m_szParticleName) ||
 		!lstrcmp(L"Player_SpaceBar_StepParticle", m_szParticleName) ||
-		//!lstrcmp(L"Player_Skill_Rush_Particle_Yellow", m_szParticleName) ||
-		//!lstrcmp(L"Player_Skill_Rush_Particle_Orange", m_szParticleName) ||
-		//!lstrcmp(L"Player_Skill_Rush_Particle_White", m_szParticleName) ||
-		//!lstrcmp(L"SpawnParticle", m_szParticleName) ||
-		//!lstrcmp(L"SpawnParticle_Sub", m_szParticleName) ||
+		!lstrcmp(L"Player_Skill_Rush_Particle_Yellow", m_szParticleName) ||
+		!lstrcmp(L"Player_Skill_Rush_Particle_Orange", m_szParticleName) ||
+		!lstrcmp(L"Player_Skill_Rush_Particle_White", m_szParticleName) ||
+		!lstrcmp(L"SpawnParticle", m_szParticleName) ||
+		!lstrcmp(L"SpawnParticle_Sub", m_szParticleName) ||
 		!lstrcmp(L"SpawnParticle_ForBoss", m_szParticleName) ||
 		!lstrcmp(L"SpawnParticle_ForBoss_Point", m_szParticleName) ||
 		!lstrcmp(L"SpawnParticle_ForBoss_Point_Sub", m_szParticleName) ||
@@ -142,12 +142,13 @@ HRESULT CTexEffect::LateInit_GameObject()
 		!lstrcmp(L"FireBoy_FireGround_BoomParticle_02", m_szParticleName) ||
 		!lstrcmp(L"DeerKing_Snow_Up_Particle_0", m_szParticleName) ||
 		!lstrcmp(L"DeerKing_Body_PointParticle", m_szParticleName) ||
-		!lstrcmp(L"DeerKing_Point_ExplosionParticle_0", m_szParticleName)
+		!lstrcmp(L"DeerKing_Point_ExplosionParticle_0", m_szParticleName) ||
 		//!lstrcmp(L"IceGirl_PointParticle_Blue", m_szParticleName) ||
 		//!lstrcmp(L"IceGirl_PointParticle_Green", m_szParticleName) ||
 		//!lstrcmp(L"IceGirl_FlashParticle_Blue", m_szParticleName) ||
 		//!lstrcmp(L"IceGirl_FlashParticle_Green", m_szParticleName)
 		//!lstrcmp(L"MapMist", m_szParticleName)
+		!lstrcmp(L"MapSnow", m_szParticleName)
 		)
 		m_bInstanceTarget = true;
 
@@ -520,7 +521,8 @@ void CTexEffect::Check_Move(_double TimeDelta)
 			else if (m_bFinishPos)
 			{
 				_v3 vDir = m_vFinishPos - m_pTransformCom->Get_Pos();
-				vMove = vDir * m_fMoveSpeed * _float(TimeDelta);
+				D3DXVec3Normalize(&vDir, &vDir);
+				vMove = (vDir * m_fMoveSpeed * 1.5f) * _float(TimeDelta);
 
 				m_pTransformCom->Add_Pos(vMove);
 			}

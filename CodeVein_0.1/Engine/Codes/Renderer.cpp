@@ -330,15 +330,15 @@ HRESULT CRenderer::Draw_RenderList()
 	if (FAILED(Render_NonAlpha()))
 		return E_FAIL;
 
-	//if (FAILED(Render_SSAO()))
-	//	return E_FAIL;
+	if (FAILED(Render_SSAO()))
+		return E_FAIL;
 
 	// VelocityMap, NormalMap For Rim-light
 	if (FAILED(Render_MotionBlurTarget()))
 		return E_FAIL;
 
-	if (FAILED(Render_ShadowMap()))
-		return E_FAIL;
+	//if (FAILED(Render_ShadowMap()))
+	//	return E_FAIL;
 
 	// 노멀타겟과 빛정보를 이용하여 셰이드타겟에 값을 그리낟.
 	if (FAILED(Render_LightAcc()))
@@ -853,31 +853,14 @@ HRESULT CRenderer::Render_LightAcc()
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_LightAcc")))
 		return E_FAIL;
 
-
-	//m_pShader_LightAcc->Set_Value("g_matLightView", &matView, sizeof(_mat));
-	//m_pShader_LightAcc->Set_Value("g_matLightProj", &matProj, sizeof(_mat));
-	//m_pShader_LightAcc->Set_Value("g_vLightPos", &vLightPos, sizeof(_v3));
-
-	// 스테이지 1
-	_v3 vLightDir = _v3(0.2f, 1.f, 0.9f);
-	V3_NORMAL_SELF(&vLightDir);
-
-
 	m_pShader_LightAcc->Set_Texture("g_NormalTexture", m_pTarget_Manager->Get_Texture(L"Target_Normal"));
 	m_pShader_LightAcc->Set_Texture("g_DepthTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"));
 	m_pShader_LightAcc->Set_Texture("g_ShadowMapTexture", m_pTarget_Manager->Get_Texture(L"Target_Shadow"));
 	m_pShader_LightAcc->Set_Texture("g_RimNormalTexture", m_pTarget_Manager->Get_Texture(L"Target_RimNormal"));
-	m_pSSAOTexture->SetUp_OnShader("g_SSAOTexture", m_pShader_LightAcc, 0);
 	
 	m_pShader_LightAcc->Set_Value("g_matProjInv", &pPipeLine->Get_Transform_Inverse(D3DTS_PROJECTION), sizeof(_mat));
 	m_pShader_LightAcc->Set_Value("g_matViewInv", &pPipeLine->Get_Transform_Inverse(D3DTS_VIEW), sizeof(_mat));
 
-	_bool bTest = false;
-	if (GetAsyncKeyState('L') & 0x8000)
-		bTest = false;
-	else
-		bTest = true;
-	m_pShader_LightAcc->Set_Bool("g_bTest", bTest);
 
 	_v3 CamPos = pPipeLine->Get_CamPosition();
 	m_pShader_LightAcc->Set_Value("g_vCamPosition", &_v4(CamPos, 1.f), sizeof(_v4));
@@ -912,9 +895,9 @@ HRESULT CRenderer::Render_Blend()
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_RimTexture", m_pTarget_Manager->Get_Texture(L"Target_Rim"))))
 		return E_FAIL;
-	// SSAO 수정중
-	//if (FAILED(m_pShader_Blend->Set_Texture("g_SSAOTexture", m_pTarget_Manager->Get_Texture(L"Target_SSAO_Blur"))))
-	//	return E_FAIL;
+
+	if (FAILED(m_pShader_Blend->Set_Texture("g_SSAOTexture", m_pTarget_Manager->Get_Texture(L"Target_SSAO_Blur"))))
+		return E_FAIL;
 
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Blend")))
 		return E_FAIL;

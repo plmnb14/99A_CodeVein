@@ -52,8 +52,8 @@ public:
 
 private:
 	//CVIBuffer*		m_pShpereBuffer;
-	_Device				m_pGraphicDev;
-	CShader*			m_pGizmoShader;
+	_Device				m_pGraphicDev = nullptr;
+	CShader*			m_pGizmoShader = nullptr;
 	D3DXCOLOR			m_Color;
 
 private:

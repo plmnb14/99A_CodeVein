@@ -358,14 +358,26 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI">
       <UniqueIdentifier>{40a1db44-79e3-4c12-8a99-e1cc3ce1a318}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\02. SkillSelectUI">
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\00. BloodCodeSelectUI">
+      <UniqueIdentifier>{67dfd12a-2bfa-4e94-a6e3-5314377fe6b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\00. BloodCodeSelectUI\BloodCodeSlot">
+      <UniqueIdentifier>{e51672cf-7238-43b8-a85c-2b1947da53a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI">
       <UniqueIdentifier>{7d9fed8c-3193-4b82-9214-fd22a8f428d8}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\00. CodeOwnerUI">
-      <UniqueIdentifier>{778dd0f5-63db-41e4-8c95-c3239613598a}</UniqueIdentifier>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\BloodSkillSlot">
+      <UniqueIdentifier>{01f02169-ac21-4408-b63f-6316d8663c6a}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. BloodCodeSlot">
-      <UniqueIdentifier>{67dfd12a-2bfa-4e94-a6e3-5314377fe6b5}</UniqueIdentifier>
+    <Filter Include="02.GameObject\Stage\Physx">
+      <UniqueIdentifier>{f938be75-5d5f-48db-a32a-8200fcf0c724}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. Font">
+      <UniqueIdentifier>{9691fea8-3f8e-4447-bf24-3e5f1e4fa387}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\7%29 Item\Haze">
+      <UniqueIdentifier>{c9d108fb-1149-4118-9ee2-ca3f032f5f37}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -729,6 +741,9 @@
     <ClInclude Include="..\Headers\CocoonBigBullet.h">
       <Filter>02.GameObject\Stage\2%29 Monster\Cocoon</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\UI_FontNum.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. Font</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\DeerKingBullet.h">
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
     </ClInclude>
@@ -741,11 +756,32 @@
     <ClInclude Include="..\Headers\BloodCodeMenuUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\CodeOwnerUI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\00. CodeOwnerUI</Filter>
+    <ClInclude Include="..\Headers\BloodCodeSelectUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\00. BloodCodeSelectUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\BloodCodeSlot.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. BloodCodeSlot</Filter>
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\00. BloodCodeSelectUI\BloodCodeSlot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\SkillReleaseUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BloodSkillSlot.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\BloodSkillSlot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\DeerKingJumpFistCol.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\DeerKingJumpInPlaceCol.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\DeerKingRushCol.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Haze.h">
+      <Filter>02.GameObject\Stage\7%29 Item\Haze</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Flag.h">
+      <Filter>02.GameObject\Stage\Physx</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1100,6 +1136,9 @@
     <ClCompile Include="..\Codes\CocoonBigBullet.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster\Cocoon</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\UI_FontNum.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. Font</Filter>
+    </ClCompile>
     <ClCompile Include="..\Codes\DeerKingBullet.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
     </ClCompile>
@@ -1112,11 +1151,32 @@
     <ClCompile Include="..\Codes\BloodCodeMenuUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\CodeOwnerUI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\00. CodeOwnerUI</Filter>
+    <ClCompile Include="..\Codes\BloodCodeSelectUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\00. BloodCodeSelectUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\BloodCodeSlot.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. BloodCodeSlot</Filter>
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\00. BloodCodeSelectUI\BloodCodeSlot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SkillReleaseUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BloodSkillSlot.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\BloodSkillSlot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DeerKingJumpFistCol.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DeerKingJumpInPlaceCol.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DeerKingRushCol.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Haze.cpp">
+      <Filter>02.GameObject\Stage\7%29 Item\Haze</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Flag.cpp">
+      <Filter>02.GameObject\Stage\Physx</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

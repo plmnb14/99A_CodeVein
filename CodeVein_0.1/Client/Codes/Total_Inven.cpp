@@ -63,16 +63,9 @@ _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 
 	if (g_pInput_Device->Key_Up(DIK_ESCAPE))
 	{
-		//m_bIsActive = !m_bIsActive;
-		m_bIsActive = true;
-		//if (m_bIsActive)
-		{
-			CUI_Manager::Get_Instance()->Get_Instance()->Get_Inventory()->Set_Active(false);
-			CUI_Manager::Get_Instance()->Get_Instance()->Get_Inventory()->Set_Detail(false);
-		//	pQuickSlot->Set_Active(false);
-		}
-		//else
-		//	pQuickSlot->Set_Active(true);
+		m_bIsActive = true;	
+		CUI_Manager::Get_Instance()->Get_Instance()->Get_Inventory()->Set_Active(false);
+		CUI_Manager::Get_Instance()->Get_Instance()->Get_Inventory()->Set_Detail(false);		
 	}
 
 	for (auto& iter : m_vecIcon)
@@ -198,14 +191,6 @@ void CTotal_Inven::SetUp_Default()
 {
 	CUI::UI_DESC* pDesc = nullptr;
 	
-	/*pDesc = new CUI::UI_DESC;
-	pDesc->fPosX = 220.f;
-	pDesc->fPosY = 100.f;
-	pDesc->fSizeX = 40.f;
-	pDesc->fSizeY = 50.f;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_InvenIcon", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
-	m_pIcon = static_cast<CInventory_Icon*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
-	m_pIcon->Set_Type(CInventory_Icon::ICON_ALL);*/
 	CInventory_Icon* pInstance = nullptr;
 	LOOP(3)
 	{
@@ -247,7 +232,7 @@ void CTotal_Inven::SetUp_Default()
 	pDesc->fPosY = 322.f;
 	pDesc->fSizeX = 90.f;
 	pDesc->fSizeY = 67.f;
-	pDesc->iIndex = 8;
+	pDesc->iIndex = 3;
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_BloodCodeIcon", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
 	m_pBloodCode = static_cast<CBloodCode_Icon*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
 

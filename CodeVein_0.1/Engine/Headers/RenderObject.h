@@ -9,6 +9,7 @@ class CShader;
 class CMesh_Static;
 class CCollider;
 class CRenderer;
+class COptimization;
 
 class ENGINE_DLL CRenderObject : public CGameObject
 {
@@ -46,11 +47,12 @@ public:
 	virtual _bool   Get_Selected() { return m_bIsSelected; }
 
 protected:
-	CTransform*		m_pTransform = nullptr;
-	CCollider*		m_pCollider = nullptr;
-	CMesh_Static*	m_pMesh_Static = nullptr;
-	CRenderer*		m_pRenderer = nullptr;
-	CShader*		m_pShader = nullptr;
+	CTransform*			m_pTransform = nullptr;
+	CCollider*			m_pCollider = nullptr;
+	CMesh_Static*		m_pMesh_Static = nullptr;
+	CRenderer*			m_pRenderer = nullptr;
+	CShader*			m_pShader = nullptr;
+	COptimization*		m_pOptimization = nullptr;
 
 	// 텍스쳐, 메쉬 관련 변수
 protected:

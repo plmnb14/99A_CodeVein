@@ -118,10 +118,27 @@ HRESULT CDecalEffect::Render_GameObject()
 {
 	if (FAILED(SetUp_ConstantTable(m_pShaderCom)))
 		return E_FAIL;
+
+	return NOERROR;
+}
+
+HRESULT CDecalEffect::Render_GameObject_SetShader(CShader* pShader)
+{
+	if (nullptr == pShader ||
+		nullptr == m_pBufferCom)
+		return E_FAIL;
+		
+	pShader->Begin_Pass(4);
 	
-	//m_pShaderCom->Begin_Shader();
-	//m_pShaderCom->Begin_Pass(4);
-	//
+	// Set Texture
+	if (FAILED(SetUp_ConstantTable(pShader)))
+		return E_FAIL;
+	
+	pShader->Commit_Changes();
+	
+	m_pBufferCom->Render_VIBuffer();
+
+
 	//VTXCUBE_COL VtxCubeCol[8];
 	//VtxCubeCol[0].vPosition = _v3(-0.5f, 0.5f, -0.5f);
 	//VtxCubeCol[0].dwColor = COLOR_GREEN(1.f);
@@ -199,28 +216,8 @@ HRESULT CDecalEffect::Render_GameObject()
 	//
 	//m_pGraphic_Dev->SetFVF(VTXFVF_COL);
 	//m_pGraphic_Dev->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, 8, 12, wIdx, D3DFMT_INDEX32, VtxCubeCol, sizeof(VTX_COL));
-	//
-	//m_pShaderCom->End_Pass();
-	//m_pShaderCom->End_Shader();
 
-	return NOERROR;
-}
 
-HRESULT CDecalEffect::Render_GameObject_SetShader(CShader* pShader)
-{
-	if (nullptr == pShader ||
-		nullptr == m_pBufferCom)
-		return E_FAIL;
-		
-	pShader->Begin_Pass(4);
-	
-	// Set Texture
-	if (FAILED(SetUp_ConstantTable(pShader)))
-		return E_FAIL;
-	
-	pShader->Commit_Changes();
-	
-	m_pBufferCom->Render_VIBuffer();
 	pShader->End_Pass();
 	
 	return S_OK;
@@ -711,12 +708,18 @@ HRESULT CDecalEffect::SetUp_ConstantTable(CShader* pShader)
 	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
 
+	
+
 	D3DXMatrixInverse(&ViewMatrix, nullptr, &ViewMatrix);
 	D3DXMatrixInverse(&ProjMatrix, nullptr, &ProjMatrix);
 
 	if (FAILED(pShader->Set_Value("g_matProjInv", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(pShader->Set_Value("g_matViewInv", &ProjMatrix, sizeof(_mat))))
+		return E_FAIL;
+
+	_v4 vInvProj = *D3DXVec4Transform(&vInvProj, &vInvProj, &ProjMatrix);
+	if (FAILED(pShader->Set_Value("g_vInvProj", &vInvProj, sizeof(_v4))))
 		return E_FAIL;
 
 	if (FAILED(pShader->Set_Value("g_fDistortion", &m_pInfo->fDistortionPower, sizeof(_float))))

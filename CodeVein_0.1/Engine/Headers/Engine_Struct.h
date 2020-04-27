@@ -14,6 +14,17 @@ namespace Engine
 	const _ulong FVF_SCREEN = D3DFVF_XYZRHW | D3DFVF_TEX1;
 	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
+	typedef struct tagNewLight : public D3DLIGHT9
+	{
+		_bool		bDecreAlpha;
+		_bool		bLifeTime;
+
+		_float		fLifeTime_Cur;
+		_float		fLifeTime_Max;
+		_float		fAlpha;
+
+	}NEW_LIGHT;
+
 	typedef struct tagWeaponParam
 	{
 		_float		fDamage;
@@ -24,6 +35,20 @@ namespace Engine
 		_float		fCol_Height;
 		_float		fRadius;
 	}WPN_PARAM;
+
+	typedef struct tagRimParam
+	{
+		_bool		bDecreRim;			// 림라이트가 가능한지
+		_float		fRimValue;			// 림라이트 수치
+		_float		fRimChangeValue;	// 림라이트 컬러 보간 수치
+		_float		fRimTimer_Max;		// 림라이트 지속시간
+		_float		fRimTimer_Cur;		// 림라이트 지속시간
+
+		_v4			vRimColor_Cur;		// 현재 림라이트 색상
+		_v4			vRimColor_Change;	// 바뀌길 원하는 림라이트 색상
+		_v4			vRimColor_Old;		// 최초 림라이트 색상
+
+	}RIM_PARAM;
 
 	typedef struct tagObjectParameter
 	{
@@ -46,9 +71,11 @@ namespace Engine
 		_float		fGuardTimer_Cur;	// 가드 중 무적 시간
 		_float		fGuardTimer_Max;	// 가드 중 최대 무적 시간
 
+		_float		fKnockBackValue;	// 넉백 파워
+
 		_bool		bDown;			// 넘어진 상태일 때
 		_bool		bAir;			// 공중인 상태일 때
-		_bool		bKnockBack;		// 넉백 상태일 때
+		_bool		bIsKnockBack;	// 넉백 상태일 때
 
 		_bool		bIsHit;			// 맞는 도중인지
 		_bool		bCanHit;		// 맞을 수 있는지
@@ -64,10 +91,10 @@ namespace Engine
 		_bool		bIsDodge;		// 회피 중인 상태인지
 
 		_bool		bInvisible;		// 투명 상태인지 ( 애니메이션은 재생되지만, 메쉬 랜더는 안되고, 충돌처리도 안되는 상태 )
-
 		_bool		bSuperArmor;	// true 일 시 넉백, 피격모션 출력, 다운 상태를 받을 수 없음
 
 		_v3			vHitDir;		// 맞은 방향
+		_v3			vHitPos;		// 때린놈 위치
 
 	}OBJECT_PARAM;
 
@@ -147,8 +174,8 @@ namespace Engine
 
 	typedef struct tagViewPortVertex
 	{
-		_v4				vPosition;
-		_v2				vTexUV;
+		_v4			vPosition;
+		_v2			vTexUV;
 
 	}VTXVIEWPORT;
 
