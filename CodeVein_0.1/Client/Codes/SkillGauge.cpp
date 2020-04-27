@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\SkillGauge.h"
-#include "FontNumManager.h"
+#include "PlayerFontUI.h"
 
 CSkillGauge::CSkillGauge(_Device pDevice)
 	: CUI(pDevice)

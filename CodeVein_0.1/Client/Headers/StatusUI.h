@@ -5,6 +5,8 @@
 
 BEGIN(Client)
 class CConditionUI;
+class CExpUI;
+class CButton_UI;
 class CStatusUI final : public CUI
 {
 private:
@@ -23,6 +25,7 @@ private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
 	void	SetUp_Default();
+	void	Exit_This_UI();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -33,6 +36,8 @@ private:
 
 private:
 	vector<CConditionUI*>	m_vecConditionUI;
+	CExpUI*					m_pExpUI = nullptr;
+	CButton_UI*				m_pExitUI = nullptr;
 
 public:
 	static CStatusUI*		Create(_Device pGraphic_Device);

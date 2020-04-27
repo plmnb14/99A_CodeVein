@@ -250,9 +250,6 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\08. FontNumUI">
       <UniqueIdentifier>{f54790f9-c2fc-4c6a-a639-8f88c1dd47a1}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\08. FontNumUI\Manager">
-      <UniqueIdentifier>{0d91f626-46bc-46dc-a493-613d6097be46}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\01.MonsterUI\DamegeNumUI">
       <UniqueIdentifier>{17a28e90-9dc3-42dc-a9ea-6b93496b8371}</UniqueIdentifier>
     </Filter>
@@ -354,6 +351,28 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\2%29 Monster\ThaiMan">
       <UniqueIdentifier>{a84f0e54-8d5e-4ead-973c-244a2a95b65a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\08. FontNumUI\PlayerFontUI">
+      <UniqueIdentifier>{0d91f626-46bc-46dc-a493-613d6097be46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\99.Public\ExitUI">
+      <UniqueIdentifier>{278c902f-dcdd-4330-899c-f26f83df9fc2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI">
+      <UniqueIdentifier>{40a1db44-79e3-4c12-8a99-e1cc3ce1a318}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\00. BloodCodeSelectUI">
+      <UniqueIdentifier>{67dfd12a-2bfa-4e94-a6e3-5314377fe6b5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\00. BloodCodeSelectUI\BloodCodeSlot">
+      <UniqueIdentifier>{e51672cf-7238-43b8-a85c-2b1947da53a1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI">
+      <UniqueIdentifier>{7d9fed8c-3193-4b82-9214-fd22a8f428d8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\BloodSkillSlot">
+      <UniqueIdentifier>{01f02169-ac21-4408-b63f-6316d8663c6a}</UniqueIdentifier>
+>>>>>>> origin/Merge_Brench
     </Filter>
     <Filter Include="02.GameObject\Stage\Physx">
       <UniqueIdentifier>{f938be75-5d5f-48db-a32a-8200fcf0c724}</UniqueIdentifier>
@@ -579,9 +598,6 @@
     <ClInclude Include="..\Headers\FontNumUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\08. FontNumUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\FontNumManager.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\08. FontNumUI\Manager</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\DamegeNumUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\01.MonsterUI\DamegeNumUI</Filter>
     </ClInclude>
@@ -743,6 +759,25 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Info_Monster.h">
       <Filter>02.GameObject\Stage\2%29 Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\PlayerFontUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\08. FontNumUI\PlayerFontUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BloodCodeMenuUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BloodCodeSelectUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\00. BloodCodeSelectUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BloodCodeSlot.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\00. BloodCodeSelectUI\BloodCodeSlot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\SkillReleaseUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BloodSkillSlot.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\BloodSkillSlot</Filter>
+>>>>>>> origin/Merge_Brench
     </ClInclude>
     <ClInclude Include="..\Headers\DeerKingJumpFistCol.h">
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
@@ -971,9 +1006,6 @@
     <ClCompile Include="..\Codes\FontNumUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\08. FontNumUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\FontNumManager.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\08. FontNumUI\Manager</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\DamegeNumUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\01.MonsterUI\DamegeNumUI</Filter>
     </ClCompile>
@@ -1132,6 +1164,25 @@
     </ClCompile>
     <ClCompile Include="..\Codes\ThaiMan.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster\ThaiMan</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\PlayerFontUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\08. FontNumUI\PlayerFontUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BloodCodeMenuUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BloodCodeSelectUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\00. BloodCodeSelectUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BloodCodeSlot.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\00. BloodCodeSelectUI\BloodCodeSlot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SkillReleaseUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BloodSkillSlot.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\BloodSkillSlot</Filter>
+>>>>>>> origin/Merge_Brench
     </ClCompile>
     <ClCompile Include="..\Codes\DeerKingJumpFistCol.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
