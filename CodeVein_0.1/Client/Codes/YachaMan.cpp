@@ -1064,12 +1064,9 @@ void CYachaMan::Play_Hammering()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
-<<<<<<< HEAD
 
 				g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon->Get_HeadPos());
-=======
 				m_tObjParam.bSuperArmor = true;
->>>>>>> 7bc43ed872fc79e066b6c9205700249a6b87517d
 			}
 		}
 
@@ -1385,12 +1382,9 @@ void CYachaMan::Play_TargetHammering()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
-<<<<<<< HEAD
 
-				g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon->Get_HeadPos());
-=======
 				m_tObjParam.bSuperArmor = false;
->>>>>>> 7bc43ed872fc79e066b6c9205700249a6b87517d
+				g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon->Get_HeadPos());
 			}
 		}
 		else if (4.900f <= AniTime)
@@ -1845,12 +1839,9 @@ void CYachaMan::Play_Combo_R_Hammering()
 			{
 				m_bEventTrigger[5] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
-<<<<<<< HEAD
 
-				g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon->Get_HeadPos());
-=======
 				m_tObjParam.bSuperArmor = false;
->>>>>>> 7bc43ed872fc79e066b6c9205700249a6b87517d
+				g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon->Get_HeadPos());
 			}
 		}
 		else if (3.267f <= AniTime)
