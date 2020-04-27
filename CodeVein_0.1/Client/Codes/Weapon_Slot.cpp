@@ -78,13 +78,13 @@ _int CWeapon_Slot::Update_GameObject(_double TimeDelta)
 	case WEAPON_LSword:
 		m_iIndex = 1;
 		break;
-	case WEAPON_Ssword:
+	case WEAPON_SSword:
 		m_iIndex = 2;
 		break;
 	case WEAPON_Gun:
 		m_iIndex = 3;
 		break;
-	case WEAPON_Halverd:
+	case WEAPON_Halberd:
 		m_iIndex = 4;
 		break;
 	}

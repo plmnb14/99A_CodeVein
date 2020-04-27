@@ -373,13 +373,23 @@ void CMonsterTool::Seting_ListBoxAni()
 
 	if(nullptr != m_pMonster)
 	{
-		CAniCtrl* pAniCtrl = TARGET_TO_D_MESH(m_pMonster)->Get_AniCtrl();
-		_uint iCount = pAniCtrl->Get_AniCtrl()->GetMaxNumAnimationSets();
+		_tchar szPath[MAX_STR];
+		_tchar szBuff[MAX_STR];
+		_tchar FullData[MAX_STR];
+		_tchar Num[MAX_STR];
 
-		LPD3DXANIMATIONSET	pAS = nullptr;
 		_tchar* szRootName;
 
-		for (_uint i = 0; i < pAniCtrl->Get_AniCtrl()->GetMaxNumAnimationSets(); ++i)
+		CAniCtrl* pAniCtrl = TARGET_TO_D_MESH(m_pMonster)->Get_AniCtrl();
+
+		LPD3DXANIMATIONSET	pAS = nullptr;
+		_uint iCount = pAniCtrl->Get_AniCtrl()->GetMaxNumAnimationSets();
+
+		wofstream szAnimationListWrite;
+		lstrcat(lstrcpy(szPath, L"../../Data/MonsterData/"), lstrcat(lstrcpy(szBuff, m_strMeshName),L"_AniList.txt"));
+		szAnimationListWrite.open(szPath);
+
+		for (_uint i = 0; i < iCount; ++i)
 		{
 			pAniCtrl->Get_AniCtrl()->GetAnimationSet(i, &pAS);
 
@@ -387,6 +397,10 @@ void CMonsterTool::Seting_ListBoxAni()
 			_uint strSize = MultiByteToWideChar(CP_ACP, 0, charName, -1, NULL, NULL);
 			szRootName = new _tchar[strSize];
 			MultiByteToWideChar(CP_ACP, 0, charName, _int(strlen(charName) + 1), szRootName, strSize);
+			
+			_itow_s(i, Num, 10);
+			swprintf_s<MAX_STR>(FullData, L"%s == %s", Num, szRootName);
+			szAnimationListWrite << FullData << endl;
 
 			m_ListBoxAni.AddString(szRootName);
 
@@ -405,16 +419,17 @@ void CMonsterTool::Seting_ListBoxBone()
 
 	m_strAttachName = L"";
 	m_ListBoxBone.ResetContent();
+
 	if (nullptr != m_pMonster)
 	{
 		_tchar* szBoneName;
 
 		for (auto vector_iter : TARGET_TO_D_MESH(m_pMonster)->Get_MeshContainer())
 		{
-			for (_uint i = 0; i < vector_iter->dwNumBones; ++i)
+			for (DWORD i = 0; i < vector_iter->dwNumBones; ++i)
 			{
 				const char*	pBoneName = vector_iter->pSkinInfo->GetBoneName(i);
-				_uint strSize = MultiByteToWideChar(CP_ACP, 0, pBoneName, -1, NULL, NULL);
+				DWORD strSize = MultiByteToWideChar(CP_ACP, 0, pBoneName, -1, NULL, NULL);
 				szBoneName = new _tchar[strSize];
 				MultiByteToWideChar(CP_ACP, 0, pBoneName, _int(strlen(pBoneName) + 1), szBoneName, strSize);
 

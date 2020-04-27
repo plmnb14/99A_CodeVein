@@ -3,6 +3,8 @@
 #include "Client_Defines.h"
 #include "GameObject.h"
 #include "Management.h"
+#include "MonsterUI.h"
+#include "Weapon.h"
 
 BEGIN(Client)
 
@@ -38,8 +40,6 @@ protected:
 
 
 protected:
-
-
 
 protected:
 	virtual CGameObject* Clone_GameObject(void* pArg) PURE;

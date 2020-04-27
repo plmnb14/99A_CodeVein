@@ -12,18 +12,37 @@ class CWeapon : public CGameObject
 public:
 	enum WEAPON_DATA
 	{
-		WPN_SSword_Normal,
-		WPN_SSword_Military,
-		WPN_LSword_Normal,
-		WPN_Hammer_Normal,
-		WPN_Halverd_Normal,
-		WPN_Gun_Normal,
+		Wpn_SSword,
+		Wpn_SSword_Black,
+		Wpn_SSword_Military,
+		Wpn_SSword_Slave,
+
+		Wpn_LSword,
+		Wpn_LSword_Black,
+		Wpn_LSword_Military,
+		Wpn_LSword_Slave,
+
+		Wpn_Halberd,
+		Wpn_Halberd_Black,
+		Wpn_Halberd_Military,
+		Wpn_Halberd_Slave,
+
+		Wpn_Hammer,
+		Wpn_Hammer_Black,
+		Wpn_Hammer_Military,
+		Wpn_Hammer_Slave,
+
+		Wpn_Gun,
+		Wpn_Gun_Black,
+		Wpn_Gun_Military,
+		Wpn_Gun_Slave,
+
 		WPN_Shield_Normal,
-		WPN_Hammer_YachaMan,
-		WPN_QueenLance,
 		WPN_QueenShield,
-		WPN_FrostBlood_IceGirl,
+		WPN_QueenLance,
 		WPN_DeerKingShield,
+		WPN_FrostBlood_IceGirl,
+
 		WPN_DATA_End
 	};
 
@@ -116,8 +135,8 @@ private:
 	_bool					m_tmpEmissiveTest = false;
 
 private:
-	WEAPON_STATE			m_eWeaponType = WEAPON_Ssword;
-	WEAPON_DATA				m_eWeaponData = WPN_SSword_Normal;
+	WEAPON_STATE			m_eWeaponType = WEAPON_SSword;
+	WEAPON_DATA				m_eWeaponData = Wpn_SSword;
 	WPN_PARAM				m_tWeaponParam[WPN_DATA_End];
 
 private:
