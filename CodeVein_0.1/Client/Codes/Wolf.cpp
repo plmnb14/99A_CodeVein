@@ -1211,7 +1211,7 @@ void CWolf::Play_Dead()
 	return;
 }
 
-void CBlackWolf::Check_DeadEffect(_double TimeDelta)
+void CWolf::Check_DeadEffect(_double TimeDelta)
 {
 	m_fDeadEffect_Delay -= _float(TimeDelta);
 	if (m_fDeadEffect_Delay > 0.f)
@@ -1237,7 +1237,7 @@ void CBlackWolf::Check_DeadEffect(_double TimeDelta)
 	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vPos);
 }
 
-HRESULT CBlackWolf::Add_Component()
+HRESULT CWolf::Add_Component(void* pArg)
 {
 	_tchar MeshName[MAX_STR] = L"";
 

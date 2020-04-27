@@ -843,7 +843,7 @@ void CCocoon::Check_DeadEffect(_double TimeDelta)
 	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vPos);
 }
 
-HRESULT CCocoon::Add_Component()
+HRESULT CCocoon::Add_Component(void* pArg)
 {
 	_tchar MeshName[MAX_STR] = L"";
 

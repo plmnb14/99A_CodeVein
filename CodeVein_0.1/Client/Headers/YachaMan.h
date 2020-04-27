@@ -152,7 +152,7 @@ private:
 
 
 private:
-	HRESULT Add_Component();
+	HRESULT Add_Component(void* pArg);
 	HRESULT SetUp_ConstantTable();
 	HRESULT Ready_Status(void* pArg);
 	HRESULT Ready_Weapon();

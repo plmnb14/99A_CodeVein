@@ -40,7 +40,13 @@ public:
 		Atk_Jump,
 	};
 	
-	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_Head, Bone_End };
+	enum BONE_TYPE 
+	{ 
+		Bone_Range,
+		Bone_Body,
+		Bone_Head,
+		Bone_End
+	};
 
 protected:
 	explicit CWolf(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -91,6 +97,7 @@ private:
 	HRESULT Ready_Status(void* pArg);
 	HRESULT Ready_Collider();
 	HRESULT Ready_BoneMatrix();
+	void Check_DeadEffect(_double TimeDelta);
 
 public:
 	static CWolf* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -154,6 +161,10 @@ private:
 	_int	m_iRandom;
 	_int	m_iDodgeCount;
 	_int	m_iDodgeCountMax;
+
+private: // For Effect
+	_float			m_fDeadEffect_Delay = 0.f;
+	_float			m_fDeadEffect_Offset = 0.f;
 
 };
 
