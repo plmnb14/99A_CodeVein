@@ -730,6 +730,9 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"Haze_FlashParticle")))
 		return E_FAIL;
 
+	if (FAILED(Add_EffectPrototype(L"Weapon_HeavyDust")))
+		return E_FAIL;
+
 	if (FAILED(Add_EffectPrototype(L"MapDust")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"MapDust_2")))
@@ -864,6 +867,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_BloodConeMesh", true)))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_BloodConeMesh_Explosion", true)))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Torment_Wind_L", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Torment_Wind_R", true)))
@@ -874,7 +879,19 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 #pragma endregion
 
-	if (FAILED(g_pManagement->Add_Prototype(L"Decal_Test", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Decal_Test.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"Blood_Decal_0", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Blood_Decal_0.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Blood_Decal_1", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Blood_Decal_1.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Blood_Decal_2", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Blood_Decal_2.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Blood_Decal_3", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Blood_Decal_3.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Blood_Decal_4", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Blood_Decal_4.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Blood_Decal_5", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Blood_Decal_5.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Blood_Decal_6", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Blood_Decal_6.dat")))))
 		return E_FAIL;
 
 	return S_OK;

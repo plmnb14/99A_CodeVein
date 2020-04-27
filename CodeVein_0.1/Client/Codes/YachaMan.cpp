@@ -1064,6 +1064,8 @@ void CYachaMan::Play_Hammering()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+
+				g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon->Get_HeadPos());
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
@@ -1380,7 +1382,9 @@ void CYachaMan::Play_TargetHammering()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+
 				m_tObjParam.bSuperArmor = false;
+				g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon->Get_HeadPos());
 			}
 		}
 		else if (4.900f <= AniTime)
@@ -1835,7 +1839,9 @@ void CYachaMan::Play_Combo_R_Hammering()
 			{
 				m_bEventTrigger[5] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+
 				m_tObjParam.bSuperArmor = false;
+				g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon->Get_HeadPos());
 			}
 		}
 		else if (3.267f <= AniTime)
@@ -2247,6 +2253,8 @@ void CYachaMan::Play_Combo_RunHammering()
 				m_bEventTrigger[3] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
 				m_tObjParam.bSuperArmor = false;
+
+				g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon->Get_HeadPos());
 			}
 		}
 		else if (0.733f <= AniTime)
