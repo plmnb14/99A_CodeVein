@@ -214,7 +214,6 @@
     <ClInclude Include="..\Headers\FireGround.h" />
     <ClInclude Include="..\Headers\FireSphere.h" />
     <ClInclude Include="..\Headers\FireTornadoCol.h" />
-    <ClInclude Include="..\Headers\Pet_PoisonButterFly.h" />
     <ClInclude Include="..\Headers\PlayerFontUI.h" />
     <ClInclude Include="..\Headers\FontNumUI.h" />
     <ClInclude Include="..\Headers\GunAttackCol.h" />
@@ -350,7 +349,6 @@
     <ClCompile Include="..\Codes\FireGround.cpp" />
     <ClCompile Include="..\Codes\FireSphere.cpp" />
     <ClCompile Include="..\Codes\FireTornadoCol.cpp" />
-    <ClCompile Include="..\Codes\Pet_PoisonButterFly.cpp" />
     <ClCompile Include="..\Codes\PlayerFontUI.cpp" />
     <ClCompile Include="..\Codes\FontNumUI.cpp" />
     <ClCompile Include="..\Codes\GunAttackCol.cpp" />
