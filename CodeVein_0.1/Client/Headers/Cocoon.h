@@ -59,6 +59,7 @@ private:
 	void Check_Hit();
 	void Check_Dist();
 	void Check_AniEvent();
+	void Check_DeadEffect(_double TimeDelta);
 
 	void Play_Shot();
 	void Play_Mist();
@@ -67,15 +68,12 @@ private:
 	void Play_Hit();
 	void Play_Dead();
 
-
-
 private:
 	HRESULT Add_Component(void* pArg);
 	HRESULT SetUp_ConstantTable();
 	HRESULT Ready_Status(void* pArg);
 	HRESULT Ready_Collider();
 	HRESULT Ready_BoneMatrix();
-	void Check_DeadEffect(_double TimeDelta);
 
 public:
 	static CCocoon* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -143,6 +141,7 @@ private:
 private: // For Effect
 	_float			m_fDeadEffect_Delay = 0.f;
 	_float			m_fDeadEffect_Offset = 0.f;
+
 };
 
 END

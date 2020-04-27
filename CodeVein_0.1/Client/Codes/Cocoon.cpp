@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Cocoon.h"
 #include "..\Headers\CocoonBullet.h"
-#include "Haze.h"
 
 CCocoon::CCocoon(LPDIRECT3DDEVICE9 pGraphic_Device)
 	:CGameObject(pGraphic_Device)
@@ -64,10 +63,7 @@ _int CCocoon::Update_GameObject(_double TimeDelta)
 
 	m_pMeshCom->SetUp_Animation(m_eState);
 
-	if (false == m_bReadyDead)
-		Enter_Collision();
-	else
-		Check_DeadEffect(TimeDelta);
+	MONSTER_STATETYPE::DEAD != m_eFirstCategory ? Enter_Collision() : Check_DeadEffect(TimeDelta);
 
 	return S_OK;
 }
@@ -599,6 +595,34 @@ void CCocoon::Check_AniEvent()
 	return;
 }
 
+void CCocoon::Check_DeadEffect(_double TimeDelta)
+{
+	m_fDeadEffect_Delay -= _float(TimeDelta);
+	if (m_fDeadEffect_Delay > 0.f)
+		return;
+
+	m_fDeadEffect_Offset -= _float(TimeDelta);
+	if (m_fDeadEffect_Offset > 0.f)
+		return;
+
+	m_fDeadEffect_Offset = 0.1f;
+
+	_v3 vPos = m_pTransformCom->Get_Pos();
+	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
+	_v3 vHeadPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips");
+	_v3 vHipPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle", 0.1f, vPos, vHeadPos);
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle_Sub", 0.1f, vPos, vHeadPos);
+
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHeadPos);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHipPos);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vPos);
+
+	return;
+}
+
 void CCocoon::Play_Shot()
 {
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
@@ -815,32 +839,6 @@ void CCocoon::Play_Dead()
 	}
 
 	return;
-}
-
-void CCocoon::Check_DeadEffect(_double TimeDelta)
-{
-	m_fDeadEffect_Delay -= _float(TimeDelta);
-	if (m_fDeadEffect_Delay > 0.f)
-		return;
-
-	m_fDeadEffect_Offset -= _float(TimeDelta);
-	if (m_fDeadEffect_Offset > 0.f)
-		return;
-
-	m_fDeadEffect_Offset = 0.1f;
-
-	_v3 vPos = m_pTransformCom->Get_Pos();
-	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
-	_v3 vHeadPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips");
-	_v3 vHipPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-
-	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle", 0.1f, vPos, vHeadPos);
-	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle_Sub", 0.1f, vPos, vHeadPos);
-
-	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHeadPos);
-	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHipPos);
-	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vPos);
 }
 
 HRESULT CCocoon::Add_Component(void* pArg)

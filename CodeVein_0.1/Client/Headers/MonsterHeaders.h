@@ -44,6 +44,7 @@
 #include "Wolf.h"
 #include "YachaMan.h"
 #include "Yeti.h"
+#include "YetiBullet.h"
 
 #include "GunGenji.h"
 #include "GunGenjiBullet.h"

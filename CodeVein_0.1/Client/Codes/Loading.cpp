@@ -1306,15 +1306,6 @@ _uint CLoading::Loading_Stage()
 		// 검방패겐지
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordShieldGenji", CSwordShieldGenji::Create(m_pGraphicDev))))
 			return E_FAIL;
-		// 성게
-		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Urchin", CUrchin::Create(m_pGraphicDev))))
-			return E_FAIL;
-		// 늑대
-		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Wolf", CWolf::Create(m_pGraphicDev))))
-			return E_FAIL;
-		// 야차맨
-		if (FAILED(g_pManagement->Add_Prototype(L"Monster_YachaMan", CYachaMan::Create(m_pGraphicDev))))
-			return E_FAIL;
 		// 토템
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Cocoon", CCocoon::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1336,13 +1327,23 @@ _uint CLoading::Loading_Stage()
 		// 몽키.D.총알
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_MonkeyBullet", CMonkeyBullet::Create(m_pGraphicDev))))
 			return E_FAIL;
-		// 예티
-		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Yeti", CYeti::Create(m_pGraphicDev))))
-			return E_FAIL;
 		// 따이맨
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ThaiMan", CThaiMan::Create(m_pGraphicDev))))
 			return E_FAIL;
-
+		// 성게
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Urchin", CUrchin::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 늑대
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Wolf", CWolf::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 야차맨
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_YachaMan", CYachaMan::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 예티
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Yeti", CYeti::Create(m_pGraphicDev))))
+			return E_FAIL;
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_YetiBullet", CYetiBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
 		// UI - Chea
 		//============================================================================================================
 

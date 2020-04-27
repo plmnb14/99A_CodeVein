@@ -4,6 +4,7 @@
 #include "Management.h"
 #include "MonsterUI.h"
 #include "Weapon.h"
+#include "Haze.h"
 
 enum FBLR 
 { 

@@ -60,7 +60,7 @@ private:
 	_bool				m_bDead = false;
 
 	_bool				m_bEffect = true;
-	_bool				m_bPlayerFriendly = false;		// 플레이어 껀지
+	_bool				m_bPlayerFriendly = false;
 
 };
 

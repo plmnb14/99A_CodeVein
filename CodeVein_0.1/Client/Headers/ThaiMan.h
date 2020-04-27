@@ -130,6 +130,7 @@ private:
 	void Check_Hit();
 	void Check_Dist();
 	void Check_AniEvent();
+	void Check_DeadEffect(_double TimeDelta);
 	
 	void Play_RandomAtkNormal();
 	void Play_RDiagonal(); //n1 ¿ì´ë°¢
@@ -217,6 +218,10 @@ private:
 	_int	m_iRandom;
 	_int	m_iDodgeCount;
 	_int	m_iDodgeCountMax;
+
+private: // For Effect
+	_float			m_fDeadEffect_Delay = 0.f;
+	_float			m_fDeadEffect_Offset = 0.f;
 
 };
 

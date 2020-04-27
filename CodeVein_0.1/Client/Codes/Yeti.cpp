@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "..\Headers\Yeti.h"
-#include "Haze.h"
 
 CYeti::CYeti(LPDIRECT3DDEVICE9 pGraphic_Device)
 	:CGameObject(pGraphic_Device)
@@ -63,10 +62,7 @@ _int CYeti::Update_GameObject(_double TimeDelta)
 
 	m_pMeshCom->SetUp_Animation(m_eState);
 
-	if (false == m_bReadyDead)
-		Enter_Collision();
-	else
-		Check_DeadEffect(TimeDelta);
+	MONSTER_STATETYPE::DEAD != m_eFirstCategory ? Enter_Collision() : Check_DeadEffect(TimeDelta);
 
 	return NO_EVENT;
 }
@@ -218,12 +214,8 @@ void CYeti::Render_Collider()
 
 void CYeti::Enter_Collision()
 {
-	if (MONSTER_STATETYPE::DEAD != m_eFirstCategory)
-	{
-		Check_CollisionPush();
-		Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
-	}
-
+	Check_CollisionPush();
+	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
 	return;
 }
 
@@ -709,6 +701,32 @@ void CYeti::Check_AniEvent()
 }
 
 return;
+}
+
+void CYeti::Check_DeadEffect(_double TimeDelta)
+{
+	m_fDeadEffect_Delay -= _float(TimeDelta);
+	if (m_fDeadEffect_Delay > 0.f)
+		return;
+
+	m_fDeadEffect_Offset -= _float(TimeDelta);
+	if (m_fDeadEffect_Offset > 0.f)
+		return;
+
+	m_fDeadEffect_Offset = 0.1f;
+
+	_v3 vPos = m_pTransformCom->Get_Pos();
+	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
+	_v3 vHeadPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips");
+	_v3 vHipPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle", 0.1f, vPos, vHeadPos);
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle_Sub", 0.1f, vPos, vHeadPos);
+
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHeadPos);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHipPos);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vPos);
 }
 
 void CYeti::Play_RandomAtkNormal()
@@ -2424,32 +2442,6 @@ void CYeti::Play_Dead()
 	return;
 }
 
-void CYeti::Check_DeadEffect(_double TimeDelta)
-{
-	m_fDeadEffect_Delay -= _float(TimeDelta);
-	if (m_fDeadEffect_Delay > 0.f)
-		return;
-
-	m_fDeadEffect_Offset -= _float(TimeDelta);
-	if (m_fDeadEffect_Offset > 0.f)
-		return;
-
-	m_fDeadEffect_Offset = 0.1f;
-
-	_v3 vPos = m_pTransformCom->Get_Pos();
-	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
-	_v3 vHeadPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips");
-	_v3 vHipPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-
-	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle", 0.1f, vPos, vHeadPos);
-	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle_Sub", 0.1f, vPos, vHeadPos);
-
-	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHeadPos);
-	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHipPos);
-	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vPos);
-}
-
 HRESULT CYeti::Add_Component()
 {
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -2509,7 +2501,7 @@ HRESULT CYeti::SetUp_ConstantTable()
 
 HRESULT CYeti::Ready_Status(void * pArg)
 {
-	m_tObjParam.fDamage = 500.f;
+	m_tObjParam.fDamage = -500.f;
 	m_tObjParam.fHp_Max = 3000.f;
 	m_tObjParam.fArmor_Max = 10.f;
 

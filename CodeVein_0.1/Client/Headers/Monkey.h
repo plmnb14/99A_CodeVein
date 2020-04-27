@@ -106,6 +106,7 @@ private:
 	void Check_Hit();
 	void Check_Dist();
 	void Check_AniEvent();
+	void Check_DeadEffect(_double TimeDelta);
 
 	void Play_RandomAtkNormal();
 	void Play_RandomAtkCombo();
@@ -125,9 +126,6 @@ private:
 	void Play_Hit();  
 	void Play_CC(); 
 	void Play_Dead(); 
-
-private:
-	void Check_DeadEffect(_double TimeDelta);
 
 private:
 	HRESULT Add_Component();

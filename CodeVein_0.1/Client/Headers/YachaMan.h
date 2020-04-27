@@ -126,6 +126,7 @@ private:
 	void Check_Hit();
 	void Check_Dist();
 	void Check_AniEvent();
+	void Check_DeadEffect(_double TimeDelta);
 
 	void Play_RandomAtkNormal();
 	void Play_RandomAtkCombo();
@@ -150,7 +151,6 @@ private:
 	void Play_CC();
 	void Play_Dead();
 
-
 private:
 	HRESULT Add_Component(void* pArg);
 	HRESULT SetUp_ConstantTable();
@@ -158,7 +158,6 @@ private:
 	HRESULT Ready_Weapon();
 	HRESULT Ready_Collider();
 	HRESULT Ready_BoneMatrix();
-	void Check_DeadEffect(_double TimeDelta);
 
 public:
 	static CYachaMan* Create(LPDIRECT3DDEVICE9 pGraphic_Device);

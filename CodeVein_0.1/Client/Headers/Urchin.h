@@ -56,6 +56,7 @@ private:
 	void Check_Hit();
 	void Check_Dist();
 	void Check_AniEvent();
+	void Check_DeadEffect(_double TimeDelta);
 
 	void Play_Rolling();
 	void Play_RollingRush();
@@ -70,7 +71,6 @@ private:
 	HRESULT Ready_Status(void* pArg);
 	HRESULT Ready_Collider();
 	HRESULT Ready_BoneMatrix();
-
 public:
 	static CUrchin* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
 	virtual CGameObject* Clone_GameObject(void* pArg);
@@ -133,6 +133,10 @@ private:
 	_int	m_iRandom;
 	_int	m_iDodgeCount;
 	_int	m_iDodgeCountMax;
+	
+private: // For Effect
+	_float			m_fDeadEffect_Delay = 0.f;
+	_float			m_fDeadEffect_Offset = 0.f;
 
 };
 

@@ -79,6 +79,7 @@ private:
 	void Check_Hit();
 	void Check_Dist();
 	void Check_AniEvent();
+	void Check_DeadEffect(_double TimeDelta);
 
 	void Play_Bite_LRL();
 	void Play_RDodgeAtk();
@@ -97,7 +98,6 @@ private:
 	HRESULT Ready_Status(void* pArg);
 	HRESULT Ready_Collider();
 	HRESULT Ready_BoneMatrix();
-	void Check_DeadEffect(_double TimeDelta);
 
 public:
 	static CWolf* Create(LPDIRECT3DDEVICE9 pGraphic_Device);

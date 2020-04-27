@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "..\Headers\Wolf.h"
-#include "Haze.h"
 
 CWolf::CWolf(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
@@ -64,10 +63,7 @@ _int CWolf::Update_GameObject(_double TimeDelta)
 
 	m_pMeshCom->SetUp_Animation(m_eState);
 
-	if (false == m_bReadyDead)
-		Enter_Collision();
-	else
-		Check_DeadEffect(TimeDelta);
+	MONSTER_STATETYPE::DEAD != m_eFirstCategory ? Enter_Collision() : Check_DeadEffect(TimeDelta);
 
 	return S_OK;
 }
@@ -215,11 +211,8 @@ void CWolf::Render_Collider()
 
 void CWolf::Enter_Collision()
 {
-	if (MONSTER_STATETYPE::DEAD != m_eFirstCategory)
-	{
-		Check_CollisionPush();
-		Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
-	}
+	Check_CollisionPush();
+	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
 
 	return;
 }
@@ -678,6 +671,34 @@ void CWolf::Check_AniEvent()
 		Play_Dead();
 		break;
 	}
+
+	return;
+}
+
+void CWolf::Check_DeadEffect(_double TimeDelta)
+{
+	m_fDeadEffect_Delay -= _float(TimeDelta);
+	if (m_fDeadEffect_Delay > 0.f)
+		return;
+
+	m_fDeadEffect_Offset -= _float(TimeDelta);
+	if (m_fDeadEffect_Offset > 0.f)
+		return;
+
+	m_fDeadEffect_Offset = 0.1f;
+
+	_v3 vPos = m_pTransformCom->Get_Pos();
+	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
+	_v3 vHeadPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips");
+	_v3 vHipPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle", 0.1f, vPos, vHeadPos);
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle_Sub", 0.1f, vPos, vHeadPos);
+
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHeadPos);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHipPos);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vPos);
 
 	return;
 }
@@ -1211,32 +1232,6 @@ void CWolf::Play_Dead()
 	return;
 }
 
-void CWolf::Check_DeadEffect(_double TimeDelta)
-{
-	m_fDeadEffect_Delay -= _float(TimeDelta);
-	if (m_fDeadEffect_Delay > 0.f)
-		return;
-
-	m_fDeadEffect_Offset -= _float(TimeDelta);
-	if (m_fDeadEffect_Offset > 0.f)
-		return;
-
-	m_fDeadEffect_Offset = 0.1f;
-
-	_v3 vPos = m_pTransformCom->Get_Pos();
-	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
-	_v3 vHeadPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips");
-	_v3 vHipPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-
-	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle", 0.1f, vPos, vHeadPos);
-	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle_Sub", 0.1f, vPos, vHeadPos);
-
-	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHeadPos);
-	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHipPos);
-	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vPos);
-}
-
 HRESULT CWolf::Add_Component(void* pArg)
 {
 	_tchar MeshName[MAX_STR] = L"";
@@ -1316,7 +1311,7 @@ HRESULT CWolf::Ready_Status(void * pArg)
 {
 	if (nullptr == pArg)
 	{
-		m_tObjParam.fDamage = 25.f;
+		m_tObjParam.fDamage = -250.f;
 		m_tObjParam.fHp_Max = 750.f;
 		m_tObjParam.fArmor_Max = 10.f;
 
@@ -1329,9 +1324,9 @@ HRESULT CWolf::Ready_Status(void * pArg)
 	else
 	{
 		MONSTER_STATUS Info = *(MONSTER_STATUS*)pArg;
-		if (WHITE == Info.eMonsterColor)
+		if (MONSTER_COLORTYPE::WHITE == Info.eMonsterColor)
 		{
-			m_tObjParam.fDamage = 300.f;
+			m_tObjParam.fDamage = -300.f;
 			m_tObjParam.fHp_Max = 900.f;
 			m_tObjParam.fArmor_Max = 10.f;
 
@@ -1343,7 +1338,7 @@ HRESULT CWolf::Ready_Status(void * pArg)
 		}
 		else
 		{
-			m_tObjParam.fDamage = 250.f;
+			m_tObjParam.fDamage = -250.f;
 			m_tObjParam.fHp_Max = 750.f;
 			m_tObjParam.fArmor_Max = 10.f;
 

@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Hunter.h"
 #include "..\Headers\\HunterBullet.h"
-#include "Haze.h"
 
 CHunter::CHunter(LPDIRECT3DDEVICE9 pGraphic_Device)
 	:CGameObject(pGraphic_Device)
@@ -67,10 +66,11 @@ _int CHunter::Update_GameObject(_double TimeDelta)
 
 	m_pMeshCom->SetUp_Animation(m_eState);
 
-	if (false == m_bReadyDead)
-		Enter_Collision();
-	else
-		Check_DeadEffect(TimeDelta);
+	MONSTER_STATETYPE::DEAD != m_eFirstCategory ? Enter_Collision() : Check_DeadEffect(TimeDelta);
+	//if (MONSTER_STATETYPE::DEAD != m_eFirstCategory)
+	//	Enter_Collision();
+	//else
+	//	Check_DeadEffect(TimeDelta);
 
 	return NO_EVENT;
 }
@@ -229,11 +229,8 @@ void CHunter::Render_Collider()
 
 void CHunter::Enter_Collision()
 {
-	if (MONSTER_STATETYPE::DEAD != m_eFirstCategory)
-	{
-		Check_CollisionPush();
-		Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
-	}
+	Check_CollisionPush();
+	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
 
 	return;
 }
@@ -943,6 +940,34 @@ void CHunter::Check_AniEvent()
 		Play_Dead();
 		break;
 	}
+
+	return;
+}
+
+void CHunter::Check_DeadEffect(_double TimeDelta)
+{
+	m_fDeadEffect_Delay -= _float(TimeDelta);
+	if (m_fDeadEffect_Delay > 0.f)
+		return;
+
+	m_fDeadEffect_Offset -= _float(TimeDelta);
+	if (m_fDeadEffect_Offset > 0.f)
+		return;
+
+	m_fDeadEffect_Offset = 0.1f;
+
+	_v3 vPos = m_pTransformCom->Get_Pos();
+	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
+	_v3 vHeadPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips");
+	_v3 vHipPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle", 0.1f, vPos, vHeadPos);
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle_Sub", 0.1f, vPos, vHeadPos);
+
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHeadPos);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHipPos);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vPos);
 
 	return;
 }
@@ -5332,6 +5357,7 @@ void CHunter::Play_Move()
 		Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 		Function_DecreMoveMent(m_fSkillMoveMultiply);
 		break;
+
 	case MONSTER_MOVETYPE::MOVE_WALK:
 		if (true == m_bCanMoveAround)
 		{
@@ -5341,7 +5367,7 @@ void CHunter::Play_Move()
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 4.f;
 
-			m_fSkillMoveSpeed_Cur = 3.f;
+			m_fSkillMoveSpeed_Cur = 2.5f;
 			m_fSkillMoveAccel_Cur = 0.f;
 			m_fSkillMoveMultiply = 0.5f;
 
@@ -5371,6 +5397,7 @@ void CHunter::Play_Move()
 				Function_MoveAround(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_X));
 		}
 		break;
+
 	case MONSTER_MOVETYPE::MOVE_DODGE:
 		if (true == m_tObjParam.bCanDodge)
 		{
@@ -5556,32 +5583,6 @@ void CHunter::Play_Dead()
 	return;
 }
 
-void CHunter::Check_DeadEffect(_double TimeDelta)
-{
-	m_fDeadEffect_Delay -= _float(TimeDelta);
-	if (m_fDeadEffect_Delay > 0.f)
-		return;
-
-	m_fDeadEffect_Offset -= _float(TimeDelta);
-	if (m_fDeadEffect_Offset > 0.f)
-		return;
-
-	m_fDeadEffect_Offset = 0.1f;
-
-	_v3 vPos = m_pTransformCom->Get_Pos();
-	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
-	_v3 vHeadPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips");
-	_v3 vHipPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-
-	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle", 0.1f, vPos, vHeadPos);
-	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle_Sub", 0.1f, vPos, vHeadPos);
-
-	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHeadPos);
-	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHipPos);
-	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vPos);
-}
-
 HRESULT CHunter::Add_Component(void* pArg)
 {
 	_tchar MeshName[MAX_STR] = L"";
@@ -5665,7 +5666,7 @@ HRESULT CHunter::Ready_Status(void* pArg)
 {
 	if (nullptr == pArg)
 	{
-		m_tObjParam.fDamage = 500.f;
+		m_tObjParam.fDamage = -500.f;
 		m_tObjParam.fHp_Max = 2000.f;
 		m_tObjParam.fArmor_Max = 10.f;
 
@@ -5683,7 +5684,7 @@ HRESULT CHunter::Ready_Status(void* pArg)
 
 		if (MONSTER_COLORTYPE::YELLOW == Info.eMonsterColor)
 		{
-			m_tObjParam.fDamage = 550.f;
+			m_tObjParam.fDamage = -550.f;
 			m_tObjParam.fHp_Max = 3000.f;
 			m_tObjParam.fArmor_Max = 10.f;
 
@@ -5695,7 +5696,7 @@ HRESULT CHunter::Ready_Status(void* pArg)
 		}
 		else
 		{
-			m_tObjParam.fDamage = 500.f;
+			m_tObjParam.fDamage = -500.f;
 			m_tObjParam.fHp_Max = 2000.f;
 			m_tObjParam.fArmor_Max = 10.f;
 
