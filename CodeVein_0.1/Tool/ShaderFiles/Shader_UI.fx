@@ -181,6 +181,17 @@ PS_OUT PS_SKILL_UI(PS_IN2 In)
 	return Out;
 }
 
+PS_OUT PS_UI_MASK(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
+
+	Out.vColor *= Out.vColor.a;
+
+	return Out;
+}
+
 technique Default_Technique
 {
 	pass Default_Rendering
@@ -260,5 +271,15 @@ technique Default_Technique
 
 		vertexshader = compile vs_3_0 VS_SKILL_COOL();
 		pixelshader = compile ps_3_0 PS_SKILL_UI();
+	}
+
+	pass	UI_Masking_Rendering
+	{
+		AlphaBlendEnable = true;
+		srcblend = srcalpha;
+		destblend = invsrcalpha;
+
+		vertexshader = compile vs_3_0 VS_MAIN();
+		pixelshader = compile ps_3_0 PS_UI_MASK();
 	}
 }

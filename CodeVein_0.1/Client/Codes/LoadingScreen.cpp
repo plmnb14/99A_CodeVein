@@ -41,6 +41,8 @@ _int CLoadingScreen::Update_GameObject(_double TimeDelta)
 	CUI::Update_GameObject(TimeDelta);
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
+	if (m_bIsDead)
+		return DEAD_OBJ;
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
 	if (m_bIsActive)

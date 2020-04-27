@@ -43,6 +43,12 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	// Target_NormalForRim
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_RimNormal", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.f))))
 		return E_FAIL;
+	// Target_BloomPower
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_BloomPower", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
+		return E_FAIL;
+	// Target_DecalDepth
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_DecalDepth", ViewPort.Width, ViewPort.Height, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.f, 1.f, 0.f, 0.f))))
+		return E_FAIL;
 
 	// 명암을 저장한다.
 	// Target_Shade (명암. 내적. 실수값을.)
@@ -99,9 +105,6 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	// Target_Bloom (BrightPass)
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Bloom", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
 		return E_FAIL;
-	// Target_BloomPower
-	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_BloomPower", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
-		return E_FAIL;
 
 	// Target_Rim
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Rim", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
@@ -128,6 +131,8 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Velocity", L"Target_RimNormal")))
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Velocity", L"Target_BloomPower")))
+		return E_FAIL;
+	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Velocity", L"Target_DecalDepth")))
 		return E_FAIL;
 
 	// For.MRT_LightAcc
@@ -233,7 +238,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	// For.Target_Normal`s Debug Buffer
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Normal", 0.0f, fTargetSize, fTargetSize, fTargetSize)))
 		return E_FAIL;
-
+	
 	// For.Target_Depth`s Debug Buffer
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Depth", 0.0f, fTargetSize * 2, fTargetSize, fTargetSize)))
 		return E_FAIL;
@@ -244,6 +249,9 @@ HRESULT CRenderer::Ready_Component_Prototype()
 
 	// For.Target_Depth`s Debug Buffer
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Velocity", 0.0f, fTargetSize * 4, fTargetSize, fTargetSize)))
+		return E_FAIL;
+	// For.Target_DecalDepth`s Debug Buffer
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_DecalDepth", fTargetSize * 2, fTargetSize * 4, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_Shade`s Debug Buffer
@@ -717,9 +725,9 @@ HRESULT CRenderer::Render_Instance()
 				D3DXMatrixInverse(&ViewMatrix, nullptr, &ViewMatrix);
 				D3DXMatrixInverse(&ProjMatrix, nullptr, &ProjMatrix);
 
-				if (FAILED(m_pShader_Effect->Set_Value("g_matProjInv", &ViewMatrix, sizeof(_mat))))
+				if (FAILED(m_pShader_Effect->Set_Value("g_matProjInv", &ProjMatrix, sizeof(_mat))))
 					return E_FAIL;
-				if (FAILED(m_pShader_Effect->Set_Value("g_matViewInv", &ProjMatrix, sizeof(_mat))))
+				if (FAILED(m_pShader_Effect->Set_Value("g_matViewInv", &ViewMatrix, sizeof(_mat))))
 					return E_FAIL;
 				m_pShader_Effect->Set_Texture("g_DepthTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"));
 

@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Monkey.h"
-#include "..\Headers\Weapon.h"
 #include "..\Headers\MonkeyBullet.h"
-#include "..\Headers\MonsterUI.h"
 
 CMonkey::CMonkey(LPDIRECT3DDEVICE9 pGraphic_Device)
 	:CGameObject(pGraphic_Device)
@@ -47,33 +45,6 @@ HRESULT CMonkey::Ready_GameObject(void* pArg)
 		Safe_AddRef(m_pTargetTransform);
 	}
 
-	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
-	m_tObjParam.fArmor_Cur = m_tObjParam.fArmor_Max;
-
-	m_tObjParam.bCanHit = true;
-	m_tObjParam.bIsHit = false;
-	m_tObjParam.bCanAttack = true;
-	m_tObjParam.bIsAttack = false;
-	m_tObjParam.bCanDodge = true; 
-	m_tObjParam.bIsDodge = false; 
-
-	m_bCanPlayDead = false;
-	m_bInRecognitionRange = false;
-	m_bInAtkRange = false;
-	m_bCanChase = false;
-	m_bCanCoolDown = false;
-	m_bIsCoolDown = false;
-	m_bAtkCategory = true;
-	m_bCanInterrupt = true;
-	m_bCanCombo = true;
-	m_bIsCombo = false;
-	m_bCanIdle = true;
-	m_bIsIdle = false;
-
-	m_fCoolDownCur = 0.f;
-	m_fSpeedForCollisionPush = 2.f;
-
 	return S_OK;
 }
 
@@ -94,7 +65,7 @@ _int CMonkey::Update_GameObject(_double TimeDelta)
 
 	m_pMeshCom->SetUp_Animation(m_eState);
 
-	Enter_Collision();
+	MONSTER_STATETYPE::DEAD != m_eFirstCategory ? Enter_Collision() : Check_DeadEffect(TimeDelta);
 
 	return NO_EVENT;
 }
@@ -208,7 +179,7 @@ HRESULT CMonkey::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 
 void CMonkey::Update_Collider()
 {
-	_ulong matrixIdx = 0;
+	_ulong matrixIdx = Bone_LeftHand;
 
 	for (auto& vector_iter : m_vecAttackCol)
 	{
@@ -252,8 +223,11 @@ void CMonkey::Render_Collider()
 
 void CMonkey::Enter_Collision()
 {
-	Check_CollisionPush();
-	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
+	if (MONSTER_STATETYPE::DEAD != m_eFirstCategory)
+	{
+		Check_CollisionPush();
+		Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
+	}
 
 	return;
 }
@@ -272,7 +246,7 @@ void CMonkey::Check_CollisionPush()
 		{
 			CCollider* pCollider = TARGET_TO_COL(Obj_iter);
 
-			if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_fSpeedForCollisionPush * DELTA_60))
+			if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_fSkillMoveSpeed_Cur * DELTA_60))
 			{
 				CTransform* pTrans = TARGET_TO_TRANS(Obj_iter);
 				CNavMesh*   pNav = TARGET_TO_NAV(Obj_iter);
@@ -345,6 +319,40 @@ void CMonkey::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 				}
 			}
 		}
+	}
+
+	return;
+}
+
+void CMonkey::Function_FBLR()
+{
+	_float angle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos()));
+
+	if (MONSTER_STATETYPE::HIT == m_eFirstCategory)
+	{
+		m_eSecondCategory_HIT = MONSTER_HITTYPE::HIT_NORMAL;
+
+		if (0.f <= angle && 90.f > angle)
+			m_eFBLR = FBLR::FRONT;
+		else if (-90.f <= angle && 0.f > angle)
+			m_eFBLR = FBLR::FRONT;
+		else if (90.f <= angle && 180.f > angle)
+			m_eFBLR = FBLR::BACK;
+		else if (-180.f <= angle && -90.f > angle)
+			m_eFBLR = FBLR::BACK;
+	}
+	else if (MONSTER_STATETYPE::CC == m_eFirstCategory)
+	{
+		m_eSecondCategory_CC = MONSTER_CCTYPE::CC_DOWN;
+
+		if (0.f <= angle && 90.f > angle)
+			m_eFBLR = FBLR::FRONT;
+		else if (-90.f <= angle && 0.f > angle)
+			m_eFBLR = FBLR::FRONT;
+		else if (90.f <= angle && 180.f > angle)
+			m_eFBLR = FBLR::BACK;
+		else if (-180.f <= angle && -90.f > angle)
+			m_eFBLR = FBLR::BACK;
 	}
 
 	return;
@@ -423,9 +431,73 @@ void CMonkey::Function_RotateBody()
 
 void CMonkey::Function_MoveAround()
 {
-	Function_RotateBody();
+	_float fTargetAngle = m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos());
 
-	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &m_pTransformCom->Get_Axis(AXIS_X), 2.f * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
+	_float fYAngle = m_pTransformCom->Get_Angle().y;
+
+	_v3 vTargetDir = m_pTransformCom->Get_Axis(AXIS_Z);
+	V3_NORMAL_SELF(&vTargetDir);
+
+	if (fTargetAngle > 0)
+	{
+		if (fYAngle < 0)
+		{
+			if (-D3DXToRadian(90.f) > fYAngle && -D3DXToRadian(180.f) < fYAngle)
+			{
+				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle <= -D3DXToRadian(180.f)) fYAngle = D3DXToRadian(180.f);
+			}
+			else fYAngle += DELTA_60 * D3DXToRadian(360.f);
+		}
+		else
+		{
+			if (fYAngle < fTargetAngle)
+			{
+				fYAngle += DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle >= fTargetAngle) fYAngle = fTargetAngle;
+			}
+			else
+			{
+				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle <= fTargetAngle) fYAngle = fTargetAngle;
+			}
+		}
+	}
+	else if (fTargetAngle < 0)
+	{
+		if (fYAngle > 0)
+		{
+			if (D3DXToRadian(90.f) < fYAngle && D3DXToRadian(180.f) > fYAngle)
+			{
+				fYAngle += DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle >= D3DXToRadian(180.f)) fYAngle = -D3DXToRadian(180.f);
+			}
+			else fYAngle -= DELTA_60 * D3DXToRadian(360.f);
+		}
+		else
+		{
+			if (fYAngle > fTargetAngle)
+			{
+				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle <= fTargetAngle) fYAngle = fTargetAngle;
+			}
+			else
+			{
+				fYAngle += DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle >= fTargetAngle) fYAngle = fTargetAngle;
+			}
+		}
+	}
+
+	m_pTransformCom->Set_Angle(AXIS_Y, fYAngle);
+
+	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &m_pTransformCom->Get_Axis(AXIS_X), m_fSkillMoveSpeed_Cur * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
 
 	return;
 }
@@ -482,10 +554,10 @@ void CMonkey::Function_ResetAfterAtk()
 	m_bCanIdle = true;
 	m_bIsIdle = false;
 
+	m_tObjParam.bSuperArmor = false;
 	m_tObjParam.bIsAttack = false;
 
-	m_bAtkCategory = true;
-	m_bCanInterrupt = true;
+	m_bCanChooseAtkType = true;
 	m_bIsCombo = false;
 
 	for (auto& vetor_iter : m_vecAttackCol)
@@ -511,22 +583,22 @@ void CMonkey::Checkk_PosY()
 
 void CMonkey::Check_Hit()
 {
-	if (MONSTER_ANITYPE::DEAD == m_eFirstCategory)
+	if (MONSTER_STATETYPE::DEAD == m_eFirstCategory)
 		return;
 
 	if (0 < m_tObjParam.fHp_Cur)
 	{
 		if (false == m_tObjParam.bCanHit)
 		{
-			if (true == m_bCanInterrupt)
+			if (false == m_tObjParam.bSuperArmor)
 			{
 				++m_iDodgeCount;
 				if (m_iDodgeCount >= m_iDodgeCountMax)
 				{
 					m_iDodgeCount = 0;
 					m_tObjParam.bCanDodge = true;
-					m_eFirstCategory = MONSTER_ANITYPE::MOVE;
-					m_eSecondCategory_MOVE = MONKEY_MOVETYPE::MOVE_DODGE;
+					m_eFirstCategory = MONSTER_STATETYPE::MOVE;
+					m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_DODGE;
 					m_pMeshCom->Reset_OldIndx();
 					Function_RotateBody();
 				}
@@ -536,86 +608,42 @@ void CMonkey::Check_Hit()
 					{
 						if (true == m_tObjParam.bHitAgain)
 						{
-							m_eFirstCategory = MONSTER_ANITYPE::HIT;
+							m_eFirstCategory = MONSTER_STATETYPE::HIT;
 							//이떄 특수 공격 관련으로 불값이 참인 경우 cc기로
 							/*if(특수 공격)
 							else
 							데미지 측정 float 혹은 bool*/
-							//	m_eFirstCategory = MONSTER_ANITYPE::CC;
-							Check_FBLR();
+							//	m_eFirstCategory = MONSTER_STATETYPE::CC;
+							Function_FBLR();
 							m_tObjParam.bHitAgain = false;
 							m_pMeshCom->Reset_OldIndx();
 						}
 					}
 					else
 					{
-						m_eFirstCategory = MONSTER_ANITYPE::HIT;
+						m_eFirstCategory = MONSTER_STATETYPE::HIT;
 						//데미지 측정, 특수 공격 측정
 						/*if(특수 공격)
 						else
 						데미지 측정 float 혹은 bool*/
-						//	m_eFirstCategory = MONSTER_ANITYPE::CC;
-						Check_FBLR();
+						//	m_eFirstCategory = MONSTER_STATETYPE::CC;
+						Function_FBLR();
 					}
 				}
 			}
 		}
 	}
 	else
-		m_eFirstCategory = MONSTER_ANITYPE::DEAD;
-
-	return;
-}
-
-void CMonkey::Check_FBLR()
-{
-	_float angle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos()));
-
-	if (MONSTER_ANITYPE::HIT == m_eFirstCategory)
-	{
-		m_eSecondCategory_HIT = MONKEY_HITTYPE::HIT_NORMAL;
-
-		if (0.f <= angle && 90.f > angle)
-			m_eFBLR = FBLR::FRONT;
-		else if (-90.f <= angle && 0.f > angle)
-			m_eFBLR = FBLR::FRONT;
-		else if (90.f <= angle && 180.f > angle)
-			m_eFBLR = FBLR::BACK;
-		else if (-180.f <= angle && -90.f > angle)
-			m_eFBLR = FBLR::BACK;
-	}
-	else if (MONSTER_ANITYPE::CC == m_eFirstCategory)
-	{
-		if (0.f <= angle && 90.f > angle)
-		{
-			m_eSecondCategory_CC = MONKEY_CCTYPE::CC_DOWN_P;
-			m_eFBLR = FBLR::FRONT;
-		}
-		else if (-90.f <= angle && 0.f > angle)
-		{
-			m_eSecondCategory_CC = MONKEY_CCTYPE::CC_DOWN_P;
-			m_eFBLR = FBLR::FRONT;			
-		}
-		else if (90.f <= angle && 180.f > angle)
-		{
-			m_eSecondCategory_CC = MONKEY_CCTYPE::CC_DOWN_S;
-			m_eFBLR = FBLR::BACK;
-		}
-		else if (-180.f <= angle && -90.f > angle)
-		{
-			m_eSecondCategory_CC = MONKEY_CCTYPE::CC_DOWN_S;
-			m_eFBLR = FBLR::BACK;
-		}
-	}
+		m_eFirstCategory = MONSTER_STATETYPE::DEAD;
 
 	return;
 }
 
 void CMonkey::Check_Dist()
 {
-	if (MONSTER_ANITYPE::HIT == m_eFirstCategory ||
-		MONSTER_ANITYPE::CC == m_eFirstCategory ||
-		MONSTER_ANITYPE::DEAD == m_eFirstCategory)
+	if (MONSTER_STATETYPE::HIT == m_eFirstCategory ||
+		MONSTER_STATETYPE::CC == m_eFirstCategory ||
+		MONSTER_STATETYPE::DEAD == m_eFirstCategory)
 		return;
 
 	if (true == m_bIsCombo ||
@@ -630,7 +658,7 @@ void CMonkey::Check_Dist()
 		//동료, 플레이어 레이어 찾기 또는 일상행동을 반복한다
 		Function_ResetAfterAtk();
 
-		m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+		m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 
 		return;
 	}
@@ -645,7 +673,7 @@ void CMonkey::Check_Dist()
 		{
 			if (true == m_bIsIdle)
 			{
-				m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+				m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 			}
 			else
 			{
@@ -655,45 +683,44 @@ void CMonkey::Check_Dist()
 					{
 						if (true == m_bIsCoolDown)
 						{
-							//막기,회피
-							m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-							m_eSecondCategory_IDLE = MONKEY_IDLETYPE::IDLE_IDLE;
+							m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
 							Function_MoveAround();
 						}
 						else
 						{
-							m_bAtkCategory = true;
-							m_eFirstCategory = MONSTER_ANITYPE::ATTACK;
+							m_bCanChooseAtkType = true;
+							m_eFirstCategory = MONSTER_STATETYPE::ATTACK;
 							Function_RotateBody();
 						}
 					}
 					else
 					{
-						m_eFirstCategory = MONSTER_ANITYPE::MOVE;
-						m_eSecondCategory_MOVE = MONKEY_MOVETYPE::MOVE_WALK;
+						m_eFirstCategory = MONSTER_STATETYPE::MOVE;
+						m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_WALK;
 					}
 				}
 				else
 				{
 					m_bCanChase = true;
-					m_eFirstCategory = MONSTER_ANITYPE::MOVE;
-					m_eSecondCategory_MOVE = MONKEY_MOVETYPE::MOVE_RUN;
+					m_eFirstCategory = MONSTER_STATETYPE::MOVE;
+					m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_RUN;
 					Function_RotateBody();
 				}
 			}
 		}
 		else
 		{
-			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+			m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 			if (false == m_bIsIdle)
 			{
-				switch (CALC::Random_Num(MONKEY_IDLETYPE::IDLE_IDLE, MONKEY_IDLETYPE::IDLE_SIT))
+				switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_SIT))
 				{
-				case MONKEY_IDLETYPE::IDLE_IDLE:
-					m_eSecondCategory_IDLE = MONKEY_IDLETYPE::IDLE_IDLE;
+				case MONSTER_IDLETYPE::IDLE_IDLE:
+					m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
 					break;
-				case MONKEY_IDLETYPE::IDLE_SIT:
-					m_eSecondCategory_IDLE = MONKEY_IDLETYPE::IDLE_SIT;
+				case MONSTER_IDLETYPE::IDLE_SIT:
+					m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
 					break;
 				}
 			}
@@ -707,34 +734,34 @@ void CMonkey::Check_AniEvent()
 {
 	switch (m_eFirstCategory)
 	{
-	case MONSTER_ANITYPE::IDLE:
+	case MONSTER_STATETYPE::IDLE:
 		Play_Idle();
 		break;
 
-	case MONSTER_ANITYPE::MOVE:
+	case MONSTER_STATETYPE::MOVE:
 		Play_Move();
 		break;
 
-	case MONSTER_ANITYPE::ATTACK:
-		if (true == m_bAtkCategory)
+	case MONSTER_STATETYPE::ATTACK:
+		if (true == m_bCanChooseAtkType)
 		{
 			m_tObjParam.bCanAttack = false;
 			m_tObjParam.bIsAttack = true;
 
-			m_bAtkCategory = false;
+			m_bCanChooseAtkType = false;
 
-			m_iRandom = CALC::Random_Num(MONKEY_ATKTYPE::ATK_NORMAL, MONKEY_ATKTYPE::ATK_COMBO);
+			m_iRandom = CALC::Random_Num(MONSTER_ATKTYPE::ATK_NORMAL, MONSTER_ATKTYPE::ATK_COMBO);
 
 			switch (m_iRandom)
 			{
-			case MONKEY_ATKTYPE::ATK_NORMAL:
-				m_eSecondCategory_ATK = MONKEY_ATKTYPE::ATK_NORMAL;
+			case MONSTER_ATKTYPE::ATK_NORMAL:
+				m_eSecondCategory_ATK = MONSTER_ATKTYPE::ATK_NORMAL;
 				Play_RandomAtkNormal();
 				break;
-			case MONKEY_ATKTYPE::ATK_COMBO:
-				m_eSecondCategory_ATK = MONKEY_ATKTYPE::ATK_COMBO;
-				m_bIsCombo = true;
+			case MONSTER_ATKTYPE::ATK_COMBO:
+				m_eSecondCategory_ATK = MONSTER_ATKTYPE::ATK_COMBO;
 				Play_RandomAtkCombo();
+				m_bIsCombo = true;
 				break;
 			}
 
@@ -742,7 +769,7 @@ void CMonkey::Check_AniEvent()
 		}
 		else
 		{
-			if (MONKEY_ATKTYPE::ATK_NORMAL == m_eSecondCategory_ATK)
+			if (MONSTER_ATKTYPE::ATK_NORMAL == m_eSecondCategory_ATK)
 			{
 				switch (m_eState)
 				{
@@ -766,7 +793,7 @@ void CMonkey::Check_AniEvent()
 					break;
 				}
 			}
-			else if (MONKEY_ATKTYPE::ATK_COMBO == m_eSecondCategory_ATK)
+			else if (MONSTER_ATKTYPE::ATK_COMBO == m_eSecondCategory_ATK)
 			{
 				switch (m_eAtkCombo)
 				{
@@ -784,18 +811,46 @@ void CMonkey::Check_AniEvent()
 		}
 		break;
 
-	case MONSTER_ANITYPE::HIT:
+	case MONSTER_STATETYPE::HIT:
 		Play_Hit();
 		break;
 
-	case MONSTER_ANITYPE::CC:
+	case MONSTER_STATETYPE::CC:
 		Play_CC();
 		break;
 
-	case MONSTER_ANITYPE::DEAD:
+	case MONSTER_STATETYPE::DEAD:
 		Play_Dead();
 		break;
 	}
+
+	return;
+}
+
+void CMonkey::Check_DeadEffect(_double TimeDelta)
+{
+	m_fDeadEffect_Delay -= _float(TimeDelta);
+	if (m_fDeadEffect_Delay > 0.f)
+		return;
+
+	m_fDeadEffect_Offset -= _float(TimeDelta);
+	if (m_fDeadEffect_Offset > 0.f)
+		return;
+
+	m_fDeadEffect_Offset = 0.1f;
+
+	_v3 vPos = m_pTransformCom->Get_Pos();
+	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
+	_v3 vHeadPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips");
+	_v3 vHipPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle", 0.1f, vPos, vHeadPos);
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle_Sub", 0.1f, vPos, vHeadPos);
+
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHeadPos);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHipPos);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vPos);
 
 	return;
 }
@@ -880,21 +935,12 @@ void CMonkey::Play_FangShot()
 		}
 		else if (3.133f <= AniTime && 3.287 > AniTime)
 		{
-
 			matBone = *m_matBone[Bone_LeftHand] * m_pTransformCom->Get_WorldMat();
 			memcpy(vBirth, &matBone._41, sizeof(_v3));
 			g_pManagement->Add_GameObject_ToLayer(L"Monster_MonkeyBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 15.f, 1.5));
-
-			//	matBone = *m_matBone[Bone_LeftHand] * m_pTransformCom->Get_WorldMat();
-			//	memcpy(vBirth, &matBone._41, sizeof(_v3));
-
-			//	g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &CMonkeyBullet::tagMonkeyBulletInfo(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 3.f, 1.5));
-			//}
 		}
 		else if (0.f <= AniTime)
-		{
 			Function_RotateBody();
-		}
 	}
 
 	return;
@@ -933,6 +979,7 @@ void CMonkey::Play_Jump_RotBody()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.833f <= AniTime)
@@ -942,6 +989,7 @@ void CMonkey::Play_Jump_RotBody()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -988,6 +1036,7 @@ void CMonkey::Play_JumpLHand()
 			{
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[0]->Set_Enabled(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (3.367f <= AniTime)
@@ -996,6 +1045,7 @@ void CMonkey::Play_JumpLHand()
 			{
 				m_bEventTrigger[2] = true;
 				m_vecAttackCol[0]->Set_Enabled(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -1050,6 +1100,7 @@ void CMonkey::Play_JumpDown()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (2.700f <= AniTime)
@@ -1059,6 +1110,7 @@ void CMonkey::Play_JumpDown()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -1113,6 +1165,7 @@ void CMonkey::Play_RDiagonal()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.300f <= AniTime)
@@ -1122,6 +1175,7 @@ void CMonkey::Play_RDiagonal()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -1176,6 +1230,7 @@ void CMonkey::Play_Atk_RotBody()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.000f <= AniTime)
@@ -1214,7 +1269,7 @@ void CMonkey::Play_Combo_Normal()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.85f))
 		{
-			m_bCanInterrupt = true;
+			m_tObjParam.bSuperArmor = true;
 			m_eState = MONKEY_ANI::Atk_N02;
 
 			return;
@@ -1233,6 +1288,7 @@ void CMonkey::Play_Combo_Normal()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.300f <= AniTime)
@@ -1242,11 +1298,9 @@ void CMonkey::Play_Combo_Normal()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 
 		if (0.767f < AniTime && 1.133f > AniTime)
 		{
@@ -1286,6 +1340,7 @@ void CMonkey::Play_Combo_Normal()
 			{
 				m_bEventTrigger[5] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.000f <= AniTime)
@@ -1295,11 +1350,9 @@ void CMonkey::Play_Combo_Normal()
 				m_bEventTrigger[6] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 
 		if (0.833f < AniTime && 1.300f > AniTime)
 		{
@@ -1327,7 +1380,7 @@ void CMonkey::Play_Combo_Jump_Clock()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.85f))
 		{
-			m_bCanInterrupt = false;
+			m_tObjParam.bSuperArmor = true;
 			m_eState = MONKEY_ANI::Atk_N02;
 
 			return;
@@ -1346,6 +1399,7 @@ void CMonkey::Play_Combo_Jump_Clock()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.833f <= AniTime)
@@ -1355,11 +1409,9 @@ void CMonkey::Play_Combo_Jump_Clock()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 
 		if (0.967f < AniTime && 1.733f > AniTime)
 		{
@@ -1399,6 +1451,7 @@ void CMonkey::Play_Combo_Jump_Clock()
 			{
 				m_bEventTrigger[5] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.000f <= AniTime)
@@ -1408,6 +1461,7 @@ void CMonkey::Play_Combo_Jump_Clock()
 				m_bEventTrigger[6] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -1437,13 +1491,12 @@ void CMonkey::Play_Combo_RunAtk()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.8f))
 		{
-			m_bCanInterrupt = true;
+			m_tObjParam.bSuperArmor = true;
 			m_eState = MONKEY_ANI::Atk_Sp_Loop;
 
 			return;
 		}
-		else if (m_pMeshCom->Is_Finish_Animation(0.3f))
-				m_bCanInterrupt = false;
+
 		if (0.600f < AniTime)
 		{
 			if (false == m_bEventTrigger[0])
@@ -1462,7 +1515,7 @@ void CMonkey::Play_Combo_RunAtk()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.9f))
 		{
-			m_bCanInterrupt = true;
+			m_tObjParam.bSuperArmor = true;
 			m_eState = MONKEY_ANI::Atk_Sp_End;
 
 			return;
@@ -1475,9 +1528,6 @@ void CMonkey::Play_Combo_RunAtk()
 			m_fSkillMoveAccel_Cur = 0.f;
 			m_fSkillMoveMultiply = 0.0f;
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 
 		Function_RotateBody();
 		Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
@@ -1507,6 +1557,7 @@ void CMonkey::Play_Combo_RunAtk()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (0.467f < AniTime)
@@ -1516,11 +1567,9 @@ void CMonkey::Play_Combo_RunAtk()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 
 		if (0.267f < AniTime && 0.800f > AniTime)
 		{
@@ -1536,13 +1585,15 @@ void CMonkey::Play_Combo_RunAtk()
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
 	}
+
+	return;
 }
 
 void CMonkey::Play_Idle()
 {
 	switch (m_eSecondCategory_IDLE)
 	{
-	case MONKEY_IDLETYPE::IDLE_IDLE:
+	case MONSTER_IDLETYPE::IDLE_IDLE:
 		if (true == m_bInRecognitionRange)
 		{
 			m_bIsIdle = false;
@@ -1563,7 +1614,7 @@ void CMonkey::Play_Idle()
 			m_eState = MONKEY_ANI::Idle;
 		}
 		break;
-	case MONKEY_IDLETYPE::IDLE_SIT:
+	case MONSTER_IDLETYPE::IDLE_SIT:
 		if (true == m_bInRecognitionRange)
 		{
 			if (MONKEY_ANI::NF_Sit == m_eState)
@@ -1591,6 +1642,8 @@ void CMonkey::Play_Idle()
 
 		break;
 	}
+
+	return;
 }
 
 void CMonkey::Play_Move()
@@ -1599,7 +1652,7 @@ void CMonkey::Play_Move()
 
 	switch (m_eSecondCategory_MOVE)
 	{
-	case MONKEY_MOVETYPE::MOVE_RUN:
+	case MONSTER_MOVETYPE::MOVE_RUN:
 		m_eState = MONKEY_ANI::Run;
 
 		Function_RotateBody();
@@ -1608,7 +1661,7 @@ void CMonkey::Play_Move()
 
 		Function_DecreMoveMent(0.1f);
 		break;
-	case MONKEY_MOVETYPE::MOVE_WALK:
+	case MONSTER_MOVETYPE::MOVE_WALK:
 		m_eState = MONKEY_ANI::Walk; 
 		if (false == m_tObjParam.bCanAttack)
 		{
@@ -1623,7 +1676,7 @@ void CMonkey::Play_Move()
 			Function_DecreMoveMent(0.1f);
 		}
 		break;
-	case MONKEY_MOVETYPE::MOVE_DODGE:
+	case MONSTER_MOVETYPE::MOVE_DODGE:
 		if (true == m_tObjParam.bCanDodge)
 		{
 			Function_ResetAfterAtk();
@@ -1638,82 +1691,76 @@ void CMonkey::Play_Move()
 			case MONKEY_ANI::Dodge:
 				if (m_pMeshCom->Is_Finish_Animation(0.95f))
 				{
-					m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 					m_tObjParam.bCanAttack = true;
 					Function_ResetAfterAtk();
 
 					return;
 				}
-				else
+
+				if (0.800f < AniTime && 1.433f > AniTime)
 				{
-					if (0.800f < AniTime && 1.433f > AniTime)
+					if (m_bEventTrigger[0] == false)
 					{
-						if (m_bEventTrigger[0] == false)
-						{
-							m_bEventTrigger[0] = true;
-							m_fSkillMoveSpeed_Cur = 10.f;
-							m_fSkillMoveAccel_Cur = 0.f;
-							m_fSkillMoveMultiply = 0.5f;
-						}
-
-						Function_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
-
-						Function_DecreMoveMent(m_fSkillMoveMultiply);
+						m_bEventTrigger[0] = true;
+						m_fSkillMoveSpeed_Cur = 10.f;
+						m_fSkillMoveAccel_Cur = 0.f;
+						m_fSkillMoveMultiply = 0.5f;
 					}
+
+					Function_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
+
+					Function_DecreMoveMent(m_fSkillMoveMultiply);
 				}
 				break;
 			case MONKEY_ANI::Dodge_L:
 				if (m_pMeshCom->Is_Finish_Animation(0.95f))
 				{
-					m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 					m_tObjParam.bCanAttack = true;
 					Function_ResetAfterAtk();
 
 					return;
 				}
-				else
+
+				if (0.800f < AniTime && 1.433f > AniTime)
 				{
-					if (0.800f < AniTime && 1.433f > AniTime)
+					if (m_bEventTrigger[0] == false)
 					{
-						if (m_bEventTrigger[0] == false)
-						{
-							m_bEventTrigger[0] = true;
-							m_fSkillMoveSpeed_Cur = 10.f;
-							m_fSkillMoveAccel_Cur = 0.f;
-							m_fSkillMoveMultiply = 0.5f;
-						}
-
-						Function_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
-
-						Function_DecreMoveMent(m_fSkillMoveMultiply);
+						m_bEventTrigger[0] = true;
+						m_fSkillMoveSpeed_Cur = 10.f;
+						m_fSkillMoveAccel_Cur = 0.f;
+						m_fSkillMoveMultiply = 0.5f;
 					}
+
+					Function_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
+
+					Function_DecreMoveMent(m_fSkillMoveMultiply);
 				}
 				break;
 			case MONKEY_ANI::Dodge_R:
 				if (m_pMeshCom->Is_Finish_Animation(0.95f))
 				{
-					m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 					m_tObjParam.bCanAttack = true;
 					Function_ResetAfterAtk();
 
 					return;
 				}
-				else
+
+				if (0.800f < AniTime && 1.433f > AniTime)
 				{
-					if (0.800f < AniTime && 1.433f > AniTime)
+					if (m_bEventTrigger[0] == false)
 					{
-						if (m_bEventTrigger[0] == false)
-						{
-							m_bEventTrigger[0] = true;
-							m_fSkillMoveSpeed_Cur = 10.f;
-							m_fSkillMoveAccel_Cur = 0.f;
-							m_fSkillMoveMultiply = 0.5f;
-						}
-
-						Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_X));
-
-						Function_DecreMoveMent(m_fSkillMoveMultiply);
+						m_bEventTrigger[0] = true;
+						m_fSkillMoveSpeed_Cur = 10.f;
+						m_fSkillMoveAccel_Cur = 0.f;
+						m_fSkillMoveMultiply = 0.5f;
 					}
+
+					Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_X));
+
+					Function_DecreMoveMent(m_fSkillMoveMultiply);
 				}
 				break;
 			}
@@ -1751,14 +1798,14 @@ void CMonkey::Play_Hit()
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 0.5f;
 
-			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+			m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 		}
 		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
 		{
 			if (false == m_tObjParam.bCanHit)
 			{
 				m_tObjParam.bCanHit = true;
-				Check_FBLR();
+				Function_FBLR();
 			}
 		}
 	}
@@ -1768,6 +1815,7 @@ void CMonkey::Play_Hit()
 
 void CMonkey::Play_CC()
 {
+	return;
 }
 
 void CMonkey::Play_Dead()
@@ -1801,13 +1849,17 @@ void CMonkey::Play_Dead()
 				m_bEnable = false;
 				m_dAniPlayMul = 0;
 			}
+
 			if (3.233f <= AniTime)
 			{
 				if (false == m_bEventTrigger[0])
 				{
 					m_bEventTrigger[0] = true;
-					Start_Dissolve(0.7f, false, true);
-					m_pWeapon->Start_Dissolve(0.7f, false, true);
+
+					Start_Dissolve(0.7f, false, true, 0.0f);
+					m_pWeapon->Start_Dissolve(0.7f, false, true, 0.f);
+					m_fDeadEffect_Delay = 0.f;
+					g_pManagement->Add_GameObject_ToLayer(L"GameObject_Haze", SCENE_STAGE, L"Layer_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
 			break;
@@ -1818,13 +1870,17 @@ void CMonkey::Play_Dead()
 				m_bEnable = false;
 				m_dAniPlayMul = 0;
 			}
+
 			if (3.167f <= AniTime)
 			{
 				if (false == m_bEventTrigger[0])
 				{
 					m_bEventTrigger[0] = true;
-					Start_Dissolve(0.7f, false, true);
-					m_pWeapon->Start_Dissolve(0.7f, false, true);
+
+					Start_Dissolve(0.7f, false, true, 0.0f);
+					m_pWeapon->Start_Dissolve(0.7f, false, true, 0.f);
+					m_fDeadEffect_Delay = 0.f;
+					g_pManagement->Add_GameObject_ToLayer(L"GameObject_Haze", SCENE_STAGE, L"Layer_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
 			break;
@@ -1835,13 +1891,17 @@ void CMonkey::Play_Dead()
 				m_bEnable = false;
 				m_dAniPlayMul = 0;
 			}
+
 			if (2.867f <= AniTime)
 			{
 				if (false == m_bEventTrigger[0])
 				{
 					m_bEventTrigger[0] = true;
-					Start_Dissolve(0.7f, false, true);
-					m_pWeapon->Start_Dissolve(0.7f, false, true);
+
+					Start_Dissolve(0.7f, false, true, 0.0f);
+					m_pWeapon->Start_Dissolve(0.7f, false, true, 0.f);
+					m_fDeadEffect_Delay = 0.f;
+					g_pManagement->Add_GameObject_ToLayer(L"GameObject_Haze", SCENE_STAGE, L"Layer_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
 			break;
@@ -1910,30 +1970,50 @@ HRESULT CMonkey::SetUp_ConstantTable()
 
 HRESULT CMonkey::Ready_Status(void * pArg)
 {
-	if (nullptr == pArg)
-	{
-		m_tObjParam.fDamage = 25.f;
-		m_tObjParam.fHp_Max = 120.f;
-		m_tObjParam.fArmor_Max = 10.f;
+	m_tObjParam.fDamage = -250.f;
+	m_tObjParam.fHp_Max = 1200.f;
+	m_tObjParam.fArmor_Max = 100.f;
 
-		m_fRecognitionRange = 15.f;
-		m_fShotRange = 10.f;
-		m_fAtkRange = 5.f;
-		m_iDodgeCountMax = 5;
-	}
-	else
-	{
-		INITSTRUCT Info = *(INITSTRUCT*)pArg;
+	m_fRecognitionRange = 15.f;
+	m_fShotRange = 10.f;
+	m_fAtkRange = 5.f;
+	m_fPersonalRange = 2.f;
+	m_iDodgeCountMax = 5;
 
-		m_tObjParam.fDamage = Info.tMonterStatus.fDamage;
-		m_tObjParam.fHp_Max = Info.tMonterStatus.fHp_Max;
-		m_tObjParam.fArmor_Max = Info.tMonterStatus.fArmor_Max;
+	m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
+	m_tObjParam.fArmor_Cur = m_tObjParam.fArmor_Max;
 
-		m_fRecognitionRange = Info.fKonwingRange;
-		m_fShotRange = Info.fCanShotRangeIfGunChooose;
-		m_fAtkRange = Info.fCanAttackRange;
-		m_iDodgeCountMax = Info.iDodgeCountMax;
-	}
+	m_tObjParam.bCanHit = true;
+	m_tObjParam.bIsHit = false;
+	m_tObjParam.bCanAttack = true;
+	m_tObjParam.bIsAttack = false;
+	m_tObjParam.bCanDodge = true;
+	m_tObjParam.bIsDodge = false;
+	m_bCanPlayDead = false;
+	m_bInRecognitionRange = false;
+	m_bInAtkRange = false;
+	m_bCanChase = false;
+	m_bCanCoolDown = false;
+	m_bIsCoolDown = false;
+	m_bCanChooseAtkType = true;
+	m_bIsCombo = false;
+	m_bCanIdle = true;
+	m_bIsIdle = false;
+	m_bCanMoveAround = true;
+	m_bIsMoveAround = false;
+
+	m_dTimeDelta = 0;
+	m_dAniPlayMul = 1;
+
+	m_fSkillMoveSpeed_Cur = 0.f;
+	m_fSkillMoveSpeed_Max = 0.f;
+	m_fSkillMoveAccel_Cur = 0.5f;
+	m_fSkillMoveAccel_Max = 0.f;
+	m_fSkillMoveMultiply = 1.f;
+
+	m_fCoolDownMax = 0.f;
+	m_fCoolDownCur = 0.f;
 
 	return S_OK;
 }
@@ -1941,7 +2021,7 @@ HRESULT CMonkey::Ready_Status(void * pArg)
 HRESULT CMonkey::Ready_Weapon()
 {
 	m_pWeapon = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon->Change_WeaponData(CWeapon::WPN_SSword_Normal);
+	m_pWeapon->Change_WeaponData(CWeapon::Wpn_SSword_Slave);
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
 	m_pWeapon->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
@@ -2051,15 +2131,6 @@ void CMonkey::Free()
 	Safe_Release(m_pMeshCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
-
-	for (auto& vecter_iter : m_vecPhysicCol)
-		Safe_Release(vecter_iter);
-
-	for (auto& vecter_iter : m_vecAttackCol)
-		Safe_Release(vecter_iter);
-
-	for (auto& iter : m_matBone)
-		iter = nullptr;
 
 	CGameObject::Free();
 

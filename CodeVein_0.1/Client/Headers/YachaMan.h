@@ -1,123 +1,99 @@
 #pragma once
 
-#include "Client_Defines.h"
-#include "GameObject.h"
-#include "Management.h"
+#include "Info_Monster.h"
 
 BEGIN(Client)
-
-class CWeapon;
-class CMonsterUI;
 
 class CYachaMan final : public CGameObject
 {
 public:
-	enum FBLR { FRONT, FRONTLEFT, FRONTRIGHT, BACK, BACKLEFT, BACKRIGHT, LEFT, RIGHT };
-	enum MONSTER_ANITYPE { IDLE, MOVE, ATTACK, HIT, CC, DEAD };
-
-	enum YACHAMAN_IDLETYPE { IDLE_IDLE, IDLE_EAT, IDLE_LURK };
-	enum YACHAMAN_MOVETYPE {MOVE_RUN, MOVE_WALK, MOVE_DODGE};
-	enum YACHAMAN_ATKTYPE {ATK_NORMAL, ATK_COMBO};
-	enum YACHAMAN_HITTYPE { HIT_STRONG, HIT_NORMAL, HIT_WEAK };
-	enum YACHAMAN_CCTYPE { CC_STUN, CC_DOWN };
-	enum YACHAMAN_DEADTYPE { DEAD_DEAD, DEAD_DEAD_S };
-
 	enum ATK_NORMAL_TYPE 
 	{
-		NORMAL_RIGHT, NORMAL_LEFT, 
-		NORMAL_HAMMERING, NORMAL_SHOULDER, 
-		NORMAL_TURNTWICE, NORMAL_HALFCLOCK, 
-		NORMAL_TARGETHAMMERING, NORMAL_WHEELWIND 
+		NORMAL_RIGHT,
+		NORMAL_SHOULDER,  
+		NORMAL_TARGETHAMMERING,
+		NORMAL_WHEELWIND 
 	};
-	enum ATK_COMBO_TYPE { COMBO_R_L, COMBO_R_HAMMERING, COMBO_SHOULDER_TURNTWICE, COMBO_SHOULDER_HALFCLOCK, COMBO_RUNHAMMERING };
+
+	enum ATK_COMBO_TYPE
+	{ 
+		COMBO_R_L,
+		COMBO_R_HAMMERING,
+		COMBO_SHOULDER_TURNTWICE,
+		COMBO_SHOULDER_HALFCLOCK,
+		COMBO_RUNHAMMERING
+	};
 
 	enum YACHAMAN_ANI
 	{
 		Hammer_Idle,
-		Atk_Ani_R,
-		Atk_Ani_L,
-		Atk_Ani_Hammering,
-		Atk_Ani_Shoulder,
-		Atk_Ani_TurnTwice,
-		Atk_Ani_HalfClock,
-		Atk_Ani_TargetHammering,
-		Atk_Ani_WheelWind,
-		Atk_Ani_Run_Start,
-		Atk_Ani_Run_Loop,
-		Atk_Ani_Run_End,
+		NF_Eat,
+		NF_Eat_End,
+		NF_Lurk,
+		NF_Lurk_End,
+		NF_Sit,
+		NF_Sit_End,
 
-		Death_B,
+		Run,
+		Walk_R,
+		Walk_L,
+		Walk_F,
+		Walk_B,
+		Dodge,
+
+		Dmg_W_BR,
+		Dmg_W_BL,
+		Dmg_W_FR,
+		Dmg_W_FL,
+
+		Dmg_N_BR,
+		Dmg_N_BL,
+		Dmg_N_FR,
+		Dmg_N_FL,
+
+		Down_S_End,
+		Down_S_Start,
+
+		Down_P_End,
+		Down_P_Loop,
+		Down_P_Start,
+
+		DmgBlow_F,
+		DmgBlow_B,
+
+		DmgStrike_S,
+		DmgStrike_P,
+
+		Stun_End,
+		Stun_Loop,
+		Stun_Start,
+
 		Death_F,
+		Death_B,
 		Death,
 
-		Run = 64,
-		Dodge,
-		Walk,
-
-		Lurk = 70,
-		Lurk_End,
-		Glance,
-		LookAround,
-		Eat,
-		Eat_End,
-
-		Stun=29,
-		Stun_End,
-		Down_S_Start,
-		Down_S_End,
-		Down_P_Start,
-		Down_P_Loop, //»ç¿ëx
-		Down_P_End,
-		Fall_Front,
-		Fall_Back,
-		Parried,	
-		Hit_B_WeakFly,
-		Hit_F_WeakFly,
-		Groggy, //->Stun
-
-		Hit_S_BR,
-		Hit_S_BL,
-		Hit_S_FR,
-		Hit_S_FL,
-
-		Hit_N_BR,
-		Hit_N_BL,
-		Hit_N_FR,
-		Hit_N_FL,
-
-		Hit_W_BR,
-		Hit_W_BL,
-		Hit_W_FR,
-		Hit_W_FL,
+		Hammer_Sp03_End,
+		Hammer_Sp03_Loop,
+		Hammer_Sp03_Start,
+		Hammer_Sp02,
+		Hammer_Sp01,
+		Hammer_S03,
+		Hammer_S02,
+		Hammer_S01,
+		Hammer_N03,
+		Hammer_N02,
+		Hammer_N01
 	};
 
-	enum BONE_TYPE { Bone_Range, Bone_Body, Bone_LeftArm, Bone_Head, Bone_End };
-
-public:
-	struct INITSTRUCT
-	{
-		INITSTRUCT(
-			_float _fDMG,
-			_float _fHpMax,
-			_float _fArmorMax,
-			_float _fKnowRange,
-			_float _fAtkRange,
-			_int _iDodgeMax)
-		{
-			tMonterStatus.fDamage = _fDMG;
-			tMonterStatus.fHp_Max = _fHpMax;
-			tMonterStatus.fArmor_Max = _fArmorMax;
-
-			fKonwingRange = _fKnowRange;
-			fCanAttackRange = _fAtkRange;
-			iDodgeCountMax = _iDodgeMax;
-		}
-
-		OBJECT_PARAM		tMonterStatus;
-		_float				fKonwingRange = 20.f;
-		_float				fCanAttackRange = 5.f;
-		_int				iDodgeCountMax = 3;
+	enum BONE_TYPE
+	{ 
+		Bone_Range,
+		Bone_Head,
+		Bone_Body,
+		Bone_LeftArm,
+		Bone_End
 	};
+
 protected:
 	explicit CYachaMan(LPDIRECT3DDEVICE9 pGraphic_Device);
 	explicit CYachaMan(const CYachaMan& rhs);
@@ -138,7 +114,9 @@ private:
 	void Check_CollisionPush();
 	void Check_CollisionEvent(list<CGameObject*> plistGameObject);
 
+	void Function_FBLR();
 	void Function_RotateBody();
+	void Function_MoveAround(_float _fSpeed, _v3 _vDir = { V3_NULL });
 	void Function_CoolDown();
 	void Function_Movement(_float _fspeed, _v3 _vDir = { V3_NULL });
 	void Function_DecreMoveMent(_float _fMutiply = 1.f);
@@ -146,9 +124,9 @@ private:
 
 	void Check_PosY();
 	void Check_Hit();
-	void Check_FBLR();
 	void Check_Dist();
 	void Check_AniEvent();
+	void Check_DeadEffect(_double TimeDelta);
 
 	void Play_RandomAtkNormal();
 	void Play_RandomAtkCombo();
@@ -174,7 +152,7 @@ private:
 	void Play_Dead();
 
 private:
-	HRESULT Add_Component();
+	HRESULT Add_Component(void* pArg);
 	HRESULT SetUp_ConstantTable();
 	HRESULT Ready_Status(void* pArg);
 	HRESULT Ready_Weapon();
@@ -198,59 +176,57 @@ private:
 
 	CTransform*			m_pTargetTransform = nullptr;
 
-	_v3					m_vBirthPos;
-	_mat*				m_matBone[Bone_End];
-	_double				m_dTimeDelta = 0;
-	_double				m_dAniPlayMul = 1;
+	_mat*					m_matBone[Bone_End];
+	MONSTER_STATETYPE		m_eFirstCategory;
+	MONSTER_IDLETYPE		m_eSecondCategory_IDLE;
+	MONSTER_MOVETYPE		m_eSecondCategory_MOVE;
+	MONSTER_ATKTYPE			m_eSecondCategory_ATK;
+	MONSTER_HITTYPE			m_eSecondCategory_HIT;
+	MONSTER_CCTYPE			m_eSecondCategory_CC;
+	MONSTER_DEADTYPE		m_eSecondCategory_DEAD;
 
-	_float				m_fSkillMoveSpeed_Cur = 0.f;
-	_float				m_fSkillMoveSpeed_Max = 0.f;
-	_float				m_fSkillMoveAccel_Cur = 0.5f;
-	_float				m_fSkillMoveAccel_Max = 0.f;
-	_float				m_fSkillMoveMultiply = 1.f;
+	WEAPON_STATE			m_eWeaponState;
+	FBLR					m_eFBLR;
+	ATK_COMBO_TYPE			m_eAtkCombo;
+	YACHAMAN_ANI			m_eState;
 
-	MONSTER_ANITYPE		m_eFirstCategory;
-	YACHAMAN_IDLETYPE	m_eSecondCategory_IDLE;
-	YACHAMAN_MOVETYPE	m_eSecondCategory_MOVE;
-	YACHAMAN_ATKTYPE	m_eSecondCategory_ATK;
-	YACHAMAN_HITTYPE	m_eSecondCategory_HIT;
-	YACHAMAN_CCTYPE		m_eSecondCategory_CC;
-	YACHAMAN_DEADTYPE	m_eSecondCategory_DEAD;
+	_bool	m_bEventTrigger[20] = {};
+	_bool	m_bCanPlayDead;
+	_bool	m_bInRecognitionRange;
+	_bool	m_bInAtkRange;
+	_bool	m_bCanChase;
+	_bool	m_bCanCoolDown;
+	_bool	m_bIsCoolDown;
+	_bool	m_bCanChooseAtkType;
+	_bool	m_bIsCombo;
+	_bool	m_bCanIdle;
+	_bool	m_bIsIdle;
+	_bool	m_bCanMoveAround;
+	_bool	m_bIsMoveAround;
 
-	ATK_COMBO_TYPE		m_eAtkCombo;
-	YACHAMAN_ANI		m_eState;
-	FBLR				m_eFBLR;
+	_double	m_dTimeDelta;
+	_double	m_dAniPlayMul;
 
-	_bool				m_bEventTrigger[20] = {};
+	_float	m_fSkillMoveSpeed_Cur;
+	_float	m_fSkillMoveSpeed_Max;
+	_float	m_fSkillMoveAccel_Cur;
+	_float	m_fSkillMoveAccel_Max;
+	_float	m_fSkillMoveMultiply;
 
-	_bool				m_bCanPlayDead = false;
-	_bool				m_bCanDissolve = false;
+	_float	m_fRecognitionRange;
+	_float	m_fShotRange;
+	_float	m_fAtkRange;
+	_float	m_fPersonalRange;
+	_float	m_fCoolDownMax;
+	_float	m_fCoolDownCur;
 
-	_bool				m_bInRecognitionRange = false;
-	_bool				m_bInAtkRange = false;
-	
-	_bool				m_bCanChase = false;
+	_int	m_iRandom;
+	_int	m_iDodgeCount;
+	_int	m_iDodgeCountMax;
 
-	_bool				m_bCanCoolDown = false;
-	_bool				m_bIsCoolDown = false;
-
-	_bool				m_bAtkCategory = true;
-	_bool				m_bCanInterrupt = true;
-	_bool				m_bCanCombo = true;
-	_bool				m_bIsCombo = false;
-
-	_bool				m_bCanIdle = true;
-	_bool				m_bIsIdle = false;
-
-	_float				m_fRecognitionRange = 15.f;
-	_float				m_fAtkRange = 4.f;
-	_float				m_fCoolDownMax = 0.f;
-	_float				m_fCoolDownCur = 0.f;
-	_float				m_fSpeedForCollisionPush = 2.f;
-
-	_int				m_iRandom = 0;
-	_int				m_iDodgeCountMax = 3;
-	_int				m_iDodgeCount = 0;
+private: // For Effect
+	_float			m_fDeadEffect_Delay = 0.f;
+	_float			m_fDeadEffect_Offset = 0.f;
 
 };
 

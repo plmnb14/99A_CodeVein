@@ -6,7 +6,7 @@
 BEGIN(Client)
 class CActive_Icon;
 class CIconBase;
-class CFontNumManager;
+class CPlayerFontUI;
 class CSkillUI final : public CUI
 {
 private:
@@ -41,8 +41,8 @@ private:
 private:
 	CActive_Icon*			m_pActive[8];
 	CIconBase*				m_pIconBase[8];
-	CFontNumManager*		m_pSkillGaugeCur = nullptr;
-	CFontNumManager*		m_pSkillGaugeMax = nullptr;
+	CPlayerFontUI*			m_pSkillGaugeCur = nullptr;
+	CPlayerFontUI*			m_pSkillGaugeMax = nullptr;
 
 public:
 	static CSkillUI*		Create(_Device pGraphic_Device);

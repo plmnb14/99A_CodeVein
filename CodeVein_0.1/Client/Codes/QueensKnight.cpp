@@ -80,7 +80,7 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Sting());
+	Start_Sel->Add_Child(Flash_Middle_Ground());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -2428,7 +2428,7 @@ HRESULT CQueensKnight::Ready_Weapon()
 	// Trail
 	m_pSword->Set_Enable_Trail(true);
 	m_pSword->Set_TrailIndex(7);
-	m_pSword->Set_TrailUseMask(0);
+	m_pSword->Set_TrailUseMask(true, 0);
 
 	// 왼손 방패
 	m_pShield = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));

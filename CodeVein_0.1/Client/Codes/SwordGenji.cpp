@@ -5,6 +5,7 @@
 #include "MonsterUI.h"
 //#include "DamegeNumUI.h"
 #include "Get_ItemUI.h"
+#include "Haze.h"
 
 CSwordGenji::CSwordGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CMonster(pGraphic_Device)
@@ -186,6 +187,12 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 	if (m_bIsDead)
 		m_bEnable = false;
 
+	if (m_bReadyDead)
+	{
+		CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle", 0.1f, m_vRightToeBase, m_vHead);
+		CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle_Sub", 0.1f, m_vRightToeBase, m_vHead);
+	}
+
 	// MonsterHP UI
 	pMonsterHpUI->Update_GameObject(TimeDelta);
 	//m_pDamegeNumUI->Update_GameObject(TimeDelta);
@@ -211,6 +218,8 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 
 	if (false == m_bReadyDead)
 		Check_PhyCollider();
+	else
+		Check_DeadEffect(TimeDelta);
 
 	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
@@ -312,9 +321,12 @@ HRESULT CSwordGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 
 	m_matLastWVP = m_pTransformCom->Get_WorldMat() * ViewMatrix * ProjMatrix;
 
-	//_mat matLightVP = g_pManagement->Get_LightViewProj();
-	//if (FAILED(pShader->Set_Value("g_LightVP_Close", &matLightVP, sizeof(_mat))))
-	//	return E_FAIL;
+	_bool bMotionBlur = true;
+	if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+		return E_FAIL;
+	_bool bDecalTarget = false;
+	if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+		return E_FAIL;
 
 	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
 
@@ -915,6 +927,14 @@ HRESULT CSwordGenji::Update_Bone_Of_BlackBoard()
 	m_vLeftHand = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftHandAttach", m_vLeftHand);
 
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
+	m_vHead = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Head", m_vHead);
+
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightToeBase");
+	m_vRightToeBase = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_RightToeBase", m_vRightToeBase);
+
 	return S_OK;
 }
 
@@ -1101,10 +1121,10 @@ void CSwordGenji::Check_PhyCollider()
 		else
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
-
-			Start_Dissolve(0.7f, false, true);
-			m_pSword->Start_Dissolve();
-			//g_pManagement->Create_Spawn_Effect(m_pTransformCom->Get_Pos());
+			Start_Dissolve(0.6f, false, true, 0.5f);
+			m_pSword->Start_Dissolve(0.6f, false, false, 0.5f);
+			m_fDeadEffect_Delay = 0.5f;
+			g_pManagement->Add_GameObject_ToLayer(L"GameObject_Haze", SCENE_STAGE, L"Layer_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.5f));
 		}
 	}
 	// 맞았을 때
@@ -1165,6 +1185,29 @@ void CSwordGenji::Push_Collider()
 			}
 		}
 	}
+}
+
+void CSwordGenji::Check_DeadEffect(_double TimeDelta)
+{
+	m_fDeadEffect_Delay -= _float(TimeDelta);
+	if (m_fDeadEffect_Delay > 0.f)
+		return;
+
+	m_fDeadEffect_Offset -= _float(TimeDelta);
+	if (m_fDeadEffect_Offset > 0.f)
+		return;
+
+	m_fDeadEffect_Offset = 0.1f;
+
+	D3DXFRAME_DERIVED* pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips");
+	_v3 vHipPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle", 0.1f, m_vRightToeBase, m_vHead);
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle_Sub", 0.1f, m_vRightToeBase, m_vHead);
+
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", m_vHead);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHipPos);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", m_vRightToeBase);
 }
 
 HRESULT CSwordGenji::Add_Component(void* pArg)
@@ -1264,7 +1307,7 @@ HRESULT CSwordGenji::SetUp_ConstantTable()
 HRESULT CSwordGenji::Ready_Weapon()
 {
 	m_pSword = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pSword->Change_WeaponData(CWeapon::WPN_SSword_Normal);
+	m_pSword->Change_WeaponData(CWeapon::Wpn_SSword_Military);
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
 	m_pSword->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
