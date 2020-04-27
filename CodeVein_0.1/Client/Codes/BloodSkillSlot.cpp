@@ -115,6 +115,7 @@ HRESULT CBloodSkillSlot::Render_GameObject()
 			iIndex = m_iIndex;
 			iPass = 1;
 		}
+		
 
 		if (FAILED(SetUp_ConstantTable(iIndex)))
 			return E_FAIL;

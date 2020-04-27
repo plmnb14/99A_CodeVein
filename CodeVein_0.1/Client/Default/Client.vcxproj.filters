@@ -379,6 +379,9 @@
     <Filter Include="02.GameObject\Stage\7%29 Item\Haze">
       <UniqueIdentifier>{c9d108fb-1149-4118-9ee2-ca3f032f5f37}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\BloodSkillCursor">
+      <UniqueIdentifier>{3799a4ea-69d8-44a0-b02a-5e7170f87bec}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -783,6 +786,9 @@
     <ClInclude Include="..\Headers\Flag.h">
       <Filter>02.GameObject\Stage\Physx</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\BloodSkillCursor.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\BloodSkillCursor</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1177,6 +1183,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Flag.cpp">
       <Filter>02.GameObject\Stage\Physx</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BloodSkillCursor.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\BloodSkillCursor</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

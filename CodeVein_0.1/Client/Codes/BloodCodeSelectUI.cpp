@@ -2,6 +2,7 @@
 #include "..\Headers\BloodCodeSelectUI.h"
 #include "UI_Manager.h"
 
+
 CBloodCodeSelectUI::CBloodCodeSelectUI(_Device pDevice)
 	: CUI(pDevice)
 {
@@ -80,6 +81,8 @@ _int CBloodCodeSelectUI::Update_GameObject(_double TimeDelta)
 		break;
 	}
 	Compute_ViewZ(&m_pTransformCom->Get_Pos());
+
+	
 	return NO_EVENT;
 }
 
@@ -240,6 +243,6 @@ void CBloodCodeSelectUI::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pRendererCom);
-
+	
 	CUI::Free();
 }

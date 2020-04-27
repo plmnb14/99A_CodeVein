@@ -52,7 +52,7 @@ Tex_Lightning3|Lightning3_%d.png|..\..\Client\Resources\Texture\Effect\Lightning
 Tex_Lightning4|Lightning4_%d.png|..\..\Client\Resources\Texture\Effect\Lightning\Lightning4\|0|16
 Tex_Lightning_NoAnim|Lightning_NoAnim_%d.png|..\..\Client\Resources\Texture\Effect\Lightning\Lightning_NoAnim\|0|3
 Tex_LinePoint|LinePoint_%d.png|..\..\Client\Resources\Texture\Effect\LinePoint\|0|8
-Tex_Mask|Mask_%d.tga|..\..\Client\Resources\Texture\Effect\Mask\|0|16
+Tex_Mask|Mask_%d.tga|..\..\Client\Resources\Texture\Effect\Mask\|0|17
 Tex_Noise|Noise_%d.tga|..\..\Client\Resources\Texture\Effect\Noise\|0|25
 Tex_Normal|Normal_%d.tga|..\..\Client\Resources\Texture\Effect\Normal\|0|10
 Tex_Crystals|Crystals_%d.png|..\..\Client\Resources\Texture\Effect\Particle\Crystals\|0|16
@@ -83,7 +83,8 @@ Tex_BloodCodeIcon|BloodCodeIcon%d.tga|..\..\Client\Resources\Texture\TestUI\Bloo
 Tex_BloodCodeMenuUI|BloodCodeMenuUI%d.png|..\..\Client\Resources\Texture\TestUI\BloodCodeMenuUI\|0|13
 Tex_BloodCodeOwner|BloodCodeMenuUI%d.png|..\..\Client\Resources\Texture\TestUI\BloodCodeOwner\|0|12
 Tex_BloodCodeSelectUI|BloodCodeSelectUI%d.png|..\..\Client\Resources\Texture\TestUI\BloodCodeSelectUI\|0|5
-Tex_BloodSkillSlot|BloodSkillSlot%d.tga|..\..\Client\Resources\Texture\TestUI\BloodSkillSlot\|0|15
+Tex_BloodSkillCursor|BloodSkillCursor%d.tga|..\..\Client\Resources\Texture\TestUI\BloodSkillCursor\|0|2
+Tex_BloodSkillSlot|BloodSkillSlot%d.tga|..\..\Client\Resources\Texture\TestUI\BloodSkillSlot\|0|17
 Tex_BossUI|BossUI%d.png|..\..\Client\Resources\Texture\TestUI\BossUI\|0|3
 Tex_ButtonUI|ButtonUI%d.tga|..\..\Client\Resources\Texture\TestUI\ButtonUI\|0|9
 Tex_ClickUI|ClickUI%d.png|..\..\Client\Resources\Texture\TestUI\ClickUI\|0|1

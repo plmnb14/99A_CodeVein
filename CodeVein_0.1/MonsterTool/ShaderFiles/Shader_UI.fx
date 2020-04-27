@@ -16,6 +16,17 @@ sampler		DiffuseSampler = sampler_state
 	mipfilter = linear;
 };
 
+texture		g_MaskTexture;
+
+sampler		MaskSampler = sampler_state
+{
+	texture = g_MaskTexture;
+	minfilter = linear;
+	magfilter = linear;
+	mipfilter = linear;
+};
+
+
 // 정점세개를 그리낟.
 
 // 각가의 정점을 vsmain함수의 인자로 던진다.
@@ -192,6 +203,20 @@ PS_OUT PS_UI_MASK(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_UI_MASK2(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	float2 DiffuseUV = In.vTexUV;
+	DiffuseUV.y += g_fSpeed;
+
+	Out.vColor = tex2D(DiffuseSampler, DiffuseUV);
+
+	Out.vColor *= tex2D(MaskSampler, In.vTexUV).r;
+
+	return Out;
+}
+
 technique Default_Technique
 {
 	pass Default_Rendering
@@ -281,5 +306,14 @@ technique Default_Technique
 
 		vertexshader = compile vs_3_0 VS_MAIN();
 		pixelshader = compile ps_3_0 PS_UI_MASK();
+	}
+	pass	UI_R_Masking_Rendering
+	{
+		AlphaBlendEnable = true;
+		srcblend = srcalpha;
+		destblend = invsrcalpha;
+
+		vertexshader = compile vs_3_0 VS_MAIN();
+		pixelshader = compile ps_3_0 PS_UI_MASK2();
 	}
 }

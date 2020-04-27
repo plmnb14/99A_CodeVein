@@ -63,6 +63,7 @@ _int CStageSelectUI::Update_GameObject(_double TimeDelta)
 	for (_uint i = 0; i < m_vecStageUI.size(); ++i)
 	{
 		TARGET_TO_TRANS(m_vecStageUI[i])->Set_Pos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookX) * 1.8f * _float(i));
+		TARGET_TO_TRANS(m_vecStageUI[i])->Set_Angle(m_pTransformCom->Get_Angle());
 	}
 	
 	

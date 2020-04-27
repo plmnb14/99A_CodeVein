@@ -52,6 +52,10 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 		++idx;
 	}
 
+	TARGET_TO_TRANS(m_pBloodSkillCursor)->Set_Pos(m_vSlotPosition);
+	TARGET_TO_TRANS(m_pBloodSkillCursor)->Set_Angle(m_pTransformCom->Get_Angle());
+	m_pBloodSkillCursor->Set_Active(m_bIsActive);
+	
 	switch (m_eBloodCodeType)
 	{
 	case BloodCode_Fighter:
@@ -180,6 +184,10 @@ void CSkillReleaseUI::SetUp_Default()
 		m_vecSkillSlot.push_back(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_StageUI", nullptr);
 	}
+
+	m_pBloodSkillCursor = static_cast<CBloodSkillCursor*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodSkillCursor", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBloodSkillCursor, SCENE_STAGE, L"Layer_StageUI", nullptr);
+	TARGET_TO_TRANS(m_pBloodSkillCursor)->Set_Scale(_v3(0.5f, 0.5f, 0.f));
 }
 
 CSkillReleaseUI * CSkillReleaseUI::Create(_Device pGraphic_Device)

@@ -2,6 +2,7 @@
 #include "..\Headers\BloodCodeMenuUI.h"
 #include "Player.h"
 #include "UI_Manager.h"
+#include "CollisionMgr.h"
 
 CBloodCodeMenuUI::CBloodCodeMenuUI(_Device pDevice)
 	: CUI(pDevice)
@@ -67,10 +68,7 @@ _int CBloodCodeMenuUI::Update_GameObject(_double TimeDelta)
 	m_pSkillReleaseUI->Set_Active(m_bIsActive);
 	m_pSkillReleaseUI->Set_SlotPos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookZ) * -0.0006f);
 	
-	if (g_pInput_Device->Key_Up(DIK_RIGHT))
-	{
-		m_pBloodCodeSelectUI->MoveRight();	
-	}
+	
 	
 
 	if (!m_bIsActive)
@@ -97,6 +95,10 @@ _int CBloodCodeMenuUI::Update_GameObject(_double TimeDelta)
 			{
 				m_pBloodCodeSelectUI->MoveLeft();
 			}
+			if (g_pInput_Device->Key_Up(DIK_RIGHT))
+			{
+				m_pBloodCodeSelectUI->MoveRight();
+			}
 			if (g_pInput_Device->Key_Up(DIK_RETURN))
 			{
 
@@ -108,7 +110,7 @@ _int CBloodCodeMenuUI::Update_GameObject(_double TimeDelta)
 		}
 	}
 	
-	
+
 	
 	return NO_EVENT;
 }
@@ -169,6 +171,8 @@ HRESULT CBloodCodeMenuUI::Add_Component()
 	// for.Com_VIBuffer
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Rect", L"Com_VIBuffer", (CComponent**)&m_pBufferCom)))
 		return E_FAIL;
+
+	
 
 	return NOERROR;
 }

@@ -5,6 +5,7 @@
 
 BEGIN(Client)
 class CBloodSkillSlot;
+class CBloodSkillCursor;
 class CSkillReleaseUI final : public CUI
 {
 private:
@@ -39,6 +40,7 @@ private:
 	vector<CBloodSkillSlot*> m_vecSkillSlot;
 	BloodCode_ID			m_eBloodCodeType;
 	_v3						m_vSlotPosition;
+	CBloodSkillCursor*		m_pBloodSkillCursor = nullptr;
 
 public:
 	static CSkillReleaseUI*		Create(_Device pGraphic_Device);

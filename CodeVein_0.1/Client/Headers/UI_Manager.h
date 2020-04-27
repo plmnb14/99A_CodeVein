@@ -48,6 +48,7 @@
 #include "BloodCodeSelectUI.h"
 #include "SkillReleaseUI.h"
 #include "BloodSkillSlot.h"
+#include "BloodSkillCursor.h"
 
 BEGIN(Client)
 class CStatusUI;
