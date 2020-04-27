@@ -538,6 +538,17 @@ void CWeapon::Clear_CollisionRecordList()
 	}
 }
 
+_v3 CWeapon::Get_HeadPos()
+{
+	_mat matWorld = m_pTransform->Get_Info().matWorld;
+	_v3 vPos = _v3(matWorld._41, matWorld._42, matWorld._43);
+	_v3 vLook = _v3(matWorld._31, matWorld._32, matWorld._33);
+
+	m_vHeadPos = vPos + vLook * (0.4f + m_tWeaponParam[m_eWeaponData].fCol_Height);
+
+	return m_vHeadPos;
+}
+
 HRESULT CWeapon::Add_Component()
 {
 	// For.Com_Transform

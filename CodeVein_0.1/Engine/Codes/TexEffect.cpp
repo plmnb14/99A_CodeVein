@@ -752,9 +752,9 @@ HRESULT CTexEffect::SetUp_ConstantTable(CShader* pShader)
 	D3DXMatrixInverse(&ViewMatrix, nullptr, &ViewMatrix);
 	D3DXMatrixInverse(&ProjMatrix, nullptr, &ProjMatrix);
 
-	if (FAILED(pShader->Set_Value("g_matProjInv", &ViewMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matProjInv", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matViewInv", &ProjMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matViewInv", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
 
 	if (FAILED(pShader->Set_Value("g_fDistortion", &m_pInfo->fDistortionPower, sizeof(_float))))

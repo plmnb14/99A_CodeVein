@@ -708,18 +708,12 @@ HRESULT CDecalEffect::SetUp_ConstantTable(CShader* pShader)
 	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
 
-	
-
 	D3DXMatrixInverse(&ViewMatrix, nullptr, &ViewMatrix);
 	D3DXMatrixInverse(&ProjMatrix, nullptr, &ProjMatrix);
 
-	if (FAILED(pShader->Set_Value("g_matProjInv", &ViewMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matViewInv", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matViewInv", &ProjMatrix, sizeof(_mat))))
-		return E_FAIL;
-
-	_v4 vInvProj = *D3DXVec4Transform(&vInvProj, &vInvProj, &ProjMatrix);
-	if (FAILED(pShader->Set_Value("g_vInvProj", &vInvProj, sizeof(_v4))))
+	if (FAILED(pShader->Set_Value("g_matProjInv", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
 
 	if (FAILED(pShader->Set_Value("g_fDistortion", &m_pInfo->fDistortionPower, sizeof(_float))))
@@ -755,8 +749,8 @@ HRESULT CDecalEffect::SetUp_ConstantTable(CShader* pShader)
 	if (FAILED(m_pColorTextureCom->SetUp_OnShader("g_ColorTexture", pShader, _uint(m_pInfo->fColorIndex))))
 		return E_FAIL;
 
-	pShader->Set_Texture("g_DepthTexture", pManagement->Get_Target_Texture(L"Target_Depth"));
-
+	pShader->Set_Texture("g_DepthTexture", pManagement->Get_Target_Texture(L"Target_DecalDepth"));
+	
 	Safe_Release(pManagement);
 
 	return NOERROR;

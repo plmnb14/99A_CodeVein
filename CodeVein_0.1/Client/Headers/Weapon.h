@@ -58,6 +58,8 @@ public:
 
 public:
 	virtual WEAPON_STATE	Get_WeaponType() { return m_eWeaponType; }
+	// 이펙트 생성될 위치
+	_v3						Get_HeadPos();
 
 public:
 	// 무기를 붙일 뼈의 메트릭스 주소를 받습니다.
@@ -98,6 +100,7 @@ private:
 	_float					m_fTrailHeight_Max = 1.f;		// 트레일 끝점 보정수치
 	_float					m_fSkillPercent = 1.f;
 
+	_v3						m_vHeadPos = V3_NULL;
 
 private:
 	_tchar					m_szName[MAX_STR] = L"";
