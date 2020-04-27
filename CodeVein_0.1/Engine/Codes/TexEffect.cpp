@@ -124,8 +124,8 @@ HRESULT CTexEffect::LateInit_GameObject()
 		!lstrcmp(L"Player_Skill_Rush_Particle_Yellow", m_szParticleName) ||
 		!lstrcmp(L"Player_Skill_Rush_Particle_Orange", m_szParticleName) ||
 		!lstrcmp(L"Player_Skill_Rush_Particle_White", m_szParticleName) ||
-		!lstrcmp(L"SpawnParticle", m_szParticleName) ||
-		!lstrcmp(L"SpawnParticle_Sub", m_szParticleName) ||
+		//!lstrcmp(L"SpawnParticle", m_szParticleName) ||
+		//!lstrcmp(L"SpawnParticle_Sub", m_szParticleName) ||
 		!lstrcmp(L"SpawnParticle_ForBoss", m_szParticleName) ||
 		!lstrcmp(L"SpawnParticle_ForBoss_Point", m_szParticleName) ||
 		!lstrcmp(L"SpawnParticle_ForBoss_Point_Sub", m_szParticleName) ||

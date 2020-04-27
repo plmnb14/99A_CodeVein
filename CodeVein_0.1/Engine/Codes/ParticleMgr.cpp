@@ -73,6 +73,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Player_Skill_BloodTornadeMesh_2", 60);
 	Input_Pool(L"Player_Skill_BloodTornadeMesh_3", 60);
 	Input_Pool(L"Player_Skill_BloodConeMesh", 60);
+	Input_Pool(L"Player_Skill_BloodConeMesh_Explosion", 60);
 	Input_Pool(L"Player_Skill_Rush_Particle_Yellow"	, 300);
 	Input_Pool(L"Player_Skill_Rush_Particle_Orange"	, 300);
 	Input_Pool(L"Player_Skill_Rush_Particle_White"	, 300);
