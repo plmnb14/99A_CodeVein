@@ -121,3 +121,15 @@ struct MONSTER_STATUS
 		eUseWhatWeapon = _eWeapon;
 	}
 };
+
+struct PET_STATUS
+{
+	MONSTER_GRADETYPE	eUseWhatGrade = MONSTER_GRADETYPE::GRADE_NORMAL;
+	WEAPON_STATE		eUseWhatWeapon = WEAPON_STATE::WEAPON_None;
+
+	PET_STATUS(MONSTER_GRADETYPE _eGrade, WEAPON_STATE _eWeapon)
+	{
+		eUseWhatGrade = _eGrade;
+		eUseWhatWeapon = _eWeapon;
+	}
+};

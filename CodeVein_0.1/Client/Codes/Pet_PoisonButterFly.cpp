@@ -414,13 +414,13 @@ void CPet_PoisonButterFly::Check_Dist()
 				//사회적 거리두기
 				if (m_fPersonalRange >= fPlayerDist)
 				{
-					cout << "타겟없음, Player와의 사회적 거리두기를 실천하십시오" << endl;
+					cout << m_fSkillMoveSpeed_Cur<<m_fSkillMoveMultiply<<"이동속도, 감속도"<< "타겟없음, Player와의 사회적 거리두기를 실천하십시오" << endl;
 					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 					m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
 				}
 				else
 				{
-					cout << "타겟없음, player 근처로 걸어갑니다" << endl;
+					cout << m_fSkillMoveSpeed_Cur << m_fSkillMoveMultiply << "이동속도, 감속도" << "타겟없음, player 근처로 걸어갑니다" << endl;
 					m_bCanMoveAround = false;
 					m_eFirstCategory = MONSTER_STATETYPE::MOVE;
 					m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_WALK;
@@ -633,16 +633,16 @@ void CPet_PoisonButterFly::Play_Shot()
 		{
 			if (false == m_bEventTrigger[0])
 			{
-				m_bEventTrigger[0] = true;
-				m_tObjParam.bSuperArmor = true;
+				//m_bEventTrigger[0] = true;
+				//m_tObjParam.bSuperArmor = true;
 
-				_mat matTemp = *m_matBone[Bone_Head] * m_pTransformCom->Get_WorldMat(); //뼈위치* 월드
+				//_mat matTemp = *m_matBone[Bone_Head] * m_pTransformCom->Get_WorldMat(); //뼈위치* 월드
 
-				memcpy(&vBirth, &matTemp._41, sizeof(_v3)); //생성위치
-				memcpy(&vLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
-				vBirth += (vLook * fLength); //생성위치 = 생성위치 +(룩*길이)
+				//memcpy(&vBirth, &matTemp._41, sizeof(_v3)); //생성위치
+				//memcpy(&vLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
+				//vBirth += (vLook * fLength); //생성위치 = 생성위치 +(룩*길이)
 
-				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
+				//g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
 			}
 		}
 		else if (0.f <= AniTime)

@@ -239,29 +239,26 @@ void CPet::Function_CalcMoveSpeed(_float _fMidDist)
 
 void CPet::Function_Find_Target(_float _fDist)
 {
-	if (!g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE).empty())
-	{
-		auto& MonsterContainer = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
+	auto& MonsterContainer = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
 
-		for (auto& Monster_iter : MonsterContainer)
+	for (auto& Monster_iter : MonsterContainer)
+	{
+		if (false == Monster_iter->Get_Enable())
+			continue;
+		else if(true == Monster_iter->Get_Dead())
+			continue;
+		else if(nullptr == Monster_iter)
+			continue;
+		//몬스터가 존재한다면
+		else
 		{
-			if (false == Monster_iter->Get_Enable())
-				continue;
-			else if(true == Monster_iter->Get_Dead())
-				continue;
-			else if(nullptr == Monster_iter)
-				continue;
-			//몬스터가 존재한다면
-			else
+			if (_fDist >= V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransformCom->Get_Pos())))
 			{
-				if (_fDist >= V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransformCom->Get_Pos())))
-				{
-					m_eTarget = TARGET_TYPE::TARGET_MONSTER;
-					m_pTarget = Monster_iter;
-				}
-				else
-					continue;
+				m_eTarget = TARGET_TYPE::TARGET_MONSTER;
+				m_pTarget = Monster_iter;
 			}
+			else
+				continue;
 		}
 	}
 	else if (!g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE).empty())

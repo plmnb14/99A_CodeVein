@@ -1,7 +1,6 @@
 #include "..\Headers\ObjectPool.h"
 #include "..\Headers\Management.h"
 
-
 CObjectPool::CObjectPool()
 {
 }
@@ -41,7 +40,7 @@ _int CObjectPool::Update_ObjectPool(_double dTimeDelta)
 
 	}
 
-	return _int();
+	return NO_EVENT;
 }
 
 _int CObjectPool::LateUpdate_ObjectPool(_double dTimeDelta)
@@ -49,7 +48,7 @@ _int CObjectPool::LateUpdate_ObjectPool(_double dTimeDelta)
 	for (auto& Object : m_listRunningObject)
 		Object->Late_Update_GameObject(dTimeDelta);
 
-	return _int();
+	return NO_EVENT;
 }
 
 void CObjectPool::Create_Object(void * pArg)
@@ -63,6 +62,8 @@ void CObjectPool::Create_Object(void * pArg)
 		m_listRunningObject.push_back(pInstance);
 		m_Container.pop();
 	}
+
+	return;
 }
 
 CObjectPool * CObjectPool::Create_ObjectPool(const _tchar* pPrototypeTag, _uint iPoolSize)
@@ -80,16 +81,18 @@ CObjectPool * CObjectPool::Create_ObjectPool(const _tchar* pPrototypeTag, _uint 
 
 void CObjectPool::Free()
 {
-	_int iQueueSize = m_Container.size();
+	_int iQueueSize = (_int)m_Container.size();
+
 	for (_int i = 0; i < iQueueSize; ++i)
 	{
 		Safe_Release(m_Container.front());
 		m_Container.pop();
 	}
 
-
 	for (auto& i : m_listRunningObject)
 		Safe_Release(i);
+
 	m_listRunningObject.clear();
 
+	return;
 }
