@@ -16,6 +16,7 @@
 
 #include "Player_Colleague.h"
 
+
 CScene_Stage_Training::CScene_Stage_Training(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
 {
@@ -49,6 +50,7 @@ _int CScene_Stage_Training::Update_Scene(_double TimeDelta)
 	//Create_Fog(TimeDelta);
 	Create_Snow(TimeDelta);
 
+	
 	return _int();
 }
 

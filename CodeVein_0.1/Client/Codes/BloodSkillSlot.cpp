@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\BloodSkillSlot.h"
-
+#include "UI_Manager.h"
 
 CBloodSkillSlot::CBloodSkillSlot(_Device pDevice)
 	: CUI(pDevice)
@@ -23,6 +23,8 @@ HRESULT CBloodSkillSlot::Ready_GameObject(void * pArg)
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
+
+	SetUp_Default();
 	return NOERROR;
 }
 
@@ -31,7 +33,9 @@ _int CBloodSkillSlot::Update_GameObject(_double TimeDelta)
 	CUI::Update_GameObject(TimeDelta);
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
-	
+	m_pCollider->Update(m_pTransformCom->Get_Pos());
+
+	m_fSpeed += _float(TimeDelta) * 1.f;
 
 	switch (m_eSkillIndex)
 	{
@@ -79,6 +83,11 @@ _int CBloodSkillSlot::Update_GameObject(_double TimeDelta)
 		break;
 	}
 	Compute_ViewZ(&m_pTransformCom->Get_Pos());
+
+	m_pCursor->Set_Active(m_bIsActive && m_bIsSelect);
+	TARGET_TO_TRANS(m_pCursor)->Set_Pos(m_pTransformCom->Get_Pos());
+	TARGET_TO_TRANS(m_pCursor)->Set_Angle(m_pTransformCom->Get_Angle());
+	
 	return NO_EVENT;
 }
 
@@ -103,31 +112,20 @@ HRESULT CBloodSkillSlot::Render_GameObject()
 
 	_uint iIndex = 0;
 	_uint iPass = 0;
-	LOOP(2)
-	{
-		if (0 == i)
-		{
-			iIndex = 14;
-			iPass = 1;
-		}
-		else if(1 == i)
-		{
-			iIndex = m_iIndex;
-			iPass = 1;
-		}
-		
-
-		if (FAILED(SetUp_ConstantTable(iIndex)))
-			return E_FAIL;
-
-		m_pShaderCom->Begin_Shader();
-		m_pShaderCom->Begin_Pass(iPass);
-
-		m_pBufferCom->Render_VIBuffer();
-		m_pShaderCom->End_Pass();
-		m_pShaderCom->End_Shader();
-	}
 	
+		
+	iIndex = m_iIndex;
+	iPass = 1;
+	
+	if (FAILED(SetUp_ConstantTable(iIndex)))
+		return E_FAIL;
+
+	m_pShaderCom->Begin_Shader();
+	m_pShaderCom->Begin_Pass(iPass);
+
+	m_pBufferCom->Render_VIBuffer();
+	m_pShaderCom->End_Pass();
+	m_pShaderCom->End_Shader();
 
 	return S_OK;
 }
@@ -154,6 +152,14 @@ HRESULT CBloodSkillSlot::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Rect", L"Com_VIBuffer", (CComponent**)&m_pBufferCom)))
 		return E_FAIL;
 
+	// for.Com_Collider
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+		return E_FAIL;
+	m_pCollider->Set_Radius(_v3{ 0.15f, 0.15f, 0.15f });
+	m_pCollider->Set_Dynamic(true);
+	m_pCollider->Set_Type(COL_SPHERE);
+	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos());
+
 	return NOERROR;
 }
 
@@ -162,6 +168,7 @@ HRESULT CBloodSkillSlot::SetUp_ConstantTable(_uint iIndex)
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
+	
 	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
@@ -172,6 +179,13 @@ HRESULT CBloodSkillSlot::SetUp_ConstantTable(_uint iIndex)
 		return E_FAIL;
 
 	return NOERROR;
+}
+
+void CBloodSkillSlot::SetUp_Default()
+{
+	m_pCursor = static_cast<CBloodSkillCursor*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodSkillCursor", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pCursor, SCENE_STAGE, L"Layer_StageUI", nullptr);
+	TARGET_TO_TRANS(m_pCursor)->Set_Scale(_v3(0.5f, 0.5f, 0.5f));
 }
 
 CBloodSkillSlot * CBloodSkillSlot::Create(_Device pGraphic_Device)
@@ -201,6 +215,7 @@ void CBloodSkillSlot::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pCollider);
 
 	CUI::Free();
 }

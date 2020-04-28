@@ -28,6 +28,8 @@ private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable(_uint iIndex);
 	void	SetUp_Default();
+	void	Click_SkillSlot();
+	void	Reset_Select();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -40,7 +42,7 @@ private:
 	vector<CBloodSkillSlot*> m_vecSkillSlot;
 	BloodCode_ID			m_eBloodCodeType;
 	_v3						m_vSlotPosition;
-	CBloodSkillCursor*		m_pBloodSkillCursor = nullptr;
+	_float					m_fCross = 100.f;
 
 public:
 	static CSkillReleaseUI*		Create(_Device pGraphic_Device);

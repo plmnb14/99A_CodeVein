@@ -79,10 +79,10 @@ Tex_Water|Water_%d.tga|..\..\Client\Resources\Texture\Effect\Water\|0|1
 Tex_ActiveUI|ActiveUI%d.tga|..\..\Client\Resources\Texture\TestUI\ActiveUI\|0|18
 Tex_Armor_Icon|Armor_Icon%d.png|..\..\Client\Resources\Texture\TestUI\Armor_Icon\|0|5
 Tex_Bayonet_Icon|Bayonet_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Bayonet_Icon\|0|3
-Tex_BloodCodeIcon|BloodCodeIcon%d.tga|..\..\Client\Resources\Texture\TestUI\BloodCodeIcon\|0|7
+Tex_BloodCodeIcon|BloodCodeIcon%d.tga|..\..\Client\Resources\Texture\TestUI\BloodCodeIcon\|0|9
 Tex_BloodCodeMenuUI|BloodCodeMenuUI%d.png|..\..\Client\Resources\Texture\TestUI\BloodCodeMenuUI\|0|13
 Tex_BloodCodeOwner|BloodCodeMenuUI%d.png|..\..\Client\Resources\Texture\TestUI\BloodCodeOwner\|0|12
-Tex_BloodCodeSelectUI|BloodCodeSelectUI%d.png|..\..\Client\Resources\Texture\TestUI\BloodCodeSelectUI\|0|5
+Tex_BloodCodeSelectUI|BloodCodeSelectUI%d.png|..\..\Client\Resources\Texture\TestUI\BloodCodeSelectUI\|0|6
 Tex_BloodSkillCursor|BloodSkillCursor%d.tga|..\..\Client\Resources\Texture\TestUI\BloodSkillCursor\|0|2
 Tex_BloodSkillSlot|BloodSkillSlot%d.tga|..\..\Client\Resources\Texture\TestUI\BloodSkillSlot\|0|17
 Tex_BossUI|BossUI%d.png|..\..\Client\Resources\Texture\TestUI\BossUI\|0|3

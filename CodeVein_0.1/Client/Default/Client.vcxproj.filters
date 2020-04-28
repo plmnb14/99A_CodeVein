@@ -382,6 +382,12 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\BloodSkillCursor">
       <UniqueIdentifier>{3799a4ea-69d8-44a0-b02a-5e7170f87bec}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\06.BloodCode_Inven">
+      <UniqueIdentifier>{ae5437ba-d67c-4802-9a61-2c2d8d34964b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\09. BloodCodeUI">
+      <UniqueIdentifier>{9de20518-f4f0-4698-8b19-40542809fe4b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -789,6 +795,12 @@
     <ClInclude Include="..\Headers\BloodSkillCursor.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\BloodSkillCursor</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\BloodCode_Inven.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\06.BloodCode_Inven</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BloodCodeUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\09. BloodCodeUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1186,6 +1198,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\BloodSkillCursor.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\BloodSkillCursor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BloodCode_Inven.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\06.BloodCode_Inven</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BloodCodeUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\09. BloodCodeUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

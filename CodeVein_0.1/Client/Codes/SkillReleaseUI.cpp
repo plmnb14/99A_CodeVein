@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\SkillReleaseUI.h"
 #include "UI_Manager.h"
+#include "CollisionMgr.h"
 
 CSkillReleaseUI::CSkillReleaseUI(_Device pDevice)
 	: CUI(pDevice)
@@ -52,9 +53,7 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 		++idx;
 	}
 
-	TARGET_TO_TRANS(m_pBloodSkillCursor)->Set_Pos(m_vSlotPosition);
-	TARGET_TO_TRANS(m_pBloodSkillCursor)->Set_Angle(m_pTransformCom->Get_Angle());
-	m_pBloodSkillCursor->Set_Active(m_bIsActive);
+	
 	
 	switch (m_eBloodCodeType)
 	{
@@ -96,6 +95,9 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 	}
 
 	Compute_ViewZ(&m_pTransformCom->Get_Pos());
+
+	Click_SkillSlot();
+
 	return NO_EVENT;
 }
 
@@ -185,9 +187,33 @@ void CSkillReleaseUI::SetUp_Default()
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_StageUI", nullptr);
 	}
 
-	m_pBloodSkillCursor = static_cast<CBloodSkillCursor*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodSkillCursor", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBloodSkillCursor, SCENE_STAGE, L"Layer_StageUI", nullptr);
-	TARGET_TO_TRANS(m_pBloodSkillCursor)->Set_Scale(_v3(0.5f, 0.5f, 0.f));
+	
+}
+
+void CSkillReleaseUI::Click_SkillSlot()
+{
+	if (!m_bIsActive)
+		return;
+
+	for (auto& iter : m_vecSkillSlot)
+	{
+		if (CCollisionMgr::Collision_Ray(iter, g_pInput_Device->Get_Ray(), &m_fCross))
+		{
+			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+			{
+				Reset_Select();
+				iter->Set_Select(true);
+			}
+				
+		}
+		
+	}
+}
+
+void CSkillReleaseUI::Reset_Select()
+{
+	for (auto& iter : m_vecSkillSlot)
+		iter->Set_Select(false);
 }
 
 CSkillReleaseUI * CSkillReleaseUI::Create(_Device pGraphic_Device)
