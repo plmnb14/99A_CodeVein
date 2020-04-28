@@ -37,6 +37,8 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
 
+
+	Check_MyHit();
 	Check_Do_List();
 	Set_AniEvent();
 
@@ -44,7 +46,7 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 
 	Update_Collider();
 
-	cout << "상태: " << m_eMovetype << ", " << "움직임: " << m_eColl_Movement << ", " << m_eColl_AttackMoment << endl;
+	cout << "상태: " << m_eMovetype << ", " << "움직임: " << m_eColl_MoveMent << ", " << m_eColl_AttackMoment << endl;
 
 	return S_OK;
 }
@@ -302,7 +304,7 @@ void CPlayer_Colleague::Check_Do_List()
 
 	if (!(m_List_pMonTarget[0]->empty()))
 		fMinPos = 2000000.f;
-	
+
 	for (auto& iter : *m_List_pMonTarget[0])
 	{
 		if (false == iter->Get_Enable())
@@ -320,7 +322,7 @@ void CPlayer_Colleague::Check_Do_List()
 				continue;
 			}
 		}
-		
+
 
 
 		fMonLength = D3DXVec3Length(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(iter)->Get_Pos()));
@@ -339,7 +341,7 @@ void CPlayer_Colleague::Check_Do_List()
 				}
 
 			/*if (false == iter->Get_Enable())
-				continue;*/
+			continue;*/
 
 			if (nullptr == iter)
 				continue;
@@ -355,12 +357,12 @@ void CPlayer_Colleague::Check_Do_List()
 					m_bMonDead = false;
 				}
 			}
-			
+
 
 			if (nullptr == m_pObject_Mon)
 				continue;
 		}
-		else if(!(fMinPos > fMonLength) && false == iter->Get_Dead())
+		else if (!(fMinPos > fMonLength) && false == iter->Get_Dead())
 		{
 			if (true == iter->Get_Dead())
 				if (m_pObject_Mon == iter)
@@ -374,7 +376,7 @@ void CPlayer_Colleague::Check_Do_List()
 				}
 
 			/*	if (false == iter->Get_Enable())
-					continue;*/
+			continue;*/
 
 			if (nullptr == iter)
 				continue;
@@ -430,12 +432,12 @@ void CPlayer_Colleague::Check_Do_List()
 			if (fMyPlayerLength >= 5.f)
 			{
 				m_eMovetype = CPlayer_Colleague::Coll_Move;
-				m_eColl_Movement = CPlayer_Colleague::Move_Run;
+				m_eColl_MoveMent = CPlayer_Colleague::Move_Run;
 			}
 			else if (fMyPlayerLength > 2.f && fMyPlayerLength < 5.f)
 			{
 				m_eMovetype = CPlayer_Colleague::Coll_Move;
-				m_eColl_Movement = CPlayer_Colleague::Move_Walk;
+				m_eColl_MoveMent = CPlayer_Colleague::Move_Walk;
 			}
 		}
 		if (false == m_bStart_Fighting && false == m_bNear_byMonster && fMyPlayerLength < 2.f)
@@ -450,6 +452,52 @@ void CPlayer_Colleague::Check_Do_List()
 		m_pTransformCom->Set_Pos(_v3(m_pTargetTransformCom->Get_Pos().x - 3.f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 2.f));
 	}
 
+
+}
+
+void CPlayer_Colleague::Check_MyHit()
+{
+	if (m_eMovetype == CPlayer_Colleague::Coll_Dead)
+		return;
+
+	if (0 < m_tObjParam.fHp_Cur)
+	{
+		if (false == m_tObjParam.bCanHit)
+		{
+			if (false == m_tObjParam.bSuperArmor)
+			{
+				++m_iDodgeCount;
+
+				if (m_iDodgeCount >= m_iDodgeCountMax)
+				{
+					m_iDodgeCount = 0;
+					m_tObjParam.bCanDodge = true;
+					m_eMovetype = CPlayer_Colleague::Coll_Dodge;
+					m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_FrontRoll;
+					m_pDynamicMesh->Reset_OldIndx();
+					Funtion_RotateBody();
+				}
+				else
+				{
+					if (true == m_tObjParam.bIsHit)
+					{
+						if (true == m_tObjParam.bHitAgain)
+						{
+							m_eMovetype = CPlayer_Colleague::Coll_Hit;
+							m_tObjParam.bHitAgain = false;
+							m_pDynamicMesh->Reset_OldIndx();
+						}
+					}
+					else
+					{
+						m_eMovetype = Colleague_MoveType::Coll_Hit;
+					}
+				}
+			}
+		}
+	}
+	else
+		m_eMovetype = CPlayer_Colleague::Coll_Dead;
 
 }
 
@@ -477,7 +525,7 @@ void CPlayer_Colleague::Set_AniEvent()
 	}
 	case CPlayer_Colleague::Coll_Move:
 	{
-		switch (m_eColl_Movement)
+		switch (m_eColl_MoveMent)
 		{
 		case Client::CPlayer_Colleague::Move_Walk:
 		{
@@ -508,12 +556,6 @@ void CPlayer_Colleague::Set_AniEvent()
 		case CPlayer_Colleague::Move_MonRun:
 		{
 			CollMove_MonRun();
-			break;
-		}
-		case CPlayer_Colleague::Move_Dodge:
-		{
-			// 이건 회피
-			CollMove_Dodge();
 			break;
 		}
 		}
@@ -605,6 +647,23 @@ void CPlayer_Colleague::Set_AniEvent()
 		break;
 		}
 	}
+	case CPlayer_Colleague::Coll_Dodge:
+	{
+		switch (m_eColl_DodgeMoment)
+		{
+		case Client::CPlayer_Colleague::Dodge_FrontRoll:
+		{
+			CollDodge_FrontRoll();
+			break;
+		}
+		case Client::CPlayer_Colleague::Dodge_BackRoll:
+		{
+
+			break;
+		}
+		}
+		break;
+	}
 	case CPlayer_Colleague::Coll_Hit:
 	{
 		Colleague_Hit();
@@ -638,8 +697,8 @@ HRESULT CPlayer_Colleague::SetUp_Default()
 	m_List_pMonTarget[0] = &(g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE));
 	m_List_pMonTarget[1] = &(g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE));
 
-	m_tObjParam.fHp_Cur = 1000.f;
-	m_tObjParam.fHp_Max = 1000.f;
+	m_tObjParam.fHp_Cur = 5000.f;
+	m_tObjParam.fHp_Max = 5000.f;
 	m_tObjParam.fDamage = 10.f;
 
 	m_tObjParam.bCanHit = true;		// 맞을 수 있는지
@@ -696,6 +755,8 @@ void CPlayer_Colleague::Colleague_Guard()
 void CPlayer_Colleague::Colleague_Hit()
 {
 	// 맞았다!
+
+	return;
 }
 
 void CPlayer_Colleague::CollMove_Walk()
@@ -761,7 +822,7 @@ void CPlayer_Colleague::CollMove_MonRun()
 	m_eColleague_Ani = CPlayer_Colleague::Ani_Front_Run;
 }
 
-void CPlayer_Colleague::CollMove_Dodge()
+void CPlayer_Colleague::CollDodge_FrontRoll()
 {
 	// 구르기나 피할 수 있는 요소를 담을 함수
 }
@@ -804,7 +865,7 @@ void CPlayer_Colleague::CollAtt_Normal()
 			m_pObject_Mon = iter;
 			fMonLenght = V3_LENGTH(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(iter)->Get_Pos()));
 		}
-		
+
 
 		if (0 != fMonLenght)
 			m_bNot_AttcaingMon = false;
@@ -912,8 +973,8 @@ void CPlayer_Colleague::CollAtt_Normal()
 void CPlayer_Colleague::CollAtt_Base1()
 {
 	_double		AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
-	
-	
+
+
 
 	if (true == m_tObjParam.bCanAttack)
 	{
@@ -965,43 +1026,43 @@ void CPlayer_Colleague::CollAtt_Base1()
 
 		/*for (auto& iter : *m_List_pMonTarget[0])
 		{
-			if (iter == m_pObject_Mon && true == iter->Get_Dead())
-			{
-				m_pObject_Mon = nullptr;
-				continue;
-			}
-			else if (iter == m_pObject_Mon)
-			{
-				if (true == iter->Get_Target_IsHit())
-				{
-					++m_iNormalAtt_Count;
-					m_bMyHiting = true;
-					m_bBase_Att[0] = true;
-					m_bChecking_MyHit = true;
-					m_fCoolTimer_limit = 0.05f;
-					Function_Checking_CoolTime(m_fCoolTimer_limit);
-				}
-				else
-				{
-					m_bChecking_MyHit = false;
-					m_bMyHiting = false;
-					m_bBase_Att[0] = false;
-					m_bBase_Att[1] = false;
-					m_bBase_Att[2] = false;
-					m_bBase_Att[3] = false;
-				}
-			}
+		if (iter == m_pObject_Mon && true == iter->Get_Dead())
+		{
+		m_pObject_Mon = nullptr;
+		continue;
+		}
+		else if (iter == m_pObject_Mon)
+		{
+		if (true == iter->Get_Target_IsHit())
+		{
+		++m_iNormalAtt_Count;
+		m_bMyHiting = true;
+		m_bBase_Att[0] = true;
+		m_bChecking_MyHit = true;
+		m_fCoolTimer_limit = 0.05f;
+		Function_Checking_CoolTime(m_fCoolTimer_limit);
+		}
+		else
+		{
+		m_bChecking_MyHit = false;
+		m_bMyHiting = false;
+		m_bBase_Att[0] = false;
+		m_bBase_Att[1] = false;
+		m_bBase_Att[2] = false;
+		m_bBase_Att[3] = false;
+		}
+		}
 		}*/
 
 		if (/*true == m_bMyHiting || */1.833 <= AniTime)
 		{
 			m_fCoolTimer_limit = 0.05f;
-			Function_Checking_CoolTime(m_fCoolTimer_limit);
+			Function_Checking_AttCoolTime(m_fCoolTimer_limit);
 			m_bBase_Att[0] = true;
 			m_bChecking_MyHit = true;
-			if(true == m_bNest_Att_CoolTimer)
+			if (true == m_bNest_Att_CoolTimer)
 				++m_iNormalAtt_Count;
-			
+
 		}
 		else/* if (false == m_bMyHiting)*/
 		{
@@ -1071,38 +1132,38 @@ void CPlayer_Colleague::CollAtt_Base2()
 
 		/*for (auto& iter : *m_List_pMonTarget[0])
 		{
-			if (iter == m_pObject_Mon && true == iter->Get_Dead())
-			{
-				m_pObject_Mon = nullptr;
-				continue;
-			}
-			else if (iter == m_pObject_Mon)
-			{
-				if (true == iter->Get_Target_IsHit())
-				{
-					++m_iNormalAtt_Count;
-					m_bMyHiting = true;
-					m_bBase_Att[1] = true;
-					m_bChecking_MyHit = true;
-					m_fCoolTimer_limit = 0.05f;
-					Function_Checking_CoolTime(m_fCoolTimer_limit);
-				}
-				else
-				{
-					m_bChecking_MyHit = false;
-					m_bMyHiting = false;
-					m_bBase_Att[0] = false;
-					m_bBase_Att[1] = false;
-					m_bBase_Att[2] = false;
-					m_bBase_Att[3] = false;
-				}
-			}
+		if (iter == m_pObject_Mon && true == iter->Get_Dead())
+		{
+		m_pObject_Mon = nullptr;
+		continue;
+		}
+		else if (iter == m_pObject_Mon)
+		{
+		if (true == iter->Get_Target_IsHit())
+		{
+		++m_iNormalAtt_Count;
+		m_bMyHiting = true;
+		m_bBase_Att[1] = true;
+		m_bChecking_MyHit = true;
+		m_fCoolTimer_limit = 0.05f;
+		Function_Checking_CoolTime(m_fCoolTimer_limit);
+		}
+		else
+		{
+		m_bChecking_MyHit = false;
+		m_bMyHiting = false;
+		m_bBase_Att[0] = false;
+		m_bBase_Att[1] = false;
+		m_bBase_Att[2] = false;
+		m_bBase_Att[3] = false;
+		}
+		}
 		}*/
 
-		if (/*true == m_bMyHiting || */1.833 <= AniTime)
+		if (/*true == m_bMyHiting || */1.833f <= AniTime)
 		{
 			m_fCoolTimer_limit = 0.05f;
-			Function_Checking_CoolTime(m_fCoolTimer_limit);
+			Function_Checking_AttCoolTime(m_fCoolTimer_limit);
 			m_bBase_Att[0] = true;
 			m_bChecking_MyHit = true;
 			if (true == m_bNest_Att_CoolTimer)
@@ -1118,23 +1179,6 @@ void CPlayer_Colleague::CollAtt_Base2()
 			m_bBase_Att[2] = false;
 			m_bBase_Att[3] = false;
 		}
-
-		/*if (true == m_bMyHiting)
-		{
-			m_bBase_Att[0] = true;
-			m_bChecking_MyHit = true;
-			m_fCoolTimer_limit = 0.05f;
-			Function_Checking_CoolTime(m_fCoolTimer_limit);
-		}
-		else if (false == m_bMyHiting)
-		{
-			m_bChecking_MyHit = false;
-			m_bMyHiting = false;
-			m_bBase_Att[0] = false;
-			m_bBase_Att[1] = false;
-			m_bBase_Att[2] = false;
-			m_bBase_Att[3] = false;
-		}*/
 	}
 	return;
 }
@@ -1188,48 +1232,48 @@ void CPlayer_Colleague::CollAtt_Base3()
 			}
 			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Colleague_SkilMovement(m_fAni_Multiply);
-
-			
 		}
 
-		for (auto& iter : *m_List_pMonTarget[0])
+		/*for (auto& iter : *m_List_pMonTarget[0])
 		{
-			if (iter == m_pObject_Mon && true == iter->Get_Dead())
-			{
-				m_pObject_Mon = nullptr;
-				continue;
-			}
-			else if (iter == m_pObject_Mon)
-			{
-				if (true == iter->Get_Target_IsHit())
-				{
-					++m_iNormalAtt_Count;
-					m_bMyHiting = true;
-					m_bBase_Att[2] = true;
-					m_bChecking_MyHit = true;
-					m_fCoolTimer_limit = 0.05f;
-					Function_Checking_CoolTime(m_fCoolTimer_limit);
-				}
-				else
-				{
-					m_bChecking_MyHit = false;
-					m_bMyHiting = false;
-					m_bBase_Att[0] = false;
-					m_bBase_Att[1] = false;
-					m_bBase_Att[2] = false;
-					m_bBase_Att[3] = false;
-				}
-			}
+		if (iter == m_pObject_Mon && true == iter->Get_Dead())
+		{
+		m_pObject_Mon = nullptr;
+		continue;
 		}
-
-		if (true == m_bMyHiting)
+		else if (iter == m_pObject_Mon)
 		{
+		if (true == iter->Get_Target_IsHit())
+		{
+		++m_iNormalAtt_Count;
+		m_bMyHiting = true;
+		m_bBase_Att[2] = true;
+		m_bChecking_MyHit = true;
+		m_fCoolTimer_limit = 0.05f;
+		Function_Checking_AttCoolTime(m_fCoolTimer_limit);
+		}
+		else
+		{
+		m_bChecking_MyHit = false;
+		m_bMyHiting = false;
+		m_bBase_Att[0] = false;
+		m_bBase_Att[1] = false;
+		m_bBase_Att[2] = false;
+		m_bBase_Att[3] = false;
+		}
+		}
+		}*/
+		if (/*true == m_bMyHiting || */2.367f <= AniTime)
+		{
+			m_fCoolTimer_limit = 0.05f;
+			Function_Checking_AttCoolTime(m_fCoolTimer_limit);
 			m_bBase_Att[0] = true;
 			m_bChecking_MyHit = true;
-			m_fCoolTimer_limit = 0.05f;
-			Function_Checking_CoolTime(m_fCoolTimer_limit);
+			if (true == m_bNest_Att_CoolTimer)
+				++m_iNormalAtt_Count;
+
 		}
-		else if (false == m_bMyHiting)
+		else/* if (false == m_bMyHiting)*/
 		{
 			m_bChecking_MyHit = false;
 			m_bMyHiting = false;
@@ -1238,6 +1282,7 @@ void CPlayer_Colleague::CollAtt_Base3()
 			m_bBase_Att[2] = false;
 			m_bBase_Att[3] = false;
 		}
+
 	}
 	return;
 }
@@ -1293,44 +1338,46 @@ void CPlayer_Colleague::CollAtt_Base4()
 			Colleague_SkilMovement(m_fAni_Multiply);
 		}
 
-		for (auto& iter : *m_List_pMonTarget[0])
+		/*for (auto& iter : *m_List_pMonTarget[0])
 		{
-			if (iter == m_pObject_Mon && true == iter->Get_Dead())
-			{
-				m_pObject_Mon = nullptr;
-				continue;
-			}
-			else if (iter == m_pObject_Mon)
-			{
-				if (true == iter->Get_Target_IsHit())
-				{
-					++m_iNormalAtt_Count;
-					m_bMyHiting = true;
-					m_bBase_Att[3] = true;
-					m_bChecking_MyHit = true;
-					m_fCoolTimer_limit = 0.05f;
-					Function_Checking_CoolTime(m_fCoolTimer_limit);
-				}
-				else
-				{
-					m_bChecking_MyHit = false;
-					m_bMyHiting = false;
-					m_bBase_Att[0] = false;
-					m_bBase_Att[1] = false;
-					m_bBase_Att[2] = false;
-					m_bBase_Att[3] = false;
-				}
-			}
+		if (iter == m_pObject_Mon && true == iter->Get_Dead())
+		{
+		m_pObject_Mon = nullptr;
+		continue;
 		}
-
-		if (true == m_bMyHiting)
+		else if (iter == m_pObject_Mon)
 		{
+		if (true == iter->Get_Target_IsHit())
+		{
+		++m_iNormalAtt_Count;
+		m_bMyHiting = true;
+		m_bBase_Att[3] = true;
+		m_bChecking_MyHit = true;
+		m_fCoolTimer_limit = 0.05f;
+		Function_Checking_AttCoolTime(m_fCoolTimer_limit);
+		}
+		else
+		{
+		m_bChecking_MyHit = false;
+		m_bMyHiting = false;
+		m_bBase_Att[0] = false;
+		m_bBase_Att[1] = false;
+		m_bBase_Att[2] = false;
+		m_bBase_Att[3] = false;
+		}
+		}
+		}*/
+		if (/*true == m_bMyHiting || */2.233f <= AniTime)
+		{
+			m_fCoolTimer_limit = 0.05f;
+			Function_Checking_AttCoolTime(m_fCoolTimer_limit);
 			m_bBase_Att[0] = true;
 			m_bChecking_MyHit = true;
-			m_fCoolTimer_limit = 0.05f;
-			Function_Checking_CoolTime(m_fCoolTimer_limit);
+			if (true == m_bNest_Att_CoolTimer)
+				++m_iNormalAtt_Count;
+
 		}
-		else if (false == m_bMyHiting)
+		else/* if (false == m_bMyHiting)*/
 		{
 			m_bChecking_MyHit = false;
 			m_bMyHiting = false;
@@ -1339,6 +1386,7 @@ void CPlayer_Colleague::CollAtt_Base4()
 			m_bBase_Att[2] = false;
 			m_bBase_Att[3] = false;
 		}
+
 	}
 	return;
 }
@@ -1483,9 +1531,9 @@ void CPlayer_Colleague::Reset_Motion_State()
 	m_tObjParam.bIsAttack = false;
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.bIsHit = false;
-	
+
 	m_pSword->Set_Target_CanAttack(false);
-	
+
 
 	LOOP(20)
 	{
@@ -1493,7 +1541,7 @@ void CPlayer_Colleague::Reset_Motion_State()
 	}
 }
 
-_bool CPlayer_Colleague::Function_Checking_CoolTime(_float fTImer)
+_bool CPlayer_Colleague::Function_Checking_AttCoolTime(_float fTImer)
 {
 	if (true == m_bChecking_MyHit)
 	{
@@ -1559,7 +1607,7 @@ void CPlayer_Colleague::Free()
 
 	/*for (auto& Moniter : *m_List_pMonTarget[0])
 	{
-		Safe_Release(Moniter);
+	Safe_Release(Moniter);
 	}*/
 	/*
 	for (auto& Bossiter : *m_List_pMonTarget[1])

@@ -12,12 +12,13 @@ class CPlayer_Colleague final : public CGameObject
 {
 public:
 	// 차후 Attack에 스킬을 추가할 시 enum으로 나눠줘야 함
-	enum Colleague_MoveType { Coll_Idle, Coll_Move, Coll_Guard, Coll_Attack, Coll_Hit, Coll_Dead };
-	enum Coll_Movement { Move_Walk, Move_BackWalk, Move_Run, Move_BackRun, Move_MonWalk, Move_MonRun, Move_Dodge };
+	enum Colleague_MoveType { Coll_Idle, Coll_Move, Coll_Guard, Coll_Attack, Coll_Hit, Coll_Dodge, Coll_Dead };
+	enum Coll_Movement { Move_Walk, Move_BackWalk, Move_Run, Move_BackRun, Move_MonWalk, Move_MonRun };
 	enum Coll_IdleMoment { Idle_Waiting, Idle_Guard };
-	enum Coll_Attackmoment { Att_waiting, Att_Normal };
+	enum Coll_AttackMoment { Att_waiting, Att_Normal };
 	enum Coll_Sub_AttMoment { Att_Base1, Att_Base2, Att_Base3, Att_Base4, Att_ThreeCombo, Att_CenterDown };
-	enum Coll_Guardmoment { Guard_Idle, Gurad_Walk, Gurad_Hit };
+	enum Coll_GuardMoment { Guard_Idle, Gurad_Walk, Gurad_Hit };
+	enum Coll_DodgeMoment { Dodge_FrontRoll, Dodge_BackRoll };
 
 	//enum Move_Direction { Move_Front, Move_Back, Move_Left, Move_Right, Move_End };
 
@@ -87,6 +88,8 @@ private:
 
 private:
 	void	Check_Do_List();
+	void	Check_MyHit();
+
 	void	Set_AniEvent();
 
 private:
@@ -107,7 +110,10 @@ private:
 	void	CollMove_BackRun();
 	void	CollMove_MonWalk();
 	void	CollMove_MonRun();
-	void	CollMove_Dodge();	// 구르기 or 막기
+
+
+	void	CollDodge_FrontRoll();	// 구르기 or 막기
+
 
 	void	CollIdle_Waiting();
 
@@ -128,7 +134,7 @@ private:
 	void	Funtion_RotateBody();
 	void	Reset_Motion_State();
 
-	_bool	Function_Checking_CoolTime(_float fTImer);
+	_bool	Function_Checking_AttCoolTime(_float fTImer);
 
 
 private:
@@ -147,11 +153,12 @@ private:
 private:
 	Colleague_MoveType		m_eMovetype;
 
-	Coll_Movement			m_eColl_Movement;
+	Coll_Movement			m_eColl_MoveMent;
 	Coll_IdleMoment			m_eColl_IdleMoment;
-	Coll_Attackmoment		m_eColl_AttackMoment;
+	Coll_AttackMoment		m_eColl_AttackMoment;
 	Coll_Sub_AttMoment		m_eColl_Sub_AttMoment;
-	Coll_Guardmoment		m_eColl_GuardMoment;
+	Coll_GuardMoment		m_eColl_GuardMoment;
+	Coll_DodgeMoment		m_eColl_DodgeMoment;
 
 	Colleague_Ani			m_eColleague_Ani;
 
@@ -160,13 +167,16 @@ private:
 private:
 	list<CGameObject*>*	m_List_pMonTarget[2];
 
+	_mat*	m_matBone[Bone_End];
+
+
 	_double	m_dPlayAni_Time = 1;
 	_double m_dTimeDelta = 0.f;
 
+
 	_uint	m_iNormalAtt_Count = 0;
-
-	_mat*	m_matBone[Bone_End];
-
+	_uint	m_iDodgeCount = 0;
+	_uint	m_iDodgeCountMax = 5;
 
 
 	_float	m_fSpeed = 0.f;
