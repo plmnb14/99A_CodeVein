@@ -445,6 +445,9 @@ PS_OUT PS_SSD(PS_IN In)
 	float2 depthUV = float2(screenposition.x, screenposition.y);
 
 	vector vDepthInfo = tex2D(DepthSampler, depthUV);
+	if(0 == vDepthInfo.x)
+		return  Out;
+
 	float		fViewZ = vDepthInfo.y * 500.f;
 	vector		vWorldPos;
 	vWorldPos.x = depthUV.x * 2.f - 1.f;

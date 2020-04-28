@@ -540,6 +540,28 @@ void CWeapon::Change_WeaponData(WEAPON_DATA _eWpnData)
 		m_eWeaponType = WEAPON_Gun;
 		break;
 
+	case WEAPON_DATA::WPN_Shield_Normal:
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_Shield");
+		m_eWeaponType = WEAPON_Shield;
+		break;	
+	case WEAPON_DATA::WPN_DeerKingShield:
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_DeerKingShield");
+		m_eWeaponType = WEAPON_Shield;
+		break;
+	case WEAPON_DATA::WPN_QueenShield:
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_QueenShield");
+		m_eWeaponType = WEAPON_Shield;
+		break;
+
+	case WEAPON_DATA::WPN_QueenLance:
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_QueenLance");
+		m_eWeaponType = WEAPON_Halberd;
+		break;
+	case WEAPON_DATA::WPN_FrostBlood_IceGirl:
+		lstrcpy(WeaponMeshName, L"Mesh_Wpn_FrostBlood_IceGirl");
+		m_eWeaponType = WEAPON_SSword;
+		break;
+
 	}
 
 	Change_WeaponMesh(WeaponMeshName);

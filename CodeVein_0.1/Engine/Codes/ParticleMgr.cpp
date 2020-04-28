@@ -420,17 +420,17 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 	//	Create_Effect_Delay(L"QueensKnight_Sting_Tornade", 0.f, _v3(0.f, 1.3f, 0.f), nullptr);
 	//}
 
-	if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_LB))
-	{
-		CParticleMgr::Get_Instance()->Create_Effect_Decal(L"Blood_Decal_0", V3_NULL);
-	}
-	if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_RB))
-	{
-		_tchar szBuff[256] = L"";
-		wsprintf(szBuff, L"Blood_Decal_%d", CCalculater::Random_Num(0, 6));
-
-		CParticleMgr::Get_Instance()->Create_Effect_Decal(szBuff, V3_NULL);
-	}
+	//if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_LB))
+	//{
+	//	CParticleMgr::Get_Instance()->Create_Effect_Decal(L"Blood_Decal_0", V3_NULL);
+	//}
+	//if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_RB))
+	//{
+	//	_tchar szBuff[256] = L"";
+	//	wsprintf(szBuff, L"Blood_Decal_%d", CCalculater::Random_Num(0, 6));
+	//
+	//	CParticleMgr::Get_Instance()->Create_Effect_Decal(szBuff, V3_NULL);
+	//}
 
 	auto& iter_begin = m_vecParticle.begin();
 	auto& iter_end = m_vecParticle.end();

@@ -6,6 +6,7 @@
 #include "Item_Manager.h"
 #include "ParticleMgr.h"
 #include "ScriptManager.h"
+#include "ObjectPool_Manager.h"
 
 CMainApp::CMainApp()
 {
@@ -34,6 +35,9 @@ _int CMainApp::Update_MainApp(_double TimeDelta)
 
 	CCameraMgr::Get_Instance()->Update();
 	CParticleMgr::Get_Instance()->Update_ParticleManager(TimeDelta);
+
+	CObjectPool_Manager::Get_Instance()->Update_ObjectPool(TimeDelta);
+	CObjectPool_Manager::Get_Instance()->LateUpdate_ObjectPool(TimeDelta);
 
 	return g_pManagement->Update_Management(TimeDelta);
 }	
@@ -203,6 +207,7 @@ void CMainApp::Free()
 	
 	CScriptManager::Get_Instance()->Destroy_Instance();
 	CParticleMgr::Get_Instance()->Destroy_Instance();
+	CObjectPool_Manager::Get_Instance()->Destroy_Instance();
 
 	Safe_Release(m_pRenderer);
 	

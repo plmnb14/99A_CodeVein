@@ -273,6 +273,8 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\Mesh_Static.h" />
     <ClInclude Include="..\Headers\MyPhysx.h" />
     <ClInclude Include="..\Headers\NavMesh.h" />
+    <ClInclude Include="..\Headers\ObjectPool.h" />
+    <ClInclude Include="..\Headers\ObjectPool_Manager.h" />
     <ClInclude Include="..\Headers\Object_Manager.h" />
     <ClInclude Include="..\Headers\Optimization.h" />
     <ClInclude Include="..\Headers\ParticleMgr.h" />
@@ -370,6 +372,8 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\Mesh_Static.cpp" />
     <ClCompile Include="..\Codes\MyPhysx.cpp" />
     <ClCompile Include="..\Codes\NavMesh.cpp" />
+    <ClCompile Include="..\Codes\ObjectPool.cpp" />
+    <ClCompile Include="..\Codes\ObjectPool_Manager.cpp" />
     <ClCompile Include="..\Codes\Object_Manager.cpp" />
     <ClCompile Include="..\Codes\Optimization.cpp" />
     <ClCompile Include="..\Codes\ParticleMgr.cpp" />
