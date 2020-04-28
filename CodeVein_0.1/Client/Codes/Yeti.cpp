@@ -512,6 +512,7 @@ void CYeti::Check_Hit()
 	else
 		m_eFirstCategory = MONSTER_STATETYPE::DEAD;
 
+	return;
 }
 
 void CYeti::Check_Dist()

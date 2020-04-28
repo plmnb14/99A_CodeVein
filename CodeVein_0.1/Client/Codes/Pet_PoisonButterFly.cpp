@@ -22,7 +22,7 @@ HRESULT CPet_PoisonButterFly::Ready_GameObject(void * pArg)
 		return E_FAIL;
 
 	m_pTransformCom->Set_Pos(_v3(1.f, 0.f, 1.f));
-	m_pTransformCom->Set_Scale(_v3(0.5f,0.5f,0.5f));
+	m_pTransformCom->Set_Scale(_v3(0.25f,0.25f,0.25f));
 
 	Ready_Status(pArg);
 	Ready_BoneMatrix(pArg);
@@ -34,15 +34,10 @@ HRESULT CPet_PoisonButterFly::Ready_GameObject(void * pArg)
 	m_pMonsterUI->Set_Bonmatrix(m_matBone[Bone_Head]);
 	m_pMonsterUI->Ready_GameObject(NULL);
 
-	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	m_pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
-	if (nullptr != m_pTarget)
-	{
-		Safe_AddRef(m_pTarget);
-
-		m_pPlayerTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
-		Safe_AddRef(m_pTargetTransform);
-	}
+	if (nullptr != m_pPlayer)
+		Safe_AddRef(m_pPlayer);
 
 	return S_OK;
 }
@@ -56,15 +51,14 @@ _int CPet_PoisonButterFly::Update_GameObject(_double TimeDelta)
 
 	m_pMonsterUI->Update_GameObject(TimeDelta);
 
-	//Check_PosY();
 	//Check_Hit();
-	//Check_Dist();
-	//Check_AniEvent();
+	Check_Dist();
+	Check_AniEvent();
 	Function_CoolDown();
 
 	m_pMeshCom->SetUp_Animation(m_eState);
 
-	//MONSTER_STATETYPE::DEAD != m_eFirstCategory ? Check_CollisionEvent() : Check_DeadEffect(TimeDelta);
+	MONSTER_STATETYPE::DEAD != m_eFirstCategory ? Check_CollisionEvent() : Check_DeadEffect(TimeDelta);
 
 	return NO_EVENT;
 }
@@ -223,8 +217,8 @@ void CPet_PoisonButterFly::Render_Collider()
 void CPet_PoisonButterFly::Check_CollisionEvent()
 {
 	Check_CollisionPush();
-	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_MORTAL));
-	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_MORTAL));
+	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE));
+	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE));
 
 	return;
 }
@@ -319,6 +313,533 @@ void CPet_PoisonButterFly::Check_CollisionHit(list<CGameObject*> plistGameObject
 	return;
 }
 
+void CPet_PoisonButterFly::Check_Hit()
+{
+	if (MONSTER_STATETYPE::DEAD == m_eFirstCategory)
+		return;
+
+	Function_Find_Target(m_fRecognitionRange);
+
+	if (nullptr == m_pTarget)
+	{
+		return;
+	}
+	else
+	{
+		switch (m_eTarget)
+		{
+		case TARGET_BOSS:
+			break;
+		case TARGET_MONSTER:
+			break;
+		case TARGET_ITEM:
+			break;
+		case TARGET_NONE:
+			break;
+		}
+	}
+
+
+	if (0 < m_tObjParam.fHp_Cur)
+	{
+		if (false == m_tObjParam.bCanHit)
+		{
+			if (false == m_tObjParam.bSuperArmor)
+			{
+				if (true == m_tObjParam.bIsHit)
+				{
+					if (true == m_tObjParam.bHitAgain)
+					{
+						m_eFirstCategory = MONSTER_STATETYPE::HIT;
+						Function_FBLR(m_pTarget);
+						m_tObjParam.bHitAgain = false;
+						m_pMeshCom->Reset_OldIndx();
+					}
+				}
+				else
+				{
+					m_eFirstCategory = MONSTER_STATETYPE::HIT;
+					Function_FBLR(m_pTarget);
+				}
+			}
+		}
+	}
+	else
+		m_eFirstCategory = MONSTER_STATETYPE::DEAD;
+
+	return;
+}
+
+void CPet_PoisonButterFly::Check_Dist()
+{
+	if (MONSTER_STATETYPE::HIT == m_eFirstCategory ||
+		MONSTER_STATETYPE::CC == m_eFirstCategory ||
+		MONSTER_STATETYPE::DEAD == m_eFirstCategory)
+		return;
+
+	if (true == m_bIsCombo ||
+		true == m_bIsMoveAround ||
+		true == m_tObjParam.bIsAttack ||
+		true == m_tObjParam.bIsDodge ||
+		true == m_tObjParam.bIsHit)
+		return;
+
+	_float fPlayerDist = V3_LENGTH(&(TARGET_TO_TRANS(m_pPlayer)->Get_Pos() - m_pTransformCom->Get_Pos()));
+
+	//Player와의 최대 거리
+	m_fLimitRange >= fPlayerDist ? m_bInLimitRange = true : m_bInLimitRange = false;
+	//자유 행동 거리
+	m_fActiveRange >= fPlayerDist ? m_bInActiveRange = true : m_bInActiveRange = false;
+
+	//최대거리 In
+	if (true == m_bInLimitRange)
+	{
+		//자유 행동 거리 In
+		if (true == m_bInActiveRange)
+		{
+			//범위 내의 보스,몬스터,아이탬 찾기
+			Function_Find_Target(m_fRecognitionRange);
+
+			//무언가를 찾았다면
+			if (nullptr != m_pTarget)
+			{
+				cout << "타겟을 찾았습니다" << endl;
+				Check_Target();
+			}
+			//아무것도 찾지 못했다면
+			else
+			{
+				//자연스러운 속도 유지를 위한 함수
+				Function_CalcMoveSpeed(m_fActiveRange);
+				//사회적 거리두기
+				if (m_fPersonalRange >= fPlayerDist)
+				{
+					cout << "타겟없음, Player와의 사회적 거리두기를 실천하십시오" << endl;
+					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+				}
+				else
+				{
+					cout << "타겟없음, player 근처로 걸어갑니다" << endl;
+					m_bCanMoveAround = false;
+					m_eFirstCategory = MONSTER_STATETYPE::MOVE;
+					m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_WALK;
+				}
+			}
+		}
+		//자유 행동 거리 Out
+		else
+		{
+			cout << "최대 거리안에 들어왔으나 자유행동거리 밖" << endl;
+			m_bCanChase = true;
+			m_eFirstCategory = MONSTER_STATETYPE::MOVE;
+			m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_RUN;
+		}
+	}
+	//최대거리 Out
+	else
+	{
+		//순간 이동이 필요한 순간, 랜덤으로 플레이어 주변값으로 이동
+		cout << "너무멀어서 순간이동이 필요한 순간" << endl;
+		m_bCanChase = true;
+		m_eFirstCategory = MONSTER_STATETYPE::MOVE;
+		m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_RUN;
+	}
+
+	return;
+}
+
+void CPet_PoisonButterFly::Check_Target()
+{
+	//목표와의 거리 비교
+	_float fTargetDist = V3_LENGTH(&(TARGET_TO_TRANS(m_pTarget)->Get_Pos() - m_pTransformCom->Get_Pos()));
+
+	//목표와 인지범위 여부
+	m_fRecognitionRange >= fTargetDist ? m_bInRecognitionRange = true : m_bInRecognitionRange = false;
+	//목표와 원거리 공격 범위 여부
+	m_fShotRange >= fTargetDist ? m_bInShotRange = true : m_bInShotRange = false;
+	//목표와 근거리 공격범위 여부
+	m_fAtkRange >= fTargetDist ? m_bInAtkRange = true : m_bInAtkRange = false;
+
+	//인지o
+	if (true == m_bInRecognitionRange)
+	{
+		//원거리o
+		if (true == m_bInShotRange)
+		{
+			//근거리o
+			if (true == m_bInAtkRange)
+			{
+				//공격가능,쿨타임x
+				if (true == m_tObjParam.bCanAttack)
+				{
+					m_bCanChooseAtkType = true;
+
+					m_eFirstCategory = MONSTER_STATETYPE::ATTACK;
+
+					m_iRandom = CALC::Random_Num(MONSTER_ATKTYPE::ATK_NORMAL, MONSTER_ATKTYPE::ATK_COMBO);
+
+					m_iRandom = 0;
+
+					switch (m_iRandom)
+					{
+					case MONSTER_ATKTYPE::ATK_NORMAL:
+						m_eSecondCategory_ATK = MONSTER_ATKTYPE::ATK_NORMAL;
+						m_eState = PET_POISIONBUTTERFLY_ANI::AtkPoisonShot;
+						//Play_RandomAtkNormal();
+						break;
+					case MONSTER_ATKTYPE::ATK_COMBO:
+						m_eSecondCategory_ATK = MONSTER_ATKTYPE::ATK_COMBO;
+						Play_RandomAtkCombo();
+						m_bIsCombo = true;
+						break;
+					}
+				}
+				//공격 불가, 쿨타임중
+				else
+				{
+					m_bCanMoveAround = true;
+					m_eFirstCategory = MONSTER_STATETYPE::MOVE;
+					m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_WALK;
+				}
+			}
+		}
+		else
+		{
+			m_bCanChase = true;
+			m_eFirstCategory = MONSTER_STATETYPE::MOVE;
+			m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_RUN;
+		}
+	}
+
+	return;
+}
+
+void CPet_PoisonButterFly::Check_AniEvent()
+{
+	switch (m_eFirstCategory)
+	{
+	case MONSTER_STATETYPE::IDLE:
+		Play_Idle();
+		break;
+	case MONSTER_STATETYPE::MOVE:
+		Play_Move();
+		break;
+	case MONSTER_STATETYPE::ATTACK:
+		if (MONSTER_ATKTYPE::ATK_NORMAL == m_eSecondCategory_ATK)
+		{
+			switch (m_eState)
+			{
+			case PET_POISIONBUTTERFLY_ANI::AtkPoisonShot:
+				Play_Shot();
+				break;
+			}
+		}
+		//else if (MONSTER_ATKTYPE::ATK_COMBO == m_eSecondCategory_ATK)
+		//{
+		//	switch (m_eAtkCombo)
+		//	{
+		//	}
+		//}
+		break;
+	case MONSTER_STATETYPE::HIT:
+		Play_Hit();
+		break;
+	case MONSTER_STATETYPE::CC:
+		Play_CC();
+		break;
+	case MONSTER_STATETYPE::DEAD:
+		Play_Dead();
+		break;
+	}
+}
+
+void CPet_PoisonButterFly::Check_DeadEffect(_double TimeDelta)
+{
+}
+
+void CPet_PoisonButterFly::Play_RandomAtkNormal()
+{
+	//switch (CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_RIGHT, ATK_NORMAL_TYPE::NORMAL_WHEELWIND))
+	//{
+	//case ATK_NORMAL_TYPE::NORMAL_RIGHT:
+	//	m_eState = PET_POISIONBUTTERFLY_ANI::Hammer_N01;
+	//	break;
+	//case ATK_NORMAL_TYPE::NORMAL_SHOULDER:
+	//	m_eState = PET_POISIONBUTTERFLY_ANI::Hammer_S01;
+	//	break;
+	//case ATK_NORMAL_TYPE::NORMAL_TARGETHAMMERING:
+	//	m_eState = PET_POISIONBUTTERFLY_ANI::Hammer_Sp01;
+	//	break;
+	//case ATK_NORMAL_TYPE::NORMAL_WHEELWIND:
+	//	m_eState = PET_POISIONBUTTERFLY_ANI::Hammer_Sp02;
+	//	break;
+	//}
+
+	return;
+}
+
+void CPet_PoisonButterFly::Play_RandomAtkCombo()
+{
+	//switch (CALC::Random_Num(ATK_COMBO_TYPE::COMBO_R_L, ATK_COMBO_TYPE::COMBO_RUNHAMMERING))
+	//{
+	//case ATK_COMBO_TYPE::COMBO_R_L:
+	//	m_eAtkCombo = ATK_COMBO_TYPE::COMBO_R_L;
+	//	m_eState = Hammer_N01;
+	//	break;
+	//case ATK_COMBO_TYPE::COMBO_R_HAMMERING:
+	//	m_eAtkCombo = ATK_COMBO_TYPE::COMBO_R_HAMMERING;
+	//	m_eState = Hammer_N01;
+	//	break;
+	//case ATK_COMBO_TYPE::COMBO_SHOULDER_TURNTWICE:
+	//	m_eAtkCombo = ATK_COMBO_TYPE::COMBO_SHOULDER_TURNTWICE;
+	//	m_eState = Hammer_S01;
+	//	break;
+	//case ATK_COMBO_TYPE::COMBO_SHOULDER_HALFCLOCK:
+	//	m_eAtkCombo = ATK_COMBO_TYPE::COMBO_SHOULDER_HALFCLOCK;
+	//	m_eState = Hammer_S01;
+	//	break;
+	//case ATK_COMBO_TYPE::COMBO_RUNHAMMERING:
+	//	m_eAtkCombo = ATK_COMBO_TYPE::COMBO_RUNHAMMERING;
+	//	m_eState = Hammer_Sp03_Start;
+	//	break;
+	//}
+
+	return;
+}
+
+void CPet_PoisonButterFly::Play_Shot()
+{
+	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+	_v3 vBirth, vLook;
+	_float fLength = 1.f;
+
+	if (true == m_tObjParam.bCanAttack)
+	{
+		m_tObjParam.bCanAttack = false;
+		m_tObjParam.bIsAttack = true;
+	}
+	else
+	{
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		{
+			m_fCoolDownMax = 0.3f;
+			m_bCanCoolDown = true;
+			Function_ResetAfterAtk();
+
+			return;
+		}
+		else if (3.333f <= AniTime)
+		{
+			if (false == m_bEventTrigger[0])
+			{
+				m_bEventTrigger[0] = true;
+				m_tObjParam.bSuperArmor = true;
+
+				_mat matTemp = *m_matBone[Bone_Head] * m_pTransformCom->Get_WorldMat(); //뼈위치* 월드
+
+				memcpy(&vBirth, &matTemp._41, sizeof(_v3)); //생성위치
+				memcpy(&vLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
+				vBirth += (vLook * fLength); //생성위치 = 생성위치 +(룩*길이)
+
+				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
+			}
+		}
+		else if (0.f <= AniTime)
+			Function_RotateBody(m_pTarget);
+	}
+
+	return;
+}
+
+void CPet_PoisonButterFly::Play_Mist()
+{
+}
+
+void CPet_PoisonButterFly::Play_Rush()
+{
+}
+
+void CPet_PoisonButterFly::Play_Heal()
+{
+	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+
+	if (nullptr != m_pPlayer)
+	{
+
+		if (true == m_tObjParam.bCanAttack)
+		{
+			m_tObjParam.bCanAttack = false;
+			m_tObjParam.bIsAttack = true;
+			m_eState = PET_POISIONBUTTERFLY_ANI::Deformation;
+		}
+		else
+		{
+			if (m_pMeshCom->Is_Finish_Animation(0.95f))
+			{
+				cout << m_tObjParam.fDamage << " 만큼 힐" << endl;
+				m_fCoolDownMax = 2.f;
+				m_bCanCoolDown = true;
+				m_pPlayer->Add_Target_Hp(-m_tObjParam.fDamage);
+				Function_ResetAfterAtk();
+
+				return;
+			}
+		}
+
+	}
+
+	return;
+}
+
+void CPet_PoisonButterFly::Play_Idle()
+{
+	cout << "사회적 거리두기를 위한 아이들" << endl;
+	m_eState = PET_POISIONBUTTERFLY_ANI::Idle;
+
+	return;
+}
+
+void CPet_PoisonButterFly::Play_Move()
+{
+	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+
+	switch (m_eSecondCategory_MOVE)
+	{
+	case MONSTER_MOVETYPE::MOVE_RUN:
+		if (true == m_bCanChase)
+		{
+			m_bCanChase = false;
+			m_eState = PET_POISIONBUTTERFLY_ANI::Walk_F;
+			m_fSkillMoveSpeed_Cur = 8.f;
+			m_fSkillMoveAccel_Cur = 0.f;
+			m_fSkillMoveMultiply = 0.5f;
+		}
+		switch (m_eTarget)
+		{
+		case TARGET_BOSS:
+			cout << "Boss를 향해 달려간다" << endl;
+			Function_RotateBody(m_pTarget);
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			break;
+		case TARGET_MONSTER:
+			cout << "Monster를 향해 달려간다" << endl;
+			Function_RotateBody(m_pTarget);
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			break;
+		case TARGET_ITEM:
+			cout << "Item을 향해 달려간다" << endl;
+			Function_RotateBody(m_pTarget);
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			break;
+		case TARGET_NONE:
+			cout << "player를 향해 달려간다" << endl;
+			Function_RotateBody(m_pPlayer);
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			break;
+		}
+		break;
+
+	case MONSTER_MOVETYPE::MOVE_WALK:
+		if (MONSTER_MOVETYPE::MOVE_WALK == m_eSecondCategory_MOVE)
+		{
+			cout << "player를 향해 걸어간다" << endl;
+			m_eState = PET_POISIONBUTTERFLY_ANI::Walk_F;
+
+			Function_RotateBody(m_pPlayer);
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+		else if (MONSTER_MOVETYPE::MOVE_ALERT == m_eSecondCategory_MOVE)
+		{
+			if (true == m_bCanMoveAround)
+			{
+				m_bCanMoveAround = false;
+				m_bIsMoveAround = true;
+
+				m_bCanCoolDown = true;
+				m_fCoolDownMax = 4.f;
+
+				m_fSkillMoveSpeed_Cur = 2.5f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 0.5f;
+
+				switch (CALC::Random_Num(PET_POISIONBUTTERFLY_ANI::Walk_R, PET_POISIONBUTTERFLY_ANI::Walk_B))
+				{
+				case PET_POISIONBUTTERFLY_ANI::Walk_R:
+				case PET_POISIONBUTTERFLY_ANI::Walk_F:
+					m_eState = PET_POISIONBUTTERFLY_ANI::Walk_R;
+					break;
+				case PET_POISIONBUTTERFLY_ANI::Walk_L:
+				case PET_POISIONBUTTERFLY_ANI::Walk_B:
+					m_eState = PET_POISIONBUTTERFLY_ANI::Walk_L;
+					break;
+				}
+			}
+			else
+			{
+				if (PET_POISIONBUTTERFLY_ANI::Walk_R == m_eState)
+					Function_MoveAround(m_pTarget, m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_X));
+				else if (PET_POISIONBUTTERFLY_ANI::Walk_L == m_eState)
+					Function_MoveAround(m_pTarget, m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_X));
+			}
+		}
+		break;
+
+	case MONSTER_MOVETYPE::MOVE_DODGE:
+		if (true == m_tObjParam.bCanDodge)
+		{
+			Function_ResetAfterAtk();
+			m_tObjParam.bCanDodge = false;
+			m_tObjParam.bIsDodge = true;
+			m_eState = PET_POISIONBUTTERFLY_ANI::Dodge;
+		}
+		else
+		{
+			if (m_pMeshCom->Is_Finish_Animation(0.95f))
+			{
+				m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+				m_tObjParam.bCanAttack = true;
+				Function_ResetAfterAtk();
+
+				return;
+			}
+
+			if (0.900f < AniTime && 1.300f > AniTime)
+			{
+				if (m_bEventTrigger[0] == false)
+				{
+					m_bEventTrigger[0] = true;
+					m_fSkillMoveSpeed_Cur = 10.f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.25f;
+				}
+
+				Function_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
+			}
+		}
+		break;
+	}
+
+	return;
+}
+
+void CPet_PoisonButterFly::Play_Hit()
+{
+	return;
+}
+
+void CPet_PoisonButterFly::Play_CC()
+{
+	return;
+}
+
+void CPet_PoisonButterFly::Play_Dead()
+{
+	return;
+}
+
 HRESULT CPet_PoisonButterFly::Add_Component(void * pArg)
 {
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -378,15 +899,18 @@ HRESULT CPet_PoisonButterFly::SetUp_ConstantTable()
 
 HRESULT CPet_PoisonButterFly::Ready_Status(void * pArg)
 {
-	m_tObjParam.fDamage = -500.f;
+	m_tObjParam.fDamage = -50.f; //힐량,공격량 등등
 	m_tObjParam.fHp_Max = 2000.f;
 	m_tObjParam.fArmor_Max = 10.f;
 
-	m_fRecognitionRange = 15.f;
-	m_fShotRange = 10.f;
-	m_fAtkRange = 5.f;
-	m_fPersonalRange = 2.f;
-	m_iDodgeCountMax = 5;
+	m_fLimitRange = 30.f; //최대거리범위
+	m_fActiveRange = 20.f; //자유행동범위
+
+	m_fRecognitionRange = 15.f; //목표인지범위
+	m_fShotRange = 10.f; //목표원거리범위
+	m_fAtkRange = 5.f; //목표근거리범위
+	m_fPersonalRange = 2.f; //사회적 거리두기 범위
+	m_iDodgeCountMax = 5; //피격시 회피카운트
 
 	m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
@@ -401,17 +925,15 @@ HRESULT CPet_PoisonButterFly::Ready_Status(void * pArg)
 
 	m_bCanPlayDead = false; //죽음 애니 진행시 true;
 	m_bInRecognitionRange = false; //인지 범위 여부
+	m_bInShotRange = false; //원거리 공격범위 여부
 	m_bInAtkRange = false; //공격 범위 여부
 	m_bCanChase = false; //추격 여부
 	m_bCanCoolDown = false; //쿨타임 여부
 	m_bIsCoolDown = false; //쿨타임 진행중 여부
-
 	m_bCanChooseAtkType = true; //공격타입 고정용
 	m_bIsCombo = false; //콤보 진행중
-
 	m_bCanMoveAround = true; //경계 여부
 	m_bIsMoveAround = false; //경게 진행중
-
 	m_bCanIdle = true; //일상 가능
 	m_bIsIdle = false; //일상 진행중 아님
 
@@ -432,31 +954,6 @@ HRESULT CPet_PoisonButterFly::Ready_Status(void * pArg)
 
 HRESULT CPet_PoisonButterFly::Ready_Weapon(void * pArg)
 {
-	m_pWeapon = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-
-	switch (m_eWeaponState)
-	{
-	case WEAPON_STATE::WEAPON_Gun:
-		m_pWeapon->Change_WeaponData(CWeapon::Wpn_Gun_Black);
-		break;
-	case WEAPON_STATE::WEAPON_Halberd:
-		m_pWeapon->Change_WeaponData(CWeapon::Wpn_Halberd_Black);
-		break;
-	case WEAPON_STATE::WEAPON_Hammer:
-		m_pWeapon->Change_WeaponData(CWeapon::Wpn_Hammer_Black);
-		break;
-	case WEAPON_STATE::WEAPON_LSword:
-		m_pWeapon->Change_WeaponData(CWeapon::Wpn_LSword_Black);
-		break;
-	case WEAPON_STATE::WEAPON_SSword:
-		m_pWeapon->Change_WeaponData(CWeapon::Wpn_SSword_Black);
-		break;
-	}
-
-	D3DXFRAME_DERIVED*	pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
-	m_pWeapon->Set_AttachBoneMartix(&pFrame->CombinedTransformationMatrix);
-	m_pWeapon->Set_ParentMatrix(&m_pTransformCom->Get_WorldMat());
-
 	return S_OK;
 }
 
@@ -495,7 +992,7 @@ HRESULT CPet_PoisonButterFly::Ready_Collider(void * pArg)
 
 HRESULT CPet_PoisonButterFly::Ready_BoneMatrix(void * pArg)
 {
-	D3DXFRAME_DERIVED*	pFrame = nullptr;
+ 	D3DXFRAME_DERIVED*	pFrame = nullptr;
 	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Spine", 0), E_FAIL);
 	m_matBone[Bone_Range] = &pFrame->CombinedTransformationMatrix;
 	m_matBone[Bone_Body] = &pFrame->CombinedTransformationMatrix;
@@ -534,7 +1031,19 @@ CGameObject* CPet_PoisonButterFly::Clone_GameObject(void * pArg)
 
 void CPet_PoisonButterFly::Free()
 {
+	Safe_Release(m_pMonsterUI);
+
+	Safe_Release(m_pPlayer);
+
+	Safe_Release(m_pCollider);
+	Safe_Release(m_pNavMesh);
+	Safe_Release(m_pTransformCom);
+	Safe_Release(m_pMeshCom);
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pRendererCom);
+
 	CPet::Free();
 
 	return;
 }
+

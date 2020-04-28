@@ -11,10 +11,10 @@ CPet::CPet(const CPet & rhs)
 {
 }
 
-void CPet::Function_FBLR()
+void CPet::Function_FBLR(CGameObject* _pGameObject)
 {
 	//수정
-	_float fAngle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos()));
+	_float fAngle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(_pGameObject)->Get_Pos()));
 
 	if (0.f <= fAngle && 30.f > fAngle)
 		m_eFBLR = FBLR::FRONT;
@@ -36,9 +36,9 @@ void CPet::Function_FBLR()
 	return;
 }
 
-void CPet::Function_RotateBody()
+void CPet::Function_RotateBody(CGameObject* _pGameObject)
 {
-	_float fTargetAngle = m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos());
+	_float fTargetAngle = m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(_pGameObject)->Get_Pos());
 
 	_float fYAngle = m_pTransformCom->Get_Angle().y;
 
@@ -107,9 +107,9 @@ void CPet::Function_RotateBody()
 	return;
 }
 
-void CPet::Function_MoveAround(_float _fSpeed, _v3 _vDir)
+void CPet::Function_MoveAround(CGameObject* _pGameObject, _float _fSpeed, _v3 _vDir)
 {
-	_float fTargetAngle = m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos());
+	_float fTargetAngle = m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(_pGameObject)->Get_Pos());
 
 	_float fYAngle = m_pTransformCom->Get_Angle().y;
 
@@ -223,6 +223,99 @@ void CPet::Function_DecreMoveMent(_float _fMutiply)
 	return;
 }
 
+void CPet::Function_CalcMoveSpeed(_float _fMidDist)
+{
+	_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(m_pPlayer)->Get_Pos() - m_pTransformCom->Get_Pos()));
+
+	if (_fMidDist >= fLenth)
+		m_fSkillMoveMultiply = (fLenth - m_fPersonalRange) / (_fMidDist- m_fPersonalRange);
+	else
+		m_fSkillMoveMultiply = 1.f;
+
+	m_fSkillMoveSpeed_Cur = 8.f * m_fSkillMoveMultiply;
+
+	return;
+}
+
+void CPet::Function_Find_Target(_float _fDist)
+{
+	if (!g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE).empty())
+	{
+		auto& MonsterContainer = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
+
+		for (auto& Monster_iter : MonsterContainer)
+		{
+			if (false == Monster_iter->Get_Enable())
+				continue;
+			else if(true == Monster_iter->Get_Dead())
+				continue;
+			else if(nullptr == Monster_iter)
+				continue;
+			//몬스터가 존재한다면
+			else
+			{
+				if (_fDist >= V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransformCom->Get_Pos())))
+				{
+					m_eTarget = TARGET_TYPE::TARGET_MONSTER;
+					m_pTarget = Monster_iter;
+				}
+				else
+					continue;
+			}
+		}
+	}
+	else if (!g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE).empty())
+	{
+		auto& BossContainer = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
+
+		for (auto& Boss_iter : BossContainer)
+		{
+			if (false == Boss_iter->Get_Enable())
+				continue;
+			else if (true == Boss_iter->Get_Dead())
+				continue;
+			else if (nullptr == Boss_iter)
+				continue;
+			else
+			{
+				if (_fDist >= V3_LENGTH(&(TARGET_TO_TRANS(Boss_iter)->Get_Pos() - m_pTransformCom->Get_Pos())))
+				{
+					m_eTarget = TARGET_TYPE::TARGET_BOSS;
+					m_pTarget = Boss_iter;
+				}
+				else
+					continue;
+			}
+		}
+	}
+	//else if (!g_pManagement->Get_GameObjectList(L"Layer_Item", SCENE_STAGE).empty())
+	//{
+	//	auto& ItemContainer = g_pManagement->Get_GameObjectList(L"Layer_Item", SCENE_STAGE);
+	//	for (auto& Item_iter : ItemContainer)
+	//	{
+	//		if (false == Item_iter->Get_Enable())
+	//			continue;
+	//		else
+	//		{
+	//			if (_fDist >= V3_LENGTH(&(TARGET_TO_TRANS(Item_iter)->Get_Pos() - m_pTransformCom->Get_Pos())))
+	//			{
+	//				m_eTarget = TARGET_TYPE::TARGET_ITEM;
+	//				m_pTarget = Item_iter;
+	//			}
+	//			else
+	//				continue;
+	//		}
+	//	}
+	//}
+	//else
+	//{
+	//	m_eTarget = TARGET_TYPE::TARGET_NONE;
+	//	m_pTarget = nullptr;
+	//}
+
+	return;
+}
+
 void CPet::Function_ResetAfterAtk()
 {
 	m_tObjParam.bCanHit = true;
@@ -251,7 +344,7 @@ void CPet::Function_ResetAfterAtk()
 	IF_NOT_NULL(m_pWeapon)
 		m_pWeapon->Set_Enable_Trail(false);
 
-	LOOP(20)
+	LOOP(30)
 		m_bEventTrigger[i] = false;
 
 	return;

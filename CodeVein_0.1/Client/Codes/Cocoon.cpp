@@ -532,37 +532,20 @@ void CCocoon::Check_Dist()
 			{
 				if (true == m_tObjParam.bCanAttack)
 				{
-					if (true == m_bIsCoolDown)
-					{
-						m_eFirstCategory = MONSTER_STATETYPE::IDLE;
-						Function_RotateBody();
-					}
+					m_eFirstCategory = MONSTER_STATETYPE::ATTACK;
+					if (m_fAtkRange < fLenth && m_fShotRange > fLenth)
+						m_eState = COCOON_ANI::Shot;
 					else
-					{
-						m_eFirstCategory = MONSTER_STATETYPE::ATTACK;
-						if (m_fAtkRange < fLenth && m_fShotRange > fLenth)
-							m_eState = COCOON_ANI::Shot;
-						else
-							m_eState = COCOON_ANI::Mist;
-						Function_RotateBody();
-					}
+						m_eState = COCOON_ANI::Mist;
 				}
 				else
-				{
 					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
-					Function_RotateBody();
-				}
 			}
 			else
-			{
 				m_eFirstCategory = MONSTER_STATETYPE::IDLE;
-				Function_RotateBody();
-			}
 		}
 		else
-		{
 			m_eFirstCategory = MONSTER_STATETYPE::IDLE;
-		}
 	}
 
 	return;
