@@ -53,6 +53,14 @@ public:
 	_bool	Check_TargetIsFrontOfMe(CTransform* _vMyTransform, CTransform* _vTargetTransform , _float fAlertRange = 45.f);
 	//=======================================================================
 
+//=======================================================================
+// 특정 리스트 내에서 자신과 가장 가까운 대상을 리턴
+//=======================================================================
+public:
+	// 나로 부터 거리가 가장 가까운 타겟을 반환합니다.
+	CGameObject*	Calc_LengthNearByMe(list<CGameObject*> _listGameObject, _v3 _vMyPos, _float _fMinLengthValue = 0.f , _float* _ppLength = nullptr);
+//=======================================================================
+
 private:
 	RIM_PARAM		m_tRimParam;
 
