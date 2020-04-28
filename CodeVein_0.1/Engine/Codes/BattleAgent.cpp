@@ -111,15 +111,17 @@ CGameObject * CBattleAgent::Calc_LengthNearByMe(list<CGameObject*> _listGameObje
 	CGameObject*	pObject = nullptr;
 	_float			fOldLength = 99999.f;
 
-	// 리스트가 비었다면,
+	// 리스트가 비었다면, 스킵
 	if (_listGameObject.empty())
 		return nullptr;
 
 	for (auto& iter : _listGameObject)
 	{
+		// 뒤졌으면 스킵
 		if (true == iter->Get_Dead())
 			continue;
 
+		// 비활성화 되면 스킵
 		if (false == iter->Get_Enable())
 			continue;
 
