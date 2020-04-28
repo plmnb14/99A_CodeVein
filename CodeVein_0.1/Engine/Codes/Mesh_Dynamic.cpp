@@ -322,52 +322,52 @@ void CMesh_Dynamic::Set_BoneSeperate(D3DXFRAME_DERIVED * _frame, const char * _b
 		Set_BoneSeperate((D3DXFRAME_DERIVED*)_frame->pFrameFirstChild, _bodyName, _sSeperateNum);
 }
 
-HRESULT CMesh_Dynamic::SetUp_Animation(_uint iIndex)
+HRESULT CMesh_Dynamic::SetUp_Animation(_uint iIndex, _bool _bOffLerp)
 {
 	if (nullptr == m_pAniCtrl_Lower)
 		return E_FAIL;
 
-	m_pAniCtrl_Lower->SetUp_Animation(iIndex);
+	m_pAniCtrl_Lower->SetUp_Animation(iIndex, _bOffLerp);
 
 	return NOERROR;
 }
 
-HRESULT CMesh_Dynamic::SetUp_Animation_Lower(_uint iIndex)
+HRESULT CMesh_Dynamic::SetUp_Animation_Lower(_uint iIndex, _bool _bOffLerp)
 {
 	if (nullptr == m_pAniCtrl_Lower)
 		return E_FAIL;
 
-	m_pAniCtrl_Lower->SetUp_Animation(iIndex);
+	m_pAniCtrl_Lower->SetUp_Animation(iIndex, _bOffLerp);
 
 	return S_OK;
 }
 
-HRESULT CMesh_Dynamic::SetUp_Animation_Upper(_uint iIndex)
+HRESULT CMesh_Dynamic::SetUp_Animation_Upper(_uint iIndex, _bool _bOffLerp)
 {
 	if (nullptr == m_pAniCtrl_Upper)
 		return E_FAIL;
 
-	m_pAniCtrl_Upper->SetUp_Animation(iIndex);
+	m_pAniCtrl_Upper->SetUp_Animation(iIndex, _bOffLerp);
 
 	return S_OK;
 }
 
-HRESULT CMesh_Dynamic::SetUp_Animation_RightArm(_uint iIndex)
+HRESULT CMesh_Dynamic::SetUp_Animation_RightArm(_uint iIndex, _bool _bOffLerp)
 {
 	if (nullptr == m_pAniCtrl_RightArm)
 		return E_FAIL;
 
-	m_pAniCtrl_RightArm->SetUp_Animation(iIndex);
+	m_pAniCtrl_RightArm->SetUp_Animation(iIndex, _bOffLerp);
 
 	return S_OK;
 }
 
-HRESULT CMesh_Dynamic::SetUp_Animation_LeftArm(_uint iIndex)
+HRESULT CMesh_Dynamic::SetUp_Animation_LeftArm(_uint iIndex, _bool _bOffLerp)
 {
 	if (nullptr == m_pAniCtrl_LeftArm)
 		return E_FAIL;
 
-	m_pAniCtrl_LeftArm->SetUp_Animation(iIndex);
+	m_pAniCtrl_LeftArm->SetUp_Animation(iIndex , _bOffLerp);
 
 	return S_OK;
 }

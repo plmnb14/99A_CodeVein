@@ -35,10 +35,6 @@ HRESULT CScene_Title::Ready_Scene()
 	
 	if (FAILED(Ready_Layer_LoadingUI(L"Layer_LoadingUI")))
 		return E_FAIL;
-	
-	// 파티클
-	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
-		return E_FAIL;
 
 	// 디졸브 전역 텍스쳐
 	g_pDissolveTexture = CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Effect/Noise/Noise_13.tga");

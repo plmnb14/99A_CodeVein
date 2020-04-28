@@ -85,7 +85,8 @@ void CGameObject::Set_Dead()
 void CGameObject::Start_Dissolve(_float fFxSpeed, _bool bFadeIn, _bool bReadyDead, _float fDelay)
 {
 	m_bDissolve = true;
-	m_iPass = 3;
+	//m_iPass = 3;
+	m_iTempPass = m_iPass;
 	m_bFadeIn = bFadeIn;
 	m_fFXSpeed = fFxSpeed;
 	m_bReadyDead = bReadyDead;
@@ -93,6 +94,7 @@ void CGameObject::Start_Dissolve(_float fFxSpeed, _bool bFadeIn, _bool bReadyDea
 
 	if (bFadeIn)
 		m_fFXAlpha = 1.f;
+
 	else
 		m_fFXAlpha = 0.3f;
 }
@@ -158,15 +160,18 @@ void CGameObject::Compute_ViewZ(const _v3* pPos)
 
 void CGameObject::Check_Dissolve(_double TimeDelta)
 {
-	if (!m_bDissolve)
+	if (false == m_bDissolve)
 		return;
 
 	m_fFXDelay -= _float(TimeDelta);
+
 	if (m_fFXDelay > 0.f)
 		return;
 
 	if(!m_bFadeIn)
 	{
+		//cout << "¾ËÆÄ°ª : " << m_fFXAlpha << endl;
+
 		m_fFXAlpha += _float(TimeDelta) * m_fFXSpeed;
 		
 		if (m_fFXAlpha >= 1.f)
@@ -174,9 +179,12 @@ void CGameObject::Check_Dissolve(_double TimeDelta)
 			if (m_bReadyDead)
 				m_bIsDead = true;
 
+			else
+			{
+				m_bDissolve = false;
+			}
+
 			m_fFXAlpha = 1.f;
-			//m_iPass = m_iTempPass;
-			//m_bDissolve = false;
 		}
 	}
 	else
@@ -187,6 +195,8 @@ void CGameObject::Check_Dissolve(_double TimeDelta)
 		{
 			m_fFXAlpha = 0.3f;
 			m_iPass = m_iTempPass;
+			//cout << "µðÁ¹ºê°¡ ³¡³µ´Âµ¥ ¾È¿¡¿È?" << endl;
+
 			m_bDissolve = false;
 		}
 	}
