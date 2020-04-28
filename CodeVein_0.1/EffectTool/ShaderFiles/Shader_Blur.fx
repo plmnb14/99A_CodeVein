@@ -1,7 +1,7 @@
 
 
 matrix		g_matWorld, g_matView, g_matProj, g_matLastWVP;
-bool		g_bMotionBlur;
+bool		g_bMotionBlur, g_bDecalTarget;
 float		g_fRimPower, g_fBloomPower = 0.75f;
 
 struct VS_IN
@@ -64,6 +64,7 @@ struct PS_OUT
 	vector		vVelocity : COLOR0;
 	vector		vNormal : COLOR1; // For RimLight
 	vector		vBloomPower : COLOR2;
+	vector		vDecalDepth : COLOR3;
 };
 
 // 픽셀의 색을 결정한다.
@@ -91,6 +92,11 @@ PS_OUT PS_MOTIONBLUR(PS_MOTIONBLUR_IN In)
 	Out.vNormal = vector(In.vNormal.xyz * 0.5f + 0.5f, g_fRimPower);
 	Out.vBloomPower = vector(g_fBloomPower,0,0,0);
 
+	if (!g_bDecalTarget)
+		Out.vDecalDepth = vector(0.f, 0.f, 0.f, 0.f);
+	else 
+		Out.vDecalDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
+	
 	return Out;
 }
 
