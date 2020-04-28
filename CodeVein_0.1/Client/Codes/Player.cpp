@@ -38,9 +38,6 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 
 	Ready_Skills();
 
-	//m_TmpFontNum = static_cast<CUI_FontNum*>(g_pManagement->Clone_GameObject_Return(L"GameObject_FontNum", nullptr));
-	//m_TmpFontNum->Set_Type(CUI_FontNum::Orthgrahpuic_UI);
-
 	return NOERROR;
 }
 
@@ -102,10 +99,10 @@ _int CPlayer::Late_Update_GameObject(_double TimeDelta)
 	Reset_BloodSuck_Options();
 	//Reset_Attack_Bool();
 
-	m_pDynamicMesh->SetUp_Animation_Lower(m_eAnim_Lower);
-	m_pDynamicMesh->SetUp_Animation_Upper(m_eAnim_Upper);
-	m_pDynamicMesh->SetUp_Animation_RightArm(m_eAnim_RightArm);
-	m_pDynamicMesh->SetUp_Animation_LeftArm(m_eAnim_RightArm);
+	m_pDynamicMesh->SetUp_Animation_Lower(m_eAnim_Lower , m_bOffLerp);
+	m_pDynamicMesh->SetUp_Animation_Upper(m_eAnim_Upper , m_bOffLerp);
+	m_pDynamicMesh->SetUp_Animation_RightArm(m_eAnim_RightArm , m_bOffLerp);
+	m_pDynamicMesh->SetUp_Animation_LeftArm(m_eAnim_RightArm, m_bOffLerp);
 
 	IF_NOT_NULL(m_pWeapon[m_eActiveSlot])
 		m_pWeapon[m_eActiveSlot]->Late_Update_GameObject(TimeDelta);
@@ -329,6 +326,12 @@ void CPlayer::Parameter_State()
 		break;
 	}
 
+	case ACT_BloodSuck_Execution:
+	{
+		Play_BloodSuckExecution();
+		break;
+	}
+
 	case ACT_Buff:
 	{
 		Play_Buff();
@@ -356,6 +359,13 @@ void CPlayer::Parameter_State()
 	case ACT_PickUp:
 	{
 		Play_PickUp();
+		break;
+	}
+
+	case ACT_Down:
+	{
+		Play_Down();
+		break;
 	}
 	}
 }
@@ -370,6 +380,12 @@ void CPlayer::Parameter_Atk()
 
 void CPlayer::Parameter_Movement()
 {
+	if (m_eActState == ACT_BloodSuck_Execution)
+		return;
+
+	if (m_eActState == ACT_Down)
+		return;
+
 	if (m_eActState == ACT_Hit)
 		return;
 
@@ -430,6 +446,9 @@ void CPlayer::Parameter_Movement()
 
 void CPlayer::Parameter_HeavyCharging()
 {
+	if (m_eActState == ACT_BloodSuck_Execution)
+		return;
+
 	if (m_eActState == ACT_Hit)
 		return;
 
@@ -455,6 +474,9 @@ void CPlayer::Parameter_Collision()
 
 void CPlayer::Parameter_Aiming()
 {
+	if (m_eActState == ACT_BloodSuck_Execution)
+		return;
+
 	if (true == m_bOnAiming)
 	{
 		if (nullptr != m_pTarget)
@@ -492,6 +514,12 @@ void CPlayer::Parameter_Aiming()
 
 void CPlayer::Parameter_HitCheck()
 {
+	if (m_eActState == ACT_BloodSuck_Execution)
+		return;
+
+	if (m_eActState == ACT_Down)
+		return;
+
 	// 플레이어가 외부에서 맞고
 	if (false == m_tObjParam.bCanHit)
 	{
@@ -950,6 +978,12 @@ void CPlayer::KeyInput()
 		return;
 	//=====================================================================
 
+	if (m_eActState == ACT_BloodSuck_Execution)
+		return;
+
+	if (m_eActState == ACT_Down)
+		return;
+
 	if (m_eActState == ACT_Disappear)
 		return;
 
@@ -988,6 +1022,7 @@ void CPlayer::KeyDown()
 		// 상호작용
 		Key_InterAct();
 
+		// 유틸리티
 		Key_Utility();
 	}
 
@@ -1553,6 +1588,21 @@ void CPlayer::Key_BloodSuck()
 	if (g_pInput_Device->Key_Down(DIK_C))
 	{
 		m_eActState = ACT_BloodSuck_Count;
+	}
+
+	// 임시 처형 , 원래는 공격을 카운터 치거나 뒤잡기 해야됨.
+	if (g_pInput_Device->Key_Down(DIK_V))
+	{
+		if (m_bCanExecution)
+		{
+			if (Check_CunterTarget())
+			{
+				m_eActState = ACT_BloodSuck_Execution;
+			}
+
+			else
+				cout << "처형할 대상이 없습니다." << endl;
+		}
 	}
 }
 
@@ -2980,19 +3030,38 @@ void CPlayer::Play_Hit()
 			m_bEventTrigger[i] = false;
 		}
 
-		m_eAnim_Upper =
-			(iHitDir == 0 ? Cmn_Hit01_B : 
-				iHitDir == 1 ? Cmn_Hit01_F : 
-				iHitDir == 2 ? Cmn_Hit01_R : Cmn_Hit01_L);
+		//m_eAnim_Upper =
+		//	(iHitDir == 0 ? Cmn_Hit01_B : 
+		//		iHitDir == 1 ? Cmn_Hit01_F : 
+		//		iHitDir == 2 ? Cmn_Hit01_R : Cmn_Hit01_L);
 
+		//m_eAnim_Upper =
+		//	(iHitDir == 0 ? Cmn_Hit02_B :
+		//		iHitDir == 1 ? Cmn_Hit02_F :
+		//		iHitDir == 2 ? Cmn_Hit02_R : Cmn_Hit02_L);
+
+		//m_eAnim_Upper =
+		//	(iHitDir == 0 ? Cmn_Hit03_B :
+		//		iHitDir == 1 ? Cmn_Hit03_F :
+		//		iHitDir == 2 ? Cmn_Hit03_R : Cmn_Hit03_L);
+
+		//m_eAnim_Upper =
+		//	(iHitDir == 0 ? Cmn_Hit04_B :
+		//		iHitDir == 1 ? Cmn_Hit04_F :
+		//		iHitDir == 2 ? Cmn_Hit04_R : Cmn_Hit04_L);
+
+		m_eAnim_Upper =
+			(iHitDir == 0 ? Cmn_HitBlow_B :
+				iHitDir == 1 ? Cmn_HitBlow_F :
+				iHitDir == 2 ? Cmn_HitBlow_R : Cmn_HitBlow_L);
+
+		// 임시 다운 테스트용
+		m_tObjParam.bDown = true;
 
 		m_eAnim_Lower = m_eAnim_Upper;
 		m_eAnim_RightArm = m_eAnim_Upper;
 		m_eAnim_LeftArm = m_eAnim_RightArm;
 
-		m_fSkillMoveSpeed_Cur = 3.f;
-		m_fSkillMoveAccel_Cur = 0.f;
-		m_fSkillMoveMultiply = 0.3f;
 
 		m_tObjParam.vHitDir = 
 			(iHitDir == 0 ? -m_pTransform->Get_Axis(AXIS_Z) :
@@ -3004,9 +3073,42 @@ void CPlayer::Play_Hit()
 	{
 		_double dAniTime = m_pDynamicMesh->Get_TrackInfo().Position;
 
+		if (m_eAnim_Upper == Cmn_HitBlow_F || m_eAnim_Upper == Cmn_HitBlow_B ||
+			m_eAnim_Upper == Cmn_HitBlow_R || m_eAnim_Upper == Cmn_HitBlow_L)
+		{
+			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
+			{
+				m_eActState = ACT_Down;
+
+				m_tObjParam.bIsHit = false;
+				m_tObjParam.bCanHit = true;
+
+				Reset_BattleState();
+
+				m_bOffLerp = true;
+
+				if (m_eAnim_Upper == Cmn_HitBlow_R)
+					m_pTransform->Add_Angle(AXIS_Y, -90.f);
+
+				else if (m_eAnim_Upper == Cmn_HitBlow_L)
+					m_pTransform->Add_Angle(AXIS_Y, 90.f);
+
+				m_pTransform->Update_Component();
+
+				return;
+			}
+		}
+
 		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 		{
-			m_eActState = ACT_Idle;
+			_bool	bBlow = false;
+
+			bBlow = (m_eAnim_Upper == Cmn_HitBlow_F ? true :
+				m_eAnim_Upper == Cmn_HitBlow_B ? true :
+				m_eAnim_Upper == Cmn_HitBlow_R ? true :
+				m_eAnim_Upper == Cmn_HitBlow_L ? true : false);
+
+			m_eActState = (true == bBlow ? ACT_Down : ACT_Idle);
 
 			m_tObjParam.bIsHit = false;
 			m_tObjParam.bCanHit = true;
@@ -3020,7 +3122,7 @@ void CPlayer::Play_Hit()
 		{
 			if (m_tObjParam.bCanHit == false)
 			{
-				m_tObjParam.bCanHit = true;
+				//m_tObjParam.bCanHit = true;
 			}
 		}
 
@@ -3099,8 +3201,618 @@ void CPlayer::Play_Hit()
 		case Cmn_Hit01_L:
 		case Cmn_Hit01_R:
 		{
+			if (dAniTime >= 1.2 && dAniTime < 2.333)
+			{
+				if (false == m_bEventTrigger[1])
+				{
+					m_bEventTrigger[1] = true;
+
+					m_fSkillMoveSpeed_Cur = 0.65f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.0f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, -m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			else if (dAniTime >= 0 && dAniTime < 0.867)
+			{
+				if (false == m_bEventTrigger[0])
+				{
+					m_bEventTrigger[0] = true;
+
+					m_fSkillMoveSpeed_Cur = 3.f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.5f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
 			break;
 		}
+		
+		//=======================================================================================
+
+		case Cmn_Hit02_F:
+		{
+			if (dAniTime >= 2.833 && dAniTime < 3.767)
+			{
+				if (false == m_bEventTrigger[2])
+				{
+					m_bEventTrigger[2] = true;
+
+					m_fSkillMoveSpeed_Cur = 0.5f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			else if (dAniTime >= 0.933 && dAniTime < 2.833)
+			{
+				if (false == m_bEventTrigger[1])
+				{
+					m_bEventTrigger[1] = true;
+
+					m_fSkillMoveSpeed_Cur = 0.15f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			else if (dAniTime >= 0 && dAniTime < 0.933)
+			{
+				if (false == m_bEventTrigger[0])
+				{
+					m_bEventTrigger[0] = true;
+
+					m_fSkillMoveSpeed_Cur = 3.f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.3f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			break;
+		}
+
+		case Cmn_Hit02_B:
+		{
+			if (dAniTime >= 2.067 && dAniTime < 3.6)
+			{
+				if (false == m_bEventTrigger[1])
+				{
+					m_bEventTrigger[1] = true;
+
+					m_fSkillMoveSpeed_Cur = 0.03f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			else if (dAniTime >= 0 && dAniTime < 2.067)
+			{
+				if (false == m_bEventTrigger[0])
+				{
+					m_bEventTrigger[0] = true;
+
+					m_fSkillMoveSpeed_Cur = 4.f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.18f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			break;
+		}
+
+		case Cmn_Hit02_L:
+		{
+			if (dAniTime >= 2.700 && dAniTime < 3.467)
+			{
+				if (false == m_bEventTrigger[2])
+				{
+					m_bEventTrigger[2] = true;
+
+					m_fSkillMoveSpeed_Cur = 0.2f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.0f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			else if (dAniTime >= 2.067 && dAniTime < 2.600)
+			{
+				if (false == m_bEventTrigger[1])
+				{
+					m_bEventTrigger[1] = true;
+
+					m_fSkillMoveSpeed_Cur = 0.2f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.0f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, -m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			else if (dAniTime >= 0 && dAniTime < 1.3)
+			{
+				if (false == m_bEventTrigger[0])
+				{
+					m_bEventTrigger[0] = true;
+
+					m_fSkillMoveSpeed_Cur = 4.f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.7f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			break;
+		}
+
+		case Cmn_Hit02_R:
+		{
+			if (dAniTime >= 3.167 && dAniTime < 3.8)
+			{
+				if (false == m_bEventTrigger[2])
+				{
+					m_bEventTrigger[2] = true;
+
+					m_fSkillMoveSpeed_Cur = 0.2f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.0f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, -m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			else if (dAniTime >= 1.267 && dAniTime < 3.167)
+			{
+				if (false == m_bEventTrigger[1])
+				{
+					m_bEventTrigger[1] = true;
+
+					m_fSkillMoveSpeed_Cur = 0.2f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.0f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			else if (dAniTime >= 0 && dAniTime < 1.267)
+			{
+				if (false == m_bEventTrigger[0])
+				{
+					m_bEventTrigger[0] = true;
+
+					m_fSkillMoveSpeed_Cur = 4.f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.7f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			break;
+		}
+
+		//=======================================================================================
+
+		case Cmn_Hit03_F:
+		{
+			if (dAniTime >= 1.733 && dAniTime < 3.733)
+			{
+				if (false == m_bEventTrigger[1])
+				{
+					m_bEventTrigger[1] = true;
+
+					m_fSkillMoveSpeed_Cur = 0.25f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			else if (dAniTime >= 0 && dAniTime < 1.733)
+			{
+				if (false == m_bEventTrigger[0])
+				{
+					m_bEventTrigger[0] = true;
+
+					m_fSkillMoveSpeed_Cur = 4.f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.18f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			break;
+		}
+
+		case Cmn_Hit03_B:
+		{
+			if (dAniTime >= 2.300 && dAniTime < 3.6)
+			{
+				if (false == m_bEventTrigger[1])
+				{
+					m_bEventTrigger[1] = true;
+
+					m_fSkillMoveSpeed_Cur = 0.03f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			else if (dAniTime >= 0 && dAniTime < 2.300)
+			{
+				if (false == m_bEventTrigger[0])
+				{
+					m_bEventTrigger[0] = true;
+
+					m_fSkillMoveSpeed_Cur = 4.f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.18f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			break;
+		}
+
+		case Cmn_Hit03_L:
+		{
+			cout << "L" << endl;
+
+			if (dAniTime >= 3.667 && dAniTime < 4.367)
+			{
+				if (false == m_bEventTrigger[2])
+				{
+					m_bEventTrigger[2] = true;
+
+					m_fSkillMoveSpeed_Cur = 0.3f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.0f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, -m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			else if (dAniTime >= 2.4 && dAniTime < 3.667)
+			{
+				if (false == m_bEventTrigger[1])
+				{
+					m_bEventTrigger[1] = true;
+
+					m_fSkillMoveSpeed_Cur = 0.25f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.0f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			else if (dAniTime >= 0 && dAniTime < 2.4)
+			{
+				if (false == m_bEventTrigger[0])
+				{
+					m_bEventTrigger[0] = true;
+
+					m_fSkillMoveSpeed_Cur = 4.f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.18f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			break;
+		}
+
+		case Cmn_Hit03_R:
+		{
+			cout << "R" << endl;
+
+			if (dAniTime >= 3.0 && dAniTime < 4.033)
+			{
+				if (false == m_bEventTrigger[2])
+				{
+					m_bEventTrigger[2] = true;
+
+					m_fSkillMoveSpeed_Cur = 0.25f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.0f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, -m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			else if (dAniTime >= 2.5 && dAniTime < 3.0)
+			{
+				if (false == m_bEventTrigger[1])
+				{
+					m_bEventTrigger[1] = true;
+
+					m_fSkillMoveSpeed_Cur = 0.15f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.0f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			else if (dAniTime >= 0 && dAniTime < 2.5)
+			{
+				if (false == m_bEventTrigger[0])
+				{
+					m_bEventTrigger[0] = true;
+
+					m_fSkillMoveSpeed_Cur = 4.f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.18f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			break;
+		}
+
+		//=======================================================================================
+
+		case Cmn_Hit04_F:
+		{
+			if (dAniTime >= 1.167 && dAniTime < 2.933)
+			{
+				if (false == m_bEventTrigger[1])
+				{
+					m_bEventTrigger[1] = true;
+
+					m_fSkillMoveSpeed_Cur = 0.1f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			else if (dAniTime >= 0.567 && dAniTime < 1.167)
+			{
+				if (false == m_bEventTrigger[1])
+				{
+					m_bEventTrigger[1] = true;
+
+					m_fSkillMoveSpeed_Cur = 0.1f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			else if (dAniTime >= 0 && dAniTime < 0.567)
+			{
+				if (false == m_bEventTrigger[0])
+				{
+					m_bEventTrigger[0] = true;
+
+					m_fSkillMoveSpeed_Cur = 4.f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.3f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			break;
+		}
+
+		case Cmn_Hit04_B:
+		{
+			if (dAniTime >= 1.833 && dAniTime < 2.233)
+			{
+				if (false == m_bEventTrigger[1])
+				{
+					m_bEventTrigger[1] = true;
+
+					m_fSkillMoveSpeed_Cur = 0.1f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			else if (dAniTime >= 0 && dAniTime < 0.967)
+			{
+				if (false == m_bEventTrigger[0])
+				{
+					m_bEventTrigger[0] = true;
+
+					m_fSkillMoveSpeed_Cur = 4.f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.3f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			break;
+		}
+
+		case Cmn_Hit04_L:
+		{
+			cout << "L" << endl;
+
+			if (dAniTime >= 1.233 && dAniTime < 2.233)
+			{
+				if (false == m_bEventTrigger[1])
+				{
+					m_bEventTrigger[1] = true;
+
+					m_fSkillMoveSpeed_Cur = 0.1f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, -m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			else if (dAniTime >= 0 && dAniTime < 1.233)
+			{
+				if (false == m_bEventTrigger[0])
+				{
+					m_bEventTrigger[0] = true;
+
+					m_fSkillMoveSpeed_Cur = 4.f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.3f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			break;
+		}
+
+		case Cmn_Hit04_R:
+		{
+			cout << "R" << endl;
+
+			if (dAniTime >= 0.0 && dAniTime < 1.233)
+			{
+				if (false == m_bEventTrigger[0])
+				{
+					m_bEventTrigger[0] = true;
+
+					m_fSkillMoveSpeed_Cur = 4.f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.3f;
+				}
+
+				Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+				Decre_Skill_Movement(m_fSkillMoveMultiply);
+			}
+
+			break;
+		}
+
+		//=======================================================================================
+
+		case Cmn_HitBlow_F:
+		{
+			if (false == m_bEventTrigger[0])
+			{
+				m_bEventTrigger[0] = true;
+
+				m_fSkillMoveSpeed_Cur = 6.0f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 0.3f;
+			}
+
+			Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+			Decre_Skill_Movement(m_fSkillMoveMultiply);
+
+			break;
+		}
+
+		case Cmn_HitBlow_B:
+		{
+			if (false == m_bEventTrigger[0])
+			{
+				m_bEventTrigger[0] = true;
+
+				m_fSkillMoveSpeed_Cur = 6.0f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 0.3f;
+			}
+
+			Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+			Decre_Skill_Movement(m_fSkillMoveMultiply);
+
+			break;
+		}
+
+		case Cmn_HitBlow_L:
+		{
+			if (false == m_bEventTrigger[0])
+			{
+				m_bEventTrigger[0] = true;
+
+				m_fSkillMoveSpeed_Cur = 6.0f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 0.3f;
+			}
+
+			Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+			Decre_Skill_Movement(m_fSkillMoveMultiply);
+
+			break;
+		}
+
+		case Cmn_HitBlow_R:
+		{
+			if (false == m_bEventTrigger[0])
+			{
+				m_bEventTrigger[0] = true;
+
+				m_fSkillMoveSpeed_Cur = 6.0f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 0.3f;
+			}
+
+			Skill_Movement(m_fSkillMoveSpeed_Cur, m_tObjParam.vHitDir);
+			Decre_Skill_Movement(m_fSkillMoveMultiply);
+
+			break;
+		}
+
 		}
 	}
 }
@@ -3241,6 +3953,125 @@ void CPlayer::Play_PickUp()
 	}
 }
 
+void CPlayer::Play_Down()
+{
+	if (false == m_bOnDown)
+	{
+		//Reset_BattleState();
+
+		m_bOnDown = true;
+
+		//if (m_eAnim_Upper == Cmn_HitBlow_R)
+		//	m_pTransform->Add_Angle(AXIS_Y, 270.f);
+
+		//else if (m_eAnim_Upper == Cmn_HitBlow_L)
+		//	m_pTransform->Add_Angle(AXIS_Y, -270.f);
+
+		//m_pTransform->Update_Component();
+
+		m_eAnim_Upper = m_eAnim_Upper == Cmn_HitBlow_F ? Cmn_Down_01 : Cmn_Down_02;
+		m_eAnim_Lower = m_eAnim_Upper;
+		m_eAnim_RightArm = m_eAnim_Upper;
+		m_eAnim_LeftArm = m_eAnim_Upper;
+
+		Reset_BattleState();
+	}
+
+	else if (m_bOnDown)
+	{
+		switch (m_eAnim_Upper)
+		{
+			//앞으로 자빠져욤
+		case Cmn_Down_01:
+		{
+			if (m_pDynamicMesh->Is_Finish_Animation(0.85f))
+			{
+				m_eAnim_Upper = Cmn_Down_01_End;
+				m_eAnim_Lower = m_eAnim_Upper;
+				m_eAnim_RightArm = m_eAnim_Upper;
+				m_eAnim_LeftArm = m_eAnim_Upper;
+
+				return;
+			}
+
+			break;
+		}
+
+		// 뒤로 자빠져욤
+		case Cmn_Down_02:
+		{
+			m_fAnimMutiply = 1.f;
+
+			cout << "다운됫어~" << endl;
+
+			if (m_pDynamicMesh->Is_Finish_Animation(0.9f))
+			{
+				m_eAnim_Upper = Cmn_Down_02_End;
+				m_eAnim_Lower = m_eAnim_Upper;
+				m_eAnim_RightArm = m_eAnim_Upper;
+				m_eAnim_LeftArm = m_eAnim_Upper;
+
+				m_bOffLerp = false;
+
+				m_fAnimMutiply = 1.f;
+
+				return;
+			}
+
+			break;
+		}
+
+		//앞으로 자빠졌다가 일어나요
+		case Cmn_Down_01_End:
+		{
+			if (m_pDynamicMesh->Is_Finish_Animation(0.85f))
+			{
+				m_bOnDown = false;
+
+				m_eActState = ACT_Idle;
+
+				m_eAnim_Upper = Cmn_Idle;
+				m_eAnim_Lower = m_eAnim_Upper;
+				m_eAnim_RightArm = m_eAnim_Upper;
+				m_eAnim_LeftArm = m_eAnim_Upper;
+
+				m_tObjParam.bDown = false;
+
+				Reset_BattleState();
+
+				return;
+			}
+
+			break;
+		}
+
+		// 뒤로 자빠졌다가 일어나요
+		case Cmn_Down_02_End:
+		{
+			if (m_pDynamicMesh->Is_Finish_Animation(0.85f))
+			{
+				m_bOnDown = false;
+
+				m_eActState = ACT_Idle;
+
+				m_eAnim_Upper = Cmn_Idle;
+				m_eAnim_Lower = m_eAnim_Upper;
+				m_eAnim_RightArm = m_eAnim_Upper;
+				m_eAnim_LeftArm = m_eAnim_Upper;
+
+				m_tObjParam.bDown = false;
+
+				Reset_BattleState();
+
+				return;
+			}
+
+			break;
+		}
+		}
+	}
+}
+
 void CPlayer::Play_Summon()
 {
 	if (false == m_bOnSummon)
@@ -3312,7 +4143,7 @@ void CPlayer::Play_BloodSuck()
 				{
 					m_pDrainWeapon->Set_AnimIdx(m_eAnim_Upper);
 					m_pDrainWeapon->Set_ActiveCollider(true);
-					m_pDrainWeapon->Set_Active(true);
+					//m_pDrainWeapon->Set_Active(true);
 
 					m_pDrainWeapon->Set_Target_CanAttack(true);
 					m_pDrainWeapon->Set_Enable_Record(true);
@@ -3338,6 +4169,8 @@ void CPlayer::Play_BloodSuck()
 			{
 				if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.f)
 				{
+					cout << "계속타냐" << endl;
+
 					m_eAnim_Upper = LongCoat_ChargeSuck_End;
 					m_eAnim_Lower = m_eAnim_Upper;
 					m_eAnim_RightArm = m_eAnim_Upper;
@@ -3348,7 +4181,7 @@ void CPlayer::Play_BloodSuck()
 					{
 						m_pDrainWeapon->Set_AnimIdx(m_eAnim_Upper);
 						m_pDrainWeapon->Set_ActiveCollider(true);
-						m_pDrainWeapon->Set_Active(true);
+						//m_pDrainWeapon->Set_Active(true);
 
 						m_pDrainWeapon->Set_Target_CanAttack(true);
 						m_pDrainWeapon->Set_Enable_Record(true);
@@ -3532,6 +4365,87 @@ void CPlayer::Play_BloodSuckCombo()
 
 				m_pDrainWeapon->Set_Target_CanAttack(false);
 				m_pDrainWeapon->Set_Enable_Record(false);
+			}
+		}
+	}
+}
+
+void CPlayer::Play_BloodSuckExecution()
+{
+	if (false == m_bIsExecution)
+	{
+		Reset_BattleState();
+
+		m_bIsExecution = true;
+		m_bCanExecution = false;
+
+		// 2번은 컷씬 아닌 처형
+		m_eAnim_Upper = LongCoat_SpecialSuck_02;
+		m_eAnim_Lower = m_eAnim_Upper;
+		m_eAnim_RightArm = m_eAnim_Upper;
+		m_eAnim_LeftArm = m_eAnim_Upper;
+
+		IF_NOT_NULL(m_pDrainWeapon)
+		{
+			m_pDrainWeapon->Set_AnimIdx(m_eAnim_Upper);
+			m_pDrainWeapon->Set_Active(true);
+		}
+
+		// 타겟의 처형여부
+		m_pCunterTarget->Set_Target_CanExicution(false);
+		m_pCunterTarget->Set_Target_Execution_Type(EXE_TYPE::EXECUTION_Back);
+		m_pCunterTarget->Set_Target_Execution_Wpn(EXE_WPN::EXECUTION_Wpn_Stinger);
+	}
+
+	else if (true == m_bIsExecution)
+	{
+		_double dAniTime = m_pDynamicMesh->Get_TrackInfo().Position;
+
+		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.95f))
+		{
+			m_eActState = ACT_Idle;
+
+			m_bIsExecution = false;
+			m_bCanExecution = true;
+
+			m_fSkillMoveAccel_Cur = 0.f;
+			m_fSkillMoveSpeed_Cur = 0.f;
+			m_fSkillMoveMultiply = 0.f;
+
+			m_tInfo.fMoveAccel_Cur = 0.f;
+			m_tInfo.fMoveSpeed_Cur = 0.f;
+
+			Reset_BattleState();
+
+			if(m_pDrainWeapon)
+			{
+				m_pDrainWeapon->Set_ActiveCollider(false);
+				m_pDrainWeapon->Set_Active(false);
+
+				m_pDrainWeapon->Set_Target_CanAttack(false);
+				m_pDrainWeapon->Set_Enable_Record(false);
+				m_pDrainWeapon->Set_OnExecution(false);
+			}
+		}
+
+		if (dAniTime > 4.733)
+		{
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+
+				m_pDrainWeapon->Set_Target_CanAttack(false);
+			}
+		}
+		else if (dAniTime > 4.6)
+		{
+			if (false == m_bEventTrigger[0])
+			{
+				m_bEventTrigger[0] = true;
+
+				m_pDrainWeapon->Set_Target_CanAttack(true);
+				m_pDrainWeapon->Set_Enable_Record(true);
+				m_pDrainWeapon->Set_OnExecution(true);
 			}
 		}
 	}
@@ -9041,6 +9955,7 @@ HRESULT CPlayer::SetUp_Default()
 	m_tObjParam.bIsDodge = false;
 	m_tObjParam.fHp_Cur = 5000.f;
 	m_tObjParam.fHp_Max = 5000.f;
+	m_tObjParam.bCanExecution = true;
 	
 	// Anim
 	m_fAnimMutiply = 1.f;
@@ -9157,6 +10072,9 @@ void CPlayer::Reset_BattleState()
 
 void CPlayer::Check_Mistletoe()
 {
+	if (m_eActState == ACT_BloodSuck_Execution)
+		return;
+
 	if (m_bOnMistletoe)
 		return;
 
@@ -9219,6 +10137,72 @@ _int CPlayer::Check_HitDirection()
 	}
 
 	return eDirection;
+}
+
+_bool CPlayer::Check_CunterAngle(CGameObject* pObj)
+{
+	_v3 vTargetPos = TARGET_TO_TRANS(pObj)->Get_Pos();
+	_float fHitAngle = D3DXToDegree(m_pTransform->Calc_HitTarget_Angle(vTargetPos));
+
+	_bool bOnFront = false;
+
+	if (fHitAngle >= 0.f && fHitAngle < 15.f)
+	{
+		bOnFront = true;
+	}
+
+	else if (fHitAngle >= -15.f && fHitAngle < 0.f)
+	{
+		bOnFront = true;
+	}
+
+	return bOnFront;
+}
+
+_bool CPlayer::Check_CunterTarget()
+{
+	m_pCunterTarget = nullptr;
+
+	CGameObject*	pCunterTarget = nullptr;
+	_float			fOldLength = 999.f;
+
+	for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE))
+	{
+		if (true == iter->Get_Dead())
+			continue;
+
+		if (false == iter->Get_Enable())
+			continue;
+
+		// 거리를 재서
+		_float fLength = D3DXVec3Length(&(TARGET_TO_TRANS(iter)->Get_Pos() - m_pTransform->Get_Pos()));
+
+		// 최소거리보다 멀면 다음으로
+		if(fLength > 2.f)
+			continue;
+
+		// 만약 이전 거리보다 멀면
+		if (fOldLength <= fLength)
+			continue;
+
+		// 거리 내에 있는데, 각도 안에 있는지도 체크
+		if(false == Check_CunterAngle(iter))
+			continue;
+
+		// 거리와 타겟을 갱신
+		fOldLength = fLength;
+		pCunterTarget = iter;
+	}
+
+	// 타겟이 null이 아니라면,
+	if (nullptr != pCunterTarget)
+	{
+		// 카운터 타겟 갱신
+		m_pCunterTarget = pCunterTarget;
+		return true;
+	}
+
+	return false;
 }
 
 CPlayer * CPlayer::Create(_Device pGraphic_Device)

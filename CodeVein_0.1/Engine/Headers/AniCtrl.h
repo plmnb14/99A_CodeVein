@@ -14,7 +14,7 @@ private:
 	virtual ~CAniCtrl() = default;
 public:
 	HRESULT Ready_Animation();
-	HRESULT SetUp_Animation(_uint iIndex); // 특정 애니메이션을 재생할 수 있도록 준비시킨다.
+	HRESULT SetUp_Animation(_uint iIndex , _bool _bOffLerp = false); // 특정 애니메이션을 재생할 수 있도록 준비시킨다.
 	HRESULT Play_Animation(_double TimeDelta); // 애니메이션을 재생한다.
 	_bool Is_Finish_Animation(_float _fLerpValue);
 

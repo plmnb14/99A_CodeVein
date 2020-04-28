@@ -128,7 +128,7 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LoadingScreen", SCENE_STATIC, L"Layer_LoadingScreen")))
 		return E_FAIL;
 	m_pLoadingScreen = static_cast<CLoadingScreen*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingScreen", SCENE_STATIC));
-	m_pLoadingScreen->Set_FadeSpeed(0.3f);
+	m_pLoadingScreen->Set_FadeSpeed(0.6f);
 
 	return S_OK;
 }

@@ -937,7 +937,8 @@ void CMonkey::Play_FangShot()
 		{
 			matBone = *m_matBone[Bone_LeftHand] * m_pTransformCom->Get_WorldMat();
 			memcpy(vBirth, &matBone._41, sizeof(_v3));
-			g_pManagement->Add_GameObject_ToLayer(L"Monster_MonkeyBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 15.f, 1.5));
+			//g_pManagement->Add_GameObject_ToLayer(L"Monster_MonkeyBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 15.f, 1.5));
+			CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_MonkeyBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 15.f, 1.5));
 		}
 		else if (0.f <= AniTime)
 			Function_RotateBody();

@@ -3,7 +3,6 @@
 #include "..\Headers\Weapon.h"
 
 #include "MonsterUI.h"
-//#include "DamegeNumUI.h"
 #include "Haze.h"
 
 CGunGenji::CGunGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
@@ -34,6 +33,7 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	Ready_BoneMatrix();
 	Ready_Collider();
 
+	m_tObjParam.bCanExecution = true;
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.fHp_Cur = 100000.f;
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
@@ -149,23 +149,34 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 	if (m_bIsDead)
 		return DEAD_OBJ;
 
-	// 플레이어 미발견
-	if (false == m_bFight)
+	// 처형이 아닐 경우,
+	if (true == m_tObjParam.bCanExecution)
 	{
-		Update_NF();
+		// 플레이어 미발견
+		if (false == m_bFight)
+		{
+			Update_NF();
+		}
+		// 플레이어 발견
+		else
+		{
+			// 뼈 위치 업데이트
+			Update_Bone_Of_BlackBoard();
+			// BB 직접 업데이트
+			Update_Value_Of_BB();
+
+			if (true == m_bAIController)
+				m_pAIControllerCom->Update_AIController(TimeDelta);
+		}
 	}
-	// 플레이어 발견
-	else
+	else if (false == m_tObjParam.bCanExecution)
 	{
-		// 뼈 위치 업데이트
+		// 뼈만 업데이트
 		Update_Bone_Of_BlackBoard();
-		// BB 직접 업데이트
-		Update_Value_Of_BB();
-
-		if (true == m_bAIController)
-			m_pAIControllerCom->Update_AIController(TimeDelta);
-
+		// 처형 체크
+		Check_Execution();
 	}
+
 
 	if (false == m_bReadyDead)
 		Check_PhyCollider();
@@ -205,7 +216,7 @@ HRESULT CGunGenji::Render_GameObject()
 		nullptr == m_pMeshCom)
 		return E_FAIL;
 
-	m_pMeshCom->Play_Animation(_float(m_dTimeDelta)); // * alpha
+	m_pMeshCom->Play_Animation(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60")); // * alpha
 
 
 	if (m_pOptimization->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 5.f))
@@ -225,8 +236,10 @@ HRESULT CGunGenji::Render_GameObject()
 
 			for (_uint j = 0; j < iNumSubSet; ++j)
 			{
-				if (false == m_bReadyDead)
-					m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+
+				if (m_bDissolve)
+					m_iPass = 3;
 
 				m_pShaderCom->Begin_Pass(m_iPass);
 
@@ -837,8 +850,6 @@ void CGunGenji::Check_PhyCollider()
 		m_pBattleAgent->Set_RimChangeData();
 		//===========================================================
 
-		m_pMeshCom->Reset_OldIndx();	//애니 인덱스 초기화
-
 		m_bAIController = false;
 
 		m_tObjParam.bIsHit = true;
@@ -850,10 +861,15 @@ void CGunGenji::Check_PhyCollider()
 		m_fSkillMoveAccel_Cur = 0.f;
 		m_fSkillMoveMultiply = 0.5f;
 
-		// 맞을때 플레이어의 룩을 받아와서 그 방향으로 밈.
-		m_vPushDir_forHitting = (*(_v3*)&TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))->Get_WorldMat().m[2]);
-
 		m_pAIControllerCom->Reset_BT();
+
+		if (false == m_tObjParam.bIsExecution)
+		{
+			m_pMeshCom->Reset_OldIndx();	//애니 인덱스 초기화
+
+			// 맞을때 플레이어의 룩을 받아와서 그 방향으로 밈.
+			m_vPushDir_forHitting = (*(_v3*)&TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))->Get_WorldMat().m[2]);
+		}
 
 		if (m_tObjParam.fHp_Cur > 0.f)
 		{
@@ -870,9 +886,15 @@ void CGunGenji::Check_PhyCollider()
 		}
 		else
 		{
-			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
-			Start_Dissolve(0.7f, false, true, 0.5f);
-			m_pGun->Start_Dissolve(0.7f, false, false, 0.5f);
+			Ani eTmpAnim = (m_tObjParam.bIsExecution ? Death_F : Ani_Death);
+			_float fDelay = (m_tObjParam.bIsExecution ? 0.5f : 0.1f);
+
+			m_pMeshCom->SetUp_Animation(eTmpAnim);	// 죽음처리 시작
+			Start_Dissolve(0.5f, false, true, fDelay);
+
+			m_pGun->Start_Dissolve();
+			//g_pManagement->Create_Spawn_Effect(m_vRightToeBase, m_vHead);
+			// 최신 머지에는 위에 이펙트 생성이 없었는데, 일단 냅둠
 			m_fDeadEffect_Delay = 0.5f;
 			g_pManagement->Add_GameObject_ToLayer(L"GameObject_Haze", SCENE_STAGE, L"Layer_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.5f));
 		}
@@ -1151,6 +1173,128 @@ HRESULT CGunGenji::Ready_NF(void * pArg)
 	m_fMinLength = eTemp.fMinLength;
 
 	return S_OK;
+}
+
+void CGunGenji::Check_Execution()
+{
+	// 만약 처형이 가능하다면, 리턴
+	if (true == m_tObjParam.bCanExecution)
+		return;
+
+	// 처형이 불가능한데, 처형중이 아닐 경우,
+	if (false == m_tObjParam.bIsExecution)
+	{
+		// 처형중인 상태로 만들어주고,
+		m_tObjParam.bIsExecution = true;
+
+		// 처형 종류에 따라 처형 애니메이션을 선택한다.
+		Check_ExecutionAnim();
+
+		m_pMeshCom->Reset_OldIndx();
+	}
+
+	// 처형 중일 경우,
+	else if (true == m_tObjParam.bIsExecution)
+	{
+		if (m_pMeshCom->Is_Finish_Animation(0.8f))
+		{
+			// 처형이 끝나고 죽을꺼기 땜에 초기화는 딱히 안해줌
+			//m_tObjParam.bIsExecution = false;
+			//m_tObjParam.bCanExecution = true;
+
+			//죽게 세팅한다.
+			//m_bIsDead = true;
+
+			// 혹시 모르니 HP 도  음수로
+			m_tObjParam.bCanHit = false;
+			m_tObjParam.fHp_Cur = -1.0f;
+
+			return;
+		}
+	}
+
+	// 처형 모션을 AniCtrl에 세팅해준다.
+	if(m_tObjParam.fHp_Cur > 0.f)
+		m_pMeshCom->SetUp_Animation(m_eExecutionAnim);
+}
+
+void CGunGenji::Check_ExecutionAnim()
+{
+	switch (m_tObjParam.eExecutionWpn)
+	{
+	case EXE_WPN::EXECUTION_Wpn_Orge:
+	{
+		Check_OrgeExecution();
+		break;
+	}
+	case EXE_WPN::EXECUTION_Wpn_Stinger:
+	{
+		Check_StingerExecution();
+		break;
+	}
+
+	case EXE_WPN::EXECUTION_Wpn_Hounds:
+	{
+		Check_HoundsExecution();
+		break;
+	}
+
+	case EXE_WPN::EXECUTION_Wpn_Ivy:
+	{
+		Check_IvyExecution();
+		break;
+	}
+
+	}
+}
+
+void CGunGenji::Check_OrgeExecution()
+{
+}
+
+void CGunGenji::Check_IvyExecution()
+{
+}
+
+void CGunGenji::Check_StingerExecution()
+{
+	switch (m_tObjParam.eExecutionType)
+	{
+	case EXE_TYPE::EXECUTION_Back:
+	{
+		m_eExecutionAnim = Ani_Execution_LongCoat_B_S;
+		break;
+	}
+	case EXE_TYPE::EXECUTION_BackCinema:
+	{
+		m_eExecutionAnim = Ani_Execution_LongCoat_B;
+		break;
+	}
+	case EXE_TYPE::EXECUTION_Front:
+	{
+		break;
+	}
+	case EXE_TYPE::EXECUTION_FrontCinema:
+	{
+		break;
+	}
+	case EXE_TYPE::EXECUTION_ComboFront:
+	{
+		break;
+	}
+	case EXE_TYPE::EXECUTION_ComboBack:
+	{
+		break;
+	}
+	case EXE_TYPE::EXECUTION_ComboCinema:
+	{
+		break;
+	}
+	}
+}
+
+void CGunGenji::Check_HoundsExecution()
+{
 }
 
 CGunGenji * CGunGenji::Create(LPDIRECT3DDEVICE9 pGraphic_Device)

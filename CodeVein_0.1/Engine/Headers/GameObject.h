@@ -68,13 +68,17 @@ public:
 	virtual _bool Get_Target_IsAttack() { return m_tObjParam.bIsAttack; }
 	virtual _bool Get_Target_CanAttack() { return m_tObjParam.bCanAttack; }
 	virtual _bool Get_Target_SuperArmor() { return m_tObjParam.bSuperArmor; };
+	virtual _bool Get_Target_IsExicution() { return m_tObjParam.bIsExecution; }
+	virtual _bool Get_Target_CanExicution() { return m_tObjParam.bCanExecution; }
 	virtual _float Get_Target_Hp() { return m_tObjParam.fHp_Cur; };
 	virtual _float Get_Target_Stamina() { return m_tObjParam.fStamina_Cur; };
 	virtual _float Get_Target_HoldGage() { return m_tObjParam.fHoldGage_Cur; };
-	virtual _float Get_DodgeTimer_Cur() { return m_tObjParam.fDodgeTimer_Cur; };
-	virtual _float Get_DodgeTimer_Max() { return m_tObjParam.fDodgeTimer_Max; };
-	virtual _float Get_GuardTimer_Cur() { return m_tObjParam.fGuardTimer_Cur; };
-	virtual _float Get_GuardTimer_Max() { return m_tObjParam.fGuardTimer_Max; };
+	virtual _float Get_Target_DodgeTimer_Cur() { return m_tObjParam.fDodgeTimer_Cur; };
+	virtual _float Get_Target_DodgeTimer_Max() { return m_tObjParam.fDodgeTimer_Max; };
+	virtual _float Get_Target_GuardTimer_Cur() { return m_tObjParam.fGuardTimer_Cur; };
+	virtual _float Get_Target_GuardTimer_Max() { return m_tObjParam.fGuardTimer_Max; };
+	virtual EXE_TYPE Get_Target_Execution_Type() { return m_tObjParam.eExecutionType; }
+	virtual EXE_WPN Get_Target_Execution_Wpn() { return m_tObjParam.eExecutionWpn; }
 
 public:
 	virtual void Add_Target_Hp(_float _fHp) { m_tObjParam.fHp_Cur += _fHp; };
@@ -93,10 +97,15 @@ public:
 	virtual void Set_Target_IsDodge(_bool _bDodge) { m_tObjParam.bIsDodge = _bDodge; }
 	virtual void Set_Target_CanDodge(_bool _bDodge) { m_tObjParam.bCanDodge = _bDodge; }
 	virtual void Set_Target_SuperArmor(_bool _bSuperArmor) { m_tObjParam.bSuperArmor = _bSuperArmor; }
+	virtual void Set_Target_IsExicution(_bool _bIsExicution) { m_tObjParam.bIsExecution = _bIsExicution; }
+	virtual void Set_Target_CanExicution(_bool _bCanExicution) {m_tObjParam.bCanExecution = _bCanExicution; }
 	virtual void Set_Target_DodgeTimer_Cur(_float _fDodgeTimer) { m_tObjParam.fDodgeTimer_Cur = _fDodgeTimer; }
 	virtual void Set_Target_DodgeTimer_Max(_float _fDodgeTimer) { m_tObjParam.fDodgeTimer_Max = _fDodgeTimer; }
 	virtual void Set_Target_GuardTimer_Cur(_float _fDodgeTimer) { m_tObjParam.fGuardTimer_Cur = _fDodgeTimer; }
 	virtual void Set_Target_GuardTimer_Max(_float _fDodgeTimer) { m_tObjParam.fGuardTimer_Max = _fDodgeTimer; }
+	virtual void Set_Target_Execution_Type(EXE_TYPE _eType) { m_tObjParam.eExecutionType = _eType; }
+	virtual void Set_Target_Execution_Wpn(EXE_WPN _eWpn) { m_tObjParam.eExecutionWpn = _eWpn; }
+
 
 	virtual void Set_Target_HitDir(_v3 _vHitDir) { m_tObjParam.vHitDir = _vHitDir; }
 	virtual void Set_Target_HitPos(_v3 _vHitPos) { m_tObjParam.vHitPos = _vHitPos; }

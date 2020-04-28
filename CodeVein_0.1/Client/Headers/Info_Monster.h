@@ -5,6 +5,7 @@
 #include "MonsterUI.h"
 #include "Weapon.h"
 #include "Haze.h"
+#include "ObjectPool_Manager.h"
 
 enum FBLR 
 { 
