@@ -56,15 +56,15 @@ _int CPet_PoisonButterFly::Update_GameObject(_double TimeDelta)
 
 	m_pMonsterUI->Update_GameObject(TimeDelta);
 
-	Check_PosY();
-	Check_Hit();
-	Check_Dist();
-	Check_AniEvent();
+	//Check_PosY();
+	//Check_Hit();
+	//Check_Dist();
+	//Check_AniEvent();
 	Function_CoolDown();
 
 	m_pMeshCom->SetUp_Animation(m_eState);
 
-	MONSTER_STATETYPE::DEAD != m_eFirstCategory ? Check_CollisionEvent() : Check_DeadEffect(TimeDelta);
+	//MONSTER_STATETYPE::DEAD != m_eFirstCategory ? Check_CollisionEvent() : Check_DeadEffect(TimeDelta);
 
 	return NO_EVENT;
 }

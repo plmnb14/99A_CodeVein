@@ -24,7 +24,7 @@ protected:
 	explicit CPet_PoisonButterFly(const CPet_PoisonButterFly& rhs);
 	virtual ~CPet_PoisonButterFly() = default;
 
-protected:
+public:
 	virtual HRESULT Ready_GameObject_Prototype() override;
 	virtual HRESULT Ready_GameObject(void * pArg) override;
 	virtual _int Update_GameObject(_double TimeDelta) override;
@@ -38,15 +38,15 @@ protected:
 	virtual void Check_CollisionPush() override;
 	virtual void Check_CollisionHit(list<CGameObject*> plistGameObject) override;
 
-protected:
-	void Function_Find_Target();
-
-protected:
-	void Check_PosY();
-	void Check_Hit();
-	void Check_Dist();
-	void Check_AniEvent();
-	void Check_DeadEffect(_double TimeDelta);
+//private:
+//	void Function_Find_Target();
+//
+//private:
+//	void Check_PosY();
+//	void Check_Hit();
+//	void Check_Dist();
+//	void Check_AniEvent();
+//	void Check_DeadEffect(_double TimeDelta);
 
 protected:
 	virtual HRESULT Add_Component(void * pArg) override;
