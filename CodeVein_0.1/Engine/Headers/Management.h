@@ -121,6 +121,7 @@ public: // For.ParticleManager
 	void Create_Effect_Delay(_tchar * szName, _float fDelay, CTransform* pFollowTrans, _mat* pTargetMat);
 	void Create_ParticleEffect_Delay(_tchar* szName, _float fLifeTime, _float fDelay, _v3 vPos, CTransform* pFollowTrans = nullptr);
 	void Create_ParticleEffect_Delay(_tchar* szName, _float fLifeTime, _float fDelay, CTransform* pFollowTrans, _mat* pTargetMat);
+	CTrail_VFX* Create_Trail();
 
 private:
 	CGraphic_Device*			m_pGraphic_Device = nullptr;

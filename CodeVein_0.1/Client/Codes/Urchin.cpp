@@ -147,6 +147,13 @@ HRESULT CUrchin::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 
 	m_matLastWVP = m_pTransformCom->Get_WorldMat() * ViewMatrix * ProjMatrix;
 
+	_bool bMotionBlur = true;
+	if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+		return E_FAIL;
+	_bool bDecalTarget = false;
+	if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+		return E_FAIL;
+
 	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
 
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)

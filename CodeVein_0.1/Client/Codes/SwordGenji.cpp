@@ -237,8 +237,8 @@ _int CSwordGenji::Late_Update_GameObject(_double TimeDelta)
 	
 	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
-	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-	//	return E_FAIL;
+	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+		return E_FAIL;
 	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
 	//	return E_FAIL;
 
@@ -308,14 +308,17 @@ HRESULT CSwordGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 		nullptr == m_pMeshCom)
 		return E_FAIL;
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
-
-	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
-		return E_FAIL;
+	pShader->Begin_Shader();
 
 	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
 	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+
+	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
+		return E_FAIL;
 	if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 		return E_FAIL;
 
@@ -327,6 +330,7 @@ HRESULT CSwordGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 	_bool bDecalTarget = false;
 	if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
 		return E_FAIL;
+
 
 	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
 
@@ -345,6 +349,8 @@ HRESULT CSwordGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 			pShader->End_Pass();
 		}
 	}
+
+	pShader->End_Shader();
 
 	return NOERROR;
 }
@@ -1121,10 +1127,10 @@ void CSwordGenji::Check_PhyCollider()
 		else
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
-			Start_Dissolve(0.6f, false, true, 0.5f);
-			m_pSword->Start_Dissolve(0.6f, false, false, 0.5f);
+			Start_Dissolve(0.45f, false, true, 0.0f);
+			m_pSword->Start_Dissolve(0.45f, false, false, 0.5f);
 			m_fDeadEffect_Delay = 0.5f;
-			g_pManagement->Add_GameObject_ToLayer(L"GameObject_Haze", SCENE_STAGE, L"Layer_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.5f));
+			CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.5f));
 		}
 	}
 	// 맞았을 때

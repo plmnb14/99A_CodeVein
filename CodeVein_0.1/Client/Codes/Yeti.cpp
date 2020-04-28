@@ -147,6 +147,13 @@ HRESULT CYeti::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 
 	m_matLastWVP = m_pTransformCom->Get_WorldMat() * ViewMatrix * ProjMatrix;
 
+	_bool bMotionBlur = true;
+	if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+		return E_FAIL;
+	_bool bDecalTarget = false;
+	if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+		return E_FAIL;
+
 	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
 
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
@@ -1485,7 +1492,8 @@ void CYeti::Play_IceThrowing()
 				memcpy(&vLook, &matTemp._21, sizeof(_v3)); //»ÀÀÇ ·è
 				vBirth += (vLook * fLength); //»ı¼ºÀ§Ä¡ = »ı¼ºÀ§Ä¡ +(·è*±æÀÌ)
 
-				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
+				//g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_HunterBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
 			}
 		}
 
@@ -2433,7 +2441,7 @@ void CYeti::Play_Dead()
 
 				Start_Dissolve(0.7f, false, true, 0.0f);
 				m_fDeadEffect_Delay = 0.f;
-				g_pManagement->Add_GameObject_ToLayer(L"GameObject_Haze", SCENE_STAGE, L"Layer_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 			}
 
 		}

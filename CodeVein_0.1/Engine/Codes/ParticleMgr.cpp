@@ -1,4 +1,5 @@
 #include "..\Headers\ParticleMgr.h"
+#include "Trail_VFX.h"
 #include "Effect.h"
 
 IMPLEMENT_SINGLETON(CParticleMgr)
@@ -8,13 +9,12 @@ CParticleMgr::CParticleMgr()
 }
 
 
-HRESULT CParticleMgr::Ready_ParticleManager()
+HRESULT CParticleMgr::Ready_ParticleManager_Essential()
 {
 	m_pManagement = CManagement::Get_Instance();
 	if (nullptr == m_pManagement)
 		return E_FAIL;
 
-	//Safe_AddRef(m_pManagement);
 	Input_Pool(L"ItemGet_Particle", 50);
 
 	Input_Pool(L"Player_FootSmoke", 50);
@@ -22,15 +22,6 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Player_FootSmoke_DodgeBack", 90);
 	Input_Pool(L"Player_SpaceBar_StepParticle", 500);
 
-	Input_Pool(L"Player_Skill_Scratch_Hor", 10);
-	Input_Pool(L"Player_Skill_Scratch_Ver", 10);
-	Input_Pool(L"Player_Skill_ScratchBlur_Hor", 10);
-	Input_Pool(L"Player_Skill_ScratchBlur_Ver", 10);
-	Input_Pool(L"Player_Skill_ScratchBlur_Sub_Hor", 10);
-	Input_Pool(L"Player_Skill_ScratchBlur_Sub_Ver", 10);
-	Input_Pool(L"Player_Skill_ShadowAssault_ScratchBlur", 10);
-	Input_Pool(L"Player_Skill_ShadowAssault_Scratch", 10);
-	Input_Pool(L"Player_Skill_DarkSmokeAura", 50);
 	Input_Pool(L"Player_ChargeSpark_Small", 10);
 	Input_Pool(L"Player_ChargeSpark_Big", 10);
 	Input_Pool(L"Player_ChargeSpark_Circle", 30);
@@ -45,6 +36,104 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Player_Buff_HandSmoke", 30);
 	Input_Pool(L"Player_Buff_Particle", 40);
 	Input_Pool(L"Player_Buff_Flash", 70);
+
+	Input_Pool(L"Monster_DeadSmoke_0", 1000);
+	//Input_Pool(L"Monster_DeadSmoke_1", 1000);
+	//Input_Pool(L"Monster_DeadSmoke_2", 1000);
+
+	Input_Pool(L"Cocoon_TongueFire", 200);
+	Input_Pool(L"Totem_Fire_Bullet_Dead_0", 200);
+	Input_Pool(L"Totem_Fire_Bullet_Dead_1", 200);
+	Input_Pool(L"Totem_Fire_BulletBody", 200);
+	Input_Pool(L"Totem_Fire_Bullet_Dead_Particle", 200);
+
+	Input_Pool(L"Monkey_Knife", 60);
+
+	Input_Pool(L"Hit_BloodParticle_0", 200);
+	Input_Pool(L"Hit_BloodParticle_1", 200);
+	Input_Pool(L"Hit_BloodParticle_2", 200);
+	Input_Pool(L"Hit_BloodParticle_3", 200);
+	Input_Pool(L"Hit_BloodParticle_4", 200);
+	Input_Pool(L"Hit_BloodParticle_5", 200);
+	Input_Pool(L"Hit_Blood_Direction_0", 100);
+	Input_Pool(L"Hit_Blood_Direction_1", 100);
+	Input_Pool(L"Hit_Blood_Direction_2", 100);
+	Input_Pool(L"Hit_Blood_Direction_3", 100);
+	Input_Pool(L"Hit_Blood_Direction_4", 100);
+	Input_Pool(L"Hit_Blood_Direction_5", 100);
+	Input_Pool(L"Hit_Blood_Direction_6", 100);
+
+	Input_Pool(L"Hit_BloodDecal_0", 50);
+
+	Input_Pool(L"Hit_Slash_Particle_0", 50);
+	Input_Pool(L"Hit_Slash_Particle_1", 50);
+	Input_Pool(L"Hit_Slash_Particle_2", 50);
+	Input_Pool(L"Hit_Slash_Particle_3", 50);
+	Input_Pool(L"Hit_Slash_0", 50);
+	Input_Pool(L"Hit_Slash_1", 50);
+	Input_Pool(L"Hit_Slash_2", 50);
+	Input_Pool(L"Hit_Slash_3", 50);
+	Input_Pool(L"Hit_SlashLine_0", 50);
+	Input_Pool(L"Hit_Particle_Red", 100);
+	Input_Pool(L"Hit_Particle_Yellow", 100);
+
+	Input_Pool(L"SpawnParticle", 1000);
+	Input_Pool(L"SpawnParticle_Sub", 1000);
+
+	Input_Pool(L"Bullet_Body", 30);
+	Input_Pool(L"Bullet_Body_Aura", 100);
+	Input_Pool(L"Bullet_DeadFlash", 30);
+	Input_Pool(L"Bullet_DeadSmoke_Base", 50);
+	Input_Pool(L"Bullet_DeadSmoke_Black", 100);
+	Input_Pool(L"Bullet_Fire_Flash", 10);
+	Input_Pool(L"Bullet_Ready_Aura", 100);
+	Input_Pool(L"Bullet_Ready_Flash", 10);
+	Input_Pool(L"Bullet_Tail_Particle", 100);
+	Input_Pool(L"RockBullet_Body", 10);
+
+	Input_Pool(L"MistletoeParticle", 500);
+	Input_Pool(L"MistletoeParticle_Sub", 500);
+	Input_Pool(L"MistletoeParticle_Active", 500);
+
+	Input_Pool(L"ItemObject", 100);
+	Input_Pool(L"ItemObject_Red", 100);
+	Input_Pool(L"ItemObject_Green", 100);
+	Input_Pool(L"ItemObject_Blue", 100);
+	Input_Pool(L"ItemObject_Purple", 100);
+	Input_Pool(L"ItemObject_Yellow", 100);
+
+	Input_Pool(L"Haze_Body", 50);
+	Input_Pool(L"Haze_FlashParticle", 2500);
+
+	Input_Pool(L"Weapon_HeavyDust", 300);
+
+	Input_Pool(L"MapDust", 100);
+	Input_Pool(L"MapDust_2", 100);
+	Input_Pool(L"MapMist", 1000);
+	Input_Pool(L"MapSnow", 2500);
+
+	Input_Pool(L"Blood_Decal_0", 100);
+	Input_Pool(L"Blood_Decal_1", 100);
+	Input_Pool(L"Blood_Decal_2", 100);
+	Input_Pool(L"Blood_Decal_3", 100);
+	Input_Pool(L"Blood_Decal_4", 100);
+	Input_Pool(L"Blood_Decal_5", 100);
+	Input_Pool(L"Blood_Decal_6", 100);
+
+	return S_OK;
+}
+
+HRESULT CParticleMgr::Ready_ParticleManager()
+{
+	Input_Pool(L"Player_Skill_Scratch_Hor", 10);
+	Input_Pool(L"Player_Skill_Scratch_Ver", 10);
+	Input_Pool(L"Player_Skill_ScratchBlur_Hor", 10);
+	Input_Pool(L"Player_Skill_ScratchBlur_Ver", 10);
+	Input_Pool(L"Player_Skill_ScratchBlur_Sub_Hor", 10);
+	Input_Pool(L"Player_Skill_ScratchBlur_Sub_Ver", 10);
+	Input_Pool(L"Player_Skill_ShadowAssault_ScratchBlur", 10);
+	Input_Pool(L"Player_Skill_ShadowAssault_Scratch", 10);
+	Input_Pool(L"Player_Skill_DarkSmokeAura", 50);
 	Input_Pool(L"Player_Skill_Ring_Hor", 10);
 	Input_Pool(L"Player_Skill_Ring_Ver", 10);
 	Input_Pool(L"Player_Skill_Particle_Explosion", 110);
@@ -74,17 +163,17 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Player_Skill_BloodTornadeMesh_3", 60);
 	Input_Pool(L"Player_Skill_BloodConeMesh", 60);
 	Input_Pool(L"Player_Skill_BloodConeMesh_Explosion", 60);
-	Input_Pool(L"Player_Skill_Rush_Particle_Yellow"	, 300);
-	Input_Pool(L"Player_Skill_Rush_Particle_Orange"	, 300);
-	Input_Pool(L"Player_Skill_Rush_Particle_White"	, 300);
-	Input_Pool(L"Player_Skill_Rush_LaserBefore"		, 10);
-	Input_Pool(L"Player_Skill_Rush_RedParticle_LaserBefore"		, 80);
-	Input_Pool(L"Player_Skill_Rush_WhiteParticle_LaserBefore"	, 80);
-	Input_Pool(L"Player_Skill_Torment_Wind_L"	, 10);
-	Input_Pool(L"Player_Skill_Torment_Wind_R"	, 10);
-	Input_Pool(L"Player_Skill_Torment_Wind_Distortion_L"	, 10);
-	Input_Pool(L"Player_Skill_Torment_Wind_Distortion_R"	, 10);
-	
+	Input_Pool(L"Player_Skill_Rush_Particle_Yellow", 300);
+	Input_Pool(L"Player_Skill_Rush_Particle_Orange", 300);
+	Input_Pool(L"Player_Skill_Rush_Particle_White", 300);
+	Input_Pool(L"Player_Skill_Rush_LaserBefore", 10);
+	Input_Pool(L"Player_Skill_Rush_RedParticle_LaserBefore", 80);
+	Input_Pool(L"Player_Skill_Rush_WhiteParticle_LaserBefore", 80);
+	Input_Pool(L"Player_Skill_Torment_Wind_L", 10);
+	Input_Pool(L"Player_Skill_Torment_Wind_R", 10);
+	Input_Pool(L"Player_Skill_Torment_Wind_Distortion_L", 10);
+	Input_Pool(L"Player_Skill_Torment_Wind_Distortion_R", 10);
+
 	Input_Pool(L"ButterFly_SoftSmoke", 2000);
 	Input_Pool(L"ButterFly_PointParticle", 3500);
 	Input_Pool(L"ButterFly_PointParticle_Plum", 1000);
@@ -325,94 +414,21 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 
 	Input_Pool(L"Boss_KnockDown_Dust", 10);
 	Input_Pool(L"Boss_Dead_Particle", 11000);
-	Input_Pool(L"Monster_DeadSmoke_0", 1000);
-	Input_Pool(L"Monster_DeadSmoke_1", 1000);
-	Input_Pool(L"Monster_DeadSmoke_2", 1000);
 
-	Input_Pool(L"Cocoon_TongueFire", 200);
-	Input_Pool(L"Totem_Fire_Bullet_Dead_0", 200);
-	Input_Pool(L"Totem_Fire_Bullet_Dead_1", 200);
-	Input_Pool(L"Totem_Fire_BulletBody", 200);
-	Input_Pool(L"Totem_Fire_Bullet_Dead_Particle", 200);
-
-	Input_Pool(L"Monkey_Knife", 60);
-
-	Input_Pool(L"Hit_BloodParticle_0", 200);
-	Input_Pool(L"Hit_BloodParticle_1", 200);
-	Input_Pool(L"Hit_BloodParticle_2", 200);
-	Input_Pool(L"Hit_BloodParticle_3", 200);
-	Input_Pool(L"Hit_BloodParticle_4", 200);
-	Input_Pool(L"Hit_BloodParticle_5", 200);
-	Input_Pool(L"Hit_Blood_Direction_0", 100);
-	Input_Pool(L"Hit_Blood_Direction_1", 100);
-	Input_Pool(L"Hit_Blood_Direction_2", 100);
-	Input_Pool(L"Hit_Blood_Direction_3", 100);
-	Input_Pool(L"Hit_Blood_Direction_4", 100);
-	Input_Pool(L"Hit_Blood_Direction_5", 100);
-	Input_Pool(L"Hit_Blood_Direction_6", 100);
-
-	Input_Pool(L"Hit_BloodDecal_0", 50);
-
-	Input_Pool(L"Hit_Slash_Particle_0", 50);
-	Input_Pool(L"Hit_Slash_Particle_1", 50);
-	Input_Pool(L"Hit_Slash_Particle_2", 50);
-	Input_Pool(L"Hit_Slash_Particle_3", 50);
-	Input_Pool(L"Hit_Slash_0", 50);
-	Input_Pool(L"Hit_Slash_1", 50);
-	Input_Pool(L"Hit_Slash_2", 50);
-	Input_Pool(L"Hit_Slash_3", 50);
-	Input_Pool(L"Hit_SlashLine_0", 50);
-	Input_Pool(L"Hit_Particle_Red"		, 100);
-	Input_Pool(L"Hit_Particle_Yellow"	, 100);
-
-	Input_Pool(L"SpawnParticle", 1000);
-	Input_Pool(L"SpawnParticle_Sub", 1000);
 	Input_Pool(L"SpawnParticle_ForBoss", 5000);
-	Input_Pool(L"SpawnParticle_ForBoss_Point", 5000);
-	Input_Pool(L"SpawnParticle_ForBoss_Point_Sub", 5000);
-	
-	Input_Pool(L"Bullet_Body", 30);
-	Input_Pool(L"Bullet_Body_Aura", 100);
-	Input_Pool(L"Bullet_DeadFlash", 30);
-	Input_Pool(L"Bullet_DeadSmoke_Base", 50);
-	Input_Pool(L"Bullet_DeadSmoke_Black", 100);
-	Input_Pool(L"Bullet_Fire_Flash", 10);
-	Input_Pool(L"Bullet_Ready_Aura", 100);
-	Input_Pool(L"Bullet_Ready_Flash", 10);
-	Input_Pool(L"Bullet_Tail_Particle", 100);
-	Input_Pool(L"RockBullet_Body", 10);
-	
-	Input_Pool(L"MistletoeParticle", 500);
-	Input_Pool(L"MistletoeParticle_Sub", 500);
-	Input_Pool(L"MistletoeParticle_Active", 500);
-
-	Input_Pool(L"ItemObject"		, 100);
-	Input_Pool(L"ItemObject_Red"	, 100);
-	Input_Pool(L"ItemObject_Green"	, 100);
-	Input_Pool(L"ItemObject_Blue"	, 100);
-	Input_Pool(L"ItemObject_Purple"	, 100);
-	Input_Pool(L"ItemObject_Yellow"	, 100);
-
-	Input_Pool(L"Haze_Body", 50);
-	Input_Pool(L"Haze_FlashParticle", 5000);
-
-	Input_Pool(L"Weapon_HeavyDust", 300);
-
-	Input_Pool(L"MapDust", 100);
-	Input_Pool(L"MapDust_2", 100);
-	Input_Pool(L"MapMist", 3000);
-	Input_Pool(L"MapSnow", 5000);
-
-	Input_Pool(L"Blood_Decal_0", 100);
-	Input_Pool(L"Blood_Decal_1", 100);
-	Input_Pool(L"Blood_Decal_2", 100);
-	Input_Pool(L"Blood_Decal_3", 100);
-	Input_Pool(L"Blood_Decal_4", 100);
-	Input_Pool(L"Blood_Decal_5", 100);
-	Input_Pool(L"Blood_Decal_6", 100);
+	//Input_Pool(L"SpawnParticle_ForBoss_Point", 5000);
+	//Input_Pool(L"SpawnParticle_ForBoss_Point_Sub", 5000);
 
 	return S_OK;
 }
+
+HRESULT CParticleMgr::Ready_Trail()
+{
+	Input_Pool_Trail(L"GameObject_SwordTrail", 1000);
+
+	return S_OK;
+}
+
 HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 {
 	//if (GetAsyncKeyState('B') & 0x8000)
@@ -420,17 +436,17 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 	//	Create_Effect_Delay(L"QueensKnight_Sting_Tornade", 0.f, _v3(0.f, 1.3f, 0.f), nullptr);
 	//}
 
-	//if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_LB))
-	//{
-	//	CParticleMgr::Get_Instance()->Create_Effect_Decal(L"Blood_Decal_0", V3_NULL);
-	//}
-	//if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_RB))
-	//{
-	//	_tchar szBuff[256] = L"";
-	//	wsprintf(szBuff, L"Blood_Decal_%d", CCalculater::Random_Num(0, 6));
-	//
-	//	CParticleMgr::Get_Instance()->Create_Effect_Decal(szBuff, V3_NULL);
-	//}
+	if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_LB))
+	{
+		CParticleMgr::Get_Instance()->Create_Effect_Decal(L"Blood_Decal_0", V3_NULL);
+	}
+	if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_RB))
+	{
+		_tchar szBuff[256] = L"";
+		wsprintf(szBuff, L"Blood_Decal_%d", CCalculater::Random_Num(0, 6));
+	
+		CParticleMgr::Get_Instance()->Create_Effect_Decal(szBuff, V3_NULL);
+	}
 
 	auto& iter_begin = m_vecParticle.begin();
 	auto& iter_end = m_vecParticle.end();
@@ -438,6 +454,7 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 	if (m_vecParticle.size() <= 0)
 	{
 		Update_Effect(TimeDelta);
+		//Update_Trail(TimeDelta);
 		return S_OK;
 	}
 
@@ -502,6 +519,28 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 	}
 
 	Update_Effect(TimeDelta);
+	//Update_Trail(TimeDelta);
+
+	return S_OK;
+}
+
+HRESULT CParticleMgr::Update_Trail(const _double TimeDelta)
+{
+	_int iProgress = 0;
+
+
+	for (auto& iter = m_TrailList.begin(); iter != m_TrailList.end(); )
+	{
+		iProgress = (*iter)->Update_GameObject(TimeDelta);
+
+		if (DEAD_OBJ == iProgress)
+		{
+			m_TrailPool[L"GameObject_SwordTrail"].push((*iter));
+
+			iter = m_TrailList.erase(iter);
+		}
+
+	}
 
 	return S_OK;
 }
@@ -939,9 +978,11 @@ void CParticleMgr::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCo
 	Create_DirEffect(L"Hit_Blood_Direction_5", vAttackPos, vBloodDir);
 	Create_DirEffect(L"Hit_Blood_Direction_6", vAttackPos, vBloodDir);
 
-
-	wsprintf(szBuff, L"Blood_Decal_%d", CCalculater::Random_Num(0, 6));
-	Create_Effect_Decal(szBuff, vAttackPos + _v3(0.f, -1.3f, 0.f));
+	for (_int i = 0; i < 4; i++)
+	{
+		wsprintf(szBuff, L"Blood_Decal_%d", CCalculater::Random_Num(0, 6));
+		Create_Effect_Decal(szBuff, vAttackPos + vDir + _v3(0.f, -1.3f, 0.f));
+	}
 }
 
 void CParticleMgr::Create_Spawn_Effect(_float fDelay, _v3 vPos, _v3 vFinishPos, CTransform* pFollowTrans)
@@ -997,6 +1038,33 @@ void CParticleMgr::Create_BossDeadParticle_Effect(_v3 vPos, _float fDelay, _floa
 
 		pFindedQueue->pop();
 	}
+}
+
+CTrail_VFX* CParticleMgr::Create_Trail()
+{
+	_tchar* szName = L"GameObject_SwordTrail";
+
+	CTrail_VFX* pTrail = nullptr;
+
+	queue<CTrail_VFX*>* pFindedQueue = Find_TrailQueue(szName);
+	if (pFindedQueue == nullptr)
+		return nullptr;
+
+	if (10 > pFindedQueue->size())
+	{
+		 pTrail = static_cast<CTrail_VFX*>(m_pManagement->Clone_GameObject_Return(szName, nullptr));
+	}
+	else
+	{
+		pTrail = pFindedQueue->front();
+		pTrail->Reset_Info();
+
+		pFindedQueue->pop();
+	}
+
+	m_TrailList.push_back(pTrail);
+
+	return pTrail;
 }
 
 HRESULT CParticleMgr::Update_Effect(const _double TimeDelta)
@@ -1058,13 +1126,32 @@ void CParticleMgr::Input_Pool(_tchar* szName, _int iCount)
 	}
 }
 
-void CParticleMgr::Pop_Pool(_tchar * szPoolName)
+void CParticleMgr::Input_Pool_Trail(_tchar* szName, _int iCount)
 {
+	m_TrailPool.emplace(szName, queue<CTrail_VFX*>());
+
+	for (_int i = 0; i <iCount; ++i)
+	{
+		// 미리 클론만 해놓기
+		CTrail_VFX* pTrail = static_cast<CTrail_VFX*>(m_pManagement->Clone_GameObject_Return(szName, nullptr));
+		m_TrailPool[szName].push(pTrail);
+	}
 }
 
 queue<CEffect*>* CParticleMgr::Find_Queue(_tchar* szName)
 {
 	for (auto& iter : m_EffectPool)
+	{
+		if (!lstrcmp(iter.first, szName))
+			return &iter.second;
+	}
+
+	return nullptr;
+}
+
+queue<CTrail_VFX*>* CParticleMgr::Find_TrailQueue(_tchar * szName)
+{
+	for (auto& iter : m_TrailPool)
 	{
 		if (!lstrcmp(iter.first, szName))
 			return &iter.second;
@@ -1086,14 +1173,27 @@ void CParticleMgr::Free()
 	}
 	m_EffectPool.clear();
 
-	for(auto& iter : m_EffectList)
+	for (auto& iter : m_TrailPool)
+	{
+		_int iQueueSize = _int(iter.second.size());
+		for (_int i = 0; i < iQueueSize; ++i)
+		{
+			Safe_Release(iter.second.front());
+			iter.second.pop();
+		}
+	}
+	m_TrailPool.clear();
+	
+	for (auto& iter : m_EffectList)
+		Safe_Release(iter);
+
+	for(auto& iter : m_TrailList)
 		Safe_Release(iter);
 
 	for (auto& iter : m_vecParticle)
 	{
 		Safe_Delete(iter);
 	}
-	
 
 	//Safe_Release(m_pManagement);
 }

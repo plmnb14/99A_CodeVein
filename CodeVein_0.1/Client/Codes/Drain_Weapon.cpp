@@ -42,6 +42,8 @@ _int CDrain_Weapon::Update_GameObject(_double TimeDelta)
 
 	OnCollisionEnter();
 
+	Parameter_State();
+	
 	return NO_EVENT;
 }
 
@@ -51,16 +53,14 @@ _int CDrain_Weapon::Late_Update_GameObject(_double TimeDelta)
 		nullptr == m_pMesh_Dynamic)
 		return E_FAIL;
 
-	//m_bActive = true;
-
 	if (m_bActive)
 	{
 		m_pMesh_Dynamic->SetUp_Animation(m_eAnimnum);
 
 		if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
 			return E_FAIL;
-		if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-			return E_FAIL;
+		//if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+		//	return E_FAIL;
 		//if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
 		//	return E_FAIL;
 	}
@@ -94,6 +94,11 @@ HRESULT CDrain_Weapon::Render_GameObject()
 		{
 			m_iPass = m_pMesh_Dynamic->Get_MaterialPass(i, j);
 
+			if (m_bDissolve)
+				m_iPass = 3;
+
+			//cout << "현재 패스 : " << m_iPass << endl;
+
 			m_pShader->Begin_Pass(m_iPass);
 
 			m_pShader->Set_DynamicTexture_Auto(m_pMesh_Dynamic, i, j);
@@ -110,7 +115,7 @@ HRESULT CDrain_Weapon::Render_GameObject()
 
 	_v3 vTmpColPos;
 
-	_mat matTmp = *m_matTailHead * m_pTransform->Get_WorldMat();
+	_mat matTmp = *m_matTailSword * m_pTransform->Get_WorldMat();
 
 	memcpy(vTmpColPos, &matTmp._41, sizeof(_v3));
 
@@ -175,8 +180,27 @@ void CDrain_Weapon::Set_Active(_bool _bActiveDrain)
 
 	if (false == m_bActive)
 	{
+		m_bOffDissolve = false;
+
 		m_pMesh_Dynamic->SetUp_Animation(0);
 		m_pMesh_Dynamic->Play_Animation(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
+	}
+
+	else if (true == m_bActive)
+	{
+		LOOP(4)
+			m_bEventTrigger[i] = false;
+
+		if (Drain_Parry == m_eAnimnum)
+		{
+			Start_Dissolve(1.5f, true);
+		}
+
+		else if (Drain_Charge_Start == m_eAnimnum)
+		{
+			Start_Dissolve(0.8f, true);
+		}
+		// 활성화 되면, 디졸브 효과
 	}
 }
 
@@ -262,6 +286,12 @@ void CDrain_Weapon::Find_TailHeadBone()
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMesh_Dynamic->Get_BonInfo(tmpChar, 0);
 
+	m_matTailSword = &pFamre->CombinedTransformationMatrix;
+
+	tmpChar = "GCTailSword";
+
+	pFamre = (D3DXFRAME_DERIVED*)m_pMesh_Dynamic->Get_BonInfo(tmpChar, 0);
+
 	m_matTailHead = &pFamre->CombinedTransformationMatrix;
 }
 
@@ -305,16 +335,19 @@ void CDrain_Weapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 
 					if (false == iter->Get_Target_IsDodge())
 					{
-						iter->Set_Target_CanHit(false);
-
-						if (iter->Get_Target_IsHit())
+						if (false == m_bOnExecution)
 						{
-							iter->Set_HitAgain(true);
+							iter->Set_Target_CanHit(false);
+
+							if (iter->Get_Target_IsHit())
+							{
+								iter->Set_HitAgain(true);
+							}
 						}
 
 						if (false == iter->Get_Target_IsDodge())
 						{
-							m_tObjParam.fDamage = 500.f;
+							m_tObjParam.fDamage = 99999.f; // iter->Get_Target_Hp();
 
 							// 무기 공격력의 +-20%까지 랜덤범위
 							// 몬스터 HP바 확인을 위해 데미지 추가해놓음 - Chae
@@ -356,7 +389,7 @@ void CDrain_Weapon::Update_Trails(_double TimeDelta)
 void CDrain_Weapon::Update_Collider()
 {
 	_v3 tmpPos;
-	memcpy(tmpPos, &m_matTailHead->_41, sizeof(_v3));
+	memcpy(tmpPos, &m_matTailSword->_41, sizeof(_v3));
 
 	m_pCollider->Update(tmpPos);
 }
@@ -425,12 +458,17 @@ HRESULT CDrain_Weapon::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Drain_LongTail", L"Com_DynamicMesh", (CComponent**)&m_pMesh_Dynamic)))
 		return E_FAIL;
 
+	// Collider
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Collider", (CComponent**)&m_pCollider)))
+		return E_FAIL;
+
+	// for.Com_BattleAgent
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"BattleAgent", L"Com_BattleAgent", (CComponent**)&m_pBattleAgent)))
 		return E_FAIL;
 
 	lstrcpy(m_szName, L"Mesh_Drain_LongTail");
 
-	m_pCollider->Set_Radius(_v3{ 0.7f, 0.7f, 0.7f });
+	m_pCollider->Set_Radius(_v3{ 1.f, 1.f, 1.f });
 	m_pCollider->Set_Dynamic(true);
 	m_pCollider->Set_Type(COL_SPHERE);
 	m_pCollider->Set_CenterPos(m_pTransform->Get_Pos() + _v3{ 0.f , m_pCollider->Get_Radius().y * 2.f , 0.f });
@@ -461,8 +499,135 @@ HRESULT CDrain_Weapon::SetUp_ConstantTable()
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
+	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShader)))
+		return E_FAIL;
+	if (FAILED(m_pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
+		return E_FAIL;
+
+	m_pBattleAgent->Update_RimParam_OnShader(m_pShader);
 
 	return NOERROR;
+}
+
+HRESULT CDrain_Weapon::Parameter_State()
+{
+	if (false == m_bActive)
+		return S_OK;
+
+	switch (m_eAnimnum)
+	{
+	case Drain_Parry:
+	{
+		_double dAniTime = m_pMesh_Dynamic->Get_TrackInfo().Position;
+
+		if (false == m_bOffDissolve)
+		{
+			m_bOffDissolve = true;
+		}
+
+		else if (m_bOffDissolve)
+		{
+			if (dAniTime < 1.0f)
+			{
+				if (m_fFXAlpha <= 0.45f)
+				{
+					if (m_bDissolve)
+					{
+						m_fFXAlpha = 0.f;
+						m_bDissolve = false;
+					}
+				}
+			}
+
+			else if (dAniTime >= 3.15f)
+			{
+				if (false == m_bEventTrigger[0])
+				{
+					m_bEventTrigger[0] = true;
+
+					Start_Dissolve(0.75f);
+				}
+			}
+		}
+
+		break;
+	}
+
+	case Drain_Charge_Start:
+	{
+		_double dAniTime = m_pMesh_Dynamic->Get_TrackInfo().Position;
+
+		if (dAniTime < 0.3f)
+		{
+			//m_fCreateEffectTime += g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60");
+			//
+			//if (m_fCreateEffectTime > 0.15f)
+			//{
+			//	m_fCreateEffectTime = 0.f;
+			//
+			//	_v3 vTmpEffectPos, vTmpEffectEndPos;
+			//
+			//	_mat matTmp = *m_matTailSword * m_pTransform->Get_WorldMat();
+			//
+			//	memcpy(vTmpEffectPos, &matTmp._41, sizeof(_v3));
+			//
+			//	matTmp = *m_matTailHead * m_pTransform->Get_WorldMat();
+			//
+			//	memcpy(vTmpEffectEndPos, &matTmp._41, sizeof(_v3));
+			//
+			//	g_pManagement->Create_Spawn_Effect(vTmpEffectPos, vTmpEffectEndPos);
+			//}
+		}
+
+		else
+			m_fCreateEffectTime = 0.f;
+
+
+		break;
+	}
+
+	case Drain_Charge_End:
+	{
+		_double dAniTime = m_pMesh_Dynamic->Get_TrackInfo().Position;
+
+		if (false == m_bOffDissolve)
+		{
+			m_bOffDissolve = true;
+		}
+
+		else if (m_bOffDissolve)
+		{
+			if (m_pMesh_Dynamic->Is_Finish_Animation(0.7f))
+			{
+				m_bOffDissolve = false;
+				m_bActive = false;
+
+				return S_OK;
+			}
+
+			else if (dAniTime >= 3.f)
+			{
+				if (false == m_bEventTrigger[0])
+				{
+					m_bEventTrigger[0] = true;
+
+					Start_Dissolve(0.5f);
+				}
+			}
+		}
+
+		break;
+	}
+
+	default:
+	{
+		m_bOffDissolve = false;
+
+		break;
+	}
+	}
+
+	return S_OK;
 }
 
 void CDrain_Weapon::Cacl_AttachBoneTransform()
@@ -514,6 +679,7 @@ void CDrain_Weapon::Free()
 	Safe_Release(m_pMesh_Dynamic);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pRenderer);
+	Safe_Release(m_pBattleAgent);
 
 	CGameObject::Free();
 }

@@ -30,14 +30,14 @@ HRESULT CWeapon::Ready_GameObject(void * pArg)
 
 	SetUp_Default();
 
-	m_pTrailEffect = static_cast<Engine::CTrail_VFX*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SwordTrail", nullptr));
+	m_pTrailEffect = g_pManagement->Create_Trail();
 	m_pTrailEffect->Set_TrailIdx(0);
 
-	m_pDistortionEffect = static_cast<Engine::CTrail_VFX*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SwordTrail", nullptr));
+	m_pDistortionEffect = g_pManagement->Create_Trail();
 	m_pDistortionEffect->Set_TrailIdx(3);
 	m_pDistortionEffect->Set_TrailType(Engine::CTrail_VFX::Trail_Distortion);
 
-	m_pStaticTrailEffect = static_cast<Engine::CTrail_VFX*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SwordTrail", nullptr));
+	m_pStaticTrailEffect = g_pManagement->Create_Trail();
 	m_pStaticTrailEffect->Set_TrailIdx(1);
 
 	return NOERROR;
@@ -122,6 +122,8 @@ HRESULT CWeapon::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 		nullptr == m_pMesh_Static)
 		return E_FAIL;
 
+	pShader->Begin_Shader();
+
 	_mat		ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
 	_mat		ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
 
@@ -136,6 +138,13 @@ HRESULT CWeapon::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 
 	m_matLastWVP = m_pTransform->Get_WorldMat() * ViewMatrix * ProjMatrix;
 
+	_bool bMotionBlur = true;
+	if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+		return E_FAIL;
+	_bool bDecalTarget = false;
+	if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+		return E_FAIL;
+
 	_ulong dwNumSubSet = m_pMesh_Static->Get_NumMaterials();
 
 	for (_ulong i = 0; i < dwNumSubSet; ++i)
@@ -148,6 +157,7 @@ HRESULT CWeapon::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 
 		pShader->End_Pass();
 	}
+	pShader->End_Shader();
 
 	return NOERROR;
 }
@@ -167,17 +177,13 @@ void CWeapon::OnCollisionEnter()
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_MonsterProjectile", SCENE_STAGE));
 	}
 	else
-	{
-		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
-		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE));
-	}
-		
+		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL) , true);
 
 
 	// =============================================================================================
 }
 
-void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
+void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject, _bool _bIsPlayer)
 {
 	// 공격 불가능이면 체크 안함
 	if (false == m_tObjParam.bCanAttack)
@@ -221,7 +227,37 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					if (false == iter->Get_Target_IsDodge())
+					// 충돌하는 대상이 카운터중이면,
+					if (true == iter->Get_Target_IsCounter())
+					{
+						// 카운터하는 대상의 전방에 내가 포함되나 본다.
+						if (m_pBattleAgent->Check_TargetIsFrontOfMe(TARGET_TO_TRANS(iter), TARGET_TO_TRANS(m_pTarget)))
+						{
+							// 시간정지 & 화면흔들림
+							g_pTimer_Manager->Set_MutiplyTime(L"Timer_Fps_60", 0.025f);
+							g_pTimer_Manager->Set_MutiplyResetTime(L"Timer_Fps_60", 0.15f);
+							CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(2.f, 20.f, 0.5f, 0.9f, CCamera::CAM_OSC_TYPE::POS_OSC);
+							//SHAKE_CAM_lv3;
+
+							_v3 tmpPos = TARGET_TO_TRANS(iter)->Get_Pos() + TARGET_TO_TRANS(iter)->Get_Axis(AXIS_Z) + _v3(0.f, 2.f, 0.f);
+
+							Create_PointLight(tmpPos);
+
+							if (_bIsPlayer)
+							{
+								// 처형되게 함.
+								iter->Set_Target_CanExicution(false);
+								iter->Set_CounterTarget(m_pTarget);
+							}
+
+							// 포함되면, 나의 주인은 카운터 당한 상태이다.
+							m_pTarget->Set_Target_CanRepel(false);
+							// 무기 또한 공격불가
+							m_tObjParam.bCanAttack = false;
+						}
+					}
+
+					else if (false == iter->Get_Target_IsDodge())
 					{
 						iter->Set_Target_CanHit(false);
 
@@ -304,7 +340,7 @@ void CWeapon::Update_Trails(_double TimeDelta)
 	{
 		m_pTrailEffect->Set_ParentTransform(&matWorld);
 		m_pTrailEffect->Ready_Info(vBegin + vDir * fBeginValue, vBegin + vDir * fEndValue);
-		m_pTrailEffect->Update_GameObject(TimeDelta);
+		// m_pTrailEffect->Update_GameObject(TimeDelta);
 	}
 
 	if (m_pDistortionEffect && !m_bSingleTrail)
@@ -606,6 +642,14 @@ HRESULT CWeapon::Add_Component()
 
 	// 최초 무기 이름
 	lstrcpy(m_szName, L"Mesh_Wpn_SSword");
+
+	// for.Com_Optimaization
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Optimization", L"Com_Optimization", (CComponent**)&m_pOptimization)))
+		return E_FAIL;
+
+	// for.Com_BattleAgent
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"BattleAgent", L"Com_BattleAgent", (CComponent**)&m_pBattleAgent)))
+		return E_FAIL;
 
 
 	//==============================================================================================================
@@ -913,14 +957,16 @@ void CWeapon::Free()
 	m_pmatAttach = nullptr;
 	m_pmatParent = nullptr;
 
-	Safe_Release(m_pTrailEffect);
-	Safe_Release(m_pStaticTrailEffect);
-	Safe_Release(m_pDistortionEffect);
+	//Safe_Release(m_pTrailEffect);
+	//Safe_Release(m_pStaticTrailEffect);
+	//Safe_Release(m_pDistortionEffect);
 
 	Safe_Release(m_pTransform);
 	Safe_Release(m_pMesh_Static);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pRenderer);
+	Safe_Release(m_pBattleAgent);
+
 
 	//for (auto& iter : m_vecAttackCol)
 	//	Safe_Release(iter);

@@ -171,6 +171,7 @@ void CDecalEffect::Setup_Info()
 	m_fAccel = 0.f;
 	m_fCurveAccel = 2.f;
 	m_fDissolve = 0.f;
+	m_fDissolveStartTime = 6.f;
 
 	m_bFadeOutStart = false;
 
@@ -528,6 +529,10 @@ void CDecalEffect::Check_LifeTime(_double TimeDelta)
 
 void CDecalEffect::Check_Alpha(_double TimeDelta)
 {
+	m_fDissolveStartTime -= _float(TimeDelta);
+	if (m_fDissolveStartTime > 0.f)
+		return;
+
 	if (!m_bFadeOutStart && m_pInfo->bFadeIn)
 	{
 		m_fAlpha += _float(TimeDelta) * m_fAlphaSpeed;

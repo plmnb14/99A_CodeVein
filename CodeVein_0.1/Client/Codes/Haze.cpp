@@ -19,8 +19,13 @@ HRESULT CHaze::Ready_GameObject_Prototype()
 
 HRESULT CHaze::Ready_GameObject(void* pArg)
 {
-	if (FAILED(Add_Component()))
-		return E_FAIL;
+	if (nullptr == pArg)
+	{
+		if (FAILED(Add_Component()))
+			return E_FAIL;
+
+		return S_OK;
+	}
 
 	m_fSpeed = 7.f;
 	m_dLifeTime = 10.f;
@@ -39,7 +44,7 @@ HRESULT CHaze::Ready_GameObject(void* pArg)
 	m_pBulletBody->Reset_Init();
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
 
-	m_pTrailEffect = static_cast<Engine::CTrail_VFX*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SwordTrail", nullptr));
+	m_pTrailEffect = g_pManagement->Create_Trail();
 	m_pTrailEffect->Set_TrailIdx(4);
 
 	_mat matRotX, matRotY, matRotZ;
@@ -78,6 +83,7 @@ _int CHaze::Update_GameObject(_double TimeDelta)
 	{
 		//Á×À½ ÀÌÆåÆ®
 		m_pBulletBody->Set_Dead();
+		m_pTrailEffect->Set_Dead();
 
 		m_bDead = true;
 	}
@@ -156,7 +162,7 @@ void CHaze::Update_Trails(_double TimeDelta)
 	{
 		m_pTrailEffect->Set_ParentTransform(&matWorld);
 		m_pTrailEffect->Ready_Info(vBegin + vDir * -0.05f, vBegin + vDir * 0.05f);
-		m_pTrailEffect->Update_GameObject(TimeDelta);
+		// m_pTrailEffect->Update_GameObject(TimeDelta);
 	}
 }
 
@@ -210,7 +216,7 @@ CGameObject * CHaze::Clone_GameObject(void * pArg)
 
 void CHaze::Free()
 {
-	Safe_Release(m_pTrailEffect);
+	//Safe_Release(m_pTrailEffect);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pRendererCom);

@@ -23,7 +23,7 @@ HRESULT CAniCtrl::Ready_Animation()
 	return NOERROR;
 }
 
-HRESULT CAniCtrl::SetUp_Animation(_uint iIndex)
+HRESULT CAniCtrl::SetUp_Animation(_uint iIndex, _bool _bOffLerp)
 {
 	if (nullptr == m_pAnimationCtrl)
 		return E_FAIL;
@@ -38,38 +38,57 @@ HRESULT CAniCtrl::SetUp_Animation(_uint iIndex)
 
 	m_Period = pAS->GetPeriod();
 
-	m_iNewTrack = m_iCurrentTrack == 0 ? 1 : 0;
 
-	m_pAnimationCtrl->SetTrackAnimationSet(m_iNewTrack, pAS);
+	_float fNewLerpValue = 0.9f;
 
-	m_pAnimationCtrl->UnkeyAllTrackEvents(m_iCurrentTrack);
-	m_pAnimationCtrl->UnkeyAllTrackEvents(m_iNewTrack);
+	if (_bOffLerp)
+	{
+		m_iNewTrack = m_iCurrentTrack == 0 ? 1 : 0;
 
+		m_pAnimationCtrl->SetTrackAnimationSet(m_iNewTrack, pAS);
 
-	//m_pAnimationCtrl->KeyTrackEnable(m_iCurrentTrack, FALSE, m_TimeDeltaAcc + 0.25);
-	//m_pAnimationCtrl->KeyTrackSpeed(m_iCurrentTrack, 1.f, m_TimeDeltaAcc, 0, D3DXTRANSITION_LINEAR);
-	//m_pAnimationCtrl->KeyTrackWeight(m_iCurrentTrack, 0.1f, m_TimeDeltaAcc, 0, D3DXTRANSITION_LINEAR);
+		m_pAnimationCtrl->UnkeyAllTrackEvents(m_iCurrentTrack);
+		m_pAnimationCtrl->UnkeyAllTrackEvents(m_iNewTrack);
 
-	//m_pAnimationCtrl->SetTrackEnable(m_iNewTrack, TRUE);
-	//m_pAnimationCtrl->KeyTrackSpeed(m_iNewTrack, 1.f, m_TimeDeltaAcc, 0, D3DXTRANSITION_LINEAR);
-	//m_pAnimationCtrl->KeyTrackWeight(m_iNewTrack, 0.9f, m_TimeDeltaAcc, 0, D3DXTRANSITION_LINEAR);
+		m_pAnimationCtrl->UnkeyAllTrackEvents(m_iCurrentTrack);
+		m_pAnimationCtrl->UnkeyAllTrackEvents(m_iNewTrack);
 
-	m_pAnimationCtrl->KeyTrackEnable(m_iCurrentTrack, FALSE, m_TimeDeltaAcc + 0.25);
-	m_pAnimationCtrl->KeyTrackSpeed(m_iCurrentTrack, 1.f, m_TimeDeltaAcc, 0.25, D3DXTRANSITION_LINEAR);
-	m_pAnimationCtrl->KeyTrackWeight(m_iCurrentTrack, 0.1f, m_TimeDeltaAcc, 0.25, D3DXTRANSITION_LINEAR);
-	
-	m_pAnimationCtrl->SetTrackEnable(m_iNewTrack, TRUE);
-	m_pAnimationCtrl->KeyTrackSpeed(m_iNewTrack, 1.f, m_TimeDeltaAcc, 0.25, D3DXTRANSITION_LINEAR);
-	m_pAnimationCtrl->KeyTrackWeight(m_iNewTrack, 0.9f, m_TimeDeltaAcc, 0.25, D3DXTRANSITION_LINEAR);
+		m_pAnimationCtrl->KeyTrackEnable(m_iCurrentTrack, FALSE, 0.0);
+		//m_pAnimationCtrl->SetTrackEnable(m_iCurrentTrack, FALSE);
+		m_pAnimationCtrl->SetTrackEnable(m_iNewTrack, TRUE);
 
-	m_pAnimationCtrl->SetTrackPosition(m_iNewTrack, 0.0);
+		m_pAnimationCtrl->SetTrackPosition(m_iNewTrack, 0.0);
+
+		m_iOldAniIndex = iIndex;
+		m_iCurrentTrack = m_iNewTrack;
+	}
+
+	else if (false == _bOffLerp)
+	{
+		m_iNewTrack = m_iCurrentTrack == 0 ? 1 : 0;
+
+		m_pAnimationCtrl->SetTrackAnimationSet(m_iNewTrack, pAS);
+
+		m_pAnimationCtrl->UnkeyAllTrackEvents(m_iCurrentTrack);
+		m_pAnimationCtrl->UnkeyAllTrackEvents(m_iNewTrack);
+
+		m_pAnimationCtrl->KeyTrackEnable(m_iCurrentTrack, FALSE, m_TimeDeltaAcc + 0.25);
+		m_pAnimationCtrl->KeyTrackSpeed(m_iCurrentTrack, 1.f, m_TimeDeltaAcc, 0.25, D3DXTRANSITION_LINEAR);
+		m_pAnimationCtrl->KeyTrackWeight(m_iCurrentTrack, 0.1f, m_TimeDeltaAcc, 0.25, D3DXTRANSITION_LINEAR);
+
+		m_pAnimationCtrl->SetTrackEnable(m_iNewTrack, TRUE);
+		m_pAnimationCtrl->KeyTrackSpeed(m_iNewTrack, 1.f, m_TimeDeltaAcc, 0.25, D3DXTRANSITION_LINEAR);
+		m_pAnimationCtrl->KeyTrackWeight(m_iNewTrack, fNewLerpValue, m_TimeDeltaAcc, 0.25, D3DXTRANSITION_LINEAR);
+
+		m_pAnimationCtrl->SetTrackPosition(m_iNewTrack, 0.0);
+
+		m_iOldAniIndex = iIndex;
+
+		m_iCurrentTrack = m_iNewTrack;
+	}
 
 	m_pAnimationCtrl->ResetTime();
 	m_TimeDeltaAcc = 0.0;
-
-	m_iOldAniIndex = iIndex;
-
-	m_iCurrentTrack = m_iNewTrack;
 
 	return NOERROR;
 }

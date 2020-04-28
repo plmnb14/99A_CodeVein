@@ -35,10 +35,6 @@ HRESULT CScene_Title::Ready_Scene()
 	
 	if (FAILED(Ready_Layer_LoadingUI(L"Layer_LoadingUI")))
 		return E_FAIL;
-	
-	// 파티클
-	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
-		return E_FAIL;
 
 	// 디졸브 전역 텍스쳐
 	g_pDissolveTexture = CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Effect/Noise/Noise_13.tga");
@@ -51,6 +47,8 @@ HRESULT CScene_Title::Ready_Scene()
 	m_pLoading->Set_LoadStaticMesh(m_bLoadStaticMesh);
 
 	CUI_Manager::Get_Instance()->SetUp_UILayer();
+
+	CParticleMgr::Get_Instance()->Ready_Trail();
 
 	if (FAILED(Ready_Player()))
 		return E_FAIL;
@@ -223,6 +221,9 @@ HRESULT CScene_Title::Ready_Player()
 	g_pManagement->Add_GameOject_ToLayer_NoClone(pPlayer, SCENE_MORTAL, L"Layer_Player", nullptr);
 
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerHP", SCENE_MORTAL, L"Layer_PlayerUI")))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerST", SCENE_MORTAL, L"Layer_PlayerUI")))
 		return E_FAIL;
 	return S_OK;
 }

@@ -461,7 +461,8 @@ PS_OUT PS_SSD(PS_IN In)
 	float3 decalLocalPos = float3(0, 0, 0);
 	decalLocalPos = mul(float4(vWorldPos.xyz, 1), g_matInvWorld).xyz;
 	
-	clip(0.5 - abs(decalLocalPos.xyz));
+	clip(0.5 - abs(decalLocalPos.xz));
+	clip(0.25 - abs(decalLocalPos.y));
 	
 	float2 decalUV = decalLocalPos.xz + 0.5f;
 		
