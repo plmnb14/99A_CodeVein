@@ -33,8 +33,9 @@ public:
 private:
 	enum Ani {
 		Ani_Idle = 42, Ani_Death = 64, Ani_Dmg01_FL = 124, Ani_Dmg01_FR = 123, Ani_Dmg01_BL = 122, Ani_Dmg01_BR = 121,
-		Ani_StandUp1 = 140, Ani_StandUp2 = 153 , DeadBodyLean_End = 72,
-		Death_F = 62, Death_B = 63
+		Ani_StandUp1 = 140, Ani_StandUp2 = 153, DeadBodyLean_End = 72,
+		Ani_DmgRepel = 105,
+		Ani_Death_F = 62, Ani_Death_B = 63
 	};
 
 	typedef enum Execution_Ani {
@@ -194,6 +195,9 @@ private:
 	void Check_IvyExecution();
 	void Check_StingerExecution();
 	void Check_HoundsExecution();
+
+private:
+	void Check_Repel();
 
 public:
 	static CGunGenji* Create(LPDIRECT3DDEVICE9 pGraphic_Device);

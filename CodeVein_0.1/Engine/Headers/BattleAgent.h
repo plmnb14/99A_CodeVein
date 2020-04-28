@@ -5,6 +5,7 @@
 
 BEGIN(Engine)
 
+class CTransform;
 class CShader;
 class ENGINE_DLL CBattleAgent : public CComponent
 {
@@ -43,7 +44,14 @@ public:
 public:
 	// 하이라이트 포인트 라이트를 생성합니다.
 	void	Create_HitLight(_v3 vLightPos, _float fLightRange = 15.f, _float fLifetime = 0.1f);
+
 //=======================================================================
+// 각도 방향 계산
+//=======================================================================
+public:
+	// 타겟이 내 특정 시야각 전방에 있는지
+	_bool	Check_TargetIsFrontOfMe(CTransform* _vMyTransform, CTransform* _vTargetTransform , _float fAlertRange = 45.f);
+	//=======================================================================
 
 private:
 	RIM_PARAM		m_tRimParam;

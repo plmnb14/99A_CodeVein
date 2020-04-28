@@ -177,13 +177,13 @@ void CWeapon::OnCollisionEnter()
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_MonsterProjectile", SCENE_STAGE));
 	}
 	else
-		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
+		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL) , true);
 
 
 	// =============================================================================================
 }
 
-void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
+void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject, _bool _bIsPlayer)
 {
 	// 공격 불가능이면 체크 안함
 	if (false == m_tObjParam.bCanAttack)
@@ -227,7 +227,37 @@ void CWeapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					if (false == iter->Get_Target_IsDodge())
+					// 충돌하는 대상이 카운터중이면,
+					if (true == iter->Get_Target_IsCounter())
+					{
+						// 카운터하는 대상의 전방에 내가 포함되나 본다.
+						if (m_pBattleAgent->Check_TargetIsFrontOfMe(TARGET_TO_TRANS(iter), TARGET_TO_TRANS(m_pTarget)))
+						{
+							// 시간정지 & 화면흔들림
+							g_pTimer_Manager->Set_MutiplyTime(L"Timer_Fps_60", 0.025f);
+							g_pTimer_Manager->Set_MutiplyResetTime(L"Timer_Fps_60", 0.15f);
+							CCameraMgr::Get_Instance()->MainCamera_Oscillatation_SetUp(2.f, 20.f, 0.5f, 0.9f, CCamera::CAM_OSC_TYPE::POS_OSC);
+							//SHAKE_CAM_lv3;
+
+							_v3 tmpPos = TARGET_TO_TRANS(iter)->Get_Pos() + TARGET_TO_TRANS(iter)->Get_Axis(AXIS_Z) + _v3(0.f, 2.f, 0.f);
+
+							Create_PointLight(tmpPos);
+
+							if (_bIsPlayer)
+							{
+								// 처형되게 함.
+								iter->Set_Target_CanExicution(false);
+								iter->Set_CounterTarget(m_pTarget);
+							}
+
+							// 포함되면, 나의 주인은 카운터 당한 상태이다.
+							m_pTarget->Set_Target_CanRepel(false);
+							// 무기 또한 공격불가
+							m_tObjParam.bCanAttack = false;
+						}
+					}
+
+					else if (false == iter->Get_Target_IsDodge())
 					{
 						iter->Set_Target_CanHit(false);
 
@@ -613,6 +643,14 @@ HRESULT CWeapon::Add_Component()
 	// 최초 무기 이름
 	lstrcpy(m_szName, L"Mesh_Wpn_SSword");
 
+	// for.Com_Optimaization
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Optimization", L"Com_Optimization", (CComponent**)&m_pOptimization)))
+		return E_FAIL;
+
+	// for.Com_BattleAgent
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"BattleAgent", L"Com_BattleAgent", (CComponent**)&m_pBattleAgent)))
+		return E_FAIL;
+
 
 	//==============================================================================================================
 	m_vecAttackCol.reserve(16);
@@ -927,6 +965,8 @@ void CWeapon::Free()
 	Safe_Release(m_pMesh_Static);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pRenderer);
+	Safe_Release(m_pBattleAgent);
+
 
 	//for (auto& iter : m_vecAttackCol)
 	//	Safe_Release(iter);

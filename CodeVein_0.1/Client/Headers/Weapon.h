@@ -61,7 +61,7 @@ public:
 
 public:
 	virtual void OnCollisionEnter();
-	virtual void OnCollisionEvent(list<CGameObject*> plistGameObject);
+	virtual void OnCollisionEvent(list<CGameObject*> plistGameObject , _bool _bIsPlayer = false);
 
 public:
 	virtual void Update_Trails(_double TimeDelta);
@@ -108,6 +108,8 @@ private:
 	CRenderer*				m_pRenderer = nullptr;
 	CShader*				m_pShader = nullptr;
 	CMesh_Static*			m_pMesh_Static = nullptr;
+	COptimization*			m_pOptimization = nullptr;
+	CBattleAgent*			m_pBattleAgent = nullptr;
 
 private:
 	CTrail_VFX*				m_pTrailEffect = nullptr;

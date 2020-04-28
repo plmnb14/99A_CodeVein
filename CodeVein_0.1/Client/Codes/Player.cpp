@@ -4301,29 +4301,89 @@ void CPlayer::Play_BloodSuckCount()
 			m_pDrainWeapon->Set_ActiveCollider(true);
 			m_pDrainWeapon->Set_Active(true);
 			m_pDrainWeapon->Set_ResetOldAnimIdx();
-
-			m_pDrainWeapon->Set_Target_CanAttack(true);
-			m_pDrainWeapon->Set_Enable_Record(true);
 		}
 	}
 
 	else if (true == m_bOnBloodSuck)
 	{
+		if (m_tObjParam.bIsCounter)
+			cout << "카운터에효" << endl;
+
+		_double dAniTime = m_pDynamicMesh->Get_TrackInfo().Position;
+
 		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
 		{
 			m_eActState = ACT_Idle;
 
 			m_bOnBloodSuck = false;
 
-			IF_NOT_NULL(m_pDrainWeapon)
+			m_pDrainWeapon->Set_Active(false);
+
+			m_pDrainWeapon->Set_ActiveCollider(false);
+
+			m_pDrainWeapon->Set_Target_CanAttack(false);
+			m_pDrainWeapon->Set_Enable_Record(false);
+
+			Reset_BattleState();
+		}
+
+		if (dAniTime > 2.833)
+		{
+			if (false == m_tObjParam.bCanExecution)
 			{
+				m_eActState = ACT_BloodSuck_Execution;
+
+				m_tObjParam.bCanCounter = false;
+				m_tObjParam.bIsCounter = false;
+
+				if (nullptr != pCounterTarget)
+				{
+					m_pCunterTarget = pCounterTarget;
+					pCounterTarget = nullptr;
+				}
+
+				m_pCunterTarget->Set_Target_IsRepel(false);
+				m_pCunterTarget->Set_Target_CanRepel(false);
+
+				if (ACT_BloodSuck_Execution != m_eActState)
+				{
+					m_pDrainWeapon->Set_Active(false);
+				}
+
 				m_pDrainWeapon->Set_ActiveCollider(false);
-				m_pDrainWeapon->Set_Active(false);
 
 				m_pDrainWeapon->Set_Target_CanAttack(false);
 				m_pDrainWeapon->Set_Enable_Record(false);
 
 				Reset_BattleState();
+
+				return;
+			}
+		}
+
+		if (dAniTime > 2.533)
+		{
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+
+				m_tObjParam.bCanCounter = false;
+				m_tObjParam.bIsCounter = false;
+			}
+		}
+
+		else if (dAniTime > 0.1)
+		{
+			if (false == m_bEventTrigger[0])
+			{
+				m_bEventTrigger[0] = true;
+
+				// 카운터가 가능할 경우
+				if (m_tObjParam.bCanCounter)
+				{
+					m_tObjParam.bCanCounter = false;
+					m_tObjParam.bIsCounter = true;
+				}
 			}
 		}
 	}
@@ -4380,7 +4440,7 @@ void CPlayer::Play_BloodSuckExecution()
 		Reset_BattleState();
 
 		m_bIsExecution = true;
-		m_bCanExecution = false;
+		//m_bCanExecution = false;
 
 		// 2번은 컷씬 아닌 처형
 		m_eAnim_Upper = LongCoat_SpecialSuck_02;
@@ -4406,10 +4466,16 @@ void CPlayer::Play_BloodSuckExecution()
 
 		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.95f))
 		{
+			m_pCunterTarget = nullptr;
+			pCounterTarget = nullptr;
+
 			m_eActState = ACT_Idle;
 
 			m_bIsExecution = false;
 			m_bCanExecution = true;
+
+			m_tObjParam.bCanExecution = true;
+			m_tObjParam.bIsExecution = false;
 
 			m_fSkillMoveAccel_Cur = 0.f;
 			m_fSkillMoveSpeed_Cur = 0.f;
@@ -9954,11 +10020,13 @@ HRESULT CPlayer::SetUp_Default()
 	m_tInfo.fMoveSpeed_Max = 5.f;
 
 	// Parameter
+	m_tObjParam.bCanExecution = true;
+	m_tObjParam.bCanRepel = true;
+	m_tObjParam.bCanCounter = true;
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.bIsDodge = false;
-	m_tObjParam.fHp_Cur = 5000.f;
-	m_tObjParam.fHp_Max = 5000.f;
-	m_tObjParam.bCanExecution = true;
+	m_tObjParam.fHp_Cur = 500.f;
+	m_tObjParam.fHp_Max = 500.f;
 	
 	// Anim
 	m_fAnimMutiply = 1.f;
