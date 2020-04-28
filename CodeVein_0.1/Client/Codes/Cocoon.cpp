@@ -653,7 +653,8 @@ void CCocoon::Play_Shot()
 				matBone = *m_matBone[Bone_Jaw_Tongue] * m_pTransformCom->Get_WorldMat();
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 
-				g_pManagement->Add_GameObject_ToLayer(L"Monster_CocoonBigBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 6.f, 2.f));
+				//g_pManagement->Add_GameObject_ToLayer(L"Monster_CocoonBigBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 6.f, 2.f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_CocoonBigBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 6.f, 2.f));
 			}
 		}
 		else if (3.7f <= AniTime && 5.8f >= AniTime)
@@ -666,9 +667,7 @@ void CCocoon::Play_Shot()
 			g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_02", 0.1f, vBirth, nullptr);
 		}
 		else if (0.f <= AniTime)
-		{
 			Function_RotateBody();
-		}
 
 		if (m_pMeshCom->Is_Finish_Animation(0.3f))
 			m_tObjParam.bSuperArmor = true;
@@ -706,10 +705,9 @@ void CCocoon::Play_Mist()
 		}
 		else if (3.567f <= AniTime)
 		{
-			if (false == m_bEventTrigger[0])
-				m_bEventTrigger[0] = true;
-			if (true == m_bEventTrigger[0])
-			{
+			if (false == m_bEventTrigger[1])
+			{	
+				m_bEventTrigger[1] = true;
 				matBone1 = *m_matBone[Bone_Jaw_Tongue] * m_pTransformCom->Get_WorldMat();
 				matBone2 = *m_matBone[Bone_Neck] * m_pTransformCom->Get_WorldMat();
 				matBone = *m_matBone[Bone_Jaw_Tongue] * m_pTransformCom->Get_WorldMat();
@@ -719,7 +717,8 @@ void CCocoon::Play_Mist()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				g_pManagement->Add_GameObject_ToLayer(L"Monster_CocoonBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, vShotDir, 4.f, 1.f));
+				//g_pManagement->Add_GameObject_ToLayer(L"Monster_CocoonBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, vShotDir, 4.f, 1.f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_CocoonBullet", &BULLET_INFO(vBirth, vShotDir, 4.f, 1.f));
 			}
 		}
 		else if (0.5f <= AniTime && 2.6f >= AniTime)

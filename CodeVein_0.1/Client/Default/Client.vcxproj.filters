@@ -385,6 +385,18 @@
     <Filter Include="02.GameObject\Stage\10%29 Pet">
       <UniqueIdentifier>{b1bb6ae7-348a-4f21-ab97-a86a07b67818}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\10%29 Pet\PoisonButterFly">
+      <UniqueIdentifier>{2f0b99ca-05de-474b-a3f2-deaf4be55682}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\10%29 Pet\DeerKing">
+      <UniqueIdentifier>{12d43b02-9be4-4bc8-8f7d-849ac5ca6a8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\10%29 Pet\FireBoy">
+      <UniqueIdentifier>{69d2dcc9-f4c0-472c-b273-1b1dedfe996f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\10%29 Pet\IceGirl">
+      <UniqueIdentifier>{3254a8a5-b186-402c-9185-6ecee3d15579}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -801,6 +813,9 @@
     <ClInclude Include="..\Headers\Pet.h">
       <Filter>02.GameObject\Stage\10%29 Pet</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Pet_PoisonButterFly.h">
+      <Filter>02.GameObject\Stage\10%29 Pet\PoisonButterFly</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1204,6 +1219,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Pet.cpp">
       <Filter>02.GameObject\Stage\10%29 Pet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Pet_PoisonButterFly.cpp">
+      <Filter>02.GameObject\Stage\10%29 Pet\PoisonButterFly</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

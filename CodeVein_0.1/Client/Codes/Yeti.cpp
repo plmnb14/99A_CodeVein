@@ -831,9 +831,9 @@ void CYeti::Play_BodyPress()
 
 		if (3.133f < AniTime && 4.200f > AniTime)
 		{
-			if (false == m_bEventTrigger[3])
+			if (false == m_bEventTrigger[2])
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[2] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -1485,15 +1485,16 @@ void CYeti::Play_IceThrowing()
 				memcpy(&vLook, &matTemp._21, sizeof(_v3)); //»ÀÀÇ ·è
 				vBirth += (vLook * fLength); //»ý¼ºÀ§Ä¡ = »ý¼ºÀ§Ä¡ +(·è*±æÀÌ)
 
-				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
+				//g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_HunterBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
 			}
 		}
 
 		if (3.400f < AniTime && 4.133f > AniTime)
 		{
-			if (false == m_bEventTrigger[3])
+			if (false == m_bEventTrigger[1])
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[1] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -1592,27 +1593,27 @@ void CYeti::Play_RollingSlash()
 		}
 		else if (0.403f <= AniTime)
 		{
-			if (false == m_bEventTrigger[6])
+			if (false == m_bEventTrigger[7])
 			{
-				m_bEventTrigger[6] = true;
+				m_bEventTrigger[7] = true;
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (0.312f <= AniTime)
 		{
-			if (false == m_bEventTrigger[7])
+			if (false == m_bEventTrigger[8])
 			{
-				m_bEventTrigger[7] = true;
+				m_bEventTrigger[8] = true;
 				m_vecAttackCol[0]->Set_Enabled(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (0.f <= AniTime)
 		{
-			if (false == m_bEventTrigger[8])
+			if (false == m_bEventTrigger[9])
 			{
-				m_bEventTrigger[8] = true;
+				m_bEventTrigger[9] = true;
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
 			}
@@ -1620,9 +1621,9 @@ void CYeti::Play_RollingSlash()
 
 		if (1.500f < AniTime && 1.900f > AniTime)
 		{
-			if (false == m_bEventTrigger[9])
+			if (false == m_bEventTrigger[10])
 			{
-				m_bEventTrigger[9] = true;
+				m_bEventTrigger[10] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -1675,9 +1676,9 @@ void CYeti::Play_Rush()
 
 		if (0.533f < AniTime && 1.300f > AniTime)
 		{
-			if (false == m_bEventTrigger[3])
+			if (false == m_bEventTrigger[2])
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[2] = true;
 				m_fSkillMoveSpeed_Cur = 8.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;

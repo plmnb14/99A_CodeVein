@@ -59,8 +59,8 @@ HRESULT CMonkeyBullet::Ready_GameObject(void * pArg)
 	m_pBulletBody->Reset_Init();;
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
 
-	m_pTrailEffect = static_cast<Engine::CTrail_VFX*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SwordTrail", nullptr));
-	m_pTrailEffect->Set_TrailIdx(5); // Red Tail
+	//m_pTrailEffect = static_cast<Engine::CTrail_VFX*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SwordTrail", nullptr));
+	//m_pTrailEffect->Set_TrailIdx(5); // Red Tail
 
 	return S_OK;
 }

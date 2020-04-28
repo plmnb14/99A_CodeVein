@@ -19,10 +19,15 @@ HRESULT CYetiBullet::Ready_GameObject_Prototype()
 
 HRESULT CYetiBullet::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component()))
-		return E_FAIL;
+	if (nullptr == pArg)
+	{
+		if (FAILED(Add_Component()))
+			return E_FAIL;
 
-	Ready_Collider();
+		Ready_Collider();
+
+		return S_OK;
+	}
 
 	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
 
@@ -49,8 +54,8 @@ HRESULT CYetiBullet::Ready_GameObject(void * pArg)
 	lstrcpy(m_pEffect_Tag4, L"Bullet_DeadSmoke_Base");
 	lstrcpy(m_pEffect_Tag5, L"Bullet_DeadSmoke_Black");
 
-	m_pTrailEffect = static_cast<Engine::CTrail_VFX*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SwordTrail", nullptr));
-	m_pTrailEffect->Set_TrailIdx(5); // Red Tail
+	//m_pTrailEffect = static_cast<Engine::CTrail_VFX*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SwordTrail", nullptr));
+	//m_pTrailEffect->Set_TrailIdx(5); // Red Tail
 
 	return S_OK;
 }
@@ -63,7 +68,7 @@ _int CYetiBullet::Update_GameObject(_double TimeDelta)
 		return DEAD_OBJ;
 
 	Enter_Collision();
-	Update_Trails(TimeDelta);
+	//Update_Trails(TimeDelta);
 
 	m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
 
