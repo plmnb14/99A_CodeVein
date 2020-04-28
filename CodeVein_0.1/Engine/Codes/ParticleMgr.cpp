@@ -73,6 +73,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Player_Skill_BloodTornadeMesh_2", 60);
 	Input_Pool(L"Player_Skill_BloodTornadeMesh_3", 60);
 	Input_Pool(L"Player_Skill_BloodConeMesh", 60);
+	Input_Pool(L"Player_Skill_BloodConeMesh_Explosion", 60);
 	Input_Pool(L"Player_Skill_Rush_Particle_Yellow"	, 300);
 	Input_Pool(L"Player_Skill_Rush_Particle_Orange"	, 300);
 	Input_Pool(L"Player_Skill_Rush_Particle_White"	, 300);
@@ -395,12 +396,20 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Haze_Body", 50);
 	Input_Pool(L"Haze_FlashParticle", 5000);
 
+	Input_Pool(L"Weapon_HeavyDust", 300);
+
 	Input_Pool(L"MapDust", 100);
 	Input_Pool(L"MapDust_2", 100);
 	Input_Pool(L"MapMist", 3000);
 	Input_Pool(L"MapSnow", 5000);
 
-	Input_Pool(L"Decal_Test", 100);
+	Input_Pool(L"Blood_Decal_0", 100);
+	Input_Pool(L"Blood_Decal_1", 100);
+	Input_Pool(L"Blood_Decal_2", 100);
+	Input_Pool(L"Blood_Decal_3", 100);
+	Input_Pool(L"Blood_Decal_4", 100);
+	Input_Pool(L"Blood_Decal_5", 100);
+	Input_Pool(L"Blood_Decal_6", 100);
 
 	return S_OK;
 }
@@ -413,7 +422,14 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 
 	//if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_LB))
 	//{
-	//	CParticleMgr::Get_Instance()->Create_Effect_Decal(L"Decal_Test", _v3(0, 0, CCalculater::Random_Num(0, 1)));
+	//	CParticleMgr::Get_Instance()->Create_Effect_Decal(L"Blood_Decal_0", V3_NULL);
+	//}
+	//if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_RB))
+	//{
+	//	_tchar szBuff[256] = L"";
+	//	wsprintf(szBuff, L"Blood_Decal_%d", CCalculater::Random_Num(0, 6));
+	//
+	//	CParticleMgr::Get_Instance()->Create_Effect_Decal(szBuff, V3_NULL);
 	//}
 
 	auto& iter_begin = m_vecParticle.begin();
@@ -922,6 +938,10 @@ void CParticleMgr::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCo
 	Create_DirEffect(L"Hit_Blood_Direction_4", vAttackPos, vBloodDir);
 	Create_DirEffect(L"Hit_Blood_Direction_5", vAttackPos, vBloodDir);
 	Create_DirEffect(L"Hit_Blood_Direction_6", vAttackPos, vBloodDir);
+
+
+	wsprintf(szBuff, L"Blood_Decal_%d", CCalculater::Random_Num(0, 6));
+	Create_Effect_Decal(szBuff, vAttackPos + _v3(0.f, -1.3f, 0.f));
 }
 
 void CParticleMgr::Create_Spawn_Effect(_float fDelay, _v3 vPos, _v3 vFinishPos, CTransform* pFollowTrans)

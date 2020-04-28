@@ -31,6 +31,7 @@ Mesh_GuardrailA|GuardrailA.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_01\Gua
 Mesh_GuardrailB|GuardrailB.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_01\GuardrailB\|0
 Mesh_GuardrailC|GuardrailC.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_01\GuardrailC\|0
 Mesh_IronplateA|IronplateA.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_01\IronplateA\|0
+Mesh_Merged_Building|Merged_Building.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_01\Merged_Building\|0
 Mesh_Pipebox|Pipebox.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_01\Pipebox\|0
 Mesh_Pole_Stage1|Pole_Stage1.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_01\Pole_Stage1\|0
 Mesh_RubblA_L_Org|RubblA_L_Org.X|..\..\Client\Resources\Mesh\StaticMesh\Stage_01\RubblA_L_Org\|0

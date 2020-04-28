@@ -435,42 +435,23 @@ PS_OUT PS_MESHEFFECT(PS_IN In)
 }
 matrix		g_matProjInv;
 matrix		g_matViewInv;
-float4		g_vInvProj;
 PS_OUT PS_SSD(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
 	float2 screenposition = In.vProjPos.xy / In.vProjPos.w;
-	screenposition.x = screenposition.x * 0.5 + 0.5;
-	screenposition.y = -screenposition.y * 0.5 + 0.5;
+	screenposition.x = screenposition.x * 0.5 + 0.5 + (0.5 / 1280.0f);
+	screenposition.y = -screenposition.y * 0.5 + 0.5 + (0.5 / 720.0f);
 	float2 depthUV = float2(screenposition.x, screenposition.y);
-	//float2 depthUV = float2(
-	//	(1 + screenposition.x) / 2 + (0.5 / 1280.0f),
-	//	(1 - screenposition.y) / 2 + (0.5 / 720.0f)
-	//	);
-	//vector vDepthInfo = tex2D(DepthSampler, depthUV.xy);
-	//
-	//
-	////vector ScenePosView = float4(In.vProjPos.xy * vDepthInfo.x / (g_DeProject.xy * In.vProjPos.w), -vDepthInfo.g * 500.f, 1);
-	//vector positionVS = In.vViewPos;
-	////float3 viewRay = positionVS.xyz * (500.f / -positionVS.z);
-	//float3 viewRay = float3(lerp(-g_vInvProj.xy, g_vInvProj.xy, depthUV), g_vInvProj.z);
-	//float3 viewPosition = viewRay * vDepthInfo.x;
-	//float3 vWorldPos = mul(float4(viewPosition, 1), g_matViewInv).xyz;
-	//float3 decalLocalPos = mul(float4(vWorldPos.xyz, 1), g_matInvWorld).xyz;
-	//
-	////clip(0.5 - abs(decalLocalPos.xyz));
-	//float2 decalUV = decalLocalPos.xz + 0.5f;
-
-	//vector ScenePosView = vector(screenposition * 2.0 - 1.0, vDepthInfo.x, 1.0);
-	//ScenePosView = mul(mul(g_matProjInv, g_matViewInv), ScenePosView);
-	//vector		vWorldPos = ((ScenePosView.xyz / ScenePosView.w), ScenePosView.w);
 
 	vector vDepthInfo = tex2D(DepthSampler, depthUV);
-	float		fViewZ = vDepthInfo.g * 500.f;
+	if(0 == vDepthInfo.x)
+		return  Out;
+
+	float		fViewZ = vDepthInfo.y * 500.f;
 	vector		vWorldPos;
-	vWorldPos.x = In.vTexUV.x * 2.f - 1.f;
-	vWorldPos.y = In.vTexUV.y * -2.f + 1.f;
+	vWorldPos.x = depthUV.x * 2.f - 1.f;
+	vWorldPos.y = depthUV.y * -2.f + 1.f;
 	vWorldPos.z = vDepthInfo.x;
 	vWorldPos.w = 1.f;
 	vWorldPos = vWorldPos * fViewZ;
@@ -480,14 +461,10 @@ PS_OUT PS_SSD(PS_IN In)
 	float3 decalLocalPos = float3(0, 0, 0);
 	decalLocalPos = mul(float4(vWorldPos.xyz, 1), g_matInvWorld).xyz;
 	
-	//clip(0.5 - abs(decalLocalPos.xyz));
+	clip(0.5 - abs(decalLocalPos.xyz));
 	
-	float2 decalUV = decalLocalPos.xy + 0.5f;
-	
-	float dist = abs(decalLocalPos.z); //decal의 local 깊이
-	float scaleDistance = max(dist * 2.0f, 1.0f);//Local깊이를 0.0과 1.0으로 맵핑시킵니다. 
-	float fadeOut = 1.0f - scaleDistance;
-	
+	float2 decalUV = decalLocalPos.xz + 0.5f;
+		
 	float4 Color = float4(1, 1, 1, 1);
 	if (g_bUseColorTex)
 	{
@@ -499,7 +476,46 @@ PS_OUT PS_SSD(PS_IN In)
 		Color = tex2D(DiffuseSampler, decalUV);
 	}
 
-	Color.a *= fadeOut; // FadeOut값을 곱해주면 표면의 부분 이외는 사라지게 됩니다.  
+	if (g_bUseRGBA)
+	{
+		Color.xyz = g_vColor.xyz;
+		Color.a *= g_vColor.a;
+	}
+	else
+	{
+		// ==============================================================================================
+		// [Memo]  g_vColor.x = Hue / g_vColor.y = Contrast / g_vColor.z = Brightness / g_vColor.w = Saturation
+		// ==============================================================================================
+		float3 intensity;
+		float half_angle = 0.5 * radians(g_vColor.x); // Hue is radians of 0 tp 360 degree
+		float4 rot_quat = float4((root3 * sin(half_angle)), cos(half_angle));
+		float3x3 rot_Matrix = QuaternionToMatrix(rot_quat);
+		Color.rgb = mul(rot_Matrix, Color.rgb);
+		Color.rgb = (Color.rgb - 0.5) * (g_vColor.y + 1.0) + 0.5;
+		Color.rgb = Color.rgb + g_vColor.z;
+		intensity = float(dot(Color.rgb, lumCoeff));
+		Color.rgb = lerp(intensity, Color.rgb, g_vColor.w);
+		// End ==========================================================================================
+	}
+
+	if (g_bDissolve)
+	{
+		float4 fxColor = tex2D(DiffuseSampler, decalUV);
+
+		if (Color.a == 0.f)
+			clip(-1);
+
+		if (fxColor.r >= g_fDissolve)
+			Color.a = 1;
+		else
+			Color.a = 0;
+	}
+
+	if (g_bUseMaskTex)
+	{
+		vector vGradientMask = tex2D(GradientSampler, decalUV);
+		Color.a *= vGradientMask.x;
+	}
 
 	Out.vColor = Color;
 	
@@ -614,12 +630,13 @@ technique Default_Technique
 	{
 		zwriteenable = false;
 
-		//AlphablendEnable = true;
-		//AlphaTestEnable = true;
-		//srcblend = SrcAlpha;
-		//DestBlend = InvSrcAlpha;
-		//blendop = add;
-		cullmode = none;
+		AlphablendEnable = true;
+		AlphaTestEnable = true;
+		srcblend = SrcAlpha;
+		DestBlend = InvSrcAlpha;
+		blendop = add;
+
+		cullmode = none; // 카메라 절두체에 잘리는 문제 : 백스페이스 컬링이 필요???
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_SSD();
