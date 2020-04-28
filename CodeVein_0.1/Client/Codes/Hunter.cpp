@@ -1133,11 +1133,11 @@ void CHunter::Play_RandomAtkCombo()
 		{
 		case ATK_COMBO_TYPE::COMBO_LSWORD_NORMAL:
 			m_eAtkCombo = ATK_COMBO_TYPE::COMBO_LSWORD_NORMAL;
-			m_eState = HUNTER_ANI::Halberd_Atk_N01;
+			m_eState = HUNTER_ANI::LSword_Atk_N01;
 			break;
 		case ATK_COMBO_TYPE::COMBO_LSWORD_STRONG:
 			m_eAtkCombo = ATK_COMBO_TYPE::COMBO_LSWORD_STRONG;
-			m_eState = HUNTER_ANI::Halberd_Atk_S01;
+			m_eState = HUNTER_ANI::LSword_Atk_S01;
 			break;
 		}
 		break;
