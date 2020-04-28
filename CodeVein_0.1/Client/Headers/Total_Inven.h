@@ -44,7 +44,7 @@ private:
 	CRenderer*				m_pRendererCom = nullptr;
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
-	CInventory_Icon*		m_pIcon = nullptr;
+	vector<CInventory_Icon*>	m_vecIcon;
 	_bool					m_bIsDetail = false;
 	CInventory*				m_pInventory = nullptr;
 	CWeapon_Slot*			m_pWeapon_Slot[2];

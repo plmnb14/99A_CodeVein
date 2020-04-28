@@ -1,8 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Hunter.h"
-#include "..\Headers\Weapon.h"
 #include "..\Headers\\HunterBullet.h"
-#include "..\Headers\MonsterUI.h"
 
 CHunter::CHunter(LPDIRECT3DDEVICE9 pGraphic_Device)
 	:CGameObject(pGraphic_Device)
@@ -21,7 +19,7 @@ HRESULT CHunter::Ready_GameObject_Prototype()
 
 HRESULT CHunter::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component()))
+	if (FAILED(Add_Component(pArg)))
 		return E_FAIL;
 
 	m_pTransformCom->Set_Pos(_v3(1.f, 0.f, 1.f));
@@ -47,33 +45,6 @@ HRESULT CHunter::Ready_GameObject(void * pArg)
 		Safe_AddRef(m_pTargetTransform);
 	}
 
-	m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
-	m_tObjParam.fArmor_Cur = m_tObjParam.fArmor_Max;
-
-	m_tObjParam.bCanHit = true; //맞기 가능
-	m_tObjParam.bIsHit = false;	//맞기 진행중 아님
-	m_tObjParam.bCanAttack = true; //공격 가능
-	m_tObjParam.bIsAttack = false; //공격 진행중 아님
-	m_tObjParam.bCanDodge = true; //회피 가능
-	m_tObjParam.bIsDodge = false;  //회피 진행중 아님
-
-	m_bCanPlayDead = false; //죽음 애니 진행시 true;
-	m_bInRecognitionRange = false; //인지 범위 여부
-	m_bInAtkRange = false; //공격 범위 여부
-	m_bCanChase = false; //추격 여부
-	m_bCanCoolDown = false; //쿨타임 여부
-	m_bIsCoolDown = false; //쿨타임 진행중 여부
-
-	m_bAtkCategory = true; //공격타입 고정용
-	m_bIsCombo = false; //콤보 진행중
-
-	m_bCanIdle = true; //일상 가능
-	m_bIsIdle = false; //일상 진행중 아님
-
-	m_fCoolDownCur = 0.f; //쿨타임 시간을 더함
-	m_fSpeedForCollisionPush = 2.f;
-
 	return S_OK;
 }
 
@@ -95,7 +66,11 @@ _int CHunter::Update_GameObject(_double TimeDelta)
 
 	m_pMeshCom->SetUp_Animation(m_eState);
 
-	Enter_Collision();
+	MONSTER_STATETYPE::DEAD != m_eFirstCategory ? Enter_Collision() : Check_DeadEffect(TimeDelta);
+	//if (MONSTER_STATETYPE::DEAD != m_eFirstCategory)
+	//	Enter_Collision();
+	//else
+	//	Check_DeadEffect(TimeDelta);
 
 	return NO_EVENT;
 }
@@ -142,7 +117,7 @@ HRESULT CHunter::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			if (MONSTER_ANITYPE::DEAD != m_eFirstCategory)
+			if (MONSTER_STATETYPE::DEAD != m_eFirstCategory)
 				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
 
 			m_pShaderCom->Begin_Pass(m_iPass);
@@ -209,7 +184,7 @@ HRESULT CHunter::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 
 void CHunter::Update_Collider()
 {
-	_ulong matrixIdx = 0;
+	_ulong matrixIdx = Bone_RightForeArm;
 
 	for (auto& vector_iter : m_vecAttackCol)
 	{
@@ -244,23 +219,18 @@ void CHunter::Update_Collider()
 void CHunter::Render_Collider()
 {
 	for (auto& iter : m_vecAttackCol)
-	{
 		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
-	}
 
 	for (auto& iter : m_vecPhysicCol)
-	{
 		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
-	}
+
+	return;
 }
 
 void CHunter::Enter_Collision()
 {
-	if (MONSTER_ANITYPE::DEAD != m_eFirstCategory)
-	{
-		Check_CollisionPush();
-		Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
-	}
+	Check_CollisionPush();
+	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
 
 	return;
 }
@@ -279,7 +249,7 @@ void CHunter::Check_CollisionPush()
 		{
 			CCollider* pCollider = TARGET_TO_COL(Obj_iter);
 
-			if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_fSpeedForCollisionPush * DELTA_60))
+			if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_fSkillMoveSpeed_Cur * DELTA_60))
 			{
 				CTransform* pTrans = TARGET_TO_TRANS(Obj_iter);
 				CNavMesh*   pNav = TARGET_TO_NAV(Obj_iter);
@@ -293,6 +263,8 @@ void CHunter::Check_CollisionPush()
 			}
 		}
 	}
+
+	return;
 }
 
 void CHunter::Check_CollisionEvent(list<CGameObject*> plistGameObject)
@@ -349,6 +321,43 @@ void CHunter::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 			}
 		}
 	}
+
+	return;
+}
+
+void CHunter::Function_FBLR()
+{
+	_float angle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos()));
+
+	if (MONSTER_STATETYPE::HIT == m_eFirstCategory)
+	{
+		m_eSecondCategory_HIT = MONSTER_HITTYPE::HIT_WEAK; //hit01
+
+		if (0.f <= angle && 90.f > angle)
+			m_eFBLR = FBLR::FRONTRIGHT;
+		else if (90.f <= angle && 180.f > angle)
+			m_eFBLR = FBLR::BACKRIGHT;
+		else if (-180.f <= angle && -90.f > angle)
+			m_eFBLR = FBLR::BACKLEFT;
+		else if (-90.f <= angle && 0.f > angle)
+			m_eFBLR = FBLR::FRONTLEFT;
+	}
+	else if (MONSTER_STATETYPE::CC == m_eFirstCategory)
+	{
+		//m_eSecondCategory_CC = HUNTER_CCTYPE::CC_STUN;
+		m_eSecondCategory_CC = MONSTER_CCTYPE::CC_DOWN;
+		//자빠짐Down_S, 엎어짐Down_P
+		if (0.f <= angle && 90.f > angle)
+			m_eFBLR = FBLR::FRONT;
+		else if (-90.f <= angle && 0.f > angle)
+			m_eFBLR = FBLR::FRONT;
+		else if (90.f <= angle && 180.f > angle)
+			m_eFBLR = FBLR::BACK;
+		else if (-180.f <= angle && -90.f > angle)
+			m_eFBLR = FBLR::BACK;
+	}
+
+	return;
 }
 
 void CHunter::Function_RotateBody()
@@ -418,6 +427,81 @@ void CHunter::Function_RotateBody()
 	}
 
 	m_pTransformCom->Set_Angle(AXIS_Y, fYAngle);
+
+	return;
+}
+
+void CHunter::Function_MoveAround(_float _fSpeed, _v3 _vDir)
+{
+	_float fTargetAngle = m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos());
+
+	_float fYAngle = m_pTransformCom->Get_Angle().y;
+
+	_v3 vTargetDir = m_pTransformCom->Get_Axis(AXIS_Z);
+	V3_NORMAL_SELF(&vTargetDir);
+
+	if (fTargetAngle > 0)
+	{
+		if (fYAngle < 0)
+		{
+			if (-D3DXToRadian(90.f) > fYAngle && -D3DXToRadian(180.f) < fYAngle)
+			{
+				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle <= -D3DXToRadian(180.f)) fYAngle = D3DXToRadian(180.f);
+			}
+			else fYAngle += DELTA_60 * D3DXToRadian(360.f);
+		}
+		else
+		{
+			if (fYAngle < fTargetAngle)
+			{
+				fYAngle += DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle >= fTargetAngle) fYAngle = fTargetAngle;
+			}
+			else
+			{
+				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle <= fTargetAngle) fYAngle = fTargetAngle;
+			}
+		}
+	}
+	else if (fTargetAngle < 0)
+	{
+		if (fYAngle > 0)
+		{
+			if (D3DXToRadian(90.f) < fYAngle && D3DXToRadian(180.f) > fYAngle)
+			{
+				fYAngle += DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle >= D3DXToRadian(180.f)) fYAngle = -D3DXToRadian(180.f);
+			}
+			else fYAngle -= DELTA_60 * D3DXToRadian(360.f);
+		}
+		else
+		{
+			if (fYAngle > fTargetAngle)
+			{
+				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle <= fTargetAngle) fYAngle = fTargetAngle;
+			}
+			else
+			{
+				fYAngle += DELTA_60 * D3DXToRadian(360.f);
+
+				if (fYAngle >= fTargetAngle) fYAngle = fTargetAngle;
+			}
+		}
+	}
+
+	m_pTransformCom->Set_Angle(AXIS_Y, fYAngle);
+
+	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &_vDir, _fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
+
+	return;
 }
 
 void CHunter::Function_CoolDown()
@@ -431,6 +515,9 @@ void CHunter::Function_CoolDown()
 			m_fCoolDownCur = 0.f;
 			m_bCanCoolDown = false;
 			m_bIsCoolDown = false;
+
+			m_bIsMoveAround = false;
+
 			m_tObjParam.bCanAttack = true;
 		}
 	}
@@ -468,13 +555,16 @@ void CHunter::Function_ResetAfterAtk()
 	m_tObjParam.bCanDodge = true;
 	m_tObjParam.bIsDodge = false;
 
+	m_tObjParam.bSuperArmor = false;
+	m_tObjParam.bIsAttack = false;
+	
 	m_bCanIdle = true;
 	m_bIsIdle = false;
 
-	m_tObjParam.bIsAttack = false;
+	m_bCanMoveAround = true;
+	m_bIsMoveAround = false;
 
-	m_bAtkCategory = true;
-	m_bCanInterrupt = true;
+	m_bCanChooseAtkType = true;
 	m_bIsCombo = false;
 
 	for (auto& vetor_iter : m_vecAttackCol)
@@ -500,7 +590,7 @@ void CHunter::Check_PosY()
 
 void CHunter::Check_Hit()
 {
-	if (MONSTER_ANITYPE::DEAD == m_eFirstCategory)
+	if (MONSTER_STATETYPE::DEAD == m_eFirstCategory)
 		return;
 	//체력o
 	if (0 < m_tObjParam.fHp_Cur)
@@ -509,7 +599,7 @@ void CHunter::Check_Hit()
 		if (false == m_tObjParam.bCanHit)
 		{
 			//콤보 방해가능
-			if (true == m_bCanInterrupt)
+			if (false == m_tObjParam.bSuperArmor)
 			{
 				++m_iDodgeCount;
 				//회피 수치 누적o
@@ -517,8 +607,8 @@ void CHunter::Check_Hit()
 				{
 					m_iDodgeCount = 0;
 					m_tObjParam.bCanDodge = true;
-					m_eFirstCategory = MONSTER_ANITYPE::MOVE;
-					m_eSecondCategory_MOVE = HUNTER_MOVETYPE::MOVE_DODGE;
+					m_eFirstCategory = MONSTER_STATETYPE::MOVE;
+					m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_DODGE;
 					m_pMeshCom->Reset_OldIndx();
 					Function_RotateBody();
 				}
@@ -531,13 +621,13 @@ void CHunter::Check_Hit()
 						//연속 피격 가능
 						if (true == m_tObjParam.bHitAgain)
 						{
-							m_eFirstCategory = MONSTER_ANITYPE::HIT;
+							m_eFirstCategory = MONSTER_STATETYPE::HIT;
 							//이떄 특수 공격 관련으로 불값이 참인 경우 cc기로
 							//if(특수 공격)
 							//else
 							//데미지 측정 float 혹은 bool
-							//	m_eFirstCategory = MONSTER_ANITYPE::CC;
-							Check_FBLR();
+							//	m_eFirstCategory = MONSTER_STATETYPE::CC;
+							Function_FBLR();
 							m_tObjParam.bHitAgain = false;
 							m_pMeshCom->Reset_OldIndx();
 						}
@@ -545,13 +635,13 @@ void CHunter::Check_Hit()
 					//처음 맞음 또는 맞은지 오래됨
 					else
 					{
-						m_eFirstCategory = MONSTER_ANITYPE::HIT;
+						m_eFirstCategory = MONSTER_STATETYPE::HIT;
 						//데미지 측정, 특수 공격 측정
 						//if(특수 공격)
 						//else
 						//데미지 측정 float 혹은 bool
-						//	m_eFirstCategory = MONSTER_ANITYPE::CC;
-						Check_FBLR();
+						//	m_eFirstCategory = MONSTER_STATETYPE::CC;
+							Function_FBLR();
 					}
 				}
 			}
@@ -559,75 +649,20 @@ void CHunter::Check_Hit()
 	}
 	//체력x
 	else
-		m_eFirstCategory = MONSTER_ANITYPE::DEAD;
-
-	return;
-}
-
-void CHunter::Check_FBLR()
-{
-	_float angle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos()));
-
-	if (MONSTER_ANITYPE::HIT == m_eFirstCategory)
-	{
-		m_eSecondCategory_HIT = HUNTER_HITTYPE::HIT_WEAK; //hit01
-
-		if (0.f <= angle && 90.f > angle)
-			m_eFBLR = FBLR::FRONTRIGHT;
-		else if (90.f <= angle && 180.f > angle)
-			m_eFBLR = FBLR::BACKRIGHT;
-		else if (-180.f <= angle && -90.f > angle)
-			m_eFBLR = FBLR::BACKLEFT;
-		else if (-90.f <= angle && 0.f > angle)
-			m_eFBLR = FBLR::FRONTLEFT;
-
-		//if(데미지 변수) 또는 if(데미지 >= xxx.f)
-		//m_eSecondCategory_HIT = HUNTER_HITTYPE::HIT_NORMAL; //hit02
-		//if (-22.5f <= angle && 22.5f > angle)
-		//	m_eFBLR = FBLR::FRONT;
-		//else if (22.5f <= angle && 67.5f > angle)
-		//	m_eFBLR = FBLR::FRONTRIGHT;
-		//else if (67.5f <= angle && 112.5f > angle)
-		//	m_eFBLR = FBLR::RIGHT;
-		//else if (112.5f <= angle && 157.5f > angle)
-		//	m_eFBLR = FBLR::BACKRIGHT;
-		//else if (157.5f <= angle && 180.f > angle)
-		//	m_eFBLR = FBLR::BACK;
-		//else if (-180.f <= angle && -157.f > angle)
-		//	m_eFBLR = FBLR::BACK;
-		//else if (-157.5f <= angle && -112.5f > angle)
-		//	m_eFBLR = FBLR::BACKLEFT;
-		//else if (-112.5f <= angle && -67.5f > angle)
-		//	m_eFBLR = FBLR::LEFT;
-		//else if (-67.5f <= angle && -22.5f > angle)
-		//	m_eFBLR = FBLR::FRONTLEFT;
-	}
-	else if (MONSTER_ANITYPE::CC == m_eFirstCategory)
-	{
-		//m_eSecondCategory_CC = HUNTER_CCTYPE::CC_STUN;
-		m_eSecondCategory_CC = HUNTER_CCTYPE::CC_DOWN;
-		//자빠짐Down_S, 엎어짐Down_P
-		if (0.f <= angle && 90.f > angle)
-			m_eFBLR = FBLR::FRONT;
-		else if (-90.f <= angle && 0.f > angle)
-			m_eFBLR = FBLR::FRONT;
-		else if (90.f <= angle && 180.f > angle)
-			m_eFBLR = FBLR::BACK;
-		else if (-180.f <= angle && -90.f > angle)
-			m_eFBLR = FBLR::BACK;
-	}
+		m_eFirstCategory = MONSTER_STATETYPE::DEAD;
 
 	return;
 }
 
 void CHunter::Check_Dist()
 {
-	if (MONSTER_ANITYPE::HIT == m_eFirstCategory ||
-		MONSTER_ANITYPE::CC == m_eFirstCategory ||
-		MONSTER_ANITYPE::DEAD == m_eFirstCategory)
+	if (MONSTER_STATETYPE::HIT == m_eFirstCategory ||
+		MONSTER_STATETYPE::CC == m_eFirstCategory ||
+		MONSTER_STATETYPE::DEAD == m_eFirstCategory)
 		return;
 
 	if (true == m_bIsCombo ||
+		true == m_bIsMoveAround||
 		true == m_tObjParam.bIsAttack ||
 		true == m_tObjParam.bIsDodge ||
 		true == m_tObjParam.bIsHit)
@@ -639,7 +674,7 @@ void CHunter::Check_Dist()
 		//동료, 플레이어 레이어 찾기 또는 일상행동을 반복한다
 		Function_ResetAfterAtk();
 
-		m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+		m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 
 		return;
 	}
@@ -656,7 +691,7 @@ void CHunter::Check_Dist()
 			//일상 진행중
 			if (true == m_bIsIdle)
 			{
-				m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+				m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 			}
 			//일상 진행중 아님
 			else
@@ -664,41 +699,26 @@ void CHunter::Check_Dist()
 				//범위o
 				if (true == m_bInAtkRange)
 				{
-					//공격가능성o
+					//공격가능성o, 쿨타임 끝남
 					if (true == m_tObjParam.bCanAttack)
 					{
-						//쿨타임o
-						if (true == m_bIsCoolDown)
-						{
-							//막기나 회피를 통해 쿨타임 시간을 벌어보자
-							m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-							m_eSecondCategory_IDLE = HUNTER_IDLETYPE::IDLE_IDLE;
-							Function_RotateBody();
-						}
-						//쿹타임x
-						else
-						{
-							m_bAtkCategory = true;
-							m_eFirstCategory = MONSTER_ANITYPE::ATTACK;
-							Function_RotateBody();
-						}
+						m_bCanChooseAtkType = true;
+						m_eFirstCategory = MONSTER_STATETYPE::ATTACK;
 					}
-					//공격가능성x
+					//공격가능성x, 쿨타임 진행중
 					else
 					{
-						//인지, 범위, 공격불가능 -> 공격중은 아닌데? walk하면서 주위 맴돌기, 버프, 동료
-						m_eFirstCategory = MONSTER_ANITYPE::IDLE;
-						m_eSecondCategory_IDLE = HUNTER_IDLETYPE::IDLE_IDLE;
-						Function_RotateBody();
+						m_bCanMoveAround = true;
+						m_eFirstCategory = MONSTER_STATETYPE::MOVE;
+						m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_WALK;
 					}
 				}
 				//범위x
 				else
 				{
 					m_bCanChase = true;
-					m_eFirstCategory = MONSTER_ANITYPE::MOVE;
-					m_eSecondCategory_MOVE = HUNTER_MOVETYPE::MOVE_RUN;
-					Function_RotateBody();
+					m_eFirstCategory = MONSTER_STATETYPE::MOVE;
+					m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_RUN;
 				}
 			}
 		}
@@ -706,22 +726,23 @@ void CHunter::Check_Dist()
 		else
 		{
 			//타겟은 있으나 인지범위에 없음
-			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+			m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+
 			if (false == m_bIsIdle)
 			{
-				switch (CALC::Random_Num(HUNTER_IDLETYPE::IDLE_IDLE, HUNTER_IDLETYPE::IDLE_SIT))
+				switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_SIT))
 				{
-				case HUNTER_IDLETYPE::IDLE_IDLE:
-					m_eSecondCategory_IDLE = HUNTER_IDLETYPE::IDLE_IDLE;
+				case MONSTER_IDLETYPE::IDLE_IDLE:
+					m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
 					break;
-				case HUNTER_IDLETYPE::IDLE_STAND:
-					m_eSecondCategory_IDLE = HUNTER_IDLETYPE::IDLE_STAND;
+				case MONSTER_IDLETYPE::IDLE_STAND:
+					m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
 					break;
-				case HUNTER_IDLETYPE::IDLE_CROUCH:
-					m_eSecondCategory_IDLE = HUNTER_IDLETYPE::IDLE_CROUCH;
+				case MONSTER_IDLETYPE::IDLE_CROUCH:
+					m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
 					break;
-				case HUNTER_IDLETYPE::IDLE_SIT:
-					m_eSecondCategory_IDLE = HUNTER_IDLETYPE::IDLE_SIT;
+				case MONSTER_IDLETYPE::IDLE_SIT:
+					m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
 					break;
 				}
 			}
@@ -735,35 +756,35 @@ void CHunter::Check_AniEvent()
 {
 	switch (m_eFirstCategory)
 	{
-	case MONSTER_ANITYPE::IDLE:
+	case MONSTER_STATETYPE::IDLE:
 		Play_Idle();
 		break;
 
-	case MONSTER_ANITYPE::MOVE:
+	case MONSTER_STATETYPE::MOVE:
 		Play_Move();
 		break;
 
-	case MONSTER_ANITYPE::ATTACK:
-		if (true == m_bAtkCategory)
+	case MONSTER_STATETYPE::ATTACK:
+		if (true == m_bCanChooseAtkType)
 		{
 			m_tObjParam.bCanAttack = false;
 			m_tObjParam.bIsAttack = true;
 
-			m_bAtkCategory = false;
+			m_bCanChooseAtkType = false;
 
-			m_iRandom = CALC::Random_Num(HUNTER_ATKTYPE::ATK_NORMAL, HUNTER_ATKTYPE::ATK_COMBO);
+			m_iRandom = CALC::Random_Num(MONSTER_ATKTYPE::ATK_NORMAL, MONSTER_ATKTYPE::ATK_COMBO);
 
-			if (WEAPON_ANITYPE::HAMMER == m_eWeaponState)
+			if (WEAPON_STATE::WEAPON_Hammer == m_eWeaponState)
 				m_iRandom = 0;
 
 			switch (m_iRandom)
 			{
-			case HUNTER_ATKTYPE::ATK_NORMAL:
-				m_eSecondCategory_ATK = HUNTER_ATKTYPE::ATK_NORMAL;
+			case MONSTER_ATKTYPE::ATK_NORMAL:
+				m_eSecondCategory_ATK = MONSTER_ATKTYPE::ATK_NORMAL;
 				Play_RandomAtkNormal();
 				break;
-			case HUNTER_ATKTYPE::ATK_COMBO:
-				m_eSecondCategory_ATK = HUNTER_ATKTYPE::ATK_COMBO;
+			case MONSTER_ATKTYPE::ATK_COMBO:
+				m_eSecondCategory_ATK = MONSTER_ATKTYPE::ATK_COMBO;
 				Play_RandomAtkCombo();
 				m_bIsCombo = true;
 				break;
@@ -773,7 +794,7 @@ void CHunter::Check_AniEvent()
 		}
 		else
 		{
-			if (HUNTER_ATKTYPE::ATK_NORMAL == m_eSecondCategory_ATK)
+			if (MONSTER_ATKTYPE::ATK_NORMAL == m_eSecondCategory_ATK)
 			{
 				switch (m_eState)
 				{
@@ -868,7 +889,7 @@ void CHunter::Check_AniEvent()
 					break;
 				}
 			}
-			else if (HUNTER_ATKTYPE::ATK_COMBO == m_eSecondCategory_ATK)
+			else if (MONSTER_ATKTYPE::ATK_COMBO == m_eSecondCategory_ATK)
 			{
 				switch (m_eAtkCombo)
 				{
@@ -907,18 +928,46 @@ void CHunter::Check_AniEvent()
 		}
 		break;
 
-	case MONSTER_ANITYPE::HIT:
+	case MONSTER_STATETYPE::HIT:
 		Play_Hit();
 		break;
 
-	case MONSTER_ANITYPE::CC:
+	case MONSTER_STATETYPE::CC:
 		Play_CC();
 		break;
 
-	case MONSTER_ANITYPE::DEAD:
+	case MONSTER_STATETYPE::DEAD:
 		Play_Dead();
 		break;
 	}
+
+	return;
+}
+
+void CHunter::Check_DeadEffect(_double TimeDelta)
+{
+	m_fDeadEffect_Delay -= _float(TimeDelta);
+	if (m_fDeadEffect_Delay > 0.f)
+		return;
+
+	m_fDeadEffect_Offset -= _float(TimeDelta);
+	if (m_fDeadEffect_Offset > 0.f)
+		return;
+
+	m_fDeadEffect_Offset = 0.1f;
+
+	_v3 vPos = m_pTransformCom->Get_Pos();
+	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
+	_v3 vHeadPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips");
+	_v3 vHipPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle", 0.1f, vPos, vHeadPos);
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle_Sub", 0.1f, vPos, vHeadPos);
+
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHeadPos);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHipPos);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vPos);
 
 	return;
 }
@@ -927,7 +976,7 @@ void CHunter::Play_RandomAtkNormal()
 {		
 	switch (m_eWeaponState)
 	{
-	case WEAPON_ANITYPE::GUN:
+	case WEAPON_STATE::WEAPON_Gun:
 		switch (CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_GUN_KICK, ATK_NORMAL_TYPE::NORMAL_GUN_SNIPE))
 		{
 		case ATK_NORMAL_TYPE::NORMAL_GUN_KICK:
@@ -944,7 +993,7 @@ void CHunter::Play_RandomAtkNormal()
 			break;
 		}
 		break;
-	case WEAPON_ANITYPE::HALBERD:
+	case WEAPON_STATE::WEAPON_Halberd:
 		switch (CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_HALBERD_STEPPIERCE, ATK_NORMAL_TYPE::NORMAL_HALBERD_TWOUPPER))
 		{
 		case ATK_NORMAL_TYPE::NORMAL_HALBERD_STEPPIERCE:
@@ -976,7 +1025,7 @@ void CHunter::Play_RandomAtkNormal()
 			break;
 		}
 		break;
-	case WEAPON_ANITYPE::HAMMER:
+	case WEAPON_STATE::WEAPON_Hammer:
 		switch (CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_HAMMER_UPPER, ATK_NORMAL_TYPE::NORMAL_HAMMER_TWOUPPER))
 		{
 		case ATK_NORMAL_TYPE::NORMAL_HAMMER_UPPER:
@@ -993,7 +1042,7 @@ void CHunter::Play_RandomAtkNormal()
 			break;
 		}
 		break;
-	case WEAPON_ANITYPE::LSWORD:
+	case WEAPON_STATE::WEAPON_LSword:
 		switch (CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_LSWORD_KNEEKICK, ATK_NORMAL_TYPE::NORMAL_LSWORD_SMASH))
 		{
 		case ATK_NORMAL_TYPE::NORMAL_LSWORD_KNEEKICK:
@@ -1010,7 +1059,7 @@ void CHunter::Play_RandomAtkNormal()
 			break;
 		}
 		break;
-	case WEAPON_ANITYPE::SWORD:
+	case WEAPON_STATE::WEAPON_SSword:
 		switch (CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_SWORD_JUMP, ATK_NORMAL_TYPE::NORMAL_SWORD_CRITICALDRAW))
 		{
 		case ATK_NORMAL_TYPE::NORMAL_SWORD_JUMP:
@@ -1050,7 +1099,7 @@ void CHunter::Play_RandomAtkCombo()
 
 	switch (m_eWeaponState)
 	{
-	case WEAPON_ANITYPE::GUN:
+	case WEAPON_STATE::WEAPON_Gun:
 		if (m_fAtkRange < fLenth &&  m_fShotRange > fLenth )
 		{
 			m_eAtkCombo = ATK_COMBO_TYPE::COMBO_GUN_CQC;
@@ -1062,7 +1111,7 @@ void CHunter::Play_RandomAtkCombo()
 			m_eState = HUNTER_ANI::Bayonet_Atk_Shoot01;
 		}
 		break;
-	case WEAPON_ANITYPE::HALBERD:
+	case WEAPON_STATE::WEAPON_Halberd:
 		switch (CALC::Random_Num(ATK_COMBO_TYPE::COMBO_HALBERD_THIRDATK, ATK_COMBO_TYPE::COMBO_HALBERD_PIERCEWIND))
 		{
 		case ATK_COMBO_TYPE::COMBO_HALBERD_THIRDATK:
@@ -1079,20 +1128,20 @@ void CHunter::Play_RandomAtkCombo()
 			break;
 		}
 		break;
-	case WEAPON_ANITYPE::LSWORD:
+	case WEAPON_STATE::WEAPON_LSword:
 		switch (CALC::Random_Num(ATK_COMBO_TYPE::COMBO_LSWORD_NORMAL, ATK_COMBO_TYPE::COMBO_LSWORD_STRONG))
 		{
 		case ATK_COMBO_TYPE::COMBO_LSWORD_NORMAL:
 			m_eAtkCombo = ATK_COMBO_TYPE::COMBO_LSWORD_NORMAL;
-			m_eState = HUNTER_ANI::Halberd_Atk_N01;
+			m_eState = HUNTER_ANI::LSword_Atk_N01;
 			break;
 		case ATK_COMBO_TYPE::COMBO_LSWORD_STRONG:
 			m_eAtkCombo = ATK_COMBO_TYPE::COMBO_LSWORD_STRONG;
-			m_eState = HUNTER_ANI::Halberd_Atk_S01;
+			m_eState = HUNTER_ANI::LSword_Atk_S01;
 			break;
 		}
 		break;
-	case WEAPON_ANITYPE::SWORD:
+	case WEAPON_STATE::WEAPON_SSword:
 		switch (CALC::Random_Num(ATK_COMBO_TYPE::COMBO_SWORD_STEPPIERCE, ATK_COMBO_TYPE::COMBO_SWORD_Diagonal_L))
 		{
 		case ATK_COMBO_TYPE::COMBO_SWORD_STEPPIERCE:
@@ -1138,6 +1187,7 @@ void CHunter::Play_Gun_Kick()
 			{
 				m_bEventTrigger[0] = true;
 				m_vecAttackCol[2]->Set_Enabled(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.200f <= AniTime)
@@ -1146,6 +1196,7 @@ void CHunter::Play_Gun_Kick()
 			{
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[2]->Set_Enabled(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -1200,6 +1251,7 @@ void CHunter::Play_Gun_R()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.533f <= AniTime)
@@ -1209,6 +1261,7 @@ void CHunter::Play_Gun_R()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -1232,7 +1285,8 @@ void CHunter::Play_Gun_R()
 void CHunter::Play_Gun_Shoot()
 {
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
-	_v3 Birth;
+	_v3 vBirth, vLook;
+	_float fLength = 1.f;
 
 	if (true == m_tObjParam.bCanAttack)
 	{
@@ -1254,22 +1308,20 @@ void CHunter::Play_Gun_Shoot()
 			if (false == m_bEventTrigger[0])
 			{
 				m_bEventTrigger[0] = true;
+				m_tObjParam.bSuperArmor = true;
 
 				_mat matTemp = *m_matBone[Bone_RightHandAttach] * m_pTransformCom->Get_WorldMat(); //뼈위치* 월드
-				_v3 TestLook;
-				_float TestLength = 1.0f;
 
-				memcpy(&Birth, &matTemp._41, sizeof(_v3)); //생성위치
-				memcpy(&TestLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
-				Birth = Birth + (TestLook * TestLength); //생성위치 = 생성위치 +(룩*길이)
+				memcpy(&vBirth, &matTemp._41, sizeof(_v3)); //생성위치
+				memcpy(&vLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
+				vBirth += (vLook * fLength); //생성위치 = 생성위치 +(룩*길이)
 
-				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 4.f, 1.5));
+				//g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_HunterBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
 			}
 		}
 		else if (0.f <= AniTime)
-		{
 			Function_RotateBody();
-		}
 	}
 
 	return;
@@ -1278,7 +1330,8 @@ void CHunter::Play_Gun_Shoot()
 void CHunter::Play_Gun_Snipe()
 {
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
-	_v3 Birth;
+	_v3 vBirth, vLook;
+	_float fLength = 1.f;
 
 	if (true == m_tObjParam.bCanAttack)
 	{
@@ -1289,46 +1342,31 @@ void CHunter::Play_Gun_Snipe()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_fCoolDownMax = 0.3f;
+			m_fCoolDownMax = 0.5f;
 			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
 
 			return;
 		}
-		else if (2.100f <= AniTime)
+		else if (3.333f <= AniTime)
 		{
 			if (false == m_bEventTrigger[0])
 			{
 				m_bEventTrigger[0] = true;
+				m_tObjParam.bSuperArmor = true;
 
 				_mat matTemp = *m_matBone[Bone_RightHandAttach] * m_pTransformCom->Get_WorldMat(); //뼈위치* 월드
-				_v3 TestLook;
-				_float TestLength = 1.0f;
 
-				memcpy(&Birth, &matTemp._41, sizeof(_v3)); //생성위치
-				memcpy(&TestLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
-				Birth = Birth + (TestLook * TestLength); //생성위치 = 생성위치 +(룩*길이)
+				memcpy(&vBirth, &matTemp._41, sizeof(_v3)); //생성위치
+				memcpy(&vLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
+				vBirth += (vLook * fLength); //생성위치 = 생성위치 +(룩*길이)
 
-				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 4.f, 1.5));
+				//g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_HunterBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
 			}
 		}
 		else if (0.f <= AniTime)
-		{
-			if (false == m_bEventTrigger[1])
-			{
-				m_bEventTrigger[1] = true;
-
-				_mat matTemp = *m_matBone[Bone_RightHandAttach] * m_pTransformCom->Get_WorldMat(); //뼈위치* 월드
-				_v3 TestLook;
-				_float TestLength = 1.0f;
-
-				memcpy(&Birth, &matTemp._41, sizeof(_v3)); //생성위치
-				memcpy(&TestLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
-				Birth = Birth + (TestLook * TestLength); //생성위치 = 생성위치 +(룩*길이)
-
-				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 4.f, 1.5));
-			}
-		}
+			Function_RotateBody();
 	}
 
 	return;
@@ -1337,13 +1375,14 @@ void CHunter::Play_Gun_Snipe()
 void CHunter::Play_Gun_Combo_Shot()
 {
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
-	_v3 Birth;
+	_v3 vBirth, vLook;
+	_float fLength = 1.f;
 
 	if (HUNTER_ANI::Bayonet_Atk_Shoot01 == m_eState)
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.7f))
 		{
-			m_bCanInterrupt = true;
+			m_tObjParam.bSuperArmor = false;
 			m_eState = HUNTER_ANI::Bayonet_Atk_Shoot02;
 
 			return;
@@ -1353,30 +1392,26 @@ void CHunter::Play_Gun_Combo_Shot()
 			if (false == m_bEventTrigger[0])
 			{
 				m_bEventTrigger[0] = true;
+				m_tObjParam.bSuperArmor = true;
 
 				_mat matTemp = *m_matBone[Bone_RightHandAttach] * m_pTransformCom->Get_WorldMat(); //뼈위치* 월드
-				_v3 TestLook;
-				_float TestLength = 1.0f;
 
-				memcpy(&Birth, &matTemp._41, sizeof(_v3)); //생성위치
-				memcpy(&TestLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
-				Birth = Birth + (TestLook * TestLength); //생성위치 = 생성위치 +(룩*길이)
+				memcpy(&vBirth, &matTemp._41, sizeof(_v3)); //생성위치
+				memcpy(&vLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
+				vBirth += (vLook * fLength); //생성위치 = 생성위치 +(룩*길이)
 
-				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 4.f, 1.5));
+				//g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_HunterBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
 			}
 		}
 		else if (0.f <= AniTime)
-		{
 			Function_RotateBody();
-		}
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 	}
 	else if (HUNTER_ANI::Bayonet_Atk_Shoot02 == m_eState)
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.62f))
 		{
-			m_bCanInterrupt = true;
+			m_tObjParam.bSuperArmor = false;
 			m_eState = HUNTER_ANI::Bayonet_Atk_Snipe;
 
 			return;
@@ -1386,39 +1421,44 @@ void CHunter::Play_Gun_Combo_Shot()
 			if (false == m_bEventTrigger[1])
 			{
 				m_bEventTrigger[1] = true;
+				m_tObjParam.bSuperArmor = true;
 
 				_mat matTemp = *m_matBone[Bone_RightHandAttach] * m_pTransformCom->Get_WorldMat(); //뼈위치* 월드
-				_v3 TestLook;
-				_float TestLength = 1.0f;
 
-				memcpy(&Birth, &matTemp._41, sizeof(_v3)); //생성위치
-				memcpy(&TestLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
-				Birth = Birth + (TestLook * TestLength); //생성위치 = 생성위치 +(룩*길이)
+				memcpy(&vBirth, &matTemp._41, sizeof(_v3)); //생성위치
+				memcpy(&vLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
+				vBirth += (vLook * fLength); //생성위치 = 생성위치 +(룩*길이)
 
-				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 4.f, 1.5));
+				//g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_HunterBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
 			}
 		}
-		else if (0.f <= AniTime)
+		else if (0.667f <= AniTime)
 		{
 			if (false == m_bEventTrigger[2])
 			{
 				m_bEventTrigger[2] = true;
+				m_tObjParam.bSuperArmor = false;
+			}
+		}
+		else if (0.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[3])
+			{
+				m_bEventTrigger[3] = true;
+				m_tObjParam.bSuperArmor = true;
 
 				_mat matTemp = *m_matBone[Bone_RightHandAttach] * m_pTransformCom->Get_WorldMat(); //뼈위치* 월드
-				_v3 TestLook;
-				_float TestLength = 1.0f;
 
-				memcpy(&Birth, &matTemp._41, sizeof(_v3)); //생성위치
-				memcpy(&TestLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
-				Birth = Birth + (TestLook * TestLength); //생성위치 = 생성위치 +(룩*길이)
+				memcpy(&vBirth, &matTemp._41, sizeof(_v3)); //생성위치
+				memcpy(&vLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
+				vBirth += (vLook * fLength); //생성위치 = 생성위치 +(룩*길이)
 
-				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 4.f, 1.5));
+				//g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_HunterBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
 			}
 			Function_RotateBody();
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 	}
 	else if (HUNTER_ANI::Bayonet_Atk_Snipe == m_eState)
 	{
@@ -1432,27 +1472,23 @@ void CHunter::Play_Gun_Combo_Shot()
 		}
 		else if (3.333f < AniTime)
 		{
-			if (false == m_bEventTrigger[3])
+			if (false == m_bEventTrigger[4])
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[4] = true;
+				m_tObjParam.bSuperArmor = true;
+
 				_mat matTemp = *m_matBone[Bone_RightHandAttach] * m_pTransformCom->Get_WorldMat(); //뼈위치* 월드
-				_v3 TestLook;
-				_float TestLength = 1.0f;
 
-				memcpy(&Birth, &matTemp._41, sizeof(_v3)); //생성위치
-				memcpy(&TestLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
-				Birth = Birth + (TestLook * TestLength); //생성위치 = 생성위치 +(룩*길이)
+				memcpy(&vBirth, &matTemp._41, sizeof(_v3)); //생성위치
+				memcpy(&vLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
+				vBirth += (vLook * fLength); //생성위치 = 생성위치 +(룩*길이)
 
-				g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(Birth, m_pTransformCom->Get_Axis(AXIS_Z), 4.f, 1.5));
+				//g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_HunterBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
 			}
 		}
 		else if (0.f < AniTime)
-		{
 			Function_RotateBody();
-		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 	}
 
 	return;
@@ -1466,7 +1502,7 @@ void CHunter::Play_Gun_Combo_CQC()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.438f))
 		{
-			m_bCanInterrupt = true;
+			m_tObjParam.bSuperArmor = true;
 			m_pWeapon->Set_Target_CanAttack(false);
 			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::Bayonet_Atk_N02;
@@ -1487,6 +1523,7 @@ void CHunter::Play_Gun_Combo_CQC()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.533f <= AniTime)
@@ -1496,11 +1533,9 @@ void CHunter::Play_Gun_Combo_CQC()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 
 		if (1.267f < AniTime && 1.767f > AniTime)
 		{
@@ -1512,6 +1547,7 @@ void CHunter::Play_Gun_Combo_CQC()
 				m_fSkillMoveMultiply = 1.5f;
 			}
 
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1520,7 +1556,7 @@ void CHunter::Play_Gun_Combo_CQC()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.65f))
 		{
-			m_bCanInterrupt = true;
+			m_tObjParam.bSuperArmor = true;
 			m_pWeapon->Set_Target_CanAttack(false);
 			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::Bayonet_Atk_N03;
@@ -1541,6 +1577,7 @@ void CHunter::Play_Gun_Combo_CQC()
 			{
 				m_bEventTrigger[6] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.133f <= AniTime)
@@ -1550,11 +1587,9 @@ void CHunter::Play_Gun_Combo_CQC()
 				m_bEventTrigger[7] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 
 		if (0.600f < AniTime && 3.627f > AniTime)
 		{
@@ -1566,6 +1601,7 @@ void CHunter::Play_Gun_Combo_CQC()
 				m_fSkillMoveMultiply = 1.f;
 			}
 
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1594,6 +1630,7 @@ void CHunter::Play_Gun_Combo_CQC()
 			{
 				m_bEventTrigger[10] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.567f <= AniTime)
@@ -1603,11 +1640,9 @@ void CHunter::Play_Gun_Combo_CQC()
 				m_bEventTrigger[11] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 
 		if (0.367f < AniTime && 1.867f >AniTime)
 		{
@@ -1619,6 +1654,7 @@ void CHunter::Play_Gun_Combo_CQC()
 				m_fSkillMoveMultiply = 1.f;
 			}
 
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1660,6 +1696,7 @@ void CHunter::Play_Halberd_StepPierce()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (3.067f <= AniTime)
@@ -1669,6 +1706,7 @@ void CHunter::Play_Halberd_StepPierce()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -1723,6 +1761,7 @@ void CHunter::Play_Halberd_RiseUp()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (2.700f <= AniTime)
@@ -1732,6 +1771,7 @@ void CHunter::Play_Halberd_RiseUp()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -1786,6 +1826,7 @@ void CHunter::Play_Halberd_Pierce()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (2.467f <= AniTime)
@@ -1795,6 +1836,7 @@ void CHunter::Play_Halberd_Pierce()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -1862,6 +1904,7 @@ void CHunter::Play_Halberd_DeepPierce()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (2.467f <= AniTime)
@@ -1871,6 +1914,7 @@ void CHunter::Play_Halberd_DeepPierce()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -1925,6 +1969,7 @@ void CHunter::Play_Halberd_ClockTwice()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (3.767f <= AniTime)
@@ -1934,6 +1979,7 @@ void CHunter::Play_Halberd_ClockTwice()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (2.567f <= AniTime)
@@ -1950,6 +1996,7 @@ void CHunter::Play_Halberd_ClockTwice()
 			{
 				m_bEventTrigger[4] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (2.100f <= AniTime)
@@ -1959,6 +2006,7 @@ void CHunter::Play_Halberd_ClockTwice()
 				m_bEventTrigger[5] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -2052,6 +2100,7 @@ void CHunter::Play_Halberd_Swing_Jump()
 			{
 				m_bEventTrigger[4] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (3.900f <= AniTime)
@@ -2061,6 +2110,7 @@ void CHunter::Play_Halberd_Swing_Jump()
 				m_bEventTrigger[3] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (2.133f <= AniTime)
@@ -2077,6 +2127,7 @@ void CHunter::Play_Halberd_Swing_Jump()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.400f <= AniTime)
@@ -2086,6 +2137,7 @@ void CHunter::Play_Halberd_Swing_Jump()
 				m_bEventTrigger[0] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -2167,6 +2219,7 @@ void CHunter::Play_Halberd_Sweap()
 			{
 				m_bEventTrigger[13] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (6.067f <= AniTime)
@@ -2176,6 +2229,7 @@ void CHunter::Play_Halberd_Sweap()
 				m_bEventTrigger[12] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (6.000f <= AniTime)
@@ -2192,6 +2246,7 @@ void CHunter::Play_Halberd_Sweap()
 			{
 				m_bEventTrigger[10] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (5.500f <= AniTime)
@@ -2201,6 +2256,7 @@ void CHunter::Play_Halberd_Sweap()
 				m_bEventTrigger[9] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (5.167f <= AniTime)
@@ -2217,6 +2273,7 @@ void CHunter::Play_Halberd_Sweap()
 			{
 				m_bEventTrigger[7] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (4.667f <= AniTime)
@@ -2226,6 +2283,7 @@ void CHunter::Play_Halberd_Sweap()
 				m_bEventTrigger[6] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (3.833f <= AniTime)
@@ -2242,6 +2300,7 @@ void CHunter::Play_Halberd_Sweap()
 			{
 				m_bEventTrigger[4] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (3.400f <= AniTime)
@@ -2251,6 +2310,7 @@ void CHunter::Play_Halberd_Sweap()
 				m_bEventTrigger[3] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (1.967f <= AniTime)
@@ -2267,6 +2327,7 @@ void CHunter::Play_Halberd_Sweap()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.567f <= AniTime)
@@ -2276,6 +2337,7 @@ void CHunter::Play_Halberd_Sweap()
 				m_bEventTrigger[0] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -2369,6 +2431,7 @@ void CHunter::Play_Halberd_SlashForth()
 			{
 				m_bEventTrigger[10] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (5.267f <= AniTime)
@@ -2378,6 +2441,7 @@ void CHunter::Play_Halberd_SlashForth()
 				m_bEventTrigger[9] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (4.933f <= AniTime)
@@ -2394,6 +2458,7 @@ void CHunter::Play_Halberd_SlashForth()
 			{
 				m_bEventTrigger[7] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (4.467f <= AniTime)
@@ -2403,6 +2468,7 @@ void CHunter::Play_Halberd_SlashForth()
 				m_bEventTrigger[6] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (4.200f <= AniTime)
@@ -2419,6 +2485,7 @@ void CHunter::Play_Halberd_SlashForth()
 			{
 				m_bEventTrigger[4] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (3.700f <= AniTime)
@@ -2428,6 +2495,7 @@ void CHunter::Play_Halberd_SlashForth()
 				m_bEventTrigger[3] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (3.333f <= AniTime)
@@ -2444,6 +2512,7 @@ void CHunter::Play_Halberd_SlashForth()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (2.800f <= AniTime)
@@ -2453,6 +2522,7 @@ void CHunter::Play_Halberd_SlashForth()
 				m_bEventTrigger[0] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -2546,6 +2616,7 @@ void CHunter::Play_Halberd_TwoUpper()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (3.733f <= AniTime)
@@ -2555,6 +2626,7 @@ void CHunter::Play_Halberd_TwoUpper()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (2.533f <= AniTime)
@@ -2571,6 +2643,7 @@ void CHunter::Play_Halberd_TwoUpper()
 			{
 				m_bEventTrigger[4] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (2.100f <= AniTime)
@@ -2580,6 +2653,7 @@ void CHunter::Play_Halberd_TwoUpper()
 				m_bEventTrigger[5] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -2648,7 +2722,7 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.6f))
 		{
-			m_bCanInterrupt = true;
+			m_tObjParam.bSuperArmor = true;
 			m_pWeapon->Set_Target_CanAttack(false);
 			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::Halberd_Atk_N02;
@@ -2669,6 +2743,7 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (2.467f <= AniTime)
@@ -2678,11 +2753,9 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 
 		if (2.333f < AniTime && 2.700f > AniTime)
 		{
@@ -2707,6 +2780,7 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
 			}
+
 			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
@@ -2716,7 +2790,7 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.6f))
 		{
-			m_bCanInterrupt = true;
+			m_tObjParam.bSuperArmor = true;
 			m_pWeapon->Set_Target_CanAttack(false);
 			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::Halberd_Atk_N03;
@@ -2737,6 +2811,7 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 			{
 				m_bEventTrigger[6] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (2.033f <= AniTime)
@@ -2746,11 +2821,9 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 				m_bEventTrigger[7] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 
 		if (0.833f < AniTime && 1.900f > AniTime)
 		{
@@ -2787,28 +2860,21 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 		}
 		else if (2.467f <= AniTime)
 		{
-			if (false == m_bEventTrigger[10])
-			{
-				m_bEventTrigger[10] = true;
-				m_pWeapon->Set_Target_CanAttack(false);
-			}
-		}
-		else if (2.167f <= AniTime)
-		{
 			if (false == m_bEventTrigger[11])
 			{
 				m_bEventTrigger[11] = true;
-				m_pWeapon->Set_Target_CanAttack(true);
-				m_pWeapon->Set_Enable_Trail(true);
+				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
-		else if (1.267f <= AniTime)
+		else if (2.167f <= AniTime)
 		{
 			if (false == m_bEventTrigger[12])
 			{
 				m_bEventTrigger[12] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (0.967f <= AniTime)
@@ -2816,8 +2882,8 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 			if (false == m_bEventTrigger[13])
 			{
 				m_bEventTrigger[13] = true;
-				m_pWeapon->Set_Target_CanAttack(true);
-				m_pWeapon->Set_Enable_Trail(true);
+				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (0.633f <= AniTime)
@@ -2827,11 +2893,9 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 				m_bEventTrigger[14] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 
 		if (2.133f < AniTime && 2.433f >AniTime)
 		{
@@ -2860,7 +2924,7 @@ void CHunter::Play_Halberd_Combo_PierceTwice()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.625f))
 		{
-			m_bCanInterrupt = true;
+			m_tObjParam.bSuperArmor = true;
 			m_pWeapon->Set_Target_CanAttack(false);
 			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::Halberd_Atk_S03;
@@ -2881,6 +2945,7 @@ void CHunter::Play_Halberd_Combo_PierceTwice()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (2.467f <= AniTime)
@@ -2890,11 +2955,9 @@ void CHunter::Play_Halberd_Combo_PierceTwice()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = true;
 
 		if (1.133f < AniTime && 1.800f >AniTime)
 		{
@@ -2935,6 +2998,7 @@ void CHunter::Play_Halberd_Combo_PierceTwice()
 			{
 				m_bEventTrigger[5] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 
 		}
@@ -2945,11 +3009,9 @@ void CHunter::Play_Halberd_Combo_PierceTwice()
 				m_bEventTrigger[6] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 
 		if (1.333f < AniTime && 1.700f > AniTime)
 		{
@@ -2978,7 +3040,7 @@ void CHunter::Play_Halberd_Combo_PierceWind()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.625f))
 		{
-			m_bCanInterrupt = true;
+			m_tObjParam.bSuperArmor = true;
 			m_pWeapon->Set_Target_CanAttack(false);
 			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::Halberd_Atk_S02;
@@ -2999,6 +3061,7 @@ void CHunter::Play_Halberd_Combo_PierceWind()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (2.467f <= AniTime)
@@ -3008,11 +3071,9 @@ void CHunter::Play_Halberd_Combo_PierceWind()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 
 		if (1.133f < AniTime && 1.800f >AniTime)
 		{
@@ -3053,6 +3114,7 @@ void CHunter::Play_Halberd_Combo_PierceWind()
 			{
 				m_bEventTrigger[5] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (2.033f <= AniTime)
@@ -3062,11 +3124,9 @@ void CHunter::Play_Halberd_Combo_PierceWind()
 				m_bEventTrigger[6] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 
 		if (0.667f < AniTime && 1.833f > AniTime)
 		{
@@ -3120,6 +3180,7 @@ void CHunter::Play_Hammer_Upper()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.967f <= AniTime)
@@ -3129,6 +3190,7 @@ void CHunter::Play_Hammer_Upper()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -3169,68 +3231,59 @@ void CHunter::Play_Hammer_Slash()
 
 			return;
 		}
-		else
+		else if (2.667f <= AniTime)
 		{
-			if (m_pMeshCom->Is_Finish_Animation(0.95f))
+			if (false == m_bEventTrigger[0])
 			{
-				m_fCoolDownMax = 0.6f;
-				m_bCanCoolDown = true;
-				Function_ResetAfterAtk();
+				m_bEventTrigger[0] = true;
+				m_pWeapon->Set_Enable_Trail(false);
+			}
+		}
+		else if (2.367f <= AniTime)
+		{
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
+			}
+		}
+		else if (2.233f <= AniTime)
+		{
+			if (false == m_bEventTrigger[2])
+			{
+				m_bEventTrigger[2] = true;
+				m_pWeapon->Set_Target_CanAttack(true);
+				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
+			}
+		}
 
-				return;
-			}
-			else if (2.667f <= AniTime)
+		if (2.200f < AniTime && 2.600f > AniTime)
+		{
+			if (false == m_bEventTrigger[3])
 			{
-				if (false == m_bEventTrigger[0])
-				{
-					m_bEventTrigger[0] = true;
-					m_pWeapon->Set_Enable_Trail(false);
-				}
-			}
-			else if (2.367f <= AniTime)
-			{
-				if (false == m_bEventTrigger[1])
-				{
-					m_bEventTrigger[1] = true;
-					m_pWeapon->Set_Target_CanAttack(false);
-				}
-			}
-			else if (2.233f <= AniTime)
-			{
-				if (false == m_bEventTrigger[2])
-				{
-					m_bEventTrigger[2] = true;
-					m_pWeapon->Set_Target_CanAttack(true);
-					m_pWeapon->Set_Enable_Trail(true);
-				}
+				m_bEventTrigger[3] = true;
+				m_fSkillMoveSpeed_Cur = 6.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.f;
 			}
 
-			if (2.200f < AniTime && 2.600f > AniTime)
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+		}
+		else if (1.067f < AniTime && 1.967f > AniTime)
+		{
+			if (false == m_bEventTrigger[3])
 			{
-				if (false == m_bEventTrigger[3])
-				{
-					m_bEventTrigger[3] = true;
-					m_fSkillMoveSpeed_Cur = 6.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 1.f;
-				}
-
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
+				m_bEventTrigger[3] = true;
+				m_fSkillMoveSpeed_Cur = 6.f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 1.f;
 			}
-			else if (1.067f < AniTime && 1.967f > AniTime)
-			{
-				if (false == m_bEventTrigger[3])
-				{
-					m_bEventTrigger[3] = true;
-					m_fSkillMoveSpeed_Cur = 6.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 1.f;
-				}
 
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
 	}
 
@@ -3270,6 +3323,7 @@ void CHunter::Play_Hammer_Smash()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (4.300f <= AniTime)
@@ -3279,6 +3333,7 @@ void CHunter::Play_Hammer_Smash()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -3305,7 +3360,8 @@ void CHunter::Play_Hammer_Smash()
 				m_fSkillMoveMultiply = 1.f;
 			}
 
-			Function_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_RotateBody();
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
 	}
@@ -3346,6 +3402,7 @@ void CHunter::Play_Hammer_TwoUpper()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (3.033f <= AniTime)
@@ -3355,6 +3412,7 @@ void CHunter::Play_Hammer_TwoUpper()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (2.067f <= AniTime)
@@ -3371,6 +3429,7 @@ void CHunter::Play_Hammer_TwoUpper()
 			{
 				m_bEventTrigger[4] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.667f <= AniTime)
@@ -3380,6 +3439,7 @@ void CHunter::Play_Hammer_TwoUpper()
 				m_bEventTrigger[5] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -3406,6 +3466,7 @@ void CHunter::Play_Hammer_TwoUpper()
 				m_fSkillMoveMultiply = 1.f;
 			}
 
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -3439,6 +3500,7 @@ void CHunter::Play_LSword_KneeKick()
 			{
 				m_bEventTrigger[0] = true;
 				m_vecAttackCol[1]->Set_Enabled(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.233f <= AniTime)
@@ -3447,6 +3509,7 @@ void CHunter::Play_LSword_KneeKick()
 			{
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[1]->Set_Enabled(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -3514,6 +3577,7 @@ void CHunter::Play_LSword_Right()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.600f <= AniTime)
@@ -3523,6 +3587,7 @@ void CHunter::Play_LSword_Right()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -3577,6 +3642,7 @@ void CHunter::Play_LSword_RDiagonal()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.500f <= AniTime)
@@ -3586,6 +3652,7 @@ void CHunter::Play_LSword_RDiagonal()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -3640,6 +3707,7 @@ void CHunter::Play_LSword_Smash()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (2.700f <= AniTime)
@@ -3649,6 +3717,7 @@ void CHunter::Play_LSword_Smash()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -3704,7 +3773,7 @@ void CHunter::Play_LSword_Combo_Normal()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.6f))
 		{
-			m_bCanInterrupt = true;
+			m_tObjParam.bSuperArmor = true;
 			m_pWeapon->Set_Target_CanAttack(false);
 			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::LSword_Atk_N02;
@@ -3725,6 +3794,7 @@ void CHunter::Play_LSword_Combo_Normal()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.600f <= AniTime)
@@ -3734,11 +3804,9 @@ void CHunter::Play_LSword_Combo_Normal()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 
 		if (0.700f < AniTime && 1.233f > AniTime)
 		{
@@ -3758,7 +3826,7 @@ void CHunter::Play_LSword_Combo_Normal()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.55f))
 		{
-			m_bCanInterrupt = true;
+			m_tObjParam.bSuperArmor = true;
 			m_pWeapon->Set_Target_CanAttack(false);
 			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::LSword_Atk_N03;
@@ -3779,6 +3847,7 @@ void CHunter::Play_LSword_Combo_Normal()
 			{
 				m_bEventTrigger[5] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.600f <= AniTime)
@@ -3788,11 +3857,9 @@ void CHunter::Play_LSword_Combo_Normal()
 				m_bEventTrigger[6] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 
 		if (0.433f < AniTime && 1.333f > AniTime)
 		{
@@ -3832,6 +3899,7 @@ void CHunter::Play_LSword_Combo_Normal()
 			{
 				m_bEventTrigger[9] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.733f <= AniTime)
@@ -3841,11 +3909,9 @@ void CHunter::Play_LSword_Combo_Normal()
 				m_bEventTrigger[10] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 
 		if (1.633f < AniTime && 2.500f > AniTime)
 		{
@@ -3886,7 +3952,7 @@ void CHunter::Play_LSword_Combo_Strong()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.45f))
 		{
-			m_bCanInterrupt = true;
+			m_tObjParam.bSuperArmor = true;
 			m_pWeapon->Set_Target_CanAttack(false);
 			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::LSword_Atk_S02;
@@ -3907,6 +3973,7 @@ void CHunter::Play_LSword_Combo_Strong()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.500f <= AniTime)
@@ -3916,11 +3983,9 @@ void CHunter::Play_LSword_Combo_Strong()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 
 		if (0.533f < AniTime && 1.300f > AniTime)
 		{
@@ -3940,7 +4005,7 @@ void CHunter::Play_LSword_Combo_Strong()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.45f))
 		{
-			m_bCanInterrupt = true;
+			m_tObjParam.bSuperArmor = true;
 			m_pWeapon->Set_Target_CanAttack(false);
 			m_pWeapon->Set_Enable_Trail(false);
 			m_eState = HUNTER_ANI::LSword_Atk_S03;
@@ -3961,6 +4026,7 @@ void CHunter::Play_LSword_Combo_Strong()
 			{
 				m_bEventTrigger[5] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.667f <= AniTime)
@@ -3970,11 +4036,9 @@ void CHunter::Play_LSword_Combo_Strong()
 				m_bEventTrigger[6] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 
 		if (0.767f < AniTime && 1.500f > AniTime)
 		{
@@ -4014,6 +4078,7 @@ void CHunter::Play_LSword_Combo_Strong()
 			{
 				m_bEventTrigger[9] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.667f <= AniTime)
@@ -4023,11 +4088,9 @@ void CHunter::Play_LSword_Combo_Strong()
 				m_bEventTrigger[10] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 
 		if (1.700f < AniTime && 2.367f > AniTime)
 		{
@@ -4093,6 +4156,7 @@ void CHunter::Play_SSword_Jump()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (2.633f <= AniTime)
@@ -4102,6 +4166,7 @@ void CHunter::Play_SSword_Jump()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -4169,6 +4234,7 @@ void CHunter::Play_SSword_RaiseUp()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (2.367f <= AniTime)
@@ -4178,6 +4244,7 @@ void CHunter::Play_SSword_RaiseUp()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -4232,6 +4299,7 @@ void CHunter::Play_SSword_Upper()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.167f <= AniTime)
@@ -4241,6 +4309,7 @@ void CHunter::Play_SSword_Upper()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -4295,6 +4364,7 @@ void CHunter::Play_SSword_Upper_L()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.900f <= AniTime)
@@ -4304,6 +4374,7 @@ void CHunter::Play_SSword_Upper_L()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -4358,6 +4429,7 @@ void CHunter::Play_SSword_WoodChop()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.867f <= AniTime)
@@ -4367,6 +4439,7 @@ void CHunter::Play_SSword_WoodChop()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -4380,6 +4453,7 @@ void CHunter::Play_SSword_WoodChop()
 				m_fSkillMoveMultiply = 1.f;
 			}
 
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -4413,6 +4487,7 @@ void CHunter::Play_SSword_Elbow()
 			{
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[0]->Set_Enabled(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.333f <= AniTime)
@@ -4421,6 +4496,7 @@ void CHunter::Play_SSword_Elbow()
 			{
 				m_bEventTrigger[2] = true;
 				m_vecAttackCol[0]->Set_Enabled(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -4434,6 +4510,7 @@ void CHunter::Play_SSword_Elbow()
 				m_fSkillMoveMultiply = 1.f;
 			}
 
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -4475,6 +4552,7 @@ void CHunter::Play_SSword_HelmetBreak()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (4.333f <= AniTime)
@@ -4484,6 +4562,7 @@ void CHunter::Play_SSword_HelmetBreak()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -4497,6 +4576,7 @@ void CHunter::Play_SSword_HelmetBreak()
 				m_fSkillMoveMultiply = 1.f;
 			}
 
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -4538,6 +4618,7 @@ void CHunter::Play_SSword_CriticalDraw()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (2.633f <= AniTime)
@@ -4547,6 +4628,7 @@ void CHunter::Play_SSword_CriticalDraw()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -4560,6 +4642,7 @@ void CHunter::Play_SSword_CriticalDraw()
 				m_fSkillMoveMultiply = 1.f;
 			}
 
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -4570,14 +4653,13 @@ void CHunter::Play_SSword_CriticalDraw()
 
 void CHunter::Play_SSword_Combo_StepPierce()
 {
-	//sp3 st,loop, end 0.935 0.9 0.915
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
 
 	if (HUNTER_ANI::SSword_Atk_Sp03_Start == m_eState)
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.935f))
 		{
-			m_bCanInterrupt = true;
+			m_tObjParam.bSuperArmor = true;
 			m_eState = HUNTER_ANI::SSword_Atk_Sp03_Loop;
 
 			return;
@@ -4589,11 +4671,9 @@ void CHunter::Play_SSword_Combo_StepPierce()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 
 		if (3.967f < AniTime && 4.367f > AniTime)
 		{
@@ -4605,6 +4685,7 @@ void CHunter::Play_SSword_Combo_StepPierce()
 				m_fSkillMoveMultiply = 1.f;
 			}
 
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -4617,12 +4698,13 @@ void CHunter::Play_SSword_Combo_StepPierce()
 
 			return;
 		}
+
 		if (false == m_bEventTrigger[4])
 		{
 			m_bEventTrigger[4] = true;
 			m_fSkillMoveSpeed_Cur = 20.f;
-			m_fSkillMoveAccel_Cur = 0.f;
-			m_fSkillMoveMultiply = 0.1f;
+			m_fSkillMoveAccel_Cur = 2.f;
+			m_fSkillMoveMultiply = 0.5f;
 		}
 
 		Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
@@ -4652,6 +4734,7 @@ void CHunter::Play_SSword_Combo_StepPierce()
 			{
 				m_bEventTrigger[6] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.533f <= AniTime)
@@ -4660,6 +4743,7 @@ void CHunter::Play_SSword_Combo_StepPierce()
 			{
 				m_bEventTrigger[7] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (1.421f <= AniTime)
@@ -4668,6 +4752,7 @@ void CHunter::Play_SSword_Combo_StepPierce()
 			{
 				m_bEventTrigger[8] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.211f <= AniTime)
@@ -4676,6 +4761,7 @@ void CHunter::Play_SSword_Combo_StepPierce()
 			{
 				m_bEventTrigger[9] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (1.103f <= AniTime)
@@ -4684,6 +4770,7 @@ void CHunter::Play_SSword_Combo_StepPierce()
 			{
 				m_bEventTrigger[10] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (0.904f <= AniTime)
@@ -4692,6 +4779,7 @@ void CHunter::Play_SSword_Combo_StepPierce()
 			{
 				m_bEventTrigger[11] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (0.857f <= AniTime)
@@ -4700,6 +4788,7 @@ void CHunter::Play_SSword_Combo_StepPierce()
 			{
 				m_bEventTrigger[12] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (0.665f <= AniTime)
@@ -4708,6 +4797,7 @@ void CHunter::Play_SSword_Combo_StepPierce()
 			{
 				m_bEventTrigger[13] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (0.526f <= AniTime)
@@ -4716,6 +4806,7 @@ void CHunter::Play_SSword_Combo_StepPierce()
 			{
 				m_bEventTrigger[14] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (0.381f <= AniTime)
@@ -4724,6 +4815,7 @@ void CHunter::Play_SSword_Combo_StepPierce()
 			{
 				m_bEventTrigger[13] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (0.233f <= AniTime)
@@ -4732,6 +4824,7 @@ void CHunter::Play_SSword_Combo_StepPierce()
 			{
 				m_bEventTrigger[14] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (0.f <= AniTime)
@@ -4740,11 +4833,9 @@ void CHunter::Play_SSword_Combo_StepPierce()
 			{
 				m_bEventTrigger[15] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 
 		if (0.267f > AniTime)
 		{
@@ -4766,14 +4857,13 @@ void CHunter::Play_SSword_Combo_StepPierce()
 
 void CHunter::Play_SSword_Combo_Strong()
 {
-	//s1 0.308 s2 0.65 s3 0.9
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
 
 	if (HUNTER_ANI::SSword_Atk_S01 == m_eState)
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.400f))
 		{
-			m_bCanInterrupt = true;
+			m_tObjParam.bSuperArmor = true;
 			m_eState = HUNTER_ANI::SSword_Atk_S02;
 
 			return;
@@ -4784,6 +4874,7 @@ void CHunter::Play_SSword_Combo_Strong()
 			{
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[0]->Set_Enabled(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.333f <= AniTime)
@@ -4792,6 +4883,7 @@ void CHunter::Play_SSword_Combo_Strong()
 			{
 				m_bEventTrigger[2] = true;
 				m_vecAttackCol[0]->Set_Enabled(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 
@@ -4805,6 +4897,7 @@ void CHunter::Play_SSword_Combo_Strong()
 				m_fSkillMoveMultiply = 1.f;
 			}
 
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -4813,9 +4906,7 @@ void CHunter::Play_SSword_Combo_Strong()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.65f))
 		{
-			m_bCanInterrupt = true;
-			m_pWeapon->Set_Target_CanAttack(false);
-			m_pWeapon->Set_Enable_Trail(false);
+			m_tObjParam.bSuperArmor = true;
 			m_eState = HUNTER_ANI::SSword_Atk_S03;
 
 			return;
@@ -4834,6 +4925,7 @@ void CHunter::Play_SSword_Combo_Strong()
 			{
 				m_bEventTrigger[5] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (3.533f <= AniTime)
@@ -4843,6 +4935,7 @@ void CHunter::Play_SSword_Combo_Strong()
 				m_bEventTrigger[6] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
 		else if (1.900f <= AniTime)
@@ -4859,6 +4952,7 @@ void CHunter::Play_SSword_Combo_Strong()
 			{
 				m_bEventTrigger[8] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.500f <= AniTime)
@@ -4868,11 +4962,9 @@ void CHunter::Play_SSword_Combo_Strong()
 				m_bEventTrigger[9] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 
 		if (2.733f < AniTime && 3.500f > AniTime)
 		{
@@ -4897,6 +4989,7 @@ void CHunter::Play_SSword_Combo_Strong()
 				m_fSkillMoveMultiply = 1.f;
 			}
 
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -4916,8 +5009,7 @@ void CHunter::Play_SSword_Combo_Strong()
 			if (false == m_bEventTrigger[12])
 			{
 				m_bEventTrigger[12] = true;
-				m_pWeapon->Set_Target_CanAttack(true);
-				m_pWeapon->Set_Enable_Trail(true);
+				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
 		else if (3.133f <= AniTime)
@@ -4925,8 +5017,8 @@ void CHunter::Play_SSword_Combo_Strong()
 			if (false == m_bEventTrigger[13])
 			{
 				m_bEventTrigger[13] = true;
-				m_pWeapon->Set_Target_CanAttack(true);
-				m_pWeapon->Set_Enable_Trail(true);
+				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (2.867f <= AniTime)
@@ -4936,11 +5028,9 @@ void CHunter::Play_SSword_Combo_Strong()
 				m_bEventTrigger[14] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 	}
 
 	return;
@@ -4954,9 +5044,7 @@ void CHunter::Play_SSword_Combo_Diagonal_L()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.5f))
 		{
-			m_bCanInterrupt = true;
-			m_pWeapon->Set_Enable_Trail(false);
-			m_pWeapon->Set_Target_CanAttack(false);
+			m_tObjParam.bSuperArmor = true;
 			m_eState = HUNTER_ANI::SSword_Atk_N03;
 
 			return;
@@ -4975,6 +5063,7 @@ void CHunter::Play_SSword_Combo_Diagonal_L()
 			{
 				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.300f <= AniTime)
@@ -4984,11 +5073,9 @@ void CHunter::Play_SSword_Combo_Diagonal_L()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 
 		if (0.900f < AniTime && 1.333f > AniTime)
 		{
@@ -4999,7 +5086,7 @@ void CHunter::Play_SSword_Combo_Diagonal_L()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.5f;
 			}
-
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -5028,6 +5115,7 @@ void CHunter::Play_SSword_Combo_Diagonal_L()
 			{
 				m_bEventTrigger[6] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
+				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (1.300f <= AniTime)
@@ -5037,11 +5125,9 @@ void CHunter::Play_SSword_Combo_Diagonal_L()
 				m_bEventTrigger[7] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+				m_tObjParam.bSuperArmor = true;
 			}
 		}
-
-		if (m_pMeshCom->Is_Finish_Animation(0.3f))
-			m_bCanInterrupt = false;
 
 		if (1.000f < AniTime && 1.567f > AniTime)
 		{
@@ -5053,6 +5139,7 @@ void CHunter::Play_SSword_Combo_Diagonal_L()
 				m_fSkillMoveMultiply = 1.f;
 			}
 
+			Function_RotateBody();
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -5065,7 +5152,7 @@ void CHunter::Play_Idle()
 {
 	switch (m_eSecondCategory_IDLE)
 	{
-	case HUNTER_IDLETYPE::IDLE_IDLE:
+	case MONSTER_IDLETYPE::IDLE_IDLE:
 		if (true == m_bInRecognitionRange)
 		{
 			m_bIsIdle = false;
@@ -5075,19 +5162,19 @@ void CHunter::Play_Idle()
 				//인지, 공격 가능->대기
 				switch (m_eWeaponState)
 				{
-				case WEAPON_ANITYPE::GUN:
+				case WEAPON_STATE::WEAPON_Gun:
 					m_eState = HUNTER_ANI::Bayonet_Idle;
 					break;
-				case WEAPON_ANITYPE::HALBERD:
+				case WEAPON_STATE::WEAPON_Halberd:
 					m_eState = HUNTER_ANI::Halberd_Idle;
 					break;
-				case WEAPON_ANITYPE::HAMMER:
+				case WEAPON_STATE::WEAPON_Hammer:
 					m_eState = HUNTER_ANI::Hammer_Idle;
 					break;
-				case WEAPON_ANITYPE::LSWORD:
+				case WEAPON_STATE::WEAPON_LSword:
 					m_eState = HUNTER_ANI::LSword_Idle;
 					break;
-				case WEAPON_ANITYPE::SWORD:
+				case WEAPON_STATE::WEAPON_SSword:
 					m_eState = HUNTER_ANI::Sword_Idle;
 					break;
 				}
@@ -5098,19 +5185,19 @@ void CHunter::Play_Idle()
 				Function_RotateBody();
 				switch (m_eWeaponState)
 				{
-				case WEAPON_ANITYPE::GUN:
+				case WEAPON_STATE::WEAPON_Gun:
 					m_eState = HUNTER_ANI::Bayonet_Idle;
 					break;
-				case WEAPON_ANITYPE::HALBERD:
+				case WEAPON_STATE::WEAPON_Halberd:
 					m_eState = HUNTER_ANI::Halberd_Idle;
 					break;
-				case WEAPON_ANITYPE::HAMMER:
+				case WEAPON_STATE::WEAPON_Hammer:
 					m_eState = HUNTER_ANI::Hammer_Idle;
 					break;
-				case WEAPON_ANITYPE::LSWORD:
+				case WEAPON_STATE::WEAPON_LSword:
 					m_eState = HUNTER_ANI::LSword_Idle;
 					break;
-				case WEAPON_ANITYPE::SWORD:
+				case WEAPON_STATE::WEAPON_SSword:
 					m_eState = HUNTER_ANI::Sword_Idle;
 					break;
 				}
@@ -5122,7 +5209,7 @@ void CHunter::Play_Idle()
 			m_eState = HUNTER_ANI::Idle;
 		}
 		break;
-	case HUNTER_IDLETYPE::IDLE_STAND:
+	case MONSTER_IDLETYPE::IDLE_STAND:
 		if (true == m_bInRecognitionRange)
 		{
 			if (HUNTER_ANI::Stand == m_eState)
@@ -5140,19 +5227,19 @@ void CHunter::Play_Idle()
 					m_bIsIdle = false;
 					switch (m_eWeaponState)
 					{
-					case WEAPON_ANITYPE::GUN:
+					case WEAPON_STATE::WEAPON_Gun:
 						m_eState = HUNTER_ANI::Bayonet_Idle;
 						break;
-					case WEAPON_ANITYPE::HALBERD:
+					case WEAPON_STATE::WEAPON_Halberd:
 						m_eState = HUNTER_ANI::Halberd_Idle;
 						break;
-					case WEAPON_ANITYPE::HAMMER:
+					case WEAPON_STATE::WEAPON_Hammer:
 						m_eState = HUNTER_ANI::Hammer_Idle;
 						break;
-					case WEAPON_ANITYPE::LSWORD:
+					case WEAPON_STATE::WEAPON_LSword:
 						m_eState = HUNTER_ANI::LSword_Idle;
 						break;
-					case WEAPON_ANITYPE::SWORD:
+					case WEAPON_STATE::WEAPON_SSword:
 						m_eState = HUNTER_ANI::Sword_Idle;
 						break;
 					}
@@ -5165,7 +5252,7 @@ void CHunter::Play_Idle()
 			m_eState = HUNTER_ANI::Stand;
 		}
 		break;
-	case HUNTER_IDLETYPE::IDLE_CROUCH:
+	case MONSTER_IDLETYPE::IDLE_CROUCH:
 		if (true == m_bInRecognitionRange)
 		{
 			if (HUNTER_ANI::Crouch == m_eState)
@@ -5183,19 +5270,19 @@ void CHunter::Play_Idle()
 					m_bIsIdle = false;
 					switch (m_eWeaponState)
 					{
-					case WEAPON_ANITYPE::GUN:
+					case WEAPON_STATE::WEAPON_Gun:
 						m_eState = HUNTER_ANI::Bayonet_Idle;
 						break;
-					case WEAPON_ANITYPE::HALBERD:
+					case WEAPON_STATE::WEAPON_Halberd:
 						m_eState = HUNTER_ANI::Halberd_Idle;
 						break;
-					case WEAPON_ANITYPE::HAMMER:
+					case WEAPON_STATE::WEAPON_Hammer:
 						m_eState = HUNTER_ANI::Hammer_Idle;
 						break;
-					case WEAPON_ANITYPE::LSWORD:
+					case WEAPON_STATE::WEAPON_LSword:
 						m_eState = HUNTER_ANI::LSword_Idle;
 						break;
-					case WEAPON_ANITYPE::SWORD:
+					case WEAPON_STATE::WEAPON_SSword:
 						m_eState = HUNTER_ANI::Sword_Idle;
 						break;
 					}
@@ -5203,9 +5290,12 @@ void CHunter::Play_Idle()
 			}
 		}
 		else
+		{
+			m_bIsIdle = true;
 			m_eState = HUNTER_ANI::Crouch;
+		}
 		break;
-	case HUNTER_IDLETYPE::IDLE_SIT:
+	case MONSTER_IDLETYPE::IDLE_SIT:
 		if (true == m_bInRecognitionRange)
 		{
 			if (HUNTER_ANI::Sit == m_eState)
@@ -5223,19 +5313,19 @@ void CHunter::Play_Idle()
 					m_bIsIdle = false;
 					switch (m_eWeaponState)
 					{
-					case WEAPON_ANITYPE::GUN:
+					case WEAPON_STATE::WEAPON_Gun:
 						m_eState = HUNTER_ANI::Bayonet_Idle;
 						break;
-					case WEAPON_ANITYPE::HALBERD:
+					case WEAPON_STATE::WEAPON_Halberd:
 						m_eState = HUNTER_ANI::Halberd_Idle;
 						break;
-					case WEAPON_ANITYPE::HAMMER:
+					case WEAPON_STATE::WEAPON_Hammer:
 						m_eState = HUNTER_ANI::Hammer_Idle;
 						break;
-					case WEAPON_ANITYPE::LSWORD:
+					case WEAPON_STATE::WEAPON_LSword:
 						m_eState = HUNTER_ANI::LSword_Idle;
 						break;
-					case WEAPON_ANITYPE::SWORD:
+					case WEAPON_STATE::WEAPON_SSword:
 						m_eState = HUNTER_ANI::Sword_Idle;
 						break;
 					}
@@ -5259,23 +5349,62 @@ void CHunter::Play_Move()
 
 	switch (m_eSecondCategory_MOVE)
 	{
-	case HUNTER_MOVETYPE::MOVE_RUN:
-		m_eState = HUNTER_ANI::Run;
+	case MONSTER_MOVETYPE::MOVE_RUN:
+		if (true == m_bCanChase)
+		{
+			m_bCanChase = false;
+			m_eState = HUNTER_ANI::Run;
+			m_fSkillMoveSpeed_Cur = 4.f;
+			m_fSkillMoveAccel_Cur = 0.f;
+			m_fSkillMoveMultiply = 0.5f;
+		}
 
 		Function_RotateBody();
-		Function_Movement(4.f, m_pTransformCom->Get_Axis(AXIS_Z));
-		Function_DecreMoveMent(0.1f);
-
+		Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+		Function_DecreMoveMent(m_fSkillMoveMultiply);
 		break;
-	case HUNTER_MOVETYPE::MOVE_WALK:
-		m_eState = HUNTER_ANI::Walk_F;
 
-		Function_RotateBody();
-		Function_Movement(2.f, m_pTransformCom->Get_Axis(AXIS_Z));
-		Function_DecreMoveMent(0.1f);
+	case MONSTER_MOVETYPE::MOVE_WALK:
+		if (true == m_bCanMoveAround)
+		{
+			m_bCanMoveAround = false;
+			m_bIsMoveAround = true;
+			
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = 4.f;
 
+			m_fSkillMoveSpeed_Cur = 2.5f;
+			m_fSkillMoveAccel_Cur = 0.f;
+			m_fSkillMoveMultiply = 0.5f;
+
+			switch (CALC::Random_Num(HUNTER_ANI::Walk_R, HUNTER_ANI::Walk_B))
+			{
+			case HUNTER_ANI::Walk_R:
+			case HUNTER_ANI::Walk_FR:
+			case HUNTER_ANI::Walk_F:
+			case HUNTER_ANI::Walk_BR_RFoot:
+			case HUNTER_ANI::Walk_B:
+				m_eState = HUNTER_ANI::Walk_R;
+				break;
+			case HUNTER_ANI::Walk_L:
+			case HUNTER_ANI::Walk_FL_L:
+			case HUNTER_ANI::Walk_FL_R:
+			case HUNTER_ANI::Walk_BR_LFoot:
+			case HUNTER_ANI::Walk_BL:
+				m_eState = HUNTER_ANI::Walk_L;
+				break;
+			}
+		}
+		else
+		{
+			if(HUNTER_ANI::Walk_R == m_eState)
+				Function_MoveAround(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_X));
+			else if(HUNTER_ANI::Walk_L == m_eState)
+				Function_MoveAround(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_X));
+		}
 		break;
-	case HUNTER_MOVETYPE::MOVE_DODGE:
+
+	case MONSTER_MOVETYPE::MOVE_DODGE:
 		if (true == m_tObjParam.bCanDodge)
 		{
 			Function_ResetAfterAtk();
@@ -5287,27 +5416,25 @@ void CHunter::Play_Move()
 		{
 			if (m_pMeshCom->Is_Finish_Animation(0.95f))
 			{
-				m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+				m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 				m_tObjParam.bCanAttack = true;
 				Function_ResetAfterAtk();
 
 				return;
 			}
-			else
-			{
-				if (0.900f < AniTime && 1.300f > AniTime)
-				{
-					if (m_bEventTrigger[0] == false)
-					{
-						m_bEventTrigger[0] = true;
-						m_fSkillMoveSpeed_Cur = 10.f;
-						m_fSkillMoveAccel_Cur = 0.f;
-						m_fSkillMoveMultiply = 0.25f;
-					}
 
-					Function_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
-					Function_DecreMoveMent(m_fSkillMoveMultiply);
+			if (0.900f < AniTime && 1.300f > AniTime)
+			{
+				if (m_bEventTrigger[0] == false)
+				{
+					m_bEventTrigger[0] = true;
+					m_fSkillMoveSpeed_Cur = 10.f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.25f;
 				}
+
+				Function_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
 		}
 		break;
@@ -5355,14 +5482,14 @@ void CHunter::Play_Hit()
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 0.5f;
 
-			m_eFirstCategory = MONSTER_ANITYPE::IDLE;
+			m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 		}
 		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
 		{
 			if (false == m_tObjParam.bCanHit)
 			{
 				m_tObjParam.bCanHit = true;
-				Check_FBLR();
+				Function_FBLR();
 			}
 		}
 
@@ -5375,6 +5502,7 @@ void CHunter::Play_Hit()
 
 void CHunter::Play_CC()
 {
+	return;
 }
 
 void CHunter::Play_Dead()
@@ -5397,7 +5525,6 @@ void CHunter::Play_Dead()
 			m_eState = HUNTER_ANI::Death_F;
 		else
 			m_eState = HUNTER_ANI::Death;
-
 	}
 	else
 	{
@@ -5448,8 +5575,11 @@ void CHunter::Play_Dead()
 				if (false == m_bEventTrigger[0])
 				{
 					m_bEventTrigger[0] = true;
-					Start_Dissolve(0.7f, false, true);
+
+					Start_Dissolve(0.7f, false, true, 0.0f);
 					m_pWeapon->Start_Dissolve(0.7f, false, true);
+					m_fDeadEffect_Delay = 0.f;
+					g_pManagement->Add_GameObject_ToLayer(L"GameObject_Haze", SCENE_STAGE, L"Layer_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
 			break;
@@ -5459,8 +5589,30 @@ void CHunter::Play_Dead()
 	return;
 }
 
-HRESULT CHunter::Add_Component()
+HRESULT CHunter::Add_Component(void* pArg)
 {
+	_tchar MeshName[MAX_STR] = L"";
+
+	MONSTER_STATUS eTemp = *(MONSTER_STATUS*)pArg;
+
+	if (nullptr == pArg)
+		lstrcpy(MeshName, L"Mesh_Hunter_Black");
+	else
+	{
+		switch (eTemp.eMonsterColor)
+		{
+		case MONSTER_COLORTYPE::YELLOW:
+			lstrcpy(MeshName, L"Mesh_Hunter_Black"); //황금 사냥꾼으로 바꿀예정
+			break;
+		case MONSTER_COLORTYPE::RED:
+		case MONSTER_COLORTYPE::BLUE:
+		case MONSTER_COLORTYPE::WHITE:
+		case MONSTER_COLORTYPE::COLOR_NONE:
+		case MONSTER_COLORTYPE::BLACK:
+			lstrcpy(MeshName, L"Mesh_Hunter_Black");
+			break;
+		}
+	}
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
 		return E_FAIL;
 
@@ -5470,7 +5622,7 @@ HRESULT CHunter::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Hunter_Black", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, MeshName, L"Com_Mesh", (CComponent**)&m_pMeshCom)))
 		return E_FAIL;
 
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMesh)))
@@ -5520,55 +5672,110 @@ HRESULT CHunter::Ready_Status(void* pArg)
 {
 	if (nullptr == pArg)
 	{
-		m_tObjParam.fDamage = 25.f;
-		m_tObjParam.fHp_Max = 200.f;
+		m_tObjParam.fDamage = -500.f;
+		m_tObjParam.fHp_Max = 2000.f;
 		m_tObjParam.fArmor_Max = 10.f;
 
 		m_fRecognitionRange = 15.f;
 		m_fShotRange = 10.f;
 		m_fAtkRange = 5.f;
+		m_fPersonalRange = 2.f;
 		m_iDodgeCountMax = 5;
-		m_eWeaponState = WEAPON_ANITYPE::SWORD;
+		m_eWeaponState = WEAPON_STATE::WEAPON_SSword;
 	}
 	else
 	{
-		INITSTRUCT Info = *(INITSTRUCT*)pArg;
-
-		m_tObjParam.fDamage = Info.tMonterStatus.fDamage;
-		m_tObjParam.fHp_Max = Info.tMonterStatus.fHp_Max;
-		m_tObjParam.fArmor_Max = Info.tMonterStatus.fArmor_Max;
-
-		m_fRecognitionRange = Info.fKonwingRange;
-		m_fShotRange = Info.fCanShotRangeIfGunChooose;
-		m_fAtkRange = Info.fCanAttackRange;
-		m_iDodgeCountMax = Info.iDodgeCountMax;
+		MONSTER_STATUS Info = *(MONSTER_STATUS*)pArg;
 		m_eWeaponState = Info.eUseWhatWeapon;
+
+		if (MONSTER_COLORTYPE::YELLOW == Info.eMonsterColor)
+		{
+			m_tObjParam.fDamage = -550.f;
+			m_tObjParam.fHp_Max = 3000.f;
+			m_tObjParam.fArmor_Max = 10.f;
+
+			m_fRecognitionRange = 15.f;
+			m_fShotRange = 10.f;
+			m_fAtkRange = 5.f;
+			m_fPersonalRange = 2.f;
+			m_iDodgeCountMax = 5;
+		}
+		else
+		{
+			m_tObjParam.fDamage = -500.f;
+			m_tObjParam.fHp_Max = 2000.f;
+			m_tObjParam.fArmor_Max = 10.f;
+
+			m_fRecognitionRange = 15.f;
+			m_fShotRange = 10.f;
+			m_fAtkRange = 5.f;
+			m_fPersonalRange = 2.f;
+			m_iDodgeCountMax = 5;
+		}
 	}
+
+	m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
+	m_tObjParam.fArmor_Cur = m_tObjParam.fArmor_Max;
+
+	m_tObjParam.bCanHit = true; //맞기 가능
+	m_tObjParam.bIsHit = false;	//맞기 진행중 아님
+	m_tObjParam.bCanAttack = true; //공격 가능
+	m_tObjParam.bIsAttack = false; //공격 진행중 아님
+	m_tObjParam.bCanDodge = true; //회피 가능
+	m_tObjParam.bIsDodge = false;  //회피 진행중 아님
+
+	m_bCanPlayDead = false; //죽음 애니 진행시 true;
+	m_bInRecognitionRange = false; //인지 범위 여부
+	m_bInAtkRange = false; //공격 범위 여부
+	m_bCanChase = false; //추격 여부
+	m_bCanCoolDown = false; //쿨타임 여부
+	m_bIsCoolDown = false; //쿨타임 진행중 여부
+
+	m_bCanChooseAtkType = true; //공격타입 고정용
+	m_bIsCombo = false; //콤보 진행중
+
+	m_bCanMoveAround = true; //경계 여부
+	m_bIsMoveAround = false; //경게 진행중
+
+	m_bCanIdle = true; //일상 가능
+	m_bIsIdle = false; //일상 진행중 아님
+
+	m_dTimeDelta = 0;
+	m_dAniPlayMul = 1;
+
+	m_fSkillMoveSpeed_Cur = 0.f;
+	m_fSkillMoveSpeed_Max = 0.f;
+	m_fSkillMoveAccel_Cur = 0.5f;
+	m_fSkillMoveAccel_Max = 0.f;
+	m_fSkillMoveMultiply = 1.f;
+
+	m_fCoolDownMax = 0.f;
+	m_fCoolDownCur = 0.f;
 
 	return S_OK;
 }
 
 HRESULT CHunter::Ready_Weapon()
 {
-	//흑의의 무기들
 	m_pWeapon = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
 
 	switch (m_eWeaponState)
 	{
-	case WEAPON_ANITYPE::GUN:
-		m_pWeapon->Change_WeaponData(CWeapon::WPN_Gun_Normal);
+	case WEAPON_STATE::WEAPON_Gun:
+		m_pWeapon->Change_WeaponData(CWeapon::Wpn_Gun_Black);
 		break;
-	case WEAPON_ANITYPE::HALBERD:
-		m_pWeapon->Change_WeaponData(CWeapon::WPN_Halverd_Normal);
+	case WEAPON_STATE::WEAPON_Halberd:
+		m_pWeapon->Change_WeaponData(CWeapon::Wpn_Halberd_Black);
 		break;
-	case WEAPON_ANITYPE::HAMMER:
-		m_pWeapon->Change_WeaponData(CWeapon::WPN_Hammer_Normal);
+	case WEAPON_STATE::WEAPON_Hammer:
+		m_pWeapon->Change_WeaponData(CWeapon::Wpn_Hammer_Black);
 		break;
-	case WEAPON_ANITYPE::LSWORD:
-		m_pWeapon->Change_WeaponData(CWeapon::WPN_LSword_Normal);
+	case WEAPON_STATE::WEAPON_LSword:
+		m_pWeapon->Change_WeaponData(CWeapon::Wpn_LSword_Black);
 		break;
-	case WEAPON_ANITYPE::SWORD:
-		m_pWeapon->Change_WeaponData(CWeapon::WPN_SSword_Normal);
+	case WEAPON_STATE::WEAPON_SSword:
+		m_pWeapon->Change_WeaponData(CWeapon::Wpn_SSword_Black);
 		break;
 	}
 
@@ -5707,15 +5914,6 @@ void CHunter::Free()
 	Safe_Release(m_pMeshCom);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);
-
-	for (auto& vecter_iter : m_vecPhysicCol)
-		Safe_Release(vecter_iter);
-
-	for (auto& vecter_iter : m_vecAttackCol)
-		Safe_Release(vecter_iter);
-
-	for (auto& iter : m_matBone)
-		iter = nullptr;
 
 	CGameObject::Free();
 

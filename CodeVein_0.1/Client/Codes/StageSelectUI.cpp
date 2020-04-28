@@ -25,10 +25,11 @@ HRESULT CStageSelectUI::Ready_GameObject(void * pArg)
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
+	CStageUI* pStageUI = nullptr;
 	LOOP(5)
 	{
-		g_pManagement->Add_GameObject_ToLayer(L"GameObject_StageUI", SCENE_STAGE, L"Layer_StageUI");
-		CStageUI* pStageUI = static_cast<CStageUI*>(g_pManagement->Get_GameObjectBack(L"Layer_StageUI", SCENE_STAGE));
+		pStageUI = static_cast<CStageUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_StageUI", nullptr));
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pStageUI, SCENE_STAGE, L"Layer_StageUI", nullptr);
 		pStageUI->Set_Teleport_Menu(i);
 		m_vecStageUI.push_back(pStageUI);
 	}
@@ -105,8 +106,10 @@ _int CStageSelectUI::Update_GameObject(_double TimeDelta)
 	//}
 	
 		
-	if (g_pInput_Device->Key_Up(DIK_RETURN))
-		cout << Teleport_Stage() << endl;
+	/*if (g_pInput_Device->Key_Up(DIK_RETURN))
+		cout << Teleport_Stage() << endl;*/
+
+	
 	return NO_EVENT;
 }
 

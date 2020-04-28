@@ -114,13 +114,15 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_USRDLL;ENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Headers/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Headers/;../../Physx/Include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <LargeAddressAware>true</LargeAddressAware>
       <AdditionalDependencies>d3d9.lib;d3dx9.lib;dxguid.lib;dinput8.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../Physx/LibDebug/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
       <ShaderType>Effect</ShaderType>
@@ -165,7 +167,8 @@ call CopyEngine.bat</Command>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;_USRDLL;ENGINE_EXPORTS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Headers/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Headers/;../../Physx/Include/;../../Physx/src/foundation/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -174,6 +177,7 @@ call CopyEngine.bat</Command>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <LargeAddressAware>true</LargeAddressAware>
       <AdditionalDependencies>d3d9.lib;d3dx9.lib;dxguid.lib;dinput8.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>../../Physx/LibRelease/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <FxCompile>
       <ShaderType>Effect</ShaderType>
@@ -267,7 +271,10 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\MeshEffect.h" />
     <ClInclude Include="..\Headers\Mesh_Dynamic.h" />
     <ClInclude Include="..\Headers\Mesh_Static.h" />
+    <ClInclude Include="..\Headers\MyPhysx.h" />
     <ClInclude Include="..\Headers\NavMesh.h" />
+    <ClInclude Include="..\Headers\ObjectPool.h" />
+    <ClInclude Include="..\Headers\ObjectPool_Manager.h" />
     <ClInclude Include="..\Headers\Object_Manager.h" />
     <ClInclude Include="..\Headers\Optimization.h" />
     <ClInclude Include="..\Headers\ParticleMgr.h" />
@@ -363,7 +370,10 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\MeshEffect.cpp" />
     <ClCompile Include="..\Codes\Mesh_Dynamic.cpp" />
     <ClCompile Include="..\Codes\Mesh_Static.cpp" />
+    <ClCompile Include="..\Codes\MyPhysx.cpp" />
     <ClCompile Include="..\Codes\NavMesh.cpp" />
+    <ClCompile Include="..\Codes\ObjectPool.cpp" />
+    <ClCompile Include="..\Codes\ObjectPool_Manager.cpp" />
     <ClCompile Include="..\Codes\Object_Manager.cpp" />
     <ClCompile Include="..\Codes\Optimization.cpp" />
     <ClCompile Include="..\Codes\ParticleMgr.cpp" />

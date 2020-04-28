@@ -12,18 +12,37 @@ class CWeapon : public CGameObject
 public:
 	enum WEAPON_DATA
 	{
-		WPN_SSword_Normal,
-		WPN_SSword_Military,
-		WPN_LSword_Normal,
-		WPN_Hammer_Normal,
-		WPN_Halverd_Normal,
-		WPN_Gun_Normal,
+		Wpn_SSword,
+		Wpn_SSword_Black,
+		Wpn_SSword_Military,
+		Wpn_SSword_Slave,
+
+		Wpn_LSword,
+		Wpn_LSword_Black,
+		Wpn_LSword_Military,
+		Wpn_LSword_Slave,
+
+		Wpn_Halberd,
+		Wpn_Halberd_Black,
+		Wpn_Halberd_Military,
+		Wpn_Halberd_Slave,
+
+		Wpn_Hammer,
+		Wpn_Hammer_Black,
+		Wpn_Hammer_Military,
+		Wpn_Hammer_Slave,
+
+		Wpn_Gun,
+		Wpn_Gun_Black,
+		Wpn_Gun_Military,
+		Wpn_Gun_Slave,
+
 		WPN_Shield_Normal,
-		WPN_Hammer_YachaMan,
-		WPN_QueenLance,
 		WPN_QueenShield,
-		WPN_FrostBlood_IceGirl,
+		WPN_QueenLance,
 		WPN_DeerKingShield,
+		WPN_FrostBlood_IceGirl,
+
 		WPN_DATA_End
 	};
 
@@ -58,6 +77,8 @@ public:
 
 public:
 	virtual WEAPON_STATE	Get_WeaponType() { return m_eWeaponType; }
+	// 이펙트 생성될 위치
+	_v3						Get_HeadPos();
 
 public:
 	// 무기를 붙일 뼈의 메트릭스 주소를 받습니다.
@@ -72,7 +93,7 @@ public:
 	virtual void			Set_Enable_Trail(_bool _bEnable);
 	virtual void			Set_SkillMode(_bool _bSkill);
 	virtual void			Set_TrailIndex(_int iIdx, _bool bStaticTrail = false);
-	virtual void			Set_TrailUseMask(_int iIdx, _bool bStaticTrail = false);
+	virtual void			Set_TrailUseMask(_bool bUse, _int iIdx, _bool bStaticTrail = false);
 	virtual void			Set_Enable_Record(_bool _bRecord);
 	// 스킬일 경우, 퍼센트 데미지 적용
 	virtual void			Set_SkillPercent(_float _fPercent);
@@ -98,6 +119,7 @@ private:
 	_float					m_fTrailHeight_Max = 1.f;		// 트레일 끝점 보정수치
 	_float					m_fSkillPercent = 1.f;
 
+	_v3						m_vHeadPos = V3_NULL;
 
 private:
 	_tchar					m_szName[MAX_STR] = L"";
@@ -116,8 +138,8 @@ private:
 	_bool					m_tmpEmissiveTest = false;
 
 private:
-	WEAPON_STATE			m_eWeaponType = WEAPON_Ssword;
-	WEAPON_DATA				m_eWeaponData = WPN_SSword_Normal;
+	WEAPON_STATE			m_eWeaponType = WEAPON_SSword;
+	WEAPON_DATA				m_eWeaponData = Wpn_SSword;
 	WPN_PARAM				m_tWeaponParam[WPN_DATA_End];
 
 private:

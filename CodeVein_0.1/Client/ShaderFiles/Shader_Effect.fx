@@ -66,6 +66,7 @@ struct VS_OUT
 	float4		vPosition : POSITION;
 	float2		vTexUV : TEXCOORD0;
 	float4		vProjPos : TEXCOORD1;
+	float4		vViewPos : TEXCOORD2;
 
 	
 };
@@ -98,7 +99,7 @@ VS_OUT VS_MAIN(VS_IN In)
 	Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);	
 	Out.vTexUV = In.vTexUV;
 	Out.vProjPos = Out.vPosition;
-
+	Out.vViewPos = mul(vector(In.vPosition, 1.f), matWV);
 	return Out;		
 }
 
@@ -133,6 +134,8 @@ struct PS_IN
 	float2		vTexUV : TEXCOORD0;
 	float4		vProjPos : TEXCOORD1;
 	//float4		vColor : COLOR0;
+	float4		vViewPos : TEXCOORD2;
+
 };
 
 struct PS_INSTANCE_IN
@@ -436,43 +439,86 @@ PS_OUT PS_SSD(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	vector		vDepthInfo = tex2D(DepthSampler, In.vTexUV); //Depth값을 알아옵니다.  
-	float		fViewZ = vDepthInfo.g * 500.f;
+	float2 screenposition = In.vProjPos.xy / In.vProjPos.w;
+	screenposition.x = screenposition.x * 0.5 + 0.5 + (0.5 / 1280.0f);
+	screenposition.y = -screenposition.y * 0.5 + 0.5 + (0.5 / 720.0f);
+	float2 depthUV = float2(screenposition.x, screenposition.y);
+
+	vector vDepthInfo = tex2D(DepthSampler, depthUV);
+	if(0 == vDepthInfo.x)
+		return  Out;
+
+	float		fViewZ = vDepthInfo.y * 500.f;
 	vector		vWorldPos;
-	vWorldPos.x = In.vTexUV.x * 2.f - 1.f;
-	vWorldPos.y = In.vTexUV.y * -2.f + 1.f;
+	vWorldPos.x = depthUV.x * 2.f - 1.f;
+	vWorldPos.y = depthUV.y * -2.f + 1.f;
 	vWorldPos.z = vDepthInfo.x;
 	vWorldPos.w = 1.f;
 	vWorldPos = vWorldPos * fViewZ;
 	vWorldPos = mul(vWorldPos, g_matProjInv);
 	vWorldPos = mul(vWorldPos, g_matViewInv);
-
+	
 	float3 decalLocalPos = float3(0, 0, 0);
-	decalLocalPos = mul(vWorldPos, g_matInvWorld).xyz;
+	decalLocalPos = mul(float4(vWorldPos.xyz, 1), g_matInvWorld).xyz;
 	
-	float2 decalUV = decalLocalPos.xy + 0.5f;
+	clip(0.5 - abs(decalLocalPos.xyz));
 	
-	//float dist = abs(decalLocalPos.z); //decal의 local 깊이
-	//float scaleDistance = max(dist * 2.0f, 1.0f);//Local깊이를 0.0과 1.0으로 맵핑시킵니다. 
-	//float fadeOut = 1.0f - scaleDistance;
-
+	float2 decalUV = decalLocalPos.xz + 0.5f;
+		
 	float4 Color = float4(1, 1, 1, 1);
 	if (g_bUseColorTex)
 	{
-		Color = tex2D(ColorSampler, In.vTexUV);
-		Color *= tex2D(DiffuseSampler, In.vTexUV).x;
+		Color = tex2D(ColorSampler, decalUV);
+		Color *= tex2D(DiffuseSampler, decalUV).x;
 	}
 	else
 	{
-		Color = tex2D(DiffuseSampler, In.vTexUV);
+		Color = tex2D(DiffuseSampler, decalUV);
 	}
 
-	//Color.a *= fadeOut; // FadeOut값을 곱해주면 표면의 부분 이외는 사라지게 됩니다.  
-	
+	if (g_bUseRGBA)
+	{
+		Color.xyz = g_vColor.xyz;
+		Color.a *= g_vColor.a;
+	}
+	else
+	{
+		// ==============================================================================================
+		// [Memo]  g_vColor.x = Hue / g_vColor.y = Contrast / g_vColor.z = Brightness / g_vColor.w = Saturation
+		// ==============================================================================================
+		float3 intensity;
+		float half_angle = 0.5 * radians(g_vColor.x); // Hue is radians of 0 tp 360 degree
+		float4 rot_quat = float4((root3 * sin(half_angle)), cos(half_angle));
+		float3x3 rot_Matrix = QuaternionToMatrix(rot_quat);
+		Color.rgb = mul(rot_Matrix, Color.rgb);
+		Color.rgb = (Color.rgb - 0.5) * (g_vColor.y + 1.0) + 0.5;
+		Color.rgb = Color.rgb + g_vColor.z;
+		intensity = float(dot(Color.rgb, lumCoeff));
+		Color.rgb = lerp(intensity, Color.rgb, g_vColor.w);
+		// End ==========================================================================================
+	}
+
+	if (g_bDissolve)
+	{
+		float4 fxColor = tex2D(DiffuseSampler, decalUV);
+
+		if (Color.a == 0.f)
+			clip(-1);
+
+		if (fxColor.r >= g_fDissolve)
+			Color.a = 1;
+		else
+			Color.a = 0;
+	}
+
+	if (g_bUseMaskTex)
+	{
+		vector vGradientMask = tex2D(GradientSampler, decalUV);
+		Color.a *= vGradientMask.x;
+	}
+
 	Out.vColor = Color;
 	
-	//Out.vColor = float4(1, 1, 1, 1);
-
 	return Out;
 }
 
@@ -588,8 +634,9 @@ technique Default_Technique
 		AlphaTestEnable = true;
 		srcblend = SrcAlpha;
 		DestBlend = InvSrcAlpha;
-		//blendop = add;
-		cullmode = none;
+		blendop = add;
+
+		cullmode = none; // 카메라 절두체에 잘리는 문제 : 백스페이스 컬링이 필요???
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_SSD();

@@ -3,7 +3,7 @@
 #include "..\Headers\Weapon.h"
 
 #include "MonsterUI.h"
-//#include "DamegeNumUI.h"
+#include "Haze.h"
 
 CGunGenji::CGunGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CMonster(pGraphic_Device)
@@ -139,7 +139,7 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 		return E_FAIL;
 
 	Push_Collider();
-
+	
 	CGameObject::Update_GameObject(TimeDelta);
 
 	// MonsterHP UI
@@ -178,6 +178,8 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 
 	if (false == m_bReadyDead)
 		Check_PhyCollider();
+	else
+		Check_DeadEffect(TimeDelta);
 
 	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
@@ -890,6 +892,9 @@ void CGunGenji::Check_PhyCollider()
 
 			m_pGun->Start_Dissolve();
 			g_pManagement->Create_Spawn_Effect(m_vRightToeBase, m_vHead);
+			// 최신 머지에는 위에 이펙트 생성이 없었는데, 일단 냅둠
+			m_fDeadEffect_Delay = 0.5f;
+			g_pManagement->Add_GameObject_ToLayer(L"GameObject_Haze", SCENE_STAGE, L"Layer_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.5f));
 		}
 	}
 	// 맞았을 때
@@ -948,6 +953,32 @@ void CGunGenji::Push_Collider()
 			}
 		}
 	}
+}
+
+void CGunGenji::Check_DeadEffect(_double TimeDelta)
+{
+	m_fDeadEffect_Delay -= _float(TimeDelta);
+	if (m_fDeadEffect_Delay > 0.f)
+		return;
+
+	m_fDeadEffect_Offset -= _float(TimeDelta);
+	if (m_fDeadEffect_Offset > 0.f)
+		return;
+
+	m_fDeadEffect_Offset = 0.1f;
+
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle", 0.1f, m_vRightToeBase, m_vHead);
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle_Sub", 0.1f, m_vRightToeBase, m_vHead);
+
+	D3DXFRAME_DERIVED* pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips");
+	_v3 vHipPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle", 0.1f, m_vRightToeBase, m_vHead);
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle_Sub", 0.1f, m_vRightToeBase, m_vHead);
+
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", m_vHead);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHipPos);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", m_vRightToeBase);
 }
 
 HRESULT CGunGenji::Add_Component(void* pArg)
@@ -1061,7 +1092,7 @@ HRESULT CGunGenji::SetUp_ConstantTable()
 HRESULT CGunGenji::Ready_Weapon()
 {
 	m_pGun = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pGun->Change_WeaponData(CWeapon::WPN_Gun_Normal);
+	m_pGun->Change_WeaponData(CWeapon::Wpn_Gun_Military);
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
 	m_pGun->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);

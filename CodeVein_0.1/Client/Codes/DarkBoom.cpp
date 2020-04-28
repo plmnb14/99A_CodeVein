@@ -37,12 +37,17 @@ HRESULT CDarkBoom::Ready_GameObject(void * pArg)
 
 	//g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_Sphere_1", 0.0f, m_pTransformCom->Get_Pos(), nullptr);
 	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_Particle", 0.0f, m_pTransformCom->Get_Pos(), nullptr);
-	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_RingReady", 0.0f, m_pTransformCom->Get_Pos(), nullptr);
+	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_RingReady", 0.05f, m_pTransformCom->Get_Pos(), nullptr);
 	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_RingReady", 0.15f, m_pTransformCom->Get_Pos(), nullptr);
-	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_Particle", 0.55f, m_pTransformCom->Get_Pos(), nullptr);
-	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_LaserBody", 0.54f, m_pTransformCom->Get_Pos(), nullptr);
-	//g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_Ring", 0.55f, m_pTransformCom->Get_Pos(), nullptr);
-	//g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_RingBottom", 0.65f, m_pTransformCom->Get_Pos(), nullptr);
+	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_ReadyDistortion", 0.25f, m_pTransformCom->Get_Pos(), nullptr);
+	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_ReadyDistortion", 0.35f, m_pTransformCom->Get_Pos(), nullptr);
+	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_ReadyDistortion", 0.45f, m_pTransformCom->Get_Pos(), nullptr);
+	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_Particle"  , 0.95f, m_pTransformCom->Get_Pos(), nullptr);
+	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_LaserBody" , 0.94f, m_pTransformCom->Get_Pos(), nullptr);
+	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_Particle"  , 0.95f, m_pTransformCom->Get_Pos(), nullptr);
+	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_RingBottom", 0.95f, m_pTransformCom->Get_Pos(), nullptr);
+	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_RingBottom", 1.f, m_pTransformCom->Get_Pos(), nullptr);
+	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_RingBottom", 1.1f, m_pTransformCom->Get_Pos(), nullptr);
 
 	return NOERROR;
 }

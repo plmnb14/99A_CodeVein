@@ -205,6 +205,12 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 
 	m_matLastWVP = m_pTransform->Get_WorldMat() * ViewMatrix * ProjMatrix;
 
+	_bool bMotionBlur = true;
+	if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+		return E_FAIL;
+	_bool bDecalTarget = false;
+	if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+		return E_FAIL;
 	_float fBloomPower = 0.5f;
 	if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
 		return E_FAIL;
@@ -1355,7 +1361,7 @@ void CPlayer::Key_Attack()
 						break;
 					}
 
-					case WEAPON_Ssword:
+					case WEAPON_SSword:
 					{
 						m_fAtkEndTime = (m_sWeakAtkCnt == 3 ? 0.18f : 0.2f);
 						break;
@@ -1367,7 +1373,7 @@ void CPlayer::Key_Attack()
 						break;
 					}
 
-					case WEAPON_Halverd:
+					case WEAPON_Halberd:
 					{
 						m_fAtkEndTime = 0.3f;
 						break;
@@ -1610,7 +1616,7 @@ void CPlayer::Play_Idle()
 		break;
 	}
 
-	case WEAPON_Ssword:
+	case WEAPON_SSword:
 	{
 		m_eAnim_Lower = Cmn_Idle;
 		break;
@@ -1628,7 +1634,7 @@ void CPlayer::Play_Idle()
 		break;
 	}
 
-	case WEAPON_Halverd:
+	case WEAPON_Halberd:
 	{
 		m_eAnim_Lower = Halverd_Idle_Loop;
 		break;
@@ -1656,7 +1662,7 @@ void CPlayer::Play_Run()
 			break;
 		}
 
-		case WEAPON_Ssword:
+		case WEAPON_SSword:
 		{
 			m_eAnim_Lower = Cmn_Run_F;
 			break;
@@ -1674,7 +1680,7 @@ void CPlayer::Play_Run()
 			break;
 		}
 
-		case WEAPON_Halverd:
+		case WEAPON_Halberd:
 		{
 			m_eAnim_Lower = Cmn_Run_F;
 			break;
@@ -1768,7 +1774,7 @@ void CPlayer::Play_Run()
 			break;
 		}
 
-		case WEAPON_Ssword:
+		case WEAPON_SSword:
 		{
 			m_eAnim_Lower = Cmn_Run_F;
 			break;
@@ -1786,7 +1792,7 @@ void CPlayer::Play_Run()
 			break;
 		}
 
-		case WEAPON_Halverd:
+		case WEAPON_Halberd:
 		{
 			m_eAnim_Lower = Cmn_Run_F;
 			break;
@@ -1806,12 +1812,12 @@ void CPlayer::Play_Run()
 		m_eAnim_RightArm =
 			(m_eMainWpnState == WEAPON_Hammer ? Hammer_Blend_Run :
 				m_eMainWpnState == WEAPON_Gun ? Gun_Blend_Run :
-				m_eMainWpnState == WEAPON_Halverd ? Halverd_Run_Blend :
+				m_eMainWpnState == WEAPON_Halberd ? Halverd_Run_Blend :
 				m_eMainWpnState == WEAPON_LSword ? Lsword_Blend_Run : m_eAnim_Lower);
 
 		m_eAnim_LeftArm = (
 			m_eMainWpnState == WEAPON_Gun ? Gun_Blend_Run :
-			m_eMainWpnState == WEAPON_Halverd ? Halverd_Run_Blend : m_eAnim_Lower);
+			m_eMainWpnState == WEAPON_Halberd ? Halverd_Run_Blend : m_eAnim_Lower);
 	}
 
 	g_pManagement->Create_Effect_Offset(L"Player_FootSmoke", 0.5f, m_pTransform->Get_Pos());
@@ -1827,7 +1833,7 @@ void CPlayer::Play_Dash()
 		break;
 	}
 
-	case WEAPON_Ssword:
+	case WEAPON_SSword:
 	{
 		m_eAnim_Lower = Cmn_Dash;
 		break;
@@ -1845,7 +1851,7 @@ void CPlayer::Play_Dash()
 		break;
 	}
 
-	case WEAPON_Halverd:
+	case WEAPON_Halberd:
 	{
 		m_eAnim_Lower = Cmn_Dash;
 		break;
@@ -1864,12 +1870,12 @@ void CPlayer::Play_Dash()
 		m_eAnim_RightArm =
 			(m_eMainWpnState == WEAPON_Hammer ? Hammer_Blend_Dash :
 				m_eMainWpnState == WEAPON_Gun ? Gun_Blend_Dash :
-				m_eMainWpnState == WEAPON_Halverd ? Halverd_Dash_Blend :
+				m_eMainWpnState == WEAPON_Halberd ? Halverd_Dash_Blend :
 				m_eMainWpnState == WEAPON_LSword ? Lsword_Blend_Dash : m_eAnim_Lower);
 
 		m_eAnim_LeftArm = (
 			m_eMainWpnState == WEAPON_Gun ? Gun_Blend_Dash :
-			m_eMainWpnState == WEAPON_Halverd ? Halverd_Dash_Blend : m_eAnim_Lower);
+			m_eMainWpnState == WEAPON_Halberd ? Halverd_Dash_Blend : m_eAnim_Lower);
 	}
 
 	g_pManagement->Create_Effect_Offset(L"Player_FootSmoke", 0.35f, m_pTransform->Get_Pos());
@@ -1968,7 +1974,7 @@ void CPlayer::Play_MoveDelay()
 		{
 			m_eAnim_LeftArm = m_eAnim_RightArm =
 				(m_eMainWpnState == WEAPON_Gun ? Gun_Blend_Walk :
-					m_eMainWpnState == WEAPON_Halverd ? Halverd_Walk_Blend: m_eAnim_Lower);
+					m_eMainWpnState == WEAPON_Halberd ? Halverd_Walk_Blend: m_eAnim_Lower);
 		}
 		// 양손 일때
 		else
@@ -2101,7 +2107,7 @@ void CPlayer::Play_Dodge()
 			break;
 		}
 
-		case WEAPON_Ssword:
+		case WEAPON_SSword:
 		{
 			if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Right] || m_bMove[MOVE_Left])
 			{
@@ -2382,7 +2388,7 @@ void CPlayer::Play_Dodge()
 			break;
 		}
 
-		case WEAPON_Halverd:
+		case WEAPON_Halberd:
 		{
 			if (m_bMove[MOVE_Front] || m_bMove[MOVE_Back] || m_bMove[MOVE_Right] || m_bMove[MOVE_Left])
 			{
@@ -2580,15 +2586,15 @@ void CPlayer::Play_Dodge()
 		m_fSkillMoveSpeed_Cur =
 			(m_eMainWpnState == WEAPON_LSword ? 12.f :
 				m_eMainWpnState == WEAPON_Hammer ? 12.f :
-				m_eMainWpnState == WEAPON_Halverd ? 12.f :
-				m_eMainWpnState == WEAPON_Ssword ? 12.f :
+				m_eMainWpnState == WEAPON_Halberd ? 12.f :
+				m_eMainWpnState == WEAPON_SSword ? 12.f :
 				m_eMainWpnState == WEAPON_Gun ? 12.f : 15.f);
 
 		m_fSkillMoveMultiply =
 			(m_eMainWpnState == WEAPON_LSword ? 0.8f :
 				m_eMainWpnState == WEAPON_Hammer ? 0.8f :
-				m_eMainWpnState == WEAPON_Halverd ? 0.8f :
-				m_eMainWpnState == WEAPON_Ssword ? 2.3f :
+				m_eMainWpnState == WEAPON_Halberd ? 0.8f :
+				m_eMainWpnState == WEAPON_SSword ? 2.3f :
 				m_eMainWpnState == WEAPON_Gun ? 0.6f : 1.2f);
 
 		m_fSkillMoveAccel_Cur = 0.f;
@@ -2850,7 +2856,7 @@ void CPlayer::Play_WeakAtk()
 		break;
 	}
 
-	case WEAPON_Ssword:
+	case WEAPON_SSword:
 	{
 		Play_Ssword_WeakAtk();
 		break;
@@ -2868,7 +2874,7 @@ void CPlayer::Play_WeakAtk()
 		break;
 	}
 
-	case WEAPON_Halverd:
+	case WEAPON_Halberd:
 	{
 		Play_Halverd_WeakAtk();
 		break;
@@ -2893,7 +2899,7 @@ void CPlayer::Play_HeavyAtk()
 			break;
 		}
 
-		case WEAPON_Ssword:
+		case WEAPON_SSword:
 		{
 			Play_Ssword_HeavyAtk();
 			break;
@@ -2911,7 +2917,7 @@ void CPlayer::Play_HeavyAtk()
 			break;
 		}
 
-		case WEAPON_Halverd:
+		case WEAPON_Halberd:
 		{
 			Play_Halverd_HeavyAtk();
 			break;
@@ -2939,7 +2945,7 @@ void CPlayer::Play_HeavyAtk()
 			break;
 		}
 
-		case WEAPON_Ssword:
+		case WEAPON_SSword:
 		{
 			Play_Ssword_HeavyAtk();
 			break;
@@ -2957,7 +2963,7 @@ void CPlayer::Play_HeavyAtk()
 			break;
 		}
 
-		case WEAPON_Halverd:
+		case WEAPON_Halberd:
 		{
 			Play_Halverd_HeavyAtk();
 			break;
@@ -3885,9 +3891,9 @@ void CPlayer::Play_WeaponChange()
 			m_bChangeWeapon = false;
 
 			m_bOneHand = (
-				m_eMainWpnState == WEAPON_Ssword ? true :
+				m_eMainWpnState == WEAPON_SSword ? true :
 				m_eMainWpnState == WEAPON_LSword ? false :
-				m_eMainWpnState == WEAPON_Halverd ? true :
+				m_eMainWpnState == WEAPON_Halberd ? true :
 				m_eMainWpnState == WEAPON_Gun ? true :
 				m_eMainWpnState == WEAPON_Hammer ? false : true
 				);
@@ -4456,6 +4462,8 @@ void CPlayer::Play_Skills()
 		m_eAnim_LeftArm = m_eAnim_Lower;
 
 		m_pWeapon[m_eActiveSlot]->Set_SkillMode(true); // RedColor
+		m_pWeapon[m_eActiveSlot]->Set_TrailUseMask(true, 6);
+
 	}
 
 	else
@@ -4616,11 +4624,17 @@ void CPlayer::Play_Skills()
 				{
 					m_bEventTrigger[0] = true;
 
+					_v3 vEffPos = m_pTransform->Get_Pos() + _v3(0.f, 1.3f, 0.f);
+					_v3 vPlayerAngleDeg = D3DXToDegree(m_pTransform->Get_Angle());
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing", 0.1f, 0.1f, m_pTransform->Get_Pos());
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing", 0.1f, 0.1f, m_pTransform->Get_Pos() );
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red", 0.3f, 0.2f, m_pTransform->Get_Pos() );
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black", 0.3f, 0.3f, m_pTransform->Get_Pos() );
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RedParticle_Explosion", 0.15f, 1.f, m_pTransform->Get_Pos() );
+					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RedParticle_Explosion", 0.15f, 1.f, m_pTransform->Get_Pos());
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"			, 0.15f, vEffPos);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"			, 0.16f, vEffPos);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"			, 0.17f, vEffPos);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"			, 0.18f, vEffPos);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"		, 0.05f, m_pTransform->Get_Pos());
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"	, 0.12f, m_pTransform->Get_Pos());
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"		, 0.2f, m_pTransform->Get_Pos());
@@ -4631,7 +4645,7 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"	, 0.46f, m_pTransform->Get_Pos());
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"		, 0.5f, m_pTransform->Get_Pos());
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"	, 0.62f, m_pTransform->Get_Pos());
-					
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodConeMesh_Explosion", 1.f, m_pTransform->Get_Pos());
 				}
 			}
 
@@ -5021,10 +5035,15 @@ void CPlayer::Play_Skills()
 				{
 					m_bEventTrigger[12] = true;
 
+					_v3 vEffPos = m_pTransform->Get_Pos() + _v3(0.f, 1.3f, 0.f);
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing", 0.1f, 0.1f, m_pTransform->Get_Pos());
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing", 0.1f, 0.1f, m_pTransform->Get_Pos());
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red", 0.3f, 0.2f, m_pTransform->Get_Pos());
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black", 0.3f, 0.3f, m_pTransform->Get_Pos());
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"			, 0.15f, vEffPos);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"			, 0.16f, vEffPos);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"			, 0.17f, vEffPos);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"			, 0.18f, vEffPos);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh", 0.05f, m_pTransform->Get_Pos());
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2", 0.12f, m_pTransform->Get_Pos());
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh", 0.2f, m_pTransform->Get_Pos());
@@ -5192,11 +5211,16 @@ void CPlayer::Play_Skills()
 				{
 					m_bEventTrigger[7] = true;
 
+					_v3 vEffPos = m_pTransform->Get_Pos() + _v3(0.f, 1.3f, 0.f);
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red"		, 0.3f	, 0.f	, V3_NULL, m_pTransform);
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black"	, 0.3f	, 0.f	, V3_NULL, m_pTransform);
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_DarkSmokeAura"	, 0.5f	, 0.f	, _v3(0, 1.1f, 0.f), m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.15f, vEffPos);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.16f, vEffPos);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.17f, vEffPos);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.18f, vEffPos);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.05f	, V3_NULL, m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.12f	, V3_NULL, m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.2f	, V3_NULL, m_pTransform);
@@ -5606,10 +5630,15 @@ void CPlayer::Play_Skills()
 				{
 					m_bEventTrigger[12] = true;
 
+					_v3 vEffPos = m_pTransform->Get_Pos() + _v3(0.f, 1.3f, 0.f);
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red"		, 0.3f	, 0.f	, V3_NULL, m_pTransform);
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black"	, 0.3f	, 0.f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.15f, vEffPos);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.16f, vEffPos);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.17f, vEffPos);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.18f, vEffPos);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.05f	, V3_NULL, m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.12f	, V3_NULL, m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.2f	, V3_NULL, m_pTransform);
@@ -5837,10 +5866,15 @@ void CPlayer::Play_Skills()
 				{
 					m_bEventTrigger[12] = true;
 
+					_v3 vEffPos = m_pTransform->Get_Pos() + _v3(0.f, 1.3f, 0.f);
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red"		, 0.3f	, 0.f	, V3_NULL, m_pTransform);
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black"	, 0.3f	, 0.f	, V3_NULL, m_pTransform);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.15f, vEffPos);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.16f, vEffPos);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.17f, vEffPos);
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.18f, vEffPos);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.05f	, V3_NULL, m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.12f	, V3_NULL, m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.2f	, V3_NULL, m_pTransform);
@@ -8151,6 +8185,7 @@ void CPlayer::Play_Hammer_WeakAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 
+					g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
 					SHAKE_CAM_lv2
 				}
 			}
@@ -8215,6 +8250,7 @@ void CPlayer::Play_Hammer_WeakAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 
+					g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
 					SHAKE_CAM_lv2
 
 					// 진동 - 강
@@ -8288,6 +8324,7 @@ void CPlayer::Play_Hammer_WeakAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 
+					g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
 					SHAKE_CAM_lv2
 				}
 			}
@@ -8455,7 +8492,8 @@ void CPlayer::Play_Hammer_HeavyAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
-
+					
+					g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
 					SHAKE_CAM_lv2
 				}
 			}
@@ -8480,6 +8518,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 
+					g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
 					SHAKE_CAM_lv2
 				}
 			}
@@ -8504,6 +8543,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 
+					g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
 					SHAKE_CAM_lv2
 				}
 			}
@@ -8598,6 +8638,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 
+					g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
 					SHAKE_CAM_lv3
 				}
 			}
@@ -8692,6 +8733,7 @@ void CPlayer::Play_Hammer_DashAtk()
 			m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 			m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 
+			g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
 			SHAKE_CAM_lv2
 		}
 	}
@@ -8926,6 +8968,7 @@ void CPlayer::Play_Lsword_WeakAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 
+					g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
 					SHAKE_CAM_lv2
 				}
 			}
@@ -9466,7 +9509,7 @@ void CPlayer::Play_Lsword_DashAtk()
 void CPlayer::Ready_Weapon()
 {
 	m_pWeapon[WPN_SLOT_A] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon[WPN_SLOT_A]->Change_WeaponData(CWeapon::WPN_SSword_Normal);
+	m_pWeapon[WPN_SLOT_A]->Change_WeaponData(CWeapon::Wpn_SSword);
 	m_pWeapon[WPN_SLOT_A]->Set_Friendly(true);
 	LPCSTR tmpChar = "RightHandAttach";
 	_mat   matAttach;
@@ -9478,7 +9521,7 @@ void CPlayer::Ready_Weapon()
 
 
 	m_pWeapon[WPN_SLOT_B] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon[WPN_SLOT_B]->Change_WeaponData(CWeapon::WPN_Hammer_Normal);
+	m_pWeapon[WPN_SLOT_B]->Change_WeaponData(CWeapon::Wpn_Hammer);
 
 	m_pWeapon[WPN_SLOT_B]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
 	m_pWeapon[WPN_SLOT_B]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
@@ -9490,7 +9533,7 @@ void CPlayer::Ready_Weapon()
 
 	// 총검
 	m_pWeapon[WPN_SLOT_C] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon[WPN_SLOT_C]->Change_WeaponData(CWeapon::WPN_Gun_Normal);
+	m_pWeapon[WPN_SLOT_C]->Change_WeaponData(CWeapon::Wpn_Gun);
 
 	m_pWeapon[WPN_SLOT_C]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
 	m_pWeapon[WPN_SLOT_C]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
@@ -9498,7 +9541,7 @@ void CPlayer::Ready_Weapon()
 
 	// 대검
 	m_pWeapon[WPN_SLOT_D] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon[WPN_SLOT_D]->Change_WeaponData(CWeapon::WPN_LSword_Normal);
+	m_pWeapon[WPN_SLOT_D]->Change_WeaponData(CWeapon::Wpn_LSword);
 
 	m_pWeapon[WPN_SLOT_D]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
 	m_pWeapon[WPN_SLOT_D]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
@@ -9506,7 +9549,7 @@ void CPlayer::Ready_Weapon()
 
 	// 창
 	m_pWeapon[WPN_SLOT_E] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon[WPN_SLOT_E]->Change_WeaponData(CWeapon::WPN_Halverd_Normal);
+	m_pWeapon[WPN_SLOT_E]->Change_WeaponData(CWeapon::Wpn_Halberd);
 
 	m_pWeapon[WPN_SLOT_E]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
 	m_pWeapon[WPN_SLOT_E]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
@@ -10021,6 +10064,7 @@ void CPlayer::Reset_BattleState()
 	m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(false);
 	m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 	m_pWeapon[m_eActiveSlot]->Set_SkillMode(false); // WhiteColor
+	m_pWeapon[m_eActiveSlot]->Set_TrailUseMask(false, 6);
 
 	LOOP(32)
 		m_bEventTrigger[i] = false;

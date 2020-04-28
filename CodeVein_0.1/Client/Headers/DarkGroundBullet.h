@@ -27,7 +27,7 @@ private:
 	_v3					m_vDir = _v3(0.f, 0.f, 0.f);
 	_float				m_fSpeed = 0.f;
 
-	_float				m_fEffectOffset = 0.f;
+	_float				m_fEffectOffset = 0.3f;
 
 	_double				m_dCurTime = 0;
 	_double				m_dLifeTime = 0;

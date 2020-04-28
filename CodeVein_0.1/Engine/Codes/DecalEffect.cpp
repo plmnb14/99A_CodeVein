@@ -94,7 +94,7 @@ _int CDecalEffect::Update_GameObject(_double TimeDelta)
 	if (m_bIsDead || m_fCreateDelay > 0.f)
 		return S_OK;
 
-	RENDERID eGroup = RENDERID::RENDER_EFFECT;
+	RENDERID eGroup = RENDERID::RENDER_UI;
 	
 	if (FAILED(m_pRendererCom->Add_RenderList(eGroup, this)))
 		return E_FAIL;
@@ -118,90 +118,14 @@ HRESULT CDecalEffect::Render_GameObject()
 {
 	if (FAILED(SetUp_ConstantTable(m_pShaderCom)))
 		return E_FAIL;
-	
-	//m_pShaderCom->Begin_Shader();
-	//m_pShaderCom->Begin_Pass(4);
-	//
-	//VTXCUBE_COL VtxCubeCol[8];
-	//VtxCubeCol[0].vPosition = _v3(-0.5f, 0.5f, -0.5f);
-	//VtxCubeCol[0].dwColor = COLOR_GREEN(1.f);
-	//
-	//VtxCubeCol[1].vPosition = _v3(0.5f, 0.5f, -0.5f);
-	//VtxCubeCol[1].dwColor = COLOR_GREEN(1.f);
-	//
-	//VtxCubeCol[2].vPosition = _v3(0.5f, -0.5f, -0.5f);
-	//VtxCubeCol[2].dwColor = COLOR_GREEN(1.f);
-	//
-	//VtxCubeCol[3].vPosition = _v3(-0.5f, -0.5f, -0.5f);
-	//VtxCubeCol[3].dwColor = COLOR_GREEN(1.f);
-	//
-	//VtxCubeCol[4].vPosition = _v3(-0.5f, 0.5f, 0.5f);
-	//VtxCubeCol[4].dwColor = COLOR_GREEN(1.f);
-	//
-	//VtxCubeCol[5].vPosition = _v3(0.5f, 0.5f, 0.5f);
-	//VtxCubeCol[5].dwColor = COLOR_GREEN(1.f);
-	//
-	//VtxCubeCol[6].vPosition = _v3(0.5f, -0.5f, 0.5f);
-	//VtxCubeCol[6].dwColor = COLOR_GREEN(1.f);
-	//
-	//VtxCubeCol[7].vPosition = _v3(-0.5f, -0.5f, 0.5f);
-	//VtxCubeCol[7].dwColor = COLOR_GREEN(1.f);
-	//
-	//POLYGON32 wIdx[12] = {};
-	//
-	//wIdx[0]._0 = 1;
-	//wIdx[0]._1 = 5;
-	//wIdx[0]._2 = 6;
-	//
-	//wIdx[1]._0 = 1;
-	//wIdx[1]._1 = 6;
-	//wIdx[1]._2 = 2;
-	//
-	//wIdx[2]._0 = 4;
-	//wIdx[2]._1 = 0;
-	//wIdx[2]._2 = 3;
-	//
-	//wIdx[3]._0 = 4;
-	//wIdx[3]._1 = 3;
-	//wIdx[3]._2 = 7;
-	//
-	//wIdx[4]._0 = 4;
-	//wIdx[4]._1 = 5;
-	//wIdx[4]._2 = 1;
-	//
-	//wIdx[5]._0 = 4;
-	//wIdx[5]._1 = 1;
-	//wIdx[5]._2 = 0;
-	//
-	//wIdx[6]._0 = 3;
-	//wIdx[6]._1 = 2;
-	//wIdx[6]._2 = 6;
-	//
-	//wIdx[7]._0 = 3;
-	//wIdx[7]._1 = 6;
-	//wIdx[7]._2 = 7;
-	//
-	//wIdx[8]._0 = 5;
-	//wIdx[8]._1 = 4;
-	//wIdx[8]._2 = 7;
-	//
-	//wIdx[9]._0 = 5;
-	//wIdx[9]._1 = 7;
-	//wIdx[9]._2 = 6;
-	//
-	//wIdx[10]._0 = 0;
-	//wIdx[10]._1 = 1;
-	//wIdx[10]._2 = 2;
-	//
-	//wIdx[11]._0 = 0;
-	//wIdx[11]._1 = 2;
-	//wIdx[11]._2 = 3;
-	//
-	//m_pGraphic_Dev->SetFVF(VTXFVF_COL);
-	//m_pGraphic_Dev->DrawIndexedPrimitiveUP(D3DPT_TRIANGLELIST, 0, 8, 12, wIdx, D3DFMT_INDEX32, VtxCubeCol, sizeof(VTX_COL));
-	//
-	//m_pShaderCom->End_Pass();
-	//m_pShaderCom->End_Shader();
+
+	m_pShaderCom->Begin_Shader();
+	m_pShaderCom->Begin_Pass(4);
+
+	m_pBufferCom->Render_VIBuffer();
+
+	m_pShaderCom->End_Pass();
+	m_pShaderCom->End_Shader();
 
 	return NOERROR;
 }
@@ -221,6 +145,7 @@ HRESULT CDecalEffect::Render_GameObject_SetShader(CShader* pShader)
 	pShader->Commit_Changes();
 	
 	m_pBufferCom->Render_VIBuffer();
+
 	pShader->End_Pass();
 	
 	return S_OK;
@@ -714,9 +639,9 @@ HRESULT CDecalEffect::SetUp_ConstantTable(CShader* pShader)
 	D3DXMatrixInverse(&ViewMatrix, nullptr, &ViewMatrix);
 	D3DXMatrixInverse(&ProjMatrix, nullptr, &ProjMatrix);
 
-	if (FAILED(pShader->Set_Value("g_matProjInv", &ViewMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matViewInv", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matViewInv", &ProjMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matProjInv", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
 
 	if (FAILED(pShader->Set_Value("g_fDistortion", &m_pInfo->fDistortionPower, sizeof(_float))))
@@ -752,8 +677,8 @@ HRESULT CDecalEffect::SetUp_ConstantTable(CShader* pShader)
 	if (FAILED(m_pColorTextureCom->SetUp_OnShader("g_ColorTexture", pShader, _uint(m_pInfo->fColorIndex))))
 		return E_FAIL;
 
-	pShader->Set_Texture("g_DepthTexture", pManagement->Get_Target_Texture(L"Target_Depth"));
-
+	pShader->Set_Texture("g_DepthTexture", pManagement->Get_Target_Texture(L"Target_DecalDepth"));
+	
 	Safe_Release(pManagement);
 
 	return NOERROR;

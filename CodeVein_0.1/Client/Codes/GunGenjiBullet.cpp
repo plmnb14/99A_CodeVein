@@ -19,10 +19,15 @@ HRESULT CGunGenjiBullet::Ready_GameObject_Prototype()
 
 HRESULT CGunGenjiBullet::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component()))
-		return E_FAIL;
+	if (nullptr == pArg)
+	{
+		if (FAILED(Add_Component()))
+			return E_FAIL;
 
-	Ready_Collider();
+		Ready_Collider();
+
+		return S_OK;
+	}
 
 	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
 
@@ -35,6 +40,10 @@ HRESULT CGunGenjiBullet::Ready_GameObject(void * pArg)
 
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
+
+	m_dCurTime = 0;
+	m_bDead = false;
+	m_bEffect = true;
 
 	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Bullet_Body", nullptr));
 	m_pBulletBody->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
@@ -49,8 +58,8 @@ HRESULT CGunGenjiBullet::Ready_GameObject(void * pArg)
 	lstrcpy(m_pEffect_Tag4, L"Bullet_DeadSmoke_Base");
 	lstrcpy(m_pEffect_Tag5, L"Bullet_DeadSmoke_Black");
 
-	m_pTrailEffect = static_cast<Engine::CTrail_VFX*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SwordTrail", nullptr));
-	m_pTrailEffect->Set_TrailIdx(5); // Red Tail
+	//m_pTrailEffect = static_cast<Engine::CTrail_VFX*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SwordTrail", nullptr));
+	//m_pTrailEffect->Set_TrailIdx(5); // Red Tail
 
 	return NOERROR;
 }
@@ -63,7 +72,7 @@ _int CGunGenjiBullet::Update_GameObject(_double TimeDelta)
 		return DEAD_OBJ;
 
 	OnCollisionEnter();
-	Update_Trails(TimeDelta);
+	//Update_Trails(TimeDelta);
 
 	m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
 

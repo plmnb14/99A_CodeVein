@@ -13,6 +13,7 @@ CManagement::CManagement()
 	, m_pTarget_Manager(CTarget_Manager::Get_Instance())
 	, m_pGizmo(CGizmo::Get_Instance())
 	, m_pBT_Node_Manager(CBT_Node_Manager::Get_Instance())
+	, m_pMyPhysx(CMyPhysx::Get_Instance())
 {
 	Safe_AddRef(m_pTarget_Manager);
 	Safe_AddRef(m_pLight_Manager);
@@ -24,6 +25,7 @@ CManagement::CManagement()
 	Safe_AddRef(m_pGraphic_Device);
 	Safe_AddRef(m_pGizmo);
 	Safe_AddRef(m_pBT_Node_Manager);
+	Safe_AddRef(m_pMyPhysx);
 }
 
 HRESULT CManagement::Ready_Engine(_uint iNumScenes)
@@ -102,6 +104,9 @@ HRESULT CManagement::Release_Engine()
 	// 최종적으로 엔진에서 사용하고 있는 다양한 매니져클래스들의 정리작업을 수행한다.
 	if (0 != CManagement::Get_Instance()->Destroy_Instance())
 		MSG_BOX("Failed To Release CManagement");
+
+	if (0 != CMyPhysx::Get_Instance()->Destroy_Instance())
+		MSG_BOX("Failed To Release CMyPhysx");
 
 	if (0 != CBT_Node_Manager::Get_Instance()->Destroy_Instance())
 		MSG_BOX("Failed To Release CBT_Node_Manager");
@@ -545,9 +550,9 @@ void CManagement::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol
 	CParticleMgr::Get_Instance()->Create_Hit_Effect(pAttackCol, pHittedCol, pHittedTrans, fPower);
 }
 
-void CManagement::Create_Spawn_Effect(_v3 vPos, _v3 vFinishPos, CTransform* pFollowTrans)
+void CManagement::Create_Spawn_Effect(_float fDelay, _v3 vPos, _v3 vFinishPos, CTransform* pFollowTrans)
 {
-	CParticleMgr::Get_Instance()->Create_Spawn_Effect(vPos, vFinishPos, pFollowTrans);
+	CParticleMgr::Get_Instance()->Create_Spawn_Effect(fDelay, vPos, vFinishPos, pFollowTrans);
 }
 
 void CManagement::Create_Effect_Offset(_tchar* szName, _float fOffset, _v3 vPos, CTransform * pFollowTrans)
@@ -577,6 +582,7 @@ void CManagement::Create_ParticleEffect_Delay(_tchar * szName, _float fLifeTime,
 
 void CManagement::Free()
 {
+	Safe_Release(m_pMyPhysx);
 	Safe_Release(m_pBT_Node_Manager);
 	Safe_Release(m_pGizmo);
 	Safe_Release(m_pTarget_Manager);

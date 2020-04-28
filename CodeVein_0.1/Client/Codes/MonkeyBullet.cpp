@@ -18,10 +18,15 @@ HRESULT CMonkeyBullet::Ready_GameObject_Prototype()
 
 HRESULT CMonkeyBullet::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component()))
-		return E_FAIL;
+	if (nullptr == pArg)
+	{
+		if (FAILED(Add_Component()))
+			return E_FAIL;
 
-	Ready_Collider();
+		Ready_Collider();
+
+		return S_OK;
+	}
 
 	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
 
@@ -44,14 +49,18 @@ HRESULT CMonkeyBullet::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
 
+	m_dCurTime = 0;
+	m_bDead = false;
+	m_bEffect = true;
+
 	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Monkey_Knife", nullptr));
 	m_pBulletBody->Set_Desc(_v3(0, 0, 0), nullptr);
 	m_pBulletBody->Set_ParentObject(this);
 	m_pBulletBody->Reset_Init();;
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
 
-	m_pTrailEffect = static_cast<Engine::CTrail_VFX*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SwordTrail", nullptr));
-	m_pTrailEffect->Set_TrailIdx(5); // Red Tail
+	//m_pTrailEffect = static_cast<Engine::CTrail_VFX*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SwordTrail", nullptr));
+	//m_pTrailEffect->Set_TrailIdx(5); // Red Tail
 
 	return S_OK;
 }
