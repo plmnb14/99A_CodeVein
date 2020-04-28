@@ -939,9 +939,11 @@ void CParticleMgr::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCo
 	Create_DirEffect(L"Hit_Blood_Direction_5", vAttackPos, vBloodDir);
 	Create_DirEffect(L"Hit_Blood_Direction_6", vAttackPos, vBloodDir);
 
-
-	wsprintf(szBuff, L"Blood_Decal_%d", CCalculater::Random_Num(0, 6));
-	Create_Effect_Decal(szBuff, vAttackPos + _v3(0.f, -1.3f, 0.f));
+	for (_int i = 0; i < 4; i++)
+	{
+		wsprintf(szBuff, L"Blood_Decal_%d", CCalculater::Random_Num(0, 6));
+		Create_Effect_Decal(szBuff, vAttackPos + vDir + _v3(0.f, -1.3f, 0.f));
+	}
 }
 
 void CParticleMgr::Create_Spawn_Effect(_float fDelay, _v3 vPos, _v3 vFinishPos, CTransform* pFollowTrans)

@@ -161,6 +161,13 @@ HRESULT CHunter::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 
 	m_matLastWVP = m_pTransformCom->Get_WorldMat() * ViewMatrix * ProjMatrix;
 
+	_bool bMotionBlur = true;
+	if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+		return E_FAIL;
+	_bool bDecalTarget = false;
+	if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+		return E_FAIL;
+
 	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
 
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
@@ -1133,11 +1140,11 @@ void CHunter::Play_RandomAtkCombo()
 		{
 		case ATK_COMBO_TYPE::COMBO_LSWORD_NORMAL:
 			m_eAtkCombo = ATK_COMBO_TYPE::COMBO_LSWORD_NORMAL;
-			m_eState = HUNTER_ANI::Halberd_Atk_N01;
+			m_eState = HUNTER_ANI::LSword_Atk_N01;
 			break;
 		case ATK_COMBO_TYPE::COMBO_LSWORD_STRONG:
 			m_eAtkCombo = ATK_COMBO_TYPE::COMBO_LSWORD_STRONG;
-			m_eState = HUNTER_ANI::Halberd_Atk_S01;
+			m_eState = HUNTER_ANI::LSword_Atk_S01;
 			break;
 		}
 		break;
@@ -3268,9 +3275,9 @@ void CHunter::Play_Hammer_Slash()
 		}
 		else if (1.067f < AniTime && 1.967f > AniTime)
 		{
-			if (false == m_bEventTrigger[3])
+			if (false == m_bEventTrigger[4])
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[4] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -3346,9 +3353,9 @@ void CHunter::Play_Hammer_Smash()
 		}
 		else if (0.367f < AniTime && 1.167f > AniTime)
 		{
-			if (false == m_bEventTrigger[3])
+			if (false == m_bEventTrigger[4])
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[4] = true;
 				m_fSkillMoveSpeed_Cur = 4.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -3704,6 +3711,14 @@ void CHunter::Play_LSword_Smash()
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
+		else if (2.75f <= AniTime)
+		{
+			if (false == m_bEventTrigger[6])
+			{
+				m_bEventTrigger[6] = true;
+				g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon->Get_HeadPos());
+			}
+		}
 		else if (2.700f <= AniTime)
 		{
 			if (false == m_bEventTrigger[2])
@@ -3730,9 +3745,9 @@ void CHunter::Play_LSword_Smash()
 		}
 		else if (1.133f < AniTime && 1.933f > AniTime)
 		{
-			if (false == m_bEventTrigger[3])
+			if (false == m_bEventTrigger[4])
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[4] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -3743,9 +3758,9 @@ void CHunter::Play_LSword_Smash()
 		}
 		else if (0.533f < AniTime && 1.033f > AniTime)
 		{
-			if (false == m_bEventTrigger[3])
+			if (false == m_bEventTrigger[5])
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[5] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -3970,6 +3985,14 @@ void CHunter::Play_LSword_Combo_Strong()
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
+		else if (1.60f <= AniTime)
+		{
+			if (false == m_bEventTrigger[13])
+			{
+				m_bEventTrigger[13] = true;
+				g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon->Get_HeadPos());
+			}
+		}
 		else if (1.500f <= AniTime)
 		{
 			if (false == m_bEventTrigger[2])
@@ -4179,9 +4202,9 @@ void CHunter::Play_SSword_Jump()
 		}
 		else if (0.300f < AniTime && 0.600f > AniTime)
 		{
-			if (false == m_bEventTrigger[3])
+			if (false == m_bEventTrigger[4])
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[4] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -4805,9 +4828,9 @@ void CHunter::Play_SSword_Combo_StepPierce()
 		}
 		else if (0.381f <= AniTime)
 		{
-			if (false == m_bEventTrigger[13])
+			if (false == m_bEventTrigger[17])
 			{
-				m_bEventTrigger[13] = true;
+				m_bEventTrigger[17] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_tObjParam.bSuperArmor = true;
 			}
