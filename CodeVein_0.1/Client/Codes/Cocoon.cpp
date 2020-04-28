@@ -666,9 +666,7 @@ void CCocoon::Play_Shot()
 			g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_02", 0.1f, vBirth, nullptr);
 		}
 		else if (0.f <= AniTime)
-		{
 			Function_RotateBody();
-		}
 
 		if (m_pMeshCom->Is_Finish_Animation(0.3f))
 			m_tObjParam.bSuperArmor = true;
@@ -706,10 +704,9 @@ void CCocoon::Play_Mist()
 		}
 		else if (3.567f <= AniTime)
 		{
-			if (false == m_bEventTrigger[0])
-				m_bEventTrigger[0] = true;
-			if (true == m_bEventTrigger[0])
-			{
+			if (false == m_bEventTrigger[1])
+			{	
+				m_bEventTrigger[1] = true;
 				matBone1 = *m_matBone[Bone_Jaw_Tongue] * m_pTransformCom->Get_WorldMat();
 				matBone2 = *m_matBone[Bone_Neck] * m_pTransformCom->Get_WorldMat();
 				matBone = *m_matBone[Bone_Jaw_Tongue] * m_pTransformCom->Get_WorldMat();

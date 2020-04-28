@@ -901,9 +901,9 @@ void CThaiMan::Play_RDiagonal()
 
 		if (1.700f < AniTime && 2.067f > AniTime)
 		{
-			if (false == m_bEventTrigger[3])
+			if (false == m_bEventTrigger[2])
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[2] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -958,9 +958,9 @@ void CThaiMan::Play_L()
 
 		if (1.200f < AniTime && 1.533f > AniTime)
 		{
-			if (false == m_bEventTrigger[3])
+			if (false == m_bEventTrigger[2])
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[2] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -1015,9 +1015,9 @@ void CThaiMan::Play_BackDumpling()
 
 		if (1.300f < AniTime && 1.933f > AniTime)
 		{
-			if (false == m_bEventTrigger[3])
+			if (false == m_bEventTrigger[2])
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[2] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -1070,9 +1070,9 @@ void CThaiMan::Play_DropKick()
 
 		if (2.400f < AniTime && 3.000f > AniTime)
 		{
-			if (false == m_bEventTrigger[3])
+			if (false == m_bEventTrigger[2])
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[2] = true;
 				m_fSkillMoveSpeed_Cur = 10.f;
 				m_fSkillMoveAccel_Cur = 2.f;
 				m_fSkillMoveMultiply = 0.5f;
@@ -1082,9 +1082,9 @@ void CThaiMan::Play_DropKick()
 		}
 		else if (0.700f < AniTime && 1.167f > AniTime)
 		{
-			if (false == m_bEventTrigger[4])
+			if (false == m_bEventTrigger[3])
 			{
-				m_bEventTrigger[4] = true;
+				m_bEventTrigger[3] = true;
 				m_fSkillMoveSpeed_Cur = 6.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
@@ -1623,9 +1623,9 @@ void CThaiMan::Play_RDigonalRRScrewRchop()
 		}
 		else if (0.667f < AniTime && 1.467f > AniTime)
 		{
-			if (false == m_bEventTrigger[8])
+			if (false == m_bEventTrigger[10])
 			{
-				m_bEventTrigger[8] = true;
+				m_bEventTrigger[10] = true;
 				m_fSkillMoveSpeed_Cur = 4.f;
 				m_fSkillMoveAccel_Cur = 2.f;
 				m_fSkillMoveMultiply = 0.5f;

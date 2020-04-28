@@ -39,7 +39,9 @@ protected:
 	virtual void Check_CollisionHit(list<CGameObject*> plistGameObject) override;
 
 protected:
-	void Check_Target();
+	void Function_Find_Target();
+
+protected:
 	void Check_PosY();
 	void Check_Hit();
 	void Check_Dist();

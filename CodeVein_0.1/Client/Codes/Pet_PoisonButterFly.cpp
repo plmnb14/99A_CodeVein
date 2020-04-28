@@ -320,11 +320,6 @@ void CPet_PoisonButterFly::Check_CollisionHit(list<CGameObject*> plistGameObject
 	return;
 }
 
-void CPet_PoisonButterFly::Check_Target()
-{
-	return;
-}
-
 HRESULT CPet_PoisonButterFly::Add_Component(void * pArg)
 {
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
