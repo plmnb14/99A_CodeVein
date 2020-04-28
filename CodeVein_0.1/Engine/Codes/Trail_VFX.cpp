@@ -49,6 +49,9 @@ HRESULT CTrail_VFX::Ready_GameObject(void * pArg)
 
 _int CTrail_VFX::Update_GameObject(_double TimeDelta)
 {
+	if (m_bIsDead)
+		return DEAD_OBJ;
+
 	_v3 TmpPos;
 
 	memcpy(TmpPos, &m_pTransform->Get_WorldMat()._41, sizeof(_v3));
@@ -247,6 +250,9 @@ void CTrail_VFX::Ready_Vtx()
 
 	for (size_t i = 0; i < m_vecStart.size(); ++i)
 	{
+		if (300 >= i * 2 ||
+			300 >= i * 2 + 1)
+			break;
 		//m_pVtx[i * 2].vPosition = m_vecStart[i];
 		//m_pVtx[i * 2].vTexUV.x = 0.f + ((_float(i)) / (m_vecStart.size() - 1));
 		//m_pVtx[i * 2].vTexUV.y = 1.f;
@@ -272,6 +278,30 @@ void CTrail_VFX::Set_ParentTransform(const _mat * _pWorldMat)
 	m_matParent = *_pWorldMat;
 
 	m_pTransform->Calc_ParentMat(&(*_pWorldMat));
+}
+
+void CTrail_VFX::Reset_Info()
+{
+	m_dwVtxFVF = VTXFVF_TEX;
+	m_dwVtxSize = sizeof(VTXTEX);
+
+	m_dwInterval = 5;
+	m_dwListCnt = 5;
+	m_dwMaxCnt = 20;
+
+	m_iTrailIdx		= 0;
+	m_iTrailMaskIdx = 0;
+	m_dwVtxCnt		= 0;
+	m_dwVtxFVF		= 0;
+	m_dwVtxSize		= 0;
+	m_dwTricnt		= 0;
+	m_bUpdateVtx	= false;
+	m_bDrawTrail	= true;
+	m_bUseMask		= false;
+	m_fUpdateTime_Cur = 0.f;
+	m_fUpdateTime_Max = 0.f;
+
+	Clear_TrailInfo();
 }
 
 HRESULT CTrail_VFX::Shader_Init(CShader* pShader, const _uint & iIndex)

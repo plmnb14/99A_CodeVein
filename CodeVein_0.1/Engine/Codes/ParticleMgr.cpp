@@ -1,4 +1,5 @@
 #include "..\Headers\ParticleMgr.h"
+#include "Trail_VFX.h"
 #include "Effect.h"
 
 IMPLEMENT_SINGLETON(CParticleMgr)
@@ -411,6 +412,8 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Blood_Decal_5", 100);
 	Input_Pool(L"Blood_Decal_6", 100);
 
+	Input_Pool_Trail(L"GameObject_SwordTrail", 1000);
+
 	return S_OK;
 }
 HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
@@ -420,17 +423,17 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 	//	Create_Effect_Delay(L"QueensKnight_Sting_Tornade", 0.f, _v3(0.f, 1.3f, 0.f), nullptr);
 	//}
 
-	//if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_LB))
-	//{
-	//	CParticleMgr::Get_Instance()->Create_Effect_Decal(L"Blood_Decal_0", V3_NULL);
-	//}
-	//if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_RB))
-	//{
-	//	_tchar szBuff[256] = L"";
-	//	wsprintf(szBuff, L"Blood_Decal_%d", CCalculater::Random_Num(0, 6));
-	//
-	//	CParticleMgr::Get_Instance()->Create_Effect_Decal(szBuff, V3_NULL);
-	//}
+	if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_LB))
+	{
+		CParticleMgr::Get_Instance()->Create_Effect_Decal(L"Blood_Decal_0", V3_NULL);
+	}
+	if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_RB))
+	{
+		_tchar szBuff[256] = L"";
+		wsprintf(szBuff, L"Blood_Decal_%d", CCalculater::Random_Num(0, 6));
+	
+		CParticleMgr::Get_Instance()->Create_Effect_Decal(szBuff, V3_NULL);
+	}
 
 	auto& iter_begin = m_vecParticle.begin();
 	auto& iter_end = m_vecParticle.end();
@@ -438,6 +441,7 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 	if (m_vecParticle.size() <= 0)
 	{
 		Update_Effect(TimeDelta);
+		//Update_Trail(TimeDelta);
 		return S_OK;
 	}
 
@@ -502,6 +506,28 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 	}
 
 	Update_Effect(TimeDelta);
+	//Update_Trail(TimeDelta);
+
+	return S_OK;
+}
+
+HRESULT CParticleMgr::Update_Trail(const _double TimeDelta)
+{
+	_int iProgress = 0;
+
+
+	for (auto& iter = m_TrailList.begin(); iter != m_TrailList.end(); )
+	{
+		iProgress = (*iter)->Update_GameObject(TimeDelta);
+
+		if (DEAD_OBJ == iProgress)
+		{
+			m_TrailPool[L"GameObject_SwordTrail"].push((*iter));
+
+			iter = m_TrailList.erase(iter);
+		}
+
+	}
 
 	return S_OK;
 }
@@ -1001,6 +1027,33 @@ void CParticleMgr::Create_BossDeadParticle_Effect(_v3 vPos, _float fDelay, _floa
 	}
 }
 
+CTrail_VFX* CParticleMgr::Create_Trail()
+{
+	_tchar* szName = L"GameObject_SwordTrail";
+
+	CTrail_VFX* pTrail = nullptr;
+
+	queue<CTrail_VFX*>* pFindedQueue = Find_TrailQueue(szName);
+	if (pFindedQueue == nullptr)
+		return nullptr;
+
+	if (10 > pFindedQueue->size())
+	{
+		 pTrail = static_cast<CTrail_VFX*>(m_pManagement->Clone_GameObject_Return(szName, nullptr));
+	}
+	else
+	{
+		pTrail = pFindedQueue->front();
+		pTrail->Reset_Info();
+
+		pFindedQueue->pop();
+	}
+
+	m_TrailList.push_back(pTrail);
+
+	return pTrail;
+}
+
 HRESULT CParticleMgr::Update_Effect(const _double TimeDelta)
 {
 	_int iProgress;
@@ -1060,13 +1113,32 @@ void CParticleMgr::Input_Pool(_tchar* szName, _int iCount)
 	}
 }
 
-void CParticleMgr::Pop_Pool(_tchar * szPoolName)
+void CParticleMgr::Input_Pool_Trail(_tchar* szName, _int iCount)
 {
+	m_TrailPool.emplace(szName, queue<CTrail_VFX*>());
+
+	for (_int i = 0; i <iCount; ++i)
+	{
+		// 미리 클론만 해놓기
+		CTrail_VFX* pTrail = static_cast<CTrail_VFX*>(m_pManagement->Clone_GameObject_Return(szName, nullptr));
+		m_TrailPool[szName].push(pTrail);
+	}
 }
 
 queue<CEffect*>* CParticleMgr::Find_Queue(_tchar* szName)
 {
 	for (auto& iter : m_EffectPool)
+	{
+		if (!lstrcmp(iter.first, szName))
+			return &iter.second;
+	}
+
+	return nullptr;
+}
+
+queue<CTrail_VFX*>* CParticleMgr::Find_TrailQueue(_tchar * szName)
+{
+	for (auto& iter : m_TrailPool)
 	{
 		if (!lstrcmp(iter.first, szName))
 			return &iter.second;
@@ -1088,14 +1160,27 @@ void CParticleMgr::Free()
 	}
 	m_EffectPool.clear();
 
-	for(auto& iter : m_EffectList)
+	for (auto& iter : m_TrailPool)
+	{
+		_int iQueueSize = _int(iter.second.size());
+		for (_int i = 0; i < iQueueSize; ++i)
+		{
+			Safe_Release(iter.second.front());
+			iter.second.pop();
+		}
+	}
+	m_TrailPool.clear();
+	
+	for (auto& iter : m_EffectList)
+		Safe_Release(iter);
+
+	for(auto& iter : m_TrailList)
 		Safe_Release(iter);
 
 	for (auto& iter : m_vecParticle)
 	{
 		Safe_Delete(iter);
 	}
-	
 
 	//Safe_Release(m_pManagement);
 }

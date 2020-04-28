@@ -1393,6 +1393,7 @@ _uint CLoading::Loading_Stage()
 		// Haze
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Haze", CHaze::Create(m_pGraphicDev))))
 			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_Haze", L"GameObject_Haze", 200);
 		//============================================================================================================
 
 

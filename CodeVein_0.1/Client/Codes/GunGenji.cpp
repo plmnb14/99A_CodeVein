@@ -874,7 +874,7 @@ void CGunGenji::Check_PhyCollider()
 			Start_Dissolve(0.7f, false, true, 0.5f);
 			m_pGun->Start_Dissolve(0.7f, false, false, 0.5f);
 			m_fDeadEffect_Delay = 0.5f;
-			g_pManagement->Add_GameObject_ToLayer(L"GameObject_Haze", SCENE_STAGE, L"Layer_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.5f));
+			CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.5f));
 		}
 	}
 	// 맞았을 때

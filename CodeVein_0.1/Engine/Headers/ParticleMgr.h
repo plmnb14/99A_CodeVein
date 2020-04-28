@@ -6,6 +6,8 @@ BEGIN(Engine)
 class CManagement;
 class CEffect;
 class CCollider;
+class CTrail_VFX;
+
 class ENGINE_DLL CParticleMgr final : public CBase
 {
 	DECLARE_SINGLETON(CParticleMgr)
@@ -38,11 +40,17 @@ public:
 	void Create_FootSmoke_Effect(_v3 vPos, _float fOffset); // 지금은 한 객체만 사용가능
 	void Create_BossDeadParticle_Effect(_v3 vPos, _float fDelay, _float fLength);
 
+public:
+	CTrail_VFX* Create_Trail();
+
 private:
 	HRESULT Update_Effect(const _double TimeDelta);
+	HRESULT Update_Trail(const _double TimeDelta);
+
 	void Input_Pool(_tchar* szName, _int iCount);
-	void Pop_Pool(_tchar* szPoolName);
+	void Input_Pool_Trail(_tchar* szName, _int iCount);
 	queue<CEffect*>* Find_Queue(_tchar* szName);
+	queue<CTrail_VFX*>* Find_TrailQueue(_tchar* szName);
 
 private:
 	typedef struct tagParticleInfo
@@ -64,6 +72,8 @@ private:
 	list<CEffect*>					m_EffectList;	// 실제 객체들 (레이어 말고 여기서 돌아감)
 	map<_tchar*, float>				m_mapEffectOffset; // 이펙트 생성 오프셋을 주는 타임값 저장
 
+	map<_tchar*, queue<CTrail_VFX*>>	m_TrailPool;	// 트레일 객체 담을 풀
+	list<CTrail_VFX*>					m_TrailList;
 	_float							m_fCreateDelay_Check = 0.f;
 
 	_float							m_fFootSmokeeDelay_Check = 0.f;

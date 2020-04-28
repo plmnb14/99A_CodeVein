@@ -94,7 +94,7 @@ void CGameObject::Start_Dissolve(_float fFxSpeed, _bool bFadeIn, _bool bReadyDea
 	if (bFadeIn)
 		m_fFXAlpha = 1.f;
 	else
-		m_fFXAlpha = 0.f;
+		m_fFXAlpha = 0.3f;
 }
 
 HRESULT CGameObject::Add_Component(_uint iSceneID, const _tchar * pPrototypeTag, const _tchar * pComponentTag, CComponent** ppComponent, void * pArg)
@@ -183,9 +183,9 @@ void CGameObject::Check_Dissolve(_double TimeDelta)
 	{
 		m_fFXAlpha -= _float(TimeDelta) * m_fFXSpeed;
 
-		if (m_fFXAlpha <= 0.f)
+		if (m_fFXAlpha <= 0.3f)
 		{
-			m_fFXAlpha = 0.f;
+			m_fFXAlpha = 0.3f;
 			m_iPass = m_iTempPass;
 			m_bDissolve = false;
 		}

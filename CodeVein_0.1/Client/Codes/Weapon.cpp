@@ -30,14 +30,14 @@ HRESULT CWeapon::Ready_GameObject(void * pArg)
 
 	SetUp_Default();
 
-	m_pTrailEffect = static_cast<Engine::CTrail_VFX*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SwordTrail", nullptr));
+	m_pTrailEffect = g_pManagement->Create_Trail();
 	m_pTrailEffect->Set_TrailIdx(0);
 
-	m_pDistortionEffect = static_cast<Engine::CTrail_VFX*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SwordTrail", nullptr));
+	m_pDistortionEffect = g_pManagement->Create_Trail();
 	m_pDistortionEffect->Set_TrailIdx(3);
 	m_pDistortionEffect->Set_TrailType(Engine::CTrail_VFX::Trail_Distortion);
 
-	m_pStaticTrailEffect = static_cast<Engine::CTrail_VFX*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SwordTrail", nullptr));
+	m_pStaticTrailEffect = g_pManagement->Create_Trail();
 	m_pStaticTrailEffect->Set_TrailIdx(1);
 
 	return NOERROR;
@@ -300,7 +300,7 @@ void CWeapon::Update_Trails(_double TimeDelta)
 	{
 		m_pTrailEffect->Set_ParentTransform(&matWorld);
 		m_pTrailEffect->Ready_Info(vBegin + vDir * fBeginValue, vBegin + vDir * fEndValue);
-		m_pTrailEffect->Update_GameObject(TimeDelta);
+		// m_pTrailEffect->Update_GameObject(TimeDelta);
 	}
 
 	if (m_pDistortionEffect && !m_bSingleTrail)
@@ -909,9 +909,9 @@ void CWeapon::Free()
 	m_pmatAttach = nullptr;
 	m_pmatParent = nullptr;
 
-	Safe_Release(m_pTrailEffect);
-	Safe_Release(m_pStaticTrailEffect);
-	Safe_Release(m_pDistortionEffect);
+	//Safe_Release(m_pTrailEffect);
+	//Safe_Release(m_pStaticTrailEffect);
+	//Safe_Release(m_pDistortionEffect);
 
 	Safe_Release(m_pTransform);
 	Safe_Release(m_pMesh_Static);
