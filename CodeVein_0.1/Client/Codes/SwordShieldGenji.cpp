@@ -252,7 +252,7 @@ HRESULT CSwordShieldGenji::Render_GameObject_SetPass(CShader * pShader, _int iPa
 		nullptr == m_pMeshCom)
 		return E_FAIL;
 
-	pShader->Begin_Shader();
+	m_pMeshCom->Play_Animation(0.f);
 
 	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
 	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
@@ -293,7 +293,6 @@ HRESULT CSwordShieldGenji::Render_GameObject_SetPass(CShader * pShader, _int iPa
 			pShader->End_Pass();
 		}
 	}
-	pShader->End_Shader();
 
 	return NOERROR;
 }

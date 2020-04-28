@@ -308,7 +308,7 @@ HRESULT CSwordGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 		nullptr == m_pMeshCom)
 		return E_FAIL;
 
-	pShader->Begin_Shader();
+	m_pMeshCom->Play_Animation(0.f);
 
 	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
 	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
@@ -343,14 +343,13 @@ HRESULT CSwordGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
 			pShader->Begin_Pass(iPass);
+			pShader->Commit_Changes();
 
 			m_pMeshCom->Render_Mesh(i, j);
 
 			pShader->End_Pass();
 		}
 	}
-
-	pShader->End_Shader();
 
 	return NOERROR;
 }

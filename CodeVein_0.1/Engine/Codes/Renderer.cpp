@@ -586,7 +586,7 @@ HRESULT CRenderer::Render_MotionBlurTarget()
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Velocity")))
 		return E_FAIL;
 
-	//m_pShader_Blur->Begin_Shader();
+	m_pShader_Blur->Begin_Shader();
 
 	for (auto& pGameObject : m_RenderList[RENDER_MOTIONBLURTARGET])
 	{
@@ -603,7 +603,7 @@ HRESULT CRenderer::Render_MotionBlurTarget()
 
 	}
 	
-	//m_pShader_Blur->End_Shader();
+	m_pShader_Blur->End_Shader();
 
 	m_RenderList[RENDER_MOTIONBLURTARGET].clear();
 

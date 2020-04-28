@@ -135,14 +135,15 @@ HRESULT CWolf::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
 	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
+	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 
+	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+		return E_FAIL;
 	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
-
-	_mat ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 	if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 		return E_FAIL;
 
@@ -155,6 +156,7 @@ HRESULT CWolf::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 	if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
 		return E_FAIL;
 
+
 	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
 
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
@@ -166,6 +168,7 @@ HRESULT CWolf::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
 			pShader->Begin_Pass(iPass);
+			pShader->Commit_Changes();
 
 			m_pMeshCom->Render_Mesh(i, j);
 

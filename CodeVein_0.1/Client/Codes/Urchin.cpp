@@ -134,8 +134,7 @@ HRESULT CUrchin::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
 	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
+	m_pMeshCom->Play_Animation(DELTA_60 * m_dAniPlayMul);
 
 	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
