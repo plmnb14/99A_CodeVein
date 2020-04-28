@@ -171,6 +171,8 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 	}
 	else if (false == m_tObjParam.bCanExecution)
 	{
+		// 뼈만 업데이트
+		Update_Bone_Of_BlackBoard();
 		// 처형 체크
 		Check_Execution();
 	}
@@ -891,7 +893,7 @@ void CGunGenji::Check_PhyCollider()
 			Start_Dissolve(0.5f, false, true, fDelay);
 
 			m_pGun->Start_Dissolve();
-			g_pManagement->Create_Spawn_Effect(m_vRightToeBase, m_vHead);
+			//g_pManagement->Create_Spawn_Effect(m_vRightToeBase, m_vHead);
 			// 최신 머지에는 위에 이펙트 생성이 없었는데, 일단 냅둠
 			m_fDeadEffect_Delay = 0.5f;
 			g_pManagement->Add_GameObject_ToLayer(L"GameObject_Haze", SCENE_STAGE, L"Layer_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.5f));
