@@ -1055,9 +1055,14 @@ _uint CLoading::Loading_Title()
 	cout << "Effect 원형 생성중" << endl;
 	Ready_Effect();
 
-	cout << "Particle 불러오는 중 . . ." << endl;
-	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
+	cout << "Particle Essential 불러오는 중 . . ." << endl;
+	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager_Essential()))
 		return E_FAIL;
+
+	// 플레이어 스킬, 보스 이펙트 포함
+	//cout << "Particle Etc 불러오는 중 . . ." << endl;
+	//if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
+	//	return E_FAIL;
 
 	// UI 원형 생성
 	//============================================================================================================
@@ -1078,6 +1083,7 @@ _uint CLoading::Loading_Title()
 	// 트레일
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SwordTrail", Engine::CTrail_VFX::Create(m_pGraphicDev))))
 		return E_FAIL;
+
 	// 스카이
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Sky", CSky::Create(m_pGraphicDev))))
 		return E_FAIL;

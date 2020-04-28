@@ -48,6 +48,8 @@ HRESULT CScene_Title::Ready_Scene()
 
 	CUI_Manager::Get_Instance()->SetUp_UILayer();
 
+	CParticleMgr::Get_Instance()->Ready_Trail();
+
 	if (FAILED(Ready_Player()))
 		return E_FAIL;
 

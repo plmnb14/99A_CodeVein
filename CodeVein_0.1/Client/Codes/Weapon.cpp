@@ -122,6 +122,8 @@ HRESULT CWeapon::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 		nullptr == m_pMesh_Static)
 		return E_FAIL;
 
+	pShader->Begin_Shader();
+
 	_mat		ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
 	_mat		ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
 
@@ -136,6 +138,13 @@ HRESULT CWeapon::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 
 	m_matLastWVP = m_pTransform->Get_WorldMat() * ViewMatrix * ProjMatrix;
 
+	_bool bMotionBlur = true;
+	if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+		return E_FAIL;
+	_bool bDecalTarget = false;
+	if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+		return E_FAIL;
+
 	_ulong dwNumSubSet = m_pMesh_Static->Get_NumMaterials();
 
 	for (_ulong i = 0; i < dwNumSubSet; ++i)
@@ -148,6 +157,7 @@ HRESULT CWeapon::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 
 		pShader->End_Pass();
 	}
+	pShader->End_Shader();
 
 	return NOERROR;
 }

@@ -308,14 +308,17 @@ HRESULT CSwordGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 		nullptr == m_pMeshCom)
 		return E_FAIL;
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
-
-	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
-		return E_FAIL;
+	pShader->Begin_Shader();
 
 	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
 	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+
+	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
+		return E_FAIL;
 	if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 		return E_FAIL;
 
@@ -327,6 +330,7 @@ HRESULT CSwordGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 	_bool bDecalTarget = false;
 	if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
 		return E_FAIL;
+
 
 	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
 
@@ -345,6 +349,8 @@ HRESULT CSwordGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 			pShader->End_Pass();
 		}
 	}
+
+	pShader->End_Shader();
 
 	return NOERROR;
 }

@@ -16,7 +16,9 @@ private:
 	virtual ~CParticleMgr() = default;
 
 public:
+	HRESULT Ready_ParticleManager_Essential();
 	HRESULT Ready_ParticleManager();
+	HRESULT Ready_Trail();
 	HRESULT Update_ParticleManager(const _double TimeDelta);
 	void Create_ParticleEffect(_tchar* szName, _float fLifeTime, _v3 vPos, CTransform* pFollowTrans = nullptr);
 	void Create_ParticleEffect_Delay(_tchar* szName, _float fLifeTime, _float fDelay, _v3 vPos, CTransform* pFollowTrans = nullptr);
