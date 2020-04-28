@@ -19,6 +19,7 @@
 
 #include "MonsterHeaders.h"
 #include "Flag.h"
+#include "ObjectPool_Manager.h"
 
 #include "PlayerHP.h"
 #include "PlayerST.h"
@@ -730,6 +731,9 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"Haze_FlashParticle")))
 		return E_FAIL;
 
+	if (FAILED(Add_EffectPrototype(L"Weapon_HeavyDust")))
+		return E_FAIL;
+
 	if (FAILED(Add_EffectPrototype(L"MapDust")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"MapDust_2")))
@@ -864,6 +868,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_BloodConeMesh", true)))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_BloodConeMesh_Explosion", true)))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Torment_Wind_L", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Torment_Wind_R", true)))
@@ -874,7 +880,19 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 #pragma endregion
 
-	if (FAILED(g_pManagement->Add_Prototype(L"Decal_Test", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Decal_Test.dat")))))
+	if (FAILED(g_pManagement->Add_Prototype(L"Blood_Decal_0", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Blood_Decal_0.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Blood_Decal_1", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Blood_Decal_1.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Blood_Decal_2", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Blood_Decal_2.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Blood_Decal_3", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Blood_Decal_3.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Blood_Decal_4", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Blood_Decal_4.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Blood_Decal_5", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Blood_Decal_5.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Blood_Decal_6", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Blood_Decal_6.dat")))))
 		return E_FAIL;
 
 	return S_OK;
@@ -1297,12 +1315,14 @@ _uint CLoading::Loading_Stage()
 		// °Ë°ÕÁö ÃÑ¾Ë
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenjiBullet", CSwordGenjiBullet::Create(m_pGraphicDev))))
 			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_SwordGenjiBullet", L"Monster_SwordGenjiBullet", 10);
 		// ÃÑ°ÕÁö
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenji", CGunGenji::Create(m_pGraphicDev))))
 			return E_FAIL;
 		// ÃÑ°ÕÁö ÃÑ¾Ë
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenjiBullet", CGunGenjiBullet::Create(m_pGraphicDev))))
 			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_GunGenjiBullet", L"Monster_GunGenjiBullet", 10);
 		// °Ë¹æÆÐ°ÕÁö
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordShieldGenji", CSwordShieldGenji::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1312,21 +1332,25 @@ _uint CLoading::Loading_Stage()
 		// ÅäÅÛ ¹æ»çÃÑ¾Ë
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBullet", CCocoonBullet::Create(m_pGraphicDev))))
 			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_CocoonBullet", L"Monster_CocoonBullet", 60);
 		// ÅäÅÛ ÃÑ¾Ë
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBigBullet", CCocoonBigBullet::Create(m_pGraphicDev))))
 			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_CocoonBigBullet", L"Monster_CocoonBigBullet", 10);
 		// ±èÇåÅÍ
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Hunter", CHunter::Create(m_pGraphicDev))))
 			return E_FAIL;
 		// ±èÇåÅÍ ÃÑ¾Ë
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_HunterBullet", CHunterBullet::Create(m_pGraphicDev))))
 			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_HunterBullet", L"Monster_HunterBullet", 10);
 		// ¸ùÅ°.D.·çÇÇ
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Monkey", CMonkey::Create(m_pGraphicDev))))
 			return E_FAIL;
 		// ¸ùÅ°.D.ÃÑ¾Ë
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_MonkeyBullet", CMonkeyBullet::Create(m_pGraphicDev))))
 			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_MonkeyBullet", L"Monster_MonkeyBullet", 20);
 		// µûÀÌ¸Ç
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ThaiMan", CThaiMan::Create(m_pGraphicDev))))
 			return E_FAIL;

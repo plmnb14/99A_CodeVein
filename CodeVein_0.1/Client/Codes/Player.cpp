@@ -208,6 +208,12 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 
 	m_matLastWVP = m_pTransform->Get_WorldMat() * ViewMatrix * ProjMatrix;
 
+	_bool bMotionBlur = true;
+	if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+		return E_FAIL;
+	_bool bDecalTarget = false;
+	if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+		return E_FAIL;
 	_float fBloomPower = 0.5f;
 	if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
 		return E_FAIL;
@@ -3725,7 +3731,7 @@ void CPlayer::Play_Skills()
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"	, 0.46f, m_pTransform->Get_Pos());
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"		, 0.5f, m_pTransform->Get_Pos());
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"	, 0.62f, m_pTransform->Get_Pos());
-					
+					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodConeMesh_Explosion", 1.f, m_pTransform->Get_Pos());
 				}
 			}
 
@@ -7265,6 +7271,7 @@ void CPlayer::Play_Hammer_WeakAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 
+					g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
 					SHAKE_CAM_lv2
 				}
 			}
@@ -7329,6 +7336,7 @@ void CPlayer::Play_Hammer_WeakAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 
+					g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
 					SHAKE_CAM_lv2
 
 					// Áøµ¿ - °­
@@ -7402,6 +7410,7 @@ void CPlayer::Play_Hammer_WeakAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 
+					g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
 					SHAKE_CAM_lv2
 				}
 			}
@@ -7569,7 +7578,8 @@ void CPlayer::Play_Hammer_HeavyAtk()
 
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
-
+					
+					g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
 					SHAKE_CAM_lv2
 				}
 			}
@@ -7594,6 +7604,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 
+					g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
 					SHAKE_CAM_lv2
 				}
 			}
@@ -7618,6 +7629,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 
+					g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
 					SHAKE_CAM_lv2
 				}
 			}
@@ -7712,6 +7724,7 @@ void CPlayer::Play_Hammer_HeavyAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 
+					g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
 					SHAKE_CAM_lv3
 				}
 			}
@@ -7806,6 +7819,7 @@ void CPlayer::Play_Hammer_DashAtk()
 			m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 			m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 
+			g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
 			SHAKE_CAM_lv2
 		}
 	}
@@ -8040,6 +8054,7 @@ void CPlayer::Play_Lsword_WeakAtk()
 					m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
 					m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
 
+					g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon[m_eActiveSlot]->Get_HeadPos());
 					SHAKE_CAM_lv2
 				}
 			}
