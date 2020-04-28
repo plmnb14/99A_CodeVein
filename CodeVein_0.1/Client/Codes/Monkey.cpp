@@ -156,6 +156,13 @@ HRESULT CMonkey::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 
 	m_matLastWVP = m_pTransformCom->Get_WorldMat() * ViewMatrix * ProjMatrix;
 
+	_bool bMotionBlur = true;
+	if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+		return E_FAIL;
+	_bool bDecalTarget = false;
+	if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+		return E_FAIL;
+
 	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
 
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
@@ -1860,7 +1867,7 @@ void CMonkey::Play_Dead()
 					Start_Dissolve(0.7f, false, true, 0.0f);
 					m_pWeapon->Start_Dissolve(0.7f, false, true, 0.f);
 					m_fDeadEffect_Delay = 0.f;
-					g_pManagement->Add_GameObject_ToLayer(L"GameObject_Haze", SCENE_STAGE, L"Layer_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
+					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
 			break;
@@ -1881,7 +1888,7 @@ void CMonkey::Play_Dead()
 					Start_Dissolve(0.7f, false, true, 0.0f);
 					m_pWeapon->Start_Dissolve(0.7f, false, true, 0.f);
 					m_fDeadEffect_Delay = 0.f;
-					g_pManagement->Add_GameObject_ToLayer(L"GameObject_Haze", SCENE_STAGE, L"Layer_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
+					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
 			break;
@@ -1902,7 +1909,7 @@ void CMonkey::Play_Dead()
 					Start_Dissolve(0.7f, false, true, 0.0f);
 					m_pWeapon->Start_Dissolve(0.7f, false, true, 0.f);
 					m_fDeadEffect_Delay = 0.f;
-					g_pManagement->Add_GameObject_ToLayer(L"GameObject_Haze", SCENE_STAGE, L"Layer_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
+					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
 			break;

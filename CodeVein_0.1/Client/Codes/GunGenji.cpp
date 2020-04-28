@@ -33,9 +33,11 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	Ready_BoneMatrix();
 	Ready_Collider();
 
-	m_tObjParam.bCanExecution = true;
+	m_tObjParam.bCanRepel = true;			// 튕겨내기 가능성 (나의 공격이 적에게서)
+	m_tObjParam.bCanCounter = true;			// 반격가능성
+	m_tObjParam.bCanExecution = true;		// 처형
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 100000.f;
+	m_tObjParam.fHp_Cur = 9999.f;
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
@@ -149,8 +151,8 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 	if (m_bIsDead)
 		return DEAD_OBJ;
 
-	// 처형이 아닐 경우,
-	if (true == m_tObjParam.bCanExecution)
+	// 처형이 아니고, 반격 당할 수 있을 경우
+	if (true == m_tObjParam.bCanExecution && true == m_tObjParam.bCanRepel)
 	{
 		// 플레이어 미발견
 		if (false == m_bFight)
@@ -169,12 +171,24 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 				m_pAIControllerCom->Update_AIController(TimeDelta);
 		}
 	}
-	else if (false == m_tObjParam.bCanExecution)
+
+	// 둘 중 하나라도 활성화 되면,
+	else
 	{
 		// 뼈만 업데이트
 		Update_Bone_Of_BlackBoard();
-		// 처형 체크
-		Check_Execution();
+
+		if (false == m_tObjParam.bCanExecution)
+		{
+			// 처형 체크
+			Check_Execution();
+		}
+
+		else if (false == m_tObjParam.bCanRepel)
+		{
+			// 반격 체크
+			Check_Repel();
+		}
 	}
 
 
@@ -198,8 +212,8 @@ _int CGunGenji::Late_Update_GameObject(_double TimeDelta)
 
 	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
-	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-	//	return E_FAIL;
+	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+		return E_FAIL;
 	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
 	//	return E_FAIL;
 
@@ -272,22 +286,27 @@ HRESULT CGunGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 		nullptr == m_pMeshCom)
 		return E_FAIL;
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
-
-	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
-		return E_FAIL;
+	pShader->Begin_Shader();
 
 	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
 	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+
+	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
+		return E_FAIL;
 	if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 		return E_FAIL;
-
 	m_matLastWVP = m_pTransformCom->Get_WorldMat() * ViewMatrix * ProjMatrix;
 
-	//_mat matLightVP = g_pManagement->Get_LightViewProj();
-	//if (FAILED(pShader->Set_Value("g_LightVP_Close", &matLightVP, sizeof(_mat))))
-	//	return E_FAIL;
+	_bool bMotionBlur = true;
+	if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+		return E_FAIL;
+	_bool bDecalTarget = false;
+	if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+		return E_FAIL;
 
 	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
 
@@ -306,6 +325,7 @@ HRESULT CGunGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 			pShader->End_Pass();
 		}
 	}
+	pShader->End_Shader();
 
 	return NOERROR;
 }
@@ -886,7 +906,7 @@ void CGunGenji::Check_PhyCollider()
 		}
 		else
 		{
-			Ani eTmpAnim = (m_tObjParam.bIsExecution ? Death_F : Ani_Death);
+			Ani eTmpAnim = (m_tObjParam.bIsExecution ? Ani_Death_F : Ani_Death);
 			_float fDelay = (m_tObjParam.bIsExecution ? 0.5f : 0.1f);
 
 			m_pMeshCom->SetUp_Animation(eTmpAnim);	// 죽음처리 시작
@@ -896,7 +916,7 @@ void CGunGenji::Check_PhyCollider()
 			//g_pManagement->Create_Spawn_Effect(m_vRightToeBase, m_vHead);
 			// 최신 머지에는 위에 이펙트 생성이 없었는데, 일단 냅둠
 			m_fDeadEffect_Delay = 0.5f;
-			g_pManagement->Add_GameObject_ToLayer(L"GameObject_Haze", SCENE_STAGE, L"Layer_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.5f));
+			CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.5f));
 		}
 	}
 	// 맞았을 때
@@ -1094,6 +1114,7 @@ HRESULT CGunGenji::SetUp_ConstantTable()
 HRESULT CGunGenji::Ready_Weapon()
 {
 	m_pGun = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
+	m_pGun->Set_Target(this);
 	m_pGun->Change_WeaponData(CWeapon::Wpn_Gun_Military);
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
@@ -1207,7 +1228,7 @@ void CGunGenji::Check_Execution()
 
 			// 혹시 모르니 HP 도  음수로
 			m_tObjParam.bCanHit = false;
-			m_tObjParam.fHp_Cur = -1.0f;
+			//m_tObjParam.fHp_Cur = -1.0f;
 
 			return;
 		}
@@ -1295,6 +1316,37 @@ void CGunGenji::Check_StingerExecution()
 
 void CGunGenji::Check_HoundsExecution()
 {
+}
+
+void CGunGenji::Check_Repel()
+{
+	if (m_tObjParam.bCanRepel)
+		return;
+
+	if (false == m_tObjParam.bIsRepel)
+	{
+		// 패링당한 상태
+		m_tObjParam.bIsRepel = true;
+
+		// 반격 애니메이션으로 세팅
+		m_pMeshCom->SetUp_Animation(Ani_DmgRepel);
+
+		m_fSkillMoveAccel_Cur = 0.f;
+		m_fSkillMoveSpeed_Cur = 2.f;
+		m_fSkillMoveMultiply = 0.5;
+	}
+
+	else if (m_tObjParam.bIsRepel)
+	{
+		if (m_pMeshCom->Is_Finish_Animation(0.9f))
+		{
+			m_tObjParam.bIsRepel = false;
+			m_tObjParam.bCanRepel = true;
+		}
+
+		Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
+		Decre_Skill_Movement(m_fSkillMoveMultiply);
+	}
 }
 
 CGunGenji * CGunGenji::Create(LPDIRECT3DDEVICE9 pGraphic_Device)

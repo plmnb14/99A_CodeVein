@@ -48,6 +48,8 @@ HRESULT CScene_Title::Ready_Scene()
 
 	CUI_Manager::Get_Instance()->SetUp_UILayer();
 
+	CParticleMgr::Get_Instance()->Ready_Trail();
+
 	if (FAILED(Ready_Player()))
 		return E_FAIL;
 
@@ -219,6 +221,9 @@ HRESULT CScene_Title::Ready_Player()
 	g_pManagement->Add_GameOject_ToLayer_NoClone(pPlayer, SCENE_MORTAL, L"Layer_Player", nullptr);
 
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerHP", SCENE_MORTAL, L"Layer_PlayerUI")))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerST", SCENE_MORTAL, L"Layer_PlayerUI")))
 		return E_FAIL;
 	return S_OK;
 }

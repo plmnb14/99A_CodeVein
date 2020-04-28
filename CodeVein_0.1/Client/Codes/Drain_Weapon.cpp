@@ -347,7 +347,7 @@ void CDrain_Weapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 
 						if (false == iter->Get_Target_IsDodge())
 						{
-							m_tObjParam.fDamage = 500.f;
+							m_tObjParam.fDamage = 99999.f; // iter->Get_Target_Hp();
 
 							// 무기 공격력의 +-20%까지 랜덤범위
 							// 몬스터 HP바 확인을 위해 데미지 추가해놓음 - Chae
