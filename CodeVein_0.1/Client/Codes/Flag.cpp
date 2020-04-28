@@ -111,9 +111,11 @@ HRESULT CFlag::Render_GameObject()
 	if (FAILED(SetUp_ConstantTable()))
 		return E_FAIL;
 
+	m_pGraphic_Dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(2);
+	m_pShaderCom->Begin_Pass(14);
 
 	m_pGraphic_Dev->SetStreamSource(0, m_pVB, 0, sizeof(tagFlag));
 	m_pGraphic_Dev->SetFVF(D3DFVF_XYZ | D3DFVF_TEX1);
@@ -123,6 +125,8 @@ HRESULT CFlag::Render_GameObject()
 	m_pShaderCom->End_Pass();
 
 	m_pShaderCom->End_Shader();
+
+	m_pGraphic_Dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_CCW);
 
 	return NOERROR;
 }
@@ -145,11 +149,15 @@ HRESULT CFlag::Add_Component(void * pArg)
 		return E_FAIL;
 
 	// For.Com_Shader
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Default", L"Com_Shader", (CComponent**)&m_pShaderCom)))
+	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Default", L"Com_Shader", (CComponent**)&m_pShaderCom)))
+	//	return E_FAIL;
+
+	// For.Com_Shader
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
 	// For.Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Inven_Icon", L"Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_HPBar", L"Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	return NOERROR;
@@ -180,7 +188,7 @@ HRESULT CFlag::SetUp_ConstantTable()
 	//m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 0);
 
 
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 1)))
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 0)))
 		return E_FAIL;
 
 

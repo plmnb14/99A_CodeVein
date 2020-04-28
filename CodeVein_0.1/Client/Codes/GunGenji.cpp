@@ -33,9 +33,11 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	Ready_BoneMatrix();
 	Ready_Collider();
 
-	m_tObjParam.bCanExecution = true;
+	m_tObjParam.bCanRepel = true;			// 튕겨내기 가능성 (나의 공격이 적에게서)
+	m_tObjParam.bCanCounter = true;			// 반격가능성
+	m_tObjParam.bCanExecution = true;		// 처형
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 100000.f;
+	m_tObjParam.fHp_Cur = 9999.f;
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
@@ -149,8 +151,8 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 	if (m_bIsDead)
 		return DEAD_OBJ;
 
-	// 처형이 아닐 경우,
-	if (true == m_tObjParam.bCanExecution)
+	// 처형이 아니고, 반격 당할 수 있을 경우
+	if (true == m_tObjParam.bCanExecution && true == m_tObjParam.bCanRepel)
 	{
 		// 플레이어 미발견
 		if (false == m_bFight)
@@ -169,12 +171,24 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 				m_pAIControllerCom->Update_AIController(TimeDelta);
 		}
 	}
-	else if (false == m_tObjParam.bCanExecution)
+
+	// 둘 중 하나라도 활성화 되면,
+	else
 	{
 		// 뼈만 업데이트
 		Update_Bone_Of_BlackBoard();
-		// 처형 체크
-		Check_Execution();
+
+		if (false == m_tObjParam.bCanExecution)
+		{
+			// 처형 체크
+			Check_Execution();
+		}
+
+		else if (false == m_tObjParam.bCanRepel)
+		{
+			// 반격 체크
+			Check_Repel();
+		}
 	}
 
 
@@ -886,7 +900,7 @@ void CGunGenji::Check_PhyCollider()
 		}
 		else
 		{
-			Ani eTmpAnim = (m_tObjParam.bIsExecution ? Death_F : Ani_Death);
+			Ani eTmpAnim = (m_tObjParam.bIsExecution ? Ani_Death_F : Ani_Death);
 			_float fDelay = (m_tObjParam.bIsExecution ? 0.5f : 0.1f);
 
 			m_pMeshCom->SetUp_Animation(eTmpAnim);	// 죽음처리 시작
@@ -1094,6 +1108,7 @@ HRESULT CGunGenji::SetUp_ConstantTable()
 HRESULT CGunGenji::Ready_Weapon()
 {
 	m_pGun = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
+	m_pGun->Set_Target(this);
 	m_pGun->Change_WeaponData(CWeapon::Wpn_Gun_Military);
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
@@ -1207,7 +1222,7 @@ void CGunGenji::Check_Execution()
 
 			// 혹시 모르니 HP 도  음수로
 			m_tObjParam.bCanHit = false;
-			m_tObjParam.fHp_Cur = -1.0f;
+			//m_tObjParam.fHp_Cur = -1.0f;
 
 			return;
 		}
@@ -1295,6 +1310,37 @@ void CGunGenji::Check_StingerExecution()
 
 void CGunGenji::Check_HoundsExecution()
 {
+}
+
+void CGunGenji::Check_Repel()
+{
+	if (m_tObjParam.bCanRepel)
+		return;
+
+	if (false == m_tObjParam.bIsRepel)
+	{
+		// 패링당한 상태
+		m_tObjParam.bIsRepel = true;
+
+		// 반격 애니메이션으로 세팅
+		m_pMeshCom->SetUp_Animation(Ani_DmgRepel);
+
+		m_fSkillMoveAccel_Cur = 0.f;
+		m_fSkillMoveSpeed_Cur = 2.f;
+		m_fSkillMoveMultiply = 0.5;
+	}
+
+	else if (m_tObjParam.bIsRepel)
+	{
+		if (m_pMeshCom->Is_Finish_Animation(0.9f))
+		{
+			m_tObjParam.bIsRepel = false;
+			m_tObjParam.bCanRepel = true;
+		}
+
+		Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
+		Decre_Skill_Movement(m_fSkillMoveMultiply);
+	}
 }
 
 CGunGenji * CGunGenji::Create(LPDIRECT3DDEVICE9 pGraphic_Device)

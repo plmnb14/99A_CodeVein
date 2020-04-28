@@ -220,6 +220,9 @@ HRESULT CScene_Title::Ready_Player()
 
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerHP", SCENE_MORTAL, L"Layer_PlayerUI")))
 		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerST", SCENE_MORTAL, L"Layer_PlayerUI")))
+		return E_FAIL;
 	return S_OK;
 }
 

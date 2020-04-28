@@ -88,6 +88,23 @@ void CBattleAgent::Create_HitLight(_v3 vLightPos, _float fLightRange, _float fLi
 	CManagement::Get_Instance()->Add_Light(m_pGraphic_Dev, LightDesc, CLight_Manager::Dynamic_Light);
 }
 
+_bool CBattleAgent::Check_TargetIsFrontOfMe(CTransform * _vMyTransform, CTransform * _vTargetTransform, _float fAlertRange)
+{
+	_float fDegreeAngle = D3DXToDegree(_vMyTransform->Calc_HitTarget_Angle(_vTargetTransform->Get_Pos()));
+
+	if (fDegreeAngle >= 0 && fDegreeAngle <= fAlertRange)
+	{
+		return true;
+	}
+
+	else if (fDegreeAngle < 0 && fDegreeAngle >= -fAlertRange)
+	{
+		return true;
+	}
+
+	return false;
+}
+
 HRESULT CBattleAgent::Ready_BattleAgent()
 {
 	m_tRimParam.fRimChangeValue = 0.f;
