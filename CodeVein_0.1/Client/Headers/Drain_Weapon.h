@@ -52,6 +52,7 @@ public:
 	virtual void			Set_ResetOldAnimIdx();
 	virtual void			Set_AnimIdx(_ulong _eAnimState);
 	virtual void			Set_Enable_Record(_bool _bOnRecord);
+	virtual void			Set_OnExecution(_bool _bOnExecution) { m_bOnExecution = _bOnExecution; };
 
 public:
 	virtual void			Find_TailHeadBone();
@@ -81,6 +82,7 @@ private:
 	_bool					m_bActive = false;
 	_bool					m_bRecordCollision = false;
 	_bool					m_bOffDissolve = false;
+	_bool					m_bOnExecution = false;
 
 private:
 	CTransform*				m_pTransform = nullptr;

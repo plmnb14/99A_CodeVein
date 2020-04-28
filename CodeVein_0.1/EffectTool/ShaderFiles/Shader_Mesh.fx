@@ -892,7 +892,7 @@ PS_OUT_ADVENCE PS_DISSOLVE(PS_IN In)
 		vColor.a = 0;
 
 
-	if (fxColor.r >= g_fFxAlpha - 0.05 && fxColor.r <= g_fFxAlpha + 0.05)
+	if (fxColor.r >= g_fFxAlpha - 0.01 && fxColor.r <= g_fFxAlpha + 0.01)
 		vColor = pow(float4(1.7, 0.95, 0.85, 1), 2.2); //
 
 	//if (fxColor.r >= g_fFxAlpha - 0.02 && fxColor.r <= g_WfFxAlpha + 0.02)

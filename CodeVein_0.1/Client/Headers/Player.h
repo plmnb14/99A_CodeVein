@@ -38,6 +38,7 @@ public:
 		ACT_Idle, ACT_Walk, ACT_Run, ACT_Dash, ACT_Dodge, ACT_MoveDelay,
 		ACT_WeakAtk, ACT_HeavyAtk, ACT_Skill, ACT_Buff,
 		ACT_BloodSuck_Count, ACT_BloodSuck, ACT_BloodSuck_Combo,
+		ACT_BloodSuck_Execution,
 		ACT_WeaponChange,
 		ACT_Hit, ACT_Jump, ACT_Fall, ACT_Down,
 		ACT_PickUp, ACT_OpenDoor, ACT_Cinematic,
@@ -83,6 +84,7 @@ private:
 private:
 	CWeapon*				m_pWeapon[WPN_SLOT_End] = {};
 	CDrain_Weapon*			m_pDrainWeapon = nullptr;
+	CGameObject*			m_pCunterTarget = nullptr;
 
 private:
 	CTransform*				m_pTransform = nullptr;
@@ -140,7 +142,9 @@ private:
 	_bool					m_bOnSummon = false;
 	_bool					m_bOnDisappear = false;
 	_bool					m_bOnDown = false;
-	_bool					m_bOffLerp = false; // 애니 보간 끄기
+	_bool					m_bOffLerp = false;			// 애니 보간 끄기
+	_bool					m_bCanExecution = true;	// 처형 가능
+	_bool					m_bIsExecution = false;		// 처형 중
 
 private:
 	_short					m_sHeavyAtkCnt = 0;
@@ -204,6 +208,8 @@ private:
 private:
 	virtual void Check_Mistletoe();
 	virtual _int Check_HitDirection();
+	virtual _bool Check_CunterAngle(CGameObject* pObj);
+	virtual _bool Check_CunterTarget();
 
 private:
 	virtual void Parameter_State();
@@ -254,6 +260,7 @@ private:
 	virtual void Play_BloodSuck();
 	virtual void Play_BloodSuckCount();
 	virtual void Play_BloodSuckCombo();
+	virtual void Play_BloodSuckExecution();
 
 private:
 	virtual void Play_Skills();

@@ -93,8 +93,15 @@ namespace Engine
 		_bool		bInvisible;		// 투명 상태인지 ( 애니메이션은 재생되지만, 메쉬 랜더는 안되고, 충돌처리도 안되는 상태 )
 		_bool		bSuperArmor;	// true 일 시 넉백, 피격모션 출력, 다운 상태를 받을 수 없음
 
+		_bool		bCanExecution;	// 처형을 할 수 있거나, 당할 수 있는 상태
+		_bool		bIsExecution;	// 처형 중인 경우, 혹은 처형 당하는 중
+		_bool		bIgnoreExecution;	// 처형불가 대상
+
 		_v3			vHitDir;		// 맞은 방향
 		_v3			vHitPos;		// 때린놈 위치
+
+		EXE_WPN		eExecutionWpn;	// 처형 시 무기
+		EXE_TYPE	eExecutionType;	// 처형 시 타입
 
 	}OBJECT_PARAM;
 

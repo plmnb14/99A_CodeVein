@@ -180,6 +180,8 @@ void CDrain_Weapon::Set_Active(_bool _bActiveDrain)
 
 	if (false == m_bActive)
 	{
+		m_bOffDissolve = false;
+
 		m_pMesh_Dynamic->SetUp_Animation(0);
 		m_pMesh_Dynamic->Play_Animation(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
 	}
@@ -189,7 +191,15 @@ void CDrain_Weapon::Set_Active(_bool _bActiveDrain)
 		LOOP(4)
 			m_bEventTrigger[i] = false;
 
-		Start_Dissolve(1.f, true);
+		if (Drain_Parry == m_eAnimnum)
+		{
+			Start_Dissolve(1.5f, true);
+		}
+
+		else if (Drain_Charge_Start == m_eAnimnum)
+		{
+			Start_Dissolve(0.8f, true);
+		}
 		// 활성화 되면, 디졸브 효과
 	}
 }
@@ -325,11 +335,14 @@ void CDrain_Weapon::OnCollisionEvent(list<CGameObject*> plistGameObject)
 
 					if (false == iter->Get_Target_IsDodge())
 					{
-						iter->Set_Target_CanHit(false);
-
-						if (iter->Get_Target_IsHit())
+						if (false == m_bOnExecution)
 						{
-							iter->Set_HitAgain(true);
+							iter->Set_Target_CanHit(false);
+
+							if (iter->Get_Target_IsHit())
+							{
+								iter->Set_HitAgain(true);
+							}
 						}
 
 						if (false == iter->Get_Target_IsDodge())
@@ -503,6 +516,43 @@ HRESULT CDrain_Weapon::Parameter_State()
 
 	switch (m_eAnimnum)
 	{
+	case Drain_Parry:
+	{
+		_double dAniTime = m_pMesh_Dynamic->Get_TrackInfo().Position;
+
+		if (false == m_bOffDissolve)
+		{
+			m_bOffDissolve = true;
+		}
+
+		else if (m_bOffDissolve)
+		{
+			if (dAniTime < 1.0f)
+			{
+				if (m_fFXAlpha <= 0.45f)
+				{
+					if (m_bDissolve)
+					{
+						m_fFXAlpha = 0.f;
+						m_bDissolve = false;
+					}
+				}
+			}
+
+			else if (dAniTime >= 3.15f)
+			{
+				if (false == m_bEventTrigger[0])
+				{
+					m_bEventTrigger[0] = true;
+
+					Start_Dissolve(0.75f);
+				}
+			}
+		}
+
+		break;
+	}
+
 	case Drain_Charge_Start:
 	{
 		_double dAniTime = m_pMesh_Dynamic->Get_TrackInfo().Position;
@@ -540,8 +590,6 @@ HRESULT CDrain_Weapon::Parameter_State()
 	{
 		_double dAniTime = m_pMesh_Dynamic->Get_TrackInfo().Position;
 
-		cout << "애니시간 : " << dAniTime << endl;
-
 		if (false == m_bOffDissolve)
 		{
 			m_bOffDissolve = true;
@@ -554,8 +602,6 @@ HRESULT CDrain_Weapon::Parameter_State()
 				m_bOffDissolve = false;
 				m_bActive = false;
 
-				cout << " 끝" << endl;
-
 				return S_OK;
 			}
 
@@ -563,8 +609,6 @@ HRESULT CDrain_Weapon::Parameter_State()
 			{
 				if (false == m_bEventTrigger[0])
 				{
-					cout << "몇번 처옵니까" << endl;
-
 					m_bEventTrigger[0] = true;
 
 					Start_Dissolve(0.5f);
@@ -635,6 +679,7 @@ void CDrain_Weapon::Free()
 	Safe_Release(m_pMesh_Dynamic);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pRenderer);
+	Safe_Release(m_pBattleAgent);
 
 	CGameObject::Free();
 }

@@ -1017,6 +1017,10 @@ _uint CLoading::Loading_Title()
 	cout << "Effect 원형 생성중" << endl;
 	Ready_Effect();
 
+	cout << "Particle 불러오는 중 . . ." << endl;
+	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
+		return E_FAIL;
+
 	// UI 원형 생성
 	//============================================================================================================
 	cout << " UI 원형 생성중" << endl;
@@ -1161,20 +1165,23 @@ _uint CLoading::Loading_Stage()
 	// 최초 로딩 호출 시 1번만 불러옵니다.
 	if (false == g_bOnStage[0])
 	{
-		// 다이나믹 메쉬 불러오는 중
+		//cout << "Particle 불러오는 중 . . ." << endl;
+		//if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
+		//	return E_FAIL;
+
+		cout << "DynamicMesh 불러오는 중 . . ." << endl;
 		//============================================================================================================
 		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
 
-		// BT_Node 생성 중
+		cout << "BT_Node 생성 중 . . ." << endl;
 		//============================================================================================================
 		if (FAILED(g_pManagement->Ready_BT_Node()))
 			return E_FAIL;
 
-
 		// 오브젝트 원형 생성
 		//============================================================================================================
 
-		// 몬스터
+		cout << "Monster Prototype 생성 중 . . ." << endl;
 		//============================================================================================================
 
 		// 독나방
@@ -1313,6 +1320,7 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Yeti", CYeti::Create(m_pGraphicDev))))
 			return E_FAIL;
 
+		cout << "UI Sub Prototype 생성 중 . . ." << endl;
 		// UI - Chea
 		//============================================================================================================
 
@@ -1338,7 +1346,7 @@ _uint CLoading::Loading_Stage()
 
 	m_bFinish = true;
 
-	cout << "로딩 완료" << endl;
+	cout << "로딩 완료 . . . !" << endl;
 
 	return NO_EVENT;
 }
