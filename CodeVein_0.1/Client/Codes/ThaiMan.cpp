@@ -715,7 +715,7 @@ void CThaiMan::Check_AniEvent()
 
 			m_bCanChooseAtkType = false;
 
-			switch (CALC::Random_Num(THAIMAN_ANI::Atk_N01,THAIMAN_ANI::Atk_SP03))
+			switch (CALC::Random_Num(THAIMAN_ANI::Atk_SP03,THAIMAN_ANI::Atk_N01))
 			{
 			case THAIMAN_ANI::Atk_N01:
 				m_eState = Atk_N01;

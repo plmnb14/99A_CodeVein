@@ -56,7 +56,6 @@ _int CPet_PoisonButterFly::Update_GameObject(_double TimeDelta)
 
 	m_pMonsterUI->Update_GameObject(TimeDelta);
 
-	Check_Target();
 	Check_PosY();
 	Check_Hit();
 	Check_Dist();
