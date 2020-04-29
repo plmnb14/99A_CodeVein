@@ -66,7 +66,7 @@ _int CBloodCodeMenuUI::Update_GameObject(_double TimeDelta)
 	TARGET_TO_TRANS(m_pSkillReleaseUI)->Set_Pos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookZ) * -0.0005f);
 	TARGET_TO_TRANS(m_pSkillReleaseUI)->Set_Angle(m_pTransformCom->Get_Angle());
 	m_pSkillReleaseUI->Set_Active(m_bIsActive);
-	m_pSkillReleaseUI->Set_SlotPos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookZ) * -0.0006f);
+	//m_pSkillReleaseUI->Set_SlotPos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookZ) * -0.0006f);
 
 	if (!m_bIsActive) // 비활성화
 	{

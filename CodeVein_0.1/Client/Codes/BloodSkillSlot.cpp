@@ -82,10 +82,12 @@ _int CBloodSkillSlot::Update_GameObject(_double TimeDelta)
 		m_iIndex = 0;
 		break;
 	}
+
+	_v3 vLookZ = m_pTransformCom->Get_Axis(AXIS_Z);
 	Compute_ViewZ(&m_pTransformCom->Get_Pos());
 
 	m_pCursor->Set_Active(m_bIsActive && m_bIsSelect);
-	TARGET_TO_TRANS(m_pCursor)->Set_Pos(m_pTransformCom->Get_Pos());
+	TARGET_TO_TRANS(m_pCursor)->Set_Pos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookZ) * 0.01f);
 	TARGET_TO_TRANS(m_pCursor)->Set_Angle(m_pTransformCom->Get_Angle());
 	
 	return NO_EVENT;
@@ -185,7 +187,8 @@ void CBloodSkillSlot::SetUp_Default()
 {
 	m_pCursor = static_cast<CBloodSkillCursor*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodSkillCursor", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pCursor, SCENE_STAGE, L"Layer_StageUI", nullptr);
-	TARGET_TO_TRANS(m_pCursor)->Set_Scale(_v3(0.5f, 0.5f, 0.5f));
+	TARGET_TO_TRANS(m_pCursor)->Set_Scale(_v3(0.5f, 0.5f, 1.f));
+
 }
 
 CBloodSkillSlot * CBloodSkillSlot::Create(_Device pGraphic_Device)

@@ -41,7 +41,7 @@ HRESULT CMistletoeUI::Ready_GameObject(void * pArg)
 	m_pStageSelectUI = CUI_Manager::Get_Instance()->Get_StageSelectUI();
 	if (nullptr == m_pStageSelectUI)
 		return E_FAIL;
-
+	m_pTransformCom->Set_Scale(_v3(0.87f, 1.f, 0.f));
 	return NOERROR;
 }
 
@@ -62,18 +62,18 @@ _int CMistletoeUI::Update_GameObject(_double TimeDelta)
 	_v3 vDir = *V3_NORMAL_SELF(&(*V3_NORMAL_SELF(&vLookX)+ /**V3_NORMAL_SELF(&vLookZ) + */_v3(0.f, 1.5f, 0.f))) * 1.5f;
 	_v3 vPosition = TARGET_TO_TRANS(m_pTarget)->Get_Pos() + vDir;
 	m_pTransformCom->Set_Pos(vPosition);
-	m_pTransformCom->Set_Scale(_v3(0.87f, 1.f, 0.f));
+	
 	m_pTransformCom->Set_Angle(TARGET_TO_TRANS(m_pTarget)->Get_Angle());
 	_v3 vLength = TARGET_TO_TRANS(m_pTarget)->Get_Pos() + vDir * 0.9f;
 
-	Compute_ViewZ(&m_pTransformCom->Get_Pos());
+	
 	LOOP(3)
 	{
 		TARGET_TO_TRANS(m_vecOption[i])->Set_Angle(m_pTransformCom->Get_Angle());
-		TARGET_TO_TRANS(m_vecOption[i])->Set_Scale(_v3(1.f, 0.1476f, 0.f));
+		TARGET_TO_TRANS(m_vecOption[i])->Set_Scale(_v3(0.87f, 0.1476f, 0.f));
 		TARGET_TO_TRANS(m_vecOption[i])->Set_At(m_pTransformCom->Get_At());
-		TARGET_TO_TRANS(m_vecOption[i])->Set_Pos(m_pTransformCom->Get_Pos() + _v3(0.f, _float(i) * -0.2f + 0.2f, 0.f));
-		m_vecOption[i]->Set_ViewZ(m_fViewZ + 100.f);
+		TARGET_TO_TRANS(m_vecOption[i])->Set_Pos(m_pTransformCom->Get_Pos() + _v3(0.f, _float(i) * -0.2f + 0.2f, 0.f) + *V3_NORMAL_SELF(&vLookZ) * -0.1f);
+		
 		m_vecOption[i]->Set_Active(m_bIsActive);
 
 		(i == m_iSelectIndex) ? (m_vecOption[i]->Set_Select(true)) : (m_vecOption[i]->Set_Select(false));
@@ -86,6 +86,7 @@ _int CMistletoeUI::Update_GameObject(_double TimeDelta)
 		m_pStageSelectUI->Set_Active(false);
 	}
 	
+	Compute_ViewZ(&m_pTransformCom->Get_Pos());
 	return NO_EVENT;
 }
 
@@ -112,7 +113,7 @@ HRESULT CMistletoeUI::Render_GameObject()
 		return E_FAIL;
 
 	m_pShaderCom->Begin_Shader();
-	m_pShaderCom->Begin_Pass(5);
+	m_pShaderCom->Begin_Pass(1);
 
 	m_pBufferCom->Render_VIBuffer();
 	m_pShaderCom->End_Pass();

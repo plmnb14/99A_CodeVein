@@ -29,6 +29,8 @@ HRESULT CBloodCodeSelectUI::Ready_GameObject(void * pArg)
 
 	SetUp_Default();
 
+	
+	
 	return NOERROR;
 }
 
@@ -46,21 +48,13 @@ _int CBloodCodeSelectUI::Update_GameObject(_double TimeDelta)
 	for (auto& iter : m_vecBloodCodeSlot)
 	{
 		TARGET_TO_TRANS(iter)->Set_Pos(m_vSlotPosition + *V3_NORMAL_SELF(&vLookX) * -0.25f + *V3_NORMAL_SELF(&vLookY) * 0.3f
-		+ *V3_NORMAL_SELF(&vLookX) * _float(idx) * 0.3f);
+		+ *V3_NORMAL_SELF(&vLookX) * _float(idx) * 0.3f + *V3_NORMAL_SELF(&vLookZ) * -0.001f);
 		TARGET_TO_TRANS(iter)->Set_Angle(m_pTransformCom->Get_Angle());
 		iter->Set_Active(m_bIsActive);
+	
 		++idx;
 	}
-	/*for (_uint i = 0; i < m_vecBloodCodeSlot.size(); ++i)
-	{
-		if (m_iSelectIndex == i)
-			m_vecBloodCodeSlot[i]->Set_Select(true);
-		else
-			m_vecBloodCodeSlot[i]->Set_Select(false);
-	}*/
 
-	
-	//m_eType = m_vecBloodCodeSlot[m_iSelectIndex]->Get_Type();
 
 	switch (m_eType)
 	{
@@ -207,7 +201,7 @@ void CBloodCodeSelectUI::SetUp_Default()
 	{
 		pInstance = static_cast<CBloodCodeSlot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodCodeSlot", nullptr));
 		pInstance->Set_Type(BloodCode_ID(i));
-		TARGET_TO_TRANS(pInstance)->Set_Scale(_v3(0.3f, 0.223f, 0.f));
+		TARGET_TO_TRANS(pInstance)->Set_Scale(_v3(0.3f, 0.223f, 1.f));
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_StageUI", nullptr);
 		m_vecBloodCodeSlot.push_back(pInstance);
 	}

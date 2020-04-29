@@ -230,10 +230,12 @@ technique Default_Technique
 
 	pass AlphaBlending
 	{
+		//ZwriteEnable = false;
+		zEnable = false;
 		AlphaBlendEnable = true;
 		SrcBlend = SrcAlpha;
 		destblend = invsrcalpha;
-
+		
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_MAIN();
 	}

@@ -37,7 +37,7 @@ _int CMistletoeOptionUI::Update_GameObject(_double TimeDelta)
 		return DEAD_OBJ;
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
-	//Compute_ViewZ(&m_pTransformCom->Get_Pos());
+	Compute_ViewZ(&m_pTransformCom->Get_Pos());
 	
 
 	if (m_bIsSelect)
@@ -70,7 +70,7 @@ HRESULT CMistletoeOptionUI::Render_GameObject()
 		return E_FAIL;
 
 	m_pShaderCom->Begin_Shader();
-	m_pShaderCom->Begin_Pass(5);
+	m_pShaderCom->Begin_Pass(1);
 
 	m_pBufferCom->Render_VIBuffer();
 	m_pShaderCom->End_Pass();
