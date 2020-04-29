@@ -28,7 +28,6 @@
 
 #include "MonsterUI.h"
 #include "MassageUI.h"
-//#include "DamegeNumUI.h"
 #include "Get_ItemUI.h"
 #include "PickUp_ItemUI.h"
 
@@ -1056,6 +1055,15 @@ _uint CLoading::Loading_Title()
 	cout << "Effect 원형 생성중" << endl;
 	Ready_Effect();
 
+	cout << "Particle Essential 불러오는 중 . . ." << endl;
+	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager_Essential()))
+		return E_FAIL;
+
+	// 플레이어 스킬, 보스 이펙트 포함
+	//cout << "Particle Etc 불러오는 중 . . ." << endl;
+	//if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
+	//	return E_FAIL;
+
 	// UI 원형 생성
 	//============================================================================================================
 	cout << " UI 원형 생성중" << endl;
@@ -1075,6 +1083,7 @@ _uint CLoading::Loading_Title()
 	// 트레일
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SwordTrail", Engine::CTrail_VFX::Create(m_pGraphicDev))))
 		return E_FAIL;
+
 	// 스카이
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Sky", CSky::Create(m_pGraphicDev))))
 		return E_FAIL;
@@ -1200,11 +1209,15 @@ _uint CLoading::Loading_Stage()
 	// 최초 로딩 호출 시 1번만 불러옵니다.
 	if (false == g_bOnStage[0])
 	{
-		// 다이나믹 메쉬 불러오는 중
+		//cout << "Particle 불러오는 중 . . ." << endl;
+		//if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
+		//	return E_FAIL;
+
+		cout << "DynamicMesh 불러오는 중 . . ." << endl;
 		//============================================================================================================
 		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
 
-		// BT_Node 생성 중
+		cout << "BT_Node 생성 중 . . ." << endl;
 		//============================================================================================================
 		if (FAILED(g_pManagement->Ready_BT_Node()))
 			return E_FAIL;
@@ -1212,16 +1225,16 @@ _uint CLoading::Loading_Stage()
 		// 오브젝트 원형 생성
 		//============================================================================================================
 
+		cout << "Physics Test Flag 생성 중 . . ." << endl;
 		// 환경
 		//============================================================================================================
 		// 깃발
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Flag", CFlag::Create(m_pGraphicDev))))
 			return E_FAIL;
 
-
-		// 몬스터
+		cout << "Monster Prototype 생성 중 . . ." << endl;
+		// 환경
 		//============================================================================================================
-
 		// 독나방
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonButterfly", CPoisonButterfly::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1366,8 +1379,14 @@ _uint CLoading::Loading_Stage()
 		// 예티
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Yeti", CYeti::Create(m_pGraphicDev))))
 			return E_FAIL;
+
+		// 예티 총알
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_YetiBullet", CYetiBullet::Create(m_pGraphicDev))))
 			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_YetiBullet", L"Monster_YetiBullet", 20);
+
+
+		cout << "UI Sub Prototype 생성 중 . . ." << endl;
 		// UI - Chea
 		//============================================================================================================
 
@@ -1391,6 +1410,7 @@ _uint CLoading::Loading_Stage()
 		// Haze
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Haze", CHaze::Create(m_pGraphicDev))))
 			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_Haze", L"GameObject_Haze", 200);
 		//============================================================================================================
 
 
@@ -1399,7 +1419,7 @@ _uint CLoading::Loading_Stage()
 
 	m_bFinish = true;
 
-	cout << "로딩 완료" << endl;
+	cout << "로딩 완료 . . . !" << endl;
 
 	return NO_EVENT;
 }

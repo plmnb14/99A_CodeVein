@@ -59,7 +59,7 @@ HRESULT CMonkeyBullet::Ready_GameObject(void * pArg)
 	m_pBulletBody->Reset_Init();;
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
 
-	m_pTrailEffect = static_cast<Engine::CTrail_VFX*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SwordTrail", nullptr));
+	m_pTrailEffect = g_pManagement->Create_Trail();
 	m_pTrailEffect->Set_TrailIdx(5); // Red Tail
 
 	return S_OK;
@@ -73,7 +73,7 @@ _int CMonkeyBullet::Update_GameObject(_double TimeDelta)
 		return DEAD_OBJ;
 
 	Enter_Collision();
-	//Update_Trails(TimeDelta);
+	Update_Trails(TimeDelta);
 
 	m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
 
@@ -82,6 +82,7 @@ _int CMonkeyBullet::Update_GameObject(_double TimeDelta)
 	if (m_dCurTime > m_dLifeTime)
 	{
 		m_pBulletBody->Set_Dead();
+		m_pTrailEffect->Set_Dead();
 
 		m_bDead = true;
 	}
@@ -153,7 +154,7 @@ void CMonkeyBullet::Update_Trails(_double TimeDelta)
 	{
 		m_pTrailEffect->Set_ParentTransform(&matWorld);
 		m_pTrailEffect->Ready_Info(vBegin + vDir * -0.05f, vBegin + vDir * 0.05f);
-		m_pTrailEffect->Update_GameObject(TimeDelta);
+		// m_pTrailEffect->Update_GameObject(TimeDelta);
 	}
 
 	return;
@@ -279,7 +280,7 @@ CGameObject * CMonkeyBullet::Clone_GameObject(void * pArg)
 
 void CMonkeyBullet::Free()
 {
-	Safe_Release(m_pTrailEffect);
+	//Safe_Release(m_pTrailEffect);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pRendererCom);

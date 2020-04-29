@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Info_Monster.h"
 #include "Monster.h"
 
 BEGIN(Client)
@@ -32,8 +33,14 @@ public:
 private:
 	enum Ani {
 		Ani_Idle = 42, Ani_Death = 64, Ani_Dmg01_FL = 124, Ani_Dmg01_FR = 123, Ani_Dmg01_BL = 122, Ani_Dmg01_BR = 121,
-		Ani_StandUp1 = 140, Ani_StandUp2 = 153
+		Ani_StandUp1 = 140, Ani_StandUp2 = 153, DeadBodyLean_End = 72,
+		Ani_DmgRepel = 105,
+		Ani_Death_F = 62, Ani_Death_B = 63
 	};
+
+	typedef enum Execution_Ani {
+		Ani_Execution_LongCoat_B_S = 53 , Ani_Execution_LongCoat_B = 54
+	}EXE_ANI;
 
 private:
 	enum BoneMatrix { Bone_Range, Bone_Body, Bone_Head, Bone_End };
@@ -100,6 +107,8 @@ private:	//∆–≈œµÈ
 
 	//////////////////// 
 
+private:
+	EXE_ANI				m_eExecutionAnim = Ani_Execution_LongCoat_B_S;
 
 private:
 	CTransform*			m_pTransformCom = nullptr;
@@ -178,6 +187,17 @@ private:
 	HRESULT Ready_BoneMatrix();
 	HRESULT Ready_Collider();
 	HRESULT Ready_NF(void* pArg);
+
+private:
+	void Check_Execution();
+	void Check_ExecutionAnim();
+	void Check_OrgeExecution();
+	void Check_IvyExecution();
+	void Check_StingerExecution();
+	void Check_HoundsExecution();
+
+private:
+	void Check_Repel();
 
 public:
 	static CGunGenji* Create(LPDIRECT3DDEVICE9 pGraphic_Device);

@@ -52,6 +52,7 @@ public:
 	virtual void			Set_ResetOldAnimIdx();
 	virtual void			Set_AnimIdx(_ulong _eAnimState);
 	virtual void			Set_Enable_Record(_bool _bOnRecord);
+	virtual void			Set_OnExecution(_bool _bOnExecution) { m_bOnExecution = _bOnExecution; };
 
 public:
 	virtual void			Find_TailHeadBone();
@@ -80,6 +81,8 @@ private:
 private:
 	_bool					m_bActive = false;
 	_bool					m_bRecordCollision = false;
+	_bool					m_bOffDissolve = false;
+	_bool					m_bOnExecution = false;
 
 private:
 	CTransform*				m_pTransform = nullptr;
@@ -87,9 +90,14 @@ private:
 	CShader*				m_pShader = nullptr;
 	CMesh_Dynamic*			m_pMesh_Dynamic = nullptr;
 	CCollider*				m_pCollider = nullptr;
+	CBattleAgent*			m_pBattleAgent = nullptr;
 
 private:
+	_mat*					m_matTailSword = nullptr;
 	_mat*					m_matTailHead = nullptr;
+
+private:
+	_float					m_fCreateEffectTime = 0.f;
 
 private:
 	_tchar					m_szName[MAX_STR] = L"";
@@ -102,9 +110,15 @@ private:
 	_float					m_fAnimMultiply = 0.f;
 
 private:
+	_bool					m_bEventTrigger[4] = {};
+
+private:
 	HRESULT Add_Component();
 	HRESULT SetUp_Default();
 	HRESULT SetUp_ConstantTable();
+
+private:
+	virtual HRESULT Parameter_State();
 
 private:
 	virtual void Cacl_AttachBoneTransform();

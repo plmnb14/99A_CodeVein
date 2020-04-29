@@ -50,11 +50,11 @@ public:
 	void	Set_BoneSeperate(D3DXFRAME_DERIVED* _frame, const char* _bodyName , _short _sSeperateNum);
 
 public:
-	HRESULT SetUp_Animation(_uint iIndex);
-	HRESULT SetUp_Animation_Lower(_uint iIndex);
-	HRESULT SetUp_Animation_Upper(_uint iIndex);
-	HRESULT SetUp_Animation_RightArm(_uint iIndex);
-	HRESULT SetUp_Animation_LeftArm(_uint iIndex);
+	HRESULT SetUp_Animation(_uint iIndex, _bool _bOffLerp = false);
+	HRESULT SetUp_Animation_Lower(_uint iIndex, _bool _bOffLerp = false);
+	HRESULT SetUp_Animation_Upper(_uint iIndex, _bool _bOffLerp = false);
+	HRESULT SetUp_Animation_RightArm(_uint iIndex, _bool _bOffLerp = false);
+	HRESULT SetUp_Animation_LeftArm(_uint iIndex, _bool _bOffLerp = false);
 
 
 	HRESULT Play_Animation_Lower(_double TimeDelta);
