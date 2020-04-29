@@ -112,8 +112,10 @@ HRESULT CMonkey::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			if (false == m_bReadyDead && false == m_bDissolve)
-				m_iPass = m_iTempPass = m_pMeshCom->Get_MaterialPass(i, j);
+			m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+
+			if (m_bDissolve)
+				m_iPass = 3;
 
 			m_pShaderCom->Begin_Pass(m_iPass);
 
@@ -143,7 +145,7 @@ HRESULT CMonkey::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
 	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
 
-	m_pMeshCom->Play_Animation(DELTA_60 * m_dAniPlayMul);
+	m_pMeshCom->Play_Animation(0.f);
 
 	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;

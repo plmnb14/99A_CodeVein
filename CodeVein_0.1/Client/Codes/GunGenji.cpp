@@ -313,7 +313,7 @@ HRESULT CGunGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 	{
 		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
-
+		
 		m_pMeshCom->Update_SkinnedMesh(i);
 
 		for (_uint j = 0; j < iNumSubSet; ++j)

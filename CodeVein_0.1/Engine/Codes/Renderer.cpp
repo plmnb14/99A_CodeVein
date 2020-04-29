@@ -401,8 +401,8 @@ HRESULT CRenderer::Draw_RenderList()
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Deferred");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Velocity");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_LightAcc");
-		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_ShadowMap");
-		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_Shadow");
+		//m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_ShadowMap");
+		//m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_Shadow");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Blend");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Distortion");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Blur");
@@ -411,6 +411,8 @@ HRESULT CRenderer::Draw_RenderList()
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_BrightPass");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_SSAO");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_SSAO_Blur");
+
+		m_pGraphic_Dev->SetTexture(0, nullptr);
 	}
 
 #endif

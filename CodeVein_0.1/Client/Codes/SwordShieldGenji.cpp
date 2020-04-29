@@ -218,8 +218,10 @@ HRESULT CSwordShieldGenji::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			if (false == m_bReadyDead)
-				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+			m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+
+			if (m_bDissolve)
+				m_iPass = 3;
 
 			m_pShaderCom->Begin_Pass(m_iPass);
 

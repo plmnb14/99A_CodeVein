@@ -107,8 +107,10 @@ HRESULT CWolf::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			if (MONSTER_STATETYPE::DEAD != m_eFirstCategory)
-				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+			m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+
+			if (m_bDissolve)
+				m_iPass = 3;
 
 			m_pShaderCom->Begin_Pass(m_iPass);
 
@@ -134,6 +136,8 @@ HRESULT CWolf::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 {
 	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
 	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
+
+	m_pMeshCom->Play_Animation(0.f);
 
 	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
 	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);

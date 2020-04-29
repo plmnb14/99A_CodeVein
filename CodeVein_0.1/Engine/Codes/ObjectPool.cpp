@@ -25,20 +25,18 @@ _int CObjectPool::Update_ObjectPool(_double dTimeDelta)
 {
 	_int iProgress = 0;
 
-
-	for (auto& iter = m_listRunningObject.begin(); iter != m_listRunningObject.end(); )
+	for (auto& iter_begin = m_listRunningObject.begin(); iter_begin != m_listRunningObject.end(); )
 	{
-		iProgress = (*iter)->Update_GameObject(dTimeDelta);
+		iProgress = (*iter_begin)->Update_GameObject(dTimeDelta);
 
 		if (DEAD_OBJ == iProgress)
 		{
+			m_Container.push((*iter_begin));
 
-
-			m_Container.push((*iter));
-
-			iter = m_listRunningObject.erase(iter);
+			iter_begin = m_listRunningObject.erase(iter_begin);
 		}
-
+		else
+			iter_begin++;
 	}
 
 	return _int();

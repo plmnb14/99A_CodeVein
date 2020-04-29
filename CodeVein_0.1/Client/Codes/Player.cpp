@@ -188,8 +188,6 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 		nullptr == m_pDynamicMesh)
 		return E_FAIL;
 
-	pShader->Begin_Shader();
-
 	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
 	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 
@@ -236,7 +234,6 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 			pShader->End_Pass();
 		}
 	}
-	pShader->End_Shader();
 
 	return NOERROR;
 }

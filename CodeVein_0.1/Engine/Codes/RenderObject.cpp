@@ -94,8 +94,6 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 		nullptr == m_pMesh_Static)
 		return E_FAIL;
 
-	pShader->Begin_Shader();
-
 	_mat		ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
 	_mat		ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
 
@@ -134,8 +132,6 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 
 		pShader->End_Pass();
 	}
-
-	pShader->End_Shader();
 
 	return NOERROR;
 }
