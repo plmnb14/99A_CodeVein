@@ -44,14 +44,17 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 	Check_Do_List();
 	Set_AniEvent();
 
+	Function_Checking_AttCoolTime(m_fCoolTimer_limit);
+
 	m_pDynamicMesh->SetUp_Animation(m_eColleague_Ani);
 
 	if (m_eMovetype != CPlayer_Colleague::Coll_Dead)
 		Enter_Collision();
 
-	cout << "상태: " << m_eMovetype << ", " << "움직임: " << m_eColl_MoveMent << ", " << m_eColl_AttackMoment << endl;
+	/*cout << "상태: " << m_eMovetype << ", " << "움직임: " << m_eColl_MoveMent << ", " << m_eColl_AttackMoment << endl;
 	cout << "애니상태: " << m_eColleague_Ani << " || " << "Run - 5, Walk - 3, Idle - 0" << endl;
-	cout << "공격중인지: " << m_tObjParam.bIsAttack << "0 - false, 1 - true" << endl;
+	cout << "공격중인지: " << m_tObjParam.bCanAttack << " || 0 - false, 1 - true" << endl;
+	cout << "몇타인지: " << m_iNormalAtt_Count << endl;*/
 
 	return S_OK;
 }
@@ -148,7 +151,7 @@ HRESULT CPlayer_Colleague::Add_Component()
 		return E_FAIL;
 
 	// 콜라이더 설정
-	m_pCollider->Set_Radius(_v3(0.35f, 0.35f, 0.35f));
+	m_pCollider->Set_Radius(_v3(0.5f, 0.5f, 0.5f));
 	m_pCollider->Set_Type(COL_SPHERE);
 	m_pCollider->Set_Dynamic(true);		// 움직이는지
 	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos());
@@ -196,7 +199,7 @@ HRESULT CPlayer_Colleague::Ready_Collider()
 {
 	m_vecPhysicCol.reserve(3);
 
-	// 경계 체크용 Collider - 밀어내기 구
+	// 경계 체크용 Collider
 	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 	IF_NULL_VALUE_RETURN(pCollider, E_FAIL);
 
@@ -241,7 +244,7 @@ HRESULT CPlayer_Colleague::Ready_Collider()
 HRESULT CPlayer_Colleague::Ready_Weapon()
 {
 	m_pSword = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pSword->Change_WeaponData(CWeapon::Wpn_SSword);
+	m_pSword->Change_WeaponData(CWeapon::Wpn_SSword_Slave);
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo("RightHandAttach");
 	m_pSword->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
@@ -283,9 +286,12 @@ void CPlayer_Colleague::Check_Do_List()
 	_float	fMinPos = 0.f;
 	_float	fMonLength = 0.f;
 
-	// Hit, Att, Dodge 이면 return 시킨다
-	if (true == m_tObjParam.bIsHit || true == m_tObjParam.bIsAttack || true == m_tObjParam.bIsDodge)
-		return;
+	_float	fPlayerLength = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransformCom->Get_Pos()));
+
+	if (fPlayerLength > 30.f)
+	{
+		m_pTransformCom->Set_Pos(_v3(m_pTargetTransformCom->Get_Pos().x - 3.f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 2.f));
+	}
 
 
 	for (auto& iter_Mon : *m_List_pMonTarget[0])
@@ -393,8 +399,10 @@ void CPlayer_Colleague::Check_Do_List()
 				continue;
 		}
 	}
-
-	cout << "몬스터 거리: " << fMinPos << endl;
+	// Hit, Att, Dodge 이면 return 시킨다
+	/*if (true == m_tObjParam.bIsHit || true == m_tObjParam.bIsAttack || true == m_tObjParam.bIsDodge)
+		return;*/
+	//cout << "몬스터 거리: " << fMinPos << endl;
 
 	_float	fMyPlayerLength = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransformCom->Get_Pos()));
 
@@ -427,6 +435,8 @@ void CPlayer_Colleague::Check_Do_List()
 				m_bNear_byMonster = false;
 			}
 		}
+		
+		
 
 		if (false == m_bStart_Fighting && false == m_bNear_byMonster)
 		{
@@ -881,8 +891,6 @@ void CPlayer_Colleague::CollAtt_Normal()
 	_float		fMonLenght = 0.f;
 	_float		fMiniPos = 0.f;
 
-	cout << "속도: " << m_fAtt_MoveSpeed_Cur << endl;
-
 	for (auto& iter : *m_List_pMonTarget[0])
 	{
 		if (iter == m_pObject_Mon && false == iter->Get_Dead())
@@ -922,23 +930,13 @@ void CPlayer_Colleague::CollAtt_Normal()
 	if (nullptr == m_pObject_Mon)
 		return;
 
-
-
-	/*if (true == m_tObjParam.bIsHit || true == m_tObjParam.bIsAttack || true == m_tObjParam.bIsDodge)
-	return;*/
-
-	/*if (m_eColl_Sub_AttMoment == CPlayer_Colleague::Att_Base1 ||
-		m_eColl_Sub_AttMoment == CPlayer_Colleague::Att_Base2 || m_eColl_Sub_AttMoment == CPlayer_Colleague::Att_Base3 ||
-		m_eColl_Sub_AttMoment == CPlayer_Colleague::Att_Base4)
-		return;*/
-
 	_double		AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
 
 	if (false == m_bCheck_Attcing /*|| false == m_bMyHiting*/)
 		Funtion_RotateBody();
 
 
-	if (fMonLenght > 3.f && false == m_bCheck_Attcing)
+	if (fMonLenght > 4.f)
 	{
 		if (false == m_bEventTrigger[4])
 		{
@@ -949,9 +947,11 @@ void CPlayer_Colleague::CollAtt_Normal()
 		}
 		Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 		/*Colleague_SkilMovement(m_fAtt_MoveMultiply);*/
+		m_eMovetype = CPlayer_Colleague::Coll_Move;
+		m_eColl_MoveMent = CPlayer_Colleague::Move_MonRun;
 		m_eColleague_Ani = CPlayer_Colleague::Ani_Front_Run;
 	}
-	else if (fMonLenght <= 3.f && fMonLenght > 2.3f)
+	else if ((fMonLenght <= 4.f && fMonLenght > 3.f) && false == m_bCheck_Attcing)
 	{
 		// 공격 중에 걷는 애니 시 트리거 사용
 		// 순수하게 걷기만 한다면 트리거 사용 x
@@ -964,53 +964,54 @@ void CPlayer_Colleague::CollAtt_Normal()
 		}
 		Colleague_Movement(2.f, m_pTransformCom->Get_Axis(AXIS_Z));
 		//Colleague_SkilMovement(m_fAni_Multiply);
-		m_eColl_MoveMent = CPlayer_Colleague::Move_Walk;
+		m_eMovetype = CPlayer_Colleague::Coll_Move;
+		m_eColl_MoveMent = CPlayer_Colleague::Move_MonWalk;
 		m_eColleague_Ani = CPlayer_Colleague::Ani_Front_Walk;
 	}
-
-
-	if (fMonLenght <= 2.3f && false == m_bCheck_Attcing)
+	else if (fMonLenght <= 3.f && false == m_bCheck_Attcing)
 	{
-		if ((m_iNormalAtt_Count == 3) && /*(true == m_bBase_Att[0]) && (true == m_bBase_Att[1]) && (true == m_bBase_Att[2]) &&*/
-			(true == m_bNest_Att_CoolTimer))
+		// 여기서 스킬을 쓸지 공격을 할지 정한다
+		// 쿨타임이 5.f이면 사용 가능, 아니면 불가능하다
+		// 만약 스킬의 쿨타임이 다 차있다면 스킬을 우선적으로 사용하며, 없을 경우 일반 공격을 한다
+
+
+
+		if (m_iNormalAtt_Count == 3 && true == m_bNest_Att_CoolTimer)
 		{
+			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base4;
 			m_eColleague_Ani = CPlayer_Colleague::Four_Att;
 		}
-		else if ((m_iNormalAtt_Count == 2) && /* (true == m_bBase_Att[0]) && (true == m_bBase_Att[1]) &&*/
-			(true == m_bNest_Att_CoolTimer))
+		else if (m_iNormalAtt_Count == 2 && true == m_bNest_Att_CoolTimer)
 		{
+			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base3;
 			m_eColleague_Ani = CPlayer_Colleague::Three_Att;
 		}
-		else if ((m_iNormalAtt_Count == 1) && (true == m_bNest_Att_CoolTimer)/* && (true == m_bBase_Att[0])*/)
+		else if (m_iNormalAtt_Count == 1 && true == m_bNest_Att_CoolTimer)
 		{
+			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base2;
 			m_eColleague_Ani = CPlayer_Colleague::Two_Att;
 		}
 		else if (m_iNormalAtt_Count == 0)
 		{
+			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base1;
 			m_eColleague_Ani = CPlayer_Colleague::One_Att;
 		}
-
-		if (m_iNormalAtt_Count >= 4)
+		else if (m_iNormalAtt_Count >= 4)
 			m_iNormalAtt_Count = 0;
-	}
 
-	
+		else if (m_eMovetype == CPlayer_Colleague::Coll_Move)
+			return;
+	}
 
 	if (0 == fMonLenght || 30.f < fMonLenght)
 	{
 		m_bNear_byMonster = false;
 		m_bStart_Fighting = false;
 	}
-
-	//if (fMonLenght > 0.f && fMonLenght < 2.3f)
-	//{
-	//	// 뒤로 물러나기
-	//	m_eColl_Movement = CPlayer_Colleague::Move_BackWalk;
-	//}
 
 
 
@@ -1021,6 +1022,7 @@ void CPlayer_Colleague::CollAtt_Base1()
 {
 	_double		AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
 
+	
 	if (true == m_tObjParam.bCanAttack)
 	{
 		m_tObjParam.bCanAttack = false;
@@ -1028,15 +1030,23 @@ void CPlayer_Colleague::CollAtt_Base1()
 	}
 	else
 	{
-		if (m_pDynamicMesh->Is_Finish_Animation(0.9f))
+		if (m_pDynamicMesh->Is_Finish_Animation(0.45f) && m_eMovetype == CPlayer_Colleague::Coll_Attack)
 		{
 			Reset_Motion_State();
 			m_eMovetype = CPlayer_Colleague::Coll_Idle;
 			//m_eColleague_Ani = CPlayer_Colleague::Ani_Idle;
 			m_bMyHiting = false;
 			m_bCheck_Attcing = false;
+
+			m_fCoolTimer_limit = 0.045f;
+			m_bBase_Att[0] = true;
+			m_bChecking_MyHit = true;
+
+			++m_iNormalAtt_Count;
+			cout << "공격 1 끝" << endl;
 			return;
 		}
+			
 		else if (0.8f <= AniTime)
 		{
 			if (false == m_bEventTrigger[0])
@@ -1050,6 +1060,7 @@ void CPlayer_Colleague::CollAtt_Base1()
 		{
 			if (false == m_bEventTrigger[1])
 			{
+				cout << "1타 성공" << endl;
 				m_bEventTrigger[1] = true;
 				m_pSword->Set_Target_CanAttack(true);
 				m_pSword->Set_Enable_Record(true);
@@ -1068,26 +1079,6 @@ void CPlayer_Colleague::CollAtt_Base1()
 			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Colleague_SkilMovement(m_fAni_Multiply);
 		}
-
-		if (1.833f <= AniTime)
-		{
-			m_fCoolTimer_limit = 0.045f;
-			Function_Checking_AttCoolTime(m_fCoolTimer_limit);
-			m_bBase_Att[0] = true;
-			m_bChecking_MyHit = true;
-			if (true == m_bNest_Att_CoolTimer)
-				++m_iNormalAtt_Count;
-		}
-		else
-		{
-			m_bChecking_MyHit = false;
-			m_bMyHiting = false;
-			m_bBase_Att[0] = false;
-			m_bBase_Att[1] = false;
-			m_bBase_Att[2] = false;
-			m_bBase_Att[3] = false;
-		}
-
 		if (0.f <= AniTime && 1.833f >= AniTime)
 		{
 			if (true == m_bNest_Att_CoolTimer)
@@ -1103,6 +1094,7 @@ void CPlayer_Colleague::CollAtt_Base2()
 {
 	_double		AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
 
+	
 
 	if (true == m_tObjParam.bCanAttack)
 	{
@@ -1111,98 +1103,56 @@ void CPlayer_Colleague::CollAtt_Base2()
 	}
 	else
 	{
-		if (m_pDynamicMesh->Is_Finish_Animation(0.9f))
+		if (m_pDynamicMesh->Is_Finish_Animation(0.45f) && m_eMovetype == CPlayer_Colleague::Coll_Attack)
 		{
+			
 			Reset_Motion_State();
 			m_eMovetype = CPlayer_Colleague::Coll_Idle;
 			//m_eColleague_Ani = CPlayer_Colleague::Ani_Idle;
 			m_bMyHiting = false;
 			m_bCheck_Attcing = false;
+
+			m_fCoolTimer_limit = 0.045f;
+			m_bBase_Att[0] = true;
+			m_bChecking_MyHit = true;
+
+			++m_iNormalAtt_Count;
+			cout << "공격 2 끝" << endl;
 			return;
 		}
-		else if (0.1f <= AniTime)
+		
+		else if (0.3f <= AniTime)
 		{
-			if (false == m_bEventTrigger[0])
+			if (false == m_bEventTrigger[3])
 			{
-				m_bEventTrigger[0] = true;
-				m_pSword->Set_Target_CanAttack(true);
-				m_pSword->Set_Enable_Record(true);
-			}
-		}
-		else if (0.6f <= AniTime)
-		{
-			if (false == m_bEventTrigger[1])
-			{
-				m_bEventTrigger[1] = true;
+				m_bEventTrigger[3] = true;
 				m_pSword->Set_Target_CanAttack(false);
 				m_pSword->Set_Enable_Record(false);
 			}
 		}
+		else if (0.1f <= AniTime)
+		{
+			if (false == m_bEventTrigger[4])
+			{
+				cout << "2타 성공" << endl;
+				m_bEventTrigger[4] = true;
+				m_pSword->Set_Target_CanAttack(true);
+				m_pSword->Set_Enable_Record(true);
+			}
+		}
 		if (0.1f <= AniTime && 0.3f >= AniTime)
 		{
-			if (false == m_bEventTrigger[2])
+			if (false == m_bEventTrigger[5])
 			{
-				m_bEventTrigger[2] = true;
+				m_bEventTrigger[5] = true;
 				m_fAtt_MoveSpeed_Cur = 4.f;
 				m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
 				m_fAni_Multiply = 0.5f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
 			}
 			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Colleague_SkilMovement(m_fAni_Multiply);
-
 		}
-
-		/*for (auto& iter : *m_List_pMonTarget[0])
-		{
-		if (iter == m_pObject_Mon && true == iter->Get_Dead())
-		{
-		m_pObject_Mon = nullptr;
-		continue;
-		}
-		else if (iter == m_pObject_Mon)
-		{
-		if (true == iter->Get_Target_IsHit())
-		{
-		++m_iNormalAtt_Count;
-		m_bMyHiting = true;
-		m_bBase_Att[1] = true;
-		m_bChecking_MyHit = true;
-		m_fCoolTimer_limit = 0.05f;
-		Function_Checking_CoolTime(m_fCoolTimer_limit);
-		}
-		else
-		{
-		m_bChecking_MyHit = false;
-		m_bMyHiting = false;
-		m_bBase_Att[0] = false;
-		m_bBase_Att[1] = false;
-		m_bBase_Att[2] = false;
-		m_bBase_Att[3] = false;
-		}
-		}
-		}*/
-
-		if (/*true == m_bMyHiting || */1.833f <= AniTime)
-		{
-			m_fCoolTimer_limit = 0.045f;
-			Function_Checking_AttCoolTime(m_fCoolTimer_limit);
-			m_bBase_Att[0] = true;
-			m_bChecking_MyHit = true;
-			if (true == m_bNest_Att_CoolTimer)
-				++m_iNormalAtt_Count;
-
-		}
-		else/* if (false == m_bMyHiting)*/
-		{
-			m_bChecking_MyHit = false;
-			m_bMyHiting = false;
-			m_bBase_Att[0] = false;
-			m_bBase_Att[1] = false;
-			m_bBase_Att[2] = false;
-			m_bBase_Att[3] = false;
-		}
-
-		if (0.f <= AniTime && 1.833f >= AniTime)
+		if (0.f <= AniTime && 1.933f >= AniTime)
 		{
 			if (true == m_bNest_Att_CoolTimer)
 				m_bCheck_Attcing = true;
@@ -1217,6 +1167,7 @@ void CPlayer_Colleague::CollAtt_Base3()
 {
 	_double		AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
 
+	
 	if (true == m_tObjParam.bCanAttack)
 	{
 		m_tObjParam.bCanAttack = false;
@@ -1224,38 +1175,47 @@ void CPlayer_Colleague::CollAtt_Base3()
 	}
 	else
 	{
-		if (m_pDynamicMesh->Is_Finish_Animation(0.9f))
+		if (m_pDynamicMesh->Is_Finish_Animation(0.45f) && m_eMovetype == CPlayer_Colleague::Coll_Attack)
 		{
+			
 			Reset_Motion_State();
 			//m_eMovetype = CPlayer_Colleague::Coll_Idle;
 			//m_eColleague_Ani = CPlayer_Colleague::Ani_Idle;
 			m_bMyHiting = false;
 			m_bCheck_Attcing = false;
+
+			m_fCoolTimer_limit = 0.045f;
+			m_bBase_Att[0] = true;
+			m_bChecking_MyHit = true;
+
+			++m_iNormalAtt_Count;
+			cout << "공격 3 끝" << endl;
 			return;
-		}
-		else if (0.6f <= AniTime)
-		{
-			if (false == m_bEventTrigger[0])
-			{
-				m_bEventTrigger[0] = true;
-				m_pSword->Set_Target_CanAttack(true);
-				m_pSword->Set_Enable_Record(true);
-			}
 		}
 		else if (0.867f <= AniTime)
 		{
-			if (false == m_bEventTrigger[1])
+			if (false == m_bEventTrigger[6])
 			{
-				m_bEventTrigger[1] = true;
+				m_bEventTrigger[6] = true;
 				m_pSword->Set_Target_CanAttack(false);
 				m_pSword->Set_Enable_Record(false);
 			}
 		}
+		else if (0.6f <= AniTime)
+		{
+			if (false == m_bEventTrigger[7])
+			{
+				cout << "3타 성공" << endl;
+				m_bEventTrigger[7] = true;
+				m_pSword->Set_Target_CanAttack(true);
+				m_pSword->Set_Enable_Record(true);
+			}
+		}
 		if (0.6f <= AniTime && 0.867f >= AniTime)
 		{
-			if (false == m_bEventTrigger[2])
+			if (false == m_bEventTrigger[8])
 			{
-				m_bEventTrigger[2] = true;
+				m_bEventTrigger[8] = true;
 				m_fAtt_MoveSpeed_Cur = 4.f;
 				m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
 				m_fAni_Multiply = 0.5f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
@@ -1263,56 +1223,6 @@ void CPlayer_Colleague::CollAtt_Base3()
 			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Colleague_SkilMovement(m_fAni_Multiply);
 		}
-
-		/*for (auto& iter : *m_List_pMonTarget[0])
-		{
-		if (iter == m_pObject_Mon && true == iter->Get_Dead())
-		{
-		m_pObject_Mon = nullptr;
-		continue;
-		}
-		else if (iter == m_pObject_Mon)
-		{
-		if (true == iter->Get_Target_IsHit())
-		{
-		++m_iNormalAtt_Count;
-		m_bMyHiting = true;
-		m_bBase_Att[2] = true;
-		m_bChecking_MyHit = true;
-		m_fCoolTimer_limit = 0.05f;
-		Function_Checking_AttCoolTime(m_fCoolTimer_limit);
-		}
-		else
-		{
-		m_bChecking_MyHit = false;
-		m_bMyHiting = false;
-		m_bBase_Att[0] = false;
-		m_bBase_Att[1] = false;
-		m_bBase_Att[2] = false;
-		m_bBase_Att[3] = false;
-		}
-		}
-		}*/
-		if (/*true == m_bMyHiting || */2.367f <= AniTime)
-		{
-			m_fCoolTimer_limit = 0.045f;
-			Function_Checking_AttCoolTime(m_fCoolTimer_limit);
-			m_bBase_Att[0] = true;
-			m_bChecking_MyHit = true;
-			if (true == m_bNest_Att_CoolTimer)
-				++m_iNormalAtt_Count;
-
-		}
-		else/* if (false == m_bMyHiting)*/
-		{
-			m_bChecking_MyHit = false;
-			m_bMyHiting = false;
-			m_bBase_Att[0] = false;
-			m_bBase_Att[1] = false;
-			m_bBase_Att[2] = false;
-			m_bBase_Att[3] = false;
-		}
-
 		if (0.f <= AniTime && 2.367f >= AniTime)
 		{
 			if (true == m_bNest_Att_CoolTimer)
@@ -1320,7 +1230,6 @@ void CPlayer_Colleague::CollAtt_Base3()
 		}
 		else
 			m_bCheck_Attcing = false;
-
 	}
 	return;
 }
@@ -1329,6 +1238,7 @@ void CPlayer_Colleague::CollAtt_Base4()
 {
 	_double		AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
 
+	
 	if (true == m_tObjParam.bCanAttack)
 	{
 		m_tObjParam.bCanAttack = false;
@@ -1336,38 +1246,47 @@ void CPlayer_Colleague::CollAtt_Base4()
 	}
 	else
 	{
-		if (m_pDynamicMesh->Is_Finish_Animation(0.9f))
+		if (m_pDynamicMesh->Is_Finish_Animation(0.45f) && m_eMovetype == CPlayer_Colleague::Coll_Attack)
 		{
+			
 			Reset_Motion_State();
 			//m_eMovetype = CPlayer_Colleague::Coll_Idle;
 			//m_eColleague_Ani = CPlayer_Colleague::Ani_Idle;
 			m_bMyHiting = false;
 			m_bCheck_Attcing = false;
+
+			m_fCoolTimer_limit = 0.045f;
+			m_bBase_Att[0] = true;
+			m_bChecking_MyHit = true;
+
+			++m_iNormalAtt_Count;
+			cout << "공격 4 끝" << endl;
 			return;
 		}
-		else if (0.6f <= AniTime)
+		else if (0.833f <= AniTime)
 		{
-			if (false == m_bEventTrigger[0])
+			if (false == m_bEventTrigger[9])
 			{
-				m_bEventTrigger[0] = true;
-				m_pSword->Set_Target_CanAttack(true);
-				m_pSword->Set_Enable_Record(true);
-			}
-		}
-		else if (0.8f >= AniTime)
-		{
-			if (false == m_bEventTrigger[1])
-			{
-				m_bEventTrigger[1] = false;
+				m_bEventTrigger[9] = true;
 				m_pSword->Set_Target_CanAttack(false);
 				m_pSword->Set_Enable_Record(false);
 			}
 		}
-		if (0.6f <= AniTime && 0.8f >= AniTime)
+		else if (0.6f <= AniTime)
 		{
-			if (false == m_bEventTrigger[2])
+			if (false == m_bEventTrigger[10])
 			{
-				m_bEventTrigger[2] = true;
+				cout << "4타 성공" << endl;
+				m_bEventTrigger[10] = true;
+				m_pSword->Set_Target_CanAttack(true);
+				m_pSword->Set_Enable_Record(true);
+			}
+		}
+		if (0.6f <= AniTime && 0.833f >= AniTime)
+		{
+			if (false == m_bEventTrigger[11])
+			{
+				m_bEventTrigger[11] = true;
 				m_fAtt_MoveSpeed_Cur = 4.f;
 				m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
 				m_fAni_Multiply = 0.5f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
@@ -1375,7 +1294,6 @@ void CPlayer_Colleague::CollAtt_Base4()
 			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Colleague_SkilMovement(m_fAni_Multiply);
 		}
-
 		/*for (auto& iter : *m_List_pMonTarget[0])
 		{
 		if (iter == m_pObject_Mon && true == iter->Get_Dead())
@@ -1405,26 +1323,6 @@ void CPlayer_Colleague::CollAtt_Base4()
 		}
 		}
 		}*/
-		if (/*true == m_bMyHiting || */2.233f <= AniTime)
-		{
-			m_fCoolTimer_limit = 0.045f;
-			Function_Checking_AttCoolTime(m_fCoolTimer_limit);
-			m_bBase_Att[0] = true;
-			m_bChecking_MyHit = true;
-			if (true == m_bNest_Att_CoolTimer)
-				++m_iNormalAtt_Count;
-
-		}
-		else/* if (false == m_bMyHiting)*/
-		{
-			m_bChecking_MyHit = false;
-			m_bMyHiting = false;
-			m_bBase_Att[0] = false;
-			m_bBase_Att[1] = false;
-			m_bBase_Att[2] = false;
-			m_bBase_Att[3] = false;
-		}
-
 		if (0.f <= AniTime && 2.233f >= AniTime)
 		{
 			if (true == m_bNest_Att_CoolTimer)
@@ -1599,12 +1497,17 @@ void CPlayer_Colleague::Reset_Motion_State()
 	m_pSword->Set_Target_CanAttack(false);
 	m_pSword->Set_Enable_Record(false);
 
-
-
 	LOOP(20)
 	{
 		m_bEventTrigger[i] = false;
 	}
+
+	m_bChecking_MyHit = false;
+	m_bMyHiting = false;
+	m_bBase_Att[0] = false;
+	m_bBase_Att[1] = false;
+	m_bBase_Att[2] = false;
+	m_bBase_Att[3] = false;
 }
 
 void CPlayer_Colleague::Enter_Collision()

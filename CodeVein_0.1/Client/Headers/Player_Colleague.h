@@ -117,13 +117,15 @@ private:
 	void	CollIdle_Waiting();
 
 	void	CollAtt_Skil();
+	void	CollAtt_ThreeCombo();
+	void	CollAtt_CenterDown();
+
 	void	CollAtt_Normal();
 	void	CollAtt_Base1();
 	void	CollAtt_Base2();
 	void	CollAtt_Base3();
 	void	CollAtt_Base4();
-	void	CollAtt_ThreeCombo();
-	void	CollAtt_CenterDown();
+
 
 	void	CollGuard_Idle();
 	void	CollGuard_Walk();
@@ -222,6 +224,8 @@ private:
 
 	_bool	m_bNest_Att_CoolTimer = false;
 	_bool	m_bChecking_MyHit = false;
+
+	_bool	m_bEnd_Attacting = false;
 
 public:
 	static	CPlayer_Colleague* Create(_Device pGraphic_Device);
