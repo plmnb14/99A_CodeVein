@@ -67,10 +67,19 @@ _int CWeapon::Late_Update_GameObject(_double TimeDelta)
 
 	if (false == m_tObjParam.bInvisible)
 	{
-		if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
-			return E_FAIL;
-		if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-			return E_FAIL;
+		if (!m_bDissolve)
+		{
+			if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
+				return E_FAIL;
+			if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+				return E_FAIL;
+		}
+		else
+		{
+			if (FAILED(m_pRenderer->Add_RenderList(RENDER_ALPHA, this)))
+				return E_FAIL;
+		}
+
 	}
 
 	//if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
@@ -94,8 +103,10 @@ HRESULT CWeapon::Render_GameObject()
 
 	for (_uint i = 0; i < iNumSubSet; ++i)
 	{
-		if (false == m_bReadyDead && !m_bDissolve)
-			m_iPass = m_pMesh_Static->Get_MaterialPass(i);
+		m_iPass = m_pMesh_Static->Get_MaterialPass(i);
+
+		if (m_bDissolve)
+			m_iPass = 3;
 
 		m_pShader->Begin_Pass(m_iPass);
 

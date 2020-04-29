@@ -238,6 +238,8 @@ _int CSwordGenji::Late_Update_GameObject(_double TimeDelta)
 	{
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 			return E_FAIL;
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+			return E_FAIL;
 	}
 	else
 	{
@@ -245,8 +247,6 @@ _int CSwordGenji::Late_Update_GameObject(_double TimeDelta)
 			return E_FAIL;
 	}
 
-	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-		return E_FAIL;
 	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
 	//	return E_FAIL;
 

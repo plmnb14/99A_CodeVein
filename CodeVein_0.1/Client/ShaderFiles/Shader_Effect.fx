@@ -518,8 +518,8 @@ PS_OUT PS_SSD(PS_IN In)
 		Color.a *= vGradientMask.x;
 	}
 
-	//Color.rgb *= 0.03f;
-	//Color.r += 0.05f;
+	Color.rgb *= 0.03f;
+	Color.r += 0.02f;
 	Out.vColor = Color;
 	
 	return Out;

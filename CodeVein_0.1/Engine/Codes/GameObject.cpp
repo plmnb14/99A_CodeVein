@@ -179,10 +179,10 @@ void CGameObject::Check_Dissolve(_double TimeDelta)
 			if (m_bReadyDead)
 				m_bIsDead = true;
 
-			else
-			{
-				m_bDissolve = false;
-			}
+			//else
+			//{
+			//	m_bDissolve = false;
+			//}
 
 			m_fFXAlpha = 1.f;
 		}
