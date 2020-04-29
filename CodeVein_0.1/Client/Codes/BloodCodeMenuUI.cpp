@@ -2,6 +2,7 @@
 #include "..\Headers\BloodCodeMenuUI.h"
 #include "Player.h"
 #include "UI_Manager.h"
+#include "CollisionMgr.h"
 
 CBloodCodeMenuUI::CBloodCodeMenuUI(_Device pDevice)
 	: CUI(pDevice)
@@ -65,49 +66,29 @@ _int CBloodCodeMenuUI::Update_GameObject(_double TimeDelta)
 	TARGET_TO_TRANS(m_pSkillReleaseUI)->Set_Pos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookZ) * -0.0005f);
 	TARGET_TO_TRANS(m_pSkillReleaseUI)->Set_Angle(m_pTransformCom->Get_Angle());
 	m_pSkillReleaseUI->Set_Active(m_bIsActive);
-	m_pSkillReleaseUI->Set_SlotPos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookZ) * -0.0006f);
-	
-	if (g_pInput_Device->Key_Up(DIK_RIGHT))
-	{
-		m_pBloodCodeSelectUI->MoveRight();	
-	}
-	
+	//m_pSkillReleaseUI->Set_SlotPos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookZ) * -0.0006f);
 
-	if (!m_bIsActive)
+	if (!m_bIsActive) // 비활성화
 	{
 		m_pBloodCodeSelectUI->Set_Active(false);
 		m_pSkillReleaseUI->Set_Active(false);
 	}
-	else
+	else // 활성화
 	{
-		if (m_bIsChoiseBloodCode)
+		if (!m_bIsChoiseBloodCode)
+		{
+			m_pBloodCodeSelectUI->Set_Active(true);
+			m_pSkillReleaseUI->Set_Active(false);
+		}
+		else if(m_bIsChoiseBloodCode)
 		{
 			m_pBloodCodeSelectUI->Set_Active(false);
 			m_pSkillReleaseUI->Set_Active(true);
 
-			if (g_pInput_Device->Key_Up(DIK_RETURN))
-				m_bIsChoiseBloodCode = false;
-		}
-		else
-		{
-			m_pBloodCodeSelectUI->Set_Active(true);
-			m_pSkillReleaseUI->Set_Active(false);
-
-			if (g_pInput_Device->Key_Up(DIK_LEFT))
-			{
-				m_pBloodCodeSelectUI->MoveLeft();
-			}
-			if (g_pInput_Device->Key_Up(DIK_RETURN))
-			{
-
-				m_pBloodCodeSelectUI->Select_BloodCode();
-				m_pSkillReleaseUI->Set_Type(m_pBloodCodeSelectUI->Get_Type());
-				m_bIsChoiseBloodCode = true;
-
-			}
+			m_pSkillReleaseUI->Set_Type(m_pBloodCodeSelectUI->Get_Type());
+			
 		}
 	}
-	
 	
 	
 	return NO_EVENT;
@@ -169,6 +150,8 @@ HRESULT CBloodCodeMenuUI::Add_Component()
 	// for.Com_VIBuffer
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Rect", L"Com_VIBuffer", (CComponent**)&m_pBufferCom)))
 		return E_FAIL;
+
+	
 
 	return NOERROR;
 }

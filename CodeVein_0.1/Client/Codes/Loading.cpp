@@ -1344,7 +1344,7 @@ _uint CLoading::Loading_Stage()
 		// ÅäÅÛ ¹æ»çÃÑ¾Ë
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBullet", CCocoonBullet::Create(m_pGraphicDev))))
 			return E_FAIL;
-		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_CocoonBullet", L"Monster_CocoonBullet", 60);
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_CocoonBullet", L"Monster_CocoonBullet", 800);
 		// ÅäÅÛ ÃÑ¾Ë
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBigBullet", CCocoonBigBullet::Create(m_pGraphicDev))))
 			return E_FAIL;

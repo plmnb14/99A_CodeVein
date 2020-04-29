@@ -70,6 +70,12 @@ public:
 	virtual _bool Get_Target_SuperArmor() { return m_tObjParam.bSuperArmor; };
 	virtual _bool Get_Target_IsExicution() { return m_tObjParam.bIsExecution; }
 	virtual _bool Get_Target_CanExicution() { return m_tObjParam.bCanExecution; }
+
+	virtual _bool Get_Target_IsCounter() { return m_tObjParam.bIsCounter; }
+	virtual _bool Get_Target_CanCounter() { return m_tObjParam.bCanCounter; }
+	virtual _bool Get_Target_IsRepel() { return m_tObjParam.bIsRepel; }
+	virtual _bool Get_Target_CanRepel() { return m_tObjParam.bCanRepel; }
+
 	virtual _float Get_Target_Hp() { return m_tObjParam.fHp_Cur; };
 	virtual _float Get_Target_Stamina() { return m_tObjParam.fStamina_Cur; };
 	virtual _float Get_Target_HoldGage() { return m_tObjParam.fHoldGage_Cur; };
@@ -99,13 +105,18 @@ public:
 	virtual void Set_Target_SuperArmor(_bool _bSuperArmor) { m_tObjParam.bSuperArmor = _bSuperArmor; }
 	virtual void Set_Target_IsExicution(_bool _bIsExicution) { m_tObjParam.bIsExecution = _bIsExicution; }
 	virtual void Set_Target_CanExicution(_bool _bCanExicution) {m_tObjParam.bCanExecution = _bCanExicution; }
+
+	virtual void Set_Target_IsCounter(_bool _bIsCounter) { m_tObjParam.bIsCounter = _bIsCounter; }
+	virtual void Set_Target_CanCounter(_bool _bCanCounter) { m_tObjParam.bCanCounter = _bCanCounter; }
+	virtual void Set_Target_IsRepel(_bool _bIsRepel) { m_tObjParam.bIsRepel = _bIsRepel; }
+	virtual void Set_Target_CanRepel(_bool _bCanRepel) { m_tObjParam.bCanRepel = _bCanRepel; }
 	virtual void Set_Target_DodgeTimer_Cur(_float _fDodgeTimer) { m_tObjParam.fDodgeTimer_Cur = _fDodgeTimer; }
 	virtual void Set_Target_DodgeTimer_Max(_float _fDodgeTimer) { m_tObjParam.fDodgeTimer_Max = _fDodgeTimer; }
 	virtual void Set_Target_GuardTimer_Cur(_float _fDodgeTimer) { m_tObjParam.fGuardTimer_Cur = _fDodgeTimer; }
 	virtual void Set_Target_GuardTimer_Max(_float _fDodgeTimer) { m_tObjParam.fGuardTimer_Max = _fDodgeTimer; }
 	virtual void Set_Target_Execution_Type(EXE_TYPE _eType) { m_tObjParam.eExecutionType = _eType; }
 	virtual void Set_Target_Execution_Wpn(EXE_WPN _eWpn) { m_tObjParam.eExecutionWpn = _eWpn; }
-
+	virtual void Set_CounterTarget(CGameObject* pGameObj) { pCounterTarget = pGameObj; };
 
 	virtual void Set_Target_HitDir(_v3 _vHitDir) { m_tObjParam.vHitDir = _vHitDir; }
 	virtual void Set_Target_HitPos(_v3 _vHitPos) { m_tObjParam.vHitPos = _vHitPos; }
@@ -127,6 +138,7 @@ protected:
 
 protected:
 	CGameObject*	m_pTarget = nullptr;
+	CGameObject*	pCounterTarget = nullptr;
 
 protected:
 	_bool	m_bIsDead = false;

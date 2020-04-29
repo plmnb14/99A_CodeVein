@@ -32,11 +32,11 @@ HRESULT CWeapon::Ready_GameObject(void * pArg)
 
 	m_pTrailEffect = g_pManagement->Create_Trail();
 	m_pTrailEffect->Set_TrailIdx(0);
-
+	
 	m_pDistortionEffect = g_pManagement->Create_Trail();
 	m_pDistortionEffect->Set_TrailIdx(3);
 	m_pDistortionEffect->Set_TrailType(Engine::CTrail_VFX::Trail_Distortion);
-
+	
 	m_pStaticTrailEffect = g_pManagement->Create_Trail();
 	m_pStaticTrailEffect->Set_TrailIdx(1);
 
@@ -67,10 +67,19 @@ _int CWeapon::Late_Update_GameObject(_double TimeDelta)
 
 	if (false == m_tObjParam.bInvisible)
 	{
-		if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
-			return E_FAIL;
-		if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-			return E_FAIL;
+		if (!m_bDissolve)
+		{
+			if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
+				return E_FAIL;
+			if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+				return E_FAIL;
+		}
+		else
+		{
+			if (FAILED(m_pRenderer->Add_RenderList(RENDER_ALPHA, this)))
+				return E_FAIL;
+		}
+
 	}
 
 	//if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
@@ -90,13 +99,14 @@ HRESULT CWeapon::Render_GameObject()
 
 	m_pShader->Begin_Shader();
 
-
 	_uint iNumSubSet = (_uint)m_pMesh_Static->Get_NumMaterials();
 
 	for (_uint i = 0; i < iNumSubSet; ++i)
 	{
-		if (false == m_bReadyDead && !m_bDissolve)
-			m_iPass = m_pMesh_Static->Get_MaterialPass(i);
+		m_iPass = m_pMesh_Static->Get_MaterialPass(i);
+
+		if (m_bDissolve)
+			m_iPass = 3;
 
 		m_pShader->Begin_Pass(m_iPass);
 
@@ -121,8 +131,6 @@ HRESULT CWeapon::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 	if (nullptr == pShader ||
 		nullptr == m_pMesh_Static)
 		return E_FAIL;
-
-	pShader->Begin_Shader();
 
 	_mat		ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
 	_mat		ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
@@ -157,7 +165,6 @@ HRESULT CWeapon::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 
 		pShader->End_Pass();
 	}
-	pShader->End_Shader();
 
 	return NOERROR;
 }
@@ -340,7 +347,7 @@ void CWeapon::Update_Trails(_double TimeDelta)
 	{
 		m_pTrailEffect->Set_ParentTransform(&matWorld);
 		m_pTrailEffect->Ready_Info(vBegin + vDir * fBeginValue, vBegin + vDir * fEndValue);
-		// m_pTrailEffect->Update_GameObject(TimeDelta);
+		m_pTrailEffect->Update_GameObject(TimeDelta);
 	}
 
 	if (m_pDistortionEffect && !m_bSingleTrail)
@@ -374,6 +381,9 @@ void CWeapon::Set_SkillMode(_bool _bSkill)
 {
 	m_bSingleTrail = _bSkill;
 
+	if (!m_pTrailEffect)
+		return;
+
 	if (_bSkill)
 		m_pTrailEffect->Set_TrailIdx(6);
 	else
@@ -384,6 +394,9 @@ void CWeapon::Set_TrailIndex(_int iIdx, _bool bStaticTrail)
 {
 	m_bSingleTrail = true;
 
+	if (!m_pTrailEffect || !m_pStaticTrailEffect)
+		return;
+
 	if(!bStaticTrail)
 		m_pTrailEffect->Set_TrailIdx(iIdx);
 	else
@@ -392,6 +405,9 @@ void CWeapon::Set_TrailIndex(_int iIdx, _bool bStaticTrail)
 
 void CWeapon::Set_TrailUseMask(_bool bUse, _int iIdx, _bool bStaticTrail)
 {
+	if (!m_pTrailEffect || !m_pStaticTrailEffect)
+		return;
+
 	if (!bStaticTrail)
 		m_pTrailEffect->Set_UseMask(bUse, iIdx);
 	else
@@ -694,7 +710,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	// ÇÑ¼Õ°Ë
 	//===========================================================================================
 
-	m_tWeaponParam[Wpn_SSword].fDamage = 100.f;
+	m_tWeaponParam[Wpn_SSword].fDamage = 1000.f;
 	m_tWeaponParam[Wpn_SSword].fRadius = 0.6f;
 	m_tWeaponParam[Wpn_SSword].fTrail_Min = 0.6f;
 	m_tWeaponParam[Wpn_SSword].fTrail_Max = 1.8f;

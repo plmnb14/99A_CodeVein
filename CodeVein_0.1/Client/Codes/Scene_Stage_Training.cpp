@@ -16,6 +16,7 @@
 
 #include "Player_Colleague.h"
 
+
 CScene_Stage_Training::CScene_Stage_Training(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
 {
@@ -49,6 +50,7 @@ _int CScene_Stage_Training::Update_Scene(_double TimeDelta)
 	//Create_Fog(TimeDelta);
 	//Create_Snow(TimeDelta);
 
+	
 	return _int();
 }
 
@@ -136,6 +138,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
 	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+
 
 	//// Å¸ÀÌ¸Ç
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_ThaiMan", &MONSTER_STATUS(MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None));
@@ -296,12 +299,12 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
 	// »ç½¿¿Õ
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_DeerKing", &CDeerKing::INFO(10.f, 5.f, 2.f));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(3.f, 0.f, 3.f));
-	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
-	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_DeerKing", &CDeerKing::INFO(10.f, 5.f, 2.f));
+	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(3.f, 0.f, 3.f));
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
+	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
 	return S_OK;
 }

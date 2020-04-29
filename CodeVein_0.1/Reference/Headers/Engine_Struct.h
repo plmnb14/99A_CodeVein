@@ -97,6 +97,12 @@ namespace Engine
 		_bool		bIsExecution;	// 처형 중인 경우, 혹은 처형 당하는 중
 		_bool		bIgnoreExecution;	// 처형불가 대상
 
+		_bool		bCanCounter;	// 카운터 가능한지
+		_bool		bIsCounter;		// 카운터 중인지
+
+		_bool		bCanRepel;		// 반격당했는지
+		_bool		bIsRepel;		// 반격당하는 중인지
+
 		_v3			vHitDir;		// 맞은 방향
 		_v3			vHitPos;		// 때린놈 위치
 

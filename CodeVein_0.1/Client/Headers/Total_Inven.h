@@ -24,6 +24,7 @@ public:
 
 public:
 	void Set_Detail(_bool bIsDetail) { m_bIsDetail = bIsDetail; }
+	void Set_PlayerBloodCodeType(BloodCode_ID eID) { m_ePlayerBloodCode = eID; }
 
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();
@@ -50,9 +51,9 @@ private:
 	CWeapon_Slot*			m_pWeapon_Slot[2];
 	CArmor_Slot*			m_pArmor_Slot;
 	CBloodCode_Icon*		m_pBloodCode = nullptr;
-	//vector<CExpendables_Slot*>	m_vecQuickSlot;
 	CInfo_Slot*				m_pQuickSlotInfo[8];
 	CNumberUI*				m_pNumberUI[8];
+	BloodCode_ID			m_ePlayerBloodCode = BloodCode_End;
 
 public:
 	static CTotal_Inven*	Create(_Device pGraphic_Device);

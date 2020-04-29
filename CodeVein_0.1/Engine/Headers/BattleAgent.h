@@ -5,6 +5,7 @@
 
 BEGIN(Engine)
 
+class CGameObject;
 class CTransform;
 class CShader;
 class CGameObject;
