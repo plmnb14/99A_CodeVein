@@ -37,6 +37,14 @@ struct VS_IN
 {
 	float3		vPosition : POSITION;
 	float2		vTexUV : TEXCOORD0;
+	float4		vInstanceRight	: TEXCOORD1;
+	float4		vInstanceUp		: TEXCOORD2;
+	float4		vInstanceLook	: TEXCOORD3;
+	float4		vInstancePos	: TEXCOORD4;
+	float4		vColor			: TEXCOORD5;
+	float3		vOption01		: TEXCOORD6;
+	bool4		vOption02		: TEXCOORD7;
+	bool4		vOption03		: TEXCOORD8;
 };
 
 struct VS_OUT
@@ -108,7 +116,6 @@ VS_OUT2		VS_SKILL_COOL(VS_IN In)
 	return Out;
 }
 
-
 // POSITION시멘틱을 가진 멤버변수에 대해서 W값으로 XYZW를 나누는 연산을 수행.(원근 투영)
 // 투영스페이스 상에 존재하는 정점(-1, 1 ~ 1, -1)을 뷰포트영역상의 정점(0, 0 ~ WINCX, WINCY)으로 변환한다.
 // 래스터라이즈 : 세개 정점에 둘러쌓여진 영역안에 존재하는 픽셀의 정보를 정점정보를 기반하여 생성한다.
@@ -132,6 +139,7 @@ struct PS_OUT
 {
 	vector		vColor : COLOR0;
 };
+
 
 // 픽셀의 색을 결정한다.
 PS_OUT PS_MAIN(PS_IN In) 
@@ -230,8 +238,6 @@ technique Default_Technique
 
 	pass AlphaBlending
 	{
-		//ZwriteEnable = false;
-		zEnable = false;
 		AlphaBlendEnable = true;
 		SrcBlend = SrcAlpha;
 		destblend = invsrcalpha;
@@ -311,6 +317,7 @@ technique Default_Technique
 	}
 	pass	UI_R_Masking_Rendering
 	{
+		zEnable = false;
 		AlphaBlendEnable = true;
 		srcblend = srcalpha;
 		destblend = invsrcalpha;
@@ -318,4 +325,5 @@ technique Default_Technique
 		vertexshader = compile vs_3_0 VS_MAIN();
 		pixelshader = compile ps_3_0 PS_UI_MASK2();
 	}
+
 }

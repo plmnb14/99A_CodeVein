@@ -37,8 +37,11 @@ _int CMistletoeOptionUI::Update_GameObject(_double TimeDelta)
 		return DEAD_OBJ;
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
-	Compute_ViewZ(&m_pTransformCom->Get_Pos());
 	
+	_v3 vWorldPos;
+
+	memcpy(vWorldPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
+	Compute_ViewZ(&vWorldPos);
 
 	if (m_bIsSelect)
 		m_fAlpha = 0.5f;

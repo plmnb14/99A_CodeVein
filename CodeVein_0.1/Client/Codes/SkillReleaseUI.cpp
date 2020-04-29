@@ -46,14 +46,13 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 	_uint idx = 0;
 	for (auto& iter : m_vecSkillSlot)
 	{
-		TARGET_TO_TRANS(iter)->Set_Pos(/*m_vSlotPosition*/m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookX) * -0.25f + *V3_NORMAL_SELF(&vLookY) * 0.3f
-			+ *V3_NORMAL_SELF(&vLookX) * _float(idx) * 0.3f + *V3_NORMAL_SELF(&vLookZ) * 0.001f);
+		TARGET_TO_TRANS(iter)->Set_Pos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookX) * -0.25f + *V3_NORMAL_SELF(&vLookY) * 0.3f
+			+ *V3_NORMAL_SELF(&vLookX) * _float(idx) * 0.5f + *V3_NORMAL_SELF(&vLookZ) * -0.001f);
 		TARGET_TO_TRANS(iter)->Set_Angle(m_pTransformCom->Get_Angle());
 		iter->Set_Active(m_bIsActive);
 		++idx;
 	}
 
-	
 	
 	switch (m_eBloodCodeType)
 	{
@@ -179,12 +178,12 @@ void CSkillReleaseUI::SetUp_Default()
 {
 	CBloodSkillSlot* pInstance = nullptr;
 
-	LOOP(3)
+	LOOP(2)
 	{
 		pInstance = static_cast<CBloodSkillSlot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodSkillSlot", nullptr));
 		TARGET_TO_TRANS(pInstance)->Set_Scale(_v3(0.3f, 0.3f, 1.f));
-		m_vecSkillSlot.push_back(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_StageUI", nullptr);
+		m_vecSkillSlot.push_back(pInstance);
 	}
 
 	
