@@ -74,10 +74,19 @@ _int CUrchin::Late_Update_GameObject(_double TimeDelta)
 
 	IF_NULL_VALUE_RETURN(m_pRendererCom, E_FAIL);
 
-	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
-		return E_FAIL;
-	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-		return E_FAIL;
+	if (!m_bDissolve)
+	{
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
+			return E_FAIL;
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
+			return E_FAIL;
+	}
+
 
 	m_dTimeDelta = TimeDelta;
 
@@ -106,8 +115,10 @@ HRESULT CUrchin::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			if (MONSTER_STATETYPE::DEAD != m_eFirstCategory)
-				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+			m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+
+			if (m_bDissolve)
+				m_iPass = 3;
 
 			m_pShaderCom->Begin_Pass(m_iPass);
 
@@ -134,8 +145,7 @@ HRESULT CUrchin::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
 	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
+	m_pMeshCom->Play_Animation(0.f);
 
 	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;

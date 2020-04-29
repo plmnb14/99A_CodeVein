@@ -57,6 +57,8 @@ _int CBloodCodeSlot::Update_GameObject(_double TimeDelta)
 		break;
 	}
 	Compute_ViewZ(&m_pTransformCom->Get_Pos());
+
+	m_pCollider->Update(m_pTransformCom->Get_Pos());
 	return NO_EVENT;
 }
 
@@ -157,6 +159,15 @@ HRESULT CBloodCodeSlot::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Rect", L"Com_VIBuffer", (CComponent**)&m_pBufferCom)))
 		return E_FAIL;
 
+	// for.Com_Collider
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+		return E_FAIL;
+
+	m_pCollider->Set_Radius(_v3{ 0.15f, 0.111f, 0.01f });
+	m_pCollider->Set_Dynamic(true);
+	m_pCollider->Set_Type(COL_SPHERE);
+	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos());
+
 	return NOERROR;
 }
 
@@ -209,6 +220,7 @@ void CBloodCodeSlot::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pCollider);
 
 	CUI::Free();
 }

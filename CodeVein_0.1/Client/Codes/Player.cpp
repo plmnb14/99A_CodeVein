@@ -188,8 +188,6 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 		nullptr == m_pDynamicMesh)
 		return E_FAIL;
 
-	pShader->Begin_Shader();
-
 	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
 	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 
@@ -236,7 +234,6 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 			pShader->End_Pass();
 		}
 	}
-	pShader->End_Shader();
 
 	return NOERROR;
 }
@@ -3033,10 +3030,10 @@ void CPlayer::Play_Hit()
 			m_bEventTrigger[i] = false;
 		}
 
-		//m_eAnim_Upper =
-		//	(iHitDir == 0 ? Cmn_Hit01_B : 
-		//		iHitDir == 1 ? Cmn_Hit01_F : 
-		//		iHitDir == 2 ? Cmn_Hit01_R : Cmn_Hit01_L);
+		m_eAnim_Upper =
+			(iHitDir == 0 ? Cmn_Hit01_B : 
+				iHitDir == 1 ? Cmn_Hit01_F : 
+				iHitDir == 2 ? Cmn_Hit01_R : Cmn_Hit01_L);
 
 		//m_eAnim_Upper =
 		//	(iHitDir == 0 ? Cmn_Hit02_B :
@@ -3053,10 +3050,10 @@ void CPlayer::Play_Hit()
 		//		iHitDir == 1 ? Cmn_Hit04_F :
 		//		iHitDir == 2 ? Cmn_Hit04_R : Cmn_Hit04_L);
 
-		m_eAnim_Upper =
-			(iHitDir == 0 ? Cmn_HitBlow_B :
-				iHitDir == 1 ? Cmn_HitBlow_F :
-				iHitDir == 2 ? Cmn_HitBlow_R : Cmn_HitBlow_L);
+		//m_eAnim_Upper =
+		//	(iHitDir == 0 ? Cmn_HitBlow_B :
+		//		iHitDir == 1 ? Cmn_HitBlow_F :
+		//		iHitDir == 2 ? Cmn_HitBlow_R : Cmn_HitBlow_L);
 
 		// 임시 다운 테스트용
 		m_tObjParam.bDown = true;
@@ -10025,8 +10022,8 @@ HRESULT CPlayer::SetUp_Default()
 	m_tObjParam.bCanCounter = true;
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.bIsDodge = false;
-	m_tObjParam.fHp_Cur = 500.f;
-	m_tObjParam.fHp_Max = 500.f;
+	m_tObjParam.fHp_Cur = 50000.f;
+	m_tObjParam.fHp_Max = 50000.f;
 	
 	// Anim
 	m_fAnimMutiply = 1.f;

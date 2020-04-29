@@ -86,7 +86,7 @@ _int CHunterBullet::Update_GameObject(_double TimeDelta)
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, m_pTransformCom->Get_Pos());
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag5, m_pTransformCom->Get_Pos());
 		m_pBulletBody->Set_Dead();
-		m_pTrailEffect->Set_Dead();
+		//m_pTrailEffect->Set_Dead();
 
 		m_bDead = true;
 	}

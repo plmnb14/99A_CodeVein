@@ -16,6 +16,9 @@ private:
 	virtual ~CBloodCodeMenuUI() = default;
 
 public:
+	void Set_IsChoise(_bool bIsChoise) { m_bIsChoiseBloodCode = bIsChoise; }
+
+public:
 	virtual HRESULT Ready_GameObject_Prototype();
 	virtual HRESULT Ready_GameObject(void* pArg);
 	virtual _int	Update_GameObject(_double TimeDelta);
@@ -40,7 +43,6 @@ private:
 	vector<CBloodCodeSlot*> m_vecBloodCodeSlot;
 	_bool					m_bIsCodeSelect = false;
 	_uint					m_iSelectIndex = 0;
-	//CCodeOwnerUI*			m_pCodeOwnerUI = nullptr;
 	_float					m_fAlpha = 0.f;
 	CBloodCodeSelectUI*		m_pBloodCodeSelectUI = nullptr;
 	CSkillReleaseUI*		m_pSkillReleaseUI = nullptr;
