@@ -232,6 +232,10 @@ HRESULT CRenderer::Ready_Component_Prototype()
 
 	_float fTargetSize = 150.f;
 	// For.Target_Diffuse`s Debug Buffer
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_RimNormal", fTargetSize * 5, 0.f, fTargetSize, fTargetSize)))
+		return E_FAIL;
+
+	// For.Target_Diffuse`s Debug Buffer
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Diffuse", 0.0f, 0.0f, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
@@ -345,8 +349,8 @@ HRESULT CRenderer::Draw_RenderList()
 	if (FAILED(Render_MotionBlurTarget()))
 		return E_FAIL;
 
-	//if (FAILED(Render_ShadowMap()))
-	//	return E_FAIL;
+	if (FAILED(Render_ShadowMap()))
+		return E_FAIL;
 
 	// 노멀타겟과 빛정보를 이용하여 셰이드타겟에 값을 그리낟.
 	if (FAILED(Render_LightAcc()))

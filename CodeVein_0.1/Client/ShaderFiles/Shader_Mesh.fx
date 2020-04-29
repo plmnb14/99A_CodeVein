@@ -8,9 +8,11 @@ bool		g_bDissolve = false;
 float3		g_vCamPos;
 
 vector		g_vRimColor = (1.f, 1.f, 1.f, 1.f);
-float		g_fRimPower = 3.f;
+float		g_fRimPower = 5.f;
 float		g_fRimAlpha = 0.f;
-float		g_fSpecularPower = 0.0f;
+float		g_fSpecularPower = 1.0f;
+
+float		g_fEmissivePower = 1.f;
 
 texture		g_DiffuseTexture;
 texture		g_NormalTexture;
@@ -20,7 +22,8 @@ texture		g_IDTexture;
 texture		g_UnionTexture;
 texture		g_RoughnessTexture;
 texture		g_TransperencyTexture;
-
+texture		g_HeightTexture;
+	
 float4		g_vSpecularColor = (0.1f, 0.1f, 0.1f, 0.1f);
 
 //====================================================================================================
@@ -59,6 +62,17 @@ sampler		SpecularSampler = sampler_state
 sampler		EmissiveSampler = sampler_state
 {
 	texture = g_EmissiveTexture;
+	minfilter = linear;
+	magfilter = linear;
+	mipfilter = linear;
+};
+
+//====================================================================================================
+// Height Map
+//====================================================================================================
+sampler		HeightSampler = sampler_state
+{
+	texture = g_HeightTexture;
 	minfilter = linear;
 	magfilter = linear;
 	mipfilter = linear;
@@ -335,7 +349,7 @@ PS_OUT_ADVENCE PS_Default_DN(PS_IN In)
 	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 0.f);
 
 	//========================================================================================================================
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 0.2f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
 
 	//========================================================================================================================
 	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
@@ -371,7 +385,7 @@ PS_OUT_ADVENCE PS_Default_DNT(PS_IN In)
 	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 0.f);
 
 	//========================================================================================================================
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
 	// Depth.z == SpecularIntensity.x ( 스펙큘러의 x )
 
 	//========================================================================================================================
@@ -407,12 +421,12 @@ PS_OUT_ADVENCE PS_Default_DNS(PS_IN In)
 
 	float3 worldNormal = mul(TBN, TanNormal);
 
-	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, SpecularIntensity.z * 1.f);
+	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 1.f);
 	// SpecularIntensity.y 가 스펙큘러 같음
 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x * 1.f, SpecularIntensity.y * 1.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, SpecularIntensity.y);
 
 	//========================================================================================================================
 	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
@@ -451,7 +465,7 @@ PS_OUT_ADVENCE PS_Default_DNE(PS_IN In)
 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
 
 	//========================================================================================================================
 	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
@@ -459,8 +473,7 @@ PS_OUT_ADVENCE PS_Default_DNE(PS_IN In)
 	float4 fFinalRimColor = g_vRimColor;
 	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
 
-	Out.vEmissive = saturate(pow(tex2D(EmissiveSampler, In.vTexUV), 2.2) + fFinalRim);
-	Out.vEmissive.a = 1.f;
+	Out.vEmissive = pow(tex2D(EmissiveSampler, In.vTexUV), 2.2) + fFinalRim;
 	//========================================================================================================================
 	return Out;
 }
@@ -488,11 +501,11 @@ PS_OUT_ADVENCE PS_Default_DNSE(PS_IN In)
 
 	float3 worldNormal = mul(TBN, TanNormal);
 
-	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, SpecularIntensity.z * 1.f);
+	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 1.f);
 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x * 1.f, SpecularIntensity.y * 1.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x , SpecularIntensity.y);
 
 	//========================================================================================================================
 	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
@@ -500,8 +513,7 @@ PS_OUT_ADVENCE PS_Default_DNSE(PS_IN In)
 	float4 fFinalRimColor = g_vRimColor;
 	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
 
-	Out.vEmissive = (pow(tex2D(EmissiveSampler, In.vTexUV), 2.2) * 3.f + fFinalRim;
-	Out.vEmissive.a = 1.f;
+	Out.vEmissive = pow(tex2D(EmissiveSampler, In.vTexUV), 2.2) * 3.f + fFinalRim;
 	//========================================================================================================================
 
 	return Out;
@@ -526,11 +538,11 @@ PS_OUT_ADVENCE PS_Default_DNR(PS_IN In)
 
 	float3 worldNormal = mul(TBN, TanNormal);
 
-	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 1.f);
 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
 
 	//========================================================================================================================
 	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
@@ -556,6 +568,18 @@ PS_OUT_ADVENCE PS_Default_DNU(PS_IN In)
 
 	//========================================================================================================================
 
+	float3 vUnion = tex2D(UnionSampler, In.vTexUV).xyz;
+
+	// 메탈니스 : 빛 전체의 강도
+	float Metalness = vUnion.x;
+	// 러프니스 : 정반사의 정도.. 쉽게 말하면 == Specular Power
+	float Roughness = vUnion.y;
+	// AO
+	float AO = vUnion.z;
+
+	//========================================================================================================================
+
+
 	float3 TanNormal = tex2D(NormalSampler, In.vTexUV).xyz;
 
 	TanNormal = normalize(TanNormal * 2.f - 1.f);
@@ -565,11 +589,11 @@ PS_OUT_ADVENCE PS_Default_DNU(PS_IN In)
 
 	float3 worldNormal = mul(TBN, TanNormal);
 
-	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, AO);
 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, Roughness, Metalness);
 
 	//========================================================================================================================
 	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
@@ -602,11 +626,11 @@ PS_OUT_ADVENCE PS_Default_DNI(PS_IN In)
 
 	float3 worldNormal = mul(TBN, TanNormal);
 
-	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 1.f);
 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 0.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
 
 	//========================================================================================================================
 	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
@@ -639,7 +663,7 @@ PS_OUT_ADVENCE PS_Default_DNSU(PS_IN In)
 
 	float3 worldNormal = mul(TBN, TanNormal);
 
-	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, SpecularIntensity.z * 1.f);
+	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 1.f);
 
 	//========================================================================================================================
 
@@ -647,7 +671,49 @@ PS_OUT_ADVENCE PS_Default_DNSU(PS_IN In)
 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x * 1.f, SpecularIntensity.y * 1.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x, SpecularIntensity.y);
+
+	//========================================================================================================================
+	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
+
+	float4 fFinalRimColor = g_vRimColor;
+	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
+
+	Out.vEmissive = fFinalRim;
+	//========================================================================================================================
+
+	return Out;
+}
+
+PS_OUT_ADVENCE PS_Default_DNSH(PS_IN In)
+{
+	PS_OUT_ADVENCE			Out = (PS_OUT_ADVENCE)0;
+
+	Out.vDiffuse = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
+	//Out.vDiffuse = ceil(Out.vDiffuse * 3.f) / 3.f;
+
+	float3 SpecularIntensity = tex2D(SpecularSampler, In.vTexUV).xyz;
+
+	//========================================================================================================================
+
+	float HeightValue = tex2D(HeightSampler, In.vTexUV).x;
+
+	//========================================================================================================================
+
+	float3 TanNormal = tex2D(NormalSampler, In.vTexUV).xyz;
+
+	TanNormal = normalize(TanNormal * 2.f - 1.f);
+
+	float3x3 TBN = float3x3(normalize(In.T), normalize(In.B), normalize(In.N));
+	TBN = transpose(TBN);
+
+	float3 worldNormal = mul(TBN, TanNormal);
+
+	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 1.f);
+
+	//========================================================================================================================
+
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x, SpecularIntensity.y);
 
 	//========================================================================================================================
 	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
@@ -675,6 +741,13 @@ PS_OUT_ADVENCE PS_Default_DNSUID(PS_IN In)
 
 	float3 vUnion = tex2D(UnionSampler, In.vTexUV).xyz;
 
+	// 메탈니스 : 빛 전체의 강도
+	float Metalness = vUnion.x;
+	// 러프니스 : 정반사의 정도.. 쉽게 말하면 == Specular Power
+	float Roughness = vUnion.y;
+	// AO
+	float AO = vUnion.z;
+
 	//========================================================================================================================
 
 	float3 TanNormal = tex2D(NormalSampler, In.vTexUV).xyz;
@@ -686,7 +759,7 @@ PS_OUT_ADVENCE PS_Default_DNSUID(PS_IN In)
 
 	float3 worldNormal = mul(TBN, TanNormal);
 
-	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, AO);
 
 	//========================================================================================================================
 
@@ -699,7 +772,7 @@ PS_OUT_ADVENCE PS_Default_DNSUID(PS_IN In)
 
 	fFinalSpecular = fFinalSpecular * SpecularIntensity.y;
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x * 1.f, SpecularIntensity.y * 1.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, Roughness, Metalness * g_fSpecularPower);
 	 
 	//========================================================================================================================
 	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
@@ -708,6 +781,7 @@ PS_OUT_ADVENCE PS_Default_DNSUID(PS_IN In)
 	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
 	
 	Out.vEmissive = fFinalRim;
+	Out.vEmissive.a = 1.f;
 	//========================================================================================================================
 
 	return Out;
@@ -732,7 +806,7 @@ PS_OUT_ADVENCE PS_Default_D(PS_IN In)
 	//
 	//float3 worldNormal = mul(TBN, TanNormal);
 
-	Out.vNormal = vector(In.N.xyz * 0.5f + 0.5f, 0.f);
+	Out.vNormal = vector(In.N.xyz * 0.5f + 0.5f, 1.f);
 
 	//========================================================================================================================
 
@@ -771,7 +845,7 @@ PS_OUT_ADVENCE PS_Default_DNID(PS_IN In)
 
 	float3 worldNormal = mul(TBN, TanNormal);
 
-	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 1.f);
 
 	//========================================================================================================================
 
@@ -782,7 +856,7 @@ PS_OUT_ADVENCE PS_Default_DNID(PS_IN In)
 	float fReducePower = vIDValue.b;
 	float fFinalSpecular = (fDefaultSpecular + fSpecularPower) - fReducePower;
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 0.f, fFinalSpecular * 5.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, fFinalSpecular);
 
 	//========================================================================================================================
 	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
@@ -816,7 +890,7 @@ PS_OUT_ADVENCE PS_Default_DNEID(PS_IN In)
 
 	float3 worldNormal = mul(TBN, TanNormal);
 
-	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 1.f);
 
 	//========================================================================================================================
 
@@ -834,7 +908,6 @@ PS_OUT_ADVENCE PS_Default_DNEID(PS_IN In)
 	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
 
 	Out.vEmissive = saturate(pow(tex2D(EmissiveSampler, In.vTexUV), 2.2) + fFinalRim);
-	Out.vEmissive.a = 1.f;
 	//========================================================================================================================
 	return Out;
 }
@@ -851,6 +924,17 @@ PS_OUT_ADVENCE PS_Default_DNEU(PS_IN In)
 
 	//========================================================================================================================
 
+	float3 vUnion = tex2D(UnionSampler, In.vTexUV).xyz;
+
+	// 메탈니스 : 빛 전체의 강도
+	float Metalness = vUnion.x;
+	// 러프니스 : 정반사의 정도.. 쉽게 말하면 == Specular Power
+	float Roughness = vUnion.y;
+	// AO
+	float AO = vUnion.z;
+
+	//========================================================================================================================
+
 	float3 TanNormal = tex2D(NormalSampler, In.vTexUV).xyz;
 
 	TanNormal = normalize(TanNormal * 2.f - 1.f);
@@ -860,23 +944,11 @@ PS_OUT_ADVENCE PS_Default_DNEU(PS_IN In)
 
 	float3 worldNormal = mul(TBN, TanNormal);
 
-	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, AO);
 
 	//========================================================================================================================
 
-	float3 vUnion = tex2D(UnionSampler, In.vTexUV).xyz;
-
-	// 메탈니스
-	float Metalness = vUnion.x;
-	// 러프니스
-	float Roughness = vUnion.y;
-	// AO
-	float AO = vUnion.z;
-
-	//========================================================================================================================
-
-
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, Roughness, Metalness);
 
 	//========================================================================================================================
 	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
@@ -884,8 +956,7 @@ PS_OUT_ADVENCE PS_Default_DNEU(PS_IN In)
 	float4 fFinalRimColor = g_vRimColor;
 	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
 
-	Out.vEmissive = saturate(pow(tex2D(EmissiveSampler, In.vTexUV), 2.2) + fFinalRim);
-	Out.vEmissive.a = 1.f;
+	Out.vEmissive = (pow(tex2D(EmissiveSampler, In.vTexUV), 2.2) * g_fEmissivePower) + fFinalRim;
 	//========================================================================================================================
 	return Out;
 }
@@ -951,7 +1022,7 @@ PS_OUT_ADVENCE PS_DISSOLVE(PS_IN In)
 
 	float3 worldNormal = mul(TBN, TanNormal);
 
-	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 0.f);
+	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 1.f);
 
 	//====================================================================================================
 
@@ -964,6 +1035,7 @@ PS_OUT_ADVENCE PS_DISSOLVE(PS_IN In)
 	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
 
 	Out.vEmissive = fFinalRim;
+	Out.vEmissive.a = 1.f;
 	//====================================================================================================
 
 	return Out;
@@ -1267,5 +1339,20 @@ technique Default_Technique
 	//	VertexShader = compile vs_3_0 VS_Flag();
 	//	PixelShader = compile ps_3_0 PS_Flag();
 	//}
+
+	//====================================================================================================
+	// 19 - Default ( D N S H )
+	//====================================================================================================
+	pass Default_DNSH
+	{
+		AlphablendEnable = false;
+
+		AlphaTestEnable = true;
+		AlphaRef = 0;
+		AlphaFunc = Greater;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 PS_Default_DNSH();
+	}
 }
 

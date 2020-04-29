@@ -161,6 +161,14 @@ HRESULT CPlayer::Render_GameObject()
 
 			m_pShader->Set_DynamicTexture_Auto(m_pDynamicMesh, i, j);
 
+			if (13 == m_iPass)
+			{
+				_float fSpec = 0.1f;
+
+				if (FAILED(m_pShader->Set_Value("g_fSpecularPower", &fSpec, sizeof(_float))))
+					return E_FAIL;
+			}
+
 			m_pShader->Commit_Changes();
 
 			m_pDynamicMesh->Render_Mesh(i, j);
@@ -213,7 +221,7 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 	_bool bDecalTarget = false;
 	if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
 		return E_FAIL;
-	_float fBloomPower = 0.5f;
+	_float fBloomPower = 0.f;
 	if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
 		return E_FAIL;
 
@@ -227,7 +235,29 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			pShader->Begin_Pass(iPass);
+			_int tmpPass = m_pDynamicMesh->Get_MaterialPass(i, j);
+
+			if (15 == tmpPass)
+			{
+				pShader->Begin_Pass(3);
+			}
+
+			else if (13 == tmpPass || 14 == tmpPass)
+			{
+				pShader->Begin_Pass(1);
+			}
+
+			else if (19 == tmpPass)
+			{
+				// ¾ó±¼
+				pShader->Set_Texture("g_HeightTexture", m_pDynamicMesh->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_HEIGHT_MAP));
+				pShader->Begin_Pass(2);
+			}
+
+			else
+			{
+				pShader->Begin_Pass(iPass);
+			}
 
 			pShader->Commit_Changes();
 

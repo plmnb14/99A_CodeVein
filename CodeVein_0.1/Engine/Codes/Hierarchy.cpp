@@ -113,7 +113,7 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 
 		if (!lstrcmp(szTextureFileName, L"T_Inner_Female1_C.tga"))
 		{
-			//cout << "1" << endl;
+			cout << "1" << endl;
 		}
 
 		//==================================================================================================================================
@@ -140,9 +140,15 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 		if (SUCCEEDED(D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_EMISSIVE_MAP])))
 			m_bIncludeMap[MESHTEXTURE::TYPE_EMISSIVE_MAP] = true;
 		//==================================================================================================================================
+		// H - Height
+		//==================================================================================================================================
+		Change_TextureFileName(szFullPath, L"E", L"H");
+		if (SUCCEEDED(D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_EMISSIVE_MAP])))
+			m_bIncludeMap[MESHTEXTURE::TYPE_HEIGHT_MAP] = true;
+		//==================================================================================================================================
 		// R - Roughness
 		//==================================================================================================================================
-		Change_TextureFileName(szFullPath, L"E", L"R");
+		Change_TextureFileName(szFullPath, L"H", L"R");
 		if (SUCCEEDED(D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_ROUGHNESS_MAP])))
 			m_bIncludeMap[MESHTEXTURE::TYPE_ROUGHNESS_MAP] = true;
 		//==================================================================================================================================
@@ -202,6 +208,13 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 						continue;
 					}
 
+					continue;
+				}
+
+				else if (m_bIncludeMap[MESHTEXTURE::TYPE_HEIGHT_MAP] == true)
+				{
+					// D N S H -> 아마 피부전용이 될꺼임
+					pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 19;
 					continue;
 				}
 
