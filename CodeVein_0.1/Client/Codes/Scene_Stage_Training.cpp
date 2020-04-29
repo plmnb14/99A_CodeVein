@@ -47,7 +47,7 @@ _int CScene_Stage_Training::Update_Scene(_double TimeDelta)
 	CUI_Manager::Get_Instance()->Update_UI();
 	
 	//Create_Fog(TimeDelta);
-	Create_Snow(TimeDelta);
+	//Create_Snow(TimeDelta);
 
 	return _int();
 }
@@ -79,6 +79,9 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Boss")))
 		return E_FAIL;
 
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Pet")))
+		return E_FAIL;
+
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_MonsterProjectile")))
 		return E_FAIL;
 
@@ -106,12 +109,19 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Pickup_Item", SCENE_STAGE, L"Layer_PickUPUI")))
 	//	return E_FAIL;
 
-	//// ÅäÅÛ
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon", &MONSTER_STATUS(MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
-	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	// ÅäÅÛ
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon", &MONSTER_STATUS(MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None));
+	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(6.f, 0.f, 6.f));
+	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+
+	// ÅäÅÛ
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon", &MONSTER_STATUS(MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None));
+	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
+	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	//// ÇåÅÍ
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &MONSTER_STATUS(MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_Gun));
@@ -162,6 +172,13 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
+	// Æê_µ¶³ªºñ
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Pet_PoisonButterFly", nullptr);
+	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
+	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Pet", nullptr);
+
 	//====================================================================================================================================================
 	// °Ë°ÕÁö
 	//====================================================================================================================================================
@@ -191,12 +208,12 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	// ÃÑ°ÕÁö
 	//====================================================================================================================================================
 	
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::Normal, CGunGenji::CheckGun, 10.f, 3.f, 2.f));
-	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(8.f, 0.f, -8.f));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
-	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::Normal, CGunGenji::CheckGun, 10.f, 3.f, 2.f));
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(8.f, 0.f, -8.f));
+	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
+	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::Jungle));
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);

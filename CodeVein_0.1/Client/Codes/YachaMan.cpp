@@ -2665,7 +2665,7 @@ HRESULT CYachaMan::Add_Component(void* pArg)
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
 
-	m_pCollider->Set_Radius(_v3{ 0.5f, 0.5f, 0.5f });
+	m_pCollider->Set_Radius(_v3{ 0.8f,0.8f,0.8f });
 	m_pCollider->Set_Dynamic(true);
 	m_pCollider->Set_Type(COL_SPHERE);
 	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pCollider->Get_Radius().y , 0.f });
@@ -2815,7 +2815,7 @@ HRESULT CYachaMan::Ready_Collider()
 	m_vecPhysicCol.push_back(pCollider);
 
 	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
-	fRadius = 0.7f;
+	fRadius = 1.2f;
 
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);

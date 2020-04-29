@@ -6,6 +6,8 @@
 #include "Weapon.h"
 #include "Haze.h"
 #include "ObjectPool_Manager.h"
+#include "Trail_VFX.h"
+#include "Effect.h"
 
 enum FBLR 
 { 
@@ -122,6 +124,14 @@ struct MONSTER_STATUS
 	}
 };
 
+enum PET_BULLET_TYPE
+{
+	PET_BULLET_POISON,
+	PET_BULLET_ICE,
+	PET_BULLET_FIRE,
+	PET_BULLET_NONE
+};
+
 struct PET_STATUS
 {
 	MONSTER_GRADETYPE	eUseWhatGrade = MONSTER_GRADETYPE::GRADE_NORMAL;
@@ -132,4 +142,17 @@ struct PET_STATUS
 		eUseWhatGrade = _eGrade;
 		eUseWhatWeapon = _eWeapon;
 	}
+};
+
+struct PET_BULLET_STATUS
+{
+	PET_BULLET_STATUS ( PET_BULLET_TYPE _eType, _v3 _vCreatePos, _v3 _vDir, _float _fSpeed, _double _dLifeTime )
+		: eType(_eType), vCreatePos(_vCreatePos), vDir(_vDir), fSpeed(_fSpeed), dLifeTime(_dLifeTime)
+	{}
+
+	PET_BULLET_TYPE	eType = PET_BULLET_NONE;
+	_v3			vCreatePos = _v3(0.f, 0.f, 0.f);
+	_v3			vDir = _v3(0.f, 0.f, 0.f);
+	_float		fSpeed = 0.f;
+	_double		dLifeTime = 0;
 };

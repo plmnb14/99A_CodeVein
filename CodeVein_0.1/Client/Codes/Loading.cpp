@@ -917,7 +917,6 @@ HRESULT CLoading::Add_EffectPrototype(const _tchar* szName, _bool bIsMesh)
 	return S_OK;
 }
 
-
 Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
 {
 	HANDLE hFile = CreateFile(szPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
@@ -1379,12 +1378,18 @@ _uint CLoading::Loading_Stage()
 		// ¿¹Æ¼
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Yeti", CYeti::Create(m_pGraphicDev))))
 			return E_FAIL;
-
 		// ¿¹Æ¼ ÃÑ¾Ë
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_YetiBullet", CYetiBullet::Create(m_pGraphicDev))))
 			return E_FAIL;
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_YetiBullet", L"Monster_YetiBullet", 20);
 
+		// Æê_µ¶³ªºñ
+		if (FAILED(g_pManagement->Add_Prototype(L"Pet_PoisonButterFly", CPet_PoisonButterFly::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// Æê ÃÑ¾Ë ¿øº»
+		if (FAILED(g_pManagement->Add_Prototype(L"Pet_Bullet", CPet_Bullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Pet_Bullet", L"Pet_Bullet", 30);
 
 		cout << "UI Sub Prototype »ý¼º Áß . . ." << endl;
 		// UI - Chea

@@ -299,7 +299,6 @@ void CYeti::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 					vecIter->Set_Enabled(false);
 
 					g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
-
 					break;
 				}
 				else
@@ -310,6 +309,9 @@ void CYeti::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 			}
 		}
 	}
+
+	return;
+
 }
 
 void CYeti::Function_FBLR()
@@ -452,11 +454,10 @@ void CYeti::Function_ResetAfterAtk()
 	m_tObjParam.bIsDodge = false;
 
 	m_tObjParam.bSuperArmor = false;
+	m_tObjParam.bIsAttack = false;
 
 	m_bCanIdle = true;
 	m_bIsIdle = false;
-
-	m_tObjParam.bIsAttack = false;
 
 	m_bCanChooseAtkType = true;
 	m_bIsCombo = false;
@@ -568,20 +569,17 @@ void CYeti::Check_Dist()
 						{
 							m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
-							Function_RotateBody();
 						}
 						else
 						{
 							m_bCanChooseAtkType = true;
 							m_eFirstCategory = MONSTER_STATETYPE::ATTACK;
-							Function_RotateBody();
 						}
 					}
 					else
 					{
 						m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 						m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
-						Function_RotateBody();
 					}
 				}
 				else
@@ -589,7 +587,6 @@ void CYeti::Check_Dist()
 					m_bCanChase = true;
 					m_eFirstCategory = MONSTER_STATETYPE::MOVE;
 					m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_RUN;
-					Function_RotateBody();
 				}
 			}
 		}
@@ -620,6 +617,9 @@ void CYeti::Check_AniEvent()
 	case MONSTER_STATETYPE::ATTACK:
 		if (true == m_bCanChooseAtkType)
 		{
+			m_tObjParam.bCanAttack = false;
+			m_tObjParam.bIsAttack = true;
+
 			m_bCanChooseAtkType = false;
 
 			switch (CALC::Random_Num(MONSTER_ATKTYPE::ATK_NORMAL, MONSTER_ATKTYPE::ATK_COMBO))
@@ -634,6 +634,8 @@ void CYeti::Check_AniEvent()
 				Play_RandomAtkCombo();
 				break;
 			}
+
+			return;
 		}
 		else
 		{
@@ -2471,7 +2473,7 @@ HRESULT CYeti::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
 
-	m_pCollider->Set_Radius(_v3{ 0.5f, 0.5f, 0.5f });
+	m_pCollider->Set_Radius(_v3{ 0.8f,0.8f,0.8f });
 	m_pCollider->Set_Dynamic(true);
 	m_pCollider->Set_Type(COL_SPHERE);
 	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pCollider->Get_Radius().y , 0.f });
@@ -2561,7 +2563,7 @@ HRESULT CYeti::Ready_Status(void * pArg)
 HRESULT CYeti::Ready_Collider()
 {
 	m_vecPhysicCol.reserve(2);
-	m_vecAttackCol.reserve(4);
+	m_vecAttackCol.reserve(5);
 	_float fRadius;
 	CCollider* pCollider = nullptr;
 
@@ -2577,7 +2579,7 @@ HRESULT CYeti::Ready_Collider()
 	m_vecPhysicCol.push_back(pCollider);
 
 	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
-	fRadius = 0.7f;
+	fRadius = 1.2f;
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
 	pCollider->Set_Type(COL_SPHERE);
@@ -2588,7 +2590,7 @@ HRESULT CYeti::Ready_Collider()
 	m_vecAttackCol.push_back(pCollider); //¹¶°³±â¿ë
 
 	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
-	fRadius = 0.7f;
+	fRadius = 1.2f;
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
 	pCollider->Set_Type(COL_SPHERE);
@@ -2598,7 +2600,7 @@ HRESULT CYeti::Ready_Collider()
 	m_vecAttackCol.push_back(pCollider);
 
 	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
-	fRadius = 0.7f;
+	fRadius = 1.2f;
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
 	pCollider->Set_Type(COL_SPHERE);
@@ -2608,7 +2610,7 @@ HRESULT CYeti::Ready_Collider()
 	m_vecAttackCol.push_back(pCollider);
 
 	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
-	fRadius = 0.7f;
+	fRadius = 1.2f;
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
 	pCollider->Set_Type(COL_SPHERE);
@@ -2624,17 +2626,17 @@ HRESULT CYeti::Ready_BoneMatrix()
 {
 	D3DXFRAME_DERIVED*	pFrame = nullptr;
 
-	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Spine2", 0), E_FAIL);
-	m_matBone[Bone_Range] = &pFrame->CombinedTransformationMatrix;
-	m_matBone[Bone_Body] = &pFrame->CombinedTransformationMatrix;
-
 	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head", 0), E_FAIL);
 	m_matBone[Bone_Head] = &pFrame->CombinedTransformationMatrix;
 
-	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHand", 0), E_FAIL);
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips", 0), E_FAIL);
+	m_matBone[Bone_Range] = &pFrame->CombinedTransformationMatrix;
+	m_matBone[Bone_Body] = &pFrame->CombinedTransformationMatrix;
+
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHandAttach", 0), E_FAIL);
 	m_matBone[Bone_LeftHand] = &pFrame->CombinedTransformationMatrix;
 
-	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHand", 0), E_FAIL);
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach", 0), E_FAIL);
 	m_matBone[Bone_RightHand] = &pFrame->CombinedTransformationMatrix;
 
 	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftForeArm", 0), E_FAIL);

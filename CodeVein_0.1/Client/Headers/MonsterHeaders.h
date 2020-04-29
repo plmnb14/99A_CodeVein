@@ -46,6 +46,7 @@
 #include "Yeti.h"
 #include "YetiBullet.h"
 
+#include "Pet_Bullet.h"
 #include "Pet_PoisonButterFly.h"
 
 #include "GunGenji.h"

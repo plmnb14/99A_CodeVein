@@ -232,84 +232,106 @@ void CPet::Function_CalcMoveSpeed(_float _fMidDist)
 	else
 		m_fSkillMoveMultiply = 1.f;
 
+	if (0.1f >= m_fSkillMoveMultiply)
+		m_fSkillMoveMultiply = 0.f;
+
 	m_fSkillMoveSpeed_Cur = 8.f * m_fSkillMoveMultiply;
 
 	return;
 }
 
-void CPet::Function_Find_Target(_float _fDist)
+void CPet::Function_Find_Target()
 {
-	auto& MonsterContainer = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
+	m_pTarget = nullptr;
 
-	for (auto& Monster_iter : MonsterContainer)
+	_float	fOldLength = 99999.f;
+
+	if (!g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE).empty())
 	{
-		if (false == Monster_iter->Get_Enable())
-			continue;
-		else if(true == Monster_iter->Get_Dead())
-			continue;
-		else if(nullptr == Monster_iter)
-			continue;
-		//몬스터가 존재한다면
-		else
+		auto& MonsterContainer = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
+
+		for (auto& Monster_iter : MonsterContainer)
 		{
-			if (_fDist >= V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransformCom->Get_Pos())))
-			{
-				m_eTarget = TARGET_TYPE::TARGET_MONSTER;
-				m_pTarget = Monster_iter;
-			}
-			else
+			if (true == Monster_iter->Get_Dead())
 				continue;
+			else if (false == Monster_iter->Get_Enable())
+				continue;
+			else if (nullptr == Monster_iter)
+				continue;
+
+			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
+
+			if (fLenth > m_fRecognitionRange)
+				continue;
+
+			if (fOldLength <= fLenth)
+				continue;
+
+			fOldLength = fLenth;
+			m_pTarget = Monster_iter;
+			m_eTarget = TARGET_TYPE::TARGET_MONSTER;
 		}
+		IF_NOT_NULL_VALUE_RETURN(m_pTarget, );
+
 	}
-	else if (!g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE).empty())
+
+	if (!g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE).empty())
 	{
 		auto& BossContainer = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
 
-		for (auto& Boss_iter : BossContainer)
+		for (auto& Monster_iter : BossContainer)
 		{
-			if (false == Boss_iter->Get_Enable())
+			if (true == Monster_iter->Get_Dead())
 				continue;
-			else if (true == Boss_iter->Get_Dead())
+			else if (false == Monster_iter->Get_Enable())
 				continue;
-			else if (nullptr == Boss_iter)
+			else if (nullptr == Monster_iter)
 				continue;
-			else
-			{
-				if (_fDist >= V3_LENGTH(&(TARGET_TO_TRANS(Boss_iter)->Get_Pos() - m_pTransformCom->Get_Pos())))
-				{
-					m_eTarget = TARGET_TYPE::TARGET_BOSS;
-					m_pTarget = Boss_iter;
-				}
-				else
-					continue;
-			}
+
+			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
+
+			if (fLenth > m_fRecognitionRange)
+				continue;
+
+			if (fOldLength <= fLenth)
+				continue;
+
+			fOldLength = fLenth;
+			m_pTarget = Monster_iter;
+			m_eTarget = TARGET_TYPE::TARGET_BOSS;
 		}
+		IF_NOT_NULL_VALUE_RETURN(m_pTarget, );
+
 	}
-	//else if (!g_pManagement->Get_GameObjectList(L"Layer_Item", SCENE_STAGE).empty())
+
+	//아이템 레이어
+	//if(!g_pManagement->Get_GameObjectList(L"Layer_Item", SCENE_STAGE).empty())
 	//{
 	//	auto& ItemContainer = g_pManagement->Get_GameObjectList(L"Layer_Item", SCENE_STAGE);
-	//	for (auto& Item_iter : ItemContainer)
+	//	for (auto& Monster_iter : ItemContainer)
 	//	{
-	//		if (false == Item_iter->Get_Enable())
+	//		if (true == Monster_iter->Get_Dead())
 	//			continue;
-	//		else
-	//		{
-	//			if (_fDist >= V3_LENGTH(&(TARGET_TO_TRANS(Item_iter)->Get_Pos() - m_pTransformCom->Get_Pos())))
-	//			{
-	//				m_eTarget = TARGET_TYPE::TARGET_ITEM;
-	//				m_pTarget = Item_iter;
-	//			}
-	//			else
-	//				continue;
-	//		}
-	//	}
-	//}
-	//else
-	//{
-	//	m_eTarget = TARGET_TYPE::TARGET_NONE;
-	//	m_pTarget = nullptr;
-	//}
+	//		else if (false == Monster_iter->Get_Enable())
+	//			continue;
+	//		else if (nullptr == Monster_iter)
+	//			continue;
 
+	//		_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
+
+	//		if (fLenth > m_fRecognitionRange)
+	//			continue;
+
+	//		if (fOldLength <= fLenth)
+	//			continue;
+
+	//		fOldLength = fLenth;
+	//		m_pTarget = Monster_iter;
+	//		m_eTarget = TARGET_TYPE::TARGET_ITEM;
+	//	}
+	//	IF_NOT_NULL_VALUE_RETURN(m_pTarget, );
+	//}
+	
 	return;
 }
 

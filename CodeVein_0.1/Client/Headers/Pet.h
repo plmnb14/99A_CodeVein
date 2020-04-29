@@ -32,7 +32,7 @@ protected:
 	virtual void Function_Movement(_float _fspeed, _v3 _vDir = { V3_NULL });
 	virtual void Function_DecreMoveMent(_float _fMutiply = 1.f);
 	virtual void Function_CalcMoveSpeed(_float _fMidDist);
-	virtual void Function_Find_Target(_float _fDist);
+	virtual void Function_Find_Target();
 	virtual void Function_ResetAfterAtk();
 
 	virtual void Play_Idle() PURE;

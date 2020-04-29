@@ -816,6 +816,9 @@
     <ClInclude Include="..\Headers\Pet_PoisonButterFly.h">
       <Filter>02.GameObject\Stage\10%29 Pet\PoisonButterFly</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Pet_Bullet.h">
+      <Filter>02.GameObject\Stage\10%29 Pet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1222,6 +1225,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Pet_PoisonButterFly.cpp">
       <Filter>02.GameObject\Stage\10%29 Pet\PoisonButterFly</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Pet_Bullet.cpp">
+      <Filter>02.GameObject\Stage\10%29 Pet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

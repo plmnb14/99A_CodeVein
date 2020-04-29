@@ -9,18 +9,10 @@ class CPet_PoisonButterFly final : public CPet
 public:
 	enum ATK_NORMAL_TYPE
 	{
-		NORMAL_SHOT,
+		NORMAL_5SHOT,
 		NORMAL_MIST,
-		NORMAL_RUSh,
-		NORMAL_HEAL,
+		NORMAL_POISONWHEELWIND,
 	};
-
-	enum ATK_COMBO_TYPE
-	{
-		COMBO_R,
-		COMBO_L
-	};
-
 
 	enum PET_POISIONBUTTERFLY_ANI
 	{
@@ -64,6 +56,8 @@ public:
 		Bone_Range,
 		Bone_Head,
 		Bone_Body,
+		Bone_Tail,
+		Bone_TailTongue,
 		Bone_End
 	};
 
@@ -94,14 +88,11 @@ private:
 	void Check_DeadEffect(_double TimeDelta);
 
 private:
-	void Play_RandomAtkNormal(); //노말 공격
-	void Play_RandomAtkCombo(); //콤보공격
-	void Play_Get(); //아이탬 획득
+	void Play_GetItem(); //아이템 획득
 	void Play_Aggro(); //아주 머나먼 미래에 사용할 수도 있으나 못할듯
-	void Play_Shot();
-	void Play_Mist();
-	void Play_Rush();
-	void Play_Heal();
+	void Play_5Shot(); // Atk_5wayShoot
+	void Play_Mist(); //allrangeshot
+	void Play_PoisonWheelWind(); //atk_poisonmine
 
 protected:
 	virtual void Play_Idle() override;
@@ -125,7 +116,6 @@ public:
 
 private:
 	_mat*	m_matBone[Bone_End];
-	ATK_COMBO_TYPE				m_eAtkCombo;
 	PET_POISIONBUTTERFLY_ANI	m_eState;
 
 };

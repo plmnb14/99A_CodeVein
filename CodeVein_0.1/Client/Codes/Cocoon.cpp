@@ -211,22 +211,21 @@ void CCocoon::Render_Collider()
 
 void CCocoon::Enter_Collision()
 {
-	if (MONSTER_STATETYPE::DEAD != m_eFirstCategory)
-	{
-		Check_CollisionPush();
-		Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
-	}
+	Check_CollisionPush();
+	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
+	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Pet", SCENE_STAGE));
 
 	return;
 }
 
 void CCocoon::Check_CollisionPush()
 {
-	list<CGameObject*> tmpList[3];
+	list<CGameObject*> tmpList[4];
 
 	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
 	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
 	tmpList[2] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
+	tmpList[3] = g_pManagement->Get_GameObjectList(L"Layer_Pet", SCENE_STAGE);
 
 	for (auto& list_iter : tmpList)
 	{
@@ -688,9 +687,10 @@ void CCocoon::Play_Mist()
 		}
 		else if (3.567f <= AniTime)
 		{
-			if (false == m_bEventTrigger[1])
+			if (false == m_bEventTrigger[0])
+				m_bEventTrigger[0] = true;
+			if (true == m_bEventTrigger[0])
 			{	
-				m_bEventTrigger[1] = true;
 				matBone1 = *m_matBone[Bone_Jaw_Tongue] * m_pTransformCom->Get_WorldMat();
 				matBone2 = *m_matBone[Bone_Neck] * m_pTransformCom->Get_WorldMat();
 				matBone = *m_matBone[Bone_Jaw_Tongue] * m_pTransformCom->Get_WorldMat();
