@@ -177,7 +177,10 @@
     <ClInclude Include="..\Headers\BloodCodeMenuUI.h" />
     <ClInclude Include="..\Headers\BloodCodeSelectUI.h" />
     <ClInclude Include="..\Headers\BloodCodeSlot.h" />
+    <ClInclude Include="..\Headers\BloodCodeUI.h" />
     <ClInclude Include="..\Headers\BloodCode_Icon.h" />
+    <ClInclude Include="..\Headers\BloodCode_Inven.h" />
+    <ClInclude Include="..\Headers\BloodSkillCursor.h" />
     <ClInclude Include="..\Headers\BloodSkillSlot.h" />
     <ClInclude Include="..\Headers\BossDecoUI.h" />
     <ClInclude Include="..\Headers\BossHP.h" />
@@ -314,7 +317,10 @@
     <ClCompile Include="..\Codes\BloodCodeMenuUI.cpp" />
     <ClCompile Include="..\Codes\BloodCodeSelectUI.cpp" />
     <ClCompile Include="..\Codes\BloodCodeSlot.cpp" />
+    <ClCompile Include="..\Codes\BloodCodeUI.cpp" />
     <ClCompile Include="..\Codes\BloodCode_Icon.cpp" />
+    <ClCompile Include="..\Codes\BloodCode_Inven.cpp" />
+    <ClCompile Include="..\Codes\BloodSkillCursor.cpp" />
     <ClCompile Include="..\Codes\BloodSkillSlot.cpp" />
     <ClCompile Include="..\Codes\BossDecoUI.cpp" />
     <ClCompile Include="..\Codes\BossHP.cpp" />

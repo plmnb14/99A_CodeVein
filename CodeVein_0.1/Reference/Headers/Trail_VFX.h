@@ -47,6 +47,9 @@ public:
 	virtual void	Set_ParentTransform(const _mat* _pWorldMat);
 	virtual void	Set_TrailType(TrailType _eTrailType) {m_eType = _eTrailType;}
 
+public:
+	void Reset_Info();
+
 private:
 	virtual HRESULT	Shader_Init(CShader* pShader, const _uint & iIndex = 0);
 

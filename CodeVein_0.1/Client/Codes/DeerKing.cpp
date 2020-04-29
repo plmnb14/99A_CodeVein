@@ -116,7 +116,7 @@ _int CDeerKing::Update_GameObject(_double TimeDelta)
 	// 플레이어 미발견
 	if (false == m_bFight)
 	{
-		Update_NF();
+		//Update_NF();
 	}
 	// 플레이어 발견
 	else

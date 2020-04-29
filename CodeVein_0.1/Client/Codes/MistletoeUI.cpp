@@ -41,7 +41,7 @@ HRESULT CMistletoeUI::Ready_GameObject(void * pArg)
 	m_pStageSelectUI = CUI_Manager::Get_Instance()->Get_StageSelectUI();
 	if (nullptr == m_pStageSelectUI)
 		return E_FAIL;
-
+	m_pTransformCom->Set_Scale(_v3(0.87f, 1.f, 0.f));
 	return NOERROR;
 }
 
@@ -49,51 +49,44 @@ _int CMistletoeUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
-	Compute_ViewZ(&m_pTransformCom->Get_Pos());
+	
 
 	m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 	if (nullptr == m_pTarget)
 		return NO_EVENT;
 
-	_v3 vAngle = TARGET_TO_TRANS(m_pTarget)->Get_Angle();
-	vAngle.y = vAngle.y + D3DXToRadian(45.f);
-	m_pTransformCom->Set_Angle(vAngle);
+	
 	_v3 vLookZ = TARGET_TO_TRANS(m_pTarget)->Get_Axis(AXIS_Z);
 	_v3 vLookX = TARGET_TO_TRANS(m_pTarget)->Get_Axis(AXIS_X);
 	
-	_v3 vDir = *V3_NORMAL_SELF(&(*V3_NORMAL_SELF(&vLookX)+ *V3_NORMAL_SELF(&vLookZ) + _v3(0.f, 1.5f, 0.f))) * 1.2f;
+	_v3 vDir = *V3_NORMAL_SELF(&(*V3_NORMAL_SELF(&vLookX)+ /**V3_NORMAL_SELF(&vLookZ) + */_v3(0.f, 1.5f, 0.f))) * 1.5f;
 	_v3 vPosition = TARGET_TO_TRANS(m_pTarget)->Get_Pos() + vDir;
 	m_pTransformCom->Set_Pos(vPosition);
-	m_pTransformCom->Set_Scale(_v3(0.87f, 1.f, 0.f));
 	
-
-	_v3 vLength = TARGET_TO_TRANS(m_pTarget)->Get_Pos() + vDir * 0.999f;
+	m_pTransformCom->Set_Angle(TARGET_TO_TRANS(m_pTarget)->Get_Angle());
+	_v3 vLength = TARGET_TO_TRANS(m_pTarget)->Get_Pos() + vDir * 0.9f;
 
 	
 	LOOP(3)
 	{
 		TARGET_TO_TRANS(m_vecOption[i])->Set_Angle(m_pTransformCom->Get_Angle());
-		TARGET_TO_TRANS(m_vecOption[i])->Set_Scale(_v3(1.f, 0.1476f, 0.f));
-		TARGET_TO_TRANS(m_vecOption[i])->Set_Pos(vLength + _v3(0.f, _float(i) * -0.2f + 0.2f, 0.f));
-		m_vecOption[i]->Set_ViewZ(m_fViewZ - 0.1f);
+		TARGET_TO_TRANS(m_vecOption[i])->Set_Scale(_v3(0.87f, 0.1476f, 0.f));
+		TARGET_TO_TRANS(m_vecOption[i])->Set_At(m_pTransformCom->Get_At());
+		TARGET_TO_TRANS(m_vecOption[i])->Set_Pos(m_pTransformCom->Get_Pos() + _v3(0.f, _float(i) * -0.2f + 0.2f, 0.f) + *V3_NORMAL_SELF(&vLookZ) * -0.1f);
+		
 		m_vecOption[i]->Set_Active(m_bIsActive);
 
 		(i == m_iSelectIndex) ? (m_vecOption[i]->Set_Select(true)) : (m_vecOption[i]->Set_Select(false));
 	}
 
-	/*if (g_pInput_Device->Key_Up(DIK_K) && m_iSelectIndex < m_vecOption.size() - 1)
-		m_iSelectIndex++;
-	if (g_pInput_Device->Key_Up(DIK_J) && m_iSelectIndex > 0)
-		m_iSelectIndex--;
-
-	if (g_pInput_Device->Key_Up(DIK_P))
-		Active_SubUI();*/
+	
 
 	if (!m_bIsActive)
 	{
 		m_pStageSelectUI->Set_Active(false);
 	}
 	
+	Compute_ViewZ(&m_pTransformCom->Get_Pos());
 	return NO_EVENT;
 }
 
@@ -120,7 +113,7 @@ HRESULT CMistletoeUI::Render_GameObject()
 		return E_FAIL;
 
 	m_pShaderCom->Begin_Shader();
-	m_pShaderCom->Begin_Pass(5);
+	m_pShaderCom->Begin_Pass(1);
 
 	m_pBufferCom->Render_VIBuffer();
 	m_pShaderCom->End_Pass();
