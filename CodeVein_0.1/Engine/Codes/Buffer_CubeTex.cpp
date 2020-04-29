@@ -31,28 +31,28 @@ HRESULT CBuffer_CubeTex::Ready_Component_Prototype()
 
 	m_pVB->Lock(0, 0, (void**)&pVertices, 0);
 
-	pVertices[0].vPosition = _v3(-0.5f, 0.5f, -0.5f);
+	pVertices[0].vPosition = _v3(-0.5f, 0.25f, -0.5f);
 	pVertices[0].vTexUV = pVertices[0].vPosition;
 
-	pVertices[1].vPosition = _v3(0.5f, 0.5f, -0.5f);
+	pVertices[1].vPosition = _v3(0.5f, 0.25f, -0.5f);
 	pVertices[1].vTexUV = pVertices[1].vPosition;
 
-	pVertices[2].vPosition = _v3(0.5f, -0.5f, -0.5f);
+	pVertices[2].vPosition = _v3(0.5f, -0.25f, -0.5f);
 	pVertices[2].vTexUV = pVertices[2].vPosition;
 
-	pVertices[3].vPosition = _v3(-0.5f, -0.5f, -0.5f);
+	pVertices[3].vPosition = _v3(-0.5f, -0.25f, -0.5f);
 	pVertices[3].vTexUV = pVertices[3].vPosition;
 
-	pVertices[4].vPosition = _v3(-0.5f, 0.5f, 0.5f);
+	pVertices[4].vPosition = _v3(-0.5f, 0.25f, 0.5f);
 	pVertices[4].vTexUV = pVertices[4].vPosition;
 
-	pVertices[5].vPosition = _v3(0.5f, 0.5f, 0.5f);
+	pVertices[5].vPosition = _v3(0.5f, 0.25f, 0.5f);
 	pVertices[5].vTexUV = pVertices[5].vPosition;
 
-	pVertices[6].vPosition = _v3(0.5f, -0.5f, 0.5f);
+	pVertices[6].vPosition = _v3(0.5f, -0.25f, 0.5f);
 	pVertices[6].vTexUV = pVertices[6].vPosition;
 
-	pVertices[7].vPosition = _v3(-0.5f, -0.5f, 0.5f);
+	pVertices[7].vPosition = _v3(-0.5f, -0.25f, 0.5f);
 	pVertices[7].vTexUV = pVertices[7].vPosition;
 
 	m_pVB->Unlock();

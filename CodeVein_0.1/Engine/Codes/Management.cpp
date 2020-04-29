@@ -580,6 +580,11 @@ void CManagement::Create_ParticleEffect_Delay(_tchar * szName, _float fLifeTime,
 	CParticleMgr::Get_Instance()->Create_ParticleEffect_Delay(szName, fLifeTime, fDelay, _v3(0, 0, 0), pFollowTrans, pTargetMat);
 }
 
+CTrail_VFX* CManagement::Create_Trail()
+{
+	return CParticleMgr::Get_Instance()->Create_Trail();
+}
+
 void CManagement::Free()
 {
 	Safe_Release(m_pMyPhysx);

@@ -105,6 +105,46 @@ _bool CBattleAgent::Check_TargetIsFrontOfMe(CTransform * _vMyTransform, CTransfo
 	return false;
 }
 
+CGameObject * CBattleAgent::Calc_LengthNearByMe(list<CGameObject*> _listGameObject, _v3 _vMyPos, _float _fMinLengthValue, _float * _ppLength)
+{
+	// 반환할 Object 객체
+	CGameObject*	pObject = nullptr;
+	_float			fOldLength = 99999.f;
+
+	// 리스트가 비었다면, 스킵
+	if (_listGameObject.empty())
+		return nullptr;
+
+	for (auto& iter : _listGameObject)
+	{
+		// 뒤졌으면 스킵
+		if (true == iter->Get_Dead())
+			continue;
+
+		// 비활성화 되면 스킵
+		if (false == iter->Get_Enable())
+			continue;
+
+		// 거리를 재서
+		_float fLength = D3DXVec3Length(&(TARGET_TO_TRANS(iter)->Get_Pos() - _vMyPos));
+
+		// 최소 거리보다 멀면 다음으로
+		if (fLength > _fMinLengthValue)
+			continue;
+
+		if (fOldLength <= fLength)
+			continue;
+
+		// 거리와 타겟을 갱신
+		fOldLength = fLength;
+		pObject = iter;
+	}
+
+	*_ppLength = nullptr != pObject ? fOldLength : 0.f;
+
+	return pObject;
+}
+
 HRESULT CBattleAgent::Ready_BattleAgent()
 {
 	m_tRimParam.fRimChangeValue = 0.f;

@@ -125,6 +125,12 @@ struct VS_IN
 	float2		vTexUV		: TEXCOORD0;
 };
 
+struct VS_IN_Flag
+{
+	float3		vPosition	: POSITION;
+	float2		vTexUV		: TEXCOORD0;
+};
+
 struct VS_OUT
 {
 	float4		vPosition : POSITION;
@@ -135,6 +141,12 @@ struct VS_OUT
 	float4		vProjPos : TEXCOORD1;
 	float4		vRimDir : TEXCOORD2;
 	float4		vRimNormal : TEXCOORD3;
+};
+
+struct VS_OUT_Flag
+{
+	float3		vPosition	: POSITION;
+	float2		vTexUV		: TEXCOORD0;
 };
 
 struct VS_BLUROUT
@@ -198,6 +210,23 @@ VS_BLUROUT VS_MOTIONBLUR(VS_IN In)
 	Out.vLastPos = previousPos;
 
 	Out.vNormal = normalize(mul(vector(In.vNormal, 0.f), g_matWorld));
+	Out.vTexUV = In.vTexUV;
+
+	return Out;
+}
+
+VS_OUT_Flag VS_Flag(VS_IN_Flag In)
+{
+	VS_OUT_Flag			Out = (VS_OUT_Flag)0;
+
+	// 월드변환, 뷰변환, 투영행렬변환.
+	matrix		matWV, matWVP;
+
+	matWV = mul(g_matWorld, g_matView);
+	matWVP = mul(matWV, g_matProj);
+
+	Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
+
 	Out.vTexUV = In.vTexUV;
 
 	return Out;
@@ -932,6 +961,7 @@ PS_OUT_ADVENCE PS_DISSOLVE(PS_IN In)
 	return Out;
 }
 
+
 technique Default_Technique
 {
 	// 기본적으로 모든 애들은 NonAlpha 임
@@ -1214,5 +1244,20 @@ technique Default_Technique
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_Default_DNEU();
 	}
+
+	//====================================================================================================
+	// 19 - ForFlag ( D )
+	//====================================================================================================
+	//pass Default_DNEU
+	//{
+	//	AlphablendEnable = false;
+	//
+	//	AlphaTestEnable = true;
+	//	AlphaRef = 0;
+	//	AlphaFunc = Greater;
+	//
+	//	VertexShader = compile vs_3_0 VS_Flag();
+	//	PixelShader = compile ps_3_0 PS_Flag();
+	//}
 }
 

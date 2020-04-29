@@ -54,8 +54,8 @@ HRESULT CYetiBullet::Ready_GameObject(void * pArg)
 	lstrcpy(m_pEffect_Tag4, L"Bullet_DeadSmoke_Base");
 	lstrcpy(m_pEffect_Tag5, L"Bullet_DeadSmoke_Black");
 
-	//m_pTrailEffect = static_cast<Engine::CTrail_VFX*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SwordTrail", nullptr));
-	//m_pTrailEffect->Set_TrailIdx(5); // Red Tail
+	m_pTrailEffect = g_pManagement->Create_Trail();
+	m_pTrailEffect->Set_TrailIdx(5); // Red Tail
 
 	return S_OK;
 }
@@ -68,7 +68,7 @@ _int CYetiBullet::Update_GameObject(_double TimeDelta)
 		return DEAD_OBJ;
 
 	Enter_Collision();
-	//Update_Trails(TimeDelta);
+	Update_Trails(TimeDelta);
 
 	m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
 
@@ -82,6 +82,7 @@ _int CYetiBullet::Update_GameObject(_double TimeDelta)
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, m_pTransformCom->Get_Pos());
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag5, m_pTransformCom->Get_Pos());
 		m_pBulletBody->Set_Dead();
+		m_pTrailEffect->Set_Dead();
 
 		m_bDead = true;
 	}
@@ -167,7 +168,7 @@ void CYetiBullet::Update_Trails(_double TimeDelta)
 	{
 		m_pTrailEffect->Set_ParentTransform(&matWorld);
 		m_pTrailEffect->Ready_Info(vBegin + vDir * -0.05f, vBegin + vDir * 0.05f);
-		m_pTrailEffect->Update_GameObject(TimeDelta);
+		// m_pTrailEffect->Update_GameObject(TimeDelta);
 	}
 
 	return;
@@ -284,7 +285,7 @@ CGameObject* CYetiBullet::Clone_GameObject(void * pArg)
 
 void CYetiBullet::Free()
 {
-	Safe_Release(m_pTrailEffect);
+	//Safe_Release(m_pTrailEffect);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pRendererCom);

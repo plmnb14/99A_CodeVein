@@ -586,10 +586,11 @@ HRESULT CRenderer::Render_MotionBlurTarget()
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Velocity")))
 		return E_FAIL;
 
-	m_pShader_Blur->Begin_Shader();
+	//m_pShader_Blur->Begin_Shader();
 
 	for (auto& pGameObject : m_RenderList[RENDER_MOTIONBLURTARGET])
 	{
+
 		if (nullptr != pGameObject)
 		{
 			if (FAILED(pGameObject->Render_GameObject_SetPass(m_pShader_Blur, 0)))
@@ -599,11 +600,13 @@ HRESULT CRenderer::Render_MotionBlurTarget()
 			}
 			Safe_Release(pGameObject);
 		}
+
 	}
+	
+	//m_pShader_Blur->End_Shader();
 
 	m_RenderList[RENDER_MOTIONBLURTARGET].clear();
 
-	m_pShader_Blur->End_Shader();
 
 	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_Velocity")))
 		return E_FAIL;
