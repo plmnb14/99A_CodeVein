@@ -111,6 +111,13 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SkillReleaseUI", CSkillReleaseUI::Create(pDevice))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BloodSkillCursor", CBloodSkillCursor::Create(pDevice))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BloodCodeInven", CBloodCode_Inven::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BloodCodeUI", CBloodCodeUI::Create(pDevice))))
+		return E_FAIL;
 	
 	//////////////// Chae
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BossMassageUI", CMassageUI::Create(pDevice))))
@@ -121,7 +128,7 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Pickup_Item", CPickUp_ItemUI::Create(pDevice))))
 		return E_FAIL;
-
+	
 
 	//=======================================================
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_FontNum", CUI_FontNum::Create(pDevice))))
@@ -189,6 +196,10 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	m_pBloodCodeMenu = static_cast<CBloodCodeMenuUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodCodeMenuUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBloodCodeMenu, SCENE_STAGE, L"Layer_StageUI", nullptr);
 	
+	// 블러드코드 인벤
+	m_pBloodCode_Inven = static_cast<CBloodCode_Inven*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodCodeInven", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBloodCode_Inven, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
 	return NOERROR;
 }
 
@@ -203,10 +214,14 @@ _int CUI_Manager::Update_UI()
 	//{
 	//	m_pMistletoeUI->Active_SubUI(); // 선택된 항목의 UI On/Off
 	//}
-	//if (g_pInput_Device->Key_Up(DIK_G))
+	//if (g_pInput_Device->Key_Up(DIK_LEFT))
 	//	m_pStageSelectUI->Move_Left(); // 스테이지UI 왼쪽이동
-	//if (g_pInput_Device->Key_Up(DIK_H))
+	//if (g_pInput_Device->Key_Up(DIK_RIGHT))
 	//	m_pStageSelectUI->Move_Right(); // 스테이지UI 오른쪽 이동
+	//if (g_pInput_Device->Key_Up(DIK_G))
+	//	m_pStageSelectUI->MoveUp_SubStage(); // 스테이지UI 위 이동
+	//if (g_pInput_Device->Key_Up(DIK_H))
+	//	m_pStageSelectUI->MoveDown_SubStage(); // 스테이지UI 아래 이동
 
 	//if (g_pInput_Device->Key_Up(DIK_J))
 	//	m_pMistletoeUI->Move_Up();

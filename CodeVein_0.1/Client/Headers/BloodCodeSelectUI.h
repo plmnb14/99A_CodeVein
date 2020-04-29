@@ -5,7 +5,6 @@
 
 BEGIN(Client)
 class CBloodCodeSlot;
-class CCodeOwnerUI;
 class CBloodCodeSelectUI final : public CUI
 {
 private:
@@ -30,11 +29,7 @@ private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable(_uint iIndex);
 	void	SetUp_Default();
-
-public:
-	void MoveRight();
-	void MoveLeft();
-	void Select_BloodCode();
+	void	Click_BloodCodeSlot();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -42,14 +37,15 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
+	CCollider*				m_pCollider = nullptr;
 
 private:
 	BloodCode_ID			m_eType = BloodCode_End;
 	_bool					m_bIsSelect = false;
 	vector<CBloodCodeSlot*>	m_vecBloodCodeSlot;
 	_uint					m_iSelectIndex = 0;
-	CCodeOwnerUI*			m_pCodeOwnerUI = nullptr;
 	_v3						m_vSlotPosition;
+	_float					m_fCross = 100.f;
 
 public:
 	static CBloodCodeSelectUI*		Create(_Device pGraphic_Device);

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\SkillReleaseUI.h"
 #include "UI_Manager.h"
+#include "CollisionMgr.h"
 
 CSkillReleaseUI::CSkillReleaseUI(_Device pDevice)
 	: CUI(pDevice)
@@ -45,13 +46,15 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 	_uint idx = 0;
 	for (auto& iter : m_vecSkillSlot)
 	{
-		TARGET_TO_TRANS(iter)->Set_Pos(m_vSlotPosition + *V3_NORMAL_SELF(&vLookX) * -0.25f + *V3_NORMAL_SELF(&vLookY) * 0.3f
-			+ *V3_NORMAL_SELF(&vLookX) * _float(idx) * 0.3f);
+		TARGET_TO_TRANS(iter)->Set_Pos(/*m_vSlotPosition*/m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookX) * -0.25f + *V3_NORMAL_SELF(&vLookY) * 0.3f
+			+ *V3_NORMAL_SELF(&vLookX) * _float(idx) * 0.3f + *V3_NORMAL_SELF(&vLookZ) * 0.001f);
 		TARGET_TO_TRANS(iter)->Set_Angle(m_pTransformCom->Get_Angle());
 		iter->Set_Active(m_bIsActive);
 		++idx;
 	}
 
+	
+	
 	switch (m_eBloodCodeType)
 	{
 	case BloodCode_Fighter:
@@ -92,6 +95,9 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 	}
 
 	Compute_ViewZ(&m_pTransformCom->Get_Pos());
+
+	Click_SkillSlot();
+
 	return NO_EVENT;
 }
 
@@ -176,10 +182,38 @@ void CSkillReleaseUI::SetUp_Default()
 	LOOP(3)
 	{
 		pInstance = static_cast<CBloodSkillSlot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodSkillSlot", nullptr));
-		TARGET_TO_TRANS(pInstance)->Set_Scale(_v3(0.3f, 0.3f, 0.f));
+		TARGET_TO_TRANS(pInstance)->Set_Scale(_v3(0.3f, 0.3f, 1.f));
 		m_vecSkillSlot.push_back(pInstance);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_StageUI", nullptr);
 	}
+
+	
+}
+
+void CSkillReleaseUI::Click_SkillSlot()
+{
+	if (!m_bIsActive)
+		return;
+
+	for (auto& iter : m_vecSkillSlot)
+	{
+		if (CCollisionMgr::Collision_Ray(iter, g_pInput_Device->Get_Ray(), &m_fCross))
+		{
+			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+			{
+				Reset_Select();
+				iter->Set_Select(true);
+			}
+				
+		}
+		
+	}
+}
+
+void CSkillReleaseUI::Reset_Select()
+{
+	for (auto& iter : m_vecSkillSlot)
+		iter->Set_Select(false);
 }
 
 CSkillReleaseUI * CSkillReleaseUI::Create(_Device pGraphic_Device)

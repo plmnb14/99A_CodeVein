@@ -500,7 +500,7 @@ PS_OUT_ADVENCE PS_Default_DNSE(PS_IN In)
 	float4 fFinalRimColor = g_vRimColor;
 	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
 
-	Out.vEmissive = (pow(tex2D(EmissiveSampler, In.vTexUV), 2.2) * 3.f + fFinalRim;
+	Out.vEmissive = (pow(tex2D(EmissiveSampler, In.vTexUV), 2.2) * 3.f + fFinalRim);
 	Out.vEmissive.a = 1.f;
 	//========================================================================================================================
 

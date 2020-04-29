@@ -48,19 +48,12 @@
 #include "BloodCodeSelectUI.h"
 #include "SkillReleaseUI.h"
 #include "BloodSkillSlot.h"
+#include "BloodSkillCursor.h"
+#include "BloodCode_Inven.h"
+#include "BloodCodeUI.h"
 
 BEGIN(Client)
-class CStatusUI;
-class CMistletoeUI;
-class CStageSelectUI;
-class CExpendables_Inven;
-class CSkillUI;
-class CQuickSlot;
-class CMaterial_Inven;
-class CWeapon_Inven;
-class CArmor_Inven;
-class CTotal_Inven;
-class CInventory;
+
 class CUI_Manager final : public CBase
 {
 	DECLARE_SINGLETON(CUI_Manager)
@@ -90,6 +83,7 @@ public:
 	CInventory*		Get_Inventory() { return m_pInventory; }
 	void Set_BossUI_Active(_bool bIsActive);
 	CBloodCodeMenuUI* Get_BloodCode_Menu() { return m_pBloodCodeMenu; }
+	CBloodCode_Inven* Get_BloodCode_Inven() { return m_pBloodCode_Inven; }
 
 private:
 	_uint m_uiCoundItem = 0;
@@ -106,6 +100,7 @@ private:
 	CTotal_Inven* m_pTotal_Inven = nullptr;
 	CInventory*		m_pInventory = nullptr;
 	CBloodCodeMenuUI* m_pBloodCodeMenu = nullptr;
+	CBloodCode_Inven* m_pBloodCode_Inven = nullptr;
 
 public:
 	virtual void Free();

@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\BloodCodeSelectUI.h"
 #include "UI_Manager.h"
+#include "CollisionMgr.h"
 
 CBloodCodeSelectUI::CBloodCodeSelectUI(_Device pDevice)
 	: CUI(pDevice)
@@ -28,6 +29,8 @@ HRESULT CBloodCodeSelectUI::Ready_GameObject(void * pArg)
 
 	SetUp_Default();
 
+	
+	
 	return NOERROR;
 }
 
@@ -45,21 +48,13 @@ _int CBloodCodeSelectUI::Update_GameObject(_double TimeDelta)
 	for (auto& iter : m_vecBloodCodeSlot)
 	{
 		TARGET_TO_TRANS(iter)->Set_Pos(m_vSlotPosition + *V3_NORMAL_SELF(&vLookX) * -0.25f + *V3_NORMAL_SELF(&vLookY) * 0.3f
-		+ *V3_NORMAL_SELF(&vLookX) * _float(idx) * 0.3f);
+		+ *V3_NORMAL_SELF(&vLookX) * _float(idx) * 0.3f + *V3_NORMAL_SELF(&vLookZ) * -0.001f);
 		TARGET_TO_TRANS(iter)->Set_Angle(m_pTransformCom->Get_Angle());
 		iter->Set_Active(m_bIsActive);
+	
 		++idx;
 	}
-	for (_uint i = 0; i < m_vecBloodCodeSlot.size(); ++i)
-	{
-		if (m_iSelectIndex == i)
-			m_vecBloodCodeSlot[i]->Set_Select(true);
-		else
-			m_vecBloodCodeSlot[i]->Set_Select(false);
-	}
 
-	
-	m_eType = m_vecBloodCodeSlot[m_iSelectIndex]->Get_Type();
 
 	switch (m_eType)
 	{
@@ -78,8 +73,14 @@ _int CBloodCodeSelectUI::Update_GameObject(_double TimeDelta)
 	case BloodCode_Eos:
 		m_iIndex = 4;
 		break;
+	case BloodCode_End:
+		m_iIndex = 5;
+		break;
 	}
 	Compute_ViewZ(&m_pTransformCom->Get_Pos());
+
+	Click_BloodCodeSlot();
+	
 	return NO_EVENT;
 }
 
@@ -112,6 +113,12 @@ HRESULT CBloodCodeSelectUI::Render_GameObject()
 	m_pShaderCom->End_Pass();
 	m_pShaderCom->End_Shader();
 
+	for (auto& iter : m_vecPhysicCol)
+		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
+
+	for (auto& iter : m_vecAttackCol)
+		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
+
 	return S_OK;
 }
 
@@ -137,6 +144,7 @@ HRESULT CBloodCodeSelectUI::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Rect", L"Com_VIBuffer", (CComponent**)&m_pBufferCom)))
 		return E_FAIL;
 
+	
 	return NOERROR;
 }
 
@@ -157,41 +165,32 @@ HRESULT CBloodCodeSelectUI::SetUp_ConstantTable(_uint iIndex)
 	return NOERROR;
 }
 
-void CBloodCodeSelectUI::MoveRight()
+void CBloodCodeSelectUI::Click_BloodCodeSlot()
 {
 	if (!m_bIsActive)
 		return;
-	if (m_iSelectIndex < m_vecBloodCodeSlot.size() - 1)
+
+	for (auto& iter : m_vecBloodCodeSlot)
 	{
-		
-		++m_iSelectIndex;
+		if (CCollisionMgr::Collision_Ray(iter, g_pInput_Device->Get_Ray(), &m_fCross))
+		{
+			iter->Set_Select(true);
+			m_eType = iter->Get_Type();
+
+			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+				CUI_Manager::Get_Instance()->Get_BloodCode_Menu()->Set_IsChoise(true);
+		}
+		else
+		{
+			iter->Set_Select(false);
+		}
 	}
-		
 }
 
-void CBloodCodeSelectUI::MoveLeft()
-{
-	if (!m_bIsActive)
-		return;
-	if (m_iSelectIndex > 0)
-	{
-		
-		--m_iSelectIndex;
-	}
-		
-}
-
-void CBloodCodeSelectUI::Select_BloodCode()
-{
-	if (!m_bIsActive)
-		return;
-
-	
-}
 
 BloodCode_ID CBloodCodeSelectUI::Get_Type()
 {
-	return BloodCode_ID(m_vecBloodCodeSlot[m_iSelectIndex]->Get_Type());
+	return m_eType;
 }
 
 void CBloodCodeSelectUI::SetUp_Default()
@@ -202,14 +201,12 @@ void CBloodCodeSelectUI::SetUp_Default()
 	{
 		pInstance = static_cast<CBloodCodeSlot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodCodeSlot", nullptr));
 		pInstance->Set_Type(BloodCode_ID(i));
-		TARGET_TO_TRANS(pInstance)->Set_Scale(_v3(0.3f, 0.223f, 0.f));
+		TARGET_TO_TRANS(pInstance)->Set_Scale(_v3(0.3f, 0.223f, 1.f));
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_StageUI", nullptr);
 		m_vecBloodCodeSlot.push_back(pInstance);
 	}
 
-	/*m_pCodeOwnerUI = static_cast<CCodeOwnerUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_CodeOwnerUI", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pCodeOwnerUI, SCENE_STAGE, L"Layer_StageUI", nullptr);
-	TARGET_TO_TRANS(m_pCodeOwnerUI)->Set_Scale(_v3(3.555555f, 2.f, 0.f));*/
+	
 }
 
 
@@ -240,6 +237,7 @@ void CBloodCodeSelectUI::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pRendererCom);
+	
 
 	CUI::Free();
 }
