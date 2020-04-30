@@ -26,6 +26,12 @@ sampler		MaskSampler = sampler_state
 	mipfilter = linear;
 };
 
+texture		g_DepthTexture;
+
+sampler		DepthSampler = sampler_state
+{
+	texture = g_DepthTexture;
+};
 
 // 정점세개를 그리낟.
 
@@ -44,7 +50,6 @@ struct VS_OUT
 	float4		vPosition : POSITION;
 	float2		vTexUV : TEXCOORD0;
 	float3		vWorldPos : TEXCOORD1;
-
 };
 
 struct VS_OUT2
@@ -108,7 +113,21 @@ VS_OUT2		VS_SKILL_COOL(VS_IN In)
 	return Out;
 }
 
+VS_OUT VS_3D_Default(VS_IN In)
+{
+	VS_OUT			Out = (VS_OUT)0;
 
+	matrix		matWV, matWVP;
+
+	matWV = mul(g_matWorld, g_matView);
+	matWVP = mul(matWV, g_matProj);
+
+	Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
+	Out.vTexUV = In.vTexUV;
+	Out.vWorldPos = Out.vPosition;
+
+	return Out;
+}
 // POSITION시멘틱을 가진 멤버변수에 대해서 W값으로 XYZW를 나누는 연산을 수행.(원근 투영)
 // 투영스페이스 상에 존재하는 정점(-1, 1 ~ 1, -1)을 뷰포트영역상의 정점(0, 0 ~ WINCX, WINCY)으로 변환한다.
 // 래스터라이즈 : 세개 정점에 둘러쌓여진 영역안에 존재하는 픽셀의 정보를 정점정보를 기반하여 생성한다.
@@ -132,6 +151,7 @@ struct PS_OUT
 {
 	vector		vColor : COLOR0;
 };
+
 
 // 픽셀의 색을 결정한다.
 PS_OUT PS_MAIN(PS_IN In) 
@@ -217,6 +237,25 @@ PS_OUT PS_UI_MASK2(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_3D_Default(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
+
+	float2		vTexUV;
+
+	vTexUV.x = (In.vWorldPos.x / In.vWorldPos.w) * 0.5f + 0.5f;
+	vTexUV.y = (In.vWorldPos.y / In.vWorldPos.w) * -0.5f + 0.5f;
+
+	vector		vDepthInfo = tex2D(DepthSampler, vTexUV);
+	float		fViewZ = vDepthInfo.y * 300.f;
+
+	Out.vColor.a = Out.vColor.a * saturate(fViewZ - In.vWorldPos.w);
+
+	return Out;
+}
+
 technique Default_Technique
 {
 	pass Default_Rendering
@@ -230,8 +269,6 @@ technique Default_Technique
 
 	pass AlphaBlending
 	{
-		//ZwriteEnable = false;
-		zEnable = false;
 		AlphaBlendEnable = true;
 		SrcBlend = SrcAlpha;
 		destblend = invsrcalpha;
@@ -311,11 +348,21 @@ technique Default_Technique
 	}
 	pass	UI_R_Masking_Rendering
 	{
+		zEnable = false;
 		AlphaBlendEnable = true;
 		srcblend = srcalpha;
 		destblend = invsrcalpha;
 
 		vertexshader = compile vs_3_0 VS_MAIN();
 		pixelshader = compile ps_3_0 PS_UI_MASK2();
+	}
+	pass 3D_Default_Rendering
+	{
+		AlphablendEnable = true;
+		SrcBlend = SrcAlpha;
+		DestBlend = InvSrcAlpha;
+
+		VertexShader = compile vs_3_0 VS_3D_Default();
+		PixelShader = compile ps_3_0 PS_3D_Default();
 	}
 }

@@ -41,7 +41,7 @@ HRESULT CMistletoeUI::Ready_GameObject(void * pArg)
 	m_pStageSelectUI = CUI_Manager::Get_Instance()->Get_StageSelectUI();
 	if (nullptr == m_pStageSelectUI)
 		return E_FAIL;
-	m_pTransformCom->Set_Scale(_v3(0.87f, 1.f, 0.f));
+	m_pTransformCom->Set_Scale(_v3(1.f, 1.3546f, 0.f));
 	return NOERROR;
 }
 
@@ -72,7 +72,7 @@ _int CMistletoeUI::Update_GameObject(_double TimeDelta)
 		TARGET_TO_TRANS(m_vecOption[i])->Set_Angle(m_pTransformCom->Get_Angle());
 		TARGET_TO_TRANS(m_vecOption[i])->Set_Scale(_v3(0.87f, 0.1476f, 0.f));
 		TARGET_TO_TRANS(m_vecOption[i])->Set_At(m_pTransformCom->Get_At());
-		TARGET_TO_TRANS(m_vecOption[i])->Set_Pos(m_pTransformCom->Get_Pos() + _v3(0.f, _float(i) * -0.2f + 0.2f, 0.f) + *V3_NORMAL_SELF(&vLookZ) * -0.1f);
+		TARGET_TO_TRANS(m_vecOption[i])->Set_Pos(m_pTransformCom->Get_Pos() + _v3(0.f, _float(i) * -0.2f + 0.2f, 0.f) + *V3_NORMAL_SELF(&vLookZ) * -0.001f);
 		
 		m_vecOption[i]->Set_Active(m_bIsActive);
 
