@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Transform.h"
+#include "ObjectPool_Manager.h"
 
 BEGIN(Engine)
 class CManagement;
@@ -67,6 +68,12 @@ private:
 		Engine::CTransform* pFollowTrans;
 		_mat*				pTargetMatrix;
 	}PARTICLE_INFO;
+
+	typedef struct tagEffInfo
+	{
+		_v3 vCreatePos;
+		_v3 vDirection;
+	}EFF_INFO;
 
 private:
 	map<_tchar*, queue<CEffect*>>	m_EffectPool;	// 미리 클론해놓은 큐

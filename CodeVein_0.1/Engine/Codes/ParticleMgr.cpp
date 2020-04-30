@@ -2,6 +2,7 @@
 #include "Trail_VFX.h"
 #include "Effect.h"
 
+
 IMPLEMENT_SINGLETON(CParticleMgr)
 
 CParticleMgr::CParticleMgr()
@@ -15,7 +16,7 @@ HRESULT CParticleMgr::Ready_ParticleManager_Essential()
 	if (nullptr == m_pManagement)
 		return E_FAIL;
 
-	Input_Pool(L"ItemGet_Particle", 50);
+	Input_Pool(L"ItemGet_Particle", 100);
 
 	Input_Pool(L"Player_FootSmoke", 50);
 	Input_Pool(L"Player_FootSmoke_Jump", 30);
@@ -64,6 +65,8 @@ HRESULT CParticleMgr::Ready_ParticleManager_Essential()
 	Input_Pool(L"Hit_Blood_Direction_6", 100);
 
 	Input_Pool(L"Hit_BloodDecal_0", 50);
+
+	Input_Pool(L"Blood_Chunk_0", 50);
 
 	Input_Pool(L"Hit_Slash_Particle_0", 50);
 	Input_Pool(L"Hit_Slash_Particle_1", 50);
@@ -125,6 +128,14 @@ HRESULT CParticleMgr::Ready_ParticleManager_Essential()
 
 HRESULT CParticleMgr::Ready_ParticleManager()
 {
+	Input_Pool(L"Player_Drain_Ink_0", 80);
+	Input_Pool(L"Player_Drain_Ink_1", 80);
+	Input_Pool(L"Player_Drain_Ink_2", 80);
+	Input_Pool(L"Player_Drain_Ink_3", 80);
+	Input_Pool(L"Player_Drain_Ink_4", 80);
+	Input_Pool(L"Player_Drain_Ink_5", 80);
+	Input_Pool(L"Player_Drain_Ink_6", 80);
+
 	Input_Pool(L"Player_Skill_Scratch_Hor", 10);
 	Input_Pool(L"Player_Skill_Scratch_Ver", 10);
 	Input_Pool(L"Player_Skill_ScratchBlur_Hor", 10);
@@ -909,10 +920,6 @@ void CParticleMgr::Create_Effect_Curve(_tchar* szName, _v3 vPos, CTransform * pT
 
 void CParticleMgr::Create_Effect_Decal(_tchar* szName, _v3 vPos)
 {
-	//CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szName, nullptr));
-	//pEffect->Set_ParticleName(szName);
-	//m_EffectPool[szName].push(pEffect);
-
 	queue<CEffect*>* pFindedQueue = Find_Queue(szName);
 	if (pFindedQueue == nullptr)
 		return;
@@ -923,8 +930,6 @@ void CParticleMgr::Create_Effect_Decal(_tchar* szName, _v3 vPos)
 	pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
 
 	pFindedQueue->pop();
-
-	//m_pManagement->Add_GameOject_ToLayer_NoClone(pEffect, SCENE_STAGE, L"Layer_Effect", nullptr);
 }
 
 void CParticleMgr::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol, CTransform* pHittedTrans, _float fPower)
@@ -982,11 +987,16 @@ void CParticleMgr::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCo
 	Create_DirEffect(L"Hit_Blood_Direction_5", vAttackPos, vBloodDir);
 	Create_DirEffect(L"Hit_Blood_Direction_6", vAttackPos, vBloodDir);
 
-	for (_int i = 0; i < 4; i++)
-	{
-		wsprintf(szBuff, L"Blood_Decal_%d", CCalculater::Random_Num(0, 6));
-		Create_Effect_Decal(szBuff, vAttackPos + vDir + _v3(0.f, -1.3f, 0.f));
-	}
+	EFF_INFO tInfo;
+	tInfo.vCreatePos = vAttackPos;
+	tInfo.vDirection = vBloodDir;
+	CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_BloodChunk", &tInfo);
+
+	//for (_int i = 0; i < 4; i++)
+	//{
+	//	wsprintf(szBuff, L"Blood_Decal_%d", CCalculater::Random_Num(0, 6));
+	//	Create_Effect_Decal(szBuff, vAttackPos + vDir + _v3(0.f, -1.3f, 0.f));
+	//}
 }
 
 void CParticleMgr::Create_Spawn_Effect(_float fDelay, _v3 vPos, _v3 vFinishPos, CTransform* pFollowTrans)

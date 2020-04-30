@@ -570,6 +570,11 @@ void CManagement::Create_Effect_Delay(_tchar * szName, _float fDelay, CTransform
 	CParticleMgr::Get_Instance()->Create_Effect_Delay(szName, fDelay, _v3(0,0,0), pFollowTrans, pTargetMat);
 }
 
+void CManagement::Create_Effect_Decal(_tchar * szName, _v3 vPos)
+{
+	CParticleMgr::Get_Instance()->Create_Effect_Decal(szName, vPos);
+}
+
 void CManagement::Create_ParticleEffect_Delay(_tchar * szName, _float fLifeTime, _float fDelay, _v3 vPos, CTransform * pFollowTrans)
 {
 	CParticleMgr::Get_Instance()->Create_ParticleEffect_Delay(szName, fLifeTime, fDelay, vPos, pFollowTrans);

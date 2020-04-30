@@ -104,7 +104,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_CLIENT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../Default/;../Headers/;../../Reference/Headers/;../../Physx/Include/;../../Physx/src/foundation/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
@@ -145,7 +145,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;_CLIENT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../Default/;../Headers/;../../Reference/Headers/;../../Physx/Include/;../../Physx/src/foundation/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
@@ -208,6 +208,7 @@
     <ClInclude Include="..\Headers\DeerKingRushCol.h" />
     <ClInclude Include="..\Headers\Drain_Weapon.h" />
     <ClInclude Include="..\Headers\Dummy_Target.h" />
+    <ClInclude Include="..\Headers\Effect_BloodChunk.h" />
     <ClInclude Include="..\Headers\Expendables.h" />
     <ClInclude Include="..\Headers\Expendables_Inven.h" />
     <ClInclude Include="..\Headers\Expendables_Slot.h" />
@@ -347,6 +348,7 @@
     <ClCompile Include="..\Codes\DeerKingRushCol.cpp" />
     <ClCompile Include="..\Codes\Drain_Weapon.cpp" />
     <ClCompile Include="..\Codes\Dummy_Target.cpp" />
+    <ClCompile Include="..\Codes\Effect_BloodChunk.cpp" />
     <ClCompile Include="..\Codes\Expendables.cpp" />
     <ClCompile Include="..\Codes\Expendables_Inven.cpp" />
     <ClCompile Include="..\Codes\Expendables_Slot.cpp" />

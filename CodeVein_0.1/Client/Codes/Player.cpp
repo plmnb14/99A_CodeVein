@@ -1551,12 +1551,16 @@ void CPlayer::Key_Utility()
 		// 아이템 사용
 		//===========================================
 
-		_v3 vEffPos = _v3(0.f, 1.5f, 0.f);
+		LPCSTR tmpChar = "RightHandAttach"; //왼손 뼈 몰라서 임시.
+		_mat   matAttach;
+		D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 2);
+		matAttach = pFamre->CombinedTransformationMatrix * m_pTransform->Get_WorldMat();
+		_v3 vEffPos = _v3(matAttach._41, matAttach._42, matAttach._43);
 
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle"			, 0.2f, vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Heal_RedLight"						, 0.2f, vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Heal_Particle"						, 0.2f, vEffPos, m_pTransform);
-		g_pManagement->Create_ParticleEffect_Delay(L"Player_Buff_HandSmoke"		, 0.2f	, 0.2f, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle"			, 0.2f, vEffPos, nullptr);
+		g_pManagement->Create_Effect_Delay(L"Player_Heal_RedLight"						, 0.2f, vEffPos, nullptr);
+		g_pManagement->Create_Effect_Delay(L"Player_Heal_Particle"						, 0.2f, vEffPos, nullptr);
+		g_pManagement->Create_ParticleEffect_Delay(L"Player_Buff_HandSmoke"		, 0.2f	, 0.2f, vEffPos, nullptr);
 	}
 }
 
@@ -3937,6 +3941,14 @@ void CPlayer::Play_PickUp()
 		m_eAnim_Lower = m_eAnim_Upper;
 		m_eAnim_RightArm = m_eAnim_Upper;
 		m_eAnim_LeftArm = m_eAnim_Upper;
+
+		// 이펙트 ==============================
+		LPCSTR tmpChar = "RightHandAttach"; //왼손 뼈 몰라서 임시.
+		_mat   matAttach;
+		D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 2);
+		matAttach = pFamre->CombinedTransformationMatrix * m_pTransform->Get_WorldMat();
+		_v3 vEffPos = _v3(matAttach._41, matAttach._42, matAttach._43);
+		g_pManagement->Create_ParticleEffect_Delay(L"ItemGet_Particle", 0.3f, 0.15f, vEffPos, nullptr);
 	}
 
 	else if (true == m_bOnPickUp)
@@ -4380,6 +4392,39 @@ void CPlayer::Play_BloodSuckCount()
 				{
 					m_tObjParam.bCanCounter = false;
 					m_tObjParam.bIsCounter = true;
+				}
+
+				// 이펙트 ============================================
+				LPCSTR tmpChar = "Hips";
+				_mat   matAttach;
+				D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 0);
+				matAttach = pFamre->CombinedTransformationMatrix * m_pTransform->Get_WorldMat();
+				_v3 vEffPos = V3_NULL;
+
+				// 시전 스모크
+				for (_int i = 0; i < 7; i++)
+				{
+					_tchar szBuff[256] = L"";
+					wsprintf(szBuff, L"Player_Drain_Ink_%d", i);
+
+					vEffPos = _v3(matAttach._41, matAttach._42, matAttach._43)
+						+ m_pTransform->Get_Axis(AXIS_Z) * -0.8f
+						+ _v3(0.f, -0.25f + _float(CCalculater::Random_Num_Double(0.0, 1.7)), 0.f);
+
+					g_pManagement->Create_Effect_Delay(szBuff, 0.1f, vEffPos);
+				}
+
+				// 끝날때 스모크
+				for (_int i = 0; i < 7; i++)
+				{
+					_tchar szBuff[256] = L"";
+					wsprintf(szBuff, L"Player_Drain_Ink_%d", i);
+
+					vEffPos = _v3(matAttach._41, matAttach._42, matAttach._43)
+						+ m_pTransform->Get_Axis(AXIS_Z) * -0.8f
+						+ _v3(0.f, _float(CCalculater::Random_Num_Double(0.0, 0.3)), 0.f);
+
+					g_pManagement->Create_Effect_Delay(szBuff, 1.6f, vEffPos);
 				}
 			}
 		}

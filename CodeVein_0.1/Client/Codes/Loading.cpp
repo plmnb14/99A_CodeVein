@@ -3,9 +3,12 @@
 #include "Management.h"
 
 #include "Sky.h"
+
 #include "TexEffect.h"
 #include "MeshEffect.h"
 #include "DecalEffect.h"
+#include "Effect_BloodChunk.h"
+
 #include "Player.h"
 
 #include "Weapon.h"
@@ -648,6 +651,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Hit_BloodDecal_0")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Blood_Chunk_0", true)))
+		return E_FAIL;
 #pragma endregion
 
 #pragma region Slash
@@ -844,6 +849,20 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Rush_RedParticle_LaserBefore")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Rush_WhiteParticle_LaserBefore")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Drain_Ink_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Drain_Ink_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Drain_Ink_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Drain_Ink_3")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Drain_Ink_4")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Drain_Ink_5")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Drain_Ink_6")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_SplitAssert_LaserAfter_RingLine", true)))
 		return E_FAIL;
@@ -1411,6 +1430,11 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Haze", CHaze::Create(m_pGraphicDev))))
 			return E_FAIL;
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_Haze", L"GameObject_Haze", 200);
+		
+		// Effect_BloodChunk
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BloodChunk", CEffect_BloodChunk::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_BloodChunk", L"GameObject_BloodChunk", 200);
 		//============================================================================================================
 
 

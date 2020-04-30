@@ -1,4 +1,5 @@
 int g_iToneIndex = 0;
+float g_fToneGradient= 0.f;
 
 texture		g_DiffuseTexture;
 sampler DiffuseSampler = sampler_state
@@ -149,12 +150,11 @@ PS_OUT PS_TONEMAPPING(PS_IN In)
 		float Luminance = 1.08f;
 		static const float fMiddleGray = 0.18f;
 		static const float fWhiteCutoff = 0.9f;
-
+		
 		float3 Color = pow(Out.vColor.xyz, 1.f / 2.2f) * fMiddleGray / (Luminance + 0.001f);
 		Color *= (1.f + (Color / (fWhiteCutoff * fWhiteCutoff)));
 		Color /= (1.f + Color);
 		Out.vColor = float4(pow(Color, 1.f / 2.2f), 1.f);
-
 	}
 	else if (1 == g_iToneIndex)
 	{
@@ -192,6 +192,11 @@ PS_OUT PS_TONEMAPPING(PS_IN In)
 		float3 Color = ((x*(A*x + C*B) + D*E) / (x*(A*x + B) + D*F)) - E / F;
 		Out.vColor = float4(Color, 1.f);
 	}
+
+	// MONO
+	float3 Color = Out.vColor.rgb;
+	Color.rgb = lerp(Color, dot(Color.rgb, float3(0.3, 0.59, 0.11)), g_fToneGradient);
+	Out.vColor = float4(Color, 1.f);
 
 	return Out;
 }
@@ -333,12 +338,14 @@ PS_OUT PS_BLURV(PS_IN In)
 	return Out;
 }
 
-
+float g_Focus_DOF;
+float g_Range_DOF;
 PS_OUT PS_AFTER(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	// Calc Distortion =========================================
+	// ============================================
+	// Calc Distortion ============================
 	float2 Trans = In.vTexUV;// +0.001f;
 	vector	Noise = tex2D(DistortionSampler, Trans);
 	//Noise.xy *= 1.f - (Noise.x + Noise.y);
@@ -350,11 +357,41 @@ PS_OUT PS_AFTER(PS_IN In)
 	float2 UV = In.vTexUV + (Noise.xy * fPower);
 	if (Noise.w <= 0)
 		UV = In.vTexUV;
-	// Calc Distortion End =========================================
+	// Calc Distortion End ========================
+	// ============================================
 
 	vector	vDiffuse = tex2D(DiffuseSampler, UV);
 	Out.vColor = pow(vDiffuse, 1 / 2.2);
 	//Out.vColor = vDiffuse;
+
+	// ============================================
+	// DOF =========================================
+
+	vector vDepth = tex2D(DepthSampler, UV);
+	float PixelCameraZ = vDepth.y * 500.f;
+	vector	vBlur = tex2D(ShadeSampler, UV);
+	Out.vColor = lerp(Out.vColor, vBlur, saturate(g_Range_DOF * abs(g_Focus_DOF - PixelCameraZ)));
+
+	// DOF END ====================================
+	// ============================================
+
+	vector fogColor = vector(0.3, 0.3, 0.3, 1.0);
+	float2 fog;
+	fog.x = 500 / (500 - 0.1);
+	fog.y = -1 / (500 - 0.1);
+
+	//// 선형 Fog
+	//vector vFog = fog.x + PixelCameraZ * fog.y;
+
+	//  지수 Fog
+	float Density = 0.06f;
+	vector vFog = 1 / exp(pow(PixelCameraZ * Density, 2));
+
+	Out.vColor = vFog * Out.vColor + (1 - vFog) * fogColor;
+
+	//const float FOG_MIN = 0.9;
+	//const float FOG_MAX = 0.99;
+	//Out.vColor = lerp(Out.vColor, fogColor, lerp(FOG_MIN, FOG_MAX, PixelCameraZ));
 
 	return Out;
 }
