@@ -406,6 +406,9 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\09. BloodCodeUI">
       <UniqueIdentifier>{9de20518-f4f0-4698-8b19-40542809fe4b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\9%29 Player_Colleague\Colleague_Bullet">
+      <UniqueIdentifier>{f353be58-7987-45ff-8b7e-daae8ee81cbe}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -834,6 +837,9 @@
     <ClInclude Include="..\Headers\BloodCodeUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\09. BloodCodeUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Colleague_Bullet.h">
+      <Filter>02.GameObject\Stage\9%29 Player_Colleague\Colleague_Bullet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1249,6 +1255,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\BloodCodeUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\09. BloodCodeUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Colleague_Bullet.cpp">
+      <Filter>02.GameObject\Stage\9%29 Player_Colleague\Colleague_Bullet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

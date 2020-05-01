@@ -32,6 +32,7 @@
 #include "PickUp_ItemUI.h"
 
 #include "Player_Colleague.h"
+#include "Colleague_Bullet.h"
 
 //#include "Item.h"
 #include "Haze.h"
@@ -1386,12 +1387,21 @@ _uint CLoading::Loading_Stage()
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_YetiBullet", L"Monster_YetiBullet", 20);
 
 
+		// Colleague - Chea
+		//============================================================================================================
+		// 동료
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Colleague", CPlayer_Colleague::Create(m_pGraphicDev))))
+			return E_FAIL;
+
+		// 동료 총알
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ColleagueBullet", CColleague_Bullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_ColleagueBullet", L"GameObject_ColleagueBullet", 20);
+
+
 		cout << "UI Sub Prototype 생성 중 . . ." << endl;
 		// UI - Chea
 		//============================================================================================================
-
-		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Colleague", CPlayer_Colleague::Create(m_pGraphicDev))))
-			return E_FAIL;
 
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MonsterHPUI", CMonsterUI::Create(m_pGraphicDev))))
 			return E_FAIL;
