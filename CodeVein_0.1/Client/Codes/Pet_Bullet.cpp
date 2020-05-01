@@ -2,12 +2,12 @@
 #include "..\Headers\Pet_Bullet.h"
 
 CPet_Bullet::CPet_Bullet(LPDIRECT3DDEVICE9 pGraphic_Device)
-	: CGameObject(pGraphic_Device)
+	: CPet(pGraphic_Device)
 {
 }
 
 CPet_Bullet::CPet_Bullet(const CPet_Bullet & rhs)
-	: CGameObject(rhs)
+	: CPet(rhs)
 {
 }
 
@@ -50,6 +50,9 @@ _int CPet_Bullet::Update_GameObject(_double TimeDelta)
 
 	if (m_dCurTime > m_dLifeTime)
 	{
+		g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_0", m_pTransformCom->Get_Pos());
+		g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_1", m_pTransformCom->Get_Pos());
+		g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_Particle", m_pTransformCom->Get_Pos());
 		m_pBulletBody->Set_Dead();
 
 		m_bDead = true;
@@ -69,6 +72,8 @@ _int CPet_Bullet::Update_GameObject(_double TimeDelta)
 			{
 				//임시로 토템총알을 복붙했습니다
 			case PET_BULLET_POISON:
+				m_fEffectOffset = 0.f;
+				g_pManagement->Create_Effect(L"Totem_Fire_BulletBody", m_pTransformCom->Get_Pos() + m_vDir * 1.3f);
 				g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_01", m_pTransformCom->Get_Pos(), nullptr);
 				g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_02", m_pTransformCom->Get_Pos(), nullptr);
 				break;
@@ -168,7 +173,7 @@ void CPet_Bullet::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 					}
 
 					iter->Set_Target_CanHit(false);
-					iter->Add_Target_Hp(m_tObjParam.fDamage);
+					iter->Add_Target_Hp(-m_tObjParam.fDamage);
 
 					m_dCurTime = 100;	// 바로 사망시키기 위해서 현재시간 100줬음
 
@@ -232,7 +237,7 @@ HRESULT CPet_Bullet::Ready_Effect(void * pArg)
 	{
 		//임시로 토템총알을 복붙했습니다
 	case PET_BULLET_TYPE::PET_BULLET_POISON:
-		m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"FireBoy_FireBullet_Mid", nullptr));
+		m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Totem_Fire_BulletBody", nullptr));
 		m_pBulletBody->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
 		m_pBulletBody->Reset_Init();
 		g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
@@ -252,10 +257,10 @@ HRESULT CPet_Bullet::Ready_Effect(void * pArg)
 	m_dLifeTime = temp.dLifeTime;
 
 	m_pTransformCom->Set_Pos(temp.vCreatePos);
-	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
+	m_pTransformCom->Set_Scale(V3_ONE);
 
 	m_tObjParam.bCanAttack = true;
-	m_tObjParam.fDamage = 20.f;
+	m_tObjParam.fDamage = 400.f;
 
 	m_dCurTime = 0;
 	m_bDead = false;
@@ -264,7 +269,7 @@ HRESULT CPet_Bullet::Ready_Effect(void * pArg)
 	return S_OK;
 }
 
-CPet_Bullet * CPet_Bullet::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
+CPet_Bullet* CPet_Bullet::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 {
 	CPet_Bullet* pInstance = new CPet_Bullet(pGraphic_Device);
 
@@ -277,7 +282,7 @@ CPet_Bullet * CPet_Bullet::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 	return pInstance;
 }
 
-CGameObject * CPet_Bullet::Clone_GameObject(void * pArg)
+CGameObject* CPet_Bullet::Clone_GameObject(void * pArg)
 {
 	CPet_Bullet* pInstance = new CPet_Bullet(*this);
 

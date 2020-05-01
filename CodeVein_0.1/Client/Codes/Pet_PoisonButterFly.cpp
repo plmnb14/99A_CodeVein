@@ -58,7 +58,7 @@ _int CPet_PoisonButterFly::Update_GameObject(_double TimeDelta)
 
 	m_pMeshCom->SetUp_Animation(m_eState);
 
-	MONSTER_STATETYPE::DEAD != m_eFirstCategory ? Check_CollisionEvent() : Check_DeadEffect(TimeDelta);
+	PET_STATETYPE::DEAD != m_eFirstCategory ? Check_CollisionEvent() : Check_DeadEffect(TimeDelta);
 
 	return NO_EVENT;
 }
@@ -67,6 +67,8 @@ _int CPet_PoisonButterFly::Late_Update_GameObject(_double TimeDelta)
 {
 	if (false == m_bEnable)
 		return NO_EVENT;
+
+	IF_NULL(m_pTarget) m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
 
 	IF_NULL_VALUE_RETURN(m_pRendererCom, E_FAIL);
 
@@ -105,7 +107,7 @@ HRESULT CPet_PoisonButterFly::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			if (MONSTER_STATETYPE::DEAD != m_eFirstCategory)
+			if (PET_STATETYPE::DEAD != m_eFirstCategory)
 				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
 
 			m_pShaderCom->Begin_Pass(m_iPass);
@@ -316,30 +318,30 @@ void CPet_PoisonButterFly::Check_CollisionHit(list<CGameObject*> plistGameObject
 
 void CPet_PoisonButterFly::Check_Hit()
 {
-	if (MONSTER_STATETYPE::DEAD == m_eFirstCategory)
+	if (PET_STATETYPE::DEAD == m_eFirstCategory)
 		return;
 
 	Function_Find_Target();
 
 	if (nullptr == m_pTarget)
 	{
+		m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
 		return;
 	}
 	else
 	{
 		switch (m_eTarget)
 		{
-		case TARGET_BOSS:
+		case PET_TARGET_TYPE::PET_TARGET_BOSS:
 			break;
-		case TARGET_MONSTER:
+		case PET_TARGET_TYPE::PET_TARGET_MONSTER:
 			break;
-		case TARGET_ITEM:
+		case PET_TARGET_TYPE::PET_TARGET_ITEM:
 			break;
-		case TARGET_NONE:
+		case PET_TARGET_TYPE::PET_TARGET_NONE:
 			break;
 		}
 	}
-
 
 	if (0 < m_tObjParam.fHp_Cur)
 	{
@@ -351,7 +353,7 @@ void CPet_PoisonButterFly::Check_Hit()
 				{
 					if (true == m_tObjParam.bHitAgain)
 					{
-						m_eFirstCategory = MONSTER_STATETYPE::HIT;
+						m_eFirstCategory = PET_STATETYPE::HIT;
 						Function_FBLR(m_pTarget);
 						m_tObjParam.bHitAgain = false;
 						m_pMeshCom->Reset_OldIndx();
@@ -359,23 +361,23 @@ void CPet_PoisonButterFly::Check_Hit()
 				}
 				else
 				{
-					m_eFirstCategory = MONSTER_STATETYPE::HIT;
+					m_eFirstCategory = PET_STATETYPE::HIT;
 					Function_FBLR(m_pTarget);
 				}
 			}
 		}
 	}
 	else
-		m_eFirstCategory = MONSTER_STATETYPE::DEAD;
+		m_eFirstCategory = PET_STATETYPE::DEAD;
 
 	return;
 }
 
 void CPet_PoisonButterFly::Check_Dist()
 {
-	if (MONSTER_STATETYPE::HIT == m_eFirstCategory ||
-		MONSTER_STATETYPE::CC == m_eFirstCategory ||
-		MONSTER_STATETYPE::DEAD == m_eFirstCategory)
+	if (PET_STATETYPE::HIT == m_eFirstCategory ||
+		PET_STATETYPE::CC == m_eFirstCategory ||
+		PET_STATETYPE::DEAD == m_eFirstCategory)
 		return;
 
 	if (true == m_bIsCombo ||
@@ -404,44 +406,46 @@ void CPet_PoisonButterFly::Check_Dist()
 			//무언가를 찾았다면
 			if (nullptr != m_pTarget)
 			{
+				m_bCanActive = true;
 				Check_Target();
 			}
 			//아무것도 찾지 못했다면
 			else
 			{
 				//자연스러운 속도 유지를 위한 함수
+				m_bCanActive = false;
 				Function_CalcMoveSpeed(m_fActiveRange);
 				//사회적 거리두기
 				if (0.f >= m_fSkillMoveSpeed_Cur)
 				{
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
-					m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+					m_eFirstCategory = PET_STATETYPE::IDLE;
+					m_eSecondCategory_IDLE = PET_IDLETYPE::IDLE_IDLE;
 				}
 				else
 				{
 					m_bCanMoveAround = false;
-					m_eFirstCategory = MONSTER_STATETYPE::MOVE;
-					m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_WALK;
+					m_eFirstCategory = PET_STATETYPE::MOVE;
+					m_eSecondCategory_MOVE = PET_MOVETYPE::MOVE_WALK;
 				}
 			}
 		}
 		//자유 행동 거리 Out
 		else
 		{
-			cout << "최대 거리안에 들어왔으나 자유행동거리 밖" << endl;
 			m_bCanChase = true;
-			m_eFirstCategory = MONSTER_STATETYPE::MOVE;
-			m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_RUN;
+			m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
+			m_eFirstCategory = PET_STATETYPE::MOVE;
+			m_eSecondCategory_MOVE = PET_MOVETYPE::MOVE_RUN;
 		}
 	}
 	//최대거리 Out
 	else
 	{
 		//순간 이동이 필요한 순간, 랜덤으로 플레이어 주변값으로 이동
-		cout << "너무멀어서 순간이동이 필요한 순간" << endl;
 		m_bCanChase = true;
-		m_eFirstCategory = MONSTER_STATETYPE::MOVE;
-		m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_RUN;
+		m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
+		m_eFirstCategory = PET_STATETYPE::MOVE;
+		m_eSecondCategory_MOVE = PET_MOVETYPE::MOVE_RUN;
 	}
 
 	return;
@@ -459,78 +463,77 @@ void CPet_PoisonButterFly::Check_Target()
 	//목표와 근거리 공격범위 여부
 	m_fAtkRange >= fTargetDist ? m_bInAtkRange = true : m_bInAtkRange = false;
 
+	//Player와 30~2 사이로 있음 
 	switch (m_eTarget)
 	{
-	case TARGET_BOSS:
-	case TARGET_MONSTER:
+	case PET_TARGET_TYPE::PET_TARGET_MONSTER:
+	case PET_TARGET_TYPE::PET_TARGET_BOSS:
+		//인지 범위o
 		if (true == m_bInRecognitionRange)
 		{
+			//원거리 범위o
 			if (true == m_bInShotRange)
 			{
+				//근거리 범위o
 				if (true == m_bInAtkRange)
 				{
+					//쿨타임x
 					if (true == m_tObjParam.bCanAttack)
-					{
-						m_bCanChooseAtkType = true;
-
-						m_tObjParam.bCanAttack = false;
-						m_tObjParam.bIsAttack = true;
-
-						m_eFirstCategory = MONSTER_STATETYPE::ATTACK;
-
-						m_iRandom = CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_5SHOT,ATK_NORMAL_TYPE::NORMAL_POISONWHEELWIND);
-
-						switch (m_iRandom)
-						{
-						case ATK_NORMAL_TYPE::NORMAL_5SHOT:
-							m_eState = PET_POISIONBUTTERFLY_ANI::Atk5wayShoot;
-							break;
-						case ATK_NORMAL_TYPE::NORMAL_MIST:
-							m_eState = PET_POISIONBUTTERFLY_ANI::AtkAllRangeShoot;
-							break;
-						case ATK_NORMAL_TYPE::NORMAL_POISONWHEELWIND:
-							m_eState = PET_POISIONBUTTERFLY_ANI::AtkPoisonMine;
-							break;
-						}
-					}
+						m_eFirstCategory = PET_STATETYPE::ATTACK;
+					//쿨타임o
 					else
 					{
-						cout << "타겟, 쿨타임, 주변을 경계하면서 걷도록 하겠습니다" << endl;;
 						m_bCanMoveAround = true;
-						m_eFirstCategory = MONSTER_STATETYPE::MOVE;
-						m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_ALERT;
+						m_eFirstCategory = PET_STATETYPE::MOVE;
+						m_eSecondCategory_MOVE = PET_MOVETYPE::MOVE_ALERT;
 					}
 				}
+				//근거리 범위x
 				else
 				{
-					cout << "타겟, 근접공격범위는 아닙니다, 걸어갑니다" << endl;
-					m_eFirstCategory = MONSTER_STATETYPE::MOVE;
-					m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_WALK;
+					//원거리 쿨타임x
+					if (true == m_tObjParam.bCanAttack)
+						m_eFirstCategory = PET_STATETYPE::ATTACK;
+					//원거리 쿨타임o
+					else
+					{
+						m_bCanMoveAround = true;
+						m_eFirstCategory = PET_STATETYPE::MOVE;
+						m_eSecondCategory_MOVE = PET_MOVETYPE::MOVE_ALERT;
+					}
 				}
 			}
+			//원거리 범위x
 			else
 			{
-				cout << "타겟, 원거리공격범위가 아닙니다, 달려갑니다" << endl;
-				m_bCanChase = true;
-				m_eFirstCategory = MONSTER_STATETYPE::MOVE;
-				m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_RUN;
+				//공격 가능거리까지 걸어가기
+				m_eFirstCategory = PET_STATETYPE::MOVE;
+				m_eSecondCategory_MOVE = PET_MOVETYPE::MOVE_WALK;
 			}
 		}
+		//인지 범위x
+		else
+		{
+			//해당 목표로 추적
+			m_bCanChase = true;
+			m_eFirstCategory = PET_STATETYPE::MOVE;
+			m_eSecondCategory_MOVE = PET_MOVETYPE::MOVE_RUN;
+		}
 		break;
-	case TARGET_ITEM:
+	case PET_TARGET_TYPE::PET_TARGET_ITEM:
 		if (true == m_bInRecognitionRange)
 		{
 			if (true == m_bInAtkRange)
 			{
 				//아이템 획득, 아이템을 공격해서 얻거나 죽이거나 할듯
-				m_eFirstCategory = MONSTER_STATETYPE::IDLE;
-				m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+				m_eFirstCategory = PET_STATETYPE::IDLE;
+				m_eSecondCategory_IDLE = PET_IDLETYPE::IDLE_IDLE;
 			}
 			else
 			{
 				m_bCanChase = true;
-				m_eFirstCategory = MONSTER_STATETYPE::MOVE;
-				m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_RUN;
+				m_eFirstCategory = PET_STATETYPE::MOVE;
+				m_eSecondCategory_MOVE = PET_MOVETYPE::MOVE_RUN;
 			}
 		}
 		break;
@@ -541,35 +544,78 @@ void CPet_PoisonButterFly::Check_Target()
 
 void CPet_PoisonButterFly::Check_AniEvent()
 {
+	IF_NULL(m_pTarget) m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
+
 	switch (m_eFirstCategory)
 	{
-	case MONSTER_STATETYPE::IDLE:
+	case PET_STATETYPE::IDLE:
 		Play_Idle();
 		break;
-	case MONSTER_STATETYPE::MOVE:
+	case PET_STATETYPE::MOVE:
 		Play_Move();
 		break;
-	case MONSTER_STATETYPE::ATTACK:
-		switch (m_eState)
+	case PET_STATETYPE::ATTACK:
+		if (false == m_tObjParam.bIsAttack)
 		{
-		case Client::CPet_PoisonButterFly::AtkPoisonMine:
-			Play_5Shot();
-			break;
-		case Client::CPet_PoisonButterFly::AtkAllRangeShoot:
-			Play_Mist();
-			break;
-		case Client::CPet_PoisonButterFly::Atk5wayShoot:
-			Play_PoisonWheelWind();
-			break;
+			m_tObjParam.bCanAttack = false;
+			m_tObjParam.bIsAttack = true;
+
+			if (true == m_bInAtkRange)
+			{
+				m_iRandom = CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_5SHOT, ATK_NORMAL_TYPE::NORMAL_MIST);
+				m_eFirstCategory = PET_STATETYPE::ATTACK;
+
+				switch (m_iRandom)
+				{
+				case ATK_NORMAL_TYPE::NORMAL_5SHOT:
+					m_eState = PET_POISIONBUTTERFLY_ANI::Atk5wayShoot;
+					break;
+				case ATK_NORMAL_TYPE::NORMAL_MIST:
+					m_eState = PET_POISIONBUTTERFLY_ANI::AtkAllRangeShoot;
+					break;
+				}
+
+			}
+			else
+			{
+				m_iRandom = CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_MIST, ATK_NORMAL_TYPE::NORMAL_POISONWHEELWIND);
+				m_eFirstCategory = PET_STATETYPE::ATTACK;
+
+				switch (m_iRandom)
+				{
+				case ATK_NORMAL_TYPE::NORMAL_MIST:
+					m_eState = PET_POISIONBUTTERFLY_ANI::AtkAllRangeShoot;
+					break;
+				case ATK_NORMAL_TYPE::NORMAL_POISONWHEELWIND:
+					m_eState = PET_POISIONBUTTERFLY_ANI::AtkPoisonMine;
+					break;
+				}
+			}
+			return;
+		}
+		else
+		{
+			switch (m_eState)
+			{
+			case Client::CPet_PoisonButterFly::AtkPoisonMine:
+				Play_5Shot();
+				break;
+			case Client::CPet_PoisonButterFly::AtkAllRangeShoot:
+				Play_Mist();
+				break;
+			case Client::CPet_PoisonButterFly::Atk5wayShoot:
+				Play_PoisonWheelWind();
+				break;
+			}
 		}
 		break;
-	case MONSTER_STATETYPE::HIT:
+	case PET_STATETYPE::HIT:
 		Play_Hit();
 		break;
-	case MONSTER_STATETYPE::CC:
+	case PET_STATETYPE::CC:
 		Play_CC();
 		break;
-	case MONSTER_STATETYPE::DEAD:
+	case PET_STATETYPE::DEAD:
 		Play_Dead();
 		break;
 	}
@@ -577,10 +623,36 @@ void CPet_PoisonButterFly::Check_AniEvent()
 
 void CPet_PoisonButterFly::Check_DeadEffect(_double TimeDelta)
 {
+	m_fDeadEffect_Delay -= _float(TimeDelta);
+	if (m_fDeadEffect_Delay > 0.f)
+		return;
+
+	m_fDeadEffect_Offset -= _float(TimeDelta);
+	if (m_fDeadEffect_Offset > 0.f)
+		return;
+
+	m_fDeadEffect_Offset = 0.1f;
+
+	_v3 vPos = m_pTransformCom->Get_Pos();
+	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
+	_v3 vHeadPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips");
+	_v3 vHipPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle", 0.1f, vPos, vHeadPos);
+	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle_Sub", 0.1f, vPos, vHeadPos);
+
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHeadPos);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vHipPos);
+	CParticleMgr::Get_Instance()->Create_Effect(L"Monster_DeadSmoke_0", vPos);
+
+	return;
 }
 
 void CPet_PoisonButterFly::Play_5Shot()
 {
+	IF_NULL(m_pTarget) m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
+
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
 	_v3 vBirth, vLook;
 	_float fLength = 1.f;
@@ -595,9 +667,9 @@ void CPet_PoisonButterFly::Play_5Shot()
 		//원하는 방향으로 5발을 쏴준다
 		if (m_pMeshCom->Is_Finish_Animation(0.955f))
 		{
-			m_fCoolDownMax = 1.0f;
-			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = 1.0f;
 
 			return;
 		}
@@ -608,18 +680,22 @@ void CPet_PoisonButterFly::Play_5Shot()
 				m_bEventTrigger[0] = true;
 				m_tObjParam.bSuperArmor = true;
 
-				_mat matTemp = *m_matBone[Bone_TailTongue] * m_pTransformCom->Get_WorldMat(); //뼈위치* 월드
+				_mat matTemp = *m_matBone[Bone_Head] * m_pTransformCom->Get_WorldMat(); //뼈위치* 월드
 
 				memcpy(&vBirth, &matTemp._41, sizeof(_v3)); //생성위치
 				memcpy(&vLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
 				vBirth += (vLook * fLength); //생성위치 = 생성위치 +(룩*길이)
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 6.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 5.f));
 			}
 		}
 		else if (0.f <= AniTime)
-			Function_RotateBody(m_pTarget);
+			if(PET_TARGET_TYPE::PET_TARGET_NONE != m_eTarget)
+				Function_RotateBody(m_pTarget);
 	}
+
+	return;
+
 }
 
 void CPet_PoisonButterFly::Play_Mist()
@@ -639,9 +715,9 @@ void CPet_PoisonButterFly::Play_Mist()
 		//기모아서 방출하는 느낌
 		if (m_pMeshCom->Is_Finish_Animation(0.955f))
 		{
-			m_fCoolDownMax = 1.0f;
-			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = 1.0f;
 
 			return;
 		}
@@ -658,7 +734,7 @@ void CPet_PoisonButterFly::Play_Mist()
 				memcpy(&vLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
 				vBirth += (vLook * fLength); //생성위치 = 생성위치 +(룩*길이)
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 6.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 6.f, 5.f));
 			}
 		}
 	}
@@ -681,9 +757,9 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_fCoolDownMax = 1.0f;
-			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = 1.0f;
 
 			return;
 		}
@@ -702,7 +778,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 4.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
 			}
 		}
 		else if (4.500f <= AniTime)
@@ -720,7 +796,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 4.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
 			}
 		}
 		else if (4.367f <= AniTime)
@@ -738,7 +814,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 4.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
 			}
 		}
 		else if (4.233f <= AniTime)
@@ -756,7 +832,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 4.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
 			}
 		}
 		else if (4.100f <= AniTime)
@@ -774,7 +850,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 4.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
 			}
 		}
 		else if (3.967f <= AniTime)
@@ -792,7 +868,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 4.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
 			}
 		}
 		else if (3.833f <= AniTime)
@@ -810,7 +886,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 4.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
 			}
 		}
 		else if (3.700f <= AniTime)
@@ -828,7 +904,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 4.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
 			}
 		}
 		else if (3.567f <= AniTime)
@@ -846,7 +922,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 4.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
 			}
 		}
 		else if (3.433f <= AniTime)
@@ -864,7 +940,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 4.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
 			}
 		}
 		else if (3.300f <= AniTime)
@@ -882,7 +958,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 4.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
 			}
 		}
 		else if (3.167f <= AniTime)
@@ -900,7 +976,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 4.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
 			}
 		}
 		else if (3.033f <= AniTime)
@@ -918,7 +994,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 4.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
 			}
 		}
 		else if (2.900f <= AniTime)
@@ -936,7 +1012,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 4.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
 			}
 		}
 		else if (2.767f <= AniTime)
@@ -954,7 +1030,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 4.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
 			}
 		}
 
@@ -976,16 +1052,18 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 
 void CPet_PoisonButterFly::Play_Idle()
 {
+	IF_NULL(m_pTarget) m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
+
 	switch (m_eTarget)
 	{
-	case TARGET_BOSS:
-	case TARGET_MONSTER:
+	case PET_TARGET_TYPE::PET_TARGET_BOSS:
+	case PET_TARGET_TYPE::PET_TARGET_MONSTER:
 		Function_RotateBody(m_pTarget);
 		m_eState = PET_POISIONBUTTERFLY_ANI::Idle;
 		break;
-	case TARGET_ITEM:
+	case PET_TARGET_TYPE::PET_TARGET_ITEM:
 		break;
-	case TARGET_NONE:
+	case PET_TARGET_TYPE::PET_TARGET_NONE:
 		Function_RotateBody(m_pPlayer);
 		m_eState = PET_POISIONBUTTERFLY_ANI::Idle;
 		break;
@@ -998,54 +1076,71 @@ void CPet_PoisonButterFly::Play_Move()
 {
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
 
+	IF_NULL(m_pTarget) m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
+
 	switch (m_eSecondCategory_MOVE)
 	{
-	case MONSTER_MOVETYPE::MOVE_RUN:
-		if (true == m_bCanChase)
-		{
-			m_bCanChase = false;
-			m_eState = PET_POISIONBUTTERFLY_ANI::Walk_F;
-			m_fSkillMoveSpeed_Cur = 8.f;
-			m_fSkillMoveAccel_Cur = 0.f;
-			m_fSkillMoveMultiply = 0.5f;
-		}
+	case MOVE_WALK:
 		switch (m_eTarget)
 		{
-		case TARGET_BOSS:
-			cout << "Boss를 향해 달려간다" << endl;
-			Function_RotateBody(m_pTarget);
-			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-			break;
-		case TARGET_MONSTER:
-			cout << "Monster를 향해 달려간다" << endl;
-			Function_RotateBody(m_pTarget);
-			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-			break;
-		case TARGET_ITEM:
-			cout << "Item을 향해 달려간다" << endl;
-			Function_RotateBody(m_pTarget);
-			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-			break;
-		case TARGET_NONE:
-			cout << "player를 향해 달려간다" << endl;
-			Function_RotateBody(m_pPlayer);
-			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-			break;
-		}
-		break;
+		case PET_TARGET_TYPE::PET_TARGET_BOSS:
+		case PET_TARGET_TYPE::PET_TARGET_MONSTER:
+		case PET_TARGET_TYPE::PET_TARGET_ITEM:
+			m_eState = PET_POISIONBUTTERFLY_ANI::Walk_F;
 
-	case MONSTER_MOVETYPE::MOVE_WALK:
-		if (MONSTER_MOVETYPE::MOVE_WALK == m_eSecondCategory_MOVE)
-		{
-			cout << "player를 향해 걸어간다" << endl;
+			Function_RotateBody(m_pTarget);
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_DecreMoveMent(m_fSkillMoveMultiply);
+			break;
+		case PET_TARGET_TYPE::PET_TARGET_NONE:
 			m_eState = PET_POISIONBUTTERFLY_ANI::Walk_F;
 
 			Function_RotateBody(m_pPlayer);
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
+			break;
 		}
-		else if (MONSTER_MOVETYPE::MOVE_ALERT == m_eSecondCategory_MOVE)
+		break;
+	case MOVE_ALERT:
+		switch (m_eTarget)
 		{
+		case PET_TARGET_TYPE::PET_TARGET_BOSS:
+		case PET_TARGET_TYPE::PET_TARGET_MONSTER:
+		if (true == m_bCanMoveAround)
+		{
+			m_bCanMoveAround = false;
+			m_bIsMoveAround = true;
+
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = 4.f;
+
+			m_fSkillMoveSpeed_Cur = 2.5f;
+			m_fSkillMoveAccel_Cur = 0.f;
+			m_fSkillMoveMultiply = 0.5f;
+
+			switch (CALC::Random_Num(PET_POISIONBUTTERFLY_ANI::Walk_R, PET_POISIONBUTTERFLY_ANI::Walk_B))
+			{
+			case PET_POISIONBUTTERFLY_ANI::Walk_R:
+			case PET_POISIONBUTTERFLY_ANI::Walk_F:
+				m_eState = PET_POISIONBUTTERFLY_ANI::Walk_R;
+				break;
+			case PET_POISIONBUTTERFLY_ANI::Walk_L:
+			case PET_POISIONBUTTERFLY_ANI::Walk_B:
+				m_eState = PET_POISIONBUTTERFLY_ANI::Walk_L;
+				break;
+			}
+		}
+		else
+		{
+			if (PET_POISIONBUTTERFLY_ANI::Walk_R == m_eState)
+				Function_MoveAround(m_pTarget, m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_X));
+			else if (PET_POISIONBUTTERFLY_ANI::Walk_L == m_eState)
+				Function_MoveAround(m_pTarget, m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_X));
+		}
+		break;
+		case PET_TARGET_TYPE::PET_TARGET_ITEM:
+			break;
+		case PET_TARGET_TYPE::PET_TARGET_NONE:
 			if (true == m_bCanMoveAround)
 			{
 				m_bCanMoveAround = false;
@@ -1073,14 +1168,37 @@ void CPet_PoisonButterFly::Play_Move()
 			else
 			{
 				if (PET_POISIONBUTTERFLY_ANI::Walk_R == m_eState)
-					Function_MoveAround(m_pTarget, m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_X));
+					Function_MoveAround(m_pPlayer, m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_X));
 				else if (PET_POISIONBUTTERFLY_ANI::Walk_L == m_eState)
-					Function_MoveAround(m_pTarget, m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_X));
+					Function_MoveAround(m_pPlayer, m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_X));
 			}
+			break;
 		}
 		break;
-
-	case MONSTER_MOVETYPE::MOVE_DODGE:
+	case MOVE_RUN:
+		if (true == m_bCanChase)
+		{
+			m_bCanChase = false;
+			m_eState = PET_POISIONBUTTERFLY_ANI::Walk_F;
+			m_fSkillMoveSpeed_Cur = 8.f;
+			m_fSkillMoveAccel_Cur = 0.f;
+			m_fSkillMoveMultiply = 0.5f;
+		}
+		switch (m_eTarget)
+		{
+		case PET_TARGET_TYPE::PET_TARGET_BOSS:
+		case PET_TARGET_TYPE::PET_TARGET_MONSTER:
+		case PET_TARGET_TYPE::PET_TARGET_ITEM:
+			Function_RotateBody(m_pTarget);
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			break;
+		case PET_TARGET_TYPE::PET_TARGET_NONE:
+			Function_RotateBody(m_pPlayer);
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			break;
+		}
+		break;
+	case MOVE_DODGE:
 		if (true == m_tObjParam.bCanDodge)
 		{
 			Function_ResetAfterAtk();
@@ -1092,7 +1210,7 @@ void CPet_PoisonButterFly::Play_Move()
 		{
 			if (m_pMeshCom->Is_Finish_Animation(0.95f))
 			{
-				m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+				m_eFirstCategory = PET_STATETYPE::IDLE;
 				m_tObjParam.bCanAttack = true;
 				Function_ResetAfterAtk();
 
@@ -1206,7 +1324,7 @@ HRESULT CPet_PoisonButterFly::Ready_Status(void * pArg)
 	m_fPersonalRange = 2.f; //사회적 거리두기 범위
 	m_iDodgeCountMax = 5; //피격시 회피카운트
 
-	m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+	m_eFirstCategory = PET_STATETYPE::IDLE;
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
 	m_tObjParam.fArmor_Cur = m_tObjParam.fArmor_Max;
 

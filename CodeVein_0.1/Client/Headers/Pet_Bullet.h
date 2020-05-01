@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Info_Monster.h"
+#include "Pet.h"
 
 BEGIN(Client)
 
-class CPet_Bullet final : public CGameObject
+class CPet_Bullet final : public CPet
 {
 protected:
 	explicit CPet_Bullet(LPDIRECT3DDEVICE9 pGraphic_Device);

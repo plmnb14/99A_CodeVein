@@ -229,7 +229,6 @@
     <ClInclude Include="..\Headers\HunterBullet.h" />
     <ClInclude Include="..\Headers\IceBarrier.h" />
     <ClInclude Include="..\Headers\IceGirl.h" />
-    <ClInclude Include="..\Headers\Info_Monster.h" />
     <ClInclude Include="..\Headers\Info_Slot.h" />
     <ClInclude Include="..\Headers\Inventory.h" />
     <ClInclude Include="..\Headers\Inventory_Icon.h" />

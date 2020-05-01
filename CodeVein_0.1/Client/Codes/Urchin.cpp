@@ -2,12 +2,12 @@
 #include "..\Headers\Urchin.h"
 
 CUrchin::CUrchin(LPDIRECT3DDEVICE9 pGraphic_Device)
-	:CGameObject(pGraphic_Device)
+	:CMonster(pGraphic_Device)
 {
 }
 
 CUrchin::CUrchin(const CUrchin & rhs)
-	:CGameObject(rhs)
+	: CMonster(rhs)
 {
 }
 

@@ -87,7 +87,6 @@ private:
 	void Check_AniEvent();
 	void Check_DeadEffect(_double TimeDelta);
 
-private:
 	void Play_GetItem(); //아이템 획득
 	void Play_Aggro(); //아주 머나먼 미래에 사용할 수도 있으나 못할듯
 	void Play_5Shot(); // Atk_5wayShoot
@@ -97,8 +96,8 @@ private:
 protected:
 	virtual void Play_Idle() override;
 	virtual void Play_Move() override;
-	virtual void Play_Hit() override;
 	virtual void Play_CC() override;
+	virtual void Play_Hit() override;
 	virtual void Play_Dead() override;
 
 protected:

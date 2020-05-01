@@ -11,9 +11,38 @@ CPet::CPet(const CPet & rhs)
 {
 }
 
+HRESULT CPet::Render_GameObject_SetPass(CShader * pShader, _int iPass)
+{
+	return S_OK;
+}
+
+void CPet::Update_Collider()
+{
+	return;
+}
+
+void CPet::Render_Collider()
+{
+	return;
+}
+
+void CPet::Check_CollisionEvent()
+{
+	return;
+}
+
+void CPet::Check_CollisionPush()
+{
+	return;
+}
+
+void CPet::Check_CollisionHit(list<CGameObject*> plistGameObject)
+{
+	return;
+}
+
 void CPet::Function_FBLR(CGameObject* _pGameObject)
 {
-	//수정
 	_float fAngle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(_pGameObject)->Get_Pos()));
 
 	if (0.f <= fAngle && 30.f > fAngle)
@@ -246,68 +275,63 @@ void CPet::Function_Find_Target()
 
 	_float	fOldLength = 99999.f;
 
-	if (!g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE).empty())
+	auto& MonsterContainer = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
+
+	auto& BossContainer = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
+
+	//auto& ItemContainer = g_pManagement->Get_GameObjectList(L"Layer_Item", SCENE_STAGE);
+
+	for (auto& Monster_iter : MonsterContainer)
 	{
-		auto& MonsterContainer = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
+		if (true == Monster_iter->Get_Dead())
+			continue;
+		else if (false == Monster_iter->Get_Enable())
+			continue;
+		else if (nullptr == Monster_iter)
+			continue;
 
-		for (auto& Monster_iter : MonsterContainer)
-		{
-			if (true == Monster_iter->Get_Dead())
-				continue;
-			else if (false == Monster_iter->Get_Enable())
-				continue;
-			else if (nullptr == Monster_iter)
-				continue;
+		_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
 
-			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
+		if (fLenth > m_fRecognitionRange)
+			continue;
 
-			if (fLenth > m_fRecognitionRange)
-				continue;
+		if (fOldLength <= fLenth)
+			continue;
 
-			if (fOldLength <= fLenth)
-				continue;
-
-			fOldLength = fLenth;
-			m_pTarget = Monster_iter;
-			m_eTarget = TARGET_TYPE::TARGET_MONSTER;
-		}
-		IF_NOT_NULL_VALUE_RETURN(m_pTarget, );
-
+		fOldLength = fLenth;
+		m_pTarget = Monster_iter;
+		m_eTarget = PET_TARGET_TYPE::PET_TARGET_MONSTER;
 	}
 
-	if (!g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE).empty())
+	IF_NOT_NULL_VALUE_RETURN(m_pTarget, );
+
+	for (auto& Monster_iter : BossContainer)
 	{
-		auto& BossContainer = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
+		if (true == Monster_iter->Get_Dead())
+			continue;
+		else if (false == Monster_iter->Get_Enable())
+			continue;
+		else if (nullptr == Monster_iter)
+			continue;
 
-		for (auto& Monster_iter : BossContainer)
-		{
-			if (true == Monster_iter->Get_Dead())
-				continue;
-			else if (false == Monster_iter->Get_Enable())
-				continue;
-			else if (nullptr == Monster_iter)
-				continue;
+		_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
 
-			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
+		if (fLenth > m_fRecognitionRange)
+			continue;
 
-			if (fLenth > m_fRecognitionRange)
-				continue;
+		if (fOldLength <= fLenth)
+			continue;
 
-			if (fOldLength <= fLenth)
-				continue;
-
-			fOldLength = fLenth;
-			m_pTarget = Monster_iter;
-			m_eTarget = TARGET_TYPE::TARGET_BOSS;
-		}
-		IF_NOT_NULL_VALUE_RETURN(m_pTarget, );
-
+		fOldLength = fLenth;
+		m_pTarget = Monster_iter;
+		m_eTarget = PET_TARGET_TYPE::PET_TARGET_BOSS;
 	}
 
-	//아이템 레이어
-	//if(!g_pManagement->Get_GameObjectList(L"Layer_Item", SCENE_STAGE).empty())
-	//{
-	//	auto& ItemContainer = g_pManagement->Get_GameObjectList(L"Layer_Item", SCENE_STAGE);
+	IF_NOT_NULL_VALUE_RETURN(m_pTarget, );
+
+	if (nullptr == m_pTarget)
+		m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
+
 	//	for (auto& Monster_iter : ItemContainer)
 	//	{
 	//		if (true == Monster_iter->Get_Dead())
@@ -327,10 +351,9 @@ void CPet::Function_Find_Target()
 
 	//		fOldLength = fLenth;
 	//		m_pTarget = Monster_iter;
-	//		m_eTarget = TARGET_TYPE::TARGET_ITEM;
+	//		m_eTarget = PET_TARGET_TYPE::TARGET_ITEM;
 	//	}
 	//	IF_NOT_NULL_VALUE_RETURN(m_pTarget, );
-	//}
 	
 	return;
 }
@@ -348,6 +371,8 @@ void CPet::Function_ResetAfterAtk()
 
 	m_bCanIdle = true;
 	m_bIsIdle = false;
+
+	m_bCanActive = false;
 
 	m_bCanMoveAround = true;
 	m_bIsMoveAround = false;
@@ -367,6 +392,61 @@ void CPet::Function_ResetAfterAtk()
 		m_bEventTrigger[i] = false;
 
 	return;
+}
+
+void CPet::Play_Idle()
+{
+	return;
+}
+
+void CPet::Play_Move()
+{
+	return;
+}
+
+void CPet::Play_Hit()
+{
+	return;
+}
+
+void CPet::Play_CC()
+{
+	return;
+}
+
+void CPet::Play_Dead()
+{
+	return;
+}
+
+HRESULT CPet::Add_Component(void * pArg)
+{
+	return S_OK;
+}
+
+HRESULT CPet::SetUp_ConstantTable()
+{
+	return S_OK;
+}
+
+HRESULT CPet::Ready_Status(void * pArg)
+{
+	return S_OK;
+}
+
+HRESULT CPet::Ready_Weapon(void * pArg)
+{
+	return S_OK;
+}
+
+HRESULT CPet::Ready_Collider(void * pArg)
+{
+	return S_OK;
+}
+
+HRESULT CPet::Ready_BoneMatrix(void * pArg)
+{
+	return S_OK;
 }
 
 void CPet::Free()

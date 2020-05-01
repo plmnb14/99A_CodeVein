@@ -807,10 +807,10 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Hammer_Black].fCol_Height = 1.0f;
 
 	m_tWeaponParam[Wpn_Hammer_Military].fDamage = 155.f;
-	m_tWeaponParam[Wpn_Hammer_Military].fRadius = 0.7f;
+	m_tWeaponParam[Wpn_Hammer_Military].fRadius = 1.1f;
 	m_tWeaponParam[Wpn_Hammer_Military].fTrail_Min = 0.75f;
 	m_tWeaponParam[Wpn_Hammer_Military].fTrail_Max = 1.5f;
-	m_tWeaponParam[Wpn_Hammer_Military].fCol_Height = 1.0f;
+	m_tWeaponParam[Wpn_Hammer_Military].fCol_Height = 1.9f;
 
 	m_tWeaponParam[Wpn_Hammer_Slave].fDamage = 155.f;
 	m_tWeaponParam[Wpn_Hammer_Slave].fRadius = 0.7f;
@@ -898,8 +898,8 @@ HRESULT CWeapon::SetUp_ConstantTable()
 	if (FAILED(m_pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
 
-	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+	_mat ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 
 	if (FAILED(m_pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
@@ -982,7 +982,6 @@ void CWeapon::Free()
 	Safe_Release(m_pShader);
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pBattleAgent);
-
 
 	//for (auto& iter : m_vecAttackCol)
 	//	Safe_Release(iter);
