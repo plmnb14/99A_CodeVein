@@ -6,6 +6,7 @@
 BEGIN(Client)
 class CBloodSkillSlot;
 class CBloodSkillCursor;
+class CReleaseQuestionUI;
 class CSkillReleaseUI final : public CUI
 {
 private:
@@ -43,6 +44,8 @@ private:
 	BloodCode_ID			m_eBloodCodeType;
 	_v3						m_vSlotPosition;
 	_float					m_fCross = 100.f;
+	_float					m_fAlpha = 0.f;
+	CReleaseQuestionUI*		m_pQuestionUI = nullptr;
 
 public:
 	static CSkillReleaseUI*		Create(_Device pGraphic_Device);

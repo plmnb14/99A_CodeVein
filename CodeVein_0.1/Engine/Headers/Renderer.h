@@ -63,6 +63,7 @@ private:
 	HRESULT Render_Effect();
 	HRESULT Render_Instance();
 	HRESULT Render_UI();
+	HRESULT Render_3dUI();
 	HRESULT Render_SSAO();
 
 private:

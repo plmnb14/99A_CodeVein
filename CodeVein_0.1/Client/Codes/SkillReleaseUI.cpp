@@ -35,7 +35,7 @@ HRESULT CSkillReleaseUI::Ready_GameObject(void * pArg)
 _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
-	m_pRendererCom->Add_RenderList(RENDER_UI, this);
+	m_pRendererCom->Add_RenderList(RENDER_3DUI, this);
 
 	
 
@@ -52,7 +52,8 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 		iter->Set_Active(m_bIsActive);
 		++idx;
 	}
-
+	TARGET_TO_TRANS(m_pQuestionUI)->Set_Pos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookY) * -0.3f);
+	TARGET_TO_TRANS(m_pQuestionUI)->Set_Angle(m_pTransformCom->Get_Angle());
 	
 	switch (m_eBloodCodeType)
 	{
@@ -93,9 +94,23 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 		break;
 	}
 
-	Compute_ViewZ(&m_pTransformCom->Get_Pos());
+	_v3 vWorldPos;
+	memcpy(vWorldPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
+	Compute_ViewZ(&vWorldPos);
+
 
 	Click_SkillSlot();
+
+	if (m_bIsActive && 
+		1.f > m_fAlpha)
+	{
+		m_fAlpha += _float(TimeDelta) * 1.f;
+	}
+	if (!m_bIsActive &&
+		0.f < m_fAlpha)
+	{
+		m_fAlpha -= _float(TimeDelta) * 1.f;
+	}
 
 	return NO_EVENT;
 }
@@ -113,7 +128,7 @@ _int CSkillReleaseUI::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CSkillReleaseUI::Render_GameObject()
 {
-	if (!m_bIsActive)
+	if (!m_bIsActive || 0.f >= m_fAlpha)
 		return NOERROR;
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
@@ -123,7 +138,7 @@ HRESULT CSkillReleaseUI::Render_GameObject()
 		return E_FAIL;
 
 	m_pShaderCom->Begin_Shader();
-	m_pShaderCom->Begin_Pass(1);
+	m_pShaderCom->Begin_Pass(3);
 
 	m_pBufferCom->Render_VIBuffer();
 	m_pShaderCom->End_Pass();
@@ -147,7 +162,7 @@ HRESULT CSkillReleaseUI::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Shader
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_UI", L"Com_Shader", (CComponent**)&m_pShaderCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_3dUI", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
 	// for.Com_VIBuffer
@@ -164,13 +179,18 @@ HRESULT CSkillReleaseUI::SetUp_ConstantTable(_uint iIndex)
 
 	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
+
 	if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
+	if (FAILED(m_pShaderCom->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
 		return E_FAIL;
 
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, _uint(iIndex))))
+		return E_FAIL;
+
+	m_pShaderCom->Set_Texture("g_DepthTexture", g_pManagement->Get_Target_Texture(L"Target_DepthUI"));
 	return NOERROR;
 }
 
@@ -181,12 +201,14 @@ void CSkillReleaseUI::SetUp_Default()
 	LOOP(2)
 	{
 		pInstance = static_cast<CBloodSkillSlot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodSkillSlot", nullptr));
-		TARGET_TO_TRANS(pInstance)->Set_Scale(_v3(0.3f, 0.3f, 1.f));
+		TARGET_TO_TRANS(pInstance)->Set_Scale(_v3(0.3f, 0.3f, 1.5f));
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_StageUI", nullptr);
 		m_vecSkillSlot.push_back(pInstance);
 	}
 
-	
+	m_pQuestionUI = static_cast<CReleaseQuestionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ReleaseQuestionUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pQuestionUI, SCENE_STAGE, L"Layer_StageUI", nullptr);
+	TARGET_TO_TRANS(m_pQuestionUI)->Set_Scale(_v3(2.f, 1.f, 1.6f));
 }
 
 void CSkillReleaseUI::Click_SkillSlot()
@@ -202,6 +224,7 @@ void CSkillReleaseUI::Click_SkillSlot()
 			{
 				Reset_Select();
 				iter->Set_Select(true);
+				m_pQuestionUI->Set_Active(true);
 			}
 				
 		}

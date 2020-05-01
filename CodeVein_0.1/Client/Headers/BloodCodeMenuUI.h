@@ -8,6 +8,7 @@ class CCodeOwnerUI;
 class CBloodCodeSlot;
 class CBloodCodeSelectUI;
 class CSkillReleaseUI;
+
 class CBloodCodeMenuUI final : public CUI
 {
 private:
@@ -47,6 +48,7 @@ private:
 	CBloodCodeSelectUI*		m_pBloodCodeSelectUI = nullptr;
 	CSkillReleaseUI*		m_pSkillReleaseUI = nullptr;
 	_bool					m_bIsChoiseBloodCode = false;
+	
 
 public:
 	static CBloodCodeMenuUI*	Create(_Device pGraphic_Device);

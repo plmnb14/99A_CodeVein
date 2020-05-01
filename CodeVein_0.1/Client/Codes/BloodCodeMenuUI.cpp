@@ -29,7 +29,7 @@ HRESULT CBloodCodeMenuUI::Ready_GameObject(void * pArg)
 
 	SetUp_Default();
 
-	m_pTransformCom->Set_Scale(_v3(3.555555f, 2.f, 0.f));
+	m_pTransformCom->Set_Scale(_v3(3.555555f, 2.f, 1.f));
 
 	return NOERROR;
 }
@@ -38,10 +38,12 @@ _int CBloodCodeMenuUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
-	m_pRendererCom->Add_RenderList(RENDER_UI, this);
+	m_pRendererCom->Add_RenderList(RENDER_ALPHA, this);
 
-	Compute_ViewZ(&m_pTransformCom->Get_Pos());
+	_v3 vWorldPos;
 
+	memcpy(vWorldPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
+	Compute_ViewZ(&vWorldPos);
 	
 	m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 	if (nullptr == m_pTarget)
@@ -144,7 +146,7 @@ HRESULT CBloodCodeMenuUI::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Shader
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_UI", L"Com_Shader", (CComponent**)&m_pShaderCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_3dUI", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
 	// for.Com_VIBuffer
@@ -161,16 +163,19 @@ HRESULT CBloodCodeMenuUI::SetUp_ConstantTable(_uint iIndex)
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
+	
 	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
-		return E_FAIL;
+	return E_FAIL;
+
 	if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
-		return E_FAIL;
+	return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
-		return E_FAIL;
+	return E_FAIL;
+
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, _uint(iIndex))))
+	return E_FAIL;
+
+	m_pShaderCom->Set_Texture("g_DepthTexture", g_pManagement->Get_Target_Texture(L"Target_DepthUI"));
 	return NOERROR;
 }
 
@@ -178,11 +183,13 @@ void CBloodCodeMenuUI::SetUp_Default()
 {
 	m_pBloodCodeSelectUI = static_cast<CBloodCodeSelectUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodCodeSelectUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBloodCodeSelectUI, SCENE_STAGE, L"Layer_StageUI", nullptr);
-	TARGET_TO_TRANS(m_pBloodCodeSelectUI)->Set_Scale(_v3(3.555555f, 2.f, 1.f));
+	TARGET_TO_TRANS(m_pBloodCodeSelectUI)->Set_Scale(_v3(3.555555f, 2.f, 2.f));
 
 	m_pSkillReleaseUI = static_cast<CSkillReleaseUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SkillReleaseUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pSkillReleaseUI, SCENE_STAGE, L"Layer_StageUI", nullptr);
-	TARGET_TO_TRANS(m_pSkillReleaseUI)->Set_Scale(_v3(3.555555f, 2.f, 1.f));
+	TARGET_TO_TRANS(m_pSkillReleaseUI)->Set_Scale(_v3(3.555555f, 2.f, 3.f));
+
+	
 }
 
 

@@ -37,7 +37,7 @@ HRESULT CBloodCodeSelectUI::Ready_GameObject(void * pArg)
 _int CBloodCodeSelectUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
-	m_pRendererCom->Add_RenderList(RENDER_UI, this);
+	m_pRendererCom->Add_RenderList(RENDER_3DUI, this);
 	
 
 	_v3 vLookX = m_pTransformCom->Get_Axis(AXIS_X);
@@ -77,7 +77,11 @@ _int CBloodCodeSelectUI::Update_GameObject(_double TimeDelta)
 		m_iIndex = 5;
 		break;
 	}
-	Compute_ViewZ(&m_pTransformCom->Get_Pos());
+	_v3 vWorldPos;
+
+	memcpy(vWorldPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
+	Compute_ViewZ(&vWorldPos);
+
 
 	Click_BloodCodeSlot();
 	
@@ -137,7 +141,7 @@ HRESULT CBloodCodeSelectUI::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Shader
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_UI", L"Com_Shader", (CComponent**)&m_pShaderCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_3dUI", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
 	// for.Com_VIBuffer

@@ -31,7 +31,7 @@ _int CBloodCodeSlot::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
-	m_pRendererCom->Add_RenderList(RENDER_UI, this);
+	m_pRendererCom->Add_RenderList(RENDER_ALPHA, this);
 
 	
 
@@ -56,7 +56,11 @@ _int CBloodCodeSlot::Update_GameObject(_double TimeDelta)
 		m_iIndex = 0;
 		break;
 	}
-	Compute_ViewZ(&m_pTransformCom->Get_Pos());
+	_v3 vWorldPos;
+
+	memcpy(vWorldPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
+	Compute_ViewZ(&vWorldPos);
+
 
 	m_pCollider->Update(m_pTransformCom->Get_Pos());
 	return NO_EVENT;

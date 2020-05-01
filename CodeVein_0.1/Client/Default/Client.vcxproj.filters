@@ -406,6 +406,9 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\09. BloodCodeUI">
       <UniqueIdentifier>{9de20518-f4f0-4698-8b19-40542809fe4b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseMasage">
+      <UniqueIdentifier>{dc2c6631-99a6-4970-9681-c15245b8219c}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -834,6 +837,12 @@
     <ClInclude Include="..\Headers\BloodCodeUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\09. BloodCodeUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\ReleaseQuestionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseMasage</Filter>
+    </ClInclude>
+    <ClInclude Include="ReleaseOption.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseMasage</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1250,6 +1259,12 @@
     <ClCompile Include="..\Codes\BloodCodeUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\09. BloodCodeUI</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\ReleaseQuestionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseMasage</Filter>
+    </ClCompile>
+    <ClCompile Include="ReleaseOption.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseMasage</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <Image Include="Client.ico">
@@ -1295,6 +1310,9 @@
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
     <FxCompile Include="..\ShaderFiles\Shader_SSAO.fx">
+      <Filter>97.ShaderFiles</Filter>
+    </FxCompile>
+    <FxCompile Include="..\ShaderFiles\Shader_3dUI.fx">
       <Filter>97.ShaderFiles</Filter>
     </FxCompile>
   </ItemGroup>

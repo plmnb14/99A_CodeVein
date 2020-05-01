@@ -84,7 +84,7 @@ Tex_BloodCodeMenuUI|BloodCodeMenuUI%d.png|..\..\Client\Resources\Texture\TestUI\
 Tex_BloodCodeOwner|BloodCodeMenuUI%d.png|..\..\Client\Resources\Texture\TestUI\BloodCodeOwner\|0|12
 Tex_BloodCodeSelectUI|BloodCodeSelectUI%d.png|..\..\Client\Resources\Texture\TestUI\BloodCodeSelectUI\|0|6
 Tex_BloodSkillCursor|BloodSkillCursor%d.tga|..\..\Client\Resources\Texture\TestUI\BloodSkillCursor\|0|2
-Tex_BloodSkillSlot|BloodSkillSlot%d.tga|..\..\Client\Resources\Texture\TestUI\BloodSkillSlot\|0|17
+Tex_BloodSkillSlot|BloodSkillSlot%d.tga|..\..\Client\Resources\Texture\TestUI\BloodSkillSlot\|0|16
 Tex_BossUI|BossUI%d.png|..\..\Client\Resources\Texture\TestUI\BossUI\|0|3
 Tex_ButtonUI|ButtonUI%d.tga|..\..\Client\Resources\Texture\TestUI\ButtonUI\|0|9
 Tex_ClickUI|ClickUI%d.png|..\..\Client\Resources\Texture\TestUI\ClickUI\|0|1
@@ -109,7 +109,7 @@ Tex_MapPattern|MapPattern%d.tga|..\..\Client\Resources\Texture\TestUI\MapPattern
 Tex_Materials|Materials%d.tga|..\..\Client\Resources\Texture\TestUI\Materials\|0|5
 Tex_MenuWindow|MenuWindow%d.png|..\..\Client\Resources\Texture\TestUI\MenuWindow\|0|6
 Tex_Menu_Icon|Menu_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Menu_Icon\|0|8
-Tex_MistletoeUI|MistletoeUI%d.tga|..\..\Client\Resources\Texture\TestUI\MistletoeUI\|0|4
+Tex_MistletoeUI|MistletoeUI%d.tga|..\..\Client\Resources\Texture\TestUI\MistletoeUI\|0|5
 Tex_MonsterHPBar|MonsterHPBar%d.png|..\..\Client\Resources\Texture\TestUI\MonsterHPBar\|0|3
 Tex_Number|Number%d.png|..\..\Client\Resources\Texture\TestUI\Number\|0|12
 Tex_Passive_Icon|Passive_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Passive_Icon\|0|89
@@ -117,6 +117,8 @@ Tex_PickUp_Item|PickUp_Item%d.png|..\..\Client\Resources\Texture\TestUI\PickUp_I
 Tex_PlayerHPUI|PlayerHPUI%d.png|..\..\Client\Resources\Texture\TestUI\PlayerHPUI\|0|4
 Tex_PlayerST|PlayerST%d.png|..\..\Client\Resources\Texture\TestUI\PlayerST\|0|3
 Tex_QuickSlotUI|QuickSlotUI%d.png|..\..\Client\Resources\Texture\TestUI\QuickSlotUI\|0|5
+Tex_ReleaseOption|ReleaseOption%d.tga|..\..\Client\Resources\Texture\TestUI\ReleaseOption\|0|3
+Tex_ReleaseQuestionUI|ReleaseQuestionUI%d.tga|..\..\Client\Resources\Texture\TestUI\ReleaseQuestionUI\|0|2
 Tex_Select_UI|Select_UI.png|..\..\Client\Resources\Texture\TestUI\Select_UI\|0|1
 Tex_SingleSword_Icon|SingleSword_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\SingleSword_Icon\|0|3
 Tex_SkillReleaseUI|SkillReleaseUI%d.png|..\..\Client\Resources\Texture\TestUI\SkillReleaseUI\|0|5

@@ -51,6 +51,8 @@
 #include "BloodSkillCursor.h"
 #include "BloodCode_Inven.h"
 #include "BloodCodeUI.h"
+#include "ReleaseQuestionUI.h"
+#include "ReleaseOption.h"
 
 BEGIN(Client)
 

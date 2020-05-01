@@ -4,6 +4,7 @@
 #include "MistletoeOptionUI.h"
 #include "StageSelectUI.h"
 #include "UI_Manager.h"
+#include "CollisionMgr.h"
 
 CMistletoeUI::CMistletoeUI(_Device pDevice)
 	: CUI(pDevice)
@@ -33,7 +34,8 @@ HRESULT CMistletoeUI::Ready_GameObject(void * pArg)
 	LOOP(3)
 	{
 		pInstance = static_cast<CMistletoeOptionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MistletoeOptionUI", nullptr));
-		pInstance->Set_UI_Index(i + 1);
+		//pInstance->Set_UI_Index(i + 1);
+		pInstance->Set_Option(CMistletoeOptionUI::MISTLETOE_OPTION(i));
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_StageUI", nullptr);
 		m_vecOption.push_back(pInstance);
 	}
@@ -41,14 +43,14 @@ HRESULT CMistletoeUI::Ready_GameObject(void * pArg)
 	m_pStageSelectUI = CUI_Manager::Get_Instance()->Get_StageSelectUI();
 	if (nullptr == m_pStageSelectUI)
 		return E_FAIL;
-	m_pTransformCom->Set_Scale(_v3(1.f, 1.3546f, 0.f));
+	m_pTransformCom->Set_Scale(_v3(1.f, 1.3546f, 1.f));
 	return NOERROR;
 }
 
 _int CMistletoeUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
-	m_pRendererCom->Add_RenderList(RENDER_UI, this);
+	m_pRendererCom->Add_RenderList(RENDER_3DUI, this);
 	
 
 	m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
@@ -70,13 +72,12 @@ _int CMistletoeUI::Update_GameObject(_double TimeDelta)
 	LOOP(3)
 	{
 		TARGET_TO_TRANS(m_vecOption[i])->Set_Angle(m_pTransformCom->Get_Angle());
-		TARGET_TO_TRANS(m_vecOption[i])->Set_Scale(_v3(0.87f, 0.1476f, 0.f));
+		TARGET_TO_TRANS(m_vecOption[i])->Set_Scale(_v3(0.87f, 0.1476f, 2.f));
 		TARGET_TO_TRANS(m_vecOption[i])->Set_At(m_pTransformCom->Get_At());
 		TARGET_TO_TRANS(m_vecOption[i])->Set_Pos(m_pTransformCom->Get_Pos() + _v3(0.f, _float(i) * -0.2f + 0.2f, 0.f) + *V3_NORMAL_SELF(&vLookZ) * -0.001f);
 		
 		m_vecOption[i]->Set_Active(m_bIsActive);
 
-		(i == m_iSelectIndex) ? (m_vecOption[i]->Set_Select(true)) : (m_vecOption[i]->Set_Select(false));
 	}
 
 	
@@ -84,9 +85,14 @@ _int CMistletoeUI::Update_GameObject(_double TimeDelta)
 	if (!m_bIsActive)
 	{
 		m_pStageSelectUI->Set_Active(false);
+		CUI_Manager::Get_Instance()->Get_BloodCode_Menu()->Set_Active(false);
 	}
 	
-	Compute_ViewZ(&m_pTransformCom->Get_Pos());
+	_v3 vWorldPos;
+	memcpy(vWorldPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
+	Compute_ViewZ(&vWorldPos);
+
+	Click_Option();
 	return NO_EVENT;
 }
 
@@ -137,7 +143,7 @@ HRESULT CMistletoeUI::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Shader
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_UI", L"Com_Shader", (CComponent**)&m_pShaderCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_3dUI", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
 	// for.Com_VIBuffer
@@ -154,58 +160,69 @@ HRESULT CMistletoeUI::SetUp_ConstantTable()
 
 	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
+
 	if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 0)))
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, _uint(0))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
-		return E_FAIL;
+
+	m_pShaderCom->Set_Texture("g_DepthTexture", g_pManagement->Get_Target_Texture(L"Target_DepthUI"));
 	return NOERROR;
 }
 
-void CMistletoeUI::Active_SubUI()
+void CMistletoeUI::Click_Option()
 {
 	if (!m_bIsActive)
 		return;
-	//if (g_pInput_Device->Key_Up(DIK_P) && m_bIsActive)
-	//{
-	//	switch (m_iSelectIndex)
-	//	{
-	//	case 0:
-	//		m_pStageSelectUI->Set_Active(!m_pStageSelectUI->Get_Active());
-	//		break;
-	//	}
-	//
-	//}
 
-	if (0 == m_iSelectIndex)
-		m_pStageSelectUI->Set_Active(!m_pStageSelectUI->Get_Active());
-	else
-		m_pStageSelectUI->Set_Active(false);
+	for (auto& iter : m_vecOption)
+	{
+		if (CCollisionMgr::Collision_Ray(iter, g_pInput_Device->Get_Ray(), &m_fCross))
+		{
+			Reset_Option();
+			iter->Set_Select(true);
 
-	if (1 == m_iSelectIndex)
+			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+			{
+				Active_SubUI(iter);
+			}
+				
+		}
+		else
+		{
+			iter->Set_Select(false);
+		}
+	}
+}
+
+void CMistletoeUI::Reset_Option()
+{
+	for (auto& iter : m_vecOption)
+	{
+			iter->Set_Select(false);
+	}
+}
+
+void CMistletoeUI::Active_SubUI(CMistletoeOptionUI* pSelectOption)
+{
+	if (!m_bIsActive ||
+		nullptr == pSelectOption)
+		return;
+
+	switch (pSelectOption->Get_Option())
+	{
+	case CMistletoeOptionUI::OPTION_STAGE: // 스테이지 이동
+		CUI_Manager::Get_Instance()->Get_StageSelectUI()->Set_Active(!CUI_Manager::Get_Instance()->Get_StageSelectUI()->Get_Active());
+		break;
+	case CMistletoeOptionUI::OPTION_INHERIT: // 연혈, 스킬
 		CUI_Manager::Get_Instance()->Get_BloodCode_Menu()->Set_Active(!CUI_Manager::Get_Instance()->Get_BloodCode_Menu()->Get_Active());
-	else
-		CUI_Manager::Get_Instance()->Get_BloodCode_Menu()->Set_Active(false);
-}
-
-void CMistletoeUI::Move_Up()
-{
-	if (!m_bIsActive)
-		return;
-	if (m_iSelectIndex > 0)
-		m_iSelectIndex--;
-}
-
-void CMistletoeUI::Move_Down()
-{
-	if (!m_bIsActive)
-		return;
-	if (m_iSelectIndex < m_vecOption.size() - 1)
-			m_iSelectIndex++;
+		break;
+	case CMistletoeOptionUI::OPTION_LEVELUP: // 레벨 업
+		break;
+	}
 }
 
 CMistletoeUI * CMistletoeUI::Create(_Device pGraphic_Device)

@@ -31,7 +31,7 @@ HRESULT CBloodSkillSlot::Ready_GameObject(void * pArg)
 _int CBloodSkillSlot::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
-	m_pRendererCom->Add_RenderList(RENDER_ALPHA, this);
+	m_pRendererCom->Add_RenderList(RENDER_3DUI, this);
 
 	m_pCollider->Update(m_pTransformCom->Get_Pos());
 
@@ -90,7 +90,10 @@ _int CBloodSkillSlot::Update_GameObject(_double TimeDelta)
 	TARGET_TO_TRANS(m_pCursor)->Set_Pos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookZ) * -0.001f);
 	TARGET_TO_TRANS(m_pCursor)->Set_Angle(m_pTransformCom->Get_Angle());
 
-	Compute_ViewZ(&m_pTransformCom->Get_Pos());
+	_v3 vWorldPos;
+	memcpy(vWorldPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
+	Compute_ViewZ(&vWorldPos);
+
 	return NO_EVENT;
 }
 
@@ -116,24 +119,21 @@ HRESULT CBloodSkillSlot::Render_GameObject()
 	_uint iIndex = 0;
 	_uint iPass = 0;
 	
-	//LOOP(2)
+	LOOP(2)
 	{
-		//(0 == i) ? (iIndex = 14) && (iPass = 1) : (iIndex = m_iIndex) && (iPass = 1);
+		(0 == i) ? (iIndex = 14) && (iPass = 1) : (iIndex = m_iIndex) && (iPass = 1);
 
-		if (FAILED(SetUp_ConstantTable(m_iIndex)))
+		if (FAILED(SetUp_ConstantTable(iIndex)))
 			return E_FAIL;
 
 		m_pShaderCom->Begin_Shader();
-		m_pShaderCom->Begin_Pass(10);
+		m_pShaderCom->Begin_Pass(iPass);
 
 		m_pBufferCom->Render_VIBuffer();
 		m_pShaderCom->End_Pass();
 		m_pShaderCom->End_Shader();
 	}
 	
-	
-
-
 	return S_OK;
 }
 
@@ -152,7 +152,7 @@ HRESULT CBloodSkillSlot::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Shader
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_UI", L"Com_Shader", (CComponent**)&m_pShaderCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_3dUI", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
 	// for.Com_VIBuffer
@@ -187,18 +187,15 @@ HRESULT CBloodSkillSlot::SetUp_ConstantTable(_uint iIndex)
 	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
 
-	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-
-	if (FAILED(m_pShaderCom->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+	if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
 
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, _uint(iIndex))))
 		return E_FAIL;
 
-	m_pShaderCom->Set_Texture("g_DepthTexture", g_pManagement->Get_Target_Texture(L"Target_Depth"));
+	m_pShaderCom->Set_Texture("g_DepthTexture", g_pManagement->Get_Target_Texture(L"Target_DepthUI"));
 
 	return NOERROR;
 }
