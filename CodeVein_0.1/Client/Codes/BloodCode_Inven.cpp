@@ -28,10 +28,10 @@ HRESULT CBloodCode_Inven::Ready_GameObject(void * pArg)
 	
 
 	Add_BloodCode(BloodCode_Fighter);
-	Add_BloodCode(BloodCode_Caster);
+	
 	Add_BloodCode(BloodCode_Berserker);
 	Add_BloodCode(BloodCode_Prometheus);
-	Add_BloodCode(BloodCode_Eos);
+	
 	return NOERROR;
 }
 

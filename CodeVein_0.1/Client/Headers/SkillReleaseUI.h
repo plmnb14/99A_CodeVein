@@ -15,8 +15,7 @@ private:
 	virtual ~CSkillReleaseUI() = default;
 
 public:
-	void Set_Type(BloodCode_ID eType) { m_eBloodCodeType = eType; }
-	void Set_SlotPos(_v3 vPosition) { m_vSlotPosition = vPosition; }
+	void Set_CodeID(BloodCode_ID eID) { m_eID = eID; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -41,10 +40,9 @@ private:
 
 private:
 	vector<CBloodSkillSlot*> m_vecSkillSlot;
-	BloodCode_ID			m_eBloodCodeType;
+	BloodCode_ID			m_eID;
 	_v3						m_vSlotPosition;
 	_float					m_fCross = 100.f;
-	_float					m_fAlpha = 0.f;
 	CReleaseQuestionUI*		m_pQuestionUI = nullptr;
 
 public:

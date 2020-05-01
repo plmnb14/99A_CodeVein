@@ -175,6 +175,7 @@
     <ClInclude Include="..\Headers\Armor_Slot.h" />
     <ClInclude Include="..\Headers\BackGround.h" />
     <ClInclude Include="..\Headers\BloodCodeMenuUI.h" />
+    <ClInclude Include="..\Headers\BloodCodeOwner.h" />
     <ClInclude Include="..\Headers\BloodCodeSelectUI.h" />
     <ClInclude Include="..\Headers\BloodCodeSlot.h" />
     <ClInclude Include="..\Headers\BloodCodeUI.h" />
@@ -317,6 +318,7 @@
     <ClCompile Include="..\Codes\Armor_Slot.cpp" />
     <ClCompile Include="..\Codes\BackGround.cpp" />
     <ClCompile Include="..\Codes\BloodCodeMenuUI.cpp" />
+    <ClCompile Include="..\Codes\BloodCodeOwner.cpp" />
     <ClCompile Include="..\Codes\BloodCodeSelectUI.cpp" />
     <ClCompile Include="..\Codes\BloodCodeSlot.cpp" />
     <ClCompile Include="..\Codes\BloodCodeUI.cpp" />

@@ -106,7 +106,7 @@ PS_OUT PS_MAIN3(PS_IN In)
 
 	Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
 
-	Out.vColor.a *= Out.vColor.r;
+	Out.vColor *= tex2D(MaskSampler, In.vTexUV).r;
 
 	return Out;
 }
@@ -140,12 +140,10 @@ technique Default_Technique
 {
 	pass Default_Rendering
 	{
-		AlphablendEnable = true;
-		SrcBlend = SrcAlpha;
-		DestBlend = InvSrcAlpha;
-
+		ZwriteEnable = false;
+		AlphablendEnable = false;
 		VertexShader = compile vs_3_0 VS_MAIN();
-		PixelShader = compile ps_3_0 PS_MAIN();
+		PixelShader = compile ps_3_0 PS_MAIN2();
 	}
 	pass Default_Rendering2
 	{

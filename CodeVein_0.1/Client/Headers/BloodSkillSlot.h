@@ -13,6 +13,9 @@ private:
 	virtual ~CBloodSkillSlot() = default;
 
 public:
+	Skill_Index Get_Skill_Index() { return m_eSkillIndex; }
+
+public:
 	void Set_SkillIndex(Skill_Index eSkillIndex) { m_eSkillIndex = eSkillIndex; }
 	void Set_Select(_bool bIsSelect) { m_bIsSelect = bIsSelect; }
 

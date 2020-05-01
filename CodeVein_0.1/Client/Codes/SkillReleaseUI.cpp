@@ -55,42 +55,54 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 	TARGET_TO_TRANS(m_pQuestionUI)->Set_Pos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookY) * -0.3f);
 	TARGET_TO_TRANS(m_pQuestionUI)->Set_Angle(m_pTransformCom->Get_Angle());
 	
-	switch (m_eBloodCodeType)
+	switch (m_eID)
 	{
-	case BloodCode_Fighter:
+	case BloodCode_Artemis:
 	{
-		m_vecSkillSlot[0]->Set_SkillIndex(Skill_OneHand_Active_01);
-		m_vecSkillSlot[1]->Set_SkillIndex(Skill_OneHand_Active_02);
-		m_iIndex = 0;
+		m_iIndex = 2;
 	}
 		break;
-	case BloodCode_Caster:
+	case BloodCode_Assassin:
 	{
-		m_vecSkillSlot[0]->Set_SkillIndex(Skill_OneHand_Active_03);
-		m_vecSkillSlot[1]->Set_SkillIndex(Skill_OneHand_Active_04);
-		m_iIndex = 1;
+		m_iIndex = 3;
+	}
+		break;
+	case BloodCode_DarkKnight:
+	{
+		m_iIndex = 4;
+	}
+		break;
+	case BloodCode_Queen:
+	{
+		m_iIndex = 5;
 	}
 		break;
 	case BloodCode_Berserker:
 	{
-		m_vecSkillSlot[0]->Set_SkillIndex(Skill_TwoHand_Active_01);
-		m_vecSkillSlot[1]->Set_SkillIndex(Skill_TwoHand_Active_02);
-		m_iIndex = 2;
+		m_iIndex = 6;
 	}
+		break;
+	case BloodCode_Hephaestus:
+	{
+		m_iIndex = 7;
+	}
+		break;
+	case BloodCode_Fighter:
+	{
+		m_iIndex = 8;
+	}
+		break;
+	case BloodCode_Heimdal:
+		m_iIndex = 9;
+		break;
+	case BloodCode_Hermes:
+		m_iIndex = 10;
+		break;
+	case BloodCode_Atlas:
+		m_iIndex = 11;
 		break;
 	case BloodCode_Prometheus:
-	{
-		m_vecSkillSlot[0]->Set_SkillIndex(Skill_TwoHand_Active_03);
-		m_vecSkillSlot[1]->Set_SkillIndex(Skill_TwoHand_Active_04);
-		m_iIndex = 3;
-	}
-		break;
-	case BloodCode_Eos:
-	{
-		m_vecSkillSlot[0]->Set_SkillIndex(Skill_Halverd_Single);
-		m_vecSkillSlot[1]->Set_SkillIndex(Skill_Gun_Single);
-		m_iIndex = 4;
-	}
+		m_iIndex = 12;
 		break;
 	}
 
@@ -101,17 +113,7 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 
 	Click_SkillSlot();
 
-	if (m_bIsActive && 
-		1.f > m_fAlpha)
-	{
-		m_fAlpha += _float(TimeDelta) * 1.f;
-	}
-	if (!m_bIsActive &&
-		0.f < m_fAlpha)
-	{
-		m_fAlpha -= _float(TimeDelta) * 1.f;
-	}
-
+	
 	return NO_EVENT;
 }
 
@@ -128,21 +130,38 @@ _int CSkillReleaseUI::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CSkillReleaseUI::Render_GameObject()
 {
-	if (!m_bIsActive || 0.f >= m_fAlpha)
+	if (!m_bIsActive)
 		return NOERROR;
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
 
-	if (FAILED(SetUp_ConstantTable(m_iIndex)))
-		return E_FAIL;
+	_uint iIndex = 0;
+	_uint iPass = 0;
+	LOOP(2)
+	{
+		if (0 == i)
+		{
+			iIndex = 0;
+			iPass = 4;
+		}
+		else if (1 == i)
+		{
+			iIndex = m_iIndex;
+			iPass = 1;
+		}
+	
+		if (FAILED(SetUp_ConstantTable(iIndex)))
+			return E_FAIL;
 
-	m_pShaderCom->Begin_Shader();
-	m_pShaderCom->Begin_Pass(3);
+		m_pShaderCom->Begin_Shader();
+		m_pShaderCom->Begin_Pass(iPass);
 
-	m_pBufferCom->Render_VIBuffer();
-	m_pShaderCom->End_Pass();
-	m_pShaderCom->End_Shader();
+		m_pBufferCom->Render_VIBuffer();
+		m_pShaderCom->End_Pass();
+		m_pShaderCom->End_Shader();
+	}
+	
 
 	return S_OK;
 }
@@ -184,13 +203,22 @@ HRESULT CSkillReleaseUI::SetUp_ConstantTable(_uint iIndex)
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
-		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, _uint(iIndex))))
-		return E_FAIL;
+	
 
-	m_pShaderCom->Set_Texture("g_DepthTexture", g_pManagement->Get_Target_Texture(L"Target_DepthUI"));
+	if (0 == iIndex)
+	{
+		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 1)))
+			return E_FAIL;
+		if (FAILED(m_pTextureCom->SetUp_OnShader("g_MaskTexture", m_pShaderCom, 0)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, _uint(iIndex))))
+			return E_FAIL;
+	}
+	
 	return NOERROR;
 }
 
@@ -218,16 +246,20 @@ void CSkillReleaseUI::Click_SkillSlot()
 
 	for (auto& iter : m_vecSkillSlot)
 	{
+		if (Skill_End == iter->Get_Skill_Index())
+			continue;
 		if (CCollisionMgr::Collision_Ray(iter, g_pInput_Device->Get_Ray(), &m_fCross))
 		{
+
+			iter->Set_Select(true);
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
-				Reset_Select();
-				iter->Set_Select(true);
 				m_pQuestionUI->Set_Active(true);
 			}
-				
+
 		}
+		else
+			iter->Set_Select(false);
 		
 	}
 }

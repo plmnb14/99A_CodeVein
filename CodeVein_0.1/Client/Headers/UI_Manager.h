@@ -44,6 +44,7 @@
 #include "StatusUI.h"
 #include "ExpUI.h"
 #include "BloodCodeMenuUI.h"
+#include "BloodCodeOwner.h"
 #include "BloodCodeSlot.h"
 #include "BloodCodeSelectUI.h"
 #include "SkillReleaseUI.h"
@@ -86,6 +87,9 @@ public:
 	void Set_BossUI_Active(_bool bIsActive);
 	CBloodCodeMenuUI* Get_BloodCode_Menu() { return m_pBloodCodeMenu; }
 	CBloodCode_Inven* Get_BloodCode_Inven() { return m_pBloodCode_Inven; }
+	CBloodCodeOwner* Get_BloodCode_Owner() { return m_pBloodCodeOwner; }
+	CBloodCodeSelectUI* Get_BloodCode_SelectUI() { return m_pBloodCodeSelectUI; }
+	CSkillReleaseUI* Get_Skill_ReleaseUI() { return m_pSkillReleaseUI; }
 
 private:
 	_uint m_uiCoundItem = 0;
@@ -103,7 +107,10 @@ private:
 	CInventory*		m_pInventory = nullptr;
 	CBloodCodeMenuUI* m_pBloodCodeMenu = nullptr;
 	CBloodCode_Inven* m_pBloodCode_Inven = nullptr;
-
+	CBloodCodeOwner* m_pBloodCodeOwner = nullptr;
+	CBloodCodeSelectUI * m_pBloodCodeSelectUI = nullptr;
+	CSkillReleaseUI* m_pSkillReleaseUI = nullptr;
+	
 public:
 	virtual void Free();
 };

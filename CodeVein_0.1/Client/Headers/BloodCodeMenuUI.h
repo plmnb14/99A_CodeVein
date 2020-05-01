@@ -4,11 +4,10 @@
 #include "UI.h"
 
 BEGIN(Client)
-class CCodeOwnerUI;
 class CBloodCodeSlot;
 class CBloodCodeSelectUI;
 class CSkillReleaseUI;
-
+class CBloodCodeOwner;
 class CBloodCodeMenuUI final : public CUI
 {
 private:
@@ -48,7 +47,7 @@ private:
 	CBloodCodeSelectUI*		m_pBloodCodeSelectUI = nullptr;
 	CSkillReleaseUI*		m_pSkillReleaseUI = nullptr;
 	_bool					m_bIsChoiseBloodCode = false;
-	
+	CBloodCodeOwner*		m_pBloodCodeOwner = nullptr;
 
 public:
 	static CBloodCodeMenuUI*	Create(_Device pGraphic_Device);

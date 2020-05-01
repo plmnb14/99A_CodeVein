@@ -409,6 +409,9 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseMasage">
       <UniqueIdentifier>{dc2c6631-99a6-4970-9681-c15245b8219c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\02. BloodCodeOwner">
+      <UniqueIdentifier>{0ca63a38-c6a4-47e9-9425-81570c8dcbfd}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -843,6 +846,9 @@
     <ClInclude Include="ReleaseOption.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseMasage</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\BloodCodeOwner.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\02. BloodCodeOwner</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1264,6 +1270,9 @@
     </ClCompile>
     <ClCompile Include="ReleaseOption.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseMasage</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BloodCodeOwner.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\02. BloodCodeOwner</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

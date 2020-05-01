@@ -261,7 +261,7 @@ PS_OUT PS_UI_MASK3(PS_IN In)
 
 	Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
 
-	Out.vColor *= Out.vColor.r;
+	Out.vColor.a *= Out.vColor.r;
 
 	return Out;
 }

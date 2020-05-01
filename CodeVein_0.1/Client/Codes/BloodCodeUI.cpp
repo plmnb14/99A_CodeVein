@@ -34,7 +34,7 @@ _int CBloodCodeUI::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
-	switch (m_eType)
+	/*switch (m_eType)
 	{
 	case BloodCode_Fighter:
 		m_iIndex = 2;
@@ -51,7 +51,7 @@ _int CBloodCodeUI::Update_GameObject(_double TimeDelta)
 	case BloodCode_Eos:
 		m_iIndex = 6;
 		break;
-	}
+	}*/
 
 	m_bIsCollMouse = Pt_InRect();
 

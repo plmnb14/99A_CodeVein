@@ -37,7 +37,7 @@ _int CBloodCode_Icon::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
-	switch (m_eType)
+	/*switch (m_eType)
 	{
 	case BloodCode_Fighter:
 		m_iIndex = 2;
@@ -57,7 +57,7 @@ _int CBloodCode_Icon::Update_GameObject(_double TimeDelta)
 	default:
 		m_iIndex = 8;
 		break;
-	}
+	}*/
 	return NO_EVENT;
 }
 
