@@ -3,12 +3,12 @@
 #include "..\Headers\CocoonBullet.h"
 
 CCocoon::CCocoon(LPDIRECT3DDEVICE9 pGraphic_Device)
-	:CGameObject(pGraphic_Device)
+	:CMonster(pGraphic_Device)
 {
 }
 
 CCocoon::CCocoon(const CCocoon & rhs)
-	: CGameObject(rhs)
+	: CMonster(rhs)
 {
 }
 
@@ -34,15 +34,6 @@ HRESULT CCocoon::Ready_GameObject(void * pArg)
 	m_pMonsterUI->Set_Bonmatrix(m_matBone[Bone_Head]);
 	m_pMonsterUI->Ready_GameObject(NULL);
 
-	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
-	if (nullptr != m_pTarget)
-	{
-		Safe_AddRef(m_pTarget);
-
-		m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
-		Safe_AddRef(m_pTargetTransform);
-	}
-
 	return S_OK;
 }
 
@@ -63,7 +54,7 @@ _int CCocoon::Update_GameObject(_double TimeDelta)
 
 	m_pMeshCom->SetUp_Animation(m_eState);
 
-	MONSTER_STATETYPE::DEAD != m_eFirstCategory ? Enter_Collision() : Check_DeadEffect(TimeDelta);
+	MONSTER_STATETYPE::DEAD != m_eFirstCategory ? Check_CollisionEvent() : Check_DeadEffect(TimeDelta);
 
 	return S_OK;
 }
@@ -87,8 +78,6 @@ _int CCocoon::Late_Update_GameObject(_double TimeDelta)
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
 			return E_FAIL;
 	}
-
-	
 
 	m_dTimeDelta = TimeDelta;
 
@@ -232,258 +221,6 @@ void CCocoon::Render_Collider()
 	return;
 }
 
-void CCocoon::Enter_Collision()
-{
-	if (MONSTER_STATETYPE::DEAD != m_eFirstCategory)
-	{
-		Check_CollisionPush();
-		Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
-	}
-
-	return;
-}
-
-void CCocoon::Check_CollisionPush()
-{
-	list<CGameObject*> tmpList[3];
-
-	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
-	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
-	tmpList[2] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
-
-	for (auto& list_iter : tmpList)
-	{
-		for (auto& Obj_iter : list_iter)
-		{
-			CCollider* pCollider = TARGET_TO_COL(Obj_iter);
-
-			if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_fSkillMoveSpeed_Cur * DELTA_60))
-			{
-				CTransform* pTrans = TARGET_TO_TRANS(Obj_iter);
-				CNavMesh*   pNav = TARGET_TO_NAV(Obj_iter);
-
-				_v3 vDir = m_pTransformCom->Get_Pos() - pTrans->Get_Pos();
-				V3_NORMAL_SELF(&vDir);
-
-				vDir.y = 0;
-
-				pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pCollider->Get_Length().x));
-			}
-		}
-	}
-
-	return;
-}
-
-void CCocoon::Check_CollisionEvent(list<CGameObject*> plistGameObject)
-{
-	if (false == m_tObjParam.bIsAttack)
-		return;
-
-	_bool bFirst = true;
-
-	for (auto& iter : plistGameObject)
-	{
-		if (false == iter->Get_Target_CanHit())
-			continue;
-
-		for (auto& vecIter : m_vecAttackCol)
-		{
-			if (false == vecIter->Get_Enabled())
-				continue;
-
-			bFirst = true;
-
-			for (auto& vecCol : iter->Get_PhysicColVector())
-			{
-				if (vecIter->Check_Sphere(vecCol))
-				{
-					if (bFirst)
-					{
-						bFirst = false;
-						continue;
-					}
-
-					if (false == iter->Get_Target_IsDodge())
-					{
-						iter->Set_Target_CanHit(false);
-						iter->Add_Target_Hp(m_tObjParam.fDamage);
-
-						if (iter->Get_Target_IsHit())
-						{
-							iter->Set_HitAgain(true);
-						}
-					}
-
-					vecIter->Set_Enabled(false);
-
-					g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
-					break;
-				}
-				else
-				{
-					if (bFirst)
-						break;
-				}
-			}
-		}
-	}
-
-	return;
-}
-
-void CCocoon::Function_FBLR()
-{	
-	_float angle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos()));
-
-	if (MONSTER_STATETYPE::HIT == m_eFirstCategory)
-	{
-		if (0.f <= angle && 90.f > angle)
-			m_eFBLR = FBLR::FRONT;
-		else if (-90.f <= angle && 0.f > angle)
-			m_eFBLR = FBLR::FRONT;
-		else if (90.f <= angle && 180.f > angle)
-			m_eFBLR = FBLR::BACK;
-		else if (-180.f <= angle && -90.f > angle)
-			m_eFBLR = FBLR::BACK;
-	}
-
-	return;
-}
-
-void CCocoon::Function_RotateBody()
-{
-	_float fTargetAngle = m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos());
-
-	_float fYAngle = m_pTransformCom->Get_Angle().y;
-
-	_v3 vTargetDir = m_pTransformCom->Get_Axis(AXIS_Z);
-	V3_NORMAL_SELF(&vTargetDir);
-
-	if (fTargetAngle > 0)
-	{
-		if (fYAngle < 0)
-		{
-			if (-D3DXToRadian(90.f) > fYAngle && -D3DXToRadian(180.f) < fYAngle)
-			{
-				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
-
-				if (fYAngle <= -D3DXToRadian(180.f)) fYAngle = D3DXToRadian(180.f);
-			}
-			else fYAngle += DELTA_60 * D3DXToRadian(360.f);
-		}
-		else
-		{
-			if (fYAngle < fTargetAngle)
-			{
-				fYAngle += DELTA_60 * D3DXToRadian(360.f);
-
-				if (fYAngle >= fTargetAngle) fYAngle = fTargetAngle;
-			}
-			else
-			{
-				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
-
-				if (fYAngle <= fTargetAngle) fYAngle = fTargetAngle;
-			}
-		}
-	}
-	else if (fTargetAngle < 0)
-	{
-		if (fYAngle > 0)
-		{
-			if (D3DXToRadian(90.f) < fYAngle && D3DXToRadian(180.f) > fYAngle)
-			{
-				fYAngle += DELTA_60 * D3DXToRadian(360.f);
-
-				if (fYAngle >= D3DXToRadian(180.f)) fYAngle = -D3DXToRadian(180.f);
-			}
-			else fYAngle -= DELTA_60 * D3DXToRadian(360.f);
-		}
-		else
-		{
-			if (fYAngle > fTargetAngle)
-			{
-				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
-
-				if (fYAngle <= fTargetAngle) fYAngle = fTargetAngle;
-			}
-			else
-			{
-				fYAngle += DELTA_60 * D3DXToRadian(360.f);
-
-				if (fYAngle >= fTargetAngle) fYAngle = fTargetAngle;
-			}
-		}
-	}
-
-	m_pTransformCom->Set_Angle(AXIS_Y, fYAngle);
-
-	return;
-}
-
-void CCocoon::Function_CoolDown()
-{
-	if (true == m_bCanCoolDown)
-	{
-		m_fCoolDownCur += DELTA_60;
-
-		if (m_fCoolDownCur >= m_fCoolDownMax)
-		{
-			m_fCoolDownCur = 0.f;
-			m_bCanCoolDown = false;
-			m_bIsCoolDown = false;
-			m_tObjParam.bCanAttack = true;
-		}
-	}
-
-	return;
-}
-
-void CCocoon::Function_Movement(_float _fspeed, _v3 _vDir)
-{
-	V3_NORMAL(&_vDir, &_vDir);
-
-	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &_vDir, _fspeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
-
-	return;
-}
-
-void CCocoon::Function_DecreMoveMent(_float _fMutiply)
-{
-	m_fSkillMoveSpeed_Cur -= (0.3f - m_fSkillMoveAccel_Cur * m_fSkillMoveAccel_Cur * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60")) * _fMutiply;
-	m_fSkillMoveAccel_Cur += g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60");
-
-	if (m_fSkillMoveSpeed_Cur < 0.f)
-	{
-		m_fSkillMoveAccel_Cur = 0.5f;
-		m_fSkillMoveSpeed_Cur = 0.f;
-	}
-
-	return;
-}
-
-void CCocoon::Function_ResetAfterAtk()
-{
-	m_tObjParam.bCanHit = true;
-	m_tObjParam.bIsHit = false;
-
-	m_tObjParam.bCanDodge = true;
-	m_tObjParam.bIsDodge = false;
-
-	m_tObjParam.bSuperArmor = false;
-
-	m_bCanIdle = true;
-	m_bIsIdle = false;
-
-	m_tObjParam.bIsAttack = false;
-
-	LOOP(20)
-		m_bEventTrigger[i] = false;
-
-	return;
-}
-
 void CCocoon::Check_PosY()
 {
 	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
@@ -505,14 +242,22 @@ void CCocoon::Check_Hit()
 				if (true == m_tObjParam.bHitAgain)
 				{
 					m_eFirstCategory = MONSTER_STATETYPE::HIT;
-					Function_FBLR();
-					m_tObjParam.bHitAgain = false;
 					m_pMeshCom->Reset_OldIndx();
+					m_tObjParam.bHitAgain = false;
+
+					if (nullptr == m_pTarget)
+						m_eFBLR = FBLR::FRONTLEFT;
+					else
+						Function_FBLR(m_pTarget);
 				}
 				else
 				{
 					m_eFirstCategory = MONSTER_STATETYPE::HIT;
-					Function_FBLR();
+
+					if (nullptr == m_pTarget)
+						m_eFBLR = FBLR::FRONTLEFT;
+					else
+						Function_FBLR(m_pTarget);
 				}
 			}
 		}
@@ -534,17 +279,19 @@ void CCocoon::Check_Dist()
 		true == m_tObjParam.bIsHit)
 		return;
 
-	if (nullptr == m_pTargetTransform)
+	Function_Find_Target();
+
+	if (nullptr == m_pTarget)
 	{
 		Function_ResetAfterAtk();
-
+		m_bInRecognitionRange = false;
 		m_eFirstCategory = MONSTER_STATETYPE::IDLE;
 
 		return;
 	}
 	else
 	{
-		_float fLenth = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransform->Get_Pos()));
+		_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(m_pTarget)->Get_Pos() - m_pTransformCom->Get_Pos()));
 
 		m_fRecognitionRange >= fLenth ? m_bInRecognitionRange = true : m_bInRecognitionRange = false;
 		m_fShotRange >= fLenth ? m_bInAtkRange = true : m_bInAtkRange = false;
@@ -555,37 +302,20 @@ void CCocoon::Check_Dist()
 			{
 				if (true == m_tObjParam.bCanAttack)
 				{
-					if (true == m_bIsCoolDown)
-					{
-						m_eFirstCategory = MONSTER_STATETYPE::IDLE;
-						Function_RotateBody();
-					}
+					m_eFirstCategory = MONSTER_STATETYPE::ATTACK;
+					if (m_fAtkRange < fLenth && m_fShotRange > fLenth)
+						m_eState = COCOON_ANI::Shot;
 					else
-					{
-						m_eFirstCategory = MONSTER_STATETYPE::ATTACK;
-						if (m_fAtkRange < fLenth && m_fShotRange > fLenth)
-							m_eState = COCOON_ANI::Shot;
-						else
-							m_eState = COCOON_ANI::Mist;
-						Function_RotateBody();
-					}
+						m_eState = COCOON_ANI::Mist;
 				}
 				else
-				{
 					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
-					Function_RotateBody();
-				}
 			}
 			else
-			{
 				m_eFirstCategory = MONSTER_STATETYPE::IDLE;
-				Function_RotateBody();
-			}
 		}
 		else
-		{
 			m_eFirstCategory = MONSTER_STATETYPE::IDLE;
-		}
 	}
 
 	return;
@@ -661,9 +391,9 @@ void CCocoon::Play_Shot()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_fCoolDownMax = 1.f;
-			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = 1.f;
 
 			return;
 		}
@@ -677,7 +407,7 @@ void CCocoon::Play_Shot()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 
 				//g_pManagement->Add_GameObject_ToLayer(L"Monster_CocoonBigBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 6.f, 2.f));
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_CocoonBigBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 6.f, 2.f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_CocoonBigBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 6.f, 1.5f));
 			}
 		}
 		else if (3.7f <= AniTime && 5.8f >= AniTime)
@@ -690,7 +420,29 @@ void CCocoon::Play_Shot()
 			g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_02", 0.1f, vBirth, nullptr);
 		}
 		else if (0.f <= AniTime)
-			Function_RotateBody();
+		{
+			if (nullptr == m_pTarget)
+			{
+				Function_Find_Target();
+
+				if (nullptr == m_pTarget)
+				{
+					Function_ResetAfterAtk();
+					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_bInRecognitionRange = false;
+					m_fCoolDownMax = 0.f;
+					m_fCoolDownCur = 0.f;
+
+					Play_Idle();
+
+					return;
+				}
+				else
+					Function_RotateBody(m_pTarget);
+			}
+			else
+				Function_RotateBody(m_pTarget);
+		}
 
 		if (m_pMeshCom->Is_Finish_Animation(0.3f))
 			m_tObjParam.bSuperArmor = true;
@@ -715,9 +467,9 @@ void CCocoon::Play_Mist()
 		//3.033 생성(머금기) 3.567 방사 6.900 종료
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
+			Function_ResetAfterAtk();
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 0.8f;
-			Function_ResetAfterAtk();
 
 			return;
 		}
@@ -728,9 +480,10 @@ void CCocoon::Play_Mist()
 		}
 		else if (3.567f <= AniTime)
 		{
-			if (false == m_bEventTrigger[1])
+			if (false == m_bEventTrigger[0])
+				m_bEventTrigger[0] = true;
+			if (true == m_bEventTrigger[0])
 			{	
-				m_bEventTrigger[1] = true;
 				matBone1 = *m_matBone[Bone_Jaw_Tongue] * m_pTransformCom->Get_WorldMat();
 				matBone2 = *m_matBone[Bone_Neck] * m_pTransformCom->Get_WorldMat();
 				matBone = *m_matBone[Bone_Jaw_Tongue] * m_pTransformCom->Get_WorldMat();
@@ -739,8 +492,6 @@ void CCocoon::Play_Mist()
 				memcpy(vMakeDirPoint2, &matBone2._41, sizeof(_v3));
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
-
-				//g_pManagement->Add_GameObject_ToLayer(L"Monster_CocoonBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, vShotDir, 4.f, 1.f));
 				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_CocoonBullet", &BULLET_INFO(vBirth, vShotDir, 4.f, 1.f));
 			}
 		}
@@ -770,12 +521,53 @@ void CCocoon::Play_Idle()
 		if (true == m_tObjParam.bCanAttack)
 		{
 			m_eState = COCOON_ANI::Threat;
-			Function_RotateBody();
+
+			if (nullptr == m_pTarget)
+			{
+				Function_Find_Target();
+
+				if (nullptr == m_pTarget)
+				{
+					Function_ResetAfterAtk();
+					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_bInRecognitionRange = false;
+					m_fCoolDownMax = 0.f;
+					m_fCoolDownCur = 0.f;
+
+					Play_Idle();
+
+					return;
+				}
+				else
+					Function_RotateBody(m_pTarget);
+			}
+			else
+				Function_RotateBody(m_pTarget);
 		}
 		else
 		{
 			m_eState = COCOON_ANI::Threat;
-			Function_RotateBody();
+			if (nullptr == m_pTarget)
+			{
+				Function_Find_Target();
+
+				if (nullptr == m_pTarget)
+				{
+					Function_ResetAfterAtk();
+					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_bInRecognitionRange = false;
+					m_fCoolDownMax = 0.f;
+					m_fCoolDownCur = 0.f;
+
+					Play_Idle();
+
+					return;
+				}
+				else
+					Function_RotateBody(m_pTarget);
+			}
+			else
+				Function_RotateBody(m_pTarget);
 		}
 	}
 	else
@@ -796,10 +588,16 @@ void CCocoon::Play_Hit()
 
 		switch (m_eFBLR)
 		{
-		case FBLR::FRONT:
+		case Client::CMonster::FRONT:
+		case Client::CMonster::FRONTLEFT:
+		case Client::CMonster::FRONTRIGHT:
+		case Client::CMonster::LEFT:
 			m_eState = COCOON_ANI::Dmg_F;
 			break;
-		case FBLR::BACK:
+		case Client::CMonster::BACK:
+		case Client::CMonster::BACKLEFT:
+		case Client::CMonster::BACKRIGHT:
+		case Client::CMonster::RIGHT:
 			m_eState = COCOON_ANI::Dmg_B;
 			break;
 		}
@@ -821,7 +619,10 @@ void CCocoon::Play_Hit()
 			if (false == m_tObjParam.bCanHit)
 			{
 				m_tObjParam.bCanHit = true;
-				Function_FBLR();
+				if (nullptr == m_pTarget)
+					m_eFBLR = FBLR::FRONTLEFT;
+				else
+					Function_FBLR(m_pTarget);
 			}
 		}
 	}
@@ -846,8 +647,7 @@ void CCocoon::Play_Dead()
 			m_bEnable = false;
 			m_dAniPlayMul = 0;
 		}
-
-		if (3.733f <= AniTime)
+		else if (3.733f <= AniTime)
 		{
 			if (false == m_bEventTrigger[0])
 			{
@@ -900,7 +700,7 @@ HRESULT CCocoon::Add_Component(void* pArg)
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
 
-	m_pCollider->Set_Radius(_v3{ 0.5f, 0.5f, 0.5f });
+	m_pCollider->Set_Radius(_v3{ 0.6f, 0.6f, 0.6f });
 	m_pCollider->Set_Dynamic(true);
 	m_pCollider->Set_Type(COL_SPHERE);
 	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pCollider->Get_Radius().y , 0.f });
@@ -1080,8 +880,8 @@ void CCocoon::Free()
 {
 	Safe_Release(m_pMonsterUI);
 
-	Safe_Release(m_pTarget);
-	Safe_Release(m_pTargetTransform);
+	IF_NOT_NULL(m_pTarget)
+		Safe_Release(m_pTarget);
 
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pNavMesh);

@@ -1,22 +1,22 @@
 #include "stdafx.h"
-#include "..\Headers\CocoonBigBullet.h"
+#include "..\Headers\Pet_Bullet.h"
 
-CCocoonBigBullet::CCocoonBigBullet(LPDIRECT3DDEVICE9 pGraphic_Device)
-	: CGameObject(pGraphic_Device)
+CPet_Bullet::CPet_Bullet(LPDIRECT3DDEVICE9 pGraphic_Device)
+	: CPet(pGraphic_Device)
 {
 }
 
-CCocoonBigBullet::CCocoonBigBullet(const CCocoonBigBullet & rhs)
-	: CGameObject(rhs)
+CPet_Bullet::CPet_Bullet(const CPet_Bullet & rhs)
+	: CPet(rhs)
 {
 }
 
-HRESULT CCocoonBigBullet::Ready_GameObject_Prototype()
+HRESULT CPet_Bullet::Ready_GameObject_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CCocoonBigBullet::Ready_GameObject(void * pArg)
+HRESULT CPet_Bullet::Ready_GameObject(void * pArg)
 {
 	if (nullptr == pArg)
 	{
@@ -27,33 +27,15 @@ HRESULT CCocoonBigBullet::Ready_GameObject(void * pArg)
 
 		return S_OK;
 	}
+	else
+	{
+		Ready_Effect(pArg);
 
-
-	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
-
-	m_vDir = temp.vDir;
-	m_fSpeed = temp.fSpeed;
-	m_dLifeTime = temp.dLifeTime;
-
-	m_pTransformCom->Set_Pos(temp.vCreatePos);
-	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
-
-	m_tObjParam.bCanAttack = true;
-	m_tObjParam.fDamage = 20.f;
-
-	m_dCurTime = 0;
-	m_bDead = false;
-	m_bEffect = true;
-
-	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Totem_Fire_BulletBody", nullptr));
-	m_pBulletBody->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
-	m_pBulletBody->Reset_Init();
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
-	
-	return S_OK;
+		return S_OK;
+	}
 }
 
-_int CCocoonBigBullet::Update_GameObject(_double TimeDelta)
+_int CPet_Bullet::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
 
@@ -83,19 +65,34 @@ _int CCocoonBigBullet::Update_GameObject(_double TimeDelta)
 		}
 
 		m_fEffectOffset += (_float)TimeDelta;
-		if (m_fEffectOffset > 0.06f)
+		if (m_fEffectOffset > 0.1f)
 		{
 			m_fEffectOffset = 0.f;
-			g_pManagement->Create_Effect(L"Totem_Fire_BulletBody", m_pTransformCom->Get_Pos() + m_vDir * 1.3f);
-			g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_01", m_pTransformCom->Get_Pos(), nullptr);
-			g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_02", m_pTransformCom->Get_Pos(), nullptr);
+			switch (m_eBulletType)
+			{
+				//임시로 토템총알을 복붙했습니다
+			case PET_BULLET_POISON:
+				m_fEffectOffset = 0.f;
+				g_pManagement->Create_Effect(L"Totem_Fire_BulletBody", m_pTransformCom->Get_Pos() + m_vDir * 1.3f);
+				g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_01", m_pTransformCom->Get_Pos(), nullptr);
+				g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_02", m_pTransformCom->Get_Pos(), nullptr);
+				break;
+			case PET_BULLET_ICE:
+				break;
+			case PET_BULLET_FIRE:
+				break;
+			case PET_BULLET_NONE:
+				break;
+			default:
+				break;
+			}
 		}
 	}
 
 	return NO_EVENT;
 }
 
-_int CCocoonBigBullet::Late_Update_GameObject(_double TimeDelta)
+_int CPet_Bullet::Late_Update_GameObject(_double TimeDelta)
 {
 	IF_NULL_VALUE_RETURN(m_pRendererCom, E_FAIL);
 
@@ -105,7 +102,7 @@ _int CCocoonBigBullet::Late_Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-HRESULT CCocoonBigBullet::Render_GameObject()
+HRESULT CPet_Bullet::Render_GameObject()
 {
 	Update_Collider();
 	Render_Collider();
@@ -113,7 +110,7 @@ HRESULT CCocoonBigBullet::Render_GameObject()
 	return S_OK;
 }
 
-void CCocoonBigBullet::Update_Collider()
+void CPet_Bullet::Update_Collider()
 {
 	_ulong matrixIdx = 0;
 
@@ -132,7 +129,7 @@ void CCocoonBigBullet::Update_Collider()
 	return;
 }
 
-void CCocoonBigBullet::Render_Collider()
+void CPet_Bullet::Render_Collider()
 {
 	for (auto& iter : m_vecAttackCol)
 		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
@@ -140,15 +137,16 @@ void CCocoonBigBullet::Render_Collider()
 	return;
 }
 
-void CCocoonBigBullet::Enter_Collision()
+void CPet_Bullet::Enter_Collision()
 {
 	Update_Collider();
-	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
+//	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE));
+	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE));
 
 	return;
 }
 
-void CCocoonBigBullet::Check_CollisionEvent(list<CGameObject*> plistGameObject)
+void CPet_Bullet::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 {
 	if (false == m_tObjParam.bCanAttack)
 		return;
@@ -194,7 +192,7 @@ void CCocoonBigBullet::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 	return;
 }
 
-HRESULT CCocoonBigBullet::Add_Component()
+HRESULT CPet_Bullet::Add_Component()
 {
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
 		return E_FAIL;
@@ -208,12 +206,12 @@ HRESULT CCocoonBigBullet::Add_Component()
 	return S_OK;
 }
 
-HRESULT CCocoonBigBullet::SetUp_ConstantTable()
+HRESULT CPet_Bullet::SetUp_ConstantTable()
 {
 	return S_OK;
 }
 
-HRESULT CCocoonBigBullet::Ready_Collider()
+HRESULT CPet_Bullet::Ready_Collider()
 {
 	m_vecAttackCol.reserve(1);
 
@@ -232,33 +230,72 @@ HRESULT CCocoonBigBullet::Ready_Collider()
 	return S_OK;
 }
 
-CCocoonBigBullet * CCocoonBigBullet::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
+HRESULT CPet_Bullet::Ready_Effect(void * pArg)
 {
-	CCocoonBigBullet* pInstance = new CCocoonBigBullet(pGraphic_Device);
+	PET_BULLET_STATUS temp = *(PET_BULLET_STATUS*)(pArg);
+	switch (temp.eType)
+	{
+		//임시로 토템총알을 복붙했습니다
+	case PET_BULLET_TYPE::PET_BULLET_POISON:
+		m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Totem_Fire_BulletBody", nullptr));
+		m_pBulletBody->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
+		m_pBulletBody->Reset_Init();
+		g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
+		break;
+	case PET_BULLET_TYPE::PET_BULLET_ICE:
+		break;
+	case PET_BULLET_TYPE::PET_BULLET_FIRE:
+		break;
+	case PET_BULLET_TYPE::PET_BULLET_NONE:
+		break;
+	}
+
+	m_eBulletType = temp.eType;
+
+	m_vDir = temp.vDir;
+	m_fSpeed = temp.fSpeed;
+	m_dLifeTime = temp.dLifeTime;
+
+	m_pTransformCom->Set_Pos(temp.vCreatePos);
+	m_pTransformCom->Set_Scale(V3_ONE);
+
+	m_tObjParam.bCanAttack = true;
+	m_tObjParam.fDamage = 400.f;
+
+	m_dCurTime = 0;
+	m_bDead = false;
+	m_bEffect = true;
+
+	return S_OK;
+}
+
+CPet_Bullet* CPet_Bullet::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
+{
+	CPet_Bullet* pInstance = new CPet_Bullet(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 	{
-		MSG_BOX("Failed To Creating CCocoonBigBullet");
+		MSG_BOX("Failed To Creating CPet_Bullet");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject * CCocoonBigBullet::Clone_GameObject(void * pArg)
+CGameObject* CPet_Bullet::Clone_GameObject(void * pArg)
 {
-	CCocoonBigBullet* pInstance = new CCocoonBigBullet(*this);
+	CPet_Bullet* pInstance = new CPet_Bullet(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
-		MSG_BOX("Failed To Cloned CCocoonBigBullet");
+		MSG_BOX("Failed To Cloned CPet_Bullet");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-void CCocoonBigBullet::Free()
+void CPet_Bullet::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pCollider);
@@ -268,5 +305,4 @@ void CCocoonBigBullet::Free()
 
 	return;
 }
-
 

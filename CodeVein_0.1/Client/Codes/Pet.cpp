@@ -11,10 +11,39 @@ CPet::CPet(const CPet & rhs)
 {
 }
 
-void CPet::Function_FBLR()
+HRESULT CPet::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 {
-	//¼öÁ¤
-	_float fAngle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos()));
+	return S_OK;
+}
+
+void CPet::Update_Collider()
+{
+	return;
+}
+
+void CPet::Render_Collider()
+{
+	return;
+}
+
+void CPet::Check_CollisionEvent()
+{
+	return;
+}
+
+void CPet::Check_CollisionPush()
+{
+	return;
+}
+
+void CPet::Check_CollisionHit(list<CGameObject*> plistGameObject)
+{
+	return;
+}
+
+void CPet::Function_FBLR(CGameObject* _pGameObject)
+{
+	_float fAngle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(_pGameObject)->Get_Pos()));
 
 	if (0.f <= fAngle && 30.f > fAngle)
 		m_eFBLR = FBLR::FRONT;
@@ -36,9 +65,9 @@ void CPet::Function_FBLR()
 	return;
 }
 
-void CPet::Function_RotateBody()
+void CPet::Function_RotateBody(CGameObject* _pGameObject)
 {
-	_float fTargetAngle = m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos());
+	_float fTargetAngle = m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(_pGameObject)->Get_Pos());
 
 	_float fYAngle = m_pTransformCom->Get_Angle().y;
 
@@ -107,9 +136,9 @@ void CPet::Function_RotateBody()
 	return;
 }
 
-void CPet::Function_MoveAround(_float _fSpeed, _v3 _vDir)
+void CPet::Function_MoveAround(CGameObject* _pGameObject, _float _fSpeed, _v3 _vDir)
 {
-	_float fTargetAngle = m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos());
+	_float fTargetAngle = m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(_pGameObject)->Get_Pos());
 
 	_float fYAngle = m_pTransformCom->Get_Angle().y;
 
@@ -223,6 +252,112 @@ void CPet::Function_DecreMoveMent(_float _fMutiply)
 	return;
 }
 
+void CPet::Function_CalcMoveSpeed(_float _fMidDist)
+{
+	_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(m_pPlayer)->Get_Pos() - m_pTransformCom->Get_Pos()));
+
+	if (_fMidDist >= fLenth)
+		m_fSkillMoveMultiply = (fLenth - m_fPersonalRange) / (_fMidDist- m_fPersonalRange);
+	else
+		m_fSkillMoveMultiply = 1.f;
+
+	if (0.1f >= m_fSkillMoveMultiply)
+		m_fSkillMoveMultiply = 0.f;
+
+	m_fSkillMoveSpeed_Cur = 8.f * m_fSkillMoveMultiply;
+
+	return;
+}
+
+void CPet::Function_Find_Target()
+{
+	m_pTarget = nullptr;
+
+	_float	fOldLength = 99999.f;
+
+	auto& MonsterContainer = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
+
+	auto& BossContainer = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
+
+	//auto& ItemContainer = g_pManagement->Get_GameObjectList(L"Layer_Item", SCENE_STAGE);
+
+	for (auto& Monster_iter : MonsterContainer)
+	{
+		if (true == Monster_iter->Get_Dead())
+			continue;
+		else if (false == Monster_iter->Get_Enable())
+			continue;
+		else if (nullptr == Monster_iter)
+			continue;
+
+		_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
+
+		if (fLenth > m_fRecognitionRange)
+			continue;
+
+		if (fOldLength <= fLenth)
+			continue;
+
+		fOldLength = fLenth;
+		m_pTarget = Monster_iter;
+		m_eTarget = PET_TARGET_TYPE::PET_TARGET_MONSTER;
+	}
+
+	IF_NOT_NULL_VALUE_RETURN(m_pTarget, );
+
+	for (auto& Monster_iter : BossContainer)
+	{
+		if (true == Monster_iter->Get_Dead())
+			continue;
+		else if (false == Monster_iter->Get_Enable())
+			continue;
+		else if (nullptr == Monster_iter)
+			continue;
+
+		_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
+
+		if (fLenth > m_fRecognitionRange)
+			continue;
+
+		if (fOldLength <= fLenth)
+			continue;
+
+		fOldLength = fLenth;
+		m_pTarget = Monster_iter;
+		m_eTarget = PET_TARGET_TYPE::PET_TARGET_BOSS;
+	}
+
+	IF_NOT_NULL_VALUE_RETURN(m_pTarget, );
+
+	if (nullptr == m_pTarget)
+		m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
+
+	//	for (auto& Monster_iter : ItemContainer)
+	//	{
+	//		if (true == Monster_iter->Get_Dead())
+	//			continue;
+	//		else if (false == Monster_iter->Get_Enable())
+	//			continue;
+	//		else if (nullptr == Monster_iter)
+	//			continue;
+
+	//		_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
+
+	//		if (fLenth > m_fRecognitionRange)
+	//			continue;
+
+	//		if (fOldLength <= fLenth)
+	//			continue;
+
+	//		fOldLength = fLenth;
+	//		m_pTarget = Monster_iter;
+	//		m_eTarget = PET_TARGET_TYPE::TARGET_ITEM;
+	//	}
+	//	IF_NOT_NULL_VALUE_RETURN(m_pTarget, );
+	
+	return;
+}
+
 void CPet::Function_ResetAfterAtk()
 {
 	m_tObjParam.bCanHit = true;
@@ -236,6 +371,8 @@ void CPet::Function_ResetAfterAtk()
 
 	m_bCanIdle = true;
 	m_bIsIdle = false;
+
+	m_bCanActive = false;
 
 	m_bCanMoveAround = true;
 	m_bIsMoveAround = false;
@@ -251,10 +388,65 @@ void CPet::Function_ResetAfterAtk()
 	IF_NOT_NULL(m_pWeapon)
 		m_pWeapon->Set_Enable_Trail(false);
 
-	LOOP(20)
+	LOOP(30)
 		m_bEventTrigger[i] = false;
 
 	return;
+}
+
+void CPet::Play_Idle()
+{
+	return;
+}
+
+void CPet::Play_Move()
+{
+	return;
+}
+
+void CPet::Play_Hit()
+{
+	return;
+}
+
+void CPet::Play_CC()
+{
+	return;
+}
+
+void CPet::Play_Dead()
+{
+	return;
+}
+
+HRESULT CPet::Add_Component(void * pArg)
+{
+	return S_OK;
+}
+
+HRESULT CPet::SetUp_ConstantTable()
+{
+	return S_OK;
+}
+
+HRESULT CPet::Ready_Status(void * pArg)
+{
+	return S_OK;
+}
+
+HRESULT CPet::Ready_Weapon(void * pArg)
+{
+	return S_OK;
+}
+
+HRESULT CPet::Ready_Collider(void * pArg)
+{
+	return S_OK;
+}
+
+HRESULT CPet::Ready_BoneMatrix(void * pArg)
+{
+	return S_OK;
 }
 
 void CPet::Free()

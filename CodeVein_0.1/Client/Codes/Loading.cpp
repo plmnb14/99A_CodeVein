@@ -918,7 +918,6 @@ HRESULT CLoading::Add_EffectPrototype(const _tchar* szName, _bool bIsMesh)
 	return S_OK;
 }
 
-
 Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
 {
 	HANDLE hFile = CreateFile(szPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
@@ -1350,21 +1349,21 @@ _uint CLoading::Loading_Stage()
 		// ÅäÅÛ ÃÑ¾Ë
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBigBullet", CCocoonBigBullet::Create(m_pGraphicDev))))
 			return E_FAIL;
-		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_CocoonBigBullet", L"Monster_CocoonBigBullet", 10);
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_CocoonBigBullet", L"Monster_CocoonBigBullet", 100);
 		// ±èÇåÅÍ
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Hunter", CHunter::Create(m_pGraphicDev))))
 			return E_FAIL;
 		// ±èÇåÅÍ ÃÑ¾Ë
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_HunterBullet", CHunterBullet::Create(m_pGraphicDev))))
 			return E_FAIL;
-		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_HunterBullet", L"Monster_HunterBullet", 10);
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_HunterBullet", L"Monster_HunterBullet", 100);
 		// ¸ùÅ°.D.·çÇÇ
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Monkey", CMonkey::Create(m_pGraphicDev))))
 			return E_FAIL;
 		// ¸ùÅ°.D.ÃÑ¾Ë
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_MonkeyBullet", CMonkeyBullet::Create(m_pGraphicDev))))
 			return E_FAIL;
-		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_MonkeyBullet", L"Monster_MonkeyBullet", 20);
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_MonkeyBullet", L"Monster_MonkeyBullet", 100);
 		// µûÀÌ¸Ç
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ThaiMan", CThaiMan::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1380,12 +1379,18 @@ _uint CLoading::Loading_Stage()
 		// ¿¹Æ¼
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Yeti", CYeti::Create(m_pGraphicDev))))
 			return E_FAIL;
-
 		// ¿¹Æ¼ ÃÑ¾Ë
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_YetiBullet", CYetiBullet::Create(m_pGraphicDev))))
 			return E_FAIL;
-		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_YetiBullet", L"Monster_YetiBullet", 20);
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_YetiBullet", L"Monster_YetiBullet", 100);
 
+		// Æê_µ¶³ªºñ
+		if (FAILED(g_pManagement->Add_Prototype(L"Pet_PoisonButterFly", CPet_PoisonButterFly::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// Æê ÃÑ¾Ë ¿øº»
+		if (FAILED(g_pManagement->Add_Prototype(L"Pet_Bullet", CPet_Bullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Pet_Bullet", L"Pet_Bullet", 100);
 
 		// Colleague - Chea
 		//============================================================================================================
