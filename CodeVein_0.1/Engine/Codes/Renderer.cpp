@@ -434,6 +434,18 @@ HRESULT CRenderer::Draw_RenderList()
 void CRenderer::DOF_On(_bool bOn)
 {
 	m_bDOF = bOn;
+
+	if (m_bDOF)
+	{
+		m_fFocus = 0.5f;
+		m_fRange = 0.08f;
+	}
+	else
+	{
+		m_fFocus = 0.f;
+		m_fRange = 0.f;
+	}
+	
 }
 
 void CRenderer::Mono_On(_bool bOn)
@@ -442,6 +454,16 @@ void CRenderer::Mono_On(_bool bOn)
 
 	if (m_bMono)
 		m_fToneGradient = 1.f;
+}
+
+void CRenderer::Fog_On(_bool bOn)
+{
+	m_bFog = bOn;
+
+	if (m_bFog)
+		m_fFogDestiny = 0.06f;
+	else
+		m_fFogDestiny = 0.f;
 }
 
 HRESULT CRenderer::Render_Priority()
@@ -1343,14 +1365,11 @@ HRESULT CRenderer::Render_After()
 	if (m_fRange > 1.f) m_fRange = 1.f;
 	if (m_fRange < 0.f) m_fRange = 0.f;
 
-#ifndef _CLIENT
-	m_fRange = 0.f;
-	m_fFocus = 0.f;
-#endif // !_CLIENT
-
 	if (FAILED(m_pShader_Blend->Set_Value("g_Focus_DOF", &m_fFocus, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Value("g_Range_DOF", &m_fRange, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Value("g_FogDestiny", &m_fFogDestiny, sizeof(_float))))
 		return E_FAIL;
 
 	// 장치에 백버퍼가 셋팅되어있다.	

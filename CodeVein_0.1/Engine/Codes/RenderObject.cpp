@@ -31,6 +31,9 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 	if (false == m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), 20.f))
 		return NO_EVENT;
 
+	if(nullptr == m_pMesh_Static)
+		return NO_EVENT;
+
 	CGameObject::LateInit_GameObject();
 	CGameObject::Update_GameObject(_TimeDelta);
 

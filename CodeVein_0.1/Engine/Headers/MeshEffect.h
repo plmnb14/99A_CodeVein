@@ -48,9 +48,6 @@ private:
 	void Change_Texture(const _tchar* _Name);
 	void Change_Mesh(const _tchar* _Name);
 
-private:
-	_v3		m_vAddedAngle = V3_NULL;
-
 public:
 	static CMeshEffect* Create(LPDIRECT3DDEVICE9 pGraphic_Device); // 원형객체 생성.
 	static CMeshEffect* Create(LPDIRECT3DDEVICE9 pGraphic_Device, EFFECT_INFO* pInfo);

@@ -8,6 +8,7 @@
 #include "MeshEffect.h"
 #include "DecalEffect.h"
 #include "Effect_BloodChunk.h"
+#include "Effect_LongSpark.h"
 
 #include "Player.h"
 
@@ -678,6 +679,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Hit_Particle_Yellow")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_LongSpark_0")))
+		return E_FAIL;
 #pragma endregion
 
 #pragma region Bullet
@@ -1040,7 +1043,7 @@ _uint CLoading::Loading_Title()
 	// 기믹 메쉬 불러오는중
 	//============================================================================================================
 	cout << "Field Gimmick Static 메쉬 불러오는중" << endl;
-	//g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Field_Gimmick_Path.dat");
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Field_Gimmick_Path.dat");
 
 	// 다이나믹 메쉬 불러오는 중
 	//============================================================================================================
@@ -1048,7 +1051,7 @@ _uint CLoading::Loading_Title()
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Dynamic_Path.dat");
 
 	// 임시 공통 스태틱 메쉬
-	//g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
 
 	// 무기 불러오는 중
 	//============================================================================================================
@@ -1078,7 +1081,7 @@ _uint CLoading::Loading_Title()
 	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager_Essential()))
 		return E_FAIL;
 
-	// 플레이어 스킬, 보스 이펙트 포함
+	//// 플레이어 스킬, 보스 이펙트 포함
 	//cout << "Particle Etc 불러오는 중 . . ." << endl;
 	//if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
 	//	return E_FAIL;
@@ -1435,8 +1438,12 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BloodChunk", CEffect_BloodChunk::Create(m_pGraphicDev))))
 			return E_FAIL;
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_BloodChunk", L"GameObject_BloodChunk", 200);
-		//============================================================================================================
 
+		// Effect_LongSpark
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LongSpark", CEffect_LongSpark::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_LongSpark", L"GameObject_LongSpark", 1000);
+		//============================================================================================================
 
 		g_bOnStage[0] = true;
 	}

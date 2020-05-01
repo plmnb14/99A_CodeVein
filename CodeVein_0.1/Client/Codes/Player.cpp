@@ -4137,6 +4137,26 @@ void CPlayer::Play_BloodSuck()
 			m_pDrainWeapon->Set_AnimIdx(m_eAnim_Upper);
 			m_pDrainWeapon->Set_Active(true);
 		}
+
+		// 이펙트 ============================================
+		LPCSTR tmpChar = "Hips";
+		_mat   matAttach;
+		D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 0);
+		matAttach = pFamre->CombinedTransformationMatrix * m_pTransform->Get_WorldMat();
+		_v3 vEffPos = V3_NULL;
+
+		// 시전 스모크
+		for (_int i = 1; i < 7; i++)
+		{
+			_tchar szBuff[256] = L"";
+			wsprintf(szBuff, L"Player_Drain_Ink_%d", i);
+
+			vEffPos = _v3(matAttach._41, matAttach._42, matAttach._43)
+				+ m_pTransform->Get_Axis(AXIS_Z) * -0.8f
+				+ _v3(0.f, -0.25f + _float(CCalculater::Random_Num_Double(0.0, 1.7)), 0.f);
+
+			g_pManagement->Create_Effect_Delay(szBuff, 0.3f, vEffPos);
+		}
 	}
 
 	else if (true == m_bOnBloodSuck)
@@ -4247,6 +4267,25 @@ void CPlayer::Play_BloodSuck()
 
 					m_pDrainWeapon->Set_Target_CanAttack(false);
 					m_pDrainWeapon->Set_Enable_Record(false);
+
+					// 이펙트 ============================================
+					LPCSTR tmpChar = "Hips";
+					_mat   matAttach;
+					D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 0);
+					matAttach = pFamre->CombinedTransformationMatrix * m_pTransform->Get_WorldMat();
+					_v3 vEffPos = V3_NULL;
+					// 끝날때 스모크
+					for (_int i = 1; i < 7; i++)
+					{
+						_tchar szBuff[256] = L"";
+						wsprintf(szBuff, L"Player_Drain_Ink_%d", i);
+
+						vEffPos = _v3(matAttach._41, matAttach._42, matAttach._43)
+							+ m_pTransform->Get_Axis(AXIS_Z) * -0.8f
+							+ _v3(0.f, _float(CCalculater::Random_Num_Double(0.0, 0.5)), 0.f);
+
+						g_pManagement->Create_Effect_Delay(szBuff, 1.f, vEffPos);
+					}
 				}
 			}
 
@@ -4378,6 +4417,35 @@ void CPlayer::Play_BloodSuckCount()
 
 				m_tObjParam.bCanCounter = false;
 				m_tObjParam.bIsCounter = false;
+
+				// 이펙트 ============================================
+				LPCSTR tmpChar = "Hips";
+				_mat   matAttach;
+				D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 0);
+				matAttach = pFamre->CombinedTransformationMatrix * m_pTransform->Get_WorldMat();
+				_v3 vEffPos = V3_NULL;
+				// 끝날때 스모크
+				for (_int i = 1; i < 7; i++)
+				{
+					_tchar szBuff[256] = L"";
+					wsprintf(szBuff, L"Player_Drain_Ink_%d", i);
+
+					vEffPos = _v3(matAttach._41, matAttach._42, matAttach._43)
+						//+ m_pTransform->Get_Axis(AXIS_Z) * -1.f
+						+ _v3(0.f, _float(CCalculater::Random_Num_Double(0.0, 0.3)), 0.f);
+
+					g_pManagement->Create_Effect_Delay(szBuff, 0.8f, vEffPos);
+				}
+			}
+		}
+
+		else if (dAniTime > 2.1)
+		{
+			if (false == m_bEventTrigger[2])
+			{
+				m_bEventTrigger[2] = true;
+
+				
 			}
 		}
 
@@ -4402,29 +4470,16 @@ void CPlayer::Play_BloodSuckCount()
 				_v3 vEffPos = V3_NULL;
 
 				// 시전 스모크
-				for (_int i = 0; i < 7; i++)
+				for (_int i = 1; i < 7; i++)
 				{
 					_tchar szBuff[256] = L"";
 					wsprintf(szBuff, L"Player_Drain_Ink_%d", i);
 
 					vEffPos = _v3(matAttach._41, matAttach._42, matAttach._43)
-						+ m_pTransform->Get_Axis(AXIS_Z) * -0.8f
+						//+ m_pTransform->Get_Axis(AXIS_Z) * -0.8f
 						+ _v3(0.f, -0.25f + _float(CCalculater::Random_Num_Double(0.0, 1.7)), 0.f);
 
 					g_pManagement->Create_Effect_Delay(szBuff, 0.1f, vEffPos);
-				}
-
-				// 끝날때 스모크
-				for (_int i = 0; i < 7; i++)
-				{
-					_tchar szBuff[256] = L"";
-					wsprintf(szBuff, L"Player_Drain_Ink_%d", i);
-
-					vEffPos = _v3(matAttach._41, matAttach._42, matAttach._43)
-						+ m_pTransform->Get_Axis(AXIS_Z) * -0.8f
-						+ _v3(0.f, _float(CCalculater::Random_Num_Double(0.0, 0.3)), 0.f);
-
-					g_pManagement->Create_Effect_Delay(szBuff, 1.6f, vEffPos);
 				}
 			}
 		}

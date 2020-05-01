@@ -39,22 +39,10 @@ HRESULT CEffect_BloodChunk::Ready_GameObject(void* pArg)
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 	m_vDir = tInfo.vDirection;
 
-	//m_fDelay = tInfo.fDelay;
-
 	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Blood_Chunk_0", nullptr));
 	m_pBulletBody->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
 	m_pBulletBody->Reset_Init();
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
-
-	//_mat matRotX, matRotY, matRotZ;
-	//m_vDir = _v3(1.f, 1.f, 1.f);
-	//D3DXMatrixRotationX(&matRotX, D3DXToRadian(CCalculater::Random_Num(0, 360)));
-	//D3DXMatrixRotationY(&matRotY, D3DXToRadian(CCalculater::Random_Num(0, 360)));
-	//D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(CCalculater::Random_Num(0, 360)));
-	//D3DXVec3TransformNormal(&m_vDir, &m_vDir, &matRotX);
-	//D3DXVec3TransformNormal(&m_vDir, &m_vDir, &matRotY);
-	//D3DXVec3TransformNormal(&m_vDir, &m_vDir, &matRotZ);
-	//D3DXVec3Normalize(&m_vDir, &m_vDir);
 
 	return NOERROR;
 }
@@ -97,7 +85,6 @@ _int CEffect_BloodChunk::Update_GameObject(_double TimeDelta)
 		if (m_fEffectOffset > 0.1f)
 		{
 			m_fEffectOffset = 0.f;
-			CParticleMgr::Get_Instance()->Create_Effect(L"Haze_FlashParticle", m_pTransformCom->Get_Pos());
 		}
 	}
 
@@ -123,7 +110,7 @@ HRESULT CEffect_BloodChunk::Render_GameObject()
 void CEffect_BloodChunk::Check_Move(_double TimeDelta)
 {
 	_float fDownLength = m_fCreatePosY - m_pTransformCom->Get_Pos().y;
-	if (fDownLength > 0.7f)
+	if (fDownLength > (0.7f * m_fCreatePosY))
 	{
 		m_dCurTime += 1000.f;
 		return;

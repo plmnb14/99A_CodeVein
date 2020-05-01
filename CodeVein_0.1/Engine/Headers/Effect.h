@@ -85,6 +85,7 @@ protected:
 	_v3						m_vAngle = { 0.f, 0.f, 0.f };	// For Worldmat Rot
 	_v3						m_vCurveRotDir = { 0.f, 0.f, 0.f };	// For Curve Rot
 	_v3						m_vFinishPos = { 0.f, 0.f, 0.f };
+	_v3						m_vAddedAngle = V3_NULL;
 
 	_bool					m_bClone = false;
 	_bool					m_bFadeOutStart = false;
