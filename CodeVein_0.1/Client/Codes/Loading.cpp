@@ -681,6 +681,12 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Hit_LongSpark_0")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_LongSpark_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_LongSpark_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_LongSpark_Test_0")))
+		return E_FAIL;
 #pragma endregion
 
 #pragma region Bullet
@@ -1442,7 +1448,7 @@ _uint CLoading::Loading_Stage()
 		// Effect_LongSpark
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LongSpark", CEffect_LongSpark::Create(m_pGraphicDev))))
 			return E_FAIL;
-		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_LongSpark", L"GameObject_LongSpark", 1000);
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_LongSpark", L"GameObject_LongSpark", 5000);
 		//============================================================================================================
 
 		g_bOnStage[0] = true;

@@ -340,6 +340,7 @@ PS_OUT PS_BLURV(PS_IN In)
 
 float g_Focus_DOF;
 float g_Range_DOF;
+float g_FogDestiny;
 PS_OUT PS_AFTER(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
@@ -374,18 +375,26 @@ PS_OUT PS_AFTER(PS_IN In)
 
 	// DOF END ====================================
 	// ============================================
+	
+	if (0 == g_FogDestiny)
+		return Out;
 
 	vector fogColor = vector(0.3, 0.3, 0.3, 1.0);
 	float2 fog;
 	fog.x = 500 / (500 - 0.1);
 	fog.y = -1 / (500 - 0.1);
 
+	float fDestiny = g_FogDestiny;
+	if (0 == vDepth.x)
+		fDestiny = 0.001f;
+	//  지수 Fog
+	vector vFog = 1 / exp(pow(PixelCameraZ * fDestiny, 2));
+
+	if (0 == vDepth.x)
+		vFog *= /*UV.y*/ saturate(1.f - (UV.y + 0.3f));
+
 	//// 선형 Fog
 	//vector vFog = fog.x + PixelCameraZ * fog.y;
-
-	//  지수 Fog
-	float Density = 0.06f;
-	vector vFog = 1 / exp(pow(PixelCameraZ * Density, 2));
 
 	Out.vColor = vFog * Out.vColor + (1 - vFog) * fogColor;
 

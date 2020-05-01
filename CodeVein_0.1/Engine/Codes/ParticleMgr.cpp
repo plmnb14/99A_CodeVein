@@ -81,6 +81,9 @@ HRESULT CParticleMgr::Ready_ParticleManager_Essential()
 	Input_Pool(L"Hit_Particle_Yellow", 100);
 
 	Input_Pool(L"Hit_LongSpark_0", 100);
+	Input_Pool(L"Hit_LongSpark_1", 100);
+	Input_Pool(L"Hit_LongSpark_2", 100);
+	Input_Pool(L"Hit_LongSpark_Test_0", 100);
 
 	Input_Pool(L"SpawnParticle", 1000);
 	Input_Pool(L"SpawnParticle_Sub", 1000);
@@ -955,50 +958,48 @@ void CParticleMgr::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCo
 
 	// ÇÇ°¡ Ä®¿¡¼­ ³ª¿È
 
-	//_v3 vAngle = pHittedTrans->Get_Angle();
-	//vAngle.z += D3DXToDegree(fAngle);
-	//Create_AngleEffect(L"Hit_SlashLine_0", vAttackPos, vAngle);
-	//
-	//_tchar szBuff[256] = L"";
-	//wsprintf(szBuff, L"Hit_Slash_Particle_%d", CCalculater::Random_Num(0, 3));
-	//Create_Effect(szBuff, vAttackPos);
-	//
-	//Create_Effect(L"Hit_Slash_0", vAttackPos);
-	//Create_Effect(L"Hit_Slash_1", vAttackPos);
-	//Create_Effect(L"Hit_Slash_2", vAttackPos);
-	//Create_Effect(L"Hit_Slash_3", vAttackPos);
-	//Create_Effect(L"Hit_Particle_Red", vAttackPos);
-	//Create_Effect(L"Hit_Particle_Yellow", vAttackPos);
-	//
-	//Create_Effect(L"Hit_BloodParticle_0", vAttackPos);
-	//Create_Effect(L"Hit_BloodParticle_1", vAttackPos);
-	//Create_Effect(L"Hit_BloodParticle_2", vAttackPos);
-	//Create_Effect(L"Hit_BloodParticle_3", vAttackPos);
-	//Create_Effect(L"Hit_BloodParticle_4", vAttackPos);
-	//Create_Effect(L"Hit_BloodParticle_5", vAttackPos);
-	//
-	//_float fMinus = (fAngle > 0) ? 1.f : -1.f;
-	//_v3 vMyDir = pHittedTrans->Get_Axis(AXIS_Z);
+	_v3 vAngle = pHittedTrans->Get_Angle();
+	vAngle.z += D3DXToDegree(fAngle);
+	Create_AngleEffect(L"Hit_SlashLine_0", vAttackPos, vAngle);
+	
+	_tchar szBuff[256] = L"";
+	wsprintf(szBuff, L"Hit_Slash_Particle_%d", CCalculater::Random_Num(0, 3));
+	Create_Effect(szBuff, vAttackPos);
+	
+	Create_Effect(L"Hit_Slash_0", vAttackPos);
+	Create_Effect(L"Hit_Slash_1", vAttackPos);
+	Create_Effect(L"Hit_Slash_2", vAttackPos);
+	Create_Effect(L"Hit_Slash_3", vAttackPos);
+	Create_Effect(L"Hit_Particle_Red", vAttackPos);
+	Create_Effect(L"Hit_Particle_Yellow", vAttackPos);
+	
+	Create_Effect(L"Hit_BloodParticle_0", vAttackPos);
+	Create_Effect(L"Hit_BloodParticle_1", vAttackPos);
+	Create_Effect(L"Hit_BloodParticle_2", vAttackPos);
+	Create_Effect(L"Hit_BloodParticle_3", vAttackPos);
+	Create_Effect(L"Hit_BloodParticle_4", vAttackPos);
+	Create_Effect(L"Hit_BloodParticle_5", vAttackPos);
+	
+	_float fMinus = (fAngle > 0) ? 1.f : -1.f;
+	_v3 vMyDir = pHittedTrans->Get_Axis(AXIS_Z);
 	_v3 vBloodDir = vDir * fPower;// +(vRight * fMinus);
-	//
-	//Create_DirEffect(L"Hit_Blood_Direction_0", vAttackPos, vBloodDir);
-	//Create_DirEffect(L"Hit_Blood_Direction_1", vAttackPos, vBloodDir);
-	//Create_DirEffect(L"Hit_Blood_Direction_2", vAttackPos, vBloodDir);
-	//Create_DirEffect(L"Hit_Blood_Direction_3", vAttackPos, vBloodDir);
-	//Create_DirEffect(L"Hit_Blood_Direction_4", vAttackPos, vBloodDir);
-	//Create_DirEffect(L"Hit_Blood_Direction_5", vAttackPos, vBloodDir);
-	//Create_DirEffect(L"Hit_Blood_Direction_6", vAttackPos, vBloodDir);
+	
+	Create_DirEffect(L"Hit_Blood_Direction_0", vAttackPos, vBloodDir);
+	Create_DirEffect(L"Hit_Blood_Direction_1", vAttackPos, vBloodDir);
+	Create_DirEffect(L"Hit_Blood_Direction_2", vAttackPos, vBloodDir);
+	Create_DirEffect(L"Hit_Blood_Direction_3", vAttackPos, vBloodDir);
+	Create_DirEffect(L"Hit_Blood_Direction_4", vAttackPos, vBloodDir);
+	Create_DirEffect(L"Hit_Blood_Direction_5", vAttackPos, vBloodDir);
+	Create_DirEffect(L"Hit_Blood_Direction_6", vAttackPos, vBloodDir);
 
 	EFF_INFO tInfo;
 	tInfo.vCreatePos = vAttackPos;
 	tInfo.vDirection = vBloodDir;
-	//CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_BloodChunk", &tInfo);
+	CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_BloodChunk", &tInfo);
 
 	tInfo.vCreatePos = pHittedTrans->Get_Pos();
-	for (_int i = 0; i < 4; i++)
-		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_LongSpark", &tInfo);
-	tInfo.vDirection = -vBloodDir;
-	for (_int i = 0; i < 4; i++)
+	tInfo.vDirection = vBloodDir;
+	for (_int i = 0; i < 70; i++)
 		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_LongSpark", &tInfo);
 
 	//for (_int i = 0; i < 4; i++)

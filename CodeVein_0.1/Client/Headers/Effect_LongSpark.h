@@ -40,6 +40,7 @@ private:
 
 	_v3					m_vPos = V3_NULL;
 	_v3					m_vDir = V3_NULL;
+	_v3					m_vRot = V3_NULL;
 	_float				m_fSpeed = 0.f;
 	_float				m_fRotSpeed = 0.f;
 	_float				m_fAccel = 0.f;
@@ -48,7 +49,6 @@ private:
 	_float				m_fAngleZ = 0.f;
 
 	_float				m_fDelay = 0.f;
-	_bool				m_bLeft = false;
 
 	_double				m_dCurTime = 0;
 	_double				m_dLifeTime = 0;
@@ -60,7 +60,6 @@ private:
 private:
 	void Check_Move(_double TimeDelta);
 	void Check_Delay(_double TimeDelta);
-	void Check_Billboard();
 private:
 
 private:

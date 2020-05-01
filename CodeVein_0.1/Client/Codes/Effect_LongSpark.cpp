@@ -27,51 +27,53 @@ HRESULT CEffect_LongSpark::Ready_GameObject(void* pArg)
 		return S_OK;
 	}
 
-	m_fSpeed = 6.f;
-	m_fRotSpeed = 7.f;
+	m_fSpeed = _float(CCalculater::Random_Num_Double(7.0, 9.0));
+	m_fRotSpeed = 1.f;
 	m_dLifeTime = 10.f;
 	m_fAccel = 1.f;
-	m_fJumpPower = 0.f;
+	m_fJumpPower = 5.f;
 
 	//_v3 vCreatePos = *(_v3*)pArg;
 	EFF_INFO tInfo = *(EFF_INFO*)pArg;
 	m_fCreatePosY = tInfo.vCreatePos.y;
 	m_vPos = tInfo.vCreatePos;
-	m_vPos += _v3(0.f, 0.5f, 0.f);
+	m_vPos += _v3(0.f, 1.8, 0.f);
 	m_pTransformCom->Set_Pos(tInfo.vCreatePos);
 	m_pTransformCom->Set_Scale(_v3(0.8f, 0.8f, 0.8f));
-	m_vDir = tInfo.vDirection;
 
-	//m_fDelay = tInfo.fDelay;
+	_mat matView = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat matY, matZ;
+	D3DXMatrixInverse(&matView, NULL, &matView);
+	_v3 vViewUp = _v3(matView._21, matView._22, matView._23);
+	_v3 vViewLook = _v3(matView._31, matView._32, matView._33);
+	//D3DXMatrixRotationAxis(&matY, &vViewUp,		D3DXToRadian(_float(CCalculater::Random_Num_Double(0.0, 10.0))));
+	D3DXMatrixRotationAxis(&matZ, &vViewLook,	D3DXToRadian(_float(CCalculater::Random_Num_Double(0.0, 30.0))));
 
-	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Hit_LongSpark_0", nullptr));
+	//m_vDir = *D3DXVec3TransformNormal(&_v3(), &_v3(1, 1, 1), &(matZ));
+	m_vDir += tInfo.vDirection;
+
+	m_vRot.z = _float(CCalculater::Random_Num_Double(80.0, 100.0));
+	
+	//_v3	vRight = *D3DXVec3Cross(&vRight, &_v3(0, 1, 0), &vViewLook);
+	//V3_NORMAL_SELF(&vRight);
+	//_float	fDot = acosf(D3DXVec3Dot(&_v3{ 0,0,1 }, &m_vDir));
+	//if (vRight.z > 0)
+	//	fDot *= -1.f;
+
+	m_fAngleZ = D3DXToDegree(acosf(D3DXVec3Dot(&m_vDir, &_v3(0, 1, 0)))) + _float(CCalculater::Random_Num_Double(0.0, 10.0));
+	//if (vRight.z > 0)
+	//	m_fAngleZ + 180.f;
+
+	//m_fDelay = _float(CCalculater::Random_Num_Double(0.0, 0.1));
+
+	//_tchar szBuff[256] = L"";
+	//wsprintf(szBuff, L"Hit_LongSpark_%d", CCalculater::Random_Num(0, 2));
+	//m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(szBuff, nullptr));
+	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Hit_LongSpark_Test_0", nullptr));
 	m_pBulletBody->Set_Desc(_v3(0, 0, 0), nullptr);
 	m_pBulletBody->Set_ParentObject(this);
 	m_pBulletBody->Reset_Init();
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
-
-	_mat matRotX, matRotY, matRotZ;
-	_v3 vDir = _v3(1.f, 1.f, 1.f);
-	//D3DXMatrixRotationX(&matRotX, D3DXToRadian(CCalculater::Random_Num(0, 360)));
-	//D3DXMatrixRotationY(&matRotY, D3DXToRadian(CCalculater::Random_Num(0, 360)));
-	D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(CCalculater::Random_Num(0, 30)));
-	//D3DXVec3TransformNormal(&vDir, &vDir, &matRotX);
-	//D3DXVec3TransformNormal(&vDir, &vDir, &matRotY);
-	D3DXVec3TransformNormal(&vDir, &vDir, &matRotZ);
-
-	m_vDir += vDir;
-
-	D3DXVec3Normalize(&m_vDir, &m_vDir);
-	_v3	vRight = *D3DXVec3Cross(&vRight, &_v3(0, 1, 0), &m_vDir);
-	V3_NORMAL_SELF(&vRight);
-
-	if (vRight.z > 0)
-		m_fAngleZ = 90.f;
-	else
-	{
-		m_fAngleZ = -90.f;
-		m_bLeft = true;
-	}
 
 	return NOERROR;
 }
@@ -90,7 +92,10 @@ _int CEffect_LongSpark::Update_GameObject(_double TimeDelta)
 	Check_Move(TimeDelta);
 
 	m_dCurTime += TimeDelta;
-
+	m_fSpeed -= m_fSpeed * _float(TimeDelta) * 2.f;
+	if (m_fSpeed < 0.5f)
+		m_fSpeed = 0.5f;
+		
 	// 시간 초과
 	if (m_dCurTime > m_dLifeTime)
 	{
@@ -138,23 +143,30 @@ void CEffect_LongSpark::Check_Move(_double TimeDelta)
 	D3DXVec3Normalize(&vNormalizeDir, &m_vDir);
 	_v3 vMove = vNormalizeDir * m_fSpeed * _float(TimeDelta);
 
-	m_fAccel += _float(TimeDelta);
-	_float fY = (m_fJumpPower * m_fAccel + -GRAVITY * m_fAccel * m_fAccel * 0.5f) *  _float(TimeDelta);
+	m_pTransformCom->Set_Angle(D3DXToRadian(m_vRot) * _float(TimeDelta));
+
+	m_fAccel += _float(TimeDelta) * m_fSpeed * 0.5f;
+	const _float _GRAVITY = 6.f;
+	_float fY = (m_fJumpPower * m_fAccel + -_GRAVITY * m_fAccel * m_fAccel * 0.5f) *  _float(TimeDelta);
 	m_vPos += vMove;
 	m_vPos.y += fY;
-	//m_pTransformCom->Set_Pos(vPos);
+	m_pTransformCom->Set_Pos(m_vPos);
 	
-	_float fRotValue = 1.f;
-	if (m_bLeft)
-		fRotValue = -1.f;
-	m_fAngleZ += fRotValue * m_fRotSpeed * _float(TimeDelta);
-
 	_mat matView = g_pManagement->Get_Transform(D3DTS_VIEW);
+	D3DXMatrixInverse(&matView, NULL, &matView);
 	_v3 vViewLook = _v3(matView._31, matView._32, matView._33);
-	D3DXMatrixRotationAxis(&matView, &vViewLook, m_fAngleZ);
-
+	
+	_float fRotValue = 90.f;
+	_v3	vRight = *D3DXVec3Cross(&vRight, &_v3(0, 1, 0), &vViewLook);
+	V3_NORMAL_SELF(&vRight);
+	if (vRight.z > 0)
+		fRotValue = -90.f;
+	m_fAngleZ += fRotValue * m_fRotSpeed * _float(TimeDelta);
+	
+	D3DXMatrixRotationAxis(&matView, &vViewLook, D3DXToRadian(m_fAngleZ));
+	
 	memcpy(&matView._41, &m_vPos, sizeof(_v3));
-
+	
 	m_pTransformCom->Set_WorldMat(matView);
 }
 
