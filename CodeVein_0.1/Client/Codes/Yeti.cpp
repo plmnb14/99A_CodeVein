@@ -2,12 +2,12 @@
 #include "..\Headers\Yeti.h"
 
 CYeti::CYeti(LPDIRECT3DDEVICE9 pGraphic_Device)
-	:CGameObject(pGraphic_Device)
+	:CMonster(pGraphic_Device)
 {
 }
 
 CYeti::CYeti(const CYeti & rhs)
-	:CGameObject(rhs)
+	: CMonster(rhs)
 {
 }
 
@@ -33,15 +33,6 @@ HRESULT CYeti::Ready_GameObject(void * pArg)
 	m_pMonsterUI->Set_Bonmatrix(m_matBone[Bone_Head]);
 	m_pMonsterUI->Ready_GameObject(NULL);
 
-	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
-	if (nullptr != m_pTarget)
-	{
-		Safe_AddRef(m_pTarget);
-
-		m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
-		Safe_AddRef(m_pTargetTransform);
-	}
-
 	return S_OK;
 }
 
@@ -62,7 +53,7 @@ _int CYeti::Update_GameObject(_double TimeDelta)
 
 	m_pMeshCom->SetUp_Animation(m_eState);
 
-	MONSTER_STATETYPE::DEAD != m_eFirstCategory ? Enter_Collision() : Check_DeadEffect(TimeDelta);
+	MONSTER_STATETYPE::DEAD != m_eFirstCategory ? Check_CollisionEvent() : Check_DeadEffect(TimeDelta);
 
 	return NO_EVENT;
 }
@@ -86,7 +77,6 @@ _int CYeti::Late_Update_GameObject(_double TimeDelta)
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
 			return E_FAIL;
 	}
-
 
 	m_dTimeDelta = TimeDelta;
 
@@ -229,257 +219,6 @@ void CYeti::Render_Collider()
 	return;
 }
 
-void CYeti::Enter_Collision()
-{
-	Check_CollisionPush();
-	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
-	return;
-}
-
-void CYeti::Check_CollisionPush()
-{
-	list<CGameObject*> tmpList[3];
-
-	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
-	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
-	tmpList[2] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
-
-	for (auto& list_iter : tmpList)
-	{
-		for (auto& Obj_iter : list_iter)
-		{
-			CCollider* pCollider = TARGET_TO_COL(Obj_iter);
-
-			if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_fSkillMoveSpeed_Cur * DELTA_60))
-			{
-				CTransform* pTrans = TARGET_TO_TRANS(Obj_iter);
-				CNavMesh*   pNav = TARGET_TO_NAV(Obj_iter);
-
-				_v3 vDir = m_pTransformCom->Get_Pos() - pTrans->Get_Pos();
-				V3_NORMAL_SELF(&vDir);
-
-				vDir.y = 0;
-
-				pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pCollider->Get_Length().x));
-			}
-		}
-	}
-}
-
-void CYeti::Check_CollisionEvent(list<CGameObject*> plistGameObject)
-{
-	if (false == m_tObjParam.bIsAttack)
-		return;
-
-	_bool bFirst = true;
-
-	for (auto& iter : plistGameObject)
-	{
-		if (false == iter->Get_Target_CanHit())
-			continue;
-
-		for (auto& vecIter : m_vecAttackCol)
-		{
-			if (false == vecIter->Get_Enabled())
-				continue;
-
-			bFirst = true;
-
-			for (auto& vecCol : iter->Get_PhysicColVector())
-			{
-				if (vecIter->Check_Sphere(vecCol))
-				{
-					if (bFirst)
-					{
-						bFirst = false;
-						continue;
-					}
-
-					if (false == iter->Get_Target_IsDodge())
-					{
-						iter->Set_Target_CanHit(false);
-						iter->Add_Target_Hp(m_tObjParam.fDamage);
-
-						if (iter->Get_Target_IsHit())
-						{
-							iter->Set_HitAgain(true);
-						}
-					}
-
-					vecIter->Set_Enabled(false);
-
-					g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
-
-					break;
-				}
-				else
-				{
-					if (bFirst)
-						break;
-				}
-			}
-		}
-	}
-}
-
-void CYeti::Function_FBLR()
-{
-	_float angle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos()));
-
-	if (MONSTER_STATETYPE::HIT == m_eFirstCategory)
-	{
-		m_eSecondCategory_HIT = MONSTER_HITTYPE::HIT_NORMAL;
-		
-		if (0.f <= angle && 90.f > angle)
-			m_eFBLR = FBLR::FRONT;
-		else if (-90.f <= angle && 0.f > angle)
-			m_eFBLR = FBLR::FRONT;
-		else if (90.f <= angle && 180.f > angle)
-			m_eFBLR = FBLR::BACK;
-		else if (-180.f <= angle && -90.f > angle)
-			m_eFBLR = FBLR::BACK;
-	}
-
-	return;
-}
-
-void CYeti::Function_RotateBody()
-{
-	_float fTargetAngle = m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos());
-
-	_float fYAngle = m_pTransformCom->Get_Angle().y;
-
-	_v3 vTargetDir = m_pTransformCom->Get_Axis(AXIS_Z);
-	V3_NORMAL_SELF(&vTargetDir);
-
-	if (fTargetAngle > 0)
-	{
-		if (fYAngle < 0)
-		{
-			if (-D3DXToRadian(90.f) > fYAngle && -D3DXToRadian(180.f) < fYAngle)
-			{
-				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
-
-				if (fYAngle <= -D3DXToRadian(180.f)) fYAngle = D3DXToRadian(180.f);
-			}
-			else fYAngle += DELTA_60 * D3DXToRadian(360.f);
-		}
-		else
-		{
-			if (fYAngle < fTargetAngle)
-			{
-				fYAngle += DELTA_60 * D3DXToRadian(360.f);
-
-				if (fYAngle >= fTargetAngle) fYAngle = fTargetAngle;
-			}
-			else
-			{
-				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
-
-				if (fYAngle <= fTargetAngle) fYAngle = fTargetAngle;
-			}
-		}
-	}
-	else if (fTargetAngle < 0)
-	{
-		if (fYAngle > 0)
-		{
-			if (D3DXToRadian(90.f) < fYAngle && D3DXToRadian(180.f) > fYAngle)
-			{
-				fYAngle += DELTA_60 * D3DXToRadian(360.f);
-
-				if (fYAngle >= D3DXToRadian(180.f)) fYAngle = -D3DXToRadian(180.f);
-			}
-			else fYAngle -= DELTA_60 * D3DXToRadian(360.f);
-		}
-		else
-		{
-			if (fYAngle > fTargetAngle)
-			{
-				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
-
-				if (fYAngle <= fTargetAngle) fYAngle = fTargetAngle;
-			}
-			else
-			{
-				fYAngle += DELTA_60 * D3DXToRadian(360.f);
-
-				if (fYAngle >= fTargetAngle) fYAngle = fTargetAngle;
-			}
-		}
-	}
-
-	m_pTransformCom->Set_Angle(AXIS_Y, fYAngle);
-}
-
-void CYeti::Function_CoolDown()
-{
-	if (true == m_bCanCoolDown)
-	{
-		m_fCoolDownCur += DELTA_60;
-
-		if (m_fCoolDownCur >= m_fCoolDownMax)
-		{
-			m_fCoolDownCur = 0.f;
-			m_bCanCoolDown = false;
-			m_bIsCoolDown = false;
-			m_tObjParam.bCanAttack = true;
-		}
-	}
-
-	return;
-}
-
-void CYeti::Function_Movement(_float _fspeed, _v3 _vDir)
-{
-	V3_NORMAL(&_vDir, &_vDir);
-
-	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &_vDir, _fspeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
-
-	return;
-}
-
-void CYeti::Function_DecreMoveMent(_float _fMutiply)
-{
-	m_fSkillMoveSpeed_Cur -= (0.3f - m_fSkillMoveAccel_Cur * m_fSkillMoveAccel_Cur * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60")) * _fMutiply;
-	m_fSkillMoveAccel_Cur += g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60");
-
-	if (m_fSkillMoveSpeed_Cur < 0.f)
-	{
-		m_fSkillMoveAccel_Cur = 0.5f;
-		m_fSkillMoveSpeed_Cur = 0.f;
-	}
-
-	return;
-}
-
-void CYeti::Function_ResetAfterAtk()
-{
-	m_tObjParam.bCanHit = true;
-	m_tObjParam.bIsHit = false;
-
-	m_tObjParam.bCanDodge = true;
-	m_tObjParam.bIsDodge = false;
-
-	m_tObjParam.bSuperArmor = false;
-
-	m_bCanIdle = true;
-	m_bIsIdle = false;
-
-	m_tObjParam.bIsAttack = false;
-
-	m_bCanChooseAtkType = true;
-	m_bIsCombo = false;
-
-	for (auto& vetor_iter : m_vecAttackCol)
-		vetor_iter->Set_Enabled(false);
-
-	LOOP(20)
-		m_bEventTrigger[i] = false;
-
-	return;
-}
-
 void CYeti::Check_PosY()
 {
 	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
@@ -503,25 +242,23 @@ void CYeti::Check_Hit()
 					if (true == m_tObjParam.bHitAgain)
 					{
 						m_eFirstCategory = MONSTER_STATETYPE::HIT;
-						//이떄 특수 공격 관련으로 불값이 참인 경우 cc기로
-						/*if(특수 공격)
-						else
-						데미지 측정 float 혹은 bool*/
-						//	m_eFirstCategory = MONSTER_STATETYPE::CC;
-						Function_FBLR();
 						m_tObjParam.bHitAgain = false;
 						m_pMeshCom->Reset_OldIndx();
+
+						if (nullptr == m_pTarget)
+							m_eFBLR = FBLR::FRONTLEFT;
+						else
+							Function_FBLR(m_pTarget);
 					}
 				}
 				else
 				{
 					m_eFirstCategory = MONSTER_STATETYPE::HIT;
-					//데미지 측정, 특수 공격 측정
-					/*if(특수 공격)
+
+					if (nullptr == m_pTarget)
+						m_eFBLR = FBLR::FRONTLEFT;
 					else
-					데미지 측정 float 혹은 bool*/
-					//	m_eFirstCategory = MONSTER_STATETYPE::CC;
-					Function_FBLR();
+						Function_FBLR(m_pTarget);
 				}
 			}
 		}
@@ -529,6 +266,7 @@ void CYeti::Check_Hit()
 	else
 		m_eFirstCategory = MONSTER_STATETYPE::DEAD;
 
+	return;
 }
 
 void CYeti::Check_Dist()
@@ -539,15 +277,16 @@ void CYeti::Check_Dist()
 		return;
 
 	if (true == m_bIsCombo ||
+		true == m_bIsMoveAround ||
 		true == m_tObjParam.bIsAttack ||
 		true == m_tObjParam.bIsDodge ||
 		true == m_tObjParam.bIsHit)
 		return;
 
-	if (nullptr == m_pTargetTransform)
+	Function_Find_Target();
+
+	if (nullptr == m_pTarget)
 	{
-		//유저를 잡았거나, 생성되지 않았거나
-		//동료, 플레이어 레이어 찾기 또는 일상행동을 반복한다
 		Function_ResetAfterAtk();
 
 		m_eFirstCategory = MONSTER_STATETYPE::IDLE;
@@ -556,7 +295,7 @@ void CYeti::Check_Dist()
 	}
 	else
 	{
-		_float fLenth = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransform->Get_Pos()));
+		_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(m_pTarget)->Get_Pos() - m_pTransformCom->Get_Pos()));
 
 		m_fRecognitionRange >= fLenth ? m_bInRecognitionRange = true : m_bInRecognitionRange = false;
 		m_fAtkRange >= fLenth ? m_bInAtkRange = true : m_bInAtkRange = false;
@@ -564,33 +303,21 @@ void CYeti::Check_Dist()
 		if (true == m_bInRecognitionRange)
 		{
 			if (true == m_bIsIdle)
-			{
 				m_eFirstCategory = MONSTER_STATETYPE::IDLE;
-			}
 			else
 			{
 				if (true == m_bInAtkRange)
 				{
 					if (true == m_tObjParam.bCanAttack)
 					{
-						if (true == m_bIsCoolDown)
-						{
-							m_eFirstCategory = MONSTER_STATETYPE::IDLE;
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
-							Function_RotateBody();
-						}
-						else
-						{
-							m_bCanChooseAtkType = true;
-							m_eFirstCategory = MONSTER_STATETYPE::ATTACK;
-							Function_RotateBody();
-						}
+						m_bCanChooseAtkType = true;
+						m_eFirstCategory = MONSTER_STATETYPE::ATTACK;
 					}
 					else
 					{
-						m_eFirstCategory = MONSTER_STATETYPE::IDLE;
-						m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
-						Function_RotateBody();
+						m_bCanMoveAround = true;
+						m_eFirstCategory = MONSTER_STATETYPE::MOVE;
+						m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_ALERT;
 					}
 				}
 				else
@@ -598,7 +325,6 @@ void CYeti::Check_Dist()
 					m_bCanChase = true;
 					m_eFirstCategory = MONSTER_STATETYPE::MOVE;
 					m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_RUN;
-					Function_RotateBody();
 				}
 			}
 		}
@@ -629,6 +355,9 @@ void CYeti::Check_AniEvent()
 	case MONSTER_STATETYPE::ATTACK:
 		if (true == m_bCanChooseAtkType)
 		{
+			m_tObjParam.bCanAttack = false;
+			m_tObjParam.bIsAttack = true;
+
 			m_bCanChooseAtkType = false;
 
 			switch (CALC::Random_Num(MONSTER_ATKTYPE::ATK_NORMAL, MONSTER_ATKTYPE::ATK_COMBO))
@@ -643,6 +372,8 @@ void CYeti::Check_AniEvent()
 				Play_RandomAtkCombo();
 				break;
 			}
+
+			return;
 		}
 		else
 		{
@@ -748,7 +479,7 @@ void CYeti::Check_DeadEffect(_double TimeDelta)
 
 void CYeti::Play_RandomAtkNormal()
 {
-	_float fLenth = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransform->Get_Pos()));
+	_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(m_pTarget)->Get_Pos() - m_pTransformCom->Get_Pos()));
 
 	switch (CALC::Random_Num(ATK_NORMAL_TYPE::NORMAL_RUSH, ATK_NORMAL_TYPE::NORMAL_BODYPRESS))
 	{
@@ -821,9 +552,9 @@ void CYeti::Play_BodyPress()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_fCoolDownMax = 0.4f;
-			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = 0.4f;
 
 			return;
 		}
@@ -855,6 +586,7 @@ void CYeti::Play_BodyPress()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -865,7 +597,8 @@ void CYeti::Play_BodyPress()
 
 void CYeti::Play_Howling()
 {
-	//미정 버프, 범위네 왜곡와 공격판정
+	//미정, 버프, 범위 왜곡와 공격판정
+	return;
 }
 
 void CYeti::Play_SlowLR()
@@ -881,9 +614,9 @@ void CYeti::Play_SlowLR()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_fCoolDownMax = 0.4f;
-			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = 0.4f;
 
 			return;
 		}
@@ -933,6 +666,7 @@ void CYeti::Play_SlowLR()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -945,6 +679,7 @@ void CYeti::Play_SlowLR()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -966,9 +701,9 @@ void CYeti::Play_RUpperChop()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_fCoolDownMax = 0.4f;
-			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = 0.4f;
 
 			return;
 		}
@@ -1036,6 +771,7 @@ void CYeti::Play_RUpperChop()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1048,6 +784,7 @@ void CYeti::Play_RUpperChop()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1060,6 +797,7 @@ void CYeti::Play_RUpperChop()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1081,9 +819,9 @@ void CYeti::Play_LRSweap()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_fCoolDownMax = 0.4f;
-			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = 0.4f;
 
 			return;
 		}
@@ -1151,6 +889,7 @@ void CYeti::Play_LRSweap()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 0.5f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1163,6 +902,7 @@ void CYeti::Play_LRSweap()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 0.5f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1175,6 +915,7 @@ void CYeti::Play_LRSweap()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 0.5f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1196,9 +937,9 @@ void CYeti::Play_FastLR()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_fCoolDownMax = 0.4f;
-			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = 0.4f;
 
 			return;
 		}
@@ -1248,6 +989,7 @@ void CYeti::Play_FastLR()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1260,6 +1002,7 @@ void CYeti::Play_FastLR()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1281,9 +1024,9 @@ void CYeti::Play_WoodChop()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_fCoolDownMax = 0.4f;
-			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = 0.4f;
 
 			return;
 		}
@@ -1323,9 +1066,9 @@ void CYeti::Play_RLRL()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_fCoolDownMax = 0.4f;
-			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = 0.4f;
 
 			return;
 		}
@@ -1411,6 +1154,7 @@ void CYeti::Play_RLRL()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1423,6 +1167,7 @@ void CYeti::Play_RLRL()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1435,6 +1180,7 @@ void CYeti::Play_RLRL()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1447,6 +1193,7 @@ void CYeti::Play_RLRL()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1459,6 +1206,7 @@ void CYeti::Play_RLRL()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1484,9 +1232,9 @@ void CYeti::Play_IceThrowing()
 		//4.400 투척
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_fCoolDownMax = 0.6f;
-			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = 0.6f;
 			return;
 		}
 		else if (4.400f <= AniTime)
@@ -1502,7 +1250,6 @@ void CYeti::Play_IceThrowing()
 				memcpy(&vLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
 				vBirth += (vLook * fLength); //생성위치 = 생성위치 +(룩*길이)
 
-				//g_pManagement->Add_GameObject_ToLayer(L"Monster_HunterBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
 				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_HunterBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
 			}
 		}
@@ -1517,7 +1264,30 @@ void CYeti::Play_IceThrowing()
 				m_fSkillMoveMultiply = 1.f;
 			}
 
-			Function_RotateBody();
+			if (nullptr == m_pTarget)
+			{
+				Function_Find_Target();
+
+				if (nullptr == m_pTarget)
+				{
+					Function_ResetAfterAtk();
+					m_fCoolDownMax = 0.f;
+					m_fCoolDownCur = 0.f;
+					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+
+					if (false == m_bIsIdle)
+						m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+
+					Play_Idle();
+
+					return;
+				}
+				else
+					Function_RotateBody(m_pTarget);
+			}
+			else
+				Function_RotateBody(m_pTarget);
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1539,9 +1309,9 @@ void CYeti::Play_RollingSlash()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_fCoolDownMax = 0.4f;
-			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = 0.4f;
 
 			return;
 		}
@@ -1645,6 +1415,7 @@ void CYeti::Play_RollingSlash()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1666,9 +1437,9 @@ void CYeti::Play_Rush()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_fCoolDownMax = 0.4f;
-			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = 0.4f;
 
 			return;
 		}
@@ -1700,6 +1471,7 @@ void CYeti::Play_Rush()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1805,6 +1577,7 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1817,6 +1590,7 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1829,6 +1603,7 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1841,6 +1616,7 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1853,6 +1629,7 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -1861,9 +1638,9 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.85f))
 		{
-			m_fCoolDownMax = 0.8f;
-			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = 0.8f;
 
 			return;
 		}
@@ -1896,7 +1673,30 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 				m_fSkillMoveMultiply = 1.f;
 			}
 
-			Function_RotateBody();
+			if (nullptr == m_pTarget)
+			{
+				Function_Find_Target();
+
+				if (nullptr == m_pTarget)
+				{
+					Function_ResetAfterAtk();
+					m_fCoolDownMax = 0.f;
+					m_fCoolDownCur = 0.f;
+					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+
+					if (false == m_bIsIdle)
+						m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+
+					Play_Idle();
+
+					return;
+				}
+				else
+					Function_RotateBody(m_pTarget);
+			}
+			else
+				Function_RotateBody(m_pTarget);
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -2002,6 +1802,7 @@ void CYeti::Play_Combo_RLRL_Smash()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -2014,6 +1815,7 @@ void CYeti::Play_Combo_RLRL_Smash()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -2026,6 +1828,7 @@ void CYeti::Play_Combo_RLRL_Smash()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -2038,6 +1841,7 @@ void CYeti::Play_Combo_RLRL_Smash()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -2050,6 +1854,7 @@ void CYeti::Play_Combo_RLRL_Smash()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -2058,9 +1863,9 @@ void CYeti::Play_Combo_RLRL_Smash()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.945f))
 		{
-			m_fCoolDownMax = 0.8f;
-			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = 0.8f;
 
 			return;
 		}
@@ -2093,7 +1898,30 @@ void CYeti::Play_Combo_RLRL_Smash()
 				m_fSkillMoveMultiply = 1.f;
 			}
 
-			Function_RotateBody();
+			if (nullptr == m_pTarget)
+			{
+				Function_Find_Target();
+
+				if (nullptr == m_pTarget)
+				{
+					Function_ResetAfterAtk();
+					m_fCoolDownMax = 0.f;
+					m_fCoolDownCur = 0.f;
+					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+
+					if (false == m_bIsIdle)
+						m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+
+					Play_Idle();
+
+					return;
+				}
+				else
+					Function_RotateBody(m_pTarget);
+			}
+			else
+				Function_RotateBody(m_pTarget);
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -2199,6 +2027,7 @@ void CYeti::Play_Combo_RLRL_Swing()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -2211,6 +2040,7 @@ void CYeti::Play_Combo_RLRL_Swing()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -2223,6 +2053,7 @@ void CYeti::Play_Combo_RLRL_Swing()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -2235,6 +2066,7 @@ void CYeti::Play_Combo_RLRL_Swing()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -2247,6 +2079,7 @@ void CYeti::Play_Combo_RLRL_Swing()
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 1.f;
 			}
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -2255,9 +2088,9 @@ void CYeti::Play_Combo_RLRL_Swing()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.945f))
 		{
-			m_fCoolDownMax = 0.8f;
-			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = 0.8f;
 
 			return;
 		}
@@ -2290,7 +2123,30 @@ void CYeti::Play_Combo_RLRL_Swing()
 				m_fSkillMoveMultiply = 1.f;
 			}
 
-			Function_RotateBody();
+			if (nullptr == m_pTarget)
+			{
+				Function_Find_Target();
+
+				if (nullptr == m_pTarget)
+				{
+					Function_ResetAfterAtk();
+					m_fCoolDownMax = 0.f;
+					m_fCoolDownCur = 0.f;
+					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+
+					if (false == m_bIsIdle)
+						m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+
+					Play_Idle();
+
+					return;
+				}
+				else
+					Function_RotateBody(m_pTarget);
+			}
+			else
+				Function_RotateBody(m_pTarget);
+
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
@@ -2306,12 +2162,34 @@ void CYeti::Play_Idle()
 		m_bIsIdle = false;
 
 		if (true == m_tObjParam.bCanAttack)
-		{
 			m_eState = YETI_ANI::NF_Threat_Loop;
-		}
 		else
 		{
-			Function_RotateBody();
+
+			if (nullptr == m_pTarget)
+			{
+				Function_Find_Target();
+
+				if (nullptr == m_pTarget)
+				{
+					Function_ResetAfterAtk();
+					m_fCoolDownMax = 0.f;
+					m_fCoolDownCur = 0.f;
+					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+
+					if (false == m_bIsIdle)
+						m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+
+					Play_Idle();
+
+					return;
+				}
+				else
+					Function_RotateBody(m_pTarget);
+			}
+			else
+				Function_RotateBody(m_pTarget);
+
 			m_eState = YETI_ANI::NF_Threat_Loop;
 		}
 	}
@@ -2331,19 +2209,140 @@ void CYeti::Play_Move()
 	switch (m_eSecondCategory_MOVE)
 	{
 	case MONSTER_MOVETYPE::MOVE_RUN:
-		m_eState = YETI_ANI::Run;
+		if (true == m_bCanChase)
+		{
+			m_bCanChase = false;
+			m_eState = YETI_ANI::Run;
+			m_fSkillMoveSpeed_Cur = 4.f;
+			m_fSkillMoveAccel_Cur = 0.f;
+			m_fSkillMoveMultiply = 0.5f;
+		}
 
-		Function_RotateBody();
-		Function_Movement(4.f, m_pTransformCom->Get_Axis(AXIS_Z));
-		Function_DecreMoveMent(0.1f);
+		if (nullptr == m_pTarget)
+		{
+			Function_Find_Target();
+
+			if (nullptr == m_pTarget)
+			{
+				Function_ResetAfterAtk();
+				m_fCoolDownMax = 0.f;
+				m_fCoolDownCur = 0.f;
+				m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+
+				if (false == m_bIsIdle)
+					m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+
+				Play_Idle();
+
+				return;
+			}
+			else
+				Function_RotateBody(m_pTarget);
+		}
+		else
+			Function_RotateBody(m_pTarget);
+
+		Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+		Function_DecreMoveMent(m_fSkillMoveMultiply);
+		break;
+
+	case MONSTER_MOVETYPE::MOVE_ALERT:
+		if (true == m_bCanMoveAround)
+		{
+			m_bCanMoveAround = false;
+			m_bIsMoveAround = true;
+
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = 4.f;
+
+			m_fSkillMoveSpeed_Cur = 2.5f;
+			m_fSkillMoveAccel_Cur = 0.f;
+			m_fSkillMoveMultiply = 0.5f;
+
+			switch (CALC::Random_Num(YETI_ANI::Walk_R, YETI_ANI::Walk_B))
+			{
+			case YETI_ANI::Walk_R:
+			case YETI_ANI::Walk_FR:
+			case YETI_ANI::Walk_F:
+			case YETI_ANI::Walk_FL_RFoot:
+			case YETI_ANI::Walk_BR_RFoot:
+				m_eState = YETI_ANI::Walk_R;
+				break;
+			case YETI_ANI::Walk_B:
+			case YETI_ANI::Walk_L:
+			case YETI_ANI::Walk_BR_LFoot:
+			case YETI_ANI::Walk_FL_LFoot:
+			case YETI_ANI::Walk_BL:
+				m_eState = YETI_ANI::Walk_L;
+				break;
+			}
+		}
+		else
+		{
+			if (nullptr == m_pTarget)
+			{
+				Function_Find_Target();
+
+				if (nullptr == m_pTarget)
+				{
+					Function_ResetAfterAtk();
+					m_fCoolDownMax = 0.f;
+					m_fCoolDownCur = 0.f;
+					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+
+					if (false == m_bIsIdle)
+						m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+
+					Play_Idle();
+
+					return;
+				}
+				else
+				{
+					if (YETI_ANI::Walk_R == m_eState)
+						Function_MoveAround(m_pTarget, m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_X));
+					else if (YETI_ANI::Walk_L == m_eState)
+						Function_MoveAround(m_pTarget, m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_X));
+				}
+			}
+			else
+			{
+				if (YETI_ANI::Walk_R == m_eState)
+					Function_MoveAround(m_pTarget, m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_X));
+				else if (YETI_ANI::Walk_L == m_eState)
+					Function_MoveAround(m_pTarget, m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_X));
+			}
+		}
 		break;
 
 	case MONSTER_MOVETYPE::MOVE_WALK:
 		m_eState = YETI_ANI::Walk_F;
 
-		Function_RotateBody();
-		Function_Movement(2.f, m_pTransformCom->Get_Axis(AXIS_Z));
-		Function_DecreMoveMent(0.1f);
+		if (nullptr == m_pTarget)
+		{
+			Function_Find_Target();
+
+			if (nullptr == m_pTarget)
+			{
+				Function_ResetAfterAtk();
+				m_fCoolDownMax = 0.f;
+				m_fCoolDownCur = 0.f;
+				m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+
+				if (false == m_bIsIdle)
+					m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+
+				Play_Idle();
+
+				return;
+			}
+			else
+				Function_RotateBody(m_pTarget);
+		}
+		else
+			Function_RotateBody(m_pTarget);
+
+		Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 		break;
 	}
 
@@ -2360,9 +2359,15 @@ void CYeti::Play_Hit()
 		switch (m_eFBLR)
 		{
 		case FBLR::FRONT:
+		case FBLR::FRONTLEFT:
+		case FBLR::FRONTRIGHT:
+		case FBLR::LEFT:
 			m_eState = YETI_ANI::Dmg_F;
 			break;
 		case FBLR::BACK:
+		case FBLR::BACKLEFT:
+		case FBLR::BACKRIGHT:
+		case FBLR::RIGHT:
 			m_eState = YETI_ANI::Dmg_B;
 			break;
 		}
@@ -2385,7 +2390,11 @@ void CYeti::Play_Hit()
 			if (false == m_tObjParam.bCanHit)
 			{
 				m_tObjParam.bCanHit = true;
-				Function_FBLR();
+
+				if (nullptr == m_pTarget)
+					m_eFBLR = FBLR::FRONTLEFT;
+				else
+					Function_FBLR(m_pTarget);
 			}
 		}
 	}
@@ -2395,6 +2404,7 @@ void CYeti::Play_Hit()
 
 void CYeti::Play_CC()
 {
+	return;
 }
 
 void CYeti::Play_Dead()
@@ -2480,7 +2490,7 @@ HRESULT CYeti::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
 
-	m_pCollider->Set_Radius(_v3{ 0.5f, 0.5f, 0.5f });
+	m_pCollider->Set_Radius(_v3{ 0.8f,0.8f,0.8f });
 	m_pCollider->Set_Dynamic(true);
 	m_pCollider->Set_Type(COL_SPHERE);
 	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pCollider->Get_Radius().y , 0.f });
@@ -2570,7 +2580,7 @@ HRESULT CYeti::Ready_Status(void * pArg)
 HRESULT CYeti::Ready_Collider()
 {
 	m_vecPhysicCol.reserve(2);
-	m_vecAttackCol.reserve(4);
+	m_vecAttackCol.reserve(5);
 	_float fRadius;
 	CCollider* pCollider = nullptr;
 
@@ -2586,7 +2596,7 @@ HRESULT CYeti::Ready_Collider()
 	m_vecPhysicCol.push_back(pCollider);
 
 	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
-	fRadius = 0.7f;
+	fRadius = 1.2f;
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
 	pCollider->Set_Type(COL_SPHERE);
@@ -2597,7 +2607,7 @@ HRESULT CYeti::Ready_Collider()
 	m_vecAttackCol.push_back(pCollider); //뭉개기용
 
 	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
-	fRadius = 0.7f;
+	fRadius = 1.2f;
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
 	pCollider->Set_Type(COL_SPHERE);
@@ -2607,7 +2617,7 @@ HRESULT CYeti::Ready_Collider()
 	m_vecAttackCol.push_back(pCollider);
 
 	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
-	fRadius = 0.7f;
+	fRadius = 1.2f;
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
 	pCollider->Set_Type(COL_SPHERE);
@@ -2617,7 +2627,7 @@ HRESULT CYeti::Ready_Collider()
 	m_vecAttackCol.push_back(pCollider);
 
 	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
-	fRadius = 0.7f;
+	fRadius = 1.2f;
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
 	pCollider->Set_Type(COL_SPHERE);
@@ -2633,17 +2643,17 @@ HRESULT CYeti::Ready_BoneMatrix()
 {
 	D3DXFRAME_DERIVED*	pFrame = nullptr;
 
-	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Spine2", 0), E_FAIL);
-	m_matBone[Bone_Range] = &pFrame->CombinedTransformationMatrix;
-	m_matBone[Bone_Body] = &pFrame->CombinedTransformationMatrix;
-
 	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head", 0), E_FAIL);
 	m_matBone[Bone_Head] = &pFrame->CombinedTransformationMatrix;
 
-	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHand", 0), E_FAIL);
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips", 0), E_FAIL);
+	m_matBone[Bone_Range] = &pFrame->CombinedTransformationMatrix;
+	m_matBone[Bone_Body] = &pFrame->CombinedTransformationMatrix;
+
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHandAttach", 0), E_FAIL);
 	m_matBone[Bone_LeftHand] = &pFrame->CombinedTransformationMatrix;
 
-	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHand", 0), E_FAIL);
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach", 0), E_FAIL);
 	m_matBone[Bone_RightHand] = &pFrame->CombinedTransformationMatrix;
 
 	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftForeArm", 0), E_FAIL);
@@ -2682,8 +2692,8 @@ void CYeti::Free()
 {
 	Safe_Release(m_pMonsterUI);
 
-	Safe_Release(m_pTarget);
-	Safe_Release(m_pTargetTransform);
+	IF_NOT_NULL(m_pTarget)
+		Safe_Release(m_pTarget);
 
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pNavMesh);

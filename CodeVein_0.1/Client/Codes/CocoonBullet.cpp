@@ -170,7 +170,7 @@ void CCocoonBullet::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 					}
 
 					iter->Set_Target_CanHit(false);
-					iter->Add_Target_Hp(m_tObjParam.fDamage);
+					iter->Add_Target_Hp(-m_tObjParam.fDamage);
 
 					m_dCurTime = 100;	// 바로 사망시키기 위해서 현재시간 100줬음
 
