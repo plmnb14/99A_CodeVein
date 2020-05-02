@@ -22,7 +22,7 @@ public:
 
 private:
 	enum Ani {
-		Ani_Idle = 0, Ani_Death = 26, Ani_Appearance = 3, Ani_Down_Start = 18, Ani_Down_Loop = 19, Ani_Down_End = 20
+		Ani_Idle = 0, Ani_Death = 26, Ani_Appearance = 3, Ani_Down_Start = 22, Ani_Down_Loop = 23, Ani_Down_End = 24
 	};
 
 private:

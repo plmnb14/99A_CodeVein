@@ -1271,21 +1271,27 @@ _uint CLoading::Loading_Stage()
 		// 얼음여자 콜드빔 작은 크기
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamSmall", CColdBeamSmall::Create(m_pGraphicDev))))
 			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_ColdBeamSmall", L"Monster_ColdBeamSmall", 10);
 		// 얼음여자 콜드빔 중간 크기
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamMiddle", CColdBeamMiddle::Create(m_pGraphicDev))))
 			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_ColdBeamMiddle", L"Monster_ColdBeamMiddle", 8);
 		// 얼음여자 콜드빔 큰 크기
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamBig", CColdBeamBig::Create(m_pGraphicDev))))
 			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_ColdBeamBig", L"Monster_ColdBeamBig", 20);
 		// 얼음여자 콜드빔 날카로운것
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamSharp", CColdBeamSharp::Create(m_pGraphicDev))))
 			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_ColdBeamSharp", L"Monster_ColdBeamSharp", 10);
 		// 얼음여자 검기발사
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordBullet", CSwordBullet::Create(m_pGraphicDev))))
 			return E_FAIL;
 		// 얼음여자 얼음보호막
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceBarrier", CIceBarrier::Create(m_pGraphicDev))))
 			return E_FAIL;
+		// 보류
+		//CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_IceBarrier", L"Monster_IceBarrier", 2);
 		// 불남자
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireBoy", CFireBoy::Create(m_pGraphicDev))))
 			return E_FAIL;
