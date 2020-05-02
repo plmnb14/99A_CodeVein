@@ -275,6 +275,7 @@
     <ClInclude Include="..\Headers\SkillGauge.h" />
     <ClInclude Include="..\Headers\SkillReleaseUI.h" />
     <ClInclude Include="..\Headers\SkillUI.h" />
+    <ClInclude Include="..\Headers\Sky_Blur.h" />
     <ClInclude Include="..\Headers\StageSelectUI.h" />
     <ClInclude Include="..\Headers\StageUI.h" />
     <ClInclude Include="..\Headers\StatusUI.h" />
@@ -414,6 +415,7 @@
     <ClCompile Include="..\Codes\SkillGauge.cpp" />
     <ClCompile Include="..\Codes\SkillReleaseUI.cpp" />
     <ClCompile Include="..\Codes\SkillUI.cpp" />
+    <ClCompile Include="..\Codes\Sky_Blur.cpp" />
     <ClCompile Include="..\Codes\StageSelectUI.cpp" />
     <ClCompile Include="..\Codes\StageUI.cpp" />
     <ClCompile Include="..\Codes\StatusUI.cpp" />

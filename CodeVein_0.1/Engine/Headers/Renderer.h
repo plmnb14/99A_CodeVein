@@ -62,7 +62,9 @@ private:
 
 	CBuffer_ViewPort*			m_pViewPortBuffer = nullptr;
 	CTexture*					m_pSSAOTexture = nullptr;
-
+	CTexture*					m_pGradingTexture = nullptr;
+	CTexture*					m_pGradingTextureTest = nullptr;
+	
 public:
 	//====================
 	// 임시 타겟 변수

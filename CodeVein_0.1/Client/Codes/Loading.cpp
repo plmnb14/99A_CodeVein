@@ -3,6 +3,7 @@
 #include "Management.h"
 
 #include "Sky.h"
+#include "Sky_Blur.h"
 
 #include "TexEffect.h"
 #include "MeshEffect.h"
@@ -679,13 +680,19 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Hit_Particle_Yellow")))
 		return E_FAIL;
-	if (FAILED(Add_EffectPrototype(L"Hit_LongSpark_0")))
+	if (FAILED(Add_EffectPrototype(L"Hit_LongSpark_L_0")))
+		return E_FAIL;							  
+	if (FAILED(Add_EffectPrototype(L"Hit_LongSpark_L_1")))
+		return E_FAIL;							  
+	if (FAILED(Add_EffectPrototype(L"Hit_LongSpark_L_2")))
 		return E_FAIL;
-	if (FAILED(Add_EffectPrototype(L"Hit_LongSpark_1")))
+	if (FAILED(Add_EffectPrototype(L"Hit_LongSpark_R_0")))
+		return E_FAIL;							   
+	if (FAILED(Add_EffectPrototype(L"Hit_LongSpark_R_1")))
+		return E_FAIL;							   
+	if (FAILED(Add_EffectPrototype(L"Hit_LongSpark_R_2")))
 		return E_FAIL;
-	if (FAILED(Add_EffectPrototype(L"Hit_LongSpark_2")))
-		return E_FAIL;
-	if (FAILED(Add_EffectPrototype(L"Hit_LongSpark_Test_0")))
+	if (FAILED(Add_EffectPrototype(L"Hit_LongSpark_Distortion_0")))
 		return E_FAIL;
 #pragma endregion
 
@@ -765,6 +772,19 @@ HRESULT CLoading::Ready_Effect(void)
 
 	if (FAILED(Add_EffectPrototype(L"Player_SpaceBar_StepParticle")))
 		return E_FAIL;
+
+#pragma region Colleague
+	if (FAILED(Add_EffectPrototype(L"Colleague_Teleport_Flash_Particle_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Teleport_Line_Particle_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Teleport_Line_Particle_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Teleport_Line_Particle_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Teleport_Smoke_0")))
+		return E_FAIL;
+#pragma endregion
 
 #pragma region Skills
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Scratch_Hor")))
@@ -1115,7 +1135,9 @@ _uint CLoading::Loading_Title()
 	// 스카이
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Sky", CSky::Create(m_pGraphicDev))))
 		return E_FAIL;
-
+	// 스카이
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Sky_Blur", CSky_Blur::Create(m_pGraphicDev))))
+		return E_FAIL;
 	//============================================================================================================
 
 	m_bFinish = true;
@@ -1448,7 +1470,7 @@ _uint CLoading::Loading_Stage()
 		// Effect_LongSpark
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LongSpark", CEffect_LongSpark::Create(m_pGraphicDev))))
 			return E_FAIL;
-		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_LongSpark", L"GameObject_LongSpark", 5000);
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_LongSpark", L"GameObject_LongSpark", 50000);
 		//============================================================================================================
 
 		g_bOnStage[0] = true;

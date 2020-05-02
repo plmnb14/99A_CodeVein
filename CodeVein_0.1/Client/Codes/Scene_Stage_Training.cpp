@@ -52,15 +52,15 @@ _int CScene_Stage_Training::Update_Scene(_double TimeDelta)
 	CUI_Manager::Get_Instance()->Update_UI();
 	
 	//Create_Fog(TimeDelta);
-	Create_Snow(TimeDelta);
+	//Create_Snow(TimeDelta);
 
-	if (g_pInput_Device->Key_Down(DIK_M))
+	if (g_pInput_Device->Key_Down(DIK_K))
 	{
 		CRenderer* pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
 		pRenderer->Fog_On(true);
 		Safe_Release(pRenderer);
 	}
-	if (g_pInput_Device->Key_Down(DIK_N))
+	if (g_pInput_Device->Key_Down(DIK_L))
 	{
 		CRenderer* pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
 		pRenderer->Fog_On(false);
@@ -311,9 +311,11 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 HRESULT CScene_Stage_Training::Ready_Layer_Environment()
 {
 	CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Sky", nullptr);
-
 	TARGET_TO_TRANS(pInstance)->Set_Angle(AXIS_Y, D3DXToRadian(0.f));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Sky", nullptr);
 
+	pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Sky_Blur", nullptr);
+	TARGET_TO_TRANS(pInstance)->Set_Angle(AXIS_Y, D3DXToRadian(0.f));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Sky", nullptr);
 
 	pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Flag", &CFlag::INFO(5, 5, 2.f, 1.f));

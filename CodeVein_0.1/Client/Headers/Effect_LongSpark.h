@@ -49,6 +49,7 @@ private:
 	_float				m_fAngleZ = 0.f;
 
 	_float				m_fDelay = 0.f;
+	_bool				m_bLeft = false;
 
 	_double				m_dCurTime = 0;
 	_double				m_dLifeTime = 0;

@@ -117,6 +117,9 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	// Target_BlurDOF
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_BlurDOF", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
+	// Target_BlurSky
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_BlurSky", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
 
 	// MRT : Multi Render Target 그룹을 지어놓은것. 
 
@@ -226,6 +229,10 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	m_pSSAOTexture = CTexture::Create(m_pGraphic_Dev, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Effect/Normal/Normal_4.tga");
 	// static_cast<CTexture*>(CComponent_Manager::Get_Instance()->Clone_Component(SCENE_STATIC, L"Tex_Noise", nullptr));
 
+	// For.m_pGradingTexture
+	m_pGradingTexture = CTexture::Create(m_pGraphic_Dev, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Grading/LUT/LUT_0.png");
+	m_pGradingTextureTest = CTexture::Create(m_pGraphic_Dev, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Grading/LUT/LUT_1.png");
+	
 	m_iInstanceCnt = 200;
 	m_pInstanceData = new INSTANCEDATA[m_iInstanceCnt];
 
@@ -480,8 +487,24 @@ HRESULT CRenderer::Render_Priority()
 			Safe_Release(pGameObject);
 		}
 	}
-
 	m_RenderList[RENDER_PRIORITY].clear();
+
+	m_pTarget_Manager->Begin_Render_Target(L"Target_BlurSky");
+	for (auto& pGameObject : m_RenderList[RENDER_FOG])
+	{
+		if (nullptr != pGameObject)
+		{
+			if (FAILED(pGameObject->Render_GameObject()))
+			{
+				Safe_Release(pGameObject);
+				return E_FAIL;
+			}
+			Safe_Release(pGameObject);
+		}
+	}
+	m_RenderList[RENDER_FOG].clear();
+	m_pTarget_Manager->End_Render_Target(L"Target_BlurSky");
+
 
 	return NOERROR;
 }
@@ -1205,9 +1228,9 @@ HRESULT CRenderer::Render_ToneMapping()
 		m_iToneIdx = 2;
 	if (GetAsyncKeyState(VK_F4) & 0x8000)
 		m_iToneIdx = 3;
-	if (GetAsyncKeyState(VK_F5) & 0x8000)
+	if (GetAsyncKeyState(VK_RCONTROL) & 0x8000)
 		m_iToneIdx = 4;
-	if (GetAsyncKeyState(VK_F6) & 0x8000)
+	if (GetAsyncKeyState(VK_RSHIFT) & 0x8000)
 		m_iToneIdx = 5;
 	
 	// Tone index
@@ -1326,39 +1349,51 @@ HRESULT CRenderer::Render_After()
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_ShadeTexture", m_pTarget_Manager->Get_Texture(L"Target_BlurDOF"))))
 		return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Texture("g_FogColorTexture", m_pTarget_Manager->Get_Texture(L"Target_BlurSky"))))
+		return E_FAIL;
 
 	if (GetAsyncKeyState('O') & 0x8000)
 	{
-		m_fFocus += 1.f * DELTA_60;
-
-		cout << "RANGE : " << m_fRange << endl;
-		cout << "FOCUS : " << m_fFocus << endl;
-		cout << "=========================" << endl;
+		m_pGradingTextureTest->SetUp_OnShader("g_GradingTexture", m_pShader_Blend, 0);
 	}
-	if (GetAsyncKeyState('I') & 0x8000)
+	else
 	{
-		m_fFocus -= 1.f * DELTA_60;
-
-		cout << "RANGE : " << m_fRange << endl;
-		cout << "FOCUS : " << m_fFocus << endl;
-		cout << "=========================" << endl;
+		// GradingTexture
+		m_pGradingTexture->SetUp_OnShader("g_GradingTexture", m_pShader_Blend, 0);
 	}
-	if (GetAsyncKeyState('U') & 0x8000)
-	{
-		m_fRange += 1.f * DELTA_60;
 
-		cout << "RANGE : " << m_fRange << endl;
-		cout << "FOCUS : " << m_fFocus << endl;
-		cout << "=========================" << endl;
-	}
-	if (GetAsyncKeyState('Y') & 0x8000)
-	{
-		m_fRange -= 1.f * DELTA_60;
-
-		cout << "RANGE : " << m_fRange << endl;
-		cout << "FOCUS : " << m_fFocus << endl;
-		cout << "=========================" << endl;
-	}
+	//if (GetAsyncKeyState('O') & 0x8000)
+	//{
+	//	m_fFocus += 1.f * DELTA_60;
+	//
+	//	cout << "RANGE : " << m_fRange << endl;
+	//	cout << "FOCUS : " << m_fFocus << endl;
+	//	cout << "=========================" << endl;
+	//}
+	//if (GetAsyncKeyState('I') & 0x8000)
+	//{
+	//	m_fFocus -= 1.f * DELTA_60;
+	//
+	//	cout << "RANGE : " << m_fRange << endl;
+	//	cout << "FOCUS : " << m_fFocus << endl;
+	//	cout << "=========================" << endl;
+	//}
+	//if (GetAsyncKeyState('U') & 0x8000)
+	//{
+	//	m_fRange += 1.f * DELTA_60;
+	//
+	//	cout << "RANGE : " << m_fRange << endl;
+	//	cout << "FOCUS : " << m_fFocus << endl;
+	//	cout << "=========================" << endl;
+	//}
+	//if (GetAsyncKeyState('Y') & 0x8000)
+	//{
+	//	m_fRange -= 1.f * DELTA_60;
+	//
+	//	cout << "RANGE : " << m_fRange << endl;
+	//	cout << "FOCUS : " << m_fFocus << endl;
+	//	cout << "=========================" << endl;
+	//}
 
 	if (m_fFocus > 1.f) m_fFocus = 1.f;
 	if (m_fFocus < 0.f) m_fFocus = 0.f;
@@ -1415,7 +1450,9 @@ CComponent * CRenderer::Clone_Component(void * pArg)
 void CRenderer::Free()
 {
 	Safe_Delete_Array(m_pInstanceData);
-
+	
+	Safe_Release(m_pGradingTexture);
+	Safe_Release(m_pGradingTextureTest);
 	Safe_Release(m_pSSAOTexture);
 	Safe_Release(m_pViewPortBuffer);
 

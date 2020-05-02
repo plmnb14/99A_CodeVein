@@ -80,10 +80,13 @@ HRESULT CParticleMgr::Ready_ParticleManager_Essential()
 	Input_Pool(L"Hit_Particle_Red", 100);
 	Input_Pool(L"Hit_Particle_Yellow", 100);
 
-	Input_Pool(L"Hit_LongSpark_0", 100);
-	Input_Pool(L"Hit_LongSpark_1", 100);
-	Input_Pool(L"Hit_LongSpark_2", 100);
-	Input_Pool(L"Hit_LongSpark_Test_0", 100);
+	Input_Pool(L"Hit_LongSpark_L_0", 100);
+	Input_Pool(L"Hit_LongSpark_L_1", 100);
+	Input_Pool(L"Hit_LongSpark_L_2", 100);
+	Input_Pool(L"Hit_LongSpark_R_0", 100);
+	Input_Pool(L"Hit_LongSpark_R_1", 100);
+	Input_Pool(L"Hit_LongSpark_R_2", 100);
+	Input_Pool(L"Hit_LongSpark_Distortion_0", 100);
 
 	Input_Pool(L"SpawnParticle", 1000);
 	Input_Pool(L"SpawnParticle_Sub", 1000);
@@ -127,6 +130,13 @@ HRESULT CParticleMgr::Ready_ParticleManager_Essential()
 	Input_Pool(L"Blood_Decal_4", 100);
 	Input_Pool(L"Blood_Decal_5", 100);
 	Input_Pool(L"Blood_Decal_6", 100);
+
+
+	Input_Pool(L"Colleague_Teleport_Flash_Particle_0", 100);
+	Input_Pool(L"Colleague_Teleport_Line_Particle_0", 100);
+	Input_Pool(L"Colleague_Teleport_Line_Particle_1", 100);
+	Input_Pool(L"Colleague_Teleport_Line_Particle_2", 100);
+	Input_Pool(L"Colleague_Teleport_Smoke_0", 100);
 
 	return S_OK;
 }
@@ -435,6 +445,8 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	//Input_Pool(L"SpawnParticle_ForBoss_Point", 5000);
 	//Input_Pool(L"SpawnParticle_ForBoss_Point_Sub", 5000);
 
+	
+
 	return S_OK;
 }
 
@@ -447,10 +459,14 @@ HRESULT CParticleMgr::Ready_Trail()
 
 HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 {
-	//if (GetAsyncKeyState('B') & 0x8000)
-	//{
-	//	Create_Effect_Delay(L"QueensKnight_Sting_Tornade", 0.f, _v3(0.f, 1.3f, 0.f), nullptr);
-	//}
+	if (CInput_Device::Get_Instance()->Key_Down(DIK_B))
+	{
+		Create_Effect_Delay(L"Colleague_Teleport_Flash_Particle_0", 0.f, _v3(0.f, 0.3f, 0.f), nullptr);
+		Create_Effect_Delay(L"Colleague_Teleport_Line_Particle_0", 0.f, _v3(0.f, 0.7f, 0.f), nullptr);
+		Create_Effect_Delay(L"Colleague_Teleport_Line_Particle_1", 0.f, _v3(0.f, 0.7f, 0.f), nullptr);
+		Create_Effect_Delay(L"Colleague_Teleport_Line_Particle_2", 0.f, _v3(0.f, 0.7f, 0.f), nullptr);
+		//Create_Effect_Delay(L"Colleague_Teleport_Smoke_0", 0.f, _v3(0.f, 0.7f, 0.f), nullptr);
+	}
 
 	if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_LB))
 	{

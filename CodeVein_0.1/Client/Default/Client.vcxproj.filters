@@ -412,6 +412,9 @@
     <Filter Include="02.GameObject\Stage\3%29 Effect\Effect_LongSpark">
       <UniqueIdentifier>{d02d899c-e7ce-4704-87d6-95604731ae1c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 Sky\Sky_Blur">
+      <UniqueIdentifier>{e26662a0-49b8-4981-9df3-3236773c32a1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -846,6 +849,9 @@
     <ClInclude Include="..\Headers\Effect_LongSpark.h">
       <Filter>02.GameObject\Stage\3%29 Effect\Effect_LongSpark</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Sky_Blur.h">
+      <Filter>02.GameObject\Stage\4%29 Sky\Sky_Blur</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1267,6 +1273,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Effect_LongSpark.cpp">
       <Filter>02.GameObject\Stage\3%29 Effect\Effect_LongSpark</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Sky_Blur.cpp">
+      <Filter>02.GameObject\Stage\4%29 Sky\Sky_Blur</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
