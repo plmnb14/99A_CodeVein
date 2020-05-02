@@ -165,8 +165,6 @@ protected:
 	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass);
 
 protected:
-	virtual void Update_Collider();
-	virtual void Render_Collider();
 	virtual void Check_CollisionEvent();
 	virtual void Check_CollisionPush();
 	virtual void Check_CollisionHit(list<CGameObject*> plistGameObject);
@@ -186,6 +184,8 @@ protected:
 	virtual void Play_Hit();
 	virtual void Play_CC();
 	virtual void Play_Dead();
+
+	//오더에 따른 겟 셋 함수를 여러개 만들예정 또는 이넘값을 이용해서 오더 내용을 변경할 예정
 
 protected:
 	virtual HRESULT Add_Component(void* pArg);
@@ -211,16 +211,15 @@ protected:
 
 	CGameObject*		m_pPlayer = nullptr;
 	CGameObject*		m_pTarget = nullptr;
-	CGameObject*		m_pTarget_By_Order = nullptr;
 
-	PET_STATETYPE	m_eFirstCategory;
+	PET_STATETYPE		m_eFirstCategory;
 
-	PET_IDLETYPE	m_eSecondCategory_IDLE;
-	PET_MOVETYPE	m_eSecondCategory_MOVE;
-	PET_ATKTYPE		m_eSecondCategory_ATK;
-	PET_HITTYPE		m_eSecondCategory_HIT;
-	PET_CCTYPE		m_eSecondCategory_CC;
-	PET_DEADTYPE	m_eSecondCategory_DEAD;
+	PET_IDLETYPE		m_eSecondCategory_IDLE;
+	PET_MOVETYPE		m_eSecondCategory_MOVE;
+	PET_ATKTYPE			m_eSecondCategory_ATK;
+	PET_HITTYPE			m_eSecondCategory_HIT;
+	PET_CCTYPE			m_eSecondCategory_CC;
+	PET_DEADTYPE		m_eSecondCategory_DEAD;
 
 	WEAPON_STATE		m_eWeaponState = WEAPON_STATE::WEAPON_None;
 	FBLR				m_eFBLR;
@@ -251,8 +250,8 @@ protected:
 	_int				m_iDodgeCount = 0; //회피 누적
 	_int				m_iDodgeCountMax = 0; //해당 카운트를 기준으로 회피 발동
 
-	//공통 사용 변수ㄴ
-	_float				m_fPersonalRange = 2.f; //player, 목표와의 사회적 거리두기 변수
+	//공통 사용 변수
+	_float				m_fPersonalRange = 4.f; //player, 목표와의 사회적 거리두기 변수
 
 	// For Effect
 	_float				m_fDeadEffect_Delay = 0.f;
@@ -274,9 +273,6 @@ protected:
 	_bool				m_bCanChooseAtkType = true; //일반,콤보 공격 여부 ->사용안할 예정, 펫==유틸
 	_bool				m_bIsCombo = false; //콤보 진행 여부 ->미사용 예정, 펫 == 유틸
 	_int				m_iRandom = 0; //랜덤 변수 사용할 일이 거의 없음, 폐기 예정?
-
-
-
 
 };
 
