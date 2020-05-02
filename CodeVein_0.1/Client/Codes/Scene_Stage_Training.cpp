@@ -66,6 +66,7 @@ _int CScene_Stage_Training::Update_Scene(_double TimeDelta)
 		pRenderer->Fog_On(false);
 		Safe_Release(pRenderer);
 	}
+	
 	return _int();
 }
 
@@ -90,10 +91,16 @@ HRESULT CScene_Stage_Training::Ready_Layer_Player(const _tchar * pLayerTag)
 
 HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 {
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Colleague")))
+		return E_FAIL;
+
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Monster")))
 		return E_FAIL;
 
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Boss")))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Pet")))
 		return E_FAIL;
 
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_MonsterProjectile")))
@@ -107,7 +114,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 
 	CGameObject* pInstance = nullptr;
 
-	// 네모네모 동료
+	//// 네모네모 동료
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague", nullptr);
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(5.f, 0.f, 5.f));
 	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
@@ -123,63 +130,75 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Pickup_Item", SCENE_STAGE, L"Layer_PickUPUI")))
 	//	return E_FAIL;
 
-
 	//// 토템
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon", &MONSTER_STATUS(MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None));
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None));
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
 	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
 	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	//// 헌터
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &MONSTER_STATUS(MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_Gun));
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_Gun));
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
+	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+
+	//// 헌터
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_Gun));
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(7.f, 0.f, 7.f));
 	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
 	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	//// 몽키
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Monkey", &MONSTER_STATUS(MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None));
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Monkey", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None));
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
 	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
 	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-
-
+	
 	//// 타이맨
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_ThaiMan", &MONSTER_STATUS(MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None));
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_ThaiMan", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None));
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
 	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
 	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	//// 성게
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Urchin", &MONSTER_STATUS(MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None));
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Urchin", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None));
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
 	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
 	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	//// 늑대
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Wolf", &MONSTER_STATUS(MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None));
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Wolf", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None));
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
 	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
 	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	//// 야차맨
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_YachaMan", &MONSTER_STATUS(MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None));
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_YachaMan", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None));
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
 	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
 	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	//// 예티
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Yeti", &MONSTER_STATUS(MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None));
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Yeti", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None));
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
 	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
 	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+
+	//// 펫_독나비
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Pet_PoisonButterFly", nullptr);
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
+	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Pet", nullptr);
 
 	//====================================================================================================================================================
 	// 검겐지

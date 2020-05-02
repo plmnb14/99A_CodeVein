@@ -1,10 +1,10 @@
 #pragma once
 
-#include "Info_Monster.h"
+#include "Monster.h"
 
 BEGIN(Client)
 
-class CUrchin final : public CGameObject
+class CUrchin final : public CMonster
 {
 public:
 	enum URCHIN_ANI 
