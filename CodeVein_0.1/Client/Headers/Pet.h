@@ -211,6 +211,7 @@ protected:
 
 	CGameObject*		m_pPlayer = nullptr;
 	CGameObject*		m_pTarget = nullptr;
+	CGameObject*		m_pTarget_By_Order = nullptr;
 
 	PET_STATETYPE	m_eFirstCategory;
 
@@ -234,49 +235,49 @@ protected:
 	_float				m_fSkillMoveAccel_Max;
 	_float				m_fSkillMoveMultiply;
 
-	//1.플레이어와의 거리
-	//최대 거리
-	//행동선택가능 거리
-	//개인적인 거리
-	_float				m_fLimitRange = 40.f; //최대 제한 거리, player에게로 달려간다
-	_float				m_fActiveRange = 30.f; //Player에게 달려가는 도중 액티브한 선택을 할수 있다
-	_bool				m_bCanActive = false; //임시로 넣은 루프 방지변수
+	//플레이어와 연관된 변수
+	_bool				m_bAbsoluteOrder = false; //우선 순위 결정
+	_float				m_fLimitRange = 40.f; //최대 제한 거리, 해당 범위 밖인 경우 무조건 복귀
+	_float				m_fActiveRange = 30.f; //행동 가능 거리, 행동 가능
 	_bool				m_bInLimitRange = false; //최대 제한 거리
 	_bool				m_bInActiveRange = false; //자유 행동 거리
 
-	//2.목표와의 거리,펫 자체의 인지,공격,원거리,개인거리
-	_float				m_fRecognitionRange = 20.f; //목표와의 거리가 인지 범위에 있다
-	_float				m_fShotRange = 10.f; //목표와의 거리가 원거리 범위 안에 있다
-	_float				m_fAtkRange = 5.f; //목표와의 거리가 근접공격 범위 안에 있다
+	//펫 자체 이용 변수
+	_float				m_fRecognitionRange = 20.f; //펫 인지 범위
+	_float				m_fShotRange = 10.f; //펫 원거리 범위
+	_float				m_fAtkRange = 5.f; //펫 근거리 범위
+	_float				m_fCoolDownCur = 0.f; //쿨타임 누적
+	_float				m_fCoolDownMax = 0.f; //해당 카운트를 기준으로 쿨타임해제
+	_int				m_iDodgeCount = 0; //회피 누적
+	_int				m_iDodgeCountMax = 0; //해당 카운트를 기준으로 회피 발동
 
-	//player 또는 목표와의 거리가 너무 가까운 것을 체크
-	_float				m_fPersonalRange = 2.f;
+	//공통 사용 변수ㄴ
+	_float				m_fPersonalRange = 2.f; //player, 목표와의 사회적 거리두기 변수
 
-	_float				m_fCoolDownMax = 0.f;
-	_float				m_fCoolDownCur = 0.f;
 	// For Effect
 	_float				m_fDeadEffect_Delay = 0.f;
 	_float				m_fDeadEffect_Offset = 0.f;
 
-	_int				m_iDodgeCount = 0;
-	_int				m_iDodgeCountMax = 0;
-
 	_bool				m_bEventTrigger[30] = {};
-	_bool				m_bCanPlayDead = false;
-	_bool				m_bInRecognitionRange = false;
-	_bool				m_bInShotRange = false;
-	_bool				m_bInAtkRange = false;
-	_bool				m_bCanChase = false;
-	_bool				m_bCanCoolDown = false;
-	_bool				m_bIsCoolDown = false;
-	_bool				m_bCanChooseAtkType = true;
-	_bool				m_bIsCombo = false;
-	_bool				m_bCanIdle =true;
-	_bool				m_bIsIdle =false;
-	_bool				m_bCanMoveAround = true;
-	_bool				m_bIsMoveAround = false;
+	_bool				m_bCanPlayDead = false; //죽을 경우 디졸브,이펙트 작동하기 위한 변수
+	_bool				m_bInRecognitionRange = false; //인지 가능 여부
+	_bool				m_bInShotRange = false; //원거리 가능 여부
+	_bool				m_bInAtkRange = false; //근거리 가능 여부
+	_bool				m_bCanChase = false; //추적 가능 여부
+	_bool				m_bCanCoolDown = false; //행동이 종료된 후 대부분 사용되는 쿨타임 가능 여부
+	_bool				m_bIsCoolDown = false; //쿨타임 진행중 여부
+	_bool				m_bCanIdle =true; //기본 동작 진행여부 ->필요성?
+	_bool				m_bIsIdle =false; //기본 동작 진행중 여부 ->필요성?
+	_bool				m_bCanMoveAround = true; //경계 가능 여부
+	_bool				m_bIsMoveAround = false; //경계 진행중 여부
 
-	_int				m_iRandom = 0;
+	_bool				m_bCanChooseAtkType = true; //일반,콤보 공격 여부 ->사용안할 예정, 펫==유틸
+	_bool				m_bIsCombo = false; //콤보 진행 여부 ->미사용 예정, 펫 == 유틸
+	_int				m_iRandom = 0; //랜덤 변수 사용할 일이 거의 없음, 폐기 예정?
+
+
+
+
 };
 
 END

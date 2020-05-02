@@ -406,14 +406,12 @@ void CPet_PoisonButterFly::Check_Dist()
 			//무언가를 찾았다면
 			if (nullptr != m_pTarget)
 			{
-				m_bCanActive = true;
 				Check_Target();
 			}
 			//아무것도 찾지 못했다면
 			else
 			{
 				//자연스러운 속도 유지를 위한 함수
-				m_bCanActive = false;
 				Function_CalcMoveSpeed(m_fActiveRange);
 				//사회적 거리두기
 				if (0.f >= m_fSkillMoveSpeed_Cur)
