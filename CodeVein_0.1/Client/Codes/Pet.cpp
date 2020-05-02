@@ -372,8 +372,6 @@ void CPet::Function_ResetAfterAtk()
 	m_bCanIdle = true;
 	m_bIsIdle = false;
 
-	m_bCanActive = false;
-
 	m_bCanMoveAround = true;
 	m_bIsMoveAround = false;
 
