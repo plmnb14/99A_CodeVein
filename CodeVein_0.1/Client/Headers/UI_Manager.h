@@ -54,6 +54,8 @@
 #include "BloodCodeUI.h"
 #include "ReleaseQuestionUI.h"
 #include "ReleaseOption.h"
+#include "SkillAcquisitionUI.h"
+#include "OKMessageUI.h"
 
 BEGIN(Client)
 
@@ -90,6 +92,7 @@ public:
 	CBloodCodeOwner* Get_BloodCode_Owner() { return m_pBloodCodeOwner; }
 	CBloodCodeSelectUI* Get_BloodCode_SelectUI() { return m_pBloodCodeSelectUI; }
 	CSkillReleaseUI* Get_Skill_ReleaseUI() { return m_pSkillReleaseUI; }
+	CSkillAcquisitionUI* Get_Skill_AcquisitionUI() { return m_pSkillAcquisitionUI; }
 
 private:
 	_uint m_uiCoundItem = 0;
@@ -110,7 +113,8 @@ private:
 	CBloodCodeOwner* m_pBloodCodeOwner = nullptr;
 	CBloodCodeSelectUI * m_pBloodCodeSelectUI = nullptr;
 	CSkillReleaseUI* m_pSkillReleaseUI = nullptr;
-	
+	CSkillAcquisitionUI* m_pSkillAcquisitionUI = nullptr;
+
 public:
 	virtual void Free();
 };

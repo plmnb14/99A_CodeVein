@@ -31,7 +31,7 @@ _int CBloodCodeSlot::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
-	m_pRendererCom->Add_RenderList(RENDER_3DUI, this);
+	m_pRendererCom->Add_RenderList(RENDER_ALPHA, this);
 
 	_v3 vWorldPos;
 	memcpy(vWorldPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
@@ -71,7 +71,7 @@ HRESULT CBloodCodeSlot::Render_GameObject()
 	{
 		LOOP(2)
 		{
-			(0 == i) ? (iIndex = 0) && (iPass = 0) : (iIndex = m_iIndex) && (iPass = 1);
+			(0 == i) ? (iIndex = 0) && (iPass = 1) : (iIndex = m_iIndex) && (iPass = 1);
 
 			if (FAILED(SetUp_ConstantTable(iIndex)))
 				return E_FAIL;
@@ -181,12 +181,12 @@ void CBloodCodeSlot::SetUp_BloodCodeIdx()
 	{
 	case BloodCode_Artemis:
 	{
-		m_iIndex = 3;
+		m_iIndex = 2;
 	}
 	break;
 	case BloodCode_Assassin:
 	{
-		m_iIndex = 4;
+		m_iIndex = 3;
 	}
 	break;
 	case BloodCode_DarkKnight:

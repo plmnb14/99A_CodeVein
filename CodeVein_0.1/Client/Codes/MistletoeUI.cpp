@@ -34,7 +34,6 @@ HRESULT CMistletoeUI::Ready_GameObject(void * pArg)
 	LOOP(3)
 	{
 		pInstance = static_cast<CMistletoeOptionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MistletoeOptionUI", nullptr));
-		//pInstance->Set_UI_Index(i + 1);
 		pInstance->Set_Option(CMistletoeOptionUI::MISTLETOE_OPTION(i));
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_StageUI", nullptr);
 		m_vecOption.push_back(pInstance);
@@ -50,7 +49,7 @@ HRESULT CMistletoeUI::Ready_GameObject(void * pArg)
 _int CMistletoeUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
-	m_pRendererCom->Add_RenderList(RENDER_3DUI, this);
+	m_pRendererCom->Add_RenderList(RENDER_ALPHA, this);
 	
 
 	m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));

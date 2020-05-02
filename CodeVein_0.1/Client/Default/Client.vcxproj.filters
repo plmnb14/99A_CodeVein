@@ -412,6 +412,9 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\02. BloodCodeOwner">
       <UniqueIdentifier>{0ca63a38-c6a4-47e9-9425-81570c8dcbfd}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillAcquisitionUI">
+      <UniqueIdentifier>{bbfa188e-2624-4f13-896b-9dd2806721b5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -849,6 +852,12 @@
     <ClInclude Include="..\Headers\BloodCodeOwner.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\02. BloodCodeOwner</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\SkillAcquisitionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillAcquisitionUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\OKMessageUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillAcquisitionUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1273,6 +1282,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\BloodCodeOwner.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\02. BloodCodeOwner</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SkillAcquisitionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillAcquisitionUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\OKMessageUI..cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillAcquisitionUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

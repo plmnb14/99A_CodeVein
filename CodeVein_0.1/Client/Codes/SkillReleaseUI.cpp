@@ -35,9 +35,7 @@ HRESULT CSkillReleaseUI::Ready_GameObject(void * pArg)
 _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
-	m_pRendererCom->Add_RenderList(RENDER_3DUI, this);
-
-	
+	m_pRendererCom->Add_RenderList(RENDER_ALPHA, this);
 
 	_v3 vLookX = m_pTransformCom->Get_Axis(AXIS_X);
 	_v3 vLookY = m_pTransformCom->Get_Axis(AXIS_Y);
@@ -52,34 +50,48 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 		iter->Set_Active(m_bIsActive);
 		++idx;
 	}
-	TARGET_TO_TRANS(m_pQuestionUI)->Set_Pos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookY) * -0.3f);
+	TARGET_TO_TRANS(m_pQuestionUI)->Set_Pos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookY) * -0.3f + *V3_NORMAL_SELF(&vLookZ) * -0.003f);
 	TARGET_TO_TRANS(m_pQuestionUI)->Set_Angle(m_pTransformCom->Get_Angle());
-	
+
+	TARGET_TO_TRANS(CUI_Manager::Get_Instance()->Get_Skill_AcquisitionUI())->Set_Pos(m_pTransformCom->Get_Pos());
+	TARGET_TO_TRANS(CUI_Manager::Get_Instance()->Get_Skill_AcquisitionUI())->Set_Scale(_v3(3.555555f, 2.f, 1.f));
+	TARGET_TO_TRANS(CUI_Manager::Get_Instance()->Get_Skill_AcquisitionUI())->Set_Angle(m_pTransformCom->Get_Angle());
+
 	switch (m_eID)
 	{
 	case BloodCode_Artemis:
 	{
 		m_iIndex = 2;
+
+		
 	}
 		break;
 	case BloodCode_Assassin:
 	{
 		m_iIndex = 3;
+
+
 	}
 		break;
 	case BloodCode_DarkKnight:
 	{
 		m_iIndex = 4;
+
+		
 	}
 		break;
 	case BloodCode_Queen:
 	{
 		m_iIndex = 5;
+
+		
 	}
 		break;
 	case BloodCode_Berserker:
 	{
 		m_iIndex = 6;
+
+		m_vecSkillSlot[0]->Set_SkillID(Dragon_Lunge);
 	}
 		break;
 	case BloodCode_Hephaestus:
@@ -90,6 +102,8 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 	case BloodCode_Fighter:
 	{
 		m_iIndex = 8;
+
+		m_vecSkillSlot[0]->Set_SkillID(Triple_Annihilator);
 	}
 		break;
 	case BloodCode_Heimdal:
@@ -102,7 +116,11 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 		m_iIndex = 11;
 		break;
 	case BloodCode_Prometheus:
+	{
 		m_iIndex = 12;
+
+		
+	}	
 		break;
 	}
 
@@ -138,14 +156,19 @@ HRESULT CSkillReleaseUI::Render_GameObject()
 
 	_uint iIndex = 0;
 	_uint iPass = 0;
-	LOOP(2)
+	LOOP(3)
 	{
 		if (0 == i)
 		{
 			iIndex = 0;
-			iPass = 4;
+			iPass = 2;
 		}
 		else if (1 == i)
+		{
+			iIndex = 1;
+			iPass = 1;
+		}
+		else if (2 == i)
 		{
 			iIndex = m_iIndex;
 			iPass = 1;
@@ -204,20 +227,8 @@ HRESULT CSkillReleaseUI::SetUp_ConstantTable(_uint iIndex)
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
 
-	
-
-	if (0 == iIndex)
-	{
-		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 1)))
-			return E_FAIL;
-		if (FAILED(m_pTextureCom->SetUp_OnShader("g_MaskTexture", m_pShaderCom, 0)))
-			return E_FAIL;
-	}
-	else
-	{
-		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, _uint(iIndex))))
-			return E_FAIL;
-	}
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, _uint(iIndex))))
+		return E_FAIL;
 	
 	return NOERROR;
 }
@@ -226,7 +237,7 @@ void CSkillReleaseUI::SetUp_Default()
 {
 	CBloodSkillSlot* pInstance = nullptr;
 
-	LOOP(2)
+	LOOP(4)
 	{
 		pInstance = static_cast<CBloodSkillSlot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodSkillSlot", nullptr));
 		TARGET_TO_TRANS(pInstance)->Set_Scale(_v3(0.3f, 0.3f, 1.5f));
@@ -246,7 +257,7 @@ void CSkillReleaseUI::Click_SkillSlot()
 
 	for (auto& iter : m_vecSkillSlot)
 	{
-		if (Skill_End == iter->Get_Skill_Index())
+		if (SkillID_End == iter->Get_Skill_ID())
 			continue;
 		if (CCollisionMgr::Collision_Ray(iter, g_pInput_Device->Get_Ray(), &m_fCross))
 		{
@@ -255,6 +266,7 @@ void CSkillReleaseUI::Click_SkillSlot()
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
 				m_pQuestionUI->Set_Active(true);
+				m_pQuestionUI->Set_Skill(iter->Get_Skill_ID());
 			}
 
 		}

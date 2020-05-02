@@ -48,7 +48,7 @@ _int CBloodCodeSelectUI::Update_GameObject(_double TimeDelta)
 	for (auto& iter : m_vecBloodCodeSlot)
 	{
 		TARGET_TO_TRANS(iter)->Set_Pos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookX) * -0.25f + *V3_NORMAL_SELF(&vLookY) * 0.3f
-		+ *V3_NORMAL_SELF(&vLookX) * _float(idx % 5) * 0.33f + *V3_NORMAL_SELF(&vLookY) * -0.3f * _float(idx / 5));
+		+ *V3_NORMAL_SELF(&vLookX) * _float(idx % 5) * 0.33f + *V3_NORMAL_SELF(&vLookY) * -0.3f * _float(idx / 5) + *V3_NORMAL_SELF(&vLookZ) * -0.01f);
 		TARGET_TO_TRANS(iter)->Set_Angle(m_pTransformCom->Get_Angle());
 		iter->Set_Active(m_bIsActive);
 	
@@ -120,14 +120,20 @@ void CBloodCodeSelectUI::SetUp_Default()
 	// 블러드코드 슬롯 생성
 	CBloodCodeSlot* pInstance = nullptr;
 
-	LOOP(BloodCode_End)
+	LOOP(5)
 	{
 		pInstance = static_cast<CBloodCodeSlot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodCodeSlot", nullptr));
-		pInstance->Set_CodeID(BloodCode_ID(i));
+		
 		TARGET_TO_TRANS(pInstance)->Set_Scale(_v3(0.3f, 0.223f, 1.f));
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_StageUI", nullptr);
 		m_vecBloodCodeSlot.push_back(pInstance);
 	}
+
+	m_vecBloodCodeSlot[0]->Set_CodeID(BloodCode_Fighter);
+	m_vecBloodCodeSlot[1]->Set_CodeID(BloodCode_Prometheus);
+	m_vecBloodCodeSlot[2]->Set_CodeID(BloodCode_Artemis);
+	m_vecBloodCodeSlot[3]->Set_CodeID(BloodCode_DarkKnight);
+	m_vecBloodCodeSlot[4]->Set_CodeID(BloodCode_Queen);
 }
 
 CBloodCodeSelectUI * CBloodCodeSelectUI::Create(_Device pGraphic_Device)

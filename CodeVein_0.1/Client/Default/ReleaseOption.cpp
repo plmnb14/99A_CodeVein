@@ -39,11 +39,11 @@ _int CReleaseOption::Update_GameObject(_double TimeDelta)
 
 	if (m_bIsActive &&
 		1.f > m_fAlpha)
-		m_fAlpha += _float(TimeDelta) * 0.3f;
+		m_fAlpha += _float(TimeDelta) * 1.2f;
 
 	if (!m_bIsActive &&
 		0.f < m_fAlpha)
-		m_fAlpha -= _float(TimeDelta) * 0.3f;
+		m_fAlpha -= _float(TimeDelta) * 1.2f;
 	return NO_EVENT;
 }
 

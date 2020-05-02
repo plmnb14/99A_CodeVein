@@ -13,6 +13,9 @@ private:
 	virtual ~CReleaseQuestionUI() = default;
 
 public:
+	void Set_Skill(Skill_ID eSkillID) { m_eReleaseSkill = eSkillID; }
+
+public:
 	virtual HRESULT Ready_GameObject_Prototype();
 	virtual HRESULT Ready_GameObject(void* pArg);
 	virtual _int	Update_GameObject(_double TimeDelta);
@@ -36,6 +39,7 @@ private:
 	_float					m_fAlpha = 0.f;
 	vector<CReleaseOption*>	m_vecOption;
 	_float					m_fCross = 100.f;
+	Skill_ID				m_eReleaseSkill = SkillID_End;
 
 public:
 	static CReleaseQuestionUI*	Create(_Device pGraphic_Device);

@@ -32,7 +32,7 @@ HRESULT CReleaseQuestionUI::Ready_GameObject(void * pArg)
 _int CReleaseQuestionUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
-	m_pRendererCom->Add_RenderList(RENDER_UI, this);
+	m_pRendererCom->Add_RenderList(RENDER_3DUI, this);
 
 	_v3 vWorldPos;
 	memcpy(vWorldPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
@@ -40,17 +40,18 @@ _int CReleaseQuestionUI::Update_GameObject(_double TimeDelta)
 
 	if (m_bIsActive &&
 		1.f > m_fAlpha)
-		m_fAlpha += _float(TimeDelta) * 0.3f;
+		m_fAlpha += _float(TimeDelta) * 1.2f;
 	
 	if (!m_bIsActive &&
 		0.f < m_fAlpha)
-		m_fAlpha -= _float(TimeDelta) * 0.3f;
+		m_fAlpha -= _float(TimeDelta) * 1.2f;
 
 	_v3 vLookY = m_pTransformCom->Get_Axis(AXIS_Y);
+	_v3 vLookZ = m_pTransformCom->Get_Axis(AXIS_Z);
 	
 	LOOP(2)
 	{
-		TARGET_TO_TRANS(m_vecOption[i])->Set_Pos(m_pTransformCom->Get_Pos() - *V3_NORMAL_SELF(&vLookY) * 0.15f * _float(i));
+		TARGET_TO_TRANS(m_vecOption[i])->Set_Pos(m_pTransformCom->Get_Pos() - *V3_NORMAL_SELF(&vLookY) * 0.15f * _float(i) + *V3_NORMAL_SELF(&vLookZ) * 0.001f);
 		TARGET_TO_TRANS(m_vecOption[i])->Set_Angle(m_pTransformCom->Get_Angle());
 		m_vecOption[i]->Set_Active(m_bIsActive);
 	}
@@ -165,11 +166,14 @@ void CReleaseQuestionUI::Click_Option()
 
 			if ((0 == m_vecOption[i]->Get_UI_Index()) && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
+				// 습득한다
 				m_bIsActive = false;
-
+				CUI_Manager::Get_Instance()->Get_Skill_AcquisitionUI()->Set_Skill(m_eReleaseSkill);
+				CUI_Manager::Get_Instance()->Get_Skill_AcquisitionUI()->Set_Active(true);
 			}
 			else if ((1 == m_vecOption[i]->Get_UI_Index()) && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
+				// 취소
 				m_bIsActive = false;
 			}
 		}

@@ -106,7 +106,7 @@ PS_OUT PS_MAIN3(PS_IN In)
 
 	Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
 
-	Out.vColor *= tex2D(MaskSampler, In.vTexUV).r;
+	Out.vColor.a *= Out.vColor.r;
 
 	return Out;
 }
@@ -136,18 +136,32 @@ PS_OUT PS_UI_MASK(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_BLOODSKILL_NO_RELEASE(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
+
+	Out.vColor.r = 0.541176f;
+	Out.vColor.g = 0.541176f;
+	Out.vColor.b = 0.541176f;
+
+	return Out;
+}
+
+
 technique Default_Technique
 {
-	pass Default_Rendering
+	pass Default_Rendering //0
 	{
-		ZwriteEnable = false;
+		ZwriteEnable = true;
 		AlphablendEnable = false;
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_MAIN2();
 	}
-	pass Default_Rendering2
+	pass Default_Rendering2 //1
 	{
-		ZwriteEnable = false;
+		ZwriteEnable = true;
 		AlphablendEnable = true;
 		SrcBlend = SrcAlpha;
 		DestBlend = InvSrcAlpha;
@@ -155,7 +169,7 @@ technique Default_Technique
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_MAIN2();
 	}
-	pass Default_Rendering3
+	pass Default_Rendering3 //2
 	{
 		ZwriteEnable = false;
 		AlphablendEnable = true;
@@ -166,7 +180,7 @@ technique Default_Technique
 		PixelShader = compile ps_3_0 PS_MAIN3();
 	}
 
-	pass Fade_Rendering
+	pass Fade_Rendering // 3
 	{
 		ZwriteEnable = false;
 		AlphablendEnable = true;
@@ -176,7 +190,7 @@ technique Default_Technique
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_3dUI_FADE();
 	}
-	pass Masking_Rendering
+	pass Masking_Rendering // 4
 	{
 		ZwriteEnable = false;
 		AlphablendEnable = true;
@@ -185,5 +199,25 @@ technique Default_Technique
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_UI_MASK();
+	}
+	pass NoReleaseSkill_Rendering // 5
+	{
+		ZwriteEnable = false;
+		AlphablendEnable = true;
+		SrcBlend = SrcAlpha;
+		DestBlend = InvSrcAlpha;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 PS_BLOODSKILL_NO_RELEASE();
+	}
+	pass Zwrite_Rendering //6
+	{
+		ZwriteEnable = false;
+		AlphablendEnable = true;
+		SrcBlend = SrcAlpha;
+		DestBlend = InvSrcAlpha;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 PS_MAIN2();
 	}
 }

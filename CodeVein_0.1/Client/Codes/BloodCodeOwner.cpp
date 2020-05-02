@@ -31,7 +31,7 @@ _int CBloodCodeOwner::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
-	m_pRendererCom->Add_RenderList(RENDER_3DUI, this);
+	m_pRendererCom->Add_RenderList(RENDER_ALPHA, this);
 
 	_v3 vWorldPos;
 	memcpy(vWorldPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
@@ -66,7 +66,7 @@ HRESULT CBloodCodeOwner::Render_GameObject()
 		return E_FAIL;
 
 	m_pShaderCom->Begin_Shader();
-	m_pShaderCom->Begin_Pass(1);
+	m_pShaderCom->Begin_Pass(6);
 
 	m_pBufferCom->Render_VIBuffer();
 	m_pShaderCom->End_Pass();

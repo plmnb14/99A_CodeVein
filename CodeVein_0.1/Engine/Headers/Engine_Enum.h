@@ -129,3 +129,18 @@ enum BloodCode_ID
 	BloodCode_Prometheus,
 	BloodCode_End
 };
+
+enum Skill_ID
+{
+	Dragon_Lunge, // °­·æº¹È£
+	Vanishing_Hollow, // ¹è´Ï½Ì ÇÒ·Î¿ì
+	Circulating_Pulse, // ºí·¯µå ¼­Å§·¯
+	Triple_Annihilator, // »ï¸ê»ì
+	Shadow_Assault, // ¼¨µµ¿ì ¾î½äÆ®
+	Severing_Abyss, // ½ºÇÃ¸´¾îºñ½º
+	Swallow_Cutter, // Á¦ºñ ¶³¾î¶ß¸®±â
+	Tormenting_Blast, // Åä¸ÕÆ® ºí·¡½ºÆ®
+	Phantom_Assault, // ÆÒÅÒ ¾î½äÆ®
+	Legion_Punisher, // ¸®Àü ÆÛ´Ï¼Å
+	SkillID_End
+};

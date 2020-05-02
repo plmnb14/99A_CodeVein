@@ -60,17 +60,13 @@ _int CBloodCodeMenuUI::Update_GameObject(_double TimeDelta)
 	m_pTransformCom->Set_Pos(vPosition);
 	
 
-	
-
-	
-
-
 	if (!m_bIsActive) // 비활성화
 	{
 		CUI_Manager::Get_Instance()->Get_BloodCode_SelectUI()->Set_Active(false);
 		CUI_Manager::Get_Instance()->Get_Skill_ReleaseUI()->Set_Active(false);
 		CUI_Manager::Get_Instance()->Get_BloodCode_Owner()->Set_CodeID(BloodCode_End);
 		CUI_Manager::Get_Instance()->Get_BloodCode_Owner()->Set_Select(false);
+		CUI_Manager::Get_Instance()->Get_Skill_AcquisitionUI()->Set_Active(false);
 		m_bIsChoiseBloodCode = false;
 	}
 	else // 활성화
@@ -89,16 +85,17 @@ _int CBloodCodeMenuUI::Update_GameObject(_double TimeDelta)
 		}
 	}
 	
-	TARGET_TO_TRANS(CUI_Manager::Get_Instance()->Get_BloodCode_Owner())->Set_Pos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookX) * -m_pTransformCom->Get_Size().x * 0.23f);
+	TARGET_TO_TRANS(CUI_Manager::Get_Instance()->Get_BloodCode_Owner())->Set_Pos(m_pTransformCom->Get_Pos()
+		+ *V3_NORMAL_SELF(&vLookX) * -m_pTransformCom->Get_Size().x * 0.23f + *V3_NORMAL_SELF(&vLookZ) * -0.01f);
 	TARGET_TO_TRANS(CUI_Manager::Get_Instance()->Get_BloodCode_Owner())->Set_Angle(m_pTransformCom->Get_Angle());
 	TARGET_TO_TRANS(CUI_Manager::Get_Instance()->Get_BloodCode_Owner())->Set_Scale(_v3(1.894f, 2.f, 1.f));
 	CUI_Manager::Get_Instance()->Get_BloodCode_Owner()->Set_Active(m_bIsActive);
 
-	TARGET_TO_TRANS(CUI_Manager::Get_Instance()->Get_BloodCode_SelectUI())->Set_Pos(m_pTransformCom->Get_Pos());
+	TARGET_TO_TRANS(CUI_Manager::Get_Instance()->Get_BloodCode_SelectUI())->Set_Pos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookZ) * -0.02f);
 	TARGET_TO_TRANS(CUI_Manager::Get_Instance()->Get_BloodCode_SelectUI())->Set_Angle(m_pTransformCom->Get_Angle());
 	TARGET_TO_TRANS(CUI_Manager::Get_Instance()->Get_BloodCode_SelectUI())->Set_Scale(_v3(3.555555f, 2.f, 1.f));
 
-	TARGET_TO_TRANS(CUI_Manager::Get_Instance()->Get_Skill_ReleaseUI())->Set_Pos(m_pTransformCom->Get_Pos());
+	TARGET_TO_TRANS(CUI_Manager::Get_Instance()->Get_Skill_ReleaseUI())->Set_Pos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookZ) * -0.02f);
 	TARGET_TO_TRANS(CUI_Manager::Get_Instance()->Get_Skill_ReleaseUI())->Set_Angle(m_pTransformCom->Get_Angle());
 	TARGET_TO_TRANS(CUI_Manager::Get_Instance()->Get_Skill_ReleaseUI())->Set_Scale(_v3(3.555555f, 2.f, 1.f));
 	
