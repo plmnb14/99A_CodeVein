@@ -16,28 +16,103 @@ HRESULT CPet::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 	return S_OK;
 }
 
-void CPet::Update_Collider()
-{
-	return;
-}
-
-void CPet::Render_Collider()
-{
-	return;
-}
-
 void CPet::Check_CollisionEvent()
 {
+	Check_CollisionPush();
+	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE));
+	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE));
+
 	return;
 }
 
 void CPet::Check_CollisionPush()
 {
+	list<CGameObject*> tmpList[4];
+
+	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
+	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
+	tmpList[2] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
+	tmpList[3] = g_pManagement->Get_GameObjectList(L"Layer_Pet", SCENE_STAGE);
+
+	for (auto& list_iter : tmpList)
+	{
+		for (auto& Obj_iter : list_iter)
+		{
+			CCollider* pCollider = TARGET_TO_COL(Obj_iter);
+
+			if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_fSkillMoveSpeed_Cur * DELTA_60))
+			{
+				CTransform* pTrans = TARGET_TO_TRANS(Obj_iter);
+				CNavMesh*   pNav = TARGET_TO_NAV(Obj_iter);
+
+				_v3 vDir = m_pTransformCom->Get_Pos() - pTrans->Get_Pos();
+				V3_NORMAL_SELF(&vDir);
+
+				vDir.y = 0;
+
+				pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pCollider->Get_Length().x));
+			}
+		}
+	}
+
 	return;
 }
 
 void CPet::Check_CollisionHit(list<CGameObject*> plistGameObject)
 {
+	if (false == m_tObjParam.bIsAttack)
+		return;
+
+	_bool bFirst = true;
+
+	for (auto& iter : plistGameObject)
+	{
+		if (false == iter->Get_Target_CanHit())
+			continue;
+
+		for (auto& vecIter : m_vecAttackCol)
+		{
+			if (false == vecIter->Get_Enabled())
+				continue;
+
+			bFirst = true;
+
+			for (auto& vecCol : iter->Get_PhysicColVector())
+			{
+				if (vecIter->Check_Sphere(vecCol))
+				{
+					if (bFirst)
+					{
+						bFirst = false;
+						continue;
+					}
+
+					if (false == iter->Get_Target_IsDodge())
+					{
+						iter->Set_Target_CanHit(false);
+						iter->Add_Target_Hp(m_tObjParam.fDamage);
+
+						if (iter->Get_Target_IsHit())
+						{
+							iter->Set_HitAgain(true);
+						}
+					}
+
+					vecIter->Set_Enabled(false);
+
+					g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
+
+					break;
+				}
+				else
+				{
+					if (bFirst)
+						break;
+				}
+			}
+		}
+	}
+
 	return;
 }
 
@@ -271,15 +346,14 @@ void CPet::Function_CalcMoveSpeed(_float _fMidDist)
 
 void CPet::Function_Find_Target()
 {
-	m_pTarget = nullptr;
-
+	//이넘값에 따라 우선순위가 바뀔 예정
 	_float	fOldLength = 99999.f;
 
 	auto& MonsterContainer = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
 
 	auto& BossContainer = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
 
-	//auto& ItemContainer = g_pManagement->Get_GameObjectList(L"Layer_Item", SCENE_STAGE);
+	auto& ItemContainer = g_pManagement->Get_GameObjectList(L"Layer_Item", SCENE_STAGE);
 
 	for (auto& Monster_iter : MonsterContainer)
 	{
@@ -301,20 +375,21 @@ void CPet::Function_Find_Target()
 		fOldLength = fLenth;
 		m_pTarget = Monster_iter;
 		m_eTarget = PET_TARGET_TYPE::PET_TARGET_MONSTER;
+		Safe_AddRef(m_pTarget);
 	}
 
-	IF_NOT_NULL_VALUE_RETURN(m_pTarget, );
+	IF_NOT_NULL_RETURN(m_pTarget);
 
-	for (auto& Monster_iter : BossContainer)
+	for (auto& Boss_iter : BossContainer)
 	{
-		if (true == Monster_iter->Get_Dead())
+		if (true == Boss_iter->Get_Dead())
 			continue;
-		else if (false == Monster_iter->Get_Enable())
+		else if (false == Boss_iter->Get_Enable())
 			continue;
-		else if (nullptr == Monster_iter)
+		else if (nullptr == Boss_iter)
 			continue;
 
-		_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
+		_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Boss_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
 
 		if (fLenth > m_fRecognitionRange)
 			continue;
@@ -323,37 +398,42 @@ void CPet::Function_Find_Target()
 			continue;
 
 		fOldLength = fLenth;
-		m_pTarget = Monster_iter;
+		m_pTarget = Boss_iter;
 		m_eTarget = PET_TARGET_TYPE::PET_TARGET_BOSS;
+		Safe_AddRef(m_pTarget);
 	}
 
-	IF_NOT_NULL_VALUE_RETURN(m_pTarget, );
+	IF_NOT_NULL_RETURN(m_pTarget);
+
+	for (auto& Item_iter : ItemContainer)
+	{
+		if (true == Item_iter->Get_Dead())
+			continue;
+		else if (false == Item_iter->Get_Enable())
+			continue;
+		else if (nullptr == Item_iter)
+			continue;
+
+		_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Item_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
+
+		if (fLenth > m_fRecognitionRange)
+			continue;
+		if (fOldLength <= fLenth)
+			continue;
+
+		fOldLength = fLenth;
+		m_pTarget = Item_iter;
+		m_eTarget = PET_TARGET_TYPE::PET_TARGET_ITEM;
+		Safe_AddRef(m_pTarget);
+	}
+
+	IF_NOT_NULL_RETURN(m_pTarget);
 
 	if (nullptr == m_pTarget)
+	{
+		m_pTarget = nullptr;
 		m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
-
-	//	for (auto& Monster_iter : ItemContainer)
-	//	{
-	//		if (true == Monster_iter->Get_Dead())
-	//			continue;
-	//		else if (false == Monster_iter->Get_Enable())
-	//			continue;
-	//		else if (nullptr == Monster_iter)
-	//			continue;
-
-	//		_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
-
-	//		if (fLenth > m_fRecognitionRange)
-	//			continue;
-
-	//		if (fOldLength <= fLenth)
-	//			continue;
-
-	//		fOldLength = fLenth;
-	//		m_pTarget = Monster_iter;
-	//		m_eTarget = PET_TARGET_TYPE::TARGET_ITEM;
-	//	}
-	//	IF_NOT_NULL_VALUE_RETURN(m_pTarget, );
+	}
 	
 	return;
 }
