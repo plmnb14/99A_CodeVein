@@ -75,11 +75,16 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 	//Start_Sel->Add_Child(Check_ShowValue);
 	//Start_Sel->Add_Child(Start_Game());
 
+	CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", false);
+	Check_ShowValue->Set_Child(Start_Game());
+	Start_Sel->Add_Child(Check_ShowValue);
+	Start_Sel->Add_Child(Start_Show());
+
 	////////////
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Start_Game());
+	//Start_Sel->Add_Child(Start_Game());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -1013,6 +1018,9 @@ CBT_Composite_Node * CPoisonButterfly::Show_FarAttack()
 	CBT_Cooldown* Cool1 = Node_Cooldown("쿨1", 300);
 	CBT_Cooldown* Cool2 = Node_Cooldown("쿨2", 300);
 	CBT_Cooldown* Cool3 = Node_Cooldown("쿨3", 300);
+	CBT_Cooldown* Cool4 = Node_Cooldown("쿨4", 300);
+
+	CBT_Play_Ani* Show_Ani3 = Node_Ani("기본", Ani_Appearance_End, 0.95f);
 
 	CBT_SetValue* Show_ValueOff = Node_BOOL_SetValue("시연회 OFF", L"Show", false);
 
@@ -1024,6 +1032,8 @@ CBT_Composite_Node * CPoisonButterfly::Show_FarAttack()
 	Cool2->Set_Child(Fire_ChaseBullet());
 	Root_Sel->Add_Child(Cool3);
 	Cool3->Set_Child(Turn_4PoisonShot());
+	Root_Sel->Add_Child(Cool4);
+	Cool4->Set_Child(Show_Ani3);
 
 	Root_Sel->Add_Child(Show_ValueOff);
 

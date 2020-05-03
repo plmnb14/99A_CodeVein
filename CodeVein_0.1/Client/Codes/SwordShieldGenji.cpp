@@ -70,6 +70,9 @@ HRESULT CSwordShieldGenji::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"MAXHP", m_tObjParam.fHp_Max);
 	pBlackBoard->Set_Value(L"Show", true);
 
+	pBlackBoard->Set_Value(L"TrailOn", false);
+	pBlackBoard->Set_Value(L"TrailOff", false);
+
 	//CBT_Selector* Start_Sel = Node_Selector("행동 시작"); // 찐
 	CBT_Sequence* Start_Sel = Node_Sequence("행동 시작"); // 테스트
 	CBT_UpdateGageRatio* UpdateHPRatioService = Node_UpdateGageRatio("체력 비율", L"HPRatio", L"MAXHP", L"HP", 1, 0.01, 0, CBT_Service_Node::Infinite);
@@ -319,8 +322,11 @@ CBT_Composite_Node * CSwordShieldGenji::Upper_Slash()
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.25, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 3.f, 0.317, 0);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.683, 0);
+	CBT_SetValue* TrailOn = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 1.f, 0.267, 0);
-	CBT_Wait* Wait2 = Node_Wait("대기2", 1, 0);
+	CBT_Wait* Wait2 = Node_Wait("대기2", 0.2, 0);
+	CBT_SetValue* TrailOff = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
+	CBT_Wait* Wait3 = Node_Wait("대기3", 0.8, 0);
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", -0.6f, 0.433, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
@@ -331,8 +337,11 @@ CBT_Composite_Node * CSwordShieldGenji::Upper_Slash()
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
 	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(TrailOn);
 	SubSeq->Add_Child(Move1);
 	SubSeq->Add_Child(Wait2);
+	SubSeq->Add_Child(TrailOff);
+	SubSeq->Add_Child(Wait3);
 	SubSeq->Add_Child(Move2);
 
 	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.417, 1, 0.116, 0);
@@ -404,7 +413,10 @@ CBT_Composite_Node * CSwordShieldGenji::Turning_Cut()
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기", 0.433, 0);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2, 1.317, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2, 0.7, 0);
+	CBT_SetValue* TrailOn = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2, 0.617, 0);
+	CBT_SetValue* TrailOff = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani22);
@@ -413,6 +425,9 @@ CBT_Composite_Node * CSwordShieldGenji::Turning_Cut()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(TrailOn);
+	SubSeq->Add_Child(Move1);
+	SubSeq->Add_Child(TrailOff);
 
 	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.183, 1, 0.134, 0);
 	Root_Parallel->Add_Service(pHitCol);
@@ -695,6 +710,21 @@ HRESULT CSwordShieldGenji::Update_Value_Of_BB()
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))->Get_Pos());
 	// 2. 체력 업데이트
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"HP", m_tObjParam.fHp_Cur);
+
+
+	// 1. 트레일 업데이트
+	if (true == m_pAIControllerCom->Get_BoolValue(L"TrailOn"))
+	{
+		m_pSword->Set_Enable_Trail(true);
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"TrailOn", false);
+	}
+
+	if (true == m_pAIControllerCom->Get_BoolValue(L"TrailOff"))
+	{
+		m_pSword->Set_Enable_Trail(false);
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"TrailOff", false);
+	}
+
 
 	//// 1. 몬스터 뒤쪽 방향 저장
 	//_v3 vBackDir = -(*(_v3*)&m_pTransformCom->Get_WorldMat().m[2]);

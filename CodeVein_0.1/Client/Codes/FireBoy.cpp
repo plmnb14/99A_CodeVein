@@ -65,10 +65,10 @@ HRESULT CFireBoy::Ready_GameObject(void * pArg)
 
 	//////////// 아래에 주석해놓은 4줄이 본게임에서 쓸 것임, 차례대로 공격함.
 
-	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
-	//Check_ShowValue->Set_Child(Start_Show());
-	//Start_Sel->Add_Child(Check_ShowValue);
-	Start_Sel->Add_Child(Start_Game());
+	CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", false);
+	Check_ShowValue->Set_Child(Start_Game());
+	Start_Sel->Add_Child(Check_ShowValue);
+	Start_Sel->Add_Child(Start_Show());
 
 	////////////
 
@@ -732,6 +732,9 @@ CBT_Composite_Node * CFireBoy::Show_FarAttack()
 	CBT_Cooldown* Cool2 = Node_Cooldown("쿨2", 300);
 	CBT_Cooldown* Cool3 = Node_Cooldown("쿨3", 300);
 	CBT_Cooldown* Cool4 = Node_Cooldown("쿨4", 300);
+	CBT_Cooldown* Cool5 = Node_Cooldown("쿨5", 300);
+
+	CBT_Play_Ani* Show_Ani3 = Node_Ani("기본", Ani_Appearance_End, 0.95f);
 
 	CBT_SetValue* Show_ValueOff = Node_BOOL_SetValue("시연회 OFF", L"Show", false);
 
@@ -745,6 +748,8 @@ CBT_Composite_Node * CFireBoy::Show_FarAttack()
 	Cool3->Set_Child(Fire_Ground());
 	Root_Sel->Add_Child(Cool4);
 	Cool4->Set_Child(Fire_Flame());
+	Root_Sel->Add_Child(Cool5);
+	Cool5->Set_Child(Show_Ani3);
 
 	Root_Sel->Add_Child(Show_ValueOff);
 

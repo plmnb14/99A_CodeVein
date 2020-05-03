@@ -62,24 +62,24 @@ HRESULT CIceGirl::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"PhyCol", true); // 피격판정 제어 변수
 	pBlackBoard->Set_Value(L"Ice_Barrier_On", false);	// 얼음 보호막 변수
 
-	//CBT_Selector* Start_Sel = Node_Selector("행동 시작");
-	CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
+	CBT_Selector* Start_Sel = Node_Selector("행동 시작");
+	//CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
 
 	pBehaviorTree->Set_Child(Start_Sel);
 
 
 	//////////// 아래에 주석해놓은 4줄이 본게임에서 쓸 것임, 차례대로 공격함.
 
-	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
-	//Check_ShowValue->Set_Child(Start_Show());
-	//Start_Sel->Add_Child(Check_ShowValue);
-	//Start_Sel->Add_Child(Start_Game());
+	CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", false);
+	Check_ShowValue->Set_Child(Start_Game());
+	Start_Sel->Add_Child(Check_ShowValue);
+	Start_Sel->Add_Child(Start_Show());
 
 	////////////
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Start_Game());
+	//Start_Sel->Add_Child(Start_Game());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -1520,7 +1520,10 @@ CBT_Composite_Node * CIceGirl::Show_NearAttack()
 	CBT_Cooldown* Cool1 = Node_Cooldown("쿨1", 300);
 	CBT_Cooldown* Cool2 = Node_Cooldown("쿨2", 300);
 	CBT_Cooldown* Cool3 = Node_Cooldown("쿨3", 300);
-	CBT_Cooldown* Cool4 = Node_Cooldown("쿨4", 300);
+	//CBT_Cooldown* Cool4 = Node_Cooldown("쿨4", 300);
+	CBT_Cooldown* Cool5 = Node_Cooldown("쿨5", 300);
+	CBT_Cooldown* Cool6 = Node_Cooldown("쿨6", 300);
+
 
 	CBT_SetValue* Show_OffNearAttack = Node_BOOL_SetValue("시연회 OFF", L"Show_Near", false);
 
@@ -1532,8 +1535,12 @@ CBT_Composite_Node * CIceGirl::Show_NearAttack()
 	Cool2->Set_Child(Jump_Attack());
 	Root_Sel->Add_Child(Cool3);
 	Cool3->Set_Child(Ice_Cut());
-	Root_Sel->Add_Child(Cool4);
-	Cool4->Set_Child(Ice_Barrier());
+	//Root_Sel->Add_Child(Cool4);
+	//Cool4->Set_Child(Ice_Barrier());
+	Root_Sel->Add_Child(Cool5);
+	Cool5->Set_Child(Jump_Attack_And_ColdBeam());
+	Root_Sel->Add_Child(Cool6);
+	Cool6->Set_Child(ColdBeam_Around_Me());
 
 	Root_Sel->Add_Child(Show_OffNearAttack);
 
@@ -1545,11 +1552,19 @@ CBT_Composite_Node * CIceGirl::Show_FarAttack()
 	CBT_Selector* Root_Sel = Node_Selector("순서대로 원거리 공격");
 
 	CBT_Cooldown* Cool0 = Node_Cooldown("쿨0", 300);
+	CBT_Cooldown* Cool1 = Node_Cooldown("쿨1", 300);
+	CBT_Cooldown* Cool2 = Node_Cooldown("쿨2", 300);
+
+	CBT_Play_Ani* Show_Ani3 = Node_Ani("기본", Ani_Appearance_End, 0.95f);
 
 	CBT_SetValue* Show_ValueOff = Node_BOOL_SetValue("시연회 OFF", L"Show", false);
 
 	Root_Sel->Add_Child(Cool0);
 	Cool0->Set_Child(Charge_Rush());
+	Root_Sel->Add_Child(Cool1);
+	Cool1->Set_Child(ColdBeam_RandomPos());
+	Root_Sel->Add_Child(Cool2);
+	Cool2->Set_Child(Show_Ani3);
 
 	Root_Sel->Add_Child(Show_ValueOff);
 
@@ -1620,15 +1635,6 @@ void CIceGirl::Down()
 			m_tObjParam.bIsHit = false;		// 재충돌 가능
 		}
 	}
-
-	//if (true == m_bDown_LoopAni)
-	//{
-	//	if (m_pMeshCom->Is_Finish_Animation(0.95f))
-	//	{
-	//		m_pMeshCom->Reset_OldIndx();
-	//		m_pMeshCom->SetUp_Animation(Ani_Down_Loop);
-	//	}
-	//}
 
 }
 

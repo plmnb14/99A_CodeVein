@@ -88,7 +88,7 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	//Check_ShowValue->Set_Child(Start_Show());
 	//Start_Sel->Add_Child(Check_ShowValue);
 
-	Start_Sel->Add_Child(Start_Game());
+	Start_Sel->Add_Child(Left_Cut());
 	//Start_Sel->Add_Child(Normal_Cut2());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
@@ -548,6 +548,9 @@ CBT_Composite_Node * CSwordGenji::ThreeCombo_Cut()
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기", 0.333, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2, 0.417, 0);
+	CBT_SetValue* TrailOn = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
+	CBT_Wait* Wait1 = Node_Wait("대기", 1.05, 0);
+	CBT_SetValue* TrailOff = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani37);
@@ -556,6 +559,9 @@ CBT_Composite_Node * CSwordGenji::ThreeCombo_Cut()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(TrailOn);
+	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(TrailOff);
 
 	CBT_UpdateParam* pHitCol0 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.767, 1, 0.133, 0);
 	CBT_UpdateParam* pHitCol1 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.117, 1, 0.15, 0);
@@ -723,6 +729,9 @@ CBT_Composite_Node * CSwordGenji::Horizontal_Cut()
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기", 0.417, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2, 0.416, 0);
+	CBT_SetValue* TrailOn = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
+	CBT_Wait* Wait1 = Node_Wait("대기", 0.4f, 0);
+	CBT_SetValue* TrailOff = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani32);
@@ -731,6 +740,9 @@ CBT_Composite_Node * CSwordGenji::Horizontal_Cut()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(TrailOn);
+	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(TrailOff);
 
 	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.9, 1, 0.317, 0);
 	Root_Parallel->Add_Service(pHitCol);
@@ -773,8 +785,10 @@ CBT_Composite_Node * CSwordGenji::TwoCombo_Cut()
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기", 0.3, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2.5f, 0.433, 0);
-	CBT_Wait* Wait1 = Node_Wait("대기", 0.3, 0);
+	CBT_SetValue* TrailOn = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
+	CBT_Wait* Wait1 = Node_Wait("대기", 0.4, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2.5f, 0.317, 0);
+	CBT_SetValue* TrailOff = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani30);
@@ -783,8 +797,10 @@ CBT_Composite_Node * CSwordGenji::TwoCombo_Cut()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(TrailOn);
 	SubSeq->Add_Child(Wait1);
 	SubSeq->Add_Child(Move1);
+	SubSeq->Add_Child(TrailOff);
 
 	CBT_UpdateParam* pHitCol0 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.767, 1, 0.166, 0);
 	CBT_UpdateParam* pHitCol1 = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1.267, 1, 0.116, 0);
@@ -804,7 +820,9 @@ CBT_Composite_Node * CSwordGenji::Left_Cut()
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.983, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2.f, 0.284, 0);
+	CBT_SetValue* TrailOn = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2.4f, 0.466, 0);
+	CBT_SetValue* TrailOff = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 0.8f, 0.45, 0);
 	CBT_MoveDirectly* Move3 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 0.6f, 1.467, 0);
 
@@ -815,7 +833,9 @@ CBT_Composite_Node * CSwordGenji::Left_Cut()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(TrailOn);
 	SubSeq->Add_Child(Move1);
+	SubSeq->Add_Child(TrailOff);
 	SubSeq->Add_Child(Move2);
 	SubSeq->Add_Child(Move3);
 

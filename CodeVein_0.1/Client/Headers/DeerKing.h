@@ -94,6 +94,13 @@ private:	// 패턴들
 	CBT_Composite_Node* NearAttack_Dist5_Final();
 	CBT_Composite_Node* FarAttack_Fianl();
 
+	//// 시연회용
+	CBT_Composite_Node* Start_Show();
+	CBT_Composite_Node* Show_RotationAndNearAttack();
+	CBT_Composite_Node* Show_NearAttack();
+	CBT_Composite_Node* Show_FarAttack();
+
+
 private:
 	void Down();	// 방패 집어던짐
 

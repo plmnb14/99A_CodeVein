@@ -60,23 +60,23 @@ HRESULT CDeerKing::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"PushCol", true);	// 충돌여부 제어변수
 	//pBlackBoard->Set_Value(L"PhyCol", true); // 피격판정 제어 변수
 
-	//CBT_Selector* Start_Sel = Node_Selector("행동 시작");
-	CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
+	CBT_Selector* Start_Sel = Node_Selector("행동 시작");
+	//CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
 
 	pBehaviorTree->Set_Child(Start_Sel);
 
 	//////////// 아래에 주석해놓은 4줄이 본게임에서 쓸 것임, 차례대로 공격함.
 
-	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
-	//Check_ShowValue->Set_Child(Start_Show());
-	//Start_Sel->Add_Child(Check_ShowValue);
-	//Start_Sel->Add_Child(Start_Game());
+	CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", false);
+	Check_ShowValue->Set_Child(Start_Game());
+	Start_Sel->Add_Child(Check_ShowValue);
+	Start_Sel->Add_Child(Start_Show());
 
 	////////////
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Start_Game());
+	//Start_Sel->Add_Child(Start_Game());
 	
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -1221,6 +1221,84 @@ CBT_Composite_Node * CDeerKing::FarAttack_Fianl()
 	//Root_Sel->Add_Child(Blade_Attack());
 	
 	return Root_Sel;
+}
+
+CBT_Composite_Node * CDeerKing::Start_Show()
+{
+	CBT_Selector* Root_Sel = Node_Selector("시연회");
+
+	CBT_CompareValue* Check_ShowValueN = Node_BOOL_A_Equal_Value("시연회 근거리 변수 체크", L"Show_Near", true);
+
+	Root_Sel->Add_Child(Check_ShowValueN);
+	Check_ShowValueN->Set_Child(Show_RotationAndNearAttack());
+
+	Root_Sel->Add_Child(Show_FarAttack());
+
+	return Root_Sel;
+}
+
+CBT_Composite_Node * CDeerKing::Show_RotationAndNearAttack()
+{
+	CBT_Sequence* Root_Seq = Node_Sequence("추적 후 순서대로 공격");
+	CBT_RotationDir* Rotation0 = Node_RotationDir("플레이어 바라보기", L"Player_Pos", 0.2);
+
+	Root_Seq->Add_Child(Rotation0);
+	Root_Seq->Add_Child(Show_NearAttack());
+
+	return Root_Seq;
+}
+
+CBT_Composite_Node * CDeerKing::Show_NearAttack()
+{
+	CBT_Selector* Root_Sel = Node_Selector("순서대로 근거리 공격");
+
+	CBT_Cooldown* Cool0 = Node_Cooldown("쿨0", 300);
+	CBT_Cooldown* Cool1 = Node_Cooldown("쿨1", 300);
+	CBT_Cooldown* Cool2 = Node_Cooldown("쿨2", 300);
+	CBT_Cooldown* Cool3 = Node_Cooldown("쿨3", 300);
+	CBT_Cooldown* Cool4 = Node_Cooldown("쿨4", 300);
+	CBT_Cooldown* Cool5 = Node_Cooldown("쿨5", 300);
+	CBT_Cooldown* Cool6 = Node_Cooldown("쿨6", 300);
+
+
+	CBT_SetValue* Show_OffNearAttack = Node_BOOL_SetValue("시연회 OFF", L"Show_Near", false);
+
+	Root_Sel->Add_Child(Cool0);
+	Cool0->Set_Child(LeftHand_Attack());
+	Root_Sel->Add_Child(Cool1);
+	Cool1->Set_Child(RightFoot_Attack());
+	Root_Sel->Add_Child(Cool2);
+	Cool2->Set_Child(Smart_Three_Attack());
+	Root_Sel->Add_Child(Cool3);
+	Cool3->Set_Child(Head_ColdBeam());
+
+	Root_Sel->Add_Child(Show_OffNearAttack);
+
+	return Root_Sel;
+}
+
+CBT_Composite_Node * CDeerKing::Show_FarAttack()
+{
+	CBT_Selector* Root_Sel = Node_Selector("순서대로 원거리 공격");
+
+	CBT_Cooldown* Cool0 = Node_Cooldown("쿨0", 300);
+	CBT_Cooldown* Cool1 = Node_Cooldown("쿨1", 300);
+	CBT_Cooldown* Cool2 = Node_Cooldown("쿨2", 300);
+
+	CBT_Play_Ani* Show_Ani3 = Node_Ani("기본", Ani_Appearance_End, 0.95f);
+
+	CBT_SetValue* Show_ValueOff = Node_BOOL_SetValue("시연회 OFF", L"Show", false);
+
+	Root_Sel->Add_Child(Cool0);
+	Cool0->Set_Child(Slide_Attack());
+	Root_Sel->Add_Child(Cool1);
+	Cool1->Set_Child(Smart_JumpAttack());
+	Root_Sel->Add_Child(Cool2);
+	Cool2->Set_Child(Show_Ani3);
+
+	Root_Sel->Add_Child(Show_ValueOff);
+
+	return Root_Sel;;
 }
 
 void CDeerKing::Down()
