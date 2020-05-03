@@ -265,6 +265,7 @@ HRESULT CPet_Bullet::Ready_Effect(void * pArg)
 	m_dCurTime = 0;
 	m_bDead = false;
 	m_bEffect = true;
+	m_fEffectOffset = 0.f;
 
 	return S_OK;
 }
