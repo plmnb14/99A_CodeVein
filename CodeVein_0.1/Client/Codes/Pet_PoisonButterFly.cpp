@@ -49,7 +49,6 @@ _int CPet_PoisonButterFly::Update_GameObject(_double TimeDelta)
 
 	CGameObject::Update_GameObject(TimeDelta);
 
-	//현재 모드랑 쓰던 모드랑 다를경우, 목표 재탐색, 우선순위에 따라 타겟을 재 정렬
 	m_pMonsterUI->Update_GameObject(TimeDelta);
 
 	//Check_Hit();

@@ -204,7 +204,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//====================================================================================================================================================
 	// °Ë°ÕÁö
 	//====================================================================================================================================================
-
+	
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::Sit1, 70.f, 10.f, 1.f));
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(-8.f, 0.f, -8.f));
 	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();

@@ -1033,19 +1033,19 @@ HRESULT CGunGenji::Add_Component(void* pArg)
 	INFO eTemp = *(INFO*)pArg;
 
 	if (nullptr == pArg)
-		lstrcpy(name, L"Mesh_NormalGenji");
+		lstrcpy(name, L"Mesh_Genji_Normal");
 	else
 	{
 		switch (eTemp.eColor)
 		{
 		case CGunGenji::Jungle:
-			lstrcpy(name, L"Mesh_JungleGenji");
+			lstrcpy(name, L"Mesh_Genji_Green");
 			break;
 		case CGunGenji::Normal:
-			lstrcpy(name, L"Mesh_NormalGenji");
+			lstrcpy(name, L"Mesh_Genji_Normal");
 			break;
 		case CGunGenji::White:
-			lstrcpy(name, L"Mesh_WhiteGenji");
+			lstrcpy(name, L"Mesh_Genji_White");
 			break;
 		}
 	}

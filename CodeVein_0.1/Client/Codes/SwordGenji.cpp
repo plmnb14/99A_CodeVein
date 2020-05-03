@@ -1256,19 +1256,19 @@ HRESULT CSwordGenji::Add_Component(void* pArg)
 	INFO eTemp = *(INFO*)pArg;
 
 	if (nullptr == pArg)
-		lstrcpy(name, L"Mesh_NormalGenji");
+		lstrcpy(name, L"Mesh_Genji_Normal");
 	else
 	{
 		switch (eTemp.eColor)
 		{
 		case CSwordGenji::Jungle:
-			lstrcpy(name, L"Mesh_JungleGenji");
+			lstrcpy(name, L"Mesh_Genji_Green");
 			break;
 		case CSwordGenji::Normal:
-			lstrcpy(name, L"Mesh_NormalGenji");
+			lstrcpy(name, L"Mesh_Genji_Normal");
 			break;
 		case CSwordGenji::White:
-			lstrcpy(name, L"Mesh_WhiteGenji");
+			lstrcpy(name, L"Mesh_Genji_White");
 			break;
 		}
 	}
