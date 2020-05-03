@@ -43,6 +43,7 @@ HRESULT CCocoonBullet::Ready_GameObject(void * pArg)
 	m_dCurTime = 0;
 	m_bDead = false;
 	m_bEffect = true;
+	m_fEffectOffset = 0.f;
 
 	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"FireBoy_FireBullet_Mid", nullptr));
 	m_pBulletBody->Set_Desc(_v3(0, 0, 0), m_pTransformCom);

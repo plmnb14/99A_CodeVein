@@ -129,7 +129,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 
 	//// 헌터
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_Gun));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(7.f, 0.f, 7.f));
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(5.f, 0.f, 5.f));
 	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
 	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
@@ -318,10 +318,10 @@ HRESULT CScene_Stage_Training::Ready_Layer_Environment()
 
 	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Sky", nullptr);
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Flag", &CFlag::INFO(5, 5, 2.f, 1.f));
-	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(0.f, 3.f, 3.f));
-	//static_cast<CFlag*>(pInstance)->Set_Wind();	// 설정안하면 디폴트 설정
-	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Sky", nullptr);
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Flag", &CFlag::INFO(5, 5, 2.f, 1.f));
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(0.f, 3.f, 3.f));
+	////static_cast<CFlag*>(pInstance)->Set_Wind();	// 설정안하면 디폴트 설정
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Sky", nullptr);
 
 	return S_OK;
 }

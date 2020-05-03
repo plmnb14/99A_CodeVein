@@ -20,15 +20,24 @@ HRESULT CDeerKingColdBeam::Ready_GameObject_Prototype()
 
 HRESULT CDeerKingColdBeam::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component()))
-		return E_FAIL;
+	if (nullptr == pArg)
+	{
+		if (FAILED(Add_Component()))
+			return E_FAIL;
 
-	Ready_Collider();
+		Ready_Collider();
+
+		return S_OK;
+	}
 
 	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
 
 	m_vDir = temp.vDir;
 	m_dLifeTime = 1;
+
+	m_dCurTime = 0;
+	m_bDead = false;
+	m_fEffectOffset = 0.f;
 
 	m_pTransformCom->Set_Pos(temp.vCreatePos);
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
@@ -48,7 +57,8 @@ HRESULT CDeerKingColdBeam::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Angle(_v3(0.f, fDot, 0.f));
 
 	m_pEffect  = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"DeerKing_IceBlock_0", nullptr));
-	m_pEffect->Set_Desc(_v3(0, -1.5f, 0.f) + m_pTransformCom->Get_Axis(AXIS_Z) * - 2.f, nullptr);
+	//m_pEffect->Set_Desc(_v3(0, -1.5f, 0.f) + m_pTransformCom->Get_Axis(AXIS_Z) * - 2.f, nullptr);
+	m_pEffect->Set_Desc(_v3(0.f, 0.f, 0.f), nullptr);
 	m_pEffect->Set_ParentObject(this);
 	m_pEffect->Set_ZWrite();
 	m_pEffect->Reset_Init();
@@ -69,20 +79,22 @@ _int CDeerKingColdBeam::Update_GameObject(_double TimeDelta)
 
 	m_dCurTime += TimeDelta;
 
+
+
 	if (m_dCurTime > m_dLifeTime)
 	{
-		CParticleMgr::Get_Instance()->Create_Effect(L"IceCrystal_01"					, m_pTransformCom->Get_Pos() + _v3(0.f, -0.8f, 0.f) + m_vDir * 0.3f	, nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(L"IceCrystal_02"					, m_pTransformCom->Get_Pos() + _v3(0.f, -0.8f, 0.f) + m_vDir * 1.5f	, nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(L"IceCrystal_03"					, m_pTransformCom->Get_Pos() + _v3(0.f, -0.8f, 0.f) + m_vDir * 2.8f	, nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Bubble_BreakSmoke"	, m_pTransformCom->Get_Pos() + _v3(0.f, -0.8f, 0.f) + m_vDir * 0.3f	, nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Bubble_BreakSmoke"	, m_pTransformCom->Get_Pos() + _v3(0.f, -0.8f, 0.f) + m_vDir * 1.5f	, nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Bubble_BreakSmoke"	, m_pTransformCom->Get_Pos() + _v3(0.f, -0.8f, 0.f) + m_vDir * 2.8f	, nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Particle"				, m_pTransformCom->Get_Pos() + _v3(0.f, -0.8f, 0.f) + m_vDir * 0.3f	, nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Particle"				, m_pTransformCom->Get_Pos() + _v3(0.f, -0.8f, 0.f) + m_vDir * 1.5f	, nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Particle"				, m_pTransformCom->Get_Pos() + _v3(0.f, -0.8f, 0.f) + m_vDir * 2.8f	, nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Break"					, m_pTransformCom->Get_Pos() + _v3(0.f, -0.8f, 0.f) + m_vDir * 0.3f	, nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Break"					, m_pTransformCom->Get_Pos() + _v3(0.f, -0.8f, 0.f) + m_vDir * 1.5f	, nullptr);
-		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Break"					, m_pTransformCom->Get_Pos() + _v3(0.f, -0.8f, 0.f) + m_vDir * 2.8f	, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceCrystal_01", m_pTransformCom->Get_Pos() + _v3(0.f, -0.8f, 0.f) + m_vDir * 0.3f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceCrystal_02", m_pTransformCom->Get_Pos() + _v3(0.f, -0.8f, 0.f) + m_vDir * 1.5f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceCrystal_03", m_pTransformCom->Get_Pos() + _v3(0.f, -0.8f, 0.f) + m_vDir * 2.8f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Bubble_BreakSmoke", m_pTransformCom->Get_Pos() + _v3(0.f, -0.8f, 0.f) + m_vDir * 0.3f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Bubble_BreakSmoke", m_pTransformCom->Get_Pos() + _v3(0.f, -0.8f, 0.f) + m_vDir * 1.5f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceGirl_Buff_Bubble_BreakSmoke", m_pTransformCom->Get_Pos() + _v3(0.f, -0.8f, 0.f) + m_vDir * 2.8f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Particle", m_pTransformCom->Get_Pos() + _v3(0.f, -0.8f, 0.f) + m_vDir * 0.3f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Particle", m_pTransformCom->Get_Pos() + _v3(0.f, -0.8f, 0.f) + m_vDir * 1.5f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Particle", m_pTransformCom->Get_Pos() + _v3(0.f, -0.8f, 0.f) + m_vDir * 2.8f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Break", m_pTransformCom->Get_Pos() + _v3(0.f, -0.8f, 0.f) + m_vDir * 0.3f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Break", m_pTransformCom->Get_Pos() + _v3(0.f, -0.8f, 0.f) + m_vDir * 1.5f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Break", m_pTransformCom->Get_Pos() + _v3(0.f, -0.8f, 0.f) + m_vDir * 2.8f, nullptr);
 
 		m_pEffect->Set_Dead();
 		m_bDead = true;
@@ -102,7 +114,8 @@ _int CDeerKingColdBeam::Update_GameObject(_double TimeDelta)
 		}
 	}
 
-	OnCollisionEnter();
+	if (m_dCurTime <= 0.3f)
+		OnCollisionEnter();
 
 	return NOERROR;
 }
@@ -136,8 +149,9 @@ HRESULT CDeerKingColdBeam::Update_Collider()
 		tmpMat = m_pTransformCom->Get_WorldMat();
 
 		_v3 ColPos = _v3(tmpMat._41, tmpMat._42, tmpMat._43);
-
-		iter->Update(ColPos);
+		_v3 LookPos = *D3DXVec3Normalize(&_v3(), &_v3(tmpMat._31, tmpMat._32, tmpMat._33));
+		
+		iter->Update(ColPos + LookPos * 3.f);
 
 		++matrixIdx;
 	}
@@ -254,7 +268,7 @@ HRESULT CDeerKingColdBeam::Ready_Collider()
 	// ÃÑ¾Ë Áß¾Ó
 	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 
-	_float fRadius = 1.1f;
+	_float fRadius = 1.5f;
 
 	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
 	pCollider->Set_Dynamic(true);

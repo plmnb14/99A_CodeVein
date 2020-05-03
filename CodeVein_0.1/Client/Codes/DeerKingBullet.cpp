@@ -20,16 +20,27 @@ HRESULT CDeerKingBullet::Ready_GameObject_Prototype()
 
 HRESULT CDeerKingBullet::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component()))
-		return E_FAIL;
+	if (nullptr == pArg)
+	{
+		if (FAILED(Add_Component()))
+			return E_FAIL;
 
-	Ready_Collider();
+		Ready_Collider();
+
+		return S_OK;
+	}
 
 	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
 
 	m_fSpeed = temp.fSpeed;
 	m_dLifeTime = temp.dLifeTime;
 	m_vDir = temp.vDir;
+
+	m_dCurTime = 0;
+	m_bDead = false;
+	m_bFire = false;
+	m_fEffectOffset = 0.f;
+	m_bEffect = false;
 
 	m_pTransformCom->Set_Pos(temp.vCreatePos);
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
@@ -68,6 +79,8 @@ _int CDeerKingBullet::Update_GameObject(_double TimeDelta)
 	// 3초 뒤에 발사
 	if (3.f < m_dCurTime)
 	{
+		OnCollisionEnter();
+
 		// Calc Angle
 		_v3	vRight = *D3DXVec3Cross(&vRight, &_v3(0.f, 1.f, 0.f), &m_vDir);
 		V3_NORMAL_SELF(&vRight);
@@ -152,7 +165,6 @@ _int CDeerKingBullet::Update_GameObject(_double TimeDelta)
 		}
 	}
 
-	OnCollisionEnter();
 
 	return NOERROR;
 }
@@ -186,8 +198,9 @@ HRESULT CDeerKingBullet::Update_Collider()
 		tmpMat = m_pTransformCom->Get_WorldMat();
 
 		_v3 ColPos = _v3(tmpMat._41, tmpMat._42, tmpMat._43);
+		_v3 LookPos = *D3DXVec3Normalize(&_v3(), &_v3(tmpMat._31, tmpMat._32, tmpMat._33));
 
-		iter->Update(ColPos);
+		iter->Update(ColPos + LookPos * 2.f);
 
 		++matrixIdx;
 	}
