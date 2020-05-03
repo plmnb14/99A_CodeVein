@@ -78,11 +78,6 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 	m_pNavMesh->Goto_Next_Subset(m_pTransform->Get_Pos(), nullptr);
 
 	CScriptManager::Get_Instance()->Update_ScriptMgr(TimeDelta, m_pNavMesh->Get_SubSetIndex(), m_pNavMesh->Get_CellIndex());
-	
-	//===========
-	//m_TmpFontNum->Update_GameObject(TimeDelta);
-	//m_TmpFontNum->Update_NumberValue(923.f);
-	//===========
 
 	return NO_EVENT;
 }
@@ -109,10 +104,6 @@ _int CPlayer::Late_Update_GameObject(_double TimeDelta)
 
 	IF_NOT_NULL(m_pDrainWeapon)
 		m_pDrainWeapon->Late_Update_GameObject(TimeDelta);
-
-	//===========
-	//m_TmpFontNum->Late_Update_GameObject(TimeDelta);
-	//===========
 
 	return NO_EVENT;
 }
@@ -293,6 +284,7 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 			pShader->End_Pass();
 		}
 	}
+
 	//============================================================================================
 
 	return S_OK;
@@ -3090,10 +3082,10 @@ void CPlayer::Play_Hit()
 			m_bEventTrigger[i] = false;
 		}
 
-		//m_eAnim_Upper =
-		//	(iHitDir == 0 ? Cmn_Hit01_B : 
-		//		iHitDir == 1 ? Cmn_Hit01_F : 
-		//		iHitDir == 2 ? Cmn_Hit01_R : Cmn_Hit01_L);
+		m_eAnim_Upper =
+			(iHitDir == 0 ? Cmn_Hit01_B : 
+				iHitDir == 1 ? Cmn_Hit01_F : 
+				iHitDir == 2 ? Cmn_Hit01_R : Cmn_Hit01_L);
 
 		//m_eAnim_Upper =
 		//	(iHitDir == 0 ? Cmn_Hit02_B :
@@ -3110,10 +3102,10 @@ void CPlayer::Play_Hit()
 		//		iHitDir == 1 ? Cmn_Hit04_F :
 		//		iHitDir == 2 ? Cmn_Hit04_R : Cmn_Hit04_L);
 
-		m_eAnim_Upper =
-			(iHitDir == 0 ? Cmn_HitBlow_B :
-				iHitDir == 1 ? Cmn_HitBlow_F :
-				iHitDir == 2 ? Cmn_HitBlow_R : Cmn_HitBlow_L);
+		//m_eAnim_Upper =
+		//	(iHitDir == 0 ? Cmn_HitBlow_B :
+		//		iHitDir == 1 ? Cmn_HitBlow_F :
+		//		iHitDir == 2 ? Cmn_HitBlow_R : Cmn_HitBlow_L);
 
 		// 임시 다운 테스트용
 		m_tObjParam.bDown = true;
@@ -10082,8 +10074,8 @@ HRESULT CPlayer::SetUp_Default()
 	m_tObjParam.bCanCounter = true;
 	m_tObjParam.bCanHit = true;
 	m_tObjParam.bIsDodge = false;
-	m_tObjParam.fHp_Cur = 500.f;
-	m_tObjParam.fHp_Max = 500.f;
+	m_tObjParam.fHp_Cur = 1000.f;
+	m_tObjParam.fHp_Max = 1000.f;
 	
 	// Anim
 	m_fAnimMutiply = 1.f;

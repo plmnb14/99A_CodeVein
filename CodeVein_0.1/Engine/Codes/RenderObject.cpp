@@ -105,7 +105,6 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass, _
 	if (nullptr == pShader ||
 		nullptr == m_pMesh_Static)
 		return E_FAIL;
-
 	//============================================================================================
 	// 공통 변수
 	//============================================================================================
@@ -169,6 +168,7 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass, _
 
 		pShader->End_Pass();
 	}
+
 	//============================================================================================
 
 	return NOERROR;

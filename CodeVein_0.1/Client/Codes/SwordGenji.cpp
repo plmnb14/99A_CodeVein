@@ -234,11 +234,19 @@ _int CSwordGenji::Late_Update_GameObject(_double TimeDelta)
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
 
-	
-	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
-		return E_FAIL;
-	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-		return E_FAIL;
+	if (!m_bDissolve)
+	{
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
+			return E_FAIL;
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
+			return E_FAIL;
+	}
+
 	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
 	//	return E_FAIL;
 
@@ -274,8 +282,10 @@ HRESULT CSwordGenji::Render_GameObject()
 
 			for (_uint j = 0; j < iNumSubSet; ++j)
 			{
-				if (false == m_bReadyDead)
-					m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+
+				if (m_bDissolve)
+					m_iPass = 3;
 
 				m_pShaderCom->Begin_Pass(m_iPass);
 
@@ -308,7 +318,7 @@ HRESULT CSwordGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bo
 		nullptr == m_pMeshCom)
 		return E_FAIL;
 
-	pShader->Begin_Shader();
+	m_pMeshCom->Play_Animation(0.f);
 
 	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
 	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
@@ -343,14 +353,13 @@ HRESULT CSwordGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bo
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
 			pShader->Begin_Pass(iPass);
+			pShader->Commit_Changes();
 
 			m_pMeshCom->Render_Mesh(i, j);
 
 			pShader->End_Pass();
 		}
 	}
-
-	pShader->End_Shader();
 
 	return NOERROR;
 }
@@ -433,11 +442,12 @@ CBT_Composite_Node * CSwordGenji::Normal_Cut3()
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.087, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 2.f, 0.583, 0);
+	CBT_SetValue* TrailOn = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.617, 0);
+	CBT_SetValue* TrailOff = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", -0.6f, 0.533, 0);
 	CBT_Wait* Wait2 = Node_Wait("대기2", 0.417, 0);
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", 0.6f, 0.65, 0);
-
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani39);
 	MainSeq->Add_Child(Show_Ani42);
@@ -445,7 +455,9 @@ CBT_Composite_Node * CSwordGenji::Normal_Cut3()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(TrailOn);
 	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(TrailOff);
 	SubSeq->Add_Child(Move1);
 	SubSeq->Add_Child(Wait2);
 	SubSeq->Add_Child(Move2);
@@ -465,7 +477,10 @@ CBT_Composite_Node * CSwordGenji::Strong_RightCut()
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.167, 0);
+	CBT_SetValue* TrailOn = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 2.f, 0.4, 0);
+	CBT_Wait* Wait1 = Node_Wait("대기0", 0.2, 0);
+	CBT_SetValue* TrailOff = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani28);
@@ -474,7 +489,10 @@ CBT_Composite_Node * CSwordGenji::Strong_RightCut()
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(TrailOn);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(TrailOff);
 
 
 	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pSword->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.483, 1, 0.167, 0);
@@ -493,7 +511,9 @@ CBT_Composite_Node * CSwordGenji::Strong_LeftCut()
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.15, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 2.f, 0.483, 0);
+	CBT_SetValue* TrailOn = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.584, 0);
+	CBT_SetValue* TrailOff = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", -0.6f, 0.35, 0);
 	CBT_Wait* Wait2 = Node_Wait("대기2", 0.416, 0);
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", 0.6f, 0.704, 0);
@@ -505,7 +525,9 @@ CBT_Composite_Node * CSwordGenji::Strong_LeftCut()
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(TrailOn);
 	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(TrailOff);
 	SubSeq->Add_Child(Move1);
 	SubSeq->Add_Child(Wait2);
 	SubSeq->Add_Child(Move2);
@@ -1234,19 +1256,19 @@ HRESULT CSwordGenji::Add_Component(void* pArg)
 	INFO eTemp = *(INFO*)pArg;
 
 	if (nullptr == pArg)
-		lstrcpy(name, L"Mesh_NormalGenji");
+		lstrcpy(name, L"Mesh_Genji_Normal");
 	else
 	{
 		switch (eTemp.eColor)
 		{
 		case CSwordGenji::Jungle:
-			lstrcpy(name, L"Mesh_JungleGenji");
+			lstrcpy(name, L"Mesh_Genji_Green");
 			break;
 		case CSwordGenji::Normal:
-			lstrcpy(name, L"Mesh_NormalGenji");
+			lstrcpy(name, L"Mesh_Genji_Normal");
 			break;
 		case CSwordGenji::White:
-			lstrcpy(name, L"Mesh_WhiteGenji");
+			lstrcpy(name, L"Mesh_Genji_White");
 			break;
 		}
 	}

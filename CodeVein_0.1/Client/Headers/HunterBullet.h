@@ -1,14 +1,10 @@
 #pragma once
 
-#include "Client_Defines.h"
-#include "GameObject.h"
-#include "Management.h"
-#include "Trail_VFX.h"
-#include "Effect.h"
+#include "Monster.h"
 
 BEGIN(Client)
 
-class CHunterBullet final : public CGameObject
+class CHunterBullet final : public CMonster
 {
 protected:
 	explicit CHunterBullet(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -23,11 +19,11 @@ public:
 	virtual HRESULT Render_GameObject();
 
 private:
+	void Update_Trails(_double TimeDelta);
 	void Update_Collider();
 	void Render_Collider();
-	void Update_Trails(_double TimeDelta);
-	virtual void Enter_Collision();
-	virtual void Check_CollisionEvent(list<CGameObject*> plistGameObject);
+	virtual void Check_CollisionEvent();
+	virtual void Check_CollisionHit(list<CGameObject*> plistGameObject);
 
 private:
 	HRESULT Add_Component();

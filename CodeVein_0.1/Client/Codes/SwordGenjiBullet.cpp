@@ -72,13 +72,13 @@ _int CSwordGenjiBullet::Update_GameObject(_double TimeDelta)
 	m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
 
 	m_dCurTime += TimeDelta;
-	cout << m_dCurTime << endl;
+
 	// ½Ã°£ ÃÊ°ú
 	if (m_dCurTime > m_dLifeTime)
 	{
 		//Á×À½ ÀÌÆåÆ®
 		m_pBulletBody->Set_Dead();
-		m_pTrailEffect->Set_Dead();
+		//m_pTrailEffect->Set_Dead();
 
 		m_bDead = true;
 	}
@@ -164,7 +164,7 @@ void CSwordGenjiBullet::Update_Trails(_double TimeDelta)
 	{
 		m_pTrailEffect->Set_ParentTransform(&matWorld);
 		m_pTrailEffect->Ready_Info(vBegin + vDir * -0.05f, vBegin + vDir * 0.05f);
-		// m_pTrailEffect->Update_GameObject(TimeDelta);
+		m_pTrailEffect->Update_GameObject(TimeDelta);
 	}
 }
 

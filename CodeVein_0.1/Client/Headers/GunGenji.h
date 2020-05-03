@@ -1,6 +1,5 @@
 #pragma once
 
-#include "Info_Monster.h"
 #include "Monster.h"
 
 BEGIN(Client)

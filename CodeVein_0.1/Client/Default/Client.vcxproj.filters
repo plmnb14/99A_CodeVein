@@ -385,17 +385,20 @@
     <Filter Include="02.GameObject\Stage\10%29 Pet">
       <UniqueIdentifier>{b1bb6ae7-348a-4f21-ab97-a86a07b67818}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\10%29 Pet\PoisonButterFly">
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\BloodSkillCursor">
+      <UniqueIdentifier>{3799a4ea-69d8-44a0-b02a-5e7170f87bec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\06.BloodCode_Inven">
+      <UniqueIdentifier>{ae5437ba-d67c-4802-9a61-2c2d8d34964b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\09. BloodCodeUI">
+      <UniqueIdentifier>{9de20518-f4f0-4698-8b19-40542809fe4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\10%29 Pet\01.PoisonButterFly">
       <UniqueIdentifier>{2f0b99ca-05de-474b-a3f2-deaf4be55682}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\10%29 Pet\DeerKing">
+    <Filter Include="02.GameObject\Stage\10%29 Pet\02.DeerKing">
       <UniqueIdentifier>{12d43b02-9be4-4bc8-8f7d-849ac5ca6a8d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\10%29 Pet\FireBoy">
-      <UniqueIdentifier>{69d2dcc9-f4c0-472c-b273-1b1dedfe996f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\10%29 Pet\IceGirl">
-      <UniqueIdentifier>{3254a8a5-b186-402c-9185-6ecee3d15579}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -612,9 +615,6 @@
     <ClInclude Include="..\Headers\DamegeNumUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\01.MonsterUI\DamegeNumUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Monster.h">
-      <Filter>02.GameObject\Stage\2%29 Monster</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\QueensKnight.h">
       <Filter>02.GameObject\Stage\1%29 Boss\QueensKnight</Filter>
     </ClInclude>
@@ -768,9 +768,6 @@
     <ClInclude Include="..\Headers\ThaiMan.h">
       <Filter>02.GameObject\Stage\2%29 Monster\ThaiMan</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Info_Monster.h">
-      <Filter>02.GameObject\Stage\2%29 Monster</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\PlayerFontUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\08. FontNumUI\PlayerFontUI</Filter>
     </ClInclude>
@@ -810,11 +807,26 @@
     <ClInclude Include="..\Headers\Flag.h">
       <Filter>02.GameObject\Stage\Physx</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Pet_PoisonButterFly.h">
+      <Filter>02.GameObject\Stage\10%29 Pet\01.PoisonButterFly</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BloodSkillCursor.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\BloodSkillCursor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BloodCode_Inven.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\06.BloodCode_Inven</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BloodCodeUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\09. BloodCodeUI</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\Pet.h">
       <Filter>02.GameObject\Stage\10%29 Pet</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Pet_PoisonButterFly.h">
-      <Filter>02.GameObject\Stage\10%29 Pet\PoisonButterFly</Filter>
+    <ClInclude Include="..\Headers\Pet_Bullet.h">
+      <Filter>02.GameObject\Stage\10%29 Pet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Monster.h">
+      <Filter>02.GameObject\Stage\2%29 Monster</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1217,11 +1229,23 @@
     <ClCompile Include="..\Codes\Flag.cpp">
       <Filter>02.GameObject\Stage\Physx</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\Pet_PoisonButterFly.cpp">
+      <Filter>02.GameObject\Stage\10%29 Pet\01.PoisonButterFly</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BloodSkillCursor.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\BloodSkillCursor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BloodCode_Inven.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\06.BloodCode_Inven</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BloodCodeUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\09. BloodCodeUI</Filter>
+    </ClCompile>
     <ClCompile Include="..\Codes\Pet.cpp">
       <Filter>02.GameObject\Stage\10%29 Pet</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Pet_PoisonButterFly.cpp">
-      <Filter>02.GameObject\Stage\10%29 Pet\PoisonButterFly</Filter>
+    <ClCompile Include="..\Codes\Pet_Bullet.cpp">
+      <Filter>02.GameObject\Stage\10%29 Pet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

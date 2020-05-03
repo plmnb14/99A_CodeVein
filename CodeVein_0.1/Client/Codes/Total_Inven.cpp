@@ -84,6 +84,7 @@ _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 	m_pArmor_Slot->Set_Active(m_bIsActive);
 	
 	m_pBloodCode->Set_Active(m_bIsActive);
+	m_pBloodCode->Set_Type(m_ePlayerBloodCode);
 
 	LOOP(8)
 	{
@@ -232,7 +233,6 @@ void CTotal_Inven::SetUp_Default()
 	pDesc->fPosY = 322.f;
 	pDesc->fSizeX = 90.f;
 	pDesc->fSizeY = 67.f;
-	pDesc->iIndex = 3;
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_BloodCodeIcon", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
 	m_pBloodCode = static_cast<CBloodCode_Icon*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
 
@@ -302,6 +302,13 @@ void CTotal_Inven::Click_Icon()
 			m_pQuickSlotInfo[i]->Set_Number(0);
 		}
 			
+	}
+
+	if (m_pBloodCode->Pt_InRect() && 
+		g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+	{
+		CUI_Manager::Get_Instance()->Get_BloodCode_Inven()->Set_Active(true);
+		m_bIsActive = false;
 	}
 }
 

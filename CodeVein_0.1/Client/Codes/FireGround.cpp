@@ -20,10 +20,15 @@ HRESULT CFireGround::Ready_GameObject_Prototype()
 
 HRESULT CFireGround::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component()))
-		return E_FAIL;
+	if (nullptr == pArg)
+	{
+		if (FAILED(Add_Component()))
+			return E_FAIL;
 
-	Ready_Collider();
+		Ready_Collider();
+
+		return S_OK;
+	}
 
 	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
 
@@ -31,6 +36,13 @@ HRESULT CFireGround::Ready_GameObject(void * pArg)
 
 	m_pTransformCom->Set_Pos(temp.vCreatePos);
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
+
+	m_dCurTime = 0;
+	m_bDead = false;
+	m_bEffectReadyFireOn = false;
+	m_bEffectFloorOn = false;
+	m_bStartBoom = false;
+	m_fEffectOffset = 0.f;
 
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
@@ -123,7 +135,8 @@ _int CFireGround::Update_GameObject(_double TimeDelta)
 	//최초로 바닥에 불을 생성한 후  일정시간 뒤 불덩어리가 터지면서 순간적으로 충돌처리
 
 	// 불 폭발 시작
-	if (false == m_bFinishBoom && true == m_bStartBoom)
+	//if (false == m_bFinishBoom && true == m_bStartBoom)
+	if (true == m_bStartBoom)
 	{
 		m_dCurBoomTime += TimeDelta;
 

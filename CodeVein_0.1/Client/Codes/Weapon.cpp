@@ -32,11 +32,11 @@ HRESULT CWeapon::Ready_GameObject(void * pArg)
 
 	m_pTrailEffect = g_pManagement->Create_Trail();
 	m_pTrailEffect->Set_TrailIdx(0);
-
+	
 	m_pDistortionEffect = g_pManagement->Create_Trail();
 	m_pDistortionEffect->Set_TrailIdx(3);
 	m_pDistortionEffect->Set_TrailType(Engine::CTrail_VFX::Trail_Distortion);
-
+	
 	m_pStaticTrailEffect = g_pManagement->Create_Trail();
 	m_pStaticTrailEffect->Set_TrailIdx(1);
 
@@ -67,12 +67,28 @@ _int CWeapon::Late_Update_GameObject(_double TimeDelta)
 
 	if (false == m_tObjParam.bInvisible)
 	{
+<<<<<<< HEAD
 		if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
 			return E_FAIL;
 		if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
 			return E_FAIL;
 		if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
 			return E_FAIL;
+=======
+		if (!m_bDissolve)
+		{
+			if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
+				return E_FAIL;
+			if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+				return E_FAIL;
+		}
+		else
+		{
+			if (FAILED(m_pRenderer->Add_RenderList(RENDER_ALPHA, this)))
+				return E_FAIL;
+		}
+
+>>>>>>> origin/Merge_Brench
 	}
 
 	return _int();
@@ -89,13 +105,14 @@ HRESULT CWeapon::Render_GameObject()
 
 	m_pShader->Begin_Shader();
 
-
 	_uint iNumSubSet = (_uint)m_pMesh_Static->Get_NumMaterials();
 
 	for (_uint i = 0; i < iNumSubSet; ++i)
 	{
-		if (false == m_bReadyDead && !m_bDissolve)
-			m_iPass = m_pMesh_Static->Get_MaterialPass(i);
+		m_iPass = m_pMesh_Static->Get_MaterialPass(i);
+
+		if (m_bDissolve)
+			m_iPass = 3;
 
 		m_pShader->Begin_Pass(m_iPass);
 
@@ -121,6 +138,7 @@ HRESULT CWeapon::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 		nullptr == m_pMesh_Static)
 		return E_FAIL;
 
+<<<<<<< HEAD
 	//============================================================================================
 	// 공통 변수
 	//============================================================================================
@@ -128,6 +146,10 @@ HRESULT CWeapon::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 	_mat	ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
 	_mat	ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
 	_mat	WorldMatrix = m_pTransform->Get_WorldMat();
+=======
+	_mat		ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+>>>>>>> origin/Merge_Brench
 
 	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
 		return E_FAIL;
@@ -184,7 +206,10 @@ HRESULT CWeapon::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 
 		pShader->End_Pass();
 	}
+<<<<<<< HEAD
 	//============================================================================================
+=======
+>>>>>>> origin/Merge_Brench
 
 	return NOERROR;
 }
@@ -367,7 +392,7 @@ void CWeapon::Update_Trails(_double TimeDelta)
 	{
 		m_pTrailEffect->Set_ParentTransform(&matWorld);
 		m_pTrailEffect->Ready_Info(vBegin + vDir * fBeginValue, vBegin + vDir * fEndValue);
-		// m_pTrailEffect->Update_GameObject(TimeDelta);
+		m_pTrailEffect->Update_GameObject(TimeDelta);
 	}
 
 	if (m_pDistortionEffect && !m_bSingleTrail)
@@ -401,6 +426,9 @@ void CWeapon::Set_SkillMode(_bool _bSkill)
 {
 	m_bSingleTrail = _bSkill;
 
+	if (!m_pTrailEffect)
+		return;
+
 	if (_bSkill)
 		m_pTrailEffect->Set_TrailIdx(6);
 	else
@@ -411,6 +439,9 @@ void CWeapon::Set_TrailIndex(_int iIdx, _bool bStaticTrail)
 {
 	m_bSingleTrail = true;
 
+	if (!m_pTrailEffect || !m_pStaticTrailEffect)
+		return;
+
 	if(!bStaticTrail)
 		m_pTrailEffect->Set_TrailIdx(iIdx);
 	else
@@ -419,6 +450,9 @@ void CWeapon::Set_TrailIndex(_int iIdx, _bool bStaticTrail)
 
 void CWeapon::Set_TrailUseMask(_bool bUse, _int iIdx, _bool bStaticTrail)
 {
+	if (!m_pTrailEffect || !m_pStaticTrailEffect)
+		return;
+
 	if (!bStaticTrail)
 		m_pTrailEffect->Set_UseMask(bUse, iIdx);
 	else
@@ -721,7 +755,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	// 한손검
 	//===========================================================================================
 
-	m_tWeaponParam[Wpn_SSword].fDamage = 100.f;
+	m_tWeaponParam[Wpn_SSword].fDamage = 1000.f;
 	m_tWeaponParam[Wpn_SSword].fRadius = 0.6f;
 	m_tWeaponParam[Wpn_SSword].fTrail_Min = 0.6f;
 	m_tWeaponParam[Wpn_SSword].fTrail_Max = 1.8f;
@@ -818,10 +852,10 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Hammer_Black].fCol_Height = 1.0f;
 
 	m_tWeaponParam[Wpn_Hammer_Military].fDamage = 155.f;
-	m_tWeaponParam[Wpn_Hammer_Military].fRadius = 0.7f;
+	m_tWeaponParam[Wpn_Hammer_Military].fRadius = 1.1f;
 	m_tWeaponParam[Wpn_Hammer_Military].fTrail_Min = 0.75f;
 	m_tWeaponParam[Wpn_Hammer_Military].fTrail_Max = 1.5f;
-	m_tWeaponParam[Wpn_Hammer_Military].fCol_Height = 1.0f;
+	m_tWeaponParam[Wpn_Hammer_Military].fCol_Height = 1.9f;
 
 	m_tWeaponParam[Wpn_Hammer_Slave].fDamage = 155.f;
 	m_tWeaponParam[Wpn_Hammer_Slave].fRadius = 0.7f;
@@ -909,8 +943,8 @@ HRESULT CWeapon::SetUp_ConstantTable()
 	if (FAILED(m_pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
 
-	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+	_mat ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 
 	if (FAILED(m_pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
@@ -1015,7 +1049,6 @@ void CWeapon::Free()
 	Safe_Release(m_pShader);
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pBattleAgent);
-
 
 	//for (auto& iter : m_vecAttackCol)
 	//	Safe_Release(iter);

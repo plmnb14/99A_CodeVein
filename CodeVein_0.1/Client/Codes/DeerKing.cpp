@@ -28,7 +28,7 @@ HRESULT CDeerKing::Ready_GameObject(void * pArg)
 	Ready_Collider();
 
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 1000.f;
+	m_tObjParam.fHp_Cur = 10000.f;
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
 	m_tObjParam.fDamage = 20.f;
 
@@ -76,7 +76,7 @@ HRESULT CDeerKing::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Slide_Attack());
+	Start_Sel->Add_Child(Start_Game());
 	
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -116,7 +116,7 @@ _int CDeerKing::Update_GameObject(_double TimeDelta)
 	// 플레이어 미발견
 	if (false == m_bFight)
 	{
-		//Update_NF();
+		Update_NF();
 	}
 	// 플레이어 발견
 	else
@@ -154,12 +154,22 @@ _int CDeerKing::Late_Update_GameObject(_double TimeDelta)
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
 
-	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
-		return E_FAIL;
+	if (!m_bDissolve)
+	{
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
+			return E_FAIL;
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
+			return E_FAIL;
+	}
+
 	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
 	//	return E_FAIL;
-	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-		return E_FAIL;
+
 
 	m_dTimeDelta = TimeDelta;
 
@@ -191,8 +201,10 @@ HRESULT CDeerKing::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			if (false == m_bReadyDead)
-				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+			m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+
+			if (m_bDissolve)
+				m_iPass = 3;
 
 			m_pShaderCom->Begin_Pass(m_iPass);
 
@@ -225,22 +237,29 @@ HRESULT CDeerKing::Render_GameObject_SetPass(CShader * pShader, _int iPass, _boo
 		nullptr == m_pMeshCom)
 		return E_FAIL;
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
-
-	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
-		return E_FAIL;
+	m_pMeshCom->Play_Animation(0.f);
 
 	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
 	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+
+	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
+		return E_FAIL;
 	if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 		return E_FAIL;
 
 	m_matLastWVP = m_pTransformCom->Get_WorldMat() * ViewMatrix * ProjMatrix;
 
-	//_mat matLightVP = g_pManagement->Get_LightViewProj();
-	//if (FAILED(pShader->Set_Value("g_LightVP_Close", &matLightVP, sizeof(_mat))))
-	//	return E_FAIL;
+	_bool bMotionBlur = true;
+	if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+		return E_FAIL;
+	_bool bDecalTarget = false;
+	if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+		return E_FAIL;
+
 
 	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
 
@@ -268,7 +287,7 @@ CBT_Composite_Node * CDeerKing::LeftHand_Attack(_float fWeight)
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("왼팔 휘두르기");
-	CBT_Play_Ani* Show_Ani31 = Node_Ani("왼팔 휘두르기", 31, fWeight);
+	CBT_Play_Ani* Show_Ani25 = Node_Ani("왼팔 휘두르기", 25, fWeight);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
@@ -287,7 +306,7 @@ CBT_Composite_Node * CDeerKing::LeftHand_Attack(_float fWeight)
 	Root_Parallel->Add_Service(Effect2);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani31);
+	MainSeq->Add_Child(Show_Ani25);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -308,7 +327,7 @@ CBT_Composite_Node * CDeerKing::RightFoot_Attack(_float fWeight)
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("오른발로 찍기");
-	CBT_Play_Ani* Show_Ani34 = Node_Ani("오른발로 찍기", 34, fWeight);
+	CBT_Play_Ani* Show_Ani28 = Node_Ani("오른발로 찍기", 28, fWeight);
 	//CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
@@ -345,7 +364,7 @@ CBT_Composite_Node * CDeerKing::RightFoot_Attack(_float fWeight)
 	Root_Parallel->Add_Service(Effect11);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani34);
+	MainSeq->Add_Child(Show_Ani28);
 	//MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -366,7 +385,7 @@ CBT_Composite_Node * CDeerKing::Rush_RightFoot()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("돌진");
-	CBT_Play_Ani* Show_Ani33 = Node_Ani("돌진", 33, 0.95f);
+	CBT_Play_Ani* Show_Ani27 = Node_Ani("돌진", 27, 0.95f);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
@@ -398,7 +417,7 @@ CBT_Composite_Node * CDeerKing::Rush_RightFoot()
 	Root_Parallel->Add_Service(Effect8);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani33);
+	MainSeq->Add_Child(Show_Ani27);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -420,7 +439,7 @@ CBT_Composite_Node * CDeerKing::WhirlWind_RightFoot()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("휠윈드");
-	CBT_Play_Ani* Show_Ani32 = Node_Ani("휠윈드", 32, 0.9f);
+	CBT_Play_Ani* Show_Ani26 = Node_Ani("휠윈드", 26, 0.9f);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
@@ -445,7 +464,7 @@ CBT_Composite_Node * CDeerKing::WhirlWind_RightFoot()
 	Root_Parallel->Add_Service(Effect5);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani32);
+	MainSeq->Add_Child(Show_Ani26);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -466,7 +485,7 @@ CBT_Composite_Node * CDeerKing::Head_ColdBeam()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("머리 고드름");
-	CBT_Play_Ani* Show_Ani37 = Node_Ani("머리 고드름", 37, 0.95f);
+	CBT_Play_Ani* Show_Ani31 = Node_Ani("머리 고드름", 31, 0.95f);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
@@ -512,8 +531,8 @@ CBT_Composite_Node * CDeerKing::Head_ColdBeam()
 	Root_Parallel->Add_Service(Effect14);
 
 	// 고드름 생성
-	CBT_CreateBullet* Col0 = Node_CreateBullet("충돌체", L"Monster_DeerKingColdBeam", L"Bone_LeftCorner", L"Self_Dir"				, 0, 1, 1.766, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col1 = Node_CreateBullet("충돌체", L"Monster_DeerKingColdBeam", L"ColdBeam_Left_Pos", L"ColdBeam_Left_Dir"	, 0, 1, 1.766, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Col0 = Node_CreateBullet("충돌체", L"Monster_DeerKingColdBeam", L"ColdBeam_Left_Pos", L"ColdBeam_Left_Dir"	, 0, 1, 1.766, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Col1 = Node_CreateBullet("충돌체", L"Monster_DeerKingColdBeam", L"ColdBeam_Mid_Pos", L"ColdBeam_Mid_Dir"		, 0, 1, 1.766, 1, 0, 0, CBT_Service_Node::Finite);
 	CBT_CreateBullet* Col2 = Node_CreateBullet("충돌체", L"Monster_DeerKingColdBeam", L"ColdBeam_Right_Pos", L"ColdBeam_Right_Dir"	, 0, 1, 1.766, 1, 0, 0, CBT_Service_Node::Finite);
 
 	Root_Parallel->Add_Service(Col0);
@@ -521,7 +540,7 @@ CBT_Composite_Node * CDeerKing::Head_ColdBeam()
 	Root_Parallel->Add_Service(Col2);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani37);
+	MainSeq->Add_Child(Show_Ani31);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -541,22 +560,24 @@ CBT_Composite_Node * CDeerKing::Slide_Attack()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("머리 고드름");
-	CBT_Play_Ani* Show_Ani28 = Node_Ani("슬라이드 시작", 28, 0.8f);
-	CBT_Play_Ani* Show_Ani29 = Node_Ani("슬라이드 루프", 29, 0.95f);
-	CBT_Play_Ani* Show_Ani30 = Node_Ani("슬라이드 끝", 30, 0.85f);
+	CBT_Play_Ani* Show_Ani22 = Node_Ani("슬라이드 시작", 22, 0.8f);
+	CBT_Play_Ani* Show_Ani23 = Node_Ani("슬라이드 루프", 23, 0.95f);
+	CBT_Play_Ani* Show_Ani24 = Node_Ani("슬라이드 끝", 24, 0.85f);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기0", L"Player_Pos", 0.1);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", -2.f, 0.316, 0);
-	CBT_Wait* Wait0 = Node_Wait("대기", 0.334, 0);
+	//CBT_Wait* Wait0 = Node_Wait("대기", 0.334, 0);
+	CBT_Wait* Wait0 = Node_Wait("대기", 0.45, 0);
 	// 애니28번 * 0.8 = 0.866
 	// 애니29번 * 0.95 = 0.259
 	CBT_SetValue* PushColOff = Node_BOOL_SetValue("PushColOff", L"PushCol", false);
-	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 10.f, 0.116 + 0.259 + 0.066, 0);
+	//CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 20.f, 0.116 + 0.259 + 0.066, 0);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 20.f, 0.259 + 0.066, 0);
 	CBT_SetValue* PushColOn = Node_BOOL_SetValue("PushColOn", L"PushCol", true);
-	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 6.f, 0.1, 0);
-	CBT_MoveDirectly* Move3 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 4.f, 0.1, 0);
+	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 10.f, 0.1, 0);
+	CBT_MoveDirectly* Move3 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 5.f, 0.1, 0);
 	CBT_MoveDirectly* Move4 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 2.f, 0.1, 0);
 	CBT_MoveDirectly* Move5 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 1.f, 0.1, 0);
 
@@ -593,9 +614,9 @@ CBT_Composite_Node * CDeerKing::Slide_Attack()
 	Root_Parallel->Add_Service(Effect14);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani28);
-	MainSeq->Add_Child(Show_Ani29);
-	MainSeq->Add_Child(Show_Ani30);
+	MainSeq->Add_Child(Show_Ani22);
+	MainSeq->Add_Child(Show_Ani23);
+	MainSeq->Add_Child(Show_Ani24);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -621,7 +642,7 @@ CBT_Composite_Node * CDeerKing::Jump_Attack(_float fWeight)
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("점프해서 방패 찍기");
-	CBT_Play_Ani* Show_Ani35 = Node_Ani("점프해서 방패 찍기", 35, fWeight);
+	CBT_Play_Ani* Show_Ani29 = Node_Ani("점프해서 방패 찍기", 29, fWeight);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
@@ -674,7 +695,7 @@ CBT_Composite_Node * CDeerKing::Jump_Attack(_float fWeight)
 	Root_Parallel->Add_Service(Effect19);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani35);
+	MainSeq->Add_Child(Show_Ani29);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -696,7 +717,7 @@ CBT_Composite_Node * CDeerKing::Throwing()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 	
 	CBT_Sequence* MainSeq = Node_Sequence("투사체 던지기");
-	CBT_Play_Ani* Show_Ani27 = Node_Ani("투사체 던지기", 27, 0.95f);
+	CBT_Play_Ani* Show_Ani21 = Node_Ani("투사체 던지기", 21, 0.95f);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
@@ -707,7 +728,7 @@ CBT_Composite_Node * CDeerKing::Throwing()
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 1.f, 0.25, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani27);
+	MainSeq->Add_Child(Show_Ani21);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -753,9 +774,9 @@ CBT_Composite_Node * CDeerKing::Jump_In_Place()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("날기");
-	CBT_Play_Ani* Show_Ani43 = Node_Ani("날기 시작", 43, 0.85f);
-	CBT_Play_Ani* Show_Ani44 = Node_Ani("떨어짐 시작", 44, 0.9f);
-	CBT_Play_Ani* Show_Ani46 = Node_Ani("떨어짐 끝", 46, 0.9f);
+	CBT_Play_Ani* Show_Ani37 = Node_Ani("날기 시작", 37, 0.85f);
+	CBT_Play_Ani* Show_Ani38 = Node_Ani("떨어짐 시작", 38, 0.9f);
+	CBT_Play_Ani* Show_Ani40 = Node_Ani("떨어짐 끝", 40, 0.9f);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
@@ -823,9 +844,9 @@ CBT_Composite_Node * CDeerKing::Jump_In_Place()
 	Root_Parallel->Add_Service(Effect27);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani43);
-	MainSeq->Add_Child(Show_Ani44);
-	MainSeq->Add_Child(Show_Ani46);
+	MainSeq->Add_Child(Show_Ani37);
+	MainSeq->Add_Child(Show_Ani38);
+	MainSeq->Add_Child(Show_Ani40);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -843,9 +864,9 @@ CBT_Composite_Node * CDeerKing::Rush_Body()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("돌진 몸통 박치기");
-	CBT_Play_Ani* Show_Ani50 = Node_Ani("돌진 시작", 50, 0.85f);
-	CBT_Play_Ani* Show_Ani51 = Node_Ani("돌진 중", 51, 0.95f);
-	CBT_Play_Ani* Show_Ani53 = Node_Ani("돌진 끝", 53, 0.95f);
+	CBT_Play_Ani* Show_Ani45 = Node_Ani("돌진 시작", 45, 0.85f);
+	CBT_Play_Ani* Show_Ani46 = Node_Ani("돌진 중", 46, 0.95f);
+	CBT_Play_Ani* Show_Ani48 = Node_Ani("돌진 끝", 48, 0.95f);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
@@ -901,9 +922,9 @@ CBT_Composite_Node * CDeerKing::Rush_Body()
 	Root_Parallel->Add_Service(Effect13);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani50);
-	MainSeq->Add_Child(Show_Ani51);
-	MainSeq->Add_Child(Show_Ani53);
+	MainSeq->Add_Child(Show_Ani45);
+	MainSeq->Add_Child(Show_Ani46);
+	MainSeq->Add_Child(Show_Ani48);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -932,9 +953,9 @@ CBT_Composite_Node * CDeerKing::Jump_Fist()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("점프 내려치기");
-	CBT_Play_Ani* Show_Ani47 = Node_Ani("점프 내려치기 시작", 47, 0.9f);
-	CBT_Play_Ani* Show_Ani48 = Node_Ani("점프 내려치기 중", 48, 0.95f);
-	CBT_Play_Ani* Show_Ani49 = Node_Ani("점프 내려치기 끝", 49, 0.9f);
+	CBT_Play_Ani* Show_Ani42 = Node_Ani("점프 내려치기 시작", 42, 0.9f);
+	CBT_Play_Ani* Show_Ani43 = Node_Ani("점프 내려치기 중", 43, 0.95f);
+	CBT_Play_Ani* Show_Ani44 = Node_Ani("점프 내려치기 끝", 44, 0.9f);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
@@ -995,9 +1016,9 @@ CBT_Composite_Node * CDeerKing::Jump_Fist()
 	Root_Parallel->Add_Service(Effect22);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani47);
-	MainSeq->Add_Child(Show_Ani48);
-	MainSeq->Add_Child(Show_Ani49);
+	MainSeq->Add_Child(Show_Ani42);
+	MainSeq->Add_Child(Show_Ani43);
+	MainSeq->Add_Child(Show_Ani44);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -1017,7 +1038,7 @@ CBT_Composite_Node * CDeerKing::Blade_Attack()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("왼손 얼음칼 베기 ");
-	CBT_Play_Ani* Show_Ani38 = Node_Ani("왼손 얼음칼 베기", 38, 0.95f);
+	CBT_Play_Ani* Show_Ani32 = Node_Ani("왼손 얼음칼 베기", 32, 0.95f);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
@@ -1030,7 +1051,7 @@ CBT_Composite_Node * CDeerKing::Blade_Attack()
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", -1.f, 0.383, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani38);
+	MainSeq->Add_Child(Show_Ani32);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -1416,11 +1437,23 @@ HRESULT CDeerKing::Update_Value_Of_BB()
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"JumpFist_Pos", m_vLeftHand + fLength * vSelfRight);
 
 	// 5. 고드름 좌표
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ColdBeam_Left_Dir"	, *D3DXVec3TransformNormal(&_v3(), &vSelfLook, D3DXMatrixRotationAxis(&_mat(), &vSelfUp, D3DXToRadian(-40))));
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ColdBeam_Right_Dir"	, *D3DXVec3TransformNormal(&_v3(), &vSelfLook, D3DXMatrixRotationAxis(&_mat(), &vSelfUp, D3DXToRadian(40))));
-	
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ColdBeam_Left_Pos", m_vHeadColdBeamPos + m_pTransformCom->Get_Axis(AXIS_X) * -1.f);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ColdBeam_Right_Pos", m_vHeadColdBeamPos + m_pTransformCom->Get_Axis(AXIS_X) * 1.f);
+	//m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ColdBeam_Left_Dir"	, *D3DXVec3TransformNormal(&_v3(), &vSelfLook, D3DXMatrixRotationAxis(&_mat(), &vSelfUp, D3DXToRadian(-40))));
+	//m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ColdBeam_Right_Dir"	, *D3DXVec3TransformNormal(&_v3(), &vSelfLook, D3DXMatrixRotationAxis(&_mat(), &vSelfUp, D3DXToRadian(40))));
+	//
+	//m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ColdBeam_Left_Pos", m_vHeadColdBeamPos + m_pTransformCom->Get_Axis(AXIS_X) * -0.5f);
+	//m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ColdBeam_Right_Pos", m_vHeadColdBeamPos + m_pTransformCom->Get_Axis(AXIS_X) * 0.5f);
+
+	_v3 vDir0 = *D3DXVec3TransformNormal(&_v3(), &vSelfLook, D3DXMatrixRotationY(&_mat(), D3DXToRadian(-30)));
+	_v3 vDir1 = vSelfLook;
+	_v3 vDir2 = *D3DXVec3TransformNormal(&_v3(), &vSelfLook, D3DXMatrixRotationY(&_mat(), D3DXToRadian(30)));
+
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ColdBeam_Left_Dir", vDir0);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ColdBeam_Mid_Dir", vDir1);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ColdBeam_Right_Dir", vDir2);
+
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ColdBeam_Left_Pos", vSelfPos + vDir0);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ColdBeam_Mid_Pos", vSelfPos + vDir1);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ColdBeam_Right_Pos", vSelfPos + vDir2);
 
 
 	return S_OK;
@@ -1458,29 +1491,29 @@ HRESULT CDeerKing::Update_NF()
 			}
 			else
 			{
-				m_pMeshCom->SetUp_Animation(Ani_AppearanceLoop);
+				m_pMeshCom->SetUp_Animation(Ani_Appearance);
 			}
 		}
 		// 플레이어가 최대거리 밖에 있는가?
 		else
-			m_pMeshCom->SetUp_Animation(Ani_AppearanceLoop);
+			m_pMeshCom->SetUp_Animation(Ani_Appearance);
 
 
-		if (m_pMeshCom->Is_Finish_Animation(0.95f))
-		{
-			m_pMeshCom->Reset_OldIndx();
-			m_pMeshCom->SetUp_Animation(Ani_AppearanceLoop);
-		}
+		//if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		//{
+		//	m_pMeshCom->Reset_OldIndx();
+		//	m_pMeshCom->SetUp_Animation(Ani_AppearanceLoop);
+		//}
 
 	}
 	// 플레이어 발견
 	else
 	{
-		m_pMeshCom->SetUp_Animation(Ani_Appearance);
+		m_pMeshCom->SetUp_Animation(Ani_Appearance_End);
 
-		if (m_pMeshCom->Is_Finish_Animation(0.97f))
+		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_pMeshCom->SetUp_Animation(Ani_AppearanceLoop);
+			m_pMeshCom->SetUp_Animation(Ani_Idle);
 			m_bFight = true;
 		}
 	}

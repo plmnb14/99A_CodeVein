@@ -20,10 +20,15 @@ HRESULT CFireBullet::Ready_GameObject_Prototype()
 
 HRESULT CFireBullet::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component()))
-		return E_FAIL;
+	if (nullptr == pArg)
+	{
+		if (FAILED(Add_Component()))
+			return E_FAIL;
 
-	Ready_Collider();
+		Ready_Collider();
+
+		return S_OK;
+	}
 
 	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
 
@@ -31,6 +36,9 @@ HRESULT CFireBullet::Ready_GameObject(void * pArg)
 	m_fSpeed = temp.fSpeed;
 	m_dLifeTime = temp.dLifeTime;
 	
+	m_dCurTime = 0;
+	m_fEffectOffset = 0.f;
+	m_bDead = false;
 
 
 	m_pTransformCom->Set_Pos(temp.vCreatePos);

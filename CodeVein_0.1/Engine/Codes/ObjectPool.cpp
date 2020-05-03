@@ -1,7 +1,6 @@
 #include "..\Headers\ObjectPool.h"
 #include "..\Headers\Management.h"
 
-
 CObjectPool::CObjectPool()
 {
 }
@@ -25,23 +24,21 @@ _int CObjectPool::Update_ObjectPool(_double dTimeDelta)
 {
 	_int iProgress = 0;
 
-
-	for (auto& iter = m_listRunningObject.begin(); iter != m_listRunningObject.end(); )
+	for (auto& iter_begin = m_listRunningObject.begin(); iter_begin != m_listRunningObject.end(); )
 	{
-		iProgress = (*iter)->Update_GameObject(dTimeDelta);
+		iProgress = (*iter_begin)->Update_GameObject(dTimeDelta);
 
 		if (DEAD_OBJ == iProgress)
 		{
+			m_Container.push((*iter_begin));
 
-
-			m_Container.push((*iter));
-
-			iter = m_listRunningObject.erase(iter);
+			iter_begin = m_listRunningObject.erase(iter_begin);
 		}
-
+		else
+			iter_begin++;
 	}
 
-	return _int();
+	return NO_EVENT;
 }
 
 _int CObjectPool::LateUpdate_ObjectPool(_double dTimeDelta)
@@ -49,7 +46,7 @@ _int CObjectPool::LateUpdate_ObjectPool(_double dTimeDelta)
 	for (auto& Object : m_listRunningObject)
 		Object->Late_Update_GameObject(dTimeDelta);
 
-	return _int();
+	return NO_EVENT;
 }
 
 void CObjectPool::Create_Object(void * pArg)
@@ -63,6 +60,7 @@ void CObjectPool::Create_Object(void * pArg)
 		m_listRunningObject.push_back(pInstance);
 		m_Container.pop();
 	}
+
 }
 
 CObjectPool * CObjectPool::Create_ObjectPool(const _tchar* pPrototypeTag, _uint iPoolSize)
@@ -80,16 +78,16 @@ CObjectPool * CObjectPool::Create_ObjectPool(const _tchar* pPrototypeTag, _uint 
 
 void CObjectPool::Free()
 {
-	_int iQueueSize = m_Container.size();
-	for (_int i = 0; i < iQueueSize; ++i)
+	size_t iQueueSize = m_Container.size();
+	for (size_t i = 0; i < iQueueSize; ++i)
 	{
 		Safe_Release(m_Container.front());
 		m_Container.pop();
 	}
 
-
 	for (auto& i : m_listRunningObject)
 		Safe_Release(i);
+
 	m_listRunningObject.clear();
 
 }

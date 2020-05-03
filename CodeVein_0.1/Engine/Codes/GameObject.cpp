@@ -179,10 +179,10 @@ void CGameObject::Check_Dissolve(_double TimeDelta)
 			if (m_bReadyDead)
 				m_bIsDead = true;
 
-			else
-			{
-				m_bDissolve = false;
-			}
+			//else
+			//{
+			//	m_bDissolve = false;
+			//}
 
 			m_fFXAlpha = 1.f;
 		}
@@ -195,7 +195,7 @@ void CGameObject::Check_Dissolve(_double TimeDelta)
 		{
 			m_fFXAlpha = 0.3f;
 			m_iPass = m_iTempPass;
-			cout << "µðÁ¹ºê°¡ ³¡³µ´Âµ¥ ¾È¿¡¿È?" << endl;
+			//cout << "µðÁ¹ºê°¡ ³¡³µ´Âµ¥ ¾È¿¡¿È?" << endl;
 
 			m_bDissolve = false;
 		}

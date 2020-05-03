@@ -2,12 +2,12 @@
 #include "..\Headers\MonkeyBullet.h"
 
 CMonkeyBullet::CMonkeyBullet(LPDIRECT3DDEVICE9 pGraphic_Device)
-	: CGameObject(pGraphic_Device)
+	: CMonster(pGraphic_Device)
 {
 }
 
 CMonkeyBullet::CMonkeyBullet(const CMonkeyBullet & rhs)
-	: CGameObject(rhs)
+	: CMonster(rhs)
 {
 }
 
@@ -28,14 +28,15 @@ HRESULT CMonkeyBullet::Ready_GameObject(void * pArg)
 		return S_OK;
 	}
 
-	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
+	MONSTER_BULLET_STATUS info = *(MONSTER_BULLET_STATUS*)pArg;
 
-	m_vDir = temp.vDir;
-	m_fSpeed = temp.fSpeed;
-	m_dLifeTime = temp.dLifeTime;
+	m_eBulletType = info.eBulletType;
+	m_vDir = info.vDir;
+	m_fSpeed = info.fSpeed;
+	m_dLifeTime = info.dLifeTime;
 
-	m_pTransformCom->Set_Pos(temp.vCreatePos);
-	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
+	m_pTransformCom->Set_Pos(info.vCreatePos);
+	m_pTransformCom->Set_Scale(V3_ONE);
 
 	// Calc Angle
 	_v3	vRight = *D3DXVec3Cross(&vRight, &_v3(0.f, 1.f, 0.f), &m_vDir);
@@ -54,9 +55,9 @@ HRESULT CMonkeyBullet::Ready_GameObject(void * pArg)
 	m_bEffect = true;
 
 	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Monkey_Knife", nullptr));
-	m_pBulletBody->Set_Desc(_v3(0, 0, 0), nullptr);
+	m_pBulletBody->Set_Desc(V3_NULL, m_pTransformCom);
 	m_pBulletBody->Set_ParentObject(this);
-	m_pBulletBody->Reset_Init();;
+	m_pBulletBody->Reset_Init();
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
 
 	m_pTrailEffect = g_pManagement->Create_Trail();
@@ -72,7 +73,7 @@ _int CMonkeyBullet::Update_GameObject(_double TimeDelta)
 	if (m_bDead)
 		return DEAD_OBJ;
 
-	Enter_Collision();
+	Check_CollisionEvent();
 	Update_Trails(TimeDelta);
 
 	m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
@@ -115,6 +116,24 @@ HRESULT CMonkeyBullet::Render_GameObject()
 	return S_OK;
 }
 
+void CMonkeyBullet::Update_Trails(_double TimeDelta)
+{
+	_mat matWorld = m_pTransformCom->Get_WorldMat();
+	_v3 vBegin, vDir;
+
+	memcpy(vBegin, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
+	memcpy(vDir, &m_pTransformCom->Get_WorldMat()._21, sizeof(_v3));
+
+	if (m_pTrailEffect)
+	{
+		m_pTrailEffect->Set_ParentTransform(&matWorld);
+		m_pTrailEffect->Ready_Info(vBegin + vDir * -0.05f, vBegin + vDir * 0.05f);
+		// m_pTrailEffect->Update_GameObject(TimeDelta);
+	}
+
+	return;
+}
+
 void CMonkeyBullet::Update_Collider()
 {
 	_ulong matrixIdx = 0;
@@ -142,33 +161,16 @@ void CMonkeyBullet::Render_Collider()
 	return;
 }
 
-void CMonkeyBullet::Update_Trails(_double TimeDelta)
-{
-	_mat matWorld = m_pTransformCom->Get_WorldMat();
-	_v3 vBegin, vDir;
-
-	memcpy(vBegin, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
-	memcpy(vDir, &m_pTransformCom->Get_WorldMat()._21, sizeof(_v3));
-
-	if (m_pTrailEffect)
-	{
-		m_pTrailEffect->Set_ParentTransform(&matWorld);
-		m_pTrailEffect->Ready_Info(vBegin + vDir * -0.05f, vBegin + vDir * 0.05f);
-		// m_pTrailEffect->Update_GameObject(TimeDelta);
-	}
-
-	return;
-}
-
-void CMonkeyBullet::Enter_Collision()
+void CMonkeyBullet::Check_CollisionEvent()
 {
 	Update_Collider();
-	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
+	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
+	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE));
 
 	return;
 }
 
-void CMonkeyBullet::Check_CollisionEvent(list<CGameObject*> plistGameObject)
+void CMonkeyBullet::Check_CollisionHit(list<CGameObject*> plistGameObject)
 {
 	if (false == m_tObjParam.bCanAttack)
 		return;
@@ -195,7 +197,7 @@ void CMonkeyBullet::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 					}
 
 					iter->Set_Target_CanHit(false);
-					iter->Add_Target_Hp(m_tObjParam.fDamage);
+					iter->Add_Target_Hp(-m_tObjParam.fDamage);
 
 					m_dCurTime = 100;	// 바로 사망시키기 위해서 현재시간 100줬음
 

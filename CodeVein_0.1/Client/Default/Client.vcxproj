@@ -177,7 +177,10 @@
     <ClInclude Include="..\Headers\BloodCodeMenuUI.h" />
     <ClInclude Include="..\Headers\BloodCodeSelectUI.h" />
     <ClInclude Include="..\Headers\BloodCodeSlot.h" />
+    <ClInclude Include="..\Headers\BloodCodeUI.h" />
     <ClInclude Include="..\Headers\BloodCode_Icon.h" />
+    <ClInclude Include="..\Headers\BloodCode_Inven.h" />
+    <ClInclude Include="..\Headers\BloodSkillCursor.h" />
     <ClInclude Include="..\Headers\BloodSkillSlot.h" />
     <ClInclude Include="..\Headers\BossDecoUI.h" />
     <ClInclude Include="..\Headers\BossHP.h" />
@@ -214,6 +217,8 @@
     <ClInclude Include="..\Headers\FireGround.h" />
     <ClInclude Include="..\Headers\FireSphere.h" />
     <ClInclude Include="..\Headers\FireTornadoCol.h" />
+    <ClInclude Include="..\Headers\Monster.h" />
+    <ClInclude Include="..\Headers\Pet_Bullet.h" />
     <ClInclude Include="..\Headers\Pet_PoisonButterFly.h" />
     <ClInclude Include="..\Headers\PlayerFontUI.h" />
     <ClInclude Include="..\Headers\FontNumUI.h" />
@@ -225,7 +230,6 @@
     <ClInclude Include="..\Headers\HunterBullet.h" />
     <ClInclude Include="..\Headers\IceBarrier.h" />
     <ClInclude Include="..\Headers\IceGirl.h" />
-    <ClInclude Include="..\Headers\Info_Monster.h" />
     <ClInclude Include="..\Headers\Info_Slot.h" />
     <ClInclude Include="..\Headers\Inventory.h" />
     <ClInclude Include="..\Headers\Inventory_Icon.h" />
@@ -242,7 +246,6 @@
     <ClInclude Include="..\Headers\MistletoeUI.h" />
     <ClInclude Include="..\Headers\Monkey.h" />
     <ClInclude Include="..\Headers\MonkeyBullet.h" />
-    <ClInclude Include="..\Headers\Monster.h" />
     <ClInclude Include="..\Headers\MonsterHeaders.h" />
     <ClInclude Include="..\Headers\MonsterUI.h" />
     <ClInclude Include="..\Headers\NumberUI.h" />
@@ -314,7 +317,10 @@
     <ClCompile Include="..\Codes\BloodCodeMenuUI.cpp" />
     <ClCompile Include="..\Codes\BloodCodeSelectUI.cpp" />
     <ClCompile Include="..\Codes\BloodCodeSlot.cpp" />
+    <ClCompile Include="..\Codes\BloodCodeUI.cpp" />
     <ClCompile Include="..\Codes\BloodCode_Icon.cpp" />
+    <ClCompile Include="..\Codes\BloodCode_Inven.cpp" />
+    <ClCompile Include="..\Codes\BloodSkillCursor.cpp" />
     <ClCompile Include="..\Codes\BloodSkillSlot.cpp" />
     <ClCompile Include="..\Codes\BossDecoUI.cpp" />
     <ClCompile Include="..\Codes\BossHP.cpp" />
@@ -350,6 +356,7 @@
     <ClCompile Include="..\Codes\FireGround.cpp" />
     <ClCompile Include="..\Codes\FireSphere.cpp" />
     <ClCompile Include="..\Codes\FireTornadoCol.cpp" />
+    <ClCompile Include="..\Codes\Pet_Bullet.cpp" />
     <ClCompile Include="..\Codes\Pet_PoisonButterFly.cpp" />
     <ClCompile Include="..\Codes\PlayerFontUI.cpp" />
     <ClCompile Include="..\Codes\FontNumUI.cpp" />

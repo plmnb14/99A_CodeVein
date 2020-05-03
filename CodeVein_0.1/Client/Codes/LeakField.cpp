@@ -20,12 +20,23 @@ HRESULT CLeakField::Ready_GameObject_Prototype()
 
 HRESULT CLeakField::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component()))
-		return E_FAIL;
+	if (nullptr == pArg)
+	{
+		if (FAILED(Add_Component()))
+			return E_FAIL;
 
-	Ready_Collider();
+		Ready_Collider();
+
+		return S_OK;
+	}
 
 	CBT_CreateBuff::BUFF_INFO temp = *(CBT_CreateBuff::BUFF_INFO*)(pArg);
+
+	if (m_pTarget_Transform)
+		Safe_Release(m_pTarget_Transform);
+
+	if (m_pTarget_AIController)
+		Safe_Release(m_pTarget_AIController);
 
 	m_pTarget_Transform = temp.pTransform;
 	Safe_AddRef(m_pTarget_Transform);
@@ -36,10 +47,15 @@ HRESULT CLeakField::Ready_GameObject(void * pArg)
 	m_dLifeTime = temp.dLifeTime;
 	m_fSpeed = 13.f;
 
+	m_bDead = false;
+	m_fEffectOffset = 0.f;
+	m_dCurTime = 0.f;
+	
 	m_pTransformCom->Set_Pos(m_pTarget_Transform->Get_Pos());
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 	m_tObjParam.bCanAttack = true;
+	m_tObjParam.fDamage = 20.f;
 
 	return NOERROR;
 }
@@ -53,7 +69,8 @@ _int CLeakField::Update_GameObject(_double TimeDelta)
 
 	m_pTransformCom->Add_Pos(_float(m_fSpeed * TimeDelta), *D3DXVec3Normalize(&_v3(), &_v3(m_pTarget_Transform->Get_Pos() - m_pTransformCom->Get_Pos())));
 	// 충돌처리는 이펙트 넣고 나서 할 것임.
-	//OnCollisionEnter();
+	OnCollisionEnter();
+	m_dTimeDelta = TimeDelta;
 
 	m_dCurTime += TimeDelta;
 
@@ -176,13 +193,13 @@ void CLeakField::OnCollisionEvent(list<CGameObject*> plistGameObject)
 
 					if (false == iter->Get_Target_IsDodge())
 					{
-						iter->Set_Target_CanHit(false);
+						//iter->Set_Target_CanHit(false);
 
-						// 타겟이 피격 가능하다면
-						if (iter->Get_Target_IsHit())
-							iter->Set_HitAgain(true);
+						//// 타겟이 피격 가능하다면
+						//if (iter->Get_Target_IsHit())
+						//	iter->Set_HitAgain(true);
 
-						iter->Add_Target_Hp(-m_tObjParam.fDamage);
+						iter->Add_Target_Hp(_float(-m_tObjParam.fDamage * m_dTimeDelta));
 					}
 
 					break;

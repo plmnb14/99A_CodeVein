@@ -4,6 +4,7 @@
 #include "UI.h"
 
 BEGIN(Client)
+class CBloodSkillCursor;
 class CBloodSkillSlot final : public CUI
 {
 private:
@@ -13,6 +14,7 @@ private:
 
 public:
 	void Set_SkillIndex(Skill_Index eSkillIndex) { m_eSkillIndex = eSkillIndex; }
+	void Set_Select(_bool bIsSelect) { m_bIsSelect = bIsSelect; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -23,7 +25,8 @@ public:
 
 private:
 	HRESULT Add_Component();
-	HRESULT SetUp_ConstantTable(_uint iIndex);
+	HRESULT SetUp_ConstantTable(_uint iDiffuse);
+	void	SetUp_Default();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -31,9 +34,13 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
+	CCollider*				m_pCollider = nullptr;
 
 private:
 	Skill_Index				m_eSkillIndex = Skill_End;
+	CBloodSkillCursor*		m_pCursor = nullptr;
+	_bool					m_bIsSelect = false;
+	_float					m_fSpeed = 0.f;
 
 public:
 	static CBloodSkillSlot*		Create(_Device pGraphic_Device);

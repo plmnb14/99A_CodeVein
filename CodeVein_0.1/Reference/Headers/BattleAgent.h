@@ -8,6 +8,8 @@ BEGIN(Engine)
 class CGameObject;
 class CTransform;
 class CShader;
+class CGameObject;
+
 class ENGINE_DLL CBattleAgent : public CComponent
 {
 private:
@@ -67,7 +69,7 @@ public:
 //=======================================================================
 public:
 	// 나로 부터 거리가 가장 가까운 타겟을 반환합니다.
-	CGameObject*	Calc_LengthNearByMe(list<CGameObject*> _listGameObject, _v3 _vMyPos, _float _fMinLengthValue = 0.f , _float* _ppLength = nullptr);
+	CGameObject* Calc_LengthNearByMe(list<CGameObject*> _listGameObject, _v3 _vMyPos, _float _fMinLengthValue = 0.f, _float* _ppLength = nullptr);
 //=======================================================================
 
 private:

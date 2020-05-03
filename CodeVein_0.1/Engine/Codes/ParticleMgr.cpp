@@ -531,14 +531,18 @@ HRESULT CParticleMgr::Update_Trail(const _double TimeDelta)
 
 	for (auto& iter = m_TrailList.begin(); iter != m_TrailList.end(); )
 	{
-		iProgress = (*iter)->Update_GameObject(TimeDelta);
+		//iProgress = (*iter)->Update_GameObject(TimeDelta);
+		_bool bDead = (*iter)->Get_Dead();
 
-		if (DEAD_OBJ == iProgress)
+		//if (DEAD_OBJ == iProgress)
+		if (bDead)
 		{
 			m_TrailPool[L"GameObject_SwordTrail"].push((*iter));
 
 			iter = m_TrailList.erase(iter);
 		}
+		else
+			iter++;
 
 	}
 
@@ -1053,11 +1057,12 @@ CTrail_VFX* CParticleMgr::Create_Trail()
 	if (10 > pFindedQueue->size())
 	{
 		 pTrail = static_cast<CTrail_VFX*>(m_pManagement->Clone_GameObject_Return(szName, nullptr));
+		 m_TrailList_ForDelete.push_back(pTrail);
 	}
 	else
 	{
 		pTrail = pFindedQueue->front();
-		pTrail->Reset_Info();
+		//pTrail->Reset_Info();
 
 		pFindedQueue->pop();
 	}
@@ -1135,6 +1140,8 @@ void CParticleMgr::Input_Pool_Trail(_tchar* szName, _int iCount)
 		// 미리 클론만 해놓기
 		CTrail_VFX* pTrail = static_cast<CTrail_VFX*>(m_pManagement->Clone_GameObject_Return(szName, nullptr));
 		m_TrailPool[szName].push(pTrail);
+
+		m_TrailList_ForDelete.push_back(pTrail);
 	}
 }
 
@@ -1173,27 +1180,33 @@ void CParticleMgr::Free()
 	}
 	m_EffectPool.clear();
 
-	for (auto& iter : m_TrailPool)
-	{
-		_int iQueueSize = _int(iter.second.size());
-		for (_int i = 0; i < iQueueSize; ++i)
-		{
-			Safe_Release(iter.second.front());
-			iter.second.pop();
-		}
-	}
+	//for (auto& iter : m_TrailPool)
+	//{
+	//	_int iQueueSize = _int(iter.second.size());
+	//	for (_int i = 0; i < iQueueSize; ++i)
+	//	{
+	//		Safe_Release(iter.second.front());
+	//		iter.second.pop();
+	//	}
+	//}
 	m_TrailPool.clear();
-	
+
+	//for (auto& iter : m_TrailList)
+	//	Safe_Release(iter);
+
+	for (auto& iter : m_TrailList_ForDelete)
+		Safe_Release(iter);
+	m_TrailList_ForDelete.clear();
+
 	for (auto& iter : m_EffectList)
 		Safe_Release(iter);
-
-	for(auto& iter : m_TrailList)
-		Safe_Release(iter);
+	m_EffectList.clear();
 
 	for (auto& iter : m_vecParticle)
 	{
 		Safe_Delete(iter);
 	}
+	m_vecParticle.clear();
 
 	//Safe_Release(m_pManagement);
 }

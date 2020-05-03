@@ -102,7 +102,7 @@ PS_OUT PS_MOTIONBLUR(PS_MOTIONBLUR_IN In)
 	Out.vVelocity = vector(velocity.xy, In.vProjPos.z / In.vProjPos.w, 1.f);
 	
 	if (!g_bMotionBlur)
-		Out.vVelocity.w = 0;
+		Out.vVelocity = vector(0.f, 0.f, 0.f, 0.f);
 	
 	float HeightValue = tex2D(HeightSampler, In.vTexUV).x;
 

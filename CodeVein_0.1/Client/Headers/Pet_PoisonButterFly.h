@@ -4,18 +4,60 @@
 
 BEGIN(Client)
 
-class CPet_PoisonButterFly :public CPet
+class CPet_PoisonButterFly final : public CPet
 {
 public:
+	enum ATK_NORMAL_TYPE
+	{
+		NORMAL_5SHOT,
+		NORMAL_MIST,
+		NORMAL_POISONWHEELWIND,
+	};
+
 	enum PET_POISIONBUTTERFLY_ANI
 	{
+		Idle,
+		Deformation,
+		Appearance,
+		Appearance_End,
 
+		Walk_R,
+		Walk_L,
+		Walk_F,
+		Walk_B,
+
+		Dodge,
+		Down_Start,
+		Down_Loop,
+		Down_End,
+
+		Dmg_F,
+		Dmg_B,
+
+		Death,
+
+		Atk_Rush,
+		Atk_Rotation,
+		Atk_R04,
+		Atk_R03,
+		Atk_R02,
+		Atk_R01,
+		Atk_PoisonMist,
+		Atk_PoisonMine,
+		Atk_PoisonBreath,
+		Atk_L02,
+		Atk_L01,
+		Atk_AllRangeShoot,
+		Atk_5wayShoot,
 	};
+
 	enum BONE_TYPE
 	{
 		Bone_Range,
 		Bone_Head,
 		Bone_Body,
+		Bone_Tail,
+		Bone_TailTongue,
 		Bone_End
 	};
 
@@ -32,21 +74,33 @@ public:
 	virtual HRESULT Render_GameObject() override;
 	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur =false) override;
 
-	virtual void Update_Collider() override;
-	virtual void Render_Collider() override;
-	virtual void Check_CollisionEvent() override;
-	virtual void Check_CollisionPush() override;
-	virtual void Check_CollisionHit(list<CGameObject*> plistGameObject) override;
+private:
+	void Update_Collider();
+	void Render_Collider();
 
-//private:
-//	void Function_Find_Target();
-//
-//private:
-//	void Check_PosY();
-//	void Check_Hit();
-//	void Check_Dist();
-//	void Check_AniEvent();
-//	void Check_DeadEffect(_double TimeDelta);
+	void Check_Hit();
+	void Check_Dist();
+	void Check_Action();
+	void Check_AniEvent();
+	void Check_DeadEffect(_double TimeDelta);
+
+	void Play_5Shot(); // Atk_5wayShoot
+	void Play_Mist(); //allrangeshot
+	void Play_GetItem(); //아이템 획득
+	void Play_Target_CC();
+	//몬스터에게 강제로 cc기를 입히는 행위, 공격우선을 할 경우 player가 떄리는 객체를 기준으로 할 예정
+	//쿨타임 매우 길게 5초에 1번?
+	//락온한 객채를 대상으로 작동?
+	//락온 대상이 죽었을 경우 근처의 타겟을 1순위로
+	//그러나 락온으로 새로운 대상을 지정할 경우 해당 객체를 1순위로
+	void Play_PoisonWheelWind(); //atk_poisonmine
+
+protected:
+	virtual void Play_Idle() override;
+	virtual void Play_Move() override;
+	virtual void Play_CC() override;
+	virtual void Play_Hit() override;
+	virtual void Play_Dead() override;
 
 protected:
 	virtual HRESULT Add_Component(void * pArg) override;
@@ -62,8 +116,8 @@ public:
 	virtual void Free();
 
 private:
-	_mat*	m_matBone[Bone_End];
-	PET_POISIONBUTTERFLY_ANI m_eState;
+	_mat*						m_matBone[Bone_End];
+	PET_POISIONBUTTERFLY_ANI	m_eState;
 
 };
 

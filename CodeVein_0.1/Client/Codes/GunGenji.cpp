@@ -165,7 +165,7 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 		// 플레이어 미발견
 		if (false == m_bFight)
 		{
-			//Update_NF();
+			Update_NF();
 		}
 		// 플레이어 발견
 		else
@@ -218,13 +218,24 @@ _int CGunGenji::Late_Update_GameObject(_double TimeDelta)
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
 
+
 	//=============================================================================================
 	// 그림자랑 모션블러는 프리스텀 안에 없으면 안그림
 	//=============================================================================================
 	if (m_pOptimization->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
 	{
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
-			return E_FAIL;
+		if (!m_bDissolve)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
+				return E_FAIL;
+		}
+
+		else
+		{
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
+				return E_FAIL;
+		}
+
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
 			return E_FAIL;
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
@@ -364,6 +375,7 @@ HRESULT CGunGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool
 			_int tmpPass = m_pMeshCom->Get_MaterialPass(i, j);
 
 			pShader->Begin_Pass(iPass);
+			pShader->Commit_Changes();
 
 			pShader->Commit_Changes();
 
@@ -372,6 +384,7 @@ HRESULT CGunGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool
 			pShader->End_Pass();
 		}
 	}
+
 	//============================================================================================
 
 	return S_OK;
@@ -1071,19 +1084,19 @@ HRESULT CGunGenji::Add_Component(void* pArg)
 	INFO eTemp = *(INFO*)pArg;
 
 	if (nullptr == pArg)
-		lstrcpy(name, L"Mesh_NormalGenji");
+		lstrcpy(name, L"Mesh_Genji_Normal");
 	else
 	{
 		switch (eTemp.eColor)
 		{
 		case CGunGenji::Jungle:
-			lstrcpy(name, L"Mesh_JungleGenji");
+			lstrcpy(name, L"Mesh_Genji_Green");
 			break;
 		case CGunGenji::Normal:
-			lstrcpy(name, L"Mesh_NormalGenji");
+			lstrcpy(name, L"Mesh_Genji_Normal");
 			break;
 		case CGunGenji::White:
-			lstrcpy(name, L"Mesh_WhiteGenji");
+			lstrcpy(name, L"Mesh_Genji_White");
 			break;
 		}
 	}

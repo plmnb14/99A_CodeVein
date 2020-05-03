@@ -20,8 +20,8 @@ public:
 
 private:
 	enum Ani {
-		Ani_Idle = 6, Ani_Death = 12, Ani_Dmg01_B = 14, Ani_Appearance = 16, Ani_Down_Start = 7,
-		Ani_Down_Loop = 8, Ani_Down_End = 9
+		Ani_Idle = 0, Ani_Death = 14, /*Ani_Dmg01_B = 14, */Ani_Appearance = 2, Ani_Appearance_End = 3, Ani_Down_Start = 9,
+		Ani_Down_Loop = 10, Ani_Down_End = 11
 	};
 
 private:
