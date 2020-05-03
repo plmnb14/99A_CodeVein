@@ -170,11 +170,13 @@ void CReleaseQuestionUI::Click_Option()
 				m_bIsActive = false;
 				CUI_Manager::Get_Instance()->Get_Skill_AcquisitionUI()->Set_Skill(m_eReleaseSkill);
 				CUI_Manager::Get_Instance()->Get_Skill_AcquisitionUI()->Set_Active(true);
+				m_bIsRelease = true;
 			}
 			else if ((1 == m_vecOption[i]->Get_UI_Index()) && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
 				// √Îº“
 				m_bIsActive = false;
+				m_bIsRelease = false;
 			}
 		}
 		else

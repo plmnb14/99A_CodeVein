@@ -415,6 +415,15 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillAcquisitionUI">
       <UniqueIdentifier>{bbfa188e-2624-4f13-896b-9dd2806721b5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven">
+      <UniqueIdentifier>{2fcd7779-fb91-4640-b0cd-1f31bff5cc5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\10. SkillSlot">
+      <UniqueIdentifier>{0a7dac9f-8188-4331-8b3d-aa9a54e399e7}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\SkillIcon">
+      <UniqueIdentifier>{49122cd9-a09a-4a0c-b445-9ba57b8cf2ac}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -858,6 +867,15 @@
     <ClInclude Include="..\Headers\OKMessageUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillAcquisitionUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Skill_Inven.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\SkillSlot.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\10. SkillSlot</Filter>
+    </ClInclude>
+    <ClInclude Include="SkillIcon.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\SkillIcon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1288,6 +1306,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\OKMessageUI..cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillAcquisitionUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Skill_Inven.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SkillSlot.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\10. SkillSlot</Filter>
+    </ClCompile>
+    <ClCompile Include="SkillIcon.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\SkillIcon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

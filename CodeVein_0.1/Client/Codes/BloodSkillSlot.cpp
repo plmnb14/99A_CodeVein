@@ -131,9 +131,9 @@ HRESULT CBloodSkillSlot::Render_GameObject()
 	}
 	else
 	{
-		LOOP(2)
+		//LOOP(2)
 		{
-			(0 == i) ? (iIndex = 0) && (iPass = 1) : (iIndex = m_iIndex) && (iPass = 1);
+			/*(0 == i) ? (iIndex = 0) && (iPass = 1) : */(iIndex = m_iIndex) && (iPass = 1);
 
 			if (FAILED(SetUp_ConstantTable(iIndex)))
 				return E_FAIL;

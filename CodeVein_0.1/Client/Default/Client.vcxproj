@@ -275,8 +275,10 @@
     <ClInclude Include="..\Headers\SkillGauge.h" />
     <ClInclude Include="..\Headers\ReleaseQuestionUI.h" />
     <ClInclude Include="..\Headers\SkillReleaseUI.h" />
+    <ClInclude Include="..\Headers\SkillSlot.h" />
     <ClInclude Include="..\Headers\SkillUI.h" />
     <ClInclude Include="..\Headers\OKMessageUI.h" />
+    <ClInclude Include="..\Headers\Skill_Inven.h" />
     <ClInclude Include="..\Headers\StageSelectUI.h" />
     <ClInclude Include="..\Headers\StageUI.h" />
     <ClInclude Include="..\Headers\StatusUI.h" />
@@ -309,6 +311,7 @@
     <ClInclude Include="Client.h" />
     <ClInclude Include="ReleaseOption.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SkillIcon.h" />
     <ClInclude Include="StageLoader.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -417,8 +420,10 @@
     <ClCompile Include="..\Codes\SkillGauge.cpp" />
     <ClCompile Include="..\Codes\ReleaseQuestionUI.cpp" />
     <ClCompile Include="..\Codes\SkillReleaseUI.cpp" />
+    <ClCompile Include="..\Codes\SkillSlot.cpp" />
     <ClCompile Include="..\Codes\SkillUI.cpp" />
     <ClCompile Include="..\Codes\OKMessageUI..cpp" />
+    <ClCompile Include="..\Codes\Skill_Inven.cpp" />
     <ClCompile Include="..\Codes\StageSelectUI.cpp" />
     <ClCompile Include="..\Codes\StageUI.cpp" />
     <ClCompile Include="..\Codes\StatusUI.cpp" />
@@ -450,6 +455,7 @@
     <ClCompile Include="..\Codes\YetiBullet.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="ReleaseOption.cpp" />
+    <ClCompile Include="SkillIcon.cpp" />
     <ClCompile Include="StageLoader.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>

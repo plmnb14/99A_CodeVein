@@ -25,7 +25,7 @@ HRESULT CMistletoeOptionUI::Ready_GameObject(void * pArg)
 	CUI::Ready_GameObject(pArg);
 	m_bIsActive = false;
 	
-	m_pCollider->Set_Radius(_v3{ 0.42f, 0.05f, 0.01f });
+	m_pCollider->Set_Radius(_v3{ 0.5f, 0.07f, 0.1f });
 	m_pCollider->Set_Dynamic(true);
 	m_pCollider->Set_Type(COL_SPHERE);
 	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos());

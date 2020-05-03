@@ -91,6 +91,11 @@ _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 		m_pQuickSlotInfo[i]->Set_Active(m_bIsActive);
 	}
 		
+	for (auto& iter : m_vecSkillIcon)
+	{
+		iter->Set_Active(m_bIsActive);
+	}
+		
 	return NO_EVENT;
 }
 
@@ -104,7 +109,6 @@ _int CTotal_Inven::Late_Update_GameObject(_double TimeDelta)
 	m_matWorld._33 = 1.f;
 	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
 	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;
-	m_matWorld._42 = 1.f;
 
 	return NO_EVENT;
 }
@@ -119,9 +123,6 @@ HRESULT CTotal_Inven::Render_GameObject()
 		return E_FAIL;
 
 	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
-
-	m_matOldView = g_pManagement->Get_Transform(D3DTS_VIEW);
-	m_matOldProj = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
@@ -139,9 +140,6 @@ HRESULT CTotal_Inven::Render_GameObject()
 	m_pShaderCom->End_Pass();
 
 	m_pShaderCom->End_Shader();
-
-	g_pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
-	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
 
 	return NOERROR;
 }
@@ -260,7 +258,25 @@ void CTotal_Inven::SetUp_Default()
 		m_pNumberUI[i] = static_cast<CNumberUI*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
 	}
 
-	
+	CSkillIcon* pSkillIcon = nullptr;
+	LOOP(8)
+	{
+		pSkillIcon = static_cast<CSkillIcon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SkillIcon", nullptr));
+		pSkillIcon->Set_UI_Size(40.f, 40.f);
+		pSkillIcon->Set_ViewZ(m_fViewZ - 0.1f);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pSkillIcon, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+		m_vecSkillIcon.push_back(pSkillIcon);
+	}
+
+	m_vecSkillIcon[0]->Set_UI_Pos(541.f, 234.f);
+	m_vecSkillIcon[1]->Set_UI_Pos(487.f, 262.f);
+	m_vecSkillIcon[2]->Set_UI_Pos(595.f, 262.f);
+	m_vecSkillIcon[3]->Set_UI_Pos(541.f, 290.f);
+
+	m_vecSkillIcon[4]->Set_UI_Pos(541.f, 360.f);
+	m_vecSkillIcon[5]->Set_UI_Pos(487.f, 387.f);
+	m_vecSkillIcon[6]->Set_UI_Pos(595.f, 387.f);
+	m_vecSkillIcon[7]->Set_UI_Pos(541.f, 415.f);
 }
 
 void CTotal_Inven::Click_Icon()
@@ -309,6 +325,16 @@ void CTotal_Inven::Click_Icon()
 	{
 		CUI_Manager::Get_Instance()->Get_BloodCode_Inven()->Set_Active(true);
 		m_bIsActive = false;
+	}
+
+	for(_uint i = 0; i < m_vecSkillIcon.size(); ++i)
+	{
+		if (m_vecSkillIcon[i]->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+		{
+			//CUI_Manager::Get_Instance()->Get_Skill_Inven()->Set_SkillUI_TotalInven(m_ePlayerBloodCode, i);
+			CUI_Manager::Get_Instance()->Get_Skill_Inven()->Set_Active(true);
+
+		}
 	}
 }
 

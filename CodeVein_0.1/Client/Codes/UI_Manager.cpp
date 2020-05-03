@@ -128,6 +128,12 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_OKMessageUI", COKMessageUI::Create(pDevice))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SkillInven", CSkill_Inven::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SkillSlot", CSkillSlot::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SkillIcon", CSkillIcon::Create(pDevice))))
+		return E_FAIL;
 	
 	//////////////// Chae
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BossMassageUI", CMassageUI::Create(pDevice))))
@@ -196,6 +202,10 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	// 블러드코드 인벤
 	m_pBloodCode_Inven = static_cast<CBloodCode_Inven*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodCodeInven", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBloodCode_Inven, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	// 스킬 인벤
+	m_pSkillInven = static_cast<CSkill_Inven*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SkillInven", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pSkillInven, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	/////////////////////////////////////// 3D /////////////////////////////////////
 	// 스테이지 선택 UI

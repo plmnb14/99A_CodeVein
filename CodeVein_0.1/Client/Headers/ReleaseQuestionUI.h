@@ -13,6 +13,12 @@ private:
 	virtual ~CReleaseQuestionUI() = default;
 
 public:
+	_bool Get_Release() { return m_bIsRelease; }
+
+public:
+	void Set_Release(_bool bIsRelease) { m_bIsRelease = bIsRelease; }
+
+public:
 	void Set_Skill(Skill_ID eSkillID) { m_eReleaseSkill = eSkillID; }
 
 public:
@@ -40,6 +46,7 @@ private:
 	vector<CReleaseOption*>	m_vecOption;
 	_float					m_fCross = 100.f;
 	Skill_ID				m_eReleaseSkill = SkillID_End;
+	_bool					m_bIsRelease = false;
 
 public:
 	static CReleaseQuestionUI*	Create(_Device pGraphic_Device);

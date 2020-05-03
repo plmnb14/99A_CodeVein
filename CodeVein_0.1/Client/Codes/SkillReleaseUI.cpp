@@ -45,7 +45,7 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 	for (auto& iter : m_vecSkillSlot)
 	{
 		TARGET_TO_TRANS(iter)->Set_Pos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookX) * -0.25f + *V3_NORMAL_SELF(&vLookY) * 0.3f
-			+ *V3_NORMAL_SELF(&vLookX) * _float(idx) * 0.5f + *V3_NORMAL_SELF(&vLookZ) * -0.001f);
+			+ *V3_NORMAL_SELF(&vLookX) * _float(idx) * 0.35f + *V3_NORMAL_SELF(&vLookZ) * -0.001f);
 		TARGET_TO_TRANS(iter)->Set_Angle(m_pTransformCom->Get_Angle());
 		iter->Set_Active(m_bIsActive);
 		++idx;
@@ -63,63 +63,111 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 	{
 		m_iIndex = 2;
 
-		
+		m_vecSkillSlot[0]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[1]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[2]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
 	}
 		break;
 	case BloodCode_Assassin:
 	{
 		m_iIndex = 3;
-
-
+		m_vecSkillSlot[0]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[1]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[2]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
 	}
 		break;
 	case BloodCode_DarkKnight:
 	{
 		m_iIndex = 4;
-
-		
+		m_vecSkillSlot[0]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[1]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[2]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
 	}
 		break;
 	case BloodCode_Queen:
 	{
 		m_iIndex = 5;
-
-		
+		m_vecSkillSlot[0]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[1]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[2]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
 	}
 		break;
 	case BloodCode_Berserker:
 	{
 		m_iIndex = 6;
-
-		m_vecSkillSlot[0]->Set_SkillID(Dragon_Lunge);
+		m_vecSkillSlot[0]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[1]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[2]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
 	}
 		break;
 	case BloodCode_Hephaestus:
 	{
 		m_iIndex = 7;
+		m_vecSkillSlot[0]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[1]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[2]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
 	}
 		break;
 	case BloodCode_Fighter:
 	{
 		m_iIndex = 8;
-
-		m_vecSkillSlot[0]->Set_SkillID(Triple_Annihilator);
+		m_vecSkillSlot[0]->Set_SkillID(Dragon_Lunge);
+		m_vecSkillSlot[1]->Set_SkillID(Triple_Annihilator);
+		m_vecSkillSlot[2]->Set_SkillID(Swallow_Cutter);
+		m_vecSkillSlot[3]->Set_SkillID(Vanishing_Hollow);
+		m_vecSkillSlot[4]->Set_SkillID(Legion_Punisher);
 	}
 		break;
 	case BloodCode_Heimdal:
+	{
 		m_iIndex = 9;
+		m_vecSkillSlot[0]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[1]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[2]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
+	}
 		break;
 	case BloodCode_Hermes:
+	{
 		m_iIndex = 10;
+		m_vecSkillSlot[0]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[1]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[2]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
+	}
 		break;
 	case BloodCode_Atlas:
+	{
 		m_iIndex = 11;
+		m_vecSkillSlot[0]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[1]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[2]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
+	}		
 		break;
 	case BloodCode_Prometheus:
 	{
 		m_iIndex = 12;
-
-		
+		m_vecSkillSlot[0]->Set_SkillID(Circulating_Pulse);
+		m_vecSkillSlot[1]->Set_SkillID(Shadow_Assault);
+		m_vecSkillSlot[2]->Set_SkillID(Tormenting_Blast);
+		m_vecSkillSlot[3]->Set_SkillID(Severing_Abyss);
+		m_vecSkillSlot[4]->Set_SkillID(Phantom_Assault);
 	}	
 		break;
 	}
@@ -237,7 +285,7 @@ void CSkillReleaseUI::SetUp_Default()
 {
 	CBloodSkillSlot* pInstance = nullptr;
 
-	LOOP(4)
+	LOOP(5)
 	{
 		pInstance = static_cast<CBloodSkillSlot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodSkillSlot", nullptr));
 		TARGET_TO_TRANS(pInstance)->Set_Scale(_v3(0.3f, 0.3f, 1.5f));
@@ -274,6 +322,8 @@ void CSkillReleaseUI::Click_SkillSlot()
 			iter->Set_Select(false);
 		
 	}
+
+	
 }
 
 void CSkillReleaseUI::Reset_Select()

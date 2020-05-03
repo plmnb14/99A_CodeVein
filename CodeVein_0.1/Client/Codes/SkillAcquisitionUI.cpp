@@ -39,6 +39,14 @@ _int CSkillAcquisitionUI::Update_GameObject(_double TimeDelta)
 	memcpy(vWorldPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
 	Compute_ViewZ(&vWorldPos);
 
+	if (m_bIsActive &&
+		1.f > m_fAlpha)
+		m_fAlpha += _float(TimeDelta) * 2.f;
+
+	if (!m_bIsActive &&
+		0.f < m_fAlpha)
+		m_fAlpha -= _float(TimeDelta) * 2.f;
+
 	_v3 vAxisY = m_pTransformCom->Get_Axis(AXIS_Y);
 	_v3 vAxisZ = m_pTransformCom->Get_Axis(AXIS_Z);
 	TARGET_TO_TRANS(m_pOKMsg)->Set_Pos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vAxisZ) * -0.001f + *V3_NORMAL_SELF(&vAxisY) * -0.2f);
@@ -97,7 +105,7 @@ _int CSkillAcquisitionUI::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CSkillAcquisitionUI::Render_GameObject()
 {
-	if (!m_bIsActive)
+	if (!m_bIsActive && 0.f >= m_fAlpha)
 		return NOERROR;
 
 	if (nullptr == m_pShaderCom ||
@@ -108,7 +116,7 @@ HRESULT CSkillAcquisitionUI::Render_GameObject()
 		return E_FAIL;
 
 	m_pShaderCom->Begin_Shader();
-	m_pShaderCom->Begin_Pass(6);
+	m_pShaderCom->Begin_Pass(3);
 	m_pBufferCom->Render_VIBuffer();
 	m_pShaderCom->End_Pass();
 	m_pShaderCom->End_Shader();
@@ -153,6 +161,8 @@ HRESULT CSkillAcquisitionUI::SetUp_ConstantTable(_uint iIndex)
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
+		return E_FAIL;
 	
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, _uint(iIndex))))
 		return E_FAIL;
@@ -164,7 +174,7 @@ void CSkillAcquisitionUI::SetUp_Default()
 {
 	m_pOKMsg = static_cast<COKMessageUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_OKMessageUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pOKMsg, SCENE_STAGE, L"Layer_StageUI", nullptr);
-	TARGET_TO_TRANS(m_pOKMsg)->Set_Scale(_v3(0.2f, 0.1f, 1.f));
+	TARGET_TO_TRANS(m_pOKMsg)->Set_Scale(_v3(0.6f, 0.3f, 1.f));
 }
 
 void CSkillAcquisitionUI::Click_OKMsgUI()

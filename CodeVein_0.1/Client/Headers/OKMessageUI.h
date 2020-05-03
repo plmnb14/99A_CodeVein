@@ -30,6 +30,9 @@ private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 	CCollider*				m_pCollider = nullptr;
 
+private:
+	_float					m_fAlpha = 0.f;
+
 public:
 	static COKMessageUI*		Create(_Device pGraphic_Device);
 	virtual CGameObject*		Clone_GameObject(void* pArg);

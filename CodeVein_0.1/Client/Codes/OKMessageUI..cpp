@@ -35,6 +35,14 @@ _int COKMessageUI::Update_GameObject(_double TimeDelta)
 	memcpy(vWorldPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
 	Compute_ViewZ(&vWorldPos);
 
+	if (m_bIsActive &&
+		1.f > m_fAlpha)
+		m_fAlpha += _float(TimeDelta) * 2.f;
+
+	if (!m_bIsActive &&
+		0.f < m_fAlpha)
+		m_fAlpha -= _float(TimeDelta) * 2.f;
+
 	m_pCollider->Update(m_pTransformCom->Get_Pos());
 
 	return NO_EVENT;
@@ -53,7 +61,7 @@ _int COKMessageUI::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT COKMessageUI::Render_GameObject()
 {
-	if (!m_bIsActive)
+	if (!m_bIsActive && 0.f >= m_fAlpha)
 		return NOERROR;
 
 	if (nullptr == m_pShaderCom ||
@@ -64,7 +72,7 @@ HRESULT COKMessageUI::Render_GameObject()
 		return E_FAIL;
 
 	m_pShaderCom->Begin_Shader();
-	m_pShaderCom->Begin_Pass(6);
+	m_pShaderCom->Begin_Pass(3);
 	m_pBufferCom->Render_VIBuffer();
 	m_pShaderCom->End_Pass();
 	m_pShaderCom->End_Shader();
@@ -97,7 +105,7 @@ HRESULT COKMessageUI::Add_Component()
 	// for.Com_Collider
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
-	m_pCollider->Set_Radius(_v3{ 0.1f, 0.05f, 0.1f });
+	m_pCollider->Set_Radius(_v3{ 0.1f, 0.05f, 0.01f });
 	m_pCollider->Set_Dynamic(true);
 	m_pCollider->Set_Type(COL_SPHERE);
 	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos());
@@ -116,6 +124,8 @@ HRESULT COKMessageUI::SetUp_ConstantTable(_uint iIndex)
 	if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, _uint(iIndex))))

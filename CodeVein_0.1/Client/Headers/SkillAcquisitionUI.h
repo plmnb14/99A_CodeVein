@@ -39,7 +39,8 @@ private:
 	Skill_ID m_eSkillType = SkillID_End;
 	COKMessageUI*			m_pOKMsg = nullptr;
 	_float					m_fCross = 100.f;
-
+	_float					m_fAlpha = 0.f;
+	
 public:
 	static CSkillAcquisitionUI*	Create(_Device pGraphic_Device);
 	virtual CGameObject*		Clone_GameObject(void* pArg);

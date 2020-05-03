@@ -79,7 +79,7 @@ Tex_Water|Water_%d.tga|..\..\Client\Resources\Texture\Effect\Water\|0|1
 Tex_ActiveUI|ActiveUI%d.tga|..\..\Client\Resources\Texture\TestUI\ActiveUI\|0|18
 Tex_Armor_Icon|Armor_Icon%d.png|..\..\Client\Resources\Texture\TestUI\Armor_Icon\|0|5
 Tex_Bayonet_Icon|Bayonet_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Bayonet_Icon\|0|3
-Tex_BloodCodeIcon|BloodCodeIcon%d.tga|..\..\Client\Resources\Texture\TestUI\BloodCodeIcon\|0|13
+Tex_BloodCodeIcon|BloodCodeIcon%d.tga|..\..\Client\Resources\Texture\TestUI\BloodCodeIcon\|0|15
 Tex_BloodCodeMenuUI|BloodCodeMenuUI%d.png|..\..\Client\Resources\Texture\TestUI\BloodCodeMenuUI\|0|13
 Tex_BloodCodeOwner|BloodCodeOwner%d.tga|..\..\Client\Resources\Texture\TestUI\BloodCodeOwner\|0|23
 Tex_BloodCodeSelectUI|BloodCodeSelectUI%d.png|..\..\Client\Resources\Texture\TestUI\BloodCodeSelectUI\|0|6
@@ -124,7 +124,8 @@ Tex_Select_UI|Select_UI.png|..\..\Client\Resources\Texture\TestUI\Select_UI\|0|1
 Tex_SingleSword_Icon|SingleSword_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\SingleSword_Icon\|0|3
 Tex_SkillAcquisitionUI|SkillAcquisitionUI%d.tga|..\..\Client\Resources\Texture\TestUI\SkillAcquisitionUI\|0|10
 Tex_SkillReleaseUI|SkillReleaseUI%d.tga|..\..\Client\Resources\Texture\TestUI\SkillReleaseUI\|0|13
-Tex_Skill_ICon|Skill_ICon%d.tga|..\..\Client\Resources\Texture\TestUI\Skill_ICon\|0|157
+Tex_SkillSlot|SkillSlot%d.tga|..\..\Client\Resources\Texture\TestUI\SkillSlot\|0|13
+Tex_Skill_ICon|Skill_ICon%d.tga|..\..\Client\Resources\Texture\TestUI\Skill_ICon\|0|11
 Tex_StageUI|StageUI%d.png|..\..\Client\Resources\Texture\TestUI\StageUI\|0|18
 Tex_Start_BossUI|Start_BossUI%d.png|..\..\Client\Resources\Texture\TestUI\Start_BossUI\|0|4
 Tex_StatusUI|StatusUI%d.png|..\..\Client\Resources\Texture\TestUI\StatusUI\|0|7

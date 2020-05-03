@@ -145,7 +145,7 @@ HRESULT CBloodCodeSlot::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
 
-	m_pCollider->Set_Radius(_v3{ 0.15f, 0.111f, 0.1f });
+	m_pCollider->Set_Radius(_v3{ 0.15f, 0.111f, 0.15f });
 	m_pCollider->Set_Dynamic(true);
 	m_pCollider->Set_Type(COL_SPHERE);
 	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos());

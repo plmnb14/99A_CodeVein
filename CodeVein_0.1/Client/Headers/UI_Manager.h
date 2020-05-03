@@ -56,6 +56,9 @@
 #include "ReleaseOption.h"
 #include "SkillAcquisitionUI.h"
 #include "OKMessageUI.h"
+#include "Skill_Inven.h"
+#include "SkillSlot.h"
+#include "SkillIcon.h"
 
 BEGIN(Client)
 
@@ -93,6 +96,7 @@ public:
 	CBloodCodeSelectUI* Get_BloodCode_SelectUI() { return m_pBloodCodeSelectUI; }
 	CSkillReleaseUI* Get_Skill_ReleaseUI() { return m_pSkillReleaseUI; }
 	CSkillAcquisitionUI* Get_Skill_AcquisitionUI() { return m_pSkillAcquisitionUI; }
+	CSkill_Inven* Get_Skill_Inven() { return m_pSkillInven; }
 
 private:
 	_uint m_uiCoundItem = 0;
@@ -114,6 +118,7 @@ private:
 	CBloodCodeSelectUI * m_pBloodCodeSelectUI = nullptr;
 	CSkillReleaseUI* m_pSkillReleaseUI = nullptr;
 	CSkillAcquisitionUI* m_pSkillAcquisitionUI = nullptr;
+	CSkill_Inven* m_pSkillInven = nullptr;
 
 public:
 	virtual void Free();
