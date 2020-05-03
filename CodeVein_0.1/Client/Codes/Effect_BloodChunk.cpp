@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\Effect_BloodChunk.h"
 #include "ParticleMgr.h"
+#include "DecalEffect.h"
 
 CEffect_BloodChunk::CEffect_BloodChunk(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
@@ -27,17 +28,20 @@ HRESULT CEffect_BloodChunk::Ready_GameObject(void* pArg)
 		return S_OK;
 	}
 
-	m_fSpeed = 3.f;
+	m_fSpeed = _float(CCalculater::Random_Num_Double(2.f, 4.f));
 	m_dLifeTime = 10.f;
 	m_fAccel = 1.f;
 	m_fJumpPower = 6.f;
 
-	//_v3 vCreatePos = *(_v3*)pArg;
 	EFF_INFO tInfo = *(EFF_INFO*)pArg;
 	m_fCreatePosY = tInfo.vCreatePos.y;
 	m_pTransformCom->Set_Pos(tInfo.vCreatePos);
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 	m_vDir = tInfo.vDirection;
+	m_bIsWallDecal = tInfo.bWall;
+
+	if (m_bIsWallDecal)
+		m_fSpeed *= 2.5f;
 
 	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Blood_Chunk_0", nullptr));
 	m_pBulletBody->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
@@ -70,7 +74,19 @@ _int CEffect_BloodChunk::Update_GameObject(_double TimeDelta)
 
 		_tchar szBuff[256] = L"";
 		wsprintf(szBuff, L"Blood_Decal_%d", CCalculater::Random_Num(0, 6));
-		g_pManagement->Create_Effect_Decal(szBuff, m_pTransformCom->Get_Pos());
+		if (m_bIsWallDecal)
+		{
+			CDecalEffect* pEff = static_cast<CDecalEffect*>(g_pManagement->Clone_GameObject_Return(szBuff, nullptr));
+			pEff->Set_Desc(m_pTransformCom->Get_Pos(), nullptr);
+			pEff->Reset_Init();
+			pEff->Set_WallDecal(true);
+			g_pManagement->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
+		}
+		else
+		{
+			g_pManagement->Create_Effect_Decal(szBuff, m_pTransformCom->Get_Pos());
+		}
+
 		m_bDead = true;
 	}
 	// ÁøÇàÁß
@@ -104,6 +120,8 @@ _int CEffect_BloodChunk::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CEffect_BloodChunk::Render_GameObject()
 {
+	g_pManagement->Gizmo_Draw_Sphere(m_pCollider->Get_CenterPos(), m_pCollider->Get_Radius().x);
+
 	return NOERROR;
 }
 
@@ -116,8 +134,17 @@ void CEffect_BloodChunk::Check_Move(_double TimeDelta)
 		return;
 	}
 
-	D3DXVec3Normalize(&m_vDir, &m_vDir);
+	if (m_bIsWallDecal &&
+		fDownLength > (0.3f * m_fCreatePosY))
+	{
+		m_dCurTime += 1000.f;
+		return;
+	}
+
+	if(!m_bIsWallDecal)
+		D3DXVec3Normalize(&m_vDir, &m_vDir);
 	_v3 vMove = m_vDir * m_fSpeed * _float(TimeDelta);
+	
 
 	m_fAccel += _float(TimeDelta);
 	_float fY = (m_fJumpPower * m_fAccel + -GRAVITY * m_fAccel * m_fAccel * 0.5f) *  _float(TimeDelta);

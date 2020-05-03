@@ -75,6 +75,12 @@ private:
 		_v3 vDirection;
 	}EFF_INFO;
 
+	typedef struct tagEffDecalInfo
+	{
+		_v3 vCreatePos;
+		_v3 vDirection;
+		_bool bWall;
+	}EFF_DECAL_INFO;
 private:
 	map<_tchar*, queue<CEffect*>>	m_EffectPool;	// 미리 클론해놓은 큐
 	list<PARTICLE_INFO*>			m_vecParticle;	// 재생될 파티클 리스트

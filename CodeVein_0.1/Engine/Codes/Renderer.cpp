@@ -746,12 +746,32 @@ HRESULT CRenderer::Render_Effect()
 	{
 		if (nullptr != pGameObject)
 		{
+			if (CEffect::TYPE_TEX == static_cast<CEffect*>(pGameObject)->Get_EffType())
+				continue;
+
 			if (FAILED(pGameObject->Render_GameObject_SetShader(m_pShader_Effect)))
 			{
 				Safe_Release(pGameObject);
 				return E_FAIL;
 			}
 			Safe_Release(pGameObject);
+		}
+	}
+
+	const _int LAYER_COUNT = 10;
+	for (_int i = 0; i < LAYER_COUNT; i++)
+	{
+		for (auto& pGameObject : m_RenderList[RENDER_EFFECT])
+		{
+			if (CEffect::TYPE_TEX == static_cast<CEffect*>(pGameObject)->Get_EffType() &&
+				i == static_cast<CTexEffect*>(pGameObject)->Get_EffectLayer())
+			{
+				if (FAILED(pGameObject->Render_GameObject_SetShader(m_pShader_Effect)))
+				{
+					Safe_Release(pGameObject);
+					return E_FAIL;
+				}
+			}
 		}
 	}
 
@@ -1065,7 +1085,7 @@ HRESULT CRenderer::Render_Blur()
 	m_pTarget_Manager->End_Render_Target(L"Target_BlurH");
 	// Blur H ==================================================
 
-	for (_int i = 0; i < 13; ++i) // È¦¼ö¸¸
+	for (_int i = 0; i < 1; ++i) // È¦¼ö¸¸
 	{
 		if (i % 2 == 0)
 		{

@@ -435,6 +435,7 @@ PS_OUT PS_MESHEFFECT(PS_IN In)
 }
 matrix		g_matProjInv;
 matrix		g_matViewInv;
+bool g_bRot;
 PS_OUT PS_SSD(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
@@ -461,10 +462,22 @@ PS_OUT PS_SSD(PS_IN In)
 	float3 decalLocalPos = float3(0, 0, 0);
 	decalLocalPos = mul(float4(vWorldPos.xyz, 1), g_matInvWorld).xyz;
 	
-	clip(0.5 - abs(decalLocalPos.xz));
-	clip(0.25 - abs(decalLocalPos.y));
-	
-	float2 decalUV = decalLocalPos.xz + 0.5f;
+	float2 decalUV;
+
+	if (g_bRot)
+	{
+		clip(0.5 - abs(decalLocalPos.xy));
+		clip(0.25 - abs(decalLocalPos.z));
+
+		decalUV = decalLocalPos.xy + 0.5f;
+	}
+	else
+	{
+		clip(0.5 - abs(decalLocalPos.xz));
+		clip(0.25 - abs(decalLocalPos.y));
+
+		decalUV = decalLocalPos.xz + 0.5f;
+	}
 		
 	float4 Color = float4(1, 1, 1, 1);
 	if (g_bUseColorTex)
@@ -570,6 +583,21 @@ PS_OUT PS_TRAIL_MASK(PS_IN In)
 	return Out;
 }
 
+float g_fUV_Value_X;
+float g_fUV_Value_Y;
+PS_OUT PS_UV(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	In.vTexUV.x += g_fUV_Value_X;
+	In.vTexUV.y += g_fUV_Value_Y;
+	Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
+	Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
+
+	return Out;
+}
+
+
 technique Default_Technique
 {
 	pass Default_Rendering // 0
@@ -639,7 +667,7 @@ technique Default_Technique
 		DestBlend = InvSrcAlpha;
 		blendop = add;
 
-		cullmode = none; // 카메라 절두체에 잘리는 문제 : 백스페이스 컬링이 필요???
+		cullmode = none;
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_SSD();
@@ -701,6 +729,22 @@ technique Default_Technique
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_MAIN();
+	}
+
+	pass Screen_Effect_UV // 9
+	{
+		zwriteenable = true;
+
+		AlphablendEnable = true;
+		AlphaTestEnable = true;
+		srcblend = SrcAlpha;
+		DestBlend = InvSrcAlpha;
+		blendop = add;
+
+		cullmode = none;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 PS_UV();
 	}
 }
 

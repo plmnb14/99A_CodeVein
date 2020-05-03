@@ -8,6 +8,7 @@
 #include "TexEffect.h"
 #include "MeshEffect.h"
 #include "DecalEffect.h"
+#include "OrthoEffect.h"
 #include "Effect_BloodChunk.h"
 #include "Effect_LongSpark.h"
 
@@ -595,6 +596,29 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"Monkey_Knife", true)))
 		return E_FAIL;
 
+	if (FAILED(Add_EffectPrototype(L"Hunter_Bullet_Body_Lightning_Hor_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hunter_Bullet_Body_Lightning_Ver_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hunter_Bullet_Body_LinePoint_Hor")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hunter_Bullet_Body_LinePoint_Ver")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hunter_Bullet_Fire_Smoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hunter_Bullet_Ready_Light")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hunter_Bullet_Tail_Lightning_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hunter_Bullet_Dead_Flash")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hunter_Bullet_Dead_Lightning")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hunter_Bullet_Dead_Smoke_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hunter_Bullet_Dead_Smoke_1")))
+		return E_FAIL;
+
 	if (FAILED(Add_EffectPrototype(L"Boss_KnockDown_Dust")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Boss_Dead_Particle")))
@@ -925,6 +949,28 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Torment_Wind_Distortion_R", true)))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_FlashLight")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_PurpleLightning")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_ShotSmoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_Smoke_Blue_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_Smoke_Blue_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_Smoke_DarkBlue")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_Bullet_DeadFlash")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_Bullet_DeadShockWave")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_Bullet_DeadSmoke_Move_Purple")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_Bullet_DeadSmoke_Blue_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_Bullet_DeadSmoke_Blue_1")))
+		return E_FAIL;
 #pragma endregion
 
 	if (FAILED(g_pManagement->Add_Prototype(L"Blood_Decal_0", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Blood_Decal_0.dat")))))
@@ -940,6 +986,11 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(g_pManagement->Add_Prototype(L"Blood_Decal_5", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Blood_Decal_5.dat")))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"Blood_Decal_6", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Blood_Decal_6.dat")))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"Snow_Ortho_0", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Snow_Ortho_0.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Snow_Ortho_1", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Snow_Ortho_1.dat")))))
 		return E_FAIL;
 
 	return S_OK;

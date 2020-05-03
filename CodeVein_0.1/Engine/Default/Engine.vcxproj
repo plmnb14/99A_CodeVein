@@ -277,6 +277,7 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\ObjectPool_Manager.h" />
     <ClInclude Include="..\Headers\Object_Manager.h" />
     <ClInclude Include="..\Headers\Optimization.h" />
+    <ClInclude Include="..\Headers\OrthoEffect.h" />
     <ClInclude Include="..\Headers\ParticleMgr.h" />
     <ClInclude Include="..\Headers\PipeLine.h" />
     <ClInclude Include="..\Headers\QuadTree.h" />
@@ -376,6 +377,7 @@ call CopyEngine.bat</Command>
     <ClCompile Include="..\Codes\ObjectPool_Manager.cpp" />
     <ClCompile Include="..\Codes\Object_Manager.cpp" />
     <ClCompile Include="..\Codes\Optimization.cpp" />
+    <ClCompile Include="..\Codes\OrthoEffect.cpp" />
     <ClCompile Include="..\Codes\ParticleMgr.cpp" />
     <ClCompile Include="..\Codes\PipeLine.cpp" />
     <ClCompile Include="..\Codes\QuadTree.cpp" />

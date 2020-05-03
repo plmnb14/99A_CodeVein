@@ -1,7 +1,8 @@
 #include "..\Headers\ParticleMgr.h"
 #include "Trail_VFX.h"
 #include "Effect.h"
-
+#include "TexEffect.h"
+#include "OrthoEffect.h"
 
 IMPLEMENT_SINGLETON(CParticleMgr)
 
@@ -49,6 +50,18 @@ HRESULT CParticleMgr::Ready_ParticleManager_Essential()
 	Input_Pool(L"Totem_Fire_Bullet_Dead_Particle", 200);
 
 	Input_Pool(L"Monkey_Knife", 60);
+
+	Input_Pool(L"Hunter_Bullet_Body_Lightning_Hor_0", 60);
+	Input_Pool(L"Hunter_Bullet_Body_Lightning_Ver_0", 60);
+	Input_Pool(L"Hunter_Bullet_Body_LinePoint_Hor", 60);
+	Input_Pool(L"Hunter_Bullet_Body_Lightning_Ver", 60);
+	Input_Pool(L"Hunter_Bullet_Fire_Smoke", 60);
+	Input_Pool(L"Hunter_Bullet_Ready_Light", 60);
+	Input_Pool(L"Hunter_Bullet_Tail_Lightning_Particle", 60);
+	Input_Pool(L"Hunter_Bullet_Dead_Flash", 60);
+	Input_Pool(L"Hunter_Bullet_Dead_Lightning", 60);
+	Input_Pool(L"Hunter_Bullet_Dead_Smoke_0", 60);
+	Input_Pool(L"Hunter_Bullet_Dead_Smoke_1", 60);
 
 	Input_Pool(L"Hit_BloodParticle_0", 200);
 	Input_Pool(L"Hit_BloodParticle_1", 200);
@@ -131,6 +144,21 @@ HRESULT CParticleMgr::Ready_ParticleManager_Essential()
 	Input_Pool(L"Blood_Decal_5", 100);
 	Input_Pool(L"Blood_Decal_6", 100);
 
+	Input_Pool(L"Snow_Ortho_0", 2);
+	Input_Pool(L"Snow_Ortho_1", 10);
+
+	// ¹ØÀ¸·Î ¿Å±â±â
+	Input_Pool(L"Player_Skill_Gun_FlashLight", 100);
+	Input_Pool(L"Player_Skill_Gun_PurpleLightning", 100);
+	Input_Pool(L"Player_Skill_Gun_ShotSmoke", 100);
+	Input_Pool(L"Player_Skill_Gun_Smoke_Blue_0", 100);
+	Input_Pool(L"Player_Skill_Gun_Smoke_Blue_1", 100);
+	Input_Pool(L"Player_Skill_Gun_Smoke_DarkBlue", 100);
+	Input_Pool(L"Player_Skill_Gun_Bullet_DeadFlash", 100);
+	Input_Pool(L"Player_Skill_Gun_Bullet_DeadShockWave", 100);
+	Input_Pool(L"Player_Skill_Gun_Bullet_DeadSmoke_Move_Purple", 100);
+	Input_Pool(L"Player_Skill_Gun_Bullet_DeadSmoke_Blue_0", 100);
+	Input_Pool(L"Player_Skill_Gun_Bullet_DeadSmoke_Blue_1", 100);
 
 	Input_Pool(L"Colleague_Teleport_Flash_Particle_0", 100);
 	Input_Pool(L"Colleague_Teleport_Line_Particle_0", 100);
@@ -459,27 +487,71 @@ HRESULT CParticleMgr::Ready_Trail()
 
 HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 {
-	if (CInput_Device::Get_Instance()->Key_Down(DIK_B))
+	//if (CInput_Device::Get_Instance()->Key_Down(DIK_B))
 	{
-		Create_Effect_Delay(L"Colleague_Teleport_Flash_Particle_0", 0.f, _v3(0.f, 0.3f, 0.f), nullptr);
-		Create_Effect_Delay(L"Colleague_Teleport_Line_Particle_0", 0.f, _v3(0.f, 0.7f, 0.f), nullptr);
-		Create_Effect_Delay(L"Colleague_Teleport_Line_Particle_1", 0.f, _v3(0.f, 0.7f, 0.f), nullptr);
-		Create_Effect_Delay(L"Colleague_Teleport_Line_Particle_2", 0.f, _v3(0.f, 0.7f, 0.f), nullptr);
-		//Create_Effect_Delay(L"Colleague_Teleport_Smoke_0", 0.f, _v3(0.f, 0.7f, 0.f), nullptr);
+		//Create_Effect_Delay(L"Snow_Ortho_0", 0.f, V3_NULL, nullptr);
+
+		//COrthoEffect* pEff = static_cast<COrthoEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Snow_Ortho_0", nullptr));
+		//pEff->Set_Desc(V3_NULL, nullptr);
+		//pEff->Set_UV_Speed(1.f, 0.f);
+		//pEff->Reset_Init();
+		//CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
+		//COrthoEffect* pEff;
+		//pEff = static_cast<COrthoEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Snow_Ortho_1", nullptr));
+		//pEff->Set_Desc(V3_NULL, nullptr);
+		//pEff->Set_UV_Speed(1.f, -1.f);
+		//pEff->Reset_Init();
+		//CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
 	}
 
-	if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_LB))
+	if (CInput_Device::Get_Instance()->Key_Down(DIK_I))
 	{
-		CParticleMgr::Get_Instance()->Create_Effect_Decal(L"Blood_Decal_0", V3_NULL);
-	}
-	if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_RB))
-	{
-		_tchar szBuff[256] = L"";
-		wsprintf(szBuff, L"Blood_Decal_%d", CCalculater::Random_Num(0, 6));
-	
-		CParticleMgr::Get_Instance()->Create_Effect_Decal(szBuff, V3_NULL);
-	}
+		CTexEffect* pEff = static_cast<CTexEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Player_Skill_Gun_FlashLight", nullptr));
+		pEff->Set_Desc(_v3(0, 1, 0), nullptr);
+		pEff->Set_Delay(1.2f);
+		pEff->Set_LayerIdx(1);
+		pEff->Reset_Init();
+		CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
 
+		pEff = static_cast<CTexEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Player_Skill_Gun_PurpleLightning", nullptr));
+		pEff->Set_Desc(_v3(0, 1, 0), nullptr);
+		pEff->Set_Delay(1.2f);
+		pEff->Set_LayerIdx(2);
+		pEff->Reset_Init();
+		CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
+
+		pEff = static_cast<CTexEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Player_Skill_Gun_ShotSmoke", nullptr));
+		pEff->Set_Desc(_v3(0, 1, 0), nullptr);
+		pEff->Set_Delay(1.2f);
+		pEff->Set_LayerIdx(1);
+		pEff->Reset_Init();
+		CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
+
+		Create_Effect_Delay(L"Player_Skill_Gun_Smoke_Blue_0"	, 0.f	, _v3(0,1,0), nullptr);
+		Create_Effect_Delay(L"Player_Skill_Gun_Smoke_Blue_1"	, 0.f	, _v3(0,1,0), nullptr);
+		Create_Effect_Delay(L"Player_Skill_Gun_Smoke_DarkBlue"	, 0.f	, _v3(0,1,0), nullptr);
+		Create_Effect_Delay(L"Player_Skill_Gun_Smoke_DarkBlue"	, 0.2f	, _v3(0,1,0), nullptr);
+		Create_Effect_Delay(L"Player_Skill_Gun_Smoke_DarkBlue"	, 0.3f	, _v3(0,1,0), nullptr);
+	}
+	if (CInput_Device::Get_Instance()->Key_Down(DIK_U))
+	{
+		CTexEffect* pEff = static_cast<CTexEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Player_Skill_Gun_Bullet_DeadFlash", nullptr));
+		pEff->Set_Desc(_v3(0, 1, 0), nullptr);
+		pEff->Set_LayerIdx(1);
+		pEff->Reset_Init();
+		CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
+
+		pEff = static_cast<CTexEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Player_Skill_Gun_Bullet_DeadShockWave", nullptr));
+		pEff->Set_Desc(_v3(0, 1, 0), nullptr);
+		pEff->Set_LayerIdx(1);
+		pEff->Reset_Init();
+		CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
+
+		Create_Effect_Delay(L"Player_Skill_Gun_Bullet_DeadSmoke_Move_Purple", 0.f, _v3(0, 1, 0), nullptr);
+		Create_Effect_Delay(L"Player_Skill_Gun_Bullet_DeadSmoke_Blue_0", 0.25f, _v3(0, 1, 0), nullptr);
+		Create_Effect_Delay(L"Player_Skill_Gun_Bullet_DeadSmoke_Blue_1", 0.25f, _v3(0, 1, 0), nullptr);
+		Create_Effect_Delay(L"Player_Skill_Gun_Smoke_DarkBlue", 0.25f, _v3(0, 1, 0), nullptr);
+	}
 	auto& iter_begin = m_vecParticle.begin();
 	auto& iter_end = m_vecParticle.end();
 
@@ -956,7 +1028,7 @@ void CParticleMgr::Create_Effect_Decal(_tchar* szName, _v3 vPos)
 void CParticleMgr::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCol, CTransform* pHittedTrans, _float fPower)
 {
 	_v3 vAttackPos = pAttackCol->Get_CenterPos();
-	_v3 vHittedPos = pHittedCol->Get_CenterPos(); // pHittedTrans->Get_Pos() + _v3(0.f, 1.f, 0.f);
+	_v3 vHittedPos = pHittedCol->Get_CenterPos();
 
 	_v3 vRight = V3_NULL;
 	memcpy(&vRight, &pHittedTrans->Get_WorldMat().m[0][0], sizeof(_v3));
@@ -966,13 +1038,6 @@ void CParticleMgr::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCo
 	D3DXVec3Normalize(&vDir, &vDir);
 	_float fAngle = acosf(D3DXVec3Dot(&vDir, &vRight));
 	fAngle *= -1.f;
-
-	//cout << D3DXToDegree(fAngle) << endl;
-	//cout << "[Attack Pos] " << vAttackPos.x << ", " << vAttackPos.y << ", " << vAttackPos.z << endl;
-	//cout << "[Hitted Pos] " << vHittedPos.x << ", " << vHittedPos.y << ", " << vHittedPos.z << endl;
-	//cout << vDir.x<<", "<< vDir.y<<", "<< vDir.z << endl;
-
-	// ÇÇ°¡ Ä®¿¡¼­ ³ª¿È
 
 	_v3 vAngle = pHittedTrans->Get_Angle();
 	vAngle.z += D3DXToDegree(fAngle);
@@ -997,7 +1062,7 @@ void CParticleMgr::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCo
 	Create_Effect(L"Hit_BloodParticle_5", vAttackPos);
 	
 	_float fMinus = (fAngle > 0) ? 1.f : -1.f;
-	_v3 vMyDir = pHittedTrans->Get_Axis(AXIS_Z);
+	_v3 vMyDir = pHittedTrans->Get_Axis(AXIS_Z) * fPower;
 	_v3 vBloodDir = vDir * fPower;// +(vRight * fMinus);
 	
 	Create_DirEffect(L"Hit_Blood_Direction_0", vAttackPos, vBloodDir);
@@ -1008,21 +1073,28 @@ void CParticleMgr::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCo
 	Create_DirEffect(L"Hit_Blood_Direction_5", vAttackPos, vBloodDir);
 	Create_DirEffect(L"Hit_Blood_Direction_6", vAttackPos, vBloodDir);
 
-	EFF_INFO tInfo;
-	tInfo.vCreatePos = vAttackPos;
-	tInfo.vDirection = vBloodDir;
-	CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_BloodChunk", &tInfo);
+	EFF_DECAL_INFO tDecalInfo;
+	tDecalInfo.vCreatePos = vAttackPos;
+	tDecalInfo.vDirection = vBloodDir;
+	tDecalInfo.bWall = false;
+	CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_BloodChunk", &tDecalInfo);
+	EFF_DECAL_INFO tDecalInfo2;
+	tDecalInfo2.vCreatePos = vAttackPos;
+	tDecalInfo2.vDirection = vBloodDir + vMyDir;
+	tDecalInfo2.bWall = false;
+	CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_BloodChunk", &tDecalInfo2);
 
-	tInfo.vCreatePos = pHittedTrans->Get_Pos();
-	tInfo.vDirection = vBloodDir;
+	EFF_DECAL_INFO tWallDecalInfo;
+	tWallDecalInfo.vCreatePos = vAttackPos;
+	tWallDecalInfo.vDirection = vMyDir;
+	tWallDecalInfo.bWall = false;
+	CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_BloodChunk", &tWallDecalInfo);
+
+	EFF_INFO tSparkInfo;
+	tSparkInfo.vCreatePos = pHittedTrans->Get_Pos();
+	tSparkInfo.vDirection = vBloodDir;
 	for (_int i = 0; i < 70; i++)
-		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_LongSpark", &tInfo);
-
-	//for (_int i = 0; i < 4; i++)
-	//{
-	//	wsprintf(szBuff, L"Blood_Decal_%d", CCalculater::Random_Num(0, 6));
-	//	Create_Effect_Decal(szBuff, vAttackPos + vDir + _v3(0.f, -1.3f, 0.f));
-	//}
+		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_LongSpark", &tSparkInfo);
 }
 
 void CParticleMgr::Create_Spawn_Effect(_float fDelay, _v3 vPos, _v3 vFinishPos, CTransform* pFollowTrans)

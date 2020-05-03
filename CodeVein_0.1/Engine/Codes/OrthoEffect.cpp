@@ -1,12 +1,12 @@
-#include "..\Headers\DecalEffect.h"
+#include "..\Headers\OrthoEffect.h"
 
-CDecalEffect::CDecalEffect(LPDIRECT3DDEVICE9 pGraphic_Device)
+COrthoEffect::COrthoEffect(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CEffect(pGraphic_Device)
 {
 
 }
 
-CDecalEffect::CDecalEffect(const CDecalEffect& rhs)
+COrthoEffect::COrthoEffect(const COrthoEffect& rhs)
 	: CEffect(rhs)
 {
 	CEffect::m_pInfo = rhs.m_pInfo;
@@ -14,12 +14,50 @@ CDecalEffect::CDecalEffect(const CDecalEffect& rhs)
 	m_bClone = true;
 }
 
-void CDecalEffect::Set_WallDecal(_bool _bWall)
+INSTANCEDATA COrthoEffect::Get_InstanceData()
 {
-	m_bWallDecal = _bWall;
+	INSTANCEDATA tData;
+
+	memcpy(&tData.fRight, &m_pTransformCom->Get_WorldMat()._11, sizeof(_float) * 4);
+	memcpy(&tData.fUp, &m_pTransformCom->Get_WorldMat()._21, sizeof(_float) * 4);
+	memcpy(&tData.fLook, &m_pTransformCom->Get_WorldMat()._31, sizeof(_float) * 4);
+	memcpy(&tData.fPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_float) * 4);
+	memcpy(&tData.fColor, &m_vColor, sizeof(_float) * 4);
+	tData.fDissolve = m_fDissolve;
+	tData.fDistortion = m_pInfo->fDistortionPower;
+	tData.fAlpha = m_fAlpha;
+	tData.bDissolve = m_pInfo->bDissolve;
+	tData.bReverseColor = m_pInfo->bRevColor;
+	tData.bUseColorTex = m_pInfo->bUseColorTex;
+	tData.bUseMaskTex = (m_pInfo->fMaskIndex != -1.f);
+	tData.bUseRGBA = m_pInfo->bUseRGBA;
+
+	return tData;
 }
 
-HRESULT CDecalEffect::Ready_GameObject_Prototype()
+void COrthoEffect::Set_UV_Speed(_float fX, _float fY)
+{
+	m_fUV_Speed_X = fX;
+	m_fUV_Speed_Y = fY;
+}
+
+HRESULT COrthoEffect::SetUp_ConstantTable_Instance(CShader* pShader)
+{
+	_float fMaskIndex = 0.f;
+	if ((m_pInfo->fMaskIndex != -1.f))
+		fMaskIndex = m_pInfo->fMaskIndex;
+
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", pShader, _uint(m_fFrame))))
+		return E_FAIL;
+	if (FAILED(m_pGradientTextureCom->SetUp_OnShader("g_GradientTexture", pShader, _uint(fMaskIndex))))
+		return E_FAIL;
+	if (FAILED(m_pColorTextureCom->SetUp_OnShader("g_ColorTexture", pShader, _uint(m_pInfo->fColorIndex))))
+		return E_FAIL;
+
+	return S_OK;
+}
+
+HRESULT COrthoEffect::Ready_GameObject_Prototype()
 {
 	// 생성 시, 오래 걸릴 수 있는 작업들을 수행한다.
 
@@ -31,7 +69,7 @@ HRESULT CDecalEffect::Ready_GameObject_Prototype()
 	return NOERROR;
 }
 
-HRESULT CDecalEffect::Ready_GameObject(void* pArg)
+HRESULT COrthoEffect::Ready_GameObject(void* pArg)
 {
 	// 복제해서 생성 된 후, 추가적으로 필요한 데이터들을 셋팅하낟.
 	if (FAILED(Add_Component()))
@@ -60,9 +98,9 @@ HRESULT CDecalEffect::Ready_GameObject(void* pArg)
 	return NOERROR;
 }
 
-HRESULT CDecalEffect::LateInit_GameObject()
+HRESULT COrthoEffect::LateInit_GameObject()
 {
-	Setup_Info();
+	//Setup_Info();
 	Change_EffectTexture(m_pInfo->szName);
 	Change_GradientTexture(m_pInfo->szGradientName);
 	Change_ColorTexture(m_pInfo->szColorName);
@@ -70,18 +108,13 @@ HRESULT CDecalEffect::LateInit_GameObject()
 	return S_OK;
 }
 
-_int CDecalEffect::Update_GameObject(_double TimeDelta)
+_int COrthoEffect::Update_GameObject(_double TimeDelta)
 {
 	if (m_bIsDead)
 		return DEAD_OBJ;
 
 	CGameObject::LateInit_GameObject();
-
-	if (CInput_Device::Get_Instance()->Key_Pressing(DIK_P))
-		m_pTransformCom->Set_Angle(_v3(90.f, 0, 0));
-	if (CInput_Device::Get_Instance()->Key_Pressing(DIK_0))
-		m_pTransformCom->Set_Angle(_v3(0.f, 0, 90.f));
-
+	
 	if (m_fCreateDelay > 0.f)
 	{
 		Check_CreateDelay(TimeDelta);
@@ -91,62 +124,66 @@ _int CDecalEffect::Update_GameObject(_double TimeDelta)
 	CGameObject::Update_GameObject(TimeDelta);
 
 	m_fLinearMovePercent += _float(TimeDelta) * 0.2f;
+	m_fUV_Value_X += _float(TimeDelta) * m_fUV_Speed_X;
+	m_fUV_Value_Y += _float(TimeDelta) * m_fUV_Speed_Y;
 
-	Check_Frame(TimeDelta);
-	Check_LifeTime(TimeDelta);
+	Setup_Ortho();
 
-	Check_Move(TimeDelta);
-	Setup_Billboard();
-	Check_Alpha(TimeDelta);
-	Check_Color(TimeDelta);
+	//Check_Frame(TimeDelta);
+	//Check_LifeTime(TimeDelta);
+	//Check_Move(TimeDelta);
+	//Check_Alpha(TimeDelta);
+	//Check_Color(TimeDelta);
 
 	// 어쩔수 없이 Update에서 호출
 	if (m_bIsDead || m_fCreateDelay > 0.f)
 		return S_OK;
 
 	RENDERID eGroup = RENDERID::RENDER_EFFECT;
-	
+
 	if (FAILED(m_pRendererCom->Add_RenderList(eGroup, this)))
 		return E_FAIL;
 
 	return S_OK;
 }
 
-_int CDecalEffect::Late_Update_GameObject(_double TimeDelta)
+_int COrthoEffect::Late_Update_GameObject(_double TimeDelta)
 {
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
 
 	if (m_bIsDead || m_fCreateDelay > 0.f)
 		return S_OK;
+
+	D3DXMatrixIdentity(&m_matWorld);
+	D3DXMatrixIdentity(&m_matView);
+
+	m_matWorld._11 = WINCX;
+	m_matWorld._22 = WINCY;
+	m_matWorld._33 = 1.f;
+	//m_matWorld._41 = 0; // WINCX * 0.5f;
+	//m_matWorld._42 = 0; // WINCY * 0.5f;
 		
 	return S_OK;
 }
 
 
-HRESULT CDecalEffect::Render_GameObject()
+HRESULT COrthoEffect::Render_GameObject()
 {
-	if (FAILED(SetUp_ConstantTable(m_pShaderCom)))
-		return E_FAIL;
-
-	m_pShaderCom->Begin_Shader();
-	m_pShaderCom->Begin_Pass(4);
-
-	m_pBufferCom->Render_VIBuffer();
-
-	m_pShaderCom->End_Pass();
-	m_pShaderCom->End_Shader();
-
 	return NOERROR;
 }
 
-HRESULT CDecalEffect::Render_GameObject_SetShader(CShader* pShader)
+HRESULT COrthoEffect::Render_GameObject_SetShader(CShader* pShader)
 {
 	if (nullptr == pShader ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
-		
-	pShader->Begin_Pass(4);
+
+	CManagement::Get_Instance()->Set_Transform(D3DTS_WORLD, m_matWorld);
+	CManagement::Get_Instance()->Set_Transform(D3DTS_VIEW, m_matView);
+	CManagement::Get_Instance()->Set_Transform(D3DTS_PROJECTION, m_matProj);
+
+	pShader->Begin_Pass(m_iPass);
 	
 	// Set Texture
 	if (FAILED(SetUp_ConstantTable(pShader)))
@@ -155,13 +192,12 @@ HRESULT CDecalEffect::Render_GameObject_SetShader(CShader* pShader)
 	pShader->Commit_Changes();
 	
 	m_pBufferCom->Render_VIBuffer();
-
 	pShader->End_Pass();
 	
 	return S_OK;
 }
 
-void CDecalEffect::Setup_Info()
+void COrthoEffect::Setup_Info()
 {
 	m_fLifeTime = m_pInfo->fLifeTime;
 	m_vColor = m_pInfo->vStartColor;
@@ -181,14 +217,13 @@ void CDecalEffect::Setup_Info()
 	m_fAccel = 0.f;
 	m_fCurveAccel = 2.f;
 	m_fDissolve = 0.f;
-	m_fDissolveStartTime = 6.f;
 
 	m_bFadeOutStart = false;
 
 	if (m_pInfo->bDistortion)
 		m_iPass = 1;
 	else
-		m_iPass = 0;
+		m_iPass = 9;
 
 	if (m_bZwrite)
 		m_iPass = 8;
@@ -321,41 +356,14 @@ void CDecalEffect::Setup_Info()
 	}
 }
 
-void CDecalEffect::Setup_Billboard()
+void COrthoEffect::Setup_Ortho()
 {
-	_mat matBill, matView, matWorld;
+	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
-	matWorld = m_pTransformCom->Get_WorldMat();
-	matView = m_pManagement->Get_Transform(D3DTS_VIEW);
-
-	D3DXMatrixIdentity(&matBill);
-
-	if (m_pInfo->bBillBoard)
-	{
-		matBill = matView;
-		memset(&matBill._41, 0, sizeof(_v3));
-		D3DXMatrixInverse(&matBill, NULL, &matBill);
-
-		m_pTransformCom->Set_WorldMat((matBill * matWorld));
-	}
-	else if (m_pInfo->bOnlyYRot)
-	{
-		matBill._11 = matView._11;
-		matBill._13 = matView._13;
-		matBill._31 = matView._31;
-		matBill._33 = matView._33;
-
-		D3DXMatrixInverse(&matBill, NULL, &matBill);
-
-		m_pTransformCom->Set_WorldMat((matBill * matWorld));
-	}
-	//else
-	//	m_pTransformCom->Update_Component();
-
-	Compute_ViewZ(&m_pTransformCom->Get_Pos());
+	//Compute_ViewZ(&m_pTransformCom->Get_Pos());
 }
 
-void CDecalEffect::Check_Frame(_double TimeDelta)
+void COrthoEffect::Check_Frame(_double TimeDelta)
 {
 	if (m_pInfo->bStaticFrame)
 		return;
@@ -374,7 +382,7 @@ void CDecalEffect::Check_Frame(_double TimeDelta)
 	}
 }
 
-void CDecalEffect::Check_Move(_double TimeDelta)
+void COrthoEffect::Check_Move(_double TimeDelta)
 {
 	if (m_pInfo->bSlowly)
 	{
@@ -417,7 +425,8 @@ void CDecalEffect::Check_Move(_double TimeDelta)
 			else if (m_bFinishPos)
 			{
 				_v3 vDir = m_vFinishPos - m_pTransformCom->Get_Pos();
-				vMove = vDir * m_fMoveSpeed * _float(TimeDelta);
+				D3DXVec3Normalize(&vDir, &vDir);
+				vMove = (vDir * m_fMoveSpeed * 1.5f) * _float(TimeDelta);
 
 				m_pTransformCom->Add_Pos(vMove);
 			}
@@ -515,11 +524,23 @@ void CDecalEffect::Check_Move(_double TimeDelta)
 		m_pTransformCom->Add_Pos(m_fMoveSpeed * _float(TimeDelta), vDir);
 	}
 
-	if(!m_pInfo->bRotMove && !m_pInfo->bMoveWithRot
+	if (!m_pInfo->bRotMove && !m_pInfo->bMoveWithRot
 		&& m_pInfo->vRotDirection == V3_NULL)
+	{
 		m_pTransformCom->Set_Angle(m_vAngle);
+		m_pTransformCom->Update_Component();
+	}
 
-	m_pTransformCom->Update_Component();
+	if (m_pParentObject && !m_pParentObject->Get_Dead())
+	{
+		CTransform* pTargetTrans = TARGET_TO_TRANS(m_pParentObject);
+		if (!pTargetTrans)
+			return;
+
+		_mat matParent = pTargetTrans->Get_WorldMat();
+		_mat matWorld = m_pTransformCom->Get_WorldMat();
+		m_pTransformCom->Set_WorldMat(matWorld * matParent);
+	}
 
 	if (m_pInfo->bScaleMove)
 	{
@@ -529,7 +550,7 @@ void CDecalEffect::Check_Move(_double TimeDelta)
 	}
 }
 
-void CDecalEffect::Check_LifeTime(_double TimeDelta)
+void COrthoEffect::Check_LifeTime(_double TimeDelta)
 {
 	m_fLifeTime -= _float(TimeDelta);
 
@@ -537,12 +558,8 @@ void CDecalEffect::Check_LifeTime(_double TimeDelta)
 		m_bIsDead = true;
 }
 
-void CDecalEffect::Check_Alpha(_double TimeDelta)
+void COrthoEffect::Check_Alpha(_double TimeDelta)
 {
-	m_fDissolveStartTime -= _float(TimeDelta);
-	if (m_fDissolveStartTime > 0.f)
-		return;
-
 	if (!m_bFadeOutStart && m_pInfo->bFadeIn)
 	{
 		m_fAlpha += _float(TimeDelta) * m_fAlphaSpeed;
@@ -570,7 +587,7 @@ void CDecalEffect::Check_Alpha(_double TimeDelta)
 	}
 }
 
-void CDecalEffect::Check_Color(_double TimeDelta)
+void COrthoEffect::Check_Color(_double TimeDelta)
 {
 	if (m_pInfo->bColorMove)
 	{
@@ -578,7 +595,7 @@ void CDecalEffect::Check_Color(_double TimeDelta)
 	}
 }
 
-void CDecalEffect::Check_CreateDelay(_double TimeDelta)
+void COrthoEffect::Check_CreateDelay(_double TimeDelta)
 {
 	m_fCreateDelay -= _float(TimeDelta);
 
@@ -588,7 +605,7 @@ void CDecalEffect::Check_CreateDelay(_double TimeDelta)
 	}
 }
 
-HRESULT CDecalEffect::Add_Component()
+HRESULT COrthoEffect::Add_Component()
 {
 	// For.Com_Renderer
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom)))
@@ -606,15 +623,12 @@ HRESULT CDecalEffect::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Colors", L"Com_ColorTexture", (CComponent**)&m_pColorTextureCom)))
 		return E_FAIL;
 
-	// For.Com_Shader
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Effect", L"Com_Shader", (CComponent**)&m_pShaderCom)))
-		return E_FAIL;
-
-	//// for.Com_VIBuffer
-	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Rect", L"Com_VIBuffer", (CComponent**)&m_pBufferCom)))
+	//// For.Com_Shader
+	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Effect", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 	//	return E_FAIL;
+
 	// for.Com_VIBuffer
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Cube", L"Com_VIBuffer", (CComponent**)&m_pBufferCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Rect", L"Com_VIBuffer", (CComponent**)&m_pBufferCom)))
 		return E_FAIL;
 
 	// For.Com_Transform
@@ -624,7 +638,7 @@ HRESULT CDecalEffect::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CDecalEffect::SetUp_ConstantTable(CShader* pShader)
+HRESULT COrthoEffect::SetUp_ConstantTable(CShader* pShader)
 {
 	if (nullptr == pShader)
 		return E_FAIL;
@@ -635,66 +649,21 @@ HRESULT CDecalEffect::SetUp_ConstantTable(CShader* pShader)
 
 	Safe_AddRef(pManagement);
 
-	_mat matWorld = m_pTransformCom->Get_WorldMat();
+	//_mat matWorld = m_pTransformCom->Get_WorldMat();
 
-	if (FAILED(pShader->Set_Value("g_matWorld", &matWorld, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
 		return E_FAIL;
-	D3DXMatrixInverse(&matWorld, nullptr, &matWorld);
-	if (FAILED(pShader->Set_Value("g_matInvWorld", &matWorld, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matView", &m_matView, sizeof(_mat))))
 		return E_FAIL;
-
-	_mat		ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
-
-	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
 
-	D3DXMatrixInverse(&ViewMatrix, nullptr, &ViewMatrix);
-	D3DXMatrixInverse(&ProjMatrix, nullptr, &ProjMatrix);
-
-	if (FAILED(pShader->Set_Value("g_matViewInv", &ViewMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_fUV_Value_X", &m_fUV_Value_X, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matProjInv", &ProjMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_fUV_Value_Y", &m_fUV_Value_Y, sizeof(_float))))
 		return E_FAIL;
-
-	if (FAILED(pShader->Set_Value("g_fDistortion", &m_pInfo->fDistortionPower, sizeof(_float))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_vColor", &m_vColor, sizeof(_v4))))
-		return E_FAIL;
-
-	if (FAILED(pShader->Set_Bool("g_bUseColorTex", m_pInfo->bUseColorTex)))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Bool("g_bReverseColor", m_pInfo->bRevColor)))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Bool("g_bUseRGBA", m_pInfo->bUseRGBA)))
-		return E_FAIL;
-
-	if (FAILED(pShader->Set_Bool("g_bDissolve", m_pInfo->bDissolve)))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_fDissolve", &m_fDissolve, sizeof(_float))))
-		return E_FAIL;
-
-	_float fMaskIndex = 0.f;
-	if (FAILED(pShader->Set_Bool("g_bUseMaskTex", (m_pInfo->fMaskIndex != -1.f))))
-		return E_FAIL;
-
-	if ((m_pInfo->fMaskIndex != -1.f))
-		fMaskIndex = m_pInfo->fMaskIndex;
 
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", pShader, _uint(m_fFrame))))
-		return E_FAIL;
-	if (FAILED(m_pGradientTextureCom->SetUp_OnShader("g_GradientTexture", pShader, _uint(fMaskIndex))))
-		return E_FAIL;
-	if (FAILED(m_pColorTextureCom->SetUp_OnShader("g_ColorTexture", pShader, _uint(m_pInfo->fColorIndex))))
-		return E_FAIL;
-
-	pShader->Set_Texture("g_DepthTexture", pManagement->Get_Target_Texture(L"Target_DecalDepth"));
-	
-	if (FAILED(pShader->Set_Bool("g_bRot", m_bWallDecal)))
 		return E_FAIL;
 
 	Safe_Release(pManagement);
@@ -702,7 +671,7 @@ HRESULT CDecalEffect::SetUp_ConstantTable(CShader* pShader)
 	return NOERROR;
 }
 
-void CDecalEffect::Change_EffectTexture(const _tchar* _Name)
+void COrthoEffect::Change_EffectTexture(const _tchar* _Name)
 {
 	auto& iter = m_pmapComponents.find(L"Com_Texture");
 
@@ -713,7 +682,7 @@ void CDecalEffect::Change_EffectTexture(const _tchar* _Name)
 	Safe_AddRef(iter->second);
 }
 
-void CDecalEffect::Change_GradientTexture(const _tchar * _Name)
+void COrthoEffect::Change_GradientTexture(const _tchar * _Name)
 {
 	auto& iter = m_pmapComponents.find(L"Com_GradientTexture");
 
@@ -726,7 +695,7 @@ void CDecalEffect::Change_GradientTexture(const _tchar * _Name)
 	Safe_AddRef(iter->second);
 }
 
-void CDecalEffect::Change_ColorTexture(const _tchar* _Name)
+void COrthoEffect::Change_ColorTexture(const _tchar* _Name)
 {
 	auto& iter = m_pmapComponents.find(L"Com_ColorTexture");
 
@@ -737,9 +706,9 @@ void CDecalEffect::Change_ColorTexture(const _tchar* _Name)
 	Safe_AddRef(iter->second);
 }
 
-CDecalEffect* CDecalEffect::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
+COrthoEffect* COrthoEffect::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 {
-	CDecalEffect*	pInstance = new CDecalEffect(pGraphic_Device);
+	COrthoEffect*	pInstance = new COrthoEffect(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 	{
@@ -751,9 +720,9 @@ CDecalEffect* CDecalEffect::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 
 }
 
-CDecalEffect* CDecalEffect::Create(LPDIRECT3DDEVICE9 pGraphic_Device, EFFECT_INFO* pInfo)
+COrthoEffect* COrthoEffect::Create(LPDIRECT3DDEVICE9 pGraphic_Device, EFFECT_INFO* pInfo)
 {
-	CDecalEffect*	pInstance = new CDecalEffect(pGraphic_Device);
+	COrthoEffect*	pInstance = new COrthoEffect(pGraphic_Device);
 
 	pInstance->m_pInfo = pInfo;
 
@@ -766,9 +735,9 @@ CDecalEffect* CDecalEffect::Create(LPDIRECT3DDEVICE9 pGraphic_Device, EFFECT_INF
 	return pInstance;
 }
 
-CGameObject* CDecalEffect::Clone_GameObject(void* pArg)
+CGameObject* COrthoEffect::Clone_GameObject(void* pArg)
 {
-	CDecalEffect*	pInstance = new CDecalEffect(*this);
+	COrthoEffect*	pInstance = new COrthoEffect(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
@@ -779,11 +748,11 @@ CGameObject* CDecalEffect::Clone_GameObject(void* pArg)
 	return pInstance;
 }
 
-void CDecalEffect::Free()
+void COrthoEffect::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
-	Safe_Release(m_pShaderCom);
+	//Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pColorTextureCom);
 	Safe_Release(m_pGradientTextureCom);

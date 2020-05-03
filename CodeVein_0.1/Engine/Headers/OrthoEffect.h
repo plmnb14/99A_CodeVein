@@ -7,16 +7,22 @@
 
 BEGIN(Engine)
 
-class ENGINE_DLL CDecalEffect : public CEffect
+class ENGINE_DLL COrthoEffect : public CEffect
 {
 
 protected:
-	explicit CDecalEffect(LPDIRECT3DDEVICE9 pGraphic_Device);
-	explicit CDecalEffect(const CDecalEffect& rhs);
-	virtual ~CDecalEffect() = default;
+	explicit COrthoEffect(LPDIRECT3DDEVICE9 pGraphic_Device);
+	explicit COrthoEffect(const COrthoEffect& rhs);
+	virtual ~COrthoEffect() = default;
 
 public:
-	void Set_WallDecal(_bool _bWall);
+	INSTANCEDATA Get_InstanceData();
+
+public:
+	void Set_UV_Speed(_float fX, _float fY);
+
+public:
+	HRESULT SetUp_ConstantTable_Instance(CShader* pShader);
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -37,10 +43,20 @@ protected:
 	CTexture*				m_pGradientTextureCom = nullptr;
 	CTexture*				m_pColorTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
-	CBuffer_CubeTex*		m_pBufferCom = nullptr;
+	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 protected:
 	CManagement*			m_pManagement = nullptr;
+
+private:
+	_mat m_matWorld;
+	_mat m_matView;
+	_mat m_matProj;
+
+	_float	m_fUV_Value_X = 0.f;
+	_float	m_fUV_Value_Y = 0.f;
+	_float	m_fUV_Speed_X = 0.f;
+	_float	m_fUV_Speed_Y = 0.f;
 
 protected:
 	void Check_Frame(_double TimeDelta);
@@ -50,7 +66,7 @@ protected:
 	void Check_Color(_double TimeDelta);
 	void Check_CreateDelay(_double TimeDelta);
 
-	void Setup_Billboard();
+	void Setup_Ortho();
 
 protected:
 	HRESULT Add_Component();
@@ -59,13 +75,9 @@ protected:
 	void Change_GradientTexture(const _tchar* _Name);
 	void Change_ColorTexture(const _tchar* _Name);
 
-private:
-	_float	m_fDissolveStartTime = 6.f;
-	_bool   m_bWallDecal = false;
-
 public:
-	static CDecalEffect* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
-	static CDecalEffect* Create(LPDIRECT3DDEVICE9 pGraphic_Device, EFFECT_INFO* pInfo);
+	static COrthoEffect* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
+	static COrthoEffect* Create(LPDIRECT3DDEVICE9 pGraphic_Device, EFFECT_INFO* pInfo);
 	virtual CGameObject* Clone_GameObject(void* pArg);
 	virtual void Free();
 };

@@ -17,6 +17,10 @@ protected:
 
 public:
 	INSTANCEDATA Get_InstanceData();
+	_int	Get_EffectLayer();
+
+public:
+	void Set_EffectLayer(_int iLayerIdx); // 클수록 위에 그려짐
 
 public:
 	HRESULT SetUp_ConstantTable_Instance(CShader* pShader);
@@ -47,7 +51,7 @@ protected:
 	CManagement*			m_pManagement = nullptr;
 
 private:
-
+	_int					m_iLayer = 0;
 
 protected:
 	void Check_Frame(_double TimeDelta);

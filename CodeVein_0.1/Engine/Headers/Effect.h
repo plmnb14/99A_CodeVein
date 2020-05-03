@@ -9,6 +9,8 @@ BEGIN(Engine)
 class ENGINE_DLL CEffect abstract : public CGameObject
 {
 public:
+	enum EFF_TYPE { TYPE_TEX, TYPE_MESH, TYPE_DECAL, TYPE_ORTHO, TYPE_END };
+public:
 	typedef struct tagEffDesc
 	{
 		CTransform* pTargetTrans;
@@ -22,6 +24,7 @@ protected:
 
 public:
 	EFFECT_INFO* Get_Info() { return m_pInfo; }
+	EFF_TYPE	Get_EffType() { return m_eType; }
 	_tchar* Get_ParticleName() { return m_szParticleName; }
 	_float	Get_CreateDelay() { return m_fCreateDelay; }
 	_v3 Get_Angle() { return m_vAngle; }
@@ -56,6 +59,8 @@ protected:
 protected:
 	EFFECT_INFO*			m_pInfo = nullptr;
 	EFFECT_DESC*			m_pDesc = nullptr;
+
+	EFF_TYPE				m_eType = TYPE_END;
 
 	CGameObject*			m_pParentObject = nullptr;
 	_mat*					m_pTargetMatrix = nullptr;

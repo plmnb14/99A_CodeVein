@@ -13,11 +13,12 @@ class CEffect_BloodChunk final : public CGameObject
 public:
 	typedef struct tagEffInfo
 	{
-		tagEffInfo(_v3 _vPos, _v3 _vDir)
-			: vCreatePos(_vPos), vDirection(_vDir)
+		tagEffInfo(_v3 _vPos, _v3 _vDir, _bool _bWall)
+			: vCreatePos(_vPos), vDirection(_vDir), bWall(_bWall)
 		{}
 		_v3 vCreatePos;
 		_v3 vDirection;
+		_bool bWall;
 	}EFF_INFO;
 
 protected:
@@ -52,6 +53,8 @@ private:
 
 	_bool				m_bEffect = true;
 	_float				m_fEffectOffset = 0.f;
+
+	_bool				m_bIsWallDecal = false;
 
 private:
 	void Check_Move(_double TimeDelta);
