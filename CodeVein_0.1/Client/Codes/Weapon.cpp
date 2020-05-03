@@ -65,30 +65,30 @@ _int CWeapon::Late_Update_GameObject(_double TimeDelta)
 		nullptr == m_pMesh_Static)
 		return E_FAIL;
 
-	if (false == m_tObjParam.bInvisible)
+	_v3 vPos;
+	memcpy(vPos, &m_pTransform->Get_WorldMat()._41, sizeof(_v3));
+
+	if (m_pOptimization->Check_InFrustumforObject(&vPos, 2.f))
 	{
-<<<<<<< HEAD
-		if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
-			return E_FAIL;
-		if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-			return E_FAIL;
-		if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
-			return E_FAIL;
-=======
-		if (!m_bDissolve)
+		if (false == m_tObjParam.bInvisible)
 		{
-			if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
-				return E_FAIL;
+			if (!m_bDissolve)
+			{
+				if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
+					return E_FAIL;
+			}
+			else
+			{
+				if (FAILED(m_pRenderer->Add_RenderList(RENDER_ALPHA, this)))
+					return E_FAIL;
+			}
+
 			if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
 				return E_FAIL;
-		}
-		else
-		{
-			if (FAILED(m_pRenderer->Add_RenderList(RENDER_ALPHA, this)))
+
+			if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
 				return E_FAIL;
 		}
-
->>>>>>> origin/Merge_Brench
 	}
 
 	return _int();
@@ -138,7 +138,6 @@ HRESULT CWeapon::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 		nullptr == m_pMesh_Static)
 		return E_FAIL;
 
-<<<<<<< HEAD
 	//============================================================================================
 	// 공통 변수
 	//============================================================================================
@@ -146,10 +145,6 @@ HRESULT CWeapon::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 	_mat	ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
 	_mat	ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
 	_mat	WorldMatrix = m_pTransform->Get_WorldMat();
-=======
-	_mat		ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
->>>>>>> origin/Merge_Brench
 
 	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
 		return E_FAIL;
@@ -206,10 +201,9 @@ HRESULT CWeapon::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 
 		pShader->End_Pass();
 	}
-<<<<<<< HEAD
+
 	//============================================================================================
-=======
->>>>>>> origin/Merge_Brench
+
 
 	return NOERROR;
 }
