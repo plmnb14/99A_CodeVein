@@ -76,6 +76,7 @@ public:
 public: // For.PipeLine
 	_v3	Get_CamPosition();
 	_mat Get_Transform(D3DTRANSFORMSTATETYPE eState);
+	_mat Get_TransformInverse(D3DTRANSFORMSTATETYPE eState);
 	HRESULT Set_Transform(D3DTRANSFORMSTATETYPE eState, _mat StateMatrix);
 
 public: // For.Light_Manager

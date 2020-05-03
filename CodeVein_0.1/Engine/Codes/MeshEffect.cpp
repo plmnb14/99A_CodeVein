@@ -189,7 +189,7 @@ HRESULT CMeshEffect::Render_GameObject_SetShader(CShader * pShader)
 	return NOERROR;
 }
 
-HRESULT CMeshEffect::Render_GameObject_SetPass(CShader* pShader, _int iPass)
+HRESULT CMeshEffect::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur)
 {
 	if (nullptr == pShader ||
 		nullptr == m_pMeshCom)

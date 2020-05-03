@@ -2,12 +2,12 @@
 #include "..\Headers\CocoonBigBullet.h"
 
 CCocoonBigBullet::CCocoonBigBullet(LPDIRECT3DDEVICE9 pGraphic_Device)
-	: CGameObject(pGraphic_Device)
+	: CMonster(pGraphic_Device)
 {
 }
 
 CCocoonBigBullet::CCocoonBigBullet(const CCocoonBigBullet & rhs)
-	: CGameObject(rhs)
+	: CMonster(rhs)
 {
 }
 
@@ -28,15 +28,15 @@ HRESULT CCocoonBigBullet::Ready_GameObject(void * pArg)
 		return S_OK;
 	}
 
+	MONSTER_BULLET_STATUS info = *(MONSTER_BULLET_STATUS*)pArg;
 
-	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
+	m_eBulletType = info.eBulletType;
+	m_vDir = info.vDir;
+	m_fSpeed = info.fSpeed;
+	m_dLifeTime = info.dLifeTime;
 
-	m_vDir = temp.vDir;
-	m_fSpeed = temp.fSpeed;
-	m_dLifeTime = temp.dLifeTime;
-
-	m_pTransformCom->Set_Pos(temp.vCreatePos);
-	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
+	m_pTransformCom->Set_Pos(info.vCreatePos);
+	m_pTransformCom->Set_Scale(V3_ONE);
 
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
@@ -47,10 +47,10 @@ HRESULT CCocoonBigBullet::Ready_GameObject(void * pArg)
 	m_fEffectOffset = 0.f;
 
 	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Totem_Fire_BulletBody", nullptr));
-	m_pBulletBody->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
+	m_pBulletBody->Set_Desc(V3_NULL, m_pTransformCom);
 	m_pBulletBody->Reset_Init();
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
-	
+
 	return S_OK;
 }
 
@@ -61,7 +61,7 @@ _int CCocoonBigBullet::Update_GameObject(_double TimeDelta)
 	if (m_bDead)
 		return DEAD_OBJ;
 
-	Enter_Collision();
+	Check_CollisionEvent();
 
 	m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
 
@@ -69,10 +69,19 @@ _int CCocoonBigBullet::Update_GameObject(_double TimeDelta)
 
 	if (m_dCurTime > m_dLifeTime)
 	{
-		g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_0", m_pTransformCom->Get_Pos());
-		g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_1", m_pTransformCom->Get_Pos());
-		g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_Particle", m_pTransformCom->Get_Pos());
-		m_pBulletBody->Set_Dead();
+		switch (m_eBulletType)
+		{
+		case Client::CMonster::BULLET_NORMAL:
+		case Client::CMonster::BULLET_FIRE:
+		case Client::CMonster::BULLET_ELECTRON:
+			g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_0", m_pTransformCom->Get_Pos());
+			g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_1", m_pTransformCom->Get_Pos());
+			g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_Particle", m_pTransformCom->Get_Pos());
+			m_pBulletBody->Set_Dead();
+			break;
+		case Client::CMonster::BULLET_ICE:
+			break;
+		}
 
 		m_bDead = true;
 	}
@@ -87,9 +96,18 @@ _int CCocoonBigBullet::Update_GameObject(_double TimeDelta)
 		if (m_fEffectOffset > 0.06f)
 		{
 			m_fEffectOffset = 0.f;
-			g_pManagement->Create_Effect(L"Totem_Fire_BulletBody", m_pTransformCom->Get_Pos() + m_vDir * 1.3f);
-			g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_01", m_pTransformCom->Get_Pos(), nullptr);
-			g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_02", m_pTransformCom->Get_Pos(), nullptr);
+			switch (m_eBulletType)
+			{
+			case Client::CMonster::BULLET_NORMAL:
+			case Client::CMonster::BULLET_FIRE:
+			case Client::CMonster::BULLET_ELECTRON:
+				g_pManagement->Create_Effect(L"Totem_Fire_BulletBody", m_pTransformCom->Get_Pos() + m_vDir * 1.3f);
+				g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_01", m_pTransformCom->Get_Pos(), nullptr);
+				g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_02", m_pTransformCom->Get_Pos(), nullptr);
+				break;
+			case Client::CMonster::BULLET_ICE:
+				break;
+			}
 		}
 	}
 
@@ -141,15 +159,16 @@ void CCocoonBigBullet::Render_Collider()
 	return;
 }
 
-void CCocoonBigBullet::Enter_Collision()
+void CCocoonBigBullet::Check_CollisionEvent()
 {
 	Update_Collider();
-	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
+	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
+	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE));
 
 	return;
 }
 
-void CCocoonBigBullet::Check_CollisionEvent(list<CGameObject*> plistGameObject)
+void CCocoonBigBullet::Check_CollisionHit(list<CGameObject*> plistGameObject)
 {
 	if (false == m_tObjParam.bCanAttack)
 		return;

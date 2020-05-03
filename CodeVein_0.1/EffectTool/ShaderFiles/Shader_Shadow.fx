@@ -1,165 +1,121 @@
-matrix		g_matWorld, g_matView, g_matProj;
-matrix		g_matLightView, g_matLightProj;
+
+matrix		g_matWorld;
+matrix		g_matWVP;
+matrix		g_matLightVP;
 matrix		g_matBias;
-matrix		g_LightVP_Close, g_LightVP_Medium, g_LightVP_Far;
 
-// ºû
-vector		g_vLightDir;
-vector		g_vLightPos;
-float		g_fRange;
-
-vector		g_vLightDiffuse;
-vector		g_vLightAmbient;
-vector		g_vLightSpecular;
-
-vector		g_vMtrlAmbient = (vector)1.f;
-vector		g_vMtrlSpecular = (vector)1.f;
-
-vector		g_vCamPosition;
-matrix		g_matProjInv;
-matrix		g_matViewInv;
-
-float3		LightDirection1 = float3(-1.5, 0.45, 0);
-
-
-texture		g_DiffuseTexture;
-texture		g_NormalTexture;
-texture		g_SpecularTexture;
-texture		g_EmissiveTexture;
-
-sampler		DiffuseSampler = sampler_state
-{
-	texture = g_DiffuseTexture;
-	minfilter = linear;
-	magfilter = linear;
-	mipfilter = linear;
-};
-
-sampler		NormalSampler = sampler_state
-{
-	texture = g_NormalTexture;
-	minfilter = linear;
-	magfilter = linear;
-	mipfilter = linear;
-};
-
-sampler		SpecularSampler = sampler_state
-{
-	texture = g_SpecularTexture;
-	minfilter = linear;
-	magfilter = linear;
-	mipfilter = linear;
-};
-
-sampler		EmissiveSampler = sampler_state
-{
-	texture = g_EmissiveTexture;
-};
+//==========================================================================
 
 texture		g_ShadowMapTexture;
+
 sampler ShadowMapSampler = sampler_state
 {
 	texture = g_ShadowMapTexture;
 
-	//minfilter = linear;
-	//magfilter = linear;
-	//mipfilter = linear;
+	minfilter = linear;
+	magfilter = linear;
+	mipfilter = linear;
+
+	addressU = border;
+	addressV = border;
+
+	BorderColor = float4(1.f, 0.0f, 0.0f, 1.0f);
 };
 
+//==========================================================================
 
-struct VS_IN
+struct VS_IN_ShadowMap
 {
 	float3		vPosition	: POSITION;
-	float3		vNormal		: NORMAL;
-	float3		vTangent	: TANGENT;
-	float3		vBinormal	: BINORMAL;
-	float2		vTexUV		: TEXCOORD0;
 };
 
-struct VS_OUT
+struct VS_IN_ShadowRender
+{
+	float3		vPosition	: POSITION;
+};
+
+struct VS_OUT_ShadowMap
 {
 	float4		vPosition	: POSITION;
-	float2		vTexUV		: TEXCOORD0;
-	float4		vDepth		: TEXCOORD1;
-	float4		vShadowUV	: TEXCOORD2;
-	float4		vWorldPos   : TEXCOORD3;
-	float4		vColor		: COLOR0;
-	float		fDepth		: TEXCOORD4;
+	float4		vDepth		: TEXCOORD0;
 };
 
-
-struct PS_IN
+struct VS_OUT_ShadowRender
 {
 	float4		vPosition	: POSITION;
-	float2		vTexUV		: TEXCOORD0;
-	float4		vDepth		: TEXCOORD1;
-	float4		vShadowUV	: TEXCOORD2;
-	float4		vWorldPos   : TEXCOORD3;
-	float4		vColor		: COLOR0;
-	float		fDepth : TEXCOORD4;
+	float4		vDepth		: TEXCOORD0;
+	float4		vShadowUV	: TEXCOORD1;
 };
 
-struct PS_OUT
+//==========================================================================
+
+VS_OUT_ShadowMap VS_SHADOWMAP(VS_IN_ShadowMap In)
 {
-	vector		vDiffuse : COLOR0;
-};
+	VS_OUT_ShadowMap Out = (VS_OUT_ShadowMap)0;
 
-VS_OUT VS_SHADOWMAP(VS_IN In)
-{
-	VS_OUT Out = (VS_OUT)0;
-
-	Out.vPosition = mul(float4(In.vPosition.xyz, 1.f), g_matWorld);
-	Out.vPosition = mul(Out.vPosition, g_matLightView);
-	Out.vPosition = mul(Out.vPosition, g_matLightProj);
-
+	matrix matLightWVP = mul(g_matWorld, g_matLightVP);
+	
+	Out.vPosition = mul(float4(In.vPosition.xyz, 1.f), matLightWVP);
 	Out.vDepth = Out.vPosition;
 
 	return Out;
 }
 
-VS_OUT VS_SHADOW(VS_IN In)
+VS_OUT_ShadowRender VS_SHADOW(VS_IN_ShadowRender In)
 {
-	VS_OUT Out = (VS_OUT)0;
+	VS_OUT_ShadowRender Out = (VS_OUT_ShadowRender)0;
 
-	matrix		matWV, matWVP;
-	
-	matWV = mul(g_matWorld, g_matView);
-	matWVP = mul(matWV, g_matProj);
+	matrix matLightWVP = mul(g_matWorld , g_matLightVP);
 
-	Out.vPosition = mul(float4(In.vPosition.xyz, 1), matWVP);
-
-	Out.vDepth = mul(float4(In.vPosition.xyz, 1), g_matWorld);
-	Out.vDepth = mul(Out.vDepth, g_matLightView);
-	Out.vDepth = mul(Out.vDepth, g_matLightProj);
-
+	Out.vPosition = mul(float4(In.vPosition.xyz, 1), g_matWVP);
+	Out.vDepth = mul(float4(In.vPosition.xyz, 1), matLightWVP);
 	Out.vShadowUV = mul(Out.vDepth, g_matBias);
 
 	return Out;
 }
 
+//==========================================================================
 
-PS_OUT PS_SHADOWMAP(PS_IN In)
+struct PS_IN_ShadowMap
+{
+	float4		vPosition	: POSITION;
+	float4		vDepth		: TEXCOORD0;
+};
+
+struct PS_IN_ShadowRender
+{
+	float4		vPosition	: POSITION;
+	float4		vDepth		: TEXCOORD0;
+	float4		vShadowUV	: TEXCOORD1;
+};
+
+struct PS_OUT
+{
+	float4		vDiffuse : COLOR0;
+};
+
+PS_OUT PS_SHADOWMAP(PS_IN_ShadowMap In)
 {
 	PS_OUT Out = (PS_OUT)0;
 
-	float fDepth = In.vDepth.z;
-	//float fDepth = In.vDepth.z / In.vDepth.w;
+	// Á¤±ÔÈ­
+	float fDepth = In.vDepth.z / In.vDepth.w;
 
 	Out.vDiffuse = float4(fDepth, fDepth, fDepth, 1.f);
-
-	//Out.vDiffuse = fDepth;
 
 	return Out;
 }
 
-PS_OUT PS_SHADOW(PS_IN In)
+PS_OUT PS_SHADOW(PS_IN_ShadowRender In)
 {
 	PS_OUT Out = (PS_OUT)0;
 
 	float4 vTexCoord[9];
 	
-	float fTexelSizeX = 1.f / 1280.f;
-	float fTexelSizeY = 1.f / 720.f;
+	float fTexelSizeX = 1.f / 3840.f;
+	float fTexelSizeY = 1.f / 2160.f;
+	//float fTexelSizeX = 1.f / 2560.f;
+	//float fTexelSizeY = 1.f / 1440.f;
 	
 	vTexCoord[0] = In.vShadowUV;
 	vTexCoord[1] = In.vShadowUV + float4(-fTexelSizeX, 0.f, 0.f, 0.f);
@@ -176,23 +132,23 @@ PS_OUT PS_SHADOW(PS_IN In)
 	
 	for (int i = 0; i < 9; i++)
 	{
-		//float fDepthValue = tex2Dproj(ShadowMapSampler, vTexCoord[i]).x;
-		//
-		//if (fDepthValue * In.vDepth.w < In.vDepth.z - 0.001f)
-		//{
-		//	fShadowTerms[i] = 0.2f;
-		//}
-		//
-		//else
-		//	fShadowTerms[i] = 1.f;
-		//
-		//fShadowTerm += float(fShadowTerms[i]);
-
-		float A = tex2Dproj(ShadowMapSampler, vTexCoord[i]).x;
-		float B = (In.vDepth.z - 0.00125f);
+		float fDepthValue = tex2Dproj(ShadowMapSampler, vTexCoord[i]).x;
 		
-		fShadowTerms[i] = (A < B ? 0.f : 1.f);
+		if (fDepthValue * In.vDepth.w < In.vDepth.z - 0.001f)
+		{
+			fShadowTerms[i] = 0.2f;
+		}
+		
+		else
+			fShadowTerms[i] = 1.f;
+		
 		fShadowTerm += float(fShadowTerms[i]);
+
+		//float A = tex2Dproj(ShadowMapSampler, vTexCoord[i]).x;
+		//float B = (In.vDepth.z - 0.00125f);
+		//
+		//fShadowTerms[i] = (A < B ? 0.f : 1.f);
+		//fShadowTerm += float(fShadowTerms[i]);
 	}
 	
 	fShadowTerm /= 9.f;

@@ -1414,7 +1414,7 @@ _uint CLoading::Loading_Stage()
 		// Æê ÃÑ¾Ë ¿øº»
 		if (FAILED(g_pManagement->Add_Prototype(L"Pet_Bullet", CPet_Bullet::Create(m_pGraphicDev))))
 			return E_FAIL;
-		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Pet_Bullet", L"Pet_Bullet", 1000);
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Pet_Bullet", L"Pet_Bullet", 100);
 
 		cout << "UI Sub Prototype »ý¼º Áß . . ." << endl;
 		// UI - Chea
@@ -1428,9 +1428,6 @@ _uint CLoading::Loading_Stage()
 
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MassageUI", CMassageUI::Create(m_pGraphicDev))))
 			return E_FAIL;
-
-		/*if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DamegeNumUI", CDamegeNumUI::Create(m_pGraphicDev))))
-			return E_FAIL;*/
 
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Get_ItemUI", CGet_ItemUI::Create(m_pGraphicDev))))
 			return E_FAIL;

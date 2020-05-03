@@ -615,9 +615,6 @@
     <ClInclude Include="..\Headers\DamegeNumUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\01.MonsterUI\DamegeNumUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Monster.h">
-      <Filter>02.GameObject\Stage\2%29 Monster</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\QueensKnight.h">
       <Filter>02.GameObject\Stage\1%29 Boss\QueensKnight</Filter>
     </ClInclude>
@@ -827,6 +824,9 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Pet_Bullet.h">
       <Filter>02.GameObject\Stage\10%29 Pet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Monster.h">
+      <Filter>02.GameObject\Stage\2%29 Monster</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>

@@ -346,88 +346,169 @@ void CPet::Function_CalcMoveSpeed(_float _fMidDist)
 
 void CPet::Function_Find_Target()
 {
-	//이넘값에 따라 우선순위가 바뀔 예정
-	_float	fOldLength = 99999.f;
-
 	auto& MonsterContainer = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
 
 	auto& BossContainer = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
 
 	auto& ItemContainer = g_pManagement->Get_GameObjectList(L"Layer_Item", SCENE_STAGE);
 
-	for (auto& Monster_iter : MonsterContainer)
+	_float	fOldLength = 99999.f;
+
+	switch (m_eNowPetMode)
 	{
-		if (true == Monster_iter->Get_Dead())
-			continue;
-		else if (false == Monster_iter->Get_Enable())
-			continue;
-		else if (nullptr == Monster_iter)
-			continue;
+	case PET_MODE_TYPE::PET_MODE_ATK:
+		for (auto& Monster_iter : MonsterContainer)
+		{
+			if (true == Monster_iter->Get_Dead())
+				continue;
+			else if (false == Monster_iter->Get_Enable())
+				continue;
+			else if (nullptr == Monster_iter)
+				continue;
 
-		_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
+			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
 
-		if (fLenth > m_fRecognitionRange)
-			continue;
+			if (fLenth > m_fRecognitionRange)
+				continue;
 
-		if (fOldLength <= fLenth)
-			continue;
+			if (fOldLength <= fLenth)
+				continue;
 
-		fOldLength = fLenth;
-		m_pTarget = Monster_iter;
-		m_eTarget = PET_TARGET_TYPE::PET_TARGET_MONSTER;
-		Safe_AddRef(m_pTarget);
+			fOldLength = fLenth;
+			m_pTarget = Monster_iter;
+			m_eTarget = PET_TARGET_TYPE::PET_TARGET_MONSTER;
+			Safe_AddRef(m_pTarget);
+		}
+
+		IF_NOT_NULL_RETURN(m_pTarget);
+
+		for (auto& Boss_iter : BossContainer)
+		{
+			if (true == Boss_iter->Get_Dead())
+				continue;
+			else if (false == Boss_iter->Get_Enable())
+				continue;
+			else if (nullptr == Boss_iter)
+				continue;
+
+			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Boss_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
+
+			if (fLenth > m_fRecognitionRange)
+				continue;
+
+			if (fOldLength <= fLenth)
+				continue;
+
+			fOldLength = fLenth;
+			m_pTarget = Boss_iter;
+			m_eTarget = PET_TARGET_TYPE::PET_TARGET_BOSS;
+			Safe_AddRef(m_pTarget);
+		}
+
+		IF_NOT_NULL_RETURN(m_pTarget);
+
+		for (auto& Item_iter : ItemContainer)
+		{
+			if (true == Item_iter->Get_Dead())
+				continue;
+			else if (false == Item_iter->Get_Enable())
+				continue;
+			else if (nullptr == Item_iter)
+				continue;
+
+			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Item_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
+
+			if (fLenth > m_fRecognitionRange)
+				continue;
+			if (fOldLength <= fLenth)
+				continue;
+
+			fOldLength = fLenth;
+			m_pTarget = Item_iter;
+			m_eTarget = PET_TARGET_TYPE::PET_TARGET_ITEM;
+			Safe_AddRef(m_pTarget);
+		}
+
+		IF_NOT_NULL_RETURN(m_pTarget);
+
+		break;
+
+	case PET_MODE_TYPE::PET_MODE_UTILL:
+		for (auto& Item_iter : ItemContainer)
+		{
+			if (true == Item_iter->Get_Dead())
+				continue;
+			else if (false == Item_iter->Get_Enable())
+				continue;
+			else if (nullptr == Item_iter)
+				continue;
+
+			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Item_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
+
+			if (fLenth > m_fRecognitionRange)
+				continue;
+			if (fOldLength <= fLenth)
+				continue;
+
+			fOldLength = fLenth;
+			m_pTarget = Item_iter;
+			m_eTarget = PET_TARGET_TYPE::PET_TARGET_ITEM;
+			Safe_AddRef(m_pTarget);
+		}
+
+		IF_NOT_NULL_RETURN(m_pTarget);
+
+		for (auto& Monster_iter : MonsterContainer)
+		{
+			if (true == Monster_iter->Get_Dead())
+				continue;
+			else if (false == Monster_iter->Get_Enable())
+				continue;
+			else if (nullptr == Monster_iter)
+				continue;
+
+			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
+
+			if (fLenth > m_fRecognitionRange)
+				continue;
+
+			if (fOldLength <= fLenth)
+				continue;
+
+			fOldLength = fLenth;
+			m_pTarget = Monster_iter;
+			m_eTarget = PET_TARGET_TYPE::PET_TARGET_MONSTER;
+			Safe_AddRef(m_pTarget);
+		}
+
+		IF_NOT_NULL_RETURN(m_pTarget);
+
+		for (auto& Boss_iter : BossContainer)
+		{
+			if (true == Boss_iter->Get_Dead())
+				continue;
+			else if (false == Boss_iter->Get_Enable())
+				continue;
+			else if (nullptr == Boss_iter)
+				continue;
+
+			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Boss_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
+
+			if (fLenth > m_fRecognitionRange)
+				continue;
+
+			if (fOldLength <= fLenth)
+				continue;
+
+			fOldLength = fLenth;
+			m_pTarget = Boss_iter;
+			m_eTarget = PET_TARGET_TYPE::PET_TARGET_BOSS;
+			Safe_AddRef(m_pTarget);
+		}
+
+		IF_NOT_NULL_RETURN(m_pTarget);
+		break;
 	}
-
-	IF_NOT_NULL_RETURN(m_pTarget);
-
-	for (auto& Boss_iter : BossContainer)
-	{
-		if (true == Boss_iter->Get_Dead())
-			continue;
-		else if (false == Boss_iter->Get_Enable())
-			continue;
-		else if (nullptr == Boss_iter)
-			continue;
-
-		_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Boss_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
-
-		if (fLenth > m_fRecognitionRange)
-			continue;
-
-		if (fOldLength <= fLenth)
-			continue;
-
-		fOldLength = fLenth;
-		m_pTarget = Boss_iter;
-		m_eTarget = PET_TARGET_TYPE::PET_TARGET_BOSS;
-		Safe_AddRef(m_pTarget);
-	}
-
-	IF_NOT_NULL_RETURN(m_pTarget);
-
-	for (auto& Item_iter : ItemContainer)
-	{
-		if (true == Item_iter->Get_Dead())
-			continue;
-		else if (false == Item_iter->Get_Enable())
-			continue;
-		else if (nullptr == Item_iter)
-			continue;
-
-		_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Item_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
-
-		if (fLenth > m_fRecognitionRange)
-			continue;
-		if (fOldLength <= fLenth)
-			continue;
-
-		fOldLength = fLenth;
-		m_pTarget = Item_iter;
-		m_eTarget = PET_TARGET_TYPE::PET_TARGET_ITEM;
-		Safe_AddRef(m_pTarget);
-	}
-
-	IF_NOT_NULL_RETURN(m_pTarget);
 
 	if (nullptr == m_pTarget)
 	{
