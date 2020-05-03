@@ -34,6 +34,8 @@ private:
 	_double				m_dLifeTime = 0;
 	_bool				m_bDead = false;
 
+	_double				m_dTimeDelta = 0;
+
 private:
 	_bool				m_bPlayerFriendly = false;		// 플레이어 껀지
 

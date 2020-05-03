@@ -44,6 +44,7 @@ HRESULT CCocoonBigBullet::Ready_GameObject(void * pArg)
 	m_dCurTime = 0;
 	m_bDead = false;
 	m_bEffect = true;
+	m_fEffectOffset = 0.f;
 
 	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Totem_Fire_BulletBody", nullptr));
 	m_pBulletBody->Set_Desc(V3_NULL, m_pTransformCom);

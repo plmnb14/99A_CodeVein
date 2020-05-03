@@ -20,10 +20,15 @@ HRESULT CDarkGroundBullet::Ready_GameObject_Prototype()
 
 HRESULT CDarkGroundBullet::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component()))
-		return E_FAIL;
+	if (nullptr == pArg)
+	{
+		if (FAILED(Add_Component()))
+			return E_FAIL;
 
-	Ready_Collider();
+		Ready_Collider();
+
+		return S_OK;
+	}
 
 	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
 
@@ -36,6 +41,10 @@ HRESULT CDarkGroundBullet::Ready_GameObject(void * pArg)
 
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
+
+	m_dCurTime = 0;
+	m_bDead = false;
+	m_fEffectOffset = 0.f;
 
 
 	return NOERROR;
@@ -58,7 +67,8 @@ _int CDarkGroundBullet::Update_GameObject(_double TimeDelta)
 	if (m_dCurTime > m_dLifeTime)
 	{
 		// 터지는 구체 생성
-		g_pManagement->Add_GameObject_ToLayer(L"Monster_DarkBoom", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(m_pTransformCom->Get_Pos(), m_vDir, m_fSpeed, 1));
+		//g_pManagement->Add_GameObject_ToLayer(L"Monster_DarkBoom", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(m_pTransformCom->Get_Pos(), m_vDir, m_fSpeed, 1));
+		CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_DarkBoom", &BULLET_INFO(m_pTransformCom->Get_Pos(), m_vDir, m_fSpeed, 1));
 		m_bDead = true;
 	}
 	// 진행중

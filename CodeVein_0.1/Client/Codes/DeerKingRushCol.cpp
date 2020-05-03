@@ -20,10 +20,15 @@ HRESULT CDeerKingRushCol::Ready_GameObject_Prototype()
 
 HRESULT CDeerKingRushCol::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component()))
-		return E_FAIL;
+	if (nullptr == pArg)
+	{
+		if (FAILED(Add_Component()))
+			return E_FAIL;
 
-	Ready_Collider();
+		Ready_Collider();
+
+		return S_OK;
+	}
 
 	CBT_CreateBuff::BUFF_INFO temp = *(CBT_CreateBuff::BUFF_INFO*)(pArg);
 
@@ -31,6 +36,10 @@ HRESULT CDeerKingRushCol::Ready_GameObject(void * pArg)
 	Safe_AddRef(m_pTarget_Transform);
 
 	m_dLifeTime = temp.dLifeTime;
+
+	m_dCurTime = 0;
+	m_bDead = false;
+
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 

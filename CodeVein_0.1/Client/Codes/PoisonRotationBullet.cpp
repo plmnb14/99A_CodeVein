@@ -19,10 +19,15 @@ HRESULT CPoisonRotationBullet::Ready_GameObject_Prototype()
 
 HRESULT CPoisonRotationBullet::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component()))
-		return E_FAIL;
+	if (nullptr == pArg)
+	{
+		if (FAILED(Add_Component()))
+			return E_FAIL;
 
-	Ready_Collider();
+		Ready_Collider();
+
+		return S_OK;
+	}
 
 	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
 
@@ -35,6 +40,11 @@ HRESULT CPoisonRotationBullet::Ready_GameObject(void * pArg)
 
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
+
+	m_dCurTime = 0;
+	m_bDead = false;
+	m_bEffect = true;
+	m_fEffectCreateOffset_Check = 0.f;
 
 	m_fEffectCreateOffset = 0.05f;
 

@@ -20,15 +20,23 @@ HRESULT CDeerKingJumpFistCol::Ready_GameObject_Prototype()
 
 HRESULT CDeerKingJumpFistCol::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component()))
-		return E_FAIL;
+	if (nullptr == pArg)
+	{
+		if (FAILED(Add_Component()))
+			return E_FAIL;
 
-	Ready_Collider();
+		Ready_Collider();
+
+		return S_OK;
+	}
 
 	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
 
 	m_fSpeed = temp.fSpeed;
 	m_dLifeTime = temp.dLifeTime;
+
+	m_dCurTime = 0;
+	m_bDead = false;
 
 	m_pTransformCom->Set_Pos(temp.vCreatePos);
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));

@@ -20,15 +20,24 @@ HRESULT CDeerKingJumpInPlaceCol::Ready_GameObject_Prototype()
 
 HRESULT CDeerKingJumpInPlaceCol::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component()))
-		return E_FAIL;
+	if (nullptr == pArg)
+	{
+		if (FAILED(Add_Component()))
+			return E_FAIL;
 
-	Ready_Collider();
+		Ready_Collider();
+
+		return S_OK;
+	}
 
 	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
 
 	m_fSpeed = temp.fSpeed;
 	m_dLifeTime = temp.dLifeTime;
+
+	m_dCurTime = 0;
+	m_bDead = false;
+	m_bEffect = false;
 
 	m_pTransformCom->Set_Pos(temp.vCreatePos);
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
@@ -193,7 +202,7 @@ void CDeerKingJumpInPlaceCol::OnCollisionEvent(list<CGameObject*> plistGameObjec
 
 						iter->Add_Target_Hp(-m_tObjParam.fDamage);
 
-						m_dCurTime = 10000;	// 맞으면 제거
+						//m_dCurTime = 10000;	// 맞으면 제거
 					}
 
 
@@ -256,8 +265,9 @@ HRESULT CDeerKingJumpInPlaceCol::Ready_Collider()
 	// 총알 중앙
 	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 
-	_float fRadius = 5.f;
-
+	//_float fRadius = 5.f;
+	_float fRadius = 8.2f;
+	
 	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
 	pCollider->Set_Dynamic(true);
 	pCollider->Set_Type(COL_SPHERE);

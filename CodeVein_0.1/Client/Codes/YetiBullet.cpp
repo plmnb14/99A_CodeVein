@@ -207,7 +207,7 @@ void CYetiBullet::Check_CollisionHit(list<CGameObject*> plistGameObject)
 					}
 
 					iter->Set_Target_CanHit(false);
-					iter->Add_Target_Hp(m_tObjParam.fDamage);
+					iter->Add_Target_Hp(-m_tObjParam.fDamage);
 
 					m_dCurTime = 100;
 
