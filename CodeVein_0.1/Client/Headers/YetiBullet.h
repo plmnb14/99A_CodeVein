@@ -1,14 +1,10 @@
 #pragma once
 
-#include "Client_Defines.h"
-#include "GameObject.h"
-#include "Management.h"
-#include "Trail_VFX.h"
-#include "Effect.h"
+#include "Monster.h"
 
 BEGIN(Client)
 
-class CYetiBullet final : public CGameObject
+class CYetiBullet final : public CMonster
 {
 protected:
 	explicit CYetiBullet(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -23,11 +19,11 @@ public:
 	virtual HRESULT Render_GameObject();
 
 private:
+	void Update_Trails(_double TimeDelta);
 	void Update_Collider();
 	void Render_Collider();
-	void Update_Trails(_double TimeDelta);
-	virtual void Enter_Collision();
-	virtual void Check_CollisionEvent(list<CGameObject*> plistGameObject);
+	virtual void Check_CollisionEvent();
+	virtual void Check_CollisionHit(list<CGameObject*> plistGameObject);
 
 private:
 	HRESULT Add_Component();
@@ -40,9 +36,6 @@ public:
 	virtual void Free();
 
 private:
-	CTransform*			m_pTransformCom = nullptr;
-	CCollider*			m_pCollider = nullptr;
-	CRenderer*			m_pRendererCom = nullptr;
 	CTrail_VFX*			m_pTrailEffect = nullptr;
 	CEffect*			m_pBulletBody = nullptr;
 

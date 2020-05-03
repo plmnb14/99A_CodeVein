@@ -53,7 +53,7 @@ _int CYeti::Update_GameObject(_double TimeDelta)
 
 	m_pMeshCom->SetUp_Animation(m_eState);
 
-	MONSTER_STATETYPE::DEAD != m_eFirstCategory ? Check_CollisionEvent() : Check_DeadEffect(TimeDelta);
+	MONSTER_STATE_TYPE::DEAD != m_eFirstCategory ? Check_CollisionEvent() : Check_DeadEffect(TimeDelta);
 
 	return NO_EVENT;
 }
@@ -228,7 +228,7 @@ void CYeti::Check_PosY()
 
 void CYeti::Check_Hit()
 {
-	if (MONSTER_STATETYPE::DEAD == m_eFirstCategory)
+	if (MONSTER_STATE_TYPE::DEAD == m_eFirstCategory)
 		return;
 
 	if (0 < m_tObjParam.fHp_Cur)
@@ -241,7 +241,7 @@ void CYeti::Check_Hit()
 				{
 					if (true == m_tObjParam.bHitAgain)
 					{
-						m_eFirstCategory = MONSTER_STATETYPE::HIT;
+						m_eFirstCategory = MONSTER_STATE_TYPE::HIT;
 						m_tObjParam.bHitAgain = false;
 						m_pMeshCom->Reset_OldIndx();
 
@@ -253,7 +253,7 @@ void CYeti::Check_Hit()
 				}
 				else
 				{
-					m_eFirstCategory = MONSTER_STATETYPE::HIT;
+					m_eFirstCategory = MONSTER_STATE_TYPE::HIT;
 
 					if (nullptr == m_pTarget)
 						m_eFBLR = FBLR::FRONTLEFT;
@@ -264,16 +264,16 @@ void CYeti::Check_Hit()
 		}
 	}
 	else
-		m_eFirstCategory = MONSTER_STATETYPE::DEAD;
+		m_eFirstCategory = MONSTER_STATE_TYPE::DEAD;
 
 	return;
 }
 
 void CYeti::Check_Dist()
 {
-	if (MONSTER_STATETYPE::HIT == m_eFirstCategory ||
-		MONSTER_STATETYPE::CC == m_eFirstCategory ||
-		MONSTER_STATETYPE::DEAD == m_eFirstCategory)
+	if (MONSTER_STATE_TYPE::HIT == m_eFirstCategory ||
+		MONSTER_STATE_TYPE::CC == m_eFirstCategory ||
+		MONSTER_STATE_TYPE::DEAD == m_eFirstCategory)
 		return;
 
 	if (true == m_bIsCombo ||
@@ -289,7 +289,7 @@ void CYeti::Check_Dist()
 	{
 		Function_ResetAfterAtk();
 
-		m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+		m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 		return;
 	}
@@ -303,7 +303,7 @@ void CYeti::Check_Dist()
 		if (true == m_bInRecognitionRange)
 		{
 			if (true == m_bIsIdle)
-				m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+				m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 			else
 			{
 				if (true == m_bInAtkRange)
@@ -311,29 +311,29 @@ void CYeti::Check_Dist()
 					if (true == m_tObjParam.bCanAttack)
 					{
 						m_bCanChooseAtkType = true;
-						m_eFirstCategory = MONSTER_STATETYPE::ATTACK;
+						m_eFirstCategory = MONSTER_STATE_TYPE::ATTACK;
 					}
 					else
 					{
 						m_bCanMoveAround = true;
-						m_eFirstCategory = MONSTER_STATETYPE::MOVE;
-						m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_ALERT;
+						m_eFirstCategory = MONSTER_STATE_TYPE::MOVE;
+						m_eSecondCategory_MOVE = MONSTER_MOVE_TYPE::MOVE_ALERT;
 					}
 				}
 				else
 				{
 					m_bCanChase = true;
-					m_eFirstCategory = MONSTER_STATETYPE::MOVE;
-					m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_RUN;
+					m_eFirstCategory = MONSTER_STATE_TYPE::MOVE;
+					m_eSecondCategory_MOVE = MONSTER_MOVE_TYPE::MOVE_RUN;
 				}
 			}
 		}
 		else
 		{
-			m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+			m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 			if (false == m_bIsIdle)
-				m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+				m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 		}
 	}
 
@@ -344,15 +344,15 @@ void CYeti::Check_AniEvent()
 {
 	switch (m_eFirstCategory)
 	{
-	case MONSTER_STATETYPE::IDLE:
+	case MONSTER_STATE_TYPE::IDLE:
 		Play_Idle();
 		break;
 
-	case MONSTER_STATETYPE::MOVE:
+	case MONSTER_STATE_TYPE::MOVE:
 		Play_Move();
 		break;
 
-	case MONSTER_STATETYPE::ATTACK:
+	case MONSTER_STATE_TYPE::ATTACK:
 		if (true == m_bCanChooseAtkType)
 		{
 			m_tObjParam.bCanAttack = false;
@@ -360,14 +360,14 @@ void CYeti::Check_AniEvent()
 
 			m_bCanChooseAtkType = false;
 
-			switch (CALC::Random_Num(MONSTER_ATKTYPE::ATK_NORMAL, MONSTER_ATKTYPE::ATK_COMBO))
+			switch (CALC::Random_Num(MONSTER_ATK_TYPE::ATK_NORMAL, MONSTER_ATK_TYPE::ATK_COMBO))
 			{
-			case MONSTER_ATKTYPE::ATK_NORMAL:
-				m_eSecondCategory_ATK = MONSTER_ATKTYPE::ATK_NORMAL;
+			case MONSTER_ATK_TYPE::ATK_NORMAL:
+				m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_NORMAL;
 				Play_RandomAtkNormal();
 				break;
-			case MONSTER_ATKTYPE::ATK_COMBO:
-				m_eSecondCategory_ATK = MONSTER_ATKTYPE::ATK_COMBO;
+			case MONSTER_ATK_TYPE::ATK_COMBO:
+				m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_COMBO;
 				m_bIsCombo = true;
 				Play_RandomAtkCombo();
 				break;
@@ -377,7 +377,7 @@ void CYeti::Check_AniEvent()
 		}
 		else
 		{
-			if (MONSTER_ATKTYPE::ATK_NORMAL == m_eSecondCategory_ATK)
+			if (MONSTER_ATK_TYPE::ATK_NORMAL == m_eSecondCategory_ATK)
 			{
 				switch (m_eState)
 				{
@@ -417,7 +417,7 @@ void CYeti::Check_AniEvent()
 					break;
 				}
 			}
-			else if (MONSTER_ATKTYPE::ATK_COMBO == m_eSecondCategory_ATK)
+			else if (MONSTER_ATK_TYPE::ATK_COMBO == m_eSecondCategory_ATK)
 			{
 				switch (m_eAtkCombo)
 				{
@@ -435,15 +435,15 @@ void CYeti::Check_AniEvent()
 		}
 		break;
 
-	case MONSTER_STATETYPE::HIT:
+	case MONSTER_STATE_TYPE::HIT:
 		Play_Hit();
 		break;
 
-	case MONSTER_STATETYPE::CC:
+	case MONSTER_STATE_TYPE::CC:
 		Play_CC();
 		break;
 
-	case MONSTER_STATETYPE::DEAD:
+	case MONSTER_STATE_TYPE::DEAD:
 		Play_Dead();
 		break;
 }
@@ -1273,10 +1273,10 @@ void CYeti::Play_IceThrowing()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
-						m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 
 					Play_Idle();
 
@@ -1682,10 +1682,10 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
-						m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 
 					Play_Idle();
 
@@ -1907,10 +1907,10 @@ void CYeti::Play_Combo_RLRL_Smash()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
-						m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 
 					Play_Idle();
 
@@ -2132,10 +2132,10 @@ void CYeti::Play_Combo_RLRL_Swing()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
-						m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 
 					Play_Idle();
 
@@ -2175,10 +2175,10 @@ void CYeti::Play_Idle()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
-						m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 
 					Play_Idle();
 
@@ -2208,7 +2208,7 @@ void CYeti::Play_Move()
 
 	switch (m_eSecondCategory_MOVE)
 	{
-	case MONSTER_MOVETYPE::MOVE_RUN:
+	case MONSTER_MOVE_TYPE::MOVE_RUN:
 		if (true == m_bCanChase)
 		{
 			m_bCanChase = false;
@@ -2227,10 +2227,10 @@ void CYeti::Play_Move()
 				Function_ResetAfterAtk();
 				m_fCoolDownMax = 0.f;
 				m_fCoolDownCur = 0.f;
-				m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+				m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 				if (false == m_bIsIdle)
-					m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 
 				Play_Idle();
 
@@ -2246,7 +2246,7 @@ void CYeti::Play_Move()
 		Function_DecreMoveMent(m_fSkillMoveMultiply);
 		break;
 
-	case MONSTER_MOVETYPE::MOVE_ALERT:
+	case MONSTER_MOVE_TYPE::MOVE_ALERT:
 		if (true == m_bCanMoveAround)
 		{
 			m_bCanMoveAround = false;
@@ -2288,10 +2288,10 @@ void CYeti::Play_Move()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
-						m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 
 					Play_Idle();
 
@@ -2315,7 +2315,7 @@ void CYeti::Play_Move()
 		}
 		break;
 
-	case MONSTER_MOVETYPE::MOVE_WALK:
+	case MONSTER_MOVE_TYPE::MOVE_WALK:
 		m_eState = YETI_ANI::Walk_F;
 
 		if (nullptr == m_pTarget)
@@ -2327,10 +2327,10 @@ void CYeti::Play_Move()
 				Function_ResetAfterAtk();
 				m_fCoolDownMax = 0.f;
 				m_fCoolDownCur = 0.f;
-				m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+				m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 				if (false == m_bIsIdle)
-					m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 
 				Play_Idle();
 
@@ -2383,7 +2383,7 @@ void CYeti::Play_Hit()
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 0.5f;
 
-			m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+			m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 		}
 		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
 		{
@@ -2539,7 +2539,7 @@ HRESULT CYeti::Ready_Status(void * pArg)
 	m_fPersonalRange = 2.f;
 	m_iDodgeCountMax = 5;
 
-	m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+	m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
 	m_tObjParam.fArmor_Cur = m_tObjParam.fArmor_Max;
 

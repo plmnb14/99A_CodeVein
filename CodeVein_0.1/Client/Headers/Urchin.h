@@ -88,13 +88,13 @@ private:
 	CTransform*			m_pTargetTransform = nullptr;
 
 	_mat*					m_matBone[Bone_End];
-	MONSTER_STATETYPE		m_eFirstCategory;
-	MONSTER_IDLETYPE		m_eSecondCategory_IDLE;
-	MONSTER_MOVETYPE		m_eSecondCategory_MOVE;
-	MONSTER_ATKTYPE			m_eSecondCategory_ATK;
-	MONSTER_HITTYPE			m_eSecondCategory_HIT;
-	MONSTER_CCTYPE			m_eSecondCategory_CC;
-	MONSTER_DEADTYPE		m_eSecondCategory_DEAD;
+	MONSTER_STATE_TYPE		m_eFirstCategory;
+	MONSTER_IDLE_TYPE		m_eSecondCategory_IDLE;
+	MONSTER_MOVE_TYPE		m_eSecondCategory_MOVE;
+	MONSTER_ATK_TYPE			m_eSecondCategory_ATK;
+	MONSTER_HIT_TYPE			m_eSecondCategory_HIT;
+	MONSTER_CC_TYPE			m_eSecondCategory_CC;
+	MONSTER_DEAD_TYPE		m_eSecondCategory_DEAD;
 
 	WEAPON_STATE			m_eWeaponState;
 	FBLR					m_eFBLR;

@@ -62,7 +62,7 @@ _int CUrchin::Update_GameObject(_double TimeDelta)
 
 	m_pMeshCom->SetUp_Animation(m_eState);
 
-	MONSTER_STATETYPE::DEAD != m_eFirstCategory ? Enter_Collision() : Check_DeadEffect(TimeDelta);
+	MONSTER_STATE_TYPE::DEAD != m_eFirstCategory ? Enter_Collision() : Check_DeadEffect(TimeDelta);
 
 	return S_OK;
 }
@@ -326,7 +326,7 @@ void CUrchin::Function_FBLR()
 {
 	_float angle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos()));
 
-	if (MONSTER_STATETYPE::HIT == m_eFirstCategory)
+	if (MONSTER_STATE_TYPE::HIT == m_eFirstCategory)
 	{
 		if (0.f <= angle && 90.f > angle)
 			m_eFBLR = FBLR::FRONT;
@@ -483,7 +483,7 @@ void CUrchin::Check_PosY()
 
 void CUrchin::Check_Hit()
 {
-	if (MONSTER_STATETYPE::DEAD == m_eFirstCategory)
+	if (MONSTER_STATE_TYPE::DEAD == m_eFirstCategory)
 		return;
 
 	if (0 < m_tObjParam.fHp_Cur)
@@ -494,30 +494,30 @@ void CUrchin::Check_Hit()
 			{
 				if (true == m_tObjParam.bHitAgain)
 				{
-					m_eFirstCategory = MONSTER_STATETYPE::HIT;
+					m_eFirstCategory = MONSTER_STATE_TYPE::HIT;
 					Function_FBLR();
 					m_tObjParam.bHitAgain = false;
 					m_pMeshCom->Reset_OldIndx();
 				}
 				else
 				{
-					m_eFirstCategory = MONSTER_STATETYPE::HIT;
+					m_eFirstCategory = MONSTER_STATE_TYPE::HIT;
 					Function_FBLR();
 				}
 			}
 		}
 	}
 	else
-		m_eFirstCategory = MONSTER_STATETYPE::DEAD;
+		m_eFirstCategory = MONSTER_STATE_TYPE::DEAD;
 
 	return;
 }
 
 void CUrchin::Check_Dist()
 {
-	if (MONSTER_STATETYPE::HIT == m_eFirstCategory ||
-		MONSTER_STATETYPE::CC == m_eFirstCategory ||
-		MONSTER_STATETYPE::DEAD == m_eFirstCategory)
+	if (MONSTER_STATE_TYPE::HIT == m_eFirstCategory ||
+		MONSTER_STATE_TYPE::CC == m_eFirstCategory ||
+		MONSTER_STATE_TYPE::DEAD == m_eFirstCategory)
 		return;
 
 	if (true == m_tObjParam.bIsAttack ||
@@ -528,7 +528,7 @@ void CUrchin::Check_Dist()
 	{
 		Function_ResetAfterAtk();
 
-		m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+		m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 		return;
 	}
@@ -547,30 +547,30 @@ void CUrchin::Check_Dist()
 				{
 					if (true == m_bIsCoolDown)
 					{
-						m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+						m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 						Function_RotateBody();
 					}
 					else
 					{
-						m_eFirstCategory = MONSTER_STATETYPE::ATTACK;
+						m_eFirstCategory = MONSTER_STATE_TYPE::ATTACK;
 						Function_RotateBody();
 					}
 				}
 				else
 				{
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 					Function_RotateBody();
 				}
 			}
 			else
 			{
-				m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+				m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 				Function_RotateBody();
 			}
 		}
 		else
 		{
-			m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+			m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 		}
 	}
 
@@ -581,11 +581,11 @@ void CUrchin::Check_AniEvent()
 {
 	switch (m_eFirstCategory)
 	{
-	case MONSTER_STATETYPE::IDLE:
+	case MONSTER_STATE_TYPE::IDLE:
 		Play_Idle();
 		break;
 
-	case MONSTER_STATETYPE::ATTACK:
+	case MONSTER_STATE_TYPE::ATTACK:
 		if (false == m_tObjParam.bIsAttack)
 		{
 			m_tObjParam.bCanAttack = false;
@@ -613,14 +613,14 @@ void CUrchin::Check_AniEvent()
 		}
 		break;
 
-	case MONSTER_STATETYPE::HIT:
+	case MONSTER_STATE_TYPE::HIT:
 		Play_Hit();
 		break;
 
-	case MONSTER_STATETYPE::CC:
+	case MONSTER_STATE_TYPE::CC:
 		break;
 
-	case MONSTER_STATETYPE::DEAD:
+	case MONSTER_STATE_TYPE::DEAD:
 		Play_Dead();
 		break;
 	}
@@ -985,7 +985,7 @@ void CUrchin::Play_Hit()
 
 			m_fCoolDownMax = 0.5f;
 
-			m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+			m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 		}
 		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
 		{
@@ -1042,14 +1042,14 @@ HRESULT CUrchin::Add_Component(void * pArg)
 	{
 		switch (eTemp.eMonsterColor)
 		{
-		case MONSTER_COLORTYPE::RED:
-		case MONSTER_COLORTYPE::BLUE:
-		case MONSTER_COLORTYPE::YELLOW:
-		case MONSTER_COLORTYPE::COLOR_NONE:
-		case MONSTER_COLORTYPE::BLACK:
+		case MONSTER_COLOR_TYPE::RED:
+		case MONSTER_COLOR_TYPE::BLUE:
+		case MONSTER_COLOR_TYPE::YELLOW:
+		case MONSTER_COLOR_TYPE::COLOR_NONE:
+		case MONSTER_COLOR_TYPE::BLACK:
 			lstrcpy(MeshName, L"Mesh_Urchin_Black");
 			break;
-		case MONSTER_COLORTYPE::WHITE:
+		case MONSTER_COLOR_TYPE::WHITE:
 			lstrcpy(MeshName, L"Mesh_Urchin_White");
 			break;
 		}
@@ -1117,7 +1117,7 @@ HRESULT CUrchin::Ready_Status(void * pArg)
 	m_fPersonalRange = 2.f;
 	m_iDodgeCountMax = 5;
 
-	m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+	m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
 	m_tObjParam.fArmor_Cur = m_tObjParam.fArmor_Max;
 
