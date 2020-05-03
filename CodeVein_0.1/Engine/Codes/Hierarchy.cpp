@@ -231,6 +231,13 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 					pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 18;
 				}
 
+				else if (m_bIncludeMap[MESHTEXTURE::TYPE_ID_MAP] == true)
+				{
+					// D N E ID
+					pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 17;
+					continue;
+				}
+
 				continue;
 			}
 
@@ -260,6 +267,14 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 				pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 10;
 				continue;
 			}
+		
+			else if (m_bIncludeMap[MESHTEXTURE::TYPE_ID_MAP] == true)
+			{
+				// D N ID
+				pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 16;
+				continue;
+			}
+
 		}
 
 	}

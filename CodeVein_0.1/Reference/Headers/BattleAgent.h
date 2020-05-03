@@ -27,8 +27,16 @@ public:
 	_v4		Get_RimColor() { return m_tRimParam.vRimColor_Cur; };
 
 public:
-	// 림라이트의 강도 설정
+	// 림라이트의 초기화 시 강도 설정
 	void	Set_RimValue(_float _fRimValue) { m_tRimParam.fRimValue = _fRimValue; }
+	// 림라이트의 초기화 시 투명도 설정
+	void	Set_RimAlpha(_float _fRimAlpha) { m_tRimParam.fRimAlpha = _fRimAlpha; }
+	// 림라이트의 강도 설정
+	void	Set_OriginRimValue(_float _fRimValue) { m_tRimParam.fOrigin_RimValue = _fRimValue; }
+	// 림라이트의 투명도 설정
+	void	Set_OriginRimAlpha(_float _fRimAlpha) { m_tRimParam.fOrigin_RimAlpha = _fRimAlpha; }
+
+
 	// 림라이트의 변화색 설정
 	void	Set_RimColorChange(_v4 _vRimColor) { m_tRimParam.vRimColor_Change = _vRimColor; }
 	// 림라이트의 데이터 갱신

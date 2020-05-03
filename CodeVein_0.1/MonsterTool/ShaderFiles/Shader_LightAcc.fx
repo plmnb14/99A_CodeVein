@@ -15,6 +15,7 @@ vector		g_vMtrlSpecular = (vector)1.f;
 vector		g_vCamPosition;
 matrix		g_matProjInv;
 matrix		g_matViewInv;
+matrix		g_matLightVP;
 
 matrix		g_matLightView;
 matrix		g_matLightProj;
@@ -61,6 +62,7 @@ sampler SSAOSampler = sampler_state
 };
 
 texture		g_ShadowMapTexture;
+
 sampler ShadowMapSampler = sampler_state
 {
 	texture = g_ShadowMapTexture;
@@ -69,10 +71,10 @@ sampler ShadowMapSampler = sampler_state
 	magfilter = linear;
 	mipfilter = linear;
 	
-	//addressU = border;
-	//addressV = border;
-	//
-	//BorderColor = float4(1.0f, 1.0f, 1.0f, 0.0f);
+	addressU = border;
+	addressV = border;
+	
+	BorderColor = float4(1.f, 0.0f, 0.0f, 1.0f);
 
 };
 struct PS_IN
@@ -109,41 +111,6 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	Out.vShade = g_vLightDiffuse * saturate(dot(normalize(g_vLightDir) * -1.f, vNormal)) + saturate(g_vLightAmbient * g_vMtrlAmbient);
 	Out.vShade.a = 1.f;
 
-	//Out.vShade.x = smoothstep(0.33, 0.67, Out.vShade.x);
-	//Out.vShade.x = smoothstep(0.33, 0.67, Out.vShade.y);
-	//Out.vShade.x = smoothstep(0.33, 0.67, Out.vShade.z);
-
-	if (vHeightValue.x > 0.0001f)
-	{
-		Out.vShade.xyz = ceil(Out.vShade.xyz * 2.f) / 2.f;
-
-		if (vHeightValue.y > 0.f)
-		{
-			Out.vShade.xyz += 0.5f;
-			Out.vShade.xyz = saturate(Out.vShade.xyz);
-		}
-
-		//else
-		//{
-		//	Out.vShade.xyz = ceil(Out.vShade.xyz * 2.f) / 2.f;
-		//}
-
-		//if (Out.vShade.x > 0.1f)
-		//{
-			//Out.vShade.xyz = 1.f;
-			//Out.vShade.xyz = ceil(Out.vShade.xyz * 10.f) / 10.f;
-			//
-			//if (vHeightValue.y > Out.vShade.x)
-			//{
-			//	Out.vShade.xyz = 1.f;
-			//}
-		//}
-		//Out.vShade.xyz = ceil(Out.vShade.xyz * 2.f) / 2.f;
-		//Out.vShade.xyz = 1.f; 
-		// ceil(Out.vShade.xyz * 2.f) / 2.f;
-		//Out.vShade.xyz = HeightValue;
-	}
-
 	vector		vReflect = reflect(normalize(g_vLightDir), vNormal);
 	vector		vWorldPos , vProjPos;
 
@@ -164,31 +131,46 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	// Shadow ====================================================================
 	
-	//float4 lightingPosition = mul(vWorldPos, g_matLightView);
-	//lightingPosition = mul(lightingPosition, g_matLightProj);
-	//
-	//float2 vUV;
-	//vUV = lightingPosition.xy / lightingPosition.w;
-	//vUV.y = -vUV.y;
-	//vUV.y = vUV * 0.5f + 0.5f;
-	//
-	//float fShadow = tex2D(ShadowMapSampler, vUV).x;
-	//float DepthBias = 0.001f;
-	//
-	//float fDepth = (lightingPosition.z / lightingPosition.w);
-	//
-	//if (fDepth > fShadow + DepthBias)
-	//{
-	//	Out.vShade.rgb *= 0.2f;
-	//
-	//	return Out;
-	//}
+	float fShadow = tex2D(ShadowMapSampler, In.vTexUV).x;
+
+	float4 lightPosition = mul(vWorldPos, g_matLightVP);
+	
+	float fDepth = (lightPosition.z / lightPosition.w);
+	float DepthBias = 0.00125f;
+	
+	if (fDepth > fShadow + DepthBias)
+	{
+		Out.vShade.rgb *= 0.2f;
+		Out.vSpecular.a = AO;
+
+		if (vHeightValue.x > 0.0001f)
+		{
+			Out.vShade.xyz = ceil(Out.vShade.xyz * 2.f) / 2.f;
+		}
+
+		return Out;
+	}
 
 	// Shadow End ====================================================================
 
+	// Toon Shade ====================================================================
+
+	if (vHeightValue.x > 0.0001f)
+	{
+		Out.vShade.xyz = ceil(Out.vShade.xyz * 2.f) / 2.f;
+
+		if (vHeightValue.y > 0.f)
+		{
+			//Out.vShade.xyz += 0.5f;
+			//Out.vShade.xyz = saturate(Out.vShade.xyz);
+		}
+	}
+
+	// Toon Shade End ====================================================================
+
 	vector		vLook = vWorldPos - g_vCamPosition;
 
-	Out.vSpecular = (g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 15.f * Roughness)) * Metalness;
+	Out.vSpecular = (g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 20.f * Roughness)) * Metalness;
 	Out.vSpecular.a = AO;
 
 	return Out;

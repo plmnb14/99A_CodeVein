@@ -10,9 +10,17 @@ float3		g_vCamPos;
 vector		g_vRimColor = (1.f, 1.f, 1.f, 1.f);
 float		g_fRimPower = 5.f;
 float		g_fRimAlpha = 0.f;
-float		g_fSpecularPower = 1.0f;
 
-float		g_fEmissivePower = 1.f;
+float		g_fSpecularPower = 1.0f;
+float		g_fEmissivePower = 1.0f;
+float		g_fRoughnessPower = 1.0f;
+float		g_fMinSpecular = 0.f;
+
+float		g_fID_R_Power = 0.f;
+float		g_fID_G_Power = 0.f;
+float		g_fID_B_Power = 0.f;
+
+//=====================================================
 
 texture		g_DiffuseTexture;
 texture		g_NormalTexture;
@@ -23,6 +31,8 @@ texture		g_UnionTexture;
 texture		g_RoughnessTexture;
 texture		g_TransperencyTexture;
 texture		g_HeightTexture;
+
+//=====================================================
 	
 float4		g_vSpecularColor = (0.1f, 0.1f, 0.1f, 0.1f);
 
@@ -558,13 +568,13 @@ PS_OUT_ADVENCE PS_Default_DNR(PS_IN In)
 
 PS_OUT_ADVENCE PS_Default_DNU(PS_IN In)
 {
-	// 유니온는 아직 구현은 안해놓음.
+	// 디퓨즈 | 노말 | 이미시브
 
 	PS_OUT_ADVENCE			Out = (PS_OUT_ADVENCE)0;
 
-	Out.vDiffuse = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
+	//========================================================================================================================
 
-	float2 SpecularIntensity = tex2D(SpecularSampler, In.vTexUV).xy;
+	Out.vDiffuse = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
 
 	//========================================================================================================================
 
@@ -579,7 +589,6 @@ PS_OUT_ADVENCE PS_Default_DNU(PS_IN In)
 
 	//========================================================================================================================
 
-
 	float3 TanNormal = tex2D(NormalSampler, In.vTexUV).xyz;
 
 	TanNormal = normalize(TanNormal * 2.f - 1.f);
@@ -593,7 +602,7 @@ PS_OUT_ADVENCE PS_Default_DNU(PS_IN In)
 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, Roughness, Metalness);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, Roughness * g_fRoughnessPower, Metalness * g_fSpecularPower);
 
 	//========================================================================================================================
 	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
@@ -603,7 +612,6 @@ PS_OUT_ADVENCE PS_Default_DNU(PS_IN In)
 
 	Out.vEmissive = fFinalRim;
 	//========================================================================================================================
-
 	return Out;
 }
 
@@ -646,11 +654,28 @@ PS_OUT_ADVENCE PS_Default_DNI(PS_IN In)
 
 PS_OUT_ADVENCE PS_Default_DNSU(PS_IN In)
 {
+	// 디퓨즈 | 노말 | 이미시브
+
 	PS_OUT_ADVENCE			Out = (PS_OUT_ADVENCE)0;
+
+	//========================================================================================================================
 
 	Out.vDiffuse = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
 
+	//========================================================================================================================
+
 	float3 SpecularIntensity = tex2D(SpecularSampler, In.vTexUV).xyz;
+
+	//========================================================================================================================
+
+	float3 vUnion = tex2D(UnionSampler, In.vTexUV).xyz;
+
+	// 메탈니스 : 빛 전체의 강도
+	float Metalness = vUnion.x;
+	// 러프니스 : 정반사의 정도.. 쉽게 말하면 == Specular Power
+	float Roughness = vUnion.y;
+	// AO
+	float AO = vUnion.z;
 
 	//========================================================================================================================
 
@@ -663,15 +688,12 @@ PS_OUT_ADVENCE PS_Default_DNSU(PS_IN In)
 
 	float3 worldNormal = mul(TBN, TanNormal);
 
-	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 1.f);
+	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, AO);
 
 	//========================================================================================================================
 
-	float3 vUnion = tex2D(UnionSampler, In.vTexUV).xyz;
-
-	//========================================================================================================================
-
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, SpecularIntensity.x, SpecularIntensity.y);
+	float finalMetalness = (Metalness * g_fSpecularPower) + g_fMinSpecular * SpecularIntensity.x;
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, Roughness * g_fRoughnessPower, finalMetalness);
 
 	//========================================================================================================================
 	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
@@ -679,9 +701,8 @@ PS_OUT_ADVENCE PS_Default_DNSU(PS_IN In)
 	float4 fFinalRimColor = g_vRimColor;
 	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
 
-	Out.vEmissive = fFinalRim;
+	Out.vEmissive = fFinalRim;	
 	//========================================================================================================================
-
 	return Out;
 }
 
@@ -729,13 +750,21 @@ PS_OUT_ADVENCE PS_Default_DNSH(PS_IN In)
 
 PS_OUT_ADVENCE PS_Default_DNSUID(PS_IN In)
 {
-	// 유니온 아직 안함
+	// 디퓨즈 | 노말 | 이미시브
 
 	PS_OUT_ADVENCE			Out = (PS_OUT_ADVENCE)0;
 
+	//========================================================================================================================
+
 	Out.vDiffuse = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
 
+	//========================================================================================================================
+
 	float3 SpecularIntensity = tex2D(SpecularSampler, In.vTexUV).xyz;
+
+	//========================================================================================================================
+
+	float3 vIDValue = tex2D(IDSampler, In.vTexUV).xyz;
 
 	//========================================================================================================================
 
@@ -763,27 +792,21 @@ PS_OUT_ADVENCE PS_Default_DNSUID(PS_IN In)
 
 	//========================================================================================================================
 
-	float3 vIDValue = tex2D(IDSampler, In.vTexUV).xyz;
+	float fMetalness_R = ((Metalness * g_fSpecularPower) + g_fMinSpecular * SpecularIntensity.x) * (vIDValue.x * g_fID_R_Power);
+	float fMetalness_G = ((Metalness * g_fSpecularPower) + g_fMinSpecular * SpecularIntensity.x) * (vIDValue.y * g_fID_G_Power);
+	float fMetalness_B = ((Metalness * g_fSpecularPower) + g_fMinSpecular * SpecularIntensity.x) * (vIDValue.z * g_fID_B_Power);
 
-	float fDefaultSpecular = 0.1f * vIDValue.r;
-	float fSpecularPower = vIDValue.g;
-	float fReducePower = vIDValue.b;
-	float fFinalSpecular = (fDefaultSpecular + fSpecularPower) - fReducePower;
+	float finalMetalness = fMetalness_R + fMetalness_G + fMetalness_B;
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, Roughness * g_fRoughnessPower, finalMetalness);
 
-	fFinalSpecular = fFinalSpecular * SpecularIntensity.y;
-
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, Roughness, Metalness * g_fSpecularPower);
-	 
 	//========================================================================================================================
 	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
-	
+
 	float4 fFinalRimColor = g_vRimColor;
 	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
-	
-	Out.vEmissive = fFinalRim;
-	Out.vEmissive.a = 1.f;
-	//========================================================================================================================
 
+	Out.vEmissive = fFinalRim;
+	//========================================================================================================================
 	return Out;
 }
 
@@ -797,15 +820,6 @@ PS_OUT_ADVENCE PS_Default_D(PS_IN In)
 
 	//========================================================================================================================
 
-	//float3 TanNormal = tex2D(NormalSampler, In.vTexUV).xyz;
-	//
-	//TanNormal = normalize(TanNormal * 2.f - 1.f);
-
-	//float3x3 TBN = float3x3(normalize(In.T), normalize(In.B), normalize(In.N));
-	//TBN = transpose(TBN);
-	//
-	//float3 worldNormal = mul(TBN, TanNormal);
-
 	Out.vNormal = vector(In.N.xyz * 0.5f + 0.5f, 1.f);
 
 	//========================================================================================================================
@@ -813,12 +827,12 @@ PS_OUT_ADVENCE PS_Default_D(PS_IN In)
 	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, 1.f);
 
 	//========================================================================================================================
-	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
+	//float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
+	//
+	//float4 fFinalRimColor = g_vRimColor;
+	//float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
 
-	float4 fFinalRimColor = g_vRimColor;
-	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
-
-	Out.vEmissive = fFinalRim;
+	Out.vEmissive = 0.f;// fFinalRim;
 	//========================================================================================================================
 
 	return Out;
@@ -836,6 +850,10 @@ PS_OUT_ADVENCE PS_Default_DNID(PS_IN In)
 
 	//========================================================================================================================
 
+	float3 vIDValue = tex2D(IDSampler, In.vTexUV).xyz;
+
+	//========================================================================================================================
+
 	float3 TanNormal = tex2D(NormalSampler, In.vTexUV).xyz;
 
 	TanNormal = normalize(TanNormal * 2.f - 1.f);
@@ -849,14 +867,13 @@ PS_OUT_ADVENCE PS_Default_DNID(PS_IN In)
 
 	//========================================================================================================================
 
-	float3 vIDValue = tex2D(IDSampler, In.vTexUV).xyz;
+	float fMetalness_R = ((1.f * g_fSpecularPower) + g_fMinSpecular) * (vIDValue.x * g_fID_R_Power);
+	float fMetalness_G = ((1.f * g_fSpecularPower) + g_fMinSpecular) * (vIDValue.y * g_fID_G_Power);
+	float fMetalness_B = ((1.f * g_fSpecularPower) + g_fMinSpecular) * (vIDValue.z * g_fID_B_Power);
 
-	float fDefaultSpecular = 0.1f * vIDValue.r;
-	float fSpecularPower = vIDValue.g;
-	float fReducePower = vIDValue.b;
-	float fFinalSpecular = (fDefaultSpecular + fSpecularPower) - fReducePower;
+	float finalMetalness = fMetalness_R + fMetalness_G + fMetalness_B;
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f, fFinalSpecular);
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f * g_fRoughnessPower, finalMetalness);
 
 	//========================================================================================================================
 	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
@@ -870,44 +887,48 @@ PS_OUT_ADVENCE PS_Default_DNID(PS_IN In)
 }
 
 PS_OUT_ADVENCE PS_Default_DNEID(PS_IN In)
+// 디퓨즈 | 노말 | 이미시브
 {
-	// 디퓨즈 | 노말 | 이미시브
-
 	PS_OUT_ADVENCE			Out = (PS_OUT_ADVENCE)0;
-
+	
 	//========================================================================================================================
-
+	
 	Out.vDiffuse = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
-
+	
 	//========================================================================================================================
-
+	
+	float3 vIDValue = tex2D(IDSampler, In.vTexUV).xyz;
+	
+	//========================================================================================================================
+	
 	float3 TanNormal = tex2D(NormalSampler, In.vTexUV).xyz;
-
+	
 	TanNormal = normalize(TanNormal * 2.f - 1.f);
-
+	
 	float3x3 TBN = float3x3(normalize(In.T), normalize(In.B), normalize(In.N));
 	TBN = transpose(TBN);
-
+	
 	float3 worldNormal = mul(TBN, TanNormal);
-
+	
 	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, 1.f);
-
+	
 	//========================================================================================================================
+	
+	float fMetalness_R = ((1.f * g_fSpecularPower) + g_fMinSpecular) * (vIDValue.x * g_fID_R_Power);
+	float fMetalness_G = ((1.f * g_fSpecularPower) + g_fMinSpecular) * (vIDValue.y * g_fID_G_Power);
+	float fMetalness_B = ((1.f * g_fSpecularPower) + g_fMinSpecular) * (vIDValue.z * g_fID_B_Power);
 
-	float3 vIDValue = tex2D(IDSampler, In.vTexUV).xyz;
+	float finalMetalness = fMetalness_R + fMetalness_G + fMetalness_B;
 
-	float fDefaultSpecular = 0.5f;
-	float fSpecularPower = fDefaultSpecular + (vIDValue.g * 5.f);
-
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, fSpecularPower, 1.f);
-
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, 1.f * g_fRoughnessPower, finalMetalness);
+	
 	//========================================================================================================================
 	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
 
 	float4 fFinalRimColor = g_vRimColor;
 	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
 
-	Out.vEmissive = saturate(pow(tex2D(EmissiveSampler, In.vTexUV), 2.2) + fFinalRim);
+	Out.vEmissive = (pow(tex2D(EmissiveSampler, In.vTexUV), 2.2) + fFinalRim);
 	//========================================================================================================================
 	return Out;
 }
@@ -948,7 +969,62 @@ PS_OUT_ADVENCE PS_Default_DNEU(PS_IN In)
 
 	//========================================================================================================================
 
-	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, Roughness, Metalness);
+	float finalMetalness = (Metalness * g_fSpecularPower) + g_fMinSpecular;
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, Roughness * g_fRoughnessPower, finalMetalness);
+
+	//========================================================================================================================
+	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
+
+	float4 fFinalRimColor = g_vRimColor;
+	float4 fFinalRim = (pow(fRim, g_fRimPower) * fFinalRimColor) * g_fRimAlpha;
+
+	Out.vEmissive = (pow(tex2D(EmissiveSampler, In.vTexUV), 2.2) * g_fEmissivePower) + fFinalRim;
+	//========================================================================================================================
+	return Out;
+}
+
+PS_OUT_ADVENCE PS_Default_DNSEU(PS_IN In)
+{
+	// 디퓨즈 | 노말 | 이미시브
+
+	PS_OUT_ADVENCE			Out = (PS_OUT_ADVENCE)0;
+
+	//========================================================================================================================
+
+	Out.vDiffuse = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
+
+	//========================================================================================================================
+
+	float3 SpecularIntensity = tex2D(SpecularSampler, In.vTexUV).xyz;
+
+	//========================================================================================================================
+
+	float3 vUnion = tex2D(UnionSampler, In.vTexUV).xyz;
+
+	// 메탈니스 : 빛 전체의 강도
+	float Metalness = vUnion.x;
+	// 러프니스 : 정반사의 정도.. 쉽게 말하면 == Specular Power
+	float Roughness = vUnion.y;
+	// AO
+	float AO = vUnion.z;
+
+	//========================================================================================================================
+
+	float3 TanNormal = tex2D(NormalSampler, In.vTexUV).xyz;
+
+	TanNormal = normalize(TanNormal * 2.f - 1.f);
+
+	float3x3 TBN = float3x3(normalize(In.T), normalize(In.B), normalize(In.N));
+	TBN = transpose(TBN);
+
+	float3 worldNormal = mul(TBN, TanNormal);
+
+	Out.vNormal = vector(worldNormal.xyz * 0.5f + 0.5f, AO);
+
+	//========================================================================================================================
+
+	float finalMetalness = (Metalness * g_fSpecularPower) + g_fMinSpecular * SpecularIntensity.x;
+	Out.vDepth = vector(In.vProjPos.z / In.vProjPos.w, In.vProjPos.w / 500.f, Roughness * g_fRoughnessPower, finalMetalness);
 
 	//========================================================================================================================
 	float fRim = 1.f - saturate(dot(In.N, In.vRimDir));
@@ -1215,9 +1291,9 @@ technique Default_Technique
 	}
 
 	//====================================================================================================
-	// 12 - Default ( D N S E U )
+	// 12 - Default ( D N S E ID )
 	//====================================================================================================
-	pass Default_DNSEU
+	pass Default_DNSEID
 	{
 		AlphablendEnable = false;
 
@@ -1232,7 +1308,7 @@ technique Default_Technique
 	//====================================================================================================
 	// 13 - Default ( D N S )
 	//====================================================================================================
-	pass Default_DNSEU
+	pass Default_DNS
 	{
 		AlphablendEnable = false;
 
@@ -1311,7 +1387,7 @@ technique Default_Technique
 	}
 
 	//====================================================================================================
-	// 18 - Default ( D N E ID )
+	// 18 - Default ( D N E U )
 	//====================================================================================================
 	pass Default_DNEU
 	{
@@ -1353,6 +1429,21 @@ technique Default_Technique
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_Default_DNSH();
+	}
+
+	//====================================================================================================
+	// 19 - Default ( D N S E U )
+	//====================================================================================================
+	pass Default_DNSEU
+	{
+		AlphablendEnable = false;
+
+		AlphaTestEnable = true;
+		AlphaRef = 0;
+		AlphaFunc = Greater;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 PS_Default_DNSEU();
 	}
 }
 

@@ -72,7 +72,7 @@ HRESULT CGameObject::Render_GameObject_SetShader(CShader * pShader)
 	return S_OK;
 }
 
-HRESULT CGameObject::Render_GameObject_SetPass(CShader* pShader, _int iPass)
+HRESULT CGameObject::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur)
 {
 	return S_OK;
 }

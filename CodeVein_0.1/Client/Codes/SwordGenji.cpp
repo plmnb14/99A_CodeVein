@@ -302,7 +302,7 @@ HRESULT CSwordGenji::Render_GameObject()
 	return NOERROR;
 }
 
-HRESULT CSwordGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass)
+HRESULT CSwordGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur)
 {
 	if (nullptr == pShader ||
 		nullptr == m_pMeshCom)

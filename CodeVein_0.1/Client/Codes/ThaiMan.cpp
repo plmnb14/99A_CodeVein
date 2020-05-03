@@ -129,7 +129,7 @@ HRESULT CThaiMan::Render_GameObject()
 	return S_OK;
 }
 
-HRESULT CThaiMan::Render_GameObject_SetPass(CShader * pShader, _int iPass)
+HRESULT CThaiMan::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
 {
 	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
 	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);

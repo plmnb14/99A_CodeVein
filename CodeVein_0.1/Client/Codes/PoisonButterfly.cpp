@@ -107,6 +107,8 @@ _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 
 	CGameObject::Update_GameObject(TimeDelta);
 
+	return NO_EVENT;
+
 	// 죽었을 경우
 	if (m_bIsDead)
 		return DEAD_OBJ;
@@ -200,8 +202,6 @@ HRESULT CPoisonButterfly::Render_GameObject()
 
 	m_pMeshCom->Play_Animation(_float(m_dTimeDelta)); // * alpha
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
 
 	m_pShaderCom->Begin_Shader();
 
@@ -209,6 +209,9 @@ HRESULT CPoisonButterfly::Render_GameObject()
 
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 	{
+		if (FAILED(SetUp_ConstantTable(i)))
+			return E_FAIL;
+
 		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
 
 		m_pMeshCom->Update_SkinnedMesh(i);
@@ -238,13 +241,10 @@ HRESULT CPoisonButterfly::Render_GameObject()
 	return NOERROR;
 }
 
-HRESULT CPoisonButterfly::Render_GameObject_SetPass(CShader * pShader, _int iPass)
+HRESULT CPoisonButterfly::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
 {
 	if (nullptr == pShader ||
 		nullptr == m_pMeshCom)
-		return E_FAIL;
-
-	if (FAILED(SetUp_ConstantTable()))
 		return E_FAIL;
 
 	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
@@ -262,6 +262,9 @@ HRESULT CPoisonButterfly::Render_GameObject_SetPass(CShader * pShader, _int iPas
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 	{
 		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+
+		if (FAILED(SetUp_ConstantTable(i)))
+			return E_FAIL;
 
 		m_pMeshCom->Update_SkinnedMesh(i);
 
@@ -1474,7 +1477,7 @@ HRESULT CPoisonButterfly::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CPoisonButterfly::SetUp_ConstantTable()
+HRESULT CPoisonButterfly::SetUp_ConstantTable(_uint _iSubsetIdx)
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -1499,6 +1502,27 @@ HRESULT CPoisonButterfly::SetUp_ConstantTable()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
+
+	//=============================================================================================
+	// 쉐이더 재질정보 수치 입력
+	//=============================================================================================
+	_float	fEmissivePower = 3.f;	// 이미시브 : 높을 수록, 자체 발광이 강해짐.
+	_float	fSpecularPower = 10.f;	// 메탈니스 : 높을 수록, 정반사가 강해짐.
+	_float	fRoughnessPower = 0.50f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
+	_float	fRimLightPower = 0.f;	// 림		: 높을 수록 빛이 퍼짐(림라이트의 범위가 넓어지고 , 밀집도가 낮아짐).
+	_float	fMinSpecular = 1.f;	// 최소 빛	: 높을 수록 빛이 퍼짐(림라이트의 범위가 넓어지고 , 밀집도가 낮아짐).
+
+	if (FAILED(m_pShaderCom->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fRimAlpha", &fRimLightPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
+		return E_FAIL;
+	//=============================================================================================
 
 	Safe_Release(pManagement);
 

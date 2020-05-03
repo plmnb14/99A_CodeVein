@@ -146,6 +146,12 @@ HRESULT CMesh_Static::Ready_Component_Prototype(const _tchar * pFilePath, const 
 				{
 					// D N S E
 					m_dwMaterialPass[i] = 6;
+
+					if (m_bIncludeMap[MESHTEXTURE::TYPE_EMISSIVE_MAP] == true)
+					{
+						// D N S E U
+						m_dwMaterialPass[i] = 20;
+					}
 					continue;
 				}
 
@@ -160,6 +166,11 @@ HRESULT CMesh_Static::Ready_Component_Prototype(const _tchar * pFilePath, const 
 				if (m_bIncludeMap[MESHTEXTURE::TYPE_ID_MAP] == true)
 				{
 					m_dwMaterialPass[i] = 17;
+				}
+
+				else if (m_bIncludeMap[MESHTEXTURE::TYPE_UNION_MAP] == true)
+				{
+					m_dwMaterialPass[i] = 18;
 				}
 
 				continue;

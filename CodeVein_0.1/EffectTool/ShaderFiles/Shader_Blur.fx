@@ -204,7 +204,7 @@ PS_OUT PS_MOTIONBLUR_Alpha(PS_MOTIONBLUR_IN In)
 	if (!g_bMotionBlur)
 		Out.vVelocity.w = 0;
 
-	Out.vNormal = vector(0.f, 0.f, 0, 1.f);
+	Out.vNormal = vector(0.f, 0.f, 0.f, 0.f);
 	Out.vBloomPower = vector(g_fBloomPower, 0, 0, 0);
 
 	if (!g_bDecalTarget)
@@ -259,7 +259,7 @@ technique Default_Technique
 	//====================================================================================================
 	// 3 - MotionBlur + EyeRash
 	//====================================================================================================
-	pass MotionBlur_Height
+	pass MotionBlur_Alpha
 	{
 		AlphaTestEnable = true;
 		Alphafunc = greater;

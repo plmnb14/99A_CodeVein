@@ -38,15 +38,20 @@ namespace Engine
 
 	typedef struct tagRimParam
 	{
-		_bool		bDecreRim;			// 림라이트가 가능한지
 		_float		fRimValue;			// 림라이트 수치
+		_float		fRimAlpha;			// 림라이트 수치
 		_float		fRimChangeValue;	// 림라이트 컬러 보간 수치
 		_float		fRimTimer_Max;		// 림라이트 지속시간
 		_float		fRimTimer_Cur;		// 림라이트 지속시간
 
+		_float		fOrigin_RimValue;		// 림라이트 원본 강도
+		_float		fOrigin_RimAlpha;		// 림라이트 원본 알파
+
 		_v4			vRimColor_Cur;		// 현재 림라이트 색상
 		_v4			vRimColor_Change;	// 바뀌길 원하는 림라이트 색상
 		_v4			vRimColor_Old;		// 최초 림라이트 색상
+
+		_bool		bDecreRim;			// 림라이트가 가능한지
 
 	}RIM_PARAM;
 

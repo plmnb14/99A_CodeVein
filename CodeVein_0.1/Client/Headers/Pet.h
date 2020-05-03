@@ -16,7 +16,7 @@ protected:
 	virtual _int Update_GameObject(_double TimeDelta) PURE;
 	virtual _int Late_Update_GameObject(_double TimeDelta) PURE;
 	virtual HRESULT Render_GameObject() PURE;
-	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass) PURE;
+	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur = false) PURE;
 
 protected:
 	virtual void Update_Collider() PURE;

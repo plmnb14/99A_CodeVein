@@ -129,6 +129,14 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 
 	m_pMeshCom->SetUp_Animation(Ani_Idle);
 
+	//===================================================================
+	// 림라이트 벨류 설정	
+	//===================================================================
+	m_pBattleAgent->Set_OriginRimAlpha(0.5f);
+	m_pBattleAgent->Set_OriginRimValue(8.f);
+	//===================================================================
+
+
 	return NOERROR;
 }
 
@@ -157,7 +165,7 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 		// 플레이어 미발견
 		if (false == m_bFight)
 		{
-			Update_NF();
+			//Update_NF();
 		}
 		// 플레이어 발견
 		else
@@ -210,12 +218,19 @@ _int CGunGenji::Late_Update_GameObject(_double TimeDelta)
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
 
-	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
-		return E_FAIL;
-	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-		return E_FAIL;
-	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
-	//	return E_FAIL;
+	//=============================================================================================
+	// 그림자랑 모션블러는 프리스텀 안에 없으면 안그림
+	//=============================================================================================
+	if (m_pOptimization->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
+	{
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
+			return E_FAIL;
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+			return E_FAIL;
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
+			return E_FAIL;
+	}
+	//=============================================================================================
 
 	m_dTimeDelta = TimeDelta;
 
@@ -233,7 +248,7 @@ HRESULT CGunGenji::Render_GameObject()
 	m_pMeshCom->Play_Animation(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60")); // * alpha
 
 
-	if (m_pOptimization->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 5.f))
+	if (m_pOptimization->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
 	{
 		if (FAILED(SetUp_ConstantTable()))
 			return E_FAIL;
@@ -255,12 +270,11 @@ HRESULT CGunGenji::Render_GameObject()
 				if (m_bDissolve)
 					m_iPass = 3;
 
+				cout << m_iPass << endl;
+
 				m_pShaderCom->Begin_Pass(m_iPass);
 
 				m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
-
-				//if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
-				//	return E_FAIL;
 
 				m_pShaderCom->Commit_Changes();
 
@@ -280,54 +294,87 @@ HRESULT CGunGenji::Render_GameObject()
 	return NOERROR;
 }
 
-HRESULT CGunGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass)
+HRESULT CGunGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur)
 {
+	if (false == m_bEnable)
+		return S_OK;
+
 	if (nullptr == pShader ||
 		nullptr == m_pMeshCom)
 		return E_FAIL;
 
-	pShader->Begin_Shader();
+	//============================================================================================
+	// 공통 변수
+	//============================================================================================
 
-	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+	_mat	ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat	ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+	_mat	WorldMatrix = m_pTransformCom->Get_WorldMat();
 
-	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
-		return E_FAIL;
-	m_matLastWVP = m_pTransformCom->Get_WorldMat() * ViewMatrix * ProjMatrix;
-
-	_bool bMotionBlur = true;
-	if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
-		return E_FAIL;
-	_bool bDecalTarget = false;
-	if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
 		return E_FAIL;
 
+	//============================================================================================
+	// 모션 블러 상수
+	//============================================================================================
+	if (_bIsForMotionBlur)
+	{
+		if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
+			return E_FAIL;
+
+		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
+
+		_bool bMotionBlur = true;
+		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+			return E_FAIL;
+		_bool bDecalTarget = false;
+		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+			return E_FAIL;
+		_float fBloomPower = 0.5f;
+		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
+			return E_FAIL;
+	}
+
+	//============================================================================================
+	// 기타 상수
+	//============================================================================================
+	else
+	{
+		_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
+
+		if (FAILED(pShader->Set_Value("g_matWVP", &matWVP, sizeof(_mat))))
+			return E_FAIL;
+	}
+
+	//============================================================================================
+	// 쉐이더 실행
+	//============================================================================================
 	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
 
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 	{
 		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
 
-		m_pMeshCom->Update_SkinnedMesh(i);
-
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
+			_int tmpPass = m_pMeshCom->Get_MaterialPass(i, j);
+
 			pShader->Begin_Pass(iPass);
+
+			pShader->Commit_Changes();
 
 			m_pMeshCom->Render_Mesh(i, j);
 
 			pShader->End_Pass();
 		}
 	}
-	pShader->End_Shader();
+	//============================================================================================
 
-	return NOERROR;
+	return S_OK;
 }
 
 CBT_Composite_Node * CGunGenji::Shot()
@@ -1080,33 +1127,59 @@ HRESULT CGunGenji::SetUp_ConstantTable()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CManagement*		pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
+	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 
-	Safe_AddRef(pManagement);
+	//=============================================================================================
+	// 기본 메트릭스
+	//=============================================================================================
 
 	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
-
-	_mat		ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
-
 	if (FAILED(m_pShaderCom->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
+
+	//=============================================================================================
+	// 디졸브용 상수
+	//=============================================================================================
 	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShaderCom)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
-	//===========================================================
-	// 림라이트 값들을 쉐이더에 등록시킴
-	m_pBattleAgent->Update_RimParam_OnShader(m_pShaderCom);
-	//===========================================================
+	//=============================================================================================
+	// 쉐이더 재질정보 수치 입력
+	//=============================================================================================
+	_float	fEmissivePower = 5.f;	// 이미시브 : 높을 수록, 자체 발광이 강해짐.
+	_float	fSpecularPower = 1.f;	// 메탈니스 : 높을 수록, 정반사가 강해짐.
+	_float	fRoughnessPower = 1.f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
+	_float	fMinSpecular = 0.0f;	// 최소 빛	: 높을 수록 빛이 퍼짐(림라이트의 범위가 넓어지고 , 밀집도가 낮아짐).
+	_float	fID_R = 1.0f;	// ID_R : R채널 ID 값 , 1이 최대
+	_float	fID_G = 0.f;	// ID_G : G채널 ID 값 , 1이 최대
+	_float	fID_B = 0.f;	// ID_B	: B채널 ID 값 , 1이 최대
 
-	Safe_Release(pManagement);
+	if (FAILED(m_pShaderCom->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fID_R_Power", &fID_R, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fID_G_Power", &fID_G, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
+		return E_FAIL;
+
+	//=============================================================================================
+	// 림라이트 값들을 쉐이더에 등록시킴
+	//=============================================================================================
+	m_pBattleAgent->Update_RimParam_OnShader(m_pShaderCom);
+	//=============================================================================================
 
 	return NOERROR;
 }
