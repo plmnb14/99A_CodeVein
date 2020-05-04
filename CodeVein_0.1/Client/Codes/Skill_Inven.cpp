@@ -38,9 +38,9 @@ HRESULT CSkill_Inven::Ready_GameObject(void * pArg)
 	m_fSizeY = 471.f;
 	m_fViewZ = 4.f;
 
-	//SetUp_Default();
+	
 
-	//Add_Skill(BloodCode_Fighter, Dragon_Lunge);
+	return NOERROR;
 }
 
 _int CSkill_Inven::Update_GameObject(_double TimeDelta)
@@ -50,17 +50,6 @@ _int CSkill_Inven::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 
-
-	/*_uint idx = 0;
-	for (auto& iter : m_vecSkillSlot)
-	{
-		iter->Set_UI_Pos(m_fPosX, m_fPosY);
-		iter->Set_Active(m_bIsActive);
-		if(SkillID_End > iter->Get_SkillID())
-			iter->Set_SkillID(m_vecSkillData[m_eInvenBloodCode][idx]);
-		++idx;
-	}*/
-	
 	
 	return NO_EVENT;
 }

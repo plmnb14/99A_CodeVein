@@ -22,6 +22,7 @@ private:
 
 public:
 	_bool Get_Detail() { return m_bIsDetail; }
+	BloodCode_ID Get_PlayerBloodCode() { return m_ePlayerBloodCode; }
 
 public:
 	void Set_Detail(_bool bIsDetail) { m_bIsDetail = bIsDetail; }

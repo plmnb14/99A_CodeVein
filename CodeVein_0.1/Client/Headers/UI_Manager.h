@@ -59,6 +59,8 @@
 #include "Skill_Inven.h"
 #include "SkillSlot.h"
 #include "SkillIcon.h"
+#include "FighterBlood.h"
+#include "PrometheusBlood.h"
 
 BEGIN(Client)
 
@@ -97,6 +99,8 @@ public:
 	CSkillReleaseUI* Get_Skill_ReleaseUI() { return m_pSkillReleaseUI; }
 	CSkillAcquisitionUI* Get_Skill_AcquisitionUI() { return m_pSkillAcquisitionUI; }
 	CSkill_Inven* Get_Skill_Inven() { return m_pSkillInven; }
+	CFighterBlood* Get_FigherBlood() { return m_pFigherBlood; }
+	CPrometheusBlood* Get_PrometheusBlood() { return m_pPrometheusBlood; }
 
 private:
 	_uint m_uiCoundItem = 0;
@@ -119,6 +123,8 @@ private:
 	CSkillReleaseUI* m_pSkillReleaseUI = nullptr;
 	CSkillAcquisitionUI* m_pSkillAcquisitionUI = nullptr;
 	CSkill_Inven* m_pSkillInven = nullptr;
+	CFighterBlood* m_pFigherBlood = nullptr;
+	CPrometheusBlood* m_pPrometheusBlood = nullptr;
 
 public:
 	virtual void Free();

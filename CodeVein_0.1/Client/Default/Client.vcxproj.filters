@@ -424,6 +424,21 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\SkillIcon">
       <UniqueIdentifier>{49122cd9-a09a-4a0c-b445-9ba57b8cf2ac}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven\01. Prometheus">
+      <UniqueIdentifier>{4f69d0d1-89a6-4062-9a49-ad3fc2d0542d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven\00. Fighter">
+      <UniqueIdentifier>{598048e8-3898-426a-9664-be68422e26ba}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven\02. Queen">
+      <UniqueIdentifier>{d2591329-ecd3-4b03-bb6f-c3a9feb1dfcf}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven\03. Artemis">
+      <UniqueIdentifier>{d343ab3b-a84f-486c-810f-9abd979d2eb4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven\04. DarkKnight">
+      <UniqueIdentifier>{abfbff60-1a6f-4fd9-be33-9e90118117cf}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -876,6 +891,12 @@
     <ClInclude Include="SkillIcon.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\SkillIcon</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\FighterBlood.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven\00. Fighter</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\PrometheusBlood.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven\01. Prometheus</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1315,6 +1336,12 @@
     </ClCompile>
     <ClCompile Include="SkillIcon.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\SkillIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\FighterBlood.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven\00. Fighter</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\PrometheusBlood.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven\01. Prometheus</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

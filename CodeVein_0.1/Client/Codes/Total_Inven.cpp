@@ -331,9 +331,18 @@ void CTotal_Inven::Click_Icon()
 	{
 		if (m_vecSkillIcon[i]->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 		{
-			//CUI_Manager::Get_Instance()->Get_Skill_Inven()->Set_SkillUI_TotalInven(m_ePlayerBloodCode, i);
-			CUI_Manager::Get_Instance()->Get_Skill_Inven()->Set_Active(true);
-
+			if (m_ePlayerBloodCode == BloodCode_Fighter)
+			{
+				CUI_Manager::Get_Instance()->Get_FigherBlood()->Set_Active(true);
+				m_bIsActive = false;
+			}
+				
+			else if (m_ePlayerBloodCode == BloodCode_Prometheus)
+			{
+				CUI_Manager::Get_Instance()->Get_PrometheusBlood()->Set_Active(true);
+				m_bIsActive = false;
+			}
+				
 		}
 	}
 }
