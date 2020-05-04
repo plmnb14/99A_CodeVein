@@ -96,6 +96,11 @@ private:
 	HRESULT Render_ToneMapping();
 	HRESULT Render_BlurDOF();
 	HRESULT Render_After();
+
+private:
+	void Calc_CSM();
+	void Calc_FrustumBoundSphere(_float fNear, _float fFar, _v3& vBoundCenter, _float& fBoundRadius);
+
 public:
 	static CRenderer* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
 	virtual CComponent* Clone_Component(void* pArg);

@@ -163,6 +163,16 @@ HRESULT CShader::Set_StaticTexture_Auto(CMesh_Static * pMeshStatic, _ulong dwSub
 		break;
 	}
 
+	case 18:	// D N E U
+	{
+		m_pEffect->SetTexture("g_DiffuseTexture", pMeshStatic->Get_Texture(dwSubsetNum,MESHTEXTURE::TYPE_DIFFUSE_MAP));
+		m_pEffect->SetTexture("g_NormalTexture", pMeshStatic->Get_Texture(dwSubsetNum, MESHTEXTURE::TYPE_NORMAL_MAP));
+		m_pEffect->SetTexture("g_EmissiveTexture", pMeshStatic->Get_Texture(dwSubsetNum, MESHTEXTURE::TYPE_EMISSIVE_MAP));
+		m_pEffect->SetTexture("g_UnionTexture", pMeshStatic->Get_Texture(dwSubsetNum, MESHTEXTURE::TYPE_UNION_MAP));
+
+		break;
+	}
+
 	}
 
 	return S_OK;
@@ -283,12 +293,52 @@ HRESULT CShader::Set_DynamicTexture_Auto(CMesh_Dynamic * pMeshDynamic, _ulong dw
 		break;
 	}
 
+	case 16:	// D N ID
+	{
+		m_pEffect->SetTexture("g_DiffuseTexture", pMeshDynamic->Get_MeshTexture(dwSubsetNum, dwMeshContainer, MESHTEXTURE::TYPE_DIFFUSE_MAP));
+		m_pEffect->SetTexture("g_NormalTexture", pMeshDynamic->Get_MeshTexture(dwSubsetNum, dwMeshContainer, MESHTEXTURE::TYPE_NORMAL_MAP));
+		m_pEffect->SetTexture("g_IDTexture", pMeshDynamic->Get_MeshTexture(dwSubsetNum, dwMeshContainer, MESHTEXTURE::TYPE_ID_MAP));
+
+		break;
+	}
+
+	case 17:	// D N E ID
+	{
+		m_pEffect->SetTexture("g_DiffuseTexture", pMeshDynamic->Get_MeshTexture(dwSubsetNum, dwMeshContainer, MESHTEXTURE::TYPE_DIFFUSE_MAP));
+		m_pEffect->SetTexture("g_NormalTexture", pMeshDynamic->Get_MeshTexture(dwSubsetNum, dwMeshContainer, MESHTEXTURE::TYPE_NORMAL_MAP));
+		m_pEffect->SetTexture("g_EmissiveTexture", pMeshDynamic->Get_MeshTexture(dwSubsetNum, dwMeshContainer, MESHTEXTURE::TYPE_EMISSIVE_MAP));
+		m_pEffect->SetTexture("g_IDTexture", pMeshDynamic->Get_MeshTexture(dwSubsetNum, dwMeshContainer, MESHTEXTURE::TYPE_ID_MAP));
+
+		break;
+	}
+
 	case 18:	// D N E U
 	{
 		m_pEffect->SetTexture("g_DiffuseTexture", pMeshDynamic->Get_MeshTexture(dwSubsetNum, dwMeshContainer, MESHTEXTURE::TYPE_DIFFUSE_MAP));
 		m_pEffect->SetTexture("g_NormalTexture", pMeshDynamic->Get_MeshTexture(dwSubsetNum, dwMeshContainer, MESHTEXTURE::TYPE_NORMAL_MAP));
 		m_pEffect->SetTexture("g_EmissiveTexture", pMeshDynamic->Get_MeshTexture(dwSubsetNum, dwMeshContainer, MESHTEXTURE::TYPE_EMISSIVE_MAP));
 		m_pEffect->SetTexture("g_UnionTexture", pMeshDynamic->Get_MeshTexture(dwSubsetNum, dwMeshContainer, MESHTEXTURE::TYPE_UNION_MAP));
+
+		break;
+	}
+
+	case 19:	// D N S H
+	{
+		m_pEffect->SetTexture("g_DiffuseTexture", pMeshDynamic->Get_MeshTexture(dwSubsetNum, dwMeshContainer, MESHTEXTURE::TYPE_DIFFUSE_MAP));
+		m_pEffect->SetTexture("g_NormalTexture", pMeshDynamic->Get_MeshTexture(dwSubsetNum, dwMeshContainer, MESHTEXTURE::TYPE_NORMAL_MAP));
+		m_pEffect->SetTexture("g_SpecularTexture", pMeshDynamic->Get_MeshTexture(dwSubsetNum, dwMeshContainer, MESHTEXTURE::TYPE_SPECULAR_MAP));
+		m_pEffect->SetTexture("g_HeightTexture", pMeshDynamic->Get_MeshTexture(dwSubsetNum, dwMeshContainer, MESHTEXTURE::TYPE_HEIGHT_MAP));
+
+		break;
+	}
+
+	case 20:	// D N S E U
+	{
+		m_pEffect->SetTexture("g_DiffuseTexture", pMeshDynamic->Get_MeshTexture(dwSubsetNum, dwMeshContainer, MESHTEXTURE::TYPE_DIFFUSE_MAP));
+		m_pEffect->SetTexture("g_NormalTexture", pMeshDynamic->Get_MeshTexture(dwSubsetNum, dwMeshContainer, MESHTEXTURE::TYPE_NORMAL_MAP));
+		m_pEffect->SetTexture("g_EmissiveTexture", pMeshDynamic->Get_MeshTexture(dwSubsetNum, dwMeshContainer, MESHTEXTURE::TYPE_EMISSIVE_MAP));
+		m_pEffect->SetTexture("g_UnionTexture", pMeshDynamic->Get_MeshTexture(dwSubsetNum, dwMeshContainer, MESHTEXTURE::TYPE_UNION_MAP));
+		m_pEffect->SetTexture("g_SpecularTexture", pMeshDynamic->Get_MeshTexture(dwSubsetNum, dwMeshContainer, MESHTEXTURE::TYPE_SPECULAR_MAP));
 
 		break;
 	}

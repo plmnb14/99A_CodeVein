@@ -38,15 +38,20 @@ namespace Engine
 
 	typedef struct tagRimParam
 	{
-		_bool		bDecreRim;			// 림라이트가 가능한지
 		_float		fRimValue;			// 림라이트 수치
+		_float		fRimAlpha;			// 림라이트 수치
 		_float		fRimChangeValue;	// 림라이트 컬러 보간 수치
 		_float		fRimTimer_Max;		// 림라이트 지속시간
 		_float		fRimTimer_Cur;		// 림라이트 지속시간
 
+		_float		fOrigin_RimValue;		// 림라이트 원본 강도
+		_float		fOrigin_RimAlpha;		// 림라이트 원본 알파
+
 		_v4			vRimColor_Cur;		// 현재 림라이트 색상
 		_v4			vRimColor_Change;	// 바뀌길 원하는 림라이트 색상
 		_v4			vRimColor_Old;		// 최초 림라이트 색상
+
+		_bool		bDecreRim;			// 림라이트가 가능한지
 
 	}RIM_PARAM;
 
@@ -96,7 +101,7 @@ namespace Engine
 		_bool		bCanExecution;	// 처형을 할 수 있거나, 당할 수 있는 상태
 		_bool		bIsExecution;	// 처형 중인 경우, 혹은 처형 당하는 중
 		_bool		bIgnoreExecution;	// 처형불가 대상
-
+			
 		_bool		bCanCounter;	// 카운터 가능한지
 		_bool		bIsCounter;		// 카운터 중인지
 
@@ -392,6 +397,7 @@ namespace Engine
 			TYPE_TRANSPARENCY_MAP,
 			TYPE_ID_MAP,
 			TYPE_AO_MAP,
+			TYPE_HEIGHT_MAP,
 			TYPE_END };
 
 		LPDIRECT3DTEXTURE9		pTextures[TYPE_END];

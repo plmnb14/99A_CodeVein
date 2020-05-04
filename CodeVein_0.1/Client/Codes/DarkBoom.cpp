@@ -20,10 +20,15 @@ HRESULT CDarkBoom::Ready_GameObject_Prototype()
 
 HRESULT CDarkBoom::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component()))
-		return E_FAIL;
+	if (nullptr == pArg)
+	{
+		if (FAILED(Add_Component()))
+			return E_FAIL;
 
-	Ready_Collider();
+		Ready_Collider();
+
+		return S_OK;
+	}
 
 	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
 
@@ -34,6 +39,10 @@ HRESULT CDarkBoom::Ready_GameObject(void * pArg)
 
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
+
+	m_dCurTime = 0;
+	m_bDead = false;
+	m_fEffectOffset = 0.f;
 
 	//g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_Sphere_1", 0.0f, m_pTransformCom->Get_Pos(), nullptr);
 	g_pManagement->Create_Effect_Delay(L"QueensKnight_DarkBoom_Particle", 0.0f, m_pTransformCom->Get_Pos(), nullptr);
@@ -60,7 +69,6 @@ _int CDarkBoom::Update_GameObject(_double TimeDelta)
 		return DEAD_OBJ;
 
 	// 충돌처리는 이펙트 넣고 나서 할 것임.
-	//OnCollisionEnter();
 
 	m_dCurTime += TimeDelta;
 
@@ -68,6 +76,7 @@ _int CDarkBoom::Update_GameObject(_double TimeDelta)
 	if (m_dCurTime > m_dLifeTime)
 	{
 		m_bDead = true;
+		OnCollisionEnter();
 	}
 	// 진행중
 	else
@@ -260,7 +269,7 @@ HRESULT CDarkBoom::Ready_Collider()
 	// 총알 중앙
 	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 
-	_float fRadius = 1.2f;
+	_float fRadius = 1.4f;
 
 	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
 	pCollider->Set_Dynamic(true);

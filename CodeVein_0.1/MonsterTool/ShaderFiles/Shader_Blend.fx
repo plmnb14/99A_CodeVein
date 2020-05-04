@@ -127,8 +127,10 @@ PS_OUT PS_MAIN(PS_IN In)
 	vector	vSpecular	= tex2D(SpecularSampler, In.vTexUV);
 	vector	vSSAO		= tex2D(SSAOSampler, In.vTexUV);
 
+	float AO = vSpecular.a;
+	vSpecular.a = 0.f;
 
-	float3 vFinalShade = vShade.r * vSSAO.r;
+	float3 vFinalShade = vShade.r * vSSAO.r * AO;
 
 	Out.vColor = ((vDiffuse + vSpecular) * float4(vFinalShade, 1.f)) + vEmissive;
 

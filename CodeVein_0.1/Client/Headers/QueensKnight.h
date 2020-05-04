@@ -22,7 +22,7 @@ public:
 
 private:
 	enum Ani {
-		Ani_Idle = 15, Ani_Death = 24, Ani_Appearance = 26, Ani_Down_Start = 16, Ani_Down_Loop = 17, Ani_Down_End = 18,
+		Ani_Idle = 0, Ani_Death = 20, Ani_Appearance = 2, Ani_Appearance_End = 3, Ani_Down_Start = 13, Ani_Down_Loop = 14, Ani_Down_End = 15,
 	
 	};
 
@@ -40,7 +40,7 @@ public:
 	virtual _int Update_GameObject(_double TimeDelta);
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
-	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass);
+	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur = false);
 
 private:	// 패턴들
 	// 1. 칼 가로로 휘두르기

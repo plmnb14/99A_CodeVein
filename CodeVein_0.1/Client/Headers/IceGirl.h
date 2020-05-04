@@ -22,7 +22,7 @@ public:
 
 private:
 	enum Ani {
-		Ani_Idle = 0, Ani_Death = 26, Ani_Appearance = 3, Ani_Down_Start = 18, Ani_Down_Loop = 19, Ani_Down_End = 20
+		Ani_Idle = 0, Ani_Death = 20, Ani_Appearance = 2, Ani_Appearance_End = 3, Ani_Down_Start = 12, Ani_Down_Loop = 13, Ani_Down_End = 14
 	};
 
 private:
@@ -39,7 +39,7 @@ public:
 	virtual _int Update_GameObject(_double TimeDelta);
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
-	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass);
+	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur = false);
 
 private:	// 패턴들
 	// 1. 회전베기
@@ -54,7 +54,7 @@ private:	// 패턴들
 	CBT_Composite_Node* Ice_Cut();
 	// 6. 얼음 보호막
 	CBT_Composite_Node* Ice_Barrier();
-	// 7. 플레이어 주위에 큰 크기 콜드빔,	얼음기둥 등장시간 조정필요
+	// 7. 플레이어 주위에 큰 크기 콜드빔
 	CBT_Composite_Node* ColdBeam_RandomPos();
 	// 8. 자신 주위 4방향  중간 크기 콜드빔
 	CBT_Composite_Node* ColdBeam_Around_Me();

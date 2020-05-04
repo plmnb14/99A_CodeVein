@@ -56,7 +56,7 @@ _int CHunter::Update_GameObject(_double TimeDelta)
 
 	m_pMeshCom->SetUp_Animation(m_eState);
 
-	MONSTER_STATETYPE::DEAD != m_eFirstCategory ? Check_CollisionEvent() : Check_DeadEffect(TimeDelta);
+	MONSTER_STATE_TYPE::DEAD != m_eFirstCategory ? Check_CollisionEvent() : Check_DeadEffect(TimeDelta);
 
 	return NO_EVENT;
 }
@@ -139,7 +139,7 @@ HRESULT CHunter::Render_GameObject()
 	return S_OK;
 }
 
-HRESULT CHunter::Render_GameObject_SetPass(CShader * pShader, _int iPass)
+HRESULT CHunter::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
 {
 	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
 	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
@@ -237,7 +237,7 @@ void CHunter::Check_PosY()
 
 void CHunter::Check_Hit()
 {
-	if (MONSTER_STATETYPE::DEAD == m_eFirstCategory)
+	if (MONSTER_STATE_TYPE::DEAD == m_eFirstCategory)
 		return;
 
 	//체력o
@@ -256,8 +256,8 @@ void CHunter::Check_Hit()
 				{
 					m_iDodgeCount = 0;
 					m_tObjParam.bCanDodge = true;
-					m_eFirstCategory = MONSTER_STATETYPE::MOVE;
-					m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_DODGE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::MOVE;
+					m_eSecondCategory_MOVE = MONSTER_MOVE_TYPE::MOVE_DODGE;
 					m_pMeshCom->Reset_OldIndx();
 				}
 				//회피 수치 누적x
@@ -269,12 +269,12 @@ void CHunter::Check_Hit()
 						//연속 피격 가능
 						if (true == m_tObjParam.bHitAgain)
 						{
-							m_eFirstCategory = MONSTER_STATETYPE::HIT;
+							m_eFirstCategory = MONSTER_STATE_TYPE::HIT;
 							//이떄 특수 공격 관련으로 불값이 참인 경우 cc기로
 							//if(특수 공격)
 							//else
 							//데미지 측정 float 혹은 bool
-							//	m_eFirstCategory = MONSTER_STATETYPE::CC;
+							//	m_eFirstCategory = MONSTER_STATE_TYPE::CC;
 							m_tObjParam.bHitAgain = false;
 							m_pMeshCom->Reset_OldIndx();
 
@@ -287,7 +287,7 @@ void CHunter::Check_Hit()
 					//처음 맞음 또는 맞은지 오래됨
 					else
 					{
-						m_eFirstCategory = MONSTER_STATETYPE::HIT;
+						m_eFirstCategory = MONSTER_STATE_TYPE::HIT;
 
 						if (nullptr == m_pTarget)
 							m_eFBLR = FBLR::FRONTLEFT;
@@ -297,7 +297,7 @@ void CHunter::Check_Hit()
 						//if(특수 공격)
 						//else
 						//데미지 측정 float 혹은 bool
-						//	m_eFirstCategory = MONSTER_STATETYPE::CC;
+						//	m_eFirstCategory = MONSTER_STATE_TYPE::CC;
 					}
 				}
 			}
@@ -305,16 +305,16 @@ void CHunter::Check_Hit()
 	}
 	//체력x
 	else
-		m_eFirstCategory = MONSTER_STATETYPE::DEAD;
+		m_eFirstCategory = MONSTER_STATE_TYPE::DEAD;
 
 	return;
 }
 
 void CHunter::Check_Dist()
 {
-	if (MONSTER_STATETYPE::HIT == m_eFirstCategory ||
-		MONSTER_STATETYPE::CC == m_eFirstCategory ||
-		MONSTER_STATETYPE::DEAD == m_eFirstCategory)
+	if (MONSTER_STATE_TYPE::HIT == m_eFirstCategory ||
+		MONSTER_STATE_TYPE::CC == m_eFirstCategory ||
+		MONSTER_STATE_TYPE::DEAD == m_eFirstCategory)
 		return;
 
 	if (true == m_bIsCombo ||
@@ -333,26 +333,26 @@ void CHunter::Check_Dist()
 		//동료, 플레이어 레이어 찾기 또는 일상행동을 반복한다
 		Function_ResetAfterAtk();
 
-		m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+		m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 		if (false == m_bIsIdle)
 		{
-			switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+			switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 			{
-			case MONSTER_IDLETYPE::IDLE_IDLE:
-				m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+			case MONSTER_IDLE_TYPE::IDLE_IDLE:
+				m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 				break;
-			case MONSTER_IDLETYPE::IDLE_CROUCH:
-			case MONSTER_IDLETYPE::IDLE_EAT:
-				m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+			case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+			case MONSTER_IDLE_TYPE::IDLE_EAT:
+				m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 				break;
-			case MONSTER_IDLETYPE::IDLE_SIT:
-			case MONSTER_IDLETYPE::IDLE_LURK:
-				m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+			case MONSTER_IDLE_TYPE::IDLE_SIT:
+			case MONSTER_IDLE_TYPE::IDLE_LURK:
+				m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 				break;
-			case MONSTER_IDLETYPE::IDLE_STAND:
-			case MONSTER_IDLETYPE::IDLE_SCRATCH:
-				m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+			case MONSTER_IDLE_TYPE::IDLE_STAND:
+			case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+				m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 				break;
 			}
 		}
@@ -372,7 +372,7 @@ void CHunter::Check_Dist()
 		{
 			//일상 진행중
 			if (true == m_bIsIdle)
-				m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+				m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 			//일상 진행중 아님
 			else
 			{
@@ -383,22 +383,22 @@ void CHunter::Check_Dist()
 					if (true == m_tObjParam.bCanAttack)
 					{
 						m_bCanChooseAtkType = true;
-						m_eFirstCategory = MONSTER_STATETYPE::ATTACK;
+						m_eFirstCategory = MONSTER_STATE_TYPE::ATTACK;
 					}
 					//공격가능성x, 쿨타임 진행중
 					else
 					{
 						m_bCanMoveAround = true;
-						m_eFirstCategory = MONSTER_STATETYPE::MOVE;
-						m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_ALERT;
+						m_eFirstCategory = MONSTER_STATE_TYPE::MOVE;
+						m_eSecondCategory_MOVE = MONSTER_MOVE_TYPE::MOVE_ALERT;
 					}
 				}
 				//범위x
 				else
 				{
 					m_bCanChase = true;
-					m_eFirstCategory = MONSTER_STATETYPE::MOVE;
-					m_eSecondCategory_MOVE = MONSTER_MOVETYPE::MOVE_RUN;
+					m_eFirstCategory = MONSTER_STATE_TYPE::MOVE;
+					m_eSecondCategory_MOVE = MONSTER_MOVE_TYPE::MOVE_RUN;
 				}
 			}
 		}
@@ -406,26 +406,26 @@ void CHunter::Check_Dist()
 		else
 		{
 			//타겟은 있으나 인지범위에 없음
-			m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+			m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 			if (false == m_bIsIdle)
 			{
-				switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+				switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 				{
-				case MONSTER_IDLETYPE::IDLE_IDLE:
-					m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+				case MONSTER_IDLE_TYPE::IDLE_IDLE:
+					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 					break;
-				case MONSTER_IDLETYPE::IDLE_CROUCH:
-				case MONSTER_IDLETYPE::IDLE_EAT:
-					m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+				case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+				case MONSTER_IDLE_TYPE::IDLE_EAT:
+					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 					break;
-				case MONSTER_IDLETYPE::IDLE_SIT:
-				case MONSTER_IDLETYPE::IDLE_LURK:
-					m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+				case MONSTER_IDLE_TYPE::IDLE_SIT:
+				case MONSTER_IDLE_TYPE::IDLE_LURK:
+					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 					break;
-				case MONSTER_IDLETYPE::IDLE_STAND:
-				case MONSTER_IDLETYPE::IDLE_SCRATCH:
-					m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+				case MONSTER_IDLE_TYPE::IDLE_STAND:
+				case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 					break;
 				}
 			}
@@ -439,15 +439,15 @@ void CHunter::Check_AniEvent()
 {
 	switch (m_eFirstCategory)
 	{
-	case MONSTER_STATETYPE::IDLE:
+	case MONSTER_STATE_TYPE::IDLE:
 		Play_Idle();
 		break;
 
-	case MONSTER_STATETYPE::MOVE:
+	case MONSTER_STATE_TYPE::MOVE:
 		Play_Move();
 		break;
 
-	case MONSTER_STATETYPE::ATTACK:
+	case MONSTER_STATE_TYPE::ATTACK:
 		if (true == m_bCanChooseAtkType)
 		{
 			m_tObjParam.bCanAttack = false;
@@ -455,19 +455,19 @@ void CHunter::Check_AniEvent()
 
 			m_bCanChooseAtkType = false;
 
-			m_iRandom = CALC::Random_Num(MONSTER_ATKTYPE::ATK_NORMAL, MONSTER_ATKTYPE::ATK_COMBO);
+			m_iRandom = CALC::Random_Num(MONSTER_ATK_TYPE::ATK_NORMAL, MONSTER_ATK_TYPE::ATK_COMBO);
 
 			if (WEAPON_STATE::WEAPON_Hammer == m_eWeaponState)
 				m_iRandom = 0;
 
 			switch (m_iRandom)
 			{
-			case MONSTER_ATKTYPE::ATK_NORMAL:
-				m_eSecondCategory_ATK = MONSTER_ATKTYPE::ATK_NORMAL;
+			case MONSTER_ATK_TYPE::ATK_NORMAL:
+				m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_NORMAL;
 				Play_RandomAtkNormal();
 				break;
-			case MONSTER_ATKTYPE::ATK_COMBO:
-				m_eSecondCategory_ATK = MONSTER_ATKTYPE::ATK_COMBO;
+			case MONSTER_ATK_TYPE::ATK_COMBO:
+				m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_COMBO;
 				Play_RandomAtkCombo();
 				m_bIsCombo = true;
 				break;
@@ -477,7 +477,7 @@ void CHunter::Check_AniEvent()
 		}
 		else
 		{
-			if (MONSTER_ATKTYPE::ATK_NORMAL == m_eSecondCategory_ATK)
+			if (MONSTER_ATK_TYPE::ATK_NORMAL == m_eSecondCategory_ATK)
 			{
 				switch (m_eState)
 				{
@@ -570,7 +570,7 @@ void CHunter::Check_AniEvent()
 					break;
 				}
 			}
-			else if (MONSTER_ATKTYPE::ATK_COMBO == m_eSecondCategory_ATK)
+			else if (MONSTER_ATK_TYPE::ATK_COMBO == m_eSecondCategory_ATK)
 			{
 				switch (m_eAtkCombo)
 				{
@@ -609,15 +609,15 @@ void CHunter::Check_AniEvent()
 		}
 		break;
 
-	case MONSTER_STATETYPE::HIT:
+	case MONSTER_STATE_TYPE::HIT:
 		Play_Hit();
 		break;
 
-	case MONSTER_STATETYPE::CC:
+	case MONSTER_STATE_TYPE::CC:
 		Play_CC();
 		break;
 
-	case MONSTER_STATETYPE::DEAD:
+	case MONSTER_STATE_TYPE::DEAD:
 		Play_Dead();
 		break;
 	}
@@ -789,26 +789,26 @@ void CHunter::Play_RandomAtkCombo()
 			m_fCoolDownMax = 0.f;
 			m_fCoolDownCur = 0.f;
 			Function_ResetAfterAtk();
-			m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+			m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 			if (false == m_bIsIdle)
 			{
-				switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+				switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 				{
-				case MONSTER_IDLETYPE::IDLE_IDLE:
-					m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+				case MONSTER_IDLE_TYPE::IDLE_IDLE:
+					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 					break;
-				case MONSTER_IDLETYPE::IDLE_CROUCH:
-				case MONSTER_IDLETYPE::IDLE_EAT:
-					m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+				case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+				case MONSTER_IDLE_TYPE::IDLE_EAT:
+					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 					break;
-				case MONSTER_IDLETYPE::IDLE_SIT:
-				case MONSTER_IDLETYPE::IDLE_LURK:
-					m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+				case MONSTER_IDLE_TYPE::IDLE_SIT:
+				case MONSTER_IDLE_TYPE::IDLE_LURK:
+					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 					break;
-				case MONSTER_IDLETYPE::IDLE_STAND:
-				case MONSTER_IDLETYPE::IDLE_SCRATCH:
-					m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+				case MONSTER_IDLE_TYPE::IDLE_STAND:
+				case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 					break;
 				}
 			}
@@ -1068,26 +1068,26 @@ void CHunter::Play_Gun_Shoot()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -1168,26 +1168,26 @@ void CHunter::Play_Gun_Snipe()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -1251,26 +1251,26 @@ void CHunter::Play_Gun_Combo_Shot()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -1348,26 +1348,26 @@ void CHunter::Play_Gun_Combo_Shot()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -1422,26 +1422,26 @@ void CHunter::Play_Gun_Combo_Shot()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -1523,26 +1523,26 @@ void CHunter::Play_Gun_Combo_CQC()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -1619,26 +1619,26 @@ void CHunter::Play_Gun_Combo_CQC()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -1714,26 +1714,26 @@ void CHunter::Play_Gun_Combo_CQC()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -2869,26 +2869,26 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -2925,26 +2925,26 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -3021,26 +3021,26 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -3135,26 +3135,26 @@ void CHunter::Play_Halberd_Combo_ThirdAtk()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -3239,26 +3239,26 @@ void CHunter::Play_Halberd_Combo_PierceTwice()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -3335,26 +3335,26 @@ void CHunter::Play_Halberd_Combo_PierceTwice()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -3439,26 +3439,26 @@ void CHunter::Play_Halberd_Combo_PierceWind()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -3534,26 +3534,26 @@ void CHunter::Play_Halberd_Combo_PierceWind()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -3798,26 +3798,26 @@ void CHunter::Play_Hammer_Smash()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -3946,26 +3946,26 @@ void CHunter::Play_Hammer_TwoUpper()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -4401,26 +4401,26 @@ void CHunter::Play_LSword_Combo_Normal()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -4509,26 +4509,26 @@ void CHunter::Play_LSword_Combo_Normal()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -4621,26 +4621,26 @@ void CHunter::Play_LSword_Combo_Strong()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -4717,26 +4717,26 @@ void CHunter::Play_LSword_Combo_Strong()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -4825,26 +4825,26 @@ void CHunter::Play_LSword_Combo_Strong()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -5207,26 +5207,26 @@ void CHunter::Play_SSword_WoodChop()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -5306,26 +5306,26 @@ void CHunter::Play_SSword_Elbow()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -5414,26 +5414,26 @@ void CHunter::Play_SSword_HelmetBreak()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -5522,26 +5522,26 @@ void CHunter::Play_SSword_CriticalDraw()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -5607,26 +5607,26 @@ void CHunter::Play_SSword_Combo_StepPierce()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -5861,26 +5861,26 @@ void CHunter::Play_SSword_Combo_Strong()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -5995,26 +5995,26 @@ void CHunter::Play_SSword_Combo_Strong()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -6135,26 +6135,26 @@ void CHunter::Play_SSword_Combo_Diagonal_L()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -6230,26 +6230,26 @@ void CHunter::Play_SSword_Combo_Diagonal_L()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -6276,7 +6276,7 @@ void CHunter::Play_Idle()
 {
 	switch (m_eSecondCategory_IDLE)
 	{
-	case MONSTER_IDLETYPE::IDLE_IDLE:
+	case MONSTER_IDLE_TYPE::IDLE_IDLE:
 		if (true == m_bInRecognitionRange)
 		{
 			m_bIsIdle = false;
@@ -6315,26 +6315,26 @@ void CHunter::Play_Idle()
 						Function_ResetAfterAtk();
 						m_fCoolDownMax = 0.f;
 						m_fCoolDownCur = 0.f;
-						m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+						m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 						if (false == m_bIsIdle)
 						{
-							switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+							switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 							{
-							case MONSTER_IDLETYPE::IDLE_IDLE:
-								m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+							case MONSTER_IDLE_TYPE::IDLE_IDLE:
+								m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 								break;
-							case MONSTER_IDLETYPE::IDLE_CROUCH:
-							case MONSTER_IDLETYPE::IDLE_EAT:
-								m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+							case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+							case MONSTER_IDLE_TYPE::IDLE_EAT:
+								m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 								break;
-							case MONSTER_IDLETYPE::IDLE_SIT:
-							case MONSTER_IDLETYPE::IDLE_LURK:
-								m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+							case MONSTER_IDLE_TYPE::IDLE_SIT:
+							case MONSTER_IDLE_TYPE::IDLE_LURK:
+								m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 								break;
-							case MONSTER_IDLETYPE::IDLE_STAND:
-							case MONSTER_IDLETYPE::IDLE_SCRATCH:
-								m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+							case MONSTER_IDLE_TYPE::IDLE_STAND:
+							case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+								m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 								break;
 							}
 						}
@@ -6375,7 +6375,7 @@ void CHunter::Play_Idle()
 			m_eState = HUNTER_ANI::Idle;
 		}
 		break;
-	case MONSTER_IDLETYPE::IDLE_STAND:
+	case MONSTER_IDLE_TYPE::IDLE_STAND:
 		if (true == m_bInRecognitionRange)
 		{
 			if (HUNTER_ANI::Stand == m_eState)
@@ -6418,7 +6418,7 @@ void CHunter::Play_Idle()
 			m_eState = HUNTER_ANI::Stand;
 		}
 		break;
-	case MONSTER_IDLETYPE::IDLE_CROUCH:
+	case MONSTER_IDLE_TYPE::IDLE_CROUCH:
 		if (true == m_bInRecognitionRange)
 		{
 			if (HUNTER_ANI::Crouch == m_eState)
@@ -6461,7 +6461,7 @@ void CHunter::Play_Idle()
 			m_eState = HUNTER_ANI::Crouch;
 		}
 		break;
-	case MONSTER_IDLETYPE::IDLE_SIT:
+	case MONSTER_IDLE_TYPE::IDLE_SIT:
 		if (true == m_bInRecognitionRange)
 		{
 			if (HUNTER_ANI::Sit == m_eState)
@@ -6515,7 +6515,7 @@ void CHunter::Play_Move()
 
 	switch (m_eSecondCategory_MOVE)
 	{
-	case MONSTER_MOVETYPE::MOVE_RUN:
+	case MONSTER_MOVE_TYPE::MOVE_RUN:
 		if (true == m_bCanChase)
 		{
 			m_bCanChase = false;
@@ -6534,26 +6534,26 @@ void CHunter::Play_Move()
 				Function_ResetAfterAtk();
 				m_fCoolDownMax = 0.f;
 				m_fCoolDownCur = 0.f;
-				m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+				m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 				if (false == m_bIsIdle)
 				{
-					switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+					switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 					{
-					case MONSTER_IDLETYPE::IDLE_IDLE:
-						m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+					case MONSTER_IDLE_TYPE::IDLE_IDLE:
+						m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 						break;
-					case MONSTER_IDLETYPE::IDLE_CROUCH:
-					case MONSTER_IDLETYPE::IDLE_EAT:
-						m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+					case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+					case MONSTER_IDLE_TYPE::IDLE_EAT:
+						m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 						break;
-					case MONSTER_IDLETYPE::IDLE_SIT:
-					case MONSTER_IDLETYPE::IDLE_LURK:
-						m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+					case MONSTER_IDLE_TYPE::IDLE_SIT:
+					case MONSTER_IDLE_TYPE::IDLE_LURK:
+						m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 						break;
-					case MONSTER_IDLETYPE::IDLE_STAND:
-					case MONSTER_IDLETYPE::IDLE_SCRATCH:
-						m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+					case MONSTER_IDLE_TYPE::IDLE_STAND:
+					case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+						m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 						break;
 					}
 				}
@@ -6572,14 +6572,14 @@ void CHunter::Play_Move()
 		Function_DecreMoveMent(m_fSkillMoveMultiply);
 		break;
 
-	case MONSTER_MOVETYPE::MOVE_ALERT:
+	case MONSTER_MOVE_TYPE::MOVE_ALERT:
 		if (true == m_bCanMoveAround)
 		{
 			m_bCanMoveAround = false;
 			m_bIsMoveAround = true;
 
 			m_bCanCoolDown = true;
-			m_fCoolDownMax = 4.f;
+			m_fCoolDownMax = CALC::Random_Num(2, 4) * 1.0f;
 
 			m_fSkillMoveSpeed_Cur = 2.5f;
 			m_fSkillMoveAccel_Cur = 0.f;
@@ -6614,26 +6614,26 @@ void CHunter::Play_Move()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 					if (false == m_bIsIdle)
 					{
-						switch (CALC::Random_Num(MONSTER_IDLETYPE::IDLE_IDLE, MONSTER_IDLETYPE::IDLE_STAND))
+						switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 						{
-						case MONSTER_IDLETYPE::IDLE_IDLE:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_IDLE;
+						case MONSTER_IDLE_TYPE::IDLE_IDLE:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 							break;
-						case MONSTER_IDLETYPE::IDLE_CROUCH:
-						case MONSTER_IDLETYPE::IDLE_EAT:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_CROUCH;
+						case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+						case MONSTER_IDLE_TYPE::IDLE_EAT:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
 							break;
-						case MONSTER_IDLETYPE::IDLE_SIT:
-						case MONSTER_IDLETYPE::IDLE_LURK:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_SIT;
+						case MONSTER_IDLE_TYPE::IDLE_SIT:
+						case MONSTER_IDLE_TYPE::IDLE_LURK:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
 							break;
-						case MONSTER_IDLETYPE::IDLE_STAND:
-						case MONSTER_IDLETYPE::IDLE_SCRATCH:
-							m_eSecondCategory_IDLE = MONSTER_IDLETYPE::IDLE_STAND;
+						case MONSTER_IDLE_TYPE::IDLE_STAND:
+						case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+							m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
 							break;
 						}
 					}
@@ -6660,7 +6660,7 @@ void CHunter::Play_Move()
 		}
 		break;
 
-	case MONSTER_MOVETYPE::MOVE_WALK:
+	case MONSTER_MOVE_TYPE::MOVE_WALK:
 		if (false == m_tObjParam.bIsAttack)
 		{
 			m_eState = HUNTER_ANI::Walk_F;
@@ -6673,7 +6673,7 @@ void CHunter::Play_Move()
 		Function_DecreMoveMent(m_fSkillMoveMultiply);
 		break;
 
-	case MONSTER_MOVETYPE::MOVE_DODGE:
+	case MONSTER_MOVE_TYPE::MOVE_DODGE:
 		if (true == m_tObjParam.bCanDodge)
 		{
 			Function_ResetAfterAtk();
@@ -6686,7 +6686,7 @@ void CHunter::Play_Move()
 			if (m_pMeshCom->Is_Finish_Animation(0.95f))
 			{
 				Function_ResetAfterAtk();
-				m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+				m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 				m_tObjParam.bCanAttack = true;
 
 				return;
@@ -6751,7 +6751,7 @@ void CHunter::Play_Hit()
 			m_bCanCoolDown = true;
 			m_fCoolDownMax = 0.5f;
 
-			m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+			m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 		}
 		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
 		{
@@ -6876,14 +6876,14 @@ HRESULT CHunter::Add_Component(void* pArg)
 	{
 		switch (eTemp.eMonsterColor)
 		{
-		case MONSTER_COLORTYPE::YELLOW:
+		case MONSTER_COLOR_TYPE::YELLOW:
 			lstrcpy(MeshName, L"Mesh_Hunter_Black"); //황금 사냥꾼으로 바꿀예정
 			break;
-		case MONSTER_COLORTYPE::RED:
-		case MONSTER_COLORTYPE::BLUE:
-		case MONSTER_COLORTYPE::WHITE:
-		case MONSTER_COLORTYPE::COLOR_NONE:
-		case MONSTER_COLORTYPE::BLACK:
+		case MONSTER_COLOR_TYPE::RED:
+		case MONSTER_COLOR_TYPE::BLUE:
+		case MONSTER_COLOR_TYPE::WHITE:
+		case MONSTER_COLOR_TYPE::COLOR_NONE:
+		case MONSTER_COLOR_TYPE::BLACK:
 			lstrcpy(MeshName, L"Mesh_Hunter_Black");
 			break;
 		}
@@ -6963,7 +6963,7 @@ HRESULT CHunter::Ready_Status(void* pArg)
 		MONSTER_STATUS Info = *(MONSTER_STATUS*)pArg;
 		m_eWeaponState = Info.eUseWhatWeapon;
 
-		if (MONSTER_COLORTYPE::YELLOW == Info.eMonsterColor)
+		if (MONSTER_COLOR_TYPE::YELLOW == Info.eMonsterColor)
 		{
 			m_tObjParam.fDamage = -550.f;
 			m_tObjParam.fHp_Max = 3000.f;
@@ -6989,7 +6989,7 @@ HRESULT CHunter::Ready_Status(void* pArg)
 		}
 	}
 
-	m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+	m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
 	m_tObjParam.fArmor_Cur = m_tObjParam.fArmor_Max;
 

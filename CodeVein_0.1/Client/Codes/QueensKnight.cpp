@@ -30,7 +30,7 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 	Ready_Collider();
 
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 1000.f;
+	m_tObjParam.fHp_Cur = 10000.f;
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
 	m_tObjParam.fDamage = 20.f;
 
@@ -63,24 +63,24 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"TrailOff", true);	// 트레일 끝
 	pBlackBoard->Set_Value(L"LeakField_On", false);	// 리크필드 변수
 
-	//CBT_Selector* Start_Sel = Node_Selector("행동 시작");
-	CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
+	CBT_Selector* Start_Sel = Node_Selector("행동 시작");
+	//CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
 
 	pBehaviorTree->Set_Child(Start_Sel);
 
 
 	//////////// 아래에 주석해놓은 4줄이 본게임에서 쓸 것임, 차례대로 공격함.
 
-	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
-	//Check_ShowValue->Set_Child(Start_Show());
-	//Start_Sel->Add_Child(Check_ShowValue);
-	//Start_Sel->Add_Child(Start_Game());
+	CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", false);
+	Check_ShowValue->Set_Child(Start_Game());
+	Start_Sel->Add_Child(Check_ShowValue);
+	Start_Sel->Add_Child(Start_Show());
 
 	////////////
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Start_Game());
+	//Start_Sel->Add_Child(Start_Game());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -94,6 +94,8 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 	m_pBossUI->Set_UI_Pos(WINCX * 0.5f, WINCY * 0.2f);
 	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBossUI, SCENE_STAGE, L"Layer_BossHP", nullptr)))
 		return E_FAIL;
+
+	m_pMeshCom->SetUp_Animation(Ani_Idle);
 
 	return S_OK;
 }
@@ -110,6 +112,8 @@ _int CQueensKnight::Update_GameObject(_double TimeDelta)
 		Push_Collider();
 
 	CGameObject::Update_GameObject(TimeDelta);
+
+	return NO_EVENT;
 
 	// 죽었을 경우
 	if (m_bIsDead)
@@ -243,7 +247,7 @@ HRESULT CQueensKnight::Render_GameObject()
 	return NOERROR;
 }
 
-HRESULT CQueensKnight::Render_GameObject_SetPass(CShader * pShader, _int iPass)
+HRESULT CQueensKnight::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
 {
 	if (nullptr == pShader ||
 		nullptr == m_pMeshCom)
@@ -298,8 +302,8 @@ CBT_Composite_Node * CQueensKnight::Normal_HorizontalCut1()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("일반 가로베기1");
-	CBT_Play_Ani* Show_Ani50 = Node_Ani("일반 가로베기1", 50, 0.95f);
-	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.f);
+	CBT_Play_Ani* Show_Ani37 = Node_Ani("일반 가로베기1", 37, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.166, 0);
@@ -328,8 +332,8 @@ CBT_Composite_Node * CQueensKnight::Normal_HorizontalCut1()
 	Root_Parallel->Add_Service(Effect7);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani50);
-	MainSeq->Add_Child(Show_Ani15);
+	MainSeq->Add_Child(Show_Ani37);
+	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
@@ -350,8 +354,8 @@ CBT_Composite_Node * CQueensKnight::Normal_VerticalCut1()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("일반 세로베기1");
-	CBT_Play_Ani* Show_Ani49 = Node_Ani("일반 세로베기1", 49, 0.95f);
-	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.f);
+	CBT_Play_Ani* Show_Ani36 = Node_Ani("일반 세로베기1", 36, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.333, 0);
@@ -386,8 +390,8 @@ CBT_Composite_Node * CQueensKnight::Normal_VerticalCut1()
 	Root_Parallel->Add_Service(Effect8);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani49);
-	MainSeq->Add_Child(Show_Ani15);
+	MainSeq->Add_Child(Show_Ani36);
+	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
@@ -413,9 +417,9 @@ CBT_Composite_Node * CQueensKnight::TwoCombo_Cut()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("2연속 베기");
-	CBT_Play_Ani* Show_Ani50 = Node_Ani("일반 가로베기1", 50, 0.5);
-	CBT_Play_Ani* Show_Ani48 = Node_Ani("일반 세로베기", 48, 0.95f);
-	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.f);
+	CBT_Play_Ani* Show_Ani37 = Node_Ani("일반 가로베기1", 37, 0.5);
+	CBT_Play_Ani* Show_Ani35 = Node_Ani("일반 세로베기", 35, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.166, 0);
@@ -476,9 +480,9 @@ CBT_Composite_Node * CQueensKnight::TwoCombo_Cut()
 	Root_Parallel->Add_Service(Effect17);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani50);
-	MainSeq->Add_Child(Show_Ani48);
-	MainSeq->Add_Child(Show_Ani15);
+	MainSeq->Add_Child(Show_Ani37);
+	MainSeq->Add_Child(Show_Ani35);
+	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
@@ -512,10 +516,10 @@ CBT_Composite_Node * CQueensKnight::ThreeCombo_Cut()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("2연속 베기");
-	CBT_Play_Ani* Show_Ani50 = Node_Ani("일반 가로베기1", 50, 0.5f);
-	CBT_Play_Ani* Show_Ani48 = Node_Ani("일반 세로베기", 48, 0.4f);
-	CBT_Play_Ani* Show_Ani45 = Node_Ani("방패치기", 45, 0.95f);
-	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.f);
+	CBT_Play_Ani* Show_Ani37 = Node_Ani("일반 가로베기1", 37, 0.5f);
+	CBT_Play_Ani* Show_Ani35 = Node_Ani("일반 세로베기", 35, 0.4f);
+	CBT_Play_Ani* Show_Ani32 = Node_Ani("방패치기", 32, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.166, 0);
@@ -584,10 +588,10 @@ CBT_Composite_Node * CQueensKnight::ThreeCombo_Cut()
 	Root_Parallel->Add_Service(Effect20);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani50);
-	MainSeq->Add_Child(Show_Ani48);
-	MainSeq->Add_Child(Show_Ani45);
-	MainSeq->Add_Child(Show_Ani15);
+	MainSeq->Add_Child(Show_Ani37);
+	MainSeq->Add_Child(Show_Ani35);
+	MainSeq->Add_Child(Show_Ani32);
+	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
@@ -623,8 +627,8 @@ CBT_Composite_Node * CQueensKnight::BackStep_Cut()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("백스텝 베기");
-	CBT_Play_Ani* Show_Ani55 = Node_Ani("백스텝 베기", 55, 0.95f);
-	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.f);
+	CBT_Play_Ani* Show_Ani42 = Node_Ani("백스텝 베기", 42, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 	
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.1);
@@ -651,8 +655,8 @@ CBT_Composite_Node * CQueensKnight::BackStep_Cut()
 	Root_Parallel->Add_Service(Effect6);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani55);
-	MainSeq->Add_Child(Show_Ani15);
+	MainSeq->Add_Child(Show_Ani42);
+	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Rotation0);
@@ -673,8 +677,8 @@ CBT_Composite_Node * CQueensKnight::Sting()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("찌르기");
-	CBT_Play_Ani* Show_Ani42 = Node_Ani("찌르기", 42, 0.95f);
-	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.f);
+	CBT_Play_Ani* Show_Ani29 = Node_Ani("찌르기", 29, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.1);
@@ -704,8 +708,8 @@ CBT_Composite_Node * CQueensKnight::Sting()
 	Root_Parallel->Add_Service(Effect6);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani42);
-	MainSeq->Add_Child(Show_Ani15);
+	MainSeq->Add_Child(Show_Ani29);
+	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Rotation0);
@@ -728,8 +732,8 @@ CBT_Composite_Node * CQueensKnight::Wing_Attack()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 	CBT_Sequence* MainSeq = Node_Sequence("돌면서 날개치기");
-	CBT_Play_Ani* Show_Ani43 = Node_Ani("돌면서 날개치기", 43, 0.95f);
-	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.f);
+	CBT_Play_Ani* Show_Ani30 = Node_Ani("돌면서 날개치기", 30, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.1);
@@ -747,8 +751,8 @@ CBT_Composite_Node * CQueensKnight::Wing_Attack()
 	Root_Parallel->Add_Service(Effect0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani43);
-	MainSeq->Add_Child(Show_Ani15);
+	MainSeq->Add_Child(Show_Ani30);
+	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Rotation0);
@@ -772,8 +776,8 @@ CBT_Composite_Node * CQueensKnight::Rush()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("돌진 찌르기");
-	CBT_Play_Ani* Show_Ani42 = Node_Ani("돌진 찌르기", 42, 0.95f);
-	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.f);
+	CBT_Play_Ani* Show_Ani29 = Node_Ani("돌진 찌르기", 29, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 	
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_SetValue* PushColOff = Node_BOOL_SetValue("PushColOff", L"PushCol", false);
@@ -802,8 +806,8 @@ CBT_Composite_Node * CQueensKnight::Rush()
 	//Root_Parallel->Add_Service(Effect6);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani42);
-	MainSeq->Add_Child(Show_Ani15);
+	MainSeq->Add_Child(Show_Ani29);
+	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(PushColOff);
@@ -826,8 +830,8 @@ CBT_Composite_Node * CQueensKnight::Shield_Attack()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("방패치기");
-	CBT_Play_Ani* Show_Ani46 = Node_Ani("방패치기", 46, 0.95f);
-	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.f);
+	CBT_Play_Ani* Show_Ani33 = Node_Ani("방패치기", 33, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.083, 0);
@@ -846,8 +850,8 @@ CBT_Composite_Node * CQueensKnight::Shield_Attack()
 	Root_Parallel->Add_Service(Effect2);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani46);
-	MainSeq->Add_Child(Show_Ani15);
+	MainSeq->Add_Child(Show_Ani33);
+	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
@@ -870,8 +874,8 @@ CBT_Composite_Node * CQueensKnight::LeakField()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("리크필드");
-	CBT_Play_Ani* Show_Ani52 = Node_Ani("리크필드", 52, 0.95f);
-	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.f);
+	CBT_Play_Ani* Show_Ani39 = Node_Ani("리크필드", 39, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("보호막 변수 On");
 	CBT_SetValue* LeakFieldOn = Node_BOOL_SetValue("리크필드 변수 On", L"LeakField_On", true);
@@ -886,8 +890,8 @@ CBT_Composite_Node * CQueensKnight::LeakField()
 	Root_Parallel->Add_Service(Effect1);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani52);
-	MainSeq->Add_Child(Show_Ani15);
+	MainSeq->Add_Child(Show_Ani39);
+	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(LeakFieldOn);
@@ -953,8 +957,8 @@ CBT_Composite_Node * CQueensKnight::Flash_Wing_Attack()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 	CBT_Sequence* MainSeq = Node_Sequence("돌면서 날개치기");
-	CBT_Play_Ani* Show_Ani43 = Node_Ani("돌면서 날개치기", 43, 0.95f);
-	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.f);
+	CBT_Play_Ani* Show_Ani30 = Node_Ani("돌면서 날개치기", 30, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.15, 0);
@@ -1025,8 +1029,8 @@ CBT_Composite_Node * CQueensKnight::Flash_Wing_Attack()
 	Root_Parallel->Add_Service(Dissolve5);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani43);
-	MainSeq->Add_Child(Show_Ani15);
+	MainSeq->Add_Child(Show_Ani30);
+	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
@@ -1054,8 +1058,8 @@ CBT_Composite_Node * CQueensKnight::Flash_Rush()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("돌진 찌르기");
-	CBT_Play_Ani* Show_Ani42 = Node_Ani("돌진 찌르기", 42, 0.95f);
-	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.f);
+	CBT_Play_Ani* Show_Ani29 = Node_Ani("돌진 찌르기", 29, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_SetValue* PushColOff = Node_BOOL_SetValue("PushColOff", L"PushCol", false);
@@ -1141,8 +1145,8 @@ CBT_Composite_Node * CQueensKnight::Flash_Rush()
 	Root_Parallel->Add_Service(Dissolve5);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani42);
-	MainSeq->Add_Child(Show_Ani15);
+	MainSeq->Add_Child(Show_Ani29);
+	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(PushColOff);
@@ -1169,9 +1173,9 @@ CBT_Composite_Node * CQueensKnight::Flash_Jump_Attack()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("위에서 내려찍기");
-	CBT_Play_Ani* Show_Ani38 = Node_Ani("점프 시작", 38, 0.7f);
-	CBT_Play_Ani* Show_Ani40 = Node_Ani("내려 찍기", 40, 0.9f);
-	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.f);
+	CBT_Play_Ani* Show_Ani25 = Node_Ani("점프 시작", 25, 0.7f);
+	CBT_Play_Ani* Show_Ani27 = Node_Ani("내려 찍기", 27, 0.9f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.871, 0);
@@ -1257,9 +1261,9 @@ CBT_Composite_Node * CQueensKnight::Flash_Jump_Attack()
 	Root_Parallel->Add_Service(Dissolve5);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani38);
-	MainSeq->Add_Child(Show_Ani40);
-	MainSeq->Add_Child(Show_Ani15);
+	MainSeq->Add_Child(Show_Ani25);
+	MainSeq->Add_Child(Show_Ani27);
+	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
@@ -1282,8 +1286,8 @@ CBT_Composite_Node * CQueensKnight::Flash_Cut()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("점멸 베기");
-	CBT_Play_Ani* Show_Ani37 = Node_Ani("점멸 베기", 37, 0.95f);
-	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.f);
+	CBT_Play_Ani* Show_Ani24 = Node_Ani("점멸 베기", 24, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.2, 0);
@@ -1369,8 +1373,8 @@ CBT_Composite_Node * CQueensKnight::Flash_Cut()
 	Root_Parallel->Add_Service(Dissolve5);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani37);
-	MainSeq->Add_Child(Show_Ani15);
+	MainSeq->Add_Child(Show_Ani24);
+	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
@@ -1399,9 +1403,9 @@ CBT_Composite_Node * CQueensKnight::Flash_Middle_Ground()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("중앙으로 점멸 후 내려찍기");
-	CBT_Play_Ani* Show_Ani38 = Node_Ani("중앙으로 점프 시작", 38, 0.7f);
-	CBT_Play_Ani* Show_Ani40 = Node_Ani("내려 찍기", 39, 0.9f);
-	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.f);
+	CBT_Play_Ani* Show_Ani25 = Node_Ani("중앙으로 점프 시작", 25, 0.7f);
+	CBT_Play_Ani* Show_Ani26 = Node_Ani("내려 찍기", 26, 0.9f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.821, 0);
@@ -1477,9 +1481,9 @@ CBT_Composite_Node * CQueensKnight::Flash_Middle_Ground()
 	Root_Parallel->Add_Service(Dissolve5);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani38);
-	MainSeq->Add_Child(Show_Ani40);
-	MainSeq->Add_Child(Show_Ani15);
+	MainSeq->Add_Child(Show_Ani25);
+	MainSeq->Add_Child(Show_Ani26);
+	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
@@ -1520,12 +1524,12 @@ CBT_Composite_Node * CQueensKnight::Smart_ThreeCombo_Cut()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("2연속 베기");
-	CBT_Play_Ani* Show_Ani50 = Node_Ani("일반 가로베기1", 50, 0.5f);
+	CBT_Play_Ani* Show_Ani37 = Node_Ani("일반 가로베기1", 37, 0.5f);
 	CBT_DistCheck* Dist0 = Node_DistCheck("거리 체크", L"Player_Pos", 5);
-	CBT_Play_Ani* Show_Ani48 = Node_Ani("일반 세로베기", 48, 0.4f);
+	CBT_Play_Ani* Show_Ani35 = Node_Ani("일반 세로베기", 35, 0.4f);
 	CBT_DistCheck* Dist1 = Node_DistCheck("거리 체크", L"Player_Pos", 3);
-	CBT_Play_Ani* Show_Ani45 = Node_Ani("방패치기", 45, 0.95f);
-	CBT_Play_Ani* Show_Ani15 = Node_Ani("기본", 15, 0.f);
+	CBT_Play_Ani* Show_Ani32 = Node_Ani("방패치기", 32, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.166, 0);
@@ -1586,12 +1590,12 @@ CBT_Composite_Node * CQueensKnight::Smart_ThreeCombo_Cut()
 	Root_Parallel->Add_Service(Effect16);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani50);
+	MainSeq->Add_Child(Show_Ani37);
 	MainSeq->Add_Child(Dist0);
-	Dist0->Set_Child(Show_Ani48);
+	Dist0->Set_Child(Show_Ani35);
 	MainSeq->Add_Child(Dist1);
-	Dist1->Set_Child(Show_Ani45);
-	MainSeq->Add_Child(Show_Ani15);
+	Dist1->Set_Child(Show_Ani32);
+	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
@@ -1802,11 +1806,11 @@ CBT_Composite_Node * CQueensKnight::Start_Show()
 CBT_Composite_Node * CQueensKnight::Show_ChaseAndNearAttack()
 {
 	CBT_Sequence* Root_Seq = Node_Sequence("추적 후 순서대로 공격");
-	CBT_Play_Ani* Show_Ani14 = Node_Ani("추적모션", 14, 0.05f);
+	CBT_Play_Ani* Show_Ani4 = Node_Ani("추적모션", 4, 0.0f);
 	CBT_MoveDirectly* Chase = Node_MoveDirectly_Chase("추적", L"Player_Pos", L"Monster_Speed", L"Monster_Dir", 5.f, 3.f);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("플레이어 바라보기", L"Player_Pos", 0.2);
 
-	Root_Seq->Add_Child(Show_Ani14);
+	Root_Seq->Add_Child(Show_Ani4);
 	Root_Seq->Add_Child(Chase);
 	Root_Seq->Add_Child(Rotation0);
 	Root_Seq->Add_Child(Show_NearAttack());
@@ -1857,6 +1861,10 @@ CBT_Composite_Node * CQueensKnight::Show_FarAttack()
 	CBT_Cooldown* Cool2 = Node_Cooldown("쿨2", 300);
 	CBT_Cooldown* Cool3 = Node_Cooldown("쿨3", 300);
 	CBT_Cooldown* Cool4 = Node_Cooldown("쿨4", 300);
+	CBT_Cooldown* Cool5 = Node_Cooldown("쿨5", 300);
+	CBT_Cooldown* Cool6 = Node_Cooldown("쿨6", 300);
+
+	CBT_Play_Ani* Show_Ani3 = Node_Ani("기본", Ani_Appearance_End, 0.95f);
 
 	CBT_SetValue* Show_ValueOff = Node_BOOL_SetValue("시연회 OFF", L"Show", false);
 
@@ -1870,7 +1878,11 @@ CBT_Composite_Node * CQueensKnight::Show_FarAttack()
 	Cool3->Set_Child(Flash_Jump_Attack());
 	Root_Sel->Add_Child(Cool4);
 	Cool4->Set_Child(Flash_Cut());
-
+	Root_Sel->Add_Child(Cool5);
+	Cool5->Set_Child(Flash_Middle_Ground());
+	Root_Sel->Add_Child(Cool6);
+	Cool6->Set_Child(Show_Ani3);
+	
 	Root_Sel->Add_Child(Show_ValueOff);
 
 	return Root_Sel;
@@ -1941,14 +1953,14 @@ void CQueensKnight::Down()
 		}
 	}
 
-	if (true == m_bDown_LoopAni)
+	/*if (true == m_bDown_LoopAni)
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.5f))
 		{
 			m_pMeshCom->Reset_OldIndx();
 			m_pMeshCom->SetUp_Animation(Ani_Down_Loop);
 		}
-	}
+	}*/
 }
 
 HRESULT CQueensKnight::Update_Bone_Of_BlackBoard()
@@ -2112,25 +2124,25 @@ HRESULT CQueensKnight::Update_NF()
 			}
 			else
 			{
-				m_pMeshCom->SetUp_Animation(Ani_Idle);
+				m_pMeshCom->SetUp_Animation(Ani_Appearance);
 			}
 		}
 		// 플레이어가 최대거리 밖에 있는가?
 		else
-			m_pMeshCom->SetUp_Animation(Ani_Idle);
+			m_pMeshCom->SetUp_Animation(Ani_Appearance);
 
 
-		if (m_pMeshCom->Is_Finish_Animation(0.95f))
-		{
-			m_pMeshCom->Reset_OldIndx();
-			m_pMeshCom->SetUp_Animation(Ani_Idle);
-		}
+		//if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		//{
+		//	m_pMeshCom->Reset_OldIndx();
+		//	m_pMeshCom->SetUp_Animation(Ani_Appearance);
+		//}
 
 	}
 	// 플레이어 발견
 	else
 	{
-		m_pMeshCom->SetUp_Animation(Ani_Appearance);
+		m_pMeshCom->SetUp_Animation(Ani_Appearance_End);
 
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
@@ -2426,6 +2438,28 @@ HRESULT CQueensKnight::SetUp_ConstantTable()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
+
+	//=============================================================================================
+	// 쉐이더 재질정보 수치 입력
+	//=============================================================================================
+	_float	fEmissivePower = 3.f;	// 이미시브 : 높을 수록, 자체 발광이 강해짐.
+	_float	fSpecularPower = 5.f;	// 메탈니스 : 높을 수록, 정반사가 강해짐.
+	_float	fRoughnessPower = 1.f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
+	_float	fRimLightPower = 0.f;	// 림		: 높을 수록 빛이 퍼짐(림라이트의 범위가 넓어지고 , 밀집도가 낮아짐).
+	_float	fMinSpecular = 0.5f;	// 최소 빛	: 높을 수록 빛이 퍼짐(림라이트의 범위가 넓어지고 , 밀집도가 낮아짐).
+
+	if (FAILED(m_pShaderCom->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fRimAlpha", &fRimLightPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
+		return E_FAIL;
+	//=============================================================================================
+
 
 	Safe_Release(pManagement);
 

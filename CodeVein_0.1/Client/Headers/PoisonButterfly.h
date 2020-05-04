@@ -20,8 +20,8 @@ public:
 
 private:
 	enum Ani {
-		Ani_Idle = 6, Ani_Death = 12, Ani_Dmg01_B = 14, Ani_Appearance = 16, Ani_Down_Start = 7,
-		Ani_Down_Loop = 8, Ani_Down_End = 9
+		Ani_Idle = 0, Ani_Death = 14, /*Ani_Dmg01_B = 14, */Ani_Appearance = 2, Ani_Appearance_End = 3, Ani_Down_Start = 9,
+		Ani_Down_Loop = 10, Ani_Down_End = 11
 	};
 
 private:
@@ -38,7 +38,7 @@ public:
 	virtual _int Update_GameObject(_double TimeDelta);
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
-	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass);
+	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur = false);
 
 private:	//패턴들
 	// 근거리
@@ -174,7 +174,7 @@ private:
 
 private:
 	HRESULT Add_Component();
-	HRESULT SetUp_ConstantTable();
+	HRESULT SetUp_ConstantTable(_uint _iSubsetIdx);
 
 	HRESULT Ready_BoneMatrix();
 	HRESULT Ready_Collider();

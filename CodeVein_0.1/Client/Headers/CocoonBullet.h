@@ -1,14 +1,10 @@
 #pragma once
 
-#include "Client_Defines.h"
-#include "GameObject.h"
-#include "Management.h"
-#include "Trail_VFX.h"
-#include "Effect.h"
+#include "Monster.h"
 
 BEGIN(Client)
 
-class CCocoonBullet final : public CGameObject
+class CCocoonBullet final : public CMonster
 {
 protected:
 	explicit CCocoonBullet(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -25,8 +21,8 @@ public:
 private:
 	void Update_Collider();
 	void Render_Collider();
-	virtual void Enter_Collision();
-	virtual void Check_CollisionEvent(list<CGameObject*> plistGameObject);
+	virtual void Check_CollisionEvent();
+	virtual void Check_CollisionHit(list<CGameObject*> plistGameObject);
 
 private:
 	HRESULT Add_Component();
@@ -39,9 +35,6 @@ public:
 	virtual void Free();
 
 private:
-	CTransform*			m_pTransformCom = nullptr;
-	CCollider*			m_pCollider = nullptr;
-	CRenderer*			m_pRendererCom = nullptr;
 	CEffect*			m_pBulletBody = nullptr;
 
 	_v3					m_vDir = _v3(0.f, 0.f, 0.f);

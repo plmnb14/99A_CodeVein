@@ -20,16 +20,25 @@ HRESULT CColdBeamBig::Ready_GameObject_Prototype()
 
 HRESULT CColdBeamBig::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component()))
-		return E_FAIL;
+	if (nullptr == pArg)
+	{
+		if (FAILED(Add_Component()))
+			return E_FAIL;
 
-	Ready_Collider();
+		Ready_Collider();
+
+		return S_OK;
+	}
 
 	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
 
 	m_vDir = temp.vDir;
 	m_dLifeTime = temp.dLifeTime;
 
+	m_dCurTime = 0;
+	m_bDead = false;
+	m_bEffect = true;
+	m_fEffectOffset = 0.f;
 
 	m_pTransformCom->Set_Pos(temp.vCreatePos);
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));

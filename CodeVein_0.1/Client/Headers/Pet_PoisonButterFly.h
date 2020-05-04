@@ -16,39 +16,39 @@ public:
 
 	enum PET_POISIONBUTTERFLY_ANI
 	{
+		Idle,
+		Deformation,
+		Appearance,
+		Appearance_End,
+
 		Walk_R,
 		Walk_L,
 		Walk_F,
 		Walk_B,
 
-		Turn_R90,
-		Turn_L90,
-		Idle,
-
-		Down_P_Start,
-		Down_P_Loop,
-		Down_P_End,
-
 		Dodge,
-		Deformation,
-		Death,
-		Dmg_B,
+		Down_Start,
+		Down_Loop,
+		Down_End,
+
 		Dmg_F,
-		Appearance_Loop,
-		Appearance,
-		AtkRush,
-		AtkRotation,
-		AtkkRightCombo04,
-		AtkkRightCombo03,
-		AtkkRightCombo02,
-		AtkkRightCombo01,
-		AtkPoisonShot,
-		AtkPoisonMine,
-		AtkPoisonBreath,
-		AttkLeftCombo02,
-		AtkLeftCombo01,
-		AtkAllRangeShoot,
-		Atk5wayShoot
+		Dmg_B,
+
+		Death,
+
+		Atk_Rush,
+		Atk_Rotation,
+		Atk_R04,
+		Atk_R03,
+		Atk_R02,
+		Atk_R01,
+		Atk_PoisonMist,
+		Atk_PoisonMine,
+		Atk_PoisonBreath,
+		Atk_L02,
+		Atk_L01,
+		Atk_AllRangeShoot,
+		Atk_5wayShoot,
 	};
 
 	enum BONE_TYPE
@@ -72,25 +72,27 @@ public:
 	virtual _int Update_GameObject(_double TimeDelta) override;
 	virtual _int Late_Update_GameObject(_double TimeDelta) override;
 	virtual HRESULT Render_GameObject() override;
-	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass) override;
-
-	virtual void Update_Collider() override;
-	virtual void Render_Collider() override;
-	virtual void Check_CollisionEvent() override;
-	virtual void Check_CollisionPush() override;
-	virtual void Check_CollisionHit(list<CGameObject*> plistGameObject) override;
+	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur =false) override;
 
 private:
+	void Update_Collider();
+	void Render_Collider();
+
 	void Check_Hit();
 	void Check_Dist();
-	void Check_Target();
+	void Check_Action();
 	void Check_AniEvent();
 	void Check_DeadEffect(_double TimeDelta);
 
-	void Play_GetItem(); //아이템 획득
-	void Play_Aggro(); //아주 머나먼 미래에 사용할 수도 있으나 못할듯
 	void Play_5Shot(); // Atk_5wayShoot
 	void Play_Mist(); //allrangeshot
+	void Play_GetItem(); //아이템 획득
+	void Play_Target_CC();
+	//몬스터에게 강제로 cc기를 입히는 행위, 공격우선을 할 경우 player가 떄리는 객체를 기준으로 할 예정
+	//쿨타임 매우 길게 5초에 1번?
+	//락온한 객채를 대상으로 작동?
+	//락온 대상이 죽었을 경우 근처의 타겟을 1순위로
+	//그러나 락온으로 새로운 대상을 지정할 경우 해당 객체를 1순위로
 	void Play_PoisonWheelWind(); //atk_poisonmine
 
 protected:
@@ -114,7 +116,7 @@ public:
 	virtual void Free();
 
 private:
-	_mat*	m_matBone[Bone_End];
+	_mat*						m_matBone[Bone_End];
 	PET_POISIONBUTTERFLY_ANI	m_eState;
 
 };

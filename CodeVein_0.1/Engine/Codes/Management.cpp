@@ -350,6 +350,14 @@ _mat CManagement::Get_Transform(D3DTRANSFORMSTATETYPE eState)
 	return _mat(m_pPipeLine->Get_Transform(eState));
 }
 
+_mat CManagement::Get_TransformInverse(D3DTRANSFORMSTATETYPE eState)
+{
+	if (nullptr == m_pPipeLine)
+		return _mat();
+
+	return _mat(m_pPipeLine->Get_Transform_Inverse(eState));
+}
+
 HRESULT CManagement::Set_Transform(D3DTRANSFORMSTATETYPE eState, _mat StateMatrix)
 {
 	if (nullptr == m_pPipeLine)
