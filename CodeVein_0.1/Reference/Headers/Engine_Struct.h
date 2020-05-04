@@ -96,7 +96,7 @@ namespace Engine
 		_bool		bCanExecution;	// 처형을 할 수 있거나, 당할 수 있는 상태
 		_bool		bIsExecution;	// 처형 중인 경우, 혹은 처형 당하는 중
 		_bool		bIgnoreExecution;	// 처형불가 대상
-
+			
 		_bool		bCanCounter;	// 카운터 가능한지
 		_bool		bIsCounter;		// 카운터 중인지
 

@@ -61,7 +61,6 @@ void CObjectPool::Create_Object(void * pArg)
 		m_Container.pop();
 	}
 
-	return;
 }
 
 CObjectPool * CObjectPool::Create_ObjectPool(const _tchar* pPrototypeTag, _uint iPoolSize)
@@ -79,9 +78,8 @@ CObjectPool * CObjectPool::Create_ObjectPool(const _tchar* pPrototypeTag, _uint 
 
 void CObjectPool::Free()
 {
-	_int iQueueSize = (_int)m_Container.size();
-
-	for (_int i = 0; i < iQueueSize; ++i)
+	size_t iQueueSize = m_Container.size();
+	for (size_t i = 0; i < iQueueSize; ++i)
 	{
 		Safe_Release(m_Container.front());
 		m_Container.pop();
@@ -92,5 +90,4 @@ void CObjectPool::Free()
 
 	m_listRunningObject.clear();
 
-	return;
 }

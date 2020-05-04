@@ -6545,7 +6545,7 @@ void CHunter::Play_Move()
 			m_bIsMoveAround = true;
 
 			m_bCanCoolDown = true;
-			m_fCoolDownMax = 4.f;
+			m_fCoolDownMax = CALC::Random_Num(2, 4) * 1.0f;
 
 			m_fSkillMoveSpeed_Cur = 2.5f;
 			m_fSkillMoveAccel_Cur = 0.f;

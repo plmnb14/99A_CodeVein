@@ -16,39 +16,39 @@ public:
 
 	enum PET_POISIONBUTTERFLY_ANI
 	{
+		Idle,
+		Deformation,
+		Appearance,
+		Appearance_End,
+
 		Walk_R,
 		Walk_L,
 		Walk_F,
 		Walk_B,
 
-		Turn_R90,
-		Turn_L90,
-		Idle,
-
-		Down_P_Start,
-		Down_P_Loop,
-		Down_P_End,
-
 		Dodge,
-		Deformation,
-		Death,
-		Dmg_B,
+		Down_Start,
+		Down_Loop,
+		Down_End,
+
 		Dmg_F,
-		Appearance_Loop,
-		Appearance,
-		AtkRush,
-		AtkRotation,
-		AtkkRightCombo04,
-		AtkkRightCombo03,
-		AtkkRightCombo02,
-		AtkkRightCombo01,
-		AtkPoisonShot,
-		AtkPoisonMine,
-		AtkPoisonBreath,
-		AttkLeftCombo02,
-		AtkLeftCombo01,
-		AtkAllRangeShoot,
-		Atk5wayShoot
+		Dmg_B,
+
+		Death,
+
+		Atk_Rush,
+		Atk_Rotation,
+		Atk_R04,
+		Atk_R03,
+		Atk_R02,
+		Atk_R01,
+		Atk_PoisonMist,
+		Atk_PoisonMine,
+		Atk_PoisonBreath,
+		Atk_L02,
+		Atk_L01,
+		Atk_AllRangeShoot,
+		Atk_5wayShoot,
 	};
 
 	enum BONE_TYPE
@@ -74,16 +74,14 @@ public:
 	virtual HRESULT Render_GameObject() override;
 	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass) override;
 
-	virtual void Update_Collider() override;
-	virtual void Render_Collider() override;
-	virtual void Check_CollisionEvent() override;
-	virtual void Check_CollisionPush() override;
-	virtual void Check_CollisionHit(list<CGameObject*> plistGameObject) override;
+protected:
+	void Update_Collider();
+	void Render_Collider();
 
 private:
 	void Check_Hit();
 	void Check_Dist();
-	void Check_Target();
+	void Check_Action();
 	void Check_AniEvent();
 	void Check_DeadEffect(_double TimeDelta);
 
@@ -114,7 +112,7 @@ public:
 	virtual void Free();
 
 private:
-	_mat*	m_matBone[Bone_End];
+	_mat*						m_matBone[Bone_End];
 	PET_POISIONBUTTERFLY_ANI	m_eState;
 
 };

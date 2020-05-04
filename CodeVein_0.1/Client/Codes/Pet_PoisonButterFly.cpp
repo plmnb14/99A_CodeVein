@@ -216,106 +216,6 @@ void CPet_PoisonButterFly::Render_Collider()
 	return;
 }
 
-void CPet_PoisonButterFly::Check_CollisionEvent()
-{
-	Check_CollisionPush();
-	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE));
-	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE));
-
-	return;
-}
-
-void CPet_PoisonButterFly::Check_CollisionPush()
-{
-	list<CGameObject*> tmpList[4];
-
-	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
-	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
-	tmpList[2] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
-	tmpList[3] = g_pManagement->Get_GameObjectList(L"Layer_Pet", SCENE_STAGE);
-
-	for (auto& list_iter : tmpList)
-	{
-		for (auto& Obj_iter : list_iter)
-		{
-			CCollider* pCollider = TARGET_TO_COL(Obj_iter);
-
-			if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_fSkillMoveSpeed_Cur * DELTA_60))
-			{
-				CTransform* pTrans = TARGET_TO_TRANS(Obj_iter);
-				CNavMesh*   pNav = TARGET_TO_NAV(Obj_iter);
-
-				_v3 vDir = m_pTransformCom->Get_Pos() - pTrans->Get_Pos();
-				V3_NORMAL_SELF(&vDir);
-
-				vDir.y = 0;
-
-				pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pCollider->Get_Length().x));
-			}
-		}
-	}
-
-	return;
-}
-
-void CPet_PoisonButterFly::Check_CollisionHit(list<CGameObject*> plistGameObject)
-{
-	if (false == m_tObjParam.bIsAttack)
-		return;
-
-	_bool bFirst = true;
-
-	for (auto& iter : plistGameObject)
-	{
-		if (false == iter->Get_Target_CanHit())
-			continue;
-
-		for (auto& vecIter : m_vecAttackCol)
-		{
-			if (false == vecIter->Get_Enabled())
-				continue;
-
-			bFirst = true;
-
-			for (auto& vecCol : iter->Get_PhysicColVector())
-			{
-				if (vecIter->Check_Sphere(vecCol))
-				{
-					if (bFirst)
-					{
-						bFirst = false;
-						continue;
-					}
-
-					if (false == iter->Get_Target_IsDodge())
-					{
-						iter->Set_Target_CanHit(false);
-						iter->Add_Target_Hp(m_tObjParam.fDamage);
-
-						if (iter->Get_Target_IsHit())
-						{
-							iter->Set_HitAgain(true);
-						}
-					}
-
-					vecIter->Set_Enabled(false);
-
-					g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
-
-					break;
-				}
-				else
-				{
-					if (bFirst)
-						break;
-				}
-			}
-		}
-	}
-
-	return;
-}
-
 void CPet_PoisonButterFly::Check_Hit()
 {
 	if (PET_STATETYPE::DEAD == m_eFirstCategory)
@@ -380,6 +280,26 @@ void CPet_PoisonButterFly::Check_Dist()
 		PET_STATETYPE::DEAD == m_eFirstCategory)
 		return;
 
+	//기존 목표 있음
+	if (nullptr != m_pTarget)
+	{
+		//목표 사망, 공장 초기화해주듯이
+		if (true == m_pTarget->Get_Dead() ||
+			false == m_pTarget->Get_Enable())
+		{
+			Safe_Release(m_pTarget);
+			Function_ResetAfterAtk();
+			m_pTarget = nullptr;
+
+			m_pTarget = nullptr;
+			m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
+
+			m_tObjParam.bCanAttack = true;
+			m_fCoolDownCur = 0.f;
+			m_fCoolDownMax = 0.f;
+		}
+	}
+
 	if (true == m_bIsCombo ||
 		true == m_bIsMoveAround ||
 		true == m_tObjParam.bIsAttack ||
@@ -389,59 +309,89 @@ void CPet_PoisonButterFly::Check_Dist()
 
 	_float fPlayerDist = V3_LENGTH(&(TARGET_TO_TRANS(m_pPlayer)->Get_Pos() - m_pTransformCom->Get_Pos()));
 
-	//Player와의 최대 거리
-	m_fLimitRange >= fPlayerDist ? m_bInLimitRange = true : m_bInLimitRange = false;
-	//자유 행동 거리
-	m_fActiveRange >= fPlayerDist ? m_bInActiveRange = true : m_bInActiveRange = false;
+	m_fLimitRange >= fPlayerDist ? m_bInLimitRange = true : m_bInLimitRange = false; //Player와의 최대 거리
+	m_fActiveRange >= fPlayerDist ? m_bInActiveRange = true : m_bInActiveRange = false; //자유 행동 거리
 
-	//최대거리 In
+	//최대거리 In 50 이내의 거리
 	if (true == m_bInLimitRange)
 	{
-		//자유 행동 거리 In
+		//자유 행동 거리 In 30 이내의 거리
 		if (true == m_bInActiveRange)
 		{
-			//범위 내의 보스, 몬스터, 아이탬 찾기
-			Function_Find_Target();
-
-			//무언가를 찾았다면
+			//기존 목표 있음
 			if (nullptr != m_pTarget)
 			{
-				m_bCanActive = true;
-				Check_Target();
+				//죽음
+				if (true == m_pTarget->Get_Dead() ||
+					false == m_pTarget->Get_Enable())
+				{
+					Safe_Release(m_pTarget);
+					m_pTarget = nullptr;
+
+					Function_Find_Target();
+					Check_Action();
+				}
+				//안 죽음
+				else
+					Check_Action();
 			}
-			//아무것도 찾지 못했다면
+			//기존 목표 없음
 			else
 			{
-				//자연스러운 속도 유지를 위한 함수
-				m_bCanActive = false;
+				Function_Find_Target();
+				Check_Action();
+			}
+		}
+		//자유 행동 거리 out 50~30 이내의 거리
+		else
+		{
+			//기존 목표 있음
+			if (nullptr != m_pTarget)
+			{
+				//죽음
+				if (true == m_pTarget->Get_Dead() ||
+					false == m_pTarget->Get_Enable())
+				{
+					Safe_Release(m_pTarget);
+					m_pTarget = nullptr;
+
+					Function_Find_Target();
+					Check_Action();
+				}
+				//안죽음
+				else
+					Check_Action();
+			}
+			//기존 목표 없음
+			else
+			{
+				//최대거리 이내에서 달려오다가 특정 거리부터는 감속
 				Function_CalcMoveSpeed(m_fActiveRange);
-				//사회적 거리두기
+				m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
+
+				//특정거리보다 가까워진 경우, 속도를 잃고 idle
 				if (0.f >= m_fSkillMoveSpeed_Cur)
 				{
 					m_eFirstCategory = PET_STATETYPE::IDLE;
 					m_eSecondCategory_IDLE = PET_IDLETYPE::IDLE_IDLE;
 				}
+				//특정거리보다 멀어진 경우, 여전히 달린다
 				else
 				{
-					m_bCanMoveAround = false;
+					m_bCanChase = true;
 					m_eFirstCategory = PET_STATETYPE::MOVE;
-					m_eSecondCategory_MOVE = PET_MOVETYPE::MOVE_WALK;
+					m_eSecondCategory_MOVE = PET_MOVETYPE::MOVE_RUN;
 				}
 			}
 		}
-		//자유 행동 거리 Out
-		else
-		{
-			m_bCanChase = true;
-			m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
-			m_eFirstCategory = PET_STATETYPE::MOVE;
-			m_eSecondCategory_MOVE = PET_MOVETYPE::MOVE_RUN;
-		}
 	}
-	//최대거리 Out
+	//최대거리 Out 50 이상의 거리
 	else
 	{
-		//순간 이동이 필요한 순간, 랜덤으로 플레이어 주변값으로 이동
+		//항상 복귀, 타겟 초기화
+		if (nullptr != m_pTarget)
+			m_pTarget = nullptr;
+
 		m_bCanChase = true;
 		m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
 		m_eFirstCategory = PET_STATETYPE::MOVE;
@@ -451,29 +401,30 @@ void CPet_PoisonButterFly::Check_Dist()
 	return;
 }
 
-void CPet_PoisonButterFly::Check_Target()
+void CPet_PoisonButterFly::Check_Action()
 {
-	//목표와의 거리 비교
-	_float fTargetDist = V3_LENGTH(&(TARGET_TO_TRANS(m_pTarget)->Get_Pos() - m_pTransformCom->Get_Pos()));
+	//오더에 따라 행동할 것, 이넘,스위치 사용예정
+	//if (true == m_bAbsoluteOrder)
+	//{
+	//}
+	//else
+	//{
+	//}
 
-	//목표와 인지범위 여부
-	m_fRecognitionRange >= fTargetDist ? m_bInRecognitionRange = true : m_bInRecognitionRange = false;
-	//목표와 원거리 공격 범위 여부
-	m_fShotRange >= fTargetDist ? m_bInShotRange = true : m_bInShotRange = false;
-	//목표와 근거리 공격범위 여부
-	m_fAtkRange >= fTargetDist ? m_bInAtkRange = true : m_bInAtkRange = false;
+	_float fTargetDist;
 
-	//Player와 30~2 사이로 있음 
 	switch (m_eTarget)
 	{
-	case PET_TARGET_TYPE::PET_TARGET_MONSTER:
 	case PET_TARGET_TYPE::PET_TARGET_BOSS:
-		//인지 범위o
+	case PET_TARGET_TYPE::PET_TARGET_MONSTER:
+		fTargetDist = V3_LENGTH(&(TARGET_TO_TRANS(m_pTarget)->Get_Pos() - m_pTransformCom->Get_Pos()));
+		m_fRecognitionRange >= fTargetDist ? m_bInRecognitionRange = true : m_bInRecognitionRange = false; //목표와 인지범위 여부
+		m_fShotRange >= fTargetDist ? m_bInShotRange = true : m_bInShotRange = false; //목표와 원거리 공격 범위 여부
+		m_fAtkRange >= fTargetDist ? m_bInAtkRange = true : m_bInAtkRange = false; //목표와 근거리 공격범위 여부
+
+		//인지 범위 o
 		if (true == m_bInRecognitionRange)
 		{
-			//원거리 범위o
-			if (true == m_bInShotRange)
-			{
 				//근거리 범위o
 				if (true == m_bInAtkRange)
 				{
@@ -491,25 +442,9 @@ void CPet_PoisonButterFly::Check_Target()
 				//근거리 범위x
 				else
 				{
-					//원거리 쿨타임x
-					if (true == m_tObjParam.bCanAttack)
-						m_eFirstCategory = PET_STATETYPE::ATTACK;
-					//원거리 쿨타임o
-					else
-					{
-						m_bCanMoveAround = true;
-						m_eFirstCategory = PET_STATETYPE::MOVE;
-						m_eSecondCategory_MOVE = PET_MOVETYPE::MOVE_ALERT;
-					}
+					m_eFirstCategory = PET_STATETYPE::MOVE;
+					m_eSecondCategory_MOVE = PET_MOVETYPE::MOVE_WALK;
 				}
-			}
-			//원거리 범위x
-			else
-			{
-				//공격 가능거리까지 걸어가기
-				m_eFirstCategory = PET_STATETYPE::MOVE;
-				m_eSecondCategory_MOVE = PET_MOVETYPE::MOVE_WALK;
-			}
 		}
 		//인지 범위x
 		else
@@ -521,20 +456,47 @@ void CPet_PoisonButterFly::Check_Target()
 		}
 		break;
 	case PET_TARGET_TYPE::PET_TARGET_ITEM:
+		fTargetDist = V3_LENGTH(&(TARGET_TO_TRANS(m_pTarget)->Get_Pos() - m_pTransformCom->Get_Pos()));
+		m_fRecognitionRange >= fTargetDist ? m_bInRecognitionRange = true : m_bInRecognitionRange = false; //목표와 인지범위 여부
+		m_fShotRange >= fTargetDist ? m_bInShotRange = true : m_bInShotRange = false; //목표와 원거리 공격 범위 여부
+		m_fAtkRange >= fTargetDist ? m_bInAtkRange = true : m_bInAtkRange = false; //목표와 근거리 공격범위 여부
+
 		if (true == m_bInRecognitionRange)
 		{
 			if (true == m_bInAtkRange)
 			{
 				//아이템 획득, 아이템을 공격해서 얻거나 죽이거나 할듯
+				cout << "아이템 획득, 혹은 파괴 등으로 해당 아이템을 인벤토리로 저장합니다" << endl;
 				m_eFirstCategory = PET_STATETYPE::IDLE;
 				m_eSecondCategory_IDLE = PET_IDLETYPE::IDLE_IDLE;
 			}
 			else
 			{
+				cout << "해당 아이템과의 거리가 멀어 달려가는 중입니다" << endl;
 				m_bCanChase = true;
 				m_eFirstCategory = PET_STATETYPE::MOVE;
 				m_eSecondCategory_MOVE = PET_MOVETYPE::MOVE_RUN;
 			}
+		}
+		break;
+
+		break;
+	case PET_TARGET_TYPE::PET_TARGET_NONE:
+		//50m 이내의 거리, 목표없음, player를 향해 복귀
+		//최대거리 이내에서 달려오다가 특정 거리부터는 감속
+		Function_CalcMoveSpeed(m_fActiveRange);
+
+		//특정거리보다 가까워진 경우, 속도를 잃고 idle
+		if (0.f >= m_fSkillMoveSpeed_Cur)
+		{
+			m_eFirstCategory = PET_STATETYPE::IDLE;
+			m_eSecondCategory_IDLE = PET_IDLETYPE::IDLE_IDLE;
+		}
+		//특정거리보다 멀어진 경우, 여전히 달린다
+		else
+		{
+			m_eFirstCategory = PET_STATETYPE::MOVE;
+			m_eSecondCategory_MOVE = PET_MOVETYPE::MOVE_RUN;
 		}
 		break;
 	}
@@ -544,8 +506,6 @@ void CPet_PoisonButterFly::Check_Target()
 
 void CPet_PoisonButterFly::Check_AniEvent()
 {
-	IF_NULL(m_pTarget) m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
-
 	switch (m_eFirstCategory)
 	{
 	case PET_STATETYPE::IDLE:
@@ -568,10 +528,10 @@ void CPet_PoisonButterFly::Check_AniEvent()
 				switch (m_iRandom)
 				{
 				case ATK_NORMAL_TYPE::NORMAL_5SHOT:
-					m_eState = PET_POISIONBUTTERFLY_ANI::Atk5wayShoot;
+					m_eState = PET_POISIONBUTTERFLY_ANI::Atk_5wayShoot;
 					break;
 				case ATK_NORMAL_TYPE::NORMAL_MIST:
-					m_eState = PET_POISIONBUTTERFLY_ANI::AtkAllRangeShoot;
+					m_eState = PET_POISIONBUTTERFLY_ANI::Atk_AllRangeShoot;
 					break;
 				}
 
@@ -584,10 +544,10 @@ void CPet_PoisonButterFly::Check_AniEvent()
 				switch (m_iRandom)
 				{
 				case ATK_NORMAL_TYPE::NORMAL_MIST:
-					m_eState = PET_POISIONBUTTERFLY_ANI::AtkAllRangeShoot;
+					m_eState = PET_POISIONBUTTERFLY_ANI::Atk_AllRangeShoot;
 					break;
 				case ATK_NORMAL_TYPE::NORMAL_POISONWHEELWIND:
-					m_eState = PET_POISIONBUTTERFLY_ANI::AtkPoisonMine;
+					m_eState = PET_POISIONBUTTERFLY_ANI::Atk_PoisonMine;
 					break;
 				}
 			}
@@ -597,13 +557,13 @@ void CPet_PoisonButterFly::Check_AniEvent()
 		{
 			switch (m_eState)
 			{
-			case Client::CPet_PoisonButterFly::AtkPoisonMine:
+			case PET_POISIONBUTTERFLY_ANI::Atk_5wayShoot:
 				Play_5Shot();
 				break;
-			case Client::CPet_PoisonButterFly::AtkAllRangeShoot:
+			case PET_POISIONBUTTERFLY_ANI::Atk_AllRangeShoot:
 				Play_Mist();
 				break;
-			case Client::CPet_PoisonButterFly::Atk5wayShoot:
+			case PET_POISIONBUTTERFLY_ANI::Atk_PoisonMine:
 				Play_PoisonWheelWind();
 				break;
 			}
@@ -651,8 +611,6 @@ void CPet_PoisonButterFly::Check_DeadEffect(_double TimeDelta)
 
 void CPet_PoisonButterFly::Play_5Shot()
 {
-	IF_NULL(m_pTarget) m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
-
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
 	_v3 vBirth, vLook;
 	_float fLength = 1.f;
@@ -1052,8 +1010,6 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 
 void CPet_PoisonButterFly::Play_Idle()
 {
-	IF_NULL(m_pTarget) m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
-
 	switch (m_eTarget)
 	{
 	case PET_TARGET_TYPE::PET_TARGET_BOSS:
@@ -1076,11 +1032,10 @@ void CPet_PoisonButterFly::Play_Move()
 {
 	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
 
-	IF_NULL(m_pTarget) m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
-
 	switch (m_eSecondCategory_MOVE)
 	{
-	case MOVE_WALK:
+	case PET_MOVETYPE::MOVE_WALK:
+		m_fSkillMoveSpeed_Cur = 2.f;
 		switch (m_eTarget)
 		{
 		case PET_TARGET_TYPE::PET_TARGET_BOSS:
@@ -1090,54 +1045,52 @@ void CPet_PoisonButterFly::Play_Move()
 
 			Function_RotateBody(m_pTarget);
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-			Function_DecreMoveMent(m_fSkillMoveMultiply);
 			break;
 		case PET_TARGET_TYPE::PET_TARGET_NONE:
 			m_eState = PET_POISIONBUTTERFLY_ANI::Walk_F;
 
 			Function_RotateBody(m_pPlayer);
 			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-			Function_DecreMoveMent(m_fSkillMoveMultiply);
 			break;
 		}
 		break;
-	case MOVE_ALERT:
+	case PET_MOVETYPE::MOVE_ALERT:
 		switch (m_eTarget)
 		{
 		case PET_TARGET_TYPE::PET_TARGET_BOSS:
 		case PET_TARGET_TYPE::PET_TARGET_MONSTER:
-		if (true == m_bCanMoveAround)
-		{
-			m_bCanMoveAround = false;
-			m_bIsMoveAround = true;
-
-			m_bCanCoolDown = true;
-			m_fCoolDownMax = 4.f;
-
-			m_fSkillMoveSpeed_Cur = 2.5f;
-			m_fSkillMoveAccel_Cur = 0.f;
-			m_fSkillMoveMultiply = 0.5f;
-
-			switch (CALC::Random_Num(PET_POISIONBUTTERFLY_ANI::Walk_R, PET_POISIONBUTTERFLY_ANI::Walk_B))
+			if (true == m_bCanMoveAround)
 			{
-			case PET_POISIONBUTTERFLY_ANI::Walk_R:
-			case PET_POISIONBUTTERFLY_ANI::Walk_F:
-				m_eState = PET_POISIONBUTTERFLY_ANI::Walk_R;
-				break;
-			case PET_POISIONBUTTERFLY_ANI::Walk_L:
-			case PET_POISIONBUTTERFLY_ANI::Walk_B:
-				m_eState = PET_POISIONBUTTERFLY_ANI::Walk_L;
-				break;
+				m_bCanMoveAround = false;
+				m_bIsMoveAround = true;
+
+				m_bCanCoolDown = true;
+				m_fCoolDownMax = CALC::Random_Num(2, 4) * 1.0f;
+
+				m_fSkillMoveSpeed_Cur = 2.5f;
+				m_fSkillMoveAccel_Cur = 0.f;
+				m_fSkillMoveMultiply = 0.5f;
+
+				switch (CALC::Random_Num(PET_POISIONBUTTERFLY_ANI::Walk_R, PET_POISIONBUTTERFLY_ANI::Walk_B))
+				{
+				case PET_POISIONBUTTERFLY_ANI::Walk_R:
+				case PET_POISIONBUTTERFLY_ANI::Walk_F:
+					m_eState = PET_POISIONBUTTERFLY_ANI::Walk_R;
+					break;
+				case PET_POISIONBUTTERFLY_ANI::Walk_L:
+				case PET_POISIONBUTTERFLY_ANI::Walk_B:
+					m_eState = PET_POISIONBUTTERFLY_ANI::Walk_L;
+					break;
+				}
 			}
-		}
-		else
-		{
-			if (PET_POISIONBUTTERFLY_ANI::Walk_R == m_eState)
-				Function_MoveAround(m_pTarget, m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_X));
-			else if (PET_POISIONBUTTERFLY_ANI::Walk_L == m_eState)
-				Function_MoveAround(m_pTarget, m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_X));
-		}
-		break;
+			else
+			{
+				if (PET_POISIONBUTTERFLY_ANI::Walk_R == m_eState)
+					Function_MoveAround(m_pTarget, m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_X));
+				else if (PET_POISIONBUTTERFLY_ANI::Walk_L == m_eState)
+					Function_MoveAround(m_pTarget, m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_X));
+			}
+			break;
 		case PET_TARGET_TYPE::PET_TARGET_ITEM:
 			break;
 		case PET_TARGET_TYPE::PET_TARGET_NONE:
@@ -1147,7 +1100,7 @@ void CPet_PoisonButterFly::Play_Move()
 				m_bIsMoveAround = true;
 
 				m_bCanCoolDown = true;
-				m_fCoolDownMax = 4.f;
+				m_fCoolDownMax = CALC::Random_Num(2, 4) * 1.0f;
 
 				m_fSkillMoveSpeed_Cur = 2.5f;
 				m_fSkillMoveAccel_Cur = 0.f;
@@ -1175,7 +1128,7 @@ void CPet_PoisonButterFly::Play_Move()
 			break;
 		}
 		break;
-	case MOVE_RUN:
+	case PET_MOVETYPE::MOVE_RUN:
 		if (true == m_bCanChase)
 		{
 			m_bCanChase = false;
@@ -1451,7 +1404,11 @@ void CPet_PoisonButterFly::Free()
 {
 	Safe_Release(m_pMonsterUI);
 
-	Safe_Release(m_pPlayer);
+	IF_NOT_NULL(m_pTarget)
+		Safe_Release(m_pTarget);
+
+	IF_NOT_NULL(m_pPlayer)
+		Safe_Release(m_pPlayer);
 
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pNavMesh);

@@ -35,15 +35,16 @@ HRESULT CHunterBullet::Ready_GameObject(void * pArg)
 	m_fSpeed = temp.fSpeed;
 	m_dLifeTime = temp.dLifeTime;
 
+	m_dCurTime = 0;
+	m_bDead = false;
+	m_bEffect = true;
+
 	m_pTransformCom->Set_Pos(temp.vCreatePos);
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
 
-	m_vDir = temp.vDir;
-	m_fSpeed = temp.fSpeed;
-	m_dLifeTime = temp.dLifeTime;
 
 	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Bullet_Body", nullptr));
 	m_pBulletBody->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
@@ -205,7 +206,7 @@ void CHunterBullet::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 					}
 
 					iter->Set_Target_CanHit(false);
-					iter->Add_Target_Hp(m_tObjParam.fDamage);
+					iter->Add_Target_Hp(-m_tObjParam.fDamage);
 
 					m_dCurTime = 100;
 
