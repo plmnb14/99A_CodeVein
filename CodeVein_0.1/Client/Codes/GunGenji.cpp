@@ -84,7 +84,7 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("½Ã¿¬È¸ º¯¼ö Ã¼Å©", L"Show", true);
 	//Check_ShowValue->Set_Child(Start_Show());
 	//Start_Sel->Add_Child(Check_ShowValue);
-	Start_Sel->Add_Child(Cut_To_Right());
+	Start_Sel->Add_Child(Start_Game());
 
 	//Start_Sel->Add_Child(Arm_Attack());
 
@@ -397,8 +397,8 @@ CBT_Composite_Node * CGunGenji::Shot()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("ÀÏ¹İ ÃÑ½î±â");
 	CBT_Sequence* MainSeq = Node_Sequence("ÀÏ¹İ ÃÑ½î±â");
-	CBT_Play_Ani* Show_Ani44 = Node_Ani("ÀÏ¹İ ÃÑ½î±â", 44, 0.95f);
-	CBT_Play_Ani* Show_Ani42 = Node_Ani("±âº»", 42, 0.1f);
+	CBT_Play_Ani* Show_Ani101 = Node_Ani("ÀÏ¹İ ÃÑ½î±â", 101, 0.95f);
+	CBT_Play_Ani* Show_Ani1 = Node_Ani("±âº»", 1, 0.1f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("ÀÌµ¿");
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("¹æÇâ ÃßÀû", L"Player_Pos", 1, 0);
@@ -415,8 +415,8 @@ CBT_Composite_Node * CGunGenji::Shot()
 	Root_Parallel->Add_Service(Effect2);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani44);
-	MainSeq->Add_Child(Show_Ani42);
+	MainSeq->Add_Child(Show_Ani101);
+	MainSeq->Add_Child(Show_Ani1);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(ChaseDir0);
@@ -429,8 +429,8 @@ CBT_Composite_Node * CGunGenji::Tumbling_Shot()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("ÅÒºí¸µ ÃÑ½î±â");
 	CBT_Sequence* MainSeq = Node_Sequence("ÅÒºí¸µ ÃÑ½î±â");
-	CBT_Play_Ani* Show_Ani48 = Node_Ani("ÅÒºí¸µ ÃÑ½î±â", 48, 0.95f);
-	CBT_Play_Ani* Show_Ani42 = Node_Ani("±âº»", 42, 0.1f);
+	CBT_Play_Ani* Show_Ani102 = Node_Ani("ÅÒºí¸µ ÃÑ½î±â", 102, 0.95f);
+	CBT_Play_Ani* Show_Ani1 = Node_Ani("±âº»", 1, 0.1f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("ÀÌµ¿");
 	CBT_Wait* Wait0 = Node_Wait("´ë±â", 0.3, 0);
@@ -440,8 +440,8 @@ CBT_Composite_Node * CGunGenji::Tumbling_Shot()
 	Root_Parallel->Add_Service(Bullet0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani48);
-	MainSeq->Add_Child(Show_Ani42);
+	MainSeq->Add_Child(Show_Ani102);
+	MainSeq->Add_Child(Show_Ani1);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
@@ -454,8 +454,8 @@ CBT_Composite_Node * CGunGenji::Sudden_Shot()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("°©ÀÚ±â ÃÑ½î±â");
 	CBT_Sequence* MainSeq = Node_Sequence("°©ÀÚ±â ÃÑ½î±â");
-	CBT_Play_Ani* Show_Ani49 = Node_Ani("°©ÀÚ±â ÃÑ½î±â", 49, 0.95f);
-	CBT_Play_Ani* Show_Ani42 = Node_Ani("±âº»", 42, 0.1f);
+	CBT_Play_Ani* Show_Ani103 = Node_Ani("°©ÀÚ±â ÃÑ½î±â", 103, 0.95f);
+	CBT_Play_Ani* Show_Ani1 = Node_Ani("±âº»", 1, 0.1f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("ÀÌµ¿");
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("¹æÇâ ÃßÀû", L"Player_Pos", 3, 0);
@@ -465,8 +465,8 @@ CBT_Composite_Node * CGunGenji::Sudden_Shot()
 	Root_Parallel->Add_Service(Bullet0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani49);
-	MainSeq->Add_Child(Show_Ani42);
+	MainSeq->Add_Child(Show_Ani103);
+	MainSeq->Add_Child(Show_Ani1);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(ChaseDir0);
@@ -479,8 +479,8 @@ CBT_Composite_Node * CGunGenji::Upper_Slash()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("º´·Ä");
 	CBT_Sequence* MainSeq = Node_Sequence("°³¸Ó¸®ÆÇ Ä¡±â");
-	CBT_Play_Ani* Show_Ani43 = Node_Ani("°³¸Ó¸®ÆÇ Ä¡±â", 43, 0.95f);
-	CBT_Play_Ani* Show_Ani42 = Node_Ani("±âº»", 42, 0.3f);
+	CBT_Play_Ani* Show_Ani97 = Node_Ani("°³¸Ó¸®ÆÇ Ä¡±â", 97, 0.95f);
+	CBT_Play_Ani* Show_Ani1 = Node_Ani("±âº»", 1, 0.3f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("ÀÌµ¿");
 	CBT_Wait* Wait0 = Node_Wait("´ë±â", 0.083, 0);
@@ -493,8 +493,8 @@ CBT_Composite_Node * CGunGenji::Upper_Slash()
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("ÀÌµ¿1", L"Monster_Speed", L"Monster_Dir", 0.6f, 0.566, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani43);
-	MainSeq->Add_Child(Show_Ani42);
+	MainSeq->Add_Child(Show_Ani97);
+	MainSeq->Add_Child(Show_Ani1);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
@@ -516,8 +516,8 @@ CBT_Composite_Node * CGunGenji::Arm_Attack()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("º´·Ä");
 	CBT_Sequence* MainSeq = Node_Sequence("ÆÈ±ÀÄ¡ Ä¡±â");
-	CBT_Play_Ani* Show_Ani45 = Node_Ani("ÆÈ±ÀÄ¡ Ä¡±â", 45, 0.95f);
-	CBT_Play_Ani* Show_Ani42 = Node_Ani("±âº»", 42, 0.3f);
+	CBT_Play_Ani* Show_Ani98 = Node_Ani("ÆÈ±ÀÄ¡ Ä¡±â", 98, 0.95f);
+	CBT_Play_Ani* Show_Ani1 = Node_Ani("±âº»", 1, 0.3f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("ÀÌµ¿");
 	CBT_Wait* Wait0 = Node_Wait("´ë±â0", 0.25, 0);
@@ -529,8 +529,8 @@ CBT_Composite_Node * CGunGenji::Arm_Attack()
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("ÀÌµ¿1", L"Monster_Speed", L"Monster_Dir", -0.6f, 1.066, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani45);
-	MainSeq->Add_Child(Show_Ani42);
+	MainSeq->Add_Child(Show_Ani98);
+	MainSeq->Add_Child(Show_Ani1);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
@@ -551,8 +551,8 @@ CBT_Composite_Node * CGunGenji::Sting_Attack()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("º´·Ä");
 	CBT_Sequence* MainSeq = Node_Sequence("Âî¸£±â");
-	CBT_Play_Ani* Show_Ani46 = Node_Ani("Âî¸£±â", 46, 0.95f);
-	CBT_Play_Ani* Show_Ani42 = Node_Ani("±âº»", 42, 0.3f);
+	CBT_Play_Ani* Show_Ani99 = Node_Ani("Âî¸£±â", 99, 0.95f);
+	CBT_Play_Ani* Show_Ani1 = Node_Ani("±âº»", 1, 0.3f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("ÀÌµ¿");
 	CBT_Wait* Wait0 = Node_Wait("´ë±â", 0.42, 0);
@@ -561,8 +561,8 @@ CBT_Composite_Node * CGunGenji::Sting_Attack()
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("ÀÌµ¿1", L"Monster_Speed", L"Monster_Dir", 0.6f, 0.537, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani46);
-	MainSeq->Add_Child(Show_Ani42);
+	MainSeq->Add_Child(Show_Ani99);
+	MainSeq->Add_Child(Show_Ani1);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
@@ -580,8 +580,8 @@ CBT_Composite_Node * CGunGenji::Cut_To_Right()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("º´·Ä");
 	CBT_Sequence* MainSeq = Node_Sequence("¿À¸¥ÂÊÀ¸·Î º£±â");
-	CBT_Play_Ani* Show_Ani47 = Node_Ani("¿À¸¥ÂÊÀ¸·Î º£±â", 47, 0.95f);
-	CBT_Play_Ani* Show_Ani42 = Node_Ani("±âº»", 42, 0.3f);
+	CBT_Play_Ani* Show_Ani100 = Node_Ani("¿À¸¥ÂÊÀ¸·Î º£±â", 100, 0.95f);
+	CBT_Play_Ani* Show_Ani1 = Node_Ani("±âº»", 1, 0.3f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("ÀÌµ¿");
 	CBT_Wait* Wait0 = Node_Wait("´ë±â0", 0.3, 0);
@@ -593,8 +593,8 @@ CBT_Composite_Node * CGunGenji::Cut_To_Right()
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("ÀÌµ¿2", L"Monster_Speed", L"Monster_Dir", -0.2f, 0.5, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani47);
-	MainSeq->Add_Child(Show_Ani42);
+	MainSeq->Add_Child(Show_Ani100);
+	MainSeq->Add_Child(Show_Ani1);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
@@ -694,11 +694,11 @@ CBT_Composite_Node * CGunGenji::Chase()
 
 	CBT_MoveDirectly* pChase = Node_MoveDirectly_Chase("ÃßÀû", L"Player_Pos", L"Monster_Speed", L"Monster_Dir", 3.f, 5.f);
 
-	CBT_Play_Ani* Show_Ani139 = Node_Ani("ÃßÀû", 139, 1.f);
+	CBT_Play_Ani* Show_Ani16 = Node_Ani("ÃßÀû", 16, 1.f);
 
 	Root_Parallel->Set_Main_Child(pChase);
 
-	Root_Parallel->Set_Sub_Child(Show_Ani139);
+	Root_Parallel->Set_Sub_Child(Show_Ani16);
 
 	return Root_Parallel;
 }
@@ -1161,7 +1161,7 @@ HRESULT CGunGenji::Add_Component(void* pArg)
 		return E_FAIL;
 //=================================================================================
 
-	m_pCollider->Set_Radius(_v3{ 0.5f, 0.5f, 0.5f });
+	m_pCollider->Set_Radius(_v3{ 1.f, 1.f, 1.f });
 	m_pCollider->Set_Dynamic(true);
 	m_pCollider->Set_Type(COL_SPHERE);
 	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pCollider->Get_Radius().y , 0.f });

@@ -1323,6 +1323,14 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireTornadoCol", CFireTornadoCol::Create(m_pGraphicDev))))
 			return E_FAIL;
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireTornadoCol", L"Monster_FireTornadoCol", 3);
+		// ¿Þ¼Õ¿¡ È­¿°±¸ ¼ÒÈ¯
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireHandBall", CFireHandBall::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireHandBall", L"Monster_FireHandBall", 3);
+		// ¿Þ¼Õ¿¡ È­¿°±¸ Á×Àº ÈÄ »ý¼ºµÇ´Â ºÒ²É
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireFlame", CFireFlame::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireFlame", L"Monster_FireFlame", 48);
 		// »ç½¿¿Õ
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKing", CDeerKing::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1346,6 +1354,14 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingRushCol", CDeerKingRushCol::Create(m_pGraphicDev))))
 			return E_FAIL;
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingRushCol", L"Monster_DeerKingRushCol", 3);
+		// »ç½¿¿Õ  ¾óÀ½°Ë ¼ÒÈ¯
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingIceSword", CDeerKingIceSword::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingIceSword", L"Monster_DeerKingIceSword", 3);
+		// »ç½¿¿Õ  ¿À¸¥¼Õ Ãæµ¹Ã¼
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingRightHandCol", CDeerKingRightHandCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingRightHandCol", L"Monster_DeerKingRightHandCol", 3);
 		// °Ë°ÕÁö
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenji", CSwordGenji::Create(m_pGraphicDev))))
 			return E_FAIL;

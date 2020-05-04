@@ -828,6 +828,18 @@
     <ClInclude Include="..\Headers\Monster.h">
       <Filter>02.GameObject\Stage\2%29 Monster</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\DeerKingIceSword.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\DeerKingRightHandCol.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\FireHandBall.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\FireFlame.h">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1246,6 +1258,18 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Pet_Bullet.cpp">
       <Filter>02.GameObject\Stage\10%29 Pet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DeerKingIceSword.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DeerKingRightHandCol.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\FireHandBall.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\FireFlame.cpp">
+      <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

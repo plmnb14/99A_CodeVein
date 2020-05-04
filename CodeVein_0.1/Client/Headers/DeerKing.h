@@ -70,11 +70,15 @@ private:	// 패턴들
 	// 3. 윈스턴처럼 점프 찍기
 	CBT_Composite_Node* Jump_Fist();
 	// 4. 왼손에 얼음칼 베기
-	CBT_Composite_Node* Blade_Attack();	// 보류
+	CBT_Composite_Node* Blade_Attack();	// 얼음검 이펙트 넣어야함
+	// 5. 오른팔 휘두르기
+	CBT_Composite_Node* RightHand_Attack(_float fWeight = 0.95f);	// 이펙트 타이밍 맞춰야함.
+
 
 	//////////// 응용
 	CBT_Composite_Node* Smart_Three_Attack();
 	CBT_Composite_Node* Smart_JumpAttack();
+	CBT_Composite_Node* Four_Combo_Punch();
 
 	CBT_Composite_Node* Chase_Timer(_double dRunTime, _float fSpeed);
 	CBT_Composite_Node* RightFoot_Attack__Rush_Or_WhirlWind();
@@ -153,6 +157,7 @@ private:
 	// 블랙보드에서 뼈의 Pos 저장소
 	_v3					m_vRightHand = _v3(0.f, 0.f, 0.f);	//RightHand
 	_v3					m_vLeftHand = _v3(0.f, 0.f, 0.f);	//LeftHand
+	_v3					m_vLeftHandAttach = _v3(0.f, 0.f, 0.f);	//LeftHandAttach
 	_v3					m_vLeftJet = _v3(0.f, 0.f, 0.f);	//Spine3_LeftJet
 	_v3					m_vRightJet = _v3(0.f, 0.f, 0.f);	//Spine3_RightJet
 	_v3					m_vRightHandAttach = _v3(0.f, 0.f, 0.f); //RightHandAttach

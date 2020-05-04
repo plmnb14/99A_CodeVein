@@ -60,23 +60,23 @@ HRESULT CDeerKing::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"PushCol", true);	// 충돌여부 제어변수
 	//pBlackBoard->Set_Value(L"PhyCol", true); // 피격판정 제어 변수
 
-	CBT_Selector* Start_Sel = Node_Selector("행동 시작");
-	//CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
+	//CBT_Selector* Start_Sel = Node_Selector("행동 시작");
+	CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
 
 	pBehaviorTree->Set_Child(Start_Sel);
 
 	//////////// 아래에 주석해놓은 4줄이 본게임에서 쓸 것임, 차례대로 공격함.
 
-	CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", false);
-	Check_ShowValue->Set_Child(Start_Game());
-	Start_Sel->Add_Child(Check_ShowValue);
-	Start_Sel->Add_Child(Start_Show());
+	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", false);
+	//Check_ShowValue->Set_Child(Start_Game());
+	//Start_Sel->Add_Child(Check_ShowValue);
+	//Start_Sel->Add_Child(Start_Show());
 
 	////////////
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	//Start_Sel->Add_Child(Start_Game());
+	Start_Sel->Add_Child(Four_Combo_Punch());
 	
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -169,7 +169,6 @@ _int CDeerKing::Late_Update_GameObject(_double TimeDelta)
 
 	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
 	//	return E_FAIL;
-
 
 	m_dTimeDelta = TimeDelta;
 
@@ -1063,6 +1062,51 @@ CBT_Composite_Node * CDeerKing::Blade_Attack()
 	SubSeq->Add_Child(Wait2);
 	SubSeq->Add_Child(Move2);
 
+	CBT_CreateBuff* Col0 = Node_CreateBuff("얼음검 소환", L"Monster_DeerKingIceSword", 0.684, 1.366, 1, 0, 0, CBT_Service_Node::Finite);
+	Root_Parallel->Add_Service(Col0);
+
+	
+
+	return Root_Parallel;
+}
+
+CBT_Composite_Node * CDeerKing::RightHand_Attack(_float fWeight)
+{
+	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
+
+	CBT_Sequence* MainSeq = Node_Sequence("오른팔 휘두르기");
+	CBT_Play_Ani* Show_Ani41 = Node_Ani("오른팔 휘두르기", 41, fWeight);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
+
+	CBT_Sequence* SubSeq = Node_Sequence("이동");
+	CBT_Wait* Wait0 = Node_Wait("대기", 0.2, 0);
+	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기0", L"Player_Pos", 0.1);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 3.f, 0.666, 0);
+	CBT_Wait* Wait1 = Node_Wait("대기1", 0.35, 0);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", -1.f, 0.117, 0);
+
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("잔눈", L"DeerKing_Snow_Up_Particle_0", L"Bone_RightHand", 0.4, 60, 0.01, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_Mid_0", L"Bone_RightHand", 0.4, 60, 0.01, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_Mid_1", L"Bone_RightHand", 0.4, 60, 0.01, 0);
+
+	Root_Parallel->Add_Service(Effect0);
+	Root_Parallel->Add_Service(Effect1);
+	Root_Parallel->Add_Service(Effect2);
+
+	Root_Parallel->Set_Main_Child(MainSeq);
+	MainSeq->Add_Child(Show_Ani41);
+	MainSeq->Add_Child(Show_Ani0);
+
+	Root_Parallel->Set_Sub_Child(SubSeq);
+	SubSeq->Add_Child(Wait0);
+	SubSeq->Add_Child(Rotation0);
+	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(Move1);
+
+	CBT_CreateBullet* Col0 = Node_CreateBullet("오른손 휘두르기 충돌체", L"Monster_DeerKingRightHandCol", L"RightHandCol_Pos", L"", 0, 0.11, 0.85, 1, 0, 0, CBT_Service_Node::Finite);
+	Root_Parallel->Add_Service(Col0);
+
 	return Root_Parallel;
 }
 
@@ -1137,6 +1181,18 @@ CBT_Composite_Node * CDeerKing::Smart_JumpAttack()
 	return Root_Seq;
 }
 
+CBT_Composite_Node * CDeerKing::Four_Combo_Punch()
+{
+	CBT_Sequence* Root_Seq = Node_Sequence("4콤보 주먹");
+
+	Root_Seq->Add_Child(LeftHand_Attack(0.95f));
+	Root_Seq->Add_Child(RightHand_Attack(0.95f));
+	Root_Seq->Add_Child(LeftHand_Attack(0.95f));
+	Root_Seq->Add_Child(RightHand_Attack(0.95f));
+
+	return Root_Seq;
+}
+
 CBT_Composite_Node * CDeerKing::Start_Game()
 {
 	CBT_Selector* Root_Sel = Node_Selector("게임 시작");
@@ -1207,7 +1263,8 @@ CBT_Composite_Node * CDeerKing::NearAttack_Dist5_Final()
 	Root_Sel->Add_Child(LeftHand_Attack());
 	Root_Sel->Add_Child(Jump_In_Place());
 	Root_Sel->Add_Child(Rush_Body());
-
+	Root_Sel->Add_Child(Four_Combo_Punch());
+	
 	return Root_Sel;
 }
 
@@ -1218,7 +1275,7 @@ CBT_Composite_Node * CDeerKing::FarAttack_Fianl()
 	Root_Sel->Add_Child(Jump_Fist());
 	Root_Sel->Add_Child(Rush_Body());
 	Root_Sel->Add_Child(Throwing());
-	//Root_Sel->Add_Child(Blade_Attack());
+	Root_Sel->Add_Child(Blade_Attack());
 	
 	return Root_Sel;
 }
@@ -1284,6 +1341,7 @@ CBT_Composite_Node * CDeerKing::Show_FarAttack()
 	CBT_Cooldown* Cool0 = Node_Cooldown("쿨0", 300);
 	CBT_Cooldown* Cool1 = Node_Cooldown("쿨1", 300);
 	CBT_Cooldown* Cool2 = Node_Cooldown("쿨2", 300);
+	CBT_Cooldown* Cool3 = Node_Cooldown("쿨3", 300);
 
 	CBT_Play_Ani* Show_Ani3 = Node_Ani("기본", Ani_Appearance_End, 0.95f);
 
@@ -1294,10 +1352,12 @@ CBT_Composite_Node * CDeerKing::Show_FarAttack()
 	Root_Sel->Add_Child(Cool1);
 	Cool1->Set_Child(Smart_JumpAttack());
 	Root_Sel->Add_Child(Cool2);
-	Cool2->Set_Child(Show_Ani3);
+	Cool2->Set_Child(Throwing());
+	Root_Sel->Add_Child(Cool3);
+	Cool3->Set_Child(Show_Ani3);
 
 	Root_Sel->Add_Child(Show_ValueOff);
-
+	
 	return Root_Sel;;
 }
 
@@ -1426,6 +1486,10 @@ HRESULT CDeerKing::Update_Bone_Of_BlackBoard()
 	m_vLeftHand = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftHand", m_vLeftHand);
 
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHandAttach");
+	m_vLeftHandAttach = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftHandAttach", m_vLeftHandAttach);
+
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHand");
 	m_vRightHand = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_RightHand", m_vRightHand);
@@ -1501,11 +1565,11 @@ HRESULT CDeerKing::Update_Value_Of_BB()
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos0", vBulletPos + fLength * vSelfUp);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos1", vBulletPos + fLength * *D3DXVec3TransformNormal(&_v3(), &vSelfUp, D3DXMatrixRotationAxis(&_mat(), &vSelfLook, D3DXToRadian(45))));
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos2", vBulletPos + fLength * *D3DXVec3TransformNormal(&_v3(), &vSelfUp, D3DXMatrixRotationAxis(&_mat(), &vSelfLook, D3DXToRadian(90))));
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos3", vBulletPos + fLength * *D3DXVec3TransformNormal(&_v3(), &vSelfUp, D3DXMatrixRotationAxis(&_mat(), &vSelfLook, D3DXToRadian(130))));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos3", vBulletPos + fLength * *D3DXVec3TransformNormal(&_v3(), &vSelfUp, D3DXMatrixRotationAxis(&_mat(), &vSelfLook, D3DXToRadian(135))));
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos4", vBulletPos + fLength * *D3DXVec3TransformNormal(&_v3(), &vSelfUp, D3DXMatrixRotationAxis(&_mat(), &vSelfLook, D3DXToRadian(180))));
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos5", vBulletPos + fLength * *D3DXVec3TransformNormal(&_v3(), &vSelfUp, D3DXMatrixRotationAxis(&_mat(), &vSelfLook, D3DXToRadian(220))));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos5", vBulletPos + fLength * *D3DXVec3TransformNormal(&_v3(), &vSelfUp, D3DXMatrixRotationAxis(&_mat(), &vSelfLook, D3DXToRadian(225))));
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos6", vBulletPos + fLength * *D3DXVec3TransformNormal(&_v3(), &vSelfUp, D3DXMatrixRotationAxis(&_mat(), &vSelfLook, D3DXToRadian(270))));
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos7", vBulletPos + fLength * *D3DXVec3TransformNormal(&_v3(), &vSelfUp, D3DXMatrixRotationAxis(&_mat(), &vSelfLook, D3DXToRadian(310))));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Throwing_Pos7", vBulletPos + fLength * *D3DXVec3TransformNormal(&_v3(), &vSelfUp, D3DXMatrixRotationAxis(&_mat(), &vSelfLook, D3DXToRadian(315))));
 
 	// 3. 몬스터 본인 좌표
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"SelfPos", vSelfPos);
@@ -1532,6 +1596,16 @@ HRESULT CDeerKing::Update_Value_Of_BB()
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ColdBeam_Left_Pos", vSelfPos + vDir0);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ColdBeam_Mid_Pos", vSelfPos + vDir1);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"ColdBeam_Right_Pos", vSelfPos + vDir2);
+
+	// 6. 얼음칼 생성 후 베기
+	// 방향
+	_v3 IceSwordDir = *D3DXVec3Normalize(&_v3(), &(m_vLeftHandAttach - m_vLeftHand));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"IceSword_Dir", IceSwordDir);
+	// 생성 위치
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"IceSword_Pos", m_vLeftHand);
+
+	// 7. 오른손 휘두르기 충돌체 좌표
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"RightHandCol_Pos", m_vRightHand);
 
 
 	return S_OK;
