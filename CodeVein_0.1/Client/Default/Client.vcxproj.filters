@@ -409,6 +409,9 @@
     <Filter Include="02.GameObject\Stage\9%29 Player_Colleague\Colleague_Bullet">
       <UniqueIdentifier>{f353be58-7987-45ff-8b7e-daae8ee81cbe}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\9%29 Player_Colleague\CollBullet_Heal">
+      <UniqueIdentifier>{e8edcff6-5c00-4fac-be0d-e1f98e6bf024}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -780,9 +783,6 @@
     <ClInclude Include="..\Headers\ThaiMan.h">
       <Filter>02.GameObject\Stage\2%29 Monster\ThaiMan</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Info_Monster.h">
-      <Filter>02.GameObject\Stage\2%29 Monster</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\PlayerFontUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\08. FontNumUI\PlayerFontUI</Filter>
     </ClInclude>
@@ -839,6 +839,10 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Colleague_Bullet.h">
       <Filter>02.GameObject\Stage\9%29 Player_Colleague\Colleague_Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Pet_Bullet.h" />
+    <ClInclude Include="CollBullet_Heal.h">
+      <Filter>02.GameObject\Stage\9%29 Player_Colleague\CollBullet_Heal</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1258,6 +1262,10 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Colleague_Bullet.cpp">
       <Filter>02.GameObject\Stage\9%29 Player_Colleague\Colleague_Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Pet_Bullet.cpp" />
+    <ClCompile Include="CollBullet_Heal.cpp">
+      <Filter>02.GameObject\Stage\9%29 Player_Colleague\CollBullet_Heal</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -8,11 +8,12 @@ BEGIN(Client)
 
 class CDrain_Weapon;
 class CWeapon;
+class CColleague_Bullet;
 class CPlayer_Colleague final : public CGameObject
 {
 public:
 	// 차후 Attack에 스킬을 추가할 시 enum으로 나눠줘야 함
-	enum Colleague_Type { Coll_Idle, Coll_Move, Coll_Guard, Coll_Attack, Coll_Hit, Coll_Dodge, Coll_Heal, Coll_Dead };
+	enum Colleague_Type { Coll_Start, Coll_Idle, Coll_Move, Coll_Guard, Coll_Attack, Coll_Hit, Coll_Dodge, Coll_Heal, Coll_Dead };
 	enum Coll_Movement { Move_Walk, Move_BackWalk, Move_Run, Move_BackRun, Move_MonWalk, Move_MonRun };
 	enum Coll_IdleMoment { Idle_Waiting, Idle_Guard };
 	enum Coll_AttackMoment { Att_Skil, Att_Normal };
@@ -71,6 +72,9 @@ public:
 	virtual HRESULT LateInit_GameObject();
 	virtual HRESULT Render_GameObject();
 
+public:
+	_float	Get_CollHP() { return m_tObjParam.fHp_Cur; }
+
 private:
 	HRESULT Add_Component();
 	HRESULT	SetUp_Default();
@@ -101,6 +105,8 @@ private:
 	void	Colleague_SkilMovement(_float Multiply);
 
 private:
+	void	Play_Start_Game();
+
 	void	Play_Dead();
 	void	Play_Hit();
 	void	Colleague_Guard();
@@ -148,9 +154,9 @@ private:
 
 	void	Function_CoolTIme();
 	_bool	Function_Checking_AttCoolTime(_float fTImer);
+	_bool	Function_Checking_SkilCoolTime(_float fSkilTimer);
 
 	void	Function_FBRL();
-
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -161,6 +167,7 @@ private:
 	CCollider*				m_pCollider = nullptr;
 
 	CWeapon*				m_pSword = nullptr;
+	CColleague_Bullet*		m_pCollBullet = nullptr;
 	CTransform*				m_pTargetTransformCom = nullptr;
 
 	CGameObject*			m_pObject_Mon = nullptr;
@@ -191,7 +198,7 @@ private:
 	_double	m_dPlayAni_Time = 1;
 	_double m_dTimeDelta = 0.f;
 
-
+	_uint	m_iCenter_Count = 0;
 	_uint	m_iNormalAtt_Count = 0;
 	_uint	m_iDodgeCount = 0;
 	_uint	m_iDodgeCountMax = 5;
@@ -213,6 +220,7 @@ private:
 
 	_float	m_fCoolTImer_NomalAtt = 0.f;
 	_float	m_fCoolTimer_limit = 0.f;
+	_float	m_fCoolTimer_Skil_limit = 0.f;
 
 	_float	m_fMonDistance_Compare = 4.5f;
 
@@ -241,10 +249,12 @@ private:
 
 	_bool	m_bStart_Attacting = false;
 
+	_bool	m_bNest_Skil_CoolTImer = false;
 	_bool	m_bNest_Att_CoolTimer = false;
 	_bool	m_bChecking_MyHit = false;
+	_bool	m_bChecking_SkilHit = false;
 
-	_bool	m_bEnd_Attacting = false;
+	_bool	m_bChecking_Gun = false;
 
 	_bool	m_bCheck_Distance = false;
 
@@ -258,6 +268,9 @@ private:
 
 	_bool	m_bCheck_HealMyHp = false;
 
+	_bool	m_bCheck_StartGame = false;
+	_bool	m_bCheck_SEndGame = false;
+
 
 private: // For Effect
 	_float	m_fDeadEffect_Delay = 0.f;
@@ -270,7 +283,6 @@ public:
 
 public:
 	virtual void Free();
-
 
 };
 

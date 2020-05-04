@@ -8,12 +8,12 @@
 
 BEGIN(Client)
 
-class CColleague_Bullet final : public CGameObject
+class CCollBullet_Heal final : public CGameObject
 {
 private:
-	explicit CColleague_Bullet(LPDIRECT3DDEVICE9 pGraphic_Device);
-	explicit CColleague_Bullet(const CColleague_Bullet& rhs);
-	virtual ~CColleague_Bullet() = default;
+	explicit CCollBullet_Heal(LPDIRECT3DDEVICE9 pGraphic_Device);
+	explicit CCollBullet_Heal(const CCollBullet_Heal& rhs);
+	virtual ~CCollBullet_Heal() = default;
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -35,7 +35,7 @@ private:
 	HRESULT Ready_Collider();
 
 public:
-	static CColleague_Bullet* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
+	static CCollBullet_Heal* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
 	virtual CGameObject* Clone_GameObject(void* pArg);
 	virtual void Free();
 

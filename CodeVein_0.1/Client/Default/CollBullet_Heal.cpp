@@ -1,29 +1,32 @@
 #include "stdafx.h"
-#include "Colleague_Bullet.h"
+#include "CollBullet_Heal.h"
+
+#include "Player.h"
+#include "Player_Colleague.h"
 
 
-CColleague_Bullet::CColleague_Bullet(LPDIRECT3DDEVICE9 pGraphic_Device)
+CCollBullet_Heal::CCollBullet_Heal(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
 }
 
-CColleague_Bullet::CColleague_Bullet(const CColleague_Bullet & rhs)
+CCollBullet_Heal::CCollBullet_Heal(const CCollBullet_Heal & rhs)
 	: CGameObject(rhs)
 {
 }
 
-HRESULT CColleague_Bullet::Ready_GameObject_Prototype()
+HRESULT CCollBullet_Heal::Ready_GameObject_Prototype()
 {
 	return S_OK;
 }
 
-HRESULT CColleague_Bullet::Ready_GameObject(void * pArg)
+HRESULT CCollBullet_Heal::Ready_GameObject(void * pArg)
 {
-	// íƒ€ì…ì— ë”°ë¥¸ íìš© ì´ì•Œê³¼ ê³µê²©ìš© ì´ì•Œë¡œ ë‚˜ë‰œë‹¤.
-	// íì´ì•Œì€ í”Œë ˆì´ì–´ì—ê²Œ ë°˜ì›ì„ ê·¸ë¦¬ë©´ì„œ ë‹¤ê°€ê°€ë©°, ë‹¿ì„ ì‹œ HPë¥¼ íšŒë³µì‹œí‚¨ë‹¤.
-	// íì´ì•Œì€ í”Œë ˆì´ì–´ì—ê²Œ ë‹¿ì„ ë•Œê¹Œì§€ ì«’ì•„ê°„ë‹¤.
-	// íì´ì•Œ ì†ë„ëŠ” ê³µê²©ì´ì•Œë³´ë‹¤ëŠ” ë¹ ë¥¸ í¸ì´ì–´ì•¼ í•¨
-	// ê³µê²©ì´ì•Œì€ ëª¬ìŠ¤í„°ì—ê²Œ ì¼ì§ì„ ìœ¼ë¡œ í–¥í•˜ë©° ìŠ¤í”¼ë“œê°€ ë‹¤ì†Œ ëŠë¦° í¸ì´ì–´ì•¼ í•œë‹¤.
+	// Å¸ÀÔ¿¡ µû¸¥ Èú¿ë ÃÑ¾Ë°ú °ø°İ¿ë ÃÑ¾Ë·Î ³ª´¶´Ù.
+	// ÈúÃÑ¾ËÀº ÇÃ·¹ÀÌ¾î¿¡°Ô ¹İ¿øÀ» ±×¸®¸é¼­ ´Ù°¡°¡¸ç, ´êÀ» ½Ã HP¸¦ È¸º¹½ÃÅ²´Ù.
+	// ÈúÃÑ¾ËÀº ÇÃ·¹ÀÌ¾î¿¡°Ô ´êÀ» ¶§±îÁö ¦i¾Æ°£´Ù.
+	// ÈúÃÑ¾Ë ¼Óµµ´Â °ø°İÃÑ¾Ëº¸´Ù´Â ºü¸¥ ÆíÀÌ¾î¾ß ÇÔ
+	// °ø°İÃÑ¾ËÀº ¸ó½ºÅÍ¿¡°Ô ÀÏÁ÷¼±À¸·Î ÇâÇÏ¸ç ½ºÇÇµå°¡ ´Ù¼Ò ´À¸° ÆíÀÌ¾î¾ß ÇÑ´Ù.
 
 	if (nullptr == pArg)
 	{
@@ -35,10 +38,12 @@ HRESULT CColleague_Bullet::Ready_GameObject(void * pArg)
 		return S_OK;
 	}
 
+	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Colleague", SCENE_STAGE);
+
 	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
 
-	m_vDir = temp.vDir;
-	m_fBullet_Speed = temp.fSpeed;
+	m_vDir = TARGET_TO_TRANS(m_pTarget)->Get_Axis(AXIS_Z);
+	m_fBullet_Speed = 3.f;
 	m_dLifeTime = temp.dLifeTime;
 
 	m_pTransformCom->Set_Pos(temp.vCreatePos);
@@ -61,28 +66,42 @@ HRESULT CColleague_Bullet::Ready_GameObject(void * pArg)
 
 	m_pTrailEffect = g_pManagement->Create_Trail();
 	m_pTrailEffect->Set_TrailIdx(5); // Red Tail
-	
+
 	return S_OK;
 }
 
-_int CColleague_Bullet::Update_GameObject(_double TimeDelta)
+_int CCollBullet_Heal::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
 
 	if (m_bDead)
 		return DEAD_OBJ;
 
+	_float fPlusHP = 0.f;
+
+	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	if(nullptr != m_pTarget)
+		fPlusHP = (m_pTarget->Get_pTarget_Param()->fHp_Cur / 2.f);
+
 	Enter_Collision();
 	Update_Trails(TimeDelta);
 
-	m_pTransformCom->Add_Pos(m_fBullet_Speed * (_float)TimeDelta, m_vDir);
+	_v3 Temp = V3_NULL;
+	if (nullptr != pPlayer)
+	{
+		Temp = TARGET_TO_TRANS(pPlayer)->Get_Pos() - m_pTransformCom->Get_Pos();
+		D3DXVec3Normalize(&Temp, &Temp);
+	}
+
+	m_pTransformCom->Add_Pos(m_fBullet_Speed * (_float)TimeDelta, Temp);
 
 	m_dCurTime += TimeDelta;
 
-	// ì‹œê°„ ì´ˆê³¼
-	if (m_dCurTime > m_dLifeTime)
+	// ÇÃ·¹ÀÌ¾î¿Í Ãæµ¹Çß´Ù¸é
+	if (false == m_pTarget->Get_Target_IsHit())
 	{
-		//ì£½ìŒ ì´í™íŠ¸
+		pPlayer->Add_Target_Hp(fPlusHP);
+		//Á×À½ ÀÌÆåÆ®
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag3, m_pTransformCom->Get_Pos());
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, m_pTransformCom->Get_Pos());
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag5, m_pTransformCom->Get_Pos());
@@ -91,7 +110,7 @@ _int CColleague_Bullet::Update_GameObject(_double TimeDelta)
 
 		m_bDead = true;
 	}
-	// ì§„í–‰ì¤‘
+	// ÁøÇàÁß
 	else
 	{
 		if (m_bEffect)
@@ -107,7 +126,7 @@ _int CColleague_Bullet::Update_GameObject(_double TimeDelta)
 	return S_OK;
 }
 
-_int CColleague_Bullet::Late_Update_GameObject(_double TimeDelta)
+_int CCollBullet_Heal::Late_Update_GameObject(_double TimeDelta)
 {
 	IF_NULL_VALUE_RETURN(m_pRendererCom, E_FAIL);
 
@@ -117,7 +136,7 @@ _int CColleague_Bullet::Late_Update_GameObject(_double TimeDelta)
 	return S_OK;
 }
 
-HRESULT CColleague_Bullet::Render_GameObject()
+HRESULT CCollBullet_Heal::Render_GameObject()
 {
 	Update_Collider();
 	Render_Collider();
@@ -125,7 +144,7 @@ HRESULT CColleague_Bullet::Render_GameObject()
 	return S_OK;
 }
 
-void CColleague_Bullet::Update_Trails(_double TimeDelta)
+void CCollBullet_Heal::Update_Trails(_double TimeDelta)
 {
 	_mat matWorld = m_pTransformCom->Get_WorldMat();
 	_v3 vBegin, vDir;
@@ -141,7 +160,7 @@ void CColleague_Bullet::Update_Trails(_double TimeDelta)
 	}
 }
 
-void CColleague_Bullet::Update_Collider()
+void CCollBullet_Heal::Update_Collider()
 {
 	_ulong matrixIdx = 0;
 
@@ -158,22 +177,28 @@ void CColleague_Bullet::Update_Collider()
 	}
 }
 
-void CColleague_Bullet::Render_Collider()
+void CCollBullet_Heal::Render_Collider()
 {
 	for (auto& iter : m_vecAttackCol)
 		g_pManagement->Gizmo_Draw_Sphere(iter->Get_CenterPos(), iter->Get_Radius().x);
 }
 
-void CColleague_Bullet::Enter_Collision()
+void CCollBullet_Heal::Enter_Collision()
 {
 	Update_Collider();
-	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE));
+	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
 }
 
-void CColleague_Bullet::Check_CollisionEvent(list<CGameObject*> plistGameObject)
+void CCollBullet_Heal::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 {
 	if (false == m_tObjParam.bCanAttack)
 		return;
+
+	_float fHealHP = 0.f;
+
+	/*CGameObject* pColleague = g_pManagement->Get_GameObjectBack(L"Layer_Colleague", SCENE_STAGE);
+	if (nullptr != pColleague)
+		fHealHP = (pColleague->Get_Target_Hp() / 30.f);*/
 
 	_bool bFirst = true;
 
@@ -196,10 +221,14 @@ void CColleague_Bullet::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 						continue;
 					}
 
-					iter->Set_Target_CanHit(false);
-					iter->Add_Target_Hp(m_tObjParam.fDamage);
+					/*if (false == m_pTarget->Get_Target_IsHit())
+					{
+						iter->Add_Target_Hp(fHealHP);
+						return;
+					}*/
+						
 
-					m_dCurTime = 100;	// ë°”ë¡œ ì‚¬ë§ì‹œí‚¤ê¸° ìœ„í•´ì„œ í˜„ì¬ì‹œê°„ 100ì¤¬ìŒ
+					m_dCurTime = 100;	// ¹Ù·Î »ç¸Á½ÃÅ°±â À§ÇØ¼­ ÇöÀç½Ã°£ 100ÁáÀ½
 
 					break;
 
@@ -216,7 +245,7 @@ void CColleague_Bullet::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 	return;
 }
 
-HRESULT CColleague_Bullet::Add_Component()
+HRESULT CCollBullet_Heal::Add_Component()
 {
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
 		return E_FAIL;
@@ -228,13 +257,13 @@ HRESULT CColleague_Bullet::Add_Component()
 	return S_OK;
 }
 
-HRESULT CColleague_Bullet::SetUp_ConstantTable()
+HRESULT CCollBullet_Heal::SetUp_ConstantTable()
 {
 
 	return S_OK;
 }
 
-HRESULT CColleague_Bullet::Ready_Collider()
+HRESULT CCollBullet_Heal::Ready_Collider()
 {
 	m_vecAttackCol.reserve(1);
 
@@ -253,9 +282,9 @@ HRESULT CColleague_Bullet::Ready_Collider()
 	return S_OK;
 }
 
-CColleague_Bullet* CColleague_Bullet::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
+CCollBullet_Heal* CCollBullet_Heal::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 {
-	CColleague_Bullet*	pInstance = new CColleague_Bullet(pGraphic_Device);
+	CCollBullet_Heal*	pInstance = new CCollBullet_Heal(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 	{
@@ -266,9 +295,9 @@ CColleague_Bullet* CColleague_Bullet::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
 	return pInstance;
 }
 
-CGameObject* CColleague_Bullet::Clone_GameObject(void* pArg)
+CGameObject* CCollBullet_Heal::Clone_GameObject(void* pArg)
 {
-	CColleague_Bullet*	pInstance = new CColleague_Bullet(*this);
+	CCollBullet_Heal*	pInstance = new CCollBullet_Heal(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
@@ -279,7 +308,7 @@ CGameObject* CColleague_Bullet::Clone_GameObject(void* pArg)
 	return pInstance;
 }
 
-void CColleague_Bullet::Free()
+void CCollBullet_Heal::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pCollider);

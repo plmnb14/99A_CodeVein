@@ -33,6 +33,7 @@
 
 #include "Player_Colleague.h"
 #include "Colleague_Bullet.h"
+#include "CollBullet_Heal.h"
 
 //#include "Item.h"
 #include "Haze.h"
@@ -1061,8 +1062,8 @@ _uint CLoading::Loading_Title()
 
 	// 플레이어 스킬, 보스 이펙트 포함
 	//cout << "Particle Etc 불러오는 중 . . ." << endl;
-	//if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
-	//	return E_FAIL;
+	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
+		return E_FAIL;
 
 	// UI 원형 생성
 	//============================================================================================================
@@ -1401,7 +1402,12 @@ _uint CLoading::Loading_Stage()
 		// 동료 총알
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ColleagueBullet", CColleague_Bullet::Create(m_pGraphicDev))))
 			return E_FAIL;
-		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_ColleagueBullet", L"GameObject_ColleagueBullet", 20);
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_ColleagueBullet", L"GameObject_ColleagueBullet", 100);
+
+		// 힐용
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CollBullet_Heal", CCollBullet_Heal::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_CollBullet_Heal", L"GameObject_CollBullet_Heal", 100);
 
 
 		cout << "UI Sub Prototype 생성 중 . . ." << endl;
