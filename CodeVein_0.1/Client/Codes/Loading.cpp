@@ -501,6 +501,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"FireBoy_ArmAttack_FloorDust")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireHandBall", true)))
+		return E_FAIL;
 #pragma endregion
 
 #pragma region DeerKing
@@ -1225,10 +1227,10 @@ _uint CLoading::Loading_Title()
 	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager_Essential()))
 		return E_FAIL;
 
-	//// 플레이어 스킬, 보스 이펙트 포함
-	//cout << "Particle Etc 불러오는 중 . . ." << endl;
-	//if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
-	//	return E_FAIL;
+	// 플레이어 스킬, 보스 이펙트 포함
+	cout << "Particle Etc 불러오는 중 . . ." << endl;
+	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
+		return E_FAIL;
 
 	// UI 원형 생성
 	//============================================================================================================

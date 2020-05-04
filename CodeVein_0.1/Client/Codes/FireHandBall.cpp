@@ -51,6 +51,11 @@ HRESULT CFireHandBall::Ready_GameObject(void * pArg)
 
 	//m_tObjParam.bCanAttack = true;
 	//m_tObjParam.fDamage = 20.f;
+	
+	m_pFireSphere = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"FireBoy_FireHandBall", nullptr));
+	m_pFireSphere->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
+	m_pFireSphere->Reset_Init();
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFireSphere, SCENE_STAGE, L"Layer_Effect", nullptr);
 
 	return NOERROR;
 }
@@ -83,6 +88,7 @@ _int CFireHandBall::Update_GameObject(_double TimeDelta)
 	if (m_dCurTime > m_dLifeTime)
 	{
 		m_bDead = true;
+		m_pFireSphere->Set_Dead();
 
 		// 플레이어 머리에서 불꽃 생성
 		CTransform* pPlayerTransCom = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL));

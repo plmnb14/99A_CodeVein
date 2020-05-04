@@ -147,56 +147,7 @@ HRESULT CParticleMgr::Ready_ParticleManager_Essential()
 	Input_Pool(L"Snow_Ortho_0", 2);
 	Input_Pool(L"Snow_Ortho_1", 10);
 
-	// 밑으로 옮기기
-	Input_Pool(L"Player_Skill_Gun_FlashLight", 20);
-	Input_Pool(L"Player_Skill_Gun_PurpleLightning", 100);
-	Input_Pool(L"Player_Skill_Gun_ShotSmoke", 100);
-	Input_Pool(L"Player_Skill_Gun_Smoke_Blue_0", 100);
-	Input_Pool(L"Player_Skill_Gun_Smoke_Blue_1", 100);
-	Input_Pool(L"Player_Skill_Gun_Smoke_DarkBlue", 100);
-	Input_Pool(L"Player_Skill_Gun_Bullet_DeadFlash", 20);
-	Input_Pool(L"Player_Skill_Gun_Bullet_DeadShockWave", 100);
-	Input_Pool(L"Player_Skill_Gun_Bullet_DeadSmoke_Move_Purple", 100);
-	Input_Pool(L"Player_Skill_Gun_Bullet_DeadSmoke_Blue_0", 100);
-	Input_Pool(L"Player_Skill_Gun_Bullet_DeadSmoke_Blue_1", 100);
-	Input_Pool(L"Player_Skill_Gun_BulletBody_Ver", 10);
-	Input_Pool(L"Player_Skill_Gun_BulletBody_Hor", 10);
-
-	Input_Pool(L"Player_Skill_Halberd_Blaster_Hor", 50);
-	Input_Pool(L"Player_Skill_Halberd_Blaster_Ver", 50);
-	Input_Pool(L"Player_Skill_Halberd_Orange_LinePoint_Explosion_0", 50);
-	Input_Pool(L"Player_Skill_Halberd_Orange_LinePoint_Explosion_1", 50);
-	Input_Pool(L"Player_Skill_Halberd_RedParticle_Explosion", 50);
-	Input_Pool(L"Player_Skill_Halberd_ShockWave", 50);
-
-	Input_Pool(L"Colleague_Teleport_Flash_Particle_0", 100);
-	Input_Pool(L"Colleague_Teleport_Line_Particle_0", 50);
-	Input_Pool(L"Colleague_Teleport_Line_Particle_1", 50);
-	Input_Pool(L"Colleague_Teleport_Line_Particle_2", 50);
-	Input_Pool(L"Colleague_Teleport_Smoke_0", 10);
-
-	Input_Pool(L"Colleague_Heal_BulletBody_Aura", 40);
-	Input_Pool(L"Colleague_Heal_BulletBody_Hor", 10);
-	Input_Pool(L"Colleague_Heal_BulletBody_Ver", 10);
-	Input_Pool(L"Colleague_Heal_HandBlood", 10);
-	Input_Pool(L"Colleague_Heal_HandLight", 10);
-	Input_Pool(L"Colleague_Heal_HandSmoke", 10);
-	Input_Pool(L"Colleague_Healing_PointParticle", 100);
-
-	Input_Pool(L"Colleague_Skill_Blood", 50);
-	Input_Pool(L"Colleague_Skill_BloodSmoke_0", 50);
-	Input_Pool(L"Colleague_Skill_BloodSmoke_1", 50);
-	Input_Pool(L"Colleague_Skill_DistortionSmoke", 30);
-	Input_Pool(L"Colleague_Skill_HandLight_Pink_0", 10);
-	Input_Pool(L"Colleague_Skill_HandLight_Red_0", 10);
-	Input_Pool(L"Colleague_Skill_HandSmoke_Black_0", 30);
-	Input_Pool(L"Colleague_Skill_PinkSmoke_0", 50);
-	Input_Pool(L"Colleague_Skill_PinkSmoke_1", 50);
-	Input_Pool(L"Colleague_Skill_Start_Particle_Black_0", 50);
-	Input_Pool(L"Colleague_Skill_Start_Particle_Black_1", 50);
-	Input_Pool(L"Colleague_Skill_Start_Particle_Black_2", 50);
-	Input_Pool(L"Colleague_Skill_Start_Particle_Red_0", 50);
-	Input_Pool(L"Colleague_Skill_Start_Particle_Red_1", 50);
+	
 
 	return S_OK;
 }
@@ -263,6 +214,56 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Player_Skill_BottomBlood_1", 20);
 	Input_Pool(L"Player_Skill_BottomBlood_2", 20);
 	Input_Pool(L"Player_Skill_BottomBlood_3", 20);
+
+	Input_Pool(L"Player_Skill_Gun_FlashLight", 20);
+	Input_Pool(L"Player_Skill_Gun_PurpleLightning", 100);
+	Input_Pool(L"Player_Skill_Gun_ShotSmoke", 100);
+	Input_Pool(L"Player_Skill_Gun_Smoke_Blue_0", 100);
+	Input_Pool(L"Player_Skill_Gun_Smoke_Blue_1", 100);
+	Input_Pool(L"Player_Skill_Gun_Smoke_DarkBlue", 100);
+	Input_Pool(L"Player_Skill_Gun_Bullet_DeadFlash", 20);
+	Input_Pool(L"Player_Skill_Gun_Bullet_DeadShockWave", 100);
+	Input_Pool(L"Player_Skill_Gun_Bullet_DeadSmoke_Move_Purple", 100);
+	Input_Pool(L"Player_Skill_Gun_Bullet_DeadSmoke_Blue_0", 100);
+	Input_Pool(L"Player_Skill_Gun_Bullet_DeadSmoke_Blue_1", 100);
+	Input_Pool(L"Player_Skill_Gun_BulletBody_Ver", 10);
+	Input_Pool(L"Player_Skill_Gun_BulletBody_Hor", 10);
+
+	Input_Pool(L"Player_Skill_Halberd_Blaster_Hor", 50);
+	Input_Pool(L"Player_Skill_Halberd_Blaster_Ver", 50);
+	Input_Pool(L"Player_Skill_Halberd_Orange_LinePoint_Explosion_0", 50);
+	Input_Pool(L"Player_Skill_Halberd_Orange_LinePoint_Explosion_1", 50);
+	Input_Pool(L"Player_Skill_Halberd_RedParticle_Explosion", 50);
+	Input_Pool(L"Player_Skill_Halberd_ShockWave", 50);
+
+	Input_Pool(L"Colleague_Teleport_Flash_Particle_0", 100);
+	Input_Pool(L"Colleague_Teleport_Line_Particle_0", 50);
+	Input_Pool(L"Colleague_Teleport_Line_Particle_1", 50);
+	Input_Pool(L"Colleague_Teleport_Line_Particle_2", 50);
+	Input_Pool(L"Colleague_Teleport_Smoke_0", 10);
+
+	Input_Pool(L"Colleague_Heal_BulletBody_Aura", 40);
+	Input_Pool(L"Colleague_Heal_BulletBody_Hor", 10);
+	Input_Pool(L"Colleague_Heal_BulletBody_Ver", 10);
+	Input_Pool(L"Colleague_Heal_HandBlood", 10);
+	Input_Pool(L"Colleague_Heal_HandLight", 10);
+	Input_Pool(L"Colleague_Heal_HandSmoke", 10);
+	Input_Pool(L"Colleague_Healing_PointParticle", 100);
+
+	Input_Pool(L"Colleague_Skill_Blood", 50);
+	Input_Pool(L"Colleague_Skill_BloodSmoke_0", 50);
+	Input_Pool(L"Colleague_Skill_BloodSmoke_1", 50);
+	Input_Pool(L"Colleague_Skill_DistortionSmoke", 30);
+	Input_Pool(L"Colleague_Skill_HandLight_Pink_0", 10);
+	Input_Pool(L"Colleague_Skill_HandLight_Red_0", 10);
+	Input_Pool(L"Colleague_Skill_HandSmoke_Black_0", 30);
+	Input_Pool(L"Colleague_Skill_PinkSmoke_0", 50);
+	Input_Pool(L"Colleague_Skill_PinkSmoke_1", 50);
+	Input_Pool(L"Colleague_Skill_Start_Particle_Black_0", 50);
+	Input_Pool(L"Colleague_Skill_Start_Particle_Black_1", 50);
+	Input_Pool(L"Colleague_Skill_Start_Particle_Black_2", 50);
+	Input_Pool(L"Colleague_Skill_Start_Particle_Red_0", 50);
+	Input_Pool(L"Colleague_Skill_Start_Particle_Red_1", 50);
 
 	Input_Pool(L"ButterFly_SoftSmoke", 2000);
 	Input_Pool(L"ButterFly_PointParticle", 3500);
@@ -463,6 +464,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"FireBoy_FireSphere_ShotCircle", 20);
 	Input_Pool(L"FireBoy_ArmAttack_Dust", 100);
 	Input_Pool(L"FireBoy_ArmAttack_FloorDust", 100);
+	Input_Pool(L"FireBoy_FireHandBall", 5);
 
 	Input_Pool(L"DeerKing_IceStone_Up_Particle_0", 100);
 	Input_Pool(L"DeerKing_IceStone_Up_Small_Particle_0", 100);
