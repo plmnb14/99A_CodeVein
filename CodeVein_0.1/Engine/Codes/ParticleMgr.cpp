@@ -133,40 +133,70 @@ HRESULT CParticleMgr::Ready_ParticleManager_Essential()
 
 	Input_Pool(L"MapDust", 100);
 	Input_Pool(L"MapDust_2", 100);
-	Input_Pool(L"MapMist", 1000);
-	Input_Pool(L"MapSnow", 2500);
+	Input_Pool(L"MapMist", 100);
+	Input_Pool(L"MapSnow", 500);
 
-	Input_Pool(L"Blood_Decal_0", 100);
-	Input_Pool(L"Blood_Decal_1", 100);
-	Input_Pool(L"Blood_Decal_2", 100);
-	Input_Pool(L"Blood_Decal_3", 100);
-	Input_Pool(L"Blood_Decal_4", 100);
-	Input_Pool(L"Blood_Decal_5", 100);
-	Input_Pool(L"Blood_Decal_6", 100);
+	Input_Pool(L"Blood_Decal_0", 50);
+	Input_Pool(L"Blood_Decal_1", 50);
+	Input_Pool(L"Blood_Decal_2", 50);
+	Input_Pool(L"Blood_Decal_3", 50);
+	Input_Pool(L"Blood_Decal_4", 50);
+	Input_Pool(L"Blood_Decal_5", 50);
+	Input_Pool(L"Blood_Decal_6", 50);
 
 	Input_Pool(L"Snow_Ortho_0", 2);
 	Input_Pool(L"Snow_Ortho_1", 10);
 
 	// 밑으로 옮기기
-	Input_Pool(L"Player_Skill_Gun_FlashLight", 100);
+	Input_Pool(L"Player_Skill_Gun_FlashLight", 20);
 	Input_Pool(L"Player_Skill_Gun_PurpleLightning", 100);
 	Input_Pool(L"Player_Skill_Gun_ShotSmoke", 100);
 	Input_Pool(L"Player_Skill_Gun_Smoke_Blue_0", 100);
 	Input_Pool(L"Player_Skill_Gun_Smoke_Blue_1", 100);
 	Input_Pool(L"Player_Skill_Gun_Smoke_DarkBlue", 100);
-	Input_Pool(L"Player_Skill_Gun_Bullet_DeadFlash", 100);
+	Input_Pool(L"Player_Skill_Gun_Bullet_DeadFlash", 20);
 	Input_Pool(L"Player_Skill_Gun_Bullet_DeadShockWave", 100);
 	Input_Pool(L"Player_Skill_Gun_Bullet_DeadSmoke_Move_Purple", 100);
 	Input_Pool(L"Player_Skill_Gun_Bullet_DeadSmoke_Blue_0", 100);
 	Input_Pool(L"Player_Skill_Gun_Bullet_DeadSmoke_Blue_1", 100);
-	Input_Pool(L"Player_Skill_Gun_BulletBody_Ver", 50);
-	Input_Pool(L"Player_Skill_Gun_BulletBody_Hor", 50);
+	Input_Pool(L"Player_Skill_Gun_BulletBody_Ver", 10);
+	Input_Pool(L"Player_Skill_Gun_BulletBody_Hor", 10);
+
+	Input_Pool(L"Player_Skill_Halberd_Blaster_Hor", 50);
+	Input_Pool(L"Player_Skill_Halberd_Blaster_Ver", 50);
+	Input_Pool(L"Player_Skill_Halberd_Orange_LinePoint_Explosion_0", 50);
+	Input_Pool(L"Player_Skill_Halberd_Orange_LinePoint_Explosion_1", 50);
+	Input_Pool(L"Player_Skill_Halberd_RedParticle_Explosion", 50);
+	Input_Pool(L"Player_Skill_Halberd_ShockWave", 50);
 
 	Input_Pool(L"Colleague_Teleport_Flash_Particle_0", 100);
-	Input_Pool(L"Colleague_Teleport_Line_Particle_0", 100);
-	Input_Pool(L"Colleague_Teleport_Line_Particle_1", 100);
-	Input_Pool(L"Colleague_Teleport_Line_Particle_2", 100);
-	Input_Pool(L"Colleague_Teleport_Smoke_0", 100);
+	Input_Pool(L"Colleague_Teleport_Line_Particle_0", 50);
+	Input_Pool(L"Colleague_Teleport_Line_Particle_1", 50);
+	Input_Pool(L"Colleague_Teleport_Line_Particle_2", 50);
+	Input_Pool(L"Colleague_Teleport_Smoke_0", 10);
+
+	Input_Pool(L"Colleague_Heal_BulletBody_Aura", 40);
+	Input_Pool(L"Colleague_Heal_BulletBody_Hor", 10);
+	Input_Pool(L"Colleague_Heal_BulletBody_Ver", 10);
+	Input_Pool(L"Colleague_Heal_HandBlood", 10);
+	Input_Pool(L"Colleague_Heal_HandLight", 10);
+	Input_Pool(L"Colleague_Heal_HandSmoke", 10);
+	Input_Pool(L"Colleague_Healing_PointParticle", 100);
+
+	Input_Pool(L"Colleague_Skill_Blood", 50);
+	Input_Pool(L"Colleague_Skill_BloodSmoke_0", 50);
+	Input_Pool(L"Colleague_Skill_BloodSmoke_1", 50);
+	Input_Pool(L"Colleague_Skill_DistortionSmoke", 30);
+	Input_Pool(L"Colleague_Skill_HandLight_Pink_0", 10);
+	Input_Pool(L"Colleague_Skill_HandLight_Red_0", 10);
+	Input_Pool(L"Colleague_Skill_HandSmoke_Black_0", 30);
+	Input_Pool(L"Colleague_Skill_PinkSmoke_0", 50);
+	Input_Pool(L"Colleague_Skill_PinkSmoke_1", 50);
+	Input_Pool(L"Colleague_Skill_Start_Particle_Black_0", 50);
+	Input_Pool(L"Colleague_Skill_Start_Particle_Black_1", 50);
+	Input_Pool(L"Colleague_Skill_Start_Particle_Black_2", 50);
+	Input_Pool(L"Colleague_Skill_Start_Particle_Red_0", 50);
+	Input_Pool(L"Colleague_Skill_Start_Particle_Red_1", 50);
 
 	return S_OK;
 }
@@ -493,7 +523,7 @@ HRESULT CParticleMgr::Ready_Trail()
 
 HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 {
-	if (CInput_Device::Get_Instance()->Key_Down(DIK_B))
+	//if (CInput_Device::Get_Instance()->Key_Down(DIK_B))
 	{
 		//Create_Effect_Delay(L"Snow_Ortho_0", 0.f, V3_NULL, nullptr);
 
@@ -502,62 +532,139 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 		//pEff->Set_UV_Speed(1.f, 0.f);
 		//pEff->Reset_Init();
 		//CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
-		COrthoEffect* pEff;
-		pEff = static_cast<COrthoEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Snow_Ortho_1", nullptr));
-		pEff->Set_Desc(V3_NULL, nullptr);
-		pEff->Set_UV_Speed(1.f, -1.f);
-		pEff->Reset_Init();
-		CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
+		//COrthoEffect* pEff;
+		//pEff = static_cast<COrthoEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Snow_Ortho_1", nullptr));
+		//pEff->Set_Desc(V3_NULL, nullptr);
+		//pEff->Set_UV_Speed(1.f, -1.f);
+		//pEff->Reset_Init();
+		//CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
 	}
 
-	if (CInput_Device::Get_Instance()->Key_Down(DIK_I))
-	{
-		CTexEffect* pEff = static_cast<CTexEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Player_Skill_Gun_FlashLight", nullptr));
-		pEff->Set_Desc(_v3(0, 1, 0), nullptr);
-		pEff->Set_Delay(1.2f);
-		pEff->Set_LayerIdx(1);
-		pEff->Reset_Init();
-		CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
-
-		pEff = static_cast<CTexEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Player_Skill_Gun_PurpleLightning", nullptr));
-		pEff->Set_Desc(_v3(0, 1, 0), nullptr);
-		pEff->Set_Delay(1.2f);
-		pEff->Set_LayerIdx(2);
-		pEff->Reset_Init();
-		CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
-
-		pEff = static_cast<CTexEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Player_Skill_Gun_ShotSmoke", nullptr));
-		pEff->Set_Desc(_v3(0, 1, 0), nullptr);
-		pEff->Set_Delay(1.2f);
-		pEff->Set_LayerIdx(1);
-		pEff->Reset_Init();
-		CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
-
-		Create_Effect_Delay(L"Player_Skill_Gun_Smoke_Blue_0"	, 0.f	, _v3(0,1,0), nullptr);
-		Create_Effect_Delay(L"Player_Skill_Gun_Smoke_Blue_1"	, 0.f	, _v3(0,1,0), nullptr);
-		Create_Effect_Delay(L"Player_Skill_Gun_Smoke_DarkBlue"	, 0.f	, _v3(0,1,0), nullptr);
-		Create_Effect_Delay(L"Player_Skill_Gun_Smoke_DarkBlue"	, 0.2f	, _v3(0,1,0), nullptr);
-		Create_Effect_Delay(L"Player_Skill_Gun_Smoke_DarkBlue"	, 0.3f	, _v3(0,1,0), nullptr);
-	}
-	if (CInput_Device::Get_Instance()->Key_Down(DIK_U))
-	{
-		CTexEffect* pEff = static_cast<CTexEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Player_Skill_Gun_Bullet_DeadFlash", nullptr));
-		pEff->Set_Desc(_v3(0, 1, 0), nullptr);
-		pEff->Set_LayerIdx(1);
-		pEff->Reset_Init();
-		CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
-
-		pEff = static_cast<CTexEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Player_Skill_Gun_Bullet_DeadShockWave", nullptr));
-		pEff->Set_Desc(_v3(0, 1, 0), nullptr);
-		pEff->Set_LayerIdx(1);
-		pEff->Reset_Init();
-		CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
-
-		Create_Effect_Delay(L"Player_Skill_Gun_Bullet_DeadSmoke_Move_Purple", 0.f, _v3(0, 1, 0), nullptr);
-		Create_Effect_Delay(L"Player_Skill_Gun_Bullet_DeadSmoke_Blue_0", 0.25f, _v3(0, 1, 0), nullptr);
-		Create_Effect_Delay(L"Player_Skill_Gun_Bullet_DeadSmoke_Blue_1", 0.25f, _v3(0, 1, 0), nullptr);
-		Create_Effect_Delay(L"Player_Skill_Gun_Smoke_DarkBlue", 0.25f, _v3(0, 1, 0), nullptr);
-	}
+	//if (CInput_Device::Get_Instance()->Key_Down(DIK_I))
+	//{
+	//	Create_Effect_Delay(L"Player_Skill_Halberd_RedParticle_Explosion", 0.f, _v3(0, 1, 0), nullptr);
+	//
+	//	_mat matView = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	//	D3DXMatrixInverse(&matView, nullptr, &matView);
+	//	_v3 vCamLook = _v3(matView._31, matView._32, matView._33);
+	//	_mat matRot;
+	//	D3DXMatrixIdentity(&matRot);
+	//
+	//	// Calc Angle
+	//	_v3	vRight = *D3DXVec3Cross(&vRight, &_v3(0.f, 1.f, 0.f), &vCamLook);
+	//	V3_NORMAL_SELF(&vRight);
+	//	_float	fDot = acosf(D3DXVec3Dot(&_v3{ 0,0,1 }, &vCamLook));
+	//	if (vRight.z > 0)
+	//		fDot *= -1.f;
+	//
+	//	for (_int i = 0; i < 20; i++)
+	//	{
+	//		_float fAngle = _float(CCalculater::Random_Num_Double(0, 360));
+	//		D3DXMatrixRotationAxis(&matRot, &vCamLook, D3DXToRadian(fAngle));
+	//		_v3 vDir = *D3DXVec3TransformNormal(&_v3(), &_v3(0, 1, 0), &matRot);
+	//		D3DXVec3Normalize(&vDir, &vDir);
+	//
+	//		_tchar szBuff[256] = L"";
+	//		wsprintf(szBuff, L"Player_Skill_Halberd_Orange_LinePoint_Explosion_%d", CCalculater::Random_Num(0, 1));
+	//		CTexEffect* pEff = static_cast<CTexEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(szBuff, nullptr));
+	//		pEff->Set_Desc(_v3(0, 1, 0), nullptr);
+	//		pEff->Set_Delay(0.f);
+	//		pEff->Set_Dir(vDir);
+	//		pEff->Set_Angle(_v3(0, D3DXToDegree(fDot), fAngle));
+	//		pEff->Set_LayerIdx(1);
+	//		pEff->Reset_Init();
+	//		CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
+	//	}
+	//
+	//	Create_Effect_Delay(L"Player_Skill_Halberd_Blaster_Hor", 0.5f, _v3(0, 1, 0), nullptr, _v3(0, D3DXToDegree(fDot), 0));
+	//	Create_Effect_Delay(L"Player_Skill_Halberd_Blaster_Ver", 0.5f, _v3(0, 1, 0), nullptr, _v3(0, D3DXToDegree(fDot), 0));
+	//
+	//	Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor", 1.5f, _v3(0, 1, 0), nullptr);
+	//	Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Hor", 1.5f, _v3(0, 1, 0), nullptr);
+	//	Create_Effect_Delay(L"Player_Skill_Scratch_Hor", 1.5f, _v3(0, 1, 0), nullptr);
+	//
+	//	Create_Effect_Delay(L"Player_Skill_Halberd_ShockWave", 2.f, _v3(0, 1, 0), nullptr);
+	//	Create_Effect_Delay(L"Player_Skill_Halberd_RedParticle_Explosion", 2.3f, _v3(0, 1, 0), nullptr);
+	//	//for (_int i = 0; i < 20; i++)
+	//	//{
+	//	//	D3DXMatrixRotationAxis(&matRot, &vCamLook, D3DXToRadian(_float(CCalculater::Random_Num_Double(0, 360))));
+	//	//	_v3 vDir = *D3DXVec3TransformNormal(&_v3(), &_v3(0, 1, 0), &matRot);
+	//	//
+	//	//	// Calc Angle
+	//	//	_v3	vRight = *D3DXVec3Cross(&vRight, &_v3(0.f, 1.f, 0.f), &vDir);
+	//	//	V3_NORMAL_SELF(&vRight);
+	//	//	_float	fDot = acosf(D3DXVec3Dot(&_v3{ 0,0,1 }, &vDir));
+	//	//	if (vRight.z > 0)
+	//	//		fDot *= -1.f;
+	//	//
+	//	//	_tchar szBuff[256] = L"";
+	//	//	wsprintf(szBuff, L"Player_Skill_Halberd_Orange_LinePoint_Explosion_%d", CCalculater::Random_Num(0, 1));
+	//	//	CTexEffect* pEff = static_cast<CTexEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(szBuff, nullptr));
+	//	//	pEff->Set_Desc(_v3(0, 1, 0), nullptr);
+	//	//	pEff->Set_Delay(2.f);
+	//	//	pEff->Set_Dir(vDir);
+	//	//	pEff->Set_Angle(_v3(0, 0, D3DXToDegree(fDot)));
+	//	//	pEff->Set_LayerIdx(1);
+	//	//	pEff->Reset_Init();
+	//	//	CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
+	//	//}
+	//
+	//	//=========================================================
+	//
+	//	//CTexEffect* pEff = static_cast<CTexEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Player_Skill_Gun_FlashLight", nullptr));
+	//	//pEff->Set_Desc(_v3(0, 1, 0), nullptr);
+	//	//pEff->Set_Delay(1.2f);
+	//	//pEff->Set_LayerIdx(1);
+	//	//pEff->Reset_Init();
+	//	//CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
+	//	//
+	//	//pEff = static_cast<CTexEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Player_Skill_Gun_PurpleLightning", nullptr));
+	//	//pEff->Set_Desc(_v3(0, 1, 0), nullptr);
+	//	//pEff->Set_Delay(1.2f);
+	//	//pEff->Set_LayerIdx(2);
+	//	//pEff->Reset_Init();
+	//	//CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
+	//	//
+	//	//pEff = static_cast<CTexEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Player_Skill_Gun_ShotSmoke", nullptr));
+	//	//pEff->Set_Desc(_v3(0, 1, 0), nullptr);
+	//	//pEff->Set_Delay(1.2f);
+	//	//pEff->Set_LayerIdx(1);
+	//	//pEff->Reset_Init();
+	//	//CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
+	//	//
+	//	//Create_Effect_Delay(L"Player_Skill_Gun_Smoke_Blue_0"	, 0.f	, _v3(0,1,0), nullptr);
+	//	//Create_Effect_Delay(L"Player_Skill_Gun_Smoke_Blue_1"	, 0.f	, _v3(0,1,0), nullptr);
+	//	//Create_Effect_Delay(L"Player_Skill_Gun_Smoke_DarkBlue"	, 0.f	, _v3(0,1,0), nullptr);
+	//	//Create_Effect_Delay(L"Player_Skill_Gun_Smoke_DarkBlue"	, 0.2f	, _v3(0,1,0), nullptr);
+	//	//Create_Effect_Delay(L"Player_Skill_Gun_Smoke_DarkBlue"	, 0.3f	, _v3(0,1,0), nullptr);
+	//}
+	//if (CInput_Device::Get_Instance()->Key_Down(DIK_U))
+	//{
+	//	Create_Effect_Delay(L"Player_Skill_Gun_BulletBody_Ver", 0.f, _v3(0, 1, 0), nullptr);
+	//	Create_Effect_Delay(L"Player_Skill_Gun_BulletBody_Hor", 0.f, _v3(0, 1, 0), nullptr);
+	//
+	//	Create_Effect_Delay(L"Player_Skill_Gun_PurpleLightning", 0.f, _v3(0, 1, 0), nullptr);
+	//
+	//	
+	//	//==============================================
+	//
+	//	//CTexEffect* pEff = static_cast<CTexEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Player_Skill_Gun_Bullet_DeadFlash", nullptr));
+	//	//pEff->Set_Desc(_v3(0, 1, 0), nullptr);
+	//	//pEff->Set_LayerIdx(1);
+	//	//pEff->Reset_Init();
+	//	//CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
+	//	//
+	//	//pEff = static_cast<CTexEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Player_Skill_Gun_Bullet_DeadShockWave", nullptr));
+	//	//pEff->Set_Desc(_v3(0, 1, 0), nullptr);
+	//	//pEff->Set_LayerIdx(1);
+	//	//pEff->Reset_Init();
+	//	//CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
+	//	//
+	//	//Create_Effect_Delay(L"Player_Skill_Gun_Bullet_DeadSmoke_Move_Purple", 0.f, _v3(0, 1, 0), nullptr);
+	//	//Create_Effect_Delay(L"Player_Skill_Gun_Bullet_DeadSmoke_Blue_0", 0.25f, _v3(0, 1, 0), nullptr);
+	//	//Create_Effect_Delay(L"Player_Skill_Gun_Bullet_DeadSmoke_Blue_1", 0.25f, _v3(0, 1, 0), nullptr);
+	//	//Create_Effect_Delay(L"Player_Skill_Gun_Smoke_DarkBlue", 0.25f, _v3(0, 1, 0), nullptr);
+	//}
 	auto& iter_begin = m_vecParticle.begin();
 	auto& iter_end = m_vecParticle.end();
 
@@ -1200,7 +1307,6 @@ void CParticleMgr::Create_Skill_Start_Effect(_v3 vPos, _v3 vEffPos, CTransform *
 	Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing"			, 0.1f	, 0.1f	, vPos, pFollowTrans);
 	Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red"			, 0.3f	, 0.2f	, vPos, pFollowTrans);
 	Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black"			, 0.3f	, 0.3f	, vPos, pFollowTrans);
-	Create_ParticleEffect_Delay(L"Player_Skill_RedParticle_Explosion"	, 0.15f	, 1.f	, vPos, pFollowTrans);
 	Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.15f			, vEffPos);
 	Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.16f			, vEffPos);
 	Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.17f			, vEffPos);
@@ -1219,7 +1325,6 @@ void CParticleMgr::Create_Skill_Start_Effect(_v3 vPos, _v3 vEffPos, CTransform *
 	Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"				, 0.46f			, vPos, pFollowTrans);
 	Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"				, 0.5f			, vPos, pFollowTrans);
 	Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.62f			, vPos, pFollowTrans);
-	Create_Effect_Delay(L"Player_Skill_BloodConeMesh_Explosion"			, 1.f			, vPos, pFollowTrans);
 }
 
 CTrail_VFX* CParticleMgr::Create_Trail()

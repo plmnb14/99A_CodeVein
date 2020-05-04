@@ -808,6 +808,50 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Colleague_Teleport_Smoke_0")))
 		return E_FAIL;
+
+	if (FAILED(Add_EffectPrototype(L"Colleague_Heal_BulletBody_Aura")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Heal_BulletBody_Hor")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Heal_BulletBody_Ver")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Heal_HandBlood")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Heal_HandLight")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Heal_HandSmoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Healing_PointParticle")))
+		return E_FAIL;
+
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_Blood")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_BloodSmoke_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_BloodSmoke_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_DistortionSmoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_HandLight_Pink_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_HandLight_Red_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_HandSmoke_Black_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_PinkSmoke_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_PinkSmoke_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_Start_Particle_Black_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_Start_Particle_Black_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_Start_Particle_Black_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_Start_Particle_Red_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_Start_Particle_Red_1")))
+		return E_FAIL;
 #pragma endregion
 
 #pragma region Skills
@@ -982,6 +1026,18 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_BottomBlood_2")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_BottomBlood_3")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Halberd_Blaster_Hor")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Halberd_Blaster_Ver")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Halberd_Orange_LinePoint_Explosion_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Halberd_Orange_LinePoint_Explosion_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Halberd_RedParticle_Explosion")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Halberd_ShockWave")))
 		return E_FAIL;
 #pragma endregion
 
