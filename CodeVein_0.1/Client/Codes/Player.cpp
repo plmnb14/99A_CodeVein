@@ -4792,26 +4792,9 @@ void CPlayer::Play_Skills()
 
 					_v3 vEffPos = m_pTransform->Get_Pos() + _v3(0.f, 1.3f, 0.f);
 					_v3 vPlayerAngleDeg = D3DXToDegree(m_pTransform->Get_Angle());
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing", 0.1f, 0.1f, m_pTransform->Get_Pos());
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing", 0.1f, 0.1f, m_pTransform->Get_Pos() );
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red", 0.3f, 0.2f, m_pTransform->Get_Pos() );
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black", 0.3f, 0.3f, m_pTransform->Get_Pos() );
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RedParticle_Explosion", 0.15f, 1.f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"			, 0.15f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"			, 0.16f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"			, 0.17f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"			, 0.18f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"		, 0.05f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"	, 0.12f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"		, 0.2f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"	, 0.27f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"	, 0.31f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"		, 0.35f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"	, 0.42f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"	, 0.46f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"		, 0.5f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"	, 0.62f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodConeMesh_Explosion", 1.f, m_pTransform->Get_Pos());
+					
+					CParticleMgr::Get_Instance()->Create_Skill_Start_Effect(m_pTransform->Get_Pos(), vEffPos);
+					//g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodConeMesh_Explosion", 1.f, vPos);
 				}
 			}
 
@@ -5202,25 +5185,7 @@ void CPlayer::Play_Skills()
 					m_bEventTrigger[12] = true;
 
 					_v3 vEffPos = m_pTransform->Get_Pos() + _v3(0.f, 1.3f, 0.f);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing", 0.1f, 0.1f, m_pTransform->Get_Pos());
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing", 0.1f, 0.1f, m_pTransform->Get_Pos());
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red", 0.3f, 0.2f, m_pTransform->Get_Pos());
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black", 0.3f, 0.3f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"			, 0.15f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"			, 0.16f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"			, 0.17f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"			, 0.18f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh", 0.05f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2", 0.12f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh", 0.2f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2", 0.27f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3", 0.31f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh", 0.35f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2", 0.42f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3", 0.46f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh", 0.5f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2", 0.62f, m_pTransform->Get_Pos());
-
+					CParticleMgr::Get_Instance()->Create_Skill_Start_Effect(m_pTransform->Get_Pos(), vEffPos);
 				}
 			}
 
@@ -5378,25 +5343,27 @@ void CPlayer::Play_Skills()
 					m_bEventTrigger[7] = true;
 
 					_v3 vEffPos = m_pTransform->Get_Pos() + _v3(0.f, 1.3f, 0.f);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red"		, 0.3f	, 0.f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black"	, 0.3f	, 0.f	, V3_NULL, m_pTransform);
+					CParticleMgr::Get_Instance()->Create_Skill_Start_Effect(V3_NULL, vEffPos, m_pTransform);
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_DarkSmokeAura"	, 0.5f	, 0.f	, _v3(0, 1.1f, 0.f), m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.15f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.16f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.17f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.18f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.05f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.12f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.2f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.27f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"				, 0.31f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.35f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.42f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"				, 0.46f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.5f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.62f	, V3_NULL, m_pTransform);
+
+					//g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
+					//g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
+					//g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red"		, 0.3f	, 0.f	, V3_NULL, m_pTransform);
+					//g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black"	, 0.3f	, 0.f	, V3_NULL, m_pTransform);
+					//g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.15f, vEffPos);
+					//g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.16f, vEffPos);
+					//g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.17f, vEffPos);
+					//g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.18f, vEffPos);
+					//g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.05f	, V3_NULL, m_pTransform);
+					//g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.12f	, V3_NULL, m_pTransform);
+					//g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.2f	, V3_NULL, m_pTransform);
+					//g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.27f	, V3_NULL, m_pTransform);
+					//g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"				, 0.31f	, V3_NULL, m_pTransform);
+					//g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.35f	, V3_NULL, m_pTransform);
+					//g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.42f	, V3_NULL, m_pTransform);
+					//g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"				, 0.46f	, V3_NULL, m_pTransform);
+					//g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.5f	, V3_NULL, m_pTransform);
+					//g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.62f	, V3_NULL, m_pTransform);
 				}
 			}
 
@@ -5552,20 +5519,22 @@ void CPlayer::Play_Skills()
 				{
 					m_bEventTrigger[13] = true;
 
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red"		, 0.3f	, 0.f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black"	, 0.3f	, 0.f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.05f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.12f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.2f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.27f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"				, 0.31f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.35f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.42f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"				, 0.46f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.5f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.62f	, V3_NULL, m_pTransform);
+					CParticleMgr::Get_Instance()->Create_Skill_Start_Effect(V3_NULL, V3_NULL, m_pTransform);
+
+					//g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
+					//g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
+					//g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red"		, 0.3f	, 0.f	, V3_NULL, m_pTransform);
+					//g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black"	, 0.3f	, 0.f	, V3_NULL, m_pTransform);
+					//g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.05f	, V3_NULL, m_pTransform);
+					//g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.12f	, V3_NULL, m_pTransform);
+					//g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.2f	, V3_NULL, m_pTransform);
+					//g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.27f	, V3_NULL, m_pTransform);
+					//g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"				, 0.31f	, V3_NULL, m_pTransform);
+					//g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.35f	, V3_NULL, m_pTransform);
+					//g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.42f	, V3_NULL, m_pTransform);
+					//g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"				, 0.46f	, V3_NULL, m_pTransform);
+					//g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.5f	, V3_NULL, m_pTransform);
+					//g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.62f	, V3_NULL, m_pTransform);
 				}
 			}
 

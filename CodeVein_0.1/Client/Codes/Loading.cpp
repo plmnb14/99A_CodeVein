@@ -971,6 +971,18 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_Bullet_DeadSmoke_Blue_1")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_BulletBody_Ver")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_BulletBody_Hor")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_BottomBlood_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_BottomBlood_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_BottomBlood_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_BottomBlood_3")))
+		return E_FAIL;
 #pragma endregion
 
 	if (FAILED(g_pManagement->Add_Prototype(L"Blood_Decal_0", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Blood_Decal_0.dat")))))
@@ -1157,10 +1169,10 @@ _uint CLoading::Loading_Title()
 	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager_Essential()))
 		return E_FAIL;
 
-	//// 플레이어 스킬, 보스 이펙트 포함
-	//cout << "Particle Etc 불러오는 중 . . ." << endl;
-	//if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
-	//	return E_FAIL;
+	// 플레이어 스킬, 보스 이펙트 포함
+	cout << "Particle Etc 불러오는 중 . . ." << endl;
+	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
+		return E_FAIL;
 
 	// UI 원형 생성
 	//============================================================================================================

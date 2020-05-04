@@ -54,7 +54,7 @@ HRESULT CParticleMgr::Ready_ParticleManager_Essential()
 	Input_Pool(L"Hunter_Bullet_Body_Lightning_Hor_0", 60);
 	Input_Pool(L"Hunter_Bullet_Body_Lightning_Ver_0", 60);
 	Input_Pool(L"Hunter_Bullet_Body_LinePoint_Hor", 60);
-	Input_Pool(L"Hunter_Bullet_Body_Lightning_Ver", 60);
+	Input_Pool(L"Hunter_Bullet_Body_LinePoint_Ver", 60);
 	Input_Pool(L"Hunter_Bullet_Fire_Smoke", 60);
 	Input_Pool(L"Hunter_Bullet_Ready_Light", 60);
 	Input_Pool(L"Hunter_Bullet_Tail_Lightning_Particle", 60);
@@ -159,6 +159,8 @@ HRESULT CParticleMgr::Ready_ParticleManager_Essential()
 	Input_Pool(L"Player_Skill_Gun_Bullet_DeadSmoke_Move_Purple", 100);
 	Input_Pool(L"Player_Skill_Gun_Bullet_DeadSmoke_Blue_0", 100);
 	Input_Pool(L"Player_Skill_Gun_Bullet_DeadSmoke_Blue_1", 100);
+	Input_Pool(L"Player_Skill_Gun_BulletBody_Ver", 50);
+	Input_Pool(L"Player_Skill_Gun_BulletBody_Hor", 50);
 
 	Input_Pool(L"Colleague_Teleport_Flash_Particle_0", 100);
 	Input_Pool(L"Colleague_Teleport_Line_Particle_0", 100);
@@ -227,6 +229,10 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Player_Skill_Torment_Wind_R", 10);
 	Input_Pool(L"Player_Skill_Torment_Wind_Distortion_L", 10);
 	Input_Pool(L"Player_Skill_Torment_Wind_Distortion_R", 10);
+	Input_Pool(L"Player_Skill_BottomBlood_0", 20);
+	Input_Pool(L"Player_Skill_BottomBlood_1", 20);
+	Input_Pool(L"Player_Skill_BottomBlood_2", 20);
+	Input_Pool(L"Player_Skill_BottomBlood_3", 20);
 
 	Input_Pool(L"ButterFly_SoftSmoke", 2000);
 	Input_Pool(L"ButterFly_PointParticle", 3500);
@@ -487,7 +493,7 @@ HRESULT CParticleMgr::Ready_Trail()
 
 HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 {
-	//if (CInput_Device::Get_Instance()->Key_Down(DIK_B))
+	if (CInput_Device::Get_Instance()->Key_Down(DIK_B))
 	{
 		//Create_Effect_Delay(L"Snow_Ortho_0", 0.f, V3_NULL, nullptr);
 
@@ -496,12 +502,12 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 		//pEff->Set_UV_Speed(1.f, 0.f);
 		//pEff->Reset_Init();
 		//CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
-		//COrthoEffect* pEff;
-		//pEff = static_cast<COrthoEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Snow_Ortho_1", nullptr));
-		//pEff->Set_Desc(V3_NULL, nullptr);
-		//pEff->Set_UV_Speed(1.f, -1.f);
-		//pEff->Reset_Init();
-		//CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
+		COrthoEffect* pEff;
+		pEff = static_cast<COrthoEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Snow_Ortho_1", nullptr));
+		pEff->Set_Desc(V3_NULL, nullptr);
+		pEff->Set_UV_Speed(1.f, -1.f);
+		pEff->Reset_Init();
+		CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
 	}
 
 	if (CInput_Device::Get_Instance()->Key_Down(DIK_I))
@@ -905,6 +911,42 @@ void CParticleMgr::Create_Effect_Delay(_tchar * szName, _float fDelay, _v3 vPos,
 	}
 }
 
+void CParticleMgr::Create_Effect_Delay(_tchar * szName, _float fDelay, _v3 vPos, CTransform * pFollowTrans, _int iLayer)
+{
+	queue<CEffect*>* pFindedQueue = Find_Queue(szName);
+	if (pFindedQueue == nullptr)
+		return;
+
+	// 풀 안에서 미리 생성한 오브젝트 꺼내서 사용
+	for (_int i = 0; i < pFindedQueue->front()->Get_Info()->iMaxCount; ++i)
+	{
+		if (pFindedQueue->size() <= 20) // 넉넉하게... 남은게 20 이하면 생성하여 사용
+		{
+			_tchar* szEffName = pFindedQueue->front()->Get_ParticleName();
+			CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));
+
+			m_EffectList.push_back(pEffect);
+
+			pEffect->Set_ParticleName(szEffName);
+			pEffect->Set_Desc(vPos, pFollowTrans);
+			pEffect->Set_LayerIdx(iLayer);
+			pEffect->Set_Delay(true, fDelay);
+			pEffect->Reset_Init();
+
+			continue;
+		}
+
+		m_EffectList.push_back(pFindedQueue->front());
+
+		pFindedQueue->front()->Set_Desc(vPos, pFollowTrans);
+		pFindedQueue->front()->Set_LayerIdx(iLayer);
+		pFindedQueue->front()->Set_Delay(true, fDelay);
+		pFindedQueue->front()->Reset_Init(); // 사용 전 초기화
+
+		pFindedQueue->pop();
+	}
+}
+
 void CParticleMgr::Create_Effect_Delay(_tchar * szName, _float fDelay, _v3 vPos, CTransform* pFollowTrans, _mat * pTargetMat)
 {
 	queue<CEffect*>* pFindedQueue = Find_Queue(szName);
@@ -1150,6 +1192,34 @@ void CParticleMgr::Create_BossDeadParticle_Effect(_v3 vPos, _float fDelay, _floa
 
 		pFindedQueue->pop();
 	}
+}
+
+void CParticleMgr::Create_Skill_Start_Effect(_v3 vPos, _v3 vEffPos, CTransform * pFollowTrans)
+{
+	Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing"			, 0.1f	, 0.1f	, vPos, pFollowTrans);
+	Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing"			, 0.1f	, 0.1f	, vPos, pFollowTrans);
+	Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red"			, 0.3f	, 0.2f	, vPos, pFollowTrans);
+	Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black"			, 0.3f	, 0.3f	, vPos, pFollowTrans);
+	Create_ParticleEffect_Delay(L"Player_Skill_RedParticle_Explosion"	, 0.15f	, 1.f	, vPos, pFollowTrans);
+	Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.15f			, vEffPos);
+	Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.16f			, vEffPos);
+	Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.17f			, vEffPos);
+	Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.18f			, vEffPos);
+	Create_Effect_Delay(L"Player_Skill_BottomBlood_0"					, 0.15f			, vPos, pFollowTrans, 1);
+	Create_Effect_Delay(L"Player_Skill_BottomBlood_1"					, 0.16f			, vPos, pFollowTrans, 1);
+	Create_Effect_Delay(L"Player_Skill_BottomBlood_2"					, 0.17f			, vPos, pFollowTrans, 1);
+	Create_Effect_Delay(L"Player_Skill_BottomBlood_3"					, 0.18f			, vPos, pFollowTrans, 1);
+	Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"				, 0.05f			, vPos, pFollowTrans);
+	Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.12f			, vPos, pFollowTrans);
+	Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"				, 0.2f			, vPos, pFollowTrans);
+	Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.27f			, vPos, pFollowTrans);
+	Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"				, 0.31f			, vPos, pFollowTrans);
+	Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"				, 0.35f			, vPos, pFollowTrans);
+	Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.42f			, vPos, pFollowTrans);
+	Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"				, 0.46f			, vPos, pFollowTrans);
+	Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"				, 0.5f			, vPos, pFollowTrans);
+	Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.62f			, vPos, pFollowTrans);
+	Create_Effect_Delay(L"Player_Skill_BloodConeMesh_Explosion"			, 1.f			, vPos, pFollowTrans);
 }
 
 CTrail_VFX* CParticleMgr::Create_Trail()

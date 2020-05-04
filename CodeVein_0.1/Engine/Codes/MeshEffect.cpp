@@ -7,7 +7,7 @@ CMeshEffect::CMeshEffect(LPDIRECT3DDEVICE9 pGraphic_Device)
 }
 
 CMeshEffect::CMeshEffect(const CMeshEffect & rhs)
-	: CEffect(rhs.m_pGraphic_Dev)
+	: CEffect(rhs)
 {
 	CEffect::m_pInfo = rhs.m_pInfo;
 	m_bClone = true;

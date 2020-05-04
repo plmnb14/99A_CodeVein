@@ -35,16 +35,6 @@ INSTANCEDATA CTexEffect::Get_InstanceData()
 	return tData;
 }
 
-_int CTexEffect::Get_EffectLayer()
-{
-	return m_iLayer;
-}
-
-void CTexEffect::Set_EffectLayer(_int iLayerIdx)
-{
-	m_iLayer = iLayerIdx;
-}
-
 HRESULT CTexEffect::SetUp_ConstantTable_Instance(CShader* pShader)
 {
 	_float fMaskIndex = 0.f;

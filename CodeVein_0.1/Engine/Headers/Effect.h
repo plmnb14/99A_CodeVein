@@ -27,7 +27,8 @@ public:
 	EFF_TYPE	Get_EffType() { return m_eType; }
 	_tchar* Get_ParticleName() { return m_szParticleName; }
 	_float	Get_CreateDelay() { return m_fCreateDelay; }
-	_v3 Get_Angle() { return m_vAngle; }
+	_v3		Get_Angle() { return m_vAngle; }
+	_int	Get_EffectLayer() { return m_iLayer; }
 
 public:
 	void Set_ParticleName(_tchar* szBuff) { lstrcpy(m_szParticleName, szBuff); }
@@ -42,6 +43,7 @@ public:
 	void Set_Delay(_bool bDelay, _float fDelay = 0.f) { m_bDelay_New = bDelay;  m_fDelay_New = fDelay; }
 	void Set_Loop(_bool bLoop) { m_bLoop = bLoop; }
 	void Set_ZWrite() { m_bZwrite = true; }
+	void Set_EffectLayer(_int iLayerIdx) { m_iLayer = iLayerIdx; } // 클수록 위에 그려짐
 
 	void Reset_Init();
 
@@ -104,6 +106,7 @@ protected:
 	_bool					m_bCurve = false;
 
 	_int					m_iPass = 0;
+	_int					m_iLayer = 0;
 
 	_tchar					m_szParticleName[256] = L"";
 
