@@ -23,6 +23,7 @@ public:
 	}
 	_v3	Get_CamPosition() const {
 		return *(_v3*)&m_WorldMatrixofCamera.m[3][0]; }
+
 public:
 	_int Update_PipeLine();
 	HRESULT Set_Transform(D3DTRANSFORMSTATETYPE eState, _mat StateMatrix);

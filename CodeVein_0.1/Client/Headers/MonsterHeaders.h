@@ -24,6 +24,8 @@
 #include "FireSphere.h"
 #include "FireGround.h"
 #include "FireTornadoCol.h"
+#include "FireHandBall.h"
+#include "FireFlame.h"
 
 #include "DeerKing.h"
 #include "DeerKingBullet.h"
@@ -31,6 +33,8 @@
 #include "DeerKingJumpFistCol.h"
 #include "DeerKingJumpInPlaceCol.h"
 #include "DeerKingRushCol.h"
+#include "DeerKingIceSword.h"
+#include "DeerKingRightHandCol.h"
 
 #include "Cocoon.h"
 #include "CocoonBullet.h"
@@ -45,6 +49,9 @@
 #include "YachaMan.h"
 #include "Yeti.h"
 #include "YetiBullet.h"
+
+#include "Pet_Bullet.h"
+#include "Pet_PoisonButterFly.h"
 
 #include "GunGenji.h"
 #include "GunGenjiBullet.h"

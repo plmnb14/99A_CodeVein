@@ -204,8 +204,10 @@
     <ClInclude Include="..\Headers\DeerKingBullet.h" />
     <ClInclude Include="..\Headers\DeerKingColdBeam.h" />
     <ClInclude Include="..\Headers\DeerKing.h" />
+    <ClInclude Include="..\Headers\DeerKingIceSword.h" />
     <ClInclude Include="..\Headers\DeerKingJumpFistCol.h" />
     <ClInclude Include="..\Headers\DeerKingJumpInPlaceCol.h" />
+    <ClInclude Include="..\Headers\DeerKingRightHandCol.h" />
     <ClInclude Include="..\Headers\DeerKingRushCol.h" />
     <ClInclude Include="..\Headers\Drain_Weapon.h" />
     <ClInclude Include="..\Headers\Dummy_Target.h" />
@@ -217,9 +219,13 @@
     <ClInclude Include="..\Headers\FighterReleaseUI.h" />
     <ClInclude Include="..\Headers\FireBoy.h" />
     <ClInclude Include="..\Headers\FireBullet.h" />
+    <ClInclude Include="..\Headers\FireFlame.h" />
     <ClInclude Include="..\Headers\FireGround.h" />
+    <ClInclude Include="..\Headers\FireHandBall.h" />
     <ClInclude Include="..\Headers\FireSphere.h" />
     <ClInclude Include="..\Headers\FireTornadoCol.h" />
+    <ClInclude Include="..\Headers\Monster.h" />
+    <ClInclude Include="..\Headers\Pet_Bullet.h" />
     <ClInclude Include="..\Headers\Pet_PoisonButterFly.h" />
     <ClInclude Include="..\Headers\PlayerFontUI.h" />
     <ClInclude Include="..\Headers\FontNumUI.h" />
@@ -231,7 +237,6 @@
     <ClInclude Include="..\Headers\HunterBullet.h" />
     <ClInclude Include="..\Headers\IceBarrier.h" />
     <ClInclude Include="..\Headers\IceGirl.h" />
-    <ClInclude Include="..\Headers\Info_Monster.h" />
     <ClInclude Include="..\Headers\Info_Slot.h" />
     <ClInclude Include="..\Headers\Inventory.h" />
     <ClInclude Include="..\Headers\Inventory_Icon.h" />
@@ -248,7 +253,6 @@
     <ClInclude Include="..\Headers\MistletoeUI.h" />
     <ClInclude Include="..\Headers\Monkey.h" />
     <ClInclude Include="..\Headers\MonkeyBullet.h" />
-    <ClInclude Include="..\Headers\Monster.h" />
     <ClInclude Include="..\Headers\MonsterHeaders.h" />
     <ClInclude Include="..\Headers\MonsterUI.h" />
     <ClInclude Include="..\Headers\NumberUI.h" />
@@ -354,8 +358,10 @@
     <ClCompile Include="..\Codes\DeerKingBullet.cpp" />
     <ClCompile Include="..\Codes\DeerKingColdBeam.cpp" />
     <ClCompile Include="..\Codes\DeerKing.cpp" />
+    <ClCompile Include="..\Codes\DeerKingIceSword.cpp" />
     <ClCompile Include="..\Codes\DeerKingJumpFistCol.cpp" />
     <ClCompile Include="..\Codes\DeerKingJumpInPlaceCol.cpp" />
+    <ClCompile Include="..\Codes\DeerKingRightHandCol.cpp" />
     <ClCompile Include="..\Codes\DeerKingRushCol.cpp" />
     <ClCompile Include="..\Codes\Drain_Weapon.cpp" />
     <ClCompile Include="..\Codes\Dummy_Target.cpp" />
@@ -367,9 +373,12 @@
     <ClCompile Include="..\Codes\FighterReleaseUI.cpp" />
     <ClCompile Include="..\Codes\FireBoy.cpp" />
     <ClCompile Include="..\Codes\FireBullet.cpp" />
+    <ClCompile Include="..\Codes\FireFlame.cpp" />
     <ClCompile Include="..\Codes\FireGround.cpp" />
+    <ClCompile Include="..\Codes\FireHandBall.cpp" />
     <ClCompile Include="..\Codes\FireSphere.cpp" />
     <ClCompile Include="..\Codes\FireTornadoCol.cpp" />
+    <ClCompile Include="..\Codes\Pet_Bullet.cpp" />
     <ClCompile Include="..\Codes\Pet_PoisonButterFly.cpp" />
     <ClCompile Include="..\Codes\PlayerFontUI.cpp" />
     <ClCompile Include="..\Codes\FontNumUI.cpp" />

@@ -3,12 +3,12 @@
 #include "ParticleMgr.h"
 
 CHunterBullet::CHunterBullet(LPDIRECT3DDEVICE9 pGraphic_Device)
-	: CGameObject(pGraphic_Device)
+	: CMonster(pGraphic_Device)
 {
 }
 
 CHunterBullet::CHunterBullet(const CHunterBullet & rhs)
-	: CGameObject(rhs)
+	: CMonster(rhs)
 {
 }
 
@@ -29,24 +29,25 @@ HRESULT CHunterBullet::Ready_GameObject(void * pArg)
 		return S_OK;
 	}
 
-	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
+	MONSTER_BULLET_STATUS info = *(MONSTER_BULLET_STATUS*)pArg;
 
-	m_vDir = temp.vDir;
-	m_fSpeed = temp.fSpeed;
-	m_dLifeTime = temp.dLifeTime;
+	m_eBulletType = info.eBulletType;
+	m_vDir = info.vDir;
+	m_fSpeed = info.fSpeed;
+	m_dLifeTime = info.dLifeTime;
 
-	m_pTransformCom->Set_Pos(temp.vCreatePos);
-	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
+	m_pTransformCom->Set_Pos(info.vCreatePos);
+	m_pTransformCom->Set_Scale(V3_ONE);
 
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
 
-	m_vDir = temp.vDir;
-	m_fSpeed = temp.fSpeed;
-	m_dLifeTime = temp.dLifeTime;
+	m_dCurTime = 0;
+	m_bDead = false;
+	m_bEffect = true;
 
 	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Bullet_Body", nullptr));
-	m_pBulletBody->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
+	m_pBulletBody->Set_Desc(V3_NULL, m_pTransformCom);
 	m_pBulletBody->Reset_Init();
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
 
@@ -71,7 +72,7 @@ _int CHunterBullet::Update_GameObject(_double TimeDelta)
 	if (m_bDead)
 		return DEAD_OBJ;
 
-	Enter_Collision();
+	Check_CollisionEvent();
 	Update_Trails(TimeDelta);
 
 	m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
@@ -125,6 +126,24 @@ HRESULT CHunterBullet::Render_GameObject()
 	return S_OK;
 }
 
+void CHunterBullet::Update_Trails(_double TimeDelta)
+{
+	_mat matWorld = m_pTransformCom->Get_WorldMat();
+	_v3 vBegin, vDir;
+
+	memcpy(vBegin, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
+	memcpy(vDir, &m_pTransformCom->Get_WorldMat()._21, sizeof(_v3));
+
+	if (m_pTrailEffect)
+	{
+		m_pTrailEffect->Set_ParentTransform(&matWorld);
+		m_pTrailEffect->Ready_Info(vBegin + vDir * -0.05f, vBegin + vDir * 0.05f);
+		// m_pTrailEffect->Update_GameObject(TimeDelta);
+	}
+
+	return;
+}
+
 void CHunterBullet::Update_Collider()
 {
 	_ulong matrixIdx = 0;
@@ -152,33 +171,16 @@ void CHunterBullet::Render_Collider()
 	return;
 }
 
-void CHunterBullet::Enter_Collision()
+void CHunterBullet::Check_CollisionEvent()
 {
 	Update_Collider();
-	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
+	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
+	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE));
 
 	return;
 }
 
-void CHunterBullet::Update_Trails(_double TimeDelta)
-{
-	_mat matWorld = m_pTransformCom->Get_WorldMat();
-	_v3 vBegin, vDir;
-
-	memcpy(vBegin, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
-	memcpy(vDir, &m_pTransformCom->Get_WorldMat()._21, sizeof(_v3));
-
-	if (m_pTrailEffect)
-	{
-		m_pTrailEffect->Set_ParentTransform(&matWorld);
-		m_pTrailEffect->Ready_Info(vBegin + vDir * -0.05f, vBegin + vDir * 0.05f);
-		// m_pTrailEffect->Update_GameObject(TimeDelta);
-	}
-
-	return;
-}
-
-void CHunterBullet::Check_CollisionEvent(list<CGameObject*> plistGameObject)
+void CHunterBullet::Check_CollisionHit(list<CGameObject*> plistGameObject)
 {
 	if (false == m_tObjParam.bCanAttack)
 		return;
@@ -205,7 +207,7 @@ void CHunterBullet::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 					}
 
 					iter->Set_Target_CanHit(false);
-					iter->Add_Target_Hp(m_tObjParam.fDamage);
+					iter->Add_Target_Hp(-m_tObjParam.fDamage);
 
 					m_dCurTime = 100;
 

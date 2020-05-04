@@ -29,7 +29,7 @@ HRESULT CIceGirl::Ready_GameObject(void * pArg)
 	Ready_Collider();
 
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 1000.f;
+	m_tObjParam.fHp_Cur = 10000.f;
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
 	m_tObjParam.fDamage = 20.f;
 
@@ -62,24 +62,24 @@ HRESULT CIceGirl::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"PhyCol", true); // 피격판정 제어 변수
 	pBlackBoard->Set_Value(L"Ice_Barrier_On", false);	// 얼음 보호막 변수
 
-	//CBT_Selector* Start_Sel = Node_Selector("행동 시작");
-	CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
+	CBT_Selector* Start_Sel = Node_Selector("행동 시작");
+	//CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
 
 	pBehaviorTree->Set_Child(Start_Sel);
 
 
 	//////////// 아래에 주석해놓은 4줄이 본게임에서 쓸 것임, 차례대로 공격함.
 
-	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
-	//Check_ShowValue->Set_Child(Start_Show());
-	//Start_Sel->Add_Child(Check_ShowValue);
-	//Start_Sel->Add_Child(Start_Game());
+	CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", false);
+	Check_ShowValue->Set_Child(Start_Game());
+	Start_Sel->Add_Child(Check_ShowValue);
+	Start_Sel->Add_Child(Start_Show());
 
 	////////////
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Start_Game());
+	//Start_Sel->Add_Child(Start_Game());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -127,7 +127,7 @@ _int CIceGirl::Update_GameObject(_double TimeDelta)
 	// 플레이어 미발견
 	if (false == m_bFight)
 	{
-		Update_NF();
+		//Update_NF();
 	}
 	// 플레이어 발견
 	else
@@ -245,7 +245,7 @@ HRESULT CIceGirl::Render_GameObject()
 	return NOERROR;
 }
 
-HRESULT CIceGirl::Render_GameObject_SetPass(CShader * pShader, _int iPass)
+HRESULT CIceGirl::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
 {
 	if (nullptr == pShader ||
 		nullptr == m_pMeshCom)
@@ -299,7 +299,7 @@ CBT_Composite_Node * CIceGirl::Turn_Cut(_float fWeight)
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("회전 베기");
-	CBT_Play_Ani* Show_Ani34 = Node_Ani("돌면서 베기", 34, fWeight);
+	CBT_Play_Ani* Show_Ani28 = Node_Ani("돌면서 베기", 28, fWeight);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
@@ -330,7 +330,7 @@ CBT_Composite_Node * CIceGirl::Turn_Cut(_float fWeight)
 	Root_Parallel->Add_Service(Effect9);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani34);;
+	MainSeq->Add_Child(Show_Ani28);;
 	MainSeq->Add_Child(Show_Ani0);;
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -349,9 +349,9 @@ CBT_Composite_Node * CIceGirl::ThreeCombo_Cut1()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("3연속 베기");
-	CBT_Play_Ani* Show_Ani38 = Node_Ani("베기1", 38, 0.4f);
-	CBT_Play_Ani* Show_Ani37 = Node_Ani("베기2", 37, 0.4f);
-	CBT_Play_Ani* Show_Ani35 = Node_Ani("베기3", 35, 0.95f);
+	CBT_Play_Ani* Show_Ani32 = Node_Ani("베기1", 32, 0.4f);
+	CBT_Play_Ani* Show_Ani31 = Node_Ani("베기2", 31, 0.4f);
+	CBT_Play_Ani* Show_Ani29 = Node_Ani("베기3", 29, 0.95f);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
@@ -426,9 +426,9 @@ CBT_Composite_Node * CIceGirl::ThreeCombo_Cut1()
 	Root_Parallel->Add_Service(Effect22);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani38);
-	MainSeq->Add_Child(Show_Ani37);
-	MainSeq->Add_Child(Show_Ani35);
+	MainSeq->Add_Child(Show_Ani32);
+	MainSeq->Add_Child(Show_Ani31);
+	MainSeq->Add_Child(Show_Ani29);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -461,9 +461,9 @@ CBT_Composite_Node * CIceGirl::ThreeCombo_Cut2()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("3연속 베기");
-	CBT_Play_Ani* Show_Ani38 = Node_Ani("베기1", 38, 0.4f);
-	CBT_Play_Ani* Show_Ani37 = Node_Ani("베기2", 37, 0.4f);
-	CBT_Play_Ani* Show_Ani34 = Node_Ani("돌면서 베기", 34, 0.95f);
+	CBT_Play_Ani* Show_Ani32 = Node_Ani("베기1", 32, 0.4f);
+	CBT_Play_Ani* Show_Ani31 = Node_Ani("베기2", 31, 0.4f);
+	CBT_Play_Ani* Show_Ani28 = Node_Ani("돌면서 베기", 28, 0.95f);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 
@@ -535,9 +535,9 @@ CBT_Composite_Node * CIceGirl::ThreeCombo_Cut2()
 	Root_Parallel->Add_Service(Effect22);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani38);
-	MainSeq->Add_Child(Show_Ani37);
-	MainSeq->Add_Child(Show_Ani34);
+	MainSeq->Add_Child(Show_Ani32);
+	MainSeq->Add_Child(Show_Ani31);
+	MainSeq->Add_Child(Show_Ani28);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -566,7 +566,7 @@ CBT_Composite_Node * CIceGirl::Jump_Attack()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("점프 공격");
-	CBT_Play_Ani* Show_Ani39 = Node_Ani("점프 공격", 39, 0.95f);
+	CBT_Play_Ani* Show_Ani33 = Node_Ani("점프 공격", 33, 0.95f);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
@@ -588,7 +588,7 @@ CBT_Composite_Node * CIceGirl::Jump_Attack()
 	Root_Parallel->Add_Service(Effect4);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani39);
+	MainSeq->Add_Child(Show_Ani33);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -608,7 +608,7 @@ CBT_Composite_Node * CIceGirl::Ice_Cut()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("3연속 베기");
-	CBT_Play_Ani* Show_Ani38 = Node_Ani("베기1", 38, 0.95f);
+	CBT_Play_Ani* Show_Ani32 = Node_Ani("베기1", 32, 0.95f);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 	
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
@@ -636,7 +636,7 @@ CBT_Composite_Node * CIceGirl::Ice_Cut()
 	
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani38);
+	MainSeq->Add_Child(Show_Ani32);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -657,7 +657,7 @@ CBT_Composite_Node * CIceGirl::Ice_Barrier()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("얼음 보호막 시전");
-	CBT_Play_Ani* Show_Ani29 = Node_Ani("얼음 보호막", 29, 0.95f);
+	CBT_Play_Ani* Show_Ani23 = Node_Ani("얼음 보호막", 23, 0.95f);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("보호막 변수 On");
@@ -675,7 +675,7 @@ CBT_Composite_Node * CIceGirl::Ice_Barrier()
 	Root_Parallel->Add_Service(Effect1);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani29);
+	MainSeq->Add_Child(Show_Ani23);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -689,7 +689,7 @@ CBT_Composite_Node * CIceGirl::ColdBeam_RandomPos()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("랜덤 위치 콜드빔");
-	CBT_Play_Ani* Show_Ani31 = Node_Ani("랜덤 위치 콜드빔", 31, 0.95f);
+	CBT_Play_Ani* Show_Ani25 = Node_Ani("랜덤 위치 콜드빔", 25, 0.95f);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
@@ -718,7 +718,7 @@ CBT_Composite_Node * CIceGirl::ColdBeam_RandomPos()
 
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani31);
+	MainSeq->Add_Child(Show_Ani25);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -735,7 +735,7 @@ CBT_Composite_Node * CIceGirl::ColdBeam_Around_Me()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("자신 주위 콜드빔");
-	CBT_Play_Ani* Show_Ani30 = Node_Ani("랜덤 위치 콜드빔", 30, 0.95f);
+	CBT_Play_Ani* Show_Ani24 = Node_Ani("랜덤 위치 콜드빔", 24, 0.95f);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
@@ -763,7 +763,7 @@ CBT_Composite_Node * CIceGirl::ColdBeam_Around_Me()
 	Root_Parallel->Add_Service(Ice3);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani30);
+	MainSeq->Add_Child(Show_Ani24);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -782,7 +782,7 @@ CBT_Composite_Node * CIceGirl::Jump_Attack_And_ColdBeam()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("점프 공격");
-	CBT_Play_Ani* Show_Ani39 = Node_Ani("점프 공격", 39, 0.95f);
+	CBT_Play_Ani* Show_Ani33 = Node_Ani("점프 공격", 33, 0.95f);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
@@ -817,7 +817,7 @@ CBT_Composite_Node * CIceGirl::Jump_Attack_And_ColdBeam()
 
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani39);
+	MainSeq->Add_Child(Show_Ani33);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -837,7 +837,7 @@ CBT_Composite_Node * CIceGirl::Charge_Rush()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("기모아서 돌진");
-	CBT_Play_Ani* Show_Ani32 = Node_Ani("기모아서 돌진", 32, 0.95f);
+	CBT_Play_Ani* Show_Ani26 = Node_Ani("기모아서 돌진", 26, 0.95f);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 	
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
@@ -870,7 +870,7 @@ CBT_Composite_Node * CIceGirl::Charge_Rush()
 	Root_Parallel->Add_Service(Effect7);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani32);
+	MainSeq->Add_Child(Show_Ani26);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -891,7 +891,7 @@ CBT_Composite_Node * CIceGirl::Dodge_Left()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 	
 	CBT_Sequence* MainSeq = Node_Sequence("좌 회피");
-	CBT_Play_Ani* Show_Ani15 = Node_Ani("좌 회피", 15, 0.5f);
+	CBT_Play_Ani* Show_Ani9 = Node_Ani("좌 회피", 9, 0.5f);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
@@ -912,7 +912,7 @@ CBT_Composite_Node * CIceGirl::Dodge_Left()
 	Root_Parallel->Add_Service(Effect2);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani15);
+	MainSeq->Add_Child(Show_Ani9);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -932,7 +932,7 @@ CBT_Composite_Node * CIceGirl::Dodge_Right()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("좌 회피");
-	CBT_Play_Ani* Show_Ani14 = Node_Ani("우 회피", 14, 0.5f);
+	CBT_Play_Ani* Show_Ani8 = Node_Ani("우 회피", 8, 0.5f);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
@@ -953,7 +953,7 @@ CBT_Composite_Node * CIceGirl::Dodge_Right()
 	Root_Parallel->Add_Service(Effect2);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani14);
+	MainSeq->Add_Child(Show_Ani8);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -973,7 +973,7 @@ CBT_Composite_Node * CIceGirl::Dodge_Front()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("좌 회피");
-	CBT_Play_Ani* Show_Ani16 = Node_Ani("앞 회피", 16, 0.5f);
+	CBT_Play_Ani* Show_Ani10 = Node_Ani("앞 회피", 10, 0.5f);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
@@ -994,7 +994,7 @@ CBT_Composite_Node * CIceGirl::Dodge_Front()
 	Root_Parallel->Add_Service(Effect2);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani16);
+	MainSeq->Add_Child(Show_Ani10);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -1014,7 +1014,7 @@ CBT_Composite_Node * CIceGirl::Dodge_Back()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("좌 회피");
-	CBT_Play_Ani* Show_Ani17 = Node_Ani("뒤 회피", 17, 0.5f);
+	CBT_Play_Ani* Show_Ani11 = Node_Ani("뒤 회피", 11, 0.5f);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
@@ -1035,7 +1035,7 @@ CBT_Composite_Node * CIceGirl::Dodge_Back()
 	Root_Parallel->Add_Service(Effect2);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani17);
+	MainSeq->Add_Child(Show_Ani11);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -1055,11 +1055,11 @@ CBT_Composite_Node * CIceGirl::Chase_ThreeCombo_Cut1()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("3연속 베기");
-	CBT_Play_Ani* Show_Ani38 = Node_Ani("베기1", 38, 0.4f);
+	CBT_Play_Ani* Show_Ani32 = Node_Ani("베기1", 32, 0.4f);
 	CBT_DistCheck* Dist0 = Node_DistCheck("거리 체크", L"Player_Pos", 6);
-	CBT_Play_Ani* Show_Ani37 = Node_Ani("베기2", 37, 0.4f);
+	CBT_Play_Ani* Show_Ani31 = Node_Ani("베기2", 31, 0.4f);
 	CBT_DistCheck* Dist1 = Node_DistCheck("거리 체크", L"Player_Pos", 6);
-	CBT_Play_Ani* Show_Ani35 = Node_Ani("베기3", 35, 0.95f);
+	CBT_Play_Ani* Show_Ani29 = Node_Ani("베기3", 29, 0.95f);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
@@ -1134,11 +1134,11 @@ CBT_Composite_Node * CIceGirl::Chase_ThreeCombo_Cut1()
 	Root_Parallel->Add_Service(Effect22);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani38);
+	MainSeq->Add_Child(Show_Ani32);
 	MainSeq->Add_Child(Dist0);
-	Dist0->Set_Child(Show_Ani37);
+	Dist0->Set_Child(Show_Ani31);
 	MainSeq->Add_Child(Dist1);
-	Dist1->Set_Child(Show_Ani35);
+	Dist1->Set_Child(Show_Ani29);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -1173,11 +1173,11 @@ CBT_Composite_Node * CIceGirl::Chase_ThreeCombo_Cut2()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("3연속 베기");
-	CBT_Play_Ani* Show_Ani38 = Node_Ani("베기1", 38, 0.4f);
+	CBT_Play_Ani* Show_Ani32 = Node_Ani("베기1", 32, 0.4f);
 	CBT_DistCheck* Dist0 = Node_DistCheck("거리 체크", L"Player_Pos", 6);
-	CBT_Play_Ani* Show_Ani37 = Node_Ani("베기2", 37, 0.4f);
+	CBT_Play_Ani* Show_Ani31 = Node_Ani("베기2", 31, 0.4f);
 	CBT_DistCheck* Dist1 = Node_DistCheck("거리 체크", L"Player_Pos", 6);
-	CBT_Play_Ani* Show_Ani34 = Node_Ani("돌면서 베기", 34, 0.95f);
+	CBT_Play_Ani* Show_Ani28 = Node_Ani("돌면서 베기", 28, 0.95f);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 
@@ -1249,11 +1249,11 @@ CBT_Composite_Node * CIceGirl::Chase_ThreeCombo_Cut2()
 	Root_Parallel->Add_Service(Effect22);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani38);
+	MainSeq->Add_Child(Show_Ani32);
 	MainSeq->Add_Child(Dist0);
-	Dist0->Set_Child(Show_Ani37);
+	Dist0->Set_Child(Show_Ani31);
 	MainSeq->Add_Child(Dist1);
-	Dist1->Set_Child(Show_Ani34);
+	Dist1->Set_Child(Show_Ani28);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -1385,7 +1385,7 @@ CBT_Composite_Node * CIceGirl::FarAttack_More_Than_HP40()
 
 	Root_Sel->Add_Child(Charge_Rush());
 	Root_Sel->Add_Child(Dash_To_Target());
-	Root_Sel->Add_Child(Create_IceBarrier_Or_Not());
+	//Root_Sel->Add_Child(Create_IceBarrier_Or_Not());
 	Root_Sel->Add_Child(ColdBeam_RandomPos());
 	
 	return Root_Sel;
@@ -1412,7 +1412,7 @@ CBT_Composite_Node * CIceGirl::NearAttack_Dist5_Final()
 	Root_Sel->Add_Child(Chase_ThreeCombo_Cut1());
 	//Root_Sel->Add_Child(Chase_ThreeCombo_Cut2());
 	Root_Sel->Add_Child(Ice_Cut());
-	Root_Sel->Add_Child(Create_IceBarrier_Or_Not());
+	//Root_Sel->Add_Child(Create_IceBarrier_Or_Not());
 	Root_Sel->Add_Child(Cut_BackDodge());
 	Root_Sel->Add_Child(Random_Dodge());
 	//Root_Sel->Add_Child(Create_IceBarrier_Or_Not());
@@ -1426,7 +1426,7 @@ CBT_Composite_Node * CIceGirl::FarAttack_Fianl()
 	CBT_Selector* Root_Sel = Node_Selector_Random("랜덤 원거리 공격");
 
 	Root_Sel->Add_Child(Charge_Rush());
-	Root_Sel->Add_Child(Create_IceBarrier_Or_Not());
+	//Root_Sel->Add_Child(Create_IceBarrier_Or_Not());
 	Root_Sel->Add_Child(Dash_To_Target());
 	Root_Sel->Add_Child(ColdBeam_RandomPos());
 
@@ -1520,7 +1520,10 @@ CBT_Composite_Node * CIceGirl::Show_NearAttack()
 	CBT_Cooldown* Cool1 = Node_Cooldown("쿨1", 300);
 	CBT_Cooldown* Cool2 = Node_Cooldown("쿨2", 300);
 	CBT_Cooldown* Cool3 = Node_Cooldown("쿨3", 300);
-	CBT_Cooldown* Cool4 = Node_Cooldown("쿨4", 300);
+	//CBT_Cooldown* Cool4 = Node_Cooldown("쿨4", 300);
+	CBT_Cooldown* Cool5 = Node_Cooldown("쿨5", 300);
+	CBT_Cooldown* Cool6 = Node_Cooldown("쿨6", 300);
+
 
 	CBT_SetValue* Show_OffNearAttack = Node_BOOL_SetValue("시연회 OFF", L"Show_Near", false);
 
@@ -1532,8 +1535,12 @@ CBT_Composite_Node * CIceGirl::Show_NearAttack()
 	Cool2->Set_Child(Jump_Attack());
 	Root_Sel->Add_Child(Cool3);
 	Cool3->Set_Child(Ice_Cut());
-	Root_Sel->Add_Child(Cool4);
-	Cool4->Set_Child(Ice_Barrier());
+	//Root_Sel->Add_Child(Cool4);
+	//Cool4->Set_Child(Ice_Barrier());
+	Root_Sel->Add_Child(Cool5);
+	Cool5->Set_Child(Jump_Attack_And_ColdBeam());
+	Root_Sel->Add_Child(Cool6);
+	Cool6->Set_Child(ColdBeam_Around_Me());
 
 	Root_Sel->Add_Child(Show_OffNearAttack);
 
@@ -1545,11 +1552,19 @@ CBT_Composite_Node * CIceGirl::Show_FarAttack()
 	CBT_Selector* Root_Sel = Node_Selector("순서대로 원거리 공격");
 
 	CBT_Cooldown* Cool0 = Node_Cooldown("쿨0", 300);
+	CBT_Cooldown* Cool1 = Node_Cooldown("쿨1", 300);
+	CBT_Cooldown* Cool2 = Node_Cooldown("쿨2", 300);
+
+	CBT_Play_Ani* Show_Ani3 = Node_Ani("기본", Ani_Appearance_End, 0.95f);
 
 	CBT_SetValue* Show_ValueOff = Node_BOOL_SetValue("시연회 OFF", L"Show", false);
 
 	Root_Sel->Add_Child(Cool0);
 	Cool0->Set_Child(Charge_Rush());
+	Root_Sel->Add_Child(Cool1);
+	Cool1->Set_Child(ColdBeam_RandomPos());
+	Root_Sel->Add_Child(Cool2);
+	Cool2->Set_Child(Show_Ani3);
 
 	Root_Sel->Add_Child(Show_ValueOff);
 
@@ -1618,15 +1633,6 @@ void CIceGirl::Down()
 		if (m_dHitTime > 0.5)
 		{
 			m_tObjParam.bIsHit = false;		// 재충돌 가능
-		}
-	}
-
-	if (true == m_bDown_LoopAni)
-	{
-		if (m_pMeshCom->Is_Finish_Animation(0.95f))
-		{
-			m_pMeshCom->Reset_OldIndx();
-			m_pMeshCom->SetUp_Animation(Ani_Down_Loop);
 		}
 	}
 
@@ -1761,21 +1767,21 @@ HRESULT CIceGirl::Update_NF()
 			}
 			else
 			{
-				m_pMeshCom->SetUp_Animation(Ani_Idle);
+				m_pMeshCom->SetUp_Animation(Ani_Appearance);
 			}
 		}
 		// 플레이어가 최대거리 밖에 있는가?
 		else
-			m_pMeshCom->SetUp_Animation(Ani_Idle);
+			m_pMeshCom->SetUp_Animation(Ani_Appearance);
 	}
 	// 플레이어 발견
 	else
 	{
-		m_pMeshCom->SetUp_Animation(Ani_Appearance);
+		m_pMeshCom->SetUp_Animation(Ani_Appearance_End);
 
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_pMeshCom->SetUp_Animation(Ani_Idle);
+			m_pMeshCom->SetUp_Animation(Ani_Appearance);
 			m_bFight = true;
 		}
 	}
@@ -2061,6 +2067,28 @@ HRESULT CIceGirl::SetUp_ConstantTable()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
+
+	//=============================================================================================
+	// 쉐이더 재질정보 수치 입력
+	//=============================================================================================
+	_float	fEmissivePower = 5.f;	// 이미시브 : 높을 수록, 자체 발광이 강해짐.
+	_float	fSpecularPower = 1.f;	// 메탈니스 : 높을 수록, 정반사가 강해짐.
+	_float	fRoughnessPower = 1.f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
+	_float	fRimLightPower = 0.f;	// 림		: 높을 수록 빛이 퍼짐(림라이트의 범위가 넓어지고 , 밀집도가 낮아짐).
+	_float	fMinSpecular = 0.1f;	// 최소 빛	: 높을 수록 빛이 퍼짐(림라이트의 범위가 넓어지고 , 밀집도가 낮아짐).
+
+	if (FAILED(m_pShaderCom->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fRimAlpha", &fRimLightPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
+		return E_FAIL;
+	//=============================================================================================
+
 
 	Safe_Release(pManagement);
 

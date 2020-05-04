@@ -35,7 +35,8 @@ void CBattleAgent::Set_RimChangeData(_bool _bOnRimLight)
 	m_tRimParam.vRimColor_Cur = _bOnRimLight ? m_tRimParam.vRimColor_Change : _v4(0.f, 0.f, 0.f, 1.f);
 	m_tRimParam.fRimTimer_Cur = 0.f;
 	m_tRimParam.fRimChangeValue = 0.f;
-	m_tRimParam.fRimValue = _bOnRimLight ? 1.f : 0.f;
+	m_tRimParam.fRimAlpha = _bOnRimLight ? m_tRimParam.fOrigin_RimAlpha : 0.f;
+	m_tRimParam.fRimValue = _bOnRimLight ? 2.f : 0.f;
 }
 
 void CBattleAgent::Update_RimParam_OnShader(CShader * _pShader)
@@ -43,7 +44,8 @@ void CBattleAgent::Update_RimParam_OnShader(CShader * _pShader)
 	_v4	vCamPos = CManagement::Get_Instance()->Get_CamPosition();
 
 	_pShader->Set_Value("g_vCamPos", &vCamPos, sizeof(_v3));
-	_pShader->Set_Value("g_fRimAlpha", &m_tRimParam.fRimValue, sizeof(_float));
+	_pShader->Set_Value("g_fRimAlpha", &m_tRimParam.fRimAlpha, sizeof(_float));
+	_pShader->Set_Value("g_fRimPower", &m_tRimParam.fRimValue, sizeof(_float));
 	_pShader->Set_Value("g_vRimColor", &m_tRimParam.vRimColor_Cur, sizeof(_v4));
 }
 
@@ -51,7 +53,8 @@ void CBattleAgent::Update_RimLight()
 {
 	m_tRimParam.fRimTimer_Cur += CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60");
 	m_tRimParam.fRimChangeValue = (m_tRimParam.fRimTimer_Cur / m_tRimParam.fRimTimer_Max);
-	m_tRimParam.fRimValue = 1.f - ((m_tRimParam.fRimTimer_Cur / m_tRimParam.fRimTimer_Max) * 0.5f);
+	//m_tRimParam.fRimAlpha = m_tRimParam.fOrigin_RimAlpha - ((m_tRimParam.fRimTimer_Cur / m_tRimParam.fRimTimer_Max) * 0.5f);
+	m_tRimParam.fRimValue += 0.01f + (m_tRimParam.fOrigin_RimValue - m_tRimParam.fRimValue) * CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60");
 
 	D3DXVec4Lerp(&m_tRimParam.vRimColor_Cur, &m_tRimParam.vRimColor_Cur,
 		&m_tRimParam.vRimColor_Old, m_tRimParam.fRimChangeValue);
@@ -60,7 +63,8 @@ void CBattleAgent::Update_RimLight()
 	{
 		m_tRimParam.fRimChangeValue = 0.f;
 		m_tRimParam.vRimColor_Cur = m_tRimParam.vRimColor_Old;
-		m_tRimParam.fRimValue = 0.5f;
+		m_tRimParam.fRimValue = m_tRimParam.fOrigin_RimValue;
+		m_tRimParam.fRimAlpha = m_tRimParam.fOrigin_RimAlpha;
 		m_tRimParam.fRimTimer_Cur = 0.f;
 		m_tRimParam.bDecreRim = false;
 	}
@@ -147,8 +151,12 @@ CGameObject * CBattleAgent::Calc_LengthNearByMe(list<CGameObject*> _listGameObje
 
 HRESULT CBattleAgent::Ready_BattleAgent()
 {
+	m_tRimParam.fOrigin_RimValue = 5.f;
+	m_tRimParam.fOrigin_RimAlpha = 0.5f;
+
 	m_tRimParam.fRimChangeValue = 0.f;
-	m_tRimParam.fRimValue = 0.5f;
+	m_tRimParam.fRimValue = 5.f;
+	m_tRimParam.fRimAlpha = 0.5f;
 	m_tRimParam.fRimTimer_Cur = 0.f;
 	m_tRimParam.fRimTimer_Max = 1.f;
 	m_tRimParam.bDecreRim = false;

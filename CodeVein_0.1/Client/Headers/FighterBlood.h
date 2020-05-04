@@ -45,7 +45,6 @@ private:
 	vector<CSkillSlot*>		m_vecSlot;
 	CInventory_Icon*		m_pExitIcon = nullptr;
 	vector<Skill_ID>		m_vecData;
-	
 
 public:
 	static CFighterBlood*		Create(_Device pGraphic_Device);
