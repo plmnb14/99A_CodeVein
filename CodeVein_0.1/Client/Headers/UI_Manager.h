@@ -61,6 +61,7 @@
 #include "SkillIcon.h"
 #include "FighterBlood.h"
 #include "PrometheusBlood.h"
+#include "FighterReleaseUI.h"
 
 BEGIN(Client)
 

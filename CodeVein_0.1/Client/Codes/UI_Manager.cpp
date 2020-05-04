@@ -138,6 +138,8 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_PrometheusBlood", CPrometheusBlood::Create(pDevice))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_FighterReleaseUI", CFighterReleaseUI::Create(pDevice))))
+		return E_FAIL;
 	
 	//////////////// Chae
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BossMassageUI", CMassageUI::Create(pDevice))))
@@ -240,6 +242,10 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	// Ω∫≈≥ »πµÊ UI
 	m_pSkillAcquisitionUI = static_cast<CSkillAcquisitionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SkillAcquisitionUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pSkillAcquisitionUI, SCENE_STAGE, L"Layer_StageUI", nullptr);
+
+	//// ∆ƒ¿Ã≈Õ ø¨«˜ ∏±∏Æ¡Ó UI
+	//m_pFighterReleaseUI = static_cast<CFighterReleaseUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_FighterReleaseUI", nullptr));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFighterReleaseUI, SCENE_STAGE, L"Layer_StageUI", nullptr);
 	return NOERROR;
 }
 

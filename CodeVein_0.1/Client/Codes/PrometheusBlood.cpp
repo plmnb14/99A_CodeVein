@@ -33,10 +33,6 @@ HRESULT CPrometheusBlood::Ready_GameObject(void * pArg)
 
 	SetUp_Default();
 
-	Add_PrometheusBlood(Circulating_Pulse);
-	Add_PrometheusBlood(Severing_Abyss);
-	Add_PrometheusBlood(Phantom_Assault);
-	Add_PrometheusBlood(Shadow_Assault);
 
 	return NOERROR;
 }
@@ -174,6 +170,7 @@ void CPrometheusBlood::Add_PrometheusBlood(Skill_ID eSkill_ID)
 	pSlot->Set_ViewZ(m_fViewZ - 0.1f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(pSlot, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 	m_vecSlot.push_back(pSlot);
+	m_vecData.push_back(eSkill_ID);
 }
 
 CPrometheusBlood * CPrometheusBlood::Create(_Device pGraphic_Device)

@@ -16,6 +16,7 @@ public:
 
 public:
 	void Set_SkillID(Skill_ID eID) { m_eSkillID = eID; }
+	void Set_Select(_bool bIsSelect) { m_bIsSelect = bIsSelect; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();

@@ -170,6 +170,20 @@ void CReleaseQuestionUI::Click_Option()
 				m_bIsActive = false;
 				CUI_Manager::Get_Instance()->Get_Skill_AcquisitionUI()->Set_Skill(m_eReleaseSkill);
 				CUI_Manager::Get_Instance()->Get_Skill_AcquisitionUI()->Set_Active(true);
+
+				switch (m_eReleaseBloodCode)
+				{
+				case BloodCode_Fighter:
+				{
+					CUI_Manager::Get_Instance()->Get_FigherBlood()->Add_FighterBlood(m_eReleaseSkill);
+				}
+					break;
+				case BloodCode_Prometheus:
+				{
+					CUI_Manager::Get_Instance()->Get_PrometheusBlood()->Add_PrometheusBlood(m_eReleaseSkill);
+				}
+					break;
+				}
 				m_bIsRelease = true;
 			}
 			else if ((1 == m_vecOption[i]->Get_UI_Index()) && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))

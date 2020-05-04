@@ -98,6 +98,10 @@ _int CBloodCodeMenuUI::Update_GameObject(_double TimeDelta)
 	TARGET_TO_TRANS(CUI_Manager::Get_Instance()->Get_Skill_ReleaseUI())->Set_Pos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookZ) * -0.02f);
 	TARGET_TO_TRANS(CUI_Manager::Get_Instance()->Get_Skill_ReleaseUI())->Set_Angle(m_pTransformCom->Get_Angle());
 	TARGET_TO_TRANS(CUI_Manager::Get_Instance()->Get_Skill_ReleaseUI())->Set_Scale(_v3(3.555555f, 2.f, 1.f));
+
+	TARGET_TO_TRANS(CUI_Manager::Get_Instance()->Get_Skill_AcquisitionUI())->Set_Pos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookZ) * -0.02f);
+	TARGET_TO_TRANS(CUI_Manager::Get_Instance()->Get_Skill_AcquisitionUI())->Set_Angle(m_pTransformCom->Get_Angle());
+	TARGET_TO_TRANS(CUI_Manager::Get_Instance()->Get_Skill_AcquisitionUI())->Set_Scale(_v3(3.555555f, 2.f, 1.f));
 	
 	return NO_EVENT;
 }

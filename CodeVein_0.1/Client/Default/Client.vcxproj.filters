@@ -439,6 +439,9 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven\04. DarkKnight">
       <UniqueIdentifier>{abfbff60-1a6f-4fd9-be33-9e90118117cf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseUI">
+      <UniqueIdentifier>{5baab775-370b-4520-8364-36515fc23027}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -825,9 +828,6 @@
     <ClInclude Include="..\Headers\BloodCodeSlot.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\00. BloodCodeSelectUI\BloodCodeSlot</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\SkillReleaseUI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\BloodSkillSlot.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\BloodSkillSlot</Filter>
     </ClInclude>
@@ -896,6 +896,12 @@
     </ClInclude>
     <ClInclude Include="..\Headers\PrometheusBlood.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven\01. Prometheus</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\SkillReleaseUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\FighterReleaseUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1271,9 +1277,6 @@
     <ClCompile Include="..\Codes\BloodCodeSlot.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\00. BloodCodeSelectUI\BloodCodeSlot</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\SkillReleaseUI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\BloodSkillSlot.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\BloodSkillSlot</Filter>
     </ClCompile>
@@ -1342,6 +1345,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\PrometheusBlood.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven\01. Prometheus</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SkillReleaseUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\FighterReleaseUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

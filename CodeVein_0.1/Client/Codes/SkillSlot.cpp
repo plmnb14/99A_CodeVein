@@ -35,6 +35,8 @@ _int CSkillSlot::Update_GameObject(_double TimeDelta)
 
 	SetUp_SkillIndex();
 
+	m_bIsCollMouse = Pt_InRect();
+
 	return NO_EVENT;
 }
 
@@ -70,42 +72,93 @@ HRESULT CSkillSlot::Render_GameObject()
 
 	if (m_bIsSelect)
 	{
-		LOOP(4)
+		if (m_bIsCollMouse)
 		{
-			if (0 == i)
-				iIndex = 0;
-			else if (1 == i)
-				iIndex = m_iIndex;
-			else if (2 == i)
-				iIndex = 1;
-			else if (3 == i)
-				iIndex = 2;
+			LOOP(4)
+			{
+				if (0 == i)
+					iIndex = 0;
+				else if (1 == i)
+					iIndex = m_iIndex;
+				else if (2 == i)
+					iIndex = 1;
+				else if (3 == i)
+					iIndex = 2;
 
-			if (FAILED(SetUp_ConstantTable(iIndex)))
-				return E_FAIL;
+				if (FAILED(SetUp_ConstantTable(iIndex)))
+					return E_FAIL;
 
-			m_pShaderCom->Begin_Shader();
-			m_pShaderCom->Begin_Pass(1);
-			m_pBufferCom->Render_VIBuffer();
-			m_pShaderCom->End_Pass();
-			m_pShaderCom->End_Shader();
+				m_pShaderCom->Begin_Shader();
+				m_pShaderCom->Begin_Pass(1);
+				m_pBufferCom->Render_VIBuffer();
+				m_pShaderCom->End_Pass();
+				m_pShaderCom->End_Shader();
+			}
+		}
+		else
+		{
+			LOOP(3)
+			{
+				if (0 == i)
+					iIndex = 0;
+				else if (1 == i)
+					iIndex = m_iIndex;
+				else if (2 == i)
+					iIndex = 1;
+
+				if (FAILED(SetUp_ConstantTable(iIndex)))
+					return E_FAIL;
+
+				m_pShaderCom->Begin_Shader();
+				m_pShaderCom->Begin_Pass(1);
+				m_pBufferCom->Render_VIBuffer();
+				m_pShaderCom->End_Pass();
+				m_pShaderCom->End_Shader();
+			}
 		}
 	}
 	else
 	{
-		LOOP(2)
+		if (m_bIsCollMouse)
 		{
-			(0 == i) ? (iIndex = 0) : (iIndex = m_iIndex);
-			if (FAILED(SetUp_ConstantTable(iIndex)))
-				return E_FAIL;
+			LOOP(3)
+			{
+				if (0 == i)
+					iIndex = 0;
+				else if (1 == i)
+					iIndex = m_iIndex;
+				else if (2 == i)
+					iIndex = 2;
 
-			m_pShaderCom->Begin_Shader();
-			m_pShaderCom->Begin_Pass(1);
-			m_pBufferCom->Render_VIBuffer();
-			m_pShaderCom->End_Pass();
-			m_pShaderCom->End_Shader();
+				if (FAILED(SetUp_ConstantTable(iIndex)))
+					return E_FAIL;
+
+				m_pShaderCom->Begin_Shader();
+				m_pShaderCom->Begin_Pass(1);
+				m_pBufferCom->Render_VIBuffer();
+				m_pShaderCom->End_Pass();
+				m_pShaderCom->End_Shader();
+			}
+		}
+		else
+		{
+			LOOP(2)
+			{
+				(0 == i) ? (iIndex = 0) : (iIndex = m_iIndex);
+				if (FAILED(SetUp_ConstantTable(iIndex)))
+					return E_FAIL;
+
+				m_pShaderCom->Begin_Shader();
+				m_pShaderCom->Begin_Pass(1);
+				m_pBufferCom->Render_VIBuffer();
+				m_pShaderCom->End_Pass();
+				m_pShaderCom->End_Shader();
+			}
+
 		}
 	}
+	
+		
 	
 
 	return NOERROR;

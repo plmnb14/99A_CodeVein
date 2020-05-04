@@ -33,8 +33,7 @@ HRESULT CFighterBlood::Ready_GameObject(void * pArg)
 
 	SetUp_Default();
 
-	Add_FighterBlood(Dragon_Lunge);
-	Add_FighterBlood(Vanishing_Hollow);
+
 
 	return NOERROR;
 }
@@ -156,11 +155,30 @@ void CFighterBlood::Click_Icon()
 {
 	if (!m_bIsActive)
 		return;
+	// 나가기 버튼
 	if (m_pExitIcon->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
 		m_bIsActive = false;
 		CUI_Manager::Get_Instance()->Get_Total_Inven()->Set_Active(true);
 	}
+
+	// 스킬슬롯
+	
+	for (auto& iter : m_vecSlot)
+	{
+		if (iter->Pt_InRect()&& g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+		{
+			Reset_SlotState();
+			iter->Set_Select(true);
+		}
+	}
+	
+}
+
+void CFighterBlood::Reset_SlotState()
+{
+	for (auto& iter : m_vecSlot)
+		iter->Set_Select(false);
 }
 
 void CFighterBlood::Add_FighterBlood(Skill_ID eSkill_ID)

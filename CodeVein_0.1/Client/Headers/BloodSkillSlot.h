@@ -14,6 +14,7 @@ private:
 
 public:
 	Skill_ID Get_Skill_ID() { return m_eSkillID; }
+	_bool Get_Release() { return m_bIsRelease; }
 
 public:
 	void Set_SkillID(Skill_ID eSkillID) { m_eSkillID = eSkillID; }

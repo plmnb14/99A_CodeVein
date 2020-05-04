@@ -25,7 +25,6 @@ HRESULT CSkillIcon::Ready_GameObject(void * pArg)
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
-	m_eSkillID = Dragon_Lunge;
 	return NOERROR;
 }
 

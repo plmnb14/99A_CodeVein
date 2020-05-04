@@ -70,7 +70,7 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
 	}
 		break;
-	case BloodCode_Assassin:
+	/*case BloodCode_Assassin:
 	{
 		m_iIndex = 3;
 		m_vecSkillSlot[0]->Set_SkillID(SkillID_End);
@@ -79,7 +79,7 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
 		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
 	}
-		break;
+		break;*/
 	case BloodCode_DarkKnight:
 	{
 		m_iIndex = 4;
@@ -100,7 +100,7 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
 	}
 		break;
-	case BloodCode_Berserker:
+	/*case BloodCode_Berserker:
 	{
 		m_iIndex = 6;
 		m_vecSkillSlot[0]->Set_SkillID(SkillID_End);
@@ -109,8 +109,8 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
 		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
 	}
-		break;
-	case BloodCode_Hephaestus:
+		break;*/
+	/*case BloodCode_Hephaestus:
 	{
 		m_iIndex = 7;
 		m_vecSkillSlot[0]->Set_SkillID(SkillID_End);
@@ -119,7 +119,7 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
 		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
 	}
-		break;
+		break;*/
 	case BloodCode_Fighter:
 	{
 		m_iIndex = 8;
@@ -128,9 +128,11 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 		m_vecSkillSlot[2]->Set_SkillID(Swallow_Cutter);
 		m_vecSkillSlot[3]->Set_SkillID(Vanishing_Hollow);
 		m_vecSkillSlot[4]->Set_SkillID(Legion_Punisher);
+
+		m_vecData = CUI_Manager::Get_Instance()->Get_FigherBlood()->Get_FighterBloodData();
 	}
 		break;
-	case BloodCode_Heimdal:
+	/*case BloodCode_Heimdal:
 	{
 		m_iIndex = 9;
 		m_vecSkillSlot[0]->Set_SkillID(SkillID_End);
@@ -139,8 +141,8 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
 		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
 	}
-		break;
-	case BloodCode_Hermes:
+		break;*/
+	/*case BloodCode_Hermes:
 	{
 		m_iIndex = 10;
 		m_vecSkillSlot[0]->Set_SkillID(SkillID_End);
@@ -149,8 +151,8 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
 		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
 	}
-		break;
-	case BloodCode_Atlas:
+		break;*/
+	/*case BloodCode_Atlas:
 	{
 		m_iIndex = 11;
 		m_vecSkillSlot[0]->Set_SkillID(SkillID_End);
@@ -159,7 +161,7 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
 		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
 	}		
-		break;
+		break;*/
 	case BloodCode_Prometheus:
 	{
 		m_iIndex = 12;
@@ -168,6 +170,8 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 		m_vecSkillSlot[2]->Set_SkillID(Tormenting_Blast);
 		m_vecSkillSlot[3]->Set_SkillID(Severing_Abyss);
 		m_vecSkillSlot[4]->Set_SkillID(Phantom_Assault);
+
+		m_vecData = CUI_Manager::Get_Instance()->Get_PrometheusBlood()->Get_PrometheusBloodData();
 	}	
 		break;
 	}
@@ -176,10 +180,17 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 	memcpy(vWorldPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
 	Compute_ViewZ(&vWorldPos);
 
-
 	Click_SkillSlot();
-
+	Compare_Data();
 	
+	if (!m_bIsActive)
+	{
+		for (auto& iter : m_vecSkillSlot)
+		{
+			iter->Set_Release(false);
+		}
+		m_vecData.clear();
+	}
 	return NO_EVENT;
 }
 
@@ -311,10 +322,10 @@ void CSkillReleaseUI::Click_SkillSlot()
 		{
 
 			iter->Set_Select(true);
-			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB) && false == iter->Get_Release())
 			{
 				m_pQuestionUI->Set_Active(true);
-				m_pQuestionUI->Set_Skill(iter->Get_Skill_ID());
+				m_pQuestionUI->Set_BloodInfo(m_eID, iter->Get_Skill_ID());
 			}
 
 		}
@@ -330,6 +341,20 @@ void CSkillReleaseUI::Reset_Select()
 {
 	for (auto& iter : m_vecSkillSlot)
 		iter->Set_Select(false);
+}
+
+void CSkillReleaseUI::Compare_Data()
+{
+	if (!m_bIsActive)
+		return;
+	for (auto& iter : m_vecSkillSlot)
+	{
+		for (auto& iter2 : m_vecData)
+		{
+			if (iter->Get_Skill_ID() == iter2)
+				iter->Set_Release(true);
+		}
+	}
 }
 
 CSkillReleaseUI * CSkillReleaseUI::Create(_Device pGraphic_Device)

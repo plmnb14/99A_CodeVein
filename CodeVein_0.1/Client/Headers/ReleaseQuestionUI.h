@@ -17,9 +17,10 @@ public:
 
 public:
 	void Set_Release(_bool bIsRelease) { m_bIsRelease = bIsRelease; }
-
-public:
-	void Set_Skill(Skill_ID eSkillID) { m_eReleaseSkill = eSkillID; }
+	void Set_BloodInfo(BloodCode_ID eBloodCodeID, Skill_ID eSkillID) {
+		m_eReleaseBloodCode = eBloodCodeID;
+		m_eReleaseSkill = eSkillID;
+	}
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -45,6 +46,7 @@ private:
 	_float					m_fAlpha = 0.f;
 	vector<CReleaseOption*>	m_vecOption;
 	_float					m_fCross = 100.f;
+	BloodCode_ID			m_eReleaseBloodCode = BloodCode_End;
 	Skill_ID				m_eReleaseSkill = SkillID_End;
 	_bool					m_bIsRelease = false;
 

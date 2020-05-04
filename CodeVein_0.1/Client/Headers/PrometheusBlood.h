@@ -14,6 +14,9 @@ private:
 	virtual ~CPrometheusBlood() = default;
 
 public:
+	vector<Skill_ID> Get_PrometheusBloodData() { return m_vecData; }
+
+public:
 	virtual HRESULT			Ready_GameObject_Prototype();
 	virtual HRESULT			Ready_GameObject(void* pArg);
 	virtual _int			Update_GameObject(_double TimeDelta);
@@ -40,6 +43,7 @@ private:
 private:
 	vector<CSkillSlot*>		m_vecSlot;
 	CInventory_Icon*		m_pExitIcon = nullptr;
+	vector<Skill_ID>		m_vecData;
 
 public:
 	static CPrometheusBlood*		Create(_Device pGraphic_Device);

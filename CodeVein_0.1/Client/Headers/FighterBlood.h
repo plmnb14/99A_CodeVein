@@ -29,6 +29,7 @@ private:
 	void					SetUp_Default();
 	void					SetUp_SlotPos();
 	void					Click_Icon();
+	void					Reset_SlotState();
 
 public:
 	void					Add_FighterBlood(Skill_ID eSkill_ID);
@@ -44,6 +45,7 @@ private:
 	vector<CSkillSlot*>		m_vecSlot;
 	CInventory_Icon*		m_pExitIcon = nullptr;
 	vector<Skill_ID>		m_vecData;
+	
 
 public:
 	static CFighterBlood*		Create(_Device pGraphic_Device);
