@@ -38,6 +38,7 @@ Tex_FireBlast2|FireBlast2_%d.png|..\..\Client\Resources\Texture\Effect\FireBlast
 Tex_FireBlast_Color_1|FireBlast_Color_1_%d.png|..\..\Client\Resources\Texture\Effect\FireBlast\FireBlast_Color_1\|0|32
 Tex_FireBlast_Color_2|FireBlast_Color_2_%d.png|..\..\Client\Resources\Texture\Effect\FireBlast\FireBlast_Color_2\|0|32
 Tex_Flash|Flash_%d.tga|..\..\Client\Resources\Texture\Effect\Flash\|0|2
+Tex_FootPrint|FootPrint_%d.tga|..\..\Client\Resources\Texture\Effect\FootPrint\|0|2
 Tex_Gradient|Gradient_%d.tga|..\..\Client\Resources\Texture\Effect\Gradient\|0|7
 Tex_Ink|Ink_%d.tga|..\..\Client\Resources\Texture\Effect\Ink\|0|1
 Tex_Laser|Laser_%d.tga|..\..\Client\Resources\Texture\Effect\Laser\|0|1
@@ -52,9 +53,11 @@ Tex_LinePoint_Hor|LinePoint_Hor_%d.png|..\..\Client\Resources\Texture\Effect\Lin
 Tex_Mask|Mask_%d.tga|..\..\Client\Resources\Texture\Effect\Mask\|0|17
 Tex_Noise|Noise_%d.tga|..\..\Client\Resources\Texture\Effect\Noise\|0|25
 Tex_Normal|Normal_%d.tga|..\..\Client\Resources\Texture\Effect\Normal\|0|10
+Tex_Ortho_BlackCorner|Black_Corner_%d.png|..\..\Client\Resources\Texture\Effect\Ortho\Ortho_BlackCorner\|0|5
+Tex_Ortho_Blood|Ortho_Blood_%d.png|..\..\Client\Resources\Texture\Effect\Ortho\Ortho_Blood\|0|2
 Tex_Ortho_Snow|Ortho_Snow_%d.tga|..\..\Client\Resources\Texture\Effect\Ortho\Ortho_Snow\|0|2
 Tex_Crystals|Crystals_%d.png|..\..\Client\Resources\Texture\Effect\Particle\Crystals\|0|16
-Tex_Point|Point_%d.tga|..\..\Client\Resources\Texture\Effect\Particle\Point\|0|10
+Tex_Point|Point_%d.tga|..\..\Client\Resources\Texture\Effect\Particle\Point\|0|12
 Tex_Scratch|Scratch_%d.tga|..\..\Client\Resources\Texture\Effect\Scratch\|0|4
 Tex_ShockWave|ShockWave_%d.tga|..\..\Client\Resources\Texture\Effect\ShockWave\|0|4
 Tex_SlashSubUV|SlashSubUV_%d.png|..\..\Client\Resources\Texture\Effect\SlashSubUV\|0|4

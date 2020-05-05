@@ -468,8 +468,8 @@ void CRenderer::Mono_On(_bool bOn)
 {
 	m_bMono = bOn;
 
-	if (m_bMono)
-		m_fToneGradient = 1.f;
+	//if (m_bMono)
+	//	m_fToneGradient = 1.f;
 }
 
 void CRenderer::Fog_On(_bool bOn)
@@ -1265,7 +1265,9 @@ HRESULT CRenderer::Render_ToneMapping()
 
 	if(!m_bMono)
 		(m_fToneGradient <= 0.f) ? m_fToneGradient = 0.f : m_fToneGradient -= DELTA_60;
-	
+	else
+		(m_fToneGradient >= 0.5f) ? m_fToneGradient = 0.5f : m_fToneGradient += DELTA_60 * 6.f;
+
 	if (GetAsyncKeyState(VK_F1) & 0x8000)
 		m_iToneIdx = 0;
 	if (GetAsyncKeyState(VK_F2) & 0x8000)

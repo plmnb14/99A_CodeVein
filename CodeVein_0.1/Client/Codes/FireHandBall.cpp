@@ -75,11 +75,31 @@ _int CFireHandBall::Update_GameObject(_double TimeDelta)
 		m_pTransformCom->Set_Pos(m_pTarget_AIController->Get_V3Value(L"Bone_LeftHand"));
 
 		m_vDir = m_pTarget_AIController->Get_V3Value(L"FlameHandBallDir");
+
+		m_fEffectOffset += (_float)TimeDelta;
+		if (m_fEffectOffset > 0.01f)
+		{
+			m_fEffectOffset = 0.f;
+
+			g_pManagement->Create_Effect(L"FireBoy_FireHandBall_BodyFire_Small", m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_01", m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_02", m_pTransformCom->Get_Pos(), nullptr);
+		}
 	}
 	// ¼Õ¿¡¼­ ¶³¾îÁü
 	else
 	{
 		m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta * m_vDir);
+
+		m_fEffectOffset += (_float)TimeDelta;
+		if (m_fEffectOffset > 0.01f)
+		{
+			m_fEffectOffset = 0.f;
+
+			g_pManagement->Create_Effect(L"FireBoy_FireHandBall_BodyFire", m_pTransformCom->Get_Pos() + m_vDir * 1.6f, nullptr);
+			g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_01", m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_02", m_pTransformCom->Get_Pos(), nullptr);
+		}
 	}
 
 	m_dCurTime += TimeDelta;
@@ -87,6 +107,10 @@ _int CFireHandBall::Update_GameObject(_double TimeDelta)
 	// ½Ã°£ ÃÊ°ú
 	if (m_dCurTime > m_dLifeTime)
 	{
+		g_pManagement->Create_Effect(L"FireBoy_FireHandBall_Dead_FireExplosion", m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect(L"FireBoy_FireHandBall_Dead_Light", m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect(L"FireBoy_FireSphere_BreakParticle", m_pTransformCom->Get_Pos(), nullptr);
+		
 		m_bDead = true;
 		m_pFireSphere->Set_Dead();
 

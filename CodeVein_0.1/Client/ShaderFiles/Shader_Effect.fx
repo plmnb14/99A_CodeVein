@@ -594,6 +594,63 @@ PS_OUT PS_UV(PS_IN In)
 	Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
 	Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
 
+	if(g_bUseColorTex)
+	{
+		Out.vColor = pow(tex2D(ColorSampler, In.vTexUV), 2.2);
+		Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
+	}
+	else
+	{
+		Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
+		Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
+	}
+
+	if (g_bUseRGBA)
+	{
+		Out.vColor.xyz = g_vColor.xyz;
+		Out.vColor.a *= g_vColor.a;
+	}
+	else
+	{
+		// ==============================================================================================
+		// [Memo]  g_vColor.x = Hue / g_vColor.y = Contrast / g_vColor.z = Brightness / g_vColor.w = Saturation
+		// ==============================================================================================
+		float3 intensity;
+		float half_angle = 0.5 * radians(g_vColor.x); // Hue is radians of 0 tp 360 degree
+		float4 rot_quat = float4((root3 * sin(half_angle)), cos(half_angle));
+		float3x3 rot_Matrix = QuaternionToMatrix(rot_quat);
+		Out.vColor.rgb = mul(rot_Matrix, Out.vColor.rgb);
+		Out.vColor.rgb = (Out.vColor.rgb - 0.5) *(g_vColor.y + 1.0) + 0.5;
+		Out.vColor.rgb = Out.vColor.rgb + g_vColor.z;
+		intensity = float(dot(Out.vColor.rgb, lumCoeff));
+		Out.vColor.rgb = lerp(intensity, Out.vColor.rgb, g_vColor.w);
+		// End ==========================================================================================
+	}
+
+	if (g_bUseMaskTex)
+	{
+		//float fGradientUV = In.vTexUV + (g_fAlpha);
+		vector vGradientMask = tex2D(GradientSampler, In.vTexUV);
+		Out.vColor.a *= vGradientMask.x;
+	}
+
+	if (g_bDissolve)
+	{
+		float4 fxColor = tex2D(DiffuseSampler, In.vTexUV);
+
+		if (Out.vColor.a == 0.f)
+			clip(-1);
+
+		if (fxColor.r >= g_fDissolve)
+			Out.vColor.a = 1;
+		else
+			Out.vColor.a = 0;
+	}
+
+	if (g_bReverseColor)
+		Out.vColor.rgb = 1 - Out.vColor.rgb;
+
+	Out.vColor.a = Out.vColor.a * g_fAlpha;
 	return Out;
 }
 

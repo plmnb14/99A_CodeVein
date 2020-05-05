@@ -74,7 +74,7 @@ HRESULT CFireBoy::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Fire_Flame());
+	Start_Sel->Add_Child(Start_Game());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -600,6 +600,10 @@ CBT_Composite_Node * CFireBoy::Fire_Flame()
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 1.5f, 0.633, 0);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.484, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", -1.5f, 0.633, 0);
+
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("왼손에 불", L"FireBoy_FireHandBall_Before_HandFire", L"Bone_LeftHand", 0.4, 1, 0, 0);
+
+	Root_Parallel->Add_Service(Effect0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani19);

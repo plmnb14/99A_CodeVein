@@ -47,11 +47,6 @@ HRESULT CFireFlame::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
 
-	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"FireBoy_FireBullet_Mid", nullptr));
-	m_pBulletBody->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
-	m_pBulletBody->Reset_Init();
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
-
 	return NOERROR;
 }
 
@@ -87,19 +82,24 @@ _int CFireFlame::Update_GameObject(_double TimeDelta)
 	if (m_dCurTime > m_dLifeTime)
 	{
 		m_bDead = true;
-		m_pBulletBody->Set_Dead();
+		
+		g_pManagement->Create_Effect(L"FireBoy_FireFlame_DeadFire", m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect(L"FireBoy_FireGround_BoomParticle_01", m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect(L"FireBoy_FireGround_BoomParticle_02", m_pTransformCom->Get_Pos(), nullptr);
 	}
 	// ÁøÇàÁß
 	else
 	{
 		m_fEffectOffset += (_float)TimeDelta;
-		if (m_fEffectOffset > 0.08f)
+		if (m_fEffectOffset > 0.01f)
 		{
 			m_fEffectOffset = 0.f;
 
-			g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_01", m_pTransformCom->Get_Pos(), nullptr);
-			g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_02", m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"FireBoy_FireFlame", m_pTransformCom->Get_Pos(), nullptr);
 		}
+
+		g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_01", 0.1f, m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_02", 0.1f, m_pTransformCom->Get_Pos(), nullptr);
 	}
 
 

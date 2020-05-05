@@ -44,6 +44,7 @@ public:
 	void Set_Loop(_bool bLoop) { m_bLoop = bLoop; }
 	void Set_ZWrite() { m_bZwrite = true; }
 	void Set_EffectLayer(_int iLayerIdx) { m_iLayer = iLayerIdx; } // 클수록 위에 그려짐
+	void Set_ParentMatrix(_mat matParent) { m_bUseParentMat = true;  m_matParent = matParent; }
 
 	void Reset_Init();
 
@@ -67,6 +68,9 @@ protected:
 	CGameObject*			m_pParentObject = nullptr;
 	_mat*					m_pTargetMatrix = nullptr;
 	CTransform*				m_pCurveTargetTrans = nullptr;
+
+	_mat					m_matParent; // For Angle Rot
+
 	_float					m_fFrame = 0.f;
 	_float					m_fAlpha = 1.f;
 	_float					m_fLifeTime = 0.f;
@@ -104,6 +108,7 @@ protected:
 	_bool					m_bInstanceTarget = false;
 	_bool					m_bZwrite = false;
 	_bool					m_bCurve = false;
+	_bool					m_bUseParentMat = false;
 
 	_int					m_iPass = 0;
 	_int					m_iLayer = 0;

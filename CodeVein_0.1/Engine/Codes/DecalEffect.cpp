@@ -610,9 +610,6 @@ HRESULT CDecalEffect::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Effect", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
-	//// for.Com_VIBuffer
-	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Rect", L"Com_VIBuffer", (CComponent**)&m_pBufferCom)))
-	//	return E_FAIL;
 	// for.Com_VIBuffer
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Cube", L"Com_VIBuffer", (CComponent**)&m_pBufferCom)))
 		return E_FAIL;

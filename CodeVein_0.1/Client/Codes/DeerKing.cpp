@@ -76,7 +76,7 @@ HRESULT CDeerKing::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Four_Combo_Punch());
+	Start_Sel->Add_Child(Blade_Attack());
 	
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -158,8 +158,8 @@ _int CDeerKing::Late_Update_GameObject(_double TimeDelta)
 	{
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 			return E_FAIL;
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-			return E_FAIL;
+		//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+		//	return E_FAIL;
 	}
 	else
 	{
@@ -1062,7 +1062,7 @@ CBT_Composite_Node * CDeerKing::Blade_Attack()
 	SubSeq->Add_Child(Wait2);
 	SubSeq->Add_Child(Move2);
 
-	CBT_CreateBuff* Col0 = Node_CreateBuff("얼음검 소환", L"Monster_DeerKingIceSword", 0.684, 1.366, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBuff* Col0 = Node_CreateBuff("얼음검 소환", L"Monster_DeerKingIceSword", 0.684 + 0.2, 1.366 - 0.2, 1, 0, 0, CBT_Service_Node::Finite);
 	Root_Parallel->Add_Service(Col0);
 
 	
@@ -1085,13 +1085,15 @@ CBT_Composite_Node * CDeerKing::RightHand_Attack(_float fWeight)
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.35, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", -1.f, 0.117, 0);
 
-	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("잔눈", L"DeerKing_Snow_Up_Particle_0", L"Bone_RightHand", 0.4, 60, 0.01, 0);
-	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_Mid_0", L"Bone_RightHand", 0.4, 60, 0.01, 0);
-	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_Mid_1", L"Bone_RightHand", 0.4, 60, 0.01, 0);
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("잔눈", L"DeerKing_Snow_Up_Particle_0", L"Bone_RightHand", 0.4, 40, 0.01, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_Mid_0", L"Bone_RightHand", 0.4, 40, 0.01, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_Mid_1", L"Bone_RightHand", 0.4, 40, 0.01, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("왜곡", L"DeerKing_Distortion_Circle", L"Bone_RightHand", 0.9, 1, 0, 0);
 
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
 	Root_Parallel->Add_Service(Effect2);
+	Root_Parallel->Add_Service(Effect3);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani41);

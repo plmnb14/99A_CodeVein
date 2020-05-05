@@ -100,7 +100,7 @@ HRESULT COrthoEffect::Ready_GameObject(void* pArg)
 
 HRESULT COrthoEffect::LateInit_GameObject()
 {
-	//Setup_Info();
+	Setup_Info();
 	Change_EffectTexture(m_pInfo->szName);
 	Change_GradientTexture(m_pInfo->szGradientName);
 	Change_ColorTexture(m_pInfo->szColorName);
@@ -127,19 +127,19 @@ _int COrthoEffect::Update_GameObject(_double TimeDelta)
 	m_fUV_Value_X += _float(TimeDelta) * m_fUV_Speed_X;
 	m_fUV_Value_Y += _float(TimeDelta) * m_fUV_Speed_Y;
 
-	Setup_Ortho();
+	Check_Frame(TimeDelta);
+	Check_LifeTime(TimeDelta);
+	Check_Move(TimeDelta);
+	Check_Alpha(TimeDelta);
+	Check_Color(TimeDelta);
 
-	//Check_Frame(TimeDelta);
-	//Check_LifeTime(TimeDelta);
-	//Check_Move(TimeDelta);
-	//Check_Alpha(TimeDelta);
-	//Check_Color(TimeDelta);
+	Setup_Ortho();
 
 	// 어쩔수 없이 Update에서 호출
 	if (m_bIsDead || m_fCreateDelay > 0.f)
 		return S_OK;
 
-	RENDERID eGroup = RENDERID::RENDER_EFFECT;
+	RENDERID eGroup = RENDERID::RENDER_UI;
 
 	if (FAILED(m_pRendererCom->Add_RenderList(eGroup, this)))
 		return E_FAIL;
@@ -170,7 +170,26 @@ _int COrthoEffect::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT COrthoEffect::Render_GameObject()
 {
-	return NOERROR;
+	if (nullptr == m_pShaderCom ||
+		nullptr == m_pBufferCom)
+		return E_FAIL;
+
+	CManagement::Get_Instance()->Set_Transform(D3DTS_WORLD, m_matWorld);
+	CManagement::Get_Instance()->Set_Transform(D3DTS_VIEW, m_matView);
+	CManagement::Get_Instance()->Set_Transform(D3DTS_PROJECTION, m_matProj);
+
+	m_pShaderCom->Begin_Shader();
+	m_pShaderCom->Begin_Pass(m_iPass);
+
+	// Set Texture
+	if (FAILED(SetUp_ConstantTable(m_pShaderCom)))
+		return E_FAIL;
+
+	m_pShaderCom->Commit_Changes();
+
+	m_pBufferCom->Render_VIBuffer();
+	m_pShaderCom->End_Pass();
+	m_pShaderCom->End_Shader();
 }
 
 HRESULT COrthoEffect::Render_GameObject_SetShader(CShader* pShader)
@@ -623,9 +642,9 @@ HRESULT COrthoEffect::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Colors", L"Com_ColorTexture", (CComponent**)&m_pColorTextureCom)))
 		return E_FAIL;
 
-	//// For.Com_Shader
-	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Effect", L"Com_Shader", (CComponent**)&m_pShaderCom)))
-	//	return E_FAIL;
+	// For.Com_Shader
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Effect", L"Com_Shader", (CComponent**)&m_pShaderCom)))
+		return E_FAIL;
 
 	// for.Com_VIBuffer
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Rect", L"Com_VIBuffer", (CComponent**)&m_pBufferCom)))
@@ -663,7 +682,37 @@ HRESULT COrthoEffect::SetUp_ConstantTable(CShader* pShader)
 	if (FAILED(pShader->Set_Value("g_fUV_Value_Y", &m_fUV_Value_Y, sizeof(_float))))
 		return E_FAIL;
 
+	if (FAILED(pShader->Set_Value("g_fDistortion", &m_pInfo->fDistortionPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_vColor", &m_vColor, sizeof(_v4))))
+		return E_FAIL;
+
+	if (FAILED(pShader->Set_Bool("g_bUseColorTex", m_pInfo->bUseColorTex)))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Bool("g_bReverseColor", m_pInfo->bRevColor)))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Bool("g_bUseRGBA", m_pInfo->bUseRGBA)))
+		return E_FAIL;
+
+	if (FAILED(pShader->Set_Bool("g_bDissolve", m_pInfo->bDissolve)))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_fDissolve", &m_fDissolve, sizeof(_float))))
+		return E_FAIL;
+
+	_float fMaskIndex = 0.f;
+	if (FAILED(pShader->Set_Bool("g_bUseMaskTex", (m_pInfo->fMaskIndex != -1.f))))
+		return E_FAIL;
+
+	if ((m_pInfo->fMaskIndex != -1.f))
+		fMaskIndex = m_pInfo->fMaskIndex;
+
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", pShader, _uint(m_fFrame))))
+		return E_FAIL;
+	if (FAILED(m_pGradientTextureCom->SetUp_OnShader("g_GradientTexture", pShader, _uint(fMaskIndex))))
+		return E_FAIL;
+	if (FAILED(m_pColorTextureCom->SetUp_OnShader("g_ColorTexture", pShader, _uint(m_pInfo->fColorIndex))))
 		return E_FAIL;
 
 	Safe_Release(pManagement);
@@ -752,7 +801,7 @@ void COrthoEffect::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
-	//Safe_Release(m_pShaderCom);
+	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pColorTextureCom);
 	Safe_Release(m_pGradientTextureCom);

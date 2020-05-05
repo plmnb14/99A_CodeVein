@@ -503,6 +503,20 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireHandBall", true)))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireHandBall_Before_HandFire")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireHandBall_Dead_Light")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireHandBall_BodyFire")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireHandBall_BodyFire_Small")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireHandBall_Dead_FireExplosion")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireFlame")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireFlame_DeadFire")))
+		return E_FAIL;
 #pragma endregion
 
 #pragma region DeerKing
@@ -579,6 +593,8 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceBlock_0", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_Tornade_Mesh_0", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSword", true)))
 		return E_FAIL;
 #pragma endregion
 
@@ -1041,6 +1057,35 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Halberd_ShockWave")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Halberd_RedLightning_Mesh", true)))
+		return E_FAIL;
+
+	if (FAILED(Add_EffectPrototype(L"DrainWeapon_BlackSmoke_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DrainWeapon_BlackSmoke_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DrainWeapon_BlackSmoke_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DrainWeapon_BlackSmoke_3")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DrainWeapon_Counter_RedLight")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DrainWeapon_Counter_ShockWave_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DrainWeapon_Counter_ShockWave_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DrainWeapon_Counter_ShockWave_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DrainWeapon_RedLine_Explosion_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DrainWeapon_WhiteParticle_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DrainWeapon_WhiteParticle_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DrainWeapon_WhiteParticle_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DrainWeapon_WhiteParticle_3")))
+		return E_FAIL;
 #pragma endregion
 
 	if (FAILED(g_pManagement->Add_Prototype(L"Blood_Decal_0", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Blood_Decal_0.dat")))))
@@ -1061,6 +1106,16 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(g_pManagement->Add_Prototype(L"Snow_Ortho_0", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Snow_Ortho_0.dat")))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"Snow_Ortho_1", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Snow_Ortho_1.dat")))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_BlackCorner_0", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_BlackCorner_0.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_BlackCorner_1", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_BlackCorner_1.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_BlackCorner_2", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_BlackCorner_2.dat")))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Blood_0", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_Blood_0.dat")))))
 		return E_FAIL;
 
 	return S_OK;
@@ -1227,10 +1282,10 @@ _uint CLoading::Loading_Title()
 	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager_Essential()))
 		return E_FAIL;
 
-	// 플레이어 스킬, 보스 이펙트 포함
-	cout << "Particle Etc 불러오는 중 . . ." << endl;
-	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
-		return E_FAIL;
+	//// 플레이어 스킬, 보스 이펙트 포함
+	//cout << "Particle Etc 불러오는 중 . . ." << endl;
+	//if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
+	//	return E_FAIL;
 
 	// UI 원형 생성
 	//============================================================================================================
