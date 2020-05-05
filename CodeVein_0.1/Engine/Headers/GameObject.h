@@ -22,7 +22,7 @@ public:
 	virtual HRESULT LateInit_GameObject();
 	virtual HRESULT Render_GameObject();
 	virtual HRESULT Render_GameObject_SetShader(CShader* pShader);
-	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass);
+	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass , _bool _bIsForMotionBlur = false);
 
 public:
 	virtual _ulong		Get_LayerIdx() { return m_dwLayerIdx; }

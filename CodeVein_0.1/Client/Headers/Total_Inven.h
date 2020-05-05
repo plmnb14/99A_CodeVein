@@ -12,6 +12,7 @@ class CBloodCode_Icon;
 class CInfo_Slot;
 class CNumberUI;
 class CQuickSlot;
+class CSkillIcon;
 class CTotal_Inven final : public CUI
 {
 private:
@@ -21,6 +22,7 @@ private:
 
 public:
 	_bool Get_Detail() { return m_bIsDetail; }
+	BloodCode_ID Get_PlayerBloodCode() { return m_ePlayerBloodCode; }
 
 public:
 	void Set_Detail(_bool bIsDetail) { m_bIsDetail = bIsDetail; }
@@ -54,6 +56,7 @@ private:
 	CInfo_Slot*				m_pQuickSlotInfo[8];
 	CNumberUI*				m_pNumberUI[8];
 	BloodCode_ID			m_ePlayerBloodCode = BloodCode_End;
+	vector<CSkillIcon*>		m_vecSkillIcon;
 
 public:
 	static CTotal_Inven*	Create(_Device pGraphic_Device);

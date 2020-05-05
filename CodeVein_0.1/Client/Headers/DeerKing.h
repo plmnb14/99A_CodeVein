@@ -40,7 +40,7 @@ public:
 	virtual _int Update_GameObject(_double TimeDelta);
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
-	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass);
+	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur = false);
 
 private:	// 패턴들
 	// 1페이지, 방패들고 있음
@@ -70,11 +70,15 @@ private:	// 패턴들
 	// 3. 윈스턴처럼 점프 찍기
 	CBT_Composite_Node* Jump_Fist();
 	// 4. 왼손에 얼음칼 베기
-	CBT_Composite_Node* Blade_Attack();	// 보류
+	CBT_Composite_Node* Blade_Attack();	// 얼음검 이펙트 넣어야함
+	// 5. 오른팔 휘두르기
+	CBT_Composite_Node* RightHand_Attack(_float fWeight = 0.95f);	// 이펙트 타이밍 맞춰야함.
+
 
 	//////////// 응용
 	CBT_Composite_Node* Smart_Three_Attack();
 	CBT_Composite_Node* Smart_JumpAttack();
+	CBT_Composite_Node* Four_Combo_Punch();
 
 	CBT_Composite_Node* Chase_Timer(_double dRunTime, _float fSpeed);
 	CBT_Composite_Node* RightFoot_Attack__Rush_Or_WhirlWind();
@@ -93,6 +97,13 @@ private:	// 패턴들
 	CBT_Composite_Node* HP_Final();
 	CBT_Composite_Node* NearAttack_Dist5_Final();
 	CBT_Composite_Node* FarAttack_Fianl();
+
+	//// 시연회용
+	CBT_Composite_Node* Start_Show();
+	CBT_Composite_Node* Show_RotationAndNearAttack();
+	CBT_Composite_Node* Show_NearAttack();
+	CBT_Composite_Node* Show_FarAttack();
+
 
 private:
 	void Down();	// 방패 집어던짐
@@ -146,6 +157,7 @@ private:
 	// 블랙보드에서 뼈의 Pos 저장소
 	_v3					m_vRightHand = _v3(0.f, 0.f, 0.f);	//RightHand
 	_v3					m_vLeftHand = _v3(0.f, 0.f, 0.f);	//LeftHand
+	_v3					m_vLeftHandAttach = _v3(0.f, 0.f, 0.f);	//LeftHandAttach
 	_v3					m_vLeftJet = _v3(0.f, 0.f, 0.f);	//Spine3_LeftJet
 	_v3					m_vRightJet = _v3(0.f, 0.f, 0.f);	//Spine3_RightJet
 	_v3					m_vRightHandAttach = _v3(0.f, 0.f, 0.f); //RightHandAttach

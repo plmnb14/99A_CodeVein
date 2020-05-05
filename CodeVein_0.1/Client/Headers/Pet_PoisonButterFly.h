@@ -72,7 +72,7 @@ public:
 	virtual _int Update_GameObject(_double TimeDelta) override;
 	virtual _int Late_Update_GameObject(_double TimeDelta) override;
 	virtual HRESULT Render_GameObject() override;
-	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass) override;
+	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur =false) override;
 
 private:
 	void Update_Collider();

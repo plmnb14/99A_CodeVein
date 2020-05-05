@@ -36,20 +36,41 @@ _int CBloodCodeUI::Update_GameObject(_double TimeDelta)
 
 	switch (m_eType)
 	{
-	case BloodCode_Fighter:
+	case BloodCode_Artemis:
 		m_iIndex = 2;
 		break;
-	case BloodCode_Caster:
+	case BloodCode_Assassin:
 		m_iIndex = 3;
 		break;
+	case BloodCode_DarkKnight:
+		m_iIndex = 5;
+		break;
+	case BloodCode_Queen:
+		m_iIndex = 12;
+		break;
 	case BloodCode_Berserker:
+		m_iIndex = 10;
+		break;
+	case BloodCode_Hephaestus:
+		m_iIndex = 8;
+		break;
+	case BloodCode_Fighter:
+		m_iIndex = 6;
+		break;
+	case BloodCode_Heimdal:
+		m_iIndex = 7;
+		break;
+	case BloodCode_Hermes:
+		m_iIndex = 9;
+		break;
+	case BloodCode_Atlas:
 		m_iIndex = 4;
 		break;
 	case BloodCode_Prometheus:
-		m_iIndex = 5;
+		m_iIndex = 11;
 		break;
-	case BloodCode_Eos:
-		m_iIndex = 6;
+	case BloodCode_End:
+		m_iIndex = 13;
 		break;
 	}
 
@@ -142,7 +163,7 @@ HRESULT CBloodCodeUI::Render_GameObject()
 				else if (1 == i)
 					iIndex = m_iIndex;
 				else if (2 == i)
-					iIndex = 7;
+					iIndex = 14;
 				else if (3 == i)
 					iIndex = 1;
 
@@ -165,7 +186,7 @@ HRESULT CBloodCodeUI::Render_GameObject()
 				else if (1 == i)
 					iIndex = m_iIndex;
 				else if (2 == i)
-					iIndex = 7;
+					iIndex = 14;
 
 				if (FAILED(SetUp_ConstantTable(iIndex)))
 					return E_FAIL;
@@ -179,7 +200,6 @@ HRESULT CBloodCodeUI::Render_GameObject()
 		}
 	}
 	
-
 	return NOERROR;
 }
 

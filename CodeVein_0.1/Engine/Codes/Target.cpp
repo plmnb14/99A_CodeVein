@@ -20,7 +20,7 @@ HRESULT CTarget::Ready_Render_Target(_uint iSizeX, _uint iSizeY, D3DFORMAT eForm
 
 	D3DVIEWPORT9		ViewPort;
 	m_pGraphic_Device->GetViewport(&ViewPort);
-	m_pGraphic_Device->CreateDepthStencilSurface(ViewPort.Width, ViewPort.Height, D3DFMT_D24S8, D3DMULTISAMPLE_NONE, 0, TRUE, &m_pNewStencil, NULL);
+	m_pGraphic_Device->CreateDepthStencilSurface(iSizeX, iSizeY, D3DFMT_D24S8, D3DMULTISAMPLE_NONE, 0, TRUE, &m_pNewStencil, NULL);
 
 	return NOERROR;
 }
@@ -52,7 +52,7 @@ HRESULT CTarget::Origin_ViewPort()
 {
 	m_pGraphic_Device->GetViewport(&m_tViewPort_Old);
 
-	m_tViewPort_New = { 0, 0, m_tViewPort_Old.Width, m_tViewPort_Old.Height, m_tViewPort_Old.MinZ, m_tViewPort_Old.MaxZ };
+	m_tViewPort_New = { 0, 0, 3840, 2160, m_tViewPort_Old.MinZ, m_tViewPort_Old.MaxZ };
 
 	return S_OK;
 }

@@ -140,7 +140,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 
 	//// วๅลอ
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_Gun));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(5.f, 0.f, 5.f));
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(8.f, 0.f, 8.f));
 	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
 	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
