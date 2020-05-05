@@ -180,13 +180,11 @@ protected:
 	CCollider*			m_pCollider = nullptr;
 	CWeapon*			m_pWeapon = nullptr;
 
-	CGameObject*		m_pTarget = nullptr;
-
 	MONSTER_STATE_TYPE		m_eFirstCategory;
 	MONSTER_IDLE_TYPE		m_eSecondCategory_IDLE;
 	MONSTER_MOVE_TYPE		m_eSecondCategory_MOVE;
-	MONSTER_ATK_TYPE			m_eSecondCategory_ATK;
-	MONSTER_HIT_TYPE			m_eSecondCategory_HIT;
+	MONSTER_ATK_TYPE		m_eSecondCategory_ATK;
+	MONSTER_HIT_TYPE		m_eSecondCategory_HIT;
 	MONSTER_CC_TYPE			m_eSecondCategory_CC;
 	MONSTER_DEAD_TYPE		m_eSecondCategory_DEAD;
 

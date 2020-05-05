@@ -456,7 +456,6 @@ void CMonster::Function_ResetAfterAtk()
 	m_tObjParam.bSuperArmor = false;
 	m_tObjParam.bIsAttack = false;
 
-	//200430 추가, 함수 순서 유지할예정
 	m_bCanCoolDown = false;
 	m_bIsCoolDown = false;
 

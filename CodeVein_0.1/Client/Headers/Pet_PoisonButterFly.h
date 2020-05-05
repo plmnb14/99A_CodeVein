@@ -57,7 +57,7 @@ public:
 		Bone_Head,
 		Bone_Body,
 		Bone_Tail,
-		Bone_TailTongue,
+		Bone_Tail6,
 		Bone_End
 	};
 
@@ -78,7 +78,6 @@ private:
 	void Update_Collider();
 	void Render_Collider();
 
-	void Check_Hit();
 	void Check_Dist();
 	void Check_Action();
 	void Check_AniEvent();

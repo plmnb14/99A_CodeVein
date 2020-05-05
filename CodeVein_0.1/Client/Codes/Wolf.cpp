@@ -337,9 +337,7 @@ void CWolf::Check_Dist()
 				if (true == m_bInAtkRange)
 				{
 					if (true == m_tObjParam.bCanAttack)
-					{
 						m_eFirstCategory = MONSTER_STATE_TYPE::ATTACK;
-					}
 					else
 					{
 						m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;

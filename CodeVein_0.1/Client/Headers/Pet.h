@@ -135,14 +135,15 @@ public:
 
 	struct PET_STATUS
 	{
-		PET_GRADE_TYPE	eUseWhatGrade = PET_GRADE_TYPE::PET_GRADE_NORMAL;
-		WEAPON_STATE		eUseWhatWeapon = WEAPON_STATE::WEAPON_None;
-
 		PET_STATUS(PET_GRADE_TYPE _eGrade, WEAPON_STATE _eWeapon)
 		{
 			eUseWhatGrade = _eGrade;
 			eUseWhatWeapon = _eWeapon;
 		}
+
+		PET_GRADE_TYPE	eUseWhatGrade = PET_GRADE_TYPE::PET_GRADE_NORMAL;
+		WEAPON_STATE		eUseWhatWeapon = WEAPON_STATE::WEAPON_None;
+
 	};
 
 	struct PET_BULLET_STATUS
@@ -219,13 +220,12 @@ protected:
 	CWeapon*			m_pWeapon = nullptr;
 
 	CGameObject*		m_pPlayer = nullptr;
-	CGameObject*		m_pTarget = nullptr;
 
 	PET_STATE_TYPE		m_eFirstCategory;
 	PET_IDLE_TYPE		m_eSecondCategory_IDLE;
 	PET_MOVE_TYPE		m_eSecondCategory_MOVE;
-	PET_ATK_TYPE			m_eSecondCategory_ATK;
-	PET_HIT_TYPE			m_eSecondCategory_HIT;
+	PET_ATK_TYPE		m_eSecondCategory_ATK;
+	PET_HIT_TYPE		m_eSecondCategory_HIT;
 	PET_CC_TYPE			m_eSecondCategory_CC;
 	PET_DEAD_TYPE		m_eSecondCategory_DEAD;
 

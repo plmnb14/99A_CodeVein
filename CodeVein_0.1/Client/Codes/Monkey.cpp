@@ -47,7 +47,7 @@ _int CMonkey::Update_GameObject(_double TimeDelta)
 
 	m_pMonsterUI->Update_GameObject(TimeDelta);
 
-	Checkk_PosY();
+	Check_PosY();
 	Check_Hit();
 	Check_Dist();
 	Check_AniEvent();
@@ -228,7 +228,7 @@ void CMonkey::Render_Collider()
 	return;
 }
 
-void CMonkey::Checkk_PosY()
+void CMonkey::Check_PosY()
 {
 	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 

@@ -828,6 +828,15 @@
     <ClInclude Include="..\Headers\Monster.h">
       <Filter>02.GameObject\Stage\2%29 Monster</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Item.h">
+      <Filter>02.GameObject\Stage\7%29 Item</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Pet_UI.h">
+      <Filter>02.GameObject\Stage\10%29 Pet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\DropItem.h">
+      <Filter>02.GameObject\Stage\7%29 Item</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1246,6 +1255,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Pet_Bullet.cpp">
       <Filter>02.GameObject\Stage\10%29 Pet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Item.cpp">
+      <Filter>02.GameObject\Stage\7%29 Item</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Pet_UI.cpp">
+      <Filter>02.GameObject\Stage\10%29 Pet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DropItem.cpp">
+      <Filter>02.GameObject\Stage\7%29 Item</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

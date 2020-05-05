@@ -33,7 +33,9 @@
 
 #include "Player_Colleague.h"
 
-//#include "Item.h"
+//Test 실험 수정 심규명
+#include "DropItem.h"
+////////////////////////////////////
 #include "Haze.h"
 
 USING(Client)
@@ -1441,6 +1443,12 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Haze", CHaze::Create(m_pGraphicDev))))
 			return E_FAIL;
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_Haze", L"GameObject_Haze", 200);
+		
+		///////test로 만들어둔 드롭아이템입니다 수정 Test 실험 심규명
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DropItem", CDropItem::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_DropItem", L"GameObject_DropItem", 200);
+
 		//============================================================================================================
 
 
