@@ -129,7 +129,7 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 		m_vecSkillSlot[3]->Set_SkillID(Vanishing_Hollow);
 		m_vecSkillSlot[4]->Set_SkillID(Legion_Punisher);
 
-		m_vecData = CUI_Manager::Get_Instance()->Get_FigherBlood()->Get_FighterBloodData();
+		
 	}
 		break;
 	/*case BloodCode_Heimdal:
@@ -171,7 +171,7 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 		m_vecSkillSlot[3]->Set_SkillID(Severing_Abyss);
 		m_vecSkillSlot[4]->Set_SkillID(Phantom_Assault);
 
-		m_vecData = CUI_Manager::Get_Instance()->Get_PrometheusBlood()->Get_PrometheusBloodData();
+		
 	}	
 		break;
 	}
@@ -179,6 +179,8 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 	_v3 vWorldPos;
 	memcpy(vWorldPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
 	Compute_ViewZ(&vWorldPos);
+
+	m_vecData = CUI_Manager::Get_Instance()->Get_Skill_Inven()->Get_Skill_Data();
 
 	Click_SkillSlot();
 	Compare_Data();

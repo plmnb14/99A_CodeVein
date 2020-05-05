@@ -37,11 +37,10 @@ HRESULT CConditionUI::Ready_GameObject(void * pArg)
 	
 
 	m_pFontValue = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
-	m_pFontValue->Set_UI_Pos(m_fPosX + m_fSizeX * 0.5f, m_fPosY + 15.f);
-	m_pFontValue->Set_UI_Size(30.f, 30.f);
+	
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontValue, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 	m_pFontValue->Set_ViewZ(m_fViewZ - 0.1f);
-
+	
 	return NOERROR;
 }
 
@@ -79,6 +78,12 @@ _int CConditionUI::Update_GameObject(_double TimeDelta)
 	case CONDITION_BLOOD:
 	{
 		m_iIndex = 2;
+		m_fMaxValue = 100.f;
+
+		if (g_pInput_Device->Get_DIKeyState(DIK_Y))
+			m_fCurValue += (_float)TimeDelta * 20.f;
+		if (g_pInput_Device->Get_DIKeyState(DIK_U))
+			m_fCurValue -= (_float)TimeDelta * 20.f;
 	}		
 		break;
 	case CONDITION_ATT:
@@ -96,7 +101,8 @@ _int CConditionUI::Update_GameObject(_double TimeDelta)
 		break;
 	}
 
-	
+	m_pFontValue->Set_UI_Pos(m_fPosX + 120.f, m_fPosY);
+	m_pFontValue->Set_UI_Size(10.f, 10.f);
 	return NO_EVENT;
 }
 
@@ -131,12 +137,12 @@ HRESULT CConditionUI::Render_GameObject()
 	_uint iIndex = 0;
 	for (_uint i = 0; i < 2; ++i)
 	{
-		if (1 == i)
+		if (0 == i)
 		{
 			iPass = 3;
-			iIndex = 5;
+			iIndex = 5;	
 		}
-		else if (0 == i)
+		else if (1 == i)
 		{
 			iPass = 1;
 			iIndex = m_iIndex;
@@ -233,9 +239,9 @@ void CConditionUI::SetUp_State(_double TimeDelta)
 
 	if (m_pFontValue)
 	{
-		m_pFontValue->Set_UI_Pos(m_fPosX + m_fSizeX * 0.5f, m_fPosY + 15.f);
+		//m_pFontValue->Set_UI_Pos(m_fPosX + 50.f, m_fPosY);
 		m_pFontValue->Set_Active(m_bIsActive);
-		m_pFontValue->Set_Number(_ulong(m_fCurValue));
+		m_pFontValue->Update_NumberValue(m_fCurValue);
 	}
 		
 }

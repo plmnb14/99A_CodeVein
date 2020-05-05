@@ -855,9 +855,6 @@
     <ClInclude Include="..\Headers\ReleaseQuestionUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseMasage</Filter>
     </ClInclude>
-    <ClInclude Include="ReleaseOption.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseMasage</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\BloodCodeOwner.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\02. BloodCodeOwner</Filter>
     </ClInclude>
@@ -908,6 +905,9 @@
     </ClInclude>
     <ClInclude Include="..\Headers\FireFlame.h">
       <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ReleaseOption.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseMasage</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1322,9 +1322,6 @@
     <ClCompile Include="..\Codes\ReleaseQuestionUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseMasage</Filter>
     </ClCompile>
-    <ClCompile Include="ReleaseOption.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseMasage</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\BloodCodeOwner.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\02. BloodCodeOwner</Filter>
     </ClCompile>
@@ -1372,6 +1369,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\FireFlame.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ReleaseOption.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseMasage</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
