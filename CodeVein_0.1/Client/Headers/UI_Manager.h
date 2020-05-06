@@ -44,23 +44,28 @@
 #include "StatusUI.h"
 #include "ExpUI.h"
 #include "BloodCodeMenuUI.h"
+#include "BloodCodeOwner.h"
 #include "BloodCodeSlot.h"
 #include "BloodCodeSelectUI.h"
 #include "SkillReleaseUI.h"
 #include "BloodSkillSlot.h"
+#include "BloodSkillCursor.h"
+#include "BloodCode_Inven.h"
+#include "BloodCodeUI.h"
+#include "ReleaseQuestionUI.h"
+#include "ReleaseOption.h"
+#include "SkillAcquisitionUI.h"
+#include "OKMessageUI.h"
+#include "Skill_Inven.h"
+#include "SkillSlot.h"
+#include "SkillIcon.h"
+#include "FighterBlood.h"
+#include "PrometheusBlood.h"
+#include "FighterReleaseUI.h"
+#include "Pet_Inven.h"
 
 BEGIN(Client)
-class CStatusUI;
-class CMistletoeUI;
-class CStageSelectUI;
-class CExpendables_Inven;
-class CSkillUI;
-class CQuickSlot;
-class CMaterial_Inven;
-class CWeapon_Inven;
-class CArmor_Inven;
-class CTotal_Inven;
-class CInventory;
+
 class CUI_Manager final : public CBase
 {
 	DECLARE_SINGLETON(CUI_Manager)
@@ -90,6 +95,15 @@ public:
 	CInventory*		Get_Inventory() { return m_pInventory; }
 	void Set_BossUI_Active(_bool bIsActive);
 	CBloodCodeMenuUI* Get_BloodCode_Menu() { return m_pBloodCodeMenu; }
+	CBloodCode_Inven* Get_BloodCode_Inven() { return m_pBloodCode_Inven; }
+	CBloodCodeOwner* Get_BloodCode_Owner() { return m_pBloodCodeOwner; }
+	CBloodCodeSelectUI* Get_BloodCode_SelectUI() { return m_pBloodCodeSelectUI; }
+	CSkillReleaseUI* Get_Skill_ReleaseUI() { return m_pSkillReleaseUI; }
+	CSkillAcquisitionUI* Get_Skill_AcquisitionUI() { return m_pSkillAcquisitionUI; }
+	CSkill_Inven* Get_Skill_Inven() { return m_pSkillInven; }
+	CFighterBlood* Get_FigherBlood() { return m_pFigherBlood; }
+	CPrometheusBlood* Get_PrometheusBlood() { return m_pPrometheusBlood; }
+	CPet_Inven* Get_Pet_Inven() { return m_pPet_Inven; }
 
 private:
 	_uint m_uiCoundItem = 0;
@@ -106,6 +120,15 @@ private:
 	CTotal_Inven* m_pTotal_Inven = nullptr;
 	CInventory*		m_pInventory = nullptr;
 	CBloodCodeMenuUI* m_pBloodCodeMenu = nullptr;
+	CBloodCode_Inven* m_pBloodCode_Inven = nullptr;
+	CBloodCodeOwner* m_pBloodCodeOwner = nullptr;
+	CBloodCodeSelectUI * m_pBloodCodeSelectUI = nullptr;
+	CSkillReleaseUI* m_pSkillReleaseUI = nullptr;
+	CSkillAcquisitionUI* m_pSkillAcquisitionUI = nullptr;
+	CSkill_Inven* m_pSkillInven = nullptr;
+	CFighterBlood* m_pFigherBlood = nullptr;
+	CPrometheusBlood* m_pPrometheusBlood = nullptr;
+	CPet_Inven* m_pPet_Inven = nullptr;
 
 public:
 	virtual void Free();

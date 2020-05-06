@@ -5,7 +5,11 @@
 
 BEGIN(Engine)
 
+class CGameObject;
+class CTransform;
 class CShader;
+class CGameObject;
+
 class ENGINE_DLL CBattleAgent : public CComponent
 {
 private:
@@ -25,8 +29,16 @@ public:
 	_v4		Get_RimColor() { return m_tRimParam.vRimColor_Cur; };
 
 public:
-	// 림라이트의 강도 설정
+	// 림라이트의 초기화 시 강도 설정
 	void	Set_RimValue(_float _fRimValue) { m_tRimParam.fRimValue = _fRimValue; }
+	// 림라이트의 초기화 시 투명도 설정
+	void	Set_RimAlpha(_float _fRimAlpha) { m_tRimParam.fRimAlpha = _fRimAlpha; }
+	// 림라이트의 강도 설정
+	void	Set_OriginRimValue(_float _fRimValue) { m_tRimParam.fOrigin_RimValue = _fRimValue; }
+	// 림라이트의 투명도 설정
+	void	Set_OriginRimAlpha(_float _fRimAlpha) { m_tRimParam.fOrigin_RimAlpha = _fRimAlpha; }
+
+
 	// 림라이트의 변화색 설정
 	void	Set_RimColorChange(_v4 _vRimColor) { m_tRimParam.vRimColor_Change = _vRimColor; }
 	// 림라이트의 데이터 갱신
@@ -43,6 +55,21 @@ public:
 public:
 	// 하이라이트 포인트 라이트를 생성합니다.
 	void	Create_HitLight(_v3 vLightPos, _float fLightRange = 15.f, _float fLifetime = 0.1f);
+
+//=======================================================================
+// 각도 방향 계산
+//=======================================================================
+public:
+	// 타겟이 내 특정 시야각 전방에 있는지
+	_bool	Check_TargetIsFrontOfMe(CTransform* _vMyTransform, CTransform* _vTargetTransform , _float fAlertRange = 45.f);
+	//=======================================================================
+
+//=======================================================================
+// 특정 리스트 내에서 자신과 가장 가까운 대상을 리턴
+//=======================================================================
+public:
+	// 나로 부터 거리가 가장 가까운 타겟을 반환합니다.
+	CGameObject* Calc_LengthNearByMe(list<CGameObject*> _listGameObject, _v3 _vMyPos, _float _fMinLengthValue = 0.f, _float* _ppLength = nullptr);
 //=======================================================================
 
 private:

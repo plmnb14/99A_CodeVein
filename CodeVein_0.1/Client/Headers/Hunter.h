@@ -1,12 +1,12 @@
 #pragma once
 
-#include "Info_Monster.h"
+#include "Monster.h"
 
 BEGIN(Client)
 
 class CHunterBullet;
 
-class CHunter final : public CGameObject
+class CHunter final : public CMonster
 {
 public:
 	enum ATK_NORMAL_TYPE
@@ -207,22 +207,11 @@ public:
 	virtual _int Update_GameObject(_double TimeDelta);
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
-	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass);
+	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur);
 
 private:
 	void Update_Collider();
 	void Render_Collider();
-	void Enter_Collision();
-	void Check_CollisionPush();
-	void Check_CollisionEvent(list<CGameObject*> plistGameObject);
-
-	void Function_FBLR();
-	void Function_RotateBody();
-	void Function_MoveAround(_float _fSpeed, _v3 _vDir = { V3_NULL });
-	void Function_CoolDown();
-	void Function_Movement(_float _fspeed, _v3 _vDir = { V3_NULL });
-	void Function_DecreMoveMent(_float _fMutiply = 1.f);
-	void Function_ResetAfterAtk();
 
 	void Check_PosY();
 	void Check_Hit();
@@ -283,7 +272,6 @@ private:
 	void Play_CC(); //스턴,넘어짐 같은 다양한 애니들 진행->이떄 히트 동작으로 넘어가지 않고 데미지만 입음
 	void Play_Dead(); //cc상태에서 죽을 경우 다양한 모션 진행
 
-
 private:
 	HRESULT Add_Component(void* pArg);
 	HRESULT SetUp_ConstantTable();
@@ -298,68 +286,9 @@ public:
 	virtual void Free();
 
 private:
-	CMonsterUI*			m_pMonsterUI = nullptr;
-	CTransform*			m_pTransformCom = nullptr;
-	CRenderer*			m_pRendererCom = nullptr;
-	CShader*			m_pShaderCom = nullptr;
-	CMesh_Dynamic*		m_pMeshCom = nullptr;
-	CNavMesh*			m_pNavMesh = nullptr;
-	CCollider*			m_pCollider = nullptr;
-	CWeapon*			m_pWeapon = nullptr;
-
-	CTransform*			m_pTargetTransform = nullptr;
-
 	_mat*					m_matBone[Bone_End];
-	MONSTER_STATETYPE		m_eFirstCategory;
-	MONSTER_IDLETYPE		m_eSecondCategory_IDLE;
-	MONSTER_MOVETYPE		m_eSecondCategory_MOVE;
-	MONSTER_ATKTYPE			m_eSecondCategory_ATK;
-	MONSTER_HITTYPE			m_eSecondCategory_HIT;
-	MONSTER_CCTYPE			m_eSecondCategory_CC;
-	MONSTER_DEADTYPE		m_eSecondCategory_DEAD;
-
-	WEAPON_STATE			m_eWeaponState;
-	FBLR					m_eFBLR;
 	ATK_COMBO_TYPE			m_eAtkCombo;
 	HUNTER_ANI				m_eState;
-
-	_bool	m_bEventTrigger[20] = {};
-	_bool	m_bCanPlayDead; //죽음 애니 재생
-	_bool	m_bInRecognitionRange; //인지범위ox
-	_bool	m_bInAtkRange; //공격범위ox
-	_bool	m_bCanChase; //추적ox
-	_bool	m_bCanCoolDown; //쿨타임ox
-	_bool	m_bIsCoolDown; //쿨타임 진행중ox
-	_bool	m_bCanChooseAtkType; //노말,콤보 가능ox
-	_bool	m_bIsCombo; //콤보공격 진행중ox
-	_bool	m_bCanIdle; //일상ox
-	_bool	m_bIsIdle; //일상 진행중ox
-	_bool	m_bCanMoveAround; //경계ox
-	_bool	m_bIsMoveAround; //경계동작 진행중
-
-	_double	m_dTimeDelta;
-	_double	m_dAniPlayMul;
-
-	_float	m_fSkillMoveSpeed_Cur;
-	_float	m_fSkillMoveSpeed_Max;
-	_float	m_fSkillMoveAccel_Cur;
-	_float	m_fSkillMoveAccel_Max;
-	_float	m_fSkillMoveMultiply;
-
-	_float	m_fRecognitionRange;
-	_float	m_fShotRange;
-	_float	m_fAtkRange;
-	_float	m_fPersonalRange;
-	_float	m_fCoolDownMax;
-	_float	m_fCoolDownCur;
-
-	_int	m_iRandom;
-	_int	m_iDodgeCount;
-	_int	m_iDodgeCountMax;
-
-private: // For Effect
-	_float			m_fDeadEffect_Delay = 0.f;
-	_float			m_fDeadEffect_Offset = 0.f;
 
 };
 

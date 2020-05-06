@@ -28,7 +28,7 @@ HRESULT CFireBoy::Ready_GameObject(void * pArg)
 	Ready_Collider();
 
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 1000.f;
+	m_tObjParam.fHp_Cur = 10000.f;
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
 	m_tObjParam.fDamage = 20.f;
 
@@ -57,24 +57,24 @@ HRESULT CFireBoy::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"Show", true);
 	pBlackBoard->Set_Value(L"Show_Near", true);
 
-	CBT_Selector* Start_Sel = Node_Selector("행동 시작");
-	//CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
+	//CBT_Selector* Start_Sel = Node_Selector("행동 시작");
+	CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
 
 	pBehaviorTree->Set_Child(Start_Sel);
 
 
 	//////////// 아래에 주석해놓은 4줄이 본게임에서 쓸 것임, 차례대로 공격함.
 
-	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
-	//Check_ShowValue->Set_Child(Start_Show());
+	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", false);
+	//Check_ShowValue->Set_Child(Start_Game());
 	//Start_Sel->Add_Child(Check_ShowValue);
-	Start_Sel->Add_Child(Start_Game());
+	//Start_Sel->Add_Child(Start_Show());
 
 	////////////
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	//Start_Sel->Add_Child(Fire_Ground());
+	Start_Sel->Add_Child(Fire_Flame());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -162,12 +162,21 @@ _int CFireBoy::Late_Update_GameObject(_double TimeDelta)
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
 
-	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
-		return E_FAIL;
+	if (!m_bDissolve)
+	{
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
+			return E_FAIL;
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
+			return E_FAIL;
+	}
+
 	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
 	//	return E_FAIL;
-	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-		return E_FAIL;
 
 	m_dTimeDelta = TimeDelta;
 
@@ -197,8 +206,10 @@ HRESULT CFireBoy::Render_GameObject()
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			if (false == m_bReadyDead)
-				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+			m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+
+			if (m_bDissolve)
+				m_iPass = 3;
 
 			m_pShaderCom->Begin_Pass(m_iPass);
 
@@ -220,28 +231,33 @@ HRESULT CFireBoy::Render_GameObject()
 	return NOERROR;
 }
 
-HRESULT CFireBoy::Render_GameObject_SetPass(CShader * pShader, _int iPass)
+HRESULT CFireBoy::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
 {
 	if (nullptr == pShader ||
 		nullptr == m_pMeshCom)
 		return E_FAIL;
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
-
-	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
-		return E_FAIL;
-
 	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
 	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+
+	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
+		return E_FAIL;
 	if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 		return E_FAIL;
 
 	m_matLastWVP = m_pTransformCom->Get_WorldMat() * ViewMatrix * ProjMatrix;
 
-	//_mat matLightVP = g_pManagement->Get_LightViewProj();
-	//if (FAILED(pShader->Set_Value("g_LightVP_Close", &matLightVP, sizeof(_mat))))
-	//	return E_FAIL;
+	_bool bMotionBlur = true;
+	if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+		return E_FAIL;
+	_bool bDecalTarget = false;
+	if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+		return E_FAIL;
+
 
 	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
 
@@ -269,8 +285,8 @@ CBT_Composite_Node * CFireBoy::Arm_Attack()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("팔꿈치 치기");
-	CBT_Play_Ani* Show_Ani32 = Node_Ani("팔꿈치 치기", 32, 0.95f);
-	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.1f);
+	CBT_Play_Ani* Show_Ani23 = Node_Ani("팔꿈치 치기", 23, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.0f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.1);
@@ -284,7 +300,7 @@ CBT_Composite_Node * CFireBoy::Arm_Attack()
 	Root_Parallel->Add_Service(Effect1);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani32);
+	MainSeq->Add_Child(Show_Ani23);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -306,8 +322,8 @@ CBT_Composite_Node * CFireBoy::Gun_Attack()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("포신으로 치기");
-	CBT_Play_Ani* Show_Ani39 = Node_Ani("포신으로 치기", 39, 0.95f);
-	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.1f);
+	CBT_Play_Ani* Show_Ani30 = Node_Ani("포신으로 치기", 30, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.0f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.1);
@@ -317,7 +333,7 @@ CBT_Composite_Node * CFireBoy::Gun_Attack()
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 0.6f, 0.17, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani39);
+	MainSeq->Add_Child(Show_Ani30);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -341,8 +357,8 @@ CBT_Composite_Node * CFireBoy::Fire_Tornado()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("불 토네이도");
-	CBT_Play_Ani* Show_Ani30 = Node_Ani("불 토네이도", 30, 0.95f);
-	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.1f);
+	CBT_Play_Ani* Show_Ani21 = Node_Ani("불 토네이도", 21, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.0f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 추적", L"Player_Pos", 0.2);
@@ -382,7 +398,7 @@ CBT_Composite_Node * CFireBoy::Fire_Tornado()
 	Root_Parallel->Add_Service(Effect13);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani30);
+	MainSeq->Add_Child(Show_Ani21);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -392,7 +408,7 @@ CBT_Composite_Node * CFireBoy::Fire_Tornado()
 	SubSeq->Add_Child(Wait1);
 	SubSeq->Add_Child(Move1);
 
-	CBT_CreateBullet* Col0 = Node_CreateBullet("토네이도 충돌체", L"Monster_FireTornadoCol", L"SelfPos", L"", 0, 2, 1.856, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Col0 = Node_CreateBullet("토네이도 충돌체", L"Monster_FireTornadoCol", L"SelfPos", L"", 0, 0.8, 1.856, 1, 0, 0, CBT_Service_Node::Finite);
 	Root_Parallel->Add_Service(Col0);
 
 	return Root_Parallel;
@@ -403,8 +419,8 @@ CBT_Composite_Node * CFireBoy::Back_Dash()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("뒤로 대쉬");
-	CBT_Play_Ani* Show_Ani14 = Node_Ani("뒤로 대쉬", 14, 0.95f);
-	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
+	CBT_Play_Ani* Show_Ani9 = Node_Ani("뒤로 대쉬", 9, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.0f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", -5.f, 0.333, 0);
@@ -412,7 +428,7 @@ CBT_Composite_Node * CFireBoy::Back_Dash()
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", -3.f, 0.517, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani14);
+	MainSeq->Add_Child(Show_Ani9);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -428,8 +444,8 @@ CBT_Composite_Node * CFireBoy::Fire_Tracking()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("추적하면서 불 발사");
-	CBT_Play_Ani* Show_Ani36 = Node_Ani("추적하면서 불 발사", 36, 0.95f);
-	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.1f);
+	CBT_Play_Ani* Show_Ani27 = Node_Ani("추적하면서 불 발사", 27, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.0f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.883, 0);
@@ -440,7 +456,7 @@ CBT_Composite_Node * CFireBoy::Fire_Tracking()
 	Root_Parallel->Add_Service(Effect0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani36);
+	MainSeq->Add_Child(Show_Ani27);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -450,7 +466,8 @@ CBT_Composite_Node * CFireBoy::Fire_Tracking()
 
 
 
-	CBT_CreateBullet* Col0 = Node_CreateBullet("화염 발사", L"Monster_FireBullet", L"Bone_Muzzle", L"StraightFireDir", 8, 1, 0.833, 12, 0.2, 0, CBT_Service_Node::Finite);
+	//CBT_CreateBullet* Col0 = Node_CreateBullet("화염 발사", L"Monster_FireBullet", L"Bone_Muzzle", L"StraightFireDir", 8, 1, 0.833, 12, 0.2, 0, CBT_Service_Node::Finite);
+	CBT_CreateBullet* Col0 = Node_CreateBullet("화염 발사", L"Monster_FireBullet", L"Bone_Muzzle", L"StraightFireDir", 8, 1, 0.833, 160, 0.025, 0, CBT_Service_Node::Finite);
 	Root_Parallel->Add_Service(Col0);
 
 	return Root_Parallel;
@@ -461,8 +478,8 @@ CBT_Composite_Node * CFireBoy::Fire_Cone()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("부채꼴로 불 발사");
-	CBT_Play_Ani* Show_Ani35 = Node_Ani("부채꼴로 불 발사", 35, 0.95f);
-	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.1f);
+	CBT_Play_Ani* Show_Ani26 = Node_Ani("부채꼴로 불 발사", 26, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.0f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기0", 1.166, 0);
@@ -473,7 +490,7 @@ CBT_Composite_Node * CFireBoy::Fire_Cone()
 	Root_Parallel->Add_Service(Effect0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani35);
+	MainSeq->Add_Child(Show_Ani26);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -493,8 +510,8 @@ CBT_Composite_Node * CFireBoy::Fire_BigSphere()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("추적 화염구 발사");
-	CBT_Play_Ani* Show_Ani33 = Node_Ani("추적 화염구 발사", 33, 0.95f);
-	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.1f);
+	CBT_Play_Ani* Show_Ani24 = Node_Ani("추적 화염구 발사", 24, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.0f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.283, 0);
@@ -510,7 +527,7 @@ CBT_Composite_Node * CFireBoy::Fire_BigSphere()
 	Root_Parallel->Add_Service(Effect1);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani33);
+	MainSeq->Add_Child(Show_Ani24);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -532,8 +549,8 @@ CBT_Composite_Node * CFireBoy::Fire_Ground()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("타겟 바닥에서 불");
-	CBT_Play_Ani* Show_Ani31 = Node_Ani("타겟 바닥에서 불", 31, 0.95f);
-	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.1f);
+	CBT_Play_Ani* Show_Ani22 = Node_Ani("타겟 바닥에서 불", 22, 0.95f);
+	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.0f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_RotationDir* Rotation0 = Node_RotationDir("방향 추적", L"Player_Pos", 0.2);
@@ -547,7 +564,7 @@ CBT_Composite_Node * CFireBoy::Fire_Ground()
 	Root_Parallel->Add_Service(Effect0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani31);
+	MainSeq->Add_Child(Show_Ani22);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -574,7 +591,7 @@ CBT_Composite_Node * CFireBoy::Fire_Flame()
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 
 	CBT_Sequence* MainSeq = Node_Sequence("폭죽 십자가 불");
-	CBT_Play_Ani* Show_Ani28 = Node_Ani("폭죽 십자가 불", 28, 0.95f);
+	CBT_Play_Ani* Show_Ani19 = Node_Ani("폭죽 십자가 불", 19, 0.95f);
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.1f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
@@ -585,7 +602,7 @@ CBT_Composite_Node * CFireBoy::Fire_Flame()
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", -1.5f, 0.633, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani28);
+	MainSeq->Add_Child(Show_Ani19);
 	MainSeq->Add_Child(Show_Ani0);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
@@ -596,27 +613,13 @@ CBT_Composite_Node * CFireBoy::Fire_Flame()
 	SubSeq->Add_Child(Move1);
 
 
+	/* 
+	1. FireHandBall 손에서 생성
+	2. FireHandBall이 없어질 때, 없어지면서 FireFlame 생성.
+	*/
 
-
-	CBT_CreateBullet* Col0 = Node_CreateBullet("공중에서 불 나옴", L"Monster_FireBullet", L"FlamePos0", L"FlameDir", 6, 5, 2.166, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col1 = Node_CreateBullet("공중에서 불 나옴", L"Monster_FireBullet", L"FlamePos1", L"FlameDir", 6, 5, 2.166, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col2 = Node_CreateBullet("공중에서 불 나옴", L"Monster_FireBullet", L"FlamePos2", L"FlameDir", 6, 5, 2.166, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col3 = Node_CreateBullet("공중에서 불 나옴", L"Monster_FireBullet", L"FlamePos3", L"FlameDir", 6, 5, 2.166, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col4 = Node_CreateBullet("공중에서 불 나옴", L"Monster_FireBullet", L"FlamePos4", L"FlameDir", 6, 5, 2.166, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col5 = Node_CreateBullet("공중에서 불 나옴", L"Monster_FireBullet", L"FlamePos5", L"FlameDir", 6, 5, 2.166, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col6 = Node_CreateBullet("공중에서 불 나옴", L"Monster_FireBullet", L"FlamePos6", L"FlameDir", 6, 5, 2.166, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col7 = Node_CreateBullet("공중에서 불 나옴", L"Monster_FireBullet", L"FlamePos7", L"FlameDir", 6, 5, 2.166, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col8 = Node_CreateBullet("공중에서 불 나옴", L"Monster_FireBullet", L"FlamePos8", L"FlameDir", 6, 5, 2.166, 1, 0, 0, CBT_Service_Node::Finite);
-
-	Root_Parallel->Add_Service(Col0);
-	Root_Parallel->Add_Service(Col1);
-	Root_Parallel->Add_Service(Col2);
-	Root_Parallel->Add_Service(Col3);
-	Root_Parallel->Add_Service(Col4);
-	Root_Parallel->Add_Service(Col5);
-	Root_Parallel->Add_Service(Col6);
-	Root_Parallel->Add_Service(Col7);
-	Root_Parallel->Add_Service(Col8);
+	CBT_CreateBuff* Bullet0 = Node_CreateBuff("화염구 왼손에 생성", L"Monster_FireHandBall", 2, 0.716, 1, 0, 0, CBT_Service_Node::Finite);
+	Root_Parallel->Add_Service(Bullet0);
 
 	return Root_Parallel;
 }
@@ -715,6 +718,9 @@ CBT_Composite_Node * CFireBoy::Show_FarAttack()
 	CBT_Cooldown* Cool2 = Node_Cooldown("쿨2", 300);
 	CBT_Cooldown* Cool3 = Node_Cooldown("쿨3", 300);
 	CBT_Cooldown* Cool4 = Node_Cooldown("쿨4", 300);
+	CBT_Cooldown* Cool5 = Node_Cooldown("쿨5", 300);
+
+	CBT_Play_Ani* Show_Ani3 = Node_Ani("기본", Ani_Appearance_End, 0.95f);
 
 	CBT_SetValue* Show_ValueOff = Node_BOOL_SetValue("시연회 OFF", L"Show", false);
 
@@ -728,6 +734,8 @@ CBT_Composite_Node * CFireBoy::Show_FarAttack()
 	Cool3->Set_Child(Fire_Ground());
 	Root_Sel->Add_Child(Cool4);
 	Cool4->Set_Child(Fire_Flame());
+	Root_Sel->Add_Child(Cool5);
+	Cool5->Set_Child(Show_Ani3);
 
 	Root_Sel->Add_Child(Show_ValueOff);
 
@@ -802,6 +810,14 @@ HRESULT CFireBoy::Update_Bone_Of_BlackBoard()
 	m_vLeftHand = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftHand", m_vLeftHand);
 
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHandAttach");
+	m_vLeftHandAttach = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftHandAttach", m_vLeftHandAttach);
+
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHandMiddle2");
+	m_vLeftHandMiddle2 = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftHandMiddle2", m_vLeftHandMiddle2);
+
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Muzzle");
 	m_vMuzzle = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Muzzle", m_vMuzzle);
@@ -861,24 +877,8 @@ HRESULT CFireBoy::Update_Value_Of_BB()
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FireDir", *D3DXVec3Normalize(&_v3(), &(m_vMuzzle - m_vRightHand)));
 
 
-	// 4. Flame, 플레이어 위에서 십자가로 불 떨어짐
-	_v3 vReverseLook = -vSelfLook;
-	_v3 vReverseRight = -vSelfRight;
-
-	_v3 vPlayerPos = pPlayerTransCom->Get_Pos();
-	_float fLength = 2.f;
-
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlamePos0", _v3(0.f, 5.f, 0.f) + vPlayerPos);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlamePos1", _v3(0.f, 5.f, 0.f) + vPlayerPos + vSelfLook * fLength);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlamePos2", _v3(0.f, 5.f, 0.f) + vPlayerPos + vSelfRight * fLength);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlamePos3", _v3(0.f, 5.f, 0.f) + vPlayerPos + vReverseLook * fLength);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlamePos4", _v3(0.f, 5.f, 0.f) + vPlayerPos + vReverseRight * fLength);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlamePos5", _v3(0.f, 5.f, 0.f) + vPlayerPos + vSelfLook * fLength * 2);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlamePos6", _v3(0.f, 5.f, 0.f) + vPlayerPos + vSelfRight * fLength * 2);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlamePos7", _v3(0.f, 5.f, 0.f) + vPlayerPos + vReverseLook * fLength * 2);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlamePos8", _v3(0.f, 5.f, 0.f) + vPlayerPos + vReverseRight * fLength * 2);
-
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlameDir", _v3(0.f, -1.f, 0.f));
+	// 4. Flame, 왼손에서 위로 불 던짐.
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlameHandBallDir", *D3DXVec3Normalize(&_v3(), &(m_vLeftHandMiddle2 - m_vLeftHandAttach)));
 
 
 	// 5. 화염 토이네도
@@ -924,17 +924,17 @@ HRESULT CFireBoy::Update_NF()
 			}
 			else
 			{
-				m_pMeshCom->SetUp_Animation(Ani_Idle);
+				m_pMeshCom->SetUp_Animation(Ani_Appearance);
 			}
 		}
 		// 플레이어가 최대거리 밖에 있는가?
 		else
-			m_pMeshCom->SetUp_Animation(Ani_Idle);
+			m_pMeshCom->SetUp_Animation(Ani_Appearance);
 	}
 	// 플레이어 발견
 	else
 	{
-		m_pMeshCom->SetUp_Animation(Ani_Appearance);
+		m_pMeshCom->SetUp_Animation(Ani_Appearance_End);
 
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
@@ -1210,6 +1210,28 @@ HRESULT CFireBoy::SetUp_ConstantTable()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
+
+	//=============================================================================================
+	// 쉐이더 재질정보 수치 입력
+	//=============================================================================================
+	_float	fEmissivePower = 5.f;	// 이미시브 : 높을 수록, 자체 발광이 강해짐.
+	_float	fSpecularPower = 3.f;	// 메탈니스 : 높을 수록, 정반사가 강해짐.
+	_float	fRoughnessPower = 4.f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
+	_float	fRimLightPower = 0.f;	// 림		: 높을 수록 빛이 퍼짐(림라이트의 범위가 넓어지고 , 밀집도가 낮아짐).
+	_float	fMinSpecular = 0.1f;	// 최소 빛	: 높을 수록 빛이 퍼짐(림라이트의 범위가 넓어지고 , 밀집도가 낮아짐).
+
+	if (FAILED(m_pShaderCom->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fRimAlpha", &fRimLightPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
+		return E_FAIL;
+	//=============================================================================================
+
 
 	Safe_Release(pManagement);
 

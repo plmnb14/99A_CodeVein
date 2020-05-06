@@ -18,15 +18,22 @@ HRESULT CGunAttackCol::Ready_GameObject_Prototype()
 
 HRESULT CGunAttackCol::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component()))
-		return E_FAIL;
+	if (nullptr == pArg)
+	{
+		if (FAILED(Add_Component()))
+			return E_FAIL;
 
-	Ready_Collider();
+		Ready_Collider();
+
+		return S_OK;
+	}
 
 	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
 
 	m_dLifeTime = temp.dLifeTime;
 
+	m_dCurTime = 0;
+	m_bDead = false;
 
 	m_pTransformCom->Set_Pos(temp.vCreatePos);
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
@@ -157,7 +164,7 @@ void CGunAttackCol::OnCollisionEvent(list<CGameObject*> plistGameObject)
 
 						iter->Add_Target_Hp(-m_tObjParam.fDamage);
 
-						m_dCurTime = 1000;	// 바로 사망시키기 위해서 현재시간 1000줬음
+						//m_dCurTime = 1000;	// 바로 사망시키기 위해서 현재시간 1000줬음
 					}
 
 

@@ -2,6 +2,7 @@
 #include "Object_Manager.h"
 #include "..\Headers\Transform.h"
 #include "..\Headers\AIController.h"
+#include "ObjectPool_Manager.h"
 
 CBT_CreateBuff::CBT_CreateBuff()
 {
@@ -37,7 +38,8 @@ CBT_Node::BT_NODE_STATE CBT_CreateBuff::Update_Node(_double TimeDelta, vector<CB
 					break;
 				else
 				{
-					CObject_Manager::Get_Instance()->Add_GameObject_ToLayer(m_pObject_Tag, SCENE_STAGE, L"Layer_MonsterProjectile", &BUFF_INFO(m_pTransform, m_pAIcontroller, m_dLifeTime));
+					//CObject_Manager::Get_Instance()->Add_GameObject_ToLayer(m_pObject_Tag, SCENE_STAGE, L"Layer_MonsterProjectile", &BUFF_INFO(m_pTransform, m_pAIcontroller, m_dLifeTime));
+					CObjectPool_Manager::Get_Instance()->Create_Object(m_pObject_Tag, &BUFF_INFO(m_pTransform, m_pAIcontroller, m_dLifeTime));
 					++m_iCur_Count_Of_Execution;
 					m_dCurTime = 0;
 				}

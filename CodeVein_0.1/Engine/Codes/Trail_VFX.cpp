@@ -250,9 +250,10 @@ void CTrail_VFX::Ready_Vtx()
 
 	for (size_t i = 0; i < m_vecStart.size(); ++i)
 	{
-		if (300 >= i * 2 ||
-			300 >= i * 2 + 1)
-			break;
+		//if (300 >= i * 2 ||
+		//	300 >= i * 2 + 1)
+		//	break;
+
 		//m_pVtx[i * 2].vPosition = m_vecStart[i];
 		//m_pVtx[i * 2].vTexUV.x = 0.f + ((_float(i)) / (m_vecStart.size() - 1));
 		//m_pVtx[i * 2].vTexUV.y = 1.f;
@@ -282,6 +283,8 @@ void CTrail_VFX::Set_ParentTransform(const _mat * _pWorldMat)
 
 void CTrail_VFX::Reset_Info()
 {
+	m_bIsDead = false;
+
 	m_dwVtxFVF = VTXFVF_TEX;
 	m_dwVtxSize = sizeof(VTXTEX);
 
@@ -301,7 +304,7 @@ void CTrail_VFX::Reset_Info()
 	m_fUpdateTime_Cur = 0.f;
 	m_fUpdateTime_Max = 0.f;
 
-	Clear_TrailInfo();
+	//Clear_TrailInfo();
 }
 
 HRESULT CTrail_VFX::Shader_Init(CShader* pShader, const _uint & iIndex)

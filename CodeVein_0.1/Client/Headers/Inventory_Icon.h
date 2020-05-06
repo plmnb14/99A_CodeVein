@@ -18,8 +18,10 @@ public:
 		ICON_ALL,
 		ICON_STATUS,
 		ICON_EXIT,
+		ICON_PET,
 		ICON_END
 	};
+
 private:
 	explicit CInventory_Icon(_Device pDevice);
 	explicit CInventory_Icon(const CInventory_Icon& rhs);

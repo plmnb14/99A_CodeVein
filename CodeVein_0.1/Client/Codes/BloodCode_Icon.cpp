@@ -36,6 +36,46 @@ _int CBloodCode_Icon::Update_GameObject(_double TimeDelta)
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
+
+	switch (m_eType)
+	{
+	case BloodCode_Artemis:
+		m_iIndex = 2;
+		break;
+	case BloodCode_Assassin:
+		m_iIndex = 3;
+		break;
+	case BloodCode_DarkKnight:
+		m_iIndex = 5;
+		break;
+	case BloodCode_Queen:
+		m_iIndex = 12;
+		break;
+	case BloodCode_Berserker:
+		m_iIndex = 10;
+		break;
+	case BloodCode_Hephaestus:
+		m_iIndex = 8;
+		break;
+	case BloodCode_Fighter:
+		m_iIndex = 6;
+		break;
+	case BloodCode_Heimdal:
+		m_iIndex = 7;
+		break;
+	case BloodCode_Hermes:
+		m_iIndex = 9;
+		break;
+	case BloodCode_Atlas:
+		m_iIndex = 4;
+		break;
+	case BloodCode_Prometheus:
+		m_iIndex = 11;
+		break;
+	case BloodCode_End:
+		m_iIndex = 13;
+		break;
+	}
 	return NO_EVENT;
 }
 
@@ -67,17 +107,13 @@ HRESULT CBloodCode_Icon::Render_GameObject()
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
-	if (FAILED(SetUp_ConstantTable()))
+	if (FAILED(SetUp_ConstantTable(m_iIndex)))
 		return E_FAIL;
 
 	m_pShaderCom->Begin_Shader();
-
 	m_pShaderCom->Begin_Pass(1);
-
 	m_pBufferCom->Render_VIBuffer();
-
 	m_pShaderCom->End_Pass();
-
 	m_pShaderCom->End_Shader();
 
 	return NOERROR;
@@ -108,7 +144,7 @@ HRESULT CBloodCode_Icon::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CBloodCode_Icon::SetUp_ConstantTable()
+HRESULT CBloodCode_Icon::SetUp_ConstantTable(_uint iIndex)
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -121,7 +157,7 @@ HRESULT CBloodCode_Icon::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, m_iIndex)))
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
 		return E_FAIL;
 
 	return NOERROR;

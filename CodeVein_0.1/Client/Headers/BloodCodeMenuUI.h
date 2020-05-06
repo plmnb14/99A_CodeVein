@@ -4,16 +4,19 @@
 #include "UI.h"
 
 BEGIN(Client)
-class CCodeOwnerUI;
 class CBloodCodeSlot;
 class CBloodCodeSelectUI;
 class CSkillReleaseUI;
+class CBloodCodeOwner;
 class CBloodCodeMenuUI final : public CUI
 {
 private:
 	explicit CBloodCodeMenuUI(_Device pDevice);
 	explicit CBloodCodeMenuUI(const CBloodCodeMenuUI& rhs);
 	virtual ~CBloodCodeMenuUI() = default;
+
+public:
+	void Set_IsChoise(_bool bIsChoise) { m_bIsChoiseBloodCode = bIsChoise; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -40,11 +43,11 @@ private:
 	vector<CBloodCodeSlot*> m_vecBloodCodeSlot;
 	_bool					m_bIsCodeSelect = false;
 	_uint					m_iSelectIndex = 0;
-	//CCodeOwnerUI*			m_pCodeOwnerUI = nullptr;
 	_float					m_fAlpha = 0.f;
 	CBloodCodeSelectUI*		m_pBloodCodeSelectUI = nullptr;
 	CSkillReleaseUI*		m_pSkillReleaseUI = nullptr;
 	_bool					m_bIsChoiseBloodCode = false;
+	CBloodCodeOwner*		m_pBloodCodeOwner = nullptr;
 
 public:
 	static CBloodCodeMenuUI*	Create(_Device pGraphic_Device);

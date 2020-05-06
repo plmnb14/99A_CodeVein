@@ -23,9 +23,11 @@ public:
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
+	void Click_Option();
+	void Reset_Option();
 
 public:
-	void Active_SubUI();
+	void Active_SubUI(CMistletoeOptionUI* pSelectOption);
 	void Move_Up();
 	void Move_Down();
 
@@ -41,6 +43,7 @@ private:
 	vector<CMistletoeOptionUI*> m_vecOption;
 	_uint					m_iSelectIndex = 0;
 	CStageSelectUI*			m_pStageSelectUI = nullptr;
+	_float m_fCross = 100.f;
 
 public:
 	static CMistletoeUI*	Create(_Device pGraphic_Device);

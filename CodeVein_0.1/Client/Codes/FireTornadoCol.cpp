@@ -18,10 +18,15 @@ HRESULT CFireTornadoCol::Ready_GameObject_Prototype()
 
 HRESULT CFireTornadoCol::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component()))
-		return E_FAIL;
+	if (nullptr == pArg)
+	{
+		if (FAILED(Add_Component()))
+			return E_FAIL;
 
-	Ready_Collider();
+		Ready_Collider();
+
+		return S_OK;
+	}
 
 	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
 
@@ -29,6 +34,9 @@ HRESULT CFireTornadoCol::Ready_GameObject(void * pArg)
 	
 	m_pTransformCom->Set_Pos(temp.vCreatePos);
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
+
+	m_dCurTime = 0;
+	m_bDead = false;
 
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;

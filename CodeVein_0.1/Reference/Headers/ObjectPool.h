@@ -6,6 +6,7 @@
 BEGIN(Engine)
 
 class CGameObject;
+
 class CObjectPool final : public CBase
 {
 private:
@@ -30,6 +31,7 @@ private:
 public:
 	static CObjectPool* Create_ObjectPool(const _tchar* pPrototypeTag, _uint iPoolSize);
 	virtual void Free();
+
 };
 
 END

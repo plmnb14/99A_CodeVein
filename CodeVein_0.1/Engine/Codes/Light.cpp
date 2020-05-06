@@ -50,16 +50,6 @@ HRESULT CLight::Render_Light(CShader* pShader)
 		pShader->Set_Value("g_fRange", &m_LightDesc.Range, sizeof(_float));
 	}
 
-	//m_LightDesc.Diffuse.r *= m_LightDesc.fAlpha;
-	//m_LightDesc.Ambient.r *= m_LightDesc.fAlpha;
-	//m_LightDesc.Diffuse.r *= m_LightDesc.fAlpha;
-	//m_LightDesc.Ambient.g *= m_LightDesc.fAlpha;
-	//m_LightDesc.Diffuse.g *= m_LightDesc.fAlpha;
-	//m_LightDesc.Ambient.g *= m_LightDesc.fAlpha;
-	//m_LightDesc.Specular.b *= m_LightDesc.fAlpha;
-	//m_LightDesc.Specular.b *= m_LightDesc.fAlpha;
-	//m_LightDesc.Specular.b *= m_LightDesc.fAlpha;
-
 	pShader->Set_Value("g_vLightDiffuse", (_v4*)&m_LightDesc.Diffuse, sizeof(_v4));
 	pShader->Set_Value("g_vLightAmbient", (_v4*)&m_LightDesc.Ambient, sizeof(_v4));	
 	pShader->Set_Value("g_vLightSpecular", (_v4*)&m_LightDesc.Specular, sizeof(_v4));

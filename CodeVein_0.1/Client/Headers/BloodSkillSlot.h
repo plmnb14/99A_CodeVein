@@ -4,6 +4,7 @@
 #include "UI.h"
 
 BEGIN(Client)
+class CBloodSkillCursor;
 class CBloodSkillSlot final : public CUI
 {
 private:
@@ -12,7 +13,13 @@ private:
 	virtual ~CBloodSkillSlot() = default;
 
 public:
-	void Set_SkillIndex(Skill_Index eSkillIndex) { m_eSkillIndex = eSkillIndex; }
+	Skill_ID Get_Skill_ID() { return m_eSkillID; }
+	_bool Get_Release() { return m_bIsRelease; }
+
+public:
+	void Set_SkillID(Skill_ID eSkillID) { m_eSkillID = eSkillID; }
+	void Set_Select(_bool bIsSelect) { m_bIsSelect = bIsSelect; }
+	void Set_Release(_bool bIsRelease) { m_bIsRelease = bIsRelease; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -23,7 +30,8 @@ public:
 
 private:
 	HRESULT Add_Component();
-	HRESULT SetUp_ConstantTable(_uint iIndex);
+	HRESULT SetUp_ConstantTable(_uint iDiffuse);
+	void	SetUp_Default();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -31,9 +39,14 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
+	CCollider*				m_pCollider = nullptr;
 
 private:
-	Skill_Index				m_eSkillIndex = Skill_End;
+	Skill_ID				m_eSkillID = SkillID_End;
+	CBloodSkillCursor*		m_pCursor = nullptr;
+	_bool					m_bIsSelect = false;
+	_float					m_fSpeed = 0.f;
+	_bool					m_bIsRelease = false;
 
 public:
 	static CBloodSkillSlot*		Create(_Device pGraphic_Device);

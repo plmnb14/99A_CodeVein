@@ -445,6 +445,9 @@ PS_OUT PS_SSD(PS_IN In)
 	float2 depthUV = float2(screenposition.x, screenposition.y);
 
 	vector vDepthInfo = tex2D(DepthSampler, depthUV);
+	if(0 == vDepthInfo.x)
+		return  Out;
+
 	float		fViewZ = vDepthInfo.y * 500.f;
 	vector		vWorldPos;
 	vWorldPos.x = depthUV.x * 2.f - 1.f;
@@ -458,7 +461,8 @@ PS_OUT PS_SSD(PS_IN In)
 	float3 decalLocalPos = float3(0, 0, 0);
 	decalLocalPos = mul(float4(vWorldPos.xyz, 1), g_matInvWorld).xyz;
 	
-	clip(0.5 - abs(decalLocalPos.xyz));
+	clip(0.5 - abs(decalLocalPos.xz));
+	clip(0.25 - abs(decalLocalPos.y));
 	
 	float2 decalUV = decalLocalPos.xz + 0.5f;
 		
@@ -514,6 +518,8 @@ PS_OUT PS_SSD(PS_IN In)
 		Color.a *= vGradientMask.x;
 	}
 
+	Color.rgb *= 0.03f;
+	Color.r += 0.02f;
 	Out.vColor = Color;
 	
 	return Out;

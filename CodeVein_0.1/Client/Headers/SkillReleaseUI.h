@@ -5,6 +5,8 @@
 
 BEGIN(Client)
 class CBloodSkillSlot;
+class CBloodSkillCursor;
+class CReleaseQuestionUI;
 class CSkillReleaseUI final : public CUI
 {
 private:
@@ -13,8 +15,7 @@ private:
 	virtual ~CSkillReleaseUI() = default;
 
 public:
-	void Set_Type(BloodCode_ID eType) { m_eBloodCodeType = eType; }
-	void Set_SlotPos(_v3 vPosition) { m_vSlotPosition = vPosition; }
+	void Set_CodeID(BloodCode_ID eID) { m_eID = eID; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -27,6 +28,11 @@ private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable(_uint iIndex);
 	void	SetUp_Default();
+	void	Click_SkillSlot();
+	void	Reset_Select();
+
+public:
+	void Compare_Data();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -37,8 +43,11 @@ private:
 
 private:
 	vector<CBloodSkillSlot*> m_vecSkillSlot;
-	BloodCode_ID			m_eBloodCodeType;
+	BloodCode_ID			m_eID;
 	_v3						m_vSlotPosition;
+	_float					m_fCross = 100.f;
+	CReleaseQuestionUI*		m_pQuestionUI = nullptr;
+	vector<Skill_ID>		m_vecData;
 
 public:
 	static CSkillReleaseUI*		Create(_Device pGraphic_Device);

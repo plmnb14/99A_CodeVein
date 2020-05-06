@@ -21,12 +21,24 @@ HRESULT CIceBarrier::Ready_GameObject_Prototype()
 
 HRESULT CIceBarrier::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component()))
-		return E_FAIL;
+	if (nullptr == pArg)
+	{
+		if (FAILED(Add_Component()))
+			return E_FAIL;
 
-	Ready_Collider();
+		Ready_Collider();
+
+		return S_OK;
+	}
 
 	CBT_CreateBuff::BUFF_INFO temp = *(CBT_CreateBuff::BUFF_INFO*)(pArg);
+	
+	if (m_pTarget_Transform)
+		Safe_Release(m_pTarget_Transform);
+
+	if (m_pTarget_AIController)
+		Safe_Release(m_pTarget_AIController);
+
 
 	m_pTarget_Transform = temp.pTransform;
 	Safe_AddRef(m_pTarget_Transform);
@@ -34,10 +46,12 @@ HRESULT CIceBarrier::Ready_GameObject(void * pArg)
 	m_pTarget_AIController = temp.pAIController;
 	Safe_AddRef(m_pTarget_AIController);
 
-
 	m_dLifeTime = temp.dLifeTime;
 
 	m_tObjParam.bCanHit = true;
+	m_bDead = false;
+	m_fEffectOffset = 0.f;
+	m_dCurTime = 0.f;
 	m_tObjParam.fHp_Cur = 1.f;
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
 
@@ -90,14 +104,14 @@ _int CIceBarrier::Update_GameObject(_double TimeDelta)
 	//  방어막 끝나고 0.5초동안 몬스터의 hit판정 막음.
 	if (true == m_bBarrierOff)
 	{
-		if (!m_vecPhysicCol.empty())
-		{
-			for (auto& iter : m_vecPhysicCol)
-			{
-				Safe_Release(iter);
-			}
-			m_vecPhysicCol.clear();
-		}
+		//if (!m_vecPhysicCol.empty())
+		//{
+		//	for (auto& iter : m_vecPhysicCol)
+		//	{
+		//		Safe_Release(iter);
+		//	}
+		//	m_vecPhysicCol.clear();
+		//}
 
 		m_dTime_BarrierOff += TimeDelta;
 
@@ -163,6 +177,7 @@ void CIceBarrier::Check_PhyCollider()
 		m_tObjParam.bCanHit = true;
 
 		m_bBarrierOff = true;
+		m_dCurTime = 1000;
 
 		for (_int i = 0; i < 10; i++)
 		{

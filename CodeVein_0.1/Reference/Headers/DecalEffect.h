@@ -56,6 +56,9 @@ protected:
 	void Change_GradientTexture(const _tchar* _Name);
 	void Change_ColorTexture(const _tchar* _Name);
 
+private:
+	_float	m_fDissolveStartTime = 6.f;
+
 public:
 	static CDecalEffect* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
 	static CDecalEffect* Create(LPDIRECT3DDEVICE9 pGraphic_Device, EFFECT_INFO* pInfo);

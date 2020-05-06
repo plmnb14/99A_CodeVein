@@ -20,10 +20,15 @@ HRESULT CColdBeamSharp::Ready_GameObject_Prototype()
 
 HRESULT CColdBeamSharp::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component()))
-		return E_FAIL;
+	if (nullptr == pArg)
+	{
+		if (FAILED(Add_Component()))
+			return E_FAIL;
 
-	Ready_Collider();
+		Ready_Collider();
+
+		return S_OK;
+	}
 
 	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
 
@@ -44,6 +49,11 @@ HRESULT CColdBeamSharp::Ready_GameObject(void * pArg)
 
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
+
+	m_dCurTime = 0;
+	m_bDead = false;
+	m_bEffect = true;
+	m_fEffectOffset = 0.f;
 
 	m_pBulletBody_01 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"IceBlock_Main_Small", nullptr));
 	m_pBulletBody_01->Set_Desc(_v3(0, 0, 0), nullptr);

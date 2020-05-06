@@ -289,7 +289,7 @@ HRESULT CDummy_Target::Add_Component()
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_NormalGenji", L"Com_MeshDynamic", (CComponent**)&m_pDynamic_Mesh)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Genji_Normal", L"Com_MeshDynamic", (CComponent**)&m_pDynamic_Mesh)))
 		return E_FAIL;
 
 	m_pDynamic_Mesh->SetUp_Animation_Lower(0);

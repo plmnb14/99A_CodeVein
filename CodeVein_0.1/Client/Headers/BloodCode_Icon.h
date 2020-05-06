@@ -12,6 +12,9 @@ private:
 	virtual ~CBloodCode_Icon() = default;
 
 public:
+	void Set_Type(BloodCode_ID eType) { m_eType = eType; }
+
+public:
 	virtual HRESULT Ready_GameObject_Prototype();
 	virtual HRESULT Ready_GameObject(void* pArg);
 	virtual _int	Update_GameObject(_double TimeDelta);
@@ -20,7 +23,7 @@ public:
 
 private:
 	HRESULT Add_Component();
-	HRESULT SetUp_ConstantTable();
+	HRESULT SetUp_ConstantTable(_uint iIndex);
 	void	SetUp_Default();
 
 public:
@@ -32,6 +35,9 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
+
+private:
+	BloodCode_ID			m_eType = BloodCode_End;
 
 public:
 	static CBloodCode_Icon*	Create(_Device pGraphic_Device);

@@ -15,9 +15,25 @@ enum RAY_CALC
 	RAY_TO_END 
 };
 
+typedef enum EXECUTION_WEAPON
+{
+	EXECUTION_Wpn_Orge, EXECUTION_Wpn_Stinger , EXECUTION_Wpn_Hounds ,EXECUTION_Wpn_Ivy,
+	EXECUTION_Wpn_End
+
+}EXE_WPN;
+
+typedef enum EXECUTION_TYPE
+{
+	EXECUTION_Front, EXECUTION_FrontCinema,
+	EXECUTION_Back, EXECUTION_BackCinema, 
+	EXECUTION_ComboFront, EXECUTION_ComboBack, EXECUTION_ComboCinema,
+	EXECUTION_Type_End
+
+}EXE_TYPE;
+
 enum RENDERID
 {
-	RENDER_PRIORITY, RENDER_NONALPHA, RENDER_SHADOWTARGET, RENDER_MOTIONBLURTARGET, RENDER_ALPHA, RENDER_EFFECT, RENDER_INSTANCE, RENDER_DISTORTION, RENDER_UI,
+	RENDER_PRIORITY, RENDER_NONALPHA, RENDER_SHADOWTARGET, RENDER_MOTIONBLURTARGET, RENDER_ALPHA, RENDER_EFFECT, RENDER_INSTANCE, RENDER_DISTORTION, RENDER_UI, RENDER_3DUI,
 	RENDER_END
 };
 
@@ -100,10 +116,31 @@ enum Teleport_ID
 
 enum BloodCode_ID
 {
-	BloodCode_Fighter, // 파이터
-	BloodCode_Caster, // 캐스터
-	BloodCode_Berserker, // 광전사(올리버)
-	BloodCode_Prometheus, // 프로메테우스(루이)
-	BloodCode_Eos, // 에오스(이오)
+	BloodCode_Artemis,
+	BloodCode_Assassin,
+	BloodCode_DarkKnight,
+	BloodCode_Queen,
+	BloodCode_Berserker,
+	BloodCode_Hephaestus,
+	BloodCode_Fighter,
+	BloodCode_Heimdal,
+	BloodCode_Hermes,
+	BloodCode_Atlas,
+	BloodCode_Prometheus,
 	BloodCode_End
+};
+
+enum Skill_ID
+{
+	Dragon_Lunge, // 강룡복호
+	Vanishing_Hollow, // 배니싱 할로우
+	Circulating_Pulse, // 블러드 서큘러
+	Triple_Annihilator, // 삼멸살
+	Shadow_Assault, // 섀도우 어썰트
+	Severing_Abyss, // 스플릿어비스
+	Swallow_Cutter, // 제비 떨어뜨리기
+	Tormenting_Blast, // 토먼트 블래스트
+	Phantom_Assault, // 팬텀 어썰트
+	Legion_Punisher, // 리전 퍼니셔
+	SkillID_End
 };

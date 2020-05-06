@@ -20,7 +20,7 @@ public:
 
 private:
 	enum Ani {
-		Ani_Idle = 0, Ani_Death = 26, Ani_Appearance = 3, Ani_Down_Start = 19, Ani_Down_Loop = 20, Ani_Down_End = 21
+		Ani_Idle = 0, Ani_Death = 17, Ani_Appearance = 2, Ani_Appearance_End = 3, Ani_Down_Start = 10, Ani_Down_Loop = 11, Ani_Down_End = 12
 	};
 
 private:
@@ -37,7 +37,7 @@ public:
 	virtual _int Update_GameObject(_double TimeDelta);
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
-	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass);
+	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur = false);
 
 private:	// 패턴
 	// 1. 팔꿈치 치기
@@ -50,7 +50,7 @@ private:	// 패턴
 	CBT_Composite_Node* Back_Dash();
 
 	////// 원거리
-	// 1. 추적하면서 지속적으로 불 발사,	불 이펙트 크기 키우기
+	// 1. 추적하면서 지속적으로 불 발사,
 	CBT_Composite_Node* Fire_Tracking();
 	// 2. 불 부채꼴로 발사
 	CBT_Composite_Node* Fire_Cone();
@@ -58,7 +58,7 @@ private:	// 패턴
 	CBT_Composite_Node* Fire_BigSphere();
 	// 4. 플레이어 바닥에서 화염
 	CBT_Composite_Node* Fire_Ground();
-	// 5. 위로 불쏘고 폭죽마냥 십자가 모양으로 떨어짐
+	// 5. 왼손에서 위로 불쏘고 새장모양으로 불꽃 떨어짐,  이펙트 재설정 해야함.
 	CBT_Composite_Node* Fire_Flame();
 
 
@@ -115,10 +115,12 @@ private:
 	_bool				m_bAIController = true;
 
 	// 블랙보드에서 뼈의 Pos 저장소
-	_v3					m_vMuzzle		= _v3(0.f, 0.f, 0.f);	// 총구 뼈
-	_v3					m_vLeftForeArm	= _v3(0.f, 0.f, 0.f);	// 팔꿈치 뼈
-	_v3					m_vLeftHand		= _v3(0.f, 0.f, 0.f);	// 왼손 뼈
-	_v3					m_vRightHand	= _v3(0.f, 0.f, 0.f);	// 오른손 뼈
+	_v3					m_vMuzzle				= _v3(0.f, 0.f, 0.f);	// 총구 뼈
+	_v3					m_vLeftForeArm			= _v3(0.f, 0.f, 0.f);	// 팔꿈치 뼈
+	_v3					m_vLeftHand				= _v3(0.f, 0.f, 0.f);	// 왼손 뼈
+	_v3					m_vLeftHandAttach		= _v3(0.f, 0.f, 0.f);	// 왼손 부착 뼈
+	_v3					m_vLeftHandMiddle2		= _v3(0.f, 0.f, 0.f);	// 왼손 가운데 손가락 뼈	
+	_v3					m_vRightHand			= _v3(0.f, 0.f, 0.f);	// 오른손 뼈
 
 private:	// 최초상태 세팅
 	_float				m_fFov = 0.f;

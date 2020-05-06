@@ -76,7 +76,8 @@ private:
 
 	map<_tchar*, queue<CTrail_VFX*>>	m_TrailPool;	// 트레일 객체 담을 풀
 	list<CTrail_VFX*>					m_TrailList;
-	_float							m_fCreateDelay_Check = 0.f;
+	list<CTrail_VFX*>					m_TrailList_ForDelete;
+	_float								m_fCreateDelay_Check = 0.f;
 
 	_float							m_fFootSmokeeDelay_Check = 0.f;
 

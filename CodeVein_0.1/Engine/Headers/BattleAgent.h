@@ -5,8 +5,11 @@
 
 BEGIN(Engine)
 
+class CGameObject;
 class CTransform;
 class CShader;
+class CGameObject;
+
 class ENGINE_DLL CBattleAgent : public CComponent
 {
 private:
@@ -26,8 +29,16 @@ public:
 	_v4		Get_RimColor() { return m_tRimParam.vRimColor_Cur; };
 
 public:
-	// 림라이트의 강도 설정
+	// 림라이트의 초기화 시 강도 설정
 	void	Set_RimValue(_float _fRimValue) { m_tRimParam.fRimValue = _fRimValue; }
+	// 림라이트의 초기화 시 투명도 설정
+	void	Set_RimAlpha(_float _fRimAlpha) { m_tRimParam.fRimAlpha = _fRimAlpha; }
+	// 림라이트의 강도 설정
+	void	Set_OriginRimValue(_float _fRimValue) { m_tRimParam.fOrigin_RimValue = _fRimValue; }
+	// 림라이트의 투명도 설정
+	void	Set_OriginRimAlpha(_float _fRimAlpha) { m_tRimParam.fOrigin_RimAlpha = _fRimAlpha; }
+
+
 	// 림라이트의 변화색 설정
 	void	Set_RimColorChange(_v4 _vRimColor) { m_tRimParam.vRimColor_Change = _vRimColor; }
 	// 림라이트의 데이터 갱신
@@ -58,7 +69,7 @@ public:
 //=======================================================================
 public:
 	// 나로 부터 거리가 가장 가까운 타겟을 반환합니다.
-	CGameObject*	Calc_LengthNearByMe(list<CGameObject*> _listGameObject, _v3 _vMyPos, _float _fMinLengthValue = 0.f , _float* _ppLength = nullptr);
+	CGameObject* Calc_LengthNearByMe(list<CGameObject*> _listGameObject, _v3 _vMyPos, _float _fMinLengthValue = 0.f, _float* _ppLength = nullptr);
 //=======================================================================
 
 private:

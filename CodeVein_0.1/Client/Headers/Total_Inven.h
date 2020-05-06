@@ -12,6 +12,8 @@ class CBloodCode_Icon;
 class CInfo_Slot;
 class CNumberUI;
 class CQuickSlot;
+class CSkillIcon;
+class CSkillSlot;
 class CTotal_Inven final : public CUI
 {
 private:
@@ -21,9 +23,13 @@ private:
 
 public:
 	_bool Get_Detail() { return m_bIsDetail; }
+	BloodCode_ID Get_PlayerBloodCode() { return m_ePlayerBloodCode; }
+	Skill_ID Get_Registration_Skill(_uint iNum);
 
 public:
 	void Set_Detail(_bool bIsDetail) { m_bIsDetail = bIsDetail; }
+	void Set_PlayerBloodCodeType(BloodCode_ID eID) { m_ePlayerBloodCode = eID; }
+	void Set_Skill_ID(_uint iNum, Skill_ID eSkillID);
 
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();
@@ -50,9 +56,10 @@ private:
 	CWeapon_Slot*			m_pWeapon_Slot[2];
 	CArmor_Slot*			m_pArmor_Slot;
 	CBloodCode_Icon*		m_pBloodCode = nullptr;
-	//vector<CExpendables_Slot*>	m_vecQuickSlot;
 	CInfo_Slot*				m_pQuickSlotInfo[8];
 	CNumberUI*				m_pNumberUI[8];
+	BloodCode_ID			m_ePlayerBloodCode = BloodCode_End;
+	vector<CSkillSlot*>		m_vecSkillIcon;
 
 public:
 	static CTotal_Inven*	Create(_Device pGraphic_Device);

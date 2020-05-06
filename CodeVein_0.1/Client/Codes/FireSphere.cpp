@@ -20,10 +20,15 @@ HRESULT CFireSphere::Ready_GameObject_Prototype()
 
 HRESULT CFireSphere::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component()))
-		return E_FAIL;
+	if (nullptr == pArg)
+	{
+		if (FAILED(Add_Component()))
+			return E_FAIL;
 
-	Ready_Collider();
+		Ready_Collider();
+
+		return S_OK;
+	}
 
 	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
 
@@ -32,6 +37,10 @@ HRESULT CFireSphere::Ready_GameObject(void * pArg)
 	m_dLifeTime = temp.dLifeTime;
 	
 	m_fMaxDegree = 10.f;
+
+	m_dCurTime = 0;
+	m_bDead = false;
+	m_fEffectOffset = 0.f;
 
 	m_pTransformCom->Set_Pos(temp.vCreatePos);
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
@@ -53,7 +62,10 @@ _int CFireSphere::Update_GameObject(_double TimeDelta)
 
 	//Look_At_Target(TimeDelta);	// º¸·ù
 
-	m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
+	if (m_pTransformCom->Get_Pos().y < 0.f)
+		m_dCurTime = 1000;
+	else
+		m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
 
 	m_dCurTime += TimeDelta;
 
