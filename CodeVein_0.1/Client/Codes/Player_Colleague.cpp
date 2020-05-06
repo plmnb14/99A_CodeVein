@@ -67,14 +67,14 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 	{*/
 		
 
-		if (g_pInput_Device->Key_Down(DIK_K))
-			m_tObjParam.fHp_Cur -= 100.f;
-		if (g_pInput_Device->Key_Down(DIK_P))
-			m_tObjParam.fHp_Cur += 1000.f;
-		if (g_pInput_Device->Key_Down(DIK_I))
-			m_pTarget->Add_Target_Hp(100.f);
-		if (g_pInput_Device->Key_Down(DIK_L))
-			m_pTarget->Add_Target_Hp(-100.f);
+		//if (g_pInput_Device->Key_Down(DIK_K))
+		//	m_tObjParam.fHp_Cur -= 100.f;
+		////if (g_pInput_Device->Key_Down(DIK_P))
+		////	m_tObjParam.fHp_Cur += 1000.f;
+		//if (g_pInput_Device->Key_Down(DIK_I))
+		//	m_pTarget->Add_Target_Hp(100.f);
+		//if (g_pInput_Device->Key_Down(DIK_L))
+		//	m_pTarget->Add_Target_Hp(-100.f);
 
 		if (0 >= m_tObjParam.fHp_Cur && 0 >= m_iMyHeal_Count)
 			m_eMovetype = CPlayer_Colleague::Coll_Dead;
