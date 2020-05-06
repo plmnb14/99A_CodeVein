@@ -410,7 +410,8 @@ HRESULT CRenderer::Draw_RenderList()
 	// ÈÄÃ³¸®
 	if (FAILED(Render_After()))
 		return E_FAIL;
-
+	if (FAILED(Render_3dUI()))
+		return E_FAIL;
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
@@ -884,6 +885,26 @@ HRESULT CRenderer::Render_UI()
 	}
 
 	m_RenderList[RENDER_UI].clear();
+
+	return NOERROR;
+}
+
+HRESULT CRenderer::Render_3dUI()
+{
+	for (auto& pGameObject : m_RenderList[RENDER_3DUI])
+	{
+		if (nullptr != pGameObject)
+		{
+			if (FAILED(pGameObject->Render_GameObject()))
+			{
+				Safe_Release(pGameObject);
+				return E_FAIL;
+			}
+			Safe_Release(pGameObject);
+		}
+	}
+
+	m_RenderList[RENDER_3DUI].clear();
 
 	return NOERROR;
 }

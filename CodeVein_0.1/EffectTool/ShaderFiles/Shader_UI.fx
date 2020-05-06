@@ -26,6 +26,12 @@ sampler		MaskSampler = sampler_state
 	mipfilter = linear;
 };
 
+texture		g_DepthTexture;
+
+sampler		DepthSampler = sampler_state
+{
+	texture = g_DepthTexture;
+};
 
 // 정점세개를 그리낟.
 
@@ -44,7 +50,6 @@ struct VS_OUT
 	float4		vPosition : POSITION;
 	float2		vTexUV : TEXCOORD0;
 	float3		vWorldPos : TEXCOORD1;
-
 };
 
 struct VS_OUT2
@@ -53,6 +58,14 @@ struct VS_OUT2
 	float2		vTexUV : TEXCOORD0;
 	float3		vWorldPos : TEXCOORD1;
 	float		fTexPercent : TEXCOORD2;
+};
+
+
+struct VS_OUT3
+{
+	float4		vPosition : POSITION;
+	float2		vTexUV : TEXCOORD0;
+	float4		vProjPos : TEXCOORD1;
 };
 
 // 정점의 기초적인 변환을 수행한다.
@@ -108,6 +121,21 @@ VS_OUT2		VS_SKILL_COOL(VS_IN In)
 	return Out;
 }
 
+VS_OUT3 VS_3D_UI(VS_IN In)
+{
+	VS_OUT3			Out = (VS_OUT3)0;
+
+	matrix		matWV, matWVP;
+
+	matWV = mul(g_matWorld, g_matView);
+	matWVP = mul(matWV, g_matProj);
+
+	Out.vPosition = mul(vector(In.vPosition, 1.f), matWVP);
+	Out.vTexUV = In.vTexUV;
+	Out.vProjPos = Out.vPosition;
+
+	return Out;
+}
 
 // POSITION시멘틱을 가진 멤버변수에 대해서 W값으로 XYZW를 나누는 연산을 수행.(원근 투영)
 // 투영스페이스 상에 존재하는 정점(-1, 1 ~ 1, -1)을 뷰포트영역상의 정점(0, 0 ~ WINCX, WINCY)으로 변환한다.
@@ -120,6 +148,8 @@ struct PS_IN
 	float3		vWorldPos : TEXCOORD1;
 };
 
+
+
 struct PS_IN2
 {
 	float4		vPosition : POSITION;
@@ -128,10 +158,18 @@ struct PS_IN2
 	float		fTexPercent : TEXCOORD2;
 };
 
+struct PS_IN3
+{
+	float4		vPosition : POSITION;
+	float2		vTexUV : TEXCOORD0;
+	float4		vProjPos : TEXCOORD1;
+};
+
 struct PS_OUT
 {
 	vector		vColor : COLOR0;
 };
+
 
 // 픽셀의 색을 결정한다.
 PS_OUT PS_MAIN(PS_IN In) 
@@ -217,6 +255,17 @@ PS_OUT PS_UI_MASK2(PS_IN In)
 	return Out;
 }
 
+PS_OUT PS_UI_MASK3(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	Out.vColor = tex2D(DiffuseSampler, In.vTexUV);
+
+	Out.vColor.a *= Out.vColor.r;
+
+	return Out;
+}
+
 technique Default_Technique
 {
 	pass Default_Rendering
@@ -230,8 +279,6 @@ technique Default_Technique
 
 	pass AlphaBlending
 	{
-		//ZwriteEnable = false;
-		zEnable = false;
 		AlphaBlendEnable = true;
 		SrcBlend = SrcAlpha;
 		destblend = invsrcalpha;
@@ -311,6 +358,7 @@ technique Default_Technique
 	}
 	pass	UI_R_Masking_Rendering
 	{
+		zEnable = false;
 		AlphaBlendEnable = true;
 		srcblend = srcalpha;
 		destblend = invsrcalpha;

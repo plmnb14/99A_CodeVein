@@ -12,9 +12,9 @@ private:
 	virtual ~CBloodCodeSlot() = default;
 
 public:
-	BloodCode_ID Get_Type() { return m_eType; }
+	BloodCode_ID Get_CodeID() { return m_eID; }
 public:
-	void Set_Type(BloodCode_ID eID) { m_eType = eID; }
+	void Set_CodeID(BloodCode_ID eID) { m_eID = eID; }
 	void Set_Select(_bool bIsSelect) { m_bIsSelect = bIsSelect; }
 
 public:
@@ -28,6 +28,7 @@ private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable(_uint iIndex);
 	void SetUp_Default();
+	void SetUp_BloodCodeIdx();
 	
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -38,7 +39,7 @@ private:
 	CCollider*				m_pCollider = nullptr;
 
 private:
-	BloodCode_ID			m_eType = BloodCode_End;
+	BloodCode_ID			m_eID = BloodCode_End;
 	_bool					m_bIsSelect = false;
 	_float					m_fAlpha = 0.f;
 
