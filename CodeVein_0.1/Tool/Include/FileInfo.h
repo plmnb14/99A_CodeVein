@@ -10,6 +10,8 @@ public:
 	enum Extract_Mesh
 	{
 		Extract_Essential,
+		Extract_Dynamic_Essential,
+		Extract_NPC,
 		Extract_Static_Common,
 		Extract_Field_Gimmick,
 		Extract_Static_Stage00,

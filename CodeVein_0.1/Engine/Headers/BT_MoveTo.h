@@ -12,13 +12,13 @@ public:
 	{
 		tagInitInfo(char* pNodeName, CTransform* pTransform, CNavMesh* _pNavMesh, _tchar* _pPos_Key, _double _dMovingTime)
 			: pTargetTransform(pTransform), pNavMesh(_pNavMesh), Target_dMovingTime(_dMovingTime)
-		{ strcpy_s<256>(Target_NodeName, pNodeName);
+		{ strcpy_s<STR_128>(Target_NodeName, pNodeName);
 		lstrcpy(Pos_Key, _pPos_Key); }
 
-		char			Target_NodeName[256] = {0,};
+		char			Target_NodeName[STR_128] = {0,};
 		CTransform*		pTargetTransform = nullptr;
 		CNavMesh*		pNavMesh = nullptr;
-		_tchar			Pos_Key[256] = { 0, };
+		_tchar			Pos_Key[STR_128] = { 0, };
 		_double			Target_dMovingTime = 0;
 	}INFO;
 
@@ -42,7 +42,7 @@ private:
 private:
 	CTransform*		m_pTransform = nullptr;
 	CNavMesh*		m_pNavMesh = nullptr;
-	_tchar			m_pPosKey[256] = { 0, };
+	_tchar			m_pPosKey[STR_128] = { 0, };
 	_double			m_dMovingTime = 0;
 
 	_double			m_dCurTime = 0;

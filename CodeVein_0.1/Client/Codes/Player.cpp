@@ -38,6 +38,11 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 
 	Ready_Skills();
 
+	m_pBattleAgent->Set_OriginRimAlpha(0.5f);
+	m_pBattleAgent->Set_OriginRimValue(0.f);
+	m_pBattleAgent->Set_RimAlpha(0.f);
+	m_pBattleAgent->Set_RimValue(0.f);
+
 	return NOERROR;
 }
 
@@ -268,6 +273,10 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 
 				else
 				{
+					if (7 == tmpPass)
+					{
+					}
+
 					pShader->Begin_Pass(iPass);
 				}
 			}
@@ -1504,6 +1513,8 @@ void CPlayer::Key_Skill()
 	// 1번 스킬
 	if (g_pInput_Device->Key_Down(DIK_1))
 	{
+		cout << "스킬 탄다" << endl;
+
 		if (true == m_bOnSkill)
 			return;
 
@@ -10120,7 +10131,7 @@ HRESULT CPlayer::SetUp_ConstantTable()
 	//=============================================================================================
 	_float	fEmissivePower = 0.f;	// 이미시브 : 높을 수록, 자체 발광이 강해짐.
 	_float	fSpecularPower = 1.f;	// 메탈니스 : 높을 수록, 정반사가 강해짐.
-	_float	fRoughnessPower = 0.5f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
+	_float	fRoughnessPower = 1.f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
 	_float	fMinSpecular = 1.f;	// 최소 빛	: 최소 단위의 빛을 더해줌.
 	_float	fID_R = 1.0f;	// ID_R : R채널 ID 값 , 1이 최대
 	_float	fID_G = 0.5f;	// ID_G : G채널 ID 값 , 1이 최대
@@ -10142,7 +10153,6 @@ HRESULT CPlayer::SetUp_ConstantTable()
 		return E_FAIL;
 	//=============================================================================================
 
-	m_pBattleAgent->Set_RimValue(3.f);
 	m_pBattleAgent->Update_RimParam_OnShader(m_pShader);
 
 	return NOERROR;
@@ -10214,11 +10224,14 @@ void CPlayer::Reset_BattleState()
 
 	m_fChargeTimer_Cur = 0.f;
 
-	m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
-	m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(false);
-	m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
-	m_pWeapon[m_eActiveSlot]->Set_SkillMode(false); // WhiteColor
-	m_pWeapon[m_eActiveSlot]->Set_TrailUseMask(false, 6);
+	if (nullptr != m_pWeapon[m_eActiveSlot])
+	{
+		m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
+		m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(false);
+		m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
+		m_pWeapon[m_eActiveSlot]->Set_SkillMode(false); // WhiteColor
+		m_pWeapon[m_eActiveSlot]->Set_TrailUseMask(false, 6);
+	}
 
 	LOOP(32)
 		m_bEventTrigger[i] = false;
@@ -10398,6 +10411,17 @@ void CPlayer::Free()
 		Safe_Delete(iter);
 	}
 
+	m_vecFullSkillInfo.shrink_to_fit();
+	m_vecFullSkillInfo.clear();
+
+	for (auto& iter : m_vecActiveSkillInfo)
+	{
+		Safe_Delete(iter);
+	}
+
+	m_vecActiveSkillInfo.shrink_to_fit();
+	m_vecActiveSkillInfo.clear();
+
 	Safe_Release(m_pDrainWeapon);
 
 	Safe_Release(m_pCollider);
@@ -10407,11 +10431,6 @@ void CPlayer::Free()
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pNavMesh);
 	Safe_Release(m_pBattleAgent);
-
-	for (auto& iter : m_vecPhysicCol)
-	{
-		Safe_Release(iter);
-	}
 
 	for (auto& iter : m_matBones)
 	{

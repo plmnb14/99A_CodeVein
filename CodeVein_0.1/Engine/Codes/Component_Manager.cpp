@@ -1,4 +1,6 @@
 #include "..\Headers\Component_Manager.h"
+#include "Management.h"
+#include "ActiveObject.h"
 
 IMPLEMENT_SINGLETON(CComponent_Manager)
 
@@ -130,25 +132,25 @@ HRESULT CComponent_Manager::Clear_Instance(_uint iSceneIndex)
 
 HRESULT CComponent_Manager::LoadMesh_FilesFromPath(_Device pGraphicDev, const _tchar * wstrImgPath)
 {
-	wifstream fin;
+	HANDLE hFile = CreateFile(wstrImgPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		::MSG_BOX("Load Failed. [INVALID_HANDLE_VALUE]");
+
+	DWORD dwByte = 0;
 
 	list<PATH_INFO*> tmpList;
-
-	fin.open(wstrImgPath);
-
-	if (fin.fail())
-		return E_FAIL;
 
 	while (true)
 	{
 		PATH_INFO* tmpPath = new PATH_INFO;
 
-		fin.getline(tmpPath->sztrStateKey, MAX_STR, '|');
-		fin.getline(tmpPath->sztrFileName, MAX_STR, '|');
-		fin.getline(tmpPath->sztrImgPath, MAX_STR, '|');
-		fin.getline(tmpPath->szIsDynamic, MAX_STR);
+		::ReadFile(hFile, &tmpPath->sztrStateKey, sizeof(_tchar) * STR_128, &dwByte, nullptr);
+		::ReadFile(hFile, &tmpPath->sztrFileName, sizeof(_tchar) * STR_128, &dwByte, nullptr);
+		::ReadFile(hFile, &tmpPath->sztrImgPath, sizeof(_tchar) * STR_128, &dwByte, nullptr);
+		::ReadFile(hFile, &tmpPath->bIsDynamic, sizeof(_bool), &dwByte, nullptr);
 
-		if (fin.eof())
+		if (0 == dwByte)
 		{
 			Safe_Delete(tmpPath);
 			break;
@@ -158,70 +160,223 @@ HRESULT CComponent_Manager::LoadMesh_FilesFromPath(_Device pGraphicDev, const _t
 		tmpList.push_back(tmpPath);
 	}
 
-	fin.close();
+	CloseHandle(hFile);
+
+	CManagement* pManagement = CManagement::Get_Instance();
+	Safe_AddRef(pManagement);
 
 	_mat matDefault;
 	D3DXMatrixIdentity(&matDefault);
 
 	for (auto& iter : tmpList)
 	{
-		CComponent* pMeshCom = (lstrcmp(iter->szIsDynamic, L"0") ? 
-			(CComponent*)CMesh_Dynamic::Create(pGraphicDev, iter->sztrImgPath, iter->sztrFileName, matDefault) :
-			(CComponent*)CMesh_Static::Create(pGraphicDev, iter->sztrImgPath, iter->sztrFileName, matDefault));
+		CComponent* pMeshCom = (iter->bIsDynamic == true ?
+			static_cast<CComponent*>(CMesh_Dynamic::Create(pGraphicDev, iter->sztrImgPath, iter->sztrFileName, matDefault)) :
+			static_cast<CComponent*>(CMesh_Static::Create(pGraphicDev, iter->sztrImgPath, iter->sztrFileName, matDefault)));
 
 		Add_Prototype(SCENE_STATIC, iter->sztrStateKey, pMeshCom);
 		m_fResCnt += 1.f;
 
 		m_listMeshPathInfo.push_back(iter);
 	}
+
 	tmpList.clear();
 
 	m_fResCnt = 0.f;
 	m_fMaxResCnt = 0.f;
+
+	Safe_Release(pManagement);
+
+	return S_OK;
+
+	//wifstream fin;
+	//
+	//list<PATH_INFO*> tmpList;
+	//
+	//fin.open(wstrImgPath);
+	//
+	//if (fin.fail())
+	//	return E_FAIL;
+	//
+	//while (true)
+	//{
+	//	PATH_INFO* tmpPath = new PATH_INFO;
+	//
+	//	fin.getline(tmpPath->sztrStateKey, STR_128, '|');
+	//	fin.getline(tmpPath->sztrFileName, STR_128, '|');
+	//	fin.getline(tmpPath->sztrImgPath, STR_128, '|');
+	//	fin.getline(tmpPath->szIsDynamic, STR_128);
+	//
+	//	if (fin.eof())
+	//	{
+	//		Safe_Delete(tmpPath);
+	//		break;
+	//	}
+	//
+	//	m_fMaxResCnt += 1.f;
+	//	tmpList.push_back(tmpPath);
+	//}
+	//
+	//fin.close();
+	//
+	//CManagement* pManagement = CManagement::Get_Instance();
+	//Safe_AddRef(pManagement);
+	//
+	//_mat matDefault;
+	//D3DXMatrixIdentity(&matDefault);
+	//
+	//for (auto& iter : tmpList)
+	//{
+	//	// 게임 오브젝트 붙혀주고
+	//	lstrcpy(iter->szProtoTypeName, L"RenderObject_");
+	//
+	//	// GameObject_Mesh_ObjectName 형식으로 프로토타입 키값 만듬
+	//	lstrcat(iter->szProtoTypeName, iter->sztrStateKey);
+	//
+	//	// 프로토타입으로 맹글어버림
+	//	pManagement->Add_Prototype(iter->szProtoTypeName, CRenderObject::Create(pGraphicDev));
+	//
+	//	CComponent* pMeshCom = (lstrcmp(iter->szIsDynamic, L"0") ? 
+	//		static_cast<CComponent*>(CMesh_Dynamic::Create(pGraphicDev, iter->sztrImgPath, iter->sztrFileName, matDefault)) :
+	//		static_cast<CComponent*>(CMesh_Static::Create(pGraphicDev, iter->sztrImgPath, iter->sztrFileName, matDefault)));
+	//
+	//	Add_Prototype(SCENE_STATIC, iter->sztrStateKey, pMeshCom);
+	//	m_fResCnt += 1.f;
+	//
+	//	m_listMeshPathInfo.push_back(iter);
+	//}
+	//
+	//tmpList.clear();
+	//
+	//m_fResCnt = 0.f;
+	//m_fMaxResCnt = 0.f;
+	//
+	//Safe_Release(pManagement);
+	//
+	//return S_OK;
+}
+
+HRESULT CComponent_Manager::LoadMesh_FilesFromPath_AddProtoRenderObj(_Device pGraphicDev, const _tchar * szImgPath)
+{
+	HANDLE hFile = CreateFile(szImgPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		::MSG_BOX("Load Failed. [INVALID_HANDLE_VALUE]");
+
+	DWORD dwByte = 0;
+
+	list<PATH_INFO*> tmpList;
+
+	while (true)
+	{
+		PATH_INFO* tmpPath = new PATH_INFO;
+
+		::ReadFile(hFile, &tmpPath->sztrStateKey, sizeof(_tchar) * STR_128, &dwByte, nullptr);
+		::ReadFile(hFile, &tmpPath->sztrFileName, sizeof(_tchar) * STR_128, &dwByte, nullptr);
+		::ReadFile(hFile, &tmpPath->sztrImgPath, sizeof(_tchar) * STR_128, &dwByte, nullptr);
+		::ReadFile(hFile, &tmpPath->bIsDynamic, sizeof(_bool), &dwByte, nullptr);
+
+		if (0 == dwByte)
+		{
+			Safe_Delete(tmpPath);
+			break;
+		}
+
+		m_fMaxResCnt += 1.f;
+		tmpList.push_back(tmpPath);
+	}
+
+	CloseHandle(hFile);
+
+	CManagement* pManagement = CManagement::Get_Instance();
+	Safe_AddRef(pManagement);
+
+	_mat matDefault;
+	D3DXMatrixIdentity(&matDefault);
+
+	for (auto& iter : tmpList)
+	{
+		// 게임 오브젝트 붙혀주고
+		lstrcpy(iter->szProtoTypeName, L"RenderObject_");
+
+		// GameObject_Mesh_ObjectName 형식으로 프로토타입 키값 만듬
+		lstrcat(iter->szProtoTypeName, iter->sztrStateKey);
+
+		// 만약 겨우살이 라면
+		if (!lstrcmp(iter->sztrStateKey, L"Mesh_Mistletoe"))
+		{
+			// 겨우살이 추가
+			pManagement->Add_Prototype(iter->szProtoTypeName, CActiveObject::Create(pGraphicDev));
+		}
+
+		else
+		{
+			// 프로토타입으로 맹글어버림
+			pManagement->Add_Prototype(iter->szProtoTypeName, CRenderObject::Create(pGraphicDev));
+		}
+
+		// 해당 이름으로 메쉬도 만들어서,
+		CComponent* pMeshCom = static_cast<CComponent*>(CMesh_Static::Create(pGraphicDev, iter->sztrImgPath, iter->sztrFileName, matDefault));
+
+		// 메쉬 프로토 타입도 만들어줌
+		Add_Prototype(SCENE_STATIC, iter->sztrStateKey, pMeshCom);
+		m_fResCnt += 1.f;
+
+		m_listMeshPathInfo.push_back(iter);
+	}
+
+	tmpList.clear();
+
+	m_fResCnt = 0.f;
+	m_fMaxResCnt = 0.f;
+
+	Safe_Release(pManagement);
+
+	return S_OK;
 
 	return S_OK;
 }
 
 HRESULT CComponent_Manager::LoadTex_FilesFromPath(_Device pGraphicDev, const _tchar * szImgPath)
 {
-	wifstream fin;
+	HANDLE hFile = CreateFile(szImgPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		::MSG_BOX("Load Failed. [INVALID_HANDLE_VALUE]");
+
+	DWORD dwByte = 0;
 
 	list<PATH_INFO*> tmpList;
-
-
-	fin.open(szImgPath);
-
-	if (fin.fail())
-		return E_FAIL;
 
 	while (true)
 	{
 		PATH_INFO* tmpPath = new PATH_INFO;
 
-		fin.getline(tmpPath->sztrStateKey, MAX_STR, '|');
-		fin.getline(tmpPath->sztrFileName, MAX_STR, '|');
-		fin.getline(tmpPath->sztrImgPath, MAX_STR, '|');
-		fin.getline(tmpPath->szIsDynamic, MAX_STR, '|');
-		fin.getline(tmpPath->szImgCnt, MAX_STR);
+		::ReadFile(hFile, &tmpPath->sztrStateKey, sizeof(_tchar) * STR_128, &dwByte, nullptr);
+		::ReadFile(hFile, &tmpPath->sztrFileName, sizeof(_tchar) * STR_128, &dwByte, nullptr);
+		::ReadFile(hFile, &tmpPath->sztrImgPath, sizeof(_tchar) * STR_128, &dwByte, nullptr);
+		::ReadFile(hFile, &tmpPath->sImgCnt, sizeof(_ushort), &dwByte, nullptr);
 
-		if (fin.eof())
+		if (0 == dwByte)
 		{
 			Safe_Delete(tmpPath);
 			break;
 		}
 
-		++m_fMaxResCnt;
+		m_fMaxResCnt += 1.f;
 		tmpList.push_back(tmpPath);
 	}
 
-	fin.close();
-
+	CloseHandle(hFile);
 
 	for (auto& iter : tmpList)
 	{
-		lstrcat(iter->sztrImgPath, iter->sztrFileName);
+		_tchar szPath[STR_256] = L"";
 
-		Add_Prototype(SCENE_STATIC, iter->sztrStateKey, CTexture::Create(pGraphicDev, CTexture::TYPE_GENERAL, iter->sztrImgPath, _wtoi(iter->szImgCnt)));
+		lstrcpy(szPath, iter->sztrImgPath);
+		lstrcat(szPath, iter->sztrFileName);
+
+		Add_Prototype(SCENE_STATIC, iter->sztrStateKey, CTexture::Create(pGraphicDev, CTexture::TYPE_GENERAL, szPath, iter->sImgCnt));
 		++m_fResCnt;
 
 		m_fResPercent = m_fResCnt / m_fMaxResCnt;
@@ -233,6 +388,56 @@ HRESULT CComponent_Manager::LoadTex_FilesFromPath(_Device pGraphicDev, const _tc
 
 	m_fResCnt = 0.f;
 	m_fMaxResCnt = 0.f;
+
+	//wifstream fin;
+	//
+	//list<PATH_INFO*> tmpList;
+	//
+	//
+	//fin.open(szImgPath);
+	//
+	//if (fin.fail())
+	//	return E_FAIL;
+	//
+	//while (true)
+	//{
+	//	PATH_INFO* tmpPath = new PATH_INFO;
+	//
+	//	fin.getline(tmpPath->sztrStateKey, STR_128, '|');
+	//	fin.getline(tmpPath->sztrFileName, STR_128, '|');
+	//	fin.getline(tmpPath->sztrImgPath, STR_128, '|');
+	//	fin.getline(tmpPath->szIsDynamic, STR_128, '|');
+	//	fin.getline(tmpPath->szImgCnt, STR_128);
+	//
+	//	if (fin.eof())
+	//	{
+	//		Safe_Delete(tmpPath);
+	//		break;
+	//	}
+	//
+	//	++m_fMaxResCnt;
+	//	tmpList.push_back(tmpPath);
+	//}
+	//
+	//fin.close();
+	//
+	//
+	//for (auto& iter : tmpList)
+	//{
+	//	lstrcat(iter->sztrImgPath, iter->sztrFileName);
+	//
+	//	Add_Prototype(SCENE_STATIC, iter->sztrStateKey, CTexture::Create(pGraphicDev, CTexture::TYPE_GENERAL, iter->sztrImgPath, _wtoi(iter->szImgCnt)));
+	//	++m_fResCnt;
+	//
+	//	m_fResPercent = m_fResCnt / m_fMaxResCnt;
+	//
+	//	m_listTexturePathInfo.push_back(iter);
+	//}
+	//
+	//tmpList.clear();
+	//
+	//m_fResCnt = 0.f;
+	//m_fMaxResCnt = 0.f;
 
 	return S_OK;
 }

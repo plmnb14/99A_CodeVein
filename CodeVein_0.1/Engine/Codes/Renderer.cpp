@@ -5,11 +5,14 @@
 //test
 #include"TexEffect.h"
 
-_float g_fShadow_X = 20.f;
-_float g_fShadow_Y = 20.f;
+_float g_fShadow_X = 64.f;
+_float g_fShadow_Y = 36.f;
 _float g_fFov = 60.f;
 _float g_fNear = 0.1f;
 _float g_fFar = 500.f;
+_short g_sShadow_X = 3840;
+_short g_sShadow_Y = 2160;
+_v3	   g_vLightDirectionPos = _v3(-100.f, 50.f, 0.f);
 
 CRenderer::CRenderer(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CComponent(pGraphic_Device)
@@ -76,11 +79,11 @@ HRESULT CRenderer::Ready_Component_Prototype()
 
 
 	// Target_ShadowMap
-	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_ShadowMap", 3840, 2160, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.f, 0.f, 0.f, 1.f))))
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_ShadowMap", g_sShadow_X, g_sShadow_Y, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.f, 0.f, 0.f, 1.f))))
 		return E_FAIL;
 
 	// Target_Shadow ( ¿ø·¡ D3DFMT_A8R8G8B8 )
-	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Shadow", 3840, 2160, D3DFMT_A8R8G8B8, D3DXCOLOR(0.f, 1.f, 0.f, 1.f))))
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Shadow", g_sShadow_X, g_sShadow_Y, D3DFMT_A8R8G8B8, D3DXCOLOR(0.f, 1.f, 0.f, 1.f))))
 		return E_FAIL;
 
 	// Target_Distortion
@@ -224,7 +227,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	//m_pViewPortBufferForBlur = CBuffer_ViewPort::Create(m_pGraphic_Dev, 0.f, 0.f, (_float)ViewPort.Width / 4, (_float)ViewPort.Height / 4);
 
 	// For.m_pSSAOTexture
-	m_pSSAOTexture = CTexture::Create(m_pGraphic_Dev, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Effect/Normal/Normal_4.tga");
+	m_pSSAOTexture = CTexture::Create(m_pGraphic_Dev, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Effect/Normal/Normal_4.dds");
 	// static_cast<CTexture*>(CComponent_Manager::Get_Instance()->Clone_Component(SCENE_STATIC, L"Tex_Noise", nullptr));
 
 	m_iInstanceCnt = 200;
@@ -235,10 +238,9 @@ HRESULT CRenderer::Ready_Component_Prototype()
 
 #ifdef _DEBUG
 
+	//=====================================================================================================================
+
 	_float fTargetSize = 120.f;
-	// For.Target_Diffuse`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_RimNormal", fTargetSize * 5, 0.f, fTargetSize, fTargetSize)))
-		return E_FAIL;
 
 	// For.Target_Diffuse`s Debug Buffer
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Diffuse", 0.0f, 0.0f, fTargetSize, fTargetSize)))
@@ -256,64 +258,79 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Emissive", 0.0f, fTargetSize * 3, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
+	//=====================================================================================================================
+
 	// For.Target_Depth`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Velocity", 0.0f, fTargetSize * 4, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Velocity", fTargetSize, 0.0f, fTargetSize, fTargetSize)))
 		return E_FAIL;
+
+	// ¾È³ª¿È
 	// For.Target_DecalDepth`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_DecalDepth", fTargetSize * 2, fTargetSize * 4, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_DecalDepth", fTargetSize, fTargetSize * 2, fTargetSize, fTargetSize)))
 		return E_FAIL;
+
+	// For.Target_RimNormal`s Debug Buffer ==  Å÷ ½¦ÀÌµù
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_RimNormal", fTargetSize, fTargetSize * 3, fTargetSize, fTargetSize)))
+		return E_FAIL;
+
+	//=====================================================================================================================
 
 	// For.Target_Shade`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Shade", fTargetSize, 0.0f, fTargetSize, fTargetSize)))
-		return E_FAIL;
-
-	// For.Target_Specular`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Specular", fTargetSize, fTargetSize, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Shade", fTargetSize * 2.f, 0.0f, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_SSAO`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_SSAO", fTargetSize * 6, fTargetSize * 0, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_SSAO", fTargetSize * 2.f, fTargetSize, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_SSAO_Blur`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_SSAO_Blur", fTargetSize * 6, fTargetSize * 1, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_SSAO_Blur", fTargetSize * 2.f, fTargetSize * 2, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
+	// For.Target_Specular`s Debug Buffer
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Specular", fTargetSize * 2.f, fTargetSize * 3, fTargetSize, fTargetSize)))
+		return E_FAIL;
 
 	// For.Target_Rim`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Rim", fTargetSize, fTargetSize * 4, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Rim", fTargetSize * 2.f, fTargetSize * 4, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
+	//=====================================================================================================================
+
 	// For.Target_ShadowMap`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_ShadowMap", fTargetSize * 4, 0.0f, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_ShadowMap", fTargetSize * 3, 0.0f, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_Shadow`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Shadow", fTargetSize * 4, fTargetSize, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Shadow", fTargetSize * 3, fTargetSize, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
-	// For.Target_Blend`s Debug Buffer // Åæ¸ÅÇÎ Á÷Àü
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Blend", fTargetSize * 3, 0.f, fTargetSize, fTargetSize)))
-		return E_FAIL;
-
-	// For.Target_Bloom`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Bloom", fTargetSize, fTargetSize * 3, fTargetSize, fTargetSize)))
-		return E_FAIL;
+	//=====================================================================================================================
 
 	// For.Target_Distortion`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Distortion", fTargetSize * 2, 0.f, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Distortion", fTargetSize * 4, 0.f, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_Blur`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Blur", fTargetSize * 2, fTargetSize, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Blur", fTargetSize * 4, fTargetSize, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_MotionBlur`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_MotionBlurObj", fTargetSize * 2, fTargetSize * 2, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_MotionBlurObj", fTargetSize * 4, fTargetSize * 2, fTargetSize, fTargetSize)))
+		return E_FAIL;
+
+	//=====================================================================================================================
+
+	// For.Target_Blend`s Debug Buffer // Åæ¸ÅÇÎ Á÷Àü
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Blend", fTargetSize * 5, 0.f, fTargetSize, fTargetSize)))
+		return E_FAIL;
+
+	// For.Target_Bloom`s Debug Buffer
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Bloom", fTargetSize * 5, fTargetSize, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_ToneMapping`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_ToneMapping", fTargetSize * 3, fTargetSize, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_ToneMapping", fTargetSize * 5, fTargetSize * 2.f, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 #endif
@@ -410,8 +427,8 @@ HRESULT CRenderer::Draw_RenderList()
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Deferred");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Velocity");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_LightAcc");
-		//m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_ShadowMap");
-		//m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_Shadow");
+		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_ShadowMap");
+		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_Shadow");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Blend");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Distortion");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Blur");
@@ -489,12 +506,12 @@ HRESULT CRenderer::Render_ShadowMap()
 	m_pTarget_Manager->New_Stencil(L"Target_ShadowMap");
 
 	m_pGraphic_Dev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DXCOLOR(0.f, 0.f, 0.f, 0.f), 1.f, 0);
-
+	
 	_mat matWorld, matView, matProj, matLightVP;
 
 	_v3 vCamPos = CManagement::Get_Instance()->Get_CamPosition();
 
-	_v3 vLightPos = vCamPos + _v3(0.f, 60.f, 100.f);
+	_v3 vLightPos = vCamPos + g_vLightDirectionPos;
 	_v3 vLookAt = vCamPos;
 
 	D3DXMatrixLookAtLH(&matView, &vLightPos, &vLookAt, &WORLD_UP);
@@ -532,15 +549,15 @@ HRESULT CRenderer::Render_Shadow()
 	m_pTarget_Manager->New_Stencil(L"Target_Shadow");
 	m_pGraphic_Dev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DXCOLOR(0.f, 0.f, 0.f, 0.f), 1.f, 0);
 
-	_float fOffsetX = 0.5f + (0.5f / 3840.f);
-	_float fOffsetY = 0.5f + (0.5f / 2160.f);
+	_float fOffsetX = 0.5f + (0.5f / 1280);
+	_float fOffsetY = 0.5f + (0.5f / 720);
 
 	_mat matScaleBias;
 	D3DXMatrixIdentity(&matScaleBias);
 
 	matScaleBias._11 = 0.5f;
 	matScaleBias._22 = -0.5f;
-	matScaleBias._33 = 1.f;
+	matScaleBias._33 = 1.0f;
 	matScaleBias._41 = fOffsetX;
 	matScaleBias._42 = fOffsetY;
 	matScaleBias._44 = 1.f;
@@ -551,7 +568,7 @@ HRESULT CRenderer::Render_Shadow()
 
 	_v3 vCamPos = CManagement::Get_Instance()->Get_CamPosition();
 
-	_v3 vLightPos = vCamPos + _v3(0.f, 60.f, 100.f);
+	_v3 vLightPos = vCamPos + g_vLightDirectionPos;
 	_v3 vLookAt = vCamPos;
 
 	D3DXMatrixLookAtLH(&matView, &vLightPos, &vLookAt, &WORLD_UP);
@@ -890,7 +907,7 @@ HRESULT CRenderer::Render_LightAcc()
 
 	_v3 vCamPos = CManagement::Get_Instance()->Get_CamPosition();
 
-	_v3 vLightPos = vCamPos + _v3(0.f, 60.f, 100.f);
+	_v3 vLightPos = vCamPos + g_vLightDirectionPos;
 	_v3 vLookAt = vCamPos;
 
 	D3DXMatrixLookAtLH(&matView, &vLightPos, &vLookAt, &WORLD_UP);

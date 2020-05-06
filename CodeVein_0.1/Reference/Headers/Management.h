@@ -67,6 +67,7 @@ public: // for.Component_Manager
 	CComponent* Clone_Component(_uint iSceneID, const _tchar* pPrototypeTag, void* pArg = nullptr);
 
 	HRESULT LoadMesh_FromPath(_Device pGraphicDev, const _tchar* szImgPath);
+	HRESULT LoadMesh_FilesFromPath_AddProtoRenderObj(_Device pGraphicDev, const _tchar* szImgPath);
 	HRESULT LoadTex_FromPath(_Device pGraphicDev, const _tchar* szImgPath);
 
 public:

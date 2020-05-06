@@ -230,11 +230,9 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	// ÃÑ°ÕÁö
 	//====================================================================================================================================================
 	
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::Normal, CGunGenji::CheckGun, 10.f, 3.f, 2.f));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(8.f, 0.f, -8.f));
-	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
-	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", 
+	//	&CGunGenji::INFO(CGunGenji::Normal, CGunGenji::CheckGun, 10.f, 3.f, 2.f, 
+	//		true, _v3(8.f, 0.f, -8.f) , V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::Jungle));
@@ -330,11 +328,11 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 
 HRESULT CScene_Stage_Training::Ready_Layer_Environment()
 {
-	CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Sky", nullptr);
-
-	TARGET_TO_TRANS(pInstance)->Set_Angle(AXIS_Y, D3DXToRadian(0.f));
-
-	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Sky", nullptr);
+	//CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Sky", nullptr);
+	//
+	//TARGET_TO_TRANS(pInstance)->Set_Angle(AXIS_Y, D3DXToRadian(0.f));
+	//
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Sky", nullptr);
 
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Flag", &CFlag::INFO(5, 5, 2.f, 1.f));
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(0.f, 3.f, 3.f));

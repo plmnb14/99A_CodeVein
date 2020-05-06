@@ -142,7 +142,7 @@ protected:
 	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur = false);
 
 protected:	// DJ
-	_tchar m_pLayerTag_Of_Target[256] = { L"Layer_Player" };
+	_tchar m_pLayerTag_Of_Target[STR_128] = { L"Layer_Player" };
 
 protected:
 	void Set_Target_To_Player();

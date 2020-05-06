@@ -1155,7 +1155,7 @@ void CWolf::Play_Dead()
 
 HRESULT CWolf::Add_Component(void* pArg)
 {
-	_tchar MeshName[MAX_STR] = L"";
+	_tchar MeshName[STR_128] = L"";
 
 	MONSTER_STATUS eTemp = *(MONSTER_STATUS*)pArg;
 

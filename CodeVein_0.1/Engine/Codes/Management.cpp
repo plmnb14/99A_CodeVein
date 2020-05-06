@@ -309,6 +309,14 @@ HRESULT CManagement::LoadMesh_FromPath(_Device pGraphicDev, const _tchar * szImg
 	return m_pComponent_Manager->LoadMesh_FilesFromPath(pGraphicDev, szImgPath);
 }
 
+HRESULT CManagement::LoadMesh_FilesFromPath_AddProtoRenderObj(_Device pGraphicDev, const _tchar * szImgPath)
+{
+	if (nullptr == m_pComponent_Manager)
+		return E_FAIL;
+
+	return m_pComponent_Manager->LoadMesh_FilesFromPath_AddProtoRenderObj(pGraphicDev, szImgPath);
+}
+
 HRESULT CManagement::LoadTex_FromPath(_Device pGraphicDev, const _tchar * szImgPath)
 {
 	if (nullptr == m_pComponent_Manager)

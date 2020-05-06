@@ -9,7 +9,7 @@ CTestWeapon::CTestWeapon(_Device pGraphic_Device)
 CTestWeapon::CTestWeapon(LPDIRECT3DDEVICE9 pGraphic_Device, _tchar * szWeaponname)
 	:CGameObject(pGraphic_Device)
 {
-	m_pszWeaponName = new _tchar[MAX_STR];
+	m_pszWeaponName = new _tchar[STR_128];
 	lstrcpy(m_pszWeaponName, szWeaponname);
 }
 

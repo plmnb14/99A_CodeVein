@@ -1,5 +1,7 @@
 #pragma once
 
+#define STR_128 128
+
 namespace Engine
 {
 	// Buffer
@@ -301,85 +303,85 @@ namespace Engine
 		std::wstring wstrStateKey = L"";
 		std::wstring wstrImgPath = L"";
 		std::wstring wstrFileName = L"";
-		std::wstring	szIsDynamic = L"";
+		_bool	bIsDynamic = false;
 
-		//_tchar sztrStateKey[256] = L"";
-		//_tchar sztrImgPath[256] = L"";
-		//_tchar sztrFileName[256] = L"";
-		//_tchar szIsDynamic[256] = L"";
+		//_tchar sztrStateKey[STR_128] = L"";
+		//_tchar sztrImgPath[STR_128] = L"";
+		//_tchar sztrFileName[STR_128] = L"";
+		//_tchar szIsDynamic[STR_128] = L"";
 
 	}MESH_INFO;
 
 	typedef struct tagTexInfo
 	{
-		//_tchar sztrStateKey[256] = L"";
-		//_tchar sztrImgPath[256] = L"";
-		//_tchar sztrFileName[256] = L"";
-		//_tchar szIsDynamic[256] = L"";
-		//_tchar szImgCnt[256] = L"";
+		//_tchar sztrStateKey[STR_128] = L"";
+		//_tchar sztrImgPath[STR_128] = L"";
+		//_tchar sztrFileName[STR_128] = L"";
+		//_tchar szIsDynamic[STR_128] = L"";
+		//_tchar szImgCnt[STR_128] = L"";
 
 		std::wstring wstrStateKey = L"";
 		std::wstring wstrImgPath = L"";
 		std::wstring wstrFileName = L"";
-		std::wstring	szIsDynamic = L"";
-		std::wstring	szImgCnt = L"";
+		_ushort sImgCnt = 0;
 
 	}TEX_INFO;
 
 	typedef struct tagPathInfo
 	{
-		_tchar sztrStateKey[256] = L"";
-		_tchar sztrImgPath[256] = L"";
-		_tchar sztrFileName[256] = L"";
-		_tchar szIsDynamic[256] = L"";
-		_tchar szImgCnt[256] = L"";
+		_tchar sztrStateKey[STR_128] = L"";
+		_tchar sztrImgPath[STR_128] = L"";
+		_tchar sztrFileName[STR_128] = L"";
+		_bool	bIsDynamic = false;
+		_ushort sImgCnt = 0;
+		_tchar szProtoTypeName[STR_128] = L"";
 
 	}PATH_INFO;
 
 	typedef struct tagObjInfo
 	{
-		_tchar szName[256] = L"";
-		_tchar szTag[256] = L"";
-		_tchar szLayerIdx[256] = L"";
+		_tchar szName[STR_128] = L"";
+		_tchar szTag[STR_128] = L"";
+		_tchar szLayerIdx[STR_128] = L"";
 
-		_tchar szIndex[256] = L"";
+		_tchar szIndex[STR_128] = L"";
 
-		_tchar szPos_X[256] = L"";
-		_tchar szPos_Y[256] = L"";
-		_tchar szPos_Z[256] = L"";
+		_tchar szPos_X[STR_128] = L"";
+		_tchar szPos_Y[STR_128] = L"";
+		_tchar szPos_Z[STR_128] = L"";
 
-		_tchar szRot_X[256] = L"";
-		_tchar szRot_Y[256] = L"";
-		_tchar szRot_Z[256] = L"";
+		_tchar szRot_X[STR_128] = L"";
+		_tchar szRot_Y[STR_128] = L"";
+		_tchar szRot_Z[STR_128] = L"";
 
-		_tchar szScale_X[256] = L"";
-		_tchar szScale_Y[256] = L"";
-		_tchar szScale_Z[256] = L"";
+		_tchar szScale_X[STR_128] = L"";
+		_tchar szScale_Y[STR_128] = L"";
+		_tchar szScale_Z[STR_128] = L"";
 
 	}OBJ_INFO;
 
 	typedef struct tagCellInfo
 	{
-		_tchar szIndex[256] = L"";
+		_tchar szIndex[STR_128] = L"";
 
-		_tchar szAB_Index[256] = L"";
-		_tchar szBC_Index[256] = L"";
-		_tchar szCA_Index[256] = L"";
+		_tchar szAB_Index[STR_128] = L"";
+		_tchar szBC_Index[STR_128] = L"";
+		_tchar szCA_Index[STR_128] = L"";
 
-		_tchar szVtx_A_x[256] = L"";
-		_tchar szVtx_A_y[256] = L"";
-		_tchar szVtx_A_z[256] = L"";
+		_tchar szVtx_A_x[STR_128] = L"";
+		_tchar szVtx_A_y[STR_128] = L"";
+		_tchar szVtx_A_z[STR_128] = L"";
 
-		_tchar szVtx_B_x[256] = L"";
-		_tchar szVtx_B_y[256] = L"";
-		_tchar szVtx_B_z[256] = L"";
+		_tchar szVtx_B_x[STR_128] = L"";
+		_tchar szVtx_B_y[STR_128] = L"";
+		_tchar szVtx_B_z[STR_128] = L"";
 
-		_tchar szVtx_C_x[256] = L"";
-		_tchar szVtx_C_y[256] = L"";
-		_tchar szVtx_C_z[256] = L"";
+		_tchar szVtx_C_x[STR_128] = L"";
+		_tchar szVtx_C_y[STR_128] = L"";
+		_tchar szVtx_C_z[STR_128] = L"";
 
-		_tchar szOption[256] = L"";
-		_tchar szSubset[256] = L"";
+		_tchar szOption[STR_128] = L"";
+		_tchar szSubset[STR_128] = L"";
 
 		_int   intOption;
 
@@ -397,8 +399,10 @@ namespace Engine
 			TYPE_TRANSPARENCY_MAP,
 			TYPE_ID_MAP,
 			TYPE_AO_MAP,
+			TYPE_NR_MAP,
 			TYPE_HEIGHT_MAP,
-			TYPE_END };
+			TYPE_END 
+		};
 
 		LPDIRECT3DTEXTURE9		pTextures[TYPE_END];
 		_ulong					m_dwMaterialPass;
@@ -423,9 +427,9 @@ namespace Engine
 
 	typedef struct tagEffectInfo
 	{
-		TCHAR	szName[256];
-		TCHAR	szGradientName[256];
-		TCHAR	szColorName[256];
+		TCHAR	szName[STR_128];
+		TCHAR	szGradientName[STR_128];
+		TCHAR	szColorName[STR_128];
 
 		_bool	bUseRGBA;
 		_bool	bStaticFrame;

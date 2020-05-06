@@ -13,10 +13,10 @@ CFileInfo::~CFileInfo()
 
 CString CFileInfo::ConvertRelativePath(const TCHAR* pFullPath)
 {
-	TCHAR szCurrentDir[256] = L"";
-	::GetCurrentDirectory(256, szCurrentDir);
+	TCHAR szCurrentDir[STR_128] = L"";
+	::GetCurrentDirectory(STR_128, szCurrentDir);
 
-	TCHAR szRelativePath[256] = L"";
+	TCHAR szRelativePath[STR_128] = L"";
 
 	//// From에서 To로 넘어가는 상대경로를 만들어서 Output에 저장하는 함수.
 	//::PathRelativePathTo(Output, From, FILE_ATTRIBUTE_DIRECTORY,
@@ -32,8 +32,8 @@ void CFileInfo::Create_Mesh_PathInfo(Extract_Mesh _eExtract_Mesh)
 {
 	list<Engine::MESH_INFO*> m_listPathInfo;
 
-	_tchar szStaticPath[MAX_STR] = L"";
-	_tchar szDynamicPath[MAX_STR] = L"";
+	_tchar szStaticPath[STR_128] = L"";
+	_tchar szDynamicPath[STR_128] = L"";
 
 	_bool	bDynamic = false;
 
@@ -48,6 +48,32 @@ void CFileInfo::Create_Mesh_PathInfo(Extract_Mesh _eExtract_Mesh)
 		
 		lstrcpy(szStaticPath, L"..\\..\\Client\\Resources\\Mesh\\");
 		lstrcat(szStaticPath, L"Essential");
+
+		break;
+	}
+
+	case Extract_Dynamic_Essential:
+	{
+		cout << "Extracting Hero Path . . ." << endl;
+		cout << "=============================================================" << endl;
+
+		lstrcpy(szStaticPath, L"..\\..\\Client\\Resources\\Mesh\\");
+		lstrcat(szStaticPath, L"Hero");
+
+		bDynamic = true;
+
+		break;
+	}
+
+	case Extract_NPC:
+	{
+		cout << "Extracting NPC Mesh Path . . ." << endl;
+		cout << "=============================================================" << endl;
+
+		lstrcpy(szStaticPath, L"..\\..\\Client\\Resources\\Mesh\\");
+		lstrcat(szStaticPath, L"NPC");
+
+		bDynamic = true;
 
 		break;
 	}
@@ -186,14 +212,25 @@ void CFileInfo::Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst, Extract_Mesh 
 {
 	cout << "Saving MeshPath . . ." << endl;
 
-	wofstream fout;
-	_tchar szDataPath[MAX_STR] = L"";
+	_tchar szDataPath[STR_128] = L"";
 
 	switch (_eExtract_Mesh)
 	{
 	case Extract_Essential:
 	{
 		lstrcpy(szDataPath, L"../../Data/Load_MeshData/Mesh_Essential_Path.dat");
+		break;
+	}
+
+	case Extract_Dynamic_Essential:
+	{
+		lstrcpy(szDataPath, L"../../Data/Load_MeshData/Mesh_Essential_Dynamic_Path.dat");
+		break;
+	}
+
+	case Extract_NPC:
+	{
+		lstrcpy(szDataPath, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
 		break;
 	}
 
@@ -270,32 +307,61 @@ void CFileInfo::Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst, Extract_Mesh 
 	}
 	}
 
-	fout.open(szDataPath);
+	//wofstream fout(szDataPath, ios::out | ios::binary);
+	//
+	//if (fout.fail())
+	//	return;
+	//
+	//for (auto& pPathInfo : rPathInfoLst)
+	//{
+	//	fout << pPathInfo->wstrStateKey;
+	//	fout << L"|";
+	//	fout << pPathInfo->wstrFileName;
+	//	fout << L"|";
+	//	fout << pPathInfo->wstrImgPath;
+	//	fout << L"|";
+	//	fout << pPathInfo->szIsDynamic << endl;
+	//
+	//	//fout.write(pPathInfo->wstrStateKey.c_str(), pPathInfo->wstrStateKey.size());
+	//	//fout.write(pPathInfo->wstrFileName.c_str(), pPathInfo->wstrFileName.size());
+	//	//fout.write(pPathInfo->wstrImgPath.c_str(), pPathInfo->wstrImgPath.size());
+	//	//fout.write(pPathInfo->szIsDynamic.c_str(), pPathInfo->szIsDynamic.size()) << endl;
+	//}
+	//
+	//fout.flush();
+	//fout.close();
+	//
+	//for (auto& pPathInfo : rPathInfoLst)
+	//{
+	//	Engine::Safe_Delete(pPathInfo);
+	//}
+	//
+	//rPathInfoLst.clear();
 
-	if (fout.fail())
-		return;
-
+	HANDLE hFile = ::CreateFile(szDataPath, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
+	
 	DWORD dwByte = 0;
-	wstring wstrCombined = L"";
 
 	for (auto& pPathInfo : rPathInfoLst)
 	{
-		wstrCombined =
-			pPathInfo->wstrStateKey + L"|" +
-			pPathInfo->wstrFileName + L"|" +
-			pPathInfo->wstrImgPath + L"|" +
-			pPathInfo->szIsDynamic;
+		if (INVALID_HANDLE_VALUE == hFile)
+			::MSG_BOX("Save Failed. [INVALID_HANDLE_VALUE]");
+	
+		const _tchar* szKey = pPathInfo->wstrStateKey.c_str();
+		const _tchar* szFile = pPathInfo->wstrFileName.c_str();
+		const _tchar* szPath = pPathInfo->wstrImgPath.c_str();
+		const _bool bDynamic = pPathInfo->bIsDynamic;
 
-		fout << wstrCombined << endl;
+		::WriteFile(hFile, szKey, sizeof(_tchar) * STR_128, &dwByte, nullptr);
+		::WriteFile(hFile, szFile, sizeof(_tchar) * STR_128, &dwByte, nullptr);
+		::WriteFile(hFile, szPath, sizeof(_tchar) * STR_128, &dwByte, nullptr);
+		::WriteFile(hFile, &bDynamic, sizeof(_bool), &dwByte, nullptr);
+
+		if (rPathInfoLst.size() == 1)
+			break;
 	}
-
-	fout.close();
-
-	for (auto& pPathInfo : rPathInfoLst)
-	{
-		Engine::Safe_Delete(pPathInfo);
-	}
-	rPathInfoLst.clear();
+	
+	CloseHandle(hFile);
 
 	cout << "Done . . . !" << endl;
 }
@@ -341,7 +407,7 @@ void CFileInfo::Extract_Mesh_PathInfo(
 
 			///////////////////////////////////////////////////////////////////////////
 
-			TCHAR szBuf[MAX_STR] = L"";
+			TCHAR szBuf[STR_128] = L"";
 			lstrcpy(szBuf, strRelative);
 
 
@@ -366,10 +432,7 @@ void CFileInfo::Extract_Mesh_PathInfo(
 			// 키 값
 			pPathInfo->wstrStateKey = L"Mesh_" + tmpString;
 
-			TCHAR szBuf_2[MAX_STR] = L"";
-			(_bIsDynamic ? lstrcpy(szBuf_2, L"1") : lstrcpy(szBuf_2, L"0"));
-
-			pPathInfo->szIsDynamic = szBuf_2;
+			pPathInfo->bIsDynamic = _bIsDynamic;
 
 			rPathInfoLst.push_back(pPathInfo);
 
@@ -384,8 +447,8 @@ void CFileInfo::Create_Texture_PathInfo()
 {
 	list<Engine::TEX_INFO*> m_listPathInfo;
 
-	_tchar szStaticPath[MAX_STR] = L"";
-	_tchar szDynamicPath[MAX_STR] = L"";
+	_tchar szStaticPath[STR_128] = L"";
+	_tchar szDynamicPath[STR_128] = L"";
 
 	cout << "Extracting Texture Path . . ." << endl;
 
@@ -397,33 +460,54 @@ void CFileInfo::Create_Texture_PathInfo()
 
 void CFileInfo::Save_Texture_PathInfo(list<Engine::TEX_INFO*>& rPathInfoLst)
 {
-	//cout << "Saving TexPath . . ." << endl;
+	cout << "Saving TexPath . . ." << endl;
 
-	wofstream fout;
-
-	fout.open(L"../../Data/Load_TexData/Tex_Path.dat");
-
-	if (fout.fail())
-		return;
-
-	DWORD dwByte = 0;
-	wstring wstrCombined = L"";
+	HANDLE hFile = ::CreateFile(L"../../Data/Load_TexData/Tex_Path.dat", GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 
 	for (auto& pPathInfo : rPathInfoLst)
 	{
-		wstrCombined = pPathInfo->wstrStateKey
-			+ L"|" + pPathInfo->wstrFileName + L"|" + pPathInfo->wstrImgPath + L"|" + pPathInfo->szIsDynamic + L"|" + pPathInfo->szImgCnt;
+		if (INVALID_HANDLE_VALUE == hFile)
+			::MSG_BOX("Save Failed. [INVALID_HANDLE_VALUE]");
 
-		fout << wstrCombined << endl;
+		DWORD dwByte = 0;
+
+		const _tchar* szKey = pPathInfo->wstrStateKey.c_str();
+		const _tchar* szFile = pPathInfo->wstrFileName.c_str();
+		const _tchar* szPath = pPathInfo->wstrImgPath.c_str();
+		const _ushort sCnt = pPathInfo->sImgCnt;
+
+		::WriteFile(hFile, szKey, sizeof(_tchar) * STR_128, &dwByte, nullptr);
+		::WriteFile(hFile, szFile, sizeof(_tchar) * STR_128, &dwByte, nullptr);
+		::WriteFile(hFile, szPath, sizeof(_tchar) * STR_128, &dwByte, nullptr);
+		::WriteFile(hFile, &sCnt, sizeof(_ushort), &dwByte, nullptr);
+
+		if (rPathInfoLst.size() == 1)
+			break;
 	}
 
-	fout.close();
+	CloseHandle(hFile);
 
-	for (auto& pPathInfo : rPathInfoLst)
-	{
-		Engine::Safe_Delete(pPathInfo);
-	}
-	rPathInfoLst.clear();
+	//if (fout.fail())
+	//	return;
+	//
+	//DWORD dwByte = 0;
+	//wstring wstrCombined = L"";
+	//
+	//for (auto& pPathInfo : rPathInfoLst)
+	//{
+	//	wstrCombined = pPathInfo->wstrStateKey
+	//		+ L"|" + pPathInfo->wstrFileName + L"|" + pPathInfo->wstrImgPath + L"|" + pPathInfo->szIsDynamic + L"|" + pPathInfo->szImgCnt;
+	//
+	//	fout << wstrCombined << endl;
+	//}
+	//
+	//fout.close();
+	//
+	//for (auto& pPathInfo : rPathInfoLst)
+	//{
+	//	Engine::Safe_Delete(pPathInfo);
+	//}
+	//rPathInfoLst.clear();
 
 	//cout << "Done . . . !" << endl;
 }
@@ -438,7 +522,7 @@ void CFileInfo::Extract_Texture_PathInfo(const TCHAR * pPath, list<Engine::TEX_I
 
 	BOOL bIsFind = find.FindFile(wstrFindPath.c_str());
 
-	TCHAR szBeforeName[MAX_STR] = L"";
+	TCHAR szBeforeName[STR_128] = L"";
 
 	while (bIsFind)
 	{
@@ -483,7 +567,7 @@ void CFileInfo::Extract_Texture_PathInfo(const TCHAR * pPath, list<Engine::TEX_I
 
 			///////////////////////////////////////////////////////////////////////////
 
-			TCHAR szBuf[MAX_STR] = L"";
+			TCHAR szBuf[STR_128] = L"";
 			lstrcpy(szBuf, strRelative);
 
 
@@ -505,10 +589,9 @@ void CFileInfo::Extract_Texture_PathInfo(const TCHAR * pPath, list<Engine::TEX_I
 				continue;
 			}
 
-			TCHAR szCnt[MAX_STR] = L"";
+			TCHAR szCnt[STR_128] = L"";
 
-			_itow_s(CountImageFile(szBuf), szCnt, 10);
-			pPathInfo->szImgCnt = szCnt;
+			pPathInfo->sImgCnt = CountImageFile(szBuf);
 
 			// 파일 이름
 			lstrcpy(szBuf, strRelative);
@@ -527,11 +610,6 @@ void CFileInfo::Extract_Texture_PathInfo(const TCHAR * pPath, list<Engine::TEX_I
 
 			// 키 값
 			pPathInfo->wstrStateKey = L"Tex_" + tmpString2;
-
-			TCHAR szBuf_2[MAX_STR] = L"";
-			(_bIsDynamic ? lstrcpy(szBuf_2, L"1") : lstrcpy(szBuf_2, L"0"));
-
-			pPathInfo->szIsDynamic = szBuf_2;
 
 			rPathInfoLst.push_back(pPathInfo);
 		}

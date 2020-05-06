@@ -10,9 +10,9 @@ public:
 	typedef struct tagInitInfo
 	{
 		tagInitInfo(char* pNodeName)
-		{ strcpy_s<256>(Target_NodeName, pNodeName); }
+		{ strcpy_s<STR_128>(Target_NodeName, pNodeName); }
 
-		char	Target_NodeName[256] = { 0, };
+		char	Target_NodeName[STR_128] = { 0, };
 	}INFO;
 
 protected:

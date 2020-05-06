@@ -12,14 +12,13 @@ BEGIN(Client)
 class CLoading final : public CBase
 {
 private:
-	explicit CLoading(LPDIRECT3DDEVICE9 pGraphicDev);
+	explicit CLoading(_Device pGraphicDev);
 	virtual ~CLoading(void) = default;
 
 public:
 	SCENEID Get_LoadingID(void) const { return m_eLoadingID; }
 	CRITICAL_SECTION* Get_Crt(void) { return &m_Crt; }
 	_bool Get_Finish(void) const { return m_bFinish; }
-	const _tchar* Get_String(void) const { return m_szString; }
 
 public:
 	virtual void Set_LoadStaticMesh(_bool _bLoadStatic) { m_bLoadStaticMesh = _bLoadStatic; }
@@ -44,17 +43,16 @@ private:
 private:
 	HANDLE				m_hThread;
 	CRITICAL_SECTION	m_Crt;
-	SCENEID				m_eLoadingID;
-	LPDIRECT3DDEVICE9	m_pGraphicDev;
-	_bool				m_bFinish;
-	_tchar				m_szString[128];
+	SCENEID				m_eLoadingID = SCENE_LOGO;
+	_Device				m_pGraphicDev = nullptr;
+	_bool				m_bFinish = false;
 
 private:
 	_bool				m_bLoadStaticMesh = false;
 	_bool				m_bLoadDynamicMesh = false;
 
 public:
-	static CLoading* Create(LPDIRECT3DDEVICE9 pGraphicDev, SCENEID eLoadingID);
+	static CLoading* Create(_Device pGraphicDev, SCENEID eLoadingID);
 	virtual	void Free(void);
 };
 

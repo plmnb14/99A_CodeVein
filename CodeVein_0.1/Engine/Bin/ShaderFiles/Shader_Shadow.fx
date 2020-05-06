@@ -112,6 +112,8 @@ PS_OUT PS_SHADOW(PS_IN_ShadowRender In)
 
 	float4 vTexCoord[9];
 	
+	//float fTexelSizeX = 1.f / 1280.f;
+	//float fTexelSizeY = 1.f / 720.f;
 	float fTexelSizeX = 1.f / 3840.f;
 	float fTexelSizeY = 1.f / 2160.f;
 	//float fTexelSizeX = 1.f / 2560.f;
@@ -133,8 +135,13 @@ PS_OUT PS_SHADOW(PS_IN_ShadowRender In)
 	for (int i = 0; i < 9; i++)
 	{
 		float fDepthValue = tex2Dproj(ShadowMapSampler, vTexCoord[i]).x;
-		
-		if (fDepthValue * In.vDepth.w < In.vDepth.z - 0.001f)
+		float cosTheta = dot(0.99f, 1.f);
+		//float bias = 0.00025f * tan(acos(cosTheta));	// 카메라 10,10 일때
+		float bias = 0.0025f * tan(acos(cosTheta));	// 카메라 64,36 일때
+
+		bias = clamp(bias, 0, 0.01);
+
+		if (fDepthValue * In.vDepth.w < In.vDepth.z - bias)
 		{
 			fShadowTerms[i] = 0.2f;
 		}
@@ -143,11 +150,11 @@ PS_OUT PS_SHADOW(PS_IN_ShadowRender In)
 			fShadowTerms[i] = 1.f;
 		
 		fShadowTerm += float(fShadowTerms[i]);
-
+	
 		//float A = tex2Dproj(ShadowMapSampler, vTexCoord[i]).x;
-		//float B = (In.vDepth.z - 0.00125f);
+		//float B = (In.vDepth.z - 0.00001f);
 		//
-		//fShadowTerms[i] = (A < B ? 0.f : 1.f);
+		//fShadowTerms[i] = (A < B ? 0.2f : 1.f);
 		//fShadowTerm += float(fShadowTerms[i]);
 	}
 	

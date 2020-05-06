@@ -130,7 +130,7 @@ HRESULT CBT_Selector::Ready_Clone_Node(void* pInit_Struct)
 {
 	INFO temp = *(INFO*)pInit_Struct;
 
-	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
+	strcpy_s<STR_128>(m_pNodeName, temp.Target_NodeName);
 	m_eMode = temp.eMode;
 
 	CBT_Node::_Set_Auto_Number(&m_iNodeNumber);

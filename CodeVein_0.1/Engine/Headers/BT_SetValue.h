@@ -13,11 +13,11 @@ public:
 	{
 		tagInitInfo(char* pNodeName, _tchar* _pTarget_Key, _bool _bValue, _float _fValue, _int _iValue, _v3 _vValue, Mode _eMode)
 			: bValue(_bValue), fValue(_fValue), iValue(_iValue), vValue(_vValue), eMode(_eMode)
-		{ strcpy_s<256>(Target_NodeName, pNodeName); 
+		{ strcpy_s<STR_128>(Target_NodeName, pNodeName);
 		lstrcpy(Target_Key, _pTarget_Key);}
 
-		char			Target_NodeName[256] = {0,};
-		_tchar			Target_Key[256] = { 0, };
+		char			Target_NodeName[STR_128] = {0,};
+		_tchar			Target_Key[STR_128] = { 0, };
 		_bool			bValue = false;
 		_float			fValue = 0.f;
 		_int			iValue = 0;
@@ -41,7 +41,7 @@ private:
 	HRESULT Ready_Clone_Node(void* pInit_Struct);
 
 private:
-	_tchar			m_pTarget_Key[256] = { 0, };
+	_tchar			m_pTarget_Key[STR_128] = { 0, };
 	_bool			m_bValue = false;
 	_float			m_fValue = 0.f;
 	_int			m_iValue = 0;

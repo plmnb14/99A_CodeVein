@@ -436,17 +436,17 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 	//	Create_Effect_Delay(L"QueensKnight_Sting_Tornade", 0.f, _v3(0.f, 1.3f, 0.f), nullptr);
 	//}
 
-	if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_LB))
-	{
-		CParticleMgr::Get_Instance()->Create_Effect_Decal(L"Blood_Decal_0", V3_NULL);
-	}
-	if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_RB))
-	{
-		_tchar szBuff[256] = L"";
-		wsprintf(szBuff, L"Blood_Decal_%d", CCalculater::Random_Num(0, 6));
-	
-		CParticleMgr::Get_Instance()->Create_Effect_Decal(szBuff, V3_NULL);
-	}
+	//if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_LB))
+	//{
+	//	CParticleMgr::Get_Instance()->Create_Effect_Decal(L"Blood_Decal_0", V3_NULL);
+	//}
+	//if (CInput_Device::Get_Instance()->Get_DIMouseState(CInput_Device::DIM_RB))
+	//{
+	//	_tchar szBuff[STR_128] = L"";
+	//	wsprintf(szBuff, L"Blood_Decal_%d", CCalculater::Random_Num(0, 6));
+	//
+	//	CParticleMgr::Get_Instance()->Create_Effect_Decal(szBuff, V3_NULL);
+	//}
 
 	auto& iter_begin = m_vecParticle.begin();
 	auto& iter_end = m_vecParticle.end();
@@ -478,10 +478,10 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 				{
 					if (pFindedQueue->size() <= 20) // 넉넉하게... 남은게 20 이하면 생성하여 사용
 					{
-						//_tchar szTemp[256];
+						//_tchar szTemp[STR_128];
 						//lstrcpy(szTemp, pFindedQueue->front()->Get_ParticleName());
-						//CHAR szForPrint[MAX_STR] = "";
-						//WideCharToMultiByte(CP_ACP, 0, szTemp, MAX_STR, szForPrint, MAX_STR, NULL, NULL);
+						//CHAR szForPrint[STR_128] = "";
+						//WideCharToMultiByte(CP_ACP, 0, szTemp, STR_128, szForPrint, STR_128, NULL, NULL);
 						//cout << "Particle Create" << szForPrint << endl;
 
 						_tchar* szEffName = pFindedQueue->front()->Get_ParticleName();
@@ -625,10 +625,10 @@ void CParticleMgr::Create_Effect(_tchar* szName, _v3 vPos, CTransform * pFollowT
 	{
 		if (pFindedQueue->size() <= 20) // 넉넉하게... 남은게 20 이하면 생성하여 사용
 		{
-			_tchar szTemp[256];
+			_tchar szTemp[STR_128];
 			lstrcpy(szTemp, pFindedQueue->front()->Get_ParticleName());
-			CHAR szForPrint[MAX_STR] = "";
-			WideCharToMultiByte(CP_ACP, 0, szTemp, MAX_STR, szForPrint, MAX_STR, NULL, NULL);
+			CHAR szForPrint[STR_128] = "";
+			WideCharToMultiByte(CP_ACP, 0, szTemp, STR_128, szForPrint, STR_128, NULL, NULL);
 			if(GetAsyncKeyState('B') & 0x8000)
 				cout << "Effect Create : " << szForPrint << endl;
 
@@ -952,7 +952,7 @@ void CParticleMgr::Create_Hit_Effect(CCollider* pAttackCol, CCollider* pHittedCo
 	vAngle.z += D3DXToDegree(fAngle);
 	Create_AngleEffect(L"Hit_SlashLine_0", vAttackPos, vAngle);
 
-	_tchar szBuff[256] = L"";
+	_tchar szBuff[STR_128] = L"";
 	wsprintf(szBuff, L"Hit_Slash_Particle_%d", CCalculater::Random_Num(0, 3));
 	Create_Effect(szBuff, vAttackPos);
 
@@ -1189,7 +1189,7 @@ void CParticleMgr::Free()
 	//		iter.second.pop();
 	//	}
 	//}
-	m_TrailPool.clear();
+	//m_TrailPool.clear();
 
 	//for (auto& iter : m_TrailList)
 	//	Safe_Release(iter);

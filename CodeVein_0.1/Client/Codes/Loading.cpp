@@ -38,11 +38,9 @@
 
 USING(Client)
 
-CLoading::CLoading(LPDIRECT3DDEVICE9 pGraphicDev)
+CLoading::CLoading(_Device pGraphicDev)
 	: m_pGraphicDev(pGraphicDev)
-	, m_bFinish(false)
 {
-	ZeroMemory(m_szString, sizeof(_tchar) * 128);
 	Safe_AddRef(m_pGraphicDev);
 }
 
@@ -899,7 +897,7 @@ HRESULT CLoading::Ready_Effect(void)
 
 HRESULT CLoading::Add_EffectPrototype(const _tchar* szName, _bool bIsMesh)
 {
-	_tchar szBuff[256] = L"../../Data/EffectData/";
+	_tchar szBuff[STR_256] = L"../../Data/EffectData/";
 	lstrcat(szBuff, szName);
 	lstrcat(szBuff, L".dat");
 
@@ -972,9 +970,9 @@ Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
 		::ReadFile(hFile, &pInfo->fRotSpeed_Max, sizeof(_float), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->fRotSpeed_Min, sizeof(_float), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->iMaxCount, sizeof(_int), &dwByte, nullptr);
-		::ReadFile(hFile, &pInfo->szColorName, sizeof(TCHAR) * MAX_STR, &dwByte, nullptr);
-		::ReadFile(hFile, &pInfo->szName, sizeof(TCHAR) * MAX_STR, &dwByte, nullptr);
-		::ReadFile(hFile, &pInfo->szGradientName, sizeof(TCHAR) * MAX_STR, &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->szColorName, sizeof(TCHAR) * STR_256, &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->szName, sizeof(TCHAR) * STR_256, &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->szGradientName, sizeof(TCHAR) * STR_256, &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->vEndColor, sizeof(_v4), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->vMoveDirection, sizeof(_v3), &dwByte, nullptr);
 		::ReadFile(hFile, &pInfo->vMoveScale, sizeof(_v3), &dwByte, nullptr);
@@ -1009,45 +1007,59 @@ Engine::EFFECT_INFO* CLoading::Read_EffectData(const _tchar* szPath)
 
 _uint CLoading::Loading_Title()
 {
+	//cout << "Mesh Stage_00 Load. . ." << endl;
+	//g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage00_Path.dat");
+	//
+	//cout << "Mesh Stage_01 Load. . ." << endl;
+	//g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage01_Path.dat");
+	//
+	//cout << "Mesh Stage_03 Load. . ." << endl;
+	//g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage03_Path.dat");
+	//
+	//cout << "Mesh Stage_04 Load. . ." << endl;
+	//g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage04_Path.dat");
+
+	//cout << "로딩 끝" << endl;
+	//m_bFinish = true;
+
+	//return NO_EVENT;
+
 	cout << "Title_Loading . . ." << endl;
 	cout << "===============================================================================" << endl;
 
 	// 필수 메쉬 불러오는중
 	//============================================================================================================
-	cout << "Essential Static 메쉬 불러오는중" << endl;
-	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Path.dat");
-
-	// 기믹 메쉬 불러오는중
-	//============================================================================================================
-	cout << "Field Gimmick Static 메쉬 불러오는중" << endl;
-	//g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Field_Gimmick_Path.dat");
+	cout << "Essential Static Mesh 불러오는 중 . . ." << endl;
+	g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Path.dat");
 
 	// 다이나믹 메쉬 불러오는 중
 	//============================================================================================================
-	cout << "Essential Dynamic 메쉬 불러오는중" << endl;
+	cout << "Essential Dynamic Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Dynamic_Path.dat");
 
-	// 임시 공통 스태틱 메쉬
-	//g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
+	cout << "DynamicMesh 불러오는 중 . . ." << endl;
+	//============================================================================================================
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
 
 	// 무기 불러오는 중
 	//============================================================================================================
-	cout << "Weapon 메쉬 불러오는 중" << endl;
+	cout << "Weapon Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Weapon_Path.dat");
 	// 일반 무기
 
-	cout << "DrainWeapon 메쉬 불러오는 중" << endl;
+	cout << "DrainWeapon Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_DrainWeapon_Path.dat");
 	// 흡혈 무기
 
 	// 텍스쳐 불러오는 중
-	//============================================================================================================
-	cout << "All Texture 불러오는중" << endl;
+	////============================================================================================================
+	cout << "All Texture 불러오는 중 . . ." << endl;
 	g_pManagement->LoadTex_FromPath(m_pGraphicDev, L"../../Data/Load_TexData/Tex_Path.dat");
 
 	//============================================================================================================
 
-	// 이펙트 메쉬 불러오는중
+	////// 이펙트 메쉬 불러오는중
+	cout << "Effect Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Effect_Path.dat");
 	// 이펙트 원형 생성
 	//============================================================================================================
@@ -1058,19 +1070,21 @@ _uint CLoading::Loading_Title()
 	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager_Essential()))
 		return E_FAIL;
 
-	//// 플레이어 스킬, 보스 이펙트 포함
-	//cout << "Particle Etc 불러오는 중 . . ." << endl;
-	//if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
-	//	return E_FAIL;
+	// 플레이어 스킬, 보스 이펙트 포함
+	cout << "Particle Etc 불러오는 중 . . ." << endl;
+	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
+		return E_FAIL;
 
 	// UI 원형 생성
 	//============================================================================================================
-	cout << " UI 원형 생성중" << endl;
+	cout << " UI 원형 생성 중 . . ." << endl;
 	CUI_Manager::Get_Instance()->Add_UI_Prototype(m_pGraphicDev);
 	CItem_Manager::Get_Instance()->Add_Item_Prototype(m_pGraphicDev);
 
 	// 기타
 	//============================================================================================================
+
+	cout << "Essential Protorypes 추가 중 . . ."  << endl;
 
 	// 흡혈 무기
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DrainWeapon", CDrain_Weapon::Create(m_pGraphicDev))))
@@ -1121,6 +1135,32 @@ _uint CLoading::Loading_Title()
 
 _uint CLoading::Loading_Stage()
 {
+	// 트레이닝이면 안불러와요
+	//if (0 != g_sStageIdx_Cur)
+	//{
+		// 임시 공통 스태틱 메쉬
+		cout << "Common Static Mesh 불러오는 중 . . ." << endl;
+		g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
+
+		// 기믹 메쉬 불러오는중
+		//============================================================================================================
+		cout << "Field Gimmick Static Mesh 불러오는 중 . . ." << endl;
+		g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Field_Gimmick_Path.dat");
+
+		cout << "Mesh Stage_00 Load. . ." << endl;
+		g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage00_Path.dat");
+
+		cout << "Mesh Stage_01 Load. . ." << endl;
+		g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage01_Path.dat");
+
+		cout << "Mesh Stage_03 Load. . ." << endl;
+		g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage03_Path.dat");
+
+		cout << "Mesh Stage_04 Load. . ." << endl;
+		g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage04_Path.dat");
+
+	//}
+
 	switch (g_sStageIdx_Cur)
 	{
 	// 스테이지 - 트레이닝
@@ -1140,12 +1180,11 @@ _uint CLoading::Loading_Stage()
 		// 2번 - 베이스
 		if (false == g_bOnStage[2])
 		{
-			//if (false == g_bReleaseMode)
-			//{
-			//	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
-			//}
+			cout << "Mesh Stage_00 Load. . ." << endl;
+			g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage00_Path.dat");
 
-			g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage00_Path.dat");
+			cout << "Clone Stage_00 GameObject . . ." << endl;
+			g_pManagement->LoadCreateObject_FromPath(m_pGraphicDev, L"Object_Stage_00.dat");
 
 			g_bOnStage[2] = true;
 		}
@@ -1158,7 +1197,11 @@ _uint CLoading::Loading_Stage()
 		// 3번 - 스테이지 01
 		if (false == g_bOnStage[3])
 		{
-			g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage01_Path.dat");
+			cout << "Load Stage_01 StaticMesh . . ." << endl;
+			g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage01_Path.dat");
+
+			cout << "Clone Stage_01 GameObject . . ." << endl;
+			g_pManagement->LoadCreateObject_FromPath(m_pGraphicDev, L"Object_Stage_01.dat");
 
 			g_bOnStage[3] = true;
 		}
@@ -1171,7 +1214,7 @@ _uint CLoading::Loading_Stage()
 		// 4번 - 스테이지 02
 		if (false == g_bOnStage[4])
 		{
-			g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage02_Path.dat");
+			g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage02_Path.dat");
 
 			g_bOnStage[4] = true;
 		}
@@ -1184,7 +1227,7 @@ _uint CLoading::Loading_Stage()
 		// 4번 - 스테이지 03
 		if (false == g_bOnStage[5])
 		{
-			g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage03_Path.dat");
+			g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage03_Path.dat");
 
 			g_bOnStage[5] = true;
 		}
@@ -1197,7 +1240,7 @@ _uint CLoading::Loading_Stage()
 		// 4번 - 스테이지 03
 		if (false == g_bOnStage[6])
 		{
-			g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage04_Path.dat");
+			g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage04_Path.dat");
 
 			g_bOnStage[6] = true;
 		}
@@ -1208,14 +1251,6 @@ _uint CLoading::Loading_Stage()
 	// 최초 로딩 호출 시 1번만 불러옵니다.
 	if (false == g_bOnStage[0])
 	{
-		//cout << "Particle 불러오는 중 . . ." << endl;
-		//if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
-		//	return E_FAIL;
-
-		cout << "DynamicMesh 불러오는 중 . . ." << endl;
-		//============================================================================================================
-		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
-
 		cout << "BT_Node 생성 중 . . ." << endl;
 		//============================================================================================================
 		if (FAILED(g_pManagement->Ready_BT_Node()))
@@ -1437,6 +1472,7 @@ _uint CLoading::Loading_Stage()
 		// Haze
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Haze", CHaze::Create(m_pGraphicDev))))
 			return E_FAIL;
+
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_Haze", L"GameObject_Haze", 200);
 		//============================================================================================================
 
@@ -1496,7 +1532,7 @@ _uint CLoading::Loading_MainStages()
 	return NO_EVENT;
 }
 
-CLoading* CLoading::Create(LPDIRECT3DDEVICE9 pGraphicDev, SCENEID eLoadingID)
+CLoading* CLoading::Create(_Device pGraphicDev, SCENEID eLoadingID)
 {
 	CLoading*	pInstance = new CLoading(pGraphicDev);
 

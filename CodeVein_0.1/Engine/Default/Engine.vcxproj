@@ -192,7 +192,7 @@ call CopyEngine.bat</Command>
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\Codes\QuadTreeTerrain.h" />
-    <ClInclude Include="..\Headers\ActeiveObject.h" />
+    <ClInclude Include="..\Headers\ActiveObject.h" />
     <ClInclude Include="..\Headers\AIController.h" />
     <ClInclude Include="..\Headers\AniCtrl.h" />
     <ClInclude Include="..\Headers\Base.h" />
@@ -299,7 +299,7 @@ call CopyEngine.bat</Command>
     <ClInclude Include="..\Headers\VIBuffer.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\Codes\ActeiveObject.cpp" />
+    <ClCompile Include="..\Codes\ActiveObject.cpp" />
     <ClCompile Include="..\Codes\AIController.cpp" />
     <ClCompile Include="..\Codes\AniCtrl.cpp" />
     <ClCompile Include="..\Codes\Base.cpp" />

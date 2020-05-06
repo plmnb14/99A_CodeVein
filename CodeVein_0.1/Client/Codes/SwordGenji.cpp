@@ -1252,7 +1252,7 @@ HRESULT CSwordGenji::Add_Component(void* pArg)
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
-	_tchar name[256] = { 0, };
+	_tchar name[STR_128] = { 0, };
 	INFO eTemp = *(INFO*)pArg;
 
 	if (nullptr == pArg)

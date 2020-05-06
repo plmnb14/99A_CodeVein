@@ -32,6 +32,8 @@ CScriptManager::CScriptManager()
 
 void CScriptManager::Update_ScriptMgr(_double _dDeltaTime, _ulong _dwSubsetIdx, _ulong _dwCellIdx)
 {
+	return;
+
 	m_fDeltaTime = (_float)_dDeltaTime;
 	m_dwSubsetIdx = _dwSubsetIdx;
 	m_dwCellIdx = _dwCellIdx;
@@ -157,7 +159,7 @@ void CScriptManager::Ready_Script_DynamicObject(_ulong _dwStageIdx)
 	}
 	case Script_Stage01:
 	{
-		Ready_Stage01_DynamicObject();
+		//Ready_Stage01_DynamicObject();
 		break;
 	}
 

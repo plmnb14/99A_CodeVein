@@ -82,7 +82,7 @@ HRESULT CBT_ChaseDir::Ready_Clone_Node(void * pInit_Struct)
 	if (m_pTransform)
 		Safe_AddRef(m_pTransform);
 
-	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
+	strcpy_s<STR_128>(m_pNodeName, temp.Target_NodeName);
 	lstrcpy(m_Target_Key, temp.Target_Key);
 
 	m_dRunTime = temp.dRunTime;

@@ -124,7 +124,7 @@ private:
 	_v3						m_vHeadPos = V3_NULL;
 
 private:
-	_tchar					m_szName[MAX_STR] = L"";
+	_tchar					m_szName[STR_128] = L"";
 
 private:
 	_mat*					m_pmatAttach;

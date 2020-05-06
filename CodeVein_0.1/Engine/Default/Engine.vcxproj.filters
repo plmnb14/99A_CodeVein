@@ -531,9 +531,6 @@
     <ClInclude Include="..\Headers\Trail_VFX.h">
       <Filter>01.Utility\[02] GameObject\4%29 Effect\99%29 Trail</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\ActeiveObject.h">
-      <Filter>01.Utility\[02] GameObject\5%29ActeiveObject_Engine</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\BT_CompareValue.h">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
     </ClInclude>
@@ -590,6 +587,9 @@
     </ClInclude>
     <ClInclude Include="..\Headers\ObjectPool_Manager.h">
       <Filter>01.Utility\[02] GameObject\6%29 ObjectPull</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ActiveObject.h">
+      <Filter>01.Utility\[02] GameObject\5%29ActeiveObject_Engine</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -827,9 +827,6 @@
     <ClCompile Include="..\Codes\Trail_VFX.cpp">
       <Filter>01.Utility\[02] GameObject\4%29 Effect\99%29 Trail</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\ActeiveObject.cpp">
-      <Filter>01.Utility\[02] GameObject\5%29ActeiveObject_Engine</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\BT_CompareValue.cpp">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
     </ClCompile>
@@ -886,6 +883,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\ObjectPool_Manager.cpp">
       <Filter>01.Utility\[02] GameObject\6%29 ObjectPull</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ActiveObject.cpp">
+      <Filter>01.Utility\[02] GameObject\5%29ActeiveObject_Engine</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
