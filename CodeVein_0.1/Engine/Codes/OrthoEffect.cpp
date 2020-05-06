@@ -190,6 +190,8 @@ HRESULT COrthoEffect::Render_GameObject()
 	m_pBufferCom->Render_VIBuffer();
 	m_pShaderCom->End_Pass();
 	m_pShaderCom->End_Shader();
+
+	return S_OK;
 }
 
 HRESULT COrthoEffect::Render_GameObject_SetShader(CShader* pShader)

@@ -41,6 +41,9 @@ private:
 	_uint Loading_MainStages();
 
 private:
+	HRESULT Ready_Intro_MonsterPrototype();
+
+private:
 	HANDLE				m_hThread;
 	CRITICAL_SECTION	m_Crt;
 	SCENEID				m_eLoadingID = SCENE_LOGO;

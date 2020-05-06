@@ -16,6 +16,9 @@ protected:
 	virtual ~CDecalEffect() = default;
 
 public:
+	void Set_WallDecal(_bool _bWall);
+
+public:
 	virtual HRESULT Ready_GameObject_Prototype();
 	virtual HRESULT Ready_GameObject(void* pArg);
 	virtual HRESULT LateInit_GameObject();
@@ -58,6 +61,7 @@ protected:
 
 private:
 	_float	m_fDissolveStartTime = 6.f;
+	_bool   m_bWallDecal = false;
 
 public:
 	static CDecalEffect* Create(LPDIRECT3DDEVICE9 pGraphic_Device);

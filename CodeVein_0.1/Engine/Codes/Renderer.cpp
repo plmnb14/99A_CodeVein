@@ -1507,84 +1507,84 @@ HRESULT CRenderer::Render_After()
 
 void CRenderer::Calc_CSM()
 {
-	//===================================================================================
-	// ViewMatrix 생성
-	//===================================================================================
-
-	_v3 vWorldCenter = V3_NULL;
-	_v3 vPos = vWorldCenter;
-	_v3 vLookAt = vWorldCenter; // + 디렉셔널 방향 * 카메라의  FarClip
-	_v3 vDirectionalDir = WORLD_LOOK;
-	_v3 vUp = WORLD_UP;
-	_v3 vRight = WORLD_RIGHT;
-
-	CALC::V3_Cross_Normal(&vUp, &vDirectionalDir, &vRight);
-
-	_mat matShadowView;
-	D3DXMatrixLookAtLH(&matShadowView, &vPos, &vLookAt, &vUp);
-
-	//===================================================================================
-	// Frustum 영역 추출
-	//===================================================================================
-
-	_float fShadowBoundRadius, fRadius;
-	_v3 vShadowBoundCenter;
-	_float arrCascadeRanges[4];
-	_float arrCascadeRadius[4];
-
-	Calc_FrustumBoundSphere(arrCascadeRanges[0], arrCascadeRanges[3], vShadowBoundCenter, fRadius);
-	fShadowBoundRadius = max(fShadowBoundRadius, fRadius);
-
-	//===================================================================================
-	// ProjMatrix 생성
-	//===================================================================================
-	_mat matShadowProj;
-	D3DXMatrixOrthoLH(&matShadowProj, fShadowBoundRadius, fShadowBoundRadius, -fShadowBoundRadius, fShadowBoundRadius);
-
-	//===================================================================================
-	// 플리커, 케스케이드 변환
-	//===================================================================================
-	_uint iToltalCascade = 3;
-	_bool bAntiFlicker = true;
-
-
-	for (_uint i = 0; i < iToltalCascade; ++i)
-	{
-		_mat matCascadeTrans, matCascadeScale;
-
-		//if (bAntiFlicker)
-		//{
-		//	_v3 vNewCenter;
-		//	Calc_FrustumBoundSphere(arrCascadeRanges[i], arrCascadeRanges[i+1], vNewCenter, fRadius);
-		//	arrCascadeRadius[i] = max(arrCascadeRadius[i], fRadius);
-		//
-		//
-		//	_v3 vOffset;
-		//	if()
-		//}
-	}
+	////===================================================================================
+	//// ViewMatrix 생성
+	////===================================================================================
+	//
+	//_v3 vWorldCenter = V3_NULL;
+	//_v3 vPos = vWorldCenter;
+	//_v3 vLookAt = vWorldCenter; // + 디렉셔널 방향 * 카메라의  FarClip
+	//_v3 vDirectionalDir = WORLD_LOOK;
+	//_v3 vUp = WORLD_UP;
+	//_v3 vRight = WORLD_RIGHT;
+	//
+	//CALC::V3_Cross_Normal(&vUp, &vDirectionalDir, &vRight);
+	//
+	//_mat matShadowView;
+	//D3DXMatrixLookAtLH(&matShadowView, &vPos, &vLookAt, &vUp);
+	//
+	////===================================================================================
+	//// Frustum 영역 추출
+	////===================================================================================
+	//
+	//_float fShadowBoundRadius, fRadius;
+	//_v3 vShadowBoundCenter;
+	//_float arrCascadeRanges[4];
+	//_float arrCascadeRadius[4];
+	//
+	//Calc_FrustumBoundSphere(arrCascadeRanges[0], arrCascadeRanges[3], vShadowBoundCenter, fRadius);
+	//fShadowBoundRadius = max(fShadowBoundRadius, fRadius);
+	//
+	////===================================================================================
+	//// ProjMatrix 생성
+	////===================================================================================
+	//_mat matShadowProj;
+	//D3DXMatrixOrthoLH(&matShadowProj, fShadowBoundRadius, fShadowBoundRadius, -fShadowBoundRadius, fShadowBoundRadius);
+	//
+	////===================================================================================
+	//// 플리커, 케스케이드 변환
+	////===================================================================================
+	//_uint iToltalCascade = 3;
+	//_bool bAntiFlicker = true;
+	//
+	//
+	//for (_uint i = 0; i < iToltalCascade; ++i)
+	//{
+	//	_mat matCascadeTrans, matCascadeScale;
+	//
+	//	//if (bAntiFlicker)
+	//	//{
+	//	//	_v3 vNewCenter;
+	//	//	Calc_FrustumBoundSphere(arrCascadeRanges[i], arrCascadeRanges[i+1], vNewCenter, fRadius);
+	//	//	arrCascadeRadius[i] = max(arrCascadeRadius[i], fRadius);
+	//	//
+	//	//
+	//	//	_v3 vOffset;
+	//	//	if()
+	//	//}
+	//}
 }
 
 void CRenderer::Calc_FrustumBoundSphere(_float fNear, _float fFar, _v3 & vBoundCenter, _float & fBoundRadius)
 {
-	_mat vCamMatrix = CManagement::Get_Instance()->Get_TransformInverse(D3DTS_VIEW);
-
-	_v3 vCamRight = *(_v3*)&vCamMatrix.m[0][0];
-	_v3 vCamUp = *(_v3*)&vCamMatrix.m[1][0];
-	_v3 vCamLook = *(_v3*)&vCamMatrix.m[2][0];
-	_v3 vCamPos = *(_v3*)&vCamMatrix.m[3][0];
-	_float fAspect , fFov;
-
-	fAspect = 720.f / 1280.f;
-	fFov = 60.f;
-
-	_float fTanFOV_X = tanf(fAspect * fFov);
-	_float fTanFOV_Y = tanf(fAspect);
-
-	vBoundCenter = vCamPos + vCamLook * (fNear + 0.5f * (fNear + fFar));
-
-	_v3 vBoundSpan = vCamPos + (-vCamRight * fTanFOV_X + vCamUp * fTanFOV_Y + vCamLook) * fFar - vBoundCenter;
-	fBoundRadius = D3DXVec3Length(&vBoundSpan);
+	//_mat vCamMatrix = CManagement::Get_Instance()->Get_TransformInverse(D3DTS_VIEW);
+	//
+	//_v3 vCamRight = *(_v3*)&vCamMatrix.m[0][0];
+	//_v3 vCamUp = *(_v3*)&vCamMatrix.m[1][0];
+	//_v3 vCamLook = *(_v3*)&vCamMatrix.m[2][0];
+	//_v3 vCamPos = *(_v3*)&vCamMatrix.m[3][0];
+	//_float fAspect , fFov;
+	//
+	//fAspect = 720.f / 1280.f;
+	//fFov = 60.f;
+	//
+	//_float fTanFOV_X = tanf(fAspect * fFov);
+	//_float fTanFOV_Y = tanf(fAspect);
+	//
+	//vBoundCenter = vCamPos + vCamLook * (fNear + 0.5f * (fNear + fFar));
+	//
+	//_v3 vBoundSpan = vCamPos + (-vCamRight * fTanFOV_X + vCamUp * fTanFOV_Y + vCamLook) * fFar - vBoundCenter;
+	//fBoundRadius = D3DXVec3Length(&vBoundSpan);
 }
 
 
