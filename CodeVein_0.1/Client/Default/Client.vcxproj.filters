@@ -412,6 +412,12 @@
     <Filter Include="02.GameObject\Stage\9%29 Player_Colleague\CollBullet_Heal">
       <UniqueIdentifier>{e8edcff6-5c00-4fac-be0d-e1f98e6bf024}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\14.ColleagueUI">
+      <UniqueIdentifier>{ae79b837-5eb8-4fc8-9c65-e96013a3e8ee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\14.ColleagueUI\Colleague_Jack">
+      <UniqueIdentifier>{e84337af-ab4b-47e7-93fb-d3f4a9050ce5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -841,8 +847,14 @@
       <Filter>02.GameObject\Stage\9%29 Player_Colleague\Colleague_Bullet</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Pet_Bullet.h" />
-    <ClInclude Include="CollBullet_Heal.h">
+    <ClInclude Include="..\Headers\CollBullet_Heal.h">
       <Filter>02.GameObject\Stage\9%29 Player_Colleague\CollBullet_Heal</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Colleague_UI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\14.ColleagueUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Colleague_Jack.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\14.ColleagueUI\Colleague_Jack</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1264,8 +1276,14 @@
       <Filter>02.GameObject\Stage\9%29 Player_Colleague\Colleague_Bullet</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Pet_Bullet.cpp" />
-    <ClCompile Include="CollBullet_Heal.cpp">
+    <ClCompile Include="..\Codes\CollBullet_Heal.cpp">
       <Filter>02.GameObject\Stage\9%29 Player_Colleague\CollBullet_Heal</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Colleague_UI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\14.ColleagueUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Colleague_Jack.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\14.ColleagueUI\Colleague_Jack</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

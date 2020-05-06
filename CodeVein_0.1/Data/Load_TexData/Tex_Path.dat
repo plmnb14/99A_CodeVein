@@ -88,6 +88,8 @@ Tex_BloodSkillSlot|BloodSkillSlot%d.tga|..\..\Client\Resources\Texture\TestUI\Bl
 Tex_BossUI|BossUI%d.png|..\..\Client\Resources\Texture\TestUI\BossUI\|0|3
 Tex_ButtonUI|ButtonUI%d.tga|..\..\Client\Resources\Texture\TestUI\ButtonUI\|0|9
 Tex_ClickUI|ClickUI%d.png|..\..\Client\Resources\Texture\TestUI\ClickUI\|0|1
+Tex_Colleague_Jack|Colleague_Jack.png|..\..\Client\Resources\Texture\TestUI\Colleague_Jack\|0|1
+Tex_Colleague_UI|Colleague_UI%d.png|..\..\Client\Resources\Texture\TestUI\Colleague_UI\|0|4
 Tex_Consume_Item|Consume_Item%d.tga|..\..\Client\Resources\Texture\TestUI\Consume_Item\|0|5
 Tex_CursorSelect|CursorSelect%d.tga|..\..\Client\Resources\Texture\TestUI\CursorSelect\|0|3
 Tex_CursorUI|CursorUI%d.png|..\..\Client\Resources\Texture\TestUI\CursorUI\|0|1

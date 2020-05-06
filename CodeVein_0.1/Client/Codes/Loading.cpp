@@ -35,6 +35,10 @@
 #include "Colleague_Bullet.h"
 #include "CollBullet_Heal.h"
 
+#include "Colleague_UI.h"
+#include "Colleague_Jack.h"
+
+
 //#include "Item.h"
 #include "Haze.h"
 
@@ -1062,8 +1066,8 @@ _uint CLoading::Loading_Title()
 
 	//// 플레이어 스킬, 보스 이펙트 포함
 	//cout << "Particle Etc 불러오는 중 . . ." << endl;
-	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
-		return E_FAIL;
+	/*if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
+		return E_FAIL;*/
 
 	// UI 원형 생성
 	//============================================================================================================
@@ -1450,6 +1454,13 @@ _uint CLoading::Loading_Stage()
 
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Get_ItemUI", CGet_ItemUI::Create(m_pGraphicDev))))
 			return E_FAIL;
+
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Colleague_UI", CColleague_UI::Create(m_pGraphicDev))))
+			return E_FAIL;
+
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Colleague_Jack", CColleague_Jack::Create(m_pGraphicDev))))
+			return E_FAIL;
+
 
 		// ETC
 		//============================================================================================================

@@ -8,7 +8,8 @@ BEGIN(Client)
 
 class CDrain_Weapon;
 class CWeapon;
-class CColleague_Bullet;
+class CColleague_UI;
+class CColleague_Jack;
 class CPlayer_Colleague final : public CGameObject
 {
 public:
@@ -121,6 +122,7 @@ private:
 
 
 	void	CollDodge_FrontRoll();	// 구르기 or 막기
+	void	CollDodge_BackRoll();
 
 
 	void	CollIdle_Waiting();
@@ -167,8 +169,11 @@ private:
 	CCollider*				m_pCollider = nullptr;
 
 	CWeapon*				m_pSword = nullptr;
-	CColleague_Bullet*		m_pCollBullet = nullptr;
+	//CColleague_Bullet*	m_pCollBullet = nullptr;
 	CTransform*				m_pTargetTransformCom = nullptr;
+
+	CColleague_UI*			m_pColleagueUI = nullptr;
+	CColleague_Jack*		m_pCollJack = nullptr;
 
 	CGameObject*			m_pObject_Mon = nullptr;
 
@@ -230,6 +235,8 @@ private:
 
 	_float	m_fCoolTime_Cur = 0.f;
 	_float	m_fCoolTime_Max = 0.f;
+
+	_float	m_fAccumulateDamage = 0.f;
 
 
 	_bool	m_bEventTrigger[20] = {};

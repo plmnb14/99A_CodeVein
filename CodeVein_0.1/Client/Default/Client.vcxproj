@@ -187,7 +187,10 @@
     <ClInclude Include="..\Headers\Button_UI.h" />
     <ClInclude Include="..\Headers\ClickUI.h" />
     <ClInclude Include="..\Headers\Client_Defines.h" />
+    <ClInclude Include="..\Headers\CollBullet_Heal.h" />
     <ClInclude Include="..\Headers\Colleague_Bullet.h" />
+    <ClInclude Include="..\Headers\Colleague_Jack.h" />
+    <ClInclude Include="..\Headers\Colleague_UI.h" />
     <ClInclude Include="..\Headers\ConditionUI.h" />
     <ClInclude Include="..\Headers\Cocoon.h" />
     <ClInclude Include="..\Headers\CocoonBigBullet.h" />
@@ -304,7 +307,6 @@
     <ClInclude Include="..\Headers\Yeti.h" />
     <ClInclude Include="..\Headers\YetiBullet.h" />
     <ClInclude Include="Client.h" />
-    <ClInclude Include="CollBullet_Heal.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="StageLoader.h" />
     <ClInclude Include="stdafx.h" />
@@ -328,7 +330,10 @@
     <ClCompile Include="..\Codes\BossHP.cpp" />
     <ClCompile Include="..\Codes\Button_UI.cpp" />
     <ClCompile Include="..\Codes\ClickUI.cpp" />
+    <ClCompile Include="..\Codes\CollBullet_Heal.cpp" />
     <ClCompile Include="..\Codes\Colleague_Bullet.cpp" />
+    <ClCompile Include="..\Codes\Colleague_Jack.cpp" />
+    <ClCompile Include="..\Codes\Colleague_UI.cpp" />
     <ClCompile Include="..\Codes\ConditionUI.cpp" />
     <ClCompile Include="..\Codes\Cocoon.cpp" />
     <ClCompile Include="..\Codes\CocoonBigBullet.cpp" />
@@ -444,7 +449,6 @@
     <ClCompile Include="..\Codes\Yeti.cpp" />
     <ClCompile Include="..\Codes\YetiBullet.cpp" />
     <ClCompile Include="Client.cpp" />
-    <ClCompile Include="CollBullet_Heal.cpp" />
     <ClCompile Include="StageLoader.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
