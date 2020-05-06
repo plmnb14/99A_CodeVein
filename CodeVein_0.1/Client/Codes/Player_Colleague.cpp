@@ -71,10 +71,6 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 		//	m_tObjParam.fHp_Cur -= 100.f;
 		////if (g_pInput_Device->Key_Down(DIK_P))
 		////	m_tObjParam.fHp_Cur += 1000.f;
-		//if (g_pInput_Device->Key_Down(DIK_I))
-		//	m_pTarget->Add_Target_Hp(100.f);
-		//if (g_pInput_Device->Key_Down(DIK_L))
-		//	m_pTarget->Add_Target_Hp(-100.f);
 
 		if (0 >= m_tObjParam.fHp_Cur && 0 >= m_iMyHeal_Count)
 			m_eMovetype = CPlayer_Colleague::Coll_Dead;
@@ -456,6 +452,10 @@ void CPlayer_Colleague::Check_Do_List()
 			continue;
 	}
 	
+	// 여기서 보스가 먼저 있는지 없는지 체크하고 보스가 없으면 바로 아래로 내려가서 몬스터를 찾는다.
+	// continue 를 해서!
+
+	//for()
 
 
 	if (!(m_List_pMonTarget[0]->empty()))
@@ -1356,23 +1356,25 @@ void CPlayer_Colleague::CollAtt_Normal()
 			*/
 			m_iCenter_Count = 0;
 		}
-		else if (m_iNormalAtt_Count == 4 && true == m_bNest_Att_CoolTimer)
+		/*if (false == m_bNest_Att_CoolTimer)
+			m_iNormalAtt_Count = 0;*/
+		else if (m_iNormalAtt_Count == 4)
 		{
 			// 여기서 삼단베기
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_ThreeCombo;
 		}
-		else if (m_iNormalAtt_Count == 3 && true == m_bNest_Att_CoolTimer)
+		else if (m_iNormalAtt_Count == 3)
 		{
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base4;
 		}
-		else if (m_iNormalAtt_Count == 2 && true == m_bNest_Att_CoolTimer)
+		else if (m_iNormalAtt_Count == 2)
 		{
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base3;
 		}
-		else if (m_iNormalAtt_Count == 1 && true == m_bNest_Att_CoolTimer)
+		else if (m_iNormalAtt_Count == 1)
 		{
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base2;
