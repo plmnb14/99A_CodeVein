@@ -38,6 +38,7 @@ Tex_FireBlast2|FireBlast2_%d.png|..\..\Client\Resources\Texture\Effect\FireBlast
 Tex_FireBlast_Color_1|FireBlast_Color_1_%d.png|..\..\Client\Resources\Texture\Effect\FireBlast\FireBlast_Color_1\|0|32
 Tex_FireBlast_Color_2|FireBlast_Color_2_%d.png|..\..\Client\Resources\Texture\Effect\FireBlast\FireBlast_Color_2\|0|32
 Tex_Flash|Flash_%d.tga|..\..\Client\Resources\Texture\Effect\Flash\|0|2
+Tex_FootPrint|FootPrint_%d.tga|..\..\Client\Resources\Texture\Effect\FootPrint\|0|2
 Tex_Gradient|Gradient_%d.tga|..\..\Client\Resources\Texture\Effect\Gradient\|0|7
 Tex_Ink|Ink_%d.tga|..\..\Client\Resources\Texture\Effect\Ink\|0|1
 Tex_Laser|Laser_%d.tga|..\..\Client\Resources\Texture\Effect\Laser\|0|1
@@ -47,11 +48,16 @@ Tex_Lightning3|Lightning3_%d.png|..\..\Client\Resources\Texture\Effect\Lightning
 Tex_Lightning4|Lightning4_%d.png|..\..\Client\Resources\Texture\Effect\Lightning\Lightning4\|0|16
 Tex_Lightning_NoAnim|Lightning_NoAnim_%d.png|..\..\Client\Resources\Texture\Effect\Lightning\Lightning_NoAnim\|0|3
 Tex_LinePoint|LinePoint_%d.png|..\..\Client\Resources\Texture\Effect\LinePoint\|0|8
+Tex_LinePoint_ForPlayerSkill|LinePoint_ForPlayerSkill_%d.tga|..\..\Client\Resources\Texture\Effect\LinePoint_ForPlayerSkill\|0|4
+Tex_LinePoint_Hor|LinePoint_Hor_%d.png|..\..\Client\Resources\Texture\Effect\LinePoint_Hor\|0|8
 Tex_Mask|Mask_%d.tga|..\..\Client\Resources\Texture\Effect\Mask\|0|17
 Tex_Noise|Noise_%d.tga|..\..\Client\Resources\Texture\Effect\Noise\|0|25
 Tex_Normal|Normal_%d.tga|..\..\Client\Resources\Texture\Effect\Normal\|0|10
+Tex_Ortho_BlackCorner|Black_Corner_%d.png|..\..\Client\Resources\Texture\Effect\Ortho\Ortho_BlackCorner\|0|5
+Tex_Ortho_Blood|Ortho_Blood_%d.png|..\..\Client\Resources\Texture\Effect\Ortho\Ortho_Blood\|0|2
+Tex_Ortho_Snow|Ortho_Snow_%d.tga|..\..\Client\Resources\Texture\Effect\Ortho\Ortho_Snow\|0|2
 Tex_Crystals|Crystals_%d.png|..\..\Client\Resources\Texture\Effect\Particle\Crystals\|0|16
-Tex_Point|Point_%d.tga|..\..\Client\Resources\Texture\Effect\Particle\Point\|0|10
+Tex_Point|Point_%d.tga|..\..\Client\Resources\Texture\Effect\Particle\Point\|0|12
 Tex_Scratch|Scratch_%d.tga|..\..\Client\Resources\Texture\Effect\Scratch\|0|4
 Tex_ShockWave|ShockWave_%d.tga|..\..\Client\Resources\Texture\Effect\ShockWave\|0|4
 Tex_SlashSubUV|SlashSubUV_%d.png|..\..\Client\Resources\Texture\Effect\SlashSubUV\|0|4
@@ -66,7 +72,7 @@ Tex_SmokeSmall|SmokeSmall_%d.png|..\..\Client\Resources\Texture\Effect\Smoke\Smo
 Tex_SmokeSoft16|SmokeSoft16_%d.png|..\..\Client\Resources\Texture\Effect\Smoke\SmokeSoft16\|0|16
 Tex_SmokeSoft64|SmokeSoft64_%d.png|..\..\Client\Resources\Texture\Effect\Smoke\SmokeSoft64\|0|64
 Tex_Splash|Splash_%d.png|..\..\Client\Resources\Texture\Effect\Splash\|0|24
-Tex_SwordTrail|SwordTrail%d.tga|..\..\Client\Resources\Texture\Effect\SwordTrail\|0|11
+Tex_SwordTrail|SwordTrail%d.tga|..\..\Client\Resources\Texture\Effect\SwordTrail\|0|12
 Tex_Tail|Tail_%d.tga|..\..\Client\Resources\Texture\Effect\Tail\|0|2
 Tex_SkyBridgeBoss_Trail|SkyBridgeBoss_Trail_%d.tga|..\..\Client\Resources\Texture\Effect\Trail\SkyBridgeBoss_Trail\|0|1
 Tex_temp|T_Enemy_DevilMiguel_Sword_Trail_01.tga|..\..\Client\Resources\Texture\Effect\Trail\temp\|0|17

@@ -109,6 +109,29 @@ CBlackBoard::OUTPUT CBlackBoard::Set_Value(const _tchar * pName, _v3 _vValue)
 	return eState;
 }
 
+CBlackBoard::OUTPUT CBlackBoard::Set_Value(const _tchar * pName, _mat _matValue)
+{
+	OUTPUT eState = OUTPUT::NONE;
+
+	auto iter = find_if(m_mapMat.begin(), m_mapMat.end(), CTag_Finder(pName));
+
+	if (iter == m_mapMat.end())
+	{
+		m_mapMat.emplace(MAP_VEC3::value_type(pName, _matValue));
+		eState = OUTPUT::UPDATE;
+	}
+	else
+	{
+		if (iter->second != _matValue)
+		{
+			iter->second = _matValue;
+			eState = OUTPUT::UPDATE;
+		}
+
+	}
+	return eState;
+}
+
 const _bool CBlackBoard::Get_BoolValue(const _tchar * pName) const
 {
 	const _bool* bTemp = Find_Value_In_mapBool(pName);
@@ -151,6 +174,21 @@ const _v3 CBlackBoard::Get_V3Value(const _tchar * pName) const
 	return *vTemp;
 }
 
+const _mat CBlackBoard::Get_MatValue(const _tchar * pName) const
+{
+	const _mat* vTemp = Find_Value_In_mapMat(pName);
+
+	if (nullptr == vTemp)
+	{
+		_mat matTemp;
+		D3DXMatrixIdentity(&matTemp);
+
+		return matTemp;
+	}
+
+	return *vTemp;
+}
+
 const _bool* CBlackBoard::Find_Value_In_mapBool(const _tchar * pName) const
 {
 	auto iter = find_if(m_mapBool.begin(), m_mapBool.end(), CTag_Finder(pName));
@@ -186,6 +224,16 @@ const _v3* CBlackBoard::Find_Value_In_mapVec3(const _tchar * pName) const
 	auto iter = find_if(m_mapVec3.begin(), m_mapVec3.end(), CTag_Finder(pName));
 
 	if (iter == m_mapVec3.end())
+		return nullptr;
+
+	return &iter->second;
+}
+
+const _mat * CBlackBoard::Find_Value_In_mapMat(const _tchar * pName) const
+{
+	auto iter = find_if(m_mapMat.begin(), m_mapMat.end(), CTag_Finder(pName));
+
+	if (iter == m_mapMat.end())
 		return nullptr;
 
 	return &iter->second;

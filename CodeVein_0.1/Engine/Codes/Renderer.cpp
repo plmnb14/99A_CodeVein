@@ -124,6 +124,13 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_ToneMapping", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
+	// Target_BlurDOF
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_BlurDOF", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+	// Target_BlurSky
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_BlurSky", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+
 	// MRT : Multi Render Target 그룹을 지어놓은것. 
 
 	// For.MRT_Deferred : Target_Diffuse + Target_Normal
@@ -230,6 +237,10 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	m_pSSAOTexture = CTexture::Create(m_pGraphic_Dev, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Effect/Normal/Normal_4.dds");
 	// static_cast<CTexture*>(CComponent_Manager::Get_Instance()->Clone_Component(SCENE_STATIC, L"Tex_Noise", nullptr));
 
+	// For.m_pGradingTexture
+	m_pGradingTexture = CTexture::Create(m_pGraphic_Dev, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Grading/LUT/LUT_0.png");
+	m_pGradingTextureTest = CTexture::Create(m_pGraphic_Dev, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Grading/LUT/LUT_1.png");
+	
 	m_iInstanceCnt = 200;
 	m_pInstanceData = new INSTANCEDATA[m_iInstanceCnt];
 
@@ -333,6 +344,9 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_ToneMapping", fTargetSize * 5, fTargetSize * 2.f, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
+	// For.Target_BlurDOF`s Debug Buffer
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_BlurDOF", fTargetSize * 4, fTargetSize * 2, fTargetSize, fTargetSize)))
+		return E_FAIL;
 #endif
 
 
@@ -403,6 +417,9 @@ HRESULT CRenderer::Draw_RenderList()
 	if (FAILED(Render_ToneMapping()))
 		return E_FAIL;
 
+	if (FAILED(Render_BlurDOF()))
+		return E_FAIL;
+
 	// Distortion 타겟에 그림 // 순서 상관X
 	if (FAILED(Render_Distortion()))
 		return E_FAIL;
@@ -410,7 +427,8 @@ HRESULT CRenderer::Draw_RenderList()
 	// 후처리
 	if (FAILED(Render_After()))
 		return E_FAIL;
-
+	if (FAILED(Render_3dUI()))
+		return E_FAIL;
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
@@ -437,6 +455,7 @@ HRESULT CRenderer::Draw_RenderList()
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_BrightPass");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_SSAO");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_SSAO_Blur");
+		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_BlurDOF");
 
 		m_pGraphic_Dev->SetTexture(0, nullptr);
 	}
@@ -444,6 +463,41 @@ HRESULT CRenderer::Draw_RenderList()
 #endif
 
 	return NOERROR;
+}
+
+void CRenderer::DOF_On(_bool bOn)
+{
+	m_bDOF = bOn;
+
+	if (m_bDOF)
+	{
+		m_fFocus = 0.5f;
+		m_fRange = 0.08f;
+	}
+	else
+	{
+		m_fFocus = 0.f;
+		m_fRange = 0.f;
+	}
+	
+}
+
+void CRenderer::Mono_On(_bool bOn)
+{
+	m_bMono = bOn;
+
+	//if (m_bMono)
+	//	m_fToneGradient = 1.f;
+}
+
+void CRenderer::Fog_On(_bool bOn)
+{
+	m_bFog = bOn;
+
+	if (m_bFog)
+		m_fFogDestiny = 0.06f;
+	else
+		m_fFogDestiny = 0.f;
 }
 
 HRESULT CRenderer::Render_Priority()
@@ -460,8 +514,24 @@ HRESULT CRenderer::Render_Priority()
 			Safe_Release(pGameObject);
 		}
 	}
-
 	m_RenderList[RENDER_PRIORITY].clear();
+
+	m_pTarget_Manager->Begin_Render_Target(L"Target_BlurSky");
+	for (auto& pGameObject : m_RenderList[RENDER_FOG])
+	{
+		if (nullptr != pGameObject)
+		{
+			if (FAILED(pGameObject->Render_GameObject()))
+			{
+				Safe_Release(pGameObject);
+				return E_FAIL;
+			}
+			Safe_Release(pGameObject);
+		}
+	}
+	m_RenderList[RENDER_FOG].clear();
+	m_pTarget_Manager->End_Render_Target(L"Target_BlurSky");
+
 
 	return NOERROR;
 }
@@ -705,12 +775,32 @@ HRESULT CRenderer::Render_Effect()
 	{
 		if (nullptr != pGameObject)
 		{
+			if (CEffect::TYPE_TEX == static_cast<CEffect*>(pGameObject)->Get_EffType())
+				continue;
+
 			if (FAILED(pGameObject->Render_GameObject_SetShader(m_pShader_Effect)))
 			{
 				Safe_Release(pGameObject);
 				return E_FAIL;
 			}
 			Safe_Release(pGameObject);
+		}
+	}
+
+	const _int LAYER_COUNT = 10;
+	for (_int i = 0; i < LAYER_COUNT; i++)
+	{
+		for (auto& pGameObject : m_RenderList[RENDER_EFFECT])
+		{
+			if (CEffect::TYPE_TEX == static_cast<CEffect*>(pGameObject)->Get_EffType() &&
+				i == static_cast<CTexEffect*>(pGameObject)->Get_EffectLayer())
+			{
+				if (FAILED(pGameObject->Render_GameObject_SetShader(m_pShader_Effect)))
+				{
+					Safe_Release(pGameObject);
+					return E_FAIL;
+				}
+			}
 		}
 	}
 
@@ -812,6 +902,26 @@ HRESULT CRenderer::Render_UI()
 	}
 
 	m_RenderList[RENDER_UI].clear();
+
+	return NOERROR;
+}
+
+HRESULT CRenderer::Render_3dUI()
+{
+	for (auto& pGameObject : m_RenderList[RENDER_3DUI])
+	{
+		if (nullptr != pGameObject)
+		{
+			if (FAILED(pGameObject->Render_GameObject()))
+			{
+				Safe_Release(pGameObject);
+				return E_FAIL;
+			}
+			Safe_Release(pGameObject);
+		}
+	}
+
+	m_RenderList[RENDER_3DUI].clear();
 
 	return NOERROR;
 }
@@ -1039,7 +1149,7 @@ HRESULT CRenderer::Render_Blur()
 	m_pTarget_Manager->End_Render_Target(L"Target_BlurH");
 	// Blur H ==================================================
 
-	for (_int i = 0; i < 13; ++i) // 홀수만
+	for (_int i = 0; i < 1; ++i) // 홀수만
 	{
 		if (i % 2 == 0)
 		{
@@ -1191,22 +1301,29 @@ HRESULT CRenderer::Render_ToneMapping()
 	if (FAILED(m_pShader_Blend->Set_Texture("g_BloomTexture", m_pTarget_Manager->Get_Texture(L"Target_Blur"))))
 		return E_FAIL;
 
-	static _int iIdx = 5;
-	if (GetAsyncKeyState(VK_F1) & 0x8000)
-		iIdx = 0;
-	if (GetAsyncKeyState(VK_F2) & 0x8000)
-		iIdx = 1;
-	if (GetAsyncKeyState(VK_F3) & 0x8000)
-		iIdx = 2;
-	if (GetAsyncKeyState(VK_F4) & 0x8000)
-		iIdx = 3;
-	if (GetAsyncKeyState(VK_F5) & 0x8000)
-		iIdx = 4;
-	if (GetAsyncKeyState(VK_F6) & 0x8000)
-		iIdx = 5;
+	if(!m_bMono)
+		(m_fToneGradient <= 0.f) ? m_fToneGradient = 0.f : m_fToneGradient -= DELTA_60;
+	else
+		(m_fToneGradient >= 0.5f) ? m_fToneGradient = 0.5f : m_fToneGradient += DELTA_60 * 6.f;
 
+	if (GetAsyncKeyState(VK_F1) & 0x8000)
+		m_iToneIdx = 0;
+	if (GetAsyncKeyState(VK_F2) & 0x8000)
+		m_iToneIdx = 1;
+	if (GetAsyncKeyState(VK_F3) & 0x8000)
+		m_iToneIdx = 2;
+	if (GetAsyncKeyState(VK_F4) & 0x8000)
+		m_iToneIdx = 3;
+	if (GetAsyncKeyState(VK_F5) & 0x8000)
+		m_iToneIdx = 4;
+	if (GetAsyncKeyState(VK_F6) & 0x8000)
+		m_iToneIdx = 5;
+	
 	// Tone index
-	if (FAILED(m_pShader_Blend->Set_Value("g_iToneIndex", &iIdx, sizeof(_int))))
+	if (FAILED(m_pShader_Blend->Set_Value("g_iToneIndex", &m_iToneIdx, sizeof(_int))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader_Blend->Set_Value("g_fToneGradient", &m_fToneGradient, sizeof(_float))))
 		return E_FAIL;
 
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_HDR")))
@@ -1227,6 +1344,83 @@ HRESULT CRenderer::Render_ToneMapping()
 	return S_OK;
 }
 
+HRESULT CRenderer::Render_BlurDOF()
+{
+	if (!m_bDOF)
+		return S_OK;
+
+	if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_ToneMapping"))))
+		return E_FAIL;
+
+	m_pTarget_Manager->Begin_Render_Target(L"Target_BlurH");
+
+	m_pShader_Blend->Begin_Shader();
+	m_pShader_Blend->Begin_Pass(2);
+
+	m_pViewPortBuffer->Render_VIBuffer();
+
+	m_pShader_Blend->End_Pass();
+	m_pShader_Blend->End_Shader();
+
+	m_pTarget_Manager->End_Render_Target(L"Target_BlurH");
+
+
+	for (_int i = 0; i < 13; ++i) // 홀수만
+	{
+		if (i % 2 == 0)
+		{
+			m_pTarget_Manager->Begin_Render_Target(L"Target_BlurV");
+
+			if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_BlurH"))))
+				return E_FAIL;
+			m_pShader_Blend->Begin_Shader();
+			m_pShader_Blend->Begin_Pass(8);
+
+			m_pViewPortBuffer->Render_VIBuffer();
+
+			m_pShader_Blend->End_Pass();
+			m_pShader_Blend->End_Shader();
+			m_pTarget_Manager->End_Render_Target(L"Target_BlurV");
+		}
+		else
+		{
+			// Blur H ==================================================
+			if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_BlurV"))))
+				return E_FAIL;
+
+			m_pTarget_Manager->Begin_Render_Target(L"Target_BlurH");
+
+			m_pShader_Blend->Begin_Shader();
+			m_pShader_Blend->Begin_Pass(7);
+
+			m_pViewPortBuffer->Render_VIBuffer();
+
+			m_pShader_Blend->End_Pass();
+			m_pShader_Blend->End_Shader();
+
+			m_pTarget_Manager->End_Render_Target(L"Target_BlurH");
+			// Blur H ==================================================
+
+		}
+	}
+
+	m_pTarget_Manager->Begin_Render_Target(L"Target_BlurDOF");
+
+	if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_BlurV"))))
+		return E_FAIL;
+
+	m_pShader_Blend->Begin_Shader();
+	m_pShader_Blend->Begin_Pass(2);
+
+	m_pViewPortBuffer->Render_VIBuffer();
+
+	m_pShader_Blend->End_Pass();
+	m_pShader_Blend->End_Shader();
+
+	m_pTarget_Manager->End_Render_Target(L"Target_BlurDOF");
+	return S_OK;
+}
+
 HRESULT CRenderer::Render_After()
 {
 	if (nullptr == m_pViewPortBuffer ||
@@ -1236,6 +1430,67 @@ HRESULT CRenderer::Render_After()
 	if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_ToneMapping"))))
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_DistortionTexture", m_pTarget_Manager->Get_Texture(L"Target_Distortion"))))
+		return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Texture("g_DepthTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"))))
+		return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Texture("g_ShadeTexture", m_pTarget_Manager->Get_Texture(L"Target_BlurDOF"))))
+		return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Texture("g_FogColorTexture", m_pTarget_Manager->Get_Texture(L"Target_BlurSky"))))
+		return E_FAIL;
+
+	if (GetAsyncKeyState('O') & 0x8000)
+	{
+		m_pGradingTextureTest->SetUp_OnShader("g_GradingTexture", m_pShader_Blend, 0);
+	}
+	else
+	{
+		// GradingTexture
+		m_pGradingTexture->SetUp_OnShader("g_GradingTexture", m_pShader_Blend, 0);
+	}
+
+	//if (GetAsyncKeyState('O') & 0x8000)
+	//{
+	//	m_fFocus += 1.f * DELTA_60;
+	//
+	//	cout << "RANGE : " << m_fRange << endl;
+	//	cout << "FOCUS : " << m_fFocus << endl;
+	//	cout << "=========================" << endl;
+	//}
+	//if (GetAsyncKeyState('I') & 0x8000)
+	//{
+	//	m_fFocus -= 1.f * DELTA_60;
+	//
+	//	cout << "RANGE : " << m_fRange << endl;
+	//	cout << "FOCUS : " << m_fFocus << endl;
+	//	cout << "=========================" << endl;
+	//}
+	//if (GetAsyncKeyState('U') & 0x8000)
+	//{
+	//	m_fRange += 1.f * DELTA_60;
+	//
+	//	cout << "RANGE : " << m_fRange << endl;
+	//	cout << "FOCUS : " << m_fFocus << endl;
+	//	cout << "=========================" << endl;
+	//}
+	//if (GetAsyncKeyState('Y') & 0x8000)
+	//{
+	//	m_fRange -= 1.f * DELTA_60;
+	//
+	//	cout << "RANGE : " << m_fRange << endl;
+	//	cout << "FOCUS : " << m_fFocus << endl;
+	//	cout << "=========================" << endl;
+	//}
+
+	if (m_fFocus > 1.f) m_fFocus = 1.f;
+	if (m_fFocus < 0.f) m_fFocus = 0.f;
+	if (m_fRange > 1.f) m_fRange = 1.f;
+	if (m_fRange < 0.f) m_fRange = 0.f;
+
+	if (FAILED(m_pShader_Blend->Set_Value("g_Focus_DOF", &m_fFocus, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Value("g_Range_DOF", &m_fRange, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Value("g_FogDestiny", &m_fFogDestiny, sizeof(_float))))
 		return E_FAIL;
 
 	// 장치에 백버퍼가 셋팅되어있다.	
@@ -1363,7 +1618,9 @@ CComponent * CRenderer::Clone_Component(void * pArg)
 void CRenderer::Free()
 {
 	Safe_Delete_Array(m_pInstanceData);
-
+	
+	Safe_Release(m_pGradingTexture);
+	Safe_Release(m_pGradingTextureTest);
 	Safe_Release(m_pSSAOTexture);
 	Safe_Release(m_pViewPortBuffer);
 

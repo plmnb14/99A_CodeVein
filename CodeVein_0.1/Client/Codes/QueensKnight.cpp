@@ -63,24 +63,24 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"TrailOff", true);	// 트레일 끝
 	pBlackBoard->Set_Value(L"LeakField_On", false);	// 리크필드 변수
 
-	//CBT_Selector* Start_Sel = Node_Selector("행동 시작");
-	CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
+	CBT_Selector* Start_Sel = Node_Selector("행동 시작");
+	//CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
 
 	pBehaviorTree->Set_Child(Start_Sel);
 
 
 	//////////// 아래에 주석해놓은 4줄이 본게임에서 쓸 것임, 차례대로 공격함.
 
-	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
-	//Check_ShowValue->Set_Child(Start_Show());
-	//Start_Sel->Add_Child(Check_ShowValue);
-	//Start_Sel->Add_Child(Start_Game());
+	CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", false);
+	Check_ShowValue->Set_Child(Start_Game());
+	Start_Sel->Add_Child(Check_ShowValue);
+	Start_Sel->Add_Child(Start_Show());
 
 	////////////
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Start_Game());
+	//Start_Sel->Add_Child(Start_Game());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -113,8 +113,6 @@ _int CQueensKnight::Update_GameObject(_double TimeDelta)
 
 	CGameObject::Update_GameObject(TimeDelta);
 
-	return NO_EVENT;
-
 	// 죽었을 경우
 	if (m_bIsDead)
 		return DEAD_OBJ;
@@ -136,6 +134,9 @@ _int CQueensKnight::Update_GameObject(_double TimeDelta)
 	// 플레이어 발견
 	else
 	{
+		//// 어그로 관리
+		Set_Target_Auto(true);
+
 		// 뼈 위치 업데이트
 		Update_Bone_Of_BlackBoard();
 		// BB 직접 업데이트
@@ -1806,11 +1807,11 @@ CBT_Composite_Node * CQueensKnight::Start_Show()
 CBT_Composite_Node * CQueensKnight::Show_ChaseAndNearAttack()
 {
 	CBT_Sequence* Root_Seq = Node_Sequence("추적 후 순서대로 공격");
-	CBT_Play_Ani* Show_Ani2 = Node_Ani("추적모션", 2, 0.05f);
+	CBT_Play_Ani* Show_Ani4 = Node_Ani("추적모션", 4, 0.0f);
 	CBT_MoveDirectly* Chase = Node_MoveDirectly_Chase("추적", L"Player_Pos", L"Monster_Speed", L"Monster_Dir", 5.f, 3.f);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("플레이어 바라보기", L"Player_Pos", 0.2);
 
-	Root_Seq->Add_Child(Show_Ani2);
+	Root_Seq->Add_Child(Show_Ani4);
 	Root_Seq->Add_Child(Chase);
 	Root_Seq->Add_Child(Rotation0);
 	Root_Seq->Add_Child(Show_NearAttack());
@@ -1861,6 +1862,10 @@ CBT_Composite_Node * CQueensKnight::Show_FarAttack()
 	CBT_Cooldown* Cool2 = Node_Cooldown("쿨2", 300);
 	CBT_Cooldown* Cool3 = Node_Cooldown("쿨3", 300);
 	CBT_Cooldown* Cool4 = Node_Cooldown("쿨4", 300);
+	CBT_Cooldown* Cool5 = Node_Cooldown("쿨5", 300);
+	CBT_Cooldown* Cool6 = Node_Cooldown("쿨6", 300);
+
+	CBT_Play_Ani* Show_Ani3 = Node_Ani("기본", Ani_Appearance_End, 0.95f);
 
 	CBT_SetValue* Show_ValueOff = Node_BOOL_SetValue("시연회 OFF", L"Show", false);
 
@@ -1874,7 +1879,11 @@ CBT_Composite_Node * CQueensKnight::Show_FarAttack()
 	Cool3->Set_Child(Flash_Jump_Attack());
 	Root_Sel->Add_Child(Cool4);
 	Cool4->Set_Child(Flash_Cut());
-
+	Root_Sel->Add_Child(Cool5);
+	Cool5->Set_Child(Flash_Middle_Ground());
+	Root_Sel->Add_Child(Cool6);
+	Cool6->Set_Child(Show_Ani3);
+	
 	Root_Sel->Add_Child(Show_ValueOff);
 
 	return Root_Sel;
@@ -2140,6 +2149,9 @@ HRESULT CQueensKnight::Update_NF()
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Idle);
 			m_bFight = true;
+
+			// 가까운 녀석 어그로 끌림.
+			Set_Target_Auto();
 		}
 	}
 
@@ -2254,11 +2266,12 @@ void CQueensKnight::Check_PhyCollider()
 
 void CQueensKnight::Push_Collider()
 {
-	list<CGameObject*> tmpList[3];
+	list<CGameObject*> tmpList[4];
 
 	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
 	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
 	tmpList[2] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
+	tmpList[3] = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_MORTAL);
 
 	for (auto& ListObj : tmpList)
 	{
@@ -2299,8 +2312,10 @@ void CQueensKnight::OnCollisionEnter()
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_MonsterProjectile", SCENE_STAGE));
 	}
 	else
+	{
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
-
+		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_MORTAL));
+	}
 
 	// =============================================================================================
 

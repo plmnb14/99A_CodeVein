@@ -12,8 +12,8 @@ class CGunGenji final : public CMonster
 public:
 	enum Color { White, Jungle, Normal };
 	enum NF_Ani {
-		Talk = 143, LookAround1 = 151, LookAround2 = 150, LookAround3 = 149, Sit1 = 144, Sit2 = 152,
-		CheckGun = 155
+		Talk = 2, LookAround1 = 4, LookAround2 = 3, LookAround3 = 2, Sit1 = 6, Sit2 = 10,
+		CheckGun = 14
 	};
 
 	typedef struct tagInitInfo
@@ -44,8 +44,8 @@ public:
 
 private:
 	enum Ani {
-		Ani_Idle = 42, Ani_Death = 64, Ani_Dmg01_FL = 124, Ani_Dmg01_FR = 123, Ani_Dmg01_BL = 122, Ani_Dmg01_BR = 121,
-		Ani_StandUp1 = 140, Ani_StandUp2 = 153, DeadBodyLean_End = 72,
+		Ani_Idle = 1, Ani_Death = 70, Ani_Dmg01_FL = 67, Ani_Dmg01_FR = 66, Ani_Dmg01_BL = 65, Ani_Dmg01_BR = 64,
+		Ani_StandUp1 = 7, Ani_StandUp2 = 11, DeadBodyLean_End = 72,
 		Ani_DmgRepel = 105,
 		Ani_Death_F = 62, Ani_Death_B = 63
 	};

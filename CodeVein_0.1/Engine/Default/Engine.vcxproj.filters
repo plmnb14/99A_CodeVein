@@ -271,6 +271,9 @@
     <Filter Include="01.Utility\[02] GameObject\6%29 ObjectPull">
       <UniqueIdentifier>{65ce9b98-c760-4d2e-bd9b-c1e7ac3735cf}</UniqueIdentifier>
     </Filter>
+    <Filter Include="01.Utility\[02] GameObject\4%29 Effect\4%29 OrthoEffect">
+      <UniqueIdentifier>{243d2321-1297-4269-991e-4b73b148aca0}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Headers\Base.h">
@@ -591,6 +594,9 @@
     <ClInclude Include="..\Headers\ActiveObject.h">
       <Filter>01.Utility\[02] GameObject\5%29ActeiveObject_Engine</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\OrthoEffect.h">
+      <Filter>01.Utility\[02] GameObject\4%29 Effect\4%29 OrthoEffect</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Base.cpp">
@@ -886,6 +892,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\ActiveObject.cpp">
       <Filter>01.Utility\[02] GameObject\5%29ActeiveObject_Engine</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\OrthoEffect.cpp">
+      <Filter>01.Utility\[02] GameObject\4%29 Effect\4%29 OrthoEffect</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

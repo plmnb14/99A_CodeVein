@@ -6,13 +6,25 @@
 BEGIN(Client)
 class CMistletoeOptionUI final : public CUI
 {
+public:
+	enum MISTLETOE_OPTION
+	{
+		OPTION_STAGE,
+		OPTION_INHERIT,
+		OPTION_LEVELUP,
+		OPTION_END
+	};
 private:
 	explicit CMistletoeOptionUI(_Device pDevice);
 	explicit CMistletoeOptionUI(const CMistletoeOptionUI& rhs);
 	virtual ~CMistletoeOptionUI() = default;
 
 public:
+	MISTLETOE_OPTION Get_Option() { return m_eOption; }
+
+public:
 	void Set_Select(_bool bIsSelect) { m_bIsSelect = bIsSelect; }
+	void Set_Option(MISTLETOE_OPTION eOption) { m_eOption = eOption; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -23,7 +35,7 @@ public:
 
 private:
 	HRESULT Add_Component();
-	HRESULT SetUp_ConstantTable();
+	HRESULT SetUp_ConstantTable(_uint iIndex);
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -31,10 +43,12 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
+	CCollider*				m_pCollider = nullptr;
 
 private:
 	_float					m_fAlpha = 0.f;
 	_bool					m_bIsSelect = false;
+	MISTLETOE_OPTION		m_eOption = OPTION_END;
 
 public:
 	static CMistletoeOptionUI*	Create(_Device pGraphic_Device);

@@ -75,11 +75,16 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 	//Start_Sel->Add_Child(Check_ShowValue);
 	//Start_Sel->Add_Child(Start_Game());
 
+	CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", false);
+	Check_ShowValue->Set_Child(Start_Game());
+	Start_Sel->Add_Child(Check_ShowValue);
+	Start_Sel->Add_Child(Start_Show());
+
 	////////////
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Start_Game());
+	//Start_Sel->Add_Child(Start_Game());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -107,8 +112,6 @@ _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 
 	CGameObject::Update_GameObject(TimeDelta);
 
-	return NO_EVENT;
-
 	// 죽었을 경우
 	if (m_bIsDead)
 		return DEAD_OBJ;
@@ -130,6 +133,9 @@ _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 	// 플레이어 발견
 	else
 	{
+		//// 어그로 관리
+		Set_Target_Auto(true);
+
 		// 뼈 위치 업데이트
 		Update_Bone_Of_BlackBoard();
 		// BB 직접 업데이트
@@ -1014,6 +1020,9 @@ CBT_Composite_Node * CPoisonButterfly::Show_FarAttack()
 	CBT_Cooldown* Cool1 = Node_Cooldown("쿨1", 300);
 	CBT_Cooldown* Cool2 = Node_Cooldown("쿨2", 300);
 	CBT_Cooldown* Cool3 = Node_Cooldown("쿨3", 300);
+	CBT_Cooldown* Cool4 = Node_Cooldown("쿨4", 300);
+
+	CBT_Play_Ani* Show_Ani3 = Node_Ani("기본", Ani_Appearance_End, 0.95f);
 
 	CBT_SetValue* Show_ValueOff = Node_BOOL_SetValue("시연회 OFF", L"Show", false);
 
@@ -1025,6 +1034,8 @@ CBT_Composite_Node * CPoisonButterfly::Show_FarAttack()
 	Cool2->Set_Child(Fire_ChaseBullet());
 	Root_Sel->Add_Child(Cool3);
 	Cool3->Set_Child(Turn_4PoisonShot());
+	Root_Sel->Add_Child(Cool4);
+	Cool4->Set_Child(Show_Ani3);
 
 	Root_Sel->Add_Child(Show_ValueOff);
 
@@ -1226,6 +1237,9 @@ HRESULT CPoisonButterfly::Update_NF()
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Idle);
 			m_bFight = true;
+
+			// 가까운 녀석 어그로 끌림.
+			Set_Target_Auto();
 		}
 	}
 
@@ -1341,11 +1355,12 @@ void CPoisonButterfly::Check_PhyCollider()
 
 void CPoisonButterfly::Push_Collider()
 {
-	list<CGameObject*> tmpList[3];
+	list<CGameObject*> tmpList[4];
 
 	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
 	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
 	tmpList[2] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
+	tmpList[3] = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_MORTAL);
 
 	for (auto& ListObj : tmpList)
 	{
@@ -1386,8 +1401,10 @@ void CPoisonButterfly::OnCollisionEnter()
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_MonsterProjectile", SCENE_STAGE));
 	}
 	else
+	{
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
-
+		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_MORTAL));
+	}
 
 	// =============================================================================================
 

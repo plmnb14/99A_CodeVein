@@ -63,9 +63,9 @@ HRESULT CExpendables_Inven::Ready_GameObject(void * pArg)
 		}
 	}
 
-	Add_MultiExpendables(CExpendables::EXPEND_1, 9);
-	Add_MultiExpendables(CExpendables::EXPEND_2, 5);
-	Add_MultiExpendables(CExpendables::EXPEND_3, 3);
+	Add_MultiExpendables(CExpendables::EXPEND_1, 30);
+	Add_MultiExpendables(CExpendables::EXPEND_2, 30);
+	Add_MultiExpendables(CExpendables::EXPEND_3, 30);
 	
 	return NOERROR;
 }

@@ -28,6 +28,8 @@ HRESULT CComponent_Manager::Ready_Component_Manager(_Device _pGraphicDev)
 		return E_FAIL;
 	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_SSAO", CShader::Create(_pGraphicDev, L"../ShaderFiles/Shader_SSAO.fx"))))
 		return E_FAIL;
+	if (FAILED(Add_Prototype(SCENE_STATIC, L"Shader_3dUI", CShader::Create(_pGraphicDev, L"../ShaderFiles/Shader_3dUI.fx"))))
+		return E_FAIL;
 
 	//===============================================
 

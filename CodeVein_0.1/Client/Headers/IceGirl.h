@@ -54,7 +54,7 @@ private:	// 패턴들
 	CBT_Composite_Node* Ice_Cut();
 	// 6. 얼음 보호막
 	CBT_Composite_Node* Ice_Barrier();
-	// 7. 플레이어 주위에 큰 크기 콜드빔,	얼음기둥 등장시간 조정필요
+	// 7. 플레이어 주위에 큰 크기 콜드빔
 	CBT_Composite_Node* ColdBeam_RandomPos();
 	// 8. 자신 주위 4방향  중간 크기 콜드빔
 	CBT_Composite_Node* ColdBeam_Around_Me();

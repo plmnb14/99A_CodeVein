@@ -3,9 +3,15 @@
 #include "Management.h"
 
 #include "Sky.h"
+#include "Sky_Blur.h"
+
 #include "TexEffect.h"
 #include "MeshEffect.h"
 #include "DecalEffect.h"
+#include "OrthoEffect.h"
+#include "Effect_BloodChunk.h"
+#include "Effect_LongSpark.h"
+
 #include "Player.h"
 
 #include "Weapon.h"
@@ -32,6 +38,12 @@
 #include "PickUp_ItemUI.h"
 
 #include "Player_Colleague.h"
+#include "Colleague_Bullet.h"
+#include "CollBullet_Heal.h"
+
+#include "Colleague_UI.h"
+#include "Colleague_Jack.h"
+
 
 //#include "Item.h"
 #include "Haze.h"
@@ -493,6 +505,22 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"FireBoy_ArmAttack_FloorDust")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireHandBall", true)))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireHandBall_Before_HandFire")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireHandBall_Dead_Light")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireHandBall_BodyFire")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireHandBall_BodyFire_Small")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireHandBall_Dead_FireExplosion")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireFlame")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FireBoy_FireFlame_DeadFire")))
+		return E_FAIL;
 #pragma endregion
 
 #pragma region DeerKing
@@ -570,6 +598,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"DeerKing_Tornade_Mesh_0", true)))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSword", true)))
+		return E_FAIL;
 #pragma endregion
 
 	if (FAILED(Add_EffectPrototype(L"Cocoon_TongueFire")))
@@ -585,7 +615,41 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"Totem_Fire_Ready")))
 		return E_FAIL;
 
+	if (FAILED(Add_EffectPrototype(L"Totem_Ice_BulletBody")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Totem_Ice_Bullet_Dead_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Totem_Ice_Bullet_Dead_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Totem_Ice_Bullet_Dead_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Totem_Ice_Ready")))
+		return E_FAIL;
+	
 	if (FAILED(Add_EffectPrototype(L"Monkey_Knife", true)))
+		return E_FAIL;
+
+	if (FAILED(Add_EffectPrototype(L"Hunter_Bullet_Body_Lightning_Hor_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hunter_Bullet_Body_Lightning_Ver_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hunter_Bullet_Body_LinePoint_Hor")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hunter_Bullet_Body_LinePoint_Ver")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hunter_Bullet_Fire_Smoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hunter_Bullet_Ready_Light")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hunter_Bullet_Tail_Lightning_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hunter_Bullet_Dead_Flash")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hunter_Bullet_Dead_Lightning")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hunter_Bullet_Dead_Smoke_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hunter_Bullet_Dead_Smoke_1")))
 		return E_FAIL;
 
 	if (FAILED(Add_EffectPrototype(L"Boss_KnockDown_Dust")))
@@ -646,6 +710,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Hit_BloodDecal_0")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Blood_Chunk_0", true)))
+		return E_FAIL;
 #pragma endregion
 
 #pragma region Slash
@@ -670,6 +736,20 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"Hit_Particle_Red")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Hit_Particle_Yellow")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_LongSpark_L_0")))
+		return E_FAIL;							  
+	if (FAILED(Add_EffectPrototype(L"Hit_LongSpark_L_1")))
+		return E_FAIL;							  
+	if (FAILED(Add_EffectPrototype(L"Hit_LongSpark_L_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_LongSpark_R_0")))
+		return E_FAIL;							   
+	if (FAILED(Add_EffectPrototype(L"Hit_LongSpark_R_1")))
+		return E_FAIL;							   
+	if (FAILED(Add_EffectPrototype(L"Hit_LongSpark_R_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Hit_LongSpark_Distortion_0")))
 		return E_FAIL;
 #pragma endregion
 
@@ -749,6 +829,63 @@ HRESULT CLoading::Ready_Effect(void)
 
 	if (FAILED(Add_EffectPrototype(L"Player_SpaceBar_StepParticle")))
 		return E_FAIL;
+
+#pragma region Colleague
+	if (FAILED(Add_EffectPrototype(L"Colleague_Teleport_Flash_Particle_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Teleport_Line_Particle_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Teleport_Line_Particle_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Teleport_Line_Particle_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Teleport_Smoke_0")))
+		return E_FAIL;
+
+	if (FAILED(Add_EffectPrototype(L"Colleague_Heal_BulletBody_Aura")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Heal_BulletBody_Hor")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Heal_BulletBody_Ver")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Heal_HandBlood")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Heal_HandLight")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Heal_HandSmoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Healing_PointParticle")))
+		return E_FAIL;
+
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_Blood")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_BloodSmoke_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_BloodSmoke_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_DistortionSmoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_HandLight_Pink_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_HandLight_Red_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_HandSmoke_Black_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_PinkSmoke_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_PinkSmoke_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_Start_Particle_Black_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_Start_Particle_Black_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_Start_Particle_Black_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_Start_Particle_Red_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Colleague_Skill_Start_Particle_Red_1")))
+		return E_FAIL;
+#pragma endregion
 
 #pragma region Skills
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Scratch_Hor")))
@@ -843,6 +980,20 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Rush_WhiteParticle_LaserBefore")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Drain_Ink_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Drain_Ink_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Drain_Ink_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Drain_Ink_3")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Drain_Ink_4")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Drain_Ink_5")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Drain_Ink_6")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_SplitAssert_LaserAfter_RingLine", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Floor_BlackRing", true)))
@@ -875,6 +1026,81 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Player_Skill_Torment_Wind_Distortion_R", true)))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_FlashLight")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_PurpleLightning")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_ShotSmoke")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_Smoke_Blue_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_Smoke_Blue_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_Smoke_DarkBlue")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_Bullet_DeadFlash")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_Bullet_DeadShockWave")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_Bullet_DeadSmoke_Move_Purple")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_Bullet_DeadSmoke_Blue_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_Bullet_DeadSmoke_Blue_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_BulletBody_Ver")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Gun_BulletBody_Hor")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_BottomBlood_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_BottomBlood_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_BottomBlood_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_BottomBlood_3")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Halberd_Blaster_Hor")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Halberd_Blaster_Ver")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Halberd_Orange_LinePoint_Explosion_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Halberd_Orange_LinePoint_Explosion_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Halberd_RedParticle_Explosion")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Halberd_ShockWave")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Player_Skill_Halberd_RedLightning_Mesh", true)))
+		return E_FAIL;
+
+	if (FAILED(Add_EffectPrototype(L"DrainWeapon_BlackSmoke_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DrainWeapon_BlackSmoke_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DrainWeapon_BlackSmoke_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DrainWeapon_BlackSmoke_3")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DrainWeapon_Counter_RedLight")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DrainWeapon_Counter_ShockWave_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DrainWeapon_Counter_ShockWave_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DrainWeapon_Counter_ShockWave_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DrainWeapon_RedLine_Explosion_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DrainWeapon_WhiteParticle_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DrainWeapon_WhiteParticle_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DrainWeapon_WhiteParticle_2")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"DrainWeapon_WhiteParticle_3")))
+		return E_FAIL;
 #pragma endregion
 
 	if (FAILED(g_pManagement->Add_Prototype(L"Blood_Decal_0", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Blood_Decal_0.dat")))))
@@ -890,6 +1116,21 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(g_pManagement->Add_Prototype(L"Blood_Decal_5", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Blood_Decal_5.dat")))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"Blood_Decal_6", CDecalEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Blood_Decal_6.dat")))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"Snow_Ortho_0", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Snow_Ortho_0.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Snow_Ortho_1", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Snow_Ortho_1.dat")))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_BlackCorner_0", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_BlackCorner_0.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_BlackCorner_1", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_BlackCorner_1.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_BlackCorner_2", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_BlackCorner_2.dat")))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Blood_0", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_Blood_0.dat")))))
 		return E_FAIL;
 
 	return S_OK;
@@ -1027,80 +1268,80 @@ _uint CLoading::Loading_Title()
 	cout << "Title_Loading . . ." << endl;
 	cout << "===============================================================================" << endl;
 
+	//============================================================================================================
 	// 필수 메쉬 불러오는중
 	//============================================================================================================
 	cout << "Essential Static Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Path.dat");
-
+	//============================================================================================================
 	// 다이나믹 메쉬 불러오는 중
 	//============================================================================================================
 	cout << "Essential Dynamic Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Dynamic_Path.dat");
 
 	cout << "DynamicMesh 불러오는 중 . . ." << endl;
-	//============================================================================================================
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
-
+	//============================================================================================================
 	// 무기 불러오는 중
 	//============================================================================================================
 	cout << "Weapon Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Weapon_Path.dat");
-	// 일반 무기
 
 	cout << "DrainWeapon Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_DrainWeapon_Path.dat");
-	// 흡혈 무기
-
+	//============================================================================================================
 	// 텍스쳐 불러오는 중
-	////============================================================================================================
+	//============================================================================================================
 	cout << "All Texture 불러오는 중 . . ." << endl;
 	g_pManagement->LoadTex_FromPath(m_pGraphicDev, L"../../Data/Load_TexData/Tex_Path.dat");
-
 	//============================================================================================================
-
-	////// 이펙트 메쉬 불러오는중
+	// 이펙트 메쉬 불러오는중
+	//============================================================================================================
 	cout << "Effect Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Effect_Path.dat");
+	//============================================================================================================
 	// 이펙트 원형 생성
 	//============================================================================================================
 	cout << "Effect 원형 생성중" << endl;
 	Ready_Effect();
-
+	//============================================================================================================
+	// 필수 파티클 생성
+	//============================================================================================================
 	cout << "Particle Essential 불러오는 중 . . ." << endl;
 	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager_Essential()))
 		return E_FAIL;
-
+	//============================================================================================================
 	// 플레이어 스킬, 보스 이펙트 포함
+	//============================================================================================================
 	cout << "Particle Etc 불러오는 중 . . ." << endl;
 	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
 		return E_FAIL;
-
+	//============================================================================================================
 	// UI 원형 생성
 	//============================================================================================================
 	cout << " UI 원형 생성 중 . . ." << endl;
 	CUI_Manager::Get_Instance()->Add_UI_Prototype(m_pGraphicDev);
 	CItem_Manager::Get_Instance()->Add_Item_Prototype(m_pGraphicDev);
-
+	//============================================================================================================
 	// 기타
 	//============================================================================================================
-
 	cout << "Essential Protorypes 추가 중 . . ."  << endl;
-
+	//============================================================================================================
 	// 흡혈 무기
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DrainWeapon", CDrain_Weapon::Create(m_pGraphicDev))))
 		return E_FAIL;
 	//무기
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon", CWeapon::Create(m_pGraphicDev))))
 		return E_FAIL;
-
 	// 트레일
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SwordTrail", Engine::CTrail_VFX::Create(m_pGraphicDev))))
 		return E_FAIL;
-
 	// 스카이
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Sky", CSky::Create(m_pGraphicDev))))
 		return E_FAIL;
-
+	// 스카이
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Sky_Blur", CSky_Blur::Create(m_pGraphicDev))))
+		return E_FAIL;
 	//============================================================================================================
 
 	m_bFinish = true;
@@ -1135,32 +1376,22 @@ _uint CLoading::Loading_Title()
 
 _uint CLoading::Loading_Stage()
 {
+	//============================================================================================================
 	// 트레이닝이면 안불러와요
-	//if (0 != g_sStageIdx_Cur)
-	//{
-		// 임시 공통 스태틱 메쉬
+	//============================================================================================================
+	if (0 != g_sStageIdx_Cur)
+	{
+		// 공통 스태틱 메쉬
 		cout << "Common Static Mesh 불러오는 중 . . ." << endl;
 		g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
 
-		// 기믹 메쉬 불러오는중
-		//============================================================================================================
+		// 기믹 메쉬
 		cout << "Field Gimmick Static Mesh 불러오는 중 . . ." << endl;
 		g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Field_Gimmick_Path.dat");
-
-		cout << "Mesh Stage_00 Load. . ." << endl;
-		g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage00_Path.dat");
-
-		cout << "Mesh Stage_01 Load. . ." << endl;
-		g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage01_Path.dat");
-
-		cout << "Mesh Stage_03 Load. . ." << endl;
-		g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage03_Path.dat");
-
-		cout << "Mesh Stage_04 Load. . ." << endl;
-		g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage04_Path.dat");
-
-	//}
-
+	}
+	//============================================================================================================
+	// 스테이지 별 로드
+	//============================================================================================================
 	switch (g_sStageIdx_Cur)
 	{
 	// 스테이지 - 트레이닝
@@ -1233,11 +1464,10 @@ _uint CLoading::Loading_Stage()
 		}
 		break;
 	}
-
 	// 스테이지 - 04
 	case 5:
 	{
-		// 4번 - 스테이지 03
+		// 4번 - 스테이지 04
 		if (false == g_bOnStage[6])
 		{
 			g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage04_Path.dat");
@@ -1247,27 +1477,29 @@ _uint CLoading::Loading_Stage()
 		break;
 	}
 	}
-
+	//============================================================================================================
+	// Essential System Operating . . .
 	// 최초 로딩 호출 시 1번만 불러옵니다.
+	//============================================================================================================
 	if (false == g_bOnStage[0])
 	{
+		//============================================================================================================
+		// 노드 생성
+		//============================================================================================================
 		cout << "BT_Node 생성 중 . . ." << endl;
 		//============================================================================================================
 		if (FAILED(g_pManagement->Ready_BT_Node()))
 			return E_FAIL;
-
+		//============================================================================================================
 		// 오브젝트 원형 생성
 		//============================================================================================================
-
 		cout << "Physics Test Flag 생성 중 . . ." << endl;
-		// 환경
-		//============================================================================================================
-		// 깃발
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Flag", CFlag::Create(m_pGraphicDev))))
 			return E_FAIL;
 
 		cout << "Monster Prototype 생성 중 . . ." << endl;
-		// 환경
+		//============================================================================================================
+		// 몬스터 프로토 타입
 		//============================================================================================================
 		// 독나방
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonButterfly", CPoisonButterfly::Create(m_pGraphicDev))))
@@ -1358,6 +1590,14 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireTornadoCol", CFireTornadoCol::Create(m_pGraphicDev))))
 			return E_FAIL;
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireTornadoCol", L"Monster_FireTornadoCol", 3);
+		// 왼손에 화염구 소환
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireHandBall", CFireHandBall::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireHandBall", L"Monster_FireHandBall", 3);
+		// 왼손에 화염구 죽은 후 생성되는 불꽃
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireFlame", CFireFlame::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireFlame", L"Monster_FireFlame", 48);
 		// 사슴왕
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKing", CDeerKing::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1381,6 +1621,14 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingRushCol", CDeerKingRushCol::Create(m_pGraphicDev))))
 			return E_FAIL;
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingRushCol", L"Monster_DeerKingRushCol", 3);
+		// 사슴왕  얼음검 소환
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingIceSword", CDeerKingIceSword::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingIceSword", L"Monster_DeerKingIceSword", 3);
+		// 사슴왕  오른손 충돌체
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingRightHandCol", CDeerKingRightHandCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingRightHandCol", L"Monster_DeerKingRightHandCol", 3);
 		// 검겐지
 		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenji", CSwordGenji::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1451,12 +1699,26 @@ _uint CLoading::Loading_Stage()
 			return E_FAIL;
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Pet_Bullet", L"Pet_Bullet", 100);
 
+		// Colleague - Chea
+		//============================================================================================================
+		// 동료
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Colleague", CPlayer_Colleague::Create(m_pGraphicDev))))
+			return E_FAIL;
+
+		// 동료 총알
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ColleagueBullet", CColleague_Bullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_ColleagueBullet", L"GameObject_ColleagueBullet", 100);
+
+		// 힐용
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CollBullet_Heal", CCollBullet_Heal::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_CollBullet_Heal", L"GameObject_CollBullet_Heal", 100);
+
+
 		cout << "UI Sub Prototype 생성 중 . . ." << endl;
 		// UI - Chea
 		//============================================================================================================
-
-		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Colleague", CPlayer_Colleague::Create(m_pGraphicDev))))
-			return E_FAIL;
 
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MonsterHPUI", CMonsterUI::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1467,6 +1729,13 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Get_ItemUI", CGet_ItemUI::Create(m_pGraphicDev))))
 			return E_FAIL;
 
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Colleague_UI", CColleague_UI::Create(m_pGraphicDev))))
+			return E_FAIL;
+
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Colleague_Jack", CColleague_Jack::Create(m_pGraphicDev))))
+			return E_FAIL;
+
+
 		// ETC
 		//============================================================================================================
 		// Haze
@@ -1474,8 +1743,17 @@ _uint CLoading::Loading_Stage()
 			return E_FAIL;
 
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_Haze", L"GameObject_Haze", 200);
-		//============================================================================================================
+		
+		// Effect_BloodChunk
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BloodChunk", CEffect_BloodChunk::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_BloodChunk", L"GameObject_BloodChunk", 200);
 
+		// Effect_LongSpark
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LongSpark", CEffect_LongSpark::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_LongSpark", L"GameObject_LongSpark", 50000);
+		//============================================================================================================
 
 		g_bOnStage[0] = true;
 	}

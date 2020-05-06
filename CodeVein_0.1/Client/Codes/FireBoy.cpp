@@ -57,24 +57,24 @@ HRESULT CFireBoy::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"Show", true);
 	pBlackBoard->Set_Value(L"Show_Near", true);
 
-	CBT_Selector* Start_Sel = Node_Selector("행동 시작");
-	//CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
+	//CBT_Selector* Start_Sel = Node_Selector("행동 시작");
+	CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
 
 	pBehaviorTree->Set_Child(Start_Sel);
 
 
 	//////////// 아래에 주석해놓은 4줄이 본게임에서 쓸 것임, 차례대로 공격함.
 
-	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
-	//Check_ShowValue->Set_Child(Start_Show());
+	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", false);
+	//Check_ShowValue->Set_Child(Start_Game());
 	//Start_Sel->Add_Child(Check_ShowValue);
-	Start_Sel->Add_Child(Start_Game());
+	//Start_Sel->Add_Child(Start_Show());
 
 	////////////
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	//Start_Sel->Add_Child(Fire_Ground());
+	Start_Sel->Add_Child(Start_Game());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -120,11 +120,14 @@ _int CFireBoy::Update_GameObject(_double TimeDelta)
 	// 플레이어 미발견
 	if (false == m_bFight)
 	{
-		//Update_NF();
+		Update_NF();
 	}
 	// 플레이어 발견
 	else
 	{
+		//// 어그로 관리
+		Set_Target_Auto(true);
+
 		// 뼈 위치 업데이트
 		Update_Bone_Of_BlackBoard();
 		// BB 직접 업데이트
@@ -132,6 +135,8 @@ _int CFireBoy::Update_GameObject(_double TimeDelta)
 
 		if (true == m_bAIController)
 			m_pAIControllerCom->Update_AIController(TimeDelta);
+
+
 
 		// 플레이어 발견 시, UI 활성화(지원)
 		m_pBossUI->Set_Active(true);
@@ -601,6 +606,10 @@ CBT_Composite_Node * CFireBoy::Fire_Flame()
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.484, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", -1.5f, 0.633, 0);
 
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("왼손에 불", L"FireBoy_FireHandBall_Before_HandFire", L"Bone_LeftHand", 0.4, 1, 0, 0);
+
+	Root_Parallel->Add_Service(Effect0);
+
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani19);
 	MainSeq->Add_Child(Show_Ani0);
@@ -613,27 +622,13 @@ CBT_Composite_Node * CFireBoy::Fire_Flame()
 	SubSeq->Add_Child(Move1);
 
 
+	/* 
+	1. FireHandBall 손에서 생성
+	2. FireHandBall이 없어질 때, 없어지면서 FireFlame 생성.
+	*/
 
-
-	CBT_CreateBullet* Col0 = Node_CreateBullet("공중에서 불 나옴", L"Monster_FireBullet", L"FlamePos0", L"FlameDir", 6, 5, 2.166, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col1 = Node_CreateBullet("공중에서 불 나옴", L"Monster_FireBullet", L"FlamePos1", L"FlameDir", 6, 5, 2.166, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col2 = Node_CreateBullet("공중에서 불 나옴", L"Monster_FireBullet", L"FlamePos2", L"FlameDir", 6, 5, 2.166, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col3 = Node_CreateBullet("공중에서 불 나옴", L"Monster_FireBullet", L"FlamePos3", L"FlameDir", 6, 5, 2.166, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col4 = Node_CreateBullet("공중에서 불 나옴", L"Monster_FireBullet", L"FlamePos4", L"FlameDir", 6, 5, 2.166, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col5 = Node_CreateBullet("공중에서 불 나옴", L"Monster_FireBullet", L"FlamePos5", L"FlameDir", 6, 5, 2.166, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col6 = Node_CreateBullet("공중에서 불 나옴", L"Monster_FireBullet", L"FlamePos6", L"FlameDir", 6, 5, 2.166, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col7 = Node_CreateBullet("공중에서 불 나옴", L"Monster_FireBullet", L"FlamePos7", L"FlameDir", 6, 5, 2.166, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col8 = Node_CreateBullet("공중에서 불 나옴", L"Monster_FireBullet", L"FlamePos8", L"FlameDir", 6, 5, 2.166, 1, 0, 0, CBT_Service_Node::Finite);
-
-	Root_Parallel->Add_Service(Col0);
-	Root_Parallel->Add_Service(Col1);
-	Root_Parallel->Add_Service(Col2);
-	Root_Parallel->Add_Service(Col3);
-	Root_Parallel->Add_Service(Col4);
-	Root_Parallel->Add_Service(Col5);
-	Root_Parallel->Add_Service(Col6);
-	Root_Parallel->Add_Service(Col7);
-	Root_Parallel->Add_Service(Col8);
+	CBT_CreateBuff* Bullet0 = Node_CreateBuff("화염구 왼손에 생성", L"Monster_FireHandBall", 2, 0.716, 1, 0, 0, CBT_Service_Node::Finite);
+	Root_Parallel->Add_Service(Bullet0);
 
 	return Root_Parallel;
 }
@@ -732,6 +727,9 @@ CBT_Composite_Node * CFireBoy::Show_FarAttack()
 	CBT_Cooldown* Cool2 = Node_Cooldown("쿨2", 300);
 	CBT_Cooldown* Cool3 = Node_Cooldown("쿨3", 300);
 	CBT_Cooldown* Cool4 = Node_Cooldown("쿨4", 300);
+	CBT_Cooldown* Cool5 = Node_Cooldown("쿨5", 300);
+
+	CBT_Play_Ani* Show_Ani3 = Node_Ani("기본", Ani_Appearance_End, 0.95f);
 
 	CBT_SetValue* Show_ValueOff = Node_BOOL_SetValue("시연회 OFF", L"Show", false);
 
@@ -745,6 +743,8 @@ CBT_Composite_Node * CFireBoy::Show_FarAttack()
 	Cool3->Set_Child(Fire_Ground());
 	Root_Sel->Add_Child(Cool4);
 	Cool4->Set_Child(Fire_Flame());
+	Root_Sel->Add_Child(Cool5);
+	Cool5->Set_Child(Show_Ani3);
 
 	Root_Sel->Add_Child(Show_ValueOff);
 
@@ -819,6 +819,14 @@ HRESULT CFireBoy::Update_Bone_Of_BlackBoard()
 	m_vLeftHand = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftHand", m_vLeftHand);
 
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHandAttach");
+	m_vLeftHandAttach = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftHandAttach", m_vLeftHandAttach);
+
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHandMiddle2");
+	m_vLeftHandMiddle2 = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftHandMiddle2", m_vLeftHandMiddle2);
+
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Muzzle");
 	m_vMuzzle = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Muzzle", m_vMuzzle);
@@ -878,24 +886,8 @@ HRESULT CFireBoy::Update_Value_Of_BB()
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FireDir", *D3DXVec3Normalize(&_v3(), &(m_vMuzzle - m_vRightHand)));
 
 
-	// 4. Flame, 플레이어 위에서 십자가로 불 떨어짐
-	_v3 vReverseLook = -vSelfLook;
-	_v3 vReverseRight = -vSelfRight;
-
-	_v3 vPlayerPos = pPlayerTransCom->Get_Pos();
-	_float fLength = 2.f;
-
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlamePos0", _v3(0.f, 5.f, 0.f) + vPlayerPos);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlamePos1", _v3(0.f, 5.f, 0.f) + vPlayerPos + vSelfLook * fLength);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlamePos2", _v3(0.f, 5.f, 0.f) + vPlayerPos + vSelfRight * fLength);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlamePos3", _v3(0.f, 5.f, 0.f) + vPlayerPos + vReverseLook * fLength);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlamePos4", _v3(0.f, 5.f, 0.f) + vPlayerPos + vReverseRight * fLength);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlamePos5", _v3(0.f, 5.f, 0.f) + vPlayerPos + vSelfLook * fLength * 2);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlamePos6", _v3(0.f, 5.f, 0.f) + vPlayerPos + vSelfRight * fLength * 2);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlamePos7", _v3(0.f, 5.f, 0.f) + vPlayerPos + vReverseLook * fLength * 2);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlamePos8", _v3(0.f, 5.f, 0.f) + vPlayerPos + vReverseRight * fLength * 2);
-
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlameDir", _v3(0.f, -1.f, 0.f));
+	// 4. Flame, 왼손에서 위로 불 던짐.
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlameHandBallDir", *D3DXVec3Normalize(&_v3(), &(m_vLeftHandMiddle2 - m_vLeftHandAttach)));
 
 
 	// 5. 화염 토이네도
@@ -957,6 +949,9 @@ HRESULT CFireBoy::Update_NF()
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Idle);
 			m_bFight = true;
+
+			// 가까운 녀석 어그로 끌림.
+			Set_Target_Auto();
 		}
 	}
 
@@ -1051,11 +1046,12 @@ void CFireBoy::Check_PhyCollider()
 
 void CFireBoy::Push_Collider()
 {
-	list<CGameObject*> tmpList[3];
+	list<CGameObject*> tmpList[4];
 
 	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
 	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
 	tmpList[2] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
+	tmpList[3] = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_MORTAL);
 
 	for (auto& ListObj : tmpList)
 	{
@@ -1096,8 +1092,10 @@ void CFireBoy::OnCollisionEnter()
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_MonsterProjectile", SCENE_STAGE));
 	}
 	else
+	{
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
-
+		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_MORTAL));
+	}
 
 	// =============================================================================================
 

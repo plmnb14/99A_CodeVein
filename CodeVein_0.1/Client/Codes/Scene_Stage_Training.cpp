@@ -35,6 +35,10 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 
 	if (FAILED(Ready_Layer_Environment()))
 		return E_FAIL;
+	
+	CRenderer* pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
+	pRenderer->Fog_On(false);
+	Safe_Release(pRenderer);
 
 	// 트레이닝 맵은 그냥 로드 가능해욤
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_Training.dat");
@@ -48,6 +52,19 @@ _int CScene_Stage_Training::Update_Scene(_double TimeDelta)
 	
 	//Create_Fog(TimeDelta);
 	//Create_Snow(TimeDelta);
+
+	//if (g_pInput_Device->Key_Down(DIK_K))
+	//{
+	//	CRenderer* pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
+	//	pRenderer->Fog_On(true);
+	//	Safe_Release(pRenderer);
+	//}
+	//if (g_pInput_Device->Key_Down(DIK_L))
+	//{
+	//	CRenderer* pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
+	//	pRenderer->Fog_On(false);
+	//	Safe_Release(pRenderer);
+	//}
 	
 	return _int();
 }
@@ -101,13 +118,6 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 
 	CGameObject* pInstance = nullptr;
 
-	//// 네모네모 동료
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague", nullptr);
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(5.f, 0.f, 5.f));
-	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
-
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossMassageUI", SCENE_STAGE, L"Layer_BossMassageUI")))
 	//	return E_FAIL;
 
@@ -147,7 +157,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 
 	//// 헌터
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter", &CMonster::MONSTER_STATUS(CMonster::MONSTER_COLORTYPE::COLOR_NONE, WEAPON_STATE::WEAPON_Gun));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(5.f, 0.f, 5.f));
+	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(8.f, 0.f, 8.f));
 	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
 	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
@@ -328,11 +338,13 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 
 HRESULT CScene_Stage_Training::Ready_Layer_Environment()
 {
-	//CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Sky", nullptr);
-	//
-	//TARGET_TO_TRANS(pInstance)->Set_Angle(AXIS_Y, D3DXToRadian(0.f));
-	//
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Sky", nullptr);
+	CGameObject* pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Sky", nullptr);
+	TARGET_TO_TRANS(pInstance)->Set_Angle(AXIS_Y, D3DXToRadian(0.f));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Sky", nullptr);
+
+	pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Sky_Blur", nullptr);
+	TARGET_TO_TRANS(pInstance)->Set_Angle(AXIS_Y, D3DXToRadian(0.f));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Sky", nullptr);
 
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Flag", &CFlag::INFO(5, 5, 2.f, 1.f));
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(0.f, 3.f, 3.f));

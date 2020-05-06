@@ -164,7 +164,7 @@ void CGunAttackCol::OnCollisionEvent(list<CGameObject*> plistGameObject)
 
 						iter->Add_Target_Hp(-m_tObjParam.fDamage);
 
-						m_dCurTime = 1000;	// 바로 사망시키기 위해서 현재시간 1000줬음
+						//m_dCurTime = 1000;	// 바로 사망시키기 위해서 현재시간 1000줬음
 					}
 
 

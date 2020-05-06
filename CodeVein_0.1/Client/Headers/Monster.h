@@ -142,13 +142,22 @@ protected:
 	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur = false);
 
 protected:	// DJ
-	_tchar m_pLayerTag_Of_Target[STR_128] = { L"Layer_Player" };
+	_tchar m_pLayerTag_Of_Target[256] = { L"Layer_Player" };
+	
+	_float		m_fAggroTime = 0;	//¾î±×·Î ²ø¸° ½Ã°£
+	_float		m_fMaxAggroTime = 10.f;
+	_float		m_fOffsetAggroTime = 0.f;
 
 protected:
 	void Set_Target_To_Player();
 	void Set_Target_To_Colleague();
 
 	_bool Is_InFov(_float fDegreeOfFov, CTransform* pSelfTransform, _v3 vTargetPos);
+
+	/*
+	Ransdom_Aggro : true¸é ·£´ý ¾î±×·Î ÇÎÆþ,  false¸é °¡±î¿î ³à¼®ÀÌ Å¸°Ù
+	*/
+	void Set_Target_Auto(_bool Ransdom_Aggro = false);
 
 	HRESULT Draw_Collider();
 
