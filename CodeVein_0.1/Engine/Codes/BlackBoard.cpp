@@ -117,7 +117,7 @@ CBlackBoard::OUTPUT CBlackBoard::Set_Value(const _tchar * pName, _mat _matValue)
 
 	if (iter == m_mapMat.end())
 	{
-		m_mapVec3.emplace(MAP_VEC3::value_type(pName, _matValue));
+		m_mapMat.emplace(MAP_VEC3::value_type(pName, _matValue));
 		eState = OUTPUT::UPDATE;
 	}
 	else

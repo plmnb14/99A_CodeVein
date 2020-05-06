@@ -43,18 +43,29 @@ HRESULT CDeerKingIceSword::Ready_GameObject(void * pArg)
 	m_dCurTime = 0;
 	m_bDead = false;
 
+	// Transform
+	m_pTransformCom->Set_Pos(V3_NULL);
+	m_pTransformCom->Set_Scale(V3_ONE);
+	m_vAngle = V3_NULL;
+	//m_vAngle.x = 30.f;
+	//m_vAngle.z = -90.f;
+
 	// »ç½¿¿Õ ºí·¢º¸µå¿¡¼­ °¡Á®¿È.
 	m_vDir = m_pTarget_AIController->Get_V3Value(L"IceSword_Dir");
 
-	m_pTransformCom->Set_Pos(m_pTarget_AIController->Get_V3Value(L"IceSword_Pos"));
-	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
+	//_mat matAttatch = m_pTarget_AIController->Get_MatValue(L"Bone_LeftHandAttach");
+	//_mat matParent = m_pTarget_AIController->Get_MatValue(L"Self_Mat");
+	//m_pTransformCom->Calc_ParentMat(&(matAttatch * matParent));
+
+	//m_pTransformCom->Set_Pos(m_pTarget_AIController->Get_V3Value(L"IceSword_Pos"));
+	//m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
 
 	m_pSwordEffect = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"DeerKing_IceSword", nullptr));
 	m_pSwordEffect->Set_Desc(V3_NULL, nullptr);
-	m_pSwordEffect->Set_Angle(_v3(0.f, 0.f, 0.f));
+	m_pSwordEffect->Set_Angle(_v3(0.f, 0.f, 90.f));
 	m_pSwordEffect->Set_ParentObject(this);
 	m_pSwordEffect->Set_ZWrite();
 	m_pSwordEffect->Reset_Init();
@@ -72,27 +83,23 @@ _int CDeerKingIceSword::Update_GameObject(_double TimeDelta)
 
 	m_dCurTime += TimeDelta;
 
-	m_vDir = m_pTarget_AIController->Get_V3Value(L"IceSword_Dir");
-	m_pTransformCom->Set_Pos(m_pTarget_AIController->Get_V3Value(L"IceSword_Pos"));
+	//m_vDir = m_pTarget_AIController->Get_V3Value(L"IceSword_Dir");
+	//m_pTransformCom->Set_Pos(m_pTarget_AIController->Get_V3Value(L"IceSword_Pos"));
 
 	_v3 vSelfDir = m_pTarget_AIController->Get_V3Value(L"Self_Dir");
 	
-	//m_pTransformCom->Calc_ParentMat(&(*m_pmatAttach * *m_pmatParent));
+	_mat matAttatch = m_pTarget_AIController->Get_MatValue(L"Mat_LeftHandAttach");
+	_mat matParent = m_pTarget_AIController->Get_MatValue(L"Self_Mat");
+	m_pTransformCom->Calc_ParentMat(&(matAttatch * matParent));
 
-	// Calc Angle
-	_v3	vRight = *D3DXVec3Cross(&vRight, &_v3(0.f, 1.f, 0.f), &vSelfDir);
-	V3_NORMAL_SELF(&vRight);
-	_float	fDot = acosf(D3DXVec3Dot(&_v3{ 0,0,1 }, &vSelfDir));
-	if (vRight.z > 0)
-		fDot *= -1.f;
-	
-	_v3	vTestRight = *D3DXVec3Cross(&vRight, &_v3(0.f, 1.f, 0.f), &m_vDir);
-	V3_NORMAL_SELF(&vRight);
-	_float	fTestDot = acosf(D3DXVec3Dot(&_v3{ 0,1,0 }, &m_vDir));
-	if (vTestRight.z > 0)
-		fTestDot *= -1.f;
-	
-	m_pTransformCom->Set_Angle(_v3(0.f, fDot, fTestDot));
+	if (m_dCurTime > 0.5f)
+	{
+	//	m_vAngle.x -= _float(TimeDelta) * 130.f;
+	}
+
+	m_pTransformCom->Set_Angle(AXIS_X, D3DXToRadian(m_vAngle.x));
+	m_pTransformCom->Set_Angle(AXIS_Y, D3DXToRadian(m_vAngle.y));
+	m_pTransformCom->Set_Angle(AXIS_Z, D3DXToRadian(m_vAngle.z));
 
 	if (m_dCurTime > m_dLifeTime)
 	{

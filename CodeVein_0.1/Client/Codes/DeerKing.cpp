@@ -1491,6 +1491,7 @@ HRESULT CDeerKing::Update_Bone_Of_BlackBoard()
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHandAttach");
 	m_vLeftHandAttach = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftHandAttach", m_vLeftHandAttach);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Mat_LeftHandAttach", pFamre->CombinedTransformationMatrix);
 
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHand");
 	m_vRightHand = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
@@ -1546,6 +1547,7 @@ HRESULT CDeerKing::Update_Value_Of_BB()
 	/////////////////
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"V3_Null", V3_NULL);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_Dir", m_pTransformCom->Get_Axis(AXIS_Z));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_Mat", m_pTransformCom->Get_WorldMat());
 	/////////////////
 
 	// 1. ¹æÆĞ Âï±â ÁÂÇ¥

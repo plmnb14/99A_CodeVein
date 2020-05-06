@@ -79,8 +79,8 @@ HRESULT CHunterBullet::Ready_GameObject(void * pArg)
 	m_pBulletBody_3->Reset_Init();
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody_3, SCENE_STAGE, L"Layer_Effect", nullptr);
 
-	//m_pTrailEffect = g_pManagement->Create_Trail();
-	//m_pTrailEffect->Set_TrailIdx(5); // Red Tail
+	m_pTrailEffect = g_pManagement->Create_Trail();
+	m_pTrailEffect->Set_TrailIdx(11);
 
 	return S_OK;
 }
@@ -92,7 +92,7 @@ _int CHunterBullet::Update_GameObject(_double TimeDelta)
 	if (m_bDead)
 		return DEAD_OBJ;
 
-	//Update_Trails(TimeDelta);
+	Update_Trails(TimeDelta);
 	Check_CollisionEvent();
 
 	m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
@@ -113,7 +113,7 @@ _int CHunterBullet::Update_GameObject(_double TimeDelta)
 		m_pBulletBody_2->Set_Dead();
 		m_pBulletBody_3->Set_Dead();
 
-		//m_pTrailEffect->Set_Dead();
+		m_pTrailEffect->Set_Dead();
 
 		m_bDead = true;
 	}

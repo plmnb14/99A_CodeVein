@@ -1297,9 +1297,9 @@ HRESULT CRenderer::Render_ToneMapping()
 		m_iToneIdx = 2;
 	if (GetAsyncKeyState(VK_F4) & 0x8000)
 		m_iToneIdx = 3;
-	if (GetAsyncKeyState(VK_RCONTROL) & 0x8000)
+	if (GetAsyncKeyState(VK_F5) & 0x8000)
 		m_iToneIdx = 4;
-	if (GetAsyncKeyState(VK_RSHIFT) & 0x8000)
+	if (GetAsyncKeyState(VK_F6) & 0x8000)
 		m_iToneIdx = 5;
 	
 	// Tone index

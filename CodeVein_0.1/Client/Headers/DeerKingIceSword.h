@@ -28,6 +28,8 @@ private:
 	CAIController*		m_pTarget_AIController = nullptr;
 
 	_v3					m_vDir = _v3(0.f, 0.f, 0.f);
+	_v3					m_vAngle = _v3(0.f, 0.f, 0.f);
+	//_float				m_fAngle = 0.f;
 
 	_float				m_fEffectOffset = 0.f;
 	_bool				m_bEffect = false;
