@@ -4,6 +4,13 @@
 
 //test
 #include"TexEffect.h"
+
+_float g_fShadow_X = 20.f;
+_float g_fShadow_Y = 20.f;
+_float g_fFov = 60.f;
+_float g_fNear = 0.1f;
+_float g_fFar = 500.f;
+
 CRenderer::CRenderer(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CComponent(pGraphic_Device)
 	, m_pTarget_Manager(CTarget_Manager::Get_Instance())
@@ -69,11 +76,11 @@ HRESULT CRenderer::Ready_Component_Prototype()
 
 
 	// Target_ShadowMap
-	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_ShadowMap", ViewPort.Width, ViewPort.Height, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.f, 0.f, 0.f, 1.f))))
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_ShadowMap", 3840, 2160, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.f, 0.f, 0.f, 1.f))))
 		return E_FAIL;
 
 	// Target_Shadow ( 원래 D3DFMT_A8R8G8B8 )
-	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Shadow", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.f, 1.f, 0.f, 1.f))))
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Shadow", 3840, 2160, D3DFMT_A8R8G8B8, D3DXCOLOR(0.f, 1.f, 0.f, 1.f))))
 		return E_FAIL;
 
 	// Target_Distortion
@@ -140,8 +147,6 @@ HRESULT CRenderer::Ready_Component_Prototype()
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_LightAcc", L"Target_Specular")))
 		return E_FAIL;
-	//if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_LightAcc", L"Target_SSAO")))
-	//	return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_LightAcc", L"Target_Rim")))
 		return E_FAIL;
 
@@ -230,7 +235,11 @@ HRESULT CRenderer::Ready_Component_Prototype()
 
 #ifdef _DEBUG
 
-	_float fTargetSize = 150.f;
+	_float fTargetSize = 120.f;
+	// For.Target_Diffuse`s Debug Buffer
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_RimNormal", fTargetSize * 5, 0.f, fTargetSize, fTargetSize)))
+		return E_FAIL;
+
 	// For.Target_Diffuse`s Debug Buffer
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Diffuse", 0.0f, 0.0f, fTargetSize, fTargetSize)))
 		return E_FAIL;
@@ -345,8 +354,8 @@ HRESULT CRenderer::Draw_RenderList()
 	if (FAILED(Render_MotionBlurTarget()))
 		return E_FAIL;
 
-	//if (FAILED(Render_ShadowMap()))
-	//	return E_FAIL;
+	if (FAILED(Render_ShadowMap()))
+		return E_FAIL;
 
 	// 노멀타겟과 빛정보를 이용하여 셰이드타겟에 값을 그리낟.
 	if (FAILED(Render_LightAcc()))
@@ -384,7 +393,8 @@ HRESULT CRenderer::Draw_RenderList()
 	// 후처리
 	if (FAILED(Render_After()))
 		return E_FAIL;
-
+	if (FAILED(Render_3dUI()))
+		return E_FAIL;
 	if (FAILED(Render_UI()))
 		return E_FAIL;
 
@@ -478,21 +488,23 @@ HRESULT CRenderer::Render_ShadowMap()
 		return E_FAIL;
 
 	m_pTarget_Manager->New_Stencil(L"Target_ShadowMap");
+
 	m_pGraphic_Dev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DXCOLOR(0.f, 0.f, 0.f, 0.f), 1.f, 0);
 
-	_mat matWorld, matView, matProj;
-	
-	_v3 vLightPos = _v3(5.f, 8.f, -5.f);
-	_v3 vLookAt = V3_NULL;
-	//_v3 vLookAt = m_vLookAtPos;
+	_mat matWorld, matView, matProj, matLightVP;
+
+	_v3 vCamPos = CManagement::Get_Instance()->Get_CamPosition();
+
+	_v3 vLightPos = vCamPos + _v3(0.f, 60.f, 100.f);
+	_v3 vLookAt = vCamPos;
 
 	D3DXMatrixLookAtLH(&matView, &vLightPos, &vLookAt, &WORLD_UP);
-	D3DXMatrixOrthoLH(&matProj, 20.f, 20.f, 0.1f, 100.f);
+	D3DXMatrixOrthoLH(&matProj, g_fShadow_X, g_fShadow_Y, g_fNear, g_fFar);
 
-	m_pShader_Shadow->Set_Value("g_matLightView", &matView, sizeof(_mat));
-	m_pShader_Shadow->Set_Value("g_matLightProj", &matProj, sizeof(_mat));
-	m_pShader_Shadow->Set_Value("g_LightPos", &vLightPos, sizeof(_v3));
+	matLightVP = matView * matProj;
 
+	m_pShader_Shadow->Set_Value("g_matLightVP", &matLightVP, sizeof(_mat));
+	
 	m_pShader_Shadow->Begin_Shader();
 
 	for (auto& pGameObject : m_RenderList[RENDER_SHADOWTARGET])
@@ -521,12 +533,11 @@ HRESULT CRenderer::Render_Shadow()
 	m_pTarget_Manager->New_Stencil(L"Target_Shadow");
 	m_pGraphic_Dev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DXCOLOR(0.f, 0.f, 0.f, 0.f), 1.f, 0);
 
-	_float fOffsetX = 0.5f + (0.5f / 1280.f);
-	_float fOffsetY = 0.5f + (0.5f / 720.f);
+	_float fOffsetX = 0.5f + (0.5f / 3840.f);
+	_float fOffsetY = 0.5f + (0.5f / 2160.f);
 
 	_mat matScaleBias;
 	D3DXMatrixIdentity(&matScaleBias);
-
 
 	matScaleBias._11 = 0.5f;
 	matScaleBias._22 = -0.5f;
@@ -537,19 +548,19 @@ HRESULT CRenderer::Render_Shadow()
 
 	m_pShader_Shadow->Set_Value("g_matBias", matScaleBias, sizeof(_mat));
 
-	_mat matWorld, matView, matProj;
+	_mat matWorld, matView, matProj, matLightVP;
 
-	_v3 vLightPos = _v3(5.f, 8.f, -5.f);
-	_v3 vLookAt = V3_NULL;
-	//_v3 vLookAt = m_vLookAtPos;
+	_v3 vCamPos = CManagement::Get_Instance()->Get_CamPosition();
 
+	_v3 vLightPos = vCamPos + _v3(0.f, 60.f, 100.f);
+	_v3 vLookAt = vCamPos;
 
 	D3DXMatrixLookAtLH(&matView, &vLightPos, &vLookAt, &WORLD_UP);
-	D3DXMatrixOrthoLH(&matProj, 20.f, 20.f, 0.1f, 100.f);
+	D3DXMatrixOrthoLH(&matProj, g_fShadow_X, g_fShadow_Y, g_fNear, g_fFar);
 
-	m_pShader_Shadow->Set_Value("g_matLightView", &matView, sizeof(_mat));
-	m_pShader_Shadow->Set_Value("g_matLightProj", &matProj, sizeof(_mat));
-	m_pShader_Shadow->Set_Value("g_LightPos", &vLightPos, sizeof(_v3));
+	matLightVP = matView * matProj;
+
+	m_pShader_Shadow->Set_Value("g_matLightVP", &matLightVP, sizeof(_mat));
 
 	m_pShader_Shadow->Set_Texture("g_ShadowMapTexture", m_pTarget_Manager->Get_Texture(L"Target_ShadowMap"));
 
@@ -570,6 +581,7 @@ HRESULT CRenderer::Render_Shadow()
 			Safe_Release(pGameObject);
 		}
 	}
+
 	m_RenderList[RENDER_SHADOWTARGET].clear();
 
 	m_pShader_Shadow->End_Shader();
@@ -595,7 +607,7 @@ HRESULT CRenderer::Render_MotionBlurTarget()
 
 		if (nullptr != pGameObject)
 		{
-			if (FAILED(pGameObject->Render_GameObject_SetPass(m_pShader_Blur, 0)))
+			if (FAILED(pGameObject->Render_GameObject_SetPass(m_pShader_Blur, 0, true)))
 			{
 				Safe_Release(pGameObject);
 				return E_FAIL;
@@ -788,6 +800,26 @@ HRESULT CRenderer::Render_UI()
 	return NOERROR;
 }
 
+HRESULT CRenderer::Render_3dUI()
+{
+	for (auto& pGameObject : m_RenderList[RENDER_3DUI])
+	{
+		if (nullptr != pGameObject)
+		{
+			if (FAILED(pGameObject->Render_GameObject()))
+			{
+				Safe_Release(pGameObject);
+				return E_FAIL;
+			}
+			Safe_Release(pGameObject);
+		}
+	}
+
+	m_RenderList[RENDER_3DUI].clear();
+
+	return NOERROR;
+}
+
 HRESULT CRenderer::Render_SSAO()
 {
 	if (nullptr == m_pViewPortBuffer ||
@@ -873,6 +905,21 @@ HRESULT CRenderer::Render_LightAcc()
 	
 	m_pShader_LightAcc->Set_Value("g_matProjInv", &pPipeLine->Get_Transform_Inverse(D3DTS_PROJECTION), sizeof(_mat));
 	m_pShader_LightAcc->Set_Value("g_matViewInv", &pPipeLine->Get_Transform_Inverse(D3DTS_VIEW), sizeof(_mat));
+
+
+	_mat matWorld, matView, matProj, matLightVP;
+
+	_v3 vCamPos = CManagement::Get_Instance()->Get_CamPosition();
+
+	_v3 vLightPos = vCamPos + _v3(0.f, 60.f, 100.f);
+	_v3 vLookAt = vCamPos;
+
+	D3DXMatrixLookAtLH(&matView, &vLightPos, &vLookAt, &WORLD_UP);
+	D3DXMatrixOrthoLH(&matProj, g_fShadow_X, g_fShadow_Y, g_fNear, g_fFar);
+
+	matLightVP = matView * matProj;
+
+	m_pShader_LightAcc->Set_Value("g_matLightVP", &matLightVP, sizeof(_mat));
 
 
 	_v3 CamPos = pPipeLine->Get_CamPosition();
@@ -1205,6 +1252,88 @@ HRESULT CRenderer::Render_After()
 	m_pShader_Blend->End_Shader();
 
 	return S_OK;
+}
+
+void CRenderer::Calc_CSM()
+{
+	//===================================================================================
+	// ViewMatrix 생성
+	//===================================================================================
+
+	_v3 vWorldCenter = V3_NULL;
+	_v3 vPos = vWorldCenter;
+	_v3 vLookAt = vWorldCenter; // + 디렉셔널 방향 * 카메라의  FarClip
+	_v3 vDirectionalDir = WORLD_LOOK;
+	_v3 vUp = WORLD_UP;
+	_v3 vRight = WORLD_RIGHT;
+
+	CALC::V3_Cross_Normal(&vUp, &vDirectionalDir, &vRight);
+
+	_mat matShadowView;
+	D3DXMatrixLookAtLH(&matShadowView, &vPos, &vLookAt, &vUp);
+
+	//===================================================================================
+	// Frustum 영역 추출
+	//===================================================================================
+
+	_float fShadowBoundRadius, fRadius;
+	_v3 vShadowBoundCenter;
+	_float arrCascadeRanges[4];
+	_float arrCascadeRadius[4];
+
+	Calc_FrustumBoundSphere(arrCascadeRanges[0], arrCascadeRanges[3], vShadowBoundCenter, fRadius);
+	fShadowBoundRadius = max(fShadowBoundRadius, fRadius);
+
+	//===================================================================================
+	// ProjMatrix 생성
+	//===================================================================================
+	_mat matShadowProj;
+	D3DXMatrixOrthoLH(&matShadowProj, fShadowBoundRadius, fShadowBoundRadius, -fShadowBoundRadius, fShadowBoundRadius);
+
+	//===================================================================================
+	// 플리커, 케스케이드 변환
+	//===================================================================================
+	_uint iToltalCascade = 3;
+	_bool bAntiFlicker = true;
+
+
+	for (_uint i = 0; i < iToltalCascade; ++i)
+	{
+		_mat matCascadeTrans, matCascadeScale;
+
+		//if (bAntiFlicker)
+		//{
+		//	_v3 vNewCenter;
+		//	Calc_FrustumBoundSphere(arrCascadeRanges[i], arrCascadeRanges[i+1], vNewCenter, fRadius);
+		//	arrCascadeRadius[i] = max(arrCascadeRadius[i], fRadius);
+		//
+		//
+		//	_v3 vOffset;
+		//	if()
+		//}
+	}
+}
+
+void CRenderer::Calc_FrustumBoundSphere(_float fNear, _float fFar, _v3 & vBoundCenter, _float & fBoundRadius)
+{
+	_mat vCamMatrix = CManagement::Get_Instance()->Get_TransformInverse(D3DTS_VIEW);
+
+	_v3 vCamRight = *(_v3*)&vCamMatrix.m[0][0];
+	_v3 vCamUp = *(_v3*)&vCamMatrix.m[1][0];
+	_v3 vCamLook = *(_v3*)&vCamMatrix.m[2][0];
+	_v3 vCamPos = *(_v3*)&vCamMatrix.m[3][0];
+	_float fAspect , fFov;
+
+	fAspect = 720.f / 1280.f;
+	fFov = 60.f;
+
+	_float fTanFOV_X = tanf(fAspect * fFov);
+	_float fTanFOV_Y = tanf(fAspect);
+
+	vBoundCenter = vCamPos + vCamLook * (fNear + 0.5f * (fNear + fFar));
+
+	_v3 vBoundSpan = vCamPos + (-vCamRight * fTanFOV_X + vCamUp * fTanFOV_Y + vCamLook) * fFar - vBoundCenter;
+	fBoundRadius = D3DXVec3Length(&vBoundSpan);
 }
 
 

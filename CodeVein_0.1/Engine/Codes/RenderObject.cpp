@@ -28,6 +28,9 @@ CRenderObject::~CRenderObject()
 
 _int CRenderObject::Update_GameObject(_double _TimeDelta)
 {
+	if (false == m_bEnable)
+		return NO_EVENT;
+
 	if (false == m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), 20.f))
 		return NO_EVENT;
 
@@ -43,7 +46,7 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 	{
 		m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
 		m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this);
-		//m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this);
+		m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this);
 	}
 
 	return S_OK;
@@ -51,11 +54,17 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 
 _int CRenderObject::Late_Update_GameObject(_double TimeDelta)
 {
+	if (false == m_bEnable)
+		return NO_EVENT;
+
 	return _int();
 }
 
 HRESULT CRenderObject::Render_GameObject()
 {
+	if (false == m_bEnable)
+		return NO_EVENT;
+
 	Init_Shader();
 
 	m_pShader->Begin_Shader();
@@ -88,37 +97,64 @@ HRESULT CRenderObject::Render_GameObject()
 	return S_OK;
 }
 
-HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass)
+HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur)
 {
+	if (false == m_bEnable)
+		return NO_EVENT;
+
 	if (nullptr == pShader ||
 		nullptr == m_pMesh_Static)
 		return E_FAIL;
+	//============================================================================================
+	// 공통 변수
+	//============================================================================================
 
-	_mat		ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+	_mat	ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	_mat	ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+	_mat	WorldMatrix = m_pTransform->Get_WorldMat();
 
-	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
-		return E_FAIL;
-
-	if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
 		return E_FAIL;
 
-	m_matLastWVP = m_pTransform->Get_WorldMat() * ViewMatrix * ProjMatrix;
+	//============================================================================================
+	// 모션 블러 상수
+	//============================================================================================
+	if (_bIsForMotionBlur)
+	{
+		if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
+			return E_FAIL;
 
-	_bool bMotionBlur = true;
-	if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
-		return E_FAIL;
-	_bool bDecalTarget = true;
-	if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
-		return E_FAIL;
+		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
 
-	_float fBloomPower = 0.5f;
-	if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
-		return E_FAIL;
+		_bool bMotionBlur = true;
+		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+			return E_FAIL;
+		_bool bDecalTarget = false;
+		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+			return E_FAIL;
+		_float fBloomPower = 0.f;
+		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
+			return E_FAIL;
+	}
+
+	//============================================================================================
+	// 기타 상수
+	//============================================================================================
+	else
+	{
+		_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
+
+		if (FAILED(pShader->Set_Value("g_matWVP", &matWVP, sizeof(_mat))))
+			return E_FAIL;
+	}
+
+	//============================================================================================
+	// 쉐이더 시작
+	//============================================================================================
 
 	_ulong dwNumSubSet = m_pMesh_Static->Get_NumMaterials();
 
@@ -132,6 +168,8 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 
 		pShader->End_Pass();
 	}
+
+	//============================================================================================
 
 	return NOERROR;
 }

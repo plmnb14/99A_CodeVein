@@ -54,7 +54,7 @@ _int CCocoon::Update_GameObject(_double TimeDelta)
 
 	m_pMeshCom->SetUp_Animation(m_eState);
 
-	MONSTER_STATETYPE::DEAD != m_eFirstCategory ? Check_CollisionEvent() : Check_DeadEffect(TimeDelta);
+	MONSTER_STATE_TYPE::DEAD != m_eFirstCategory ? Check_CollisionEvent() : Check_DeadEffect(TimeDelta);
 
 	return S_OK;
 }
@@ -131,7 +131,7 @@ HRESULT CCocoon::Render_GameObject()
 	return S_OK;
 }
 
-HRESULT CCocoon::Render_GameObject_SetPass(CShader * pShader, _int iPass)
+HRESULT CCocoon::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
 {
 	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
 	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
@@ -230,7 +230,7 @@ void CCocoon::Check_PosY()
 
 void CCocoon::Check_Hit()
 {
-	if (MONSTER_STATETYPE::DEAD == m_eFirstCategory)
+	if (MONSTER_STATE_TYPE::DEAD == m_eFirstCategory)
 		return;
 
 	if (0 < m_tObjParam.fHp_Cur)
@@ -241,7 +241,7 @@ void CCocoon::Check_Hit()
 			{
 				if (true == m_tObjParam.bHitAgain)
 				{
-					m_eFirstCategory = MONSTER_STATETYPE::HIT;
+					m_eFirstCategory = MONSTER_STATE_TYPE::HIT;
 					m_pMeshCom->Reset_OldIndx();
 					m_tObjParam.bHitAgain = false;
 
@@ -252,7 +252,7 @@ void CCocoon::Check_Hit()
 				}
 				else
 				{
-					m_eFirstCategory = MONSTER_STATETYPE::HIT;
+					m_eFirstCategory = MONSTER_STATE_TYPE::HIT;
 
 					if (nullptr == m_pTarget)
 						m_eFBLR = FBLR::FRONTLEFT;
@@ -263,16 +263,16 @@ void CCocoon::Check_Hit()
 		}
 	}
 	else
-		m_eFirstCategory = MONSTER_STATETYPE::DEAD;
+		m_eFirstCategory = MONSTER_STATE_TYPE::DEAD;
 
 	return;
 }
 
 void CCocoon::Check_Dist()
 {
-	if (MONSTER_STATETYPE::HIT == m_eFirstCategory ||
-		MONSTER_STATETYPE::CC == m_eFirstCategory ||
-		MONSTER_STATETYPE::DEAD == m_eFirstCategory)
+	if (MONSTER_STATE_TYPE::HIT == m_eFirstCategory ||
+		MONSTER_STATE_TYPE::CC == m_eFirstCategory ||
+		MONSTER_STATE_TYPE::DEAD == m_eFirstCategory)
 		return;
 
 	if (true == m_tObjParam.bIsAttack ||
@@ -285,7 +285,7 @@ void CCocoon::Check_Dist()
 	{
 		Function_ResetAfterAtk();
 		m_bInRecognitionRange = false;
-		m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+		m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
 		return;
 	}
@@ -302,20 +302,20 @@ void CCocoon::Check_Dist()
 			{
 				if (true == m_tObjParam.bCanAttack)
 				{
-					m_eFirstCategory = MONSTER_STATETYPE::ATTACK;
+					m_eFirstCategory = MONSTER_STATE_TYPE::ATTACK;
 					if (m_fAtkRange < fLenth && m_fShotRange > fLenth)
 						m_eState = COCOON_ANI::Shot;
 					else
 						m_eState = COCOON_ANI::Mist;
 				}
 				else
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 			}
 			else
-				m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+				m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 		}
 		else
-			m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+			m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 	}
 
 	return;
@@ -325,22 +325,22 @@ void CCocoon::Check_AniEvent()
 {
 	switch (m_eFirstCategory)
 	{
-	case MONSTER_STATETYPE::IDLE:
+	case MONSTER_STATE_TYPE::IDLE:
 		Play_Idle();
 		break;
 
-	case MONSTER_STATETYPE::ATTACK:
+	case MONSTER_STATE_TYPE::ATTACK:
 		if(COCOON_ANI::Shot== m_eState)
 			Play_Shot();
 		else if(COCOON_ANI::Mist == m_eState)
 			Play_Mist();
 		break;
 
-	case MONSTER_STATETYPE::HIT:
+	case MONSTER_STATE_TYPE::HIT:
 		Play_Hit();
 		break;
 
-	case MONSTER_STATETYPE::DEAD:
+	case MONSTER_STATE_TYPE::DEAD:
 		Play_Dead();
 		break;
 	}
@@ -406,8 +406,13 @@ void CCocoon::Play_Shot()
 				matBone = *m_matBone[Bone_Jaw_Tongue] * m_pTransformCom->Get_WorldMat();
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 
-				//g_pManagement->Add_GameObject_ToLayer(L"Monster_CocoonBigBullet", SCENE_STAGE, L"Layer_MonsterProjectile", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 6.f, 2.f));
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_CocoonBigBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 6.f, 1.5f));
+				if(MONSTER_COLOR_TYPE::WHITE == m_eMonsterColor) //¾óÀ½ ½î¼¼¿ä
+					CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_CocoonBigBullet", &MONSTER_BULLET_STATUS(
+						MONSTER_BULLET_TYPE::BULLET_ICE, vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 6.f, 2.5f));
+				else
+					CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_CocoonBigBullet", &MONSTER_BULLET_STATUS(
+						MONSTER_BULLET_TYPE::BULLET_FIRE, vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 6.f, 2.5f));
+					//CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_CocoonBigBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 6.f, 1.5f));
 			}
 		}
 		else if (3.7f <= AniTime && 5.8f >= AniTime)
@@ -428,7 +433,7 @@ void CCocoon::Play_Shot()
 				if (nullptr == m_pTarget)
 				{
 					Function_ResetAfterAtk();
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 					m_bInRecognitionRange = false;
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
@@ -492,7 +497,13 @@ void CCocoon::Play_Mist()
 				memcpy(vMakeDirPoint2, &matBone2._41, sizeof(_v3));
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_CocoonBullet", &BULLET_INFO(vBirth, vShotDir, 4.f, 1.f));
+
+				if(MONSTER_COLOR_TYPE::WHITE == m_eMonsterColor)
+					CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_CocoonBullet", &MONSTER_BULLET_STATUS(
+						MONSTER_BULLET_TYPE::BULLET_ICE, vBirth, vShotDir, 4.f, 1.f));
+				else
+					CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_CocoonBullet", &MONSTER_BULLET_STATUS(
+						MONSTER_BULLET_TYPE::BULLET_FIRE, vBirth, vShotDir, 4.f, 1.f));
 			}
 		}
 		else if (0.5f <= AniTime && 2.6f >= AniTime)
@@ -529,7 +540,7 @@ void CCocoon::Play_Idle()
 				if (nullptr == m_pTarget)
 				{
 					Function_ResetAfterAtk();
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 					m_bInRecognitionRange = false;
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
@@ -554,7 +565,7 @@ void CCocoon::Play_Idle()
 				if (nullptr == m_pTarget)
 				{
 					Function_ResetAfterAtk();
-					m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 					m_bInRecognitionRange = false;
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
@@ -612,7 +623,7 @@ void CCocoon::Play_Hit()
 
 			m_fCoolDownMax = 0.5f;
 
-			m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+			m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 		}
 		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
 		{
@@ -675,14 +686,14 @@ HRESULT CCocoon::Add_Component(void* pArg)
 	{
 		switch (eTemp.eMonsterColor)
 		{
-		case MONSTER_COLORTYPE::WHITE:
+		case MONSTER_COLOR_TYPE::WHITE:
 			lstrcpy(MeshName, L"Mesh_Cocoon_White");
 			break;
-		case MONSTER_COLORTYPE::RED:
-		case MONSTER_COLORTYPE::BLUE:
-		case MONSTER_COLORTYPE::YELLOW:
-		case MONSTER_COLORTYPE::COLOR_NONE:
-		case MONSTER_COLORTYPE::BLACK:
+		case MONSTER_COLOR_TYPE::RED:
+		case MONSTER_COLOR_TYPE::BLUE:
+		case MONSTER_COLOR_TYPE::YELLOW:
+		case MONSTER_COLOR_TYPE::COLOR_NONE:
+		case MONSTER_COLOR_TYPE::BLACK:
 			lstrcpy(MeshName, L"Mesh_Cocoon_Black");
 			break;
 		}
@@ -739,6 +750,18 @@ HRESULT CCocoon::SetUp_ConstantTable()
 
 HRESULT CCocoon::Ready_Status(void * pArg)
 {
+	if (nullptr != pArg)
+	{
+		MONSTER_STATUS info = *(MONSTER_STATUS*)pArg;
+
+		if (MONSTER_COLOR_TYPE::WHITE == info.eMonsterColor)
+			m_eMonsterColor = info.eMonsterColor;
+		else
+			m_eMonsterColor = MONSTER_COLOR_TYPE::COLOR_NONE;
+	}
+	else
+		m_eMonsterColor = MONSTER_COLOR_TYPE::COLOR_NONE;
+
 	m_tObjParam.fDamage = 250.f;
 	m_tObjParam.fHp_Max = 750.f;
 	m_tObjParam.fArmor_Max = 100.f;
@@ -748,7 +771,7 @@ HRESULT CCocoon::Ready_Status(void * pArg)
 	m_fAtkRange = 5.f;
 	m_fPersonalRange = 2.f;
 
-	m_eFirstCategory = MONSTER_STATETYPE::IDLE;
+	m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
 	m_tObjParam.fArmor_Cur = m_tObjParam.fArmor_Max;
 

@@ -73,6 +73,9 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"MAXHP", m_tObjParam.fHp_Max);
 	pBlackBoard->Set_Value(L"Show", true);
 
+	pBlackBoard->Set_Value(L"TrailOn", false);
+	pBlackBoard->Set_Value(L"TrailOff", false);
+
 	CBT_Selector* Start_Sel = Node_Selector("행동 시작");
 	//CBT_Sequence* Start_Sel = Node_Sequence("행동 시작"); // 테스트
 
@@ -128,6 +131,14 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	////////////////////////
 
 	m_pMeshCom->SetUp_Animation(Ani_Idle);
+
+	//===================================================================
+	// 림라이트 벨류 설정	
+	//===================================================================
+	m_pBattleAgent->Set_OriginRimAlpha(0.5f);
+	m_pBattleAgent->Set_OriginRimValue(8.f);
+	//===================================================================
+
 
 	return NOERROR;
 }
@@ -210,21 +221,30 @@ _int CGunGenji::Late_Update_GameObject(_double TimeDelta)
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
 
-	if (!m_bDissolve)
+
+	//=============================================================================================
+	// 그림자랑 모션블러는 프리스텀 안에 없으면 안그림
+	//=============================================================================================
+	if (m_pOptimization->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
 	{
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
-			return E_FAIL;
+		if (!m_bDissolve)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
+				return E_FAIL;
+		}
+
+		else
+		{
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
+				return E_FAIL;
+		}
+
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
 			return E_FAIL;
-	}
-	else
-	{
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
 			return E_FAIL;
 	}
-
-	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
-	//	return E_FAIL;
+	//=============================================================================================
 
 	m_dTimeDelta = TimeDelta;
 
@@ -242,7 +262,7 @@ HRESULT CGunGenji::Render_GameObject()
 	m_pMeshCom->Play_Animation(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60")); // * alpha
 
 
-	if (m_pOptimization->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 5.f))
+	if (m_pOptimization->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
 	{
 		if (FAILED(SetUp_ConstantTable()))
 			return E_FAIL;
@@ -264,12 +284,11 @@ HRESULT CGunGenji::Render_GameObject()
 				if (m_bDissolve)
 					m_iPass = 3;
 
+				cout << m_iPass << endl;
+
 				m_pShaderCom->Begin_Pass(m_iPass);
 
 				m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
-
-				//if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
-				//	return E_FAIL;
 
 				m_pShaderCom->Commit_Changes();
 
@@ -289,45 +308,78 @@ HRESULT CGunGenji::Render_GameObject()
 	return NOERROR;
 }
 
-HRESULT CGunGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass)
+HRESULT CGunGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur)
 {
+	if (false == m_bEnable)
+		return S_OK;
+
 	if (nullptr == pShader ||
 		nullptr == m_pMeshCom)
 		return E_FAIL;
 
-	m_pMeshCom->Play_Animation(0.f);
+	//============================================================================================
+	// 공통 변수
+	//============================================================================================
 
-	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+	_mat	ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat	ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+	_mat	WorldMatrix = m_pTransformCom->Get_WorldMat();
 
-	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
-		return E_FAIL;
-	m_matLastWVP = m_pTransformCom->Get_WorldMat() * ViewMatrix * ProjMatrix;
-
-	_bool bMotionBlur = true;
-	if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
-		return E_FAIL;
-	_bool bDecalTarget = false;
-	if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
 		return E_FAIL;
 
+	//============================================================================================
+	// 모션 블러 상수
+	//============================================================================================
+	if (_bIsForMotionBlur)
+	{
+		if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
+			return E_FAIL;
+
+		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
+
+		_bool bMotionBlur = true;
+		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+			return E_FAIL;
+		_bool bDecalTarget = false;
+		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+			return E_FAIL;
+		_float fBloomPower = 0.5f;
+		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
+			return E_FAIL;
+	}
+
+	//============================================================================================
+	// 기타 상수
+	//============================================================================================
+	else
+	{
+		_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
+
+		if (FAILED(pShader->Set_Value("g_matWVP", &matWVP, sizeof(_mat))))
+			return E_FAIL;
+	}
+
+	//============================================================================================
+	// 쉐이더 실행
+	//============================================================================================
 	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
 
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 	{
 		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
-		
-		m_pMeshCom->Update_SkinnedMesh(i);
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
+			_int tmpPass = m_pMeshCom->Get_MaterialPass(i, j);
+
 			pShader->Begin_Pass(iPass);
+			pShader->Commit_Changes();
+
 			pShader->Commit_Changes();
 
 			m_pMeshCom->Render_Mesh(i, j);
@@ -336,15 +388,17 @@ HRESULT CGunGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass)
 		}
 	}
 
-	return NOERROR;
+	//============================================================================================
+
+	return S_OK;
 }
 
 CBT_Composite_Node * CGunGenji::Shot()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("일반 총쏘기");
 	CBT_Sequence* MainSeq = Node_Sequence("일반 총쏘기");
-	CBT_Play_Ani* Show_Ani44 = Node_Ani("일반 총쏘기", 44, 0.95f);
-	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.1f);
+	CBT_Play_Ani* Show_Ani101 = Node_Ani("일반 총쏘기", 101, 0.95f);
+	CBT_Play_Ani* Show_Ani1 = Node_Ani("기본", 1, 0.1f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적", L"Player_Pos", 1, 0);
@@ -361,8 +415,8 @@ CBT_Composite_Node * CGunGenji::Shot()
 	Root_Parallel->Add_Service(Effect2);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani44);
-	MainSeq->Add_Child(Show_Ani42);
+	MainSeq->Add_Child(Show_Ani101);
+	MainSeq->Add_Child(Show_Ani1);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(ChaseDir0);
@@ -375,8 +429,8 @@ CBT_Composite_Node * CGunGenji::Tumbling_Shot()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("텀블링 총쏘기");
 	CBT_Sequence* MainSeq = Node_Sequence("텀블링 총쏘기");
-	CBT_Play_Ani* Show_Ani48 = Node_Ani("텀블링 총쏘기", 48, 0.95f);
-	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.1f);
+	CBT_Play_Ani* Show_Ani102 = Node_Ani("텀블링 총쏘기", 102, 0.95f);
+	CBT_Play_Ani* Show_Ani1 = Node_Ani("기본", 1, 0.1f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기", 0.3, 0);
@@ -386,8 +440,8 @@ CBT_Composite_Node * CGunGenji::Tumbling_Shot()
 	Root_Parallel->Add_Service(Bullet0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani48);
-	MainSeq->Add_Child(Show_Ani42);
+	MainSeq->Add_Child(Show_Ani102);
+	MainSeq->Add_Child(Show_Ani1);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
@@ -400,8 +454,8 @@ CBT_Composite_Node * CGunGenji::Sudden_Shot()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("갑자기 총쏘기");
 	CBT_Sequence* MainSeq = Node_Sequence("갑자기 총쏘기");
-	CBT_Play_Ani* Show_Ani49 = Node_Ani("갑자기 총쏘기", 49, 0.95f);
-	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.1f);
+	CBT_Play_Ani* Show_Ani103 = Node_Ani("갑자기 총쏘기", 103, 0.95f);
+	CBT_Play_Ani* Show_Ani1 = Node_Ani("기본", 1, 0.1f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_ChaseDir* ChaseDir0 = Node_ChaseDir("방향 추적", L"Player_Pos", 3, 0);
@@ -411,8 +465,8 @@ CBT_Composite_Node * CGunGenji::Sudden_Shot()
 	Root_Parallel->Add_Service(Bullet0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani49);
-	MainSeq->Add_Child(Show_Ani42);
+	MainSeq->Add_Child(Show_Ani103);
+	MainSeq->Add_Child(Show_Ani1);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(ChaseDir0);
@@ -425,24 +479,32 @@ CBT_Composite_Node * CGunGenji::Upper_Slash()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 	CBT_Sequence* MainSeq = Node_Sequence("개머리판 치기");
-	CBT_Play_Ani* Show_Ani43 = Node_Ani("개머리판 치기", 43, 0.95f);
-	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.3f);
+	CBT_Play_Ani* Show_Ani97 = Node_Ani("개머리판 치기", 97, 0.95f);
+	CBT_Play_Ani* Show_Ani1 = Node_Ani("기본", 1, 0.3f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기", 0.083, 0);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2, 0.534, 0);
-	CBT_Wait* Wait1 = Node_Wait("대기1", 0.45, 0);
-	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 0.6f, 0.566, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2, 0.434, 0);
+	CBT_SetValue* TrailOn = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동", L"Monster_Speed", L"Monster_Dir", 2, 0.1, 0);
+	CBT_Wait* Wait1 = Node_Wait("대기1", 0.2, 0);
+	CBT_SetValue* TrailOff = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
+	CBT_Wait* Wait2 = Node_Wait("대기1", 0.25, 0);
+	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 0.6f, 0.566, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani43);
-	MainSeq->Add_Child(Show_Ani42);
+	MainSeq->Add_Child(Show_Ani97);
+	MainSeq->Add_Child(Show_Ani1);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
-	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(TrailOn);
 	SubSeq->Add_Child(Move1);
+	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(TrailOff);
+	SubSeq->Add_Child(Wait2);
+	SubSeq->Add_Child(Move2);
 
 	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pGun->Get_pTarget_Param(), CBT_UpdateParam::Collider, 0.5, 1, 0.20, 0);
 	Root_Parallel->Add_Service(pHitCol);
@@ -454,25 +516,30 @@ CBT_Composite_Node * CGunGenji::Arm_Attack()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 	CBT_Sequence* MainSeq = Node_Sequence("팔굼치 치기");
-	CBT_Play_Ani* Show_Ani45 = Node_Ani("팔굼치 치기", 45, 0.95f);
-	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.3f);
+	CBT_Play_Ani* Show_Ani98 = Node_Ani("팔굼치 치기", 98, 0.95f);
+	CBT_Play_Ani* Show_Ani1 = Node_Ani("기본", 1, 0.3f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.25, 0);
-	//CBT_Wait* Wait0 = Node_Wait("대기", 0.35, 0);
-	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 2, 1.05, 0);
+	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 2, 0.75, 0);
+	CBT_SetValue* TrailOn = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
+	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 2, 0.3, 0);
+	CBT_SetValue* TrailOff = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.317, 0);
-	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", -0.6f, 1.066, 0);
+	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", -0.6f, 1.066, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani45);
-	MainSeq->Add_Child(Show_Ani42);
+	MainSeq->Add_Child(Show_Ani98);
+	MainSeq->Add_Child(Show_Ani1);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
-	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(TrailOn);
 	SubSeq->Add_Child(Move1);
+	SubSeq->Add_Child(TrailOff);
+	SubSeq->Add_Child(Wait1);
+	SubSeq->Add_Child(Move2);
 
 	CBT_UpdateParam* pHitCol = Node_UpdateParam("무기 히트 On", m_pGun->Get_pTarget_Param(), CBT_UpdateParam::Collider, 1, 1, 0.2, 0);
 	Root_Parallel->Add_Service(pHitCol);
@@ -484,8 +551,8 @@ CBT_Composite_Node * CGunGenji::Sting_Attack()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 	CBT_Sequence* MainSeq = Node_Sequence("찌르기");
-	CBT_Play_Ani* Show_Ani46 = Node_Ani("찌르기", 46, 0.95f);
-	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.3f);
+	CBT_Play_Ani* Show_Ani99 = Node_Ani("찌르기", 99, 0.95f);
+	CBT_Play_Ani* Show_Ani1 = Node_Ani("기본", 1, 0.3f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기", 0.42, 0);
@@ -494,8 +561,8 @@ CBT_Composite_Node * CGunGenji::Sting_Attack()
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 0.6f, 0.537, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani46);
-	MainSeq->Add_Child(Show_Ani42);
+	MainSeq->Add_Child(Show_Ani99);
+	MainSeq->Add_Child(Show_Ani1);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
@@ -513,24 +580,28 @@ CBT_Composite_Node * CGunGenji::Cut_To_Right()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
 	CBT_Sequence* MainSeq = Node_Sequence("오른쪽으로 베기");
-	CBT_Play_Ani* Show_Ani47 = Node_Ani("오른쪽으로 베기", 47, 0.95f);
-	CBT_Play_Ani* Show_Ani42 = Node_Ani("기본", 42, 0.3f);
+	CBT_Play_Ani* Show_Ani100 = Node_Ani("오른쪽으로 베기", 100, 0.95f);
+	CBT_Play_Ani* Show_Ani1 = Node_Ani("기본", 1, 0.3f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
 	CBT_Wait* Wait0 = Node_Wait("대기0", 0.3, 0);
 	CBT_MoveDirectly* Move0 = Node_MoveDirectly_Rush("이동0", L"Monster_Speed", L"Monster_Dir", 1, 0.4, 0);
+	CBT_SetValue* TrailOn = Node_BOOL_SetValue("트레일 On", L"TrailOn", true);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", 2, 0.35, 0);
+	CBT_SetValue* TrailOff = Node_BOOL_SetValue("트레일 Off", L"TrailOff", true);
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.367, 0);
 	CBT_MoveDirectly* Move2 = Node_MoveDirectly_Rush("이동2", L"Monster_Speed", L"Monster_Dir", -0.2f, 0.5, 0);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
-	MainSeq->Add_Child(Show_Ani47);
-	MainSeq->Add_Child(Show_Ani42);
+	MainSeq->Add_Child(Show_Ani100);
+	MainSeq->Add_Child(Show_Ani1);
 
 	Root_Parallel->Set_Sub_Child(SubSeq);
 	SubSeq->Add_Child(Wait0);
 	SubSeq->Add_Child(Move0);
+	SubSeq->Add_Child(TrailOn);
 	SubSeq->Add_Child(Move1);
+	SubSeq->Add_Child(TrailOff);
 	SubSeq->Add_Child(Wait1);
 	SubSeq->Add_Child(Move2);
 
@@ -623,11 +694,11 @@ CBT_Composite_Node * CGunGenji::Chase()
 
 	CBT_MoveDirectly* pChase = Node_MoveDirectly_Chase("추적", L"Player_Pos", L"Monster_Speed", L"Monster_Dir", 3.f, 5.f);
 
-	CBT_Play_Ani* Show_Ani139 = Node_Ani("추적", 139, 1.f);
+	CBT_Play_Ani* Show_Ani16 = Node_Ani("추적", 16, 1.f);
 
 	Root_Parallel->Set_Main_Child(pChase);
 
-	Root_Parallel->Set_Sub_Child(Show_Ani139);
+	Root_Parallel->Set_Sub_Child(Show_Ani16);
 
 	return Root_Parallel;
 }
@@ -730,6 +801,20 @@ HRESULT CGunGenji::Update_Value_Of_BB()
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"HP", m_tObjParam.fHp_Cur);
 	// 3. 체력 비율 업데이트
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"HPRatio", _float(m_tObjParam.fHp_Cur / m_tObjParam.fHp_Max) * 100);
+
+
+	// 1. 트레일 업데이트
+	if (true == m_pAIControllerCom->Get_BoolValue(L"TrailOn"))
+	{
+		m_pGun->Set_Enable_Trail(true);
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"TrailOn", false);
+	}
+
+	if (true == m_pAIControllerCom->Get_BoolValue(L"TrailOff"))
+	{
+		m_pGun->Set_Enable_Trail(false);
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"TrailOff", false);
+	}
 
 
 
@@ -1033,19 +1118,19 @@ HRESULT CGunGenji::Add_Component(void* pArg)
 	INFO eTemp = *(INFO*)pArg;
 
 	if (nullptr == pArg)
-		lstrcpy(name, L"Mesh_NormalGenji");
+		lstrcpy(name, L"Mesh_Genji_Normal");
 	else
 	{
 		switch (eTemp.eColor)
 		{
 		case CGunGenji::Jungle:
-			lstrcpy(name, L"Mesh_JungleGenji");
+			lstrcpy(name, L"Mesh_Genji_Green");
 			break;
 		case CGunGenji::Normal:
-			lstrcpy(name, L"Mesh_NormalGenji");
+			lstrcpy(name, L"Mesh_Genji_Normal");
 			break;
 		case CGunGenji::White:
-			lstrcpy(name, L"Mesh_WhiteGenji");
+			lstrcpy(name, L"Mesh_Genji_White");
 			break;
 		}
 	}
@@ -1076,7 +1161,7 @@ HRESULT CGunGenji::Add_Component(void* pArg)
 		return E_FAIL;
 //=================================================================================
 
-	m_pCollider->Set_Radius(_v3{ 0.5f, 0.5f, 0.5f });
+	m_pCollider->Set_Radius(_v3{ 1.f, 1.f, 1.f });
 	m_pCollider->Set_Dynamic(true);
 	m_pCollider->Set_Type(COL_SPHERE);
 	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pCollider->Get_Radius().y , 0.f });
@@ -1089,33 +1174,59 @@ HRESULT CGunGenji::SetUp_ConstantTable()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CManagement*		pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
+	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 
-	Safe_AddRef(pManagement);
+	//=============================================================================================
+	// 기본 메트릭스
+	//=============================================================================================
 
 	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
-
-	_mat		ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
-
 	if (FAILED(m_pShaderCom->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
+
+	//=============================================================================================
+	// 디졸브용 상수
+	//=============================================================================================
 	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShaderCom)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
-	//===========================================================
-	// 림라이트 값들을 쉐이더에 등록시킴
-	m_pBattleAgent->Update_RimParam_OnShader(m_pShaderCom);
-	//===========================================================
+	//=============================================================================================
+	// 쉐이더 재질정보 수치 입력
+	//=============================================================================================
+	_float	fEmissivePower = 5.f;	// 이미시브 : 높을 수록, 자체 발광이 강해짐.
+	_float	fSpecularPower = 1.f;	// 메탈니스 : 높을 수록, 정반사가 강해짐.
+	_float	fRoughnessPower = 1.f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
+	_float	fMinSpecular = 0.0f;	// 최소 빛	: 높을 수록 빛이 퍼짐(림라이트의 범위가 넓어지고 , 밀집도가 낮아짐).
+	_float	fID_R = 1.0f;	// ID_R : R채널 ID 값 , 1이 최대
+	_float	fID_G = 0.f;	// ID_G : G채널 ID 값 , 1이 최대
+	_float	fID_B = 0.f;	// ID_B	: B채널 ID 값 , 1이 최대
 
-	Safe_Release(pManagement);
+	if (FAILED(m_pShaderCom->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fID_R_Power", &fID_R, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fID_G_Power", &fID_G, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
+		return E_FAIL;
+
+	//=============================================================================================
+	// 림라이트 값들을 쉐이더에 등록시킴
+	//=============================================================================================
+	m_pBattleAgent->Update_RimParam_OnShader(m_pShaderCom);
+	//=============================================================================================
 
 	return NOERROR;
 }

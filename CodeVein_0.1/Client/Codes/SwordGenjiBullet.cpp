@@ -78,7 +78,7 @@ _int CSwordGenjiBullet::Update_GameObject(_double TimeDelta)
 	{
 		//Á×À½ ÀÌÆåÆ®
 		m_pBulletBody->Set_Dead();
-		//m_pTrailEffect->Set_Dead();
+		m_pTrailEffect->Set_Dead();
 
 		m_bDead = true;
 	}

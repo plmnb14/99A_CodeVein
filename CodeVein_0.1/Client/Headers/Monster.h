@@ -27,7 +27,7 @@ public:
 		RIGHT
 	};
 
-	enum MONSTER_STATETYPE
+	enum MONSTER_STATE_TYPE
 	{
 		IDLE,
 		MOVE,
@@ -37,17 +37,18 @@ public:
 		DEAD
 	};
 
-	enum MONSTER_COLORTYPE
+	enum MONSTER_COLOR_TYPE
 	{
 		RED,
 		BLUE,
+		GREEN,
 		YELLOW,
 		BLACK,
 		WHITE,
 		COLOR_NONE
 	};
 
-	enum MONSTER_IDLETYPE
+	enum MONSTER_IDLE_TYPE
 	{
 		IDLE_IDLE,
 		IDLE_CROUCH,
@@ -58,7 +59,7 @@ public:
 		IDLE_STAND
 	};
 
-	enum MONSTER_MOVETYPE
+	enum MONSTER_MOVE_TYPE
 	{
 		MOVE_WALK,
 		MOVE_ALERT,
@@ -66,42 +67,63 @@ public:
 		MOVE_DODGE
 	};
 
-	enum MONSTER_ATKTYPE
+	enum MONSTER_ATK_TYPE
 	{
 		ATK_NORMAL,
 		ATK_COMBO
 	};
 
-	enum MONSTER_HITTYPE
+	enum MONSTER_HIT_TYPE
 	{
 		HIT_STRONG,
 		HIT_NORMAL,
 		HIT_WEAK
 	};
 
-	enum MONSTER_CCTYPE
+	enum MONSTER_CC_TYPE
 	{
 		CC_STUN,
 		CC_DOWN,
 		CC_BLOW
 	};
 
-	enum MONSTER_DEADTYPE
+	enum MONSTER_DEAD_TYPE
 	{
 		DEAD_DEAD,
 		DEAD_EXCUTION
 	};
 
+	enum MONSTER_BULLET_TYPE
+	{
+		BULLET_NORMAL, //±‚∫ª «Õµ¢¿Ã ªˆªÛ
+		BULLET_FIRE, //∫“¿Ã∆Â∆Æ
+		BULLET_ICE, //æÛ¿Ω¿Ã∆Â∆Æ
+		BULLET_ELECTRON //¿¸±‚¿Ã∆Â∆Æ
+	};
+
 	struct MONSTER_STATUS
 	{
-		MONSTER_COLORTYPE	eMonsterColor = MONSTER_COLORTYPE::COLOR_NONE;
+		MONSTER_COLOR_TYPE	eMonsterColor = MONSTER_COLOR_TYPE::COLOR_NONE;
 		WEAPON_STATE		eUseWhatWeapon = WEAPON_STATE::WEAPON_None;
 
-		MONSTER_STATUS(MONSTER_COLORTYPE _eColor, WEAPON_STATE _eWeapon)
+		MONSTER_STATUS(MONSTER_COLOR_TYPE _eColor, WEAPON_STATE _eWeapon)
 		{
 			eMonsterColor = _eColor;
 			eUseWhatWeapon = _eWeapon;
 		}
+	};
+
+	struct MONSTER_BULLET_STATUS
+	{
+		MONSTER_BULLET_STATUS(MONSTER_BULLET_TYPE _eType, _v3 _vCreatePos, _v3 _vDir, _float _fSpeed, _double _dLifeTime)
+			: eBulletType(_eType), vCreatePos(_vCreatePos), vDir(_vDir), fSpeed(_fSpeed), dLifeTime(_dLifeTime)
+		{}
+
+		_v3			vCreatePos = _v3(0.f, 0.f, 0.f);
+		_v3			vDir = _v3(0.f, 0.f, 0.f);
+		_float		fSpeed = 0.f;
+		_double		dLifeTime = 0;
+		MONSTER_BULLET_TYPE	eBulletType;
 	};
 
 protected:
@@ -117,7 +139,7 @@ protected:
 	virtual HRESULT LateInit_GameObject();
 	virtual HRESULT Render_GameObject() PURE;
 	virtual HRESULT Render_GameObject_SetShader(CShader* pShader);
-	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass);
+	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur = false);
 
 protected:	// DJ
 	_tchar m_pLayerTag_Of_Target[256] = { L"Layer_Player" };
@@ -160,16 +182,18 @@ protected:
 
 	CGameObject*		m_pTarget = nullptr;
 
-	MONSTER_STATETYPE		m_eFirstCategory;
-	MONSTER_IDLETYPE		m_eSecondCategory_IDLE;
-	MONSTER_MOVETYPE		m_eSecondCategory_MOVE;
-	MONSTER_ATKTYPE			m_eSecondCategory_ATK;
-	MONSTER_HITTYPE			m_eSecondCategory_HIT;
-	MONSTER_CCTYPE			m_eSecondCategory_CC;
-	MONSTER_DEADTYPE		m_eSecondCategory_DEAD;
+	MONSTER_STATE_TYPE		m_eFirstCategory;
+	MONSTER_IDLE_TYPE		m_eSecondCategory_IDLE;
+	MONSTER_MOVE_TYPE		m_eSecondCategory_MOVE;
+	MONSTER_ATK_TYPE			m_eSecondCategory_ATK;
+	MONSTER_HIT_TYPE			m_eSecondCategory_HIT;
+	MONSTER_CC_TYPE			m_eSecondCategory_CC;
+	MONSTER_DEAD_TYPE		m_eSecondCategory_DEAD;
 
 	WEAPON_STATE			m_eWeaponState;
 	FBLR					m_eFBLR;
+	MONSTER_COLOR_TYPE		m_eMonsterColor;
+	MONSTER_BULLET_TYPE		m_eBulletType;
 
 	_double					m_dTimeDelta;
 	_double					m_dAniPlayMul;

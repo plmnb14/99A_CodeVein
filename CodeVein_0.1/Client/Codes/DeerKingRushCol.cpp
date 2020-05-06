@@ -32,6 +32,9 @@ HRESULT CDeerKingRushCol::Ready_GameObject(void * pArg)
 
 	CBT_CreateBuff::BUFF_INFO temp = *(CBT_CreateBuff::BUFF_INFO*)(pArg);
 
+	if (m_pTarget_Transform)
+		Safe_Release(m_pTarget_Transform);
+
 	m_pTarget_Transform = temp.pTransform;
 	Safe_AddRef(m_pTarget_Transform);
 

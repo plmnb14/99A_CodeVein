@@ -71,26 +71,26 @@ void CSkillUI::Set_SkillIcon(_uint iIndex, Skill_Index eSkill_Index)
 
 	m_pActive[iIndex]->Set_Skill_Index(eSkill_Index);
 }
-
-void CSkillUI::Set_SkillGaugeCur(_ulong iNum)
-{
-	m_pSkillGaugeCur->Set_Number(iNum);
-}
-
-void CSkillUI::Set_SkillGaugeMax(_ulong iNum)
-{
-	m_pSkillGaugeMax->Set_Number(iNum);
-}
-
-_ulong CSkillUI::Get_SkillGaugeCur()
-{
-	return m_pSkillGaugeCur->Get_Number();
-}
-
-_ulong CSkillUI::Get_SkillGaugeMax()
-{
-	return m_pSkillGaugeMax->Get_Number();
-}
+//
+//void CSkillUI::Set_SkillGaugeCur(_ulong iNum)
+//{
+//	m_pSkillGaugeCur->Set_Number(iNum);
+//}
+//
+//void CSkillUI::Set_SkillGaugeMax(_ulong iNum)
+//{
+//	m_pSkillGaugeMax->Set_Number(iNum);
+//}
+//
+//_ulong CSkillUI::Get_SkillGaugeCur()
+//{
+//	return m_pSkillGaugeCur->Get_Number();
+//}
+//
+//_ulong CSkillUI::Get_SkillGaugeMax()
+//{
+//	return m_pSkillGaugeMax->Get_Number();
+//}
 
 CSkillUI * CSkillUI::Create(_Device pGraphic_Device)
 {

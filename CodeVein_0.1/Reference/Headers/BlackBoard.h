@@ -12,7 +12,7 @@ class CGameObject;
 class ENGINE_DLL CBlackBoard final : public CBase
 {
 public:
-	enum VALUE { BOOL, FLOAT, INT, VEC3};
+	enum VALUE { BOOL, FLOAT, INT, VEC3, MAT};
 	enum OUTPUT { NONE, UPDATE};
 
 private:
@@ -32,18 +32,21 @@ public:
 	OUTPUT Set_Value(const _tchar* pName, _float fValue);
 	OUTPUT Set_Value(const _tchar* pName, _int iValue);
 	OUTPUT Set_Value(const _tchar* pName, _v3 _vValue);
+	OUTPUT Set_Value(const _tchar* pName, _mat _matValue);
 
 public:
 	const _bool Get_BoolValue(const _tchar* pName) const;
 	const _float Get_FloatValue(const _tchar* pName) const;
 	const _int Get_IntValue(const _tchar* pName) const;
 	const _v3 Get_V3Value(const _tchar* pName) const;
+	const _mat Get_MatValue(const _tchar* pName) const;
 
 private:
 	const _bool* Find_Value_In_mapBool(const _tchar* pName) const;
 	const _float* Find_Value_In_mapFloat(const _tchar* pName) const;
 	const _int* Find_Value_In_mapInt(const _tchar* pName) const;
 	const _v3* Find_Value_In_mapVec3(const _tchar* pName) const;
+	const _mat* Find_Value_In_mapMat(const _tchar* pName) const;
 
 private:
 	HRESULT Ready_BlackBoard();
@@ -62,6 +65,8 @@ private:
 	map<const _tchar*, _v3>						m_mapVec3;
 	typedef map<const _tchar*, _v3>				MAP_VEC3;
 
+	map<const _tchar*, _mat>					m_mapMat;
+	typedef map<const _tchar*, _mat>			MAP_MAT;
 
 public:
 	static CBlackBoard* Create();

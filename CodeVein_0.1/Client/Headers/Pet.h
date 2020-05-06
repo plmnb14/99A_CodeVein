@@ -27,7 +27,7 @@ public:
 		RIGHT
 	};
 
-	enum PET_STATETYPE
+	enum PET_STATE_TYPE
 	{
 		IDLE,
 		MOVE,
@@ -37,7 +37,7 @@ public:
 		DEAD
 	};
 
-	enum PET_COLORTYPE
+	enum PET_COLOR_TYPE
 	{
 		RED,
 		BLUE,
@@ -47,7 +47,7 @@ public:
 		COLOR_NONE
 	};
 
-	enum PET_IDLETYPE
+	enum PET_IDLE_TYPE
 	{
 		IDLE_IDLE,
 		IDLE_CROUCH,
@@ -58,7 +58,7 @@ public:
 		IDLE_STAND
 	};
 
-	enum PET_MOVETYPE
+	enum PET_MOVE_TYPE
 	{
 		MOVE_WALK,
 		MOVE_ALERT,
@@ -66,39 +66,46 @@ public:
 		MOVE_DODGE
 	};
 
-	enum PET_ATKTYPE
+	enum PET_ATK_TYPE
 	{
 		ATK_NORMAL,
 		ATK_COMBO
 	};
 
-	enum PET_HITTYPE
+	enum PET_HIT_TYPE
 	{
 		HIT_STRONG,
 		HIT_NORMAL,
 		HIT_WEAK
 	};
 
-	enum PET_CCTYPE
+	enum PET_CC_TYPE
 	{
 		CC_STUN,
 		CC_DOWN,
 		CC_BLOW
 	};
 
-	enum PET_DEADTYPE
+	enum PET_DEAD_TYPE
 	{
 		DEAD_DEAD,
 		DEAD_EXCUTION
 	};
 
-	enum PET_GRADETYPE
+	enum PET_GRADE_TYPE
 	{
 		PET_GRADE_NORMAL,
 		PET_GRADE_RARE,
 		PET_GRADE_UNIQUE,
 		PET_GRADE_LEGEND,
 		PET_GRADE_TYPE_END
+	};
+
+	enum PET_MODE_TYPE
+	{
+		PET_MODE_ATK, //공격대상->아이템
+		PET_MODE_UTILL, //아이템->공격대상
+		PET_MODE_END
 	};
 
 	enum PET_TYPE
@@ -128,10 +135,10 @@ public:
 
 	struct PET_STATUS
 	{
-		PET_GRADETYPE	eUseWhatGrade = PET_GRADETYPE::PET_GRADE_NORMAL;
+		PET_GRADE_TYPE	eUseWhatGrade = PET_GRADE_TYPE::PET_GRADE_NORMAL;
 		WEAPON_STATE		eUseWhatWeapon = WEAPON_STATE::WEAPON_None;
 
-		PET_STATUS(PET_GRADETYPE _eGrade, WEAPON_STATE _eWeapon)
+		PET_STATUS(PET_GRADE_TYPE _eGrade, WEAPON_STATE _eWeapon)
 		{
 			eUseWhatGrade = _eGrade;
 			eUseWhatWeapon = _eWeapon;
@@ -186,6 +193,8 @@ protected:
 	virtual void Play_Dead();
 
 	//오더에 따른 겟 셋 함수를 여러개 만들예정 또는 이넘값을 이용해서 오더 내용을 변경할 예정
+	PET_MODE_TYPE Get_Pet_Mode() { return m_eNowPetMode; }
+	void Set_Pet_Mode(PET_MODE_TYPE _eMode) { m_eNowPetMode = _eMode; }
 
 protected:
 	virtual HRESULT Add_Component(void* pArg);
@@ -212,27 +221,36 @@ protected:
 	CGameObject*		m_pPlayer = nullptr;
 	CGameObject*		m_pTarget = nullptr;
 
-	PET_STATETYPE		m_eFirstCategory;
+	PET_STATE_TYPE		m_eFirstCategory;
+	PET_IDLE_TYPE		m_eSecondCategory_IDLE;
+	PET_MOVE_TYPE		m_eSecondCategory_MOVE;
+	PET_ATK_TYPE			m_eSecondCategory_ATK;
+	PET_HIT_TYPE			m_eSecondCategory_HIT;
+	PET_CC_TYPE			m_eSecondCategory_CC;
+	PET_DEAD_TYPE		m_eSecondCategory_DEAD;
 
-	PET_IDLETYPE		m_eSecondCategory_IDLE;
-	PET_MOVETYPE		m_eSecondCategory_MOVE;
-	PET_ATKTYPE			m_eSecondCategory_ATK;
-	PET_HITTYPE			m_eSecondCategory_HIT;
-	PET_CCTYPE			m_eSecondCategory_CC;
-	PET_DEADTYPE		m_eSecondCategory_DEAD;
-
-	WEAPON_STATE		m_eWeaponState = WEAPON_STATE::WEAPON_None;
 	FBLR				m_eFBLR;
+	WEAPON_STATE		m_eWeaponState = WEAPON_STATE::WEAPON_None;
 	PET_TARGET_TYPE		m_eTarget = PET_TARGET_TYPE::PET_TARGET_TYPE_END;
+	PET_MODE_TYPE		m_eNowPetMode = PET_MODE_TYPE::PET_MODE_END;
+	PET_MODE_TYPE		m_eOldPetMdoe = PET_MODE_TYPE::PET_MODE_END;
 
 	_double				m_dTimeDelta = 0;
 	_double				m_dAniPlayMul = 1;
 
+	//공통 사용 변수
 	_float				m_fSkillMoveSpeed_Cur;
 	_float				m_fSkillMoveSpeed_Max;
 	_float				m_fSkillMoveAccel_Cur;
 	_float				m_fSkillMoveAccel_Max;
 	_float				m_fSkillMoveMultiply;
+	_float				m_fPersonalRange = 4.f; //player, 목표와의 사회적 거리두기 변수
+
+	_bool				m_bEventTrigger[30] = {};
+
+	// For Effect
+	_float				m_fDeadEffect_Delay = 0.f;
+	_float				m_fDeadEffect_Offset = 0.f;
 
 	//플레이어와 연관된 변수
 	_bool				m_bAbsoluteOrder = false; //우선 순위 결정
@@ -250,14 +268,6 @@ protected:
 	_int				m_iDodgeCount = 0; //회피 누적
 	_int				m_iDodgeCountMax = 0; //해당 카운트를 기준으로 회피 발동
 
-	//공통 사용 변수
-	_float				m_fPersonalRange = 4.f; //player, 목표와의 사회적 거리두기 변수
-
-	// For Effect
-	_float				m_fDeadEffect_Delay = 0.f;
-	_float				m_fDeadEffect_Offset = 0.f;
-
-	_bool				m_bEventTrigger[30] = {};
 	_bool				m_bCanPlayDead = false; //죽을 경우 디졸브,이펙트 작동하기 위한 변수
 	_bool				m_bInRecognitionRange = false; //인지 가능 여부
 	_bool				m_bInShotRange = false; //원거리 가능 여부
@@ -273,6 +283,8 @@ protected:
 	_bool				m_bCanChooseAtkType = true; //일반,콤보 공격 여부 ->사용안할 예정, 펫==유틸
 	_bool				m_bIsCombo = false; //콤보 진행 여부 ->미사용 예정, 펫 == 유틸
 	_int				m_iRandom = 0; //랜덤 변수 사용할 일이 거의 없음, 폐기 예정?
+
+	_int				m_iCount = 0; //단순 계산용 카운팅 변수 테스트용도로 이넘값 변경할 예정
 
 };
 

@@ -31,34 +31,16 @@ _int CBloodCodeSlot::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
-	m_pRendererCom->Add_RenderList(RENDER_UI, this);
+	m_pRendererCom->Add_RenderList(RENDER_ALPHA, this);
 
-	
+	_v3 vWorldPos;
+	memcpy(vWorldPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
+	Compute_ViewZ(&vWorldPos);
 
-	switch (m_eType)
-	{
-	case BloodCode_Fighter:
-		m_iIndex = 2;
-		break;
-	case BloodCode_Caster:
-		m_iIndex = 3;
-		break;
-	case BloodCode_Berserker:
-		m_iIndex = 4;
-		break;
-	case BloodCode_Prometheus:
-		m_iIndex = 5;
-		break;
-	case BloodCode_Eos:
-		m_iIndex = 6;
-		break;
-	default:
-		m_iIndex = 0;
-		break;
-	}
-	Compute_ViewZ(&m_pTransformCom->Get_Pos());
+	SetUp_BloodCodeIdx();
 
 	m_pCollider->Update(m_pTransformCom->Get_Pos());
+
 	return NO_EVENT;
 }
 
@@ -109,7 +91,7 @@ HRESULT CBloodCodeSlot::Render_GameObject()
 			if (0 == i)
 			{
 				iIndex = 0;
-				iPass = 1;
+				iPass = 0;
 			}
 			else if (1 == i)
 			{
@@ -152,7 +134,7 @@ HRESULT CBloodCodeSlot::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Shader
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_UI", L"Com_Shader", (CComponent**)&m_pShaderCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_3dUI", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
 	// for.Com_VIBuffer
@@ -163,7 +145,7 @@ HRESULT CBloodCodeSlot::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
 
-	m_pCollider->Set_Radius(_v3{ 0.15f, 0.111f, 0.01f });
+	m_pCollider->Set_Radius(_v3{ 0.15f, 0.111f, 0.15f });
 	m_pCollider->Set_Dynamic(true);
 	m_pCollider->Set_Type(COL_SPHERE);
 	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos());
@@ -191,6 +173,68 @@ HRESULT CBloodCodeSlot::SetUp_ConstantTable(_uint iIndex)
 
 void CBloodCodeSlot::SetUp_Default()
 {
+}
+
+void CBloodCodeSlot::SetUp_BloodCodeIdx()
+{
+	switch (m_eID)
+	{
+	case BloodCode_Artemis:
+	{
+		m_iIndex = 2;
+	}
+	break;
+	case BloodCode_Assassin:
+	{
+		m_iIndex = 3;
+	}
+	break;
+	case BloodCode_DarkKnight:
+	{
+		m_iIndex = 5;
+	}
+	break;
+	case BloodCode_Queen:
+	{
+		m_iIndex = 12;
+	}
+	break;
+	case BloodCode_Berserker:
+	{
+		m_iIndex = 10;
+	}
+	break;
+	case BloodCode_Hephaestus:
+	{
+		m_iIndex = 8;
+	}
+	break;
+	case BloodCode_Fighter:
+	{
+		m_iIndex = 6;
+	}
+	break;
+	case BloodCode_Heimdal:
+	{
+		m_iIndex = 7;
+	}
+	break;
+	case BloodCode_Hermes:
+	{
+		m_iIndex = 9;
+	}
+	break;
+	case BloodCode_Atlas:
+	{
+		m_iIndex = 4;
+	}
+	break;
+	case BloodCode_Prometheus:
+	{
+		m_iIndex = 11;
+	}
+	break;
+	}
 }
 
 CBloodCodeSlot * CBloodCodeSlot::Create(_Device pGraphic_Device)

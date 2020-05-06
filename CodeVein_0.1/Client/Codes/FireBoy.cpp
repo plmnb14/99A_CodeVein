@@ -57,24 +57,24 @@ HRESULT CFireBoy::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"Show", true);
 	pBlackBoard->Set_Value(L"Show_Near", true);
 
-	CBT_Selector* Start_Sel = Node_Selector("행동 시작");
-	//CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
+	//CBT_Selector* Start_Sel = Node_Selector("행동 시작");
+	CBT_Sequence* Start_Sel = Node_Sequence("행동 시작");	//테스트
 
 	pBehaviorTree->Set_Child(Start_Sel);
 
 
 	//////////// 아래에 주석해놓은 4줄이 본게임에서 쓸 것임, 차례대로 공격함.
 
-	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", true);
-	//Check_ShowValue->Set_Child(Start_Show());
+	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", false);
+	//Check_ShowValue->Set_Child(Start_Game());
 	//Start_Sel->Add_Child(Check_ShowValue);
-	Start_Sel->Add_Child(Start_Game());
+	//Start_Sel->Add_Child(Start_Show());
 
 	////////////
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	//Start_Sel->Add_Child(Fire_Ground());
+	Start_Sel->Add_Child(Fire_Flame());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -231,7 +231,7 @@ HRESULT CFireBoy::Render_GameObject()
 	return NOERROR;
 }
 
-HRESULT CFireBoy::Render_GameObject_SetPass(CShader * pShader, _int iPass)
+HRESULT CFireBoy::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
 {
 	if (nullptr == pShader ||
 		nullptr == m_pMeshCom)
@@ -613,27 +613,13 @@ CBT_Composite_Node * CFireBoy::Fire_Flame()
 	SubSeq->Add_Child(Move1);
 
 
+	/* 
+	1. FireHandBall 손에서 생성
+	2. FireHandBall이 없어질 때, 없어지면서 FireFlame 생성.
+	*/
 
-
-	CBT_CreateBullet* Col0 = Node_CreateBullet("공중에서 불 나옴", L"Monster_FireBullet", L"FlamePos0", L"FlameDir", 6, 5, 2.166, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col1 = Node_CreateBullet("공중에서 불 나옴", L"Monster_FireBullet", L"FlamePos1", L"FlameDir", 6, 5, 2.166, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col2 = Node_CreateBullet("공중에서 불 나옴", L"Monster_FireBullet", L"FlamePos2", L"FlameDir", 6, 5, 2.166, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col3 = Node_CreateBullet("공중에서 불 나옴", L"Monster_FireBullet", L"FlamePos3", L"FlameDir", 6, 5, 2.166, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col4 = Node_CreateBullet("공중에서 불 나옴", L"Monster_FireBullet", L"FlamePos4", L"FlameDir", 6, 5, 2.166, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col5 = Node_CreateBullet("공중에서 불 나옴", L"Monster_FireBullet", L"FlamePos5", L"FlameDir", 6, 5, 2.166, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col6 = Node_CreateBullet("공중에서 불 나옴", L"Monster_FireBullet", L"FlamePos6", L"FlameDir", 6, 5, 2.166, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col7 = Node_CreateBullet("공중에서 불 나옴", L"Monster_FireBullet", L"FlamePos7", L"FlameDir", 6, 5, 2.166, 1, 0, 0, CBT_Service_Node::Finite);
-	CBT_CreateBullet* Col8 = Node_CreateBullet("공중에서 불 나옴", L"Monster_FireBullet", L"FlamePos8", L"FlameDir", 6, 5, 2.166, 1, 0, 0, CBT_Service_Node::Finite);
-
-	Root_Parallel->Add_Service(Col0);
-	Root_Parallel->Add_Service(Col1);
-	Root_Parallel->Add_Service(Col2);
-	Root_Parallel->Add_Service(Col3);
-	Root_Parallel->Add_Service(Col4);
-	Root_Parallel->Add_Service(Col5);
-	Root_Parallel->Add_Service(Col6);
-	Root_Parallel->Add_Service(Col7);
-	Root_Parallel->Add_Service(Col8);
+	CBT_CreateBuff* Bullet0 = Node_CreateBuff("화염구 왼손에 생성", L"Monster_FireHandBall", 2, 0.716, 1, 0, 0, CBT_Service_Node::Finite);
+	Root_Parallel->Add_Service(Bullet0);
 
 	return Root_Parallel;
 }
@@ -732,6 +718,9 @@ CBT_Composite_Node * CFireBoy::Show_FarAttack()
 	CBT_Cooldown* Cool2 = Node_Cooldown("쿨2", 300);
 	CBT_Cooldown* Cool3 = Node_Cooldown("쿨3", 300);
 	CBT_Cooldown* Cool4 = Node_Cooldown("쿨4", 300);
+	CBT_Cooldown* Cool5 = Node_Cooldown("쿨5", 300);
+
+	CBT_Play_Ani* Show_Ani3 = Node_Ani("기본", Ani_Appearance_End, 0.95f);
 
 	CBT_SetValue* Show_ValueOff = Node_BOOL_SetValue("시연회 OFF", L"Show", false);
 
@@ -745,6 +734,8 @@ CBT_Composite_Node * CFireBoy::Show_FarAttack()
 	Cool3->Set_Child(Fire_Ground());
 	Root_Sel->Add_Child(Cool4);
 	Cool4->Set_Child(Fire_Flame());
+	Root_Sel->Add_Child(Cool5);
+	Cool5->Set_Child(Show_Ani3);
 
 	Root_Sel->Add_Child(Show_ValueOff);
 
@@ -819,6 +810,14 @@ HRESULT CFireBoy::Update_Bone_Of_BlackBoard()
 	m_vLeftHand = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftHand", m_vLeftHand);
 
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHandAttach");
+	m_vLeftHandAttach = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftHandAttach", m_vLeftHandAttach);
+
+	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHandMiddle2");
+	m_vLeftHandMiddle2 = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftHandMiddle2", m_vLeftHandMiddle2);
+
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Muzzle");
 	m_vMuzzle = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Muzzle", m_vMuzzle);
@@ -878,24 +877,8 @@ HRESULT CFireBoy::Update_Value_Of_BB()
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FireDir", *D3DXVec3Normalize(&_v3(), &(m_vMuzzle - m_vRightHand)));
 
 
-	// 4. Flame, 플레이어 위에서 십자가로 불 떨어짐
-	_v3 vReverseLook = -vSelfLook;
-	_v3 vReverseRight = -vSelfRight;
-
-	_v3 vPlayerPos = pPlayerTransCom->Get_Pos();
-	_float fLength = 2.f;
-
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlamePos0", _v3(0.f, 5.f, 0.f) + vPlayerPos);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlamePos1", _v3(0.f, 5.f, 0.f) + vPlayerPos + vSelfLook * fLength);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlamePos2", _v3(0.f, 5.f, 0.f) + vPlayerPos + vSelfRight * fLength);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlamePos3", _v3(0.f, 5.f, 0.f) + vPlayerPos + vReverseLook * fLength);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlamePos4", _v3(0.f, 5.f, 0.f) + vPlayerPos + vReverseRight * fLength);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlamePos5", _v3(0.f, 5.f, 0.f) + vPlayerPos + vSelfLook * fLength * 2);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlamePos6", _v3(0.f, 5.f, 0.f) + vPlayerPos + vSelfRight * fLength * 2);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlamePos7", _v3(0.f, 5.f, 0.f) + vPlayerPos + vReverseLook * fLength * 2);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlamePos8", _v3(0.f, 5.f, 0.f) + vPlayerPos + vReverseRight * fLength * 2);
-
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlameDir", _v3(0.f, -1.f, 0.f));
+	// 4. Flame, 왼손에서 위로 불 던짐.
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FlameHandBallDir", *D3DXVec3Normalize(&_v3(), &(m_vLeftHandMiddle2 - m_vLeftHandAttach)));
 
 
 	// 5. 화염 토이네도
@@ -1227,6 +1210,28 @@ HRESULT CFireBoy::SetUp_ConstantTable()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
+
+	//=============================================================================================
+	// 쉐이더 재질정보 수치 입력
+	//=============================================================================================
+	_float	fEmissivePower = 5.f;	// 이미시브 : 높을 수록, 자체 발광이 강해짐.
+	_float	fSpecularPower = 3.f;	// 메탈니스 : 높을 수록, 정반사가 강해짐.
+	_float	fRoughnessPower = 4.f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
+	_float	fRimLightPower = 0.f;	// 림		: 높을 수록 빛이 퍼짐(림라이트의 범위가 넓어지고 , 밀집도가 낮아짐).
+	_float	fMinSpecular = 0.1f;	// 최소 빛	: 높을 수록 빛이 퍼짐(림라이트의 범위가 넓어지고 , 밀집도가 낮아짐).
+
+	if (FAILED(m_pShaderCom->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fRimAlpha", &fRimLightPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
+		return E_FAIL;
+	//=============================================================================================
+
 
 	Safe_Release(pManagement);
 

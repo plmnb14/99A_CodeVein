@@ -21,7 +21,7 @@ HRESULT CMonster::Render_GameObject_SetShader(CShader * pShader)
 	return S_OK;
 }
 
-HRESULT CMonster::Render_GameObject_SetPass(CShader * pShader, _int iPass)
+HRESULT CMonster::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
 {
 	return S_OK;
 }

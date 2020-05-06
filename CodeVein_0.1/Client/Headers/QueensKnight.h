@@ -40,7 +40,7 @@ public:
 	virtual _int Update_GameObject(_double TimeDelta);
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
-	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass);
+	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur = false);
 
 private:	// 패턴들
 	// 1. 칼 가로로 휘두르기
