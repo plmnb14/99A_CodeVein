@@ -20,7 +20,7 @@ public:
 	enum Coll_AttackMoment { Att_Skil, Att_Normal };
 	enum Coll_Sub_AttMoment { 
 		Att_Base1, Att_Base2, Att_Base3, Att_Base4, Att_ThreeCombo, Att_CenterDown, Att_SlowGun,
-		Att_MonWalk, Att_MonRun
+		Att_MonWalk, Att_MonRun, Att_MonBackWalk
 	};
 	enum Coll_GuardMoment { Guard_Idle, Gurad_Walk, Gurad_Hit };
 	enum Coll_DodgeMoment { Dodge_FrontRoll, Dodge_BackRoll };
