@@ -13,6 +13,7 @@ private:
 
 public:
 	Skill_ID Get_SkillID() { return m_eSkillID; }
+	_bool Get_Select() { return m_bIsSelect; }
 
 public:
 	void Set_SkillID(Skill_ID eID) { m_eSkillID = eID; }

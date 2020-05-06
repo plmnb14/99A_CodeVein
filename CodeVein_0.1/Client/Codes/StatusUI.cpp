@@ -28,10 +28,10 @@ HRESULT CStatusUI::Ready_GameObject(void * pArg)
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = 900.f;
-	m_fPosY = 300.f;
-	m_fSizeX = 512.f;
-	m_fSizeY = 512.f;
+	m_fPosX = 1089.f;
+	m_fPosY = 309.f;
+	m_fSizeX = 530.f;
+	m_fSizeY = 530.f;
 	m_fViewZ = 1.f;
 
 	m_bIsActive = false;
@@ -55,11 +55,6 @@ _int CStatusUI::Update_GameObject(_double TimeDelta)
 
 	if (m_pExpUI)
 		m_pExpUI->Set_Active(m_bIsActive);
-
-	if (m_pExitUI)
-		m_pExitUI->Set_Active(m_bIsActive);
-
-	Exit_This_UI();
 
 	return NO_EVENT;
 }
@@ -155,8 +150,8 @@ void CStatusUI::SetUp_Default()
 	LOOP(5)
 	{
 		pInstance = static_cast<CConditionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ConditionUI", nullptr));
-		pInstance->Set_UI_Pos(m_fPosX - 30.f, m_fPosY + 65.f * _float(i) - 100.f);
-		pInstance->Set_UI_Size(325.f, 53.f);
+		pInstance->Set_UI_Pos(1080.f, 230.f + 43.f * _float(i));
+		pInstance->Set_UI_Size(199.36, 80.f);
 		pInstance->Set_ViewZ(m_fViewZ - 0.1f);
 		pInstance->Set_ConditionType(CConditionUI::CONDITION_TYPE(i));
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
@@ -164,30 +159,10 @@ void CStatusUI::SetUp_Default()
 	}
 
 	m_pExpUI = static_cast<CExpUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExpUI", nullptr));
-	m_pExpUI->Set_UI_Pos(m_fPosX, m_fPosY - 180.f);
-	m_pExpUI->Set_UI_Size(100.f, 100.f);
-	m_pExpUI->Set_ViewZ(m_fViewZ - 0.1f);
+	m_pExpUI->Set_UI_Pos(m_fPosX, m_fPosY - 120.f);
+	m_pExpUI->Set_UI_Size(70.f, 70.f);
+	m_pExpUI->Set_ViewZ(m_fViewZ - 0.2f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExpUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
-
-	// 나가기 버튼
-	m_pExitUI = static_cast<CButton_UI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ButtonUI", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExitUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
-	m_pExitUI->Set_UI_Pos(m_fPosX - 180.f, m_fPosY - 190.f);
-	m_pExitUI->Set_UI_Size(30.f, 30.f);
-	m_pExitUI->Set_UI_Index(8);
-}
-
-void CStatusUI::Exit_This_UI()
-{
-	if (!m_pExitUI->Get_Active())
-		return;
-
-	if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB) &&
-		g_pInput_Device->MousePt_InRect(m_pExitUI->Get_UI_Pos().x, m_pExitUI->Get_UI_Pos().y, m_pExitUI->Get_UI_Size().x, m_pExitUI->Get_UI_Size().y, g_hWnd))
-	{
-		CUI_Manager::Get_Instance()->Get_Total_Inven()->Set_Active(true);
-		m_bIsActive = false;
-	}
 }
 
 CStatusUI * CStatusUI::Create(_Device pGraphic_Device)

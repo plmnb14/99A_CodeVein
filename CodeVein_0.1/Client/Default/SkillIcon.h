@@ -12,7 +12,10 @@ private:
 	virtual ~CSkillIcon() = default;
 
 public:
+	Skill_ID Get_Skill_ID() { return m_eSkillID; }
 
+public:
+	void Set_Skill_ID(Skill_ID eSkillID) { m_eSkillID = eSkillID; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
