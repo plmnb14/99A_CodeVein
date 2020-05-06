@@ -731,7 +731,7 @@ void CPet_PoisonButterFly::Play_5Shot()
 				vBirth += (vLook * fLength); //생성위치 = 생성위치 +(룩*길이)
 
 				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(
-					PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 10.f, 3.f));
+					PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 15.f, 1.5f));
 			}
 		}
 		else if (0.f <= AniTime)
@@ -856,7 +856,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 12.f, 1.f));
 			}
 		}
 		else if (4.500f <= AniTime)
@@ -874,7 +874,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 12.f, 1.f));
 			}
 		}
 		else if (4.367f <= AniTime)
@@ -892,7 +892,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 12.f, 1.f));
 			}
 		}
 		else if (4.233f <= AniTime)
@@ -910,7 +910,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 12.f, 1.f));
 			}
 		}
 		else if (4.100f <= AniTime)
@@ -928,7 +928,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 12.f, 1.f));
 			}
 		}
 		else if (3.967f <= AniTime)
@@ -946,7 +946,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 12.f, 1.f));
 			}
 		}
 		else if (3.833f <= AniTime)
@@ -964,7 +964,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 12.f, 1.f));
 			}
 		}
 		else if (3.700f <= AniTime)
@@ -982,7 +982,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 12.f, 1.f));
 			}
 		}
 		else if (3.567f <= AniTime)
@@ -1000,7 +1000,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 12.f, 1.f));
 			}
 		}
 		else if (3.433f <= AniTime)
@@ -1018,7 +1018,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 12.f, 1.f));
 			}
 		}
 		else if (3.300f <= AniTime)
@@ -1036,7 +1036,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 12.f, 1.f));
 			}
 		}
 		else if (3.167f <= AniTime)
@@ -1054,7 +1054,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 12.f, 1.f));
 			}
 		}
 		else if (3.033f <= AniTime)
@@ -1072,7 +1072,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 12.f, 1.f));
 			}
 		}
 		else if (2.900f <= AniTime)
@@ -1090,7 +1090,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 12.f, 1.f));
 			}
 		}
 		else if (2.767f <= AniTime)
@@ -1108,7 +1108,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 8.f, 1.5f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, vShotDir, 12.f, 1.f));
 			}
 		}
 
@@ -1187,7 +1187,7 @@ void CPet_PoisonButterFly::Play_Move()
 				m_bIsMoveAround = true;
 
 				m_bCanCoolDown = true;
-				m_fCoolDownMax = CALC::Random_Num(2, 4) * 1.0f;
+				m_fCoolDownMax = CALC::Random_Num(1, 3) * 1.0f;
 
 				m_fSkillMoveSpeed_Cur = 2.5f;
 				m_fSkillMoveAccel_Cur = 0.f;
@@ -1207,7 +1207,6 @@ void CPet_PoisonButterFly::Play_Move()
 			}
 			else
 			{
-				cout << "공격 후 경계움직임" << endl;
 				if (PET_POISIONBUTTERFLY_ANI::Walk_R == m_eState)
 					Function_MoveAround(m_pTarget, m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_X));
 				else if (PET_POISIONBUTTERFLY_ANI::Walk_L == m_eState)
@@ -1409,8 +1408,8 @@ HRESULT CPet_PoisonButterFly::Ready_Status(void * pArg)
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
 	m_tObjParam.fArmor_Cur = m_tObjParam.fArmor_Max;
 
-	m_tObjParam.bCanHit = true; //맞기 가능
-	m_tObjParam.bIsHit = false;	//맞기 진행중 아님
+	m_tObjParam.bCanHit = true; //피격 가능
+	m_tObjParam.bIsHit = false;	//피격 진행중 아님
 	m_tObjParam.bCanAttack = true; //공격 가능
 	m_tObjParam.bIsAttack = false; //공격 진행중 아님
 	m_tObjParam.bCanDodge = true; //회피 가능
@@ -1453,7 +1452,6 @@ HRESULT CPet_PoisonButterFly::Ready_Weapon(void * pArg)
 HRESULT CPet_PoisonButterFly::Ready_Collider(void * pArg)
 {
 	m_vecPhysicCol.reserve(2);
-	m_vecAttackCol.reserve(2);
 
 	_float fRadius;
 	CCollider* pCollider = nullptr;

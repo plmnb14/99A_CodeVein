@@ -900,9 +900,6 @@
     <ClInclude Include="..\Headers\Item.h">
       <Filter>02.GameObject\Stage\7%29 Item</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Pet_UI.h">
-      <Filter>02.GameObject\Stage\10%29 Pet</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\DropItem.h">
       <Filter>02.GameObject\Stage\7%29 Item</Filter>
     </ClInclude>
@@ -1373,9 +1370,6 @@
     <ClCompile Include="..\Codes\Item.cpp">
       <Filter>02.GameObject\Stage\7%29 Item</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Pet_UI.cpp">
-      <Filter>02.GameObject\Stage\10%29 Pet</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\DropItem.cpp">
       <Filter>02.GameObject\Stage\7%29 Item</Filter>
     </ClCompile>
@@ -1390,7 +1384,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\FireFlame.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\FireBoy\Bullet</Filter>
->>>>>>> cffed8c0b7e46d0a0e250fd4c4e2cc3d871e06e6
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
