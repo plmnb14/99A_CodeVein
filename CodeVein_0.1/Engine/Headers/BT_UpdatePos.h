@@ -11,11 +11,11 @@ public:
 	{
 		tagInitInfo(char* pNodeName, _tchar* _Target_Key, CTransform* _pTarget_Transform, _uint _Count_Of_Execution, _double dUpdateTime, _double dOffset, CBT_Service_Node::Mode _eMode)
 			: Target_Transform(_pTarget_Transform), Target_dUpdateTime(dUpdateTime), Target_dOffset(dOffset), Count_Of_Execution(_Count_Of_Execution)
-		{ strcpy_s<256>(Target_NodeName, pNodeName); 
+		{ strcpy_s<STR_128>(Target_NodeName, pNodeName);
 		lstrcpy(Target_Key, _Target_Key);}
 
-		char					Target_NodeName[256] = {0,};
-		_tchar					Target_Key[256] = { 0, };
+		char					Target_NodeName[STR_128] = {0,};
+		_tchar					Target_Key[STR_128] = { 0, };
 		_double					Target_dUpdateTime = 0;
 		_double					Target_dOffset = 0;
 		CTransform*				Target_Transform = nullptr;
@@ -46,7 +46,7 @@ private:
 	_double				m_dUpdateTime = 0;
 	_double				m_dOffset = 0;
 
-	_tchar				m_pTargetKey[256] = { 0, };
+	_tchar				m_pTargetKey[STR_128] = { 0, };
 
 	CTransform*			m_pTarget_Transform = nullptr;
 

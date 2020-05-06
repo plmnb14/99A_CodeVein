@@ -88,7 +88,7 @@ HRESULT CBT_MoveDir::Ready_Clone_Node(void * pInit_Struct)
 	if (m_pTransform)
 		Safe_AddRef(m_pTransform);
 
-	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
+	strcpy_s<STR_128>(m_pNodeName, temp.Target_NodeName);
 	lstrcpy(m_Dir_Key, temp.Dir_Key);
 
 	m_fMove_Speed = temp.fMove_Speed;

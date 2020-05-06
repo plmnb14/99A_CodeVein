@@ -27,7 +27,7 @@ private:
 	_int		m_iFrame;
 	_float		m_fTimeCount;
 	_float		m_fTimeCount2;
-	TCHAR		m_szFPS[MAX_STR];
+	TCHAR		m_szFPS[STR_128];
 
 	LARGE_INTEGER	m_CurTime;
 	LARGE_INTEGER	m_OldTime;

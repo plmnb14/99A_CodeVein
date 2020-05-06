@@ -118,13 +118,6 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 
 	CGameObject* pInstance = nullptr;
 
-	//// ³×¸ð³×¸ð µ¿·á
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague", nullptr);
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(5.f, 0.f, 5.f));
-	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_MORTAL, L"Layer_Colleague", nullptr);
-
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossMassageUI", SCENE_STAGE, L"Layer_BossMassageUI")))
 	//	return E_FAIL;
 
@@ -247,12 +240,10 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	// ÃÑ°ÕÁö
 	//====================================================================================================================================================
 	
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::Normal, CGunGenji::CheckGun, 10.f, 3.f, 2.f));
-	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(8.f, 0.f, -8.f));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
-	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", 
+	//	&CGunGenji::INFO(CGunGenji::Normal, CGunGenji::CheckGun, 10.f, 3.f, 2.f, 
+	//		true, _v3(8.f, 0.f, -8.f) , V3_NULL, 0));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::Jungle));
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);

@@ -96,7 +96,6 @@ void CScene_Logo::Free()
 
 HRESULT CScene_Logo::Ready_Essential_Prototype_GameObject()
 {
-
 	return S_OK;
 }
 
@@ -110,6 +109,10 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LoadingScreen", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LoadingScreen/LoadingScreen%d.png", 2))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LoadingBar", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LoadingBar/LoadingBar%d.png", 10))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LoadingBar", CLoadingBar::Create(m_pGraphic_Device))))
+		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LoadingScreen", CLoadingScreen::Create(m_pGraphic_Device))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LogoBackGround", CBackGround::Create(m_pGraphic_Device))))
@@ -122,6 +125,7 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LogoButton", SCENE_LOGO, L"Layer_LogoButton")))
 		return E_FAIL;
+
 	m_pLogoBtn = static_cast<CLogoBtn*>(g_pManagement->Get_GameObjectBack(L"Layer_LogoButton", SCENE_LOGO));
 	Safe_AddRef(m_pLogoBtn);
 
@@ -176,6 +180,7 @@ void CScene_Logo::Logo_KeyInput()
 {
 	if (g_pInput_Device->Key_Down(DIK_1))
 	{
+		cout << "Æ®·¹ÀÌ´×" << endl;
 		m_eSceneChange = Stage_Training;
 		Update_DebugStage_Console();
 		g_sStageIdx_Cur = 0;

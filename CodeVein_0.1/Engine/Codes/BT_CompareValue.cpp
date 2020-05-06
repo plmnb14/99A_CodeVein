@@ -205,7 +205,7 @@ HRESULT CBT_CompareValue::Ready_Clone_Node(void * pInit_Struct)
 {
 	INFO temp = *(INFO*)pInit_Struct;
 
-	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
+	strcpy_s<STR_128>(m_pNodeName, temp.Target_NodeName);
 	m_eValue = temp.eValue;
 	lstrcpy(m_pTargetKey_A, temp.TargetKey_A);
 

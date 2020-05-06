@@ -385,7 +385,7 @@ void CMapTool_Page::Save_Object()
 		return;
 
 	DWORD dwByte = 0;
-	_tchar szObjdata[MAX_STR] = L"";
+	_tchar szObjdata[STR_128] = L"";
 	_tchar szSlash[2] = L"|";
 	wstring wstrCombined = L"";
 
@@ -488,21 +488,21 @@ void CMapTool_Page::Load_Object()
 	{
 		Engine::OBJ_INFO ObjInfo;
 
-		fin.getline(ObjInfo.szName, MAX_STR, '|');
-		fin.getline(ObjInfo.szLayerIdx, MAX_STR, '|');
-		fin.getline(ObjInfo.szIndex, MAX_STR, '|');
+		fin.getline(ObjInfo.szName, STR_128, '|');
+		fin.getline(ObjInfo.szLayerIdx, STR_128, '|');
+		fin.getline(ObjInfo.szIndex, STR_128, '|');
 
-		fin.getline(ObjInfo.szPos_X, MAX_STR, '|');
-		fin.getline(ObjInfo.szPos_Y, MAX_STR, '|');
-		fin.getline(ObjInfo.szPos_Z, MAX_STR, '|');
+		fin.getline(ObjInfo.szPos_X, STR_128, '|');
+		fin.getline(ObjInfo.szPos_Y, STR_128, '|');
+		fin.getline(ObjInfo.szPos_Z, STR_128, '|');
 		
-		fin.getline(ObjInfo.szRot_X, MAX_STR, '|');
-		fin.getline(ObjInfo.szRot_Y, MAX_STR, '|');
-		fin.getline(ObjInfo.szRot_Z, MAX_STR, '|');
+		fin.getline(ObjInfo.szRot_X, STR_128, '|');
+		fin.getline(ObjInfo.szRot_Y, STR_128, '|');
+		fin.getline(ObjInfo.szRot_Z, STR_128, '|');
 		
-		fin.getline(ObjInfo.szScale_X, MAX_STR, '|');
-		fin.getline(ObjInfo.szScale_Y, MAX_STR, '|');
-		fin.getline(ObjInfo.szScale_Z, MAX_STR);
+		fin.getline(ObjInfo.szScale_X, STR_128, '|');
+		fin.getline(ObjInfo.szScale_Y, STR_128, '|');
+		fin.getline(ObjInfo.szScale_Z, STR_128);
 
 
 		if (fin.eof())
@@ -531,7 +531,7 @@ void CMapTool_Page::Load_Object()
 			vVtx[2] = { fC[0], fC[1], fC[2] };
 
 
-			Engine::CRenderObject*	pInstance = Engine::CRenderObject::Create(g_pGraphicDev);
+			Engine::CRenderObject*	pInstance = Engine::CRenderObject::Create_For_Tool(g_pGraphicDev);
 			pInstance->Set_OnTool(true);
 			pInstance->Change_Mesh(ObjInfo.szName);
 			pInstance->Set_Index(iIndex);
@@ -543,7 +543,7 @@ void CMapTool_Page::Load_Object()
 
 			m_listObject.push_back(pInstance);
 			
-			_tchar szObjName[MAX_STR] = L"";
+			_tchar szObjName[STR_128] = L"";
 			lstrcpy(szObjName, ObjInfo.szName);
 			lstrcat(szObjName, ObjInfo.szIndex);
 
@@ -564,7 +564,7 @@ void CMapTool_Page::CreateObject()
 	_int iIndex = 0;
 
 	// 렌더 오브젝트를 복사 한다.
-	Engine::CRenderObject* pInstace = Engine::CRenderObject::CreateClone(m_pRenderObj);
+	Engine::CRenderObject* pInstace = Engine::CRenderObject::CreateClone_For_Tool(m_pRenderObj , true);
 	pInstace->Set_OnTool(true);
 	pInstace->Set_LayerIdx(m_sLayerCurIdx);
 
@@ -617,12 +617,12 @@ void CMapTool_Page::Delete_SelectObject()
 
 					//_int	iIndex = 0;
 					//_tchar	szIndex[32] = L"";
-					//_tchar	szName[MAX_STR] = L"";
+					//_tchar	szName[STR_128] = L"";
 					//
 					//iIndex = m_pSelectedObj->Get_Index();
 					//_stprintf_s(szIndex, _T("%d"), iIndex);
 					//
-					//memcpy(&szName, m_pSelectedObj->Get_Name(), sizeof(_tchar[MAX_STR]));
+					//memcpy(&szName, m_pSelectedObj->Get_Name(), sizeof(_tchar[STR_128]));
 					//lstrcat(szName, szIndex);
 
 					Safe_Release(iter);
@@ -797,112 +797,112 @@ _bool CMapTool_Page::CheckObject()
 
 void CMapTool_Page::LoadFilePath(const wstring & wstrImgPath)
 {
-	HTREEITEM hStaticRoot = nullptr;
-	HTREEITEM hDynamicRoot = nullptr;
-
-	wifstream fin;
-
-	fin.open(wstrImgPath);
-
-	if (fin.fail())
-		return;
-	
-	hStaticRoot = CTreeFinder::Find_Node_By_Name(m_Tree, L"StaticMesh");
-
-
-	//cout << sizeof(PATH_INFO) << endl;
-
-	while (true)
-	{
-		Engine::PATH_INFO* tmpPath = new Engine::PATH_INFO;
-
-		fin.getline(tmpPath->sztrStateKey, MAX_STR, '|');
-		fin.getline(tmpPath->sztrFileName, MAX_STR, '|');
-		fin.getline(tmpPath->sztrImgPath, MAX_STR, '|');
-		fin.getline(tmpPath->szIsDynamic, MAX_STR);
-
-		if (fin.eof())
-		{
-			Engine::Safe_Delete(tmpPath);
-			break;
-		}
-
-		m_listMeshPathInfo.push_back(tmpPath);
-
-		// 카테고리 이름
-		TCHAR szBuf[MAX_STR] = L"";
-		lstrcpy(szBuf, tmpPath->sztrImgPath);
-		::PathRemoveBackslash(szBuf);
-		CString tmpString = ::PathFindFileName(szBuf);
-		
-		_tchar* szBuf2 = new _tchar[MAX_STR];
-		lstrcpy(szBuf2, tmpString);
-		
-		
-		HTREEITEM* hItems  = new HTREEITEM;
-		_bool	isEnd = true;
-		_bool	bisDynamic = false;
-		
-		
-		for (auto& iter : m_listStaticFolder)
-		{
-			if (!lstrcmp(iter, szBuf2))
-			{
-				m_Tree.InsertItem(tmpPath->sztrStateKey, 0, 0, *m_listStaticBranch.back());
-				isEnd = false;
-		
-				Engine::Safe_Delete(szBuf2);
-				Engine::Safe_Delete(hItems);
-		
-				break;
-			}
-		
-			else
-				isEnd = true;
-		}
-		
-		for (auto& iter : m_listDynamicFolder)
-		{
-			if (!lstrcmp(iter, szBuf2))
-			{
-				m_Tree.InsertItem(tmpPath->sztrStateKey, 0, 0, *m_listDynamicBranch.back());
-				isEnd = false;
-		
-				Engine::Safe_Delete(szBuf2);
-				Engine::Safe_Delete(hItems);
-		
-				break;
-			}
-		
-			else
-				isEnd = true;
-		}
-		
-		if (isEnd)
-		{
-			(lstrcmp(tmpPath->szIsDynamic, L"0") ? bisDynamic = false : bisDynamic = true);
-		
-			if (bisDynamic)
-			{
-				*hItems = m_Tree.InsertItem(szBuf2, 0, 0, hStaticRoot);
-				m_listStaticFolder.push_back(szBuf2);
-				m_listStaticBranch.push_back(hItems);
-			}
-		
-			else
-			{
-				*hItems = m_Tree.InsertItem(szBuf2, 0, 0, hDynamicRoot);
-				m_listDynamicFolder.push_back(szBuf2);
-				m_listDynamicBranch.push_back(hItems);
-			}
-		
-			m_Tree.InsertItem(tmpPath->sztrStateKey, 0, 0, *hItems);
-		
-			hItems = nullptr;
-		}
-	}
-
-	fin.close();
+	//HTREEITEM hStaticRoot = nullptr;
+	//HTREEITEM hDynamicRoot = nullptr;
+	//
+	//wifstream fin;
+	//
+	//fin.open(wstrImgPath);
+	//
+	//if (fin.fail())
+	//	return;
+	//
+	//hStaticRoot = CTreeFinder::Find_Node_By_Name(m_Tree, L"StaticMesh");
+	//
+	//
+	////cout << sizeof(PATH_INFO) << endl;
+	//
+	//while (true)
+	//{
+	//	Engine::PATH_INFO* tmpPath = new Engine::PATH_INFO;
+	//
+	//	fin.getline(tmpPath->sztrStateKey, STR_128, '|');
+	//	fin.getline(tmpPath->sztrFileName, STR_128, '|');
+	//	fin.getline(tmpPath->sztrImgPath, STR_128, '|');
+	//	fin.getline(tmpPath->b, sizeof(_bool));
+	//
+	//	if (fin.eof())
+	//	{
+	//		Engine::Safe_Delete(tmpPath);
+	//		break;
+	//	}
+	//
+	//	m_listMeshPathInfo.push_back(tmpPath);
+	//
+	//	// 카테고리 이름
+	//	TCHAR szBuf[STR_128] = L"";
+	//	lstrcpy(szBuf, tmpPath->sztrImgPath);
+	//	::PathRemoveBackslash(szBuf);
+	//	CString tmpString = ::PathFindFileName(szBuf);
+	//	
+	//	_tchar* szBuf2 = new _tchar[STR_128];
+	//	lstrcpy(szBuf2, tmpString);
+	//	
+	//	
+	//	HTREEITEM* hItems  = new HTREEITEM;
+	//	_bool	isEnd = true;
+	//	_bool	bisDynamic = false;
+	//	
+	//	
+	//	for (auto& iter : m_listStaticFolder)
+	//	{
+	//		if (!lstrcmp(iter, szBuf2))
+	//		{
+	//			m_Tree.InsertItem(tmpPath->sztrStateKey, 0, 0, *m_listStaticBranch.back());
+	//			isEnd = false;
+	//	
+	//			Engine::Safe_Delete(szBuf2);
+	//			Engine::Safe_Delete(hItems);
+	//	
+	//			break;
+	//		}
+	//	
+	//		else
+	//			isEnd = true;
+	//	}
+	//	
+	//	for (auto& iter : m_listDynamicFolder)
+	//	{
+	//		if (!lstrcmp(iter, szBuf2))
+	//		{
+	//			m_Tree.InsertItem(tmpPath->sztrStateKey, 0, 0, *m_listDynamicBranch.back());
+	//			isEnd = false;
+	//	
+	//			Engine::Safe_Delete(szBuf2);
+	//			Engine::Safe_Delete(hItems);
+	//	
+	//			break;
+	//		}
+	//	
+	//		else
+	//			isEnd = true;
+	//	}
+	//	
+	//	if (isEnd)
+	//	{
+	//		(lstrcmp(tmpPath->szIsDynamic, L"0") ? bisDynamic = false : bisDynamic = true);
+	//	
+	//		if (bisDynamic)
+	//		{
+	//			*hItems = m_Tree.InsertItem(szBuf2, 0, 0, hStaticRoot);
+	//			m_listStaticFolder.push_back(szBuf2);
+	//			m_listStaticBranch.push_back(hItems);
+	//		}
+	//	
+	//		else
+	//		{
+	//			*hItems = m_Tree.InsertItem(szBuf2, 0, 0, hDynamicRoot);
+	//			m_listDynamicFolder.push_back(szBuf2);
+	//			m_listDynamicBranch.push_back(hItems);
+	//		}
+	//	
+	//		m_Tree.InsertItem(tmpPath->sztrStateKey, 0, 0, *hItems);
+	//	
+	//		hItems = nullptr;
+	//	}
+	//}
+	//
+	//fin.close();
 
 	return;
 }
@@ -914,8 +914,8 @@ void CMapTool_Page::Change_Mesh(const _tchar * _MeshName)
 
 void CMapTool_Page::Add_Object_OnTree(Engine::CRenderObject * _pObj)
 {
-	_tchar tmpName[MAX_STR] = L"";
-	_tchar tmpNumber[MAX_STR] = L"";
+	_tchar tmpName[STR_128] = L"";
+	_tchar tmpNumber[STR_128] = L"";
 	//HTREEITEM* newItem = new HTREEITEM;
 
 	// 이름 복사하고,
@@ -1161,7 +1161,7 @@ void CMapTool_Page::OnTvnSelchangedTree3(NMHDR * pNMHDR, LRESULT * pResult)
 	{
 		if (lstrcmp(strCur, L"Object"))
 		{
-			_tchar szNum[MAX_STR] = L"";
+			_tchar szNum[STR_128] = L"";
 			_int tmpIndex = _ttoi(strCur);
 
 			_itot_s(tmpIndex, szNum, 10);
@@ -1170,7 +1170,7 @@ void CMapTool_Page::OnTvnSelchangedTree3(NMHDR * pNMHDR, LRESULT * pResult)
 
 			for (auto& iter : m_listObject)
 			{
-				_tchar szTmpName[MAX_STR] = L"";
+				_tchar szTmpName[STR_128] = L"";
 
 				lstrcpy(szTmpName, static_cast<Engine::CRenderObject*>(iter)->Get_Name());
 				lstrcat(szTmpName, szNum);
@@ -1195,15 +1195,15 @@ void CMapTool_Page::OnTvnSelchangedTree3(NMHDR * pNMHDR, LRESULT * pResult)
 	{
 		if (lstrcmp(strCur, L"Object"))
 		{
-			_tchar szNum[MAX_STR] = L"";
+			_tchar szNum[STR_128] = L"";
 			_int tmpIndex = _ttoi(strCur);
 
 			_itot_s(tmpIndex, szNum, 10);
 
 			for (auto& iter : m_listObject)
 			{
-				_tchar szNum2[MAX_STR] = L"";
-				_tchar szTmpName[MAX_STR] = L"";
+				_tchar szNum2[STR_128] = L"";
+				_tchar szTmpName[STR_128] = L"";
 
 				_itot_s(static_cast<Engine::CRenderObject*>(iter)->Get_Index(), szNum2, 10);
 

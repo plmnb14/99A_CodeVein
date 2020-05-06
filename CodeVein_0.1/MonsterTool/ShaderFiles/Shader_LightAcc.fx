@@ -137,19 +137,8 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	
 	float fDepth = (lightPosition.z / lightPosition.w);
 	float DepthBias = 0.00125f;
-	
-	if (fDepth > fShadow + DepthBias)
-	{
-		Out.vShade.rgb *= 0.2f;
-		Out.vSpecular.a = AO;
 
-		if (vHeightValue.x > 0.0001f)
-		{
-			Out.vShade.xyz = ceil(Out.vShade.xyz * 2.f) / 2.f;
-		}
-
-		return Out;
-	}
+	Out.vShade.rgb *= fShadow;
 
 	// Shadow End ====================================================================
 

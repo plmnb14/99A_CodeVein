@@ -612,10 +612,10 @@ void CParticleTab::OnBnClickedButton_Save()
 		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
 		L"Data Files(*.dat)|*.dat||", this);
 
-	TCHAR szCurrentPath[MAX_STR] = L"";
+	TCHAR szCurrentPath[STR_256] = L"";
 
 	// 현재 작업경로를 얻어오는 함수
-	::GetCurrentDirectory(MAX_STR, szCurrentPath);
+	::GetCurrentDirectory(STR_256, szCurrentPath);
 	// 현재 경로에서 파일명을 제거하는 함수. 제거할 파일명 없다면 말단 폴더명을 제거 (\Debug ,\Tool)
 	::PathRemoveFileSpec(szCurrentPath);
 	::PathRemoveFileSpec(szCurrentPath);
@@ -677,9 +677,9 @@ void CParticleTab::OnBnClickedButton_Save()
 		::WriteFile(hFile, &m_pInfo->fRotSpeed_Max, sizeof(_float), &dwByte, nullptr);
 		::WriteFile(hFile, &m_pInfo->fRotSpeed_Min, sizeof(_float), &dwByte, nullptr);
 		::WriteFile(hFile, &m_pInfo->iMaxCount, sizeof(_int), &dwByte, nullptr);
-		::WriteFile(hFile, &m_pInfo->szColorName, sizeof(TCHAR) * MAX_STR, &dwByte, nullptr);
-		::WriteFile(hFile, &m_pInfo->szName, sizeof(TCHAR) * MAX_STR, &dwByte, nullptr);
-		::WriteFile(hFile, &m_pInfo->szGradientName, sizeof(TCHAR) * MAX_STR, &dwByte, nullptr);
+		::WriteFile(hFile, &m_pInfo->szColorName, sizeof(TCHAR) * STR_256, &dwByte, nullptr);
+		::WriteFile(hFile, &m_pInfo->szName, sizeof(TCHAR) * STR_256, &dwByte, nullptr);
+		::WriteFile(hFile, &m_pInfo->szGradientName, sizeof(TCHAR) * STR_256, &dwByte, nullptr);
 		::WriteFile(hFile, &m_pInfo->vEndColor, sizeof(_v4), &dwByte, nullptr);
 		::WriteFile(hFile, &m_pInfo->vMoveDirection, sizeof(_v3), &dwByte, nullptr);
 		::WriteFile(hFile, &m_pInfo->vMoveScale, sizeof(_v3), &dwByte, nullptr);
@@ -734,10 +734,10 @@ void CParticleTab::OnBnClickedButton_Load()
 		OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT,
 		L"Data Files(*.dat)|*.dat||", this);
 
-	TCHAR szCurrentPath[MAX_STR] = L"";
+	TCHAR szCurrentPath[STR_256] = L"";
 
 	// 현재 작업경로를 얻어오는 함수
-	::GetCurrentDirectory(MAX_STR, szCurrentPath);
+	::GetCurrentDirectory(STR_256, szCurrentPath);
 	// 현재 경로에서 파일명을 제거하는 함수. 제거할 파일명 없다면 말단 폴더명을 제거 (\Debug ,\Tool)
 	::PathRemoveFileSpec(szCurrentPath);
 	::PathRemoveFileSpec(szCurrentPath);
@@ -756,7 +756,7 @@ void CParticleTab::OnBnClickedButton_Load()
 
 		DWORD dwByte = 0;
 		EFFECT_INFO tInfo;
-		_tchar szBuff[256] = L"";
+		_tchar szBuff[STR_256] = L"";
 
 		_bool bIsTex = false;
 		::ReadFile(hFile, &bIsTex, sizeof(_bool), &dwByte, nullptr);
@@ -907,24 +907,24 @@ void CParticleTab::OnBnClickedButton_Load()
 			wsprintf(szBuff, L"%i", tInfo.iMaxCount);
 			m_EditParticleCount.SetString(szBuff);
 
-			::ReadFile(hFile, &tInfo.szColorName, sizeof(TCHAR) * MAX_STR, &dwByte, nullptr);
+			::ReadFile(hFile, &tInfo.szColorName, sizeof(TCHAR) * STR_256, &dwByte, nullptr);
 			GetDlgItem(IDC_EDIT44)->SetWindowTextW(tInfo.szColorName);
 			m_wstrColorTexName = tInfo.szColorName; 
 
 			if (bIsTex)
 			{
-				::ReadFile(hFile, &tInfo.szName, sizeof(TCHAR) * MAX_STR, &dwByte, nullptr);
+				::ReadFile(hFile, &tInfo.szName, sizeof(TCHAR) * STR_256, &dwByte, nullptr);
 				GetDlgItem(IDC_EDIT2)->SetWindowTextW(tInfo.szName);
 				m_wstrTexName = tInfo.szName;
 			}
 			else
 			{
-				::ReadFile(hFile, &tInfo.szName, sizeof(TCHAR) * MAX_STR, &dwByte, nullptr);
+				::ReadFile(hFile, &tInfo.szName, sizeof(TCHAR) * STR_256, &dwByte, nullptr);
 				GetDlgItem(IDC_EDIT2)->SetWindowTextW(tInfo.szName);
 				m_wstrMeshName = tInfo.szName;
 			}
 
-			::ReadFile(hFile, &tInfo.szGradientName, sizeof(TCHAR) * MAX_STR, &dwByte, nullptr);
+			::ReadFile(hFile, &tInfo.szGradientName, sizeof(TCHAR) * STR_256, &dwByte, nullptr);
 
 			::ReadFile(hFile, &tInfo.vEndColor, sizeof(_v4), &dwByte, nullptr);
 			_stprintf_s(szBuff, _countof(szBuff), L"%.3f", tInfo.vEndColor.x);

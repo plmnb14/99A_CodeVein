@@ -1,7 +1,7 @@
 #pragma once
 
 #include "RenderObject.h"
-#include "ActeiveObject.h"
+#include "ActiveObject.h"
 #include "Management.h"
 #include "Effect.h"
 

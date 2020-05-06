@@ -1,6 +1,6 @@
 #include "..\Headers\Object_Manager.h"
 #include "Transform.h"
-//#include "Management.h"
+#include "Management.h"
 
 IMPLEMENT_SINGLETON(CObject_Manager)
 
@@ -181,15 +181,18 @@ HRESULT CObject_Manager::LoadObjectPrototypes_FromPath(_Device pGraphicDev, cons
 {
 	wifstream fin;
 
-	_int	iIndex;
+	_int	iIndex = 0;
 
-	_float fA[3];
-	_float fB[3];
-	_float fC[3];
+	_float fA[3] = {};
+	_float fB[3] = {};
+	_float fC[3] = {};
 
 	_v3    vVtx[3];
 
-	_tchar  szPath[MAX_STR] = L"../../Data/Load_StageData/";
+	_tchar  szPath[STR_128] = L"../../Data/Load_StageData/";
+
+	CManagement* pManagement = CManagement::Get_Instance();
+	Safe_AddRef(pManagement);
 
 	// 파일명과 경로를 조합하여 최종 파일경로 산출 
 	lstrcat(szPath, szImgPath);
@@ -197,27 +200,30 @@ HRESULT CObject_Manager::LoadObjectPrototypes_FromPath(_Device pGraphicDev, cons
 	fin.open(szPath);
 
 	if (fin.fail())
+	{
+		Safe_Release(pManagement);
 		return S_OK;
+	}
 
 	while (true)
 	{
 		Engine::OBJ_INFO* ObjInfo = new Engine::OBJ_INFO;
 
-		fin.getline(ObjInfo->szName, MAX_STR, '|');
-		fin.getline(ObjInfo->szIndex, MAX_STR, '|');
-		fin.getline(ObjInfo->szTag, MAX_STR, '|');
+		fin.getline(ObjInfo->szName, STR_128, '|');
+		fin.getline(ObjInfo->szIndex, STR_128, '|');
+		fin.getline(ObjInfo->szTag, STR_128, '|');
 
-		fin.getline(ObjInfo->szPos_X, MAX_STR, '|');
-		fin.getline(ObjInfo->szPos_Y, MAX_STR, '|');
-		fin.getline(ObjInfo->szPos_Z, MAX_STR, '|');
+		fin.getline(ObjInfo->szPos_X, STR_128, '|');
+		fin.getline(ObjInfo->szPos_Y, STR_128, '|');
+		fin.getline(ObjInfo->szPos_Z, STR_128, '|');
 
-		fin.getline(ObjInfo->szRot_X, MAX_STR, '|');
-		fin.getline(ObjInfo->szRot_Y, MAX_STR, '|');
-		fin.getline(ObjInfo->szRot_Z, MAX_STR, '|');
+		fin.getline(ObjInfo->szRot_X, STR_128, '|');
+		fin.getline(ObjInfo->szRot_Y, STR_128, '|');
+		fin.getline(ObjInfo->szRot_Z, STR_128, '|');
 
-		fin.getline(ObjInfo->szScale_X, MAX_STR, '|');
-		fin.getline(ObjInfo->szScale_Y, MAX_STR, '|');
-		fin.getline(ObjInfo->szScale_Z, MAX_STR);
+		fin.getline(ObjInfo->szScale_X, STR_128, '|');
+		fin.getline(ObjInfo->szScale_Y, STR_128, '|');
+		fin.getline(ObjInfo->szScale_Z, STR_128);
 
 
 		if (fin.eof())
@@ -230,91 +236,47 @@ HRESULT CObject_Manager::LoadObjectPrototypes_FromPath(_Device pGraphicDev, cons
 		{
 			iIndex = _wtoi(ObjInfo->szIndex);
 
-			fA[0] = (_float)_wtof(ObjInfo->szPos_X);
-			fA[1] = (_float)_wtof(ObjInfo->szPos_Y);
-			fA[2] = (_float)_wtof(ObjInfo->szPos_Z);
+			vVtx[0].x = (_float)_wtof(ObjInfo->szPos_X);
+			vVtx[0].y = (_float)_wtof(ObjInfo->szPos_Y);
+			vVtx[0].z = (_float)_wtof(ObjInfo->szPos_Z);
 
-			fB[0] = (_float)_wtof(ObjInfo->szRot_X);
-			fB[1] = (_float)_wtof(ObjInfo->szRot_Y);
-			fB[2] = (_float)_wtof(ObjInfo->szRot_Z);
+			vVtx[1].x = (_float)_wtof(ObjInfo->szRot_X);
+			vVtx[1].y = (_float)_wtof(ObjInfo->szRot_Y);
+			vVtx[1].z = (_float)_wtof(ObjInfo->szRot_Z);
 
-			fC[0] = (_float)_wtof(ObjInfo->szScale_X);
-			fC[1] = (_float)_wtof(ObjInfo->szScale_Y);
-			fC[2] = (_float)_wtof(ObjInfo->szScale_Z);
-
-			vVtx[0] = { fA[0], fA[1], fA[2] };
-			vVtx[1] = { fB[0], fB[1], fB[2] };
-			vVtx[2] = { fC[0], fC[1], fC[2] };
+			vVtx[2].x = (_float)_wtof(ObjInfo->szScale_X);
+			vVtx[2].y = (_float)_wtof(ObjInfo->szScale_Y);
+			vVtx[2].z = (_float)_wtof(ObjInfo->szScale_Z);
 
 
-			_tchar szObjName[MAX_STR] = L"";
+			_tchar szObjName[STR_128] = L"";
 			lstrcpy(szObjName, ObjInfo->szName);
+
+			// 프로토타입 이름으로 만들고
+			_tchar tmpProtoName[STR_128] = L"RenderObject_";
+			lstrcat(tmpProtoName, ObjInfo->szName);
+
 			if (!(lstrcmp(szObjName, L"Mesh_Mistletoe")))
 			{
-				Engine::CActiveObject*	pActiveObj = Engine::CActiveObject::Create(pGraphicDev, 0);
-
-				pActiveObj->Chaning_AtvMesh(ObjInfo->szName);
-				pActiveObj->Set_Index(iIndex);
-
-				TARGET_TO_TRANS(pActiveObj)->Set_Pos(vVtx[0]);
-				TARGET_TO_TRANS(pActiveObj)->Set_Angle(vVtx[1]);
-				TARGET_TO_TRANS(pActiveObj)->Set_Scale(vVtx[2]);
-
-				Add_GameOject_ToLayer_NoClone(pActiveObj, SCENE_STAGE, L"Layer_Mistletoe", NULL);
-				lstrcat(szObjName, ObjInfo->szIndex);
-
-				pActiveObj = nullptr;
+				pManagement->Add_GameObject_ToLayer(tmpProtoName, SCENE_STAGE, L"Layer_Mistletoe", 
+					&CActiveObject::ACTOBJ_INFO(ObjInfo->szName, vVtx[0], vVtx[1], vVtx[2], iIndex , 0));
 			}
-			if (!(lstrcmp(szObjName, L"Mesh_Itembox")))
+
+			else if (!(lstrcmp(szObjName, L"Mesh_Itembox")))
 			{
-				Engine::CActiveObject*	pActiveObj = Engine::CActiveObject::Create(pGraphicDev, 2);
-
-				pActiveObj->Chaning_AtvMesh(ObjInfo->szName);
-				pActiveObj->Set_Index(iIndex);
-
-				TARGET_TO_TRANS(pActiveObj)->Set_Pos(vVtx[0]);
-				TARGET_TO_TRANS(pActiveObj)->Set_Angle(vVtx[1]);
-				TARGET_TO_TRANS(pActiveObj)->Set_Scale(vVtx[2]);
-
-				Add_GameOject_ToLayer_NoClone(pActiveObj, SCENE_STAGE, L"Layer_ItemBox", NULL);
-				lstrcat(szObjName, ObjInfo->szIndex);
-
-				pActiveObj = nullptr;
+				pManagement->Add_GameObject_ToLayer(tmpProtoName, SCENE_STAGE, L"Layer_ItemBox",
+					&CActiveObject::ACTOBJ_INFO(ObjInfo->szName, vVtx[0], vVtx[1], vVtx[2], iIndex, 2));
 			}
-			if (!(lstrcmp(szObjName, L"Mesh_Itembox_Lid")))
+
+			else if (!(lstrcmp(szObjName, L"Mesh_Itembox_Lid")))
 			{
-				Engine::CActiveObject*	pActiveObj = Engine::CActiveObject::Create(pGraphicDev, 3);
-
-				pActiveObj->Chaning_AtvMesh(ObjInfo->szName);
-				pActiveObj->Set_Index(iIndex);
-
-				TARGET_TO_TRANS(pActiveObj)->Set_Pos(vVtx[0]);
-				TARGET_TO_TRANS(pActiveObj)->Set_Angle(vVtx[1]);
-				TARGET_TO_TRANS(pActiveObj)->Set_Scale(vVtx[2]);
-
-				Add_GameOject_ToLayer_NoClone(pActiveObj, SCENE_STAGE, L"Layer_Render", NULL);
-				lstrcat(szObjName, ObjInfo->szIndex);
-
-				pActiveObj = nullptr;
+				pManagement->Add_GameObject_ToLayer(tmpProtoName, SCENE_STAGE, L"Layer_ItemBox",
+					&CActiveObject::ACTOBJ_INFO(ObjInfo->szName, vVtx[0], vVtx[1], vVtx[2], iIndex, 3));
 			}
 			else
 			{
-				Engine::CRenderObject*	pInstance = Engine::CRenderObject::Create(pGraphicDev);
-
-				pInstance->Change_Mesh(ObjInfo->szName);
-				pInstance->Set_Index(iIndex);
-
-				TARGET_TO_TRANS(pInstance)->Set_Pos(vVtx[0]);
-				TARGET_TO_TRANS(pInstance)->Set_Angle(vVtx[1]);
-				TARGET_TO_TRANS(pInstance)->Set_Scale(vVtx[2]);
-
-				Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Render", NULL);
-
-				/*_tchar szObjName[MAX_STR] = L"";
-				lstrcpy(szObjName, ObjInfo->szName);*/
-				lstrcat(szObjName, ObjInfo->szIndex);
-
-				pInstance = nullptr;
+				pManagement->Add_GameObject_ToLayer(tmpProtoName, SCENE_STAGE, L"Layer_Render", 
+					&CRenderObject::OBJ_INFO(ObjInfo->szName, vVtx[0], vVtx[1], vVtx[2], iIndex));
 			}
 
 			Engine::Safe_Delete(ObjInfo);
@@ -322,6 +284,8 @@ HRESULT CObject_Manager::LoadObjectPrototypes_FromPath(_Device pGraphicDev, cons
 	}
 
 	fin.close();
+
+	Safe_Release(pManagement);
 
 	return S_OK;
 }

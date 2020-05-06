@@ -26,10 +26,10 @@ HRESULT CScene_Stage_01::Ready_Scene()
 	if (FAILED(Ready_Layer_Environment(L"Layer_Environment")))
 		return E_FAIL;
 
-	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_01.dat");
-
 	CScriptManager::Get_Instance()->Set_StageIdx(1);
 	CScriptManager::Get_Instance()->Ready_Script_DynamicObject(1);
+
+	//g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_01.dat");
 
 	return S_OK;
 }
@@ -189,7 +189,7 @@ HRESULT CScene_Stage_01::Ready_LightDesc()
 	LightDesc.Ambient = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	// In.WorldSpace
-	_v3 vLightDir = _v3(0.2f, -1.f, 0.9f);
+	_v3 vLightDir = _v3(100.f, -50.f, 0.f);
 
 	V3_NORMAL_SELF(&vLightDir);
 
@@ -221,8 +221,6 @@ CScene_Stage_01 * CScene_Stage_01::Create(LPDIRECT3DDEVICE9 pGraphic_Device, _bo
 
 void CScene_Stage_01::Free()
 {
-	//Safe_Release(m_pNavMesh);
-
 	CScene::Free();
 }
 

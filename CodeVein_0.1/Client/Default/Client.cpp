@@ -25,6 +25,7 @@ CMyPhysx*			g_pPhysx;
 // ================================================
 // 스테이지를 한번이라도 들렸는지 확인하는 전역변수 (MeshLoad를 위해)
 // ================================================
+bool				g_bActiveCam	= false;
 bool				g_bOnStage[8]	= {};
 bool				g_bReleaseMode	= false;
 short				g_sStageIdx_Cur = 0;
@@ -55,7 +56,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 {
 
 #ifdef _DEBUG
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif // _DEBUG
 
     UNREFERENCED_PARAMETER(hPrevInstance);

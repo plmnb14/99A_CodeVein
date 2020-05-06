@@ -59,7 +59,7 @@ private:
 private:
 	typedef struct tagParticleInfo
 	{
-		_tchar	szName[256];
+		_tchar	szName[STR_128];
 		_float	fLifeTime;
 		_float	fDelayTime;
 		_v3		vCreatePos;

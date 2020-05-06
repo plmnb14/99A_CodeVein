@@ -24,9 +24,6 @@ HRESULT CScene_Stage_Base::Ready_Scene()
 	if (FAILED(Ready_Layer_BackGround(L"Layer_Sky")))
 		return E_FAIL;
 
-	// 메쉬 생성합니다.
-	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_00.dat");
-
 	// 플레이어의 네비 메쉬도 바꿔줍니다.
 	Ready_Player();
 
@@ -213,93 +210,111 @@ HRESULT CScene_Stage_Base::Ready_LightDesc()
 	NEW_LIGHT		LightDesc;
 	ZeroMemory(&LightDesc, sizeof(NEW_LIGHT));
 
-	float fAmbient = 0.1f;
-
-	LightDesc.Type = D3DLIGHT_POINT;
-	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
+	LightDesc.Type = D3DLIGHT_DIRECTIONAL;
+	LightDesc.Diffuse = D3DXCOLOR(1.f, 0.882f, 0.801f, 1.f);
+	LightDesc.Ambient = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
-	LightDesc.Position = _v3(-0.f, 3.f, -10.f);
-	LightDesc.Range = 7.f;
+	// In.WorldSpace
+	_v3 vLightDir = _v3(-100.f, -50.f, 0.f);
+
+	V3_NORMAL_SELF(&vLightDir);
+
+	LightDesc.Direction = vLightDir;
 
 	LightDesc.fAlpha = 1.f;
-
-
-	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
-		return E_FAIL;
-
-	LightDesc.Type = D3DLIGHT_POINT;
-	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
-	LightDesc.Specular = LightDesc.Diffuse;
-	LightDesc.Position = _v3(-0.f, 3.f, -5.f);
-	LightDesc.Range = 7.f;
-	LightDesc.fAlpha = 1.f;
-
-
-	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
-		return E_FAIL;
-
-	LightDesc.Type = D3DLIGHT_POINT;
-	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
-	LightDesc.Specular = LightDesc.Diffuse;
-	LightDesc.Position = _v3(-0.f, 3.f, 0.f);
-	LightDesc.Range = 7.f;
-
-	LightDesc.fAlpha = 1.f;
+	//LightDesc.Direction = _v3(0.0f, 0.f, 1.f);
 
 	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
 		return E_FAIL;
 
 
-	LightDesc.Type = D3DLIGHT_POINT;
-	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
-	LightDesc.Specular = LightDesc.Diffuse;
-	LightDesc.Position = _v3(-0.f, 3.f, 5.f);
-	LightDesc.Range = 7.f;
-
-	LightDesc.fAlpha = 1.f;
-
-	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
-		return E_FAIL;
-
-	LightDesc.Type = D3DLIGHT_POINT;
-	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
-	LightDesc.Specular = LightDesc.Diffuse;
-	LightDesc.Position = _v3(-0.f, 4.f, 10.f);
-	LightDesc.Range = 7.f;
-
-	LightDesc.fAlpha = 1.f;
-
-	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
-		return E_FAIL;
-
-	LightDesc.Type = D3DLIGHT_POINT;
-	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
-	LightDesc.Specular = LightDesc.Diffuse;
-	LightDesc.Position = _v3(-0.f, 4.f, 15.f);
-	LightDesc.Range = 7.f;
-
-	LightDesc.fAlpha = 1.f;
-
-	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
-		return E_FAIL;
-
-	LightDesc.Type = D3DLIGHT_POINT;
-	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
-	LightDesc.Specular = LightDesc.Diffuse;
-	LightDesc.Position = _v3(-0.f, 4.f, 20.f);
-	LightDesc.Range = 7.f;
-
-	LightDesc.fAlpha = 1.f;
-
-	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
-		return E_FAIL;
+	//float fAmbient = 0.1f;
+	//
+	//LightDesc.Type = D3DLIGHT_POINT;
+	//LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
+	//LightDesc.Specular = LightDesc.Diffuse;
+	//LightDesc.Position = _v3(-0.f, 3.f, -10.f);
+	//LightDesc.Range = 7.f;
+	//
+	//LightDesc.fAlpha = 1.f;
+	//
+	//
+	//if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+	//	return E_FAIL;
+	//
+	//LightDesc.Type = D3DLIGHT_POINT;
+	//LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
+	//LightDesc.Specular = LightDesc.Diffuse;
+	//LightDesc.Position = _v3(-0.f, 3.f, -5.f);
+	//LightDesc.Range = 7.f;
+	//LightDesc.fAlpha = 1.f;
+	//
+	//
+	//if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+	//	return E_FAIL;
+	//
+	//LightDesc.Type = D3DLIGHT_POINT;
+	//LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
+	//LightDesc.Specular = LightDesc.Diffuse;
+	//LightDesc.Position = _v3(-0.f, 3.f, 0.f);
+	//LightDesc.Range = 7.f;
+	//
+	//LightDesc.fAlpha = 1.f;
+	//
+	//if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+	//	return E_FAIL;
+	//
+	//
+	//LightDesc.Type = D3DLIGHT_POINT;
+	//LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
+	//LightDesc.Specular = LightDesc.Diffuse;
+	//LightDesc.Position = _v3(-0.f, 3.f, 5.f);
+	//LightDesc.Range = 7.f;
+	//
+	//LightDesc.fAlpha = 1.f;
+	//
+	//if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+	//	return E_FAIL;
+	//
+	//LightDesc.Type = D3DLIGHT_POINT;
+	//LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
+	//LightDesc.Specular = LightDesc.Diffuse;
+	//LightDesc.Position = _v3(-0.f, 4.f, 10.f);
+	//LightDesc.Range = 7.f;
+	//
+	//LightDesc.fAlpha = 1.f;
+	//
+	//if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+	//	return E_FAIL;
+	//
+	//LightDesc.Type = D3DLIGHT_POINT;
+	//LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
+	//LightDesc.Specular = LightDesc.Diffuse;
+	//LightDesc.Position = _v3(-0.f, 4.f, 15.f);
+	//LightDesc.Range = 7.f;
+	//
+	//LightDesc.fAlpha = 1.f;
+	//
+	//if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+	//	return E_FAIL;
+	//
+	//LightDesc.Type = D3DLIGHT_POINT;
+	//LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
+	//LightDesc.Specular = LightDesc.Diffuse;
+	//LightDesc.Position = _v3(-0.f, 4.f, 20.f);
+	//LightDesc.Range = 7.f;
+	//
+	//LightDesc.fAlpha = 1.f;
+	//
+	//if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+	//	return E_FAIL;
 
 	return NOERROR;
 }
@@ -323,7 +338,10 @@ CScene_Stage_Base * CScene_Stage_Base::Create(LPDIRECT3DDEVICE9 pGraphic_Device,
 
 void CScene_Stage_Base::Free()
 {
-	Safe_Release(m_pNavMesh);
+	if (nullptr != m_pLoading)
+	{
+		Safe_Release(m_pLoading);
+	}
 
 	CScene::Free();
 }

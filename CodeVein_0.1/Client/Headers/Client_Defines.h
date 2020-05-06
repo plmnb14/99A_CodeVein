@@ -30,6 +30,7 @@ extern Engine::CMyPhysx*			g_pPhysx;
 
 //enum SCENEID { SCENE_STATIC, SCENE_LOGO, SCENE_STAGE, SCENE_END };
 
+extern bool		g_bActiveCam;
 extern bool		g_bOnStage[8];
 extern bool		g_bReleaseMode;
 extern short	g_sStageIdx_Cur;

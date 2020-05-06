@@ -598,6 +598,7 @@ HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 	//_float	fDot = acosf(D3DXVec3Dot(&_v3{ 0,0,1 }, &vCamLook));
 	//if (vRight.z > 0)
 	//	fDot *= -1.f;
+
 	//if (CInput_Device::Get_Instance()->Key_Down(DIK_I))
 	//{
 	//	Create_Effect_Delay(L"Player_Skill_Halberd_RedParticle_Explosion", 0.f, _v3(0, 1, 0), nullptr);
@@ -926,8 +927,8 @@ void CParticleMgr::Create_Effect(_tchar* szName, _v3 vPos, CTransform * pFollowT
 		{
 			_tchar szTemp[256];
 			lstrcpy(szTemp, pFindedQueue->front()->Get_ParticleName());
-			CHAR szForPrint[MAX_STR] = "";
-			WideCharToMultiByte(CP_ACP, 0, szTemp, MAX_STR, szForPrint, MAX_STR, NULL, NULL);
+			CHAR szForPrint[STR_256] = "";
+			WideCharToMultiByte(CP_ACP, 0, szTemp, STR_256, szForPrint, STR_256, NULL, NULL);
 			if(GetAsyncKeyState('B') & 0x8000)
 				cout << "Effect Create : " << szForPrint << endl;
 

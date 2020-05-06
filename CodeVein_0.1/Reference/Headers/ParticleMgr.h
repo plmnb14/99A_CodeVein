@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Transform.h"
+#include "ObjectPool_Manager.h"
 
 BEGIN(Engine)
 class CManagement;
@@ -31,6 +32,7 @@ public:
 	void Create_Effect_NoPool(_tchar* szName, _v3 vPos, CTransform* pFollowTrans = nullptr);
 	void Create_Effect_Offset(_tchar* szName, _float fOffset, _v3 vPos, CTransform* pFollowTrans = nullptr);
 	void Create_Effect_Delay(_tchar* szName, _float fDelay, _v3 vPos, CTransform* pFollowTrans = nullptr, _v3 vAngle = V3_NULL);
+	void Create_Effect_Delay(_tchar* szName, _float fDelay, _v3 vPos, CTransform* pFollowTrans, _int iLayer);
 	void Create_Effect_Delay(_tchar* szName, _float fDelay, _v3 vPos, CTransform* pFollowTrans, _mat* pTargetMat);
 	void Create_Effect_FinishPos(_tchar* szName, _float fDelay, _v3 vPos, _v3 vFinishPos, CTransform* pFollowTrans = nullptr);
 	void Create_Effect_Curve(_tchar* szName, _v3 vPos, CTransform* pTargetTrans, _float fPower);
@@ -41,7 +43,7 @@ public:
 	void Create_Spawn_Effect(_float fDelay, _v3 vPos, _v3 vFinishPos, CTransform* pFollowTrans = nullptr);
 	void Create_FootSmoke_Effect(_v3 vPos, _float fOffset); // 지금은 한 객체만 사용가능
 	void Create_BossDeadParticle_Effect(_v3 vPos, _float fDelay, _float fLength);
-
+	void Create_Skill_Start_Effect(_v3 vPos, _v3 vEffPos, CTransform* pFollowTrans = nullptr);
 public:
 	CTrail_VFX* Create_Trail();
 
@@ -57,7 +59,7 @@ private:
 private:
 	typedef struct tagParticleInfo
 	{
-		_tchar	szName[256];
+		_tchar	szName[STR_128];
 		_float	fLifeTime;
 		_float	fDelayTime;
 		_v3		vCreatePos;
@@ -68,6 +70,18 @@ private:
 		_mat*				pTargetMatrix;
 	}PARTICLE_INFO;
 
+	typedef struct tagEffInfo
+	{
+		_v3 vCreatePos;
+		_v3 vDirection;
+	}EFF_INFO;
+
+	typedef struct tagEffDecalInfo
+	{
+		_v3 vCreatePos;
+		_v3 vDirection;
+		_bool bWall;
+	}EFF_DECAL_INFO;
 private:
 	map<_tchar*, queue<CEffect*>>	m_EffectPool;	// 미리 클론해놓은 큐
 	list<PARTICLE_INFO*>			m_vecParticle;	// 재생될 파티클 리스트

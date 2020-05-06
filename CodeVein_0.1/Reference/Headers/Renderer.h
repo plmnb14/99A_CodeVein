@@ -22,14 +22,33 @@ public:
 public:
 	HRESULT Add_RenderList(RENDERID eGroup, CGameObject* pGameObject);
 	HRESULT Draw_RenderList();
+
+public:
+	void DOF_On(_bool bOn);
+	void Mono_On(_bool bOn);
+	void Fog_On(_bool bOn);
+
 private:
-	_bool						m_bOnRenderTarget = false;
-	_mat						m_matLastWVP;
 	list<CGameObject*>			m_RenderList[RENDER_END];
 	typedef list<CGameObject*>	RENDERLIST;
 private:
-	INSTANCEDATA* m_pInstanceData = nullptr;
-	_int m_iInstanceCnt = 0;
+	_bool						m_bOnRenderTarget = false;
+	_mat						m_matLastWVP;
+
+	INSTANCEDATA*				m_pInstanceData = nullptr;
+	_int						m_iInstanceCnt = 0;
+
+	_bool						m_bMono = false;
+	_float						m_fToneGradient = 1.f;
+	_int						m_iToneIdx = 5;
+
+	_bool						m_bDOF = false;
+	_float						m_fFocus = 0.f;
+	_float						m_fRange = 0.f;
+
+	_bool						m_bFog = false;
+	_float						m_fFogDestiny = 0.f;
+
 private:
 	CTarget_Manager*			m_pTarget_Manager = nullptr;
 	CLight_Manager*				m_pLight_Manager = nullptr;
@@ -43,7 +62,9 @@ private:
 
 	CBuffer_ViewPort*			m_pViewPortBuffer = nullptr;
 	CTexture*					m_pSSAOTexture = nullptr;
-
+	CTexture*					m_pGradingTexture = nullptr;
+	CTexture*					m_pGradingTextureTest = nullptr;
+	
 public:
 	//====================
 	// 임시 타겟 변수
@@ -74,6 +95,7 @@ private:
 	HRESULT Render_MotionBlurObj();
 	HRESULT Render_MotionBlur();
 	HRESULT Render_ToneMapping();
+	HRESULT Render_BlurDOF();
 	HRESULT Render_After();
 
 private:

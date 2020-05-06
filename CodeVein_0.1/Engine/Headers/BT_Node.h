@@ -50,7 +50,7 @@ protected:
 protected:
 	_uint			m_iNodeNumber = 0;
 	BT_NODE_STATE	m_eChild_State = BT_NODE_STATE::INPROGRESS;
-	char			m_pNodeName[256] = { 0, };
+	char			m_pNodeName[STR_128] = { 0, };
 
 	_bool	m_bInit = true;
 	

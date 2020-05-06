@@ -2,18 +2,32 @@
 #include "Management.h"
 
 CRenderObject::CRenderObject(_Device _pGraphicDev)
-	:CGameObject(_pGraphicDev),
-	m_eGroup(RENDER_NONALPHA),
-	m_iIndex(0)
+	:CGameObject(_pGraphicDev)
 {
 }
 
 CRenderObject::CRenderObject(const CRenderObject& rhs)
-	: CGameObject(rhs.m_pGraphic_Dev)
+	: CGameObject(rhs)
+	//, m_eGroup(rhs.m_eGroup)
+	//, m_iIndex(rhs.m_iIndex)	
+//: CGameObject(rhs.m_pGraphic_Dev)
+//, m_eGroup(rhs.m_eGroup)
+//, m_iIndex(rhs.m_iIndex)
+{
+	//memcpy(m_szName, rhs.m_szName, sizeof(_tchar[STR_128]));
+	//
+	//Add_Essentional_Copy();
+	//Default_Setting();
+	//
+	//m_pTransform->Set_Info(rhs.m_pTransform->Get_Info());
+}
+
+CRenderObject::CRenderObject(const CRenderObject & rhs, _bool _OnTool)
+	:CGameObject(rhs)
 	, m_eGroup(rhs.m_eGroup)
 	, m_iIndex(rhs.m_iIndex)
 {
-	memcpy(m_szName, rhs.m_szName, sizeof(_tchar[MAX_STR]));
+	memcpy(m_szName, rhs.m_szName, sizeof(_tchar[STR_128]));
 
 	Add_Essentional_Copy();
 	Default_Setting();
@@ -40,6 +54,17 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 	CGameObject::LateInit_GameObject();
 	CGameObject::Update_GameObject(_TimeDelta);
 
+	return S_OK;
+}
+
+_int CRenderObject::Late_Update_GameObject(_double TimeDelta)
+{
+	if (false == m_bEnable)
+		return NO_EVENT;
+
+	if (false == m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), 20.f))
+		return NO_EVENT;
+
 	if (true == m_bOnTool)
 	{
 		Update_Collider();
@@ -49,16 +74,10 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 	{
 		m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
 		m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this);
-		m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this);
+
+		if(lstrcmp(m_szName, L"Mesh_Merged_Building"))
+			m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this);
 	}
-
-	return S_OK;
-}
-
-_int CRenderObject::Late_Update_GameObject(_double TimeDelta)
-{
-	if (false == m_bEnable)
-		return NO_EVENT;
 
 	return _int();
 }
@@ -283,7 +302,7 @@ void CRenderObject::Set_RenderGroup(RENDERID _eGroup)
 	m_eGroup = _eGroup;
 }
 
-CRenderObject * CRenderObject::Create(_Device _pGraphicDev)
+CRenderObject * CRenderObject::Create_For_Tool(_Device _pGraphicDev)
 {
 	CRenderObject* pInstance = new CRenderObject(_pGraphicDev);
 
@@ -295,9 +314,21 @@ CRenderObject * CRenderObject::Create(_Device _pGraphicDev)
 	return pInstance;
 }
 
-CRenderObject * CRenderObject::CreateClone(CRenderObject* _pCopy)
+CRenderObject * CRenderObject::CreateClone_For_Tool(CRenderObject * _pCopy, _bool _OnTool)
 {
 	return new CRenderObject(*_pCopy);
+}
+
+CRenderObject * CRenderObject::Create(_Device _pGraphicDev)
+{
+	CRenderObject* pInstance = new CRenderObject(_pGraphicDev);
+
+	if (FAILED(pInstance->Initialize_For_Protoype()))
+	{
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
 }
 
 void CRenderObject::Free()
@@ -314,7 +345,19 @@ void CRenderObject::Free()
 
 CGameObject * CRenderObject::Clone_GameObject(void * pArg)
 {
-	return nullptr;
+	CRenderObject* pInstance = new CRenderObject(*this);
+
+	if (FAILED(pInstance->Ready_GameObject(pArg)))
+	{
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+HRESULT CRenderObject::Initialize_For_Protoype()
+{
+	return S_OK;
 }
 
 HRESULT CRenderObject::Initialize()
@@ -341,7 +384,48 @@ void CRenderObject::Init_Shader()
 	m_pShader->Set_Value("g_matWorld", &matWorld, sizeof(_mat));
 	m_pShader->Set_Value("g_matView", &matView, sizeof(_mat));
 	m_pShader->Set_Value("g_matProj", &matProj, sizeof(_mat));
+}
 
-	float fRimValue = 0.f;
-	m_pShader->Set_Value("g_fRimAlpha", &fRimValue, sizeof(_float));
+HRESULT CRenderObject::Ready_GameObject(void * pAvg)
+{
+	OBJ_INFO Info = *(OBJ_INFO*)(pAvg);
+
+	Add_Components(Info.szMeshName);
+
+	m_pTransform->Set_Pos(Info.vPos);
+	m_pTransform->Set_Angle(Info.vAngle);
+	m_pTransform->Set_Scale(Info.vScale);
+
+	return S_OK;
+}
+
+HRESULT CRenderObject::Add_Components(_tchar * szMeshName)
+{
+	// For.Com_Transform
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransform)))
+		return E_FAIL;
+
+	// For.Com_Renderer
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRenderer)))
+		return E_FAIL;
+
+	// For.Com_Shader
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShader)))
+		return E_FAIL;
+
+	// for.Com_Mesh
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, szMeshName, L"Com_StaticMesh", (CComponent**)&m_pMesh_Static)))
+		return E_FAIL;
+
+	// for.Com_Mesh
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+		return E_FAIL;
+
+	// for.Com_Optimization
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Optimization", L"Com_Opimaization", (CComponent**)& m_pOptimization)))
+		return E_FAIL;
+
+	lstrcpy(m_szName, szMeshName);
+
+	return S_OK;
 }

@@ -1,7 +1,7 @@
 #pragma once
 
 #include "RenderObject.h"
-#include "ActeiveObject.h"
+#include "ActiveObject.h"
 #include "Management.h"
 
 BEGIN(Engine)
@@ -113,7 +113,7 @@ protected:
 	_int					m_iPass = 0;
 	_int					m_iLayer = 0;
 
-	_tchar					m_szParticleName[256] = L"";
+	_tchar					m_szParticleName[STR_128] = L"";
 
 public:
 	virtual void Free();

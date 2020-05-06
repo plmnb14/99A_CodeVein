@@ -152,13 +152,15 @@ void CMainApp::Global_KeyInput()
 	// 자유 시점 카메라
 	if (g_pInput_Device->Key_Down(DIK_NUMPAD0))
 	{
-		CCameraMgr::Get_Instance()->Set_CamView(TOOL_VIEW);
+		if(g_bActiveCam)
+			CCameraMgr::Get_Instance()->Set_CamView(TOOL_VIEW);
 	}
 
 	// 3인칭 카메라
 	if (g_pInput_Device->Key_Down(DIK_NUMPAD1))
 	{
-		CCameraMgr::Get_Instance()->Set_CamView(BACK_VIEW);
+		if(g_bActiveCam)
+			CCameraMgr::Get_Instance()->Set_CamView(BACK_VIEW);
 	}
 
 	// All Gizmo's Toggle On / Off

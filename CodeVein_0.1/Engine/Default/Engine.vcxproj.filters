@@ -235,9 +235,6 @@
     <Filter Include="01.Utility\[02] GameObject\4%29 Effect\99%29 Trail">
       <UniqueIdentifier>{dac7e4fb-8d3e-4b8c-8917-b7c23b078cd6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="01.Utility\[02] GameObject\5%29ActeiveObject_Engine">
-      <UniqueIdentifier>{063442cd-02dd-4869-8ab7-3d2f69c964cc}</UniqueIdentifier>
-    </Filter>
     <Filter Include="01.Utility\[06] RenderTarget">
       <UniqueIdentifier>{3b9e2ce9-dff4-4b8f-856c-bf3a6e526f87}</UniqueIdentifier>
     </Filter>
@@ -273,6 +270,9 @@
     </Filter>
     <Filter Include="01.Utility\[02] GameObject\4%29 Effect\4%29 OrthoEffect">
       <UniqueIdentifier>{243d2321-1297-4269-991e-4b73b148aca0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="01.Utility\[02] GameObject\5%29 ActiveObject">
+      <UniqueIdentifier>{063442cd-02dd-4869-8ab7-3d2f69c964cc}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -534,9 +534,6 @@
     <ClInclude Include="..\Headers\Trail_VFX.h">
       <Filter>01.Utility\[02] GameObject\4%29 Effect\99%29 Trail</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\ActeiveObject.h">
-      <Filter>01.Utility\[02] GameObject\5%29ActeiveObject_Engine</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\BT_CompareValue.h">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
     </ClInclude>
@@ -593,6 +590,9 @@
     </ClInclude>
     <ClInclude Include="..\Headers\ObjectPool_Manager.h">
       <Filter>01.Utility\[02] GameObject\6%29 ObjectPull</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ActiveObject.h">
+      <Filter>01.Utility\[02] GameObject\5%29 ActiveObject</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\OrthoEffect.h">
       <Filter>01.Utility\[02] GameObject\4%29 Effect\4%29 OrthoEffect</Filter>
@@ -833,9 +833,6 @@
     <ClCompile Include="..\Codes\Trail_VFX.cpp">
       <Filter>01.Utility\[02] GameObject\4%29 Effect\99%29 Trail</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\ActeiveObject.cpp">
-      <Filter>01.Utility\[02] GameObject\5%29ActeiveObject_Engine</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\BT_CompareValue.cpp">
       <Filter>01.Utility\[03] Component\Component\09%29 AIController\Node\Decorator\Derive</Filter>
     </ClCompile>
@@ -892,6 +889,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\ObjectPool_Manager.cpp">
       <Filter>01.Utility\[02] GameObject\6%29 ObjectPull</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ActiveObject.cpp">
+      <Filter>01.Utility\[02] GameObject\5%29 ActiveObject</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\OrthoEffect.cpp">
       <Filter>01.Utility\[02] GameObject\4%29 Effect\4%29 OrthoEffect</Filter>

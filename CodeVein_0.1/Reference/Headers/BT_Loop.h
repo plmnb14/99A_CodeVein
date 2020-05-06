@@ -15,9 +15,9 @@ public:
 	{
 		tagInitInfo(char* pNodeName, _uint iLoopCount)
 			: iMaxLoopCount(iLoopCount)
-		{ strcpy_s<256>(Target_NodeName, pNodeName); }
+		{ strcpy_s<STR_128>(Target_NodeName, pNodeName); }
 
-		char	Target_NodeName[256] = { 0, };
+		char	Target_NodeName[STR_128] = { 0, };
 		_uint	iMaxLoopCount = 0;
 	}INFO;
 

@@ -5,9 +5,9 @@ IMPLEMENT_SINGLETON(CInput_Device)
 
 CInput_Device::CInput_Device(void)
 {
-	ZeroMemory(&m_byKeyDown, sizeof(_byte) * MAX_STR);
-	ZeroMemory(&m_byKeyUp, sizeof(_byte) * MAX_STR);
-	ZeroMemory(&m_byKeyState, sizeof(_byte) * MAX_STR);
+	ZeroMemory(&m_byKeyDown, sizeof(_byte) * STR_256);
+	ZeroMemory(&m_byKeyUp, sizeof(_byte) * STR_256);
+	ZeroMemory(&m_byKeyState, sizeof(_byte) * STR_256);
 }
 
 CInput_Device::~CInput_Device(void)
@@ -258,7 +258,7 @@ HRESULT Engine::CInput_Device::Ready_Input_Dev(HINSTANCE hInst, HWND hWnd)
 
 HRESULT Engine::CInput_Device::Set_InputDev(void)
 {
-	m_pKeyBoard->GetDeviceState(MAX_STR, m_byKeyState);
+	m_pKeyBoard->GetDeviceState(STR_256, m_byKeyState);
 	m_pMouse->GetDeviceState(sizeof(m_tMouseState), &m_tMouseState);
 
 	return S_OK;
