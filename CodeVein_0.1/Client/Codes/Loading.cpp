@@ -611,6 +611,17 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"Totem_Fire_Ready")))
 		return E_FAIL;
 
+	if (FAILED(Add_EffectPrototype(L"Totem_Ice_BulletBody")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Totem_Ice_Bullet_Dead_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Totem_Ice_Bullet_Dead_1")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Totem_Ice_Bullet_Dead_Particle")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"Totem_Ice_Ready")))
+		return E_FAIL;
+	
 	if (FAILED(Add_EffectPrototype(L"Monkey_Knife", true)))
 		return E_FAIL;
 
