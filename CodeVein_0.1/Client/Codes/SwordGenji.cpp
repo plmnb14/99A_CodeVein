@@ -206,6 +206,9 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 	// 플레이어 발견
 	else
 	{
+		// 가까운 녀석 어그로 끌림.
+		Set_Target_Auto();
+
 		// 뼈 위치 업데이트
 		Update_Bone_Of_BlackBoard();
 		// BB 직접 업데이트
@@ -1203,11 +1206,12 @@ void CSwordGenji::Check_PhyCollider()
 
 void CSwordGenji::Push_Collider()
 {
-	list<CGameObject*> tmpList[3];
+	list<CGameObject*> tmpList[4];
 
 	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
 	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
 	tmpList[2] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
+	tmpList[3] = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_MORTAL);
 
 	for (auto& ListObj : tmpList)
 	{
