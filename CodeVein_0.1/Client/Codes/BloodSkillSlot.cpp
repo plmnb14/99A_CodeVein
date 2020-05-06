@@ -31,65 +31,62 @@ HRESULT CBloodSkillSlot::Ready_GameObject(void * pArg)
 _int CBloodSkillSlot::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
-	m_pRendererCom->Add_RenderList(RENDER_UI, this);
+	m_pRendererCom->Add_RenderList(RENDER_3DUI, this);
 
 	m_pCollider->Update(m_pTransformCom->Get_Pos());
 
 	m_fSpeed += _float(TimeDelta) * 1.f;
 
-	switch (m_eSkillIndex)
+	switch (m_eSkillID)
 	{
-	case Skill_OneHand_Active_01:
+	case Dragon_Lunge:
 		m_iIndex = 1;
 		break;
-	case Skill_OneHand_Active_02:
+	case Vanishing_Hollow:
 		m_iIndex = 2;
 		break;
-	case Skill_OneHand_Active_03:
+	case Circulating_Pulse:
 		m_iIndex = 3;
 		break;
-	case Skill_OneHand_Active_04:
+	case Triple_Annihilator:
 		m_iIndex = 4;
 		break;
-	case Skill_TwoHand_Active_01:
+	case Shadow_Assault:
 		m_iIndex = 5;
 		break;
-	case Skill_TwoHand_Active_02:
+	case Severing_Abyss:
 		m_iIndex = 6;
 		break;
-	case Skill_TwoHand_Active_03:
+	case Swallow_Cutter:
 		m_iIndex = 7;
 		break;
-	case Skill_TwoHand_Active_04:
+	case Tormenting_Blast:
 		m_iIndex = 8;
 		break;
-	case Skill_Halverd_Single:
+	case Phantom_Assault:
 		m_iIndex = 9;
 		break;
-	case Skill_Gun_Single:
+	case Legion_Punisher:
 		m_iIndex = 10;
 		break;
-	case Skill_Buff_Enchant_01:
-		m_iIndex = 11;
-		break;
-	case Skill_Buff_Enchant_02:
-		m_iIndex = 12;
-		break;
-	case Skill_Buff_Enchant_03:
-		m_iIndex = 13;
-		break;
-	case Skill_End:
-		m_iIndex = 0;
+	case SkillID_End:
 		break;
 	}
 
 	_v3 vLookZ = m_pTransformCom->Get_Axis(AXIS_Z);
-	Compute_ViewZ(&m_pTransformCom->Get_Pos());
-
-	m_pCursor->Set_Active(m_bIsActive && m_bIsSelect);
-	TARGET_TO_TRANS(m_pCursor)->Set_Pos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookZ) * 0.01f);
-	TARGET_TO_TRANS(m_pCursor)->Set_Angle(m_pTransformCom->Get_Angle());
 	
+	if (m_eSkillID == SkillID_End)
+		m_pCursor->Set_Active(false);
+	else
+		m_pCursor->Set_Active(m_bIsActive && m_bIsSelect);
+
+	TARGET_TO_TRANS(m_pCursor)->Set_Pos(m_pTransformCom->Get_Pos()/* + *V3_NORMAL_SELF(&vLookZ) * -0.01f*/);
+	TARGET_TO_TRANS(m_pCursor)->Set_Angle(m_pTransformCom->Get_Angle());
+
+	_v3 vWorldPos;
+	memcpy(vWorldPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
+	Compute_ViewZ(&vWorldPos);
+
 	return NO_EVENT;
 }
 
@@ -106,7 +103,7 @@ _int CBloodSkillSlot::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CBloodSkillSlot::Render_GameObject()
 {
-	if (!m_bIsActive)
+	if (!m_bIsActive || SkillID_End == m_eSkillID)
 		return NOERROR;
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
@@ -115,20 +112,42 @@ HRESULT CBloodSkillSlot::Render_GameObject()
 	_uint iIndex = 0;
 	_uint iPass = 0;
 	
-		
-	iIndex = m_iIndex;
-	iPass = 1;
+	if (!m_bIsRelease)
+	{
+		//LOOP(2)
+		{
+			/*(0 == i) ? (iIndex = 0) && (iPass = 1) : */(iIndex = m_iIndex) && (iPass = 5);
+
+			if (FAILED(SetUp_ConstantTable(iIndex)))
+				return E_FAIL;
+
+			m_pShaderCom->Begin_Shader();
+			m_pShaderCom->Begin_Pass(iPass);
+
+			m_pBufferCom->Render_VIBuffer();
+			m_pShaderCom->End_Pass();
+			m_pShaderCom->End_Shader();
+		}
+	}
+	else
+	{
+		//LOOP(2)
+		{
+			/*(0 == i) ? (iIndex = 0) && (iPass = 1) : */(iIndex = m_iIndex) && (iPass = 1);
+
+			if (FAILED(SetUp_ConstantTable(iIndex)))
+				return E_FAIL;
+
+			m_pShaderCom->Begin_Shader();
+			m_pShaderCom->Begin_Pass(iPass);
+
+			m_pBufferCom->Render_VIBuffer();
+			m_pShaderCom->End_Pass();
+			m_pShaderCom->End_Shader();
+		}
+	}
 	
-	if (FAILED(SetUp_ConstantTable(iIndex)))
-		return E_FAIL;
-
-	m_pShaderCom->Begin_Shader();
-	m_pShaderCom->Begin_Pass(iPass);
-
-	m_pBufferCom->Render_VIBuffer();
-	m_pShaderCom->End_Pass();
-	m_pShaderCom->End_Shader();
-
+	
 	return S_OK;
 }
 
@@ -147,7 +166,7 @@ HRESULT CBloodSkillSlot::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Shader
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_UI", L"Com_Shader", (CComponent**)&m_pShaderCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_3dUI", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
 	// for.Com_VIBuffer
@@ -171,14 +190,26 @@ HRESULT CBloodSkillSlot::SetUp_ConstantTable(_uint iIndex)
 		return E_FAIL;
 
 	
-	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
+	/*if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
+		return E_FAIL;*/
+	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
+
+	if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
+		return E_FAIL;
+
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, _uint(iIndex))))
+		return E_FAIL;
+
+	m_pShaderCom->Set_Texture("g_DepthTexture", g_pManagement->Get_Target_Texture(L"Target_DepthUI"));
 
 	return NOERROR;
 }

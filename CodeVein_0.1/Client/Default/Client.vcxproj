@@ -175,6 +175,7 @@
     <ClInclude Include="..\Headers\Armor_Slot.h" />
     <ClInclude Include="..\Headers\BackGround.h" />
     <ClInclude Include="..\Headers\BloodCodeMenuUI.h" />
+    <ClInclude Include="..\Headers\BloodCodeOwner.h" />
     <ClInclude Include="..\Headers\BloodCodeSelectUI.h" />
     <ClInclude Include="..\Headers\BloodCodeSlot.h" />
     <ClInclude Include="..\Headers\BloodCodeUI.h" />
@@ -214,6 +215,8 @@
     <ClInclude Include="..\Headers\Expendables_Inven.h" />
     <ClInclude Include="..\Headers\Expendables_Slot.h" />
     <ClInclude Include="..\Headers\ExpUI.h" />
+    <ClInclude Include="..\Headers\FighterBlood.h" />
+    <ClInclude Include="..\Headers\FighterReleaseUI.h" />
     <ClInclude Include="..\Headers\FireBoy.h" />
     <ClInclude Include="..\Headers\FireBullet.h" />
     <ClInclude Include="..\Headers\FireFlame.h" />
@@ -264,6 +267,7 @@
     <ClInclude Include="..\Headers\PoisonRotationBullet.h" />
     <ClInclude Include="..\Headers\PoisonTornado.h" />
     <ClInclude Include="..\Headers\Flag.h" />
+    <ClInclude Include="..\Headers\PrometheusBlood.h" />
     <ClInclude Include="..\Headers\QueensKnight.h" />
     <ClInclude Include="..\Headers\QuickSlot.h" />
     <ClInclude Include="..\Headers\Scene_Stage_01.h" />
@@ -274,9 +278,14 @@
     <ClInclude Include="..\Headers\Scene_Title.h" />
     <ClInclude Include="..\Headers\ScriptManager.h" />
     <ClInclude Include="..\Headers\Select_UI.h" />
+    <ClInclude Include="..\Headers\SkillAcquisitionUI.h" />
     <ClInclude Include="..\Headers\SkillGauge.h" />
+    <ClInclude Include="..\Headers\ReleaseQuestionUI.h" />
     <ClInclude Include="..\Headers\SkillReleaseUI.h" />
+    <ClInclude Include="..\Headers\SkillSlot.h" />
     <ClInclude Include="..\Headers\SkillUI.h" />
+    <ClInclude Include="..\Headers\OKMessageUI.h" />
+    <ClInclude Include="..\Headers\Skill_Inven.h" />
     <ClInclude Include="..\Headers\StageSelectUI.h" />
     <ClInclude Include="..\Headers\StageUI.h" />
     <ClInclude Include="..\Headers\StatusUI.h" />
@@ -307,7 +316,9 @@
     <ClInclude Include="..\Headers\Yeti.h" />
     <ClInclude Include="..\Headers\YetiBullet.h" />
     <ClInclude Include="Client.h" />
+    <ClInclude Include="ReleaseOption.h" />
     <ClInclude Include="Resource.h" />
+    <ClInclude Include="SkillIcon.h" />
     <ClInclude Include="StageLoader.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
@@ -319,6 +330,7 @@
     <ClCompile Include="..\Codes\Armor_Slot.cpp" />
     <ClCompile Include="..\Codes\BackGround.cpp" />
     <ClCompile Include="..\Codes\BloodCodeMenuUI.cpp" />
+    <ClCompile Include="..\Codes\BloodCodeOwner.cpp" />
     <ClCompile Include="..\Codes\BloodCodeSelectUI.cpp" />
     <ClCompile Include="..\Codes\BloodCodeSlot.cpp" />
     <ClCompile Include="..\Codes\BloodCodeUI.cpp" />
@@ -357,6 +369,8 @@
     <ClCompile Include="..\Codes\Expendables_Inven.cpp" />
     <ClCompile Include="..\Codes\Expendables_Slot.cpp" />
     <ClCompile Include="..\Codes\ExpUI.cpp" />
+    <ClCompile Include="..\Codes\FighterBlood.cpp" />
+    <ClCompile Include="..\Codes\FighterReleaseUI.cpp" />
     <ClCompile Include="..\Codes\FireBoy.cpp" />
     <ClCompile Include="..\Codes\FireBullet.cpp" />
     <ClCompile Include="..\Codes\FireFlame.cpp" />
@@ -406,6 +420,7 @@
     <ClCompile Include="..\Codes\PoisonRotationBullet.cpp" />
     <ClCompile Include="..\Codes\PoisonTornado.cpp" />
     <ClCompile Include="..\Codes\Flag.cpp" />
+    <ClCompile Include="..\Codes\PrometheusBlood.cpp" />
     <ClCompile Include="..\Codes\QueensKnight.cpp" />
     <ClCompile Include="..\Codes\QuickSlot.cpp" />
     <ClCompile Include="..\Codes\Scene_Stage_01.cpp" />
@@ -416,9 +431,14 @@
     <ClCompile Include="..\Codes\Scene_Title.cpp" />
     <ClCompile Include="..\Codes\ScriptManager.cpp" />
     <ClCompile Include="..\Codes\Select_UI.cpp" />
+    <ClCompile Include="..\Codes\SkillAcquisitionUI.cpp" />
     <ClCompile Include="..\Codes\SkillGauge.cpp" />
+    <ClCompile Include="..\Codes\ReleaseQuestionUI.cpp" />
     <ClCompile Include="..\Codes\SkillReleaseUI.cpp" />
+    <ClCompile Include="..\Codes\SkillSlot.cpp" />
     <ClCompile Include="..\Codes\SkillUI.cpp" />
+    <ClCompile Include="..\Codes\OKMessageUI..cpp" />
+    <ClCompile Include="..\Codes\Skill_Inven.cpp" />
     <ClCompile Include="..\Codes\StageSelectUI.cpp" />
     <ClCompile Include="..\Codes\StageUI.cpp" />
     <ClCompile Include="..\Codes\StatusUI.cpp" />
@@ -449,6 +469,8 @@
     <ClCompile Include="..\Codes\Yeti.cpp" />
     <ClCompile Include="..\Codes\YetiBullet.cpp" />
     <ClCompile Include="Client.cpp" />
+    <ClCompile Include="ReleaseOption.cpp" />
+    <ClCompile Include="SkillIcon.cpp" />
     <ClCompile Include="StageLoader.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
@@ -465,6 +487,7 @@
     <Image Include="small.ico" />
   </ItemGroup>
   <ItemGroup>
+    <FxCompile Include="..\ShaderFiles\Shader_3dUI.fx" />
     <FxCompile Include="..\ShaderFiles\Shader_Blur.fx" />
     <FxCompile Include="..\ShaderFiles\Shader_Default.fx" />
     <FxCompile Include="..\ShaderFiles\Shader_Effect.fx" />

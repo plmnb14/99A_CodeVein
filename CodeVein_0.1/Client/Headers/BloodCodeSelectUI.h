@@ -13,17 +13,12 @@ private:
 	virtual ~CBloodCodeSelectUI() = default;
 
 public:
-	BloodCode_ID  Get_Type();
-
-public:
-	void Set_SlotPos(_v3 vPosition) { m_vSlotPosition = vPosition; }
+	BloodCode_ID  Get_CodeID();
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
 	virtual HRESULT Ready_GameObject(void* pArg);
 	virtual _int	Update_GameObject(_double TimeDelta);
-	virtual _int	Late_Update_GameObject(_double TimeDelta);
-	virtual HRESULT Render_GameObject();
 
 private:
 	HRESULT Add_Component();
@@ -40,11 +35,8 @@ private:
 	CCollider*				m_pCollider = nullptr;
 
 private:
-	BloodCode_ID			m_eType = BloodCode_End;
-	_bool					m_bIsSelect = false;
+	BloodCode_ID			m_eID = BloodCode_End;
 	vector<CBloodCodeSlot*>	m_vecBloodCodeSlot;
-	_uint					m_iSelectIndex = 0;
-	_v3						m_vSlotPosition;
 	_float					m_fCross = 100.f;
 
 public:

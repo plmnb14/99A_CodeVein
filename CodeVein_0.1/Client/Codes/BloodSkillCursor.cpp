@@ -29,13 +29,15 @@ HRESULT CBloodSkillCursor::Ready_GameObject(void * pArg)
 _int CBloodSkillCursor::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
-	m_pRendererCom->Add_RenderList(RENDER_UI, this);
-	Compute_ViewZ(&m_pTransformCom->Get_Pos());
+	m_pRendererCom->Add_RenderList(RENDER_3DUI, this);
+	
 
 	m_fSpeed += _float(TimeDelta) * 1.f;
 
-	
-	
+	_v3 vWorldPos;
+	memcpy(vWorldPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
+	Compute_ViewZ(&vWorldPos);
+
 	return NO_EVENT;
 }
 
@@ -62,7 +64,7 @@ HRESULT CBloodSkillCursor::Render_GameObject()
 		return E_FAIL;
 
 	m_pShaderCom->Begin_Shader();
-	m_pShaderCom->Begin_Pass(9);
+	m_pShaderCom->Begin_Pass(4);
 
 	m_pBufferCom->Render_VIBuffer();
 	m_pShaderCom->End_Pass();
@@ -86,7 +88,7 @@ HRESULT CBloodSkillCursor::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Shader
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_UI", L"Com_Shader", (CComponent**)&m_pShaderCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_3dUI", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
 	// for.Com_VIBuffer
