@@ -951,14 +951,14 @@
     <ClInclude Include="..\Headers\Colleague_UI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\CollBullet_Heal.h">
-      <Filter>02.GameObject\Stage\9%29 Player_Colleague\Colleague Bullet\Heal Bullet</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\Colleague_Bullet.h">
       <Filter>02.GameObject\Stage\9%29 Player_Colleague\Colleague Bullet\Att Bullet</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Colleague_Jack.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\Colleague Jack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\CollBullet_Heal.h">
+      <Filter>02.GameObject\Stage\9%29 Player_Colleague\Colleague Bullet\Heal Bullet</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1439,14 +1439,14 @@
     <ClCompile Include="..\Codes\Colleague_UI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\CollBullet_Heal.cpp">
-      <Filter>02.GameObject\Stage\9%29 Player_Colleague\Colleague Bullet\Heal Bullet</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\Colleague_Bullet.cpp">
       <Filter>02.GameObject\Stage\9%29 Player_Colleague\Colleague Bullet\Att Bullet</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Colleague_Jack.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\Colleague Jack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\CollBullet_Heal.cpp">
+      <Filter>02.GameObject\Stage\9%29 Player_Colleague\Colleague Bullet\Heal Bullet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
