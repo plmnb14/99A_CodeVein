@@ -83,7 +83,7 @@ _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 		m_bIsActive = true;	
 		CUI_Manager::Get_Instance()->Get_Instance()->Get_Inventory()->Set_Active(false);
 		CUI_Manager::Get_Instance()->Get_Instance()->Get_Inventory()->Set_Detail(false);		
-		// 스테이터스 창 비활성화
+		// 스테이터스 창 활성화
 		CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(true);
 	}
 
@@ -216,7 +216,7 @@ void CTotal_Inven::SetUp_Default()
 	CUI::UI_DESC* pDesc = nullptr;
 	
 	CInventory_Icon* pInstance = nullptr;
-	LOOP(2)
+	LOOP(3)
 	{
 		pInstance = static_cast<CInventory_Icon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_InvenIcon",nullptr));
 		pInstance->Set_UI_Pos(235.f + 40.f * i, 130.f);
@@ -226,7 +226,8 @@ void CTotal_Inven::SetUp_Default()
 		m_vecIcon.push_back(pInstance);
 	}
 	m_vecIcon[0]->Set_Type(CInventory_Icon::ICON_ALL);
-	m_vecIcon[1]->Set_Type(CInventory_Icon::ICON_EXIT);
+	m_vecIcon[1]->Set_Type(CInventory_Icon::ICON_PET);
+	m_vecIcon[2]->Set_Type(CInventory_Icon::ICON_EXIT);
 
 	LOOP(3)
 	{
@@ -315,7 +316,16 @@ void CTotal_Inven::Click_Icon()
 		m_pInventory->Set_Active(true);
 		m_bIsActive = false;
 	}
-	else if (m_vecIcon[1]->Pt_InRect() &&
+	//else if (m_vecIcon[1]->Pt_InRect() &&
+	//	g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+	//{	
+	//	// 스테이터스 창 비활성화
+	//	CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(false);
+	//	// 펫 인벤토리 활성화
+	//	CUI_Manager::Get_Instance()->Get_Pet_Inven()->Set_Active(true);
+	//	m_bIsActive = false;
+	//}
+	else if (m_vecIcon[2]->Pt_InRect() &&
 		g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
 		m_bIsActive = false;

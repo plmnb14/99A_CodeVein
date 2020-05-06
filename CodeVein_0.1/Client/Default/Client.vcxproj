@@ -226,6 +226,7 @@
     <ClInclude Include="..\Headers\FireTornadoCol.h" />
     <ClInclude Include="..\Headers\Monster.h" />
     <ClInclude Include="..\Headers\Pet_Bullet.h" />
+    <ClInclude Include="..\Headers\Pet_Inven.h" />
     <ClInclude Include="..\Headers\Pet_PoisonButterFly.h" />
     <ClInclude Include="..\Headers\PlayerFontUI.h" />
     <ClInclude Include="..\Headers\FontNumUI.h" />
@@ -379,6 +380,7 @@
     <ClCompile Include="..\Codes\FireSphere.cpp" />
     <ClCompile Include="..\Codes\FireTornadoCol.cpp" />
     <ClCompile Include="..\Codes\Pet_Bullet.cpp" />
+    <ClCompile Include="..\Codes\Pet_Inven.cpp" />
     <ClCompile Include="..\Codes\Pet_PoisonButterFly.cpp" />
     <ClCompile Include="..\Codes\PlayerFontUI.cpp" />
     <ClCompile Include="..\Codes\FontNumUI.cpp" />
