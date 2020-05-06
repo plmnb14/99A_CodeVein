@@ -65,7 +65,7 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 
 	/*if (true == m_bCheck_SEndGame)
 	{*/
-		m_pDynamicMesh->SetUp_Animation(m_eColleague_Ani);
+		
 
 		if (g_pInput_Device->Key_Down(DIK_K))
 			m_tObjParam.fHp_Cur -= 100.f;
@@ -84,7 +84,6 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 		{
 			m_eMovetype = CPlayer_Colleague::Coll_Heal;
 			m_eColl_HealMoment = CPlayer_Colleague::My_Heal;
-			m_eColleague_Ani = CPlayer_Colleague::Ani_Heal;
 		}
 		if ((true == m_bNest_Skil_CoolTImer && 100.f >= m_pTarget->Get_Target_Hp()) &&
 			m_eMovetype != CPlayer_Colleague::Coll_Dead)
@@ -92,7 +91,6 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 			m_fCoolTimer_Skil_limit = 5.f;
 			m_eMovetype = CPlayer_Colleague::Coll_Heal;
 			m_eColl_HealMoment = CPlayer_Colleague::Player_Heal;
-			m_eColleague_Ani = CPlayer_Colleague::Ani_PlayerHeal_or_Gun;
 		}
 
 		Check_MyHit();
@@ -104,17 +102,17 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 		Function_Checking_SkilCoolTime(m_fCoolTimer_Skil_limit);
 		Function_CoolTIme();
 
-		
+		m_pDynamicMesh->SetUp_Animation(m_eColleague_Ani);
 
-		
-
+		cout << m_pSword->Get_Target_CanAttack() << endl;
+		cout << "상태: " << m_eMovetype << " | " << "0 - Idle, 1 - Move, 3 - Att" << endl;
+		cout << "공격상태: " << m_eColl_Sub_AttMoment << " | " << "Ani : " << m_eColleague_Ani << endl;
 	
 	
 		if (m_eMovetype != CPlayer_Colleague::Coll_Dead)
 			Enter_Collision();
 
-		cout << "현재 HP: " << m_tObjParam.fHp_Cur << "상태: " << m_eMovetype << " | " << "0 - Idle, 1 - Move, 3 - Att" << endl;
-		cout << "공격상태: " << m_eColl_Sub_AttMoment << " | " << "4 - Att_ThreeCombo, 5 - Att_CenterDown" << endl;
+		
 
 	//}
 	return S_OK;
@@ -440,7 +438,7 @@ void CPlayer_Colleague::Check_Do_List()
 		m_pTransformCom->Set_Pos(_v3(m_pTargetTransformCom->Get_Pos().x - 3.f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 2.f));
 	}
 
-
+	// 몬스터 or 보스 리스트가 비어있거나 Enable 이면 탐색 종료
 	for (auto& iter_Mon : *m_List_pMonTarget[0])
 	{
 		if (false == iter_Mon->Get_Enable())
@@ -457,6 +455,8 @@ void CPlayer_Colleague::Check_Do_List()
 		if (m_List_pMonTarget[1]->empty())
 			continue;
 	}
+	
+
 
 	if (!(m_List_pMonTarget[0]->empty()))
 		fMinPos = 2000000.f;
@@ -552,6 +552,7 @@ void CPlayer_Colleague::Check_Do_List()
 	if (true == m_tObjParam.bIsHit || true == m_tObjParam.bIsDodge)
 		return;
 
+	// 플레이어와의 거리 체크
 	_float	fMyPlayerLength = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransformCom->Get_Pos()));
 
 	if (fMyPlayerLength < 30.f)		// 플레이어가 범위 내에 있는지 체크
@@ -576,16 +577,8 @@ void CPlayer_Colleague::Check_Do_List()
 				m_bNear_byMonster = true;
 				// 몬스터가 범위 내로 들어왔고 어떤 공격을 할건지
 
-				//if (true == m_tObjParam.bCanAttack)
-				//{
-				//	m_eMovetype = CPlayer_Colleague::Coll_Attack;
-				//	m_eColl_AttackMoment = CPlayer_Colleague::Att_Skil;
-				//}
-				//else
-				//{
-					m_eMovetype = CPlayer_Colleague::Coll_Attack;
-					m_eColl_AttackMoment = CPlayer_Colleague::Att_Normal;
-				//}
+				m_eMovetype = CPlayer_Colleague::Coll_Attack;
+				m_eColl_AttackMoment = CPlayer_Colleague::Att_Normal;
 			}
 			else
 			{
@@ -642,6 +635,7 @@ void CPlayer_Colleague::Set_AniEvent()
 		case CPlayer_Colleague::Idle_Waiting:
 		{
 			CollIdle_Waiting();
+			m_eColleague_Ani = CPlayer_Colleague::Ani_Idle;
 			// Idle_Waiting - 플레이어가 범위 안에 있고 주위에 몬스터도 없을 때
 			break;
 		}
@@ -661,31 +655,26 @@ void CPlayer_Colleague::Set_AniEvent()
 		{
 			// 플레이어와 일정 거리 이상으로 가까워졌을 때 걷는다
 			CollMove_Walk();
+			m_eColleague_Ani = CPlayer_Colleague::Ani_Front_Walk;
 			break;
 		}
 		case CPlayer_Colleague::Move_BackWalk:
 		{
 			CollMove_BackWalk();
+			m_eColleague_Ani = CPlayer_Colleague::Ani_Back_Walk;
 			break;
 		}
 		case CPlayer_Colleague::Move_Run:
 		{
 			// 플레이어와 일정 거리 이상 떨어져 있을 때 뛰어서 쫒아간다
 			CollMove_Run();
+			m_eColleague_Ani = CPlayer_Colleague::Ani_Front_Run;
 			break;
 		}
 		case CPlayer_Colleague::Move_BackRun:
 		{
 			CollMove_BackRun();
-		}
-		case CPlayer_Colleague::Move_MonWalk:
-		{
-			CollMove_MonWalk();
-			break;
-		}
-		case CPlayer_Colleague::Move_MonRun:
-		{
-			CollMove_MonRun();
+			m_eColleague_Ani = CPlayer_Colleague::Ani_Back_Run;
 			break;
 		}
 		}
@@ -737,36 +726,56 @@ void CPlayer_Colleague::Set_AniEvent()
 		case CPlayer_Colleague::Att_Base1:
 		{
 			CollAtt_Base1();
+			m_eColleague_Ani = CPlayer_Colleague::One_Att;
 			break;
 		}
 		case CPlayer_Colleague::Att_Base2:
 		{
 			CollAtt_Base2();
+			m_eColleague_Ani = CPlayer_Colleague::Two_Att;
 			break;
 		}
 		case CPlayer_Colleague::Att_Base3:
 		{
 			CollAtt_Base3();
+			m_eColleague_Ani = CPlayer_Colleague::Three_Att;
 			break;
 		}
 		case CPlayer_Colleague::Att_Base4:
 		{
 			CollAtt_Base4();
+			m_eColleague_Ani = CPlayer_Colleague::Four_Att;
 			break;
 		}
 		case CPlayer_Colleague::Att_ThreeCombo:
 		{
 			CollAtt_ThreeCombo();
+			m_eColleague_Ani = CPlayer_Colleague::Ani_Trun_Center_Att_Skil;
 			break;
 		}
 		case CPlayer_Colleague::Att_CenterDown:
 		{
 			CollAtt_CenterDown();
+			m_eColleague_Ani = CPlayer_Colleague::Ani_Jump_CenterAtt_Skil;
 			break;
 		}
 		case CPlayer_Colleague::Att_SlowGun:
 		{
 			CollAtt_SlowGun();
+			m_eColleague_Ani = CPlayer_Colleague::Ani_PlayerHeal_or_Gun;
+			break;
+		}
+		case CPlayer_Colleague::Att_MonWalk:
+		{
+			CollMove_MonWalk();
+			m_eColleague_Ani = CPlayer_Colleague::Ani_Front_Walk;
+			break;
+		}
+		case CPlayer_Colleague::Att_MonRun:
+		{
+			CollMove_MonRun();
+			m_eColleague_Ani = CPlayer_Colleague::Ani_Front_Run;
+			break;
 		}
 		break;
 		}
@@ -778,11 +787,13 @@ void CPlayer_Colleague::Set_AniEvent()
 		case Client::CPlayer_Colleague::Dodge_FrontRoll:
 		{
 			CollDodge_FrontRoll();
+			m_eColleague_Ani = CPlayer_Colleague::Ani_Front_Roll;
 			break;
 		}
 		case Client::CPlayer_Colleague::Dodge_BackRoll:
 		{
 			CollDodge_BackRoll();
+			m_eColleague_Ani = CPlayer_Colleague::Ani_Back_Roll;
 			break;
 		}
 		}
@@ -800,11 +811,13 @@ void CPlayer_Colleague::Set_AniEvent()
 		case Client::CPlayer_Colleague::My_Heal:
 		{
 			CollHeal_ForMe();
+			m_eColleague_Ani = CPlayer_Colleague::Ani_Heal;
 			break;
 		}
 		case Client::CPlayer_Colleague::Player_Heal:
 		{
 			CollHeal_ForPlayer();
+			m_eColleague_Ani = CPlayer_Colleague::Ani_PlayerHeal_or_Gun;
 			break;
 		}
 		}
@@ -813,6 +826,7 @@ void CPlayer_Colleague::Set_AniEvent()
 	case CPlayer_Colleague::Coll_Dead:
 	{
 		Play_Dead();
+		m_eColleague_Ani = CPlayer_Colleague::Ani_Dead;
 		break;
 	}
 
@@ -842,8 +856,8 @@ HRESULT CPlayer_Colleague::SetUp_Default()
 	m_List_pMonTarget[0] = &(g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE));
 	m_List_pMonTarget[1] = &(g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE));
 
-	m_tObjParam.fHp_Cur = 1000.f;
-	m_tObjParam.fHp_Max = 1000.f;
+	m_tObjParam.fHp_Cur = 50000.f;
+	m_tObjParam.fHp_Max = 50000.f;
 	m_tObjParam.fDamage = 10.f;
 
 	m_tObjParam.bCanHit = true;		// 맞을 수 있는지
@@ -898,7 +912,7 @@ void CPlayer_Colleague::Play_Start_Game()
 		{
 			Funtion_Reset_State();
 			m_bCheck_StartGame = true;
-			m_eMovetype = CPlayer_Colleague::Coll_Start;
+			//m_eMovetype = CPlayer_Colleague::Coll_Start;
 		}
 		else
 		{
@@ -932,7 +946,6 @@ void CPlayer_Colleague::Play_Dead()
 
 	if (false == m_bColleagueDead)
 	{
-		m_eColleague_Ani = CPlayer_Colleague::Ani_Dead;
 		Funtion_Reset_State();
 		m_bColleagueDead = true;
 	}
@@ -991,7 +1004,7 @@ void CPlayer_Colleague::Play_Hit()
 	}
 	else
 	{
-		if (m_pDynamicMesh->Is_Finish_Animation(0.86f) && m_eMovetype == CPlayer_Colleague::Coll_Hit)
+		if (m_pDynamicMesh->Is_Finish_Animation(0.86f))
 		{
 			m_tObjParam.bIsHit = false;
 			m_tObjParam.bCanHit = true;
@@ -1020,7 +1033,6 @@ void CPlayer_Colleague::CollMove_Walk()
 	Funtion_RotateBody();
 	Colleague_Movement(2.f, m_pTransformCom->Get_Axis(AXIS_Z));
 	// 지금은 앞으로만 걷게
-	m_eColleague_Ani = CPlayer_Colleague::Ani_Front_Walk;
 }
 
 void CPlayer_Colleague::CollMove_BackWalk()
@@ -1028,7 +1040,6 @@ void CPlayer_Colleague::CollMove_BackWalk()
 	// 뒤로 걷나?
 	Funtion_RotateBody();
 	Colleague_Movement(2.f, -(m_pTransformCom->Get_Axis(AXIS_Z)));
-	m_eColleague_Ani = CPlayer_Colleague::Ani_Back_Walk;
 }
 
 void CPlayer_Colleague::CollMove_Run()
@@ -1036,8 +1047,8 @@ void CPlayer_Colleague::CollMove_Run()
 	// 뛸 때 속도조절하는건데 일시적으로 이렇게 두고 나중에 꼭 수정해야 함
 	Funtion_RotateBody();
 	Colleague_Movement(5.f, m_pTransformCom->Get_Axis(AXIS_Z));
+
 	// 지금은 앞으로만 뛰게
-	m_eColleague_Ani = CPlayer_Colleague::Ani_Front_Run;
 }
 
 void CPlayer_Colleague::CollMove_BackRun()
@@ -1045,12 +1056,11 @@ void CPlayer_Colleague::CollMove_BackRun()
 	Funtion_RotateBody();
 	Colleague_Movement(5.f, -(m_pTransformCom->Get_Axis(AXIS_Z)));
 	// 지금은 앞으로만 뛰게
-	m_eColleague_Ani = CPlayer_Colleague::Ani_Back_Run;
 }
 
 void CPlayer_Colleague::CollMove_MonWalk()
 {
-	if (nullptr == m_pObject_Mon)
+	/*if (nullptr == m_pObject_Mon)
 		return;
 
 	Funtion_RotateBody();
@@ -1059,13 +1069,15 @@ void CPlayer_Colleague::CollMove_MonWalk()
 
 	D3DXVec3Normalize(&MonDir, &MonDir);
 
-	Colleague_Movement(4.f, MonDir);
-	m_eColleague_Ani = CPlayer_Colleague::Ani_Front_Run;
+	Colleague_Movement(4.f, MonDir);*/
+
+	Funtion_RotateBody();
+	Colleague_Movement(2.f, m_pTransformCom->Get_Axis(AXIS_Z));
 }
 
 void CPlayer_Colleague::CollMove_MonRun()
 {
-	if (nullptr == m_pObject_Mon)
+	/*if (nullptr == m_pObject_Mon)
 		return;
 
 	Funtion_RotateBody();
@@ -1074,8 +1086,9 @@ void CPlayer_Colleague::CollMove_MonRun()
 
 	D3DXVec3Normalize(&MonDir, &MonDir);
 
-	Colleague_Movement(4.f, MonDir);
-	m_eColleague_Ani = CPlayer_Colleague::Ani_Front_Run;
+	Colleague_Movement(4.f, MonDir);*/
+	Funtion_RotateBody();
+	Colleague_Movement(5.f, m_pTransformCom->Get_Axis(AXIS_Z));
 }
 
 void CPlayer_Colleague::CollDodge_FrontRoll()
@@ -1144,7 +1157,6 @@ void CPlayer_Colleague::CollIdle_Waiting()
 {
 	Funtion_RotateBody();
 	Colleague_Movement(0.f, m_pTransformCom->Get_Axis(AXIS_Z));
-	m_eColleague_Ani = CPlayer_Colleague::Ani_Idle;
 }
 
 void CPlayer_Colleague::CollAtt_Skil()
@@ -1280,8 +1292,8 @@ void CPlayer_Colleague::CollAtt_Normal()
 		true == m_tObjParam.bHitAgain)
 		return;
 
-	if (true == m_tObjParam.bIsAttack && m_eMovetype == CPlayer_Colleague::Coll_Attack)
-		return;
+	/*if (true == m_tObjParam.bIsAttack && m_eMovetype == CPlayer_Colleague::Coll_Attack)
+		return;*/
 
 	/*if (m_eMovetype == CPlayer_Colleague::Coll_Attack)
 		return;*/
@@ -1294,18 +1306,17 @@ void CPlayer_Colleague::CollAtt_Normal()
 
 	if (fMonLenght > 4.f)
 	{
-		if (false == m_bEventTrigger[4])
-		{
-			m_bEventTrigger[4] = true;
-			m_fAtt_MoveSpeed_Cur = 4.f;
-			m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화0
-			m_fAni_Multiply = 0.f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
-		}
-		Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+		m_eMovetype = CPlayer_Colleague::Coll_Attack;
+		m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_MonRun;
+		//if (false == m_bEventTrigger[4])
+		//{
+		//	m_bEventTrigger[4] = true;
+		//	m_fAtt_MoveSpeed_Cur = 4.f;
+		//	m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화0
+		//	m_fAni_Multiply = 0.f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
+		//}
+		//Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 		/*Colleague_SkilMovement(m_fAtt_MoveMultiply);*/
-		m_eMovetype = CPlayer_Colleague::Coll_Move;
-		m_eColl_MoveMent = CPlayer_Colleague::Move_MonRun;
-		m_eColleague_Ani = CPlayer_Colleague::Ani_Front_Run;
 	}
 	if (true == m_bNest_Att_CoolTimer && (7.3f >= fMonLenght && 4.f < fMonLenght))
 	{
@@ -1313,78 +1324,73 @@ void CPlayer_Colleague::CollAtt_Normal()
 		m_eMovetype = CPlayer_Colleague::Coll_Attack;
 		//m_eColl_AttackMoment = CPlayer_Colleague::Att_Normal;
 		m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_SlowGun;
-		m_eColleague_Ani = CPlayer_Colleague::Ani_PlayerHeal_or_Gun;
 	}
 	else if ((fMonLenght <= 4.f && fMonLenght > 3.f))
 	{
 		// 공격 중에 걷는 애니 시 트리거 사용
 		// 순수하게 걷기만 한다면 트리거 사용x
-		if (false == m_bEventTrigger[5])
+		m_eMovetype = CPlayer_Colleague::Coll_Attack;
+		m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_MonWalk;
+		/*if (false == m_bEventTrigger[5])
 		{
 			m_bEventTrigger[5] = true;
 			m_fAtt_MoveSpeed_Cur = 2.f;
 			m_fAtt_MoveAccel_Cur = 0.f;
 			m_fAni_Multiply = 0.f;
 		}
-		Colleague_Movement(2.f, m_pTransformCom->Get_Axis(AXIS_Z));
+		Colleague_Movement(2.f, m_pTransformCom->Get_Axis(AXIS_Z));*/
 		//Colleague_SkilMovement(m_fAni_Multiply);
-		m_eMovetype = CPlayer_Colleague::Coll_Move;
-		m_eColl_MoveMent = CPlayer_Colleague::Move_MonWalk;
-		m_eColleague_Ani = CPlayer_Colleague::Ani_Front_Walk;
 	}
 	else if ((fMonLenght <= 3.f && false == m_bCheck_Attcing))
 	{
 		// 만약 스킬의 쿨타임이 다 차있다면 스킬을 우선적으로 사용하며, 없을 경우 일반 공격을 한다
 		// 제일 우선으로 스킬 타고 그 다음에 일반 공격
+
+		if (m_iNormalAtt_Count > 4)
+			m_iNormalAtt_Count = 0;
 		
-		if (3 == m_iCenter_Count && 4 == m_iNormalAtt_Count)
+		if (3 == m_iCenter_Count)
 		{
 			/*m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_CenterDown;
-			m_eColleague_Ani = CPlayer_Colleague::Ani_Jump_CenterAtt_Skil;
-			m_iCenter_Count = 0;*/
+			*/
+			m_iCenter_Count = 0;
 		}
 		else if (m_iNormalAtt_Count == 4 && true == m_bNest_Att_CoolTimer)
 		{
 			// 여기서 삼단베기
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_ThreeCombo;
-			m_eColleague_Ani = CPlayer_Colleague::Ani_Trun_Center_Att_Skil;
 		}
 		else if (m_iNormalAtt_Count == 3 && true == m_bNest_Att_CoolTimer)
 		{
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base4;
-			m_eColleague_Ani = CPlayer_Colleague::Four_Att;
 		}
 		else if (m_iNormalAtt_Count == 2 && true == m_bNest_Att_CoolTimer)
 		{
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base3;
-			m_eColleague_Ani = CPlayer_Colleague::Three_Att;
 		}
 		else if (m_iNormalAtt_Count == 1 && true == m_bNest_Att_CoolTimer)
 		{
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base2;
-			m_eColleague_Ani = CPlayer_Colleague::Two_Att;
 		}
 		else if (m_iNormalAtt_Count == 0)
 		{
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base1;
-			m_eColleague_Ani = CPlayer_Colleague::One_Att;
 		}
-		else if (m_iNormalAtt_Count > 4)
-			m_iNormalAtt_Count = 0;
+		
 
-		else if (m_eMovetype == CPlayer_Colleague::Coll_Move)
+		/*else if (m_eMovetype == CPlayer_Colleague::Coll_Move)
 		{
 			m_iNormalAtt_Count = 0;
 			return;
 		}
 		else
-			m_iNormalAtt_Count = 0;
+			m_iNormalAtt_Count = 0;*/
 			
 	}
 
@@ -1408,10 +1414,10 @@ void CPlayer_Colleague::CollAtt_Base1()
 	}
 	else
 	{
-		if (m_pDynamicMesh->Is_Finish_Animation(0.45f) && m_eMovetype == CPlayer_Colleague::Coll_Attack)
+		if (m_pDynamicMesh->Is_Finish_Animation(0.45f) && m_eColleague_Ani == CPlayer_Colleague::One_Att)
 		{
 			Funtion_Reset_State();
-			m_eMovetype = CPlayer_Colleague::Coll_Idle;
+//			m_eMovetype = CPlayer_Colleague::Coll_Idle;
 			m_bChecking_MyHit = true;
 			++m_iNormalAtt_Count;
 			m_bMyHiting = false;
@@ -1788,14 +1794,14 @@ void CPlayer_Colleague::CollAtt_ThreeCombo()		// 4번
 	//		m_bCheck_Attcing = false;
 	//}
 	//return;
-	if (true == m_tObjParam.bCanAttack)
-	{
-		m_tObjParam.bCanAttack = false;
-		m_tObjParam.bIsAttack = true;
-	}
-	else
-	{
-		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f) && m_eColl_Sub_AttMoment == CPlayer_Colleague::Att_ThreeCombo)
+	//if (true == m_tObjParam.bCanAttack)
+	//{
+	//	m_tObjParam.bCanAttack = false;
+	//	m_tObjParam.bIsAttack = true;
+	//}
+	//else
+	//{
+		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.8f) && m_eColleague_Ani == CPlayer_Colleague::Ani_Trun_Center_Att_Skil)
 		{
 			Funtion_Reset_State();
 			m_eMovetype = CPlayer_Colleague::Coll_Idle;
@@ -1953,7 +1959,7 @@ void CPlayer_Colleague::CollAtt_ThreeCombo()		// 4번
 				g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2", 0.62f, V3_NULL, m_pTransformCom);
 			}
 		}
-	}
+	//}
 	
 	return;
 }
@@ -2230,14 +2236,13 @@ void CPlayer_Colleague::CollHeal_ForMe()
 		{
 			Funtion_Reset_State();
 			m_eMovetype = CPlayer_Colleague::Coll_Idle;
-			m_eColleague_Ani = CPlayer_Colleague::Ani_Idle;
 		}
 		else if (false == m_bEventTrigger[0])
 		{
 			m_bEventTrigger[0] = true;
 			m_eMovetype = CPlayer_Colleague::Coll_Heal;
 			m_eColl_HealMoment = CPlayer_Colleague::My_Heal;
-			m_eColleague_Ani = CPlayer_Colleague::Ani_Heal;
+			//m_eColleague_Ani = CPlayer_Colleague::Ani_Heal;
 			m_bCheck_HealMyHp = true;
 			m_tObjParam.fHp_Cur += m_tObjParam.fHp_Max / 0.8f;
 			if (m_tObjParam.fHp_Cur > m_tObjParam.fHp_Max)
@@ -2327,6 +2332,14 @@ void CPlayer_Colleague::Funtion_RotateBody()
 			}
 		}
 	}
+
+	/*if (!((*m_List_pMonTarget[1]).empty()))
+	{
+		for (auto& Boss_iter : *m_List_pMonTarget[1])
+		{
+
+		}
+	}*/
 
 	/*if (nullptr == m_pObject_Mon)
 	return;*/
