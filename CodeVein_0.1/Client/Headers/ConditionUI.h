@@ -52,6 +52,7 @@ private:
 	CONDITION_TYPE			m_eType;
 	OBJECT_PARAM			m_tObjParam;
 	CPlayerFontUI*			m_pFontValue = nullptr;
+	_v2						m_vOldSize;
 
 public:
 	static CConditionUI*	Create(_Device pGraphic_Device);

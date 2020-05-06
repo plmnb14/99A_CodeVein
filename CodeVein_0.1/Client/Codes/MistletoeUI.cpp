@@ -118,7 +118,7 @@ HRESULT CMistletoeUI::Render_GameObject()
 		return E_FAIL;
 
 	m_pShaderCom->Begin_Shader();
-	m_pShaderCom->Begin_Pass(1);
+	m_pShaderCom->Begin_Pass(6);
 
 	m_pBufferCom->Render_VIBuffer();
 	m_pShaderCom->End_Pass();

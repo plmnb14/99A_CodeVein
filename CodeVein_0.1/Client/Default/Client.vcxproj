@@ -227,6 +227,7 @@
     <ClInclude Include="..\Headers\Item.h" />
     <ClInclude Include="..\Headers\Monster.h" />
     <ClInclude Include="..\Headers\Pet_Bullet.h" />
+    <ClInclude Include="..\Headers\Pet_Inven.h" />
     <ClInclude Include="..\Headers\Pet_PoisonButterFly.h" />
     <ClInclude Include="..\Headers\PlayerFontUI.h" />
     <ClInclude Include="..\Headers\FontNumUI.h" />
@@ -271,6 +272,7 @@
     <ClInclude Include="..\Headers\PrometheusBlood.h" />
     <ClInclude Include="..\Headers\QueensKnight.h" />
     <ClInclude Include="..\Headers\QuickSlot.h" />
+    <ClInclude Include="..\Headers\ReleaseOption.h" />
     <ClInclude Include="..\Headers\Scene_Stage_01.h" />
     <ClInclude Include="..\Headers\Scene_Stage_02.h" />
     <ClInclude Include="..\Headers\Scene_Stage_03.h" />
@@ -318,7 +320,6 @@
     <ClInclude Include="..\Headers\Yeti.h" />
     <ClInclude Include="..\Headers\YetiBullet.h" />
     <ClInclude Include="Client.h" />
-    <ClInclude Include="ReleaseOption.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SkillIcon.h" />
     <ClInclude Include="StageLoader.h" />
@@ -382,6 +383,7 @@
     <ClCompile Include="..\Codes\FireTornadoCol.cpp" />
     <ClCompile Include="..\Codes\Item.cpp" />
     <ClCompile Include="..\Codes\Pet_Bullet.cpp" />
+    <ClCompile Include="..\Codes\Pet_Inven.cpp" />
     <ClCompile Include="..\Codes\Pet_PoisonButterFly.cpp" />
     <ClCompile Include="..\Codes\PlayerFontUI.cpp" />
     <ClCompile Include="..\Codes\FontNumUI.cpp" />
@@ -426,6 +428,7 @@
     <ClCompile Include="..\Codes\PrometheusBlood.cpp" />
     <ClCompile Include="..\Codes\QueensKnight.cpp" />
     <ClCompile Include="..\Codes\QuickSlot.cpp" />
+    <ClCompile Include="..\Codes\ReleaseOption.cpp" />
     <ClCompile Include="..\Codes\Scene_Stage_01.cpp" />
     <ClCompile Include="..\Codes\Scene_Stage_02.cpp" />
     <ClCompile Include="..\Codes\Scene_Stage_03.cpp" />
@@ -473,7 +476,6 @@
     <ClCompile Include="..\Codes\Yeti.cpp" />
     <ClCompile Include="..\Codes\YetiBullet.cpp" />
     <ClCompile Include="Client.cpp" />
-    <ClCompile Include="ReleaseOption.cpp" />
     <ClCompile Include="SkillIcon.cpp" />
     <ClCompile Include="StageLoader.cpp" />
     <ClCompile Include="stdafx.cpp">

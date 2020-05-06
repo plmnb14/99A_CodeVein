@@ -212,7 +212,7 @@ technique Default_Technique
 	}
 	pass Zwrite_Rendering //6
 	{
-		ZwriteEnable = false;
+		ZwriteEnable = true;
 		AlphablendEnable = true;
 		SrcBlend = SrcAlpha;
 		DestBlend = InvSrcAlpha;

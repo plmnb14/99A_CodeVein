@@ -62,6 +62,7 @@
 #include "FighterBlood.h"
 #include "PrometheusBlood.h"
 #include "FighterReleaseUI.h"
+#include "Pet_Inven.h"
 
 BEGIN(Client)
 
@@ -102,6 +103,7 @@ public:
 	CSkill_Inven* Get_Skill_Inven() { return m_pSkillInven; }
 	CFighterBlood* Get_FigherBlood() { return m_pFigherBlood; }
 	CPrometheusBlood* Get_PrometheusBlood() { return m_pPrometheusBlood; }
+	CPet_Inven* Get_Pet_Inven() { return m_pPet_Inven; }
 
 private:
 	_uint m_uiCoundItem = 0;
@@ -126,6 +128,7 @@ private:
 	CSkill_Inven* m_pSkillInven = nullptr;
 	CFighterBlood* m_pFigherBlood = nullptr;
 	CPrometheusBlood* m_pPrometheusBlood = nullptr;
+	CPet_Inven* m_pPet_Inven = nullptr;
 
 public:
 	virtual void Free();

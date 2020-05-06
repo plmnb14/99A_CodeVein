@@ -12,9 +12,8 @@ CSkill_Inven::CSkill_Inven(const CSkill_Inven & rhs)
 {
 }
 
-void CSkill_Inven::Set_SkillUI_TotalInven(BloodCode_ID eBloodCodeID, _uint iIndex)
+void CSkill_Inven::Set_SkillUI_TotalInven(_uint iIndex)
 {
-	m_eInvenBloodCode = eBloodCodeID;
 	m_iRegistIdx = iIndex;
 }
 
@@ -38,8 +37,7 @@ HRESULT CSkill_Inven::Ready_GameObject(void * pArg)
 	m_fSizeY = 471.f;
 	m_fViewZ = 4.f;
 
-	
-
+	SetUp_Default();
 	return NOERROR;
 }
 
@@ -50,7 +48,15 @@ _int CSkill_Inven::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 
-	
+	_uint iIdx = 0;
+	for (auto& iter : m_vecSlot)
+	{
+		iter->Set_UI_Pos(m_fPosX - 100.f + _float(iIdx) * 50.f, m_fPosY - 150.f);
+		iter->Set_Active(m_bIsActive);
+		iIdx++;
+	}
+	m_pExitIcon->Set_Active(m_bIsActive);
+	Click_SubUI();
 	return NO_EVENT;
 }
 
@@ -142,20 +148,42 @@ HRESULT CSkill_Inven::SetUp_ConstantTable()
 
 void CSkill_Inven::SetUp_Default()
 {
-	LOOP(5)
-	{
-		CSkillSlot* pInstance = static_cast<CSkillSlot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SkillSlot", nullptr));
-		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
-		pInstance->Set_UI_Size(50.f, 50.f);
-		m_vecSkillSlot.push_back(pInstance);
-	}
-	
+	m_pExitIcon = static_cast<CInventory_Icon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_InvenIcon", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExitIcon, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	m_pExitIcon->Set_UI_Pos(m_fPosX + 120.f, m_fPosY - 203.f);
+	m_pExitIcon->Set_UI_Size(35.f, 45.f);
+	m_pExitIcon->Set_Type(CInventory_Icon::ICON_EXIT);
 }
 
-void CSkill_Inven::Add_Skill(BloodCode_ID eBloodCodeID, Skill_ID eSkillID)
+void CSkill_Inven::Click_SubUI()
 {
-	
-	m_vecSkillData[eBloodCodeID].push_back(eSkillID);
+	// 나가기 버튼 클릭시
+	if (m_pExitIcon->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+	{
+		m_bIsActive = false;
+		CUI_Manager::Get_Instance()->Get_Total_Inven()->Set_Active(true);
+	}
+
+	// 스킬 슬롯 선택시
+	for (_uint i = 0; i < m_vecSlot.size(); ++i)
+	{
+		if (m_vecSlot[i]->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+		{
+			m_vecSlot[i]->Set_Select(true);
+			CUI_Manager::Get_Instance()->Get_Total_Inven()->Set_Skill_ID(m_iRegistIdx, m_vecSlot[i]->Get_SkillID());
+		}
+	}
+}
+
+void CSkill_Inven::Add_Skill_Data(Skill_ID eSkillID)
+{
+	CSkillSlot* pSlot = static_cast<CSkillSlot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SkillSlot", nullptr));
+	pSlot->Set_SkillID(eSkillID);
+	pSlot->Set_UI_Size(50.f, 50.f);
+	pSlot->Set_ViewZ(m_fViewZ - 0.1f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pSlot, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	m_vecSlot.push_back(pSlot);
+	m_vecData.push_back(eSkillID);
 }
 
 CSkill_Inven * CSkill_Inven::Create(_Device pGraphic_Device)
