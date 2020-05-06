@@ -11,6 +11,7 @@
 #include "OrthoEffect.h"
 #include "Effect_BloodChunk.h"
 #include "Effect_LongSpark.h"
+#include "Effect_FireFlower.h"
 
 #include "Player.h"
 
@@ -1727,7 +1728,12 @@ _uint CLoading::Loading_Stage()
 		// Effect_LongSpark
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LongSpark", CEffect_LongSpark::Create(m_pGraphicDev))))
 			return E_FAIL;
-		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_LongSpark", L"GameObject_LongSpark", 50000);
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_LongSpark", L"GameObject_LongSpark", 3000);
+
+		// Effect_FireFlower
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_FireFlower", CEffect_FireFlower::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_FireFlower", L"GameObject_FireFlower", 3000);
 		//============================================================================================================
 
 		g_bOnStage[0] = true;

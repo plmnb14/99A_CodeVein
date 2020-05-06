@@ -33,6 +33,9 @@ HRESULT CEffect_BloodChunk::Ready_GameObject(void* pArg)
 	m_fAccel = 1.f;
 	m_fJumpPower = 6.f;
 
+	m_dCurTime = 0.f;
+	m_bDead = false;
+
 	EFF_INFO tInfo = *(EFF_INFO*)pArg;
 	m_fCreatePosY = tInfo.vCreatePos.y;
 	m_pTransformCom->Set_Pos(tInfo.vCreatePos);
