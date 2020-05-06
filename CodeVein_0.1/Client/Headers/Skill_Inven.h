@@ -5,6 +5,7 @@
 
 BEGIN(Client)
 class CSkillSlot;
+class CInventory_Icon;
 class CSkill_Inven final : public CUI
 {
 public:
@@ -13,7 +14,10 @@ public:
 	virtual ~CSkill_Inven() = default;
 
 public:
-	void Set_SkillUI_TotalInven(BloodCode_ID eBloodCodeID, _uint iIndex);
+	vector<Skill_ID>	Get_Skill_Data() { return m_vecData; }
+
+public:
+	void Set_SkillUI_TotalInven(_uint iIndex);
 
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();
@@ -26,9 +30,10 @@ private:
 	HRESULT					Add_Component();
 	HRESULT					SetUp_ConstantTable();
 	void					SetUp_Default();
+	void					Click_SubUI();
 
 public:
-	void Add_Skill(BloodCode_ID eBloodCodeID, Skill_ID eSkillID);
+	void Add_Skill_Data(Skill_ID eSkillID);
 
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
@@ -38,10 +43,10 @@ private:
 	CShader*				m_pShaderCom = nullptr;
 
 private:
-	vector<CSkillSlot*>		m_vecSkillSlot;
-	BloodCode_ID			m_eInvenBloodCode = BloodCode_End;
+	vector<CSkillSlot*>		m_vecSlot;
 	_uint					m_iRegistIdx = 0;
-	vector<Skill_ID>		m_vecSkillData[BloodCode_End + 1];
+	vector<Skill_ID>		m_vecData;
+	CInventory_Icon*		m_pExitIcon = nullptr;
 
 public:
 	static CSkill_Inven*		Create(_Device pGraphic_Device);

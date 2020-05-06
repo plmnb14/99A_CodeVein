@@ -38,6 +38,12 @@
 #include "PickUp_ItemUI.h"
 
 #include "Player_Colleague.h"
+#include "Colleague_Bullet.h"
+#include "CollBullet_Heal.h"
+
+#include "Colleague_UI.h"
+#include "Colleague_Jack.h"
+
 
 //#include "Item.h"
 #include "Haze.h"
@@ -1295,8 +1301,8 @@ _uint CLoading::Loading_Title()
 
 	//// 플레이어 스킬, 보스 이펙트 포함
 	//cout << "Particle Etc 불러오는 중 . . ." << endl;
-	//if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
-	//	return E_FAIL;
+	/*if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
+		return E_FAIL;*/
 
 	// UI 원형 생성
 	//============================================================================================================
@@ -1669,12 +1675,26 @@ _uint CLoading::Loading_Stage()
 			return E_FAIL;
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Pet_Bullet", L"Pet_Bullet", 100);
 
+		// Colleague - Chea
+		//============================================================================================================
+		// 동료
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Colleague", CPlayer_Colleague::Create(m_pGraphicDev))))
+			return E_FAIL;
+
+		// 동료 총알
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ColleagueBullet", CColleague_Bullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_ColleagueBullet", L"GameObject_ColleagueBullet", 100);
+
+		// 힐용
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CollBullet_Heal", CCollBullet_Heal::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_CollBullet_Heal", L"GameObject_CollBullet_Heal", 100);
+
+
 		cout << "UI Sub Prototype 생성 중 . . ." << endl;
 		// UI - Chea
 		//============================================================================================================
-
-		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Colleague", CPlayer_Colleague::Create(m_pGraphicDev))))
-			return E_FAIL;
 
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MonsterHPUI", CMonsterUI::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1684,6 +1704,13 @@ _uint CLoading::Loading_Stage()
 
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Get_ItemUI", CGet_ItemUI::Create(m_pGraphicDev))))
 			return E_FAIL;
+
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Colleague_UI", CColleague_UI::Create(m_pGraphicDev))))
+			return E_FAIL;
+
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Colleague_Jack", CColleague_Jack::Create(m_pGraphicDev))))
+			return E_FAIL;
+
 
 		// ETC
 		//============================================================================================================

@@ -2,7 +2,6 @@
 #include "..\Headers\ExpUI.h"
 #include "Player.h"
 #include "PlayerFontUI.h"
-#include "FontNumUI.h"
 
 CExpUI::CExpUI(_Device pDevice)
 	: CUI(pDevice)
@@ -56,18 +55,17 @@ _int CExpUI::Update_GameObject(_double TimeDelta)
 	
 	if (m_pLevelFont)
 	{
-		_ulong dwDigits = m_pLevelFont->Calc_Digits(g_sPlayerLevel);
-		m_pLevelFont->Set_UI_Pos(m_fPosX + m_pLevelFont->Get_UI_Size().x * 0.15f * (dwDigits - 1) - m_fSizeX * 0.6f, m_fPosY);
-		m_pLevelFont->Set_UI_Size(m_fSizeX * 0.5f, m_fSizeY * 0.5f);
+		m_pLevelFont->Update_NumberValue(g_sPlayerLevel);	
 		m_pLevelFont->Set_ViewZ(m_fViewZ - 0.1f);
 		m_pLevelFont->Set_Active(m_bIsActive);
-
+		m_pLevelFont->Set_UI_Pos(m_fPosX, m_fPosY);
+		m_pLevelFont->Set_UI_Size(m_fSizeX * 0.3f, m_fSizeY * 0.3f);
 		// Lv이 0보다 작으면 0
 		if (0 >= g_sPlayerLevel)
-			m_pLevelFont->Set_Number(0);
+			m_pLevelFont->Update_NumberValue(0);
 		// 아니면 레벨 그대로
 		else
-			m_pLevelFont->Set_Number(g_sPlayerLevel);
+			m_pLevelFont->Update_NumberValue(g_sPlayerLevel);
 	}	
 	
 	return NO_EVENT;

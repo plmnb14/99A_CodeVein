@@ -18,6 +18,7 @@ public:
 		ICON_ALL,
 		ICON_STATUS,
 		ICON_EXIT,
+		ICON_PET,
 		ICON_END
 	};
 
