@@ -31,6 +31,8 @@ private:
 	HRESULT					SetUp_ConstantTable();
 	void					SetUp_Default();
 	void					Click_SubUI();
+	void					Search_Regist_Skill();
+	void					Reset_Select_Slot();
 
 public:
 	void Add_Skill_Data(Skill_ID eSkillID);

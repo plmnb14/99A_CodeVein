@@ -64,6 +64,8 @@
 #include "FighterReleaseUI.h"
 #include "Pet_Inven.h"
 
+#include "NoticeUI.h"
+
 BEGIN(Client)
 
 class CUI_Manager final : public CBase

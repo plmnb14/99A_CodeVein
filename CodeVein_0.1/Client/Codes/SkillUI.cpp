@@ -2,6 +2,7 @@
 #include "..\Headers\SkillUI.h"
 #include "Active_Icon.h"
 #include "PlayerFontUI.h"
+#include "UI_Manager.h"
 
 CSkillUI::CSkillUI(_Device pDevice)
 	: CUI(pDevice)
@@ -11,6 +12,14 @@ CSkillUI::CSkillUI(_Device pDevice)
 CSkillUI::CSkillUI(const CSkillUI & rhs)
 	: CUI(rhs)
 {
+}
+
+void CSkillUI::Set_Active_State(CActive_Icon::ACTIVE_STATE eState, _uint iIndex)
+{
+	if (iIndex < 0 || iIndex >= 8)
+		return;
+
+	m_pActive[iIndex]->Set_Active_State(eState);
 }
 
 HRESULT CSkillUI::Ready_GameObject_Prototype()
@@ -32,6 +41,14 @@ _int CSkillUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
+	
+	for (_uint i = 0; i < 8; ++i)
+	{
+		Skill_ID eSkill_ID = CUI_Manager::Get_Instance()->Get_Total_Inven()->Get_Registration_Skill(i);
+		m_pActive[i]->Set_Skill_ID(eSkill_ID);
+
+		
+	}
 	return NO_EVENT;
 }
 
@@ -60,16 +77,12 @@ void CSkillUI::SetUp_Default()
 	m_pActive[6]->Set_UI_Pos(fPosX2 + 30.f, fPosY2);
 	m_pActive[7]->Set_UI_Pos(fPosX2, fPosY2 + 30.f);
 
-	/*m_pActive[0]->Set_Skill_Index(Skill_OneHand_Active_01);
-	m_pActive[0]->Set_Active_State(CActive_Icon::ACTIVE_BUFF);*/
+	
 }
 
 void CSkillUI::Set_SkillIcon(_uint iIndex, Skill_Index eSkill_Index)
 {
-	if (iIndex < 0 || iIndex >= 8)
-		return;
-
-	m_pActive[iIndex]->Set_Skill_Index(eSkill_Index);
+	
 }
 //
 //void CSkillUI::Set_SkillGaugeCur(_ulong iNum)

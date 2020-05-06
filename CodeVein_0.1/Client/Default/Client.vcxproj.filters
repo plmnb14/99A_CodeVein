@@ -439,6 +439,9 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\08. Pet_Inven">
       <UniqueIdentifier>{a7a0f26e-f1c3-4bbe-a84d-2ece8c87140c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\NoticeUI">
+      <UniqueIdentifier>{d6168e56-8109-4605-a1de-3973f41c30f5}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -915,6 +918,9 @@
     <ClInclude Include="..\Headers\Pet_Inven.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\08. Pet_Inven</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\NoticeUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\NoticeUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1381,6 +1387,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Pet_Inven.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\08. Pet_Inven</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\NoticeUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\NoticeUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

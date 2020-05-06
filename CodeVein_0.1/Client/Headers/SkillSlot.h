@@ -14,10 +14,12 @@ private:
 public:
 	Skill_ID Get_SkillID() { return m_eSkillID; }
 	_bool Get_Select() { return m_bIsSelect; }
+	_bool Get_Regist() { return m_bIsRegist; }
 
 public:
 	void Set_SkillID(Skill_ID eID) { m_eSkillID = eID; }
 	void Set_Select(_bool bIsSelect) { m_bIsSelect = bIsSelect; }
+	void Set_Regist(_bool bIsRegist) { m_bIsRegist = bIsRegist; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -45,6 +47,7 @@ private:
 	_bool					m_bIsCollMouse = false;
 	Skill_ID				m_eSkillID = SkillID_End;
 	_bool					m_bIsSelect = false;
+	_bool					m_bIsRegist = false;
 
 public:
 	static CSkillSlot*		Create(_Device pGraphic_Device);

@@ -120,7 +120,7 @@ _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 		iter->Set_Active(m_bIsActive);
 	}
 
-	
+	m_pNoticeUI->Set_Active(m_bIsActive);
 		
 	return NO_EVENT;
 }
@@ -302,6 +302,12 @@ void CTotal_Inven::SetUp_Default()
 	m_vecSkillIcon[5]->Set_UI_Pos(486.f, 380.f);
 	m_vecSkillIcon[6]->Set_UI_Pos(586.f, 380.f);
 	m_vecSkillIcon[7]->Set_UI_Pos(536.f, 410.f);
+
+	m_pNoticeUI = static_cast<CNoticeUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_NoticeUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pNoticeUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	m_pNoticeUI->Set_UI_Pos(248.f, 81.f);
+	m_pNoticeUI->Set_UI_Size(186.664f, 40.f); // 280 : 60 -> 4.6666 : 1
+	m_pNoticeUI->Set_ViewZ(m_fViewZ - 0.1f);
 }
 
 void CTotal_Inven::Click_Icon()
@@ -361,22 +367,16 @@ void CTotal_Inven::Click_Icon()
 	// 스킬 설정
 	for(_uint i = 0; i < m_vecSkillIcon.size(); ++i)
 	{
-		if (m_vecSkillIcon[i]->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+		if (m_vecSkillIcon[i]->Pt_InRect())
 		{
-			/*if (m_ePlayerBloodCode == BloodCode_Fighter)
+			m_pNoticeUI->Set_UI_Index(i + 1);
+			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
-				CUI_Manager::Get_Instance()->Get_FigherBlood()->Set_Active(true);
 				m_bIsActive = false;
+				CUI_Manager::Get_Instance()->Get_Skill_Inven()->Set_SkillUI_TotalInven(i);
+				CUI_Manager::Get_Instance()->Get_Skill_Inven()->Set_Active(true);
 			}
-				
-			else if (m_ePlayerBloodCode == BloodCode_Prometheus)
-			{
-				CUI_Manager::Get_Instance()->Get_PrometheusBlood()->Set_Active(true);
-				m_bIsActive = false;
-			}*/
-			m_bIsActive = false;
-			CUI_Manager::Get_Instance()->Get_Skill_Inven()->Set_SkillUI_TotalInven(i);
-			CUI_Manager::Get_Instance()->Get_Skill_Inven()->Set_Active(true);
+		
 		}
 	}
 }

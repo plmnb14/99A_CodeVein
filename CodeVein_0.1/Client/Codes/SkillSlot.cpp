@@ -70,7 +70,7 @@ HRESULT CSkillSlot::Render_GameObject()
 
 	_uint iIndex = 0;
 
-	if (m_bIsSelect)
+	if (m_bIsSelect || m_bIsRegist)
 	{
 		if (m_bIsCollMouse)
 		{

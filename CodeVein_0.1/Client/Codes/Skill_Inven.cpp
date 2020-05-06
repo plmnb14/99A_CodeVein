@@ -51,12 +51,13 @@ _int CSkill_Inven::Update_GameObject(_double TimeDelta)
 	_uint iIdx = 0;
 	for (auto& iter : m_vecSlot)
 	{
-		iter->Set_UI_Pos(m_fPosX - 100.f + _float(iIdx) * 50.f, m_fPosY - 150.f);
+		iter->Set_UI_Pos(m_fPosX - 100.f + 50.f * (iIdx % 5), m_fPosY - 150.f + 50.f * (iIdx / 5));
 		iter->Set_Active(m_bIsActive);
 		iIdx++;
 	}
 	m_pExitIcon->Set_Active(m_bIsActive);
 	Click_SubUI();
+	Search_Regist_Skill();
 	return NO_EVENT;
 }
 
@@ -167,12 +168,37 @@ void CSkill_Inven::Click_SubUI()
 	// 스킬 슬롯 선택시
 	for (_uint i = 0; i < m_vecSlot.size(); ++i)
 	{
-		if (m_vecSlot[i]->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+		if (m_vecSlot[i]->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB) && (false == m_vecSlot[i]->Get_Regist()))
 		{
+			Reset_Select_Slot();
 			m_vecSlot[i]->Set_Select(true);
 			CUI_Manager::Get_Instance()->Get_Total_Inven()->Set_Skill_ID(m_iRegistIdx, m_vecSlot[i]->Get_SkillID());
 		}
 	}
+}
+
+void CSkill_Inven::Search_Regist_Skill()
+{
+	LOOP(8)
+	{
+		if (i == m_iRegistIdx)
+			continue;
+
+		Skill_ID eSkill_ID = CUI_Manager::Get_Instance()->Get_Total_Inven()->Get_Registration_Skill(i);
+
+		for (auto& iter : m_vecSlot)
+		{
+			if (iter->Get_SkillID() == eSkill_ID)
+				iter->Set_Regist(true);
+		}
+	}
+	
+}
+
+void CSkill_Inven::Reset_Select_Slot()
+{
+	for (auto& iter : m_vecSlot)
+		iter->Set_Select(false);
 }
 
 void CSkill_Inven::Add_Skill_Data(Skill_ID eSkillID)

@@ -20,8 +20,13 @@ private:
 	virtual ~CActive_Icon() = default;
 
 public:
-	void Set_Skill_Index(Skill_Index eSkill_Index) {
-		m_Skill_Index = eSkill_Index;
+	Skill_ID Get_Skill_ID() {
+		return m_eSkillID;
+	}
+
+public:
+	void Set_Skill_ID(Skill_ID eSkill_ID) {
+		m_eSkillID = eSkill_ID;
 	}
 	void Set_Active_State(ACTIVE_STATE eState) { m_eState = eState; }
 
@@ -44,8 +49,8 @@ private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 private:
-	Skill_Index		m_Skill_Index = Skill_End;
-	ACTIVE_STATE	m_eState = ACTIVE_USE;
+	Skill_ID		m_eSkillID = SkillID_End;
+	ACTIVE_STATE	m_eState = ACTIVE_NO_USE;
 	_float			m_fPercentage = 0.f;
 	_float			m_fMaxTime = 10.f;
 	_float			m_fCurTime = 0.f;

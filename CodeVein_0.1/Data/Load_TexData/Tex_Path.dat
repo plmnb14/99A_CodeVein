@@ -76,7 +76,7 @@ Tex_Tail|Tail_%d.tga|..\..\Client\Resources\Texture\Effect\Tail\|0|2
 Tex_SkyBridgeBoss_Trail|SkyBridgeBoss_Trail_%d.tga|..\..\Client\Resources\Texture\Effect\Trail\SkyBridgeBoss_Trail\|0|1
 Tex_temp|T_Enemy_DevilMiguel_Sword_Trail_01.tga|..\..\Client\Resources\Texture\Effect\Trail\temp\|0|17
 Tex_Water|Water_%d.tga|..\..\Client\Resources\Texture\Effect\Water\|0|1
-Tex_ActiveUI|ActiveUI%d.tga|..\..\Client\Resources\Texture\TestUI\ActiveUI\|0|18
+Tex_ActiveUI|ActiveUI%d.tga|..\..\Client\Resources\Texture\TestUI\ActiveUI\|0|16
 Tex_Armor_Icon|Armor_Icon%d.png|..\..\Client\Resources\Texture\TestUI\Armor_Icon\|0|5
 Tex_Bayonet_Icon|Bayonet_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Bayonet_Icon\|0|3
 Tex_BloodCodeIcon|BloodCodeIcon%d.tga|..\..\Client\Resources\Texture\TestUI\BloodCodeIcon\|0|15
@@ -111,6 +111,7 @@ Tex_MenuWindow|MenuWindow%d.png|..\..\Client\Resources\Texture\TestUI\MenuWindow
 Tex_Menu_Icon|Menu_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Menu_Icon\|0|8
 Tex_MistletoeUI|MistletoeUI%d.tga|..\..\Client\Resources\Texture\TestUI\MistletoeUI\|0|5
 Tex_MonsterHPBar|MonsterHPBar%d.png|..\..\Client\Resources\Texture\TestUI\MonsterHPBar\|0|3
+Tex_NoticeUI|NoticeUI%d.dds|..\..\Client\Resources\Texture\TestUI\NoticeUI\|0|9
 Tex_Number|Number%d.png|..\..\Client\Resources\Texture\TestUI\Number\|0|12
 Tex_OKMessageUI|OKMessageUI%d.tga|..\..\Client\Resources\Texture\TestUI\OKMessageUI\|0|1
 Tex_Passive_Icon|Passive_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Passive_Icon\|0|89
