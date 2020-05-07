@@ -190,7 +190,7 @@ HRESULT CBloodCodeMenuUI::SetUp_ConstantTable(_uint iIndex)
 void CBloodCodeMenuUI::SetUp_Default()
 {
 	/*m_pBloodCodeSelectUI = static_cast<CBloodCodeSelectUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodCodeSelectUI", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBloodCodeSelectUI, SCENE_STAGE, L"Layer_StageUI", nullptr);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBloodCodeSelectUI, SCENE_MORTAL, L"Layer_StageUI", nullptr);
 	TARGET_TO_TRANS(m_pBloodCodeSelectUI)->Set_Scale(_v3(3.555555f, 2.f, 2.f));
 	if (nullptr == m_pBloodCodeSelectUI)
 	{
@@ -199,7 +199,7 @@ void CBloodCodeMenuUI::SetUp_Default()
 	}
 
 	m_pSkillReleaseUI = static_cast<CSkillReleaseUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SkillReleaseUI", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pSkillReleaseUI, SCENE_STAGE, L"Layer_StageUI", nullptr);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pSkillReleaseUI, SCENE_MORTAL, L"Layer_StageUI", nullptr);
 	TARGET_TO_TRANS(m_pSkillReleaseUI)->Set_Scale(_v3(3.555555f, 2.f, 3.f));
 	if (nullptr == m_pSkillReleaseUI)
 	{
@@ -208,7 +208,7 @@ void CBloodCodeMenuUI::SetUp_Default()
 	}
 
 	m_pBloodCodeOwner = static_cast<CBloodCodeOwner*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodCodeOwner", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBloodCodeOwner, SCENE_STAGE, L"Layer_StageUI", nullptr);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBloodCodeOwner, SCENE_MORTAL, L"Layer_StageUI", nullptr);
 	TARGET_TO_TRANS(m_pBloodCodeOwner)->Set_Scale(_v3(1.894f, 2.f, 1.f));
 	if (nullptr == m_pBloodCodeOwner)
 	{

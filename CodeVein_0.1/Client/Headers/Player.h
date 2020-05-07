@@ -347,6 +347,9 @@ private:
 private:
 	virtual void Change_Weapon();
 
+private:
+	virtual void Reset_All();
+
 public:
 	static	CPlayer* Create(_Device pGraphic_Device);
 	virtual CGameObject* Clone_GameObject(void* pArg);

@@ -35,12 +35,14 @@ HRESULT CScene_Stage_Base::Ready_Scene()
 		g_bOnStage[7] = true;
 	}
 
+	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_00.dat");
+
 	return S_OK;
 }
 
 _int CScene_Stage_Base::Update_Scene(_double TimeDelta)
 {
-	CUI_Manager::Get_Instance()->Update_UI();
+	//CUI_Manager::Get_Instance()->Update_UI();
 
 	return NO_EVENT;
 }
@@ -71,6 +73,29 @@ HRESULT CScene_Stage_Base::Render_Scene()
 
 		else if (true == m_pLoading->Get_Finish() && g_pInput_Device->Key_Down(DIK_J))
 		{
+			//g_eSceneID_Cur = SCENE_STAGE_02;
+			//g_eSTeleportID_Cur = TeleportID_St02_1;
+			//
+			//CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+			//
+			//pInstance->Set_Enable(false);
+			//
+			//g_pManagement->Clear_LightList();
+			//
+			//if (FAILED(g_pManagement->Clear_Instance(SCENE_STAGE)))
+			//	return -1;
+			//
+			//CScene* pScene = CScene_Stage_02::Create(m_pGraphic_Device, m_bLoadStaticMesh);
+			//
+			//if (FAILED(g_pManagement->SetUp_CurrentScene(pScene)))
+			//	return -1;
+		}
+
+		else if (true == m_pLoading->Get_Finish() && g_pInput_Device->Key_Down(DIK_K))
+		{
+			g_eSceneID_Cur = SCENE_STAGE_03;
+			g_eSTeleportID_Cur = TeleportID_St03_1;
+
 			CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
 			pInstance->Set_Enable(false);
@@ -86,8 +111,11 @@ HRESULT CScene_Stage_Base::Render_Scene()
 				return -1;
 		}
 
-		else if (true == m_pLoading->Get_Finish() && g_pInput_Device->Key_Down(DIK_K))
+		else if (true == m_pLoading->Get_Finish() && g_pInput_Device->Key_Down(DIK_L))
 		{
+			g_eSceneID_Cur = SCENE_STAGE_04;
+			g_eSTeleportID_Cur = TeleportID_St04_1;
+
 			CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
 			pInstance->Set_Enable(false);
@@ -109,6 +137,9 @@ HRESULT CScene_Stage_Base::Render_Scene()
 	{
 		if (g_pInput_Device->Key_Down(DIK_H))
 		{
+			g_eSceneID_Cur = SCENE_STAGE_01;
+			g_eSTeleportID_Cur = TeleportID_St01_1;
+
 			CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
 			pInstance->Set_Enable(false);
@@ -126,6 +157,29 @@ HRESULT CScene_Stage_Base::Render_Scene()
 
 		else if (g_pInput_Device->Key_Down(DIK_J))
 		{
+			//g_eSceneID_Cur = SCENE_STAGE_02;
+			//g_eSTeleportID_Cur = TeleportID_St02_1;
+			//
+			//CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+			//
+			//pInstance->Set_Enable(false);
+			//
+			//g_pManagement->Clear_LightList();
+			//
+			//if (FAILED(g_pManagement->Clear_Instance(SCENE_STAGE)))
+			//	return -1;
+			//
+			//CScene* pScene = CScene_Stage_02::Create(m_pGraphic_Device, m_bLoadStaticMesh);
+			//
+			//if (FAILED(g_pManagement->SetUp_CurrentScene(pScene)))
+			//	return -1;
+		}
+
+		else if (g_pInput_Device->Key_Down(DIK_K))
+		{
+			g_eSceneID_Cur = SCENE_STAGE_03;
+			g_eSTeleportID_Cur = TeleportID_St03_1;
+
 			CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
 			pInstance->Set_Enable(false);
@@ -141,8 +195,11 @@ HRESULT CScene_Stage_Base::Render_Scene()
 				return -1;
 		}
 
-		else if (g_pInput_Device->Key_Down(DIK_K))
+		else if (g_pInput_Device->Key_Down(DIK_L))
 		{
+			g_eSceneID_Cur = SCENE_STAGE_04;
+			g_eSTeleportID_Cur = TeleportID_St04_1;
+
 			CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
 			pInstance->Set_Enable(false);
