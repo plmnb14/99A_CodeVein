@@ -63,8 +63,7 @@ void CMonster::Set_Target_Auto(_bool Ransdom_Aggro)
 	CGameObject* pColleaue = nullptr;
 	CGameObject* pPlayer = nullptr;
 
-	auto& ColleagueContainer = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_MORTAL);
-
+	auto& ColleagueContainer = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE);
 	auto& PlayerContainer = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
 
 	if (!ColleagueContainer.empty())
