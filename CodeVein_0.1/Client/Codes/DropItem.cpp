@@ -2,12 +2,12 @@
 #include "..\Headers\DropItem.h"
 
 CDropItem::CDropItem(LPDIRECT3DDEVICE9 pGraphic_Device)
-	:CItem(pGraphic_Device)
+	:CGameObject(pGraphic_Device)
 {
 }
 
 CDropItem::CDropItem(const CDropItem & rhs)
-	:CItem(rhs)
+	:CGameObject(rhs)
 {
 }
 
@@ -36,24 +36,27 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 	CGameObject::Update_GameObject(TimeDelta);
 
 	m_dCanGetItemLimitTimeCur += TimeDelta;
-	m_fEffectLimitTime += (_float)TimeDelta;
+	m_fTempEffectLimitTime += (_float)TimeDelta;
 
+	//Check_PosY(); //혹시 모르니 네비y
 	//상호작용 대상과 충돌 여부 체크
-	//Check_PosY();
 	Check_Dist();
 
-	if (true == m_bCanGetItem)
-		cout << "충돌로 인한 아이템 얻기 가능" << endl;
+	//if(true == m_bCanGetItem)
+	//{
+	//	"줍는다" UI 발동
+	//}
 
-	if (m_fEffectLimitTime > 0.05f)
+	//0.05초마다 이펙트효과 발생
+	if (m_fTempEffectLimitTime > 0.05f)
 	{
-		m_fEffectLimitTime = 0.f;
+		m_fTempEffectLimitTime = 0.f;
 		g_pManagement->Create_Effect(L"Totem_Fire_BulletBody", m_pTransform->Get_Pos());
 		g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_01", m_pTransform->Get_Pos(), nullptr);
 		g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_02", m_pTransform->Get_Pos(), nullptr);
 	}
 
-	//1.제한 시간 초과
+	//1.제한 시간 초과된 상태
 	if (m_dCanGetItemLimitTimeMax <= m_dCanGetItemLimitTimeCur)
 	{
 		//단순 소멸
@@ -68,11 +71,30 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 	//획득모션,제한시간 이내인 경우
 	if (true == m_bCanGetItem && m_dCanGetItemLimitTimeMax >= m_dCanGetItemLimitTimeCur)
 	{
+		//섬광이펙트,파티클이펙트 등등 획득한 티를 내주고
+		//획득 ui를 보여줘야함 ("획득")
 		//인벤으로 저장
+		switch (m_eItemType)
+		{
+		case ITEM_TYPE::ITEM_MATERIAL:
+			CUI_Manager::Get_Instance()->Get_Material_Inven()->Add_Material(m_eMaterialType);
+			break;
+		case ITEM_TYPE::ITEM_EXPENDABLES:
+			CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Add_Expendables(m_eExpendablesType);
+			break;
+		case ITEM_TYPE::ITEM_WEAPON:
+			//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(); //무기타입을 받아서 해당아이템이 추가되게끔
+			break;
+		case ITEM_TYPE::ITEM_PET:
+			CUI_Manager::Get_Instance()->Get_Pet_Inven()->Add_Pet(m_ePetType);
+			break;
+		}
+
 		g_pManagement->Create_Effect(L"Bullet_DeadFlash", m_pTransform->Get_Pos(), nullptr);
 		g_pManagement->Create_Effect(L"Bullet_DeadSmoke_Base", m_pTransform->Get_Pos(), nullptr);
 		g_pManagement->Create_Effect(L"Bullet_DeadSmoke_Black", m_pTransform->Get_Pos(), nullptr);
 		m_bEnable = false;
+
 		return DEAD_OBJ;
 	}
 
@@ -149,6 +171,13 @@ void CDropItem::Check_Dist()
 	return;
 }
 
+void CDropItem::Check_PosY()
+{
+	//m_pTransform->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransform->Get_Pos()));
+
+	return;
+}
+
 HRESULT CDropItem::Add_Component(void* _pArg)
 {
 	// For.Com_Transform
@@ -166,17 +195,15 @@ HRESULT CDropItem::Add_Component(void* _pArg)
 	return S_OK;
 }
 
-HRESULT CDropItem::SetUp_ConstantTable()
-{
-	return S_OK;
-}
-
-HRESULT CDropItem::Ready_Status(void * _pArg)
+HRESULT CDropItem::Ready_Status(void* _pArg)
 {
 	if (nullptr == _pArg)
 	{
 		m_eItemType = ITEM_TYPE::ITEM_MATERIAL;
 		m_eItemGrade = ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL;
+
+		m_eMaterialType = CMaterial::MATERIAL_TYPE::MATERIAL_1;
+
 		m_pTransform->Set_Pos(_v3{ 1.f, 0.f, 1.f });
 		m_dCanGetItemLimitTimeMax = 5;
 	}
@@ -184,6 +211,23 @@ HRESULT CDropItem::Ready_Status(void * _pArg)
 	{
 		ITEM_STATUS info = *(ITEM_STATUS*)_pArg;
 		m_eItemType = info.eItemType;
+
+		switch (m_eItemType)
+		{
+		case ITEM_TYPE::ITEM_MATERIAL:
+			m_eMaterialType = info.eMaterialType;
+			break;
+		case ITEM_TYPE::ITEM_EXPENDABLES:
+			m_eExpendablesType = info.eExpendablesType;
+			break;
+		case ITEM_TYPE::ITEM_WEAPON:
+			m_eWeaponType = info.eWeaponType;
+			break;
+		case ITEM_TYPE::ITEM_PET:
+			m_ePetType = info.ePetType;
+			break;
+		}
+
 		m_eItemGrade = info.eItemGradeType;
 		m_dCanGetItemLimitTimeMax = info.dCanGetLimitTimeMax;
 		m_pTransform->Set_Pos(info.vBirthPos);
@@ -195,22 +239,8 @@ HRESULT CDropItem::Ready_Status(void * _pArg)
 	return S_OK;
 }
 
-HRESULT CDropItem::Ready_Collider()
+HRESULT CDropItem::SetUp_ConstantTable()
 {
-	m_vecPhysicCol.reserve(1);
-
-	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
-
-	_float fRadius = 0.6f;
-
-	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
-	pCollider->Set_Dynamic(true);
-	pCollider->Set_Type(COL_SPHERE);
-	pCollider->Set_CenterPos(_v3(m_pTransform->Get_WorldMat().m[3][0], m_pTransform->Get_WorldMat().m[3][1], m_pTransform->Get_WorldMat().m[3][2]));
-	pCollider->Set_Enabled(false);
-
-	m_vecPhysicCol.push_back(pCollider);
-
 	return S_OK;
 }
 
@@ -243,10 +273,10 @@ CGameObject* CDropItem::Clone_GameObject(void * pArg)
 void CDropItem::Free()
 {
 	Safe_Release(m_pTransform);
-	Safe_Release(m_pCollider);
+	//Safe_Release(m_pNaviMesh);
 	Safe_Release(m_pRenderer);
 
-	CItem::Free();
+	CGameObject::Free();
 
 	return;
 }

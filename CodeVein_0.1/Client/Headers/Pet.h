@@ -92,13 +92,31 @@ public:
 		DEAD_EXCUTION
 	};
 
-	enum PET_GRADE_TYPE
+	enum PET_PLUS_TYPE //강화수치
+	{
+		PET_PLUS_0,
+		PET_PLUS_1,
+		PET_PLUS_2,
+		PET_PLUS_3,
+		PET_PLUS_4,
+		PET_PLUS_5,
+		PET_PLUS_END,
+	};
+
+	enum PET_GRADE_TYPE //등급
 	{
 		PET_GRADE_NORMAL,
 		PET_GRADE_RARE,
 		PET_GRADE_UNIQUE,
 		PET_GRADE_LEGEND,
 		PET_GRADE_TYPE_END
+	}; 
+
+	enum PET_TYPE // 펫 종류
+	{
+		PET_DEERKING,
+		PET_POISONBUTTERFLY,
+		PET_TYPE_END
 	};
 
 	enum PET_MODE_TYPE
@@ -106,14 +124,6 @@ public:
 		PET_MODE_ATK, //공격대상->아이템
 		PET_MODE_UTILL, //아이템->공격대상
 		PET_MODE_END
-	};
-
-	enum PET_TYPE
-	{
-		PET_AIR,
-		PET_LAND,
-		PET_INSTALL,
-		PET_TYPE_END
 	};
 
 	enum PET_TARGET_TYPE
@@ -193,6 +203,15 @@ protected:
 	virtual void Play_CC();
 	virtual void Play_Dead();
 
+	public:
+		virtual PET_PLUS_TYPE Get_Plus() { return m_ePlusType; }
+		virtual PET_TYPE Get_Type() { return m_eType; }
+		virtual PET_GRADE_TYPE Get_Grade() { return m_eGradeType; }
+
+		virtual void Set_Plus(PET_PLUS_TYPE _ePlusType) { m_ePlusType = _ePlusType; }
+		virtual void Get_Type(PET_TYPE _eType) { m_eType = _eType; }
+		virtual void Get_Grade(PET_GRADE_TYPE _eGradeType) { m_eGradeType = _eGradeType; }
+
 	//오더에 따른 겟 셋 함수를 여러개 만들예정 또는 이넘값을 이용해서 오더 내용을 변경할 예정
 	PET_MODE_TYPE Get_Pet_Mode() { return m_eNowPetMode; }
 	void Set_Pet_Mode(PET_MODE_TYPE _eMode) { m_eNowPetMode = _eMode; }
@@ -228,6 +247,10 @@ protected:
 	PET_HIT_TYPE		m_eSecondCategory_HIT;
 	PET_CC_TYPE			m_eSecondCategory_CC;
 	PET_DEAD_TYPE		m_eSecondCategory_DEAD;
+
+	PET_PLUS_TYPE		m_ePlusType = PET_PLUS_TYPE::PET_PLUS_END; //펫 강화수치
+	PET_GRADE_TYPE		m_eGradeType = PET_GRADE_TYPE::PET_GRADE_TYPE_END; //펫 등급
+	PET_TYPE			m_eType = PET_TYPE::PET_TYPE_END; //펫 종류
 
 	FBLR				m_eFBLR;
 	WEAPON_STATE		m_eWeaponState = WEAPON_STATE::WEAPON_None;

@@ -669,7 +669,10 @@ void CCocoon::Play_Dead()
 				m_fDeadEffect_Delay = 0.f;
 
 				CGameObject* pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
-					&CItem::ITEM_STATUS(CItem::ITEM_TYPE::ITEM_MATERIAL, CItem::ITEM_GRADE_NORMAL, m_pTransformCom->Get_Pos(), 12.f));
+					&CDropItem::ITEM_STATUS(CDropItem::ITEM_TYPE::ITEM_PET, 
+						CDropItem::ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, 
+						CPet::PET_TYPE::PET_POISONBUTTERFLY, 
+						m_pTransformCom->Get_Pos(), 12.f));
 				g_pManagement->Add_GameOject_ToLayer_NoClone(pItem, SCENE_STAGE, L"Layer_Item", nullptr);
 
 				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));

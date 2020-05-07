@@ -439,6 +439,12 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\08. Pet_Inven">
       <UniqueIdentifier>{a7a0f26e-f1c3-4bbe-a84d-2ece8c87140c}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\7%29 Item\Pet%28펫%29">
+      <UniqueIdentifier>{64ae0ffc-a645-4df0-9d70-b9ce119c8eec}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\Test_Pet">
+      <UniqueIdentifier>{e1619559-c327-4def-8b62-b9b38a871adb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -897,9 +903,6 @@
     <ClInclude Include="..\Headers\Monster.h">
       <Filter>02.GameObject\Stage\2%29 Monster</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Item.h">
-      <Filter>02.GameObject\Stage\7%29 Item</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\DropItem.h">
       <Filter>02.GameObject\Stage\7%29 Item</Filter>
     </ClInclude>
@@ -920,6 +923,9 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Pet_Inven.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\08. Pet_Inven</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Pet_Slot.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\Test_Pet</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1370,9 +1376,6 @@
     <ClCompile Include="..\Codes\Pet_Bullet.cpp">
       <Filter>02.GameObject\Stage\10%29 Pet</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Item.cpp">
-      <Filter>02.GameObject\Stage\7%29 Item</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\DropItem.cpp">
       <Filter>02.GameObject\Stage\7%29 Item</Filter>
     </ClCompile>
@@ -1393,6 +1396,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Pet_Inven.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\08. Pet_Inven</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Pet_Slot.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\Test_Pet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
