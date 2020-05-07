@@ -68,11 +68,14 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 	if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
 
-	if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-		return E_FAIL;
+	if (false == m_bDissolve)
+	{
+		if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+			return E_FAIL;
 
-	if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
-		return E_FAIL;
+		if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
+			return E_FAIL;
+	}
 
 	IF_NOT_NULL(m_pWeapon[m_eActiveSlot])
 		m_pWeapon[m_eActiveSlot]->Update_GameObject(TimeDelta);
@@ -82,7 +85,7 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	m_pNavMesh->Goto_Next_Subset(m_pTransform->Get_Pos(), nullptr);
 
-	CScriptManager::Get_Instance()->Update_ScriptMgr(TimeDelta, m_pNavMesh->Get_SubSetIndex(), m_pNavMesh->Get_CellIndex());
+	//CScriptManager::Get_Instance()->Update_ScriptMgr(TimeDelta, m_pNavMesh->Get_SubSetIndex(), m_pNavMesh->Get_CellIndex());
 
 	return NO_EVENT;
 }
@@ -179,8 +182,8 @@ HRESULT CPlayer::Render_GameObject()
 
 	IF_NOT_NULL(m_pNavMesh)
 	{
-		if (true == m_bEnable)
-			m_pNavMesh->Render_NaviMesh();
+		//if (true == m_bEnable)
+		//	m_pNavMesh->Render_NaviMesh();
 	}
 
 	return NOERROR;
@@ -304,15 +307,24 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 
 void CPlayer::Teleport_ResetOptions(_int _eSceneID, _int _eTeleportID)
 {
+	_v3 vShadowLightPos = V3_NULL;
 	_v3 vPos = V3_NULL;
 	_float fAngle = 0.f;
 	_float fRadian = 0.f;
+
+	// 텔레포트 할때는 항상 소환 상태
+	m_eActState = ACT_Summon;
+
+	Reset_BattleState();
+	Reset_BloodSuck_Options();
 
 	// 위치 , 방향 설정
 	switch (_eSceneID)
 	{
 	case SCENE_STAGE_BASE:
 	{
+		vShadowLightPos = _v3(100.f, 50.f, 0.f);
+
 		vPos = _eTeleportID == TeleportID_Tutorial ?
 			V3_NULL : _v3(-0.519f, 0.120f, 23.810f);
 
@@ -324,6 +336,8 @@ void CPlayer::Teleport_ResetOptions(_int _eSceneID, _int _eTeleportID)
 
 	case SCENE_STAGE_01:
 	{
+		vShadowLightPos = _v3(-100.f, 50.f, 0.f);
+
 		vPos = _eTeleportID == TeleportID_St01_1 ? _v3(150.484f, -18.08f, 70.417f) :
 			_eTeleportID == TeleportID_St01_2 ? V3_NULL : V3_NULL;
 
@@ -342,8 +356,10 @@ void CPlayer::Teleport_ResetOptions(_int _eSceneID, _int _eTeleportID)
 
 	case SCENE_STAGE_03:
 	{
+		vShadowLightPos = _v3(-100.f, 50.f, 0.f);
+
 		vPos = _eTeleportID == TeleportID_St03_1 ?
-			_v3(150.484f, -18.08f, 70.417f) : V3_NULL;
+			_v3(52.610f, -13.0f, 3.575f) : V3_NULL;
 
 		fAngle = _eTeleportID == TeleportID_St03_1 ?
 			0.f : 0.f;
@@ -353,6 +369,8 @@ void CPlayer::Teleport_ResetOptions(_int _eSceneID, _int _eTeleportID)
 
 	case SCENE_STAGE_04:
 	{
+		vShadowLightPos = _v3(-100.f, 50.f, 0.f);
+
 		vPos = _eTeleportID == TeleportID_St04_1 ?
 			_v3(42.504f, -3.85f, 75.683f) : V3_NULL;
 
@@ -362,6 +380,8 @@ void CPlayer::Teleport_ResetOptions(_int _eSceneID, _int _eTeleportID)
 		break;
 	}
 	}
+
+	m_pRenderer->Set_ShadowLightPos(vShadowLightPos);
 
 	fRadian = D3DXToRadian(fAngle);
 	m_pTransform->Set_Pos(vPos);
@@ -10107,6 +10127,10 @@ void CPlayer::Change_Weapon()
 	// 여기 무기 바꾸는 코드를 추후에 작성해야 합니다.
 }
 
+void CPlayer::Reset_All()
+{
+}
+
 HRESULT CPlayer::Add_Component()
 {
 	// For.Com_Transform
@@ -10331,24 +10355,20 @@ void CPlayer::Check_Mistletoe()
 	if (m_bOnMistletoe)
 		return;
 
-	size_t sSTLSize = g_pManagement->Get_GameObjectList(L"Layer_Mistletoe", SCENE_STAGE).size();
+	if (g_pManagement->Get_GameObjectList(L"Layer_Mistletoe", SCENE_STAGE).empty())
+		return;
 
-	if (sSTLSize > 0)
+	for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Mistletoe", SCENE_STAGE))
 	{
-		for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Mistletoe", SCENE_STAGE))
+		if (false == iter->Get_Enable())
+			continue;
+
+		CTransform* pIterTrans = TARGET_TO_TRANS(iter);
+
+		if (1.5f >= V3_LENGTH(&(m_pTransform->Get_Pos() - pIterTrans->Get_Pos())))
 		{
-			if(false == iter->Get_Enable())
-				continue;
-
-			CTransform* pIterTrans = TARGET_TO_TRANS(iter);
-
-			if (1.5f >= V3_LENGTH(&(m_pTransform->Get_Pos() - pIterTrans->Get_Pos())))
-			{
-				cout << "Moon  : 겨우살이 체크 되요" << endl;
-
-				m_bCanMistletoe = true;
-				return;
-			}
+			m_bCanMistletoe = true;
+			return;
 		}
 	}
 }

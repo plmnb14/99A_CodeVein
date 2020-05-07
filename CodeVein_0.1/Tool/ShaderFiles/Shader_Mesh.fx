@@ -1271,6 +1271,7 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DNE
 	{
+		cullmode = none;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1285,6 +1286,7 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DNSE
 	{
+		cullmode = none;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1300,6 +1302,7 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DNU
 	{
+		cullmode = none;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1314,6 +1317,7 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DNI
 	{
+		cullmode = none;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1328,6 +1332,7 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DNT
 	{
+		cullmode = none;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1342,6 +1347,7 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DNR
 	{
+		cullmode = none;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1357,6 +1363,7 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DNSU
 	{
+		cullmode = none;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1372,6 +1379,7 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DNSEID
 	{
+		cullmode = none;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1387,6 +1395,7 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DNS
 	{
+		cullmode = none;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1402,6 +1411,7 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_D
 	{
+		cullmode = none;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1427,8 +1437,6 @@ technique Default_Technique
 		DestBlend = InvSrcAlpha;
 		blendop = add;
 
-		cullmode = none;
-
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_Default_D();
 	}
@@ -1438,6 +1446,7 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DNE
 	{
+		cullmode = none;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1453,6 +1462,7 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DNEID
 	{
+		cullmode = none;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
@@ -1468,6 +1478,7 @@ technique Default_Technique
 	//====================================================================================================
 	pass Default_DNEU
 	{
+		cullmode = none;
 		AlphablendEnable = false;
 
 		AlphaTestEnable = true;
