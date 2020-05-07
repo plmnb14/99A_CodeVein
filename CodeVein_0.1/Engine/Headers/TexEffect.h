@@ -1,7 +1,7 @@
 #pragma once
 
 #include "RenderObject.h"
-#include "ActeiveObject.h"
+#include "ActiveObject.h"
 #include "Management.h"
 #include "Effect.h"
 
@@ -17,6 +17,7 @@ protected:
 
 public:
 	INSTANCEDATA Get_InstanceData();
+
 
 public:
 	HRESULT SetUp_ConstantTable_Instance(CShader* pShader);
@@ -47,7 +48,6 @@ protected:
 	CManagement*			m_pManagement = nullptr;
 
 private:
-
 
 protected:
 	void Check_Frame(_double TimeDelta);

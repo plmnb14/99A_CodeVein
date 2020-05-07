@@ -37,9 +37,12 @@ void CNavMesh::Move_NaviMesh_Y(const _ulong _dwSubIdx, const _float _fYDist)
 
 HRESULT CNavMesh::Ready_NaviMesh(_Device _pGraphicDev, const _tchar * _NavMeshPath)
 {
+	m_dwSubsetIdx = -1;
+	m_dwIndex = -1;
+
 	m_vecSubset_Cell.reserve(1000);
 
-	_tchar FullPathName[MAX_STR] = L"../../Data/Load_NavData/";
+	_tchar FullPathName[STR_128] = L"../../Data/Load_NavData/";
 	lstrcat(FullPathName, _NavMeshPath);
 
 	wifstream fin;
@@ -51,7 +54,7 @@ HRESULT CNavMesh::Ready_NaviMesh(_Device _pGraphicDev, const _tchar * _NavMeshPa
 	_v3    vVtx[3];
 	_int	iParam;
 
-	_tchar tmpSubset[MAX_STR] = L"999";
+	_tchar tmpSubset[STR_128] = L"999";
 
 	fin.open(FullPathName);
 
@@ -62,22 +65,22 @@ HRESULT CNavMesh::Ready_NaviMesh(_Device _pGraphicDev, const _tchar * _NavMeshPa
 	{
 		Engine::CELL_INFO* CellInfo = new Engine::CELL_INFO;
 
-		fin.getline(CellInfo->szSubset, MAX_STR, '|');
-		fin.getline(CellInfo->szIndex, MAX_STR, '|');
+		fin.getline(CellInfo->szSubset, STR_128, '|');
+		fin.getline(CellInfo->szIndex, STR_128, '|');
 
-		fin.getline(CellInfo->szVtx_A_x, MAX_STR, '|');
-		fin.getline(CellInfo->szVtx_A_y, MAX_STR, '|');
-		fin.getline(CellInfo->szVtx_A_z, MAX_STR, '|');
+		fin.getline(CellInfo->szVtx_A_x, STR_128, '|');
+		fin.getline(CellInfo->szVtx_A_y, STR_128, '|');
+		fin.getline(CellInfo->szVtx_A_z, STR_128, '|');
 
-		fin.getline(CellInfo->szVtx_B_x, MAX_STR, '|');
-		fin.getline(CellInfo->szVtx_B_y, MAX_STR, '|');
-		fin.getline(CellInfo->szVtx_B_z, MAX_STR, '|');
+		fin.getline(CellInfo->szVtx_B_x, STR_128, '|');
+		fin.getline(CellInfo->szVtx_B_y, STR_128, '|');
+		fin.getline(CellInfo->szVtx_B_z, STR_128, '|');
 
-		fin.getline(CellInfo->szVtx_C_x, MAX_STR, '|');
-		fin.getline(CellInfo->szVtx_C_y, MAX_STR, '|');
-		fin.getline(CellInfo->szVtx_C_z, MAX_STR, '|');
+		fin.getline(CellInfo->szVtx_C_x, STR_128, '|');
+		fin.getline(CellInfo->szVtx_C_y, STR_128, '|');
+		fin.getline(CellInfo->szVtx_C_z, STR_128, '|');
 
-		fin.getline(CellInfo->szOption, MAX_STR);
+		fin.getline(CellInfo->szOption, STR_128);
 
 
 		if (fin.eof())
@@ -150,15 +153,11 @@ HRESULT CNavMesh::Ready_Prototype_NaviMesh()
 
 void CNavMesh::Render_NaviMesh(void)
 {
-	//for (auto& iterVec : m_vecSubset_Cell)
-	//{
-
 	for (auto& iter : *m_vecSubset_Cell[m_dwSubsetIdx])
 	{
 		iter->Update();
 		iter->Render();
 	}
-	//}
 }
 
 HRESULT CNavMesh::Link_Cell()
@@ -251,17 +250,19 @@ void CNavMesh::Check_Line(_v3* _DstLine, CCell* _DstCell, CCell* _RscCell, _int 
 	_DstCell->Set_Sibling(tmpCell, iLineNum, iIndex);
 }
 
-void CNavMesh::Check_OnNavMesh(const _v3* pTargetPos)
+void CNavMesh::Check_OnNavMesh(_v3 pTargetPos)
 {
 	if (m_dwIndex == -1)
 	{
+		_int iSubsetIdx = 0;
+
 		while (true)
 		{
-			_int iSubsetIdx = 0;
+			_int iMaxSize = (_int)m_vecSubset_Cell.size();
 
 			for (auto& iter : *m_vecSubset_Cell[iSubsetIdx])
 			{
-				if (iter->Compare_Inner_Only(*pTargetPos))
+				if (iter->Compare_Inner_Only(pTargetPos))
 				{
 					m_dwIndex = iter->Get_CellIdx();
 					m_dwSubsetIdx = iSubsetIdx;
@@ -270,6 +271,9 @@ void CNavMesh::Check_OnNavMesh(const _v3* pTargetPos)
 			}
 
 			++iSubsetIdx;
+
+			if (iSubsetIdx > iMaxSize)
+				break;
 		}
 	}
 }

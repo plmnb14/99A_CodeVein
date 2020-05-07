@@ -2,18 +2,22 @@
 #include "Management.h"
 
 CRenderObject::CRenderObject(_Device _pGraphicDev)
-	:CGameObject(_pGraphicDev),
-	m_eGroup(RENDER_NONALPHA),
-	m_iIndex(0)
+	:CGameObject(_pGraphicDev)
 {
 }
 
 CRenderObject::CRenderObject(const CRenderObject& rhs)
-	: CGameObject(rhs.m_pGraphic_Dev)
+	: CGameObject(rhs)
+{
+
+}
+
+CRenderObject::CRenderObject(const CRenderObject & rhs, _bool _OnTool)
+	:CGameObject(rhs)
 	, m_eGroup(rhs.m_eGroup)
 	, m_iIndex(rhs.m_iIndex)
 {
-	memcpy(m_szName, rhs.m_szName, sizeof(_tchar[MAX_STR]));
+	memcpy(m_szName, rhs.m_szName, sizeof(_tchar[STR_128]));
 
 	Add_Essentional_Copy();
 	Default_Setting();
@@ -31,11 +35,27 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 	if (false == m_bEnable)
 		return NO_EVENT;
 
-	if (false == m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), 20.f))
+	if (false == m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), 10.f))
+		return NO_EVENT;
+
+	if(nullptr == m_pMesh_Static)
 		return NO_EVENT;
 
 	CGameObject::LateInit_GameObject();
 	CGameObject::Update_GameObject(_TimeDelta);
+
+	//Update_Collider();
+
+	return S_OK;
+}
+
+_int CRenderObject::Late_Update_GameObject(_double TimeDelta)
+{
+	if (false == m_bEnable)
+		return NO_EVENT;
+
+	if (false == m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), 10.f))
+		return NO_EVENT;
 
 	if (true == m_bOnTool)
 	{
@@ -48,14 +68,6 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 		m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this);
 		m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this);
 	}
-
-	return S_OK;
-}
-
-_int CRenderObject::Late_Update_GameObject(_double TimeDelta)
-{
-	if (false == m_bEnable)
-		return NO_EVENT;
 
 	return _int();
 }
@@ -89,10 +101,10 @@ HRESULT CRenderObject::Render_GameObject()
 	m_pShader->End_Shader();
 
 
-	CGizmo::Get_Instance()->Draw_AABB(m_pCollider->Get_GizmoPos(), m_pCollider->Get_CenterPos(), m_pTransform->Get_Size());
-
-	if (m_bIsSelected)
-		CGizmo::Get_Instance()->Draw_XYZ(m_pTransform->Get_Pos(), m_pTransform->Get_Axis(AXIS_Z), m_pTransform->Get_Axis(AXIS_X));
+	//CGizmo::Get_Instance()->Draw_AABB(m_pCollider->Get_GizmoPos(), m_pCollider->Get_CenterPos(), m_pTransform->Get_Size());
+	//
+	//if (m_bIsSelected)
+	//	CGizmo::Get_Instance()->Draw_XYZ(m_pTransform->Get_Pos(), m_pTransform->Get_Axis(AXIS_Z), m_pTransform->Get_Axis(AXIS_X));
 
 	return S_OK;
 }
@@ -136,7 +148,7 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass, _
 		_bool bDecalTarget = false;
 		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
 			return E_FAIL;
-		_float fBloomPower = 0.f;
+		_float fBloomPower = 10.f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
 			return E_FAIL;
 	}
@@ -151,6 +163,8 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass, _
 		if (FAILED(pShader->Set_Value("g_matWVP", &matWVP, sizeof(_mat))))
 			return E_FAIL;
 	}
+
+
 
 	//============================================================================================
 	// 쉐이더 시작
@@ -280,7 +294,7 @@ void CRenderObject::Set_RenderGroup(RENDERID _eGroup)
 	m_eGroup = _eGroup;
 }
 
-CRenderObject * CRenderObject::Create(_Device _pGraphicDev)
+CRenderObject * CRenderObject::Create_For_Tool(_Device _pGraphicDev)
 {
 	CRenderObject* pInstance = new CRenderObject(_pGraphicDev);
 
@@ -292,9 +306,21 @@ CRenderObject * CRenderObject::Create(_Device _pGraphicDev)
 	return pInstance;
 }
 
-CRenderObject * CRenderObject::CreateClone(CRenderObject* _pCopy)
+CRenderObject * CRenderObject::CreateClone_For_Tool(CRenderObject * _pCopy, _bool _OnTool)
 {
-	return new CRenderObject(*_pCopy);
+	return new CRenderObject(*_pCopy , _OnTool);
+}
+
+CRenderObject * CRenderObject::Create(_Device _pGraphicDev)
+{
+	CRenderObject* pInstance = new CRenderObject(_pGraphicDev);
+
+	if (FAILED(pInstance->Initialize_For_Protoype()))
+	{
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
 }
 
 void CRenderObject::Free()
@@ -311,7 +337,19 @@ void CRenderObject::Free()
 
 CGameObject * CRenderObject::Clone_GameObject(void * pArg)
 {
-	return nullptr;
+	CRenderObject* pInstance = new CRenderObject(*this);
+
+	if (FAILED(pInstance->Ready_GameObject(pArg)))
+	{
+		Safe_Release(pInstance);
+	}
+
+	return pInstance;
+}
+
+HRESULT CRenderObject::Initialize_For_Protoype()
+{
+	return S_OK;
 }
 
 HRESULT CRenderObject::Initialize()
@@ -339,6 +377,77 @@ void CRenderObject::Init_Shader()
 	m_pShader->Set_Value("g_matView", &matView, sizeof(_mat));
 	m_pShader->Set_Value("g_matProj", &matProj, sizeof(_mat));
 
-	float fRimValue = 0.f;
-	m_pShader->Set_Value("g_fRimAlpha", &fRimValue, sizeof(_float));
+	//=============================================================================================
+	// 쉐이더 재질정보 수치 입력
+	//=============================================================================================
+	_float	fEmissivePower = 5.f;	// 이미시브 : 높을 수록, 자체 발광이 강해짐.
+	_float	fSpecularPower = 1.f;	// 메탈니스 : 높을 수록, 정반사가 강해짐.
+	_float	fRoughnessPower = 1.f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
+	_float	fMinSpecular = 0.1f;	// 최소 빛	: 최소 단위의 빛을 더해줌.
+	_float	fID_R = 1.0f;	// ID_R : R채널 ID 값 , 1이 최대
+	_float	fID_G = 0.5f;	// ID_G : G채널 ID 값 , 1이 최대
+	_float	fID_B = 0.1f;	// ID_B	: B채널 ID 값 , 1이 최대
+	_float	fRimAlpha = 0.0f;	// ID_B	: B채널 ID 값 , 1이 최대
+
+	if (FAILED(m_pShader->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
+		return;
+	if (FAILED(m_pShader->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
+		return;
+	if (FAILED(m_pShader->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
+		return;
+	if (FAILED(m_pShader->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
+		return;
+	if (FAILED(m_pShader->Set_Value("g_fID_R_Power", &fID_R, sizeof(_float))))
+		return;
+	if (FAILED(m_pShader->Set_Value("g_fID_G_Power", &fID_G, sizeof(_float))))
+		return;
+	if (FAILED(m_pShader->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
+		return;
+	if (FAILED(m_pShader->Set_Value("g_fRimAlpha", &fRimAlpha, sizeof(_float))))
+		return;
+	//=============================================================================================
+}
+
+HRESULT CRenderObject::Ready_GameObject(void * pAvg)
+{
+	OBJ_INFO Info = *(OBJ_INFO*)(pAvg);
+
+	Add_Components(Info.szMeshName);
+
+	m_pTransform->Set_Pos(Info.vPos);
+	m_pTransform->Set_Angle(Info.vAngle);
+	m_pTransform->Set_Scale(Info.vScale);
+
+	return S_OK;
+}
+
+HRESULT CRenderObject::Add_Components(_tchar * szMeshName)
+{
+	// For.Com_Transform
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransform)))
+		return E_FAIL;
+
+	// For.Com_Renderer
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRenderer)))
+		return E_FAIL;
+
+	// For.Com_Shader
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShader)))
+		return E_FAIL;
+
+	// for.Com_Mesh
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, szMeshName, L"Com_StaticMesh", (CComponent**)&m_pMesh_Static)))
+		return E_FAIL;
+
+	// for.Com_Mesh
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+		return E_FAIL;
+
+	// for.Com_Optimization
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Optimization", L"Com_Opimaization", (CComponent**)& m_pOptimization)))
+		return E_FAIL;
+
+	lstrcpy(m_szName, szMeshName);
+
+	return S_OK;
 }

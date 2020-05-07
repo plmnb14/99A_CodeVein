@@ -22,12 +22,13 @@ public:
 	CBlackBoard::OUTPUT Set_Value_Of_BlackBoard(const _tchar* pName, _float fValue);
 	CBlackBoard::OUTPUT Set_Value_Of_BlackBoard(const _tchar* pName, _int iValue);
 	CBlackBoard::OUTPUT Set_Value_Of_BlackBoard(const _tchar* pName, _v3 vValue);
+	CBlackBoard::OUTPUT Set_Value_Of_BlackBoard(const _tchar* pName, _mat vValue);
 
 	const _bool Get_BoolValue(const _tchar* pName) const;
 	const _float Get_FloatValue(const _tchar* pName) const;
 	const _int Get_IntValue(const _tchar* pName) const;
 	const _v3 Get_V3Value(const _tchar* pName) const;
-
+	const _mat Get_MatValue(const _tchar* pName) const;
 public:
 	void Reset_BT();
 

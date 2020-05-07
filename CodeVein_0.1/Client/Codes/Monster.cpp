@@ -58,6 +58,104 @@ _bool CMonster::Is_InFov(_float fDegreeOfFov, CTransform* pSelfTransform, _v3 vT
 	return false;
 }
 
+void CMonster::Set_Target_Auto(_bool Ransdom_Aggro)
+{
+	CGameObject* pColleaue = nullptr;
+	CGameObject* pPlayer = nullptr;
+
+	auto& ColleagueContainer = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_MORTAL);
+
+	auto& PlayerContainer = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
+
+	if (!ColleagueContainer.empty())
+	{
+		// 무조건 동료 있다,  없을리 없다.
+		pColleaue = ColleagueContainer.front();
+
+		// 동료가 비활성화
+		if (true == pColleaue->Get_Dead() ||
+			false == pColleaue->Get_Enable())
+		{
+			// 다시 되돌림.
+			pColleaue = nullptr;
+		}
+	}
+
+	if (!PlayerContainer.empty())
+	{
+		// 무조건 플레이어 있다,  없을리 없다.
+		pPlayer = PlayerContainer.front();
+
+		// 플레이어가 비활성화
+		if (true == pPlayer->Get_Dead() ||
+			false == pPlayer->Get_Enable())
+		{
+			// 다시 되돌림.
+			pPlayer = nullptr;
+		}
+	}
+
+	// 랜덤 어그로 핑퐁
+	if (true == Ransdom_Aggro)
+	{
+		m_fAggroTime += g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60");
+
+		// 어그로 시간이 경과되면 다시 핑퐁
+		if (m_fAggroTime > m_fMaxAggroTime + m_fOffsetAggroTime)
+		{
+			// 애니가 끝날 때 어그로 평가
+			if (m_pMeshCom->Is_Finish_Animation(0.9f))
+			{
+				// 플레이어한테 어그로였는가
+				if (0 == lstrcmp(m_pLayerTag_Of_Target, L"Layer_Player"))
+				{
+					// 동료로 어그로 교체
+					if (nullptr != pColleaue)
+						Set_Target_To_Colleague();
+
+				}
+				else
+				{
+					// 플레이어로 어그로 교체
+					if (nullptr != pPlayer)
+						Set_Target_To_Player();
+				}
+
+				// 어그로 시간, 랜덤 Offset 초기화
+				m_fAggroTime = 0.f;
+				m_fOffsetAggroTime = _float(CALC::Random_Num_Double(-2, 2));
+			}
+		}
+
+	}
+	// 거리 체크
+	else
+	{
+		// 애니가 끝날 때 어그로 평가
+		if (m_pMeshCom->Is_Finish_Animation(0.9f))
+		{
+			// 둘 다 살아있으면 거리비교
+			if (pPlayer && pColleaue)
+			{
+				_float fLengthToPlayer = V3_LENGTH(&(TARGET_TO_TRANS(pPlayer)->Get_Pos() - m_pTransformCom->Get_Pos()));
+				_float fLengthTopColleaue = V3_LENGTH(&(TARGET_TO_TRANS(pColleaue)->Get_Pos() - m_pTransformCom->Get_Pos()));
+
+				if (fLengthTopColleaue > fLengthToPlayer)
+					Set_Target_To_Colleague();
+				else
+					Set_Target_To_Player();
+			}
+			else if (nullptr == pColleaue)
+				Set_Target_To_Player();
+			else
+				Set_Target_To_Colleague();
+		}
+	}
+
+
+
+}
+
 HRESULT CMonster::Draw_Collider()
 {
 	for (auto& iter : m_vecPhysicCol)
@@ -73,7 +171,7 @@ void CMonster::Check_CollisionEvent()
 {
 	Check_CollisionPush();
 	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
-	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE));
+	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_MORTAL));
 
 	return;
 }
@@ -85,7 +183,7 @@ void CMonster::Check_CollisionPush()
 	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
 	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
 	tmpList[2] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
-	tmpList[3] = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE);
+	tmpList[3] = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_MORTAL);
 
 	for (auto& list_iter : tmpList)
 	{
@@ -390,7 +488,7 @@ void CMonster::Function_Find_Target()
 
 	_float	fOldLength = 99999.f;
 
-	auto& ColleagueContainer = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE);
+	auto& ColleagueContainer = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_MORTAL);
 
 	auto& PlayerContainer = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
 

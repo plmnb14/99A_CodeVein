@@ -309,6 +309,14 @@ HRESULT CManagement::LoadMesh_FromPath(_Device pGraphicDev, const _tchar * szImg
 	return m_pComponent_Manager->LoadMesh_FilesFromPath(pGraphicDev, szImgPath);
 }
 
+HRESULT CManagement::LoadMesh_FilesFromPath_AddProtoRenderObj(_Device pGraphicDev, const _tchar * szImgPath)
+{
+	if (nullptr == m_pComponent_Manager)
+		return E_FAIL;
+
+	return m_pComponent_Manager->LoadMesh_FilesFromPath_AddProtoRenderObj(pGraphicDev, szImgPath);
+}
+
 HRESULT CManagement::LoadTex_FromPath(_Device pGraphicDev, const _tchar * szImgPath)
 {
 	if (nullptr == m_pComponent_Manager)
@@ -576,6 +584,11 @@ void CManagement::Create_Effect_Delay(_tchar * szName, _float fDelay, _v3 vPos, 
 void CManagement::Create_Effect_Delay(_tchar * szName, _float fDelay, CTransform* pFollowTrans, _mat * pTargetMat)
 {
 	CParticleMgr::Get_Instance()->Create_Effect_Delay(szName, fDelay, _v3(0,0,0), pFollowTrans, pTargetMat);
+}
+
+void CManagement::Create_Effect_Decal(_tchar * szName, _v3 vPos)
+{
+	CParticleMgr::Get_Instance()->Create_Effect_Decal(szName, vPos);
 }
 
 void CManagement::Create_ParticleEffect_Delay(_tchar * szName, _float fLifeTime, _float fDelay, _v3 vPos, CTransform * pFollowTrans)

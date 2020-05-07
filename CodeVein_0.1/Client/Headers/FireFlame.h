@@ -23,7 +23,6 @@ private:
 	CTransform*			m_pTransformCom = nullptr;
 	CCollider*			m_pCollider = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
-	CEffect*			m_pBulletBody = nullptr;
 
 	CAIController*		m_pTarget_AIController = nullptr;
 

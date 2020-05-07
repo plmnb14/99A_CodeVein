@@ -5,11 +5,14 @@
 //test
 #include"TexEffect.h"
 
-_float g_fShadow_X = 20.f;
-_float g_fShadow_Y = 20.f;
+_float g_fShadow_X = 64.f;
+_float g_fShadow_Y = 36.f;
 _float g_fFov = 60.f;
 _float g_fNear = 0.1f;
 _float g_fFar = 500.f;
+_short g_sShadow_X = 3840;
+_short g_sShadow_Y = 2160;
+_v3	   g_vLightDirectionPos = _v3(-100.f, 50.f, 0.f);
 
 CRenderer::CRenderer(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CComponent(pGraphic_Device)
@@ -76,11 +79,11 @@ HRESULT CRenderer::Ready_Component_Prototype()
 
 
 	// Target_ShadowMap
-	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_ShadowMap", 3840, 2160, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.f, 0.f, 0.f, 1.f))))
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_ShadowMap", g_sShadow_X, g_sShadow_Y, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.f, 0.f, 0.f, 1.f))))
 		return E_FAIL;
 
 	// Target_Shadow ( 원래 D3DFMT_A8R8G8B8 )
-	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Shadow", 3840, 2160, D3DFMT_A8R8G8B8, D3DXCOLOR(0.f, 1.f, 0.f, 1.f))))
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Shadow", g_sShadow_X, g_sShadow_Y, D3DFMT_A8R8G8B8, D3DXCOLOR(0.f, 1.f, 0.f, 1.f))))
 		return E_FAIL;
 
 	// Target_Distortion
@@ -119,6 +122,13 @@ HRESULT CRenderer::Ready_Component_Prototype()
 
 	// Target_ToneMapping
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_ToneMapping", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+
+	// Target_BlurDOF
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_BlurDOF", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
+		return E_FAIL;
+	// Target_BlurSky
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_BlurSky", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.f, 0.f, 0.f, 0.f))))
 		return E_FAIL;
 
 	// MRT : Multi Render Target 그룹을 지어놓은것. 
@@ -224,9 +234,13 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	//m_pViewPortBufferForBlur = CBuffer_ViewPort::Create(m_pGraphic_Dev, 0.f, 0.f, (_float)ViewPort.Width / 4, (_float)ViewPort.Height / 4);
 
 	// For.m_pSSAOTexture
-	m_pSSAOTexture = CTexture::Create(m_pGraphic_Dev, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Effect/Normal/Normal_4.tga");
+	m_pSSAOTexture = CTexture::Create(m_pGraphic_Dev, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Effect/Normal/Normal_4.dds");
 	// static_cast<CTexture*>(CComponent_Manager::Get_Instance()->Clone_Component(SCENE_STATIC, L"Tex_Noise", nullptr));
 
+	// For.m_pGradingTexture
+	m_pGradingTexture = CTexture::Create(m_pGraphic_Dev, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Grading/LUT/LUT_0.png");
+	m_pGradingTextureTest = CTexture::Create(m_pGraphic_Dev, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Grading/LUT/LUT_1.png");
+	
 	m_iInstanceCnt = 200;
 	m_pInstanceData = new INSTANCEDATA[m_iInstanceCnt];
 
@@ -235,10 +249,9 @@ HRESULT CRenderer::Ready_Component_Prototype()
 
 #ifdef _DEBUG
 
+	//=====================================================================================================================
+
 	_float fTargetSize = 120.f;
-	// For.Target_Diffuse`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_RimNormal", fTargetSize * 5, 0.f, fTargetSize, fTargetSize)))
-		return E_FAIL;
 
 	// For.Target_Diffuse`s Debug Buffer
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Diffuse", 0.0f, 0.0f, fTargetSize, fTargetSize)))
@@ -256,66 +269,84 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Emissive", 0.0f, fTargetSize * 3, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
+	//=====================================================================================================================
+
 	// For.Target_Depth`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Velocity", 0.0f, fTargetSize * 4, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Velocity", fTargetSize, 0.0f, fTargetSize, fTargetSize)))
 		return E_FAIL;
+
+	// 안나옴
 	// For.Target_DecalDepth`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_DecalDepth", fTargetSize * 2, fTargetSize * 4, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_DecalDepth", fTargetSize, fTargetSize * 2, fTargetSize, fTargetSize)))
 		return E_FAIL;
+
+	// For.Target_RimNormal`s Debug Buffer ==  툰 쉐이딩
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_RimNormal", fTargetSize, fTargetSize * 3, fTargetSize, fTargetSize)))
+		return E_FAIL;
+
+	//=====================================================================================================================
 
 	// For.Target_Shade`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Shade", fTargetSize, 0.0f, fTargetSize, fTargetSize)))
-		return E_FAIL;
-
-	// For.Target_Specular`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Specular", fTargetSize, fTargetSize, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Shade", fTargetSize * 2.f, 0.0f, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_SSAO`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_SSAO", fTargetSize * 6, fTargetSize * 0, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_SSAO", fTargetSize * 2.f, fTargetSize, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_SSAO_Blur`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_SSAO_Blur", fTargetSize * 6, fTargetSize * 1, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_SSAO_Blur", fTargetSize * 2.f, fTargetSize * 2, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
+	// For.Target_Specular`s Debug Buffer
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Specular", fTargetSize * 2.f, fTargetSize * 3, fTargetSize, fTargetSize)))
+		return E_FAIL;
 
 	// For.Target_Rim`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Rim", fTargetSize, fTargetSize * 4, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Rim", fTargetSize * 2.f, fTargetSize * 4, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
+	//=====================================================================================================================
+
 	// For.Target_ShadowMap`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_ShadowMap", fTargetSize * 4, 0.0f, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_ShadowMap", fTargetSize * 3, 0.0f, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_Shadow`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Shadow", fTargetSize * 4, fTargetSize, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Shadow", fTargetSize * 3, fTargetSize, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
-	// For.Target_Blend`s Debug Buffer // 톤매핑 직전
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Blend", fTargetSize * 3, 0.f, fTargetSize, fTargetSize)))
-		return E_FAIL;
-
-	// For.Target_Bloom`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Bloom", fTargetSize, fTargetSize * 3, fTargetSize, fTargetSize)))
-		return E_FAIL;
+	//=====================================================================================================================
 
 	// For.Target_Distortion`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Distortion", fTargetSize * 2, 0.f, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Distortion", fTargetSize * 4, 0.f, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_Blur`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Blur", fTargetSize * 2, fTargetSize, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Blur", fTargetSize * 4, fTargetSize, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_MotionBlur`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_MotionBlurObj", fTargetSize * 2, fTargetSize * 2, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_MotionBlurObj", fTargetSize * 4, fTargetSize * 2, fTargetSize, fTargetSize)))
+		return E_FAIL;
+
+	//=====================================================================================================================
+
+	// For.Target_Blend`s Debug Buffer // 톤매핑 직전
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Blend", fTargetSize * 5, 0.f, fTargetSize, fTargetSize)))
+		return E_FAIL;
+
+	// For.Target_Bloom`s Debug Buffer
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Bloom", fTargetSize * 5, fTargetSize, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_ToneMapping`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_ToneMapping", fTargetSize * 3, fTargetSize, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_ToneMapping", fTargetSize * 5, fTargetSize * 2.f, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
+	// For.Target_BlurDOF`s Debug Buffer
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_BlurDOF", fTargetSize * 4, fTargetSize * 2, fTargetSize, fTargetSize)))
+		return E_FAIL;
 #endif
 
 
@@ -386,6 +417,9 @@ HRESULT CRenderer::Draw_RenderList()
 	if (FAILED(Render_ToneMapping()))
 		return E_FAIL;
 
+	if (FAILED(Render_BlurDOF()))
+		return E_FAIL;
+
 	// Distortion 타겟에 그림 // 순서 상관X
 	if (FAILED(Render_Distortion()))
 		return E_FAIL;
@@ -411,8 +445,8 @@ HRESULT CRenderer::Draw_RenderList()
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Deferred");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Velocity");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_LightAcc");
-		//m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_ShadowMap");
-		//m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_Shadow");
+		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_ShadowMap");
+		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_Shadow");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Blend");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Distortion");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_Blur");
@@ -421,6 +455,7 @@ HRESULT CRenderer::Draw_RenderList()
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_BrightPass");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_SSAO");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_SSAO_Blur");
+		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_BlurDOF");
 
 		m_pGraphic_Dev->SetTexture(0, nullptr);
 	}
@@ -428,6 +463,41 @@ HRESULT CRenderer::Draw_RenderList()
 #endif
 
 	return NOERROR;
+}
+
+void CRenderer::DOF_On(_bool bOn)
+{
+	m_bDOF = bOn;
+
+	if (m_bDOF)
+	{
+		m_fFocus = 0.5f;
+		m_fRange = 0.08f;
+	}
+	else
+	{
+		m_fFocus = 0.f;
+		m_fRange = 0.f;
+	}
+	
+}
+
+void CRenderer::Mono_On(_bool bOn)
+{
+	m_bMono = bOn;
+
+	//if (m_bMono)
+	//	m_fToneGradient = 1.f;
+}
+
+void CRenderer::Fog_On(_bool bOn)
+{
+	m_bFog = bOn;
+
+	if (m_bFog)
+		m_fFogDestiny = 0.06f;
+	else
+		m_fFogDestiny = 0.f;
 }
 
 HRESULT CRenderer::Render_Priority()
@@ -444,8 +514,24 @@ HRESULT CRenderer::Render_Priority()
 			Safe_Release(pGameObject);
 		}
 	}
-
 	m_RenderList[RENDER_PRIORITY].clear();
+
+	m_pTarget_Manager->Begin_Render_Target(L"Target_BlurSky");
+	for (auto& pGameObject : m_RenderList[RENDER_FOG])
+	{
+		if (nullptr != pGameObject)
+		{
+			if (FAILED(pGameObject->Render_GameObject()))
+			{
+				Safe_Release(pGameObject);
+				return E_FAIL;
+			}
+			Safe_Release(pGameObject);
+		}
+	}
+	m_RenderList[RENDER_FOG].clear();
+	m_pTarget_Manager->End_Render_Target(L"Target_BlurSky");
+
 
 	return NOERROR;
 }
@@ -490,12 +576,12 @@ HRESULT CRenderer::Render_ShadowMap()
 	m_pTarget_Manager->New_Stencil(L"Target_ShadowMap");
 
 	m_pGraphic_Dev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DXCOLOR(0.f, 0.f, 0.f, 0.f), 1.f, 0);
-
+	
 	_mat matWorld, matView, matProj, matLightVP;
 
 	_v3 vCamPos = CManagement::Get_Instance()->Get_CamPosition();
 
-	_v3 vLightPos = vCamPos + _v3(0.f, 60.f, 100.f);
+	_v3 vLightPos = vCamPos + g_vLightDirectionPos;
 	_v3 vLookAt = vCamPos;
 
 	D3DXMatrixLookAtLH(&matView, &vLightPos, &vLookAt, &WORLD_UP);
@@ -533,15 +619,15 @@ HRESULT CRenderer::Render_Shadow()
 	m_pTarget_Manager->New_Stencil(L"Target_Shadow");
 	m_pGraphic_Dev->Clear(0, NULL, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER, D3DXCOLOR(0.f, 0.f, 0.f, 0.f), 1.f, 0);
 
-	_float fOffsetX = 0.5f + (0.5f / 3840.f);
-	_float fOffsetY = 0.5f + (0.5f / 2160.f);
+	_float fOffsetX = 0.5f + (0.5f / 1280);
+	_float fOffsetY = 0.5f + (0.5f / 720);
 
 	_mat matScaleBias;
 	D3DXMatrixIdentity(&matScaleBias);
 
 	matScaleBias._11 = 0.5f;
 	matScaleBias._22 = -0.5f;
-	matScaleBias._33 = 1.f;
+	matScaleBias._33 = 1.0f;
 	matScaleBias._41 = fOffsetX;
 	matScaleBias._42 = fOffsetY;
 	matScaleBias._44 = 1.f;
@@ -552,7 +638,7 @@ HRESULT CRenderer::Render_Shadow()
 
 	_v3 vCamPos = CManagement::Get_Instance()->Get_CamPosition();
 
-	_v3 vLightPos = vCamPos + _v3(0.f, 60.f, 100.f);
+	_v3 vLightPos = vCamPos + g_vLightDirectionPos;
 	_v3 vLookAt = vCamPos;
 
 	D3DXMatrixLookAtLH(&matView, &vLightPos, &vLookAt, &WORLD_UP);
@@ -689,12 +775,32 @@ HRESULT CRenderer::Render_Effect()
 	{
 		if (nullptr != pGameObject)
 		{
+			if (CEffect::TYPE_TEX == static_cast<CEffect*>(pGameObject)->Get_EffType())
+				continue;
+
 			if (FAILED(pGameObject->Render_GameObject_SetShader(m_pShader_Effect)))
 			{
 				Safe_Release(pGameObject);
 				return E_FAIL;
 			}
 			Safe_Release(pGameObject);
+		}
+	}
+
+	const _int LAYER_COUNT = 10;
+	for (_int i = 0; i < LAYER_COUNT; i++)
+	{
+		for (auto& pGameObject : m_RenderList[RENDER_EFFECT])
+		{
+			if (CEffect::TYPE_TEX == static_cast<CEffect*>(pGameObject)->Get_EffType() &&
+				i == static_cast<CTexEffect*>(pGameObject)->Get_EffectLayer())
+			{
+				if (FAILED(pGameObject->Render_GameObject_SetShader(m_pShader_Effect)))
+				{
+					Safe_Release(pGameObject);
+					return E_FAIL;
+				}
+			}
 		}
 	}
 
@@ -911,7 +1017,7 @@ HRESULT CRenderer::Render_LightAcc()
 
 	_v3 vCamPos = CManagement::Get_Instance()->Get_CamPosition();
 
-	_v3 vLightPos = vCamPos + _v3(0.f, 60.f, 100.f);
+	_v3 vLightPos = vCamPos + g_vLightDirectionPos;
 	_v3 vLookAt = vCamPos;
 
 	D3DXMatrixLookAtLH(&matView, &vLightPos, &vLookAt, &WORLD_UP);
@@ -1043,7 +1149,7 @@ HRESULT CRenderer::Render_Blur()
 	m_pTarget_Manager->End_Render_Target(L"Target_BlurH");
 	// Blur H ==================================================
 
-	for (_int i = 0; i < 13; ++i) // 홀수만
+	for (_int i = 0; i < 1; ++i) // 홀수만
 	{
 		if (i % 2 == 0)
 		{
@@ -1195,22 +1301,29 @@ HRESULT CRenderer::Render_ToneMapping()
 	if (FAILED(m_pShader_Blend->Set_Texture("g_BloomTexture", m_pTarget_Manager->Get_Texture(L"Target_Blur"))))
 		return E_FAIL;
 
-	static _int iIdx = 5;
-	if (GetAsyncKeyState(VK_F1) & 0x8000)
-		iIdx = 0;
-	if (GetAsyncKeyState(VK_F2) & 0x8000)
-		iIdx = 1;
-	if (GetAsyncKeyState(VK_F3) & 0x8000)
-		iIdx = 2;
-	if (GetAsyncKeyState(VK_F4) & 0x8000)
-		iIdx = 3;
-	if (GetAsyncKeyState(VK_F5) & 0x8000)
-		iIdx = 4;
-	if (GetAsyncKeyState(VK_F6) & 0x8000)
-		iIdx = 5;
+	if(!m_bMono)
+		(m_fToneGradient <= 0.f) ? m_fToneGradient = 0.f : m_fToneGradient -= DELTA_60;
+	else
+		(m_fToneGradient >= 0.5f) ? m_fToneGradient = 0.5f : m_fToneGradient += DELTA_60 * 6.f;
 
+	if (GetAsyncKeyState(VK_F1) & 0x8000)
+		m_iToneIdx = 0;
+	if (GetAsyncKeyState(VK_F2) & 0x8000)
+		m_iToneIdx = 1;
+	if (GetAsyncKeyState(VK_F3) & 0x8000)
+		m_iToneIdx = 2;
+	if (GetAsyncKeyState(VK_F4) & 0x8000)
+		m_iToneIdx = 3;
+	if (GetAsyncKeyState(VK_F5) & 0x8000)
+		m_iToneIdx = 4;
+	if (GetAsyncKeyState(VK_F6) & 0x8000)
+		m_iToneIdx = 5;
+	
 	// Tone index
-	if (FAILED(m_pShader_Blend->Set_Value("g_iToneIndex", &iIdx, sizeof(_int))))
+	if (FAILED(m_pShader_Blend->Set_Value("g_iToneIndex", &m_iToneIdx, sizeof(_int))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader_Blend->Set_Value("g_fToneGradient", &m_fToneGradient, sizeof(_float))))
 		return E_FAIL;
 
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_HDR")))
@@ -1231,6 +1344,83 @@ HRESULT CRenderer::Render_ToneMapping()
 	return S_OK;
 }
 
+HRESULT CRenderer::Render_BlurDOF()
+{
+	if (!m_bDOF)
+		return S_OK;
+
+	if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_ToneMapping"))))
+		return E_FAIL;
+
+	m_pTarget_Manager->Begin_Render_Target(L"Target_BlurH");
+
+	m_pShader_Blend->Begin_Shader();
+	m_pShader_Blend->Begin_Pass(2);
+
+	m_pViewPortBuffer->Render_VIBuffer();
+
+	m_pShader_Blend->End_Pass();
+	m_pShader_Blend->End_Shader();
+
+	m_pTarget_Manager->End_Render_Target(L"Target_BlurH");
+
+
+	for (_int i = 0; i < 13; ++i) // 홀수만
+	{
+		if (i % 2 == 0)
+		{
+			m_pTarget_Manager->Begin_Render_Target(L"Target_BlurV");
+
+			if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_BlurH"))))
+				return E_FAIL;
+			m_pShader_Blend->Begin_Shader();
+			m_pShader_Blend->Begin_Pass(8);
+
+			m_pViewPortBuffer->Render_VIBuffer();
+
+			m_pShader_Blend->End_Pass();
+			m_pShader_Blend->End_Shader();
+			m_pTarget_Manager->End_Render_Target(L"Target_BlurV");
+		}
+		else
+		{
+			// Blur H ==================================================
+			if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_BlurV"))))
+				return E_FAIL;
+
+			m_pTarget_Manager->Begin_Render_Target(L"Target_BlurH");
+
+			m_pShader_Blend->Begin_Shader();
+			m_pShader_Blend->Begin_Pass(7);
+
+			m_pViewPortBuffer->Render_VIBuffer();
+
+			m_pShader_Blend->End_Pass();
+			m_pShader_Blend->End_Shader();
+
+			m_pTarget_Manager->End_Render_Target(L"Target_BlurH");
+			// Blur H ==================================================
+
+		}
+	}
+
+	m_pTarget_Manager->Begin_Render_Target(L"Target_BlurDOF");
+
+	if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_BlurV"))))
+		return E_FAIL;
+
+	m_pShader_Blend->Begin_Shader();
+	m_pShader_Blend->Begin_Pass(2);
+
+	m_pViewPortBuffer->Render_VIBuffer();
+
+	m_pShader_Blend->End_Pass();
+	m_pShader_Blend->End_Shader();
+
+	m_pTarget_Manager->End_Render_Target(L"Target_BlurDOF");
+	return S_OK;
+}
+
 HRESULT CRenderer::Render_After()
 {
 	if (nullptr == m_pViewPortBuffer ||
@@ -1240,6 +1430,67 @@ HRESULT CRenderer::Render_After()
 	if (FAILED(m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_ToneMapping"))))
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_DistortionTexture", m_pTarget_Manager->Get_Texture(L"Target_Distortion"))))
+		return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Texture("g_DepthTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"))))
+		return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Texture("g_ShadeTexture", m_pTarget_Manager->Get_Texture(L"Target_BlurDOF"))))
+		return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Texture("g_FogColorTexture", m_pTarget_Manager->Get_Texture(L"Target_BlurSky"))))
+		return E_FAIL;
+
+	if (GetAsyncKeyState('O') & 0x8000)
+	{
+		m_pGradingTextureTest->SetUp_OnShader("g_GradingTexture", m_pShader_Blend, 0);
+	}
+	else
+	{
+		// GradingTexture
+		m_pGradingTexture->SetUp_OnShader("g_GradingTexture", m_pShader_Blend, 0);
+	}
+
+	//if (GetAsyncKeyState('O') & 0x8000)
+	//{
+	//	m_fFocus += 1.f * DELTA_60;
+	//
+	//	cout << "RANGE : " << m_fRange << endl;
+	//	cout << "FOCUS : " << m_fFocus << endl;
+	//	cout << "=========================" << endl;
+	//}
+	//if (GetAsyncKeyState('I') & 0x8000)
+	//{
+	//	m_fFocus -= 1.f * DELTA_60;
+	//
+	//	cout << "RANGE : " << m_fRange << endl;
+	//	cout << "FOCUS : " << m_fFocus << endl;
+	//	cout << "=========================" << endl;
+	//}
+	//if (GetAsyncKeyState('U') & 0x8000)
+	//{
+	//	m_fRange += 1.f * DELTA_60;
+	//
+	//	cout << "RANGE : " << m_fRange << endl;
+	//	cout << "FOCUS : " << m_fFocus << endl;
+	//	cout << "=========================" << endl;
+	//}
+	//if (GetAsyncKeyState('Y') & 0x8000)
+	//{
+	//	m_fRange -= 1.f * DELTA_60;
+	//
+	//	cout << "RANGE : " << m_fRange << endl;
+	//	cout << "FOCUS : " << m_fFocus << endl;
+	//	cout << "=========================" << endl;
+	//}
+
+	if (m_fFocus > 1.f) m_fFocus = 1.f;
+	if (m_fFocus < 0.f) m_fFocus = 0.f;
+	if (m_fRange > 1.f) m_fRange = 1.f;
+	if (m_fRange < 0.f) m_fRange = 0.f;
+
+	if (FAILED(m_pShader_Blend->Set_Value("g_Focus_DOF", &m_fFocus, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Value("g_Range_DOF", &m_fRange, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Value("g_FogDestiny", &m_fFogDestiny, sizeof(_float))))
 		return E_FAIL;
 
 	// 장치에 백버퍼가 셋팅되어있다.	
@@ -1256,84 +1507,84 @@ HRESULT CRenderer::Render_After()
 
 void CRenderer::Calc_CSM()
 {
-	//===================================================================================
-	// ViewMatrix 생성
-	//===================================================================================
-
-	_v3 vWorldCenter = V3_NULL;
-	_v3 vPos = vWorldCenter;
-	_v3 vLookAt = vWorldCenter; // + 디렉셔널 방향 * 카메라의  FarClip
-	_v3 vDirectionalDir = WORLD_LOOK;
-	_v3 vUp = WORLD_UP;
-	_v3 vRight = WORLD_RIGHT;
-
-	CALC::V3_Cross_Normal(&vUp, &vDirectionalDir, &vRight);
-
-	_mat matShadowView;
-	D3DXMatrixLookAtLH(&matShadowView, &vPos, &vLookAt, &vUp);
-
-	//===================================================================================
-	// Frustum 영역 추출
-	//===================================================================================
-
-	_float fShadowBoundRadius, fRadius;
-	_v3 vShadowBoundCenter;
-	_float arrCascadeRanges[4];
-	_float arrCascadeRadius[4];
-
-	Calc_FrustumBoundSphere(arrCascadeRanges[0], arrCascadeRanges[3], vShadowBoundCenter, fRadius);
-	fShadowBoundRadius = max(fShadowBoundRadius, fRadius);
-
-	//===================================================================================
-	// ProjMatrix 생성
-	//===================================================================================
-	_mat matShadowProj;
-	D3DXMatrixOrthoLH(&matShadowProj, fShadowBoundRadius, fShadowBoundRadius, -fShadowBoundRadius, fShadowBoundRadius);
-
-	//===================================================================================
-	// 플리커, 케스케이드 변환
-	//===================================================================================
-	_uint iToltalCascade = 3;
-	_bool bAntiFlicker = true;
-
-
-	for (_uint i = 0; i < iToltalCascade; ++i)
-	{
-		_mat matCascadeTrans, matCascadeScale;
-
-		//if (bAntiFlicker)
-		//{
-		//	_v3 vNewCenter;
-		//	Calc_FrustumBoundSphere(arrCascadeRanges[i], arrCascadeRanges[i+1], vNewCenter, fRadius);
-		//	arrCascadeRadius[i] = max(arrCascadeRadius[i], fRadius);
-		//
-		//
-		//	_v3 vOffset;
-		//	if()
-		//}
-	}
+	////===================================================================================
+	//// ViewMatrix 생성
+	////===================================================================================
+	//
+	//_v3 vWorldCenter = V3_NULL;
+	//_v3 vPos = vWorldCenter;
+	//_v3 vLookAt = vWorldCenter; // + 디렉셔널 방향 * 카메라의  FarClip
+	//_v3 vDirectionalDir = WORLD_LOOK;
+	//_v3 vUp = WORLD_UP;
+	//_v3 vRight = WORLD_RIGHT;
+	//
+	//CALC::V3_Cross_Normal(&vUp, &vDirectionalDir, &vRight);
+	//
+	//_mat matShadowView;
+	//D3DXMatrixLookAtLH(&matShadowView, &vPos, &vLookAt, &vUp);
+	//
+	////===================================================================================
+	//// Frustum 영역 추출
+	////===================================================================================
+	//
+	//_float fShadowBoundRadius, fRadius;
+	//_v3 vShadowBoundCenter;
+	//_float arrCascadeRanges[4];
+	//_float arrCascadeRadius[4];
+	//
+	//Calc_FrustumBoundSphere(arrCascadeRanges[0], arrCascadeRanges[3], vShadowBoundCenter, fRadius);
+	//fShadowBoundRadius = max(fShadowBoundRadius, fRadius);
+	//
+	////===================================================================================
+	//// ProjMatrix 생성
+	////===================================================================================
+	//_mat matShadowProj;
+	//D3DXMatrixOrthoLH(&matShadowProj, fShadowBoundRadius, fShadowBoundRadius, -fShadowBoundRadius, fShadowBoundRadius);
+	//
+	////===================================================================================
+	//// 플리커, 케스케이드 변환
+	////===================================================================================
+	//_uint iToltalCascade = 3;
+	//_bool bAntiFlicker = true;
+	//
+	//
+	//for (_uint i = 0; i < iToltalCascade; ++i)
+	//{
+	//	_mat matCascadeTrans, matCascadeScale;
+	//
+	//	//if (bAntiFlicker)
+	//	//{
+	//	//	_v3 vNewCenter;
+	//	//	Calc_FrustumBoundSphere(arrCascadeRanges[i], arrCascadeRanges[i+1], vNewCenter, fRadius);
+	//	//	arrCascadeRadius[i] = max(arrCascadeRadius[i], fRadius);
+	//	//
+	//	//
+	//	//	_v3 vOffset;
+	//	//	if()
+	//	//}
+	//}
 }
 
 void CRenderer::Calc_FrustumBoundSphere(_float fNear, _float fFar, _v3 & vBoundCenter, _float & fBoundRadius)
 {
-	_mat vCamMatrix = CManagement::Get_Instance()->Get_TransformInverse(D3DTS_VIEW);
-
-	_v3 vCamRight = *(_v3*)&vCamMatrix.m[0][0];
-	_v3 vCamUp = *(_v3*)&vCamMatrix.m[1][0];
-	_v3 vCamLook = *(_v3*)&vCamMatrix.m[2][0];
-	_v3 vCamPos = *(_v3*)&vCamMatrix.m[3][0];
-	_float fAspect , fFov;
-
-	fAspect = 720.f / 1280.f;
-	fFov = 60.f;
-
-	_float fTanFOV_X = tanf(fAspect * fFov);
-	_float fTanFOV_Y = tanf(fAspect);
-
-	vBoundCenter = vCamPos + vCamLook * (fNear + 0.5f * (fNear + fFar));
-
-	_v3 vBoundSpan = vCamPos + (-vCamRight * fTanFOV_X + vCamUp * fTanFOV_Y + vCamLook) * fFar - vBoundCenter;
-	fBoundRadius = D3DXVec3Length(&vBoundSpan);
+	//_mat vCamMatrix = CManagement::Get_Instance()->Get_TransformInverse(D3DTS_VIEW);
+	//
+	//_v3 vCamRight = *(_v3*)&vCamMatrix.m[0][0];
+	//_v3 vCamUp = *(_v3*)&vCamMatrix.m[1][0];
+	//_v3 vCamLook = *(_v3*)&vCamMatrix.m[2][0];
+	//_v3 vCamPos = *(_v3*)&vCamMatrix.m[3][0];
+	//_float fAspect , fFov;
+	//
+	//fAspect = 720.f / 1280.f;
+	//fFov = 60.f;
+	//
+	//_float fTanFOV_X = tanf(fAspect * fFov);
+	//_float fTanFOV_Y = tanf(fAspect);
+	//
+	//vBoundCenter = vCamPos + vCamLook * (fNear + 0.5f * (fNear + fFar));
+	//
+	//_v3 vBoundSpan = vCamPos + (-vCamRight * fTanFOV_X + vCamUp * fTanFOV_Y + vCamLook) * fFar - vBoundCenter;
+	//fBoundRadius = D3DXVec3Length(&vBoundSpan);
 }
 
 
@@ -1367,7 +1618,9 @@ CComponent * CRenderer::Clone_Component(void * pArg)
 void CRenderer::Free()
 {
 	Safe_Delete_Array(m_pInstanceData);
-
+	
+	Safe_Release(m_pGradingTexture);
+	Safe_Release(m_pGradingTextureTest);
 	Safe_Release(m_pSSAOTexture);
 	Safe_Release(m_pViewPortBuffer);
 

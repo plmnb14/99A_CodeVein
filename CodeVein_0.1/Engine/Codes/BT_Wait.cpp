@@ -68,7 +68,7 @@ HRESULT CBT_Wait::Ready_Clone_Node(void * pInit_Struct)
 {
 	INFO temp = *(INFO*)pInit_Struct;
 
-	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
+	strcpy_s<STR_128>(m_pNodeName, temp.Target_NodeName);
 	m_dWaitingTime = temp.Target_dWaitingTime;
 	m_dOffset = temp.Target_dOffset;
 

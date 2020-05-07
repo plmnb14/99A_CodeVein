@@ -528,8 +528,8 @@ void CNavMesh_Page::Add_Subset()
 {
 	//HTREEITEM* tmpItem = new HTREEITEM;
 
-	_tchar szSubset[MAX_STR] = L"Subset_";
-	_tchar szSubsetIndex[MAX_STR] = L"";
+	_tchar szSubset[STR_128] = L"Subset_";
+	_tchar szSubsetIndex[STR_128] = L"";
 	_int   iCurIndex = m_iSubsetIdx;
 
 	_stprintf_s(szSubsetIndex, _T("%d"), iCurIndex);
@@ -582,7 +582,7 @@ void CNavMesh_Page::Create_Cell(LPDIRECT3DDEVICE9 pGraphicDev, _v3* _vPos)
 
 
 	// ÀÎµ¦½º Å½»ö
-	LOOP(MAX_STR * 2)
+	LOOP(STR_128 * 2)
 	{
 		bFind = false;
 
@@ -610,13 +610,13 @@ void CNavMesh_Page::Create_Cell(LPDIRECT3DDEVICE9 pGraphicDev, _v3* _vPos)
 	pInstance->Set_CellParam(CELL_PARAM::NORMAL);
 	m_vecSubset_Cell[m_iSubsetIdx].push_back(pInstance);
 
-	_tchar	tmpSubsetIndex[MAX_STR] = L"";
-	_tchar	tmpIndex[MAX_STR] = L"";
+	_tchar	tmpSubsetIndex[STR_128] = L"";
+	_tchar	tmpIndex[STR_128] = L"";
 
 	_itot_s(iIndex, tmpIndex, 10);
 	_itot_s(m_iSubsetIdx, tmpSubsetIndex, 10);
 
-	_tchar szSubset[MAX_STR] = L"Subset_";
+	_tchar szSubset[STR_128] = L"Subset_";
 
 	lstrcat(szSubset , tmpSubsetIndex);
 
@@ -645,7 +645,7 @@ void CNavMesh_Page::Save_CellData()
 		return;
 
 	DWORD dwByte = 0;
-	_tchar szCelldata[MAX_STR] = L"";
+	_tchar szCelldata[STR_128] = L"";
 	_tchar szSlash[2] = L"|";
 	wstring wstrCombined = L"";
 
@@ -746,7 +746,7 @@ void CNavMesh_Page::Load_CellData()
 	_int	iParam;
 	_int	iCellIndex = 0;
 
-	_tchar tmpSubset[MAX_STR] = L"999";
+	_tchar tmpSubset[STR_128] = L"999";
 	HTREEITEM newTreeNode = NULL;
 
 	fin.open(L"../../Data/Navmesh_Test.dat");
@@ -758,22 +758,22 @@ void CNavMesh_Page::Load_CellData()
 	{
 		CELL_INFO* CellInfo = new CELL_INFO;
 
-		fin.getline(CellInfo->szSubset, MAX_STR, '|');
-		fin.getline(CellInfo->szIndex, MAX_STR, '|');
+		fin.getline(CellInfo->szSubset, STR_128, '|');
+		fin.getline(CellInfo->szIndex, STR_128, '|');
 
-		fin.getline(CellInfo->szVtx_A_x, MAX_STR, '|');
-		fin.getline(CellInfo->szVtx_A_y, MAX_STR, '|');
-		fin.getline(CellInfo->szVtx_A_z, MAX_STR, '|');
+		fin.getline(CellInfo->szVtx_A_x, STR_128, '|');
+		fin.getline(CellInfo->szVtx_A_y, STR_128, '|');
+		fin.getline(CellInfo->szVtx_A_z, STR_128, '|');
 
-		fin.getline(CellInfo->szVtx_B_x, MAX_STR, '|');
-		fin.getline(CellInfo->szVtx_B_y, MAX_STR, '|');
-		fin.getline(CellInfo->szVtx_B_z, MAX_STR, '|');
+		fin.getline(CellInfo->szVtx_B_x, STR_128, '|');
+		fin.getline(CellInfo->szVtx_B_y, STR_128, '|');
+		fin.getline(CellInfo->szVtx_B_z, STR_128, '|');
 
-		fin.getline(CellInfo->szVtx_C_x, MAX_STR, '|');
-		fin.getline(CellInfo->szVtx_C_y, MAX_STR, '|');
-		fin.getline(CellInfo->szVtx_C_z, MAX_STR, '|');
+		fin.getline(CellInfo->szVtx_C_x, STR_128, '|');
+		fin.getline(CellInfo->szVtx_C_y, STR_128, '|');
+		fin.getline(CellInfo->szVtx_C_z, STR_128, '|');
 
-		fin.getline(CellInfo->szOption, MAX_STR);
+		fin.getline(CellInfo->szOption, STR_128);
 
 
 		if (fin.eof())
@@ -809,7 +809,7 @@ void CNavMesh_Page::Load_CellData()
 			pInstance->Set_CellIdx(iCellIndex);
 			pInstance->Set_CellParam(CELL_PARAM(iParam));
 
-			_tchar SubsetName[MAX_STR] = L"Subset_";
+			_tchar SubsetName[STR_128] = L"Subset_";
 
 			if (lstrcmp(tmpSubset, CellInfo->szSubset))
 			{

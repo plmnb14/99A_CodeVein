@@ -421,9 +421,18 @@ void CCocoon::Play_Shot()
 			matBone = *m_matBone[Bone_Jaw_Tongue] * m_pTransformCom->Get_WorldMat();
 			memcpy(vBirth, &matBone._41, sizeof(_v3));
 
-			g_pManagement->Create_Effect_Offset(L"Cocoon_TongueFire", 0.05f, vBirth, nullptr);
-			g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_01", 0.1f, vBirth, nullptr);
-			g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_02", 0.1f, vBirth, nullptr);
+			if (MONSTER_COLOR_TYPE::WHITE == m_eMonsterColor)
+			{
+				g_pManagement->Create_Effect_Offset(L"Totem_Ice_Ready", 0.05f, vBirth, nullptr);
+				g_pManagement->Create_Effect_Offset(L"DeerKing_IceSmoke_0", 0.1f, vBirth, nullptr);
+				g_pManagement->Create_Effect_Offset(L"DeerKing_IceSmoke_1", 0.1f, vBirth, nullptr);
+			}
+			else
+			{
+				g_pManagement->Create_Effect_Offset(L"Cocoon_TongueFire", 0.05f, vBirth, nullptr);
+				g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_01", 0.1f, vBirth, nullptr);
+				g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_02", 0.1f, vBirth, nullptr);
+			}
 		}
 		else if (0.f <= AniTime)
 		{
@@ -512,9 +521,18 @@ void CCocoon::Play_Mist()
 			matBone = *m_matBone[Bone_Jaw_Tongue] * m_pTransformCom->Get_WorldMat();
 			memcpy(vBirth, &matBone._41, sizeof(_v3));
 
-			g_pManagement->Create_Effect_Offset(L"Cocoon_TongueFire", 0.05f, vBirth, nullptr);
-			g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_01", 0.1f, vBirth, nullptr);
-			g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_02", 0.1f, vBirth, nullptr);
+			if (MONSTER_COLOR_TYPE::WHITE == m_eMonsterColor)
+			{
+				g_pManagement->Create_Effect_Offset(L"Totem_Ice_Ready", 0.05f, vBirth, nullptr);
+				g_pManagement->Create_Effect_Offset(L"DeerKing_IceSmoke_0", 0.1f, vBirth, nullptr);
+				g_pManagement->Create_Effect_Offset(L"DeerKing_IceSmoke_1", 0.1f, vBirth, nullptr);
+			}
+			else
+			{
+				g_pManagement->Create_Effect_Offset(L"Cocoon_TongueFire", 0.05f, vBirth, nullptr);
+				g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_01", 0.1f, vBirth, nullptr);
+				g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_02", 0.1f, vBirth, nullptr);
+			}
 		}
 
 		if (m_pMeshCom->Is_Finish_Animation(0.3f))
@@ -685,7 +703,7 @@ void CCocoon::Play_Dead()
 
 HRESULT CCocoon::Add_Component(void* pArg)
 {
-	_tchar MeshName[MAX_STR] = L"";
+	_tchar MeshName[STR_128] = L"";
 
 	MONSTER_STATUS eTemp = *(MONSTER_STATUS*)pArg;
 

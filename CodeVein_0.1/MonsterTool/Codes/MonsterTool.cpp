@@ -332,7 +332,7 @@ void CMonsterTool::Seting_ComboBoxWeapon()
 	{
 		CString temp(list_iter->wstrStateKey.c_str());
 
-		_tchar* szTemp = new _tchar[MAX_STR];
+		_tchar* szTemp = new _tchar[STR_128];
 		lstrcpy(szTemp, temp);
 		m_listWeaponName.push_back(szTemp);
 
@@ -355,7 +355,7 @@ void CMonsterTool::Seting_ListBoxMesh()
 	{
 		CString temp(list_iter->wstrStateKey.c_str());
 
-		_tchar* szTemp = new _tchar[MAX_STR];
+		_tchar* szTemp = new _tchar[STR_128];
 		lstrcpy(szTemp, temp);
 		m_listMeshName.push_back(szTemp);
 
@@ -373,10 +373,10 @@ void CMonsterTool::Seting_ListBoxAni()
 
 	if(nullptr != m_pMonster)
 	{
-		_tchar szPath[MAX_STR];
-		_tchar szBuff[MAX_STR];
-		_tchar FullData[MAX_STR];
-		_tchar Num[MAX_STR];
+		_tchar szPath[STR_128];
+		_tchar szBuff[STR_128];
+		_tchar FullData[STR_128];
+		_tchar Num[STR_128];
 
 		_tchar* szRootName;
 
@@ -399,7 +399,7 @@ void CMonsterTool::Seting_ListBoxAni()
 			MultiByteToWideChar(CP_ACP, 0, charName, _int(strlen(charName) + 1), szRootName, strSize);
 			
 			_itow_s(i, Num, 10);
-			swprintf_s<MAX_STR>(FullData, L"%s == %s", Num, szRootName);
+			swprintf_s<STR_128>(FullData, L"%s == %s", Num, szRootName);
 			szAnimationListWrite << FullData << endl;
 
 			m_ListBoxAni.AddString(szRootName);
@@ -632,7 +632,7 @@ void CMonsterTool::LDBClick_MeshList()
 		m_ListBoxMesh.GetText(m_ListBoxMesh.GetCurSel(), m_strMeshName);
 		UpdateData(FALSE);
 
-		_tchar szTemp[MAX_STR];
+		_tchar szTemp[STR_128];
 		lstrcpy(szTemp, m_strMeshName);
 		m_pMonster = CTestMonster::Create(pToolView->Get_Device(), szTemp);
 
@@ -653,7 +653,7 @@ void CMonsterTool::LDBClick_MeshList()
 		m_ListBoxMesh.GetText(m_ListBoxMesh.GetCurSel(), m_strMeshName);
 		UpdateData(FALSE);
 
-		_tchar szTemp[MAX_STR];
+		_tchar szTemp[STR_128];
 		lstrcpy(szTemp, m_strMeshName);
 		m_pMonster = CTestMonster::Create(pToolView->Get_Device(), szTemp);
 
@@ -843,7 +843,7 @@ void CMonsterTool::LDBClick_TreeCtrlAniCombo(NMHDR *pNMHDR, LRESULT *pResult)
 {
 	CString strSelectedItemName = m_TreeCtrlAniCombo.GetItemText(m_TreeCtrlAniCombo.GetSelectedItem()); //선택된 노드 이름
 
-	_tchar szSelectedItemName[MAX_STR];
+	_tchar szSelectedItemName[STR_128];
 	lstrcpy(szSelectedItemName, strSelectedItemName);
 
 	if (0 > strSelectedItemName.Find(L"/")) //해당 문자가 없는 경우, 부모인 경우
@@ -1266,8 +1266,8 @@ void CMonsterTool::Save_AniEvent()
 {
 	CFileDialog Dlg(FALSE, L".txt", L"Event.txt", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, L"Text Files(*.txt)|*.txt||", this);
 
-	_tchar szCurrentPath[MAX_STR] = L"";
-	::GetCurrentDirectory(MAX_STR, szCurrentPath);
+	_tchar szCurrentPath[STR_128] = L"";
+	::GetCurrentDirectory(STR_128, szCurrentPath);
 	::PathRemoveFileSpec(szCurrentPath);
 	::PathRemoveFileSpec(szCurrentPath);
 
@@ -1281,8 +1281,8 @@ void CMonsterTool::Save_AniEvent()
 		wofstream wcharFileWrite;
 		wcharFileWrite.open(Dlg.GetPathName()); //해당 파일 열기, 모드 바이너리로 하고 싶다면 wifstream::binary
 
-		_tchar FullData[MAX_STR];
-		_tchar szEventType[MAX_STR];
+		_tchar FullData[STR_128];
+		_tchar szEventType[STR_128];
 
 		if (wcharFileWrite.is_open()) //텍스트 파일을 연다면
 		{
@@ -1297,7 +1297,7 @@ void CMonsterTool::Save_AniEvent()
 						{
 						case ANI_EVENT_TYPE::MOVE:
 							lstrcpy(szEventType, L"MOVE");
-							swprintf_s<MAX_STR>(FullData, L"%s|%d|%s|%.2f|%.2f|%.2f|%.2f|%.2f|%.2f|%.2f",
+							swprintf_s<STR_128>(FullData, L"%s|%d|%s|%.2f|%.2f|%.2f|%.2f|%.2f|%.2f|%.2f",
 								MeshName_iter.first, AniIndex_iter.first, szEventType,
 								AniEventType_iter.second->m_dStartTime, AniEventType_iter.second->m_dEndTime,
 								AniEventType_iter.second->m_dLoopTime, AniEventType_iter.second->m_dRange,
@@ -1307,7 +1307,7 @@ void CMonsterTool::Save_AniEvent()
 							break;
 						case ANI_EVENT_TYPE::EFFECT:
 							lstrcpy(szEventType, L"EFFECT");
-							swprintf_s<MAX_STR>(FullData, L"%s|%d|%s|%.2f|%.2f|%.2f|%.2f|%.2f|%.2f|%.2f",
+							swprintf_s<STR_128>(FullData, L"%s|%d|%s|%.2f|%.2f|%.2f|%.2f|%.2f|%.2f|%.2f",
 								MeshName_iter.first, AniIndex_iter.first, szEventType,
 								AniEventType_iter.second->m_dStartTime, AniEventType_iter.second->m_dEndTime,
 								AniEventType_iter.second->m_dLoopTime, AniEventType_iter.second->m_dRange,
@@ -1317,7 +1317,7 @@ void CMonsterTool::Save_AniEvent()
 							break;
 						case ANI_EVENT_TYPE::SOUND:
 							lstrcpy(szEventType, L"SOUND");
-							swprintf_s<MAX_STR>(FullData, L"%s|%d|%s|%.2f|%.2f|%.2f|%.2f|%.2f|%.2f|%.2f",
+							swprintf_s<STR_128>(FullData, L"%s|%d|%s|%.2f|%.2f|%.2f|%.2f|%.2f|%.2f|%.2f",
 								MeshName_iter.first, AniIndex_iter.first, szEventType,
 								AniEventType_iter.second->m_dStartTime, AniEventType_iter.second->m_dEndTime,
 								AniEventType_iter.second->m_dLoopTime, AniEventType_iter.second->m_dRange,
@@ -1327,7 +1327,7 @@ void CMonsterTool::Save_AniEvent()
 							break;
 						case ANI_EVENT_TYPE::COLLISION:
 							lstrcpy(szEventType, L"COLLISION");
-							swprintf_s<MAX_STR>(FullData, L"%s|%d|%s|%.2f|%.2f|%.2f|%.2f|%.2f|%.2f|%.2f",
+							swprintf_s<STR_128>(FullData, L"%s|%d|%s|%.2f|%.2f|%.2f|%.2f|%.2f|%.2f|%.2f",
 								MeshName_iter.first, AniIndex_iter.first, szEventType,
 								AniEventType_iter.second->m_dStartTime, AniEventType_iter.second->m_dEndTime,
 								AniEventType_iter.second->m_dLoopTime, AniEventType_iter.second->m_dRange,
@@ -1355,8 +1355,8 @@ void CMonsterTool::Load_AniEvent()
 
 	CFileDialog	Dlg(TRUE, L".txt", L"Event.txt", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, L"Text Files(*.txt)|*.txt||", this);
 
-	_tchar szCurrentPath[MAX_STR] = L"";
-	::GetCurrentDirectory(MAX_STR, szCurrentPath);
+	_tchar szCurrentPath[STR_128] = L"";
+	::GetCurrentDirectory(STR_128, szCurrentPath);
 
 	::PathRemoveFileSpec(szCurrentPath);
 	::PathRemoveFileSpec(szCurrentPath);
@@ -1370,8 +1370,8 @@ void CMonsterTool::Load_AniEvent()
 		wifstream wcharFileRead;
 		wcharFileRead.open(Dlg.GetPathName()); //해당 파일 열기
 
-		_tchar szMeshName[MAX_STR];
-		_tchar Number[MAX_STR];
+		_tchar szMeshName[STR_128];
+		_tchar Number[STR_128];
 		ANI_EVENT_TYPE EventType;
 
 		if (!m_mapmapmapAniEvent.empty())
@@ -1397,15 +1397,15 @@ void CMonsterTool::Load_AniEvent()
 		{
 			while (true)
 			{
-				wcharFileRead.getline(szMeshName, MAX_STR, '|');
+				wcharFileRead.getline(szMeshName, STR_128, '|');
 
 				if (!lstrcmp(szMeshName, L""))
 					break;
 
-				wcharFileRead.getline(Number, MAX_STR, '|');
+				wcharFileRead.getline(Number, STR_128, '|');
 				_uint AniIndexNumber = _wtoi(Number); //인덱스 번호
 
-				wcharFileRead.getline(Number, MAX_STR, '|');
+				wcharFileRead.getline(Number, STR_128, '|');
 				//이벤트 종류
 
 				if (!lstrcmp(Number, L"MOVE")) EventType = ANI_EVENT_TYPE::MOVE;
@@ -1413,25 +1413,25 @@ void CMonsterTool::Load_AniEvent()
 				if (!lstrcmp(Number, L"SOUND"))  EventType = ANI_EVENT_TYPE::SOUND;
 				if (!lstrcmp(Number, L"COLLISION"))  EventType = ANI_EVENT_TYPE::COLLISION;
 
-				wcharFileRead.getline(Number, MAX_STR, '|'); //시작 값
+				wcharFileRead.getline(Number, STR_128, '|'); //시작 값
 				_double dStartTime = _wtof(Number);
 				
-				wcharFileRead.getline(Number, MAX_STR, '|'); //끝 값
+				wcharFileRead.getline(Number, STR_128, '|'); //끝 값
 				_double dEndTime = _wtof(Number);
 
-				wcharFileRead.getline(Number, MAX_STR, '|'); //반복 값
+				wcharFileRead.getline(Number, STR_128, '|'); //반복 값
 				_double dLoopTime = _wtof(Number);
 
-				wcharFileRead.getline(Number, MAX_STR, '|'); //반경 값
+				wcharFileRead.getline(Number, STR_128, '|'); //반경 값
 				_double dRange = _wtof(Number);
 
-				wcharFileRead.getline(Number, MAX_STR, '|'); //이동속도 값
+				wcharFileRead.getline(Number, STR_128, '|'); //이동속도 값
 				_double dMoveSpeed = _wtof(Number);
 
-				wcharFileRead.getline(Number, MAX_STR, '|'); //이동가속도 값
+				wcharFileRead.getline(Number, STR_128, '|'); //이동가속도 값
 				_double dMoveAccel = _wtof(Number);
 
-				wcharFileRead.getline(Number, MAX_STR); //비율 값
+				wcharFileRead.getline(Number, STR_128); //비율 값
 				_double dAniRatio = _wtof(Number);
 
 				for (auto& list_iter : m_listMeshName)
@@ -1630,8 +1630,8 @@ void CMonsterTool::Save_AniCombo()
 {
 	CFileDialog Dlg(FALSE, L".txt", L"Combo.txt", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, L"Text Files(*.txt)|*.txt||", this);
 
-	_tchar szCurrentPath[MAX_STR] = L"";
-	::GetCurrentDirectory(MAX_STR, szCurrentPath);
+	_tchar szCurrentPath[STR_128] = L"";
+	::GetCurrentDirectory(STR_128, szCurrentPath);
 	::PathRemoveFileSpec(szCurrentPath);
 	::PathRemoveFileSpec(szCurrentPath);
 
@@ -1645,7 +1645,7 @@ void CMonsterTool::Save_AniCombo()
 		wofstream wcharFileWrite;
 		wcharFileWrite.open(Dlg.GetPathName()); //해당 파일 열기, 모드 바이너리로 하고 싶다면 wifstream::binary
 
-		_tchar FullData[MAX_STR];
+		_tchar FullData[STR_128];
 
 		if (wcharFileWrite.is_open()) //텍스트 파일을 연다면
 		{
@@ -1656,7 +1656,7 @@ void CMonsterTool::Save_AniCombo()
 					for (auto& AniIndex_iter : ComboNumber_iter.second)
 					{
 						//몬스터 종류, 콤보번호, 애니인덱스, 애니재생비율
-						swprintf_s<MAX_STR>(FullData, L"%s|%d|%d|%.2f",
+						swprintf_s<STR_128>(FullData, L"%s|%d|%d|%.2f",
 							MeshName_iter.first, ComboNumber_iter.first, AniIndex_iter.first, AniIndex_iter.second);
 						wcharFileWrite << FullData << endl;
 					}
@@ -1679,8 +1679,8 @@ void CMonsterTool::Load_AniCombo()
 
 	CFileDialog	Dlg(TRUE, L".txt", L"Combo.txt", OFN_HIDEREADONLY | OFN_OVERWRITEPROMPT, L"Text Files(*.txt)|*.txt||", this);
 
-	_tchar szCurrentPath[MAX_STR] = L"";
-	::GetCurrentDirectory(MAX_STR, szCurrentPath);
+	_tchar szCurrentPath[STR_128] = L"";
+	::GetCurrentDirectory(STR_128, szCurrentPath);
 	::PathRemoveFileSpec(szCurrentPath);
 	::PathRemoveFileSpec(szCurrentPath);
 
@@ -1695,8 +1695,8 @@ void CMonsterTool::Load_AniCombo()
 		wifstream wcharFileRead;
 
 		wcharFileRead.open(Dlg.GetPathName()); //해당 파일 열기
-		_tchar szMeshName[MAX_STR];
-		_tchar Number[MAX_STR];
+		_tchar szMeshName[STR_128];
+		_tchar Number[STR_128];
 		_uint AniComboNumber, AniIndexNumber;
 		_float AniRatio;
 
@@ -1704,18 +1704,18 @@ void CMonsterTool::Load_AniCombo()
 		{
 			while (true) //끝자락에 도달하지 않는다면 계속 반복하라
 			{
-				wcharFileRead.getline(szMeshName, MAX_STR, '|');
+				wcharFileRead.getline(szMeshName, STR_128, '|');
 
 				if (!lstrcmp(szMeshName, L""))
 					break;
 
-				wcharFileRead.getline(Number, MAX_STR, '|');
+				wcharFileRead.getline(Number, STR_128, '|');
 				AniComboNumber = _wtoi(Number); //콤보 번호
 
-				wcharFileRead.getline(Number, MAX_STR, '|');
+				wcharFileRead.getline(Number, STR_128, '|');
 				AniIndexNumber = _wtoi(Number); //인덱스 번호
 
-				wcharFileRead.getline(Number, MAX_STR);
+				wcharFileRead.getline(Number, STR_128);
 				AniRatio = (_float)_wtof(Number); //애니 비율
 
 				for (auto& list_iter : m_listMeshName)
@@ -1784,7 +1784,7 @@ void CMonsterTool::Create_Weapon()
 
 		UpdateData(FALSE);
 
-		_tchar szTemp[MAX_STR];
+		_tchar szTemp[STR_128];
 		lstrcpy(szTemp, m_strWeaponName);
 		m_pWeapon = CTestWeapon::Create(pToolView->Get_Device(), szTemp);
 	}
@@ -1798,7 +1798,7 @@ void CMonsterTool::Create_Weapon()
 
 		UpdateData(FALSE);
 
-		_tchar szTemp[MAX_STR];
+		_tchar szTemp[STR_128];
 		lstrcpy(szTemp, m_strWeaponName);
 		m_pWeapon = CTestWeapon::Create(pToolView->Get_Device(), szTemp);
 	}

@@ -118,7 +118,7 @@ HRESULT CBT_CreateEffect::Ready_Clone_Node(void * pInit_Struct)
 	// 버젼 확인
 	if (Version::Old == m_eVersion)
 	{
-		strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
+		strcpy_s<STR_128>(m_pNodeName, temp.Target_NodeName);
 		lstrcpy(m_pEffect_Tag, temp.Effect_Tag);
 		lstrcpy(m_vEffect_Pos_Key, temp.Create_Pos_Key);
 
@@ -139,7 +139,7 @@ HRESULT CBT_CreateEffect::Ready_Clone_Node(void * pInit_Struct)
 	}
 	else if (Version::New == m_eVersion)
 	{
-		strcpy_s<256>(m_pNodeName, temp2.Target_NodeName);
+		strcpy_s<STR_128>(m_pNodeName, temp2.Target_NodeName);
 		lstrcpy(m_pEffect_Tag, temp2.Effect_Tag);
 		lstrcpy(m_vEffect_Pos_Key, temp2.Create_Pos_Key);
 		m_pEffect_TransformCom = temp2.pTransform;

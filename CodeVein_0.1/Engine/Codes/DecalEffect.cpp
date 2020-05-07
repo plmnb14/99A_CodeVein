@@ -14,6 +14,11 @@ CDecalEffect::CDecalEffect(const CDecalEffect& rhs)
 	m_bClone = true;
 }
 
+void CDecalEffect::Set_WallDecal(_bool _bWall)
+{
+	m_bWallDecal = _bWall;
+}
+
 HRESULT CDecalEffect::Ready_GameObject_Prototype()
 {
 	// 생성 시, 오래 걸릴 수 있는 작업들을 수행한다.
@@ -71,7 +76,12 @@ _int CDecalEffect::Update_GameObject(_double TimeDelta)
 		return DEAD_OBJ;
 
 	CGameObject::LateInit_GameObject();
-	
+
+	if (CInput_Device::Get_Instance()->Key_Pressing(DIK_P))
+		m_pTransformCom->Set_Angle(_v3(90.f, 0, 0));
+	if (CInput_Device::Get_Instance()->Key_Pressing(DIK_0))
+		m_pTransformCom->Set_Angle(_v3(0.f, 0, 90.f));
+
 	if (m_fCreateDelay > 0.f)
 	{
 		Check_CreateDelay(TimeDelta);
@@ -600,9 +610,6 @@ HRESULT CDecalEffect::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Effect", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
-	//// for.Com_VIBuffer
-	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Rect", L"Com_VIBuffer", (CComponent**)&m_pBufferCom)))
-	//	return E_FAIL;
 	// for.Com_VIBuffer
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Cube", L"Com_VIBuffer", (CComponent**)&m_pBufferCom)))
 		return E_FAIL;
@@ -684,6 +691,9 @@ HRESULT CDecalEffect::SetUp_ConstantTable(CShader* pShader)
 
 	pShader->Set_Texture("g_DepthTexture", pManagement->Get_Target_Texture(L"Target_DecalDepth"));
 	
+	if (FAILED(pShader->Set_Bool("g_bRot", m_bWallDecal)))
+		return E_FAIL;
+
 	Safe_Release(pManagement);
 
 	return NOERROR;

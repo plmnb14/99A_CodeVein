@@ -252,7 +252,7 @@ _bool CCell::Compare_Inner_Only (const _v3 pPos)
 	return true;
 }
 
-CCell::COMPARE CCell::Compare(const _v3 * pEndPos, _ulong * pIndex , _v2* _pDirection , _ulong* _iIndex, _bool _bIsUpper)
+CCell::COMPARE CCell::Compare(const _v3 * pEndPos, _long * pIndex , _v2* _pDirection , _ulong* _iIndex, _bool _bIsUpper)
 {
 	for (_ulong i = 0; i < LINE_END; ++i)
 	{
@@ -339,10 +339,12 @@ CCell::COMPARE_LR CCell::Compare_Line(const _v2 * pEndPos , _int _iLine, _v2* _p
 
 	if (0 <= fResult)
 	{
+		// 양수
 		return COMPARE_LEFT;
 	}
 	else
 	{
+		//음수
 		return COMPARE_RIGHT;
 	}
 }

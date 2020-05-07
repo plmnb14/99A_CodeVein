@@ -19,7 +19,7 @@ public:
 
 public:
 	_ulong Get_NumMaterials() const { return m_dwNumMaterials; }
-	_ulong Get_MaterialPass(_ulong dwPass) { return m_dwMaterialPass[dwPass]; }
+	_ulong Get_MaterialPass(_ulong dwPass) { return m_sMaterialPass[dwPass]; }
 	LPDIRECT3DBASETEXTURE9 Get_Texture(_ulong dwMaterialIndex, MESHTEXTURE::TYPE eType);
 public:
 	virtual HRESULT Ready_Component_Prototype(const _tchar* pFilePath, const _tchar* pFileName, _mat PivotMatrix);
@@ -43,13 +43,15 @@ private:
 	_v3						m_pVtxMin;
 	_v3						m_pVtxMax;
 
-	_ulong					m_dwMaterialPass[10] = {};
+	_ushort					m_sMaterialPass[STR_128] = {};
 
 private:
 	_bool					m_bIncludeMap[MESHTEXTURE::TYPE_END] = {};
 
 private:
 	HRESULT Change_TextureFileName(_tchar* pFilePath, _tchar * pSourMark, _tchar * pDestMark);
+	HRESULT Change_TextureFileExtension(_tchar* pFilePath);
+
 public:
 	static CMesh_Static* Create(LPDIRECT3DDEVICE9 pGraphic_Device, const _tchar* pFilePath, const _tchar* pFileName, _mat PivotMatrix);
 	virtual CComponent* Clone_Component(void* pArg);

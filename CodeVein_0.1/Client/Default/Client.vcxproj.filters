@@ -376,9 +376,6 @@
     <Filter Include="02.GameObject\Stage\Physx">
       <UniqueIdentifier>{f938be75-5d5f-48db-a32a-8200fcf0c724}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. Font">
-      <UniqueIdentifier>{9691fea8-3f8e-4447-bf24-3e5f1e4fa387}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\7%29 Item\Haze">
       <UniqueIdentifier>{c9d108fb-1149-4118-9ee2-ca3f032f5f37}</UniqueIdentifier>
     </Filter>
@@ -393,6 +390,15 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\09. BloodCodeUI">
       <UniqueIdentifier>{9de20518-f4f0-4698-8b19-40542809fe4b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\3%29 Effect\Effect_BloodChunk">
+      <UniqueIdentifier>{8542ba52-849a-4f72-9adb-dadef6271e64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\3%29 Effect\Effect_LongSpark">
+      <UniqueIdentifier>{d02d899c-e7ce-4704-87d6-95604731ae1c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\4%29 Sky\Sky_Blur">
+      <UniqueIdentifier>{e26662a0-49b8-4981-9df3-3236773c32a1}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseMasage">
       <UniqueIdentifier>{dc2c6631-99a6-4970-9681-c15245b8219c}</UniqueIdentifier>
@@ -444,6 +450,28 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\Test_Pet">
       <UniqueIdentifier>{e1619559-c327-4def-8b62-b9b38a871adb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\14. Font">
+      <UniqueIdentifier>{9691fea8-3f8e-4447-bf24-3e5f1e4fa387}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\15. Colleague UI">
+      <UniqueIdentifier>{6fe37e52-06eb-4099-bb5e-470d524b5252}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\9%29 Player_Colleague\Colleague Bullet">
+      <UniqueIdentifier>{a93ed83b-41f1-47ce-a5ca-e53379d49d9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\9%29 Player_Colleague\Colleague Bullet\Att Bullet">
+      <UniqueIdentifier>{d44928ac-994f-42bb-93e2-14c3cda384e6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\9%29 Player_Colleague\Colleague Bullet\Heal Bullet">
+      <UniqueIdentifier>{b84dff3e-d563-4cc5-bc33-692582cf11b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\Colleague Jack">
+      <UniqueIdentifier>{1256d69f-6532-4f43-93af-fc4859017616}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\3%29 Effect\Effect_FireFlower">
+      <UniqueIdentifier>{e3f3b1d2-c8df-469c-b4a2-7ebc9b7ebbc1}</UniqueIdentifier>
+>>>>>>> e8a4c228bec69f159edc50defbbc77ec35f27567
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -799,7 +827,7 @@
       <Filter>02.GameObject\Stage\2%29 Monster\Cocoon</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\UI_FontNum.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\13. Font</Filter>
+      <Filter>02.GameObject\Stage\5%29 UI\UI\14. Font</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\DeerKingBullet.h">
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
@@ -860,6 +888,15 @@
     </ClInclude>
     <ClInclude Include="..\Headers\BloodCodeUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\09. BloodCodeUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Effect_BloodChunk.h">
+      <Filter>02.GameObject\Stage\3%29 Effect\Effect_BloodChunk</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Effect_LongSpark.h">
+      <Filter>02.GameObject\Stage\3%29 Effect\Effect_LongSpark</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Sky_Blur.h">
+      <Filter>02.GameObject\Stage\4%29 Sky\Sky_Blur</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\ReleaseQuestionUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseMasage</Filter>
@@ -926,6 +963,21 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Pet_Slot.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\Test_Pet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Colleague_UI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Colleague_Bullet.h">
+      <Filter>02.GameObject\Stage\9%29 Player_Colleague\Colleague Bullet\Att Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Colleague_Jack.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\Colleague Jack</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\CollBullet_Heal.h">
+      <Filter>02.GameObject\Stage\9%29 Player_Colleague\Colleague Bullet\Heal Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Effect_FireFlower.h">
+      <Filter>02.GameObject\Stage\3%29 Effect\Effect_FireFlower</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1275,7 +1327,7 @@
       <Filter>02.GameObject\Stage\2%29 Monster\Cocoon</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\UI_FontNum.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\13. Font</Filter>
+      <Filter>02.GameObject\Stage\5%29 UI\UI\14. Font</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\DeerKingBullet.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
@@ -1336,6 +1388,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\BloodCodeUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\09. BloodCodeUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Effect_BloodChunk.cpp">
+      <Filter>02.GameObject\Stage\3%29 Effect\Effect_BloodChunk</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Effect_LongSpark.cpp">
+      <Filter>02.GameObject\Stage\3%29 Effect\Effect_LongSpark</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Sky_Blur.cpp">
+      <Filter>02.GameObject\Stage\4%29 Sky\Sky_Blur</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\ReleaseQuestionUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseMasage</Filter>
@@ -1399,6 +1460,21 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Pet_Slot.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\Test_Pet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Colleague_UI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Colleague_Bullet.cpp">
+      <Filter>02.GameObject\Stage\9%29 Player_Colleague\Colleague Bullet\Att Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Colleague_Jack.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\Colleague Jack</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\CollBullet_Heal.cpp">
+      <Filter>02.GameObject\Stage\9%29 Player_Colleague\Colleague Bullet\Heal Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Effect_FireFlower.cpp">
+      <Filter>02.GameObject\Stage\3%29 Effect\Effect_FireFlower</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

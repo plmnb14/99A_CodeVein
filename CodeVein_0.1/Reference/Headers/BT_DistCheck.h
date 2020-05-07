@@ -16,11 +16,11 @@ public:
 	{
 		tagInitInfo(char* pNodeName, _tchar* _pTarget_Key, CTransform* _pTransform, _float _fMaxLength)
 			: pTransform(_pTransform), fMaxLength(_fMaxLength)
-		{ strcpy_s<256>(Target_NodeName, pNodeName);
+		{ strcpy_s<STR_128>(Target_NodeName, pNodeName);
 		lstrcpy(Target_Key, _pTarget_Key); }
 
-		char		Target_NodeName[256] = { 0, };
-		_tchar		Target_Key[256] = { 0, };
+		char		Target_NodeName[STR_128] = { 0, };
+		_tchar		Target_Key[STR_128] = { 0, };
 		CTransform*	pTransform = nullptr;
 		_float		fMaxLength = 0.f;
 	} INFO;
@@ -48,7 +48,7 @@ private:
 	_bool			m_bInProgress = false;
 
 	CTransform*		m_pTransform = nullptr;
-	_tchar			m_Target_Key[256] = { 0, };
+	_tchar			m_Target_Key[STR_128] = { 0, };
 	_float			m_fMaxLength = 0;
 
 public:

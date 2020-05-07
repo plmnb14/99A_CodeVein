@@ -112,7 +112,7 @@ private:
 	void Update_Dir_Shield_Throwing();
 
 private:
-	CTransform*			m_pTransformCom = nullptr;
+	//CTransform*			m_pTransformCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
 	CMesh_Dynamic*		m_pMeshCom = nullptr;

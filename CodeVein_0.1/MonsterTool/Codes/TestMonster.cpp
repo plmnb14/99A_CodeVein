@@ -9,7 +9,7 @@ CTestMonster::CTestMonster(LPDIRECT3DDEVICE9 pGraphic_Device)
 CTestMonster::CTestMonster(LPDIRECT3DDEVICE9 pGraphic_Device, _tchar* szMeshname)
 	: CGameObject(pGraphic_Device)
 {
-	m_pszMeshName = new _tchar[MAX_STR];
+	m_pszMeshName = new _tchar[STR_128];
 	lstrcpy(m_pszMeshName, szMeshname);
 }
 

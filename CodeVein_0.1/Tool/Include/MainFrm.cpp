@@ -108,6 +108,8 @@ BOOL CMainFrame::OnCreateClient(LPCREATESTRUCT lpcs, CCreateContext* pContext)
 {
 	// 메쉬 경로 추출
 	CFileInfo::Create_Mesh_PathInfo(CFileInfo::Extract_Essential);
+	CFileInfo::Create_Mesh_PathInfo(CFileInfo::Extract_Dynamic_Essential);
+	CFileInfo::Create_Mesh_PathInfo(CFileInfo::Extract_NPC);
 	CFileInfo::Create_Mesh_PathInfo(CFileInfo::Extract_Static_Common);
 	CFileInfo::Create_Mesh_PathInfo(CFileInfo::Extract_Field_Gimmick);
 	CFileInfo::Create_Mesh_PathInfo(CFileInfo::Extract_Static_Stage00);

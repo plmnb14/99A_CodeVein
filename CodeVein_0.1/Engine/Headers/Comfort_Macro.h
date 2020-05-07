@@ -20,7 +20,10 @@
 #define F_HLF  0.5f
 #define F_ONE  1.f
 
-#define MAX_STR 256
+#define STR_256 256
+#define STR_128 128
+#define STR_64 64
+#define STR_32 32
 
 #define GRAVITY 9.80665f
 

@@ -15,11 +15,11 @@ public:
 	{
 		tagInitInfo(char* pNodeName, Value _eValue,  _tchar* _TargetKey_A, Mode _eMode, _tchar* _TargetKey_B)
 			: eValue(_eValue), eMode(_eMode)
-		{ strcpy_s<256>(Target_NodeName, pNodeName);
+		{ strcpy_s<STR_128>(Target_NodeName, pNodeName);
 		lstrcpy(TargetKey_A, _TargetKey_A);
 		lstrcpy(TargetKey_B, _TargetKey_B);}
 
-		char			Target_NodeName[256] = { 0, };
+		char			Target_NodeName[STR_128] = { 0, };
 		_tchar*			TargetKey_A = nullptr;
 		_tchar*			TargetKey_B = nullptr;
 		Mode			eMode = EQUAL;
@@ -50,8 +50,8 @@ private:
 	_bool			m_bInProgress = false;
 
 	Value			m_eValue = BOOL;
-	_tchar			m_pTargetKey_A[256] = { 0, };
-	_tchar			m_pTargetKey_B[256] = { 0, };
+	_tchar			m_pTargetKey_A[STR_128] = { 0, };
+	_tchar			m_pTargetKey_B[STR_128] = { 0, };
 	Mode			m_eMode = EQUAL;
 
 	/*

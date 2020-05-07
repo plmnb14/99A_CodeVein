@@ -100,7 +100,7 @@ private:
 	_float					m_fCreateEffectTime = 0.f;
 
 private:
-	_tchar					m_szName[MAX_STR] = L"";
+	_tchar					m_szName[STR_128] = L"";
 
 private:
 	_mat*					m_pmatAttach = nullptr;

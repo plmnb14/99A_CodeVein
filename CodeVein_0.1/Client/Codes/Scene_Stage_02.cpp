@@ -49,16 +49,15 @@ HRESULT CScene_Stage_02::Render_Scene()
 
 HRESULT CScene_Stage_02::Ready_Layer_Player(const _tchar * pLayerTag)
 {
-	// 몬스터 레이어만 미리 추가
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Mistletoe")))
+		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Monster")))
 		return E_FAIL;
-
-	// 보스 레이어만 미리 추가
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Boss")))
 		return E_FAIL;
-
-	// 투사체 레이어 추가
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_MonsterProjectile")))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_BossUI")))
 		return E_FAIL;
 
 	CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);

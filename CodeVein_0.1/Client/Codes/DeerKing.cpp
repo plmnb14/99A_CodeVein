@@ -76,7 +76,7 @@ HRESULT CDeerKing::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Four_Combo_Punch());
+	Start_Sel->Add_Child(Blade_Attack());
 	
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -121,6 +121,9 @@ _int CDeerKing::Update_GameObject(_double TimeDelta)
 	// 플레이어 발견
 	else
 	{
+		//// 어그로 관리
+		Set_Target_Auto(true);
+
 		// 뼈 위치 업데이트
 		Update_Bone_Of_BlackBoard();
 		// BB 직접 업데이트
@@ -158,8 +161,8 @@ _int CDeerKing::Late_Update_GameObject(_double TimeDelta)
 	{
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 			return E_FAIL;
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-			return E_FAIL;
+		//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+		//	return E_FAIL;
 	}
 	else
 	{
@@ -1062,7 +1065,7 @@ CBT_Composite_Node * CDeerKing::Blade_Attack()
 	SubSeq->Add_Child(Wait2);
 	SubSeq->Add_Child(Move2);
 
-	CBT_CreateBuff* Col0 = Node_CreateBuff("얼음검 소환", L"Monster_DeerKingIceSword", 0.684, 1.366, 1, 0, 0, CBT_Service_Node::Finite);
+	CBT_CreateBuff* Col0 = Node_CreateBuff("얼음검 소환", L"Monster_DeerKingIceSword", 0.684 + 0.2, 1.366 - 0.2, 1, 0, 0, CBT_Service_Node::Finite);
 	Root_Parallel->Add_Service(Col0);
 
 	
@@ -1085,13 +1088,15 @@ CBT_Composite_Node * CDeerKing::RightHand_Attack(_float fWeight)
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.35, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", -1.f, 0.117, 0);
 
-	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("잔눈", L"DeerKing_Snow_Up_Particle_0", L"Bone_RightHand", 0.4, 60, 0.01, 0);
-	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_Mid_0", L"Bone_RightHand", 0.4, 60, 0.01, 0);
-	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_Mid_1", L"Bone_RightHand", 0.4, 60, 0.01, 0);
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("잔눈", L"DeerKing_Snow_Up_Particle_0", L"Bone_RightHand", 0.4, 40, 0.01, 0);
+	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_Mid_0", L"Bone_RightHand", 0.4, 40, 0.01, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("연기", L"DeerKing_IceSmoke_Mid_1", L"Bone_RightHand", 0.4, 40, 0.01, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("왜곡", L"DeerKing_Distortion_Circle", L"Bone_RightHand", 0.9, 1, 0, 0);
 
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
 	Root_Parallel->Add_Service(Effect2);
+	Root_Parallel->Add_Service(Effect3);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani41);
@@ -1489,6 +1494,7 @@ HRESULT CDeerKing::Update_Bone_Of_BlackBoard()
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHandAttach");
 	m_vLeftHandAttach = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftHandAttach", m_vLeftHandAttach);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Mat_LeftHandAttach", pFamre->CombinedTransformationMatrix);
 
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHand");
 	m_vRightHand = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
@@ -1544,6 +1550,7 @@ HRESULT CDeerKing::Update_Value_Of_BB()
 	/////////////////
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"V3_Null", V3_NULL);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_Dir", m_pTransformCom->Get_Axis(AXIS_Z));
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_Mat", m_pTransformCom->Get_WorldMat());
 	/////////////////
 
 	// 1. 방패 찍기 좌표
@@ -1667,6 +1674,9 @@ HRESULT CDeerKing::Update_NF()
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Idle);
 			m_bFight = true;
+
+			// 가까운 녀석 어그로 끌림.
+			Set_Target_Auto();
 		}
 	}
 
@@ -1790,11 +1800,12 @@ void CDeerKing::Check_PhyCollider()
 
 void CDeerKing::Push_Collider()
 {
-	list<CGameObject*> tmpList[3];
+	list<CGameObject*> tmpList[4];
 
 	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
 	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
 	tmpList[2] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
+	tmpList[3] = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_MORTAL);
 
 	for (auto& ListObj : tmpList)
 	{
@@ -1835,8 +1846,10 @@ void CDeerKing::OnCollisionEnter()
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_MonsterProjectile", SCENE_STAGE));
 	}
 	else
+	{
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
-
+		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_MORTAL));
+	}
 
 	// =============================================================================================
 }
@@ -1931,7 +1944,7 @@ HRESULT CDeerKing::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
 
-	m_pCollider->Set_Radius(_v3{ 1.f, 1.f, 1.f });
+	m_pCollider->Set_Radius(_v3{ 1.5f, 1.5f, 1.5f });
 	m_pCollider->Set_Dynamic(true);
 	m_pCollider->Set_Type(COL_SPHERE);
 	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pCollider->Get_Radius().y , 0.f });

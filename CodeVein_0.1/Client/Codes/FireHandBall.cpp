@@ -51,6 +51,11 @@ HRESULT CFireHandBall::Ready_GameObject(void * pArg)
 
 	//m_tObjParam.bCanAttack = true;
 	//m_tObjParam.fDamage = 20.f;
+	
+	m_pFireSphere = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"FireBoy_FireHandBall", nullptr));
+	m_pFireSphere->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
+	m_pFireSphere->Reset_Init();
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFireSphere, SCENE_STAGE, L"Layer_Effect", nullptr);
 
 	return NOERROR;
 }
@@ -70,11 +75,31 @@ _int CFireHandBall::Update_GameObject(_double TimeDelta)
 		m_pTransformCom->Set_Pos(m_pTarget_AIController->Get_V3Value(L"Bone_LeftHand"));
 
 		m_vDir = m_pTarget_AIController->Get_V3Value(L"FlameHandBallDir");
+
+		m_fEffectOffset += (_float)TimeDelta;
+		if (m_fEffectOffset > 0.01f)
+		{
+			m_fEffectOffset = 0.f;
+
+			g_pManagement->Create_Effect(L"FireBoy_FireHandBall_BodyFire_Small", m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_01", m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_02", m_pTransformCom->Get_Pos(), nullptr);
+		}
 	}
 	// 손에서 떨어짐
 	else
 	{
 		m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta * m_vDir);
+
+		m_fEffectOffset += (_float)TimeDelta;
+		if (m_fEffectOffset > 0.01f)
+		{
+			m_fEffectOffset = 0.f;
+
+			g_pManagement->Create_Effect(L"FireBoy_FireHandBall_BodyFire", m_pTransformCom->Get_Pos() + m_vDir * 1.6f, nullptr);
+			g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_01", m_pTransformCom->Get_Pos(), nullptr);
+			g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_02", m_pTransformCom->Get_Pos(), nullptr);
+		}
 	}
 
 	m_dCurTime += TimeDelta;
@@ -82,7 +107,12 @@ _int CFireHandBall::Update_GameObject(_double TimeDelta)
 	// 시간 초과
 	if (m_dCurTime > m_dLifeTime)
 	{
+		g_pManagement->Create_Effect(L"FireBoy_FireHandBall_Dead_FireExplosion", m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect(L"FireBoy_FireHandBall_Dead_Light", m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect(L"FireBoy_FireSphere_BreakParticle", m_pTransformCom->Get_Pos(), nullptr);
+		
 		m_bDead = true;
+		m_pFireSphere->Set_Dead();
 
 		// 플레이어 머리에서 불꽃 생성
 		CTransform* pPlayerTransCom = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL));

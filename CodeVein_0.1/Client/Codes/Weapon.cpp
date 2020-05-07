@@ -32,13 +32,16 @@ HRESULT CWeapon::Ready_GameObject(void * pArg)
 
 	m_pTrailEffect = g_pManagement->Create_Trail();
 	m_pTrailEffect->Set_TrailIdx(0);
+	//Safe_AddRef(m_pTrailEffect);
 	
 	m_pDistortionEffect = g_pManagement->Create_Trail();
 	m_pDistortionEffect->Set_TrailIdx(3);
 	m_pDistortionEffect->Set_TrailType(Engine::CTrail_VFX::Trail_Distortion);
-	
+	//Safe_AddRef(m_pDistortionEffect);
+
 	m_pStaticTrailEffect = g_pManagement->Create_Trail();
 	m_pStaticTrailEffect->Set_TrailIdx(1);
+	//Safe_AddRef(m_pStaticTrailEffect);
 
 	return NOERROR;
 }
@@ -223,7 +226,11 @@ void CWeapon::OnCollisionEnter()
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_MonsterProjectile", SCENE_STAGE));
 	}
 	else
-		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL) , true);
+	{
+		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL), true);
+		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE), true);
+	}
+		
 
 
 	// =============================================================================================
@@ -486,7 +493,8 @@ void CWeapon::Change_WeaponMesh(const _tchar* _MeshName)
 
 	// Release 한 컴포넌트에 새로이 Clone 받음.
 	iter->second = m_pMesh_Static = static_cast<CMesh_Static*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, _MeshName));
-	Safe_AddRef(iter->second);
+	//Safe_AddRef(iter->second);
+	Safe_AddRef(m_pMesh_Static);
 
 	// 콜라이더도 업데이트 해야함.
 	_float fRadius = m_tWeaponParam[m_eWeaponData].fRadius;
@@ -542,7 +550,7 @@ void CWeapon::Change_WeaponData(WEAPON_DATA _eWpnData)
 
 	m_eWeaponData = _eWpnData;
 
-	_tchar WeaponMeshName[MAX_STR] = L"";
+	_tchar WeaponMeshName[STR_128] = L"";
 
 	switch (_eWpnData)
 	{
@@ -1042,16 +1050,12 @@ void CWeapon::Free()
 	Safe_Release(m_pMesh_Static);
 	Safe_Release(m_pShader);
 	Safe_Release(m_pRenderer);
+
 	Safe_Release(m_pBattleAgent);
+	Safe_Release(m_pOptimization);
 
-	//for (auto& iter : m_vecAttackCol)
-	//	Safe_Release(iter);
-
-	//m_vecAttackCol.shrink_to_fit();
-	//m_vecAttackCol.clear();
-
-	//for (auto& iter : m_listCollisionRecord)
-	//	iter = nullptr;
+	for (auto& iter : m_listCollisionRecord)
+		iter = nullptr;
 
 	CGameObject::Free();
 }

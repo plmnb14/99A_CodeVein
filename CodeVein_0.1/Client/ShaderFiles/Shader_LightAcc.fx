@@ -137,34 +137,12 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	
 	float fDepth = (lightPosition.z / lightPosition.w);
 	float DepthBias = 0.00125f;
-	
-	if (fDepth > fShadow + DepthBias)
-	{
-		Out.vShade.rgb *= 0.2f;
-		Out.vSpecular.a = AO;
 
-		if (vHeightValue.x > 0.0001f)
-		{
-			Out.vShade.xyz = ceil(Out.vShade.xyz * 2.f) / 2.f;
-		}
-
-		return Out;
-	}
+	Out.vShade.rgb *= fShadow;
 
 	// Shadow End ====================================================================
 
 	// Toon Shade ====================================================================
-
-	if (vHeightValue.x > 0.0001f)
-	{
-		Out.vShade.xyz = ceil(Out.vShade.xyz * 2.f) / 2.f;
-
-		if (vHeightValue.y > 0.f)
-		{
-			//Out.vShade.xyz += 0.5f;
-			//Out.vShade.xyz = saturate(Out.vShade.xyz);
-		}
-	}
 
 	// Toon Shade End ====================================================================
 
@@ -172,6 +150,19 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	Out.vSpecular = (g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 20.f * Roughness)) * Metalness;
 	Out.vSpecular.a = AO;
+
+	if (vHeightValue.x > 0.0001f)
+	{
+		Out.vShade.xyz = ceil(Out.vShade.xyz * 2.f) / 2.f;
+		Out.vSpecular.a = 100.f;
+
+		if (vHeightValue.y > 0.f)
+		{
+			//Out.vSpecular.a = 0.2f;
+			//Out.vShade.xyz += 0.5f;
+			//Out.vShade.xyz = saturate(Out.vShade.xyz);
+		}
+	}
 
 	return Out;
 }

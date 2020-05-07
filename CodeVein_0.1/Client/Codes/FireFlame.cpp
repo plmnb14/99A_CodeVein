@@ -82,11 +82,24 @@ _int CFireFlame::Update_GameObject(_double TimeDelta)
 	if (m_dCurTime > m_dLifeTime)
 	{
 		m_bDead = true;
+		
+		g_pManagement->Create_Effect(L"FireBoy_FireFlame_DeadFire", m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect(L"FireBoy_FireGround_BoomParticle_01", m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect(L"FireBoy_FireGround_BoomParticle_02", m_pTransformCom->Get_Pos(), nullptr);
 	}
 	// ÁøÇàÁß
 	else
 	{
+		m_fEffectOffset += (_float)TimeDelta;
+		if (m_fEffectOffset > 0.01f)
+		{
+			m_fEffectOffset = 0.f;
 
+			g_pManagement->Create_Effect(L"FireBoy_FireFlame", m_pTransformCom->Get_Pos(), nullptr);
+		}
+
+		g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_01", 0.1f, m_pTransformCom->Get_Pos(), nullptr);
+		g_pManagement->Create_Effect_Offset(L"FireBoy_FireBullet_Particle_02", 0.1f, m_pTransformCom->Get_Pos(), nullptr);
 	}
 
 

@@ -39,12 +39,12 @@ private:
 	CTrail_VFX*			m_pTrailEffect = nullptr;
 	CEffect*			m_pBulletBody = nullptr;
 
-	_tchar				m_pEffect_Tag0[MAX_STR] = { 0, };
-	_tchar				m_pEffect_Tag1[MAX_STR] = { 0, };
-	_tchar				m_pEffect_Tag2[MAX_STR] = { 0, };
-	_tchar				m_pEffect_Tag3[MAX_STR] = { 0, };
-	_tchar				m_pEffect_Tag4[MAX_STR] = { 0, };
-	_tchar				m_pEffect_Tag5[MAX_STR] = { 0, };
+	_tchar				m_pEffect_Tag0[STR_128] = { 0, };
+	_tchar				m_pEffect_Tag1[STR_128] = { 0, };
+	_tchar				m_pEffect_Tag2[STR_128] = { 0, };
+	_tchar				m_pEffect_Tag3[STR_128] = { 0, };
+	_tchar				m_pEffect_Tag4[STR_128] = { 0, };
+	_tchar				m_pEffect_Tag5[STR_128] = { 0, };
 
 	_v3					m_vDir = _v3(0.f, 0.f, 0.f);
 	_float				m_fSpeed = 0.f;

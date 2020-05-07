@@ -168,7 +168,7 @@ HRESULT CBT_MoveDirectly::Ready_Clone_Node(void * pInit_Struct)
 		Safe_AddRef(m_pNavMesh);
 
 	m_eMode = temp.eMode;
-	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
+	strcpy_s<STR_128>(m_pNodeName, temp.Target_NodeName);
 
 	if( MODE::CHASE == m_eMode)
 		lstrcpy(m_Target_Key, temp.Target_Key);
