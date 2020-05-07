@@ -40,6 +40,19 @@ _int CScene_Stage_01::Update_Scene(_double TimeDelta)
 	//CUI_Manager::Get_Instance()->Update_UI();
 	//Create_Fog(TimeDelta);
 
+	if (g_pInput_Device->Key_Down(DIK_K))
+	{
+		CRenderer* pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
+		pRenderer->Fog_On(true);
+		Safe_Release(pRenderer);
+	}
+	if (g_pInput_Device->Key_Down(DIK_L))
+	{
+		CRenderer* pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
+		pRenderer->Fog_On(false);
+		Safe_Release(pRenderer);
+	}
+
 	return _int();
 }
 
@@ -159,6 +172,9 @@ void CScene_Stage_01::Create_Fog(_double TimeDelta)
 HRESULT CScene_Stage_01::Ready_Layer_Environment(const _tchar* pLayerTag)
 {
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Sky", SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Sky_Blur", SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossMassageUI", SCENE_STAGE, L"Layer_BossMassageUI")))
