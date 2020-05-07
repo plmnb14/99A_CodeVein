@@ -47,13 +47,6 @@ private:
 	CEffect*			m_pBulletBody = nullptr;
 
 private:
-	_tchar				m_pEffect_Tag0[MAX_STR] = { 0, };
-	_tchar				m_pEffect_Tag1[MAX_STR] = { 0, };
-	_tchar				m_pEffect_Tag2[MAX_STR] = { 0, };
-	_tchar				m_pEffect_Tag3[MAX_STR] = { 0, };
-	_tchar				m_pEffect_Tag4[MAX_STR] = { 0, };
-	_tchar				m_pEffect_Tag5[MAX_STR] = { 0, };
-
 	_v3					m_vDir = _v3(0.f, 0.f, 0.f);
 
 	//_uint				m_iSeting_BulletType;

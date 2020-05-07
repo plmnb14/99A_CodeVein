@@ -43,14 +43,33 @@ HRESULT CDeerKingIceSword::Ready_GameObject(void * pArg)
 	m_dCurTime = 0;
 	m_bDead = false;
 
+	// Transform
+	m_pTransformCom->Set_Pos(V3_NULL);
+	m_pTransformCom->Set_Scale(V3_ONE);
+	m_vAngle = V3_NULL;
+	//m_vAngle.x = 30.f;
+	//m_vAngle.z = -90.f;
+
 	// 사슴왕 블랙보드에서 가져옴.
 	m_vDir = m_pTarget_AIController->Get_V3Value(L"IceSword_Dir");
 
-	m_pTransformCom->Set_Pos(m_pTarget_AIController->Get_V3Value(L"IceSword_Pos"));
-	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
+	//_mat matAttatch = m_pTarget_AIController->Get_MatValue(L"Bone_LeftHandAttach");
+	//_mat matParent = m_pTarget_AIController->Get_MatValue(L"Self_Mat");
+	//m_pTransformCom->Calc_ParentMat(&(matAttatch * matParent));
+
+	//m_pTransformCom->Set_Pos(m_pTarget_AIController->Get_V3Value(L"IceSword_Pos"));
+	//m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
+
+	m_pSwordEffect = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"DeerKing_IceSword", nullptr));
+	m_pSwordEffect->Set_Desc(V3_NULL, nullptr);
+	m_pSwordEffect->Set_Angle(_v3(0.f, 0.f, 90.f));
+	m_pSwordEffect->Set_ParentObject(this);
+	m_pSwordEffect->Set_ZWrite();
+	m_pSwordEffect->Reset_Init();
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pSwordEffect, SCENE_STAGE, L"Layer_Effect", nullptr);
 
 	return NOERROR;
 }
@@ -64,17 +83,58 @@ _int CDeerKingIceSword::Update_GameObject(_double TimeDelta)
 
 	m_dCurTime += TimeDelta;
 
-	m_vDir = m_pTarget_AIController->Get_V3Value(L"IceSword_Dir");
-	m_pTransformCom->Set_Pos(m_pTarget_AIController->Get_V3Value(L"IceSword_Pos"));
+	//m_vDir = m_pTarget_AIController->Get_V3Value(L"IceSword_Dir");
+	//m_pTransformCom->Set_Pos(m_pTarget_AIController->Get_V3Value(L"IceSword_Pos"));
 
+	_v3 vSelfDir = m_pTarget_AIController->Get_V3Value(L"Self_Dir");
+	
+	_mat matAttatch = m_pTarget_AIController->Get_MatValue(L"Mat_LeftHandAttach");
+	_mat matParent = m_pTarget_AIController->Get_MatValue(L"Self_Mat");
+	m_pTransformCom->Calc_ParentMat(&(matAttatch * matParent));
+
+	if (m_dCurTime > 0.5f)
+	{
+	//	m_vAngle.x -= _float(TimeDelta) * 130.f;
+	}
+
+	m_pTransformCom->Set_Angle(AXIS_X, D3DXToRadian(m_vAngle.x));
+	m_pTransformCom->Set_Angle(AXIS_Y, D3DXToRadian(m_vAngle.y));
+	m_pTransformCom->Set_Angle(AXIS_Z, D3DXToRadian(m_vAngle.z));
 
 	if (m_dCurTime > m_dLifeTime)
 	{
 		m_bDead = true;
+		m_pSwordEffect->Set_Dead();
+
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceCrystal_01", m_pTransformCom->Get_Pos() + m_vDir * 1.3f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceCrystal_02", m_pTransformCom->Get_Pos() + m_vDir * 1.3f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceCrystal_03", m_pTransformCom->Get_Pos() + m_vDir * 1.3f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Smoke_01", m_pTransformCom->Get_Pos() + m_vDir * 1.3f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Smoke_01", m_pTransformCom->Get_Pos() + m_vDir * 1.3f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Particle", m_pTransformCom->Get_Pos() + m_vDir * 1.3f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Break", m_pTransformCom->Get_Pos() + m_vDir * 0.6f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Break", m_pTransformCom->Get_Pos() + m_vDir * 1.3f, nullptr);
+		CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Break", m_pTransformCom->Get_Pos() + m_vDir * 1.8f, nullptr);
 	}
 	else
 	{
+		if (m_dCurTime > 0.1f && m_bEffect)
+		{
+			m_bEffect = true;
 
+			CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Smoke_01", m_pTransformCom->Get_Pos() + m_vDir * 1.3f, nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Smoke_02", m_pTransformCom->Get_Pos() + m_vDir * 1.3f, nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(L"IceBlock_Particle", m_pTransformCom->Get_Pos() + m_vDir * 1.3f, nullptr);
+		}
+
+		m_fEffectOffset += _float(TimeDelta);
+		if (m_fEffectOffset > 0.01f)
+		{
+			m_fEffectOffset = 0.f;
+
+			CParticleMgr::Get_Instance()->Create_Effect(L"IceSmoke_01", m_pTransformCom->Get_Pos() + m_vDir * 1.3f, nullptr);
+			CParticleMgr::Get_Instance()->Create_Effect(L"IceSmoke_02", m_pTransformCom->Get_Pos() + m_vDir * 1.3f, nullptr);
+		}
 	}
 
 	// 충돌체 위치는 추후 조정

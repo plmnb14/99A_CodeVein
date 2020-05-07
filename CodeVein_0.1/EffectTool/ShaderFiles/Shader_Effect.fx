@@ -435,6 +435,7 @@ PS_OUT PS_MESHEFFECT(PS_IN In)
 }
 matrix		g_matProjInv;
 matrix		g_matViewInv;
+bool g_bRot;
 PS_OUT PS_SSD(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
@@ -461,10 +462,22 @@ PS_OUT PS_SSD(PS_IN In)
 	float3 decalLocalPos = float3(0, 0, 0);
 	decalLocalPos = mul(float4(vWorldPos.xyz, 1), g_matInvWorld).xyz;
 	
-	clip(0.5 - abs(decalLocalPos.xz));
-	clip(0.25 - abs(decalLocalPos.y));
-	
-	float2 decalUV = decalLocalPos.xz + 0.5f;
+	float2 decalUV;
+
+	if (g_bRot)
+	{
+		clip(0.5 - abs(decalLocalPos.xy));
+		clip(0.25 - abs(decalLocalPos.z));
+
+		decalUV = decalLocalPos.xy + 0.5f;
+	}
+	else
+	{
+		clip(0.5 - abs(decalLocalPos.xz));
+		clip(0.25 - abs(decalLocalPos.y));
+
+		decalUV = decalLocalPos.xz + 0.5f;
+	}
 		
 	float4 Color = float4(1, 1, 1, 1);
 	if (g_bUseColorTex)
@@ -570,6 +583,78 @@ PS_OUT PS_TRAIL_MASK(PS_IN In)
 	return Out;
 }
 
+float g_fUV_Value_X;
+float g_fUV_Value_Y;
+PS_OUT PS_UV(PS_IN In)
+{
+	PS_OUT			Out = (PS_OUT)0;
+
+	In.vTexUV.x += g_fUV_Value_X;
+	In.vTexUV.y += g_fUV_Value_Y;
+	Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
+	Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
+
+	if(g_bUseColorTex)
+	{
+		Out.vColor = pow(tex2D(ColorSampler, In.vTexUV), 2.2);
+		Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
+	}
+	else
+	{
+		Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
+		Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
+	}
+
+	if (g_bUseRGBA)
+	{
+		Out.vColor.xyz = g_vColor.xyz;
+		Out.vColor.a *= g_vColor.a;
+	}
+	else
+	{
+		// ==============================================================================================
+		// [Memo]  g_vColor.x = Hue / g_vColor.y = Contrast / g_vColor.z = Brightness / g_vColor.w = Saturation
+		// ==============================================================================================
+		float3 intensity;
+		float half_angle = 0.5 * radians(g_vColor.x); // Hue is radians of 0 tp 360 degree
+		float4 rot_quat = float4((root3 * sin(half_angle)), cos(half_angle));
+		float3x3 rot_Matrix = QuaternionToMatrix(rot_quat);
+		Out.vColor.rgb = mul(rot_Matrix, Out.vColor.rgb);
+		Out.vColor.rgb = (Out.vColor.rgb - 0.5) *(g_vColor.y + 1.0) + 0.5;
+		Out.vColor.rgb = Out.vColor.rgb + g_vColor.z;
+		intensity = float(dot(Out.vColor.rgb, lumCoeff));
+		Out.vColor.rgb = lerp(intensity, Out.vColor.rgb, g_vColor.w);
+		// End ==========================================================================================
+	}
+
+	if (g_bUseMaskTex)
+	{
+		//float fGradientUV = In.vTexUV + (g_fAlpha);
+		vector vGradientMask = tex2D(GradientSampler, In.vTexUV);
+		Out.vColor.a *= vGradientMask.x;
+	}
+
+	if (g_bDissolve)
+	{
+		float4 fxColor = tex2D(DiffuseSampler, In.vTexUV);
+
+		if (Out.vColor.a == 0.f)
+			clip(-1);
+
+		if (fxColor.r >= g_fDissolve)
+			Out.vColor.a = 1;
+		else
+			Out.vColor.a = 0;
+	}
+
+	if (g_bReverseColor)
+		Out.vColor.rgb = 1 - Out.vColor.rgb;
+
+	Out.vColor.a = Out.vColor.a * g_fAlpha;
+	return Out;
+}
+
+
 technique Default_Technique
 {
 	pass Default_Rendering // 0
@@ -639,7 +724,7 @@ technique Default_Technique
 		DestBlend = InvSrcAlpha;
 		blendop = add;
 
-		cullmode = none; // 카메라 절두체에 잘리는 문제 : 백스페이스 컬링이 필요???
+		cullmode = none;
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_SSD();
@@ -701,6 +786,22 @@ technique Default_Technique
 
 		VertexShader = compile vs_3_0 VS_MAIN();
 		PixelShader = compile ps_3_0 PS_MAIN();
+	}
+
+	pass Screen_Effect_UV // 9
+	{
+		zwriteenable = true;
+
+		AlphablendEnable = true;
+		AlphaTestEnable = true;
+		srcblend = SrcAlpha;
+		DestBlend = InvSrcAlpha;
+		blendop = add;
+
+		cullmode = none;
+
+		VertexShader = compile vs_3_0 VS_MAIN();
+		PixelShader = compile ps_3_0 PS_UV();
 	}
 }
 

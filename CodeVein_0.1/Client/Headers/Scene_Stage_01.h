@@ -27,9 +27,6 @@ private:
 	void Create_Fog(_double TimeDelta);
 
 private:
-	CNavMesh*		m_pNavMesh = nullptr;
-
-private:
 	_float m_fMapFogDelay = 10.f;
 	_float m_fMapWindDustDelay = 1.f;
 

@@ -268,7 +268,7 @@ HRESULT CBT_Simple_Parallel::Ready_Clone_Node(void * pInit_Struct)
 {
 	INFO temp = *(INFO*)pInit_Struct;
 
-	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
+	strcpy_s<STR_128>(m_pNodeName, temp.Target_NodeName);
 
 	m_pChildren.resize(2);
 

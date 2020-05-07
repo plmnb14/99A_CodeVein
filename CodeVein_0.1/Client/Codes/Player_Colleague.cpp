@@ -2318,6 +2318,18 @@ void CPlayer_Colleague::CollAtt_SlowGun()
 				//Set_Friendly(true);
 			}
 		}
+		else if ((0.5f <= AniTime) && m_eColleague_Ani == CPlayer_Colleague::Ani_PlayerHeal_or_Gun)
+		{
+			if (false == m_bEventTrigger[2])
+			{
+				_mat matBone = *m_matBone[Bone_LHand] * m_pTransformCom->Get_WorldMat();
+				memcpy(&vBirth, &matBone._41, sizeof(_v3));
+
+				g_pManagement->Create_Effect_Delay(L"Colleague_Skill_HandLight_Red_0", 0.f, vBirth);
+				g_pManagement->Create_Effect_Delay(L"Colleague_Skill_HandLight_Pink_0", 0.3f, vBirth);
+				g_pManagement->Create_Effect_Delay(L"Colleague_Skill_HandSmoke_Black_0", 0.f, vBirth);
+			}
+		}
 
 		if (0.f <= AniTime && 0.861f >= AniTime)
 			m_bChecking_Gun = true;

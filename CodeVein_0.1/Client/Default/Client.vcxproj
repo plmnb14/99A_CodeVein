@@ -75,8 +75,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
     <OutDir>..\Bin\</OutDir>
-    <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>F:\DirectX_sdk\Include;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>F:\DirectX_sdk\Lib\x64;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <LinkIncremental>false</LinkIncremental>
@@ -84,8 +84,8 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
     <OutDir>..\Release\</OutDir>
-    <IncludePath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
-    <LibraryPath>C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(LibraryPath)</LibraryPath>
+    <IncludePath>F:\DirectX_sdk\Include;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>F:\DirectX_sdk\Lib\x64;C:\Program Files %28x86%29\Microsoft DirectX SDK %28June 2010%29\Lib\x64;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -104,7 +104,7 @@
       <PrecompiledHeader>Use</PrecompiledHeader>
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
-      <PreprocessorDefinitions>_DEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>_DEBUG;_WINDOWS;_CLIENT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../Default/;../Headers/;../../Reference/Headers/;../../Physx/Include/;../../Physx/src/foundation/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
@@ -145,7 +145,7 @@
       <Optimization>MaxSpeed</Optimization>
       <FunctionLevelLinking>true</FunctionLevelLinking>
       <IntrinsicFunctions>true</IntrinsicFunctions>
-      <PreprocessorDefinitions>NDEBUG;_WINDOWS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <PreprocessorDefinitions>NDEBUG;_WINDOWS;_CLIENT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <AdditionalIncludeDirectories>../Default/;../Headers/;../../Reference/Headers/;../../Physx/Include/;../../Physx/src/foundation/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreaded</RuntimeLibrary>
     </ClCompile>
@@ -153,7 +153,7 @@
       <SubSystem>Windows</SubSystem>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <GenerateDebugInformation>DebugFastLink</GenerateDebugInformation>
       <LargeAddressAware>true</LargeAddressAware>
       <AdditionalLibraryDirectories>../../Reference/Librarys/;../../Physx/LibRelease/;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>Engine.lib;d3d9.lib;d3dx9.lib;dxguid.lib;%(AdditionalDependencies)</AdditionalDependencies>
@@ -215,6 +215,9 @@
     <ClInclude Include="..\Headers\DeerKingRushCol.h" />
     <ClInclude Include="..\Headers\Drain_Weapon.h" />
     <ClInclude Include="..\Headers\Dummy_Target.h" />
+    <ClInclude Include="..\Headers\Effect_BloodChunk.h" />
+    <ClInclude Include="..\Headers\Effect_FireFlower.h" />
+    <ClInclude Include="..\Headers\Effect_LongSpark.h" />
     <ClInclude Include="..\Headers\Expendables.h" />
     <ClInclude Include="..\Headers\Expendables_Inven.h" />
     <ClInclude Include="..\Headers\Expendables_Slot.h" />
@@ -290,6 +293,7 @@
     <ClInclude Include="..\Headers\SkillReleaseUI.h" />
     <ClInclude Include="..\Headers\SkillSlot.h" />
     <ClInclude Include="..\Headers\SkillUI.h" />
+    <ClInclude Include="..\Headers\Sky_Blur.h" />
     <ClInclude Include="..\Headers\OKMessageUI.h" />
     <ClInclude Include="..\Headers\Skill_Inven.h" />
     <ClInclude Include="..\Headers\StageSelectUI.h" />
@@ -374,6 +378,9 @@
     <ClCompile Include="..\Codes\DeerKingRushCol.cpp" />
     <ClCompile Include="..\Codes\Drain_Weapon.cpp" />
     <ClCompile Include="..\Codes\Dummy_Target.cpp" />
+    <ClCompile Include="..\Codes\Effect_BloodChunk.cpp" />
+    <ClCompile Include="..\Codes\Effect_FireFlower.cpp" />
+    <ClCompile Include="..\Codes\Effect_LongSpark.cpp" />
     <ClCompile Include="..\Codes\Expendables.cpp" />
     <ClCompile Include="..\Codes\Expendables_Inven.cpp" />
     <ClCompile Include="..\Codes\Expendables_Slot.cpp" />
@@ -448,6 +455,7 @@
     <ClCompile Include="..\Codes\SkillReleaseUI.cpp" />
     <ClCompile Include="..\Codes\SkillSlot.cpp" />
     <ClCompile Include="..\Codes\SkillUI.cpp" />
+    <ClCompile Include="..\Codes\Sky_Blur.cpp" />
     <ClCompile Include="..\Codes\OKMessageUI..cpp" />
     <ClCompile Include="..\Codes\Skill_Inven.cpp" />
     <ClCompile Include="..\Codes\StageSelectUI.cpp" />

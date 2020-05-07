@@ -94,7 +94,7 @@ HRESULT CBT_CreateBuff::Ready_Clone_Node(void * pInit_Struct)
 {
 	INFO temp = *(INFO*)pInit_Struct;
 
-	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
+	strcpy_s<STR_128>(m_pNodeName, temp.Target_NodeName);
 	lstrcpy(m_pObject_Tag, temp.Object_Tag);
 
 	m_pTransform = temp.pTransform;

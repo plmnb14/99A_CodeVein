@@ -143,12 +143,21 @@ protected:
 
 protected:	// DJ
 	_tchar m_pLayerTag_Of_Target[256] = { L"Layer_Player" };
+	
+	_float		m_fAggroTime = 0;	//¾î±×·Î ²ø¸° ½Ã°£
+	_float		m_fMaxAggroTime = 10.f;
+	_float		m_fOffsetAggroTime = 0.f;
 
 protected:
 	void Set_Target_To_Player();
 	void Set_Target_To_Colleague();
 
 	_bool Is_InFov(_float fDegreeOfFov, CTransform* pSelfTransform, _v3 vTargetPos);
+
+	/*
+	Ransdom_Aggro : true¸é ·£´ý ¾î±×·Î ÇÎÆþ,  false¸é °¡±î¿î ³à¼®ÀÌ Å¸°Ù
+	*/
+	void Set_Target_Auto(_bool Ransdom_Aggro = false);
 
 	HRESULT Draw_Collider();
 
@@ -172,6 +181,7 @@ protected:
 
 protected:
 	CMonsterUI*			m_pMonsterUI = nullptr;
+
 	CTransform*			m_pTransformCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
@@ -179,8 +189,9 @@ protected:
 	CNavMesh*			m_pNavMesh = nullptr;
 	CCollider*			m_pCollider = nullptr;
 	CWeapon*			m_pWeapon = nullptr;
-
-	CGameObject*		m_pTarget = nullptr;
+	COptimization*		m_pOptimization = nullptr;
+	CBattleAgent*		m_pBattleAgent = nullptr;
+	CAIController*		m_pAIControllerCom = nullptr;
 
 	MONSTER_STATE_TYPE		m_eFirstCategory;
 	MONSTER_IDLE_TYPE		m_eSecondCategory_IDLE;

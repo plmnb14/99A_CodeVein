@@ -75,6 +75,14 @@ CBlackBoard::OUTPUT CAIController::Set_Value_Of_BlackBoard(const _tchar* pName, 
 	return m_pBlackBoard->Set_Value(pName, vValue);
 }
 
+CBlackBoard::OUTPUT CAIController::Set_Value_Of_BlackBoard(const _tchar * pName, _mat vValue)
+{
+	if (nullptr == m_pBlackBoard)
+		return CBlackBoard::NONE;
+
+	return m_pBlackBoard->Set_Value(pName, vValue);
+}
+
 const _bool CAIController::Get_BoolValue(const _tchar * pName) const
 {
 	return m_pBlackBoard->Get_BoolValue(pName);
@@ -93,6 +101,11 @@ const _int CAIController::Get_IntValue(const _tchar * pName) const
 const _v3 CAIController::Get_V3Value(const _tchar * pName) const
 {
 	return m_pBlackBoard->Get_V3Value(pName);
+}
+
+const _mat CAIController::Get_MatValue(const _tchar * pName) const
+{
+	return m_pBlackBoard->Get_MatValue(pName);
 }
 
 void CAIController::Reset_BT()

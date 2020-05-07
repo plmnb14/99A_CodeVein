@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Colleague_Bullet.h"
 
-
 CColleague_Bullet::CColleague_Bullet(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
@@ -43,24 +42,16 @@ HRESULT CColleague_Bullet::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 	m_tObjParam.bCanAttack = true;
-	m_tObjParam.fDamage = 200.f;
+	//m_tObjParam.fDamage = 200.f;
 
 
-	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Bullet_Body", nullptr));
-	m_pBulletBody->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
-	m_pBulletBody->Reset_Init();
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
+	//m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Bullet_Body", nullptr));
+	//m_pBulletBody->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
+	//m_pBulletBody->Reset_Init();
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
 
-	//lstrcpy(m_pEffect_Tag0, L"Bullet_Body");
-	lstrcpy(m_pEffect_Tag1, L"Bullet_Body_Aura");
-	lstrcpy(m_pEffect_Tag2, L"Bullet_Tail_Particle");
-
-	lstrcpy(m_pEffect_Tag3, L"Bullet_DeadFlash");
-	lstrcpy(m_pEffect_Tag4, L"Bullet_DeadSmoke_Base");
-	lstrcpy(m_pEffect_Tag5, L"Bullet_DeadSmoke_Black");
-
-	m_pTrailEffect = g_pManagement->Create_Trail();
-	m_pTrailEffect->Set_TrailIdx(5); // Red Tail
+	//m_pTrailEffect = g_pManagement->Create_Trail();
+	//m_pTrailEffect->Set_TrailIdx(5); // Red Tail
 
 	return S_OK;
 }
@@ -83,11 +74,15 @@ _int CColleague_Bullet::Update_GameObject(_double TimeDelta)
 	if (m_dCurTime > m_dLifeTime)
 	{
 		//죽음 이펙트
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag3, m_pTransformCom->Get_Pos());
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, m_pTransformCom->Get_Pos());
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag5, m_pTransformCom->Get_Pos());
-		m_pBulletBody->Set_Dead();
+		//m_pBulletBody->Set_Dead();
 		//m_pTrailEffect->Set_Dead();
+
+		CParticleMgr::Get_Instance()->Create_Effect(L"Colleague_Skill_PinkSmoke_0", m_pTransformCom->Get_Pos());
+		CParticleMgr::Get_Instance()->Create_Effect(L"Colleague_Skill_PinkSmoke_1", m_pTransformCom->Get_Pos());
+		CParticleMgr::Get_Instance()->Create_Effect(L"Colleague_Skill_Blood", m_pTransformCom->Get_Pos());
+		CParticleMgr::Get_Instance()->Create_Effect_Delay(L"Colleague_Skill_BloodSmoke_0", 0.3f, m_pTransformCom->Get_Pos());
+		CParticleMgr::Get_Instance()->Create_Effect_Delay(L"Colleague_Skill_BloodSmoke_1", 0.3f, m_pTransformCom->Get_Pos());
+		CParticleMgr::Get_Instance()->Create_Effect_Delay(L"Colleague_Skill_DistortionSmoke", 0.5f, m_pTransformCom->Get_Pos());
 
 		m_bDead = true;
 	}
@@ -96,13 +91,8 @@ _int CColleague_Bullet::Update_GameObject(_double TimeDelta)
 	{
 		if (m_bEffect)
 		{
-			//CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag0, _v3(), m_pTransformCom);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag1, _v3(), m_pTransformCom);
-
 			m_bEffect = false;
 		}
-
-		CParticleMgr::Get_Instance()->Create_Effect_Offset(m_pEffect_Tag2, 0.1f, m_pTransformCom->Get_Pos());
 	}
 
 	return S_OK;

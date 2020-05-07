@@ -62,7 +62,7 @@ public:
 	CSetingView*					m_pSetingView;
 
 	_ulong							m_dwRenderCnt;
-	_tchar							m_szFPS[MAX_STR];
+	_tchar							m_szFPS[STR_128];
 	_float							m_fTime = 0.f;
 
 };

@@ -1041,8 +1041,21 @@ void CHunter::Play_Gun_Shoot()
 				memcpy(&vLook, &matTemp._21, sizeof(_v3)); //»ÀÀÇ ·è
 				vBirth += (vLook * fLength); //»ý¼ºÀ§Ä¡ = »ý¼ºÀ§Ä¡ +(·è*±æÀÌ)
 
+				g_pManagement->Create_Effect_Delay(L"Hunter_Bullet_Fire_Smoke", 0.f, vBirth);
+				g_pManagement->Create_Effect_Delay(L"Hunter_Bullet_Dead_Lightning", 0.f, vBirth);
 				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_HunterBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
 			}
+		}
+		else if (3.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+			}
+
+			_mat matTemp = *m_matBone[Bone_RightHandAttach] * m_pTransformCom->Get_WorldMat(); //»ÀÀ§Ä¡* ¿ùµå
+			_v3 vPos = _v3(matTemp._41, matTemp._42, matTemp._43);
+			g_pManagement->Create_Effect_Offset(L"Hunter_Bullet_Ready_Light", 0.1f, vPos);
 		}
 		else if (0.f <= AniTime)
 		{
@@ -1128,8 +1141,21 @@ void CHunter::Play_Gun_Snipe()
 				memcpy(&vLook, &matTemp._21, sizeof(_v3)); //»ÀÀÇ ·è
 				vBirth += (vLook * fLength); //»ý¼ºÀ§Ä¡ = »ý¼ºÀ§Ä¡ +(·è*±æÀÌ)
 
+				g_pManagement->Create_Effect_Delay(L"Hunter_Bullet_Fire_Smoke", 0.f, vBirth);
+				g_pManagement->Create_Effect_Delay(L"Hunter_Bullet_Dead_Lightning", 0.f, vBirth);
 				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_HunterBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
 			}
+		}
+		else if (0.5f <= AniTime)
+		{
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+			}
+
+			_mat matTemp = *m_matBone[Bone_RightHandAttach] * m_pTransformCom->Get_WorldMat(); //»ÀÀ§Ä¡* ¿ùµå
+			_v3 vPos = _v3(matTemp._41, matTemp._42, matTemp._43);
+			g_pManagement->Create_Effect_Offset(L"Hunter_Bullet_Ready_Light", 0.1f, vPos);
 		}
 		else if (0.f <= AniTime)
 		{
@@ -1209,6 +1235,8 @@ void CHunter::Play_Gun_Combo_Shot()
 				memcpy(&vLook, &matTemp._21, sizeof(_v3)); //»ÀÀÇ ·è
 				vBirth += (vLook * fLength); //»ý¼ºÀ§Ä¡ = »ý¼ºÀ§Ä¡ +(·è*±æÀÌ)
 
+				g_pManagement->Create_Effect_Delay(L"Hunter_Bullet_Fire_Smoke", 0.f, vBirth);
+				g_pManagement->Create_Effect_Delay(L"Hunter_Bullet_Dead_Lightning", 0.f, vBirth);
 				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_HunterBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
 			}
 		}
@@ -1280,6 +1308,8 @@ void CHunter::Play_Gun_Combo_Shot()
 				memcpy(&vLook, &matTemp._21, sizeof(_v3)); //»ÀÀÇ ·è
 				vBirth += (vLook * fLength); //»ý¼ºÀ§Ä¡ = »ý¼ºÀ§Ä¡ +(·è*±æÀÌ)
 
+				g_pManagement->Create_Effect_Delay(L"Hunter_Bullet_Fire_Smoke", 0.f, vBirth);
+				g_pManagement->Create_Effect_Delay(L"Hunter_Bullet_Dead_Lightning", 0.f, vBirth);
 				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_HunterBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
 			}
 		}
@@ -1304,6 +1334,8 @@ void CHunter::Play_Gun_Combo_Shot()
 				memcpy(&vLook, &matTemp._21, sizeof(_v3)); //»ÀÀÇ ·è
 				vBirth += (vLook * fLength); //»ý¼ºÀ§Ä¡ = »ý¼ºÀ§Ä¡ +(·è*±æÀÌ)
 
+				g_pManagement->Create_Effect_Delay(L"Hunter_Bullet_Fire_Smoke", 0.f, vBirth);
+				g_pManagement->Create_Effect_Delay(L"Hunter_Bullet_Dead_Lightning", 0.f, vBirth);
 				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_HunterBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
 			}
 
@@ -1374,6 +1406,8 @@ void CHunter::Play_Gun_Combo_Shot()
 				memcpy(&vLook, &matTemp._21, sizeof(_v3)); //»ÀÀÇ ·è
 				vBirth += (vLook * fLength); //»ý¼ºÀ§Ä¡ = »ý¼ºÀ§Ä¡ +(·è*±æÀÌ)
 
+				g_pManagement->Create_Effect_Delay(L"Hunter_Bullet_Fire_Smoke", 0.f, vBirth);
+				g_pManagement->Create_Effect_Delay(L"Hunter_Bullet_Dead_Lightning", 0.f, vBirth);
 				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_HunterBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
 			}
 		}
@@ -6832,7 +6866,7 @@ void CHunter::Play_Dead()
 
 HRESULT CHunter::Add_Component(void* pArg)
 {
-	_tchar MeshName[MAX_STR] = L"";
+	_tchar MeshName[STR_128] = L"";
 
 	MONSTER_STATUS eTemp = *(MONSTER_STATUS*)pArg;
 

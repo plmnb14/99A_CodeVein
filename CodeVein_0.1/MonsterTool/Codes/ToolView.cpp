@@ -108,10 +108,10 @@ void CToolView::OnInitialUpdate()
 	CInput_Device::Get_Instance()->Ready_Input_Dev(g_hInst, g_hWnd);
 	CInput_Device::Get_Instance()->Set_InputDev();
 
-	_tchar szDynamicExtractPath[MAX_STR] = L"";
-	_tchar szDynamicSavePath[MAX_STR] = L"";
-	_tchar szWeaponExtractPath[MAX_STR] = L"";
-	_tchar szWeaponSavePath[MAX_STR] = L"";
+	_tchar szDynamicExtractPath[STR_128] = L"";
+	_tchar szDynamicSavePath[STR_128] = L"";
+	_tchar szWeaponExtractPath[STR_128] = L"";
+	_tchar szWeaponSavePath[STR_128] = L"";
 	lstrcpy(szDynamicExtractPath, L"..\\..\\Client\\Resources\\Mesh\\DynamicMesh");
 	lstrcpy(szDynamicSavePath, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
 	lstrcpy(szWeaponExtractPath, L"..\\..\\Client\\Resources\\Mesh\\Weapons");
@@ -139,10 +139,10 @@ END_MESSAGE_MAP()
 
 CString CToolView::Convert_RelativePath(const _tchar * pFullPath)
 {
-	_tchar szCurrentDir[MAX_STR] = L"";
-	::GetCurrentDirectory(MAX_STR, szCurrentDir);
+	_tchar szCurrentDir[STR_128] = L"";
+	::GetCurrentDirectory(STR_128, szCurrentDir);
 
-	_tchar szRelativePath[MAX_STR] = L"";
+	_tchar szRelativePath[STR_128] = L"";
 	::PathRelativePathTo(szRelativePath, szCurrentDir, FILE_ATTRIBUTE_DIRECTORY, pFullPath, FILE_ATTRIBUTE_DIRECTORY);
 
 	return CString(szRelativePath);
@@ -203,7 +203,7 @@ void CToolView::Extract_Mesh_PathInfo(const _tchar * pPath, list<MESH_INFO*>& rP
 
 			Engine::MESH_INFO* pPathInfo = new Engine::MESH_INFO;
 
-			_tchar szBuf[MAX_STR] = L"";
+			_tchar szBuf[STR_128] = L"";
 			lstrcpy(szBuf, strRelative);
 
 			// 폴더까지의 경로
@@ -225,7 +225,7 @@ void CToolView::Extract_Mesh_PathInfo(const _tchar * pPath, list<MESH_INFO*>& rP
 			// 키 값
 			pPathInfo->wstrStateKey = L"Mesh_" + tmpString;
 
-			_tchar szBuf_2[MAX_STR] = L"";
+			_tchar szBuf_2[STR_128] = L"";
 			(_bIsDynamic ? lstrcpy(szBuf_2, L"1") : lstrcpy(szBuf_2, L"0"));
 
 			pPathInfo->szIsDynamic = szBuf_2;

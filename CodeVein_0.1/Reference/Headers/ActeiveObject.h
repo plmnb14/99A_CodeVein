@@ -53,7 +53,7 @@ protected:
 
 	_ulong			m_PassNum = 0;
 
-	_tchar			m_szAciveName[MAX_STR] = L"";
+	_tchar			m_szAciveName[STR_128] = L"";
 
 	_bool			m_bCheck_Mistletoe = false;
 	// 임시적으로 멤버변수 불값 사용. 후에 수정

@@ -14,10 +14,10 @@ public:
 	{
 		tagInitInfo(char* pNodeName, CGameObject* pThisObject, _float _fFxSpeed, _bool _bFadeIn, _double _Service_Start_Time, CBT_Service_Node::Mode _eMode)
 			: Target_Object(pThisObject), fFxSpeed(_fFxSpeed), _bFadeIn(_bFadeIn), Service_Start_Time(_Service_Start_Time), eMode(_eMode)
-		{ strcpy_s<256>(Target_NodeName, pNodeName);
+		{ strcpy_s<STR_128>(Target_NodeName, pNodeName);
 		}
 
-		char					Target_NodeName[256] = {0,};
+		char					Target_NodeName[STR_128] = {0,};
 		CGameObject*			Target_Object = nullptr;
 		_float					fFxSpeed = 0.f;
 		_bool					_bFadeIn = false;

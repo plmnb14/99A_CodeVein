@@ -89,7 +89,7 @@ HRESULT CBT_UpdateGageRatio::Ready_Clone_Node(void * pInit_Struct)
 {
 	INFO temp = *(INFO*)pInit_Struct;
 
-	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
+	strcpy_s<STR_128>(m_pNodeName, temp.Target_NodeName);
 	lstrcpy(m_pKey_Save_GageRatio, temp.Target_Save_GageRatio);
 	lstrcpy(m_pTargetKey_CurGage, temp.Target_KeyCurGage);
 	lstrcpy(m_pTargetKey_MaxGage, temp.Target_KeyMaxGage);

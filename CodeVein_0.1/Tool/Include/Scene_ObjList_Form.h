@@ -45,7 +45,7 @@ protected:
 	afx_msg void DataChange();
 
 public:
-	_tchar*							m_arrObject[MAX_STR];
+	_tchar*							m_arrObject[STR_128];
 	list<_tchar*>					m_listObject;
 	list<_tchar*>					m_listNewObject;
 

@@ -14,9 +14,9 @@ public:
 	{
 		tagInitInfo(char* pNodeName, _double dWaitingTime, _double dOffset)
 			: Target_dWaitingTime(dWaitingTime), Target_dOffset(dOffset)
-		{ strcpy_s<256>(Target_NodeName, pNodeName); }
+		{ strcpy_s<STR_128>(Target_NodeName, pNodeName); }
 
-		char	Target_NodeName[256] = {0,};
+		char	Target_NodeName[STR_128] = {0,};
 		_double Target_dWaitingTime = 0;
 		_double Target_dOffset = 0;
 	}INFO;

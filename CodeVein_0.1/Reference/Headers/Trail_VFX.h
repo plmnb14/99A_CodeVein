@@ -114,7 +114,7 @@ private:
 
 
 private:
-	_tchar		m_eTexName[MAX_STR] = L"";
+	_tchar		m_eTexName[STR_128] = L"";
 
 private:
 	_mat		m_matParent;

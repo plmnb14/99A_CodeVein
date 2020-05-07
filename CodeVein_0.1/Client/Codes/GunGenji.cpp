@@ -49,10 +49,6 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 	m_pMonsterUI->Set_Bonmatrix(m_matBones[Bone_Head]);
 	m_pMonsterUI->Ready_GameObject(NULL);
 
-	/*m_pMonDamegeUI = static_cast<CDamegeNumUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_DamegeNumUI", pArg));
-	m_pMonDamegeUI->Set_Target(this);
-	m_pMonDamegeUI->Ready_GameObject(NULL);*/
-
 	////////////////// 행동트리 init
 
 	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL);
@@ -130,14 +126,7 @@ HRESULT CGunGenji::Ready_GameObject(void * pArg)
 
 	////////////////////////
 
-	m_pMeshCom->SetUp_Animation(Ani_Idle);
-
-	//===================================================================
-	// 림라이트 벨류 설정	
-	//===================================================================
-	m_pBattleAgent->Set_OriginRimAlpha(0.5f);
-	m_pBattleAgent->Set_OriginRimValue(8.f);
-	//===================================================================
+	//m_pMeshCom->SetUp_Animation(Ani_Idle);
 
 
 	return NOERROR;
@@ -151,16 +140,18 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 	if (nullptr == g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))
 		return E_FAIL;
 
+	// 죽었을 경우
+	if (m_bIsDead)
+		return DEAD_OBJ;
+
 	Push_Collider();
 	
 	CGameObject::Update_GameObject(TimeDelta);
 
 	// MonsterHP UI
-	m_pMonsterUI->Update_GameObject(TimeDelta);
+	if(nullptr != m_pMonsterUI)
+		m_pMonsterUI->Update_GameObject(TimeDelta);
 
-	// 죽었을 경우
-	if (m_bIsDead)
-		return DEAD_OBJ;
 
 	// 처형이 아니고, 반격 당할 수 있을 경우
 	if (true == m_tObjParam.bCanExecution && true == m_tObjParam.bCanRepel)
@@ -168,11 +159,15 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 		// 플레이어 미발견
 		if (false == m_bFight)
 		{
+			cout << "발견 못했습니다" << endl;
 			Update_NF();
 		}
 		// 플레이어 발견
 		else
 		{
+			// 가까운 녀석 어그로 끌림.
+			Set_Target_Auto();
+
 			// 뼈 위치 업데이트
 			Update_Bone_Of_BlackBoard();
 			// BB 직접 업데이트
@@ -220,7 +215,6 @@ _int CGunGenji::Late_Update_GameObject(_double TimeDelta)
 
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
-
 
 	//=============================================================================================
 	// 그림자랑 모션블러는 프리스텀 안에 없으면 안그림
@@ -283,8 +277,6 @@ HRESULT CGunGenji::Render_GameObject()
 
 				if (m_bDissolve)
 					m_iPass = 3;
-
-				cout << m_iPass << endl;
 
 				m_pShaderCom->Begin_Pass(m_iPass);
 
@@ -875,6 +867,8 @@ HRESULT CGunGenji::Update_NF()
 			}
 			else
 			{
+				cout << "발견 못함 : " << m_eNF_Ani << endl;
+
 				m_pMeshCom->SetUp_Animation(m_eNF_Ani);
 			}
 		}
@@ -1039,14 +1033,18 @@ void CGunGenji::Check_PhyCollider()
 
 void CGunGenji::Push_Collider()
 {
-	list<CGameObject*> tmpList[3];
+	list<CGameObject*> tmpList[4];
 
 	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
 	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
 	tmpList[2] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
+	tmpList[3] = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE);
 
 	for (auto& ListObj : tmpList)
 	{
+		if (ListObj.empty())
+			continue;
+
 		for (auto& iter : ListObj)
 		{
 			CCollider* pCollider = TARGET_TO_COL(iter);
@@ -1114,7 +1112,7 @@ HRESULT CGunGenji::Add_Component(void* pArg)
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
-	_tchar name[256] = { 0, };
+	_tchar name[STR_128] = { 0, };
 	INFO eTemp = *(INFO*)pArg;
 
 	if (nullptr == pArg)
@@ -1313,6 +1311,42 @@ HRESULT CGunGenji::Ready_NF(void * pArg)
 	m_fMaxLength = eTemp.fMaxLength;
 	m_fMinLength = eTemp.fMinLength;
 
+	//===================================================================
+	// 림라이트 벨류 설정	
+	//===================================================================
+	m_pBattleAgent->Set_RimAlpha(0.5f);
+	m_pBattleAgent->Set_RimValue(8.f);
+	m_pBattleAgent->Set_OriginRimAlpha(0.5f);
+	m_pBattleAgent->Set_OriginRimValue(8.f);
+	//===================================================================
+
+	//===================================================================
+	// 트리거 소환용 설정
+	//===================================================================
+	// 트리거 소환되는 녀석이면
+	if (eTemp.bSpawnOnTrigger)
+	{
+		// 스테이지 번호로 네비 불러옴
+		_tchar szNavData[STR_128] = L"";
+
+		lstrcpy(szNavData, (
+			eTemp.sStageIdx == 0 ? L"Navmesh_Training.dat" :
+			eTemp.sStageIdx == 1 ? L"Navmesh_Stage_01.dat" : 
+			eTemp.sStageIdx == 2 ? L"Navmesh_Stage_02.dat" : 
+			eTemp.sStageIdx == 3 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
+
+		m_pNavMesh->Set_Index(-1);
+		m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, szNavData);
+		m_pNavMesh->Check_OnNavMesh(eTemp.vPos);
+		m_pTransformCom->Set_Pos(eTemp.vPos);
+		m_pTransformCom->Set_Angle(eTemp.vAngle);
+
+		//m_pNavMesh->Set_SubsetIndex(eTemp.sSubSetIdx);
+		//m_pNavMesh->Set_Index(eTemp.sCellIdx);
+	}
+	//===================================================================
+
+
 	return S_OK;
 }
 
@@ -1497,10 +1531,11 @@ CGameObject * CGunGenji::Clone_GameObject(void * pArg)
 
 void CGunGenji::Free()
 {
-	Safe_Release(m_pMonsterUI);
+	//Safe_Release(m_pMonsterUI);
 
 	Safe_Release(m_pNavMesh);
 	Safe_Release(m_pGun);
+
 	Safe_Release(m_pAIControllerCom);
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pMeshCom);

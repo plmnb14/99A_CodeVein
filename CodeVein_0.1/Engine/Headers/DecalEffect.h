@@ -1,7 +1,7 @@
 #pragma once
 
 #include "RenderObject.h"
-#include "ActeiveObject.h"
+#include "ActiveObject.h"
 #include "Management.h"
 #include "Effect.h"
 
@@ -14,6 +14,9 @@ protected:
 	explicit CDecalEffect(LPDIRECT3DDEVICE9 pGraphic_Device);
 	explicit CDecalEffect(const CDecalEffect& rhs);
 	virtual ~CDecalEffect() = default;
+
+public:
+	void Set_WallDecal(_bool _bWall);
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -58,6 +61,7 @@ protected:
 
 private:
 	_float	m_fDissolveStartTime = 6.f;
+	_bool   m_bWallDecal = false;
 
 public:
 	static CDecalEffect* Create(LPDIRECT3DDEVICE9 pGraphic_Device);

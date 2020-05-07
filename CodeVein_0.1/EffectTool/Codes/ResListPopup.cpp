@@ -58,8 +58,8 @@ void CResListPopup::OnLbnSelchangeList()
 		return;
 
 	CString strFileName = L"";
-	TCHAR szObjectKey[MAX_STR] = L"";
-	TCHAR szFileName[MAX_STR] = L"";
+	TCHAR szObjectKey[STR_128] = L"";
+	TCHAR szFileName[STR_128] = L"";
 
 	m_ListResourses.GetText(iIndex, strFileName);
 
@@ -81,11 +81,11 @@ void CResListPopup::OnLbnSelchangeList()
 		pFormView->m_ParticleTab.Set_MaxFrame(_float((*iter_begin)->iMaxCount));
 		pFormView->m_ParticleTab.Set_Index((*iter_begin)->tPathInfo.szImgCnt);
 
-		//CHAR szForPrint[MAX_STR] = "";
-		//WideCharToMultiByte(CP_ACP, 0, (*iter_begin)->tPathInfo.sztrStateKey, MAX_STR, szForPrint, MAX_STR, NULL, NULL);
+		//CHAR szForPrint[STR_128] = "";
+		//WideCharToMultiByte(CP_ACP, 0, (*iter_begin)->tPathInfo.sztrStateKey, STR_128, szForPrint, STR_128, NULL, NULL);
 		//cout << szForPrint << endl;
 		//cout << (*iter_begin)->iMaxCount << endl;
-		//WideCharToMultiByte(CP_ACP, 0, (*iter_begin)->tPathInfo.szImgCnt, MAX_STR, szForPrint, MAX_STR, NULL, NULL);
+		//WideCharToMultiByte(CP_ACP, 0, (*iter_begin)->tPathInfo.szImgCnt, STR_128, szForPrint, STR_128, NULL, NULL);
 		//cout << szForPrint << endl;
 		//cout << "=======================================================" << endl;
 
@@ -149,11 +149,11 @@ void CResListPopup::Load_TextureFromPath()
 	{
 		PATH_INFO* tmpPath = new PATH_INFO;
 
-		fin.getline(tmpPath->sztrStateKey, MAX_STR, '|');
-		fin.getline(tmpPath->sztrFileName, MAX_STR, '|');
-		fin.getline(tmpPath->sztrImgPath, MAX_STR, '|');
-		fin.getline(tmpPath->szIsDynamic, MAX_STR, '|');
-		fin.getline(tmpPath->szImgCnt, MAX_STR);
+		fin.getline(tmpPath->sztrStateKey, STR_128, '|');
+		fin.getline(tmpPath->sztrFileName, STR_128, '|');
+		fin.getline(tmpPath->sztrImgPath, STR_128, '|');
+		fin.getline(tmpPath->szIsDynamic, STR_128, '|');
+		fin.getline(tmpPath->szImgCnt, STR_128);
 
 		if (fin.eof())
 		{
@@ -172,11 +172,11 @@ void CResListPopup::Load_TextureFromPath()
 		for (_int i = 0; i < stoi(iter->szImgCnt); ++i)
 		{
 
-			_tchar szFileName[256] = L"";
+			_tchar szFileName[STR_128] = L"";
 			wsprintf(szFileName, iter->sztrFileName, i);
 			m_ListResourses.AddString(szFileName);
 
-			_tchar szPath[256] = L"";
+			_tchar szPath[STR_128] = L"";
 			lstrcpy(szPath, iter->sztrImgPath);
 			lstrcat(szPath, szFileName);
 
@@ -186,7 +186,7 @@ void CResListPopup::Load_TextureFromPath()
 			lstrcpy(tmpPath->tPathInfo.sztrFileName, szFileName);
 			lstrcpy(tmpPath->tPathInfo.sztrImgPath, szPath);
 			lstrcpy(tmpPath->tPathInfo.szIsDynamic, L"");
-			_tchar szNum[128] = L"";
+			_tchar szNum[STR_128] = L"";
 			wsprintf(szNum, L"%d", i);
 			lstrcpy(tmpPath->tPathInfo.szImgCnt, szNum);
 			tmpPath->iMaxCount = stoi(iter->szImgCnt);
@@ -215,10 +215,10 @@ void CResListPopup::Load_MeshFromPath()
 	{
 		PATH_INFO* tmpPath = new PATH_INFO;
 
-		fin.getline(tmpPath->sztrStateKey, MAX_STR, '|');
-		fin.getline(tmpPath->sztrFileName, MAX_STR, '|');
-		fin.getline(tmpPath->sztrImgPath, MAX_STR, '|');
-		fin.getline(tmpPath->szIsDynamic, MAX_STR);
+		fin.getline(tmpPath->sztrStateKey, STR_128, '|');
+		fin.getline(tmpPath->sztrFileName, STR_128, '|');
+		fin.getline(tmpPath->sztrImgPath, STR_128, '|');
+		fin.getline(tmpPath->szIsDynamic, STR_128);
 
 		if (fin.eof())
 		{
@@ -236,7 +236,7 @@ void CResListPopup::Load_MeshFromPath()
 	{
 		m_ListResourses.AddString(iter->sztrFileName);
 
-		_tchar szPath[256] = L"";
+		_tchar szPath[STR_128] = L"";
 		lstrcpy(szPath, iter->sztrImgPath);
 		lstrcat(szPath, iter->sztrFileName);
 
@@ -246,7 +246,7 @@ void CResListPopup::Load_MeshFromPath()
 		lstrcpy(tmpPath->tPathInfo.sztrFileName, iter->sztrFileName);
 		lstrcpy(tmpPath->tPathInfo.sztrImgPath, szPath);
 		lstrcpy(tmpPath->tPathInfo.szIsDynamic, L"");
-		_tchar szNum[128] = L"0";
+		_tchar szNum[STR_128] = L"0";
 		lstrcpy(tmpPath->tPathInfo.szImgCnt, szNum);
 
 		m_listFileInfo.push_back(tmpPath);

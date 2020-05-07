@@ -112,7 +112,7 @@ void CCameraMgr::Change_MainCam(const _ushort & _eCameraClass, const _tchar * pC
 	//	if (m_pCamTag != nullptr)
 	//		m_pCamTag = nullptr;
 	//
-	//	_tchar* tmpChar = new _tchar[128];
+	//	_tchar* tmpChar = new _tchar[STR_128];
 	//
 	//	lstrcpy(tmpChar, pCameraTag);
 	//	m_pCamTag = tmpChar;

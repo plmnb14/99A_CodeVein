@@ -13,10 +13,10 @@ CFileInfo::~CFileInfo()
 
 CString CFileInfo::ConvertRelativePath(const TCHAR* pFullPath)
 {
-	TCHAR szCurrentDir[256] = L"";
-	::GetCurrentDirectory(256, szCurrentDir);
+	TCHAR szCurrentDir[STR_128] = L"";
+	::GetCurrentDirectory(STR_128, szCurrentDir);
 
-	TCHAR szRelativePath[256] = L"";
+	TCHAR szRelativePath[STR_128] = L"";
 
 	//// From에서 To로 넘어가는 상대경로를 만들어서 Output에 저장하는 함수.
 	//::PathRelativePathTo(Output, From, FILE_ATTRIBUTE_DIRECTORY,
@@ -32,8 +32,8 @@ void CFileInfo::Create_Mesh_PathInfo()
 {
 	list<Engine::MESH_INFO*> m_listPathInfo;
 
-	_tchar szStaticPath[MAX_STR] = L"";
-	_tchar szDynamicPath[MAX_STR] = L"";
+	_tchar szStaticPath[STR_128] = L"";
+	_tchar szDynamicPath[STR_128] = L"";
 
 	cout << "Extracting StaticMesh Path . . ." << endl;
 
@@ -123,7 +123,7 @@ void CFileInfo::Extract_Mesh_PathInfo(
 
 			///////////////////////////////////////////////////////////////////////////
 
-			TCHAR szBuf[MAX_STR] = L"";
+			TCHAR szBuf[STR_128] = L"";
 			lstrcpy(szBuf, strRelative);
 
 
@@ -148,7 +148,7 @@ void CFileInfo::Extract_Mesh_PathInfo(
 			// 키 값
 			pPathInfo->wstrStateKey = L"Mesh_" + tmpString;
 
-			TCHAR szBuf_2[MAX_STR] = L"";
+			TCHAR szBuf_2[STR_128] = L"";
 			(_bIsDynamic ? lstrcpy(szBuf_2, L"1") : lstrcpy(szBuf_2, L"0"));
 
 			pPathInfo->szIsDynamic = szBuf_2;
@@ -166,8 +166,8 @@ void CFileInfo::Create_Texture_PathInfo()
 {
 	list<Engine::TEX_INFO*> m_listPathInfo;
 
-	_tchar szStaticPath[MAX_STR] = L"";
-	_tchar szDynamicPath[MAX_STR] = L"";
+	_tchar szStaticPath[STR_128] = L"";
+	_tchar szDynamicPath[STR_128] = L"";
 
 	cout << "Extracting Texture Path . . ." << endl;
 
@@ -220,7 +220,7 @@ void CFileInfo::Extract_Texture_PathInfo(const TCHAR * pPath, list<Engine::TEX_I
 
 	BOOL bIsFind = find.FindFile(wstrFindPath.c_str());
 
-	TCHAR szBeforeName[MAX_STR] = L"";
+	TCHAR szBeforeName[STR_128] = L"";
 
 	while (bIsFind)
 	{
@@ -265,7 +265,7 @@ void CFileInfo::Extract_Texture_PathInfo(const TCHAR * pPath, list<Engine::TEX_I
 
 			///////////////////////////////////////////////////////////////////////////
 
-			TCHAR szBuf[MAX_STR] = L"";
+			TCHAR szBuf[STR_128] = L"";
 			lstrcpy(szBuf, strRelative);
 
 
@@ -287,10 +287,9 @@ void CFileInfo::Extract_Texture_PathInfo(const TCHAR * pPath, list<Engine::TEX_I
 				continue;
 			}
 
-			TCHAR szCnt[MAX_STR] = L"";
+			TCHAR szCnt[STR_128] = L"";
 
-			_itow_s(CountImageFile(szBuf), szCnt, 10);
-			pPathInfo->szImgCnt = szCnt;
+			pPathInfo->sImgCnt = CountImageFile(szBuf);
 
 			// 파일 이름
 			lstrcpy(szBuf, strRelative);
@@ -309,11 +308,6 @@ void CFileInfo::Extract_Texture_PathInfo(const TCHAR * pPath, list<Engine::TEX_I
 
 			// 키 값
 			pPathInfo->wstrStateKey = L"Tex_" + tmpString2;
-
-			TCHAR szBuf_2[MAX_STR] = L"";
-			(_bIsDynamic ? lstrcpy(szBuf_2, L"1") : lstrcpy(szBuf_2, L"0"));
-
-			pPathInfo->szIsDynamic = szBuf_2;
 
 			rPathInfoLst.push_back(pPathInfo);
 		}

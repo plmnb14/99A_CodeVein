@@ -204,6 +204,8 @@ void CGameObject::Check_Dissolve(_double TimeDelta)
 
 void CGameObject::Free()
 {
+	Safe_Release(m_pGraphic_Dev);
+
 	for (auto& Pair : m_pmapComponents)
 		Safe_Release(Pair.second);
 
@@ -216,6 +218,4 @@ void CGameObject::Free()
 	for (auto& Col : m_vecAttackCol)
 		Safe_Release(Col);
 	m_vecAttackCol.clear();
-
-	Safe_Release(m_pGraphic_Dev);
 }

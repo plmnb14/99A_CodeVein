@@ -182,7 +182,7 @@ _uint CStageSelectUI::Teleport_Stage()
 		if (0 == iSubStage)
 			iStageNumber = TeleportID_Home_1;
 		else if(1 == iSubStage)
-			iStageNumber = TeleportID_Home_2;
+			iStageNumber = TeleportID_Tutorial;
 	}
 		break;
 	case CStageUI::Teleport_St01:

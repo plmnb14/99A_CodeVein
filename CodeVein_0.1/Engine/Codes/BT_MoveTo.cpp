@@ -73,7 +73,7 @@ HRESULT CBT_MoveTo::Ready_Clone_Node(void * pInit_Struct)
 {
 	INFO temp = *(INFO*)pInit_Struct;
 
-	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
+	strcpy_s<STR_128>(m_pNodeName, temp.Target_NodeName);
 
 	m_pTransform = temp.pTargetTransform;
 	Safe_AddRef(m_pTransform);

@@ -25,11 +25,11 @@ public:
 	{
 		tagInitInfo(char* pNodeName, _tchar* _Object_Tag, CTransform* _pTransform, CAIController* _pAIController, _double _dLifeTime, _double _dService_Start_Time, _uint _MaxCount_Of_Execution, _double dCreateTime, _double dOffset, CBT_Service_Node::Mode _eMode)
 			: pTransform(_pTransform), pAIController(_pAIController), dLifeTime(_dLifeTime), Service_Start_Time(_dService_Start_Time), Target_dCreateTime(dCreateTime), Target_dOffset(dOffset), MaxCount_Of_Execution(_MaxCount_Of_Execution), eMode(_eMode)
-		{strcpy_s<256>(Target_NodeName, pNodeName);
+		{strcpy_s<STR_128>(Target_NodeName, pNodeName);
 		lstrcpy(Object_Tag, _Object_Tag);}
 
-		char					Target_NodeName[256] = {0,};
-		_tchar					Object_Tag[256] = { 0, };
+		char					Target_NodeName[STR_128] = {0,};
+		_tchar					Object_Tag[STR_128] = { 0, };
 		CTransform*				pTransform = nullptr;
 		CAIController*			pAIController = nullptr;
 		_double					dLifeTime = 0;
@@ -61,7 +61,7 @@ private:
 	_double		m_dMaxTime = 0;
 
 private:
-	_tchar					m_pObject_Tag[256] = { 0, };
+	_tchar					m_pObject_Tag[STR_128] = { 0, };
 
 	CTransform*				m_pTransform = nullptr;
 	CAIController*			m_pAIcontroller = nullptr;

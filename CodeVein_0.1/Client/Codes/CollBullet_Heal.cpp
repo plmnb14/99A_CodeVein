@@ -4,6 +4,8 @@
 #include "Player.h"
 #include "Player_Colleague.h"
 
+#include "ParticleMgr.h"
+
 
 CCollBullet_Heal::CCollBullet_Heal(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
@@ -52,20 +54,29 @@ HRESULT CCollBullet_Heal::Ready_GameObject(void * pArg)
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 200.f;
 
-	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Bullet_Body", nullptr));
-	m_pBulletBody->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
-	m_pBulletBody->Reset_Init();
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
+	// Calc Angle
+	_v3	vRight = *D3DXVec3Cross(&vRight, &_v3(0.f, 1.f, 0.f), &m_vDir);
+	V3_NORMAL_SELF(&vRight);
+	_float	fDot = acosf(D3DXVec3Dot(&_v3{ 0,0,1 }, &m_vDir));
+	if (vRight.z > 0)
+		fDot *= -1.f;
 
-	lstrcpy(m_pEffect_Tag1, L"Bullet_Body_Aura");
-	lstrcpy(m_pEffect_Tag2, L"Bullet_Tail_Particle");
+	m_pTransformCom->Set_Angle(_v3(0.f, fDot, 0.f));
 
-	lstrcpy(m_pEffect_Tag3, L"Bullet_DeadFlash");
-	lstrcpy(m_pEffect_Tag4, L"Bullet_DeadSmoke_Base");
-	lstrcpy(m_pEffect_Tag5, L"Bullet_DeadSmoke_Black");
+	m_pBulletBody_0 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Colleague_Heal_BulletBody_Hor", nullptr));
+	m_pBulletBody_0->Set_Desc(_v3(0, 0, 0), nullptr);
+	m_pBulletBody_0->Set_ParentObject(this);
+	m_pBulletBody_0->Reset_Init();
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody_0, SCENE_STAGE, L"Layer_Effect", nullptr);
+
+	m_pBulletBody_1 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Colleague_Heal_BulletBody_Ver", nullptr));
+	m_pBulletBody_1->Set_Desc(_v3(0, 0, 0), nullptr);
+	m_pBulletBody_1->Set_ParentObject(this);
+	m_pBulletBody_1->Reset_Init();
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody_1, SCENE_STAGE, L"Layer_Effect", nullptr);
 
 	m_pTrailEffect = g_pManagement->Create_Trail();
-	m_pTrailEffect->Set_TrailIdx(5); // Red Tail
+	m_pTrailEffect->Set_TrailIdx(4); // Red Tail
 
 	return S_OK;
 }
@@ -103,11 +114,9 @@ _int CCollBullet_Heal::Update_GameObject(_double TimeDelta)
 		_float TempHP = pPlayer->Get_Target_Param().fHp_Max / 0.8f;
 		pPlayer->Add_Target_Hp(TempHP);
 		//Á×À½ ÀÌÆåÆ®
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag3, m_pTransformCom->Get_Pos());
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, m_pTransformCom->Get_Pos());
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag5, m_pTransformCom->Get_Pos());
-		m_pBulletBody->Set_Dead();
-		//m_pTrailEffect->Set_Dead();
+		m_pBulletBody_0->Set_Dead();
+		m_pBulletBody_1->Set_Dead();
+		m_pTrailEffect->Set_Dead();
 
 		m_bDead = true;
 	}
@@ -116,12 +125,10 @@ _int CCollBullet_Heal::Update_GameObject(_double TimeDelta)
 	{
 		if (m_bEffect)
 		{
-			//CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag0, _v3(), m_pTransformCom);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag1, _v3(), m_pTransformCom);
-
 			m_bEffect = false;
 		}
-		CParticleMgr::Get_Instance()->Create_Effect_Offset(m_pEffect_Tag2, 0.1f, m_pTransformCom->Get_Pos());
+
+		CParticleMgr::Get_Instance()->Create_Effect_Offset(L"Colleague_Heal_BulletBody_Aura", 0.01f, m_pTransformCom->Get_Pos());
 	}
 
 	return S_OK;
