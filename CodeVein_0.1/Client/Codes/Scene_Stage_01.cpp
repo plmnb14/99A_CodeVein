@@ -8,6 +8,7 @@
 #include "UI_Manager.h"
 #include "ParticleMgr.h"
 #include "ScriptManager.h"
+#include "Player.h"
 
 CScene_Stage_01::CScene_Stage_01(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
@@ -26,8 +27,8 @@ HRESULT CScene_Stage_01::Ready_Scene()
 	if (FAILED(Ready_Layer_Environment(L"Layer_Environment")))
 		return E_FAIL;
 
-	CScriptManager::Get_Instance()->Set_StageIdx(1);
-	CScriptManager::Get_Instance()->Ready_Script_DynamicObject(1);
+	//CScriptManager::Get_Instance()->Set_StageIdx(1);
+	//CScriptManager::Get_Instance()->Ready_Script_DynamicObject(1);
 
 	//g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_01.dat");
 
@@ -70,35 +71,23 @@ HRESULT CScene_Stage_01::Render_Scene()
 
 HRESULT CScene_Stage_01::Ready_Layer_Player(const _tchar * pLayerTag)
 {
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Mistletoe")))
+		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Monster")))
 		return E_FAIL;
-
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Boss")))
 		return E_FAIL;
-
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_MonsterProjectile")))
 		return E_FAIL;
-
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_BossUI")))
 		return E_FAIL;
 
-	CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	CPlayer* pInstance = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 
+	pInstance->Teleport_ResetOptions(g_eSceneID_Cur, g_eSTeleportID_Cur);
 	pInstance->Set_Enable(true);
 
-	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Stage_01.dat");
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-	TARGET_TO_NAV(pInstance)->Set_Index(5);
-	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(150.484f, -18.08f, 70.417f));
-	TARGET_TO_TRANS(pInstance)->Set_Angle(V3_NULL);
-
-	pInstance = nullptr;;
-
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerHP", SCENE_MORTAL, L"Layer_PlayerUI")))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerST", SCENE_MORTAL, L"Layer_PlayerUI")))
-		return E_FAIL;
+	pInstance = nullptr;
 
 	return S_OK;
 }

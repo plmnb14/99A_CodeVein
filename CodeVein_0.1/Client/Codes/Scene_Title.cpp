@@ -88,36 +88,48 @@ _int CScene_Title::Update_Scene(_double TimeDelta)
 		{
 		case CScene_Logo::Stage_Base:
 		{
+			g_eSceneID_Cur = SCENE_STAGE_BASE;
+			g_eSTeleportID_Cur = TeleportID_Home_1;
 			pScene = CScene_Stage_Base::Create(m_pGraphic_Device, m_bLoadStaticMesh);
 			break;
 		}
 	
 		case CScene_Logo::Stage_Training:
 		{
+			g_eSceneID_Cur = SCENE_STAGE_TRAINING;
+			g_eSTeleportID_Cur = TeleportID_Tutorial;
 			pScene = CScene_Stage_Training::Create(m_pGraphic_Device, m_bLoadStaticMesh);
 			break;
 		}
 	
 		case CScene_Logo::Stage_01:
 		{
+			g_eSceneID_Cur = SCENE_STAGE_01;
+			g_eSTeleportID_Cur = TeleportID_St01_1;
 			pScene = CScene_Stage_01::Create(m_pGraphic_Device, m_bLoadStaticMesh);
 			break;
 		}
 	
 		case CScene_Logo::Stage_02:
 		{
+			g_eSceneID_Cur = SCENE_STAGE_02;
+			g_eSTeleportID_Cur = TeleportID_St02_1;
 			pScene = CScene_Stage_02::Create(m_pGraphic_Device, m_bLoadStaticMesh);
 			break;
 		}
 	
 		case CScene_Logo::Stage_03:
 		{
+			g_eSceneID_Cur = SCENE_STAGE_03;
+			g_eSTeleportID_Cur = TeleportID_St03_1;
 			pScene = CScene_Stage_03::Create(m_pGraphic_Device, m_bLoadStaticMesh);
 			break;
 		}
 
 		case CScene_Logo::Stage_04:
 		{
+			g_eSceneID_Cur = SCENE_STAGE_04;
+			g_eSTeleportID_Cur = TeleportID_St04_1;
 			pScene = CScene_Stage_04::Create(m_pGraphic_Device, m_bLoadStaticMesh);
 			break;
 		}

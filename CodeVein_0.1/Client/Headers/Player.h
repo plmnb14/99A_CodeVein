@@ -13,6 +13,18 @@ class CDrain_Weapon;
 class CWeapon;
 class CPlayer : public CGameObject
 {
+public:
+	typedef struct tagMoveOptionReset
+	{
+		tagMoveOptionReset(SCENEID _eSceneID, Teleport_ID _eTeleportID)
+			: eSceneID(_eSceneID), eTeleportID(_eTeleportID)
+		{}
+
+		Teleport_ID eTeleportID = TeleportID_End;
+		SCENEID eSceneID = SCENE_END;
+
+	}TELEPORT_RESET;
+
 private:
 	CUI_FontNum*	m_TmpFontNum = nullptr;
 
@@ -72,6 +84,9 @@ public:
 	virtual _int	Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
 	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur = false);
+
+public:
+	virtual void Teleport_ResetOptions(_int _eSceneID, _int _eTeleportID);
 
 private:
 	ACTOR_INFO				m_tInfo = {};

@@ -37,6 +37,9 @@ void CNavMesh::Move_NaviMesh_Y(const _ulong _dwSubIdx, const _float _fYDist)
 
 HRESULT CNavMesh::Ready_NaviMesh(_Device _pGraphicDev, const _tchar * _NavMeshPath)
 {
+	m_dwSubsetIdx = -1;
+	m_dwIndex = -1;
+
 	m_vecSubset_Cell.reserve(1000);
 
 	_tchar FullPathName[STR_128] = L"../../Data/Load_NavData/";
@@ -150,15 +153,11 @@ HRESULT CNavMesh::Ready_Prototype_NaviMesh()
 
 void CNavMesh::Render_NaviMesh(void)
 {
-	//for (auto& iterVec : m_vecSubset_Cell)
-	//{
-
 	for (auto& iter : *m_vecSubset_Cell[m_dwSubsetIdx])
 	{
 		iter->Update();
 		iter->Render();
 	}
-	//}
 }
 
 HRESULT CNavMesh::Link_Cell()
@@ -251,18 +250,19 @@ void CNavMesh::Check_Line(_v3* _DstLine, CCell* _DstCell, CCell* _RscCell, _int 
 	_DstCell->Set_Sibling(tmpCell, iLineNum, iIndex);
 }
 
-void CNavMesh::Check_OnNavMesh(const _v3* pTargetPos)
+void CNavMesh::Check_OnNavMesh(_v3 pTargetPos)
 {
 	if (m_dwIndex == -1)
 	{
+		_int iSubsetIdx = 0;
+
 		while (true)
 		{
-			_int iSubsetIdx = 0;
 			_int iMaxSize = (_int)m_vecSubset_Cell.size();
 
 			for (auto& iter : *m_vecSubset_Cell[iSubsetIdx])
 			{
-				if (iter->Compare_Inner_Only(*pTargetPos))
+				if (iter->Compare_Inner_Only(pTargetPos))
 				{
 					m_dwIndex = iter->Get_CellIdx();
 					m_dwSubsetIdx = iSubsetIdx;

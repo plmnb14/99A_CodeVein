@@ -46,7 +46,7 @@ private:
 	void		Check_Line(_v3* _DstLine, CCell* _DstCell, CCell* _RscCell, _int _LineNum);
 
 public:
-	void Check_OnNavMesh(const _v3 * pTargetPos);
+	void Check_OnNavMesh(_v3 pTargetPos);
 
 private:
 	typedef vector<CCell*>		VEC_CELL;
@@ -54,8 +54,8 @@ private:
 
 	vector<VEC_CELL*>		m_vecSubset_Cell;
 
-	_ulong					m_dwSubsetIdx = 0;
-	_ulong					m_dwIndex = 0;
+	_long					m_dwSubsetIdx = -1;
+	_long					m_dwIndex = -1;
 	_bool					m_bCanMove = false;
 
 

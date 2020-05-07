@@ -157,7 +157,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	float AO = vSpecular.a;
 	vSpecular.a = 0.f;
 
-	float3 vFinalShade = vShade.r * vSSAO.r * AO;
+	float3 vFinalShade = saturate(vShade.r * vSSAO.r * AO);
 
 	Out.vColor = ((vDiffuse + vSpecular) * float4(vFinalShade, 1.f)) + vEmissive;
 

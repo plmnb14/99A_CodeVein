@@ -797,112 +797,111 @@ _bool CMapTool_Page::CheckObject()
 
 void CMapTool_Page::LoadFilePath(const wstring & wstrImgPath)
 {
-	//HTREEITEM hStaticRoot = nullptr;
-	//HTREEITEM hDynamicRoot = nullptr;
-	//
-	//wifstream fin;
-	//
-	//fin.open(wstrImgPath);
-	//
-	//if (fin.fail())
-	//	return;
-	//
-	//hStaticRoot = CTreeFinder::Find_Node_By_Name(m_Tree, L"StaticMesh");
-	//
-	//
-	////cout << sizeof(PATH_INFO) << endl;
-	//
-	//while (true)
-	//{
-	//	Engine::PATH_INFO* tmpPath = new Engine::PATH_INFO;
-	//
-	//	fin.getline(tmpPath->sztrStateKey, STR_128, '|');
-	//	fin.getline(tmpPath->sztrFileName, STR_128, '|');
-	//	fin.getline(tmpPath->sztrImgPath, STR_128, '|');
-	//	fin.getline(tmpPath->b, sizeof(_bool));
-	//
-	//	if (fin.eof())
-	//	{
-	//		Engine::Safe_Delete(tmpPath);
-	//		break;
-	//	}
-	//
-	//	m_listMeshPathInfo.push_back(tmpPath);
-	//
-	//	// 카테고리 이름
-	//	TCHAR szBuf[STR_128] = L"";
-	//	lstrcpy(szBuf, tmpPath->sztrImgPath);
-	//	::PathRemoveBackslash(szBuf);
-	//	CString tmpString = ::PathFindFileName(szBuf);
-	//	
-	//	_tchar* szBuf2 = new _tchar[STR_128];
-	//	lstrcpy(szBuf2, tmpString);
-	//	
-	//	
-	//	HTREEITEM* hItems  = new HTREEITEM;
-	//	_bool	isEnd = true;
-	//	_bool	bisDynamic = false;
-	//	
-	//	
-	//	for (auto& iter : m_listStaticFolder)
-	//	{
-	//		if (!lstrcmp(iter, szBuf2))
-	//		{
-	//			m_Tree.InsertItem(tmpPath->sztrStateKey, 0, 0, *m_listStaticBranch.back());
-	//			isEnd = false;
-	//	
-	//			Engine::Safe_Delete(szBuf2);
-	//			Engine::Safe_Delete(hItems);
-	//	
-	//			break;
-	//		}
-	//	
-	//		else
-	//			isEnd = true;
-	//	}
-	//	
-	//	for (auto& iter : m_listDynamicFolder)
-	//	{
-	//		if (!lstrcmp(iter, szBuf2))
-	//		{
-	//			m_Tree.InsertItem(tmpPath->sztrStateKey, 0, 0, *m_listDynamicBranch.back());
-	//			isEnd = false;
-	//	
-	//			Engine::Safe_Delete(szBuf2);
-	//			Engine::Safe_Delete(hItems);
-	//	
-	//			break;
-	//		}
-	//	
-	//		else
-	//			isEnd = true;
-	//	}
-	//	
-	//	if (isEnd)
-	//	{
-	//		(lstrcmp(tmpPath->szIsDynamic, L"0") ? bisDynamic = false : bisDynamic = true);
-	//	
-	//		if (bisDynamic)
-	//		{
-	//			*hItems = m_Tree.InsertItem(szBuf2, 0, 0, hStaticRoot);
-	//			m_listStaticFolder.push_back(szBuf2);
-	//			m_listStaticBranch.push_back(hItems);
-	//		}
-	//	
-	//		else
-	//		{
-	//			*hItems = m_Tree.InsertItem(szBuf2, 0, 0, hDynamicRoot);
-	//			m_listDynamicFolder.push_back(szBuf2);
-	//			m_listDynamicBranch.push_back(hItems);
-	//		}
-	//	
-	//		m_Tree.InsertItem(tmpPath->sztrStateKey, 0, 0, *hItems);
-	//	
-	//		hItems = nullptr;
-	//	}
-	//}
-	//
-	//fin.close();
+	HTREEITEM hStaticRoot = nullptr;
+	HTREEITEM hDynamicRoot = nullptr;
+	
+	HANDLE hFile = CreateFile(wstrImgPath.c_str(), GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		::MSG_BOX("Load Failed. [INVALID_HANDLE_VALUE]");
+
+	DWORD dwByte = 0;
+
+	list<PATH_INFO*> tmpList;
+	
+	hStaticRoot = CTreeFinder::Find_Node_By_Name(m_Tree, L"StaticMesh");
+	
+	while (true)
+	{
+		PATH_INFO* tmpPath = new PATH_INFO;
+
+		::ReadFile(hFile, &tmpPath->sztrStateKey, sizeof(_tchar) * STR_128, &dwByte, nullptr);
+		::ReadFile(hFile, &tmpPath->sztrFileName, sizeof(_tchar) * STR_128, &dwByte, nullptr);
+		::ReadFile(hFile, &tmpPath->sztrImgPath, sizeof(_tchar) * STR_128, &dwByte, nullptr);
+		::ReadFile(hFile, &tmpPath->bIsDynamic, sizeof(_bool), &dwByte, nullptr);
+
+		if (0 == dwByte)
+		{
+			Safe_Delete(tmpPath);
+			break;
+		}
+	
+		m_listMeshPathInfo.push_back(tmpPath);
+	
+		// 카테고리 이름
+		TCHAR szBuf[STR_128] = L"";
+		lstrcpy(szBuf, tmpPath->sztrImgPath);
+		::PathRemoveBackslash(szBuf);
+		CString tmpString = ::PathFindFileName(szBuf);
+		
+		_tchar* szBuf2 = new _tchar[STR_128];
+		lstrcpy(szBuf2, tmpString);
+		
+		
+		HTREEITEM* hItems  = new HTREEITEM;
+		_bool	isEnd = true;
+		_bool	bisDynamic = false;
+		
+		
+		for (auto& iter : m_listStaticFolder)
+		{
+			if (!lstrcmp(iter, szBuf2))
+			{
+				m_Tree.InsertItem(tmpPath->sztrStateKey, 0, 0, *m_listStaticBranch.back());
+				isEnd = false;
+		
+				Engine::Safe_Delete(szBuf2);
+				Engine::Safe_Delete(hItems);
+		
+				break;
+			}
+		
+			else
+				isEnd = true;
+		}
+		
+		//for (auto& iter : m_listDynamicFolder)
+		//{
+		//	if (!lstrcmp(iter, szBuf2))
+		//	{
+		//		m_Tree.InsertItem(tmpPath->sztrStateKey, 0, 0, *m_listDynamicBranch.back());
+		//		isEnd = false;
+		//
+		//		Engine::Safe_Delete(szBuf2);
+		//		Engine::Safe_Delete(hItems);
+		//
+		//		break;
+		//	}
+		//
+		//	else
+		//		isEnd = true;
+		//}
+		
+		if (isEnd)
+		{
+			//(tmpPath->bIsDynamic == 0 ? bisDynamic = false : bisDynamic = true);
+			//
+			//if (bisDynamic)
+			//{
+				*hItems = m_Tree.InsertItem(szBuf2, 0, 0, hStaticRoot);
+				m_listStaticFolder.push_back(szBuf2);
+				m_listStaticBranch.push_back(hItems);
+			//}
+		
+			//else
+			//{
+			//	*hItems = m_Tree.InsertItem(szBuf2, 0, 0, hDynamicRoot);
+			//	m_listDynamicFolder.push_back(szBuf2);
+			//	m_listDynamicBranch.push_back(hItems);
+			//}
+		
+			m_Tree.InsertItem(tmpPath->sztrStateKey, 0, 0, *hItems);
+		
+			hItems = nullptr;
+		}
+	}
+	
+	CloseHandle(hFile);
 
 	return;
 }
@@ -1085,7 +1084,7 @@ void CMapTool_Page::OnTvnSelchangedTree1(NMHDR *pNMHDR, LRESULT *pResult)
 	{
 		if (m_pRenderObj == nullptr)
 		{
-			m_pRenderObj = Engine::CRenderObject::Create(g_pGraphicDev);
+			m_pRenderObj = Engine::CRenderObject::Create_For_Tool(g_pGraphicDev);
 			m_pRenderObj->Set_OnTool(true);
 		}
 
@@ -1236,7 +1235,7 @@ BOOL CMapTool_Page::OnInitDialog()
 
 	m_Tree.InsertItem(TEXT("StaticMesh"), 0, 0, TVI_ROOT);
 
-	LoadFilePath(L"../../Data/Load_MeshData/Mesh_Static_Stage03_Path.dat");
+	LoadFilePath(L"../../Data/Load_MeshData/Mesh_Static_Stage01_Path.dat");
 	LoadFilePath(L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
 	LoadFilePath(L"../../Data/Load_MeshData/Mesh_Field_Gimmick_Path.dat");
 

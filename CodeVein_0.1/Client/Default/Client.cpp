@@ -32,6 +32,8 @@ short				g_sStageIdx_Cur = 0;
 short				g_sPlayerLevel = 1;
 short				g_sQuadTreeCX = 0;
 short				g_sQuadTreeCY = 0;
+int					g_eSceneID_Cur = SCENE_END;
+int					g_eSTeleportID_Cur = TeleportID_End;
 
 // [0] - 최초 로딩 타이틀
 // [1] - 트레이닝

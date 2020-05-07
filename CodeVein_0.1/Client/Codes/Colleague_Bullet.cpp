@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Colleague_Bullet.h"
 
-
 CColleague_Bullet::CColleague_Bullet(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {

@@ -151,7 +151,7 @@ void CStatusUI::SetUp_Default()
 	{
 		pInstance = static_cast<CConditionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ConditionUI", nullptr));
 		pInstance->Set_UI_Pos(1080.f, 230.f + 43.f * _float(i));
-		pInstance->Set_UI_Size(199.36, 80.f);
+		pInstance->Set_UI_Size(199.36f, 80.f);
 		pInstance->Set_ViewZ(m_fViewZ - 0.1f);
 		pInstance->Set_ConditionType(CConditionUI::CONDITION_TYPE(i));
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);

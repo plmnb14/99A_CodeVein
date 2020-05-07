@@ -1338,7 +1338,7 @@ HRESULT CGunGenji::Ready_NF(void * pArg)
 
 		m_pNavMesh->Set_Index(-1);
 		m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, szNavData);
-		m_pNavMesh->Check_OnNavMesh(&eTemp.vPos);
+		m_pNavMesh->Check_OnNavMesh(eTemp.vPos);
 		m_pTransformCom->Set_Pos(eTemp.vPos);
 		m_pTransformCom->Set_Angle(eTemp.vAngle);
 

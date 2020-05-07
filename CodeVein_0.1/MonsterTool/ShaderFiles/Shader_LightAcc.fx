@@ -144,23 +144,25 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 
 	// Toon Shade ====================================================================
 
-	if (vHeightValue.x > 0.0001f)
-	{
-		Out.vShade.xyz = ceil(Out.vShade.xyz * 2.f) / 2.f;
-
-		if (vHeightValue.y > 0.f)
-		{
-			//Out.vShade.xyz += 0.5f;
-			//Out.vShade.xyz = saturate(Out.vShade.xyz);
-		}
-	}
-
 	// Toon Shade End ====================================================================
 
 	vector		vLook = vWorldPos - g_vCamPosition;
 
 	Out.vSpecular = (g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 20.f * Roughness)) * Metalness;
 	Out.vSpecular.a = AO;
+
+	if (vHeightValue.x > 0.0001f)
+	{
+		Out.vShade.xyz = ceil(Out.vShade.xyz * 2.f) / 2.f;
+		Out.vSpecular.a = 100.f;
+
+		if (vHeightValue.y > 0.f)
+		{
+			//Out.vSpecular.a = 0.2f;
+			//Out.vShade.xyz += 0.5f;
+			//Out.vShade.xyz = saturate(Out.vShade.xyz);
+		}
+	}
 
 	return Out;
 }

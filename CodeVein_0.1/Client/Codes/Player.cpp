@@ -38,10 +38,10 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 
 	Ready_Skills();
 
-	m_pBattleAgent->Set_OriginRimAlpha(0.5f);
-	m_pBattleAgent->Set_OriginRimValue(0.f);
-	m_pBattleAgent->Set_RimAlpha(0.f);
-	m_pBattleAgent->Set_RimValue(0.f);
+	m_pBattleAgent->Set_OriginRimAlpha(0.25f);
+	m_pBattleAgent->Set_OriginRimValue(7.f);
+	m_pBattleAgent->Set_RimAlpha(0.25f);
+	m_pBattleAgent->Set_RimValue(7.f);
 
 	return NOERROR;
 }
@@ -178,7 +178,10 @@ HRESULT CPlayer::Render_GameObject()
 	Draw_Collider();
 
 	IF_NOT_NULL(m_pNavMesh)
-		m_pNavMesh->Render_NaviMesh();
+	{
+		if (true == m_bEnable)
+			m_pNavMesh->Render_NaviMesh();
+	}
 
 	return NOERROR;
 }
@@ -297,6 +300,88 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 	//============================================================================================
 
 	return S_OK;
+}
+
+void CPlayer::Teleport_ResetOptions(_int _eSceneID, _int _eTeleportID)
+{
+	_v3 vPos = V3_NULL;
+	_float fAngle = 0.f;
+	_float fRadian = 0.f;
+
+	// 위치 , 방향 설정
+	switch (_eSceneID)
+	{
+	case SCENE_STAGE_BASE:
+	{
+		vPos = _eTeleportID == TeleportID_Tutorial ?
+			V3_NULL : _v3(-0.519f, 0.120f, 23.810f);
+
+		fAngle = _eTeleportID == TeleportID_Tutorial ?
+			0.f :180.f;
+
+		break;
+	}
+
+	case SCENE_STAGE_01:
+	{
+		vPos = _eTeleportID == TeleportID_St01_1 ? _v3(150.484f, -18.08f, 70.417f) :
+			_eTeleportID == TeleportID_St01_2 ? V3_NULL : V3_NULL;
+
+		fAngle = _eTeleportID == TeleportID_St01_1 ? 0.f :
+			_eTeleportID == TeleportID_St01_2 ? 0.f : 0.f;
+
+		break;
+	}
+
+	case SCENE_STAGE_02:
+	{
+		// 아직
+
+		break;
+	}
+
+	case SCENE_STAGE_03:
+	{
+		vPos = _eTeleportID == TeleportID_St03_1 ?
+			_v3(150.484f, -18.08f, 70.417f) : V3_NULL;
+
+		fAngle = _eTeleportID == TeleportID_St03_1 ?
+			0.f : 0.f;
+
+		break;
+	}
+
+	case SCENE_STAGE_04:
+	{
+		vPos = _eTeleportID == TeleportID_St04_1 ?
+			_v3(42.504f, -3.85f, 75.683f) : V3_NULL;
+
+		fAngle = _eTeleportID == TeleportID_St04_1 ?
+			0.f : 0.f;
+
+		break;
+	}
+	}
+
+	fRadian = D3DXToRadian(fAngle);
+	m_pTransform->Set_Pos(vPos);
+	m_pTransform->Set_Angle(AXIS_Y, fRadian);
+
+	_tchar szNavMeshName[STR_128] = L"";
+
+	lstrcpy(szNavMeshName, 
+		(_eSceneID == SCENE_STAGE_BASE ? L"Navmesh_Stage_00.dat" :
+			_eSceneID == SCENE_STAGE_01 ? L"Navmesh_Stage_01.dat" : 
+			_eSceneID == SCENE_STAGE_02 ? L"Navmesh_Stage_02.dat" : 
+			_eSceneID == SCENE_STAGE_03 ? L"Navmesh_Stage_03.dat" : 
+			_eSceneID == SCENE_STAGE_04 ? L"Navmesh_Stage_04.dat" :  L"Navmesh_Training.dat"));
+
+	m_pNavMesh->Reset_NaviMesh();
+	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, szNavMeshName);
+	m_pNavMesh->Check_OnNavMesh(vPos);
+
+	CCameraMgr::Get_Instance()->Set_LockAngleX(fAngle);
+	CCameraMgr::Get_Instance()->Set_CamView(BACK_VIEW);
 }
 
 void CPlayer::Parameter_State()
@@ -10093,9 +10178,9 @@ HRESULT CPlayer::SetUp_Default()
 	m_fAnimMutiply = 1.f;
 
 	// Navi
-	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_03.dat");
-	m_pNavMesh->Set_SubsetIndex(0);
-	m_pNavMesh->Set_Index(0);
+	//m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_03.dat");
+	//m_pNavMesh->Set_SubsetIndex(0);
+	//m_pNavMesh->Set_Index(0);
 
 	return S_OK;
 }

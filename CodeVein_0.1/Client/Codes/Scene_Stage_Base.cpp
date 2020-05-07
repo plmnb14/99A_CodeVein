@@ -8,6 +8,7 @@
 
 #include "UI_Manager.h"
 #include "CameraMgr.h"
+#include "Player.h"
 
 CScene_Stage_Base::CScene_Stage_Base(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
@@ -41,7 +42,7 @@ _int CScene_Stage_Base::Update_Scene(_double TimeDelta)
 {
 	CUI_Manager::Get_Instance()->Update_UI();
 
-	return _int();
+	return NO_EVENT;
 }
 
 HRESULT CScene_Stage_Base::Render_Scene()
@@ -50,6 +51,9 @@ HRESULT CScene_Stage_Base::Render_Scene()
 	{
 		if (true == m_pLoading->Get_Finish() && g_pInput_Device->Key_Down(DIK_H))
 		{
+			g_eSceneID_Cur = SCENE_STAGE_01;
+			g_eSTeleportID_Cur = TeleportID_St01_1;
+
 			CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
 			pInstance->Set_Enable(false);
@@ -155,6 +159,7 @@ HRESULT CScene_Stage_Base::Render_Scene()
 		}
 
 	}
+
 	return S_OK;
 }
 
@@ -172,20 +177,17 @@ HRESULT CScene_Stage_Base::Ready_Player()
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_BossUI")))
 		return E_FAIL;
 
-	CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	CPlayer* pInstance = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 
 	pInstance->Set_Enable(true);
-
-	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Stage_00.dat");
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-	TARGET_TO_NAV(pInstance)->Set_Index(14);
-	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(-0.519f, 0.120f, 23.810f));
-	TARGET_TO_TRANS(pInstance)->Set_Angle(AXIS_Y, D3DXToRadian(180.f));
+	pInstance->Teleport_ResetOptions(g_eSceneID_Cur , g_eSTeleportID_Cur);
 
 	pInstance = nullptr;
 
-	CCameraMgr::Get_Instance()->Set_CamView(BACK_VIEW);
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerHP", SCENE_MORTAL, L"Layer_PlayerUI")))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerST", SCENE_MORTAL, L"Layer_PlayerUI")))
+		return E_FAIL;
 
 	return S_OK;
 }

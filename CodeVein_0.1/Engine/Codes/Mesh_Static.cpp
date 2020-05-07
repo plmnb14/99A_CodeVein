@@ -61,6 +61,10 @@ HRESULT CMesh_Static::Ready_Component_Prototype(const _tchar * pFilePath, const 
 	m_ppTextures = new MESHTEXTURE[m_dwNumMaterials];
 	ZeroMemory(m_ppTextures, sizeof(MESHTEXTURE) * m_dwNumMaterials);
 
+	if (!lstrcmp(pFileName, L"Building_Wall.X"))
+	{
+		cout << "!" << endl;
+	}
 
 	for (size_t i = 0; i < m_dwNumMaterials; ++i)
 	{
