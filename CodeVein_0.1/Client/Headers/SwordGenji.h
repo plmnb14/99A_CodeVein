@@ -108,20 +108,9 @@ private:	//패턴들
 	//////////////
 
 private:
-	CTransform*			m_pTransformCom = nullptr;
-	CRenderer*			m_pRendererCom = nullptr;
-	CShader*			m_pShaderCom = nullptr;
-	CMesh_Dynamic*		m_pMeshCom = nullptr;
-	CAIController*		m_pAIControllerCom = nullptr;
-	CNavMesh*			m_pNavMesh = nullptr;
-	CCollider*			m_pCollider = nullptr;
-	COptimization*		m_pOptimization = nullptr;
-
 	CWeapon*			m_pSword = nullptr;
 
 	////////////// MonsterHP UI
-	//CDamegeNumUI*		m_pDamegeNumUI = nullptr;
-	CMonsterUI*			pMonsterHpUI = nullptr;
 	CGet_ItemUI*		m_pGet_Item = nullptr;
 
 	//렌더에서 타임델타 쓰기위해서 저장해놓음

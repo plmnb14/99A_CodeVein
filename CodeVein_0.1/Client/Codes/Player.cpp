@@ -304,6 +304,7 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 
 void CPlayer::Teleport_ResetOptions(_int _eSceneID, _int _eTeleportID)
 {
+	_v3 vShadowLightPos = V3_NULL;
 	_v3 vPos = V3_NULL;
 	_float fAngle = 0.f;
 	_float fRadian = 0.f;
@@ -313,6 +314,8 @@ void CPlayer::Teleport_ResetOptions(_int _eSceneID, _int _eTeleportID)
 	{
 	case SCENE_STAGE_BASE:
 	{
+		vShadowLightPos = _v3(100.f, 50.f, 0.f);
+
 		vPos = _eTeleportID == TeleportID_Tutorial ?
 			V3_NULL : _v3(-0.519f, 0.120f, 23.810f);
 
@@ -324,6 +327,8 @@ void CPlayer::Teleport_ResetOptions(_int _eSceneID, _int _eTeleportID)
 
 	case SCENE_STAGE_01:
 	{
+		vShadowLightPos = _v3(-100.f, 50.f, 0.f);
+
 		vPos = _eTeleportID == TeleportID_St01_1 ? _v3(150.484f, -18.08f, 70.417f) :
 			_eTeleportID == TeleportID_St01_2 ? V3_NULL : V3_NULL;
 
@@ -362,6 +367,8 @@ void CPlayer::Teleport_ResetOptions(_int _eSceneID, _int _eTeleportID)
 		break;
 	}
 	}
+
+	m_pRenderer->Set_ShadowLightPos(vShadowLightPos);
 
 	fRadian = D3DXToRadian(fAngle);
 	m_pTransform->Set_Pos(vPos);
