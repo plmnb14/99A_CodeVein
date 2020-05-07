@@ -152,8 +152,8 @@ void CInventory::SetUp_Default()
 		pDesc = new CUI::UI_DESC;
 		pDesc->fPosX = m_fPosX - 100.f + 50.f * i;
 		pDesc->fPosY = m_fPosY - 170.3f;
-		pDesc->fSizeX = 35.f;
-		pDesc->fSizeY = 45.f;
+		pDesc->fSizeX = 30.f;
+		pDesc->fSizeY = 30.f;
 		g_pManagement->Add_GameObject_ToLayer(L"GameObject_InvenIcon", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
 		CInventory_Icon* pIcon = static_cast<CInventory_Icon*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
 		pIcon->Set_Type(CInventory_Icon::ICON_TYPE(i));

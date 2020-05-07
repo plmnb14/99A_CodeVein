@@ -37,7 +37,9 @@ _int CPet_Inven::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 
-	
+	Click_Icon();
+
+	m_pExitIcon->Set_Active(m_bIsActive);
 	return NO_EVENT;
 }
 
@@ -129,14 +131,32 @@ HRESULT CPet_Inven::SetUp_ConstantTable()
 
 void CPet_Inven::SetUp_Default()
 {
-	m_fPosX = WINCX * 0.3f;
-	m_fPosY = WINCY * 0.5f;
+	m_fPosX = 229.5f;
+	m_fPosY = 325.5f;
 	m_fSizeX = 280.f;
 	m_fSizeY = 471.f;
 	m_fViewZ = 4.f;
 	m_bIsActive = false;
 
-	
+	m_pExitIcon = static_cast<CInventory_Icon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_InvenIcon", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExitIcon, SCENE_MORTAL, L"Layer_PetUI", nullptr);
+	m_pExitIcon->Set_UI_Pos(m_fPosX + 100.f, m_fPosY - 200.f);
+	m_pExitIcon->Set_UI_Size(30.f, 30.f);
+	m_pExitIcon->Set_Type(CInventory_Icon::ICON_EXIT);
+	m_pExitIcon->Set_ViewZ(m_fViewZ - 0.1f);
+}
+
+void CPet_Inven::Click_Icon()
+{
+	if (!m_bIsActive)
+		return;
+
+	if (m_pExitIcon->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+	{
+		m_bIsActive = false;
+		CUI_Manager::Get_Instance()->Get_Total_Inven()->Set_Active(true);
+		CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(true);
+	}
 }
 
 

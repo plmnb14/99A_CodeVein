@@ -25,16 +25,16 @@ CTotal_Inven::CTotal_Inven(const CTotal_Inven & rhs)
 
 Skill_ID CTotal_Inven::Get_Registration_Skill(_uint iNum)
 {
-	//if (iNum < 0 || iNum > m_vecSkillIcon.size() - 1)
-	//	return SkillID_End;
+	if (iNum < 0 || iNum > m_vecSkillIcon.size() - 1)
+		return SkillID_End;
 
 	return m_vecSkillIcon[iNum]->Get_SkillID();
 }
 
 void CTotal_Inven::Set_Skill_ID(_uint iNum, Skill_ID eSkillID)
 {
-	//if (iNum < 0 || iNum > m_vecSkillIcon.size() - 1)
-	//	return;
+	if (iNum < 0 || iNum > m_vecSkillIcon.size() - 1)
+		return;
 
 	m_vecSkillIcon[iNum]->Set_SkillID(eSkillID);
 }
@@ -85,6 +85,8 @@ _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 		CUI_Manager::Get_Instance()->Get_Instance()->Get_Inventory()->Set_Detail(false);		
 		// 스테이터스 창 활성화
 		CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(true);
+		// 퀵슬롯 비활성화
+		CUI_Manager::Get_Instance()->Get_QuickSlot()->Set_Active(false);
 	}
 
 	// 인벤 아이콘 활성화
@@ -322,21 +324,23 @@ void CTotal_Inven::Click_Icon()
 		m_pInventory->Set_Active(true);
 		m_bIsActive = false;
 	}
-	//else if (m_vecIcon[1]->Pt_InRect() &&
-	//	g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
-	//{	
-	//	// 스테이터스 창 비활성화
-	//	CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(false);
-	//	// 펫 인벤토리 활성화
-	//	CUI_Manager::Get_Instance()->Get_Pet_Inven()->Set_Active(true);
-	//	m_bIsActive = false;
-	//}
+	else if (m_vecIcon[1]->Pt_InRect() &&
+		g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+	{	
+		m_bIsActive = false;
+		// 스테이터스 창 비활성화
+		CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(false);
+		// 펫 인벤토리 활성화
+		CUI_Manager::Get_Instance()->Get_Pet_Inven()->Set_Active(true);
+	}
 	else if (m_vecIcon[2]->Pt_InRect() &&
 		g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
 		m_bIsActive = false;
 		// 스테이터스 창 비활성화
 		CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(false);
+		// 퀵슬롯 활성화
+		CUI_Manager::Get_Instance()->Get_QuickSlot()->Set_Active(true);
 	}
 	
 	vector<CExpendables_Slot*> vecQuickSlot = * CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Get_QuickSlot();

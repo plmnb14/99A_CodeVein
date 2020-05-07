@@ -76,7 +76,7 @@ Tex_Tail|Tail_%d.tga|..\..\Client\Resources\Texture\Effect\Tail\|0|2
 Tex_SkyBridgeBoss_Trail|SkyBridgeBoss_Trail_%d.tga|..\..\Client\Resources\Texture\Effect\Trail\SkyBridgeBoss_Trail\|0|1
 Tex_temp|T_Enemy_DevilMiguel_Sword_Trail_01.tga|..\..\Client\Resources\Texture\Effect\Trail\temp\|0|17
 Tex_Water|Water_%d.tga|..\..\Client\Resources\Texture\Effect\Water\|0|1
-Tex_ActiveUI|ActiveUI%d.tga|..\..\Client\Resources\Texture\TestUI\ActiveUI\|0|16
+Tex_ActiveUI|ActiveUI%d.dds|..\..\Client\Resources\Texture\TestUI\ActiveUI\|0|16
 Tex_Armor_Icon|Armor_Icon%d.png|..\..\Client\Resources\Texture\TestUI\Armor_Icon\|0|5
 Tex_Bayonet_Icon|Bayonet_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Bayonet_Icon\|0|3
 Tex_BloodCodeIcon|BloodCodeIcon%d.tga|..\..\Client\Resources\Texture\TestUI\BloodCodeIcon\|0|15
