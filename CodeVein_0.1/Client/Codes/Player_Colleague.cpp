@@ -205,7 +205,7 @@ HRESULT CPlayer_Colleague::Add_Component()
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Test_Jack", L"Com_DynamicMesh", (CComponent**)&m_pDynamicMesh)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Buddy_Jack", L"Com_DynamicMesh", (CComponent**)&m_pDynamicMesh)))
 		return E_FAIL;
 
 	// for.Com_NavMesh
@@ -653,7 +653,7 @@ void CPlayer_Colleague::Check_Do_List()
 	// Hit, Att, Dodge 이면 return 시킨다
 
 
-	if (true == m_tObjParam.bIsHit || true == m_tObjParam.bIsDodge)
+	if (true == m_tObjParam.bIsHit/* || true == m_tObjParam.bIsDodge*/)
 		return;
 
 	// 플레이어와의 거리 체크
@@ -718,6 +718,24 @@ void CPlayer_Colleague::Check_Do_List()
 		}
 
 	}
+
+	//if (true == m_bStart_Fighting && true == m_bNear_byMonster)
+	//{
+	//	// 전투 상태일 때
+	//	// 구르기 쿨타임을 줘서 구르고 싶은 기분일 때 구르게 하기
+	//	m_fDodge_CoolTime += DELTA_60;
+
+	//	if (m_fDodge_CoolTime >= 10.f)
+	//	{
+	//		// 5초마다 구르게
+	//		m_eMovetype = CPlayer_Colleague::Coll_Dodge;
+	//		m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_FrontRoll;
+
+	//		m_fDodge_CoolTime = 0.f;
+	//	}
+	//}
+
+
 	if (fMyPlayerLength > 30.f)
 	{
 		m_pTransformCom->Set_Pos(_v3(m_pTargetTransformCom->Get_Pos().x - 3.f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 2.f));
@@ -1364,47 +1382,48 @@ void CPlayer_Colleague::CollAtt_Normal()
 	}
 
 	if (m_pObject_Mon == nullptr)
-	{
-		for (auto& iter : *m_List_pMonTarget[0])
-		{
-			if (true == m_List_pMonTarget[0]->empty())
-				continue;
+		fMonLenght = 0.f;
 
-			if (iter == m_pObject_Mon && false == iter->Get_Dead())
-			{
-				CTransform* MonTransCom = TARGET_TO_TRANS(iter);
-				fMonLenght = V3_LENGTH(&(m_pTransformCom->Get_Pos() - MonTransCom->Get_Pos()));
-			}
-			if (iter == m_pObject_Mon && true == iter->Get_Dead())
-			{
-				m_pObject_Mon = iter;
-				continue;
-			}
-			if (false == iter->Get_Enable())
-				continue;
+	for (auto& iter : *m_List_pMonTarget[0])
+	{
+		if (true == m_List_pMonTarget[0]->empty())
+			continue;
+
+		if (iter == m_pObject_Mon && false == iter->Get_Dead())
+		{
+			CTransform* MonTransCom = TARGET_TO_TRANS(iter);
+			fMonLenght = V3_LENGTH(&(m_pTransformCom->Get_Pos() - MonTransCom->Get_Pos()));
+		}
+		if (iter == m_pObject_Mon && true == iter->Get_Dead())
+		{
+			m_pObject_Mon = iter;
+			continue;
+		}
+
+		if (false == iter->Get_Enable())
+			continue;
+
+		if (m_pObject_Mon != iter)
+		{
+			m_pObject_Mon = iter;
+			fMonLenght = V3_LENGTH(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(iter)->Get_Pos()));
+		}
+
+
+		if (0 != fMonLenght)
+			m_bNot_AttcaingMon = false;
+		else if (0 == fMonLenght)
+		{
+			m_bNot_AttcaingMon = true;
 			if (m_pObject_Mon != iter)
 			{
 				m_pObject_Mon = iter;
 				fMonLenght = V3_LENGTH(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(iter)->Get_Pos()));
 			}
-
-
-			if (0 != fMonLenght)
-				m_bNot_AttcaingMon = false;
-			else if (0 == fMonLenght)
-			{
-				m_bNot_AttcaingMon = true;
-				if (m_pObject_Mon != iter)
-				{
-					m_pObject_Mon = iter;
-					fMonLenght = V3_LENGTH(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(iter)->Get_Pos()));
-				}
-				else
-					return;
-			}
+			else
+				return;
 		}
 	}
-	
 
 	if (nullptr == m_pObject_Mon)
 		return;
@@ -1484,16 +1503,6 @@ void CPlayer_Colleague::CollAtt_Normal()
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base1;
 		}
-
-
-		/*else if (m_eMovetype == CPlayer_Colleague::Coll_Move)
-		{
-		m_iNormalAtt_Count = 0;
-		return;
-		}
-		else
-		m_iNormalAtt_Count = 0;*/
-
 	}
 
 	if (0 == fMonLenght || 30.f < fMonLenght)
@@ -2362,12 +2371,10 @@ void CPlayer_Colleague::CollHeal_ForMe()
 			m_bEventTrigger[0] = true;
 			m_eMovetype = CPlayer_Colleague::Coll_Heal;
 			m_eColl_HealMoment = CPlayer_Colleague::My_Heal;
-			//m_eColleague_Ani = CPlayer_Colleague::Ani_Heal;
 			m_bCheck_HealMyHp = true;
 			m_tObjParam.fHp_Cur += m_tObjParam.fHp_Max / 0.8f;
 			if (m_tObjParam.fHp_Cur > m_tObjParam.fHp_Max)
 				m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
-			//m_tObjParam`.fHp_Cur += (m_tObjParam.fHp_Cur / 2.f);
 			--m_iMyHeal_Count;
 		}
 	}

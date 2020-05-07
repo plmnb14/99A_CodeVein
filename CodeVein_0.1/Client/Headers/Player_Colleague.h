@@ -230,6 +230,8 @@ private:
 	_float	m_fCoolTimer_limit = 0.f;
 	_float	m_fCoolTimer_Skil_limit = 0.f;
 
+	_float	m_fDodge_CoolTime = 0.f;
+
 	_float	m_fMonDistance_Compare = 4.5f;
 
 	_float	m_fCoolTime_MyHeal = 10.f;
