@@ -94,7 +94,7 @@ HRESULT CPlayerFontUI::Render_GameObject()
 		m_iIndex = m_arrDigitIdx[i - 1];
 
 		// 렌더 패스
-		m_pShader->Begin_Pass(5);
+		m_pShader->Begin_Pass(1);
 
 		// 번호에 따라 넘버 텍스쳐 세팅
 		m_pTexture->SetUp_OnShader("g_DiffuseTexture", m_pShader, m_iIndex);
@@ -190,9 +190,7 @@ HRESULT CPlayerFontUI::SetUp_ConstantTable()
 	matView = m_matView;
 	matProj = m_matProj;
 	
-	if (FAILED(m_pShader->Set_Value("g_fAlpha", &m_fTimerAlpha, sizeof(_mat))))
-		return E_FAIL;
-
+	
 	if (FAILED(m_pShader->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShader->Set_Value("g_matView", &matView, sizeof(_mat))))
@@ -280,9 +278,7 @@ void CPlayerFontUI::Calc_BillBoard(_int iLoopCnt, _float _fInterval)
 
 	matWorld = m_pTransform->Get_WorldMat();
 
-	//matWorld._41 += matWorld._11 * iLoopCnt * _fInterval;
-	//matWorld._43 += matWorld._13 * iLoopCnt * _fInterval;
-
+	
 	matInverse._11 = matView._11;
 	matInverse._13 = matView._13;
 	matInverse._31 = matView._31;

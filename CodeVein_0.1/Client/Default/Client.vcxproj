@@ -214,6 +214,7 @@
     <ClInclude Include="..\Headers\Expendables.h" />
     <ClInclude Include="..\Headers\Expendables_Inven.h" />
     <ClInclude Include="..\Headers\Expendables_Slot.h" />
+    <ClInclude Include="..\Headers\ExplainSkillUI.h" />
     <ClInclude Include="..\Headers\ExpUI.h" />
     <ClInclude Include="..\Headers\FighterBlood.h" />
     <ClInclude Include="..\Headers\FighterReleaseUI.h" />
@@ -370,6 +371,7 @@
     <ClCompile Include="..\Codes\Expendables.cpp" />
     <ClCompile Include="..\Codes\Expendables_Inven.cpp" />
     <ClCompile Include="..\Codes\Expendables_Slot.cpp" />
+    <ClCompile Include="..\Codes\ExplainSkillUI.cpp" />
     <ClCompile Include="..\Codes\ExpUI.cpp" />
     <ClCompile Include="..\Codes\FighterBlood.cpp" />
     <ClCompile Include="..\Codes\FighterReleaseUI.cpp" />

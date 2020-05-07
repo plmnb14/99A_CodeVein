@@ -25,16 +25,16 @@ CTotal_Inven::CTotal_Inven(const CTotal_Inven & rhs)
 
 Skill_ID CTotal_Inven::Get_Registration_Skill(_uint iNum)
 {
-	if (iNum < 0 || iNum > m_vecSkillIcon.size() - 1)
-		return SkillID_End;
+	//if (iNum < 0 || iNum > m_vecSkillIcon.size() - 1)
+	//	return SkillID_End;
 
 	return m_vecSkillIcon[iNum]->Get_SkillID();
 }
 
 void CTotal_Inven::Set_Skill_ID(_uint iNum, Skill_ID eSkillID)
 {
-	if (iNum < 0 || iNum > m_vecSkillIcon.size() - 1)
-		return;
+	//if (iNum < 0 || iNum > m_vecSkillIcon.size() - 1)
+	//	return;
 
 	m_vecSkillIcon[iNum]->Set_SkillID(eSkillID);
 }
@@ -232,7 +232,7 @@ void CTotal_Inven::SetUp_Default()
 	LOOP(3)
 	{
 		pDesc = new CUI::UI_DESC;
-		pDesc->fPosX = 240.f + 60.f * i;
+		pDesc->fPosX = 240.f + 55.f * i;
 		pDesc->fPosY = 198.f;
 		pDesc->fSizeX = 53.f;
 		pDesc->fSizeY = 53.f;
@@ -306,7 +306,7 @@ void CTotal_Inven::SetUp_Default()
 	m_pNoticeUI = static_cast<CNoticeUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_NoticeUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pNoticeUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 	m_pNoticeUI->Set_UI_Pos(248.f, 81.f);
-	m_pNoticeUI->Set_UI_Size(186.664f, 40.f); // 280 : 60 -> 4.6666 : 1
+	m_pNoticeUI->Set_UI_Size(186.664f, 40.5f); // 280 : 60 -> 4.6666 : 1
 	m_pNoticeUI->Set_ViewZ(m_fViewZ - 0.1f);
 }
 

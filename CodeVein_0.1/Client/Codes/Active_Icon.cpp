@@ -77,7 +77,6 @@ _int CActive_Icon::Update_GameObject(_double TimeDelta)
 		break;
 	case SkillID_End:
 		m_iIndex = 0;
-		m_eState = ACTIVE_NO_USE;
 		break;
 	}
 	return NO_EVENT;

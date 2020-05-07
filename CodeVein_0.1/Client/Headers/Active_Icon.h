@@ -50,7 +50,7 @@ private:
 
 private:
 	Skill_ID		m_eSkillID = SkillID_End;
-	ACTIVE_STATE	m_eState = ACTIVE_NO_USE;
+	ACTIVE_STATE	m_eState = ACTIVE_USE;
 	_float			m_fPercentage = 0.f;
 	_float			m_fMaxTime = 10.f;
 	_float			m_fCurTime = 0.f;

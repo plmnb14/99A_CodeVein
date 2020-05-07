@@ -921,6 +921,9 @@
     <ClInclude Include="..\Headers\NoticeUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\NoticeUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\ExplainSkillUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1390,6 +1393,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\NoticeUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\NoticeUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ExplainSkillUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

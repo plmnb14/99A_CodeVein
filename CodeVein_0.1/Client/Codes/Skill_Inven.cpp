@@ -30,8 +30,8 @@ HRESULT CSkill_Inven::Ready_GameObject(void * pArg)
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = WINCX * 0.3f;
-	m_fPosY = WINCY * 0.5f;
+	m_fPosX = 229.5f;
+	m_fPosY = 325.5f;
 
 	m_fSizeX = 280.f;
 	m_fSizeY = 471.f;
@@ -58,6 +58,18 @@ _int CSkill_Inven::Update_GameObject(_double TimeDelta)
 	m_pExitIcon->Set_Active(m_bIsActive);
 	Click_SubUI();
 	Search_Regist_Skill();
+
+	m_pExplainUI->Set_Active(m_bIsActive);
+
+	if (!m_bIsActive)
+	{
+		for (auto& iter : m_vecSlot)
+		{
+			iter->Set_Regist(false);
+			iter->Set_Select(false);
+		}
+
+	}
 	return NO_EVENT;
 }
 
@@ -152,8 +164,13 @@ void CSkill_Inven::SetUp_Default()
 	m_pExitIcon = static_cast<CInventory_Icon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_InvenIcon", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExitIcon, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 	m_pExitIcon->Set_UI_Pos(m_fPosX + 120.f, m_fPosY - 203.f);
-	m_pExitIcon->Set_UI_Size(35.f, 45.f);
+	m_pExitIcon->Set_UI_Size(40.f, 40.f);
 	m_pExitIcon->Set_Type(CInventory_Icon::ICON_EXIT);
+
+	m_pExplainUI = static_cast<CExplainSkillUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExplainSkillUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExplainUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	m_pExplainUI->Set_UI_Pos(WINCX * 0.5f, WINCY * 0.5f);
+	m_pExplainUI->Set_UI_Size(WINCX, WINCY);
 }
 
 void CSkill_Inven::Click_SubUI()
@@ -168,11 +185,19 @@ void CSkill_Inven::Click_SubUI()
 	// 스킬 슬롯 선택시
 	for (_uint i = 0; i < m_vecSlot.size(); ++i)
 	{
-		if (m_vecSlot[i]->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB) && (false == m_vecSlot[i]->Get_Regist()))
+		if (m_vecSlot[i]->Pt_InRect() && /*g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB) && */(!m_vecSlot[i]->Get_Regist()))
 		{
-			Reset_Select_Slot();
-			m_vecSlot[i]->Set_Select(true);
-			CUI_Manager::Get_Instance()->Get_Total_Inven()->Set_Skill_ID(m_iRegistIdx, m_vecSlot[i]->Get_SkillID());
+			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+			{
+				Reset_Select_Slot();
+				m_vecSlot[i]->Set_Select(true);
+				CUI_Manager::Get_Instance()->Get_Total_Inven()->Set_Skill_ID(m_iRegistIdx, m_vecSlot[i]->Get_SkillID());
+			}
+			else if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
+			{
+				CUI_Manager::Get_Instance()->Get_Total_Inven()->Set_Skill_ID(m_iRegistIdx, SkillID_End);
+				m_vecSlot[i]->Set_Select(false);
+			}
 		}
 	}
 }
@@ -181,15 +206,20 @@ void CSkill_Inven::Search_Regist_Skill()
 {
 	LOOP(8)
 	{
-		if (i == m_iRegistIdx)
-			continue;
+		/*if (i == m_iRegistIdx)
+			continue;*/
 
 		Skill_ID eSkill_ID = CUI_Manager::Get_Instance()->Get_Total_Inven()->Get_Registration_Skill(i);
 
 		for (auto& iter : m_vecSlot)
 		{
 			if (iter->Get_SkillID() == eSkill_ID)
-				iter->Set_Regist(true);
+			{					
+				if (i == m_iRegistIdx)
+					iter->Set_Select(true);
+				else
+					iter->Set_Regist(true);		
+			}
 		}
 	}
 	

@@ -32,9 +32,10 @@ HRESULT CInventory::Ready_GameObject(void * pArg)
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = WINCX * 0.3f;
-	m_fPosY = WINCY * 0.5f;
-	
+	m_fPosX = 229.5f;
+	m_fPosY = 325.5f;
+	m_fSizeX = 280.f;
+	m_fSizeY = 471.f;
 	m_fViewZ = 0.5f;
 	m_bIsActive = false;
 
@@ -150,7 +151,7 @@ void CInventory::SetUp_Default()
 	{
 		pDesc = new CUI::UI_DESC;
 		pDesc->fPosX = m_fPosX - 100.f + 50.f * i;
-		pDesc->fPosY = m_fPosY - 203.f;
+		pDesc->fPosY = m_fPosY - 170.3f;
 		pDesc->fSizeX = 35.f;
 		pDesc->fSizeY = 45.f;
 		g_pManagement->Add_GameObject_ToLayer(L"GameObject_InvenIcon", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);

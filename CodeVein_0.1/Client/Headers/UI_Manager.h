@@ -65,6 +65,7 @@
 #include "Pet_Inven.h"
 
 #include "NoticeUI.h"
+#include "ExplainSkillUI.h"
 
 BEGIN(Client)
 

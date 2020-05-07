@@ -93,6 +93,7 @@ Tex_CursorSelect|CursorSelect%d.tga|..\..\Client\Resources\Texture\TestUI\Cursor
 Tex_CursorUI|CursorUI%d.png|..\..\Client\Resources\Texture\TestUI\CursorUI\|0|1
 Tex_DamegeNum|DamegeNum%d.png|..\..\Client\Resources\Texture\TestUI\DamegeNum\|0|11
 Tex_Expendables|Expendables%d.png|..\..\Client\Resources\Texture\TestUI\Expendables\|0|5
+Tex_ExplainSkillUI|ExplainSkillUI%d.png|..\..\Client\Resources\Texture\TestUI\ExplainSkillUI\|0|1
 Tex_ExpUI|ExpUI%d.png|..\..\Client\Resources\Texture\TestUI\ExpUI\|0|2
 Tex_FontNumber|FontNumber%d.png|..\..\Client\Resources\Texture\TestUI\FontNumber\|0|13
 Tex_Get_ItemUI|Get_ItemUI%d.png|..\..\Client\Resources\Texture\TestUI\Get_ItemUI\|0|7
@@ -111,13 +112,14 @@ Tex_MenuWindow|MenuWindow%d.png|..\..\Client\Resources\Texture\TestUI\MenuWindow
 Tex_Menu_Icon|Menu_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Menu_Icon\|0|8
 Tex_MistletoeUI|MistletoeUI%d.tga|..\..\Client\Resources\Texture\TestUI\MistletoeUI\|0|5
 Tex_MonsterHPBar|MonsterHPBar%d.png|..\..\Client\Resources\Texture\TestUI\MonsterHPBar\|0|3
-Tex_NoticeUI|NoticeUI%d.dds|..\..\Client\Resources\Texture\TestUI\NoticeUI\|0|9
+Tex_NoticeUI|NoticeUI%d.png|..\..\Client\Resources\Texture\TestUI\NoticeUI\|0|9
 Tex_Number|Number%d.png|..\..\Client\Resources\Texture\TestUI\Number\|0|12
 Tex_OKMessageUI|OKMessageUI%d.tga|..\..\Client\Resources\Texture\TestUI\OKMessageUI\|0|1
 Tex_Passive_Icon|Passive_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\Passive_Icon\|0|89
 Tex_PickUp_Item|PickUp_Item%d.png|..\..\Client\Resources\Texture\TestUI\PickUp_Item\|0|3
 Tex_PlayerHPUI|PlayerHPUI%d.png|..\..\Client\Resources\Texture\TestUI\PlayerHPUI\|0|4
 Tex_PlayerST|PlayerST%d.png|..\..\Client\Resources\Texture\TestUI\PlayerST\|0|3
+Tex_QuickSlotNum|QuickSlotNum%d.dds|..\..\Client\Resources\Texture\TestUI\QuickSlotNum\|0|10
 Tex_QuickSlotUI|QuickSlotUI%d.png|..\..\Client\Resources\Texture\TestUI\QuickSlotUI\|0|5
 Tex_ReleaseOption|ReleaseOption%d.tga|..\..\Client\Resources\Texture\TestUI\ReleaseOption\|0|3
 Tex_ReleaseQuestionUI|ReleaseQuestionUI%d.tga|..\..\Client\Resources\Texture\TestUI\ReleaseQuestionUI\|0|2
@@ -125,7 +127,7 @@ Tex_Select_UI|Select_UI.png|..\..\Client\Resources\Texture\TestUI\Select_UI\|0|1
 Tex_SingleSword_Icon|SingleSword_Icon%d.tga|..\..\Client\Resources\Texture\TestUI\SingleSword_Icon\|0|3
 Tex_SkillAcquisitionUI|SkillAcquisitionUI%d.tga|..\..\Client\Resources\Texture\TestUI\SkillAcquisitionUI\|0|10
 Tex_SkillReleaseUI|SkillReleaseUI%d.tga|..\..\Client\Resources\Texture\TestUI\SkillReleaseUI\|0|13
-Tex_SkillSlot|SkillSlot%d.tga|..\..\Client\Resources\Texture\TestUI\SkillSlot\|0|13
+Tex_SkillSlot|SkillSlot%d.tga|..\..\Client\Resources\Texture\TestUI\SkillSlot\|0|14
 Tex_Skill_ICon|Skill_ICon%d.tga|..\..\Client\Resources\Texture\TestUI\Skill_ICon\|0|11
 Tex_StageUI|StageUI%d.png|..\..\Client\Resources\Texture\TestUI\StageUI\|0|18
 Tex_Start_BossUI|Start_BossUI%d.png|..\..\Client\Resources\Texture\TestUI\Start_BossUI\|0|4

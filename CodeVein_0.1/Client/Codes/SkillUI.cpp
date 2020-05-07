@@ -46,8 +46,6 @@ _int CSkillUI::Update_GameObject(_double TimeDelta)
 	{
 		Skill_ID eSkill_ID = CUI_Manager::Get_Instance()->Get_Total_Inven()->Get_Registration_Skill(i);
 		m_pActive[i]->Set_Skill_ID(eSkill_ID);
-
-		
 	}
 	return NO_EVENT;
 }

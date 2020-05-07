@@ -262,24 +262,24 @@ void CExpendables_Slot::SetUp_Default()
 	pDesc->fPosY = m_fPosY;
 	pDesc->fSizeX = m_fSizeX;
 	pDesc->fSizeY = m_fSizeY;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_SelectUI", SCENE_STAGE, L"Layer_SelectUI", pDesc);
-	m_pSelectUI = static_cast<CSelect_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_SelectUI", SCENE_STAGE));
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_SelectUI", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
+	m_pSelectUI = static_cast<CSelect_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
 
 	pDesc = new CUI::UI_DESC;
 	pDesc->fPosX = m_fPosX - m_fSizeX * 0.25f;
 	pDesc->fPosY = m_fPosY + m_fSizeY * 0.25f;
 	pDesc->fSizeX = m_fSizeX * 0.25f;
 	pDesc->fSizeY = m_fSizeY * 0.25f;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NumberUI", SCENE_STAGE, L"Layer_NumberUI", pDesc);
-	m_pNumberUI = static_cast<CNumberUI*>(g_pManagement->Get_GameObjectBack(L"Layer_NumberUI", SCENE_STAGE));
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NumberUI", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
+	m_pNumberUI = static_cast<CNumberUI*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
 
 	pDesc = new CUI::UI_DESC;
 	pDesc->fPosX = m_fPosX;
 	pDesc->fPosY = m_fPosY;
 	pDesc->fSizeX = m_fSizeX;
 	pDesc->fSizeY = m_fSizeY;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_CursorUI", SCENE_STAGE, L"Layer_CursorUI", pDesc);
-	m_pCursorUI = static_cast<CCursorUI*>(g_pManagement->Get_GameObjectBack(L"Layer_CursorUI", SCENE_STAGE));
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_CursorUI", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
+	m_pCursorUI = static_cast<CCursorUI*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
 }
 
 

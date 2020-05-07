@@ -6,6 +6,7 @@
 BEGIN(Client)
 class CSkillSlot;
 class CInventory_Icon;
+class CExplainSkillUI;
 class CSkill_Inven final : public CUI
 {
 public:
@@ -49,6 +50,7 @@ private:
 	_uint					m_iRegistIdx = 0;
 	vector<Skill_ID>		m_vecData;
 	CInventory_Icon*		m_pExitIcon = nullptr;
+	CExplainSkillUI*				m_pExplainUI = nullptr;
 
 public:
 	static CSkill_Inven*		Create(_Device pGraphic_Device);
