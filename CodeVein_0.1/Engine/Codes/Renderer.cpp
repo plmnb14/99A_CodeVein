@@ -277,11 +277,11 @@ HRESULT CRenderer::Ready_Component_Prototype()
 		return E_FAIL;
 
 	// For.Target_DecalDepth`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_DecalDepth", fTargetSize, fTargetSize * 2, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_DecalDepth", fTargetSize, fTargetSize * 1, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_RimNormal`s Debug Buffer ==  Å÷ ½¦ÀÌµù
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_RimNormal", fTargetSize, fTargetSize * 3, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_RimNormal", fTargetSize, fTargetSize * 2, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	//=====================================================================================================================

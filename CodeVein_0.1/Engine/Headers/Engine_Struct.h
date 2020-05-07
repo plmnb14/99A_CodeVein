@@ -1,6 +1,7 @@
 #pragma once
 
 #define STR_128 128
+#define STR_256 256
 
 namespace Engine
 {
@@ -448,9 +449,9 @@ namespace Engine
 
 	typedef struct tagEffectInfo
 	{
-		TCHAR	szName[STR_128];
-		TCHAR	szGradientName[STR_128];
-		TCHAR	szColorName[STR_128];
+		TCHAR	szName[STR_256];
+		TCHAR	szGradientName[STR_256];
+		TCHAR	szColorName[STR_256];
 
 		_bool	bUseRGBA;
 		_bool	bStaticFrame;
