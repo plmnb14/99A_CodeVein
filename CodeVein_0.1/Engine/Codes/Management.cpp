@@ -326,6 +326,15 @@ HRESULT CManagement::LoadTex_FromPath(_Device pGraphicDev, const _tchar * szImgP
 	return m_pComponent_Manager->LoadTex_FilesFromPath(pGraphicDev, szImgPath);
 }
 
+HRESULT CManagement::LoadTex_FromPath_Tool(_Device pGraphicDev, const _tchar * szImgPath)
+{
+	if (nullptr == m_pComponent_Manager)
+		return E_FAIL;
+
+
+	return m_pComponent_Manager->LoadTex_FilesFromPath_Tool(pGraphicDev, szImgPath);
+}
+
 void CManagement::Clone_NavMesh_OnManagement()
 {
 	if (nullptr == m_pComponent_Manager)

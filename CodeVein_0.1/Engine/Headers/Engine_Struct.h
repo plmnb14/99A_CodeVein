@@ -327,6 +327,25 @@ namespace Engine
 
 	}TEX_INFO;
 
+	typedef struct tagMeshInfo_EffTool
+	{
+		std::wstring wstrStateKey = L"";
+		std::wstring wstrImgPath = L"";
+		std::wstring wstrFileName = L"";
+		_tchar szIsDynamic[STR_128] = L"";
+
+	}MESH_INFO_EFFTOOL;
+
+	typedef struct tagTexInfo_EffTool
+	{
+		std::wstring wstrStateKey = L"";
+		std::wstring wstrImgPath = L"";
+		std::wstring wstrFileName = L"";
+		_tchar szIsDynamic[STR_128] = L"";
+		_tchar szImgCnt[STR_128] = L"";
+
+	}TEX_INFO_EFFTOOL;
+
 	typedef struct tagPathInfo
 	{
 		_tchar sztrStateKey[STR_128] = L"";
@@ -335,6 +354,8 @@ namespace Engine
 		_bool	bIsDynamic = false;
 		_ushort sImgCnt = 0;
 		_tchar szProtoTypeName[STR_128] = L"";
+		_tchar szIsDynamic[STR_128] = L"";
+		_tchar szImgCnt[STR_128] = L"";
 
 	}PATH_INFO;
 

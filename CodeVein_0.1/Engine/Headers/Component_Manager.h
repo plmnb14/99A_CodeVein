@@ -40,6 +40,7 @@ public:
 	HRESULT LoadMesh_FilesFromPath(_Device pGraphicDev, const _tchar* szImgPath);
 	HRESULT LoadMesh_FilesFromPath_AddProtoRenderObj(_Device pGraphicDev, const _tchar* szImgPath);
 	HRESULT LoadTex_FilesFromPath(_Device pGraphicDev, const _tchar* szImgPath);
+	HRESULT LoadTex_FilesFromPath_Tool(_Device pGraphicDev, const _tchar * szImgPath);
 
 private:
 	map<const _tchar*, CComponent*>*		m_pPrototypes = nullptr;

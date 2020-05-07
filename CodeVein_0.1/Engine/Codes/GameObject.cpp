@@ -38,6 +38,9 @@ _int CGameObject::Update_GameObject(_double TimeDelta)
 
 	for (; iter_begin != iter_end; ++iter_begin)
 	{
+		if (nullptr == (iter_begin->second))
+			continue;
+
 		iter_begin->second->Update_Component();
 	}
 
