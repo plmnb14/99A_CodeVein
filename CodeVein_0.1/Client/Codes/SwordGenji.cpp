@@ -41,19 +41,10 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 	// MonsterHP UI
- 	pMonsterHpUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
- 	pMonsterHpUI->Set_Target(this);
-	pMonsterHpUI->Set_Bonmatrix(m_matBones[Bone_Head]);
- 	pMonsterHpUI->Ready_GameObject(pArg);
-
-	/*m_pDamegeNumUI = static_cast<CDamegeNumUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_DamegeNumUI", pArg));
-	m_pDamegeNumUI->Set_Target(this);
-	m_pDamegeNumUI->Ready_GameObject(NULL);*/
-
-	//m_pGet_Item = static_cast<CGet_ItemUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Get_ItemUI", pArg));
-	//m_pGet_Item->Set_ItemTarget(this);
-	//m_pGet_Item->Ready_GameObject(pArg);
-
+	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
+	m_pMonsterUI->Set_Target(this);
+	m_pMonsterUI->Set_Bonmatrix(m_matBones[Bone_Head]);
+	m_pMonsterUI->Ready_GameObject(pArg);
 
 	//////////////////// 행동트리 init
 
@@ -194,7 +185,7 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 	}
 
 	// MonsterHP UI
-	pMonsterHpUI->Update_GameObject(TimeDelta);
+	//pMonsterHpUI->Update_GameObject(TimeDelta);
 	//m_pDamegeNumUI->Update_GameObject(TimeDelta);
 	//m_pGet_Item->Update_GameObject(TimeDelta);
 
@@ -1206,7 +1197,7 @@ void CSwordGenji::Check_PhyCollider()
 
 void CSwordGenji::Push_Collider()
 {
-	list<CGameObject*> tmpList[4];
+	list<CGameObject*> tmpList[4] = {};
 
 	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
 	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
@@ -1215,6 +1206,9 @@ void CSwordGenji::Push_Collider()
 
 	for (auto& ListObj : tmpList)
 	{
+		if(ListObj.empty())
+			continue;
+
 		for (auto& iter : ListObj)
 		{
 			CCollider* pCollider = TARGET_TO_COL(iter);
@@ -1468,7 +1462,7 @@ CGameObject * CSwordGenji::Clone_GameObject(void * pArg)
 
 void CSwordGenji::Free()
 {
-	Safe_Release(pMonsterHpUI);
+	Safe_Release(m_pMonsterUI);
 	//Safe_Release(m_pDamegeNumUI);
 	//Safe_Release(m_pGet_Item);
 

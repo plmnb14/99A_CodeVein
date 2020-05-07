@@ -122,23 +122,9 @@ private:	//패턴들
 private:
 	EXE_ANI				m_eExecutionAnim = Ani_Execution_LongCoat_B_S;
 
-private:
-	CTransform*			m_pTransformCom = nullptr;
-	CRenderer*			m_pRendererCom = nullptr;
-	CShader*			m_pShaderCom = nullptr;
-	CMesh_Dynamic*		m_pMeshCom = nullptr;
-	CAIController*		m_pAIControllerCom = nullptr;
-	CNavMesh*			m_pNavMesh = nullptr;
-	CCollider*			m_pCollider = nullptr;
-	COptimization*		m_pOptimization = nullptr;
-	CBattleAgent*		m_pBattleAgent = nullptr;
-
 	CWeapon*			m_pGun = nullptr;
 
 	//////////// 채유미
-	// 몬스터 HP바 UI
-	CMonsterUI*			m_pMonsterUI = nullptr;
-	////////////
 
 	//렌더에서 타임델타 쓰기위해서 저장해놓음
 	_double				m_dTimeDelta = 0;

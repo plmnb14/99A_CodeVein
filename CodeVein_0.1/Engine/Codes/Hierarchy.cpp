@@ -224,7 +224,7 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 		////==================================================================================================================================
 		//// T - Transparency Map
 		////==================================================================================================================================
-		Change_TextureFileName(szFullPath, L"M", L"T");
+		Change_TextureFileName(szFullPath, L"Q", L"T");
 		if (NO_EVENT == _waccess(szFullPath, 0))
 		{
 			//D3DXCreateTextureFromFileEx(

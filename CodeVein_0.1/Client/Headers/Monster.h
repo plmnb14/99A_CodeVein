@@ -181,13 +181,17 @@ protected:
 
 protected:
 	CMonsterUI*			m_pMonsterUI = nullptr;
+	CWeapon*			m_pWeapon = nullptr;
+
 	CTransform*			m_pTransformCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
 	CMesh_Dynamic*		m_pMeshCom = nullptr;
 	CNavMesh*			m_pNavMesh = nullptr;
 	CCollider*			m_pCollider = nullptr;
-	CWeapon*			m_pWeapon = nullptr;
+	COptimization*		m_pOptimization = nullptr;
+	CBattleAgent*		m_pBattleAgent = nullptr;
+	CAIController*		m_pAIControllerCom = nullptr;
 
 	MONSTER_STATE_TYPE		m_eFirstCategory;
 	MONSTER_IDLE_TYPE		m_eSecondCategory_IDLE;
