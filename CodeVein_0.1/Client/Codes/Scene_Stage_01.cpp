@@ -30,26 +30,31 @@ HRESULT CScene_Stage_01::Ready_Scene()
 	//CScriptManager::Get_Instance()->Set_StageIdx(1);
 	//CScriptManager::Get_Instance()->Ready_Script_DynamicObject(1);
 
-	//g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_01.dat");
+	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_01.dat");
 
 	return S_OK;
 }
 
 _int CScene_Stage_01::Update_Scene(_double TimeDelta)
 {
-	CUI_Manager::Get_Instance()->Update_UI();
+	//CUI_Manager::Get_Instance()->Update_UI();
 	//Create_Fog(TimeDelta);
 
+	return _int();
+}
+
+HRESULT CScene_Stage_01::Render_Scene()
+{
 	if (g_pInput_Device->Key_Down(DIK_H))
 	{
+		g_eSceneID_Cur = SCENE_STAGE_BASE;
+		g_eSTeleportID_Cur = TeleportID_Home_1;
+
 		CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
 		pInstance->Set_Enable(false);
 
 		g_pManagement->Clear_LightList();
-		
-		CScriptManager::Get_Instance()->Reset_Script_DynmicObject();
-		CScriptManager::Get_Instance()->Reset_ScriptEvent(0, true);
 
 		if (FAILED(g_pManagement->Clear_Instance(SCENE_STAGE)))
 			return -1;
@@ -59,12 +64,6 @@ _int CScene_Stage_01::Update_Scene(_double TimeDelta)
 		if (FAILED(g_pManagement->SetUp_CurrentScene(pScene)))
 			return -1;
 	}
-
-	return _int();
-}
-
-HRESULT CScene_Stage_01::Render_Scene()
-{
 
 	return S_OK;
 }

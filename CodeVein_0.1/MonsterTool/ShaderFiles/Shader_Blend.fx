@@ -157,7 +157,7 @@ PS_OUT PS_MAIN(PS_IN In)
 	float AO = vSpecular.a;
 	vSpecular.a = 0.f;
 
-	float3 vFinalShade = saturate(vShade.r * vSSAO.r * AO);
+	float3 vFinalShade = vShade.r * vSSAO.r * AO;
 
 	Out.vColor = ((vDiffuse + vSpecular) * float4(vFinalShade, 1.f)) + vEmissive;
 
@@ -208,7 +208,7 @@ PS_OUT PS_TONEMAPPING(PS_IN In)
 	}
 	else if (4 == g_iToneIndex)
 	{
-		//// Uncharted2Tonemap ========================================================================
+		//// Uncharted2 Tonemap ========================================================================
 		float A = 0.15;
 		float B = 0.50;
 		float C = 0.10;
@@ -222,7 +222,7 @@ PS_OUT PS_TONEMAPPING(PS_IN In)
 	}
 
 	// MONO =========================================================
-	float3 Color = Out.vColor.rgb;
+	float3 Color = saturate(Out.vColor.rgb);
 	Color.rgb = lerp(Color, dot(Color.rgb, float3(0.3, 0.59, 0.11)), g_fToneGradient);
 	Out.vColor = float4(Color, 1.f);
 	

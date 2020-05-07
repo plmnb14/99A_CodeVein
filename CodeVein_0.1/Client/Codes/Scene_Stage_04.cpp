@@ -9,6 +9,8 @@
 #include "ParticleMgr.h"
 #include "ScriptManager.h"
 
+#include "Player.h"
+
 CScene_Stage_04::CScene_Stage_04(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
 {
@@ -28,8 +30,8 @@ HRESULT CScene_Stage_04::Ready_Scene()
 
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_04.dat");
 
-	CScriptManager::Get_Instance()->Set_StageIdx(4);
-	CScriptManager::Get_Instance()->Ready_Script_DynamicObject(4);
+	//CScriptManager::Get_Instance()->Set_StageIdx(4);
+	//CScriptManager::Get_Instance()->Ready_Script_DynamicObject(4);
 
 	return S_OK;
 }
@@ -38,16 +40,21 @@ _int CScene_Stage_04::Update_Scene(_double TimeDelta)
 {
 	CUI_Manager::Get_Instance()->Update_UI();
 
+	return NO_EVENT;
+}
+
+HRESULT CScene_Stage_04::Render_Scene()
+{
 	if (g_pInput_Device->Key_Down(DIK_H))
 	{
+		g_eSceneID_Cur = SCENE_STAGE_BASE;
+		g_eSTeleportID_Cur = TeleportID_Home_1;
+
 		CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
 		pInstance->Set_Enable(false);
 
 		g_pManagement->Clear_LightList();
-
-		CScriptManager::Get_Instance()->Reset_Script_DynmicObject();
-		CScriptManager::Get_Instance()->Reset_ScriptEvent(0, true);
 
 		if (FAILED(g_pManagement->Clear_Instance(SCENE_STAGE)))
 			return -1;
@@ -58,48 +65,28 @@ _int CScene_Stage_04::Update_Scene(_double TimeDelta)
 			return -1;
 	}
 
-	return _int();
-}
-
-HRESULT CScene_Stage_04::Render_Scene()
-{
-
 	return S_OK;
 }
 
 HRESULT CScene_Stage_04::Ready_Layer_Player(const _tchar * pLayerTag)
 {
-	// 몬스터 레이어만 미리 추가
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Mistletoe")))
+		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Monster")))
 		return E_FAIL;
-
-	// 보스 레이어만 미리 추가
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Boss")))
 		return E_FAIL;
-
-	// 투사체 레이어 추가
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_MonsterProjectile")))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_BossUI")))
+		return E_FAIL;
 
-	CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	CPlayer* pInstance = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 
+	pInstance->Teleport_ResetOptions(g_eSceneID_Cur, g_eSTeleportID_Cur);
 	pInstance->Set_Enable(true);
 
-	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Stage_04.dat");
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-	TARGET_TO_NAV(pInstance)->Set_Index(51);
-	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(42.504f, -3.85f, 75.683f));
-	TARGET_TO_TRANS(pInstance)->Set_Angle(V3_NULL);
-
-	pInstance = nullptr;;
-
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerHP", SCENE_STAGE, L"Layer_PlayerHP")))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerST", SCENE_STAGE, L"Layer_PlayerST")))
-		return E_FAIL;
-
-	return S_OK;
+	pInstance = nullptr;
 }
 
 HRESULT CScene_Stage_04::Ready_Layer_Environment(const _tchar* pLayerTag)

@@ -217,7 +217,7 @@ HRESULT CBloodSkillSlot::SetUp_ConstantTable(_uint iIndex)
 void CBloodSkillSlot::SetUp_Default()
 {
 	m_pCursor = static_cast<CBloodSkillCursor*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodSkillCursor", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pCursor, SCENE_STAGE, L"Layer_StageUI", nullptr);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pCursor, SCENE_MORTAL, L"Layer_StageUI", nullptr);
 	TARGET_TO_TRANS(m_pCursor)->Set_Scale(_v3(0.5f, 0.5f, 1.f));
 
 }

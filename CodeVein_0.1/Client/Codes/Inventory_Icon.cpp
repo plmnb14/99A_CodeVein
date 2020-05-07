@@ -180,9 +180,9 @@ void CInventory_Icon::SetUp_Default()
 	pDesc->fSizeX = m_fSizeX;
 	pDesc->fSizeY = m_fSizeY;
 
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_ClickUI", SCENE_STAGE, L"Layer_ClickUI", pDesc)))
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_ClickUI", SCENE_MORTAL, L"Layer_ClickUI", pDesc)))
 		return;
-	m_pClickUI = static_cast<CClickUI*>(g_pManagement->Get_GameObjectBack(L"Layer_ClickUI", SCENE_STAGE));
+	m_pClickUI = static_cast<CClickUI*>(g_pManagement->Get_GameObjectBack(L"Layer_ClickUI", SCENE_MORTAL));
 }
 
 _bool CInventory_Icon::Pt_InRect()

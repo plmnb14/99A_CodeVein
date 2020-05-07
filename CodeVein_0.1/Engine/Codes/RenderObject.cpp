@@ -54,9 +54,6 @@ _int CRenderObject::Late_Update_GameObject(_double TimeDelta)
 	if (false == m_bEnable)
 		return NO_EVENT;
 
-	if (false == m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), 10.f))
-		return NO_EVENT;
-
 	if (true == m_bOnTool)
 	{
 		Update_Collider();
@@ -64,9 +61,13 @@ _int CRenderObject::Late_Update_GameObject(_double TimeDelta)
 
 	else if (false == m_bOnTool)
 	{
+		m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this);
+
+		if (false == m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), 10.f))
+			return NO_EVENT;
+
 		m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
 		m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this);
-		m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this);
 	}
 
 	return _int();
