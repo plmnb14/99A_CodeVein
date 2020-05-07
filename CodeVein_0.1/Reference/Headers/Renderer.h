@@ -24,6 +24,9 @@ public:
 	HRESULT Draw_RenderList();
 
 public:
+	void Set_ShadowLightPos(_v3 _vPos) { m_vShadowLightPos = _vPos; }
+
+public:
 	void DOF_On(_bool bOn);
 	void Mono_On(_bool bOn);
 	void Fog_On(_bool bOn);
@@ -31,6 +34,10 @@ public:
 private:
 	list<CGameObject*>			m_RenderList[RENDER_END];
 	typedef list<CGameObject*>	RENDERLIST;
+
+private:
+	_v3							m_vShadowLightPos = V3_NULL;
+
 private:
 	_bool						m_bOnRenderTarget = false;
 	_mat						m_matLastWVP;
