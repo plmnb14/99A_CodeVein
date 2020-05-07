@@ -556,39 +556,48 @@ HRESULT CParticleMgr::Ready_Trail()
 HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 {
 	//if (CInput_Device::Get_Instance()->Key_Down(DIK_B))
-	{
-		//Create_Effect_Delay(L"Snow_Ortho_0", 0.f, V3_NULL, nullptr);
-
-		//COrthoEffect* pEff = static_cast<COrthoEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Snow_Ortho_0", nullptr));
-		//pEff->Set_Desc(V3_NULL, nullptr);
-		//pEff->Set_UV_Speed(1.f, 0.f);
-		//pEff->Reset_Init();
-		//CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
-		//COrthoEffect* pEff;
-		//pEff = static_cast<COrthoEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Snow_Ortho_1", nullptr));
-		//pEff->Set_Desc(V3_NULL, nullptr);
-		//pEff->Set_UV_Speed(1.f, -1.f);
-		//pEff->Reset_Init();
-		//CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
-	}
-
-	CGameObject* pPlayer = CManagement::Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
-	if (!pPlayer)
-		return S_OK;
-	_mat matView = TARGET_TO_TRANS(pPlayer)->Get_WorldMat(); // CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
-	D3DXMatrixInverse(&matView, nullptr, &matView);
-	_v3 vCamUp = _v3(matView._21, matView._22, matView._23);
-	_v3 vCamLook = _v3(matView._31, matView._32, matView._33);
-	_mat matRot;
-	D3DXMatrixIdentity(&matRot);
-	D3DXVec3Normalize(&vCamLook, &vCamLook);
-
-	// Calc Angle
-	_v3	vRight = *D3DXVec3Cross(&vRight, &_v3(0.f, 1.f, 0.f), &vCamLook);
-	V3_NORMAL_SELF(&vRight);
-	_float	fDot = acosf(D3DXVec3Dot(&_v3{ 0,0,1 }, &vCamLook));
-	if (vRight.z > 0)
-		fDot *= -1.f;
+	//{
+	//	EFF_INFO tInfo;
+	//	tInfo.vCreatePos = V3_NULL;
+	//	tInfo.vDirection = V3_NULL;
+	//
+	//	for (_int i = 0; i < 30; i++)
+	//		CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_FireFlower", (void*)&tInfo);
+	//
+	//		//CManagement::Get_Instance()->Add_GameObject_ToLayer(L"GameObject_FireFlower", SCENE_STAGE, L"Layer_Effect");
+	//
+	//	//Create_Effect_Delay(L"Snow_Ortho_0", 0.f, V3_NULL, nullptr);
+	//
+	//	//COrthoEffect* pEff = static_cast<COrthoEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Snow_Ortho_0", nullptr));
+	//	//pEff->Set_Desc(V3_NULL, nullptr);
+	//	//pEff->Set_UV_Speed(1.f, 0.f);
+	//	//pEff->Reset_Init();
+	//	//CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
+	//	//COrthoEffect* pEff;
+	//	//pEff = static_cast<COrthoEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Snow_Ortho_1", nullptr));
+	//	//pEff->Set_Desc(V3_NULL, nullptr);
+	//	//pEff->Set_UV_Speed(1.f, -1.f);
+	//	//pEff->Reset_Init();
+	//	//CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEff, SCENE_STAGE, L"Layer_Effect", nullptr);
+	//}
+	//
+	//CGameObject* pPlayer = CManagement::Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	//if (!pPlayer)
+	//	return S_OK;
+	//_mat matView = TARGET_TO_TRANS(pPlayer)->Get_WorldMat(); // CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	//D3DXMatrixInverse(&matView, nullptr, &matView);
+	//_v3 vCamUp = _v3(matView._21, matView._22, matView._23);
+	//_v3 vCamLook = _v3(matView._31, matView._32, matView._33);
+	//_mat matRot;
+	//D3DXMatrixIdentity(&matRot);
+	//D3DXVec3Normalize(&vCamLook, &vCamLook);
+	//
+	//// Calc Angle
+	//_v3	vRight = *D3DXVec3Cross(&vRight, &_v3(0.f, 1.f, 0.f), &vCamLook);
+	//V3_NORMAL_SELF(&vRight);
+	//_float	fDot = acosf(D3DXVec3Dot(&_v3{ 0,0,1 }, &vCamLook));
+	//if (vRight.z > 0)
+	//	fDot *= -1.f;
 
 	//if (CInput_Device::Get_Instance()->Key_Down(DIK_I))
 	//{

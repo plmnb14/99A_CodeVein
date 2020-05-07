@@ -463,6 +463,9 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\15. Colleague UI\Colleague Jack">
       <UniqueIdentifier>{1256d69f-6532-4f43-93af-fc4859017616}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\3%29 Effect\Effect_FireFlower">
+      <UniqueIdentifier>{e3f3b1d2-c8df-469c-b4a2-7ebc9b7ebbc1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -960,6 +963,9 @@
     <ClInclude Include="..\Headers\CollBullet_Heal.h">
       <Filter>02.GameObject\Stage\9%29 Player_Colleague\Colleague Bullet\Heal Bullet</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Effect_FireFlower.h">
+      <Filter>02.GameObject\Stage\3%29 Effect\Effect_FireFlower</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1447,6 +1453,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\CollBullet_Heal.cpp">
       <Filter>02.GameObject\Stage\9%29 Player_Colleague\Colleague Bullet\Heal Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Effect_FireFlower.cpp">
+      <Filter>02.GameObject\Stage\3%29 Effect\Effect_FireFlower</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

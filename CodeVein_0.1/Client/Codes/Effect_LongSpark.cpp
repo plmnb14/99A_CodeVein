@@ -33,11 +33,14 @@ HRESULT CEffect_LongSpark::Ready_GameObject(void* pArg)
 	m_fAccel = 1.f;
 	m_fJumpPower = 5.f;
 
+	m_dCurTime = 0.f;
+	m_bDead = false;
+
 	//_v3 vCreatePos = *(_v3*)pArg;
 	EFF_INFO tInfo = *(EFF_INFO*)pArg;
 	m_fCreatePosY = tInfo.vCreatePos.y;
 	m_vPos = tInfo.vCreatePos;
-	m_vPos += _v3(0.f, 1.8, 0.f);
+	m_vPos += _v3(0.f, 1.8f, 0.f);
 	m_pTransformCom->Set_Pos(tInfo.vCreatePos);
 	m_pTransformCom->Set_Scale(_v3(0.8f, 0.8f, 0.8f));
 
