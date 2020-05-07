@@ -145,7 +145,7 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass, _
 		_bool bMotionBlur = true;
 		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
 			return E_FAIL;
-		_bool bDecalTarget = false;
+		_bool bDecalTarget = true;
 		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
 			return E_FAIL;
 		_float fBloomPower = 10.f;
