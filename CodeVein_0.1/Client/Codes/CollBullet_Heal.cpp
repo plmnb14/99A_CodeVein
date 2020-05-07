@@ -100,7 +100,8 @@ _int CCollBullet_Heal::Update_GameObject(_double TimeDelta)
 	// 플레이어와 충돌했다면
 	if (false == pPlayer->Get_Target_IsHit())
 	{
-		pPlayer->Add_Target_Hp(fPlusHP);
+		_float TempHP = pPlayer->Get_Target_Param().fHp_Max / 0.8f;
+		pPlayer->Add_Target_Hp(TempHP);
 		//죽음 이펙트
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag3, m_pTransformCom->Get_Pos());
 		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, m_pTransformCom->Get_Pos());
