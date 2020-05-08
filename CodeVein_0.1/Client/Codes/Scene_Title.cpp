@@ -52,14 +52,14 @@ _int CScene_Title::Update_Scene(_double TimeDelta)
 	{
 		if (false == m_bReadyAll)
 		{
-			//m_bReadyAll = true;
-			//
-			//CUI_Manager::Get_Instance()->SetUp_UILayer();
-			//
-			//CParticleMgr::Get_Instance()->Ready_Trail();
-			//
-			//if (FAILED(Ready_Player()))
-			//	return E_FAIL;
+			m_bReadyAll = true;
+			
+			CUI_Manager::Get_Instance()->SetUp_UILayer();
+			
+			CParticleMgr::Get_Instance()->Ready_Trail();
+			
+			if (FAILED(Ready_Player()))
+				return E_FAIL;
 		}
 
 		static_cast<CLoadingBar*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingUI", SCENE_TITLE))->Set_Finish();
@@ -67,23 +67,11 @@ _int CScene_Title::Update_Scene(_double TimeDelta)
 		cout << "로드 되었습니다!! 넘어가세요!!" << endl;
 	}
 
-	// =======================================================
-	// UI 버튼 막아놓음.
-	// =======================================================
-	//_bool Coll_ToButton = static_cast<CLogoBtn*>(g_pManagement->Get_GameObjectBack(L"Layer_LogoBtn", SCENE_TITLE))->Get_CollMose();
-
 	if (true == m_pLoading->Get_Finish() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
 		static_cast<CLoadingScreen*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingScreen", SCENE_STATIC))->Set_Active(false);
 		static_cast<CLoadingScreen*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingScreen", SCENE_STATIC))->Set_UI_Index(1);
 		
-		// =======================================================
-		// UI 버튼 막아놓음.
-		// =======================================================
-		//if (false == Coll_ToButton)
-		//	return 0;
-		//m_pLoadingScreen->Set_Active(false);	
-
 		CScene* pScene = nullptr;
 	
 		switch (m_sStageOptionIdx)

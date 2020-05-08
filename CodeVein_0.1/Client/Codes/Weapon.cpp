@@ -487,14 +487,13 @@ void CWeapon::Change_WeaponMesh(const _tchar* _MeshName)
 	// 컴포넌트에 있는 매쉬 찾아서
 	auto& iter = m_pmapComponents.find(L"Com_StaticMesh");
 
-	// 둘 다 해제
+	// Static 멤버변수는 처음에 Clone 할때 AddRef 해준다., 
 	Safe_Release(m_pMesh_Static);
 	Safe_Release(iter->second);
 
 	// Release 한 컴포넌트에 새로이 Clone 받음.
 	iter->second = m_pMesh_Static = static_cast<CMesh_Static*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, _MeshName));
 	Safe_AddRef(iter->second);
-	//Safe_AddRef(m_pMesh_Static);
 
 	// 콜라이더도 업데이트 해야함.
 	_float fRadius = m_tWeaponParam[m_eWeaponData].fRadius;

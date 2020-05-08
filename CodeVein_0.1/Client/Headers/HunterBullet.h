@@ -36,9 +36,6 @@ public:
 	virtual void Free();
 
 private:
-	CTransform*			m_pTransformCom = nullptr;
-	CCollider*			m_pCollider = nullptr;
-	CRenderer*			m_pRendererCom = nullptr;
 	CTrail_VFX*			m_pTrailEffect = nullptr;
 	CEffect*			m_pBulletBody_0 = nullptr;
 	CEffect*			m_pBulletBody_1 = nullptr;
