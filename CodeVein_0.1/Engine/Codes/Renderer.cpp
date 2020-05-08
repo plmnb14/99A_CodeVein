@@ -496,7 +496,7 @@ void CRenderer::Fog_On(_bool bOn)
 	m_bFog = bOn;
 
 	if (m_bFog)
-		m_fFogDestiny = 0.06f;
+		m_fFogDestiny = 0.01f;
 	else
 		m_fFogDestiny = 0.f;
 }
@@ -1423,6 +1423,16 @@ HRESULT CRenderer::Render_After()
 	if (FAILED(m_pShader_Blend->Set_Texture("g_FogColorTexture", m_pTarget_Manager->Get_Texture(L"Target_BlurSky"))))
 		return E_FAIL;
 
+	_mat		ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+	D3DXMatrixInverse(&ViewMatrix, nullptr, &ViewMatrix);
+	D3DXMatrixInverse(&ProjMatrix, nullptr, &ProjMatrix);
+
+	if (FAILED(m_pShader_Blend->Set_Value("g_matViewInv", &ViewMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Value("g_matProjInv", &ProjMatrix, sizeof(_mat))))
+		return E_FAIL;
+
 	if (GetAsyncKeyState('M') & 0x8000)
 	{
 		m_pGradingTextureTest->SetUp_OnShader("g_GradingTexture", m_pShader_Blend, 0);
@@ -1433,22 +1443,14 @@ HRESULT CRenderer::Render_After()
 		m_pGradingTexture->SetUp_OnShader("g_GradingTexture", m_pShader_Blend, 0);
 	}
 
-	//if (GetAsyncKeyState('O') & 0x8000)
-	//{
-	//	m_fFocus += 1.f * DELTA_60;
-	//
-	//	cout << "RANGE : " << m_fRange << endl;
-	//	cout << "FOCUS : " << m_fFocus << endl;
-	//	cout << "=========================" << endl;
-	//}
-	//if (GetAsyncKeyState('I') & 0x8000)
-	//{
-	//	m_fFocus -= 1.f * DELTA_60;
-	//
-	//	cout << "RANGE : " << m_fRange << endl;
-	//	cout << "FOCUS : " << m_fFocus << endl;
-	//	cout << "=========================" << endl;
-	//}
+	if (GetAsyncKeyState('O') & 0x8000)
+	{
+		m_fFogDestiny = 0.06f;
+	}
+	if (GetAsyncKeyState('I') & 0x8000)
+	{
+		m_fFogDestiny = 0.15f;
+	}
 	//if (GetAsyncKeyState('U') & 0x8000)
 	//{
 	//	m_fRange += 1.f * DELTA_60;
