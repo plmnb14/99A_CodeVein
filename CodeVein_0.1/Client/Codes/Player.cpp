@@ -32,7 +32,7 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 	Ready_BoneMatrix();
 	Ready_Collider();
 
-	//Ready_Weapon();
+	Ready_Weapon();
 	Ready_DrainWeapon();
 
 	Ready_Skills();
@@ -10681,10 +10681,10 @@ CGameObject * CPlayer::Clone_GameObject(void * pArg)
 
 void CPlayer::Free()
 {
-	//LOOP(5)
-	//{
-	//	Safe_Release(m_pWeapon[i]);
-	//}
+	LOOP(5)
+	{
+		Safe_Release(m_pWeapon[i]);
+	}
 
 	for (auto& iter : m_vecFullSkillInfo)
 	{

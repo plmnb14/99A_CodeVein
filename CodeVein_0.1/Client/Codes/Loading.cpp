@@ -1610,213 +1610,259 @@ _uint CLoading::Loading_MainStages()
 
 HRESULT CLoading::Ready_Intro_MonsterPrototype()
 {
+	//============================================================================================================================================
 	// µ¶³ª¹æ
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonButterfly", CPoisonButterfly::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// µ¶³ª¹æ 5¹ß Åõ»çÃ¼
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonBullet", CPoisonBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_PoisonBullet", L"Monster_PoisonBullet", 20);
-	// µ¶³ª¹æ ÃßÀû Åõ»çÃ¼
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonChaseBullet", CPoisonChaseBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_PoisonChaseBullet", L"Monster_PoisonChaseBullet", 5);
-	// µ¶³ª¹æ 4¹æÇâ Åõ»çÃ¼
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonRotationBullet", CPoisonRotationBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_PoisonRotationBullet", L"Monster_PoisonRotationBullet", 8);
-	// µ¶³ª¹æ ±â¸ð¾Æ¼­ ½î±â Ãæµ¹Ã¼
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonTornado", CPoisonTornado::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_PoisonTornado", L"Monster_PoisonTornado", 3);
-
+	//============================================================================================================================================
+	{
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonButterfly", CPoisonButterfly::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// µ¶³ª¹æ 5¹ß Åõ»çÃ¼
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonBullet", CPoisonBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_PoisonBullet", L"Monster_PoisonBullet", 20);
+		// µ¶³ª¹æ ÃßÀû Åõ»çÃ¼
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonChaseBullet", CPoisonChaseBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_PoisonChaseBullet", L"Monster_PoisonChaseBullet", 5);
+		// µ¶³ª¹æ 4¹æÇâ Åõ»çÃ¼
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonRotationBullet", CPoisonRotationBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_PoisonRotationBullet", L"Monster_PoisonRotationBullet", 8);
+		// µ¶³ª¹æ ±â¸ð¾Æ¼­ ½î±â Ãæµ¹Ã¼
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonTornado", CPoisonTornado::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_PoisonTornado", L"Monster_PoisonTornado", 3);
+	}
+	//============================================================================================================================================
 	// ¿©¿ÕÀÇ ±â»ç
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_QueensKnight", CQueensKnight::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// ¶¥¿¡¼­ Âî¸´Âî¸´ ¿òÁ÷ÀÌ´Â ÃÑ¾Ë
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkGroundBullet", CDarkGroundBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DarkGroundBullet", L"Monster_DarkGroundBullet", 16);
-	// ¾îµÒ Æø¹ß
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkBoom", CDarkBoom::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DarkBoom", L"Monster_DarkBoom", 16);
-	// ±â»ç ÁÖÀ§ °á°è
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkMidCol", CDarkMidCol::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DarkMidCol", L"Monster_DarkMidCol", 3);
-	// ¸®Å© ÇÊµå
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_LeakField", CLeakField::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_LeakField", L"Monster_LeakField", 3);
-
-	// ¾óÀ½¿©ÀÚ
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceGirl", CIceGirl::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// ¾óÀ½¿©ÀÚ ÄÝµåºö ÀÛÀº Å©±â
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamSmall", CColdBeamSmall::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_ColdBeamSmall", L"Monster_ColdBeamSmall", 10);
-	// ¾óÀ½¿©ÀÚ ÄÝµåºö Áß°£ Å©±â
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamMiddle", CColdBeamMiddle::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_ColdBeamMiddle", L"Monster_ColdBeamMiddle", 8);
-	// ¾óÀ½¿©ÀÚ ÄÝµåºö Å« Å©±â
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamBig", CColdBeamBig::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_ColdBeamBig", L"Monster_ColdBeamBig", 20);
-	// ¾óÀ½¿©ÀÚ ÄÝµåºö ³¯Ä«·Î¿î°Í
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamSharp", CColdBeamSharp::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_ColdBeamSharp", L"Monster_ColdBeamSharp", 10);
-	// ¾óÀ½¿©ÀÚ °Ë±â¹ß»ç
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordBullet", CSwordBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_SwordBullet", L"Monster_SwordBullet", 3);
-	// ¾óÀ½¿©ÀÚ ¾óÀ½º¸È£¸·
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceBarrier", CIceBarrier::Create(m_pGraphicDev))))
-		return E_FAIL;
-	//// º¸·ù
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_IceBarrier", L"Monster_IceBarrier", 2);
-
+	//============================================================================================================================================
+	{
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_QueensKnight", CQueensKnight::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ¶¥¿¡¼­ Âî¸´Âî¸´ ¿òÁ÷ÀÌ´Â ÃÑ¾Ë
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkGroundBullet", CDarkGroundBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DarkGroundBullet", L"Monster_DarkGroundBullet", 16);
+		// ¾îµÒ Æø¹ß
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkBoom", CDarkBoom::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DarkBoom", L"Monster_DarkBoom", 16);
+		// ±â»ç ÁÖÀ§ °á°è
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkMidCol", CDarkMidCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DarkMidCol", L"Monster_DarkMidCol", 3);
+		// ¸®Å© ÇÊµå
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_LeakField", CLeakField::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_LeakField", L"Monster_LeakField", 3);
+	}
+	//============================================================================================================================================
+	//// ¾óÀ½¿©ÀÚ
+	//============================================================================================================================================
+	{
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceGirl", CIceGirl::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ¾óÀ½¿©ÀÚ ÄÝµåºö ÀÛÀº Å©±â
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamSmall", CColdBeamSmall::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_ColdBeamSmall", L"Monster_ColdBeamSmall", 10);
+		// ¾óÀ½¿©ÀÚ ÄÝµåºö Áß°£ Å©±â
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamMiddle", CColdBeamMiddle::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_ColdBeamMiddle", L"Monster_ColdBeamMiddle", 8);
+		// ¾óÀ½¿©ÀÚ ÄÝµåºö Å« Å©±â
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamBig", CColdBeamBig::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_ColdBeamBig", L"Monster_ColdBeamBig", 20);
+		// ¾óÀ½¿©ÀÚ ÄÝµåºö ³¯Ä«·Î¿î°Í
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamSharp", CColdBeamSharp::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_ColdBeamSharp", L"Monster_ColdBeamSharp", 10);
+		// ¾óÀ½¿©ÀÚ °Ë±â¹ß»ç
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordBullet", CSwordBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_SwordBullet", L"Monster_SwordBullet", 3);
+		// ¾óÀ½¿©ÀÚ ¾óÀ½º¸È£¸·
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceBarrier", CIceBarrier::Create(m_pGraphicDev))))
+			return E_FAIL;
+		//// º¸·ù
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_IceBarrier", L"Monster_IceBarrier", 2);
+	}
+	//============================================================================================================================================
 	// ºÒ³²ÀÚ
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireBoy", CFireBoy::Create(m_pGraphicDev))))
-		return E_FAIL;
-	//Æ÷½ÅÀ¸·Î ¶§¸®±â ÄÝ¶óÀÌ´õ
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunAttackCol", CGunAttackCol::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_GunAttackCol", L"Monster_GunAttackCol", 3);
-
-	// ºÒ ÃÑ¾Ë
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireBullet", CFireBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireBullet", L"Monster_FireBullet", 80);
-
-	// È­¿°±¸
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireSphere", CFireSphere::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireSphere", L"Monster_FireSphere", 3);
-
-	// Å¸°ÙÀÇ ¹Ù´Ú¿¡ È­¿°Æø¹ß
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireGround", CFireGround::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireGround", L"Monster_FireGround", 15);
-
-	// È­¿° Åä³×ÀÌµµ ÄÝ¶óÀÌ´õ
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireTornadoCol", CFireTornadoCol::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireTornadoCol", L"Monster_FireTornadoCol", 3);
-
-	// ¿Þ¼Õ¿¡ È­¿°±¸ ¼ÒÈ¯
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireHandBall", CFireHandBall::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireHandBall", L"Monster_FireHandBall", 3);
-	
-	// ¿Þ¼Õ¿¡ È­¿°±¸ Á×Àº ÈÄ »ý¼ºµÇ´Â ºÒ²É
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireFlame", CFireFlame::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireFlame", L"Monster_FireFlame", 48);
-
+	//============================================================================================================================================
+	{
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireBoy", CFireBoy::Create(m_pGraphicDev))))
+			return E_FAIL;
+		//Æ÷½ÅÀ¸·Î ¶§¸®±â ÄÝ¶óÀÌ´õ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunAttackCol", CGunAttackCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_GunAttackCol", L"Monster_GunAttackCol", 3);
+		
+		// ºÒ ÃÑ¾Ë
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireBullet", CFireBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireBullet", L"Monster_FireBullet", 80);
+		
+		// È­¿°±¸
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireSphere", CFireSphere::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireSphere", L"Monster_FireSphere", 3);
+		
+		// Å¸°ÙÀÇ ¹Ù´Ú¿¡ È­¿°Æø¹ß
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireGround", CFireGround::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireGround", L"Monster_FireGround", 15);
+		
+		// È­¿° Åä³×ÀÌµµ ÄÝ¶óÀÌ´õ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireTornadoCol", CFireTornadoCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireTornadoCol", L"Monster_FireTornadoCol", 3);
+		
+		// ¿Þ¼Õ¿¡ È­¿°±¸ ¼ÒÈ¯
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireHandBall", CFireHandBall::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireHandBall", L"Monster_FireHandBall", 3);
+		
+		// ¿Þ¼Õ¿¡ È­¿°±¸ Á×Àº ÈÄ »ý¼ºµÇ´Â ºÒ²É
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireFlame", CFireFlame::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireFlame", L"Monster_FireFlame", 48);
+	}
+	//============================================================================================================================================
 	// »ç½¿¿Õ
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKing", CDeerKing::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// »ç½¿¿Õ  Åõ»çÃ¼
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingBullet", CDeerKingBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingBullet", L"Monster_DeerKingBullet", 24);
-	// »ç½¿¿Õ  »ÏÁ· ¾óÀ½
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingColdBeam", CDeerKingColdBeam::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingColdBeam", L"Monster_DeerKingColdBeam", 6);
-	// »ç½¿¿Õ  Á¡ÇÁÁÖ¸Ô ÄÝ¶óÀÌ´õ
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingJumpFistCol", CDeerKingJumpFistCol::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingJumpFistCol", L"Monster_DeerKingJumpFistCol", 3);
-	// »ç½¿¿Õ  Á¦ÀÚ¸® Á¡ÇÁ ÄÝ¶óÀÌ´õ
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingJumpInPlaceCol", CDeerKingJumpInPlaceCol::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingJumpInPlaceCol", L"Monster_DeerKingJumpInPlaceCol", 3);
-	// »ç½¿¿Õ  µ¹Áø ÄÝ¶óÀÌ´õ
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingRushCol", CDeerKingRushCol::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingRushCol", L"Monster_DeerKingRushCol", 3);
-	// »ç½¿¿Õ  ¾óÀ½°Ë ¼ÒÈ¯
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingIceSword", CDeerKingIceSword::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingIceSword", L"Monster_DeerKingIceSword", 3);
-	// »ç½¿¿Õ  ¿À¸¥¼Õ Ãæµ¹Ã¼
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingRightHandCol", CDeerKingRightHandCol::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingRightHandCol", L"Monster_DeerKingRightHandCol", 3);
+	//============================================================================================================================================
+	{
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKing", CDeerKing::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// »ç½¿¿Õ  Åõ»çÃ¼
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingBullet", CDeerKingBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingBullet", L"Monster_DeerKingBullet", 24);
+		// »ç½¿¿Õ  »ÏÁ· ¾óÀ½
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingColdBeam", CDeerKingColdBeam::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingColdBeam", L"Monster_DeerKingColdBeam", 6);
+		// »ç½¿¿Õ  Á¡ÇÁÁÖ¸Ô ÄÝ¶óÀÌ´õ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingJumpFistCol", CDeerKingJumpFistCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingJumpFistCol", L"Monster_DeerKingJumpFistCol", 3);
+		// »ç½¿¿Õ  Á¦ÀÚ¸® Á¡ÇÁ ÄÝ¶óÀÌ´õ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingJumpInPlaceCol", CDeerKingJumpInPlaceCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingJumpInPlaceCol", L"Monster_DeerKingJumpInPlaceCol", 3);
+		// »ç½¿¿Õ  µ¹Áø ÄÝ¶óÀÌ´õ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingRushCol", CDeerKingRushCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingRushCol", L"Monster_DeerKingRushCol", 3);
+		// »ç½¿¿Õ  ¾óÀ½°Ë ¼ÒÈ¯
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingIceSword", CDeerKingIceSword::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingIceSword", L"Monster_DeerKingIceSword", 3);
+		// »ç½¿¿Õ  ¿À¸¥¼Õ Ãæµ¹Ã¼
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingRightHandCol", CDeerKingRightHandCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingRightHandCol", L"Monster_DeerKingRightHandCol", 3);
+	}
+	//============================================================================================================================================
 	// °Ë°ÕÁö
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenji", CSwordGenji::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// °Ë°ÕÁö ÃÑ¾Ë
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenjiBullet", CSwordGenjiBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_SwordGenjiBullet", L"Monster_SwordGenjiBullet", 100);
-	// ÃÑ°ÕÁö
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenji", CGunGenji::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// ÃÑ°ÕÁö ÃÑ¾Ë
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenjiBullet", CGunGenjiBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_GunGenjiBullet", L"Monster_GunGenjiBullet", 100);
-	// °Ë¹æÆÐ°ÕÁö
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordShieldGenji", CSwordShieldGenji::Create(m_pGraphicDev))))
-		return E_FAIL;
+	//============================================================================================================================================
+	{
+		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenji", CSwordGenji::Create(m_pGraphicDev))))
+		//	return E_FAIL;
+		//// °Ë°ÕÁö ÃÑ¾Ë
+		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenjiBullet", CSwordGenjiBullet::Create(m_pGraphicDev))))
+		//	return E_FAIL;
+		//CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_SwordGenjiBullet", L"Monster_SwordGenjiBullet", 100);
+		//// ÃÑ°ÕÁö
+		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenji", CGunGenji::Create(m_pGraphicDev))))
+		//	return E_FAIL;
+		//// ÃÑ°ÕÁö ÃÑ¾Ë
+		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenjiBullet", CGunGenjiBullet::Create(m_pGraphicDev))))
+		//	return E_FAIL;
+		//CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_GunGenjiBullet", L"Monster_GunGenjiBullet", 100);
+		//// °Ë¹æÆÐ°ÕÁö
+		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordShieldGenji", CSwordShieldGenji::Create(m_pGraphicDev))))
+		//	return E_FAIL;
+	}
+	//============================================================================================================================================
 	// ÅäÅÛ
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_Cocoon", CCocoon::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// ÅäÅÛ ¹æ»çÃÑ¾Ë
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBullet", CCocoonBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_CocoonBullet", L"Monster_CocoonBullet", 800);
-	// ÅäÅÛ ÃÑ¾Ë
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBigBullet", CCocoonBigBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_CocoonBigBullet", L"Monster_CocoonBigBullet", 100);
+	//============================================================================================================================================
+	{
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Cocoon", CCocoon::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ÅäÅÛ ¹æ»çÃÑ¾Ë
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBullet", CCocoonBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_CocoonBullet", L"Monster_CocoonBullet", 800);
+		// ÅäÅÛ ÃÑ¾Ë
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBigBullet", CCocoonBigBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_CocoonBigBullet", L"Monster_CocoonBigBullet", 100);
+	}
+	//============================================================================================================================================
 	// ±èÇåÅÍ
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_Hunter", CHunter::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// ±èÇåÅÍ ÃÑ¾Ë
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_HunterBullet", CHunterBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_HunterBullet", L"Monster_HunterBullet", 100);
+	//============================================================================================================================================
+	{
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Hunter", CHunter::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ±èÇåÅÍ ÃÑ¾Ë
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_HunterBullet", CHunterBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_HunterBullet", L"Monster_HunterBullet", 100);
+	}
+	//============================================================================================================================================
 	// ¸ùÅ°.D.·çÇÇ
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_Monkey", CMonkey::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// ¸ùÅ°.D.ÃÑ¾Ë
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_MonkeyBullet", CMonkeyBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_MonkeyBullet", L"Monster_MonkeyBullet", 100);
+	//============================================================================================================================================
+	{
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Monkey", CMonkey::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ¸ùÅ°.D.ÃÑ¾Ë
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_MonkeyBullet", CMonkeyBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_MonkeyBullet", L"Monster_MonkeyBullet", 100);
+	}
+	//============================================================================================================================================
 	// µûÀÌ¸Ç
+	//============================================================================================================================================
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_ThaiMan", CThaiMan::Create(m_pGraphicDev))))
 		return E_FAIL;
+	//============================================================================================================================================
 	// ¼º°Ô
+	//============================================================================================================================================
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_Urchin", CUrchin::Create(m_pGraphicDev))))
 		return E_FAIL;
+	//============================================================================================================================================
 	// ´Á´ë
+	//============================================================================================================================================
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_Wolf", CWolf::Create(m_pGraphicDev))))
 		return E_FAIL;
+	//============================================================================================================================================
 	// ¾ßÂ÷¸Ç
+	//============================================================================================================================================
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_YachaMan", CYachaMan::Create(m_pGraphicDev))))
 		return E_FAIL;
+	//============================================================================================================================================
 	// ¿¹Æ¼
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_Yeti", CYeti::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// ¿¹Æ¼ ÃÑ¾Ë
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_YetiBullet", CYetiBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_YetiBullet", L"Monster_YetiBullet", 100);
-
+	//============================================================================================================================================
+	{
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Yeti", CYeti::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ¿¹Æ¼ ÃÑ¾Ë
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_YetiBullet", CYetiBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_YetiBullet", L"Monster_YetiBullet", 100);
+	}
+	//============================================================================================================================================
 	// Æê_µ¶³ªºñ
+	//============================================================================================================================================
 	if (FAILED(g_pManagement->Add_Prototype(L"Pet_PoisonButterFly", CPet_PoisonButterFly::Create(m_pGraphicDev))))
 		return E_FAIL;
 	// Æê ÃÑ¾Ë ¿øº»
 	if (FAILED(g_pManagement->Add_Prototype(L"Pet_Bullet", CPet_Bullet::Create(m_pGraphicDev))))
 		return E_FAIL;
 	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Pet_Bullet", L"Pet_Bullet", 100);
+	//============================================================================================================================================
 
 	return S_OK;
 }
