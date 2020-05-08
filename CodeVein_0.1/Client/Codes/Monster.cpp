@@ -122,7 +122,7 @@ void CMonster::Set_Target_Auto(_bool Ransdom_Aggro)
 
 				// 어그로 시간, 랜덤 Offset 초기화
 				m_fAggroTime = 0.f;
-				m_fOffsetAggroTime = _float(CALC::Random_Num_Double(-2, 2));
+				m_fOffsetAggroTime = _float(CALC::Random_Num_Double(-3, 3));
 			}
 		}
 
