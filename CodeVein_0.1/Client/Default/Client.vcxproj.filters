@@ -897,9 +897,6 @@
     <ClInclude Include="..\Headers\Monster.h">
       <Filter>02.GameObject\Stage\2%29 Monster</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\DropItem.h">
-      <Filter>02.GameObject\Stage\7%29 Item</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\DeerKingIceSword.h">
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
     </ClInclude>
@@ -977,6 +974,9 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Monster.h">
       <Filter>02.GameObject\Stage\2%29 Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\DropItem.h">
+      <Filter>02.GameObject\Stage\7%29 Item</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\DropItem.h">
       <Filter>02.GameObject\Stage\7%29 Item</Filter>
@@ -1397,9 +1397,6 @@
     <ClCompile Include="..\Codes\Pet_Bullet.cpp">
       <Filter>02.GameObject\Stage\10%29 Pet</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\DropItem.cpp">
-      <Filter>02.GameObject\Stage\7%29 Item</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\DeerKingIceSword.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
     </ClCompile>
@@ -1477,6 +1474,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Monster.cpp">
       <Filter>02.GameObject\Stage\2%29 Monster</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\DropItem.cpp">
+      <Filter>02.GameObject\Stage\7%29 Item</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\DropItem.cpp">
       <Filter>02.GameObject\Stage\7%29 Item</Filter>

@@ -306,7 +306,6 @@
     <ClInclude Include="..\Headers\SwordGenji.h" />
     <ClInclude Include="..\Headers\SwordGenjiBullet.h" />
     <ClInclude Include="..\Headers\SwordShieldGenji.h" />
-    <ClInclude Include="..\Headers\DropItem.h" />
     <ClInclude Include="..\Headers\ThaiMan.h" />
     <ClInclude Include="..\Headers\Total_Inven.h" />
     <ClInclude Include="..\Headers\UI_FontNum.h" />
@@ -471,7 +470,6 @@
     <ClCompile Include="..\Codes\SwordGenji.cpp" />
     <ClCompile Include="..\Codes\SwordGenjiBullet.cpp" />
     <ClCompile Include="..\Codes\SwordShieldGenji.cpp" />
-    <ClCompile Include="..\Codes\DropItem.cpp" />
     <ClCompile Include="..\Codes\ThaiMan.cpp" />
     <ClCompile Include="..\Codes\Total_Inven.cpp" />
     <ClCompile Include="..\Codes\UI_FontNum.cpp" />

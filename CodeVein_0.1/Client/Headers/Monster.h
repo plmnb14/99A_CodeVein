@@ -10,7 +10,7 @@
 #include "MonsterUI.h"
 #include "Weapon.h"
 #include "Haze.h"
-#include "DropItem.h"
+//#include "DropItem.h"
 
 BEGIN(Client)
 
