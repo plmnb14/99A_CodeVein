@@ -27,8 +27,8 @@ HRESULT CColleague_UI::Ready_GameObject(void * pArg)
 
 	m_fPosX = 119.50f;
 	m_fPosY = 421.50f;
-	m_fSizeX = 155.f;
-	m_fSizeY = 13.f;
+	m_fSizeX = 162.f;
+	m_fSizeY = 20.f;
 
 	//m_bIsActive = true;
 

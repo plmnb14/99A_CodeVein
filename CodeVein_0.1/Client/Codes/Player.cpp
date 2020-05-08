@@ -43,6 +43,12 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 	m_pBattleAgent->Set_RimAlpha(0.25f);
 	m_pBattleAgent->Set_RimValue(7.f);
 
+	m_pUIManager = CUI_Manager::Get_Instance();
+	Safe_AddRef(m_pUIManager);
+
+	m_pCamManager = CCameraMgr::Get_Instance();
+	Safe_AddRef(m_pCamManager);
+
 	return NOERROR;
 }
 
@@ -1168,32 +1174,43 @@ void CPlayer::KeyInput()
 
 void CPlayer::KeyDown()
 {
-	if (false == m_bStopMovementKeyInput)
+	if (m_bActiveUI)
 	{
-		// 이동관련
-		Key_Movement_Down();
-
-		// 공격관련
-		Key_Attack();
-
-		// 무기 변경
-		Key_ChangeWeapon();
-
-		// 스킬
-		Key_Skill();
-
-		// 흡혈
-		Key_BloodSuck();
-
-		// 상호작용
-		Key_InterAct();
-
-		// 유틸리티
-		Key_Utility();
+		Key_UI_n_Utiliy(m_bActiveUI);
 	}
 
-	// 특수동작
-	Key_Special();
+	else
+	{
+		if (false == m_bStopMovementKeyInput)
+		{
+			// 이동관련
+			Key_Movement_Down();
+
+			// 공격관련
+			Key_Attack();
+
+			// 무기 변경
+			Key_ChangeWeapon();
+
+			// 스킬
+			Key_Skill();
+
+			// 흡혈
+			Key_BloodSuck();
+
+			// 상호작용
+			Key_InterAct();
+
+			// 유틸리티
+			Key_Utility();
+		}
+
+		// 특수동작
+		Key_Special();
+
+		// UI , 유틸
+		Key_UI_n_Utiliy(m_bActiveUI);
+	}
 }
 
 void CPlayer::KeyUp()
@@ -1436,19 +1453,6 @@ void CPlayer::Key_Special()
 		if (false == m_bOnAiming)
 		{
 			CCameraMgr::Get_Instance()->Set_LockAngleX(D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)));
-		}
-	}
-
-	if (g_pInput_Device->Key_Down(DIK_X))
-	{
-		if (m_bCanMistletoe)
-		{
-			m_bCanMistletoe = false;
-
-			m_bActiveUI = true;
-
-			m_bOnMistletoe = true;
-			m_eActState = ACT_Mistoletoe;
 		}
 	}
 }
@@ -1774,6 +1778,61 @@ void CPlayer::Key_BloodSuck()
 
 			else
 				cout << "처형할 대상이 없습니다." << endl;
+		}
+	}
+}
+
+void CPlayer::Key_UI_n_Utiliy(_bool _bActiveUI)
+{
+	// 활성화된 상태가 아닐 때
+	if (!_bActiveUI)
+	{
+		// 상호작용도 하고, 아이템도 줍고, 겨우살이도 활성화 시키고
+		if (g_pInput_Device->Key_Down(DIK_E))
+		{
+			// 겨우살이가 활성화 가능하면
+			if (m_bOnUI_Mistletoe)
+			{
+				Active_UI_Mistletoe();
+			}
+
+			// 상호작용 가능
+			else if (m_bCanInterAct)
+			{
+				// 아직 추가안함.
+			}
+
+			// 대화 가능
+			else if (m_bCanDialouge)
+			{
+				// 아직 추가안함.
+			}
+
+			// 아이템 획득 가능
+			else if (m_bCanPickUp)
+			{
+				// 아직 추가안함.
+			}
+		}
+
+		// 유아이가 비활성화 되어 있을 때는 , 메인 UI 를 킨다.
+		else if (g_pInput_Device->Key_Down(DIK_ESCAPE))
+		{
+		}
+	}
+
+	// UI 가 활성화 되어 있을 경우
+
+	else if (_bActiveUI)
+	{
+		// 유아이가 활성화 되어 있을 때는 , 닫아주는 기능을 한다.
+		if (g_pInput_Device->Key_Down(DIK_ESCAPE))
+		{
+			// 초기화
+			Active_UI_Mistletoe(true);
+			Active_UI_Inventory(true);
+			Active_UI_StageSelect(true);
+			Active_UI_NPC(true);
 		}
 	}
 }
@@ -10131,6 +10190,57 @@ void CPlayer::Reset_All()
 {
 }
 
+void CPlayer::Active_UI_Mistletoe(_bool _bResetUI)
+{
+	_bool bUIActive = false;
+
+	// 활성 상태에 따라 On/Off 판단 , 플레이어 유아이 활성화도 바꿈
+	if(!_bResetUI)
+		m_bActiveUI = m_pUIManager->Get_MistletoeUI()->Get_Active() ? false : true;
+
+	// 스테이지 선택 UI 를 On/Off 시킨다.
+	m_pUIManager->Get_MistletoeUI()->Set_Active(bUIActive);
+
+	// 카메라 에임 상태 설정
+	m_pCamManager->Set_OnAimingTarget(bUIActive);
+
+	// 비활성화면 리턴
+	if (!bUIActive)
+	{
+		// 타겟도 Null 해줘요
+		m_pCamManager->Set_AimingTarget(nullptr);
+		return;
+	}
+
+	// 타겟 설정
+	m_pCamManager->Set_AimingTarget(m_pUIManager->Get_MistletoeUI());
+}
+
+void CPlayer::Active_UI_Inventory(_bool _bResetUI)
+{
+	// 전체 UI 를 활성화 시킨다.
+	m_pUIManager->Get_Total_Inven()->Set_Active(true);
+}
+
+void CPlayer::Active_UI_StageSelect(_bool _bResetUI)
+{
+	// 활성 상태에 따라 On/Off 판단
+	_bool bUIActive = m_pUIManager->Get_MistletoeUI()->Get_Active() ? false : true;
+
+	// 스테이지 선택 UI 를 On/Off 시킨다.
+	m_pUIManager->Get_MistletoeUI()->Set_Active(bUIActive);
+
+	// 비활성화면 리턴
+	if (!bUIActive)
+		return;
+}
+
+void CPlayer::Active_UI_NPC(_bool _bResetUI)
+{
+	// NPC UI 를 활성화 시킨다.
+	m_pUIManager->Get_MistletoeUI()->Set_Active(true);
+}
+
 HRESULT CPlayer::Add_Component()
 {
 	// For.Com_Transform
@@ -10352,7 +10462,7 @@ void CPlayer::Check_Mistletoe()
 	if (m_eActState == ACT_BloodSuck_Execution)
 		return;
 
-	if (m_bOnMistletoe)
+	if (m_bActiveUI)
 		return;
 
 	if (g_pManagement->Get_GameObjectList(L"Layer_Mistletoe", SCENE_STAGE).empty())
@@ -10367,10 +10477,12 @@ void CPlayer::Check_Mistletoe()
 
 		if (1.5f >= V3_LENGTH(&(m_pTransform->Get_Pos() - pIterTrans->Get_Pos())))
 		{
-			m_bCanMistletoe = true;
+			m_bOnUI_Mistletoe = true;
 			return;
 		}
 	}
+
+	m_bOnUI_Mistletoe = false;
 }
 
 _int CPlayer::Check_HitDirection()
@@ -10529,7 +10641,6 @@ void CPlayer::Free()
 	m_vecActiveSkillInfo.clear();
 
 	Safe_Release(m_pDrainWeapon);
-
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pTransform);
 	Safe_Release(m_pDynamicMesh);
@@ -10537,6 +10648,9 @@ void CPlayer::Free()
 	Safe_Release(m_pRenderer);
 	Safe_Release(m_pNavMesh);
 	Safe_Release(m_pBattleAgent);
+
+	Safe_Release(m_pUIManager);
+	Safe_Release(m_pCamManager);
 
 	for (auto& iter : m_matBones)
 	{
