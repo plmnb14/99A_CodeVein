@@ -55,7 +55,7 @@ _ulong CMesh_Dynamic::Get_MaterialPass(_ulong iMeshConstainerIdx , _ulong dwSubs
 
 HRESULT CMesh_Dynamic::Ready_Component_Prototype(const _tchar * pFilePath, const _tchar * pFileName, _mat PivotMatrix)
 {
-	_tchar		szFullPath[128] = L"";
+	_tchar		szFullPath[STR_256] = L"";
 
 	LPD3DXMESH		pMesh = nullptr;
 

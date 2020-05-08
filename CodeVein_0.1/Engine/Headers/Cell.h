@@ -36,7 +36,7 @@ public:
 	_v3		m_vCA[2];
 
 public:
-	CCell::COMPARE		Compare(const _v3* pEndPos, _ulong* pIndex, _v2* _pDirection, _ulong* _iIndex = nullptr, _bool _bIsUpper = false);
+	CCell::COMPARE		Compare(const _v3* pEndPos, _long* pIndex, _v2* _pDirection, _ulong* _iIndex = nullptr, _bool _bIsUpper = false);
 	CCell::COMPARE_LR	Compare_Line(const _v2* pEndPos, _int _iLine, _v2* _pDirection = nullptr, _ulong* _iIndex = nullptr);
 	void				Calc_Line();
 

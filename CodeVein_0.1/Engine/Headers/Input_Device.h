@@ -72,10 +72,10 @@ private:
 private:
 	DIMOUSESTATE			m_tMouseState = { 0, };
 	_bool					m_bMouseKeyDown[4] = {false, };
-	_byte					m_byKeyState[MAX_STR];
+	_byte					m_byKeyState[STR_256];
 
-	_byte					m_byKeyDown[MAX_STR];
-	_byte					m_byKeyUp[MAX_STR];
+	_byte					m_byKeyDown[STR_256];
+	_byte					m_byKeyUp[STR_256];
 
 public:
 	virtual void	Free(void);

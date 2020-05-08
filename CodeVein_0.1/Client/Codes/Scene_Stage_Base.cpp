@@ -8,6 +8,7 @@
 
 #include "UI_Manager.h"
 #include "CameraMgr.h"
+#include "Player.h"
 
 CScene_Stage_Base::CScene_Stage_Base(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
@@ -24,9 +25,6 @@ HRESULT CScene_Stage_Base::Ready_Scene()
 	if (FAILED(Ready_Layer_BackGround(L"Layer_Sky")))
 		return E_FAIL;
 
-	// 메쉬 생성합니다.
-	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_00.dat");
-
 	// 플레이어의 네비 메쉬도 바꿔줍니다.
 	Ready_Player();
 
@@ -37,14 +35,16 @@ HRESULT CScene_Stage_Base::Ready_Scene()
 		g_bOnStage[7] = true;
 	}
 
+	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_00.dat");
+
 	return S_OK;
 }
 
 _int CScene_Stage_Base::Update_Scene(_double TimeDelta)
 {
-	CUI_Manager::Get_Instance()->Update_UI();
+	//CUI_Manager::Get_Instance()->Update_UI();
 
-	return _int();
+	return NO_EVENT;
 }
 
 HRESULT CScene_Stage_Base::Render_Scene()
@@ -53,6 +53,9 @@ HRESULT CScene_Stage_Base::Render_Scene()
 	{
 		if (true == m_pLoading->Get_Finish() && g_pInput_Device->Key_Down(DIK_H))
 		{
+			g_eSceneID_Cur = SCENE_STAGE_01;
+			g_eSTeleportID_Cur = TeleportID_St01_1;
+
 			CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
 			pInstance->Set_Enable(false);
@@ -70,6 +73,29 @@ HRESULT CScene_Stage_Base::Render_Scene()
 
 		else if (true == m_pLoading->Get_Finish() && g_pInput_Device->Key_Down(DIK_J))
 		{
+			//g_eSceneID_Cur = SCENE_STAGE_02;
+			//g_eSTeleportID_Cur = TeleportID_St02_1;
+			//
+			//CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+			//
+			//pInstance->Set_Enable(false);
+			//
+			//g_pManagement->Clear_LightList();
+			//
+			//if (FAILED(g_pManagement->Clear_Instance(SCENE_STAGE)))
+			//	return -1;
+			//
+			//CScene* pScene = CScene_Stage_02::Create(m_pGraphic_Device, m_bLoadStaticMesh);
+			//
+			//if (FAILED(g_pManagement->SetUp_CurrentScene(pScene)))
+			//	return -1;
+		}
+
+		else if (true == m_pLoading->Get_Finish() && g_pInput_Device->Key_Down(DIK_K))
+		{
+			g_eSceneID_Cur = SCENE_STAGE_03;
+			g_eSTeleportID_Cur = TeleportID_St03_1;
+
 			CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
 			pInstance->Set_Enable(false);
@@ -85,8 +111,11 @@ HRESULT CScene_Stage_Base::Render_Scene()
 				return -1;
 		}
 
-		else if (true == m_pLoading->Get_Finish() && g_pInput_Device->Key_Down(DIK_K))
+		else if (true == m_pLoading->Get_Finish() && g_pInput_Device->Key_Down(DIK_L))
 		{
+			g_eSceneID_Cur = SCENE_STAGE_04;
+			g_eSTeleportID_Cur = TeleportID_St04_1;
+
 			CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
 			pInstance->Set_Enable(false);
@@ -108,6 +137,9 @@ HRESULT CScene_Stage_Base::Render_Scene()
 	{
 		if (g_pInput_Device->Key_Down(DIK_H))
 		{
+			g_eSceneID_Cur = SCENE_STAGE_01;
+			g_eSTeleportID_Cur = TeleportID_St01_1;
+
 			CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
 			pInstance->Set_Enable(false);
@@ -125,6 +157,29 @@ HRESULT CScene_Stage_Base::Render_Scene()
 
 		else if (g_pInput_Device->Key_Down(DIK_J))
 		{
+			//g_eSceneID_Cur = SCENE_STAGE_02;
+			//g_eSTeleportID_Cur = TeleportID_St02_1;
+			//
+			//CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+			//
+			//pInstance->Set_Enable(false);
+			//
+			//g_pManagement->Clear_LightList();
+			//
+			//if (FAILED(g_pManagement->Clear_Instance(SCENE_STAGE)))
+			//	return -1;
+			//
+			//CScene* pScene = CScene_Stage_02::Create(m_pGraphic_Device, m_bLoadStaticMesh);
+			//
+			//if (FAILED(g_pManagement->SetUp_CurrentScene(pScene)))
+			//	return -1;
+		}
+
+		else if (g_pInput_Device->Key_Down(DIK_K))
+		{
+			g_eSceneID_Cur = SCENE_STAGE_03;
+			g_eSTeleportID_Cur = TeleportID_St03_1;
+
 			CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
 			pInstance->Set_Enable(false);
@@ -140,8 +195,11 @@ HRESULT CScene_Stage_Base::Render_Scene()
 				return -1;
 		}
 
-		else if (g_pInput_Device->Key_Down(DIK_K))
+		else if (g_pInput_Device->Key_Down(DIK_L))
 		{
+			g_eSceneID_Cur = SCENE_STAGE_04;
+			g_eSTeleportID_Cur = TeleportID_St04_1;
+
 			CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
 			pInstance->Set_Enable(false);
@@ -158,6 +216,7 @@ HRESULT CScene_Stage_Base::Render_Scene()
 		}
 
 	}
+
 	return S_OK;
 }
 
@@ -175,20 +234,17 @@ HRESULT CScene_Stage_Base::Ready_Player()
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_BossUI")))
 		return E_FAIL;
 
-	CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	CPlayer* pInstance = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 
 	pInstance->Set_Enable(true);
-
-	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Stage_00.dat");
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-	TARGET_TO_NAV(pInstance)->Set_Index(14);
-	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(-0.519f, 0.120f, 23.810f));
-	TARGET_TO_TRANS(pInstance)->Set_Angle(AXIS_Y, D3DXToRadian(180.f));
+	pInstance->Teleport_ResetOptions(g_eSceneID_Cur , g_eSTeleportID_Cur);
 
 	pInstance = nullptr;
 
-	CCameraMgr::Get_Instance()->Set_CamView(BACK_VIEW);
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerHP", SCENE_MORTAL, L"Layer_PlayerUI")))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerST", SCENE_MORTAL, L"Layer_PlayerUI")))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -213,93 +269,111 @@ HRESULT CScene_Stage_Base::Ready_LightDesc()
 	NEW_LIGHT		LightDesc;
 	ZeroMemory(&LightDesc, sizeof(NEW_LIGHT));
 
-	float fAmbient = 0.1f;
-
-	LightDesc.Type = D3DLIGHT_POINT;
-	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
+	LightDesc.Type = D3DLIGHT_DIRECTIONAL;
+	LightDesc.Diffuse = D3DXCOLOR(1.f, 0.882f, 0.801f, 1.f);
+	LightDesc.Ambient = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
-	LightDesc.Position = _v3(-0.f, 3.f, -10.f);
-	LightDesc.Range = 7.f;
+	// In.WorldSpace
+	_v3 vLightDir = _v3(-100.f, -50.f, 0.f);
+
+	V3_NORMAL_SELF(&vLightDir);
+
+	LightDesc.Direction = vLightDir;
 
 	LightDesc.fAlpha = 1.f;
-
-
-	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
-		return E_FAIL;
-
-	LightDesc.Type = D3DLIGHT_POINT;
-	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
-	LightDesc.Specular = LightDesc.Diffuse;
-	LightDesc.Position = _v3(-0.f, 3.f, -5.f);
-	LightDesc.Range = 7.f;
-	LightDesc.fAlpha = 1.f;
-
-
-	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
-		return E_FAIL;
-
-	LightDesc.Type = D3DLIGHT_POINT;
-	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
-	LightDesc.Specular = LightDesc.Diffuse;
-	LightDesc.Position = _v3(-0.f, 3.f, 0.f);
-	LightDesc.Range = 7.f;
-
-	LightDesc.fAlpha = 1.f;
+	//LightDesc.Direction = _v3(0.0f, 0.f, 1.f);
 
 	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
 		return E_FAIL;
 
 
-	LightDesc.Type = D3DLIGHT_POINT;
-	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
-	LightDesc.Specular = LightDesc.Diffuse;
-	LightDesc.Position = _v3(-0.f, 3.f, 5.f);
-	LightDesc.Range = 7.f;
-
-	LightDesc.fAlpha = 1.f;
-
-	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
-		return E_FAIL;
-
-	LightDesc.Type = D3DLIGHT_POINT;
-	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
-	LightDesc.Specular = LightDesc.Diffuse;
-	LightDesc.Position = _v3(-0.f, 4.f, 10.f);
-	LightDesc.Range = 7.f;
-
-	LightDesc.fAlpha = 1.f;
-
-	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
-		return E_FAIL;
-
-	LightDesc.Type = D3DLIGHT_POINT;
-	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
-	LightDesc.Specular = LightDesc.Diffuse;
-	LightDesc.Position = _v3(-0.f, 4.f, 15.f);
-	LightDesc.Range = 7.f;
-
-	LightDesc.fAlpha = 1.f;
-
-	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
-		return E_FAIL;
-
-	LightDesc.Type = D3DLIGHT_POINT;
-	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
-	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
-	LightDesc.Specular = LightDesc.Diffuse;
-	LightDesc.Position = _v3(-0.f, 4.f, 20.f);
-	LightDesc.Range = 7.f;
-
-	LightDesc.fAlpha = 1.f;
-
-	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
-		return E_FAIL;
+	//float fAmbient = 0.1f;
+	//
+	//LightDesc.Type = D3DLIGHT_POINT;
+	//LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
+	//LightDesc.Specular = LightDesc.Diffuse;
+	//LightDesc.Position = _v3(-0.f, 3.f, -10.f);
+	//LightDesc.Range = 7.f;
+	//
+	//LightDesc.fAlpha = 1.f;
+	//
+	//
+	//if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+	//	return E_FAIL;
+	//
+	//LightDesc.Type = D3DLIGHT_POINT;
+	//LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
+	//LightDesc.Specular = LightDesc.Diffuse;
+	//LightDesc.Position = _v3(-0.f, 3.f, -5.f);
+	//LightDesc.Range = 7.f;
+	//LightDesc.fAlpha = 1.f;
+	//
+	//
+	//if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+	//	return E_FAIL;
+	//
+	//LightDesc.Type = D3DLIGHT_POINT;
+	//LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
+	//LightDesc.Specular = LightDesc.Diffuse;
+	//LightDesc.Position = _v3(-0.f, 3.f, 0.f);
+	//LightDesc.Range = 7.f;
+	//
+	//LightDesc.fAlpha = 1.f;
+	//
+	//if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+	//	return E_FAIL;
+	//
+	//
+	//LightDesc.Type = D3DLIGHT_POINT;
+	//LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
+	//LightDesc.Specular = LightDesc.Diffuse;
+	//LightDesc.Position = _v3(-0.f, 3.f, 5.f);
+	//LightDesc.Range = 7.f;
+	//
+	//LightDesc.fAlpha = 1.f;
+	//
+	//if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+	//	return E_FAIL;
+	//
+	//LightDesc.Type = D3DLIGHT_POINT;
+	//LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
+	//LightDesc.Specular = LightDesc.Diffuse;
+	//LightDesc.Position = _v3(-0.f, 4.f, 10.f);
+	//LightDesc.Range = 7.f;
+	//
+	//LightDesc.fAlpha = 1.f;
+	//
+	//if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+	//	return E_FAIL;
+	//
+	//LightDesc.Type = D3DLIGHT_POINT;
+	//LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
+	//LightDesc.Specular = LightDesc.Diffuse;
+	//LightDesc.Position = _v3(-0.f, 4.f, 15.f);
+	//LightDesc.Range = 7.f;
+	//
+	//LightDesc.fAlpha = 1.f;
+	//
+	//if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+	//	return E_FAIL;
+	//
+	//LightDesc.Type = D3DLIGHT_POINT;
+	//LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
+	//LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
+	//LightDesc.Specular = LightDesc.Diffuse;
+	//LightDesc.Position = _v3(-0.f, 4.f, 20.f);
+	//LightDesc.Range = 7.f;
+	//
+	//LightDesc.fAlpha = 1.f;
+	//
+	//if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
+	//	return E_FAIL;
 
 	return NOERROR;
 }
@@ -323,7 +397,10 @@ CScene_Stage_Base * CScene_Stage_Base::Create(LPDIRECT3DDEVICE9 pGraphic_Device,
 
 void CScene_Stage_Base::Free()
 {
-	Safe_Release(m_pNavMesh);
+	if (nullptr != m_pLoading)
+	{
+		Safe_Release(m_pLoading);
+	}
 
 	CScene::Free();
 }

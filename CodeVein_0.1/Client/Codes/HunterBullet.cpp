@@ -39,6 +39,15 @@ HRESULT CHunterBullet::Ready_GameObject(void * pArg)
 	m_pTransformCom->Set_Pos(info.vCreatePos);
 	m_pTransformCom->Set_Scale(V3_ONE);
 
+	// Calc Angle
+	_v3	vRight = *D3DXVec3Cross(&vRight, &_v3(0.f, 1.f, 0.f), &m_vDir);
+	V3_NORMAL_SELF(&vRight);
+	_float	fDot = acosf(D3DXVec3Dot(&_v3{ 0,0,1 }, &m_vDir));
+	if (vRight.z > 0)
+		fDot *= -1.f;
+
+	m_pTransformCom->Set_Angle(_v3(0.f, fDot, 0.f));
+
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 20.f;
 
@@ -46,21 +55,32 @@ HRESULT CHunterBullet::Ready_GameObject(void * pArg)
 	m_bDead = false;
 	m_bEffect = true;
 
-	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Bullet_Body", nullptr));
-	m_pBulletBody->Set_Desc(V3_NULL, m_pTransformCom);
-	m_pBulletBody->Reset_Init();
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
+	m_pBulletBody_0 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Hunter_Bullet_Body_Lightning_Hor_0", nullptr));
+	m_pBulletBody_0->Set_Desc(_v3(0, 0, 0), nullptr);
+	m_pBulletBody_0->Set_ParentObject(this);
+	m_pBulletBody_0->Reset_Init();
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody_0, SCENE_STAGE, L"Layer_Effect", nullptr);
 
-	//lstrcpy(m_pEffect_Tag0, L"Bullet_Body");
-	lstrcpy(m_pEffect_Tag1, L"Bullet_Body_Aura");
-	lstrcpy(m_pEffect_Tag2, L"Bullet_Tail_Particle");
+	m_pBulletBody_1 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Hunter_Bullet_Body_Lightning_Ver_0", nullptr));
+	m_pBulletBody_1->Set_Desc(_v3(0, 0, 0), nullptr);
+	m_pBulletBody_1->Set_ParentObject(this);
+	m_pBulletBody_1->Reset_Init();
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody_1, SCENE_STAGE, L"Layer_Effect", nullptr);
+	
+	m_pBulletBody_2 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Hunter_Bullet_Body_LinePoint_Hor", nullptr));
+	m_pBulletBody_2->Set_Desc(_v3(0, 0, 0), nullptr);
+	m_pBulletBody_2->Set_ParentObject(this);
+	m_pBulletBody_2->Reset_Init();
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody_2, SCENE_STAGE, L"Layer_Effect", nullptr);
 
-	lstrcpy(m_pEffect_Tag3, L"Bullet_DeadFlash");
-	lstrcpy(m_pEffect_Tag4, L"Bullet_DeadSmoke_Base");
-	lstrcpy(m_pEffect_Tag5, L"Bullet_DeadSmoke_Black");
+	m_pBulletBody_3 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Hunter_Bullet_Body_LinePoint_Ver", nullptr));
+	m_pBulletBody_3->Set_Desc(_v3(0, 0, 0), nullptr);
+	m_pBulletBody_3->Set_ParentObject(this);
+	m_pBulletBody_3->Reset_Init();
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody_3, SCENE_STAGE, L"Layer_Effect", nullptr);
 
 	m_pTrailEffect = g_pManagement->Create_Trail();
-	m_pTrailEffect->Set_TrailIdx(5); // Red Tail
+	m_pTrailEffect->Set_TrailIdx(11);
 
 	return S_OK;
 }
@@ -72,8 +92,8 @@ _int CHunterBullet::Update_GameObject(_double TimeDelta)
 	if (m_bDead)
 		return DEAD_OBJ;
 
-	Check_CollisionEvent();
 	Update_Trails(TimeDelta);
+	Check_CollisionEvent();
 
 	m_pTransformCom->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
 
@@ -83,11 +103,17 @@ _int CHunterBullet::Update_GameObject(_double TimeDelta)
 	if (m_dCurTime > m_dLifeTime)
 	{
 		//Á×À½ ÀÌÆåÆ®
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag3, m_pTransformCom->Get_Pos());
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag4, m_pTransformCom->Get_Pos());
-		CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag5, m_pTransformCom->Get_Pos());
-		m_pBulletBody->Set_Dead();
-		//m_pTrailEffect->Set_Dead();
+		CParticleMgr::Get_Instance()->Create_Effect(L"Hunter_Bullet_Dead_Smoke_0", m_pTransformCom->Get_Pos());
+		CParticleMgr::Get_Instance()->Create_Effect(L"Hunter_Bullet_Dead_Smoke_1", m_pTransformCom->Get_Pos());
+		CParticleMgr::Get_Instance()->Create_Effect(L"Hunter_Bullet_Dead_Lightning", m_pTransformCom->Get_Pos());
+		CParticleMgr::Get_Instance()->Create_Effect(L"Hunter_Bullet_Dead_Flash", m_pTransformCom->Get_Pos());
+		
+		m_pBulletBody_0->Set_Dead();
+		m_pBulletBody_1->Set_Dead();
+		m_pBulletBody_2->Set_Dead();
+		m_pBulletBody_3->Set_Dead();
+
+		m_pTrailEffect->Set_Dead();
 
 		m_bDead = true;
 	}
@@ -96,13 +122,10 @@ _int CHunterBullet::Update_GameObject(_double TimeDelta)
 	{
 		if (m_bEffect)
 		{
-			//CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag0, _v3(), m_pTransformCom);
-			CParticleMgr::Get_Instance()->Create_Effect(m_pEffect_Tag1, _v3(), m_pTransformCom);
-
 			m_bEffect = false;
 		}
 
-		CParticleMgr::Get_Instance()->Create_Effect_Offset(m_pEffect_Tag2, 0.1f, m_pTransformCom->Get_Pos());
+		CParticleMgr::Get_Instance()->Create_Effect_Offset(L"Hunter_Bullet_Tail_Lightning_Particle", 0.01f, m_pTransformCom->Get_Pos());
 	}
 
 	return S_OK;
@@ -232,7 +255,7 @@ HRESULT CHunterBullet::Add_Component()
 		return E_FAIL;
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom)))
 		return E_FAIL;
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pColliderCom)))
 		return E_FAIL;
 
 	return S_OK;
@@ -291,12 +314,7 @@ CGameObject* CHunterBullet::Clone_GameObject(void * pArg)
 
 void CHunterBullet::Free()
 {
-	//Safe_Release(m_pTrailEffect);
-	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pCollider);
-	Safe_Release(m_pRendererCom);
-
-	CGameObject::Free();
+	CMonster::Free();
 
 	return;
 }

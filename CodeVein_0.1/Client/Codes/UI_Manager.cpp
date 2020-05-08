@@ -162,7 +162,7 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 
 HRESULT CUI_Manager::SetUp_UILayer()
 {
-	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_StageUI")))
+	if (FAILED(g_pManagement->Add_Layer(SCENE_MORTAL, L"Layer_StageUI")))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Layer(SCENE_MORTAL, L"Layer_PlayerUI")))
 		return E_FAIL;
@@ -209,7 +209,7 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	m_pSkillInven = static_cast<CSkill_Inven*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SkillInven", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pSkillInven, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
-	/////////////////////////////////////// 3D /////////////////////////////////////
+	///////////////////////////////////////// 3D /////////////////////////////////////
 	// Ω∫≈◊¿Ã¡ˆ º±≈√ UI
 	m_pStageSelectUI = static_cast<CStageSelectUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_StageSelectUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pStageSelectUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
@@ -232,7 +232,7 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	m_pSkillAcquisitionUI = static_cast<CSkillAcquisitionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SkillAcquisitionUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pSkillAcquisitionUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
-	////////////////////////////////////// ∆Í UI /////////////////////////////////////////////////////////////////////
+	//////////////////////////////////// ∆Í UI /////////////////////////////////////////////////////////////////////
 	// ∆Í ¿Œ∫•≈‰∏Æ
 	m_pPet_Inven = static_cast<CPet_Inven*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PetInven", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pPet_Inven, SCENE_MORTAL, L"Layer_PetUI", nullptr);

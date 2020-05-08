@@ -38,6 +38,9 @@ _int CGameObject::Update_GameObject(_double TimeDelta)
 
 	for (; iter_begin != iter_end; ++iter_begin)
 	{
+		if (nullptr == (iter_begin->second))
+			continue;
+
 		iter_begin->second->Update_Component();
 	}
 
@@ -204,6 +207,8 @@ void CGameObject::Check_Dissolve(_double TimeDelta)
 
 void CGameObject::Free()
 {
+	Safe_Release(m_pGraphic_Dev);
+
 	for (auto& Pair : m_pmapComponents)
 		Safe_Release(Pair.second);
 
@@ -216,6 +221,4 @@ void CGameObject::Free()
 	for (auto& Col : m_vecAttackCol)
 		Safe_Release(Col);
 	m_vecAttackCol.clear();
-
-	Safe_Release(m_pGraphic_Dev);
 }

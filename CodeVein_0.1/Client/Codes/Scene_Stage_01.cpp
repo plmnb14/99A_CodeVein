@@ -8,6 +8,7 @@
 #include "UI_Manager.h"
 #include "ParticleMgr.h"
 #include "ScriptManager.h"
+#include "Player.h"
 
 CScene_Stage_01::CScene_Stage_01(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
@@ -26,29 +27,39 @@ HRESULT CScene_Stage_01::Ready_Scene()
 	if (FAILED(Ready_Layer_Environment(L"Layer_Environment")))
 		return E_FAIL;
 
-	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_01.dat");
+	CRenderer* pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
+	pRenderer->Fog_On(true);
+	Safe_Release(pRenderer);
 
-	CScriptManager::Get_Instance()->Set_StageIdx(1);
-	CScriptManager::Get_Instance()->Ready_Script_DynamicObject(1);
+	//CScriptManager::Get_Instance()->Set_StageIdx(1);
+	//CScriptManager::Get_Instance()->Ready_Script_DynamicObject(1);
+
+	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_01.dat");
 
 	return S_OK;
 }
 
 _int CScene_Stage_01::Update_Scene(_double TimeDelta)
 {
-	CUI_Manager::Get_Instance()->Update_UI();
-	//Create_Fog(TimeDelta);
+	//CUI_Manager::Get_Instance()->Update_UI();
+	Create_Fog(TimeDelta);
+	Create_Dust(TimeDelta);
 
+	return _int();
+}
+
+HRESULT CScene_Stage_01::Render_Scene()
+{
 	if (g_pInput_Device->Key_Down(DIK_H))
 	{
+		g_eSceneID_Cur = SCENE_STAGE_BASE;
+		g_eSTeleportID_Cur = TeleportID_Home_1;
+
 		CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
 		pInstance->Set_Enable(false);
 
 		g_pManagement->Clear_LightList();
-		
-		CScriptManager::Get_Instance()->Reset_Script_DynmicObject();
-		CScriptManager::Get_Instance()->Reset_ScriptEvent(0, true);
 
 		if (FAILED(g_pManagement->Clear_Instance(SCENE_STAGE)))
 			return -1;
@@ -59,46 +70,28 @@ _int CScene_Stage_01::Update_Scene(_double TimeDelta)
 			return -1;
 	}
 
-	return _int();
-}
-
-HRESULT CScene_Stage_01::Render_Scene()
-{
-
 	return S_OK;
 }
 
 HRESULT CScene_Stage_01::Ready_Layer_Player(const _tchar * pLayerTag)
 {
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Mistletoe")))
+		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Monster")))
 		return E_FAIL;
-
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Boss")))
 		return E_FAIL;
-
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_MonsterProjectile")))
 		return E_FAIL;
-
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_BossUI")))
 		return E_FAIL;
 
-	CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	CPlayer* pInstance = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 
+	pInstance->Teleport_ResetOptions(g_eSceneID_Cur, g_eSTeleportID_Cur);
 	pInstance->Set_Enable(true);
 
-	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Stage_01.dat");
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-	TARGET_TO_NAV(pInstance)->Set_Index(5);
-	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(150.484f, -18.08f, 70.417f));
-	TARGET_TO_TRANS(pInstance)->Set_Angle(V3_NULL);
-
-	pInstance = nullptr;;
-
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerHP", SCENE_MORTAL, L"Layer_PlayerUI")))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerST", SCENE_MORTAL, L"Layer_PlayerUI")))
-		return E_FAIL;
+	pInstance = nullptr;
 
 	return S_OK;
 }
@@ -113,54 +106,50 @@ void CScene_Stage_01::Create_Fog(_double TimeDelta)
 	CTransform* pPlayerTrans = TARGET_TO_TRANS(pPlayer);
 	_v3 vPlayerPos = pPlayerTrans->Get_Pos();
 
-	const _float FOG_OFFSET = 10.f;
+	const _float FOG_OFFSET = 5.f;
 
 	m_fMapFogDelay += _float(TimeDelta);
 	if (m_fMapFogDelay > FOG_OFFSET)
 	{
 		m_fMapFogDelay = 0.f;
-	
-		for (_int i = 0; i < 30; ++i)
-		{
-			_mat matRotY;
-			_v3 vDir = _v3(1.f, 0.f, 1.f);
-			D3DXMatrixIdentity(&matRotY);
-	
-			D3DXMatrixRotationY(&matRotY, D3DXToRadian(_float(CCalculater::Random_Num_Double(0, 360))));
-			D3DXVec3TransformNormal(&vDir, &vDir, &matRotY);
-			D3DXVec3Normalize(&vDir, &vDir);
-	
-			_float fMinRange = 5.f;
-			_float fRandRange = _float(CCalculater::Random_Num_Double(0, 20));
-			_v3 vRandPos = vDir * (fMinRange + fRandRange);
-	
-			g_pManagement->Create_Effect(L"MapMist", vRandPos + _v3(0.f, -0.5f, 0.f), pPlayerTrans);
-		}
+		g_pManagement->Create_Effect(L"MapFog_0", _v3(0.f, -26.f, 0.f));
 	}
-	
-	const _float DUST_OFFSET = 0.3f;
 
+	g_pManagement->Create_Effect_Offset(L"MapFog_0", 7.f, _v3(0.f, -23.f, 0.f));
+}
+
+void CScene_Stage_01::Create_Dust(_double TimeDelta)
+{
+	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	if (!pPlayer)
+		return;
+
+	CTransform* pPlayerTrans = TARGET_TO_TRANS(pPlayer);
+	_v3 vPlayerPos = pPlayerTrans->Get_Pos();
+
+	const _float DUST_OFFSET = 1.f;
+	
 	m_fMapWindDustDelay += _float(TimeDelta);
 	if (m_fMapWindDustDelay > DUST_OFFSET)
 	{
 		m_fMapWindDustDelay = 0.f;
-
+	
 		for (_int i = 0; i < 10; ++i)
 		{
 			_mat matRotY;
 			_v3 vDir = _v3(1.f, 0.f, 1.f);
 			D3DXMatrixIdentity(&matRotY);
-
+	
 			D3DXMatrixRotationY(&matRotY, D3DXToRadian(_float(CCalculater::Random_Num_Double(0, 360))));
 			D3DXVec3TransformNormal(&vDir, &vDir, &matRotY);
 			D3DXVec3Normalize(&vDir, &vDir);
-
+	
 			_float fMinRange = 1.f;
 			_float fRandRange = _float(CCalculater::Random_Num_Double(0, 30));
-			_v3 vRandPos = vDir * (fMinRange + fRandRange) + _v3(0.f, 0.2f, 0.f);
-
+			_v3 vRandPos = vDir * (fMinRange + fRandRange);// +_v3(0.f, 0.2f, 0.f);
+	
 			g_pManagement->Create_Effect(L"MapDust", vPlayerPos + vRandPos + _v3(0.f, _float(CCalculater::Random_Num_Double(0, 0.5)), 0.f), nullptr);
-
+	
 			fRandRange = _float(CCalculater::Random_Num_Double(0, 20));
 			vRandPos = vDir * (fMinRange + fRandRange);
 			g_pManagement->Create_Effect(L"MapDust_2", vPlayerPos + vRandPos + _v3(0.f, _float(CCalculater::Random_Num_Double(0, 0.5)), 0.f), nullptr);
@@ -173,8 +162,13 @@ HRESULT CScene_Stage_01::Ready_Layer_Environment(const _tchar* pLayerTag)
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Sky", SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Sky_Blur", SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossMassageUI", SCENE_STAGE, L"Layer_BossMassageUI")))
 		return E_FAIL;
+
+	g_pManagement->Create_Effect(L"FloorPlane_Black", _v3(0.f, -28.f, 0.f));
 
 	return S_OK;
 }
@@ -189,7 +183,7 @@ HRESULT CScene_Stage_01::Ready_LightDesc()
 	LightDesc.Ambient = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	// In.WorldSpace
-	_v3 vLightDir = _v3(0.2f, -1.f, 0.9f);
+	_v3 vLightDir = _v3(100.f, -50.f, 0.f);
 
 	V3_NORMAL_SELF(&vLightDir);
 
@@ -221,8 +215,6 @@ CScene_Stage_01 * CScene_Stage_01::Create(LPDIRECT3DDEVICE9 pGraphic_Device, _bo
 
 void CScene_Stage_01::Free()
 {
-	//Safe_Release(m_pNavMesh);
-
 	CScene::Free();
 }
 

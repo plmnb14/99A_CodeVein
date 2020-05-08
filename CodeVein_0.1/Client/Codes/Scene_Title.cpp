@@ -32,22 +32,20 @@ HRESULT CScene_Title::Ready_Scene()
 
 	if (FAILED(Ready_Prototype_GameObject()))
 		return E_FAIL;
-	
+
 	if (FAILED(Ready_Layer_LoadingUI(L"Layer_LoadingUI")))
 		return E_FAIL;
 
-	// 디졸브 전역 텍스쳐
-	g_pDissolveTexture = CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Effect/Noise/Noise_13.tga");
+	//디졸브 전역 텍스쳐
+	g_pDissolveTexture = CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Effect/Noise/Noise_13.dds");
 
 	m_pLoading = CLoading::Create(m_pGraphic_Device, SCENE_STAGE);
 
 	if (nullptr == m_pLoading)
 		return E_FAIL;
 
-	m_pLoading->Set_LoadStaticMesh(m_bLoadStaticMesh);
-
 	CUI_Manager::Get_Instance()->SetUp_UILayer();
-
+	
 	CParticleMgr::Get_Instance()->Ready_Trail();
 
 	if (FAILED(Ready_Player()))
@@ -90,36 +88,48 @@ _int CScene_Title::Update_Scene(_double TimeDelta)
 		{
 		case CScene_Logo::Stage_Base:
 		{
+			g_eSceneID_Cur = SCENE_STAGE_BASE;
+			g_eSTeleportID_Cur = TeleportID_Home_1;
 			pScene = CScene_Stage_Base::Create(m_pGraphic_Device, m_bLoadStaticMesh);
 			break;
 		}
 	
 		case CScene_Logo::Stage_Training:
 		{
+			g_eSceneID_Cur = SCENE_STAGE_TRAINING;
+			g_eSTeleportID_Cur = TeleportID_Tutorial;
 			pScene = CScene_Stage_Training::Create(m_pGraphic_Device, m_bLoadStaticMesh);
 			break;
 		}
 	
 		case CScene_Logo::Stage_01:
 		{
+			g_eSceneID_Cur = SCENE_STAGE_01;
+			g_eSTeleportID_Cur = TeleportID_St01_1;
 			pScene = CScene_Stage_01::Create(m_pGraphic_Device, m_bLoadStaticMesh);
 			break;
 		}
 	
 		case CScene_Logo::Stage_02:
 		{
+			g_eSceneID_Cur = SCENE_STAGE_02;
+			g_eSTeleportID_Cur = TeleportID_St02_1;
 			pScene = CScene_Stage_02::Create(m_pGraphic_Device, m_bLoadStaticMesh);
 			break;
 		}
 	
 		case CScene_Logo::Stage_03:
 		{
+			g_eSceneID_Cur = SCENE_STAGE_03;
+			g_eSTeleportID_Cur = TeleportID_St03_1;
 			pScene = CScene_Stage_03::Create(m_pGraphic_Device, m_bLoadStaticMesh);
 			break;
 		}
 
 		case CScene_Logo::Stage_04:
 		{
+			g_eSceneID_Cur = SCENE_STAGE_04;
+			g_eSTeleportID_Cur = TeleportID_St04_1;
 			pScene = CScene_Stage_04::Create(m_pGraphic_Device, m_bLoadStaticMesh);
 			break;
 		}
@@ -157,15 +167,12 @@ HRESULT CScene_Title::Ready_Prototype_GameObject()
 
 	CCameraMgr::Get_Instance()->Set_CamView(BACK_VIEW);
 
+	g_bActiveCam = true;
+
 	/*if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LoadingScreen", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LoadingScreen/LoadingScreen0.tga", 1))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LoadingScreen", CLoadingScreen::Create(m_pGraphic_Device))))
 		return E_FAIL;*/
-
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LoadingBar", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LoadingBar/LoadingBar%d.png", 10))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LoadingBar", CLoadingBar::Create(m_pGraphic_Device))))
-		return E_FAIL;
 	
 	return S_OK;
 }
@@ -204,8 +211,7 @@ HRESULT CScene_Title::Ready_Player()
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_MonsterProjectile")))
 		return E_FAIL;
 
-	//========================================================================================
-
+	//========================================================================================0
 
 	// 플레이어 원형 생성
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Player", CPlayer::Create(m_pGraphic_Device))))
@@ -222,9 +228,9 @@ HRESULT CScene_Title::Ready_Player()
 
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerHP", SCENE_MORTAL, L"Layer_PlayerUI")))
 		return E_FAIL;
-
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerST", SCENE_MORTAL, L"Layer_PlayerUI")))
 		return E_FAIL;
+
 	return S_OK;
 }
 

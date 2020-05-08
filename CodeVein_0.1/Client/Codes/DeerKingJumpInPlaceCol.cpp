@@ -153,8 +153,10 @@ void CDeerKingJumpInPlaceCol::OnCollisionEnter()
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_MonsterProjectile", SCENE_STAGE));
 	}
 	else
+	{
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
-
+		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE));
+	}
 
 	// =============================================================================================
 
@@ -247,7 +249,7 @@ HRESULT CDeerKingJumpInPlaceCol::Add_Component()
 		return E_FAIL;
 
 	// for.Com_Collider
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pColliderCom)))
 		return E_FAIL;
 
 	return NOERROR;
@@ -307,9 +309,6 @@ CGameObject * CDeerKingJumpInPlaceCol::Clone_GameObject(void * pArg)
 
 void CDeerKingJumpInPlaceCol::Free()
 {
-	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pCollider);
-	Safe_Release(m_pRendererCom);
 
-	CGameObject::Free();
+	CMonster::Free();
 }

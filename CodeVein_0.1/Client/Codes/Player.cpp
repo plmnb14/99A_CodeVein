@@ -2,7 +2,6 @@
 #include "..\Headers\Player.h"
 #include "Weapon.h"
 #include "Drain_Weapon.h"
-#include "CameraMgr.h"
 #include "Dummy_Target.h"
 
 #include "ScriptManager.h"
@@ -38,6 +37,17 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 
 	Ready_Skills();
 
+	m_pBattleAgent->Set_OriginRimAlpha(0.25f);
+	m_pBattleAgent->Set_OriginRimValue(7.f);
+	m_pBattleAgent->Set_RimAlpha(0.25f);
+	m_pBattleAgent->Set_RimValue(7.f);
+
+	//m_pUIManager = CUI_Manager::Get_Instance();
+	//Safe_AddRef(m_pUIManager);
+	//
+	//m_pCamManager = CCameraMgr::Get_Instance();
+	//Safe_AddRef(m_pCamManager);
+
 	return NOERROR;
 }
 
@@ -63,11 +73,14 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 	if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
 
-	if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-		return E_FAIL;
+	if (false == m_bDissolve)
+	{
+		if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+			return E_FAIL;
 
-	if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
-		return E_FAIL;
+		if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
+			return E_FAIL;
+	}
 
 	IF_NOT_NULL(m_pWeapon[m_eActiveSlot])
 		m_pWeapon[m_eActiveSlot]->Update_GameObject(TimeDelta);
@@ -77,7 +90,7 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	m_pNavMesh->Goto_Next_Subset(m_pTransform->Get_Pos(), nullptr);
 
-	CScriptManager::Get_Instance()->Update_ScriptMgr(TimeDelta, m_pNavMesh->Get_SubSetIndex(), m_pNavMesh->Get_CellIndex());
+	//CScriptManager::Get_Instance()->Update_ScriptMgr(TimeDelta, m_pNavMesh->Get_SubSetIndex(), m_pNavMesh->Get_CellIndex());
 
 	return NO_EVENT;
 }
@@ -173,7 +186,10 @@ HRESULT CPlayer::Render_GameObject()
 	Draw_Collider();
 
 	IF_NOT_NULL(m_pNavMesh)
-		m_pNavMesh->Render_NaviMesh();
+	{
+		//if (true == m_bEnable)
+		//	m_pNavMesh->Render_NaviMesh();
+	}
 
 	return NOERROR;
 }
@@ -268,6 +284,10 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 
 				else
 				{
+					if (7 == tmpPass)
+					{
+					}
+
 					pShader->Begin_Pass(iPass);
 				}
 			}
@@ -288,6 +308,111 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 	//============================================================================================
 
 	return S_OK;
+}
+
+void CPlayer::Teleport_ResetOptions(_int _eSceneID, _int _eTeleportID)
+{
+	_v3 vShadowLightPos = V3_NULL;
+	_v3 vPos = V3_NULL;
+	_float fAngle = 0.f;
+	_float fRadian = 0.f;
+
+	// 텔레포트 할때는 항상 소환 상태
+	m_eActState = ACT_Summon;
+
+	Reset_BattleState();
+	Reset_BloodSuck_Options();
+
+	// 위치 , 방향 설정
+	switch (_eSceneID)
+	{
+	case SCENE_STAGE_TRAINING:
+	{
+		vShadowLightPos = _v3(100.f, 50.f, 0.f);
+		break;
+	}
+
+	case SCENE_STAGE_BASE:
+	{
+		vShadowLightPos = _v3(100.f, 50.f, 0.f);
+
+		vPos = _eTeleportID == TeleportID_Tutorial ?
+			V3_NULL : _v3(-0.519f, 0.120f, 23.810f);
+
+		fAngle = _eTeleportID == TeleportID_Tutorial ?
+			0.f :180.f;
+
+		break;
+	}
+
+	case SCENE_STAGE_01:
+	{
+		vShadowLightPos = _v3(-100.f, 50.f, 0.f);
+
+		vPos = _eTeleportID == TeleportID_St01_1 ? _v3(150.484f, -18.08f, 70.417f) :
+			_eTeleportID == TeleportID_St01_2 ? V3_NULL : V3_NULL;
+
+		fAngle = _eTeleportID == TeleportID_St01_1 ? 0.f :
+			_eTeleportID == TeleportID_St01_2 ? 0.f : 0.f;
+
+		break;
+	}
+
+	case SCENE_STAGE_02:
+	{
+		// 아직
+
+		break;
+	}
+
+	case SCENE_STAGE_03:
+	{
+		vShadowLightPos = _v3(-100.f, 50.f, 0.f);
+
+		vPos = _eTeleportID == TeleportID_St03_1 ?
+			_v3(52.610f, -13.0f, 3.575f) : V3_NULL;
+
+		fAngle = _eTeleportID == TeleportID_St03_1 ?
+			0.f : 0.f;
+
+		break;
+	}
+
+	case SCENE_STAGE_04:
+	{
+		vShadowLightPos = _v3(-100.f, 50.f, 0.f);
+
+		vPos = _eTeleportID == TeleportID_St04_1 ?
+			_v3(42.504f, -3.85f, 75.683f) : V3_NULL;
+
+		fAngle = _eTeleportID == TeleportID_St04_1 ?
+			0.f : 0.f;
+
+		break;
+	}
+	}
+
+	m_pRenderer->Set_ShadowLightPos(vShadowLightPos);
+
+	fRadian = D3DXToRadian(fAngle);
+	m_pTransform->Set_Pos(vPos);
+	m_pTransform->Set_Angle(AXIS_Y, fRadian);
+
+	_tchar szNavMeshName[STR_128] = L"";
+
+	lstrcpy(szNavMeshName, 
+		(_eSceneID == SCENE_STAGE_BASE ? L"Navmesh_Stage_00.dat" :
+			_eSceneID == SCENE_STAGE_01 ? L"Navmesh_Stage_01.dat" : 
+			_eSceneID == SCENE_STAGE_02 ? L"Navmesh_Stage_02.dat" : 
+			_eSceneID == SCENE_STAGE_03 ? L"Navmesh_Stage_03.dat" : 
+			_eSceneID == SCENE_STAGE_04 ? L"Navmesh_Stage_04.dat" :  L"Navmesh_Training.dat"));
+
+	m_pNavMesh->Reset_NaviMesh();
+	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, szNavMeshName);
+	m_pNavMesh->Check_OnNavMesh(vPos);
+
+	CCameraMgr::Get_Instance()->Set_LockAngleX(fAngle);
+	CCameraMgr::Get_Instance()->Set_CamView(BACK_VIEW);
 }
 
 void CPlayer::Parameter_State()
@@ -1054,32 +1179,43 @@ void CPlayer::KeyInput()
 
 void CPlayer::KeyDown()
 {
-	if (false == m_bStopMovementKeyInput)
+	if (m_bActiveUI)
 	{
-		// 이동관련
-		Key_Movement_Down();
-
-		// 공격관련
-		Key_Attack();
-
-		// 무기 변경
-		Key_ChangeWeapon();
-
-		// 스킬
-		Key_Skill();
-
-		// 흡혈
-		Key_BloodSuck();
-
-		// 상호작용
-		Key_InterAct();
-
-		// 유틸리티
-		Key_Utility();
+		Key_UI_n_Utiliy(m_bActiveUI);
 	}
 
-	// 특수동작
-	Key_Special();
+	else
+	{
+		if (false == m_bStopMovementKeyInput)
+		{
+			// 이동관련
+			Key_Movement_Down();
+
+			// 공격관련
+			Key_Attack();
+
+			// 무기 변경
+			Key_ChangeWeapon();
+
+			// 스킬
+			Key_Skill();
+
+			// 흡혈
+			Key_BloodSuck();
+
+			// 상호작용
+			Key_InterAct();
+
+			// 유틸리티
+			Key_Utility();
+		}
+
+		// 특수동작
+		Key_Special();
+
+		// UI , 유틸
+		Key_UI_n_Utiliy(m_bActiveUI);
+	}
 }
 
 void CPlayer::KeyUp()
@@ -1324,19 +1460,6 @@ void CPlayer::Key_Special()
 			CCameraMgr::Get_Instance()->Set_LockAngleX(D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)));
 		}
 	}
-
-	if (g_pInput_Device->Key_Down(DIK_X))
-	{
-		if (m_bCanMistletoe)
-		{
-			m_bCanMistletoe = false;
-
-			m_bActiveUI = true;
-
-			m_bOnMistletoe = true;
-			m_eActState = ACT_Mistoletoe;
-		}
-	}
 }
 
 void CPlayer::Key_Attack()
@@ -1504,6 +1627,8 @@ void CPlayer::Key_Skill()
 	// 1번 스킬
 	if (g_pInput_Device->Key_Down(DIK_1))
 	{
+		cout << "스킬 탄다" << endl;
+
 		if (true == m_bOnSkill)
 			return;
 
@@ -1603,25 +1728,29 @@ void CPlayer::Key_Utility()
 		// 아이템 사용
 		//===========================================
 
-		_v3 vEffPos = _v3(0.f, 1.5f, 0.f);
+		LPCSTR tmpChar = "RightHandAttach"; //왼손 뼈 몰라서 임시.
+		_mat   matAttach;
+		D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 2);
+		matAttach = pFamre->CombinedTransformationMatrix * m_pTransform->Get_WorldMat();
+		_v3 vEffPos = _v3(matAttach._41, matAttach._42, matAttach._43);
 
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle"			, 0.2f, vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Heal_RedLight"						, 0.2f, vEffPos, m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Heal_Particle"						, 0.2f, vEffPos, m_pTransform);
-		g_pManagement->Create_ParticleEffect_Delay(L"Player_Buff_HandSmoke"		, 0.2f	, 0.2f, vEffPos, m_pTransform);
+		g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle"			, 0.2f, vEffPos, nullptr);
+		g_pManagement->Create_Effect_Delay(L"Player_Heal_RedLight"						, 0.2f, vEffPos, nullptr);
+		g_pManagement->Create_Effect_Delay(L"Player_Heal_Particle"						, 0.2f, vEffPos, nullptr);
+		g_pManagement->Create_ParticleEffect_Delay(L"Player_Buff_HandSmoke"		, 0.2f	, 0.2f, vEffPos, nullptr);
 	}
 }
 
 void CPlayer::Key_InterAct()
 {
-	if (g_pInput_Device->Key_Down(DIK_E))
-	{
-		m_eActState = ACT_PickUp;
-
-		//===========================================
-		// 아이템 줍기
-		//===========================================
-	}
+	//if (g_pInput_Device->Key_Down(DIK_E))
+	//{
+	//	m_eActState = ACT_PickUp;
+	//
+	//	//===========================================
+	//	// 아이템 줍기
+	//	//===========================================
+	//}
 }
 
 void CPlayer::Key_BloodSuck()
@@ -1654,6 +1783,69 @@ void CPlayer::Key_BloodSuck()
 
 			else
 				cout << "처형할 대상이 없습니다." << endl;
+		}
+	}
+}
+
+void CPlayer::Key_UI_n_Utiliy(_bool _bActiveUI)
+{
+	if (!_bActiveUI)
+	{
+		// 상호작용도 하고, 아이템도 줍고, 겨우살이도 활성화 시키고
+		if (g_pInput_Device->Key_Down(DIK_E))
+		{
+			// 겨우살이가 활성화 가능하면
+			if (m_bOnUI_Mistletoe)
+			{
+				Active_UI_Mistletoe();
+			}
+
+			// 상호작용 가능
+			else if (m_bCanInterAct)
+			{
+				// 아직 추가안함.
+			}
+
+			// 대화 가능
+			else if (m_bCanDialouge)
+			{
+				// 아직 추가안함.
+			}
+
+			// 아이템 획득 가능
+			else if (m_bCanPickUp)
+			{
+				// 아직 추가안함.
+			}
+		}
+
+		// 유아이가 비활성화 되어 있을 때는 , 메인 UI 를 킨다.
+		else if (g_pInput_Device->Key_Down(DIK_ESCAPE))
+		{
+		}
+	}
+
+	// UI 가 활성화 되어 있을 경우
+
+	else if (_bActiveUI)
+	{
+		// 유아이가 활성화 되어 있을 때는 , 닫아주는 기능을 한다.
+		if (g_pInput_Device->Key_Down(DIK_ESCAPE))
+		{
+			if(m_bOnUI_StageSelect)
+				Active_UI_StageSelect(true);
+
+			else if (m_bOnUI_Mistletoe)
+				Active_UI_Mistletoe(true);
+
+			else if (m_bOnUI_Skill)
+				Active_UI_StageSelect(true);
+
+			else if (m_bOnUI_Inventory)
+				Active_UI_Inventory(true);
+
+			else if (m_bOnUI_NPCTalk)
+				Active_UI_NPC(true);
 		}
 	}
 }
@@ -3989,6 +4181,14 @@ void CPlayer::Play_PickUp()
 		m_eAnim_Lower = m_eAnim_Upper;
 		m_eAnim_RightArm = m_eAnim_Upper;
 		m_eAnim_LeftArm = m_eAnim_Upper;
+
+		// 이펙트 ==============================
+		LPCSTR tmpChar = "RightHandAttach"; //왼손 뼈 몰라서 임시.
+		_mat   matAttach;
+		D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 2);
+		matAttach = pFamre->CombinedTransformationMatrix * m_pTransform->Get_WorldMat();
+		_v3 vEffPos = _v3(matAttach._41, matAttach._42, matAttach._43);
+		g_pManagement->Create_ParticleEffect_Delay(L"ItemGet_Particle", 0.3f, 0.15f, vEffPos, nullptr);
 	}
 
 	else if (true == m_bOnPickUp)
@@ -4177,6 +4377,26 @@ void CPlayer::Play_BloodSuck()
 			m_pDrainWeapon->Set_AnimIdx(m_eAnim_Upper);
 			m_pDrainWeapon->Set_Active(true);
 		}
+
+		// 이펙트 ============================================
+		LPCSTR tmpChar = "Hips";
+		_mat   matAttach;
+		D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 0);
+		matAttach = pFamre->CombinedTransformationMatrix * m_pTransform->Get_WorldMat();
+		_v3 vEffPos = V3_NULL;
+
+		// 시전 스모크
+		for (_int i = 1; i < 7; i++)
+		{
+			_tchar szBuff[256] = L"";
+			wsprintf(szBuff, L"Player_Drain_Ink_%d", i);
+
+			vEffPos = _v3(matAttach._41, matAttach._42, matAttach._43)
+				+ m_pTransform->Get_Axis(AXIS_Z) * -0.8f
+				+ _v3(0.f, -0.25f + _float(CCalculater::Random_Num_Double(0.0, 1.7)), 0.f);
+
+			g_pManagement->Create_Effect_Delay(szBuff, 0.3f, vEffPos);
+		}
 	}
 
 	else if (true == m_bOnBloodSuck)
@@ -4287,6 +4507,25 @@ void CPlayer::Play_BloodSuck()
 
 					m_pDrainWeapon->Set_Target_CanAttack(false);
 					m_pDrainWeapon->Set_Enable_Record(false);
+
+					// 이펙트 ============================================
+					LPCSTR tmpChar = "Hips";
+					_mat   matAttach;
+					D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 0);
+					matAttach = pFamre->CombinedTransformationMatrix * m_pTransform->Get_WorldMat();
+					_v3 vEffPos = V3_NULL;
+					// 끝날때 스모크
+					for (_int i = 1; i < 7; i++)
+					{
+						_tchar szBuff[256] = L"";
+						wsprintf(szBuff, L"Player_Drain_Ink_%d", i);
+
+						vEffPos = _v3(matAttach._41, matAttach._42, matAttach._43)
+							+ m_pTransform->Get_Axis(AXIS_Z) * -0.8f
+							+ _v3(0.f, _float(CCalculater::Random_Num_Double(0.0, 0.5)), 0.f);
+
+						g_pManagement->Create_Effect_Delay(szBuff, 1.f, vEffPos);
+					}
 				}
 			}
 
@@ -4418,6 +4657,35 @@ void CPlayer::Play_BloodSuckCount()
 
 				m_tObjParam.bCanCounter = false;
 				m_tObjParam.bIsCounter = false;
+
+				// 이펙트 ============================================
+				LPCSTR tmpChar = "Hips";
+				_mat   matAttach;
+				D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 0);
+				matAttach = pFamre->CombinedTransformationMatrix * m_pTransform->Get_WorldMat();
+				_v3 vEffPos = V3_NULL;
+				// 끝날때 스모크
+				for (_int i = 1; i < 7; i++)
+				{
+					_tchar szBuff[256] = L"";
+					wsprintf(szBuff, L"Player_Drain_Ink_%d", i);
+
+					vEffPos = _v3(matAttach._41, matAttach._42, matAttach._43)
+						//+ m_pTransform->Get_Axis(AXIS_Z) * -1.f
+						+ _v3(0.f, _float(CCalculater::Random_Num_Double(0.0, 0.3)), 0.f);
+
+					g_pManagement->Create_Effect_Delay(szBuff, 0.8f, vEffPos);
+				}
+			}
+		}
+
+		else if (dAniTime > 2.1)
+		{
+			if (false == m_bEventTrigger[2])
+			{
+				m_bEventTrigger[2] = true;
+
+				
 			}
 		}
 
@@ -4432,6 +4700,26 @@ void CPlayer::Play_BloodSuckCount()
 				{
 					m_tObjParam.bCanCounter = false;
 					m_tObjParam.bIsCounter = true;
+				}
+
+				// 이펙트 ============================================
+				LPCSTR tmpChar = "Hips";
+				_mat   matAttach;
+				D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 0);
+				matAttach = pFamre->CombinedTransformationMatrix * m_pTransform->Get_WorldMat();
+				_v3 vEffPos = V3_NULL;
+
+				// 시전 스모크
+				for (_int i = 1; i < 7; i++)
+				{
+					_tchar szBuff[256] = L"";
+					wsprintf(szBuff, L"Player_Drain_Ink_%d", i);
+
+					vEffPos = _v3(matAttach._41, matAttach._42, matAttach._43)
+						//+ m_pTransform->Get_Axis(AXIS_Z) * -0.8f
+						+ _v3(0.f, -0.25f + _float(CCalculater::Random_Num_Double(0.0, 1.7)), 0.f);
+
+					g_pManagement->Create_Effect_Delay(szBuff, 0.1f, vEffPos);
 				}
 			}
 		}
@@ -4743,26 +5031,9 @@ void CPlayer::Play_Skills()
 					m_bEventTrigger[0] = true;
 
 					_v3 vEffPos = m_pTransform->Get_Pos() + _v3(0.f, 1.3f, 0.f);
-					_v3 vPlayerAngleDeg = D3DXToDegree(m_pTransform->Get_Angle());
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing", 0.1f, 0.1f, m_pTransform->Get_Pos());
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing", 0.1f, 0.1f, m_pTransform->Get_Pos() );
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red", 0.3f, 0.2f, m_pTransform->Get_Pos() );
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black", 0.3f, 0.3f, m_pTransform->Get_Pos() );
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RedParticle_Explosion", 0.15f, 1.f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"			, 0.15f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"			, 0.16f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"			, 0.17f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"			, 0.18f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"		, 0.05f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"	, 0.12f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"		, 0.2f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"	, 0.27f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"	, 0.31f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"		, 0.35f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"	, 0.42f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"	, 0.46f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"		, 0.5f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"	, 0.62f, m_pTransform->Get_Pos());
+					
+					CParticleMgr::Get_Instance()->Create_Skill_Start_Effect(m_pTransform->Get_Pos(), vEffPos);
+					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RedParticle_Explosion", 0.15f, 1.f, m_pTransform->Get_Pos(), m_pTransform);
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodConeMesh_Explosion", 1.f, m_pTransform->Get_Pos());
 				}
 			}
@@ -5154,25 +5425,7 @@ void CPlayer::Play_Skills()
 					m_bEventTrigger[12] = true;
 
 					_v3 vEffPos = m_pTransform->Get_Pos() + _v3(0.f, 1.3f, 0.f);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing", 0.1f, 0.1f, m_pTransform->Get_Pos());
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing", 0.1f, 0.1f, m_pTransform->Get_Pos());
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red", 0.3f, 0.2f, m_pTransform->Get_Pos());
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black", 0.3f, 0.3f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"			, 0.15f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"			, 0.16f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"			, 0.17f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"			, 0.18f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh", 0.05f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2", 0.12f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh", 0.2f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2", 0.27f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3", 0.31f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh", 0.35f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2", 0.42f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3", 0.46f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh", 0.5f, m_pTransform->Get_Pos());
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2", 0.62f, m_pTransform->Get_Pos());
-
+					CParticleMgr::Get_Instance()->Create_Skill_Start_Effect(m_pTransform->Get_Pos(), vEffPos);
 				}
 			}
 
@@ -5330,25 +5583,8 @@ void CPlayer::Play_Skills()
 					m_bEventTrigger[7] = true;
 
 					_v3 vEffPos = m_pTransform->Get_Pos() + _v3(0.f, 1.3f, 0.f);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red"		, 0.3f	, 0.f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black"	, 0.3f	, 0.f	, V3_NULL, m_pTransform);
+					CParticleMgr::Get_Instance()->Create_Skill_Start_Effect(V3_NULL, vEffPos, m_pTransform);
 					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_DarkSmokeAura"	, 0.5f	, 0.f	, _v3(0, 1.1f, 0.f), m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.15f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.16f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.17f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.18f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.05f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.12f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.2f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.27f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"				, 0.31f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.35f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.42f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"				, 0.46f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.5f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.62f	, V3_NULL, m_pTransform);
 				}
 			}
 
@@ -5504,20 +5740,7 @@ void CPlayer::Play_Skills()
 				{
 					m_bEventTrigger[13] = true;
 
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red"		, 0.3f	, 0.f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black"	, 0.3f	, 0.f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.05f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.12f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.2f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.27f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"				, 0.31f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.35f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.42f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"				, 0.46f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.5f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.62f	, V3_NULL, m_pTransform);
+					CParticleMgr::Get_Instance()->Create_Skill_Start_Effect(V3_NULL, V3_NULL, m_pTransform);
 				}
 			}
 
@@ -5749,24 +5972,7 @@ void CPlayer::Play_Skills()
 					m_bEventTrigger[12] = true;
 
 					_v3 vEffPos = m_pTransform->Get_Pos() + _v3(0.f, 1.3f, 0.f);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red"		, 0.3f	, 0.f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black"	, 0.3f	, 0.f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.15f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.16f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.17f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.18f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.05f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.12f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.2f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.27f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"				, 0.31f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.35f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.42f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"				, 0.46f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.5f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.62f	, V3_NULL, m_pTransform);
+					CParticleMgr::Get_Instance()->Create_Skill_Start_Effect(V3_NULL, vEffPos, m_pTransform);
 				}
 			}
 
@@ -5985,24 +6191,7 @@ void CPlayer::Play_Skills()
 					m_bEventTrigger[12] = true;
 
 					_v3 vEffPos = m_pTransform->Get_Pos() + _v3(0.f, 1.3f, 0.f);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing"	, 0.1f	, 0.f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red"		, 0.3f	, 0.f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black"	, 0.3f	, 0.f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.15f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.16f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.17f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3"						, 0.18f, vEffPos);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.05f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.12f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.2f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.27f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"				, 0.31f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.35f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.42f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3"				, 0.46f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh"					, 0.5f	, V3_NULL, m_pTransform);
-					g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2"				, 0.62f	, V3_NULL, m_pTransform);
+					CParticleMgr::Get_Instance()->Create_Skill_Start_Effect(V3_NULL, vEffPos, m_pTransform);
 				}
 			}
 
@@ -10010,6 +10199,82 @@ void CPlayer::Change_Weapon()
 	// 여기 무기 바꾸는 코드를 추후에 작성해야 합니다.
 }
 
+void CPlayer::Reset_All()
+{
+}
+
+void CPlayer::Active_UI_Mistletoe(_bool _bResetUI)
+{
+	_bool bUIActive = false;
+
+	// 활성 상태에 따라 On/Off 판단 , 플레이어 유아이 활성화도 바꿈
+	if(!_bResetUI)
+		bUIActive = m_bActiveUI = m_pUIManager->Get_MistletoeUI()->Get_Active() ? false : true;
+
+	// 스테이지 선택 UI 를 On/Off 시킨다.
+	m_pUIManager->Get_MistletoeUI()->Set_Active(bUIActive);
+
+	// 카메라 에임 상태 설정
+	m_pCamManager->Set_OnAimingTarget(bUIActive);
+
+	// 비활성화면 리턴
+	if (false == bUIActive)
+	{
+		// 타겟도 Null 해줘요
+		m_pCamManager->Set_AimingTarget(nullptr);
+		m_pCamManager->Set_MidDistance(3.5f);
+		return;
+	}
+
+	// 타겟 설정
+	m_pCamManager->Set_AimingTarget(m_pUIManager->Get_MistletoeUI());
+	m_pCamManager->Set_MidDistance(1.5f);
+}
+
+void CPlayer::Active_UI_Inventory(_bool _bResetUI)
+{
+	// 전체 UI 를 활성화 시킨다.
+	m_pUIManager->Get_Total_Inven()->Set_Active(true);
+}
+
+void CPlayer::Active_UI_StageSelect(_bool _bResetUI)
+{
+	// 활성 상태에 따라 On/Off 판단
+	_bool bUIActive = m_pUIManager->Get_StageSelectUI()->Get_Active() ? false : true;
+
+	// 스테이지 선택 UI 를 On/Off 시킨다.
+	m_pUIManager->Get_StageSelectUI()->Set_Active(bUIActive);
+
+	// 선택이 됫는지 안됫는지
+	m_bOnUI_StageSelect = bUIActive;
+
+	// 비활성화면 리턴
+	if (!bUIActive)
+		return;
+
+	// 카메라 에임 상태 설정
+	m_pCamManager->Set_OnAimingTarget(bUIActive);
+
+	// 비활성화면 리턴
+	if (false == bUIActive)
+	{
+		// 타겟도 Null 해줘요
+		m_pCamManager->Set_AimingTarget(nullptr);
+		m_pCamManager->Set_MidDistance(3.5f);
+		return;
+	}
+
+	// 타겟 설정
+	m_pCamManager->Set_AimingTarget(m_pUIManager->Get_StageSelectUI());
+	m_pCamManager->Set_MidDistance(1.5f);
+}
+
+void CPlayer::Active_UI_NPC(_bool _bResetUI)
+{
+	// NPC UI 를 활성화 시킨다.
+	m_pUIManager->Get_MistletoeUI()->Set_Active(true);
+}
+
 HRESULT CPlayer::Add_Component()
 {
 	// For.Com_Transform
@@ -10081,9 +10346,9 @@ HRESULT CPlayer::SetUp_Default()
 	m_fAnimMutiply = 1.f;
 
 	// Navi
-	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_03.dat");
-	m_pNavMesh->Set_SubsetIndex(0);
-	m_pNavMesh->Set_Index(0);
+	//m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, L"Navmesh_Stage_03.dat");
+	//m_pNavMesh->Set_SubsetIndex(0);
+	//m_pNavMesh->Set_Index(0);
 
 	return S_OK;
 }
@@ -10120,7 +10385,7 @@ HRESULT CPlayer::SetUp_ConstantTable()
 	//=============================================================================================
 	_float	fEmissivePower = 0.f;	// 이미시브 : 높을 수록, 자체 발광이 강해짐.
 	_float	fSpecularPower = 1.f;	// 메탈니스 : 높을 수록, 정반사가 강해짐.
-	_float	fRoughnessPower = 0.5f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
+	_float	fRoughnessPower = 1.f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
 	_float	fMinSpecular = 1.f;	// 최소 빛	: 최소 단위의 빛을 더해줌.
 	_float	fID_R = 1.0f;	// ID_R : R채널 ID 값 , 1이 최대
 	_float	fID_G = 0.5f;	// ID_G : G채널 ID 값 , 1이 최대
@@ -10142,7 +10407,6 @@ HRESULT CPlayer::SetUp_ConstantTable()
 		return E_FAIL;
 	//=============================================================================================
 
-	m_pBattleAgent->Set_RimValue(3.f);
 	m_pBattleAgent->Update_RimParam_OnShader(m_pShader);
 
 	return NOERROR;
@@ -10214,11 +10478,14 @@ void CPlayer::Reset_BattleState()
 
 	m_fChargeTimer_Cur = 0.f;
 
-	m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
-	m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(false);
-	m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
-	m_pWeapon[m_eActiveSlot]->Set_SkillMode(false); // WhiteColor
-	m_pWeapon[m_eActiveSlot]->Set_TrailUseMask(false, 6);
+	if (nullptr != m_pWeapon[m_eActiveSlot])
+	{
+		m_pWeapon[m_eActiveSlot]->Set_Target_CanAttack(false);
+		m_pWeapon[m_eActiveSlot]->Set_Enable_Trail(false);
+		m_pWeapon[m_eActiveSlot]->Set_Enable_Record(false);
+		m_pWeapon[m_eActiveSlot]->Set_SkillMode(false); // WhiteColor
+		m_pWeapon[m_eActiveSlot]->Set_TrailUseMask(false, 6);
+	}
 
 	LOOP(32)
 		m_bEventTrigger[i] = false;
@@ -10229,29 +10496,27 @@ void CPlayer::Check_Mistletoe()
 	if (m_eActState == ACT_BloodSuck_Execution)
 		return;
 
-	if (m_bOnMistletoe)
+	if (m_bActiveUI)
 		return;
 
-	size_t sSTLSize = g_pManagement->Get_GameObjectList(L"Layer_Mistletoe", SCENE_STAGE).size();
+	if (g_pManagement->Get_GameObjectList(L"Layer_Mistletoe", SCENE_STAGE).empty())
+		return;
 
-	if (sSTLSize > 0)
+	for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Mistletoe", SCENE_STAGE))
 	{
-		for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Mistletoe", SCENE_STAGE))
+		if (false == iter->Get_Enable())
+			continue;
+
+		CTransform* pIterTrans = TARGET_TO_TRANS(iter);
+
+		if (1.5f >= V3_LENGTH(&(m_pTransform->Get_Pos() - pIterTrans->Get_Pos())))
 		{
-			if(false == iter->Get_Enable())
-				continue;
-
-			CTransform* pIterTrans = TARGET_TO_TRANS(iter);
-
-			if (1.5f >= V3_LENGTH(&(m_pTransform->Get_Pos() - pIterTrans->Get_Pos())))
-			{
-				cout << "Moon  : 겨우살이 체크 되요" << endl;
-
-				m_bCanMistletoe = true;
-				return;
-			}
+			m_bOnUI_Mistletoe = true;
+			return;
 		}
 	}
+
+	m_bOnUI_Mistletoe = false;
 }
 
 _int CPlayer::Check_HitDirection()
@@ -10398,8 +10663,18 @@ void CPlayer::Free()
 		Safe_Delete(iter);
 	}
 
-	Safe_Release(m_pDrainWeapon);
+	m_vecFullSkillInfo.shrink_to_fit();
+	m_vecFullSkillInfo.clear();
 
+	for (auto& iter : m_vecActiveSkillInfo)
+	{
+		Safe_Delete(iter);
+	}
+
+	m_vecActiveSkillInfo.shrink_to_fit();
+	m_vecActiveSkillInfo.clear();
+
+	Safe_Release(m_pDrainWeapon);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pTransform);
 	Safe_Release(m_pDynamicMesh);
@@ -10408,10 +10683,8 @@ void CPlayer::Free()
 	Safe_Release(m_pNavMesh);
 	Safe_Release(m_pBattleAgent);
 
-	for (auto& iter : m_vecPhysicCol)
-	{
-		Safe_Release(iter);
-	}
+	//Safe_Release(m_pUIManager);
+	//Safe_Release(m_pCamManager);
 
 	for (auto& iter : m_matBones)
 	{

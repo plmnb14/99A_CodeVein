@@ -74,7 +74,7 @@ HRESULT CFireBoy::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Fire_Flame());
+	Start_Sel->Add_Child(Start_Game());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -96,9 +96,6 @@ _int CFireBoy::Update_GameObject(_double TimeDelta)
 {
 	if (false == m_bEnable)
 		return NO_EVENT;
-
-	if (nullptr == g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))
-		return E_FAIL;
 
 	Push_Collider();
 
@@ -125,6 +122,9 @@ _int CFireBoy::Update_GameObject(_double TimeDelta)
 	// 플레이어 발견
 	else
 	{
+		//// 어그로 관리
+		Set_Target_Auto(true);
+
 		// 뼈 위치 업데이트
 		Update_Bone_Of_BlackBoard();
 		// BB 직접 업데이트
@@ -132,6 +132,8 @@ _int CFireBoy::Update_GameObject(_double TimeDelta)
 
 		if (true == m_bAIController)
 			m_pAIControllerCom->Update_AIController(TimeDelta);
+
+
 
 		// 플레이어 발견 시, UI 활성화(지원)
 		m_pBossUI->Set_Active(true);
@@ -149,7 +151,7 @@ _int CFireBoy::Update_GameObject(_double TimeDelta)
 
 	OnCollisionEnter();
 
-	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
+	m_pTransformCom->Set_Pos(m_pNavMeshCom->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
 	return NOERROR;
 }
@@ -162,21 +164,30 @@ _int CFireBoy::Late_Update_GameObject(_double TimeDelta)
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
 
-	if (!m_bDissolve)
+	//=============================================================================================
+	// 그림자랑 모션블러는 프리스텀 안에 없으면 안그림
+	//=============================================================================================
+	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
 	{
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
-			return E_FAIL;
+		if (!m_bDissolve)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
+				return E_FAIL;
+		}
+
+		else
+		{
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
+				return E_FAIL;
+		}
+
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
 			return E_FAIL;
-	}
-	else
-	{
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
 			return E_FAIL;
 	}
+	//=============================================================================================
 
-	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
-	//	return E_FAIL;
 
 	m_dTimeDelta = TimeDelta;
 
@@ -191,39 +202,42 @@ HRESULT CFireBoy::Render_GameObject()
 
 	m_pMeshCom->Play_Animation(_float(m_dTimeDelta)); // * alpha
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
-
-	m_pShaderCom->Begin_Shader();
-
-	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
-
-	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
 	{
-		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+		if (FAILED(SetUp_ConstantTable()))
+			return E_FAIL;
 
-		m_pMeshCom->Update_SkinnedMesh(i);
+		m_pShaderCom->Begin_Shader();
 
-		for (_uint j = 0; j < iNumSubSet; ++j)
+		_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+
+		for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 		{
-			m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+			_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
 
-			if (m_bDissolve)
-				m_iPass = 3;
+			m_pMeshCom->Update_SkinnedMesh(i);
 
-			m_pShaderCom->Begin_Pass(m_iPass);
+			for (_uint j = 0; j < iNumSubSet; ++j)
+			{
+				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
 
-			m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
+				if (m_bDissolve)
+					m_iPass = 3;
 
-			m_pShaderCom->Commit_Changes();
+				m_pShaderCom->Begin_Pass(m_iPass);
 
-			m_pMeshCom->Render_Mesh(i, j);
+				m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
 
-			m_pShaderCom->End_Pass();
+				m_pShaderCom->Commit_Changes();
+
+				m_pMeshCom->Render_Mesh(i, j);
+
+				m_pShaderCom->End_Pass();
+			}
 		}
-	}
 
-	m_pShaderCom->End_Shader();
+		m_pShaderCom->End_Shader();
+	}
 
 	Update_Collider();
 	Draw_Collider();
@@ -601,6 +615,10 @@ CBT_Composite_Node * CFireBoy::Fire_Flame()
 	CBT_Wait* Wait1 = Node_Wait("대기1", 0.484, 0);
 	CBT_MoveDirectly* Move1 = Node_MoveDirectly_Rush("이동1", L"Monster_Speed", L"Monster_Dir", -1.5f, 0.633, 0);
 
+	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("왼손에 불", L"FireBoy_FireHandBall_Before_HandFire", L"Bone_LeftHand", 0.4, 1, 0, 0);
+
+	Root_Parallel->Add_Service(Effect0);
+
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani19);
 	MainSeq->Add_Child(Show_Ani0);
@@ -831,8 +849,13 @@ HRESULT CFireBoy::Update_Bone_Of_BlackBoard()
 
 HRESULT CFireBoy::Update_Value_Of_BB()
 {
+	CGameObject* pPlayer = CMonster::Get_pTargetObject();
+
+	if (nullptr == pPlayer)
+		return E_FAIL;
+
 	// 1. 플레이어 좌표 업데이트
-	CTransform* pPlayerTransCom = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL));
+	CTransform* pPlayerTransCom = TARGET_TO_TRANS(pPlayer);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Player_Pos", pPlayerTransCom->Get_Pos());
 	// 2. 체력 업데이트
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"HP", m_tObjParam.fHp_Cur);
@@ -853,26 +876,7 @@ HRESULT CFireBoy::Update_Value_Of_BB()
 
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"StraightFireDir", *D3DXVec3Normalize (&_v3(), &(m_vMuzzle - m_vRightHand + _v3(0.f, -0.2f, 0.f))));
 
-	//_v3 vDirTemp0;
-
-	//_v3 vTempFrontDir = _v3(0.f, 0.f, 1.f);
-	//_float fRadian = D3DXVec3Dot(&vSelfLook, &vTempFrontDir);
-
-	//if (fRadian >= 0)
-	//	D3DXVec3TransformNormal(&vDirTemp0, &vSelfLook, D3DXMatrixRotationX(&_mat(), D3DXToRadian(15)));
-	//else if (fRadian < 0)
-	//	D3DXVec3TransformNormal(&vDirTemp0, &vSelfLook, D3DXMatrixRotationX(&_mat(), D3DXToRadian(-15)));
-
-	//m_pAIControllerCom->Set_Value_Of_BlackBoard(L"StraightFireDir", vDirTemp0);
-
 	// 3. 포신에서 부채꼴, 화염구 발사하는 방향
-
-	//if (fRadian >= 0)
-	//	D3DXVec3TransformNormal(&vDirTemp0, &vSelfLook, D3DXMatrixRotationX(&_mat(), D3DXToRadian(3)));
-	//else if (fRadian < 0)
-	//	D3DXVec3TransformNormal(&vDirTemp0, &vSelfLook, D3DXMatrixRotationX(&_mat(), D3DXToRadian(-3)));
-
-	//m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FireDir", vDirTemp0);
 
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"FireDir", *D3DXVec3Normalize(&_v3(), &(m_vMuzzle - m_vRightHand)));
 
@@ -898,26 +902,38 @@ HRESULT CFireBoy::Update_NF()
 	if (false == m_bFindPlayer)
 	{
 		// 플레이어 좌표 구함.
-		_v3 vPlayer_Pos = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))->Get_Pos();
+		_v3 vPlayer_Pos = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos();
+
+		// 동료 좌표 구함
+		_v3 vColleague_Pos = _v3(10000.f, 10000.f, 10000.f);
+
+		CGameObject* pColleague = g_pManagement->Get_GameObjectBack(L"Layer_Colleague", SCENE_STAGE);
+
+		// 동료가 있으면 좌표 갱신
+		if (nullptr != pColleague)
+			vColleague_Pos = TARGET_TO_TRANS(pColleague)->Get_Pos();
 
 		// 플레이어와 몬스터의 거리
-		_v3 vLengthTemp = vPlayer_Pos - m_pTransformCom->Get_Pos();
-		vLengthTemp.y = 0.f;
-		_float fLength = D3DXVec3Length(&vLengthTemp);
+		_v3 vP_LengthTemp = vPlayer_Pos - m_pTransformCom->Get_Pos();
+		vP_LengthTemp.y = 0.f;
+		_float fP_Length = D3DXVec3Length(&vP_LengthTemp);
 
-		//cout << "거리 : " << fLength << endl;
+		// 동료와 몬스터의 거리
+		_v3 vC_LengthTemp = vColleague_Pos - m_pTransformCom->Get_Pos();
+		vC_LengthTemp.y = 0.f;
+		_float fC_Length = D3DXVec3Length(&vC_LengthTemp);
 
 		// 플레이어가 최소거리안에 있는가?
-		if (fLength < m_fMinLength)
+		if (fP_Length < m_fMinLength || fC_Length < m_fMinLength)
 		{
 			// 플레이어 발견
 			m_bFindPlayer = true;
 		}
 		// 플레이어가 최대거리 안에 있는가?
-		else if (fLength < m_fMaxLength)
+		else if (fP_Length < m_fMaxLength || fC_Length < m_fMaxLength)
 		{
 			// 플레이어가 시야각 안에 있는가?
-			if (Is_InFov(m_fFov, m_pTransformCom, vPlayer_Pos))
+			if (Is_InFov(m_fFov, m_pTransformCom, vPlayer_Pos) || Is_InFov(m_fFov, m_pTransformCom, vColleague_Pos))
 			{
 				// 플레이어 발견
 				m_bFindPlayer = true;
@@ -940,6 +956,9 @@ HRESULT CFireBoy::Update_NF()
 		{
 			m_pMeshCom->SetUp_Animation(Ani_Idle);
 			m_bFight = true;
+
+			// 가까운 녀석 어그로 끌림.
+			Set_Target_Auto();
 		}
 	}
 
@@ -965,7 +984,7 @@ HRESULT CFireBoy::Update_Collider()
 	///////// 공격용 콜라이더
 	m_vecAttackCol[0]->Update(m_vLeftForeArm);
 
-	m_pCollider->Update(m_pTransformCom->Get_Pos() + _v3(0.f, m_pCollider->Get_Radius().y, 0.f));
+	m_pColliderCom->Update(m_pTransformCom->Get_Pos() + _v3(0.f, m_pColliderCom->Get_Radius().y, 0.f));
 	return S_OK;
 }
 
@@ -1034,20 +1053,24 @@ void CFireBoy::Check_PhyCollider()
 
 void CFireBoy::Push_Collider()
 {
-	list<CGameObject*> tmpList[3];
+	list<CGameObject*> tmpList[4];
 
 	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
 	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
 	tmpList[2] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
+	tmpList[3] = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE);
 
 	for (auto& ListObj : tmpList)
 	{
+		if (ListObj.empty())
+			continue;
+
 		for (auto& iter : ListObj)
 		{
 			CCollider* pCollider = TARGET_TO_COL(iter);
 
 			// 지금 속도값 임의로 넣었는데 구해서 넣어줘야함 - 완료
-			if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_pAIControllerCom->Get_FloatValue(L"Monster_Speed")))
+			if (m_pColliderCom->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_pAIControllerCom->Get_FloatValue(L"Monster_Speed")))
 			{
 				CTransform* pTrans = TARGET_TO_TRANS(iter);
 				CNavMesh*   pNav = TARGET_TO_NAV(iter);
@@ -1060,7 +1083,7 @@ void CFireBoy::Push_Collider()
 				vDir.y = 0;
 
 				// 네비 메쉬타게 끔 세팅
-				pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pCollider->Get_Length().x));
+				pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pColliderCom->Get_Length().x));
 			}
 		}
 	}
@@ -1079,8 +1102,10 @@ void CFireBoy::OnCollisionEnter()
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_MonsterProjectile", SCENE_STAGE));
 	}
 	else
+	{
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
-
+		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE));
+	}
 
 	// =============================================================================================
 
@@ -1169,17 +1194,28 @@ HRESULT CFireBoy::Add_Component()
 		return E_FAIL;
 
 	// for.Com_NavMesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMesh)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMeshCom)))
 		return E_FAIL;
 
 	// for.Com_Collider
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pColliderCom)))
 		return E_FAIL;
 
-	m_pCollider->Set_Radius(_v3{ 1.5f, 1.5f, 1.5f });
-	m_pCollider->Set_Dynamic(true);
-	m_pCollider->Set_Type(COL_SPHERE);
-	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pCollider->Get_Radius().y , 0.f });
+	//=================================================================================
+	// for.Com_Optimaization
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Optimization", L"Com_Optimization", (CComponent**)&m_pOptimizationCom)))
+		return E_FAIL;
+
+	// for.Com_BattleAgent
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"BattleAgent", L"Com_BattleAgent", (CComponent**)&m_pBattleAgentCom)))
+		return E_FAIL;
+	//=================================================================================
+
+
+	m_pColliderCom->Set_Radius(_v3{ 1.5f, 1.5f, 1.5f });
+	m_pColliderCom->Set_Dynamic(true);
+	m_pColliderCom->Set_Type(COL_SPHERE);
+	m_pColliderCom->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pColliderCom->Get_Radius().y , 0.f });
 
 
 	return NOERROR;
@@ -1359,13 +1395,6 @@ CGameObject * CFireBoy::Clone_GameObject(void * pArg)
 
 void CFireBoy::Free()
 {
-	Safe_Release(m_pCollider);
-	Safe_Release(m_pNavMesh);
-	Safe_Release(m_pAIControllerCom);
-	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pMeshCom);
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pRendererCom);
 
-	CGameObject::Free();
+	CMonster::Free();
 }

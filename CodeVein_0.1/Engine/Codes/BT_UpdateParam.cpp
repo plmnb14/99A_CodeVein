@@ -114,7 +114,7 @@ HRESULT CBT_UpdateParam::Ready_Clone_Node(void * pInit_Struct)
 {
 	INFO temp = *(INFO*)pInit_Struct;
 
-	strcpy_s<256>(m_pNodeName, temp.Target_NodeName);
+	strcpy_s<STR_128>(m_pNodeName, temp.Target_NodeName);
 	m_dUpdateTime = temp.Target_dUpdateTime;
 	m_dOffset = temp.Target_dOffset;
 	m_pTarget_ObjParam = temp.Target_ObjParam;

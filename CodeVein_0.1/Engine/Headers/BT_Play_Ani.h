@@ -14,9 +14,9 @@ public:
 	{
 		tagInitInfo(char* pNodeName, CMesh_Dynamic* pMesh_Dynamic, _uint _iAni_Index, _float _fAniWeight = 0.9f)
 			: Target_pMesh_Dynamic(pMesh_Dynamic), Target_iAni_iIndex(_iAni_Index), fAniWeight(_fAniWeight)
-		{ strcpy_s<256>(Target_NodeName, pNodeName); }
+		{ strcpy_s<STR_128>(Target_NodeName, pNodeName); }
 
-		char			Target_NodeName[256] = {0,};
+		char			Target_NodeName[STR_128] = {0,};
 		CMesh_Dynamic*	Target_pMesh_Dynamic = nullptr;
 		_uint			Target_iAni_iIndex = 0;
 		_float			fAniWeight = 0.f;

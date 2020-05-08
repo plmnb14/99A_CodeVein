@@ -1,14 +1,15 @@
 #include "stdafx.h"
 #include "..\Headers\PoisonRotationBullet.h"
 #include "ParticleMgr.h"
+#include "Effect.h"
 
 CPoisonRotationBullet::CPoisonRotationBullet(LPDIRECT3DDEVICE9 pGraphic_Device)
-	: CGameObject(pGraphic_Device)
+	: CMonster(pGraphic_Device)
 {
 }
 
 CPoisonRotationBullet::CPoisonRotationBullet(const CPoisonRotationBullet & rhs)
-	: CGameObject(rhs)
+	: CMonster(rhs)
 {
 }
 
@@ -248,8 +249,10 @@ void CPoisonRotationBullet::OnCollisionEnter()
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_MonsterProjectile", SCENE_STAGE));
 	}
 	else
+	{
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
-
+		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE));
+	}
 
 	// =============================================================================================
 
@@ -328,7 +331,7 @@ HRESULT CPoisonRotationBullet::Add_Component()
 		return E_FAIL;
 
 	// for.Com_Collider
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pColliderCom)))
 		return E_FAIL;
 
 	return NOERROR;
@@ -387,11 +390,8 @@ CGameObject * CPoisonRotationBullet::Clone_GameObject(void * pArg)
 
 void CPoisonRotationBullet::Free()
 {
-	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pCollider);
-	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pBulletTransformCom1);
 	Safe_Release(m_pBulletTransformCom2);
 
-	CGameObject::Free();
+	CMonster::Free();
 }

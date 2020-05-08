@@ -108,10 +108,10 @@ void CToolView::OnInitialUpdate()
 	CInput_Device::Get_Instance()->Ready_Input_Dev(g_hInst, g_hWnd);
 	CInput_Device::Get_Instance()->Set_InputDev();
 
-	_tchar szDynamicExtractPath[MAX_STR] = L"";
-	_tchar szDynamicSavePath[MAX_STR] = L"";
-	_tchar szWeaponExtractPath[MAX_STR] = L"";
-	_tchar szWeaponSavePath[MAX_STR] = L"";
+	_tchar szDynamicExtractPath[STR_128] = L"";
+	_tchar szDynamicSavePath[STR_128] = L"";
+	_tchar szWeaponExtractPath[STR_128] = L"";
+	_tchar szWeaponSavePath[STR_128] = L"";
 	lstrcpy(szDynamicExtractPath, L"..\\..\\Client\\Resources\\Mesh\\DynamicMesh");
 	lstrcpy(szDynamicSavePath, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
 	lstrcpy(szWeaponExtractPath, L"..\\..\\Client\\Resources\\Mesh\\Weapons");
@@ -139,10 +139,10 @@ END_MESSAGE_MAP()
 
 CString CToolView::Convert_RelativePath(const _tchar * pFullPath)
 {
-	_tchar szCurrentDir[MAX_STR] = L"";
-	::GetCurrentDirectory(MAX_STR, szCurrentDir);
+	_tchar szCurrentDir[STR_128] = L"";
+	::GetCurrentDirectory(STR_128, szCurrentDir);
 
-	_tchar szRelativePath[MAX_STR] = L"";
+	_tchar szRelativePath[STR_128] = L"";
 	::PathRelativePathTo(szRelativePath, szCurrentDir, FILE_ATTRIBUTE_DIRECTORY, pFullPath, FILE_ATTRIBUTE_DIRECTORY);
 
 	return CString(szRelativePath);
@@ -203,7 +203,7 @@ void CToolView::Extract_Mesh_PathInfo(const _tchar * pPath, list<MESH_INFO*>& rP
 
 			Engine::MESH_INFO* pPathInfo = new Engine::MESH_INFO;
 
-			_tchar szBuf[MAX_STR] = L"";
+			_tchar szBuf[STR_128] = L"";
 			lstrcpy(szBuf, strRelative);
 
 			// 폴더까지의 경로
@@ -225,13 +225,11 @@ void CToolView::Extract_Mesh_PathInfo(const _tchar * pPath, list<MESH_INFO*>& rP
 			// 키 값
 			pPathInfo->wstrStateKey = L"Mesh_" + tmpString;
 
-			_tchar szBuf_2[MAX_STR] = L"";
-			(_bIsDynamic ? lstrcpy(szBuf_2, L"1") : lstrcpy(szBuf_2, L"0"));
+			pPathInfo->bIsDynamic = _bIsDynamic;
 
-			pPathInfo->szIsDynamic = szBuf_2;
-
-			wcout << pPathInfo->wstrStateKey<<"를 추출했습니다" << endl;
 			rPathInfoLst.push_back(pPathInfo);
+
+			wcout << pPathInfo->wstrStateKey<<" 를 추출했습니다" << endl;
 		}
 	}
 
@@ -240,32 +238,34 @@ void CToolView::Extract_Mesh_PathInfo(const _tchar * pPath, list<MESH_INFO*>& rP
 
 void CToolView::Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst, const _tchar* szPath)
 {
-	wofstream fout;
-
-	fout.open(szPath);
-
-	if (fout.fail())
-		return;
+	HANDLE hFile = ::CreateFile(szPath, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 
 	DWORD dwByte = 0;
-	wstring wstrCombined = L"";
 
 	for (auto& pPathInfo : rPathInfoLst)
 	{
-		wstrCombined =
-			pPathInfo->wstrStateKey + L"|" +
-			pPathInfo->wstrFileName + L"|" +
-			pPathInfo->wstrImgPath + L"|" +
-			pPathInfo->szIsDynamic;
+		if (INVALID_HANDLE_VALUE == hFile)
+			::MSG_BOX("Save Failed. [INVALID_HANDLE_VALUE]");
 
-		fout << wstrCombined << endl;
+		const _tchar* szKey = pPathInfo->wstrStateKey.c_str();
+		const _tchar* szFile = pPathInfo->wstrFileName.c_str();
+		const _tchar* szPath = pPathInfo->wstrImgPath.c_str();
+		const _bool bDynamic = pPathInfo->bIsDynamic;
+
+		::WriteFile(hFile, szKey, sizeof(_tchar) * STR_128, &dwByte, nullptr);
+		::WriteFile(hFile, szFile, sizeof(_tchar) * STR_128, &dwByte, nullptr);
+		::WriteFile(hFile, szPath, sizeof(_tchar) * STR_128, &dwByte, nullptr);
+		::WriteFile(hFile, &bDynamic, sizeof(_bool), &dwByte, nullptr);
+
 		wcout << pPathInfo->wstrStateKey<<"를 저장했습니다" << endl;
+		if (rPathInfoLst.size() == 1)
+			break;
 	}
 
-	fout.close();
+	CloseHandle(hFile);
 
-	cout << endl;
 	cout << "저장 완료 . . . !" << endl;
+	cout << endl;
 
 	return;
 }

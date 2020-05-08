@@ -11,15 +11,15 @@ public:
 	{
 		tagInitInfo(char* pNodeName, _tchar* _Object_Tag, _tchar* _Create_Pos_Key, _tchar* _Dir_Key, _float _fSpeed, _double _dLifeTime, _double _dService_Start_Time, _uint _MaxCount_Of_Execution, _double dCreateTime, _double dOffset, CBT_Service_Node::Mode _eMode)
 			: fSpeed(_fSpeed), dLifeTime(_dLifeTime), Service_Start_Time(_dService_Start_Time), Target_dCreateTime(dCreateTime), Target_dOffset(dOffset), MaxCount_Of_Execution(_MaxCount_Of_Execution), eMode(_eMode)
-		{strcpy_s<256>(Target_NodeName, pNodeName);
+		{strcpy_s<STR_128>(Target_NodeName, pNodeName);
 		lstrcpy(Object_Tag, _Object_Tag);
 		lstrcpy(Create_Pos_Key, _Create_Pos_Key);
 		lstrcpy(Dir_Key, _Dir_Key);}
 
-		char					Target_NodeName[256] = {0,};
-		_tchar					Object_Tag[256] = { 0, };
-		_tchar					Create_Pos_Key[256] = { 0, };
-		_tchar					Dir_Key[256] = { 0, };
+		char					Target_NodeName[STR_128] = {0,};
+		_tchar					Object_Tag[STR_128] = { 0, };
+		_tchar					Create_Pos_Key[STR_128] = { 0, };
+		_tchar					Dir_Key[STR_128] = { 0, };
 		_float					fSpeed = 0.f;
 		_double					dLifeTime = 0;
 		_double					Service_Start_Time = 0;
@@ -50,9 +50,9 @@ private:
 	_double		m_dMaxTime = 0;
 
 private:
-	_tchar					m_pObject_Tag[256] = { 0, };
-	_tchar					m_pCreate_Pos_Key[256] = { 0, };
-	_tchar					m_pDir_Key[256] = { 0, };
+	_tchar					m_pObject_Tag[STR_128] = { 0, };
+	_tchar					m_pCreate_Pos_Key[STR_128] = { 0, };
+	_tchar					m_pDir_Key[STR_128] = { 0, };
 
 	_v3						m_vCreate_Pos = _v3(0.f, 0.f, 0.f);
 	_v3						m_vDir = _v3(0.f, 0.f, 0.f);

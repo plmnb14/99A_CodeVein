@@ -27,11 +27,13 @@ private:
 private:
 	HRESULT SetUp_Name(char** ppSourName, const char* pDestName);
 	HRESULT Change_TextureFileName(_tchar* pFilePath, _tchar * pSourMark, _tchar * pDestMark);
+	HRESULT Change_TextureFileExtension(_tchar* pFilePath);
+
 public:
 	static CHierarchy* Create(LPDIRECT3DDEVICE9 pGraphic_Device, const _tchar* pFilePath);
 	virtual void Free();
 
-	_ulong		m_dwMaterialPass[10] = {};
+	_ulong		m_dwMaterialPass[STR_32] = {};
 
 private:
 	_bool		m_bIncludeMap[MESHTEXTURE::TYPE_END] = {};

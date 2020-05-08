@@ -171,8 +171,10 @@ void CGunGenjiBullet::OnCollisionEnter()
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_MonsterProjectile", SCENE_STAGE));
 	}
 	else
+	{
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
-
+		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE));
+	}
 
 	// =============================================================================================
 
@@ -263,6 +265,7 @@ HRESULT CGunGenjiBullet::Add_Component()
 	// for.Com_Collider
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
+
 
 	return NOERROR;
 }

@@ -1,13 +1,10 @@
 #pragma once
 
-#include "Client_Defines.h"
-#include "GameObject.h"
-#include "Management.h"
-#include "Effect.h"
+#include "Monster.h"
 
 BEGIN(Client)
 
-class CPoisonRotationBullet final : public CGameObject
+class CPoisonRotationBullet final : public CMonster
 {
 protected:
 	explicit CPoisonRotationBullet(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -22,9 +19,6 @@ public:
 	virtual HRESULT Render_GameObject();
 
 private:
-	CTransform*			m_pTransformCom = nullptr;
-	CCollider*			m_pCollider = nullptr;
-	CRenderer*			m_pRendererCom = nullptr;
 	CEffect*			m_pBulletBody1 = nullptr;
 	CEffect*			m_pBulletBody2 = nullptr;
 
@@ -36,18 +30,18 @@ private:
 	CTransform*			m_pBulletTransformCom2 = nullptr;
 	_float				m_fAngle = 0.f;
 	////
-	_tchar				m_pEffect_Tag0[256] = { 0, };
-	_tchar				m_pEffect_Tag1[256] = { 0, };
-	_tchar				m_pEffect_Tag2[256] = { 0, };
-	_tchar				m_pEffect_Tag3[256] = { 0, };
-	_tchar				m_pEffect_Tag4[256] = { 0, };
+	_tchar				m_pEffect_Tag0[STR_128] = { 0, };
+	_tchar				m_pEffect_Tag1[STR_128] = { 0, };
+	_tchar				m_pEffect_Tag2[STR_128] = { 0, };
+	_tchar				m_pEffect_Tag3[STR_128] = { 0, };
+	_tchar				m_pEffect_Tag4[STR_128] = { 0, };
 
-	_tchar				m_pEffect_Tag5[256] = { 0, };
-	_tchar				m_pEffect_Tag6[256] = { 0, };
-	_tchar				m_pEffect_Tag7[256] = { 0, };
-	_tchar				m_pEffect_Tag8[256] = { 0, };
-	_tchar				m_pEffect_Tag9[256] = { 0, };
-	_tchar				m_pEffect_Tag10[256] = { 0, };
+	_tchar				m_pEffect_Tag5[STR_128] = { 0, };
+	_tchar				m_pEffect_Tag6[STR_128] = { 0, };
+	_tchar				m_pEffect_Tag7[STR_128] = { 0, };
+	_tchar				m_pEffect_Tag8[STR_128] = { 0, };
+	_tchar				m_pEffect_Tag9[STR_128] = { 0, };
+	_tchar				m_pEffect_Tag10[STR_128] = { 0, };
 
 	_double				m_dCurTime = 0;
 	_double				m_dLifeTime = 0;

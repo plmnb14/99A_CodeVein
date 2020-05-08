@@ -214,8 +214,8 @@ void CExpendables_Inven::Click_Inven()
 
 void CExpendables_Inven::Add_Expendables(CExpendables::EXPEND_TYPE eType)
 {
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_Expendables", SCENE_STAGE, L"Layer_Expendables");
-	CExpendables* pExpendables = static_cast<CExpendables*>(g_pManagement->Get_GameObjectBack(L"Layer_Expendables", SCENE_STAGE));
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_Expendables", SCENE_MORTAL, L"Layer_Expendables");
+	CExpendables* pExpendables = static_cast<CExpendables*>(g_pManagement->Get_GameObjectBack(L"Layer_Expendables", SCENE_MORTAL));
 	if (nullptr == pExpendables)
 	{
 		MSG_BOX("Expendables is null");

@@ -57,7 +57,6 @@ HRESULT CMainApp::Render_MainApp()
 	m_pGraphic_Dev->Clear(0, nullptr, D3DCLEAR_TARGET | D3DCLEAR_ZBUFFER | D3DCLEAR_STENCIL, D3DXCOLOR(0.f, 0.f, 1.f, 1.f), 1.f, 0);
 	m_pGraphic_Dev->BeginScene();
 
-
 	if (FAILED(m_pRenderer->Draw_RenderList()))
 		return E_FAIL;
 
@@ -152,13 +151,15 @@ void CMainApp::Global_KeyInput()
 	// 자유 시점 카메라
 	if (g_pInput_Device->Key_Down(DIK_NUMPAD0))
 	{
-		CCameraMgr::Get_Instance()->Set_CamView(TOOL_VIEW);
+		if(g_bActiveCam)
+			CCameraMgr::Get_Instance()->Set_CamView(TOOL_VIEW);
 	}
 
 	// 3인칭 카메라
 	if (g_pInput_Device->Key_Down(DIK_NUMPAD1))
 	{
-		CCameraMgr::Get_Instance()->Set_CamView(BACK_VIEW);
+		if(g_bActiveCam)
+			CCameraMgr::Get_Instance()->Set_CamView(BACK_VIEW);
 	}
 
 	// All Gizmo's Toggle On / Off

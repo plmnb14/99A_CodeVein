@@ -8,6 +8,10 @@
 #include "ParticleMgr.h"
 #include "ScriptManager.h"
 
+#include "Player.h"
+
+#include "Scene_Stage_Base.h"
+
 CScene_Stage_02::CScene_Stage_02(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
 {
@@ -43,46 +47,48 @@ _int CScene_Stage_02::Update_Scene(_double TimeDelta)
 
 HRESULT CScene_Stage_02::Render_Scene()
 {
+	if (g_pInput_Device->Key_Down(DIK_H))
+	{
+		g_eSceneID_Cur = SCENE_STAGE_BASE;
+		g_eSTeleportID_Cur = TeleportID_Home_1;
+
+		CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+
+		pInstance->Set_Enable(false);
+
+		g_pManagement->Clear_LightList();
+
+		if (FAILED(g_pManagement->Clear_Instance(SCENE_STAGE)))
+			return -1;
+
+		CScene* pScene = CScene_Stage_Base::Create(m_pGraphic_Device, m_bLoadStaticMesh);
+
+		if (FAILED(g_pManagement->SetUp_CurrentScene(pScene)))
+			return -1;
+	}
 
 	return S_OK;
 }
 
 HRESULT CScene_Stage_02::Ready_Layer_Player(const _tchar * pLayerTag)
 {
-	// 몬스터 레이어만 미리 추가
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Mistletoe")))
+		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Monster")))
 		return E_FAIL;
-
-	// 보스 레이어만 미리 추가
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Boss")))
 		return E_FAIL;
-
-	// 투사체 레이어 추가
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_MonsterProjectile")))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_BossUI")))
+		return E_FAIL;
 
-	CGameObject* pInstance = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	CPlayer* pInstance = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 
+	pInstance->Teleport_ResetOptions(g_eSceneID_Cur, g_eSTeleportID_Cur);
 	pInstance->Set_Enable(true);
 
-	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Stage_01.dat");
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-	TARGET_TO_NAV(pInstance)->Set_Index(5);
-	TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(150.484f, -18.08f, 70.417f));
-	TARGET_TO_TRANS(pInstance)->Set_Angle(V3_NULL);
-
-	pInstance = nullptr;;
-
-	return S_OK;
-
-
-	//if(FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerHP", SCENE_STAGE, L"Layer_PlayerHP")))
-	//	return E_FAIL;
-	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerST", SCENE_STAGE, L"Layer_PlayerST")))
-	//	return E_FAIL;
-
-	return S_OK;
+	pInstance = nullptr;
 }
 
 HRESULT CScene_Stage_02::Ready_Layer_Environment(const _tchar* pLayerTag)

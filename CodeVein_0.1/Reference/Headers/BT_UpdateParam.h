@@ -13,9 +13,9 @@ public:
 	{
 		tagInitInfo(char* pNodeName, OBJECT_PARAM* _pTarget_ObjParam, Param _eParam, _double _Service_Start_Time, _uint _Count_Of_Execution, _double dUpdateTime, _double dOffset, CBT_Service_Node::Mode _eMode)
 			: Target_ObjParam(_pTarget_ObjParam), eParam(_eParam), Service_Start_Time(_Service_Start_Time), Target_dUpdateTime(dUpdateTime), Target_dOffset(dOffset), Count_Of_Execution(_Count_Of_Execution), eMode(_eMode)
-		{ strcpy_s<256>(Target_NodeName, pNodeName); }
+		{ strcpy_s<STR_128>(Target_NodeName, pNodeName); }
 
-		char					Target_NodeName[256] = {0,};
+		char					Target_NodeName[STR_128] = {0,};
 		_double					Target_dUpdateTime = 0;
 		_double					Target_dOffset = 0;
 		OBJECT_PARAM*			Target_ObjParam = nullptr;

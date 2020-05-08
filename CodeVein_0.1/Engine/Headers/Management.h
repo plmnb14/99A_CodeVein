@@ -20,6 +20,7 @@
 #include "ParticleMgr.h"
 #include "Renderer.h"
 #include "MyPhysx.h"
+#include "CameraMgr.h"
 
 BEGIN(Engine)
 
@@ -67,7 +68,9 @@ public: // for.Component_Manager
 	CComponent* Clone_Component(_uint iSceneID, const _tchar* pPrototypeTag, void* pArg = nullptr);
 
 	HRESULT LoadMesh_FromPath(_Device pGraphicDev, const _tchar* szImgPath);
+	HRESULT LoadMesh_FilesFromPath_AddProtoRenderObj(_Device pGraphicDev, const _tchar* szImgPath);
 	HRESULT LoadTex_FromPath(_Device pGraphicDev, const _tchar* szImgPath);
+	HRESULT LoadTex_FromPath_Tool(_Device pGraphicDev, const _tchar* szImgPath);
 
 public:
 	void	Clone_NavMesh_OnManagement();
@@ -120,6 +123,7 @@ public: // For.ParticleManager
 	void Create_Effect_Offset(_tchar* szName, _float fOffset, _v3 vPos, CTransform* pFollowTrans = nullptr);
 	void Create_Effect_Delay(_tchar* szName, _float fDelay, _v3 vPos, CTransform* pFollowTrans = nullptr, _v3 vAngle = V3_NULL);
 	void Create_Effect_Delay(_tchar * szName, _float fDelay, CTransform* pFollowTrans, _mat* pTargetMat);
+	void Create_Effect_Decal(_tchar* szName, _v3 vPos);
 	void Create_ParticleEffect_Delay(_tchar* szName, _float fLifeTime, _float fDelay, _v3 vPos, CTransform* pFollowTrans = nullptr);
 	void Create_ParticleEffect_Delay(_tchar* szName, _float fLifeTime, _float fDelay, CTransform* pFollowTrans, _mat* pTargetMat);
 	CTrail_VFX* Create_Trail();

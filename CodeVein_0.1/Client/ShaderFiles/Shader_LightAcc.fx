@@ -123,55 +123,43 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	vWorldPos = vProjPos * fViewZ;
 
 	// 2. 뷰( 로컬위치 * 월드 * 뷰 )
-	vWorldPos = mul(vProjPos, g_matProjInv);
+	vWorldPos = mul(vWorldPos, g_matProjInv);
 
 	// 3. 월드( 로컬위치 * 월드)
 	vWorldPos = mul(vWorldPos, g_matViewInv);
 
-
-	// Shadow ====================================================================
-	
-	float fShadow = tex2D(ShadowMapSampler, In.vTexUV).x;
-
-	float4 lightPosition = mul(vWorldPos, g_matLightVP);
-	
-	float fDepth = (lightPosition.z / lightPosition.w);
-	float DepthBias = 0.00125f;
-	
-	if (fDepth > fShadow + DepthBias)
-	{
-		Out.vShade.rgb *= 0.2f;
-		Out.vSpecular.a = AO;
-
-		if (vHeightValue.x > 0.0001f)
-		{
-			Out.vShade.xyz = ceil(Out.vShade.xyz * 2.f) / 2.f;
-		}
-
-		return Out;
-	}
-
-	// Shadow End ====================================================================
-
-	// Toon Shade ====================================================================
-
-	if (vHeightValue.x > 0.0001f)
-	{
-		Out.vShade.xyz = ceil(Out.vShade.xyz * 2.f) / 2.f;
-
-		if (vHeightValue.y > 0.f)
-		{
-			//Out.vShade.xyz += 0.5f;
-			//Out.vShade.xyz = saturate(Out.vShade.xyz);
-		}
-	}
-
-	// Toon Shade End ====================================================================
+	//========================================================================
 
 	vector		vLook = vWorldPos - g_vCamPosition;
 
 	Out.vSpecular = (g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 20.f * Roughness)) * Metalness;
 	Out.vSpecular.a = AO;
+
+	if (vHeightValue.x > 0.0001f)
+	{
+		Out.vShade.xyz = ceil(Out.vShade.xyz * 2.f) / 2.f;
+		//Out.vSpecular.a = 100.f;
+
+		if (vHeightValue.y > 0.f)
+		{
+			//Out.vSpecular.a = 0.2f;
+			//Out.vShade.xyz += 0.5f;
+			//Out.vShade.xyz = saturate(Out.vShade.xyz);
+		}
+	}
+
+	// Shadow ====================================================================
+
+	float fShadow = tex2D(ShadowMapSampler, In.vTexUV).x;
+
+	float4 lightPosition = mul(vWorldPos, g_matLightVP);
+
+	float fDepth = (lightPosition.z / lightPosition.w);
+	float DepthBias = 0.00125f;
+
+	Out.vShade.rgb *= fShadow;
+
+	// Shadow End ====================================================================
 
 	return Out;
 }

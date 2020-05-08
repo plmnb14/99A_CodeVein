@@ -128,6 +128,7 @@ void CBloodCodeSelectUI::SetUp_Default()
 		pInstance = static_cast<CBloodCodeSlot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodCodeSlot", nullptr));
 		
 		TARGET_TO_TRANS(pInstance)->Set_Scale(_v3(0.3f, 0.223f, 1.f));
+
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 		m_vecBloodCodeSlot.push_back(pInstance);
 	}

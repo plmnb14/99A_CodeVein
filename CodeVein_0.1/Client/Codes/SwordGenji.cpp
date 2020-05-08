@@ -1,11 +1,8 @@
 #include "stdafx.h"
 #include "..\Headers\SwordGenji.h"
-#include "..\Headers\Weapon.h"
 
-#include "MonsterUI.h"
 //#include "DamegeNumUI.h"
 #include "Get_ItemUI.h"
-#include "Haze.h"
 
 CSwordGenji::CSwordGenji(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CMonster(pGraphic_Device)
@@ -34,26 +31,20 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	Ready_BoneMatrix();
 	Ready_Collider();
 
+	m_tObjParam.bCanRepel = true;			// 튕겨내기 가능성 (나의 공격이 적에게서)
+	m_tObjParam.bCanCounter = true;			// 반격가능성
+	m_tObjParam.bCanExecution = true;		// 처형
 	m_tObjParam.bCanHit = true;
-	m_tObjParam.fHp_Cur = 1000.f;
+	m_tObjParam.fHp_Cur = 9999.f;
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
 	// MonsterHP UI
- 	pMonsterHpUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
- 	pMonsterHpUI->Set_Target(this);
-	pMonsterHpUI->Set_Bonmatrix(m_matBones[Bone_Head]);
- 	pMonsterHpUI->Ready_GameObject(pArg);
-
-	/*m_pDamegeNumUI = static_cast<CDamegeNumUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_DamegeNumUI", pArg));
-	m_pDamegeNumUI->Set_Target(this);
-	m_pDamegeNumUI->Ready_GameObject(NULL);*/
-
-	//m_pGet_Item = static_cast<CGet_ItemUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Get_ItemUI", pArg));
-	//m_pGet_Item->Set_ItemTarget(this);
-	//m_pGet_Item->Ready_GameObject(pArg);
-
+	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
+	m_pMonsterUI->Set_Target(this);
+	m_pMonsterUI->Set_Bonmatrix(m_matBones[Bone_Head]);
+	m_pMonsterUI->Ready_GameObject(pArg);
 
 	//////////////////// 행동트리 init
 
@@ -70,7 +61,7 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 
 	Update_Bone_Of_BlackBoard();
 
-	pBlackBoard->Set_Value(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))->Get_Pos());
+	pBlackBoard->Set_Value(L"Player_Pos", TARGET_TO_TRANS(pPlayer)->Get_Pos());
 	pBlackBoard->Set_Value(L"HP", m_tObjParam.fHp_Cur);
 	pBlackBoard->Set_Value(L"MAXHP", m_tObjParam.fHp_Max);
 	pBlackBoard->Set_Value(L"HPRatio", 100);
@@ -79,8 +70,8 @@ HRESULT CSwordGenji::Ready_GameObject(void * pArg)
 	pBlackBoard->Set_Value(L"TrailOn", false);
 	pBlackBoard->Set_Value(L"TrailOff", false);
 
-	//CBT_Selector* Start_Sel = Node_Selector("행동 시작"); // 찐
-	CBT_Sequence* Start_Sel = Node_Sequence("행동 시작"); // 테스트
+	CBT_Selector* Start_Sel = Node_Selector("행동 시작"); // 찐
+	//CBT_Sequence* Start_Sel = Node_Sequence("행동 시작"); // 테스트
 
 	pBehaviorTree->Set_Child(Start_Sel);
 
@@ -194,26 +185,51 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 	}
 
 	// MonsterHP UI
-	pMonsterHpUI->Update_GameObject(TimeDelta);
+	if (nullptr != m_pMonsterUI)
+		m_pMonsterUI->Update_GameObject(TimeDelta);
+
 	//m_pDamegeNumUI->Update_GameObject(TimeDelta);
 	//m_pGet_Item->Update_GameObject(TimeDelta);
 
-	// 플레이어 미발견
-	if (false == m_bFight)
+	// 처형이 아니고, 반격 당할 수 있을 경우
+	if (true == m_tObjParam.bCanExecution && true == m_tObjParam.bCanRepel)
 	{
-		Update_NF();
+		// 플레이어 미발견
+		if (false == m_bFight)
+		{
+			Update_NF();
+		}
+		// 플레이어 발견
+		else
+		{
+			// 가까운 녀석 어그로 끌림.
+			Set_Target_Auto();
+
+			// 뼈 위치 업데이트
+			Update_Bone_Of_BlackBoard();
+			// BB 직접 업데이트
+			Update_Value_Of_BB();
+
+			if (true == m_bAIController)
+				m_pAIControllerCom->Update_AIController(TimeDelta);
+		}
 	}
-	// 플레이어 발견
 	else
 	{
-		// 뼈 위치 업데이트
+		// 뼈만 업데이트
 		Update_Bone_Of_BlackBoard();
-		// BB 직접 업데이트
-		Update_Value_Of_BB();
 
-		if (true == m_bAIController)
-			m_pAIControllerCom->Update_AIController(TimeDelta);
+		if (false == m_tObjParam.bCanExecution)
+		{
+			// 처형 체크
+			Check_Execution();
+		}
 
+		else if (false == m_tObjParam.bCanRepel)
+		{
+			// 반격 체크
+			Check_Repel();
+		}
 	}
 
 	if (false == m_bReadyDead)
@@ -221,7 +237,7 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 	else
 		Check_DeadEffect(TimeDelta);
 
-	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
+	m_pTransformCom->Set_Pos(m_pNavMeshCom->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
 	return NOERROR;
 }
@@ -234,21 +250,29 @@ _int CSwordGenji::Late_Update_GameObject(_double TimeDelta)
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
 
-	if (!m_bDissolve)
+	//=============================================================================================
+	// 그림자랑 모션블러는 프리스텀 안에 없으면 안그림
+	//=============================================================================================
+	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
 	{
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
-			return E_FAIL;
+		if (!m_bDissolve)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
+				return E_FAIL;
+		}
+
+		else
+		{
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
+				return E_FAIL;
+		}
+
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
 			return E_FAIL;
-	}
-	else
-	{
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
 			return E_FAIL;
 	}
-
-	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
-	//	return E_FAIL;
+	//=============================================================================================
 
 	m_dTimeDelta = TimeDelta;
 
@@ -265,7 +289,7 @@ HRESULT CSwordGenji::Render_GameObject()
 
 	m_pMeshCom->Play_Animation(_float(m_dTimeDelta)); // * alpha
 
-	if (m_pOptimization->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 1.5f))
+	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
 	{
 		if (FAILED(SetUp_ConstantTable()))
 			return E_FAIL;
@@ -291,9 +315,6 @@ HRESULT CSwordGenji::Render_GameObject()
 
 				m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
 
-				//if (FAILED(m_pShaderCom->Set_Texture("g_DiffuseTexture", m_pMeshCom->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_DIFFUSE_MAP))))
-				//	return E_FAIL;
-
 				m_pShaderCom->Commit_Changes();
 
 				m_pMeshCom->Render_Mesh(i, j);
@@ -314,45 +335,76 @@ HRESULT CSwordGenji::Render_GameObject()
 
 HRESULT CSwordGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur)
 {
+	if (false == m_bEnable)
+		return S_OK;
+
 	if (nullptr == pShader ||
 		nullptr == m_pMeshCom)
 		return E_FAIL;
 
-	m_pMeshCom->Play_Animation(0.f);
+	//============================================================================================
+	// 공통 변수
+	//============================================================================================
 
-	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+	_mat	ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat	ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+	_mat	WorldMatrix = m_pTransformCom->Get_WorldMat();
 
-	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
 		return E_FAIL;
 
-	m_matLastWVP = m_pTransformCom->Get_WorldMat() * ViewMatrix * ProjMatrix;
+	//============================================================================================
+	// 모션 블러 상수
+	//============================================================================================
+	if (_bIsForMotionBlur)
+	{
+		if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
+			return E_FAIL;
 
-	_bool bMotionBlur = true;
-	if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
-		return E_FAIL;
-	_bool bDecalTarget = false;
-	if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
-		return E_FAIL;
+		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
 
+		_bool bMotionBlur = true;
+		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+			return E_FAIL;
+		_bool bDecalTarget = false;
+		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+			return E_FAIL;
+		_float fBloomPower = 0.5f;
+		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
+			return E_FAIL;
+	}
 
+	//============================================================================================
+	// 기타 상수
+	//============================================================================================
+	else
+	{
+		_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
+
+		if (FAILED(pShader->Set_Value("g_matWVP", &matWVP, sizeof(_mat))))
+			return E_FAIL;
+	}
+
+	//============================================================================================
+	// 쉐이더 실행
+	//============================================================================================
 	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
 
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 	{
 		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
 
-		m_pMeshCom->Update_SkinnedMesh(i);
-
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
+			_int tmpPass = m_pMeshCom->Get_MaterialPass(i, j);
+
 			pShader->Begin_Pass(iPass);
+			pShader->Commit_Changes();
+
 			pShader->Commit_Changes();
 
 			m_pMeshCom->Render_Mesh(i, j);
@@ -361,7 +413,9 @@ HRESULT CSwordGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bo
 		}
 	}
 
-	return NOERROR;
+	//============================================================================================
+
+	return S_OK;
 }
 
 CBT_Composite_Node * CSwordGenji::Normal_Cut1()
@@ -1100,7 +1154,7 @@ HRESULT CSwordGenji::Update_Collider()
 		++matrixIdx;
 	}
 
-	m_pCollider->Update(m_pTransformCom->Get_Pos() + _v3(0.f, m_pCollider->Get_Radius().y, 0.f));
+	m_pColliderCom->Update(m_pTransformCom->Get_Pos() + _v3(0.f, m_pColliderCom->Get_Radius().y, 0.f));
 
 	return S_OK;
 }
@@ -1114,7 +1168,7 @@ void CSwordGenji::Skill_Movement(_float _fspeed, _v3 _vDir)
 	D3DXVec3Normalize(&tmpLook, &tmpLook);
 
 	// 네비게이션 적용하면 
-	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &tmpLook, fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
+	m_pTransformCom->Set_Pos((m_pNavMeshCom->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &tmpLook, fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
 }
 
 void CSwordGenji::Decre_Skill_Movement(_float _fMutiply)
@@ -1134,7 +1188,10 @@ void CSwordGenji::Check_PhyCollider()
 	// 충돌처리, bCanHit를 무기가 false시켜줄것임.
 	if (false == m_tObjParam.bCanHit && m_tObjParam.bIsHit == false)
 	{
-		m_pMeshCom->Reset_OldIndx();	//애니 인덱스 초기화
+		//===========================================================
+		// 맞을 때 마다 림라이트 값을 초기화 시킴
+		m_pBattleAgentCom->Set_RimChangeData();
+		//==============================
 
 		m_bAIController = false;
 
@@ -1147,11 +1204,15 @@ void CSwordGenji::Check_PhyCollider()
 		m_fSkillMoveAccel_Cur = 0.f;
 		m_fSkillMoveMultiply = 0.5f;
 
-		// 맞을때 플레이어의 룩을 받아와서 그 방향으로 밈.
-		m_vPushDir_forHitting = (*(_v3*)&TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))->Get_WorldMat().m[2]);
-
 		m_pAIControllerCom->Reset_BT();
 
+		if (false == m_tObjParam.bIsExecution)
+		{
+			m_pMeshCom->Reset_OldIndx();	//애니 인덱스 초기화
+
+			// 맞을때 플레이어의 룩을 받아와서 그 방향으로 밈.
+			m_vPushDir_forHitting = (*(_v3*)&TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))->Get_WorldMat().m[2]);
+		}
 
 		if (m_tObjParam.fHp_Cur > 0.f)
 		{
@@ -1168,11 +1229,16 @@ void CSwordGenji::Check_PhyCollider()
 		}
 		else
 		{
-			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
-			Start_Dissolve(0.45f, false, true, 0.0f);
+			Ani eTmpAnim = (m_tObjParam.bIsExecution ? Ani_Death_F : Ani_Death);
+			_float fDelay = (m_tObjParam.bIsExecution ? 0.5f : 0.1f);
+
+			m_pMeshCom->SetUp_Animation(eTmpAnim);	// 죽음처리 시작
+			Start_Dissolve(0.5f, false, true, fDelay);
+
 			m_pSword->Start_Dissolve(0.45f, false, false, 0.5f);
+
 			m_fDeadEffect_Delay = 0.5f;
-			CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.5f));
+			CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.5f));		
 		}
 	}
 	// 맞았을 때
@@ -1203,20 +1269,24 @@ void CSwordGenji::Check_PhyCollider()
 
 void CSwordGenji::Push_Collider()
 {
-	list<CGameObject*> tmpList[3];
+	list<CGameObject*> tmpList[4] = {};
 
 	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
 	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
 	tmpList[2] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
+	tmpList[3] = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE);
 
 	for (auto& ListObj : tmpList)
 	{
+		if(ListObj.empty())
+			continue;
+
 		for (auto& iter : ListObj)
 		{
 			CCollider* pCollider = TARGET_TO_COL(iter);
 
 			// 지금 속도값 임의로 넣었는데 구해서 넣어줘야함 - 완료
-			if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_pAIControllerCom->Get_FloatValue(L"Monster_Speed")))
+			if (m_pColliderCom->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_pAIControllerCom->Get_FloatValue(L"Monster_Speed")))
 			{
 				CTransform* pTrans = TARGET_TO_TRANS(iter);
 				CNavMesh*   pNav = TARGET_TO_NAV(iter);
@@ -1229,7 +1299,7 @@ void CSwordGenji::Push_Collider()
 				vDir.y = 0;
 
 				// 네비 메쉬타게 끔 세팅
-				pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pCollider->Get_Length().x));
+				pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pColliderCom->Get_Length().x));
 			}
 		}
 	}
@@ -1272,7 +1342,7 @@ HRESULT CSwordGenji::Add_Component(void* pArg)
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
-	_tchar name[256] = { 0, };
+	_tchar name[STR_128] = { 0, };
 	INFO eTemp = *(INFO*)pArg;
 
 	if (nullptr == pArg)
@@ -1302,21 +1372,21 @@ HRESULT CSwordGenji::Add_Component(void* pArg)
 		return E_FAIL;
 
 	// for.Com_NavMesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMesh)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMeshCom)))
 		return E_FAIL;
 
 	// for.Com_Collider
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pColliderCom)))
 		return E_FAIL;
 
 	// for.Com_Optimaization
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Optimization", L"Com_Optimization", (CComponent**)&m_pOptimization)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Optimization", L"Com_Optimization", (CComponent**)&m_pOptimizationCom)))
 		return E_FAIL;
 
-	m_pCollider->Set_Radius(_v3{ 1.f, 1.f, 1.f });
-	m_pCollider->Set_Dynamic(true);
-	m_pCollider->Set_Type(COL_SPHERE);
-	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pCollider->Get_Radius().y , 0.f });
+	m_pColliderCom->Set_Radius(_v3{ 1.f, 1.f, 1.f });
+	m_pColliderCom->Set_Dynamic(true);
+	m_pColliderCom->Set_Type(COL_SPHERE);
+	m_pColliderCom->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pColliderCom->Get_Radius().y , 0.f });
 
 	return NOERROR;
 }
@@ -1326,28 +1396,59 @@ HRESULT CSwordGenji::SetUp_ConstantTable()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	CManagement*		pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
+	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 
-	Safe_AddRef(pManagement);
+	//=============================================================================================
+	// 기본 메트릭스
+	//=============================================================================================
 
 	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
-
-	_mat		ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
-
 	if (FAILED(m_pShaderCom->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
+
+	//=============================================================================================
+	// 디졸브용 상수
+	//=============================================================================================
 	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShaderCom)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
-	Safe_Release(pManagement);
+	//=============================================================================================
+	// 쉐이더 재질정보 수치 입력
+	//=============================================================================================
+	_float	fEmissivePower = 5.f;	// 이미시브 : 높을 수록, 자체 발광이 강해짐.
+	_float	fSpecularPower = 1.f;	// 메탈니스 : 높을 수록, 정반사가 강해짐.
+	_float	fRoughnessPower = 1.f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
+	_float	fMinSpecular = 0.0f;	// 최소 빛	: 높을 수록 빛이 퍼짐(림라이트의 범위가 넓어지고 , 밀집도가 낮아짐).
+	_float	fID_R = 1.0f;	// ID_R : R채널 ID 값 , 1이 최대
+	_float	fID_G = 0.f;	// ID_G : G채널 ID 값 , 1이 최대
+	_float	fID_B = 0.f;	// ID_B	: B채널 ID 값 , 1이 최대
+
+	if (FAILED(m_pShaderCom->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fID_R_Power", &fID_R, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fID_G_Power", &fID_G, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
+		return E_FAIL;
+
+	//=============================================================================================
+	// 림라이트 값들을 쉐이더에 등록시킴
+	//=============================================================================================
+	m_pBattleAgentCom->Update_RimParam_OnShader(m_pShaderCom);
+	//=============================================================================================
 
 	return NOERROR;
 }
@@ -1419,7 +1520,195 @@ HRESULT CSwordGenji::Ready_NF(void * pArg)
 	m_fMaxLength = eTemp.fMaxLength;
 	m_fMinLength = eTemp.fMinLength;
 
+	//===================================================================
+	// 림라이트 벨류 설정	
+	//===================================================================
+	m_pBattleAgentCom->Set_RimAlpha(0.5f);
+	m_pBattleAgentCom->Set_RimValue(8.f);
+	m_pBattleAgentCom->Set_OriginRimAlpha(0.5f);
+	m_pBattleAgentCom->Set_OriginRimValue(8.f);
+	//===================================================================
+
+	//===================================================================
+	// 트리거 소환용 설정
+	//===================================================================
+	// 트리거 소환되는 녀석이면
+	if (eTemp.bSpawnOnTrigger)
+	{
+		// 스테이지 번호로 네비 불러옴
+		_tchar szNavData[STR_128] = L"";
+
+		lstrcpy(szNavData, (
+			eTemp.sStageIdx == 0 ? L"Navmesh_Training.dat" :
+			eTemp.sStageIdx == 1 ? L"Navmesh_Stage_01.dat" :
+			eTemp.sStageIdx == 2 ? L"Navmesh_Stage_02.dat" :
+			eTemp.sStageIdx == 3 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
+
+		m_pNavMeshCom->Set_Index(-1);
+		m_pNavMeshCom->Ready_NaviMesh(m_pGraphic_Dev, szNavData);
+		m_pNavMeshCom->Check_OnNavMesh(eTemp.vPos);
+		m_pTransformCom->Set_Pos(eTemp.vPos);
+		m_pTransformCom->Set_Angle(eTemp.vAngle);
+
+		//m_pNavMeshCom->Set_SubsetIndex(eTemp.sSubSetIdx);
+		//m_pNavMeshCom->Set_Index(eTemp.sCellIdx);
+	}
+	//===================================================================
+
 	return S_OK;
+}
+
+void CSwordGenji::Check_Execution()
+{
+	// 만약 처형이 가능하다면, 리턴
+	if (true == m_tObjParam.bCanExecution)
+		return;
+
+	// 처형이 불가능한데, 처형중이 아닐 경우,
+	if (false == m_tObjParam.bIsExecution)
+	{
+		// 처형중인 상태로 만들어주고,
+		m_tObjParam.bIsExecution = true;
+
+		// 처형 종류에 따라 처형 애니메이션을 선택한다.
+		Check_ExecutionAnim();
+
+		m_pMeshCom->Reset_OldIndx();
+	}
+
+	// 처형 중일 경우,
+	else if (true == m_tObjParam.bIsExecution)
+	{
+		if (m_pMeshCom->Is_Finish_Animation(0.8f))
+		{
+			// 처형이 끝나고 죽을꺼기 땜에 초기화는 딱히 안해줌
+			//m_tObjParam.bIsExecution = false;
+			//m_tObjParam.bCanExecution = true;
+
+			//죽게 세팅한다.
+			//m_bIsDead = true;
+
+			// 혹시 모르니 HP 도  음수로
+			m_tObjParam.bCanHit = false;
+			//m_tObjParam.fHp_Cur = -1.0f;
+
+			return;
+		}
+	}
+
+	// 처형 모션을 AniCtrl에 세팅해준다.
+	if (m_tObjParam.fHp_Cur > 0.f)
+		m_pMeshCom->SetUp_Animation(m_eExecutionAnim);
+}
+
+void CSwordGenji::Check_ExecutionAnim()
+{
+	switch (m_tObjParam.eExecutionWpn)
+	{
+	case EXE_WPN::EXECUTION_Wpn_Orge:
+	{
+		Check_OrgeExecution();
+		break;
+	}
+	case EXE_WPN::EXECUTION_Wpn_Stinger:
+	{
+		Check_StingerExecution();
+		break;
+	}
+
+	case EXE_WPN::EXECUTION_Wpn_Hounds:
+	{
+		Check_HoundsExecution();
+		break;
+	}
+
+	case EXE_WPN::EXECUTION_Wpn_Ivy:
+	{
+		Check_IvyExecution();
+		break;
+	}
+
+	}
+}
+
+void CSwordGenji::Check_OrgeExecution()
+{
+}
+
+void CSwordGenji::Check_IvyExecution()
+{
+}
+
+void CSwordGenji::Check_StingerExecution()
+{
+	switch (m_tObjParam.eExecutionType)
+	{
+	case EXE_TYPE::EXECUTION_Back:
+	{
+		m_eExecutionAnim = Ani_Execution_LongCoat_B_S;
+		break;
+	}
+	case EXE_TYPE::EXECUTION_BackCinema:
+	{
+		m_eExecutionAnim = Ani_Execution_LongCoat_B;
+		break;
+	}
+	case EXE_TYPE::EXECUTION_Front:
+	{
+		break;
+	}
+	case EXE_TYPE::EXECUTION_FrontCinema:
+	{
+		break;
+	}
+	case EXE_TYPE::EXECUTION_ComboFront:
+	{
+		break;
+	}
+	case EXE_TYPE::EXECUTION_ComboBack:
+	{
+		break;
+	}
+	case EXE_TYPE::EXECUTION_ComboCinema:
+	{
+		break;
+	}
+	}
+}
+
+void CSwordGenji::Check_HoundsExecution()
+{
+}
+
+void CSwordGenji::Check_Repel()
+{
+	if (m_tObjParam.bCanRepel)
+		return;
+
+	if (false == m_tObjParam.bIsRepel)
+	{
+		// 패링당한 상태
+		m_tObjParam.bIsRepel = true;
+
+		// 반격 애니메이션으로 세팅
+		m_pMeshCom->SetUp_Animation(Ani_DmgRepel);
+
+		m_fSkillMoveAccel_Cur = 0.f;
+		m_fSkillMoveSpeed_Cur = 2.f;
+		m_fSkillMoveMultiply = 0.5;
+	}
+
+	else if (m_tObjParam.bIsRepel)
+	{
+		if (m_pMeshCom->Is_Finish_Animation(0.9f))
+		{
+			m_tObjParam.bIsRepel = false;
+			m_tObjParam.bCanRepel = true;
+		}
+
+		Skill_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
+		Decre_Skill_Movement(m_fSkillMoveMultiply);
+	}
 }
 
 HRESULT CSwordGenji::Ready_BoneMatrix()
@@ -1464,19 +1753,10 @@ CGameObject * CSwordGenji::Clone_GameObject(void * pArg)
 
 void CSwordGenji::Free()
 {
-	Safe_Release(pMonsterHpUI);
 	//Safe_Release(m_pDamegeNumUI);
 	//Safe_Release(m_pGet_Item);
 
 	Safe_Release(m_pSword);
-	Safe_Release(m_pNavMesh);
-	Safe_Release(m_pAIControllerCom);
-	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pMeshCom);
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pRendererCom);
-	Safe_Release(m_pCollider);
-	Safe_Release(m_pOptimization);
 
-	CGameObject::Free();
+	CMonster::Free();
 }

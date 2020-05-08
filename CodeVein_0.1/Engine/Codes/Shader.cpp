@@ -173,6 +173,14 @@ HRESULT CShader::Set_StaticTexture_Auto(CMesh_Static * pMeshStatic, _ulong dwSub
 		break;
 	}
 
+	case 21:	// D Z
+	{
+		m_pEffect->SetTexture("g_DiffuseTexture", pMeshStatic->Get_Texture(dwSubsetNum, MESHTEXTURE::TYPE_DIFFUSE_MAP));
+		m_pEffect->SetTexture("g_ZTexture", pMeshStatic->Get_Texture(dwSubsetNum, MESHTEXTURE::TYPE_NR_MAP));
+
+		break;
+	}
+
 	}
 
 	return S_OK;

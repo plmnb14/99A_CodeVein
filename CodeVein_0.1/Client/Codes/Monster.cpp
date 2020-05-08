@@ -58,6 +58,115 @@ _bool CMonster::Is_InFov(_float fDegreeOfFov, CTransform* pSelfTransform, _v3 vT
 	return false;
 }
 
+void CMonster::Set_Target_Auto(_bool Ransdom_Aggro)
+{
+	CGameObject* pColleaue = nullptr;
+	CGameObject* pPlayer = nullptr;
+
+	auto& ColleagueContainer = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE);
+	auto& PlayerContainer = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
+
+	if (!ColleagueContainer.empty())
+	{
+		// 무조건 동료 있다,  없을리 없다.
+		pColleaue = ColleagueContainer.front();
+
+		// 동료가 비활성화
+		if (true == pColleaue->Get_Dead() ||
+			false == pColleaue->Get_Enable())
+		{
+			// 다시 되돌림.
+			pColleaue = nullptr;
+		}
+	}
+
+	if (!PlayerContainer.empty())
+	{
+		// 무조건 플레이어 있다,  없을리 없다.
+		pPlayer = PlayerContainer.front();
+
+		// 플레이어가 비활성화
+		if (true == pPlayer->Get_Dead() ||
+			false == pPlayer->Get_Enable())
+		{
+			// 다시 되돌림.
+			pPlayer = nullptr;
+		}
+	}
+
+	// 랜덤 어그로 핑퐁
+	if (true == Ransdom_Aggro)
+	{
+		m_fAggroTime += g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60");
+
+		// 어그로 시간이 경과되면 다시 핑퐁
+		if (m_fAggroTime > m_fMaxAggroTime + m_fOffsetAggroTime)
+		{
+			// 애니가 끝날 때 어그로 평가
+			if (m_pMeshCom->Is_Finish_Animation(0.9f))
+			{
+				// 플레이어한테 어그로였는가
+				if (0 == lstrcmp(m_pLayerTag_Of_Target, L"Layer_Player"))
+				{
+					// 동료로 어그로 교체
+					if (nullptr != pColleaue)
+						Set_Target_To_Colleague();
+
+				}
+				else
+				{
+					// 플레이어로 어그로 교체
+					if (nullptr != pPlayer)
+						Set_Target_To_Player();
+				}
+
+				// 어그로 시간, 랜덤 Offset 초기화
+				m_fAggroTime = 0.f;
+				m_fOffsetAggroTime = _float(CALC::Random_Num_Double(-2, 2));
+			}
+		}
+
+	}
+	// 거리 체크
+	else
+	{
+		// 애니가 끝날 때 어그로 평가
+		if (m_pMeshCom->Is_Finish_Animation(0.9f))
+		{
+			// 둘 다 살아있으면 거리비교
+			if (pPlayer && pColleaue)
+			{
+				_float fLengthToPlayer = V3_LENGTH(&(TARGET_TO_TRANS(pPlayer)->Get_Pos() - m_pTransformCom->Get_Pos()));
+				_float fLengthTopColleaue = V3_LENGTH(&(TARGET_TO_TRANS(pColleaue)->Get_Pos() - m_pTransformCom->Get_Pos()));
+
+				if (fLengthTopColleaue > fLengthToPlayer)
+					Set_Target_To_Colleague();
+				else
+					Set_Target_To_Player();
+			}
+			else if (nullptr == pColleaue)
+				Set_Target_To_Player();
+			else
+				Set_Target_To_Colleague();
+		}
+	}
+
+
+
+}
+
+CGameObject * CMonster::Get_pTargetObject()
+{
+	// 우선  SCENE_MORTAL에서 찾아봄.
+	CGameObject* pObject = g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL);
+
+	// 못 찾았으면 동료를 찾으면됨.
+	if(nullptr == pObject)
+		pObject = g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_STAGE);
+
+	return pObject;
+}
+
 HRESULT CMonster::Draw_Collider()
 {
 	for (auto& iter : m_vecPhysicCol)
@@ -93,7 +202,7 @@ void CMonster::Check_CollisionPush()
 		{
 			CCollider* pCollider = TARGET_TO_COL(Obj_iter);
 
-			if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_fSkillMoveSpeed_Cur * DELTA_60))
+			if (m_pColliderCom->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_fSkillMoveSpeed_Cur * DELTA_60))
 			{
 				CTransform* pTrans = TARGET_TO_TRANS(Obj_iter);
 				CNavMesh*   pNav = TARGET_TO_NAV(Obj_iter);
@@ -103,7 +212,7 @@ void CMonster::Check_CollisionPush()
 
 				vDir.y = 0;
 
-				pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pCollider->Get_Length().x));
+				pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pColliderCom->Get_Length().x));
 			}
 		}
 	}
@@ -332,7 +441,7 @@ void CMonster::Function_MoveAround(CGameObject * _pGameObject, _float _fSpeed, _
 
 	m_pTransformCom->Set_Angle(AXIS_Y, fYAngle);
 
-	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &_vDir, _fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
+	m_pTransformCom->Set_Pos((m_pNavMeshCom->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &_vDir, _fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
 
 	return;
 }
@@ -361,7 +470,7 @@ void CMonster::Function_CoolDown()
 void CMonster::Function_Movement(_float _fspeed, _v3 _vDir)
 {
 	V3_NORMAL(&_vDir, &_vDir);
-	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &_vDir, _fspeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
+	m_pTransformCom->Set_Pos((m_pNavMeshCom->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &_vDir, _fspeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
 
 	return;
 }
@@ -382,10 +491,10 @@ void CMonster::Function_DecreMoveMent(_float _fMutiply)
 
 void CMonster::Function_Find_Target()
 {
-	if (nullptr != m_pTarget)
+	if (nullptr != m_pAggroTarget)
 	{
-		Safe_Release(m_pTarget);
-		m_pTarget = nullptr;
+		Safe_Release(m_pAggroTarget);
+		m_pAggroTarget = nullptr;
 	}
 
 	_float	fOldLength = 99999.f;
@@ -412,11 +521,11 @@ void CMonster::Function_Find_Target()
 			continue;
 
 		fOldLength = fLenth;
-		m_pTarget = Colleague_iter;
-		Safe_AddRef(m_pTarget);	
+		m_pAggroTarget = Colleague_iter;
+		Safe_AddRef(m_pAggroTarget);	
 	}
 
-	IF_NOT_NULL_RETURN(m_pTarget);
+	IF_NOT_NULL_RETURN(m_pAggroTarget);
 
 	for (auto& Player_iter : PlayerContainer)
 	{
@@ -436,11 +545,11 @@ void CMonster::Function_Find_Target()
 			continue;
 
 		fOldLength = fLenth;
-		m_pTarget = Player_iter;
-		Safe_AddRef(m_pTarget);
+		m_pAggroTarget = Player_iter;
+		Safe_AddRef(m_pAggroTarget);
 	}
 
-	IF_NOT_NULL_RETURN(m_pTarget);
+	IF_NOT_NULL_RETURN(m_pAggroTarget);
 
 	return;
 }
@@ -456,7 +565,6 @@ void CMonster::Function_ResetAfterAtk()
 	m_tObjParam.bSuperArmor = false;
 	m_tObjParam.bIsAttack = false;
 
-	//200430 추가, 함수 순서 유지할예정
 	m_bCanCoolDown = false;
 	m_bIsCoolDown = false;
 
@@ -485,6 +593,24 @@ void CMonster::Function_ResetAfterAtk()
 
 void CMonster::Free()
 {
+	Safe_Release(m_pMonsterUI);
+
+	IF_NOT_NULL(m_pAggroTarget)
+		Safe_Release(m_pAggroTarget);
+
+	IF_NOT_NULL(m_pWeapon)
+		Safe_Release(m_pWeapon);
+
+	Safe_Release(m_pAIControllerCom);
+	Safe_Release(m_pOptimizationCom);
+	Safe_Release(m_pBattleAgentCom);
+	Safe_Release(m_pColliderCom);
+	Safe_Release(m_pNavMeshCom);
+	Safe_Release(m_pTransformCom);
+	Safe_Release(m_pMeshCom);
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pRendererCom);
+
 	CGameObject::Free();
 
 	return;

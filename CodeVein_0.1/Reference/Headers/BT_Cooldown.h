@@ -11,9 +11,9 @@ public:
 	{
 		tagInitInfo(char* pNodeName, _double dCoolTime)
 			: Target_dCoolTime(dCoolTime)
-		{ strcpy_s<256>(Target_NodeName, pNodeName); }
+		{ strcpy_s<STR_128>(Target_NodeName, pNodeName); }
 		
-		char	Target_NodeName[256] = { 0, };
+		char	Target_NodeName[STR_128] = { 0, };
 		_double	Target_dCoolTime = 0;
 	}INFO;
 

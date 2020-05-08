@@ -46,7 +46,18 @@ HRESULT CCocoonBullet::Ready_GameObject(void * pArg)
 	m_bEffect = true;
 	m_fEffectOffset = 0.f;
 
-	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"FireBoy_FireBullet_Mid", nullptr));
+	switch (m_eBulletType)
+	{
+	case MONSTER_BULLET_TYPE::BULLET_ELECTRON:
+	case MONSTER_BULLET_TYPE::BULLET_NORMAL:
+	case MONSTER_BULLET_TYPE::BULLET_FIRE:
+		m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"FireBoy_FireBullet_Mid", nullptr));
+		break;
+	case MONSTER_BULLET_TYPE::BULLET_ICE:
+		m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Totem_Ice_BulletBody", nullptr));
+		break;
+	}
+
 	m_pBulletBody->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
 	m_pBulletBody->Reset_Init();
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
@@ -94,7 +105,9 @@ _int CCocoonBullet::Update_GameObject(_double TimeDelta)
 				g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_02", m_pTransformCom->Get_Pos(), nullptr);
 				break;
 			case MONSTER_BULLET_TYPE::BULLET_ICE:
-				break;
+				g_pManagement->Create_Effect(L"DeerKing_IceSmoke_0", m_pTransformCom->Get_Pos(), nullptr);
+				g_pManagement->Create_Effect(L"DeerKing_IceSmoke_1", m_pTransformCom->Get_Pos(), nullptr);
+				break; 
 			}
 		}
 	}
@@ -210,7 +223,7 @@ HRESULT CCocoonBullet::Add_Component()
 	if (FAILED(CMonster::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
-	if (FAILED(CMonster::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+	if (FAILED(CMonster::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pColliderCom)))
 		return E_FAIL;
 
 	return S_OK;
@@ -268,10 +281,6 @@ CGameObject* CCocoonBullet::Clone_GameObject(void * pArg)
 
 void CCocoonBullet::Free()
 {
-	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pCollider);
-	Safe_Release(m_pRendererCom);
-
 	CMonster::Free();
 
 	return;

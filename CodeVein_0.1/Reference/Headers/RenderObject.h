@@ -13,9 +13,30 @@ class COptimization;
 
 class ENGINE_DLL CRenderObject : public CGameObject
 {
+
+public:
+	typedef struct tagObjInitInfo
+	{
+		tagObjInitInfo(_tchar* _meshName, _v3 vPos, _v3 vAngle, _v3 vScale , _uint iIndex)
+			: vPos(vPos), vAngle(vAngle), vScale(vScale), iIndex(iIndex)
+		{
+			lstrcpy(szMeshName, _meshName);
+		}
+
+		_tchar szMeshName[STR_128];
+
+		_v3 vPos;
+		_v3 vAngle;
+		_v3 vScale;
+
+		_uint iIndex;
+
+	}OBJ_INFO;
+
 protected:
 	explicit CRenderObject(_Device _pGraphicDev);
 	explicit CRenderObject(const CRenderObject& rhs);
+	explicit CRenderObject(const CRenderObject& rhs , _bool _OnTool);
 	virtual ~CRenderObject();
 
 public:
@@ -56,7 +77,7 @@ protected:
 
 	// 텍스쳐, 메쉬 관련 변수
 protected:
-	_tchar			m_szName[MAX_STR] = L"";
+	_tchar			m_szName[STR_128] = L"";
 	_int			m_iIndex = 0;
 	_ulong			m_dwPassNum = 0;
 
@@ -73,11 +94,17 @@ private:
 	RENDERID		m_eGroup = RENDER_NONALPHA;
 
 private:
+	virtual HRESULT Initialize_For_Protoype();
 	virtual HRESULT Initialize();
 	virtual HRESULT LateInit_GameObject();
 	virtual void	Init_Shader();
 
+	virtual HRESULT Ready_GameObject(void* pAvg);
+	virtual HRESULT	Add_Components(_tchar * szMeshName);
+
 public:
+	static CRenderObject* Create_For_Tool(_Device _pGraphicDev);
+	static CRenderObject* CreateClone_For_Tool(CRenderObject* _pCopy, _bool _OnTool);
 	static CRenderObject* Create(_Device _pGraphicDev);
 	static CRenderObject* CreateClone(CRenderObject* _pCopy);
 

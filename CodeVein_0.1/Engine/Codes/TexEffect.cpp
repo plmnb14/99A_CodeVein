@@ -60,6 +60,9 @@ HRESULT CTexEffect::Ready_GameObject_Prototype()
 		m_pInfo = new EFFECT_INFO;
 		ZeroMemory(m_pInfo, sizeof(EFFECT_INFO));
 	}
+
+	m_eType = TYPE_TEX;
+
 	return NOERROR;
 }
 
@@ -112,8 +115,8 @@ HRESULT CTexEffect::LateInit_GameObject()
 		//!lstrcmp(L"Hit_Slash_Particle_1", m_szParticleName) ||
 		//!lstrcmp(L"Hit_Slash_Particle_2", m_szParticleName) ||
 		//!lstrcmp(L"Hit_Slash_Particle_3", m_szParticleName) ||
-		!lstrcmp(L"MistletoeParticle", m_szParticleName) ||
-		!lstrcmp(L"MistletoeParticle_Sub", m_szParticleName) ||
+		//!lstrcmp(L"MistletoeParticle", m_szParticleName) ||
+		//!lstrcmp(L"MistletoeParticle_Sub", m_szParticleName) ||
 		!lstrcmp(L"Player_Buff_Particle", m_szParticleName) ||
 		!lstrcmp(L"Player_ChargeSpark_Particle", m_szParticleName) ||
 		!lstrcmp(L"Player_Heal_Particle", m_szParticleName) ||
@@ -407,7 +410,7 @@ void CTexEffect::Setup_Info()
 		}
 		else
 		{
-			m_pTransformCom->Set_Angle(_v3(D3DXToRadian(m_pInfo->vRotDirection.x), D3DXToRadian(m_pInfo->vRotDirection.y), D3DXToRadian(m_pInfo->vRotDirection.z)));
+			m_pTransformCom->Set_Angle(D3DXToRadian(m_pInfo->vRotDirection));
 		}
 	}
 
@@ -614,17 +617,10 @@ void CTexEffect::Check_Move(_double TimeDelta)
 		D3DXVec3TransformNormal(&vDir, &vDir, &matRotY);
 		D3DXVec3TransformNormal(&vDir, &vDir, &matRotZ);
 
-		//vDirZ = vDirX + vDirY + vDirZ;
 		D3DXVec3Normalize(&vDir, &vDir);
 
 		m_pTransformCom->Add_Pos(m_fMoveSpeed * _float(TimeDelta), vDir);
 	}
-
-	if(!m_pInfo->bRotMove && !m_pInfo->bMoveWithRot
-		&& m_pInfo->vRotDirection == V3_NULL)
-		m_pTransformCom->Set_Angle(m_vAngle);
-
-	m_pTransformCom->Update_Component();
 
 	if (m_pInfo->bScaleMove)
 	{
@@ -632,6 +628,74 @@ void CTexEffect::Check_Move(_double TimeDelta)
 		//m_vLerpScale -= m_pInfo->vStartScale * _float(TimeDelta);
 		m_pTransformCom->Set_Scale(m_vLerpScale);
 	}
+
+	if (!m_pInfo->bRotMove && !m_pInfo->bMoveWithRot
+		/*&& m_pInfo->vRotDirection == V3_NULL*/)
+	{
+		//m_pTransformCom->Set_Angle(D3DXToRadian(m_vAngle));
+		m_pTransformCom->Update_Component();
+
+		_mat matParent, matScale, matRotX, matRotY, matRotZ, matTrans;
+		D3DXMatrixScaling(&matScale, 1,1,1);
+		D3DXMatrixRotationX(&matRotX, D3DXToRadian(m_vAngle.x));
+		D3DXMatrixRotationY(&matRotY, D3DXToRadian(m_vAngle.y));
+		D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(m_vAngle.z));
+		D3DXMatrixTranslation(&matTrans, 0,0,0);
+		matParent = matScale * matRotX * matRotZ * matRotY * matTrans;
+
+		m_pTransformCom->Set_WorldMat(m_pTransformCom->Get_WorldMat() * matParent);
+	}
+
+	if (0 != m_fRotSpeed && m_vAngle != V3_NULL)
+	{
+		_mat matParent, matScale, matRotX, matRotY, matRotZ, matTrans;
+		_mat matWorld;// = m_pTransformCom->Get_WorldMat();
+
+		m_vAddedAngle += (m_pInfo->vRotDirection) * _float(TimeDelta) * m_fRotSpeed;
+
+		D3DXMatrixIdentity(&matWorld);
+		D3DXMatrixIdentity(&matRotX);
+		D3DXMatrixIdentity(&matRotY);
+		D3DXMatrixIdentity(&matRotZ);
+		D3DXMatrixIdentity(&matScale);
+		D3DXMatrixIdentity(&matTrans);
+		D3DXMatrixScaling(&matScale, 1,1,1);
+		D3DXMatrixRotationX(&matRotX, D3DXToRadian(m_vAddedAngle.x));
+		D3DXMatrixRotationY(&matRotY, D3DXToRadian(m_vAddedAngle.y));
+		D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(m_vAddedAngle.z));
+		matWorld = matScale * matRotX * matRotY * matRotZ;
+	
+		D3DXMatrixIdentity(&matRotX);
+		D3DXMatrixIdentity(&matRotY);
+		D3DXMatrixIdentity(&matRotZ);
+		D3DXMatrixIdentity(&matTrans);
+		D3DXMatrixScaling(&matScale, m_vLerpScale.x, m_vLerpScale.y, m_vLerpScale.z);
+		D3DXMatrixRotationX(&matRotX, D3DXToRadian(m_vAngle.x));
+		D3DXMatrixRotationY(&matRotY, D3DXToRadian(m_vAngle.y));
+		D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(m_vAngle.z));
+		D3DXMatrixTranslation(&matTrans, m_pTransformCom->Get_Pos().x, m_pTransformCom->Get_Pos().y, m_pTransformCom->Get_Pos().z);
+		matParent = matScale * matRotX * matRotY * matRotZ * matTrans;
+	
+		m_pTransformCom->Set_WorldMat(matWorld * matParent);
+	}
+
+	if (m_pParentObject && !m_pParentObject->Get_Dead())
+	{
+		CTransform* pTargetTrans = TARGET_TO_TRANS(m_pParentObject);
+		if (!pTargetTrans)
+			return;
+
+		_mat matParent = pTargetTrans->Get_WorldMat();
+		_mat matWorld = m_pTransformCom->Get_WorldMat();
+		m_pTransformCom->Set_WorldMat(matWorld * matParent);
+	}
+
+	if (m_bUseParentMat)
+	{
+		_mat matWorld = m_pTransformCom->Get_WorldMat();
+		m_pTransformCom->Set_WorldMat(matWorld * m_matParent);
+	}
+
 }
 
 void CTexEffect::Check_LifeTime(_double TimeDelta)
@@ -736,9 +800,6 @@ HRESULT CTexEffect::SetUp_ConstantTable(CShader* pShader)
 	_mat matWorld = m_pTransformCom->Get_WorldMat();
 
 	if (FAILED(pShader->Set_Value("g_matWorld", &matWorld, sizeof(_mat))))
-		return E_FAIL;
-	D3DXMatrixInverse(&matWorld, nullptr, &matWorld);
-	if (FAILED(pShader->Set_Value("g_matInvWorld", &matWorld, sizeof(_mat))))
 		return E_FAIL;
 
 	_mat		ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);

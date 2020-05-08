@@ -25,12 +25,15 @@ CMyPhysx*			g_pPhysx;
 // ================================================
 // 스테이지를 한번이라도 들렸는지 확인하는 전역변수 (MeshLoad를 위해)
 // ================================================
+bool				g_bActiveCam	= false;
 bool				g_bOnStage[8]	= {};
 bool				g_bReleaseMode	= false;
 short				g_sStageIdx_Cur = 0;
 short				g_sPlayerLevel = 1;
 short				g_sQuadTreeCX = 0;
 short				g_sQuadTreeCY = 0;
+int					g_eSceneID_Cur = SCENE_END;
+int					g_eSTeleportID_Cur = TeleportID_End;
 
 // [0] - 최초 로딩 타이틀
 // [1] - 트레이닝
@@ -55,7 +58,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 {
 
 #ifdef _DEBUG
-	_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
+	//_CrtSetDbgFlag(_CRTDBG_ALLOC_MEM_DF | _CRTDBG_LEAK_CHECK_DF);
 #endif // _DEBUG
 
     UNREFERENCED_PARAMETER(hPrevInstance);

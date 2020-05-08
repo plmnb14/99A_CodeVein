@@ -20,9 +20,7 @@ public:
 	virtual HRESULT Render_GameObject();
 
 private:
-	CTransform*			m_pTransformCom = nullptr;
-	CCollider*			m_pCollider = nullptr;
-	CRenderer*			m_pRendererCom = nullptr;
+	CEffect*			m_pFireSphere = nullptr;
 
 	CAIController*		m_pTarget_AIController = nullptr;
 

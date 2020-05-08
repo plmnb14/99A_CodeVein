@@ -1,14 +1,17 @@
 #pragma once
 
 #include "Client_Defines.h"
+#include "Client_Item_Enum.h"
 #include "GameObject.h"
 #include "Management.h"
-#include "MonsterUI.h"
-#include "Weapon.h"
-#include "Haze.h"
 #include "ObjectPool_Manager.h"
 #include "Trail_VFX.h"
 #include "Effect.h"
+
+#include "MonsterUI.h"
+#include "Weapon.h"
+#include "Haze.h"
+#include "DropItem.h"
 
 BEGIN(Client)
 
@@ -106,11 +109,18 @@ public:
 		MONSTER_COLOR_TYPE	eMonsterColor = MONSTER_COLOR_TYPE::COLOR_NONE;
 		WEAPON_STATE		eUseWhatWeapon = WEAPON_STATE::WEAPON_None;
 
-		MONSTER_STATUS(MONSTER_COLOR_TYPE _eColor, WEAPON_STATE _eWeapon)
-		{
-			eMonsterColor = _eColor;
-			eUseWhatWeapon = _eWeapon;
-		}
+		_bool				bSpawnOnTrigger = false;
+		_v3					vPos = {};
+		_v3					vAngle = {};
+		_ushort				sStageIdx = 0;
+		//_ushort			sSubSetIdx = 0;
+		//_ushort			sCellIdx = 0;
+
+		MONSTER_STATUS(MONSTER_COLOR_TYPE _eColor, WEAPON_STATE _eWeapon, _bool _bSpawn = false,
+			_v3 vPos = V3_NULL, _v3 vAngle = V3_NULL, _ushort sStageIdx = 0)
+			:eMonsterColor(_eColor), eUseWhatWeapon(_eWeapon) ,bSpawnOnTrigger(_bSpawn),
+			vPos(vPos), vAngle(vAngle), sStageIdx(sStageIdx)
+		{}
 	};
 
 	struct MONSTER_BULLET_STATUS
@@ -142,13 +152,24 @@ protected:
 	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur = false);
 
 protected:	// DJ
-	_tchar m_pLayerTag_Of_Target[256] = { L"Layer_Player" };
+	_tchar m_pLayerTag_Of_Target[STR_128] = { L"Layer_Player" };
+	
+	_float		m_fAggroTime = 0;	//¾î±×·Î ²ø¸° ½Ã°£
+	_float		m_fMaxAggroTime = 10.f;
+	_float		m_fOffsetAggroTime = 0.f;
 
 protected:
 	void Set_Target_To_Player();
 	void Set_Target_To_Colleague();
 
 	_bool Is_InFov(_float fDegreeOfFov, CTransform* pSelfTransform, _v3 vTargetPos);
+
+	/*
+	Ransdom_Aggro : true¸é ·£´ý ¾î±×·Î ÇÎÆþ,  false¸é °¡±î¿î ³à¼®ÀÌ Å¸°Ù
+	*/
+	void Set_Target_Auto(_bool Ransdom_Aggro = false);
+
+	CGameObject* Get_pTargetObject();
 
 	HRESULT Draw_Collider();
 
@@ -172,21 +193,26 @@ protected:
 
 protected:
 	CMonsterUI*			m_pMonsterUI = nullptr;
+	CWeapon*			m_pWeapon = nullptr;
+
 	CTransform*			m_pTransformCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CShader*			m_pShaderCom = nullptr;
 	CMesh_Dynamic*		m_pMeshCom = nullptr;
-	CNavMesh*			m_pNavMesh = nullptr;
-	CCollider*			m_pCollider = nullptr;
-	CWeapon*			m_pWeapon = nullptr;
+	CNavMesh*			m_pNavMeshCom = nullptr;
+	CCollider*			m_pColliderCom = nullptr;
+	COptimization*		m_pOptimizationCom = nullptr;
+	CBattleAgent*		m_pBattleAgentCom = nullptr;
+	CAIController*		m_pAIControllerCom = nullptr;
 
-	CGameObject*		m_pTarget = nullptr;
+	CGameObject*		m_pAggroTarget = nullptr;
 
+protected:
 	MONSTER_STATE_TYPE		m_eFirstCategory;
 	MONSTER_IDLE_TYPE		m_eSecondCategory_IDLE;
 	MONSTER_MOVE_TYPE		m_eSecondCategory_MOVE;
-	MONSTER_ATK_TYPE			m_eSecondCategory_ATK;
-	MONSTER_HIT_TYPE			m_eSecondCategory_HIT;
+	MONSTER_ATK_TYPE		m_eSecondCategory_ATK;
+	MONSTER_HIT_TYPE		m_eSecondCategory_HIT;
 	MONSTER_CC_TYPE			m_eSecondCategory_CC;
 	MONSTER_DEAD_TYPE		m_eSecondCategory_DEAD;
 

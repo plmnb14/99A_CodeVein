@@ -3,9 +3,9 @@
 #include "Client_Defines.h"
 #include "GameObject.h"
 #include "Management.h"
+#include "CameraMgr.h"
 
-// 테스트용 숫자 폰트
-#include "UI_FontNum.h"
+#include "UI_Manager.h"
 
 BEGIN(Client)
 
@@ -13,8 +13,17 @@ class CDrain_Weapon;
 class CWeapon;
 class CPlayer : public CGameObject
 {
-private:
-	CUI_FontNum*	m_TmpFontNum = nullptr;
+public:
+	typedef struct tagMoveOptionReset
+	{
+		tagMoveOptionReset(SCENEID _eSceneID, Teleport_ID _eTeleportID)
+			: eSceneID(_eSceneID), eTeleportID(_eTeleportID)
+		{}
+
+		Teleport_ID eTeleportID = TeleportID_End;
+		SCENEID eSceneID = SCENE_END;
+
+	}TELEPORT_RESET;
 
 public:
 	enum DODGE_TYPE
@@ -73,6 +82,9 @@ public:
 	virtual HRESULT Render_GameObject();
 	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur = false);
 
+public:
+	virtual void Teleport_ResetOptions(_int _eSceneID, _int _eTeleportID);
+
 private:
 	ACTOR_INFO				m_tInfo = {};
 	ACT_STATE				m_eActState = ACT_Summon;
@@ -94,6 +106,10 @@ private:
 	CNavMesh*				m_pNavMesh = nullptr;
 	CCollider*				m_pCollider = nullptr;
 	CBattleAgent*			m_pBattleAgent = nullptr;
+
+private:
+	CUI_Manager*			m_pUIManager = nullptr;
+	CCameraMgr*				m_pCamManager = nullptr;
 
 private:
 	vector<CCollider*>		m_vecPhsycColl;
@@ -134,17 +150,23 @@ private:
 	_bool					m_bOnChargeSuck = false;
 	_bool					m_bOnPickUp = false;
 	_bool					m_bCanSprintAtk = false;
-	_bool					m_bCanMistletoe = false;
-	_bool					m_bOnMistletoe = false;
-	_bool					m_bActiveUI = false;
-	_bool					m_bCanSummon = true;
-	_bool					m_bCanDisappear = true;
-	_bool					m_bOnSummon = false;
-	_bool					m_bOnDisappear = false;
-	_bool					m_bOnDown = false;
+	_bool					m_bActiveUI = false;		// 현재 UI 활성 중
+	_bool					m_bCanSummon = true;		// 재소환 가능한지
+	_bool					m_bCanDisappear = true;		// 사라질 수 있는지
+	_bool					m_bOnSummon = false;		// 재소환
+	_bool					m_bOnDisappear = false;		// 사라짐
+	_bool					m_bOnDown = false;			// 다운 됬냐
 	_bool					m_bOffLerp = false;			// 애니 보간 끄기
 	_bool					m_bCanExecution = true;	// 처형 가능
 	_bool					m_bIsExecution = false;		// 처형 중
+	_bool					m_bOnUI_Mistletoe = false;
+	_bool					m_bOnUI_Inventory = false;
+	_bool					m_bOnUI_Skill = false;
+	_bool					m_bOnUI_StageSelect = false;
+	_bool					m_bOnUI_NPCTalk = false;
+	_bool					m_bCanPickUp = false;	// 아이템 줍기
+	_bool					m_bCanDialouge = false; // 대화
+	_bool					m_bCanInterAct = false;	// 상호작용
 
 private:
 	_short					m_sHeavyAtkCnt = 0;
@@ -235,6 +257,7 @@ private:
 	virtual void Key_Utility();
 	virtual void Key_InterAct();
 	virtual void Key_BloodSuck();
+	virtual void Key_UI_n_Utiliy(_bool _bActiveUI);
 
 private:
 	virtual void Play_Idle();
@@ -331,6 +354,15 @@ private:
 
 private:
 	virtual void Change_Weapon();
+
+private:
+	virtual void Reset_All();
+
+public:
+	virtual void Active_UI_Mistletoe(_bool _bResetUI = false);		// 겨우살이
+	virtual void Active_UI_Inventory(_bool _bResetUI = false);		// 인벤토리
+	virtual void Active_UI_StageSelect(_bool _bResetUI = false);	// 스테이지 선택
+	virtual void Active_UI_NPC(_bool _bResetUI = false);			// NPC 와의 대화
 
 public:
 	static	CPlayer* Create(_Device pGraphic_Device);

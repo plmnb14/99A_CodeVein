@@ -46,7 +46,18 @@ HRESULT CCocoonBigBullet::Ready_GameObject(void * pArg)
 	m_bEffect = true;
 	m_fEffectOffset = 0.f;
 
-	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Totem_Fire_BulletBody", nullptr));
+	switch (m_eBulletType)
+	{
+	case Client::CMonster::BULLET_NORMAL:
+	case Client::CMonster::BULLET_FIRE:
+	case Client::CMonster::BULLET_ELECTRON:
+		m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Totem_Fire_BulletBody", nullptr));
+		break;
+	case Client::CMonster::BULLET_ICE:
+		m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Totem_Ice_BulletBody", nullptr));
+		break;
+	}
+
 	m_pBulletBody->Set_Desc(V3_NULL, m_pTransformCom);
 	m_pBulletBody->Reset_Init();
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
@@ -80,6 +91,10 @@ _int CCocoonBigBullet::Update_GameObject(_double TimeDelta)
 			m_pBulletBody->Set_Dead();
 			break;
 		case Client::CMonster::BULLET_ICE:
+			g_pManagement->Create_Effect(L"Totem_Ice_Bullet_Dead_0", m_pTransformCom->Get_Pos());
+			g_pManagement->Create_Effect(L"Totem_Ice_Bullet_Dead_1", m_pTransformCom->Get_Pos());
+			g_pManagement->Create_Effect(L"Totem_Ice_Bullet_Dead_Particle", m_pTransformCom->Get_Pos());
+			m_pBulletBody->Set_Dead();
 			break;
 		}
 
@@ -222,7 +237,7 @@ HRESULT CCocoonBigBullet::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pColliderCom)))
 		return E_FAIL;
 
 	return S_OK;
@@ -280,11 +295,7 @@ CGameObject * CCocoonBigBullet::Clone_GameObject(void * pArg)
 
 void CCocoonBigBullet::Free()
 {
-	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pCollider);
-	Safe_Release(m_pRendererCom);
-
-	CGameObject::Free();
+	CMonster::Free();
 
 	return;
 }
