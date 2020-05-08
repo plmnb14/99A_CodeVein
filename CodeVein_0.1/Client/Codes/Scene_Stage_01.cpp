@@ -27,6 +27,10 @@ HRESULT CScene_Stage_01::Ready_Scene()
 	if (FAILED(Ready_Layer_Environment(L"Layer_Environment")))
 		return E_FAIL;
 
+	CRenderer* pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
+	pRenderer->Fog_On(true);
+	Safe_Release(pRenderer);
+
 	//CScriptManager::Get_Instance()->Set_StageIdx(1);
 	//CScriptManager::Get_Instance()->Ready_Script_DynamicObject(1);
 
