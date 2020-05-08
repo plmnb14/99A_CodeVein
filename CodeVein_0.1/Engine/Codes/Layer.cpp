@@ -6,6 +6,9 @@ CLayer::CLayer()
 
 CGameObject* CLayer::Get_GameObjectBack()
 {
+	if (m_ObjectList.empty())
+		return nullptr;
+
 	return m_ObjectList.back();
 }
 

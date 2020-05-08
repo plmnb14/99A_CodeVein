@@ -83,7 +83,7 @@ _int CDeerKingIceSword::Update_GameObject(_double TimeDelta)
 
 	m_dCurTime += TimeDelta;
 
-	//m_vDir = m_pTarget_AIController->Get_V3Value(L"IceSword_Dir");
+	m_vDir = m_pTarget_AIController->Get_V3Value(L"IceSword_Dir");
 	//m_pTransformCom->Set_Pos(m_pTarget_AIController->Get_V3Value(L"IceSword_Pos"));
 
 	_v3 vSelfDir = m_pTarget_AIController->Get_V3Value(L"Self_Dir");
@@ -173,7 +173,7 @@ HRESULT CDeerKingIceSword::Update_Collider()
 
 		_v3 ColPos = _v3(tmpMat._41, tmpMat._42, tmpMat._43);
 
-		iter->Update(ColPos);
+		iter->Update(ColPos + m_vDir * 2.f);
 
 		++matrixIdx;
 	}
@@ -292,7 +292,7 @@ HRESULT CDeerKingIceSword::Ready_Collider()
 	// ÃÑ¾Ë Áß¾Ó
 	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 
-	_float fRadius = 2.f;
+	_float fRadius = 1.f;
 
 	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
 	pCollider->Set_Dynamic(true);
