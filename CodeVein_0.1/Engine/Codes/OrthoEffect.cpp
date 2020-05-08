@@ -43,13 +43,7 @@ void COrthoEffect::Set_UV_Speed(_float fX, _float fY)
 
 void COrthoEffect::Set_Mask(const _tchar* _Name, _int _iMaskIdx)
 {
-	auto& iter = m_pmapComponents.find(L"Com_MaskTexture");
-
-	Safe_Release(m_pMaskTextureCom);
-	Safe_Release(iter->second);
-
-	iter->second = m_pMaskTextureCom = static_cast<CTexture*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, _Name));
-	Safe_AddRef(iter->second);
+	Change_MaskTexture(_Name);
 
 	m_iMaskIdx = _iMaskIdx;
 }
@@ -659,9 +653,9 @@ HRESULT COrthoEffect::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Ortho_Title", L"Com_ColorTexture", (CComponent**)&m_pColorTextureCom)))
 		return E_FAIL;
 
-	//// For.Com_MaskTexture
-	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Ortho_Title", L"Com_MaskTexture", (CComponent**)&m_pMaskTextureCom)))
-	//	return E_FAIL;
+	// For.Com_MaskTexture
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Ortho_Title", L"Com_MaskTexture", (CComponent**)&m_pMaskTextureCom)))
+		return E_FAIL;
 
 	// For.Com_Shader
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Effect", L"Com_Shader", (CComponent**)&m_pShaderCom)))
@@ -722,6 +716,11 @@ HRESULT COrthoEffect::SetUp_ConstantTable(CShader* pShader)
 	if (FAILED(pShader->Set_Value("g_fDissolve", &m_fDissolve, sizeof(_float))))
 		return E_FAIL;
 
+	// юс╫ц
+	_bool bTitle = true;
+	if (FAILED(pShader->Set_Bool("g_bTitle", bTitle)))
+		return E_FAIL;
+
 	_float fMaskIndex = 0.f;
 	if (FAILED(pShader->Set_Bool("g_bUseMaskTex", (m_pInfo->fMaskIndex != -1.f))))
 		return E_FAIL;
@@ -735,8 +734,8 @@ HRESULT COrthoEffect::SetUp_ConstantTable(CShader* pShader)
 		return E_FAIL;
 	if (FAILED(m_pColorTextureCom->SetUp_OnShader("g_ColorTexture", pShader, _uint(m_pInfo->fColorIndex))))
 		return E_FAIL;
-	//if (FAILED(m_pMaskTextureCom->SetUp_OnShader("g_MaskTexture", pShader, _uint(m_iMaskIdx))))
-	//	return E_FAIL;
+	if (FAILED(m_pMaskTextureCom->SetUp_OnShader("g_MaskTexture", pShader, _uint(m_iMaskIdx))))
+		return E_FAIL;
 
 	Safe_Release(pManagement);
 
@@ -785,6 +784,22 @@ void COrthoEffect::Change_ColorTexture(const _tchar* _Name)
 	if (!iter->second)
 	{
 		Change_ColorTexture(L"Tex_Ortho_Title");
+	}
+}
+
+void COrthoEffect::Change_MaskTexture(const _tchar * _Name)
+{
+	auto& iter = m_pmapComponents.find(L"Com_MaskTexture");
+
+	Safe_Release(m_pMaskTextureCom);
+	Safe_Release(iter->second);
+
+	iter->second = m_pMaskTextureCom = static_cast<CTexture*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, _Name));
+	Safe_AddRef(iter->second);
+
+	if (!iter->second)
+	{
+		Change_MaskTexture(L"Tex_Ortho_Title");
 	}
 }
 
@@ -838,7 +853,7 @@ void COrthoEffect::Free()
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pColorTextureCom);
 	Safe_Release(m_pGradientTextureCom);
-	//Safe_Release(m_pMaskTextureCom);
+	Safe_Release(m_pMaskTextureCom);
 	Safe_Release(m_pRendererCom);
 	
 	//Safe_Release(m_pManagement);

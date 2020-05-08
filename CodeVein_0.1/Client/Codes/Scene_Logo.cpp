@@ -115,7 +115,7 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LoadingBar", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LoadingBar/LoadingBar%d.png", 10))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"Tex_Ortho_Title", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/Effect/Ortho/Ortho_Title/Ortho_Title_%d.dds", 6))))
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"Tex_Ortho_Title", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/Effect/Ortho/Ortho_Title/Ortho_Title_%d.dds", 7))))
 		return E_FAIL;
 
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LoadingBar", CLoadingBar::Create(m_pGraphic_Device))))
@@ -154,12 +154,14 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 	m_pLoadingScreen->Set_FadeSpeed(0.6f);
 
 	m_pGlitterEffect_0 = static_cast<COrthoEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Ortho_Title_Glitter_0", nullptr));
-	m_pGlitterEffect_0->Set_UV_Speed(0.05f, 0.f);
+	m_pGlitterEffect_0->Set_UV_Speed(0.03f, 0.f);
+	m_pGlitterEffect_0->Set_Mask(L"Tex_Ortho_Title", 6);
 	m_pGlitterEffect_0->Reset_Init();
 	CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(m_pGlitterEffect_0, SCENE_STAGE, L"Layer_Effect", nullptr);
 	
 	m_pGlitterEffect_1 = static_cast<COrthoEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Ortho_Title_Glitter_1", nullptr));
-	m_pGlitterEffect_1->Set_UV_Speed(0.07f, 0.08f);
+	m_pGlitterEffect_1->Set_UV_Speed(0.045f, 0.06f);
+	m_pGlitterEffect_1->Set_Mask(L"Tex_Ortho_Title", 6);
 	m_pGlitterEffect_1->Reset_Init();
 	CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(m_pGlitterEffect_1, SCENE_STAGE, L"Layer_Effect", nullptr);
 

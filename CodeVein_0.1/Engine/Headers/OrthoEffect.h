@@ -77,6 +77,7 @@ protected:
 	void Change_EffectTexture(const _tchar* _Name);
 	void Change_GradientTexture(const _tchar* _Name);
 	void Change_ColorTexture(const _tchar* _Name);
+	void Change_MaskTexture(const _tchar* _Name);
 
 public:
 	static COrthoEffect* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
