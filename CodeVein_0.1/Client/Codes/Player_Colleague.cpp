@@ -103,7 +103,7 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 	cout << "상태: " << m_eMovetype << " | " << "0 - Idle, 1 - Move, 3 - Att" << endl;
 	cout << "공격상태: " << m_eColl_Sub_AttMoment << " | " << "Ani : " << m_eColleague_Ani << endl;*/
 
-	cout << "공격상태: " << m_eColl_Sub_AttMoment << " | " << m_iNormalAtt_Count << endl;
+	//cout << "공격상태: " << m_eColl_Sub_AttMoment << " | " << m_iNormalAtt_Count << endl;
 
 	if (m_eMovetype != CPlayer_Colleague::Coll_Dead)
 		Enter_Collision();

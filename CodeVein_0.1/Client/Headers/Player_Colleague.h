@@ -14,13 +14,13 @@ class CPlayer_Colleague final : public CGameObject
 {
 public:
 	// 차후 Attack에 스킬을 추가할 시 enum으로 나눠줘야 함
-	enum Colleague_Type { /*Coll_Start, */Coll_Idle, Coll_Move, Coll_Guard, Coll_Attack, Coll_Hit, Coll_Dodge, Coll_Heal, Coll_Dead };
+	enum Colleague_Type { Coll_Idle, Coll_Move, Coll_Guard, Coll_Attack, Coll_Hit, Coll_Dodge, Coll_Heal, Coll_Dead, Coll_Start };
 	enum Coll_Movement { Move_Walk, Move_BackWalk, Move_Run, Move_BackRun };
 	enum Coll_IdleMoment { Idle_Waiting, Idle_Guard };
 	enum Coll_AttackMoment { Att_Skil, Att_Normal };
 	enum Coll_Sub_AttMoment { 
 		Att_Base1, Att_Base2, Att_Base3, Att_Base4, Att_ThreeCombo, Att_CenterDown, Att_SlowGun,
-		Att_MonWalk, Att_MonRun
+		Att_MonWalk, Att_MonRun, Att_MonBackWalk
 	};
 	enum Coll_GuardMoment { Guard_Idle, Gurad_Walk, Gurad_Hit };
 	enum Coll_DodgeMoment { Dodge_FrontRoll, Dodge_BackRoll, Dodge_End };
@@ -180,7 +180,6 @@ private:
 	CCollider*				m_pCollider = nullptr;
 
 	CWeapon*				m_pSword = nullptr;
-	//CColleague_Bullet*	m_pCollBullet = nullptr;
 	CTransform*				m_pTargetTransformCom = nullptr;
 
 	CColleague_UI*			m_pColleagueUI = nullptr;
@@ -248,6 +247,8 @@ private:
 	_float	m_fCoolTime_Max = 0.f;
 
 	_float	m_fAccumulateDamage = 0.f;
+
+	_float	m_fDodge_CoolTime = 0.f;
 
 
 	_bool	m_bEventTrigger[20] = {};
