@@ -1266,6 +1266,9 @@ _uint CLoading::Loading_Title()
 
 	cout << "DynamicMesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
+
+	cout << "NPC 불러오는 중 . . ." << endl;
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
 	//============================================================================================================
 	// 무기 불러오는 중
 	//============================================================================================================
@@ -1493,16 +1496,16 @@ _uint CLoading::Loading_Stage()
 		//============================================================================================================
 		// 동료
 
-		//if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Colleague", CPlayer_Colleague::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// 동료 총알
-		//if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ColleagueBullet", CColleague_Bullet::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_ColleagueBullet", L"GameObject_ColleagueBullet", 100);
-		//// 힐용
-		//if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CollBullet_Heal", CCollBullet_Heal::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_CollBullet_Heal", L"GameObject_CollBullet_Heal", 100);
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Colleague", CPlayer_Colleague::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 동료 총알
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ColleagueBullet", CColleague_Bullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_ColleagueBullet", L"GameObject_ColleagueBullet", 100);
+		// 힐용
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CollBullet_Heal", CCollBullet_Heal::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_CollBullet_Heal", L"GameObject_CollBullet_Heal", 100);
 		//============================================================================================================
 		// UI - Chea
 		//============================================================================================================

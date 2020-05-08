@@ -147,7 +147,7 @@ void CFighterReleaseUI::SetUp_Default()
 	{
 		CBloodSkillSlot* pInstance = static_cast<CBloodSkillSlot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodSkillSlot", nullptr));
 		TARGET_TO_TRANS(pInstance)->Set_Scale(_v3(0.3f, 0.3f, 1.5f));
-		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_StageUI", nullptr);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_MORTAL, L"Layer_StageUI", nullptr);
 		m_vecSkillSlot.push_back(pInstance);
 	}
 
@@ -159,7 +159,7 @@ void CFighterReleaseUI::SetUp_Default()
 
 
 	m_pQuestionUI = static_cast<CReleaseQuestionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ReleaseQuestionUI", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pQuestionUI, SCENE_STAGE, L"Layer_StageUI", nullptr);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pQuestionUI, SCENE_MORTAL, L"Layer_StageUI", nullptr);
 	TARGET_TO_TRANS(m_pQuestionUI)->Set_Scale(_v3(2.f, 1.f, 1.6f));
 }
 

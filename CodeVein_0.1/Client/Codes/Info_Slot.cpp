@@ -39,8 +39,8 @@ HRESULT CInfo_Slot::Ready_GameObject(void * pArg)
 	pDesc->fSizeX = m_fSizeX * 0.25f;
 	pDesc->fSizeY = m_fSizeY * 0.25f;
 	pDesc->iIndex = 0;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NumberUI", SCENE_STAGE, L"Layer_NumberUI", pDesc);
-	m_pNumberUI = static_cast<CNumberUI*>(g_pManagement->Get_GameObjectBack(L"Layer_NumberUI", SCENE_STAGE));
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NumberUI", SCENE_MORTAL, L"Layer_NumberUI", pDesc);
+	m_pNumberUI = static_cast<CNumberUI*>(g_pManagement->Get_GameObjectBack(L"Layer_NumberUI", SCENE_MORTAL));
 		
 	return NOERROR;
 }

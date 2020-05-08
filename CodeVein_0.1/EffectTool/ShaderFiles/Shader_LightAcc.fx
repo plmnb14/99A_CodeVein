@@ -128,23 +128,7 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	// 3. 월드( 로컬위치 * 월드)
 	vWorldPos = mul(vWorldPos, g_matViewInv);
 
-
-	// Shadow ====================================================================
-	
-	float fShadow = tex2D(ShadowMapSampler, In.vTexUV).x;
-
-	float4 lightPosition = mul(vWorldPos, g_matLightVP);
-	
-	float fDepth = (lightPosition.z / lightPosition.w);
-	float DepthBias = 0.00125f;
-
-	Out.vShade.rgb *= fShadow;
-
-	// Shadow End ====================================================================
-
-	// Toon Shade ====================================================================
-
-	// Toon Shade End ====================================================================
+	//========================================================================
 
 	vector		vLook = vWorldPos - g_vCamPosition;
 
@@ -154,7 +138,7 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	if (vHeightValue.x > 0.0001f)
 	{
 		Out.vShade.xyz = ceil(Out.vShade.xyz * 2.f) / 2.f;
-		Out.vSpecular.a = 100.f;
+		//Out.vSpecular.a = 100.f;
 
 		if (vHeightValue.y > 0.f)
 		{
@@ -163,6 +147,25 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 			//Out.vShade.xyz = saturate(Out.vShade.xyz);
 		}
 	}
+
+	// Shadow ====================================================================
+
+	float fShadow = tex2D(ShadowMapSampler, In.vTexUV).x;
+
+	float4 lightPosition = mul(vWorldPos, g_matLightVP);
+
+	float fDepth = (lightPosition.z / lightPosition.w);
+	float DepthBias = 0.00125f;
+
+	if (Out.vSpecular.x > 0.f)
+	{
+		fShadow = 1.f - fShadow;
+	}
+
+
+	Out.vShade.rgb *= fShadow;
+
+	// Shadow End ====================================================================
 
 	return Out;
 }

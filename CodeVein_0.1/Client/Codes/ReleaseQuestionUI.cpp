@@ -147,7 +147,7 @@ void CReleaseQuestionUI::SetUp_Default()
 	LOOP(2)
 	{
 		pInstance = static_cast<CReleaseOption*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ReleaseOption", nullptr));
-		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_StageUI", nullptr);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_MORTAL, L"Layer_StageUI", nullptr);
 		TARGET_TO_TRANS(pInstance)->Set_Scale(_v3(1.2f, 0.3f, 1.f));
 		pInstance->Set_UI_Index(i);
 		m_vecOption.push_back(pInstance);

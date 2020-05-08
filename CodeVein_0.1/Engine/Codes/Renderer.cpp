@@ -12,7 +12,6 @@ _float g_fNear = 0.1f;
 _float g_fFar = 500.f;
 _short g_sShadow_X = 3840;
 _short g_sShadow_Y = 2160;
-_v3	   g_vLightDirectionPos = _v3(-100.f, 50.f, 0.f);
 
 CRenderer::CRenderer(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CComponent(pGraphic_Device)
@@ -27,6 +26,8 @@ HRESULT CRenderer::Ready_Component_Prototype()
 {
 	if (nullptr == m_pTarget_Manager)
 		return E_FAIL;
+
+	m_vShadowLightPos = _v3(-100.f, 50.f, 0.f);
 
 	D3DVIEWPORT9		ViewPort;
 	m_pGraphic_Dev->GetViewport(&ViewPort);
@@ -581,7 +582,7 @@ HRESULT CRenderer::Render_ShadowMap()
 
 	_v3 vCamPos = CManagement::Get_Instance()->Get_CamPosition();
 
-	_v3 vLightPos = vCamPos + g_vLightDirectionPos;
+	_v3 vLightPos = vCamPos + m_vShadowLightPos;
 	_v3 vLookAt = vCamPos;
 
 	D3DXMatrixLookAtLH(&matView, &vLightPos, &vLookAt, &WORLD_UP);
@@ -638,7 +639,7 @@ HRESULT CRenderer::Render_Shadow()
 
 	_v3 vCamPos = CManagement::Get_Instance()->Get_CamPosition();
 
-	_v3 vLightPos = vCamPos + g_vLightDirectionPos;
+	_v3 vLightPos = vCamPos + m_vShadowLightPos;
 	_v3 vLookAt = vCamPos;
 
 	D3DXMatrixLookAtLH(&matView, &vLightPos, &vLookAt, &WORLD_UP);
@@ -1017,7 +1018,7 @@ HRESULT CRenderer::Render_LightAcc()
 
 	_v3 vCamPos = CManagement::Get_Instance()->Get_CamPosition();
 
-	_v3 vLightPos = vCamPos + g_vLightDirectionPos;
+	_v3 vLightPos = vCamPos + m_vShadowLightPos;
 	_v3 vLookAt = vCamPos;
 
 	D3DXMatrixLookAtLH(&matView, &vLightPos, &vLookAt, &WORLD_UP);
