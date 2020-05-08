@@ -155,6 +155,13 @@ protected:
 	_bool  m_bOSCReverse[3] = {};
 	_bool  m_bOSCOrigin = false;
 
+	//==============================================
+	_bool  m_bOnAmingUI = false;
+
+	_float m_fRightX_Gap = 0.f;
+	//==============================================
+
+
 	CAM_OSC_TYPE m_eOSCType = OSC_END;
 
 protected:	// Camera Position Setting

@@ -272,5 +272,5 @@ void CDeerKingRushCol::Free()
 {
 	Safe_Release(m_pTarget_Transform);
 
-	CGameObject::Free();
+	CMonster::Free();
 }
