@@ -209,7 +209,7 @@ HRESULT CPlayer_Colleague::Add_Component()
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Test_Jack", L"Com_DynamicMesh", (CComponent**)&m_pDynamicMesh)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Buddy_Jack", L"Com_DynamicMesh", (CComponent**)&m_pDynamicMesh)))
 		return E_FAIL;
 
 	// for.Com_NavMesh
