@@ -34,6 +34,49 @@ _int CNoticeUI::Update_GameObject(_double TimeDelta)
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
+
+	switch (m_eID)
+	{
+	case Dragon_Lunge:
+		m_iIndex = 1;
+		break;
+	case Vanishing_Hollow:
+		m_iIndex = 2;
+		break;
+	case Circulating_Pulse:
+		m_iIndex = 3;
+		break;
+	case Triple_Annihilator:
+		m_iIndex = 4;
+		break;
+	case Shadow_Assault:
+		m_iIndex = 5;
+		break;
+	case Severing_Abyss:
+		m_iIndex = 6;
+		break;
+	case Swallow_Cutter:
+		m_iIndex = 7;
+		break;
+	case Tormenting_Blast:
+		m_iIndex = 8;
+		break;
+	case Phantom_Assault:
+		m_iIndex = 9;
+		break;
+	case Legion_Punisher:
+		m_iIndex = 10;
+		break;
+	case Chariot_Rush:
+		m_iIndex = 16;
+		break;
+	case Fusillade_Rondo:
+		m_iIndex = 17;
+		break;
+	case SkillID_End:
+		m_iIndex = 0;
+		break;
+	}
 	return NO_EVENT;
 }
 

@@ -175,6 +175,8 @@ void CSkill_Inven::SetUp_Default()
 
 void CSkill_Inven::Click_SubUI()
 {
+	if (!m_bIsActive)
+		return;
 	// 나가기 버튼 클릭시
 	if (m_pExitIcon->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{

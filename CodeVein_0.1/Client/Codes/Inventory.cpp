@@ -189,39 +189,45 @@ void CInventory::Click_Icon()
 			switch (pIcon->Get_Type())
 			{
 			case CInventory_Icon::ICON_EXPEND:
+			{
 				m_pExpInven->Set_Active(true);
 				m_pMtrInven->Set_Active(false);
 				m_pWeaponInven->Set_Active(false);
 				m_pArmorInven->Set_Active(false);
-				
+			}			
 				break;
 			case CInventory_Icon::ICON_MTRL:
+			{
 				m_pExpInven->Set_Active(false);
 				m_pMtrInven->Set_Active(true);
 				m_pWeaponInven->Set_Active(false);
 				m_pArmorInven->Set_Active(false);
-				
+			}
 				break;
 			case CInventory_Icon::ICON_WEAPON:
+			{
 				m_pExpInven->Set_Active(false);
 				m_pMtrInven->Set_Active(false);
 				m_pWeaponInven->Set_Active(true);
 				m_pArmorInven->Set_Active(false);
-				
+			}	
 				break;
 			case CInventory_Icon::ICON_ARMOR:
+			{
 				m_pExpInven->Set_Active(false);
 				m_pMtrInven->Set_Active(false);
 				m_pWeaponInven->Set_Active(false);
 				m_pArmorInven->Set_Active(true);
-				
+			}	
 				break;
 			case CInventory_Icon::ICON_ALL:
+			{
 				m_pTotalInven->Set_Active(true);
 				m_bIsDetail = false;
 				m_bIsActive = false;
 				for (auto& pIcon : m_vecIcon)
 					pIcon->Set_Click(false);
+			}			
 				break;
 			}
 		}

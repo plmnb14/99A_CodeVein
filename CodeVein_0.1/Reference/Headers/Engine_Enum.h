@@ -142,5 +142,7 @@ enum Skill_ID
 	Tormenting_Blast, // 토먼트 블래스트
 	Phantom_Assault, // 팬텀 어썰트
 	Legion_Punisher, // 리전 퍼니셔
+	Fusillade_Rondo, // 총스킬
+	Chariot_Rush, // 창스킬
 	SkillID_End
 };

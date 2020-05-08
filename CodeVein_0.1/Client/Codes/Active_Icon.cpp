@@ -75,6 +75,12 @@ _int CActive_Icon::Update_GameObject(_double TimeDelta)
 	case Legion_Punisher:
 		m_iIndex = 10;
 		break;
+	case Chariot_Rush:
+		m_iIndex = 16;
+		break;
+	case Fusillade_Rondo:
+		m_iIndex = 17;
+		break;
 	case SkillID_End:
 		m_iIndex = 0;
 		break;

@@ -69,6 +69,12 @@ _int CBloodSkillSlot::Update_GameObject(_double TimeDelta)
 	case Legion_Punisher:
 		m_iIndex = 10;
 		break;
+	case Chariot_Rush:
+		m_iIndex = 11;
+		break;
+	case Fusillade_Rondo:
+		m_iIndex = 12;
+		break;
 	case SkillID_End:
 		break;
 	}

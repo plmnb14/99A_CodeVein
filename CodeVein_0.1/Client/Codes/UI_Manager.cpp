@@ -116,8 +116,7 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BloodSkillCursor", CBloodSkillCursor::Create(pDevice))))
 		return E_FAIL;
 
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BloodCodeInven", CBloodCode_Inven::Create(pDevice))))
-		return E_FAIL;
+	
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BloodCodeUI", CBloodCodeUI::Create(pDevice))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ReleaseQuestionUI", CReleaseQuestionUI::Create(pDevice))))
@@ -133,12 +132,6 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SkillSlot", CSkillSlot::Create(pDevice))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SkillIcon", CSkillIcon::Create(pDevice))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_FighterBlood", CFighterBlood::Create(pDevice))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_PrometheusBlood", CPrometheusBlood::Create(pDevice))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_FighterReleaseUI", CFighterReleaseUI::Create(pDevice))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_NoticeUI", CNoticeUI::Create(pDevice))))
 		return E_FAIL;
@@ -212,44 +205,34 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	m_pStatusUI = static_cast<CStatusUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_StatusUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pStatusUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 	
-	// 블러드코드 인벤
-	m_pBloodCode_Inven = static_cast<CBloodCode_Inven*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodCodeInven", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBloodCode_Inven, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
-
 	// 스킬 인벤
 	m_pSkillInven = static_cast<CSkill_Inven*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SkillInven", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pSkillInven, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
-	// 파이터 연혈창
-	m_pFigherBlood = static_cast<CFighterBlood*>(g_pManagement->Clone_GameObject_Return(L"GameObject_FighterBlood", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFigherBlood, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
-	// 프로메테우스 연혈창
-	m_pPrometheusBlood = static_cast<CPrometheusBlood*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PrometheusBlood", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pPrometheusBlood, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
-
 	/////////////////////////////////////// 3D /////////////////////////////////////
 	// 스테이지 선택 UI
 	m_pStageSelectUI = static_cast<CStageSelectUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_StageSelectUI", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pStageSelectUI, SCENE_STAGE, L"Layer_StageUI", nullptr);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pStageSelectUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 	// 겨우살이 UI
 	m_pMistletoeUI = static_cast<CMistletoeUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MistletoeUI", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pMistletoeUI, SCENE_STAGE, L"Layer_StageUI", nullptr);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pMistletoeUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 	// 블러드코드메뉴창 UI
 	m_pBloodCodeMenu = static_cast<CBloodCodeMenuUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodCodeMenuUI", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBloodCodeMenu, SCENE_STAGE, L"Layer_StageUI", nullptr);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBloodCodeMenu, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 	// 블러드코드 주인
 	m_pBloodCodeOwner = static_cast<CBloodCodeOwner*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodCodeOwner", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBloodCodeOwner, SCENE_STAGE, L"Layer_StageUI", nullptr);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBloodCodeOwner, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 	// 블러드코드 선택 UI
 	m_pBloodCodeSelectUI = static_cast<CBloodCodeSelectUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodCodeSelectUI", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBloodCodeSelectUI, SCENE_STAGE, L"Layer_StageUI", nullptr);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBloodCodeSelectUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 	// 스킬(연혈) 릴리즈 UI
 	m_pSkillReleaseUI = static_cast<CSkillReleaseUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SkillReleaseUI", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pSkillReleaseUI, SCENE_STAGE, L"Layer_StageUI", nullptr);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pSkillReleaseUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 	// 스킬 획득 UI
 	m_pSkillAcquisitionUI = static_cast<CSkillAcquisitionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SkillAcquisitionUI", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pSkillAcquisitionUI, SCENE_STAGE, L"Layer_StageUI", nullptr);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pSkillAcquisitionUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
+	////////////////////////////////////// 펫 UI /////////////////////////////////////////////////////////////////////
 	// 펫 인벤토리
 	m_pPet_Inven = static_cast<CPet_Inven*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PetInven", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pPet_Inven, SCENE_MORTAL, L"Layer_PetUI", nullptr);

@@ -289,6 +289,12 @@ void CSkillSlot::SetUp_SkillIndex()
 	case Legion_Punisher:
 		m_iIndex = 12;
 		break;	
+	case Chariot_Rush:
+		m_iIndex = 14;
+		break;
+	case Fusillade_Rondo:
+		m_iIndex = 15;
+		break;
 	case SkillID_End:
 		m_iIndex = 0;
 		break;

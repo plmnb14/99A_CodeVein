@@ -87,6 +87,12 @@ _int CSkillAcquisitionUI::Update_GameObject(_double TimeDelta)
 	case Legion_Punisher:
 		m_iIndex = 9;
 		break;
+	case Chariot_Rush:
+		m_iIndex = 10;
+		break;
+	case Fusillade_Rondo:
+		m_iIndex = 11;
+		break;
 	}
 
 	return NO_EVENT;
@@ -173,7 +179,7 @@ HRESULT CSkillAcquisitionUI::SetUp_ConstantTable(_uint iIndex)
 void CSkillAcquisitionUI::SetUp_Default()
 {
 	m_pOKMsg = static_cast<COKMessageUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_OKMessageUI", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pOKMsg, SCENE_STAGE, L"Layer_StageUI", nullptr);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pOKMsg, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 	TARGET_TO_TRANS(m_pOKMsg)->Set_Scale(_v3(0.6f, 0.3f, 1.f));
 }
 

@@ -234,10 +234,10 @@ void CTotal_Inven::SetUp_Default()
 	LOOP(3)
 	{
 		pDesc = new CUI::UI_DESC;
-		pDesc->fPosX = 240.f + 55.f * i;
-		pDesc->fPosY = 198.f;
-		pDesc->fSizeX = 53.f;
-		pDesc->fSizeY = 53.f;
+		pDesc->fPosX = 239.f + 57.f * i;
+		pDesc->fPosY = 200.f;
+		pDesc->fSizeX = 55.f;
+		pDesc->fSizeY = 55.f;
 
 		if (2 > i)
 		{

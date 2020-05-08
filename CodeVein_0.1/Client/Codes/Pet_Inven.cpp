@@ -40,6 +40,7 @@ _int CPet_Inven::Update_GameObject(_double TimeDelta)
 	Click_Icon();
 
 	m_pExitIcon->Set_Active(m_bIsActive);
+
 	return NO_EVENT;
 }
 

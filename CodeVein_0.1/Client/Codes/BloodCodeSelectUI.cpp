@@ -104,10 +104,10 @@ void CBloodCodeSelectUI::Click_BloodCodeSlot()
 			{
 				// 블러드 코드 선택 시, 연혈 릴리즈 창 활성화 & 블러드 코드 선택 창 비활성화
 				
-
 				CUI_Manager::Get_Instance()->Get_Total_Inven()->Set_PlayerBloodCodeType(m_eID);
 				CUI_Manager::Get_Instance()->Get_BloodCode_Menu()->Set_IsChoise(true);	
 				CUI_Manager::Get_Instance()->Get_BloodCode_Owner()->Set_Alpha(0.2f);
+				CUI_Manager::Get_Instance()->Get_BloodCode_Owner()->Set_CodeID(m_eID);
 				CUI_Manager::Get_Instance()->Get_Skill_ReleaseUI()->Set_CodeID(m_eID);
 			}
 		}
@@ -128,7 +128,7 @@ void CBloodCodeSelectUI::SetUp_Default()
 		pInstance = static_cast<CBloodCodeSlot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodCodeSlot", nullptr));
 		
 		TARGET_TO_TRANS(pInstance)->Set_Scale(_v3(0.3f, 0.223f, 1.f));
-		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_StageUI", nullptr);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 		m_vecBloodCodeSlot.push_back(pInstance);
 	}
 

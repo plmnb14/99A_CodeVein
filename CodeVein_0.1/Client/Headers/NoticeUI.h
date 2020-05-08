@@ -12,6 +12,9 @@ private:
 	virtual ~CNoticeUI() = default;
 
 public:
+	void Set_Skill_ID(Skill_ID eID) { m_eID = eID; }
+
+public:
 	virtual HRESULT Ready_GameObject_Prototype();
 	virtual HRESULT Ready_GameObject(void* pArg);
 	virtual _int	Update_GameObject(_double TimeDelta);
@@ -28,6 +31,9 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
+
+private:
+	Skill_ID				m_eID = SkillID_End;
 
 public:
 	static CNoticeUI*		Create(_Device pGraphic_Device);
