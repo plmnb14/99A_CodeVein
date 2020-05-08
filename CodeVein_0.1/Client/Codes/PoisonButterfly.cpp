@@ -1,7 +1,5 @@
 #include "stdafx.h"
 #include "..\Headers\PoisonButterfly.h"
-#include "..\Headers\PoisonBullet.h"
-#include "..\Headers\PoisonRotationBullet.h"
 #include "..\Headers\BossHP.h"
 
 CPoisonButterfly::CPoisonButterfly(LPDIRECT3DDEVICE9 pGraphic_Device)
@@ -34,7 +32,6 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 	m_tObjParam.fHp_Cur = 10000.f;
 	m_tObjParam.fHp_Max = m_tObjParam.fHp_Cur;
 	m_tObjParam.fDamage = 20.f;
-	//m_tObjParam.fDamage = 0.f;
 
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.f, 1.f));
 
@@ -114,7 +111,7 @@ _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 
 	// 죽었을 경우
 	if (m_bIsDead)
-		return DEAD_OBJ;
+		m_bEnable = false;
 
 	// 죽음 애니메이션
 	if (m_bReadyDead)
@@ -123,7 +120,7 @@ _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 		m_pBossUI->Set_Active(false);
 		return NO_EVENT;
 	}
-		
+
 
 	// 플레이어 미발견
 	if (false == m_bFight)
@@ -157,21 +154,10 @@ _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 
 	if (false == m_bReadyDead)
 		Check_PhyCollider();
-	
+
 	OnCollisionEnter();
 
-
-	//// 플레이어 좌표 구함.
-	//_v3 vPlayer_Pos = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos();
-
-	//// 플레이어와 몬스터의 거리
-	//_v3 vLengthTemp = vPlayer_Pos - m_pTransformCom->Get_Pos();
-	//vLengthTemp.y = 0.f;
-	//_float fLength = D3DXVec3Length(&vLengthTemp);
-
-	//cout << fLength << endl;
-
-	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
+	m_pTransformCom->Set_Pos(m_pNavMeshCom->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
 	return NOERROR;
 }
@@ -184,22 +170,33 @@ _int CPoisonButterfly::Late_Update_GameObject(_double TimeDelta)
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
 
-	if (!m_bDissolve)
+	//=============================================================================================
+	// 그림자랑 모션블러는 프리스텀 안에 없으면 안그림
+	//=============================================================================================
+	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
 	{
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
-			return E_FAIL;
+		if (!m_bDissolve)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
+				return E_FAIL;
+		}
+
+		else
+		{
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
+				return E_FAIL;
+		}
+
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
 			return E_FAIL;
-	}
-	else
-	{
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
 			return E_FAIL;
 	}
+	//=============================================================================================
 
 	m_dTimeDelta = TimeDelta;
 
-	return NOERROR;
+	return NO_EVENT;
 }
 
 HRESULT CPoisonButterfly::Render_GameObject()
@@ -211,39 +208,43 @@ HRESULT CPoisonButterfly::Render_GameObject()
 	m_pMeshCom->Play_Animation(_float(m_dTimeDelta)); // * alpha
 
 
-	m_pShaderCom->Begin_Shader();
-
-	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
-
-	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
 	{
-		if (FAILED(SetUp_ConstantTable(i)))
-			return E_FAIL;
+		m_pShaderCom->Begin_Shader();
 
-		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+		_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
 
-		m_pMeshCom->Update_SkinnedMesh(i);
-
-		for (_uint j = 0; j < iNumSubSet; ++j)
+		for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 		{
-			m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+			if (FAILED(SetUp_ConstantTable(i)))
+				return E_FAIL;
 
-			if (m_bDissolve)
-				m_iPass = 3;
+			_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
 
-			m_pShaderCom->Begin_Pass(m_iPass);
+			m_pMeshCom->Update_SkinnedMesh(i);
 
-			m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
+			for (_uint j = 0; j < iNumSubSet; ++j)
+			{
+				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
 
-			m_pShaderCom->Commit_Changes();
+				if (m_bDissolve)
+					m_iPass = 3;
 
-			m_pMeshCom->Render_Mesh(i, j);
+				m_pShaderCom->Begin_Pass(m_iPass);
 
-			m_pShaderCom->End_Pass();
+				m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
+
+				m_pShaderCom->Commit_Changes();
+
+				m_pMeshCom->Render_Mesh(i, j);
+
+				m_pShaderCom->End_Pass();
+			}
 		}
-	}
 
-	m_pShaderCom->End_Shader();
+		m_pShaderCom->End_Shader();
+
+	}
 
 	Update_Collider();
 	Draw_Collider();
@@ -442,15 +443,15 @@ CBT_Composite_Node * CPoisonButterfly::Poison_Tornado_After_Charging()
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("폭발할 때 처음 스모크 01", L"ButterFly_SoftSmoke_Ready_1", L"Self_Pos", 3.2, 1, 0.01, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("폭발할 때 처음 스모크 02", L"ButterFly_SoftSmoke_Ready_2", L"Self_Pos", 3.2, 1, 0.01, 0);
 	//CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("기 모을 때 메쉬이펙트", L"ButterFly_Distortion_Circle", L"Self_Pos", 0.3, 1, 0.01, 0);
-	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("기 모을 때 스모크 01", L"ButterFly_SoftSmoke", L"Self_Pos"		, 0.3, 40, 1.2, 0);
-	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("기 모을 때 스모크 02", L"ButterFly_SoftSmoke_Bottom", L"Self_Pos"	, 0.8, 40, 1.5, 0);
+	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("기 모을 때 스모크 01", L"ButterFly_SoftSmoke", L"Self_Pos", 0.3, 40, 1.2, 0);
+	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("기 모을 때 스모크 02", L"ButterFly_SoftSmoke_Bottom", L"Self_Pos", 0.8, 40, 1.5, 0);
 	//CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("폭발할 때 처음 빨간 스모크", L"ButterFly_Smoke_Red_Once", L"Self_Pos"	, 0, 1, 0.01, 0);
-	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("폭발하는 빨간 스모크", L"ButterFly_Smoke_Red_Particle", L"Self_Pos"	,3, 15, 0.01, 0);
+	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("폭발하는 빨간 스모크", L"ButterFly_Smoke_Red_Particle", L"Self_Pos", 3, 15, 0.01, 0);
 	//CBT_CreateEffect* Effect6 = Node_CreateParticle_Finite("바닥에 깔리는 빨간 스모크", L"ButterFly_SoftSmoke_Floor", L"Self_Pos", 10, 0.8, 150, 0, 0);
 	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("바닥에 깔리는 빨간 스모크", L"ButterFly_SoftSmoke_Floor", L"Self_Pos", 0.8, 60, 1.5, 0);
 	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("폭발할 때 자두색 동그라미 파티클", L"ButterFly_PointParticle_Plum", L"Self_Pos", 3.2, 20, 0.7, 0);
-	CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("폭발할 때 회오리 메쉬이펙트 01", L"ButterFly_RingLine", L"Self_Pos"	, 3, 1, 0.01, 0);
-	CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("폭발할 때 회오리 메쉬이펙트 02", L"ButterFly_RingLine", L"Self_Pos"	, 3.45, 1, 0.01, 0);
+	CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("폭발할 때 회오리 메쉬이펙트 01", L"ButterFly_RingLine", L"Self_Pos", 3, 1, 0.01, 0);
+	CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("폭발할 때 회오리 메쉬이펙트 02", L"ButterFly_RingLine", L"Self_Pos", 3.45, 1, 0.01, 0);
 	CBT_CreateEffect* Effect10 = Node_CreateEffect_Finite("회오리 메쉬 왜곡", L"ButterFly_RingLine_Distortion", L"Self_Pos", 3, 1, 0.01, 0);
 	CBT_CreateEffect* Effect11 = Node_CreateEffect_Finite("기 모을 때 스모크 덩어리", L"ButterFly_SoftSmoke_Chunk", L"Self_Pos", 0.8, 20, 1.5, 0);
 
@@ -618,7 +619,7 @@ CBT_Composite_Node * CPoisonButterfly::Rush()
 CBT_Composite_Node * CPoisonButterfly::Fire_5Bullet()
 {
 	CBT_Simple_Parallel* Root_Parallel = Node_Parallel_Immediate("병렬");
-		
+
 	CBT_Sequence* MainSeq = Node_Sequence("5발탄");
 	CBT_Play_Ani* Show_Ani27 = Node_Ani("5발탄", 27, 0.95f);
 	CBT_Play_Ani* Show_Ani6 = Node_Ani("기본", 0, 0.f);
@@ -715,7 +716,7 @@ CBT_Composite_Node * CPoisonButterfly::Turn_4PoisonShot()
 CBT_Composite_Node * CPoisonButterfly::Smart_Eat()
 {
 	CBT_Sequence* Root_Seq = Node_Sequence("똑똑한 왼쪽 냠, 오른쪽 냠");
-	
+
 	CBT_DistCheck* Dist0 = Node_DistCheck("거리 체크", L"Player_Pos", 5);
 
 	Root_Seq->Add_Child(Right_Eat(0.85f));
@@ -791,7 +792,7 @@ CBT_Composite_Node * CPoisonButterfly::WhirlWind()
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("전체적으로 쓰이는 옅은 독안개", L"ButterFly_SoftSmoke_Mist", L"Bone_Tail6", 0, 150, 0.01, 0);
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("반짝이는 보라색 모래", L"ButterFly_GlitterSand", L"Bone_Tail6", 0, 150, 0.01, 0);
 	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("안개와 같이 나오는 왜곡", L"ButterFly_Distortion_Smoke", L"Bone_Tail6", 0, 150, 0.01, 0);
-	
+
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
 	Root_Parallel->Add_Service(Effect2);
@@ -1045,7 +1046,7 @@ CBT_Composite_Node * CPoisonButterfly::Show_FarAttack()
 void CPoisonButterfly::Down()
 {
 	m_dDownTime += DELTA_60;
-	 
+
 	// down 시작함.
 	if (true == m_bDown_StartAni)
 	{
@@ -1071,7 +1072,7 @@ void CPoisonButterfly::Down()
 
 			m_bDown_Start = false;
 			m_bAIController = true;
-			
+
 			++m_iDownCount;
 
 			// Down 안에서 쓰는 bool 리셋
@@ -1138,7 +1139,7 @@ HRESULT CPoisonButterfly::Update_Bone_Of_BlackBoard()
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Tail6_Tongue2");
 	m_vTail6_Tongue2 = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Tail6_Tongue2", m_vTail6_Tongue2);
-	
+
 	return S_OK;
 }
 
@@ -1164,7 +1165,7 @@ HRESULT CPoisonButterfly::Update_Value_Of_BB()
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_PoisonDir2", vDirTemp0);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_PoisonDir3", *D3DXVec3TransformNormal(&_v3(), &vDirTemp0, D3DXMatrixRotationY(&_mat(), D3DXToRadian(-12.5f))));
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_PoisonDir4", *D3DXVec3TransformNormal(&_v3(), &vDirTemp0, D3DXMatrixRotationY(&_mat(), D3DXToRadian(-25))));
-	
+
 	// 2. 본인 좌표
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Self_Pos", m_pTransformCom->Get_Pos());
 
@@ -1267,7 +1268,7 @@ HRESULT CPoisonButterfly::Update_Collider()
 	m_vecAttackCol[1]->Update(m_vTail4);
 	m_vecAttackCol[2]->Update(m_vTail2);
 
-	m_pCollider->Update(m_pTransformCom->Get_Pos() + _v3(0.f, m_pCollider->Get_Radius().y, 0.f));
+	m_pColliderCom->Update(m_pTransformCom->Get_Pos() + _v3(0.f, m_pColliderCom->Get_Radius().y, 0.f));
 	return S_OK;
 }
 
@@ -1287,10 +1288,10 @@ void CPoisonButterfly::Check_PhyCollider()
 		//m_pMeshCom->Reset_OldIndx();	//애니 인덱스 초기화
 
 		//m_bAIController = false;
-		
+
 		m_tObjParam.bIsHit = true;
 		m_tObjParam.bCanHit = true;
-		
+
 		m_dHitTime = 0;	// 피격가능 타임 초기화
 
 		m_bFight = true;		// 싸움 시작
@@ -1330,7 +1331,7 @@ void CPoisonButterfly::Check_PhyCollider()
 				}
 			}
 
-			
+
 
 
 		}
@@ -1360,16 +1361,19 @@ void CPoisonButterfly::Push_Collider()
 	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
 	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
 	tmpList[2] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
-	tmpList[3] = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_MORTAL);
+	tmpList[3] = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE);
 
 	for (auto& ListObj : tmpList)
 	{
+		if (ListObj.empty())
+			continue;
+
 		for (auto& iter : ListObj)
 		{
 			CCollider* pCollider = TARGET_TO_COL(iter);
 
 			// 지금 속도값 임의로 넣었는데 구해서 넣어줘야함 - 완료
-			if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_pAIControllerCom->Get_FloatValue(L"Monster_Speed")))
+			if (m_pColliderCom->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_pAIControllerCom->Get_FloatValue(L"Monster_Speed")))
 			{
 				CTransform* pTrans = TARGET_TO_TRANS(iter);
 				CNavMesh*   pNav = TARGET_TO_NAV(iter);
@@ -1382,7 +1386,7 @@ void CPoisonButterfly::Push_Collider()
 				vDir.y = 0;
 
 				// 네비 메쉬타게 끔 세팅
-				pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pCollider->Get_Length().x));
+				pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pColliderCom->Get_Length().x));
 			}
 		}
 	}
@@ -1403,7 +1407,7 @@ void CPoisonButterfly::OnCollisionEnter()
 	else
 	{
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
-		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_MORTAL));
+		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE));
 	}
 
 	// =============================================================================================
@@ -1493,17 +1497,27 @@ HRESULT CPoisonButterfly::Add_Component()
 		return E_FAIL;
 
 	// for.Com_NavMesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMesh)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMeshCom)))
 		return E_FAIL;
 
 	// for.Com_Collider
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pColliderCom)))
 		return E_FAIL;
 
-	m_pCollider->Set_Radius(_v3{ 1.5f, 1.5f, 1.5f });
-	m_pCollider->Set_Dynamic(true);
-	m_pCollider->Set_Type(COL_SPHERE);
-	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pCollider->Get_Radius().y , 0.f });
+	//=================================================================================
+	// for.Com_Optimaization
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Optimization", L"Com_Optimization", (CComponent**)&m_pOptimizationCom)))
+		return E_FAIL;
+
+	// for.Com_BattleAgent
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"BattleAgent", L"Com_BattleAgent", (CComponent**)&m_pBattleAgentCom)))
+		return E_FAIL;
+	//=================================================================================
+
+	m_pColliderCom->Set_Radius(_v3{ 1.5f, 1.5f, 1.5f });
+	m_pColliderCom->Set_Dynamic(true);
+	m_pColliderCom->Set_Type(COL_SPHERE);
+	m_pColliderCom->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pColliderCom->Get_Radius().y , 0.f });
 
 
 	return NOERROR;
@@ -1703,13 +1717,6 @@ CGameObject * CPoisonButterfly::Clone_GameObject(void * pArg)
 
 void CPoisonButterfly::Free()
 {
-	Safe_Release(m_pCollider);
-	Safe_Release(m_pNavMesh);
-	Safe_Release(m_pAIControllerCom);
-	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pMeshCom);
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pRendererCom);
 
-	CGameObject::Free();
+	CMonster::Free();
 }

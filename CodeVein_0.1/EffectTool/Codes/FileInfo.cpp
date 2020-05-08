@@ -30,7 +30,7 @@ CString CFileInfo::ConvertRelativePath(const TCHAR* pFullPath)
 
 void CFileInfo::Create_Mesh_PathInfo()
 {
-	list<Engine::MESH_INFO*> m_listPathInfo;
+	list<Engine::MESH_INFO_EFFTOOL*> m_listPathInfo;
 
 	_tchar szStaticPath[STR_128] = L"";
 	_tchar szDynamicPath[STR_128] = L"";
@@ -46,7 +46,7 @@ void CFileInfo::Create_Mesh_PathInfo()
 	Save_Mesh_PathInfo(m_listPathInfo);
 }
 
-void CFileInfo::Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst)
+void CFileInfo::Save_Mesh_PathInfo(list<MESH_INFO_EFFTOOL*>& rPathInfoLst)
 {
 	cout << "Saving MeshPath . . ." << endl;
 
@@ -84,7 +84,7 @@ void CFileInfo::Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst)
 
 void CFileInfo::Extract_Mesh_PathInfo(
 	const TCHAR* pPath,
-	list<MESH_INFO*>& rPathInfoLst , _bool _bIsDynamic)
+	list<MESH_INFO_EFFTOOL*>& rPathInfoLst , _bool _bIsDynamic)
 {
 	cout << "Extracting Path . . ." << endl;
 
@@ -119,7 +119,7 @@ void CFileInfo::Extract_Mesh_PathInfo(
 
 			CString strRelative = ConvertRelativePath(strFullPath);
 
-			Engine::MESH_INFO* pPathInfo = new Engine::MESH_INFO;
+			Engine::MESH_INFO_EFFTOOL* pPathInfo = new Engine::MESH_INFO_EFFTOOL;
 
 			///////////////////////////////////////////////////////////////////////////
 
@@ -151,7 +151,8 @@ void CFileInfo::Extract_Mesh_PathInfo(
 			TCHAR szBuf_2[STR_128] = L"";
 			(_bIsDynamic ? lstrcpy(szBuf_2, L"1") : lstrcpy(szBuf_2, L"0"));
 
-			pPathInfo->szIsDynamic = szBuf_2;
+			//lstrcpy(pPathInfo->szIsDynamic, szBuf_2);
+			//pPathInfo->szIsDynamic = szBuf_2;
 
 			rPathInfoLst.push_back(pPathInfo);
 
@@ -164,7 +165,7 @@ void CFileInfo::Extract_Mesh_PathInfo(
 
 void CFileInfo::Create_Texture_PathInfo()
 {
-	list<Engine::TEX_INFO*> m_listPathInfo;
+	list<Engine::TEX_INFO_EFFTOOL*> m_listPathInfo;
 
 	_tchar szStaticPath[STR_128] = L"";
 	_tchar szDynamicPath[STR_128] = L"";
@@ -177,7 +178,7 @@ void CFileInfo::Create_Texture_PathInfo()
 	Save_Texture_PathInfo(m_listPathInfo);
 }
 
-void CFileInfo::Save_Texture_PathInfo(list<Engine::TEX_INFO*>& rPathInfoLst)
+void CFileInfo::Save_Texture_PathInfo(list<Engine::TEX_INFO_EFFTOOL*>& rPathInfoLst)
 {
 	//cout << "Saving TexPath . . ." << endl;
 
@@ -210,7 +211,7 @@ void CFileInfo::Save_Texture_PathInfo(list<Engine::TEX_INFO*>& rPathInfoLst)
 	//cout << "Done . . . !" << endl;
 }
 
-void CFileInfo::Extract_Texture_PathInfo(const TCHAR * pPath, list<Engine::TEX_INFO*>& rPathInfoLst, _bool _bIsDynamic)
+void CFileInfo::Extract_Texture_PathInfo(const TCHAR * pPath, list<Engine::TEX_INFO_EFFTOOL*>& rPathInfoLst, _bool _bIsDynamic)
 {
 	//cout << "Extracting Path . . ." << endl;
 
@@ -261,7 +262,7 @@ void CFileInfo::Extract_Texture_PathInfo(const TCHAR * pPath, list<Engine::TEX_I
 				strRelative.Replace(L"0.", L"%d.");
 			}
 
-			Engine::TEX_INFO* pPathInfo = new Engine::TEX_INFO;
+			Engine::TEX_INFO_EFFTOOL* pPathInfo = new Engine::TEX_INFO_EFFTOOL;
 
 			///////////////////////////////////////////////////////////////////////////
 
@@ -288,8 +289,8 @@ void CFileInfo::Extract_Texture_PathInfo(const TCHAR * pPath, list<Engine::TEX_I
 			}
 
 			TCHAR szCnt[STR_128] = L"";
-
-			pPathInfo->sImgCnt = CountImageFile(szBuf);
+			_itot_s(CountImageFile(szBuf), szCnt, 10);
+			lstrcpy(pPathInfo->szImgCnt, szCnt);
 
 			// 파일 이름
 			lstrcpy(szBuf, strRelative);

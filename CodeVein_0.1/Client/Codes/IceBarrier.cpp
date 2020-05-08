@@ -203,7 +203,7 @@ HRESULT CIceBarrier::Add_Component()
 		return E_FAIL;
 
 	// for.Com_Collider
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pColliderCom)))
 		return E_FAIL;
 
 	return NOERROR;
@@ -275,12 +275,8 @@ CGameObject * CIceBarrier::Clone_GameObject(void * pArg)
 
 void CIceBarrier::Free()
 {
-	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pCollider);
-	Safe_Release(m_pRendererCom);
-
 	Safe_Release(m_pTarget_Transform);
 	Safe_Release(m_pTarget_AIController);
 
-	CGameObject::Free();
+	CMonster::Free();
 }

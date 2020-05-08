@@ -224,7 +224,7 @@ HRESULT CMonkeyBullet::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pColliderCom)))
 		return E_FAIL;
 
 	return S_OK;
@@ -283,11 +283,7 @@ CGameObject * CMonkeyBullet::Clone_GameObject(void * pArg)
 void CMonkeyBullet::Free()
 {
 	//Safe_Release(m_pTrailEffect);
-	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pCollider);
-	Safe_Release(m_pRendererCom);
-
-	CGameObject::Free();
+	CMonster::Free();
 
 	return;
 }

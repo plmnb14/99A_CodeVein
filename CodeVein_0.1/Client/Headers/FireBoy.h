@@ -80,13 +80,6 @@ private:
 	void Down();
 
 private:
-	CTransform*			m_pTransformCom = nullptr;
-	CRenderer*			m_pRendererCom = nullptr;
-	CShader*			m_pShaderCom = nullptr;
-	CMesh_Dynamic*		m_pMeshCom = nullptr;
-	CAIController*		m_pAIControllerCom = nullptr;
-	CNavMesh*			m_pNavMesh = nullptr;
-	CCollider*			m_pCollider = nullptr;
 
 	// 피격가능 현재 시간
 	_double				m_dHitTime = 0;

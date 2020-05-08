@@ -223,7 +223,7 @@ HRESULT CCocoonBullet::Add_Component()
 	if (FAILED(CMonster::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
-	if (FAILED(CMonster::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+	if (FAILED(CMonster::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pColliderCom)))
 		return E_FAIL;
 
 	return S_OK;
@@ -281,10 +281,6 @@ CGameObject* CCocoonBullet::Clone_GameObject(void * pArg)
 
 void CCocoonBullet::Free()
 {
-	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pCollider);
-	Safe_Release(m_pRendererCom);
-
 	CMonster::Free();
 
 	return;

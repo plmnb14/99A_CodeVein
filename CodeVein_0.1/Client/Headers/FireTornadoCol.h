@@ -20,10 +20,6 @@ public:
 	virtual HRESULT Render_GameObject();
 
 private:
-	CTransform*			m_pTransformCom = nullptr;
-	CCollider*			m_pCollider = nullptr;
-	CRenderer*			m_pRendererCom = nullptr;
-
 	_double				m_dCurTime = 0;
 	_double				m_dLifeTime = 0;
 	_bool				m_bDead = false;

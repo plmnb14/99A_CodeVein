@@ -1,13 +1,10 @@
 #pragma once
 
-#include "Client_Defines.h"
-#include "GameObject.h"
-#include "Management.h"
-#include "Effect.h"
+#include "Monster.h"
 
 BEGIN(Client)
 
-class CPoisonRotationBullet final : public CGameObject
+class CPoisonRotationBullet final : public CMonster
 {
 protected:
 	explicit CPoisonRotationBullet(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -22,9 +19,6 @@ public:
 	virtual HRESULT Render_GameObject();
 
 private:
-	CTransform*			m_pTransformCom = nullptr;
-	CCollider*			m_pCollider = nullptr;
-	CRenderer*			m_pRendererCom = nullptr;
 	CEffect*			m_pBulletBody1 = nullptr;
 	CEffect*			m_pBulletBody2 = nullptr;
 
