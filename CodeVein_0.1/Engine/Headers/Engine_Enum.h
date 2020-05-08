@@ -157,3 +157,16 @@ enum Skill_ID
 	Chariot_Rush, // Ã¢½ºÅ³
 	SkillID_End
 };
+
+enum PET_TYPE
+{
+	Poison_Butterfly_B,
+	Poison_Butterfly_A,
+	Poison_Butterfly_S,
+	Poison_Butterfly_SS,
+	Deer_King_B,
+	Deer_King_A,
+	Deer_King_S,
+	Deer_King_SS,
+	PetType_End
+};

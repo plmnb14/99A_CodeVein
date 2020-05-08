@@ -61,6 +61,7 @@
 #include "SkillIcon.h"
 
 #include "Pet_Inven.h"
+#include "Pet_Slot.h"
 
 #include "NoticeUI.h"
 #include "ExplainSkillUI.h"

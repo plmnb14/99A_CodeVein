@@ -21,11 +21,9 @@ HRESULT CPet_Slot::Ready_GameObject_Prototype()
 HRESULT CPet_Slot::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
-		return DEAD_OBJ;
+		return E_FAIL;
 
 	CUI::Ready_GameObject(pArg);
-
-	SetUp_Default();
 
 	m_bIsActive = false;
 
@@ -36,73 +34,20 @@ _int CPet_Slot::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
-	if (true == m_bIsDead)
-		return DEAD_OBJ;
-
-	if (nullptr != m_pSelectUI)
-	{
-		m_pSelectUI->Set_UI_Pos(m_fPosX, m_fPosY);
-		m_pSelectUI->Set_UI_Size(m_fSizeX, m_fSizeY);
-		m_pSelectUI->Set_ViewZ(m_fViewZ - 0.1f);
-		m_pSelectUI->Set_Active(m_bIsActive);
-	}
-
-	if (nullptr != m_pCursorUI)
-	{
-		m_pCursorUI->Set_UI_Pos(m_fPosX, m_fPosY);
-		m_pCursorUI->Set_UI_Size(m_fSizeX, m_fSizeY);
-		m_pCursorUI->Set_ViewZ(m_fViewZ - 0.2f);
-
-		if (m_vecPet.size() > 0)
-			m_pCursorUI->Set_Active(m_bIsActive);
-		else
-			m_pCursorUI->Set_Active(false);
-
-		m_pCursorUI->Set_CursorColl(Pt_InRect());
-	}
-
-	if (nullptr != m_pNumberUI)
-	{
-		m_pNumberUI->Set_Active(m_bIsActive);
-
-		if (m_vecPet.size() == 0)
-			m_pNumberUI->Set_Active(false);
-
-		m_pNumberUI->Set_UI_Index(_uint(m_vecPet.size()));
-		m_pNumberUI->Set_UI_Pos(m_fPosX - m_fSizeX * 0.25f, m_fPosY + m_fSizeY * 0.25f);
-	}
-
 	m_pRenderer->Add_RenderList(RENDER_UI, this);
+	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 
-	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
-
-	if (m_vecPet.size() > 0)
-		m_ePetType = m_vecPet.front()->Get_Type();
-	else
-		m_ePetType = CPet::PET_TYPE::PET_TYPE_END;
-
-
-	if (m_vecPet.size() > 0)
-		m_pSelectUI->Set_Select(m_bIsSelect);
-	else
-		m_pSelectUI->Set_Select(false);
-
-	//강화수치= +숫자 붙이고
-	//등급 테두리 색상
-	//종류 아이콘
+	m_bIsCollMouse = Pt_InRect();
+	
 	switch (m_ePetType)
 	{
-	case CPet::PET_TYPE::PET_DEERKING:
-		m_iIndex = 0;
+	case CPet::PET_POISONBUTTERFLY:
+		m_iIndex = 3;
 		break;
-	case CPet::PET_TYPE::PET_POISONBUTTERFLY:
-		m_iIndex = 1;
-		break;
-	case CPet::PET_TYPE::PET_TYPE_END:
-		m_iIndex = 2;
+	case CPet::PET_DEERKING:
+		m_iIndex = 4;
 		break;
 	}
-
 	return NO_EVENT;
 }
 
@@ -130,100 +75,103 @@ HRESULT CPet_Slot::Render_GameObject()
 
 	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
 
-	m_matOldView = g_pManagement->Get_Transform(D3DTS_VIEW);
-	m_matOldProj = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
+	_uint iIndex = 0;
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
-
-	m_pShader->Begin_Shader();
-
-	m_pShader->Begin_Pass(1);
-
-	m_pBuffer->Render_VIBuffer();
-
-	m_pShader->End_Pass();
-
-	m_pShader->End_Shader();
-
-
-	g_pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
-	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
-
+	if (!m_bIsSelect)
+	{
+		if (!m_bIsCollMouse)
+		{
+			LOOP(2)
+			{
+				if (0 == i)
+					iIndex = 0;
+				else if (1 == i)
+					iIndex = m_iIndex;
+				if (FAILED(SetUp_ConstantTable(iIndex)))
+					return E_FAIL;
+				m_pShader->Begin_Shader();
+				m_pShader->Begin_Pass(1);
+				m_pBuffer->Render_VIBuffer();
+				m_pShader->End_Pass();
+				m_pShader->End_Shader();
+			}
+		}
+		else
+		{
+			LOOP(3)
+			{
+				if (0 == i)
+					iIndex = 0;
+				else if (1 == i)
+					iIndex = m_iIndex;
+				else if (2 == i)
+					iIndex = 2;
+				if (FAILED(SetUp_ConstantTable(iIndex)))
+					return E_FAIL;
+				m_pShader->Begin_Shader();
+				m_pShader->Begin_Pass(1);
+				m_pBuffer->Render_VIBuffer();
+				m_pShader->End_Pass();
+				m_pShader->End_Shader();
+			}
+		}
+	}
+	else
+	{
+		if (!m_bIsCollMouse)
+		{
+			LOOP(3)
+			{
+				if (0 == i)
+					iIndex = 0;
+				else if (1 == i)
+					iIndex = m_iIndex;
+				else if (2 == i)
+					iIndex = 1;
+				if (FAILED(SetUp_ConstantTable(iIndex)))
+					return E_FAIL;
+				m_pShader->Begin_Shader();
+				m_pShader->Begin_Pass(1);
+				m_pBuffer->Render_VIBuffer();
+				m_pShader->End_Pass();
+				m_pShader->End_Shader();
+			}
+		}
+		else
+		{
+			LOOP(4)
+			{
+				if (0 == i)
+					iIndex = 0;
+				else if (1 == i)
+					iIndex = m_iIndex;
+				else if (2 == i)
+					iIndex = 1;
+				else if (3 == i)
+					iIndex = 2;
+				if (FAILED(SetUp_ConstantTable(iIndex)))
+					return E_FAIL;
+				m_pShader->Begin_Shader();
+				m_pShader->Begin_Pass(1);
+				m_pBuffer->Render_VIBuffer();
+				m_pShader->End_Pass();
+				m_pShader->End_Shader();
+			}
+		}
+	}
+	
+	
 
 	return S_OK;
 }
 
-_uint CPet_Slot::Get_Size()
-{
-	return _uint(m_vecPet.size());
-}
-
-_uint CPet_Slot::Get_Plus()
-{
-	if (m_vecPet.size() == 0)
-		return CPet::PET_PLUS_TYPE::PET_PLUS_END;
-
-	return _uint(m_vecPet.front()->Get_Plus());
-}
-
-_uint CPet_Slot::Get_Type()
-{
-	if (m_vecPet.size() == 0)
-		return CPet::PET_TYPE::PET_TYPE_END;
-
-	return _uint(m_vecPet.front()->Get_Type());
-}
-
-_uint CPet_Slot::Get_Grade()
-{
-	if (m_vecPet.size() == 0)
-		return CPet::PET_TYPE::PET_TYPE_END;
-
-	return _uint(m_vecPet.front()->Get_Type());
-}
-
-void CPet_Slot::Set_Select(_bool bIsSelect)
-{
-	m_bIsSelect = bIsSelect;
-
-	return;
-}
 
 _bool CPet_Slot::Pt_InRect()
 {
 	return g_pInput_Device->MousePt_InRect(m_fPosX, m_fPosY, m_fSizeX, m_fSizeY, g_hWnd);
-}
-
-void CPet_Slot::Input_Item(CPet * pPet)
-{
-	IF_NULL_RETURN(pPet);
-
-	m_vecPet.push_back(pPet);
-
-	return;
-}
-
-void CPet_Slot::Delete_Item()
-{
-	if (m_vecPet.size() == 0)
-		return;
-
-	m_vecPet.pop_back();
-
-	return;
-}
-
-void CPet_Slot::Delete_Items()
-{
-	for (_uint i = 0; i < m_vecPet.size(); ++i)
-		m_vecPet.pop_back();
-
-	return;
 }
 
 HRESULT CPet_Slot::Add_Component()
@@ -236,8 +184,8 @@ HRESULT CPet_Slot::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRenderer)))
 		return E_FAIL;
 
-	// For.Com_Texture //현재는 이렇지만 펫 아이콘으로 교체
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Pets", L"Com_Texture", (CComponent**)&m_pTexture)))
+	// For.Com_Texture
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_PetIcon", L"Com_Texture", (CComponent**)&m_pTexture)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -251,38 +199,7 @@ HRESULT CPet_Slot::Add_Component()
 	return S_OK;
 }
 
-HRESULT CPet_Slot::SetUp_Default()
-{
-	CUI::UI_DESC* pDesc = nullptr;
-
-	pDesc = new CUI::UI_DESC;
-	pDesc->fPosX = m_fPosX;
-	pDesc->fPosY = m_fPosY;
-	pDesc->fSizeX = m_fSizeX;
-	pDesc->fSizeY = m_fSizeY;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_SelectUI", SCENE_STAGE, L"Layer_SelectUI", pDesc);
-	m_pSelectUI = static_cast<CSelect_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_SelectUI", SCENE_STAGE));
-
-	pDesc = new CUI::UI_DESC;
-	pDesc->fPosX = m_fPosX - m_fSizeX * 0.25f;
-	pDesc->fPosY = m_fPosY + m_fSizeY * 0.25f;
-	pDesc->fSizeX = m_fSizeX * 0.25f;
-	pDesc->fSizeY = m_fSizeY * 0.25f;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NumberUI", SCENE_STAGE, L"Layer_NumberUI", pDesc);
-	m_pNumberUI = static_cast<CNumberUI*>(g_pManagement->Get_GameObjectBack(L"Layer_NumberUI", SCENE_STAGE));
-
-	pDesc = new CUI::UI_DESC;
-	pDesc->fPosX = m_fPosX;
-	pDesc->fPosY = m_fPosY;
-	pDesc->fSizeX = m_fSizeX;
-	pDesc->fSizeY = m_fSizeY;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_CursorUI", SCENE_STAGE, L"Layer_CursorUI", pDesc);
-	m_pCursorUI = static_cast<CCursorUI*>(g_pManagement->Get_GameObjectBack(L"Layer_CursorUI", SCENE_STAGE));
-
-	return S_OK;
-}
-
-HRESULT CPet_Slot::SetUp_ConstantTable()
+HRESULT CPet_Slot::SetUp_ConstantTable(_uint iIndex)
 {
 	IF_NULL_VALUE_RETURN(m_pShader, E_FAIL);
 
@@ -294,7 +211,7 @@ HRESULT CPet_Slot::SetUp_ConstantTable()
 	if (FAILED(m_pShader->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
 
-	if (FAILED(m_pTexture->SetUp_OnShader("g_DiffuseTexture", m_pShader, m_iIndex)))
+	if (FAILED(m_pTexture->SetUp_OnShader("g_DiffuseTexture", m_pShader, iIndex)))
 		return E_FAIL;
 
 	return S_OK;
@@ -335,6 +252,4 @@ void CPet_Slot::Free()
 	Safe_Release(m_pRenderer);
 
 	CUI::Free();
-
-	return;
 }

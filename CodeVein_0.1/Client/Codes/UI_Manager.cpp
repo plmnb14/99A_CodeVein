@@ -157,6 +157,8 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 	// ================== 펫 인벤토리 ==================
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_PetInven", CPet_Inven::Create(pDevice))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_PetSlot", CPet_Slot::Create(pDevice))))
+		return E_FAIL;
 	return NOERROR;
 }
 
@@ -236,7 +238,7 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	// 펫 인벤토리
 	m_pPet_Inven = static_cast<CPet_Inven*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PetInven", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pPet_Inven, SCENE_MORTAL, L"Layer_PetUI", nullptr);
-
+	
 	return NOERROR;
 }
 
@@ -269,8 +271,7 @@ _int CUI_Manager::Update_UI()
 	//if (g_pInput_Device->Key_Up(DIK_RETURN))
 	//	cout << m_pStageSelectUI->Teleport_Stage() << endl; // 스테이지 선택시, 각각 다른 _uint값 반환
 
-	if (g_pInput_Device->Key_Up(DIK_U))
-		m_pPet_Inven->Set_Active(!m_pPet_Inven->Get_Active());
+	
 	return 0;
 }
 

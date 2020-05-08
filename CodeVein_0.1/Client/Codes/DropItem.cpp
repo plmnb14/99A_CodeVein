@@ -87,7 +87,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 			//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(); //무기타입을 받아서 해당아이템이 추가되게끔
 			break;
 		case ITEM_TYPE::ITEM_PET:
-			CUI_Manager::Get_Instance()->Get_Pet_Inven()->Add_Pet(m_eItemGrade, m_ePetType);
+			CUI_Manager::Get_Instance()->Get_Pet_Inven()->Add_Pet(/*m_eItemGrade, */m_ePetType);
 			break;
 		}
 
