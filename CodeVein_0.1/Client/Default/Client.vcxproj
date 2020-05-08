@@ -240,6 +240,7 @@
     <ClInclude Include="..\Headers\Pet_Bullet.h" />
     <ClInclude Include="..\Headers\Pet_Inven.h" />
     <ClInclude Include="..\Headers\Pet_PoisonButterFly.h" />
+    <ClInclude Include="..\Headers\Pet_Slot.h" />
     <ClInclude Include="..\Headers\PlayerFontUI.h" />
     <ClInclude Include="..\Headers\FontNumUI.h" />
     <ClInclude Include="..\Headers\GunAttackCol.h" />
@@ -305,6 +306,7 @@
     <ClInclude Include="..\Headers\SwordGenji.h" />
     <ClInclude Include="..\Headers\SwordGenjiBullet.h" />
     <ClInclude Include="..\Headers\SwordShieldGenji.h" />
+    <ClInclude Include="..\Headers\DropItem.h" />
     <ClInclude Include="..\Headers\ThaiMan.h" />
     <ClInclude Include="..\Headers\Total_Inven.h" />
     <ClInclude Include="..\Headers\UI_FontNum.h" />
@@ -404,6 +406,7 @@
     <ClCompile Include="..\Codes\Pet_Bullet.cpp" />
     <ClCompile Include="..\Codes\Pet_Inven.cpp" />
     <ClCompile Include="..\Codes\Pet_PoisonButterFly.cpp" />
+    <ClCompile Include="..\Codes\Pet_Slot.cpp" />
     <ClCompile Include="..\Codes\PlayerFontUI.cpp" />
     <ClCompile Include="..\Codes\FontNumUI.cpp" />
     <ClCompile Include="..\Codes\GunAttackCol.cpp" />
@@ -468,6 +471,7 @@
     <ClCompile Include="..\Codes\SwordGenji.cpp" />
     <ClCompile Include="..\Codes\SwordGenjiBullet.cpp" />
     <ClCompile Include="..\Codes\SwordShieldGenji.cpp" />
+    <ClCompile Include="..\Codes\DropItem.cpp" />
     <ClCompile Include="..\Codes\ThaiMan.cpp" />
     <ClCompile Include="..\Codes\Total_Inven.cpp" />
     <ClCompile Include="..\Codes\UI_FontNum.cpp" />

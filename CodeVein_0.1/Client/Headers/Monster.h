@@ -3,12 +3,14 @@
 #include "Client_Defines.h"
 #include "GameObject.h"
 #include "Management.h"
-#include "MonsterUI.h"
-#include "Weapon.h"
-#include "Haze.h"
 #include "ObjectPool_Manager.h"
 #include "Trail_VFX.h"
 #include "Effect.h"
+
+#include "MonsterUI.h"
+#include "Weapon.h"
+#include "Haze.h"
+#include "DropItem.h"
 
 BEGIN(Client)
 

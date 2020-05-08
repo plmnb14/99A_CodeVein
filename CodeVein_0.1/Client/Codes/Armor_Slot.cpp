@@ -202,9 +202,9 @@ void CArmor_Slot::SetUp_Default()
 	pDesc->fPosY = m_fPosY;
 	pDesc->fSizeX = m_fSizeX;
 	pDesc->fSizeY = m_fSizeY;
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_SelectUI", SCENE_STAGE, L"Layer_SelectUI", pDesc)))
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_SelectUI", SCENE_MORTAL, L"Layer_SelectUI", pDesc)))
 		return;
-	m_pSelectUI = static_cast<CSelect_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_SelectUI", SCENE_STAGE));
+	m_pSelectUI = static_cast<CSelect_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_SelectUI", SCENE_MORTAL));
 
 	pDesc = new CUI::UI_DESC;
 	pDesc->fPosX = m_fPosX;
@@ -212,9 +212,9 @@ void CArmor_Slot::SetUp_Default()
 	pDesc->fSizeX = m_fSizeX;
 	pDesc->fSizeY = m_fSizeY;
 
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_CursorUI", SCENE_STAGE, L"Layer_CursorUI", pDesc)))
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_CursorUI", SCENE_MORTAL, L"Layer_CursorUI", pDesc)))
 		return;
-	m_pCursorUI = static_cast<CCursorUI*>(g_pManagement->Get_GameObjectBack(L"Layer_CursorUI", SCENE_STAGE));
+	m_pCursorUI = static_cast<CCursorUI*>(g_pManagement->Get_GameObjectBack(L"Layer_CursorUI", SCENE_MORTAL));
 }
 
 CArmor_Slot * CArmor_Slot::Create(_Device pGraphic_Device)

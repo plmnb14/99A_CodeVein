@@ -37,8 +37,6 @@ public:
 		_v3						vPos = {};
 		_v3						vAngle = {};
 		_ushort					sStageIdx = 0;
-		//_ushort					sSubSetIdx = 0;
-		//_ushort					sCellIdx = 0;
 		//=======================================================
 	}INFO;
 

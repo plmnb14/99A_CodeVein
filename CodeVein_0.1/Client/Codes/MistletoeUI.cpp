@@ -35,7 +35,7 @@ HRESULT CMistletoeUI::Ready_GameObject(void * pArg)
 	{
 		pInstance = static_cast<CMistletoeOptionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MistletoeOptionUI", nullptr));
 		pInstance->Set_Option(CMistletoeOptionUI::MISTLETOE_OPTION(i));
-		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_StageUI", nullptr);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_MORTAL, L"Layer_StageUI", nullptr);
 		m_vecOption.push_back(pInstance);
 	}
 	

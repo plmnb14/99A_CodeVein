@@ -466,6 +466,9 @@
     <Filter Include="02.GameObject\Stage\3%29 Effect\Effect_FireFlower">
       <UniqueIdentifier>{e3f3b1d2-c8df-469c-b4a2-7ebc9b7ebbc1}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\11.PetSlot">
+      <UniqueIdentifier>{e1619559-c327-4def-8b62-b9b38a871adb}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -891,6 +894,12 @@
     <ClInclude Include="..\Headers\Pet_Bullet.h">
       <Filter>02.GameObject\Stage\10%29 Pet</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Monster.h">
+      <Filter>02.GameObject\Stage\2%29 Monster</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\DropItem.h">
+      <Filter>02.GameObject\Stage\7%29 Item</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\DeerKingIceSword.h">
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
     </ClInclude>
@@ -908,6 +917,9 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Pet_Inven.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\08. Pet_Inven</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Pet_Slot.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\11.PetSlot</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Colleague_UI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI</Filter>
@@ -1385,6 +1397,9 @@
     <ClCompile Include="..\Codes\Pet_Bullet.cpp">
       <Filter>02.GameObject\Stage\10%29 Pet</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\DropItem.cpp">
+      <Filter>02.GameObject\Stage\7%29 Item</Filter>
+    </ClCompile>
     <ClCompile Include="..\Codes\DeerKingIceSword.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
     </ClCompile>
@@ -1402,6 +1417,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Pet_Inven.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\08. Pet_Inven</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Pet_Slot.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\11.PetSlot</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Colleague_UI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\15. Colleague UI</Filter>

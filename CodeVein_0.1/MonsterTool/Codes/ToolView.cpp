@@ -225,13 +225,11 @@ void CToolView::Extract_Mesh_PathInfo(const _tchar * pPath, list<MESH_INFO*>& rP
 			// 키 값
 			pPathInfo->wstrStateKey = L"Mesh_" + tmpString;
 
-			_tchar szBuf_2[STR_128] = L"";
-			(_bIsDynamic ? lstrcpy(szBuf_2, L"1") : lstrcpy(szBuf_2, L"0"));
+			pPathInfo->bIsDynamic = _bIsDynamic;
 
-			pPathInfo->szIsDynamic = szBuf_2;
-
-			wcout << pPathInfo->wstrStateKey<<"를 추출했습니다" << endl;
 			rPathInfoLst.push_back(pPathInfo);
+
+			wcout << pPathInfo->wstrStateKey<<" 를 추출했습니다" << endl;
 		}
 	}
 
@@ -240,32 +238,34 @@ void CToolView::Extract_Mesh_PathInfo(const _tchar * pPath, list<MESH_INFO*>& rP
 
 void CToolView::Save_Mesh_PathInfo(list<MESH_INFO*>& rPathInfoLst, const _tchar* szPath)
 {
-	wofstream fout;
-
-	fout.open(szPath);
-
-	if (fout.fail())
-		return;
+	HANDLE hFile = ::CreateFile(szPath, GENERIC_WRITE, 0, 0, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, nullptr);
 
 	DWORD dwByte = 0;
-	wstring wstrCombined = L"";
 
 	for (auto& pPathInfo : rPathInfoLst)
 	{
-		wstrCombined =
-			pPathInfo->wstrStateKey + L"|" +
-			pPathInfo->wstrFileName + L"|" +
-			pPathInfo->wstrImgPath + L"|" +
-			pPathInfo->szIsDynamic;
+		if (INVALID_HANDLE_VALUE == hFile)
+			::MSG_BOX("Save Failed. [INVALID_HANDLE_VALUE]");
 
-		fout << wstrCombined << endl;
+		const _tchar* szKey = pPathInfo->wstrStateKey.c_str();
+		const _tchar* szFile = pPathInfo->wstrFileName.c_str();
+		const _tchar* szPath = pPathInfo->wstrImgPath.c_str();
+		const _bool bDynamic = pPathInfo->bIsDynamic;
+
+		::WriteFile(hFile, szKey, sizeof(_tchar) * STR_128, &dwByte, nullptr);
+		::WriteFile(hFile, szFile, sizeof(_tchar) * STR_128, &dwByte, nullptr);
+		::WriteFile(hFile, szPath, sizeof(_tchar) * STR_128, &dwByte, nullptr);
+		::WriteFile(hFile, &bDynamic, sizeof(_bool), &dwByte, nullptr);
+
 		wcout << pPathInfo->wstrStateKey<<"를 저장했습니다" << endl;
+		if (rPathInfoLst.size() == 1)
+			break;
 	}
 
-	fout.close();
+	CloseHandle(hFile);
 
-	cout << endl;
 	cout << "저장 완료 . . . !" << endl;
+	cout << endl;
 
 	return;
 }

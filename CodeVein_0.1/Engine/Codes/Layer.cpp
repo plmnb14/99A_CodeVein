@@ -57,6 +57,7 @@ _int CLayer::Update_Layer(_double TimeDelta)
 
 				iter_begin = m_ObjectList.erase(iter_begin);
 			}
+
 			else
 				iter_begin++;
 	
