@@ -6,6 +6,11 @@
 #include "Trail_VFX.h"
 #include "Effect.h"
 
+#include "Expendables.h"
+#include "Material.h"
+#include "Weapon.h"
+#include "Pet.h"
+
 BEGIN(Client)
 
 //class CExpendables;

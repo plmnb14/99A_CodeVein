@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Cocoon.h"
 #include "..\Headers\CocoonBullet.h"
-#include "..\Headers\DropItem.h"
 
 CCocoon::CCocoon(LPDIRECT3DDEVICE9 pGraphic_Device)
 	:CMonster(pGraphic_Device)
