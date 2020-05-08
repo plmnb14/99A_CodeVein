@@ -135,6 +135,8 @@ HRESULT CParticleMgr::Ready_ParticleManager_Essential()
 	Input_Pool(L"MapDust_2", 100);
 	Input_Pool(L"MapMist", 100);
 	Input_Pool(L"MapSnow", 500);
+	Input_Pool(L"MapFog_0", 300);
+	Input_Pool(L"FloorPlane_Black", 2);
 
 	Input_Pool(L"Blood_Decal_0", 50);
 	Input_Pool(L"Blood_Decal_1", 50);

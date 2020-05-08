@@ -40,7 +40,7 @@ HRESULT CEffect_FireFlower::Ready_GameObject(void* pArg)
 	EFF_INFO tInfo = *(EFF_INFO*)pArg;
 	m_fCreatePosY = tInfo.vCreatePos.y;
 	m_vPos = tInfo.vCreatePos;
-	m_vPos += _v3(0.f, 1.8, 0.f);
+	m_vPos += _v3(0.f, 1.8f, 0.f);
 	m_pTransformCom->Set_Pos(m_vPos);
 	m_pTransformCom->Set_Scale(_v3(0.8f, 0.8f, 0.8f));
 

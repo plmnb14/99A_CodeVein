@@ -276,13 +276,12 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_Velocity", fTargetSize, 0.0f, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
-	// 안나옴
 	// For.Target_DecalDepth`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_DecalDepth", fTargetSize, fTargetSize * 2, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_DecalDepth", fTargetSize, fTargetSize * 1, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	// For.Target_RimNormal`s Debug Buffer ==  툰 쉐이딩
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_RimNormal", fTargetSize, fTargetSize * 3, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_RimNormal", fTargetSize, fTargetSize * 2, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	//=====================================================================================================================
@@ -346,7 +345,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 		return E_FAIL;
 
 	// For.Target_BlurDOF`s Debug Buffer
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_BlurDOF", fTargetSize * 4, fTargetSize * 2, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_BlurDOF", fTargetSize * 5, fTargetSize * 3, fTargetSize, fTargetSize)))
 		return E_FAIL;
 #endif
 
@@ -457,7 +456,8 @@ HRESULT CRenderer::Draw_RenderList()
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_SSAO");
 		m_pTarget_Manager->Render_Debug_Buffer(L"MRT_SSAO_Blur");
 		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_BlurDOF");
-
+		m_pTarget_Manager->Render_Debug_Buffer_Single(L"Target_DecalDepth");
+		
 		m_pGraphic_Dev->SetTexture(0, nullptr);
 	}
 
@@ -496,7 +496,7 @@ void CRenderer::Fog_On(_bool bOn)
 	m_bFog = bOn;
 
 	if (m_bFog)
-		m_fFogDestiny = 0.06f;
+		m_fFogDestiny = 0.01f;
 	else
 		m_fFogDestiny = 0.f;
 }
@@ -1062,8 +1062,15 @@ HRESULT CRenderer::Render_Blend()
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_RimTexture", m_pTarget_Manager->Get_Texture(L"Target_Rim"))))
 		return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Texture("g_DepthTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"))))
+		return E_FAIL;
 
 	if (FAILED(m_pShader_Blend->Set_Texture("g_SSAOTexture", m_pTarget_Manager->Get_Texture(L"Target_SSAO_Blur"))))
+		return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Texture("g_FogColorTexture", m_pTarget_Manager->Get_Texture(L"Target_BlurSky"))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader_Blend->Set_Value("g_FogDestiny", &m_fFogDestiny, sizeof(_float))))
 		return E_FAIL;
 
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Blend")))
@@ -1150,7 +1157,7 @@ HRESULT CRenderer::Render_Blur()
 	m_pTarget_Manager->End_Render_Target(L"Target_BlurH");
 	// Blur H ==================================================
 
-	for (_int i = 0; i < 1; ++i) // 홀수만
+	for (_int i = 0; i < 13; ++i) // 홀수만
 	{
 		if (i % 2 == 0)
 		{
@@ -1213,22 +1220,6 @@ HRESULT CRenderer::Render_MotionBlurObj()
 	if (nullptr == m_pViewPortBuffer ||
 		nullptr == m_pShader_Blend)
 		return E_FAIL;
-
-	CManagement*		pManagement = CManagement::Get_Instance();
-	if (nullptr == pManagement)
-		return E_FAIL;
-
-	Safe_AddRef(pManagement);
-
-	_mat		ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
-	_mat		matWVP;
-	matWVP = ViewMatrix * ProjMatrix;
-	//D3DXMatrixInverse(&matWVP, nullptr, &matWVP);
-	//if (FAILED(m_pShader_Blend->Set_Value("g_matInvVP", &matWVP, sizeof(_mat))))
-	//	return E_FAIL;
-
-	Safe_Release(pManagement);
 
 	// 오브젝트 단위의 모션블러, 속도맵 ==============================================================================
 	m_pShader_Blend->Set_Texture("g_DiffuseTexture", m_pTarget_Manager->Get_Texture(L"Target_Blend"));
@@ -1436,10 +1427,9 @@ HRESULT CRenderer::Render_After()
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_ShadeTexture", m_pTarget_Manager->Get_Texture(L"Target_BlurDOF"))))
 		return E_FAIL;
-	if (FAILED(m_pShader_Blend->Set_Texture("g_FogColorTexture", m_pTarget_Manager->Get_Texture(L"Target_BlurSky"))))
-		return E_FAIL;
 
-	if (GetAsyncKeyState('O') & 0x8000)
+
+	if (GetAsyncKeyState('M') & 0x8000)
 	{
 		m_pGradingTextureTest->SetUp_OnShader("g_GradingTexture", m_pShader_Blend, 0);
 	}
@@ -1451,19 +1441,11 @@ HRESULT CRenderer::Render_After()
 
 	//if (GetAsyncKeyState('O') & 0x8000)
 	//{
-	//	m_fFocus += 1.f * DELTA_60;
-	//
-	//	cout << "RANGE : " << m_fRange << endl;
-	//	cout << "FOCUS : " << m_fFocus << endl;
-	//	cout << "=========================" << endl;
+	//	m_fFogDestiny = 0.06f;
 	//}
 	//if (GetAsyncKeyState('I') & 0x8000)
 	//{
-	//	m_fFocus -= 1.f * DELTA_60;
-	//
-	//	cout << "RANGE : " << m_fRange << endl;
-	//	cout << "FOCUS : " << m_fFocus << endl;
-	//	cout << "=========================" << endl;
+	//	m_fFogDestiny = 0.15f;
 	//}
 	//if (GetAsyncKeyState('U') & 0x8000)
 	//{
@@ -1490,8 +1472,6 @@ HRESULT CRenderer::Render_After()
 	if (FAILED(m_pShader_Blend->Set_Value("g_Focus_DOF", &m_fFocus, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Value("g_Range_DOF", &m_fRange, sizeof(_float))))
-		return E_FAIL;
-	if (FAILED(m_pShader_Blend->Set_Value("g_FogDestiny", &m_fFogDestiny, sizeof(_float))))
 		return E_FAIL;
 
 	// 장치에 백버퍼가 셋팅되어있다.	

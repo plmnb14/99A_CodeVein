@@ -90,7 +90,7 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 
 	Check_MyHit();
 
-	Check_Do_List();
+	Check_Do_List(TimeDelta);
 	Set_AniEvent();
 
 	Function_Checking_AttCoolTime(m_fCoolTimer_limit);
@@ -103,7 +103,7 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 	cout << "상태: " << m_eMovetype << " | " << "0 - Idle, 1 - Move, 3 - Att" << endl;
 	cout << "공격상태: " << m_eColl_Sub_AttMoment << " | " << "Ani : " << m_eColleague_Ani << endl;*/
 
-	cout << "공격상태: " << m_eColl_Sub_AttMoment << " | " << m_iNormalAtt_Count << endl;
+	//cout << "공격상태: " << m_eColl_Sub_AttMoment << " | " << m_iNormalAtt_Count << endl;
 
 	if (m_eMovetype != CPlayer_Colleague::Coll_Dead)
 		Enter_Collision();
@@ -417,11 +417,12 @@ void CPlayer_Colleague::Check_MyHit()
 }
 
 
-void CPlayer_Colleague::Check_Do_List()
+void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 {
 	if (m_eMovetype == CPlayer_Colleague::Coll_Hit ||
 		m_eMovetype == CPlayer_Colleague::Coll_Dead ||
-		m_eMovetype == CPlayer_Colleague::Coll_Heal)
+		m_eMovetype == CPlayer_Colleague::Coll_Heal ||
+		m_eMovetype == CPlayer_Colleague::Coll_Dodge)
 		return;
 
 	_float	fMinPos = 0.f;
@@ -671,10 +672,7 @@ void CPlayer_Colleague::Check_Do_List()
 
 		if (true == m_bStart_Fighting)
 		{
-			/*if (true == m_tObjParam.bIsHit)
-			{
-			m_pObject_Mon->Get_
-			}*/
+			m_fDodge_CoolTime += (_float)TimeDelta;
 
 			if (fMinPos < 30.f)
 			{
@@ -719,21 +717,18 @@ void CPlayer_Colleague::Check_Do_List()
 
 	}
 
-	//if (true == m_bStart_Fighting && true == m_bNear_byMonster)
-	//{
-	//	// 전투 상태일 때
-	//	// 구르기 쿨타임을 줘서 구르고 싶은 기분일 때 구르게 하기
-	//	m_fDodge_CoolTime += DELTA_60;
+	if ((true == m_bStart_Fighting && true == m_bNear_byMonster) && m_fDodge_CoolTime >= 10.f)
+	{
+		// 전투 상태일 때
+		// 구르기 쿨타임을 줘서 구르고 싶은 기분일 때 구르게 하기
+		
 
-	//	if (m_fDodge_CoolTime >= 10.f)
-	//	{
-	//		// 5초마다 구르게
-	//		m_eMovetype = CPlayer_Colleague::Coll_Dodge;
-	//		m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_FrontRoll;
-
-	//		m_fDodge_CoolTime = 0.f;
-	//	}
-	//}
+		// 5초마다 구르게
+		m_eMovetype = CPlayer_Colleague::Coll_Dodge;
+		m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_FrontRoll;
+		m_fDodge_CoolTime = 0;
+		cout << "데굴데굴" << endl;
+	}
 
 
 	if (fMyPlayerLength > 30.f)
@@ -904,6 +899,7 @@ void CPlayer_Colleague::Set_AniEvent()
 		}
 		break;
 		}
+		break;
 	}
 	case CPlayer_Colleague::Coll_Dodge:
 	{
@@ -921,6 +917,8 @@ void CPlayer_Colleague::Set_AniEvent()
 			m_eColleague_Ani = CPlayer_Colleague::Ani_Back_Roll;
 			break;
 		}
+		case CPlayer_Colleague::Dodge_End:
+			break;
 		}
 		break;
 	}
@@ -954,7 +952,7 @@ void CPlayer_Colleague::Set_AniEvent()
 		m_eColleague_Ani = CPlayer_Colleague::Ani_Dead;
 		break;
 	}
-
+	break;
 	}
 }
 
@@ -1190,15 +1188,6 @@ void CPlayer_Colleague::CollMove_MonRun()
 void CPlayer_Colleague::CollDodge_FrontRoll()
 {
 	// 구르기 조건
-	/*
-	싸우고 있을 때만!구르기를 해야 함!!
-
-	많이 맞고 있거나 피가 적게 있을 때 맞고 있다면 회피해야 함
-	- 데미지 체크를 해서, 데미지가 몇 이상 들어왔고 && 앞에 몬스터와 전투 중이라면 구르기로 피한다.
-	누적 데미지 변수 하나 필요
-	구르기는 한번만 해야 함
-	쿨타임을 어느정도
-	데미지 누적으로 구르기를 했다면 누적 데미지를 초기화 시켜줘야 함*/
 	_double AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
 
 	if (true == m_tObjParam.bCanDodge)
@@ -1208,12 +1197,12 @@ void CPlayer_Colleague::CollDodge_FrontRoll()
 	}
 	else
 	{
-		if (m_pDynamicMesh->Is_Finish_Animation(0.9f) && m_eColleague_Ani == CPlayer_Colleague::Ani_Front_Roll)
+		if (m_pDynamicMesh->Is_Finish_Animation(0.81f) && m_eColleague_Ani == CPlayer_Colleague::Ani_Front_Roll)
 		{
 			Funtion_Reset_State();
-			m_eMovetype = CPlayer_Colleague::Coll_Idle;
 			m_bChecking_MyHit = true;
-			m_fCoolTimer_limit = 2.f;
+			m_fCoolTimer_limit = 5.f;
+			m_eMovetype = CPlayer_Colleague::Coll_Idle;
 			return;
 		}
 		else if (1.967f <= AniTime && 3.333f >= AniTime)
@@ -1222,9 +1211,9 @@ void CPlayer_Colleague::CollDodge_FrontRoll()
 			if (false == m_bEventTrigger[0])
 			{
 				m_bEventTrigger[0] = true;
-				m_fAtt_MoveSpeed_Cur = 1.8f;
+				m_fAtt_MoveSpeed_Cur = 0.15f;
 				m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
-				m_fAni_Multiply = 0.5f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
+				m_fAni_Multiply = 1.f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
 			}
 			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Colleague_SkilMovement(m_fAni_Multiply);
@@ -1235,9 +1224,9 @@ void CPlayer_Colleague::CollDodge_FrontRoll()
 			if (false == m_bEventTrigger[1])
 			{
 				m_bEventTrigger[1] = true;
-				m_fAtt_MoveSpeed_Cur = 7.f;
+				m_fAtt_MoveSpeed_Cur = 1.8f;
 				m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
-				m_fAni_Multiply = 1.f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
+				m_fAni_Multiply = 0.7f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
 			}
 			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Colleague_SkilMovement(m_fAni_Multiply);
@@ -1246,6 +1235,22 @@ void CPlayer_Colleague::CollDodge_FrontRoll()
 }
 
 void CPlayer_Colleague::CollDodge_BackRoll()
+{
+}
+
+void CPlayer_Colleague::CollDodge_LeftRoll()
+{
+}
+
+void CPlayer_Colleague::CollDodge_RightRoll()
+{
+}
+
+void CPlayer_Colleague::CollDodge_B_LeftRoll()
+{
+}
+
+void CPlayer_Colleague::CollDodge_B_RightRoll()
 {
 }
 

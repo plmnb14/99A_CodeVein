@@ -115,13 +115,6 @@ private:
 	void	Down();		// 체력 70퍼 이하면 다운
 
 private:
-	CTransform*			m_pTransformCom = nullptr;
-	CRenderer*			m_pRendererCom = nullptr;
-	CShader*			m_pShaderCom = nullptr;
-	CMesh_Dynamic*		m_pMeshCom = nullptr;
-	CAIController*		m_pAIControllerCom = nullptr;
-	CNavMesh*			m_pNavMesh = nullptr;
-	CCollider*			m_pCollider = nullptr;
 
 	CWeapon*			m_pSword = nullptr;
 	CWeapon*			m_pShield = nullptr;

@@ -228,7 +228,7 @@ void CWeapon::OnCollisionEnter()
 	else
 	{
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL), true);
-		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_MORTAL), true);
+		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE), true);
 	}
 		
 
@@ -776,10 +776,10 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_SSword_Military].fCol_Height = 1.1f;
 
 	m_tWeaponParam[Wpn_SSword_Slave].fDamage = 100.f;
-	m_tWeaponParam[Wpn_SSword_Slave].fRadius = 0.8f;
+	m_tWeaponParam[Wpn_SSword_Slave].fRadius = 0.7f;
 	m_tWeaponParam[Wpn_SSword_Slave].fTrail_Min = 0.6f;
 	m_tWeaponParam[Wpn_SSword_Slave].fTrail_Max = 1.8f;
-	m_tWeaponParam[Wpn_SSword_Slave].fCol_Height = 0.9f;
+	m_tWeaponParam[Wpn_SSword_Slave].fCol_Height = 1.2f;
 
 	//===========================================================================================
 	// ´ë°Ë

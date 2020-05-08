@@ -91,7 +91,7 @@ protected:
 	void Update_Collider();
 	void Render_Collider();
 
-	void Checkk_PosY();
+	void Check_PosY();
 	void Check_Hit();
 	void Check_Dist();
 	void Check_AniEvent();

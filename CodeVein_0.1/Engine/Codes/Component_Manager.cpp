@@ -391,55 +391,60 @@ HRESULT CComponent_Manager::LoadTex_FilesFromPath(_Device pGraphicDev, const _tc
 	m_fResCnt = 0.f;
 	m_fMaxResCnt = 0.f;
 
-	//wifstream fin;
-	//
-	//list<PATH_INFO*> tmpList;
-	//
-	//
-	//fin.open(szImgPath);
-	//
-	//if (fin.fail())
-	//	return E_FAIL;
-	//
-	//while (true)
-	//{
-	//	PATH_INFO* tmpPath = new PATH_INFO;
-	//
-	//	fin.getline(tmpPath->sztrStateKey, STR_128, '|');
-	//	fin.getline(tmpPath->sztrFileName, STR_128, '|');
-	//	fin.getline(tmpPath->sztrImgPath, STR_128, '|');
-	//	fin.getline(tmpPath->szIsDynamic, STR_128, '|');
-	//	fin.getline(tmpPath->szImgCnt, STR_128);
-	//
-	//	if (fin.eof())
-	//	{
-	//		Safe_Delete(tmpPath);
-	//		break;
-	//	}
-	//
-	//	++m_fMaxResCnt;
-	//	tmpList.push_back(tmpPath);
-	//}
-	//
-	//fin.close();
-	//
-	//
-	//for (auto& iter : tmpList)
-	//{
-	//	lstrcat(iter->sztrImgPath, iter->sztrFileName);
-	//
-	//	Add_Prototype(SCENE_STATIC, iter->sztrStateKey, CTexture::Create(pGraphicDev, CTexture::TYPE_GENERAL, iter->sztrImgPath, _wtoi(iter->szImgCnt)));
-	//	++m_fResCnt;
-	//
-	//	m_fResPercent = m_fResCnt / m_fMaxResCnt;
-	//
-	//	m_listTexturePathInfo.push_back(iter);
-	//}
-	//
-	//tmpList.clear();
-	//
-	//m_fResCnt = 0.f;
-	//m_fMaxResCnt = 0.f;
+	return S_OK;
+}
+
+HRESULT CComponent_Manager::LoadTex_FilesFromPath_Tool(_Device pGraphicDev, const _tchar * szImgPath)
+{
+	wifstream fin;
+	
+	list<PATH_INFO*> tmpList;
+	
+	
+	fin.open(szImgPath);
+	
+	if (fin.fail())
+		return E_FAIL;
+	
+	while (true)
+	{
+		PATH_INFO* tmpPath = new PATH_INFO;
+	
+		fin.getline(tmpPath->sztrStateKey, STR_128, '|');
+		fin.getline(tmpPath->sztrFileName, STR_128, '|');
+		fin.getline(tmpPath->sztrImgPath, STR_128, '|');
+		fin.getline(tmpPath->szIsDynamic, STR_128, '|');
+		fin.getline(tmpPath->szImgCnt, STR_128);
+	
+		if (fin.eof())
+		{
+			Safe_Delete(tmpPath);
+			break;
+		}
+	
+		++m_fMaxResCnt;
+		tmpList.push_back(tmpPath);
+	}
+	
+	fin.close();
+	
+	
+	for (auto& iter : tmpList)
+	{
+		lstrcat(iter->sztrImgPath, iter->sztrFileName);
+	
+		Add_Prototype(SCENE_STATIC, iter->sztrStateKey, CTexture::Create(pGraphicDev, CTexture::TYPE_GENERAL, iter->sztrImgPath, _wtoi(iter->szImgCnt)));
+		++m_fResCnt;
+	
+		m_fResPercent = m_fResCnt / m_fMaxResCnt;
+	
+		m_listTexturePathInfo.push_back(iter);
+	}
+	
+	tmpList.clear();
+	
+	m_fResCnt = 0.f;
+	m_fMaxResCnt = 0.f;
 
 	return S_OK;
 }

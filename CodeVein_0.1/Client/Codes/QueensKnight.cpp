@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "..\Headers\QueensKnight.h"
-#include "..\Headers\Weapon.h"
 #include "..\Headers\BossHP.h"
 
 
@@ -115,7 +114,7 @@ _int CQueensKnight::Update_GameObject(_double TimeDelta)
 
 	// 죽었을 경우
 	if (m_bIsDead)
-		return DEAD_OBJ;
+		m_bEnable = false;
 
 	// 죽음 애니메이션
 	if (m_bReadyDead)
@@ -161,7 +160,7 @@ _int CQueensKnight::Update_GameObject(_double TimeDelta)
 
 	OnCollisionEnter();
 
-	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
+	m_pTransformCom->Set_Pos(m_pNavMeshCom->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
 	return NOERROR;
 }
@@ -174,21 +173,29 @@ _int CQueensKnight::Late_Update_GameObject(_double TimeDelta)
 	if (nullptr == m_pRendererCom)
 		return E_FAIL;
 
-	if (!m_bDissolve)
+	//=============================================================================================
+	// 그림자랑 모션블러는 프리스텀 안에 없으면 안그림
+	//=============================================================================================
+	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
 	{
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
-			return E_FAIL;
+		if (!m_bDissolve)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
+				return E_FAIL;
+		}
+
+		else
+		{
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
+				return E_FAIL;
+		}
+
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
 			return E_FAIL;
-	}
-	else
-	{
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
 			return E_FAIL;
 	}
-
-	//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
-	//	return E_FAIL;
+	//=============================================================================================
 
 	m_dTimeDelta = TimeDelta;
 
@@ -206,39 +213,42 @@ HRESULT CQueensKnight::Render_GameObject()
 
 	m_pMeshCom->Play_Animation(_float(m_dTimeDelta)); // * alpha
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
-
-	m_pShaderCom->Begin_Shader();
-
-	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
-
-	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
 	{
-		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+		if (FAILED(SetUp_ConstantTable()))
+			return E_FAIL;
 
-		m_pMeshCom->Update_SkinnedMesh(i);
+		m_pShaderCom->Begin_Shader();
 
-		for (_uint j = 0; j < iNumSubSet; ++j)
+		_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+
+		for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 		{
-			m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+			_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
 
-			if (m_bDissolve)
-				m_iPass = 3;
+			m_pMeshCom->Update_SkinnedMesh(i);
 
-			m_pShaderCom->Begin_Pass(m_iPass);
+			for (_uint j = 0; j < iNumSubSet; ++j)
+			{
+				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
 
-			m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
+				if (m_bDissolve)
+					m_iPass = 3;
 
-			m_pShaderCom->Commit_Changes();
+				m_pShaderCom->Begin_Pass(m_iPass);
 
-			m_pMeshCom->Render_Mesh(i, j);
+				m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
 
-			m_pShaderCom->End_Pass();
+				m_pShaderCom->Commit_Changes();
+
+				m_pMeshCom->Render_Mesh(i, j);
+
+				m_pShaderCom->End_Pass();
+			}
 		}
-	}
 
-	m_pShaderCom->End_Shader();
+		m_pShaderCom->End_Shader();
+	}
 
 	m_pSword->Update_GameObject(m_dTimeDelta);
 	m_pShield->Update_GameObject(m_dTimeDelta);
@@ -2177,7 +2187,7 @@ HRESULT CQueensKnight::Update_Collider()
 	/////// 공격용 콜라이더
 	m_vecAttackCol[0]->Update(m_vWing);
 
-	m_pCollider->Update(m_pTransformCom->Get_Pos() + _v3(0.f, m_pCollider->Get_Radius().y, 0.f));
+	m_pColliderCom->Update(m_pTransformCom->Get_Pos() + _v3(0.f, m_pColliderCom->Get_Radius().y, 0.f));
 	return S_OK;
 }
 
@@ -2271,16 +2281,19 @@ void CQueensKnight::Push_Collider()
 	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
 	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
 	tmpList[2] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
-	tmpList[3] = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_MORTAL);
+	tmpList[3] = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE);
 
 	for (auto& ListObj : tmpList)
 	{
+		if (ListObj.empty())
+			continue;
+
 		for (auto& iter : ListObj)
 		{
 			CCollider* pCollider = TARGET_TO_COL(iter);
 
 			// 지금 속도값 임의로 넣었는데 구해서 넣어줘야함 - 완료
-			if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_pAIControllerCom->Get_FloatValue(L"Monster_Speed")))
+			if (m_pColliderCom->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_pAIControllerCom->Get_FloatValue(L"Monster_Speed")))
 			{
 				CTransform* pTrans = TARGET_TO_TRANS(iter);
 				CNavMesh*   pNav = TARGET_TO_NAV(iter);
@@ -2293,7 +2306,7 @@ void CQueensKnight::Push_Collider()
 				vDir.y = 0;
 
 				// 네비 메쉬타게 끔 세팅
-				pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pCollider->Get_Length().x));
+				pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pColliderCom->Get_Length().x));
 			}
 		}
 	}
@@ -2314,7 +2327,7 @@ void CQueensKnight::OnCollisionEnter()
 	else
 	{
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
-		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_MORTAL));
+		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE));
 	}
 
 	// =============================================================================================
@@ -2404,17 +2417,27 @@ HRESULT CQueensKnight::Add_Component()
 		return E_FAIL;
 
 	// for.Com_NavMesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMesh)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMeshCom)))
 		return E_FAIL;
 
 	// for.Com_Collider
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pColliderCom)))
 		return E_FAIL;
 
-	m_pCollider->Set_Radius(_v3{ 1.5f, 1.5f, 1.5f });
-	m_pCollider->Set_Dynamic(true);
-	m_pCollider->Set_Type(COL_SPHERE);
-	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pCollider->Get_Radius().y , 0.f });
+	//=================================================================================
+	// for.Com_Optimaization
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Optimization", L"Com_Optimization", (CComponent**)&m_pOptimizationCom)))
+		return E_FAIL;
+
+	// for.Com_BattleAgent
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"BattleAgent", L"Com_BattleAgent", (CComponent**)&m_pBattleAgentCom)))
+		return E_FAIL;
+	//=================================================================================
+
+	m_pColliderCom->Set_Radius(_v3{ 1.5f, 1.5f, 1.5f });
+	m_pColliderCom->Set_Dynamic(true);
+	m_pColliderCom->Set_Type(COL_SPHERE);
+	m_pColliderCom->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pColliderCom->Get_Radius().y , 0.f });
 
 
 	return NOERROR;
@@ -2615,13 +2638,6 @@ void CQueensKnight::Free()
 {
 	Safe_Release(m_pShield);
 	Safe_Release(m_pSword);
-	Safe_Release(m_pCollider);
-	Safe_Release(m_pNavMesh);
-	Safe_Release(m_pAIControllerCom);
-	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pMeshCom);
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pRendererCom);
 
 	CGameObject::Free();
 }
