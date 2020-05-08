@@ -23,7 +23,7 @@ public:
 		Att_MonWalk, Att_MonRun, Att_MonBackWalk
 	};
 	enum Coll_GuardMoment { Guard_Idle, Gurad_Walk, Gurad_Hit };
-	enum Coll_DodgeMoment { Dodge_FrontRoll, Dodge_BackRoll };
+	enum Coll_DodgeMoment { Dodge_FrontRoll, Dodge_BackRoll, Dodge_End };
 	enum Coll_HealMoment { My_Heal, Player_Heal };
 
 	enum Coll_FBLR { Coll_Front, Coll_Back };
@@ -34,7 +34,6 @@ private:
 private:
 	enum Colleague_Ani
 	{
-		Ani_Start_Game,
 		Ani_Idle,
 		Ani_PlayerDead,
 		Ani_Trun_Left90,
@@ -60,7 +59,12 @@ private:
 		Ani_Heal,
 		Ani_PlayerHeal_or_Gun,
 		Ani_Trun_Center_Att_Skil,
-		Ani_Jump_CenterAtt_Skil
+		Ani_Jump_CenterAtt_Skil,
+		Ani_Start_Game,
+		Ani_Left_Roll,
+		Ani_Right_Roll,
+		Ani_BLeft_Roll,
+		Ani_BRight_Roll
 	};
 
 protected:
@@ -99,7 +103,7 @@ private:
 private:
 	void	Check_DeadEffect(_double TimeDelta);
 
-	void	Check_Do_List();
+	void	Check_Do_List(_double TimeDelta);
 	void	Check_MyHit();
 
 	void	Set_AniEvent();
@@ -126,6 +130,10 @@ private:
 
 	void	CollDodge_FrontRoll();	// 구르기 or 막기
 	void	CollDodge_BackRoll();
+	void	CollDodge_LeftRoll();
+	void	CollDodge_RightRoll();
+	void	CollDodge_B_LeftRoll();
+	void	CollDodge_B_RightRoll();
 
 
 	void	CollIdle_Waiting();
