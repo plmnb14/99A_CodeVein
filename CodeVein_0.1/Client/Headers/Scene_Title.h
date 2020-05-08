@@ -35,6 +35,9 @@ private:
 public:
 	static CScene_Title* Create(_Device pGraphic_Device, _short _sStageNum, _bool _bLoadStatic);
 	virtual void Free();
+
+private:
+	_bool m_bReadyAll = false;
 };
 
 END

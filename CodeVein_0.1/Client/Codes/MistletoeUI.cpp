@@ -197,8 +197,6 @@ void CMistletoeUI::Click_Option()
 
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
-				Active_SubUI(iter);
-
 				// 0번은 스테이지
 				if (0 == iIdx)
 				{
@@ -216,6 +214,8 @@ void CMistletoeUI::Click_Option()
 				{
 
 				}
+
+				//Active_SubUI(iter);
 			}
 				
 		}

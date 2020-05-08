@@ -36,19 +36,9 @@ HRESULT CScene_Title::Ready_Scene()
 	if (FAILED(Ready_Layer_LoadingUI(L"Layer_LoadingUI")))
 		return E_FAIL;
 
-	//디졸브 전역 텍스쳐
-	g_pDissolveTexture = CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Effect/Noise/Noise_13.dds");
-
 	m_pLoading = CLoading::Create(m_pGraphic_Device, SCENE_STAGE);
 
 	if (nullptr == m_pLoading)
-		return E_FAIL;
-
-	CUI_Manager::Get_Instance()->SetUp_UILayer();
-	
-	CParticleMgr::Get_Instance()->Ready_Trail();
-
-	if (FAILED(Ready_Player()))
 		return E_FAIL;
 
 	return S_OK;
@@ -60,6 +50,18 @@ _int CScene_Title::Update_Scene(_double TimeDelta)
 
 	if (true == m_pLoading->Get_Finish())
 	{
+		if (false == m_bReadyAll)
+		{
+			//m_bReadyAll = true;
+			//
+			//CUI_Manager::Get_Instance()->SetUp_UILayer();
+			//
+			//CParticleMgr::Get_Instance()->Ready_Trail();
+			//
+			//if (FAILED(Ready_Player()))
+			//	return E_FAIL;
+		}
+
 		static_cast<CLoadingBar*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingUI", SCENE_TITLE))->Set_Finish();
 		
 		cout << "로드 되었습니다!! 넘어가세요!!" << endl;
@@ -159,6 +161,9 @@ HRESULT CScene_Title::Render_Scene()
 
 HRESULT CScene_Title::Ready_Prototype_GameObject()
 {
+	//디졸브 전역 텍스쳐
+	g_pDissolveTexture = CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Effect/Noise/Noise_13.dds");
+
 	CCameraMgr::Get_Instance()->Reserve_ContainerSize(2);
 	CCameraMgr::Get_Instance()->Ready_Camera(m_pGraphic_Device, DYNAMIC_CAM, L"Tool_FreeCam", TOOL_VIEW, DEFAULT_MODE);
 	CCameraMgr::Get_Instance()->Set_MainCamera(DYNAMIC_CAM, L"Tool_FreeCam");
