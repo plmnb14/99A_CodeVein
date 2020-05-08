@@ -52,14 +52,14 @@ _int CScene_Title::Update_Scene(_double TimeDelta)
 	{
 		if (false == m_bReadyAll)
 		{
-			//m_bReadyAll = true;
-			//
-			//CUI_Manager::Get_Instance()->SetUp_UILayer();
-			//
-			//CParticleMgr::Get_Instance()->Ready_Trail();
-			//
-			//if (FAILED(Ready_Player()))
-			//	return E_FAIL;
+			m_bReadyAll = true;
+			
+			CUI_Manager::Get_Instance()->SetUp_UILayer();
+			
+			CParticleMgr::Get_Instance()->Ready_Trail();
+			
+			if (FAILED(Ready_Player()))
+				return E_FAIL;
 		}
 
 		static_cast<CLoadingBar*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingUI", SCENE_TITLE))->Set_Finish();
