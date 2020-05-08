@@ -65,22 +65,28 @@ _int CWolf::Late_Update_GameObject(_double TimeDelta)
 
 	IF_NULL_VALUE_RETURN(m_pRendererCom, E_FAIL);
 
-	if (!m_bDissolve)
+	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
 	{
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
-			return E_FAIL;
+		if (!m_bDissolve)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
+				return E_FAIL;
+		}
+		else
+		{
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
+				return E_FAIL;
+		}
+
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
 			return E_FAIL;
-	}
-	else
-	{
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
 			return E_FAIL;
 	}
 
 	m_dTimeDelta = TimeDelta;
 
-	return S_OK;
+	return NO_EVENT;
 }
 
 HRESULT CWolf::Render_GameObject()
@@ -132,43 +138,74 @@ HRESULT CWolf::Render_GameObject()
 
 HRESULT CWolf::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
 {
+	if (false == m_bEnable)
+		return S_OK;
+
 	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
 	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
 
-	m_pMeshCom->Play_Animation(0.f);
+	//============================================================================================
+	// 공통 변수
+	//============================================================================================
+	_mat	ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat	ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+	_mat	WorldMatrix = m_pTransformCom->Get_WorldMat();
 
-	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-
-	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
 		return E_FAIL;
 
-	m_matLastWVP = m_pTransformCom->Get_WorldMat() * ViewMatrix * ProjMatrix;
+	//============================================================================================
+	// 모션 블러 상수
+	//============================================================================================
+	if (_bIsForMotionBlur)
+	{
+		if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
+			return E_FAIL;
 
-	_bool bMotionBlur = true;
-	if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
-		return E_FAIL;
-	_bool bDecalTarget = false;
-	if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
-		return E_FAIL;
+		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
 
+		_bool bMotionBlur = true;
+		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+			return E_FAIL;
+		_bool bDecalTarget = false;
+		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+			return E_FAIL;
+		_float fBloomPower = 0.5f;
+		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
+			return E_FAIL;
+	}
+
+	//============================================================================================
+	// 기타 상수
+	//============================================================================================
+	else
+	{
+		_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
+
+		if (FAILED(pShader->Set_Value("g_matWVP", &matWVP, sizeof(_mat))))
+			return E_FAIL;
+	}
+
+	//============================================================================================
+	// 쉐이더 실행
+	//============================================================================================
 	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
 
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 	{
 		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
 
-		m_pMeshCom->Update_SkinnedMesh(i);
-
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
+			_int tmpPass = m_pMeshCom->Get_MaterialPass(i, j);
+
 			pShader->Begin_Pass(iPass);
+			pShader->Commit_Changes();
+
 			pShader->Commit_Changes();
 
 			m_pMeshCom->Render_Mesh(i, j);
@@ -176,6 +213,8 @@ HRESULT CWolf::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _b
 			pShader->End_Pass();
 		}
 	}
+
+	//============================================================================================
 
 	return S_OK;
 }
@@ -204,7 +243,7 @@ void CWolf::Update_Collider()
 		++matrixIdx;
 	}
 
-	m_pCollider->Update(m_pTransformCom->Get_Pos() + _v3(0.f, m_pCollider->Get_Radius().y, 0.f));
+	m_pColliderCom->Update(m_pTransformCom->Get_Pos() + _v3(0.f, m_pColliderCom->Get_Radius().y, 0.f));
 
 	return;
 }
@@ -222,7 +261,7 @@ void CWolf::Render_Collider()
 
 void CWolf::Check_PosY()
 {
-	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
+	m_pTransformCom->Set_Pos(m_pNavMeshCom->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
 	return;
 }
@@ -255,19 +294,19 @@ void CWolf::Check_Hit()
 						m_tObjParam.bHitAgain = false;
 						m_pMeshCom->Reset_OldIndx();
 
-						if (nullptr == m_pTarget)
+						if (nullptr == m_pAggroTarget)
 							m_eFBLR = FBLR::FRONTLEFT;
 						else
-							Function_FBLR(m_pTarget);
+							Function_FBLR(m_pAggroTarget);
 					}
 					else
 					{
 						m_eFirstCategory = MONSTER_STATE_TYPE::HIT;
 
-						if (nullptr == m_pTarget)
+						if (nullptr == m_pAggroTarget)
 							m_eFBLR = FBLR::FRONTLEFT;
 						else
-							Function_FBLR(m_pTarget);
+							Function_FBLR(m_pAggroTarget);
 					}
 				}
 			}
@@ -293,7 +332,7 @@ void CWolf::Check_Dist()
 
 	Function_Find_Target();
 
-	if (nullptr == m_pTarget)
+	if (nullptr == m_pAggroTarget)
 	{
 		Function_ResetAfterAtk();
 
@@ -323,7 +362,7 @@ void CWolf::Check_Dist()
 	}
 	else
 	{
-		_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(m_pTarget)->Get_Pos() - m_pTransformCom->Get_Pos()));
+		_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(m_pAggroTarget)->Get_Pos() - m_pTransformCom->Get_Pos()));
 
 		m_fRecognitionRange >= fLenth ? m_bInRecognitionRange = true : m_bInRecognitionRange = false;
 		m_fAtkRange >= fLenth ? m_bInAtkRange = true : m_bInAtkRange = false;
@@ -805,11 +844,11 @@ void CWolf::Play_Idle()
 				m_eState = WOLF_ANI::Idle;
 			else
 			{
-				if (nullptr == m_pTarget)
+				if (nullptr == m_pAggroTarget)
 				{
 					Function_Find_Target();
 
-					if (nullptr == m_pTarget)
+					if (nullptr == m_pAggroTarget)
 					{
 						Function_ResetAfterAtk();
 						m_fCoolDownMax = 0.f;
@@ -843,10 +882,10 @@ void CWolf::Play_Idle()
 						return;
 					}
 					else
-						Function_RotateBody(m_pTarget);
+						Function_RotateBody(m_pAggroTarget);
 				}
 				else
-					Function_RotateBody(m_pTarget);
+					Function_RotateBody(m_pAggroTarget);
 
 				m_eState = WOLF_ANI::Threat;
 			}
@@ -930,11 +969,11 @@ void CWolf::Play_Move()
 			m_fSkillMoveMultiply = 0.5f;
 		}
 
-		if (nullptr == m_pTarget)
+		if (nullptr == m_pAggroTarget)
 		{
 			Function_Find_Target();
 
-			if (nullptr == m_pTarget)
+			if (nullptr == m_pAggroTarget)
 			{
 				Function_ResetAfterAtk();
 				m_fCoolDownMax = 0.f;
@@ -966,10 +1005,10 @@ void CWolf::Play_Move()
 				return;
 			}
 			else
-				Function_RotateBody(m_pTarget);
+				Function_RotateBody(m_pAggroTarget);
 		}
 		else
-			Function_RotateBody(m_pTarget);
+			Function_RotateBody(m_pAggroTarget);
 
 		Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 		Function_DecreMoveMent(m_fSkillMoveMultiply);
@@ -977,11 +1016,11 @@ void CWolf::Play_Move()
 
 	case MONSTER_MOVE_TYPE::MOVE_WALK:
 		m_eState = WOLF_ANI::Walk;
-		if (nullptr == m_pTarget)
+		if (nullptr == m_pAggroTarget)
 		{
 			Function_Find_Target();
 
-			if (nullptr == m_pTarget)
+			if (nullptr == m_pAggroTarget)
 			{
 				Function_ResetAfterAtk();
 				m_fCoolDownMax = 0.f;
@@ -1013,10 +1052,10 @@ void CWolf::Play_Move()
 				return;
 			}
 			else
-				Function_RotateBody(m_pTarget);
+				Function_RotateBody(m_pAggroTarget);
 		}
 		else
-			Function_RotateBody(m_pTarget);
+			Function_RotateBody(m_pAggroTarget);
 
 		Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 		break;
@@ -1102,10 +1141,10 @@ void CWolf::Play_Hit()
 			{
 				m_tObjParam.bCanHit = true;
 
-				if (nullptr == m_pTarget)
+				if (nullptr == m_pAggroTarget)
 					m_eFBLR = FBLR::FRONTLEFT;
 				else
-					Function_FBLR(m_pTarget);
+					Function_FBLR(m_pAggroTarget);
 			}
 		}
 	}
@@ -1178,21 +1217,32 @@ HRESULT CWolf::Add_Component(void* pArg)
 
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
 		return E_FAIL;
+
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom)))
 		return E_FAIL;
+
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
+
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, MeshName, L"Com_Mesh", (CComponent**)&m_pMeshCom)))
 		return E_FAIL;
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMesh)))
-		return E_FAIL;
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMeshCom)))
 		return E_FAIL;
 
-	m_pCollider->Set_Radius(_v3{ 0.6f, 0.6f, 0.6f });
-	m_pCollider->Set_Dynamic(true);
-	m_pCollider->Set_Type(COL_SPHERE);
-	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pCollider->Get_Radius().y , 0.f });
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pColliderCom)))
+		return E_FAIL;
+
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Optimization", L"Com_Optimization", (CComponent**)&m_pOptimizationCom)))
+		return E_FAIL;
+
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"BattleAgent", L"Com_BattleAgent", (CComponent**)&m_pBattleAgentCom)))
+		return E_FAIL;
+
+	m_pColliderCom->Set_Radius(_v3{ 0.6f, 0.6f, 0.6f });
+	m_pColliderCom->Set_Dynamic(true);
+	m_pColliderCom->Set_Type(COL_SPHERE);
+	m_pColliderCom->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pColliderCom->Get_Radius().y , 0.f });
 
 	return S_OK;
 }
@@ -1201,72 +1251,123 @@ HRESULT CWolf::SetUp_ConstantTable()
 {
 	IF_NULL_VALUE_RETURN(m_pShaderCom, E_FAIL);
 
-	CManagement* pManagement = CManagement::Get_Instance();
-	IF_NULL_VALUE_RETURN(pManagement, E_FAIL);
+	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 
-	Safe_AddRef(pManagement);
+	//=============================================================================================
+	// 기본 메트릭스
+	//=============================================================================================
 
 	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
-
-	_mat ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
-	_mat ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
-
 	if (FAILED(m_pShaderCom->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
+
+	//=============================================================================================
+	// 디졸브용 상수
+	//=============================================================================================
 	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShaderCom)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
-	Safe_Release(pManagement);
+	//=============================================================================================
+	// 쉐이더 재질정보 수치 입력
+	//=============================================================================================
+	_float	fEmissivePower = 5.f;	// 이미시브 : 높을 수록, 자체 발광이 강해짐.
+	_float	fSpecularPower = 1.f;	// 메탈니스 : 높을 수록, 정반사가 강해짐.
+	_float	fRoughnessPower = 1.f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
+	_float	fMinSpecular = 0.1f;	// 최소 빛	: 높을 수록 빛이 퍼짐(림라이트의 범위가 넓어지고 , 밀집도가 낮아짐).
+	_float	fID_R = 1.0f;	// ID_R : R채널 ID 값 , 1이 최대
+	_float	fID_G = 0.5f;	// ID_G : G채널 ID 값 , 1이 최대
+	_float	fID_B = 0.2f;	// ID_B	: B채널 ID 값 , 1이 최대
+
+	if (FAILED(m_pShaderCom->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fID_R_Power", &fID_R, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fID_G_Power", &fID_G, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
+		return E_FAIL;
+
+	//=============================================================================================
+	// 림라이트 값들을 쉐이더에 등록시킴
+	//=============================================================================================
+	m_pBattleAgentCom->Update_RimParam_OnShader(m_pShaderCom);
+	//=============================================================================================
 
 	return S_OK;
 }
 
 HRESULT CWolf::Ready_Status(void * pArg)
 {
-	if (nullptr == pArg)
+	if (nullptr != pArg)
 	{
-		m_tObjParam.fDamage = -250.f;
-		m_tObjParam.fHp_Max = 750.f;
-		m_tObjParam.fArmor_Max = 10.f;
+		MONSTER_STATUS Info = *(MONSTER_STATUS*)pArg;
+		m_pBattleAgentCom->Set_RimAlpha(0.5f);
+		m_pBattleAgentCom->Set_RimValue(8.f);
+		m_pBattleAgentCom->Set_OriginRimAlpha(0.5f);
+		m_pBattleAgentCom->Set_OriginRimValue(8.f);
 
-		m_fRecognitionRange = 15.f;
-		m_fShotRange = 10.f;
-		m_fAtkRange = 5.f;
-		m_fPersonalRange = 2.f;
-		m_iDodgeCountMax = 5;
+		if (true == Info.bSpawnOnTrigger)
+		{
+			_tchar szNavData[STR_128] = L"";
+
+			lstrcpy(szNavData, (
+				Info.sStageIdx == 0 ? L"Navmesh_Training.dat" :
+				Info.sStageIdx == 1 ? L"Navmesh_Stage_01.dat" :
+				Info.sStageIdx == 2 ? L"Navmesh_Stage_02.dat" :
+				Info.sStageIdx == 3 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
+
+			m_pNavMeshCom->Set_Index(-1);
+			m_pNavMeshCom->Ready_NaviMesh(m_pGraphic_Dev, szNavData);
+			m_pNavMeshCom->Check_OnNavMesh(Info.vPos);
+			m_pTransformCom->Set_Pos(Info.vPos);
+			m_pTransformCom->Set_Angle(Info.vAngle);
+
+			//m_pNavMeshCom->Set_SubsetIndex(Info.sSubSetIdx);
+			//m_pNavMeshCom->Set_Index(Info.sCellIdx);
+			if (MONSTER_COLOR_TYPE::WHITE == Info.eMonsterColor)
+			{
+				m_eMonsterColor = Info.eMonsterColor;
+				m_tObjParam.fDamage = -300.f;
+				m_tObjParam.fHp_Max = 900.f;
+				m_tObjParam.fArmor_Max = 10.f;
+
+				m_fRecognitionRange = 15.f;
+				m_fShotRange = 10.f;
+				m_fAtkRange = 5.f;
+				m_fPersonalRange = 2.f;
+				m_iDodgeCountMax = 5;
+			}
+			else
+			{
+				m_eMonsterColor = MONSTER_COLOR_TYPE::BLACK;
+				m_tObjParam.fDamage = -250.f;
+				m_tObjParam.fHp_Max = 750.f;
+				m_tObjParam.fArmor_Max = 10.f;
+
+				m_fRecognitionRange = 15.f;
+				m_fShotRange = 10.f;
+				m_fAtkRange = 5.f;
+				m_fPersonalRange = 2.f;
+				m_iDodgeCountMax = 5;
+			}
+		}
 	}
 	else
 	{
-		MONSTER_STATUS Info = *(MONSTER_STATUS*)pArg;
-		if (MONSTER_COLOR_TYPE::WHITE == Info.eMonsterColor)
-		{
-			m_tObjParam.fDamage = -300.f;
-			m_tObjParam.fHp_Max = 900.f;
-			m_tObjParam.fArmor_Max = 10.f;
-
-			m_fRecognitionRange = 15.f;
-			m_fShotRange = 10.f;
-			m_fAtkRange = 5.f;
-			m_fPersonalRange = 2.f;
-			m_iDodgeCountMax = 5;
-		}
-		else
-		{
-			m_tObjParam.fDamage = -250.f;
-			m_tObjParam.fHp_Max = 750.f;
-			m_tObjParam.fArmor_Max = 10.f;
-
-			m_fRecognitionRange = 15.f;
-			m_fShotRange = 10.f;
-			m_fAtkRange = 5.f;
-			m_fPersonalRange = 2.f;
-			m_iDodgeCountMax = 5;
-		}
+		MSG_BOX("Create Monster pArgument == nullptr Failed");
+		return E_FAIL;
 	}
 
 	m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
@@ -1405,19 +1506,7 @@ CGameObject* CWolf::Clone_GameObject(void * pArg)
 
 void CWolf::Free()
 {
-	Safe_Release(m_pMonsterUI);
-
-	IF_NOT_NULL(m_pTarget)
-		Safe_Release(m_pTarget);
-
-	Safe_Release(m_pCollider);
-	Safe_Release(m_pNavMesh);
-	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pMeshCom);
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pRendererCom);
-
-	CGameObject::Free();
+	CMonster::Free();
 
 	return;
 }

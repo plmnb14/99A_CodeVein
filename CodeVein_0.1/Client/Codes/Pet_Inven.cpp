@@ -38,13 +38,17 @@ _int CPet_Inven::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 
-	Click_Inven();
-
+	_uint iIdx = 0;
 	for (auto& vector_iter : m_vecPetSlot)
 	{
+		vector_iter->Set_UI_Pos(m_fPosX - 100.f + 50.f * (iIdx % 5), m_fPosY - 150.f + 50.f * (m_fPosY / 5));
 		vector_iter->Set_Active(m_bIsActive);
-		vector_iter->Set_ViewZ(m_fViewZ - 0.1f);
+		iIdx++;
 	}
+
+	m_pExitIcon->Set_Active(m_bIsActive);
+
+	Click_Inven();
 
 	return NO_EVENT;
 }
@@ -92,7 +96,7 @@ HRESULT CPet_Inven::Render_GameObject()
 	return S_OK;
 }
 
-void CPet_Inven::Add_Pet(CPet::PET_TYPE _eType)
+void CPet_Inven::Add_Pet(CDropItem::ITEM_GRADE_TYPE _eGrade, CPet::PET_TYPE _eType)
 {
 	CUI::UI_DESC* pDesc = nullptr;
 	CPet_Slot* pSlot = nullptr;
@@ -115,6 +119,14 @@ void CPet_Inven::Add_Pet(CPet::PET_TYPE _eType)
 	}
 
 	return;
+}
+
+void CPet_Inven::Sell_Pet(_uint iDelete)
+{
+}
+
+void CPet_Inven::Active_Pet(CPet_Slot * pSlot)
+{
 }
 
 void CPet_Inven::Click_Inven()

@@ -51,7 +51,7 @@ _int CSkill_Inven::Update_GameObject(_double TimeDelta)
 	_uint iIdx = 0;
 	for (auto& iter : m_vecSlot)
 	{
-		iter->Set_UI_Pos(m_fPosX - 100.f + _float(iIdx) * 50.f, m_fPosY - 150.f);
+		iter->Set_UI_Pos(m_fPosX - 100.f + 50.f * (iIdx % 5), m_fPosY - 150.f + 50.f * (m_fPosY / 5));
 		iter->Set_Active(m_bIsActive);
 		iIdx++;
 	}

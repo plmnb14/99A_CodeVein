@@ -237,7 +237,7 @@ HRESULT CPet_Slot::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture //현재는 이렇지만 펫 아이콘으로 교체
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Expendables", L"Com_Texture", (CComponent**)&m_pTexture)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Pets", L"Com_Texture", (CComponent**)&m_pTexture)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -251,25 +251,7 @@ HRESULT CPet_Slot::Add_Component()
 	return S_OK;
 }
 
-HRESULT CPet_Slot::SetUp_ConstantTable()
-{
-	IF_NULL_VALUE_RETURN(m_pShader, E_FAIL);
-
-	if (FAILED(m_pShader->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_matView", &m_matView, sizeof(_mat))))
-
-		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
-		return E_FAIL;
-
-	if (FAILED(m_pTexture->SetUp_OnShader("g_DiffuseTexture", m_pShader, m_iIndex)))
-		return E_FAIL;
-
-	return S_OK;
-}
-
-void CPet_Slot::SetUp_Default()
+HRESULT CPet_Slot::SetUp_Default()
 {
 	CUI::UI_DESC* pDesc = nullptr;
 
@@ -297,7 +279,25 @@ void CPet_Slot::SetUp_Default()
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_CursorUI", SCENE_STAGE, L"Layer_CursorUI", pDesc);
 	m_pCursorUI = static_cast<CCursorUI*>(g_pManagement->Get_GameObjectBack(L"Layer_CursorUI", SCENE_STAGE));
 
-	return;
+	return S_OK;
+}
+
+HRESULT CPet_Slot::SetUp_ConstantTable()
+{
+	IF_NULL_VALUE_RETURN(m_pShader, E_FAIL);
+
+	if (FAILED(m_pShader->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(m_pShader->Set_Value("g_matView", &m_matView, sizeof(_mat))))
+
+		return E_FAIL;
+	if (FAILED(m_pShader->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
+		return E_FAIL;
+
+	if (FAILED(m_pTexture->SetUp_OnShader("g_DiffuseTexture", m_pShader, m_iIndex)))
+		return E_FAIL;
+
+	return S_OK;
 }
 
 CPet_Slot* CPet_Slot::Create(_Device pGraphic_Device)

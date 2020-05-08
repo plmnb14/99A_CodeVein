@@ -3,6 +3,7 @@
 #include "Client_Defines.h"
 #include "UI.h"
 
+#include "DropItem.h"
 #include "Pet_Slot.h"
 #include "Inventory_Icon.h"
 
@@ -22,7 +23,9 @@ public:
 	virtual _int			Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT			Render_GameObject();
 
-	void					Add_Pet(CPet::PET_TYPE _eType);
+	void					Add_Pet(CDropItem::ITEM_GRADE_TYPE _eGrade, CPet::PET_TYPE _eType);
+	void					Sell_Pet(_uint iDelete);
+	void					Active_Pet(CPet_Slot* pSlot);
 
 private:
 	void					Click_Inven();

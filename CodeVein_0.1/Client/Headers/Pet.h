@@ -116,6 +116,7 @@ public:
 	{
 		PET_DEERKING,
 		PET_POISONBUTTERFLY,
+		PET_WOLF,
 		PET_TYPE_END
 	};
 

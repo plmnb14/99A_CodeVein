@@ -33,15 +33,6 @@ HRESULT CUrchin::Ready_GameObject(void * pArg)
 	m_pMonsterUI->Set_Bonmatrix(m_matBone[Bone_Head]);
 	m_pMonsterUI->Ready_GameObject(NULL);
 
-	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
-	if (nullptr != m_pTarget)
-	{
-		Safe_AddRef(m_pTarget);
-
-		m_pTargetTransform = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
-		Safe_AddRef(m_pTargetTransform);
-	}
-
 	return S_OK;
 }
 
@@ -62,7 +53,7 @@ _int CUrchin::Update_GameObject(_double TimeDelta)
 
 	m_pMeshCom->SetUp_Animation(m_eState);
 
-	MONSTER_STATE_TYPE::DEAD != m_eFirstCategory ? Enter_Collision() : Check_DeadEffect(TimeDelta);
+	MONSTER_STATE_TYPE::DEAD != m_eFirstCategory ? Check_CollisionEvent() : Check_DeadEffect(TimeDelta);
 
 	return S_OK;
 }
@@ -74,23 +65,28 @@ _int CUrchin::Late_Update_GameObject(_double TimeDelta)
 
 	IF_NULL_VALUE_RETURN(m_pRendererCom, E_FAIL);
 
-	if (!m_bDissolve)
+	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
 	{
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
-			return E_FAIL;
+		if (!m_bDissolve)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
+				return E_FAIL;
+		}
+		else
+		{
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
+				return E_FAIL;
+		}
+
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
 			return E_FAIL;
-	}
-	else
-	{
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
 			return E_FAIL;
 	}
-
 
 	m_dTimeDelta = TimeDelta;
 
-	return S_OK;
+	return NO_EVENT;
 }
 
 HRESULT CUrchin::Render_GameObject()
@@ -142,45 +138,83 @@ HRESULT CUrchin::Render_GameObject()
 
 HRESULT CUrchin::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
 {
+	if (false == m_bEnable)
+		return S_OK;
+
 	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
 	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
 
-	m_pMeshCom->Play_Animation(0.f);
+	//============================================================================================
+	// 공통 변수
+	//============================================================================================
+	_mat	ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat	ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+	_mat	WorldMatrix = m_pTransformCom->Get_WorldMat();
 
-	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
 		return E_FAIL;
 
-	_mat ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-	if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
-		return E_FAIL;
+	//============================================================================================
+	// 모션 블러 상수
+	//============================================================================================
+	if (_bIsForMotionBlur)
+	{
+		if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
+			return E_FAIL;
 
-	m_matLastWVP = m_pTransformCom->Get_WorldMat() * ViewMatrix * ProjMatrix;
+		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
 
-	_bool bMotionBlur = true;
-	if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
-		return E_FAIL;
-	_bool bDecalTarget = false;
-	if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
-		return E_FAIL;
+		_bool bMotionBlur = true;
+		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+			return E_FAIL;
+		_bool bDecalTarget = false;
+		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+			return E_FAIL;
+		_float fBloomPower = 0.5f;
+		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
+			return E_FAIL;
+	}
 
+	//============================================================================================
+	// 기타 상수
+	//============================================================================================
+	else
+	{
+		_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
+
+		if (FAILED(pShader->Set_Value("g_matWVP", &matWVP, sizeof(_mat))))
+			return E_FAIL;
+	}
+
+	//============================================================================================
+	// 쉐이더 실행
+	//============================================================================================
 	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
 
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 	{
 		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
 
-		m_pMeshCom->Update_SkinnedMesh(i);
-
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
+			_int tmpPass = m_pMeshCom->Get_MaterialPass(i, j);
+
 			pShader->Begin_Pass(iPass);
+			pShader->Commit_Changes();
+
+			pShader->Commit_Changes();
 
 			m_pMeshCom->Render_Mesh(i, j);
 
 			pShader->End_Pass();
 		}
 	}
+
+	//============================================================================================
 
 	return S_OK;
 }
@@ -209,7 +243,7 @@ void CUrchin::Update_Collider()
 		++matrixIdx;
 	}
 
-	m_pCollider->Update(m_pTransformCom->Get_Pos() + _v3(0.f, m_pCollider->Get_Radius().y, 0.f));
+	m_pColliderCom->Update(m_pTransformCom->Get_Pos() + _v3(0.f, m_pColliderCom->Get_Radius().y, 0.f));
 
 	return;
 }
@@ -225,258 +259,9 @@ void CUrchin::Render_Collider()
 	return;
 }
 
-void CUrchin::Enter_Collision()
-{
-	Check_CollisionPush();
-	Check_CollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
-
-	return;
-}
-
-void CUrchin::Check_CollisionPush()
-{
-	list<CGameObject*> tmpList[3];
-
-	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
-	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
-	tmpList[2] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
-
-	for (auto& list_iter : tmpList)
-	{
-		for (auto& Obj_iter : list_iter)
-		{
-			CCollider* pCollider = TARGET_TO_COL(Obj_iter);
-
-			if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_fSkillMoveSpeed_Cur * DELTA_60))
-			{
-				CTransform* pTrans = TARGET_TO_TRANS(Obj_iter);
-				CNavMesh*   pNav = TARGET_TO_NAV(Obj_iter);
-
-				_v3 vDir = m_pTransformCom->Get_Pos() - pTrans->Get_Pos();
-				V3_NORMAL_SELF(&vDir);
-
-				vDir.y = 0;
-
-				pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pCollider->Get_Length().x));
-			}
-		}
-	}
-
-	return;
-}
-
-void CUrchin::Check_CollisionEvent(list<CGameObject*> plistGameObject)
-{
-	if (false == m_tObjParam.bIsAttack)
-		return;
-
-	_bool bFirst = true;
-
-	for (auto& iter : plistGameObject)
-	{
-		if (false == iter->Get_Target_CanHit())
-			continue;
-
-		for (auto& vecIter : m_vecAttackCol)
-		{
-			if (false == vecIter->Get_Enabled())
-				continue;
-
-			bFirst = true;
-
-			for (auto& vecCol : iter->Get_PhysicColVector())
-			{
-				if (vecIter->Check_Sphere(vecCol))
-				{
-					if (bFirst)
-					{
-						bFirst = false;
-						continue;
-					}
-
-					if (false == iter->Get_Target_IsDodge())
-					{
-						iter->Set_Target_CanHit(false);
-						iter->Add_Target_Hp(m_tObjParam.fDamage);
-
-						if (iter->Get_Target_IsHit())
-						{
-							iter->Set_HitAgain(true);
-						}
-					}
-
-					vecIter->Set_Enabled(false);
-
-					g_pManagement->Create_Hit_Effect(vecIter, vecCol, TARGET_TO_TRANS(iter));
-					break;
-				}
-				else
-				{
-					if (bFirst)
-						break;
-				}
-			}
-		}
-	}
-
-	return;
-}
-
-void CUrchin::Function_FBLR()
-{
-	_float angle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos()));
-
-	if (MONSTER_STATE_TYPE::HIT == m_eFirstCategory)
-	{
-		if (0.f <= angle && 90.f > angle)
-			m_eFBLR = FBLR::FRONT;
-		else if (-90.f <= angle && 0.f > angle)
-			m_eFBLR = FBLR::FRONT;
-		else if (90.f <= angle && 180.f > angle)
-			m_eFBLR = FBLR::BACK;
-		else if (-180.f <= angle && -90.f > angle)
-			m_eFBLR = FBLR::BACK;
-	}
-
-	return;
-}
-
-void CUrchin::Function_RotateBody()
-{
-	_float fTargetAngle = m_pTransformCom->Chase_Target_Angle(&m_pTargetTransform->Get_Pos());
-
-	_float fYAngle = m_pTransformCom->Get_Angle().y;
-
-	_v3 vTargetDir = m_pTransformCom->Get_Axis(AXIS_Z);
-	V3_NORMAL_SELF(&vTargetDir);
-
-	if (fTargetAngle > 0)
-	{
-		if (fYAngle < 0)
-		{
-			if (-D3DXToRadian(90.f) > fYAngle && -D3DXToRadian(180.f) < fYAngle)
-			{
-				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
-
-				if (fYAngle <= -D3DXToRadian(180.f)) fYAngle = D3DXToRadian(180.f);
-			}
-			else fYAngle += DELTA_60 * D3DXToRadian(360.f);
-		}
-		else
-		{
-			if (fYAngle < fTargetAngle)
-			{
-				fYAngle += DELTA_60 * D3DXToRadian(360.f);
-
-				if (fYAngle >= fTargetAngle) fYAngle = fTargetAngle;
-			}
-			else
-			{
-				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
-
-				if (fYAngle <= fTargetAngle) fYAngle = fTargetAngle;
-			}
-		}
-	}
-	else if (fTargetAngle < 0)
-	{
-		if (fYAngle > 0)
-		{
-			if (D3DXToRadian(90.f) < fYAngle && D3DXToRadian(180.f) > fYAngle)
-			{
-				fYAngle += DELTA_60 * D3DXToRadian(360.f);
-
-				if (fYAngle >= D3DXToRadian(180.f)) fYAngle = -D3DXToRadian(180.f);
-			}
-			else fYAngle -= DELTA_60 * D3DXToRadian(360.f);
-		}
-		else
-		{
-			if (fYAngle > fTargetAngle)
-			{
-				fYAngle -= DELTA_60 * D3DXToRadian(360.f);
-
-				if (fYAngle <= fTargetAngle) fYAngle = fTargetAngle;
-			}
-			else
-			{
-				fYAngle += DELTA_60 * D3DXToRadian(360.f);
-
-				if (fYAngle >= fTargetAngle) fYAngle = fTargetAngle;
-			}
-		}
-	}
-
-	m_pTransformCom->Set_Angle(AXIS_Y, fYAngle);
-
-	return;
-}
-
-void CUrchin::Function_CoolDown()
-{
-	if (true == m_bCanCoolDown)
-	{
-		m_fCoolDownCur += DELTA_60;
-
-		if (m_fCoolDownCur >= m_fCoolDownMax)
-		{
-			m_fCoolDownCur = 0.f;
-			m_bCanCoolDown = false;
-			m_bIsCoolDown = false;
-			m_tObjParam.bCanAttack = true;
-		}
-	}
-
-	return;
-}
-
-void CUrchin::Function_Movement(_float _fspeed, _v3 _vDir)
-{
-	V3_NORMAL(&_vDir, &_vDir);
-
-	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &_vDir, _fspeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
-
-	return;
-}
-
-void CUrchin::Function_DecreMoveMent(_float _fMutiply)
-{
-	m_fSkillMoveSpeed_Cur -= (0.3f - m_fSkillMoveAccel_Cur * m_fSkillMoveAccel_Cur * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60")) * _fMutiply;
-	m_fSkillMoveAccel_Cur += g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60");
-
-	if (m_fSkillMoveSpeed_Cur < 0.f)
-	{
-		m_fSkillMoveAccel_Cur = 0.5f;
-		m_fSkillMoveSpeed_Cur = 0.f;
-	}
-
-	return;
-}
-
-void CUrchin::Function_ResetAfterAtk()
-{
-	m_tObjParam.bCanHit = true;
-	m_tObjParam.bIsHit = false;
-
-	m_tObjParam.bCanDodge = true;
-	m_tObjParam.bIsDodge = false;
-
-	m_tObjParam.bSuperArmor = false;
-
-	m_bCanIdle = true;
-	m_bIsIdle = false;
-
-	m_tObjParam.bIsAttack = false;
-
-	LOOP(20)
-		m_bEventTrigger[i] = false;
-
-	return;
-}
-
 void CUrchin::Check_PosY()
 {
-	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
+	m_pTransformCom->Set_Pos(m_pNavMeshCom->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
 	return;
 }
@@ -495,14 +280,22 @@ void CUrchin::Check_Hit()
 				if (true == m_tObjParam.bHitAgain)
 				{
 					m_eFirstCategory = MONSTER_STATE_TYPE::HIT;
-					Function_FBLR();
 					m_tObjParam.bHitAgain = false;
 					m_pMeshCom->Reset_OldIndx();
+
+					if (nullptr == m_pAggroTarget)
+						m_eFBLR = FBLR::FRONTLEFT;
+					else
+						Function_FBLR(m_pAggroTarget);
 				}
 				else
 				{
 					m_eFirstCategory = MONSTER_STATE_TYPE::HIT;
-					Function_FBLR();
+
+					if (nullptr == m_pAggroTarget)
+						m_eFBLR = FBLR::FRONTLEFT;
+					else
+						Function_FBLR(m_pAggroTarget);
 				}
 			}
 		}
@@ -520,11 +313,15 @@ void CUrchin::Check_Dist()
 		MONSTER_STATE_TYPE::DEAD == m_eFirstCategory)
 		return;
 
-	if (true == m_tObjParam.bIsAttack ||
+	if (true == m_bIsCombo ||
+		true == m_tObjParam.bIsAttack ||
+		true == m_tObjParam.bIsDodge ||
 		true == m_tObjParam.bIsHit)
 		return;
 
-	if (nullptr == m_pTargetTransform)
+	Function_Find_Target();
+
+	if (nullptr == m_pAggroTarget)
 	{
 		Function_ResetAfterAtk();
 
@@ -534,7 +331,7 @@ void CUrchin::Check_Dist()
 	}
 	else
 	{
-		_float fLenth = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransform->Get_Pos()));
+		_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(m_pAggroTarget)->Get_Pos() - m_pTransformCom->Get_Pos()));
 
 		m_fRecognitionRange >= fLenth ? m_bInRecognitionRange = true : m_bInRecognitionRange = false;
 		m_fShotRange >= fLenth ? m_bInAtkRange = true : m_bInAtkRange = false;
@@ -546,27 +343,15 @@ void CUrchin::Check_Dist()
 				if (true == m_tObjParam.bCanAttack)
 				{
 					if (true == m_bIsCoolDown)
-					{
 						m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
-						Function_RotateBody();
-					}
 					else
-					{
 						m_eFirstCategory = MONSTER_STATE_TYPE::ATTACK;
-						Function_RotateBody();
-					}
 				}
 				else
-				{
 					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
-					Function_RotateBody();
-				}
 			}
 			else
-			{
 				m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
-				Function_RotateBody();
-			}
 		}
 		else
 		{
@@ -618,6 +403,7 @@ void CUrchin::Check_AniEvent()
 		break;
 
 	case MONSTER_STATE_TYPE::CC:
+		Play_CC();
 		break;
 
 	case MONSTER_STATE_TYPE::DEAD:
@@ -950,12 +736,14 @@ void CUrchin::Play_Idle()
 		if (true == m_tObjParam.bCanAttack)
 		{
 			m_eState = URCHIN_ANI::Idle;
-			Function_RotateBody();
+			if(nullptr != m_pAggroTarget)
+				Function_RotateBody(m_pAggroTarget);
 		}
 		else
 		{
 			m_eState = URCHIN_ANI::Idle;
-			Function_RotateBody();
+			if (nullptr != m_pAggroTarget)
+				Function_RotateBody(m_pAggroTarget);
 		}
 	}
 	else
@@ -964,6 +752,11 @@ void CUrchin::Play_Idle()
 		m_eState = URCHIN_ANI::Idle;
 	}
 
+	return;
+}
+
+void CUrchin::Play_CC()
+{
 	return;
 }
 
@@ -1016,13 +809,16 @@ void CUrchin::Play_Dead()
 			m_bEnable = false;
 			m_dAniPlayMul = 0;
 		}
-
-		if (1.967f <= AniTime)
+		else if (1.967f <= AniTime)
 		{
 			if (false == m_bEventTrigger[0])
 			{
 				m_bEventTrigger[0] = true;
-				Start_Dissolve(0.8f, false, true);
+
+				Start_Dissolve(0.7f, false, true, 0.0f);
+				m_pWeapon->Start_Dissolve(0.7f, false, true, 0.f);
+				m_fDeadEffect_Delay = 0.f;
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 			}
 		}
 	}
@@ -1057,21 +853,32 @@ HRESULT CUrchin::Add_Component(void * pArg)
 
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
 		return E_FAIL;
+
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom)))
 		return E_FAIL;
+
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
+
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, MeshName, L"Com_Mesh", (CComponent**)&m_pMeshCom)))
 		return E_FAIL;
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMesh)))
-		return E_FAIL;
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMeshCom)))
 		return E_FAIL;
 
-	m_pCollider->Set_Radius(_v3{ 0.5f, 0.5f, 0.5f });
-	m_pCollider->Set_Dynamic(true);
-	m_pCollider->Set_Type(COL_SPHERE);
-	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pCollider->Get_Radius().y , 0.f });
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pColliderCom)))
+		return E_FAIL;
+
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Optimization", L"Com_Optimization", (CComponent**)&m_pOptimizationCom)))
+		return E_FAIL;
+
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"BattleAgent", L"Com_BattleAgent", (CComponent**)&m_pBattleAgentCom)))
+		return E_FAIL;
+
+	m_pColliderCom->Set_Radius(_v3{0.6f, 0.6f, 0.6f});
+	m_pColliderCom->Set_Dynamic(true);
+	m_pColliderCom->Set_Type(COL_SPHERE);
+	m_pColliderCom->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pColliderCom->Get_Radius().y , 0.f });
 
 	return S_OK;
 }
@@ -1080,36 +887,114 @@ HRESULT CUrchin::SetUp_ConstantTable()
 {
 	IF_NULL_VALUE_RETURN(m_pShaderCom, E_FAIL);
 
-	CManagement* pManagement = CManagement::Get_Instance();
-	IF_NULL_VALUE_RETURN(pManagement, E_FAIL);
+	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 
-	Safe_AddRef(pManagement);
+	//=============================================================================================
+	// 기본 메트릭스
+	//=============================================================================================
 
 	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
-
-	_mat ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
-	_mat ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
-
 	if (FAILED(m_pShaderCom->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
+
+	//=============================================================================================
+	// 디졸브용 상수
+	//=============================================================================================
 	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShaderCom)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
-	Safe_Release(pManagement);
+	//=============================================================================================
+	// 쉐이더 재질정보 수치 입력
+	//=============================================================================================
+	_float	fEmissivePower = 5.f;	// 이미시브 : 높을 수록, 자체 발광이 강해짐.
+	_float	fSpecularPower = 1.f;	// 메탈니스 : 높을 수록, 정반사가 강해짐.
+	_float	fRoughnessPower = 1.f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
+	_float	fMinSpecular = 0.1f;	// 최소 빛	: 높을 수록 빛이 퍼짐(림라이트의 범위가 넓어지고 , 밀집도가 낮아짐).
+	_float	fID_R = 1.0f;	// ID_R : R채널 ID 값 , 1이 최대
+	_float	fID_G = 0.5f;	// ID_G : G채널 ID 값 , 1이 최대
+	_float	fID_B = 0.2f;	// ID_B	: B채널 ID 값 , 1이 최대
+
+	if (FAILED(m_pShaderCom->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fID_R_Power", &fID_R, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fID_G_Power", &fID_G, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
+		return E_FAIL;
+
+	//=============================================================================================
+	// 림라이트 값들을 쉐이더에 등록시킴
+	//=============================================================================================
+	m_pBattleAgentCom->Update_RimParam_OnShader(m_pShaderCom);
+	//=============================================================================================
 
 	return S_OK;
 }
 
 HRESULT CUrchin::Ready_Status(void * pArg)
 {
-	m_tObjParam.fDamage = -100.f;
-	m_tObjParam.fHp_Max = 750.f;
-	m_tObjParam.fArmor_Max = 10.f;
+	if (nullptr != pArg)
+	{
+		MONSTER_STATUS Info = *(MONSTER_STATUS*)pArg;
+		m_pBattleAgentCom->Set_RimAlpha(0.5f);
+		m_pBattleAgentCom->Set_RimValue(8.f);
+		m_pBattleAgentCom->Set_OriginRimAlpha(0.5f);
+		m_pBattleAgentCom->Set_OriginRimValue(8.f);
+
+		if (true == Info.bSpawnOnTrigger)
+		{
+			_tchar szNavData[STR_128] = L"";
+
+			lstrcpy(szNavData, (
+				Info.sStageIdx == 0 ? L"Navmesh_Training.dat" :
+				Info.sStageIdx == 1 ? L"Navmesh_Stage_01.dat" :
+				Info.sStageIdx == 2 ? L"Navmesh_Stage_02.dat" :
+				Info.sStageIdx == 3 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
+
+			m_pNavMeshCom->Set_Index(-1);
+			m_pNavMeshCom->Ready_NaviMesh(m_pGraphic_Dev, szNavData);
+			m_pNavMeshCom->Check_OnNavMesh(Info.vPos);
+			m_pTransformCom->Set_Pos(Info.vPos);
+			m_pTransformCom->Set_Angle(Info.vAngle);
+
+			//m_pNavMeshCom->Set_SubsetIndex(Info.sSubSetIdx);
+			//m_pNavMeshCom->Set_Index(Info.sCellIdx);
+		}
+
+		if (MONSTER_COLOR_TYPE::WHITE == Info.eMonsterColor)
+		{
+			m_eMonsterColor = Info.eMonsterColor;
+			m_tObjParam.fDamage = -100.f;
+			m_tObjParam.fHp_Max = 750.f;
+			m_tObjParam.fArmor_Max = 10.f;
+		}
+		else
+		{
+			m_eMonsterColor = MONSTER_COLOR_TYPE::BLACK;
+			m_tObjParam.fDamage = -120.f;
+			m_tObjParam.fHp_Max = 800.f;
+			m_tObjParam.fArmor_Max = 10.f;
+		}
+
+	}
+	else
+	{
+		MSG_BOX("Create Monster pArgument == nullptr Failed");
+		return E_FAIL;
+	}
 
 	m_fRecognitionRange = 30.f;
 	m_fShotRange = 20.f;
@@ -1247,19 +1132,7 @@ CGameObject * CUrchin::Clone_GameObject(void * pArg)
 
 void CUrchin::Free()
 {
-	Safe_Release(m_pMonsterUI);
-
-	Safe_Release(m_pTarget);
-	Safe_Release(m_pTargetTransform);
-
-	Safe_Release(m_pCollider);
-	Safe_Release(m_pNavMesh);
-	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pMeshCom);
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pRendererCom);
-
-	CGameObject::Free();
+	CMonster::Free();
 
 	return;
 }

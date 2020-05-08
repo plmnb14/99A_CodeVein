@@ -71,6 +71,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 	//획득모션,제한시간 이내인 경우
 	if (true == m_bCanGetItem && m_dCanGetItemLimitTimeMax >= m_dCanGetItemLimitTimeCur)
 	{
+		//"줍는다" 관련 변수가 참인 경우도 포함할것
 		//섬광이펙트,파티클이펙트 등등 획득한 티를 내주고
 		//획득 ui를 보여줘야함 ("획득")
 		//인벤으로 저장
@@ -86,7 +87,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 			//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(); //무기타입을 받아서 해당아이템이 추가되게끔
 			break;
 		case ITEM_TYPE::ITEM_PET:
-			CUI_Manager::Get_Instance()->Get_Pet_Inven()->Add_Pet(m_ePetType);
+			CUI_Manager::Get_Instance()->Get_Pet_Inven()->Add_Pet(m_eItemGrade, m_ePetType);
 			break;
 		}
 

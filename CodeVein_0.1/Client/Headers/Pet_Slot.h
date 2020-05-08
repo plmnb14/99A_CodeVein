@@ -48,8 +48,8 @@ public:
 
 private:
 	HRESULT						Add_Component();
+	HRESULT						SetUp_Default();
 	HRESULT						SetUp_ConstantTable();
-	void						SetUp_Default();
 
 public:
 	static CPet_Slot*			Create(_Device pGraphic_Device);

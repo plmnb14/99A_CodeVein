@@ -45,7 +45,6 @@
 #include "Colleague_UI.h"
 #include "Colleague_Jack.h"
 
-
 //Test 실험 수정 심규명
 #include "DropItem.h"
 ////////////////////////////////////
@@ -1808,7 +1807,6 @@ HRESULT CLoading::Ready_Intro_MonsterPrototype()
 
 	return S_OK;
 }
-
 
 CLoading* CLoading::Create(_Device pGraphicDev, SCENEID eLoadingID)
 {
