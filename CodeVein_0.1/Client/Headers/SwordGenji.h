@@ -12,12 +12,14 @@ class CSwordGenji final : public CMonster
 {
 public:
 	enum Color { White, Jungle, Normal };
-	enum NF_Ani {Talk = 2, LookAround1 = 4, LookAround2 = 3, LookAround3 = 2, Sit1 = 6, Sit2 = 10};
+	enum NF_Ani { Talk = 2, LookAround1 = 4, LookAround2 = 3, LookAround3 = 2, Sit1 = 6, Sit2 = 10 };
 
 	typedef struct tagInitInfo
 	{
-		tagInitInfo(CSwordGenji::Color _eColor, NF_Ani _eNF_Ani, _float _fFov, _float _fMaxLength, _float _fMinLength)
-			: eColor(_eColor), eNF_Ani(_eNF_Ani), fFov(_fFov), fMaxLength(_fMaxLength), fMinLength(_fMinLength)
+		tagInitInfo(CSwordGenji::Color _eColor, NF_Ani _eNF_Ani, _float _fFov, _float _fMaxLength, _float _fMinLength,
+			_bool _bSpawn = false, _v3 vPos = V3_NULL, _v3 vAngle = V3_NULL, _ushort sStageIdx = 0)//, _ushort sSubsetIdx = 0, _ushort sCellIdx = 0)
+			: eColor(_eColor), eNF_Ani(_eNF_Ani), fFov(_fFov), fMaxLength(_fMaxLength), fMinLength(_fMinLength),
+			bSpawnOnTrigger(_bSpawn), vPos(vPos), vAngle(vAngle), sStageIdx(sStageIdx)// , sSubSetIdx(sSubSetIdx), sCellIdx(sCellIdx)
 		{}
 
 		CSwordGenji::Color		eColor = Normal;
@@ -25,13 +27,31 @@ public:
 		_float					fFov = 0.f;
 		_float					fMaxLength = 0.f;
 		_float					fMinLength = 0.f;
+
+		//=======================================================
+		// 트리거 소환용
+		//=======================================================
+		_bool					bSpawnOnTrigger = false;
+		_v3						vPos = {};
+		_v3						vAngle = {};
+		_ushort					sStageIdx = 0;
+		//_ushort					sSubSetIdx = 0;
+		//_ushort					sCellIdx = 0;
+		//=======================================================
 	}INFO;
 
 private:
 	enum Ani {
 		Ani_Idle = 1, Ani_Death = 70, Ani_Dmg01_FL = 67, Ani_Dmg01_FR = 66, Ani_Dmg01_BL = 65, Ani_Dmg01_BR = 64,
-		Ani_StandUp1 = 7, Ani_StandUp2 = 11
+		Ani_StandUp1 = 7, Ani_StandUp2 = 11,
+		DeadBodyLean_End = 72,
+		Ani_DmgRepel = 105,
+		Ani_Death_F = 62, Ani_Death_B = 63
 	};
+
+	typedef enum Execution_Ani {
+		Ani_Execution_LongCoat_B_S = 53, Ani_Execution_LongCoat_B = 54
+	}EXE_ANI;
 
 private:
 	enum BoneMatrix { Bone_Range, Bone_Body, Bone_Head, Bone_End };
@@ -47,7 +67,7 @@ public:
 	virtual _int Update_GameObject(_double TimeDelta);
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
-	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur =false);
+	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur = false);
 
 public:
 	_mat*	Get_Bonmatrix() { return m_matBones[Bone_Head]; }
@@ -108,6 +128,8 @@ private:	//패턴들
 	//////////////
 
 private:
+	EXE_ANI				m_eExecutionAnim = Ani_Execution_LongCoat_B_S;
+
 	CWeapon*			m_pSword = nullptr;
 
 	////////////// MonsterHP UI
@@ -117,7 +139,7 @@ private:
 	_double				m_dTimeDelta = 0;
 
 	_bool				m_bFindPlayer = false;	// 플레이어 발견 못한 상태
-	_bool				m_bFight = false;	
+	_bool				m_bFight = false;
 
 	//뼈다귀
 	_mat*				m_matBones[Bone_End];
@@ -170,6 +192,17 @@ private:
 	HRESULT Ready_BoneMatrix();
 	HRESULT Ready_Collider();
 	HRESULT Ready_NF(void* pArg);
+
+private:
+	void Check_Execution();
+	void Check_ExecutionAnim();
+	void Check_OrgeExecution();
+	void Check_IvyExecution();
+	void Check_StingerExecution();
+	void Check_HoundsExecution();
+
+private:
+	void Check_Repel();
 
 public:
 	static CSwordGenji* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
