@@ -574,7 +574,7 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 			_v3 vOwnerRight = vTrans->Get_Axis(AXIS_X);
 			_v3 vLerpTargetPos, vLerpTargetAt;
 
-			vAimAt = TARGET_TO_TRANS(m_pAimingTarget)->Get_Pos() + (WORLD_UP * 1.5f);
+			vAimAt = TARGET_TO_TRANS(m_pAimingTarget)->Get_Pos(); // +(WORLD_UP * 1.5f);
 
 			vEyePos = vOwnerDir *= -1.f;
 			vEyePos *= m_fDistance;

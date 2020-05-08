@@ -45,9 +45,7 @@
 #include "Colleague_UI.h"
 #include "Colleague_Jack.h"
 
-//Test 실험 수정 심규명
 #include "DropItem.h"
-////////////////////////////////////
 #include "Haze.h"
 
 USING(Client)
@@ -821,6 +819,10 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"MapSnow")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"MapFog_0")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"FloorPlane_Black")))
+		return E_FAIL;
 
 	if (FAILED(Add_EffectPrototype(L"Player_FootSmoke")))
 		return E_FAIL;
@@ -1301,9 +1303,9 @@ _uint CLoading::Loading_Title()
 	//============================================================================================================
 	// 플레이어 스킬, 보스 이펙트 포함
 	//============================================================================================================
-	//cout << "Particle Etc 불러오는 중 . . ." << endl;
-	//if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
-	//	return E_FAIL;
+	cout << "Particle Etc 불러오는 중 . . ." << endl;
+	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
+		return E_FAIL;
 	//============================================================================================================
 	// UI 원형 생성
 	//============================================================================================================
@@ -1401,9 +1403,6 @@ _uint CLoading::Loading_Stage()
 		{
 			cout << "Mesh Stage_00 Load. . ." << endl;
 			g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage00_Path.dat");
-
-			cout << "Clone Stage_00 GameObject . . ." << endl;
-			g_pManagement->LoadCreateObject_FromPath(m_pGraphicDev, L"Object_Stage_00.dat");
 
 			g_bOnStage[2] = true;
 		}
@@ -1568,8 +1567,8 @@ _uint CLoading::Loading_MainStages()
 	// 3번 - 스테이지 01
 	if (false == g_bOnStage[3])
 	{
-		cout << "스테이지 1 리소스 로딩중  . . . " << endl;
-		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage01_Path.dat");
+		cout << "Load Stage_01 StaticMesh . . ." << endl;
+		g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage01_Path.dat");
 
 		g_bOnStage[3] = true;
 	}
@@ -1577,8 +1576,8 @@ _uint CLoading::Loading_MainStages()
 	// 3번 - 스테이지 01
 	if (false == g_bOnStage[4])
 	{
-		cout << "스테이지 2 리소스 로딩중  . . . (리소스 없음)" << endl;
-		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage02_Path.dat");
+		cout << "Load Stage_02 StaticMesh . . ." << endl;
+		//g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage02_Path.dat");
 
 		g_bOnStage[4] = true;
 	}
@@ -1586,8 +1585,8 @@ _uint CLoading::Loading_MainStages()
 	// 3번 - 스테이지 01
 	if (false == g_bOnStage[5])
 	{
-		cout << "스테이지 3 리소스 로딩중 . . . " << endl;
-		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage03_Path.dat");
+		cout << "Load Stage_03 StaticMesh . . ." << endl;
+		g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage03_Path.dat");
 
 		g_bOnStage[5] = true;
 	}
@@ -1595,8 +1594,8 @@ _uint CLoading::Loading_MainStages()
 	// 3번 - 스테이지 01
 	if (false == g_bOnStage[6])
 	{
-		cout << "스테이지 4 리소스 로딩중  . . . " << endl;
-		g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage04_Path.dat");
+		cout << "Load Stage_04 StaticMesh . . ." << endl;
+		g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage04_Path.dat");
 
 		g_bOnStage[6] = true;
 	}
