@@ -79,9 +79,7 @@ void CResListPopup::OnLbnSelchangeList()
 	{
 		pFormView->m_ParticleTab.Set_TexName((*iter_begin)->tPathInfo.sztrStateKey);
 		pFormView->m_ParticleTab.Set_MaxFrame(_float((*iter_begin)->iMaxCount));
-		TCHAR szCnt[STR_128] = L"";
-		_itot_s((*iter_begin)->tPathInfo.sImgCnt, szCnt, STR_128);
-		pFormView->m_ParticleTab.Set_Index(szCnt);
+		pFormView->m_ParticleTab.Set_Index((*iter_begin)->tPathInfo.szImgCnt);
 
 		//CHAR szForPrint[STR_128] = "";
 		//WideCharToMultiByte(CP_ACP, 0, (*iter_begin)->tPathInfo.sztrStateKey, STR_128, szForPrint, STR_128, NULL, NULL);
@@ -96,9 +94,7 @@ void CResListPopup::OnLbnSelchangeList()
 	case CResListPopup::TYPE_COLOR:
 	{
 		pFormView->m_ParticleTab.Set_ColorTexName((*iter_begin)->tPathInfo.sztrStateKey);
-		TCHAR szCnt[STR_128] = L"";
-		_itot_s((*iter_begin)->tPathInfo.sImgCnt, szCnt, STR_128);
-		pFormView->m_ParticleTab.Set_ColorIndex(szCnt);
+		pFormView->m_ParticleTab.Set_ColorIndex((*iter_begin)->tPathInfo.szImgCnt);
 		break;
 	}
 	case CResListPopup::TYPE_GRADIENT:

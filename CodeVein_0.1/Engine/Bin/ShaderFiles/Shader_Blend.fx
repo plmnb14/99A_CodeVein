@@ -144,6 +144,7 @@ struct PS_OUT
 	vector		vColor : COLOR0;
 };
 
+float g_FogDestiny;
 PS_OUT PS_MAIN(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
@@ -160,6 +161,34 @@ PS_OUT PS_MAIN(PS_IN In)
 	float3 vFinalShade = vShade.r * vSSAO.r * AO;
 
 	Out.vColor = ((vDiffuse + vSpecular) * float4(vFinalShade, 1.f)) + vEmissive;
+
+	// ==================================================
+	// FOG  =============================================
+	vector	vDepth = tex2D(DepthSampler, In.vTexUV);
+	float PixelCameraZ = vDepth.y * 500.f;
+	vector fogColor = tex2D(FogColorSampler, In.vTexUV);// vector(0.3, 0.3, 0.3, 1.0);
+	float2 fog;
+	fog.x = 500 / (500 - 0.1);
+	fog.y = -1 / (500 - 0.1);
+
+	float fDestiny = g_FogDestiny;
+	if (0 == g_FogDestiny || 0 == vDepth.x)
+		fDestiny = 0.001f;
+
+	////  지수 Fog
+	//vector vFog = 1 / exp(pow(PixelCameraZ * fDestiny, 2));
+
+	//if (0 == vDepth.x)
+	//	vFog *= /*UV.y*/ saturate(1.f - (UV.y + 0.3f));
+
+	// 선형 Fog
+	vector vFog = fog.x + PixelCameraZ * fog.y;
+
+	Out.vColor = vFog * Out.vColor + (1 - vFog) * fogColor;
+
+	//const float FOG_MIN = 0.9;
+	//const float FOG_MAX = 0.99;
+	//Out.vColor = lerp(Out.vColor, fogColor, lerp(FOG_MIN, FOG_MAX, PixelCameraZ));
 
 	return Out;
 }
@@ -368,11 +397,8 @@ PS_OUT PS_BLURV(PS_IN In)
 	return Out;
 }
 
-float4 g_matProjInv, g_matViewInv;
 float g_Focus_DOF;
 float g_Range_DOF;
-
-float g_FogDestiny;
 
 float MAXCOLOR = 31.0;
 float COLORS = 32.0;
@@ -401,60 +427,11 @@ PS_OUT PS_AFTER(PS_IN In)
 	vector	vDiffuse = tex2D(DiffuseSampler, UV);
 	Out.vColor = vDiffuse;
 
-	// ==================================================
-	// FOG  =============================================
-
+	// ============================================
+	// DOF =========================================
 	vector vDepth = tex2D(DepthSampler, UV);
 	float PixelCameraZ = vDepth.y * 500.f;
 
-	vector fogColor = tex2D(FogColorSampler, UV);// vector(0.3, 0.3, 0.3, 1.0);
-	float2 fog;
-	fog.x = 500 / (500 - 0.1);
-	fog.y = -1 / (500 - 0.1);
-
-	float fDestiny = g_FogDestiny;
-	if (0 == g_FogDestiny || 0 == vDepth.x)
-		fDestiny = 0.001f;
-
-	////  지수 Fog
-	//vector vFog = 1 / exp(pow(PixelCameraZ * fDestiny, 2));
-
-	//if (0 == vDepth.x)
-	//	vFog *= /*UV.y*/ saturate(1.f - (UV.y + 0.3f));
-
-	// 선형 Fog
-	vector vFog = fog.x + PixelCameraZ * fog.y;
-
-	Out.vColor = vFog * Out.vColor + (1 - vFog) * fogColor;
-
-	//const float FOG_MIN = 0.9;
-	//const float FOG_MAX = 0.99;
-	//Out.vColor = lerp(Out.vColor, fogColor, lerp(FOG_MIN, FOG_MAX, PixelCameraZ));
-
-	// Floor Fog ============================================
-	vector		vWorldPos, vProjPos;
-	vProjPos.x = UV.x * 2.f - 1.f;
-	vProjPos.y = UV.y * -2.f + 1.f;
-	vProjPos.z = vDepth.x;
-	vProjPos.w = 1.f;
-
-	vWorldPos = vProjPos * PixelCameraZ;
-	vWorldPos = mul(vWorldPos, g_matProjInv);
-	vWorldPos = mul(vWorldPos, g_matViewInv);
-
-	if (vWorldPos.y <= -1.f)
-	{
-		fogColor = vector(0.5, 0.5, 0.5, 1.0);
-		// 선형 Fog
-		vFog = fog.x + PixelCameraZ * fog.y;
-
-		Out.vColor = vFog * Out.vColor + (1 - vFog) * fogColor;
-	}
-
-	// ============================================
-	// DOF =========================================
-
-	
 	vector	vBlur = tex2D(ShadeSampler, UV);
 	Out.vColor = lerp(Out.vColor, vBlur, saturate(g_Range_DOF * abs(g_Focus_DOF - PixelCameraZ)));
 

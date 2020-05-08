@@ -38,20 +38,8 @@ HRESULT CScene_Stage_01::Ready_Scene()
 _int CScene_Stage_01::Update_Scene(_double TimeDelta)
 {
 	//CUI_Manager::Get_Instance()->Update_UI();
-	//Create_Fog(TimeDelta);
-
-	if (g_pInput_Device->Key_Down(DIK_K))
-	{
-		CRenderer* pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
-		pRenderer->Fog_On(true);
-		Safe_Release(pRenderer);
-	}
-	if (g_pInput_Device->Key_Down(DIK_L))
-	{
-		CRenderer* pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
-		pRenderer->Fog_On(false);
-		Safe_Release(pRenderer);
-	}
+	Create_Fog(TimeDelta);
+	Create_Dust(TimeDelta);
 
 	return _int();
 }
@@ -114,54 +102,50 @@ void CScene_Stage_01::Create_Fog(_double TimeDelta)
 	CTransform* pPlayerTrans = TARGET_TO_TRANS(pPlayer);
 	_v3 vPlayerPos = pPlayerTrans->Get_Pos();
 
-	const _float FOG_OFFSET = 10.f;
+	const _float FOG_OFFSET = 5.f;
 
 	m_fMapFogDelay += _float(TimeDelta);
 	if (m_fMapFogDelay > FOG_OFFSET)
 	{
 		m_fMapFogDelay = 0.f;
-	
-		for (_int i = 0; i < 30; ++i)
-		{
-			_mat matRotY;
-			_v3 vDir = _v3(1.f, 0.f, 1.f);
-			D3DXMatrixIdentity(&matRotY);
-	
-			D3DXMatrixRotationY(&matRotY, D3DXToRadian(_float(CCalculater::Random_Num_Double(0, 360))));
-			D3DXVec3TransformNormal(&vDir, &vDir, &matRotY);
-			D3DXVec3Normalize(&vDir, &vDir);
-	
-			_float fMinRange = 5.f;
-			_float fRandRange = _float(CCalculater::Random_Num_Double(0, 20));
-			_v3 vRandPos = vDir * (fMinRange + fRandRange);
-	
-			g_pManagement->Create_Effect(L"MapMist", vRandPos + _v3(0.f, -0.5f, 0.f), pPlayerTrans);
-		}
+		g_pManagement->Create_Effect(L"MapFog_0", _v3(0.f, -26.f, 0.f));
 	}
-	
-	const _float DUST_OFFSET = 0.3f;
 
+	g_pManagement->Create_Effect_Offset(L"MapFog_0", 7.f, _v3(0.f, -23.f, 0.f));
+}
+
+void CScene_Stage_01::Create_Dust(_double TimeDelta)
+{
+	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	if (!pPlayer)
+		return;
+
+	CTransform* pPlayerTrans = TARGET_TO_TRANS(pPlayer);
+	_v3 vPlayerPos = pPlayerTrans->Get_Pos();
+
+	const _float DUST_OFFSET = 1.f;
+	
 	m_fMapWindDustDelay += _float(TimeDelta);
 	if (m_fMapWindDustDelay > DUST_OFFSET)
 	{
 		m_fMapWindDustDelay = 0.f;
-
+	
 		for (_int i = 0; i < 10; ++i)
 		{
 			_mat matRotY;
 			_v3 vDir = _v3(1.f, 0.f, 1.f);
 			D3DXMatrixIdentity(&matRotY);
-
+	
 			D3DXMatrixRotationY(&matRotY, D3DXToRadian(_float(CCalculater::Random_Num_Double(0, 360))));
 			D3DXVec3TransformNormal(&vDir, &vDir, &matRotY);
 			D3DXVec3Normalize(&vDir, &vDir);
-
+	
 			_float fMinRange = 1.f;
 			_float fRandRange = _float(CCalculater::Random_Num_Double(0, 30));
-			_v3 vRandPos = vDir * (fMinRange + fRandRange) + _v3(0.f, 0.2f, 0.f);
-
+			_v3 vRandPos = vDir * (fMinRange + fRandRange);// +_v3(0.f, 0.2f, 0.f);
+	
 			g_pManagement->Create_Effect(L"MapDust", vPlayerPos + vRandPos + _v3(0.f, _float(CCalculater::Random_Num_Double(0, 0.5)), 0.f), nullptr);
-
+	
 			fRandRange = _float(CCalculater::Random_Num_Double(0, 20));
 			vRandPos = vDir * (fMinRange + fRandRange);
 			g_pManagement->Create_Effect(L"MapDust_2", vPlayerPos + vRandPos + _v3(0.f, _float(CCalculater::Random_Num_Double(0, 0.5)), 0.f), nullptr);
@@ -179,6 +163,8 @@ HRESULT CScene_Stage_01::Ready_Layer_Environment(const _tchar* pLayerTag)
 
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossMassageUI", SCENE_STAGE, L"Layer_BossMassageUI")))
 		return E_FAIL;
+
+	g_pManagement->Create_Effect(L"FloorPlane_Black", _v3(0.f, -28.f, 0.f));
 
 	return S_OK;
 }

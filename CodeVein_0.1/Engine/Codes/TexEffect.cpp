@@ -115,8 +115,8 @@ HRESULT CTexEffect::LateInit_GameObject()
 		//!lstrcmp(L"Hit_Slash_Particle_1", m_szParticleName) ||
 		//!lstrcmp(L"Hit_Slash_Particle_2", m_szParticleName) ||
 		//!lstrcmp(L"Hit_Slash_Particle_3", m_szParticleName) ||
-		!lstrcmp(L"MistletoeParticle", m_szParticleName) ||
-		!lstrcmp(L"MistletoeParticle_Sub", m_szParticleName) ||
+		//!lstrcmp(L"MistletoeParticle", m_szParticleName) ||
+		//!lstrcmp(L"MistletoeParticle_Sub", m_szParticleName) ||
 		!lstrcmp(L"Player_Buff_Particle", m_szParticleName) ||
 		!lstrcmp(L"Player_ChargeSpark_Particle", m_szParticleName) ||
 		!lstrcmp(L"Player_Heal_Particle", m_szParticleName) ||

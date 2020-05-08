@@ -493,6 +493,8 @@ void CRenderer::Mono_On(_bool bOn)
 
 void CRenderer::Fog_On(_bool bOn)
 {
+	// 현재 선형포그라서 동작 X
+
 	m_bFog = bOn;
 
 	if (m_bFog)
@@ -1062,8 +1064,15 @@ HRESULT CRenderer::Render_Blend()
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_RimTexture", m_pTarget_Manager->Get_Texture(L"Target_Rim"))))
 		return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Texture("g_DepthTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"))))
+		return E_FAIL;
 
 	if (FAILED(m_pShader_Blend->Set_Texture("g_SSAOTexture", m_pTarget_Manager->Get_Texture(L"Target_SSAO_Blur"))))
+		return E_FAIL;
+	if (FAILED(m_pShader_Blend->Set_Texture("g_FogColorTexture", m_pTarget_Manager->Get_Texture(L"Target_BlurSky"))))
+		return E_FAIL;
+
+	if (FAILED(m_pShader_Blend->Set_Value("g_FogDestiny", &m_fFogDestiny, sizeof(_float))))
 		return E_FAIL;
 
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Blend")))
@@ -1420,18 +1429,7 @@ HRESULT CRenderer::Render_After()
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_ShadeTexture", m_pTarget_Manager->Get_Texture(L"Target_BlurDOF"))))
 		return E_FAIL;
-	if (FAILED(m_pShader_Blend->Set_Texture("g_FogColorTexture", m_pTarget_Manager->Get_Texture(L"Target_BlurSky"))))
-		return E_FAIL;
 
-	_mat		ViewMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
-	D3DXMatrixInverse(&ViewMatrix, nullptr, &ViewMatrix);
-	D3DXMatrixInverse(&ProjMatrix, nullptr, &ProjMatrix);
-
-	if (FAILED(m_pShader_Blend->Set_Value("g_matViewInv", &ViewMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(m_pShader_Blend->Set_Value("g_matProjInv", &ProjMatrix, sizeof(_mat))))
-		return E_FAIL;
 
 	if (GetAsyncKeyState('M') & 0x8000)
 	{
@@ -1476,8 +1474,6 @@ HRESULT CRenderer::Render_After()
 	if (FAILED(m_pShader_Blend->Set_Value("g_Focus_DOF", &m_fFocus, sizeof(_float))))
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Value("g_Range_DOF", &m_fRange, sizeof(_float))))
-		return E_FAIL;
-	if (FAILED(m_pShader_Blend->Set_Value("g_FogDestiny", &m_fFogDestiny, sizeof(_float))))
 		return E_FAIL;
 
 	// 장치에 백버퍼가 셋팅되어있다.	

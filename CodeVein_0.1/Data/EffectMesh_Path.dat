@@ -1,6 +1,7 @@
 Mesh_ARBloodAura01|ARBloodAura01.X|..\..\Client\Resources\Mesh\EffectMesh\ARBloodAura01\|
 Mesh_ARBloodAura02|ARBloodAura02.X|..\..\Client\Resources\Mesh\EffectMesh\ARBloodAura02\|
 Mesh_Blast|Blast.X|..\..\Client\Resources\Mesh\EffectMesh\Blast\|
+Mesh_Cloud_Plane|Cloud_Plane.X|..\..\Client\Resources\Mesh\EffectMesh\Cloud_Plane\|
 Mesh_Cone01|Cone01.X|..\..\Client\Resources\Mesh\EffectMesh\Cone01\|
 Mesh_Cone02|Cone02.X|..\..\Client\Resources\Mesh\EffectMesh\Cone02\|
 Mesh_Cone02r|Cone02r.X|..\..\Client\Resources\Mesh\EffectMesh\Cone02r\|
@@ -12,11 +13,11 @@ Mesh_IceBlock02|IceBlock02.X|..\..\Client\Resources\Mesh\EffectMesh\IceBlock02\|
 Mesh_IceBlock03|IceBlock03.X|..\..\Client\Resources\Mesh\EffectMesh\IceBlock03\|
 Mesh_IceBlock04|IceBlock04.X|..\..\Client\Resources\Mesh\EffectMesh\IceBlock04\|
 Mesh_Knife|Knife.X|..\..\Client\Resources\Mesh\EffectMesh\Knife\|
-Mesh_LineRing_0|LineRing_0.X|..\..\Client\Resources\Mesh\EffectMesh\LineRing\|
-Mesh_LineRing_1|LineRing_1.X|..\..\Client\Resources\Mesh\EffectMesh\LineRing\|
 Mesh_LineRing02|LineRing02.X|..\..\Client\Resources\Mesh\EffectMesh\LineRing02\|
 Mesh_LineRing03|LineRing03.X|..\..\Client\Resources\Mesh\EffectMesh\LineRing03\|
 Mesh_LineRing06|LineRing06.X|..\..\Client\Resources\Mesh\EffectMesh\LineRing06\|
+Mesh_LineRing_0|LineRing_0.X|..\..\Client\Resources\Mesh\EffectMesh\LineRing_0\|
+Mesh_LineRing_1|LineRing_1.X|..\..\Client\Resources\Mesh\EffectMesh\LineRing_1\|
 Mesh_LineRing_ForPlayerSkill|LineRing_ForPlayerSkill.X|..\..\Client\Resources\Mesh\EffectMesh\LineRing_ForPlayerSkill\|
 Mesh_LineRing_ForPlayerSkill_|LineRing_ForPlayerSkill_.X|..\..\Client\Resources\Mesh\EffectMesh\LineRing_ForPlayerSkill_\|
 Mesh_Ring02|Ring02.X|..\..\Client\Resources\Mesh\EffectMesh\Ring02\|
