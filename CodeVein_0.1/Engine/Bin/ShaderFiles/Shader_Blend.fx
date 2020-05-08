@@ -171,24 +171,18 @@ PS_OUT PS_MAIN(PS_IN In)
 	fog.x = 500 / (500 - 0.1);
 	fog.y = -1 / (500 - 0.1);
 
-	float fDestiny = g_FogDestiny;
-	if (0 == g_FogDestiny || 0 == vDepth.x)
-		fDestiny = 0.001f;
-
+	//float fDestiny = g_FogDestiny;
+	//if (0 == g_FogDestiny || 0 == vDepth.x)
+	//	fDestiny = 0.001f;
 	////  지수 Fog
 	//vector vFog = 1 / exp(pow(PixelCameraZ * fDestiny, 2));
-
-	//if (0 == vDepth.x)
-	//	vFog *= /*UV.y*/ saturate(1.f - (UV.y + 0.3f));
-
+	if (0 == vDepth.x || 0 == g_FogDestiny)
+		return Out;
+	
 	// 선형 Fog
 	vector vFog = fog.x + PixelCameraZ * fog.y;
 
 	Out.vColor = vFog * Out.vColor + (1 - vFog) * fogColor;
-
-	//const float FOG_MIN = 0.9;
-	//const float FOG_MAX = 0.99;
-	//Out.vColor = lerp(Out.vColor, fogColor, lerp(FOG_MIN, FOG_MAX, PixelCameraZ));
 
 	return Out;
 }

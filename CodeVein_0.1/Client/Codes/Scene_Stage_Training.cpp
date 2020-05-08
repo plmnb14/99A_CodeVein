@@ -53,19 +53,6 @@ _int CScene_Stage_Training::Update_Scene(_double TimeDelta)
 	
 	//Create_Fog(TimeDelta);
 	//Create_Snow(TimeDelta);
-
-	//if (g_pInput_Device->Key_Down(DIK_K))
-	//{
-	//	CRenderer* pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
-	//	pRenderer->Fog_On(true);
-	//	Safe_Release(pRenderer);
-	//}
-	//if (g_pInput_Device->Key_Down(DIK_L))
-	//{
-	//	CRenderer* pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
-	//	pRenderer->Fog_On(false);
-	//	Safe_Release(pRenderer);
-	//}
 	
 	return _int();
 }

@@ -493,8 +493,6 @@ void CRenderer::Mono_On(_bool bOn)
 
 void CRenderer::Fog_On(_bool bOn)
 {
-	// 현재 선형포그라서 동작 X
-
 	m_bFog = bOn;
 
 	if (m_bFog)
@@ -1441,14 +1439,14 @@ HRESULT CRenderer::Render_After()
 		m_pGradingTexture->SetUp_OnShader("g_GradingTexture", m_pShader_Blend, 0);
 	}
 
-	if (GetAsyncKeyState('O') & 0x8000)
-	{
-		m_fFogDestiny = 0.06f;
-	}
-	if (GetAsyncKeyState('I') & 0x8000)
-	{
-		m_fFogDestiny = 0.15f;
-	}
+	//if (GetAsyncKeyState('O') & 0x8000)
+	//{
+	//	m_fFogDestiny = 0.06f;
+	//}
+	//if (GetAsyncKeyState('I') & 0x8000)
+	//{
+	//	m_fFogDestiny = 0.15f;
+	//}
 	//if (GetAsyncKeyState('U') & 0x8000)
 	//{
 	//	m_fRange += 1.f * DELTA_60;
