@@ -32,6 +32,9 @@ private:
 	virtual void Update_DebugStage_Console();
 
 private:
+	Engine::EFFECT_INFO * Read_EffectData(const _tchar * szPath);
+
+private:
 	CLoading*			m_pLoading = nullptr;
 	CLogoBtn*			m_pLogoBtn = nullptr;
 	CLoadingScreen*		m_pLoadingScreen = nullptr;

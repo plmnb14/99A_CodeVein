@@ -2214,6 +2214,8 @@ void CPlayer_Colleague::CollAtt_SlowGun()
 		{
 			if (false == m_bEventTrigger[2])
 			{
+				m_bEventTrigger[2] = true;
+
 				_mat matBone = *m_matBone[Bone_LHand] * m_pTransformCom->Get_WorldMat();
 				memcpy(&vBirth, &matBone._41, sizeof(_v3));
 

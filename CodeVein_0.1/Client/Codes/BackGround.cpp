@@ -40,7 +40,7 @@ _int CBackGround::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
-	m_pRendererCom->Add_RenderList(RENDER_UI, this);
+	m_pRendererCom->Add_RenderList(RENDER_ALPHA, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
@@ -77,17 +77,22 @@ HRESULT CBackGround::Render_GameObject()
 	_uint iTexNum = 0;
 	_uint iPass = 0;
 	
-	LOOP(2)
+	LOOP(3)
 	{
-		if (1 == i)
+		if (0 == i)
 		{
-			iTexNum = 1;
+			iTexNum = m_iIndex;
+			iPass = 6;
+		}
+		else if (1 == i)
+		{
+			iTexNum = 4;
 			iPass = 1;
 		}
 		else
 		{
-			iTexNum = m_iIndex;
-			iPass = 6;
+			iTexNum = 1;
+			iPass = 1;
 		}
 		if (FAILED(SetUp_ConstantTable(iTexNum)))
 			return E_FAIL;
