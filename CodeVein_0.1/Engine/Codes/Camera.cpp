@@ -403,6 +403,7 @@ void CCamera::Change_Type_Option(CameraView _CameraViewType)
 	}
 	case BACK_VIEW:
 	{
+		m_bMouseControl = true;
 		m_fDistance = 2.f;
 		m_pTarget = CManagement::Get_Instance()->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 		break;
@@ -491,6 +492,7 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 		_v3 vLerpTargetPos, vLerpTargetAt;
 		_float fLerpAngle = 0.f;
 
+		// 에이밍 중이 아닐 때
 		if (false == m_bOnAiming)
 		{
 			Tps_Aiming();
@@ -565,6 +567,7 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 			//cout << "카메라 x 축 : " << m_fX_LockAngle << endl;
 		}
 
+		// 에이밍 중일 때
 		else if (true == m_bOnAiming)
 		{
 			Tps_Aiming();
@@ -581,7 +584,7 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 
 			CALC::V3_Axis_Normal(&matRotAxis, &vEyePos, &vOwnerRight, 22.5f, true);
 
-			vEyePos += vTransPos + _v3{ 0,1,0 };
+			vEyePos += vTransPos + _v3{ 0,1,0 } + WORLD_RIGHT;
 
 			if (m_bOnLerpAt)
 			{
@@ -632,6 +635,7 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 			m_pTransform->Set_Pos(vLerpTargetPos + (vRight * m_fOSCAxis_Gap[AXIS_X]) + (WORLD_UP * m_fOSCAxis_Gap[AXIS_Y]));
 			m_pTransform->Set_At(vLerpTargetAt + (vRight * m_fOSCAxis_Gap[AXIS_X]) + (WORLD_UP * m_fOSCAxis_Gap[AXIS_Y]));
 		}
+
 		break;
 
 	}
@@ -717,6 +721,9 @@ HRESULT CCamera::SetUp_MouseRotate()
 
 	if (m_eCamView != QUATER_VIEW && m_eCamView != TOOL_VIEW)
 	{
+		if (m_bMouseControl == false)
+			return E_FAIL;
+
 		CInput_Device::Get_Instance()->Set_MouseLock();
 	}
 
@@ -803,7 +810,7 @@ HRESULT CCamera::SetUp_MouseRotate()
 
 	else if (m_eCamView == TOOL_VIEW)
 	{
-		if (m_bMouseControl == false)
+		if (m_bMouseControl == true)
 			return E_FAIL;
 
 		CInput_Device::Get_Instance()->Set_MouseLock(false);

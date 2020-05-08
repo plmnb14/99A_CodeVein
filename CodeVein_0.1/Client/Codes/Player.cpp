@@ -32,7 +32,7 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 	Ready_BoneMatrix();
 	Ready_Collider();
 
-	Ready_Weapon();
+	//Ready_Weapon();
 	Ready_DrainWeapon();
 
 	Ready_Skills();
@@ -42,11 +42,11 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 	m_pBattleAgent->Set_RimAlpha(0.25f);
 	m_pBattleAgent->Set_RimValue(7.f);
 
-	//m_pUIManager = CUI_Manager::Get_Instance();
-	//Safe_AddRef(m_pUIManager);
-	//
-	//m_pCamManager = CCameraMgr::Get_Instance();
-	//Safe_AddRef(m_pCamManager);
+	m_pUIManager = CUI_Manager::Get_Instance();
+	Safe_AddRef(m_pUIManager);
+
+	m_pCamManager = CCameraMgr::Get_Instance();
+	Safe_AddRef(m_pCamManager);
 
 	return NOERROR;
 }
@@ -1789,6 +1789,28 @@ void CPlayer::Key_BloodSuck()
 
 void CPlayer::Key_UI_n_Utiliy(_bool _bActiveUI)
 {
+	if (g_pInput_Device->Key_Down(DIK_E))
+	{
+		if (m_bOnUI_StageSelect)
+			Active_UI_StageSelect(true);
+
+		else if (m_bOnUI_Mistletoe)
+			Active_UI_Mistletoe(true);
+
+		else if (m_bOnUI_Skill)
+			Active_UI_StageSelect(true);
+
+		else if (m_bOnUI_Inventory)
+			Active_UI_Inventory(true);
+
+		else if (m_bOnUI_NPCTalk)
+			Active_UI_NPC(true);
+
+		Active_UI_Mistletoe();
+	}
+
+	return;
+
 	if (!_bActiveUI)
 	{
 		// 상호작용도 하고, 아이템도 줍고, 겨우살이도 활성화 시키고
@@ -10211,6 +10233,8 @@ void CPlayer::Active_UI_Mistletoe(_bool _bResetUI)
 	if(!_bResetUI)
 		bUIActive = m_bActiveUI = m_pUIManager->Get_MistletoeUI()->Get_Active() ? false : true;
 
+	m_bOnUI_Mistletoe = bUIActive;
+
 	// 스테이지 선택 UI 를 On/Off 시킨다.
 	m_pUIManager->Get_MistletoeUI()->Set_Active(bUIActive);
 
@@ -10223,12 +10247,16 @@ void CPlayer::Active_UI_Mistletoe(_bool _bResetUI)
 		// 타겟도 Null 해줘요
 		m_pCamManager->Set_AimingTarget(nullptr);
 		m_pCamManager->Set_MidDistance(3.5f);
+		m_pCamManager->Set_MouseCtrl(true);
+		g_pInput_Device->Set_MouseLock(true);
 		return;
 	}
 
 	// 타겟 설정
 	m_pCamManager->Set_AimingTarget(m_pUIManager->Get_MistletoeUI());
 	m_pCamManager->Set_MidDistance(1.5f);
+	m_pCamManager->Set_MouseCtrl(false);
+	g_pInput_Device->Set_MouseLock(false);
 }
 
 void CPlayer::Active_UI_Inventory(_bool _bResetUI)
@@ -10266,7 +10294,7 @@ void CPlayer::Active_UI_StageSelect(_bool _bResetUI)
 
 	// 타겟 설정
 	m_pCamManager->Set_AimingTarget(m_pUIManager->Get_StageSelectUI());
-	m_pCamManager->Set_MidDistance(1.5f);
+	m_pCamManager->Set_MidDistance(2.f);
 }
 
 void CPlayer::Active_UI_NPC(_bool _bResetUI)
@@ -10653,10 +10681,10 @@ CGameObject * CPlayer::Clone_GameObject(void * pArg)
 
 void CPlayer::Free()
 {
-	LOOP(5)
-	{
-		Safe_Release(m_pWeapon[i]);
-	}
+	//LOOP(5)
+	//{
+	//	Safe_Release(m_pWeapon[i]);
+	//}
 
 	for (auto& iter : m_vecFullSkillInfo)
 	{
@@ -10683,8 +10711,10 @@ void CPlayer::Free()
 	Safe_Release(m_pNavMesh);
 	Safe_Release(m_pBattleAgent);
 
-	//Safe_Release(m_pUIManager);
-	//Safe_Release(m_pCamManager);
+	Safe_Release(m_pUIManager);
+	Safe_Release(m_pCamManager);
+
+	m_pCunterTarget = nullptr;
 
 	for (auto& iter : m_matBones)
 	{
