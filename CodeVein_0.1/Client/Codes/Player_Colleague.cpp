@@ -724,7 +724,9 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 
 	if ((true == m_bStart_Fighting && true == m_bNear_byMonster) && m_fDodge_CoolTime >= 10.f)
 	{
-		_float fAngle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&m_pTargetTransformCom->Get_Pos()));
+		_float fAngle = 0.f;
+		if (nullptr != m_pObject_Mon)
+			fAngle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(m_pObject_Mon)->Get_Pos()));
 
 		// 전투 상태일 때, 10초마다 구르게
 		cout << "데굴데굴" << endl;
