@@ -92,6 +92,8 @@ void CScene_Logo::Free()
 {
 	Safe_Release(m_pLogoBtn);
 	Safe_Release(m_pLoading);
+	m_pGlitterEffect_0->Set_Dead();
+	m_pGlitterEffect_1->Set_Dead();
 
 	CScene::Free();
 }
@@ -151,15 +153,15 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 	m_pLoadingScreen = static_cast<CLoadingScreen*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingScreen", SCENE_STATIC));
 	m_pLoadingScreen->Set_FadeSpeed(0.6f);
 
-	COrthoEffect* pEffect = static_cast<COrthoEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Ortho_Title_Glitter_0", nullptr));
-	pEffect->Set_UV_Speed(0.05f, 0.f);
-	pEffect->Reset_Init();
-	CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEffect, SCENE_STAGE, L"Layer_Effect", nullptr);
+	m_pGlitterEffect_0 = static_cast<COrthoEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Ortho_Title_Glitter_0", nullptr));
+	m_pGlitterEffect_0->Set_UV_Speed(0.05f, 0.f);
+	m_pGlitterEffect_0->Reset_Init();
+	CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(m_pGlitterEffect_0, SCENE_STAGE, L"Layer_Effect", nullptr);
 	
-	pEffect = static_cast<COrthoEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Ortho_Title_Glitter_1", nullptr));
-	pEffect->Set_UV_Speed(0.07f, 0.08f);
-	pEffect->Reset_Init();
-	CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEffect, SCENE_STAGE, L"Layer_Effect", nullptr);
+	m_pGlitterEffect_1 = static_cast<COrthoEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Ortho_Title_Glitter_1", nullptr));
+	m_pGlitterEffect_1->Set_UV_Speed(0.07f, 0.08f);
+	m_pGlitterEffect_1->Reset_Init();
+	CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(m_pGlitterEffect_1, SCENE_STAGE, L"Layer_Effect", nullptr);
 
 	CParticleMgr::Get_Instance()->Create_Effect_NoPool(L"Ortho_Title_ShadowLine", V3_NULL);
 	CParticleMgr::Get_Instance()->Create_Effect_NoPool(L"Ortho_Title_ShadowText", V3_NULL);
