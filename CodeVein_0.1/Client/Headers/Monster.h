@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Client_Defines.h"
+#include "Client_Item_Enum.h"
 #include "GameObject.h"
 #include "Management.h"
 #include "ObjectPool_Manager.h"
@@ -10,7 +11,7 @@
 #include "MonsterUI.h"
 #include "Weapon.h"
 #include "Haze.h"
-//#include "DropItem.h"
+#include "DropItem.h"
 
 BEGIN(Client)
 

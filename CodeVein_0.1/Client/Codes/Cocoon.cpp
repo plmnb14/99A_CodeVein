@@ -725,8 +725,8 @@ void CCocoon::Play_Dead()
 				m_fDeadEffect_Delay = 0.f;
 
 				CGameObject* pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
-					&CDropItem::ITEM_STATUS(CDropItem::ITEM_TYPE::ITEM_PET, 
-						CDropItem::ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, 
+					&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, 
+						ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, 
 						CPet::PET_TYPE::PET_POISONBUTTERFLY, 
 						m_pTransformCom->Get_Pos(), 12.f));
 				g_pManagement->Add_GameOject_ToLayer_NoClone(pItem, SCENE_STAGE, L"Layer_Item", nullptr);
@@ -907,10 +907,6 @@ HRESULT CCocoon::Ready_Status(void * pArg)
 		MSG_BOX("Create Monster pArgument == nullptr Failed");
 		return E_FAIL;
 	}
-
-	m_tObjParam.fDamage = 250.f;
-	m_tObjParam.fHp_Max = 750.f;
-	m_tObjParam.fArmor_Max = 100.f;
 
 	m_fRecognitionRange = 30.f;
 	m_fShotRange = 20.f;

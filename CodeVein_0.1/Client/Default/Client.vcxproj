@@ -328,6 +328,7 @@
     <ClInclude Include="..\Headers\Yeti.h" />
     <ClInclude Include="..\Headers\YetiBullet.h" />
     <ClInclude Include="Client.h" />
+    <ClInclude Include="Client_Item_Enum.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SkillIcon.h" />
     <ClInclude Include="StageLoader.h" />

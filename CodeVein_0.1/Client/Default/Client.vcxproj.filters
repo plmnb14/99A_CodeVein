@@ -981,6 +981,9 @@
     <ClInclude Include="..\Headers\DropItem.h">
       <Filter>02.GameObject\Stage\7%29 Item</Filter>
     </ClInclude>
+    <ClInclude Include="Client_Item_Enum.h">
+      <Filter>98.Headers</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">

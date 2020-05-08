@@ -1,5 +1,6 @@
 #pragma once
 
+#include "Client_Item_Enum.h"
 #include "UI_Manager.h"
 #include "GameObject.h"
 #include "Management.h"
@@ -21,24 +22,6 @@ BEGIN(Client)
 class CDropItem :public CGameObject
 {
 public:
-	enum ITEM_TYPE
-	{
-		ITEM_MATERIAL, //재료
-		ITEM_EXPENDABLES, //소모품
-		ITEM_WEAPON, //무기
-		ITEM_PET, //펫
-		ITEM_TYPE_END
-	};
-
-	enum ITEM_GRADE_TYPE
-	{
-		ITEM_GRADE_NORMAL,
-		ITEM_GRADE_RARE,
-		ITEM_GRADE_UNIQUE,
-		ITEM_GRADE_LEGEND,
-		ITEM_GRADE_TYPE_END
-	};
-
 	struct ITEM_STATUS
 	{
 		ITEM_STATUS(ITEM_TYPE _eType, ITEM_GRADE_TYPE _eGrade, CMaterial::MATERIAL_TYPE _eMaterial, _v3 _vBirthPos, _double _dLimitTime)
@@ -75,7 +58,6 @@ public:
 		_v3			vBirthPos; //생성위치
 		_double		dCanGetLimitTimeMax; //소멸제한 시간
 	};
-
 protected:
 	explicit CDropItem(LPDIRECT3DDEVICE9 pGraphic_Device);
 	explicit CDropItem(const CDropItem& rhs);

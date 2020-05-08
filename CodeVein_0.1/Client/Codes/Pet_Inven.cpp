@@ -96,7 +96,7 @@ HRESULT CPet_Inven::Render_GameObject()
 	return S_OK;
 }
 
-void CPet_Inven::Add_Pet(CDropItem::ITEM_GRADE_TYPE _eGrade, CPet::PET_TYPE _eType)
+void CPet_Inven::Add_Pet(ITEM_GRADE_TYPE _eGrade, CPet::PET_TYPE _eType)
 {
 	CUI::UI_DESC* pDesc = nullptr;
 	CPet_Slot* pSlot = nullptr;
@@ -123,10 +123,12 @@ void CPet_Inven::Add_Pet(CDropItem::ITEM_GRADE_TYPE _eGrade, CPet::PET_TYPE _eTy
 
 void CPet_Inven::Sell_Pet(_uint iDelete)
 {
+	return;
 }
 
 void CPet_Inven::Active_Pet(CPet_Slot * pSlot)
 {
+	return;
 }
 
 void CPet_Inven::Click_Inven()
@@ -218,6 +220,12 @@ HRESULT CPet_Inven::SetUp_Default()
 	m_fSizeY = 471.f;
 	m_fViewZ = 4.f;
 	m_bIsActive = false;
+
+	m_pExitIcon = static_cast<CInventory_Icon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_InvenIcon", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExitIcon, SCENE_MORTAL, L"Layer_PetUI", nullptr);
+	m_pExitIcon->Set_UI_Pos(m_fPosX + 120.f, m_fPosY - 203.f);
+	m_pExitIcon->Set_UI_Size(35.f, 45.f);
+	m_pExitIcon->Set_Type(CInventory_Icon::ICON_EXIT);
 
 	return S_OK;
 }

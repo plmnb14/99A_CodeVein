@@ -228,7 +228,7 @@ void CWeapon::OnCollisionEnter()
 	else
 	{
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL), true);
-		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_MORTAL), true);
+		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE), true);
 	}
 		
 
