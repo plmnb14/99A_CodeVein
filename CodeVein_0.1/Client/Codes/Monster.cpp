@@ -155,6 +155,18 @@ void CMonster::Set_Target_Auto(_bool Ransdom_Aggro)
 
 }
 
+CGameObject * CMonster::Get_pTargetObject()
+{
+	// 우선  SCENE_MORTAL에서 찾아봄.
+	CGameObject* pObject = g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL);
+
+	// 못 찾았으면 동료를 찾으면됨.
+	if(nullptr == pObject)
+		pObject = g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_STAGE);
+
+	return pObject;
+}
+
 HRESULT CMonster::Draw_Collider()
 {
 	for (auto& iter : m_vecPhysicCol)
@@ -170,7 +182,7 @@ void CMonster::Check_CollisionEvent()
 {
 	Check_CollisionPush();
 	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
-	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_MORTAL));
+	Check_CollisionHit(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE));
 
 	return;
 }
@@ -182,7 +194,7 @@ void CMonster::Check_CollisionPush()
 	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
 	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
 	tmpList[2] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
-	tmpList[3] = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_MORTAL);
+	tmpList[3] = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE);
 
 	for (auto& list_iter : tmpList)
 	{
@@ -190,7 +202,7 @@ void CMonster::Check_CollisionPush()
 		{
 			CCollider* pCollider = TARGET_TO_COL(Obj_iter);
 
-			if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_fSkillMoveSpeed_Cur * DELTA_60))
+			if (m_pColliderCom->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_fSkillMoveSpeed_Cur * DELTA_60))
 			{
 				CTransform* pTrans = TARGET_TO_TRANS(Obj_iter);
 				CNavMesh*   pNav = TARGET_TO_NAV(Obj_iter);
@@ -200,7 +212,7 @@ void CMonster::Check_CollisionPush()
 
 				vDir.y = 0;
 
-				pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pCollider->Get_Length().x));
+				pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pColliderCom->Get_Length().x));
 			}
 		}
 	}
@@ -429,7 +441,7 @@ void CMonster::Function_MoveAround(CGameObject * _pGameObject, _float _fSpeed, _
 
 	m_pTransformCom->Set_Angle(AXIS_Y, fYAngle);
 
-	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &_vDir, _fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
+	m_pTransformCom->Set_Pos((m_pNavMeshCom->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &_vDir, _fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
 
 	return;
 }
@@ -458,7 +470,7 @@ void CMonster::Function_CoolDown()
 void CMonster::Function_Movement(_float _fspeed, _v3 _vDir)
 {
 	V3_NORMAL(&_vDir, &_vDir);
-	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &_vDir, _fspeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
+	m_pTransformCom->Set_Pos((m_pNavMeshCom->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &_vDir, _fspeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
 
 	return;
 }
@@ -479,15 +491,15 @@ void CMonster::Function_DecreMoveMent(_float _fMutiply)
 
 void CMonster::Function_Find_Target()
 {
-	if (nullptr != m_pTarget)
+	if (nullptr != m_pAggroTarget)
 	{
-		Safe_Release(m_pTarget);
-		m_pTarget = nullptr;
+		Safe_Release(m_pAggroTarget);
+		m_pAggroTarget = nullptr;
 	}
 
 	_float	fOldLength = 99999.f;
 
-	auto& ColleagueContainer = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_MORTAL);
+	auto& ColleagueContainer = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE);
 
 	auto& PlayerContainer = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
 
@@ -509,11 +521,11 @@ void CMonster::Function_Find_Target()
 			continue;
 
 		fOldLength = fLenth;
-		m_pTarget = Colleague_iter;
-		Safe_AddRef(m_pTarget);	
+		m_pAggroTarget = Colleague_iter;
+		Safe_AddRef(m_pAggroTarget);	
 	}
 
-	IF_NOT_NULL_RETURN(m_pTarget);
+	IF_NOT_NULL_RETURN(m_pAggroTarget);
 
 	for (auto& Player_iter : PlayerContainer)
 	{
@@ -533,11 +545,11 @@ void CMonster::Function_Find_Target()
 			continue;
 
 		fOldLength = fLenth;
-		m_pTarget = Player_iter;
-		Safe_AddRef(m_pTarget);
+		m_pAggroTarget = Player_iter;
+		Safe_AddRef(m_pAggroTarget);
 	}
 
-	IF_NOT_NULL_RETURN(m_pTarget);
+	IF_NOT_NULL_RETURN(m_pAggroTarget);
 
 	return;
 }
@@ -553,7 +565,6 @@ void CMonster::Function_ResetAfterAtk()
 	m_tObjParam.bSuperArmor = false;
 	m_tObjParam.bIsAttack = false;
 
-	//200430 추가, 함수 순서 유지할예정
 	m_bCanCoolDown = false;
 	m_bIsCoolDown = false;
 
@@ -582,6 +593,24 @@ void CMonster::Function_ResetAfterAtk()
 
 void CMonster::Free()
 {
+	Safe_Release(m_pMonsterUI);
+
+	IF_NOT_NULL(m_pAggroTarget)
+		Safe_Release(m_pAggroTarget);
+
+	IF_NOT_NULL(m_pWeapon)
+		Safe_Release(m_pWeapon);
+
+	Safe_Release(m_pAIControllerCom);
+	Safe_Release(m_pOptimizationCom);
+	Safe_Release(m_pBattleAgentCom);
+	Safe_Release(m_pColliderCom);
+	Safe_Release(m_pNavMeshCom);
+	Safe_Release(m_pTransformCom);
+	Safe_Release(m_pMeshCom);
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pRendererCom);
+
 	CGameObject::Free();
 
 	return;

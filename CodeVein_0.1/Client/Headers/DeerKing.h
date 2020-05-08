@@ -112,14 +112,6 @@ private:
 	void Update_Dir_Shield_Throwing();
 
 private:
-	//CTransform*			m_pTransformCom = nullptr;
-	CRenderer*			m_pRendererCom = nullptr;
-	CShader*			m_pShaderCom = nullptr;
-	CMesh_Dynamic*		m_pMeshCom = nullptr;
-	CAIController*		m_pAIControllerCom = nullptr;
-	CNavMesh*			m_pNavMesh = nullptr;
-	CCollider*			m_pCollider = nullptr;
-
 	CWeapon*			m_pShield = nullptr;
 
 	// 피격가능 현재 시간

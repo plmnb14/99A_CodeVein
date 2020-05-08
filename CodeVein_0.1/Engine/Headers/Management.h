@@ -20,6 +20,7 @@
 #include "ParticleMgr.h"
 #include "Renderer.h"
 #include "MyPhysx.h"
+#include "CameraMgr.h"
 
 BEGIN(Engine)
 

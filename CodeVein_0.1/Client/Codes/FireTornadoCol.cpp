@@ -125,8 +125,10 @@ void CFireTornadoCol::OnCollisionEnter()
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_MonsterProjectile", SCENE_STAGE));
 	}
 	else
+	{
 		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL));
-
+		OnCollisionEvent(g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE));
+	}
 
 	// =============================================================================================
 
@@ -174,7 +176,7 @@ void CFireTornadoCol::OnCollisionEvent(list<CGameObject*> plistGameObject)
 
 						iter->Add_Target_Hp(-m_tObjParam.fDamage);
 
-						m_dCurTime = 1000;	// 바로 사망시키기 위해서 현재시간 1000줬음
+						//m_dCurTime = 1000;	// 바로 사망시키기 위해서 현재시간 1000줬음
 					}
 
 
@@ -205,7 +207,7 @@ HRESULT CFireTornadoCol::Add_Component()
 		return E_FAIL;
 
 	// for.Com_Collider
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pColliderCom)))
 		return E_FAIL;
 
 	return NOERROR;
@@ -264,9 +266,6 @@ CGameObject * CFireTornadoCol::Clone_GameObject(void * pArg)
 
 void CFireTornadoCol::Free()
 {
-	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pCollider);
-	Safe_Release(m_pRendererCom);
 
-	CGameObject::Free();
+	CMonster::Free();
 }
