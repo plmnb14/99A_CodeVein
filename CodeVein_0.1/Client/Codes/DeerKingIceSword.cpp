@@ -173,7 +173,7 @@ HRESULT CDeerKingIceSword::Update_Collider()
 
 		_v3 ColPos = _v3(tmpMat._41, tmpMat._42, tmpMat._43);
 
-		iter->Update(ColPos + m_vDir * 2.f);
+		iter->Update(ColPos + m_vDir * 2.5f);
 
 		++matrixIdx;
 	}
@@ -292,7 +292,7 @@ HRESULT CDeerKingIceSword::Ready_Collider()
 	// ÃÑ¾Ë Áß¾Ó
 	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 
-	_float fRadius = 1.f;
+	_float fRadius = 1.5f;
 
 	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
 	pCollider->Set_Dynamic(true);
