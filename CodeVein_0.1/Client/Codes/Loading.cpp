@@ -1768,22 +1768,22 @@ HRESULT CLoading::Ready_Intro_MonsterPrototype()
 	// ∞À∞’¡ˆ
 	//============================================================================================================================================
 	{
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenji", CSwordGenji::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// ∞À∞’¡ˆ √—æÀ
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenjiBullet", CSwordGenjiBullet::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_SwordGenjiBullet", L"Monster_SwordGenjiBullet", 100);
-		//// √—∞’¡ˆ
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenji", CGunGenji::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//// √—∞’¡ˆ √—æÀ
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenjiBullet", CGunGenjiBullet::Create(m_pGraphicDev))))
-		//	return E_FAIL;
-		//CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_GunGenjiBullet", L"Monster_GunGenjiBullet", 100);
-		//// ∞ÀπÊ∆–∞’¡ˆ
-		//if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordShieldGenji", CSwordShieldGenji::Create(m_pGraphicDev))))
-		//	return E_FAIL;
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenji", CSwordGenji::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// ∞À∞’¡ˆ √—æÀ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenjiBullet", CSwordGenjiBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_SwordGenjiBullet", L"Monster_SwordGenjiBullet", 100);
+		// √—∞’¡ˆ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenji", CGunGenji::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// √—∞’¡ˆ √—æÀ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenjiBullet", CGunGenjiBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_GunGenjiBullet", L"Monster_GunGenjiBullet", 100);
+		// ∞ÀπÊ∆–∞’¡ˆ
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordShieldGenji", CSwordShieldGenji::Create(m_pGraphicDev))))
+			return E_FAIL;
 	}
 	//============================================================================================================================================
 	// ≈‰≈€

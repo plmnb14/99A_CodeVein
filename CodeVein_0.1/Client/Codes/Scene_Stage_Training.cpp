@@ -41,7 +41,6 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 	pRenderer->Fog_On(false);
 	Safe_Release(pRenderer);
 
-	// Æ®·¹ÀÌ´× ¸ÊÀº ±×³É ·Îµå °¡´ÉÇØ¿è
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_Training.dat");
 
 	return S_OK;
