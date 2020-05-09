@@ -1,14 +1,11 @@
 #pragma once
+
 #include "Client_Defines.h"
 #include "UI.h"
-#include "Management.h"
-
 #include "Material.h"
-#include "Select_UI.h"
-#include "CursorUI.h"
-#include "NumberUI.h"
 
 BEGIN(Client)
+class CPlayerFontUI;
 class CMaterial_Slot final : public CUI
 {
 private:
@@ -30,7 +27,8 @@ public:
 
 private:
 	HRESULT			Add_Component();
-	HRESULT			SetUp_ConstantTable();
+	HRESULT			SetUp_ConstantTable(_uint iIndex);
+	void			SetUp_Default();
 
 public:
 	void Input_Item(CMaterial* pMaterial);
@@ -47,11 +45,12 @@ private:
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
-	CSelect_UI*				m_pSelectUI = nullptr;
-	_bool					m_bIsSelect = false;
-	vector<CMaterial*>		m_vecMaterial;
-	CCursorUI*				m_pCursorUI = nullptr;
-	CNumberUI*				m_pNumberUI = nullptr;
+private:
+	_bool							m_bIsSelect = false;
+	vector<CMaterial*>				m_vecMaterial;
+	CMaterial::MATERIAL_TYPE		m_eType = CMaterial::MATERIAL_END;
+	_bool							m_bIsCollMouse = false;
+	CPlayerFontUI*					m_pItemCntFont = nullptr;
 
 public:
 	static CMaterial_Slot*		Create(_Device pGraphic_Device);

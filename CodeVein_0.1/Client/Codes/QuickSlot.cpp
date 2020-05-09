@@ -1,9 +1,5 @@
 #include "stdafx.h"
 #include "..\Headers\QuickSlot.h"
-
-#include "Expendables_Inven.h"
-#include "Button_UI.h"
-#include "NumberUI.h"
 #include "UI_Manager.h"
 
 CQuickSlot::CQuickSlot(_Device pDevice)

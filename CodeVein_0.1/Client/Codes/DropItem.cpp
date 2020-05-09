@@ -266,7 +266,7 @@ HRESULT CDropItem::Ready_Status(void* _pArg)
 		m_eItemType = ITEM_TYPE::ITEM_MATERIAL;
 		m_eItemGrade = ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL;
 
-		m_eMaterialType = CMaterial::MATERIAL_TYPE::MATERIAL_1;
+		m_eMaterialType = CMaterial::MATERIAL_TYPE::Queen_Steel;
 
 		m_pTransform->Set_Pos(_v3{ 1.f, 0.f, 1.f });
 		m_dCanGetItemLimitTimeMax = 5;

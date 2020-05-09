@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Material_Slot.h"
-
+#include "PlayerFontUI.h"
 
 
 CMaterial_Slot::CMaterial_Slot(_Device pDevice)
@@ -28,31 +28,8 @@ HRESULT CMaterial_Slot::Ready_GameObject(void * pArg)
 
 	m_bIsActive = false;
 
-	CUI::UI_DESC* pDesc = new CUI::UI_DESC;
-	pDesc->fPosX = m_fPosX;
-	pDesc->fPosY = m_fPosY;
-	pDesc->fSizeX = m_fSizeX;
-	pDesc->fPosY = m_fSizeY;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_SelectUI", SCENE_MORTAL, L"Layer_SelectUI", pDesc);
-	m_pSelectUI = static_cast<CSelect_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_SelectUI", SCENE_MORTAL));
+	SetUp_Default();
 
-	pDesc = new CUI::UI_DESC;
-	pDesc->fPosX = m_fPosX;
-	pDesc->fPosY = m_fPosY;
-	pDesc->fSizeX = m_fSizeX;
-	pDesc->fSizeY = m_fSizeY;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_CursorUI", SCENE_MORTAL, L"Layer_CursorUI", pDesc);
-	m_pCursorUI = static_cast<CCursorUI*>(g_pManagement->Get_GameObjectBack(L"Layer_CursorUI", SCENE_MORTAL));
-
-	pDesc = new CUI::UI_DESC;
-	pDesc->fPosX = m_fPosX - m_fSizeX * 0.25f;
-	pDesc->fPosY = m_fPosY + m_fSizeY * 0.25f;
-	pDesc->fSizeX = m_fSizeX * 0.25f;
-	pDesc->fSizeY = m_fSizeY * 0.25f;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NumberUI", SCENE_MORTAL, L"Layer_NumberUI", pDesc);
-	m_pNumberUI = static_cast<CNumberUI*>(g_pManagement->Get_GameObjectBack(L"Layer_NumberUI", SCENE_MORTAL));
-
-	
 	return NOERROR;
 }
 
@@ -67,42 +44,36 @@ _int CMaterial_Slot::Update_GameObject(_double TimeDelta)
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
 	if (m_vecMaterial.size() > 0)
-		m_iIndex = m_vecMaterial.front()->Get_Type();
+		m_eType = m_vecMaterial.front()->Get_Type();
 	else
-		m_iIndex = CMaterial::MATERIAL_END;
+		m_eType = CMaterial::MATERIAL_END;
 
-	if (m_pSelectUI)
+	switch (m_eType)
 	{
-		m_pSelectUI->Set_Select(m_bIsSelect);
-		m_pSelectUI->Set_Active(m_bIsActive);
-	}
-		
-	if (m_pCursorUI)
-	{
-		m_pCursorUI->Set_UI_Pos(m_fPosX, m_fPosY);
-		m_pCursorUI->Set_UI_Size(m_fSizeX, m_fSizeY);
-		m_pCursorUI->Set_ViewZ(m_fViewZ - 0.2f);
-
-		if (m_vecMaterial.size() > 0)
-			m_pCursorUI->Set_Active(m_bIsActive);
-		else
-			m_pCursorUI->Set_Active(false);
-
-		m_pCursorUI->Set_CursorColl(Pt_InRect());
+	case CMaterial::Queen_Steel:
+		m_iIndex = 3;
+		break;
+	case CMaterial::Queen_Titanium:
+		m_iIndex = 4;
+		break;
+	case CMaterial::Queen_Tungsten:
+		m_iIndex = 5;
+		break;
 	}
 
-	if (m_pNumberUI)
+	if (m_pItemCntFont)
 	{
-		m_pNumberUI->Set_Active(m_bIsActive);
+		m_pItemCntFont->Set_Active(m_bIsActive);
 
 		if (m_vecMaterial.size() == 0)
-			m_pNumberUI->Set_Active(false);
+			m_pItemCntFont->Set_Active(false);
 
-		m_pNumberUI->Set_UI_Index(_uint(m_vecMaterial.size()));
-		m_pNumberUI->Set_ViewZ(m_fViewZ - 0.1f);
+		m_pItemCntFont->Update_NumberValue(_float(m_vecMaterial.size()));
+		
 	}
 
-	
+	m_bIsCollMouse = Pt_InRect();
+
 	return NO_EVENT;
 }
 
@@ -122,7 +93,8 @@ _int CMaterial_Slot::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CMaterial_Slot::Render_GameObject()
 {
-	if (!m_bIsActive)
+	if (!m_bIsActive ||
+		m_eType == CMaterial::MATERIAL_END)
 		return NOERROR;
 
 	if (nullptr == m_pShaderCom ||
@@ -130,29 +102,100 @@ HRESULT CMaterial_Slot::Render_GameObject()
 		return E_FAIL;
 
 	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
-
-	m_matOldView = g_pManagement->Get_Transform(D3DTS_VIEW);
-	m_matOldProj = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
+	_uint iIndex = 0;
 
-	m_pShaderCom->Begin_Shader();
+	if (!m_bIsSelect)
+	{
+		if (m_bIsCollMouse)
+		{
+			LOOP(3)
+			{
+				if (0 == i)
+					iIndex = 0;
+				else if (1 == i)
+					iIndex = m_iIndex;
+				else if (2 == i)
+					iIndex = 2;
 
-	m_pShaderCom->Begin_Pass(1);
+				if (FAILED(SetUp_ConstantTable(iIndex)))
+					return E_FAIL;
+				m_pShaderCom->Begin_Shader();
+				m_pShaderCom->Begin_Pass(1);
+				m_pBufferCom->Render_VIBuffer();
+				m_pShaderCom->End_Pass();
+				m_pShaderCom->End_Shader();
+			}
+		}
+		else
+		{
+			LOOP(2)
+			{
+				if (0 == i)
+					iIndex = 0;
+				else if (1 == i)
+					iIndex = m_iIndex;
 
-	m_pBufferCom->Render_VIBuffer();
+				if (FAILED(SetUp_ConstantTable(iIndex)))
+					return E_FAIL;
+				m_pShaderCom->Begin_Shader();
+				m_pShaderCom->Begin_Pass(1);
+				m_pBufferCom->Render_VIBuffer();
+				m_pShaderCom->End_Pass();
+				m_pShaderCom->End_Shader();
+			}
+		}
+	}
+	else
+	{
+		if (m_bIsCollMouse)
+		{
+			LOOP(4)
+			{
+				if (0 == i)
+					iIndex = 0;
+				else if (1 == i)
+					iIndex = m_iIndex;
+				else if (2 == i)
+					iIndex = 1;
+				else if (3 == i)
+					iIndex = 2;
 
-	m_pShaderCom->End_Pass();
+				if (FAILED(SetUp_ConstantTable(iIndex)))
+					return E_FAIL;
+				m_pShaderCom->Begin_Shader();
+				m_pShaderCom->Begin_Pass(1);
+				m_pBufferCom->Render_VIBuffer();
+				m_pShaderCom->End_Pass();
+				m_pShaderCom->End_Shader();
+			}
+		}
+		else
+		{
+			LOOP(3)
+			{
+				if (0 == i)
+					iIndex = 0;
+				else if (1 == i)
+					iIndex = m_iIndex;
+				else if (2 == i)
+					iIndex = 1;
 
-	m_pShaderCom->End_Shader();
+				if (FAILED(SetUp_ConstantTable(iIndex)))
+					return E_FAIL;
+				m_pShaderCom->Begin_Shader();
+				m_pShaderCom->Begin_Pass(1);
+				m_pBufferCom->Render_VIBuffer();
+				m_pShaderCom->End_Pass();
+				m_pShaderCom->End_Shader();
+			}
+		}
+	}
+	
 
 
-	g_pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
-	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
 
 	return NOERROR;
 }
@@ -182,7 +225,7 @@ HRESULT CMaterial_Slot::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CMaterial_Slot::SetUp_ConstantTable()
+HRESULT CMaterial_Slot::SetUp_ConstantTable(_uint iIndex)
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -193,11 +236,22 @@ HRESULT CMaterial_Slot::SetUp_ConstantTable()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, m_iIndex)))
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
 		return E_FAIL;
 
 	return NOERROR;
 }
+
+void CMaterial_Slot::SetUp_Default()
+{
+	m_pItemCntFont = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
+	m_pItemCntFont->Set_UI_Pos(m_fPosX - m_fSizeX * 0.25f, m_fPosY + m_fSizeY * 0.25f);
+	m_pItemCntFont->Set_UI_Size(10.4f, 20.f);
+	m_pItemCntFont->Set_ViewZ(m_fViewZ - 0.1f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pItemCntFont, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	m_pItemCntFont->Set_ViewZ(m_fViewZ - 0.1f);
+}
+
 
 void CMaterial_Slot::Input_Item(CMaterial * pMaterial)
 {

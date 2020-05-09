@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Expendables_Slot.h"
-#include "UI_Manager.h"
+#include "PlayerFontUI.h"
 
 // 0 ~ 아이템, End-> 없음
 

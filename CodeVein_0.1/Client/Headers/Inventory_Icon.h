@@ -4,8 +4,6 @@
 #include "UI.h"
 
 BEGIN(Client)
-
-class CClickUI;
 class CInventory_Icon final : public CUI
 {	
 public:
@@ -28,11 +26,9 @@ private:
 	virtual ~CInventory_Icon() = default;
 
 public:
-	_bool Get_Click() { return m_bIsClick; }
 	ICON_TYPE Get_Type() { return m_eType; }
 
 public:
-	void Set_Click(_bool bIsClick) { m_bIsClick = bIsClick; }
 	void Set_Type(ICON_TYPE eType) { m_eType = eType; }
 
 public:
@@ -44,7 +40,7 @@ public:
 
 private:
 	HRESULT Add_Component();
-	HRESULT SetUp_ConstantTable();
+	HRESULT SetUp_ConstantTable(_uint iIndex);
 	void	SetUp_Default();
 
 public:
@@ -56,8 +52,8 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
-	CClickUI*				m_pClickUI = nullptr;
-	_bool					m_bIsClick = false;
+	
+private:
 	ICON_TYPE				m_eType;
 
 public:

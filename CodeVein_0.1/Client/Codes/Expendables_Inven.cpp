@@ -96,7 +96,6 @@ _int CExpendables_Inven::Late_Update_GameObject(_double TimeDelta)
 	m_matWorld._33 = 1.f;
 	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
 	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;
-	m_matWorld._42 = 1.f;
 
 	return NO_EVENT;
 }
@@ -111,10 +110,6 @@ HRESULT CExpendables_Inven::Render_GameObject()
 		return E_FAIL;
 
 	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
-
-	m_matOldView = g_pManagement->Get_Transform(D3DTS_VIEW);
-	m_matOldProj = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
@@ -131,9 +126,6 @@ HRESULT CExpendables_Inven::Render_GameObject()
 	m_pShaderCom->End_Pass();
 
 	m_pShaderCom->End_Shader();
-
-	g_pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
-	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
 
 	return NOERROR;
 }

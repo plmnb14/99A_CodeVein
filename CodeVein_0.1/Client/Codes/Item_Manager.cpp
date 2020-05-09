@@ -1,10 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Item_Manager.h"
 
-
-
-
-
 IMPLEMENT_SINGLETON(CItem_Manager)
 
 CItem_Manager::CItem_Manager()
@@ -25,8 +21,6 @@ HRESULT CItem_Manager::Add_Item_Prototype(_Device pDevice)
 {
 	g_pManagement->Add_Prototype(L"GameObject_Expendables", CExpendables::Create(pDevice));
 	g_pManagement->Add_Prototype(L"GameObject_Material", CMaterial::Create(pDevice));
-
-	g_pManagement->Add_Prototype(L"GameObject_Armor", CArmor::Create(pDevice));
 
 	return NOERROR;
 }

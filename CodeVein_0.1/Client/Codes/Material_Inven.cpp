@@ -48,13 +48,16 @@ HRESULT CMaterial_Inven::Ready_GameObject(void * pArg)
 			pDesc->fSizeY = 50.f;
 			g_pManagement->Add_GameObject_ToLayer(L"GameObject_MaterialSlot", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
 			pSlot = static_cast<CMaterial_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
+			pSlot->Set_ViewZ(m_fViewZ - 0.1f);
 			m_vecMaterialSlot.push_back(pSlot);
 			m_vecUI_DESC.push_back(pDesc);
 		}
 
 	}
 	
-	
+	Add_MultiMaterial(CMaterial::Queen_Steel, 8);
+	Add_MultiMaterial(CMaterial::Queen_Titanium, 9);
+	Add_MultiMaterial(CMaterial::Queen_Tungsten, 10);
 	return NOERROR;
 }
 
@@ -70,12 +73,8 @@ _int CMaterial_Inven::Update_GameObject(_double TimeDelta)
 	Click_Inven();
 
 	for (auto& pSlot : m_vecMaterialSlot)
-	{
 		pSlot->Set_Active(m_bIsActive);
-		pSlot->Set_ViewZ(m_fViewZ - 0.1f);
-	}
-
-
+	
 	return NO_EVENT;
 }
 
@@ -89,7 +88,6 @@ _int CMaterial_Inven::Late_Update_GameObject(_double TimeDelta)
 	m_matWorld._33 = 1.f;
 	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
 	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;
-	m_matWorld._42 = 1.f;
 
 	return NO_EVENT;
 }
@@ -195,7 +193,7 @@ void CMaterial_Inven::Load_Materials(CMaterial * pMaterial, _uint iIndex)
 		return;
 
 	if ((m_vecMaterialSlot[iIndex]->Get_Type() == pMaterial->Get_Type() ||
-		m_vecMaterialSlot[iIndex]->Get_Size() == 0) && m_vecMaterialSlot[iIndex]->Get_Size() < 9)
+		m_vecMaterialSlot[iIndex]->Get_Size() == 0) && m_vecMaterialSlot[iIndex]->Get_Size() < 5)
 		m_vecMaterialSlot[iIndex]->Input_Item(pMaterial);
 	else
 		Load_Materials(pMaterial, iIndex + 1);
@@ -222,10 +220,6 @@ void CMaterial_Inven::Click_Inven()
 			}
 		}
 	}
-	/*if(g_pInput_Device->Key_Up(DIK_8))
-		Add_MultiMaterial(CMaterial::MATERIAL_1, 1);
-	if (g_pInput_Device->Key_Up(DIK_9))
-		Sell_Material(1);*/
 }
 
 void CMaterial_Inven::Add_Material(CMaterial::MATERIAL_TYPE eType)

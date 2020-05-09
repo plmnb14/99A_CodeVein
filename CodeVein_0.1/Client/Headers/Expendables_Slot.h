@@ -6,7 +6,6 @@
 
 BEGIN(Client)
 
-class CExpendables;
 class CPlayerFontUI;
 class CExpendables_Slot final : public CUI
 {

@@ -108,7 +108,7 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 {
 	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LogoBackGround", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LogoBack/LogoBack%d.dds", 5))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LogoButton", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Button/Button%d.png", 4))))
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LogoButton", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Button/Button%d.png", 1))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_CursorEffect", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/CursorEffect/CursorEffect%d.png", 1))))
 		return E_FAIL;
