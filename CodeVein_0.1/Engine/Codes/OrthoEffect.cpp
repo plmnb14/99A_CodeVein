@@ -148,7 +148,7 @@ _int COrthoEffect::Update_GameObject(_double TimeDelta)
 	if (m_bIsDead || m_fCreateDelay > 0.f)
 		return S_OK;
 
-	RENDERID eGroup = RENDERID::RENDER_ALPHA;
+	RENDERID eGroup = RENDERID::RENDER_EFFECT;
 
 	if (FAILED(m_pRendererCom->Add_RenderList(eGroup, this)))
 		return E_FAIL;

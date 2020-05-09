@@ -43,6 +43,7 @@ private:
 	_bool				m_bIsChangeStage = false;
 	COrthoEffect*		m_pGlitterEffect_0 = nullptr;
 	COrthoEffect*		m_pGlitterEffect_1 = nullptr;
+	COrthoEffect*		m_pTitleBG = nullptr;
 
 private:
 	DEBUG_SceneChange   m_eSceneChange = Stage_Training;

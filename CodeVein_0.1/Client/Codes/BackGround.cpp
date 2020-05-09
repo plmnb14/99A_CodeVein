@@ -40,8 +40,7 @@ _int CBackGround::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
-	m_pRendererCom->Add_RenderList(RENDER_ALPHA, this);
-	m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this);
+	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
@@ -82,11 +81,15 @@ HRESULT CBackGround::Render_GameObject()
 	{
 		if (0 == i)
 		{
+			continue;
+
 			iTexNum = m_iIndex;
 			iPass = 6;
 		}
 		else if (1 == i)
 		{
+			continue;
+
 			iTexNum = 4;
 			iPass = 1;
 		}
@@ -111,95 +114,6 @@ HRESULT CBackGround::Render_GameObject()
 	
 	return NOERROR;
 }
-
-
-HRESULT CBackGround::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
-{
-	if (false == m_bEnable)
-		return S_OK;
-
-	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
-
-	//============================================================================================
-	// 공통 변수
-	//============================================================================================
-	_mat	ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat	ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-	_mat	WorldMatrix = m_pTransformCom->Get_WorldMat();
-
-	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
-		return E_FAIL;
-
-	//============================================================================================
-	// 모션 블러 상수
-	//============================================================================================
-	if (_bIsForMotionBlur)
-	{
-		if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-			return E_FAIL;
-		if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-			return E_FAIL;
-		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
-			return E_FAIL;
-
-		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
-
-		_bool bMotionBlur = false;
-		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
-			return E_FAIL;
-		_bool bDecalTarget = false;
-		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
-			return E_FAIL;
-		_float fBloomPower = 100.f;
-		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
-			return E_FAIL;
-	}
-
-	//============================================================================================
-	// 기타 상수
-	//============================================================================================
-	else
-	{
-		_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
-
-		if (FAILED(pShader->Set_Value("g_matWVP", &matWVP, sizeof(_mat))))
-			return E_FAIL;
-	}
-
-	//============================================================================================
-	// 쉐이더 실행
-	//============================================================================================
-
-	LOOP(3)
-	{
-		_uint iTexNum = 0;
-
-		if (0 == i)
-			iTexNum = m_iIndex;
-		else if (1 == i)
-			iTexNum = 4;
-		else
-			iTexNum = 1;
-
-		//if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", pShader, iTexNum)))
-		//	return E_FAIL;
-
-		pShader->Begin_Shader();
-
-		pShader->Begin_Pass(iPass);
-
-		m_pBufferCom->Render_VIBuffer();
-
-		pShader->End_Pass();
-
-		pShader->End_Shader();
-	}
-
-	//============================================================================================
-
-	return S_OK;
-}
-
 
 HRESULT CBackGround::Add_Component()
 {

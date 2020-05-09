@@ -94,6 +94,7 @@ void CScene_Logo::Free()
 	Safe_Release(m_pLoading);
 	m_pGlitterEffect_0->Set_Dead();
 	m_pGlitterEffect_1->Set_Dead();
+	m_pTitleBG->Set_Dead();
 
 	CScene::Free();
 }
@@ -115,7 +116,7 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LoadingBar", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LoadingBar/LoadingBar%d.png", 10))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"Tex_Ortho_Title", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/Effect/Ortho/Ortho_Title/Ortho_Title_%d.dds", 7))))
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"Tex_Ortho_Title", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/Effect/Ortho/Ortho_Title/Ortho_Title_%d.dds", 8))))
 		return E_FAIL;
 
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LoadingBar", CLoadingBar::Create(m_pGraphic_Device))))
@@ -139,6 +140,8 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Title_Smoke", COrthoEffect::Create(m_pGraphic_Device, Read_EffectData(L"../../Data/EffectData/Ortho_Title_Smoke.dat")))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Title_BG", COrthoEffect::Create(m_pGraphic_Device, Read_EffectData(L"../../Data/EffectData/Ortho_Title_BG.dat")))))
+		return E_FAIL;
 
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LogoBackGround", SCENE_LOGO, L"Layer_LogoBackGround")))
 		return E_FAIL;
@@ -153,6 +156,10 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 	m_pLoadingScreen = static_cast<CLoadingScreen*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingScreen", SCENE_STATIC));
 	m_pLoadingScreen->Set_FadeSpeed(0.6f);
 
+	m_pTitleBG = static_cast<COrthoEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Ortho_Title_BG", nullptr));
+	m_pTitleBG->Reset_Init();
+	CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(m_pTitleBG, SCENE_STAGE, L"Layer_Effect", nullptr);
+
 	m_pGlitterEffect_0 = static_cast<COrthoEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Ortho_Title_Glitter_0", nullptr));
 	m_pGlitterEffect_0->Set_UV_Speed(0.03f, 0.f);
 	m_pGlitterEffect_0->Set_Mask(L"Tex_Ortho_Title", 6);
@@ -164,10 +171,10 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 	m_pGlitterEffect_1->Set_Mask(L"Tex_Ortho_Title", 6);
 	m_pGlitterEffect_1->Reset_Init();
 	CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(m_pGlitterEffect_1, SCENE_STAGE, L"Layer_Effect", nullptr);
-
-	CParticleMgr::Get_Instance()->Create_Effect_NoPool(L"Ortho_Title_ShadowLine", V3_NULL);
-	CParticleMgr::Get_Instance()->Create_Effect_NoPool(L"Ortho_Title_ShadowText", V3_NULL);
-	CParticleMgr::Get_Instance()->Create_Effect_NoPool(L"Ortho_Title_Smoke", V3_NULL);
+	
+	//CParticleMgr::Get_Instance()->Create_Effect_NoPool(L"Ortho_Title_ShadowLine", V3_NULL);
+	//CParticleMgr::Get_Instance()->Create_Effect_NoPool(L"Ortho_Title_ShadowText", V3_NULL);
+	//CParticleMgr::Get_Instance()->Create_Effect_NoPool(L"Ortho_Title_Smoke", V3_NULL);
 
 	return S_OK;
 }
