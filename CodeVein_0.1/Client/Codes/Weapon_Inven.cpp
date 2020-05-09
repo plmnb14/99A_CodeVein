@@ -24,12 +24,11 @@ HRESULT CWeapon_Inven::Ready_GameObject(void * pArg)
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = WINCX * 0.3f;
-	m_fPosY = WINCY * 0.5f;
+	m_fPosX = 229.5f;
+	m_fPosY = 325.5f;
 	m_fSizeX = 280.f;
 	m_fSizeY = 471.f;
-
-	m_fViewZ = 3.f;
+	m_fViewZ = 4.f;
 
 	m_bIsActive = false;
 
@@ -269,7 +268,7 @@ void CWeapon_Inven::Add_Weapon(WEAPON_STATE eType)
 	{
 		m_vecWeaponSlot[i]->Set_Active(m_bIsActive);
 		m_vecWeaponSlot[i]->Set_ViewZ(m_fViewZ - 0.1f);
-		m_vecWeaponSlot[i]->Set_UI_Pos(m_fPosX - 103.f + 52.f * (i % 5), m_fPosY - 130.f + 52.f * (i / 5));
+		m_vecWeaponSlot[i]->Set_UI_Pos(m_fPosX - 103.f + 52.f * (i % 5), m_fPosY - 100.f + 52.f * (i / 5));
 	}
 }
 

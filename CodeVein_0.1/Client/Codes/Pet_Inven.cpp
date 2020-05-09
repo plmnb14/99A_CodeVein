@@ -1,5 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Pet_Inven.h"
+#include "UI_Manager.h"
 
 CPet_Inven::CPet_Inven(_Device pDevice)
 	: CUI(pDevice)
@@ -26,7 +27,9 @@ HRESULT CPet_Inven::Ready_GameObject(void * pArg)
 	CUI::Ready_GameObject(pArg);
 
 	SetUp_Default();
-
+	Add_Pet(CPet::PET_DEERKING);
+	Add_Pet(CPet::PET_POISONBUTTERFLY);
+	Add_Pet(CPet::PET_POISONBUTTERFLY);
 	return S_OK;
 }
 
@@ -41,7 +44,7 @@ _int CPet_Inven::Update_GameObject(_double TimeDelta)
 	_uint iIdx = 0;
 	for (auto& vector_iter : m_vecPetSlot)
 	{
-		vector_iter->Set_UI_Pos(m_fPosX - 100.f + 50.f * (iIdx % 5), m_fPosY - 150.f + 50.f * (m_fPosY / 5));
+		vector_iter->Set_UI_Pos(m_fPosX - 100.f + 50.f * (iIdx % 5), m_fPosY - 150.f + 50.f * (iIdx / 5));
 		vector_iter->Set_Active(m_bIsActive);
 		iIdx++;
 	}
@@ -96,95 +99,38 @@ HRESULT CPet_Inven::Render_GameObject()
 	return S_OK;
 }
 
-void CPet_Inven::Add_Pet(ITEM_GRADE_TYPE _eGrade, CPet::PET_TYPE _eType)
-{
-	CUI::UI_DESC* pDesc = nullptr;
-	CPet_Slot* pSlot = nullptr;
-
-	pDesc = new CUI::UI_DESC;
-
-	pDesc->fSizeX = 50.f;
-	pDesc->fSizeY = 50.f;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_PetSlot", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
-	pSlot = static_cast<CPet_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
-	pSlot->Set_Type(_eType);
-	m_vecPetSlot.push_back(pSlot);
-
-	// 슬롯 생성시 위치 조정
-	for (_uint i = 0; i < m_vecPetSlot.size(); ++i)
-	{
-		m_vecPetSlot[i]->Set_Active(m_bIsActive);
-		m_vecPetSlot[i]->Set_ViewZ(m_fViewZ - 0.1f);
-		m_vecPetSlot[i]->Set_UI_Pos(m_fPosX - 103.f + 52.f * (i % 5), m_fPosY - 130.f + 52.f * (i / 5));
-	}
-
-	return;
-}
-
-void CPet_Inven::Sell_Pet(_uint iDelete)
-{
-	return;
-}
-
-void CPet_Inven::Active_Pet(CPet_Slot * pSlot)
-{
-	return;
-}
-
 void CPet_Inven::Click_Inven()
 {
-	//비활성화시 작용x
-	if (false == m_bIsActive)
+	if (!m_bIsActive)
 		return;
 
-	//슬롯 탐색
-	for (auto& pSlot : m_vecPetSlot)
+	if (m_pExitIcon->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
-		//슬롯과 충돌했다면
-		if (true == pSlot->Pt_InRect())
+		m_bIsActive = false;
+		CUI_Manager::Get_Instance()->Get_Total_Inven()->Set_Active(true);
+		CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(true);
+	}
+
+	if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+	{
+		for (auto& iter : m_vecPetSlot)
 		{
-			//왼쪽버튼 누름, 등록
-			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB) && !pSlot->Get_Select())
-				Regist_PetSlot(pSlot);
-			//오른쪽버튼 누름, 해제
-			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB) && pSlot->Get_Select())
-				UnRegist_PetSlot(pSlot);
+			if (iter->Pt_InRect())
+			{
+				Reset_SlotSelect();
+				iter->Set_Select(true);
+			}
 		}
 	}
-
-	return;
+	
 }
 
-void CPet_Inven::Regist_PetSlot(CPet_Slot* _pPetSlot)
+void CPet_Inven::Reset_SlotSelect()
 {
-	//종류 없음, 등록 취소
-	if (_pPetSlot->Get_Type() == CPet::PET_TYPE::PET_TYPE_END)
-		return;
-
-	//대상 타입이 없을경우
-	if (m_eType == CPet::PET_TYPE::PET_TYPE_END)
+	for (auto& iter : m_vecPetSlot)
 	{
-		m_eType = (CPet::PET_TYPE)_pPetSlot->Get_Type();
-		_pPetSlot->Set_Select(true);
+		iter->Set_Select(false);
 	}
-
-	return;
-}
-
-void CPet_Inven::UnRegist_PetSlot(CPet_Slot* _pPetSlot)
-{
-	//종류 없음, 해제 취소
-	if (_pPetSlot->Get_Type() == CPet::PET_TYPE::PET_TYPE_END)
-		return;
-
-	//대상 찾음
-	if (_pPetSlot->Get_Type() == m_eType)
-	{
-		m_eType = CPet::PET_TYPE::PET_TYPE_END;
-		_pPetSlot->Set_Select(false);
-	}
-
-	return;
 }
 
 HRESULT CPet_Inven::Add_Component()
@@ -214,17 +160,16 @@ HRESULT CPet_Inven::Add_Component()
 
 HRESULT CPet_Inven::SetUp_Default()
 {
-	m_fPosX = WINCX * 0.3f;
-	m_fPosY = WINCY * 0.5f;
+	m_fPosX = 229.5f;
+	m_fPosY = 325.5f;
 	m_fSizeX = 280.f;
 	m_fSizeY = 471.f;
 	m_fViewZ = 4.f;
-	m_bIsActive = false;
 
 	m_pExitIcon = static_cast<CInventory_Icon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_InvenIcon", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExitIcon, SCENE_MORTAL, L"Layer_PetUI", nullptr);
 	m_pExitIcon->Set_UI_Pos(m_fPosX + 120.f, m_fPosY - 203.f);
-	m_pExitIcon->Set_UI_Size(35.f, 45.f);
+	m_pExitIcon->Set_UI_Size(30.f, 30.f);
 	m_pExitIcon->Set_Type(CInventory_Icon::ICON_EXIT);
 
 	return S_OK;
@@ -247,6 +192,16 @@ HRESULT CPet_Inven::SetUp_ConstantTable()
 		return E_FAIL;
 
 	return S_OK;
+}
+
+void CPet_Inven::Add_Pet(CPet::PET_TYPE ePetType)
+{
+	CPet_Slot* pPetSlot = static_cast<CPet_Slot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PetSlot", nullptr));
+	pPetSlot->Set_PetType(ePetType);
+	pPetSlot->Set_PetLevel(1); // 레벨 1부터 시작
+	pPetSlot->Set_UI_Size(40.f, 40.f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pPetSlot, SCENE_MORTAL, L"Layer_PetUI", nullptr);
+	m_vecPetSlot.push_back(pPetSlot);
 }
 
 CPet_Inven* CPet_Inven::Create(_Device pGraphic_Device)
@@ -284,6 +239,4 @@ void CPet_Inven::Free()
 	Safe_Release(m_pShader);
 
 	CUI::Free();
-
-	return;
 }

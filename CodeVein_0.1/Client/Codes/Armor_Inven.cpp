@@ -31,13 +31,10 @@ HRESULT CArmor_Inven::Ready_GameObject(void * pArg)
 
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = WINCX * 0.3f;
-	m_fPosY = WINCY * 0.5f;
-
+	m_fPosX = 229.5f;
+	m_fPosY = 325.5f;
 	m_fSizeX = 280.f;
-
 	m_fSizeY = 471.f;
-
 	m_fViewZ = 4.f;
 
 	m_bIsActive = false;
@@ -95,9 +92,6 @@ HRESULT CArmor_Inven::Render_GameObject()
 
 	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
 
-	m_matOldView = g_pManagement->Get_Transform(D3DTS_VIEW);
-	m_matOldProj = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
@@ -114,9 +108,6 @@ HRESULT CArmor_Inven::Render_GameObject()
 	m_pShaderCom->End_Pass();
 
 	m_pShaderCom->End_Shader();
-
-	g_pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
-	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
 
 	return NOERROR;
 }
@@ -248,7 +239,7 @@ void CArmor_Inven::Add_Armor(CArmor::ARMOR_TYPE eType)
 	{
 		m_vecArmorSlot[i]->Set_Active(m_bIsActive);
 		m_vecArmorSlot[i]->Set_ViewZ(m_fViewZ - 0.1f);
-		m_vecArmorSlot[i]->Set_UI_Pos(m_fPosX - 103.f + 52.f * (i % 5), m_fPosY - 130.f + 52.f * (i / 5));
+		m_vecArmorSlot[i]->Set_UI_Pos(m_fPosX - 103.f + 52.f * (i % 5), m_fPosY - 100.f + 52.f * (i / 5));
 	}
 }
 

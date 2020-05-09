@@ -14,11 +14,6 @@
 
 BEGIN(Client)
 
-//class CExpendables;
-//class CMaterial;
-//class CWeapon;
-//class CPet;
-
 class CDropItem :public CGameObject
 {
 public:
@@ -87,8 +82,6 @@ public:
 private:
 	CRenderer*						m_pRenderer = nullptr;
 	CTransform*						m_pTransform = nullptr;
-	CCollider*						m_pCollider = nullptr;
-	//CNavMesh*						m_pNavMesh = nullptr;
 	CTrail_VFX*						m_pTrailEffect = nullptr;
 	CEffect*						m_pEffect = nullptr;
 

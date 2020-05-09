@@ -117,6 +117,53 @@ HRESULT CSkillSlot::Render_GameObject()
 			}
 		}
 	}
+	else if (m_bIsRegist)
+	{
+		if (m_bIsCollMouse)
+		{
+			LOOP(4)
+			{
+				if (0 == i)
+					iIndex = 0;
+				else if (1 == i)
+					iIndex = m_iIndex;
+				else if (2 == i)
+					iIndex = 13;
+				else if (3 == i)
+					iIndex = 2;
+
+				if (FAILED(SetUp_ConstantTable(iIndex)))
+					return E_FAIL;
+
+				m_pShaderCom->Begin_Shader();
+				m_pShaderCom->Begin_Pass(1);
+				m_pBufferCom->Render_VIBuffer();
+				m_pShaderCom->End_Pass();
+				m_pShaderCom->End_Shader();
+			}
+		}
+		else
+		{
+			LOOP(3)
+			{
+				if (0 == i)
+					iIndex = 0;
+				else if (1 == i)
+					iIndex = m_iIndex;
+				else if (2 == i)
+					iIndex = 13;
+
+				if (FAILED(SetUp_ConstantTable(iIndex)))
+					return E_FAIL;
+
+				m_pShaderCom->Begin_Shader();
+				m_pShaderCom->Begin_Pass(1);
+				m_pBufferCom->Render_VIBuffer();
+				m_pShaderCom->End_Pass();
+				m_pShaderCom->End_Shader();
+			}
+		}
+	}
 	else
 	{
 		if (m_bIsCollMouse)
@@ -242,6 +289,15 @@ void CSkillSlot::SetUp_SkillIndex()
 	case Legion_Punisher:
 		m_iIndex = 12;
 		break;	
+	case Chariot_Rush:
+		m_iIndex = 14;
+		break;
+	case Fusillade_Rondo:
+		m_iIndex = 15;
+		break;
+	case SkillID_End:
+		m_iIndex = 0;
+		break;
 	}
 }
 
