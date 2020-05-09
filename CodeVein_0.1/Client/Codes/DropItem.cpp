@@ -41,7 +41,6 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 	m_dCanGetItemLimitTimeCur += TimeDelta;
 	m_fTempEffectLimitTime += (_float)TimeDelta;
 
-	//Check_PosY(); //혹시 모르니 네비y
 	//상호작용 대상과 충돌 여부 체크
 	Check_Dist();
 
@@ -91,7 +90,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 		//g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_0", m_pTransform->Get_Pos());
 		//g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_1", m_pTransform->Get_Pos());
 		//g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_Particle", m_pTransform->Get_Pos());
-		//m_pEffect->Set_Dead();
+		m_pEffect->Set_Dead();
 		m_bEnable = false;
 		return DEAD_OBJ;
 	}
@@ -158,7 +157,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 			//g_pManagement->Create_Effect(L"Bullet_DeadFlash", m_pTransform->Get_Pos(), nullptr);
 			//g_pManagement->Create_Effect(L"Bullet_DeadSmoke_Base", m_pTransform->Get_Pos(), nullptr);
 			//g_pManagement->Create_Effect(L"Bullet_DeadSmoke_Black", m_pTransform->Get_Pos(), nullptr);
-			//m_pEffect->Set_Dead();
+			m_pEffect->Set_Dead();
 			m_bEnable = false;
 
 			return DEAD_OBJ;
@@ -339,8 +338,13 @@ CGameObject* CDropItem::Clone_GameObject(void * pArg)
 void CDropItem::Free()
 {
 	Safe_Release(m_pTransform);
-	//Safe_Release(m_pNaviMesh);
 	Safe_Release(m_pRenderer);
+
+	IF_NOT_NULL(m_pEffect)
+		Safe_Release(m_pEffect);
+
+	IF_NOT_NULL(m_pTrailEffect)
+		Safe_Release(m_pTrailEffect);
 
 	CGameObject::Free();
 

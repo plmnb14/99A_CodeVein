@@ -54,6 +54,9 @@ private:
 
 	vector<CPet_Slot*>		m_vecPetSlot;
 	CPet::PET_TYPE			m_eType;
+	
+	_bool					m_bCanActivePet = true;
+	_uint					m_VectorNum = 0;
 
 };
 

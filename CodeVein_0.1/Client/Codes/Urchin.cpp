@@ -458,9 +458,9 @@ void CUrchin::Play_Rolling()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_fCoolDownMax = 1.f;
-			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = 1.5f;
 
 			return;
 		}
@@ -617,9 +617,9 @@ void CUrchin::Play_RollingRush()
 	{
 		if (m_pMeshCom->Is_Finish_Animation(0.95f))
 		{
-			m_fCoolDownMax = 1.3f;
-			m_bCanCoolDown = true;
 			Function_ResetAfterAtk();
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = 1.8f;
 
 			return;
 		}

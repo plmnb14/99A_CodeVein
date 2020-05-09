@@ -403,7 +403,6 @@ void CPet_PoisonButterFly::Check_Dist()
 						m_eFirstCategory = PET_STATE_TYPE::IDLE;
 						m_eSecondCategory_IDLE = PET_IDLE_TYPE::IDLE_IDLE;
 					}
-					//특정거리보다 멀어진 경우, 여전히 달린다
 					else
 					{
 						m_bCanChase = true;
