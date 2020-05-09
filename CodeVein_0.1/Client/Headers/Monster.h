@@ -155,7 +155,7 @@ protected:	// DJ
 	_tchar m_pLayerTag_Of_Target[STR_128] = { L"Layer_Player" };
 	
 	_float		m_fAggroTime = 0;	//어그로 끌린 시간
-	_float		m_fMaxAggroTime = 10.f;
+	_float		m_fMaxAggroTime = 7.f;
 	_float		m_fOffsetAggroTime = 0.f;
 
 protected:

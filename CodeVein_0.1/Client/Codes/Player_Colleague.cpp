@@ -51,7 +51,7 @@ HRESULT CPlayer_Colleague::Ready_GameObject(void * pArg)
 _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 {
 	/*if (false == m_bEnable)
-		return E_FAIL;*/
+	return E_FAIL;*/
 
 	CGameObject::Update_GameObject(TimeDelta);
 
@@ -65,54 +65,50 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 
 	/*if (true == m_bCheck_SEndGame)
 	{*/
-		
 
-		//if (g_pInput_Device->Key_Down(DIK_K))
-		//	m_tObjParam.fHp_Cur -= 100.f;
-		////if (g_pInput_Device->Key_Down(DIK_P))
-		////	m_tObjParam.fHp_Cur += 1000.f;
-		//if (g_pInput_Device->Key_Down(DIK_I))
-		//	m_pTarget->Add_Target_Hp(100.f);
-		//if (g_pInput_Device->Key_Down(DIK_L))
-		//	m_pTarget->Add_Target_Hp(-100.f);
+	if (g_pInput_Device->Key_Down(DIK_K))
+		m_pTarget->Add_Target_Hp(-100.f);
+	if (g_pInput_Device->Key_Down(DIK_P))
+		m_pTarget->Add_Target_Hp(100.f);
 
-		if (0 >= m_tObjParam.fHp_Cur && 0 >= m_iMyHeal_Count)
-			m_eMovetype = CPlayer_Colleague::Coll_Dead;
+	if (0 >= m_tObjParam.fHp_Cur && 0 >= m_iMyHeal_Count)
+		m_eMovetype = CPlayer_Colleague::Coll_Dead;
 
-		if ((10.f >= m_tObjParam.fHp_Cur/* && 0 <= m_tObjParam.fHp_Cur*/) &&
-			m_eMovetype != CPlayer_Colleague::Coll_Dead)
-		{
-			m_eMovetype = CPlayer_Colleague::Coll_Heal;
-			m_eColl_HealMoment = CPlayer_Colleague::My_Heal;
-		}
-		if ((true == m_bNest_Skil_CoolTImer && 100.f >= m_pTarget->Get_Target_Hp()) &&
-			m_eMovetype != CPlayer_Colleague::Coll_Dead)
-		{
-			m_fCoolTimer_Skil_limit = 5.f;
-			m_eMovetype = CPlayer_Colleague::Coll_Heal;
-			m_eColl_HealMoment = CPlayer_Colleague::Player_Heal;
-		}
+	if ((10.f >= m_tObjParam.fHp_Cur/* && 0 <= m_tObjParam.fHp_Cur*/) &&
+		m_eMovetype != CPlayer_Colleague::Coll_Dead)
+	{
+		m_eMovetype = CPlayer_Colleague::Coll_Heal;
+		m_eColl_HealMoment = CPlayer_Colleague::My_Heal;
+	}
+	if ((true == m_bNest_Skil_CoolTImer && 100.f >= m_pTarget->Get_Target_Hp()) &&
+		m_eMovetype != CPlayer_Colleague::Coll_Dead)
+	{
+		m_fCoolTimer_Skil_limit = 5.f;
+		m_eMovetype = CPlayer_Colleague::Coll_Heal;
+		m_eColl_HealMoment = CPlayer_Colleague::Player_Heal;
+	}
 
-		Check_MyHit();
+	Check_MyHit();
 
-		Check_Do_List();
-		Set_AniEvent();
+	Check_Do_List(TimeDelta);
+	Set_AniEvent();
 
-		Function_Checking_AttCoolTime(m_fCoolTimer_limit);
-		Function_Checking_SkilCoolTime(m_fCoolTimer_Skil_limit);
-		Function_CoolTIme();
+	Function_Checking_AttCoolTime(m_fCoolTimer_limit);
+	Function_Checking_SkilCoolTime(m_fCoolTimer_Skil_limit);
+	Function_CoolTIme();
 
-		m_pDynamicMesh->SetUp_Animation(m_eColleague_Ani);
+	m_pDynamicMesh->SetUp_Animation(m_eColleague_Ani);
 
-		cout << m_pSword->Get_Target_CanAttack() << endl;
-		cout << "상태: " << m_eMovetype << " | " << "0 - Idle, 1 - Move, 3 - Att" << endl;
-		cout << "공격상태: " << m_eColl_Sub_AttMoment << " | " << "Ani : " << m_eColleague_Ani << endl;
-	
-	
-		if (m_eMovetype != CPlayer_Colleague::Coll_Dead)
-			Enter_Collision();
+	/*	cout << m_pSword->Get_Target_CanAttack() << endl;
+	cout << "상태: " << m_eMovetype << " | " << "0 - Idle, 1 - Move, 3 - Att" << endl;
+	cout << "공격상태: " << m_eColl_Sub_AttMoment << " | " << "Ani : " << m_eColleague_Ani << endl;*/
 
-		
+	cout << "공격상태: " << m_eColl_DodgeMoment << " | " << m_iNormalAtt_Count << endl;
+
+	if (m_eMovetype != CPlayer_Colleague::Coll_Dead)
+		Enter_Collision();
+
+
 
 	//}
 	return S_OK;
@@ -121,7 +117,7 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 _int CPlayer_Colleague::Late_Update_GameObject(_double TimeDelta)
 {
 	/*if (false == m_bEnable)
-		return E_FAIL;*/
+	return E_FAIL;*/
 	m_pCollJack->Late_Update_GameObject(TimeDelta);
 	m_pColleagueUI->Late_Update_GameObject(TimeDelta);
 
@@ -144,7 +140,7 @@ HRESULT CPlayer_Colleague::LateInit_GameObject()
 HRESULT CPlayer_Colleague::Render_GameObject()
 {
 	/*if (false == m_bEnable)
-		return S_OK;*/
+	return S_OK;*/
 
 	if (nullptr == m_pShaderCom || nullptr == m_pDynamicMesh)
 		return E_FAIL;
@@ -209,7 +205,7 @@ HRESULT CPlayer_Colleague::Add_Component()
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Test_Jack", L"Com_DynamicMesh", (CComponent**)&m_pDynamicMesh)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Buddy_Jack", L"Com_DynamicMesh", (CComponent**)&m_pDynamicMesh)))
 		return E_FAIL;
 
 	// for.Com_NavMesh
@@ -325,7 +321,6 @@ HRESULT CPlayer_Colleague::Ready_Weapon()
 	m_pSword->Set_ParentMatrix(&m_pTransformCom->Get_WorldMat());
 	m_pSword->Set_Friendly(true);		// 무기의 아군인지 적군인지 체크한다. true는 아군
 
-	
 	// 총알
 	//m_pCollBullet = static_cast<CColleague_Bullet*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ColleagueBullet", NULL));
 
@@ -421,11 +416,12 @@ void CPlayer_Colleague::Check_MyHit()
 }
 
 
-void CPlayer_Colleague::Check_Do_List()
+void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 {
-	if (m_eMovetype == CPlayer_Colleague::Coll_Hit || 
+	if (m_eMovetype == CPlayer_Colleague::Coll_Hit ||
 		m_eMovetype == CPlayer_Colleague::Coll_Dead ||
-		m_eMovetype == CPlayer_Colleague::Coll_Heal)
+		m_eMovetype == CPlayer_Colleague::Coll_Heal ||
+		m_eMovetype == CPlayer_Colleague::Coll_Dodge)
 		return;
 
 	_float	fMinPos = 0.f;
@@ -455,108 +451,220 @@ void CPlayer_Colleague::Check_Do_List()
 		if (m_List_pMonTarget[1]->empty())
 			continue;
 	}
-	
 
+	// 여기서 보스가 먼저 있는지 없는지 체크하고 보스가 없으면 바로 아래로 내려가서 몬스터를 찾는다.
+	// continue 를 해서!
+	// 보스 찾는 부분
+	//=======================================================
 
-	if (!(m_List_pMonTarget[0]->empty()))
+	if (!(m_List_pMonTarget[1]->empty()))
 		fMinPos = 2000000.f;
 
-	for (auto& iter : *m_List_pMonTarget[0])
+	if (!(m_List_pMonTarget[1]->empty()))
 	{
-		if (false == iter->Get_Enable())
+		for (auto& Bossiter : *m_List_pMonTarget[1])
 		{
-			m_bStart_Fighting = false;
-			m_bNear_byMonster = false;
-			continue;
-		}
-
-		if (true == iter->Get_Dead())
-		{
-			if (m_pObject_Mon == iter)
+			if (false == Bossiter->Get_Enable())
 			{
-				m_pObject_Mon = nullptr;
+				m_bStart_Fighting = false;
+				m_bNear_byMonster = false;
 				continue;
 			}
-		}
-
-		fMonLength = D3DXVec3Length(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(iter)->Get_Pos()));
-
-		if (fMinPos > fMonLength)
-		{
-			if (true == iter->Get_Dead())
-				if (m_pObject_Mon == iter)
+			if (true == Bossiter->Get_Dead())
+			{
+				if (m_pObject_Mon == Bossiter)
 				{
 					m_pObject_Mon = nullptr;
-					fMonLength = 0.f;
-					m_bStart_Fighting = false;
-					m_bNear_byMonster = false;
-					m_bMonDead = true;
 					continue;
 				}
+			}
+			fMonLength = D3DXVec3Length(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(Bossiter)->Get_Pos()));
 
-			/*if (false == iter->Get_Enable())
-			continue;*/
-
-			if (nullptr == iter)
-				continue;
-
-			fMinPos = fMonLength;
-
-			m_pObject_Mon = iter;
-
-			if (false == iter->Get_Dead())
+			if (fMinPos > fMonLength)
 			{
-				if (m_pObject_Mon == iter)
+				if (true == Bossiter->Get_Dead())
 				{
+					if (m_pObject_Mon == Bossiter)
+					{
+						m_pObject_Mon = nullptr;
+						fMonLength = 0.f;
+						m_bStart_Fighting = false;
+						m_bNear_byMonster = false;
+						m_bMonDead = true;
+						continue;
+					}
+
+				}
+
+				if (nullptr == Bossiter)
+					continue;
+
+				fMinPos = fMonLength;
+
+				m_pObject_Mon = Bossiter;
+
+				if (false == Bossiter->Get_Dead())
+				{
+					if (m_pObject_Mon == Bossiter)
+					{
+						m_bMonDead = false;
+					}
+				}
+
+				if (nullptr == m_pObject_Mon)
+					continue;
+			}
+			else if (!(fMinPos > fMonLength) && false == Bossiter->Get_Dead())
+			{
+				if (true == Bossiter->Get_Dead())
+					if (m_pObject_Mon == Bossiter)
+					{
+						m_pObject_Mon = nullptr;
+						fMonLength = 0.f;
+						m_bStart_Fighting = false;
+						m_bNear_byMonster = false;
+						m_bMonDead = true;
+						continue;
+					}
+
+				if (nullptr == Bossiter)
+					continue;
+
+				fMinPos = fMonLength;
+
+				m_pObject_Mon = Bossiter;
+
+				if (nullptr != m_pObject_Mon)
 					m_bMonDead = false;
-				}
+
+				if (nullptr == m_pObject_Mon)
+					continue;
 			}
 
-
-			if (nullptr == m_pObject_Mon)
-				continue;
-		}
-		else if (!(fMinPos > fMonLength) && false == iter->Get_Dead())
-		{
-			if (true == iter->Get_Dead())
-				if (m_pObject_Mon == iter)
+			if (true == Bossiter->Get_Dead())
+				if (m_pObject_Mon == Bossiter)
 				{
 					m_pObject_Mon = nullptr;
 					fMonLength = 0.f;
-					m_bStart_Fighting = false;
-					m_bNear_byMonster = false;
+					/*m_bStart_Fighting = false;
+					m_bNear_byMonster = false;*/
 					m_bMonDead = true;
 					continue;
 				}
+		}
+	}
+	else
+		m_pObject_Mon = nullptr;
 
-			/*	if (false == iter->Get_Enable())
-			continue;*/
 
-			if (nullptr == iter)
+	//=======================================================
+
+	if (nullptr == m_pObject_Mon)
+	{
+		if (!(m_List_pMonTarget[0]->empty()))
+			fMinPos = 2000000.f;
+
+		for (auto& iter : *m_List_pMonTarget[0])
+		{
+			if (false == iter->Get_Enable())
+			{
+				m_bStart_Fighting = false;
+				m_bNear_byMonster = false;
 				continue;
+			}
 
-			fMinPos = fMonLength;
+			if (true == iter->Get_Dead())
+			{
+				if (m_pObject_Mon == iter)
+				{
+					m_pObject_Mon = nullptr;
+					continue;
+				}
+			}
 
-			m_pObject_Mon = iter;
+			fMonLength = D3DXVec3Length(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(iter)->Get_Pos()));
 
-			if (nullptr != m_pObject_Mon)
-				m_bMonDead = false;
+			if (fMinPos > fMonLength)
+			{
+				if (true == iter->Get_Dead())
+					if (m_pObject_Mon == iter)
+					{
+						m_pObject_Mon = nullptr;
+						fMonLength = 0.f;
+						m_bStart_Fighting = false;
+						m_bNear_byMonster = false;
+						m_bMonDead = true;
+						continue;
+					}
 
-			if (nullptr == m_pObject_Mon)
-				continue;
+				/*if (false == iter->Get_Enable())
+				continue;*/
+
+				if (nullptr == iter)
+					continue;
+
+				fMinPos = fMonLength;
+
+				m_pObject_Mon = iter;
+
+				if (false == iter->Get_Dead())
+				{
+					if (m_pObject_Mon == iter)
+					{
+						m_bMonDead = false;
+					}
+				}
+
+
+				if (nullptr == m_pObject_Mon)
+					continue;
+			}
+			else if (!(fMinPos > fMonLength) && false == iter->Get_Dead())
+			{
+				if (true == iter->Get_Dead())
+					if (m_pObject_Mon == iter)
+					{
+						m_pObject_Mon = nullptr;
+						fMonLength = 0.f;
+						m_bStart_Fighting = false;
+						m_bNear_byMonster = false;
+						m_bMonDead = true;
+						continue;
+					}
+
+				/*	if (false == iter->Get_Enable())
+				continue;*/
+
+				if (nullptr == iter)
+					continue;
+
+				fMinPos = fMonLength;
+
+				m_pObject_Mon = iter;
+
+				if (nullptr != m_pObject_Mon)
+					m_bMonDead = false;
+
+				if (nullptr == m_pObject_Mon)
+					continue;
+			}
 		}
 	}
 	// Hit, Att, Dodge 이면 return 시킨다
-	
 
-	if (true == m_tObjParam.bIsHit || true == m_tObjParam.bIsDodge)
-		return;
+
+	//if (true == m_tObjParam.bIsHit/* || true == m_tObjParam.bIsDodge*/)
+	//	return;
 
 	// 플레이어와의 거리 체크
 	_float	fMyPlayerLength = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransformCom->Get_Pos()));
 
 	if (fMyPlayerLength < 30.f)		// 플레이어가 범위 내에 있는지 체크
 	{
+		m_fDodge_CoolTime += TimeDelta; 
+		if (/*(true == m_bStart_Fighting && true == m_bNear_byMonster) && */m_fDodge_CoolTime >= 1.5f)
+		{
+
 		if (fMinPos < 30.f && 0 != fMinPos)
 			m_bStart_Fighting = true;
 		if (fMinPos > 30.f || 0 == fMinPos)
@@ -567,18 +675,17 @@ void CPlayer_Colleague::Check_Do_List()
 
 		if (true == m_bStart_Fighting)
 		{
-			/*if (true == m_tObjParam.bIsHit)
-			{
-				m_pObject_Mon->Get_
-			}*/
+			m_fDodge_CoolTime += (_float)TimeDelta;
 
 			if (fMinPos < 30.f)
 			{
 				m_bNear_byMonster = true;
+
+				
 				// 몬스터가 범위 내로 들어왔고 어떤 공격을 할건지
 
-				m_eMovetype = CPlayer_Colleague::Coll_Attack;
-				m_eColl_AttackMoment = CPlayer_Colleague::Att_Normal;
+				/*m_eMovetype = CPlayer_Colleague::Coll_Attack;
+				m_eColl_AttackMoment = CPlayer_Colleague::Att_Normal;*/
 			}
 			else
 			{
@@ -593,8 +700,6 @@ void CPlayer_Colleague::Check_Do_List()
 				m_bNear_byMonster = false;
 			}
 		}
-		
-		
 
 		if (false == m_bStart_Fighting && false == m_bNear_byMonster)
 		{
@@ -616,6 +721,39 @@ void CPlayer_Colleague::Check_Do_List()
 		}
 
 	}
+
+	if ((true == m_bStart_Fighting && true == m_bNear_byMonster) && m_fDodge_CoolTime >= 10.f)
+	{
+		_float fAngle = 0.f;
+		if (nullptr != m_pObject_Mon)
+			fAngle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(m_pObject_Mon)->Get_Pos()));
+
+		// 전투 상태일 때, 10초마다 구르게
+		cout << "데굴데굴" << endl;
+		m_eMovetype = CPlayer_Colleague::Coll_Dodge;
+
+		if (0.f <= fAngle && 30.f > fAngle)
+			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
+		else if (30.f <= fAngle && 90.f > fAngle)
+			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_LeftRoll;
+		else if (-150.f <= fAngle && -90.f > fAngle)
+			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
+		else if (90.f <= fAngle && 150.f > fAngle)
+			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
+		else if (150.f <= fAngle && 180.f > fAngle)
+			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_FrontRoll;
+		else if (-180.f <= fAngle && -150.f > fAngle)
+			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_FrontRoll;
+		else if (-90.f <= fAngle && -30.f > fAngle)
+			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_RightRoll;
+		else if (-30.f <= fAngle && 0 > fAngle)
+			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
+
+		m_fDodge_CoolTime = 0;
+	}
+	}
+
+
 	if (fMyPlayerLength > 30.f)
 	{
 		m_pTransformCom->Set_Pos(_v3(m_pTargetTransformCom->Get_Pos().x - 3.f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 2.f));
@@ -777,27 +915,56 @@ void CPlayer_Colleague::Set_AniEvent()
 			m_eColleague_Ani = CPlayer_Colleague::Ani_Front_Run;
 			break;
 		}
+		case CPlayer_Colleague::Att_MonBackWalk:
+		{
+			CollMove_BackWalk();
+			m_eColleague_Ani = CPlayer_Colleague::Ani_Back_Walk;
+		}
 		break;
 		}
+		break;
 	}
 	case CPlayer_Colleague::Coll_Dodge:
 	{
 		switch (m_eColl_DodgeMoment)
 		{
-		case Client::CPlayer_Colleague::Dodge_FrontRoll:
+		case CPlayer_Colleague::Dodge_FrontRoll:
 		{
 			CollDodge_FrontRoll();
 			m_eColleague_Ani = CPlayer_Colleague::Ani_Front_Roll;
 			break;
-		}
-		case Client::CPlayer_Colleague::Dodge_BackRoll:
+		}	
+		case CPlayer_Colleague::Dodge_BackRoll:
 		{
 			CollDodge_BackRoll();
 			m_eColleague_Ani = CPlayer_Colleague::Ani_Back_Roll;
 			break;
 		}
+		case CPlayer_Colleague::Dodge_LeftRoll:
+		{
+			CollDodge_LeftRoll();
+			m_eColleague_Ani = CPlayer_Colleague::Ani_Left_Roll;
+			break;
 		}
-		break;
+		case CPlayer_Colleague::Dodge_RightRoll:
+		{
+			CollDodge_RightRoll();
+			m_eColleague_Ani = CPlayer_Colleague::Ani_Right_Roll;
+			break;
+		}
+		case CPlayer_Colleague::Dodge_BLeftRoll:
+		{
+			CollDodge_B_LeftRoll();
+			m_eColleague_Ani = CPlayer_Colleague::Ani_BLeft_Roll;
+			break;
+		}
+		case CPlayer_Colleague::Dodge_BRightRoll:
+		{
+			CollDodge_B_RightRoll();
+			m_eColleague_Ani = CPlayer_Colleague::Ani_BRight_Roll;
+			break;
+		}
+		}
 	}
 	case CPlayer_Colleague::Coll_Hit:
 	{
@@ -829,7 +996,7 @@ void CPlayer_Colleague::Set_AniEvent()
 		m_eColleague_Ani = CPlayer_Colleague::Ani_Dead;
 		break;
 	}
-
+	break;
 	}
 }
 
@@ -879,7 +1046,7 @@ HRESULT CPlayer_Colleague::SetUp_Default()
 	return S_OK;
 }
 
-void CPlayer_Colleague::Colleague_Movement(_float fSpeed, _v3 vDir/*, _v3 YDir*/)
+void CPlayer_Colleague::Colleague_Movement(_float fSpeed, _v3 vDir)
 {
 	V3_NORMAL(&vDir, &vDir);
 	m_pTransformCom->Set_Pos(m_pNavMesh->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
@@ -905,14 +1072,14 @@ void CPlayer_Colleague::Play_Start_Game()
 	// 게임이 시작하면서 플레이어 근처에서 스타트 모션을 한번만! 한 뒤에 시작한다.
 	// 죽고 나면 해당 불값은 false 가 되고 
 	_double AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
-	
+
 	if (false == m_bCheck_SEndGame)
 	{
 		if (false == m_bCheck_StartGame)
 		{
 			Funtion_Reset_State();
 			m_bCheck_StartGame = true;
-			//m_eMovetype = CPlayer_Colleague::Coll_Start;
+			m_eMovetype = CPlayer_Colleague::Coll_Start;
 		}
 		else
 		{
@@ -930,7 +1097,7 @@ void CPlayer_Colleague::Play_Start_Game()
 					// 
 					Start_Dissolve(0.8f, false, true, 0.0f);
 					m_fDeadEffect_Delay = 0.f;
-					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", 
+					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze",
 						(void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
@@ -968,7 +1135,7 @@ void CPlayer_Colleague::Play_Dead()
 		//	}
 		//}
 	}
-	
+
 }
 
 void CPlayer_Colleague::Colleague_Guard()
@@ -1019,8 +1186,6 @@ void CPlayer_Colleague::Play_Hit()
 			{
 				m_tObjParam.bCanHit = true;
 				Function_FBRL();
-
-				/*if(nullptr == )*/
 			}
 		}
 	}
@@ -1032,77 +1197,40 @@ void CPlayer_Colleague::CollMove_Walk()
 {
 	Funtion_RotateBody();
 	Colleague_Movement(2.f, m_pTransformCom->Get_Axis(AXIS_Z));
-	// 지금은 앞으로만 걷게
 }
 
 void CPlayer_Colleague::CollMove_BackWalk()
 {
-	// 뒤로 걷나?
 	Funtion_RotateBody();
 	Colleague_Movement(2.f, -(m_pTransformCom->Get_Axis(AXIS_Z)));
 }
 
 void CPlayer_Colleague::CollMove_Run()
 {
-	// 뛸 때 속도조절하는건데 일시적으로 이렇게 두고 나중에 꼭 수정해야 함
 	Funtion_RotateBody();
 	Colleague_Movement(5.f, m_pTransformCom->Get_Axis(AXIS_Z));
-
-	// 지금은 앞으로만 뛰게
 }
 
 void CPlayer_Colleague::CollMove_BackRun()
 {
 	Funtion_RotateBody();
 	Colleague_Movement(5.f, -(m_pTransformCom->Get_Axis(AXIS_Z)));
-	// 지금은 앞으로만 뛰게
 }
 
 void CPlayer_Colleague::CollMove_MonWalk()
 {
-	/*if (nullptr == m_pObject_Mon)
-		return;
-
-	Funtion_RotateBody();
-
-	_v3 MonDir = TARGET_TO_TRANS(m_pObject_Mon)->Get_Pos() - m_pTransformCom->Get_Pos();
-
-	D3DXVec3Normalize(&MonDir, &MonDir);
-
-	Colleague_Movement(4.f, MonDir);*/
-
 	Funtion_RotateBody();
 	Colleague_Movement(2.f, m_pTransformCom->Get_Axis(AXIS_Z));
 }
 
 void CPlayer_Colleague::CollMove_MonRun()
 {
-	/*if (nullptr == m_pObject_Mon)
-		return;
-
-	Funtion_RotateBody();
-
-	_v3 MonDir = m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(m_pObject_Mon)->Get_Pos();
-
-	D3DXVec3Normalize(&MonDir, &MonDir);
-
-	Colleague_Movement(4.f, MonDir);*/
 	Funtion_RotateBody();
 	Colleague_Movement(5.f, m_pTransformCom->Get_Axis(AXIS_Z));
 }
 
 void CPlayer_Colleague::CollDodge_FrontRoll()
 {
-	// 구르기 조건
-/*
-	싸우고 있을 때만!구르기를 해야 함!!
-
-	많이 맞고 있거나 피가 적게 있을 때 맞고 있다면 회피해야 함
-	- 데미지 체크를 해서, 데미지가 몇 이상 들어왔고 && 앞에 몬스터와 전투 중이라면 구르기로 피한다.
-	누적 데미지 변수 하나 필요
-	구르기는 한번만 해야 함
-	쿨타임을 어느정도
-	데미지 누적으로 구르기를 했다면 누적 데미지를 초기화 시켜줘야 함*/
 	_double AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
 
 	if (true == m_tObjParam.bCanDodge)
@@ -1112,36 +1240,23 @@ void CPlayer_Colleague::CollDodge_FrontRoll()
 	}
 	else
 	{
-		if (m_pDynamicMesh->Is_Finish_Animation(0.9f) && m_eColleague_Ani == CPlayer_Colleague::Ani_Front_Roll)
+		if (m_pDynamicMesh->Is_Finish_Animation(0.81f) && m_eColleague_Ani == CPlayer_Colleague::Ani_Front_Roll)
 		{
 			Funtion_Reset_State();
-			m_eMovetype = CPlayer_Colleague::Coll_Idle;
 			m_bChecking_MyHit = true;
-			m_fCoolTimer_limit = 2.f;
+			m_fCoolTimer_limit = 5.f;
+			m_eMovetype = CPlayer_Colleague::Coll_Idle;
 			return;
 		}
-		else if (1.967f <= AniTime && 3.333f >= AniTime)
-		{
-			// 일어나는 구간, 천천히 일어남
-			if (false == m_bEventTrigger[0])
-			{
-				m_bEventTrigger[0] = true;
-				m_fAtt_MoveSpeed_Cur = 1.8f;
-				m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
-				m_fAni_Multiply = 0.5f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
-			}
-			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-			Colleague_SkilMovement(m_fAni_Multiply);
-		}
-		else if (0.067f <= AniTime && 1.633f >= AniTime)
+		else if (0.067f <= AniTime && 1.5f >= AniTime)
 		{
 			// 여기서는 빠르게 해서 속도 확 높여서 구르는 구간
 			if (false == m_bEventTrigger[1])
 			{
 				m_bEventTrigger[1] = true;
 				m_fAtt_MoveSpeed_Cur = 7.f;
-				m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
-				m_fAni_Multiply = 1.f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
+				m_fAtt_MoveAccel_Cur = 0.f;
+				m_fAni_Multiply = 0.5f;
 			}
 			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Colleague_SkilMovement(m_fAni_Multiply);
@@ -1151,6 +1266,188 @@ void CPlayer_Colleague::CollDodge_FrontRoll()
 
 void CPlayer_Colleague::CollDodge_BackRoll()
 {
+	_double AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
+
+	if (true == m_tObjParam.bCanDodge)
+	{
+		m_tObjParam.bCanDodge = false;
+		m_tObjParam.bIsDodge = true;
+	}
+	else
+	{
+		if (m_pDynamicMesh->Is_Finish_Animation(0.81f) && m_eColleague_Ani == CPlayer_Colleague::Ani_Front_Roll)
+		{
+			Funtion_Reset_State();
+			m_bChecking_MyHit = true;
+			m_fCoolTimer_limit = 5.f;
+			m_eMovetype = CPlayer_Colleague::Coll_Idle;
+			return;
+		}
+		else if (0.3f <= AniTime && 1.467f >= AniTime)
+		{
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+				m_fAtt_MoveSpeed_Cur = 7.f;
+				m_fAtt_MoveAccel_Cur = 0.f;
+				m_fAni_Multiply = 1.f;
+			}
+			Colleague_Movement(m_fAtt_MoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
+			Colleague_SkilMovement(m_fAni_Multiply);
+		}
+	}
+}
+
+void CPlayer_Colleague::CollDodge_LeftRoll()
+{
+	_double AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
+
+	if (true == m_tObjParam.bCanDodge)
+	{
+		m_tObjParam.bCanDodge = false;
+		m_tObjParam.bIsDodge = true;
+	}
+	else
+	{
+		if (m_pDynamicMesh->Is_Finish_Animation(0.81f) && m_eColleague_Ani == CPlayer_Colleague::Ani_Left_Roll)
+		{
+			Funtion_Reset_State();
+			m_bChecking_MyHit = true;
+			m_fCoolTimer_limit = 5.f;
+			m_eMovetype = CPlayer_Colleague::Coll_Idle;
+			return;
+		}
+		else if (0.033f <= AniTime && 1.133f >= AniTime)
+		{
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+				m_fAtt_MoveSpeed_Cur = 5.f;
+				m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
+				m_fAni_Multiply = 1.f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
+			}
+			Colleague_Movement(m_fAtt_MoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_X));
+			Colleague_SkilMovement(m_fAni_Multiply);
+		}
+	}
+}
+
+void CPlayer_Colleague::CollDodge_RightRoll()
+{
+	_double AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
+
+	if (true == m_tObjParam.bCanDodge)
+	{
+		m_tObjParam.bCanDodge = false;
+		m_tObjParam.bIsDodge = true;
+	}
+	else
+	{
+		if (m_pDynamicMesh->Is_Finish_Animation(0.81f) && m_eColleague_Ani == CPlayer_Colleague::Ani_Right_Roll)
+		{
+			Funtion_Reset_State();
+			m_bChecking_MyHit = true;
+			m_fCoolTimer_limit = 5.f;
+			m_eMovetype = CPlayer_Colleague::Coll_Idle;
+			return;
+		}
+		else if (0.067f <= AniTime && 1.267f >= AniTime)
+		{
+			// 여기서는 빠르게 해서 속도 확 높여서 구르는 구간
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+				m_fAtt_MoveSpeed_Cur = 5.f;
+				m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
+				m_fAni_Multiply = 1.f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
+			}
+			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_X));
+			Colleague_SkilMovement(m_fAni_Multiply);
+		}
+	}
+}
+
+void CPlayer_Colleague::CollDodge_B_LeftRoll()
+{
+	//_double AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
+
+	//if (true == m_tObjParam.bCanDodge)
+	//{
+	//	m_tObjParam.bCanDodge = false;
+	//	m_tObjParam.bIsDodge = true;
+	//}
+	//else
+	//{
+	//	if (m_pDynamicMesh->Is_Finish_Animation(0.81f) && m_eColleague_Ani == CPlayer_Colleague::Ani_Front_Roll)
+	//	{
+	//		Funtion_Reset_State();
+	//		m_bChecking_MyHit = true;
+	//		m_fCoolTimer_limit = 5.f;
+	//		m_eMovetype = CPlayer_Colleague::Coll_Idle;
+	//		return;
+	//	}
+	//	else if (0.067f <= AniTime && 1.767f >= AniTime)
+	//	{
+	//		// 여기서는 빠르게 해서 속도 확 높여서 구르는 구간
+	//		if (false == m_bEventTrigger[1])
+	//		{
+	//			m_bEventTrigger[1] = true;
+	//			m_fAtt_MoveSpeed_Cur = 3.f;
+	//			m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
+	//			m_fAni_Multiply = 0.7f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
+	//		}
+	//		Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+	//		Colleague_SkilMovement(m_fAni_Multiply);
+	//	}
+	//}
+}
+
+void CPlayer_Colleague::CollDodge_B_RightRoll()
+{
+	//_double AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
+
+	//if (true == m_tObjParam.bCanDodge)
+	//{
+	//	m_tObjParam.bCanDodge = false;
+	//	m_tObjParam.bIsDodge = true;
+	//}
+	//else
+	//{
+	//	if (m_pDynamicMesh->Is_Finish_Animation(0.81f) && m_eColleague_Ani == CPlayer_Colleague::Ani_Front_Roll)
+	//	{
+	//		Funtion_Reset_State();
+	//		m_bChecking_MyHit = true;
+	//		m_fCoolTimer_limit = 5.f;
+	//		m_eMovetype = CPlayer_Colleague::Coll_Idle;
+	//		return;
+	//	}
+	//	else if (1.967f <= AniTime && 3.333f >= AniTime)
+	//	{
+	//		// 일어나는 구간, 천천히 일어남
+	//		if (false == m_bEventTrigger[0])
+	//		{
+	//			m_bEventTrigger[0] = true;
+	//			m_fAtt_MoveSpeed_Cur = 0.15f;
+	//			m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
+	//			m_fAni_Multiply = 1.f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
+	//		}
+	//		Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+	//		Colleague_SkilMovement(m_fAni_Multiply);
+	//	}
+	//	else if (0.167f <= AniTime && 1.633f >= AniTime)
+	//	{
+	//		// 여기서는 빠르게 해서 속도 확 높여서 구르는 구간
+	//		if (false == m_bEventTrigger[1])
+	//		{
+	//			m_bEventTrigger[1] = true;
+	//			m_fAtt_MoveSpeed_Cur = 3.f;
+	//			m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
+	//			m_fAni_Multiply = 0.7f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
+	//		}
+	//		Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+	//		Colleague_SkilMovement(m_fAni_Multiply);
+	//	}
+	//}
 }
 
 void CPlayer_Colleague::CollIdle_Waiting()
@@ -1161,11 +1458,6 @@ void CPlayer_Colleague::CollIdle_Waiting()
 
 void CPlayer_Colleague::CollAtt_Skil()
 {
-	// 각 스킬마다 쿨타임이 있어야 한다.
-	// 스킬 사용 후에 쿨타임 시작하게
-	// 거리 별로 스킬을 사용하는 것이 아니라 랜덤으로? 사용하게 해야 한다
-	// 지금 나오는거 보면 쿨타임이 잘 안 되는 것 같기도?
-	// 아주 멀다면 손에서 구 발사하는 건 그대로 해야 함
 	_float		fMonLenght = 0.f;
 
 	for (auto& iter : *m_List_pMonTarget[0])
@@ -1207,13 +1499,10 @@ void CPlayer_Colleague::CollAtt_Skil()
 	if (nullptr == m_pObject_Mon)
 		return;
 
- 	_double		AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
+	_double		AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
 
 	if (false == m_bCheck_Attcing)
 		Funtion_RotateBody();
-
-	// 총 스킬을 그냥 노말로 빼야 할 것 같다
-	// 손에서 총은 거리가 있을 때 바로바로 나와야 하고 
 
 	//if (true == m_bTestRendom/* && true == m_bNest_Skil_CoolTImer*/)
 	//{
@@ -1249,8 +1538,53 @@ void CPlayer_Colleague::CollAtt_Normal()
 
 	_float		fMonLenght = 0.f;
 
+
+	for (auto& Bossiter : *m_List_pMonTarget[1])
+	{
+		if (true == m_List_pMonTarget[1]->empty())
+			continue;
+
+		if (Bossiter == m_pObject_Mon && false == Bossiter->Get_Dead())
+		{
+			CTransform* BossTransCom = TARGET_TO_TRANS(Bossiter);
+			fMonLenght = V3_LENGTH(&(m_pTransformCom->Get_Pos() - BossTransCom->Get_Pos()));
+		}
+		if (Bossiter == m_pObject_Mon && true == Bossiter->Get_Dead())
+		{
+			m_pObject_Mon = Bossiter;
+			continue;
+		}
+		if (false == Bossiter->Get_Enable())
+			continue;
+		if (m_pObject_Mon != Bossiter)
+		{
+			m_pObject_Mon = Bossiter;
+			fMonLenght = V3_LENGTH(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(Bossiter)->Get_Pos()));
+		}
+
+		if (0 != fMonLenght)
+			m_bNot_AttcaingMon = false;
+		else if (0 == fMonLenght)
+		{
+			m_bNot_AttcaingMon = true;
+			if (m_pObject_Mon != Bossiter)
+			{
+				m_pObject_Mon = Bossiter;
+				fMonLenght = V3_LENGTH(&(m_pTransformCom->Get_Pos() - TARGET_TO_TRANS(Bossiter)->Get_Pos()));
+			}
+			else
+				return;
+		}
+	}
+
+	if (m_pObject_Mon == nullptr)
+		fMonLenght = 0.f;
+
 	for (auto& iter : *m_List_pMonTarget[0])
 	{
+		if (true == m_List_pMonTarget[0]->empty())
+			continue;
+
 		if (iter == m_pObject_Mon && false == iter->Get_Dead())
 		{
 			CTransform* MonTransCom = TARGET_TO_TRANS(iter);
@@ -1261,8 +1595,10 @@ void CPlayer_Colleague::CollAtt_Normal()
 			m_pObject_Mon = iter;
 			continue;
 		}
+
 		if (false == iter->Get_Enable())
 			continue;
+
 		if (m_pObject_Mon != iter)
 		{
 			m_pObject_Mon = iter;
@@ -1272,7 +1608,7 @@ void CPlayer_Colleague::CollAtt_Normal()
 
 		if (0 != fMonLenght)
 			m_bNot_AttcaingMon = false;
-		if (0 == fMonLenght)
+		else if (0 == fMonLenght)
 		{
 			m_bNot_AttcaingMon = true;
 			if (m_pObject_Mon != iter)
@@ -1288,64 +1624,45 @@ void CPlayer_Colleague::CollAtt_Normal()
 	if (nullptr == m_pObject_Mon)
 		return;
 
-	if (true == m_tObjParam.bIsAttack || true == m_tObjParam.bIsHit || 
+	if (true == m_tObjParam.bIsAttack || true == m_tObjParam.bIsHit ||
 		true == m_tObjParam.bHitAgain)
 		return;
 
 	/*if (true == m_tObjParam.bIsAttack && m_eMovetype == CPlayer_Colleague::Coll_Attack)
-		return;*/
+	return;*/
 
 	/*if (m_eMovetype == CPlayer_Colleague::Coll_Attack)
-		return;*/
+	return;*/
 
 	_double		AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
 
 	if (false == m_bCheck_Attcing /*|| false == m_bMyHiting*/)
 		Funtion_RotateBody();
 
-
+	
 	if (fMonLenght > 4.f)
 	{
 		m_eMovetype = CPlayer_Colleague::Coll_Attack;
 		m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_MonRun;
-		//if (false == m_bEventTrigger[4])
-		//{
-		//	m_bEventTrigger[4] = true;
-		//	m_fAtt_MoveSpeed_Cur = 4.f;
-		//	m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화0
-		//	m_fAni_Multiply = 0.f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
-		//}
-		//Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-		/*Colleague_SkilMovement(m_fAtt_MoveMultiply);*/
 	}
 	if (true == m_bNest_Att_CoolTimer && (7.3f >= fMonLenght && 4.f < fMonLenght))
 	{
 		// 노멀에서 총을 쏜다
 		m_eMovetype = CPlayer_Colleague::Coll_Attack;
-		//m_eColl_AttackMoment = CPlayer_Colleague::Att_Normal;
 		m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_SlowGun;
 	}
 	else if ((fMonLenght <= 4.f && fMonLenght > 3.f))
 	{
-		// 공격 중에 걷는 애니 시 트리거 사용
-		// 순수하게 걷기만 한다면 트리거 사용x
 		m_eMovetype = CPlayer_Colleague::Coll_Attack;
 		m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_MonWalk;
-		/*if (false == m_bEventTrigger[5])
-		{
-			m_bEventTrigger[5] = true;
-			m_fAtt_MoveSpeed_Cur = 2.f;
-			m_fAtt_MoveAccel_Cur = 0.f;
-			m_fAni_Multiply = 0.f;
-		}
-		Colleague_Movement(2.f, m_pTransformCom->Get_Axis(AXIS_Z));*/
-		//Colleague_SkilMovement(m_fAni_Multiply);
 	}
-	else if ((fMonLenght <= 3.f && false == m_bCheck_Attcing))
+	/*else if ((1.5f >= fMonLenght && 0.f <= fMonLenght) && )
 	{
-		// 만약 스킬의 쿨타임이 다 차있다면 스킬을 우선적으로 사용하며, 없을 경우 일반 공격을 한다
-		// 제일 우선으로 스킬 타고 그 다음에 일반 공격
-
+		m_eMovetype = CPlayer_Colleague::Coll_Attack;
+		m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_MonBackWalk;
+	}*/
+	else if ((fMonLenght <= 3.f/* && false == m_bCheck_Attcing*/))
+	{
 		if (m_iNormalAtt_Count > 4)
 			m_iNormalAtt_Count = 0;
 		
@@ -1356,23 +1673,23 @@ void CPlayer_Colleague::CollAtt_Normal()
 			*/
 			m_iCenter_Count = 0;
 		}
-		else if (m_iNormalAtt_Count == 4 && true == m_bNest_Att_CoolTimer)
+		else if (m_iNormalAtt_Count == 4)
 		{
 			// 여기서 삼단베기
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_ThreeCombo;
 		}
-		else if (m_iNormalAtt_Count == 3 && true == m_bNest_Att_CoolTimer)
+		else if (m_iNormalAtt_Count == 3)
 		{
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base4;
 		}
-		else if (m_iNormalAtt_Count == 2 && true == m_bNest_Att_CoolTimer)
+		else if (m_iNormalAtt_Count == 2)
 		{
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base3;
 		}
-		else if (m_iNormalAtt_Count == 1 && true == m_bNest_Att_CoolTimer)
+		else if (m_iNormalAtt_Count == 1)
 		{
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base2;
@@ -1382,16 +1699,6 @@ void CPlayer_Colleague::CollAtt_Normal()
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base1;
 		}
-		
-
-		/*else if (m_eMovetype == CPlayer_Colleague::Coll_Move)
-		{
-			m_iNormalAtt_Count = 0;
-			return;
-		}
-		else
-			m_iNormalAtt_Count = 0;*/
-			
 	}
 
 	if (0 == fMonLenght || 30.f < fMonLenght)
@@ -1417,7 +1724,7 @@ void CPlayer_Colleague::CollAtt_Base1()
 		if (m_pDynamicMesh->Is_Finish_Animation(0.45f) && m_eColleague_Ani == CPlayer_Colleague::One_Att)
 		{
 			Funtion_Reset_State();
-//			m_eMovetype = CPlayer_Colleague::Coll_Idle;
+			//			m_eMovetype = CPlayer_Colleague::Coll_Idle;
 			m_bChecking_MyHit = true;
 			++m_iNormalAtt_Count;
 			m_bMyHiting = false;
@@ -1426,29 +1733,29 @@ void CPlayer_Colleague::CollAtt_Base1()
 			m_bBase_Att[0] = true;
 			return;
 		}
-		else if (0.833f <= AniTime)
+		else if (1.167f <= AniTime)
 		{
 			if (false == m_bEventTrigger[0])
 			{
 				m_bEventTrigger[0] = true;
 				m_pSword->Set_Enable_Trail(false);
-			}
-		}
-		else if (0.8f <= AniTime)
-		{
-			if (false == m_bEventTrigger[1])
-			{
-				m_bEventTrigger[1] = true;
 				m_pSword->Set_Target_CanAttack(false);
 				m_pSword->Set_Enable_Record(false);
 			}
 		}
+		/*else if (0.8f <= AniTime)
+		{
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+				
+			}
+		}*/
 		else if (0.6f <= AniTime)
 		{
 			if (false == m_bEventTrigger[2])
 			{
 				m_bEventTrigger[2] = true;
-				m_pSword->Set_Target_CanAttack(true);
 				m_pSword->Set_Enable_Record(true);
 			}
 		}
@@ -1457,6 +1764,7 @@ void CPlayer_Colleague::CollAtt_Base1()
 			if (false == m_bEventTrigger[3])
 			{
 				m_bEventTrigger[3] = true;
+				m_pSword->Set_Target_CanAttack(true);
 				m_pSword->Set_Enable_Trail(true);
 			}
 		}
@@ -1470,6 +1778,7 @@ void CPlayer_Colleague::CollAtt_Base1()
 				m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
 				m_fAni_Multiply = 0.45f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
 			}
+			Funtion_RotateBody();
 			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Colleague_SkilMovement(m_fAni_Multiply);
 		}
@@ -1495,10 +1804,10 @@ void CPlayer_Colleague::CollAtt_Base2()
 	}
 	else
 	{
-		if (m_pDynamicMesh->Is_Finish_Animation(0.45f) && 
+		if (m_pDynamicMesh->Is_Finish_Animation(0.45f) &&
 			(m_eColl_Sub_AttMoment == CPlayer_Colleague::Att_Base2 && m_eColl_AttackMoment == CPlayer_Colleague::Att_Normal))
 		{
-			
+
 			Funtion_Reset_State();
 			m_eMovetype = CPlayer_Colleague::Coll_Idle;
 			++m_iNormalAtt_Count;
@@ -1509,38 +1818,40 @@ void CPlayer_Colleague::CollAtt_Base2()
 			m_bChecking_MyHit = true;
 			return;
 		}
-		else if (0.833f <= AniTime)
+		/*else if (0.833f <= AniTime)
 		{
 			if (false == m_bEventTrigger[3])
 			{
 				m_bEventTrigger[3] = true;
 				m_pSword->Set_Enable_Trail(false);
 			}
-		}
-		else if (0.3f <= AniTime)
+		}*/
+		else if (0.933f <= AniTime)
 		{
 			if (false == m_bEventTrigger[4])
 			{
 				m_bEventTrigger[4] = true;
 				m_pSword->Set_Target_CanAttack(false);
 				m_pSword->Set_Enable_Record(false);
+				m_pSword->Set_Enable_Trail(false);
 			}
 		}
-		else if (0.267f <= AniTime)
+		/*else if (0.267f <= AniTime)
 		{
 			if (false == m_bEventTrigger[5])
 			{
 				m_bEventTrigger[5] = true;
 				m_pSword->Set_Enable_Trail(true);
 			}
-		}
-		else if (0.1f <= AniTime)
+		}*/
+		else if (0.367f <= AniTime)
 		{
 			if (false == m_bEventTrigger[6])
 			{
 				m_bEventTrigger[6] = true;
 				m_pSword->Set_Target_CanAttack(true);
 				m_pSword->Set_Enable_Record(true);
+				m_pSword->Set_Enable_Trail(true);
 			}
 		}
 		if (0.f <= AniTime && 0.833f >= AniTime)
@@ -1552,6 +1863,7 @@ void CPlayer_Colleague::CollAtt_Base2()
 				m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
 				m_fAni_Multiply = 0.6f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
 			}
+			Funtion_RotateBody();
 			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Colleague_SkilMovement(m_fAni_Multiply);
 		}
@@ -1570,7 +1882,7 @@ void CPlayer_Colleague::CollAtt_Base3()
 {
 	_double		AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
 
-	
+
 	if (true == m_tObjParam.bCanAttack)
 	{
 		m_tObjParam.bCanAttack = false;
@@ -1580,7 +1892,7 @@ void CPlayer_Colleague::CollAtt_Base3()
 	{
 		if (m_pDynamicMesh->Is_Finish_Animation(0.45f) && m_eMovetype == CPlayer_Colleague::Coll_Attack)
 		{
-			
+
 			Funtion_Reset_State();
 			m_eMovetype = CPlayer_Colleague::Coll_Idle;
 			++m_iNormalAtt_Count;
@@ -1634,6 +1946,7 @@ void CPlayer_Colleague::CollAtt_Base3()
 				m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
 				m_fAni_Multiply = 0.6f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
 			}
+			Funtion_RotateBody();
 			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Colleague_SkilMovement(m_fAni_Multiply);
 		}
@@ -1651,7 +1964,7 @@ void CPlayer_Colleague::CollAtt_Base3()
 void CPlayer_Colleague::CollAtt_Base4()
 {
 	_double		AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
-	
+
 	if (true == m_tObjParam.bCanAttack)
 	{
 		m_tObjParam.bCanAttack = false;
@@ -1695,7 +2008,6 @@ void CPlayer_Colleague::CollAtt_Base4()
 				m_bEventTrigger[14] = true;
 				m_pSword->Set_Target_CanAttack(true);
 				m_pSword->Set_Enable_Record(true);
-				
 			}
 		}
 		else if (0.533f <= AniTime)
@@ -1715,6 +2027,7 @@ void CPlayer_Colleague::CollAtt_Base4()
 				m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
 				m_fAni_Multiply = 0.6f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
 			}
+			Funtion_RotateBody();
 			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Colleague_SkilMovement(m_fAni_Multiply);
 		}
@@ -1801,166 +2114,166 @@ void CPlayer_Colleague::CollAtt_ThreeCombo()		// 4번
 	//}
 	//else
 	//{
-		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.8f) && m_eColleague_Ani == CPlayer_Colleague::Ani_Trun_Center_Att_Skil)
+	if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.8f) && m_eColleague_Ani == CPlayer_Colleague::Ani_Trun_Center_Att_Skil)
+	{
+		Funtion_Reset_State();
+		m_eMovetype = CPlayer_Colleague::Coll_Idle;
+		m_bTestRendom = true;
+		m_bMyHiting = false;
+		m_bCheck_Attcing = false;
+		m_fCoolTimer_limit = 5.f;
+		m_bChecking_MyHit = true;
+		++m_iNormalAtt_Count;
+		++m_iCenter_Count;
+
+		return;
+	}
+
+	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.7f)
+	{
+		if (m_bEventTrigger[6] == false)
 		{
-			Funtion_Reset_State();
-			m_eMovetype = CPlayer_Colleague::Coll_Idle;
-			m_bTestRendom = true;
-			m_bMyHiting = false;
-			m_bCheck_Attcing = false;
-			m_fCoolTimer_limit = 5.f;
-			m_bChecking_MyHit = true;
-			++m_iNormalAtt_Count;
-			++m_iCenter_Count;
+			m_bEventTrigger[6] = true;
 
-			return;
+			m_pSword->Set_Enable_Trail(false);
 		}
+	}
 
-		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.7f)
+	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.5f)
+	{
+		if (m_bEventTrigger[5] == false)
 		{
-			if (m_bEventTrigger[6] == false)
-			{
-				m_bEventTrigger[6] = true;
+			m_bEventTrigger[5] = true;
 
-				m_pSword->Set_Enable_Trail(false);
-			}
+			m_pSword->Set_Target_CanAttack(false);
+			m_pSword->Set_Enable_Record(false);
 		}
+	}
 
-		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.5f)
+	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.167f)
+	{
+		if (m_bEventTrigger[4] == false)
 		{
-			if (m_bEventTrigger[5] == false)
-			{
-				m_bEventTrigger[5] = true;
+			m_bEventTrigger[4] = true;
 
-				m_pSword->Set_Target_CanAttack(false);
-				m_pSword->Set_Enable_Record(false);
-			}
+			m_pSword->Set_Target_CanAttack(true);
+			m_pSword->Set_Enable_Record(true);
 		}
+	}
 
-		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.167f)
+	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.0f)
+	{
+		if (m_bEventTrigger[3] == false)
 		{
-			if (m_bEventTrigger[4] == false)
-			{
-				m_bEventTrigger[4] = true;
+			m_bEventTrigger[3] = true;
 
-				m_pSword->Set_Target_CanAttack(true);
-				m_pSword->Set_Enable_Record(true);
-			}
+			m_pSword->Set_Enable_Trail(true);
 		}
+	}
 
-		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.0f)
+
+	if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.6f && m_pDynamicMesh->Get_TrackInfo().Position < 3.367f)
+	{
+		if (m_bEventTrigger[2] == false)
 		{
-			if (m_bEventTrigger[3] == false)
-			{
-				m_bEventTrigger[3] = true;
+			m_bEventTrigger[2] = true;
 
-				m_pSword->Set_Enable_Trail(true);
-			}
+			m_fAtt_MoveAccel_Cur = 0.f;
+			m_fAtt_MoveSpeed_Cur = 0.2f;
+			m_fAni_Multiply = 0.0f;
 		}
+		Colleague_SkilMovement(m_fAni_Multiply);
+		Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+	}
 
-
-		if (m_pDynamicMesh->Get_TrackInfo().Position >= 2.6f && m_pDynamicMesh->Get_TrackInfo().Position < 3.367f)
+	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.366f && m_pDynamicMesh->Get_TrackInfo().Position < 2.067f)
+	{
+		if (m_bEventTrigger[1] == false)
 		{
-			if (m_bEventTrigger[2] == false)
-			{
-				m_bEventTrigger[2] = true;
+			m_bEventTrigger[1] = true;
 
-				m_fAtt_MoveAccel_Cur = 0.f;
-				m_fAtt_MoveSpeed_Cur = 0.2f;
-				m_fAni_Multiply = 0.0f;
-			}
-			Colleague_SkilMovement(m_fAni_Multiply);
-			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			m_fAtt_MoveAccel_Cur = 0.f;
+			m_fAtt_MoveSpeed_Cur = 0.2f;
+			m_fAni_Multiply = 0.0f;
 		}
+		Colleague_SkilMovement(m_fAni_Multiply);
+		Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+	}
 
-		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.366f && m_pDynamicMesh->Get_TrackInfo().Position < 2.067f)
+	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.f && m_pDynamicMesh->Get_TrackInfo().Position < 1.366f)
+	{
+		if (m_bEventTrigger[0] == false)
 		{
-			if (m_bEventTrigger[1] == false)
-			{
-				m_bEventTrigger[1] = true;
+			m_bEventTrigger[0] = true;
 
-				m_fAtt_MoveAccel_Cur = 0.f;
-				m_fAtt_MoveSpeed_Cur = 0.2f;
-				m_fAni_Multiply = 0.0f;
-			}
-			Colleague_SkilMovement(m_fAni_Multiply);
-			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			m_fAtt_MoveAccel_Cur = 0.f;
+			m_fAtt_MoveSpeed_Cur = 4.f;
+			m_fAni_Multiply = 0.f;
 		}
+		Colleague_SkilMovement(m_fAni_Multiply);
+		Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+	}
 
-		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.f && m_pDynamicMesh->Get_TrackInfo().Position < 1.366f)
+	_v3 vEffPos = _v3(0.f, 1.5f, 0.f) + m_pTransformCom->Get_Axis(AXIS_Z) * 1.5f;
+
+	if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.333f)
+	{
+		if (m_bEventTrigger[9] == false)
 		{
-			if (m_bEventTrigger[0] == false)
-			{
-				m_bEventTrigger[0] = true;
+			m_bEventTrigger[9] = true;
 
-				m_fAtt_MoveAccel_Cur = 0.f;
-				m_fAtt_MoveSpeed_Cur = 4.f;
-				m_fAni_Multiply = 0.f;
-			}
-			Colleague_SkilMovement(m_fAni_Multiply);
-			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_ShadowAssault_ScratchBlur", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_ShadowAssault_Scratch", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Hit_Slash_0", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Hit_Slash_1", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Hit_Slash_2", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RedParticle_Explosion", 0.1f, 0.f, vEffPos, m_pTransformCom);
+
 		}
+	}
 
-		_v3 vEffPos = _v3(0.f, 1.5f, 0.f) + m_pTransformCom->Get_Axis(AXIS_Z) * 1.5f;
-
-		if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.333f)
+	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.133f)
+	{
+		if (m_bEventTrigger[8] == false)
 		{
-			if (m_bEventTrigger[9] == false)
-			{
-				m_bEventTrigger[9] = true;
+			m_bEventTrigger[8] = true;
 
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_ShadowAssault_ScratchBlur", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_ShadowAssault_Scratch", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Hit_Slash_0", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Hit_Slash_1", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Hit_Slash_2", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RedParticle_Explosion", 0.1f, 0.f, vEffPos, m_pTransformCom);
-
-			}
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.f, m_pTransformCom->Get_Pos() + _v3(0, 0.5f, 0.f), nullptr);
 		}
+	}
 
-		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.133f)
+	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.1f)
+	{
+		if (m_bEventTrigger[7] == false)
 		{
-			if (m_bEventTrigger[8] == false)
-			{
-				m_bEventTrigger[8] = true;
+			m_bEventTrigger[7] = true;
 
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_WindMesh", 0.f, m_pTransformCom->Get_Pos() + _v3(0, 0.5f, 0.f), nullptr);
-			}
+			_v3 vEffPos = m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f);
+			g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing", 0.1f, 0.f, V3_NULL, m_pTransformCom);
+			g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing", 0.1f, 0.f, V3_NULL, m_pTransformCom);
+			g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red", 0.3f, 0.f, V3_NULL, m_pTransformCom);
+			g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black", 0.3f, 0.f, V3_NULL, m_pTransformCom);
+			g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_DarkSmokeAura", 0.5f, 0.f, _v3(0, 1.1f, 0.f), m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3", 0.15f, vEffPos);
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3", 0.16f, vEffPos);
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3", 0.17f, vEffPos);
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3", 0.18f, vEffPos);
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh", 0.05f, V3_NULL, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2", 0.12f, V3_NULL, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh", 0.2f, V3_NULL, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2", 0.27f, V3_NULL, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3", 0.31f, V3_NULL, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh", 0.35f, V3_NULL, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2", 0.42f, V3_NULL, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3", 0.46f, V3_NULL, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh", 0.5f, V3_NULL, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2", 0.62f, V3_NULL, m_pTransformCom);
 		}
-
-		else if (m_pDynamicMesh->Get_TrackInfo().Position >= 0.1f)
-		{
-			if (m_bEventTrigger[7] == false)
-			{
-				m_bEventTrigger[7] = true;
-
-				_v3 vEffPos = m_pTransformCom->Get_Pos() + _v3(0.f, 1.3f, 0.f);
-				g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_BlackRing", 0.1f, 0.f, V3_NULL, m_pTransformCom);
-				g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_Floor_RedRing", 0.1f, 0.f, V3_NULL, m_pTransformCom);
-				g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Red", 0.3f, 0.f, V3_NULL, m_pTransformCom);
-				g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RotYRing_Black", 0.3f, 0.f, V3_NULL, m_pTransformCom);
-				g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_DarkSmokeAura", 0.5f, 0.f, _v3(0, 1.1f, 0.f), m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3", 0.15f, vEffPos);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3", 0.16f, vEffPos);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3", 0.17f, vEffPos);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_RedOnion_3", 0.18f, vEffPos);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh", 0.05f, V3_NULL, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2", 0.12f, V3_NULL, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh", 0.2f, V3_NULL, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2", 0.27f, V3_NULL, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3", 0.31f, V3_NULL, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh", 0.35f, V3_NULL, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2", 0.42f, V3_NULL, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_3", 0.46f, V3_NULL, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh", 0.5f, V3_NULL, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_BloodTornadeMesh_2", 0.62f, V3_NULL, m_pTransformCom);
-			}
-		}
+	}
 	//}
-	
+
 	return;
 }
 
@@ -1978,188 +2291,188 @@ void CPlayer_Colleague::CollAtt_CenterDown()		// 2번
 	//}
 	//else
 	//{
-		if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f)/* && m_eColl_Sub_AttMoment == CPlayer_Colleague::Att_CenterDown*/)
+	if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f)/* && m_eColl_Sub_AttMoment == CPlayer_Colleague::Att_CenterDown*/)
+	{
+		Funtion_Reset_State();
+		m_eMovetype = CPlayer_Colleague::Coll_Idle;
+		m_bTestRendom = true;
+		m_bMyHiting = false;
+		m_bCheck_Attcing = false;
+		m_fCoolTimer_limit = 8.f;
+		m_bChecking_MyHit = true;
+		++m_iNormalAtt_Count;
+		return;
+	}
+	else if (AniTime >= 3.233f)
+	{
+		if (m_bEventTrigger[9] == false)
 		{
-			Funtion_Reset_State();
-			m_eMovetype = CPlayer_Colleague::Coll_Idle;
-			m_bTestRendom = true;
-			m_bMyHiting = false;
-			m_bCheck_Attcing = false;
-			m_fCoolTimer_limit = 8.f;
-			m_bChecking_MyHit = true;
-			++m_iNormalAtt_Count;
-			return;
+			m_bEventTrigger[9] = true;
+
+			m_pSword->Set_Enable_Trail(false);
 		}
-		else if (AniTime >= 3.233f)
-		{
-			if (m_bEventTrigger[9] == false)
-			{
-				m_bEventTrigger[9] = true;
+	}
 
-				m_pSword->Set_Enable_Trail(false);
-			}
+	else if (AniTime >= 3.033f)
+	{
+		if (m_bEventTrigger[8] == false)
+		{
+			m_bEventTrigger[8] = true;
+
+			m_pSword->Set_Target_CanAttack(false);
+			m_pSword->Set_Enable_Record(false);
 		}
+	}
 
-		else if (AniTime >= 3.033f)
+	else if (AniTime >= 2.887f)
+	{
+		if (m_bEventTrigger[7] == false)
 		{
-			if (m_bEventTrigger[8] == false)
-			{
-				m_bEventTrigger[8] = true;
+			m_bEventTrigger[7] = true;
 
-				m_pSword->Set_Target_CanAttack(false);
-				m_pSword->Set_Enable_Record(false);
-			}
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_Ring_Hor", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_Ring_Ver", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_RedCircle_Flash", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f, vEffPos, m_pTransformCom);
 		}
+	}
 
-		else if (AniTime >= 2.887f)
+	else if (AniTime >= 2.867f)
+	{
+		if (m_bEventTrigger[6] == false)
 		{
-			if (m_bEventTrigger[7] == false)
-			{
-				m_bEventTrigger[7] = true;
+			m_bEventTrigger[6] = true;
 
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_Ring_Hor", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_Ring_Ver", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_RedCircle_Flash", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f, vEffPos, m_pTransformCom);
-			}
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Ver", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Ver", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Ver", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Hit_Slash_0", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Hit_Slash_1", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Hit_Slash_2", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos, m_pTransformCom);
 		}
+	}
 
-		else if (AniTime >= 2.867f)
+	else if (AniTime >= 2.767f)
+	{
+		if (m_bEventTrigger[5] == false)
 		{
-			if (m_bEventTrigger[6] == false)
-			{
-				m_bEventTrigger[6] = true;
+			m_bEventTrigger[5] = true;
 
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Ver", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Ver", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Ver", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Hit_Slash_0", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Hit_Slash_1", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Hit_Slash_2", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos, m_pTransformCom);
-			}
+			m_pSword->Set_Target_CanAttack(true);
+			m_pSword->Set_Enable_Record(true);
 		}
+	}
 
-		else if (AniTime >= 2.767f)
+	else if (AniTime >= 2.6f)
+	{
+		if (m_bEventTrigger[4] == false)
 		{
-			if (m_bEventTrigger[5] == false)
-			{
-				m_bEventTrigger[5] = true;
+			m_bEventTrigger[4] = true;
 
-				m_pSword->Set_Target_CanAttack(true);
-				m_pSword->Set_Enable_Record(true);
-			}
+			m_pSword->Set_Enable_Trail(true);
 		}
+	}
 
-		else if (AniTime >= 2.6f)
+	else if (AniTime >= 1.967f)
+	{
+		if (m_bEventTrigger[3] == false)
 		{
-			if (m_bEventTrigger[4] == false)
-			{
-				m_bEventTrigger[4] = true;
+			m_bEventTrigger[3] = true;
 
-				m_pSword->Set_Enable_Trail(true);
-			}
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Hor", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Hit_Slash_0", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Hit_Slash_1", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Hit_Slash_2", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos, m_pTransformCom);
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f, vEffPos, m_pTransformCom);
 		}
+	}
 
-		else if (AniTime >= 1.967f)
+
+	if (AniTime >= 2.867f && AniTime < 3.333f)
+	{
+		if (m_bEventTrigger[12] == false)
 		{
-			if (m_bEventTrigger[3] == false)
-			{
-				m_bEventTrigger[3] = true;
+			m_bEventTrigger[12] = true;
 
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Hor", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_Scratch_Hor", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Hit_Slash_0", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Hit_Slash_1", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Hit_Slash_2", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos, m_pTransformCom);
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_RedParticle_Explosion", 0.f, vEffPos, m_pTransformCom);
-			}
+			m_fAtt_MoveSpeed_Cur = 1.f;
+			m_fAtt_MoveAccel_Cur = 0.f;
+
+			m_fAni_Multiply = 1.f;
 		}
+		Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+		Colleague_SkilMovement(m_fAni_Multiply);
+	}
 
-
-		if (AniTime >= 2.867f && AniTime < 3.333f)
+	else if (AniTime >= 2.f)
+	{
+		if (m_bEventTrigger[2] == false)
 		{
-			if (m_bEventTrigger[12] == false)
-			{
-				m_bEventTrigger[12] = true;
+			m_bEventTrigger[2] = true;
 
-				m_fAtt_MoveSpeed_Cur = 1.f;
-				m_fAtt_MoveAccel_Cur = 0.f;
+			m_tObjParam.bInvisible = false;
+			m_pSword->Set_Invisible(false);
 
-				m_fAni_Multiply = 1.f;
-			}
-			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-			Colleague_SkilMovement(m_fAni_Multiply);
+			m_fAni_Multiply = 1.f;
 		}
+	}
 
-		else if (AniTime >= 2.f)
+	else if (AniTime >= 1.9f)
+	{
+		if (m_bEventTrigger[10] == false)
 		{
-			if (m_bEventTrigger[2] == false)
-			{
-				m_bEventTrigger[2] = true;
+			m_bEventTrigger[10] = true;
 
-				m_tObjParam.bInvisible = false;
-				m_pSword->Set_Invisible(false);
+			_v3 vEffPos_Dis = _v3(0.f, 1.5f, 0.f) - m_pTransformCom->Get_Axis(AXIS_Z) * 1.f;
+			m_tObjParam.bCanHit = true;
 
-				m_fAni_Multiply = 1.f;
-			}
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle", 0.f, vEffPos_Dis, m_pTransformCom);
 		}
+	}
 
-		else if (AniTime >= 1.9f)
+	if (AniTime >= 1.167f && AniTime < 2.1f)
+	{
+		if (m_bEventTrigger[0] == false)
 		{
-			if (m_bEventTrigger[10] == false)
-			{
-				m_bEventTrigger[10] = true;
+			m_bEventTrigger[0] = true;
 
-				_v3 vEffPos_Dis = _v3(0.f, 1.5f, 0.f) - m_pTransformCom->Get_Axis(AXIS_Z) * 1.f;
-				m_tObjParam.bCanHit = true;
+			m_fAtt_MoveSpeed_Cur = 30.f;
+			m_fAtt_MoveAccel_Cur = 0.f;
 
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle", 0.f, vEffPos_Dis, m_pTransformCom);
-			}
-		}
+			m_fAni_Multiply = 1.5f;
 
-		if (AniTime >= 1.167f && AniTime < 2.1f)
-		{
-			if (m_bEventTrigger[0] == false)
-			{
-				m_bEventTrigger[0] = true;
-
-				m_fAtt_MoveSpeed_Cur = 30.f;
-				m_fAtt_MoveAccel_Cur = 0.f;
-
-				m_fAni_Multiply = 1.5f;
-
-				m_tObjParam.bInvisible = true;
-				m_pSword->Set_Invisible(true);
-			}
-
-			if (m_bEventTrigger[1] == false)
-			{
-				m_bEventTrigger[1] = true;
-
-				_v3 vEffPos_Dis = _v3(0.f, 1.5f, 0.f) + m_pTransformCom->Get_Axis(AXIS_Z) * 1.5f;
-				m_tObjParam.bCanHit = false;
-
-				g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle", 0.f, vEffPos_Dis, m_pTransformCom);
-			}
-			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-			Colleague_SkilMovement(m_fAni_Multiply);
+			m_tObjParam.bInvisible = true;
+			m_pSword->Set_Invisible(true);
 		}
 
-		else if (m_pDynamicMesh->Get_TrackInfo().Position > 0.5f)
+		if (m_bEventTrigger[1] == false)
 		{
-			if (m_bEventTrigger[11] == false)
-			{
-				m_bEventTrigger[11] = true;
+			m_bEventTrigger[1] = true;
 
-				// 디졸브 잠깐 빼둠
-				//Start_Dissolve(1.f, false);
-			}
+			_v3 vEffPos_Dis = _v3(0.f, 1.5f, 0.f) + m_pTransformCom->Get_Axis(AXIS_Z) * 1.5f;
+			m_tObjParam.bCanHit = false;
+
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle", 0.f, vEffPos_Dis, m_pTransformCom);
 		}
+		Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+		Colleague_SkilMovement(m_fAni_Multiply);
+	}
+
+	else if (m_pDynamicMesh->Get_TrackInfo().Position > 0.5f)
+	{
+		if (m_bEventTrigger[11] == false)
+		{
+			m_bEventTrigger[11] = true;
+
+			// 디졸브 잠깐 빼둠
+			//Start_Dissolve(1.f, false);
+		}
+	}
 	//}
 	return;
 }
@@ -2214,6 +2527,8 @@ void CPlayer_Colleague::CollAtt_SlowGun()
 		{
 			if (false == m_bEventTrigger[2])
 			{
+				m_bEventTrigger[2] = true;
+
 				_mat matBone = *m_matBone[Bone_LHand] * m_pTransformCom->Get_WorldMat();
 				memcpy(&vBirth, &matBone._41, sizeof(_v3));
 
@@ -2254,12 +2569,10 @@ void CPlayer_Colleague::CollHeal_ForMe()
 			m_bEventTrigger[0] = true;
 			m_eMovetype = CPlayer_Colleague::Coll_Heal;
 			m_eColl_HealMoment = CPlayer_Colleague::My_Heal;
-			//m_eColleague_Ani = CPlayer_Colleague::Ani_Heal;
 			m_bCheck_HealMyHp = true;
 			m_tObjParam.fHp_Cur += m_tObjParam.fHp_Max / 0.8f;
 			if (m_tObjParam.fHp_Cur > m_tObjParam.fHp_Max)
 				m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
-			//m_tObjParam`.fHp_Cur += (m_tObjParam.fHp_Cur / 2.f);
 			--m_iMyHeal_Count;
 		}
 	}
@@ -2301,7 +2614,7 @@ void CPlayer_Colleague::CollHeal_ForPlayer()
 		}
 	}
 
-	
+
 }
 
 void CPlayer_Colleague::Funtion_RotateBody()
@@ -2316,11 +2629,43 @@ void CPlayer_Colleague::Funtion_RotateBody()
 	if (false == m_bStart_Fighting)
 		m_bLook_Monster = false;
 
-// 	if (true == m_tObjParam.bIsAttack)
-// 		return;
+	// 	if (true == m_tObjParam.bIsAttack)
+	// 		return;
+
+	for (auto& Bossiter : *m_List_pMonTarget[1])
+	{
+		if (true == (*m_List_pMonTarget[1]).empty())
+			continue;
+
+		if (Bossiter == m_pObject_Mon && true == Bossiter->Get_Dead())
+		{
+			m_pObject_Mon = nullptr;
+			continue;
+		}
+
+		if (m_List_pMonTarget[1]->empty())
+			continue;
+
+		if (Bossiter == m_pObject_Mon)
+		{
+			if (true == m_bStart_Fighting && true == m_bNear_byMonster)		// 전투 시 시선을 몬스터로 고정
+			{
+				m_bLook_Monster = true;
+				fTargetAngle = m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(Bossiter)->Get_Pos());
+			}
+			else
+			{
+				m_bLook_Monster = false;
+				fTargetAngle = m_pTransformCom->Chase_Target_Angle(&m_pTargetTransformCom->Get_Pos());	// 없으면 플레이어
+			}
+		}
+	}
 
 	for (auto& iter : *m_List_pMonTarget[0])
 	{
+		if (true == (*m_List_pMonTarget[0]).empty())
+			continue;
+
 		if (iter == m_pObject_Mon && true == iter->Get_Dead())
 		{
 			m_pObject_Mon = nullptr;
@@ -2344,17 +2689,6 @@ void CPlayer_Colleague::Funtion_RotateBody()
 			}
 		}
 	}
-
-	/*if (!((*m_List_pMonTarget[1]).empty()))
-	{
-		for (auto& Boss_iter : *m_List_pMonTarget[1])
-		{
-
-		}
-	}*/
-
-	/*if (nullptr == m_pObject_Mon)
-	return;*/
 
 	if (false == m_bLook_Monster)
 		fTargetAngle = m_pTransformCom->Chase_Target_Angle(&m_pTargetTransformCom->Get_Pos());	// 없으면 플레이어
@@ -2591,7 +2925,7 @@ _bool CPlayer_Colleague::Function_Checking_AttCoolTime(_float fTImer)
 			m_bNest_Att_CoolTimer = true;
 			m_fCoolTImer_NomalAtt = 0.f;
 		}
-			
+
 		else
 			m_bNest_Att_CoolTimer = false;
 	}

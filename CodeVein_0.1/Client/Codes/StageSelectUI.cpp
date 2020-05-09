@@ -53,16 +53,20 @@ _int CStageSelectUI::Update_GameObject(_double TimeDelta)
 	LOOP(5)
 		m_vecStageUI[i]->Set_Active(m_bIsActive);
 
+	CTransform* pTargetTrans = TARGET_TO_TRANS(m_pTarget);
 	
-	m_pTransformCom->Set_Angle(TARGET_TO_TRANS(m_pTarget)->Get_Angle());
-	_v3 vLookZ = TARGET_TO_TRANS(m_pTarget)->Get_Axis(AXIS_Z);
-	_v3 vLookX = TARGET_TO_TRANS(m_pTarget)->Get_Axis(AXIS_X);
-	m_pTransformCom->Set_Pos(TARGET_TO_TRANS(m_pTarget)->Get_Pos() + (*V3_NORMAL_SELF(&vLookZ) + _v3(0.f, 2.f, 0.f) - *V3_NORMAL_SELF(&vLookX) * _float(m_iSelectIndex) * 1.8f));
-	
+	m_pTransformCom->Set_Angle(pTargetTrans->Get_Angle());
+	_v3 vLook = pTargetTrans->Get_Axis(AXIS_Z);
+	_v3 vRight = pTargetTrans->Get_Axis(AXIS_X);
 
+	V3_NORMAL_SELF(&vLook);
+	V3_NORMAL_SELF(&vRight);
+
+	m_pTransformCom->Set_Pos(pTargetTrans->Get_Pos() + ((vLook * 1.f) + (WORLD_UP * 2.5f) - (vRight * _float(m_iSelectIndex) * 1.8f)));
+	
 	for (_uint i = 0; i < m_vecStageUI.size(); ++i)
 	{
-		TARGET_TO_TRANS(m_vecStageUI[i])->Set_Pos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vLookX) * 1.8f * _float(i));
+		TARGET_TO_TRANS(m_vecStageUI[i])->Set_Pos(m_pTransformCom->Get_Pos() + *V3_NORMAL_SELF(&vRight) * 1.8f * _float(i));
 		TARGET_TO_TRANS(m_vecStageUI[i])->Set_Angle(m_pTransformCom->Get_Angle());
 	}
 	

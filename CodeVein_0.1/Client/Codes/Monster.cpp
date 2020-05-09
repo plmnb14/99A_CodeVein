@@ -63,7 +63,7 @@ void CMonster::Set_Target_Auto(_bool Ransdom_Aggro)
 	CGameObject* pColleaue = nullptr;
 	CGameObject* pPlayer = nullptr;
 
-	auto& ColleagueContainer = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_MORTAL);
+	auto& ColleagueContainer = g_pManagement->Get_GameObjectList(L"Layer_Colleague", SCENE_STAGE);
 	auto& PlayerContainer = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
 
 	if (!ColleagueContainer.empty())
@@ -122,7 +122,7 @@ void CMonster::Set_Target_Auto(_bool Ransdom_Aggro)
 
 				// 어그로 시간, 랜덤 Offset 초기화
 				m_fAggroTime = 0.f;
-				m_fOffsetAggroTime = _float(CALC::Random_Num_Double(-2, 2));
+				m_fOffsetAggroTime = _float(CALC::Random_Num_Double(-3, 3));
 			}
 		}
 

@@ -41,6 +41,13 @@ void COrthoEffect::Set_UV_Speed(_float fX, _float fY)
 	m_fUV_Speed_Y = fY;
 }
 
+void COrthoEffect::Set_Mask(const _tchar* _Name, _int _iMaskIdx)
+{
+	Change_MaskTexture(_Name);
+
+	m_iMaskIdx = _iMaskIdx;
+}
+
 HRESULT COrthoEffect::SetUp_ConstantTable_Instance(CShader* pShader)
 {
 	_float fMaskIndex = 0.f;
@@ -95,6 +102,8 @@ HRESULT COrthoEffect::Ready_GameObject(void* pArg)
 
 	//Safe_AddRef(m_pManagement);
 
+	m_iLayer = 9;
+
 	return NOERROR;
 }
 
@@ -139,7 +148,7 @@ _int COrthoEffect::Update_GameObject(_double TimeDelta)
 	if (m_bIsDead || m_fCreateDelay > 0.f)
 		return S_OK;
 
-	RENDERID eGroup = RENDERID::RENDER_UI;
+	RENDERID eGroup = RENDERID::RENDER_EFFECT;
 
 	if (FAILED(m_pRendererCom->Add_RenderList(eGroup, this)))
 		return E_FAIL;
@@ -633,15 +642,19 @@ HRESULT COrthoEffect::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_LinePoint", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Ortho_Title", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_GradientTexture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Gradient", L"Com_GradientTexture", (CComponent**)&m_pGradientTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Ortho_Title", L"Com_GradientTexture", (CComponent**)&m_pGradientTextureCom)))
 		return E_FAIL;
 
 	// For.Com_ColorTexture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Colors", L"Com_ColorTexture", (CComponent**)&m_pColorTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Ortho_Title", L"Com_ColorTexture", (CComponent**)&m_pColorTextureCom)))
+		return E_FAIL;
+
+	// For.Com_MaskTexture
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Ortho_Title", L"Com_MaskTexture", (CComponent**)&m_pMaskTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -703,6 +716,11 @@ HRESULT COrthoEffect::SetUp_ConstantTable(CShader* pShader)
 	if (FAILED(pShader->Set_Value("g_fDissolve", &m_fDissolve, sizeof(_float))))
 		return E_FAIL;
 
+	// 임시
+	_bool bTitle = true;
+	if (FAILED(pShader->Set_Bool("g_bTitle", bTitle)))
+		return E_FAIL;
+
 	_float fMaskIndex = 0.f;
 	if (FAILED(pShader->Set_Bool("g_bUseMaskTex", (m_pInfo->fMaskIndex != -1.f))))
 		return E_FAIL;
@@ -715,6 +733,8 @@ HRESULT COrthoEffect::SetUp_ConstantTable(CShader* pShader)
 	if (FAILED(m_pGradientTextureCom->SetUp_OnShader("g_GradientTexture", pShader, _uint(fMaskIndex))))
 		return E_FAIL;
 	if (FAILED(m_pColorTextureCom->SetUp_OnShader("g_ColorTexture", pShader, _uint(m_pInfo->fColorIndex))))
+		return E_FAIL;
+	if (FAILED(m_pMaskTextureCom->SetUp_OnShader("g_MaskTexture", pShader, _uint(m_iMaskIdx))))
 		return E_FAIL;
 
 	Safe_Release(pManagement);
@@ -744,6 +764,11 @@ void COrthoEffect::Change_GradientTexture(const _tchar * _Name)
 	// Release 한 컴포넌트에 새로이 Clone 받음.
 	iter->second = m_pGradientTextureCom = static_cast<CTexture*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, _Name));
 	Safe_AddRef(iter->second);
+
+	if (!iter->second)
+	{
+		Change_GradientTexture(L"Tex_Ortho_Title");
+	}
 }
 
 void COrthoEffect::Change_ColorTexture(const _tchar* _Name)
@@ -755,6 +780,27 @@ void COrthoEffect::Change_ColorTexture(const _tchar* _Name)
 
 	iter->second = m_pColorTextureCom = static_cast<CTexture*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, _Name));
 	Safe_AddRef(iter->second);
+
+	if (!iter->second)
+	{
+		Change_ColorTexture(L"Tex_Ortho_Title");
+	}
+}
+
+void COrthoEffect::Change_MaskTexture(const _tchar * _Name)
+{
+	auto& iter = m_pmapComponents.find(L"Com_MaskTexture");
+
+	Safe_Release(m_pMaskTextureCom);
+	Safe_Release(iter->second);
+
+	iter->second = m_pMaskTextureCom = static_cast<CTexture*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, _Name));
+	Safe_AddRef(iter->second);
+
+	if (!iter->second)
+	{
+		Change_MaskTexture(L"Tex_Ortho_Title");
+	}
 }
 
 COrthoEffect* COrthoEffect::Create(LPDIRECT3DDEVICE9 pGraphic_Device)
@@ -807,8 +853,9 @@ void COrthoEffect::Free()
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pColorTextureCom);
 	Safe_Release(m_pGradientTextureCom);
+	Safe_Release(m_pMaskTextureCom);
 	Safe_Release(m_pRendererCom);
-
+	
 	//Safe_Release(m_pManagement);
 
 	CEffect::Free();

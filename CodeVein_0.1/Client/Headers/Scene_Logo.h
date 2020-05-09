@@ -4,6 +4,8 @@
 #include "Scene.h"
 #include "Loading.h"
 
+#include "OrthoEffect.h"
+
 BEGIN(Client)
 class CLogoBtn;
 class CLoadingScreen;
@@ -32,10 +34,16 @@ private:
 	virtual void Update_DebugStage_Console();
 
 private:
+	Engine::EFFECT_INFO * Read_EffectData(const _tchar * szPath);
+
+private:
 	CLoading*			m_pLoading = nullptr;
 	CLogoBtn*			m_pLogoBtn = nullptr;
 	CLoadingScreen*		m_pLoadingScreen = nullptr;
 	_bool				m_bIsChangeStage = false;
+	COrthoEffect*		m_pGlitterEffect_0 = nullptr;
+	COrthoEffect*		m_pGlitterEffect_1 = nullptr;
+	COrthoEffect*		m_pTitleBG = nullptr;
 
 private:
 	DEBUG_SceneChange   m_eSceneChange = Stage_Training;
