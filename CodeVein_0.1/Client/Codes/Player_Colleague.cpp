@@ -103,7 +103,7 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 	cout << "상태: " << m_eMovetype << " | " << "0 - Idle, 1 - Move, 3 - Att" << endl;
 	cout << "공격상태: " << m_eColl_Sub_AttMoment << " | " << "Ani : " << m_eColleague_Ani << endl;*/
 
-	cout << "공격상태: " << m_eColl_DodgeMoment << " | " << m_iNormalAtt_Count << endl;
+	//cout << "공격상태: " << m_eColl_DodgeMoment << " | " << m_iNormalAtt_Count << endl;
 
 	if (m_eMovetype != CPlayer_Colleague::Coll_Dead)
 		Enter_Collision();
@@ -431,7 +431,14 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 
 	if (fPlayerLength > 30.f)
 	{
-		m_pTransformCom->Set_Pos(_v3(m_pTargetTransformCom->Get_Pos().x - 3.f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 2.f));
+		_v3 vPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 2.f);
+		m_pTransformCom->Set_Pos(vPos);
+
+		g_pManagement->Create_Effect_Delay(L"Colleague_Teleport_Line_Particle_0", 0.f, vPos, nullptr);
+		g_pManagement->Create_Effect_Delay(L"Colleague_Teleport_Line_Particle_1", 0.f, vPos, nullptr);
+		g_pManagement->Create_Effect_Delay(L"Colleague_Teleport_Line_Particle_2", 0.f, vPos, nullptr);
+		g_pManagement->Create_Effect_Delay(L"Colleague_Teleport_Flash_Particle_0", 0.f, vPos, nullptr);
+		//g_pManagement->Create_Effect_Delay(L"Colleague_Teleport_Smoke_0", 0.f, vPos, nullptr);
 	}
 
 	// 몬스터 or 보스 리스트가 비어있거나 Enable 이면 탐색 종료
@@ -723,7 +730,7 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 			fAngle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(m_pObject_Mon)->Get_Pos()));
 
 		// 전투 상태일 때, 10초마다 구르게
-		cout << "데굴데굴" << endl;
+		//cout << "데굴데굴" << endl;
 		m_eMovetype = CPlayer_Colleague::Coll_Dodge;
 
 		if (0.f <= fAngle && 30.f > fAngle)
@@ -2215,7 +2222,7 @@ void CPlayer_Colleague::CollAtt_ThreeCombo()		// 4번
 		if (m_bEventTrigger[9] == false)
 		{
 			m_bEventTrigger[9] = true;
-
+			cout << "SKILL EFFECT CHECK _ 2218" << endl;
 			g_pManagement->Create_Effect_Delay(L"Player_Skill_ShadowAssault_ScratchBlur", 0.f, vEffPos, m_pTransformCom);
 			g_pManagement->Create_Effect_Delay(L"Player_Skill_ShadowAssault_Scratch", 0.f, vEffPos, m_pTransformCom);
 			g_pManagement->Create_Effect_Delay(L"Hit_Slash_0", 0.f, vEffPos, m_pTransformCom);
