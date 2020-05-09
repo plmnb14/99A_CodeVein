@@ -180,7 +180,6 @@
     <ClInclude Include="..\Headers\BloodCodeSlot.h" />
     <ClInclude Include="..\Headers\BloodCodeUI.h" />
     <ClInclude Include="..\Headers\BloodCode_Icon.h" />
-    <ClInclude Include="..\Headers\BloodCode_Inven.h" />
     <ClInclude Include="..\Headers\BloodSkillCursor.h" />
     <ClInclude Include="..\Headers\BloodSkillSlot.h" />
     <ClInclude Include="..\Headers\BossDecoUI.h" />
@@ -222,9 +221,8 @@
     <ClInclude Include="..\Headers\Expendables.h" />
     <ClInclude Include="..\Headers\Expendables_Inven.h" />
     <ClInclude Include="..\Headers\Expendables_Slot.h" />
+    <ClInclude Include="..\Headers\ExplainSkillUI.h" />
     <ClInclude Include="..\Headers\ExpUI.h" />
-    <ClInclude Include="..\Headers\FighterBlood.h" />
-    <ClInclude Include="..\Headers\FighterReleaseUI.h" />
     <ClInclude Include="..\Headers\FireBoy.h" />
     <ClInclude Include="..\Headers\FireBullet.h" />
     <ClInclude Include="..\Headers\FireFlame.h" />
@@ -237,6 +235,7 @@
     <ClInclude Include="..\Headers\Monkey.h" />
     <ClInclude Include="..\Headers\MonkeyBullet.h" />
     <ClInclude Include="..\Headers\Monster.h" />
+    <ClInclude Include="..\Headers\NoticeUI.h" />
     <ClInclude Include="..\Headers\Pet_Bullet.h" />
     <ClInclude Include="..\Headers\Pet_Inven.h" />
     <ClInclude Include="..\Headers\Pet_PoisonButterFly.h" />
@@ -277,7 +276,6 @@
     <ClInclude Include="..\Headers\PoisonRotationBullet.h" />
     <ClInclude Include="..\Headers\PoisonTornado.h" />
     <ClInclude Include="..\Headers\Flag.h" />
-    <ClInclude Include="..\Headers\PrometheusBlood.h" />
     <ClInclude Include="..\Headers\QueensKnight.h" />
     <ClInclude Include="..\Headers\QuickSlot.h" />
     <ClInclude Include="..\Headers\ReleaseOption.h" />
@@ -348,7 +346,6 @@
     <ClCompile Include="..\Codes\BloodCodeSlot.cpp" />
     <ClCompile Include="..\Codes\BloodCodeUI.cpp" />
     <ClCompile Include="..\Codes\BloodCode_Icon.cpp" />
-    <ClCompile Include="..\Codes\BloodCode_Inven.cpp" />
     <ClCompile Include="..\Codes\BloodSkillCursor.cpp" />
     <ClCompile Include="..\Codes\BloodSkillSlot.cpp" />
     <ClCompile Include="..\Codes\BossDecoUI.cpp" />
@@ -389,9 +386,8 @@
     <ClCompile Include="..\Codes\Expendables.cpp" />
     <ClCompile Include="..\Codes\Expendables_Inven.cpp" />
     <ClCompile Include="..\Codes\Expendables_Slot.cpp" />
+    <ClCompile Include="..\Codes\ExplainSkillUI.cpp" />
     <ClCompile Include="..\Codes\ExpUI.cpp" />
-    <ClCompile Include="..\Codes\FighterBlood.cpp" />
-    <ClCompile Include="..\Codes\FighterReleaseUI.cpp" />
     <ClCompile Include="..\Codes\FireBoy.cpp" />
     <ClCompile Include="..\Codes\FireBullet.cpp" />
     <ClCompile Include="..\Codes\FireFlame.cpp" />
@@ -399,6 +395,7 @@
     <ClCompile Include="..\Codes\FireHandBall.cpp" />
     <ClCompile Include="..\Codes\FireSphere.cpp" />
     <ClCompile Include="..\Codes\FireTornadoCol.cpp" />
+    <ClCompile Include="..\Codes\NoticeUI.cpp" />
     <ClCompile Include="..\Codes\Hunter.cpp" />
     <ClCompile Include="..\Codes\HunterBullet.cpp" />
     <ClCompile Include="..\Codes\Monkey.cpp" />
@@ -443,7 +440,6 @@
     <ClCompile Include="..\Codes\PoisonRotationBullet.cpp" />
     <ClCompile Include="..\Codes\PoisonTornado.cpp" />
     <ClCompile Include="..\Codes\Flag.cpp" />
-    <ClCompile Include="..\Codes\PrometheusBlood.cpp" />
     <ClCompile Include="..\Codes\QueensKnight.cpp" />
     <ClCompile Include="..\Codes\QuickSlot.cpp" />
     <ClCompile Include="..\Codes\ReleaseOption.cpp" />

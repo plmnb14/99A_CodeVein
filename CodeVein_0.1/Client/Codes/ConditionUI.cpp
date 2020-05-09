@@ -79,11 +79,6 @@ _int CConditionUI::Update_GameObject(_double TimeDelta)
 	{
 		m_iIndex = 2;
 		m_fMaxValue = 100.f;
-
-		if (g_pInput_Device->Get_DIKeyState(DIK_Y))
-			m_fCurValue += (_float)TimeDelta * 20.f;
-		if (g_pInput_Device->Get_DIKeyState(DIK_U))
-			m_fCurValue -= (_float)TimeDelta * 20.f;
 	}		
 		break;
 	case CONDITION_ATT:
@@ -102,7 +97,7 @@ _int CConditionUI::Update_GameObject(_double TimeDelta)
 	}
 
 	m_pFontValue->Set_UI_Pos(m_fPosX + 120.f, m_fPosY);
-	m_pFontValue->Set_UI_Size(10.f, 10.f);
+	m_pFontValue->Set_UI_Size(10.4f, 20.f);
 	return NO_EVENT;
 }
 

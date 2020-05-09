@@ -31,7 +31,7 @@ HRESULT CExpUI::Ready_GameObject(void * pArg)
 
 	m_pLevelFont = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
 	m_pLevelFont->Set_UI_Pos(m_fPosX, m_fPosY);
-	m_pLevelFont->Set_UI_Size(m_fSizeX * 0.5f, m_fSizeY * 0.5f);
+	m_pLevelFont->Set_UI_Size(7.8f, 15.f);
 	m_pLevelFont->Set_ViewZ(m_fViewZ - 0.1f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pLevelFont, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 

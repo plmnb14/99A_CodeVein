@@ -189,8 +189,8 @@ void CQuickSlot::SetUp_Default()
 	pDesc->fSizeX = 20.f;
 	pDesc->fSizeY = 20.f;
 	pDesc->iIndex = 5;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ButtonUI", SCENE_MORTAL, L"Layer_DecoUI", pDesc);
-	m_vecDecoUI.push_back(static_cast<CButton_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_DecoUI", SCENE_MORTAL)));
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ButtonUI", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
+	m_vecDecoUI.push_back(static_cast<CButton_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL)));
 
 	pDesc = new CUI::UI_DESC;
 	pDesc->fPosX = m_fPosX + 30.f;
@@ -198,8 +198,8 @@ void CQuickSlot::SetUp_Default()
 	pDesc->fSizeX = 20.f;
 	pDesc->fSizeY = 20.f;
 	pDesc->iIndex = 6;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ButtonUI", SCENE_MORTAL, L"Layer_DecoUI", pDesc);
-	m_vecDecoUI.push_back(static_cast<CButton_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_DecoUI", SCENE_MORTAL)));
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ButtonUI", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
+	m_vecDecoUI.push_back(static_cast<CButton_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL)));
 	//==============================================
 
 	// Ä«¿îÆ® UI
@@ -209,8 +209,8 @@ void CQuickSlot::SetUp_Default()
 	pDesc->fSizeX = 20.f;
 	pDesc->fSizeY = 20.f;
 	pDesc->iIndex = 0;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NumberUI", SCENE_MORTAL, L"Layer_NumberUI", pDesc);
-	m_pNumberUI = static_cast<CNumberUI*>(g_pManagement->Get_GameObjectBack(L"Layer_NumberUI", SCENE_MORTAL));
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NumberUI", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
+	m_pNumberUI = static_cast<CNumberUI*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
 	m_pNumberUI->Set_Active(true);
 }
 

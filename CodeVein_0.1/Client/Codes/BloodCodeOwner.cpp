@@ -39,6 +39,14 @@ _int CBloodCodeOwner::Update_GameObject(_double TimeDelta)
 
 	Set_BloodCodeOwner();
 	
+	if (m_bIsActive &&
+		1.f > m_fAlpha)
+		m_fAlpha += _float(TimeDelta) * 1.2f;
+
+	if (!m_bIsActive &&
+		0.f < m_fAlpha)
+		m_fAlpha -= _float(TimeDelta) * 1.2f;
+
 	return NO_EVENT;
 }
 
@@ -55,7 +63,7 @@ _int CBloodCodeOwner::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CBloodCodeOwner::Render_GameObject()
 {
-	if (!m_bIsActive)
+	if (!m_bIsActive && m_fAlpha <= 0.f)
 		return NOERROR;
 
 	if (nullptr == m_pShaderCom ||
@@ -66,7 +74,7 @@ HRESULT CBloodCodeOwner::Render_GameObject()
 		return E_FAIL;
 
 	m_pShaderCom->Begin_Shader();
-	m_pShaderCom->Begin_Pass(6);
+	m_pShaderCom->Begin_Pass(3);
 
 	m_pBufferCom->Render_VIBuffer();
 	m_pShaderCom->End_Pass();
@@ -107,12 +115,12 @@ HRESULT CBloodCodeOwner::SetUp_ConstantTable(_uint iIndex)
 
 	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
-
 	if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
-
+	if (FAILED(m_pShaderCom->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
+		return E_FAIL;
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, _uint(iIndex))))
 		return E_FAIL;
 

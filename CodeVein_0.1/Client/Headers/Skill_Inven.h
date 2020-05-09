@@ -6,6 +6,7 @@
 BEGIN(Client)
 class CSkillSlot;
 class CInventory_Icon;
+class CExplainSkillUI;
 class CSkill_Inven final : public CUI
 {
 public:
@@ -31,6 +32,8 @@ private:
 	HRESULT					SetUp_ConstantTable();
 	void					SetUp_Default();
 	void					Click_SubUI();
+	void					Search_Regist_Skill();
+	void					Reset_Select_Slot();
 
 public:
 	void Add_Skill_Data(Skill_ID eSkillID);
@@ -47,6 +50,7 @@ private:
 	_uint					m_iRegistIdx = 0;
 	vector<Skill_ID>		m_vecData;
 	CInventory_Icon*		m_pExitIcon = nullptr;
+	CExplainSkillUI*				m_pExplainUI = nullptr;
 
 public:
 	static CSkill_Inven*		Create(_Device pGraphic_Device);

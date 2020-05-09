@@ -43,42 +43,45 @@ _int CActive_Icon::Update_GameObject(_double TimeDelta)
 	m_fCurTime += _float(TimeDelta);
 	m_fPercentage = m_fCurTime / m_fMaxTime;
 
-	switch (m_Skill_Index)
+	switch (m_eSkillID)
 	{
-	case Skill_OneHand_Active_01:
+	case Dragon_Lunge:
 		m_iIndex = 1;
 		break;
-	case Skill_OneHand_Active_02:
+	case Vanishing_Hollow:
 		m_iIndex = 2;
 		break;
-	case Skill_OneHand_Active_03:
+	case Circulating_Pulse:
 		m_iIndex = 3;
 		break;
-	case Skill_OneHand_Active_04:
+	case Triple_Annihilator:
 		m_iIndex = 4;
 		break;
-	case Skill_TwoHand_Active_01:
+	case Shadow_Assault:
 		m_iIndex = 5;
 		break;
-	case Skill_TwoHand_Active_02:
+	case Severing_Abyss:
 		m_iIndex = 6;
 		break;
-	case Skill_TwoHand_Active_03:
+	case Swallow_Cutter:
 		m_iIndex = 7;
 		break;
-	case Skill_TwoHand_Active_04:
+	case Tormenting_Blast:
 		m_iIndex = 8;
 		break;
-	case Skill_Buff_Enchant_01:
+	case Phantom_Assault:
 		m_iIndex = 9;
 		break;
-	case Skill_Buff_Enchant_02:
+	case Legion_Punisher:
 		m_iIndex = 10;
 		break;
-	case Skill_Buff_Enchant_03:
-		m_iIndex = 11;
+	case Chariot_Rush:
+		m_iIndex = 16;
 		break;
-	default:
+	case Fusillade_Rondo:
+		m_iIndex = 17;
+		break;
+	case SkillID_End:
 		m_iIndex = 0;
 		break;
 	}
@@ -117,7 +120,7 @@ HRESULT CActive_Icon::Render_GameObject()
 	{
 		for (_uint i = 0; i < 2; ++i)
 		{
-			(i == 0) ? (iTexNum = 13) : (iTexNum = m_iIndex);
+			(i == 0) ? (iTexNum = 11) : (iTexNum = m_iIndex);
 			if (FAILED(SetUp_ConstantTable(iTexNum)))
 				return E_FAIL;
 
@@ -135,7 +138,7 @@ HRESULT CActive_Icon::Render_GameObject()
 		break;
 	case ACTIVE_NO_USE:
 	{
-		if (FAILED(SetUp_ConstantTable(13)))
+		if (FAILED(SetUp_ConstantTable(11)))
 			return E_FAIL;
 		m_pShaderCom->Begin_Shader();
 		m_pShaderCom->Begin_Pass(1);
@@ -145,7 +148,7 @@ HRESULT CActive_Icon::Render_GameObject()
 
 		for (_uint i = 0; i < 2; ++i)
 		{
-			(i == 0) ? (iTexNum = m_iIndex) : (iTexNum = 16);
+			(i == 0) ? (iTexNum = m_iIndex) : (iTexNum = 14);
 			if (FAILED(SetUp_ConstantTable(iTexNum)))
 				return E_FAIL;
 
@@ -159,7 +162,7 @@ HRESULT CActive_Icon::Render_GameObject()
 		break;
 	case ACTIVE_COOL:
 	{
-		if (FAILED(SetUp_ConstantTable(13)))
+		if (FAILED(SetUp_ConstantTable(11)))
 			return E_FAIL;
 		m_pShaderCom->Begin_Shader();
 		m_pShaderCom->Begin_Pass(1);
@@ -169,7 +172,7 @@ HRESULT CActive_Icon::Render_GameObject()
 
 		for (_uint i = 0; i < 2; ++i)
 		{
-			(i == 0) ? (iTexNum = m_iIndex) : (iTexNum = 17);
+			(i == 0) ? (iTexNum = m_iIndex) : (iTexNum = 15);
 			if (FAILED(SetUp_ConstantTable(iTexNum)))
 				return E_FAIL;
 			m_pShaderCom->Begin_Shader();
@@ -179,7 +182,7 @@ HRESULT CActive_Icon::Render_GameObject()
 			m_pShaderCom->End_Shader();
 		}
 
-		if (FAILED(SetUp_ConstantTable(15)))
+		if (FAILED(SetUp_ConstantTable(13)))
 			return E_FAIL;
 		m_pShaderCom->Begin_Shader();
 		m_pShaderCom->Begin_Pass(7); // 흰색 프레임 UV값 변경
@@ -190,7 +193,7 @@ HRESULT CActive_Icon::Render_GameObject()
 		break;
 	case ACTIVE_BUFF:
 	{
-		if (FAILED(SetUp_ConstantTable(16)))
+		if (FAILED(SetUp_ConstantTable(14)))
 			return E_FAIL;
 		m_pShaderCom->Begin_Shader();
 		m_pShaderCom->Begin_Pass(1);
@@ -198,7 +201,7 @@ HRESULT CActive_Icon::Render_GameObject()
 		m_pShaderCom->End_Pass();
 		m_pShaderCom->End_Shader();
 
-		if (FAILED(SetUp_ConstantTable(14)))
+		if (FAILED(SetUp_ConstantTable(12)))
 			return E_FAIL;
 		m_pShaderCom->Begin_Shader();
 		m_pShaderCom->Begin_Pass(7); // 붉은색 프레임 UV값 변경

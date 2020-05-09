@@ -2,7 +2,7 @@
 
 #include "Client_Defines.h"
 #include "UI.h"
-
+#include "Active_Icon.h"
 BEGIN(Client)
 class CActive_Icon;
 class CIconBase;
@@ -15,6 +15,9 @@ private:
 	virtual ~CSkillUI() = default;
 
 public:
+	void Set_Active_State(CActive_Icon::ACTIVE_STATE eState, _uint iIndex);
+
+public:
 	virtual HRESULT Ready_GameObject_Prototype();
 	virtual HRESULT Ready_GameObject(void* pArg);
 	virtual _int	Update_GameObject(_double TimeDelta);
@@ -22,7 +25,6 @@ public:
 private:
 	void	SetUp_Default();
 
-public:
 	void	Set_SkillIcon(_uint iIndex, Skill_Index eSkill_Index); // 스킬 아이콘 세팅 함수
 	void	Set_SkillGaugeCur(_ulong iNum);
 	void	Set_SkillGaugeMax(_ulong iNum);

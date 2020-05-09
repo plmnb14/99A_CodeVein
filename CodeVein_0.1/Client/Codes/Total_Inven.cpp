@@ -85,6 +85,8 @@ _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 		CUI_Manager::Get_Instance()->Get_Instance()->Get_Inventory()->Set_Detail(false);		
 		// 스테이터스 창 활성화
 		CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(true);
+		// 퀵슬롯 비활성화
+		CUI_Manager::Get_Instance()->Get_QuickSlot()->Set_Active(false);
 	}
 
 	// 인벤 아이콘 활성화
@@ -120,7 +122,7 @@ _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 		iter->Set_Active(m_bIsActive);
 	}
 
-	
+	m_pNoticeUI->Set_Active(m_bIsActive);
 		
 	return NO_EVENT;
 }
@@ -232,10 +234,10 @@ void CTotal_Inven::SetUp_Default()
 	LOOP(3)
 	{
 		pDesc = new CUI::UI_DESC;
-		pDesc->fPosX = 240.f + 60.f * i;
-		pDesc->fPosY = 198.f;
-		pDesc->fSizeX = 53.f;
-		pDesc->fSizeY = 53.f;
+		pDesc->fPosX = 239.f + 57.f * i;
+		pDesc->fPosY = 200.f;
+		pDesc->fSizeX = 55.f;
+		pDesc->fSizeY = 55.f;
 
 		if (2 > i)
 		{
@@ -302,6 +304,12 @@ void CTotal_Inven::SetUp_Default()
 	m_vecSkillIcon[5]->Set_UI_Pos(486.f, 380.f);
 	m_vecSkillIcon[6]->Set_UI_Pos(586.f, 380.f);
 	m_vecSkillIcon[7]->Set_UI_Pos(536.f, 410.f);
+
+	m_pNoticeUI = static_cast<CNoticeUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_NoticeUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pNoticeUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	m_pNoticeUI->Set_UI_Pos(248.f, 81.f);
+	m_pNoticeUI->Set_UI_Size(186.664f, 40.5f); // 280 : 60 -> 4.6666 : 1
+	m_pNoticeUI->Set_ViewZ(m_fViewZ - 0.1f);
 }
 
 void CTotal_Inven::Click_Icon()
@@ -316,21 +324,23 @@ void CTotal_Inven::Click_Icon()
 		m_pInventory->Set_Active(true);
 		m_bIsActive = false;
 	}
-	//else if (m_vecIcon[1]->Pt_InRect() &&
-	//	g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
-	//{	
-	//	// 스테이터스 창 비활성화
-	//	CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(false);
-	//	// 펫 인벤토리 활성화
-	//	CUI_Manager::Get_Instance()->Get_Pet_Inven()->Set_Active(true);
-	//	m_bIsActive = false;
-	//}
+	else if (m_vecIcon[1]->Pt_InRect() &&
+		g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+	{	
+		m_bIsActive = false;
+		// 스테이터스 창 비활성화
+		CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(false);
+		// 펫 인벤토리 활성화
+		CUI_Manager::Get_Instance()->Get_Pet_Inven()->Set_Active(true);
+	}
 	else if (m_vecIcon[2]->Pt_InRect() &&
 		g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
 		m_bIsActive = false;
 		// 스테이터스 창 비활성화
 		CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(false);
+		// 퀵슬롯 활성화
+		CUI_Manager::Get_Instance()->Get_QuickSlot()->Set_Active(true);
 	}
 	
 	vector<CExpendables_Slot*> vecQuickSlot = * CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Get_QuickSlot();
@@ -361,22 +371,16 @@ void CTotal_Inven::Click_Icon()
 	// 스킬 설정
 	for(_uint i = 0; i < m_vecSkillIcon.size(); ++i)
 	{
-		if (m_vecSkillIcon[i]->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+		if (m_vecSkillIcon[i]->Pt_InRect())
 		{
-			/*if (m_ePlayerBloodCode == BloodCode_Fighter)
+			m_pNoticeUI->Set_UI_Index(i + 1);
+			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
-				CUI_Manager::Get_Instance()->Get_FigherBlood()->Set_Active(true);
 				m_bIsActive = false;
+				CUI_Manager::Get_Instance()->Get_Skill_Inven()->Set_SkillUI_TotalInven(i);
+				CUI_Manager::Get_Instance()->Get_Skill_Inven()->Set_Active(true);
 			}
-				
-			else if (m_ePlayerBloodCode == BloodCode_Prometheus)
-			{
-				CUI_Manager::Get_Instance()->Get_PrometheusBlood()->Set_Active(true);
-				m_bIsActive = false;
-			}*/
-			m_bIsActive = false;
-			CUI_Manager::Get_Instance()->Get_Skill_Inven()->Set_SkillUI_TotalInven(i);
-			CUI_Manager::Get_Instance()->Get_Skill_Inven()->Set_Active(true);
+		
 		}
 	}
 }

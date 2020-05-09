@@ -103,7 +103,7 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 	cout << "상태: " << m_eMovetype << " | " << "0 - Idle, 1 - Move, 3 - Att" << endl;
 	cout << "공격상태: " << m_eColl_Sub_AttMoment << " | " << "Ani : " << m_eColleague_Ani << endl;*/
 
-	//cout << "공격상태: " << m_eColl_Sub_AttMoment << " | " << m_iNormalAtt_Count << endl;
+	cout << "공격상태: " << m_eColl_DodgeMoment << " | " << m_iNormalAtt_Count << endl;
 
 	if (m_eMovetype != CPlayer_Colleague::Coll_Dead)
 		Enter_Collision();
@@ -321,9 +321,8 @@ HRESULT CPlayer_Colleague::Ready_Weapon()
 	m_pSword->Set_ParentMatrix(&m_pTransformCom->Get_WorldMat());
 	m_pSword->Set_Friendly(true);		// 무기의 아군인지 적군인지 체크한다. true는 아군
 
-
-										// 총알
-										//m_pCollBullet = static_cast<CColleague_Bullet*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ColleagueBullet", NULL));
+	// 총알
+	//m_pCollBullet = static_cast<CColleague_Bullet*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ColleagueBullet", NULL));
 
 
 	return S_OK;
@@ -654,8 +653,8 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 	// Hit, Att, Dodge 이면 return 시킨다
 
 
-	if (true == m_tObjParam.bIsHit/* || true == m_tObjParam.bIsDodge*/)
-		return;
+	//if (true == m_tObjParam.bIsHit/* || true == m_tObjParam.bIsDodge*/)
+	//	return;
 
 	// 플레이어와의 거리 체크
 	_float	fMyPlayerLength = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransformCom->Get_Pos()));
@@ -677,6 +676,8 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 			if (fMinPos < 30.f)
 			{
 				m_bNear_byMonster = true;
+
+				
 				// 몬스터가 범위 내로 들어왔고 어떤 공격을 할건지
 
 				m_eMovetype = CPlayer_Colleague::Coll_Attack;
@@ -715,19 +716,35 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 			m_eColl_IdleMoment = CPlayer_Colleague::Idle_Waiting;
 		}
 
-	}
-
 	if ((true == m_bStart_Fighting && true == m_bNear_byMonster) && m_fDodge_CoolTime >= 10.f)
 	{
-		// 전투 상태일 때
-		// 구르기 쿨타임을 줘서 구르고 싶은 기분일 때 구르게 하기
-		
+		_float fAngle = 0.f;
+		if (nullptr != m_pObject_Mon)
+			fAngle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(m_pObject_Mon)->Get_Pos()));
 
-		// 5초마다 구르게
-		m_eMovetype = CPlayer_Colleague::Coll_Dodge;
-		m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_FrontRoll;
-		m_fDodge_CoolTime = 0;
+		// 전투 상태일 때, 10초마다 구르게
 		cout << "데굴데굴" << endl;
+		m_eMovetype = CPlayer_Colleague::Coll_Dodge;
+
+		if (0.f <= fAngle && 30.f > fAngle)
+			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
+		else if (30.f <= fAngle && 90.f > fAngle)
+			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_LeftRoll;
+		else if (-150.f <= fAngle && -90.f > fAngle)
+			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
+		else if (90.f <= fAngle && 150.f > fAngle)
+			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
+		else if (150.f <= fAngle && 180.f > fAngle)
+			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_FrontRoll;
+		else if (-180.f <= fAngle && -150.f > fAngle)
+			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_FrontRoll;
+		else if (-90.f <= fAngle && -30.f > fAngle)
+			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_RightRoll;
+		else if (-30.f <= fAngle && 0 > fAngle)
+			m_eColl_DodgeMoment = CPlayer_Colleague::Dodge_BackRoll;
+
+		m_fDodge_CoolTime = 0;
+	}
 	}
 
 
@@ -905,22 +922,43 @@ void CPlayer_Colleague::Set_AniEvent()
 	{
 		switch (m_eColl_DodgeMoment)
 		{
-		case Client::CPlayer_Colleague::Dodge_FrontRoll:
+		case CPlayer_Colleague::Dodge_FrontRoll:
 		{
 			CollDodge_FrontRoll();
 			m_eColleague_Ani = CPlayer_Colleague::Ani_Front_Roll;
 			break;
-		}
-		case Client::CPlayer_Colleague::Dodge_BackRoll:
+		}	
+		case CPlayer_Colleague::Dodge_BackRoll:
 		{
 			CollDodge_BackRoll();
 			m_eColleague_Ani = CPlayer_Colleague::Ani_Back_Roll;
 			break;
 		}
-		case CPlayer_Colleague::Dodge_End:
+		case CPlayer_Colleague::Dodge_LeftRoll:
+		{
+			CollDodge_LeftRoll();
+			m_eColleague_Ani = CPlayer_Colleague::Ani_Left_Roll;
 			break;
 		}
-		break;
+		case CPlayer_Colleague::Dodge_RightRoll:
+		{
+			CollDodge_RightRoll();
+			m_eColleague_Ani = CPlayer_Colleague::Ani_Right_Roll;
+			break;
+		}
+		case CPlayer_Colleague::Dodge_BLeftRoll:
+		{
+			CollDodge_B_LeftRoll();
+			m_eColleague_Ani = CPlayer_Colleague::Ani_BLeft_Roll;
+			break;
+		}
+		case CPlayer_Colleague::Dodge_BRightRoll:
+		{
+			CollDodge_B_RightRoll();
+			m_eColleague_Ani = CPlayer_Colleague::Ani_BRight_Roll;
+			break;
+		}
+		}
 	}
 	case CPlayer_Colleague::Coll_Hit:
 	{
@@ -1187,7 +1225,6 @@ void CPlayer_Colleague::CollMove_MonRun()
 
 void CPlayer_Colleague::CollDodge_FrontRoll()
 {
-	// 구르기 조건
 	_double AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
 
 	if (true == m_tObjParam.bCanDodge)
@@ -1205,28 +1242,15 @@ void CPlayer_Colleague::CollDodge_FrontRoll()
 			m_eMovetype = CPlayer_Colleague::Coll_Idle;
 			return;
 		}
-		else if (1.967f <= AniTime && 3.333f >= AniTime)
-		{
-			// 일어나는 구간, 천천히 일어남
-			if (false == m_bEventTrigger[0])
-			{
-				m_bEventTrigger[0] = true;
-				m_fAtt_MoveSpeed_Cur = 0.15f;
-				m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
-				m_fAni_Multiply = 1.f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
-			}
-			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-			Colleague_SkilMovement(m_fAni_Multiply);
-		}
-		else if (0.067f <= AniTime && 1.633f >= AniTime)
+		else if (0.067f <= AniTime && 1.5f >= AniTime)
 		{
 			// 여기서는 빠르게 해서 속도 확 높여서 구르는 구간
 			if (false == m_bEventTrigger[1])
 			{
 				m_bEventTrigger[1] = true;
-				m_fAtt_MoveSpeed_Cur = 1.8f;
-				m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
-				m_fAni_Multiply = 0.7f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
+				m_fAtt_MoveSpeed_Cur = 7.f;
+				m_fAtt_MoveAccel_Cur = 0.f;
+				m_fAni_Multiply = 0.5f;
 			}
 			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 			Colleague_SkilMovement(m_fAni_Multiply);
@@ -1236,22 +1260,188 @@ void CPlayer_Colleague::CollDodge_FrontRoll()
 
 void CPlayer_Colleague::CollDodge_BackRoll()
 {
+	_double AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
+
+	if (true == m_tObjParam.bCanDodge)
+	{
+		m_tObjParam.bCanDodge = false;
+		m_tObjParam.bIsDodge = true;
+	}
+	else
+	{
+		if (m_pDynamicMesh->Is_Finish_Animation(0.81f) && m_eColleague_Ani == CPlayer_Colleague::Ani_Front_Roll)
+		{
+			Funtion_Reset_State();
+			m_bChecking_MyHit = true;
+			m_fCoolTimer_limit = 5.f;
+			m_eMovetype = CPlayer_Colleague::Coll_Idle;
+			return;
+		}
+		else if (0.3f <= AniTime && 1.467f >= AniTime)
+		{
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+				m_fAtt_MoveSpeed_Cur = 7.f;
+				m_fAtt_MoveAccel_Cur = 0.f;
+				m_fAni_Multiply = 1.f;
+			}
+			Colleague_Movement(m_fAtt_MoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
+			Colleague_SkilMovement(m_fAni_Multiply);
+		}
+	}
 }
 
 void CPlayer_Colleague::CollDodge_LeftRoll()
 {
+	_double AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
+
+	if (true == m_tObjParam.bCanDodge)
+	{
+		m_tObjParam.bCanDodge = false;
+		m_tObjParam.bIsDodge = true;
+	}
+	else
+	{
+		if (m_pDynamicMesh->Is_Finish_Animation(0.81f) && m_eColleague_Ani == CPlayer_Colleague::Ani_Left_Roll)
+		{
+			Funtion_Reset_State();
+			m_bChecking_MyHit = true;
+			m_fCoolTimer_limit = 5.f;
+			m_eMovetype = CPlayer_Colleague::Coll_Idle;
+			return;
+		}
+		else if (0.033f <= AniTime && 1.133f >= AniTime)
+		{
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+				m_fAtt_MoveSpeed_Cur = 5.f;
+				m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
+				m_fAni_Multiply = 1.f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
+			}
+			Colleague_Movement(m_fAtt_MoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_X));
+			Colleague_SkilMovement(m_fAni_Multiply);
+		}
+	}
 }
 
 void CPlayer_Colleague::CollDodge_RightRoll()
 {
+	_double AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
+
+	if (true == m_tObjParam.bCanDodge)
+	{
+		m_tObjParam.bCanDodge = false;
+		m_tObjParam.bIsDodge = true;
+	}
+	else
+	{
+		if (m_pDynamicMesh->Is_Finish_Animation(0.81f) && m_eColleague_Ani == CPlayer_Colleague::Ani_Right_Roll)
+		{
+			Funtion_Reset_State();
+			m_bChecking_MyHit = true;
+			m_fCoolTimer_limit = 5.f;
+			m_eMovetype = CPlayer_Colleague::Coll_Idle;
+			return;
+		}
+		else if (0.067f <= AniTime && 1.267f >= AniTime)
+		{
+			// 여기서는 빠르게 해서 속도 확 높여서 구르는 구간
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+				m_fAtt_MoveSpeed_Cur = 5.f;
+				m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
+				m_fAni_Multiply = 1.f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
+			}
+			Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_X));
+			Colleague_SkilMovement(m_fAni_Multiply);
+		}
+	}
 }
 
 void CPlayer_Colleague::CollDodge_B_LeftRoll()
 {
+	//_double AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
+
+	//if (true == m_tObjParam.bCanDodge)
+	//{
+	//	m_tObjParam.bCanDodge = false;
+	//	m_tObjParam.bIsDodge = true;
+	//}
+	//else
+	//{
+	//	if (m_pDynamicMesh->Is_Finish_Animation(0.81f) && m_eColleague_Ani == CPlayer_Colleague::Ani_Front_Roll)
+	//	{
+	//		Funtion_Reset_State();
+	//		m_bChecking_MyHit = true;
+	//		m_fCoolTimer_limit = 5.f;
+	//		m_eMovetype = CPlayer_Colleague::Coll_Idle;
+	//		return;
+	//	}
+	//	else if (0.067f <= AniTime && 1.767f >= AniTime)
+	//	{
+	//		// 여기서는 빠르게 해서 속도 확 높여서 구르는 구간
+	//		if (false == m_bEventTrigger[1])
+	//		{
+	//			m_bEventTrigger[1] = true;
+	//			m_fAtt_MoveSpeed_Cur = 3.f;
+	//			m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
+	//			m_fAni_Multiply = 0.7f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
+	//		}
+	//		Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+	//		Colleague_SkilMovement(m_fAni_Multiply);
+	//	}
+	//}
 }
 
 void CPlayer_Colleague::CollDodge_B_RightRoll()
 {
+	//_double AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
+
+	//if (true == m_tObjParam.bCanDodge)
+	//{
+	//	m_tObjParam.bCanDodge = false;
+	//	m_tObjParam.bIsDodge = true;
+	//}
+	//else
+	//{
+	//	if (m_pDynamicMesh->Is_Finish_Animation(0.81f) && m_eColleague_Ani == CPlayer_Colleague::Ani_Front_Roll)
+	//	{
+	//		Funtion_Reset_State();
+	//		m_bChecking_MyHit = true;
+	//		m_fCoolTimer_limit = 5.f;
+	//		m_eMovetype = CPlayer_Colleague::Coll_Idle;
+	//		return;
+	//	}
+	//	else if (1.967f <= AniTime && 3.333f >= AniTime)
+	//	{
+	//		// 일어나는 구간, 천천히 일어남
+	//		if (false == m_bEventTrigger[0])
+	//		{
+	//			m_bEventTrigger[0] = true;
+	//			m_fAtt_MoveSpeed_Cur = 0.15f;
+	//			m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
+	//			m_fAni_Multiply = 1.f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
+	//		}
+	//		Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+	//		Colleague_SkilMovement(m_fAni_Multiply);
+	//	}
+	//	else if (0.167f <= AniTime && 1.633f >= AniTime)
+	//	{
+	//		// 여기서는 빠르게 해서 속도 확 높여서 구르는 구간
+	//		if (false == m_bEventTrigger[1])
+	//		{
+	//			m_bEventTrigger[1] = true;
+	//			m_fAtt_MoveSpeed_Cur = 3.f;
+	//			m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
+	//			m_fAni_Multiply = 0.7f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
+	//		}
+	//		Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+	//		Colleague_SkilMovement(m_fAni_Multiply);
+	//	}
+	//}
 }
 
 void CPlayer_Colleague::CollIdle_Waiting()
@@ -1262,11 +1452,6 @@ void CPlayer_Colleague::CollIdle_Waiting()
 
 void CPlayer_Colleague::CollAtt_Skil()
 {
-	// 각 스킬마다 쿨타임이 있어야 한다.
-	// 스킬 사용 후에 쿨타임 시작하게
-	// 거리 별로 스킬을 사용하는 것이 아니라 랜덤으로? 사용하게 해야 한다
-	// 지금 나오는거 보면 쿨타임이 잘 안 되는 것 같기도?
-	// 아주 멀다면 손에서 구 발사하는 건 그대로 해야 함
 	_float		fMonLenght = 0.f;
 
 	for (auto& iter : *m_List_pMonTarget[0])
@@ -2336,6 +2521,8 @@ void CPlayer_Colleague::CollAtt_SlowGun()
 		{
 			if (false == m_bEventTrigger[2])
 			{
+				m_bEventTrigger[2] = true;
+
 				_mat matBone = *m_matBone[Bone_LHand] * m_pTransformCom->Get_WorldMat();
 				memcpy(&vBirth, &matBone._41, sizeof(_v3));
 
@@ -2770,6 +2957,107 @@ void CPlayer_Colleague::Function_FBRL()
 		else if (-180.f <= fAngle && -90.f > fAngle)
 			m_eFBLR = Coll_FBLR::Coll_Back;
 	}
+}
+
+void CPlayer_Colleague::Teleport_ResetOptions(_int eSceneID, _int eTeleportID)
+{
+	_v3 vShadowLightPos = V3_NULL;
+	_v3 vPos = V3_NULL;
+	_float fAngle = 0.f;
+	_float fRadian = 0.f;
+
+	// 텔레포트 할때는 항상 소환 상태
+	m_eMovetype = CPlayer_Colleague::Coll_Start;
+
+	Funtion_Reset_State();
+
+	// 위치 , 방향 설정
+	switch (eSceneID)
+	{
+	case SCENE_STAGE_TRAINING:
+	{
+		vShadowLightPos = _v3(100.f, 50.f, 0.f);
+		break;
+	}
+
+	case SCENE_STAGE_BASE:
+	{
+		vShadowLightPos = _v3(100.f, 50.f, 0.f);
+
+		vPos = eTeleportID == TeleportID_Tutorial ?
+			V3_NULL : _v3(-0.519f, 0.120f, 23.810f);
+
+		fAngle = eTeleportID == TeleportID_Tutorial ?
+			0.f : 180.f;
+
+		break;
+	}
+
+	case SCENE_STAGE_01:
+	{
+		vShadowLightPos = _v3(-100.f, 50.f, 0.f);
+
+		vPos = eTeleportID == TeleportID_St01_1 ? _v3(150.484f, -18.08f, 70.417f) :
+			eTeleportID == TeleportID_St01_2 ? V3_NULL : V3_NULL;
+
+		fAngle = eTeleportID == TeleportID_St01_1 ? 0.f :
+			eTeleportID == TeleportID_St01_2 ? 0.f : 0.f;
+
+		break;
+	}
+
+	case SCENE_STAGE_02:
+	{
+		// 아직
+
+		break;
+	}
+
+	case SCENE_STAGE_03:
+	{
+		vShadowLightPos = _v3(-100.f, 50.f, 0.f);
+
+		vPos = eTeleportID == TeleportID_St03_1 ?
+			_v3(52.610f, -13.0f, 3.575f) : V3_NULL;
+
+		fAngle = eTeleportID == TeleportID_St03_1 ?
+			0.f : 0.f;
+
+		break;
+	}
+
+	case SCENE_STAGE_04:
+	{
+		vShadowLightPos = _v3(-100.f, 50.f, 0.f);
+
+		vPos = eTeleportID == TeleportID_St04_1 ?
+			_v3(42.504f, -3.85f, 75.683f) : V3_NULL;
+
+		fAngle = eTeleportID == TeleportID_St04_1 ?
+			0.f : 0.f;
+
+		break;
+	}
+	}
+
+	m_pRendererCom->Set_ShadowLightPos(vShadowLightPos);
+
+	fRadian = D3DXToRadian(fAngle);
+	m_pTransformCom->Set_Pos(vPos);
+	m_pTransformCom->Set_Angle(AXIS_Y, fRadian);
+
+	_tchar szNavMeshName[STR_128] = L"";
+
+	lstrcpy(szNavMeshName,
+		(eSceneID == SCENE_STAGE_BASE ? L"Navmesh_Stage_00.dat" :
+			eSceneID == SCENE_STAGE_01 ? L"Navmesh_Stage_01.dat" :
+			eSceneID == SCENE_STAGE_02 ? L"Navmesh_Stage_02.dat" :
+			eSceneID == SCENE_STAGE_03 ? L"Navmesh_Stage_03.dat" :
+			eSceneID == SCENE_STAGE_04 ? L"Navmesh_Stage_04.dat" : L"Navmesh_Training.dat"));
+
+	m_pNavMesh->Reset_NaviMesh();
+	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, szNavMeshName);
+	m_pNavMesh->Check_OnNavMesh(vPos);
 }
 
 CPlayer_Colleague* CPlayer_Colleague::Create(_Device pGraphic_Device)

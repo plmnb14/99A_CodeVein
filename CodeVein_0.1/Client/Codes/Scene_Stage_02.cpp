@@ -89,6 +89,8 @@ HRESULT CScene_Stage_02::Ready_Layer_Player(const _tchar * pLayerTag)
 	pInstance->Set_Enable(true);
 
 	pInstance = nullptr;
+
+	return S_OK;
 }
 
 HRESULT CScene_Stage_02::Ready_Layer_Environment(const _tchar* pLayerTag)

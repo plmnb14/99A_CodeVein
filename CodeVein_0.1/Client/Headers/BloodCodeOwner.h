@@ -17,6 +17,7 @@ public:
 public:
 	void Set_CodeID(BloodCode_ID eID) { m_eID = eID; }
 	void Set_Select(_bool bIsSelect) { m_bIsSelect = bIsSelect; }
+	void Set_Alpha(_float fAlpha) { m_fAlpha = fAlpha; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -40,6 +41,7 @@ private:
 private:
 	BloodCode_ID			m_eID = BloodCode_End;
 	_bool					m_bIsSelect = false;
+	_float					m_fAlpha = 0.f;
 
 public:
 	static CBloodCodeOwner*		Create(_Device pGraphic_Device);
