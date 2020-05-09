@@ -1,5 +1,7 @@
 #pragma once
 
+//#define PlaySound g_pSoundManager;
+
 static const unsigned short g_nWinCX = 1280;
 static const unsigned short g_nWinCY = 720;
 
@@ -8,8 +10,9 @@ extern HWND			g_hWnd;
 
 ///////////////////////////////////////////////////////////////////////////////
 
-extern int		g_eSceneID_Cur;
-extern int		g_eSTeleportID_Cur;
+extern int				g_eSceneID_Cur;
+extern int				g_eSTeleportID_Cur;
+
 
 namespace Engine
 {
@@ -39,7 +42,34 @@ extern bool			g_bReleaseMode;
 extern short		g_sStageIdx_Cur;
 extern short		g_sPlayerLevel;
 
-namespace Client {}
+namespace Client
+{
+	class CSoundManager;
+}
+
+extern Client::CSoundManager*	g_pSoundManager;
 
 using namespace Client;
+
+//
+
+class CMyStrCmp
+{
+public:
+	CMyStrCmp() {}
+	CMyStrCmp(const TCHAR* pString)
+		:m_pString(pString)
+	{
+
+	}
+	~CMyStrCmp() {}
+public:
+	template <typename T>
+	bool operator()(T& rPair)
+	{
+		return !lstrcmp(rPair.first, m_pString);
+	}
+private:
+	const TCHAR* m_pString;
+};
 
