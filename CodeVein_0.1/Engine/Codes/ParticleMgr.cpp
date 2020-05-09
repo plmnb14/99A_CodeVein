@@ -553,6 +553,18 @@ HRESULT CParticleMgr::Ready_Trail()
 	return S_OK;
 }
 
+HRESULT CParticleMgr::Ready_TitleEffect()
+{
+	Input_Pool(L"Ortho_Title_Glitter_0", 3);
+	Input_Pool(L"Ortho_Title_Glitter_1", 3);
+	Input_Pool(L"Ortho_Title_ShadowLine", 3);
+	Input_Pool(L"Ortho_Title_ShadowText", 3);
+	Input_Pool(L"Ortho_Title_Smoke", 3);
+	Input_Pool(L"Ortho_Title_BG", 3);
+
+	return S_OK;
+}
+
 HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 {
 	//if (CInput_Device::Get_Instance()->Key_Down(DIK_B))
@@ -1438,6 +1450,22 @@ CTrail_VFX* CParticleMgr::Create_Trail()
 	return pTrail;
 }
 
+CEffect* CParticleMgr::Create_TitleEffect(_tchar* szName)
+{
+	CEffect* pEff = nullptr;
+
+	queue<CEffect*>* pFindedQueue = Find_Queue(szName);
+	if (pFindedQueue == nullptr)
+		return nullptr;
+
+	pEff = pFindedQueue->front();
+	m_EffectList.push_back(pEff);
+
+	pFindedQueue->pop();
+
+	return pEff;
+}
+
 HRESULT CParticleMgr::Update_Effect(const _double TimeDelta)
 {
 	_int iProgress;
@@ -1491,7 +1519,7 @@ void CParticleMgr::Input_Pool(_tchar* szName, _int iCount)
 	for (_int i = 0; i <iCount; ++i)
 	{
 		// 미리 클론만 해놓기
-		CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szName, nullptr));
+		CEffect* pEffect = static_cast<CEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(szName, nullptr));
 		pEffect->Set_ParticleName(szName); // 이펙트 Info 안의 이름과 오브젝트 Tag이름이 달라서 이렇게 해줌. (해당 큐 안에 다시 넣으려고)
 		m_EffectPool[szName].push(pEffect);
 	}

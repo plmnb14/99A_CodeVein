@@ -27,7 +27,7 @@ HRESULT CColleague_Bullet::Ready_GameObject(void * pArg)
 
 		return S_OK;
 	}
-
+	cout << "Create Colleague Bullet!!!!!" << endl;
 	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
 
 	m_vDir = temp.vDir;
@@ -50,8 +50,8 @@ HRESULT CColleague_Bullet::Ready_GameObject(void * pArg)
 	//m_pBulletBody->Reset_Init();
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
 
-	//m_pTrailEffect = g_pManagement->Create_Trail();
-	//m_pTrailEffect->Set_TrailIdx(5); // Red Tail
+	m_pTrailEffect = g_pManagement->Create_Trail();
+	m_pTrailEffect->Set_TrailIdx(5); // Red Tail
 
 	return S_OK;
 }
@@ -75,7 +75,7 @@ _int CColleague_Bullet::Update_GameObject(_double TimeDelta)
 	{
 		//죽음 이펙트
 		//m_pBulletBody->Set_Dead();
-		//m_pTrailEffect->Set_Dead();
+		m_pTrailEffect->Set_Dead();
 
 		CParticleMgr::Get_Instance()->Create_Effect(L"Colleague_Skill_PinkSmoke_0", m_pTransformCom->Get_Pos());
 		CParticleMgr::Get_Instance()->Create_Effect(L"Colleague_Skill_PinkSmoke_1", m_pTransformCom->Get_Pos());

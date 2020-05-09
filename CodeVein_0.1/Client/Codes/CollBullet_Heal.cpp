@@ -40,12 +40,14 @@ HRESULT CCollBullet_Heal::Ready_GameObject(void * pArg)
 		return S_OK;
 	}
 
+	cout << "Create Heal Bullet!!!!!" << endl;
+
 	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Colleague", SCENE_STAGE);
 
 	BULLET_INFO temp = *(BULLET_INFO*)(pArg);
 
 	m_vDir = TARGET_TO_TRANS(m_pTarget)->Get_Axis(AXIS_Z);
-	m_fBullet_Speed = 3.f;
+	m_fBullet_Speed = 8.f;
 	m_dLifeTime = temp.dLifeTime;
 
 	m_pTransformCom->Set_Pos(temp.vCreatePos);
@@ -53,15 +55,6 @@ HRESULT CCollBullet_Heal::Ready_GameObject(void * pArg)
 
 	m_tObjParam.bCanAttack = true;
 	m_tObjParam.fDamage = 200.f;
-
-	// Calc Angle
-	_v3	vRight = *D3DXVec3Cross(&vRight, &_v3(0.f, 1.f, 0.f), &m_vDir);
-	V3_NORMAL_SELF(&vRight);
-	_float	fDot = acosf(D3DXVec3Dot(&_v3{ 0,0,1 }, &m_vDir));
-	if (vRight.z > 0)
-		fDot *= -1.f;
-
-	m_pTransformCom->Set_Angle(_v3(0.f, fDot, 0.f));
 
 	m_pBulletBody_0 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Colleague_Heal_BulletBody_Hor", nullptr));
 	m_pBulletBody_0->Set_Desc(_v3(0, 0, 0), nullptr);
@@ -98,20 +91,35 @@ _int CCollBullet_Heal::Update_GameObject(_double TimeDelta)
 	Update_Trails(TimeDelta);
 
 	_v3 Temp = V3_NULL;
+	_float fLen = 0.f;
 	if (nullptr != pPlayer)
 	{
-		Temp = TARGET_TO_TRANS(pPlayer)->Get_Pos() - m_pTransformCom->Get_Pos();
+		Temp = TARGET_TO_TRANS(pPlayer)->Get_Pos() + _v3(0.f, 1.f, 0.f) - m_pTransformCom->Get_Pos();
+		fLen = D3DXVec3Length(&Temp);
 		D3DXVec3Normalize(&Temp, &Temp);
 	}
 
 	m_pTransformCom->Add_Pos(m_fBullet_Speed * (_float)TimeDelta, Temp);
 
+	// Calc Angle
+	_v3	vRight = *D3DXVec3Cross(&vRight, &_v3(0.f, 1.f, 0.f), &Temp);
+	V3_NORMAL_SELF(&vRight);
+	_float	fDot = acosf(D3DXVec3Dot(&_v3{ 0,0,1 }, &Temp));
+	if (vRight.z > 0)
+		fDot *= -1.f;
+
+	m_pTransformCom->Set_Angle(_v3(0.f, fDot, 0.f));
+
 	m_dCurTime += TimeDelta;
 
 	// 플레이어와 충돌했다면
-	if (false == pPlayer->Get_Target_IsHit())
+	//if (false == pPlayer->Get_Target_IsHit())
+	if (fLen < 0.8f)
 	{
+		cout << "Heal Bullet Dead : HealAmount - "<< fPlusHP << endl;
+
 		pPlayer->Add_Target_Hp(fPlusHP);
+
 		//죽음 이펙트
 		m_pBulletBody_0->Set_Dead();
 		m_pBulletBody_1->Set_Dead();

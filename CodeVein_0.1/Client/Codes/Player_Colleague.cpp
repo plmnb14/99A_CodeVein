@@ -103,7 +103,7 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 	cout << "상태: " << m_eMovetype << " | " << "0 - Idle, 1 - Move, 3 - Att" << endl;
 	cout << "공격상태: " << m_eColl_Sub_AttMoment << " | " << "Ani : " << m_eColleague_Ani << endl;*/
 
-	cout << "공격상태: " << m_eColl_DodgeMoment << " | " << m_iNormalAtt_Count << endl;
+	//cout << "공격상태: " << m_eColl_DodgeMoment << " | " << m_iNormalAtt_Count << endl;
 
 	if (m_eMovetype != CPlayer_Colleague::Coll_Dead)
 		Enter_Collision();
@@ -431,7 +431,14 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 
 	if (fPlayerLength > 30.f)
 	{
-		m_pTransformCom->Set_Pos(_v3(m_pTargetTransformCom->Get_Pos().x - 3.f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 2.f));
+		_v3 vPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 2.f);
+		m_pTransformCom->Set_Pos(vPos);
+
+		g_pManagement->Create_Effect_Delay(L"Colleague_Teleport_Line_Particle_0", 0.f, vPos, nullptr);
+		g_pManagement->Create_Effect_Delay(L"Colleague_Teleport_Line_Particle_1", 0.f, vPos, nullptr);
+		g_pManagement->Create_Effect_Delay(L"Colleague_Teleport_Line_Particle_2", 0.f, vPos, nullptr);
+		g_pManagement->Create_Effect_Delay(L"Colleague_Teleport_Flash_Particle_0", 0.f, vPos, nullptr);
+		//g_pManagement->Create_Effect_Delay(L"Colleague_Teleport_Smoke_0", 0.f, vPos, nullptr);
 	}
 
 	// 몬스터 or 보스 리스트가 비어있거나 Enable 이면 탐색 종료
@@ -723,7 +730,7 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 			fAngle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(m_pObject_Mon)->Get_Pos()));
 
 		// 전투 상태일 때, 10초마다 구르게
-		cout << "데굴데굴" << endl;
+		//cout << "데굴데굴" << endl;
 		m_eMovetype = CPlayer_Colleague::Coll_Dodge;
 
 		if (0.f <= fAngle && 30.f > fAngle)
@@ -1017,8 +1024,8 @@ HRESULT CPlayer_Colleague::SetUp_Default()
 	m_List_pMonTarget[0] = &(g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE));
 	m_List_pMonTarget[1] = &(g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE));
 
-	m_tObjParam.fHp_Cur = 50000.f;
-	m_tObjParam.fHp_Max = 50000.f;
+	m_tObjParam.fHp_Cur = 500.f;
+	m_tObjParam.fHp_Max = 5000.f;
 	m_tObjParam.fDamage = 10.f;
 
 	m_tObjParam.bCanHit = true;		// 맞을 수 있는지
@@ -1662,9 +1669,9 @@ void CPlayer_Colleague::CollAtt_Normal()
 		
 		if (3 == m_iCenter_Count)
 		{
-			/*m_eMovetype = CPlayer_Colleague::Coll_Attack;
+			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_CenterDown;
-			*/
+			
 			m_iCenter_Count = 0;
 		}
 		else if (m_iNormalAtt_Count == 4)
@@ -2210,11 +2217,13 @@ void CPlayer_Colleague::CollAtt_ThreeCombo()		// 4번
 
 	_v3 vEffPos = _v3(0.f, 1.5f, 0.f) + m_pTransformCom->Get_Axis(AXIS_Z) * 1.5f;
 
-	if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.333f)
+	if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.7f)
 	{
 		if (m_bEventTrigger[9] == false)
 		{
 			m_bEventTrigger[9] = true;
+
+			cout << "Skill_ShadowAssault_ScratchBlur_2226 : " << m_pDynamicMesh->Get_TrackInfo().Position << endl;
 
 			g_pManagement->Create_Effect_Delay(L"Player_Skill_ShadowAssault_ScratchBlur", 0.f, vEffPos, m_pTransformCom);
 			g_pManagement->Create_Effect_Delay(L"Player_Skill_ShadowAssault_Scratch", 0.f, vEffPos, m_pTransformCom);
@@ -2224,7 +2233,6 @@ void CPlayer_Colleague::CollAtt_ThreeCombo()		// 4번
 			g_pManagement->Create_Effect_Delay(L"Hit_Slash_3", 0.f, vEffPos, m_pTransformCom);
 			g_pManagement->Create_Effect_Delay(L"Hit_Slash_Particle_0", 0.f, vEffPos, m_pTransformCom);
 			g_pManagement->Create_ParticleEffect_Delay(L"Player_Skill_RedParticle_Explosion", 0.1f, 0.f, vEffPos, m_pTransformCom);
-
 		}
 	}
 
@@ -2324,6 +2332,8 @@ void CPlayer_Colleague::CollAtt_CenterDown()		// 2번
 		{
 			m_bEventTrigger[7] = true;
 
+			cout << "CollAtt_CenterDown_2 : " << m_pDynamicMesh->Get_TrackInfo().Position << endl;
+
 			g_pManagement->Create_Effect_Delay(L"Player_Skill_Ring_Hor", 0.f, vEffPos, m_pTransformCom);
 			g_pManagement->Create_Effect_Delay(L"Player_Skill_Ring_Ver", 0.f, vEffPos, m_pTransformCom);
 			g_pManagement->Create_Effect_Delay(L"Player_Skill_RedCircle_Flash", 0.f, vEffPos, m_pTransformCom);
@@ -2336,6 +2346,8 @@ void CPlayer_Colleague::CollAtt_CenterDown()		// 2번
 		if (m_bEventTrigger[6] == false)
 		{
 			m_bEventTrigger[6] = true;
+
+			cout << "CollAtt_CenterDown_1 : " << m_pDynamicMesh->Get_TrackInfo().Position << endl;
 
 			g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Ver", 0.f, vEffPos, m_pTransformCom);
 			g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Ver", 0.f, vEffPos, m_pTransformCom);
@@ -2374,6 +2386,8 @@ void CPlayer_Colleague::CollAtt_CenterDown()		// 2번
 		if (m_bEventTrigger[3] == false)
 		{
 			m_bEventTrigger[3] = true;
+
+			cout << "CollAtt_CenterDown_0 : " << m_pDynamicMesh->Get_TrackInfo().Position << endl;
 
 			g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor", 0.f, vEffPos, m_pTransformCom);
 			g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Hor", 0.f, vEffPos, m_pTransformCom);
@@ -2440,8 +2454,8 @@ void CPlayer_Colleague::CollAtt_CenterDown()		// 2번
 
 			m_fAni_Multiply = 1.5f;
 
-			m_tObjParam.bInvisible = true;
-			m_pSword->Set_Invisible(true);
+			//m_tObjParam.bInvisible = true;
+			//m_pSword->Set_Invisible(true);
 		}
 
 		if (m_bEventTrigger[1] == false)
@@ -2512,6 +2526,7 @@ void CPlayer_Colleague::CollAtt_SlowGun()
 				memcpy(&vLook, &matBone._21, sizeof(_v3));
 				vBirth += (vLook*fLenght);
 
+				cout << "SlowGun!!! : "<< AniTime << endl;
 				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_ColleagueBullet",
 					&BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 3.f, 1.f));
 				//Set_Friendly(true);
@@ -2525,8 +2540,8 @@ void CPlayer_Colleague::CollAtt_SlowGun()
 
 				_mat matBone = *m_matBone[Bone_LHand] * m_pTransformCom->Get_WorldMat();
 				memcpy(&vBirth, &matBone._41, sizeof(_v3));
-
-				g_pManagement->Create_Effect_Delay(L"Colleague_Skill_HandLight_Red_0", 0.f, vBirth);
+				
+				//g_pManagement->Create_Effect_Delay(L"Colleague_Skill_HandLight_Red_0", 0.f, vBirth);
 				g_pManagement->Create_Effect_Delay(L"Colleague_Skill_HandLight_Pink_0", 0.3f, vBirth);
 				g_pManagement->Create_Effect_Delay(L"Colleague_Skill_HandSmoke_Black_0", 0.f, vBirth);
 			}
@@ -2568,6 +2583,17 @@ void CPlayer_Colleague::CollHeal_ForMe()
 			if (m_tObjParam.fHp_Cur > m_tObjParam.fHp_Max)
 				m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
 			--m_iMyHeal_Count;
+
+			cout << "Self Heal" << endl;
+
+			_mat matBone = *m_matBone[Bone_LHand] * m_pTransformCom->Get_WorldMat();
+			_v3 vEffPos;
+			memcpy(&vEffPos, &matBone._41, sizeof(_v3));
+			 
+			g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle", 0.2f, vEffPos, nullptr);
+			g_pManagement->Create_Effect_Delay(L"Player_Heal_RedLight", 0.2f, vEffPos, nullptr);
+			g_pManagement->Create_Effect_Delay(L"Player_Heal_Particle", 0.2f, vEffPos, nullptr);
+			g_pManagement->Create_ParticleEffect_Delay(L"Player_Buff_HandSmoke", 0.2f, 0.2f, vEffPos, nullptr);
 		}
 	}
 	else
