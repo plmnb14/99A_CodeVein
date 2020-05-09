@@ -71,15 +71,15 @@ _int CYeti::Late_Update_GameObject(_double TimeDelta)
 		{
 			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 				return E_FAIL;
+
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+				return E_FAIL;
 		}
 		else
 		{
 			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
 				return E_FAIL;
 		}
-
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-			return E_FAIL;
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
 			return E_FAIL;
 	}
@@ -130,8 +130,11 @@ HRESULT CYeti::Render_GameObject()
 
 	m_pShaderCom->End_Shader();
 
-	Update_Collider();
-	Render_Collider();
+	if (MONSTER_STATE_TYPE::DEAD != m_eFirstCategory)
+	{
+		Update_Collider();
+		Render_Collider();
+	}
 
 	return S_OK;
 }
@@ -2505,6 +2508,7 @@ void CYeti::Play_Dead()
 
 				Start_Dissolve(0.7f, false, true, 0.0f);
 				m_fDeadEffect_Delay = 0.f;
+
 				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 			}
 
@@ -2645,8 +2649,8 @@ HRESULT CYeti::Ready_Status(void * pArg)
 		return E_FAIL;
 	}
 
-	m_tObjParam.fDamage = -500.f;
-	m_tObjParam.fHp_Max = 3000.f;
+	m_tObjParam.fDamage = -100.f;
+	m_tObjParam.fHp_Max = 300.f;
 	m_tObjParam.fArmor_Max = 10.f;
 
 	m_fRecognitionRange = 15.f;

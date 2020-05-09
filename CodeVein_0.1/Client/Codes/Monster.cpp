@@ -178,6 +178,76 @@ HRESULT CMonster::Draw_Collider()
 	return S_OK;
 }
 
+void CMonster::Check_DropItem()
+{
+	CGameObject* pItem = nullptr;
+
+	m_iRandom = CALC::Random_Num(0, 10);
+
+	switch (m_iRandom)
+	{
+	case 0:
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
+			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
+				m_pTransformCom->Get_Pos(), 12.f));
+		break;
+	case 1:
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
+			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
+				m_pTransformCom->Get_Pos(), 12.f));
+		break;
+	case 2:
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
+			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
+				m_pTransformCom->Get_Pos(), 12.f));
+		break;
+	case 3:
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
+			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
+				m_pTransformCom->Get_Pos(), 12.f));
+		break;
+	case 4:
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
+			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
+				m_pTransformCom->Get_Pos(), 12.f));
+		break;
+	case 5:
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
+			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
+				m_pTransformCom->Get_Pos(), 12.f));
+		break;
+	case 6:
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
+			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
+				m_pTransformCom->Get_Pos(), 12.f));
+		break;
+	case 7:
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
+			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
+				m_pTransformCom->Get_Pos(), 12.f));
+		break;
+	case 8:
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
+			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
+				m_pTransformCom->Get_Pos(), 12.f));
+		break;
+	case 9:
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
+			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
+				m_pTransformCom->Get_Pos(), 12.f));
+		break;
+	case 10:
+		pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
+			&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY,
+				m_pTransformCom->Get_Pos(), 12.f));
+		break;
+	}
+
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pItem, SCENE_STAGE, L"Layer_Item", nullptr);
+
+	return;
+}
+
 void CMonster::Check_CollisionEvent()
 {
 	Check_CollisionPush();

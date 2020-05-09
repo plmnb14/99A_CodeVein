@@ -73,6 +73,9 @@ _int CHunter::Late_Update_GameObject(_double TimeDelta)
 		{
 			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 				return E_FAIL;
+
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+				return E_FAIL;
 		}
 		else
 		{
@@ -80,8 +83,6 @@ _int CHunter::Late_Update_GameObject(_double TimeDelta)
 				return E_FAIL;
 		}
 
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-			return E_FAIL;
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
 			return E_FAIL;
 	}
@@ -138,8 +139,11 @@ HRESULT CHunter::Render_GameObject()
 	IF_NOT_NULL(m_pWeapon)
 		m_pWeapon->Update_GameObject(m_dTimeDelta);
 
-	Update_Collider();
-	Render_Collider();
+	if (MONSTER_STATE_TYPE::DEAD != m_eFirstCategory)
+	{
+		Update_Collider();
+		Render_Collider();
+	}
 
 	return S_OK;
 }
@@ -6622,7 +6626,7 @@ void CHunter::Play_Move()
 			m_bIsMoveAround = true;
 
 			m_bCanCoolDown = true;
-			m_fCoolDownMax = CALC::Random_Num(2, 4) * 1.0f;
+			m_fCoolDownMax = CALC::Random_Num(1, 3) * 1.0f;
 
 			m_fSkillMoveSpeed_Cur = 2.5f;
 			m_fSkillMoveAccel_Cur = 0.f;
@@ -6857,8 +6861,11 @@ void CHunter::Play_Dead()
 				if (false == m_bEventTrigger[0])
 				{
 					m_bEventTrigger[0] = true;
+
 					Start_Dissolve(0.7f, false, true);
 					m_pWeapon->Start_Dissolve(0.7f, false, true);
+					m_fDeadEffect_Delay = 0.f;
+
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
@@ -6875,8 +6882,11 @@ void CHunter::Play_Dead()
 				if (false == m_bEventTrigger[0])
 				{
 					m_bEventTrigger[0] = true;
+
 					Start_Dissolve(0.7f, false, true);
 					m_pWeapon->Start_Dissolve(0.7f, false, true);
+					m_fDeadEffect_Delay = 0.f;
+
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
@@ -6897,6 +6907,7 @@ void CHunter::Play_Dead()
 					Start_Dissolve(0.7f, false, true, 0.0f);
 					m_pWeapon->Start_Dissolve(0.7f, false, true);
 					m_fDeadEffect_Delay = 0.f;
+
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}

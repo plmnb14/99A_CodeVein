@@ -41,7 +41,8 @@ _int CPet_Inven::Update_GameObject(_double TimeDelta)
 	_uint iIdx = 0;
 	for (auto& vector_iter : m_vecPetSlot)
 	{
-		vector_iter->Set_UI_Pos(m_fPosX - 100.f + 50.f * (iIdx % 5), m_fPosY - 150.f + 50.f * (m_fPosY / 5));
+		cout << m_vecPetSlot.size() << endl;
+		vector_iter->Set_UI_Pos(m_fPosX - 100.f + 50.f * (iIdx % 5), m_fPosY - 150.f + 50.f * (iIdx / 5));
 		vector_iter->Set_Active(m_bIsActive);
 		iIdx++;
 	}
@@ -105,9 +106,10 @@ void CPet_Inven::Add_Pet(ITEM_GRADE_TYPE _eGrade, CPet::PET_TYPE _eType)
 
 	pDesc->fSizeX = 50.f;
 	pDesc->fSizeY = 50.f;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_PetSlot", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
-	pSlot = static_cast<CPet_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
-	pSlot->Set_Type(_eType);
+	g_pManagement->Add_GameObject_ToLayer(L"GameObject_PetSlot", SCENE_MORTAL, L"Layer_PetUI", pDesc);
+	pSlot = static_cast<CPet_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_PetUI", SCENE_MORTAL));
+	pSlot->Set_Grade(_eGrade); //펫 등급설정
+	pSlot->Set_Type(_eType); //펫 종류 설정
 	m_vecPetSlot.push_back(pSlot);
 
 	// 슬롯 생성시 위치 조정

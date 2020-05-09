@@ -21,23 +21,22 @@ HRESULT CPet_PoisonButterFly::Ready_GameObject(void * pArg)
 	if (FAILED(Add_Component(pArg)))
 		return E_FAIL;
 
-	m_pTransformCom->Set_Pos(_v3(1.f, 0.f, 1.f));
-	m_pTransformCom->Set_Scale(_v3(0.25f,0.25f,0.25f));
-
 	Ready_Status(pArg);
 	Ready_BoneMatrix(pArg);
 	Ready_Collider(pArg);
 	Ready_Weapon(pArg);
 
-	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
-	m_pMonsterUI->Set_Target(this);
-	m_pMonsterUI->Set_Bonmatrix(m_matBone[Bone_Head]);
-	m_pMonsterUI->Ready_GameObject(NULL);
-
 	m_pPlayer = &(*g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 
 	if (nullptr != m_pPlayer)
 		Safe_AddRef(m_pPlayer);
+
+	Check_Navi();
+	
+	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
+	m_pMonsterUI->Set_Target(this);
+	m_pMonsterUI->Set_Bonmatrix(m_matBone[Bone_Head]);
+	m_pMonsterUI->Ready_GameObject(NULL);
 
 	return S_OK;
 }
@@ -55,7 +54,7 @@ _int CPet_PoisonButterFly::Update_GameObject(_double TimeDelta)
 	Check_AniEvent();
 	Function_CoolDown();
 
-	m_pMeshCom->SetUp_Animation(m_eState);
+	m_pMesh->SetUp_Animation(m_eState);
 
 	PET_STATE_TYPE::DEAD != m_eFirstCategory ? Check_CollisionEvent() : Check_DeadEffect(TimeDelta);
 
@@ -69,11 +68,11 @@ _int CPet_PoisonButterFly::Late_Update_GameObject(_double TimeDelta)
 
 	IF_NULL(m_pTarget) m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
 
-	IF_NULL_VALUE_RETURN(m_pRendererCom, E_FAIL);
+	IF_NULL_VALUE_RETURN(m_pRenderer, E_FAIL);
 
-	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
+	if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
 		return E_FAIL;
-	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+	if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
 		return E_FAIL;
 
 	m_dTimeDelta = TimeDelta;
@@ -86,42 +85,42 @@ _int CPet_PoisonButterFly::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CPet_PoisonButterFly::Render_GameObject()
 {
-	IF_NULL_VALUE_RETURN(m_pShaderCom, E_FAIL);
-	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
+	IF_NULL_VALUE_RETURN(m_pShader, E_FAIL);
+	IF_NULL_VALUE_RETURN(m_pMesh, E_FAIL);
 
-	m_pMeshCom->Play_Animation(DELTA_60 * m_dAniPlayMul);
+	m_pMesh->Play_Animation(DELTA_60 * m_dAniPlayMul);
 
 	if (FAILED(SetUp_ConstantTable()))
 		return E_FAIL;
 
-	m_pShaderCom->Begin_Shader();
+	m_pShader->Begin_Shader();
 
-	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+	_uint iNumMeshContainer = _uint(m_pMesh->Get_NumMeshContainer());
 
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 	{
-		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+		_uint iNumSubSet = (_uint)m_pMesh->Get_NumMaterials(i);
 
-		m_pMeshCom->Update_SkinnedMesh(i);
+		m_pMesh->Update_SkinnedMesh(i);
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
 			if (PET_STATE_TYPE::DEAD != m_eFirstCategory)
-				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+				m_iPass = m_pMesh->Get_MaterialPass(i, j);
 
-			m_pShaderCom->Begin_Pass(m_iPass);
+			m_pShader->Begin_Pass(m_iPass);
 
-			m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
+			m_pShader->Set_DynamicTexture_Auto(m_pMesh, i, j);
 
-			m_pShaderCom->Commit_Changes();
+			m_pShader->Commit_Changes();
 
-			m_pMeshCom->Render_Mesh(i, j);
+			m_pMesh->Render_Mesh(i, j);
 
-			m_pShaderCom->End_Pass();
+			m_pShader->End_Pass();
 		}
 	}
 
-	m_pShaderCom->End_Shader();
+	m_pShader->End_Shader();
 
 	IF_NOT_NULL(m_pWeapon)
 		m_pWeapon->Update_GameObject(m_dTimeDelta);
@@ -135,12 +134,12 @@ HRESULT CPet_PoisonButterFly::Render_GameObject()
 HRESULT CPet_PoisonButterFly::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
 {
 	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
-	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
+	IF_NULL_VALUE_RETURN(m_pMesh, E_FAIL);
 
 	if (FAILED(SetUp_ConstantTable()))
 		return E_FAIL;
 
-	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
 
 	_mat ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
@@ -148,21 +147,21 @@ HRESULT CPet_PoisonButterFly::Render_GameObject_SetPass(CShader * pShader, _int 
 	if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
 		return E_FAIL;
 
-	m_matLastWVP = m_pTransformCom->Get_WorldMat() * ViewMatrix * ProjMatrix;
+	m_matLastWVP = m_pTransform->Get_WorldMat() * ViewMatrix * ProjMatrix;
 
-	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+	_uint iNumMeshContainer = _uint(m_pMesh->Get_NumMeshContainer());
 
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 	{
-		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+		_uint iNumSubSet = (_uint)m_pMesh->Get_NumMaterials(i);
 
-		m_pMeshCom->Update_SkinnedMesh(i);
+		m_pMesh->Update_SkinnedMesh(i);
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
 			pShader->Begin_Pass(iPass);
 
-			m_pMeshCom->Render_Mesh(i, j);
+			m_pMesh->Render_Mesh(i, j);
 
 			pShader->End_Pass();
 		}
@@ -177,7 +176,7 @@ void CPet_PoisonButterFly::Update_Collider()
 
 	for (auto& vector_iter : m_vecAttackCol)
 	{
-		_mat matTemp = *m_matBone[matrixIdx] * m_pTransformCom->Get_WorldMat();
+		_mat matTemp = *m_matBone[matrixIdx] * m_pTransform->Get_WorldMat();
 
 		_v3 ColPos = _v3(matTemp._41, matTemp._42, matTemp._43);
 
@@ -190,7 +189,7 @@ void CPet_PoisonButterFly::Update_Collider()
 
 	for (auto& iter : m_vecPhysicCol)
 	{
-		_mat tmpMat = *m_matBone[matrixIdx] * m_pTransformCom->Get_WorldMat();
+		_mat tmpMat = *m_matBone[matrixIdx] * m_pTransform->Get_WorldMat();
 
 		_v3 ColPos = _v3(tmpMat._41, tmpMat._42, tmpMat._43);
 
@@ -199,7 +198,7 @@ void CPet_PoisonButterFly::Update_Collider()
 		++matrixIdx;
 	}
 
-	m_pCollider->Update(m_pTransformCom->Get_Pos() + _v3(0.f, m_pCollider->Get_Radius().y, 0.f));
+	m_pCollider->Update(m_pTransform->Get_Pos() + _v3(0.f, m_pCollider->Get_Radius().y, 0.f));
 
 	return;
 }
@@ -299,7 +298,7 @@ void CPet_PoisonButterFly::Check_Dist()
 		true == m_tObjParam.bIsHit)
 		return;
 
-	_float fPlayerDist = V3_LENGTH(&(TARGET_TO_TRANS(m_pPlayer)->Get_Pos() - m_pTransformCom->Get_Pos()));
+	_float fPlayerDist = V3_LENGTH(&(TARGET_TO_TRANS(m_pPlayer)->Get_Pos() - m_pTransform->Get_Pos()));
 
 	m_fLimitRange >= fPlayerDist ? m_bInLimitRange = true : m_bInLimitRange = false; //Player와의 최대 거리
 	m_fActiveRange >= fPlayerDist ? m_bInActiveRange = true : m_bInActiveRange = false; //자유 행동 거리
@@ -508,7 +507,7 @@ void CPet_PoisonButterFly::Check_Dist()
 
 void CPet_PoisonButterFly::Check_Action()
 {
-	_float fTargetDist = V3_LENGTH(&(TARGET_TO_TRANS(m_pTarget)->Get_Pos() - m_pTransformCom->Get_Pos()));
+	_float fTargetDist = V3_LENGTH(&(TARGET_TO_TRANS(m_pTarget)->Get_Pos() - m_pTransform->Get_Pos()));
 
 	m_fRecognitionRange >= fTargetDist ? m_bInRecognitionRange = true : m_bInRecognitionRange = false; //목표와 인지범위 여부
 	m_fShotRange >= fTargetDist ? m_bInShotRange = true : m_bInShotRange = false; //목표와 원거리 공격 범위 여부
@@ -679,11 +678,11 @@ void CPet_PoisonButterFly::Check_DeadEffect(_double TimeDelta)
 
 	m_fDeadEffect_Offset = 0.1f;
 
-	_v3 vPos = m_pTransformCom->Get_Pos();
-	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
-	_v3 vHeadPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
-	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips");
-	_v3 vHipPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	_v3 vPos = m_pTransform->Get_Pos();
+	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMesh->Get_BonInfo("Head");
+	_v3 vHeadPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransform->Get_WorldMat()).m[3]);
+	pFamre = (D3DXFRAME_DERIVED*)m_pMesh->Get_BonInfo("Hips");
+	_v3 vHipPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransform->Get_WorldMat()).m[3]);
 
 	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle", 0.1f, vPos, vHeadPos);
 	CParticleMgr::Get_Instance()->Create_Effect_FinishPos(L"SpawnParticle_Sub", 0.1f, vPos, vHeadPos);
@@ -697,7 +696,7 @@ void CPet_PoisonButterFly::Check_DeadEffect(_double TimeDelta)
 
 void CPet_PoisonButterFly::Play_5Shot()
 {
-	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+	_double AniTime = m_pMesh->Get_TrackInfo().Position;
 	_v3 vBirth, vLook;
 	_float fLength = 1.f;
 
@@ -709,7 +708,7 @@ void CPet_PoisonButterFly::Play_5Shot()
 	else
 	{
 		//원하는 방향으로 5발을 쏴준다
-		if (m_pMeshCom->Is_Finish_Animation(0.955f))
+		if (m_pMesh->Is_Finish_Animation(0.955f))
 		{
 			Function_ResetAfterAtk();
 			m_bCanCoolDown = true;
@@ -724,14 +723,14 @@ void CPet_PoisonButterFly::Play_5Shot()
 				m_bEventTrigger[0] = true;
 				m_tObjParam.bSuperArmor = true;
 
-				_mat matTemp = *m_matBone[Bone_Head] * m_pTransformCom->Get_WorldMat();
+				_mat matTemp = *m_matBone[Bone_Head] * m_pTransform->Get_WorldMat();
 
 				memcpy(&vBirth, &matTemp._41, sizeof(_v3));
 				memcpy(&vLook, &matTemp._31, sizeof(_v3)); //Right Up Look Pos
 				vBirth += (vLook * fLength); //생성위치 = 생성위치 +(룩*길이)
 
 				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(
-					PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 15.f, 1.5f));
+					PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, m_pTransform->Get_Axis(AXIS_Z), 15.f, 1.5f));
 			}
 		}
 		else if (0.f <= AniTime)
@@ -779,7 +778,7 @@ void CPet_PoisonButterFly::Play_5Shot()
 
 void CPet_PoisonButterFly::Play_Mist()
 {
-	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+	_double AniTime = m_pMesh->Get_TrackInfo().Position;
 	_v3 vBirth, vLook;
 	_float fLength = 1.f;
 
@@ -791,7 +790,7 @@ void CPet_PoisonButterFly::Play_Mist()
 	else
 	{
 		//전 방향으로 발사, 기모아서 방출하는 느낌
-		if (m_pMeshCom->Is_Finish_Animation(0.955f))
+		if (m_pMesh->Is_Finish_Animation(0.955f))
 		{
 			Function_ResetAfterAtk();
 			m_bCanCoolDown = true;
@@ -806,13 +805,13 @@ void CPet_PoisonButterFly::Play_Mist()
 				m_bEventTrigger[0] = true;
 				m_tObjParam.bSuperArmor = true;
 
-				_mat matTemp = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat(); //뼈위치* 월드
+				_mat matTemp = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat(); //뼈위치* 월드
 
 				memcpy(&vBirth, &matTemp._41, sizeof(_v3)); //생성위치
 				memcpy(&vLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
 				vBirth += (vLook * fLength); //생성위치 = 생성위치 +(룩*길이)
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 6.f, 5.f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Pet_Bullet", &PET_BULLET_STATUS(PET_BULLET_TYPE::PET_BULLET_POISON, vBirth, m_pTransform->Get_Axis(AXIS_Z), 6.f, 5.f));
 			}
 		}
 	}
@@ -822,7 +821,7 @@ void CPet_PoisonButterFly::Play_Mist()
 
 void CPet_PoisonButterFly::Play_PoisonWheelWind()
 {
-	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+	_double AniTime = m_pMesh->Get_TrackInfo().Position;
 	_mat matBone1, matBone2, matBone;
 	_v3 vBirth, vShotDir, vMakeDirPoint1, vMakeDirPoint2;
 
@@ -833,7 +832,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 	}
 	else
 	{
-		if (m_pMeshCom->Is_Finish_Animation(0.95f))
+		if (m_pMesh->Is_Finish_Animation(0.95f))
 		{
 			Function_ResetAfterAtk();
 			m_bCanCoolDown = true;
@@ -847,9 +846,9 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 			{
 				m_bEventTrigger[0] = true;
 				m_tObjParam.bSuperArmor = true;
-				matBone1 = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
-				matBone2 = *m_matBone[Bone_Tail] * m_pTransformCom->Get_WorldMat();
-				matBone = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
+				matBone1 = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
+				matBone2 = *m_matBone[Bone_Tail] * m_pTransform->Get_WorldMat();
+				matBone = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
 
 				memcpy(vMakeDirPoint1, &matBone1._41, sizeof(_v3));
 				memcpy(vMakeDirPoint2, &matBone2._41, sizeof(_v3));
@@ -865,9 +864,9 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 			{
 				m_bEventTrigger[1] = true;
 				m_tObjParam.bSuperArmor = true;
-				matBone1 = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
-				matBone2 = *m_matBone[Bone_Tail] * m_pTransformCom->Get_WorldMat();
-				matBone = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
+				matBone1 = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
+				matBone2 = *m_matBone[Bone_Tail] * m_pTransform->Get_WorldMat();
+				matBone = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
 
 				memcpy(vMakeDirPoint1, &matBone1._41, sizeof(_v3));
 				memcpy(vMakeDirPoint2, &matBone2._41, sizeof(_v3));
@@ -883,9 +882,9 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 			{
 				m_bEventTrigger[2] = true;
 				m_tObjParam.bSuperArmor = true;
-				matBone1 = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
-				matBone2 = *m_matBone[Bone_Tail] * m_pTransformCom->Get_WorldMat();
-				matBone = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
+				matBone1 = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
+				matBone2 = *m_matBone[Bone_Tail] * m_pTransform->Get_WorldMat();
+				matBone = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
 
 				memcpy(vMakeDirPoint1, &matBone1._41, sizeof(_v3));
 				memcpy(vMakeDirPoint2, &matBone2._41, sizeof(_v3));
@@ -901,9 +900,9 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 			{
 				m_bEventTrigger[3] = true;
 				m_tObjParam.bSuperArmor = true;
-				matBone1 = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
-				matBone2 = *m_matBone[Bone_Tail] * m_pTransformCom->Get_WorldMat();
-				matBone = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
+				matBone1 = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
+				matBone2 = *m_matBone[Bone_Tail] * m_pTransform->Get_WorldMat();
+				matBone = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
 
 				memcpy(vMakeDirPoint1, &matBone1._41, sizeof(_v3));
 				memcpy(vMakeDirPoint2, &matBone2._41, sizeof(_v3));
@@ -919,9 +918,9 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 			{
 				m_bEventTrigger[4] = true;
 				m_tObjParam.bSuperArmor = true;
-				matBone1 = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
-				matBone2 = *m_matBone[Bone_Tail] * m_pTransformCom->Get_WorldMat();
-				matBone = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
+				matBone1 = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
+				matBone2 = *m_matBone[Bone_Tail] * m_pTransform->Get_WorldMat();
+				matBone = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
 
 				memcpy(vMakeDirPoint1, &matBone1._41, sizeof(_v3));
 				memcpy(vMakeDirPoint2, &matBone2._41, sizeof(_v3));
@@ -937,9 +936,9 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 			{
 				m_bEventTrigger[5] = true;
 				m_tObjParam.bSuperArmor = true;
-				matBone1 = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
-				matBone2 = *m_matBone[Bone_Tail] * m_pTransformCom->Get_WorldMat();
-				matBone = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
+				matBone1 = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
+				matBone2 = *m_matBone[Bone_Tail] * m_pTransform->Get_WorldMat();
+				matBone = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
 
 				memcpy(vMakeDirPoint1, &matBone1._41, sizeof(_v3));
 				memcpy(vMakeDirPoint2, &matBone2._41, sizeof(_v3));
@@ -955,9 +954,9 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 			{
 				m_bEventTrigger[6] = true;
 				m_tObjParam.bSuperArmor = true;
-				matBone1 = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
-				matBone2 = *m_matBone[Bone_Tail] * m_pTransformCom->Get_WorldMat();
-				matBone = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
+				matBone1 = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
+				matBone2 = *m_matBone[Bone_Tail] * m_pTransform->Get_WorldMat();
+				matBone = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
 
 				memcpy(vMakeDirPoint1, &matBone1._41, sizeof(_v3));
 				memcpy(vMakeDirPoint2, &matBone2._41, sizeof(_v3));
@@ -973,9 +972,9 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 			{
 				m_bEventTrigger[7] = true;
 				m_tObjParam.bSuperArmor = true;
-				matBone1 = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
-				matBone2 = *m_matBone[Bone_Tail] * m_pTransformCom->Get_WorldMat();
-				matBone = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
+				matBone1 = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
+				matBone2 = *m_matBone[Bone_Tail] * m_pTransform->Get_WorldMat();
+				matBone = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
 
 				memcpy(vMakeDirPoint1, &matBone1._41, sizeof(_v3));
 				memcpy(vMakeDirPoint2, &matBone2._41, sizeof(_v3));
@@ -991,9 +990,9 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 			{
 				m_bEventTrigger[8] = true;
 				m_tObjParam.bSuperArmor = true;
-				matBone1 = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
-				matBone2 = *m_matBone[Bone_Tail] * m_pTransformCom->Get_WorldMat();
-				matBone = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
+				matBone1 = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
+				matBone2 = *m_matBone[Bone_Tail] * m_pTransform->Get_WorldMat();
+				matBone = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
 
 				memcpy(vMakeDirPoint1, &matBone1._41, sizeof(_v3));
 				memcpy(vMakeDirPoint2, &matBone2._41, sizeof(_v3));
@@ -1009,9 +1008,9 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 			{
 				m_bEventTrigger[9] = true;
 				m_tObjParam.bSuperArmor = true;
-				matBone1 = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
-				matBone2 = *m_matBone[Bone_Tail] * m_pTransformCom->Get_WorldMat();
-				matBone = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
+				matBone1 = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
+				matBone2 = *m_matBone[Bone_Tail] * m_pTransform->Get_WorldMat();
+				matBone = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
 
 				memcpy(vMakeDirPoint1, &matBone1._41, sizeof(_v3));
 				memcpy(vMakeDirPoint2, &matBone2._41, sizeof(_v3));
@@ -1027,9 +1026,9 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 			{
 				m_bEventTrigger[10] = true;
 				m_tObjParam.bSuperArmor = true;
-				matBone1 = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
-				matBone2 = *m_matBone[Bone_Tail] * m_pTransformCom->Get_WorldMat();
-				matBone = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
+				matBone1 = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
+				matBone2 = *m_matBone[Bone_Tail] * m_pTransform->Get_WorldMat();
+				matBone = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
 
 				memcpy(vMakeDirPoint1, &matBone1._41, sizeof(_v3));
 				memcpy(vMakeDirPoint2, &matBone2._41, sizeof(_v3));
@@ -1045,9 +1044,9 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 			{
 				m_bEventTrigger[11] = true;
 				m_tObjParam.bSuperArmor = true;
-				matBone1 = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
-				matBone2 = *m_matBone[Bone_Tail] * m_pTransformCom->Get_WorldMat();
-				matBone = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
+				matBone1 = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
+				matBone2 = *m_matBone[Bone_Tail] * m_pTransform->Get_WorldMat();
+				matBone = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
 
 				memcpy(vMakeDirPoint1, &matBone1._41, sizeof(_v3));
 				memcpy(vMakeDirPoint2, &matBone2._41, sizeof(_v3));
@@ -1063,9 +1062,9 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 			{
 				m_bEventTrigger[12] = true;
 				m_tObjParam.bSuperArmor = true;
-				matBone1 = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
-				matBone2 = *m_matBone[Bone_Tail] * m_pTransformCom->Get_WorldMat();
-				matBone = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
+				matBone1 = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
+				matBone2 = *m_matBone[Bone_Tail] * m_pTransform->Get_WorldMat();
+				matBone = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
 
 				memcpy(vMakeDirPoint1, &matBone1._41, sizeof(_v3));
 				memcpy(vMakeDirPoint2, &matBone2._41, sizeof(_v3));
@@ -1081,9 +1080,9 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 			{
 				m_bEventTrigger[13] = true;
 				m_tObjParam.bSuperArmor = true;
-				matBone1 = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
-				matBone2 = *m_matBone[Bone_Tail] * m_pTransformCom->Get_WorldMat();
-				matBone = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
+				matBone1 = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
+				matBone2 = *m_matBone[Bone_Tail] * m_pTransform->Get_WorldMat();
+				matBone = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
 
 				memcpy(vMakeDirPoint1, &matBone1._41, sizeof(_v3));
 				memcpy(vMakeDirPoint2, &matBone2._41, sizeof(_v3));
@@ -1099,9 +1098,9 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 			{
 				m_bEventTrigger[14] = true;
 				m_tObjParam.bSuperArmor = true;
-				matBone1 = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
-				matBone2 = *m_matBone[Bone_Tail] * m_pTransformCom->Get_WorldMat();
-				matBone = *m_matBone[Bone_Tail6] * m_pTransformCom->Get_WorldMat();
+				matBone1 = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
+				matBone2 = *m_matBone[Bone_Tail] * m_pTransform->Get_WorldMat();
+				matBone = *m_matBone[Bone_Tail6] * m_pTransform->Get_WorldMat();
 
 				memcpy(vMakeDirPoint1, &matBone1._41, sizeof(_v3));
 				memcpy(vMakeDirPoint2, &matBone2._41, sizeof(_v3));
@@ -1122,7 +1121,7 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 				m_fSkillMoveMultiply = 0.5f;
 			}
 
-			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
 	}
@@ -1152,7 +1151,7 @@ void CPet_PoisonButterFly::Play_Idle()
 
 void CPet_PoisonButterFly::Play_Move()
 {
-	_double AniTime = m_pMeshCom->Get_TrackInfo().Position;
+	_double AniTime = m_pMesh->Get_TrackInfo().Position;
 
 	switch (m_eSecondCategory_MOVE)
 	{
@@ -1166,13 +1165,13 @@ void CPet_PoisonButterFly::Play_Move()
 			m_eState = PET_POISIONBUTTERFLY_ANI::Walk_F;
 
 			Function_RotateBody(m_pTarget);
-			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
 			break;
 		case PET_TARGET_TYPE::PET_TARGET_NONE:
 			m_eState = PET_POISIONBUTTERFLY_ANI::Walk_F;
 
 			Function_RotateBody(m_pPlayer);
-			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
 			break;
 		}
 		break;
@@ -1208,9 +1207,9 @@ void CPet_PoisonButterFly::Play_Move()
 			else
 			{
 				if (PET_POISIONBUTTERFLY_ANI::Walk_R == m_eState)
-					Function_MoveAround(m_pTarget, m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_X));
+					Function_MoveAround(m_pTarget, m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_X));
 				else if (PET_POISIONBUTTERFLY_ANI::Walk_L == m_eState)
-					Function_MoveAround(m_pTarget, m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_X));
+					Function_MoveAround(m_pTarget, m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_X));
 			}
 			break;
 		case PET_TARGET_TYPE::PET_TARGET_ITEM:
@@ -1243,9 +1242,9 @@ void CPet_PoisonButterFly::Play_Move()
 			else
 			{
 				if (PET_POISIONBUTTERFLY_ANI::Walk_R == m_eState)
-					Function_MoveAround(m_pPlayer, m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_X));
+					Function_MoveAround(m_pPlayer, m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_X));
 				else if (PET_POISIONBUTTERFLY_ANI::Walk_L == m_eState)
-					Function_MoveAround(m_pPlayer, m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_X));
+					Function_MoveAround(m_pPlayer, m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_X));
 			}
 			break;
 		}
@@ -1265,11 +1264,11 @@ void CPet_PoisonButterFly::Play_Move()
 		case PET_TARGET_TYPE::PET_TARGET_MONSTER:
 		case PET_TARGET_TYPE::PET_TARGET_ITEM:
 			Function_RotateBody(m_pTarget);
-			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
 			break;
 		case PET_TARGET_TYPE::PET_TARGET_NONE:
 			Function_RotateBody(m_pPlayer);
-			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+			Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransform->Get_Axis(AXIS_Z));
 			break;
 		}
 		break;
@@ -1283,7 +1282,7 @@ void CPet_PoisonButterFly::Play_Move()
 		}
 		else
 		{
-			if (m_pMeshCom->Is_Finish_Animation(0.95f))
+			if (m_pMesh->Is_Finish_Animation(0.95f))
 			{
 				m_eFirstCategory = PET_STATE_TYPE::IDLE;
 				m_tObjParam.bCanAttack = true;
@@ -1302,7 +1301,7 @@ void CPet_PoisonButterFly::Play_Move()
 					m_fSkillMoveMultiply = 0.25f;
 				}
 
-				Function_Movement(m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_Movement(m_fSkillMoveSpeed_Cur, -m_pTransform->Get_Axis(AXIS_Z));
 				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
 		}
@@ -1329,16 +1328,16 @@ void CPet_PoisonButterFly::Play_Dead()
 
 HRESULT CPet_PoisonButterFly::Add_Component(void * pArg)
 {
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransform)))
 		return E_FAIL;
 
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRenderer)))
 		return E_FAIL;
 
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShaderCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShader)))
 		return E_FAIL;
 
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_PoisonButterFly", L"Com_Mesh", (CComponent**)&m_pMeshCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_PoisonButterFly", L"Com_Mesh", (CComponent**)&m_pMesh)))
 		return E_FAIL;
 
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMesh)))
@@ -1350,33 +1349,33 @@ HRESULT CPet_PoisonButterFly::Add_Component(void * pArg)
 	m_pCollider->Set_Radius(_v3{ 0.8f, 0.8f, 0.8f });
 	m_pCollider->Set_Dynamic(true);
 	m_pCollider->Set_Type(COL_SPHERE);
-	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pCollider->Get_Radius().y , 0.f });
+	m_pCollider->Set_CenterPos(m_pTransform->Get_Pos() + _v3{ 0.f , m_pCollider->Get_Radius().y , 0.f });
 
 	return S_OK;
 }
 
 HRESULT CPet_PoisonButterFly::SetUp_ConstantTable()
 {
-	IF_NULL_VALUE_RETURN(m_pShaderCom, E_FAIL);
+	IF_NULL_VALUE_RETURN(m_pShader, E_FAIL);
 
 	CManagement* pManagement = CManagement::Get_Instance();
 	IF_NULL_VALUE_RETURN(pManagement, E_FAIL);
 
 	Safe_AddRef(pManagement);
 
-	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
+	if (FAILED(m_pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
 
 	_mat ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
 	_mat ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
 
-	if (FAILED(m_pShaderCom->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+	if (FAILED(m_pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+	if (FAILED(m_pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShaderCom)))
+	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShader)))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
+	if (FAILED(m_pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	Safe_Release(pManagement);
@@ -1441,6 +1440,8 @@ HRESULT CPet_PoisonButterFly::Ready_Status(void * pArg)
 	m_fCoolDownMax = 0.f;
 	m_fCoolDownCur = 0.f;
 
+	m_pTransform->Set_Scale(_v3(0.25f, 0.25f, 0.25f));
+
 	return S_OK;
 }
 
@@ -1484,17 +1485,17 @@ HRESULT CPet_PoisonButterFly::Ready_Collider(void * pArg)
 HRESULT CPet_PoisonButterFly::Ready_BoneMatrix(void * pArg)
 {
  	D3DXFRAME_DERIVED*	pFrame = nullptr;
-	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Spine", 0), E_FAIL);
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMesh->Get_BonInfo("Spine", 0), E_FAIL);
 	m_matBone[Bone_Range] = &pFrame->CombinedTransformationMatrix;
 	m_matBone[Bone_Body] = &pFrame->CombinedTransformationMatrix;
 
-	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head", 0), E_FAIL);
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMesh->Get_BonInfo("Head", 0), E_FAIL);
 	m_matBone[Bone_Head] = &pFrame->CombinedTransformationMatrix;
 
-	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Tail6", 0), E_FAIL); //Tail6_Tongue2
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMesh->Get_BonInfo("Tail6", 0), E_FAIL); //Tail6_Tongue2
 	m_matBone[Bone_Tail6] = &pFrame->CombinedTransformationMatrix;
 
-	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Tail4", 0), E_FAIL);
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMesh->Get_BonInfo("Tail4", 0), E_FAIL);
 	m_matBone[Bone_Tail] = &pFrame->CombinedTransformationMatrix;
 
 	return S_OK;
@@ -1528,21 +1529,6 @@ CGameObject* CPet_PoisonButterFly::Clone_GameObject(void * pArg)
 
 void CPet_PoisonButterFly::Free()
 {
-	Safe_Release(m_pMonsterUI);
-
-	IF_NOT_NULL(m_pTarget)
-		Safe_Release(m_pTarget);
-
-	IF_NOT_NULL(m_pPlayer)
-		Safe_Release(m_pPlayer);
-
-	Safe_Release(m_pCollider);
-	Safe_Release(m_pNavMesh);
-	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pMeshCom);
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pRendererCom);
-
 	CPet::Free();
 
 	return;

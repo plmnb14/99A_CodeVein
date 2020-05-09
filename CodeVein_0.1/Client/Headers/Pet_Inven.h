@@ -5,6 +5,7 @@
 #include "UI.h"
 
 #include "Pet_Slot.h"
+//인벤토리 안에 들어가면 사라질 예정
 #include "Inventory_Icon.h"
 
 BEGIN(Client)

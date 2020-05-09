@@ -71,15 +71,15 @@ _int CUrchin::Late_Update_GameObject(_double TimeDelta)
 		{
 			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 				return E_FAIL;
+
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+				return E_FAIL;
 		}
 		else
 		{
 			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
 				return E_FAIL;
 		}
-
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-			return E_FAIL;
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
 			return E_FAIL;
 	}
@@ -130,8 +130,11 @@ HRESULT CUrchin::Render_GameObject()
 
 	m_pShaderCom->End_Shader();
 
-	Update_Collider();
-	Render_Collider();
+	if (MONSTER_STATE_TYPE::DEAD != m_eFirstCategory)
+	{
+		Update_Collider();
+		Render_Collider();
+	}
 
 	return S_OK;
 }
@@ -223,7 +226,7 @@ void CUrchin::Update_Collider()
 {
 	for (auto& vector_iter : m_vecAttackCol)
 	{
-		_mat matTemp = *m_matBone[Bone_Head] * m_pTransformCom->Get_WorldMat();
+		_mat matTemp = *m_matBone[Bone_Body] * m_pTransformCom->Get_WorldMat();
 
 		_v3 ColPos = _v3(matTemp._41, matTemp._42, matTemp._43);
 
@@ -816,8 +819,8 @@ void CUrchin::Play_Dead()
 				m_bEventTrigger[0] = true;
 
 				Start_Dissolve(0.7f, false, true, 0.0f);
-				m_pWeapon->Start_Dissolve(0.7f, false, true, 0.f);
 				m_fDeadEffect_Delay = 0.f;
+
 				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 			}
 		}
@@ -1042,7 +1045,7 @@ HRESULT CUrchin::Ready_Status(void * pArg)
 
 HRESULT CUrchin::Ready_Collider()
 {
-	m_vecAttackCol.reserve(2);
+	m_vecAttackCol.reserve(1);
 	m_vecPhysicCol.reserve(3);
 
 	CCollider* pCollider = nullptr;
@@ -1057,26 +1060,7 @@ HRESULT CUrchin::Ready_Collider()
 	pCollider->Set_Type(COL_SPHERE);
 	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Range]->_41, m_matBone[Bone_Range]->_42, m_matBone[Bone_Range]->_43));
 	pCollider->Set_Enabled(true);
-	m_vecPhysicCol.push_back(pCollider);
 
-	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
-	fRadius = 0.5f;
-
-	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
-	pCollider->Set_Dynamic(true);
-	pCollider->Set_Type(COL_SPHERE);
-	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Body]->_41, m_matBone[Bone_Body]->_42, m_matBone[Bone_Body]->_43));
-	pCollider->Set_Enabled(true);
-	m_vecPhysicCol.push_back(pCollider);
-
-	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
-	fRadius = 0.2f;
-
-	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
-	pCollider->Set_Dynamic(true);
-	pCollider->Set_Type(COL_SPHERE);
-	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Head]->_41, m_matBone[Bone_Head]->_42, m_matBone[Bone_Head]->_43));
-	pCollider->Set_Enabled(true);
 	m_vecPhysicCol.push_back(pCollider);
 
 	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
@@ -1087,7 +1071,20 @@ HRESULT CUrchin::Ready_Collider()
 	pCollider->Set_Type(COL_SPHERE);
 	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Body]->_41, m_matBone[Bone_Body]->_42, m_matBone[Bone_Body]->_43));
 	pCollider->Set_Enabled(true);
+
+	m_vecPhysicCol.push_back(pCollider);
 	m_vecAttackCol.push_back(pCollider);
+
+	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
+	fRadius = 0.2f;
+
+	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
+	pCollider->Set_Dynamic(true);
+	pCollider->Set_Type(COL_SPHERE);
+	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Head]->_41, m_matBone[Bone_Head]->_42, m_matBone[Bone_Head]->_43));
+	pCollider->Set_Enabled(true);
+
+	m_vecPhysicCol.push_back(pCollider);
 
 	return S_OK;
 }
@@ -1097,9 +1094,11 @@ HRESULT CUrchin::Ready_BoneMatrix()
 	D3DXFRAME_DERIVED*	pFrame = nullptr;
 
 	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips", 0), E_FAIL);
-	m_matBone[Bone_Head] = &pFrame->CombinedTransformationMatrix;
 	m_matBone[Bone_Range] = &pFrame->CombinedTransformationMatrix;
 	m_matBone[Bone_Body] = &pFrame->CombinedTransformationMatrix;
+
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Toge12", 0), E_FAIL);
+	m_matBone[Bone_Head] = &pFrame->CombinedTransformationMatrix;
 
 	return S_OK;
 }
