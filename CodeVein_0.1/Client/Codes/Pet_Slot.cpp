@@ -121,9 +121,6 @@ HRESULT CPet_Slot::Render_GameObject()
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
-
 	m_pShader->Begin_Shader();
 
 	m_pShader->Begin_Pass(1);
@@ -226,7 +223,6 @@ HRESULT CPet_Slot::Render_GameObject()
 	return S_OK;
 }
 
-
 _bool CPet_Slot::Pt_InRect()
 {
 	return g_pInput_Device->MousePt_InRect(m_fPosX, m_fPosY, m_fSizeX, m_fSizeY, g_hWnd);
@@ -253,37 +249,6 @@ HRESULT CPet_Slot::Add_Component()
 	// for.Com_VIBuffer
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Rect", L"Com_VIBuffer", (CComponent**)&m_pBuffer)))
 		return E_FAIL;
-
-	return S_OK;
-}
-
-HRESULT CPet_Slot::SetUp_Default()
-{
-	CUI::UI_DESC* pDesc = nullptr;
-
-	//pDesc = new CUI::UI_DESC;
-	//pDesc->fPosX = m_fPosX;
-	//pDesc->fPosY = m_fPosY;
-	//pDesc->fSizeX = m_fSizeX;
-	//pDesc->fSizeY = m_fSizeY;
-	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_SelectUI", SCENE_STAGE, L"Layer_SelectUI", pDesc);
-	//m_pSelectUI = static_cast<CSelect_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_SelectUI", SCENE_STAGE));
-
-	//pDesc = new CUI::UI_DESC;
-	//pDesc->fPosX = m_fPosX - m_fSizeX * 0.25f;
-	//pDesc->fPosY = m_fPosY + m_fSizeY * 0.25f;
-	//pDesc->fSizeX = m_fSizeX * 0.25f;
-	//pDesc->fSizeY = m_fSizeY * 0.25f;
-	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_NumberUI", SCENE_STAGE, L"Layer_NumberUI", pDesc);
-	//m_pNumberUI = static_cast<CNumberUI*>(g_pManagement->Get_GameObjectBack(L"Layer_NumberUI", SCENE_STAGE));
-
-	//pDesc = new CUI::UI_DESC;
-	//pDesc->fPosX = m_fPosX;
-	//pDesc->fPosY = m_fPosY;
-	//pDesc->fSizeX = m_fSizeX;
-	//pDesc->fSizeY = m_fSizeY;
-	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_CursorUI", SCENE_STAGE, L"Layer_CursorUI", pDesc);
-	//m_pCursorUI = static_cast<CCursorUI*>(g_pManagement->Get_GameObjectBack(L"Layer_CursorUI", SCENE_STAGE));
 
 	return S_OK;
 }

@@ -101,19 +101,6 @@ HRESULT CPet_Inven::Render_GameObject()
 
 void CPet_Inven::Click_Inven()
 {
-	CUI::UI_DESC* pDesc = nullptr;
-	CPet_Slot* pSlot = nullptr;
-
-	pDesc = new CUI::UI_DESC;
-
-	pDesc->fSizeX = 50.f;
-	pDesc->fSizeY = 50.f;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_PetSlot", SCENE_MORTAL, L"Layer_PetUI", pDesc);
-	pSlot = static_cast<CPet_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_PetUI", SCENE_MORTAL));
-	pSlot->Set_Grade(_eGrade); //Æê µî±Þ¼³Á¤
-	pSlot->Set_Type(_eType); //Æê Á¾·ù ¼³Á¤
-	m_vecPetSlot.push_back(pSlot);
-
 	if (!m_bIsActive)
 		return;
 
@@ -145,7 +132,6 @@ void CPet_Inven::Reset_SlotSelect()
 		iter->Set_Select(false);
 	}
 }
-
 
 HRESULT CPet_Inven::Add_Component()
 {

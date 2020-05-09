@@ -90,7 +90,6 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 		//g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_0", m_pTransform->Get_Pos());
 		//g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_1", m_pTransform->Get_Pos());
 		//g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_Particle", m_pTransform->Get_Pos());
-		m_pEffect->Set_Dead();
 		m_bEnable = false;
 		return DEAD_OBJ;
 	}
@@ -131,7 +130,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 				//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon();
 				break;
 			case ITEM_PET:
-				CUI_Manager::Get_Instance()->Get_Pet_Inven()->Add_Pet(m_eItemGrade, m_ePetType);
+				CUI_Manager::Get_Instance()->Get_Pet_Inven()->Add_Pet(m_ePetType);
 				break;
 			}
 			//"줍는다" 관련 변수가 참인 경우도 포함할것
@@ -157,7 +156,6 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 			//g_pManagement->Create_Effect(L"Bullet_DeadFlash", m_pTransform->Get_Pos(), nullptr);
 			//g_pManagement->Create_Effect(L"Bullet_DeadSmoke_Base", m_pTransform->Get_Pos(), nullptr);
 			//g_pManagement->Create_Effect(L"Bullet_DeadSmoke_Black", m_pTransform->Get_Pos(), nullptr);
-			m_pEffect->Set_Dead();
 			m_bEnable = false;
 
 			return DEAD_OBJ;
