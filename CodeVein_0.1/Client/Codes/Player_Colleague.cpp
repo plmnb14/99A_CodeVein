@@ -661,10 +661,6 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 
 	if (fMyPlayerLength < 30.f)		// 플레이어가 범위 내에 있는지 체크
 	{
-		m_fDodge_CoolTime += TimeDelta; 
-		if (/*(true == m_bStart_Fighting && true == m_bNear_byMonster) && */m_fDodge_CoolTime >= 1.5f)
-		{
-
 		if (fMinPos < 30.f && 0 != fMinPos)
 			m_bStart_Fighting = true;
 		if (fMinPos > 30.f || 0 == fMinPos)
@@ -684,8 +680,8 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 				
 				// 몬스터가 범위 내로 들어왔고 어떤 공격을 할건지
 
-				/*m_eMovetype = CPlayer_Colleague::Coll_Attack;
-				m_eColl_AttackMoment = CPlayer_Colleague::Att_Normal;*/
+				m_eMovetype = CPlayer_Colleague::Coll_Attack;
+				m_eColl_AttackMoment = CPlayer_Colleague::Att_Normal;
 			}
 			else
 			{
@@ -719,8 +715,6 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 			m_eMovetype = CPlayer_Colleague::Coll_Idle;
 			m_eColl_IdleMoment = CPlayer_Colleague::Idle_Waiting;
 		}
-
-	}
 
 	if ((true == m_bStart_Fighting && true == m_bNear_byMonster) && m_fDodge_CoolTime >= 10.f)
 	{
@@ -2963,6 +2957,107 @@ void CPlayer_Colleague::Function_FBRL()
 		else if (-180.f <= fAngle && -90.f > fAngle)
 			m_eFBLR = Coll_FBLR::Coll_Back;
 	}
+}
+
+void CPlayer_Colleague::Teleport_ResetOptions(_int eSceneID, _int eTeleportID)
+{
+	_v3 vShadowLightPos = V3_NULL;
+	_v3 vPos = V3_NULL;
+	_float fAngle = 0.f;
+	_float fRadian = 0.f;
+
+	// 텔레포트 할때는 항상 소환 상태
+	m_eMovetype = CPlayer_Colleague::Coll_Start;
+
+	Funtion_Reset_State();
+
+	// 위치 , 방향 설정
+	switch (eSceneID)
+	{
+	case SCENE_STAGE_TRAINING:
+	{
+		vShadowLightPos = _v3(100.f, 50.f, 0.f);
+		break;
+	}
+
+	case SCENE_STAGE_BASE:
+	{
+		vShadowLightPos = _v3(100.f, 50.f, 0.f);
+
+		vPos = eTeleportID == TeleportID_Tutorial ?
+			V3_NULL : _v3(-0.519f, 0.120f, 23.810f);
+
+		fAngle = eTeleportID == TeleportID_Tutorial ?
+			0.f : 180.f;
+
+		break;
+	}
+
+	case SCENE_STAGE_01:
+	{
+		vShadowLightPos = _v3(-100.f, 50.f, 0.f);
+
+		vPos = eTeleportID == TeleportID_St01_1 ? _v3(150.484f, -18.08f, 70.417f) :
+			eTeleportID == TeleportID_St01_2 ? V3_NULL : V3_NULL;
+
+		fAngle = eTeleportID == TeleportID_St01_1 ? 0.f :
+			eTeleportID == TeleportID_St01_2 ? 0.f : 0.f;
+
+		break;
+	}
+
+	case SCENE_STAGE_02:
+	{
+		// 아직
+
+		break;
+	}
+
+	case SCENE_STAGE_03:
+	{
+		vShadowLightPos = _v3(-100.f, 50.f, 0.f);
+
+		vPos = eTeleportID == TeleportID_St03_1 ?
+			_v3(52.610f, -13.0f, 3.575f) : V3_NULL;
+
+		fAngle = eTeleportID == TeleportID_St03_1 ?
+			0.f : 0.f;
+
+		break;
+	}
+
+	case SCENE_STAGE_04:
+	{
+		vShadowLightPos = _v3(-100.f, 50.f, 0.f);
+
+		vPos = eTeleportID == TeleportID_St04_1 ?
+			_v3(42.504f, -3.85f, 75.683f) : V3_NULL;
+
+		fAngle = eTeleportID == TeleportID_St04_1 ?
+			0.f : 0.f;
+
+		break;
+	}
+	}
+
+	m_pRendererCom->Set_ShadowLightPos(vShadowLightPos);
+
+	fRadian = D3DXToRadian(fAngle);
+	m_pTransformCom->Set_Pos(vPos);
+	m_pTransformCom->Set_Angle(AXIS_Y, fRadian);
+
+	_tchar szNavMeshName[STR_128] = L"";
+
+	lstrcpy(szNavMeshName,
+		(eSceneID == SCENE_STAGE_BASE ? L"Navmesh_Stage_00.dat" :
+			eSceneID == SCENE_STAGE_01 ? L"Navmesh_Stage_01.dat" :
+			eSceneID == SCENE_STAGE_02 ? L"Navmesh_Stage_02.dat" :
+			eSceneID == SCENE_STAGE_03 ? L"Navmesh_Stage_03.dat" :
+			eSceneID == SCENE_STAGE_04 ? L"Navmesh_Stage_04.dat" : L"Navmesh_Training.dat"));
+
+	m_pNavMesh->Reset_NaviMesh();
+	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, szNavMeshName);
+	m_pNavMesh->Check_OnNavMesh(vPos);
 }
 
 CPlayer_Colleague* CPlayer_Colleague::Create(_Device pGraphic_Device)
