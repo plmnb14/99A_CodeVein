@@ -345,6 +345,5 @@ CGameObject * CFireHandBall::Clone_GameObject(void * pArg)
 
 void CFireHandBall::Free()
 {
-
-	CGameObject::Free();
+	CMonster::Free();
 }

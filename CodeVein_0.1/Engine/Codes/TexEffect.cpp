@@ -630,20 +630,20 @@ void CTexEffect::Check_Move(_double TimeDelta)
 	}
 
 	if (!m_pInfo->bRotMove && !m_pInfo->bMoveWithRot
-		/*&& m_pInfo->vRotDirection == V3_NULL*/)
+		&& m_pInfo->vRotDirection == V3_NULL)
 	{
-		//m_pTransformCom->Set_Angle(D3DXToRadian(m_vAngle));
+		m_pTransformCom->Set_Angle(D3DXToRadian(m_vAngle));
 		m_pTransformCom->Update_Component();
 
-		_mat matParent, matScale, matRotX, matRotY, matRotZ, matTrans;
-		D3DXMatrixScaling(&matScale, 1,1,1);
-		D3DXMatrixRotationX(&matRotX, D3DXToRadian(m_vAngle.x));
-		D3DXMatrixRotationY(&matRotY, D3DXToRadian(m_vAngle.y));
-		D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(m_vAngle.z));
-		D3DXMatrixTranslation(&matTrans, 0,0,0);
-		matParent = matScale * matRotX * matRotZ * matRotY * matTrans;
-
-		m_pTransformCom->Set_WorldMat(m_pTransformCom->Get_WorldMat() * matParent);
+		//_mat matParent, matScale, matRotX, matRotY, matRotZ, matTrans;
+		//D3DXMatrixScaling(&matScale, 1,1,1);
+		//D3DXMatrixRotationX(&matRotX, D3DXToRadian(m_vAngle.x));
+		//D3DXMatrixRotationY(&matRotY, D3DXToRadian(m_vAngle.y));
+		//D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(m_vAngle.z));
+		//D3DXMatrixTranslation(&matTrans, 0,0,0);
+		//matParent = matScale * matRotX * matRotZ * matRotY * matTrans;
+		//
+		//m_pTransformCom->Set_WorldMat(m_pTransformCom->Get_WorldMat() * matParent);
 	}
 
 	if (0 != m_fRotSpeed && m_vAngle != V3_NULL)

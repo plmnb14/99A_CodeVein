@@ -22,11 +22,12 @@ public:
 		Att_Base1, Att_Base2, Att_Base3, Att_Base4, Att_ThreeCombo, Att_CenterDown, Att_SlowGun,
 		Att_MonWalk, Att_MonRun, Att_MonBackWalk
 	};
+
 	enum Coll_GuardMoment { Guard_Idle, Gurad_Walk, Gurad_Hit };
-	enum Coll_DodgeMoment { Dodge_FrontRoll, Dodge_BackRoll, Dodge_End };
+	enum Coll_DodgeMoment { Dodge_FrontRoll, Dodge_BackRoll, Dodge_LeftRoll, Dodge_RightRoll, Dodge_BLeftRoll, Dodge_BRightRoll };
 	enum Coll_HealMoment { My_Heal, Player_Heal };
 
-	enum Coll_FBLR { Coll_Front, Coll_Back };
+	enum Coll_FBLR { Coll_Front, Coll_Back, Coll_FrontRight, Coll_BackRight, Coll_BackLeft, Coll_FrontLeft };
 
 private:
 	enum Bonematrix_Type { Bone_Range, Bone_Body, Bone_Head, Bone_LHand, Bone_End };
@@ -289,6 +290,8 @@ private:
 
 	_bool	m_bCheck_StartGame = false;
 	_bool	m_bCheck_SEndGame = false;
+
+	_bool	m_bTestBool = false;
 
 
 private: // For Effect

@@ -77,17 +77,26 @@ HRESULT CBackGround::Render_GameObject()
 	_uint iTexNum = 0;
 	_uint iPass = 0;
 	
-	LOOP(2)
+	LOOP(3)
 	{
-		if (1 == i)
+		if (0 == i)
 		{
-			iTexNum = 1;
+			continue;
+
+			iTexNum = m_iIndex;
+			iPass = 6;
+		}
+		else if (1 == i)
+		{
+			continue;
+
+			iTexNum = 4;
 			iPass = 1;
 		}
 		else
 		{
-			iTexNum = m_iIndex;
-			iPass = 6;
+			iTexNum = 1;
+			iPass = 1;
 		}
 		if (FAILED(SetUp_ConstantTable(iTexNum)))
 			return E_FAIL;

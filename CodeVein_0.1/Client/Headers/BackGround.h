@@ -12,12 +12,14 @@ protected:
 	explicit CBackGround(LPDIRECT3DDEVICE9 pGraphic_Device);
 	explicit CBackGround(const CBackGround& rhs);
 	virtual ~CBackGround() = default;
+
 public:
 	virtual HRESULT Ready_GameObject_Prototype(); // 원복객체 생성 시, 호출될 함수.
 	virtual HRESULT Ready_GameObject(void* pArg); // 인게임 객체 생성 시, 호출될 함수.
 	virtual _int Update_GameObject(_double TimeDelta);
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
+
 private:
 	CTransform*				m_pTransformCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;

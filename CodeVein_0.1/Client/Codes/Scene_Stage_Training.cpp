@@ -41,7 +41,6 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 	pRenderer->Fog_On(false);
 	Safe_Release(pRenderer);
 
-	// Æ®·¹ÀÌ´× ¸ÊÀº ±×³É ·Îµå °¡´ÉÇØ¿è
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_Training.dat");
 
 	return S_OK;
@@ -186,12 +185,11 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	// °Ë°ÕÁö
 	//====================================================================================================================================================
 	
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::Sit1, 70.f, 10.f, 1.f));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(-8.f, 0.f, -8.f));
-	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", 
+	//	&CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::Sit1, 70.f, 10.f, 1.f,
+	//		true, _v3(5.f, 0.f, -2.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-	
+
 	//====================================================================================================================================================
 
 
@@ -201,9 +199,9 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji",
 	//	&CGunGenji::INFO(CGunGenji::Normal, CGunGenji::CheckGun, 10.f, 3.f, 2.f,
-	//		true, _v3(8.f, 0.f, -8.f), V3_NULL, 0));
+	//		true, _v3(3.f, 0.f, -8.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-	
+
 	//====================================================================================================================================================
 
 
@@ -211,13 +209,11 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	// Ã¢ ¹æÆÐ °ÕÁö
 	//====================================================================================================================================================
 	
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordShieldGenji", &CSwordShieldGenji::INFO(CSwordShieldGenji::White, CSwordShieldGenji::LookAround1, 10.f, 5.f, 2.f));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(-8.f, 0.f, 8.f));
-	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
-	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordShieldGenji",
+	//	&CSwordShieldGenji::INFO(CSwordShieldGenji::White, CSwordShieldGenji::LookAround1, 10.f, 5.f, 2.f,
+	//		true, _v3(5.f, 0.f, -8.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-	
+
 	//====================================================================================================================================================
 
 
@@ -229,44 +225,34 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//	return E_FAIL;
 
 
-	// µ¶³ª¹æ
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_PoisonButterfly", &CPoisonButterfly::INFO(10.f, 5.f, 2.f));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(8.f, 0.f, 8.f));
-	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
-	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//// µ¶³ª¹æ
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_PoisonButterfly", 
+	//	&CPoisonButterfly::INFO(10.f, 5.f, 2.f,
+	//		true, _v3(-5.f, 0.f, 8.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
-	// ¿©¿ÕÀÇ ±â»ç
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_QueensKnight", &CQueensKnight::INFO(10.f, 5.f, 2.f));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(3.f, 0.f, 3.f));
-	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
-	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-
-	// ¾óÀ½¿©ÀÚ
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_IceGirl", &CIceGirl::INFO(10.f, 5.f, 2.f));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(3.f, 0.f, 3.f));
-	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
-	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//// ¿©¿ÕÀÇ ±â»ç
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_QueensKnight", 
+	//	&CQueensKnight::INFO(10.f, 5.f, 2.f,
+	//		true, _v3(-8.f, 0.f, 3.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
-	// ºÒ³²ÀÚ
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_FireBoy", &CIceGirl::INFO(10.f, 5.f, 2.f));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(3.f, 0.f, 3.f));
-	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
-	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//// ¾óÀ½¿©ÀÚ
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_IceGirl", 
+	//	&CIceGirl::INFO(10.f, 5.f, 2.f,
+	//		true, _v3(3.f, 0.f, -8.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
-	////// »ç½¿¿Õ
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_DeerKing", &CDeerKing::INFO(10.f, 5.f, 2.f));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(3.f, 0.f, 3.f));
-	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
-	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//// ºÒ³²ÀÚ
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_FireBoy", 
+	//	&CFireBoy::INFO(10.f, 5.f, 2.f,
+	//		true, _v3(8.f, 0.f, -5.f), V3_NULL, 0));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
+
+	//// »ç½¿¿Õ
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_DeerKing",
+	//	&CDeerKing::INFO(10.f, 5.f, 2.f,
+	//		true, _v3(8.f, 0.f, -8.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
 	return S_OK;
