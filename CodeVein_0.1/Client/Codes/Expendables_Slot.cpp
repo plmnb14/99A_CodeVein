@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Expendables_Slot.h"
-
+#include "UI_Manager.h"
 
 // 0 ~ 아이템, End-> 없음
 
@@ -45,43 +45,8 @@ _int CExpendables_Slot::Update_GameObject(_double TimeDelta)
 	if (m_bIsDead)
 		return DEAD_OBJ;
 
-	if (m_pSelectUI)
-	{
-		m_pSelectUI->Set_UI_Pos(m_fPosX, m_fPosY);
-		m_pSelectUI->Set_UI_Size(m_fSizeX, m_fSizeY);
-		m_pSelectUI->Set_ViewZ(m_fViewZ - 0.1f);
-		m_pSelectUI->Set_Active(m_bIsActive);
-
-	}
-		
-
-	if (m_pCursorUI)
-	{
-		m_pCursorUI->Set_UI_Pos(m_fPosX, m_fPosY);
-		m_pCursorUI->Set_UI_Size(m_fSizeX, m_fSizeY);
-		m_pCursorUI->Set_ViewZ(m_fViewZ - 0.2f);
-
-		if (m_vecExpendables.size() > 0)
-			m_pCursorUI->Set_Active(m_bIsActive);
-		else
-			m_pCursorUI->Set_Active(false);
-		
-		m_pCursorUI->Set_CursorColl(Pt_InRect());
-	}
-		
-
-	if (m_pNumberUI)
-	{
-		m_pNumberUI->Set_Active(m_bIsActive);
-
-		if (m_vecExpendables.size() == 0)
-			m_pNumberUI->Set_Active(false);
-
-		m_pNumberUI->Set_UI_Index(_uint(m_vecExpendables.size()));
-		m_pNumberUI->Set_UI_Pos(m_fPosX - m_fSizeX * 0.25f, m_fPosY + m_fSizeY * 0.25f);
-	}
-		
-
+	
+	
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
@@ -91,30 +56,37 @@ _int CExpendables_Slot::Update_GameObject(_double TimeDelta)
 	else
 		m_eType = CExpendables::EXPEND_END;
 
-	
-	if (m_vecExpendables.size() > 0)
-		m_pSelectUI->Set_Select(m_bIsSelect);
-	else
-		m_pSelectUI->Set_Select(false);
-
 	switch (m_eType)
 	{
-	case CExpendables::EXPEND_1:
-		m_iIndex = 0;
-		break;
-	case CExpendables::EXPEND_2:
-		m_iIndex = 1;
-		break;
-	case CExpendables::EXPEND_3:
-		m_iIndex = 2;
-		break;
-	case CExpendables::EXPEND_4:
+	case CExpendables::Expend_MaximumUp:
 		m_iIndex = 3;
 		break;
-	case CExpendables::EXPEND_END:
+	case CExpendables::Expend_Hp:
 		m_iIndex = 4;
 		break;
+	case CExpendables::Expend_Return:
+		m_iIndex = 5;
+		break;
+	case CExpendables::Expend_Blood:
+		m_iIndex = 6;
+		break;
+	case CExpendables::Expend_Cheet:
+		m_iIndex = 7;
+		break;
+	case CExpendables::Expend_SuperArmor:
+		m_iIndex = 8;
+		break;
 	}
+
+	m_bIsCollMouse = Pt_InRect();
+
+	m_pItemCntFont->Update_NumberValue(_float(m_vecExpendables.size()));
+
+	if (m_vecExpendables.size() == 0)
+		m_pItemCntFont->Set_Active(false);
+	else
+		m_pItemCntFont->Set_Active(m_bIsActive);
+	
 	return NO_EVENT;
 }
 
@@ -134,7 +106,7 @@ _int CExpendables_Slot::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CExpendables_Slot::Render_GameObject()
 {
-	if (!m_bIsActive)
+	if (!m_bIsActive || CExpendables::EXPEND_END == m_eType)
 		return NOERROR;
 
 	if (nullptr == m_pShaderCom ||
@@ -143,30 +115,104 @@ HRESULT CExpendables_Slot::Render_GameObject()
 
 
 	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
-
-	m_matOldView = g_pManagement->Get_Transform(D3DTS_VIEW);
-	m_matOldProj = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
+	_uint iIndex = 0;
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
+	if (!m_bIsSelect) // 클릭 X
+	{
+		if (m_bIsCollMouse) // 마우스 충돌시
+		{
+			LOOP(3)
+			{
+				if (0 == i)
+					iIndex = 0;
+				else if (1 == i)
+					iIndex = m_iIndex;
+				else if (2 == i)
+					iIndex = 2;
 
-	m_pShaderCom->Begin_Shader();
+				if (FAILED(SetUp_ConstantTable(iIndex)))
+					return E_FAIL;
 
-	m_pShaderCom->Begin_Pass(1);
+				m_pShaderCom->Begin_Shader();
+				m_pShaderCom->Begin_Pass(1);
+				m_pBufferCom->Render_VIBuffer();
+				m_pShaderCom->End_Pass();
+				m_pShaderCom->End_Shader();
+			}
 
-	m_pBufferCom->Render_VIBuffer();
+		}
+		else // 마우스 충돌 X
+		{
+			LOOP(2)
+			{
+				if (0 == i)
+					iIndex = 0;
+				else if (1 == i)
+					iIndex = m_iIndex;
 
-	m_pShaderCom->End_Pass();
+				if (FAILED(SetUp_ConstantTable(iIndex)))
+					return E_FAIL;
 
-	m_pShaderCom->End_Shader();
+				m_pShaderCom->Begin_Shader();
+				m_pShaderCom->Begin_Pass(1);
+				m_pBufferCom->Render_VIBuffer();
+				m_pShaderCom->End_Pass();
+				m_pShaderCom->End_Shader();
+			}
+		}
 
+	}
+	else // 클릭시
+	{
+		if (m_bIsCollMouse) // 마우스 충돌시
+		{
+			LOOP(4)
+			{
+				if (0 == i)
+					iIndex = 0;
+				else if (1 == i)
+					iIndex = m_iIndex;
+				else if (2 == i)
+					iIndex = 1;
+				else if (3 == i)
+					iIndex = 2;
 
-	g_pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
-	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
+				if (FAILED(SetUp_ConstantTable(iIndex)))
+					return E_FAIL;
+
+				m_pShaderCom->Begin_Shader();
+				m_pShaderCom->Begin_Pass(1);
+				m_pBufferCom->Render_VIBuffer();
+				m_pShaderCom->End_Pass();
+				m_pShaderCom->End_Shader();
+			}
+
+		}
+		else // 마우스 충돌 X
+		{
+			LOOP(3)
+			{
+				if (0 == i)
+					iIndex = 0;
+				else if (1 == i)
+					iIndex = m_iIndex;
+				else if (2 == i)
+					iIndex = 1;
+
+				if (FAILED(SetUp_ConstantTable(iIndex)))
+					return E_FAIL;
+
+				m_pShaderCom->Begin_Shader();
+				m_pShaderCom->Begin_Pass(1);
+				m_pBufferCom->Render_VIBuffer();
+				m_pShaderCom->End_Pass();
+				m_pShaderCom->End_Shader();
+			}
+		}
+	}
 
 	return NOERROR;
 }
@@ -234,7 +280,7 @@ HRESULT CExpendables_Slot::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CExpendables_Slot::SetUp_ConstantTable()
+HRESULT CExpendables_Slot::SetUp_ConstantTable(_uint iIndex)
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -247,7 +293,7 @@ HRESULT CExpendables_Slot::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, m_iIndex)))
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
 		return E_FAIL;
 
 	return NOERROR;
@@ -255,38 +301,12 @@ HRESULT CExpendables_Slot::SetUp_ConstantTable()
 
 void CExpendables_Slot::SetUp_Default()
 {
-	CUI::UI_DESC* pDesc = nullptr;
-
-	pDesc = new CUI::UI_DESC;
-	pDesc->fPosX = m_fPosX;
-	pDesc->fPosY = m_fPosY;
-	pDesc->fSizeX = m_fSizeX;
-	pDesc->fSizeY = m_fSizeY;
-
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_SelectUI", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
-	m_pSelectUI = static_cast<CSelect_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
-
-	pDesc = new CUI::UI_DESC;
-	pDesc->fPosX = m_fPosX - m_fSizeX * 0.25f;
-	pDesc->fPosY = m_fPosY + m_fSizeY * 0.25f;
-	pDesc->fSizeX = m_fSizeX * 0.25f;
-	pDesc->fSizeY = m_fSizeY * 0.25f;
-
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NumberUI", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
-	m_pNumberUI = static_cast<CNumberUI*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
-
-
-	pDesc = new CUI::UI_DESC;
-	pDesc->fPosX = m_fPosX;
-	pDesc->fPosY = m_fPosY;
-	pDesc->fSizeX = m_fSizeX;
-	pDesc->fSizeY = m_fSizeY;
-
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_CursorUI", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
-	m_pCursorUI = static_cast<CCursorUI*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
+	m_pItemCntFont = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
+	m_pItemCntFont->Set_UI_Pos(m_fPosX - m_fSizeX * 0.25f, m_fPosY + m_fSizeY * 0.25f);
+	m_pItemCntFont->Set_UI_Size(10.4f, 20.f);
+	m_pItemCntFont->Set_ViewZ(m_fViewZ - 0.1f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pItemCntFont, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
-
-
 
 CExpendables_Slot * CExpendables_Slot::Create(_Device pGraphic_Device)
 {

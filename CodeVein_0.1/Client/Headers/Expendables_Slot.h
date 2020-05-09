@@ -2,16 +2,12 @@
 
 #include "Client_Defines.h"
 #include "UI.h"
-#include "Management.h"
-
 #include "Expendables.h"
-#include "Select_UI.h"
-#include "NumberUI.h"
-#include "CursorUI.h"
 
 BEGIN(Client)
 
-
+class CExpendables;
+class CPlayerFontUI;
 class CExpendables_Slot final : public CUI
 {
 private:
@@ -22,7 +18,6 @@ private:
 public:
 	vector<CExpendables*> Get_Expendables() { return m_vecExpendables; }
 	_bool Get_Select() { return m_bIsSelect; }
-	CNumberUI* Get_NumberUI() { return m_pNumberUI; }
 	_uint Get_Size();
 	_uint Get_Type();
 
@@ -48,9 +43,8 @@ public:
 
 private:
 	HRESULT Add_Component();
-	HRESULT SetUp_ConstantTable();
+	HRESULT SetUp_ConstantTable(_uint iIndex);
 	void	SetUp_Default();
-	
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -59,12 +53,12 @@ private:
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
+private:
 	vector<CExpendables*>	m_vecExpendables;
-	CSelect_UI*				m_pSelectUI = nullptr;
 	_bool					m_bIsSelect = false;
-	CNumberUI*				m_pNumberUI = nullptr;
-	CCursorUI*				m_pCursorUI = nullptr;
-	CExpendables::EXPEND_TYPE m_eType = CExpendables::EXPEND_END;
+	CExpendables::EXPEND_TYPE	m_eType = CExpendables::EXPEND_END;
+	_bool					m_bIsCollMouse = false;
+	CPlayerFontUI*			m_pItemCntFont = nullptr;
 
 public:
 	static CExpendables_Slot*	Create(_Device pGraphic_Device);

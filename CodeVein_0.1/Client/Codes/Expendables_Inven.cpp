@@ -60,9 +60,9 @@ HRESULT CExpendables_Inven::Ready_GameObject(void * pArg)
 		}
 	}
 
-	Add_MultiExpendables(CExpendables::EXPEND_1, 30);
-	Add_MultiExpendables(CExpendables::EXPEND_2, 30);
-	Add_MultiExpendables(CExpendables::EXPEND_3, 30);
+	Add_MultiExpendables(CExpendables::Expend_Blood, 5);
+	Add_MultiExpendables(CExpendables::Expend_Cheet, 6);
+	Add_MultiExpendables(CExpendables::Expend_Hp, 7);
 	
 	return NOERROR;
 }
@@ -331,11 +331,22 @@ void CExpendables_Inven::Load_Expendables(CExpendables* pExpendables, _uint iInd
 	if (m_vecSlot.size() <= iIndex)
 		return;
 
-	if ((m_vecSlot[iIndex]->Get_Type() == pExpendables->Get_Type() ||
-		m_vecSlot[iIndex]->Get_Size() == 0) && m_vecSlot[iIndex]->Get_Size() < 9)
-		m_vecSlot[iIndex]->Input_Item(pExpendables);
-	else
-		Load_Expendables(pExpendables, iIndex + 1);
+	if (pExpendables->Get_Type() == CExpendables::Expend_Hp) // 체력물약->최대치 만큼만 슬롯에 담김
+	{
+		if ((m_vecSlot[iIndex]->Get_Type() == pExpendables->Get_Type() ||
+			m_vecSlot[iIndex]->Get_Size() == 0) && m_vecSlot[iIndex]->Get_Size() < m_iMaximumCnt)
+			m_vecSlot[iIndex]->Input_Item(pExpendables);
+		else
+			Load_Expendables(pExpendables, iIndex + 1);
+	}
+	else // 체력물약 이외의 아이템은 5개씩 담김
+	{
+		if ((m_vecSlot[iIndex]->Get_Type() == pExpendables->Get_Type() ||
+			m_vecSlot[iIndex]->Get_Size() == 0) && m_vecSlot[iIndex]->Get_Size() < 5)
+			m_vecSlot[iIndex]->Input_Item(pExpendables);
+		else
+			Load_Expendables(pExpendables, iIndex + 1);
+	}
 }
 
 CExpendables_Inven * CExpendables_Inven::Create(_Device pGraphic_Device)
