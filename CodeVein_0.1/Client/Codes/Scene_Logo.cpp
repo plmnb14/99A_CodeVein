@@ -51,20 +51,16 @@ _int CScene_Logo::Update_Scene(_double TimeDelta)
 		
 	if (true == m_pLoading->Get_Finish() && m_bIsChangeStage)
 	{
-		m_pGlitterEffect_0->Set_Dead();
-		m_pGlitterEffect_1->Set_Dead();
-		m_pTitleBG->Set_Dead();
-
 		if (g_bReleaseMode)
 		{
 			// 베이스 스테이지 고정
 			g_sStageIdx_Cur = 1;
 			m_eSceneChange = Stage_Base;
 		}
-
+		
 		if (FAILED(g_pManagement->SetUp_CurrentScene(CScene_Title::Create(m_pGraphic_Device, m_eSceneChange, m_bLoadStaticMesh))))
 			return -1;
-
+		
 		if (FAILED(g_pManagement->Clear_Instance(SCENE_LOGO)))
 			return -1;
 
@@ -97,6 +93,10 @@ void CScene_Logo::Free()
 	Safe_Release(m_pLogoBtn);
 	Safe_Release(m_pLoading);
 
+	m_pGlitterEffect_0->Set_Dead();
+	m_pGlitterEffect_1->Set_Dead();
+	m_pTitleBG->Set_Dead();
+
 	CScene::Free();
 }
 
@@ -107,30 +107,8 @@ HRESULT CScene_Logo::Ready_Essential_Prototype_GameObject()
 
 HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 {
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LogoBackGround", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LogoBack/LogoBack%d.dds", 5))))
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Ortho_Title", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/Effect/Ortho/Ortho_Title/Ortho_Title_%d.dds", 8))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LogoButton", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Button/Button%d.png", 4))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_CursorEffect", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/CursorEffect/CursorEffect%d.png", 1))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LoadingScreen", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LoadingScreen/LoadingScreen%d.png", 2))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LoadingBar", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LoadingBar/LoadingBar%d.png", 10))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"Tex_Ortho_Title", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/Effect/Ortho/Ortho_Title/Ortho_Title_%d.dds", 8))))
-		return E_FAIL;
-
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LoadingBar", CLoadingBar::Create(m_pGraphic_Device))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LoadingScreen", CLoadingScreen::Create(m_pGraphic_Device))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LogoBackGround", CBackGround::Create(m_pGraphic_Device))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LogoButton", CLogoBtn::Create(m_pGraphic_Device))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CursorEffect", CCursorEffect::Create(m_pGraphic_Device))))
-		return E_FAIL;
-
 	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Title_Glitter_0", COrthoEffect::Create(m_pGraphic_Device, Read_EffectData(L"../../Data/EffectData/Ortho_Title_Glitter_0.dat")))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Title_Glitter_1", COrthoEffect::Create(m_pGraphic_Device, Read_EffectData(L"../../Data/EffectData/Ortho_Title_Glitter_1.dat")))))
@@ -142,6 +120,31 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Title_Smoke", COrthoEffect::Create(m_pGraphic_Device, Read_EffectData(L"../../Data/EffectData/Ortho_Title_Smoke.dat")))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Title_BG", COrthoEffect::Create(m_pGraphic_Device, Read_EffectData(L"../../Data/EffectData/Ortho_Title_BG.dat")))))
+		return E_FAIL;
+	
+	CParticleMgr::Get_Instance()->Ready_TitleEffect();
+
+
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LogoBackGround", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LogoBack/LogoBack%d.dds", 5))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LogoButton", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Button/Button%d.png", 4))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_CursorEffect", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/CursorEffect/CursorEffect%d.png", 1))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LoadingScreen", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LoadingScreen/LoadingScreen%d.png", 2))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LoadingBar", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LoadingBar/LoadingBar%d.png", 10))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LoadingBar", CLoadingBar::Create(m_pGraphic_Device))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LoadingScreen", CLoadingScreen::Create(m_pGraphic_Device))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LogoBackGround", CBackGround::Create(m_pGraphic_Device))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LogoButton", CLogoBtn::Create(m_pGraphic_Device))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CursorEffect", CCursorEffect::Create(m_pGraphic_Device))))
 		return E_FAIL;
 
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LogoBackGround", SCENE_LOGO, L"Layer_LogoBackGround")))
@@ -157,21 +160,21 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 	m_pLoadingScreen = static_cast<CLoadingScreen*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingScreen", SCENE_STATIC));
 	m_pLoadingScreen->Set_FadeSpeed(0.6f);
 
-	m_pTitleBG = static_cast<COrthoEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Ortho_Title_BG", nullptr));
+	m_pTitleBG = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_TitleEffect(L"Ortho_Title_BG"));
+	m_pTitleBG->Set_Desc(_v3(0, 0, 0), nullptr);
 	m_pTitleBG->Reset_Init();
-	CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(m_pTitleBG, SCENE_STAGE, L"Layer_Effect", nullptr);
-
-	m_pGlitterEffect_0 = static_cast<COrthoEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Ortho_Title_Glitter_0", nullptr));
+	
+	m_pGlitterEffect_0 = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_TitleEffect(L"Ortho_Title_Glitter_0"));
+	m_pGlitterEffect_0->Set_Desc(_v3(0, 0, 0), nullptr);
 	m_pGlitterEffect_0->Set_UV_Speed(0.03f, 0.f);
 	m_pGlitterEffect_0->Set_Mask(L"Tex_Ortho_Title", 6);
 	m_pGlitterEffect_0->Reset_Init();
-	CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(m_pGlitterEffect_0, SCENE_STAGE, L"Layer_Effect", nullptr);
 	
-	m_pGlitterEffect_1 = static_cast<COrthoEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Ortho_Title_Glitter_1", nullptr));
+	m_pGlitterEffect_1 = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_TitleEffect(L"Ortho_Title_Glitter_1"));
+	m_pGlitterEffect_1->Set_Desc(_v3(0, 0, 0), nullptr);
 	m_pGlitterEffect_1->Set_UV_Speed(0.045f, 0.06f);
 	m_pGlitterEffect_1->Set_Mask(L"Tex_Ortho_Title", 6);
 	m_pGlitterEffect_1->Reset_Init();
-	CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(m_pGlitterEffect_1, SCENE_STAGE, L"Layer_Effect", nullptr);
 	
 	//CParticleMgr::Get_Instance()->Create_Effect_NoPool(L"Ortho_Title_ShadowLine", V3_NULL);
 	//CParticleMgr::Get_Instance()->Create_Effect_NoPool(L"Ortho_Title_ShadowText", V3_NULL);
