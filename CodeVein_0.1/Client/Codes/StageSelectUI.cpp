@@ -29,7 +29,9 @@ HRESULT CStageSelectUI::Ready_GameObject(void * pArg)
 	LOOP(5)
 	{
 		pStageUI = static_cast<CStageUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_StageUI", nullptr));
-		g_pManagement->Add_GameOject_ToLayer_NoClone(pStageUI, SCENE_MORTAL, L"Layer_StageUI", nullptr);
+
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pStageUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
 		pStageUI->Set_Teleport_Menu(i);
 		m_vecStageUI.push_back(pStageUI);
 	}

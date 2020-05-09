@@ -25,13 +25,11 @@ HRESULT CMaterial_Inven::Ready_GameObject(void * pArg)
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = WINCX * 0.3f;
-	m_fPosY = WINCY * 0.5f;
-
+	m_fPosX = 229.5f;
+	m_fPosY = 325.5f;
 	m_fSizeX = 280.f;
 	m_fSizeY = 471.f;
-
-	m_fViewZ = 2.f;
+	m_fViewZ = 4.f;
 
 	m_bIsActive = false;
 
@@ -45,7 +43,7 @@ HRESULT CMaterial_Inven::Ready_GameObject(void * pArg)
 			pDesc = new CUI::UI_DESC;
 
 			pDesc->fPosX = m_fPosX - 103.f + 52.f * j;
-			pDesc->fPosY = m_fPosY - 130.f + 52.f * i;
+			pDesc->fPosY = m_fPosY - 100.f + 52.f * i;
 			pDesc->fSizeX = 50.f;
 			pDesc->fSizeY = 50.f;
 			g_pManagement->Add_GameObject_ToLayer(L"GameObject_MaterialSlot", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);

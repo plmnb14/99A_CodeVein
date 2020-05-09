@@ -63,27 +63,17 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 	{
 		m_iIndex = 2;
 
-		m_vecSkillSlot[0]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[0]->Set_SkillID(Fusillade_Rondo);
 		m_vecSkillSlot[1]->Set_SkillID(SkillID_End);
 		m_vecSkillSlot[2]->Set_SkillID(SkillID_End);
 		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
 		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
 	}
 		break;
-	/*case BloodCode_Assassin:
-	{
-		m_iIndex = 3;
-		m_vecSkillSlot[0]->Set_SkillID(SkillID_End);
-		m_vecSkillSlot[1]->Set_SkillID(SkillID_End);
-		m_vecSkillSlot[2]->Set_SkillID(SkillID_End);
-		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
-		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
-	}
-		break;*/
 	case BloodCode_DarkKnight:
 	{
 		m_iIndex = 4;
-		m_vecSkillSlot[0]->Set_SkillID(SkillID_End);
+		m_vecSkillSlot[0]->Set_SkillID(Chariot_Rush);
 		m_vecSkillSlot[1]->Set_SkillID(SkillID_End);
 		m_vecSkillSlot[2]->Set_SkillID(SkillID_End);
 		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
@@ -100,26 +90,6 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
 	}
 		break;
-	/*case BloodCode_Berserker:
-	{
-		m_iIndex = 6;
-		m_vecSkillSlot[0]->Set_SkillID(SkillID_End);
-		m_vecSkillSlot[1]->Set_SkillID(SkillID_End);
-		m_vecSkillSlot[2]->Set_SkillID(SkillID_End);
-		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
-		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
-	}
-		break;*/
-	/*case BloodCode_Hephaestus:
-	{
-		m_iIndex = 7;
-		m_vecSkillSlot[0]->Set_SkillID(SkillID_End);
-		m_vecSkillSlot[1]->Set_SkillID(SkillID_End);
-		m_vecSkillSlot[2]->Set_SkillID(SkillID_End);
-		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
-		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
-	}
-		break;*/
 	case BloodCode_Fighter:
 	{
 		m_iIndex = 8;
@@ -132,36 +102,6 @@ _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 		
 	}
 		break;
-	/*case BloodCode_Heimdal:
-	{
-		m_iIndex = 9;
-		m_vecSkillSlot[0]->Set_SkillID(SkillID_End);
-		m_vecSkillSlot[1]->Set_SkillID(SkillID_End);
-		m_vecSkillSlot[2]->Set_SkillID(SkillID_End);
-		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
-		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
-	}
-		break;*/
-	/*case BloodCode_Hermes:
-	{
-		m_iIndex = 10;
-		m_vecSkillSlot[0]->Set_SkillID(SkillID_End);
-		m_vecSkillSlot[1]->Set_SkillID(SkillID_End);
-		m_vecSkillSlot[2]->Set_SkillID(SkillID_End);
-		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
-		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
-	}
-		break;*/
-	/*case BloodCode_Atlas:
-	{
-		m_iIndex = 11;
-		m_vecSkillSlot[0]->Set_SkillID(SkillID_End);
-		m_vecSkillSlot[1]->Set_SkillID(SkillID_End);
-		m_vecSkillSlot[2]->Set_SkillID(SkillID_End);
-		m_vecSkillSlot[3]->Set_SkillID(SkillID_End);
-		m_vecSkillSlot[4]->Set_SkillID(SkillID_End);
-	}		
-		break;*/
 	case BloodCode_Prometheus:
 	{
 		m_iIndex = 12;
@@ -302,12 +242,12 @@ void CSkillReleaseUI::SetUp_Default()
 	{
 		pInstance = static_cast<CBloodSkillSlot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodSkillSlot", nullptr));
 		TARGET_TO_TRANS(pInstance)->Set_Scale(_v3(0.3f, 0.3f, 1.5f));
-		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_MORTAL, L"Layer_StageUI", nullptr);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 		m_vecSkillSlot.push_back(pInstance);
 	}
 
 	m_pQuestionUI = static_cast<CReleaseQuestionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ReleaseQuestionUI", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pQuestionUI, SCENE_MORTAL, L"Layer_StageUI", nullptr);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pQuestionUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 	TARGET_TO_TRANS(m_pQuestionUI)->Set_Scale(_v3(2.f, 1.f, 1.6f));
 }
 

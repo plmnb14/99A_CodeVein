@@ -385,9 +385,6 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\BloodSkillCursor">
       <UniqueIdentifier>{3799a4ea-69d8-44a0-b02a-5e7170f87bec}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\06.BloodCode_Inven">
-      <UniqueIdentifier>{ae5437ba-d67c-4802-9a61-2c2d8d34964b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\09. BloodCodeUI">
       <UniqueIdentifier>{9de20518-f4f0-4698-8b19-40542809fe4b}</UniqueIdentifier>
     </Filter>
@@ -418,21 +415,6 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\SkillIcon">
       <UniqueIdentifier>{49122cd9-a09a-4a0c-b445-9ba57b8cf2ac}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven\01. Prometheus">
-      <UniqueIdentifier>{4f69d0d1-89a6-4062-9a49-ad3fc2d0542d}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven\00. Fighter">
-      <UniqueIdentifier>{598048e8-3898-426a-9664-be68422e26ba}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven\02. Queen">
-      <UniqueIdentifier>{d2591329-ecd3-4b03-bb6f-c3a9feb1dfcf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven\03. Artemis">
-      <UniqueIdentifier>{d343ab3b-a84f-486c-810f-9abd979d2eb4}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven\04. DarkKnight">
-      <UniqueIdentifier>{abfbff60-1a6f-4fd9-be33-9e90118117cf}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseUI">
       <UniqueIdentifier>{5baab775-370b-4520-8364-36515fc23027}</UniqueIdentifier>
     </Filter>
@@ -444,6 +426,9 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\08. Pet_Inven">
       <UniqueIdentifier>{a7a0f26e-f1c3-4bbe-a84d-2ece8c87140c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\NoticeUI">
+      <UniqueIdentifier>{d6168e56-8109-4605-a1de-3973f41c30f5}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\14. Font">
       <UniqueIdentifier>{9691fea8-3f8e-4447-bf24-3e5f1e4fa387}</UniqueIdentifier>
@@ -840,9 +825,6 @@
     <ClInclude Include="..\Headers\BloodSkillCursor.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\BloodSkillCursor</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\BloodCode_Inven.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\06.BloodCode_Inven</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\BloodCodeUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\09. BloodCodeUI</Filter>
     </ClInclude>
@@ -876,16 +858,7 @@
     <ClInclude Include="SkillIcon.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\SkillIcon</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\FighterBlood.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven\00. Fighter</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\PrometheusBlood.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven\01. Prometheus</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\SkillReleaseUI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\FighterReleaseUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Pet.h">
@@ -914,6 +887,12 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Pet_Inven.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\08. Pet_Inven</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\NoticeUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\NoticeUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ExplainSkillUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Pet_Slot.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\11.PetSlot</Filter>
@@ -1346,9 +1325,6 @@
     <ClCompile Include="..\Codes\BloodSkillCursor.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\BloodSkillCursor</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\BloodCode_Inven.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\06.BloodCode_Inven</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\BloodCodeUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\09. BloodCodeUI</Filter>
     </ClCompile>
@@ -1382,16 +1358,7 @@
     <ClCompile Include="SkillIcon.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\SkillIcon</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\FighterBlood.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven\00. Fighter</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\PrometheusBlood.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven\01. Prometheus</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\SkillReleaseUI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseUI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\FighterReleaseUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI\01. SkillReleaseUI\SkillReleaseUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Pet.cpp">
@@ -1417,6 +1384,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Pet_Inven.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\08. Pet_Inven</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\NoticeUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\02.Icon\NoticeUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ExplainSkillUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\07. Skill_Inven</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Pet_Slot.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\11.PetSlot</Filter>

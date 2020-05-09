@@ -3,12 +3,7 @@
 #include "Client_Defines.h"
 #include "Client_Item_Enum.h"
 #include "UI.h"
-
 #include "Pet.h"
-
-#include "Select_UI.h"
-#include "NumberUI.h"
-#include "CursorUI.h"
 
 BEGIN(Client)
 
@@ -18,6 +13,15 @@ private:
 	explicit CPet_Slot(_Device pDevice);
 	explicit CPet_Slot(const CPet_Slot& rhs);
 	virtual ~CPet_Slot() = default;
+
+public:
+	CPet::PET_TYPE Get_PetType() { return m_ePetType; }
+	_uint Get_PetLevel() { return m_iPetLevel; }
+
+public:
+	void Set_PetType(CPet::PET_TYPE eType) { m_ePetType = eType; }
+	void Set_PetLevel(_uint iLevel) { m_iPetLevel = iLevel; }
+	void Set_Select(_bool bIsSelect) { m_bIsSelect = bIsSelect; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -48,14 +52,11 @@ public:
 	void Delete_Items();
 
 private:
-	HRESULT						Add_Component();
-	HRESULT						SetUp_Default();
-	HRESULT						SetUp_ConstantTable();
+	HRESULT					Add_Component();
+	HRESULT					SetUp_ConstantTable(_uint iIndex);
 
 public:
-	static CPet_Slot*			Create(_Device pGraphic_Device);
-	virtual CGameObject*		Clone_GameObject(void* pArg);
-	virtual void				Free();
+	_bool					Pt_InRect();
 
 private:
 	CTransform*				m_pTransform = nullptr;
@@ -64,17 +65,21 @@ private:
 	CShader*				m_pShader = nullptr;
 	CBuffer_RcTex*			m_pBuffer = nullptr;
 
-	CSelect_UI*				m_pSelectUI = nullptr;
-	CNumberUI*				m_pNumberUI = nullptr;
-	CCursorUI*				m_pCursorUI = nullptr;
-
-	vector<CPet*>			m_vecPet;
-
+private:
+	_bool					m_bIsCollMouse = false;
 	_bool					m_bIsSelect = false;
+	CPet::PET_TYPE			m_ePetType = CPet::PET_TYPE_END;
+	_uint					m_iPetLevel = 1;
+
+public:
+	static CPet_Slot*			Create(_Device pGraphic_Device);
+	virtual CGameObject*		Clone_GameObject(void* pArg);
+	virtual void				Free();
 
 	CPet::PET_PLUS_TYPE		m_ePlusType = CPet::PET_PLUS_TYPE::PET_PLUS_END;
 	ITEM_GRADE_TYPE			m_eGradeType = ITEM_GRADE_TYPE::ITEM_GRADE_TYPE_END;
 	CPet::PET_TYPE			m_ePetType = CPet::PET_TYPE::PET_TYPE_END;
+
 };
 
 END
