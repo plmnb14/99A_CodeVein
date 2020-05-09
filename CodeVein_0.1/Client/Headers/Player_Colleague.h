@@ -173,6 +173,9 @@ private:
 	void	Function_FBRL();
 
 private:
+	void Teleport_ResetOptions(_int eSceneID, _int eTeleportID);
+
+private:
 	CTransform*				m_pTransformCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
