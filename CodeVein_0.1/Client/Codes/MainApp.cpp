@@ -7,6 +7,8 @@
 #include "ParticleMgr.h"
 #include "ScriptManager.h"
 #include "ObjectPool_Manager.h"
+#include "SoundManager.h"
+
 
 CMainApp::CMainApp()
 {
@@ -23,6 +25,9 @@ HRESULT CMainApp::Ready_MainApp()
 	if (FAILED(Ready_Start_Scene(SCENE_LOGO)))
 		return E_FAIL;
 
+	// º¼·ýÁ¶Àý
+	g_pSoundManager->Set_Volume(CSoundManager::BGM_Sound, 0.25f);
+
 	return S_OK;
 }
 
@@ -38,6 +43,8 @@ _int CMainApp::Update_MainApp(_double TimeDelta)
 
 	CObjectPool_Manager::Get_Instance()->Update_ObjectPool(TimeDelta);
 	CObjectPool_Manager::Get_Instance()->LateUpdate_ObjectPool(TimeDelta);
+
+	g_pSoundManager->Update_SoundManager();
 
 	return g_pManagement->Update_Management(TimeDelta);
 }	
@@ -96,6 +103,9 @@ HRESULT CMainApp::Ready_Default_Setting(CGraphic_Device::WINMODE eMode, _ushort 
 		return E_FAIL;
 
 	if (FAILED(g_pManagement->Set_InputDev()))
+		return E_FAIL;
+
+	if (FAILED(g_pSoundManager->Ready_SoundManager()))
 		return E_FAIL;
 
 	CScriptManager::Get_Instance()->Ready_ScriptManager(m_pGraphic_Dev);

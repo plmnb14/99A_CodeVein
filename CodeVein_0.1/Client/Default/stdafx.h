@@ -17,6 +17,10 @@
 #include <memory.h>
 #include <tchar.h>
 
+#include <io.h>
+#include "fmod.h"
+#pragma comment(lib, "fmod_vc.lib")
+
 
 // TODO: 프로그램에 필요한 추가 헤더는 여기에서 참조합니다.
 
@@ -37,3 +41,4 @@
 #include <iostream>
 #pragma comment(linker,"/entry:wWinMainCRTStartup /subsystem:console")
 
+#include "SoundManager.h"

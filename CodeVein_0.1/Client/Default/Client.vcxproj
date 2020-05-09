@@ -105,7 +105,7 @@
       <WarningLevel>Level3</WarningLevel>
       <Optimization>Disabled</Optimization>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_CLIENT;%(PreprocessorDefinitions)</PreprocessorDefinitions>
-      <AdditionalIncludeDirectories>../Default/;../Headers/;../../Reference/Headers/;../../Physx/Include/;../../Physx/src/foundation/include/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>../Default/;../Headers/;../../Reference/Headers/;../../Physx/Include/;../../Physx/src/foundation/include/;../../FMod/;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <RuntimeLibrary>MultiThreadedDebug</RuntimeLibrary>
     </ClCompile>
     <Link>
@@ -296,6 +296,7 @@
     <ClInclude Include="..\Headers\Sky_Blur.h" />
     <ClInclude Include="..\Headers\OKMessageUI.h" />
     <ClInclude Include="..\Headers\Skill_Inven.h" />
+    <ClInclude Include="..\Headers\SoundManager.h" />
     <ClInclude Include="..\Headers\StageSelectUI.h" />
     <ClInclude Include="..\Headers\StageUI.h" />
     <ClInclude Include="..\Headers\StatusUI.h" />
@@ -459,6 +460,7 @@
     <ClCompile Include="..\Codes\Sky_Blur.cpp" />
     <ClCompile Include="..\Codes\OKMessageUI..cpp" />
     <ClCompile Include="..\Codes\Skill_Inven.cpp" />
+    <ClCompile Include="..\Codes\SoundManager.cpp" />
     <ClCompile Include="..\Codes\StageSelectUI.cpp" />
     <ClCompile Include="..\Codes\StageUI.cpp" />
     <ClCompile Include="..\Codes\StatusUI.cpp" />

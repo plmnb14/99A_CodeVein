@@ -48,6 +48,8 @@
 #include "DropItem.h"
 #include "Haze.h"
 
+#include "SoundManager.h"
+
 USING(Client)
 
 CLoading::CLoading(_Device pGraphicDev)
@@ -1333,6 +1335,10 @@ _uint CLoading::Loading_Title()
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Sky_Blur", CSky_Blur::Create(m_pGraphicDev))))
 		return E_FAIL;
 	//============================================================================================================
+	// 사운드
+	//============================================================================================================
+	g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
+	//============================================================================================================
 
 	m_bFinish = true;
 
@@ -1360,6 +1366,11 @@ _uint CLoading::Loading_Title()
 	cout << "[9] # 릴리즈 모드 # ";
 	cout << (g_bReleaseMode ? "true" : "false") << endl;
 	cout << "-------------------------------------------------------------------------------" << endl;
+
+	g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
+	//g_pSoundManager->Play_Sound(L"Title_Intro_02.wav", CSoundManager::Background_01, CSoundManager::Master_Sound);
+	//g_pSoundManager->Play_Sound(L"Gwan_Cchak.wav", CSoundManager::Background_01, CSoundManager::BGM_Sound);
+	g_pSoundManager->Play_BGM(L"Gwan_Cchak.wav");
 
 	return NO_EVENT;
 }
