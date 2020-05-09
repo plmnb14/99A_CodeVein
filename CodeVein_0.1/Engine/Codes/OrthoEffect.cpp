@@ -113,6 +113,7 @@ HRESULT COrthoEffect::LateInit_GameObject()
 	Change_EffectTexture(m_pInfo->szName);
 	Change_GradientTexture(m_pInfo->szGradientName);
 	Change_ColorTexture(m_pInfo->szColorName);
+	Change_MaskTexture(L"Tex_Ortho_Title");
 
 	return S_OK;
 }

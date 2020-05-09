@@ -51,6 +51,10 @@ _int CScene_Logo::Update_Scene(_double TimeDelta)
 		
 	if (true == m_pLoading->Get_Finish() && m_bIsChangeStage)
 	{
+		m_pGlitterEffect_0->Set_Dead();
+		m_pGlitterEffect_1->Set_Dead();
+		m_pTitleBG->Set_Dead();
+
 		if (g_bReleaseMode)
 		{
 			// 베이스 스테이지 고정
@@ -92,9 +96,6 @@ void CScene_Logo::Free()
 {
 	Safe_Release(m_pLogoBtn);
 	Safe_Release(m_pLoading);
-	m_pGlitterEffect_0->Set_Dead();
-	m_pGlitterEffect_1->Set_Dead();
-	m_pTitleBG->Set_Dead();
 
 	CScene::Free();
 }

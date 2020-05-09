@@ -436,8 +436,6 @@ HRESULT CRenderer::Draw_RenderList()
 
 	if (CInput_Device::Get_Instance()->Key_Down(DIK_NUMPAD9))
 		m_bOnRenderTarget = !m_bOnRenderTarget;
-	if (CInput_Device::Get_Instance()->Key_Down(DIK_N))
-		m_bOnRenderTarget = !m_bOnRenderTarget;
 
 	if (m_bOnRenderTarget)
 	{

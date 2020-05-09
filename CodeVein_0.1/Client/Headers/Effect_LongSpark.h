@@ -47,6 +47,7 @@ private:
 	_float				m_fJumpPower = 0.f;
 	_float				m_fCreatePosY = 0.f;
 	_float				m_fAngleZ = 0.f;
+	_float				m_fRandAngle = 0.f;
 
 	_float				m_fDelay = 0.f;
 	_bool				m_bLeft = false;
