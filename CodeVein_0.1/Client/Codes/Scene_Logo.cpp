@@ -9,6 +9,8 @@
 #include "LoadingBar.h"
 #include "CursorEffect.h"
 
+#include "OrthoEffect.h"
+
 CScene_Logo::CScene_Logo(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
 	, m_pLoading(nullptr)
@@ -90,6 +92,9 @@ void CScene_Logo::Free()
 {
 	Safe_Release(m_pLogoBtn);
 	Safe_Release(m_pLoading);
+	m_pGlitterEffect_0->Set_Dead();
+	m_pGlitterEffect_1->Set_Dead();
+	m_pTitleBG->Set_Dead();
 
 	CScene::Free();
 }
@@ -101,7 +106,7 @@ HRESULT CScene_Logo::Ready_Essential_Prototype_GameObject()
 
 HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 {
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LogoBackGround", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LogoBack/LogoBack%d.png", 4))))
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LogoBackGround", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LogoBack/LogoBack%d.dds", 5))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LogoButton", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Button/Button%d.png", 4))))
 		return E_FAIL;
@@ -111,6 +116,9 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LoadingBar", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LoadingBar/LoadingBar%d.png", 10))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"Tex_Ortho_Title", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/Effect/Ortho/Ortho_Title/Ortho_Title_%d.dds", 8))))
+		return E_FAIL;
+
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LoadingBar", CLoadingBar::Create(m_pGraphic_Device))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_LoadingScreen", CLoadingScreen::Create(m_pGraphic_Device))))
@@ -121,6 +129,20 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CursorEffect", CCursorEffect::Create(m_pGraphic_Device))))
 		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Title_Glitter_0", COrthoEffect::Create(m_pGraphic_Device, Read_EffectData(L"../../Data/EffectData/Ortho_Title_Glitter_0.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Title_Glitter_1", COrthoEffect::Create(m_pGraphic_Device, Read_EffectData(L"../../Data/EffectData/Ortho_Title_Glitter_1.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Title_ShadowLine", COrthoEffect::Create(m_pGraphic_Device, Read_EffectData(L"../../Data/EffectData/Ortho_Title_ShadowLine.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Title_ShadowText", COrthoEffect::Create(m_pGraphic_Device, Read_EffectData(L"../../Data/EffectData/Ortho_Title_ShadowText.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Title_Smoke", COrthoEffect::Create(m_pGraphic_Device, Read_EffectData(L"../../Data/EffectData/Ortho_Title_Smoke.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Title_BG", COrthoEffect::Create(m_pGraphic_Device, Read_EffectData(L"../../Data/EffectData/Ortho_Title_BG.dat")))))
+		return E_FAIL;
+
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LogoBackGround", SCENE_LOGO, L"Layer_LogoBackGround")))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_LogoButton", SCENE_LOGO, L"Layer_LogoButton")))
@@ -133,6 +155,26 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 		return E_FAIL;
 	m_pLoadingScreen = static_cast<CLoadingScreen*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingScreen", SCENE_STATIC));
 	m_pLoadingScreen->Set_FadeSpeed(0.6f);
+
+	m_pTitleBG = static_cast<COrthoEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Ortho_Title_BG", nullptr));
+	m_pTitleBG->Reset_Init();
+	CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(m_pTitleBG, SCENE_STAGE, L"Layer_Effect", nullptr);
+
+	m_pGlitterEffect_0 = static_cast<COrthoEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Ortho_Title_Glitter_0", nullptr));
+	m_pGlitterEffect_0->Set_UV_Speed(0.03f, 0.f);
+	m_pGlitterEffect_0->Set_Mask(L"Tex_Ortho_Title", 6);
+	m_pGlitterEffect_0->Reset_Init();
+	CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(m_pGlitterEffect_0, SCENE_STAGE, L"Layer_Effect", nullptr);
+	
+	m_pGlitterEffect_1 = static_cast<COrthoEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(L"Ortho_Title_Glitter_1", nullptr));
+	m_pGlitterEffect_1->Set_UV_Speed(0.045f, 0.06f);
+	m_pGlitterEffect_1->Set_Mask(L"Tex_Ortho_Title", 6);
+	m_pGlitterEffect_1->Reset_Init();
+	CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(m_pGlitterEffect_1, SCENE_STAGE, L"Layer_Effect", nullptr);
+	
+	//CParticleMgr::Get_Instance()->Create_Effect_NoPool(L"Ortho_Title_ShadowLine", V3_NULL);
+	//CParticleMgr::Get_Instance()->Create_Effect_NoPool(L"Ortho_Title_ShadowText", V3_NULL);
+	//CParticleMgr::Get_Instance()->Create_Effect_NoPool(L"Ortho_Title_Smoke", V3_NULL);
 
 	return S_OK;
 }
@@ -234,4 +276,95 @@ void CScene_Logo::Logo_KeyInput()
 
 		Update_DebugStage_Console();
 	}
+}
+
+
+Engine::EFFECT_INFO* CScene_Logo::Read_EffectData(const _tchar* szPath)
+{
+	HANDLE hFile = CreateFile(szPath, GENERIC_READ, 0, 0, OPEN_EXISTING, FILE_ATTRIBUTE_NORMAL, nullptr);
+
+	if (INVALID_HANDLE_VALUE == hFile)
+		::MSG_BOX("Load Failed. [INVALID_HANDLE_VALUE]");
+
+	DWORD dwByte = 0;
+	Engine::EFFECT_INFO* pInfo = new Engine::EFFECT_INFO;
+
+	_bool bIsTex = false;
+	::ReadFile(hFile, &bIsTex, sizeof(_bool), &dwByte, nullptr);
+
+	while (true)
+	{
+		::ReadFile(hFile, &pInfo->bBillBoard, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bOnlyYRot, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bDistortion, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bStaticFrame, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bUseColorTex, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bUseRGBA, sizeof(_bool), &dwByte, nullptr);
+
+		::ReadFile(hFile, &pInfo->bColorMove, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bDirMove, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bFadeIn, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bFadeOut, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bLinearMove, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bRandomMove, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bRandomRot, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bRandStartPos, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bRevColor, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bRotMove, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bScaleMove, sizeof(_bool), &dwByte, nullptr);
+
+		::ReadFile(hFile, &pInfo->fAlphaSpeed, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fAlphaSpeed_Max, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fAlphaSpeed_Min, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fColorSpeed, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fCreateDelay, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fCreateDelay_Max, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fCreateDelay_Min, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fLifeTime, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fMaxAlpha, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fAnimSpeed, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fMaxFrame, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fMoveScaleSpeed, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fMoveSpeed, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fMoveSpeed_Max, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fMoveSpeed_Min, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fRandStartPosRange_Max, sizeof(_float) * 3, &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fRandStartPosRange_Min, sizeof(_float) * 3, &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fRotSpeed, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fRotSpeed_Max, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fRotSpeed_Min, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->iMaxCount, sizeof(_int), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->szColorName, sizeof(TCHAR) * STR_256, &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->szName, sizeof(TCHAR) * STR_256, &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->szGradientName, sizeof(TCHAR) * STR_256, &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->vEndColor, sizeof(_v4), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->vMoveDirection, sizeof(_v3), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->vMoveScale, sizeof(_v3), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->vRandDirectionRange, sizeof(_v3), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->vRotDirection, sizeof(_v3), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->vStartColor, sizeof(_v4), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->vStartPos, sizeof(_v3), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->vStartScale, sizeof(_v3), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fColorIndex, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fMaskIndex, sizeof(_float), &dwByte, nullptr);
+
+		_bool bTemp;
+		::ReadFile(hFile, &bTemp, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &bTemp, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &bTemp, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &bTemp, sizeof(_bool), &dwByte, nullptr);
+
+		::ReadFile(hFile, &pInfo->bGravity, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bRandScale, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bMoveWithRot, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bSlowly, sizeof(_bool), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->fDistortionPower, sizeof(_float), &dwByte, nullptr);
+		::ReadFile(hFile, &pInfo->bDissolve, sizeof(_bool), &dwByte, nullptr);
+
+		break;
+	}
+
+	CloseHandle(hFile);
+
+	return pInfo;
 }

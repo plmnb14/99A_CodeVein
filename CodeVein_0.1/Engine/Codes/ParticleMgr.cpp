@@ -258,8 +258,6 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"Player_Skill_Gun_BulletBody_Ver", 10);
 	Input_Pool(L"Player_Skill_Gun_BulletBody_Hor", 10);
 
-
-
 	Input_Pool(L"Colleague_Teleport_Flash_Particle_0", 100);
 	Input_Pool(L"Colleague_Teleport_Line_Particle_0", 50);
 	Input_Pool(L"Colleague_Teleport_Line_Particle_1", 50);
@@ -1046,11 +1044,11 @@ void CParticleMgr::Create_AutoFindEffect(_tchar* szName, _float fLifeTime, _v3 v
 
 void CParticleMgr::Create_Effect_NoPool(_tchar* szName, _v3 vPos, CTransform* pFollowTrans)
 {
-	CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szName, nullptr));
+	CEffect* pEffect = static_cast<CEffect*>(CManagement::Get_Instance()->Clone_GameObject_Return(szName, nullptr));
 	pEffect->Set_Desc(vPos, pFollowTrans);
 	pEffect->Set_Delay(false);
 	pEffect->Reset_Init();
-	m_pManagement->Add_GameOject_ToLayer_NoClone(pEffect, SCENE_STAGE, L"Layer_Effect", nullptr);
+	CManagement::Get_Instance()->Add_GameOject_ToLayer_NoClone(pEffect, SCENE_STAGE, L"Layer_Effect", nullptr);
 }
 
 void CParticleMgr::Create_Effect_Offset(_tchar* szName, _float fOffset, _v3 vPos, CTransform * pFollowTrans)
