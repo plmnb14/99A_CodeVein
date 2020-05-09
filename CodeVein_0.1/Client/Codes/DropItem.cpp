@@ -91,6 +91,8 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 		//g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_1", m_pTransform->Get_Pos());
 		//g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_Particle", m_pTransform->Get_Pos());
 		m_bEnable = false;
+		m_pEffect->Set_Dead();
+
 		return DEAD_OBJ;
 	}
 	//2.제한 시간 이내
@@ -339,10 +341,10 @@ void CDropItem::Free()
 	Safe_Release(m_pRenderer);
 
 	IF_NOT_NULL(m_pEffect)
-		Safe_Release(m_pEffect);
+		m_pEffect->Set_Dead();
 
 	IF_NOT_NULL(m_pTrailEffect)
-		Safe_Release(m_pTrailEffect);
+		m_pTrailEffect->Set_Dead();
 
 	CGameObject::Free();
 

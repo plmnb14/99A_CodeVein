@@ -176,9 +176,9 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 	m_pGlitterEffect_1->Set_Mask(L"Tex_Ortho_Title", 6);
 	m_pGlitterEffect_1->Reset_Init();
 	
-	//CParticleMgr::Get_Instance()->Create_Effect_NoPool(L"Ortho_Title_ShadowLine", V3_NULL);
-	//CParticleMgr::Get_Instance()->Create_Effect_NoPool(L"Ortho_Title_ShadowText", V3_NULL);
-	//CParticleMgr::Get_Instance()->Create_Effect_NoPool(L"Ortho_Title_Smoke", V3_NULL);
+	//CParticleMgr::Get_Instance()->Create_TitleEffect(L"Ortho_Title_ShadowLine");
+	//CParticleMgr::Get_Instance()->Create_TitleEffect(L"Ortho_Title_ShadowText");
+	//CParticleMgr::Get_Instance()->Create_TitleEffect(L"Ortho_Title_Smoke");
 
 	return S_OK;
 }
