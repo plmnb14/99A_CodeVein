@@ -78,6 +78,14 @@ private:
 		_v3 vDirection;
 	}EFF_INFO;
 
+	typedef struct tagEffFireFlowerInfo
+	{
+		_v3 vCreatePos;
+		_v3 vDirection;
+		_float fDelay;
+		_tchar	szName[STR_128];
+	}EFF_FIREFLOWER_INFO;
+
 	typedef struct tagEffDecalInfo
 	{
 		_v3 vCreatePos;

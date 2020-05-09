@@ -43,7 +43,8 @@ HRESULT CEffect_FireFlower::Ready_GameObject(void* pArg)
 	m_vPos += _v3(0.f, 1.8f, 0.f);
 	m_pTransformCom->Set_Pos(m_vPos);
 	m_pTransformCom->Set_Scale(_v3(0.8f, 0.8f, 0.8f));
-
+	m_fDelay = tInfo.fDelay;
+	lstrcpy(m_szName, tInfo.szBuff);
 
 	_mat matView = g_pManagement->Get_Transform(D3DTS_VIEW);
 	_mat matRot;
@@ -64,12 +65,12 @@ HRESULT CEffect_FireFlower::Ready_GameObject(void* pArg)
 	D3DXMatrixRotationAxis(&matRot, &vCamLook, D3DXToRadian(fAngle));
 	m_vDir = *D3DXVec3TransformNormal(&_v3(), &_v3(0, 1, 0), &matRot);
 
-	m_fDelay = _float(CCalculater::Random_Num_Double(0.0, 0.1));
+	m_fDelay += _float(CCalculater::Random_Num_Double(0.0, 0.05));
 
-	_tchar szBuff[256] = L"";
-	wsprintf(szBuff, L"Player_Skill_Halberd_Orange_LinePoint_Explosion_%d", CCalculater::Random_Num(0, 1));
+	//_tchar szBuff[256] = L"";
+	//wsprintf(szBuff, L"Player_Skill_Halberd_Orange_LinePoint_Explosion_%d", CCalculater::Random_Num(0, 1));
 
-	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(szBuff, nullptr));
+	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(m_szName, nullptr));
 	m_pBulletBody->Set_Desc(_v3(0, 0, 0), nullptr);
 	m_pBulletBody->Set_Angle(_v3(0, 0, fAngle));
 	m_pBulletBody->Set_ParentObject(this);
