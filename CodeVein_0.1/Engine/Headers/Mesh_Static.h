@@ -21,6 +21,9 @@ public:
 	_ulong Get_NumMaterials() const { return m_dwNumMaterials; }
 	_ulong Get_MaterialPass(_ulong dwPass) { return m_sMaterialPass[dwPass]; }
 	LPDIRECT3DBASETEXTURE9 Get_Texture(_ulong dwMaterialIndex, MESHTEXTURE::TYPE eType);
+
+	LPD3DXMESH	Get_pMesh() { return m_pMesh; }
+
 public:
 	virtual HRESULT Ready_Component_Prototype(const _tchar* pFilePath, const _tchar* pFileName, _mat PivotMatrix);
 	virtual HRESULT Ready_Component(void* pArg);
