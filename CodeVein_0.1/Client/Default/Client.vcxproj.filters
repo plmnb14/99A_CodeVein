@@ -436,6 +436,9 @@
     <Filter Include="95. SoundManager">
       <UniqueIdentifier>{e4f55a90-9a32-4788-a5b8-44ef84c5e70e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\Physx\Cloth">
+      <UniqueIdentifier>{fb02bec6-d1d4-4b95-aaa1-74737ac78d67}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -930,6 +933,15 @@
     <ClInclude Include="..\Headers\SoundManager.h">
       <Filter>95. SoundManager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Cloth.h">
+      <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ClothDynamic.h">
+      <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ClothStatic.h">
+      <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1408,6 +1420,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\SoundManager.cpp">
       <Filter>95. SoundManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Cloth.cpp">
+      <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ClothDynamic.cpp">
+      <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ClothStatic.cpp">
+      <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

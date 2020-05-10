@@ -27,6 +27,8 @@
 #include "MonsterHeaders.h"
 #include "Flag.h"
 #include "ObjectPool_Manager.h"
+#include "ClothDynamic.h"
+#include "ClothStatic.h"
 
 #include "PlayerHP.h"
 #include "PlayerST.h"
@@ -105,7 +107,7 @@ unsigned int CALLBACK CLoading::Thread_Main(void* pArg)
 
 HRESULT CLoading::Ready_Effect(void)
 {
-
+	
 #pragma region ButterFly
 	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke")))
 		return E_FAIL;
@@ -181,7 +183,8 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_Body")))
 		return E_FAIL;
 #pragma endregion
-
+	
+	
 #pragma region Queens Knight
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_2Phase_SwordCrash_Chunk")))
 		return E_FAIL;
@@ -257,6 +260,7 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_ReadyDistortion")))
 		return E_FAIL;
+	
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_1")))
@@ -343,17 +347,21 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 #pragma endregion
 	
+
 #pragma region IceGirl
+
 	if (FAILED(Add_EffectPrototype(L"IceFloorAura_01")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceFloorAura_02")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceFloorAura_03")))
 		return E_FAIL;
+	////////////////////
 	if (FAILED(Add_EffectPrototype(L"IceSmoke_01")))
 		return E_FAIL;
-	if (FAILED(Add_EffectPrototype(L"IceSmoke_02")))
+	if (FAILED(Add_EffectPrototype(L"IceSmoke_02"))) // 이것 마지막
 		return E_FAIL;
+/////////////////////////////////////
 	if (FAILED(Add_EffectPrototype(L"IceGirl_FlashParticle_Blue")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceGirl_FlashParticle_Green")))
@@ -362,6 +370,7 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceGirl_PointParticle_Green")))
 		return E_FAIL;
+	//////////////////
 	if (FAILED(Add_EffectPrototype(L"IceBlock_Main", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceBlock_Sub_01", true)))
@@ -388,6 +397,7 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceGirl_SwordBullet_Mesh_2", true)))
 		return E_FAIL;
+///////////////////////////// 아래는 완
 	if (FAILED(Add_EffectPrototype(L"IceCrystal_01")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceCrystal_02")))
@@ -431,7 +441,8 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Charge_Smoke_01")))
 		return E_FAIL;
 #pragma endregion
-
+	
+	
 #pragma region FireBoy
 	if (FAILED(Add_EffectPrototype(L"FireBoy_Charge_Hand_Fire")))
 		return E_FAIL;
@@ -524,7 +535,7 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireFlame_DeadFire")))
 		return E_FAIL;
 #pragma endregion
-
+	
 #pragma region DeerKing
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceStone_Up_Particle_0", true)))
 		return E_FAIL;
@@ -603,7 +614,7 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSword", true)))
 		return E_FAIL;
 #pragma endregion
-
+	
 	if (FAILED(Add_EffectPrototype(L"Cocoon_TongueFire")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Totem_Fire_Bullet_Dead_0")))
@@ -835,7 +846,7 @@ HRESULT CLoading::Ready_Effect(void)
 
 	if (FAILED(Add_EffectPrototype(L"Player_SpaceBar_StepParticle")))
 		return E_FAIL;
-
+	
 #pragma region Colleague
 	if (FAILED(Add_EffectPrototype(L"Colleague_Teleport_Flash_Particle_0")))
 		return E_FAIL;
@@ -1873,6 +1884,16 @@ HRESULT CLoading::Ready_Intro_MonsterPrototype()
 	if (FAILED(g_pManagement->Add_Prototype(L"Pet_Bullet", CPet_Bullet::Create(m_pGraphicDev))))
 		return E_FAIL;
 	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Pet_Bullet", L"Pet_Bullet", 100);
+	//============================================================================================================================================
+
+
+	//============================================================================================================================================
+	// 옷
+	//============================================================================================================================================
+	if (FAILED(g_pManagement->Add_Prototype(L"Cloth_Static", CClothStatic::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Cloth_Dynamic", CClothDynamic::Create(m_pGraphicDev))))
+		return E_FAIL;
 	//============================================================================================================================================
 
 	return S_OK;
