@@ -25,7 +25,7 @@ public:
 	_uint Select_Stage();
 	void Move_Right();
 	void Move_Left();
-	_uint Teleport_Stage();
+	void Teleport_Stage();
 	void MoveUp_SubStage();
 	void MoveDown_SubStage();
 

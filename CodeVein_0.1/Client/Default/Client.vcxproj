@@ -197,6 +197,9 @@
     <ClInclude Include="..\Headers\ColdBeamBig.h" />
     <ClInclude Include="..\Headers\ColdBeamMiddle.h" />
     <ClInclude Include="..\Headers\ScriptUI.h" />
+    <ClInclude Include="..\Headers\Costume_Accessory.h" />
+    <ClInclude Include="..\Headers\Costume_Hair.h" />
+    <ClInclude Include="..\Headers\Costume_Outer.h" />
     <ClInclude Include="..\Headers\CursorEffect.h" />
     <ClInclude Include="..\Headers\DamegeNumUI.h" />
     <ClInclude Include="..\Headers\DarkBoom.h" />
@@ -294,6 +297,7 @@
     <ClInclude Include="..\Headers\OKMessageUI.h" />
     <ClInclude Include="..\Headers\Skill_Inven.h" />
     <ClInclude Include="..\Headers\SoundManager.h" />
+    <ClInclude Include="..\Headers\StageAgent.h" />
     <ClInclude Include="..\Headers\StageSelectUI.h" />
     <ClInclude Include="..\Headers\StageUI.h" />
     <ClInclude Include="..\Headers\StatusUI.h" />
@@ -327,7 +331,6 @@
     <ClInclude Include="Client_Item_Enum.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SkillIcon.h" />
-    <ClInclude Include="StageLoader.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
@@ -359,6 +362,9 @@
     <ClCompile Include="..\Codes\ColdBeamBig.cpp" />
     <ClCompile Include="..\Codes\ColdBeamMiddle.cpp" />
     <ClCompile Include="..\Codes\ScriptUI.cpp" />
+    <ClCompile Include="..\Codes\Costume_Accessory.cpp" />
+    <ClCompile Include="..\Codes\Costume_Hair.cpp" />
+    <ClCompile Include="..\Codes\Costume_Outer.cpp" />
     <ClCompile Include="..\Codes\CursorEffect.cpp" />
     <ClCompile Include="..\Codes\DamegeNumUI.cpp" />
     <ClCompile Include="..\Codes\DarkBoom.cpp" />
@@ -455,6 +461,7 @@
     <ClCompile Include="..\Codes\OKMessageUI..cpp" />
     <ClCompile Include="..\Codes\Skill_Inven.cpp" />
     <ClCompile Include="..\Codes\SoundManager.cpp" />
+    <ClCompile Include="..\Codes\StageAgent.cpp" />
     <ClCompile Include="..\Codes\StageSelectUI.cpp" />
     <ClCompile Include="..\Codes\StageUI.cpp" />
     <ClCompile Include="..\Codes\StatusUI.cpp" />
@@ -486,7 +493,6 @@
     <ClCompile Include="..\Codes\YetiBullet.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="SkillIcon.cpp" />
-    <ClCompile Include="StageLoader.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
