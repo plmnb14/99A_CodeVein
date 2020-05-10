@@ -25,6 +25,8 @@ public:
 
 	_ulong Get_MaterialPass(_ulong iMeshConstainerIdx , _ulong dwSubsetIdx);
 
+	vector<LPD3DXMESHCONTAINER_DERIVED>&	Get_vecContainer() { return m_MeshContainerList; }
+
 public:
 	virtual HRESULT Ready_Component_Prototype(const _tchar* pFilePath, const _tchar* pFileName, _mat PivotMatrix);
 	virtual HRESULT Ready_Component(void* pArg);
