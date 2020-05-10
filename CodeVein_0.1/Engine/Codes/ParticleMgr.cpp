@@ -949,12 +949,12 @@ void CParticleMgr::Create_Effect(_tchar* szName, _v3 vPos, CTransform * pFollowT
 	{
 		if (pFindedQueue->size() <= 20) // 넉넉하게... 남은게 20 이하면 생성하여 사용
 		{
-			//_tchar szTemp[256];
-			//lstrcpy(szTemp, pFindedQueue->front()->Get_ParticleName());
-			//CHAR szForPrint[STR_256] = "";
-			//WideCharToMultiByte(CP_ACP, 0, szTemp, STR_256, szForPrint, STR_256, NULL, NULL);
-			////if(GetAsyncKeyState('B') & 0x8000)
-			//	cout << "Effect Create : " << szForPrint << endl;
+			_tchar szTemp[256];
+			lstrcpy(szTemp, pFindedQueue->front()->Get_ParticleName());
+			CHAR szForPrint[STR_256] = "";
+			WideCharToMultiByte(CP_ACP, 0, szTemp, STR_256, szForPrint, STR_256, NULL, NULL);
+			//if(GetAsyncKeyState('B') & 0x8000)
+				cout << "Effect Create : " << szForPrint << endl;
 
 			_tchar* szEffName = pFindedQueue->front()->Get_ParticleName();
 			CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));
@@ -1392,7 +1392,7 @@ void CParticleMgr::Create_BossDeadParticle_Effect(_v3 vPos, _float fDelay, _floa
 	if (pFindedQueue == nullptr)
 		return;
 
-	for (_int i = 0; i < 100; i++)
+	for (_int i = 0; i < 2500; i++)
 	{
 		if (pFindedQueue->size() < 20)
 			return;
