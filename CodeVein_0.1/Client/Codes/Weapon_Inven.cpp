@@ -36,22 +36,6 @@ HRESULT CWeapon_Inven::Ready_GameObject(void * pArg)
 	CUI::UI_DESC* pDesc = nullptr;
 	CWeapon_Slot* pSlot = nullptr;
 	
-	/*for (_uint i = 0; i < 6; ++i)
-	{
-
-		for (_uint j = 0; j < 5; ++j)
-		{
-			pDesc = new CUI::UI_DESC;
-			pDesc->fPosX = m_fPosX - 103.f + 52.f * j;
-			pDesc->fPosY = m_fPosY - 130.f + 52.f * i;
-			pDesc->fSizeX = 50.f;
-			pDesc->fSizeY = 50.f;
-			g_pManagement->Add_GameObject_ToLayer(L"GameObject_WeaponSlot", SCENE_STAGE, L"Layer_WeaponSlot", pDesc);
-			pSlot = static_cast<CWeapon_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_WeaponSlot", SCENE_STAGE));
-			m_vecWeaponSlot.push_back(pSlot);
-		}
-
-	}*/
 
 	LOOP(2)
 		m_UseWeapon[i] = WEAPON_None;
@@ -73,8 +57,6 @@ _int CWeapon_Inven::Update_GameObject(_double TimeDelta)
 
 	Click_Inven();
 	
-
-
 	for (auto& pWeaponSlot : m_vecWeaponSlot)
 	{
 		pWeaponSlot->Set_Active(m_bIsActive);
@@ -95,7 +77,6 @@ _int CWeapon_Inven::Late_Update_GameObject(_double TimeDelta)
 	m_matWorld._33 = 1.f;
 	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
 	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;
-	m_matWorld._42 = 1.f;
 
 	return NO_EVENT;
 }

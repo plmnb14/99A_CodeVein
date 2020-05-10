@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Info_Slot.h"
-#include "NumberUI.h"
+#include "PlayerFontUI.h"
 
 CInfo_Slot::CInfo_Slot(_Device pDevice)
 	: CUI(pDevice)
@@ -14,7 +14,7 @@ CInfo_Slot::CInfo_Slot(const CInfo_Slot & rhs)
 
 void CInfo_Slot::Set_Number(_uint iNumber)
 {
-	m_pNumberUI->Set_UI_Index(iNumber);
+	m_iNumber = iNumber;
 }
 
 HRESULT CInfo_Slot::Ready_GameObject_Prototype()
@@ -33,15 +33,11 @@ HRESULT CInfo_Slot::Ready_GameObject(void * pArg)
 
 	m_bIsActive = false;
 
-	CUI::UI_DESC* pDesc = new CUI::UI_DESC;
-	pDesc->fPosX = m_fPosX - m_fSizeX * 0.25f;
-	pDesc->fPosY = m_fPosY + m_fSizeY * 0.25f;
-	pDesc->fSizeX = m_fSizeX * 0.25f;
-	pDesc->fSizeY = m_fSizeY * 0.25f;
-	pDesc->iIndex = 0;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NumberUI", SCENE_MORTAL, L"Layer_NumberUI", pDesc);
-	m_pNumberUI = static_cast<CNumberUI*>(g_pManagement->Get_GameObjectBack(L"Layer_NumberUI", SCENE_MORTAL));
-		
+	m_pItemCntFont = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
+	m_pItemCntFont->Set_UI_Pos(m_fPosX - m_fSizeX * 0.25f, m_fPosY + m_fSizeY * 0.25f);
+	m_pItemCntFont->Set_UI_Size(10.4f, 20.f);
+	m_pItemCntFont->Set_ViewZ(m_fViewZ - 0.1f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pItemCntFont, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 	return NOERROR;
 }
 
@@ -55,25 +51,34 @@ _int CInfo_Slot::Update_GameObject(_double TimeDelta)
 
 	switch (m_eInfo)
 	{
-	case CExpendables::EXPEND_1:
-		m_iIndex = 0;
-		break;
-	case CExpendables::EXPEND_2:
-		m_iIndex = 1;
-		break;
-	case CExpendables::EXPEND_3:
-		m_iIndex = 2;
-		break;
-	case CExpendables::EXPEND_4:
+	case CExpendables::Expend_MaximumUp:
 		m_iIndex = 3;
 		break;
-	case CExpendables::EXPEND_END:
+	case CExpendables::Expend_Hp:
 		m_iIndex = 4;
+		break;
+	case CExpendables::Expend_Return:
+		m_iIndex = 5;
+		break;
+	case CExpendables::Expend_Blood:
+		m_iIndex = 6;
+		break;
+	case CExpendables::Expend_Cheet:
+		m_iIndex = 7;
+		break;
+	case CExpendables::Expend_SuperArmor:
+		m_iIndex = 8;
+		break;
+	case CExpendables::EXPEND_END:
 		break;
 	}
 
-	m_pNumberUI->Set_Active(m_bIsActive);
-	m_pNumberUI->Set_ViewZ(m_fViewZ - 0.1f);
+	if (m_eInfo == CExpendables::EXPEND_END)
+		m_pItemCntFont->Set_Active(false);
+	else
+		m_pItemCntFont->Set_Active(m_bIsActive);
+	m_pItemCntFont->Update_NumberValue(m_iNumber);
+	m_pItemCntFont->Set_ViewZ(m_fViewZ - 0.1f);
 
 	return NO_EVENT;
 }
@@ -94,39 +99,26 @@ _int CInfo_Slot::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CInfo_Slot::Render_GameObject()
 {
-	if (!m_bIsActive)
+	if (!m_bIsActive || 
+		m_eInfo == CExpendables::EXPEND_END)
 		return NOERROR;
 
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
 
-
 	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
-
-	m_matOldView = g_pManagement->Get_Transform(D3DTS_VIEW);
-	m_matOldProj = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
-
 
 	if (FAILED(SetUp_ConstantTable()))
 		return E_FAIL;
 
 	m_pShaderCom->Begin_Shader();
-
 	m_pShaderCom->Begin_Pass(1);
-
 	m_pBufferCom->Render_VIBuffer();
-
 	m_pShaderCom->End_Pass();
-
 	m_pShaderCom->End_Shader();
-
-
-	g_pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
-	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
 
 	return NOERROR;
 }
@@ -164,11 +156,9 @@ HRESULT CInfo_Slot::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
-
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
-
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, m_iIndex)))
 		return E_FAIL;
 

@@ -53,7 +53,7 @@ Tex_LinePoint_Hor|LinePoint_Hor_%d.png|..\..\Client\Resources\Texture\Effect\Lin
 Tex_Mask|Mask_%d.dds|..\..\Client\Resources\Texture\Effect\Mask\||17
 Tex_Noise|Noise_%d.dds|..\..\Client\Resources\Texture\Effect\Noise\||25
 Tex_Normal|Normal_%d.dds|..\..\Client\Resources\Texture\Effect\Normal\||10
-Tex_Ortho_BlackCorner|Black_Corner_%d.png|..\..\Client\Resources\Texture\Effect\Ortho\Ortho_BlackCorner\||5
+Tex_Black_Corner|Black_Corner_%d.png|..\..\Client\Resources\Texture\Effect\Ortho\Black_Corner\||5
 Tex_Ortho_Blood|Ortho_Blood_%d.png|..\..\Client\Resources\Texture\Effect\Ortho\Ortho_Blood\||2
 Tex_Ortho_Snow|Ortho_Snow_%d.tga|..\..\Client\Resources\Texture\Effect\Ortho\Ortho_Snow\||2
 Tex_Ortho_Title|Ortho_Title_%d.dds|..\..\Client\Resources\Texture\Effect\Ortho\Ortho_Title\||8

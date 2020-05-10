@@ -133,9 +133,6 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\99.Public">
       <UniqueIdentifier>{7c37cd0b-3aa1-4f2a-98a4-27c93e364280}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\99.Public\Button_UI">
-      <UniqueIdentifier>{f4308e4f-0a96-460c-ba32-24c91ab05ac0}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\0%29 Player\00%29 DrainWeapon">
       <UniqueIdentifier>{3b3dddb5-14c2-4366-8b67-4ae8f25b5dbd}</UniqueIdentifier>
     </Filter>
@@ -199,12 +196,6 @@
     <Filter Include="02.GameObject\Stage\7%29 Item\Material%28재료%29">
       <UniqueIdentifier>{924ab983-b201-4c9c-bc23-a953d27ee152}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\8%29 Armor">
-      <UniqueIdentifier>{603bb8b5-40d3-4990-a88c-772e3147a35a}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\04. Select_UI">
-      <UniqueIdentifier>{6be15063-782e-4209-96d4-18ea99a6801b}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\06. Get_ItemUI">
       <UniqueIdentifier>{1109951a-a48a-447c-bb46-b5d93621bebb}</UniqueIdentifier>
     </Filter>
@@ -213,12 +204,6 @@
     </Filter>
     <Filter Include="99.Default">
       <UniqueIdentifier>{12050d82-529f-451b-a007-685621a315bf}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\05. NumberUI">
-      <UniqueIdentifier>{06250359-a0c3-4de4-afff-90ff48c1c972}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\06. CursorUI">
-      <UniqueIdentifier>{6d74b162-2001-4bc6-8023-f3d2ca758c6e}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\Stage\1%29 Boss\PoisonButterfly\Bullet">
       <UniqueIdentifier>{9fe0c9c4-700a-4361-889f-770896093c16}</UniqueIdentifier>
@@ -240,9 +225,6 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\08. InfoSlot">
       <UniqueIdentifier>{343ae753-bdb9-4056-b045-a2752feb235f}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\07. ClickUI">
-      <UniqueIdentifier>{4df8b620-ca33-4900-a23f-bd20831e0c51}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\07. MassageUI">
       <UniqueIdentifier>{540b3aae-02d4-4cfe-b5dc-cb949b85ba2b}</UniqueIdentifier>
@@ -354,9 +336,6 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\08. FontNumUI\PlayerFontUI">
       <UniqueIdentifier>{0d91f626-46bc-46dc-a493-613d6097be46}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\99.Public\ExitUI">
-      <UniqueIdentifier>{278c902f-dcdd-4330-899c-f26f83df9fc2}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\13. BloodCodeMenuUI">
       <UniqueIdentifier>{40a1db44-79e3-4c12-8a99-e1cc3ce1a318}</UniqueIdentifier>
@@ -471,6 +450,12 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\0%29 Player\01%29 Costume\[3] Accessory">
       <UniqueIdentifier>{a9416921-45fb-498f-978c-3e12343dcd6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\04. HazeUI">
+      <UniqueIdentifier>{b43ab97b-58b5-48ec-bf6c-e7cb04438b4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\99.Public\MouseUI">
+      <UniqueIdentifier>{2bfceb16-1374-4a01-9881-b5af3154309b}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -588,12 +573,6 @@
     <ClInclude Include="..\Headers\Material.h">
       <Filter>02.GameObject\Stage\7%29 Item\Material%28재료%29</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Armor.h">
-      <Filter>02.GameObject\Stage\8%29 Armor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Select_UI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\04. Select_UI</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\Drain_Weapon.h">
       <Filter>02.GameObject\Stage\0%29 Player\00%29 DrainWeapon</Filter>
     </ClInclude>
@@ -620,12 +599,6 @@
     </ClInclude>
     <ClInclude Include="..\Headers\ScriptManager.h">
       <Filter>96.ScriptManager</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\NumberUI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\05. NumberUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\CursorUI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\06. CursorUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Get_ItemUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\04. Get_ItemUI</Filter>
@@ -668,9 +641,6 @@
     </ClInclude>
     <ClInclude Include="..\Headers\Total_Inven.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\05.Total_Inven</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\ClickUI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\07. ClickUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\PoisonChaseBullet.h">
       <Filter>02.GameObject\Stage\1%29 Boss\PoisonButterfly\Bullet</Filter>
@@ -755,9 +725,6 @@
     </ClInclude>
     <ClInclude Include="..\Headers\MistletoeUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\11. MistletoeUI</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\Button_UI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\Button_UI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\MistletoeOptionUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\11. MistletoeUI\MistletoeOptionUI</Filter>
@@ -993,6 +960,12 @@
     <ClInclude Include="..\Headers\Costume_Outer.h">
       <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[2] Outer</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\HazeUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\04. HazeUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MouseUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\MouseUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1100,12 +1073,6 @@
     <ClCompile Include="..\Codes\Material.cpp">
       <Filter>02.GameObject\Stage\7%29 Item\Material%28재료%29</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Armor.cpp">
-      <Filter>02.GameObject\Stage\8%29 Armor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Select_UI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\04. Select_UI</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\Drain_Weapon.cpp">
       <Filter>02.GameObject\Stage\0%29 Player\00%29 DrainWeapon</Filter>
     </ClCompile>
@@ -1135,12 +1102,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\ScriptManager.cpp">
       <Filter>96.ScriptManager</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\NumberUI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\05. NumberUI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\CursorUI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\06. CursorUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\MonsterUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\01.MonsterUI</Filter>
@@ -1177,9 +1138,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Total_Inven.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\05.Total_Inven</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\ClickUI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\07. ClickUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\PoisonChaseBullet.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\PoisonButterfly\Bullet</Filter>
@@ -1267,9 +1225,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\MistletoeUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\11. MistletoeUI</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\Button_UI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\Button_UI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\MistletoeOptionUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\11. MistletoeUI\MistletoeOptionUI</Filter>
@@ -1498,6 +1453,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Costume_Outer.cpp">
       <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[2] Outer</Filter>
+    </ClInclude>
+    <ClCompile Include="..\Codes\HazeUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\04. HazeUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MouseUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\MouseUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

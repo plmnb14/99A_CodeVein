@@ -1,16 +1,5 @@
 #include "stdafx.h"
 #include "..\Headers\Total_Inven.h"
-#include "Inventory_Icon.h"
-#include "Inventory.h"
-#include "Weapon_Slot.h"
-#include "Weapon_Inven.h"
-#include "Armor_Slot.h"
-#include "Armor_Inven.h"
-#include "BloodCode_Icon.h"
-#include "Info_Slot.h"
-#include "Expendables_Inven.h"
-#include "QuickSlot.h"
-#include "StatusUI.h"
 #include "UI_Manager.h"
 
 CTotal_Inven::CTotal_Inven(_Device pDevice)
@@ -221,8 +210,8 @@ void CTotal_Inven::SetUp_Default()
 	LOOP(3)
 	{
 		pInstance = static_cast<CInventory_Icon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_InvenIcon",nullptr));
-		pInstance->Set_UI_Pos(235.f + 40.f * i, 130.f);
-		pInstance->Set_UI_Size(30.f, 30.f);
+		pInstance->Set_UI_Pos(235.f + 50.f * i, 130.f);
+		pInstance->Set_UI_Size(40.f, 40.f);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 		
 		m_vecIcon.push_back(pInstance);
@@ -249,7 +238,7 @@ void CTotal_Inven::SetUp_Default()
 		{
 			g_pManagement->Add_GameObject_ToLayer(L"GameObject_ArmorSlot", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
 			m_pArmor_Slot = static_cast<CArmor_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
-			m_pArmor_Slot->Set_Type(CArmor::ARMOR_END);
+			m_pArmor_Slot->Set_Type(ARMOR_End);
 		}
 	}
 	
@@ -272,19 +261,6 @@ void CTotal_Inven::SetUp_Default()
 		g_pManagement->Add_GameObject_ToLayer(L"GameObject_InfoSlot", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
 		m_pQuickSlotInfo[i] = static_cast<CInfo_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
 	}
-
-	LOOP(8)
-	{
-		pDesc = new CUI::UI_DESC;
-		pDesc->fPosX = m_pQuickSlotInfo[i]->Get_UI_Pos().x - m_pQuickSlotInfo[i]->Get_UI_Size().x * 0.25f;
-		pDesc->fPosY = m_pQuickSlotInfo[i]->Get_UI_Pos().y + m_pQuickSlotInfo[i]->Get_UI_Size().y * 0.25f;
-		pDesc->fSizeX = m_pQuickSlotInfo[i]->Get_UI_Size().x * 0.25f;
-		pDesc->fSizeY = m_pQuickSlotInfo[i]->Get_UI_Size().y * 0.25f;
-		pDesc->iIndex = 0;
-		g_pManagement->Add_GameObject_ToLayer(L"GameObject_NumberUI", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
-		m_pNumberUI[i] = static_cast<CNumberUI*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
-	}
-
 	
 	LOOP(8)
 	{
@@ -322,6 +298,7 @@ void CTotal_Inven::Click_Icon()
 	{
 		m_pInventory = CUI_Manager::Get_Instance()->Get_Inventory();
 		m_pInventory->Set_Active(true);
+		CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Set_Active(true);
 		m_bIsActive = false;
 	}
 	else if (m_vecIcon[1]->Pt_InRect() &&

@@ -113,6 +113,7 @@ HRESULT COrthoEffect::LateInit_GameObject()
 	Change_EffectTexture(m_pInfo->szName);
 	Change_GradientTexture(m_pInfo->szGradientName);
 	Change_ColorTexture(m_pInfo->szColorName);
+	Change_MaskTexture(L"DefaultTex_Ortho_Title");
 
 	return S_OK;
 }
@@ -642,19 +643,19 @@ HRESULT COrthoEffect::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Ortho_Title", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"DefaultTex_Ortho_Title", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_GradientTexture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Ortho_Title", L"Com_GradientTexture", (CComponent**)&m_pGradientTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"DefaultTex_Ortho_Title", L"Com_GradientTexture", (CComponent**)&m_pGradientTextureCom)))
 		return E_FAIL;
 
 	// For.Com_ColorTexture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Ortho_Title", L"Com_ColorTexture", (CComponent**)&m_pColorTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"DefaultTex_Ortho_Title", L"Com_ColorTexture", (CComponent**)&m_pColorTextureCom)))
 		return E_FAIL;
 
 	// For.Com_MaskTexture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Ortho_Title", L"Com_MaskTexture", (CComponent**)&m_pMaskTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"DefaultTex_Ortho_Title", L"Com_MaskTexture", (CComponent**)&m_pMaskTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -767,7 +768,7 @@ void COrthoEffect::Change_GradientTexture(const _tchar * _Name)
 
 	if (!iter->second)
 	{
-		Change_GradientTexture(L"Tex_Ortho_Title");
+		Change_GradientTexture(L"DefaultTex_Ortho_Title");
 	}
 }
 
@@ -783,7 +784,7 @@ void COrthoEffect::Change_ColorTexture(const _tchar* _Name)
 
 	if (!iter->second)
 	{
-		Change_ColorTexture(L"Tex_Ortho_Title");
+		Change_ColorTexture(L"DefaultTex_Ortho_Title");
 	}
 }
 
@@ -799,7 +800,7 @@ void COrthoEffect::Change_MaskTexture(const _tchar * _Name)
 
 	if (!iter->second)
 	{
-		Change_MaskTexture(L"Tex_Ortho_Title");
+		Change_MaskTexture(L"DefaultTex_Ortho_Title");
 	}
 }
 

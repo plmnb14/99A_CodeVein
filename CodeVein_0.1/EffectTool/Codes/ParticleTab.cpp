@@ -677,6 +677,8 @@ void CParticleTab::OnBnClickedButton_Save()
 		::WriteFile(hFile, &m_pInfo->fRotSpeed_Max, sizeof(_float), &dwByte, nullptr);
 		::WriteFile(hFile, &m_pInfo->fRotSpeed_Min, sizeof(_float), &dwByte, nullptr);
 		::WriteFile(hFile, &m_pInfo->iMaxCount, sizeof(_int), &dwByte, nullptr);
+		//TCHAR szTempPath[STR_256] = L"Default";
+		//lstrcat(szTempPath, m_pInfo->szName);
 		::WriteFile(hFile, &m_pInfo->szColorName, sizeof(TCHAR) * STR_256, &dwByte, nullptr);
 		::WriteFile(hFile, &m_pInfo->szName, sizeof(TCHAR) * STR_256, &dwByte, nullptr);
 		::WriteFile(hFile, &m_pInfo->szGradientName, sizeof(TCHAR) * STR_256, &dwByte, nullptr);

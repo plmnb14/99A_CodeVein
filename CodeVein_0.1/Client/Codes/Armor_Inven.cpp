@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Armor_Inven.h"
-
+#include "Armor_Slot.h"
 
 CArmor_Inven::CArmor_Inven(_Device pDevice)
 	: CUI(pDevice)
@@ -12,9 +12,9 @@ CArmor_Inven::CArmor_Inven(const CArmor_Inven & rhs)
 {
 }
 
-CArmor::ARMOR_TYPE CArmor_Inven::Get_UseArmorType()
+ARMOR_TYPE CArmor_Inven::Get_UseArmorType()
 {
-	return CArmor::ARMOR_TYPE(m_eRegistArmor);
+	return m_eRegistArmor;
 }
 
 HRESULT CArmor_Inven::Ready_GameObject_Prototype()
@@ -41,8 +41,9 @@ HRESULT CArmor_Inven::Ready_GameObject(void * pArg)
 
 	SetUp_Default();
 
-	Add_Armor(CArmor::ARMOR_1);
-	Add_Armor(CArmor::ARMOR_2);
+	Add_Armor(ARMOR_Drape);
+	Add_Armor(ARMOR_Gauntlet);
+	Add_Armor(ARMOR_LongCoat);
 
 	return NOERROR;
 }
@@ -76,7 +77,6 @@ _int CArmor_Inven::Late_Update_GameObject(_double TimeDelta)
 	m_matWorld._33 = 1.f;
 	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
 	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;
-	m_matWorld._42 = 1.f;
 
 	return NO_EVENT;
 }
@@ -156,24 +156,7 @@ HRESULT CArmor_Inven::SetUp_ConstantTable()
 
 void CArmor_Inven::SetUp_Default()
 {
-	/*CUI::UI_DESC* pDesc = nullptr;
-	CArmor_Slot* pSlot = nullptr;
-	for (_uint i = 0; i < 6; ++i)
-	{
-		for (_uint j = 0; j < 5; ++j)
-		{
-			pDesc = new CUI::UI_DESC;
-			pDesc->fPosX = m_fPosX - 103.f + 52.f * j;
-			pDesc->fPosY = m_fPosY - 130.f + 52.f * i;
-			pDesc->fSizeX = 50.f;
-			pDesc->fSizeY = 50.f;
-			g_pManagement->Add_GameObject_ToLayer(L"GameObject_ArmorSlot", SCENE_STAGE, L"Layer_ArmorSlot", pDesc);
-			pSlot = static_cast<CArmor_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_ArmorSlot", SCENE_STAGE));
-			m_vecArmorSlot.push_back(pSlot);
-		}
-	}*/
-
-	m_eRegistArmor = CArmor::ARMOR_END;
+	
 }
 
 void CArmor_Inven::Click_Inven()
@@ -197,9 +180,9 @@ void CArmor_Inven::Click_Inven()
 
 void CArmor_Inven::Regist_Armor(CArmor_Slot * pArmorSlot)
 {
-	if (pArmorSlot->Get_Type() == CArmor::ARMOR_END)
+	if (pArmorSlot->Get_Type() == ARMOR_End)
 		return;
-	if (m_eRegistArmor == CArmor::ARMOR_END)
+	if (m_eRegistArmor == ARMOR_End)
 	{
 		m_eRegistArmor = pArmorSlot->Get_Type();
 		pArmorSlot->Set_Select(true);
@@ -210,16 +193,16 @@ void CArmor_Inven::Regist_Armor(CArmor_Slot * pArmorSlot)
 
 void CArmor_Inven::UnRegist_Armor(CArmor_Slot * pArmorSlot)
 {
-	if (pArmorSlot->Get_Type() == CArmor::ARMOR_END)
+	if (pArmorSlot->Get_Type() == ARMOR_End)
 		return;
 	if (pArmorSlot->Get_Type() == m_eRegistArmor)
 	{
-		m_eRegistArmor = CArmor::ARMOR_END;
+		m_eRegistArmor = ARMOR_End;
 		pArmorSlot->Set_Select(false);
 	}
 }
 
-void CArmor_Inven::Add_Armor(CArmor::ARMOR_TYPE eType)
+void CArmor_Inven::Add_Armor(ARMOR_TYPE eType)
 {
 	CUI::UI_DESC* pDesc = nullptr;
 	CArmor_Slot* pSlot = nullptr;
