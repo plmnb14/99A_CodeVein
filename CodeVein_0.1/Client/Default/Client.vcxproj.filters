@@ -442,6 +442,9 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\99.Public\MouseUI">
       <UniqueIdentifier>{2bfceb16-1374-4a01-9881-b5af3154309b}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\16. ConversationUI">
+      <UniqueIdentifier>{4f0943ce-c02a-408f-af5f-6c1c94ea2eee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -942,6 +945,9 @@
     <ClInclude Include="..\Headers\MouseUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\MouseUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\ScriptUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\16. ConversationUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1426,6 +1432,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\MouseUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\MouseUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ScriptUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\16. ConversationUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -196,6 +196,7 @@
     <ClInclude Include="..\Headers\ColdBeamSmall.h" />
     <ClInclude Include="..\Headers\ColdBeamBig.h" />
     <ClInclude Include="..\Headers\ColdBeamMiddle.h" />
+    <ClInclude Include="..\Headers\ScriptUI.h" />
     <ClInclude Include="..\Headers\CursorEffect.h" />
     <ClInclude Include="..\Headers\DamegeNumUI.h" />
     <ClInclude Include="..\Headers\DarkBoom.h" />
@@ -357,6 +358,7 @@
     <ClCompile Include="..\Codes\ColdBeamSmall.cpp" />
     <ClCompile Include="..\Codes\ColdBeamBig.cpp" />
     <ClCompile Include="..\Codes\ColdBeamMiddle.cpp" />
+    <ClCompile Include="..\Codes\ScriptUI.cpp" />
     <ClCompile Include="..\Codes\CursorEffect.cpp" />
     <ClCompile Include="..\Codes\DamegeNumUI.cpp" />
     <ClCompile Include="..\Codes\DarkBoom.cpp" />
