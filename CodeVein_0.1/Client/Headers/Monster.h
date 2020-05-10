@@ -37,7 +37,8 @@ public:
 		ATTACK,
 		HIT,
 		CC,
-		DEAD
+		DEAD,
+		STATE_END
 	};
 
 	enum MONSTER_COLOR_TYPE
@@ -59,7 +60,8 @@ public:
 		IDLE_LURK,
 		IDLE_SCRATCH,
 		IDLE_SIT,
-		IDLE_STAND
+		IDLE_STAND,
+		IDLE_END
 	};
 
 	enum MONSTER_MOVE_TYPE
@@ -67,33 +69,38 @@ public:
 		MOVE_WALK,
 		MOVE_ALERT,
 		MOVE_RUN,
-		MOVE_DODGE
+		MOVE_DODGE,
+		MOVE_END
 	};
 
 	enum MONSTER_ATK_TYPE
 	{
 		ATK_NORMAL,
-		ATK_COMBO
+		ATK_COMBO,
+		ATK_END
 	};
 
 	enum MONSTER_HIT_TYPE
 	{
 		HIT_STRONG,
 		HIT_NORMAL,
-		HIT_WEAK
+		HIT_WEAK,
+		HIT_END
 	};
 
 	enum MONSTER_CC_TYPE
 	{
 		CC_STUN,
 		CC_DOWN,
-		CC_BLOW
+		CC_BLOW,
+		CC_END
 	};
 
 	enum MONSTER_DEAD_TYPE
 	{
 		DEAD_DEAD,
-		DEAD_EXCUTION
+		DEAD_EXCUTION,
+		DEAD_END
 	};
 
 	enum MONSTER_BULLET_TYPE
@@ -209,52 +216,52 @@ protected:
 	CGameObject*		m_pAggroTarget = nullptr;
 
 protected:
-	MONSTER_STATE_TYPE		m_eFirstCategory;
-	MONSTER_IDLE_TYPE		m_eSecondCategory_IDLE;
-	MONSTER_MOVE_TYPE		m_eSecondCategory_MOVE;
-	MONSTER_ATK_TYPE		m_eSecondCategory_ATK;
-	MONSTER_HIT_TYPE		m_eSecondCategory_HIT;
-	MONSTER_CC_TYPE			m_eSecondCategory_CC;
-	MONSTER_DEAD_TYPE		m_eSecondCategory_DEAD;
+	MONSTER_STATE_TYPE		m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+	MONSTER_IDLE_TYPE		m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_END;
+	MONSTER_MOVE_TYPE		m_eSecondCategory_MOVE = MONSTER_MOVE_TYPE::MOVE_END;
+	MONSTER_ATK_TYPE		m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_END;
+	MONSTER_HIT_TYPE		m_eSecondCategory_HIT = MONSTER_HIT_TYPE::HIT_END;
+	MONSTER_CC_TYPE			m_eSecondCategory_CC = MONSTER_CC_TYPE::CC_END;
+	MONSTER_DEAD_TYPE		m_eSecondCategory_DEAD = MONSTER_DEAD_TYPE::DEAD_END;
 
-	WEAPON_STATE			m_eWeaponState;
-	FBLR					m_eFBLR;
-	MONSTER_COLOR_TYPE		m_eMonsterColor;
-	MONSTER_BULLET_TYPE		m_eBulletType;
+	WEAPON_STATE			m_eWeaponState = WEAPON_STATE::WEAPON_None;
+	FBLR					m_eFBLR = FBLR::FRONT;
+	MONSTER_COLOR_TYPE		m_eMonsterColor = MONSTER_COLOR_TYPE::COLOR_NONE;
+	MONSTER_BULLET_TYPE		m_eBulletType = MONSTER_BULLET_TYPE::BULLET_NORMAL;
 
-	_double					m_dTimeDelta;
-	_double					m_dAniPlayMul;
+	_double					m_dTimeDelta = 0;
+	_double					m_dAniPlayMul = 1;
 
 	_bool					m_bEventTrigger[30] = {};
-	_bool					m_bCanPlayDead; //죽음 애니 재생
-	_bool					m_bInRecognitionRange; //인지범위ox
-	_bool					m_bInAtkRange; //공격범위ox
-	_bool					m_bCanChase; //추적ox
-	_bool					m_bCanCoolDown; //쿨타임ox
-	_bool					m_bIsCoolDown; //쿨타임 진행중ox
-	_bool					m_bCanChooseAtkType; //노말,콤보 가능ox
-	_bool					m_bIsCombo; //콤보공격 진행중ox
-	_bool					m_bCanIdle; //일상ox
-	_bool					m_bIsIdle; //일상 진행중ox
-	_bool					m_bCanMoveAround; //경계ox
-	_bool					m_bIsMoveAround; //경계동작 진행중
+	_bool					m_bCanPlayDead = false; //죽음 애니 재생
+	_bool					m_bInRecognitionRange = false; //인지범위ox
+	_bool					m_bInAtkRange = false; //공격범위ox
+	_bool					m_bCanChase = false; //추적ox
+	_bool					m_bCanCoolDown = false; //쿨타임ox
+	_bool					m_bIsCoolDown = false; //쿨타임 진행중ox
+	_bool					m_bCanChooseAtkType = false; //노말,콤보 가능ox
+	_bool					m_bIsCombo = false; //콤보공격 진행중ox
+	_bool					m_bCanIdle = true; //일상ox
+	_bool					m_bIsIdle = false; //일상 진행중ox
+	_bool					m_bCanMoveAround = false; //경계ox
+	_bool					m_bIsMoveAround = false; //경계동작 진행중
 
-	_float					m_fSkillMoveSpeed_Cur;
-	_float					m_fSkillMoveSpeed_Max;
-	_float					m_fSkillMoveAccel_Cur;
-	_float					m_fSkillMoveAccel_Max;
-	_float					m_fSkillMoveMultiply;
+	_float					m_fSkillMoveSpeed_Cur= 0.f;
+	_float					m_fSkillMoveSpeed_Max = 0.f;
+	_float					m_fSkillMoveAccel_Cur = 0.f;
+	_float					m_fSkillMoveAccel_Max = 0.f;
+	_float					m_fSkillMoveMultiply = 0.f;
 
-	_float					m_fRecognitionRange;
-	_float					m_fShotRange;
-	_float					m_fAtkRange;
-	_float					m_fPersonalRange;
-	_float					m_fCoolDownMax;
-	_float					m_fCoolDownCur;
+	_float					m_fRecognitionRange = 0.f;
+	_float					m_fShotRange = 0.f;
+	_float					m_fAtkRange = 0.f;
+	_float					m_fPersonalRange = 0.f;
+	_float					m_fCoolDownMax = 0.f;
+	_float					m_fCoolDownCur = 0.f;
 
-	_int					m_iRandom;
-	_int					m_iDodgeCount;
-	_int					m_iDodgeCountMax;
+	_int					m_iRandom = 0;
+	_int					m_iDodgeCount = 0;
+	_int					m_iDodgeCountMax = 0;
 
 	_float					m_fDeadEffect_Delay = 0.f;
 	_float					m_fDeadEffect_Offset = 0.f;

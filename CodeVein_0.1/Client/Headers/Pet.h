@@ -55,7 +55,8 @@ public:
 		IDLE_LURK,
 		IDLE_SCRATCH,
 		IDLE_SIT,
-		IDLE_STAND
+		IDLE_STAND,
+		IDLE_END
 	};
 
 	enum PET_MOVE_TYPE
@@ -63,33 +64,38 @@ public:
 		MOVE_WALK,
 		MOVE_ALERT,
 		MOVE_RUN,
-		MOVE_DODGE
+		MOVE_DODGE,
+		MOVE_END
 	};
 
 	enum PET_ATK_TYPE
 	{
 		ATK_NORMAL,
-		ATK_COMBO
+		ATK_COMBO,
+		ATK_END
 	};
 
 	enum PET_HIT_TYPE
 	{
 		HIT_STRONG,
 		HIT_NORMAL,
-		HIT_WEAK
+		HIT_WEAK,
+		HIT_END
 	};
 
 	enum PET_CC_TYPE
 	{
 		CC_STUN,
 		CC_DOWN,
-		CC_BLOW
+		CC_BLOW,
+		CC_END
 	};
 
 	enum PET_DEAD_TYPE
 	{
 		DEAD_DEAD,
-		DEAD_EXCUTION
+		DEAD_EXCUTION,
+		DEAD_END
 	};
 
 	enum PET_PLUS_TYPE //강화수치
@@ -242,19 +248,19 @@ protected:
 
 	CGameObject*		m_pPlayer = nullptr;
 
-	PET_STATE_TYPE		m_eFirstCategory;
-	PET_IDLE_TYPE		m_eSecondCategory_IDLE;
-	PET_MOVE_TYPE		m_eSecondCategory_MOVE;
-	PET_ATK_TYPE		m_eSecondCategory_ATK;
-	PET_HIT_TYPE		m_eSecondCategory_HIT;
-	PET_CC_TYPE			m_eSecondCategory_CC;
-	PET_DEAD_TYPE		m_eSecondCategory_DEAD;
+	PET_STATE_TYPE		m_eFirstCategory = PET_STATE_TYPE::IDLE;
+	PET_IDLE_TYPE		m_eSecondCategory_IDLE = PET_IDLE_TYPE::IDLE_END;
+	PET_MOVE_TYPE		m_eSecondCategory_MOVE = PET_MOVE_TYPE::MOVE_END;
+	PET_ATK_TYPE		m_eSecondCategory_ATK = PET_ATK_TYPE::ATK_END;
+	PET_HIT_TYPE		m_eSecondCategory_HIT = PET_HIT_TYPE::HIT_END;
+	PET_CC_TYPE			m_eSecondCategory_CC = PET_CC_TYPE::CC_END;
+	PET_DEAD_TYPE		m_eSecondCategory_DEAD = PET_DEAD_TYPE::DEAD_END;
 
 	PET_PLUS_TYPE		m_ePlusType = PET_PLUS_TYPE::PET_PLUS_END; //펫 강화수치
 	PET_GRADE_TYPE		m_eGradeType = PET_GRADE_TYPE::PET_GRADE_TYPE_END; //펫 등급
 	PET_TYPE			m_eType = PET_TYPE::PET_TYPE_END; //펫 종류
 
-	FBLR				m_eFBLR;
+	FBLR				m_eFBLR= FBLR::FRONT;
 	WEAPON_STATE		m_eWeaponState = WEAPON_STATE::WEAPON_None;
 	PET_TARGET_TYPE		m_eTarget = PET_TARGET_TYPE::PET_TARGET_TYPE_END;
 	PET_MODE_TYPE		m_eNowPetMode = PET_MODE_TYPE::PET_MODE_END;
@@ -264,11 +270,11 @@ protected:
 	_double				m_dAniPlayMul = 1;
 
 	//공통 사용 변수
-	_float				m_fSkillMoveSpeed_Cur;
-	_float				m_fSkillMoveSpeed_Max;
-	_float				m_fSkillMoveAccel_Cur;
-	_float				m_fSkillMoveAccel_Max;
-	_float				m_fSkillMoveMultiply;
+	_float				m_fSkillMoveSpeed_Cur = 0.f;
+	_float				m_fSkillMoveSpeed_Max = 0.f;
+	_float				m_fSkillMoveAccel_Cur = 0.f;
+	_float				m_fSkillMoveAccel_Max = 0.f;
+	_float				m_fSkillMoveMultiply = 0.f;
 	_float				m_fPersonalRange = 4.f; //player, 목표와의 사회적 거리두기 변수
 
 	_bool				m_bEventTrigger[30] = {};
