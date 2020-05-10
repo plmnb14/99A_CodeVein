@@ -86,7 +86,7 @@ HRESULT CLogoBtn::Render_GameObject()
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
-	if (FAILED(SetUp_ConstantTable(3)))
+	if (FAILED(SetUp_ConstantTable(0)))
 		return E_FAIL;
 
 	m_pShaderCom->Begin_Shader();

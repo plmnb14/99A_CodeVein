@@ -5,7 +5,6 @@
 #include "Item_Manager.h"
 
 
-#include "Button_UI.h"
 #include "PlayerHP.h"
 #include "PlayerST.h"
 #include "BossDecoUI.h"
@@ -15,18 +14,14 @@
 
 #include "Expendables_Inven.h"
 #include "Expendables_Slot.h"
-#include "Select_UI.h"
 #include "Material_Inven.h"
 #include "Material_Slot.h"
 #include "Weapon_Slot.h"
 #include "Weapon_Inven.h"
 #include "Armor_Slot.h"
 #include "Armor_Inven.h"
-#include "NumberUI.h"
-#include "CursorUI.h"
 #include "Inventory.h"
 #include "Inventory_Icon.h"
-#include "ClickUI.h"
 #include "Total_Inven.h"
 #include "BloodCode_Icon.h"
 #include "Info_Slot.h"
@@ -66,6 +61,8 @@
 #include "NoticeUI.h"
 #include "ExplainSkillUI.h"
 
+#include "HazeUI.h"
+
 BEGIN(Client)
 
 class CUI_Manager final : public CBase
@@ -102,7 +99,9 @@ public:
 	CSkillReleaseUI* Get_Skill_ReleaseUI() { return m_pSkillReleaseUI; }
 	CSkillAcquisitionUI* Get_Skill_AcquisitionUI() { return m_pSkillAcquisitionUI; }
 	CSkill_Inven* Get_Skill_Inven() { return m_pSkillInven; }
+	CHazeUI* Get_HazeUI() { return m_pHazeUI; }
 	
+	// ∆Í ¿Œ∫•≈‰∏Æ
 	CPet_Inven* Get_Pet_Inven() { return m_pPet_Inven; }
 
 private:
@@ -125,7 +124,9 @@ private:
 	CSkillReleaseUI* m_pSkillReleaseUI = nullptr;
 	CSkillAcquisitionUI* m_pSkillAcquisitionUI = nullptr;
 	CSkill_Inven* m_pSkillInven = nullptr;
+	CHazeUI*	m_pHazeUI = nullptr;
 	
+	// ∆Í ¿Œ∫•≈‰∏Æ
 	CPet_Inven* m_pPet_Inven = nullptr;
 
 public:

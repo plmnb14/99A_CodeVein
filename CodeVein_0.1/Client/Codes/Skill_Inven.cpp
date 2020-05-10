@@ -68,8 +68,8 @@ _int CSkill_Inven::Update_GameObject(_double TimeDelta)
 			iter->Set_Regist(false);
 			iter->Set_Select(false);
 		}
-
 	}
+
 	return NO_EVENT;
 }
 

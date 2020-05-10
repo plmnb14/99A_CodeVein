@@ -1,13 +1,5 @@
 #include "stdafx.h"
 #include "..\Headers\Inventory.h"
-
-#include "QuickSlot.h"
-#include "Expendables_Inven.h"
-#include "Material_Inven.h"
-#include "Weapon_Inven.h"
-#include "Armor_Inven.h"
-#include "Total_Inven.h"
-#include "Inventory_Icon.h"
 #include "UI_Manager.h"
 
 CInventory::CInventory(_Device pDevice)
@@ -48,35 +40,18 @@ _int CInventory::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
-	
-	
-	if (m_bIsActive && !m_bIsDetail)
-	{
-		
-		m_vecIcon[CInventory_Icon::ICON_EXPEND]->Set_Click(true);
-		
-
-		m_bIsDetail = true;
-	}
-
-	
-
 	Click_Icon();
 
 	for (auto& pIcon : m_vecIcon)
 		pIcon->Set_Active(m_bIsActive);
 	
-	if (!m_bIsActive && !m_bIsDetail)
+	if (!m_bIsActive)
 	{
 		m_pExpInven->Set_Active(false);
 		m_pMtrInven->Set_Active(false);
 		m_pWeaponInven->Set_Active(false);
 		m_pArmorInven->Set_Active(false);	
-
-		for (auto& pIcon : m_vecIcon)
-			pIcon->Set_Click(false);
 	}
-
 
 	return NO_EVENT;
 }
@@ -145,15 +120,15 @@ void CInventory::SetUp_Default()
 	m_pWeaponInven = CUI_Manager::Get_Instance()->Get_Weapon_Inven();
 	m_pArmorInven = CUI_Manager::Get_Instance()->Get_Armor_Inven();
 	m_pTotalInven = CUI_Manager::Get_Instance()->Get_Total_Inven();
-
+	
 	CUI::UI_DESC* pDesc = nullptr;
 	LOOP(5)
 	{
 		pDesc = new CUI::UI_DESC;
 		pDesc->fPosX = m_fPosX - 100.f + 50.f * i;
-		pDesc->fPosY = m_fPosY - 170.3f;
-		pDesc->fSizeX = 30.f;
-		pDesc->fSizeY = 30.f;
+		pDesc->fPosY = m_fPosY - 203.f;
+		pDesc->fSizeX = 40.f;
+		pDesc->fSizeY = 40.f;
 		g_pManagement->Add_GameObject_ToLayer(L"GameObject_InvenIcon", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
 		CInventory_Icon* pIcon = static_cast<CInventory_Icon*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
 		pIcon->Set_Type(CInventory_Icon::ICON_TYPE(i));
@@ -166,25 +141,9 @@ void CInventory::Click_Icon()
 	if (!m_bIsActive)
 		return;
 	
-	if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
-	{
-		for (auto& pIcon : m_vecIcon)
-		{
-		
-			if (pIcon->Pt_InRect())
-			{
-				pIcon->Set_Click(true);
-				
-			}
-			else
-				pIcon->Set_Click(false);
-		}
-		
-	}
-
 	for (auto& pIcon : m_vecIcon)
 	{
-		if (pIcon->Get_Click())
+		if (pIcon->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 		{
 			switch (pIcon->Get_Type())
 			{
@@ -225,8 +184,6 @@ void CInventory::Click_Icon()
 				m_pTotalInven->Set_Active(true);
 				m_bIsDetail = false;
 				m_bIsActive = false;
-				for (auto& pIcon : m_vecIcon)
-					pIcon->Set_Click(false);
 			}			
 				break;
 			}

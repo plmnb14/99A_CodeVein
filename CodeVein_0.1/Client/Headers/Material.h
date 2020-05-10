@@ -10,10 +10,9 @@ class CMaterial final : public CGameObject
 public:
 	enum MATERIAL_TYPE
 	{
-		MATERIAL_1,
-		MATERIAL_2,
-		MATERIAL_3,
-		MATERIAL_4,
+		Queen_Steel,
+		Queen_Titanium,
+		Queen_Tungsten,
 		MATERIAL_END
 	};
 
@@ -34,7 +33,7 @@ public:
 	virtual _int	Update_GameObject(_double TimeDelta);
 
 private:
-	MATERIAL_TYPE m_eType;
+	MATERIAL_TYPE m_eType = MATERIAL_END;
 
 public:
 	static CMaterial*		Create(_Device pGraphic_Device);

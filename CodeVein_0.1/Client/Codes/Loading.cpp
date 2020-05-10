@@ -1268,11 +1268,11 @@ _uint CLoading::Loading_Title()
 	cout << "Essential Dynamic Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Dynamic_Path.dat");
 
-	cout << "DynamicMesh 불러오는 중 . . ." << endl;
-	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
-
-	cout << "NPC 불러오는 중 . . ." << endl;
-	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
+	//cout << "DynamicMesh 불러오는 중 . . ." << endl;
+	//g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
+	//
+	//cout << "NPC 불러오는 중 . . ." << endl;
+	//g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
 	//============================================================================================================
 	// 무기 불러오는 중
 	//============================================================================================================
@@ -1367,10 +1367,10 @@ _uint CLoading::Loading_Title()
 	cout << (g_bReleaseMode ? "true" : "false") << endl;
 	cout << "-------------------------------------------------------------------------------" << endl;
 
-	g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
+	//g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
 	//g_pSoundManager->Play_Sound(L"Title_Intro_02.wav", CSoundManager::Background_01, CSoundManager::Master_Sound);
 	//g_pSoundManager->Play_Sound(L"Gwan_Cchak.wav", CSoundManager::Background_01, CSoundManager::BGM_Sound);
-	g_pSoundManager->Play_BGM(L"Gwan_Cchak.wav");
+	//g_pSoundManager->Play_BGM(L"Gwan_Cchak.wav");
 
 	return NO_EVENT;
 }

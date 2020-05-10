@@ -5,6 +5,7 @@
 #include "Client_Defines.h"
 #include "Base.h"
 #include "Management.h"
+#include "StageAgent.h"
 
 BEGIN(Client)
 
@@ -29,6 +30,9 @@ private:
 private:
 	CRenderer*				m_pRenderer = nullptr;
 	LPDIRECT3DDEVICE9		m_pGraphic_Dev = nullptr;
+
+private:
+	CStageAgent*			m_pStageAgent = nullptr;
 
 private:
 	HRESULT Ready_Default_Setting(CGraphic_Device::WINMODE eMode, _ushort nWinCX, _ushort nWinCY);

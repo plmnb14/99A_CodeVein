@@ -79,7 +79,6 @@ HRESULT CPet_Inven::Render_GameObject()
 	IF_NULL_VALUE_RETURN(m_pBuffer, E_FAIL);
 
 	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
-
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
@@ -169,7 +168,7 @@ HRESULT CPet_Inven::SetUp_Default()
 	m_pExitIcon = static_cast<CInventory_Icon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_InvenIcon", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExitIcon, SCENE_MORTAL, L"Layer_PetUI", nullptr);
 	m_pExitIcon->Set_UI_Pos(m_fPosX + 120.f, m_fPosY - 203.f);
-	m_pExitIcon->Set_UI_Size(30.f, 30.f);
+	m_pExitIcon->Set_UI_Size(40.f, 40.f);
 	m_pExitIcon->Set_Type(CInventory_Icon::ICON_EXIT);
 
 	return S_OK;

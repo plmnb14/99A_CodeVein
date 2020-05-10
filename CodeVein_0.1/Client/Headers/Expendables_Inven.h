@@ -15,6 +15,10 @@ private:
 
 public:
 	vector<CExpendables_Slot*>* Get_QuickSlot() { return &m_vecQuickSlot; }
+	_uint Get_MaximumItemCnt() { return m_iMaximumCnt; }
+
+public:
+	void Set_MaximumItemCnt(_uint iMaximum) { m_iMaximumCnt = iMaximum; }
 
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();
@@ -49,6 +53,7 @@ private:
 	vector<CExpendables_Slot*>	m_vecQuickSlot;
 	vector<CExpendables*>	m_vecExpendables;
 	vector<UI_DESC*>		m_vecUI_DESC;
+	_uint					m_iMaximumCnt = 3;
 
 public:
 	static CExpendables_Inven*	Create(_Device pGraphic_Device);

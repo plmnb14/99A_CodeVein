@@ -90,11 +90,11 @@ _int CMistletoeUI::Update_GameObject(_double TimeDelta)
 
 	
 
-	if (!m_bIsActive)
-	{
-		m_pStageSelectUI->Set_Active(false);
-		CUI_Manager::Get_Instance()->Get_BloodCode_Menu()->Set_Active(false);
-	}
+	//if (!m_bIsActive)
+	//{
+	//	m_pStageSelectUI->Set_Active(false);
+	//	CUI_Manager::Get_Instance()->Get_BloodCode_Menu()->Set_Active(false);
+	//}
 	
 	_v3 vWorldPos;
 	memcpy(vWorldPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
@@ -203,10 +203,10 @@ void CMistletoeUI::Click_Option()
 					static_cast<CPlayer*>(m_pTarget)->Active_UI_StageSelect(false);
 				}
 
-				// 1번은 스킬
+				// 1번은 블러드 코드
 				else if (1 == iIdx)
 				{
-					 //스킬
+					static_cast<CPlayer*>(m_pTarget)->Active_UI_BloodCode(false);
 				}
 
 				// 2번은 레벨업

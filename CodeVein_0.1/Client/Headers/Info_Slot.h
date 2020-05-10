@@ -5,7 +5,7 @@
 #include "Expendables.h"
 
 BEGIN(Client)
-class CNumberUI;
+class CPlayerFontUI;
 class CInfo_Slot final : public CUI
 {
 private:
@@ -34,9 +34,11 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
-	CExpendables::EXPEND_TYPE m_eInfo = CExpendables::EXPEND_END;
-	CNumberUI*				m_pNumberUI = nullptr;
-	_uint					m_iNumber = 0;
+
+private:
+	CExpendables::EXPEND_TYPE	m_eInfo = CExpendables::EXPEND_END;
+	_uint						m_iNumber = 0;
+	CPlayerFontUI*				m_pItemCntFont = nullptr;
 
 public:
 	static CInfo_Slot*		Create(_Device pGraphic_Device);
