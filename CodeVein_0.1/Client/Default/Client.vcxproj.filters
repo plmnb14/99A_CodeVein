@@ -457,6 +457,9 @@
     <Filter Include="95. SoundManager">
       <UniqueIdentifier>{e4f55a90-9a32-4788-a5b8-44ef84c5e70e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\3%29 Effect\Effect_Parent">
+      <UniqueIdentifier>{f579e196-a438-49ed-be73-f5f79f7faad1}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -969,6 +972,9 @@
     <ClInclude Include="..\Headers\SoundManager.h">
       <Filter>95. SoundManager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Effect_Parent.h">
+      <Filter>02.GameObject\Stage\3%29 Effect\Effect_Parent</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1465,6 +1471,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\SoundManager.cpp">
       <Filter>95. SoundManager</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Effect_Parent.cpp">
+      <Filter>02.GameObject\Stage\3%29 Effect\Effect_Parent</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
