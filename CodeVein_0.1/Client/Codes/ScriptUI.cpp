@@ -25,7 +25,12 @@ HRESULT CScriptUI::Ready_GameObject(void * pArg)
 	CUI::Ready_GameObject(pArg);
 
 	m_fPosX = WINCX * 0.5f;
-	m_fPosY = WINCY * 0.8f;
+	m_fPosY = 635.f;
+	m_fSizeX = 512.f;
+	m_fSizeY = 128.f;
+
+	m_fLifeTime = 5.f;
+	
 	return NOERROR;
 }
 
@@ -36,6 +41,39 @@ _int CScriptUI::Update_GameObject(_double TimeDelta)
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
+
+	switch (m_eTalker)
+	{
+	case Talker_Player:
+		m_iTalkerIndex = 2;
+		break;
+	case Talker_Jack:
+		m_iTalkerIndex = 3;
+		break;
+	case Talker_End:
+		break;
+	}
+
+	switch (m_eScriptNum)
+	{
+	case Jack_Player_Test1:
+		m_iScriptIndex = 0;
+		break;
+	case Jack_Player_Test2:
+		m_iScriptIndex = 1;
+		break;
+	case Script_End:
+		break;
+	}
+
+	if (m_bIsActive && 1.f > m_fAlpha)
+		m_fAlpha += _float(TimeDelta) * 2.f;
+	if(!m_bIsActive && 0.f < m_fAlpha)
+		m_fAlpha -= _float(TimeDelta) * 2.f;
+
+	// 활성화 상태의 UI -> LifeTime 초과시 비활성화(Fade In / Out 으로 활성화 Or 비활성화)
+	Calc_LifeTime(TimeDelta);
+	
 	return NO_EVENT;
 }
 
@@ -55,7 +93,8 @@ _int CScriptUI::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CScriptUI::Render_GameObject()
 {
-	if (!m_bIsActive)
+	if (!m_bIsActive
+		&& m_fAlpha <= 0.f)
 		return NOERROR;
 
 	if (nullptr == m_pShaderCom ||
@@ -68,18 +107,18 @@ HRESULT CScriptUI::Render_GameObject()
 
 	_uint iIndex = 0;
 
-	//LOOP(2)
+	LOOP(2)
 	{
-		/*if (0 == i)
-			iIndex = 0;
+		if (0 == i)
+			iIndex = m_iTalkerIndex;
 		else if (1 == i)
-			iIndex = m_iIndex;*/
+			iIndex = m_iScriptIndex;
 
 		if (FAILED(SetUp_ConstantTable(iIndex)))
 			return E_FAIL;
 
 		m_pShaderCom->Begin_Shader();
-		m_pShaderCom->Begin_Pass(1);
+		m_pShaderCom->Begin_Pass(5);
 		m_pBufferCom->Render_VIBuffer();
 		m_pShaderCom->End_Pass();
 		m_pShaderCom->End_Shader();
@@ -125,6 +164,8 @@ HRESULT CScriptUI::SetUp_ConstantTable(_uint iIndex)
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
+		return E_FAIL;
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
 		return E_FAIL;
 
@@ -133,6 +174,20 @@ HRESULT CScriptUI::SetUp_ConstantTable(_uint iIndex)
 
 void CScriptUI::SetUp_Default()
 {
+}
+
+void CScriptUI::Calc_LifeTime(_double TimeDelta)
+{
+	if (!m_bIsActive)
+		return;
+
+	m_fDelta += _float(TimeDelta);
+
+	if (m_fDelta >= m_fLifeTime)
+	{
+		m_fDelta = 0.f;
+		m_bIsActive = false;
+	}
 }
 
 CScriptUI * CScriptUI::Create(_Device pGraphic_Device)

@@ -62,6 +62,7 @@
 #include "ExplainSkillUI.h"
 
 #include "HazeUI.h"
+#include "ScriptUI.h"
 
 BEGIN(Client)
 
@@ -100,6 +101,7 @@ public:
 	CSkillAcquisitionUI* Get_Skill_AcquisitionUI() { return m_pSkillAcquisitionUI; }
 	CSkill_Inven* Get_Skill_Inven() { return m_pSkillInven; }
 	CHazeUI* Get_HazeUI() { return m_pHazeUI; }
+	CScriptUI* Get_ScriptUI() { return m_pScriptUI; }
 	
 	// ∆Í ¿Œ∫•≈‰∏Æ
 	CPet_Inven* Get_Pet_Inven() { return m_pPet_Inven; }
@@ -125,6 +127,7 @@ private:
 	CSkillAcquisitionUI* m_pSkillAcquisitionUI = nullptr;
 	CSkill_Inven* m_pSkillInven = nullptr;
 	CHazeUI*	m_pHazeUI = nullptr;
+	CScriptUI*	m_pScriptUI = nullptr;
 	
 	// ∆Í ¿Œ∫•≈‰∏Æ
 	CPet_Inven* m_pPet_Inven = nullptr;
