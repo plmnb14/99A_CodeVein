@@ -37,6 +37,7 @@ private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable(_uint iIndex);
 	void	SetUp_Default();
+	void	Calc_LifeTime(_double TimeDelta);
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -47,6 +48,11 @@ private:
 
 private:
 	_float					m_fLifeTime = 0.f;
+	_uint					m_iTalkerIndex = 0;
+	_uint					m_iScriptIndex = 0;
+	Script_Talker			m_eTalker = Talker_End;
+	Script_Number			m_eScriptNum = Script_End;
+	_float					m_fAlpha = 0.f;
 
 public:
 	static CScriptUI*		Create(_Device pGraphic_Device);
