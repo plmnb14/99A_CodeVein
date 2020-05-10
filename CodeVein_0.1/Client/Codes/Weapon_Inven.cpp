@@ -249,7 +249,7 @@ void CWeapon_Inven::Add_Weapon(WEAPON_STATE eType)
 	{
 		m_vecWeaponSlot[i]->Set_Active(m_bIsActive);
 		m_vecWeaponSlot[i]->Set_ViewZ(m_fViewZ - 0.1f);
-		m_vecWeaponSlot[i]->Set_UI_Pos(m_fPosX - 103.f + 52.f * (i % 5), m_fPosY - 100.f + 52.f * (i / 5));
+		m_vecWeaponSlot[i]->Set_UI_Pos(m_fPosX - 103.f + 52.f * (i % 5), m_fPosY - 140.f + 52.f * (i / 5));
 	}
 }
 

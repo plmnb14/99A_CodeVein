@@ -30,10 +30,10 @@ private:
 	void	SetUp_Default();
 	void	Click_SkillSlot();
 	void	Reset_Select();
-	void	Back_To_BloodCodeUI();
 
 public:
-	void Compare_Data();
+	void	Compare_Data();
+	void	Back_To_BloodCodeUI();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;

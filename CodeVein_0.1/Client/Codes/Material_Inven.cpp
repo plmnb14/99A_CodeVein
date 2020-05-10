@@ -43,7 +43,7 @@ HRESULT CMaterial_Inven::Ready_GameObject(void * pArg)
 			pDesc = new CUI::UI_DESC;
 
 			pDesc->fPosX = m_fPosX - 103.f + 52.f * j;
-			pDesc->fPosY = m_fPosY - 100.f + 52.f * i;
+			pDesc->fPosY = m_fPosY - 140.f + 52.f * i;
 			pDesc->fSizeX = 50.f;
 			pDesc->fSizeY = 50.f;
 			g_pManagement->Add_GameObject_ToLayer(L"GameObject_MaterialSlot", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
