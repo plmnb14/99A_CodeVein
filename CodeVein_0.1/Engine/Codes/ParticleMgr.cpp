@@ -81,10 +81,10 @@ HRESULT CParticleMgr::Ready_ParticleManager_Essential()
 
 	Input_Pool(L"Blood_Chunk_0", 50);
 
-	Input_Pool(L"Hit_Slash_Particle_0", 50);
-	Input_Pool(L"Hit_Slash_Particle_1", 50);
-	Input_Pool(L"Hit_Slash_Particle_2", 50);
-	Input_Pool(L"Hit_Slash_Particle_3", 50);
+	Input_Pool(L"Hit_Slash_Particle_0", 80);
+	Input_Pool(L"Hit_Slash_Particle_1", 80);
+	Input_Pool(L"Hit_Slash_Particle_2", 80);
+	Input_Pool(L"Hit_Slash_Particle_3", 80);
 	Input_Pool(L"Hit_Slash_0", 50);
 	Input_Pool(L"Hit_Slash_1", 50);
 	Input_Pool(L"Hit_Slash_2", 50);
@@ -305,7 +305,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"ButterFly_SoftSmoke_Mist", 1500);
 	Input_Pool(L"ButterFly_SoftSmoke_Chunk", 500);
 	Input_Pool(L"ButterFly_WaterSplash", 100);
-	Input_Pool(L"ButterFly_GlitterSand", 300);
+	Input_Pool(L"ButterFly_GlitterSand", 500);
 
 	Input_Pool(L"ButterFly_VenomShot", 1000);
 	Input_Pool(L"ButterFly_VenomShot_Body", 100);
@@ -368,7 +368,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"QueensKnight_DarkBoom_ReadyDistortion", 200);
 	Input_Pool(L"QueensKnight_LeakField_0", 350);
 	Input_Pool(L"QueensKnight_LeakField_1", 350);
-	Input_Pool(L"QueensKnight_LeakField_Hand", 150);
+	Input_Pool(L"QueensKnight_LeakField_Hand", 300);
 	Input_Pool(L"QueensKnight_LeakField_Hand_Aura", 150);
 	Input_Pool(L"QueensKnight_LeakField_Particle", 450);
 	Input_Pool(L"QueensKnight_Lightning_0", 50);
@@ -402,7 +402,7 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"QueensKnight_Trail_Lightning_1", 200);
 	Input_Pool(L"QueensKnight_Trail_Lightning_2", 500);
 	Input_Pool(L"QueensKnight_Trail_Lightning_2_Dark", 200);
-	Input_Pool(L"QueensKnight_WhirlWind_Smoke", 300);
+	Input_Pool(L"QueensKnight_WhirlWind_Smoke", 600);
 	Input_Pool(L"QueensKnight_Sting_Tornade", 5);
 
 	Input_Pool(L"IceFloorAura_01", 300);
@@ -949,12 +949,12 @@ void CParticleMgr::Create_Effect(_tchar* szName, _v3 vPos, CTransform * pFollowT
 	{
 		if (pFindedQueue->size() <= 20) // 넉넉하게... 남은게 20 이하면 생성하여 사용
 		{
-			_tchar szTemp[256];
-			lstrcpy(szTemp, pFindedQueue->front()->Get_ParticleName());
-			CHAR szForPrint[STR_256] = "";
-			WideCharToMultiByte(CP_ACP, 0, szTemp, STR_256, szForPrint, STR_256, NULL, NULL);
-			//if(GetAsyncKeyState('B') & 0x8000)
-				cout << "Effect Create : " << szForPrint << endl;
+			//_tchar szTemp[256];
+			//lstrcpy(szTemp, pFindedQueue->front()->Get_ParticleName());
+			//CHAR szForPrint[STR_256] = "";
+			//WideCharToMultiByte(CP_ACP, 0, szTemp, STR_256, szForPrint, STR_256, NULL, NULL);
+			////if(GetAsyncKeyState('B') & 0x8000)
+			//	cout << "Effect Create : " << szForPrint << endl;
 
 			_tchar* szEffName = pFindedQueue->front()->Get_ParticleName();
 			CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));
@@ -1100,12 +1100,12 @@ void CParticleMgr::Create_Effect_Delay(_tchar * szName, _float fDelay, _v3 vPos,
 	{
 		if (pFindedQueue->size() <= 20) // 넉넉하게... 남은게 20 이하면 생성하여 사용
 		{
-			_tchar szTemp[256];
-			lstrcpy(szTemp, pFindedQueue->front()->Get_ParticleName());
-			CHAR szForPrint[STR_256] = "";
-			WideCharToMultiByte(CP_ACP, 0, szTemp, STR_256, szForPrint, STR_256, NULL, NULL);
-			//if (GetAsyncKeyState('B') & 0x8000)
-				cout << "Effect Create : " << szForPrint << endl;
+			//_tchar szTemp[256];
+			//lstrcpy(szTemp, pFindedQueue->front()->Get_ParticleName());
+			//CHAR szForPrint[STR_256] = "";
+			//WideCharToMultiByte(CP_ACP, 0, szTemp, STR_256, szForPrint, STR_256, NULL, NULL);
+			////if (GetAsyncKeyState('B') & 0x8000)
+			//	cout << "Effect Create : " << szForPrint << endl;
 
 			_tchar* szEffName = pFindedQueue->front()->Get_ParticleName();
 			CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));
@@ -1143,12 +1143,12 @@ void CParticleMgr::Create_Effect_Delay(_tchar * szName, _float fDelay, _v3 vPos,
 	{
 		if (pFindedQueue->size() <= 20) // 넉넉하게... 남은게 20 이하면 생성하여 사용
 		{
-			_tchar szTemp[256];
-			lstrcpy(szTemp, pFindedQueue->front()->Get_ParticleName());
-			CHAR szForPrint[STR_256] = "";
-			WideCharToMultiByte(CP_ACP, 0, szTemp, STR_256, szForPrint, STR_256, NULL, NULL);
-			//if (GetAsyncKeyState('B') & 0x8000)
-			cout << "Effect Create : " << szForPrint << endl;
+			//_tchar szTemp[256];
+			//lstrcpy(szTemp, pFindedQueue->front()->Get_ParticleName());
+			//CHAR szForPrint[STR_256] = "";
+			//WideCharToMultiByte(CP_ACP, 0, szTemp, STR_256, szForPrint, STR_256, NULL, NULL);
+			////if (GetAsyncKeyState('B') & 0x8000)
+			//cout << "Effect Create : " << szForPrint << endl;
 
 			_tchar* szEffName = pFindedQueue->front()->Get_ParticleName();
 			CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));
