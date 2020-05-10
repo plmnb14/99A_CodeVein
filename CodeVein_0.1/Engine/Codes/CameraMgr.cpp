@@ -162,6 +162,21 @@ void CCameraMgr::Set_AimingTarget(CGameObject * pAimingTarget)
 	m_pMainCamera->Set_AimingTarget(pAimingTarget);
 }
 
+void CCameraMgr::Set_AimUI(_bool _bAimUI)
+{
+	m_pMainCamera->Set_AimUI(_bAimUI);
+}
+
+void CCameraMgr::Set_AimYPos(_float fYPos)
+{
+	m_pMainCamera->Set_AimYPos(fYPos);
+}
+
+void CCameraMgr::Set_AimXPosMulti(_float _fMuti)
+{
+	m_pMainCamera->Set_AimXPosMulti(_fMuti);
+}
+
 void CCameraMgr::Set_MouseCtrl(_bool _bMouseCtrl)
 {
 	m_pMainCamera->Set_MouseControl(_bMouseCtrl);

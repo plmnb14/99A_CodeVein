@@ -222,8 +222,8 @@ protected:
 	MONSTER_COLOR_TYPE		m_eMonsterColor;
 	MONSTER_BULLET_TYPE		m_eBulletType;
 
-	_double					m_dTimeDelta;
-	_double					m_dAniPlayMul;
+	_double					m_dTimeDelta = 0.0;
+	_double					m_dAniPlayMul = 0.0;
 
 	_bool					m_bEventTrigger[30] = {};
 	_bool					m_bCanPlayDead; //죽음 애니 재생

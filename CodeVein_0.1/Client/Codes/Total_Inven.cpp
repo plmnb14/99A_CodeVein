@@ -67,9 +67,9 @@ _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 	// 퀵슬롯 정보
 	CQuickSlot* pQuickSlot = CUI_Manager::Get_Instance()->Get_QuickSlot();
 
-	if (g_pInput_Device->Key_Up(DIK_ESCAPE))
+	// 활성화 상태라면
+	if (m_bIsActive)
 	{
-		m_bIsActive = true;	
 		CUI_Manager::Get_Instance()->Get_Instance()->Get_Inventory()->Set_Active(false);
 		CUI_Manager::Get_Instance()->Get_Instance()->Get_Inventory()->Set_Detail(false);		
 		// 스테이터스 창 활성화
