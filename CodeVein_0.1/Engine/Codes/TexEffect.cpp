@@ -146,6 +146,7 @@ HRESULT CTexEffect::LateInit_GameObject()
 		!lstrcmp(L"DeerKing_Snow_Up_Particle_0", m_szParticleName) ||
 		!lstrcmp(L"DeerKing_Body_PointParticle", m_szParticleName) ||
 		!lstrcmp(L"DeerKing_Point_ExplosionParticle_0", m_szParticleName) ||
+		!lstrcmp(L"IceGirl_SlashSnowParticle_0", m_szParticleName) ||
 		//!lstrcmp(L"IceGirl_PointParticle_Blue", m_szParticleName) ||
 		//!lstrcmp(L"IceGirl_PointParticle_Green", m_szParticleName) ||
 		//!lstrcmp(L"IceGirl_FlashParticle_Blue", m_szParticleName) ||
@@ -634,16 +635,6 @@ void CTexEffect::Check_Move(_double TimeDelta)
 	{
 		m_pTransformCom->Set_Angle(D3DXToRadian(m_vAngle));
 		m_pTransformCom->Update_Component();
-
-		//_mat matParent, matScale, matRotX, matRotY, matRotZ, matTrans;
-		//D3DXMatrixScaling(&matScale, 1,1,1);
-		//D3DXMatrixRotationX(&matRotX, D3DXToRadian(m_vAngle.x));
-		//D3DXMatrixRotationY(&matRotY, D3DXToRadian(m_vAngle.y));
-		//D3DXMatrixRotationZ(&matRotZ, D3DXToRadian(m_vAngle.z));
-		//D3DXMatrixTranslation(&matTrans, 0,0,0);
-		//matParent = matScale * matRotX * matRotZ * matRotY * matTrans;
-		//
-		//m_pTransformCom->Set_WorldMat(m_pTransformCom->Get_WorldMat() * matParent);
 	}
 
 	if (0 != m_fRotSpeed && m_vAngle != V3_NULL)

@@ -70,12 +70,12 @@ HRESULT CEffect_FireFlower::Ready_GameObject(void* pArg)
 	//_tchar szBuff[256] = L"";
 	//wsprintf(szBuff, L"Player_Skill_Halberd_Orange_LinePoint_Explosion_%d", CCalculater::Random_Num(0, 1));
 
-	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(m_szName, nullptr));
+	m_pBulletBody = CParticleMgr::Get_Instance()->Create_EffectReturn(m_szName);
 	m_pBulletBody->Set_Desc(_v3(0, 0, 0), nullptr);
 	m_pBulletBody->Set_Angle(_v3(0, 0, fAngle));
 	m_pBulletBody->Set_ParentObject(this);
 	m_pBulletBody->Reset_Init();
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
 
 	return NOERROR;
 }

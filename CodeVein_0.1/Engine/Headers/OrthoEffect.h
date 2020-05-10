@@ -21,6 +21,8 @@ public:
 public:
 	void Set_UV_Speed(_float fX, _float fY);
 	void Set_Mask(const _tchar* _Name, _int _iMaskIdx);
+	void Set_UI_Layer();
+
 public:
 	HRESULT SetUp_ConstantTable_Instance(CShader* pShader);
 
@@ -60,6 +62,8 @@ private:
 	_float	m_fUV_Speed_Y = 0.f;
 
 	_int	m_iMaskIdx = 0;
+
+	_bool	m_bUILayer = false;
 
 protected:
 	void Check_Frame(_double TimeDelta);

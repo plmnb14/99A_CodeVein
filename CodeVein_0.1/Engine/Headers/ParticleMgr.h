@@ -44,10 +44,12 @@ public:
 	void Create_Spawn_Effect(_float fDelay, _v3 vPos, _v3 vFinishPos, CTransform* pFollowTrans = nullptr);
 	void Create_FootSmoke_Effect(_v3 vPos, _float fOffset); // 지금은 한 객체만 사용가능
 	void Create_BossDeadParticle_Effect(_v3 vPos, _float fDelay, _float fLength);
+	void Create_BossDead_Text(_float fDelay);
 	void Create_Skill_Start_Effect(_v3 vPos, _v3 vEffPos, CTransform* pFollowTrans = nullptr);
 public:
 	CTrail_VFX* Create_Trail();
 	CEffect* Create_TitleEffect(_tchar* szName);
+	CEffect* Create_EffectReturn(_tchar* szName);
 
 private:
 	HRESULT Update_Effect(const _double TimeDelta);

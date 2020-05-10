@@ -362,6 +362,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceGirl_PointParticle_Green")))
 		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_SlashSnowParticle_0")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceBlock_Main", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceBlock_Sub_01", true)))
@@ -1139,6 +1141,11 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Blood_0", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_Blood_0.dat")))))
 		return E_FAIL;
 
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_BossDead_BG", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_BossDead_BG.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_BossDead_Text", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_BossDead_Text.dat")))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -1305,9 +1312,9 @@ _uint CLoading::Loading_Title()
 	//============================================================================================================
 	// 플레이어 스킬, 보스 이펙트 포함
 	//============================================================================================================
-	//cout << "Particle Etc 불러오는 중 . . ." << endl;
-	//if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
-	//	return E_FAIL;
+	cout << "Particle Etc 불러오는 중 . . ." << endl;
+	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
+		return E_FAIL;
 	//============================================================================================================
 	// UI 원형 생성
 	//============================================================================================================
