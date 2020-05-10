@@ -9,10 +9,12 @@ class CExpendables final : public CGameObject
 public:
 	enum EXPEND_TYPE
 	{
-		EXPEND_1,
-		EXPEND_2,
-		EXPEND_3,
-		EXPEND_4,
+		Expend_MaximumUp,		// 아이템 최대 소지 개수 증가
+		Expend_Hp,				// 체력 아이템
+		Expend_Return,			// 귀환 아이템
+		Expend_Blood,			// 영혈 아이템
+		Expend_Cheet,			// 치트 아이템
+		Expend_SuperArmor,		// 슈퍼 아머
 		EXPEND_END
 	};
 

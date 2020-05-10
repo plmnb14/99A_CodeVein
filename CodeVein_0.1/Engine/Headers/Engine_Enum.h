@@ -170,3 +170,12 @@ enum PET_TYPE
 	Deer_King_SS,
 	PetType_End
 };
+
+enum ARMOR_TYPE
+{
+	ARMOR_Drape,
+	ARMOR_Gauntlet,
+	ARMOR_LongCoat,
+	ARMOR_Muffler,
+	ARMOR_End
+};

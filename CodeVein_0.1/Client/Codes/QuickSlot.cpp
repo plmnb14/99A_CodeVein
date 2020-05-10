@@ -1,9 +1,5 @@
 #include "stdafx.h"
 #include "..\Headers\QuickSlot.h"
-
-#include "Expendables_Inven.h"
-#include "Button_UI.h"
-#include "NumberUI.h"
 #include "UI_Manager.h"
 
 CQuickSlot::CQuickSlot(_Device pDevice)
@@ -34,8 +30,8 @@ HRESULT CQuickSlot::Ready_GameObject(void * pArg)
 
 	m_fPosX = 120.f;
 	m_fPosY = 500.f;
-	m_fSizeX = 50.f;
-	m_fSizeY = 50.f;
+	m_fSizeX = 80.f;
+	m_fSizeY = 80.f;
 	m_bIsActive = true;
 
 	SetUp_Default();
@@ -53,40 +49,47 @@ _int CQuickSlot::Update_GameObject(_double TimeDelta)
 
 	if (m_vecQuickSlot.size() > m_iSelect)
 	{
-		m_iIndex = m_vecQuickSlot[m_iSelect]->Get_Type();
-		m_pNumberUI->Set_UI_Index(m_vecQuickSlot[m_iSelect]->Get_NumberUI()->Get_UI_Index());
+		m_eType = CExpendables::EXPEND_TYPE(m_vecQuickSlot[m_iSelect]->Get_Type());
+		m_pItemCntFont->Update_NumberValue(_float(m_vecQuickSlot[m_iSelect]->Get_Size()));
 	}
 		
 	else
 	{
-		m_iIndex = CExpendables::EXPEND_END;
-		m_pNumberUI->Set_UI_Index(0);
+		m_eType = CExpendables::EXPEND_END;
+		m_pItemCntFont->Update_NumberValue(0.f);
+	}
+
+	switch (m_eType)
+	{
+	case CExpendables::Expend_MaximumUp:
+		m_iIndex = 1;
+		break;
+	case CExpendables::Expend_Hp:
+		m_iIndex = 2;
+		break;
+	case CExpendables::Expend_Return:
+		m_iIndex = 3;
+		break;
+	case CExpendables::Expend_Blood:
+		m_iIndex = 4;
+		break;
+	case CExpendables::Expend_Cheet:
+		m_iIndex = 5;
+		break;
+	case CExpendables::Expend_SuperArmor:
+		m_iIndex = 6;
+		break;
+	case CExpendables::EXPEND_END:
+		m_iIndex = 7;
+		break;
 	}
 	
 	// 소비템 창에서 실시간으로 퀵슬롯 등록 정보를 얻어와서 벡터에 저장	
 	m_vecQuickSlot = *CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Get_QuickSlot();
 	
-	// ADD: 퀵슬롯 ->  방향으로 
-	if (g_pInput_Device->Key_Up(DIK_ADD))
-	{
-		if (m_iSelect >= m_vecQuickSlot.size() - 1)
-			m_iSelect = 0;
-		else
-			++m_iSelect;
+	Move_QuickSlot();
 
-	}
-	// SUBTRACT: 퀵슬롯 <- 방향으로
-	if (g_pInput_Device->Key_Up(DIK_SUBTRACT))
-	{
-		if (m_iSelect > 0)
-			--m_iSelect;
-		else
-			m_iSelect = _uint(m_vecQuickSlot.size()) - 1;
-	}
-
-	LOOP(2)
-		m_vecDecoUI[i]->Set_Active(m_bIsActive);
-	m_pNumberUI->Set_Active(m_bIsActive);
+	m_pItemCntFont->Set_Active(m_bIsActive);
 
 	return NO_EVENT;
 }
@@ -118,18 +121,25 @@ HRESULT CQuickSlot::Render_GameObject()
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
+	_uint iIndex = 0;
 
-	m_pShaderCom->Begin_Shader();
+	LOOP(2)
+	{
+		if (0 == i)
+			iIndex = 0;
+		else if (1 == i)
+			iIndex = m_iIndex;
 
-	m_pShaderCom->Begin_Pass(1);
+		if (FAILED(SetUp_ConstantTable(iIndex)))
+			return E_FAIL;
 
-	m_pBufferCom->Render_VIBuffer();
-
-	m_pShaderCom->End_Pass();
-
-	m_pShaderCom->End_Shader();
+		m_pShaderCom->Begin_Shader();
+		m_pShaderCom->Begin_Pass(1);
+		m_pBufferCom->Render_VIBuffer();
+		m_pShaderCom->End_Pass();
+		m_pShaderCom->End_Shader();
+	}
+	
 
 	return NOERROR;
 }
@@ -159,7 +169,7 @@ HRESULT CQuickSlot::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CQuickSlot::SetUp_ConstantTable()
+HRESULT CQuickSlot::SetUp_ConstantTable(_uint iIndex)
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -170,8 +180,7 @@ HRESULT CQuickSlot::SetUp_ConstantTable()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
-
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, m_iIndex)))
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
 		return E_FAIL;
 
 	return NOERROR;
@@ -179,39 +188,32 @@ HRESULT CQuickSlot::SetUp_ConstantTable()
 
 void CQuickSlot::SetUp_Default()
 {
-	CUI::UI_DESC* pDesc = nullptr;
+	m_pItemCntFont = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
+	m_pItemCntFont->Set_UI_Pos(m_fPosX, m_fPosY + m_fSizeY * 0.4f);
+	m_pItemCntFont->Set_UI_Size(10.4f, 20.f);
+	m_pItemCntFont->Set_ViewZ(m_fViewZ - 0.1f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pItemCntFont, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+}
 
-	// 화살표
-	//==============================================
-	pDesc = new CUI::UI_DESC;
-	pDesc->fPosX = m_fPosX - 30.f;
-	pDesc->fPosY = m_fPosY;
-	pDesc->fSizeX = 20.f;
-	pDesc->fSizeY = 20.f;
-	pDesc->iIndex = 5;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ButtonUI", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
-	m_vecDecoUI.push_back(static_cast<CButton_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL)));
+void CQuickSlot::Move_QuickSlot()
+{
+	// ADD: 퀵슬롯 ->  방향으로 
+	if (g_pInput_Device->Key_Up(DIK_ADD))
+	{
+		if (m_iSelect >= m_vecQuickSlot.size() - 1)
+			m_iSelect = 0;
+		else
+			++m_iSelect;
 
-	pDesc = new CUI::UI_DESC;
-	pDesc->fPosX = m_fPosX + 30.f;
-	pDesc->fPosY = m_fPosY;
-	pDesc->fSizeX = 20.f;
-	pDesc->fSizeY = 20.f;
-	pDesc->iIndex = 6;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ButtonUI", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
-	m_vecDecoUI.push_back(static_cast<CButton_UI*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL)));
-	//==============================================
-
-	// 카운트 UI
-	pDesc = new CUI::UI_DESC;
-	pDesc->fPosX = m_fPosX;
-	pDesc->fPosY = m_fPosY + 30.f;
-	pDesc->fSizeX = 20.f;
-	pDesc->fSizeY = 20.f;
-	pDesc->iIndex = 0;
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NumberUI", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
-	m_pNumberUI = static_cast<CNumberUI*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
-	m_pNumberUI->Set_Active(true);
+	}
+	// SUBTRACT: 퀵슬롯 <- 방향으로
+	if (g_pInput_Device->Key_Up(DIK_SUBTRACT))
+	{
+		if (m_iSelect > 0)
+			--m_iSelect;
+		else
+			m_iSelect = _uint(m_vecQuickSlot.size()) - 1;
+	}
 }
 
 CExpendables::EXPEND_TYPE CQuickSlot::Use_Item()

@@ -170,7 +170,6 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\Headers\Active_Icon.h" />
-    <ClInclude Include="..\Headers\Armor.h" />
     <ClInclude Include="..\Headers\Armor_Inven.h" />
     <ClInclude Include="..\Headers\Armor_Slot.h" />
     <ClInclude Include="..\Headers\BackGround.h" />
@@ -184,9 +183,10 @@
     <ClInclude Include="..\Headers\BloodSkillSlot.h" />
     <ClInclude Include="..\Headers\BossDecoUI.h" />
     <ClInclude Include="..\Headers\BossHP.h" />
-    <ClInclude Include="..\Headers\Button_UI.h" />
-    <ClInclude Include="..\Headers\ClickUI.h" />
     <ClInclude Include="..\Headers\Client_Defines.h" />
+    <ClInclude Include="..\Headers\Cloth.h" />
+    <ClInclude Include="..\Headers\ClothDynamic.h" />
+    <ClInclude Include="..\Headers\ClothStatic.h" />
     <ClInclude Include="..\Headers\Cocoon.h" />
     <ClInclude Include="..\Headers\CocoonBigBullet.h" />
     <ClInclude Include="..\Headers\CocoonBullet.h" />
@@ -199,8 +199,11 @@
     <ClInclude Include="..\Headers\ColdBeamSmall.h" />
     <ClInclude Include="..\Headers\ColdBeamBig.h" />
     <ClInclude Include="..\Headers\ColdBeamMiddle.h" />
+    <ClInclude Include="..\Headers\ScriptUI.h" />
+    <ClInclude Include="..\Headers\Costume_Accessory.h" />
+    <ClInclude Include="..\Headers\Costume_Hair.h" />
+    <ClInclude Include="..\Headers\Costume_Outer.h" />
     <ClInclude Include="..\Headers\CursorEffect.h" />
-    <ClInclude Include="..\Headers\CursorUI.h" />
     <ClInclude Include="..\Headers\DamegeNumUI.h" />
     <ClInclude Include="..\Headers\DarkBoom.h" />
     <ClInclude Include="..\Headers\DarkMidCol.h" />
@@ -231,11 +234,13 @@
     <ClInclude Include="..\Headers\FireHandBall.h" />
     <ClInclude Include="..\Headers\FireSphere.h" />
     <ClInclude Include="..\Headers\FireTornadoCol.h" />
+    <ClInclude Include="..\Headers\HazeUI.h" />
     <ClInclude Include="..\Headers\Hunter.h" />
     <ClInclude Include="..\Headers\HunterBullet.h" />
     <ClInclude Include="..\Headers\Monkey.h" />
     <ClInclude Include="..\Headers\MonkeyBullet.h" />
     <ClInclude Include="..\Headers\Monster.h" />
+    <ClInclude Include="..\Headers\MouseUI.h" />
     <ClInclude Include="..\Headers\NoticeUI.h" />
     <ClInclude Include="..\Headers\Pet_Bullet.h" />
     <ClInclude Include="..\Headers\Pet_Inven.h" />
@@ -265,7 +270,6 @@
     <ClInclude Include="..\Headers\MistletoeUI.h" />
     <ClInclude Include="..\Headers\MonsterHeaders.h" />
     <ClInclude Include="..\Headers\MonsterUI.h" />
-    <ClInclude Include="..\Headers\NumberUI.h" />
     <ClInclude Include="..\Headers\Passive_Icon.h" />
     <ClInclude Include="..\Headers\Pet.h" />
     <ClInclude Include="..\Headers\PickUp_ItemUI.h" />
@@ -287,7 +291,6 @@
     <ClInclude Include="..\Headers\Scene_Stage_Training.h" />
     <ClInclude Include="..\Headers\Scene_Title.h" />
     <ClInclude Include="..\Headers\ScriptManager.h" />
-    <ClInclude Include="..\Headers\Select_UI.h" />
     <ClInclude Include="..\Headers\SkillAcquisitionUI.h" />
     <ClInclude Include="..\Headers\SkillGauge.h" />
     <ClInclude Include="..\Headers\ReleaseQuestionUI.h" />
@@ -298,6 +301,7 @@
     <ClInclude Include="..\Headers\OKMessageUI.h" />
     <ClInclude Include="..\Headers\Skill_Inven.h" />
     <ClInclude Include="..\Headers\SoundManager.h" />
+    <ClInclude Include="..\Headers\StageAgent.h" />
     <ClInclude Include="..\Headers\StageSelectUI.h" />
     <ClInclude Include="..\Headers\StageUI.h" />
     <ClInclude Include="..\Headers\StatusUI.h" />
@@ -331,13 +335,11 @@
     <ClInclude Include="Client_Item_Enum.h" />
     <ClInclude Include="Resource.h" />
     <ClInclude Include="SkillIcon.h" />
-    <ClInclude Include="StageLoader.h" />
     <ClInclude Include="stdafx.h" />
     <ClInclude Include="targetver.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\Codes\Active_Icon.cpp" />
-    <ClCompile Include="..\Codes\Armor.cpp" />
     <ClCompile Include="..\Codes\Armor_Inven.cpp" />
     <ClCompile Include="..\Codes\Armor_Slot.cpp" />
     <ClCompile Include="..\Codes\BackGround.cpp" />
@@ -351,8 +353,9 @@
     <ClCompile Include="..\Codes\BloodSkillSlot.cpp" />
     <ClCompile Include="..\Codes\BossDecoUI.cpp" />
     <ClCompile Include="..\Codes\BossHP.cpp" />
-    <ClCompile Include="..\Codes\Button_UI.cpp" />
-    <ClCompile Include="..\Codes\ClickUI.cpp" />
+    <ClCompile Include="..\Codes\Cloth.cpp" />
+    <ClCompile Include="..\Codes\ClothDynamic.cpp" />
+    <ClCompile Include="..\Codes\ClothStatic.cpp" />
     <ClCompile Include="..\Codes\Cocoon.cpp" />
     <ClCompile Include="..\Codes\CocoonBigBullet.cpp" />
     <ClCompile Include="..\Codes\CocoonBullet.cpp" />
@@ -365,8 +368,11 @@
     <ClCompile Include="..\Codes\ColdBeamSmall.cpp" />
     <ClCompile Include="..\Codes\ColdBeamBig.cpp" />
     <ClCompile Include="..\Codes\ColdBeamMiddle.cpp" />
+    <ClCompile Include="..\Codes\ScriptUI.cpp" />
+    <ClCompile Include="..\Codes\Costume_Accessory.cpp" />
+    <ClCompile Include="..\Codes\Costume_Hair.cpp" />
+    <ClCompile Include="..\Codes\Costume_Outer.cpp" />
     <ClCompile Include="..\Codes\CursorEffect.cpp" />
-    <ClCompile Include="..\Codes\CursorUI.cpp" />
     <ClCompile Include="..\Codes\DamegeNumUI.cpp" />
     <ClCompile Include="..\Codes\DarkBoom.cpp" />
     <ClCompile Include="..\Codes\DarkMidCol.cpp" />
@@ -397,6 +403,8 @@
     <ClCompile Include="..\Codes\FireHandBall.cpp" />
     <ClCompile Include="..\Codes\FireSphere.cpp" />
     <ClCompile Include="..\Codes\FireTornadoCol.cpp" />
+    <ClCompile Include="..\Codes\HazeUI.cpp" />
+    <ClCompile Include="..\Codes\MouseUI.cpp" />
     <ClCompile Include="..\Codes\NoticeUI.cpp" />
     <ClCompile Include="..\Codes\Hunter.cpp" />
     <ClCompile Include="..\Codes\HunterBullet.cpp" />
@@ -430,7 +438,6 @@
     <ClCompile Include="..\Codes\MistletoeOptionUI.cpp" />
     <ClCompile Include="..\Codes\MistletoeUI.cpp" />
     <ClCompile Include="..\Codes\MonsterUI.cpp" />
-    <ClCompile Include="..\Codes\NumberUI.cpp" />
     <ClCompile Include="..\Codes\Passive_Icon.cpp" />
     <ClCompile Include="..\Codes\Pet.cpp" />
     <ClCompile Include="..\Codes\PickUp_ItemUI.cpp" />
@@ -452,7 +459,6 @@
     <ClCompile Include="..\Codes\Scene_Stage_Training.cpp" />
     <ClCompile Include="..\Codes\Scene_Title.cpp" />
     <ClCompile Include="..\Codes\ScriptManager.cpp" />
-    <ClCompile Include="..\Codes\Select_UI.cpp" />
     <ClCompile Include="..\Codes\SkillAcquisitionUI.cpp" />
     <ClCompile Include="..\Codes\SkillGauge.cpp" />
     <ClCompile Include="..\Codes\ReleaseQuestionUI.cpp" />
@@ -463,6 +469,7 @@
     <ClCompile Include="..\Codes\OKMessageUI..cpp" />
     <ClCompile Include="..\Codes\Skill_Inven.cpp" />
     <ClCompile Include="..\Codes\SoundManager.cpp" />
+    <ClCompile Include="..\Codes\StageAgent.cpp" />
     <ClCompile Include="..\Codes\StageSelectUI.cpp" />
     <ClCompile Include="..\Codes\StageUI.cpp" />
     <ClCompile Include="..\Codes\StatusUI.cpp" />
@@ -494,7 +501,6 @@
     <ClCompile Include="..\Codes\YetiBullet.cpp" />
     <ClCompile Include="Client.cpp" />
     <ClCompile Include="SkillIcon.cpp" />
-    <ClCompile Include="StageLoader.cpp" />
     <ClCompile Include="stdafx.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>

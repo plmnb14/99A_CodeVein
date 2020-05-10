@@ -20,6 +20,7 @@ public:
 	HRESULT Ready_ParticleManager_Essential();
 	HRESULT Ready_ParticleManager();
 	HRESULT Ready_Trail();
+	HRESULT Ready_TitleEffect();
 	HRESULT Update_ParticleManager(const _double TimeDelta);
 	void Create_ParticleEffect(_tchar* szName, _float fLifeTime, _v3 vPos, CTransform* pFollowTrans = nullptr);
 	void Create_ParticleEffect_Delay(_tchar* szName, _float fLifeTime, _float fDelay, _v3 vPos, CTransform* pFollowTrans = nullptr);
@@ -46,6 +47,7 @@ public:
 	void Create_Skill_Start_Effect(_v3 vPos, _v3 vEffPos, CTransform* pFollowTrans = nullptr);
 public:
 	CTrail_VFX* Create_Trail();
+	CEffect* Create_TitleEffect(_tchar* szName);
 
 private:
 	HRESULT Update_Effect(const _double TimeDelta);
@@ -82,6 +84,7 @@ private:
 		_v3 vDirection;
 		_bool bWall;
 	}EFF_DECAL_INFO;
+
 private:
 	map<_tchar*, queue<CEffect*>>	m_EffectPool;	// 미리 클론해놓은 큐
 	list<PARTICLE_INFO*>			m_vecParticle;	// 재생될 파티클 리스트

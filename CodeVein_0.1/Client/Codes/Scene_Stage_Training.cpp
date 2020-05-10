@@ -13,6 +13,8 @@
 
 #include "MonsterHeaders.h"
 #include "Flag.h"
+#include "ClothDynamic.h"
+#include "ClothStatic.h"
 
 #include "Player_Colleague.h"
 #include "Player.h"
@@ -251,6 +253,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//		true, _v3(8.f, 0.f, -8.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
+
 	return S_OK;
 }
 
@@ -268,6 +271,16 @@ HRESULT CScene_Stage_Training::Ready_Layer_Environment()
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(0.f, 3.f, 3.f));
 	////static_cast<CFlag*>(pInstance)->Set_Wind();	// ¼³Á¤¾ÈÇÏ¸é µðÆúÆ® ¼³Á¤
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Sky", nullptr);
+
+
+	//// ´ÙÀÌ³ª¹Í ¿Ê
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Cloth_Dynamic", &CClothDynamic::INFO(CClothDynamic::ClothDynamic_Name::LongCoat));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Cloth", nullptr);
+
+	//// ½ºÅ×Æ½ ¿Ê
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Cloth_Static", &CClothStatic::INFO(CClothStatic::ClothStatic_Name::Hair_Long));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Cloth", nullptr);
+
 
 	return S_OK;
 }

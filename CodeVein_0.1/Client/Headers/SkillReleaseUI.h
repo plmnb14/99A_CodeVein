@@ -30,6 +30,7 @@ private:
 	void	SetUp_Default();
 	void	Click_SkillSlot();
 	void	Reset_Select();
+	void	Back_To_BloodCodeUI();
 
 public:
 	void Compare_Data();

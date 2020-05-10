@@ -9,6 +9,7 @@
 
 BEGIN(Client)
 
+class CStageAgent;
 class CDrain_Weapon;
 class CWeapon;
 class CPlayer : public CGameObject
@@ -94,6 +95,9 @@ private:
 	ACTIVE_WEAPON_SLOT		m_eActiveSlot = WPN_SLOT_A;
 
 private:
+	CStageAgent*			m_pStageAgent = nullptr;
+
+private:
 	CWeapon*				m_pWeapon[WPN_SLOT_End] = {};
 	CDrain_Weapon*			m_pDrainWeapon = nullptr;
 	CGameObject*			m_pCunterTarget = nullptr;
@@ -161,7 +165,7 @@ private:
 	_bool					m_bIsExecution = false;		// 처형 중
 	_bool					m_bOnUI_Mistletoe = false;
 	_bool					m_bOnUI_Inventory = false;
-	_bool					m_bOnUI_Skill = false;
+	_bool					m_bOnUI_BloodCode = false;
 	_bool					m_bOnUI_StageSelect = false;
 	_bool					m_bOnUI_NPCTalk = false;
 	_bool					m_bCanPickUp = false;	// 아이템 줍기
@@ -363,6 +367,7 @@ public:
 	virtual void Active_UI_Inventory(_bool _bResetUI = false);		// 인벤토리
 	virtual void Active_UI_StageSelect(_bool _bResetUI = false);	// 스테이지 선택
 	virtual void Active_UI_NPC(_bool _bResetUI = false);			// NPC 와의 대화
+	virtual void Active_UI_BloodCode(_bool _bResetUI = false);			// NPC 와의 대화
 
 public:
 	static	CPlayer* Create(_Device pGraphic_Device);

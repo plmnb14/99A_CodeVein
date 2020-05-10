@@ -26,7 +26,7 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 
 	// º¼·ýÁ¶Àý
-	g_pSoundManager->Set_Volume(CSoundManager::BGM_Sound, 0.25f);
+	g_pSoundManager->Set_Volume(CSoundManager::Master_Sound, 0.f);
 
 	return S_OK;
 }
@@ -51,6 +51,8 @@ _int CMainApp::Update_MainApp(_double TimeDelta)
 
 void CMainApp::LateUpdate_MainApp(_double TimeDelta)
 {
+	m_pStageAgent->Update_StageAgent(m_pGraphic_Dev);
+
 	Global_KeyInput();
 }
 
@@ -109,6 +111,9 @@ HRESULT CMainApp::Ready_Default_Setting(CGraphic_Device::WINMODE eMode, _ushort 
 		return E_FAIL;
 
 	CScriptManager::Get_Instance()->Ready_ScriptManager(m_pGraphic_Dev);
+
+	m_pStageAgent = CStageAgent::Get_Instance();
+	Safe_AddRef(m_pStageAgent);
 
 	return S_OK;
 }
@@ -212,6 +217,8 @@ CMainApp * CMainApp::Create()
 
 void CMainApp::Free()
 {
+	Safe_Release(m_pStageAgent);
+
 	Safe_Release(g_pDissolveTexture);
 
 	Safe_Release(m_pGraphic_Dev);

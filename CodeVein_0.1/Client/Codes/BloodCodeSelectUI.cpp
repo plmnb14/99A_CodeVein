@@ -28,7 +28,7 @@ HRESULT CBloodCodeSelectUI::Ready_GameObject(void * pArg)
 	CUI::Ready_GameObject(pArg);
 
 	SetUp_Default();
-
+	
 	return NOERROR;
 }
 
