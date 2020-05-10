@@ -439,6 +439,30 @@
     <Filter Include="02.GameObject\Stage\Physx\Cloth">
       <UniqueIdentifier>{fb02bec6-d1d4-4b95-aaa1-74737ac78d67}</UniqueIdentifier>
     </Filter>
+    <Filter Include="94. StageAgent">
+      <UniqueIdentifier>{4dcdf895-5442-4efd-aeeb-a5e9547eaed6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\0%29 Player\01%29 Costume">
+      <UniqueIdentifier>{fb9e8e53-a817-46da-b751-1fe5abd1c284}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\0%29 Player\01%29 Costume\[1] Hair">
+      <UniqueIdentifier>{7f462560-9057-4fa4-ac19-b1a9f293ab64}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\0%29 Player\01%29 Costume\[2] Outer">
+      <UniqueIdentifier>{554d7a5c-d8fa-46d4-9db4-34f13afd960b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\0%29 Player\01%29 Costume\[3] Accessory">
+      <UniqueIdentifier>{a9416921-45fb-498f-978c-3e12343dcd6f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\04. HazeUI">
+      <UniqueIdentifier>{b43ab97b-58b5-48ec-bf6c-e7cb04438b4a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\99.Public\MouseUI">
+      <UniqueIdentifier>{2bfceb16-1374-4a01-9881-b5af3154309b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\16. ConversationUI">
+      <UniqueIdentifier>{4f0943ce-c02a-408f-af5f-6c1c94ea2eee}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -494,9 +518,6 @@
     </ClInclude>
     <ClInclude Include="..\Headers\UI_Manager.h">
       <Filter>02.GameObject\Stage\5%29 UI\Manager\UI_Manager</Filter>
-    </ClInclude>
-    <ClInclude Include="StageLoader.h">
-      <Filter>01.Scene\98.StageLoader</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Item_Manager.h">
       <Filter>02.GameObject\Stage\5%29 UI\Manager\Item_Manager</Filter>
@@ -942,6 +963,27 @@
     <ClInclude Include="..\Headers\ClothStatic.h">
       <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\StageAgent.h">
+      <Filter>94. StageAgent</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Costume_Hair.h">
+      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[1] Hair</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Costume_Accessory.h">
+      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[3] Accessory</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Costume_Outer.h">
+      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[2] Outer</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\HazeUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\04. HazeUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MouseUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\MouseUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ScriptUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\16. ConversationUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -988,9 +1030,6 @@
     </ClCompile>
     <ClCompile Include="..\Codes\UI_Manager.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\Manager\UI_Manager</Filter>
-    </ClCompile>
-    <ClCompile Include="StageLoader.cpp">
-      <Filter>01.Scene\98.StageLoader</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Item_Manager.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\Manager\Item_Manager</Filter>
@@ -1429,6 +1468,27 @@
     </ClCompile>
     <ClCompile Include="..\Codes\ClothStatic.cpp">
       <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\StageAgent.cpp">
+      <Filter>94. StageAgent</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Costume_Hair.cpp">
+      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[1] Hair</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Costume_Accessory.cpp">
+      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[3] Accessory</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Costume_Outer.cpp">
+      <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[2] Outer</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\HazeUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\04. HazeUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MouseUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\MouseUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ScriptUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\16. ConversationUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

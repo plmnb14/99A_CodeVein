@@ -3,6 +3,7 @@
 #include "Weapon.h"
 #include "Drain_Weapon.h"
 #include "Dummy_Target.h"
+#include "StageAgent.h"
 
 #include "ScriptManager.h"
 
@@ -48,6 +49,9 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 	m_pCamManager = CCameraMgr::Get_Instance();
 	Safe_AddRef(m_pCamManager);
 
+	m_pStageAgent = CStageAgent::Get_Instance();
+	Safe_AddRef(m_pStageAgent);
+
 	return NOERROR;
 }
 
@@ -70,16 +74,28 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	Check_Mistletoe();
 
-	if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
-		return E_FAIL;
+	if (!m_tObjParam.bInvisible)
+	{
+		if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
+			return E_FAIL;
+	}
+
+	else if (m_tObjParam.bInvisible)
+	{
+		if (FAILED(m_pRenderer->Add_RenderList(RENDER_ALPHA, this)))
+			return E_FAIL;
+	}
 
 	if (false == m_bDissolve)
 	{
-		if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-			return E_FAIL;
+		if (!m_tObjParam.bInvisible)
+		{
+			if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+				return E_FAIL;
 
-		if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
-			return E_FAIL;
+			if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
+				return E_FAIL;
+		}
 	}
 
 	IF_NOT_NULL(m_pWeapon[m_eActiveSlot])
@@ -1792,13 +1808,18 @@ void CPlayer::Key_UI_n_Utiliy(_bool _bActiveUI)
 	if (g_pInput_Device->Key_Down(DIK_E))
 	{
 		if (m_bOnUI_StageSelect)
+		{
 			Active_UI_StageSelect(true);
+		}
+
+		else if (m_bOnUI_BloodCode)
+			Active_UI_BloodCode(true);
 
 		else if (m_bOnUI_Mistletoe)
+		{
+			m_bActiveUI = false;
 			Active_UI_Mistletoe(true);
-
-		else if (m_bOnUI_Skill)
-			Active_UI_StageSelect(true);
+		}
 
 		else if (m_bOnUI_Inventory)
 			Active_UI_Inventory(true);
@@ -1806,8 +1827,44 @@ void CPlayer::Key_UI_n_Utiliy(_bool _bActiveUI)
 		else if (m_bOnUI_NPCTalk)
 			Active_UI_NPC(true);
 
-		Active_UI_Mistletoe();
+		else
+			Active_UI_Mistletoe();
 	}
+
+	if (m_bOnUI_StageSelect)
+	{
+		if (g_pInput_Device->Key_Down(DIK_RIGHT))
+		{
+			m_pUIManager->Get_StageSelectUI()->Move_Right();
+		}
+
+		else if (g_pInput_Device->Key_Down(DIK_LEFT))
+		{
+			m_pUIManager->Get_StageSelectUI()->Move_Left();
+		}
+
+		if (g_pInput_Device->Key_Down(DIK_UP))
+		{
+			m_pUIManager->Get_StageSelectUI()->MoveUp_SubStage();
+		}
+
+		else if (g_pInput_Device->Key_Down(DIK_DOWN))
+		{
+			m_pUIManager->Get_StageSelectUI()->MoveDown_SubStage();
+		}
+
+		if (g_pInput_Device->Key_Down(DIK_SPACE))
+		{
+			m_pUIManager->Get_StageSelectUI()->Teleport_Stage();
+
+			m_pStageAgent->Reserve_ChangeStage();
+
+			m_bActiveUI = false;
+			Active_UI_StageSelect(true);
+			Active_UI_Mistletoe(true);
+		}
+	}
+
 
 	return;
 
@@ -1860,8 +1917,8 @@ void CPlayer::Key_UI_n_Utiliy(_bool _bActiveUI)
 			else if (m_bOnUI_Mistletoe)
 				Active_UI_Mistletoe(true);
 
-			else if (m_bOnUI_Skill)
-				Active_UI_StageSelect(true);
+			else if (m_bOnUI_BloodCode)
+				Active_UI_BloodCode(true);
 
 			else if (m_bOnUI_Inventory)
 				Active_UI_Inventory(true);
@@ -5064,6 +5121,8 @@ void CPlayer::Play_Skills()
 		}
 		case Renketsu_StrongAtk_02:
 		{
+			cout << m_pDynamicMesh->Get_TrackInfo().Position << endl;
+
 			_v3 vEffPos = _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f;
 
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
@@ -5230,7 +5289,7 @@ void CPlayer::Play_Skills()
 					m_bEventTrigger[1] = true;
 
 					_v3 vEffPos_Dis = _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f;
-					m_tObjParam.bCanHit = false;
+					//m_tObjParam.bCanHit = false;
 
 					g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle", 0.f, vEffPos_Dis, m_pTransform);
 				}
@@ -5246,7 +5305,7 @@ void CPlayer::Play_Skills()
 					m_bEventTrigger[11] = true;
 
 					// 디졸브 잠깐 빼둠
-					//Start_Dissolve(1.f, false);
+					// Start_Dissolve(1.f, false);
 				}
 			}
 
@@ -10282,7 +10341,15 @@ void CPlayer::Active_UI_StageSelect(_bool _bResetUI)
 
 	// 비활성화면 리턴
 	if (!bUIActive)
+	{
+		m_pUIManager->Get_MistletoeUI()->Set_Active(true);
+		m_pCamManager->Set_OnAimingTarget(true);
+		m_pCamManager->Set_AimingTarget(m_pUIManager->Get_MistletoeUI());
+
 		return;
+	}
+
+	m_pUIManager->Get_MistletoeUI()->Set_Active(false);
 
 	// 카메라 에임 상태 설정
 	m_pCamManager->Set_OnAimingTarget(bUIActive);
@@ -10305,6 +10372,44 @@ void CPlayer::Active_UI_NPC(_bool _bResetUI)
 {
 	// NPC UI 를 활성화 시킨다.
 	m_pUIManager->Get_MistletoeUI()->Set_Active(true);
+}
+
+void CPlayer::Active_UI_BloodCode(_bool _bResetUI)
+{
+	// 활성 상태에 따라 On/Off 판단
+	_bool bUIActive = m_pUIManager->Get_BloodCode_Menu()->Get_Active() ? false : true;
+
+	// 스테이지 선택 UI 를 On/Off 시킨다.
+	m_pUIManager->Get_BloodCode_Menu()->Set_Active(bUIActive);
+
+	// 선택이 됫는지 안됫는지
+	m_bOnUI_StageSelect = bUIActive;
+
+	// 비활성화면 리턴
+	if (!bUIActive)
+	{
+		m_pUIManager->Get_MistletoeUI()->Set_Active(true);
+		m_pCamManager->Set_OnAimingTarget(true);
+		m_pCamManager->Set_AimingTarget(m_pUIManager->Get_MistletoeUI());
+
+		return;
+	}
+
+	// 카메라 에임 상태 설정
+	m_pCamManager->Set_OnAimingTarget(bUIActive);
+
+	// 비활성화면 리턴
+	if (false == bUIActive)
+	{
+		// 타겟도 Null 해줘요
+		m_pCamManager->Set_AimingTarget(nullptr);
+		m_pCamManager->Set_MidDistance(3.5f);
+		return;
+	}
+
+	// 타겟 설정
+	m_pCamManager->Set_AimingTarget(m_pUIManager->Get_StageSelectUI());
+	m_pCamManager->Set_MidDistance(2.f);
 }
 
 HRESULT CPlayer::Add_Component()
@@ -10717,6 +10822,7 @@ void CPlayer::Free()
 
 	Safe_Release(m_pUIManager);
 	Safe_Release(m_pCamManager);
+	Safe_Release(m_pStageAgent);
 
 	m_pCunterTarget = nullptr;
 

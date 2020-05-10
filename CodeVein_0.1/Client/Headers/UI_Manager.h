@@ -61,6 +61,8 @@
 #include "NoticeUI.h"
 #include "ExplainSkillUI.h"
 
+#include "HazeUI.h"
+
 BEGIN(Client)
 
 class CUI_Manager final : public CBase
@@ -97,7 +99,9 @@ public:
 	CSkillReleaseUI* Get_Skill_ReleaseUI() { return m_pSkillReleaseUI; }
 	CSkillAcquisitionUI* Get_Skill_AcquisitionUI() { return m_pSkillAcquisitionUI; }
 	CSkill_Inven* Get_Skill_Inven() { return m_pSkillInven; }
+	CHazeUI* Get_HazeUI() { return m_pHazeUI; }
 	
+	// ∆Í ¿Œ∫•≈‰∏Æ
 	CPet_Inven* Get_Pet_Inven() { return m_pPet_Inven; }
 
 private:
@@ -120,7 +124,9 @@ private:
 	CSkillReleaseUI* m_pSkillReleaseUI = nullptr;
 	CSkillAcquisitionUI* m_pSkillAcquisitionUI = nullptr;
 	CSkill_Inven* m_pSkillInven = nullptr;
+	CHazeUI*	m_pHazeUI = nullptr;
 	
+	// ∆Í ¿Œ∫•≈‰∏Æ
 	CPet_Inven* m_pPet_Inven = nullptr;
 
 public:

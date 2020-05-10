@@ -186,7 +186,8 @@ HRESULT CSkillReleaseUI::Render_GameObject()
 		m_pShaderCom->End_Shader();
 	}
 	
-
+	if (g_pInput_Device->Get_DIKeyState(DIK_P))
+		Back_To_BloodCodeUI();
 	return S_OK;
 }
 
@@ -283,6 +284,17 @@ void CSkillReleaseUI::Reset_Select()
 {
 	for (auto& iter : m_vecSkillSlot)
 		iter->Set_Select(false);
+}
+
+void CSkillReleaseUI::Back_To_BloodCodeUI()
+{
+	if (!m_bIsActive)
+		return;
+
+	// 블러드 코드 선택 전으로 돌아감
+	CUI_Manager::Get_Instance()->Get_BloodCode_Menu()->Set_IsChoise(false);
+	// 블러드 코드 Owner UI 알파값 일시적으로 낮춤 -> 저절로 알파값 증가 
+	CUI_Manager::Get_Instance()->Get_BloodCode_Owner()->Set_Alpha(0.2f);
 }
 
 void CSkillReleaseUI::Compare_Data()
