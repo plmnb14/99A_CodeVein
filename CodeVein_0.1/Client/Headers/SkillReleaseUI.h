@@ -32,7 +32,8 @@ private:
 	void	Reset_Select();
 
 public:
-	void Compare_Data();
+	void	Compare_Data();
+	void	Back_To_BloodCodeUI();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;

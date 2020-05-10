@@ -436,6 +436,9 @@
     <Filter Include="95. SoundManager">
       <UniqueIdentifier>{e4f55a90-9a32-4788-a5b8-44ef84c5e70e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\Physx\Cloth">
+      <UniqueIdentifier>{fb02bec6-d1d4-4b95-aaa1-74737ac78d67}</UniqueIdentifier>
+    </Filter>
     <Filter Include="94. StageAgent">
       <UniqueIdentifier>{4dcdf895-5442-4efd-aeeb-a5e9547eaed6}</UniqueIdentifier>
     </Filter>
@@ -456,6 +459,12 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\99.Public\MouseUI">
       <UniqueIdentifier>{2bfceb16-1374-4a01-9881-b5af3154309b}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\16. ConversationUI">
+      <UniqueIdentifier>{4f0943ce-c02a-408f-af5f-6c1c94ea2eee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\02.BossUI\BossNameUI">
+      <UniqueIdentifier>{0ae4d82f-eda5-4958-8435-c97d58c9857a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -948,6 +957,15 @@
     <ClInclude Include="..\Headers\SoundManager.h">
       <Filter>95. SoundManager</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\Cloth.h">
+      <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ClothDynamic.h">
+      <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ClothStatic.h">
+      <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\StageAgent.h">
       <Filter>94. StageAgent</Filter>
     </ClInclude>
@@ -965,6 +983,12 @@
     </ClInclude>
     <ClInclude Include="..\Headers\MouseUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\MouseUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ScriptUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\16. ConversationUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BossNameUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\02.BossUI\BossNameUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1442,6 +1466,15 @@
     <ClCompile Include="..\Codes\SoundManager.cpp">
       <Filter>95. SoundManager</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\Cloth.cpp">
+      <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ClothDynamic.cpp">
+      <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ClothStatic.cpp">
+      <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
+    </ClCompile>
     <ClCompile Include="..\Codes\StageAgent.cpp">
       <Filter>94. StageAgent</Filter>
     </ClCompile>
@@ -1459,6 +1492,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\MouseUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\MouseUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ScriptUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\16. ConversationUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BossNameUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\02.BossUI\BossNameUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

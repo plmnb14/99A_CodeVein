@@ -44,7 +44,7 @@ _int CPet_Inven::Update_GameObject(_double TimeDelta)
 	_uint iIdx = 0;
 	for (auto& vector_iter : m_vecPetSlot)
 	{
-		vector_iter->Set_UI_Pos(m_fPosX - 100.f + 50.f * (iIdx % 5), m_fPosY - 150.f + 50.f * (iIdx / 5));
+		vector_iter->Set_UI_Pos(m_fPosX - 100.f + 52.f * (iIdx % 5), m_fPosY - 150.f + 52.f * (iIdx / 5));
 		vector_iter->Set_Active(m_bIsActive);
 		iIdx++;
 	}
@@ -198,7 +198,7 @@ void CPet_Inven::Add_Pet(CPet::PET_TYPE ePetType)
 	CPet_Slot* pPetSlot = static_cast<CPet_Slot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PetSlot", nullptr));
 	pPetSlot->Set_PetType(ePetType);
 	pPetSlot->Set_PetLevel(1); // 레벨 1부터 시작
-	pPetSlot->Set_UI_Size(40.f, 40.f);
+	pPetSlot->Set_UI_Size(50.f, 50.f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(pPetSlot, SCENE_MORTAL, L"Layer_PetUI", nullptr);
 	m_vecPetSlot.push_back(pPetSlot);
 }

@@ -35,7 +35,7 @@ HRESULT CSkillReleaseUI::Ready_GameObject(void * pArg)
 _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
-	m_pRendererCom->Add_RenderList(RENDER_ALPHA, this);
+	m_pRendererCom->Add_RenderList(RENDER_3DUI, this);
 
 	_v3 vLookX = m_pTransformCom->Get_Axis(AXIS_X);
 	_v3 vLookY = m_pTransformCom->Get_Axis(AXIS_Y);
@@ -185,7 +185,6 @@ HRESULT CSkillReleaseUI::Render_GameObject()
 		m_pShaderCom->End_Pass();
 		m_pShaderCom->End_Shader();
 	}
-	
 
 	return S_OK;
 }
@@ -283,6 +282,17 @@ void CSkillReleaseUI::Reset_Select()
 {
 	for (auto& iter : m_vecSkillSlot)
 		iter->Set_Select(false);
+}
+
+void CSkillReleaseUI::Back_To_BloodCodeUI()
+{
+	if (!m_bIsActive)
+		return;
+
+	// 블러드 코드 선택 전으로 돌아감
+	CUI_Manager::Get_Instance()->Get_BloodCode_Menu()->Set_IsChoise(false);
+	// 블러드 코드 Owner UI 알파값 일시적으로 낮춤 -> 저절로 알파값 증가 
+	CUI_Manager::Get_Instance()->Get_BloodCode_Owner()->Set_Alpha(0.2f);
 }
 
 void CSkillReleaseUI::Compare_Data()

@@ -28,16 +28,16 @@ HRESULT CBloodCodeMenuUI::Ready_GameObject(void * pArg)
 	CUI::Ready_GameObject(pArg);
 
 	m_pTransformCom->Set_Scale(_v3(3.555555f, 2.f, 1.f));
-
+	
 	return NOERROR;
 }
 
 _int CBloodCodeMenuUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
-
-	m_pRendererCom->Add_RenderList(RENDER_ALPHA, this);
-
+	
+	m_pRendererCom->Add_RenderList(RENDER_UI_BACK, this);
+	
 	_v3 vWorldPos;
 	memcpy(vWorldPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
 	Compute_ViewZ(&vWorldPos);

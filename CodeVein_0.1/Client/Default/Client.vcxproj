@@ -183,7 +183,11 @@
     <ClInclude Include="..\Headers\BloodSkillSlot.h" />
     <ClInclude Include="..\Headers\BossDecoUI.h" />
     <ClInclude Include="..\Headers\BossHP.h" />
+    <ClInclude Include="..\Headers\BossNameUI.h" />
     <ClInclude Include="..\Headers\Client_Defines.h" />
+    <ClInclude Include="..\Headers\Cloth.h" />
+    <ClInclude Include="..\Headers\ClothDynamic.h" />
+    <ClInclude Include="..\Headers\ClothStatic.h" />
     <ClInclude Include="..\Headers\Cocoon.h" />
     <ClInclude Include="..\Headers\CocoonBigBullet.h" />
     <ClInclude Include="..\Headers\CocoonBullet.h" />
@@ -196,6 +200,7 @@
     <ClInclude Include="..\Headers\ColdBeamSmall.h" />
     <ClInclude Include="..\Headers\ColdBeamBig.h" />
     <ClInclude Include="..\Headers\ColdBeamMiddle.h" />
+    <ClInclude Include="..\Headers\ScriptUI.h" />
     <ClInclude Include="..\Headers\Costume_Accessory.h" />
     <ClInclude Include="..\Headers\Costume_Hair.h" />
     <ClInclude Include="..\Headers\Costume_Outer.h" />
@@ -348,6 +353,10 @@
     <ClCompile Include="..\Codes\BloodSkillSlot.cpp" />
     <ClCompile Include="..\Codes\BossDecoUI.cpp" />
     <ClCompile Include="..\Codes\BossHP.cpp" />
+    <ClCompile Include="..\Codes\BossNameUI.cpp" />
+    <ClCompile Include="..\Codes\Cloth.cpp" />
+    <ClCompile Include="..\Codes\ClothDynamic.cpp" />
+    <ClCompile Include="..\Codes\ClothStatic.cpp" />
     <ClCompile Include="..\Codes\Cocoon.cpp" />
     <ClCompile Include="..\Codes\CocoonBigBullet.cpp" />
     <ClCompile Include="..\Codes\CocoonBullet.cpp" />
@@ -360,6 +369,7 @@
     <ClCompile Include="..\Codes\ColdBeamSmall.cpp" />
     <ClCompile Include="..\Codes\ColdBeamBig.cpp" />
     <ClCompile Include="..\Codes\ColdBeamMiddle.cpp" />
+    <ClCompile Include="..\Codes\ScriptUI.cpp" />
     <ClCompile Include="..\Codes\Costume_Accessory.cpp" />
     <ClCompile Include="..\Codes\Costume_Hair.cpp" />
     <ClCompile Include="..\Codes\Costume_Outer.cpp" />
