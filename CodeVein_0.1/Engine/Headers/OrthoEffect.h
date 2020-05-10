@@ -55,6 +55,8 @@ private:
 	_mat m_matWorld;
 	_mat m_matView;
 	_mat m_matProj;
+	_mat m_matOldView;
+	_mat m_matOldProj;
 
 	_float	m_fUV_Value_X = 0.f;
 	_float	m_fUV_Value_Y = 0.f;

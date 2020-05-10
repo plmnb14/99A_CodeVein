@@ -440,17 +440,17 @@ CBT_Composite_Node * CIceGirl::ThreeCombo_Cut1()
 	CBT_CreateEffect* Effect14 = Node_CreateEffect_Finite("ÃÊ·Ï ¹ÝÂ¦ÀÌ ÆÄÆ¼Å¬", L"IceGirl_FlashParticle_Green"	, L"Sword_MidPos"	, 0.38, 80, 0, 0);
 	CBT_CreateEffect* Effect23 = Node_CreateEffect_Finite("Èò ´« ÆÄÆ¼Å¬", L"IceGirl_SlashSnowParticle_0"			, L"Sword_MidPos"	, 0.38, 1, 0, 0);
 	
-	CBT_CreateEffect* Effect15 = Node_CreateEffect_Finite("ÆÄ¶û ¿ø ÆÄÆ¼Å¬", L"IceGirl_PointParticle_Blue"			, L"Sword_MidPos"	, 1, 80, 0, 0);
-	CBT_CreateEffect* Effect16 = Node_CreateEffect_Finite("ÃÊ·Ï ¿ø ÆÄÆ¼Å¬", L"IceGirl_PointParticle_Green"		, L"Sword_MidPos"	, 1, 80, 0, 0);
-	CBT_CreateEffect* Effect17 = Node_CreateEffect_Finite("ÆÄ¶û ¹ÝÂ¦ÀÌ ÆÄÆ¼Å¬", L"IceGirl_FlashParticle_Blue"		, L"Sword_MidPos"	, 1, 80, 0, 0);
-	CBT_CreateEffect* Effect18 = Node_CreateEffect_Finite("ÃÊ·Ï ¹ÝÂ¦ÀÌ ÆÄÆ¼Å¬", L"IceGirl_FlashParticle_Green"	, L"Sword_MidPos"	, 1, 80, 0, 0);
-	CBT_CreateEffect* Effect24 = Node_CreateEffect_Finite("Èò ´« ÆÄÆ¼Å¬", L"IceGirl_SlashSnowParticle_0"			, L"Sword_MidPos"	, 1, 1, 0, 0);
+	CBT_CreateEffect* Effect15 = Node_CreateEffect_Finite("ÆÄ¶û ¿ø ÆÄÆ¼Å¬", L"IceGirl_PointParticle_Blue"			, L"Sword_MidPos"	, 1.08, 80, 0, 0);
+	CBT_CreateEffect* Effect16 = Node_CreateEffect_Finite("ÃÊ·Ï ¿ø ÆÄÆ¼Å¬", L"IceGirl_PointParticle_Green"		, L"Sword_MidPos"	, 1.08, 80, 0, 0);
+	CBT_CreateEffect* Effect17 = Node_CreateEffect_Finite("ÆÄ¶û ¹ÝÂ¦ÀÌ ÆÄÆ¼Å¬", L"IceGirl_FlashParticle_Blue"		, L"Sword_MidPos"	, 1.08, 80, 0, 0);
+	CBT_CreateEffect* Effect18 = Node_CreateEffect_Finite("ÃÊ·Ï ¹ÝÂ¦ÀÌ ÆÄÆ¼Å¬", L"IceGirl_FlashParticle_Green"	, L"Sword_MidPos"	, 1.08, 80, 0, 0);
+	CBT_CreateEffect* Effect24 = Node_CreateEffect_Finite("Èò ´« ÆÄÆ¼Å¬", L"IceGirl_SlashSnowParticle_0"			, L"Sword_MidPos"	, 1.08, 1, 0, 0);
 	
-	CBT_CreateEffect* Effect19 = Node_CreateEffect_Finite("ÆÄ¶û ¿ø ÆÄÆ¼Å¬", L"IceGirl_PointParticle_Blue"			, L"Sword_MidPos"	, 1.6, 80, 0, 0);
-	CBT_CreateEffect* Effect20 = Node_CreateEffect_Finite("ÃÊ·Ï ¿ø ÆÄÆ¼Å¬", L"IceGirl_PointParticle_Green"		, L"Sword_MidPos"	, 1.6, 80, 0, 0);
-	CBT_CreateEffect* Effect21 = Node_CreateEffect_Finite("ÆÄ¶û ¹ÝÂ¦ÀÌ ÆÄÆ¼Å¬", L"IceGirl_FlashParticle_Blue"		, L"Sword_MidPos"	, 1.6, 80, 0, 0);
-	CBT_CreateEffect* Effect22 = Node_CreateEffect_Finite("ÃÊ·Ï ¹ÝÂ¦ÀÌ ÆÄÆ¼Å¬", L"IceGirl_FlashParticle_Green"	, L"Sword_MidPos"	, 1.6, 80, 0, 0);
-	CBT_CreateEffect* Effect25 = Node_CreateEffect_Finite("Èò ´« ÆÄÆ¼Å¬", L"IceGirl_SlashSnowParticle_0"			, L"Sword_MidPos"	, 1, 1, 0, 0);
+	CBT_CreateEffect* Effect19 = Node_CreateEffect_Finite("ÆÄ¶û ¿ø ÆÄÆ¼Å¬", L"IceGirl_PointParticle_Blue"			, L"Sword_MidPos"	, 1.88, 80, 0, 0);
+	CBT_CreateEffect* Effect20 = Node_CreateEffect_Finite("ÃÊ·Ï ¿ø ÆÄÆ¼Å¬", L"IceGirl_PointParticle_Green"		, L"Sword_MidPos"	, 1.88, 80, 0, 0);
+	CBT_CreateEffect* Effect21 = Node_CreateEffect_Finite("ÆÄ¶û ¹ÝÂ¦ÀÌ ÆÄÆ¼Å¬", L"IceGirl_FlashParticle_Blue"		, L"Sword_MidPos"	, 1.88, 80, 0, 0);
+	CBT_CreateEffect* Effect22 = Node_CreateEffect_Finite("ÃÊ·Ï ¹ÝÂ¦ÀÌ ÆÄÆ¼Å¬", L"IceGirl_FlashParticle_Green"	, L"Sword_MidPos"	, 1.88, 80, 0, 0);
+	CBT_CreateEffect* Effect25 = Node_CreateEffect_Finite("Èò ´« ÆÄÆ¼Å¬", L"IceGirl_SlashSnowParticle_0"			, L"Sword_MidPos"	, 1.88, 1, 0, 0);
 
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);

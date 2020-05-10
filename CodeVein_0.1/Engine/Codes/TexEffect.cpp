@@ -107,7 +107,7 @@ HRESULT CTexEffect::LateInit_GameObject()
 		!lstrcmp(L"QueensKnight_SwordCrash_Particle", m_szParticleName) ||
 		!lstrcmp(L"QueensKnight_JumpDown_Particle_Red", m_szParticleName) ||
 		!lstrcmp(L"QueensKnight_ShieldAttack_Particle", m_szParticleName) ||
-		!lstrcmp(L"Boss_Dead_Particle", m_szParticleName) ||
+		//!lstrcmp(L"Boss_Dead_Particle", m_szParticleName) ||
 		!lstrcmp(L"ButterFly_PointParticle", m_szParticleName) ||
 		!lstrcmp(L"ButterFly_PointParticle_Plum", m_szParticleName) ||
 		!lstrcmp(L"ButterFly_VenomShot_PointParticle", m_szParticleName) ||

@@ -154,7 +154,7 @@ _int COrthoEffect::Update_GameObject(_double TimeDelta)
 	if (m_bIsDead || m_fCreateDelay > 0.f)
 		return S_OK;
 
-	RENDERID eGroup = RENDERID::RENDER_EFFECT;
+	RENDERID eGroup = RENDERID::RENDER_ORTHO;
 	if (m_bUILayer)
 		eGroup = RENDERID::RENDER_UI;
 
@@ -191,6 +191,9 @@ HRESULT COrthoEffect::Render_GameObject()
 		nullptr == m_pBufferCom)
 		return E_FAIL;
 
+	m_matOldView = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	m_matOldProj = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+
 	CManagement::Get_Instance()->Set_Transform(D3DTS_WORLD, m_matWorld);
 	CManagement::Get_Instance()->Set_Transform(D3DTS_VIEW, m_matView);
 	CManagement::Get_Instance()->Set_Transform(D3DTS_PROJECTION, m_matProj);
@@ -208,6 +211,9 @@ HRESULT COrthoEffect::Render_GameObject()
 	m_pShaderCom->End_Pass();
 	m_pShaderCom->End_Shader();
 
+	CManagement::Get_Instance()->Set_Transform(D3DTS_VIEW, m_matOldView);
+	CManagement::Get_Instance()->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
+
 	return S_OK;
 }
 
@@ -216,6 +222,9 @@ HRESULT COrthoEffect::Render_GameObject_SetShader(CShader* pShader)
 	if (nullptr == pShader ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
+
+	m_matOldView = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	m_matOldProj = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
 
 	CManagement::Get_Instance()->Set_Transform(D3DTS_WORLD, m_matWorld);
 	CManagement::Get_Instance()->Set_Transform(D3DTS_VIEW, m_matView);
@@ -231,7 +240,10 @@ HRESULT COrthoEffect::Render_GameObject_SetShader(CShader* pShader)
 	
 	m_pBufferCom->Render_VIBuffer();
 	pShader->End_Pass();
-	
+
+	CManagement::Get_Instance()->Set_Transform(D3DTS_VIEW, m_matOldView);
+	CManagement::Get_Instance()->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
+
 	return S_OK;
 }
 

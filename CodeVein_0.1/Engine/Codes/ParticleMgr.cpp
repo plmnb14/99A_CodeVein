@@ -192,6 +192,7 @@ HRESULT CParticleMgr::Ready_ParticleManager_Essential()
 	Input_Pool(L"DrainWeapon_WhiteParticle_2", 50);
 	Input_Pool(L"DrainWeapon_WhiteParticle_3", 50);
 
+	Input_Pool(L"Boss_Dead_Particle", 11000);
 
 	return S_OK;
 }
@@ -539,7 +540,6 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"DeerKing_IceSword", 3);
 
 	Input_Pool(L"Boss_KnockDown_Dust", 10);
-	Input_Pool(L"Boss_Dead_Particle", 11000);
 
 	Input_Pool(L"SpawnParticle_ForBoss", 5000);
 	//Input_Pool(L"SpawnParticle_ForBoss_Point", 5000);
@@ -573,7 +573,10 @@ HRESULT CParticleMgr::Ready_TitleEffect()
 HRESULT CParticleMgr::Update_ParticleManager(const _double TimeDelta)
 {
 	if (CInput_Device::Get_Instance()->Key_Down(DIK_B))
-		Create_BossDead_Text(0.1f);
+		Create_Effect_Delay(L"Boss_Dead_Particle", 0.f, V3_NULL, nullptr);
+
+	if (CInput_Device::Get_Instance()->Key_Down(DIK_L))
+		Create_BossDeadParticle_Effect(V3_NULL, 0.f, 0.5f);
 
 	if (CInput_Device::Get_Instance()->Key_Down(DIK_I))
 	{
@@ -1361,7 +1364,7 @@ void CParticleMgr::Create_BossDeadParticle_Effect(_v3 vPos, _float fDelay, _floa
 	if (pFindedQueue == nullptr)
 		return;
 
-	for (_int i = 0; i < 5000; i++)
+	for (_int i = 0; i < 100; i++)
 	{
 		if (pFindedQueue->size() < 20)
 			return;
