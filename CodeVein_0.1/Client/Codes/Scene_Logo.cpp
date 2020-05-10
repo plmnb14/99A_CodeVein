@@ -174,7 +174,7 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 	
 	m_pGlitterEffect_1 = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_EffectReturn(L"Ortho_Title_Glitter_1"));
 	m_pGlitterEffect_1->Set_Desc(_v3(0, 0, 0), nullptr);
-	m_pGlitterEffect_1->Set_UV_Speed(0.045f, 0.06f);
+	m_pGlitterEffect_1->Set_UV_Speed(0.04f, 0.06f);
 	m_pGlitterEffect_1->Set_Mask(L"Tex_Ortho_Title", 6);
 	m_pGlitterEffect_1->Reset_Init();
 	

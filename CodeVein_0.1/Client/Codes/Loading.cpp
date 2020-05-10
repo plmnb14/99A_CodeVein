@@ -12,6 +12,7 @@
 #include "Effect_BloodChunk.h"
 #include "Effect_LongSpark.h"
 #include "Effect_FireFlower.h"
+#include "Effect_Parent.h"
 
 #include "Player.h"
 
@@ -1563,6 +1564,11 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_FireFlower", CEffect_FireFlower::Create(m_pGraphicDev))))
 			return E_FAIL;
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_FireFlower", L"GameObject_FireFlower", 3000);
+
+		// Effect_Parent
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_EffParent", CEffect_Parent::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_EffParent", L"GameObject_EffParent", 100);
 
 		///////test로 만들어둔 드롭아이템입니다 수정 Test 실험 심규명
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DropItem", CDropItem::Create(m_pGraphicDev))))
