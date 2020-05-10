@@ -1453,7 +1453,7 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Costume_Outer.cpp">
       <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[2] Outer</Filter>
-    </ClInclude>
+    </ClCompile>
     <ClCompile Include="..\Codes\HazeUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\04. HazeUI</Filter>
     </ClCompile>
