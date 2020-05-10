@@ -1370,7 +1370,7 @@ _uint CLoading::Loading_Title()
 	g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
 	//g_pSoundManager->Play_Sound(L"Title_Intro_02.wav", CSoundManager::Background_01, CSoundManager::Master_Sound);
 	//g_pSoundManager->Play_Sound(L"Gwan_Cchak.wav", CSoundManager::Background_01, CSoundManager::BGM_Sound);
-	g_pSoundManager->Play_BGM(L"Gwan_Cchak.wav");
+	//g_pSoundManager->Play_BGM(L"Gwan_Cchak.wav");
 
 	return NO_EVENT;
 }

@@ -226,6 +226,7 @@
     <ClInclude Include="..\Headers\FireHandBall.h" />
     <ClInclude Include="..\Headers\FireSphere.h" />
     <ClInclude Include="..\Headers\FireTornadoCol.h" />
+    <ClInclude Include="..\Headers\HazeUI.h" />
     <ClInclude Include="..\Headers\Hunter.h" />
     <ClInclude Include="..\Headers\HunterBullet.h" />
     <ClInclude Include="..\Headers\Monkey.h" />
@@ -385,6 +386,7 @@
     <ClCompile Include="..\Codes\FireHandBall.cpp" />
     <ClCompile Include="..\Codes\FireSphere.cpp" />
     <ClCompile Include="..\Codes\FireTornadoCol.cpp" />
+    <ClCompile Include="..\Codes\HazeUI.cpp" />
     <ClCompile Include="..\Codes\NoticeUI.cpp" />
     <ClCompile Include="..\Codes\Hunter.cpp" />
     <ClCompile Include="..\Codes\HunterBullet.cpp" />
