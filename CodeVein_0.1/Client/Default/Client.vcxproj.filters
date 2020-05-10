@@ -439,6 +439,9 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\04. HazeUI">
       <UniqueIdentifier>{b43ab97b-58b5-48ec-bf6c-e7cb04438b4a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\99.Public\MouseUI">
+      <UniqueIdentifier>{2bfceb16-1374-4a01-9881-b5af3154309b}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -936,6 +939,9 @@
     <ClInclude Include="..\Headers\HazeUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\04. HazeUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\MouseUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\MouseUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1417,6 +1423,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\HazeUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\04. HazeUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MouseUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\MouseUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

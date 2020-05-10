@@ -40,7 +40,7 @@ _int CHazeUI::Update_GameObject(_double TimeDelta)
 	if (m_pHazeCntFont)
 	{
 		m_pHazeCntFont->Set_Active(m_bIsActive);
-		m_pHazeCntFont->Update_NumberValue(m_uHazeCnt);
+		m_pHazeCntFont->Update_NumberValue(_float(m_uHazeCnt));
 	}	
 	
 	return NO_EVENT;
