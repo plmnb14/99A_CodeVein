@@ -185,9 +185,7 @@ HRESULT CSkillReleaseUI::Render_GameObject()
 		m_pShaderCom->End_Pass();
 		m_pShaderCom->End_Shader();
 	}
-	
-	if (g_pInput_Device->Get_DIKeyState(DIK_P))
-		Back_To_BloodCodeUI();
+
 	return S_OK;
 }
 

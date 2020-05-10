@@ -27,6 +27,13 @@ private:
 	virtual ~CScriptUI() = default;
 
 public:
+	void Set_LifeTime(_float fLifeTime) { m_fLifeTime = fLifeTime; }
+	void Set_Script(Script_Talker eTalker, Script_Number eScriptNum) {
+		m_eTalker = eTalker;
+		m_eScriptNum = eScriptNum;
+	}
+
+public:
 	virtual HRESULT Ready_GameObject_Prototype();
 	virtual HRESULT Ready_GameObject(void* pArg);
 	virtual _int	Update_GameObject(_double TimeDelta);
@@ -47,6 +54,7 @@ private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 private:
+	_float					m_fDelta = 0.f;
 	_float					m_fLifeTime = 0.f;
 	_uint					m_iTalkerIndex = 0;
 	_uint					m_iScriptIndex = 0;
