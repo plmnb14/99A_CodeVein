@@ -161,6 +161,11 @@ private:
 	_v3					m_vWing = _v3(0.f, 0.f, 0.f);
 	_v3					m_vLeftHand = _v3(0.f, 0.f, 0.f);
 
+	// 뼈 주소
+	D3DXFRAME_DERIVED*	m_pWingFrame = nullptr;
+	D3DXFRAME_DERIVED*	m_pLeftHandFrame = nullptr;
+
+
 private:	// 최초상태 세팅
 	_float				m_fFov = 0.f;
 	_float				m_fMaxLength = 0.f;

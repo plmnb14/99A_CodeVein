@@ -165,6 +165,11 @@ private:
 	_v3					m_vLeftHand = _v3(0.f, 0.f, 0.f);	//LeftHand
 	_v3					m_vHips = _v3(0.f, 0.f, 0.f);		//Hips
 
+	// 뼈 주소
+	D3DXFRAME_DERIVED*	m_pLeftHandFrame = nullptr;
+	D3DXFRAME_DERIVED*	m_pHipsFrame = nullptr;
+
+
 private:	// 최초상태 세팅
 	_float				m_fFov = 0.f;
 	_float				m_fMaxLength = 0.f;
