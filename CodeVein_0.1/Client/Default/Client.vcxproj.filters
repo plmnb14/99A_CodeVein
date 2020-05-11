@@ -475,6 +475,15 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\16. ScriptUI">
       <UniqueIdentifier>{4f0943ce-c02a-408f-af5f-6c1c94ea2eee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponShopOptionUI">
+      <UniqueIdentifier>{898148ef-3190-44f5-91d2-17cfad3ee94f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponBuyUI">
+      <UniqueIdentifier>{c5b92a9d-ae56-4445-b205-6c856197dec9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\Weapon_Inven_InShop">
+      <UniqueIdentifier>{6853725d-b417-436b-ac2e-2fa52f9f1441}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1011,6 +1020,15 @@
     <ClInclude Include="..\Headers\ClothManager.h">
       <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\WeaponShopOptionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponShopOptionUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\WeaponBuyUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponBuyUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Weapon_Inven_InShop.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\Weapon_Inven_InShop</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1531,6 +1549,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\ClothManager.cpp">
       <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\WeaponShopOptionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponShopOptionUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\WeaponBuyUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponBuyUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Weapon_Inven_InShop.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\Weapon_Inven_InShop</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

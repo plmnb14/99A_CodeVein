@@ -3,6 +3,10 @@
 #include "Client_Defines.h"
 #include "UI.h"
 
+#include "WeaponShopOptionUI.h"
+#include "WeaponBuyUI.h"
+#include "Weapon_Inven_InShop.h"
+
 BEGIN(Client)
 class CWeaponShopUI final : public CUI
 {
@@ -23,9 +27,10 @@ private:
 	HRESULT SetUp_ConstantTable();
 	void Click_Option();
 	void Reset_Option();
+	void Check_Key();
 
 public:
-	//void Active_SubUI(CMistletoeOptionUI* pSelectOption);
+	void Active_SubUI(CWeaponShopOptionUI* pSelectOption);
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -37,8 +42,15 @@ private:
 private:
 	_float					m_fAlpha = 0.f;
 	_uint					m_iSelectIndex = 0;
-	_float m_fCross = 100.f;
+	_float					m_fCross = 100.f;
+	_bool					m_bFirestMenu = false;
+	_bool					m_bPopupOn = false;
 
+	CWeaponShopOptionUI::WEAPONSHOP_OPTION	m_eState = CWeaponShopOptionUI::WEAPONSHOP_OPTION::OPTION_END;
+
+	vector<CWeaponShopOptionUI*>	m_vecOption;
+	CWeaponBuyUI*					m_pBuyUI;
+	CWeapon_Inven_InShop*			m_pInven;
 public:
 	static CWeaponShopUI*	Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);

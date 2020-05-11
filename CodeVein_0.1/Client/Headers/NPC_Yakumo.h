@@ -5,7 +5,7 @@
 #include "Management.h"
 
 BEGIN(Client)
-
+class CWeaponShopUI;
 class CNPC_Yakumo final : public CGameObject
 {
 public:
@@ -68,6 +68,8 @@ public:
 	virtual void Free();
 
 private:
+	CWeaponShopUI*			m_pWeaponShopUI;
+
 	_mat*					m_matBone[Bone_End];
 	NPC_ANI					m_eState;
 

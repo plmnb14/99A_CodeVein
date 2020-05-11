@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\Headers\NPC_Yakumo.h"
 
+#include "WeaponShopUI.h"
+
 CNPC_Yakumo::CNPC_Yakumo(LPDIRECT3DDEVICE9 pGraphic_Device)
 	:CGameObject(pGraphic_Device)
 {
@@ -31,6 +33,11 @@ HRESULT CNPC_Yakumo::Ready_GameObject(void * pArg)
 
 	Ready_BoneMatrix();
 	Ready_Collider();
+
+	// UI
+	m_pWeaponShopUI = static_cast<CWeaponShopUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_WeaponShopUI", nullptr));
+	m_pWeaponShopUI->Set_Target(this);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pWeaponShopUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	return S_OK;
 }
@@ -255,7 +262,7 @@ void CNPC_Yakumo::Check_Dist()
 	_float fLen = D3DXVec3Length(&_v3(TARGET_TO_TRANS(m_pPlayer)->Get_Pos() - m_pTransformCom->Get_Pos()));
 
 	const _float MIN_DIST = 1.5f;
-	if (fLen <= MIN_DIST)
+	if (fLen <= MIN_DIST && !m_pWeaponShopUI->Get_Active())
 		m_bCanActive = true;
 	else
 	{
@@ -270,6 +277,8 @@ void CNPC_Yakumo::Check_Dist()
 		g_pInput_Device->Key_Down(DIK_R))
 	{
 		m_bActive = true;
+
+		m_pWeaponShopUI->Set_Active(true);
 
 		if (0 == CCalculater::Random_Num(0, 1))
 			m_eState = Gloomy;
@@ -496,6 +505,14 @@ CGameObject* CNPC_Yakumo::Clone_GameObject(void * pArg)
 void CNPC_Yakumo::Free()
 {
 	CGameObject::Free();
+
+	Safe_Release(m_pOptimizationCom);
+	Safe_Release(m_pBattleAgentCom);
+	Safe_Release(m_pColliderCom);
+	Safe_Release(m_pTransformCom);
+	Safe_Release(m_pMeshCom);
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pRendererCom);
 
 	return;
 }
