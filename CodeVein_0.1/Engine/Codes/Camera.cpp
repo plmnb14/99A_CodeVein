@@ -819,7 +819,7 @@ HRESULT CCamera::SetUp_MouseRotate()
 
 	else if (m_eCamView == TOOL_VIEW)
 	{
-		if (m_bMouseControl == true)
+		if (m_bMouseControl != true)
 			return E_FAIL;
 
 		CInput_Device::Get_Instance()->Set_MouseLock(false);
