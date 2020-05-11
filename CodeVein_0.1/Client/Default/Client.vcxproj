@@ -183,6 +183,7 @@
     <ClInclude Include="..\Headers\BloodSkillSlot.h" />
     <ClInclude Include="..\Headers\BossDecoUI.h" />
     <ClInclude Include="..\Headers\BossHP.h" />
+    <ClInclude Include="..\Headers\BossNameUI.h" />
     <ClInclude Include="..\Headers\Client_Defines.h" />
     <ClInclude Include="..\Headers\Cloth.h" />
     <ClInclude Include="..\Headers\ClothDynamic.h" />
@@ -352,6 +353,7 @@
     <ClCompile Include="..\Codes\BloodSkillSlot.cpp" />
     <ClCompile Include="..\Codes\BossDecoUI.cpp" />
     <ClCompile Include="..\Codes\BossHP.cpp" />
+    <ClCompile Include="..\Codes\BossNameUI.cpp" />
     <ClCompile Include="..\Codes\Cloth.cpp" />
     <ClCompile Include="..\Codes\ClothDynamic.cpp" />
     <ClCompile Include="..\Codes\ClothStatic.cpp" />
