@@ -1254,7 +1254,7 @@ HRESULT CGunGenji::Ready_Weapon()
 {
 	m_pGun = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
 	m_pGun->Set_Target(this);
-	m_pGun->Change_WeaponData(CWeapon::Wpn_Gun_Military);
+	m_pGun->Change_WeaponData(Wpn_Gun_Military);
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
 	m_pGun->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);

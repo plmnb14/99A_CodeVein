@@ -10139,14 +10139,13 @@ void CPlayer::Ready_Weapon()
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 2);
 
 	m_pWeapon[WPN_SLOT_A] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon[WPN_SLOT_A]->Change_WeaponData(CWeapon::Wpn_SSword);
+	m_pWeapon[WPN_SLOT_A]->Change_WeaponData(Wpn_SSword);
 	m_pWeapon[WPN_SLOT_A]->Set_Friendly(true);
 	m_pWeapon[WPN_SLOT_A]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
 	m_pWeapon[WPN_SLOT_A]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
 
-
 	m_pWeapon[WPN_SLOT_B] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon[WPN_SLOT_B]->Change_WeaponData(CWeapon::Wpn_Hammer);
+	m_pWeapon[WPN_SLOT_B]->Change_WeaponData(Wpn_Hammer);
 	m_pWeapon[WPN_SLOT_B]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
 	m_pWeapon[WPN_SLOT_B]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
 	m_pWeapon[WPN_SLOT_B]->Set_Friendly(true);

@@ -2088,7 +2088,7 @@ HRESULT CDeerKing::Ready_Weapon()
 {
 	// 오른손 방패
 	m_pShield = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pShield->Change_WeaponData(CWeapon::WPN_DeerKingShield);
+	m_pShield->Change_WeaponData(WPN_DeerKingShield);
 
 	D3DXFRAME_DERIVED* pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
 	m_pShield->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);

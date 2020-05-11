@@ -2182,7 +2182,7 @@ HRESULT CIceGirl::Ready_Weapon()
 {
 	// 오른손 무기
 	m_pSword = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pSword->Change_WeaponData(CWeapon::WPN_FrostBlood_IceGirl);
+	m_pSword->Change_WeaponData(WPN_FrostBlood_IceGirl);
 	
 	// Trail
 	m_pSword->Set_Enable_Trail(true);
