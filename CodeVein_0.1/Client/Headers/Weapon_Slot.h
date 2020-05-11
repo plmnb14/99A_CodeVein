@@ -43,6 +43,7 @@ private:
 private:
 	_bool					m_bIsSelect = false;
 	WEAPON_STATE			m_eType = WEAPON_None;
+	WPN_PARAM				m_eWeaponParam;
 	_bool					m_bIsCollMouse = false;
 
 public:

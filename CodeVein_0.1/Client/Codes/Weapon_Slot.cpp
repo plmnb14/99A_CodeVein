@@ -4,6 +4,7 @@
 CWeapon_Slot::CWeapon_Slot(_Device pDevice)
 	: CUI(pDevice)
 {
+	ZeroMemory(&m_eWeaponParam, sizeof(WPN_PARAM));
 }
 
 CWeapon_Slot::CWeapon_Slot(const CWeapon_Slot & rhs)
