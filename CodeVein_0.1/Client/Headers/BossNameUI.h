@@ -5,6 +5,17 @@
 BEGIN(Client)
 class CBossNameUI final : public CUI
 {
+public:
+	enum BossName_INDEX
+	{
+		Index_None,
+		Index_PoisonButterfly,
+		Index_DeerKing,
+		Index_IceGirl,
+		Index_FireBoy,
+		Index_QueensKnight,
+		Index_End
+	};
 private:
 	explicit CBossNameUI(_Device pDevice);
 	explicit CBossNameUI(const CBossNameUI& rhs);

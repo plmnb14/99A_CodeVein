@@ -7150,19 +7150,19 @@ HRESULT CHunter::Ready_Weapon()
 	switch (m_eWeaponState)
 	{
 	case WEAPON_STATE::WEAPON_Gun:
-		m_pWeapon->Change_WeaponData(CWeapon::Wpn_Gun_Black);
+		m_pWeapon->Change_WeaponData(Wpn_Gun_Black);
 		break;
 	case WEAPON_STATE::WEAPON_Halberd:
-		m_pWeapon->Change_WeaponData(CWeapon::Wpn_Halberd_Black);
+		m_pWeapon->Change_WeaponData(Wpn_Halberd_Black);
 		break;
 	case WEAPON_STATE::WEAPON_Hammer:
-		m_pWeapon->Change_WeaponData(CWeapon::Wpn_Hammer_Black);
+		m_pWeapon->Change_WeaponData(Wpn_Hammer_Black);
 		break;
 	case WEAPON_STATE::WEAPON_LSword:
-		m_pWeapon->Change_WeaponData(CWeapon::Wpn_LSword_Black);
+		m_pWeapon->Change_WeaponData(Wpn_LSword_Black);
 		break;
 	case WEAPON_STATE::WEAPON_SSword:
-		m_pWeapon->Change_WeaponData(CWeapon::Wpn_SSword_Black);
+		m_pWeapon->Change_WeaponData(Wpn_SSword_Black);
 		break;
 	}
 

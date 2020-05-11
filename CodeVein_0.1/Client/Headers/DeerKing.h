@@ -5,6 +5,7 @@
 BEGIN(Client)
 
 class CWeapon;
+class CBossHP;
 class CDeerKing final : public CMonster
 {
 public:
@@ -142,6 +143,9 @@ private:
 	_v3					m_vThrowing_Dir = _v3(0.f, 0.f, 0.f);
 	_float				m_fThrowing_Speed = 15.f;
 
+private:	// UI(지원)
+	CBossHP*			m_pBossUI = nullptr;
+
 private:	// 다운 상태를 위한 변수
 	_bool				m_bDown_Start = false;
 
@@ -165,6 +169,16 @@ private:
 	_v3					m_vRightJet = _v3(0.f, 0.f, 0.f);	//Spine3_RightJet
 	_v3					m_vRightHandAttach = _v3(0.f, 0.f, 0.f); //RightHandAttach
 	_v3					m_vHeadColdBeamPos = _v3(0.f, 0.f, 0.f);	//Head_LeftCorner (사슴뿔, 머리 고드름 생성위치)
+
+	// 뼈 주소
+	D3DXFRAME_DERIVED*	m_pLeftHandFrame = nullptr;
+	D3DXFRAME_DERIVED*	m_pLeftHandAttachFrame = nullptr;
+	D3DXFRAME_DERIVED*	m_pRightHandFrame = nullptr;
+	D3DXFRAME_DERIVED*	m_pRightHandAttachFrame = nullptr;
+	D3DXFRAME_DERIVED*	m_pSpine3_LeftJetFrame = nullptr;
+	D3DXFRAME_DERIVED*	m_pSpine3_RightJetFrame = nullptr;
+	D3DXFRAME_DERIVED*	m_pHead_LeftCornerFrame = nullptr;
+
 
 private:	// 최초상태 세팅
 	_float				m_fFov = 0.f;

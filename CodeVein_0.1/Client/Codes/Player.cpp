@@ -54,6 +54,8 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 	m_pStageAgent = CStageAgent::Get_Instance();
 	Safe_AddRef(m_pStageAgent);
 
+	m_tObjParam.sMana_Cur = 100;
+
 	return NOERROR;
 }
 
@@ -760,7 +762,11 @@ void CPlayer::Parameter_CheckActiveSkill()
 		Skill_ID eTmpSkillId = m_pUIManager->Get_Total_Inven()->Get_Registration_Skill(i);
 
 		if (Skill_ID::SkillID_End == eTmpSkillId)
+		{
+			m_arrbActiveSkillOn[i] = false;
+			ZeroMemory(&m_arrSkillInfo[i], sizeof(SKILL_INFO));
 			continue;
+		}
 
 		_uint iSkillIdx =
 			eTmpSkillId == Severing_Abyss ? 0 :
@@ -781,9 +787,14 @@ void CPlayer::Parameter_CheckActiveSkill()
 
 		m_arrSkillInfo[i].bOneHand = m_vecFullSkillInfo[iSkillIdx]->bOneHand;
 		m_arrSkillInfo[i].dwSkillCost = m_vecFullSkillInfo[iSkillIdx]->dwSkillCost;
-		m_arrSkillInfo[i].eCurSkillIdx = m_vecFullSkillInfo[iSkillIdx]->eCurSkillIdx;
-;
+		m_arrSkillInfo[i].dwAnimationIdx = m_vecFullSkillInfo[iSkillIdx]->dwAnimationIdx;
 	}
+}
+
+void CPlayer::Parameter_CheckActiveWeapon()
+{
+	//m_pUIManager->Get_Weapon_Inven()->Get_UseWeaponState(WPN_SLOT_A);
+	//m_pUIManager->Get_Weapon_Inven()->Get_UseWeaponState(WPN_SLOT_B);
 }
 
 void CPlayer::Movement_Aiming(_float _fAngle, _float _fMovespeed)
@@ -1688,12 +1699,14 @@ void CPlayer::Key_Skill()
 		if (m_tObjParam.sMana_Cur < (_short)m_arrSkillInfo[0].dwSkillCost)
 			return;
 
+		Reset_BattleState();
+
 		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[0].dwSkillCost;
-		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[0].eCurSkillIdx;
+		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[0].dwAnimationIdx;
 		m_eActState = ACT_Skill;
 
 		//===================================================================================================================
-		//m_eActState = ACT_Skill;
+		//m_eActState = ACT_Skill0
 		//
 		//if (true == m_bOneHand)
 		//	m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[0]->dwAnimationIdx);
@@ -1701,8 +1714,6 @@ void CPlayer::Key_Skill()
 		//else if (false == m_bOneHand)
 		//	m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[4]->dwAnimationIdx);
 		//===================================================================================================================
-
-		Reset_BattleState();
 	}
 
 	// 2번 스킬
@@ -1717,8 +1728,10 @@ void CPlayer::Key_Skill()
 		if (m_tObjParam.sMana_Cur < (_short)m_arrSkillInfo[1].dwSkillCost)
 			return;
 
+		Reset_BattleState();
+
 		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[1].dwSkillCost;
-		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[1].eCurSkillIdx;
+		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[1].dwAnimationIdx;
 		m_eActState = ACT_Skill;
 
 		//m_eActState = ACT_Skill;
@@ -1730,8 +1743,6 @@ void CPlayer::Key_Skill()
 		//	m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[5]->dwAnimationIdx);
 		//
 		//_v3 vEffPos = _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f;
-
-		Reset_BattleState();
 	}
 
 	// 3번 스킬
@@ -1746,8 +1757,10 @@ void CPlayer::Key_Skill()
 		if (m_tObjParam.sMana_Cur < (_short)m_arrSkillInfo[3].dwSkillCost)
 			return;
 
+		Reset_BattleState();
+
 		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[2].dwSkillCost;
-		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[2].eCurSkillIdx;
+		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[2].dwAnimationIdx;
 		m_eActState = ACT_Skill;
 
 		//m_eActState = ACT_Skill;
@@ -1773,8 +1786,10 @@ void CPlayer::Key_Skill()
 		if (m_tObjParam.sMana_Cur < (_short)m_arrSkillInfo[3].dwSkillCost)
 			return;
 
+		Reset_BattleState();
+
 		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[3].dwSkillCost;
-		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[3].eCurSkillIdx;
+		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[3].dwAnimationIdx;
 		m_eActState = ACT_Skill;
 
 		//m_eActState = ACT_Skill;
@@ -1784,8 +1799,6 @@ void CPlayer::Key_Skill()
 		//
 		//else if (false == m_bOneHand)
 		//	m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[7]->dwAnimationIdx);
-
-		Reset_BattleState();
 	}
 
 	// 5번 스킬
@@ -1800,11 +1813,11 @@ void CPlayer::Key_Skill()
 		if (m_tObjParam.sMana_Cur < (_short)m_arrSkillInfo[4].dwSkillCost)
 			return;
 
-		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[4].dwSkillCost;
-		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[4].eCurSkillIdx;
-		m_eActState = ACT_Skill;
-
 		Reset_BattleState();
+
+		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[4].dwSkillCost;
+		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[4].dwAnimationIdx;
+		m_eActState = ACT_Skill;
 	}
 
 
@@ -1820,11 +1833,11 @@ void CPlayer::Key_Skill()
 		if (m_tObjParam.sMana_Cur < (_short)m_arrSkillInfo[5].dwSkillCost)
 			return;
 
-		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[5].dwSkillCost;
-		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[5].eCurSkillIdx;
-		m_eActState = ACT_Skill;
-
 		Reset_BattleState();
+
+		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[5].dwSkillCost;
+		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[5].dwAnimationIdx;
+		m_eActState = ACT_Skill;
 	}
 
 
@@ -1840,11 +1853,11 @@ void CPlayer::Key_Skill()
 		if (m_tObjParam.sMana_Cur < (_short)m_arrSkillInfo[6].dwSkillCost)
 			return;
 
-		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[6].dwSkillCost;
-		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[6].eCurSkillIdx;
-		m_eActState = ACT_Skill;
-
 		Reset_BattleState();
+
+		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[6].dwSkillCost;
+		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[6].dwAnimationIdx;
+		m_eActState = ACT_Skill;
 	}
 
 	// 7번 스킬
@@ -1859,11 +1872,11 @@ void CPlayer::Key_Skill()
 		if (m_tObjParam.sMana_Cur < (_short)m_arrSkillInfo[7].dwSkillCost)
 			return;
 
-		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[7].dwSkillCost;
-		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[7].eCurSkillIdx;
-		m_eActState = ACT_Skill;
-
 		Reset_BattleState();
+
+		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[7].dwSkillCost;
+		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[7].dwAnimationIdx;
+		m_eActState = ACT_Skill;
 	}
 
 	// 1번 버프
@@ -1963,11 +1976,22 @@ void CPlayer::Key_UI_n_Utiliy(_bool _bActiveUI)
 	{
 		if (g_pInput_Device->Key_Down(DIK_ESCAPE))
 		{
-			if (m_bOnUI_Inventory)
+			if (true == m_pUIManager->Get_Skill_Inven()->Get_Active())
 			{
+				m_pUIManager->Get_Skill_Inven()->Set_Active(false);
+			}
+
+			else if (m_bOnUI_Inventory)
+			{
+				m_pCamManager->Set_MouseCtrl(true);
+				g_pInput_Device->Set_MouseLock(true);
+				m_pRenderer->DOF_On(false);
+
 				m_bActiveUI = false;
 				m_pUIManager->Get_Total_Inven()->Set_Active(false);
 				m_pUIManager->Get_StatusUI()->Set_Active(false);
+
+				Parameter_CheckActiveSkill();
 			}
 
 			else
@@ -2072,6 +2096,10 @@ void CPlayer::Key_UI_n_Utiliy(_bool _bActiveUI)
 	{
 		if (g_pInput_Device->Key_Down(DIK_ESCAPE))
 		{
+			g_pInput_Device->Set_MouseLock(false);
+			m_pCamManager->Set_MouseCtrl(false);
+			m_pRenderer->DOF_On(true);
+
 			m_bActiveUI = true;
 			m_bOnUI_Inventory = true;
 			m_pUIManager->Get_Total_Inven()->Set_Active(true);
@@ -10105,52 +10133,53 @@ void CPlayer::Play_Lsword_DashAtk()
 
 void CPlayer::Ready_Weapon()
 {
-	m_pWeapon[WPN_SLOT_A] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon[WPN_SLOT_A]->Change_WeaponData(CWeapon::Wpn_SSword);
-	m_pWeapon[WPN_SLOT_A]->Set_Friendly(true);
 	LPCSTR tmpChar = "RightHandAttach";
 	_mat   matAttach;
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 2);
 
+	m_pWeapon[WPN_SLOT_A] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
+	m_pWeapon[WPN_SLOT_A]->Change_WeaponData(Wpn_SSword);
+	m_pWeapon[WPN_SLOT_A]->Set_Friendly(true);
 	m_pWeapon[WPN_SLOT_A]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
 	m_pWeapon[WPN_SLOT_A]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
 
-
 	m_pWeapon[WPN_SLOT_B] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon[WPN_SLOT_B]->Change_WeaponData(CWeapon::Wpn_Hammer);
-
+	m_pWeapon[WPN_SLOT_B]->Change_WeaponData(Wpn_Hammer);
 	m_pWeapon[WPN_SLOT_B]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
 	m_pWeapon[WPN_SLOT_B]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
 	m_pWeapon[WPN_SLOT_B]->Set_Friendly(true);
+
+	m_bWeaponActive[WPN_SLOT_A] = true;
+	m_bWeaponActive[WPN_SLOT_B] = false;
 
 	//========================================================================================================================
 	// 여기서 부터 디버그용 무기슬롯
 	//========================================================================================================================
 
-	// 총검
-	m_pWeapon[WPN_SLOT_C] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon[WPN_SLOT_C]->Change_WeaponData(CWeapon::Wpn_Gun);
-
-	m_pWeapon[WPN_SLOT_C]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
-	m_pWeapon[WPN_SLOT_C]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
-	m_pWeapon[WPN_SLOT_C]->Set_Friendly(true);
-
-	// 대검
-	m_pWeapon[WPN_SLOT_D] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon[WPN_SLOT_D]->Change_WeaponData(CWeapon::Wpn_LSword);
-
-	m_pWeapon[WPN_SLOT_D]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
-	m_pWeapon[WPN_SLOT_D]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
-	m_pWeapon[WPN_SLOT_D]->Set_Friendly(true);
-
-	// 창
-	m_pWeapon[WPN_SLOT_E] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon[WPN_SLOT_E]->Change_WeaponData(CWeapon::Wpn_Halberd);
-
-	m_pWeapon[WPN_SLOT_E]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
-	m_pWeapon[WPN_SLOT_E]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
-	m_pWeapon[WPN_SLOT_E]->Set_Friendly(true);
+	//// 총검
+	//m_pWeapon[WPN_SLOT_C] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
+	//m_pWeapon[WPN_SLOT_C]->Change_WeaponData(CWeapon::Wpn_Gun);
+	//
+	//m_pWeapon[WPN_SLOT_C]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
+	//m_pWeapon[WPN_SLOT_C]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
+	//m_pWeapon[WPN_SLOT_C]->Set_Friendly(true);
+	//
+	//// 대검
+	//m_pWeapon[WPN_SLOT_D] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
+	//m_pWeapon[WPN_SLOT_D]->Change_WeaponData(CWeapon::Wpn_LSword);
+	//
+	//m_pWeapon[WPN_SLOT_D]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
+	//m_pWeapon[WPN_SLOT_D]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
+	//m_pWeapon[WPN_SLOT_D]->Set_Friendly(true);
+	//
+	//// 창
+	//m_pWeapon[WPN_SLOT_E] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
+	//m_pWeapon[WPN_SLOT_E]->Change_WeaponData(CWeapon::Wpn_Halberd);
+	//
+	//m_pWeapon[WPN_SLOT_E]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
+	//m_pWeapon[WPN_SLOT_E]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
+	//m_pWeapon[WPN_SLOT_E]->Set_Friendly(true);
 
 	//========================================================================================================================
 }

@@ -37,7 +37,7 @@ enum RENDERID
 	RENDER_NONALPHA,
 	RENDER_SHADOWTARGET, RENDER_MOTIONBLURTARGET,
 	RENDER_ALPHA,
-	RENDER_EFFECT, RENDER_INSTANCE, RENDER_DISTORTION,
+	RENDER_EFFECT, RENDER_INSTANCE, RENDER_DISTORTION, RENDER_ORTHO,
 	RENDER_UI, RENDER_3DUI, RENDER_UI_BACK,
 	RENDER_END
 };
@@ -112,6 +112,17 @@ enum WEAPON_STATE
 {
 	WEAPON_None, WEAPON_SSword, WEAPON_LSword, WEAPON_Hammer, WEAPON_Halberd, WEAPON_Gun, WEAPON_Shield,
 	WEAPON_End
+};
+
+enum WEAPON_DATA
+{
+	Wpn_SSword, Wpn_SSword_Black, Wpn_SSword_Military, Wpn_SSword_Slave,
+	Wpn_LSword, Wpn_LSword_Black, Wpn_LSword_Military, Wpn_LSword_Slave,
+	Wpn_Halberd, Wpn_Halberd_Black, Wpn_Halberd_Military, Wpn_Halberd_Slave,
+	Wpn_Hammer, Wpn_Hammer_Black, Wpn_Hammer_Military, Wpn_Hammer_Slave,
+	Wpn_Gun, Wpn_Gun_Black, Wpn_Gun_Military, Wpn_Gun_Slave,
+	WPN_Shield_Normal, WPN_QueenShield, WPN_QueenLance, WPN_DeerKingShield, WPN_FrostBlood_IceGirl,
+	WPN_DATA_End
 };
 
 enum Teleport_ID

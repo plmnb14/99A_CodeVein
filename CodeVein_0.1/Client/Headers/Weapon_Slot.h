@@ -13,11 +13,11 @@ private:
 
 public:
 	bool Get_Select() { return m_bIsSelect; }
-	WEAPON_STATE Get_Type();
+	WPN_PARAM Get_WeaponParam() { return m_tWeaponParam; }
 
 public:
 	void Set_Select(_bool bIsSelect) { m_bIsSelect = bIsSelect; }
-	void Set_Type(WEAPON_STATE eType) { m_eType = eType; }
+	void Set_WeaponParam(WPN_PARAM tWeaponParam) { m_tWeaponParam = tWeaponParam; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -42,7 +42,7 @@ private:
 
 private:
 	_bool					m_bIsSelect = false;
-	WEAPON_STATE			m_eType = WEAPON_None;
+	WPN_PARAM				m_tWeaponParam;
 	_bool					m_bIsCollMouse = false;
 
 public:

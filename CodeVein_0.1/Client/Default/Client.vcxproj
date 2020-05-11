@@ -187,6 +187,7 @@
     <ClInclude Include="..\Headers\Client_Defines.h" />
     <ClInclude Include="..\Headers\Cloth.h" />
     <ClInclude Include="..\Headers\ClothDynamic.h" />
+    <ClInclude Include="..\Headers\ClothManager.h" />
     <ClInclude Include="..\Headers\ClothStatic.h" />
     <ClInclude Include="..\Headers\Cocoon.h" />
     <ClInclude Include="..\Headers\CocoonBigBullet.h" />
@@ -359,6 +360,7 @@
     <ClCompile Include="..\Codes\BossNameUI.cpp" />
     <ClCompile Include="..\Codes\Cloth.cpp" />
     <ClCompile Include="..\Codes\ClothDynamic.cpp" />
+    <ClCompile Include="..\Codes\ClothManager.cpp" />
     <ClCompile Include="..\Codes\ClothStatic.cpp" />
     <ClCompile Include="..\Codes\Cocoon.cpp" />
     <ClCompile Include="..\Codes\CocoonBigBullet.cpp" />
