@@ -243,6 +243,8 @@ protected:
 	CMesh_Dynamic*		m_pMesh = nullptr;
 	CNavMesh*			m_pNavMesh = nullptr;
 	CCollider*			m_pCollider = nullptr;
+	COptimization*		m_pOptimization = nullptr;
+
 	CMonsterUI*			m_pMonsterUI = nullptr;
 	CWeapon*			m_pWeapon = nullptr;
 

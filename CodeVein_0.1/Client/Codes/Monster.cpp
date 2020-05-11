@@ -268,6 +268,9 @@ void CMonster::Check_CollisionPush()
 
 	for (auto& list_iter : tmpList)
 	{
+		if (list_iter.empty())
+			continue;
+
 		for (auto& Obj_iter : list_iter)
 		{
 			CCollider* pCollider = TARGET_TO_COL(Obj_iter);

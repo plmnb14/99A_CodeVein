@@ -225,6 +225,8 @@ HRESULT CUrchin::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool 
 
 void CUrchin::Update_Collider()
 {
+	_ulong matrixIdx = Bone_Body;
+
 	for (auto& vector_iter : m_vecAttackCol)
 	{
 		_mat matTemp = *m_matBone[Bone_Body] * m_pTransformCom->Get_WorldMat();
@@ -234,7 +236,7 @@ void CUrchin::Update_Collider()
 		vector_iter->Update(ColPos);
 	}
 
-	_ulong matrixIdx = 0;
+	matrixIdx = 0;
 
 	for (auto& iter : m_vecPhysicCol)
 	{
@@ -981,14 +983,14 @@ HRESULT CUrchin::Ready_Status(void * pArg)
 		if (MONSTER_COLOR_TYPE::WHITE == Info.eMonsterColor)
 		{
 			m_eMonsterColor = Info.eMonsterColor;
-			m_tObjParam.fDamage = -100.f;
-			m_tObjParam.fHp_Max = 750.f;
+			m_tObjParam.fDamage = -0.f;
+			m_tObjParam.fHp_Max = 7500.f;
 			m_tObjParam.fArmor_Max = 10.f;
 		}
 		else
 		{
 			m_eMonsterColor = MONSTER_COLOR_TYPE::BLACK;
-			m_tObjParam.fDamage = -120.f;
+			m_tObjParam.fDamage = -0.f;
 			m_tObjParam.fHp_Max = 800.f;
 			m_tObjParam.fArmor_Max = 10.f;
 		}
@@ -1077,7 +1079,7 @@ HRESULT CUrchin::Ready_Collider()
 	m_vecAttackCol.push_back(pCollider);
 
 	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
-	fRadius = 0.2f;
+	fRadius = 0.7f;
 
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
@@ -1094,7 +1096,7 @@ HRESULT CUrchin::Ready_BoneMatrix()
 {
 	D3DXFRAME_DERIVED*	pFrame = nullptr;
 
-	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips", 0), E_FAIL);
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("CHARA_OFFSET", 0), E_FAIL);
 	m_matBone[Bone_Range] = &pFrame->CombinedTransformationMatrix;
 	m_matBone[Bone_Body] = &pFrame->CombinedTransformationMatrix;
 

@@ -63,7 +63,7 @@ private:
 
 	_uint		m_iCheck_Renderindex = 0;
 
-	_mat*		m_matMonsterBon;
+	_mat*		m_matMonsterBon = nullptr;
 
 private:
 	CTransform*				m_pTransformCom = nullptr;

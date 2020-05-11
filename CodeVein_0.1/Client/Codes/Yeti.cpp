@@ -2701,7 +2701,7 @@ HRESULT CYeti::Ready_Status(void * pArg)
 HRESULT CYeti::Ready_Collider()
 {
 	m_vecPhysicCol.reserve(2);
-	m_vecAttackCol.reserve(5);
+	m_vecAttackCol.reserve(4);
 	_float fRadius;
 	CCollider* pCollider = nullptr;
 
