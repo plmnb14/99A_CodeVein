@@ -54,11 +54,10 @@ HRESULT CMonkeyBullet::Ready_GameObject(void * pArg)
 	m_bDead = false;
 	m_bEffect = true;
 
-	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Monkey_Knife", nullptr));
+	m_pBulletBody = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Monkey_Knife");
 	m_pBulletBody->Set_Desc(V3_NULL, m_pTransformCom);
 	m_pBulletBody->Set_ParentObject(this);
 	m_pBulletBody->Reset_Init();
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
 
 	m_pTrailEffect = g_pManagement->Create_Trail();
 	m_pTrailEffect->Set_TrailIdx(5); // Red Tail
@@ -282,7 +281,12 @@ CGameObject * CMonkeyBullet::Clone_GameObject(void * pArg)
 
 void CMonkeyBullet::Free()
 {
-	//Safe_Release(m_pTrailEffect);
+	IF_NOT_NULL(m_pBulletBody)
+		m_pBulletBody->Set_Dead();
+
+	IF_NOT_NULL(m_pTrailEffect)
+		m_pTrailEffect->Set_Dead();
+
 	CMonster::Free();
 
 	return;

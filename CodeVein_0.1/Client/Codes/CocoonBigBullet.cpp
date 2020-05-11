@@ -51,16 +51,14 @@ HRESULT CCocoonBigBullet::Ready_GameObject(void * pArg)
 	case Client::CMonster::BULLET_NORMAL:
 	case Client::CMonster::BULLET_FIRE:
 	case Client::CMonster::BULLET_ELECTRON:
-		m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Totem_Fire_BulletBody", nullptr));
+		m_pBulletBody = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Totem_Fire_BulletBody");
 		break;
 	case Client::CMonster::BULLET_ICE:
-		m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Totem_Ice_BulletBody", nullptr));
+		m_pBulletBody = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Totem_Ice_BulletBody");
 		break;
 	}
-
 	m_pBulletBody->Set_Desc(V3_NULL, m_pTransformCom);
 	m_pBulletBody->Reset_Init();
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
 
 	return S_OK;
 }
@@ -295,6 +293,9 @@ CGameObject * CCocoonBigBullet::Clone_GameObject(void * pArg)
 
 void CCocoonBigBullet::Free()
 {
+	IF_NOT_NULL(m_pBulletBody)
+		m_pBulletBody->Set_Dead();
+
 	CMonster::Free();
 
 	return;

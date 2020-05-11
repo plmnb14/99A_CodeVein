@@ -23,10 +23,9 @@ HRESULT CDropItem::Ready_GameObject(void * pArg)
 
 	Ready_Status(pArg);
 
-	m_pEffect = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Totem_Fire_BulletBody", nullptr));
+	m_pEffect = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Totem_Fire_BulletBody");
 	m_pEffect->Set_Desc(V3_NULL, m_pTransform);
 	m_pEffect->Reset_Init();
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pEffect, SCENE_STAGE, L"Layer_Item", nullptr);
 
 	return S_OK;
 }
@@ -337,14 +336,14 @@ CGameObject* CDropItem::Clone_GameObject(void * pArg)
 
 void CDropItem::Free()
 {
-	Safe_Release(m_pTransform);
-	Safe_Release(m_pRenderer);
-
 	IF_NOT_NULL(m_pEffect)
 		m_pEffect->Set_Dead();
 
 	IF_NOT_NULL(m_pTrailEffect)
 		m_pTrailEffect->Set_Dead();
+
+	Safe_Release(m_pTransform);
+	Safe_Release(m_pRenderer);
 
 	CGameObject::Free();
 

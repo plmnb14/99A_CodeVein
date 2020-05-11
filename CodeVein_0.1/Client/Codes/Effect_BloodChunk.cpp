@@ -46,10 +46,9 @@ HRESULT CEffect_BloodChunk::Ready_GameObject(void* pArg)
 	if (m_bIsWallDecal)
 		m_fSpeed *= 2.5f;
 
-	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Blood_Chunk_0", nullptr));
-	m_pBulletBody->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
+	m_pBulletBody = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Blood_Chunk_0");
+	m_pBulletBody->Set_Desc(V3_NULL, m_pTransformCom);
 	m_pBulletBody->Reset_Init();
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
 
 	return NOERROR;
 }
@@ -212,6 +211,9 @@ CGameObject * CEffect_BloodChunk::Clone_GameObject(void * pArg)
 
 void CEffect_BloodChunk::Free()
 {
+	IF_NOT_NULL(m_pBulletBody)
+		m_pBulletBody->Set_Dead();
+
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pRendererCom);

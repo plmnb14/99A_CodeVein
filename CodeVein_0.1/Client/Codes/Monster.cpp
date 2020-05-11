@@ -578,11 +578,11 @@ void CMonster::Function_Find_Target()
 
 	for (auto& Colleague_iter : ColleagueContainer)
 	{
-		if (true == Colleague_iter->Get_Dead())
+		if (nullptr == Colleague_iter)
+			continue;
+		else if (true == Colleague_iter->Get_Dead())
 			continue;
 		else if (false == Colleague_iter->Get_Enable())
-			continue;
-		else if (nullptr == Colleague_iter)
 			continue;
 
 		_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Colleague_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
@@ -602,11 +602,11 @@ void CMonster::Function_Find_Target()
 
 	for (auto& Player_iter : PlayerContainer)
 	{
-		if (true == Player_iter->Get_Dead())
+		if (nullptr == Player_iter)
+			continue;
+		else if (true == Player_iter->Get_Dead())
 			continue;
 		else if (false == Player_iter->Get_Enable())
-			continue;
-		else if (nullptr == Player_iter)
 			continue;
 
 		_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Player_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
