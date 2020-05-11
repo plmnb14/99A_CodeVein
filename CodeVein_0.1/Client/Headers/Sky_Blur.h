@@ -18,6 +18,11 @@ public:
 	virtual _int Update_GameObject(_double TimeDelta);
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
+
+private:
+	void Check_Scene();
+	void Change_Mesh(const _tchar * _MeshName);
+
 private:
 	CTransform*				m_pTransformCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;	
@@ -26,6 +31,8 @@ private:
 	//CBuffer_CubeTex*		m_pBufferCom = nullptr;
 	CMesh_Static*			m_pMeshCom = nullptr;
 
+	SCENEID					m_eOldSceneID = SCENEID::SCENE_END;
+	_tchar					m_szName[STR_128];
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();

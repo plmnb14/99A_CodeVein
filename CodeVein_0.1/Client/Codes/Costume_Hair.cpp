@@ -1,7 +1,6 @@
 #include "stdafx.h"
 #include "Costume_Hair.h"
 
-
 CCostume_Hair::CCostume_Hair(_Device pGraphicDev)
 	:CGameObject(pGraphicDev)
 {
@@ -136,6 +135,7 @@ void CCostume_Hair::Change_HairMesh(HairType _eHairType)
 	case CCostume_Hair::Hair_01:
 	{
 		lstrcpy(szMeshName, L"Mesh_Hair01");
+		m_eHairTag = CClothManager::Hair01;
 		break;
 	}
 	case CCostume_Hair::Hair_02:
@@ -189,6 +189,30 @@ void CCostume_Hair::Change_HairMesh(HairType _eHairType)
 	m_eHairType = _eHairType;
 }
 
+void CCostume_Hair::Change_Vertex()
+{
+	physx::PxSceneWriteLock scopedLock(*g_pPhysx->Get_Scene());
+
+	physx::PxCloth* pCloth = g_pClothManager->Get_Cloth_Static(m_eHairTag);
+
+	physx::PxClothFabric* pFabric = pCloth->getFabric();
+	physx::PxClothParticleData* pData = pCloth->lockParticleData();
+
+	LPD3DXMESH	pMesh = m_pStaticMesh->Get_pMesh();
+	_ulong dwStride = pMesh->GetNumBytesPerVertex();
+
+	_byte* pVertices = nullptr;
+
+	pMesh->LockVertexBuffer(0, (void**)&pVertices);
+
+	for (_ulong i = 0; i < _ulong(pFabric->getNbParticles()); ++i)
+	{
+		*(_v3*)(pVertices + (i * dwStride)) = *(_v3*)(pData->particles + i);
+	}
+
+	pMesh->UnlockVertexBuffer();
+}
+
 _int CCostume_Hair::Update_GameObject(_double TimeDelta)
 {
 	if (false == m_bEnable)
@@ -240,6 +264,9 @@ HRESULT CCostume_Hair::Render_GameObject()
 	if (nullptr == m_pShader ||
 		nullptr == m_pStaticMesh)
 		return E_FAIL;
+
+	// 버텍스 교체
+	Change_Vertex();
 
 	if (FAILED(SetUp_ConstantTable()))
 		return E_FAIL;

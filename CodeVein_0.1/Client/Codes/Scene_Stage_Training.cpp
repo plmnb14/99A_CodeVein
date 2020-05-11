@@ -38,7 +38,7 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 
 	if (FAILED(Ready_Layer_Environment()))
 		return E_FAIL;
-	
+
 	CRenderer* pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
 	pRenderer->Fog_On(false);
 	Safe_Release(pRenderer);
@@ -51,10 +51,10 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 _int CScene_Stage_Training::Update_Scene(_double TimeDelta)
 {
 	CUI_Manager::Get_Instance()->Update_UI();
-	
+
 	//Create_Fog(TimeDelta);
 	//Create_Snow(TimeDelta);
-	
+
 	return _int();
 }
 
@@ -101,24 +101,31 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Mistletoe")))
 		return E_FAIL;
 
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_NPC")))
+		return E_FAIL;
+
 	CGameObject* pInstance = nullptr;
 
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossMassageUI", SCENE_STAGE, L"Layer_BossMassageUI")))
 	//	return E_FAIL;
 
-	/*if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Get_Item", SCENE_STAGE, L"Layer_Get_ItemUI")))
-		return E_FAIL;*/
+	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Get_Item", SCENE_STAGE, L"Layer_Get_ItemUI")))
+	//	return E_FAIL;
 
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Pickup_Item", SCENE_STAGE, L"Layer_PickUPUI")))
 	//	return E_FAIL;
 
-	// ±èÀç±¸
+	//// ±èÀç±¸
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague", nullptr);
 	///*TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(5.f, 0.f, 5.f));*/
 	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
 	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-	//TARGET_TO_NAV(pInstance)->Check_OnNavMesh(_v3(0.f,0.f,0.f));
+	//TARGET_TO_NAV(pInstance)->Check_OnNavMesh(_v3(0.f, 0.f, 0.f));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
+
+	//// ¾ßÄí¸ð
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_NPC_Yakumo", nullptr);
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_NPC", nullptr);
 
 	//// ÅäÅÛ
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon", 
@@ -182,7 +189,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//====================================================================================================================================================
 	// °Ë°ÕÁö
 	//====================================================================================================================================================
-	
+
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", 
 	//	&CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::Sit1, 70.f, 10.f, 1.f,
 	//		true, _v3(5.f, 0.f, -2.f), V3_NULL, 0));
@@ -194,7 +201,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//====================================================================================================================================================
 	// ÃÑ°ÕÁö
 	//====================================================================================================================================================
-	
+
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji",
 	//	&CGunGenji::INFO(CGunGenji::Normal, CGunGenji::CheckGun, 10.f, 3.f, 2.f,
 	//		true, _v3(3.f, 0.f, -8.f), V3_NULL, 0));
@@ -206,7 +213,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//====================================================================================================================================================
 	// Ã¢ ¹æÆÐ °ÕÁö
 	//====================================================================================================================================================
-	
+
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordShieldGenji",
 	//	&CSwordShieldGenji::INFO(CSwordShieldGenji::White, CSwordShieldGenji::LookAround1, 10.f, 5.f, 2.f,
 	//		true, _v3(5.f, 0.f, -8.f), V3_NULL, 0));
@@ -224,7 +231,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 
 
 	//// µ¶³ª¹æ
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_PoisonButterfly", 
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_PoisonButterfly",
 	//	&CPoisonButterfly::INFO(10.f, 5.f, 2.f,
 	//		true, _v3(-5.f, 0.f, 8.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
@@ -236,13 +243,13 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
 	//// ¾óÀ½¿©ÀÚ
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_IceGirl", 
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_IceGirl",
 	//	&CIceGirl::INFO(10.f, 5.f, 2.f,
 	//		true, _v3(3.f, 0.f, -8.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
-	//// ºÒ³²ÀÚ
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_FireBoy", 
+	////// ºÒ³²ÀÚ
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_FireBoy",
 	//	&CFireBoy::INFO(10.f, 5.f, 2.f,
 	//		true, _v3(8.f, 0.f, -5.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
@@ -273,11 +280,11 @@ HRESULT CScene_Stage_Training::Ready_Layer_Environment()
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Sky", nullptr);
 
 
-	//// ´ÙÀÌ³ª¹Í ¿Ê
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Cloth_Dynamic", &CClothDynamic::INFO(CClothDynamic::ClothDynamic_Name::LongCoat));
+	// ´ÙÀÌ³ª¹Í ¿Ê
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Cloth_Dynamic", &CClothDynamic::INFO(CClothDynamic::ClothDynamic_Name::Drape));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Cloth", nullptr);
 
-	//// ½ºÅ×Æ½ ¿Ê
+	// ½ºÅ×Æ½ ¿Ê
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Cloth_Static", &CClothStatic::INFO(CClothStatic::ClothStatic_Name::Hair_Long));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Cloth", nullptr);
 

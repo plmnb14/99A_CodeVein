@@ -793,8 +793,8 @@ void CPlayer::Parameter_CheckActiveSkill()
 
 void CPlayer::Parameter_CheckActiveWeapon()
 {
-	m_pUIManager->Get_Weapon_Inven()->Get_UseWeaponState(WPN_SLOT_A);
-	m_pUIManager->Get_Weapon_Inven()->Get_UseWeaponState(WPN_SLOT_B);
+	//m_pUIManager->Get_Weapon_Inven()->Get_UseWeaponState(WPN_SLOT_A);
+	//m_pUIManager->Get_Weapon_Inven()->Get_UseWeaponState(WPN_SLOT_B);
 }
 
 void CPlayer::Movement_Aiming(_float _fAngle, _float _fMovespeed)

@@ -4,7 +4,7 @@
 CWeapon_Slot::CWeapon_Slot(_Device pDevice)
 	: CUI(pDevice)
 {
-	ZeroMemory(&m_eWeaponParam, sizeof(WPN_PARAM));
+	ZeroMemory(&m_tWeaponParam, sizeof(WPN_PARAM));
 }
 
 CWeapon_Slot::CWeapon_Slot(const CWeapon_Slot & rhs)
@@ -36,25 +36,78 @@ _int CWeapon_Slot::Update_GameObject(_double TimeDelta)
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
-	switch (m_eType)
+	/*
+	Wpn_SSword, Wpn_SSword_Black, Wpn_SSword_Military, Wpn_SSword_Slave,
+	Wpn_LSword, Wpn_LSword_Black, Wpn_LSword_Military, Wpn_LSword_Slave,
+	Wpn_Halberd, Wpn_Halberd_Black, Wpn_Halberd_Military, Wpn_Halberd_Slave,
+	Wpn_Hammer, Wpn_Hammer_Black, Wpn_Hammer_Military, Wpn_Hammer_Slave,
+	Wpn_Gun, Wpn_Gun_Black, Wpn_Gun_Military, Wpn_Gun_Slave,
+	WPN_Shield_Normal, WPN_QueenShield, WPN_QueenLance, WPN_DeerKingShield, WPN_FrostBlood_IceGirl,
+	WPN_DATA_End*/
+	switch (m_tWeaponParam.iWeaponName)
 	{
-	case WEAPON_Hammer:
-		m_iIndex = 7;
-		break;
-	case WEAPON_LSword:
+	case Wpn_SSword:
 		m_iIndex = 4;
 		break;
-	case WEAPON_SSword:
-		m_iIndex = 3;
-		break;
-	case WEAPON_Gun:
+	case Wpn_SSword_Black:
 		m_iIndex = 5;
 		break;
-	case WEAPON_Halberd:
+	case Wpn_SSword_Military:
 		m_iIndex = 6;
 		break;
-	case WEAPON_None:
+	case Wpn_SSword_Slave:
+		m_iIndex = 7;
+		break;
+	case Wpn_LSword:
 		m_iIndex = 8;
+		break;
+	case Wpn_LSword_Black:
+		m_iIndex = 9;
+		break;
+	case Wpn_LSword_Military:
+		m_iIndex = 10;
+		break;
+	case Wpn_LSword_Slave:
+		m_iIndex = 11;
+		break;
+	case Wpn_Halberd:
+		m_iIndex = 12;
+		break;
+	case Wpn_Halberd_Black:
+		m_iIndex = 13;
+		break;
+	case Wpn_Halberd_Military:
+		m_iIndex = 14;
+		break;
+	case Wpn_Halberd_Slave:
+		m_iIndex = 15;
+		break;
+	case Wpn_Hammer:
+		m_iIndex = 16;
+		break;
+	case Wpn_Hammer_Black:
+		m_iIndex = 17;
+		break;
+	case Wpn_Hammer_Military:
+		m_iIndex = 18;
+		break;
+	case Wpn_Hammer_Slave:
+		m_iIndex = 19;
+		break;
+	case Wpn_Gun:
+		m_iIndex = 20;
+		break;
+	case Wpn_Gun_Black:
+		m_iIndex = 21;
+		break;
+	case Wpn_Gun_Military:
+		m_iIndex = 22;
+		break;
+	case Wpn_Gun_Slave:
+		m_iIndex = 23;
+		break;
+	default:
+		m_iIndex = 3;
 		break;
 	}
 
@@ -187,11 +240,6 @@ HRESULT CWeapon_Slot::Render_GameObject()
 _bool CWeapon_Slot::Pt_InRect()
 {
 	return g_pInput_Device->MousePt_InRect(m_fPosX, m_fPosY, m_fSizeX, m_fSizeY, g_hWnd);
-}
-
-WEAPON_STATE CWeapon_Slot::Get_Type()
-{
-	return m_eType;
 }
 
 HRESULT CWeapon_Slot::Add_Component()

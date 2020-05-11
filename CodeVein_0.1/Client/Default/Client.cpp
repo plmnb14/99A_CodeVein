@@ -7,6 +7,7 @@
 
 #include "Management.h"
 #include "SoundManager.h"
+#include "ClothManager.h"
 
 #define MAX_LOADSTRING 100
 
@@ -22,7 +23,8 @@ CFrameMgr*					g_pFrame_Manager;
 CInput_Device*				g_pInput_Device;
 CTexture*					g_pDissolveTexture;
 CMyPhysx*					g_pPhysx;
-Client::CSoundManager*				g_pSoundManager = nullptr;
+Client::CSoundManager*		g_pSoundManager = nullptr;
+Client::CClothManager*		g_pClothManager = nullptr;
 
 // ================================================
 // 스테이지를 한번이라도 들렸는지 확인하는 전역변수 (MeshLoad를 위해)
@@ -90,6 +92,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 	g_pFrame_Manager = CFrameMgr::Get_Instance();
 	g_pInput_Device = CInput_Device::Get_Instance();
 	g_pPhysx = CMyPhysx::Get_Instance();
+	g_pClothManager = CClothManager::Get_Instance();
 
 	g_pPhysx->Ready_MyPhysx();
 
@@ -147,6 +150,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 	}
 	
+	g_pClothManager->Destroy_Instance();
 	g_pSoundManager->Destroy_Instance();
 	g_pTimer_Manager->Destroy_Instance();
 	g_pFrame_Manager->Destroy_Instance();

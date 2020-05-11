@@ -152,6 +152,14 @@ private:
 	_v3					m_vBody = _v3(0.f, 0.f, 0.f);	//Spine2
 	_v3					m_vHead = _v3(0.f, 0.f, 0.f);	//Head
 
+	// 뼈 주소
+	D3DXFRAME_DERIVED*	m_pTail6Frame = nullptr;
+	D3DXFRAME_DERIVED*	m_pTail4Frame = nullptr;
+	D3DXFRAME_DERIVED*	m_pTail2Frame = nullptr;
+	D3DXFRAME_DERIVED*	m_pHeadFrame = nullptr;
+	D3DXFRAME_DERIVED*	m_pTail6_Tongue2Frame = nullptr;
+
+
 private:	// 최초상태 세팅
 	_float				m_fFov = 0.f;
 	_float				m_fMaxLength = 0.f;
