@@ -44,7 +44,7 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 	CGameObject::LateInit_GameObject();
 	CGameObject::Update_GameObject(_TimeDelta);
 
-	//Update_Collider();
+	Update_Collider();
 
 	return S_OK;
 }
@@ -102,10 +102,10 @@ HRESULT CRenderObject::Render_GameObject()
 	m_pShader->End_Shader();
 
 
-	//CGizmo::Get_Instance()->Draw_AABB(m_pCollider->Get_GizmoPos(), m_pCollider->Get_CenterPos(), m_pTransform->Get_Size());
-	//
-	//if (m_bIsSelected)
-	//	CGizmo::Get_Instance()->Draw_XYZ(m_pTransform->Get_Pos(), m_pTransform->Get_Axis(AXIS_Z), m_pTransform->Get_Axis(AXIS_X));
+	CGizmo::Get_Instance()->Draw_AABB(m_pCollider->Get_GizmoPos(), m_pCollider->Get_CenterPos(), m_pTransform->Get_Size());
+
+	if (m_bIsSelected)
+		CGizmo::Get_Instance()->Draw_XYZ(m_pTransform->Get_Pos(), m_pTransform->Get_Axis(AXIS_Z), m_pTransform->Get_Axis(AXIS_X));
 
 	return S_OK;
 }
@@ -382,13 +382,20 @@ void CRenderObject::Init_Shader()
 	// 쉐이더 재질정보 수치 입력
 	//=============================================================================================
 	_float	fEmissivePower = 5.f;	// 이미시브 : 높을 수록, 자체 발광이 강해짐.
-	_float	fSpecularPower = 1.f;	// 메탈니스 : 높을 수록, 정반사가 강해짐.
+	_float	fSpecularPower = 0.5f;	// 메탈니스 : 높을 수록, 정반사가 강해짐.
 	_float	fRoughnessPower = 1.f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
 	_float	fMinSpecular = 0.1f;	// 최소 빛	: 최소 단위의 빛을 더해줌.
 	_float	fID_R = 1.0f;	// ID_R : R채널 ID 값 , 1이 최대
 	_float	fID_G = 0.5f;	// ID_G : G채널 ID 값 , 1이 최대
 	_float	fID_B = 0.1f;	// ID_B	: B채널 ID 값 , 1이 최대
 	_float	fRimAlpha = 0.0f;	// ID_B	: B채널 ID 값 , 1이 최대
+
+	if (!lstrcmp(m_szName, L"Mesh_Home_Floor_One"))
+	{
+		fSpecularPower = 0.1f;
+		fMinSpecular = 0.f;
+		fRoughnessPower = 0.85f;
+	}
 
 	if (FAILED(m_pShader->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
 		return;

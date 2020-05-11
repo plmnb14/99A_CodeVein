@@ -184,8 +184,8 @@ void CToolView::Setup_Default()
 	CManagement::Get_Instance()->LoadMesh_FromPath(g_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Path.dat");
 	CManagement::Get_Instance()->LoadMesh_FromPath(g_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
 	CManagement::Get_Instance()->LoadMesh_FromPath(g_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Field_Gimmick_Path.dat");
-	//CManagement::Get_Instance()->LoadMesh_FromPath(g_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage00_Path.dat");
-	CManagement::Get_Instance()->LoadMesh_FromPath(g_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage01_Path.dat");
+	CManagement::Get_Instance()->LoadMesh_FromPath(g_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage00_Path.dat");
+	//CManagement::Get_Instance()->LoadMesh_FromPath(g_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage01_Path.dat");
 	//CManagement::Get_Instance()->LoadMesh_FromPath(g_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage02_Path.dat");
 	//CManagement::Get_Instance()->LoadMesh_FromPath(g_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage03_Path.dat");
 	//CManagement::Get_Instance()->LoadMesh_FromPath(g_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage04_Path.dat");

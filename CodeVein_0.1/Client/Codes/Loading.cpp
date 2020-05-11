@@ -14,6 +14,8 @@
 #include "Effect_FireFlower.h"
 #include "Effect_Parent.h"
 
+#include "NPC_Yakumo.h"
+
 #include "Player.h"
 
 #include "Weapon.h"
@@ -1286,10 +1288,9 @@ _uint CLoading::Loading_Title()
 
 	cout << "DynamicMesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
-
-	//============================================================================================================
-	//cout << "NPC 불러오는 중 . . ." << endl;
-	//g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
+	
+	cout << "NPC 불러오는 중 . . ." << endl;
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
 	//============================================================================================================
 	// 무기 불러오는 중
 	//============================================================================================================
@@ -1588,6 +1589,11 @@ _uint CLoading::Loading_Stage()
 			return E_FAIL;
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_DropItem", L"GameObject_DropItem", 200);
 
+		//============================================================================================================
+		// NPC
+		//============================================================================================================
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_NPC_Yakumo", CNPC_Yakumo::Create(m_pGraphicDev))))
+			return E_FAIL;
 		//============================================================================================================
 
 		g_bOnStage[0] = true;
