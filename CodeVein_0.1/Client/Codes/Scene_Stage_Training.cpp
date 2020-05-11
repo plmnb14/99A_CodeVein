@@ -235,17 +235,17 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//		true, _v3(-8.f, 0.f, 3.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
-	//// 얼음여자
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_IceGirl", 
-	//	&CIceGirl::INFO(10.f, 5.f, 2.f,
-	//		true, _v3(3.f, 0.f, -8.f), V3_NULL, 0));
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
+	// 얼음여자
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_IceGirl", 
+		&CIceGirl::INFO(10.f, 5.f, 2.f,
+			true, _v3(3.f, 0.f, -8.f), V3_NULL, 0));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
-	//// 불남자
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_FireBoy", 
-	//	&CFireBoy::INFO(10.f, 5.f, 2.f,
-	//		true, _v3(8.f, 0.f, -5.f), V3_NULL, 0));
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
+	// 불남자
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_FireBoy", 
+		&CFireBoy::INFO(10.f, 5.f, 2.f,
+			true, _v3(8.f, 0.f, -5.f), V3_NULL, 0));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
 	//// 사슴왕
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_DeerKing",
