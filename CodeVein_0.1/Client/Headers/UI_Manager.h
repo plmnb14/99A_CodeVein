@@ -9,6 +9,7 @@
 #include "PlayerST.h"
 #include "BossDecoUI.h"
 #include "BossHP.h"
+#include "BossNameUI.h"
 
 #include "QuickSlot.h"
 

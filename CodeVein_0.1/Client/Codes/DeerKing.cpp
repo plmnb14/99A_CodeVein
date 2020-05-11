@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\DeerKing.h"
 #include "..\Headers\Weapon.h"
+#include "..\Headers\BossHP.h"
 
 CDeerKing::CDeerKing(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CMonster(pGraphic_Device)
@@ -66,22 +67,30 @@ HRESULT CDeerKing::Ready_GameObject(void * pArg)
 
 	//////////// 아래에 주석해놓은 4줄이 본게임에서 쓸 것임, 차례대로 공격함.
 
-	//CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", false);
-	//Check_ShowValue->Set_Child(Start_Game());
-	//Start_Sel->Add_Child(Check_ShowValue);
-	//Start_Sel->Add_Child(Start_Show());
+	CBT_CompareValue* Check_ShowValue = Node_BOOL_A_Equal_Value("시연회 변수 체크", L"Show", false);
+	Check_ShowValue->Set_Child(Start_Game());
+	Start_Sel->Add_Child(Check_ShowValue);
+	Start_Sel->Add_Child(Start_Show());
 
 	////////////
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	Start_Sel->Add_Child(Blade_Attack());
+	//Start_Sel->Add_Child(Blade_Attack());
 	
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
 
 	//CBT_Wait* Wait0 = Node_Wait("대기", 1, 0);
 	//Start_Sel->Add_Child(Wait0);
+
+	/////////////
+	// UI 추가(지원)
+	m_pBossUI = static_cast<CBossHP*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BossHP", nullptr));
+	m_pBossUI->Set_UI_Pos(WINCX * 0.5f, WINCY * 0.1f);
+	m_pBossUI->Set_BossName(CBossNameUI::Index_DeerKing);
+	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBossUI, SCENE_STAGE, L"Layer_BossHP", nullptr)))
+		return E_FAIL;
 
 	return S_OK;
 }
@@ -105,6 +114,8 @@ _int CDeerKing::Update_GameObject(_double TimeDelta)
 	// 죽음 애니메이션
 	if (m_bReadyDead)
 	{
+		// 죽기전 UI 비활성화
+		m_pBossUI->Set_Active(false);
 		return NO_EVENT;
 	}
 
@@ -133,6 +144,15 @@ _int CDeerKing::Update_GameObject(_double TimeDelta)
 		if (true == m_bAIController)
 			m_pAIControllerCom->Update_AIController(TimeDelta);
 
+		// 플레이어 발견 시, UI 활성화(지원)
+		m_pBossUI->Set_Active(true);
+
+		// 보스UI 업데이트
+		// 체력이 0이 되었을때 밀림현상 방지.
+		if (0 >= m_tObjParam.fHp_Cur)
+			m_pBossUI->Set_BossHPInfo(0, 100);
+		else
+			m_pBossUI->Set_BossHPInfo(m_tObjParam.fHp_Cur, m_tObjParam.fHp_Max);
 	}
 
 	if (false == m_bReadyDead)

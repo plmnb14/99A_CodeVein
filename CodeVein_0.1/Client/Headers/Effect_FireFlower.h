@@ -13,11 +13,15 @@ class CEffect_FireFlower final : public CGameObject
 public:
 	typedef struct tagEffInfo
 	{
-		tagEffInfo(_v3 _vPos, _v3 _vDir)
-			: vCreatePos(_vPos), vDirection(_vDir)
-		{}
+		tagEffInfo(_v3 _vPos, _v3 _vDir, _float _fDelay, _tchar* _szBuff)
+			: vCreatePos(_vPos), vDirection(_vDir), fDelay(_fDelay)
+		{
+			lstrcpy(szBuff, _szBuff);
+		}
 		_v3 vCreatePos;
 		_v3 vDirection;
+		_float fDelay;
+		_tchar szBuff[STR_128];
 	}EFF_INFO;
 
 protected:
@@ -37,6 +41,8 @@ private:
 	CCollider*			m_pCollider = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
 	CEffect*			m_pBulletBody = nullptr;
+
+	TCHAR				m_szName[STR_128] = L"";
 
 	_v3					m_vPos = V3_NULL;
 	_v3					m_vDir = V3_NULL;
