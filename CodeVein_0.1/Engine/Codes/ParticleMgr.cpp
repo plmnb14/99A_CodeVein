@@ -408,8 +408,8 @@ HRESULT CParticleMgr::Ready_ParticleManager()
 	Input_Pool(L"IceFloorAura_01", 300);
 	Input_Pool(L"IceFloorAura_02", 300);
 	Input_Pool(L"IceFloorAura_03", 300);
-	Input_Pool(L"IceSmoke_01", 100);
-	Input_Pool(L"IceSmoke_02", 100);
+	Input_Pool(L"IceSmoke_01", 300);
+	Input_Pool(L"IceSmoke_02", 300);
 	Input_Pool(L"IceGirl_FlashParticle_Blue", 5000);
 	Input_Pool(L"IceGirl_FlashParticle_Green", 5000);
 	Input_Pool(L"IceGirl_PointParticle_Blue", 5000);
@@ -949,12 +949,12 @@ void CParticleMgr::Create_Effect(_tchar* szName, _v3 vPos, CTransform * pFollowT
 	{
 		if (pFindedQueue->size() <= 20) // 넉넉하게... 남은게 20 이하면 생성하여 사용
 		{
-			_tchar szTemp[256];
-			lstrcpy(szTemp, pFindedQueue->front()->Get_ParticleName());
-			CHAR szForPrint[STR_256] = "";
-			WideCharToMultiByte(CP_ACP, 0, szTemp, STR_256, szForPrint, STR_256, NULL, NULL);
-			//if(GetAsyncKeyState('B') & 0x8000)
-				cout << "Effect Create : " << szForPrint << endl;
+			//_tchar szTemp[256];
+			//lstrcpy(szTemp, pFindedQueue->front()->Get_ParticleName());
+			//CHAR szForPrint[STR_256] = "";
+			//WideCharToMultiByte(CP_ACP, 0, szTemp, STR_256, szForPrint, STR_256, NULL, NULL);
+			////if(GetAsyncKeyState('B') & 0x8000)
+			//	cout << "Effect Create : " << szForPrint << endl;
 
 			_tchar* szEffName = pFindedQueue->front()->Get_ParticleName();
 			CEffect* pEffect = static_cast<CEffect*>(m_pManagement->Clone_GameObject_Return(szEffName, nullptr));
