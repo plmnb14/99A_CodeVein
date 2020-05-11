@@ -222,7 +222,7 @@ void CArmor_Inven::Add_Armor(ARMOR_TYPE eType)
 	{
 		m_vecArmorSlot[i]->Set_Active(m_bIsActive);
 		m_vecArmorSlot[i]->Set_ViewZ(m_fViewZ - 0.1f);
-		m_vecArmorSlot[i]->Set_UI_Pos(m_fPosX - 103.f + 52.f * (i % 5), m_fPosY - 100.f + 52.f * (i / 5));
+		m_vecArmorSlot[i]->Set_UI_Pos(m_fPosX - 103.f + 52.f * (i % 5), m_fPosY - 140.f + 52.f * (i / 5));
 	}
 }
 

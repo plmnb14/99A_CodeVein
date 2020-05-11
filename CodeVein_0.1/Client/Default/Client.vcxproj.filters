@@ -466,6 +466,9 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\16. ConversationUI">
       <UniqueIdentifier>{4f0943ce-c02a-408f-af5f-6c1c94ea2eee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\02.BossUI\BossNameUI">
+      <UniqueIdentifier>{0ae4d82f-eda5-4958-8435-c97d58c9857a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -990,6 +993,9 @@
     <ClInclude Include="..\Headers\ScriptUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\16. ConversationUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\BossNameUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\02.BossUI\BossNameUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1498,6 +1504,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\ScriptUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\16. ConversationUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BossNameUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\02.BossUI\BossNameUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -117,6 +117,9 @@ namespace Engine
 		EXE_WPN		eExecutionWpn;	// 처형 시 무기
 		EXE_TYPE	eExecutionType;	// 처형 시 타입
 
+		_short		sMana_Cur;		// 스킬 마나
+		_short		sMana_Max;		// 스킬 마나 맥스
+
 	}OBJECT_PARAM;
 
 	typedef struct tagSkillInfo

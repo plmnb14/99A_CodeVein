@@ -3122,7 +3122,6 @@ void CPlayer_Colleague::Free()
 
 	// µ¿·á Transfrom
 	Safe_Release(m_pTransformCom);
-
 	Safe_Release(m_pDynamicMesh);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);

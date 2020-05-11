@@ -427,6 +427,8 @@ HRESULT CRenderer::Draw_RenderList()
 	// ÈÄÃ³¸®
 	if (FAILED(Render_After()))
 		return E_FAIL;
+	if (FAILED(Render_UI_Back()))
+		return E_FAIL;
 	if (FAILED(Render_3dUI()))
 		return E_FAIL;
 	if (FAILED(Render_UI()))
@@ -890,6 +892,26 @@ HRESULT CRenderer::Render_Instance()
 	m_RenderList[RENDER_INSTANCE].clear();
 
 	m_pShader_Effect->End_Shader();
+
+	return NOERROR;
+}
+
+HRESULT CRenderer::Render_UI_Back()
+{
+	for (auto& pGameObject : m_RenderList[RENDER_UI_BACK])
+	{
+		if (nullptr != pGameObject)
+		{
+			if (FAILED(pGameObject->Render_GameObject()))
+			{
+				Safe_Release(pGameObject);
+				return E_FAIL;
+			}
+			Safe_Release(pGameObject);
+		}
+	}
+
+	m_RenderList[RENDER_UI_BACK].clear();
 
 	return NOERROR;
 }

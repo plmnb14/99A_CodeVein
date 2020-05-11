@@ -78,7 +78,7 @@ HRESULT CIceGirl::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	//Start_Sel->Add_Child(ThreeCombo_Cut1());
+	//Start_Sel->Add_Child(Start_Game());
 
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -174,23 +174,23 @@ _int CIceGirl::Late_Update_GameObject(_double TimeDelta)
 	//=============================================================================================
 	// 그림자랑 모션블러는 프리스텀 안에 없으면 안그림
 	//=============================================================================================
+	if (!m_bDissolve)
+	{
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
+			return E_FAIL;
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
+			return E_FAIL;
+	}
+
+	else
+	{
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
+			return E_FAIL;
+	}
+
 	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
 	{
-		if (!m_bDissolve)
-		{
-			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
-				return E_FAIL;
-			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-				return E_FAIL;
-		}
-
-		else
-		{
-			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
-				return E_FAIL;
-		}
-	
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
 			return E_FAIL;
 	}
 	//=============================================================================================
@@ -362,11 +362,10 @@ CBT_Composite_Node * CIceGirl::Turn_Cut(_float fWeight)
 	CBT_CreateEffect* Effect4 = Node_CreateEffect_Finite("칼 냉기 스모크1", L"IceSmoke_01", L"Sword_MidPos", 0.2, 150, 0, 0);
 	CBT_CreateEffect* Effect5 = Node_CreateEffect_Finite("칼 냉기 스모크2", L"IceSmoke_02", L"Sword_MidPos", 0.2, 150, 0, 0);
 
-	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("파랑 원 파티클", L"IceGirl_PointParticle_Blue", L"Sword_MidPos"			, 0.38, 80, 0, 0);
+	CBT_CreateEffect* Effect6 = Node_CreateEffect_Finite("파랑 원 파티클", L"IceGirl_PointParticle_Blue", L"Sword_MidPos"		, 0.38, 80, 0, 0);
 	CBT_CreateEffect* Effect7 = Node_CreateEffect_Finite("초록 원 파티클", L"IceGirl_PointParticle_Green", L"Sword_MidPos"		, 0.38, 80, 0, 0);
-	CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("파랑 반짝이 파티클", L"IceGirl_FlashParticle_Blue", L"Sword_MidPos"		, 0.38, 80, 0, 0);
+	CBT_CreateEffect* Effect8 = Node_CreateEffect_Finite("파랑 반짝이 파티클", L"IceGirl_FlashParticle_Blue", L"Sword_MidPos"	, 0.38, 80, 0, 0);
 	CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("초록 반짝이 파티클", L"IceGirl_FlashParticle_Green", L"Sword_MidPos"	, 0.38, 80, 0, 0);
-	CBT_CreateEffect* Effect10 = Node_CreateEffect_Finite("흰 눈 파티클", L"IceGirl_SlashSnowParticle_0", L"Sword_MidPos"		, 0.38, 1, 0, 0);
 
 	Root_Parallel->Add_Service(Effect1);
 	Root_Parallel->Add_Service(Effect2);
@@ -377,7 +376,6 @@ CBT_Composite_Node * CIceGirl::Turn_Cut(_float fWeight)
 	Root_Parallel->Add_Service(Effect7);
 	Root_Parallel->Add_Service(Effect8);
 	Root_Parallel->Add_Service(Effect9);
-	Root_Parallel->Add_Service(Effect10);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani28);;
@@ -436,23 +434,20 @@ CBT_Composite_Node * CIceGirl::ThreeCombo_Cut1()
 	CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("칼 냉기 스모크1", L"IceSmoke_01"	, L"Sword_MidPos"	, 0.2, 150, 0, 0);
 	CBT_CreateEffect* Effect10 = Node_CreateEffect_Finite("칼 냉기 스모크2", L"IceSmoke_02"	, L"Sword_MidPos"	, 0.2, 150, 0, 0);
 	
-	CBT_CreateEffect* Effect11 = Node_CreateEffect_Finite("파랑 원 파티클", L"IceGirl_PointParticle_Blue"			, L"Sword_MidPos"	, 0.38, 60, 0, 0);
-	CBT_CreateEffect* Effect12 = Node_CreateEffect_Finite("초록 원 파티클", L"IceGirl_PointParticle_Green"		, L"Sword_MidPos"	, 0.38, 60, 0, 0);
-	CBT_CreateEffect* Effect13 = Node_CreateEffect_Finite("파랑 반짝이 파티클", L"IceGirl_FlashParticle_Blue"		, L"Sword_MidPos"	, 0.38, 60, 0, 0);
-	CBT_CreateEffect* Effect14 = Node_CreateEffect_Finite("초록 반짝이 파티클", L"IceGirl_FlashParticle_Green"	, L"Sword_MidPos"	, 0.38, 60, 0, 0);
-	CBT_CreateEffect* Effect23 = Node_CreateEffect_Finite("흰 눈 파티클", L"IceGirl_SlashSnowParticle_0"			, L"Sword_MidPos"	, 0.38, 1, 0, 0);
+	CBT_CreateEffect* Effect11 = Node_CreateEffect_Finite("파랑 원 파티클", L"IceGirl_PointParticle_Blue"			, L"Sword_MidPos"	, 0.38, 80, 0, 0);
+	CBT_CreateEffect* Effect12 = Node_CreateEffect_Finite("초록 원 파티클", L"IceGirl_PointParticle_Green"		, L"Sword_MidPos"	, 0.38, 80, 0, 0);
+	CBT_CreateEffect* Effect13 = Node_CreateEffect_Finite("파랑 반짝이 파티클", L"IceGirl_FlashParticle_Blue"		, L"Sword_MidPos"	, 0.38, 80, 0, 0);
+	CBT_CreateEffect* Effect14 = Node_CreateEffect_Finite("초록 반짝이 파티클", L"IceGirl_FlashParticle_Green"	, L"Sword_MidPos"	, 0.38, 80, 0, 0);
 	
-	CBT_CreateEffect* Effect15 = Node_CreateEffect_Finite("파랑 원 파티클", L"IceGirl_PointParticle_Blue"			, L"Sword_MidPos"	, 1.08, 60, 0, 0);
-	CBT_CreateEffect* Effect16 = Node_CreateEffect_Finite("초록 원 파티클", L"IceGirl_PointParticle_Green"		, L"Sword_MidPos"	, 1.08, 60, 0, 0);
-	CBT_CreateEffect* Effect17 = Node_CreateEffect_Finite("파랑 반짝이 파티클", L"IceGirl_FlashParticle_Blue"		, L"Sword_MidPos"	, 1.08, 60, 0, 0);
-	CBT_CreateEffect* Effect18 = Node_CreateEffect_Finite("초록 반짝이 파티클", L"IceGirl_FlashParticle_Green"	, L"Sword_MidPos"	, 1.08, 60, 0, 0);
-	CBT_CreateEffect* Effect24 = Node_CreateEffect_Finite("흰 눈 파티클", L"IceGirl_SlashSnowParticle_0"			, L"Sword_MidPos"	, 1.08, 1, 0, 0);
+	CBT_CreateEffect* Effect15 = Node_CreateEffect_Finite("파랑 원 파티클", L"IceGirl_PointParticle_Blue"			, L"Sword_MidPos"	, 1, 80, 0, 0);
+	CBT_CreateEffect* Effect16 = Node_CreateEffect_Finite("초록 원 파티클", L"IceGirl_PointParticle_Green"		, L"Sword_MidPos"	, 1, 80, 0, 0);
+	CBT_CreateEffect* Effect17 = Node_CreateEffect_Finite("파랑 반짝이 파티클", L"IceGirl_FlashParticle_Blue"		, L"Sword_MidPos"	, 1, 80, 0, 0);
+	CBT_CreateEffect* Effect18 = Node_CreateEffect_Finite("초록 반짝이 파티클", L"IceGirl_FlashParticle_Green"	, L"Sword_MidPos"	, 1, 80, 0, 0);
 	
-	CBT_CreateEffect* Effect19 = Node_CreateEffect_Finite("파랑 원 파티클", L"IceGirl_PointParticle_Blue"			, L"Sword_MidPos"	, 1.88, 60, 0, 0);
-	CBT_CreateEffect* Effect20 = Node_CreateEffect_Finite("초록 원 파티클", L"IceGirl_PointParticle_Green"		, L"Sword_MidPos"	, 1.88, 60, 0, 0);
-	CBT_CreateEffect* Effect21 = Node_CreateEffect_Finite("파랑 반짝이 파티클", L"IceGirl_FlashParticle_Blue"		, L"Sword_MidPos"	, 1.88, 60, 0, 0);
-	CBT_CreateEffect* Effect22 = Node_CreateEffect_Finite("초록 반짝이 파티클", L"IceGirl_FlashParticle_Green"	, L"Sword_MidPos"	, 1.88, 60, 0, 0);
-	CBT_CreateEffect* Effect25 = Node_CreateEffect_Finite("흰 눈 파티클", L"IceGirl_SlashSnowParticle_0"			, L"Sword_MidPos"	, 1.88, 1, 0, 0);
+	CBT_CreateEffect* Effect19 = Node_CreateEffect_Finite("파랑 원 파티클", L"IceGirl_PointParticle_Blue"			, L"Sword_MidPos"	, 1.6, 80, 0, 0);
+	CBT_CreateEffect* Effect20 = Node_CreateEffect_Finite("초록 원 파티클", L"IceGirl_PointParticle_Green"		, L"Sword_MidPos"	, 1.6, 80, 0, 0);
+	CBT_CreateEffect* Effect21 = Node_CreateEffect_Finite("파랑 반짝이 파티클", L"IceGirl_FlashParticle_Blue"		, L"Sword_MidPos"	, 1.6, 80, 0, 0);
+	CBT_CreateEffect* Effect22 = Node_CreateEffect_Finite("초록 반짝이 파티클", L"IceGirl_FlashParticle_Green"	, L"Sword_MidPos"	, 1.6, 80, 0, 0);
 
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
@@ -477,9 +472,6 @@ CBT_Composite_Node * CIceGirl::ThreeCombo_Cut1()
 	Root_Parallel->Add_Service(Effect20);
 	Root_Parallel->Add_Service(Effect21);
 	Root_Parallel->Add_Service(Effect22);
-	Root_Parallel->Add_Service(Effect23);
-	Root_Parallel->Add_Service(Effect24);
-	Root_Parallel->Add_Service(Effect25);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani32);
@@ -551,23 +543,20 @@ CBT_Composite_Node * CIceGirl::ThreeCombo_Cut2()
 	CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("칼 냉기 스모크1", L"IceSmoke_01"	, L"Sword_MidPos"	, 0.2, 180, 0, 0);
 	CBT_CreateEffect* Effect10 = Node_CreateEffect_Finite("칼 냉기 스모크2", L"IceSmoke_02"	, L"Sword_MidPos"	, 0.2, 180, 0, 0);
 	
-	CBT_CreateEffect* Effect11 = Node_CreateEffect_Finite("파랑 원모양 파티클", L"IceGirl_PointParticle_Blue"	, L"Sword_MidPos"		, 0.38, 60, 0, 0);
-	CBT_CreateEffect* Effect12 = Node_CreateEffect_Finite("초록 원모양 파티클", L"IceGirl_PointParticle_Green"	, L"Sword_MidPos"	, 0.38, 60, 0, 0);
-	CBT_CreateEffect* Effect13 = Node_CreateEffect_Finite("파랑 반짝이 파티클", L"IceGirl_FlashParticle_Blue"	, L"Sword_MidPos"		, 0.38, 60, 0, 0);
-	CBT_CreateEffect* Effect14 = Node_CreateEffect_Finite("초록 반짝이 파티클", L"IceGirl_FlashParticle_Green"	, L"Sword_MidPos"	, 0.38, 60, 0, 0);
-	CBT_CreateEffect* Effect23 = Node_CreateEffect_Finite("흰 눈 파티클", L"IceGirl_SlashSnowParticle_0"			, L"Sword_MidPos"	, 0.38, 1, 0, 0);
+	CBT_CreateEffect* Effect11 = Node_CreateEffect_Finite("파랑 원모양 파티클", L"IceGirl_PointParticle_Blue"	, L"Sword_MidPos"	, 0.38, 80, 0, 0);
+	CBT_CreateEffect* Effect12 = Node_CreateEffect_Finite("초록 원모양 파티클", L"IceGirl_PointParticle_Green"	, L"Sword_MidPos"	, 0.38, 80, 0, 0);
+	CBT_CreateEffect* Effect13 = Node_CreateEffect_Finite("파랑 반짝이 파티클", L"IceGirl_FlashParticle_Blue"	, L"Sword_MidPos"	, 0.38, 80, 0, 0);
+	CBT_CreateEffect* Effect14 = Node_CreateEffect_Finite("초록 반짝이 파티클", L"IceGirl_FlashParticle_Green"	, L"Sword_MidPos"	, 0.38, 80, 0, 0);
 	
-	CBT_CreateEffect* Effect15 = Node_CreateEffect_Finite("파랑 원모양 파티클", L"IceGirl_PointParticle_Blue"	, L"Sword_MidPos"		, 1, 60, 0, 0);
-	CBT_CreateEffect* Effect16 = Node_CreateEffect_Finite("초록 원모양 파티클", L"IceGirl_PointParticle_Green"	, L"Sword_MidPos"	, 1, 60, 0, 0);
-	CBT_CreateEffect* Effect17 = Node_CreateEffect_Finite("파랑 반짝이 파티클", L"IceGirl_FlashParticle_Blue"	, L"Sword_MidPos"		, 1, 60, 0, 0);
-	CBT_CreateEffect* Effect18 = Node_CreateEffect_Finite("초록 반짝이 파티클", L"IceGirl_FlashParticle_Green"	, L"Sword_MidPos"	, 1, 60, 0, 0);
-	CBT_CreateEffect* Effect24 = Node_CreateEffect_Finite("흰 눈 파티클", L"IceGirl_SlashSnowParticle_0"			, L"Sword_MidPos"	, 1, 1, 0, 0);
+	CBT_CreateEffect* Effect15 = Node_CreateEffect_Finite("파랑 원모양 파티클", L"IceGirl_PointParticle_Blue"	, L"Sword_MidPos"	, 1, 80, 0, 0);
+	CBT_CreateEffect* Effect16 = Node_CreateEffect_Finite("초록 원모양 파티클", L"IceGirl_PointParticle_Green"	, L"Sword_MidPos"	, 1, 80, 0, 0);
+	CBT_CreateEffect* Effect17 = Node_CreateEffect_Finite("파랑 반짝이 파티클", L"IceGirl_FlashParticle_Blue"	, L"Sword_MidPos"	, 1, 80, 0, 0);
+	CBT_CreateEffect* Effect18 = Node_CreateEffect_Finite("초록 반짝이 파티클", L"IceGirl_FlashParticle_Green"	, L"Sword_MidPos"	, 1, 80, 0, 0);
 	
-	CBT_CreateEffect* Effect19 = Node_CreateEffect_Finite("파랑 원모양 파티클", L"IceGirl_PointParticle_Blue"	, L"Sword_MidPos"		, 1.95, 60, 0, 0);
-	CBT_CreateEffect* Effect20 = Node_CreateEffect_Finite("초록 원모양 파티클", L"IceGirl_PointParticle_Green"	, L"Sword_MidPos"	, 1.95, 60, 0, 0);
-	CBT_CreateEffect* Effect21 = Node_CreateEffect_Finite("파랑 반짝이 파티클", L"IceGirl_FlashParticle_Blue"	, L"Sword_MidPos"		, 1.95, 60, 0, 0);
-	CBT_CreateEffect* Effect22 = Node_CreateEffect_Finite("초록 반짝이 파티클", L"IceGirl_FlashParticle_Green"	, L"Sword_MidPos"	, 1.95, 60, 0, 0);
-	CBT_CreateEffect* Effect25 = Node_CreateEffect_Finite("흰 눈 파티클", L"IceGirl_SlashSnowParticle_0"			, L"Sword_MidPos"	, 1.95, 1, 0, 0);
+	CBT_CreateEffect* Effect19 = Node_CreateEffect_Finite("파랑 원모양 파티클", L"IceGirl_PointParticle_Blue"	, L"Sword_MidPos"	, 1.95, 80, 0, 0);
+	CBT_CreateEffect* Effect20 = Node_CreateEffect_Finite("초록 원모양 파티클", L"IceGirl_PointParticle_Green"	, L"Sword_MidPos"	, 1.95, 80, 0, 0);
+	CBT_CreateEffect* Effect21 = Node_CreateEffect_Finite("파랑 반짝이 파티클", L"IceGirl_FlashParticle_Blue"	, L"Sword_MidPos"	, 1.95, 80, 0, 0);
+	CBT_CreateEffect* Effect22 = Node_CreateEffect_Finite("초록 반짝이 파티클", L"IceGirl_FlashParticle_Green"	, L"Sword_MidPos"	, 1.95, 80, 0, 0);
 
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
@@ -592,9 +581,6 @@ CBT_Composite_Node * CIceGirl::ThreeCombo_Cut2()
 	Root_Parallel->Add_Service(Effect20);
 	Root_Parallel->Add_Service(Effect21);
 	Root_Parallel->Add_Service(Effect22);
-	Root_Parallel->Add_Service(Effect23);
-	Root_Parallel->Add_Service(Effect24);
-	Root_Parallel->Add_Service(Effect25);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani32);
@@ -968,12 +954,10 @@ CBT_Composite_Node * CIceGirl::Dodge_Left()
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_01", L"Self_Foot", 0.1, 15, 0, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_02", L"Self_Foot", 0.1, 15, 0, 0);
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_03", L"Self_Foot", 0.1, 15, 0, 0);
-	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("흰 눈 파티클", L"IceGirl_SlashSnowParticle_0", L"Self_Foot", 0.1, 1, 0, 0);
 
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
 	Root_Parallel->Add_Service(Effect2);
-	Root_Parallel->Add_Service(Effect3);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani9);
@@ -1011,12 +995,10 @@ CBT_Composite_Node * CIceGirl::Dodge_Right()
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_01", L"Self_Foot", 0.1, 15, 0, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_02", L"Self_Foot", 0.1, 15, 0, 0);
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_03", L"Self_Foot", 0.1, 15, 0, 0);
-	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("흰 눈 파티클", L"IceGirl_SlashSnowParticle_0", L"Self_Foot", 0.1, 1, 0, 0);
 
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
 	Root_Parallel->Add_Service(Effect2);
-	Root_Parallel->Add_Service(Effect3);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani8);
@@ -1054,12 +1036,10 @@ CBT_Composite_Node * CIceGirl::Dodge_Front()
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_01", L"Self_Foot", 0.1, 15, 0, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_02", L"Self_Foot", 0.1, 15, 0, 0);
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_03", L"Self_Foot", 0.1, 15, 0, 0);
-	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("흰 눈 파티클", L"IceGirl_SlashSnowParticle_0", L"Self_Foot", 0.1, 1, 0, 0);
 
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
 	Root_Parallel->Add_Service(Effect2);
-	Root_Parallel->Add_Service(Effect3);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani10);
@@ -1097,12 +1077,10 @@ CBT_Composite_Node * CIceGirl::Dodge_Back()
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_01", L"Self_Foot", 0.1, 15, 0, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_02", L"Self_Foot", 0.1, 15, 0, 0);
 	CBT_CreateEffect* Effect2 = Node_CreateEffect_Finite("바닥 얼음 오오라", L"IceFloorAura_03", L"Self_Foot", 0.1, 15, 0, 0);
-	CBT_CreateEffect* Effect3 = Node_CreateEffect_Finite("흰 눈 파티클", L"IceGirl_SlashSnowParticle_0", L"Self_Foot", 0.1, 1, 0, 0);
 
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
 	Root_Parallel->Add_Service(Effect2);
-	Root_Parallel->Add_Service(Effect3);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani11);
@@ -1164,23 +1142,20 @@ CBT_Composite_Node * CIceGirl::Chase_ThreeCombo_Cut1()
 	CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("칼 냉기 스모크1", L"IceSmoke_01", L"Sword_MidPos", 0.2, 150, 0, 0);
 	CBT_CreateEffect* Effect10 = Node_CreateEffect_Finite("칼 냉기 스모크2", L"IceSmoke_02", L"Sword_MidPos", 0.2, 150, 0, 0);
 
-	CBT_CreateEffect* Effect11 = Node_CreateEffect_Finite("파랑 원 파티클", L"IceGirl_PointParticle_Blue", L"Sword_MidPos"		, 0.38, 70, 0, 0);
-	CBT_CreateEffect* Effect12 = Node_CreateEffect_Finite("초록 원 파티클", L"IceGirl_PointParticle_Green", L"Sword_MidPos"		, 0.38, 70, 0, 0);
-	CBT_CreateEffect* Effect13 = Node_CreateEffect_Finite("파랑 반짝이 파티클", L"IceGirl_FlashParticle_Blue", L"Sword_MidPos"	, 0.38, 70, 0, 0);
-	CBT_CreateEffect* Effect14 = Node_CreateEffect_Finite("초록 반짝이 파티클", L"IceGirl_FlashParticle_Green", L"Sword_MidPos"	, 0.38, 70, 0, 0);
-	CBT_CreateEffect* Effect23 = Node_CreateEffect_Finite("흰 눈 파티클", L"IceGirl_SlashSnowParticle_0", L"Self_Foot"			, 0.38, 1, 0, 0);
+	CBT_CreateEffect* Effect11 = Node_CreateEffect_Finite("파랑 원 파티클", L"IceGirl_PointParticle_Blue", L"Sword_MidPos", 0.38, 80, 0, 0);
+	CBT_CreateEffect* Effect12 = Node_CreateEffect_Finite("초록 원 파티클", L"IceGirl_PointParticle_Green", L"Sword_MidPos", 0.38, 80, 0, 0);
+	CBT_CreateEffect* Effect13 = Node_CreateEffect_Finite("파랑 반짝이 파티클", L"IceGirl_FlashParticle_Blue", L"Sword_MidPos", 0.38, 80, 0, 0);
+	CBT_CreateEffect* Effect14 = Node_CreateEffect_Finite("초록 반짝이 파티클", L"IceGirl_FlashParticle_Green", L"Sword_MidPos", 0.38, 80, 0, 0);
 
-	CBT_CreateEffect* Effect15 = Node_CreateEffect_Finite("파랑 원 파티클", L"IceGirl_PointParticle_Blue", L"Sword_MidPos"		, 1, 70, 0, 0);
-	CBT_CreateEffect* Effect16 = Node_CreateEffect_Finite("초록 원 파티클", L"IceGirl_PointParticle_Green", L"Sword_MidPos"		, 1, 70, 0, 0);
-	CBT_CreateEffect* Effect17 = Node_CreateEffect_Finite("파랑 반짝이 파티클", L"IceGirl_FlashParticle_Blue", L"Sword_MidPos"	, 1, 70, 0, 0);
-	CBT_CreateEffect* Effect18 = Node_CreateEffect_Finite("초록 반짝이 파티클", L"IceGirl_FlashParticle_Green", L"Sword_MidPos"	, 1, 70, 0, 0);
-	CBT_CreateEffect* Effect24 = Node_CreateEffect_Finite("흰 눈 파티클", L"IceGirl_SlashSnowParticle_0", L"Self_Foot"			 ,1, 1, 0, 0);
+	CBT_CreateEffect* Effect15 = Node_CreateEffect_Finite("파랑 원 파티클", L"IceGirl_PointParticle_Blue", L"Sword_MidPos", 1, 80, 0, 0);
+	CBT_CreateEffect* Effect16 = Node_CreateEffect_Finite("초록 원 파티클", L"IceGirl_PointParticle_Green", L"Sword_MidPos", 1, 80, 0, 0);
+	CBT_CreateEffect* Effect17 = Node_CreateEffect_Finite("파랑 반짝이 파티클", L"IceGirl_FlashParticle_Blue", L"Sword_MidPos", 1, 80, 0, 0);
+	CBT_CreateEffect* Effect18 = Node_CreateEffect_Finite("초록 반짝이 파티클", L"IceGirl_FlashParticle_Green", L"Sword_MidPos", 1, 80, 0, 0);
 
-	CBT_CreateEffect* Effect19 = Node_CreateEffect_Finite("파랑 원 파티클", L"IceGirl_PointParticle_Blue", L"Sword_MidPos"		, 1.6, 70, 0, 0);
-	CBT_CreateEffect* Effect20 = Node_CreateEffect_Finite("초록 원 파티클", L"IceGirl_PointParticle_Green", L"Sword_MidPos"		, 1.6, 70, 0, 0);
-	CBT_CreateEffect* Effect21 = Node_CreateEffect_Finite("파랑 반짝이 파티클", L"IceGirl_FlashParticle_Blue", L"Sword_MidPos"	, 1.6, 70, 0, 0);
-	CBT_CreateEffect* Effect22 = Node_CreateEffect_Finite("초록 반짝이 파티클", L"IceGirl_FlashParticle_Green", L"Sword_MidPos"	, 1.6, 70, 0, 0);
-	CBT_CreateEffect* Effect25 = Node_CreateEffect_Finite("흰 눈 파티클", L"IceGirl_SlashSnowParticle_0", L"Self_Foot"			, 1.6, 1, 0, 0);
+	CBT_CreateEffect* Effect19 = Node_CreateEffect_Finite("파랑 원 파티클", L"IceGirl_PointParticle_Blue", L"Sword_MidPos", 1.6, 80, 0, 0);
+	CBT_CreateEffect* Effect20 = Node_CreateEffect_Finite("초록 원 파티클", L"IceGirl_PointParticle_Green", L"Sword_MidPos", 1.6, 80, 0, 0);
+	CBT_CreateEffect* Effect21 = Node_CreateEffect_Finite("파랑 반짝이 파티클", L"IceGirl_FlashParticle_Blue", L"Sword_MidPos", 1.6, 80, 0, 0);
+	CBT_CreateEffect* Effect22 = Node_CreateEffect_Finite("초록 반짝이 파티클", L"IceGirl_FlashParticle_Green", L"Sword_MidPos", 1.6, 80, 0, 0);
 
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
@@ -1205,9 +1180,6 @@ CBT_Composite_Node * CIceGirl::Chase_ThreeCombo_Cut1()
 	Root_Parallel->Add_Service(Effect20);
 	Root_Parallel->Add_Service(Effect21);
 	Root_Parallel->Add_Service(Effect22);
-	Root_Parallel->Add_Service(Effect23);
-	Root_Parallel->Add_Service(Effect24);
-	Root_Parallel->Add_Service(Effect25);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani32);
@@ -1285,23 +1257,20 @@ CBT_Composite_Node * CIceGirl::Chase_ThreeCombo_Cut2()
 	CBT_CreateEffect* Effect9 = Node_CreateEffect_Finite("칼 냉기 스모크1", L"IceSmoke_01", L"Sword_MidPos", 0.2, 180, 0, 0);
 	CBT_CreateEffect* Effect10 = Node_CreateEffect_Finite("칼 냉기 스모크2", L"IceSmoke_02", L"Sword_MidPos", 0.2, 180, 0, 0);
 
-	CBT_CreateEffect* Effect11 = Node_CreateEffect_Finite("파랑 원모양 파티클", L"IceGirl_PointParticle_Blue", L"Sword_MidPos"	, 0.38, 70, 0, 0);
-	CBT_CreateEffect* Effect12 = Node_CreateEffect_Finite("초록 원모양 파티클", L"IceGirl_PointParticle_Green", L"Sword_MidPos"	, 0.38, 70, 0, 0);
-	CBT_CreateEffect* Effect13 = Node_CreateEffect_Finite("파랑 반짝이 파티클", L"IceGirl_FlashParticle_Blue", L"Sword_MidPos"	, 0.38, 70, 0, 0);
-	CBT_CreateEffect* Effect14 = Node_CreateEffect_Finite("초록 반짝이 파티클", L"IceGirl_FlashParticle_Green", L"Sword_MidPos"	, 0.38, 70, 0, 0);
-	CBT_CreateEffect* Effect23 = Node_CreateEffect_Finite("흰 눈 파티클", L"IceGirl_SlashSnowParticle_0", L"Self_Foot"			 ,0.38, 1, 0, 0);
+	CBT_CreateEffect* Effect11 = Node_CreateEffect_Finite("파랑 원모양 파티클", L"IceGirl_PointParticle_Blue", L"Sword_MidPos", 0.38, 80, 0, 0);
+	CBT_CreateEffect* Effect12 = Node_CreateEffect_Finite("초록 원모양 파티클", L"IceGirl_PointParticle_Green", L"Sword_MidPos", 0.38, 80, 0, 0);
+	CBT_CreateEffect* Effect13 = Node_CreateEffect_Finite("파랑 반짝이 파티클", L"IceGirl_FlashParticle_Blue", L"Sword_MidPos", 0.38, 80, 0, 0);
+	CBT_CreateEffect* Effect14 = Node_CreateEffect_Finite("초록 반짝이 파티클", L"IceGirl_FlashParticle_Green", L"Sword_MidPos", 0.38, 80, 0, 0);
 
-	CBT_CreateEffect* Effect15 = Node_CreateEffect_Finite("파랑 원모양 파티클", L"IceGirl_PointParticle_Blue", L"Sword_MidPos"	, 1, 70, 0, 0);
-	CBT_CreateEffect* Effect16 = Node_CreateEffect_Finite("초록 원모양 파티클", L"IceGirl_PointParticle_Green", L"Sword_MidPos"	, 1, 70, 0, 0);
-	CBT_CreateEffect* Effect17 = Node_CreateEffect_Finite("파랑 반짝이 파티클", L"IceGirl_FlashParticle_Blue", L"Sword_MidPos"	, 1, 70, 0, 0);
-	CBT_CreateEffect* Effect18 = Node_CreateEffect_Finite("초록 반짝이 파티클", L"IceGirl_FlashParticle_Green", L"Sword_MidPos"	, 1, 70, 0, 0);
-	CBT_CreateEffect* Effect24 = Node_CreateEffect_Finite("흰 눈 파티클", L"IceGirl_SlashSnowParticle_0", L"Self_Foot"			 ,1, 1, 0, 0);
+	CBT_CreateEffect* Effect15 = Node_CreateEffect_Finite("파랑 원모양 파티클", L"IceGirl_PointParticle_Blue", L"Sword_MidPos", 1, 80, 0, 0);
+	CBT_CreateEffect* Effect16 = Node_CreateEffect_Finite("초록 원모양 파티클", L"IceGirl_PointParticle_Green", L"Sword_MidPos", 1, 80, 0, 0);
+	CBT_CreateEffect* Effect17 = Node_CreateEffect_Finite("파랑 반짝이 파티클", L"IceGirl_FlashParticle_Blue", L"Sword_MidPos", 1, 80, 0, 0);
+	CBT_CreateEffect* Effect18 = Node_CreateEffect_Finite("초록 반짝이 파티클", L"IceGirl_FlashParticle_Green", L"Sword_MidPos", 1, 80, 0, 0);
 
-	CBT_CreateEffect* Effect19 = Node_CreateEffect_Finite("파랑 원모양 파티클", L"IceGirl_PointParticle_Blue", L"Sword_MidPos"	, 1.95, 70, 0, 0);
-	CBT_CreateEffect* Effect20 = Node_CreateEffect_Finite("초록 원모양 파티클", L"IceGirl_PointParticle_Green", L"Sword_MidPos"	, 1.95, 70, 0, 0);
-	CBT_CreateEffect* Effect21 = Node_CreateEffect_Finite("파랑 반짝이 파티클", L"IceGirl_FlashParticle_Blue", L"Sword_MidPos"	, 1.95, 70, 0, 0);
-	CBT_CreateEffect* Effect22 = Node_CreateEffect_Finite("초록 반짝이 파티클", L"IceGirl_FlashParticle_Green", L"Sword_MidPos"	, 1.95, 70, 0, 0);
-	CBT_CreateEffect* Effect25 = Node_CreateEffect_Finite("흰 눈 파티클", L"IceGirl_SlashSnowParticle_0", L"Self_Foot"			 ,1.95, 1, 0, 0);
+	CBT_CreateEffect* Effect19 = Node_CreateEffect_Finite("파랑 원모양 파티클", L"IceGirl_PointParticle_Blue", L"Sword_MidPos", 1.95, 80, 0, 0);
+	CBT_CreateEffect* Effect20 = Node_CreateEffect_Finite("초록 원모양 파티클", L"IceGirl_PointParticle_Green", L"Sword_MidPos", 1.95, 80, 0, 0);
+	CBT_CreateEffect* Effect21 = Node_CreateEffect_Finite("파랑 반짝이 파티클", L"IceGirl_FlashParticle_Blue", L"Sword_MidPos", 1.95, 80, 0, 0);
+	CBT_CreateEffect* Effect22 = Node_CreateEffect_Finite("초록 반짝이 파티클", L"IceGirl_FlashParticle_Green", L"Sword_MidPos", 1.95, 80, 0, 0);
 
 	Root_Parallel->Add_Service(Effect0);
 	Root_Parallel->Add_Service(Effect1);
@@ -1326,9 +1295,6 @@ CBT_Composite_Node * CIceGirl::Chase_ThreeCombo_Cut2()
 	Root_Parallel->Add_Service(Effect20);
 	Root_Parallel->Add_Service(Effect21);
 	Root_Parallel->Add_Service(Effect22);
-	Root_Parallel->Add_Service(Effect23);
-	Root_Parallel->Add_Service(Effect24);
-	Root_Parallel->Add_Service(Effect25);
 
 	Root_Parallel->Set_Main_Child(MainSeq);
 	MainSeq->Add_Child(Show_Ani32);

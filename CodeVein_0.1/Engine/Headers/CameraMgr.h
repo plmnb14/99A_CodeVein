@@ -43,6 +43,10 @@ public:
 
 	void Set_OnAimingTarget(_bool _bOnAim);
 	void Set_AimingTarget(CGameObject* pAimingTarget);
+	void Set_AimUI(_bool _bAimUI);
+
+	void Set_AimYPos(_float fYPos);
+	void Set_AimXPosMulti(_float _fMuti);
 
 	void Set_MouseCtrl(_bool _bMouseCtrl);
 

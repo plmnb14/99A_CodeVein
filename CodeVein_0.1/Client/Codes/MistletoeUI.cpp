@@ -69,7 +69,7 @@ _int CMistletoeUI::Update_GameObject(_double TimeDelta)
 	V3_NORMAL_SELF(&vRight);
 
 	// x 축 방향벡터 + 플레이어
-	_v3 vPosition = pTargetTrans->Get_Pos() + (vRight * 1.f) + vLook + (WORLD_UP * 1.5f);
+	_v3 vPosition = pTargetTrans->Get_Pos() + vLook + vRight + (WORLD_UP * 1.5f);
 	m_pTransformCom->Set_Pos(vPosition);
 	
 	_float fOriginYRadian = pTargetTrans->Get_Angle().y;

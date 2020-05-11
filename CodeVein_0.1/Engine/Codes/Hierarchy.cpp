@@ -44,8 +44,6 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 
 	pMeshContainer->MeshData.Type = D3DXMESHTYPE_MESH;
 
-
-
 	LPD3DXMESH		pMesh = pMeshData->pMesh;
 	Safe_AddRef(pMesh);
 

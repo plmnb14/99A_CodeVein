@@ -32,7 +32,7 @@ private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 public:
-	static CBossDecoUI*			Create(_Device pGraphic_Device);
+	static CBossDecoUI*		Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);
 	virtual void			Free();
 };
