@@ -3,6 +3,7 @@
 #include "Client_Defines.h"
 #include "GameObject.h"
 #include "Management.h"
+#include "ClothManager.h"
 
 BEGIN(Client)
 
@@ -56,19 +57,25 @@ private:
 	virtual void Change_HairMesh(HairType _eHairType);
 
 private:
-	CTransform*				m_pTransform = nullptr;
-	CRenderer*				m_pRenderer = nullptr;
-	CShader*				m_pShader = nullptr;
-	CMesh_Static*			m_pStaticMesh = nullptr;
-	CBattleAgent*			m_pBattleAgent = nullptr;
+	void Change_Vertex();
 
 private:
-	_mat*					m_pmatParent = nullptr;
-	_mat*					m_pmatBone = nullptr;
+	CTransform*					m_pTransform = nullptr;
+	CRenderer*					m_pRenderer = nullptr;
+	CShader*					m_pShader = nullptr;
+	CMesh_Static*				m_pStaticMesh = nullptr;
+	CBattleAgent*				m_pBattleAgent = nullptr;
 
 private:
-	HairType				m_eHairType = Hair_01;
-	_v4						m_vColorValue = {};
+	_mat*						m_pmatParent = nullptr;
+	_mat*						m_pmatBone = nullptr;
+
+private:
+	HairType					m_eHairType = Hair_01;
+	_v4							m_vColorValue = {};
+
+private:
+	CClothManager::Cloth_Static	m_eHairTag = CClothManager::Hair01;
 
 public:
 	static CCostume_Hair* Create(_Device pGraphicDev);

@@ -463,11 +463,11 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\99.Public\MouseUI">
       <UniqueIdentifier>{2bfceb16-1374-4a01-9881-b5af3154309b}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\5%29 UI\UI\16. ConversationUI">
-      <UniqueIdentifier>{4f0943ce-c02a-408f-af5f-6c1c94ea2eee}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\02.BossUI\BossNameUI">
       <UniqueIdentifier>{0ae4d82f-eda5-4958-8435-c97d58c9857a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\16. ScriptUI">
+      <UniqueIdentifier>{4f0943ce-c02a-408f-af5f-6c1c94ea2eee}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -991,10 +991,13 @@
       <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\MouseUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\ScriptUI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\16. ConversationUI</Filter>
+      <Filter>02.GameObject\Stage\5%29 UI\UI\16. ScriptUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\BossNameUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\02.BossUI\BossNameUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ClothManager.h">
+      <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1503,10 +1506,13 @@
       <Filter>02.GameObject\Stage\5%29 UI\UI\99.Public\MouseUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\ScriptUI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\16. ConversationUI</Filter>
+      <Filter>02.GameObject\Stage\5%29 UI\UI\16. ScriptUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\BossNameUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\02.BossUI\BossNameUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ClothManager.cpp">
+      <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

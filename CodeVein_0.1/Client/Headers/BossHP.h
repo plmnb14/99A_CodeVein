@@ -3,6 +3,7 @@
 #include "Management.h"
 #include "UI.h"
 #include "Client_Defines.h"
+#include "BossNameUI.h"
 
 BEGIN(Client)
 class CHPBack;
@@ -21,6 +22,7 @@ public:
 		m_fBossHP = fHP;
 		m_fTotalHP = fMaxHP;
 	}
+	void Set_BossName(CBossNameUI::BossName_INDEX eBossNameIdx) { m_eBossNameIdx = eBossNameIdx; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -41,7 +43,8 @@ private:
 	_float m_fPercentage = 0.f;
 	CHPBack* m_pHPBack = nullptr;
 	CBossDecoUI* m_pDecoUI = nullptr;
-	_uint m_iPass = 0;
+	CBossNameUI* m_pBossNameUI = nullptr;
+	CBossNameUI::BossName_INDEX m_eBossNameIdx = CBossNameUI::Index_None;
 
 private:
 	CTransform*				m_pTransformCom = nullptr;

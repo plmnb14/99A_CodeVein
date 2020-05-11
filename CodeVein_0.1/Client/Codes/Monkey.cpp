@@ -1914,7 +1914,7 @@ HRESULT CMonkey::Ready_Status(void * pArg)
 HRESULT CMonkey::Ready_Weapon()
 {
 	m_pWeapon = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon->Change_WeaponData(CWeapon::Wpn_SSword_Slave);
+	m_pWeapon->Change_WeaponData(Wpn_SSword_Slave);
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
 	m_pWeapon->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);

@@ -763,12 +763,10 @@ CBT_Composite_Node * CSwordShieldGenji::NearAttack()
 
 HRESULT CSwordShieldGenji::Update_Bone_Of_BlackBoard()
 {
-	D3DXFRAME_DERIVED* pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
-	m_vHead = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_vHead = *(_v3*)(&(m_pHeadFrame->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Head", m_vHead);
 
-	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightToeBase");
-	m_vRightToeBase = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_vRightToeBase = *(_v3*)(&(m_pRightToeBaseFrame->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_RightToeBase", m_vRightToeBase);
 
 	return E_NOTIMPL;
@@ -1231,7 +1229,7 @@ HRESULT CSwordShieldGenji::Ready_Weapon()
 {
 	// 오른손 무기
 	m_pSword = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pSword->Change_WeaponData(CWeapon::Wpn_SSword_Military);
+	m_pSword->Change_WeaponData(Wpn_SSword_Military);
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
 	m_pSword->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
@@ -1239,7 +1237,7 @@ HRESULT CSwordShieldGenji::Ready_Weapon()
 
 	// 왼손 방패
 	m_pShield = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pShield->Change_WeaponData(CWeapon::WPN_Shield_Normal);
+	m_pShield->Change_WeaponData(WPN_Shield_Normal);
 
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHandAttach");
 	m_pShield->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
@@ -1259,6 +1257,11 @@ HRESULT CSwordShieldGenji::Ready_BoneMatrix()
 
 	m_matBones[Bone_Range] = &pFrame->CombinedTransformationMatrix;
 	m_matBones[Bone_Body] = &pFrame->CombinedTransformationMatrix;
+
+	// 뼈 주소 저장
+	m_pHeadFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
+	m_pRightToeBaseFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightToeBase");
+
 
 	return S_OK;
 }

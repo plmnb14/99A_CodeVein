@@ -3639,7 +3639,7 @@ HRESULT CYachaMan::Ready_Status(void * pArg)
 HRESULT CYachaMan::Ready_Weapon()
 {
 	m_pWeapon = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon->Change_WeaponData(CWeapon::Wpn_Hammer_Military);
+	m_pWeapon->Change_WeaponData(Wpn_Hammer_Military);
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
 	m_pWeapon->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);

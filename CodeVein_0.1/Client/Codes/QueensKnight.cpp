@@ -91,6 +91,7 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 	// UI 추가(지원)
 	m_pBossUI = static_cast<CBossHP*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BossHP", nullptr));
 	m_pBossUI->Set_UI_Pos(WINCX * 0.5f, WINCY * 0.2f);
+	m_pBossUI->Set_BossName(CBossNameUI::Index_QueensKnight);
 	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBossUI, SCENE_STAGE, L"Layer_BossHP", nullptr)))
 		return E_FAIL;
 
@@ -2008,12 +2009,10 @@ void CQueensKnight::Down()
 
 HRESULT CQueensKnight::Update_Bone_Of_BlackBoard()
 {
-	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Spine3_WingB4");
-	m_vWing = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_vWing = *(_v3*)(&(m_pWingFrame->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Wing", m_vWing);
 
-	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHand");
-	m_vLeftHand = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_vLeftHand = *(_v3*)(&(m_pLeftHandFrame->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftHand", m_vLeftHand);
 	
 	return S_OK;
@@ -2278,6 +2277,7 @@ void CQueensKnight::Check_PhyCollider()
 					m_pAIControllerCom->Reset_BT();
 					m_bAIController = false;
 
+					m_pAIControllerCom->Set_Value_Of_BlackBoard(L"PushCol", true);
 				}
 			}
 
@@ -2294,6 +2294,7 @@ void CQueensKnight::Check_PhyCollider()
 					m_pAIControllerCom->Reset_BT();
 					m_bAIController = false;
 
+					m_pAIControllerCom->Set_Value_Of_BlackBoard(L"PushCol", true);
 				}
 			}
 		
@@ -2481,7 +2482,7 @@ HRESULT CQueensKnight::Add_Component()
 		return E_FAIL;
 	//=================================================================================
 
-	m_pColliderCom->Set_Radius(_v3{ 1.5f, 1.5f, 1.5f });
+	m_pColliderCom->Set_Radius(_v3{ 1.8f, 1.8f, 1.8f });
 	m_pColliderCom->Set_Dynamic(true);
 	m_pColliderCom->Set_Type(COL_SPHERE);
 	m_pColliderCom->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pColliderCom->Get_Radius().y , 0.f });
@@ -2547,7 +2548,7 @@ HRESULT CQueensKnight::Ready_Weapon()
 {
 	// 오른손 무기
 	m_pSword = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pSword->Change_WeaponData(CWeapon::WPN_QueenLance);
+	m_pSword->Change_WeaponData(WPN_QueenLance);
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
 	m_pSword->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
@@ -2560,7 +2561,7 @@ HRESULT CQueensKnight::Ready_Weapon()
 
 	// 왼손 방패
 	m_pShield = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pShield->Change_WeaponData(CWeapon::WPN_QueenShield);
+	m_pShield->Change_WeaponData(WPN_QueenShield);
 
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHandAttach");
 	m_pShield->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
@@ -2579,6 +2580,11 @@ HRESULT CQueensKnight::Ready_BoneMatrix()
 
 	m_matBones[Bone_Range] = &pFrame->CombinedTransformationMatrix;
 	m_matBones[Bone_Body] = &pFrame->CombinedTransformationMatrix;
+
+
+	// 뼈 주소 저장
+	m_pWingFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Spine3_WingB4");
+	m_pLeftHandFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHand");
 
 	return S_OK;
 }
