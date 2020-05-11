@@ -200,6 +200,7 @@
     <ClInclude Include="..\Headers\ColdBeamSmall.h" />
     <ClInclude Include="..\Headers\ColdBeamBig.h" />
     <ClInclude Include="..\Headers\ColdBeamMiddle.h" />
+    <ClInclude Include="..\Headers\NPC_Yakumo.h" />
     <ClInclude Include="..\Headers\ScriptUI.h" />
     <ClInclude Include="..\Headers\Costume_Accessory.h" />
     <ClInclude Include="..\Headers\Costume_Hair.h" />
@@ -326,6 +327,7 @@
     <ClInclude Include="..\Headers\Sky.h" />
     <ClInclude Include="..\Headers\Urchin.h" />
     <ClInclude Include="..\Headers\Weapon.h" />
+    <ClInclude Include="..\Headers\WeaponShopUI.h" />
     <ClInclude Include="..\Headers\Weapon_Inven.h" />
     <ClInclude Include="..\Headers\Weapon_Slot.h" />
     <ClInclude Include="..\Headers\Wolf.h" />
@@ -370,6 +372,7 @@
     <ClCompile Include="..\Codes\ColdBeamSmall.cpp" />
     <ClCompile Include="..\Codes\ColdBeamBig.cpp" />
     <ClCompile Include="..\Codes\ColdBeamMiddle.cpp" />
+    <ClCompile Include="..\Codes\NPC_Yakumo.cpp" />
     <ClCompile Include="..\Codes\ScriptUI.cpp" />
     <ClCompile Include="..\Codes\Costume_Accessory.cpp" />
     <ClCompile Include="..\Codes\Costume_Hair.cpp" />
@@ -495,6 +498,7 @@
     <ClCompile Include="..\Codes\Sky.cpp" />
     <ClCompile Include="..\Codes\Urchin.cpp" />
     <ClCompile Include="..\Codes\Weapon.cpp" />
+    <ClCompile Include="..\Codes\WeaponShopUI.cpp" />
     <ClCompile Include="..\Codes\Weapon_Inven.cpp" />
     <ClCompile Include="..\Codes\Weapon_Slot.cpp" />
     <ClCompile Include="..\Codes\Wolf.cpp" />
