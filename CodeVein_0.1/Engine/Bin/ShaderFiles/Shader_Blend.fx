@@ -1,6 +1,23 @@
 int g_iToneIndex = 0;
 float g_fToneGradient= 0.f;
 
+texture		g_ShadowMapTexture;
+
+sampler ShadowMapSampler = sampler_state
+{
+	texture = g_ShadowMapTexture;
+
+	minfilter = linear;
+	magfilter = linear;
+	mipfilter = linear;
+
+	addressU = border;
+	addressV = border;
+
+	BorderColor = float4(1.f, 0.0f, 0.0f, 1.0f);
+
+};
+
 texture		g_DiffuseTexture;
 sampler DiffuseSampler = sampler_state
 {
@@ -154,11 +171,12 @@ PS_OUT PS_MAIN(PS_IN In)
 	vector	vShade		= tex2D(ShadeSampler, In.vTexUV);
 	vector	vSpecular	= tex2D(SpecularSampler, In.vTexUV);
 	vector	vSSAO		= tex2D(SSAOSampler, In.vTexUV);
+	vector	vShadow		= tex2D(ShadowMapSampler, In.vTexUV);
 
 	float AO = vSpecular.a;
 	vSpecular.a = 0.f;
 
-	float3 vFinalShade = vShade.r * vSSAO.r * AO;
+	float3 vFinalShade = vShade.r * vSSAO.r * AO;// *vShadow.x;
 
 	Out.vColor = ((vDiffuse + vSpecular) * float4(vFinalShade, 1.f)) + vEmissive;
 

@@ -3,7 +3,7 @@
 IMPLEMENT_SINGLETON(CLight_Manager)
 
 CLight_Manager::CLight_Manager()
-{\
+{
 }
 
 const NEW_LIGHT * CLight_Manager::Get_LightDesc(_uint iIndex)

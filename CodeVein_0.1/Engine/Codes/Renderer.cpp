@@ -1100,7 +1100,8 @@ HRESULT CRenderer::Render_Blend()
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_DepthTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"))))
 		return E_FAIL;
-
+	if (FAILED(m_pShader_Blend->Set_Texture("g_ShadowMapTexture", m_pTarget_Manager->Get_Texture(L"Target_Shadow"))))
+		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_SSAOTexture", m_pTarget_Manager->Get_Texture(L"Target_SSAO_Blur"))))
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_FogColorTexture", m_pTarget_Manager->Get_Texture(L"Target_BlurSky"))))
