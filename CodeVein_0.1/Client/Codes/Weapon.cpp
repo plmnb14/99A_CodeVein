@@ -765,7 +765,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_SSword].fTrail_Max = 1.8f;
 	m_tWeaponParam[Wpn_SSword].fCol_Height = 1.1f;
 
-	m_tWeaponParam[Wpn_SSword_Black].iWeaponName = Wpn_SSword;
+	m_tWeaponParam[Wpn_SSword_Black].iWeaponName = Wpn_SSword_Black;
 	m_tWeaponParam[Wpn_SSword_Black].iWeaponType = WEAPON_SSword;
 	m_tWeaponParam[Wpn_SSword_Black].iReinforce = 0;
 	m_tWeaponParam[Wpn_SSword_Black].fDamage = 100.f;
@@ -774,7 +774,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_SSword_Black].fTrail_Max = 1.8f;
 	m_tWeaponParam[Wpn_SSword_Black].fCol_Height = 0.6f;
 
-	m_tWeaponParam[Wpn_SSword_Military].iWeaponName = Wpn_SSword;
+	m_tWeaponParam[Wpn_SSword_Military].iWeaponName = Wpn_SSword_Military;
 	m_tWeaponParam[Wpn_SSword_Military].iWeaponType = WEAPON_SSword;
 	m_tWeaponParam[Wpn_SSword_Military].iReinforce = 0;
 	m_tWeaponParam[Wpn_SSword_Military].fDamage = 100.f;
@@ -783,7 +783,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_SSword_Military].fTrail_Max = 1.8f;
 	m_tWeaponParam[Wpn_SSword_Military].fCol_Height = 1.1f;
 
-	m_tWeaponParam[Wpn_SSword_Slave].iWeaponName = Wpn_SSword;
+	m_tWeaponParam[Wpn_SSword_Slave].iWeaponName = Wpn_SSword_Slave;
 	m_tWeaponParam[Wpn_SSword_Slave].iWeaponType = WEAPON_SSword;
 	m_tWeaponParam[Wpn_SSword_Slave].iReinforce = 0;
 	m_tWeaponParam[Wpn_SSword_Slave].fDamage = 100.f;
@@ -805,7 +805,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_LSword].fTrail_Max = 2.1f;
 	m_tWeaponParam[Wpn_LSword].fCol_Height = 1.4f;
 
-	m_tWeaponParam[Wpn_LSword_Black].iWeaponName = Wpn_LSword;
+	m_tWeaponParam[Wpn_LSword_Black].iWeaponName = Wpn_LSword_Black;
 	m_tWeaponParam[Wpn_LSword_Black].iWeaponType = WEAPON_LSword;
 	m_tWeaponParam[Wpn_LSword_Black].iReinforce = 0;
 	m_tWeaponParam[Wpn_LSword_Black].fDamage = 155.f;
@@ -814,7 +814,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_LSword_Black].fTrail_Max = 2.1f;
 	m_tWeaponParam[Wpn_LSword_Black].fCol_Height = 1.3f;
 
-	m_tWeaponParam[Wpn_LSword_Military].iWeaponName = Wpn_LSword;
+	m_tWeaponParam[Wpn_LSword_Military].iWeaponName = Wpn_LSword_Military;
 	m_tWeaponParam[Wpn_LSword_Military].iWeaponType = WEAPON_LSword;
 	m_tWeaponParam[Wpn_LSword_Military].iReinforce = 0;
 	m_tWeaponParam[Wpn_LSword_Military].fDamage = 155.f;
@@ -823,7 +823,7 @@ HRESULT CWeapon::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_LSword_Military].fTrail_Max = 2.1f;
 	m_tWeaponParam[Wpn_LSword_Military].fCol_Height = 1.5f;
 
-	m_tWeaponParam[Wpn_LSword_Slave].iWeaponName = Wpn_LSword;
+	m_tWeaponParam[Wpn_LSword_Slave].iWeaponName = Wpn_LSword_Slave;
 	m_tWeaponParam[Wpn_LSword_Slave].iWeaponType = WEAPON_LSword;
 	m_tWeaponParam[Wpn_LSword_Slave].iReinforce = 0;
 	m_tWeaponParam[Wpn_LSword_Slave].fDamage = 155.f;
