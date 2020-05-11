@@ -34,7 +34,7 @@ private:
 	HRESULT					SetUp_ConstantTable();
 
 public:
-	void Add_Pet(CPet::PET_TYPE ePetType);
+	void Add_Pet(CPet::PET_TYPE ePetType, CPet::PET_GRADE_TYPE ePetGrade = CPet::PET_GRADE_NORMAL);
 
 public:
 	static CPet_Inven*		Create(_Device pGraphic_Device);

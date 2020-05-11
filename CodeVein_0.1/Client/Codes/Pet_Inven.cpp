@@ -121,6 +121,16 @@ void CPet_Inven::Click_Inven()
 			}
 		}
 	}
+	if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
+	{
+		for (auto& iter : m_vecPetSlot)
+		{
+			if (iter->Pt_InRect())
+			{
+				iter->Set_Select(false);
+			}
+		}
+	}
 	
 }
 
@@ -193,11 +203,11 @@ HRESULT CPet_Inven::SetUp_ConstantTable()
 	return S_OK;
 }
 
-void CPet_Inven::Add_Pet(CPet::PET_TYPE ePetType)
+void CPet_Inven::Add_Pet(CPet::PET_TYPE ePetType, CPet::PET_GRADE_TYPE ePetGrade)
 {
 	CPet_Slot* pPetSlot = static_cast<CPet_Slot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PetSlot", nullptr));
 	pPetSlot->Set_PetType(ePetType);
-	pPetSlot->Set_PetLevel(1); // 레벨 1부터 시작
+	pPetSlot->Set_PetGrade(CPet::PET_GRADE_NORMAL); // 등급 Normal부터 시작
 	pPetSlot->Set_UI_Size(50.f, 50.f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(pPetSlot, SCENE_MORTAL, L"Layer_PetUI", nullptr);
 	m_vecPetSlot.push_back(pPetSlot);

@@ -148,10 +148,10 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 			//	CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Add_Expendables(m_eExpendablesType);
 			//	break;
 			//case ITEM_TYPE::ITEM_WEAPON:
-			//	//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(); //무기타입을 받아서 해당아이템이 추가되게끔
+			//	CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(); //무기타입을 받아서 해당아이템이 추가되게끔 -> 이제WPN_PARAM 구조체로 받아야!!
 			//	break;
 			//case ITEM_TYPE::ITEM_PET:
-			//	CUI_Manager::Get_Instance()->Get_Pet_Inven()->Add_Pet(m_eItemGrade, m_ePetType);
+			//	CUI_Manager::Get_Instance()->Get_Pet_Inven()->Add_Pet(m_ePetType);
 			//	break;
 			//}
 
