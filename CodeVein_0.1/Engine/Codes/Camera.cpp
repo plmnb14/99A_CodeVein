@@ -382,6 +382,11 @@ void CCamera::Set_OnAimingTarget(_bool _bOnAim)
 	//}
 }
 
+void CCamera::Set_AimUI(_bool _bAimUI)
+{
+	m_bAimUI = _bAimUI;
+}
+
 void CCamera::Add_At(_float _fSpeed, _v3 _vDir)
 {
 	m_pTransform->Add_At(_fSpeed, _vDir);
@@ -525,7 +530,7 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 
 				else
 				{
-					m_fAtLerpValue += Engine::CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60_2");
+					m_fAtLerpValue += Engine::CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60_2") * 2.f;
 					D3DXVec3Lerp(&vLerpTargetAt, &m_vOldAt, &vAt, m_fAtLerpValue);
 					m_vOldAt = vLerpTargetAt;
 				}
@@ -548,7 +553,7 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 
 				else
 				{
-					m_fPosLerpValue += Engine::CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60_2") * 0.5f;
+					m_fPosLerpValue += Engine::CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60_2") * 2.f;
 					D3DXVec3Lerp(&vLerpTargetPos, &m_vOldPos, &vEyePos, m_fPosLerpValue);
 
 					//V3_NORMAL_SELF(&vLerpTargetPos);
@@ -582,9 +587,13 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 			vEyePos = vOwnerDir *= -1.f;
 			vEyePos *= m_fDistance;
 
+			vEyePos.y = m_bAimUI ? vEyePos.y + m_fAim_YPos : vEyePos.y;
+
 			CALC::V3_Axis_Normal(&matRotAxis, &vEyePos, &vOwnerRight, 22.5f, true);
 
-			vEyePos += vTransPos + _v3{ 0,1,0 } + WORLD_RIGHT;
+			vOwnerRight = m_bAimUI ? vOwnerRight * m_fAim_XPosMulti : vOwnerRight * 1.f;
+
+			vEyePos += vTransPos + _v3{ 0,1,0 } + vOwnerRight;
 
 			if (m_bOnLerpAt)
 			{
@@ -598,7 +607,7 @@ HRESULT CCamera::SetUp_ViewType(CameraView _CameraViewType)
 
 				else
 				{
-					m_fAtLerpValue += Engine::CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60_2") * 2.f;
+					m_fAtLerpValue += Engine::CTimer_Manager::Get_Instance()->Get_DeltaTime(L"Timer_Fps_60_2");
 					D3DXVec3Lerp(&vLerpTargetAt, &m_vOldAt, &vAimAt, m_fAtLerpValue);
 					m_vOldAt = vLerpTargetAt;
 				}

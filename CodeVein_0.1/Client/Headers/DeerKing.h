@@ -5,6 +5,7 @@
 BEGIN(Client)
 
 class CWeapon;
+class CBossHP;
 class CDeerKing final : public CMonster
 {
 public:
@@ -141,6 +142,9 @@ private:
 	_v3					m_bCur_RightHandAttach_Pos = _v3(0.f, 0.f, 0.f);
 	_v3					m_vThrowing_Dir = _v3(0.f, 0.f, 0.f);
 	_float				m_fThrowing_Speed = 15.f;
+
+private:	// UI(지원)
+	CBossHP*			m_pBossUI = nullptr;
 
 private:	// 다운 상태를 위한 변수
 	_bool				m_bDown_Start = false;

@@ -211,6 +211,13 @@ private: // For Dissolve
 	_float					m_fDissolveY = 0.f;
 
 private:
+	_bool				m_arrbActiveSkillOn[8] = {};
+	SKILL_INFO			m_arrSkillInfo[8] = {};
+
+private:
+	_bool				m_bWeaponActive[2] = {};
+
+private:
 	HRESULT Add_Component();
 	HRESULT SetUp_Default();
 	HRESULT SetUp_ConstantTable();
@@ -247,6 +254,8 @@ private:
 	virtual void Parameter_Collision();
 	virtual void Parameter_Aiming();
 	virtual void Parameter_HitCheck();
+	virtual void Parameter_CheckActiveSkill();
+	virtual void Parameter_CheckActiveWeapon();
 
 private:
 	virtual void KeyInput();

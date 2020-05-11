@@ -2,6 +2,7 @@
 #include "..\Headers\BossHP.h"
 #include "BossDecoUI.h"
 
+
 CBossHP::CBossHP(_Device pGraphic_Device)
 	: CUI(pGraphic_Device)
 {
@@ -31,10 +32,18 @@ HRESULT CBossHP::Ready_GameObject(void * pArg)
 	m_fSizeX = 840;
 	m_fSizeY = 64.f;
 
-	m_bIsActive = false;
 	
-	g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossDecoUI", SCENE_STAGE, L"Layer_BossDecoUI");
-	m_pDecoUI = static_cast<CBossDecoUI*>(g_pManagement->Get_GameObjectBack(L"Layer_BossDecoUI", SCENE_STAGE));
+	m_pDecoUI = static_cast<CBossDecoUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BossDecoUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pDecoUI, SCENE_STAGE, L"Layer_StageUI", nullptr);
+	
+	m_pDecoUI->Set_UI_Size(WINCX, 64.f);
+	m_pDecoUI->Set_ViewZ(m_fViewZ + 0.1f);
+	
+	m_pBossNameUI = static_cast<CBossNameUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BossNameUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBossNameUI, SCENE_STAGE, L"Layer_StageUI", nullptr);
+	
+	m_pBossNameUI->Set_UI_Size(200.f, 25.f);
+	m_pBossNameUI->Set_ViewZ(m_fViewZ + 0.1f);
 	
 	
 	return NOERROR;
@@ -46,17 +55,25 @@ _int CBossHP::Update_GameObject(_double TimeDelta)
 
 	//if (nullptr == m_pTarget)
 	//	return NO_EVENT;
-
+	
 	SetUp_State(TimeDelta);
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 	
-	m_pDecoUI->Set_Active(m_bIsActive);
-	m_pDecoUI->Set_UI_Pos(m_fPosX, m_fPosY);
-	m_pDecoUI->Set_UI_Size(WINCX, 64.f);
-	m_pDecoUI->Set_ViewZ(m_fViewZ + 0.1f);
+	if (m_pDecoUI)
+	{
+		m_pDecoUI->Set_UI_Pos(m_fPosX, m_fPosY);
+		m_pDecoUI->Set_Active(m_bIsActive);
+	}
+		
+	if (m_pBossNameUI)
+	{
+		m_pBossNameUI->Set_UI_Pos(m_fPosX, m_fPosY - 25.f);
+		m_pBossNameUI->Set_Active(m_bIsActive);
+		m_pBossNameUI->Set_UI_Index(m_eBossNameIdx);
+	}	
 
 	return NO_EVENT;
 }
@@ -91,13 +108,28 @@ HRESULT CBossHP::Render_GameObject()
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
 	_uint iPass = 0;
+	_uint iIndex = 0;
+
 	for (_uint i = 0; i < 2; ++i)
 	{
 		if (i == 0)
+		{
+			iIndex = 0;
 			iPass = 1;
+		}
+			
 		else if (i == 1)
+		{
+			iIndex = 1;
 			iPass = 2;
-		if (FAILED(SetUp_ConstantTable(i)))
+		}
+			
+		/*else if (i == 2)
+		{
+			iIndex = 3;
+			iPass = 1;
+		}*/
+		if (FAILED(SetUp_ConstantTable(iIndex)))
 			return E_FAIL;
 		m_pShaderCom->Begin_Shader();
 		m_pShaderCom->Begin_Pass(iPass);
@@ -144,7 +176,7 @@ HRESULT CBossHP::SetUp_ConstantTable(_uint iIndex)
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (iIndex == 0)
+	/*if (iIndex == 0)
 	{
 		if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
 			return E_FAIL;
@@ -157,7 +189,7 @@ HRESULT CBossHP::SetUp_ConstantTable(_uint iIndex)
 		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
 			return E_FAIL;
 	}
-	else if (iIndex == 1)
+	else if (iIndex == 1)*/
 	{
 		if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
 			return E_FAIL;

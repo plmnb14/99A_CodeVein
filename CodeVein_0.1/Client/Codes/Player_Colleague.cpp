@@ -39,11 +39,9 @@ HRESULT CPlayer_Colleague::Ready_GameObject(void * pArg)
 
 	m_pCollJack = static_cast<CColleague_Jack*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague_Jack", pArg));
 	m_pCollJack->Set_Target(this);
-	m_pCollJack->Ready_GameObject(NULL);
 
 	m_pColleagueUI = static_cast<CColleague_UI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague_UI", pArg));
 	m_pColleagueUI->Set_Target(this);
-	m_pColleagueUI->Ready_GameObject(NULL);
 
 	return S_OK;
 }
@@ -314,7 +312,7 @@ HRESULT CPlayer_Colleague::Ready_Collider()
 HRESULT CPlayer_Colleague::Ready_Weapon()
 {
 	m_pSword = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pSword->Change_WeaponData(CWeapon::Wpn_SSword_Slave);
+	m_pSword->Change_WeaponData(Wpn_SSword_Slave);
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo("RightHandAttach");
 	m_pSword->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
@@ -3122,7 +3120,6 @@ void CPlayer_Colleague::Free()
 
 	// µ¿·á Transfrom
 	Safe_Release(m_pTransformCom);
-
 	Safe_Release(m_pDynamicMesh);
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pRendererCom);

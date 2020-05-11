@@ -91,6 +91,7 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 	// UI 추가(지원)
 	m_pBossUI = static_cast<CBossHP*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BossHP", nullptr));
 	m_pBossUI->Set_UI_Pos(WINCX * 0.5f, WINCY * 0.2f);
+	m_pBossUI->Set_BossName(CBossNameUI::Index_QueensKnight);
 	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBossUI, SCENE_STAGE, L"Layer_BossHP", nullptr)))
 		return E_FAIL;
 
@@ -173,23 +174,23 @@ _int CQueensKnight::Late_Update_GameObject(_double TimeDelta)
 	//=============================================================================================
 	// 그림자랑 모션블러는 프리스텀 안에 없으면 안그림
 	//=============================================================================================
-	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
+	if (!m_bDissolve)
 	{
-		if (!m_bDissolve)
-		{
-			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
-				return E_FAIL;
-		}
-
-		else
-		{
-			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
-				return E_FAIL;
-		}
-
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 			return E_FAIL;
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
+			return E_FAIL;
+	}
+
+	else
+	{
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
+			return E_FAIL;
+	}
+
+	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
+	{
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
 			return E_FAIL;
 	}
 	//=============================================================================================
@@ -2547,7 +2548,7 @@ HRESULT CQueensKnight::Ready_Weapon()
 {
 	// 오른손 무기
 	m_pSword = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pSword->Change_WeaponData(CWeapon::WPN_QueenLance);
+	m_pSword->Change_WeaponData(WPN_QueenLance);
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
 	m_pSword->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
@@ -2560,7 +2561,7 @@ HRESULT CQueensKnight::Ready_Weapon()
 
 	// 왼손 방패
 	m_pShield = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pShield->Change_WeaponData(CWeapon::WPN_QueenShield);
+	m_pShield->Change_WeaponData(WPN_QueenShield);
 
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHandAttach");
 	m_pShield->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);

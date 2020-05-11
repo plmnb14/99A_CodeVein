@@ -183,6 +183,7 @@
     <ClInclude Include="..\Headers\BloodSkillSlot.h" />
     <ClInclude Include="..\Headers\BossDecoUI.h" />
     <ClInclude Include="..\Headers\BossHP.h" />
+    <ClInclude Include="..\Headers\BossNameUI.h" />
     <ClInclude Include="..\Headers\Client_Defines.h" />
     <ClInclude Include="..\Headers\Cloth.h" />
     <ClInclude Include="..\Headers\ClothDynamic.h" />
@@ -222,6 +223,7 @@
     <ClInclude Include="..\Headers\Effect_BloodChunk.h" />
     <ClInclude Include="..\Headers\Effect_FireFlower.h" />
     <ClInclude Include="..\Headers\Effect_LongSpark.h" />
+    <ClInclude Include="..\Headers\Effect_Parent.h" />
     <ClInclude Include="..\Headers\Expendables.h" />
     <ClInclude Include="..\Headers\Expendables_Inven.h" />
     <ClInclude Include="..\Headers\Expendables_Slot.h" />
@@ -353,6 +355,7 @@
     <ClCompile Include="..\Codes\BloodSkillSlot.cpp" />
     <ClCompile Include="..\Codes\BossDecoUI.cpp" />
     <ClCompile Include="..\Codes\BossHP.cpp" />
+    <ClCompile Include="..\Codes\BossNameUI.cpp" />
     <ClCompile Include="..\Codes\Cloth.cpp" />
     <ClCompile Include="..\Codes\ClothDynamic.cpp" />
     <ClCompile Include="..\Codes\ClothManager.cpp" />
@@ -391,6 +394,7 @@
     <ClCompile Include="..\Codes\Effect_BloodChunk.cpp" />
     <ClCompile Include="..\Codes\Effect_FireFlower.cpp" />
     <ClCompile Include="..\Codes\Effect_LongSpark.cpp" />
+    <ClCompile Include="..\Codes\Effect_Parent.cpp" />
     <ClCompile Include="..\Codes\Expendables.cpp" />
     <ClCompile Include="..\Codes\Expendables_Inven.cpp" />
     <ClCompile Include="..\Codes\Expendables_Slot.cpp" />

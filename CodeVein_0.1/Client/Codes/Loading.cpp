@@ -12,6 +12,7 @@
 #include "Effect_BloodChunk.h"
 #include "Effect_LongSpark.h"
 #include "Effect_FireFlower.h"
+#include "Effect_Parent.h"
 
 #include "Player.h"
 
@@ -357,12 +358,10 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceFloorAura_03")))
 		return E_FAIL;
-	////////////////////
 	if (FAILED(Add_EffectPrototype(L"IceSmoke_01")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceSmoke_02"))) // 이것 마지막
 		return E_FAIL;
-/////////////////////////////////////
 	if (FAILED(Add_EffectPrototype(L"IceGirl_FlashParticle_Blue")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceGirl_FlashParticle_Green")))
@@ -371,7 +370,8 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceGirl_PointParticle_Green")))
 		return E_FAIL;
-	//////////////////
+	if (FAILED(Add_EffectPrototype(L"IceGirl_SlashSnowParticle_0")))
+		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceBlock_Main", true)))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceBlock_Sub_01", true)))
@@ -398,7 +398,6 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceGirl_SwordBullet_Mesh_2", true)))
 		return E_FAIL;
-///////////////////////////// 아래는 완
 	if (FAILED(Add_EffectPrototype(L"IceCrystal_01")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceCrystal_02")))
@@ -1151,6 +1150,11 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Blood_0", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_Blood_0.dat")))))
 		return E_FAIL;
 
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_BossDead_BG", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_BossDead_BG.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_BossDead_Text", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_BossDead_Text.dat")))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -1282,9 +1286,10 @@ _uint CLoading::Loading_Title()
 
 	cout << "DynamicMesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
-	
-	cout << "NPC 불러오는 중 . . ." << endl;
-	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
+
+	//============================================================================================================
+	//cout << "NPC 불러오는 중 . . ." << endl;
+	//g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
 	//============================================================================================================
 	// 무기 불러오는 중
 	//============================================================================================================
@@ -1572,6 +1577,11 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_FireFlower", CEffect_FireFlower::Create(m_pGraphicDev))))
 			return E_FAIL;
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_FireFlower", L"GameObject_FireFlower", 3000);
+
+		// Effect_Parent
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_EffParent", CEffect_Parent::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_EffParent", L"GameObject_EffParent", 100);
 
 		///////test로 만들어둔 드롭아이템입니다 수정 Test 실험 심규명
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DropItem", CDropItem::Create(m_pGraphicDev))))

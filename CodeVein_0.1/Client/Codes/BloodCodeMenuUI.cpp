@@ -35,8 +35,8 @@ HRESULT CBloodCodeMenuUI::Ready_GameObject(void * pArg)
 _int CBloodCodeMenuUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
-
-	m_pRendererCom->Add_RenderList(RENDER_ALPHA, this);
+	
+	m_pRendererCom->Add_RenderList(RENDER_UI_BACK, this);
 	
 	_v3 vWorldPos;
 	memcpy(vWorldPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));

@@ -7,6 +7,8 @@
 
 #include "ScriptManager.h"
 
+float g_OriginCamPos = 3.f;
+
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
 {
@@ -51,6 +53,8 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 
 	m_pStageAgent = CStageAgent::Get_Instance();
 	Safe_AddRef(m_pStageAgent);
+
+	m_tObjParam.sMana_Cur = 100;
 
 	return NOERROR;
 }
@@ -748,6 +752,49 @@ void CPlayer::Parameter_HitCheck()
 			}
 		}
 	}
+}
+
+void CPlayer::Parameter_CheckActiveSkill()
+{
+	// 1번 스킬 가져옴
+	for (_uint i = 0; i < 8; ++i)
+	{
+		Skill_ID eTmpSkillId = m_pUIManager->Get_Total_Inven()->Get_Registration_Skill(i);
+
+		if (Skill_ID::SkillID_End == eTmpSkillId)
+		{
+			m_arrbActiveSkillOn[i] = false;
+			ZeroMemory(&m_arrSkillInfo[i], sizeof(SKILL_INFO));
+			continue;
+		}
+
+		_uint iSkillIdx =
+			eTmpSkillId == Severing_Abyss ? 0 :
+			eTmpSkillId == Phantom_Assault ? 1 :
+			eTmpSkillId == Circulating_Pulse ? 2 :
+			eTmpSkillId == Shadow_Assault ? 3 :
+			eTmpSkillId == Legion_Punisher ? 4 :
+			eTmpSkillId == Triple_Annihilator ? 5 :
+			eTmpSkillId == Dragon_Lunge ? 6 :
+			eTmpSkillId == Tormenting_Blast ? 7 :
+			eTmpSkillId == Chariot_Rush ? 8 :
+			eTmpSkillId == Fusillade_Rondo ? 9 : 999;
+
+		if(999 == eTmpSkillId)
+			continue;
+
+		m_arrbActiveSkillOn[i] = true;
+
+		m_arrSkillInfo[i].bOneHand = m_vecFullSkillInfo[iSkillIdx]->bOneHand;
+		m_arrSkillInfo[i].dwSkillCost = m_vecFullSkillInfo[iSkillIdx]->dwSkillCost;
+		m_arrSkillInfo[i].dwAnimationIdx = m_vecFullSkillInfo[iSkillIdx]->dwAnimationIdx;
+	}
+}
+
+void CPlayer::Parameter_CheckActiveWeapon()
+{
+	//m_pUIManager->Get_Weapon_Inven()->Get_UseWeaponState(WPN_SLOT_A);
+	//m_pUIManager->Get_Weapon_Inven()->Get_UseWeaponState(WPN_SLOT_B);
 }
 
 void CPlayer::Movement_Aiming(_float _fAngle, _float _fMovespeed)
@@ -1643,20 +1690,30 @@ void CPlayer::Key_Skill()
 	// 1번 스킬
 	if (g_pInput_Device->Key_Down(DIK_1))
 	{
-		cout << "스킬 탄다" << endl;
-
 		if (true == m_bOnSkill)
 			return;
 
-		m_eActState = ACT_Skill;
+		if (false == m_arrbActiveSkillOn[0])
+			return;
 
-		if (true == m_bOneHand)
-			m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[0]->dwAnimationIdx);
-
-		else if (false == m_bOneHand)
-			m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[4]->dwAnimationIdx);
+		if (m_tObjParam.sMana_Cur < (_short)m_arrSkillInfo[0].dwSkillCost)
+			return;
 
 		Reset_BattleState();
+
+		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[0].dwSkillCost;
+		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[0].dwAnimationIdx;
+		m_eActState = ACT_Skill;
+
+		//===================================================================================================================
+		//m_eActState = ACT_Skill0
+		//
+		//if (true == m_bOneHand)
+		//	m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[0]->dwAnimationIdx);
+		//
+		//else if (false == m_bOneHand)
+		//	m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[4]->dwAnimationIdx);
+		//===================================================================================================================
 	}
 
 	// 2번 스킬
@@ -1665,17 +1722,27 @@ void CPlayer::Key_Skill()
 		if (true == m_bOnSkill)
 			return;
 
-		m_eActState = ACT_Skill;
+		if (false == m_arrbActiveSkillOn[1])
+			return;
 
-		if (true == m_bOneHand)
-			m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[1]->dwAnimationIdx);
-
-		else if (false == m_bOneHand)
-			m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[5]->dwAnimationIdx);
-
-		_v3 vEffPos = _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f;
+		if (m_tObjParam.sMana_Cur < (_short)m_arrSkillInfo[1].dwSkillCost)
+			return;
 
 		Reset_BattleState();
+
+		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[1].dwSkillCost;
+		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[1].dwAnimationIdx;
+		m_eActState = ACT_Skill;
+
+		//m_eActState = ACT_Skill;
+		//
+		//if (true == m_bOneHand)
+		//	m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[1]->dwAnimationIdx);
+		//
+		//else if (false == m_bOneHand)
+		//	m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[5]->dwAnimationIdx);
+		//
+		//_v3 vEffPos = _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f;
 	}
 
 	// 3번 스킬
@@ -1684,13 +1751,25 @@ void CPlayer::Key_Skill()
 		if (true == m_bOnSkill)
 			return;
 
+		if (false == m_arrbActiveSkillOn[2])
+			return;
+
+		if (m_tObjParam.sMana_Cur < (_short)m_arrSkillInfo[3].dwSkillCost)
+			return;
+
+		Reset_BattleState();
+
+		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[2].dwSkillCost;
+		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[2].dwAnimationIdx;
 		m_eActState = ACT_Skill;
 
-		if(true == m_bOneHand)
-			m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[2]->dwAnimationIdx);
-
-		else if (false == m_bOneHand)
-			m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[6]->dwAnimationIdx);
+		//m_eActState = ACT_Skill;
+		//
+		//if(true == m_bOneHand)
+		//	m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[2]->dwAnimationIdx);
+		//
+		//else if (false == m_bOneHand)
+		//	m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[6]->dwAnimationIdx);
 
 		Reset_BattleState();
 	}
@@ -1701,37 +1780,125 @@ void CPlayer::Key_Skill()
 		if (true == m_bOnSkill)
 			return;
 
-		m_eActState = ACT_Skill;
+		if (false == m_arrbActiveSkillOn[3])
+			return;
 
-		if (true == m_bOneHand)
-			m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[3]->dwAnimationIdx);
-
-		else if (false == m_bOneHand)
-			m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[7]->dwAnimationIdx);
+		if (m_tObjParam.sMana_Cur < (_short)m_arrSkillInfo[3].dwSkillCost)
+			return;
 
 		Reset_BattleState();
+
+		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[3].dwSkillCost;
+		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[3].dwAnimationIdx;
+		m_eActState = ACT_Skill;
+
+		//m_eActState = ACT_Skill;
+		//
+		//if (true == m_bOneHand)
+		//	m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[3]->dwAnimationIdx);
+		//
+		//else if (false == m_bOneHand)
+		//	m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[7]->dwAnimationIdx);
 	}
 
-	// 1번 버프
+	// 5번 스킬
 	else if (g_pInput_Device->Key_Down(DIK_5))
 	{
 		if (true == m_bOnSkill)
 			return;
 
-		m_eActState = ACT_Buff;
+		if (false == m_arrbActiveSkillOn[4])
+			return;
 
-		m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[8]->dwAnimationIdx);
+		if (m_tObjParam.sMana_Cur < (_short)m_arrSkillInfo[4].dwSkillCost)
+			return;
 
-		LPCSTR tmpChar = "Head"; // 왼손 뼈로 바꿔야함
-		D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 1);
-		_mat* pLeftHand= &pFamre->CombinedTransformationMatrix;
+		Reset_BattleState();
 
-		g_pManagement->Create_Effect_Delay(L"Player_Buff_Particle"							, 0.4f, _v3(0.f, 1.25f, 0.f), m_pTransform);
-		g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Blaster"				, 0.6f, m_pTransform, pLeftHand);
-		g_pManagement->Create_Effect_Delay(L"Player_Buff_HandLight"							, 0.4f, m_pTransform, pLeftHand);
-		g_pManagement->Create_ParticleEffect_Delay(L"Player_Buff_Flash"				, 0.1f	, 0.6f, m_pTransform, pLeftHand);
-		g_pManagement->Create_ParticleEffect_Delay(L"Player_Buff_HandSmoke"		, 0.65f	, 0.6f, m_pTransform, pLeftHand);
+		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[4].dwSkillCost;
+		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[4].dwAnimationIdx;
+		m_eActState = ACT_Skill;
 	}
+
+
+	// 6번 스킬
+	else if (g_pInput_Device->Key_Down(DIK_6))
+	{
+		if (true == m_bOnSkill)
+			return;
+
+		if (false == m_arrbActiveSkillOn[5])
+			return;
+
+		if (m_tObjParam.sMana_Cur < (_short)m_arrSkillInfo[5].dwSkillCost)
+			return;
+
+		Reset_BattleState();
+
+		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[5].dwSkillCost;
+		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[5].dwAnimationIdx;
+		m_eActState = ACT_Skill;
+	}
+
+
+	// 7번 스킬
+	else if (g_pInput_Device->Key_Down(DIK_7))
+	{
+		if (true == m_bOnSkill)
+			return;
+
+		if (false == m_arrbActiveSkillOn[6])
+			return;
+
+		if (m_tObjParam.sMana_Cur < (_short)m_arrSkillInfo[6].dwSkillCost)
+			return;
+
+		Reset_BattleState();
+
+		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[6].dwSkillCost;
+		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[6].dwAnimationIdx;
+		m_eActState = ACT_Skill;
+	}
+
+	// 7번 스킬
+	else if (g_pInput_Device->Key_Down(DIK_8))
+	{
+		if (true == m_bOnSkill)
+			return;
+
+		if (false == m_arrbActiveSkillOn[7])
+			return;
+
+		if (m_tObjParam.sMana_Cur < (_short)m_arrSkillInfo[7].dwSkillCost)
+			return;
+
+		Reset_BattleState();
+
+		m_tObjParam.sMana_Cur -= (_short)m_arrSkillInfo[7].dwSkillCost;
+		m_eAnim_Lower = (P_ANI)m_arrSkillInfo[7].dwAnimationIdx;
+		m_eActState = ACT_Skill;
+	}
+
+	// 1번 버프
+	//else if (g_pInput_Device->Key_Down(DIK_5))
+	//{
+	//	if (true == m_bOnSkill)
+	//		return;
+	//
+	//	m_eActState = ACT_Buff;
+	//
+	//	m_eAnim_Lower = P_ANI(m_vecFullSkillInfo[8]->dwAnimationIdx);
+	//
+	//	LPCSTR tmpChar = "Head"; // 왼손 뼈로 바꿔야함
+	//	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 1);
+	//	_mat* pLeftHand= &pFamre->CombinedTransformationMatrix;
+	//
+	//	g_pManagement->Create_Effect_Delay(L"Player_Buff_Particle"							, 0.4f, _v3(0.f, 1.25f, 0.f), m_pTransform);
+	//	g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Blaster"				, 0.6f, m_pTransform, pLeftHand);
+	//	g_pManagement->Create_Effect_Delay(L"Player_Buff_HandLight"							, 0.4f, m_pTransform, pLeftHand);
+	//	g_pManagement->Create_ParticleEffect_Delay(L"Player_Buff_Flash"				, 0.1f	, 0.6f, m_pTransform, pLeftHand);
+	//	g_pManagement->Create_ParticleEffect_Delay(L"Player_Buff_HandSmoke"		, 0.65f	, 0.6f, m_pTransform, pLeftHand);
+	//}
 }
 
 void CPlayer::Key_Utility()
@@ -1805,63 +1972,143 @@ void CPlayer::Key_BloodSuck()
 
 void CPlayer::Key_UI_n_Utiliy(_bool _bActiveUI)
 {
-	if (g_pInput_Device->Key_Down(DIK_E))
+	if (true == _bActiveUI)
 	{
+		if (g_pInput_Device->Key_Down(DIK_ESCAPE))
+		{
+			if (true == m_pUIManager->Get_Skill_Inven()->Get_Active())
+			{
+				m_pUIManager->Get_Skill_Inven()->Set_Active(false);
+			}
+
+			else if (m_bOnUI_Inventory)
+			{
+				m_pCamManager->Set_MouseCtrl(true);
+				g_pInput_Device->Set_MouseLock(true);
+				m_pRenderer->DOF_On(false);
+
+				m_bActiveUI = false;
+				m_pUIManager->Get_Total_Inven()->Set_Active(false);
+				m_pUIManager->Get_StatusUI()->Set_Active(false);
+
+				Parameter_CheckActiveSkill();
+			}
+
+			else
+			{
+				if (m_bOnUI_StageSelect)
+				{
+					// 예는 하위라 안꺼도됨
+					Active_UI_StageSelect(true);
+				}
+
+				else if (m_bOnUI_BloodCode)
+				{
+					// 예도 하위라 안꺼도됨
+					Active_UI_BloodCode(true);
+				}
+
+				else if (m_bOnUI_Mistletoe)
+				{
+					// 예는 상위라 꺼야됨
+					m_bActiveUI = false;
+					Active_UI_Mistletoe(true);
+				}
+
+				else if (m_bOnUI_Inventory)
+				{
+					// 상위
+					m_bActiveUI = false;
+					Active_UI_Inventory(true);
+				}
+
+				else if (m_bOnUI_NPCTalk)
+				{
+					// 상위
+					m_bActiveUI = false;
+					Active_UI_NPC(true);
+				}
+			}
+		}
+
+		// 임시로 넣어둔거라, 이거 빼야함
+		else if (g_pInput_Device->Key_Down(DIK_E))
+		{
+			if (m_bOnUI_StageSelect)
+			{
+				Active_UI_StageSelect(true);
+			}
+
+			else if (m_bOnUI_BloodCode)
+			{
+				Active_UI_BloodCode(true);
+			}
+
+			else if (m_bOnUI_Mistletoe)
+			{
+				m_bActiveUI = false;
+				Active_UI_Mistletoe(true);
+			}
+
+			else if (m_bOnUI_Inventory)
+				Active_UI_Inventory(true);
+
+			else if (m_bOnUI_NPCTalk)
+				Active_UI_NPC(true);
+		}
+
 		if (m_bOnUI_StageSelect)
 		{
-			Active_UI_StageSelect(true);
+			if (g_pInput_Device->Key_Down(DIK_RIGHT))
+			{
+				m_pUIManager->Get_StageSelectUI()->Move_Right();
+			}
+
+			else if (g_pInput_Device->Key_Down(DIK_LEFT))
+			{
+				m_pUIManager->Get_StageSelectUI()->Move_Left();
+			}
+
+			if (g_pInput_Device->Key_Down(DIK_UP))
+			{
+				m_pUIManager->Get_StageSelectUI()->MoveUp_SubStage();
+			}
+
+			else if (g_pInput_Device->Key_Down(DIK_DOWN))
+			{
+				m_pUIManager->Get_StageSelectUI()->MoveDown_SubStage();
+			}
+
+			if (g_pInput_Device->Key_Down(DIK_SPACE))
+			{
+				m_pUIManager->Get_StageSelectUI()->Teleport_Stage();
+
+				m_pStageAgent->Reserve_ChangeStage();
+
+				m_bActiveUI = false;
+				Active_UI_StageSelect(true);
+				Active_UI_Mistletoe(true);
+			}
 		}
-
-		else if (m_bOnUI_BloodCode)
-			Active_UI_BloodCode(true);
-
-		else if (m_bOnUI_Mistletoe)
-		{
-			m_bActiveUI = false;
-			Active_UI_Mistletoe(true);
-		}
-
-		else if (m_bOnUI_Inventory)
-			Active_UI_Inventory(true);
-
-		else if (m_bOnUI_NPCTalk)
-			Active_UI_NPC(true);
-
-		else
-			Active_UI_Mistletoe();
 	}
 
-	if (m_bOnUI_StageSelect)
+	else if (false == _bActiveUI)
 	{
-		if (g_pInput_Device->Key_Down(DIK_RIGHT))
+		if (g_pInput_Device->Key_Down(DIK_ESCAPE))
 		{
-			m_pUIManager->Get_StageSelectUI()->Move_Right();
+			g_pInput_Device->Set_MouseLock(false);
+			m_pCamManager->Set_MouseCtrl(false);
+			m_pRenderer->DOF_On(true);
+
+			m_bActiveUI = true;
+			m_bOnUI_Inventory = true;
+			m_pUIManager->Get_Total_Inven()->Set_Active(true);
+			m_pUIManager->Get_StatusUI()->Set_Active(true);
 		}
 
-		else if (g_pInput_Device->Key_Down(DIK_LEFT))
+		else if (g_pInput_Device->Key_Down(DIK_E))
 		{
-			m_pUIManager->Get_StageSelectUI()->Move_Left();
-		}
-
-		if (g_pInput_Device->Key_Down(DIK_UP))
-		{
-			m_pUIManager->Get_StageSelectUI()->MoveUp_SubStage();
-		}
-
-		else if (g_pInput_Device->Key_Down(DIK_DOWN))
-		{
-			m_pUIManager->Get_StageSelectUI()->MoveDown_SubStage();
-		}
-
-		if (g_pInput_Device->Key_Down(DIK_SPACE))
-		{
-			m_pUIManager->Get_StageSelectUI()->Teleport_Stage();
-
-			m_pStageAgent->Reserve_ChangeStage();
-
-			m_bActiveUI = false;
-			Active_UI_StageSelect(true);
-			Active_UI_Mistletoe(true);
+			Active_UI_Mistletoe();
 		}
 	}
 
@@ -1901,6 +2148,7 @@ void CPlayer::Key_UI_n_Utiliy(_bool _bActiveUI)
 		// 유아이가 비활성화 되어 있을 때는 , 메인 UI 를 킨다.
 		else if (g_pInput_Device->Key_Down(DIK_ESCAPE))
 		{
+			m_pUIManager->Get_Total_Inven()->Set_Active(true);
 		}
 	}
 
@@ -3818,8 +4066,6 @@ void CPlayer::Play_Hit()
 
 		case Cmn_Hit03_L:
 		{
-			cout << "L" << endl;
-
 			if (dAniTime >= 3.667 && dAniTime < 4.367)
 			{
 				if (false == m_bEventTrigger[2])
@@ -3870,8 +4116,6 @@ void CPlayer::Play_Hit()
 
 		case Cmn_Hit03_R:
 		{
-			cout << "R" << endl;
-
 			if (dAniTime >= 3.0 && dAniTime < 4.033)
 			{
 				if (false == m_bEventTrigger[2])
@@ -4009,8 +4253,6 @@ void CPlayer::Play_Hit()
 
 		case Cmn_Hit04_L:
 		{
-			cout << "L" << endl;
-
 			if (dAniTime >= 1.233 && dAniTime < 2.233)
 			{
 				if (false == m_bEventTrigger[1])
@@ -4046,8 +4288,6 @@ void CPlayer::Play_Hit()
 
 		case Cmn_Hit04_R:
 		{
-			cout << "R" << endl;
-
 			if (dAniTime >= 0.0 && dAniTime < 1.233)
 			{
 				if (false == m_bEventTrigger[0])
@@ -4333,8 +4573,6 @@ void CPlayer::Play_Down()
 		{
 			m_fAnimMutiply = 1.f;
 
-			cout << "다운됫어~" << endl;
-
 			if (m_pDynamicMesh->Is_Finish_Animation(0.9f))
 			{
 				m_eAnim_Upper = Cmn_Down_02_End;
@@ -4520,8 +4758,6 @@ void CPlayer::Play_BloodSuck()
 			{
 				if (m_pDynamicMesh->Get_TrackInfo().Position >= 3.f)
 				{
-					cout << "계속타냐" << endl;
-
 					m_eAnim_Upper = LongCoat_ChargeSuck_End;
 					m_eAnim_Lower = m_eAnim_Upper;
 					m_eAnim_RightArm = m_eAnim_Upper;
@@ -4948,7 +5184,6 @@ void CPlayer::Play_Skills()
 
 		m_pWeapon[m_eActiveSlot]->Set_SkillMode(true); // RedColor
 		m_pWeapon[m_eActiveSlot]->Set_TrailUseMask(true, 6);
-
 	}
 
 	else
@@ -5121,8 +5356,6 @@ void CPlayer::Play_Skills()
 		}
 		case Renketsu_StrongAtk_02:
 		{
-			cout << m_pDynamicMesh->Get_TrackInfo().Position << endl;
-
 			_v3 vEffPos = _v3(0.f, 1.5f, 0.f) + m_pTransform->Get_Axis(AXIS_Z) * 1.5f;
 
 			if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.9f))
@@ -9900,52 +10133,53 @@ void CPlayer::Play_Lsword_DashAtk()
 
 void CPlayer::Ready_Weapon()
 {
-	m_pWeapon[WPN_SLOT_A] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon[WPN_SLOT_A]->Change_WeaponData(CWeapon::Wpn_SSword);
-	m_pWeapon[WPN_SLOT_A]->Set_Friendly(true);
 	LPCSTR tmpChar = "RightHandAttach";
 	_mat   matAttach;
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo(tmpChar, 2);
 
+	m_pWeapon[WPN_SLOT_A] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
+	m_pWeapon[WPN_SLOT_A]->Change_WeaponData(Wpn_SSword);
+	m_pWeapon[WPN_SLOT_A]->Set_Friendly(true);
 	m_pWeapon[WPN_SLOT_A]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
 	m_pWeapon[WPN_SLOT_A]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
 
-
 	m_pWeapon[WPN_SLOT_B] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon[WPN_SLOT_B]->Change_WeaponData(CWeapon::Wpn_Hammer);
-
+	m_pWeapon[WPN_SLOT_B]->Change_WeaponData(Wpn_Hammer);
 	m_pWeapon[WPN_SLOT_B]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
 	m_pWeapon[WPN_SLOT_B]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
 	m_pWeapon[WPN_SLOT_B]->Set_Friendly(true);
+
+	m_bWeaponActive[WPN_SLOT_A] = true;
+	m_bWeaponActive[WPN_SLOT_B] = false;
 
 	//========================================================================================================================
 	// 여기서 부터 디버그용 무기슬롯
 	//========================================================================================================================
 
-	// 총검
-	m_pWeapon[WPN_SLOT_C] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon[WPN_SLOT_C]->Change_WeaponData(CWeapon::Wpn_Gun);
-
-	m_pWeapon[WPN_SLOT_C]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
-	m_pWeapon[WPN_SLOT_C]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
-	m_pWeapon[WPN_SLOT_C]->Set_Friendly(true);
-
-	// 대검
-	m_pWeapon[WPN_SLOT_D] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon[WPN_SLOT_D]->Change_WeaponData(CWeapon::Wpn_LSword);
-
-	m_pWeapon[WPN_SLOT_D]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
-	m_pWeapon[WPN_SLOT_D]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
-	m_pWeapon[WPN_SLOT_D]->Set_Friendly(true);
-
-	// 창
-	m_pWeapon[WPN_SLOT_E] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon[WPN_SLOT_E]->Change_WeaponData(CWeapon::Wpn_Halberd);
-
-	m_pWeapon[WPN_SLOT_E]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
-	m_pWeapon[WPN_SLOT_E]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
-	m_pWeapon[WPN_SLOT_E]->Set_Friendly(true);
+	//// 총검
+	//m_pWeapon[WPN_SLOT_C] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
+	//m_pWeapon[WPN_SLOT_C]->Change_WeaponData(CWeapon::Wpn_Gun);
+	//
+	//m_pWeapon[WPN_SLOT_C]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
+	//m_pWeapon[WPN_SLOT_C]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
+	//m_pWeapon[WPN_SLOT_C]->Set_Friendly(true);
+	//
+	//// 대검
+	//m_pWeapon[WPN_SLOT_D] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
+	//m_pWeapon[WPN_SLOT_D]->Change_WeaponData(CWeapon::Wpn_LSword);
+	//
+	//m_pWeapon[WPN_SLOT_D]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
+	//m_pWeapon[WPN_SLOT_D]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
+	//m_pWeapon[WPN_SLOT_D]->Set_Friendly(true);
+	//
+	//// 창
+	//m_pWeapon[WPN_SLOT_E] = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
+	//m_pWeapon[WPN_SLOT_E]->Change_WeaponData(CWeapon::Wpn_Halberd);
+	//
+	//m_pWeapon[WPN_SLOT_E]->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
+	//m_pWeapon[WPN_SLOT_E]->Set_ParentMatrix(&m_pTransform->Get_WorldMat());
+	//m_pWeapon[WPN_SLOT_E]->Set_Friendly(true);
 
 	//========================================================================================================================
 }
@@ -10036,7 +10270,7 @@ void CPlayer::Ready_Skills()
 	pSkillInfo->bOneHand = true;
 	pSkillInfo->dwAnimationIdx = Renketsu_StrongAtk_01;
 	pSkillInfo->eCurSkillIdx = Skill_OneHand_Active_01;
-	pSkillInfo->dwSkillCost = 2;
+	pSkillInfo->dwSkillCost = 2; 
 
 	LOOP(4)
 		pSkillInfo->ePreSkillIdx[i] = Skill_End;
@@ -10145,22 +10379,7 @@ void CPlayer::Ready_Skills()
 
 	pSkillInfo = new SKILL_INFO();
 
-	// 1 - 버프
-	pSkillInfo->bOneHand = true;
-	pSkillInfo->dwAnimationIdx = Renketsu_Buff;
-	pSkillInfo->eCurSkillIdx = Skill_Buff_Enchant_01;
-	pSkillInfo->dwSkillCost = 2;
-
-	LOOP(4)
-		pSkillInfo->ePreSkillIdx[i] = Skill_End;
-
-	m_vecFullSkillInfo.push_back(pSkillInfo);
-
-	//====================================================================================
-
-	pSkillInfo = new SKILL_INFO();
-
-	// 10 - 창 스킬
+	// 9 - 창 스킬
 	pSkillInfo->bOneHand = true;
 	pSkillInfo->dwAnimationIdx = Halverd_Skill_Heavy_01;
 	pSkillInfo->eCurSkillIdx = Skill_Halverd_Single;
@@ -10175,10 +10394,25 @@ void CPlayer::Ready_Skills()
 
 	pSkillInfo = new SKILL_INFO();
 
-	// 11 - 총검 스킬
+	// 10 - 총검 스킬
 	pSkillInfo->bOneHand = true;
 	pSkillInfo->dwAnimationIdx = Halverd_Skill_Heavy_01;
 	pSkillInfo->eCurSkillIdx = Skill_Gun_Single;
+	pSkillInfo->dwSkillCost = 2;
+
+	LOOP(4)
+		pSkillInfo->ePreSkillIdx[i] = Skill_End;
+
+	m_vecFullSkillInfo.push_back(pSkillInfo);
+
+	//====================================================================================\
+
+	pSkillInfo = new SKILL_INFO();
+
+	// 11 - 버프
+	pSkillInfo->bOneHand = true;
+	pSkillInfo->dwAnimationIdx = Renketsu_Buff;
+	pSkillInfo->eCurSkillIdx = Skill_Buff_Enchant_01;
 	pSkillInfo->dwSkillCost = 2;
 
 	LOOP(4)
@@ -10307,19 +10541,34 @@ void CPlayer::Active_UI_Mistletoe(_bool _bResetUI)
 	// 비활성화면 리턴
 	if (false == bUIActive)
 	{
+		m_pCamManager->Set_AimXPosMulti(1.f);
+		m_pCamManager->Set_AimYPos(0.f);
+
 		// 타겟도 Null 해줘요
+		m_pCamManager->Set_AimUI(false);
 		m_pCamManager->Set_AimingTarget(nullptr);
-		m_pCamManager->Set_MidDistance(3.5f);
+		m_pCamManager->Set_MidDistance(g_OriginCamPos);
 		m_pCamManager->Set_MouseCtrl(true);
+		m_pCamManager->Set_LockAngleX(D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)));
+
 		g_pInput_Device->Set_MouseLock(true);
+
+		m_pRenderer->DOF_On(false);
+
 		return;
 	}
 
 	// 타겟 설정
+	m_pCamManager->Set_AimXPosMulti(0.2f);
+	m_pCamManager->Set_AimYPos(0.f);
+
+	m_pCamManager->Set_AimUI(true);
 	m_pCamManager->Set_AimingTarget(m_pUIManager->Get_MistletoeUI());
 	m_pCamManager->Set_MidDistance(1.5f);
 	m_pCamManager->Set_MouseCtrl(false);
 	g_pInput_Device->Set_MouseLock(false);
+
+	m_pRenderer->DOF_On(true);
 }
 
 void CPlayer::Active_UI_Inventory(_bool _bResetUI)
@@ -10342,6 +10591,10 @@ void CPlayer::Active_UI_StageSelect(_bool _bResetUI)
 	// 비활성화면 리턴
 	if (!bUIActive)
 	{
+		m_pCamManager->Set_MidDistance(1.5f);
+		m_pCamManager->Set_AimXPosMulti(0.2f);
+		m_pCamManager->Set_AimYPos(0.f);
+
 		m_pUIManager->Get_MistletoeUI()->Set_Active(true);
 		m_pCamManager->Set_OnAimingTarget(true);
 		m_pCamManager->Set_AimingTarget(m_pUIManager->Get_MistletoeUI());
@@ -10349,23 +10602,17 @@ void CPlayer::Active_UI_StageSelect(_bool _bResetUI)
 		return;
 	}
 
+	// 상위인 겨우살이 끕니다.
 	m_pUIManager->Get_MistletoeUI()->Set_Active(false);
 
 	// 카메라 에임 상태 설정
 	m_pCamManager->Set_OnAimingTarget(bUIActive);
-
-	// 비활성화면 리턴
-	if (false == bUIActive)
-	{
-		// 타겟도 Null 해줘요
-		m_pCamManager->Set_AimingTarget(nullptr);
-		m_pCamManager->Set_MidDistance(3.5f);
-		return;
-	}
-
-	// 타겟 설정
+	m_pCamManager->Set_AimUI(true);
 	m_pCamManager->Set_AimingTarget(m_pUIManager->Get_StageSelectUI());
-	m_pCamManager->Set_MidDistance(2.f);
+
+	m_pCamManager->Set_MidDistance(1.5f);
+	m_pCamManager->Set_AimXPosMulti(0.2f);
+	m_pCamManager->Set_AimYPos(-0.5f);
 }
 
 void CPlayer::Active_UI_NPC(_bool _bResetUI)
@@ -10383,11 +10630,15 @@ void CPlayer::Active_UI_BloodCode(_bool _bResetUI)
 	m_pUIManager->Get_BloodCode_Menu()->Set_Active(bUIActive);
 
 	// 선택이 됫는지 안됫는지
-	m_bOnUI_StageSelect = bUIActive;
+	m_bOnUI_BloodCode = bUIActive;
 
 	// 비활성화면 리턴
 	if (!bUIActive)
 	{
+		m_pCamManager->Set_MidDistance(1.5f);
+		m_pCamManager->Set_AimXPosMulti(0.5f);
+		m_pCamManager->Set_AimYPos(0.f);
+
 		m_pUIManager->Get_MistletoeUI()->Set_Active(true);
 		m_pCamManager->Set_OnAimingTarget(true);
 		m_pCamManager->Set_AimingTarget(m_pUIManager->Get_MistletoeUI());
@@ -10395,21 +10646,16 @@ void CPlayer::Active_UI_BloodCode(_bool _bResetUI)
 		return;
 	}
 
+	m_pUIManager->Get_MistletoeUI()->Set_Active(false);
+
+	m_pCamManager->Set_AimXPosMulti(-1.5f);
+	m_pCamManager->Set_AimYPos(-0.2f);
+
 	// 카메라 에임 상태 설정
 	m_pCamManager->Set_OnAimingTarget(bUIActive);
-
-	// 비활성화면 리턴
-	if (false == bUIActive)
-	{
-		// 타겟도 Null 해줘요
-		m_pCamManager->Set_AimingTarget(nullptr);
-		m_pCamManager->Set_MidDistance(3.5f);
-		return;
-	}
-
-	// 타겟 설정
+	m_pCamManager->Set_AimUI(true);
 	m_pCamManager->Set_AimingTarget(m_pUIManager->Get_StageSelectUI());
-	m_pCamManager->Set_MidDistance(2.f);
+	m_pCamManager->Set_MidDistance(2.5f);
 }
 
 HRESULT CPlayer::Add_Component()

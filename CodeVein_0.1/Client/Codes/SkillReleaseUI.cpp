@@ -35,7 +35,7 @@ HRESULT CSkillReleaseUI::Ready_GameObject(void * pArg)
 _int CSkillReleaseUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
-	m_pRendererCom->Add_RenderList(RENDER_ALPHA, this);
+	m_pRendererCom->Add_RenderList(RENDER_3DUI, this);
 
 	_v3 vLookX = m_pTransformCom->Get_Axis(AXIS_X);
 	_v3 vLookY = m_pTransformCom->Get_Axis(AXIS_Y);

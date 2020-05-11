@@ -83,8 +83,11 @@ public:
 	virtual _float Get_Target_GuardTimer_Max() { return m_tObjParam.fGuardTimer_Max; };
 	virtual EXE_TYPE Get_Target_Execution_Type() { return m_tObjParam.eExecutionType; }
 	virtual EXE_WPN Get_Target_Execution_Wpn() { return m_tObjParam.eExecutionWpn; }
+	virtual _short Get_Target_Mana_Cur() { return m_tObjParam.sMana_Cur; }
+	virtual _short Get_Target_Mana_Max() { return m_tObjParam.sMana_Max; }
 
 public:
+	virtual void Add_Target_Mana(_short _sMana) { m_tObjParam.sMana_Cur += _sMana; };
 	virtual void Add_Target_Hp(_float _fHp) { m_tObjParam.fHp_Cur += _fHp; };
 	virtual void Add_Target_Stamina(_float _fStamina) { m_tObjParam.fStamina_Cur += _fStamina; };
 	virtual void Add_Target_HoldGage(_float _fHoldGage) { m_tObjParam.fHoldGage_Cur += _fHoldGage; };
@@ -114,6 +117,8 @@ public:
 	virtual void Set_Target_Execution_Type(EXE_TYPE _eType) { m_tObjParam.eExecutionType = _eType; }
 	virtual void Set_Target_Execution_Wpn(EXE_WPN _eWpn) { m_tObjParam.eExecutionWpn = _eWpn; }
 	virtual void Set_CounterTarget(CGameObject* pGameObj) { pCounterTarget = pGameObj; };
+	virtual void Set_Target_Mana_Cur(_short _sMana) { m_tObjParam.sMana_Cur = _sMana; }
+	virtual void Set_Target_Mana_Max(_short _sMana) { m_tObjParam.sMana_Max = _sMana; }
 
 
 	virtual void Set_Target_HitDir(_v3 _vHitDir) { m_tObjParam.vHitDir = _vHitDir; }

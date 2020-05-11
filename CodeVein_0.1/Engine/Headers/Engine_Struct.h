@@ -30,13 +30,19 @@ namespace Engine
 
 	typedef struct tagWeaponParam
 	{
-		_float		fDamage;
+		_int		iWeaponType;	// 무기 타입 ex) Weapon_Sword
+		_int		iWeaponName;	// 무기 이름 ex) Sword_Military
 
-		_float		fTrail_Min;
-		_float		fTrail_Max;
+		_uint		iReinforce;		//강화 단계
 
-		_float		fCol_Height;
-		_float		fRadius;
+		_float		fDamage;		//기본 공격력
+
+		_float		fTrail_Min;		// 트레일 최소
+		_float		fTrail_Max;		// 트레일 최대
+
+		_float		fCol_Height;	// 충돌체 최초 위치
+		_float		fRadius;		// 충돌 구 범위
+
 	}WPN_PARAM;
 
 	typedef struct tagRimParam
@@ -116,6 +122,9 @@ namespace Engine
 
 		EXE_WPN		eExecutionWpn;	// 처형 시 무기
 		EXE_TYPE	eExecutionType;	// 처형 시 타입
+
+		_short		sMana_Cur;		// 스킬 마나
+		_short		sMana_Max;		// 스킬 마나 맥스
 
 	}OBJECT_PARAM;
 

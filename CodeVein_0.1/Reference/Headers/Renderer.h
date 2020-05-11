@@ -90,6 +90,7 @@ private:
 	HRESULT Render_Alpha();
 	HRESULT Render_Effect();
 	HRESULT Render_Instance();
+	HRESULT Render_UI_Back();
 	HRESULT Render_UI();
 	HRESULT Render_3dUI();
 	HRESULT Render_SSAO();

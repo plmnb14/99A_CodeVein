@@ -67,9 +67,9 @@ _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 	// 퀵슬롯 정보
 	CQuickSlot* pQuickSlot = CUI_Manager::Get_Instance()->Get_QuickSlot();
 
-	if (g_pInput_Device->Key_Up(DIK_ESCAPE))
+	// 활성화 상태라면
+	if (m_bIsActive)
 	{
-		m_bIsActive = true;	
 		CUI_Manager::Get_Instance()->Get_Instance()->Get_Inventory()->Set_Active(false);
 		CUI_Manager::Get_Instance()->Get_Instance()->Get_Inventory()->Set_Detail(false);		
 		// 스테이터스 창 활성화
@@ -86,7 +86,7 @@ _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 	LOOP(2)
 	{
 		CWeapon_Inven* pWeaponInven = CUI_Manager::Get_Instance()->Get_Weapon_Inven();
-		m_pWeapon_Slot[i]->Set_Type(pWeaponInven->Get_UseWeaponState(i));
+		m_pWeapon_Slot[i]->Set_WeaponParam(pWeaponInven->Get_UseWeaponParam(i));
 		m_pWeapon_Slot[i]->Set_Active(m_bIsActive);
 	}
 	
@@ -232,7 +232,10 @@ void CTotal_Inven::SetUp_Default()
 		{
 			g_pManagement->Add_GameObject_ToLayer(L"GameObject_WeaponSlot", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
 			m_pWeapon_Slot[i] = static_cast<CWeapon_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
-			m_pWeapon_Slot[i]->Set_Type(WEAPON_None);
+			WPN_PARAM tWpnParam = {};
+			tWpnParam.iWeaponName = WPN_DATA_End;
+			tWpnParam.iWeaponType = WEAPON_End;
+			m_pWeapon_Slot[i]->Set_WeaponParam(tWpnParam);
 		}
 		else if (2 == i)
 		{
