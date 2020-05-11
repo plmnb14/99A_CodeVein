@@ -5,6 +5,7 @@
 #include "UI.h"
 
 #include "Pet_Slot.h"
+//인벤토리 안에 들어가면 사라질 예정
 #include "Inventory_Icon.h"
 
 BEGIN(Client)
@@ -23,19 +24,17 @@ public:
 	virtual _int			Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT			Render_GameObject();
 
-	void					Add_Pet(ITEM_GRADE_TYPE _eGrade, CPet::PET_TYPE _eType);
-	void					Sell_Pet(_uint iDelete);
-	void					Active_Pet(CPet_Slot* pSlot);
-
 private:
 	void					Click_Inven();
-	void					Regist_PetSlot(CPet_Slot* _pPetSlot);
-	void					UnRegist_PetSlot(CPet_Slot* _pPetSlot);
+	void					Reset_SlotSelect();
 
 private:
 	HRESULT					Add_Component();
 	HRESULT					SetUp_Default();
 	HRESULT					SetUp_ConstantTable();
+
+public:
+	void Add_Pet(CPet::PET_TYPE ePetType);
 
 public:
 	static CPet_Inven*		Create(_Device pGraphic_Device);
@@ -53,6 +52,9 @@ private:
 
 	vector<CPet_Slot*>		m_vecPetSlot;
 	CPet::PET_TYPE			m_eType;
+	
+	_bool					m_bCanActivePet = true;
+	_uint					m_VectorNum = 0;
 
 };
 

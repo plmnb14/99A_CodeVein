@@ -123,7 +123,7 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	vWorldPos = vProjPos * fViewZ;
 
 	// 2. 뷰( 로컬위치 * 월드 * 뷰 )
-	vWorldPos = mul(vProjPos, g_matProjInv);
+	vWorldPos = mul(vWorldPos, g_matProjInv);
 
 	// 3. 월드( 로컬위치 * 월드)
 	vWorldPos = mul(vWorldPos, g_matViewInv);

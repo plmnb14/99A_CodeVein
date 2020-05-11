@@ -6,6 +6,7 @@
 #include "MainApp.h"
 
 #include "Management.h"
+#include "SoundManager.h"
 
 #define MAX_LOADSTRING 100
 
@@ -15,12 +16,13 @@ WCHAR szTitle[MAX_LOADSTRING];                  // 제목 표시줄 텍스트입니다.
 WCHAR szWindowClass[MAX_LOADSTRING];            // 기본 창 클래스 이름입니다.
 HWND g_hWnd;
 
-CManagement*		g_pManagement;
-CTimer_Manager*		g_pTimer_Manager;
-CFrameMgr*			g_pFrame_Manager;
-CInput_Device*		g_pInput_Device;
-CTexture*			g_pDissolveTexture;
-CMyPhysx*			g_pPhysx;
+CManagement*				g_pManagement;
+CTimer_Manager*				g_pTimer_Manager;
+CFrameMgr*					g_pFrame_Manager;
+CInput_Device*				g_pInput_Device;
+CTexture*					g_pDissolveTexture;
+CMyPhysx*					g_pPhysx;
+Client::CSoundManager*				g_pSoundManager = nullptr;
 
 // ================================================
 // 스테이지를 한번이라도 들렸는지 확인하는 전역변수 (MeshLoad를 위해)
@@ -80,6 +82,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
 	g_pManagement = CManagement::Get_Instance();
 	Safe_AddRef(g_pManagement);
+
+	g_pSoundManager = CSoundManager::Get_Instance();
 
 	g_pTimer_Manager = CTimer_Manager::Get_Instance();
 
@@ -143,6 +147,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 		}
 	}
 	
+	g_pSoundManager->Destroy_Instance();
 	g_pTimer_Manager->Destroy_Instance();
 	g_pFrame_Manager->Destroy_Instance();
 	

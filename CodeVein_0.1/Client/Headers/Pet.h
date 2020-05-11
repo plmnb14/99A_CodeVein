@@ -154,7 +154,7 @@ public:
 
 		PET_GRADE_TYPE	eUseWhatGrade = PET_GRADE_TYPE::PET_GRADE_NORMAL;
 		WEAPON_STATE		eUseWhatWeapon = WEAPON_STATE::WEAPON_None;
-
+		_ushort				sStageIdx = 0;
 	};
 
 	struct PET_BULLET_STATUS
@@ -184,6 +184,7 @@ protected:
 	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass);
 
 protected:
+	virtual void Check_Navi();
 	virtual void Check_CollisionEvent();
 	virtual void Check_CollisionPush();
 	virtual void Check_CollisionHit(list<CGameObject*> plistGameObject);
@@ -230,10 +231,10 @@ protected:
 	virtual void Free();
 
 protected:
-	CTransform*			m_pTransformCom = nullptr;
-	CRenderer*			m_pRendererCom = nullptr;
-	CShader*			m_pShaderCom = nullptr;
-	CMesh_Dynamic*		m_pMeshCom = nullptr;
+	CTransform*			m_pTransform = nullptr;
+	CRenderer*			m_pRenderer = nullptr;
+	CShader*			m_pShader = nullptr;
+	CMesh_Dynamic*		m_pMesh = nullptr;
 	CNavMesh*			m_pNavMesh = nullptr;
 	CCollider*			m_pCollider = nullptr;
 	CMonsterUI*			m_pMonsterUI = nullptr;

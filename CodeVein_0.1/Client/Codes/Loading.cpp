@@ -12,6 +12,7 @@
 #include "Effect_BloodChunk.h"
 #include "Effect_LongSpark.h"
 #include "Effect_FireFlower.h"
+#include "Effect_Parent.h"
 
 #include "Player.h"
 
@@ -27,6 +28,8 @@
 #include "MonsterHeaders.h"
 #include "Flag.h"
 #include "ObjectPool_Manager.h"
+#include "ClothDynamic.h"
+#include "ClothStatic.h"
 
 #include "PlayerHP.h"
 #include "PlayerST.h"
@@ -47,6 +50,8 @@
 
 #include "DropItem.h"
 #include "Haze.h"
+
+#include "SoundManager.h"
 
 USING(Client)
 
@@ -103,7 +108,7 @@ unsigned int CALLBACK CLoading::Thread_Main(void* pArg)
 
 HRESULT CLoading::Ready_Effect(void)
 {
-
+	
 #pragma region ButterFly
 	if (FAILED(Add_EffectPrototype(L"ButterFly_SoftSmoke")))
 		return E_FAIL;
@@ -179,7 +184,8 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"ButterFly_VenomShot_Body")))
 		return E_FAIL;
 #pragma endregion
-
+	
+	
 #pragma region Queens Knight
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_2Phase_SwordCrash_Chunk")))
 		return E_FAIL;
@@ -255,6 +261,7 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_DarkBoom_ReadyDistortion")))
 		return E_FAIL;
+	
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"QueensKnight_LeakField_1")))
@@ -341,7 +348,9 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 #pragma endregion
 	
+
 #pragma region IceGirl
+
 	if (FAILED(Add_EffectPrototype(L"IceFloorAura_01")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceFloorAura_02")))
@@ -350,7 +359,7 @@ HRESULT CLoading::Ready_Effect(void)
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceSmoke_01")))
 		return E_FAIL;
-	if (FAILED(Add_EffectPrototype(L"IceSmoke_02")))
+	if (FAILED(Add_EffectPrototype(L"IceSmoke_02"))) // 이것 마지막
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceGirl_FlashParticle_Blue")))
 		return E_FAIL;
@@ -359,6 +368,8 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"IceGirl_PointParticle_Blue")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceGirl_PointParticle_Green")))
+		return E_FAIL;
+	if (FAILED(Add_EffectPrototype(L"IceGirl_SlashSnowParticle_0")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"IceBlock_Main", true)))
 		return E_FAIL;
@@ -429,7 +440,8 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"IceGirl_Buff_Charge_Smoke_01")))
 		return E_FAIL;
 #pragma endregion
-
+	
+	
 #pragma region FireBoy
 	if (FAILED(Add_EffectPrototype(L"FireBoy_Charge_Hand_Fire")))
 		return E_FAIL;
@@ -522,7 +534,7 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"FireBoy_FireFlame_DeadFire")))
 		return E_FAIL;
 #pragma endregion
-
+	
 #pragma region DeerKing
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceStone_Up_Particle_0", true)))
 		return E_FAIL;
@@ -601,7 +613,7 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(Add_EffectPrototype(L"DeerKing_IceSword", true)))
 		return E_FAIL;
 #pragma endregion
-
+	
 	if (FAILED(Add_EffectPrototype(L"Cocoon_TongueFire")))
 		return E_FAIL;
 	if (FAILED(Add_EffectPrototype(L"Totem_Fire_Bullet_Dead_0")))
@@ -833,7 +845,7 @@ HRESULT CLoading::Ready_Effect(void)
 
 	if (FAILED(Add_EffectPrototype(L"Player_SpaceBar_StepParticle")))
 		return E_FAIL;
-
+	
 #pragma region Colleague
 	if (FAILED(Add_EffectPrototype(L"Colleague_Teleport_Flash_Particle_0")))
 		return E_FAIL;
@@ -1137,6 +1149,11 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Blood_0", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_Blood_0.dat")))))
 		return E_FAIL;
 
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_BossDead_BG", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_BossDead_BG.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_BossDead_Text", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_BossDead_Text.dat")))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -1268,9 +1285,9 @@ _uint CLoading::Loading_Title()
 
 	cout << "DynamicMesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
-
-	cout << "NPC 불러오는 중 . . ." << endl;
-	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
+	//
+	//cout << "NPC 불러오는 중 . . ." << endl;
+	//g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
 	//============================================================================================================
 	// 무기 불러오는 중
 	//============================================================================================================
@@ -1303,9 +1320,9 @@ _uint CLoading::Loading_Title()
 	//============================================================================================================
 	// 플레이어 스킬, 보스 이펙트 포함
 	//============================================================================================================
-	cout << "Particle Etc 불러오는 중 . . ." << endl;
-	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
-		return E_FAIL;
+	//cout << "Particle Etc 불러오는 중 . . ." << endl;
+	//if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
+	//	return E_FAIL;
 	//============================================================================================================
 	// UI 원형 생성
 	//============================================================================================================
@@ -1332,6 +1349,10 @@ _uint CLoading::Loading_Title()
 	// 스카이
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Sky_Blur", CSky_Blur::Create(m_pGraphicDev))))
 		return E_FAIL;
+	//============================================================================================================
+	// 사운드
+	//============================================================================================================
+	g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
 	//============================================================================================================
 
 	m_bFinish = true;
@@ -1360,6 +1381,11 @@ _uint CLoading::Loading_Title()
 	cout << "[9] # 릴리즈 모드 # ";
 	cout << (g_bReleaseMode ? "true" : "false") << endl;
 	cout << "-------------------------------------------------------------------------------" << endl;
+
+	//g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
+	//g_pSoundManager->Play_Sound(L"Title_Intro_02.wav", CSoundManager::Background_01, CSoundManager::Master_Sound);
+	//g_pSoundManager->Play_Sound(L"Gwan_Cchak.wav", CSoundManager::Background_01, CSoundManager::BGM_Sound);
+	//g_pSoundManager->Play_BGM(L"Gwan_Cchak.wav");
 
 	return NO_EVENT;
 }
@@ -1484,9 +1510,10 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Flag", CFlag::Create(m_pGraphicDev))))
 			return E_FAIL;
 
-		cout << "Monster Prototype 생성 중 . . ." << endl;
+
 		//============================================================================================================
 		// 몬스터 프로토 타입
+		cout << "Monster Prototype 생성 중 . . ." << endl;
 		//============================================================================================================
 		if (FAILED(Ready_Intro_MonsterPrototype()))
 			return E_FAIL;
@@ -1505,22 +1532,22 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CollBullet_Heal", CCollBullet_Heal::Create(m_pGraphicDev))))
 			return E_FAIL;
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_CollBullet_Heal", L"GameObject_CollBullet_Heal", 100);
-		//============================================================================================================
+		////============================================================================================================
 		// UI - Chea
 		//============================================================================================================
-		//cout << "UI Sub Prototype 생성 중 . . ." << endl;
+		cout << "UI Sub Prototype 생성 중 . . ." << endl;
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MonsterHPUI", CMonsterUI::Create(m_pGraphicDev))))
 			return E_FAIL;
-
+		
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MassageUI", CMassageUI::Create(m_pGraphicDev))))
 			return E_FAIL;
-
+		
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Get_ItemUI", CGet_ItemUI::Create(m_pGraphicDev))))
 			return E_FAIL;
-
+		
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Colleague_UI", CColleague_UI::Create(m_pGraphicDev))))
 			return E_FAIL;
-
+		
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Colleague_Jack", CColleague_Jack::Create(m_pGraphicDev))))
 			return E_FAIL;
 		//============================================================================================================
@@ -1529,7 +1556,7 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Haze", CHaze::Create(m_pGraphicDev))))
 			return E_FAIL;
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_Haze", L"GameObject_Haze", 200);
-		
+
 		// Effect_BloodChunk
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BloodChunk", CEffect_BloodChunk::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1544,7 +1571,12 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_FireFlower", CEffect_FireFlower::Create(m_pGraphicDev))))
 			return E_FAIL;
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_FireFlower", L"GameObject_FireFlower", 3000);
-	
+
+		// Effect_Parent
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_EffParent", CEffect_Parent::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_EffParent", L"GameObject_EffParent", 100);
+
 		///////test로 만들어둔 드롭아이템입니다 수정 Test 실험 심규명
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DropItem", CDropItem::Create(m_pGraphicDev))))
 			return E_FAIL;
@@ -1609,203 +1641,269 @@ _uint CLoading::Loading_MainStages()
 
 HRESULT CLoading::Ready_Intro_MonsterPrototype()
 {
+	//============================================================================================================================================
 	// 독나방
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonButterfly", CPoisonButterfly::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 독나방 5발 투사체
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonBullet", CPoisonBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_PoisonBullet", L"Monster_PoisonBullet", 20);
-	// 독나방 추적 투사체
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonChaseBullet", CPoisonChaseBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_PoisonChaseBullet", L"Monster_PoisonChaseBullet", 5);
-	// 독나방 4방향 투사체
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonRotationBullet", CPoisonRotationBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_PoisonRotationBullet", L"Monster_PoisonRotationBullet", 8);
-	// 독나방 기모아서 쏘기 충돌체
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonTornado", CPoisonTornado::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_PoisonTornado", L"Monster_PoisonTornado", 3);
+	//============================================================================================================================================
+	{
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonButterfly", CPoisonButterfly::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 독나방 5발 투사체
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonBullet", CPoisonBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_PoisonBullet", L"Monster_PoisonBullet", 20);
+		// 독나방 추적 투사체
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonChaseBullet", CPoisonChaseBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_PoisonChaseBullet", L"Monster_PoisonChaseBullet", 5);
+		// 독나방 4방향 투사체
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonRotationBullet", CPoisonRotationBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_PoisonRotationBullet", L"Monster_PoisonRotationBullet", 8);
+		// 독나방 기모아서 쏘기 충돌체
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_PoisonTornado", CPoisonTornado::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_PoisonTornado", L"Monster_PoisonTornado", 3);
+	}
+	//============================================================================================================================================
 	// 여왕의 기사
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_QueensKnight", CQueensKnight::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 땅에서 찌릿찌릿 움직이는 총알
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkGroundBullet", CDarkGroundBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DarkGroundBullet", L"Monster_DarkGroundBullet", 16);
-	// 어둠 폭발
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkBoom", CDarkBoom::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DarkBoom", L"Monster_DarkBoom", 16);
-	// 기사 주위 결계
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkMidCol", CDarkMidCol::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DarkMidCol", L"Monster_DarkMidCol", 3);
-	// 리크 필드
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_LeakField", CLeakField::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_LeakField", L"Monster_LeakField", 3);
-	// 얼음여자
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceGirl", CIceGirl::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 얼음여자 콜드빔 작은 크기
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamSmall", CColdBeamSmall::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_ColdBeamSmall", L"Monster_ColdBeamSmall", 10);
-	// 얼음여자 콜드빔 중간 크기
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamMiddle", CColdBeamMiddle::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_ColdBeamMiddle", L"Monster_ColdBeamMiddle", 8);
-	// 얼음여자 콜드빔 큰 크기
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamBig", CColdBeamBig::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_ColdBeamBig", L"Monster_ColdBeamBig", 20);
-	// 얼음여자 콜드빔 날카로운것
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamSharp", CColdBeamSharp::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_ColdBeamSharp", L"Monster_ColdBeamSharp", 10);
-	// 얼음여자 검기발사
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordBullet", CSwordBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_SwordBullet", L"Monster_SwordBullet", 3);
-	// 얼음여자 얼음보호막
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceBarrier", CIceBarrier::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 보류
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_IceBarrier", L"Monster_IceBarrier", 2);
+	//============================================================================================================================================
+	{
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_QueensKnight", CQueensKnight::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 땅에서 찌릿찌릿 움직이는 총알
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkGroundBullet", CDarkGroundBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DarkGroundBullet", L"Monster_DarkGroundBullet", 16);
+		// 어둠 폭발
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkBoom", CDarkBoom::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DarkBoom", L"Monster_DarkBoom", 16);
+		// 기사 주위 결계
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DarkMidCol", CDarkMidCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DarkMidCol", L"Monster_DarkMidCol", 3);
+		// 리크 필드
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_LeakField", CLeakField::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_LeakField", L"Monster_LeakField", 3);
+	}
+	//============================================================================================================================================
+	//// 얼음여자
+	//============================================================================================================================================
+	{
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceGirl", CIceGirl::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 얼음여자 콜드빔 작은 크기
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamSmall", CColdBeamSmall::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_ColdBeamSmall", L"Monster_ColdBeamSmall", 10);
+		// 얼음여자 콜드빔 중간 크기
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamMiddle", CColdBeamMiddle::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_ColdBeamMiddle", L"Monster_ColdBeamMiddle", 8);
+		// 얼음여자 콜드빔 큰 크기
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamBig", CColdBeamBig::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_ColdBeamBig", L"Monster_ColdBeamBig", 20);
+		// 얼음여자 콜드빔 날카로운것
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_ColdBeamSharp", CColdBeamSharp::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_ColdBeamSharp", L"Monster_ColdBeamSharp", 10);
+		// 얼음여자 검기발사
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordBullet", CSwordBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_SwordBullet", L"Monster_SwordBullet", 3);
+		// 얼음여자 얼음보호막
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_IceBarrier", CIceBarrier::Create(m_pGraphicDev))))
+			return E_FAIL;
+		//// 보류
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_IceBarrier", L"Monster_IceBarrier", 2);
+	}
+	//============================================================================================================================================
 	// 불남자
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireBoy", CFireBoy::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 포신으로 때리기 콜라이더
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunAttackCol", CGunAttackCol::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_GunAttackCol", L"Monster_GunAttackCol", 3);
-	// 불 총알
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireBullet", CFireBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireBullet", L"Monster_FireBullet", 80);
-	// 화염구
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireSphere", CFireSphere::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireSphere", L"Monster_FireSphere", 3);
-	// 타겟의 바닥에 화염폭발
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireGround", CFireGround::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireGround", L"Monster_FireGround", 15);
-	// 화염 토네이도 콜라이더
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireTornadoCol", CFireTornadoCol::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireTornadoCol", L"Monster_FireTornadoCol", 3);
-	// 왼손에 화염구 소환
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireHandBall", CFireHandBall::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireHandBall", L"Monster_FireHandBall", 3);
-	// 왼손에 화염구 죽은 후 생성되는 불꽃
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireFlame", CFireFlame::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireFlame", L"Monster_FireFlame", 48);
+	//============================================================================================================================================
+	{
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireBoy", CFireBoy::Create(m_pGraphicDev))))
+			return E_FAIL;
+		//포신으로 때리기 콜라이더
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunAttackCol", CGunAttackCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_GunAttackCol", L"Monster_GunAttackCol", 3);
+		
+		// 불 총알
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireBullet", CFireBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireBullet", L"Monster_FireBullet", 80);
+		
+		// 화염구
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireSphere", CFireSphere::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireSphere", L"Monster_FireSphere", 3);
+		
+		// 타겟의 바닥에 화염폭발
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireGround", CFireGround::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireGround", L"Monster_FireGround", 15);
+		
+		// 화염 토네이도 콜라이더
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireTornadoCol", CFireTornadoCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireTornadoCol", L"Monster_FireTornadoCol", 3);
+		
+		// 왼손에 화염구 소환
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireHandBall", CFireHandBall::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireHandBall", L"Monster_FireHandBall", 3);
+		
+		// 왼손에 화염구 죽은 후 생성되는 불꽃
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_FireFlame", CFireFlame::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_FireFlame", L"Monster_FireFlame", 48);
+	}
+	//============================================================================================================================================
 	// 사슴왕
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKing", CDeerKing::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 사슴왕  투사체
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingBullet", CDeerKingBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingBullet", L"Monster_DeerKingBullet", 24);
-	// 사슴왕  뾰족 얼음
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingColdBeam", CDeerKingColdBeam::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingColdBeam", L"Monster_DeerKingColdBeam", 6);
-	// 사슴왕  점프주먹 콜라이더
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingJumpFistCol", CDeerKingJumpFistCol::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingJumpFistCol", L"Monster_DeerKingJumpFistCol", 3);
-	// 사슴왕  제자리 점프 콜라이더
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingJumpInPlaceCol", CDeerKingJumpInPlaceCol::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingJumpInPlaceCol", L"Monster_DeerKingJumpInPlaceCol", 3);
-	// 사슴왕  돌진 콜라이더
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingRushCol", CDeerKingRushCol::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingRushCol", L"Monster_DeerKingRushCol", 3);
-	// 사슴왕  얼음검 소환
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingIceSword", CDeerKingIceSword::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingIceSword", L"Monster_DeerKingIceSword", 3);
-	// 사슴왕  오른손 충돌체
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingRightHandCol", CDeerKingRightHandCol::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingRightHandCol", L"Monster_DeerKingRightHandCol", 3);
+	//============================================================================================================================================
+	{
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKing", CDeerKing::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 사슴왕  투사체
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingBullet", CDeerKingBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingBullet", L"Monster_DeerKingBullet", 24);
+		// 사슴왕  뾰족 얼음
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingColdBeam", CDeerKingColdBeam::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingColdBeam", L"Monster_DeerKingColdBeam", 6);
+		// 사슴왕  점프주먹 콜라이더
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingJumpFistCol", CDeerKingJumpFistCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingJumpFistCol", L"Monster_DeerKingJumpFistCol", 3);
+		// 사슴왕  제자리 점프 콜라이더
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingJumpInPlaceCol", CDeerKingJumpInPlaceCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingJumpInPlaceCol", L"Monster_DeerKingJumpInPlaceCol", 3);
+		// 사슴왕  돌진 콜라이더
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingRushCol", CDeerKingRushCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingRushCol", L"Monster_DeerKingRushCol", 3);
+		// 사슴왕  얼음검 소환
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingIceSword", CDeerKingIceSword::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingIceSword", L"Monster_DeerKingIceSword", 3);
+		// 사슴왕  오른손 충돌체
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_DeerKingRightHandCol", CDeerKingRightHandCol::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_DeerKingRightHandCol", L"Monster_DeerKingRightHandCol", 3);
+	}
+	//============================================================================================================================================
 	// 검겐지
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenji", CSwordGenji::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 검겐지 총알
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenjiBullet", CSwordGenjiBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_SwordGenjiBullet", L"Monster_SwordGenjiBullet", 100);
-	// 총겐지
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenji", CGunGenji::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 총겐지 총알
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenjiBullet", CGunGenjiBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_GunGenjiBullet", L"Monster_GunGenjiBullet", 100);
-	// 검방패겐지
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordShieldGenji", CSwordShieldGenji::Create(m_pGraphicDev))))
-		return E_FAIL;
+	//============================================================================================================================================
+	{
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenji", CSwordGenji::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 검겐지 총알
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordGenjiBullet", CSwordGenjiBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_SwordGenjiBullet", L"Monster_SwordGenjiBullet", 100);
+		// 총겐지
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenji", CGunGenji::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 총겐지 총알
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_GunGenjiBullet", CGunGenjiBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_GunGenjiBullet", L"Monster_GunGenjiBullet", 100);
+		// 검방패겐지
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_SwordShieldGenji", CSwordShieldGenji::Create(m_pGraphicDev))))
+			return E_FAIL;
+	}
+	//============================================================================================================================================
 	// 토템
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_Cocoon", CCocoon::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 토템 방사총알
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBullet", CCocoonBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_CocoonBullet", L"Monster_CocoonBullet", 800);
-	// 토템 총알
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBigBullet", CCocoonBigBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_CocoonBigBullet", L"Monster_CocoonBigBullet", 100);
+	//============================================================================================================================================
+	{
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Cocoon", CCocoon::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 토템 방사총알
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBullet", CCocoonBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_CocoonBullet", L"Monster_CocoonBullet", 800);
+		// 토템 총알
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_CocoonBigBullet", CCocoonBigBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_CocoonBigBullet", L"Monster_CocoonBigBullet", 100);
+	}
+	//============================================================================================================================================
 	// 김헌터
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_Hunter", CHunter::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 김헌터 총알
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_HunterBullet", CHunterBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_HunterBullet", L"Monster_HunterBullet", 100);
+	//============================================================================================================================================
+	{
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Hunter", CHunter::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 김헌터 총알
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_HunterBullet", CHunterBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_HunterBullet", L"Monster_HunterBullet", 100);
+	}
+	//============================================================================================================================================
 	// 몽키.D.루피
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_Monkey", CMonkey::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 몽키.D.총알
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_MonkeyBullet", CMonkeyBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_MonkeyBullet", L"Monster_MonkeyBullet", 100);
+	//============================================================================================================================================
+	{
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Monkey", CMonkey::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 몽키.D.총알
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_MonkeyBullet", CMonkeyBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_MonkeyBullet", L"Monster_MonkeyBullet", 100);
+	}
+	//============================================================================================================================================
 	// 따이맨
+	//============================================================================================================================================
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_ThaiMan", CThaiMan::Create(m_pGraphicDev))))
 		return E_FAIL;
+	//============================================================================================================================================
 	// 성게
+	//============================================================================================================================================
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_Urchin", CUrchin::Create(m_pGraphicDev))))
 		return E_FAIL;
+	//============================================================================================================================================
 	// 늑대
+	//============================================================================================================================================
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_Wolf", CWolf::Create(m_pGraphicDev))))
 		return E_FAIL;
+	//============================================================================================================================================
 	// 야차맨
+	//============================================================================================================================================
 	if (FAILED(g_pManagement->Add_Prototype(L"Monster_YachaMan", CYachaMan::Create(m_pGraphicDev))))
 		return E_FAIL;
+	//============================================================================================================================================
 	// 예티
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_Yeti", CYeti::Create(m_pGraphicDev))))
-		return E_FAIL;
-	// 예티 총알
-	if (FAILED(g_pManagement->Add_Prototype(L"Monster_YetiBullet", CYetiBullet::Create(m_pGraphicDev))))
-		return E_FAIL;
-	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_YetiBullet", L"Monster_YetiBullet", 100);
-
+	//============================================================================================================================================
+	{
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_Yeti", CYeti::Create(m_pGraphicDev))))
+			return E_FAIL;
+		// 예티 총알
+		if (FAILED(g_pManagement->Add_Prototype(L"Monster_YetiBullet", CYetiBullet::Create(m_pGraphicDev))))
+			return E_FAIL;
+		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Monster_YetiBullet", L"Monster_YetiBullet", 100);
+	}
+	//============================================================================================================================================
 	// 펫_독나비
+	//============================================================================================================================================
 	if (FAILED(g_pManagement->Add_Prototype(L"Pet_PoisonButterFly", CPet_PoisonButterFly::Create(m_pGraphicDev))))
 		return E_FAIL;
 	// 펫 총알 원본
 	if (FAILED(g_pManagement->Add_Prototype(L"Pet_Bullet", CPet_Bullet::Create(m_pGraphicDev))))
 		return E_FAIL;
 	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Pet_Bullet", L"Pet_Bullet", 100);
+	//============================================================================================================================================
+
+
+	//============================================================================================================================================
+	// 옷
+	//============================================================================================================================================
+	if (FAILED(g_pManagement->Add_Prototype(L"Cloth_Static", CClothStatic::Create(m_pGraphicDev))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Cloth_Dynamic", CClothDynamic::Create(m_pGraphicDev))))
+		return E_FAIL;
+	//============================================================================================================================================
 
 	return S_OK;
 }

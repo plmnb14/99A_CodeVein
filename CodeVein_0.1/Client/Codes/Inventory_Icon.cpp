@@ -1,6 +1,5 @@
 #include "stdafx.h"
 #include "..\Headers\Inventory_Icon.h"
-#include "ClickUI.h"
 
 CInventory_Icon::CInventory_Icon(_Device pDevice)
 	: CUI(pDevice)
@@ -38,12 +37,6 @@ _int CInventory_Icon::Update_GameObject(_double TimeDelta)
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
-
-	if (m_pClickUI)
-	{
-		m_pClickUI->Set_Active(m_bIsActive);
-		m_pClickUI->Set_Click(m_bIsClick);
-	}
 
 	switch (m_eType)
 	{
@@ -100,29 +93,39 @@ HRESULT CInventory_Icon::Render_GameObject()
 		return E_FAIL;
 
 	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
-
-	m_matOldView = g_pManagement->Get_Transform(D3DTS_VIEW);
-	m_matOldProj = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
+	_uint iIndex = 0;
+	if (Pt_InRect())
+	{
+		LOOP(2)
+		{
+			if (0 == i)
+				iIndex = m_iIndex;
+			else if (1 == i)
+				iIndex = 8;
 
-	m_pShaderCom->Begin_Shader();
-
-	m_pShaderCom->Begin_Pass(1);
-
-	m_pBufferCom->Render_VIBuffer();
-
-	m_pShaderCom->End_Pass();
-
-	m_pShaderCom->End_Shader();
-
-
-	g_pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
-	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
+			if (FAILED(SetUp_ConstantTable(iIndex)))
+				return E_FAIL;
+			m_pShaderCom->Begin_Shader();
+			m_pShaderCom->Begin_Pass(1);
+			m_pBufferCom->Render_VIBuffer();
+			m_pShaderCom->End_Pass();
+			m_pShaderCom->End_Shader();
+		}
+	}
+	else
+	{
+		iIndex = m_iIndex;
+		if (FAILED(SetUp_ConstantTable(iIndex)))
+			return E_FAIL;
+		m_pShaderCom->Begin_Shader();
+		m_pShaderCom->Begin_Pass(1);
+		m_pBufferCom->Render_VIBuffer();
+		m_pShaderCom->End_Pass();
+		m_pShaderCom->End_Shader();
+	}
 
 	return NOERROR;
 }
@@ -152,7 +155,7 @@ HRESULT CInventory_Icon::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CInventory_Icon::SetUp_ConstantTable()
+HRESULT CInventory_Icon::SetUp_ConstantTable(_uint iIndex)
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -165,7 +168,7 @@ HRESULT CInventory_Icon::SetUp_ConstantTable()
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
 
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, m_iIndex)))
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
 		return E_FAIL;
 
 	return NOERROR;
@@ -173,16 +176,7 @@ HRESULT CInventory_Icon::SetUp_ConstantTable()
 
 void CInventory_Icon::SetUp_Default()
 {
-	CUI::UI_DESC* pDesc = nullptr;
-	pDesc = new CUI::UI_DESC;
-	pDesc->fPosX = m_fPosX;
-	pDesc->fPosY = m_fPosY;
-	pDesc->fSizeX = m_fSizeX;
-	pDesc->fSizeY = m_fSizeY;
-
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_ClickUI", SCENE_MORTAL, L"Layer_ClickUI", pDesc)))
-		return;
-	m_pClickUI = static_cast<CClickUI*>(g_pManagement->Get_GameObjectBack(L"Layer_ClickUI", SCENE_MORTAL));
+	
 }
 
 _bool CInventory_Icon::Pt_InRect()

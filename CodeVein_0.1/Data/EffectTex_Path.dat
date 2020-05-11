@@ -53,9 +53,11 @@ Tex_LinePoint_Hor|LinePoint_Hor_%d.png|..\..\Client\Resources\Texture\Effect\Lin
 Tex_Mask|Mask_%d.dds|..\..\Client\Resources\Texture\Effect\Mask\||17
 Tex_Noise|Noise_%d.dds|..\..\Client\Resources\Texture\Effect\Noise\||25
 Tex_Normal|Normal_%d.dds|..\..\Client\Resources\Texture\Effect\Normal\||10
-Tex_Ortho_BlackCorner|Black_Corner_%d.png|..\..\Client\Resources\Texture\Effect\Ortho\Ortho_BlackCorner\||5
+Tex_Black_Corner|Black_Corner_%d.png|..\..\Client\Resources\Texture\Effect\Ortho\Black_Corner\||5
 Tex_Ortho_Blood|Ortho_Blood_%d.png|..\..\Client\Resources\Texture\Effect\Ortho\Ortho_Blood\||2
+Tex_Ortho_BossDead|Ortho_BossDead_%d.dds|..\..\Client\Resources\Texture\Effect\Ortho\Ortho_BossDead\||2
 Tex_Ortho_Snow|Ortho_Snow_%d.tga|..\..\Client\Resources\Texture\Effect\Ortho\Ortho_Snow\||2
+Tex_Ortho_Title|Ortho_Title_%d.dds|..\..\Client\Resources\Texture\Effect\Ortho\Ortho_Title\||9
 Tex_Crystals|Crystals_%d.png|..\..\Client\Resources\Texture\Effect\Particle\Crystals\||16
 Tex_Point|Point_%d.dds|..\..\Client\Resources\Texture\Effect\Particle\Point\||12
 Tex_Scratch|Scratch_%d.dds|..\..\Client\Resources\Texture\Effect\Scratch\||4
@@ -74,7 +76,4 @@ Tex_SmokeSoft64|SmokeSoft64_%d.png|..\..\Client\Resources\Texture\Effect\Smoke\S
 Tex_Splash|Splash_%d.png|..\..\Client\Resources\Texture\Effect\Splash\||24
 Tex_SwordTrail|SwordTrail_%d.dds|..\..\Client\Resources\Texture\Effect\SwordTrail\||12
 Tex_Tail|Tail_%d.dds|..\..\Client\Resources\Texture\Effect\Tail\||2
-Tex_After_Trail|After_Trail%d.dds|..\..\Client\Resources\Texture\Effect\Trail\After_Trail\||2
-Tex_SkyBridgeBoss_Trail|SkyBridgeBoss_Trail%d.tga|..\..\Client\Resources\Texture\Effect\Trail\SkyBridgeBoss_Trail\||1
-Tex_Weapon_Trail|Weapon_Trail%d.dds|..\..\Client\Resources\Texture\Effect\Trail\Weapon_Trail\||15
 Tex_Water|Water_%d.dds|..\..\Client\Resources\Texture\Effect\Water\||1

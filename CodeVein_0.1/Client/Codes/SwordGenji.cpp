@@ -167,9 +167,6 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 	if (false == m_bEnable)
 		return NO_EVENT;
 
-	if (nullptr == g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))
-		return E_FAIL;
-
 	Push_Collider();
 
 	CGameObject::Update_GameObject(TimeDelta);
@@ -203,7 +200,7 @@ _int CSwordGenji::Update_GameObject(_double TimeDelta)
 		else
 		{
 			// 가까운 녀석 어그로 끌림.
-			Set_Target_Auto();
+			Set_Target_Auto(true);
 
 			// 뼈 위치 업데이트
 			Update_Bone_Of_BlackBoard();
@@ -253,23 +250,23 @@ _int CSwordGenji::Late_Update_GameObject(_double TimeDelta)
 	//=============================================================================================
 	// 그림자랑 모션블러는 프리스텀 안에 없으면 안그림
 	//=============================================================================================
-	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
+	if (!m_bDissolve)
 	{
-		if (!m_bDissolve)
-		{
-			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
-				return E_FAIL;
-		}
-
-		else
-		{
-			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
-				return E_FAIL;
-		}
-
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 			return E_FAIL;
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
+			return E_FAIL;
+	}
+
+	else
+	{
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
+			return E_FAIL;
+	}
+
+	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
+	{
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
 			return E_FAIL;
 	}
 	//=============================================================================================
@@ -1042,8 +1039,15 @@ HRESULT CSwordGenji::Update_Bone_Of_BlackBoard()
 
 HRESULT CSwordGenji::Update_Value_Of_BB()
 {
+	CGameObject* pPlayer = CMonster::Get_pTargetObject();
+
+	if (nullptr == pPlayer)
+		return E_FAIL;
+
+	CTransform* pPlayer_Trans = TARGET_TO_TRANS(pPlayer);
+
 	// 1. 플레이어 좌표 업데이트
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Player_Pos", TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))->Get_Pos());
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Player_Pos", pPlayer_Trans->Get_Pos());
 	// 2. 체력 업데이트
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"HP", m_tObjParam.fHp_Cur);
 	// 3. 체력 비율 업데이트
@@ -1078,26 +1082,40 @@ HRESULT CSwordGenji::Update_NF()
 	if (false == m_bFindPlayer)
 	{
 		// 플레이어 좌표 구함.
-		_v3 vPlayer_Pos = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))->Get_Pos();
+		_v3 vPlayer_Pos = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos();
+
+		// 동료 좌표 구함
+		_v3 vColleague_Pos = _v3(10000.f, 10000.f, 10000.f);
+
+		CGameObject* pColleague = g_pManagement->Get_GameObjectBack(L"Layer_Colleague", SCENE_STAGE);
+
+		// 동료가 있으면 좌표 갱신
+		if (nullptr != pColleague)
+			vColleague_Pos = TARGET_TO_TRANS(pColleague)->Get_Pos();
 
 		// 플레이어와 몬스터의 거리
-		_v3 vLengthTemp = vPlayer_Pos - m_pTransformCom->Get_Pos();
-		vLengthTemp.y = 0.f;
-		_float fLength = D3DXVec3Length(&vLengthTemp);
+		_v3 vP_LengthTemp = vPlayer_Pos - m_pTransformCom->Get_Pos();
+		vP_LengthTemp.y = 0.f;
+		_float fP_Length = D3DXVec3Length(&vP_LengthTemp);
 
-		//cout << "거리 : " << fLength << endl;
+		// 동료와 몬스터의 거리
+		_v3 vC_LengthTemp = vColleague_Pos - m_pTransformCom->Get_Pos();
+		vC_LengthTemp.y = 0.f;
+		_float fC_Length = D3DXVec3Length(&vC_LengthTemp);
+
+
 
 		// 플레이어가 최소거리안에 있는가?
-		if (fLength < m_fMinLength)
+		if (fP_Length < m_fMinLength || fC_Length < m_fMinLength)
 		{
 			// 플레이어 발견
 			m_bFindPlayer = true;
 		}
 		// 플레이어가 최대거리 안에 있는가?
-		else if (fLength < m_fMaxLength)
+		else if (fP_Length < m_fMaxLength || fC_Length < m_fMaxLength)
 		{
 			// 플레이어가 시야각 안에 있는가?
-			if (Is_InFov(m_fFov, m_pTransformCom, vPlayer_Pos))
+			if (Is_InFov(m_fFov, m_pTransformCom, vPlayer_Pos) || Is_InFov(m_fFov, m_pTransformCom, vColleague_Pos))
 			{
 				// 플레이어 발견
 				m_bFindPlayer = true;
@@ -1211,12 +1229,12 @@ void CSwordGenji::Check_PhyCollider()
 			m_pMeshCom->Reset_OldIndx();	//애니 인덱스 초기화
 
 			// 맞을때 플레이어의 룩을 받아와서 그 방향으로 밈.
-			m_vPushDir_forHitting = (*(_v3*)&TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))->Get_WorldMat().m[2]);
+			m_vPushDir_forHitting = (*(_v3*)&TARGET_TO_TRANS(CMonster::Get_pTargetObject())->Get_WorldMat().m[2]);
 		}
 
 		if (m_tObjParam.fHp_Cur > 0.f)
 		{
-			_float fAngle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))->Get_Pos()));
+			_float fAngle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(CMonster::Get_pTargetObject())->Get_Pos()));
 
 			if (0.f <= fAngle && fAngle < 90.f)
 				m_pMeshCom->SetUp_Animation(Ani_Dmg01_FR);
@@ -1379,9 +1397,15 @@ HRESULT CSwordGenji::Add_Component(void* pArg)
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pColliderCom)))
 		return E_FAIL;
 
+	//=================================================================================
 	// for.Com_Optimaization
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Optimization", L"Com_Optimization", (CComponent**)&m_pOptimizationCom)))
 		return E_FAIL;
+
+	// for.Com_BattleAgent
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"BattleAgent", L"Com_BattleAgent", (CComponent**)&m_pBattleAgentCom)))
+		return E_FAIL;
+	//=================================================================================
 
 	m_pColliderCom->Set_Radius(_v3{ 1.f, 1.f, 1.f });
 	m_pColliderCom->Set_Dynamic(true);
@@ -1456,7 +1480,7 @@ HRESULT CSwordGenji::SetUp_ConstantTable()
 HRESULT CSwordGenji::Ready_Weapon()
 {
 	m_pSword = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pSword->Change_WeaponData(CWeapon::Wpn_SSword_Military);
+	m_pSword->Change_WeaponData(Wpn_SSword_Military);
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
 	m_pSword->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);

@@ -302,6 +302,5 @@ CGameObject * CFireFlame::Clone_GameObject(void * pArg)
 
 void CFireFlame::Free()
 {
-
 	CMonster::Free();
 }

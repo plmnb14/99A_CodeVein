@@ -155,7 +155,7 @@ protected:	// DJ
 	_tchar m_pLayerTag_Of_Target[STR_128] = { L"Layer_Player" };
 	
 	_float		m_fAggroTime = 0;	//어그로 끌린 시간
-	_float		m_fMaxAggroTime = 10.f;
+	_float		m_fMaxAggroTime = 7.f;
 	_float		m_fOffsetAggroTime = 0.f;
 
 protected:
@@ -174,6 +174,7 @@ protected:
 	HRESULT Draw_Collider();
 
 protected:
+	virtual void Check_DropItem();
 	virtual void Check_CollisionEvent();
 	virtual void Check_CollisionPush();
 	virtual void Check_CollisionHit(list<CGameObject*> plistGameObject);
@@ -221,8 +222,8 @@ protected:
 	MONSTER_COLOR_TYPE		m_eMonsterColor;
 	MONSTER_BULLET_TYPE		m_eBulletType;
 
-	_double					m_dTimeDelta;
-	_double					m_dAniPlayMul;
+	_double					m_dTimeDelta = 0.0;
+	_double					m_dAniPlayMul = 0.0;
 
 	_bool					m_bEventTrigger[30] = {};
 	_bool					m_bCanPlayDead; //죽음 애니 재생

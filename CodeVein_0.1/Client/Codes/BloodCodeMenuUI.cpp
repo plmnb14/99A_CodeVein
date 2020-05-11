@@ -27,19 +27,17 @@ HRESULT CBloodCodeMenuUI::Ready_GameObject(void * pArg)
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
-	//SetUp_Default();
-
 	m_pTransformCom->Set_Scale(_v3(3.555555f, 2.f, 1.f));
-
+	
 	return NOERROR;
 }
 
 _int CBloodCodeMenuUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
-
-	m_pRendererCom->Add_RenderList(RENDER_ALPHA, this);
-
+	
+	m_pRendererCom->Add_RenderList(RENDER_UI_BACK, this);
+	
 	_v3 vWorldPos;
 	memcpy(vWorldPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
 	Compute_ViewZ(&vWorldPos);
@@ -47,8 +45,6 @@ _int CBloodCodeMenuUI::Update_GameObject(_double TimeDelta)
 	m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 	if (nullptr == m_pTarget)
 		return NO_EVENT;
-	
-	
 
 	m_pTransformCom->Set_Angle(TARGET_TO_TRANS(m_pTarget)->Get_Angle());
 	_v3 vLookX = TARGET_TO_TRANS(m_pTarget)->Get_Axis(AXIS_X);
@@ -183,40 +179,8 @@ HRESULT CBloodCodeMenuUI::SetUp_ConstantTable(_uint iIndex)
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, _uint(iIndex))))
 		return E_FAIL;
 
-	//m_pShaderCom->Set_Texture("g_DepthTexture", g_pManagement->Get_Target_Texture(L"Target_DepthUI"));
 	return NOERROR;
 }
-
-void CBloodCodeMenuUI::SetUp_Default()
-{
-	/*m_pBloodCodeSelectUI = static_cast<CBloodCodeSelectUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodCodeSelectUI", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBloodCodeSelectUI, SCENE_MORTAL, L"Layer_StageUI", nullptr);
-	TARGET_TO_TRANS(m_pBloodCodeSelectUI)->Set_Scale(_v3(3.555555f, 2.f, 2.f));
-	if (nullptr == m_pBloodCodeSelectUI)
-	{
-		MSG_BOX("SelectUI is null");
-		return;
-	}
-
-	m_pSkillReleaseUI = static_cast<CSkillReleaseUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SkillReleaseUI", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pSkillReleaseUI, SCENE_MORTAL, L"Layer_StageUI", nullptr);
-	TARGET_TO_TRANS(m_pSkillReleaseUI)->Set_Scale(_v3(3.555555f, 2.f, 3.f));
-	if (nullptr == m_pSkillReleaseUI)
-	{
-		MSG_BOX("m_pSkillReleaseUI is null");
-		return;
-	}
-
-	m_pBloodCodeOwner = static_cast<CBloodCodeOwner*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BloodCodeOwner", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBloodCodeOwner, SCENE_MORTAL, L"Layer_StageUI", nullptr);
-	TARGET_TO_TRANS(m_pBloodCodeOwner)->Set_Scale(_v3(1.894f, 2.f, 1.f));
-	if (nullptr == m_pBloodCodeOwner)
-	{
-		MSG_BOX("m_pBloodCodeOwner is null");
-		return;
-	}*/
-}
-
 
 CBloodCodeMenuUI * CBloodCodeMenuUI::Create(_Device pGraphic_Device)
 {

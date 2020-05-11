@@ -5,18 +5,30 @@
 BEGIN(Client)
 
 class CWeapon;
+class CBossHP;
 class CDeerKing final : public CMonster
 {
 public:
 	typedef struct tagInitInfo
 	{
-		tagInitInfo(_float _fFov, _float _fMaxLength, _float _fMinLength)
+		tagInitInfo(_float _fFov, _float _fMaxLength, _float _fMinLength,
+		 _bool _bSpawn = false, _v3 vPos = V3_NULL, _v3 vAngle = V3_NULL, _ushort sStageIdx = 0)//, _ushort sSubsetIdx = 0, _ushort sCellIdx = 0)
 			: fFov(_fFov), fMaxLength(_fMaxLength), fMinLength(_fMinLength)
+			, bSpawnOnTrigger(_bSpawn), vPos(vPos), vAngle(vAngle), sStageIdx(sStageIdx)// , sSubSetIdx(sSubSetIdx), sCellIdx(sCellIdx)
 		{}
 
 		_float					fFov = 0.f;
 		_float					fMaxLength = 0.f;
 		_float					fMinLength = 0.f;
+
+		//=======================================================
+		// 트리거 소환용
+		//=======================================================
+		_bool					bSpawnOnTrigger = false;
+		_v3						vPos = {};
+		_v3						vAngle = {};
+		_ushort					sStageIdx = 0;
+		//=======================================================
 	}INFO;
 
 
@@ -130,6 +142,9 @@ private:
 	_v3					m_bCur_RightHandAttach_Pos = _v3(0.f, 0.f, 0.f);
 	_v3					m_vThrowing_Dir = _v3(0.f, 0.f, 0.f);
 	_float				m_fThrowing_Speed = 15.f;
+
+private:	// UI(지원)
+	CBossHP*			m_pBossUI = nullptr;
 
 private:	// 다운 상태를 위한 변수
 	_bool				m_bDown_Start = false;

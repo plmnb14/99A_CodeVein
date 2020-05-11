@@ -427,6 +427,8 @@ HRESULT CRenderer::Draw_RenderList()
 	// ÈÄÃ³¸®
 	if (FAILED(Render_After()))
 		return E_FAIL;
+	if (FAILED(Render_UI_Back()))
+		return E_FAIL;
 	if (FAILED(Render_3dUI()))
 		return E_FAIL;
 	if (FAILED(Render_UI()))
@@ -434,7 +436,7 @@ HRESULT CRenderer::Draw_RenderList()
 
 #ifdef _DEBUG
 
-	if (CInput_Device::Get_Instance()->Key_Down((_ubyte)DIKEYBOARD_9))
+	if (CInput_Device::Get_Instance()->Key_Down(DIK_NUMPAD9))
 		m_bOnRenderTarget = !m_bOnRenderTarget;
 
 	if (m_bOnRenderTarget)
@@ -770,6 +772,8 @@ HRESULT CRenderer::Render_Alpha()
 
 HRESULT CRenderer::Render_Effect()
 {
+	Render_Instance();
+
 	m_pShader_Effect->Begin_Shader();
 
 	for (auto& pGameObject : m_RenderList[RENDER_EFFECT])
@@ -807,9 +811,21 @@ HRESULT CRenderer::Render_Effect()
 
 	m_RenderList[RENDER_EFFECT].clear();
 
-	m_pShader_Effect->End_Shader();
+	for (auto& pGameObject : m_RenderList[RENDER_ORTHO])
+	{
+		if (nullptr != pGameObject)
+		{
+			if (FAILED(pGameObject->Render_GameObject_SetShader(m_pShader_Effect)))
+			{
+				Safe_Release(pGameObject);
+				return E_FAIL;
+			}
+			Safe_Release(pGameObject);
+		}
+	}
+	m_RenderList[RENDER_ORTHO].clear();
 
-	Render_Instance();
+	m_pShader_Effect->End_Shader();
 
 	return NOERROR;
 }
@@ -876,6 +892,26 @@ HRESULT CRenderer::Render_Instance()
 	m_RenderList[RENDER_INSTANCE].clear();
 
 	m_pShader_Effect->End_Shader();
+
+	return NOERROR;
+}
+
+HRESULT CRenderer::Render_UI_Back()
+{
+	for (auto& pGameObject : m_RenderList[RENDER_UI_BACK])
+	{
+		if (nullptr != pGameObject)
+		{
+			if (FAILED(pGameObject->Render_GameObject()))
+			{
+				Safe_Release(pGameObject);
+				return E_FAIL;
+			}
+			Safe_Release(pGameObject);
+		}
+	}
+
+	m_RenderList[RENDER_UI_BACK].clear();
 
 	return NOERROR;
 }

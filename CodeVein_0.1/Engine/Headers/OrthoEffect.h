@@ -20,6 +20,8 @@ public:
 
 public:
 	void Set_UV_Speed(_float fX, _float fY);
+	void Set_Mask(const _tchar* _Name, _int _iMaskIdx);
+	void Set_UI_Layer();
 
 public:
 	HRESULT SetUp_ConstantTable_Instance(CShader* pShader);
@@ -42,6 +44,7 @@ protected:
 	CTexture*				m_pTextureCom = nullptr;
 	CTexture*				m_pGradientTextureCom = nullptr;
 	CTexture*				m_pColorTextureCom = nullptr;
+	CTexture*				m_pMaskTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
@@ -52,11 +55,17 @@ private:
 	_mat m_matWorld;
 	_mat m_matView;
 	_mat m_matProj;
+	_mat m_matOldView;
+	_mat m_matOldProj;
 
 	_float	m_fUV_Value_X = 0.f;
 	_float	m_fUV_Value_Y = 0.f;
 	_float	m_fUV_Speed_X = 0.f;
 	_float	m_fUV_Speed_Y = 0.f;
+
+	_int	m_iMaskIdx = 0;
+
+	_bool	m_bUILayer = false;
 
 protected:
 	void Check_Frame(_double TimeDelta);
@@ -74,6 +83,7 @@ protected:
 	void Change_EffectTexture(const _tchar* _Name);
 	void Change_GradientTexture(const _tchar* _Name);
 	void Change_ColorTexture(const _tchar* _Name);
+	void Change_MaskTexture(const _tchar* _Name);
 
 public:
 	static COrthoEffect* Create(LPDIRECT3DDEVICE9 pGraphic_Device);

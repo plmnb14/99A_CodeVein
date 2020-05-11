@@ -30,14 +30,11 @@ HRESULT CExpendables_Inven::Ready_GameObject(void * pArg)
 
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = WINCX * 0.3f;
-	m_fPosY = WINCY * 0.5f;
-
+	m_fPosX = 229.5f;
+	m_fPosY = 325.5f;
 	m_fSizeX = 280.f;
-
 	m_fSizeY = 471.f;
-
-	m_fViewZ = 1.f;
+	m_fViewZ = 4.f;
 
 	m_bIsActive = false;
 
@@ -51,7 +48,7 @@ HRESULT CExpendables_Inven::Ready_GameObject(void * pArg)
 			pDesc = new CUI::UI_DESC;
 
 			pDesc->fPosX = m_fPosX - 103.f + 52.f * j;
-			pDesc->fPosY = m_fPosY - 130.f + 52.f * i;
+			pDesc->fPosY = m_fPosY - 140.f + 52.f * i;
 			pDesc->fSizeX = 50.f;
 			pDesc->fSizeY = 50.f;
 			
@@ -63,9 +60,9 @@ HRESULT CExpendables_Inven::Ready_GameObject(void * pArg)
 		}
 	}
 
-	Add_MultiExpendables(CExpendables::EXPEND_1, 30);
-	Add_MultiExpendables(CExpendables::EXPEND_2, 30);
-	Add_MultiExpendables(CExpendables::EXPEND_3, 30);
+	Add_MultiExpendables(CExpendables::Expend_Blood, 5);
+	Add_MultiExpendables(CExpendables::Expend_Cheet, 6);
+	Add_MultiExpendables(CExpendables::Expend_Hp, 7);
 	
 	return NOERROR;
 }
@@ -99,7 +96,6 @@ _int CExpendables_Inven::Late_Update_GameObject(_double TimeDelta)
 	m_matWorld._33 = 1.f;
 	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
 	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;
-	m_matWorld._42 = 1.f;
 
 	return NO_EVENT;
 }
@@ -114,10 +110,6 @@ HRESULT CExpendables_Inven::Render_GameObject()
 		return E_FAIL;
 
 	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
-
-	m_matOldView = g_pManagement->Get_Transform(D3DTS_VIEW);
-	m_matOldProj = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
@@ -134,9 +126,6 @@ HRESULT CExpendables_Inven::Render_GameObject()
 	m_pShaderCom->End_Pass();
 
 	m_pShaderCom->End_Shader();
-
-	g_pManagement->Set_Transform(D3DTS_VIEW, m_matOldView);
-	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
 
 	return NOERROR;
 }
@@ -334,11 +323,22 @@ void CExpendables_Inven::Load_Expendables(CExpendables* pExpendables, _uint iInd
 	if (m_vecSlot.size() <= iIndex)
 		return;
 
-	if ((m_vecSlot[iIndex]->Get_Type() == pExpendables->Get_Type() ||
-		m_vecSlot[iIndex]->Get_Size() == 0) && m_vecSlot[iIndex]->Get_Size() < 9)
-		m_vecSlot[iIndex]->Input_Item(pExpendables);
-	else
-		Load_Expendables(pExpendables, iIndex + 1);
+	if (pExpendables->Get_Type() == CExpendables::Expend_Hp) // 체력물약->최대치 만큼만 슬롯에 담김
+	{
+		if ((m_vecSlot[iIndex]->Get_Type() == pExpendables->Get_Type() ||
+			m_vecSlot[iIndex]->Get_Size() == 0) && m_vecSlot[iIndex]->Get_Size() < m_iMaximumCnt)
+			m_vecSlot[iIndex]->Input_Item(pExpendables);
+		else
+			Load_Expendables(pExpendables, iIndex + 1);
+	}
+	else // 체력물약 이외의 아이템은 5개씩 담김
+	{
+		if ((m_vecSlot[iIndex]->Get_Type() == pExpendables->Get_Type() ||
+			m_vecSlot[iIndex]->Get_Size() == 0) && m_vecSlot[iIndex]->Get_Size() < 5)
+			m_vecSlot[iIndex]->Input_Item(pExpendables);
+		else
+			Load_Expendables(pExpendables, iIndex + 1);
+	}
 }
 
 CExpendables_Inven * CExpendables_Inven::Create(_Device pGraphic_Device)

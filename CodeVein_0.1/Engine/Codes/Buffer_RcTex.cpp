@@ -113,8 +113,18 @@ void CBuffer_RcTex::Render_VIBuffer()
 
 void CBuffer_RcTex::Render_Before_Instancing(INSTANCEDATA* pInstanceDataArr, _int iSize)
 {
+	//unsigned int uOffset = 0;
+	//
+	//unsigned int uVertexSize = m_iStride;
+	//if (uOffset + uVertexSize > sizeof(INSTANCEDATA))
+	//	uOffset = 0;
+	//
+	//unsigned long dwLockFlag = D3DLOCK_DISCARD;
+	//if (uOffset > 0) dwLockFlag = D3DLOCK_NOOVERWRITE;
+
 	INSTANCEDATA* pIPos;
 	m_pVBInstanceData->Lock(0, NULL, (void**)&pIPos, D3DLOCK_DISCARD);
+	//m_pVBInstanceData->Lock(uOffset, uVertexSize, (void**)&pIPos, dwLockFlag);
 	
 	INSTANCEDATA instanceBox;
 	for (_int i = 0; i < iSize; ++i)
@@ -136,6 +146,8 @@ void CBuffer_RcTex::Render_Before_Instancing(INSTANCEDATA* pInstanceDataArr, _in
 		pIPos++;
 	}
 	m_pVBInstanceData->Unlock();
+
+	//uOffset += uVertexSize;
 
 	m_pGraphic_Dev->SetVertexDeclaration(m_pVertexDeclHardware);
 	m_pGraphic_Dev->SetStreamSourceFreq(0, D3DSTREAMSOURCE_INDEXEDDATA | iSize);

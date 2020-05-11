@@ -90,6 +90,7 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 	// UI 추가(지원)
 	m_pBossUI = static_cast<CBossHP*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BossHP", nullptr));
 	m_pBossUI->Set_UI_Pos(WINCX * 0.5f, WINCY * 0.2f);
+	m_pBossUI->Set_BossName(CBossNameUI::Index_PoisonButterfly);
 	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBossUI, SCENE_STAGE, L"Layer_BossHP", nullptr)))
 		return E_FAIL;
 
@@ -100,9 +101,6 @@ _int CPoisonButterfly::Update_GameObject(_double TimeDelta)
 {
 	if (false == m_bEnable)
 		return NO_EVENT;
-
-	if (nullptr == g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))
-		return E_FAIL;
 
 	if (true == m_pAIControllerCom->Get_BoolValue(L"PushCol"))
 		Push_Collider();
@@ -173,23 +171,23 @@ _int CPoisonButterfly::Late_Update_GameObject(_double TimeDelta)
 	//=============================================================================================
 	// 그림자랑 모션블러는 프리스텀 안에 없으면 안그림
 	//=============================================================================================
-	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
+	if (!m_bDissolve)
 	{
-		if (!m_bDissolve)
-		{
-			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
-				return E_FAIL;
-		}
-
-		else
-		{
-			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
-				return E_FAIL;
-		}
-
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 			return E_FAIL;
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
+			return E_FAIL;
+	}
+
+	else
+	{
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
+			return E_FAIL;
+	}
+
+	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
+	{
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
 			return E_FAIL;
 	}
 	//=============================================================================================
@@ -254,51 +252,85 @@ HRESULT CPoisonButterfly::Render_GameObject()
 
 HRESULT CPoisonButterfly::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
 {
+	if (false == m_bEnable)
+		return S_OK;
+
 	if (nullptr == pShader ||
 		nullptr == m_pMeshCom)
 		return E_FAIL;
 
-	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+	//============================================================================================
+	// 공통 변수
+	//============================================================================================
 
-	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
-		return E_FAIL;
+	_mat	ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat	ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+	_mat	WorldMatrix = m_pTransformCom->Get_WorldMat();
 
-	m_matLastWVP = m_pTransformCom->Get_WorldMat() * ViewMatrix * ProjMatrix;
-
-	_bool bMotionBlur = true;
-	if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
-		return E_FAIL;
-	_bool bDecalTarget = false;
-	if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
 		return E_FAIL;
 
+	//============================================================================================
+	// 모션 블러 상수
+	//============================================================================================
+	if (_bIsForMotionBlur)
+	{
+		if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
+			return E_FAIL;
+
+		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
+
+		_bool bMotionBlur = true;
+		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+			return E_FAIL;
+		_bool bDecalTarget = false;
+		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+			return E_FAIL;
+		_float fBloomPower = 0.5f;
+		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
+			return E_FAIL;
+	}
+
+	//============================================================================================
+	// 기타 상수
+	//============================================================================================
+	else
+	{
+		_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
+
+		if (FAILED(pShader->Set_Value("g_matWVP", &matWVP, sizeof(_mat))))
+			return E_FAIL;
+	}
+
+	//============================================================================================
+	// 쉐이더 실행
+	//============================================================================================
 	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
 
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 	{
 		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
 
-		if (FAILED(SetUp_ConstantTable(i)))
-			return E_FAIL;
-
-		m_pMeshCom->Update_SkinnedMesh(i);
-
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
+			_int tmpPass = m_pMeshCom->Get_MaterialPass(i, j);
+
 			pShader->Begin_Pass(iPass);
+			pShader->Commit_Changes();
+
+			pShader->Commit_Changes();
 
 			m_pMeshCom->Render_Mesh(i, j);
 
 			pShader->End_Pass();
 		}
 	}
+
+	//============================================================================================
 
 	return NOERROR;
 }
@@ -1145,7 +1177,12 @@ HRESULT CPoisonButterfly::Update_Bone_Of_BlackBoard()
 
 HRESULT CPoisonButterfly::Update_Value_Of_BB()
 {
-	CTransform* pPlayer_Trans = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL));
+	CGameObject* pPlayer = CMonster::Get_pTargetObject();
+
+	if (nullptr == pPlayer)
+		return E_FAIL;
+
+	CTransform* pPlayer_Trans = TARGET_TO_TRANS(pPlayer);
 
 	// 1. 플레이어 좌표 업데이트
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Player_Pos", pPlayer_Trans->Get_Pos());
@@ -1186,26 +1223,40 @@ HRESULT CPoisonButterfly::Update_NF()
 	if (false == m_bFindPlayer)
 	{
 		// 플레이어 좌표 구함.
-		_v3 vPlayer_Pos = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(m_pLayerTag_Of_Target, SCENE_MORTAL))->Get_Pos();
+		_v3 vPlayer_Pos = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos();
+
+		// 동료 좌표 구함
+		_v3 vColleague_Pos = _v3(10000.f, 10000.f, 10000.f);
+
+		CGameObject* pColleague = g_pManagement->Get_GameObjectBack(L"Layer_Colleague", SCENE_STAGE);
+
+		// 동료가 있으면 좌표 갱신
+		if (nullptr != pColleague)
+			vColleague_Pos = TARGET_TO_TRANS(pColleague)->Get_Pos();
 
 		// 플레이어와 몬스터의 거리
-		_v3 vLengthTemp = vPlayer_Pos - m_pTransformCom->Get_Pos();
-		vLengthTemp.y = 0.f;
-		_float fLength = D3DXVec3Length(&vLengthTemp);
+		_v3 vP_LengthTemp = vPlayer_Pos - m_pTransformCom->Get_Pos();
+		vP_LengthTemp.y = 0.f;
+		_float fP_Length = D3DXVec3Length(&vP_LengthTemp);
 
-		//cout << "거리 : " << fLength << endl;
+		// 동료와 몬스터의 거리
+		_v3 vC_LengthTemp = vColleague_Pos - m_pTransformCom->Get_Pos();
+		vC_LengthTemp.y = 0.f;
+		_float fC_Length = D3DXVec3Length(&vC_LengthTemp);
+
+
 
 		// 플레이어가 최소거리안에 있는가?
-		if (fLength < m_fMinLength)
+		if (fP_Length < m_fMinLength || fC_Length < m_fMinLength)
 		{
 			// 플레이어 발견
 			m_bFindPlayer = true;
 		}
 		// 플레이어가 최대거리 안에 있는가?
-		else if (fLength < m_fMaxLength)
+		else if (fP_Length < m_fMaxLength || fC_Length < m_fMaxLength)
 		{
 			// 플레이어가 시야각 안에 있는가?
-			if (Is_InFov(m_fFov, m_pTransformCom, vPlayer_Pos))
+			if (Is_InFov(m_fFov, m_pTransformCom, vPlayer_Pos) || Is_InFov(m_fFov, m_pTransformCom, vColleague_Pos))
 			{
 				// 플레이어 발견
 				m_bFindPlayer = true;
@@ -1685,6 +1736,42 @@ HRESULT CPoisonButterfly::Ready_NF(void * pArg)
 	m_fFov = eTemp.fFov;
 	m_fMaxLength = eTemp.fMaxLength;
 	m_fMinLength = eTemp.fMinLength;
+
+	//===================================================================
+	// 림라이트 벨류 설정	
+	//===================================================================
+	m_pBattleAgentCom->Set_RimAlpha(0.5f);
+	m_pBattleAgentCom->Set_RimValue(8.f);
+	m_pBattleAgentCom->Set_OriginRimAlpha(0.5f);
+	m_pBattleAgentCom->Set_OriginRimValue(8.f);
+	//===================================================================
+
+	//===================================================================
+	// 트리거 소환용 설정
+	//===================================================================
+	// 트리거 소환되는 녀석이면
+	if (eTemp.bSpawnOnTrigger)
+	{
+		// 스테이지 번호로 네비 불러옴
+		_tchar szNavData[STR_128] = L"";
+
+		lstrcpy(szNavData, (
+			eTemp.sStageIdx == 0 ? L"Navmesh_Training.dat" :
+			eTemp.sStageIdx == 1 ? L"Navmesh_Stage_01.dat" :
+			eTemp.sStageIdx == 2 ? L"Navmesh_Stage_02.dat" :
+			eTemp.sStageIdx == 3 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
+
+		m_pNavMeshCom->Set_Index(-1);
+		m_pNavMeshCom->Ready_NaviMesh(m_pGraphic_Dev, szNavData);
+		m_pNavMeshCom->Check_OnNavMesh(eTemp.vPos);
+		m_pTransformCom->Set_Pos(eTemp.vPos);
+		m_pTransformCom->Set_Angle(eTemp.vAngle);
+
+		//m_pNavMeshCom->Set_SubsetIndex(eTemp.sSubSetIdx);
+		//m_pNavMeshCom->Set_Index(eTemp.sCellIdx);
+	}
+	//===================================================================
+
 
 	return S_OK;
 }

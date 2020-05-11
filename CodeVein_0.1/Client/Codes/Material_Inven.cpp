@@ -25,13 +25,11 @@ HRESULT CMaterial_Inven::Ready_GameObject(void * pArg)
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = WINCX * 0.3f;
-	m_fPosY = WINCY * 0.5f;
-
+	m_fPosX = 229.5f;
+	m_fPosY = 325.5f;
 	m_fSizeX = 280.f;
 	m_fSizeY = 471.f;
-
-	m_fViewZ = 2.f;
+	m_fViewZ = 4.f;
 
 	m_bIsActive = false;
 
@@ -45,18 +43,21 @@ HRESULT CMaterial_Inven::Ready_GameObject(void * pArg)
 			pDesc = new CUI::UI_DESC;
 
 			pDesc->fPosX = m_fPosX - 103.f + 52.f * j;
-			pDesc->fPosY = m_fPosY - 130.f + 52.f * i;
+			pDesc->fPosY = m_fPosY - 140.f + 52.f * i;
 			pDesc->fSizeX = 50.f;
 			pDesc->fSizeY = 50.f;
 			g_pManagement->Add_GameObject_ToLayer(L"GameObject_MaterialSlot", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
 			pSlot = static_cast<CMaterial_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
+			pSlot->Set_ViewZ(m_fViewZ - 0.1f);
 			m_vecMaterialSlot.push_back(pSlot);
 			m_vecUI_DESC.push_back(pDesc);
 		}
 
 	}
 	
-	
+	Add_MultiMaterial(CMaterial::Queen_Steel, 8);
+	Add_MultiMaterial(CMaterial::Queen_Titanium, 9);
+	Add_MultiMaterial(CMaterial::Queen_Tungsten, 10);
 	return NOERROR;
 }
 
@@ -72,12 +73,8 @@ _int CMaterial_Inven::Update_GameObject(_double TimeDelta)
 	Click_Inven();
 
 	for (auto& pSlot : m_vecMaterialSlot)
-	{
 		pSlot->Set_Active(m_bIsActive);
-		pSlot->Set_ViewZ(m_fViewZ - 0.1f);
-	}
-
-
+	
 	return NO_EVENT;
 }
 
@@ -91,7 +88,6 @@ _int CMaterial_Inven::Late_Update_GameObject(_double TimeDelta)
 	m_matWorld._33 = 1.f;
 	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
 	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;
-	m_matWorld._42 = 1.f;
 
 	return NO_EVENT;
 }
@@ -197,7 +193,7 @@ void CMaterial_Inven::Load_Materials(CMaterial * pMaterial, _uint iIndex)
 		return;
 
 	if ((m_vecMaterialSlot[iIndex]->Get_Type() == pMaterial->Get_Type() ||
-		m_vecMaterialSlot[iIndex]->Get_Size() == 0) && m_vecMaterialSlot[iIndex]->Get_Size() < 9)
+		m_vecMaterialSlot[iIndex]->Get_Size() == 0) && m_vecMaterialSlot[iIndex]->Get_Size() < 5)
 		m_vecMaterialSlot[iIndex]->Input_Item(pMaterial);
 	else
 		Load_Materials(pMaterial, iIndex + 1);
@@ -224,10 +220,6 @@ void CMaterial_Inven::Click_Inven()
 			}
 		}
 	}
-	/*if(g_pInput_Device->Key_Up(DIK_8))
-		Add_MultiMaterial(CMaterial::MATERIAL_1, 1);
-	if (g_pInput_Device->Key_Up(DIK_9))
-		Sell_Material(1);*/
 }
 
 void CMaterial_Inven::Add_Material(CMaterial::MATERIAL_TYPE eType)

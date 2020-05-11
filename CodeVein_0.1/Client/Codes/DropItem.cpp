@@ -33,12 +33,14 @@ HRESULT CDropItem::Ready_GameObject(void * pArg)
 
 _int CDropItem::Update_GameObject(_double TimeDelta)
 {
+	if (false == m_bEnable)
+		return NO_EVENT;
+
 	CGameObject::Update_GameObject(TimeDelta);
 
 	m_dCanGetItemLimitTimeCur += TimeDelta;
 	m_fTempEffectLimitTime += (_float)TimeDelta;
 
-	//Check_PosY(); //혹시 모르니 네비y
 	//상호작용 대상과 충돌 여부 체크
 	Check_Dist();
 
@@ -51,52 +53,115 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 	if (m_fTempEffectLimitTime > 0.05f)
 	{
 		m_fTempEffectLimitTime = 0.f;
-		g_pManagement->Create_Effect(L"Totem_Fire_BulletBody", m_pTransform->Get_Pos());
-		g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_01", m_pTransform->Get_Pos(), nullptr);
-		g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_02", m_pTransform->Get_Pos(), nullptr);
+		cout << "아이템 생성된 효과 발생" << endl;
+		switch (m_eItemGrade)
+		{
+		case ITEM_GRADE_NORMAL:
+			g_pManagement->Create_Effect(L"ItemObject", m_pTransform->Get_Pos());
+			break;
+		case ITEM_GRADE_RARE:
+			g_pManagement->Create_Effect(L"ItemObject_Purple", m_pTransform->Get_Pos());
+			break;
+		case ITEM_GRADE_UNIQUE:
+			g_pManagement->Create_Effect(L"ItemObject_Red", m_pTransform->Get_Pos());
+			break;
+		case ITEM_GRADE_LEGEND:
+			g_pManagement->Create_Effect(L"ItemObject_Yellow", m_pTransform->Get_Pos());
+			break;
+		}
 	}
 
 	//1.제한 시간 초과된 상태
 	if (m_dCanGetItemLimitTimeMax <= m_dCanGetItemLimitTimeCur)
 	{
-		//단순 소멸
-		g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_0", m_pTransform->Get_Pos());
-		g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_1", m_pTransform->Get_Pos());
-		g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_Particle", m_pTransform->Get_Pos());
-		m_pEffect->Set_Dead();
-		m_bEnable = false;
-		return DEAD_OBJ;
-	}
-	//2.상호작용 대상이 획득
-	//획득모션,제한시간 이내인 경우
-	if (true == m_bCanGetItem && m_dCanGetItemLimitTimeMax >= m_dCanGetItemLimitTimeCur)
-	{
-		//"줍는다" 관련 변수가 참인 경우도 포함할것
-		//섬광이펙트,파티클이펙트 등등 획득한 티를 내주고
-		//획득 ui를 보여줘야함 ("획득")
-		//인벤으로 저장
-		switch (m_eItemType)
+		//아이템 등급
+		switch (m_eItemGrade)
 		{
-		case ITEM_TYPE::ITEM_MATERIAL:
-			CUI_Manager::Get_Instance()->Get_Material_Inven()->Add_Material(m_eMaterialType);
+		case ITEM_GRADE_NORMAL:
 			break;
-		case ITEM_TYPE::ITEM_EXPENDABLES:
-			CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Add_Expendables(m_eExpendablesType);
+		case ITEM_GRADE_RARE:
 			break;
-		case ITEM_TYPE::ITEM_WEAPON:
-			//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(); //무기타입을 받아서 해당아이템이 추가되게끔
+		case ITEM_GRADE_UNIQUE:
 			break;
-		case ITEM_TYPE::ITEM_PET:
-			CUI_Manager::Get_Instance()->Get_Pet_Inven()->Add_Pet(m_eItemGrade, m_ePetType);
+		case ITEM_GRADE_LEGEND:
 			break;
 		}
-
-		g_pManagement->Create_Effect(L"Bullet_DeadFlash", m_pTransform->Get_Pos(), nullptr);
-		g_pManagement->Create_Effect(L"Bullet_DeadSmoke_Base", m_pTransform->Get_Pos(), nullptr);
-		g_pManagement->Create_Effect(L"Bullet_DeadSmoke_Black", m_pTransform->Get_Pos(), nullptr);
+		//단순 소멸
+		//g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_0", m_pTransform->Get_Pos());
+		//g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_1", m_pTransform->Get_Pos());
+		//g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_Particle", m_pTransform->Get_Pos());
 		m_bEnable = false;
+		m_pEffect->Set_Dead();
 
 		return DEAD_OBJ;
+	}
+	//2.제한 시간 이내
+	else
+	{
+		if (true == m_bCanGetItem)
+		{
+			m_bCanGetItem = false;
+
+			//"줍는다" 관련 변수가 참인 경우도 포함할것
+			//섬광이펙트,파티클이펙트 등등 획득한 티를 내주고
+			//획득 ui를 보여줘야함 ("획득")
+			//인벤으로 저장
+
+			//아이템 등급
+			switch (m_eItemGrade)
+			{
+			case ITEM_GRADE_NORMAL:
+				break;
+			case ITEM_GRADE_RARE:
+				break;
+			case ITEM_GRADE_UNIQUE:
+				break;
+			case ITEM_GRADE_LEGEND:
+				break;
+			}
+			//아이템 종류
+			switch (m_eItemType)
+			{
+			case ITEM_MATERIAL:
+				CUI_Manager::Get_Instance()->Get_Material_Inven()->Add_Material(m_eMaterialType);
+				break;
+			case ITEM_EXPENDABLES:
+				CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Add_Expendables(m_eExpendablesType);
+				break;
+			case ITEM_WEAPON:
+				//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon();
+				break;
+			case ITEM_PET:
+				CUI_Manager::Get_Instance()->Get_Pet_Inven()->Add_Pet(m_ePetType);
+				break;
+			}
+			//"줍는다" 관련 변수가 참인 경우도 포함할것
+			//섬광이펙트,파티클이펙트 등등 획득한 티를 내주고
+			//획득 ui를 보여줘야함 ("줍는다")
+			//인벤으로 저장
+			//switch (m_eItemType)
+			//{
+			//case ITEM_TYPE::ITEM_MATERIAL:
+			//	CUI_Manager::Get_Instance()->Get_Material_Inven()->Add_Material(m_eMaterialType);
+			//	break;
+			//case ITEM_TYPE::ITEM_EXPENDABLES:
+			//	CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Add_Expendables(m_eExpendablesType);
+			//	break;
+			//case ITEM_TYPE::ITEM_WEAPON:
+			//	//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(); //무기타입을 받아서 해당아이템이 추가되게끔
+			//	break;
+			//case ITEM_TYPE::ITEM_PET:
+			//	CUI_Manager::Get_Instance()->Get_Pet_Inven()->Add_Pet(m_eItemGrade, m_ePetType);
+			//	break;
+			//}
+
+			//g_pManagement->Create_Effect(L"Bullet_DeadFlash", m_pTransform->Get_Pos(), nullptr);
+			//g_pManagement->Create_Effect(L"Bullet_DeadSmoke_Base", m_pTransform->Get_Pos(), nullptr);
+			//g_pManagement->Create_Effect(L"Bullet_DeadSmoke_Black", m_pTransform->Get_Pos(), nullptr);
+			m_bEnable = false;
+
+			return DEAD_OBJ;
+		}
 	}
 
 	return NO_EVENT;
@@ -203,7 +268,7 @@ HRESULT CDropItem::Ready_Status(void* _pArg)
 		m_eItemType = ITEM_TYPE::ITEM_MATERIAL;
 		m_eItemGrade = ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL;
 
-		m_eMaterialType = CMaterial::MATERIAL_TYPE::MATERIAL_1;
+		m_eMaterialType = CMaterial::MATERIAL_TYPE::Queen_Steel;
 
 		m_pTransform->Set_Pos(_v3{ 1.f, 0.f, 1.f });
 		m_dCanGetItemLimitTimeMax = 5;
@@ -226,7 +291,6 @@ HRESULT CDropItem::Ready_Status(void* _pArg)
 			break;
 		case ITEM_TYPE::ITEM_PET:
 			m_ePetType = info.ePetType;
-			break;
 		}
 
 		m_eItemGrade = info.eItemGradeType;
@@ -274,8 +338,13 @@ CGameObject* CDropItem::Clone_GameObject(void * pArg)
 void CDropItem::Free()
 {
 	Safe_Release(m_pTransform);
-	//Safe_Release(m_pNaviMesh);
 	Safe_Release(m_pRenderer);
+
+	IF_NOT_NULL(m_pEffect)
+		m_pEffect->Set_Dead();
+
+	IF_NOT_NULL(m_pTrailEffect)
+		m_pTrailEffect->Set_Dead();
 
 	CGameObject::Free();
 

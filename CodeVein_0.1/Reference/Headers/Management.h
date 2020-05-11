@@ -70,6 +70,7 @@ public: // for.Component_Manager
 	HRESULT LoadMesh_FromPath(_Device pGraphicDev, const _tchar* szImgPath);
 	HRESULT LoadMesh_FilesFromPath_AddProtoRenderObj(_Device pGraphicDev, const _tchar* szImgPath);
 	HRESULT LoadTex_FromPath(_Device pGraphicDev, const _tchar* szImgPath);
+	HRESULT LoadTex_FromPath_Tool(_Device pGraphicDev, const _tchar* szImgPath);
 
 public:
 	void	Clone_NavMesh_OnManagement();

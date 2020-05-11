@@ -35,14 +35,18 @@ HRESULT CMistletoeUI::Ready_GameObject(void * pArg)
 	{
 		pInstance = static_cast<CMistletoeOptionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MistletoeOptionUI", nullptr));
 		pInstance->Set_Option(CMistletoeOptionUI::MISTLETOE_OPTION(i));
-		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_MORTAL, L"Layer_StageUI", nullptr);
+		g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 		m_vecOption.push_back(pInstance);
 	}
 	
 	m_pStageSelectUI = CUI_Manager::Get_Instance()->Get_StageSelectUI();
 	if (nullptr == m_pStageSelectUI)
 		return E_FAIL;
+
 	m_pTransformCom->Set_Scale(_v3(1.f, 1.3546f, 1.f));
+	m_pTransformCom->Set_Angle(V3_NULL);
+	m_pTransformCom->Set_Angle(AXIS_Y, D3DXToRadian(20.f));
+
 	return NOERROR;
 }
 
@@ -50,22 +54,27 @@ _int CMistletoeUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 	m_pRendererCom->Add_RenderList(RENDER_ALPHA, this);
-	
 
 	m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 	if (nullptr == m_pTarget)
 		return NO_EVENT;
 
+	CTransform* pTargetTrans = TARGET_TO_TRANS(m_pTarget);
 	
-	_v3 vLookZ = TARGET_TO_TRANS(m_pTarget)->Get_Axis(AXIS_Z);
-	_v3 vLookX = TARGET_TO_TRANS(m_pTarget)->Get_Axis(AXIS_X);
+	_v3 vLook = pTargetTrans->Get_Axis(AXIS_Z);
+	_v3 vRight = pTargetTrans->Get_Axis(AXIS_X);
 	
-	_v3 vDir = *V3_NORMAL_SELF(&(*V3_NORMAL_SELF(&vLookX)+ /**V3_NORMAL_SELF(&vLookZ) + */_v3(0.f, 1.5f, 0.f))) * 1.5f;
-	_v3 vPosition = TARGET_TO_TRANS(m_pTarget)->Get_Pos() + vDir;
+	// x 축 방향벡터
+	V3_NORMAL_SELF(&vLook);
+	V3_NORMAL_SELF(&vRight);
+
+	// x 축 방향벡터 + 플레이어
+	_v3 vPosition = pTargetTrans->Get_Pos() + vLook + vRight + (WORLD_UP * 1.5f);
 	m_pTransformCom->Set_Pos(vPosition);
 	
-	m_pTransformCom->Set_Angle(TARGET_TO_TRANS(m_pTarget)->Get_Angle());
-	_v3 vLength = TARGET_TO_TRANS(m_pTarget)->Get_Pos() + vDir * 0.9f;
+	_float fOriginYRadian = pTargetTrans->Get_Angle().y;
+	_float fAdditionalYRadian = fOriginYRadian + D3DXToRadian(20.f);
+	m_pTransformCom->Set_Angle(AXIS_Y, fAdditionalYRadian);
 
 	
 	LOOP(3)
@@ -73,7 +82,7 @@ _int CMistletoeUI::Update_GameObject(_double TimeDelta)
 		TARGET_TO_TRANS(m_vecOption[i])->Set_Angle(m_pTransformCom->Get_Angle());
 		TARGET_TO_TRANS(m_vecOption[i])->Set_Scale(_v3(0.87f, 0.1476f, 2.f));
 		TARGET_TO_TRANS(m_vecOption[i])->Set_At(m_pTransformCom->Get_At());
-		TARGET_TO_TRANS(m_vecOption[i])->Set_Pos(m_pTransformCom->Get_Pos() + _v3(0.f, _float(i) * -0.2f + 0.2f, 0.f) + *V3_NORMAL_SELF(&vLookZ) * -0.001f);
+		TARGET_TO_TRANS(m_vecOption[i])->Set_Pos(m_pTransformCom->Get_Pos() + _v3(0.f, _float(i) * -0.2f + 0.2f, 0.f) + *V3_NORMAL_SELF(&vLook) * -0.001f);
 		
 		m_vecOption[i]->Set_Active(m_bIsActive);
 
@@ -81,11 +90,11 @@ _int CMistletoeUI::Update_GameObject(_double TimeDelta)
 
 	
 
-	if (!m_bIsActive)
-	{
-		m_pStageSelectUI->Set_Active(false);
-		CUI_Manager::Get_Instance()->Get_BloodCode_Menu()->Set_Active(false);
-	}
+	//if (!m_bIsActive)
+	//{
+	//	m_pStageSelectUI->Set_Active(false);
+	//	CUI_Manager::Get_Instance()->Get_BloodCode_Menu()->Set_Active(false);
+	//}
 	
 	_v3 vWorldPos;
 	memcpy(vWorldPos, &m_pTransformCom->Get_WorldMat()._41, sizeof(_v3));
@@ -177,6 +186,8 @@ void CMistletoeUI::Click_Option()
 	if (!m_bIsActive)
 		return;
 
+	_int iIdx = 0;
+
 	for (auto& iter : m_vecOption)
 	{
 		if (CCollisionMgr::Collision_Ray(iter, g_pInput_Device->Get_Ray(), &m_fCross))
@@ -186,7 +197,25 @@ void CMistletoeUI::Click_Option()
 
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
-				Active_SubUI(iter);
+				// 0번은 스테이지
+				if (0 == iIdx)
+				{
+					static_cast<CPlayer*>(m_pTarget)->Active_UI_StageSelect(false);
+				}
+
+				// 1번은 블러드 코드
+				else if (1 == iIdx)
+				{
+					static_cast<CPlayer*>(m_pTarget)->Active_UI_BloodCode(false);
+				}
+
+				// 2번은 레벨업
+				else if (2 == iIdx)
+				{
+
+				}
+
+				//Active_SubUI(iter);
 			}
 				
 		}
@@ -194,6 +223,8 @@ void CMistletoeUI::Click_Option()
 		{
 			iter->Set_Select(false);
 		}
+
+		++iIdx;
 	}
 }
 

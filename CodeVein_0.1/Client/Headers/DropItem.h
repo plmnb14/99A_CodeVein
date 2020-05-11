@@ -14,11 +14,6 @@
 
 BEGIN(Client)
 
-//class CExpendables;
-//class CMaterial;
-//class CWeapon;
-//class CPet;
-
 class CDropItem :public CGameObject
 {
 public:
@@ -34,7 +29,7 @@ public:
 		{
 		}
 
-		ITEM_STATUS(ITEM_TYPE _eType, ITEM_GRADE_TYPE _eGrade, CWeapon::WEAPON_DATA _eWeapon, _v3 _vBirthPos, _double _dLimitTime)
+		ITEM_STATUS(ITEM_TYPE _eType, ITEM_GRADE_TYPE _eGrade, WEAPON_DATA _eWeapon, _v3 _vBirthPos, _double _dLimitTime)
 			:eItemType(_eType), eItemGradeType(_eGrade), eWeaponType(_eWeapon), vBirthPos(_vBirthPos), dCanGetLimitTimeMax(_dLimitTime)
 		{
 		}
@@ -51,7 +46,7 @@ public:
 
 		CExpendables::EXPEND_TYPE		eExpendablesType; //상위 - 소모품 종류
 
-		CWeapon::WEAPON_DATA			eWeaponType;	//상위 - 무기 종류
+		WEAPON_DATA			eWeaponType;	//상위 - 무기 종류
 
 		CPet::PET_TYPE					ePetType; //상위 - 펫 종류
 
@@ -87,8 +82,6 @@ public:
 private:
 	CRenderer*						m_pRenderer = nullptr;
 	CTransform*						m_pTransform = nullptr;
-	CCollider*						m_pCollider = nullptr;
-	//CNavMesh*						m_pNavMesh = nullptr;
 	CTrail_VFX*						m_pTrailEffect = nullptr;
 	CEffect*						m_pEffect = nullptr;
 
@@ -100,7 +93,7 @@ private:
 
 	CExpendables::EXPEND_TYPE		m_eExpendablesType = CExpendables::EXPEND_TYPE::EXPEND_END; //소모품 종류
 
-	CWeapon::WEAPON_DATA			m_eWeaponType = CWeapon::WEAPON_DATA::WPN_DATA_End;	//무기 종류
+	WEAPON_DATA						m_eWeaponType = WEAPON_DATA::WPN_DATA_End;	//무기 종류
 
 	CPet::PET_TYPE					m_ePetType = CPet::PET_TYPE::PET_TYPE_END; //펫 종류
 

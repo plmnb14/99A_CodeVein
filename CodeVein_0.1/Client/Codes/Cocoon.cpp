@@ -66,22 +66,23 @@ _int CCocoon::Late_Update_GameObject(_double TimeDelta)
 
 	IF_NULL_VALUE_RETURN(m_pRendererCom, E_FAIL);
 
-	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
+	if (!m_bDissolve)
 	{
-		if (!m_bDissolve)
-		{
-			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
-				return E_FAIL;
-		}
-		else
-		{
-			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
-				return E_FAIL;
-		}
-
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 			return E_FAIL;
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
+			return E_FAIL;
+	}
+
+	else
+	{
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
+			return E_FAIL;
+	}
+
+	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
+	{
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
 			return E_FAIL;
 	}
 
@@ -131,8 +132,11 @@ HRESULT CCocoon::Render_GameObject()
 
 	m_pShaderCom->End_Shader();
 
-	Update_Collider();
-	Render_Collider();
+	if (MONSTER_STATE_TYPE::DEAD != m_eFirstCategory)
+	{
+		Update_Collider();
+		Render_Collider();
+	}
 
 	return S_OK;
 }
@@ -724,12 +728,7 @@ void CCocoon::Play_Dead()
 				Start_Dissolve(0.8f, false, true, 0.0f);
 				m_fDeadEffect_Delay = 0.f;
 
-				CGameObject* pItem = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
-					&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_PET, 
-						ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, 
-						CPet::PET_TYPE::PET_POISONBUTTERFLY, 
-						m_pTransformCom->Get_Pos(), 12.f));
-				g_pManagement->Add_GameOject_ToLayer_NoClone(pItem, SCENE_STAGE, L"Layer_Item", nullptr);
+				Check_DropItem();
 
 				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 			}

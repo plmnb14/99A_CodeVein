@@ -2,10 +2,9 @@
 
 #include "Client_Defines.h"
 #include "UI.h"
-#include "Armor_Slot.h"
 
 BEGIN(Client)
-
+class CArmor_Slot;
 class CArmor_Inven final : public CUI
 {
 private:
@@ -14,7 +13,7 @@ private:
 	virtual ~CArmor_Inven() = default;
 
 public:
-	CArmor::ARMOR_TYPE Get_UseArmorType();
+	ARMOR_TYPE Get_UseArmorType();
 
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();
@@ -32,7 +31,7 @@ private:
 	void					UnRegist_Armor(CArmor_Slot* pArmorSlot);
 
 public:
-	void					Add_Armor(CArmor::ARMOR_TYPE eType);
+	void					Add_Armor(ARMOR_TYPE eType);
 
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
@@ -41,7 +40,7 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 	vector<CArmor_Slot*>	m_vecArmorSlot;
-	CArmor::ARMOR_TYPE		m_eRegistArmor = CArmor::ARMOR_END;
+	ARMOR_TYPE				m_eRegistArmor = ARMOR_End;
 
 public:
 	static CArmor_Inven*	Create(_Device pGraphic_Device);

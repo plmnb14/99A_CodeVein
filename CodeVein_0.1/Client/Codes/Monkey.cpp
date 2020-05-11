@@ -67,22 +67,23 @@ _int CMonkey::Late_Update_GameObject(_double TimeDelta)
 
 	IF_NULL_VALUE_RETURN(m_pRendererCom, E_FAIL);
 
-	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
+	if (!m_bDissolve)
 	{
-		if (!m_bDissolve)
-		{
-			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
-				return E_FAIL;
-		}
-		else
-		{
-			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
-				return E_FAIL;
-		}
-
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 			return E_FAIL;
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
+			return E_FAIL;
+	}
+
+	else
+	{
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
+			return E_FAIL;
+	}
+
+	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
+	{
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
 			return E_FAIL;
 	}
 
@@ -138,8 +139,11 @@ HRESULT CMonkey::Render_GameObject()
 	IF_NOT_NULL(m_pWeapon)
 		m_pWeapon->Update_GameObject(m_dTimeDelta);
 
-	Update_Collider();
-	Render_Collider();
+	if (MONSTER_STATE_TYPE::DEAD != m_eFirstCategory)
+	{
+		Update_Collider();
+		Render_Collider();
+	}
 
 	return S_OK;
 }
@@ -1675,6 +1679,7 @@ void CMonkey::Play_Dead()
 					Start_Dissolve(0.7f, false, true, 0.0f);
 					m_pWeapon->Start_Dissolve(0.7f, false, true, 0.f);
 					m_fDeadEffect_Delay = 0.f;
+
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
@@ -1695,6 +1700,7 @@ void CMonkey::Play_Dead()
 					Start_Dissolve(0.7f, false, true, 0.0f);
 					m_pWeapon->Start_Dissolve(0.7f, false, true, 0.f);
 					m_fDeadEffect_Delay = 0.f;
+
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
@@ -1715,6 +1721,7 @@ void CMonkey::Play_Dead()
 					Start_Dissolve(0.7f, false, true, 0.0f);
 					m_pWeapon->Start_Dissolve(0.7f, false, true, 0.f);
 					m_fDeadEffect_Delay = 0.f;
+
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
@@ -1907,7 +1914,7 @@ HRESULT CMonkey::Ready_Status(void * pArg)
 HRESULT CMonkey::Ready_Weapon()
 {
 	m_pWeapon = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	m_pWeapon->Change_WeaponData(CWeapon::Wpn_SSword_Slave);
+	m_pWeapon->Change_WeaponData(Wpn_SSword_Slave);
 
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
 	m_pWeapon->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);

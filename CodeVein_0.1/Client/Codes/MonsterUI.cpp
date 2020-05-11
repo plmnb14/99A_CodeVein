@@ -172,18 +172,23 @@ HRESULT CMonsterUI::Render_GameObject()
 
 			if (i == 0)
 				m_iCheck_Renderindex = 0;
+
 			if (i == 1)
 			{
 				if (FAILED(m_pShaderCom->Set_Value("g_fPercentage", &m_fWhite_Percentage, sizeof(_float))))
 					return E_FAIL;
+
 				m_iCheck_Renderindex = 1;
 			}
+
 			if (i == 2)
 			{
 				if (FAILED(m_pShaderCom->Set_Value("g_fPercentage", &m_fPercentage, sizeof(_float))))
 					return E_FAIL;
+
 				m_iCheck_Renderindex = 2;
 			}
+
 			if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, i)))
 				return E_FAIL;
 

@@ -3,11 +3,13 @@
 #include "Client_Defines.h"
 #include "GameObject.h"
 #include "Management.h"
+#include "CameraMgr.h"
 
 #include "UI_Manager.h"
 
 BEGIN(Client)
 
+class CStageAgent;
 class CDrain_Weapon;
 class CWeapon;
 class CPlayer : public CGameObject
@@ -93,6 +95,9 @@ private:
 	ACTIVE_WEAPON_SLOT		m_eActiveSlot = WPN_SLOT_A;
 
 private:
+	CStageAgent*			m_pStageAgent = nullptr;
+
+private:
 	CWeapon*				m_pWeapon[WPN_SLOT_End] = {};
 	CDrain_Weapon*			m_pDrainWeapon = nullptr;
 	CGameObject*			m_pCunterTarget = nullptr;
@@ -160,8 +165,9 @@ private:
 	_bool					m_bIsExecution = false;		// 처형 중
 	_bool					m_bOnUI_Mistletoe = false;
 	_bool					m_bOnUI_Inventory = false;
-	_bool					m_bOnUI_Skill = false;
+	_bool					m_bOnUI_BloodCode = false;
 	_bool					m_bOnUI_StageSelect = false;
+	_bool					m_bOnUI_NPCTalk = false;
 	_bool					m_bCanPickUp = false;	// 아이템 줍기
 	_bool					m_bCanDialouge = false; // 대화
 	_bool					m_bCanInterAct = false;	// 상호작용
@@ -205,6 +211,13 @@ private: // For Dissolve
 	_float					m_fDissolveY = 0.f;
 
 private:
+	_bool				m_arrbActiveSkillOn[8] = {};
+	SKILL_INFO			m_arrSkillInfo[8] = {};
+
+private:
+	_bool				m_bWeaponActive[2] = {};
+
+private:
 	HRESULT Add_Component();
 	HRESULT SetUp_Default();
 	HRESULT SetUp_ConstantTable();
@@ -241,6 +254,8 @@ private:
 	virtual void Parameter_Collision();
 	virtual void Parameter_Aiming();
 	virtual void Parameter_HitCheck();
+	virtual void Parameter_CheckActiveSkill();
+	virtual void Parameter_CheckActiveWeapon();
 
 private:
 	virtual void KeyInput();
@@ -356,11 +371,12 @@ private:
 private:
 	virtual void Reset_All();
 
-private:
+public:
 	virtual void Active_UI_Mistletoe(_bool _bResetUI = false);		// 겨우살이
 	virtual void Active_UI_Inventory(_bool _bResetUI = false);		// 인벤토리
 	virtual void Active_UI_StageSelect(_bool _bResetUI = false);	// 스테이지 선택
 	virtual void Active_UI_NPC(_bool _bResetUI = false);			// NPC 와의 대화
+	virtual void Active_UI_BloodCode(_bool _bResetUI = false);			// NPC 와의 대화
 
 public:
 	static	CPlayer* Create(_Device pGraphic_Device);

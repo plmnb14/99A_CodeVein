@@ -9,6 +9,7 @@ BEGIN(Client)
 
 class CButton_UI;
 class CNumberUI;
+class CPlayerFontUI;
 class CQuickSlot final : public CUI
 {
 private:
@@ -28,8 +29,9 @@ public:
 
 private:
 	HRESULT Add_Component();
-	HRESULT SetUp_ConstantTable();
+	HRESULT SetUp_ConstantTable(_uint iIndex);
 	void	SetUp_Default();
+	void	Move_QuickSlot();
 
 public:
 	CExpendables::EXPEND_TYPE Use_Item(); // 퀵슬롯에서 아이템 사용시 해당 아이템 제거 및 사용 아이템 타입 반환
@@ -45,7 +47,9 @@ private:
 	vector<CExpendables_Slot*>	m_vecQuickSlot;
 	_uint						m_iSelect = 0;
 	vector<CButton_UI*>			m_vecDecoUI;
-	CNumberUI*					m_pNumberUI = nullptr;
+	//CNumberUI*					m_pNumberUI = nullptr;
+	CExpendables::EXPEND_TYPE	m_eType = CExpendables::EXPEND_END;
+	CPlayerFontUI*			m_pItemCntFont = nullptr;
 
 public:
 	static CQuickSlot*		Create(_Device pGraphic_Device);

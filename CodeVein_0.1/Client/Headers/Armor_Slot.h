@@ -2,11 +2,8 @@
 
 #include "Client_Defines.h"
 #include "UI.h"
-#include "Armor.h"
 
 BEGIN(Client)
-class CSelect_UI;
-class CCursorUI;
 class CArmor_Slot final : public CUI
 {
 private:
@@ -16,11 +13,11 @@ private:
 
 public:
 	bool Get_Select() { return m_bIsSelect; }
-	CArmor::ARMOR_TYPE Get_Type();
+	ARMOR_TYPE Get_Type();
 
 public:
 	void Set_Select(_bool bIsSelect) { m_bIsSelect = bIsSelect; }
-	void Set_Type(CArmor::ARMOR_TYPE eType) { m_eType = eType; }
+	void Set_Type(ARMOR_TYPE eType) { m_eType = eType; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -34,7 +31,7 @@ public:
 
 private:
 	HRESULT Add_Component();
-	HRESULT SetUp_ConstantTable();
+	HRESULT SetUp_ConstantTable(_uint iIndex);
 	void	SetUp_Default();
 
 private:
@@ -44,10 +41,10 @@ private:
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
-	CSelect_UI*				m_pSelectUI = nullptr;
-	CCursorUI*				m_pCursorUI = nullptr;
+private:
+	ARMOR_TYPE				m_eType = ARMOR_End;
 	_bool					m_bIsSelect = false;
-	CArmor::ARMOR_TYPE		m_eType = CArmor::ARMOR_END;
+	_bool					m_bIsCollMouse = false;
 
 public:
 	static CArmor_Slot*		Create(_Device pGraphic_Device);

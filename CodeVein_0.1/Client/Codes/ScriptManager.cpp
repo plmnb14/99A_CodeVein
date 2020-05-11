@@ -200,7 +200,7 @@ void CScriptManager::St01_Sub0()
 {
 	switch (m_dwCellIdx)
 	{
-	case 5 :
+	case 5:
 	{
 		if (m_bEventTrigger[Script_Stage01][0] == false)
 		{

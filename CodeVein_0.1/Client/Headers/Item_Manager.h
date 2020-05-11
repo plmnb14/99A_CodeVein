@@ -12,8 +12,6 @@
 #include "Weapon.h"
 #include "Weapon_Slot.h"
 
-#include "Armor.h"
-
 BEGIN(Client)
 
 class CItem_Manager : public CBase
@@ -46,7 +44,7 @@ private:
 	vector<CExpendables*>	m_vecExpendables;
 	vector<CExpendables_Slot*>	m_vecQuickSlot;
 	vector<CMaterial*>		m_vecMaterial;
-	vector<CWeapon::WEAPON_DATA>	m_vecWeaponData;
+	vector<WEAPON_DATA>	m_vecWeaponData;
 
 
 public:

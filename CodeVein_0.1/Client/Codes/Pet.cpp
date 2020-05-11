@@ -16,6 +16,27 @@ HRESULT CPet::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 	return S_OK;
 }
 
+void CPet::Check_Navi()
+{
+	_tchar szNavData[STR_128] = L"";
+
+	lstrcpy(szNavData, (
+		g_eSceneID_Cur == 5 ? L"Navmesh_Training.dat" :
+		g_eSceneID_Cur == 6 ? L"Navmesh_Stage_01.dat" :
+		g_eSceneID_Cur == 7 ? L"Navmesh_Stage_02.dat" :
+		g_eSceneID_Cur == 8 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
+
+	//player 오른쪽으로 3.f만큼 소환될것임
+	m_pTransform->Set_Pos(TARGET_TO_TRANS(m_pPlayer)->Get_Axis(AXIS_X) * 1.f);
+
+	m_pNavMesh->Set_Index(-1);
+	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, szNavData);
+	m_pNavMesh->Check_OnNavMesh(m_pTransform->Get_Pos());
+
+
+	return;
+}
+
 void CPet::Check_CollisionEvent()
 {
 	Check_CollisionPush();
@@ -40,12 +61,12 @@ void CPet::Check_CollisionPush()
 		{
 			CCollider* pCollider = TARGET_TO_COL(Obj_iter);
 
-			if (m_pCollider->Check_Sphere(pCollider, m_pTransformCom->Get_Axis(AXIS_Z), m_fSkillMoveSpeed_Cur * DELTA_60))
+			if (m_pCollider->Check_Sphere(pCollider, m_pTransform->Get_Axis(AXIS_Z), m_fSkillMoveSpeed_Cur * DELTA_60))
 			{
 				CTransform* pTrans = TARGET_TO_TRANS(Obj_iter);
 				CNavMesh*   pNav = TARGET_TO_NAV(Obj_iter);
 
-				_v3 vDir = m_pTransformCom->Get_Pos() - pTrans->Get_Pos();
+				_v3 vDir = m_pTransform->Get_Pos() - pTrans->Get_Pos();
 				V3_NORMAL_SELF(&vDir);
 
 				vDir.y = 0;
@@ -118,7 +139,7 @@ void CPet::Check_CollisionHit(list<CGameObject*> plistGameObject)
 
 void CPet::Function_FBLR(CGameObject* _pGameObject)
 {
-	_float fAngle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(_pGameObject)->Get_Pos()));
+	_float fAngle = D3DXToDegree(m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(_pGameObject)->Get_Pos()));
 
 	if (0.f <= fAngle && 30.f > fAngle)
 		m_eFBLR = FBLR::FRONT;
@@ -142,11 +163,11 @@ void CPet::Function_FBLR(CGameObject* _pGameObject)
 
 void CPet::Function_RotateBody(CGameObject* _pGameObject)
 {
-	_float fTargetAngle = m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(_pGameObject)->Get_Pos());
+	_float fTargetAngle = m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(_pGameObject)->Get_Pos());
 
-	_float fYAngle = m_pTransformCom->Get_Angle().y;
+	_float fYAngle = m_pTransform->Get_Angle().y;
 
-	_v3 vTargetDir = m_pTransformCom->Get_Axis(AXIS_Z);
+	_v3 vTargetDir = m_pTransform->Get_Axis(AXIS_Z);
 	V3_NORMAL_SELF(&vTargetDir);
 
 	if (fTargetAngle > 0)
@@ -206,18 +227,18 @@ void CPet::Function_RotateBody(CGameObject* _pGameObject)
 		}
 	}
 
-	m_pTransformCom->Set_Angle(AXIS_Y, fYAngle);
+	m_pTransform->Set_Angle(AXIS_Y, fYAngle);
 
 	return;
 }
 
 void CPet::Function_MoveAround(CGameObject* _pGameObject, _float _fSpeed, _v3 _vDir)
 {
-	_float fTargetAngle = m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(_pGameObject)->Get_Pos());
+	_float fTargetAngle = m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(_pGameObject)->Get_Pos());
 
-	_float fYAngle = m_pTransformCom->Get_Angle().y;
+	_float fYAngle = m_pTransform->Get_Angle().y;
 
-	_v3 vTargetDir = m_pTransformCom->Get_Axis(AXIS_Z);
+	_v3 vTargetDir = m_pTransform->Get_Axis(AXIS_Z);
 	V3_NORMAL_SELF(&vTargetDir);
 
 	if (fTargetAngle > 0)
@@ -277,9 +298,9 @@ void CPet::Function_MoveAround(CGameObject* _pGameObject, _float _fSpeed, _v3 _v
 		}
 	}
 
-	m_pTransformCom->Set_Angle(AXIS_Y, fYAngle);
+	m_pTransform->Set_Angle(AXIS_Y, fYAngle);
 
-	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &_vDir, _fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
+	m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &_vDir, _fSpeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
 
 	return;
 }
@@ -308,7 +329,7 @@ void CPet::Function_CoolDown()
 void CPet::Function_Movement(_float _fspeed, _v3 _vDir)
 {
 	V3_NORMAL(&_vDir, &_vDir);
-	m_pTransformCom->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransformCom->Get_Pos(), &_vDir, _fspeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
+	m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &_vDir, _fspeed * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"))));
 
 	return;
 }
@@ -329,7 +350,7 @@ void CPet::Function_DecreMoveMent(_float _fMutiply)
 
 void CPet::Function_CalcMoveSpeed(_float _fMidDist)
 {
-	_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(m_pPlayer)->Get_Pos() - m_pTransformCom->Get_Pos()));
+	_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(m_pPlayer)->Get_Pos() - m_pTransform->Get_Pos()));
 
 	if (_fMidDist >= fLenth)
 		m_fSkillMoveMultiply = (fLenth - m_fPersonalRange) / (_fMidDist- m_fPersonalRange);
@@ -366,7 +387,7 @@ void CPet::Function_Find_Target()
 			else if (nullptr == Monster_iter)
 				continue;
 
-			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
+			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransform->Get_Pos()));
 
 			if (fLenth > m_fRecognitionRange)
 				continue;
@@ -391,7 +412,7 @@ void CPet::Function_Find_Target()
 			else if (nullptr == Boss_iter)
 				continue;
 
-			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Boss_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
+			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Boss_iter)->Get_Pos() - m_pTransform->Get_Pos()));
 
 			if (fLenth > m_fRecognitionRange)
 				continue;
@@ -416,7 +437,7 @@ void CPet::Function_Find_Target()
 			else if (nullptr == Item_iter)
 				continue;
 
-			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Item_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
+			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Item_iter)->Get_Pos() - m_pTransform->Get_Pos()));
 
 			if (fLenth > m_fRecognitionRange)
 				continue;
@@ -443,7 +464,7 @@ void CPet::Function_Find_Target()
 			else if (nullptr == Item_iter)
 				continue;
 
-			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Item_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
+			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Item_iter)->Get_Pos() - m_pTransform->Get_Pos()));
 
 			if (fLenth > m_fRecognitionRange)
 				continue;
@@ -467,7 +488,7 @@ void CPet::Function_Find_Target()
 			else if (nullptr == Monster_iter)
 				continue;
 
-			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
+			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Monster_iter)->Get_Pos() - m_pTransform->Get_Pos()));
 
 			if (fLenth > m_fRecognitionRange)
 				continue;
@@ -492,7 +513,7 @@ void CPet::Function_Find_Target()
 			else if (nullptr == Boss_iter)
 				continue;
 
-			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Boss_iter)->Get_Pos() - m_pTransformCom->Get_Pos()));
+			_float fLenth = V3_LENGTH(&(TARGET_TO_TRANS(Boss_iter)->Get_Pos() - m_pTransform->Get_Pos()));
 
 			if (fLenth > m_fRecognitionRange)
 				continue;
@@ -610,6 +631,21 @@ HRESULT CPet::Ready_BoneMatrix(void * pArg)
 
 void CPet::Free()
 {
+	Safe_Release(m_pMonsterUI);
+
+	IF_NOT_NULL(m_pTarget)
+		Safe_Release(m_pTarget);
+
+	IF_NOT_NULL(m_pPlayer)
+		Safe_Release(m_pPlayer);
+
+	Safe_Release(m_pCollider);
+	Safe_Release(m_pNavMesh);
+	Safe_Release(m_pTransform);
+	Safe_Release(m_pMesh);
+	Safe_Release(m_pShader);
+	Safe_Release(m_pRenderer);
+
 	CGameObject::Free();
 
 	return;

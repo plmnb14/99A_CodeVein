@@ -85,17 +85,16 @@ HRESULT CPlayerHP::Render_GameObject()
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
 	_uint iPass = 0;
-	for (_uint i = 0; i < 2; ++i)
+	LOOP(4)
 	{
-		if (0 == i)
-		{
-			m_fSizeX = 320.f;
-			m_fSizeY = 64.f;
-		}
-
-		else if (1 == i)
+		if (1 == i)
 		{
 			m_fSizeX = 300.f;
+			m_fSizeY = 64.f;
+		}
+		else
+		{
+			m_fSizeX = 320.f;
 			m_fSizeY = 64.f;
 		}
 
@@ -206,16 +205,16 @@ void CPlayerHP::SetUp_Default()
 
 	// Player 현재 체력 폰트
 	m_pFontCurHP = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
-	m_pFontCurHP->Set_UI_Pos(m_fPosX + 60.f, m_fPosY);
-	m_pFontCurHP->Set_UI_Size(20.f, 20.f);
+	m_pFontCurHP->Set_UI_Pos(m_fPosX + 65.f, m_fPosY);
+	m_pFontCurHP->Set_UI_Size(10.4f, 20.f);
 	m_pFontCurHP->Set_ViewZ(m_fViewZ - 0.1f);
 	m_pFontCurHP->Set_Active(true);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontCurHP, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	// 플레이어 전체 체력 폰트
 	m_pFontTotalHP = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
-	m_pFontTotalHP->Set_UI_Pos(m_fPosX + 115.f, m_fPosY - 3.f);
-	m_pFontTotalHP->Set_UI_Size(10.f, 10.f);
+	m_pFontTotalHP->Set_UI_Pos(m_fPosX + 130.f, m_fPosY - 3.f);
+	m_pFontTotalHP->Set_UI_Size(7.8f, 15.f);
 	m_pFontTotalHP->Set_ViewZ(m_fViewZ - 0.1f);
 	m_pFontTotalHP->Set_Active(true);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontTotalHP, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);

@@ -75,6 +75,7 @@ public:
 	void Set_MouseControl(_bool _bMouseControl);
 	void Set_OnAimingTarget(_bool _bOnAim);
 	void Set_AimingTarget(CGameObject* pAimingTarget) { m_pAimingTarget = pAimingTarget; }
+	void Set_AimUI(_bool _bAimUI);
 
 public:
 	void Add_At(_float _fSpeed, _v3 _vDir);
@@ -104,6 +105,10 @@ public:
 
 public:
 	_bool		Get_MouseControl() { return m_bMouseControl; }
+
+public:
+	void	Set_AimYPos(_float _fY) { m_fAim_YPos = _fY; };
+	void	Set_AimXPosMulti(_float _fXMulti) { m_fAim_XPosMulti = _fXMulti; };
 
 public:
 	void		KeyInput();
@@ -155,7 +160,19 @@ protected:
 	_bool  m_bOSCReverse[3] = {};
 	_bool  m_bOSCOrigin = false;
 
+	//==============================================
+	_bool  m_bOnAmingUI = false;
+
+	_float m_fRightX_Gap = 0.f;
+	//==============================================
+
+
 	CAM_OSC_TYPE m_eOSCType = OSC_END;
+
+	_bool m_bAimUI = false;
+
+	_float m_fAim_YPos = 0.f;
+	_float m_fAim_XPosMulti = 1.f;
 
 protected:	// Camera Position Setting
 	_float m_fDistance;			// Camera to target distance

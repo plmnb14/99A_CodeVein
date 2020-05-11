@@ -5,28 +5,24 @@
 #include "Item_Manager.h"
 
 
-#include "Button_UI.h"
 #include "PlayerHP.h"
 #include "PlayerST.h"
 #include "BossDecoUI.h"
 #include "BossHP.h"
+#include "BossNameUI.h"
 
 #include "QuickSlot.h"
 
 #include "Expendables_Inven.h"
 #include "Expendables_Slot.h"
-#include "Select_UI.h"
 #include "Material_Inven.h"
 #include "Material_Slot.h"
 #include "Weapon_Slot.h"
 #include "Weapon_Inven.h"
 #include "Armor_Slot.h"
 #include "Armor_Inven.h"
-#include "NumberUI.h"
-#include "CursorUI.h"
 #include "Inventory.h"
 #include "Inventory_Icon.h"
-#include "ClickUI.h"
 #include "Total_Inven.h"
 #include "BloodCode_Icon.h"
 #include "Info_Slot.h"
@@ -50,7 +46,7 @@
 #include "SkillReleaseUI.h"
 #include "BloodSkillSlot.h"
 #include "BloodSkillCursor.h"
-#include "BloodCode_Inven.h"
+
 #include "BloodCodeUI.h"
 #include "ReleaseQuestionUI.h"
 #include "ReleaseOption.h"
@@ -59,10 +55,15 @@
 #include "Skill_Inven.h"
 #include "SkillSlot.h"
 #include "SkillIcon.h"
-#include "FighterBlood.h"
-#include "PrometheusBlood.h"
-#include "FighterReleaseUI.h"
+
 #include "Pet_Inven.h"
+#include "Pet_Slot.h"
+
+#include "NoticeUI.h"
+#include "ExplainSkillUI.h"
+
+#include "HazeUI.h"
+#include "ScriptUI.h"
 
 BEGIN(Client)
 
@@ -95,14 +96,15 @@ public:
 	CInventory*		Get_Inventory() { return m_pInventory; }
 	void Set_BossUI_Active(_bool bIsActive);
 	CBloodCodeMenuUI* Get_BloodCode_Menu() { return m_pBloodCodeMenu; }
-	CBloodCode_Inven* Get_BloodCode_Inven() { return m_pBloodCode_Inven; }
 	CBloodCodeOwner* Get_BloodCode_Owner() { return m_pBloodCodeOwner; }
 	CBloodCodeSelectUI* Get_BloodCode_SelectUI() { return m_pBloodCodeSelectUI; }
 	CSkillReleaseUI* Get_Skill_ReleaseUI() { return m_pSkillReleaseUI; }
 	CSkillAcquisitionUI* Get_Skill_AcquisitionUI() { return m_pSkillAcquisitionUI; }
 	CSkill_Inven* Get_Skill_Inven() { return m_pSkillInven; }
-	CFighterBlood* Get_FigherBlood() { return m_pFigherBlood; }
-	CPrometheusBlood* Get_PrometheusBlood() { return m_pPrometheusBlood; }
+	CHazeUI* Get_HazeUI() { return m_pHazeUI; }
+	CScriptUI* Get_ScriptUI() { return m_pScriptUI; }
+	
+	// ∆Í ¿Œ∫•≈‰∏Æ
 	CPet_Inven* Get_Pet_Inven() { return m_pPet_Inven; }
 
 private:
@@ -120,14 +122,15 @@ private:
 	CTotal_Inven* m_pTotal_Inven = nullptr;
 	CInventory*		m_pInventory = nullptr;
 	CBloodCodeMenuUI* m_pBloodCodeMenu = nullptr;
-	CBloodCode_Inven* m_pBloodCode_Inven = nullptr;
 	CBloodCodeOwner* m_pBloodCodeOwner = nullptr;
 	CBloodCodeSelectUI * m_pBloodCodeSelectUI = nullptr;
 	CSkillReleaseUI* m_pSkillReleaseUI = nullptr;
 	CSkillAcquisitionUI* m_pSkillAcquisitionUI = nullptr;
 	CSkill_Inven* m_pSkillInven = nullptr;
-	CFighterBlood* m_pFigherBlood = nullptr;
-	CPrometheusBlood* m_pPrometheusBlood = nullptr;
+	CHazeUI*	m_pHazeUI = nullptr;
+	CScriptUI*	m_pScriptUI = nullptr;
+	
+	// ∆Í ¿Œ∫•≈‰∏Æ
 	CPet_Inven* m_pPet_Inven = nullptr;
 
 public:

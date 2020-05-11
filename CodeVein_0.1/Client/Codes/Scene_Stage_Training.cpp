@@ -13,6 +13,8 @@
 
 #include "MonsterHeaders.h"
 #include "Flag.h"
+#include "ClothDynamic.h"
+#include "ClothStatic.h"
 
 #include "Player_Colleague.h"
 #include "Player.h"
@@ -41,7 +43,6 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 	pRenderer->Fog_On(false);
 	Safe_Release(pRenderer);
 
-	// 트레이닝 맵은 그냥 로드 가능해욤
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_Training.dat");
 
 	return S_OK;
@@ -88,10 +89,8 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Pet")))
 		return E_FAIL;
 
-	//////////////////////////////////////////아이템 찾기 테스트용/////////////////////////////////////////////
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Item")))
 		return E_FAIL;
-	///////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_MonsterProjectile")))
 		return E_FAIL;
@@ -141,57 +140,54 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 
 	//// 몽키
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Monkey",
-	//	&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_Gun,
+	//	&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
 	//		true, _v3(4.f, 0.f, 4.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
-	//// 몽키
+	//// 따이맨
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_ThaiMan",
-	//	&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_Gun,
+	//	&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
 	//		true, _v3(4.f, 0.f, 4.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	//// 성게
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Urchin",
-	//	&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_Gun,
+	//	&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
 	//		true, _v3(4.f, 0.f, 4.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	//// 늑대
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Wolf",
-	//	&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_Gun,
+	//	&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
 	//		true, _v3(4.f, 0.f, 4.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	//// 야차맨
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_YachaMan",
-	//	&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_Gun,
+	//	&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
 	//		true, _v3(4.f, 0.f, 4.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	//// 예티
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Yeti",
-	//	&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_Gun,
+	//	&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
 	//		true, _v3(4.f, 0.f, 4.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	//// 펫_독나비, 소환위치는 항상 player의 오른쪽값
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Pet_PoisonButterFly", nullptr);
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
-	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	////TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Pet", nullptr);
 
 	//====================================================================================================================================================
 	// 검겐지
 	//====================================================================================================================================================
 	
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::Sit1, 70.f, 10.f, 1.f));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(-8.f, 0.f, -8.f));
-	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", 
+	//	&CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::Sit1, 70.f, 10.f, 1.f,
+	//		true, _v3(5.f, 0.f, -2.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-	
+
 	//====================================================================================================================================================
 
 
@@ -201,9 +197,9 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji",
 	//	&CGunGenji::INFO(CGunGenji::Normal, CGunGenji::CheckGun, 10.f, 3.f, 2.f,
-	//		true, _v3(8.f, 0.f, -8.f), V3_NULL, 0));
+	//		true, _v3(3.f, 0.f, -8.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-	
+
 	//====================================================================================================================================================
 
 
@@ -211,13 +207,11 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	// 창 방패 겐지
 	//====================================================================================================================================================
 	
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordShieldGenji", &CSwordShieldGenji::INFO(CSwordShieldGenji::White, CSwordShieldGenji::LookAround1, 10.f, 5.f, 2.f));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(-8.f, 0.f, 8.f));
-	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
-	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordShieldGenji",
+	//	&CSwordShieldGenji::INFO(CSwordShieldGenji::White, CSwordShieldGenji::LookAround1, 10.f, 5.f, 2.f,
+	//		true, _v3(5.f, 0.f, -8.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-	
+
 	//====================================================================================================================================================
 
 
@@ -229,45 +223,36 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//	return E_FAIL;
 
 
-	// 독나방
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_PoisonButterfly", &CPoisonButterfly::INFO(10.f, 5.f, 2.f));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(8.f, 0.f, 8.f));
-	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
-	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//// 독나방
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_PoisonButterfly", 
+	//	&CPoisonButterfly::INFO(10.f, 5.f, 2.f,
+	//		true, _v3(-5.f, 0.f, 8.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
-	// 여왕의 기사
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_QueensKnight", &CQueensKnight::INFO(10.f, 5.f, 2.f));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(3.f, 0.f, 3.f));
-	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
-	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
-
-	// 얼음여자
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_IceGirl", &CIceGirl::INFO(10.f, 5.f, 2.f));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(3.f, 0.f, 3.f));
-	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
-	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//// 여왕의 기사
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_QueensKnight", 
+	//	&CQueensKnight::INFO(10.f, 5.f, 2.f,
+	//		true, _v3(-8.f, 0.f, 3.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
-	// 불남자
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_FireBoy", &CIceGirl::INFO(10.f, 5.f, 2.f));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(3.f, 0.f, 3.f));
-	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
-	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//// 얼음여자
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_IceGirl", 
+	//	&CIceGirl::INFO(10.f, 5.f, 2.f,
+	//		true, _v3(3.f, 0.f, -8.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
 
-	////// 사슴왕
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_DeerKing", &CDeerKing::INFO(10.f, 5.f, 2.f));
-	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(3.f, 0.f, 3.f));
-	////TARGET_TO_TRANS(pInstance)->Set_Pos(V3_NULL);
-	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	//// 불남자
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_FireBoy", 
+	//	&CFireBoy::INFO(10.f, 5.f, 2.f,
+	//		true, _v3(8.f, 0.f, -5.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
+
+	//// 사슴왕
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_DeerKing",
+	//	&CDeerKing::INFO(10.f, 5.f, 2.f,
+	//		true, _v3(8.f, 0.f, -8.f), V3_NULL, 0));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
+
 
 	return S_OK;
 }
@@ -286,6 +271,16 @@ HRESULT CScene_Stage_Training::Ready_Layer_Environment()
 	//TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(0.f, 3.f, 3.f));
 	////static_cast<CFlag*>(pInstance)->Set_Wind();	// 설정안하면 디폴트 설정
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Sky", nullptr);
+
+
+	//// 다이나믹 옷
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Cloth_Dynamic", &CClothDynamic::INFO(CClothDynamic::ClothDynamic_Name::LongCoat));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Cloth", nullptr);
+
+	//// 스테틱 옷
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Cloth_Static", &CClothStatic::INFO(CClothStatic::ClothStatic_Name::Hair_Long));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Cloth", nullptr);
+
 
 	return S_OK;
 }

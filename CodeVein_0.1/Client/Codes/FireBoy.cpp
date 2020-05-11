@@ -87,6 +87,7 @@ HRESULT CFireBoy::Ready_GameObject(void * pArg)
 	// UI 추가(지원)
 	m_pBossUI = static_cast<CBossHP*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BossHP", nullptr));
 	m_pBossUI->Set_UI_Pos(WINCX * 0.5f, WINCY * 0.1f);
+	m_pBossUI->Set_BossName(CBossNameUI::Index_FireBoy);
 	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBossUI, SCENE_STAGE, L"Layer_BossHP", nullptr)))
 		return E_FAIL;
 	return S_OK;
@@ -167,23 +168,23 @@ _int CFireBoy::Late_Update_GameObject(_double TimeDelta)
 	//=============================================================================================
 	// 그림자랑 모션블러는 프리스텀 안에 없으면 안그림
 	//=============================================================================================
-	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
+	if (!m_bDissolve)
 	{
-		if (!m_bDissolve)
-		{
-			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
-				return E_FAIL;
-		}
-
-		else
-		{
-			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
-				return E_FAIL;
-		}
-
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 			return E_FAIL;
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
+			return E_FAIL;
+	}
+
+	else
+	{
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
+			return E_FAIL;
+	}
+
+	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
+	{
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
 			return E_FAIL;
 	}
 	//=============================================================================================
@@ -247,49 +248,86 @@ HRESULT CFireBoy::Render_GameObject()
 
 HRESULT CFireBoy::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
 {
+	if (false == m_bEnable)
+		return S_OK;
+
 	if (nullptr == pShader ||
 		nullptr == m_pMeshCom)
 		return E_FAIL;
 
-	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+	//============================================================================================
+	// 공통 변수
+	//============================================================================================
 
-	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
-		return E_FAIL;
+	_mat	ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat	ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+	_mat	WorldMatrix = m_pTransformCom->Get_WorldMat();
 
-	m_matLastWVP = m_pTransformCom->Get_WorldMat() * ViewMatrix * ProjMatrix;
-
-	_bool bMotionBlur = true;
-	if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
-		return E_FAIL;
-	_bool bDecalTarget = false;
-	if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
 		return E_FAIL;
 
+	//============================================================================================
+	// 모션 블러 상수
+	//============================================================================================
+	if (_bIsForMotionBlur)
+	{
+		if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
+			return E_FAIL;
 
+		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
+
+		_bool bMotionBlur = true;
+		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+			return E_FAIL;
+		_bool bDecalTarget = false;
+		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+			return E_FAIL;
+		_float fBloomPower = 0.5f;
+		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
+			return E_FAIL;
+	}
+
+	//============================================================================================
+	// 기타 상수
+	//============================================================================================
+	else
+	{
+		_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
+
+		if (FAILED(pShader->Set_Value("g_matWVP", &matWVP, sizeof(_mat))))
+			return E_FAIL;
+	}
+
+	//============================================================================================
+	// 쉐이더 실행
+	//============================================================================================
 	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
 
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 	{
 		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
 
-		m_pMeshCom->Update_SkinnedMesh(i);
-
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
+			_int tmpPass = m_pMeshCom->Get_MaterialPass(i, j);
+
 			pShader->Begin_Pass(iPass);
+			pShader->Commit_Changes();
+
+			pShader->Commit_Changes();
 
 			m_pMeshCom->Render_Mesh(i, j);
 
 			pShader->End_Pass();
 		}
 	}
+
+	//============================================================================================
+
 
 	return NOERROR;
 }
@@ -1363,6 +1401,42 @@ HRESULT CFireBoy::Ready_NF(void * pArg)
 	m_fFov = eTemp.fFov;
 	m_fMaxLength = eTemp.fMaxLength;
 	m_fMinLength = eTemp.fMinLength;
+
+	//===================================================================
+	// 림라이트 벨류 설정	
+	//===================================================================
+	m_pBattleAgentCom->Set_RimAlpha(0.5f);
+	m_pBattleAgentCom->Set_RimValue(8.f);
+	m_pBattleAgentCom->Set_OriginRimAlpha(0.5f);
+	m_pBattleAgentCom->Set_OriginRimValue(8.f);
+	//===================================================================
+
+	//===================================================================
+	// 트리거 소환용 설정
+	//===================================================================
+	// 트리거 소환되는 녀석이면
+	if (eTemp.bSpawnOnTrigger)
+	{
+		// 스테이지 번호로 네비 불러옴
+		_tchar szNavData[STR_128] = L"";
+
+		lstrcpy(szNavData, (
+			eTemp.sStageIdx == 0 ? L"Navmesh_Training.dat" :
+			eTemp.sStageIdx == 1 ? L"Navmesh_Stage_01.dat" :
+			eTemp.sStageIdx == 2 ? L"Navmesh_Stage_02.dat" :
+			eTemp.sStageIdx == 3 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
+
+		m_pNavMeshCom->Set_Index(-1);
+		m_pNavMeshCom->Ready_NaviMesh(m_pGraphic_Dev, szNavData);
+		m_pNavMeshCom->Check_OnNavMesh(eTemp.vPos);
+		m_pTransformCom->Set_Pos(eTemp.vPos);
+		m_pTransformCom->Set_Angle(eTemp.vAngle);
+
+		//m_pNavMeshCom->Set_SubsetIndex(eTemp.sSubSetIdx);
+		//m_pNavMeshCom->Set_Index(eTemp.sCellIdx);
+	}
+	//===================================================================
+
 
 	return S_OK;
 }

@@ -1,6 +1,7 @@
 #pragma once
 
 #define STR_128 128
+#define STR_256 256
 
 namespace Engine
 {
@@ -29,13 +30,19 @@ namespace Engine
 
 	typedef struct tagWeaponParam
 	{
-		_float		fDamage;
+		_int		iWeaponType;	// 무기 타입 ex) Weapon_Sword
+		_int		iWeaponName;	// 무기 이름 ex) Sword_Military
 
-		_float		fTrail_Min;
-		_float		fTrail_Max;
+		_uint		iReinforce;		//강화 단계
 
-		_float		fCol_Height;
-		_float		fRadius;
+		_float		fDamage;		//기본 공격력
+
+		_float		fTrail_Min;		// 트레일 최소
+		_float		fTrail_Max;		// 트레일 최대
+
+		_float		fCol_Height;	// 충돌체 최초 위치
+		_float		fRadius;		// 충돌 구 범위
+
 	}WPN_PARAM;
 
 	typedef struct tagRimParam
@@ -115,6 +122,9 @@ namespace Engine
 
 		EXE_WPN		eExecutionWpn;	// 처형 시 무기
 		EXE_TYPE	eExecutionType;	// 처형 시 타입
+
+		_short		sMana_Cur;		// 스킬 마나
+		_short		sMana_Max;		// 스킬 마나 맥스
 
 	}OBJECT_PARAM;
 
@@ -327,6 +337,25 @@ namespace Engine
 
 	}TEX_INFO;
 
+	typedef struct tagMeshInfo_EffTool
+	{
+		std::wstring wstrStateKey = L"";
+		std::wstring wstrImgPath = L"";
+		std::wstring wstrFileName = L"";
+		_tchar szIsDynamic[STR_128] = L"";
+
+	}MESH_INFO_EFFTOOL;
+
+	typedef struct tagTexInfo_EffTool
+	{
+		std::wstring wstrStateKey = L"";
+		std::wstring wstrImgPath = L"";
+		std::wstring wstrFileName = L"";
+		_tchar szIsDynamic[STR_128] = L"";
+		_tchar szImgCnt[STR_128] = L"";
+
+	}TEX_INFO_EFFTOOL;
+
 	typedef struct tagPathInfo
 	{
 		_tchar sztrStateKey[STR_128] = L"";
@@ -335,6 +364,8 @@ namespace Engine
 		_bool	bIsDynamic = false;
 		_ushort sImgCnt = 0;
 		_tchar szProtoTypeName[STR_128] = L"";
+		_tchar szIsDynamic[STR_128] = L"";
+		_tchar szImgCnt[STR_128] = L"";
 
 	}PATH_INFO;
 
@@ -427,9 +458,9 @@ namespace Engine
 
 	typedef struct tagEffectInfo
 	{
-		TCHAR	szName[STR_128];
-		TCHAR	szGradientName[STR_128];
-		TCHAR	szColorName[STR_128];
+		TCHAR	szName[STR_256];
+		TCHAR	szGradientName[STR_256];
+		TCHAR	szColorName[STR_256];
 
 		_bool	bUseRGBA;
 		_bool	bStaticFrame;

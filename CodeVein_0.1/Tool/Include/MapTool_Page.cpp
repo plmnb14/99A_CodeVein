@@ -1235,7 +1235,7 @@ BOOL CMapTool_Page::OnInitDialog()
 
 	m_Tree.InsertItem(TEXT("StaticMesh"), 0, 0, TVI_ROOT);
 
-	LoadFilePath(L"../../Data/Load_MeshData/Mesh_Static_Stage01_Path.dat");
+	LoadFilePath(L"../../Data/Load_MeshData/Mesh_Static_Stage02_Path.dat");
 	LoadFilePath(L"../../Data/Load_MeshData/Mesh_Static_Common_Path.dat");
 	LoadFilePath(L"../../Data/Load_MeshData/Mesh_Field_Gimmick_Path.dat");
 

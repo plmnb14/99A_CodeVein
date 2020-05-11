@@ -44,6 +44,12 @@ sampler		DepthSampler = sampler_state
 	texture = g_DepthTexture;
 };
 
+texture		g_MaskTexture;
+sampler		MaskSampler = sampler_state
+{
+	texture = g_MaskTexture;
+};
+
 struct VS_IN
 {
 	float3		vPosition : POSITION;
@@ -583,26 +589,38 @@ PS_OUT PS_TRAIL_MASK(PS_IN In)
 	return Out;
 }
 
+bool g_bTitle;
 float g_fUV_Value_X;
 float g_fUV_Value_Y;
 PS_OUT PS_UV(PS_IN In)
 {
 	PS_OUT			Out = (PS_OUT)0;
 
-	In.vTexUV.x += g_fUV_Value_X;
-	In.vTexUV.y += g_fUV_Value_Y;
-	Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
-	Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
+	float2 TexUV = In.vTexUV;
+	float2 TexUVForTitle = In.vTexUV;
+
+	TexUV.x += g_fUV_Value_X;
+	TexUV.y += g_fUV_Value_Y;
+
+	if (g_bTitle)
+	{
+		TexUVForTitle.x += g_fUV_Value_X * 0.5f;
+		TexUVForTitle.y += g_fUV_Value_Y * 0.5f;
+	}
+
+
+	Out.vColor = pow(tex2D(DiffuseSampler, TexUV), 2.2);
+	Out.vColor.a = tex2D(DiffuseSampler, TexUV).x;
 
 	if(g_bUseColorTex)
 	{
-		Out.vColor = pow(tex2D(ColorSampler, In.vTexUV), 2.2);
-		Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
+		Out.vColor = pow(tex2D(ColorSampler, TexUV), 2.2);
+		Out.vColor.a = tex2D(DiffuseSampler, TexUV).x;
 	}
 	else
 	{
-		Out.vColor = pow(tex2D(DiffuseSampler, In.vTexUV), 2.2);
-		Out.vColor.a = tex2D(DiffuseSampler, In.vTexUV).x;
+		Out.vColor = pow(tex2D(DiffuseSampler, TexUV), 2.2);
+		Out.vColor.a = tex2D(DiffuseSampler, TexUV).x;
 	}
 
 	if (g_bUseRGBA)
@@ -630,13 +648,19 @@ PS_OUT PS_UV(PS_IN In)
 	if (g_bUseMaskTex)
 	{
 		//float fGradientUV = In.vTexUV + (g_fAlpha);
-		vector vGradientMask = tex2D(GradientSampler, In.vTexUV);
+		vector vGradientMask = tex2D(GradientSampler, TexUVForTitle);
 		Out.vColor.a *= vGradientMask.x;
+	}
+
+	if (g_bTitle && g_bUseMaskTex)
+	{
+		vector vMask = tex2D(MaskSampler, In.vTexUV);
+		Out.vColor.a *= saturate(vMask.x + 0.1f);
 	}
 
 	if (g_bDissolve)
 	{
-		float4 fxColor = tex2D(DiffuseSampler, In.vTexUV);
+		float4 fxColor = tex2D(DiffuseSampler, TexUV);
 
 		if (Out.vColor.a == 0.f)
 			clip(-1);
