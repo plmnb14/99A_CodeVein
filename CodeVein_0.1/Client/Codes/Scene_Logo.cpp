@@ -108,7 +108,7 @@ HRESULT CScene_Logo::Ready_Essential_Prototype_GameObject()
 
 HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 {
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Ortho_Title", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/Effect/Ortho/Ortho_Title/Ortho_Title_%d.dds", 8))))
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Ortho_Title", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/Effect/Ortho/Ortho_Title/Ortho_Title_%d.dds", 9))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Title_Glitter_0", COrthoEffect::Create(m_pGraphic_Device, Read_EffectData(L"../../Data/EffectData/Ortho_Title_Glitter_0.dat")))))
 		return E_FAIL;
@@ -122,7 +122,9 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Title_BG", COrthoEffect::Create(m_pGraphic_Device, Read_EffectData(L"../../Data/EffectData/Ortho_Title_BG.dat")))))
 		return E_FAIL;
-	
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Title_WhiteFadeout", COrthoEffect::Create(m_pGraphic_Device, Read_EffectData(L"../../Data/EffectData/Ortho_Title_WhiteFadeout.dat")))))
+		return E_FAIL;
+
 	CParticleMgr::Get_Instance()->Ready_TitleEffect();
 
 
@@ -168,25 +170,31 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 	m_pLoadingScreen = static_cast<CLoadingScreen*>(g_pManagement->Get_GameObjectBack(L"Layer_LoadingScreen", SCENE_STATIC));
 	m_pLoadingScreen->Set_FadeSpeed(0.6f);
 
-	m_pTitleBG = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_TitleEffect(L"Ortho_Title_BG"));
+	m_pTitleBG = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_EffectReturn(L"Ortho_Title_BG"));
 	m_pTitleBG->Set_Desc(_v3(0, 0, 0), nullptr);
 	m_pTitleBG->Reset_Init();
 	
-	m_pGlitterEffect_0 = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_TitleEffect(L"Ortho_Title_Glitter_0"));
+	m_pGlitterEffect_0 = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_EffectReturn(L"Ortho_Title_Glitter_0"));
 	m_pGlitterEffect_0->Set_Desc(_v3(0, 0, 0), nullptr);
 	m_pGlitterEffect_0->Set_UV_Speed(0.03f, 0.f);
 	m_pGlitterEffect_0->Set_Mask(L"Tex_Ortho_Title", 6);
 	m_pGlitterEffect_0->Reset_Init();
 	
-	m_pGlitterEffect_1 = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_TitleEffect(L"Ortho_Title_Glitter_1"));
+	m_pGlitterEffect_1 = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_EffectReturn(L"Ortho_Title_Glitter_1"));
 	m_pGlitterEffect_1->Set_Desc(_v3(0, 0, 0), nullptr);
-	m_pGlitterEffect_1->Set_UV_Speed(0.045f, 0.06f);
+	m_pGlitterEffect_1->Set_UV_Speed(0.04f, 0.06f);
 	m_pGlitterEffect_1->Set_Mask(L"Tex_Ortho_Title", 6);
 	m_pGlitterEffect_1->Reset_Init();
 	
-	//CParticleMgr::Get_Instance()->Create_TitleEffect(L"Ortho_Title_ShadowLine");
-	//CParticleMgr::Get_Instance()->Create_TitleEffect(L"Ortho_Title_ShadowText");
-	//CParticleMgr::Get_Instance()->Create_TitleEffect(L"Ortho_Title_Smoke");
+	COrthoEffect* pEff = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_EffectReturn(L"Ortho_Title_WhiteFadeout"));
+	pEff->Set_Desc(_v3(0, 0, 0), nullptr);
+	pEff->Set_UI_Layer();
+	pEff->Reset_Init();
+
+	//CParticleMgr::Get_Instance()->Create_TitleEffect(L"Ortho_Title_WhiteFadeout");
+	//CParticleMgr::Get_Instance()->Create_Effect(L"Ortho_Title_ShadowLine");
+	//CParticleMgr::Get_Instance()->Create_Effect(L"Ortho_Title_ShadowText");
+	//CParticleMgr::Get_Instance()->Create_Effect(L"Ortho_Title_Smoke");
 
 	return S_OK;
 }

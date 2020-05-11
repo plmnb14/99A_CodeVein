@@ -772,6 +772,8 @@ HRESULT CRenderer::Render_Alpha()
 
 HRESULT CRenderer::Render_Effect()
 {
+	Render_Instance();
+
 	m_pShader_Effect->Begin_Shader();
 
 	for (auto& pGameObject : m_RenderList[RENDER_EFFECT])
@@ -809,9 +811,21 @@ HRESULT CRenderer::Render_Effect()
 
 	m_RenderList[RENDER_EFFECT].clear();
 
-	m_pShader_Effect->End_Shader();
+	for (auto& pGameObject : m_RenderList[RENDER_ORTHO])
+	{
+		if (nullptr != pGameObject)
+		{
+			if (FAILED(pGameObject->Render_GameObject_SetShader(m_pShader_Effect)))
+			{
+				Safe_Release(pGameObject);
+				return E_FAIL;
+			}
+			Safe_Release(pGameObject);
+		}
+	}
+	m_RenderList[RENDER_ORTHO].clear();
 
-	Render_Instance();
+	m_pShader_Effect->End_Shader();
 
 	return NOERROR;
 }

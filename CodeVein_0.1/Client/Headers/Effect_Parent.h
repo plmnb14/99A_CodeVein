@@ -8,26 +8,27 @@
 
 BEGIN(Client)
 
-class CEffect_FireFlower final : public CGameObject
+class CEffect_Parent final : public CGameObject
 {
 public:
 	typedef struct tagEffInfo
 	{
-		tagEffInfo(_v3 _vPos, _v3 _vDir, _float _fDelay, _tchar* _szBuff)
-			: vCreatePos(_vPos), vDirection(_vDir), fDelay(_fDelay)
+		tagEffInfo(_v3 _vPos, _v3 _vDir, _float _fDelay, _float _fSpeed, _tchar* _szBuff)
+			: vCreatePos(_vPos), vDirection(_vDir), fDelay(_fDelay), fSpeed(_fSpeed)
 		{
 			lstrcpy(szBuff, _szBuff);
 		}
 		_v3 vCreatePos;
 		_v3 vDirection;
 		_float fDelay;
+		_float fSpeed;
 		_tchar szBuff[STR_128];
 	}EFF_INFO;
 
 protected:
-	explicit CEffect_FireFlower(LPDIRECT3DDEVICE9 pGraphic_Device);
-	explicit CEffect_FireFlower(const CEffect_FireFlower& rhs);
-	virtual ~CEffect_FireFlower() = default;
+	explicit CEffect_Parent(LPDIRECT3DDEVICE9 pGraphic_Device);
+	explicit CEffect_Parent(const CEffect_Parent& rhs);
+	virtual ~CEffect_Parent() = default;
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -74,7 +75,7 @@ private:
 	HRESULT SetUp_ConstantTable();
 
 public:
-	static CEffect_FireFlower* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
+	static CEffect_Parent* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
 	virtual CGameObject* Clone_GameObject(void* pArg);
 	virtual void Free();
 };

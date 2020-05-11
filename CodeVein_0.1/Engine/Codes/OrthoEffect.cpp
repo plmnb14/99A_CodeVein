@@ -48,6 +48,11 @@ void COrthoEffect::Set_Mask(const _tchar* _Name, _int _iMaskIdx)
 	m_iMaskIdx = _iMaskIdx;
 }
 
+void COrthoEffect::Set_UI_Layer()
+{
+	m_bUILayer = true;
+}
+
 HRESULT COrthoEffect::SetUp_ConstantTable_Instance(CShader* pShader)
 {
 	_float fMaskIndex = 0.f;
@@ -149,7 +154,9 @@ _int COrthoEffect::Update_GameObject(_double TimeDelta)
 	if (m_bIsDead || m_fCreateDelay > 0.f)
 		return S_OK;
 
-	RENDERID eGroup = RENDERID::RENDER_EFFECT;
+	RENDERID eGroup = RENDERID::RENDER_ORTHO;
+	if (m_bUILayer)
+		eGroup = RENDERID::RENDER_UI;
 
 	if (FAILED(m_pRendererCom->Add_RenderList(eGroup, this)))
 		return E_FAIL;
@@ -168,8 +175,8 @@ _int COrthoEffect::Late_Update_GameObject(_double TimeDelta)
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
 
-	m_matWorld._11 = WINCX;
-	m_matWorld._22 = WINCY;
+	m_matWorld._11 = WINCX * m_vLerpScale.x;
+	m_matWorld._22 = WINCY * m_vLerpScale.y;
 	m_matWorld._33 = 1.f;
 	//m_matWorld._41 = 0; // WINCX * 0.5f;
 	//m_matWorld._42 = 0; // WINCY * 0.5f;
@@ -183,6 +190,9 @@ HRESULT COrthoEffect::Render_GameObject()
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
+
+	m_matOldView = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	m_matOldProj = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
 
 	CManagement::Get_Instance()->Set_Transform(D3DTS_WORLD, m_matWorld);
 	CManagement::Get_Instance()->Set_Transform(D3DTS_VIEW, m_matView);
@@ -201,6 +211,9 @@ HRESULT COrthoEffect::Render_GameObject()
 	m_pShaderCom->End_Pass();
 	m_pShaderCom->End_Shader();
 
+	CManagement::Get_Instance()->Set_Transform(D3DTS_VIEW, m_matOldView);
+	CManagement::Get_Instance()->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
+
 	return S_OK;
 }
 
@@ -209,6 +222,9 @@ HRESULT COrthoEffect::Render_GameObject_SetShader(CShader* pShader)
 	if (nullptr == pShader ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
+
+	m_matOldView = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	m_matOldProj = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
 
 	CManagement::Get_Instance()->Set_Transform(D3DTS_WORLD, m_matWorld);
 	CManagement::Get_Instance()->Set_Transform(D3DTS_VIEW, m_matView);
@@ -224,7 +240,10 @@ HRESULT COrthoEffect::Render_GameObject_SetShader(CShader* pShader)
 	
 	m_pBufferCom->Render_VIBuffer();
 	pShader->End_Pass();
-	
+
+	CManagement::Get_Instance()->Set_Transform(D3DTS_VIEW, m_matOldView);
+	CManagement::Get_Instance()->Set_Transform(D3DTS_PROJECTION, m_matOldProj);
+
 	return S_OK;
 }
 
@@ -752,6 +771,11 @@ void COrthoEffect::Change_EffectTexture(const _tchar* _Name)
 
 	iter->second = m_pTextureCom = static_cast<CTexture*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, _Name));
 	Safe_AddRef(iter->second);
+
+	if (!iter->second)
+	{
+		Change_EffectTexture(L"DefaultTex_Ortho_Title");
+	}
 }
 
 void COrthoEffect::Change_GradientTexture(const _tchar * _Name)

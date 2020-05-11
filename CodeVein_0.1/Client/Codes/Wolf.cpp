@@ -505,7 +505,7 @@ void CWolf::Check_DeadEffect(_double TimeDelta)
 	if (m_fDeadEffect_Offset > 0.f)
 		return;
 
-	m_fDeadEffect_Offset = 0.1f;
+	m_fDeadEffect_Offset = 0.15f;
 
 	_v3 vPos = m_pTransformCom->Get_Pos();
 	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
@@ -1184,10 +1184,10 @@ void CWolf::Play_Dead()
 			{
 				m_bEventTrigger[0] = true;
 
-				Start_Dissolve(0.7f, false, true, 0.0f);
-				m_fDeadEffect_Delay = 0.f;
+				Start_Dissolve(0.9f, false, true, 0.3f);
+				m_fDeadEffect_Delay = 0.3f;
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.3f));
 			}
 		}
 	}
