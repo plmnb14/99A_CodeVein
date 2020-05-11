@@ -1688,12 +1688,10 @@ void CIceGirl::Down()
 
 HRESULT CIceGirl::Update_Bone_Of_BlackBoard()
 {
-	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHand");
-	m_vLeftHand = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_vLeftHand = *(_v3*)(&(m_pLeftHandFrame->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftHand", m_vLeftHand);
 
-	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips");
-	m_vHips = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_vHips = *(_v3*)(&(m_pHipsFrame->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Hips", m_vHips);
 	
 	return S_OK;
@@ -1910,6 +1908,7 @@ void CIceGirl::Check_PhyCollider()
 					m_pAIControllerCom->Reset_BT();
 					m_bAIController = false;
 
+					m_pAIControllerCom->Set_Value_Of_BlackBoard(L"PushCol", true);
 				}
 			}
 
@@ -1926,6 +1925,7 @@ void CIceGirl::Check_PhyCollider()
 					m_pAIControllerCom->Reset_BT();
 					m_bAIController = false;
 
+					m_pAIControllerCom->Set_Value_Of_BlackBoard(L"PushCol", true);
 				}
 			}
 
@@ -2115,7 +2115,7 @@ HRESULT CIceGirl::Add_Component()
 	//=================================================================================
 
 
-	m_pColliderCom->Set_Radius(_v3{ 1.f, 1.f, 1.f });
+	m_pColliderCom->Set_Radius(_v3{ 1.3f, 1.3f, 1.3f });
 	m_pColliderCom->Set_Dynamic(true);
 	m_pColliderCom->Set_Type(COL_SPHERE);
 	m_pColliderCom->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pColliderCom->Get_Radius().y , 0.f });
@@ -2207,6 +2207,10 @@ HRESULT CIceGirl::Ready_BoneMatrix()
 
 	m_matBones[Bone_Range] = &pFrame->CombinedTransformationMatrix;
 	m_matBones[Bone_Body] = &pFrame->CombinedTransformationMatrix;
+
+	// »À ÁÖ¼Ò
+	m_pLeftHandFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHand");
+	m_pHipsFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips");
 
 	return S_OK;
 }

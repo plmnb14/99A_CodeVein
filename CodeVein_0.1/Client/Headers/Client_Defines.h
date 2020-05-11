@@ -45,9 +45,11 @@ extern short		g_sPlayerLevel;
 namespace Client
 {
 	class CSoundManager;
+	class CClothManager;
 }
 
 extern Client::CSoundManager*	g_pSoundManager;
+extern Client::CClothManager*	g_pClothManager;
 
 using namespace Client;
 

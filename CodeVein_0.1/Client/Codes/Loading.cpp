@@ -51,6 +51,7 @@
 #include "Haze.h"
 
 #include "SoundManager.h"
+#include "ClothManager.h"
 
 USING(Client)
 
@@ -1279,11 +1280,11 @@ _uint CLoading::Loading_Title()
 	cout << "Essential Dynamic Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Dynamic_Path.dat");
 
-	//cout << "DynamicMesh 불러오는 중 . . ." << endl;
-	//g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
-	//
-	//cout << "NPC 불러오는 중 . . ." << endl;
-	//g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
+	cout << "DynamicMesh 불러오는 중 . . ." << endl;
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
+	
+	cout << "NPC 불러오는 중 . . ." << endl;
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
 	//============================================================================================================
 	// 무기 불러오는 중
 	//============================================================================================================
@@ -1349,6 +1350,10 @@ _uint CLoading::Loading_Title()
 	// 사운드
 	//============================================================================================================
 	g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
+	//============================================================================================================
+	// 옷
+	//============================================================================================================
+	g_pClothManager->Ready_ClothManager();
 	//============================================================================================================
 
 	m_bFinish = true;

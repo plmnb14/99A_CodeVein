@@ -1517,8 +1517,7 @@ void CDeerKing::Update_Dir_Shield_Throwing()
 {
 	m_bOld_RightHandAttach_Pos = m_vRightHandAttach;
 
-	D3DXFRAME_DERIVED* pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
-	m_vRightHandAttach = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_vRightHandAttach = *(_v3*)(&(m_pRightHandAttachFrame->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_RightHandAttach", m_vRightHandAttach);
 
 	m_bCur_RightHandAttach_Pos = m_vRightHandAttach;
@@ -1529,30 +1528,30 @@ void CDeerKing::Update_Dir_Shield_Throwing()
 
 HRESULT CDeerKing::Update_Bone_Of_BlackBoard()
 {
-	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHand");
-	m_vLeftHand = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pLeftHandFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHand");
+	m_vLeftHand = *(_v3*)(&(m_pLeftHandFrame->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftHand", m_vLeftHand);
 
-	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHandAttach");
-	m_vLeftHandAttach = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pLeftHandAttachFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHandAttach");
+	m_vLeftHandAttach = *(_v3*)(&(m_pLeftHandAttachFrame->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftHandAttach", m_vLeftHandAttach);
-	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Mat_LeftHandAttach", pFamre->CombinedTransformationMatrix);
+	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Mat_LeftHandAttach", m_pLeftHandAttachFrame->CombinedTransformationMatrix);
 
-	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHand");
-	m_vRightHand = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pRightHandFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHand");
+	m_vRightHand = *(_v3*)(&(m_pRightHandFrame->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_RightHand", m_vRightHand);
 
-	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Spine3_LeftJet");
-	m_vLeftJet = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pSpine3_LeftJetFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Spine3_LeftJet");
+	m_vLeftJet = *(_v3*)(&(m_pSpine3_LeftJetFrame->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftJet", m_vLeftJet);
 
-	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Spine3_RightJet");
-	m_vRightJet = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pSpine3_RightJetFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Spine3_RightJet");
+	m_vRightJet = *(_v3*)(&(m_pSpine3_RightJetFrame->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_RightJet", m_vRightJet);
 
 	// 머리 박기 패턴 - 고드름 생성위치
-	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head_LeftCorner");
-	m_vHeadColdBeamPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_pHead_LeftCornerFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head_LeftCorner");
+	m_vHeadColdBeamPos = *(_v3*)(&(m_pHead_LeftCornerFrame->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_vHeadColdBeamPos += (m_pTransformCom->Get_Axis(AXIS_Z) * 0.5f);
 	m_vHeadColdBeamPos += (m_pTransformCom->Get_Axis(AXIS_Y) * -1.3f);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftCorner", m_vHeadColdBeamPos);
@@ -1801,6 +1800,7 @@ void CDeerKing::Check_PhyCollider()
 					m_pAIControllerCom->Reset_BT();
 					m_bAIController = false;
 
+					m_pAIControllerCom->Set_Value_Of_BlackBoard(L"PushCol", true);
 				}
 			}
 
@@ -2006,7 +2006,7 @@ HRESULT CDeerKing::Add_Component()
 		return E_FAIL;
 	//=================================================================================
 
-	m_pColliderCom->Set_Radius(_v3{ 1.5f, 1.5f, 1.5f });
+	m_pColliderCom->Set_Radius(_v3{ 1.8f, 1.8f, 1.8f });
 	m_pColliderCom->Set_Dynamic(true);
 	m_pColliderCom->Set_Type(COL_SPHERE);
 	m_pColliderCom->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pColliderCom->Get_Radius().y , 0.f });
@@ -2087,6 +2087,15 @@ HRESULT CDeerKing::Ready_BoneMatrix()
 
 	m_matBones[Bone_Range] = &pFrame->CombinedTransformationMatrix;
 	m_matBones[Bone_Body] = &pFrame->CombinedTransformationMatrix;
+
+	// 뼈 주소
+	m_pLeftHandFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHand");
+	m_pLeftHandAttachFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHandAttach");
+	m_pRightHandFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHand");
+	m_pRightHandAttachFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightHandAttach");
+	m_pSpine3_LeftJetFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Spine3_LeftJet");
+	m_pSpine3_RightJetFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Spine3_RightJet");
+	m_pHead_LeftCornerFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head_LeftCorner");
 
 	return S_OK;
 }

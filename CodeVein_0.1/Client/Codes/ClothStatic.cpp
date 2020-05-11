@@ -61,14 +61,15 @@ HRESULT CClothStatic::Ready_GameObject(void * pArg)
 
 	scene.addActor(*m_pCloth);
 
-
 	CClothStatic::INFO Temp = *(CClothStatic::INFO*)pArg;
 
 	switch (Temp.eName)
 	{
 	case CClothStatic::Hair_Long:
+		Init_HairLong();
 		break;
 	case CClothStatic::Hair_Ponytail:
+		Init_HairPonyTail();
 		break;
 	}
 
@@ -88,15 +89,18 @@ _int CClothStatic::Update_GameObject(_double TimeDelta)
 
 	Set_Wind();
 
-	//_v3 vPlayerPos = TARGET_TO_TRANS(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL))->Get_Pos();
+	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	_v3 vPlayerPos = TARGET_TO_TRANS(pPlayer)->Get_Pos();
 
-	//PxTransform rootPose = PxTransform(PxVec3(vPlayerPos.x, vPlayerPos.y, vPlayerPos.z));;
-	//
-	//// physx ¿Ê¿¡ ÁÂÇ¥ Àü´Þ.
-	//m_pCloth->setTargetPose(rootPose);
+	CMesh_Dynamic* pPlayerMesh = TARGET_TO_D_MESH(pPlayer);
 
-	//// d3d¿¡¼­ ¾µ  physx¿¡¼­ °è»êµÈ ÁÂÇ¥.
-	//m_pTransformCom->Set_Pos(_v3(m_pCloth->getGlobalPose().p.x, m_pCloth->getGlobalPose().p.y, m_pCloth->getGlobalPose().p.z));
+	PxTransform rootPose = PxTransform(PxVec3(vPlayerPos.x, vPlayerPos.y, vPlayerPos.z));
+
+	// physx ¿Ê¿¡ ÁÂÇ¥ Àü´Þ.
+	m_pCloth->setTargetPose(rootPose);
+
+	// d3d¿¡¼­ ¾µ  physx¿¡¼­ °è»êµÈ ÁÂÇ¥.
+	m_pTransformCom->Set_Pos(_v3(m_pCloth->getGlobalPose().p.x, m_pCloth->getGlobalPose().p.y, m_pCloth->getGlobalPose().p.z));
 
 	return NO_EVENT;
 }
@@ -284,11 +288,11 @@ void CClothStatic::Init_HairLong()
 	// reduce impact of frame acceleration
 	// x, z: cloth swings out less when walking in a circle
 	// y: cloth responds less to jump acceleration
-	m_pCloth->setLinearInertiaScale(PxVec3(0.4f, 0.3f, 0.4f));
+	m_pCloth->setLinearInertiaScale(PxVec3(0.2f, 0.3f, 0.2f));
 
 	// leave impact of frame torque at default
 	//m_pCloth->setAngularInertiaScale(PxVec3(1.0f));
-	m_pCloth->setAngularInertiaScale(PxVec3(0.3f));
+	m_pCloth->setAngularInertiaScale(PxVec3(0.2f));
 
 	// reduce centrifugal force of rotating frame
 	m_pCloth->setCentrifugalInertiaScale(PxVec3(0.3f));

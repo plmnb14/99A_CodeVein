@@ -984,6 +984,9 @@
     <ClInclude Include="..\Headers\ScriptUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\16. ConversationUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\ClothManager.h">
+      <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1489,6 +1492,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\ScriptUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\16. ConversationUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ClothManager.cpp">
+      <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -1151,24 +1151,19 @@ void CPoisonButterfly::Down()
 
 HRESULT CPoisonButterfly::Update_Bone_Of_BlackBoard()
 {
-	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Tail6");
-	m_vTail6 = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_vTail6 = *(_v3*)(&(m_pTail6Frame->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Tail6", m_vTail6);
 
-	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Tail4");
-	m_vTail4 = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_vTail4 = *(_v3*)(&(m_pTail4Frame->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Tail4", m_vTail4);
 
-	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Tail2");
-	m_vTail2 = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_vTail2 = *(_v3*)(&(m_pTail2Frame->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Tail2", m_vTail2);
 
-	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
-	m_vHead = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_vHead = *(_v3*)(&(m_pHeadFrame->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Head", m_vHead);
 
-	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Tail6_Tongue2");
-	m_vTail6_Tongue2 = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_vTail6_Tongue2 = *(_v3*)(&(m_pTail6_Tongue2Frame->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Tail6_Tongue2", m_vTail6_Tongue2);
 
 	return S_OK;
@@ -1362,6 +1357,7 @@ void CPoisonButterfly::Check_PhyCollider()
 					m_pAIControllerCom->Reset_BT();
 					m_bAIController = false;
 
+					m_pAIControllerCom->Set_Value_Of_BlackBoard(L"PushCol", true);
 				}
 			}
 
@@ -1378,6 +1374,7 @@ void CPoisonButterfly::Check_PhyCollider()
 					m_pAIControllerCom->Reset_BT();
 					m_bAIController = false;
 
+					m_pAIControllerCom->Set_Value_Of_BlackBoard(L"PushCol", true);
 				}
 			}
 
@@ -1564,7 +1561,7 @@ HRESULT CPoisonButterfly::Add_Component()
 		return E_FAIL;
 	//=================================================================================
 
-	m_pColliderCom->Set_Radius(_v3{ 1.5f, 1.5f, 1.5f });
+	m_pColliderCom->Set_Radius(_v3{ 1.8f, 1.8f, 1.8f });
 	m_pColliderCom->Set_Dynamic(true);
 	m_pColliderCom->Set_Type(COL_SPHERE);
 	m_pColliderCom->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pColliderCom->Get_Radius().y , 0.f });
@@ -1635,6 +1632,13 @@ HRESULT CPoisonButterfly::Ready_BoneMatrix()
 
 	m_matBones[Bone_Range] = &pFrame->CombinedTransformationMatrix;
 	m_matBones[Bone_Body] = &pFrame->CombinedTransformationMatrix;
+
+	// »À ÁÖ¼Ò ÀúÀå
+	m_pTail6Frame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Tail6");
+	m_pTail4Frame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Tail4");
+	m_pTail2Frame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Tail2");
+	m_pHeadFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
+	m_pTail6_Tongue2Frame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Tail6_Tongue2");
 
 	return S_OK;
 }

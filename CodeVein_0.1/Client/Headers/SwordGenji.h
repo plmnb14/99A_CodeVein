@@ -148,6 +148,12 @@ private:
 	_v3					m_vLeftHand = _v3(0.f, 0.f, 0.f);
 	_v3					m_vHead = _v3(0.f, 0.f, 0.f);	// Head
 	_v3					m_vRightToeBase = _v3(0.f, 0.f, 0.f);	// Toe
+
+	// ª¿ ¡÷º“
+	D3DXFRAME_DERIVED*	m_pLeftHandAttachFrame = nullptr;
+	D3DXFRAME_DERIVED*	m_pHeadFrame = nullptr;
+	D3DXFRAME_DERIVED*	m_pRightToeBaseFrame = nullptr;
+
 private:
 	_float				m_fSkillMoveSpeed_Cur = 0.f;
 	_float				m_fSkillMoveSpeed_Max = 0.f;

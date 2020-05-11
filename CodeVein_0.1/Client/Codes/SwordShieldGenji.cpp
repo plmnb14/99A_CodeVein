@@ -763,12 +763,10 @@ CBT_Composite_Node * CSwordShieldGenji::NearAttack()
 
 HRESULT CSwordShieldGenji::Update_Bone_Of_BlackBoard()
 {
-	D3DXFRAME_DERIVED* pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
-	m_vHead = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_vHead = *(_v3*)(&(m_pHeadFrame->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Head", m_vHead);
 
-	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightToeBase");
-	m_vRightToeBase = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_vRightToeBase = *(_v3*)(&(m_pRightToeBaseFrame->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_RightToeBase", m_vRightToeBase);
 
 	return E_NOTIMPL;
@@ -1259,6 +1257,11 @@ HRESULT CSwordShieldGenji::Ready_BoneMatrix()
 
 	m_matBones[Bone_Range] = &pFrame->CombinedTransformationMatrix;
 	m_matBones[Bone_Body] = &pFrame->CombinedTransformationMatrix;
+
+	// »À ÁÖ¼Ò ÀúÀå
+	m_pHeadFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
+	m_pRightToeBaseFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("RightToeBase");
+
 
 	return S_OK;
 }
