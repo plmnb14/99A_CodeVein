@@ -9,6 +9,7 @@
 
 BEGIN(Client)
 
+class CCostume_Hair;
 class CStageAgent;
 class CDrain_Weapon;
 class CWeapon;
@@ -85,7 +86,6 @@ public:
 
 public:
 	virtual void Teleport_ResetOptions(_int _eSceneID, _int _eTeleportID);
-
 private:
 	ACTOR_INFO				m_tInfo = {};
 	ACT_STATE				m_eActState = ACT_Summon;
@@ -110,6 +110,9 @@ private:
 	CNavMesh*				m_pNavMesh = nullptr;
 	CCollider*				m_pCollider = nullptr;
 	CBattleAgent*			m_pBattleAgent = nullptr;
+
+private:
+	CCostume_Hair*			m_pHair = nullptr;
 
 private:
 	CUI_Manager*			m_pUIManager = nullptr;

@@ -13,7 +13,7 @@ class CCostume_Hair : public CGameObject
 public:
 	enum HairType
 	{
-		Hair_01, Hair_02, Hair_03, Hair_04, Hair_05, Hair_06, Hair_07, Hair_08,
+		Hair_01, Hair_02, Hair_03, Hair_04, Hair_05, Hair_06, Hair_07,
 		Hair_End
 	};
 

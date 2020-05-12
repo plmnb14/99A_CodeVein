@@ -25,6 +25,8 @@ HRESULT CCostume_Hair::Ready_GameObject(void * pArg)
 	m_vColorValue = pInfo.vColorValue;
 	m_eHairType = pInfo.eHairType;
 
+
+
 	if (FAILED(Add_Components()))
 		return E_FAIL;
 
@@ -33,6 +35,7 @@ HRESULT CCostume_Hair::Ready_GameObject(void * pArg)
 
 	return S_OK;
 }
+
 
 HRESULT CCostume_Hair::Add_Components()
 {
@@ -49,7 +52,7 @@ HRESULT CCostume_Hair::Add_Components()
 		return E_FAIL;
 
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Hair01", L"Com_StaticMesh", (CComponent**)&m_pStaticMesh)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Hair_01", L"Com_StaticMesh", (CComponent**)&m_pStaticMesh)))
 		return E_FAIL;
 
 	// for.Com_BattleAgent
@@ -62,10 +65,11 @@ HRESULT CCostume_Hair::Add_Components()
 HRESULT CCostume_Hair::Setup_Default()
 {
 	m_pTransform->Set_Pos(V3_NULL);
-	m_pTransform->Set_Angle(V3_NULL);
 	m_pTransform->Set_Scale(V3_ONE);
+	//m_pTransform->Set_Angle(V3_NULL);
+	m_pTransform->Set_Angle(AXIS_X, D3DXToRadian(-90.f));
 
-	return E_NOTIMPL;
+	return S_OK;
 }
 
 HRESULT CCostume_Hair::SetUp_ConstantTable()
@@ -118,7 +122,8 @@ void CCostume_Hair::Calc_AttachBoneTransform()
 	_mat tmpMat;
 	D3DXMatrixIdentity(&tmpMat);
 
-	memcpy(&tmpMat._41, &(*m_pmatBone)._41, sizeof(_v3));
+	//memcpy(&tmpMat._41, &(*m_pmatBone)._41, sizeof(_v3));
+	memcpy(&tmpMat, m_pmatBone, sizeof(_mat));
 
 	m_pTransform->Calc_ParentMat(&(tmpMat * *m_pmatParent));
 }
@@ -134,43 +139,44 @@ void CCostume_Hair::Change_HairMesh(HairType _eHairType)
 	{
 	case CCostume_Hair::Hair_01:
 	{
-		lstrcpy(szMeshName, L"Mesh_Hair01");
+		lstrcpy(szMeshName, L"Mesh_Hair_01");
 		m_eHairTag = CClothManager::Hair01;
 		break;
 	}
 	case CCostume_Hair::Hair_02:
 	{
-		lstrcpy(szMeshName, L"Mesh_Hair02");
+		lstrcpy(szMeshName, L"Mesh_Hair_02");
+		m_eHairTag = CClothManager::Hair02;
 		break;
 	}
 	case CCostume_Hair::Hair_03:
 	{
-		lstrcpy(szMeshName, L"Mesh_Hair03");
+		lstrcpy(szMeshName, L"Mesh_Hair_03");
+		m_eHairTag = CClothManager::Hair03;
 		break;
 	}
 	case CCostume_Hair::Hair_04:
 	{
-		lstrcpy(szMeshName, L"Mesh_Hair04");
+		lstrcpy(szMeshName, L"Mesh_Hair_04");
+		m_eHairTag = CClothManager::Hair04;
 		break;
 	}
 	case CCostume_Hair::Hair_05:
 	{
-		lstrcpy(szMeshName, L"Mesh_Hair05");
+		lstrcpy(szMeshName, L"Mesh_Hair_05");
+		m_eHairTag = CClothManager::Hair05;
 		break;
 	}
 	case CCostume_Hair::Hair_06:
 	{
-		lstrcpy(szMeshName, L"Mesh_Hair06");
+		lstrcpy(szMeshName, L"Mesh_Hair_06");
+		m_eHairTag = CClothManager::Hair06;
 		break;
 	}
 	case CCostume_Hair::Hair_07:
 	{
-		lstrcpy(szMeshName, L"Mesh_Hair07");
-		break;
-	}
-	case CCostume_Hair::Hair_08:
-	{
-		lstrcpy(szMeshName, L"Mesh_Hair08");
+		lstrcpy(szMeshName, L"Mesh_Hair_07");
+		m_eHairTag = CClothManager::Hair07;
 		break;
 	}
 	}
@@ -182,7 +188,7 @@ void CCostume_Hair::Change_HairMesh(HairType _eHairType)
 	Safe_Release(m_pStaticMesh);
 	Safe_Release(iter->second);
 
-	// Release 한 컴포넌트에 새로이 Clone 받음.
+	// Release 한 컴포넌트에 새로이 Clone 받음
 	iter->second = m_pStaticMesh = static_cast<CMesh_Static*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, szMeshName));
 	Safe_AddRef(iter->second);
 
@@ -205,6 +211,9 @@ void CCostume_Hair::Change_Vertex()
 
 	pMesh->LockVertexBuffer(0, (void**)&pVertices);
 
+
+	_ulong adsfas = _ulong(pFabric->getNbParticles());
+
 	for (_ulong i = 0; i < _ulong(pFabric->getNbParticles()); ++i)
 	{
 		*(_v3*)(pVertices + (i * dwStride)) = *(_v3*)(pData->particles + i);
@@ -220,6 +229,20 @@ _int CCostume_Hair::Update_GameObject(_double TimeDelta)
 
 	CGameObject::Update_GameObject(TimeDelta);
 	Calc_AttachBoneTransform();
+
+	g_pClothManager->Update_Cloth_Static(m_eHairTag);
+
+	static _byte iCount = 0;
+
+	if (g_pInput_Device->Key_Down(DIK_U))
+	{
+		++iCount;
+
+		Change_HairMesh(HairType(iCount));
+
+		if (6 == iCount)
+			iCount = 0;
+	}
 
 	return NO_EVENT;
 }
@@ -402,4 +425,11 @@ CGameObject * CCostume_Hair::Clone_GameObject(void * pArg)
 
 void CCostume_Hair::free()
 {
+	Safe_Release(m_pTransform);
+	Safe_Release(m_pRenderer);
+	Safe_Release(m_pShader);
+	Safe_Release(m_pStaticMesh);
+	Safe_Release(m_pBattleAgent);
+
+	CGameObject::Free();
 }
