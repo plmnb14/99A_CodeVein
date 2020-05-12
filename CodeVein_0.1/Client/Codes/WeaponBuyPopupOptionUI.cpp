@@ -35,11 +35,6 @@ HRESULT CWeaponBuyPopupOptionUI::Ready_GameObject(void * pArg)
 	m_bIsActive = false;
 	m_iIndex = 1;
 
-	m_pCollider->Set_Radius(_v3{ 0.5f, 0.07f, 0.1f });
-	m_pCollider->Set_Dynamic(true);
-	m_pCollider->Set_Type(COL_SPHERE);
-	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos());
-
 	return NOERROR;
 }
 
@@ -72,11 +67,16 @@ _int CWeaponBuyPopupOptionUI::Update_GameObject(_double TimeDelta)
 		m_fSizeY = 80.f;
 		m_fPosX = 650.f;
 		m_fPosY = 420.f;
+
+		if (m_bSell)
+			m_iIndex = 14;
+		else
+			m_iIndex = 4;
+
 		break;
 	}
 	}
 
-	m_pCollider->Update(m_pTransformCom->Get_Pos());
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	return NO_EVENT;
@@ -105,29 +105,7 @@ HRESULT CWeaponBuyPopupOptionUI::Render_GameObject()
 		return E_FAIL;
 
 	_uint iIndex = 0;
-	if (!m_bIsSelect)
-	{
-		iIndex = m_iIndex;
-
-		g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
-
-		g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
-		g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
-
-		if (FAILED(SetUp_ConstantTable(iIndex)))
-			return E_FAIL;
-
-		m_pShaderCom->Begin_Shader();
-
-		m_pShaderCom->Begin_Pass(1);
-
-		m_pBufferCom->Render_VIBuffer();
-
-		m_pShaderCom->End_Pass();
-
-		m_pShaderCom->End_Shader();
-	}
-	else if(4 == m_iIndex)
+	if(m_bIsSelect && 4 == m_iIndex)
 	{
 		LOOP(2)
 		{
@@ -144,13 +122,31 @@ HRESULT CWeaponBuyPopupOptionUI::Render_GameObject()
 			m_pShaderCom->End_Shader();
 		}
 	}
+	else
+	{
+		iIndex = m_iIndex;
 
+		g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
 
+		g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
+		g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
+		if (FAILED(SetUp_ConstantTable(iIndex)))
+			return E_FAIL;
 
-	
+		m_pShaderCom->Begin_Shader();
+		m_pShaderCom->Begin_Pass(1);
+		m_pBufferCom->Render_VIBuffer();
+		m_pShaderCom->End_Pass();
+		m_pShaderCom->End_Shader();
+	}
 
 	return NOERROR;
+}
+
+_bool CWeaponBuyPopupOptionUI::Pt_InRect()
+{
+	return g_pInput_Device->MousePt_InRect(m_fPosX, m_fPosY, m_fSizeX, m_fSizeY, g_hWnd);
 }
 
 HRESULT CWeaponBuyPopupOptionUI::Add_Component()
@@ -173,10 +169,6 @@ HRESULT CWeaponBuyPopupOptionUI::Add_Component()
 
 	// for.Com_VIBuffer
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Rect", L"Com_VIBuffer", (CComponent**)&m_pBufferCom)))
-		return E_FAIL;
-
-	// for.Com_Collider
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
 
 	return NOERROR;
@@ -226,7 +218,6 @@ void CWeaponBuyPopupOptionUI::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pRendererCom);
-	Safe_Release(m_pCollider);
 	
 	CUI::Free();
 }

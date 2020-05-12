@@ -28,6 +28,7 @@ public:
 	{
 		OPTION_BUY_WEAPON,
 		OPTION_BUY_DRAINWEAPON,
+		OPTION_BUY_ITEM,
 		OPTION_BUY_END
 	};
 private:

@@ -29,7 +29,7 @@ private:
 public:
 	void	Set_Active(_bool bIsActive);
 	void	Set_Inven(CWeapon_Inven_InShop* pParent) { m_pInven = pParent; }
-
+	void	Set_Type(POPUP_TYPE eType) { m_eType = eType; }
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
 	virtual HRESULT Ready_GameObject(void* pArg);
@@ -38,16 +38,16 @@ public:
 	virtual HRESULT Render_GameObject();
 
 	void Click_Option();
-
 	void Reset_Option();
-
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
 	void	Change_Texture(const _tchar* _Name);
 	void	SetUp_Default();
 	void	Check_ItemOption();
-	void	Check_LateInit();
+
+	void	Buy_Weapon();
+	void	Sell_Weapon();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -68,6 +68,8 @@ private:
 
 	_int					m_iTexIndex = 0;
 	_int					m_iCount = 0;
+	
+	POPUP_TYPE				m_eType = POPUP_END;
 public:
 	static CWeaponBuyPopupUI*	Create(_Device pGraphic_Device);
 	virtual CGameObject*		Clone_GameObject(void* pArg);

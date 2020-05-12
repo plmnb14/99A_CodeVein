@@ -17,7 +17,8 @@ CWeaponBuyPopupUI::CWeaponBuyPopupUI(const CWeaponBuyPopupUI & rhs)
 void CWeaponBuyPopupUI::Set_Active(_bool bIsActive)
 {
 	m_bIsActive = bIsActive;
-
+	if (m_bIsActive)
+		m_iCount = 0;
 }
 
 HRESULT CWeaponBuyPopupUI::Ready_GameObject_Prototype()
@@ -37,7 +38,7 @@ HRESULT CWeaponBuyPopupUI::Ready_GameObject(void * pArg)
 	m_fPosY = 350.f;
 	m_fSizeX = 512.f * 1.5f;
 	m_fSizeY = 512.f * 1.5f;
-	m_fViewZ = 1.f;
+	m_fViewZ = 0.5f;
 
 	m_bIsActive = false;
 	m_iTexIndex = 1;
@@ -67,6 +68,11 @@ _int CWeaponBuyPopupUI::Update_GameObject(_double TimeDelta)
 	m_fSizeX = 512.f;
 	m_fSizeY = 256.f;
 
+	_float fPosX = WINCX * 0.505f;
+	if(m_iCount > 9)
+		fPosX = WINCX * 0.520f;
+	m_pFontItemCount->Set_UI_Pos(fPosX, WINCY * 0.475f);
+
 	LOOP(3)
 	{
 		TARGET_TO_TRANS(m_vecOption[i])->Set_Angle(m_pTransformCom->Get_Angle());
@@ -83,6 +89,10 @@ _int CWeaponBuyPopupUI::Update_GameObject(_double TimeDelta)
 		TARGET_TO_TRANS(m_vecOption[i])->Set_Pos(vPos);
 
 		m_vecOption[i]->Set_ButtonType(CWeaponBuyPopupOptionUI::BUTTON_TYPE(i));
+		if(POPUP_WEAPON_SELL == m_eType ||
+			POPUP_ARMOR_SELL == m_eType || 
+			POPUP_ITEM_SELL == m_eType)
+			m_vecOption[i]->Set_IsSell(true);
 		m_vecOption[i]->Set_Active(m_bIsActive);
 	}
 
@@ -147,31 +157,52 @@ void CWeaponBuyPopupUI::Click_Option()
 	
 	for (auto& iter : m_vecOption)
 	{
-		if (CCollisionMgr::Collision_Ray(iter, g_pInput_Device->Get_Ray(), &m_fCross))
+		if (iter->Pt_InRect())
 		{
 			Reset_Option();
 			iter->Set_Select(true);
 	
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
-				//if (0 == iIdx)
-				//	m_eState = CWeaponShopOptionUI::OPTION_UPGRADE;
-				//else if (1 == iIdx)
-				//{
-				//	m_eState = CWeaponShopOptionUI::OPTION_BUY;
-				//	m_bFirestMenu = false;
-				//}
-				//else if (2 == iIdx)
-				//	m_eState = CWeaponShopOptionUI::OPTION_SELL;
-				//else if (3 == iIdx)
-				//{
-				//	Set_Active(false);
-				//	m_bFirestMenu = true;
-				//}
-	
-				//Active_SubUI(iter);
+				if (0 == iIdx)
+					--m_iCount;
+				else if (1 == iIdx)
+					++m_iCount;
+				else if (2 == iIdx)
+				{
+					switch (m_eType)
+					{
+					case Client::CWeaponBuyPopupUI::POPUP_WEAPON_BUY:
+						Buy_Weapon();
+						break;
+					case Client::CWeaponBuyPopupUI::POPUP_WEAPON_SELL:
+						Sell_Weapon();
+						break;
+					case Client::CWeaponBuyPopupUI::POPUP_ARMOR_BUY:
+						break;
+					case Client::CWeaponBuyPopupUI::POPUP_ARMOR_SELL:
+						break;
+					case Client::CWeaponBuyPopupUI::POPUP_ITEM_BUY:
+						break;
+					case Client::CWeaponBuyPopupUI::POPUP_ITEM_SELL:
+						break;
+					}
+
+					Set_Active(false);
+					m_pInven->Refresh_Inven();
+				}
 			}
-	
+
+			if (POPUP_WEAPON_SELL == m_eType)
+			{
+				if (m_iCount > 1)
+					m_iCount = 1;
+			}
+
+			if (0 > m_iCount)
+				m_iCount = 0;
+			if (m_iCount > 99)
+				m_iCount = 99;
 		}
 		else
 		{
@@ -246,8 +277,8 @@ void CWeaponBuyPopupUI::Change_Texture(const _tchar * _Name)
 void CWeaponBuyPopupUI::SetUp_Default()
 {
 	m_pFontItemCount = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
-	m_pFontItemCount->Set_UI_Pos(WINCX * 0.47f, WINCY * 0.38f);
-	m_pFontItemCount->Set_UI_Size(10.4f, 20.f);
+	m_pFontItemCount->Set_UI_Pos(WINCX * 0.505f, WINCY * 0.475f);
+	m_pFontItemCount->Set_UI_Size(40.4f, 60.f);
 	m_pFontItemCount->Set_ViewZ(m_fViewZ - 0.1f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontItemCount, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
@@ -275,6 +306,32 @@ void CWeaponBuyPopupUI::Check_ItemOption()
 	m_pFontItemCount->Update_NumberValue((_float)m_iCount);
 	m_pFontItemCount->Set_Active(true);
 
+}
+
+void CWeaponBuyPopupUI::Buy_Weapon()
+{
+	_int iPrice = m_pInven->Get_SelectedSlot()->Get_WeaponParam().iPrice;
+	_int iTotalPrice = m_iCount * iPrice;
+	_int iMyHaze = (_int)CUI_Manager::Get_Instance()->Get_HazeUI()->Get_Haze_Cnt();
+	if (iTotalPrice > iMyHaze)
+		return;
+
+	for (_int i = 0; i < m_iCount; i++)
+	{
+		m_pInven->Buy_Weapon();
+	}
+	CUI_Manager::Get_Instance()->Get_HazeUI()->Accumulate_Haze(-iTotalPrice);
+}
+
+void CWeaponBuyPopupUI::Sell_Weapon()
+{
+	_int iPrice = m_pInven->Get_SelectedSlot()->Get_WeaponParam().iPrice;
+
+	for (_int i = 0; i < m_iCount; i++)
+	{
+		m_pInven->Sell_Weapon();
+	}
+	CUI_Manager::Get_Instance()->Get_HazeUI()->Accumulate_Haze(iPrice);
 }
 
 CWeaponBuyPopupUI * CWeaponBuyPopupUI::Create(_Device pGraphic_Device)

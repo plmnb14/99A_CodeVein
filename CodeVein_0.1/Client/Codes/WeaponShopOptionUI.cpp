@@ -84,6 +84,23 @@ _int CWeaponShopOptionUI::Update_GameObject(_double TimeDelta)
 		}
 	}
 
+	if (MENU_SELL == m_eMenu)
+	{
+		switch (m_eBuyOption)
+		{
+		case Client::CWeaponShopOptionUI::OPTION_BUY_WEAPON:
+			m_iIndex = 10;
+			break;
+		case Client::CWeaponShopOptionUI::OPTION_BUY_DRAINWEAPON:
+			m_iIndex = 11;
+			break;
+		case Client::CWeaponShopOptionUI::OPTION_BUY_ITEM:
+			m_iIndex = 12;
+			break;
+		case Client::CWeaponShopOptionUI::OPTION_BUY_END:
+			break;
+		}
+	}
 	return NO_EVENT;
 }
 

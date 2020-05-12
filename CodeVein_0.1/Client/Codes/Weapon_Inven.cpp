@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Weapon_Inven.h"
-
+#include "Weapon.h"
 
 CWeapon_Inven::CWeapon_Inven(_Device pDevice)
 	: CUI(pDevice)
@@ -225,6 +225,17 @@ void CWeapon_Inven::UnRegist_Weapon(CWeapon_Slot * pWeaponSlot)
 
 HRESULT CWeapon_Inven::SetUp_WeaponData()
 {
+	CWeapon* pTempWeapon = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
+	if (!pTempWeapon)
+		return E_FAIL;
+	pTempWeapon->AddRef();
+
+	for (_int i = 0; i < WEAPON_DATA::WPN_DATA_End; i++)
+		m_tWeaponParam[i] = pTempWeapon->Get_WeaponParam((WEAPON_DATA)i);
+
+	Safe_Release(pTempWeapon);
+	return;
+
 	//===========================================================================================
 	// ÇÑ¼Õ°Ë
 	//===========================================================================================
@@ -516,12 +527,14 @@ void CWeapon_Inven::Sell_Weapon()
 	_ulong idx = 0;
 	for (auto& pSlot : m_vecWeaponSlot)
 	{
-		if (pSlot->Pt_InRect())
+		//if (pSlot->Pt_InRect())
 		{
-			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+			//if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+			if(pSlot->Get_Select())
 			{
 				m_vecWeaponSlot.erase(m_vecWeaponSlot.begin() + idx);
 				m_vecWeaponSlot.shrink_to_fit();
+				break;
 			}
 		}
 		++idx;

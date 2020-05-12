@@ -55,6 +55,31 @@ void CWeaponBuyUI::Set_WeaponDescType(WEAPON_ALL_DATA eType)
 	Change_Texture(L"Tex_Item_Desc_Weapon");
 }
 
+void CWeaponBuyUI::Set_ShopType(SHOP_OPTION eType)
+{
+	m_eType = eType;
+
+	switch (m_eType)
+	{
+	case Client::CWeaponBuyUI::SHOP_WEAPON_BUY:
+		m_iTexIndex = 0;
+		break;
+	case Client::CWeaponBuyUI::SHOP_WEAPON_SELL:
+		m_iTexIndex = 11;
+		break;
+	case Client::CWeaponBuyUI::SHOP_ARMOR_BUY:
+		m_iTexIndex = 12;
+		break;
+	case Client::CWeaponBuyUI::SHOP_ARMOR_SELL:
+		m_iTexIndex = 13;
+		break;
+	case Client::CWeaponBuyUI::SHOP_ITEM_BUY:
+		break;
+	case Client::CWeaponBuyUI::SHOP_ITEM_SELL:
+		break;
+	}
+}
+
 HRESULT CWeaponBuyUI::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
@@ -85,6 +110,7 @@ _int CWeaponBuyUI::Update_GameObject(_double TimeDelta)
 
 	if (MOVE_END == m_eMoveType && WpnAll_END == m_eWeaponDesc)
 	{
+		SetUp_Default();
 		Check_LateInit();
 		Check_MoveType();
 		Check_Desc();
@@ -197,19 +223,19 @@ void CWeaponBuyUI::Change_Texture(const _tchar * _Name)
 void CWeaponBuyUI::SetUp_Default()
 {
 	m_pFontDamage = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
-	m_pFontDamage->Set_UI_Pos(WINCX * 0.47f, WINCY * 0.38f);
+	m_pFontDamage->Set_UI_Pos(WINCX * 0.46f, WINCY * 0.58f);
 	m_pFontDamage->Set_UI_Size(10.4f, 20.f);
 	m_pFontDamage->Set_ViewZ(m_fViewZ - 0.05f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontDamage, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	m_pMyHazeCnt = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
-	m_pMyHazeCnt->Set_UI_Pos(WINCX * 0.47f, WINCY * 0.20f);
+	m_pMyHazeCnt->Set_UI_Pos(WINCX * 0.47f, WINCY * 0.24f);
 	m_pMyHazeCnt->Set_UI_Size(10.4f, 20.f);
 	m_pMyHazeCnt->Set_ViewZ(m_fViewZ - 0.1f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pMyHazeCnt, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	m_pPriceHazeCnt = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
-	m_pPriceHazeCnt->Set_UI_Pos(WINCX * 0.47f, WINCY * 0.24f);
+	m_pPriceHazeCnt->Set_UI_Pos(WINCX * 0.47f, WINCY * 0.20f);
 	m_pPriceHazeCnt->Set_UI_Size(10.4f, 20.f);
 	m_pPriceHazeCnt->Set_ViewZ(m_fViewZ - 0.05f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pPriceHazeCnt, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
@@ -222,13 +248,34 @@ void CWeaponBuyUI::Check_ItemOption()
 	if (!m_bIsActive)
 		return;
 
+	if (!m_pParent)
+		return;
+
+	switch (m_eType)
+	{
+	case Client::CWeaponBuyUI::SHOP_WEAPON_BUY:
+		m_pInven = m_pParent->Get_InvenBuy();
+		break;
+	case Client::CWeaponBuyUI::SHOP_WEAPON_SELL:
+		m_pInven = m_pParent->Get_InvenSell();
+		break;
+	case Client::CWeaponBuyUI::SHOP_ARMOR_BUY:
+		break;
+	case Client::CWeaponBuyUI::SHOP_ARMOR_SELL:
+		break;
+	case Client::CWeaponBuyUI::SHOP_ITEM_BUY:
+		break;
+	case Client::CWeaponBuyUI::SHOP_ITEM_SELL:
+		break;
+	}
+
 	CWeapon_Slot* pWeaponSlot = m_pInven->Get_HoverSlot();
 
-	if (!pWeaponSlot)
-	{
+	if (!pWeaponSlot || m_pInven->Get_PopupOn())
 		pWeaponSlot = m_pInven->Get_SelectedSlot();
+
+	if (!pWeaponSlot)
 		return;
-	}
 
 	WPN_PARAM tParam = pWeaponSlot->Get_WeaponParam();
 	//tParam.iReinforce;
@@ -299,11 +346,6 @@ void CWeaponBuyUI::Check_ItemOption()
 
 void CWeaponBuyUI::Check_LateInit()
 {
-	if (m_pInven || !m_pParent)
-		return;
-
-	m_pInven = m_pParent->Get_InvenBuy();
-	SetUp_Default();
 }
 
 void CWeaponBuyUI::Check_MoveType()
@@ -311,7 +353,7 @@ void CWeaponBuyUI::Check_MoveType()
 	if (MOVE_END == m_eMoveType && !m_pWeaponMoveTypeUI)
 	{
 		m_pWeaponMoveTypeUI = static_cast<CWeaponBuyUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_WeaponBuyUI", nullptr));
-		m_pWeaponMoveTypeUI->Set_UI_Pos(WINCX * 0.48f, WINCY * 0.510f);
+		m_pWeaponMoveTypeUI->Set_UI_Pos(WINCX * 0.448f, WINCY * 0.710f);
 		m_pWeaponMoveTypeUI->Set_UI_Size(200.0f, 60.f);
 		m_pWeaponMoveTypeUI->Set_ViewZ(m_fViewZ - 0.05f);
 		m_pWeaponMoveTypeUI->Set_WeaponMoveType(MOVE_STEP);
@@ -324,8 +366,8 @@ void CWeaponBuyUI::Check_Desc()
 	if (WpnAll_END == m_eWeaponDesc && !m_pWeaponDescUI)
 	{
 		m_pWeaponDescUI = static_cast<CWeaponBuyUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_WeaponBuyUI", nullptr));
-		m_pWeaponDescUI->Set_UI_Pos(WINCX * 0.55f, WINCY * 0.08f);
-		m_pWeaponDescUI->Set_UI_Size(450.0f, 250.0f);
+		m_pWeaponDescUI->Set_UI_Pos(WINCX * 0.549f, WINCY * 0.079f);
+		m_pWeaponDescUI->Set_UI_Size(455.0f, 255.0f);
 		m_pWeaponDescUI->Set_ViewZ(m_fViewZ - 0.05f);
 		m_pWeaponDescUI->Set_WeaponDescType(WEAPON_ALL_DATA::WpnAll_Gun_Bayonet);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(m_pWeaponDescUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);

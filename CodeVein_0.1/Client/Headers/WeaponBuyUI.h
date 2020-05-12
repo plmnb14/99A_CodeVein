@@ -18,6 +18,17 @@ public:
 		MOVE_HEAVYROLLING,
 		MOVE_END
 	};
+
+	enum SHOP_OPTION
+	{
+		SHOP_WEAPON_BUY,
+		SHOP_WEAPON_SELL,
+		SHOP_ARMOR_BUY,
+		SHOP_ARMOR_SELL,
+		SHOP_ITEM_BUY,
+		SHOP_ITEM_SELL,
+		SHOP_END
+	};
 private:
 	explicit CWeaponBuyUI(_Device pDevice);
 	explicit CWeaponBuyUI(const CWeaponBuyUI& rhs);
@@ -26,8 +37,10 @@ private:
 public:
 	void	Set_Active(_bool bIsActive);
 	void	Set_Parent(CWeaponShopUI* pParent) { m_pParent = pParent; }
+	void	Set_Inven(CWeapon_Inven_InShop* pInven) { m_pInven = pInven; }
 	void	Set_WeaponMoveType(MOVE_TYPE eType);
 	void	Set_WeaponDescType(WEAPON_ALL_DATA eType);
+	void	Set_ShopType(SHOP_OPTION eType);
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -68,6 +81,7 @@ private:
 	_int					m_iTexIndex = 0;
 
 	WEAPON_ALL_DATA			m_eWeaponDesc = WEAPON_ALL_DATA::WpnAll_END;
+	SHOP_OPTION				m_eType = SHOP_END;
 public:
 	static CWeaponBuyUI*		Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);

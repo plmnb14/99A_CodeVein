@@ -78,7 +78,7 @@ _int CWeaponShopUI::Update_GameObject(_double TimeDelta)
 			TARGET_TO_TRANS(m_vecOption[i])->Set_Angle(m_pTransformCom->Get_Angle());
 			TARGET_TO_TRANS(m_vecOption[i])->Set_Scale(_v3(0.87f, 0.2476f, 1.f));
 			TARGET_TO_TRANS(m_vecOption[i])->Set_At(m_pTransformCom->Get_At());
-			TARGET_TO_TRANS(m_vecOption[i])->Set_Pos(m_pTransformCom->Get_Pos() + _v3(0.f, _float(i) * -0.2f + 0.15f, 0.f) + *V3_NORMAL_SELF(&vLook) * +0.001f);
+			TARGET_TO_TRANS(m_vecOption[i])->Set_Pos(m_pTransformCom->Get_Pos() + _v3(0.f, _float(i) * -0.2f + 0.285f, 0.f) + *V3_NORMAL_SELF(&vLook) * +0.001f);
 			m_vecOption[i]->Set_Menu(CWeaponShopOptionUI::WEAPONSHOP_MENU::MENU_NONE);
 			m_vecOption[i]->Setup_InvenType(CWeaponShopOptionUI::WEAPONSHOP_OPTION(i));
 			m_vecOption[i]->Set_Active(m_bIsActive);
@@ -97,6 +97,21 @@ _int CWeaponShopUI::Update_GameObject(_double TimeDelta)
 				TARGET_TO_TRANS(m_vecOption[i])->Set_At(m_pTransformCom->Get_At());
 				TARGET_TO_TRANS(m_vecOption[i])->Set_Pos(m_pTransformCom->Get_Pos() + _v3(0.f, _float(i) * -0.2f + 0.08f, 0.f) + *V3_NORMAL_SELF(&vLook) * +0.001f);
 				m_vecOption[i]->Set_Menu(CWeaponShopOptionUI::WEAPONSHOP_MENU::MENU_BUY);
+				m_vecOption[i]->Set_BuyOption(CWeaponShopOptionUI::WEAPONSHOP_OPTION_BUY(i));
+				m_vecOption[i]->Set_Active(m_bIsActive);
+			}
+		}
+		else if (CWeaponShopOptionUI::OPTION_SELL == m_eState)
+		{
+			LOOP(4)
+				m_vecOption[i]->Set_Active(false);
+			LOOP(3)
+			{
+				TARGET_TO_TRANS(m_vecOption[i])->Set_Angle(m_pTransformCom->Get_Angle());
+				TARGET_TO_TRANS(m_vecOption[i])->Set_Scale(_v3(0.87f, 0.2476f, 1.f));
+				TARGET_TO_TRANS(m_vecOption[i])->Set_At(m_pTransformCom->Get_At());
+				TARGET_TO_TRANS(m_vecOption[i])->Set_Pos(m_pTransformCom->Get_Pos() + _v3(0.f, _float(i) * -0.2f + 0.28f, 0.f) + *V3_NORMAL_SELF(&vLook) * +0.001f);
+				m_vecOption[i]->Set_Menu(CWeaponShopOptionUI::WEAPONSHOP_MENU::MENU_SELL);
 				m_vecOption[i]->Set_BuyOption(CWeaponShopOptionUI::WEAPONSHOP_OPTION_BUY(i));
 				m_vecOption[i]->Set_Active(m_bIsActive);
 			}
@@ -225,7 +240,10 @@ void CWeaponShopUI::Click_Option()
 						m_bFirestMenu = false;
 					}
 					else if (2 == iIdx)
+					{
 						m_eState = CWeaponShopOptionUI::OPTION_SELL;
+						m_bFirestMenu = false;
+					}
 					else if (3 == iIdx)
 					{
 						Set_Active(false);
@@ -242,6 +260,8 @@ void CWeaponShopUI::Click_Option()
 					{
 						m_pBuyInven->Set_Active(true);
 						m_pBuyUI->Set_Active(true);
+						m_pBuyUI->Set_ShopType(CWeaponBuyUI::SHOP_WEAPON_BUY);
+						//m_pBuyUI->Set_Inven(m_pBuyInven);
 					}
 					else if (1 == iIdx) // ÈíÇ÷¾ÆÀå
 						_int a = 0;
@@ -255,6 +275,8 @@ void CWeaponShopUI::Click_Option()
 					{
 						m_pSellInven->Set_Active(true);
 						m_pBuyUI->Set_Active(true);
+						m_pBuyUI->Set_ShopType(CWeaponBuyUI::SHOP_WEAPON_SELL);
+						//m_pBuyUI->Set_Inven(m_pSellInven);
 					}
 					else if (1 == iIdx) // ÈíÇ÷¾ÆÀå
 						_int a = 0;
@@ -327,11 +349,11 @@ void CWeaponShopUI::Setup_AfterClone()
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBuyUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	m_pBuyInven = static_cast<CWeapon_Inven_InShop*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon_Inven_InShop", nullptr));
-	m_pBuyInven->Setup_InvenType(CWeapon_Inven_InShop::INVEN_SHOP_OPTION::SHOP_BUY);
+	m_pBuyInven->Setup_InvenType(CWeapon_Inven_InShop::INVEN_SHOP_OPTION::SHOP_WEAPON_BUY);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBuyInven, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	m_pSellInven = static_cast<CWeapon_Inven_InShop*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon_Inven_InShop", nullptr));
-	m_pSellInven->Setup_InvenType(CWeapon_Inven_InShop::INVEN_SHOP_OPTION::SHOP_SELL);
+	m_pSellInven->Setup_InvenType(CWeapon_Inven_InShop::INVEN_SHOP_OPTION::SHOP_WEAPON_SELL);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pSellInven, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
 

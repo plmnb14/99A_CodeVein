@@ -14,6 +14,17 @@ CWeapon_Inven_InShop::CWeapon_Inven_InShop(const CWeapon_Inven_InShop & rhs)
 {
 }
 
+_bool CWeapon_Inven_InShop::Get_PopupOn()
+{
+	if (
+		m_pWeaponBuyPopup->Get_Active() ||
+		m_pWeaponSellPopup->Get_Active()
+		)
+		return true;
+	else
+		return false;
+}
+
 void CWeapon_Inven_InShop::Setup_InvenType(INVEN_SHOP_OPTION eOption)
 {
 	m_eOption = eOption;
@@ -23,24 +34,31 @@ void CWeapon_Inven_InShop::Setup_InvenType(INVEN_SHOP_OPTION eOption)
 
 	switch (m_eOption)
 	{
-	case Client::CWeapon_Inven_InShop::SHOP_BUY:
+	case Client::CWeapon_Inven_InShop::SHOP_WEAPON_BUY:
 	{
-		LOOP(2)
-		{
-			m_UseWeaponParam[i] = m_tWeaponParam[WPN_DATA_End];
-		}
-
 		for (_int i = 0; i < WPN_DATA_End; i++)
 		{
 			Add_Weapon(m_tWeaponParam[i]);;
 		}
 		break;
 	}
-	case Client::CWeapon_Inven_InShop::SHOP_SELL:
+	case Client::CWeapon_Inven_InShop::SHOP_WEAPON_SELL:
 	{
-
+		vector<CWeapon_Slot*>* pVecMyWeapon = CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Get_VecWeaponSlot();
+		for (_int i = 0; i < pVecMyWeapon->size(); i++)
+		{
+			Add_Weapon((*pVecMyWeapon)[i]->Get_WeaponParam());
+		}
 		break;
 	}
+	}
+}
+
+void CWeapon_Inven_InShop::Refresh_Inven()
+{
+	for (auto& iter : m_vecWeaponSlot)
+	{
+		iter->Set_Select(false);
 	}
 }
 
@@ -68,7 +86,13 @@ HRESULT CWeapon_Inven_InShop::Ready_GameObject(void * pArg)
 
 	m_pWeaponBuyPopup = static_cast<CWeaponBuyPopupUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon_BuyPopup", nullptr));
 	m_pWeaponBuyPopup->Set_Inven(this);
+	m_pWeaponBuyPopup->Set_Type(CWeaponBuyPopupUI::POPUP_WEAPON_BUY);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pWeaponBuyPopup, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	m_pWeaponSellPopup = static_cast<CWeaponBuyPopupUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon_BuyPopup", nullptr));
+	m_pWeaponSellPopup->Set_Inven(this);
+	m_pWeaponSellPopup->Set_Type(CWeaponBuyPopupUI::POPUP_WEAPON_SELL);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pWeaponSellPopup, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	return NOERROR;
 }
@@ -94,6 +118,16 @@ _int CWeapon_Inven_InShop::Update_GameObject(_double TimeDelta)
 		if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
 		{
 			m_pWeaponBuyPopup->Set_Active(false);
+			Refresh_Inven();
+		}
+	}
+
+	if (m_pWeaponSellPopup->Get_Active())
+	{
+		if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
+		{
+			m_pWeaponSellPopup->Set_Active(false);
+			Refresh_Inven();
 		}
 	}
 	
@@ -209,12 +243,24 @@ void CWeapon_Inven_InShop::Click_Inven()
 				m_pSelectedSlot = pSlot;
 				switch (m_eOption)
 				{
-				case Client::CWeapon_Inven_InShop::SHOP_BUY:
-					Buy_Weapon(pSlot);
+				case Client::CWeapon_Inven_InShop::SHOP_WEAPON_BUY:
+				{
+					m_pWeaponBuyPopup->Set_Active(true);
 					return;
-				case Client::CWeapon_Inven_InShop::SHOP_SELL:
-					Sell_Weapon(pSlot);
+				}
+				case Client::CWeapon_Inven_InShop::SHOP_WEAPON_SELL:
+				{
+					m_pWeaponSellPopup->Set_Active(true);
 					return;
+				}
+				case Client::CWeapon_Inven_InShop::SHOP_ARMOR_BUY:
+					break;
+				case Client::CWeapon_Inven_InShop::SHOP_ARMOR_SELL:
+					break;
+				case Client::CWeapon_Inven_InShop::SHOP_ITEM_BUY:
+					break;
+				case Client::CWeapon_Inven_InShop::SHOP_ITEM_SELL:
+					break;
 				}
 			}
 			return;
@@ -224,14 +270,13 @@ void CWeapon_Inven_InShop::Click_Inven()
 	//m_pSelectedSlot = nullptr;
 }
 
-void CWeapon_Inven_InShop::Buy_Weapon(CWeapon_Slot* pWeaponSlot)
+void CWeapon_Inven_InShop::Buy_Weapon()
 {
-	m_pWeaponBuyPopup->Set_Active(true);
-	//m_pWeaponInventory->Add_Weapon(pWeaponSlot->Get_WeaponParam());
+	m_pWeaponInventory->Add_Weapon(m_pSelectedSlot->Get_WeaponParam());
 }
 
 
-void CWeapon_Inven_InShop::Sell_Weapon(CWeapon_Slot* pWeaponSlot)
+void CWeapon_Inven_InShop::Sell_Weapon()
 {
 	m_pWeaponInventory->Sell_Weapon();
 }
@@ -240,7 +285,7 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 {
 	switch (eShop)
 	{
-	case Client::CWeapon_Inven_InShop::SHOP_BUY:
+	case Client::CWeapon_Inven_InShop::SHOP_WEAPON_BUY:
 	{
 		CWeapon* pTempWeapon = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
 		if (!pTempWeapon)
@@ -253,13 +298,17 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 		Safe_Release(pTempWeapon);
 		break;
 	}
-	case Client::CWeapon_Inven_InShop::SHOP_SELL:
-	{
-
+	case Client::CWeapon_Inven_InShop::SHOP_WEAPON_SELL:
+		break;
+	case Client::CWeapon_Inven_InShop::SHOP_ARMOR_BUY:
+		break;
+	case Client::CWeapon_Inven_InShop::SHOP_ARMOR_SELL:
+		break;
+	case Client::CWeapon_Inven_InShop::SHOP_ITEM_BUY:
+		break;
+	case Client::CWeapon_Inven_InShop::SHOP_ITEM_SELL:
 		break;
 	}
-	}
-	
 
 	return S_OK;
 }
