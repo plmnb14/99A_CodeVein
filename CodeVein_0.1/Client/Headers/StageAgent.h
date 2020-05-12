@@ -28,6 +28,7 @@ private:
 
 private:
 	_bool m_bReserveChangeStage = false;
+	_short m_sOldStageIdx = 999;
 
 };
 
