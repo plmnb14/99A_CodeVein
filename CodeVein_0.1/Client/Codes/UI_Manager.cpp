@@ -162,7 +162,10 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon_Inven_InShop", CWeapon_Inven_InShop::Create(pDevice))))
 		return E_FAIL;
-
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon_BuyPopup", CWeaponBuyPopupUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon_BuyPopupOption", CWeaponBuyPopupOptionUI::Create(pDevice))))
+		return E_FAIL;
 	return NOERROR;
 }
 
@@ -196,8 +199,8 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pTotal_Inven, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 	
 	// 인벤토리 관리 클래스
-	m_pInventory = static_cast<CInventory*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Inventory", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pInventory, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	m_pWeaponInventory = static_cast<CInventory*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Inventory", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pWeaponInventory, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 	
 	// 퀵슬롯
 	m_pQuickSlot = static_cast<CQuickSlot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_QuickSlot", nullptr));

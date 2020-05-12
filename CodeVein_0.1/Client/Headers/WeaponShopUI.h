@@ -4,16 +4,24 @@
 #include "UI.h"
 
 #include "WeaponShopOptionUI.h"
-#include "WeaponBuyUI.h"
-#include "Weapon_Inven_InShop.h"
 
 BEGIN(Client)
+class CWeaponBuyUI;
+class CWeaponShopOptionUI;
+class CWeapon_Inven_InShop;
 class CWeaponShopUI final : public CUI
 {
 private:
 	explicit CWeaponShopUI(_Device pDevice);
 	explicit CWeaponShopUI(const CWeaponShopUI& rhs);
 	virtual ~CWeaponShopUI() = default;
+
+public:
+	CWeapon_Inven_InShop* Get_InvenBuy() { return m_pBuyInven; }
+	CWeapon_Inven_InShop* Get_InvenSell() { return m_pSellInven; }
+
+public:
+	void Setup_AfterClone();
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -50,7 +58,8 @@ private:
 
 	vector<CWeaponShopOptionUI*>	m_vecOption;
 	CWeaponBuyUI*					m_pBuyUI;
-	CWeapon_Inven_InShop*			m_pInven;
+	CWeapon_Inven_InShop*			m_pBuyInven;
+	CWeapon_Inven_InShop*			m_pSellInven;
 public:
 	static CWeaponShopUI*	Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);

@@ -109,7 +109,7 @@ void CSky_Blur::Check_Scene()
 			Change_Mesh(L"Mesh_Sky_Blur_1");
 			break;
 		case SCENE_STAGE_03:
-			Change_Mesh(L"Mesh_Sky_Blur_0");
+			Change_Mesh(L"Mesh_Sky_Blur_3");
 			break;
 		case SCENE_STAGE_04:
 			Change_Mesh(L"Mesh_Sky_Blur_2");

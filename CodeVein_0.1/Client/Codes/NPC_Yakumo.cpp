@@ -34,9 +34,15 @@ HRESULT CNPC_Yakumo::Ready_GameObject(void * pArg)
 	Ready_BoneMatrix();
 	Ready_Collider();
 
+	return S_OK;
+}
+
+HRESULT CNPC_Yakumo::LateInit_GameObject()
+{
 	// UI
 	m_pWeaponShopUI = static_cast<CWeaponShopUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_WeaponShopUI", nullptr));
 	m_pWeaponShopUI->Set_Target(this);
+	m_pWeaponShopUI->Setup_AfterClone();
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pWeaponShopUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	return S_OK;
@@ -47,6 +53,7 @@ _int CNPC_Yakumo::Update_GameObject(_double TimeDelta)
 	if (false == m_bEnable)
 		return NO_EVENT;
 
+	CGameObject::LateInit_GameObject();
 	CGameObject::Update_GameObject(TimeDelta);
 
 	Check_Dist();
@@ -259,6 +266,9 @@ void CNPC_Yakumo::Render_Collider()
 
 void CNPC_Yakumo::Check_Dist()
 {
+	if (!m_pWeaponShopUI)
+		return;
+
 	_float fLen = D3DXVec3Length(&_v3(TARGET_TO_TRANS(m_pPlayer)->Get_Pos() - m_pTransformCom->Get_Pos()));
 
 	const _float MIN_DIST = 1.5f;

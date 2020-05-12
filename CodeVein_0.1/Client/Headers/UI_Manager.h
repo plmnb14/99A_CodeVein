@@ -69,6 +69,8 @@
 #include "WeaponShopOptionUI.h"
 #include "WeaponBuyUI.h"
 #include "Weapon_Inven_InShop.h"
+#include "WeaponBuyPopupUI.h"
+#include "WeaponBuyPopupOptionUI.h"
 
 BEGIN(Client)
 
@@ -98,7 +100,7 @@ public:
 	CWeapon_Inven* Get_Weapon_Inven() { return m_pWeapon_Inven; }
 	CArmor_Inven* Get_Armor_Inven() { return m_pArmor_Inven; }
 	CTotal_Inven* Get_Total_Inven() { return m_pTotal_Inven; }
-	CInventory*		Get_Inventory() { return m_pInventory; }
+	CInventory*		Get_Inventory() { return m_pWeaponInventory; }
 	void Set_BossUI_Active(_bool bIsActive);
 	CBloodCodeMenuUI* Get_BloodCode_Menu() { return m_pBloodCodeMenu; }
 	CBloodCodeOwner* Get_BloodCode_Owner() { return m_pBloodCodeOwner; }
@@ -125,7 +127,7 @@ private:
 	CWeapon_Inven* m_pWeapon_Inven = nullptr;
 	CArmor_Inven* m_pArmor_Inven = nullptr;
 	CTotal_Inven* m_pTotal_Inven = nullptr;
-	CInventory*		m_pInventory = nullptr;
+	CInventory*		m_pWeaponInventory = nullptr;
 	CBloodCodeMenuUI* m_pBloodCodeMenu = nullptr;
 	CBloodCodeOwner* m_pBloodCodeOwner = nullptr;
 	CBloodCodeSelectUI * m_pBloodCodeSelectUI = nullptr;

@@ -125,6 +125,41 @@ enum WEAPON_DATA
 	WPN_DATA_End
 };
 
+enum WEAPON_ALL_DATA
+{
+	WpnAll_Gun_Bayonet,
+	WpnAll_Gun_ReverTardor,
+	WpnAll_Gun_Nakil,
+	WpnAll_Gun_DarkBayonet,
+	WpnAll_Halberd_SolidPiercer,
+	WpnAll_Halberd_Black,
+	WpnAll_Halberd_DarkBodish,
+	WpnAll_Halberd_Nakil,
+	WpnAll_Hammer_ImperseAnker,
+	WpnAll_Hammer_Black,
+	WpnAll_Hammer_DarkHeavyAxe,
+	WpnAll_Hammer_Nakil,
+	WpnAll_LSword_Tsubai,
+	WpnAll_LSword_Black,
+	WpnAll_LSword_Nakil,
+	WpnAll_LSword_DarkTsubai,
+	WpnAll_SSword_Red,
+	WpnAll_SSword_Executioner,
+	WpnAll_SSword_Nakil,
+	WpnAll_SSword_DarkBrodeSword,
+
+	WpnAll_END
+};
+
+enum ARMOR_All_DATA
+{
+	ArmorAll_DarkBlood,
+	ArmorAll_DrakNight,
+	ArmorAll_Spike,
+
+	ArmorAll_END
+};
+
 enum Teleport_ID
 {
 	TeleportID_Tutorial,

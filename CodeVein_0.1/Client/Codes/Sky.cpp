@@ -111,7 +111,7 @@ void CSky::Check_Scene()
 			Change_Mesh(L"Mesh_Sky_1");
 			break;
 		case SCENE_STAGE_03:
-			Change_Mesh(L"Mesh_Sky_0");
+			Change_Mesh(L"Mesh_Sky_3");
 			break;
 		case SCENE_STAGE_04:
 			Change_Mesh(L"Mesh_Sky_2");
@@ -166,7 +166,7 @@ HRESULT CSky::Add_Component()
 		return E_FAIL;
 	
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Sky_0", L"Static_Mesh", (CComponent**)&m_pMeshCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Sky_3", L"Static_Mesh", (CComponent**)&m_pMeshCom)))
 		return E_FAIL;
 
 	//// For.Com_Buffer

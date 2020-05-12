@@ -15,6 +15,9 @@ protected:
 	virtual ~CWeapon() = default;
 
 public:
+	WPN_PARAM Get_WeaponParam(WEAPON_DATA _eData);
+
+public:
 	virtual HRESULT Ready_GameObject_Prototype();
 	virtual HRESULT Ready_GameObject(void* pArg);
 	virtual _int	Update_GameObject(_double TimeDelta);

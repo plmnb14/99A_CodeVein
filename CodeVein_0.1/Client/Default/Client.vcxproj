@@ -328,6 +328,8 @@
     <ClInclude Include="..\Headers\Sky.h" />
     <ClInclude Include="..\Headers\Urchin.h" />
     <ClInclude Include="..\Headers\Weapon.h" />
+    <ClInclude Include="..\Headers\WeaponBuyPopupOptionUI.h" />
+    <ClInclude Include="..\Headers\WeaponBuyPopupUI.h" />
     <ClInclude Include="..\Headers\WeaponBuyUI.h" />
     <ClInclude Include="..\Headers\WeaponShopOptionUI.h" />
     <ClInclude Include="..\Headers\WeaponShopUI.h" />
@@ -503,6 +505,8 @@
     <ClCompile Include="..\Codes\Sky.cpp" />
     <ClCompile Include="..\Codes\Urchin.cpp" />
     <ClCompile Include="..\Codes\Weapon.cpp" />
+    <ClCompile Include="..\Codes\WeaponBuyPopupOptionUI.cpp" />
+    <ClCompile Include="..\Codes\WeaponBuyPopupUI.cpp" />
     <ClCompile Include="..\Codes\WeaponBuyUI.cpp" />
     <ClCompile Include="..\Codes\WeaponShopOptionUI.cpp" />
     <ClCompile Include="..\Codes\WeaponShopUI.cpp" />

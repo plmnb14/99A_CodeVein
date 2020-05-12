@@ -40,7 +40,7 @@ public:
 
 public:
 	void Set_Select(_bool bIsSelect) { m_bIsSelect = bIsSelect; }
-	void Set_Option(WEAPONSHOP_OPTION eOption) { m_eOption = eOption; }
+	void Setup_InvenType(WEAPONSHOP_OPTION eOption) { m_eOption = eOption; }
 	void Set_BuyOption(WEAPONSHOP_OPTION_BUY eOption) { m_eBuyOption = eOption; }
 	void Set_Menu(WEAPONSHOP_MENU eMenu) { m_eMenu = eMenu; }
 public:

@@ -35,6 +35,7 @@ private:
 
 public:
 	void Add_Weapon(WPN_PARAM tAddWpnParam);
+	void Sell_Weapon();
 
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;

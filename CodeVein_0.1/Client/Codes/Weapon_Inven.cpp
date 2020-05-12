@@ -511,6 +511,23 @@ void CWeapon_Inven::Add_Weapon(WPN_PARAM tAddWpnParam)
 	}
 }
 
+void CWeapon_Inven::Sell_Weapon()
+{
+	_ulong idx = 0;
+	for (auto& pSlot : m_vecWeaponSlot)
+	{
+		if (pSlot->Pt_InRect())
+		{
+			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+			{
+				m_vecWeaponSlot.erase(m_vecWeaponSlot.begin() + idx);
+				m_vecWeaponSlot.shrink_to_fit();
+			}
+		}
+		++idx;
+	}
+}
+
 
 CWeapon_Inven * CWeapon_Inven::Create(_Device pGraphic_Device)
 {

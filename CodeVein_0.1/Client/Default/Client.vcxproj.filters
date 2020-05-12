@@ -484,6 +484,12 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\Weapon_Inven_InShop">
       <UniqueIdentifier>{6853725d-b417-436b-ac2e-2fa52f9f1441}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponBuyUI\WeaponBuyPopupUI">
+      <UniqueIdentifier>{e94b7d3b-bcc2-4e67-8d0a-e32b2e928a55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponBuyUI\WeaponBuyPopupUI\WeaponBuyPopupOptionUI">
+      <UniqueIdentifier>{7b27eddf-d4a7-4e8d-94a2-6d325238987f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1029,6 +1035,12 @@
     <ClInclude Include="..\Headers\Weapon_Inven_InShop.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\Weapon_Inven_InShop</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\WeaponBuyPopupUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponBuyUI\WeaponBuyPopupUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\WeaponBuyPopupOptionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponBuyUI\WeaponBuyPopupUI\WeaponBuyPopupOptionUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1558,6 +1570,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Weapon_Inven_InShop.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\Weapon_Inven_InShop</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\WeaponBuyPopupUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponBuyUI\WeaponBuyPopupUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\WeaponBuyPopupOptionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponBuyUI\WeaponBuyPopupUI\WeaponBuyPopupOptionUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
