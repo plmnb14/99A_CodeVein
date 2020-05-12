@@ -41,6 +41,9 @@ HRESULT CScene_Title::Ready_Scene()
 	if (nullptr == m_pLoading)
 		return E_FAIL;
 
+	g_pDissolveTexture = CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Effect/Noise/Noise_13.dds");
+
+
 	return S_OK;
 }
 

@@ -200,7 +200,7 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
 
 	vector		vLook = vWorldPos - g_vCamPosition;
 
-	Out.vSpecular = fAtt * (g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 5.f * Roughness)) * Metalness;
+	Out.vSpecular = fAtt * (g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 5.f * Roughness)) * Metalness * 2.f;
 	Out.vSpecular.a = AO;
 
 	//float fShadow = tex2D(ShadowMapSampler, In.vTexUV).x;

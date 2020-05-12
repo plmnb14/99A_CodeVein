@@ -39,13 +39,13 @@ HRESULT CScene_Stage_Base::Ready_Scene()
 
 	// ¾ßÄí¸ð
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-4.46f, -1.37f, -5.294f), D3DXToRadian(90.f)));
-	
+
 	// NPC 1
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-10.5f, -1.37f, -14.3f), D3DXToRadian(45.f)));
-	
+
 	// NPC 2
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(6.283f, -1.37f, -14.75f), D3DXToRadian(-45.f)));
-	
+
 	return S_OK;
 }
 
@@ -129,11 +129,10 @@ HRESULT CScene_Stage_Base::Ready_LightDesc()
 	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
 		return E_FAIL;
 
-
 	float fAmbient = 0.1f;
 
 	LightDesc.Type = D3DLIGHT_POINT;
-	LightDesc.Diffuse = D3DXCOLOR(0.31f, 0.73f, 0.87f, 1.f);
+	LightDesc.Diffuse = D3DXCOLOR(0.31f, 0.73f, 0.87f, 1.f) * 2.f;
 	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	LightDesc.Position = _v3(-0.f, 1.3f, 15.984f);
@@ -146,7 +145,7 @@ HRESULT CScene_Stage_Base::Ready_LightDesc()
 		return E_FAIL;
 
 	LightDesc.Type = D3DLIGHT_POINT;
-	LightDesc.Diffuse = D3DXCOLOR(1.f, 0.75f, 0.5f, 1.f);
+	LightDesc.Diffuse = D3DXCOLOR(1.f, 0.75f, 0.5f, 1.f)* 2.f;
 	LightDesc.Ambient = D3DXCOLOR(fAmbient, fAmbient, fAmbient, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	LightDesc.Position = _v3(-0.f, 2.5f, 6.319f);

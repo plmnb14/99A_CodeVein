@@ -79,8 +79,8 @@ _int CNPC_Yakumo::Late_Update_GameObject(_double TimeDelta)
 	{
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 			return E_FAIL;
-		//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
-		//	return E_FAIL;
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
+			return E_FAIL;
 	}
 	
 	else
@@ -89,11 +89,11 @@ _int CNPC_Yakumo::Late_Update_GameObject(_double TimeDelta)
 			return E_FAIL;
 	}
 	
-	//if(m_bInFrustum)
-	//{
-	//	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-	//		return E_FAIL;
-	//}
+	if (m_bInFrustum)
+	{
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+			return E_FAIL;
+	}
 
 	return NO_EVENT;
 }
@@ -107,6 +107,15 @@ HRESULT CNPC_Yakumo::Render_GameObject()
 
 	if (m_bInFrustum)
 	{
+		if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShaderCom)))
+			return E_FAIL;
+
+		_mat matveiwView = g_pManagement->Get_Transform(D3DTS_VIEW);
+		_mat matPro = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+
+		m_pShaderCom->Set_Value("g_matView", &matveiwView, sizeof(_mat));
+		m_pShaderCom->Set_Value("g_matProj", &matPro, sizeof(_mat));
+
 		if (FAILED(SetUp_ConstantTable(m_pShaderCom)))
 			return E_FAIL;
 

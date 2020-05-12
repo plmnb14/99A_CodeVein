@@ -68,6 +68,7 @@ private:
 	CShader*					m_pShader_SSAO = nullptr;
 	CShader*					m_pShader_RenderMesh = nullptr;
 	CShader*					m_pShader_Trail = nullptr;
+	CShader*					m_pShader_3DUI = nullptr;
 
 	CBuffer_ViewPort*			m_pViewPortBuffer = nullptr;
 	CTexture*					m_pSSAOTexture = nullptr;

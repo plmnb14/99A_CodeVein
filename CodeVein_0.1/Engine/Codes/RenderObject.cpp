@@ -39,7 +39,7 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 		return NO_EVENT;
 
 	if (nullptr != m_pOptimization)
-		m_bInFrustum = m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), 5.f);
+		m_bInFrustum = m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), 10.f);
 	else
 		cout << "옵티마이즈 없어요!!!!!" << endl;
 
@@ -74,6 +74,12 @@ HRESULT CRenderObject::Render_GameObject()
 		return NO_EVENT;
 
 	Init_Shader(m_pShader);
+
+	_mat matveiwView = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	_mat matPro = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+
+	m_pShader->Set_Value("g_matView", &matveiwView, sizeof(_mat));
+	m_pShader->Set_Value("g_matProj", &matPro, sizeof(_mat));
 
 	m_pShader->Begin_Shader();
 

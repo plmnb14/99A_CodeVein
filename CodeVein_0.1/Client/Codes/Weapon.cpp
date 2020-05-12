@@ -100,6 +100,15 @@ HRESULT CWeapon::Render_GameObject()
 		nullptr == m_pMesh_Static)
 		return E_FAIL;
 
+	_mat matveiwView = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	_mat matPro = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+
+	m_pShader->Set_Value("g_matView", &matveiwView, sizeof(_mat));
+	m_pShader->Set_Value("g_matProj", &matPro, sizeof(_mat));
+
+	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShader)))
+		return E_FAIL;
+
 	if (FAILED(SetUp_ConstantTable(m_pShader)))
 		return E_FAIL;
 

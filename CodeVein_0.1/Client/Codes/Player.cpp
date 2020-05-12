@@ -168,6 +168,15 @@ HRESULT CPlayer::Render_GameObject()
 	if (m_tObjParam.bInvisible)
 		return S_OK;
 
+	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShader)))
+		return E_FAIL;
+
+	_mat matveiwView = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat matPro = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+
+	m_pShader->Set_Value("g_matView", &matveiwView, sizeof(_mat));
+	m_pShader->Set_Value("g_matProj", &matPro, sizeof(_mat));
+
 	if (FAILED(SetUp_ConstantTable(m_pShader)))
 		return E_FAIL;
 
@@ -271,7 +280,7 @@ HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 			{
 				_float fSpec = 0.1f;
 
-				if (FAILED(m_pShader->Set_Value("g_fSpecularPower", &fSpec, sizeof(_float))))
+				if (FAILED(pShader->Set_Value("g_fSpecularPower", &fSpec, sizeof(_float))))
 					return E_FAIL;
 			}
 

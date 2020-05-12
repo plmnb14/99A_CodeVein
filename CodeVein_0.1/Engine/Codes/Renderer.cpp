@@ -212,6 +212,10 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (nullptr == m_pShader_Trail)
 		return E_FAIL;
 
+	m_pShader_3DUI = static_cast<CShader*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Shader_3dUI"));
+	if (nullptr == m_pShader_3DUI)
+		return E_FAIL;
+
 	// For.Shader_LightAcc
 	m_pShader_LightAcc = CShader::Create(m_pGraphic_Dev, L"../ShaderFiles/Shader_LightAcc.fx");
 	if (nullptr == m_pShader_LightAcc)
@@ -581,8 +585,8 @@ HRESULT CRenderer::Render_NonAlpha()
 		return E_FAIL;
 	if (FAILED(m_pShader_RenderMesh->Set_Value("g_matProj", &matProj, sizeof(_mat))))
 		return E_FAIL;
-	//if (FAILED(m_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShader_RenderMesh)))
-	//	return E_FAIL;
+	if (FAILED(m_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShader_RenderMesh)))
+		return E_FAIL;
 
 	for (auto& pGameObject : m_RenderList[RENDER_NONALPHA])
 	{
@@ -747,7 +751,6 @@ HRESULT CRenderer::Render_MotionBlurTarget()
 			}
 			Safe_Release(pGameObject);
 		}
-
 	}
 	
 	m_pShader_Blur->End_Shader();
@@ -802,46 +805,18 @@ HRESULT CRenderer::Render_Alpha()
 	pManagement->Set_Transform(D3DTS_VIEW, matView);
 	pManagement->Set_Transform(D3DTS_PROJECTION, matProj);
 
-	if (FAILED(m_pShader_RenderMesh->Set_Value("g_matView", &matView, sizeof(_mat))))
+	m_pShader_Trail->Begin_Shader();
+
+	if (FAILED(m_pShader_Trail->Set_Value("g_matView", &matView, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(m_pShader_RenderMesh->Set_Value("g_matProj", &matProj, sizeof(_mat))))
+	if (FAILED(m_pShader_Trail->Set_Value("g_matProj", &matProj, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(m_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShader_RenderMesh)))
-		return E_FAIL;
-
-	m_pShader_RenderMesh->Begin_Shader();
-
-	for (auto& pGameObject : m_RenderList[RENDER_ALPHA])
-	{
-		if (nullptr != pGameObject)
-		{
-			if (FAILED(pGameObject->Render_GameObject_Instancing_SetPass(m_pShader_RenderMesh)))
-			{
-				Safe_Release(pGameObject);
-				return E_FAIL;
-			}
-			Safe_Release(pGameObject);
-		}
-	}
-
-	m_pShader_RenderMesh->End_Shader();
-
-	m_RenderList[RENDER_ALPHA].clear();
-
-
-
-	//m_pShader_Trail->Begin_Shader();
-	//
-	//if (FAILED(m_pShader_Trail->Set_Value("g_matView", &matView, sizeof(_mat))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShader_Trail->Set_Value("g_matProj", &matProj, sizeof(_mat))))
-	//	return E_FAIL;
 
 	for (auto& pGameObject : m_RenderList[RENDER_ALPHA_TRAIL])
 	{
 		if (nullptr != pGameObject)
 		{
-			if (FAILED(pGameObject->Render_GameObject()))// _Instancing_SetPass(m_pShader_Trail)))
+			if (FAILED(pGameObject->Render_GameObject_Instancing_SetPass(m_pShader_Trail)))// _Instancing_SetPass(m_pShader_Trail)))
 			{
 				Safe_Release(pGameObject);
 				return E_FAIL;
@@ -850,33 +825,68 @@ HRESULT CRenderer::Render_Alpha()
 		}
 	}
 
-	//m_pShader_Trail->End_Shader();
+	m_pShader_Trail->End_Shader();
 
 	m_RenderList[RENDER_ALPHA_TRAIL].clear();
 
+	//===============================================================================
 
-	for (auto& pGameObject : m_RenderList[RENDER_ALPHA_UI])
-	{
-		if (nullptr != pGameObject)
-		{
-			if (FAILED(pGameObject->Render_GameObject()))
-			{
-				Safe_Release(pGameObject);
-				return E_FAIL;
-			}
-			Safe_Release(pGameObject);
-		}
-	}
+	//m_pShader_RenderMesh->Begin_Shader();
+	//
+	//if (FAILED(m_pShader_RenderMesh->Set_Value("g_matView", &matView, sizeof(_mat))))
+	//	return E_FAIL;
+	//if (FAILED(m_pShader_RenderMesh->Set_Value("g_matProj", &matProj, sizeof(_mat))))
+	//	return E_FAIL;
+	//if (FAILED(m_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShader_RenderMesh)))
+	//	return E_FAIL;
+	//
+	//for (auto& pGameObject : m_RenderList[RENDER_ALPHA])
+	//{
+	//	if (nullptr != pGameObject)
+	//	{
+	//		if (FAILED(pGameObject->Render_GameObject_Instancing_SetPass(m_pShader_RenderMesh)))
+	//		{
+	//			Safe_Release(pGameObject);
+	//			return E_FAIL;
+	//		}
+	//		Safe_Release(pGameObject);
+	//	}
+	//}
+	//
+	//m_pShader_RenderMesh->End_Shader();
+	//
+	//m_RenderList[RENDER_ALPHA].clear();
 
-	m_RenderList[RENDER_ALPHA_UI].clear();
+	//======================================================================;
+
+	//m_pShader_3DUI->Begin_Shader();
+	//
+	//if (FAILED(m_pShader_3DUI->Set_Value("g_matView", &matView, sizeof(_mat))))
+	//	return E_FAIL;
+	//if (FAILED(m_pShader_3DUI->Set_Value("g_matProj", &matProj, sizeof(_mat))))
+	//	return E_FAIL;
+	//
+	//for (auto& pGameObject : m_RenderList[RENDER_ALPHA_UI])
+	//{
+	//	if (nullptr != pGameObject)
+	//	{
+	//		if (FAILED(pGameObject->Render_GameObject_Instancing_SetPass(m_pShader_3DUI)))
+	//		{
+	//			Safe_Release(pGameObject);
+	//			return E_FAIL;
+	//		}
+	//		Safe_Release(pGameObject);
+	//	}
+	//}
+	//m_pShader_3DUI->End_Shader();
+	//
+	//m_RenderList[RENDER_ALPHA_UI].clear();
 
 	return NOERROR;
 }
 
 HRESULT CRenderer::Render_Effect()
 {
-	//m_pShader_Effect->Begin_Shader();
-
 	Render_Instance();
 
 	m_pShader_Effect->Begin_Shader();
@@ -1231,13 +1241,18 @@ HRESULT CRenderer::Render_Blend()
 	m_pShader_Blend->End_Pass();
 	m_pShader_Blend->End_Shader();
 
-	// Alpha
-	if (FAILED(Render_Alpha()))
-		return E_FAIL;
 
 	// Effect
 	if (FAILED(Render_Effect()))
 		return E_FAIL;
+
+	// Alpha
+	if (FAILED(Render_Alpha()))
+		return E_FAIL;
+
+	//// Effect
+	//if (FAILED(Render_Effect()))
+	//	return E_FAIL;
 
 	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_Blend")))
 		return E_FAIL;
@@ -1756,6 +1771,7 @@ void CRenderer::Free()
 	Safe_Release(m_pShader_Effect);
 	Safe_Release(m_pShader_Blur);
 	Safe_Release(m_pShader_SSAO);
+	Safe_Release(m_pShader_3DUI);
 
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pTarget_Manager);

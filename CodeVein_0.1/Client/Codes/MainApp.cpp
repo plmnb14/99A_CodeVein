@@ -221,7 +221,7 @@ void CMainApp::Free()
 
 	Safe_Release(m_pStageAgent);
 
-	//Safe_Release(g_pDissolveTexture);
+	Safe_Release(g_pDissolveTexture);
 
 	Safe_Release(m_pGraphic_Dev);
 	
