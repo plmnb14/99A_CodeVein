@@ -13,7 +13,18 @@ class CColleague_Jack;
 class CPlayer_Colleague final : public CGameObject
 {
 public:
-	// 차후 Attack에 스킬을 추가할 시 enum으로 나눠줘야 함
+	typedef struct tagMoveOptionReset
+	{
+		tagMoveOptionReset(SCENEID _eSceneID, Teleport_ID _eTeleportID)
+			: eSceneID(_eSceneID), eTeleportID(_eTeleportID)
+		{}
+
+		Teleport_ID eTeleportID = TeleportID_End;
+		SCENEID eSceneID = SCENE_END;
+
+	}TELEPORT_RESET;
+
+public:
 	enum Colleague_Type { Coll_Idle, Coll_Move, Coll_Guard, Coll_Attack, Coll_Hit, Coll_Dodge, Coll_Heal, Coll_Dead, Coll_Start };
 	enum Coll_Movement { Move_Walk, Move_BackWalk, Move_Run, Move_BackRun };
 	enum Coll_IdleMoment { Idle_Waiting, Idle_Guard };
@@ -30,7 +41,7 @@ public:
 	enum Coll_FBLR { Coll_Front, Coll_Back, Coll_FrontRight, Coll_BackRight, Coll_BackLeft, Coll_FrontLeft };
 
 private:
-	enum Bonematrix_Type { Bone_Range, Bone_Body, Bone_Head, Bone_LHand, Bone_End };
+	enum Bonematrix_Type { Bone_Range, Bone_Body, Bone_Head, Bone_LHand, Bone_RHand, Bone_End };
 
 private:
 	enum Colleague_Ani
@@ -109,6 +120,8 @@ private:
 
 	void	Set_AniEvent();
 
+	void	Check_Navi();
+
 private:
 	void	Colleague_Movement(_float fSpeed, _v3 vDir);
 	void	Colleague_SkilMovement(_float Multiply);
@@ -172,7 +185,7 @@ private:
 
 	void	Function_FBRL();
 
-private:
+public:
 	void Teleport_ResetOptions(_int eSceneID, _int eTeleportID);
 
 private:

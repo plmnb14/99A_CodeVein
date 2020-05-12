@@ -10,6 +10,8 @@
 #include "ScriptManager.h"
 #include "Player.h"
 
+#include "Player_Colleague.h"
+
 CScene_Stage_01::CScene_Stage_01(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
 {
@@ -22,6 +24,9 @@ HRESULT CScene_Stage_01::Ready_Scene()
 		return E_FAIL;
 
 	if (FAILED(Ready_Layer_Player(L"Layer_Player")))
+		return E_FAIL;
+
+	if (FAILED(Ready_Layer_Colleague(L"Layer_Colleague")))
 		return E_FAIL;
 
 	if (FAILED(Ready_Layer_Environment(L"Layer_Environment")))
@@ -169,6 +174,28 @@ HRESULT CScene_Stage_01::Ready_Layer_Environment(const _tchar* pLayerTag)
 		return E_FAIL;
 
 	g_pManagement->Create_Effect(L"FloorPlane_Black", _v3(0.f, -28.f, 0.f));
+
+	return S_OK;
+}
+
+HRESULT CScene_Stage_01::Ready_Layer_Colleague(const _tchar * pLayerTah)
+{
+	// 아규먼트로 넘겨주게
+	CGameObject* pInstance = nullptr;
+
+	pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague", nullptr);
+	/*TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(5.f, 0.f, 5.f));*/
+	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
+	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
+	TARGET_TO_NAV(pInstance)->Check_OnNavMesh(_v3(0.f, 0.f, 0.f));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
+
+	CPlayer_Colleague* pColleague = static_cast<CPlayer_Colleague*>(g_pManagement->Get_GameObjectBack(L"Layer_Colleague", SCENE_MORTAL));
+	if(nullptr != pColleague)
+		pColleague->Teleport_ResetOptions(g_eSceneID_Cur, g_eSTeleportID_Cur);
+	//pInstance->Set_Enable(true);
+
+	//pColleague = nullptr;
 
 	return S_OK;
 }

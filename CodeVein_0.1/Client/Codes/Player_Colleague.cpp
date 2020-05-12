@@ -63,11 +63,13 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 
 	/*if (true == m_bCheck_SEndGame)
 	{*/
+	cout << "동료: " << m_pTransformCom->Get_Pos().x << ", " << m_pTransformCom->Get_Pos().y << ", "  << m_pTransformCom->Get_Pos().z << endl;
+	cout << "플레이어: " << m_pTargetTransformCom->Get_Pos().x << ", " << m_pTargetTransformCom->Get_Pos().y << ", " << m_pTargetTransformCom->Get_Pos().z << endl;
 
 	if (g_pInput_Device->Key_Down(DIK_K))
-		m_pTarget->Add_Target_Hp(-100.f);
+		m_tObjParam.fHp_Cur += 100.f;
 	if (g_pInput_Device->Key_Down(DIK_P))
-		m_pTarget->Add_Target_Hp(100.f);
+		m_tObjParam.fHp_Cur -= 100.f;
 
 	if (0 >= m_tObjParam.fHp_Cur && 0 >= m_iMyHeal_Count)
 		m_eMovetype = CPlayer_Colleague::Coll_Dead;
@@ -260,6 +262,11 @@ HRESULT CPlayer_Colleague::Ready_BoneMatrix()
 	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo("LeftHand", 0), E_FAIL);
 	m_matBone[Bone_LHand] = &pFrame->CombinedTransformationMatrix;
 
+	// 오른손
+	IF_NULL_VALUE_RETURN(pFrame = (D3DXFRAME_DERIVED*)m_pDynamicMesh->Get_BonInfo("RightHand", 0), E_FAIL);
+	m_matBone[Bone_RHand] = &pFrame->CombinedTransformationMatrix;
+
+
 	return S_OK;
 }
 
@@ -383,7 +390,7 @@ void CPlayer_Colleague::Check_DeadEffect(_double TimeDelta)
 
 void CPlayer_Colleague::Check_MyHit()
 {
-	if (m_eMovetype == CPlayer_Colleague::Coll_Dead)
+	if (m_eMovetype == CPlayer_Colleague::Coll_Dead || m_eMovetype == CPlayer_Colleague::Coll_Heal)
 		return;
 
 	if (0 < m_tObjParam.fHp_Cur)
@@ -432,10 +439,10 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 		_v3 vPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 2.f);
 		m_pTransformCom->Set_Pos(vPos);
 
-		g_pManagement->Create_Effect_Delay(L"Colleague_Teleport_Line_Particle_0", 0.f, vPos, nullptr);
+		/*g_pManagement->Create_Effect_Delay(L"Colleague_Teleport_Line_Particle_0", 0.f, vPos, nullptr);
 		g_pManagement->Create_Effect_Delay(L"Colleague_Teleport_Line_Particle_1", 0.f, vPos, nullptr);
 		g_pManagement->Create_Effect_Delay(L"Colleague_Teleport_Line_Particle_2", 0.f, vPos, nullptr);
-		g_pManagement->Create_Effect_Delay(L"Colleague_Teleport_Flash_Particle_0", 0.f, vPos, nullptr);
+		g_pManagement->Create_Effect_Delay(L"Colleague_Teleport_Flash_Particle_0", 0.f, vPos, nullptr);*/
 		//g_pManagement->Create_Effect_Delay(L"Colleague_Teleport_Smoke_0", 0.f, vPos, nullptr);
 	}
 
@@ -755,7 +762,8 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 
 	if (fMyPlayerLength > 30.f)
 	{
-		m_pTransformCom->Set_Pos(_v3(m_pTargetTransformCom->Get_Pos().x - 3.f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 2.f));
+		Check_Navi();
+		//m_pTransformCom->Set_Pos(_v3(m_pTargetTransformCom->Get_Pos().x - 3.f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 2.f));
 	}
 
 
@@ -999,6 +1007,23 @@ void CPlayer_Colleague::Set_AniEvent()
 	}
 }
 
+void CPlayer_Colleague::Check_Navi()
+{
+	_tchar szNavData[STR_128] = L"";
+
+	lstrcpy(szNavData, (
+		g_eSceneID_Cur == 5 ? L"Navmesh_Training.dat" :
+		g_eSceneID_Cur == 6 ? L"Navmesh_Stage_01.dat" :
+		g_eSceneID_Cur == 7 ? L"Navmesh_Stage_02.dat" :
+		g_eSceneID_Cur == 8 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
+
+	m_pTransformCom->Set_Pos(m_pTargetTransformCom->Get_Axis(AXIS_X) * 1.f);
+
+	m_pNavMesh->Set_Index(-1);
+	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, szNavData);
+	m_pNavMesh->Check_OnNavMesh(m_pTransformCom->Get_Pos());
+}
+
 HRESULT CPlayer_Colleague::SetUp_Default()
 {
 	m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
@@ -1143,7 +1168,7 @@ void CPlayer_Colleague::Colleague_Guard()
 
 void CPlayer_Colleague::Play_Hit()
 {
-	if (m_eMovetype == CPlayer_Colleague::Coll_Dead)
+	if (m_eMovetype == CPlayer_Colleague::Coll_Dead || m_eMovetype == CPlayer_Colleague::Coll_Heal)
 		return;
 
 	if (false == m_tObjParam.bIsHit)
@@ -2564,34 +2589,42 @@ void CPlayer_Colleague::CollGuard_Hit()
 
 void CPlayer_Colleague::CollHeal_ForMe()
 {
+	_double		AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
+
 	if (0 < m_iMyHeal_Count && m_iMyHeal_Count <= 4)
 	{
-		if (m_pDynamicMesh->Is_Finish_Animation(0.8f) && m_eColl_HealMoment == CPlayer_Colleague::My_Heal)
+		if (m_pDynamicMesh->Is_Finish_Animation(0.9f) && m_eColleague_Ani == CPlayer_Colleague::Ani_Heal)
 		{
 			Funtion_Reset_State();
 			m_eMovetype = CPlayer_Colleague::Coll_Idle;
+			m_eColleague_Ani = CPlayer_Colleague::Ani_Idle;
 		}
-		else if (false == m_bEventTrigger[0])
+		else if (2.267f <= AniTime)
 		{
-			m_bEventTrigger[0] = true;
-			m_eMovetype = CPlayer_Colleague::Coll_Heal;
-			m_eColl_HealMoment = CPlayer_Colleague::My_Heal;
-			m_bCheck_HealMyHp = true;
-			m_tObjParam.fHp_Cur += m_tObjParam.fHp_Max / 0.8f;
-			if (m_tObjParam.fHp_Cur > m_tObjParam.fHp_Max)
-				m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
-			--m_iMyHeal_Count;
+			if (false == m_bEventTrigger[0])
+			{
+				m_bEventTrigger[0] = true;
+				m_eMovetype = CPlayer_Colleague::Coll_Heal;
+				m_eColl_HealMoment = CPlayer_Colleague::My_Heal;
+				m_bCheck_HealMyHp = true;
+				m_tObjParam.fHp_Cur += m_tObjParam.fHp_Max / 0.8f;
+				if (m_tObjParam.fHp_Cur > m_tObjParam.fHp_Max)
+					m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
+				if (m_tObjParam.fHp_Cur < 0.f)
+					m_tObjParam.fHp_Cur = 0.f;
+				--m_iMyHeal_Count;
 
-			cout << "Self Heal" << endl;
+				cout << "Self Heal" << endl;
 
-			_mat matBone = *m_matBone[Bone_LHand] * m_pTransformCom->Get_WorldMat();
-			_v3 vEffPos;
-			memcpy(&vEffPos, &matBone._41, sizeof(_v3));
-			 
-			g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle", 0.2f, vEffPos, nullptr);
-			g_pManagement->Create_Effect_Delay(L"Player_Heal_RedLight", 0.2f, vEffPos, nullptr);
-			g_pManagement->Create_Effect_Delay(L"Player_Heal_Particle", 0.2f, vEffPos, nullptr);
-			g_pManagement->Create_ParticleEffect_Delay(L"Player_Buff_HandSmoke", 0.2f, 0.2f, vEffPos, nullptr);
+				_mat matBone = *m_matBone[Bone_RHand] * m_pTransformCom->Get_WorldMat();
+				_v3 vEffPos;
+				memcpy(&vEffPos, &matBone._41, sizeof(_v3));
+
+				g_pManagement->Create_Effect_Delay(L"Player_Skill_Distortion_Circle", 0.2f, vEffPos, nullptr);
+				g_pManagement->Create_Effect_Delay(L"Player_Heal_RedLight", 0.2f, vEffPos, nullptr);
+				g_pManagement->Create_Effect_Delay(L"Player_Heal_Particle", 0.2f, vEffPos, nullptr);
+				g_pManagement->Create_ParticleEffect_Delay(L"Player_Buff_HandSmoke", 0.2f, 0.2f, vEffPos, nullptr);
+			}
 		}
 	}
 	else
@@ -2991,37 +3024,38 @@ void CPlayer_Colleague::Teleport_ResetOptions(_int eSceneID, _int eTeleportID)
 	_float fRadian = 0.f;
 
 	// 텔레포트 할때는 항상 소환 상태
-	m_eMovetype = CPlayer_Colleague::Coll_Start;
+	m_eMovetype = CPlayer_Colleague::Coll_Idle;
 
 	Funtion_Reset_State();
 
 	// 위치 , 방향 설정
-	switch (eSceneID)
+	switch (g_eSceneID_Cur)
 	{
 	case SCENE_STAGE_TRAINING:
 	{
-		vShadowLightPos = _v3(100.f, 50.f, 0.f);
+		//vShadowLightPos = _v3(100.f, 50.f, 0.f);
+		vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f);
 		break;
 	}
 
 	case SCENE_STAGE_BASE:
 	{
-		vShadowLightPos = _v3(100.f, 50.f, 0.f);
+		/*vShadowLightPos = _v3(100.f, 50.f, 0.f);
 
 		vPos = eTeleportID == TeleportID_Tutorial ?
 			V3_NULL : _v3(-0.519f, 0.120f, 23.810f);
 
 		fAngle = eTeleportID == TeleportID_Tutorial ?
-			0.f : 180.f;
+			0.f : 180.f;*/
 
 		break;
 	}
 
 	case SCENE_STAGE_01:
 	{
-		vShadowLightPos = _v3(-100.f, 50.f, 0.f);
+		//vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f);
 
-		vPos = eTeleportID == TeleportID_St01_1 ? _v3(150.484f, -18.08f, 70.417f) :
+		vPos = eTeleportID == TeleportID_St01_1 ? vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f) :
 			eTeleportID == TeleportID_St01_2 ? V3_NULL : V3_NULL;
 
 		fAngle = eTeleportID == TeleportID_St01_1 ? 0.f :
@@ -3039,10 +3073,10 @@ void CPlayer_Colleague::Teleport_ResetOptions(_int eSceneID, _int eTeleportID)
 
 	case SCENE_STAGE_03:
 	{
-		vShadowLightPos = _v3(-100.f, 50.f, 0.f);
+		//vShadowLightPos = vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f);;
 
 		vPos = eTeleportID == TeleportID_St03_1 ?
-			_v3(52.610f, -13.0f, 3.575f) : V3_NULL;
+			vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f) : V3_NULL;
 
 		fAngle = eTeleportID == TeleportID_St03_1 ?
 			0.f : 0.f;
@@ -3052,10 +3086,10 @@ void CPlayer_Colleague::Teleport_ResetOptions(_int eSceneID, _int eTeleportID)
 
 	case SCENE_STAGE_04:
 	{
-		vShadowLightPos = _v3(-100.f, 50.f, 0.f);
+		//vShadowLightPos = vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f);
 
 		vPos = eTeleportID == TeleportID_St04_1 ?
-			_v3(42.504f, -3.85f, 75.683f) : V3_NULL;
+			vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f) : V3_NULL;
 
 		fAngle = eTeleportID == TeleportID_St04_1 ?
 			0.f : 0.f;
@@ -3063,7 +3097,7 @@ void CPlayer_Colleague::Teleport_ResetOptions(_int eSceneID, _int eTeleportID)
 		break;
 	}
 	}
-
+	
 	m_pRendererCom->Set_ShadowLightPos(vShadowLightPos);
 
 	fRadian = D3DXToRadian(fAngle);
@@ -3073,11 +3107,11 @@ void CPlayer_Colleague::Teleport_ResetOptions(_int eSceneID, _int eTeleportID)
 	_tchar szNavMeshName[STR_128] = L"";
 
 	lstrcpy(szNavMeshName,
-		(eSceneID == SCENE_STAGE_BASE ? L"Navmesh_Stage_00.dat" :
-			eSceneID == SCENE_STAGE_01 ? L"Navmesh_Stage_01.dat" :
-			eSceneID == SCENE_STAGE_02 ? L"Navmesh_Stage_02.dat" :
-			eSceneID == SCENE_STAGE_03 ? L"Navmesh_Stage_03.dat" :
-			eSceneID == SCENE_STAGE_04 ? L"Navmesh_Stage_04.dat" : L"Navmesh_Training.dat"));
+		(g_eSceneID_Cur == SCENE_STAGE_BASE ? L"Navmesh_Stage_00.dat" :
+			g_eSceneID_Cur == SCENE_STAGE_01 ? L"Navmesh_Stage_01.dat" :
+			g_eSceneID_Cur == SCENE_STAGE_02 ? L"Navmesh_Stage_02.dat" :
+			g_eSceneID_Cur == SCENE_STAGE_03 ? L"Navmesh_Stage_03.dat" :
+			g_eSceneID_Cur == SCENE_STAGE_04 ? L"Navmesh_Stage_04.dat" : L"Navmesh_Training.dat"));
 
 	m_pNavMesh->Reset_NaviMesh();
 	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, szNavMeshName);
