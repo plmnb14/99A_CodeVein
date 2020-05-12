@@ -44,6 +44,7 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
+	CCollider*				m_pCollider = nullptr;
 
 private:
 	_bool					m_bIsSelect = false;

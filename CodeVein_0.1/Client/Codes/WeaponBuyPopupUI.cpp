@@ -86,10 +86,11 @@ _int CWeaponBuyPopupUI::Update_GameObject(_double TimeDelta)
 		m_vecOption[i]->Set_Active(m_bIsActive);
 	}
 
+	Click_Option();
+
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
-
 	return NO_EVENT;
 }
 
@@ -139,46 +140,46 @@ HRESULT CWeaponBuyPopupUI::Render_GameObject()
 
 void CWeaponBuyPopupUI::Click_Option()
 {
-	//if (!m_bIsActive)
-	//	return;
-	//
-	//_int iIdx = 0;
-	//
-	//for (auto& iter : m_vecOption)
-	//{
-	//	if (CCollisionMgr::Collision_Ray(iter, g_pInput_Device->Get_Ray(), &m_fCross))
-	//	{
-	//		Reset_Option();
-	//		iter->Set_Select(true);
-	//
-	//		if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
-	//		{
-	//			if (0 == iIdx)
-	//				m_eState = CWeaponShopOptionUI::OPTION_UPGRADE;
-	//			else if (1 == iIdx)
-	//			{
-	//				m_eState = CWeaponShopOptionUI::OPTION_BUY;
-	//				m_bFirestMenu = false;
-	//			}
-	//			else if (2 == iIdx)
-	//				m_eState = CWeaponShopOptionUI::OPTION_SELL;
-	//			else if (3 == iIdx)
-	//			{
-	//				Set_Active(false);
-	//				m_bFirestMenu = true;
-	//			}
-	//
-	//			//Active_SubUI(iter);
-	//		}
-	//
-	//	}
-	//	else
-	//	{
-	//		iter->Set_Select(false);
-	//	}
-	//
-	//	++iIdx;
-	//}
+	if (!m_bIsActive)
+		return;
+	
+	_int iIdx = 0;
+	
+	for (auto& iter : m_vecOption)
+	{
+		if (CCollisionMgr::Collision_Ray(iter, g_pInput_Device->Get_Ray(), &m_fCross))
+		{
+			Reset_Option();
+			iter->Set_Select(true);
+	
+			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+			{
+				//if (0 == iIdx)
+				//	m_eState = CWeaponShopOptionUI::OPTION_UPGRADE;
+				//else if (1 == iIdx)
+				//{
+				//	m_eState = CWeaponShopOptionUI::OPTION_BUY;
+				//	m_bFirestMenu = false;
+				//}
+				//else if (2 == iIdx)
+				//	m_eState = CWeaponShopOptionUI::OPTION_SELL;
+				//else if (3 == iIdx)
+				//{
+				//	Set_Active(false);
+				//	m_bFirestMenu = true;
+				//}
+	
+				//Active_SubUI(iter);
+			}
+	
+		}
+		else
+		{
+			iter->Set_Select(false);
+		}
+	
+		++iIdx;
+	}
 }
 
 void CWeaponBuyPopupUI::Reset_Option()
@@ -254,7 +255,10 @@ void CWeaponBuyPopupUI::SetUp_Default()
 void CWeaponBuyPopupUI::Check_ItemOption()
 {
 	if (!m_bIsActive)
+	{
+		m_pFontItemCount->Set_Active(false);
 		return;
+	}
 
 	CWeapon_Slot* pWeaponSlot = m_pInven->Get_SelectedSlot();
 

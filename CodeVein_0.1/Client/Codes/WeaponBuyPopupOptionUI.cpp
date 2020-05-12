@@ -34,7 +34,12 @@ HRESULT CWeaponBuyPopupOptionUI::Ready_GameObject(void * pArg)
 
 	m_bIsActive = false;
 	m_iIndex = 1;
-	
+
+	m_pCollider->Set_Radius(_v3{ 0.5f, 0.07f, 0.1f });
+	m_pCollider->Set_Dynamic(true);
+	m_pCollider->Set_Type(COL_SPHERE);
+	m_pCollider->Set_CenterPos(m_pTransformCom->Get_Pos());
+
 	return NOERROR;
 }
 
@@ -71,6 +76,7 @@ _int CWeaponBuyPopupOptionUI::Update_GameObject(_double TimeDelta)
 	}
 	}
 
+	m_pCollider->Update(m_pTransformCom->Get_Pos());
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	return NO_EVENT;
@@ -169,6 +175,10 @@ HRESULT CWeaponBuyPopupOptionUI::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Rect", L"Com_VIBuffer", (CComponent**)&m_pBufferCom)))
 		return E_FAIL;
 
+	// for.Com_Collider
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+		return E_FAIL;
+
 	return NOERROR;
 }
 
@@ -216,6 +226,7 @@ void CWeaponBuyPopupOptionUI::Free()
 	Safe_Release(m_pShaderCom);
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pRendererCom);
-
+	Safe_Release(m_pCollider);
+	
 	CUI::Free();
 }
