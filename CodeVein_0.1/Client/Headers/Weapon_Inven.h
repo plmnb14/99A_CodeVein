@@ -18,6 +18,10 @@ private:
 public:
 	WPN_PARAM Get_UseWeaponParam(_uint iIndex) { return m_UseWeaponParam[iIndex]; }
 	vector<CWeapon_Slot*>* Get_VecWeaponSlot() { return &m_vecWeaponSlot; }
+
+public:
+	HRESULT Set_WeaponData_FromWeapon();
+
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();
 	virtual HRESULT			Ready_GameObject(void* pArg);

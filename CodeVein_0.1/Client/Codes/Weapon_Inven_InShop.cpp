@@ -44,6 +44,7 @@ void CWeapon_Inven_InShop::Setup_InvenType(INVEN_SHOP_OPTION eOption)
 	}
 	case Client::CWeapon_Inven_InShop::SHOP_WEAPON_SELL:
 	{
+		CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Set_WeaponData_FromWeapon();
 		vector<CWeapon_Slot*>* pVecMyWeapon = CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Get_VecWeaponSlot();
 		for (_int i = 0; i < pVecMyWeapon->size(); i++)
 		{

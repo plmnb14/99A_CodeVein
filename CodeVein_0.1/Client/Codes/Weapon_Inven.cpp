@@ -12,6 +12,23 @@ CWeapon_Inven::CWeapon_Inven(const CWeapon_Inven & rhs)
 {
 }
 
+HRESULT CWeapon_Inven::Set_WeaponData_FromWeapon()
+{
+	CWeapon* pTempWeapon = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
+	if (!pTempWeapon)
+		return E_FAIL;
+	pTempWeapon->AddRef();
+
+	for (_int i = 0; i < WEAPON_DATA::WPN_DATA_End; i++)
+		m_tWeaponParam[i] = pTempWeapon->Get_WeaponParam((WEAPON_DATA)i);
+
+	for (auto& iter : m_vecWeaponSlot)
+		iter->Set_WeaponParam(m_tWeaponParam[iter->Get_WeaponParam().iWeaponType]);
+
+	Safe_Release(pTempWeapon);
+	return S_OK;
+}
+
 HRESULT CWeapon_Inven::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
@@ -225,17 +242,6 @@ void CWeapon_Inven::UnRegist_Weapon(CWeapon_Slot * pWeaponSlot)
 
 HRESULT CWeapon_Inven::SetUp_WeaponData()
 {
-	CWeapon* pTempWeapon = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-	if (!pTempWeapon)
-		return E_FAIL;
-	pTempWeapon->AddRef();
-
-	for (_int i = 0; i < WEAPON_DATA::WPN_DATA_End; i++)
-		m_tWeaponParam[i] = pTempWeapon->Get_WeaponParam((WEAPON_DATA)i);
-
-	Safe_Release(pTempWeapon);
-	return;
-
 	//===========================================================================================
 	// ÇÑ¼Õ°Ë
 	//===========================================================================================
