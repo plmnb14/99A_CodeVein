@@ -211,14 +211,14 @@ protected:
 	virtual void Play_CC();
 	virtual void Play_Dead();
 
-	public:
-		virtual PET_PLUS_TYPE Get_Plus() { return m_ePlusType; }
-		virtual PET_TYPE Get_Type() { return m_eType; }
-		virtual PET_GRADE_TYPE Get_Grade() { return m_eGradeType; }
+public:
+	virtual PET_PLUS_TYPE Get_Plus() { return m_ePlusType; }
+	virtual PET_TYPE Get_Type() { return m_eType; }
+	virtual PET_GRADE_TYPE Get_Grade() { return m_eGradeType; }
 
-		virtual void Set_Plus(PET_PLUS_TYPE _ePlusType) { m_ePlusType = _ePlusType; }
-		virtual void Get_Type(PET_TYPE _eType) { m_eType = _eType; }
-		virtual void Get_Grade(PET_GRADE_TYPE _eGradeType) { m_eGradeType = _eGradeType; }
+	virtual void Set_Plus(PET_PLUS_TYPE _ePlusType) { m_ePlusType = _ePlusType; }
+	virtual void Get_Type(PET_TYPE _eType) { m_eType = _eType; }
+	virtual void Get_Grade(PET_GRADE_TYPE _eGradeType) { m_eGradeType = _eGradeType; }
 
 	//오더에 따른 겟 셋 함수를 여러개 만들예정 또는 이넘값을 이용해서 오더 내용을 변경할 예정
 	PET_MODE_TYPE Get_Pet_Mode() { return m_eNowPetMode; }
