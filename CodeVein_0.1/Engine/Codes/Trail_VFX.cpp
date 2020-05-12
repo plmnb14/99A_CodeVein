@@ -68,7 +68,7 @@ _int CTrail_VFX::Update_GameObject(_double TimeDelta)
 	{
 	case Trail_Normal:
 	{
-		m_pRenderer->Add_RenderList(RENDER_ALPHA, this);
+		m_pRenderer->Add_RenderList(RENDER_ALPHA_TRAIL, this);
 		break;
 	}
 	case Trail_Distortion:
@@ -135,6 +135,37 @@ HRESULT CTrail_VFX::Render_GameObject_SetShader(CShader * pShader)
 	Shader_Init(pShader, m_iTrailIdx);
 
 	pShader->Begin_Pass(iPass);
+
+	m_pGraphic_Dev->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, m_dwTricnt, m_pVtx, sizeof(VTXTEX));
+
+	pShader->End_Pass();
+
+	m_vecStart.clear();
+	m_vecStart.shrink_to_fit();
+
+	m_vecEnd.clear();
+	m_vecStart.shrink_to_fit();
+
+	return S_OK;
+}
+
+HRESULT CTrail_VFX::Render_GameObject_Instancing_SetPass(CShader * pShader)
+{
+	m_pGraphic_Dev->SetRenderState(D3DRS_LIGHTING, FALSE);
+	m_pGraphic_Dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+
+	m_pGraphic_Dev->SetFVF(m_dwVtxFVF);
+
+	_int iPass = (m_eType == Trail_Normal ? 5 : 1);
+
+	if (m_bUseMask)
+		iPass = 6;
+
+	Shader_Init(pShader, m_iTrailIdx);
+
+	pShader->Begin_Pass(iPass);
+
+	pShader->Commit_Changes();
 
 	m_pGraphic_Dev->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, m_dwTricnt, m_pVtx, sizeof(VTXTEX));
 

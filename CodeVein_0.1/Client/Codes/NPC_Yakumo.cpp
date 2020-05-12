@@ -21,8 +21,11 @@ HRESULT CNPC_Yakumo::Ready_GameObject(void * pArg)
 	if (FAILED(Add_Component(pArg)))
 		return E_FAIL;
 
-	m_pTransformCom->Set_Pos(_v3(1.f, 0.f, 1.f));
-	m_pTransformCom->Set_Scale(_v3(1.1f, 1.1f, 1.1f));
+	NPC_INFO pInfo = *(NPC_INFO*)pArg;
+
+	m_pTransformCom->Set_Pos(pInfo.vPos);
+	m_pTransformCom->Set_Scale(V3_ONE);
+	m_pTransformCom->Set_Angle(AXIS_Y, pInfo.fYAngle);
 	
 	m_pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 	m_eState = Idle;
@@ -32,6 +35,11 @@ HRESULT CNPC_Yakumo::Ready_GameObject(void * pArg)
 	Ready_BoneMatrix();
 	Ready_Collider();
 
+	m_pBattleAgentCom->Set_OriginRimAlpha(0.25f);
+	m_pBattleAgentCom->Set_OriginRimValue(7.f);
+	m_pBattleAgentCom->Set_RimAlpha(0.25f);
+	m_pBattleAgentCom->Set_RimValue(7.f);
+
 	return S_OK;
 }
 
@@ -40,10 +48,20 @@ _int CNPC_Yakumo::Update_GameObject(_double TimeDelta)
 	if (false == m_bEnable)
 		return NO_EVENT;
 
+	//====================================================================================================
+	// 컬링
+	//====================================================================================================
+	m_bInFrustum = m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f);
+	//====================================================================================================
+
+
 	CGameObject::Update_GameObject(TimeDelta);
 
-	Check_Dist();
-	Check_Anim();
+	//========================
+	// 터진다해서 꺼둠
+	//========================
+	//Check_Dist();
+	//Check_Anim();
 
 	m_pMeshCom->SetUp_Animation(m_eState);
 
@@ -56,26 +74,26 @@ _int CNPC_Yakumo::Late_Update_GameObject(_double TimeDelta)
 		return NO_EVENT;
 
 	IF_NULL_VALUE_RETURN(m_pRendererCom, E_FAIL);
-
+	
 	if (!m_bDissolve)
 	{
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
 			return E_FAIL;
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
-			return E_FAIL;
+		//if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
+		//	return E_FAIL;
 	}
-
+	
 	else
 	{
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
 			return E_FAIL;
 	}
-
-	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
-	{
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-			return E_FAIL;
-	}
+	
+	//if(m_bInFrustum)
+	//{
+	//	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+	//		return E_FAIL;
+	//}
 
 	return NO_EVENT;
 }
@@ -87,42 +105,90 @@ HRESULT CNPC_Yakumo::Render_GameObject()
 
 	m_pMeshCom->Play_Animation(DELTA_60 * m_dAniPlayMul);
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
-
-	m_pShaderCom->Begin_Shader();
-
-	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
-
-	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+	if (m_bInFrustum)
 	{
-		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+		if (FAILED(SetUp_ConstantTable(m_pShaderCom)))
+			return E_FAIL;
 
-		m_pMeshCom->Update_SkinnedMesh(i);
+		m_pShaderCom->Begin_Shader();
 
-		for (_uint j = 0; j < iNumSubSet; ++j)
+		_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+
+		for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 		{
-			m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+			_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
 
-			if (m_bDissolve)
-				m_iPass = 3;
+			m_pMeshCom->Update_SkinnedMesh(i);
 
-			m_pShaderCom->Begin_Pass(m_iPass);
+			for (_uint j = 0; j < iNumSubSet; ++j)
+			{
+				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
 
-			m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
+				if (m_bDissolve)
+					m_iPass = 3;
 
-			m_pShaderCom->Commit_Changes();
+				m_pShaderCom->Begin_Pass(m_iPass);
 
-			m_pMeshCom->Render_Mesh(i, j);
+				m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
 
-			m_pShaderCom->End_Pass();
+				m_pShaderCom->Commit_Changes();
+
+				m_pMeshCom->Render_Mesh(i, j);
+
+				m_pShaderCom->End_Pass();
+			}
 		}
+
+		m_pShaderCom->End_Shader();
 	}
 
-	m_pShaderCom->End_Shader();
+	Update_Collider();
+
+	return S_OK;
+}
+
+HRESULT CNPC_Yakumo::Render_GameObject_Instancing_SetPass(CShader * pShader)
+{
+	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
+	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
+
+	m_pMeshCom->Play_Animation(DELTA_60 * m_dAniPlayMul);
+
+	if (m_bInFrustum)
+	{
+		if (FAILED(SetUp_ConstantTable(pShader)))
+			return E_FAIL;
+
+		_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+
+		for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+		{
+			_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+
+			m_pMeshCom->Update_SkinnedMesh(i);
+
+			for (_uint j = 0; j < iNumSubSet; ++j)
+			{
+				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+
+				if (m_bDissolve)
+					m_iPass = 3;
+
+				pShader->Begin_Pass(m_iPass);
+
+				pShader->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
+
+				pShader->Commit_Changes();
+
+				m_pMeshCom->Render_Mesh(i, j);
+
+				pShader->End_Pass();
+			}
+		}
+
+	}
 
 	Update_Collider();
-	Render_Collider();
 
 	return S_OK;
 }
@@ -195,7 +261,6 @@ HRESULT CNPC_Yakumo::Render_GameObject_SetPass(CShader * pShader, _int iPass, _b
 			_int tmpPass = m_pMeshCom->Get_MaterialPass(i, j);
 
 			pShader->Begin_Pass(iPass);
-			pShader->Commit_Changes();
 
 			pShader->Commit_Changes();
 
@@ -212,28 +277,6 @@ HRESULT CNPC_Yakumo::Render_GameObject_SetPass(CShader * pShader, _int iPass, _b
 
 void CNPC_Yakumo::Update_Collider()
 {
-	for (auto& vector_iter : m_vecAttackCol)
-	{
-		_mat matTemp = *m_matBone[Bone_Head] * m_pTransformCom->Get_WorldMat();
-
-		_v3 ColPos = _v3(matTemp._41, matTemp._42, matTemp._43);
-
-		vector_iter->Update(ColPos);
-	}
-
-	_ulong matrixIdx = 0;
-
-	for (auto& iter : m_vecPhysicCol)
-	{
-		_mat tmpMat = *m_matBone[matrixIdx] * m_pTransformCom->Get_WorldMat();
-
-		_v3 ColPos = _v3(tmpMat._41, tmpMat._42, tmpMat._43);
-
-		iter->Update(ColPos);
-
-		++matrixIdx;
-	}
-
 	m_pColliderCom->Update(m_pTransformCom->Get_Pos() + _v3(0.f, m_pColliderCom->Get_Radius().y, 0.f));
 
 	return;
@@ -336,30 +379,21 @@ HRESULT CNPC_Yakumo::Add_Component(void* pArg)
 	return S_OK;
 }
 
-HRESULT CNPC_Yakumo::SetUp_ConstantTable()
+HRESULT CNPC_Yakumo::SetUp_ConstantTable(CShader * pShader)
 {
-	IF_NULL_VALUE_RETURN(m_pShaderCom, E_FAIL);
-
-	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
 
 	//=============================================================================================
 	// 기본 메트릭스
 	//=============================================================================================
 
-	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
 
 	//=============================================================================================
 	// 디졸브용 상수
 	//=============================================================================================
-	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShaderCom)))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	//=============================================================================================
@@ -373,19 +407,19 @@ HRESULT CNPC_Yakumo::SetUp_ConstantTable()
 	_float	fID_G = 0.5f;	// ID_G : G채널 ID 값 , 1이 최대
 	_float	fID_B = 0.2f;	// ID_B	: B채널 ID 값 , 1이 최대
 
-	if (FAILED(m_pShaderCom->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fID_R_Power", &fID_R, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fID_R_Power", &fID_R, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fID_G_Power", &fID_G, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fID_G_Power", &fID_G, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
 		return E_FAIL;
 
 	//=============================================================================================
@@ -495,6 +529,14 @@ CGameObject* CNPC_Yakumo::Clone_GameObject(void * pArg)
 
 void CNPC_Yakumo::Free()
 {
+	Safe_Release(m_pTransformCom);
+	Safe_Release(m_pRendererCom);
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pMeshCom);
+	Safe_Release(m_pColliderCom);
+	Safe_Release(m_pBattleAgentCom);
+	Safe_Release(m_pOptimizationCom);
+
 	CGameObject::Free();
 
 	return;

@@ -150,7 +150,7 @@ HRESULT CScene_Title::Render_Scene()
 HRESULT CScene_Title::Ready_Prototype_GameObject()
 {
 	//디졸브 전역 텍스쳐
-	g_pDissolveTexture = CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Effect/Noise/Noise_13.dds");
+	//g_pDissolveTexture = CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Effect/Noise/Noise_13.dds");
 
 	CCameraMgr::Get_Instance()->Reserve_ContainerSize(2);
 	CCameraMgr::Get_Instance()->Ready_Camera(m_pGraphic_Device, DYNAMIC_CAM, L"Tool_FreeCam", TOOL_VIEW, DEFAULT_MODE);

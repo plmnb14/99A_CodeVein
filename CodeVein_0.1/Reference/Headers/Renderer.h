@@ -66,12 +66,15 @@ private:
 	CShader*					m_pShader_Effect = nullptr;
 	CShader*					m_pShader_Blur = nullptr;
 	CShader*					m_pShader_SSAO = nullptr;
+	CShader*					m_pShader_RenderMesh = nullptr;
+	CShader*					m_pShader_Trail = nullptr;
 
 	CBuffer_ViewPort*			m_pViewPortBuffer = nullptr;
 	CTexture*					m_pSSAOTexture = nullptr;
 	CTexture*					m_pGradingTexture = nullptr;
 	CTexture*					m_pGradingTextureTest = nullptr;
-	
+	CTexture*					m_pDissolveTexture = nullptr;
+
 public:
 	//====================
 	// 임시 타겟 변수

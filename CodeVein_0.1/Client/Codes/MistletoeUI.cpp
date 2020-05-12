@@ -53,7 +53,7 @@ HRESULT CMistletoeUI::Ready_GameObject(void * pArg)
 _int CMistletoeUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
-	m_pRendererCom->Add_RenderList(RENDER_ALPHA, this);
+	m_pRendererCom->Add_RenderList(RENDER_ALPHA_UI, this);
 
 	m_pTarget = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 	if (nullptr == m_pTarget)
