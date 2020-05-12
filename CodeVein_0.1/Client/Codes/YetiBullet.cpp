@@ -45,11 +45,12 @@ HRESULT CYetiBullet::Ready_GameObject(void * pArg)
 	m_dCurTime = 0;
 	m_bDead = false;
 	m_bEffect = true;
-
-	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Bullet_Body", nullptr));
+	
+	m_pBulletBody = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Bullet_Body");
 	m_pBulletBody->Set_Desc(V3_NULL, m_pTransformCom);
 	m_pBulletBody->Reset_Init();
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
+	// static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Bullet_Body", nullptr));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
 
 	//lstrcpy(m_pEffect_Tag0, L"Bullet_Body");
 	lstrcpy(m_pEffect_Tag1, L"Bullet_Body_Aura");
@@ -138,7 +139,7 @@ void CYetiBullet::Update_Trails(_double TimeDelta)
 	{
 		m_pTrailEffect->Set_ParentTransform(&matWorld);
 		m_pTrailEffect->Ready_Info(vBegin + vDir * -0.05f, vBegin + vDir * 0.05f);
-		// m_pTrailEffect->Update_GameObject(TimeDelta);
+		m_pTrailEffect->Update_GameObject(TimeDelta);
 	}
 
 	return;
@@ -249,7 +250,7 @@ HRESULT CYetiBullet::Ready_Collider()
 
 	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 
-	_float fRadius = 0.3f;
+	_float fRadius = 0.4f;
 
 	pCollider->Set_Radius(_v3(fRadius, fRadius, fRadius));
 	pCollider->Set_Dynamic(true);
@@ -290,7 +291,11 @@ CGameObject* CYetiBullet::Clone_GameObject(void * pArg)
 
 void CYetiBullet::Free()
 {
-	//Safe_Release(m_pTrailEffect);
+	IF_NOT_NULL(m_pBulletBody)
+		m_pBulletBody->Set_Dead();
+
+	IF_NOT_NULL(m_pTrailEffect)
+		m_pTrailEffect->Set_Dead();
 
 	CMonster::Free();
 

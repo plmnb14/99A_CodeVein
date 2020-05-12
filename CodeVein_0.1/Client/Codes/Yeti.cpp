@@ -408,7 +408,9 @@ void CYeti::Check_AniEvent()
 
 			m_bCanChooseAtkType = false;
 
-			switch (CALC::Random_Num(MONSTER_ATK_TYPE::ATK_NORMAL, MONSTER_ATK_TYPE::ATK_COMBO))
+			m_iRandom = CALC::Random_Num(MONSTER_ATK_TYPE::ATK_NORMAL, MONSTER_ATK_TYPE::ATK_COMBO);
+
+			switch (m_iRandom)
 			{
 			case MONSTER_ATK_TYPE::ATK_NORMAL:
 				m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_NORMAL;
@@ -554,6 +556,9 @@ void CYeti::Play_RandomAtkNormal()
 		break;
 	case ATK_NORMAL_TYPE::NORMAL_R_UPPER_ACCELDOWN:
 		m_eState = YETI_ANI::Atk_Sp02;
+		break;
+	case ATK_NORMAL_TYPE::NORMAL_SLOWL_R:
+		m_eState = YETI_ANI::Atk_Sp01;
 		break;
 	case ATK_NORMAL_TYPE::NORMAL_HOULING:
 		//m_eState = YETI_ANI::Atk_Field;
@@ -1298,7 +1303,7 @@ void CYeti::Play_IceThrowing()
 				memcpy(&vLook, &matTemp._21, sizeof(_v3)); //»ÀÀÇ ·è
 				vBirth += (vLook * fLength); //»ý¼ºÀ§Ä¡ = »ý¼ºÀ§Ä¡ +(·è*±æÀÌ)
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_HunterBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_YetiBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
 			}
 		}
 
@@ -2210,10 +2215,13 @@ void CYeti::Play_Idle()
 		m_bIsIdle = false;
 
 		if (true == m_tObjParam.bCanAttack)
+		{
 			m_eState = YETI_ANI::NF_Threat_Loop;
+			if (nullptr != m_pAggroTarget)
+				Function_RotateBody(m_pAggroTarget);
+		}
 		else
 		{
-
 			if (nullptr == m_pAggroTarget)
 			{
 				Function_Find_Target();
@@ -2223,12 +2231,11 @@ void CYeti::Play_Idle()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
+					m_bIsIdle = true;
+
 					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
-
-					if (false == m_bIsIdle)
-						m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
-
-					Play_Idle();
+					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
+					m_eState = YETI_ANI::Idle;
 
 					return;
 				}
@@ -2545,7 +2552,7 @@ HRESULT CYeti::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"BattleAgent", L"Com_BattleAgent", (CComponent**)&m_pBattleAgentCom)))
 		return E_FAIL;
 
-	m_pColliderCom->Set_Radius(V3_ONE);
+	m_pColliderCom->Set_Radius(_v3{1.2f, 1.2f, 1.2f});
 	m_pColliderCom->Set_Dynamic(true);
 	m_pColliderCom->Set_Type(COL_SPHERE);
 	m_pColliderCom->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pColliderCom->Get_Radius().y , 0.f });
@@ -2651,7 +2658,7 @@ HRESULT CYeti::Ready_Status(void * pArg)
 	}
 
 	m_tObjParam.fDamage = -100.f;
-	m_tObjParam.fHp_Max = 300.f;
+	m_tObjParam.fHp_Max = 1600.f;
 	m_tObjParam.fArmor_Max = 10.f;
 
 	m_fRecognitionRange = 15.f;
@@ -2701,7 +2708,7 @@ HRESULT CYeti::Ready_Status(void * pArg)
 HRESULT CYeti::Ready_Collider()
 {
 	m_vecPhysicCol.reserve(2);
-	m_vecAttackCol.reserve(5);
+	m_vecAttackCol.reserve(4);
 	_float fRadius;
 	CCollider* pCollider = nullptr;
 
@@ -2717,7 +2724,7 @@ HRESULT CYeti::Ready_Collider()
 	m_vecPhysicCol.push_back(pCollider);
 
 	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
-	fRadius = 1.2f;
+	fRadius = 1.4f;
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
 	pCollider->Set_Type(COL_SPHERE);

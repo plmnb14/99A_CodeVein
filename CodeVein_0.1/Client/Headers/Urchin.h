@@ -52,6 +52,7 @@ private:
 	void Play_RollingRush();
 
 	void Play_Idle();
+	void Play_Move();
 	void Play_CC();
 	void Play_Hit();
 	void Play_Dead();
@@ -62,6 +63,7 @@ private:
 	HRESULT Ready_Status(void* pArg);
 	HRESULT Ready_Collider();
 	HRESULT Ready_BoneMatrix();
+
 public:
 	static CUrchin* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
 	virtual CGameObject* Clone_GameObject(void* pArg);

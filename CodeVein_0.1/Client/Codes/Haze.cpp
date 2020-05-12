@@ -39,10 +39,9 @@ HRESULT CHaze::Ready_GameObject(void* pArg)
 	m_fDelay = tInfo.fDelay;
 	m_fHazeValue = tInfo.fHazeValue;
 
-	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Haze_Body", nullptr));
-	m_pBulletBody->Set_Desc(_v3(0, 0, 0), m_pTransformCom);
+	m_pBulletBody = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Haze_Body");
+	m_pBulletBody->Set_Desc(V3_NULL, m_pTransformCom);
 	m_pBulletBody->Reset_Init();
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
 
 	m_pTrailEffect = g_pManagement->Create_Trail();
 	m_pTrailEffect->Set_TrailIdx(4);
@@ -216,7 +215,15 @@ CGameObject * CHaze::Clone_GameObject(void * pArg)
 
 void CHaze::Free()
 {
-	//Safe_Release(m_pTrailEffect);
+	IF_NOT_NULL(m_pTrailEffect)
+		m_pTrailEffect->Set_Dead();
+
+	IF_NOT_NULL(m_pBulletBody)
+		m_pBulletBody->Set_Dead();
+
+	IF_NOT_NULL(m_pTargetTrans)
+		m_pTargetTrans = nullptr;
+
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pRendererCom);

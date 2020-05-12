@@ -55,29 +55,25 @@ HRESULT CHunterBullet::Ready_GameObject(void * pArg)
 	m_bDead = false;
 	m_bEffect = true;
 
-	m_pBulletBody_0 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Hunter_Bullet_Body_Lightning_Hor_0", nullptr));
-	m_pBulletBody_0->Set_Desc(_v3(0, 0, 0), nullptr);
+	m_pBulletBody_0 = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Hunter_Bullet_Body_Lightning_Hor_0");
+	m_pBulletBody_0->Set_Desc(V3_NULL, nullptr);
 	m_pBulletBody_0->Set_ParentObject(this);
 	m_pBulletBody_0->Reset_Init();
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody_0, SCENE_STAGE, L"Layer_Effect", nullptr);
 
-	m_pBulletBody_1 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Hunter_Bullet_Body_Lightning_Ver_0", nullptr));
-	m_pBulletBody_1->Set_Desc(_v3(0, 0, 0), nullptr);
+	m_pBulletBody_1 = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Hunter_Bullet_Body_Lightning_Ver_0");
+	m_pBulletBody_1->Set_Desc(V3_NULL, nullptr);
 	m_pBulletBody_1->Set_ParentObject(this);
 	m_pBulletBody_1->Reset_Init();
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody_1, SCENE_STAGE, L"Layer_Effect", nullptr);
-	
-	m_pBulletBody_2 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Hunter_Bullet_Body_LinePoint_Hor", nullptr));
-	m_pBulletBody_2->Set_Desc(_v3(0, 0, 0), nullptr);
+
+	m_pBulletBody_2 = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Hunter_Bullet_Body_LinePoint_Hor");
+	m_pBulletBody_2->Set_Desc(V3_NULL, nullptr);
 	m_pBulletBody_2->Set_ParentObject(this);
 	m_pBulletBody_2->Reset_Init();
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody_2, SCENE_STAGE, L"Layer_Effect", nullptr);
 
-	m_pBulletBody_3 = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Hunter_Bullet_Body_LinePoint_Ver", nullptr));
-	m_pBulletBody_3->Set_Desc(_v3(0, 0, 0), nullptr);
+	m_pBulletBody_3 = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Hunter_Bullet_Body_LinePoint_Ver");
+	m_pBulletBody_3->Set_Desc(V3_NULL, nullptr);
 	m_pBulletBody_3->Set_ParentObject(this);
 	m_pBulletBody_3->Reset_Init();
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody_3, SCENE_STAGE, L"Layer_Effect", nullptr);
 
 	m_pTrailEffect = g_pManagement->Create_Trail();
 	m_pTrailEffect->Set_TrailIdx(11);
@@ -314,6 +310,24 @@ CGameObject* CHunterBullet::Clone_GameObject(void * pArg)
 
 void CHunterBullet::Free()
 {
+	IF_NOT_NULL(m_pBulletBody_0)
+		m_pBulletBody_0->Set_Dead();
+
+	IF_NOT_NULL(m_pBulletBody_1)
+		m_pBulletBody_1->Set_Dead();
+
+	IF_NOT_NULL(m_pBulletBody_2)
+		m_pBulletBody_2->Set_Dead();
+
+	IF_NOT_NULL(m_pBulletBody_3)
+		m_pBulletBody_3->Set_Dead();
+
+	IF_NOT_NULL(m_pTrailEffect)
+		m_pTrailEffect->Set_Dead();
+
+	IF_NOT_NULL(m_pTrailEffect)
+		m_pTrailEffect->Set_Dead();
+
 	CMonster::Free();
 
 	return;

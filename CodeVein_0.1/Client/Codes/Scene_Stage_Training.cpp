@@ -101,6 +101,9 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Mistletoe")))
 		return E_FAIL;
 
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_NPC")))
+		return E_FAIL;
+
 	CGameObject* pInstance = nullptr;
 
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossMassageUI", SCENE_STAGE, L"Layer_BossMassageUI")))
@@ -112,13 +115,17 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Pickup_Item", SCENE_STAGE, L"Layer_PickUPUI")))
 	//	return E_FAIL;
 
-	// ±èÀç±¸
+	//// ±èÀç±¸
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague", nullptr);
 	///*TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(5.f, 0.f, 5.f));*/
 	//TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
 	//TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
 	//TARGET_TO_NAV(pInstance)->Check_OnNavMesh(_v3(0.f, 0.f, 0.f));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
+
+	// ¾ßÄí¸ð
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_NPC_Yakumo", nullptr);
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_NPC", nullptr);
 
 	//// ÅäÅÛ
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon", 

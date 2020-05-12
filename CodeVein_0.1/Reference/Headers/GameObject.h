@@ -22,6 +22,7 @@ public:
 	virtual HRESULT LateInit_GameObject();
 	virtual HRESULT Render_GameObject();
 	virtual HRESULT Render_GameObject_SetShader(CShader* pShader);
+	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader);
 	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass , _bool _bIsForMotionBlur = false);
 
 public:
@@ -168,6 +169,9 @@ protected:
 	_int    m_iTempPass = 0;
 protected:
 	_ulong			m_dwLayerIdx = 0;			// 생성될 레이어 번호
+
+protected:
+	_bool			m_bInFrustum = false;	// 절두체 내부임?
 
 protected:
 	map<const _tchar*, CComponent*>			m_pmapComponents;

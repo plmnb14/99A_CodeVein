@@ -67,12 +67,11 @@ HRESULT CEffect_LongSpark::Ready_GameObject(void* pArg)
 	{
 		wsprintf(szBuff, L"Hit_LongSpark_Distortion_%d", 0);
 	}
-	
-	m_pBulletBody = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(szBuff, nullptr));
-	m_pBulletBody->Set_Desc(_v3(0, 0, 0), nullptr);
+
+	m_pBulletBody = CParticleMgr::Get_Instance()->Create_EffectReturn(szBuff);
+	m_pBulletBody->Set_Desc(V3_NULL, nullptr);
 	m_pBulletBody->Set_ParentObject(this);
 	m_pBulletBody->Reset_Init();
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBulletBody, SCENE_STAGE, L"Layer_Effect", nullptr);
 
 	return NOERROR;
 }
@@ -233,6 +232,9 @@ CGameObject * CEffect_LongSpark::Clone_GameObject(void * pArg)
 
 void CEffect_LongSpark::Free()
 {
+	IF_NOT_NULL(m_pBulletBody)
+		m_pBulletBody->Set_Dead();
+
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pRendererCom);

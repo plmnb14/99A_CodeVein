@@ -27,6 +27,8 @@ HRESULT CSky::Ready_GameObject(void * pArg)
 	
 	m_pTransformCom->Set_Pos(_v3(0.f, -20.f, 0.f));
 	m_pTransformCom->Set_Scale(_v3(0.3f, 0.3f, 0.3f));
+	
+	lstrcpy(m_szName, L"Mesh_Sky_0");
 
 	return NOERROR;
 }
@@ -34,7 +36,9 @@ HRESULT CSky::Ready_GameObject(void * pArg)
 _int CSky::Update_GameObject(_double TimeDelta)
 {
 	CGameObject::Update_GameObject(TimeDelta);
-	return _int();
+	Check_Scene();
+
+	return NOERROR;
 }
 
 _int CSky::Late_Update_GameObject(_double TimeDelta)
@@ -79,6 +83,74 @@ HRESULT CSky::Render_GameObject()
 	return NOERROR;
 }
 
+void CSky::Check_Scene()
+{
+	if (g_eSceneID_Cur != m_eOldSceneID)
+	{
+		m_eOldSceneID = (SCENEID)g_eSceneID_Cur;
+
+		switch (m_eOldSceneID)
+		{
+		case SCENE_STATIC:
+			break;
+		case SCENE_LOGO:
+			break;
+		case SCENE_TITLE:
+			break;
+		case SCENE_STAGE:
+			break;
+		case SCENE_STAGE_BASE:
+			Change_Mesh(L"Mesh_Sky_0");
+			break;
+		case SCENE_STAGE_TRAINING:
+			break;
+		case SCENE_STAGE_01:
+			Change_Mesh(L"Mesh_Sky_0");
+			break;
+		case SCENE_STAGE_02:
+			Change_Mesh(L"Mesh_Sky_1");
+			break;
+		case SCENE_STAGE_03:
+			Change_Mesh(L"Mesh_Sky_0");
+			break;
+		case SCENE_STAGE_04:
+			Change_Mesh(L"Mesh_Sky_2");
+			break;
+		case SCENE_MORTAL:
+			break;
+		case SCENE_PREPARE_ALL:
+			break;
+		case SCENE_END:
+			break;
+		default:
+			break;
+		}
+	}
+}
+
+void CSky::Change_Mesh(const _tchar* _MeshName)
+{
+	// 이름 비교해서 같으면 Return
+	if (!lstrcmp(m_szName, _MeshName))
+		return;
+
+	// 다르다면 이름 갱신하고,
+	lstrcpy(m_szName, _MeshName);
+
+	// 컴포넌트에 있는 매쉬 찾아서
+	auto& iter = m_pmapComponents.find(L"Com_StaticMesh");
+
+	// 둘 다 해제
+	Safe_Release(m_pMeshCom);
+	Safe_Release(iter->second);
+
+	// Release 한 컴포넌트에 새로이 Clone 받음.
+	iter->second = m_pMeshCom = static_cast<CMesh_Static*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, m_szName));
+	Safe_AddRef(iter->second);
+
+	return;
+}
+
 HRESULT CSky::Add_Component()
 {
 	// For.Com_Transform
@@ -94,7 +166,7 @@ HRESULT CSky::Add_Component()
 		return E_FAIL;
 	
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Sky_1", L"Static_Mesh", (CComponent**)&m_pMeshCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Sky_0", L"Static_Mesh", (CComponent**)&m_pMeshCom)))
 		return E_FAIL;
 
 	//// For.Com_Buffer
