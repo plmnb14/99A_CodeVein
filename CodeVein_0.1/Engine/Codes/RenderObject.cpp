@@ -35,16 +35,19 @@ _int CRenderObject::Update_GameObject(_double _TimeDelta)
 	if (false == m_bEnable)
 		return NO_EVENT;
 
-	if (false == m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), 10.f))
-		return NO_EVENT;
-
 	if(nullptr == m_pMesh_Static)
 		return NO_EVENT;
+
+	if (nullptr != m_pOptimization)
+		m_bInFrustum = m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), 10.f);
+	else
+		cout << "옵티마이즈 없어요!!!!!" << endl;
 
 	CGameObject::LateInit_GameObject();
 	CGameObject::Update_GameObject(_TimeDelta);
 
-	Update_Collider();
+	if (m_bOnTool)
+		Update_Collider();
 
 	return S_OK;
 }
@@ -54,18 +57,10 @@ _int CRenderObject::Late_Update_GameObject(_double TimeDelta)
 	if (false == m_bEnable)
 		return NO_EVENT;
 
-	if (true == m_bOnTool)
+	m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this);
+
+	if (m_bInFrustum)
 	{
-		Update_Collider();
-	}
-
-	else if (false == m_bOnTool)
-	{
-		m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this);
-
-		if (false == m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), 10.f))
-			return NO_EVENT;
-
 		m_pRenderer->Add_RenderList(RENDER_NONALPHA, this);
 		m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this);
 	}
@@ -78,7 +73,13 @@ HRESULT CRenderObject::Render_GameObject()
 	if (false == m_bEnable)
 		return NO_EVENT;
 
-	Init_Shader();
+	Init_Shader(m_pShader);
+
+	_mat matveiwView = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	_mat matPro = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+
+	m_pShader->Set_Value("g_matView", &matveiwView, sizeof(_mat));
+	m_pShader->Set_Value("g_matProj", &matPro, sizeof(_mat));
 
 	m_pShader->Begin_Shader();
 
@@ -106,6 +107,33 @@ HRESULT CRenderObject::Render_GameObject()
 
 	if (m_bIsSelected)
 		CGizmo::Get_Instance()->Draw_XYZ(m_pTransform->Get_Pos(), m_pTransform->Get_Axis(AXIS_Z), m_pTransform->Get_Axis(AXIS_X));
+
+	return S_OK;
+}
+
+HRESULT CRenderObject::Render_GameObject_Instancing_SetPass(CShader * pShader)
+{
+	if (false == m_bEnable)
+		return NO_EVENT;
+
+	Init_Shader(pShader);
+
+	_ulong dwNumSubSet = m_pMesh_Static->Get_NumMaterials();
+
+	for (_ulong i = 0; i < dwNumSubSet; ++i)
+	{
+		m_iPass = m_pMesh_Static->Get_MaterialPass(i);
+
+		pShader->Begin_Pass(m_iPass);
+
+		pShader->Set_StaticTexture_Auto(m_pMesh_Static, i);
+
+		pShader->Commit_Changes();
+
+		m_pMesh_Static->Render_Mesh(i);
+
+		pShader->End_Pass();
+	}
 
 	return S_OK;
 }
@@ -366,17 +394,13 @@ HRESULT CRenderObject::LateInit_GameObject()
 	return S_OK;
 }
 
-void CRenderObject::Init_Shader()
+void CRenderObject::Init_Shader(CShader* pShader)
 {
 	_mat		matWorld, matView, matProj;
 
 	matWorld = m_pTransform->Get_WorldMat();
-	m_pGraphic_Dev->GetTransform(D3DTS_VIEW, &matView);
-	m_pGraphic_Dev->GetTransform(D3DTS_PROJECTION, &matProj);
 
-	m_pShader->Set_Value("g_matWorld", &matWorld, sizeof(_mat));
-	m_pShader->Set_Value("g_matView", &matView, sizeof(_mat));
-	m_pShader->Set_Value("g_matProj", &matProj, sizeof(_mat));
+	pShader->Set_Value("g_matWorld", &matWorld, sizeof(_mat));
 
 	//=============================================================================================
 	// 쉐이더 재질정보 수치 입력
@@ -397,21 +421,21 @@ void CRenderObject::Init_Shader()
 		fRoughnessPower = 0.85f;
 	}
 
-	if (FAILED(m_pShader->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
 		return;
-	if (FAILED(m_pShader->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
 		return;
-	if (FAILED(m_pShader->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
 		return;
-	if (FAILED(m_pShader->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
 		return;
-	if (FAILED(m_pShader->Set_Value("g_fID_R_Power", &fID_R, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fID_R_Power", &fID_R, sizeof(_float))))
 		return;
-	if (FAILED(m_pShader->Set_Value("g_fID_G_Power", &fID_G, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fID_G_Power", &fID_G, sizeof(_float))))
 		return;
-	if (FAILED(m_pShader->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
 		return;
-	if (FAILED(m_pShader->Set_Value("g_fRimAlpha", &fRimAlpha, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fRimAlpha", &fRimAlpha, sizeof(_float))))
 		return;
 	//=============================================================================================
 }

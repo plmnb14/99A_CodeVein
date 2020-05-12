@@ -64,6 +64,16 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 	if (false == m_bEnable)
 		return NO_EVENT;
 
+	if (g_pInput_Device->Key_Down(DIK_Y))
+	{
+		cout << "===================================================" << endl;
+		cout << m_pTransform->Get_Pos().x << endl;
+		cout << m_pTransform->Get_Pos().y << endl;
+		cout << m_pTransform->Get_Pos().z << endl;
+		cout << "===================================================" << endl;
+
+	}
+
 	CGameObject::Update_GameObject(TimeDelta);
 
 	KeyInput();
@@ -158,7 +168,16 @@ HRESULT CPlayer::Render_GameObject()
 	if (m_tObjParam.bInvisible)
 		return S_OK;
 
-	if (FAILED(SetUp_ConstantTable()))
+	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShader)))
+		return E_FAIL;
+
+	_mat matveiwView = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat matPro = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+
+	m_pShader->Set_Value("g_matView", &matveiwView, sizeof(_mat));
+	m_pShader->Set_Value("g_matProj", &matPro, sizeof(_mat));
+
+	if (FAILED(SetUp_ConstantTable(m_pShader)))
 		return E_FAIL;
 
 	m_pShader->Begin_Shader();
@@ -202,6 +221,76 @@ HRESULT CPlayer::Render_GameObject()
 	}
 
 	m_pShader->End_Shader();
+
+	Draw_Collider();
+
+	IF_NOT_NULL(m_pNavMesh)
+	{
+		//if (true == m_bEnable)
+		//	m_pNavMesh->Render_NaviMesh();
+	}
+
+	return NOERROR;
+}
+
+HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
+{
+	if (false == m_bEnable)
+		return S_OK;
+
+	if (nullptr == pShader ||
+		nullptr == m_pDynamicMesh)
+		return E_FAIL;
+
+	m_pDynamicMesh->Play_Animation_Lower(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply);
+	m_pDynamicMesh->Play_Animation_Upper(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply);
+	m_pDynamicMesh->Play_Animation_RightArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply, false);
+	m_pDynamicMesh->Play_Animation_LeftArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply);
+
+	if (m_tObjParam.bInvisible)
+		return S_OK;
+
+	if (FAILED(SetUp_ConstantTable(pShader)))
+		return E_FAIL;
+
+
+	_uint iNumMeshContainer = _uint(m_pDynamicMesh->Get_NumMeshContainer());
+	// 메쉬 컨테이너는 3개
+
+	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+	{
+		_uint iNumSubSet = (_uint)m_pDynamicMesh->Get_NumMaterials(i);
+		// 서브셋은 5개
+
+		// 메시를 뼈에 붙인다.
+		m_pDynamicMesh->Update_SkinnedMesh(i);
+
+		for (_uint j = 0; j < iNumSubSet; ++j)
+		{
+			m_iPass = m_pDynamicMesh->Get_MaterialPass(i, j);
+
+			if (m_bDissolve)
+				m_iPass = 3;
+
+			pShader->Begin_Pass(m_iPass);
+
+			pShader->Set_DynamicTexture_Auto(m_pDynamicMesh, i, j);
+
+			if (13 == m_iPass)
+			{
+				_float fSpec = 0.1f;
+
+				if (FAILED(pShader->Set_Value("g_fSpecularPower", &fSpec, sizeof(_float))))
+					return E_FAIL;
+			}
+
+			pShader->Commit_Changes();
+
+			m_pDynamicMesh->Render_Mesh(i, j);
+
+			pShader->End_Pass();
+		}
+	}
 
 	Draw_Collider();
 
@@ -10736,31 +10825,22 @@ HRESULT CPlayer::SetUp_Default()
 	return S_OK;
 }
 
-HRESULT CPlayer::SetUp_ConstantTable()
+HRESULT CPlayer::SetUp_ConstantTable(CShader* pShader)
 {
-	if (nullptr == m_pShader)
+	if (nullptr == pShader)
 		return E_FAIL;
-
-	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 
 	//=============================================================================================
 	// 기본 메트릭스
 	//=============================================================================================
 
-	if (FAILED(m_pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
 
 	//=============================================================================================
 	// 디졸브용 상수
 	//=============================================================================================
-	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShader)))
-		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	//=============================================================================================
@@ -10774,23 +10854,23 @@ HRESULT CPlayer::SetUp_ConstantTable()
 	_float	fID_G = 0.5f;	// ID_G : G채널 ID 값 , 1이 최대
 	_float	fID_B = 0.1f;	// ID_B	: B채널 ID 값 , 1이 최대
 
-	if (FAILED(m_pShader->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_fID_R_Power", &fID_R, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fID_R_Power", &fID_R, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_fID_G_Power", &fID_G, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fID_G_Power", &fID_G, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
 		return E_FAIL;
 	//=============================================================================================
 
-	m_pBattleAgent->Update_RimParam_OnShader(m_pShader);
+	m_pBattleAgent->Update_RimParam_OnShader(pShader);
 
 	return NOERROR;
 }

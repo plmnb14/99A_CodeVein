@@ -4,6 +4,9 @@ matrix		g_matWVP;
 matrix		g_matLightVP;
 matrix		g_matBias;
 
+int g_iScreenX = 1980;
+int g_iScreenY = 720;
+
 //==========================================================================
 
 texture		g_ShadowMapTexture;
@@ -114,8 +117,8 @@ PS_OUT PS_SHADOW(PS_IN_ShadowRender In)
 	
 	//float fTexelSizeX = 1.f / 1280.f;
 	//float fTexelSizeY = 1.f / 720.f;
-	float fTexelSizeX = 1.f / 3840.f;
-	float fTexelSizeY = 1.f / 2160.f;
+	float fTexelSizeX = 1.f / g_iScreenX;
+	float fTexelSizeY = 1.f / g_iScreenY;
 	//float fTexelSizeX = 1.f / 2560.f;
 	//float fTexelSizeY = 1.f / 1440.f;
 	

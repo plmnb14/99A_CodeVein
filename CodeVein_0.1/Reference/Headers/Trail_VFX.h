@@ -27,6 +27,7 @@ public:
 	virtual	HRESULT LateInit_GameObject();
 	virtual HRESULT Render_GameObject();
 	virtual HRESULT Render_GameObject_SetShader(CShader* pShader);
+	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader);
 
 public:
 	virtual size_t	Get_ListSize() { return m_vecStart.size(); };
