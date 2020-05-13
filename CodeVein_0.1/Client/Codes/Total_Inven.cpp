@@ -75,7 +75,7 @@ _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 		// 스테이터스 창 활성화
 		CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(true);
 		// 퀵슬롯 비활성화
-		CUI_Manager::Get_Instance()->Get_QuickSlot()->Set_Active(false);
+		//CUI_Manager::Get_Instance()->Get_QuickSlot()->Set_Active(false);
 	}
 
 	// 인벤 아이콘 활성화
@@ -321,7 +321,7 @@ void CTotal_Inven::Click_Icon()
 		// 스테이터스 창 비활성화
 		CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(false);
 		// 퀵슬롯 활성화
-		CUI_Manager::Get_Instance()->Get_QuickSlot()->Set_Active(true);
+		//CUI_Manager::Get_Instance()->Get_QuickSlot()->Set_Active(true);
 	}
 	
 	vector<CExpendables_Slot*> vecQuickSlot = * CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Get_QuickSlot();
