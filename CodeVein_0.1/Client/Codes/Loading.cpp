@@ -17,6 +17,7 @@
 #include "NPC_Yakumo.h"
 
 #include "Player.h"
+#include "Costume_Hair.h"
 
 #include "Weapon.h"
 #include "Drain_Weapon.h"
@@ -1323,9 +1324,9 @@ _uint CLoading::Loading_Title()
 	//============================================================================================================
 	// 플레이어 스킬, 보스 이펙트 포함
 	//============================================================================================================
-	cout << "Particle Etc 불러오는 중 . . ." << endl;
-	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
-		return E_FAIL;
+	//cout << "Particle Etc 불러오는 중 . . ." << endl;
+	//if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
+	//	return E_FAIL;
 	//============================================================================================================
 	// UI 원형 생성
 	//============================================================================================================
@@ -1359,6 +1360,7 @@ _uint CLoading::Loading_Title()
 	//============================================================================================================
 	// 옷
 	//============================================================================================================
+	cout << " 옷 생성 중 . . ." << endl;
 	g_pClothManager->Ready_ClothManager();
 	//============================================================================================================
 
@@ -1595,6 +1597,10 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_NPC_Yakumo", CNPC_Yakumo::Create(m_pGraphicDev))))
 			return E_FAIL;
 		//============================================================================================================
+
+		// 옷
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Costume_Hair", CCostume_Hair::Create(m_pGraphicDev))))
+			return E_FAIL;
 
 		g_bOnStage[0] = true;
 	}

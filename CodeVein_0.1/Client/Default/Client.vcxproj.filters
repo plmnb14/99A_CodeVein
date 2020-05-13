@@ -1002,6 +1002,12 @@
     <ClInclude Include="..\Headers\BossNameUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\02.BossUI\BossNameUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\ExplainArmorUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\03.Armor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ExplainWeaponUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\02.Weapon</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\NPC_Yakumo.h">
       <Filter>02.GameObject\Stage\11%29 NPC</Filter>
     </ClInclude>
@@ -1522,6 +1528,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\BossNameUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\02.BossUI\BossNameUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ExplainArmorUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\03.Armor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ExplainWeaponUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\02.Weapon</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\NPC_Yakumo.cpp">
       <Filter>02.GameObject\Stage\11%29 NPC</Filter>

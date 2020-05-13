@@ -7,6 +7,8 @@
 
 #include "ScriptManager.h"
 
+#include "Costume_Hair.h"
+
 float g_OriginCamPos = 3.f;
 
 CPlayer::CPlayer(LPDIRECT3DDEVICE9 pGraphic_Device)
@@ -56,6 +58,11 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 
 	m_tObjParam.sMana_Cur = 100;
 
+
+
+	m_pHair = (CCostume_Hair*)g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Hair", &CCostume_Hair::_INFO(CCostume_Hair::Hair_01, &m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(0.f, 0.f, 0.f, 0.f)));
+
+
 	return NOERROR;
 }
 
@@ -78,6 +85,8 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	CGameObject::Update_GameObject(TimeDelta);
 
+	m_pHair->Update_GameObject(TimeDelta);
+
 	KeyInput();
 
 	Parameter_HitCheck();
@@ -89,6 +98,8 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 	Parameter_Aiming();
 
 	Check_Mistletoe();
+
+
 
 	if (!m_tObjParam.bInvisible)
 	{
@@ -138,6 +149,10 @@ _int CPlayer::Late_Update_GameObject(_double TimeDelta)
 
 	Reset_BloodSuck_Options();
 	//Reset_Attack_Bool();
+
+
+	m_pHair->Late_Update_GameObject(TimeDelta);
+
 
 	m_pDynamicMesh->SetUp_Animation_Lower(m_eAnim_Lower , m_bOffLerp);
 	m_pDynamicMesh->SetUp_Animation_Upper(m_eAnim_Upper , m_bOffLerp);
@@ -192,11 +207,15 @@ HRESULT CPlayer::Render_GameObject()
 		_uint iNumSubSet = (_uint)m_pDynamicMesh->Get_NumMaterials(i);
 		// 서브셋은 5개
 
+		if (i == 1)
+			continue;
+
 		// 메시를 뼈에 붙인다.
 		m_pDynamicMesh->Update_SkinnedMesh(i);
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
+
 			m_iPass = m_pDynamicMesh->Get_MaterialPass(i , j);
 
 			if (m_bDissolve)
@@ -225,6 +244,7 @@ HRESULT CPlayer::Render_GameObject()
 	m_pShader->End_Shader();
 
 	Draw_Collider();
+
 
 	IF_NOT_NULL(m_pNavMesh)
 	{
@@ -261,6 +281,9 @@ HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 	{
+		if (i == 1)
+			continue;
+
 		_uint iNumSubSet = (_uint)m_pDynamicMesh->Get_NumMaterials(i);
 		// 서브셋은 5개
 
@@ -11234,6 +11257,8 @@ void CPlayer::Free()
 	{
 		iter = nullptr;
 	}
+
+	Safe_Release(m_pHair);
 
 	CGameObject::Free();
 }

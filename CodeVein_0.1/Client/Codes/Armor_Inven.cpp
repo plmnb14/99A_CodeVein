@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\Armor_Inven.h"
-#include "Armor_Slot.h"
+#include "UI_Manager.h"
 
 CArmor_Inven::CArmor_Inven(_Device pDevice)
 	: CUI(pDevice)
@@ -12,9 +12,9 @@ CArmor_Inven::CArmor_Inven(const CArmor_Inven & rhs)
 {
 }
 
-ARMOR_TYPE CArmor_Inven::Get_UseArmorType()
+ARMOR_PARAM CArmor_Inven::Get_UseArmorParam()
 {
-	return m_eRegistArmor;
+	return m_tRegistParam;
 }
 
 HRESULT CArmor_Inven::Ready_GameObject_Prototype()
@@ -41,9 +41,19 @@ HRESULT CArmor_Inven::Ready_GameObject(void * pArg)
 
 	SetUp_Default();
 
-	Add_Armor(ARMOR_Drape);
-	Add_Armor(ARMOR_Gauntlet);
-	Add_Armor(ARMOR_LongCoat);
+	ARMOR_PARAM tParam;
+	tParam.iArmorType = ARMOR_Gauntlet;
+	tParam.fDef = 10;
+	tParam.iPrice = 1000;
+	Add_Armor(tParam);
+	tParam.iArmorType = ARMOR_LongCoat;
+	tParam.fDef = 100;
+	tParam.iPrice = 10000;
+	Add_Armor(tParam);
+	tParam.iArmorType = ARMOR_Muffler;
+	tParam.fDef = 1000;
+	tParam.iPrice = 30000;
+	Add_Armor(tParam);
 
 	return NOERROR;
 }
@@ -61,6 +71,8 @@ _int CArmor_Inven::Update_GameObject(_double TimeDelta)
 		pSlot->Set_ViewZ(m_fViewZ - 0.1f);
 		pSlot->Set_Active(m_bIsActive);
 	}
+	m_pExplainUI->Set_Active(m_bIsActive);
+
 
 	Click_Inven();
 		
@@ -156,7 +168,10 @@ HRESULT CArmor_Inven::SetUp_ConstantTable()
 
 void CArmor_Inven::SetUp_Default()
 {
-	
+	m_pExplainUI = static_cast<CExplainArmorUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExplainArmorUI", nullptr));
+	//m_pExplainUI->Set_UI_Pos(WINCX * 0.5f + 25.f, WINCY * 0.5f - 30.f);
+	//m_pExplainUI->Set_UI_Size(500.f, 500.f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExplainUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
 
 void CArmor_Inven::Click_Inven()
@@ -166,25 +181,41 @@ void CArmor_Inven::Click_Inven()
 
 	for (auto& pSlot : m_vecArmorSlot)
 	{
-		if (pSlot->Pt_InRect())
+		// if (pSlot->Pt_InRect())
+		//{
+		//	m_pExplainUI->Set_ArmorParam(pSlot->Get_ArmorParam());
+
+		//	/*if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB) &&
+		//		!pSlot->Get_Select())
+		//		Regist_Armor(pSlot);
+		//	if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB) &&
+		//		pSlot->Get_Select())
+		//		UnRegist_Armor(pSlot);*/
+		//	
+		//}
+		if (pSlot->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 		{
-			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB) &&
-				!pSlot->Get_Select())
-				Regist_Armor(pSlot);
-			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB) &&
-				pSlot->Get_Select())
-				UnRegist_Armor(pSlot);
+			Reset_SelectSlot();
+			pSlot->Set_Select(true);
+			m_tRegistParam = pSlot->Get_ArmorParam();
+		}
+		else if (pSlot->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
+		{
+			pSlot->Set_Select(false);
+			m_tRegistParam.iArmorType = ARMOR_End;
+			m_tRegistParam.iPrice = 0;
+			m_tRegistParam.fDef = 0.f;
 		}
 	}
 }
 
 void CArmor_Inven::Regist_Armor(CArmor_Slot * pArmorSlot)
 {
-	if (pArmorSlot->Get_Type() == ARMOR_End)
-		return;
-	if (m_eRegistArmor == ARMOR_End)
+	/*if (pArmorSlot->Get_ArmorParam().iArmorType == ARMOR_End)
+		return;*/
+	if (m_tRegistParam.iArmorType == ARMOR_End)
 	{
-		m_eRegistArmor = pArmorSlot->Get_Type();
+		m_tRegistParam = pArmorSlot->Get_ArmorParam();
 		pArmorSlot->Set_Select(true);
 	}
 	else
@@ -193,16 +224,22 @@ void CArmor_Inven::Regist_Armor(CArmor_Slot * pArmorSlot)
 
 void CArmor_Inven::UnRegist_Armor(CArmor_Slot * pArmorSlot)
 {
-	if (pArmorSlot->Get_Type() == ARMOR_End)
+	if (pArmorSlot->Get_ArmorParam().iArmorType == ARMOR_End)
 		return;
-	if (pArmorSlot->Get_Type() == m_eRegistArmor)
+	if (pArmorSlot->Get_ArmorParam().iArmorType == m_tRegistParam.iArmorType)
 	{
-		m_eRegistArmor = ARMOR_End;
+		pArmorSlot->Init_Param();
 		pArmorSlot->Set_Select(false);
 	}
 }
 
-void CArmor_Inven::Add_Armor(ARMOR_TYPE eType)
+void CArmor_Inven::Reset_SelectSlot()
+{
+	for (auto& iter : m_vecArmorSlot)
+		iter->Set_Select(false);
+}
+
+void CArmor_Inven::Add_Armor(ARMOR_PARAM tArmorParam)
 {
 	CUI::UI_DESC* pDesc = nullptr;
 	CArmor_Slot* pSlot = nullptr;
@@ -214,7 +251,7 @@ void CArmor_Inven::Add_Armor(ARMOR_TYPE eType)
 	pDesc->fSizeY = 50.f;
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_ArmorSlot", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
 	pSlot = static_cast<CArmor_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
-	pSlot->Set_Type(eType);
+	pSlot->Set_ArmorParam(tArmorParam);
 	m_vecArmorSlot.push_back(pSlot);
 
 	// 슬롯 생성시 위치 조정
