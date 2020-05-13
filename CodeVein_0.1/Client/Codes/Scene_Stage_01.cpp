@@ -180,12 +180,12 @@ HRESULT CScene_Stage_01::Ready_Layer_Environment(const _tchar* pLayerTag)
 
 HRESULT CScene_Stage_01::Ready_Layer_Colleague(const _tchar * pLayerTah)
 {
-	//// ±èÀç±¸ Ãß°¡
-	//CGameObject* pInstance = nullptr;
+	// ±èÀç±¸ Ãß°¡
+	CGameObject* pInstance = nullptr;
 
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
-	//	&CPlayer_Colleague::JACK_INFO(_v3(150.484f, -18.08f, 70.417f), 0.f, 1));
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
+	pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
+		&CPlayer_Colleague::JACK_INFO(_v3(150.484f, -18.08f, 70.417f), 0.f, 1));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
 
 	return S_OK;
 }

@@ -68,6 +68,9 @@
 #include "ExplainArmorUI.h"
 #include "ExplainWeaponUI.h"
 
+#include "Get_ItemUI.h"
+#include "PickUp_ItemUI.h"
+
 BEGIN(Client)
 
 class CUI_Manager final : public CBase
@@ -139,6 +142,10 @@ private:
 	
 	// ∆Í ¿Œ∫•≈‰∏Æ
 	CPet_Inven* m_pPet_Inven = nullptr;
+
+	// Get Item UI
+	CGet_ItemUI*	m_pGet_ItemUI = nullptr;
+	CPickUp_ItemUI*	m_pPickUp_ItemUI = nullptr;
 
 public:
 	virtual void Free();

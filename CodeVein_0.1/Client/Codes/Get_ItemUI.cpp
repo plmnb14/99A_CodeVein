@@ -5,6 +5,7 @@
 #include "UI_Manager.h"
 
 
+
 CGet_ItemUI::CGet_ItemUI(_Device Graphic_Device)
 	: CUI(Graphic_Device)
 {
@@ -54,7 +55,7 @@ _int CGet_ItemUI::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
-	if (true == m_bShow_Ask_Pickup /*&& false == m_bSparkle_Box*/)
+
 		m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	return S_OK;
@@ -62,15 +63,6 @@ _int CGet_ItemUI::Update_GameObject(_double TimeDelta)
 
 _int CGet_ItemUI::Late_Update_GameObject(_double TimeDelta)
 {
-	D3DXMatrixIdentity(&m_matWorld);
-	D3DXMatrixIdentity(&m_matView);
-
-	m_matWorld._11 = m_fSizeX;
-	m_matWorld._22 = m_fSizeY;
-	m_matWorld._33 = 1.f;
-	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
-	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;
-
 	return S_OK;
 }
 
@@ -90,43 +82,6 @@ HRESULT CGet_ItemUI::Render_GameObject()
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
 	CUI_Manager* pUIMgr = CUI_Manager::Get_Instance();
-
-	if (3 < m_iCount_PickUpitem)
-		m_iCount_PickUpitem = 0;
-
-	if (FAILED(SetUp_ConstantTable(0)))
-		return E_FAIL;
-
-	m_pShaderCom->Begin_Shader();
-
-	if (3 == m_iUINumber)
-		m_pShaderCom->Begin_Pass(2);
-	if (4 == m_iUINumber)
-		m_pShaderCom->Begin_Pass(5);
-	else
-		m_pShaderCom->Begin_Pass(1);
-	
-	if (true == m_bCheck_Click && false == m_bSparkle_Box)
-	{
-		if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 1)))
-			return E_FAIL;
-
-		m_pShaderCom->Commit_Changes();
-
-		if (g_pInput_Device->Key_Up(DIK_P))
-		{
-			m_bSparkle_Box = true;
-		
-			++m_iCount_PickUpitem;
-			pUIMgr->Set_CoundItem(m_iCount_PickUpitem);
-		}
-	}
-	m_pBufferCom->Render_VIBuffer();
-
-	m_pShaderCom->End_Pass();
-
-	m_pShaderCom->End_Shader();
-
 
 
 	return S_OK;
@@ -204,63 +159,13 @@ void CGet_ItemUI::SetUp_State(_double TimeDelta)
 	// 지금은 더미로 했지만 나중에 아이템 생성되고 나면 생성된 아이템에 따라 아이템 이름을(enum값을?)
 	// 변수에다가 받아와서 해당 이름을 띄운다
 
+	//list<CGameObject*> ItemList = g_pManagement->Get_GameObjectList(L"Layer_Item", SCENE_STAGE);
+
 	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 
 	_v3 Player_D3 = TARGET_TO_TRANS(m_pTarget)->Get_Pos() - TARGET_TO_TRANS(pPlayer)->Get_Pos();
 
-	if (V3_LENGTH(&Player_D3) <= 2.f)
-	{
-		m_bShow_Ask_Pickup = true;
-		if (g_pInput_Device->Key_Down(DIK_P))
-		{
-			m_bCheck_Click = true;
-		}
-	}
-	else
-	{
-		m_bCheck_Click = false;
-		m_bShow_Ask_Pickup = false;
-	}
 	
-
-	if (3 == m_iUINumber || 4 == m_iUINumber)
-	{
-		m_fSizeX = 298.f;
-		m_fSizeY = 38.f;
-
-		m_fPosX = 1100.f;
-		m_fPosY = 200.f;
-	}
-
-
-	if (3 == m_iUINumber)
-		m_fNowItemBar_Size += 5.f;
-
-	if (m_fNowItemBar_Size >= m_fSizeX)
-	{
-		m_fNowItemBar_Size = m_fSizeX;
-		//m_fEndTimer += (_float)TimeDelta;
-	}
-	if (true == m_bSparkle_Box)
-	{
-		m_bCheck_Click = false;
-		m_bSparkle_Box = false;
-		m_bShow_GetItemName = false;
-		m_bShow_Ask_Pickup = false;
-
-		m_fSparkleBox = 0.f;
-		m_fTimer = 0.f;
-		m_fEndTimer = 0.f;
-		m_fNowItemBar_Size = 0.f;
-
-		m_iUINumber = 0;
-
-		m_fPosX = WINCX * 0.5f;
-		m_fPosY = WINCY - 100.f;
-
-		m_fSizeX = 269.f;
-		m_fSizeY = 81.f;
-	}
 }
 
 CGet_ItemUI * CGet_ItemUI::Create(_Device pGraphic_Device)

@@ -131,9 +131,13 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 	if (m_eMovetype != CPlayer_Colleague::Coll_Dead)
 		Enter_Collision();
 
-	
+	IF_NOT_NULL(m_pSword)
+		m_pSword->Update_GameObject(m_dTimeDelta);
 
 	//}
+
+	m_pNavMesh->Goto_Next_Subset(m_pTransformCom->Get_Pos(), nullptr);
+
 	return S_OK;
 }
 
@@ -231,8 +235,7 @@ HRESULT CPlayer_Colleague::Render_GameObject()
 	}
 	m_pShaderCom->End_Shader();
 
-	IF_NOT_NULL(m_pSword)
-		m_pSword->Update_GameObject(m_dTimeDelta);
+	
 
 	}
 
@@ -951,7 +954,7 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 				m_eColl_MoveMent = CPlayer_Colleague::Move_Walk;
 			}
 		}
-		if (false == m_bStart_Fighting && false == m_bNear_byMonster && fMyPlayerLength < 2.f)
+		if ((false == m_bStart_Fighting && false == m_bNear_byMonster) && fMyPlayerLength <= 2.f)
 		{
 			m_eMovetype = CPlayer_Colleague::Coll_Idle;
 			m_eColl_IdleMoment = CPlayer_Colleague::Idle_Waiting;
@@ -3241,48 +3244,47 @@ void CPlayer_Colleague::Function_FBRL()
 
 void CPlayer_Colleague::Teleport_ResetOptions(void * pArg/*_int eSceneID, _int eTeleportID*/)
 {
-	_v3 vShadowLightPos = V3_NULL;
-	_v3 vPos = V3_NULL;
-	_float fAngle = 0.f;
-	_float fRadian = 0.f;
+	//_v3 vShadowLightPos = V3_NULL;
+	//_v3 vPos = V3_NULL;
+	//_float fAngle = 0.f;
+	//_float fRadian = 0.f;
 
-	// 텔레포트 할때는 항상 소환 상태
-	m_eMovetype = CPlayer_Colleague::Coll_Idle;
+	//// 텔레포트 할때는 항상 소환 상태
+	//m_eMovetype = CPlayer_Colleague::Coll_Idle;
 
-	Funtion_Reset_State();
+	//Funtion_Reset_State();
 
 	//// 위치 , 방향 설정
-	//switch (g_eSceneID_Cur)
+	//switch (_eSceneID)
 	//{
 	//case SCENE_STAGE_TRAINING:
 	//{
-	//	//vShadowLightPos = _v3(100.f, 50.f, 0.f);
-	//	vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f);
+	//	vShadowLightPos = _v3(100.f, 50.f, 0.f);
 	//	break;
 	//}
 
 	//case SCENE_STAGE_BASE:
 	//{
-	//	/*vShadowLightPos = _v3(100.f, 50.f, 0.f);
+	//	vShadowLightPos = _v3(100.f, 50.f, 0.f);
 
-	//	vPos = eTeleportID == TeleportID_Tutorial ?
+	//	vPos = _eTeleportID == TeleportID_Tutorial ?
 	//		V3_NULL : _v3(-0.519f, 0.120f, 23.810f);
 
-	//	fAngle = eTeleportID == TeleportID_Tutorial ?
-	//		0.f : 180.f;*/
+	//	fAngle = _eTeleportID == TeleportID_Tutorial ?
+	//		0.f : 180.f;
 
 	//	break;
 	//}
 
 	//case SCENE_STAGE_01:
 	//{
-	//	//vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f);
+	//	vShadowLightPos = _v3(-100.f, 50.f, 0.f);
 
-	//	vPos = eTeleportID == TeleportID_St01_1 ? vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f) :
-	//		eTeleportID == TeleportID_St01_2 ? V3_NULL : V3_NULL;
+	//	vPos = _eTeleportID == TeleportID_St01_1 ? _v3(150.484f, -18.08f, 70.417f) :
+	//		_eTeleportID == TeleportID_St01_2 ? V3_NULL : V3_NULL;
 
-	//	fAngle = eTeleportID == TeleportID_St01_1 ? 0.f :
-	//		eTeleportID == TeleportID_St01_2 ? 0.f : 0.f;
+	//	fAngle = _eTeleportID == TeleportID_St01_1 ? 0.f :
+	//		_eTeleportID == TeleportID_St01_2 ? 0.f : 0.f;
 
 	//	break;
 	//}
@@ -3296,12 +3298,12 @@ void CPlayer_Colleague::Teleport_ResetOptions(void * pArg/*_int eSceneID, _int e
 
 	//case SCENE_STAGE_03:
 	//{
-	//	//vShadowLightPos = vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f);;
+	//	vShadowLightPos = _v3(-100.f, 50.f, 0.f);
 
-	//	vPos = eTeleportID == TeleportID_St03_1 ?
-	//		vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f) : V3_NULL;
+	//	vPos = _eTeleportID == TeleportID_St03_1 ?
+	//		_v3(52.610f, -13.0f, 3.575f) : V3_NULL;
 
-	//	fAngle = eTeleportID == TeleportID_St03_1 ?
+	//	fAngle = _eTeleportID == TeleportID_St03_1 ?
 	//		0.f : 0.f;
 
 	//	break;
@@ -3309,12 +3311,12 @@ void CPlayer_Colleague::Teleport_ResetOptions(void * pArg/*_int eSceneID, _int e
 
 	//case SCENE_STAGE_04:
 	//{
-	//	//vShadowLightPos = vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f);
+	//	vShadowLightPos = _v3(-100.f, 50.f, 0.f);
 
-	//	vPos = eTeleportID == TeleportID_St04_1 ?
-	//		vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f) : V3_NULL;
+	//	vPos = _eTeleportID == TeleportID_St04_1 ?
+	//		_v3(42.504f, -3.85f, 75.683f) : V3_NULL;
 
-	//	fAngle = eTeleportID == TeleportID_St04_1 ?
+	//	fAngle = _eTeleportID == TeleportID_St04_1 ?
 	//		0.f : 0.f;
 
 	//	break;

@@ -140,6 +140,9 @@ void CSky::Change_Mesh(const _tchar* _MeshName)
 	// 컴포넌트에 있는 매쉬 찾아서
 	auto& iter = m_pmapComponents.find(L"Com_StaticMesh");
 
+	if (iter == m_pmapComponents.end())
+		return;
+
 	// 둘 다 해제
 	Safe_Release(m_pMeshCom);
 	Safe_Release(iter->second);

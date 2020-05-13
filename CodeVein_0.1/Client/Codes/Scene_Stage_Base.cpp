@@ -37,6 +37,10 @@ HRESULT CScene_Stage_Base::Ready_Scene()
 
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_00.dat");
 
+	// Àè
+	// ³ªÁß¿¡ NPC·Î ±³Ã¼
+	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_Colleague", SCENE_STAGE, L"Layer_Colleague", &CNPC_Yakumo::NPC_INFO(_v3(-3.46f, -1.37f, -4.294f), D3DXToRadian(90.f)));
+
 	// ¾ßÄí¸ð
 	g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-4.46f, -1.37f, -5.294f), D3DXToRadian(90.f)));
 

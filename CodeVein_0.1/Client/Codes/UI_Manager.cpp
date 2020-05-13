@@ -247,6 +247,14 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	// ∆Í ¿Œ∫•≈‰∏Æ
 	m_pPet_Inven = static_cast<CPet_Inven*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PetInven", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pPet_Inven, SCENE_MORTAL, L"Layer_PetUI", nullptr);
+
+
+	/////////////////////////////////// Item Get UI /////////////////////////////////////
+	m_pGet_ItemUI = static_cast<CGet_ItemUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Get_ItemUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pGet_ItemUI, SCENE_STAGE, L"Layer_Get_ItemUI", nullptr);
+
+	m_pPickUp_ItemUI = static_cast<CPickUp_ItemUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PickUp_ItemUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pPickUp_ItemUI, SCENE_STAGE, L"Layer_PickUp_ItemUI", nullptr);
 	
 	return NOERROR;
 }
