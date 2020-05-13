@@ -784,7 +784,8 @@ void CPlayer::Parameter_Aiming()
 
 		Target_AimChasing();
 
-		m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(m_pTarget)->Get_Pos()));
+		if(nullptr != m_pTarget)
+			m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(m_pTarget)->Get_Pos()));
 	}
 
 	else if (false == m_bOnAiming)
