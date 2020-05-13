@@ -439,12 +439,7 @@ void CYeti::Check_Dist()
 			}
 		}
 		else
-		{
 			m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
-
-			if (false == m_bIsIdle)
-				m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
-		}
 	}
 
 	return;
@@ -1390,9 +1385,6 @@ void CYeti::Play_IceThrowing()
 					m_fCoolDownCur = 0.f;
 					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
-					if (false == m_bIsIdle)
-						m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
-
 					Play_Idle();
 
 					return;
@@ -1799,9 +1791,6 @@ void CYeti::Play_Combo_RLRL_Shoulder()
 					m_fCoolDownCur = 0.f;
 					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
-					if (false == m_bIsIdle)
-						m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
-
 					Play_Idle();
 
 					return;
@@ -2023,9 +2012,6 @@ void CYeti::Play_Combo_RLRL_Smash()
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
 					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
-
-					if (false == m_bIsIdle)
-						m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 
 					Play_Idle();
 
@@ -2249,9 +2235,6 @@ void CYeti::Play_Combo_RLRL_Swing()
 					m_fCoolDownCur = 0.f;
 					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
-					if (false == m_bIsIdle)
-						m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
-
 					Play_Idle();
 
 					return;
@@ -2296,7 +2279,6 @@ void CYeti::Play_Idle()
 					m_bIsIdle = true;
 
 					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
-					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 					m_eState = YETI_ANI::Idle;
 
 					return;
@@ -2345,9 +2327,6 @@ void CYeti::Play_Move()
 				m_fCoolDownMax = 0.f;
 				m_fCoolDownCur = 0.f;
 				m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
-
-				if (false == m_bIsIdle)
-					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 
 				Play_Idle();
 
@@ -2407,9 +2386,6 @@ void CYeti::Play_Move()
 					m_fCoolDownCur = 0.f;
 					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
-					if (false == m_bIsIdle)
-						m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
-
 					Play_Idle();
 
 					return;
@@ -2445,9 +2421,6 @@ void CYeti::Play_Move()
 				m_fCoolDownMax = 0.f;
 				m_fCoolDownCur = 0.f;
 				m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
-
-				if (false == m_bIsIdle)
-					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 
 				Play_Idle();
 
@@ -2730,6 +2703,8 @@ HRESULT CYeti::Ready_Status(void * pArg)
 	m_iDodgeCountMax = 5;
 
 	m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+	m_eState = YETI_ANI::Idle;
+
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
 	m_tObjParam.fArmor_Cur = m_tObjParam.fArmor_Max;
 

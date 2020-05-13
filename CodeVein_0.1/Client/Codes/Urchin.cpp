@@ -1228,6 +1228,8 @@ HRESULT CUrchin::Ready_Status(void * pArg)
 	m_iDodgeCountMax = 5;
 
 	m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+	m_eState = URCHIN_ANI::Idle;
+
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
 	m_tObjParam.fArmor_Cur = m_tObjParam.fArmor_Max;
 

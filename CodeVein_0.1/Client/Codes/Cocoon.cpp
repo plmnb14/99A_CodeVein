@@ -974,6 +974,20 @@ HRESULT CCocoon::Ready_Status(void * pArg)
 	m_fPersonalRange = 2.f;
 
 	m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+
+	switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
+	{
+	case MONSTER_IDLE_TYPE::IDLE_STAND:
+	case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+	case MONSTER_IDLE_TYPE::IDLE_EAT:
+	case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+	case MONSTER_IDLE_TYPE::IDLE_SIT:
+	case MONSTER_IDLE_TYPE::IDLE_LURK:
+	case MONSTER_IDLE_TYPE::IDLE_IDLE:
+		m_eState = COCOON_ANI::Idle;
+		break;
+	}
+
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
 	m_tObjParam.fArmor_Cur = m_tObjParam.fArmor_Max;
 
