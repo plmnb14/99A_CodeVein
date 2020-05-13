@@ -43,6 +43,10 @@ _int CPlayerHP::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
+	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	if (!m_pTarget)
+		return 0;
+
 	SetUp_State(TimeDelta);
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
@@ -193,16 +197,6 @@ HRESULT CPlayerHP::SetUp_ConstantTable(_uint iIndex)
 
 void CPlayerHP::SetUp_Default()
 {
-	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
-
-	if (nullptr != m_pTarget)
-		m_fPlayerHP = m_pTarget->Get_Target_Hp();
-
-	else
-		m_fPlayerHP = 0.f;
-
-	m_fTotalHP = m_fPlayerHP;
-
 	// Player 현재 체력 폰트
 	m_pFontCurHP = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
 	m_pFontCurHP->Set_UI_Pos(m_fPosX + 65.f, m_fPosY);
@@ -213,7 +207,7 @@ void CPlayerHP::SetUp_Default()
 
 	// 플레이어 전체 체력 폰트
 	m_pFontTotalHP = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
-	m_pFontTotalHP->Set_UI_Pos(m_fPosX + 130.f, m_fPosY - 3.f);
+	m_pFontTotalHP->Set_UI_Pos(m_fPosX + 125.f, m_fPosY);
 	m_pFontTotalHP->Set_UI_Size(7.8f, 15.f);
 	m_pFontTotalHP->Set_ViewZ(m_fViewZ - 0.1f);
 	m_pFontTotalHP->Set_Active(true);
@@ -228,6 +222,7 @@ void CPlayerHP::SetUp_State(_double TimeDelta)
 		m_fPlayerHP = 0.f;
 
 	m_fPlayerHP = m_pTarget->Get_Target_Hp();
+	m_fTotalHP = m_pTarget->Get_Target_Param().fHp_Cur;
 
 	// Texture UV 흐르는 속도
 	m_fSpeed += -0.2f * _float(TimeDelta);
