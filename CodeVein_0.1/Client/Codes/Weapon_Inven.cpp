@@ -67,10 +67,13 @@ _int CWeapon_Inven::Update_GameObject(_double TimeDelta)
 
 	Click_Inven();
 	
+	_uint iIdx = 0;
 	for (auto& pWeaponSlot : m_vecWeaponSlot)
 	{
 		pWeaponSlot->Set_Active(m_bIsActive);
+		pWeaponSlot->Set_UI_Pos(m_fPosX - 100.f + 52.f * (iIdx % 5), m_fPosY - 150.f + 52.f * (iIdx / 5));
 		pWeaponSlot->Set_ViewZ(m_fViewZ - 0.1f);
+		iIdx++;
 	}
 	m_pExplainUI->Set_Active(m_bIsActive);
 	
@@ -190,6 +193,7 @@ void CWeapon_Inven::Click_Inven()
 			{
 				UnRegist_Weapon(pSlot);
 			}
+			
 		}
 	}
 }
@@ -524,7 +528,6 @@ void CWeapon_Inven::Add_Weapon(WPN_PARAM tAddWpnParam)
 		m_vecWeaponSlot[i]->Set_UI_Pos(m_fPosX - 103.f + 52.f * (i % 5), m_fPosY - 140.f + 52.f * (i / 5));
 	}
 }
-
 
 CWeapon_Inven * CWeapon_Inven::Create(_Device pGraphic_Device)
 {

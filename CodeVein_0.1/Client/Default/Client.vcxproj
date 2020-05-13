@@ -202,6 +202,8 @@
     <ClInclude Include="..\Headers\ColdBeamBig.h" />
     <ClInclude Include="..\Headers\ColdBeamMiddle.h" />
     <ClInclude Include="..\Headers\ExplainArmorUI.h" />
+    <ClInclude Include="..\Headers\ExplainExpendUI.h" />
+    <ClInclude Include="..\Headers\ExplainMaterialUI.h" />
     <ClInclude Include="..\Headers\ExplainWeaponUI.h" />
     <ClInclude Include="..\Headers\NPC_Yakumo.h" />
     <ClInclude Include="..\Headers\ScriptUI.h" />
@@ -377,6 +379,8 @@
     <ClCompile Include="..\Codes\ColdBeamBig.cpp" />
     <ClCompile Include="..\Codes\ColdBeamMiddle.cpp" />
     <ClCompile Include="..\Codes\ExplainArmorUI.cpp" />
+    <ClCompile Include="..\Codes\ExplainExpendUI.cpp" />
+    <ClCompile Include="..\Codes\ExplainMaterialUI.cpp" />
     <ClCompile Include="..\Codes\ExplainWeaponUI.cpp" />
     <ClCompile Include="..\Codes\NPC_Yakumo.cpp" />
     <ClCompile Include="..\Codes\ScriptUI.cpp" />

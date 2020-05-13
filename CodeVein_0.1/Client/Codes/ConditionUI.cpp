@@ -96,8 +96,9 @@ _int CConditionUI::Update_GameObject(_double TimeDelta)
 		break;
 	}
 
-	m_pFontValue->Set_UI_Pos(m_fPosX + 120.f, m_fPosY);
+	m_pFontValue->Set_UI_Pos(m_fPosX + 140.f, m_fPosY + 10.f);
 	m_pFontValue->Set_UI_Size(10.4f, 20.f);
+
 	return NO_EVENT;
 }
 

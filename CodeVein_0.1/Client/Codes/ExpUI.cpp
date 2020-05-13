@@ -59,7 +59,7 @@ _int CExpUI::Update_GameObject(_double TimeDelta)
 		m_pLevelFont->Set_ViewZ(m_fViewZ - 0.1f);
 		m_pLevelFont->Set_Active(m_bIsActive);
 		m_pLevelFont->Set_UI_Pos(m_fPosX, m_fPosY);
-		m_pLevelFont->Set_UI_Size(m_fSizeX * 0.3f, m_fSizeY * 0.3f);
+		m_pLevelFont->Set_UI_Size(7.8f, 15.f);
 		// Lv이 0보다 작으면 0
 		if (0 >= g_sPlayerLevel)
 			m_pLevelFont->Update_NumberValue(0);

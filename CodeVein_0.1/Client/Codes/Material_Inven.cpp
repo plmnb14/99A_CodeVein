@@ -2,6 +2,7 @@
 #include "..\Headers\Material_Inven.h"
 
 #include "Item_Manager.h"
+#include "UI_Manager.h"
 
 CMaterial_Inven::CMaterial_Inven(_Device pDevice)
 	: CUI(pDevice)
@@ -32,6 +33,8 @@ HRESULT CMaterial_Inven::Ready_GameObject(void * pArg)
 	m_fViewZ = 4.f;
 
 	m_bIsActive = false;
+
+	SetUp_Default();
 
 	// Slot Create
 	CUI::UI_DESC* pDesc = nullptr;
@@ -74,6 +77,9 @@ _int CMaterial_Inven::Update_GameObject(_double TimeDelta)
 
 	for (auto& pSlot : m_vecMaterialSlot)
 		pSlot->Set_Active(m_bIsActive);
+	
+	if (m_pExplainUI)
+		m_pExplainUI->Set_Active(m_bIsActive);
 	
 	return NO_EVENT;
 }
@@ -206,8 +212,12 @@ void CMaterial_Inven::Click_Inven()
 
 	for (auto& pSlot : m_vecMaterialSlot)
 	{
-		if (pSlot->Pt_InRect())
+		if (pSlot->Pt_InRect() && pSlot->Get_Type() != CMaterial::MATERIAL_END)
 		{
+			m_pExplainUI->Set_Type(CMaterial::MATERIAL_TYPE(pSlot->Get_Type()));
+			m_pExplainUI->Set_CurHaveCnt(pSlot->Get_Size());
+			m_pExplainUI->Set_MaximumCnt(5);
+
 			if (!pSlot->Get_Select() && pSlot->Get_Size() > 0 && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
 				// 마우스 왼쪽 버튼 눌렀을 때
@@ -220,6 +230,14 @@ void CMaterial_Inven::Click_Inven()
 			}
 		}
 	}
+}
+
+void CMaterial_Inven::SetUp_Default()
+{
+	m_pExplainUI = static_cast<CExplainMaterialUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExplainMaterialUI", nullptr));
+	m_pExplainUI->Set_UI_Pos(WINCX * 0.5f, WINCY * 0.5f);
+	m_pExplainUI->Set_UI_Size(1024.f * 0.6f, 720.f * 0.6f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExplainUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
 
 void CMaterial_Inven::Add_Material(CMaterial::MATERIAL_TYPE eType)

@@ -67,6 +67,8 @@
 
 #include "ExplainArmorUI.h"
 #include "ExplainWeaponUI.h"
+#include "ExplainMaterialUI.h"
+#include "ExplainExpendUI.h"
 
 BEGIN(Client)
 

@@ -39,10 +39,12 @@ _int CHazeUI::Update_GameObject(_double TimeDelta)
 
 	if (m_pHazeCntFont)
 	{
+		Calc_HazeFontPos();
 		m_pHazeCntFont->Set_Active(m_bIsActive);
 		m_pHazeCntFont->Update_NumberValue(_float(m_uHazeCnt));
 	}	
-	
+	if (g_pInput_Device->Key_Pressing(DIK_J))
+		m_uHazeCnt = m_uHazeCnt + 10;
 	return NO_EVENT;
 }
 
@@ -141,6 +143,30 @@ HRESULT CHazeUI::SetUp_Default()
 	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(m_pHazeCntFont, SCENE_MORTAL, L"Layer_PlayerUI", nullptr)))
 		return E_FAIL;
 	return NOERROR;
+}
+
+void CHazeUI::Calc_HazeFontPos()
+{
+	if (m_uHazeCnt >= 0 && m_uHazeCnt < 10)
+	{
+		m_pHazeCntFont->Set_UI_Pos(m_fPosX + 30.f, m_fPosY);
+	}
+	else if (m_uHazeCnt < 100)
+	{
+		m_pHazeCntFont->Set_UI_Pos(m_fPosX + 45.f, m_fPosY);
+	}
+	else if (m_uHazeCnt < 1000)
+	{
+		m_pHazeCntFont->Set_UI_Pos(m_fPosX + 60.f, m_fPosY);
+	}
+	else if (m_uHazeCnt < 10000)
+	{
+		m_pHazeCntFont->Set_UI_Pos(m_fPosX + 75.f, m_fPosY);
+	}
+	else if (m_uHazeCnt < 100000)
+	{
+		m_pHazeCntFont->Set_UI_Pos(m_fPosX + 90.f, m_fPosY);
+	}
 }
 
 CHazeUI * CHazeUI::Create(_Device pGraphic_Device)

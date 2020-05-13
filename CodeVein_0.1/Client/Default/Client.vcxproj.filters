@@ -475,6 +475,18 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\16. ScriptUI">
       <UniqueIdentifier>{4f0943ce-c02a-408f-af5f-6c1c94ea2eee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\02.Weapon\ExplainWeapon">
+      <UniqueIdentifier>{aaad8145-0680-4e45-b963-8dba13ccd5b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\03.Armor\ExplainArmor">
+      <UniqueIdentifier>{862b1dde-0c7e-4e67-84be-f538675b3330}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\01.Material\ExplainMaterial">
+      <UniqueIdentifier>{9ada0970-8598-4a16-be3e-d65cc7d2cc8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\00.Expendables\ExplainExpend">
+      <UniqueIdentifier>{f3cc84f2-1c32-4428-8ff3-36a622407b35}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1002,12 +1014,6 @@
     <ClInclude Include="..\Headers\BossNameUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\02.BossUI\BossNameUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\ExplainArmorUI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\03.Armor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\ExplainWeaponUI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\02.Weapon</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\NPC_Yakumo.h">
       <Filter>02.GameObject\Stage\11%29 NPC</Filter>
     </ClInclude>
@@ -1016,6 +1022,18 @@
     </ClInclude>
     <ClInclude Include="..\Headers\ClothManager.h">
       <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ExplainWeaponUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\02.Weapon\ExplainWeapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ExplainArmorUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\03.Armor\ExplainArmor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ExplainMaterialUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\01.Material\ExplainMaterial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ExplainExpendUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\00.Expendables\ExplainExpend</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1529,12 +1547,6 @@
     <ClCompile Include="..\Codes\BossNameUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\02.BossUI\BossNameUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\ExplainArmorUI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\03.Armor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\ExplainWeaponUI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\02.Weapon</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\NPC_Yakumo.cpp">
       <Filter>02.GameObject\Stage\11%29 NPC</Filter>
     </ClCompile>
@@ -1543,6 +1555,18 @@
     </ClCompile>
     <ClCompile Include="..\Codes\ClothManager.cpp">
       <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ExplainWeaponUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\02.Weapon\ExplainWeapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ExplainArmorUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\03.Armor\ExplainArmor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ExplainMaterialUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\01.Material\ExplainMaterial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ExplainExpendUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\00.Expendables\ExplainExpend</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -34,6 +34,45 @@ _int CExplainSkillUI::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 
+	switch (m_eType)
+	{
+	case Dragon_Lunge:
+		m_iIndex = 0;
+		break;
+	case Vanishing_Hollow:
+		m_iIndex = 1;
+		break;
+	case Circulating_Pulse:
+		m_iIndex = 2;
+		break;
+	case Triple_Annihilator:
+		m_iIndex = 3;
+		break;
+	case Shadow_Assault:
+		m_iIndex = 4;
+		break;
+	case Severing_Abyss:
+		m_iIndex = 5;
+		break;
+	case Swallow_Cutter:
+		m_iIndex = 6;
+		break;
+	case Tormenting_Blast:
+		m_iIndex = 7;
+		break;
+	case Phantom_Assault:
+		m_iIndex = 8;
+		break;
+	case Legion_Punisher:
+		m_iIndex = 9;
+		break;
+	case Chariot_Rush:
+		m_iIndex = 10;
+		break;
+	case Fusillade_Rondo:
+		m_iIndex = 11;
+		break;
+	}
 	return NO_EVENT;
 }
 
@@ -53,7 +92,8 @@ _int CExplainSkillUI::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CExplainSkillUI::Render_GameObject()
 {
-	if (!m_bIsActive)
+	if (!m_bIsActive || 
+		m_eType == SkillID_End)
 		return NOERROR;
 
 	if (nullptr == m_pShaderCom ||
