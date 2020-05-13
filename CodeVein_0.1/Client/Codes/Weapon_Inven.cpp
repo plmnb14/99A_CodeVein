@@ -404,12 +404,10 @@ HRESULT CWeapon_Inven::SetUp_WeaponData()
 	// ÇØ¸Ó
 	//===========================================================================================
 
-<<<<<<< HEAD
+
 	m_tWeaponParam[Wpn_Hammer].iWeaponName = Wpn_LSword;
 	m_tWeaponParam[Wpn_Hammer].iWeaponName_InShop = WpnAll_Hammer_ImperseAnker;
-=======
 	m_tWeaponParam[Wpn_Hammer].iWeaponName = Wpn_Hammer;
->>>>>>> origin/Merge_Brench
 	m_tWeaponParam[Wpn_Hammer].iWeaponType = WEAPON_Halberd;
 	m_tWeaponParam[Wpn_Hammer].iPrice = 100;
 	m_tWeaponParam[Wpn_Hammer].iReinforce = 0;
