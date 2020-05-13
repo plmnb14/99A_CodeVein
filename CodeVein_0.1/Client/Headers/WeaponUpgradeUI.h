@@ -11,7 +11,13 @@ class CWeaponUpgradeOptionUI;
 class CWeaponUpgradeUI final : public CUI
 {
 public:
-
+	enum MOVE_TYPE
+	{
+		MOVE_STEP,
+		MOVE_ROLLING,
+		MOVE_HEAVYROLLING,
+		MOVE_END
+	};
 private:
 	explicit CWeaponUpgradeUI(_Device pDevice);
 	explicit CWeaponUpgradeUI(const CWeaponUpgradeUI& rhs);
@@ -21,6 +27,7 @@ public:
 	void	Set_Active(_bool bIsActive);
 	void	Set_Inven(CWeapon_Inven_InShop* pParent) { m_pInven = pParent; }
 	void	Set_WeaponDescType(WEAPON_ALL_DATA eType);
+	void	Set_WeaponMoveType(MOVE_TYPE eType);
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -38,12 +45,17 @@ private:
 	HRESULT SetUp_ConstantTable();
 	void	Change_Texture(const _tchar* _Name);
 	void	SetUp_Default();
+
+	void	Check_LateInit();
 	void	Check_ItemOption();
 	void	Check_WeaponName();
+	void	Check_MoveType();
 	void	Check_Option();
+
 	void	Upgrade_Weapon();
 
 	_int	Get_RequireMaterial(CMaterial::MATERIAL_TYPE eType, _int iReinforce);
+	_float	Get_PlusDamage(_float fDamage, _int iReinforce);
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -57,9 +69,19 @@ private:
 	vector<CWeaponUpgradeOptionUI*>		m_vecOption;
 
 	CWeaponUpgradeUI*					m_pWeaponNameUI = nullptr;
-	WEAPON_ALL_DATA						m_eWeaponDesc = WEAPON_ALL_DATA::WpnAll_END;
+	CWeaponUpgradeUI*					m_pWeaponMoveTypeUI = nullptr;
 
-	CPlayerFontUI*						m_pFontReinforce = nullptr;
+	WEAPON_ALL_DATA						m_eWeaponDesc = WEAPON_ALL_DATA::WpnAll_END;
+	MOVE_TYPE							m_eMoveType = MOVE_TYPE::MOVE_END;
+
+	CPlayerFontUI*						m_pFontReinforceHeader = nullptr;
+	CPlayerFontUI*						m_pFontReinforceDesc = nullptr;
+	CPlayerFontUI*						m_pFontReinforceAfterDesc = nullptr;
+	CPlayerFontUI*						m_pFontPlusDamageDesc = nullptr;
+	CPlayerFontUI*						m_pFontPlusDamageAfterDesc = nullptr;
+	CPlayerFontUI*						m_pFontDamageDesc = nullptr;
+	CPlayerFontUI*						m_pFontDamageAfterDesc = nullptr;
+
 	_bool								m_bLateInit = false;
 	_int								m_iTexIdx = 0;
 public:

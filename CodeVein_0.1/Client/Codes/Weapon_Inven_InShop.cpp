@@ -456,7 +456,8 @@ void CWeapon_Inven_InShop::Free()
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pTempWeapon);
+	if (m_pTempWeapon)
+		Safe_Release(m_pTempWeapon);
 
 	CUI::Free();
 }

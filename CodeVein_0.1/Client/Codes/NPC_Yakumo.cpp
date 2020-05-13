@@ -71,10 +71,8 @@ _int CNPC_Yakumo::Update_GameObject(_double TimeDelta)
 	CGameObject::Update_GameObject(TimeDelta);
 
 	//========================
-	// ÅÍÁø´ÙÇØ¼­ ²¨µÒ
-	//========================
-	//Check_Dist();
-	//Check_Anim();
+	Check_Dist();
+	Check_Anim();
 
 	m_pMeshCom->SetUp_Animation(m_eState);
 
