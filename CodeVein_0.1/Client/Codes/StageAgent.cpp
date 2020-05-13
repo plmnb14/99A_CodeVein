@@ -8,6 +8,8 @@
 #include "Scene_Stage_03.h"
 #include "Scene_Stage_04.h"
 
+#include "ScriptManager.h"
+
 IMPLEMENT_SINGLETON(CStageAgent)
 
 CStageAgent::CStageAgent()
@@ -30,6 +32,24 @@ void CStageAgent::Change_Stage(_Device _pGraphicDev)
 			g_eSceneID_Cur == SCENE_STAGE_03 ? (CScene*)CScene_Stage_03::Create(_pGraphicDev, true) :
 			g_eSceneID_Cur == SCENE_STAGE_04 ? (CScene*)CScene_Stage_04::Create(_pGraphicDev, true) : (CScene*)CScene_Stage_Training::Create(_pGraphicDev, true));
 	
+	if (m_sOldStageIdx != g_eSceneID_Cur)
+	{
+		m_sOldStageIdx = g_eSceneID_Cur;
+
+		_short sStageIdx = 
+			g_eSceneID_Cur == SCENE_STAGE_01 ? 1 :
+			g_eSceneID_Cur == SCENE_STAGE_02 ? 2 :
+			g_eSceneID_Cur == SCENE_STAGE_03 ? 3 :
+			g_eSceneID_Cur == SCENE_STAGE_04 ? 4 : 999;
+
+		if (999 != sStageIdx)
+		{
+			CScriptManager::Get_Instance()->Set_StageIdx(sStageIdx);
+			CScriptManager::Get_Instance()->Reset_ScriptEvent(sStageIdx, false);
+			CScriptManager::Get_Instance()->Ready_Script_DynamicObject(sStageIdx);
+		}
+	}
+
 	// ¾À ¼¼ÆÃ
 	g_pManagement->SetUp_CurrentScene(pScene);
 }

@@ -20,6 +20,8 @@ HRESULT CLight::Ready_Light(NEW_LIGHT LightDesc)
 
 	m_LightDesc = LightDesc;
 
+	IF_NULL_VALUE_RETURN(m_pOtimize = static_cast<COptimization*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Optimization")), E_FAIL);
+
 	return NOERROR;
 }
 
@@ -27,11 +29,6 @@ HRESULT CLight::Render_Light(CShader* pShader)
 {
 	if (nullptr == m_pViewPortBuffer)
 		return E_FAIL;
-
-	m_LightDesc.Diffuse.a *= m_LightDesc.fAlpha;
-	m_LightDesc.Ambient.a *= m_LightDesc.fAlpha;
-	m_LightDesc.Specular.a *= m_LightDesc.fAlpha;
-	m_LightDesc.Range *= m_LightDesc.fAlpha;
 
 	_uint			iPassIndex = 0;
 
@@ -44,11 +41,21 @@ HRESULT CLight::Render_Light(CShader* pShader)
 
 	else if (D3DLIGHT_POINT == m_LightDesc.Type)
 	{
+		_v3 tmpLightPos = m_LightDesc.Position;
+
+		if (false == m_pOtimize->Check_InFrustumforObject(&tmpLightPos, m_LightDesc.Range))
+			return S_OK;
+
 		iPassIndex = 1;
 
 		pShader->Set_Value("g_vLightPos", &_v4(m_LightDesc.Position, 1.f), sizeof(_v4));
 		pShader->Set_Value("g_fRange", &m_LightDesc.Range, sizeof(_float));
 	}
+
+	m_LightDesc.Diffuse.a *= m_LightDesc.fAlpha;
+	m_LightDesc.Ambient.a *= m_LightDesc.fAlpha;
+	m_LightDesc.Specular.a *= m_LightDesc.fAlpha;
+	m_LightDesc.Range *= m_LightDesc.fAlpha;
 
 	pShader->Set_Value("g_vLightDiffuse", (_v4*)&m_LightDesc.Diffuse, sizeof(_v4));
 	pShader->Set_Value("g_vLightAmbient", (_v4*)&m_LightDesc.Ambient, sizeof(_v4));	

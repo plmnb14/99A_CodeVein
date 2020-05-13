@@ -19,10 +19,11 @@ public:
 	virtual _int	Update_GameObject(_double TimeDelta);
 	virtual _int	Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
+	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader);
 
 private:
 	HRESULT Add_Component();
-	HRESULT SetUp_ConstantTable();
+	HRESULT SetUp_ConstantTable(CShader* pShader);
 	void Click_Option();
 	void Reset_Option();
 

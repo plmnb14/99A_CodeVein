@@ -38,6 +38,8 @@ public:
 	virtual _int	Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
 	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass);
+	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader);
+
 
 public:
 	virtual void			Set_Active(_bool _bActiveDrain);
@@ -115,7 +117,7 @@ private:
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_Default();
-	HRESULT SetUp_ConstantTable();
+	HRESULT SetUp_ConstantTable(CShader* pShader);
 
 private:
 	virtual HRESULT Parameter_State();

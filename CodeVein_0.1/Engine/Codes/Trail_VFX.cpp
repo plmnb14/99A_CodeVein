@@ -68,7 +68,9 @@ _int CTrail_VFX::Update_GameObject(_double TimeDelta)
 	{
 	case Trail_Normal:
 	{
-		m_pRenderer->Add_RenderList(RENDER_ALPHA, this);
+		m_pRenderer->Add_RenderList(RENDER_ALPHA_TRAIL, this);
+		//m_pRenderer->Add_RenderList(RENDER_ALPHA, this);
+
 		break;
 	}
 	case Trail_Distortion:
@@ -103,6 +105,14 @@ HRESULT CTrail_VFX::Render_GameObject()
 	if (m_bUseMask)
 		iPass = 6;
 
+	CManagement* pManagement = CManagement::Get_Instance();
+
+	_mat		ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
+	m_pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat));
+	m_pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat));
+	m_pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat));
+
 	Shader_Init(m_pShader, m_iTrailIdx);
 
 	m_pShader->Begin_Shader();
@@ -119,15 +129,17 @@ HRESULT CTrail_VFX::Render_GameObject()
 	m_vecEnd.clear();
 	m_vecStart.shrink_to_fit();
 
+	pManagement = nullptr;
+
 	return S_OK;
 }
 
 HRESULT CTrail_VFX::Render_GameObject_SetShader(CShader * pShader)
 {
-	m_pGraphic_Dev->SetRenderState(D3DRS_LIGHTING, FALSE);
-	m_pGraphic_Dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-
-	m_pGraphic_Dev->SetFVF(m_dwVtxFVF);
+	//m_pGraphic_Dev->SetRenderState(D3DRS_LIGHTING, FALSE);
+	//m_pGraphic_Dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	//
+	//m_pGraphic_Dev->SetFVF(m_dwVtxFVF);
 
 	_int iPass = (m_eType == Trail_Normal ? 5 : 1);
 	if (m_bUseMask) iPass = 6;
@@ -135,6 +147,39 @@ HRESULT CTrail_VFX::Render_GameObject_SetShader(CShader * pShader)
 	Shader_Init(pShader, m_iTrailIdx);
 
 	pShader->Begin_Pass(iPass);
+
+	pShader->Commit_Changes();
+
+	m_pGraphic_Dev->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, m_dwTricnt, m_pVtx, sizeof(VTXTEX));
+
+	pShader->End_Pass();
+
+	m_vecStart.clear();
+	m_vecStart.shrink_to_fit();
+
+	m_vecEnd.clear();
+	m_vecStart.shrink_to_fit();
+
+	return S_OK;
+}
+
+HRESULT CTrail_VFX::Render_GameObject_Instancing_SetPass(CShader * pShader)
+{
+	m_pGraphic_Dev->SetRenderState(D3DRS_LIGHTING, FALSE);
+	m_pGraphic_Dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	
+	m_pGraphic_Dev->SetFVF(m_dwVtxFVF);
+
+	_int iPass = (m_eType == Trail_Normal ? 5 : 1);
+
+	if (m_bUseMask)
+		iPass = 6;
+
+	Shader_Init(pShader, m_iTrailIdx);
+
+	pShader->Begin_Pass(iPass);
+
+	pShader->Commit_Changes();
 
 	m_pGraphic_Dev->DrawPrimitiveUP(D3DPT_TRIANGLESTRIP, m_dwTricnt, m_pVtx, sizeof(VTXTEX));
 
@@ -318,11 +363,9 @@ HRESULT CTrail_VFX::Shader_Init(CShader* pShader, const _uint & iIndex)
 
 	Safe_AddRef(pManagement);
 
-	_mat		ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
 	pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat));
-	pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat));
-	pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat));
+	//pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat));
+	//pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat));
 
 	_float	fAlpha = 1.f;
 	_float	fDistortion = 0.01f;

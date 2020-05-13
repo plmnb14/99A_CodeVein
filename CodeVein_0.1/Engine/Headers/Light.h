@@ -6,6 +6,7 @@
 
 BEGIN(Engine)
 
+class COptimization;
 class CLight final : public CBase
 {
 private:
@@ -52,6 +53,9 @@ private:
 	_mat	m_matView = {};
 	_mat	m_matProj = {};
 	_v3		m_vPos = {0, 0, 0};
+
+private:
+	COptimization*	m_pOtimize = nullptr;
 
 public:
 	static CLight* Create(LPDIRECT3DDEVICE9 pGraphic_Device, NEW_LIGHT LightDesc);

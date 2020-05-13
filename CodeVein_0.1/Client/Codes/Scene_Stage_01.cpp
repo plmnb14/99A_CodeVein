@@ -36,9 +36,6 @@ HRESULT CScene_Stage_01::Ready_Scene()
 	pRenderer->Fog_On(true);
 	Safe_Release(pRenderer);
 
-	//CScriptManager::Get_Instance()->Set_StageIdx(1);
-	//CScriptManager::Get_Instance()->Ready_Script_DynamicObject(1);
-
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_01.dat");
 
 	return S_OK;
@@ -89,6 +86,8 @@ HRESULT CScene_Stage_01::Ready_Layer_Player(const _tchar * pLayerTag)
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_MonsterProjectile")))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_BossUI")))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Colleague")))
 		return E_FAIL;
 
 	CPlayer* pInstance = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
