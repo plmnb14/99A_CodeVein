@@ -13,6 +13,18 @@ class CColleague_Jack;
 class CPlayer_Colleague final : public CGameObject
 {
 public:
+	typedef struct tagInitInfo
+	{
+		tagInitInfo(_v3 vPos, _float fYAngle, _ushort StageIdx)
+			: vPos(vPos), fYAngle(fYAngle), sStageIdx(g_eSceneID_Cur)
+		{}
+
+		_v3			vPos = {};
+		_float		fYAngle = 0.f;
+		_ushort		sStageIdx = 0;
+	}JACK_INFO;
+
+public:
 	typedef struct tagMoveOptionReset
 	{
 		tagMoveOptionReset(SCENEID _eSceneID, Teleport_ID _eTeleportID)
@@ -91,14 +103,16 @@ public:
 	virtual _int	Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT LateInit_GameObject();
 	virtual HRESULT Render_GameObject();
+	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader);
+	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur = false);
 
 public:
 	_float	Get_CollHP() { return m_tObjParam.fHp_Cur; }
 
 private:
-	HRESULT Add_Component();
+	HRESULT Add_Component(void* pArg);
 	HRESULT	SetUp_Default();
-	HRESULT SetUp_ConstantTable();
+	HRESULT SetUp_ConstantTable(CShader * pShader);
 
 private:
 	HRESULT	Ready_BoneMatrix();
@@ -186,7 +200,7 @@ private:
 	void	Function_FBRL();
 
 public:
-	void Teleport_ResetOptions(_int eSceneID, _int eTeleportID);
+	void Teleport_ResetOptions(void * pArg/*_int eSceneID, _int eTeleportID*/);
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -195,6 +209,7 @@ private:
 	CMesh_Dynamic*			m_pDynamicMesh = nullptr;
 	CNavMesh*				m_pNavMesh = nullptr;
 	CCollider*				m_pCollider = nullptr;
+	COptimization*			m_pOptimizationCom = nullptr;
 
 	CWeapon*				m_pSword = nullptr;
 	CTransform*				m_pTargetTransformCom = nullptr;
@@ -203,6 +218,8 @@ private:
 	CColleague_Jack*		m_pCollJack = nullptr;
 
 	CGameObject*			m_pObject_Mon = nullptr;
+
+	CBattleAgent*			m_pBattleAgentCom = nullptr;
 
 private:
 	Colleague_Type			m_eMovetype;

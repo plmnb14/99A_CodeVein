@@ -28,14 +28,29 @@ HRESULT CPlayer_Colleague::Ready_GameObject_Prototype()
 
 HRESULT CPlayer_Colleague::Ready_GameObject(void * pArg)
 {
-	if (FAILED(Add_Component()))
+	if (FAILED(Add_Component(pArg)))
 		return E_FAIL;
 
-	SetUp_Default();
+	JACK_INFO pInfo = *(JACK_INFO*)pArg;
 
+
+	SetUp_Default();
 	Ready_BoneMatrix();
 	Ready_Collider();
 	Ready_Weapon();
+
+	m_pTransformCom->Set_Pos(pInfo.vPos);
+	m_pTransformCom->Set_Angle(AXIS_Y, pInfo.fYAngle);
+	
+	Teleport_ResetOptions(pArg);
+
+	//m_eMovetype = CPlayer_Colleague::Coll_Start;
+
+	m_pBattleAgentCom->Set_OriginRimAlpha(0.25f);
+	m_pBattleAgentCom->Set_OriginRimValue(7.f);
+	m_pBattleAgentCom->Set_RimAlpha(0.25f);
+	m_pBattleAgentCom->Set_RimValue(7.f);
+
 
 	m_pCollJack = static_cast<CColleague_Jack*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague_Jack", pArg));
 	m_pCollJack->Set_Target(this);
@@ -49,7 +64,15 @@ HRESULT CPlayer_Colleague::Ready_GameObject(void * pArg)
 _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 {
 	/*if (false == m_bEnable)
-	return E_FAIL;*/
+		return E_FAIL;*/
+
+
+	//====================================================================================================
+	// 컬링
+	//====================================================================================================
+	m_bInFrustum = m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f);
+	//====================================================================================================
+
 
 	CGameObject::Update_GameObject(TimeDelta);
 
@@ -63,8 +86,8 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 
 	/*if (true == m_bCheck_SEndGame)
 	{*/
-	cout << "동료: " << m_pTransformCom->Get_Pos().x << ", " << m_pTransformCom->Get_Pos().y << ", "  << m_pTransformCom->Get_Pos().z << endl;
-	cout << "플레이어: " << m_pTargetTransformCom->Get_Pos().x << ", " << m_pTargetTransformCom->Get_Pos().y << ", " << m_pTargetTransformCom->Get_Pos().z << endl;
+	//cout << "동료: " << m_pTransformCom->Get_Pos().x << ", " << m_pTransformCom->Get_Pos().y << ", "  << m_pTransformCom->Get_Pos().z << endl;
+	//cout << "플레이어: " << m_pTargetTransformCom->Get_Pos().x << ", " << m_pTargetTransformCom->Get_Pos().y << ", " << m_pTargetTransformCom->Get_Pos().z << endl;
 
 	if (g_pInput_Device->Key_Down(DIK_K))
 		m_tObjParam.fHp_Cur += 100.f;
@@ -108,7 +131,7 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 	if (m_eMovetype != CPlayer_Colleague::Coll_Dead)
 		Enter_Collision();
 
-
+	
 
 	//}
 	return S_OK;
@@ -117,14 +140,33 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 _int CPlayer_Colleague::Late_Update_GameObject(_double TimeDelta)
 {
 	/*if (false == m_bEnable)
-	return E_FAIL;*/
+	return NO_EVENT;*/
+
+	IF_NULL_VALUE_RETURN(m_pRendererCom, E_FAIL);
+
+	m_dTimeDelta = TimeDelta;
+
 	m_pCollJack->Late_Update_GameObject(TimeDelta);
 	m_pColleagueUI->Late_Update_GameObject(TimeDelta);
 
-	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
-		return E_FAIL;
+	if (!m_bDissolve)
+	{
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_NONALPHA, this)))
+			return E_FAIL;
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_SHADOWTARGET, this)))
+			return E_FAIL;
+	}
+	else
+	{
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_ALPHA, this)))
+			return E_FAIL;
+	}
 
-	m_dTimeDelta = TimeDelta;
+	if (m_bInFrustum && !m_bDissolve)
+	{
+		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+			return E_FAIL;
+	}
 
 	IF_NOT_NULL(m_pSword)
 		m_pSword->Late_Update_GameObject(TimeDelta);
@@ -139,19 +181,24 @@ HRESULT CPlayer_Colleague::LateInit_GameObject()
 
 HRESULT CPlayer_Colleague::Render_GameObject()
 {
-	/*if (false == m_bEnable)
-	return S_OK;*/
+	IF_NULL_VALUE_RETURN(m_pShaderCom, E_FAIL);
+	IF_NULL_VALUE_RETURN(m_pDynamicMesh, E_FAIL);
 
-	if (nullptr == m_pShaderCom || nullptr == m_pDynamicMesh)
-		return E_FAIL;
+	m_pDynamicMesh->Play_Animation(DELTA_60 * m_dPlayAni_Time);
 
-	m_pDynamicMesh->Play_Animation(m_dPlayAni_Time * g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60"));
+	if (m_bInFrustum)
+	{
+		if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShaderCom)))
+			return E_FAIL;
 
-	if (m_tObjParam.bInvisible)
-		return S_OK;
+		_mat matveiwView = g_pManagement->Get_Transform(D3DTS_VIEW);
+		_mat matPro = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
+		m_pShaderCom->Set_Value("g_matView", &matveiwView, sizeof(_mat));
+		m_pShaderCom->Set_Value("g_matProj", &matPro, sizeof(_mat));
+
+		if (FAILED(SetUp_ConstantTable(m_pShaderCom)))
+			return E_FAIL;
 
 	m_pShaderCom->Begin_Shader();
 
@@ -167,6 +214,9 @@ HRESULT CPlayer_Colleague::Render_GameObject()
 		{
 			if (CPlayer_Colleague::Coll_Dead != m_eMovetype)
 				m_iPass = m_pDynamicMesh->Get_MaterialPass(i, j);
+
+			if (m_bDissolve)
+				m_iPass = 3;
 
 			m_pShaderCom->Begin_Pass(m_iPass);
 
@@ -184,36 +234,171 @@ HRESULT CPlayer_Colleague::Render_GameObject()
 	IF_NOT_NULL(m_pSword)
 		m_pSword->Update_GameObject(m_dTimeDelta);
 
+	}
+
 	Update_Collider();
 	Render_Collider();
 
 	return S_OK;
+
+
 }
 
-HRESULT CPlayer_Colleague::Add_Component()
+HRESULT CPlayer_Colleague::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
-	// For.Com_Transform
+	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
+	IF_NULL_VALUE_RETURN(m_pDynamicMesh, E_FAIL);
+
+	m_pDynamicMesh->Play_Animation(DELTA_60 * m_dPlayAni_Time);
+
+	if (m_bInFrustum)
+	{
+		if (FAILED(SetUp_ConstantTable(pShader)))
+			return E_FAIL;
+
+		_uint iNumMeshContainer = _uint(m_pDynamicMesh->Get_NumMeshContainer());
+
+		for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+		{
+			_uint iNumSubSet = (_uint)m_pDynamicMesh->Get_NumMaterials(i);
+
+			m_pDynamicMesh->Update_SkinnedMesh(i);
+
+			for (_uint j = 0; j < iNumSubSet; ++j)
+			{
+				m_iPass = m_pDynamicMesh->Get_MaterialPass(i, j);
+
+				if (m_bDissolve)
+					m_iPass = 3;
+
+				pShader->Begin_Pass(m_iPass);
+
+				pShader->Set_DynamicTexture_Auto(m_pDynamicMesh, i, j);
+
+				pShader->Commit_Changes();
+
+				m_pDynamicMesh->Render_Mesh(i, j);
+
+				pShader->End_Pass();
+			}
+		}
+
+	}
+
+	Update_Collider();
+
+	return S_OK;
+}
+
+HRESULT CPlayer_Colleague::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
+{
+	if (false == m_bEnable)
+		return S_OK;
+
+	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
+	IF_NULL_VALUE_RETURN(m_pDynamicMesh, E_FAIL);
+
+	//============================================================================================
+	// 공통 변수
+	//============================================================================================
+	_mat	ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat	ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+	_mat	WorldMatrix = m_pTransformCom->Get_WorldMat();
+
+	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
+		return E_FAIL;
+
+	//============================================================================================
+	// 모션 블러 상수
+	//============================================================================================
+	if (_bIsForMotionBlur)
+	{
+		if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
+			return E_FAIL;
+
+		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
+
+		_bool bMotionBlur = true;
+		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+			return E_FAIL;
+		_bool bDecalTarget = false;
+		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+			return E_FAIL;
+		_float fBloomPower = 0.5f;
+		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
+			return E_FAIL;
+	}
+
+	//============================================================================================
+	// 기타 상수
+	//============================================================================================
+	else
+	{
+		_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
+
+		if (FAILED(pShader->Set_Value("g_matWVP", &matWVP, sizeof(_mat))))
+			return E_FAIL;
+	}
+
+	//============================================================================================
+	// 쉐이더 실행
+	//============================================================================================
+	_uint iNumMeshContainer = _uint(m_pDynamicMesh->Get_NumMeshContainer());
+
+	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+	{
+		_uint iNumSubSet = (_uint)m_pDynamicMesh->Get_NumMaterials(i);
+
+		for (_uint j = 0; j < iNumSubSet; ++j)
+		{
+			_int tmpPass = m_pDynamicMesh->Get_MaterialPass(i, j);
+
+			pShader->Begin_Pass(iPass);
+
+			pShader->Commit_Changes();
+
+			m_pDynamicMesh->Render_Mesh(i, j);
+
+			pShader->End_Pass();
+		}
+	}
+
+	//============================================================================================
+
+
+	return S_OK;
+}
+
+HRESULT CPlayer_Colleague::Add_Component(void* pArg)
+{
+	_tchar MeshName[STR_128] = L"";
+
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
 		return E_FAIL;
 
-	// For.Com_Renderer
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom)))
 		return E_FAIL;
 
-	// For.Com_Shader
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_Mesh", L"Com_Shader", (CComponent**)&m_pShaderCom)))
 		return E_FAIL;
 
-	// for.Com_Mesh
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Buddy_Jack", L"Com_DynamicMesh", (CComponent**)&m_pDynamicMesh)))
 		return E_FAIL;
 
-	// for.Com_NavMesh
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"NavMesh", L"Com_NavMesh", (CComponent**)&m_pNavMesh)))
 		return E_FAIL;
 
-	// for.Com_Collider
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
+		return E_FAIL;
+
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Optimization", L"Com_Optimization", (CComponent**)&m_pOptimizationCom)))
+		return E_FAIL;
+
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"BattleAgent", L"Com_BattleAgent", (CComponent**)&m_pBattleAgentCom)))
 		return E_FAIL;
 
 	// 콜라이더 설정
@@ -226,9 +411,56 @@ HRESULT CPlayer_Colleague::Add_Component()
 }
 
 
-HRESULT CPlayer_Colleague::SetUp_ConstantTable()
+HRESULT CPlayer_Colleague::SetUp_ConstantTable(CShader* pShader)
 {
-	if (nullptr == m_pShaderCom)
+	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
+
+	//=============================================================================================
+	// 기본 메트릭스
+	//=============================================================================================
+
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
+		return E_FAIL;
+
+	//=============================================================================================
+	// 디졸브용 상수
+	//=============================================================================================
+	if (FAILED(pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
+		return E_FAIL;
+
+	//=============================================================================================
+	// 쉐이더 재질정보 수치 입력
+	//=============================================================================================
+	_float	fEmissivePower = 5.f;	// 이미시브 : 높을 수록, 자체 발광이 강해짐.
+	_float	fSpecularPower = 1.f;	// 메탈니스 : 높을 수록, 정반사가 강해짐.
+	_float	fRoughnessPower = 1.f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
+	_float	fMinSpecular = 0.1f;	// 최소 빛	: 높을 수록 빛이 퍼짐(림라이트의 범위가 넓어지고 , 밀집도가 낮아짐).
+	_float	fID_R = 1.0f;	// ID_R : R채널 ID 값 , 1이 최대
+	_float	fID_G = 0.5f;	// ID_G : G채널 ID 값 , 1이 최대
+	_float	fID_B = 0.2f;	// ID_B	: B채널 ID 값 , 1이 최대
+
+	if (FAILED(pShader->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_fID_R_Power", &fID_R, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_fID_G_Power", &fID_G, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
+		return E_FAIL;
+
+	//=============================================================================================
+	// 림라이트 값들을 쉐이더에 등록시킴
+	//=============================================================================================
+	m_pBattleAgentCom->Update_RimParam_OnShader(m_pShaderCom);
+	//=============================================================================================
+
+	/*if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
@@ -240,7 +472,7 @@ HRESULT CPlayer_Colleague::SetUp_ConstantTable()
 	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShaderCom)))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
-		return E_FAIL;
+		return E_FAIL;*/
 
 	return S_OK;
 }
@@ -325,10 +557,6 @@ HRESULT CPlayer_Colleague::Ready_Weapon()
 	m_pSword->Set_AttachBoneMartix(&pFamre->CombinedTransformationMatrix);
 	m_pSword->Set_ParentMatrix(&m_pTransformCom->Get_WorldMat());
 	m_pSword->Set_Friendly(true);		// 무기의 아군인지 적군인지 체크한다. true는 아군
-
-	// 총알
-	//m_pCollBullet = static_cast<CColleague_Bullet*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ColleagueBullet", NULL));
-
 
 	return S_OK;
 }
@@ -434,17 +662,18 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 
 	_float	fPlayerLength = V3_LENGTH(&(m_pTransformCom->Get_Pos() - m_pTargetTransformCom->Get_Pos()));
 
-	if (fPlayerLength > 30.f)
-	{
-		_v3 vPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 2.f);
-		m_pTransformCom->Set_Pos(vPos);
+	//if (fPlayerLength > 30.f)
+	//{
+	//	Check_Navi();
+	//	/*_v3 vPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 2.f);
+	//	m_pTransformCom->Set_Pos(vPos);*/
 
-		/*g_pManagement->Create_Effect_Delay(L"Colleague_Teleport_Line_Particle_0", 0.f, vPos, nullptr);
-		g_pManagement->Create_Effect_Delay(L"Colleague_Teleport_Line_Particle_1", 0.f, vPos, nullptr);
-		g_pManagement->Create_Effect_Delay(L"Colleague_Teleport_Line_Particle_2", 0.f, vPos, nullptr);
-		g_pManagement->Create_Effect_Delay(L"Colleague_Teleport_Flash_Particle_0", 0.f, vPos, nullptr);*/
-		//g_pManagement->Create_Effect_Delay(L"Colleague_Teleport_Smoke_0", 0.f, vPos, nullptr);
-	}
+	//	/*g_pManagement->Create_Effect_Delay(L"Colleague_Teleport_Line_Particle_0", 0.f, vPos, nullptr);
+	//	g_pManagement->Create_Effect_Delay(L"Colleague_Teleport_Line_Particle_1", 0.f, vPos, nullptr);
+	//	g_pManagement->Create_Effect_Delay(L"Colleague_Teleport_Line_Particle_2", 0.f, vPos, nullptr);
+	//	g_pManagement->Create_Effect_Delay(L"Colleague_Teleport_Flash_Particle_0", 0.f, vPos, nullptr);*/
+	//	//g_pManagement->Create_Effect_Delay(L"Colleague_Teleport_Smoke_0", 0.f, vPos, nullptr);
+	//}
 
 	// 몬스터 or 보스 리스트가 비어있거나 Enable 이면 탐색 종료
 	for (auto& iter_Mon : *m_List_pMonTarget[0])
@@ -758,12 +987,10 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 		m_fDodge_CoolTime = 0;
 	}
 	}
-
-
-	if (fMyPlayerLength > 30.f)
+	else if (fMyPlayerLength >= 30.f)
 	{
-		Check_Navi();
-		//m_pTransformCom->Set_Pos(_v3(m_pTargetTransformCom->Get_Pos().x - 3.f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 2.f));
+		m_pTransformCom->Set_Pos(_v3(m_pTargetTransformCom->Get_Pos().x - 3.f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 2.f));
+ 		Check_Navi();
 	}
 
 
@@ -1017,11 +1244,13 @@ void CPlayer_Colleague::Check_Navi()
 		g_eSceneID_Cur == 7 ? L"Navmesh_Stage_02.dat" :
 		g_eSceneID_Cur == 8 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
 
-	m_pTransformCom->Set_Pos(m_pTargetTransformCom->Get_Axis(AXIS_X) * 1.f);
+	m_pTransformCom->Set_Pos(_v3(m_pTargetTransformCom->Get_Pos().x - 3.f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 2.f));
 
-	m_pNavMesh->Set_Index(-1);
+	m_pNavMesh->Reset_NaviMesh();
 	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, szNavData);
 	m_pNavMesh->Check_OnNavMesh(m_pTransformCom->Get_Pos());
+
+	//m_pTransformCom->Set_Pos(m_pTargetTransformCom->Get_Axis(AXIS_X) * 1.f);
 }
 
 HRESULT CPlayer_Colleague::SetUp_Default()
@@ -1037,7 +1266,7 @@ HRESULT CPlayer_Colleague::SetUp_Default()
 	if (nullptr != m_pTargetTransformCom)
 		Safe_AddRef(m_pTargetTransformCom);
 
-	m_pTransformCom->Set_Pos(_v3(m_pTargetTransformCom->Get_Pos().x - 5.f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 5.f));
+	//m_pTransformCom->Set_Pos(_v3(m_pTargetTransformCom->Get_Pos().x - 5.f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 5.f));
 
 	m_eMovetype = CPlayer_Colleague::Coll_Idle;
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
@@ -2355,8 +2584,6 @@ void CPlayer_Colleague::CollAtt_CenterDown()		// 2번
 		{
 			m_bEventTrigger[7] = true;
 
-			cout << "CollAtt_CenterDown_2 : " << m_pDynamicMesh->Get_TrackInfo().Position << endl;
-
 			g_pManagement->Create_Effect_Delay(L"Player_Skill_Ring_Hor", 0.f, vEffPos, m_pTransformCom);
 			g_pManagement->Create_Effect_Delay(L"Player_Skill_Ring_Ver", 0.f, vEffPos, m_pTransformCom);
 			g_pManagement->Create_Effect_Delay(L"Player_Skill_RedCircle_Flash", 0.f, vEffPos, m_pTransformCom);
@@ -2369,8 +2596,6 @@ void CPlayer_Colleague::CollAtt_CenterDown()		// 2번
 		if (m_bEventTrigger[6] == false)
 		{
 			m_bEventTrigger[6] = true;
-
-			cout << "CollAtt_CenterDown_1 : " << m_pDynamicMesh->Get_TrackInfo().Position << endl;
 
 			g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Ver", 0.f, vEffPos, m_pTransformCom);
 			g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Ver", 0.f, vEffPos, m_pTransformCom);
@@ -2409,8 +2634,6 @@ void CPlayer_Colleague::CollAtt_CenterDown()		// 2번
 		if (m_bEventTrigger[3] == false)
 		{
 			m_bEventTrigger[3] = true;
-
-			cout << "CollAtt_CenterDown_0 : " << m_pDynamicMesh->Get_TrackInfo().Position << endl;
 
 			g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Hor", 0.f, vEffPos, m_pTransformCom);
 			g_pManagement->Create_Effect_Delay(L"Player_Skill_ScratchBlur_Sub_Hor", 0.f, vEffPos, m_pTransformCom);
@@ -3016,7 +3239,7 @@ void CPlayer_Colleague::Function_FBRL()
 	}
 }
 
-void CPlayer_Colleague::Teleport_ResetOptions(_int eSceneID, _int eTeleportID)
+void CPlayer_Colleague::Teleport_ResetOptions(void * pArg/*_int eSceneID, _int eTeleportID*/)
 {
 	_v3 vShadowLightPos = V3_NULL;
 	_v3 vPos = V3_NULL;
@@ -3028,81 +3251,82 @@ void CPlayer_Colleague::Teleport_ResetOptions(_int eSceneID, _int eTeleportID)
 
 	Funtion_Reset_State();
 
-	// 위치 , 방향 설정
-	switch (g_eSceneID_Cur)
-	{
-	case SCENE_STAGE_TRAINING:
-	{
-		//vShadowLightPos = _v3(100.f, 50.f, 0.f);
-		vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f);
-		break;
-	}
+	//// 위치 , 방향 설정
+	//switch (g_eSceneID_Cur)
+	//{
+	//case SCENE_STAGE_TRAINING:
+	//{
+	//	//vShadowLightPos = _v3(100.f, 50.f, 0.f);
+	//	vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f);
+	//	break;
+	//}
 
-	case SCENE_STAGE_BASE:
-	{
-		/*vShadowLightPos = _v3(100.f, 50.f, 0.f);
+	//case SCENE_STAGE_BASE:
+	//{
+	//	/*vShadowLightPos = _v3(100.f, 50.f, 0.f);
 
-		vPos = eTeleportID == TeleportID_Tutorial ?
-			V3_NULL : _v3(-0.519f, 0.120f, 23.810f);
+	//	vPos = eTeleportID == TeleportID_Tutorial ?
+	//		V3_NULL : _v3(-0.519f, 0.120f, 23.810f);
 
-		fAngle = eTeleportID == TeleportID_Tutorial ?
-			0.f : 180.f;*/
+	//	fAngle = eTeleportID == TeleportID_Tutorial ?
+	//		0.f : 180.f;*/
 
-		break;
-	}
+	//	break;
+	//}
 
-	case SCENE_STAGE_01:
-	{
-		//vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f);
+	//case SCENE_STAGE_01:
+	//{
+	//	//vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f);
 
-		vPos = eTeleportID == TeleportID_St01_1 ? vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f) :
-			eTeleportID == TeleportID_St01_2 ? V3_NULL : V3_NULL;
+	//	vPos = eTeleportID == TeleportID_St01_1 ? vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f) :
+	//		eTeleportID == TeleportID_St01_2 ? V3_NULL : V3_NULL;
 
-		fAngle = eTeleportID == TeleportID_St01_1 ? 0.f :
-			eTeleportID == TeleportID_St01_2 ? 0.f : 0.f;
+	//	fAngle = eTeleportID == TeleportID_St01_1 ? 0.f :
+	//		eTeleportID == TeleportID_St01_2 ? 0.f : 0.f;
 
-		break;
-	}
+	//	break;
+	//}
 
-	case SCENE_STAGE_02:
-	{
-		// 아직
+	//case SCENE_STAGE_02:
+	//{
+	//	// 아직
 
-		break;
-	}
+	//	break;
+	//}
 
-	case SCENE_STAGE_03:
-	{
-		//vShadowLightPos = vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f);;
+	//case SCENE_STAGE_03:
+	//{
+	//	//vShadowLightPos = vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f);;
 
-		vPos = eTeleportID == TeleportID_St03_1 ?
-			vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f) : V3_NULL;
+	//	vPos = eTeleportID == TeleportID_St03_1 ?
+	//		vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f) : V3_NULL;
 
-		fAngle = eTeleportID == TeleportID_St03_1 ?
-			0.f : 0.f;
+	//	fAngle = eTeleportID == TeleportID_St03_1 ?
+	//		0.f : 0.f;
 
-		break;
-	}
+	//	break;
+	//}
 
-	case SCENE_STAGE_04:
-	{
-		//vShadowLightPos = vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f);
+	//case SCENE_STAGE_04:
+	//{
+	//	//vShadowLightPos = vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f);
 
-		vPos = eTeleportID == TeleportID_St04_1 ?
-			vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f) : V3_NULL;
+	//	vPos = eTeleportID == TeleportID_St04_1 ?
+	//		vShadowLightPos = _v3(m_pTargetTransformCom->Get_Pos().x - 3.5f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 3.5f) : V3_NULL;
 
-		fAngle = eTeleportID == TeleportID_St04_1 ?
-			0.f : 0.f;
+	//	fAngle = eTeleportID == TeleportID_St04_1 ?
+	//		0.f : 0.f;
 
-		break;
-	}
-	}
+	//	break;
+	//}
+	//}
+	//m_pTransformCom->Set_Pos(TARGET_TO_TRANS(m_pTarget)->Get_Axis(AXIS_X) * 1.f);
 	
-	m_pRendererCom->Set_ShadowLightPos(vShadowLightPos);
+	//m_pRendererCom->Set_ShadowLightPos(vShadowLightPos);
 
-	fRadian = D3DXToRadian(fAngle);
-	m_pTransformCom->Set_Pos(vPos);
-	m_pTransformCom->Set_Angle(AXIS_Y, fRadian);
+	//fRadian = D3DXToRadian(fAngle);
+	//m_pTransformCom->Set_Pos(vPos);
+	//m_pTransformCom->Set_Angle(AXIS_Y, fRadian);
 
 	_tchar szNavMeshName[STR_128] = L"";
 
@@ -3115,7 +3339,8 @@ void CPlayer_Colleague::Teleport_ResetOptions(_int eSceneID, _int eTeleportID)
 
 	m_pNavMesh->Reset_NaviMesh();
 	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, szNavMeshName);
-	m_pNavMesh->Check_OnNavMesh(vPos);
+	m_pNavMesh->Check_OnNavMesh(m_pTransformCom->Get_Pos());
+	//m_pNavMesh->Check_OnNavMesh(vPos);
 }
 
 CPlayer_Colleague* CPlayer_Colleague::Create(_Device pGraphic_Device)
@@ -3168,6 +3393,9 @@ void CPlayer_Colleague::Free()
 	{
 		iter = nullptr;
 	}
+
+	Safe_Release(m_pBattleAgentCom);
+
 
 	CGameObject::Free();
 }

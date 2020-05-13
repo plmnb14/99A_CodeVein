@@ -26,8 +26,9 @@ HRESULT CScene_Stage_01::Ready_Scene()
 	if (FAILED(Ready_Layer_Player(L"Layer_Player")))
 		return E_FAIL;
 
-	if (FAILED(Ready_Layer_Colleague(L"Layer_Colleague")))
-		return E_FAIL;
+	// 김재구 추가
+	/*if (FAILED(Ready_Layer_Colleague(L"Layer_Colleague")))
+		return E_FAIL;*/
 
 	if (FAILED(Ready_Layer_Environment(L"Layer_Environment")))
 		return E_FAIL;
@@ -179,22 +180,12 @@ HRESULT CScene_Stage_01::Ready_Layer_Environment(const _tchar* pLayerTag)
 
 HRESULT CScene_Stage_01::Ready_Layer_Colleague(const _tchar * pLayerTah)
 {
-	// 아규먼트로 넘겨주게
-	CGameObject* pInstance = nullptr;
+	//// 김재구 추가
+	//CGameObject* pInstance = nullptr;
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague", nullptr);
-	/*TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(5.f, 0.f, 5.f));*/
-	TARGET_TO_NAV(pInstance)->Reset_NaviMesh();
-	TARGET_TO_NAV(pInstance)->Ready_NaviMesh(m_pGraphic_Device, L"Navmesh_Training.dat");
-	TARGET_TO_NAV(pInstance)->Check_OnNavMesh(_v3(0.f, 0.f, 0.f));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
-
-	CPlayer_Colleague* pColleague = static_cast<CPlayer_Colleague*>(g_pManagement->Get_GameObjectBack(L"Layer_Colleague", SCENE_MORTAL));
-	if(nullptr != pColleague)
-		pColleague->Teleport_ResetOptions(g_eSceneID_Cur, g_eSTeleportID_Cur);
-	//pInstance->Set_Enable(true);
-
-	//pColleague = nullptr;
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague",
+	//	&CPlayer_Colleague::JACK_INFO(_v3(150.484f, -18.08f, 70.417f), 0.f, 1));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
 
 	return S_OK;
 }
