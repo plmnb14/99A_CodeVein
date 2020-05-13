@@ -33,18 +33,15 @@ HRESULT CPlayerST::Ready_GameObject(void * pArg)
 
 	m_bIsActive = true;
 
-	
-	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
-
-	m_fPlayerST = m_pTarget->Get_Target_Stamina();
-	m_fTotalST = m_fPlayerST;
-	
 	return NOERROR;
 }
 
 _int CPlayerST::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
+	m_pTarget = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	if (!m_pTarget)
+		return 0;
 
 	SetUp_State(TimeDelta);
 
@@ -175,6 +172,7 @@ void CPlayerST::SetUp_State(_double TimeDelta)
 		m_fPlayerST = 0.f;
 	
 	m_fPlayerST = m_pTarget->Get_Target_Stamina();
+	m_fTotalST = m_pTarget->Get_Target_Param().fStamina_Max;
 
 	// Texture UV 흐르는 속도
 	m_fSpeed += 0.f;

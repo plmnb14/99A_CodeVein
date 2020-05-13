@@ -13,11 +13,11 @@ private:
 
 public:
 	bool Get_Select() { return m_bIsSelect; }
-	ARMOR_TYPE Get_Type();
+	ARMOR_PARAM Get_ArmorParam();
 
 public:
 	void Set_Select(_bool bIsSelect) { m_bIsSelect = bIsSelect; }
-	void Set_Type(ARMOR_TYPE eType) { m_eType = eType; }
+	void Set_ArmorParam(ARMOR_PARAM tArmorParam) { m_tArmorParam = tArmorParam; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -28,6 +28,7 @@ public:
 
 public:
 	_bool Pt_InRect();
+	void Init_Param();
 
 private:
 	HRESULT Add_Component();
@@ -42,7 +43,7 @@ private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 private:
-	ARMOR_TYPE				m_eType = ARMOR_End;
+	ARMOR_PARAM				m_tArmorParam;
 	_bool					m_bIsSelect = false;
 	_bool					m_bIsCollMouse = false;
 

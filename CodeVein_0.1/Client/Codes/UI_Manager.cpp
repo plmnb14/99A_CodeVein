@@ -127,6 +127,10 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ScriptUI", CScriptUI::Create(pDevice))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ExplainArmorUI", CExplainArmorUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ExplainWeaponUI", CExplainWeaponUI::Create(pDevice))))
+		return E_FAIL;
 	
 	//////////////// Chae
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BossMassageUI", CMassageUI::Create(pDevice))))
@@ -162,6 +166,13 @@ HRESULT CUI_Manager::SetUp_UILayer()
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STATIC, L"Layer_StaticUI")))
 		return E_FAIL;
+	// 플레이어 HP
+	m_pPlayerHP = static_cast<CPlayerHP*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerHP", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pPlayerHP, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	// 플레이어 ST
+	m_pPlayerST = static_cast<CPlayerST*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerST", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pPlayerST, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 	
 	// 소비 인벤토리
 	m_pExpendables_Inven = static_cast<CExpendables_Inven*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExpendablesInven", nullptr));
@@ -242,11 +253,11 @@ HRESULT CUI_Manager::SetUp_UILayer()
 
 _int CUI_Manager::Update_UI()
 {
-	if (g_pInput_Device->Key_Up(DIK_O))
+	/*if (g_pInput_Device->Key_Up(DIK_O))
 	{
 		m_bTest = !m_bTest;
 		m_pMistletoeUI->Set_Active(m_bTest);
-	}
+	}*/
 	//if (g_pInput_Device->Key_Up(DIK_P))
 	//{
 	//	m_pMistletoeUI->Active_SubUI(); // 선택된 항목의 UI On/Off

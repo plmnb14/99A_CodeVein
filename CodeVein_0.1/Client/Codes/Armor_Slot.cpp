@@ -4,11 +4,13 @@
 CArmor_Slot::CArmor_Slot(_Device pDevice)
 	: CUI(pDevice)
 {
+	
 }
 
 CArmor_Slot::CArmor_Slot(const CArmor_Slot & rhs)
 	: CUI(rhs)
 {
+	
 }
 
 HRESULT CArmor_Slot::Ready_GameObject_Prototype()
@@ -29,6 +31,10 @@ HRESULT CArmor_Slot::Ready_GameObject(void * pArg)
 
 	m_bIsActive = false;
 
+	m_tArmorParam.iArmorType = ARMOR_End;
+	m_tArmorParam.fDef = 0.f;
+	m_tArmorParam.iPrice = 0;
+
 	return NOERROR;
 }
 
@@ -42,11 +48,11 @@ _int CArmor_Slot::Update_GameObject(_double TimeDelta)
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
 	
-	switch (m_eType)
+	switch (m_tArmorParam.iArmorType)
 	{
-	case ARMOR_Drape:
+	/*case ARMOR_Drape:
 		m_iIndex = 3;
-		break;
+		break;*/
 	case ARMOR_Gauntlet:
 		m_iIndex = 4;
 		break;
@@ -189,9 +195,16 @@ _bool CArmor_Slot::Pt_InRect()
 	return g_pInput_Device->MousePt_InRect(m_fPosX, m_fPosY, m_fSizeX, m_fSizeY, g_hWnd);
 }
 
-ARMOR_TYPE CArmor_Slot::Get_Type()
+void CArmor_Slot::Init_Param()
 {
-	return m_eType;
+	m_tArmorParam.iArmorType = ARMOR_End;
+	m_tArmorParam.fDef = 0.f;
+	m_tArmorParam.iPrice = 0;
+}
+
+ARMOR_PARAM CArmor_Slot::Get_ArmorParam()
+{
+	return m_tArmorParam;
 }
 
 HRESULT CArmor_Slot::Add_Component()
