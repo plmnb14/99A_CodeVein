@@ -158,7 +158,7 @@ public:
 			eUseWhatWeapon = _eWeapon;
 		}
 
-		PET_GRADE_TYPE	eUseWhatGrade = PET_GRADE_TYPE::PET_GRADE_NORMAL;
+		PET_GRADE_TYPE		eUseWhatGrade = PET_GRADE_TYPE::PET_GRADE_NORMAL;
 		WEAPON_STATE		eUseWhatWeapon = WEAPON_STATE::WEAPON_None;
 		_ushort				sStageIdx = 0;
 	};
@@ -187,10 +187,10 @@ protected:
 	virtual _int Update_GameObject(_double TimeDelta) PURE;
 	virtual _int Late_Update_GameObject(_double TimeDelta) PURE;
 	virtual HRESULT Render_GameObject() PURE;
+	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader);
 	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass);
 
 protected:
-	virtual void Check_Navi();
 	virtual void Check_CollisionEvent();
 	virtual void Check_CollisionPush();
 	virtual void Check_CollisionHit(list<CGameObject*> plistGameObject);
@@ -212,15 +212,15 @@ protected:
 	virtual void Play_Dead();
 
 public:
-	virtual PET_PLUS_TYPE Get_Plus() { return m_ePlusType; }
-	virtual PET_TYPE Get_Type() { return m_eType; }
-	virtual PET_GRADE_TYPE Get_Grade() { return m_eGradeType; }
+	virtual void Check_Navi();
+	virtual PET_PLUS_TYPE Get_PetPlus() { return m_ePlusType; }
+	virtual PET_TYPE Get_PetType() { return m_eType; }
+	virtual PET_GRADE_TYPE Get_PetGrade() { return m_eGradeType; }
 
-	virtual void Set_Plus(PET_PLUS_TYPE _ePlusType) { m_ePlusType = _ePlusType; }
-	virtual void Get_Type(PET_TYPE _eType) { m_eType = _eType; }
-	virtual void Get_Grade(PET_GRADE_TYPE _eGradeType) { m_eGradeType = _eGradeType; }
+	virtual void Set_PetPlus(PET_PLUS_TYPE _ePlusType) { m_ePlusType = _ePlusType; }
+	virtual void Set_PetType(PET_TYPE _eType) { m_eType = _eType; }
+	virtual void Set_PetGrade(PET_GRADE_TYPE _eGradeType) { m_eGradeType = _eGradeType; }
 
-	//오더에 따른 겟 셋 함수를 여러개 만들예정 또는 이넘값을 이용해서 오더 내용을 변경할 예정
 	PET_MODE_TYPE Get_Pet_Mode() { return m_eNowPetMode; }
 	void Set_Pet_Mode(PET_MODE_TYPE _eMode) { m_eNowPetMode = _eMode; }
 
@@ -246,7 +246,6 @@ protected:
 	COptimization*		m_pOptimization = nullptr;
 	CBattleAgent*		m_pBattleAgent = nullptr;
 
-	CMonsterUI*			m_pMonsterUI = nullptr;
 	CWeapon*			m_pWeapon = nullptr;
 
 	CGameObject*		m_pPlayer = nullptr;
@@ -281,6 +280,7 @@ protected:
 	_float				m_fPersonalRange = 4.f; //player, 목표와의 사회적 거리두기 변수
 
 	_bool				m_bEventTrigger[30] = {};
+	_bool				m_bCanSummonInStage = false;
 
 	// For Effect
 	_float				m_fDeadEffect_Delay = 0.f;

@@ -25,6 +25,7 @@ public:
 	virtual HRESULT			Render_GameObject();
 
 private:
+	void					Check_Call_Pet(_bool _Check_Get_SlotSelect);
 	void					Click_Inven();
 	void					Reset_SlotSelect();
 
@@ -51,7 +52,9 @@ private:
 	CInventory_Icon*		m_pExitIcon = nullptr;
 
 	vector<CPet_Slot*>		m_vecPetSlot;
-	CPet::PET_TYPE			m_eType;
+	CPet::PET_GRADE_TYPE	m_eGradeType = CPet::PET_GRADE_TYPE::PET_GRADE_TYPE_END;
+	CPet::PET_TYPE			m_eNowType = CPet::PET_TYPE::PET_TYPE_END;
+	CPet::PET_TYPE			m_eOldType = CPet::PET_TYPE::PET_TYPE_END;
 	
 	_bool					m_bCanActivePet = true;
 	_uint					m_VectorNum = 0;

@@ -32,11 +32,6 @@ HRESULT CPet_PoisonButterFly::Ready_GameObject(void * pArg)
 		Safe_AddRef(m_pPlayer);
 
 	Check_Navi();
-	
-	m_pMonsterUI = static_cast<CMonsterUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MonsterHPUI", pArg));
-	m_pMonsterUI->Set_Target(this);
-	m_pMonsterUI->Set_Bonmatrix(m_matBone[Bone_Head]);
-	m_pMonsterUI->Ready_GameObject(NULL);
 
 	return S_OK;
 }
@@ -47,8 +42,6 @@ _int CPet_PoisonButterFly::Update_GameObject(_double TimeDelta)
 		return NO_EVENT;
 
 	CGameObject::Update_GameObject(TimeDelta);
-
-	m_pMonsterUI->Update_GameObject(TimeDelta);
 
 	Check_Dist();
 	Check_AniEvent();
@@ -67,8 +60,6 @@ _int CPet_PoisonButterFly::Late_Update_GameObject(_double TimeDelta)
 {
 	if (false == m_bEnable)
 		return NO_EVENT;
-
-	IF_NULL(m_pTarget) m_eTarget = PET_TARGET_TYPE::PET_TARGET_NONE;
 
 	IF_NULL_VALUE_RETURN(m_pRenderer, E_FAIL);
 
@@ -148,7 +139,7 @@ HRESULT CPet_PoisonButterFly::Render_GameObject()
 	return S_OK;
 }
 
-HRESULT CPet_PoisonButterFly::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
+HRESULT CPet_PoisonButterFly::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
 	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
 	IF_NULL_VALUE_RETURN(m_pMesh, E_FAIL);
@@ -193,6 +184,89 @@ HRESULT CPet_PoisonButterFly::Render_GameObject_SetPass(CShader * pShader, _int 
 		Update_Collider();
 		Render_Collider();
 	}
+
+	return S_OK;
+}
+
+HRESULT CPet_PoisonButterFly::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
+{
+	if (false == m_bEnable)
+		return S_OK;
+
+	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
+	IF_NULL_VALUE_RETURN(m_pMesh, E_FAIL);
+
+	//============================================================================================
+	// 공통 변수
+	//============================================================================================
+	_mat	ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat	ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
+	_mat	WorldMatrix = m_pTransform->Get_WorldMat();
+
+	if (FAILED(pShader->Set_Value("g_matWorld", &WorldMatrix, sizeof(_mat))))
+		return E_FAIL;
+
+	//============================================================================================
+	// 모션 블러 상수
+	//============================================================================================
+	if (_bIsForMotionBlur)
+	{
+		if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+			return E_FAIL;
+		if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
+			return E_FAIL;
+
+		m_matLastWVP = WorldMatrix * ViewMatrix * ProjMatrix;
+
+		_bool bMotionBlur = true;
+		if (FAILED(pShader->Set_Bool("g_bMotionBlur", bMotionBlur)))
+			return E_FAIL;
+		_bool bDecalTarget = false;
+		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
+			return E_FAIL;
+		_float fBloomPower = 0.5f;
+		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
+			return E_FAIL;
+	}
+
+	//============================================================================================
+	// 기타 상수
+	//============================================================================================
+	else
+	{
+		_mat matWVP = WorldMatrix * ViewMatrix * ProjMatrix;
+
+		if (FAILED(pShader->Set_Value("g_matWVP", &matWVP, sizeof(_mat))))
+			return E_FAIL;
+	}
+
+	//============================================================================================
+	// 쉐이더 실행
+	//============================================================================================
+	_uint iNumMeshContainer = _uint(m_pMesh->Get_NumMeshContainer());
+
+	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+	{
+		_uint iNumSubSet = (_uint)m_pMesh->Get_NumMaterials(i);
+
+		for (_uint j = 0; j < iNumSubSet; ++j)
+		{
+			_int tmpPass = m_pMesh->Get_MaterialPass(i, j);
+
+			pShader->Begin_Pass(iPass);
+			pShader->Commit_Changes();
+
+			pShader->Commit_Changes();
+
+			m_pMesh->Render_Mesh(i, j);
+
+			pShader->End_Pass();
+		}
+	}
+
+	//============================================================================================
 
 	return S_OK;
 }
@@ -277,11 +351,9 @@ void CPet_PoisonButterFly::Check_Dist()
 		switch (m_iCount)
 		{
 		case 1:
-			cout << "공격 우선" << endl;
 			m_eNowPetMode = PET_MODE_TYPE::PET_MODE_ATK;
 			break;
 		case 2:
-			cout << "유틸 우선" << endl;
 			m_eNowPetMode = PET_MODE_TYPE::PET_MODE_UTILL;
 			break;
 		}
@@ -579,13 +651,11 @@ void CPet_PoisonButterFly::Check_Action()
 	case PET_TARGET_TYPE::PET_TARGET_ITEM:
 		if (true == m_bInRecognitionRange)
 		{
-			cout << "펫, 아이템 인지" << endl;
 			//최대한 아이템과 가깝게 합시다....
 			Function_CalcMoveSpeed(m_fPersonalRange);
 
 			if (0.f >= m_fSkillMoveSpeed_Cur)
 			{
-				cout << "펫, 아이템 충돌 습득" << endl;
 				m_eFirstCategory = PET_STATE_TYPE::IDLE;
 				m_eSecondCategory_IDLE = PET_IDLE_TYPE::IDLE_IDLE;
 				if (nullptr != m_pTarget)
@@ -602,7 +672,6 @@ void CPet_PoisonButterFly::Check_Action()
 			}
 			else
 			{
-				cout << "펫, 아이템 추격" << endl;
 				m_eFirstCategory = PET_STATE_TYPE::MOVE;
 				m_eSecondCategory_MOVE = PET_MOVE_TYPE::MOVE_RUN;
 			}
@@ -1390,25 +1459,16 @@ HRESULT CPet_PoisonButterFly::SetUp_ConstantTable(CShader* pShader)
 {
 	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
 
-	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-
 	//=============================================================================================
 	// 기본 메트릭스
 	//=============================================================================================
 
 	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-		return E_FAIL;
 
 	//=============================================================================================
 	// 디졸브용 상수
 	//=============================================================================================
-	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", pShader)))
-		return E_FAIL;
 	if (FAILED(pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
@@ -1461,7 +1521,8 @@ HRESULT CPet_PoisonButterFly::Ready_Status(void * pArg)
 	m_fAtkRange = 4.f; //목표 근거리범위
 	m_fPersonalRange = 2.f; //사회적 거리두기 범위
 	m_iDodgeCountMax = 5; //피격시 회피카운트
-
+	
+	m_eType = PET_TYPE::PET_POISONBUTTERFLY;
 	m_eFirstCategory = PET_STATE_TYPE::IDLE;
 	m_eNowPetMode = PET_MODE_TYPE::PET_MODE_ATK;
 	m_eOldPetMdoe = PET_MODE_TYPE::PET_MODE_END;
@@ -1503,8 +1564,6 @@ HRESULT CPet_PoisonButterFly::Ready_Status(void * pArg)
 
 	m_fCoolDownMax = 0.f;
 	m_fCoolDownCur = 0.f;
-
-	m_pTransform->Set_Scale(_v3(0.25f, 0.25f, 0.25f));
 
 	return S_OK;
 }

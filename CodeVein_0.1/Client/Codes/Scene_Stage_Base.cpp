@@ -55,7 +55,7 @@ HRESULT CScene_Stage_Base::Ready_Scene()
 
 _int CScene_Stage_Base::Update_Scene(_double TimeDelta)
 {
-	//CUI_Manager::Get_Instance()->Update_UI();
+	CUI_Manager::Get_Instance()->Update_UI();
 
 	return NO_EVENT;
 }
