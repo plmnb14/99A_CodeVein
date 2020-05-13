@@ -148,9 +148,6 @@
     <Filter Include="02.GameObject\Stage\1%29 Boss\PoisonButterfly">
       <UniqueIdentifier>{3625e8d8-de25-4c6f-9d0d-1266dcc58923}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\1%29 Boss\CatWoman">
-      <UniqueIdentifier>{e568e588-f565-417a-acdc-050897a061aa}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\2%29 Monster\Genji\Gun">
       <UniqueIdentifier>{2559073b-348a-4906-a8bc-c47e3dbfa5fe}</UniqueIdentifier>
     </Filter>
@@ -433,17 +430,11 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\01.Slot\11.PetSlot">
       <UniqueIdentifier>{e1619559-c327-4def-8b62-b9b38a871adb}</UniqueIdentifier>
     </Filter>
-    <Filter Include="95. SoundManager">
-      <UniqueIdentifier>{e4f55a90-9a32-4788-a5b8-44ef84c5e70e}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\3%29 Effect\Effect_Parent">
       <UniqueIdentifier>{f579e196-a438-49ed-be73-f5f79f7faad1}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\Stage\Physx\Cloth">
       <UniqueIdentifier>{fb02bec6-d1d4-4b95-aaa1-74737ac78d67}</UniqueIdentifier>
-    </Filter>
-    <Filter Include="94. StageAgent">
-      <UniqueIdentifier>{4dcdf895-5442-4efd-aeeb-a5e9547eaed6}</UniqueIdentifier>
     </Filter>
     <Filter Include="02.GameObject\Stage\0%29 Player\01%29 Costume">
       <UniqueIdentifier>{fb9e8e53-a817-46da-b751-1fe5abd1c284}</UniqueIdentifier>
@@ -474,6 +465,12 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\16. ScriptUI">
       <UniqueIdentifier>{4f0943ce-c02a-408f-af5f-6c1c94ea2eee}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="94.StageAgent">
+      <UniqueIdentifier>{4dcdf895-5442-4efd-aeeb-a5e9547eaed6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="95.SoundManager">
+      <UniqueIdentifier>{e4f55a90-9a32-4788-a5b8-44ef84c5e70e}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -964,7 +961,7 @@
       <Filter>98.Headers</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\SoundManager.h">
-      <Filter>95. SoundManager</Filter>
+      <Filter>95.SoundManager</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Effect_Parent.h">
       <Filter>02.GameObject\Stage\3%29 Effect\Effect_Parent</Filter>
@@ -979,7 +976,7 @@
       <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\StageAgent.h">
-      <Filter>94. StageAgent</Filter>
+      <Filter>94.StageAgent</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Costume_Hair.h">
       <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[1] Hair</Filter>
@@ -1016,6 +1013,9 @@
     </ClInclude>
     <ClInclude Include="..\Headers\ClothManager.h">
       <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Pet_DeerKing.h">
+      <Filter>02.GameObject\Stage\10%29 Pet\02.DeerKing</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1491,7 +1491,7 @@
       <Filter>02.GameObject\Stage\7%29 Item</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\SoundManager.cpp">
-      <Filter>95. SoundManager</Filter>
+      <Filter>95.SoundManager</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Effect_Parent.cpp">
       <Filter>02.GameObject\Stage\3%29 Effect\Effect_Parent</Filter>
@@ -1506,7 +1506,7 @@
       <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\StageAgent.cpp">
-      <Filter>94. StageAgent</Filter>
+      <Filter>94.StageAgent</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Costume_Hair.cpp">
       <Filter>02.GameObject\Stage\0%29 Player\01%29 Costume\[1] Hair</Filter>
@@ -1543,6 +1543,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\ClothManager.cpp">
       <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Pet_DeerKing.cpp">
+      <Filter>02.GameObject\Stage\10%29 Pet\02.DeerKing</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

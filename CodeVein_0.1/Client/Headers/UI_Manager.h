@@ -90,8 +90,8 @@ public:
 	CMistletoeUI* Get_MistletoeUI() { return m_pMistletoeUI; }
 	CStageSelectUI* Get_StageSelectUI() { return m_pStageSelectUI; }
 	CExpendables_Inven* Get_Expendables_Inven() { return m_pExpendables_Inven; }
-	CSkillUI* Get_Skill_UI() { return m_pSkillUI; }
-	CQuickSlot* Get_QuickSlot() { return m_pQuickSlot; }
+	CSkillUI* Get_Skill_UI() { return m_pSkillUI; } // Skill 퀵슬롯
+	CQuickSlot* Get_QuickSlot() { return m_pQuickSlot; } // 퀵슬롯
 	CMaterial_Inven* Get_Material_Inven() { return m_pMaterial_Inven; }
 	CWeapon_Inven* Get_Weapon_Inven() { return m_pWeapon_Inven; }
 	CArmor_Inven* Get_Armor_Inven() { return m_pArmor_Inven; }
@@ -104,8 +104,10 @@ public:
 	CSkillReleaseUI* Get_Skill_ReleaseUI() { return m_pSkillReleaseUI; }
 	CSkillAcquisitionUI* Get_Skill_AcquisitionUI() { return m_pSkillAcquisitionUI; }
 	CSkill_Inven* Get_Skill_Inven() { return m_pSkillInven; }
-	CHazeUI* Get_HazeUI() { return m_pHazeUI; }
-	CScriptUI* Get_ScriptUI() { return m_pScriptUI; }
+	CHazeUI* Get_HazeUI() { return m_pHazeUI; }	// 헤이즈 UI
+	CScriptUI* Get_ScriptUI() { return m_pScriptUI; } // 대사 UI
+	CPlayerHP* Get_PlayerHP() { return m_pPlayerHP; } // 플레이어 HP
+	CPlayerST* Get_PlayerST() { return m_pPlayerST; } // 플레이어 ST
 	
 	// 펫 인벤토리
 	CPet_Inven* Get_Pet_Inven() { return m_pPet_Inven; }
@@ -132,6 +134,8 @@ private:
 	CSkill_Inven* m_pSkillInven = nullptr;
 	CHazeUI*	m_pHazeUI = nullptr;
 	CScriptUI*	m_pScriptUI = nullptr;
+	CPlayerHP*	m_pPlayerHP = nullptr;
+	CPlayerST*	m_pPlayerST = nullptr;
 	
 	// 펫 인벤토리
 	CPet_Inven* m_pPet_Inven = nullptr;

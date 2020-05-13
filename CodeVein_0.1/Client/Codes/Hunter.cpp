@@ -90,8 +90,11 @@ _int CHunter::Late_Update_GameObject(_double TimeDelta)
 
 	if (m_bInFrustum)
 	{
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-			return E_FAIL;
+		if (false == m_bDissolve)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+				return E_FAIL;
+		}
 	}
 
 	m_dTimeDelta = TimeDelta;
@@ -7165,6 +7168,30 @@ HRESULT CHunter::Ready_Status(void* pArg)
 	}
 
 	m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+
+	switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
+	{
+	case MONSTER_IDLE_TYPE::IDLE_IDLE:
+		m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
+		m_eState = HUNTER_ANI::Idle;
+		break;
+	case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+	case MONSTER_IDLE_TYPE::IDLE_LURK:
+		m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_CROUCH;
+		m_eState = HUNTER_ANI::Crouch;
+		break;
+	case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+	case MONSTER_IDLE_TYPE::IDLE_SIT:
+		m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
+		m_eState = HUNTER_ANI::Sit;
+		break;
+	case MONSTER_IDLE_TYPE::IDLE_STAND:
+	case MONSTER_IDLE_TYPE::IDLE_EAT:
+		m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_STAND;
+		m_eState = HUNTER_ANI::Stand;
+		break;
+	}
+
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
 	m_tObjParam.fArmor_Cur = m_tObjParam.fArmor_Max;
 

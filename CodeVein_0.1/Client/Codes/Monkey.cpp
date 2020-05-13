@@ -90,8 +90,11 @@ _int CMonkey::Late_Update_GameObject(_double TimeDelta)
 
 	if (m_bInFrustum)
 	{
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-			return E_FAIL;
+		if (false == m_bDissolve)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+				return E_FAIL;
+		}
 	}
 
 	m_dTimeDelta = TimeDelta;
@@ -1937,6 +1940,24 @@ HRESULT CMonkey::Ready_Status(void * pArg)
 	m_iDodgeCountMax = 5;
 
 	m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+
+	switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
+	{
+	case MONSTER_IDLE_TYPE::IDLE_IDLE:
+	case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+	case MONSTER_IDLE_TYPE::IDLE_EAT:
+		m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
+		m_eState = MONKEY_ANI::Idle;
+		break;
+	case MONSTER_IDLE_TYPE::IDLE_LURK:
+	case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+	case MONSTER_IDLE_TYPE::IDLE_SIT:
+	case MONSTER_IDLE_TYPE::IDLE_STAND:
+		m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
+		m_eState = MONKEY_ANI::NF_Sit;
+		break;
+	}
+
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
 	m_tObjParam.fArmor_Cur = m_tObjParam.fArmor_Max;
 
