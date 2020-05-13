@@ -148,9 +148,6 @@
     <Filter Include="02.GameObject\Stage\1%29 Boss\PoisonButterfly">
       <UniqueIdentifier>{3625e8d8-de25-4c6f-9d0d-1266dcc58923}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\1%29 Boss\CatWoman">
-      <UniqueIdentifier>{e568e588-f565-417a-acdc-050897a061aa}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\2%29 Monster\Genji\Gun">
       <UniqueIdentifier>{2559073b-348a-4906-a8bc-c47e3dbfa5fe}</UniqueIdentifier>
     </Filter>

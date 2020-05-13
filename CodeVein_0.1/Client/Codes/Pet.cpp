@@ -604,7 +604,7 @@ HRESULT CPet::Add_Component(void * pArg)
 	return S_OK;
 }
 
-HRESULT CPet::SetUp_ConstantTable()
+HRESULT CPet::SetUp_ConstantTable(CShader* pShader)
 {
 	return S_OK;
 }

@@ -89,8 +89,11 @@ _int CYachaMan::Late_Update_GameObject(_double TimeDelta)
 
 	if (m_bInFrustum)
 	{
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-			return E_FAIL;
+		if (false == m_bDissolve)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+				return E_FAIL;
+		}
 	}
 
 	m_dTimeDelta = TimeDelta;
@@ -3123,6 +3126,28 @@ void CYachaMan::Play_Idle()
 			m_eState = YACHAMAN_ANI::NF_Lurk;
 		}
 		break;
+	case MONSTER_IDLE_TYPE::IDLE_SIT:
+		if (true == m_bInRecognitionRange)
+		{
+			if (YACHAMAN_ANI::NF_Sit == m_eState)
+			{
+				m_bIsIdle = true;
+
+				if (m_pMeshCom->Is_Finish_Animation(0.5f))
+					m_eState = YACHAMAN_ANI::NF_Sit_End;
+			}
+			else if (YACHAMAN_ANI::NF_Sit_End == m_eState)
+			{
+				m_bCanIdle = true;
+				m_bIsIdle = false;
+				m_eState = YACHAMAN_ANI::Hammer_Idle;
+			}
+		}
+		else
+		{
+			m_bIsIdle = true;
+			m_eState = YACHAMAN_ANI::NF_Sit;
+		}
 	}
 
 	return;
@@ -3662,6 +3687,33 @@ HRESULT CYachaMan::Ready_Status(void * pArg)
 	}
 
 	m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+
+	switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
+	{
+	case MONSTER_IDLE_TYPE::IDLE_IDLE:
+		m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
+		m_eState = YACHAMAN_ANI::Hammer_Idle;
+		break;
+
+	case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+	case MONSTER_IDLE_TYPE::IDLE_EAT:
+		m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_EAT;
+		m_eState = YACHAMAN_ANI::NF_Eat;
+		break;
+
+	case MONSTER_IDLE_TYPE::IDLE_STAND:
+	case MONSTER_IDLE_TYPE::IDLE_LURK:
+		m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_LURK;
+		m_eState = YACHAMAN_ANI::NF_Lurk;
+		break;
+
+	case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+	case MONSTER_IDLE_TYPE::IDLE_SIT:
+		m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
+		m_eState = YACHAMAN_ANI::NF_Sit;
+		break;
+	}
+
 	m_tObjParam.fHp_Cur = m_tObjParam.fHp_Max;
 	m_tObjParam.fArmor_Cur = m_tObjParam.fArmor_Max;
 

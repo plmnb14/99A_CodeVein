@@ -103,7 +103,7 @@ protected:
 
 protected:
 	virtual HRESULT Add_Component(void * pArg) override;
-	virtual HRESULT SetUp_ConstantTable() override;
+	virtual HRESULT SetUp_ConstantTable(CShader* pShader) override;
 	virtual HRESULT Ready_Status(void * pArg) override;
 	virtual HRESULT Ready_Weapon(void * pArg) override;
 	virtual HRESULT Ready_Collider(void * pArg) override;
