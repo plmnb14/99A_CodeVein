@@ -217,6 +217,8 @@ CMainApp * CMainApp::Create()
 
 void CMainApp::Free()
 {
+	CObjectPool_Manager::Get_Instance()->Destroy_Instance();
+
 	Safe_Release(m_pStageAgent);
 
 	Safe_Release(g_pDissolveTexture);
@@ -225,7 +227,7 @@ void CMainApp::Free()
 	
 	CScriptManager::Get_Instance()->Destroy_Instance();
 	CParticleMgr::Get_Instance()->Destroy_Instance();
-	CObjectPool_Manager::Get_Instance()->Destroy_Instance();
+	//CObjectPool_Manager::Get_Instance()->Destroy_Instance();
 
 	Safe_Release(m_pRenderer);
 	

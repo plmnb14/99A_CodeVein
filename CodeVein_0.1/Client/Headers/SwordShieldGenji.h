@@ -67,6 +67,7 @@ public:
 	virtual _int Update_GameObject(_double TimeDelta);
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
+	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader);
 	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur = false);
 
 public:
@@ -137,6 +138,10 @@ private:
 	_v3					m_vHead = _v3(0.f, 0.f, 0.f);			// Head
 	_v3					m_vRightToeBase = _v3(0.f, 0.f, 0.f);	// Toe
 
+	// ª¿ ¡÷º“
+	D3DXFRAME_DERIVED*	m_pHeadFrame = nullptr;
+	D3DXFRAME_DERIVED*	m_pRightToeBaseFrame = nullptr;
+
 private:
 	_float				m_fSkillMoveSpeed_Cur = 0.f;
 	_float				m_fSkillMoveSpeed_Max = 0.f;
@@ -175,7 +180,7 @@ private:
 
 private:
 	HRESULT Add_Component(void* pArg);
-	HRESULT SetUp_ConstantTable();
+	HRESULT SetUp_ConstantTable(CShader* pShader);
 
 	HRESULT Ready_Weapon();
 	HRESULT Ready_BoneMatrix();

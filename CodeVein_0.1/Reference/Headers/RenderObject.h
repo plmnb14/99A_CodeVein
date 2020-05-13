@@ -43,6 +43,7 @@ public:
 	virtual _int Update_GameObject(_double _TimeDelta);
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
+	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader);
 	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur = false);
 
 public:
@@ -97,7 +98,7 @@ private:
 	virtual HRESULT Initialize_For_Protoype();
 	virtual HRESULT Initialize();
 	virtual HRESULT LateInit_GameObject();
-	virtual void	Init_Shader();
+	virtual void	Init_Shader(CShader* pShader);
 
 	virtual HRESULT Ready_GameObject(void* pAvg);
 	virtual HRESULT	Add_Components(_tchar * szMeshName);

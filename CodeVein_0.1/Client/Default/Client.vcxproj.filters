@@ -466,6 +466,12 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\02.BossUI\BossNameUI">
       <UniqueIdentifier>{0ae4d82f-eda5-4958-8435-c97d58c9857a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\11%29 NPC">
+      <UniqueIdentifier>{5ab663c3-0d05-4c88-9966-a7f204108ef1}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI">
+      <UniqueIdentifier>{cf51cae2-bbd7-4903-8599-4df21952a78a}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\16. ScriptUI">
       <UniqueIdentifier>{4f0943ce-c02a-408f-af5f-6c1c94ea2eee}</UniqueIdentifier>
     </Filter>
@@ -1002,6 +1008,15 @@
     <ClInclude Include="..\Headers\ExplainWeaponUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\02.Weapon</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\NPC_Yakumo.h">
+      <Filter>02.GameObject\Stage\11%29 NPC</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\WeaponShopUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ClothManager.h">
+      <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1519,6 +1534,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\ExplainWeaponUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\02.Weapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\NPC_Yakumo.cpp">
+      <Filter>02.GameObject\Stage\11%29 NPC</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\WeaponShopUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ClothManager.cpp">
+      <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

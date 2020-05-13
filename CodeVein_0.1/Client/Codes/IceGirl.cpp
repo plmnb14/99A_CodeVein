@@ -161,6 +161,13 @@ _int CIceGirl::Update_GameObject(_double TimeDelta)
 
 	m_pTransformCom->Set_Pos(m_pNavMeshCom->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
+	//====================================================================================================
+	// ÄÃ¸µ
+	//====================================================================================================
+	m_bInFrustum = m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f);
+	//====================================================================================================
+
+
 	return NOERROR;
 }
 
@@ -189,7 +196,7 @@ _int CIceGirl::Late_Update_GameObject(_double TimeDelta)
 			return E_FAIL;
 	}
 
-	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
+	if (m_bInFrustum)
 	{
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
 			return E_FAIL;
@@ -212,10 +219,10 @@ HRESULT CIceGirl::Render_GameObject()
 
 	m_pMeshCom->Play_Animation(_float(m_dTimeDelta)); // * alpha
 
-	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
+	if (m_bInFrustum)
 	{
 
-		if (FAILED(SetUp_ConstantTable()))
+		if (FAILED(SetUp_ConstantTable(m_pShaderCom)))
 			return E_FAIL;
 
 		m_pShaderCom->Begin_Shader();
@@ -256,6 +263,55 @@ HRESULT CIceGirl::Render_GameObject()
 	Draw_Collider();
 
 	return NOERROR;
+}
+
+HRESULT CIceGirl::Render_GameObject_Instancing_SetPass(CShader * pShader)
+{
+	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
+	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
+
+	m_pMeshCom->Play_Animation(DELTA_60 * m_dAniPlayMul);
+
+	if (m_bInFrustum)
+	{
+		if (FAILED(SetUp_ConstantTable(pShader)))
+			return E_FAIL;
+
+		_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+
+		for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+		{
+			_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+
+			m_pMeshCom->Update_SkinnedMesh(i);
+
+			for (_uint j = 0; j < iNumSubSet; ++j)
+			{
+				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+
+				if (m_bDissolve)
+					m_iPass = 3;
+
+				pShader->Begin_Pass(m_iPass);
+
+				pShader->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
+
+				pShader->Commit_Changes();
+
+				m_pMeshCom->Render_Mesh(i, j);
+
+				pShader->End_Pass();
+			}
+		}
+
+	}
+
+	m_pSword->Update_GameObject(m_dTimeDelta);
+
+	Update_Collider();
+	Draw_Collider();
+
+	return S_OK;
 }
 
 HRESULT CIceGirl::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
@@ -1689,12 +1745,10 @@ void CIceGirl::Down()
 
 HRESULT CIceGirl::Update_Bone_Of_BlackBoard()
 {
-	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHand");
-	m_vLeftHand = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_vLeftHand = *(_v3*)(&(m_pLeftHandFrame->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_LeftHand", m_vLeftHand);
 
-	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips");
-	m_vHips = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
+	m_vHips = *(_v3*)(&(m_pHipsFrame->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	m_pAIControllerCom->Set_Value_Of_BlackBoard(L"Bone_Hips", m_vHips);
 	
 	return S_OK;
@@ -1911,6 +1965,7 @@ void CIceGirl::Check_PhyCollider()
 					m_pAIControllerCom->Reset_BT();
 					m_bAIController = false;
 
+					m_pAIControllerCom->Set_Value_Of_BlackBoard(L"PushCol", true);
 				}
 			}
 
@@ -1927,6 +1982,7 @@ void CIceGirl::Check_PhyCollider()
 					m_pAIControllerCom->Reset_BT();
 					m_bAIController = false;
 
+					m_pAIControllerCom->Set_Value_Of_BlackBoard(L"PushCol", true);
 				}
 			}
 
@@ -2116,7 +2172,7 @@ HRESULT CIceGirl::Add_Component()
 	//=================================================================================
 
 
-	m_pColliderCom->Set_Radius(_v3{ 1.f, 1.f, 1.f });
+	m_pColliderCom->Set_Radius(_v3{ 1.3f, 1.3f, 1.3f });
 	m_pColliderCom->Set_Dynamic(true);
 	m_pColliderCom->Set_Type(COL_SPHERE);
 	m_pColliderCom->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pColliderCom->Get_Radius().y , 0.f });
@@ -2125,9 +2181,9 @@ HRESULT CIceGirl::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CIceGirl::SetUp_ConstantTable()
+HRESULT CIceGirl::SetUp_ConstantTable(CShader* pShader)
 {
-	if (nullptr == m_pShaderCom)
+	if (nullptr == pShader)
 		return E_FAIL;
 
 	CManagement*		pManagement = CManagement::Get_Instance();
@@ -2136,19 +2192,19 @@ HRESULT CIceGirl::SetUp_ConstantTable()
 
 	Safe_AddRef(pManagement);
 
-	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
 
 	_mat		ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
 	_mat		ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
 
-	if (FAILED(m_pShaderCom->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShaderCom)))
+	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", pShader)))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	//=============================================================================================
@@ -2160,15 +2216,15 @@ HRESULT CIceGirl::SetUp_ConstantTable()
 	_float	fRimLightPower = 0.f;	// ¸²		: ³ôÀ» ¼ö·Ï ºûÀÌ ÆÛÁü(¸²¶óÀÌÆ®ÀÇ ¹üÀ§°¡ ³Ð¾îÁö°í , ¹ÐÁýµµ°¡ ³·¾ÆÁü).
 	_float	fMinSpecular = 0.1f;	// ÃÖ¼Ò ºû	: ³ôÀ» ¼ö·Ï ºûÀÌ ÆÛÁü(¸²¶óÀÌÆ®ÀÇ ¹üÀ§°¡ ³Ð¾îÁö°í , ¹ÐÁýµµ°¡ ³·¾ÆÁü).
 
-	if (FAILED(m_pShaderCom->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fRimAlpha", &fRimLightPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fRimAlpha", &fRimLightPower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
 		return E_FAIL;
 	//=============================================================================================
 
@@ -2208,6 +2264,10 @@ HRESULT CIceGirl::Ready_BoneMatrix()
 
 	m_matBones[Bone_Range] = &pFrame->CombinedTransformationMatrix;
 	m_matBones[Bone_Body] = &pFrame->CombinedTransformationMatrix;
+
+	// »À ÁÖ¼Ò
+	m_pLeftHandFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("LeftHand");
+	m_pHipsFrame = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips");
 
 	return S_OK;
 }

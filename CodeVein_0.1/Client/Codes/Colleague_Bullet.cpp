@@ -70,10 +70,10 @@ _int CColleague_Bullet::Update_GameObject(_double TimeDelta)
 
 	m_dCurTime += TimeDelta;
 
-	// 시간 초과
+	// Time Out
 	if (m_dCurTime > m_dLifeTime)
 	{
-		//죽음 이펙트
+		// Death Effect
 		//m_pBulletBody->Set_Dead();
 		m_pTrailEffect->Set_Dead();
 
@@ -86,7 +86,7 @@ _int CColleague_Bullet::Update_GameObject(_double TimeDelta)
 
 		m_bDead = true;
 	}
-	// 진행중
+	// InComing
 	else
 	{
 		if (m_bEffect)
@@ -236,7 +236,7 @@ HRESULT CColleague_Bullet::Ready_Collider()
 {
 	m_vecAttackCol.reserve(1);
 
-	// 총알 중앙
+	// Bullet center
 	CCollider* pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider"));
 
 	_float fRadius = 0.3f;

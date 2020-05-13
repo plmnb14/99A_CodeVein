@@ -14,7 +14,10 @@
 #include "Effect_FireFlower.h"
 #include "Effect_Parent.h"
 
+#include "NPC_Yakumo.h"
+
 #include "Player.h"
+#include "Costume_Hair.h"
 
 #include "Weapon.h"
 #include "Drain_Weapon.h"
@@ -52,6 +55,7 @@
 #include "Haze.h"
 
 #include "SoundManager.h"
+#include "ClothManager.h"
 
 USING(Client)
 
@@ -1285,9 +1289,9 @@ _uint CLoading::Loading_Title()
 
 	cout << "DynamicMesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
-	//
-	//cout << "NPC 불러오는 중 . . ." << endl;
-	//g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
+	
+	cout << "NPC 불러오는 중 . . ." << endl;
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
 	//============================================================================================================
 	// 무기 불러오는 중
 	//============================================================================================================
@@ -1353,6 +1357,11 @@ _uint CLoading::Loading_Title()
 	// 사운드
 	//============================================================================================================
 	g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
+	//============================================================================================================
+	// 옷
+	//============================================================================================================
+	cout << " 옷 생성 중 . . ." << endl;
+	g_pClothManager->Ready_ClothManager();
 	//============================================================================================================
 
 	m_bFinish = true;
@@ -1583,6 +1592,15 @@ _uint CLoading::Loading_Stage()
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_DropItem", L"GameObject_DropItem", 200);
 
 		//============================================================================================================
+		// NPC
+		//============================================================================================================
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_NPC_Yakumo", CNPC_Yakumo::Create(m_pGraphicDev))))
+			return E_FAIL;
+		//============================================================================================================
+
+		// 옷
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Costume_Hair", CCostume_Hair::Create(m_pGraphicDev))))
+			return E_FAIL;
 
 		g_bOnStage[0] = true;
 	}
@@ -1609,7 +1627,7 @@ _uint CLoading::Loading_MainStages()
 	if (false == g_bOnStage[4])
 	{
 		cout << "Load Stage_02 StaticMesh . . ." << endl;
-		//g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage02_Path.dat");
+		g_pManagement->LoadMesh_FilesFromPath_AddProtoRenderObj(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Static_Stage02_Path.dat");
 
 		g_bOnStage[4] = true;
 	}

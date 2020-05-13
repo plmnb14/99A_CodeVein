@@ -639,6 +639,7 @@ void CPet::Free()
 	IF_NOT_NULL(m_pPlayer)
 		Safe_Release(m_pPlayer);
 
+	Safe_Release(m_pOptimization);
 	Safe_Release(m_pCollider);
 	Safe_Release(m_pNavMesh);
 	Safe_Release(m_pTransform);

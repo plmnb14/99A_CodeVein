@@ -12,6 +12,12 @@ _float g_fNear = 0.1f;
 _float g_fFar = 500.f;
 _short g_sShadow_X = 3840;
 _short g_sShadow_Y = 2160;
+//_short g_sShadow_X = 2560;
+//_short g_sShadow_Y = 1440;
+//_short g_sShadow_X = 1920;
+//_short g_sShadow_Y = 1080;
+//_short g_sShadow_X = 1280;
+//_short g_sShadow_Y = 720;
 
 CRenderer::CRenderer(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CComponent(pGraphic_Device)
@@ -197,6 +203,19 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_HDR", L"Target_ToneMapping")))
 		return E_FAIL;
 
+	// For.RenderOnly_Mesh
+	m_pShader_RenderMesh = static_cast<CShader*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Shader_Mesh"));
+	if (nullptr == m_pShader_RenderMesh)
+		return E_FAIL;
+
+	m_pShader_Trail = static_cast<CShader*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Shader_Effect"));
+	if (nullptr == m_pShader_Trail)
+		return E_FAIL;
+
+	m_pShader_3DUI = static_cast<CShader*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Shader_3dUI"));
+	if (nullptr == m_pShader_3DUI)
+		return E_FAIL;
+
 	// For.Shader_LightAcc
 	m_pShader_LightAcc = CShader::Create(m_pGraphic_Dev, L"../ShaderFiles/Shader_LightAcc.fx");
 	if (nullptr == m_pShader_LightAcc)
@@ -233,6 +252,10 @@ HRESULT CRenderer::Ready_Component_Prototype()
 		return E_FAIL;
 
 	//m_pViewPortBufferForBlur = CBuffer_ViewPort::Create(m_pGraphic_Dev, 0.f, 0.f, (_float)ViewPort.Width / 4, (_float)ViewPort.Height / 4);
+
+
+	// µðÁ¹ºÎ
+	m_pDissolveTexture = CTexture::Create(m_pGraphic_Dev, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Effect/Noise/Noise_13.dds");
 
 	// For.m_pSSAOTexture
 	m_pSSAOTexture = CTexture::Create(m_pGraphic_Dev, CTexture::TYPE_GENERAL, L"../../Client/Resources/Texture/Effect/Normal/Normal_4.dds");
@@ -550,11 +573,26 @@ HRESULT CRenderer::Render_NonAlpha()
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Deferred")))
 		return E_FAIL;
 
+	m_pShader_RenderMesh->Begin_Shader();
+
+	_mat matView, matProj;
+	CManagement* pManagement = CManagement::Get_Instance();
+
+	matView = pManagement->Get_Transform(D3DTS_VIEW);
+	matProj = pManagement->Get_Transform(D3DTS_PROJECTION);
+
+	if (FAILED(m_pShader_RenderMesh->Set_Value("g_matView", &matView, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(m_pShader_RenderMesh->Set_Value("g_matProj", &matProj, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(m_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShader_RenderMesh)))
+		return E_FAIL;
+
 	for (auto& pGameObject : m_RenderList[RENDER_NONALPHA])
 	{
 		if (nullptr != pGameObject)
 		{
-			if (FAILED(pGameObject->Render_GameObject()))
+			if (FAILED(pGameObject->Render_GameObject_Instancing_SetPass(m_pShader_RenderMesh)))
 			{
 				Safe_Release(pGameObject);
 				return E_FAIL;
@@ -563,7 +601,11 @@ HRESULT CRenderer::Render_NonAlpha()
 		}
 	}
 
+	m_pShader_RenderMesh->End_Shader();
+
 	m_RenderList[RENDER_NONALPHA].clear();
+
+
 
 	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_Deferred")))
 		return E_FAIL;
@@ -593,7 +635,10 @@ HRESULT CRenderer::Render_ShadowMap()
 	matLightVP = matView * matProj;
 
 	m_pShader_Shadow->Set_Value("g_matLightVP", &matLightVP, sizeof(_mat));
-	
+
+	m_pShader_Shadow->Set_Value("g_iScreenX", &g_sShadow_X, sizeof(_int));
+	m_pShader_Shadow->Set_Value("g_iScreenY", &g_sShadow_Y, sizeof(_int));
+
 	m_pShader_Shadow->Begin_Shader();
 
 	for (auto& pGameObject : m_RenderList[RENDER_SHADOWTARGET])
@@ -636,6 +681,9 @@ HRESULT CRenderer::Render_Shadow()
 	matScaleBias._44 = 1.f;
 
 	m_pShader_Shadow->Set_Value("g_matBias", matScaleBias, sizeof(_mat));
+
+	m_pShader_Shadow->Set_Value("g_iScreenX", &g_sShadow_X, sizeof(_int));
+	m_pShader_Shadow->Set_Value("g_iScreenY", &g_sShadow_Y, sizeof(_int));
 
 	_mat matWorld, matView, matProj, matLightVP;
 
@@ -703,7 +751,6 @@ HRESULT CRenderer::Render_MotionBlurTarget()
 			}
 			Safe_Release(pGameObject);
 		}
-
 	}
 	
 	m_pShader_Blur->End_Shader();
@@ -752,11 +799,24 @@ HRESULT CRenderer::Render_Alpha()
 	if (nullptr == m_pTarget_Manager)
 		return E_FAIL;
 
-	for (auto& pGameObject : m_RenderList[RENDER_ALPHA])
+	_mat matView, matProj;
+	CManagement* pManagement = CManagement::Get_Instance();
+
+	matView = pManagement->Get_Transform(D3DTS_VIEW);
+	matProj = pManagement->Get_Transform(D3DTS_PROJECTION);
+
+	m_pShader_Trail->Begin_Shader();
+
+	if (FAILED(m_pShader_Trail->Set_Value("g_matView", &matView, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(m_pShader_Trail->Set_Value("g_matProj", &matProj, sizeof(_mat))))
+		return E_FAIL;
+
+	for (auto& pGameObject : m_RenderList[RENDER_ALPHA_TRAIL])
 	{
 		if (nullptr != pGameObject)
 		{
-			if (FAILED(pGameObject->Render_GameObject()))
+			if (FAILED(pGameObject->Render_GameObject_Instancing_SetPass(m_pShader_Trail)))
 			{
 				Safe_Release(pGameObject);
 				return E_FAIL;
@@ -765,7 +825,62 @@ HRESULT CRenderer::Render_Alpha()
 		}
 	}
 
+	m_pShader_Trail->End_Shader();
+
+	m_RenderList[RENDER_ALPHA_TRAIL].clear();
+
+	//===============================================================================
+
+	m_pShader_RenderMesh->Begin_Shader();
+
+	if (FAILED(m_pShader_RenderMesh->Set_Value("g_matView", &matView, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(m_pShader_RenderMesh->Set_Value("g_matProj", &matProj, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(m_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShader_RenderMesh)))
+		return E_FAIL;
+
+	for (auto& pGameObject : m_RenderList[RENDER_ALPHA])
+	{
+		if (nullptr != pGameObject)
+		{
+			if (FAILED(pGameObject->Render_GameObject_Instancing_SetPass(m_pShader_RenderMesh)))
+			{
+				Safe_Release(pGameObject);
+				return E_FAIL;
+			}
+			Safe_Release(pGameObject);
+		}
+	}
+
+	m_pShader_RenderMesh->End_Shader();
+
 	m_RenderList[RENDER_ALPHA].clear();
+
+	//===============================================================================
+
+	m_pShader_3DUI->Begin_Shader();
+
+	if (FAILED(m_pShader_3DUI->Set_Value("g_matView", &matView, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(m_pShader_3DUI->Set_Value("g_matProj", &matProj, sizeof(_mat))))
+		return E_FAIL;
+
+	for (auto& pGameObject : m_RenderList[RENDER_ALPHA_UI])
+	{
+		if (nullptr != pGameObject)
+		{
+			if (FAILED(pGameObject->Render_GameObject_Instancing_SetPass(m_pShader_3DUI)))
+			{
+				Safe_Release(pGameObject);
+				return E_FAIL;
+			}
+			Safe_Release(pGameObject);
+		}
+	}
+	m_pShader_3DUI->End_Shader();
+
+	m_RenderList[RENDER_ALPHA_UI].clear();
 
 	return NOERROR;
 }
@@ -1100,7 +1215,8 @@ HRESULT CRenderer::Render_Blend()
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_DepthTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"))))
 		return E_FAIL;
-
+	if (FAILED(m_pShader_Blend->Set_Texture("g_ShadowMapTexture", m_pTarget_Manager->Get_Texture(L"Target_Shadow"))))
+		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_SSAOTexture", m_pTarget_Manager->Get_Texture(L"Target_SSAO_Blur"))))
 		return E_FAIL;
 	if (FAILED(m_pShader_Blend->Set_Texture("g_FogColorTexture", m_pTarget_Manager->Get_Texture(L"Target_BlurSky"))))
@@ -1636,17 +1752,21 @@ void CRenderer::Free()
 {
 	Safe_Delete_Array(m_pInstanceData);
 	
+	Safe_Release(m_pDissolveTexture);
 	Safe_Release(m_pGradingTexture);
 	Safe_Release(m_pGradingTextureTest);
 	Safe_Release(m_pSSAOTexture);
 	Safe_Release(m_pViewPortBuffer);
 
+	Safe_Release(m_pShader_Trail);
+	Safe_Release(m_pShader_RenderMesh);
 	Safe_Release(m_pShader_Blend);
 	Safe_Release(m_pShader_LightAcc);
 	Safe_Release(m_pShader_Shadow);
 	Safe_Release(m_pShader_Effect);
 	Safe_Release(m_pShader_Blur);
 	Safe_Release(m_pShader_SSAO);
+	Safe_Release(m_pShader_3DUI);
 
 	Safe_Release(m_pLight_Manager);
 	Safe_Release(m_pTarget_Manager);

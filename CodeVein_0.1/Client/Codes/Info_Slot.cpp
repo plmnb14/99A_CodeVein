@@ -77,7 +77,7 @@ _int CInfo_Slot::Update_GameObject(_double TimeDelta)
 		m_pItemCntFont->Set_Active(false);
 	else
 		m_pItemCntFont->Set_Active(m_bIsActive);
-	m_pItemCntFont->Update_NumberValue(m_iNumber);
+	m_pItemCntFont->Update_NumberValue((_float)m_iNumber);
 	m_pItemCntFont->Set_ViewZ(m_fViewZ - 0.1f);
 
 	return NO_EVENT;

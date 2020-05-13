@@ -55,6 +55,12 @@ _int CYeti::Update_GameObject(_double TimeDelta)
 
 	MONSTER_STATE_TYPE::DEAD != m_eFirstCategory ? Check_CollisionEvent() : Check_DeadEffect(TimeDelta);
 
+	//====================================================================================================
+	// 컬링
+	//====================================================================================================
+	m_bInFrustum = m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f);
+	//====================================================================================================
+
 	return NO_EVENT;
 }
 
@@ -79,7 +85,7 @@ _int CYeti::Late_Update_GameObject(_double TimeDelta)
 			return E_FAIL;
 	}
 
-	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
+	if (m_bInFrustum)
 	{
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
 			return E_FAIL;
@@ -97,39 +103,92 @@ HRESULT CYeti::Render_GameObject()
 
 	m_pMeshCom->Play_Animation(DELTA_60 * m_dAniPlayMul);
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
-
-	m_pShaderCom->Begin_Shader();
-
-	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
-
-	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+	if (m_bInFrustum)
 	{
-		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+		if (FAILED(SetUp_ConstantTable(m_pShaderCom)))
+			return E_FAIL;
 
-		m_pMeshCom->Update_SkinnedMesh(i);
+		m_pShaderCom->Begin_Shader();
 
-		for (_uint j = 0; j < iNumSubSet; ++j)
+		_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+
+		for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 		{
-			m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+			_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
 
-			if (m_bDissolve)
-				m_iPass = 3;
+			m_pMeshCom->Update_SkinnedMesh(i);
 
-			m_pShaderCom->Begin_Pass(m_iPass);
+			for (_uint j = 0; j < iNumSubSet; ++j)
+			{
+				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
 
-			m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
+				if (m_bDissolve)
+					m_iPass = 3;
 
-			m_pShaderCom->Commit_Changes();
+				m_pShaderCom->Begin_Pass(m_iPass);
 
-			m_pMeshCom->Render_Mesh(i, j);
+				m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
 
-			m_pShaderCom->End_Pass();
+				m_pShaderCom->Commit_Changes();
+
+				m_pMeshCom->Render_Mesh(i, j);
+
+				m_pShaderCom->End_Pass();
+			}
 		}
+
+		m_pShaderCom->End_Shader();
 	}
 
-	m_pShaderCom->End_Shader();
+	if (MONSTER_STATE_TYPE::DEAD != m_eFirstCategory)
+	{
+		Update_Collider();
+		Render_Collider();
+	}
+
+	return S_OK;
+}
+
+HRESULT CYeti::Render_GameObject_Instancing_SetPass(CShader * pShader)
+{
+	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
+	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
+
+	m_pMeshCom->Play_Animation(DELTA_60 * m_dAniPlayMul);
+
+	if (m_bInFrustum)
+	{
+		if (FAILED(SetUp_ConstantTable(pShader)))
+			return E_FAIL;
+
+		_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+
+		for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+		{
+			_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+
+			m_pMeshCom->Update_SkinnedMesh(i);
+
+			for (_uint j = 0; j < iNumSubSet; ++j)
+			{
+				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+
+				if (m_bDissolve)
+					m_iPass = 3;
+
+				pShader->Begin_Pass(m_iPass);
+
+				pShader->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
+
+				pShader->Commit_Changes();
+
+				m_pMeshCom->Render_Mesh(i, j);
+
+				pShader->End_Pass();
+			}
+		}
+
+	}
 
 	if (MONSTER_STATE_TYPE::DEAD != m_eFirstCategory)
 	{
@@ -408,7 +467,9 @@ void CYeti::Check_AniEvent()
 
 			m_bCanChooseAtkType = false;
 
-			switch (CALC::Random_Num(MONSTER_ATK_TYPE::ATK_NORMAL, MONSTER_ATK_TYPE::ATK_COMBO))
+			m_iRandom = CALC::Random_Num(MONSTER_ATK_TYPE::ATK_NORMAL, MONSTER_ATK_TYPE::ATK_COMBO);
+
+			switch (m_iRandom)
 			{
 			case MONSTER_ATK_TYPE::ATK_NORMAL:
 				m_eSecondCategory_ATK = MONSTER_ATK_TYPE::ATK_NORMAL;
@@ -554,6 +615,9 @@ void CYeti::Play_RandomAtkNormal()
 		break;
 	case ATK_NORMAL_TYPE::NORMAL_R_UPPER_ACCELDOWN:
 		m_eState = YETI_ANI::Atk_Sp02;
+		break;
+	case ATK_NORMAL_TYPE::NORMAL_SLOWL_R:
+		m_eState = YETI_ANI::Atk_Sp01;
 		break;
 	case ATK_NORMAL_TYPE::NORMAL_HOULING:
 		//m_eState = YETI_ANI::Atk_Field;
@@ -1298,7 +1362,7 @@ void CYeti::Play_IceThrowing()
 				memcpy(&vLook, &matTemp._21, sizeof(_v3)); //뼈의 룩
 				vBirth += (vLook * fLength); //생성위치 = 생성위치 +(룩*길이)
 
-				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_HunterBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
+				CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_YetiBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 8.f, 1.5));
 			}
 		}
 
@@ -2210,10 +2274,13 @@ void CYeti::Play_Idle()
 		m_bIsIdle = false;
 
 		if (true == m_tObjParam.bCanAttack)
+		{
 			m_eState = YETI_ANI::NF_Threat_Loop;
+			if (nullptr != m_pAggroTarget)
+				Function_RotateBody(m_pAggroTarget);
+		}
 		else
 		{
-
 			if (nullptr == m_pAggroTarget)
 			{
 				Function_Find_Target();
@@ -2223,12 +2290,11 @@ void CYeti::Play_Idle()
 					Function_ResetAfterAtk();
 					m_fCoolDownMax = 0.f;
 					m_fCoolDownCur = 0.f;
+					m_bIsIdle = true;
+
 					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
-
-					if (false == m_bIsIdle)
-						m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
-
-					Play_Idle();
+					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
+					m_eState = YETI_ANI::Idle;
 
 					return;
 				}
@@ -2545,7 +2611,7 @@ HRESULT CYeti::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"BattleAgent", L"Com_BattleAgent", (CComponent**)&m_pBattleAgentCom)))
 		return E_FAIL;
 
-	m_pColliderCom->Set_Radius(V3_ONE);
+	m_pColliderCom->Set_Radius(_v3{1.2f, 1.2f, 1.2f});
 	m_pColliderCom->Set_Dynamic(true);
 	m_pColliderCom->Set_Type(COL_SPHERE);
 	m_pColliderCom->Set_CenterPos(m_pTransformCom->Get_Pos() + _v3{ 0.f , m_pColliderCom->Get_Radius().y , 0.f });
@@ -2553,9 +2619,9 @@ HRESULT CYeti::Add_Component()
 	return S_OK;
 }
 
-HRESULT CYeti::SetUp_ConstantTable()
+HRESULT CYeti::SetUp_ConstantTable(CShader* pShader)
 {
-	IF_NULL_VALUE_RETURN(m_pShaderCom, E_FAIL);
+	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
 
 	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
 	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
@@ -2564,19 +2630,19 @@ HRESULT CYeti::SetUp_ConstantTable()
 	// 기본 메트릭스
 	//=============================================================================================
 
-	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
 
 	//=============================================================================================
 	// 디졸브용 상수
 	//=============================================================================================
-	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShaderCom)))
+	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", pShader)))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	//=============================================================================================
@@ -2590,25 +2656,25 @@ HRESULT CYeti::SetUp_ConstantTable()
 	_float	fID_G = 0.5f;	// ID_G : G채널 ID 값 , 1이 최대
 	_float	fID_B = 0.2f;	// ID_B	: B채널 ID 값 , 1이 최대
 
-	if (FAILED(m_pShaderCom->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fID_R_Power", &fID_R, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fID_R_Power", &fID_R, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fID_G_Power", &fID_G, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fID_G_Power", &fID_G, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
 		return E_FAIL;
 
 	//=============================================================================================
 	// 림라이트 값들을 쉐이더에 등록시킴
 	//=============================================================================================
-	m_pBattleAgentCom->Update_RimParam_OnShader(m_pShaderCom);
+	m_pBattleAgentCom->Update_RimParam_OnShader(pShader);
 	//=============================================================================================
 
 	return S_OK;
@@ -2651,7 +2717,7 @@ HRESULT CYeti::Ready_Status(void * pArg)
 	}
 
 	m_tObjParam.fDamage = -100.f;
-	m_tObjParam.fHp_Max = 300.f;
+	m_tObjParam.fHp_Max = 1600.f;
 	m_tObjParam.fArmor_Max = 10.f;
 
 	m_fRecognitionRange = 15.f;
@@ -2701,7 +2767,7 @@ HRESULT CYeti::Ready_Status(void * pArg)
 HRESULT CYeti::Ready_Collider()
 {
 	m_vecPhysicCol.reserve(2);
-	m_vecAttackCol.reserve(5);
+	m_vecAttackCol.reserve(4);
 	_float fRadius;
 	CCollider* pCollider = nullptr;
 
@@ -2717,7 +2783,7 @@ HRESULT CYeti::Ready_Collider()
 	m_vecPhysicCol.push_back(pCollider);
 
 	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
-	fRadius = 1.2f;
+	fRadius = 1.4f;
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
 	pCollider->Set_Type(COL_SPHERE);

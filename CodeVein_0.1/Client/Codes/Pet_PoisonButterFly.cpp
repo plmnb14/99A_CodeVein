@@ -1345,6 +1345,9 @@ HRESULT CPet_PoisonButterFly::Add_Component(void * pArg)
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Collider", L"Com_Collider", (CComponent**)&m_pCollider)))
 		return E_FAIL;
 
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Optimization", L"Com_Optimization", (CComponent**)&m_pOptimization)))
+		return E_FAIL;
+
 	m_pCollider->Set_Radius(_v3{ 0.8f, 0.8f, 0.8f });
 	m_pCollider->Set_Dynamic(true);
 	m_pCollider->Set_Type(COL_SPHERE);

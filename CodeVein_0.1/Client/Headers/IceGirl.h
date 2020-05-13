@@ -50,6 +50,7 @@ public:
 	virtual _int Update_GameObject(_double TimeDelta);
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
+	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader);
 	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur = false);
 
 private:	// 패턴들
@@ -165,6 +166,11 @@ private:
 	_v3					m_vLeftHand = _v3(0.f, 0.f, 0.f);	//LeftHand
 	_v3					m_vHips = _v3(0.f, 0.f, 0.f);		//Hips
 
+	// 뼈 주소
+	D3DXFRAME_DERIVED*	m_pLeftHandFrame = nullptr;
+	D3DXFRAME_DERIVED*	m_pHipsFrame = nullptr;
+
+
 private:	// 최초상태 세팅
 	_float				m_fFov = 0.f;
 	_float				m_fMaxLength = 0.f;
@@ -190,7 +196,7 @@ private:
 
 private:
 	HRESULT Add_Component();
-	HRESULT SetUp_ConstantTable();
+	HRESULT SetUp_ConstantTable(CShader* pShader);
 
 	HRESULT Ready_Weapon();
 	HRESULT Ready_BoneMatrix();

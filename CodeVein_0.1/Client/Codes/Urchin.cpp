@@ -55,6 +55,12 @@ _int CUrchin::Update_GameObject(_double TimeDelta)
 
 	MONSTER_STATE_TYPE::DEAD != m_eFirstCategory ? Check_CollisionEvent() : Check_DeadEffect(TimeDelta);
 
+	//====================================================================================================
+	// 컬링
+	//====================================================================================================
+	m_bInFrustum = m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f);
+	//====================================================================================================
+
 	return S_OK;
 }
 
@@ -79,7 +85,7 @@ _int CUrchin::Late_Update_GameObject(_double TimeDelta)
 			return E_FAIL;
 	}
 
-	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
+	if (m_bInFrustum)
 	{
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
 			return E_FAIL;
@@ -97,39 +103,92 @@ HRESULT CUrchin::Render_GameObject()
 
 	m_pMeshCom->Play_Animation(DELTA_60 * m_dAniPlayMul); // * alpha
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
-
-	m_pShaderCom->Begin_Shader();
-
-	_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
-
-	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+	if (m_bInFrustum)
 	{
-		_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+		if (FAILED(SetUp_ConstantTable(m_pShaderCom)))
+			return E_FAIL;
 
-		m_pMeshCom->Update_SkinnedMesh(i);
+		m_pShaderCom->Begin_Shader();
 
-		for (_uint j = 0; j < iNumSubSet; ++j)
+		_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+
+		for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 		{
-			m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+			_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
 
-			if (m_bDissolve)
-				m_iPass = 3;
+			m_pMeshCom->Update_SkinnedMesh(i);
 
-			m_pShaderCom->Begin_Pass(m_iPass);
+			for (_uint j = 0; j < iNumSubSet; ++j)
+			{
+				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
 
-			m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
+				if (m_bDissolve)
+					m_iPass = 3;
 
-			m_pShaderCom->Commit_Changes();
+				m_pShaderCom->Begin_Pass(m_iPass);
 
-			m_pMeshCom->Render_Mesh(i, j);
+				m_pShaderCom->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
 
-			m_pShaderCom->End_Pass();
+				m_pShaderCom->Commit_Changes();
+
+				m_pMeshCom->Render_Mesh(i, j);
+
+				m_pShaderCom->End_Pass();
+			}
 		}
+
+		m_pShaderCom->End_Shader();
 	}
 
-	m_pShaderCom->End_Shader();
+	if (MONSTER_STATE_TYPE::DEAD != m_eFirstCategory)
+	{
+		Update_Collider();
+		Render_Collider();
+	}
+
+	return S_OK;
+}
+
+HRESULT CUrchin::Render_GameObject_Instancing_SetPass(CShader * pShader)
+{
+	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
+	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
+
+	m_pMeshCom->Play_Animation(DELTA_60 * m_dAniPlayMul);
+
+	if (m_bInFrustum)
+	{
+		if (FAILED(SetUp_ConstantTable(pShader)))
+			return E_FAIL;
+
+		_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+
+		for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+		{
+			_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+
+			m_pMeshCom->Update_SkinnedMesh(i);
+
+			for (_uint j = 0; j < iNumSubSet; ++j)
+			{
+				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+
+				if (m_bDissolve)
+					m_iPass = 3;
+
+				pShader->Begin_Pass(m_iPass);
+
+				pShader->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
+
+				pShader->Commit_Changes();
+
+				m_pMeshCom->Render_Mesh(i, j);
+
+				pShader->End_Pass();
+			}
+		}
+
+	}
 
 	if (MONSTER_STATE_TYPE::DEAD != m_eFirstCategory)
 	{
@@ -225,16 +284,18 @@ HRESULT CUrchin::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool 
 
 void CUrchin::Update_Collider()
 {
+	_ulong matrixIdx = Bone_Body;
+
 	for (auto& vector_iter : m_vecAttackCol)
 	{
-		_mat matTemp = *m_matBone[Bone_Body] * m_pTransformCom->Get_WorldMat();
+		_mat matTemp = *m_matBone[matrixIdx] * m_pTransformCom->Get_WorldMat();
 
 		_v3 ColPos = _v3(matTemp._41, matTemp._42, matTemp._43);
 
 		vector_iter->Update(ColPos);
 	}
 
-	_ulong matrixIdx = 0;
+	matrixIdx = 0;
 
 	for (auto& iter : m_vecPhysicCol)
 	{
@@ -342,24 +403,31 @@ void CUrchin::Check_Dist()
 
 		if (true == m_bInRecognitionRange)
 		{
-			if (true == m_bInAtkRange)
+			if (true == m_bIsIdle)
+				m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+			else
 			{
-				if (true == m_tObjParam.bCanAttack)
+				if (true == m_bInAtkRange)
 				{
-					if (true == m_bIsCoolDown)
-						m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
-					else
+					if (true == m_tObjParam.bCanAttack)
 						m_eFirstCategory = MONSTER_STATE_TYPE::ATTACK;
+					else
+						m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 				}
 				else
-					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+				{
+					m_bCanMoveAround = true;
+					m_eFirstCategory = MONSTER_STATE_TYPE::MOVE;
+					m_eSecondCategory_MOVE = MONSTER_MOVE_TYPE::MOVE_RUN;
+				}
 			}
-			else
-				m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 		}
 		else
 		{
 			m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+
+			if (false == m_bIsIdle)
+				m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
 		}
 	}
 
@@ -372,6 +440,10 @@ void CUrchin::Check_AniEvent()
 	{
 	case MONSTER_STATE_TYPE::IDLE:
 		Play_Idle();
+		break;
+
+	case MONSTER_STATE_TYPE::MOVE:
+		Play_Move();
 		break;
 
 	case MONSTER_STATE_TYPE::ATTACK:
@@ -431,7 +503,7 @@ void CUrchin::Check_DeadEffect(_double TimeDelta)
 	m_fDeadEffect_Offset = 0.1f;
 
 	_v3 vPos = m_pTransformCom->Get_Pos();
-	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Head");
+	D3DXFRAME_DERIVED*	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Toge12");
 	_v3 vHeadPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
 	pFamre = (D3DXFRAME_DERIVED*)m_pMeshCom->Get_BonInfo("Hips");
 	_v3 vHipPos = *(_v3*)(&(pFamre->CombinedTransformationMatrix * m_pTransformCom->Get_WorldMat()).m[3]);
@@ -461,7 +533,7 @@ void CUrchin::Play_Rolling()
 		{
 			Function_ResetAfterAtk();
 			m_bCanCoolDown = true;
-			m_fCoolDownMax = 1.5f;
+			m_fCoolDownMax = 3.f;
 
 			return;
 		}
@@ -620,7 +692,7 @@ void CUrchin::Play_RollingRush()
 		{
 			Function_ResetAfterAtk();
 			m_bCanCoolDown = true;
-			m_fCoolDownMax = 1.8f;
+			m_fCoolDownMax = 3.f;
 
 			return;
 		}
@@ -746,7 +818,26 @@ void CUrchin::Play_Idle()
 		else
 		{
 			m_eState = URCHIN_ANI::Idle;
-			if (nullptr != m_pAggroTarget)
+
+			if (nullptr == m_pAggroTarget)
+			{
+				Function_Find_Target();
+
+				if (nullptr == m_pAggroTarget)
+				{
+					Function_ResetAfterAtk();
+					m_fCoolDownMax = 0.f;
+					m_fCoolDownCur = 0.f;
+					m_bIsIdle = true;
+
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+
+					return;
+				}
+				else
+					Function_RotateBody(m_pAggroTarget);
+			}
+			else
 				Function_RotateBody(m_pAggroTarget);
 		}
 	}
@@ -757,6 +848,133 @@ void CUrchin::Play_Idle()
 	}
 
 	return;
+}
+
+void CUrchin::Play_Move()
+{
+	switch (m_eSecondCategory_MOVE)
+	{
+	case Client::CMonster::MOVE_WALK:
+		m_fSkillMoveSpeed_Cur = 2.f;
+		m_eState = URCHIN_ANI::Run;
+
+		if (nullptr == m_pAggroTarget)
+		{
+			Function_Find_Target();
+
+			if (nullptr == m_pAggroTarget)
+			{
+				Function_ResetAfterAtk();
+				m_fCoolDownMax = 0.f;
+				m_fCoolDownCur = 0.f;
+				m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+
+				if (false == m_bIsIdle)
+					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
+
+				Play_Idle();
+
+				return;
+			}
+			else
+				Function_RotateBody(m_pAggroTarget);
+		}
+		else
+			Function_RotateBody(m_pAggroTarget);
+
+		Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+		break;
+
+	case Client::CMonster::MOVE_ALERT:
+		if (true == m_bCanMoveAround)
+		{
+			m_bCanMoveAround = false;
+			m_bIsMoveAround = true;
+
+			m_bCanCoolDown = true;
+			m_fCoolDownMax = CALC::Random_Num(2, 4) * 1.0f;
+			m_iRandom = CALC::Random_Num(0, 1);
+			m_fSkillMoveSpeed_Cur = 2.5f;
+			m_fSkillMoveAccel_Cur = 0.f;
+			m_fSkillMoveMultiply = 0.5f;
+
+			m_eState = URCHIN_ANI::Run;
+		}
+		else
+		{
+			if (nullptr == m_pAggroTarget)
+			{
+				Function_Find_Target();
+
+				if (nullptr == m_pAggroTarget)
+				{
+					Function_ResetAfterAtk();
+					m_fCoolDownMax = 0.f;
+					m_fCoolDownCur = 0.f;
+					m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+
+					if (false == m_bIsIdle)
+						m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
+
+					Play_Idle();
+
+					return;
+				}
+				else
+				{
+					if(0 == m_iRandom)
+						Function_MoveAround(m_pAggroTarget, m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_X));
+					else if(1 == m_iRandom)
+						Function_MoveAround(m_pAggroTarget, m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_X));
+				}
+			}
+			else
+			{
+				if (0 == m_iRandom)
+					Function_MoveAround(m_pAggroTarget, m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_X));
+				else if (1 == m_iRandom)
+					Function_MoveAround(m_pAggroTarget, m_fSkillMoveSpeed_Cur, -m_pTransformCom->Get_Axis(AXIS_X));
+			}
+		}
+		break;
+	case Client::CMonster::MOVE_RUN:
+		if (true == m_bCanChase)
+		{
+			m_bCanChase = false;
+			m_eState = URCHIN_ANI::Run;
+			m_fSkillMoveSpeed_Cur = 4.f;
+			m_fSkillMoveAccel_Cur = 0.f;
+			m_fSkillMoveMultiply = 0.5f;
+		}
+
+		if (nullptr == m_pAggroTarget)
+		{
+			Function_Find_Target();
+
+			if (nullptr == m_pAggroTarget)
+			{
+				Function_ResetAfterAtk();
+				m_fCoolDownMax = 0.f;
+				m_fCoolDownCur = 0.f;
+				m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+
+				if (false == m_bIsIdle)
+					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
+
+				Play_Idle();
+
+				return;
+			}
+			else
+				Function_RotateBody(m_pAggroTarget);
+		}
+		else
+			Function_RotateBody(m_pAggroTarget);
+
+		Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+		Function_DecreMoveMent(m_fSkillMoveMultiply);
+		break;
+	}
 }
 
 void CUrchin::Play_CC()
@@ -887,9 +1105,9 @@ HRESULT CUrchin::Add_Component(void * pArg)
 	return S_OK;
 }
 
-HRESULT CUrchin::SetUp_ConstantTable()
+HRESULT CUrchin::SetUp_ConstantTable(CShader* pShader)
 {
-	IF_NULL_VALUE_RETURN(m_pShaderCom, E_FAIL);
+	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
 
 	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
 	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
@@ -898,19 +1116,19 @@ HRESULT CUrchin::SetUp_ConstantTable()
 	// 기본 메트릭스
 	//=============================================================================================
 
-	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
 
 	//=============================================================================================
 	// 디졸브용 상수
 	//=============================================================================================
-	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShaderCom)))
+	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", pShader)))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	//=============================================================================================
@@ -924,25 +1142,25 @@ HRESULT CUrchin::SetUp_ConstantTable()
 	_float	fID_G = 0.5f;	// ID_G : G채널 ID 값 , 1이 최대
 	_float	fID_B = 0.2f;	// ID_B	: B채널 ID 값 , 1이 최대
 
-	if (FAILED(m_pShaderCom->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fID_R_Power", &fID_R, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fID_R_Power", &fID_R, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fID_G_Power", &fID_G, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fID_G_Power", &fID_G, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
 		return E_FAIL;
 
 	//=============================================================================================
 	// 림라이트 값들을 쉐이더에 등록시킴
 	//=============================================================================================
-	m_pBattleAgentCom->Update_RimParam_OnShader(m_pShaderCom);
+	m_pBattleAgentCom->Update_RimParam_OnShader(pShader);
 	//=============================================================================================
 
 	return S_OK;
@@ -981,14 +1199,14 @@ HRESULT CUrchin::Ready_Status(void * pArg)
 		if (MONSTER_COLOR_TYPE::WHITE == Info.eMonsterColor)
 		{
 			m_eMonsterColor = Info.eMonsterColor;
-			m_tObjParam.fDamage = -100.f;
+			m_tObjParam.fDamage = -0.f;
 			m_tObjParam.fHp_Max = 750.f;
 			m_tObjParam.fArmor_Max = 10.f;
 		}
 		else
 		{
 			m_eMonsterColor = MONSTER_COLOR_TYPE::BLACK;
-			m_tObjParam.fDamage = -120.f;
+			m_tObjParam.fDamage = -0.f;
 			m_tObjParam.fHp_Max = 800.f;
 			m_tObjParam.fArmor_Max = 10.f;
 		}
@@ -1046,8 +1264,8 @@ HRESULT CUrchin::Ready_Status(void * pArg)
 
 HRESULT CUrchin::Ready_Collider()
 {
-	m_vecAttackCol.reserve(1);
 	m_vecPhysicCol.reserve(3);
+	m_vecAttackCol.reserve(1);
 
 	CCollider* pCollider = nullptr;
 	_float fRadius;
@@ -1074,10 +1292,9 @@ HRESULT CUrchin::Ready_Collider()
 	pCollider->Set_Enabled(true);
 
 	m_vecPhysicCol.push_back(pCollider);
-	m_vecAttackCol.push_back(pCollider);
 
 	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
-	fRadius = 0.2f;
+	fRadius = 0.7f;
 
 	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
 	pCollider->Set_Dynamic(true);
@@ -1086,6 +1303,17 @@ HRESULT CUrchin::Ready_Collider()
 	pCollider->Set_Enabled(true);
 
 	m_vecPhysicCol.push_back(pCollider);
+
+	IF_NULL_VALUE_RETURN(pCollider = static_cast<CCollider*>(g_pManagement->Clone_Component(SCENE_STATIC, L"Collider")), E_FAIL);
+	fRadius = 0.5f;
+
+	pCollider->Set_Radius(_v3{ fRadius, fRadius, fRadius });
+	pCollider->Set_Dynamic(true);
+	pCollider->Set_Type(COL_SPHERE);
+	pCollider->Set_CenterPos(_v3(m_matBone[Bone_Body]->_41, m_matBone[Bone_Body]->_42, m_matBone[Bone_Body]->_43));
+	pCollider->Set_Enabled(true);
+
+	m_vecAttackCol.push_back(pCollider);
 
 	return S_OK;
 }

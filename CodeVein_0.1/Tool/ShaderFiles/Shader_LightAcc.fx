@@ -77,6 +77,7 @@ sampler ShadowMapSampler = sampler_state
 	BorderColor = float4(1.f, 0.0f, 0.0f, 1.0f);
 
 };
+
 struct PS_IN
 {
 	float4		vPosition : POSITION;
@@ -138,7 +139,7 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	if (vHeightValue.x > 0.0001f)
 	{
 		Out.vShade.xyz = ceil(Out.vShade.xyz * 2.f) / 2.f;
-		//Out.vSpecular.a = 100.f;
+		Out.vSpecular.a = 1.f;
 
 		if (vHeightValue.y > 0.f)
 		{
@@ -151,13 +152,10 @@ PS_OUT PS_MAIN_DIRECTIONAL(PS_IN In)
 	// Shadow ====================================================================
 
 	float fShadow = tex2D(ShadowMapSampler, In.vTexUV).x;
-
-	float4 lightPosition = mul(vWorldPos, g_matLightVP);
-
-	float fDepth = (lightPosition.z / lightPosition.w);
-	float DepthBias = 0.00125f;
-
 	Out.vShade.rgb *= fShadow;
+
+	if (fShadow < 1.f)
+		Out.vSpecular.xyz = 0.f;
 
 	// Shadow End ====================================================================
 
@@ -184,8 +182,9 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
 	vWorldPos = mul(vWorldPos, g_matProjInv);
 	vWorldPos = mul(vWorldPos, g_matViewInv);
 
-
-	float4		vSpecularIntensity = float4(vDepthInfo.z, vDepthInfo.w, vNormalInfo.w, 1.f);
+	float		Roughness = vDepthInfo.z;
+	float		Metalness = vDepthInfo.w;
+	float		AO = vNormalInfo.w;
 
 	vector		vLightDir = vWorldPos - g_vLightPos;
 	float		fLength = length(vLightDir);
@@ -196,63 +195,16 @@ PS_OUT PS_MAIN_POINT(PS_IN In)
 	vector		vReflect = reflect(normalize(vLightDir), vNormal);
 
 
-	Out.vShade = fAtt * g_vLightDiffuse * saturate(dot(normalize(vLightDir) * -1.f, vNormal)) + saturate(g_vLightAmbient * g_vMtrlAmbient);
+	Out.vShade = fAtt * g_vLightDiffuse * saturate(dot(normalize(vLightDir) * -1.f, vNormal));// +saturate(g_vLightAmbient * g_vMtrlAmbient);
 	Out.vShade.a = 1.f;
-
-
-	// Shadow ====================================================================
-
-	//float4 lightingPosition = mul(vWorldPos, g_LightVP_Close);
-	//
-	//float2 ShadowTexCoord = 0.5 * lightingPosition.xy /
-	//	lightingPosition.w + float2(0.5, 0.5);
-	//ShadowTexCoord.y = 1.0f - ShadowTexCoord.y;
-	//
-	//float fShadow = tex2D(ShadowMapSampler, ShadowTexCoord).x;
-	//
-	//float DepthBias = 0.001f;
-	//float ourdepth = (lightingPosition.z / lightingPosition.w) - DepthBias;
-	//
-	////
-	//if (fShadow <= ourdepth)
-	//{
-	//	Out.vShade.rgb *= 0.2f;
-	//
-	//	return Out;
-	//}
-
-	//float4 lightingPosition = mul(vWorldPos, g_LightVP_Close); 
-	//
-	//float2 ShadowTexCoord = 0.5 * lightingPosition.xy /
-	//	lightingPosition.w + float2(0.5, 0.5);
-	//ShadowTexCoord.y = -ShadowTexCoord.y;
-	//
-	//float4 fShadow = tex2D(ShadowMapSampler, ShadowTexCoord.xy);
-	////
-	//if (fShadow.x <= 0.6f)
-	//{
-	//	Out.vShade.rgb *= 0.2f;
-	//
-	//	return Out;
-	//}
-
-	//float4 fShadow = tex2D(ShadowMapSampler, In.vTexUV.xy); 
-	////
-	//if (fShadow.a <= 0.6f)
-	//{
-	//	Out.vShade.rgb *= 0.2f;
-	//
-	//	return Out;
-	//}
-
-	// Shadow ====================================================================
 
 	vector		vLook = vWorldPos - g_vCamPosition;
 
-	Out.vSpecular = fAtt * g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 20.f); // *vSpecularIntensity.y;
-	Out.vSpecular.a = 0.f;
+	Out.vSpecular = fAtt * (g_vLightDiffuse * pow(saturate(dot(normalize(vLook) * -1.f, vReflect)), 5.f * Roughness)) * Metalness * 2.f;
+	Out.vSpecular.a = AO;
 
-	// RimLight ====================================================================
+	//float fShadow = tex2D(ShadowMapSampler, In.vTexUV).x;
+	//Out.vShade *= fShadow;
 
 	return Out;
 }
