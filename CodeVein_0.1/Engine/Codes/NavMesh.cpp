@@ -260,6 +260,9 @@ void CNavMesh::Check_OnNavMesh(_v3 pTargetPos)
 		{
 			_int iMaxSize = (_int)m_vecSubset_Cell.size();
 
+			if (iSubsetIdx >= iMaxSize)
+				break;
+
 			for (auto& iter : *m_vecSubset_Cell[iSubsetIdx])
 			{
 				if (iter->Compare_Inner_Only(pTargetPos))
@@ -271,9 +274,6 @@ void CNavMesh::Check_OnNavMesh(_v3 pTargetPos)
 			}
 
 			++iSubsetIdx;
-
-			if (iSubsetIdx > iMaxSize)
-				break;
 		}
 	}
 }
