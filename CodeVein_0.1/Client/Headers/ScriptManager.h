@@ -1,6 +1,6 @@
 #pragma once
 
-#define MaxTriggerCnt 64
+#define MaxTriggerCnt 32
 
 #include "Base.h"
 #include "Client_Defines.h"
@@ -19,7 +19,7 @@ class CScriptManager : public CBase
 private:
 	typedef enum Script_Info
 	{
-		Script_Base , Script_Stage01, Script_Stage02, Script_Stage03, Script_Stage04, Script_Stage_Training, Script_Stage_End,
+		Script_Base , Script_Stage01, Script_Stage02, Script_Stage03, Script_Stage04, Script_Stage_End,
 	}SCRIPT_SCENE;
 
 private:
@@ -36,7 +36,6 @@ public:
 
 public:
 	virtual void Reset_Script_DynmicObject();
-	virtual void Reset_ObjectPoolVector();
 
 public:
 	virtual void Update_ScriptMgr(_double _dDeltaTime , _ulong _dwSubsetIdx , _ulong _dwCellIdx);

@@ -165,10 +165,10 @@ HRESULT CTrail_VFX::Render_GameObject_SetShader(CShader * pShader)
 
 HRESULT CTrail_VFX::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
-	//m_pGraphic_Dev->SetRenderState(D3DRS_LIGHTING, FALSE);
-	//m_pGraphic_Dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
-	//
-	//m_pGraphic_Dev->SetFVF(m_dwVtxFVF);
+	m_pGraphic_Dev->SetRenderState(D3DRS_LIGHTING, FALSE);
+	m_pGraphic_Dev->SetRenderState(D3DRS_CULLMODE, D3DCULL_NONE);
+	
+	m_pGraphic_Dev->SetFVF(m_dwVtxFVF);
 
 	_int iPass = (m_eType == Trail_Normal ? 5 : 1);
 

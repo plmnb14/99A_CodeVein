@@ -71,6 +71,8 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 		cout << m_pTransform->Get_Pos().y << endl;
 		cout << m_pTransform->Get_Pos().z << endl;
 		cout << "===================================================" << endl;
+		cout << D3DXToDegree(m_pTransform->Get_Angle(AXIS_Y)) << endl;
+		cout << "===================================================" << endl;
 
 	}
 
@@ -1269,32 +1271,104 @@ void CPlayer::Target_AimChasing()
 	if (m_bHaveAimingTarget)
 		return;
 
-	for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE))
-	{
-		if(true == iter->Get_Dead())
-			continue;
-
-		if (false == iter->Get_Enable())
-			continue;
-
-		_float fLength = D3DXVec3Length(&(TARGET_TO_TRANS(iter)->Get_Pos() - m_pTransform->Get_Pos()));
-
-		if (fLength > m_fAmingRange)
-			continue;
-
-		m_bHaveAimingTarget = true;
-
-		m_pTarget = iter;
-
-		CCameraMgr::Get_Instance()->Set_AimingTarget(m_pTarget);
-		CCameraMgr::Get_Instance()->Set_OnAimingTarget(true);
-
-		m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(m_pTarget)->Get_Pos()));
-
+	if (m_bOnAiming)
 		return;
+
+	if (false == g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE).empty())
+	{
+		_float fOldLength = 9999.f;
+		CGameObject* pOldTarget = nullptr;
+
+		_v3 pTargetTransPos = V3_NULL;
+
+		for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE))
+		{
+			if (false == iter->Get_Enable())
+				continue;
+
+			if (true == iter->Get_Dead())
+				continue;
+
+			pTargetTransPos = TARGET_TO_TRANS(iter)->Get_Pos();
+
+			_float fLength = D3DXVec3Length(&(pTargetTransPos - m_pTransform->Get_Pos()));
+
+			if (fLength > m_fAmingRange)
+				continue;
+
+			// 기존에 OldLength 보다 작을 경우
+			if (fOldLength > fLength)
+				fOldLength = fLength;
+
+			m_bHaveAimingTarget = true;
+
+			pOldTarget = iter;
+		}
+
+
+		if (nullptr != pOldTarget)
+		{
+			m_pTarget = pOldTarget;
+
+			m_pCamManager->Set_AimingTarget(m_pTarget);
+			m_pCamManager->Set_OnAimingTarget(true);
+
+			m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&pTargetTransPos));
+
+			m_bOnAiming = true;
+		}
+	}
+
+	if (m_bOnAiming)
+		return;
+
+	if (false == g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE).empty())
+	{
+		_float fOldLength = 9999.f;
+		CGameObject* pOldTarget = nullptr;
+
+		_v3 pTargetTransPos = V3_NULL;
+
+		for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE))
+		{
+			if (false == iter->Get_Enable())
+				continue;
+
+			if (true == iter->Get_Dead())
+				continue;
+
+			pTargetTransPos = TARGET_TO_TRANS(iter)->Get_Pos();
+
+			_float fLength = D3DXVec3Length(&(pTargetTransPos - m_pTransform->Get_Pos()));
+
+			if (fLength > m_fAmingRange)
+				continue;
+			
+			// 기존에 OldLength 보다 작을 경우
+			if (fOldLength > fLength)
+				fOldLength = fLength;
+
+			m_bHaveAimingTarget = true;
+
+			pOldTarget = iter;
+		}
+
+
+		if (nullptr != pOldTarget)
+		{
+			m_pTarget = pOldTarget;
+
+			m_pCamManager->Set_AimingTarget(m_pTarget);
+			m_pCamManager->Set_OnAimingTarget(true);
+
+			m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&pTargetTransPos));
+
+			m_bOnAiming = true;
+		}
 	}
 
 	m_bOnAiming = false;
+	m_pCamManager->Set_OnAimingTarget(false);
 
 	return;
 }
@@ -2198,6 +2272,9 @@ void CPlayer::Key_UI_n_Utiliy(_bool _bActiveUI)
 		else if (g_pInput_Device->Key_Down(DIK_E))
 		{
 			Active_UI_Mistletoe();
+
+			// 여기 유아이 끄는거 넣어야함
+			//m_pUIManager->Get_Skill_AcquisitionUI()->Set_Active(false);
 		}
 	}
 

@@ -32,8 +32,6 @@ CScriptManager::CScriptManager()
 
 void CScriptManager::Update_ScriptMgr(_double _dDeltaTime, _ulong _dwSubsetIdx, _ulong _dwCellIdx)
 {
-	return;
-
 	m_fDeltaTime = (_float)_dDeltaTime;
 	m_dwSubsetIdx = _dwSubsetIdx;
 	m_dwCellIdx = _dwCellIdx;
@@ -63,7 +61,7 @@ void CScriptManager::Update_ScriptEvent()
 	{
 	case Script_Base:
 	{
-		Stage_Base_Scripts();
+		//Stage_Base_Scripts();
 		break;
 	}
 
@@ -91,12 +89,6 @@ void CScriptManager::Update_ScriptEvent()
 		break;
 	}
 
-	case Script_Stage_Training:
-	{
-		break;
-
-	}
-
 	case Script_Stage_End:
 	{
 		break;
@@ -118,20 +110,17 @@ void CScriptManager::Reset_ScriptEvent(_ushort _sScriptStageIdx, _bool _bResetAl
 			}
 		}
 	}
+
+	else
+	{
+		for (_uint i = 0; i < MaxTriggerCnt; ++i)
+		{
+			m_bEventTrigger[_sScriptStageIdx][i] = false;
+		}
+	}
 }
 
 void CScriptManager::Reset_Script_DynmicObject()
-{
-	for (auto& iter : m_vecObjectPool)
-	{
-		Safe_Release(iter);
-	}
-
-	m_vecObjectPool.shrink_to_fit();
-	m_vecObjectPool.clear();
-}
-
-void CScriptManager::Reset_ObjectPoolVector()
 {
 	for (auto& iter : m_vecObjectPool)
 	{
@@ -159,7 +148,7 @@ void CScriptManager::Ready_Script_DynamicObject(_ulong _dwStageIdx)
 	}
 	case Script_Stage01:
 	{
-		//Ready_Stage01_DynamicObject();
+		Ready_Stage01_DynamicObject();
 		break;
 	}
 
@@ -179,12 +168,6 @@ void CScriptManager::Ready_Script_DynamicObject(_ulong _dwStageIdx)
 	{
 		Ready_Stage04_DynamicObject();
 		break;
-	}
-
-	case Script_Stage_Training:
-	{
-		break;
-
 	}
 
 	case Script_Stage_End:
@@ -209,6 +192,7 @@ void CScriptManager::St01_Sub0()
 			m_vecObjectPool[0]->Set_Enable(true);
 			m_vecObjectPool[1]->Set_Enable(true);
 			m_vecObjectPool[2]->Set_Enable(true);
+			m_vecObjectPool[3]->Set_Enable(true);
 		}
 	}
 
@@ -218,11 +202,9 @@ void CScriptManager::St01_Sub0()
 		{
 			m_bEventTrigger[Script_Stage01][1] = true;
 
-			m_vecObjectPool[3]->Set_Enable(true);
 			m_vecObjectPool[4]->Set_Enable(true);
 			m_vecObjectPool[5]->Set_Enable(true);
 			m_vecObjectPool[6]->Set_Enable(true);
-			m_vecObjectPool[7]->Set_Enable(true);
 		}
 	}
 	}
@@ -238,8 +220,12 @@ void CScriptManager::St01_Sub1()
 		{
 			m_bEventTrigger[Script_Stage01][2] = true;
 
+			m_vecObjectPool[7]->Set_Enable(true);
 			m_vecObjectPool[8]->Set_Enable(true);
 			m_vecObjectPool[9]->Set_Enable(true);
+			m_vecObjectPool[10]->Set_Enable(true);
+			m_vecObjectPool[11]->Set_Enable(true);
+			m_vecObjectPool[12]->Set_Enable(true);
 		}
 	}
 	}
@@ -255,7 +241,12 @@ void CScriptManager::St01_Sub2()
 		{
 			m_bEventTrigger[Script_Stage01][3] = true;
 
-			m_vecObjectPool[10]->Set_Enable(true);
+			m_vecObjectPool[13]->Set_Enable(true);
+			m_vecObjectPool[14]->Set_Enable(true);
+			m_vecObjectPool[15]->Set_Enable(true);
+			m_vecObjectPool[16]->Set_Enable(true);
+			m_vecObjectPool[17]->Set_Enable(true);
+			m_vecObjectPool[18]->Set_Enable(true);
 		}
 	}
 
@@ -264,12 +255,6 @@ void CScriptManager::St01_Sub2()
 		if (m_bEventTrigger[Script_Stage01][4] == false)
 		{
 			m_bEventTrigger[Script_Stage01][4] = true;
-
-			m_vecObjectPool[11]->Set_Enable(true);
-			m_vecObjectPool[12]->Set_Enable(true);
-			m_vecObjectPool[13]->Set_Enable(true);
-			m_vecObjectPool[14]->Set_Enable(true);
-			m_vecObjectPool[15]->Set_Enable(true);
 		}
 	}
 
@@ -278,11 +263,6 @@ void CScriptManager::St01_Sub2()
 		if (m_bEventTrigger[Script_Stage01][5] == false)
 		{
 			m_bEventTrigger[Script_Stage01][5] = true;
-
-			m_vecObjectPool[16]->Set_Enable(true);
-			m_vecObjectPool[17]->Set_Enable(true);
-			m_vecObjectPool[18]->Set_Enable(true);
-			m_vecObjectPool[19]->Set_Enable(true);
 		}
 	}
 
@@ -293,8 +273,6 @@ void CScriptManager::St01_Sub2()
 		{
 			m_bEventTrigger[Script_Stage01][6] = true;
 
-			m_vecObjectPool[20]->Set_Enable(true);
-			m_vecObjectPool[21]->Set_Enable(true);
 		}
 	}
 	}
@@ -310,11 +288,10 @@ void CScriptManager::St01_Sub3()
 		{
 			m_bEventTrigger[Script_Stage01][7] = true;
 
+			m_vecObjectPool[19]->Set_Enable(true);
+			m_vecObjectPool[20]->Set_Enable(true);
+			m_vecObjectPool[21]->Set_Enable(true);
 			m_vecObjectPool[22]->Set_Enable(true);
-			m_vecObjectPool[23]->Set_Enable(true);
-			m_vecObjectPool[24]->Set_Enable(true);
-			m_vecObjectPool[25]->Set_Enable(true);
-			m_vecObjectPool[26]->Set_Enable(true);
 		}
 	}
 
@@ -324,7 +301,7 @@ void CScriptManager::St01_Sub3()
 		{
 			m_bEventTrigger[Script_Stage01][8] = true;
 
-			m_vecObjectPool[27]->Set_Enable(true);
+			m_vecObjectPool[23]->Set_Enable(true);
 		}
 	}
 	}
@@ -340,8 +317,7 @@ void CScriptManager::St01_Sub4()
 		{
 			m_bEventTrigger[Script_Stage01][9] = true;
 
-			m_vecObjectPool[28]->Set_Enable(true);
-			//m_vecObjectPool[29]->Set_Enable(true);
+			m_vecObjectPool[24]->Set_Enable(true);
 
 			// º¸½º HP¹Ù »ý¼º
 			g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossHP", SCENE_STAGE, L"Layer_BossHP");
@@ -360,9 +336,9 @@ void CScriptManager::St01_Sub6()
 	{
 	case 0:
 	{
-		if (m_bEventTrigger[Script_Stage01][11] == false)
+		if (m_bEventTrigger[Script_Stage01][10] == false)
 		{
-			m_bEventTrigger[Script_Stage01][11] = true;
+			m_bEventTrigger[Script_Stage01][10] = true;
 			m_bTimer = true;
 
 			CMassageUI* pMassageUI = static_cast<CMassageUI*>(g_pManagement->Get_GameObjectBack(L"Layer_BossMassageUI", SCENE_STAGE));
@@ -649,290 +625,298 @@ void CScriptManager::Ready_Base_DynamicObject()
 
 void CScriptManager::Ready_Stage01_DynamicObject()
 {
-	m_vecObjectPool.reserve(40);
+	m_vecObjectPool.reserve(25);
 
-	_v3 vPos[30] =
+	_v4 vPos[25] =
 	{
-		// ÃÊ¹Ý 3¸í
-		_v3(144.551f, -18.08f, 79.895f),
-		_v3(145.498f, -18.08f, 84.775f),
-		_v3(150.690f, -18.08f, 94.981f),
-		// =========================================
+		// ================================================================================================================
+		// 25¸¶¸®
+		// ================================================================================================================
+		// °Ë°Õ, °Ë°Õ, °Ë°Õ, Ã¢°Õ
+		// ================================================================================================================
+		_v4(149.756f, -18.08f, 89.3907f, 176.f),
+		_v4(145.419f, -18.08f, 78.1315f, 77.f),
+		_v4(141.593f, -17.7f, 102.344f, -281.f),
+		_v4(138.36f, -17.7f, 110.634f, 131.f),
+		// ================================================================================================================
+		// ¾ßÂ÷ , ÃÑ°Õ, °Ë°Õ
+		// ================================================================================================================
+		_v4(104.911f, -17.15f, 114.246f, 79.f),
+		_v4(103.837f, -17.15f, 106.89f, 23.f),
+		_v4(74.5243f, -17.15f, 108.566f, 186.f),
+		// ================================================================================================================
+		// ¾ßÂ÷, ÃÑ°Õ, °Ë°Õ, °Ë°Õ ,Ã¢°Õ, °Ë°Õ
+		// ================================================================================================================
+		_v4(63.1959f, -17.150f, 117.537f, 5.f),
+		_v4(67.4774f, -17.150f, 121.635f, 186.f),
+		_v4(72.5364f, -17.150f, 108.336f, 252.f),
+		_v4(88.6899f, -17.150f, 114.131f, 7.f),
+		_v4(91.0369f, -17.150f, 121.635f, 221.f),
+		_v4(93.2527f, -4.2f, 108.336f, 54.f),
+		// ================================================================================================================
+		// °Ë°Õ, ÃÑ°Õ, ´ó, ´ó, ´ó, ´ó
+		// ================================================================================================================
+		_v4(84.356f, 0.1f, 158.816f, 166.f),
+		_v4(88.37f, 0.1f, 166.539f, 183.f),
+		_v4(41.4651f, 0.1f, 153.171f, 96.f),
+		_v4(37.0877f, 0.1f, 143.726f, 54.f),
+		_v4(33.1281f, 0.1f, 147.35f, 83.f),
+		_v4(29.5839f, 0.1f, 153.327f, 102.f),
+		// ================================================================================================================
+		// Ã¢°Õ, ´ó , ÃÑ°Õ, ÃÑ°Õ, ¾ßÂ÷
+		// ================================================================================================================
+		_v4(8.286f, 0.1f, 107.834f, 107.834f),
+		_v4(3.648f, 0.1f, 117.118f, 117.118f),
+		_v4(15.2567f, 0.1f, 101.224f, -44.9926f),
+		_v4(20.45f, 0.1f, 116.49f, 278.682f),
+		_v4(-5.112f, 0.1f, 54.158f, 11.f),
+		// ================================================================================================================
+		// µ¶³ªºñ
+		// ================================================================================================================
+		_v4(-2.81f, 0.8f, -2.54f, 356.f)
+		// ================================================================================================================
 
-		// Ã¢, °Ë, Ã¢, ÃÑ, ÃÑ
-		_v3(135.253f, -17.667f, 110.645f),
-		_v3(132.46f, -17.7f, 118.243f),
-		_v3(106.398f, -17.150f, 114.131f),
-		_v3(104.769f, -17.150f, 121.635f),
-		_v3(105.458f, -17.150f, 108.336f),
-		// =========================================
 
-		// ÀÌÀü 2¸í
-		_v3(95.754f, -17.15f, 106.058f),
-		_v3(87.195f, -17.15f, 105.301f),
-		// =========================================
-
-		// ÃÑ, ÃÑ
-		_v3(72.357f, -17.15f, 141.364f),
-		// =========================================
-
-		// ÀÌÀü 5¸¶¸®
-		_v3(61.826f, -17.15f, 115.219f),
-		_v3(65.298f, -17.15f, 125.649f),
-		_v3(62.689f, -17.15f, 127.093f),
-		_v3(71.845f, -17.15f, 132.392f),
-		_v3(102.201f, -17.15f, 141.943f),
-		// =========================================
-
-		// ´ó´óÀÌ 4¸¶¸®
-		_v3(64.588f, -0.1f, 151.872f),
-		_v3(43.606f, -0.1f, 151.288f),
-		_v3(41.517f, -0.1f, 147.294f),
-		_v3(54.421f, -0.1f, 143.731f),
-		// =========================================
-
-		// ÀÌÀü °ÕÁö µÑ
-		_v3(85.174f, 0.1f, 154.160f),
-		_v3(87.157f, 0.1f, 167.728f),
-		// =========================================
-
-		//  °Ë, °Ë, Ã¢, °Ë, ¾ß
-		_v3(9.853f, 0.1f, 122.874f),
-		_v3(22.171f, 0.1f, 127.027f),
-		_v3(6.095f, 0.1f, 109.448f),
-		_v3(15.527f, 0.1f, 102.195f),
-		_v3(-4.185f, 0.1f, 60.353f),
-		// =========================================
-
-		// °Ë °ÕÁö
-		_v3(43.606f, 0.1f, 151.288f),
-		// =========================================
-
-		// º¸½º
-		_v3(-0.955f, 0.8f, -5.525f)
-		// =========================================
 	};
 
 	CGameObject* pInstance = nullptr;
+	_uint		iIndex = 0;
 
-	//=======================================================================
-	// 4¸í
-
-	{
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White, CSwordGenji::NF_Ani::Talk, 10.f, 5.f, 2.f));
-		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-		TARGET_TO_NAV(pInstance)->Set_Index(32);
-		m_vecObjectPool.push_back(pInstance);
-		Safe_AddRef(pInstance);
-
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::Jungle, CGunGenji::NF_Ani::Sit1, 10.f, 5.f, 2.f));
-		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-		TARGET_TO_NAV(pInstance)->Set_Index(39);
-		m_vecObjectPool.push_back(pInstance);
-		Safe_AddRef(pInstance);
-
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::NF_Ani::Talk, 10.f, 5.f, 2.f));
-		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-		TARGET_TO_NAV(pInstance)->Set_Index(52);
-		m_vecObjectPool.push_back(pInstance);
-		Safe_AddRef(pInstance);
-	}
-
-	//=======================================================================
-
-	{
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordShieldGenji", &CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::NF_Ani::LookAround1, 10.f, 5.f, 2.f));
-		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-		TARGET_TO_NAV(pInstance)->Set_Index(81);
-		m_vecObjectPool.push_back(pInstance);
-		Safe_AddRef(pInstance);
-
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CSwordGenji::INFO(CSwordGenji::White, CSwordGenji::NF_Ani::Talk, 10.f, 5.f, 2.f));
-		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(0);
-		TARGET_TO_NAV(pInstance)->Set_Index(74);
-		m_vecObjectPool.push_back(pInstance);
-		Safe_AddRef(pInstance);
-
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordShieldGenji", &CGunGenji::INFO(CGunGenji::Jungle, CGunGenji::NF_Ani::Sit1, 10.f, 5.f, 2.f));
-		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-		TARGET_TO_NAV(pInstance)->Set_Index(29);
-		m_vecObjectPool.push_back(pInstance);
-		Safe_AddRef(pInstance);
-
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::NF_Ani::LookAround2, 10.f, 5.f, 2.f));
-		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-		TARGET_TO_NAV(pInstance)->Set_Index(39);
-		m_vecObjectPool.push_back(pInstance);
-		Safe_AddRef(pInstance);
-
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::NF_Ani::Talk, 10.f, 5.f, 2.f));
-		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-		TARGET_TO_NAV(pInstance)->Set_Index(43);
-		m_vecObjectPool.push_back(pInstance);
-		Safe_AddRef(pInstance);
-	}
-
-	//=======================================================================
-
-	{
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White, CSwordGenji::NF_Ani::Talk, 10.f, 5.f, 2.f));
-		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-		TARGET_TO_NAV(pInstance)->Set_Index(55);
-		m_vecObjectPool.push_back(pInstance);
-		Safe_AddRef(pInstance);
-
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle, CSwordGenji::NF_Ani::Sit1, 10.f, 5.f, 2.f));
-		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(1);
-		TARGET_TO_NAV(pInstance)->Set_Index(63);
-		m_vecObjectPool.push_back(pInstance);
-		Safe_AddRef(pInstance);
-	}
-
-	//=======================================================================
-	{
-		pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CSwordGenji::INFO(CSwordGenji::White, CSwordGenji::NF_Ani::Talk, 10.f, 5.f, 2.f));
-		TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-		TARGET_TO_NAV(pInstance)->Set_Index(42);
-		m_vecObjectPool.push_back(pInstance);
-		Safe_AddRef(pInstance);
-	}
-
-	//=======================================================================
-
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White, CSwordGenji::NF_Ani::Talk, 10.f, 5.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-	TARGET_TO_NAV(pInstance)->Set_Index(28);
+	// ================================================================================================================
+	// 25¸¶¸®
+	// ================================================================================================================
+	// °Ë°Õ, °Ë°Õ, °Ë°Õ, Ã¢°Õ
+	// ================================================================================================================
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji",
+		&CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::NF_Ani::Talk, 10.f, 10.f, 2.f,
+			true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, vPos[iIndex].w, 0.f), 1));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	++iIndex;
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle, CSwordGenji::NF_Ani::Talk, 10.f, 5.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-	TARGET_TO_NAV(pInstance)->Set_Index(34);
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji",
+		&CSwordGenji::INFO(CSwordGenji::White, CSwordGenji::NF_Ani::Sit1, 10.f, 5.f, 2.f,
+			true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, vPos[iIndex].w, 0.f), 1));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	++iIndex;
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::Jungle, CGunGenji::NF_Ani::Sit1, 10.f, 5.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-	TARGET_TO_NAV(pInstance)->Set_Index(138);
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji",
+		&CSwordGenji::INFO(CSwordGenji::Jungle, CSwordGenji::NF_Ani::LookAround1, 10.f, 5.f, 2.f,
+			true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, vPos[iIndex].w, 0.f), 1));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	++iIndex;
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji", &CGunGenji::INFO(CGunGenji::Jungle, CGunGenji::NF_Ani::LookAround3, 10.f, 5.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-	TARGET_TO_NAV(pInstance)->Set_Index(45);
+	// Ã¢°Õ
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordShieldGenji",
+		&CSwordShieldGenji::INFO(CSwordShieldGenji::White, CSwordShieldGenji::NF_Ani::LookAround3, 50.f, 7.f, 2.f,
+			true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, vPos[iIndex].w, 0.f), 1));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
-
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::Talk, 10.f, 5.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(2);
-	TARGET_TO_NAV(pInstance)->Set_Index(72);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	++iIndex;
+	// ================================================================================================================
+	// ¾ßÂ÷ , ÃÑ°Õ, °Ë°Õ
+	// ================================================================================================================
+	// ¾ßÂ÷
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_YachaMan",
+		&CMonster::MONSTER_STATUS(CMonster::COLOR_NONE, WEAPON_None,
+			true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, vPos[iIndex].w, 0.f), 1));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	++iIndex;
 
-	//=======================================================================
-
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Wolf", NULL);
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
-	TARGET_TO_NAV(pInstance)->Set_Index(84);
+	// ÃÑ°Õ
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji",
+		&CGunGenji::INFO(CGunGenji::Jungle, CGunGenji::NF_Ani::Talk, 10.f, 10.f, 2.f,
+			true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, vPos[iIndex].w, 0.f), 1));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	++iIndex;
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Wolf", NULL);
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
-	TARGET_TO_NAV(pInstance)->Set_Index(126);
+	// °Ë°Õ
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji",
+		&CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::NF_Ani::Sit1, 10.f, 10.f, 2.f,
+			true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, vPos[iIndex].w, 0.f), 1));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
-
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Wolf", NULL);
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
-	TARGET_TO_NAV(pInstance)->Set_Index(129);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	++iIndex;
+	// ================================================================================================================
+	// ¾ßÂ÷, ÃÑ°Õ, °Ë°Õ, °Ë°Õ ,Ã¢°Õ, °Ë°Õ
+	// ================================================================================================================
+	//¾ßÂ÷
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_YachaMan",
+		&CMonster::MONSTER_STATUS(CMonster::COLOR_NONE, WEAPON_None,
+			true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, vPos[iIndex].w, 0.f), 1));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	++iIndex;
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Wolf", NULL);
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
-	TARGET_TO_NAV(pInstance)->Set_Index(120);
+	// ÃÑ°Õ
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji",
+		&CGunGenji::INFO(CGunGenji::Normal, CGunGenji::NF_Ani::Talk, 10.f, 10.f, 2.f,
+			true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, vPos[iIndex].w, 0.f), 1));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	++iIndex;
 
-	//=======================================================================
-
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White, CSwordGenji::Talk, 10.f, 5.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
-	TARGET_TO_NAV(pInstance)->Set_Index(25);
+	// °Ë°Õ
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji",
+		&CSwordGenji::INFO(CSwordGenji::White, CSwordGenji::NF_Ani::Sit1, 10.f, 10.f, 2.f,
+			true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, vPos[iIndex].w, 0.f), 1));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	++iIndex;
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle, CSwordGenji::Talk, 10.f, 5.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
-	TARGET_TO_NAV(pInstance)->Set_Index(36);
+	// °Ë°Õ
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji",
+		&CSwordGenji::INFO(CSwordGenji::Jungle, CSwordGenji::NF_Ani::Sit1, 10.f, 10.f, 2.f,
+			true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, vPos[iIndex].w, 0.f), 1));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	++iIndex;
 
-	//=======================================================================
-
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::Sit1, 10.f, 5.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(4);
-	TARGET_TO_NAV(pInstance)->Set_Index(23);
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordShieldGenji",
+		&CSwordShieldGenji::INFO(CSwordShieldGenji::White, CSwordShieldGenji::NF_Ani::LookAround3, 50.f, 7.f, 2.f,
+			true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, vPos[iIndex].w, 0.f), 1));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	++iIndex;
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle, CSwordGenji::Sit2, 10.f, 5.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(4);
-	TARGET_TO_NAV(pInstance)->Set_Index(19);
+	// °Ë°Õ
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji",
+		&CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::NF_Ani::Sit1, 10.f, 10.f, 2.f,
+			true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, vPos[iIndex].w, 0.f), 1));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
-
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White, CSwordGenji::Sit1, 10.f, 5.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(4);
-	TARGET_TO_NAV(pInstance)->Set_Index(41);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	++iIndex;
+	// ================================================================================================================
+	// °Ë°Õ, ÃÑ°Õ, ´ó, ´ó, ´ó, ´ó
+	// ================================================================================================================
+	// °Ë°Õ
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji",
+		&CSwordGenji::INFO(CSwordGenji::Jungle, CSwordGenji::NF_Ani::Sit1, 10.f, 10.f, 2.f,
+			true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, vPos[iIndex].w, 0.f), 1));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	++iIndex;
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::Jungle, CSwordGenji::Sit2, 10.f, 5.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(4);
-	TARGET_TO_NAV(pInstance)->Set_Index(48);
+	// ÃÑ°Õ
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji",
+		&CGunGenji::INFO(CGunGenji::Normal, CGunGenji::NF_Ani::Talk, 10.f, 10.f, 2.f,
+			true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, vPos[iIndex].w, 0.f), 1));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	++iIndex;
 
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_YachaMan", NULL);
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(5);
-	TARGET_TO_NAV(pInstance)->Set_Index(31);
+	// ´Á´ë
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Wolf",
+		&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+			true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, vPos[iIndex].w, 0.f), 1));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	++iIndex;
 
-	//=======================================================================
-
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", &CSwordGenji::INFO(CSwordGenji::White, CSwordGenji::Talk, 10.f, 5.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(3);
-	TARGET_TO_NAV(pInstance)->Set_Index(126);
+	// ´Á´ë
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Wolf",
+		&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+			true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, vPos[iIndex].w, 0.f), 1));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	++iIndex;
 
-	//=======================================================================
-
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_PoisonButterfly", &CPoisonButterfly::INFO(45.f, 15.f, 2.f));
-	TARGET_TO_NAV(pInstance)->Set_SubsetIndex(6);
-	TARGET_TO_NAV(pInstance)->Set_Index(2);
+	// ´Á´ë
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Wolf",
+		&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+			true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, vPos[iIndex].w, 0.f), 1));
 	m_vecObjectPool.push_back(pInstance);
 	Safe_AddRef(pInstance);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	++iIndex;
 
-	//=======================================================================
+	// ´Á´ë
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Wolf",
+		&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+			true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, vPos[iIndex].w, 0.f), 1));
+	m_vecObjectPool.push_back(pInstance);
+	Safe_AddRef(pInstance);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	++iIndex;
 
-	_ulong dwIndex = 0;
+	// ================================================================================================================
+	// Ã¢°Õ, ´ó , ÃÑ°Õ, ÃÑ°Õ, ¾ßÂ÷
+	// ================================================================================================================
+	// Ã¢°Õ
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordShieldGenji",
+		&CSwordShieldGenji::INFO(CSwordShieldGenji::White, CSwordShieldGenji::NF_Ani::LookAround3, 50.f, 7.f, 2.f,
+			true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, vPos[iIndex].w, 0.f), 1));
+	m_vecObjectPool.push_back(pInstance);
+	Safe_AddRef(pInstance);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	++iIndex;
 
-	for (auto& iter : m_vecObjectPool)
-	{
-		iter->Set_Enable(false);
-		TARGET_TO_TRANS(iter)->Set_Pos(vPos[dwIndex]);
-		TARGET_TO_NAV(iter)->Ready_NaviMesh(m_pGraphicDev, L"Navmesh_Stage_01.dat");
-		//TARGET_TO_NAV(iter)->Check_OnNavMesh(&vPos[dwIndex]);
+	// ´Á´ë
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Wolf",
+		&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+			true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, vPos[iIndex].w, 0.f), 1));
+	m_vecObjectPool.push_back(pInstance);
+	Safe_AddRef(pInstance);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	++iIndex;
 
-		g_pManagement->Add_GameOject_ToLayer_NoClone(iter, SCENE_STAGE, L"Layer_Monster", nullptr);
+	// ÃÑ°Õ
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji",
+		&CGunGenji::INFO(CGunGenji::Normal, CGunGenji::NF_Ani::Talk, 10.f, 10.f, 2.f,
+			true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, vPos[iIndex].w, 0.f), 1));
+	m_vecObjectPool.push_back(pInstance);
+	Safe_AddRef(pInstance);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	++iIndex;
 
-		++dwIndex;
-	}
+	// ÃÑ°Õ
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_GunGenji",
+		&CGunGenji::INFO(CGunGenji::Normal, CGunGenji::NF_Ani::Talk, 10.f, 10.f, 2.f,
+			true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, vPos[iIndex].w, 0.f), 1));
+	m_vecObjectPool.push_back(pInstance);
+	Safe_AddRef(pInstance);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	++iIndex;
 
+	//¾ßÂ÷
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_YachaMan",
+		&CMonster::MONSTER_STATUS(CMonster::COLOR_NONE, WEAPON_None,
+			true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, vPos[iIndex].w, 0.f), 1));
+	m_vecObjectPool.push_back(pInstance);
+	Safe_AddRef(pInstance);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	++iIndex;
+	// ================================================================================================================
+	// µ¶³ªºñ
+	// ================================================================================================================
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_PoisonButterfly",
+		&CPoisonButterfly::INFO(80.f, 18.f, 1.f,
+			true, _v3(vPos[iIndex].x, vPos[iIndex].y, vPos[iIndex].z), _v3(0.f, vPos[iIndex].w, 0.f), 1));
+	m_vecObjectPool.push_back(pInstance);
+	Safe_AddRef(pInstance);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Boss", nullptr);
+	// ================================================================================================================
 }
 
 void CScriptManager::Ready_Stage02_DynamicObject()
