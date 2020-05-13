@@ -802,8 +802,8 @@ HRESULT CRenderer::Render_Alpha()
 	_mat matView, matProj;
 	CManagement* pManagement = CManagement::Get_Instance();
 
-	pManagement->Set_Transform(D3DTS_VIEW, matView);
-	pManagement->Set_Transform(D3DTS_PROJECTION, matProj);
+	matView = pManagement->Get_Transform(D3DTS_VIEW);
+	matProj = pManagement->Get_Transform(D3DTS_PROJECTION);
 
 	m_pShader_Trail->Begin_Shader();
 
@@ -816,7 +816,7 @@ HRESULT CRenderer::Render_Alpha()
 	{
 		if (nullptr != pGameObject)
 		{
-			if (FAILED(pGameObject->Render_GameObject_Instancing_SetPass(m_pShader_Trail)))// _Instancing_SetPass(m_pShader_Trail)))
+			if (FAILED(pGameObject->Render_GameObject_Instancing_SetPass(m_pShader_Trail)))
 			{
 				Safe_Release(pGameObject);
 				return E_FAIL;
@@ -831,56 +831,56 @@ HRESULT CRenderer::Render_Alpha()
 
 	//===============================================================================
 
-	//m_pShader_RenderMesh->Begin_Shader();
-	//
-	//if (FAILED(m_pShader_RenderMesh->Set_Value("g_matView", &matView, sizeof(_mat))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShader_RenderMesh->Set_Value("g_matProj", &matProj, sizeof(_mat))))
-	//	return E_FAIL;
-	//if (FAILED(m_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShader_RenderMesh)))
-	//	return E_FAIL;
-	//
-	//for (auto& pGameObject : m_RenderList[RENDER_ALPHA])
-	//{
-	//	if (nullptr != pGameObject)
-	//	{
-	//		if (FAILED(pGameObject->Render_GameObject_Instancing_SetPass(m_pShader_RenderMesh)))
-	//		{
-	//			Safe_Release(pGameObject);
-	//			return E_FAIL;
-	//		}
-	//		Safe_Release(pGameObject);
-	//	}
-	//}
-	//
-	//m_pShader_RenderMesh->End_Shader();
-	//
-	//m_RenderList[RENDER_ALPHA].clear();
+	m_pShader_RenderMesh->Begin_Shader();
 
-	//======================================================================;
+	if (FAILED(m_pShader_RenderMesh->Set_Value("g_matView", &matView, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(m_pShader_RenderMesh->Set_Value("g_matProj", &matProj, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(m_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShader_RenderMesh)))
+		return E_FAIL;
 
-	//m_pShader_3DUI->Begin_Shader();
-	//
-	//if (FAILED(m_pShader_3DUI->Set_Value("g_matView", &matView, sizeof(_mat))))
-	//	return E_FAIL;
-	//if (FAILED(m_pShader_3DUI->Set_Value("g_matProj", &matProj, sizeof(_mat))))
-	//	return E_FAIL;
-	//
-	//for (auto& pGameObject : m_RenderList[RENDER_ALPHA_UI])
-	//{
-	//	if (nullptr != pGameObject)
-	//	{
-	//		if (FAILED(pGameObject->Render_GameObject_Instancing_SetPass(m_pShader_3DUI)))
-	//		{
-	//			Safe_Release(pGameObject);
-	//			return E_FAIL;
-	//		}
-	//		Safe_Release(pGameObject);
-	//	}
-	//}
-	//m_pShader_3DUI->End_Shader();
-	//
-	//m_RenderList[RENDER_ALPHA_UI].clear();
+	for (auto& pGameObject : m_RenderList[RENDER_ALPHA])
+	{
+		if (nullptr != pGameObject)
+		{
+			if (FAILED(pGameObject->Render_GameObject_Instancing_SetPass(m_pShader_RenderMesh)))
+			{
+				Safe_Release(pGameObject);
+				return E_FAIL;
+			}
+			Safe_Release(pGameObject);
+		}
+	}
+
+	m_pShader_RenderMesh->End_Shader();
+
+	m_RenderList[RENDER_ALPHA].clear();
+
+	//===============================================================================
+
+	m_pShader_3DUI->Begin_Shader();
+
+	if (FAILED(m_pShader_3DUI->Set_Value("g_matView", &matView, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(m_pShader_3DUI->Set_Value("g_matProj", &matProj, sizeof(_mat))))
+		return E_FAIL;
+
+	for (auto& pGameObject : m_RenderList[RENDER_ALPHA_UI])
+	{
+		if (nullptr != pGameObject)
+		{
+			if (FAILED(pGameObject->Render_GameObject_Instancing_SetPass(m_pShader_3DUI)))
+			{
+				Safe_Release(pGameObject);
+				return E_FAIL;
+			}
+			Safe_Release(pGameObject);
+		}
+	}
+	m_pShader_3DUI->End_Shader();
+
+	m_RenderList[RENDER_ALPHA_UI].clear();
 
 	return NOERROR;
 }
@@ -1241,18 +1241,13 @@ HRESULT CRenderer::Render_Blend()
 	m_pShader_Blend->End_Pass();
 	m_pShader_Blend->End_Shader();
 
-
-	// Effect
-	if (FAILED(Render_Effect()))
-		return E_FAIL;
-
 	// Alpha
 	if (FAILED(Render_Alpha()))
 		return E_FAIL;
 
-	//// Effect
-	//if (FAILED(Render_Effect()))
-	//	return E_FAIL;
+	// Effect
+	if (FAILED(Render_Effect()))
+		return E_FAIL;
 
 	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_Blend")))
 		return E_FAIL;
