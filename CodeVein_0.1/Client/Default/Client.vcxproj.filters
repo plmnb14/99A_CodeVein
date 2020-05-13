@@ -487,6 +487,15 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\00.Expendables\ExplainExpend">
       <UniqueIdentifier>{f3cc84f2-1c32-4428-8ff3-36a622407b35}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. MaterialShopUI%28소비, 재료 상점%29">
+      <UniqueIdentifier>{dea79879-fe60-4fd6-a4bc-4f50264affd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. MaterialShopUI%28소비, 재료 상점%29\00. ExpendCollection">
+      <UniqueIdentifier>{f0ed087e-8595-4e7b-9d2e-e0cadcaa4086}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. MaterialShopUI%28소비, 재료 상점%29\01. MaterialCollection">
+      <UniqueIdentifier>{d4d47d07-2b0f-4d6e-b8ee-852960f85573}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1035,6 +1044,15 @@
     <ClInclude Include="..\Headers\ExplainExpendUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\00.Expendables\ExplainExpend</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\MaterialShopUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. MaterialShopUI%28소비, 재료 상점%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ExpendCollectionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. MaterialShopUI%28소비, 재료 상점%29\00. ExpendCollection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MaterialCollectionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. MaterialShopUI%28소비, 재료 상점%29\01. MaterialCollection</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1567,6 +1585,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\ExplainExpendUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\00.Expendables\ExplainExpend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MaterialShopUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. MaterialShopUI%28소비, 재료 상점%29</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ExpendCollectionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. MaterialShopUI%28소비, 재료 상점%29\00. ExpendCollection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MaterialCollectionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. MaterialShopUI%28소비, 재료 상점%29\01. MaterialCollection</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

@@ -70,6 +70,8 @@
 #include "ExplainMaterialUI.h"
 #include "ExplainExpendUI.h"
 
+#include "MaterialShopUI.h"
+
 BEGIN(Client)
 
 class CUI_Manager final : public CBase
@@ -110,6 +112,7 @@ public:
 	CScriptUI* Get_ScriptUI() { return m_pScriptUI; } // 대사 UI
 	CPlayerHP* Get_PlayerHP() { return m_pPlayerHP; } // 플레이어 HP
 	CPlayerST* Get_PlayerST() { return m_pPlayerST; } // 플레이어 ST
+	CMaterialShopUI* Get_MaterialShopUI() { return m_pMaterialShopUI; }
 	
 	// 펫 인벤토리
 	CPet_Inven* Get_Pet_Inven() { return m_pPet_Inven; }
@@ -138,6 +141,7 @@ private:
 	CScriptUI*	m_pScriptUI = nullptr;
 	CPlayerHP*	m_pPlayerHP = nullptr;
 	CPlayerST*	m_pPlayerST = nullptr;
+	CMaterialShopUI* m_pMaterialShopUI = nullptr; // 소비, 재료 상점 UI
 	
 	// 펫 인벤토리
 	CPet_Inven* m_pPet_Inven = nullptr;

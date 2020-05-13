@@ -201,10 +201,13 @@
     <ClInclude Include="..\Headers\ColdBeamSmall.h" />
     <ClInclude Include="..\Headers\ColdBeamBig.h" />
     <ClInclude Include="..\Headers\ColdBeamMiddle.h" />
+    <ClInclude Include="..\Headers\ExpendCollectionUI.h" />
     <ClInclude Include="..\Headers\ExplainArmorUI.h" />
     <ClInclude Include="..\Headers\ExplainExpendUI.h" />
     <ClInclude Include="..\Headers\ExplainMaterialUI.h" />
     <ClInclude Include="..\Headers\ExplainWeaponUI.h" />
+    <ClInclude Include="..\Headers\MaterialCollectionUI.h" />
+    <ClInclude Include="..\Headers\MaterialShopUI.h" />
     <ClInclude Include="..\Headers\NPC_Yakumo.h" />
     <ClInclude Include="..\Headers\ScriptUI.h" />
     <ClInclude Include="..\Headers\Costume_Accessory.h" />
@@ -378,10 +381,13 @@
     <ClCompile Include="..\Codes\ColdBeamSmall.cpp" />
     <ClCompile Include="..\Codes\ColdBeamBig.cpp" />
     <ClCompile Include="..\Codes\ColdBeamMiddle.cpp" />
+    <ClCompile Include="..\Codes\ExpendCollectionUI.cpp" />
     <ClCompile Include="..\Codes\ExplainArmorUI.cpp" />
     <ClCompile Include="..\Codes\ExplainExpendUI.cpp" />
     <ClCompile Include="..\Codes\ExplainMaterialUI.cpp" />
     <ClCompile Include="..\Codes\ExplainWeaponUI.cpp" />
+    <ClCompile Include="..\Codes\MaterialCollectionUI.cpp" />
+    <ClCompile Include="..\Codes\MaterialShopUI.cpp" />
     <ClCompile Include="..\Codes\NPC_Yakumo.cpp" />
     <ClCompile Include="..\Codes\ScriptUI.cpp" />
     <ClCompile Include="..\Codes\Costume_Accessory.cpp" />

@@ -135,6 +135,8 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ExplainExpendUI", CExplainExpendUI::Create(pDevice))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MaterialShopUI", CMaterialShopUI::Create(pDevice))))
+		return E_FAIL;
 	
 	//////////////// Chae
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BossMassageUI", CMassageUI::Create(pDevice))))
@@ -246,6 +248,9 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	// 헤이즈 UI
 	m_pHazeUI = static_cast<CHazeUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_HazeUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pHazeUI, SCENE_MORTAL, L"Layer_HazeUI", nullptr);
+	// 소비, 재료 상점 UI
+	m_pMaterialShopUI = static_cast<CMaterialShopUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MaterialShopUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pMaterialShopUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	//////////////////////////////////// 펫 UI /////////////////////////////////////////////////////////////////////
 	// 펫 인벤토리
