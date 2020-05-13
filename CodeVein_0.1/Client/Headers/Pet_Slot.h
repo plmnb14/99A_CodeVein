@@ -24,11 +24,11 @@ public:
 public:
 	_bool Pt_InRect();
 	CPet::PET_TYPE Get_PetType() { return m_ePetType; }
-	_uint Get_PetLevel() { return m_iPetLevel; }
+	_uint Get_PetGrade() { return m_ePetGrade; }
 	_bool Get_Select() { return m_bIsSelect; }
 
 	void Set_PetType(CPet::PET_TYPE eType) { m_ePetType = eType; }
-	void Set_PetLevel(_uint iLevel) { m_iPetLevel = iLevel; }
+	void Set_PetGrade(CPet::PET_GRADE_TYPE eGrade) { m_ePetGrade = eGrade; }
 	void Set_Select(_bool bIsSelect) { m_bIsSelect = bIsSelect; }
 
 private:
@@ -50,7 +50,7 @@ private:
 	_bool					m_bIsCollMouse = false;
 	_bool					m_bIsSelect = false;
 	CPet::PET_TYPE			m_ePetType = CPet::PET_TYPE_END;
-	_uint					m_iPetLevel = 1;
+	CPet::PET_GRADE_TYPE	m_ePetGrade = CPet::PET_GRADE_TYPE_END;
 
 };
 

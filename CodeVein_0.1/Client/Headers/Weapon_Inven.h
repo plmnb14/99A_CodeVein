@@ -2,12 +2,11 @@
 
 #include "Client_Defines.h"
 #include "UI.h"
-#include "Weapon_Slot.h"
 
 BEGIN(Client)
-
 class CWeapon;
 class CWeapon_Slot;
+class CExplainWeaponUI;
 class CWeapon_Inven final : public CUI
 {
 private:
@@ -32,6 +31,7 @@ private:
 	void					Regist_Weapon(CWeapon_Slot* pWeaponSlot);
 	void					UnRegist_Weapon(CWeapon_Slot* pWeaponSlot);
 	HRESULT					SetUp_WeaponData();
+	void					SetUp_Default();
 
 public:
 	void Add_Weapon(WPN_PARAM tAddWpnParam);
@@ -45,6 +45,7 @@ private:
 	vector<CWeapon_Slot*>	m_vecWeaponSlot;
 	WPN_PARAM				m_UseWeaponParam[2];
 	WPN_PARAM				m_tWeaponParam[WPN_DATA_End + 1];
+	CExplainWeaponUI*		m_pExplainUI = nullptr;
 
 public:
 	static CWeapon_Inven*	Create(_Device pGraphic_Device);

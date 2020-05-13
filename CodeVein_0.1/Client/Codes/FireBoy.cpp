@@ -154,6 +154,13 @@ _int CFireBoy::Update_GameObject(_double TimeDelta)
 
 	m_pTransformCom->Set_Pos(m_pNavMeshCom->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
+	//====================================================================================================
+	// ÄÃ¸µ
+	//====================================================================================================
+	m_bInFrustum = m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f);
+	//====================================================================================================
+
+
 	return NOERROR;
 }
 
@@ -182,7 +189,7 @@ _int CFireBoy::Late_Update_GameObject(_double TimeDelta)
 			return E_FAIL;
 	}
 
-	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
+	if (m_bInFrustum)
 	{
 		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
 			return E_FAIL;
@@ -203,9 +210,9 @@ HRESULT CFireBoy::Render_GameObject()
 
 	m_pMeshCom->Play_Animation(_float(m_dTimeDelta)); // * alpha
 
-	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
+	if (m_bInFrustum)
 	{
-		if (FAILED(SetUp_ConstantTable()))
+		if (FAILED(SetUp_ConstantTable(m_pShaderCom)))
 			return E_FAIL;
 
 		m_pShaderCom->Begin_Shader();
@@ -244,6 +251,53 @@ HRESULT CFireBoy::Render_GameObject()
 	Draw_Collider();
 
 	return NOERROR;
+}
+
+HRESULT CFireBoy::Render_GameObject_Instancing_SetPass(CShader * pShader)
+{
+	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
+	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
+
+	m_pMeshCom->Play_Animation(DELTA_60 * m_dAniPlayMul);
+
+	if (m_bInFrustum)
+	{
+		if (FAILED(SetUp_ConstantTable(pShader)))
+			return E_FAIL;
+
+		_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+
+		for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+		{
+			_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+
+			m_pMeshCom->Update_SkinnedMesh(i);
+
+			for (_uint j = 0; j < iNumSubSet; ++j)
+			{
+				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+
+				if (m_bDissolve)
+					m_iPass = 3;
+
+				pShader->Begin_Pass(m_iPass);
+
+				pShader->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
+
+				pShader->Commit_Changes();
+
+				m_pMeshCom->Render_Mesh(i, j);
+
+				pShader->End_Pass();
+			}
+		}
+
+	}
+
+	Update_Collider();
+	Draw_Collider();
+
+	return S_OK;
 }
 
 HRESULT CFireBoy::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
@@ -1253,7 +1307,7 @@ HRESULT CFireBoy::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CFireBoy::SetUp_ConstantTable()
+HRESULT CFireBoy::SetUp_ConstantTable(CShader* pShader)
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;

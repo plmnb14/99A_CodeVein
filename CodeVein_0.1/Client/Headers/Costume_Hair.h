@@ -13,7 +13,7 @@ class CCostume_Hair : public CGameObject
 public:
 	enum HairType
 	{
-		Hair_01, Hair_02, Hair_03, Hair_04, Hair_05, Hair_06, Hair_07, Hair_08,
+		Hair_01, Hair_02, Hair_03, Hair_04, Hair_05, Hair_06, Hair_07,
 		Hair_End
 	};
 
@@ -43,6 +43,7 @@ public:
 	virtual _int	Update_GameObject(_double TimeDelta);
 	virtual _int	Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
+	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader);
 	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur = false);
 
 private:
@@ -50,7 +51,7 @@ private:
 	virtual HRESULT Ready_GameObject(void* pArg);
 	virtual HRESULT Add_Components();
 	virtual HRESULT Setup_Default();
-	virtual HRESULT SetUp_ConstantTable();
+	virtual HRESULT SetUp_ConstantTable(CShader* pShader);
 
 private:
 	virtual void Calc_AttachBoneTransform();

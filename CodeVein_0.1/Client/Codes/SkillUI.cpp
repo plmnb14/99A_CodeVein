@@ -14,6 +14,14 @@ CSkillUI::CSkillUI(const CSkillUI & rhs)
 {
 }
 
+Skill_ID CSkillUI::Get_Skill_ID(_uint iIndex)
+{
+	if (iIndex >= 8)
+		return SkillID_End;
+
+	return m_pActive[iIndex]->Get_Skill_ID();
+}
+
 void CSkillUI::Set_Active_State(CActive_Icon::ACTIVE_STATE eState, _uint iIndex)
 {
 	if (iIndex < 0 || iIndex >= 8)
@@ -66,42 +74,28 @@ void CSkillUI::SetUp_Default()
 			m_pActive[i]->Set_UI_Size(54.f, 54.f);
 	}
 
+	// 가운데 위
 	m_pActive[0]->Set_UI_Pos(fPosX1, fPosY1 - 35.f);
+	// 왼쪽 중간
 	m_pActive[1]->Set_UI_Pos(fPosX1 - 35.f, fPosY1);
+	// 오른쪽 중간
 	m_pActive[2]->Set_UI_Pos(fPosX1 + 35.f, fPosY1);
+	// 가운데 아래
 	m_pActive[3]->Set_UI_Pos(fPosX1, fPosY1 + 35.f);
+
+
+	// 가운데 위
 	m_pActive[4]->Set_UI_Pos(fPosX2, fPosY2 - 30.f);
+	// 왼쪽 중간
 	m_pActive[5]->Set_UI_Pos(fPosX2 - 30.f, fPosY2);
+	// 오른쪽 중간
 	m_pActive[6]->Set_UI_Pos(fPosX2 + 30.f, fPosY2);
+	// 가운데 아래
 	m_pActive[7]->Set_UI_Pos(fPosX2, fPosY2 + 30.f);
 
 	
 }
 
-void CSkillUI::Set_SkillIcon(_uint iIndex, Skill_Index eSkill_Index)
-{
-	
-}
-//
-//void CSkillUI::Set_SkillGaugeCur(_ulong iNum)
-//{
-//	m_pSkillGaugeCur->Set_Number(iNum);
-//}
-//
-//void CSkillUI::Set_SkillGaugeMax(_ulong iNum)
-//{
-//	m_pSkillGaugeMax->Set_Number(iNum);
-//}
-//
-//_ulong CSkillUI::Get_SkillGaugeCur()
-//{
-//	return m_pSkillGaugeCur->Get_Number();
-//}
-//
-//_ulong CSkillUI::Get_SkillGaugeMax()
-//{
-//	return m_pSkillGaugeMax->Get_Number();
-//}
 
 CSkillUI * CSkillUI::Create(_Device pGraphic_Device)
 {
