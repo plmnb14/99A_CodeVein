@@ -87,8 +87,11 @@ _int CUrchin::Late_Update_GameObject(_double TimeDelta)
 
 	if (m_bInFrustum)
 	{
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-			return E_FAIL;
+		if (false == m_bDissolve)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+				return E_FAIL;
+		}
 	}
 
 	m_dTimeDelta = TimeDelta;

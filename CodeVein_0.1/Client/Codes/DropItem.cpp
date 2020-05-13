@@ -168,10 +168,19 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 
 _int CDropItem::Late_Update_GameObject(_double TimeDelta)
 {
+	if (false == m_bEnable)
+		return NO_EVENT;
+
 	IF_NULL_VALUE_RETURN(m_pRenderer, E_FAIL);
 
-	if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
-		return E_FAIL;
+	if (true == m_bInFrustum)
+	{
+		if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
+			return E_FAIL;
+
+		if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+			return E_FAIL;
+	}
 
 	return NO_EVENT;
 }
@@ -245,12 +254,13 @@ void CDropItem::Check_PosY()
 
 HRESULT CDropItem::Add_Component(void* _pArg)
 {
-	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransform)))
 		return E_FAIL;
 
-	// For.Com_Renderer
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRenderer)))
+		return E_FAIL;
+
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Optimization", L"Com_Optimization", (CComponent**)&m_pOptimization)))
 		return E_FAIL;
 
 	//// For.Com_NaviMesh
@@ -303,7 +313,7 @@ HRESULT CDropItem::Ready_Status(void* _pArg)
 	return S_OK;
 }
 
-HRESULT CDropItem::SetUp_ConstantTable()
+HRESULT CDropItem::SetUp_ConstantTable(CShader* pShader)
 {
 	return S_OK;
 }

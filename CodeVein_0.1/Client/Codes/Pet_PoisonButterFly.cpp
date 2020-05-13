@@ -58,6 +58,8 @@ _int CPet_PoisonButterFly::Update_GameObject(_double TimeDelta)
 
 	PET_STATE_TYPE::DEAD != m_eFirstCategory ? Check_CollisionEvent() : Check_DeadEffect(TimeDelta);
 
+	m_bInFrustum = m_pOptimization->Check_InFrustumforObject(&m_pTransform->Get_Pos(), 2.f);
+
 	return NO_EVENT;
 }
 
@@ -70,15 +72,30 @@ _int CPet_PoisonButterFly::Late_Update_GameObject(_double TimeDelta)
 
 	IF_NULL_VALUE_RETURN(m_pRenderer, E_FAIL);
 
-	if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
-		return E_FAIL;
-	if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-		return E_FAIL;
+	if (!m_bDissolve)
+	{
+		if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
+			return E_FAIL;
+		if (FAILED(m_pRenderer->Add_RenderList(RENDER_SHADOWTARGET, this)))
+			return E_FAIL;
+	}
+
+	else
+	{
+		if (FAILED(m_pRenderer->Add_RenderList(RENDER_ALPHA, this)))
+			return E_FAIL;
+	}
+
+	if (m_bInFrustum)
+	{
+		if (false == m_bDissolve)
+		{
+			if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+				return E_FAIL;
+		}
+	}
 
 	m_dTimeDelta = TimeDelta;
-
-	IF_NOT_NULL(m_pWeapon)
-		m_pWeapon->Late_Update_GameObject(TimeDelta);
 
 	return NO_EVENT;
 }
@@ -90,7 +107,7 @@ HRESULT CPet_PoisonButterFly::Render_GameObject()
 
 	m_pMesh->Play_Animation(DELTA_60 * m_dAniPlayMul);
 
-	if (FAILED(SetUp_ConstantTable()))
+	if (FAILED(SetUp_ConstantTable(m_pShader)))
 		return E_FAIL;
 
 	m_pShader->Begin_Shader();
@@ -122,11 +139,11 @@ HRESULT CPet_PoisonButterFly::Render_GameObject()
 
 	m_pShader->End_Shader();
 
-	IF_NOT_NULL(m_pWeapon)
-		m_pWeapon->Update_GameObject(m_dTimeDelta);
-
-	Update_Collider();
-	Render_Collider();
+	if (PET_STATE_TYPE::DEAD != m_eFirstCategory)
+	{
+		Update_Collider();
+		Render_Collider();
+	}
 
 	return S_OK;
 }
@@ -136,35 +153,45 @@ HRESULT CPet_PoisonButterFly::Render_GameObject_SetPass(CShader * pShader, _int 
 	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
 	IF_NULL_VALUE_RETURN(m_pMesh, E_FAIL);
 
-	if (FAILED(SetUp_ConstantTable()))
-		return E_FAIL;
+	m_pMesh->Play_Animation(DELTA_60 * m_dAniPlayMul);
 
-	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
-		return E_FAIL;
-
-	_mat ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-	if (FAILED(pShader->Set_Value("g_matLastWVP", &m_matLastWVP, sizeof(_mat))))
-		return E_FAIL;
-
-	m_matLastWVP = m_pTransform->Get_WorldMat() * ViewMatrix * ProjMatrix;
-
-	_uint iNumMeshContainer = _uint(m_pMesh->Get_NumMeshContainer());
-
-	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+	if (m_bInFrustum)
 	{
-		_uint iNumSubSet = (_uint)m_pMesh->Get_NumMaterials(i);
+		if (FAILED(SetUp_ConstantTable(pShader)))
+			return E_FAIL;
 
-		m_pMesh->Update_SkinnedMesh(i);
+		_uint iNumMeshContainer = _uint(m_pMesh->Get_NumMeshContainer());
 
-		for (_uint j = 0; j < iNumSubSet; ++j)
+		for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 		{
-			pShader->Begin_Pass(iPass);
+			_uint iNumSubSet = (_uint)m_pMesh->Get_NumMaterials(i);
 
-			m_pMesh->Render_Mesh(i, j);
+			m_pMesh->Update_SkinnedMesh(i);
 
-			pShader->End_Pass();
+			for (_uint j = 0; j < iNumSubSet; ++j)
+			{
+				m_iPass = m_pMesh->Get_MaterialPass(i, j);
+
+				if (m_bDissolve)
+					m_iPass = 3;
+
+				pShader->Begin_Pass(m_iPass);
+
+				pShader->Set_DynamicTexture_Auto(m_pMesh, i, j);
+
+				pShader->Commit_Changes();
+
+				m_pMesh->Render_Mesh(i, j);
+
+				pShader->End_Pass();
+			}
 		}
+	}
+
+	if (PET_STATE_TYPE::DEAD != m_eFirstCategory)
+	{
+		Update_Collider();
+		Render_Collider();
 	}
 
 	return S_OK;
@@ -1348,6 +1375,9 @@ HRESULT CPet_PoisonButterFly::Add_Component(void * pArg)
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Optimization", L"Com_Optimization", (CComponent**)&m_pOptimization)))
 		return E_FAIL;
 
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"BattleAgent", L"Com_BattleAgent", (CComponent**)&m_pBattleAgent)))
+		return E_FAIL;
+
 	m_pCollider->Set_Radius(_v3{ 0.8f, 0.8f, 0.8f });
 	m_pCollider->Set_Dynamic(true);
 	m_pCollider->Set_Type(COL_SPHERE);
@@ -1356,31 +1386,63 @@ HRESULT CPet_PoisonButterFly::Add_Component(void * pArg)
 	return S_OK;
 }
 
-HRESULT CPet_PoisonButterFly::SetUp_ConstantTable()
+HRESULT CPet_PoisonButterFly::SetUp_ConstantTable(CShader* pShader)
 {
-	IF_NULL_VALUE_RETURN(m_pShader, E_FAIL);
+	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
 
-	CManagement* pManagement = CManagement::Get_Instance();
-	IF_NULL_VALUE_RETURN(pManagement, E_FAIL);
+	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
+	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 
-	Safe_AddRef(pManagement);
+	//=============================================================================================
+	// 기본 메트릭스
+	//=============================================================================================
 
-	if (FAILED(m_pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
 
-	_mat ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
-	_mat ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
-
-	if (FAILED(m_pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+	//=============================================================================================
+	// 디졸브용 상수
+	//=============================================================================================
+	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", pShader)))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShader)))
-		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
-	Safe_Release(pManagement);
+	//=============================================================================================
+	// 쉐이더 재질정보 수치 입력
+	//=============================================================================================
+	_float	fEmissivePower = 5.f;	// 이미시브 : 높을 수록, 자체 발광이 강해짐.
+	_float	fSpecularPower = 1.f;	// 메탈니스 : 높을 수록, 정반사가 강해짐.
+	_float	fRoughnessPower = 1.f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
+	_float	fMinSpecular = 0.1f;	// 최소 빛	: 높을 수록 빛이 퍼짐(림라이트의 범위가 넓어지고 , 밀집도가 낮아짐).
+	_float	fID_R = 1.0f;	// ID_R : R채널 ID 값 , 1이 최대
+	_float	fID_G = 0.5f;	// ID_G : G채널 ID 값 , 1이 최대
+	_float	fID_B = 0.2f;	// ID_B	: B채널 ID 값 , 1이 최대
+
+	if (FAILED(pShader->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_fID_R_Power", &fID_R, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_fID_G_Power", &fID_G, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(pShader->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
+		return E_FAIL;
+
+	//=============================================================================================
+	// 림라이트 값들을 쉐이더에 등록시킴
+	//=============================================================================================
+	m_pBattleAgent->Update_RimParam_OnShader(pShader);
+	//=============================================================================================
 
 	return S_OK;
 }
