@@ -3,8 +3,7 @@
 #include "Pet.h"
 
 BEGIN(Client)
-
-class CPet_PoisonButterFly final : public CPet
+class CPet_DeerKing final : public CPet
 {
 public:
 	enum ATK_NORMAL_TYPE
@@ -62,9 +61,9 @@ public:
 	};
 
 protected:
-	explicit CPet_PoisonButterFly(LPDIRECT3DDEVICE9 pGraphic_Device);
-	explicit CPet_PoisonButterFly(const CPet_PoisonButterFly& rhs);
-	virtual ~CPet_PoisonButterFly() = default;
+	explicit CPet_DeerKing(LPDIRECT3DDEVICE9 pGraphic_Device);
+	explicit CPet_DeerKing(const CPet_DeerKing& rhs);
+	virtual ~CPet_DeerKing() = default;
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype() override;
@@ -73,7 +72,7 @@ public:
 	virtual _int Late_Update_GameObject(_double TimeDelta) override;
 	virtual HRESULT Render_GameObject() override;
 	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader) override;
-	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur =false) override;
+	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur = false) override;
 
 private:
 	void Update_Collider();
@@ -83,10 +82,6 @@ private:
 	void Check_Action();
 	void Check_AniEvent();
 	void Check_DeadEffect(_double TimeDelta);
-
-	void Play_5Shot(); // Atk_5wayShoot
-	void Play_Mist(); //allrangeshot
-	void Play_PoisonWheelWind(); //atk_poisonmine
 
 protected:
 	virtual void Play_Idle() override;
@@ -104,7 +99,7 @@ protected:
 	virtual HRESULT Ready_BoneMatrix(void * pArg) override;
 
 public:
-	static CPet_PoisonButterFly* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
+	static CPet_DeerKing* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
 	virtual CGameObject* Clone_GameObject(void* pArg);
 	virtual void Free();
 
@@ -115,3 +110,5 @@ private:
 };
 
 END
+
+
