@@ -200,6 +200,8 @@
     <ClInclude Include="..\Headers\ColdBeamSmall.h" />
     <ClInclude Include="..\Headers\ColdBeamBig.h" />
     <ClInclude Include="..\Headers\ColdBeamMiddle.h" />
+    <ClInclude Include="..\Headers\ExplainArmorUI.h" />
+    <ClInclude Include="..\Headers\ExplainWeaponUI.h" />
     <ClInclude Include="..\Headers\ScriptUI.h" />
     <ClInclude Include="..\Headers\Costume_Accessory.h" />
     <ClInclude Include="..\Headers\Costume_Hair.h" />
@@ -370,6 +372,8 @@
     <ClCompile Include="..\Codes\ColdBeamSmall.cpp" />
     <ClCompile Include="..\Codes\ColdBeamBig.cpp" />
     <ClCompile Include="..\Codes\ColdBeamMiddle.cpp" />
+    <ClCompile Include="..\Codes\ExplainArmorUI.cpp" />
+    <ClCompile Include="..\Codes\ExplainWeaponUI.cpp" />
     <ClCompile Include="..\Codes\ScriptUI.cpp" />
     <ClCompile Include="..\Codes\Costume_Accessory.cpp" />
     <ClCompile Include="..\Codes\Costume_Hair.cpp" />

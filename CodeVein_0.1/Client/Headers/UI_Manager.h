@@ -65,6 +65,9 @@
 #include "HazeUI.h"
 #include "ScriptUI.h"
 
+#include "ExplainArmorUI.h"
+#include "ExplainWeaponUI.h"
+
 BEGIN(Client)
 
 class CUI_Manager final : public CBase
