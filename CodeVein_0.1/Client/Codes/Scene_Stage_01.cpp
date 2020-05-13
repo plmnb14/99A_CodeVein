@@ -38,7 +38,8 @@ HRESULT CScene_Stage_01::Ready_Scene()
 
 _int CScene_Stage_01::Update_Scene(_double TimeDelta)
 {
-	//CUI_Manager::Get_Instance()->Update_UI();
+	CUI_Manager::Get_Instance()->Update_UI();
+
 	Create_Fog(TimeDelta);
 	Create_Dust(TimeDelta);
 
