@@ -440,10 +440,10 @@ void CClothManager::Update_Hair_ColPos(physx::PxCloth* pCloth)
 		vector<PxClothCollisionSphere> vecSpheres;
 		vecSpheres.resize(2);
 
-		_v3 vNeck = *(_v3*)(&(m_pPlayerFrame[Neck]->CombinedTransformationMatrix.m[3]));// *pTransform->Get_WorldMat()).m[3]);
+		_v3 vNeck = *(_v3*)(&(m_pPlayerFrame[Neck]->CombinedTransformationMatrix.m[3])) - _v3(0.f, 1.4992, 0.f);// *pTransform->Get_WorldMat()).m[3]);
 		vecSpheres[0] = (PxClothCollisionSphere(*(PxVec3*)(&vNeck), 0.07f));
 
-		_v3 vHip = *(_v3*)(&(m_pPlayerFrame[Hips]->CombinedTransformationMatrix.m[3]));// * pTransform->Get_WorldMat()).m[3]);
+		_v3 vHip = *(_v3*)(&(m_pPlayerFrame[Hips]->CombinedTransformationMatrix.m[3])) - _v3(0.f, 1.4992, 0.f);// * pTransform->Get_WorldMat()).m[3]);
 		vecSpheres[1] = (PxClothCollisionSphere(*(PxVec3*)(&vNeck), 0.1f));
 
 		pCloth->setCollisionSpheres(&vecSpheres.front(), (PxU32)vecSpheres.size());
@@ -459,8 +459,8 @@ void CClothManager::Update_Hair_ColPos(physx::PxCloth* pCloth)
 	// Ãæµ¹±¸ : ¸ñ, ¾ûµ¢ÀÌ 
 	pCloth->getCollisionData(&vecSpheres.front(), 0, 0, 0, 0);
 
-	vecSpheres[0].pos = *(PxVec3*)(&m_pPlayerFrame[Neck]->CombinedTransformationMatrix.m[3]);
-	vecSpheres[1].pos = *(PxVec3*)(&m_pPlayerFrame[Hips]->CombinedTransformationMatrix.m[3]);
+	vecSpheres[0].pos = *(PxVec3*)(&m_pPlayerFrame[Neck]->CombinedTransformationMatrix.m[3]) - PxVec3(0.f, 1.4992, 0.f);
+	vecSpheres[1].pos = *(PxVec3*)(&m_pPlayerFrame[Hips]->CombinedTransformationMatrix.m[3]) - PxVec3(0.f, 1.4992, 0.f);
 
 	pCloth->setCollisionSpheres(&vecSpheres.front(), (PxU32)vecSpheres.size());
 

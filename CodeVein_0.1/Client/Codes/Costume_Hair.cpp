@@ -72,24 +72,24 @@ HRESULT CCostume_Hair::Setup_Default()
 	return S_OK;
 }
 
-HRESULT CCostume_Hair::SetUp_ConstantTable()
+HRESULT CCostume_Hair::SetUp_ConstantTable(CShader* pShader)
 {
-	if (nullptr == m_pShader)
+	if (nullptr == pShader)
 		return E_FAIL;
 
-	if (FAILED(m_pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
 
 	_mat ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
 	_mat ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 
-	if (FAILED(m_pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShader)))
+	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", pShader)))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	//=============================================================================================
@@ -101,15 +101,15 @@ HRESULT CCostume_Hair::SetUp_ConstantTable()
 	_float	fRimLightPower = 0.f;	// 림		: 높을 수록 빛이 퍼짐(림라이트의 범위가 넓어지고 , 밀집도가 낮아짐).
 	_float	fMinSpecular = 1.f;	// 최소 빛	: 높을 수록 빛이 퍼짐(림라이트의 범위가 넓어지고 , 밀집도가 낮아짐).
 
-	if (FAILED(m_pShader->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_fRimAlpha", &fRimLightPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fRimAlpha", &fRimLightPower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
 		return E_FAIL;
 	//=============================================================================================
 
@@ -291,7 +291,7 @@ HRESULT CCostume_Hair::Render_GameObject()
 	// 버텍스 교체
 	Change_Vertex();
 
-	if (FAILED(SetUp_ConstantTable()))
+	if (FAILED(SetUp_ConstantTable(m_pShader)))
 		return E_FAIL;
 
 	m_pShader->Begin_Shader();
@@ -317,6 +317,44 @@ HRESULT CCostume_Hair::Render_GameObject()
 	}
 
 	m_pShader->End_Shader();
+
+	return S_OK;
+}
+
+HRESULT CCostume_Hair::Render_GameObject_Instancing_SetPass(CShader * pShader)
+{
+	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
+	IF_NULL_VALUE_RETURN(m_pStaticMesh, E_FAIL);
+
+	//// 버텍스 교체
+	//Change_Vertex();
+
+	if (FAILED(SetUp_ConstantTable(pShader)))
+		return E_FAIL;
+
+
+	_uint iNumSubSet = (_uint)m_pStaticMesh->Get_NumMaterials();
+
+	for (_uint i = 0; i < iNumSubSet; ++i)
+	{
+		m_iPass = m_pStaticMesh->Get_MaterialPass(i);
+
+		if (m_bDissolve)
+			m_iPass = 3;
+
+		pShader->Begin_Pass(m_iPass);
+
+		pShader->Set_StaticTexture_Auto(m_pStaticMesh, i);
+
+		pShader->Commit_Changes();
+
+		m_pStaticMesh->Render_Mesh(i);
+
+		pShader->End_Pass();
+	}
+
+	// 버텍스 교체
+	Change_Vertex();
 
 	return S_OK;
 }

@@ -83,6 +83,8 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	CGameObject::Update_GameObject(TimeDelta);
 
+	m_pHair->Update_GameObject(TimeDelta);
+
 	KeyInput();
 
 	Parameter_HitCheck();
@@ -95,7 +97,6 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	Check_Mistletoe();
 
-	m_pHair->Update_GameObject(TimeDelta);
 
 
 	if (!m_tObjParam.bInvisible)
@@ -278,6 +279,9 @@ HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
 	{
+		if (i == 1)
+			continue;
+
 		_uint iNumSubSet = (_uint)m_pDynamicMesh->Get_NumMaterials(i);
 		// 서브셋은 5개
 
