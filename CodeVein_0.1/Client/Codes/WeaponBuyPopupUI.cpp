@@ -36,8 +36,8 @@ HRESULT CWeaponBuyPopupUI::Ready_GameObject(void * pArg)
 
 	m_fPosX = 650.f;
 	m_fPosY = 350.f;
-	m_fSizeX = 512.f * 1.5f;
-	m_fSizeY = 512.f * 1.5f;
+	m_fSizeX = 512.f;
+	m_fSizeY = 256.f;
 	m_fViewZ = 0.5f;
 
 	m_bIsActive = false;
@@ -62,11 +62,6 @@ _int CWeaponBuyPopupUI::Update_GameObject(_double TimeDelta)
 	CUI::Update_GameObject(TimeDelta);
 
 	Check_ItemOption();
-
-	m_fPosX = 650.f;
-	m_fPosY = 350.f;
-	m_fSizeX = 512.f;
-	m_fSizeY = 256.f;
 
 	_float fPosX = WINCX * 0.505f;
 	if(m_iCount > 9)

@@ -51,6 +51,7 @@ private:
 	WPN_PARAM				m_UseWeaponParam[2];
 	WPN_PARAM				m_tWeaponParam[WPN_DATA_End + 1];
 
+	CWeapon*				m_pTempWeapon = nullptr;
 public:
 	static CWeapon_Inven*	Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);

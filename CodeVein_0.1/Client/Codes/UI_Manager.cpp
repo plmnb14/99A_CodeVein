@@ -166,6 +166,10 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon_BuyPopupOption", CWeaponBuyPopupOptionUI::Create(pDevice))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon_Upgrade", CWeaponUpgradeUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon_UpgradeOption", CWeaponUpgradeOptionUI::Create(pDevice))))
+		return E_FAIL;
 	return NOERROR;
 }
 

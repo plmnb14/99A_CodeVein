@@ -27,6 +27,7 @@ public:
 		SHOP_ARMOR_SELL,
 		SHOP_ITEM_BUY,
 		SHOP_ITEM_SELL,
+		SHOP_UPGRADE,
 		SHOP_END
 	};
 private:
@@ -82,6 +83,8 @@ private:
 
 	WEAPON_ALL_DATA			m_eWeaponDesc = WEAPON_ALL_DATA::WpnAll_END;
 	SHOP_OPTION				m_eType = SHOP_END;
+
+	_bool					m_bLateInit = false;
 public:
 	static CWeaponBuyUI*		Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);

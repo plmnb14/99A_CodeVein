@@ -18,7 +18,8 @@ _bool CWeapon_Inven_InShop::Get_PopupOn()
 {
 	if (
 		m_pWeaponBuyPopup->Get_Active() ||
-		m_pWeaponSellPopup->Get_Active()
+		m_pWeaponSellPopup->Get_Active() ||
+		m_pWeaponUpgradePopup->Get_Active()
 		)
 		return true;
 	else
@@ -43,8 +44,9 @@ void CWeapon_Inven_InShop::Setup_InvenType(INVEN_SHOP_OPTION eOption)
 		break;
 	}
 	case Client::CWeapon_Inven_InShop::SHOP_WEAPON_SELL:
+	case Client::CWeapon_Inven_InShop::SHOP_WEAPON_UPGRADE:
 	{
-		CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Set_WeaponData_FromWeapon();
+		//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Set_WeaponData_FromWeapon();
 		vector<CWeapon_Slot*>* pVecMyWeapon = CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Get_VecWeaponSlot();
 		for (_int i = 0; i < pVecMyWeapon->size(); i++)
 		{
@@ -57,10 +59,23 @@ void CWeapon_Inven_InShop::Setup_InvenType(INVEN_SHOP_OPTION eOption)
 
 void CWeapon_Inven_InShop::Refresh_Inven()
 {
+	//for (auto& iter : m_vecWeaponSlot)
+	//{
+	//	if(iter->Get_Dead())
+	//		continue;
+	//
+	//	iter->Set_SelectShop(false);
+	//}
+	//
 	for (auto& iter : m_vecWeaponSlot)
 	{
-		iter->Set_Select(false);
+		iter->Set_Dead();
+		//m_vecWeaponSlot.erase(iter);
 	}
+	m_vecWeaponSlot.clear();
+	Setup_InvenType(m_eOption);
+
+	m_pSelectedSlot = nullptr;
 }
 
 HRESULT CWeapon_Inven_InShop::Ready_GameObject_Prototype()
@@ -95,11 +110,21 @@ HRESULT CWeapon_Inven_InShop::Ready_GameObject(void * pArg)
 	m_pWeaponSellPopup->Set_Type(CWeaponBuyPopupUI::POPUP_WEAPON_SELL);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pWeaponSellPopup, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
+	m_pWeaponUpgradePopup = static_cast<CWeaponUpgradeUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon_Upgrade", nullptr));
+	m_pWeaponUpgradePopup->Set_Inven(this);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pWeaponUpgradePopup, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
 	return NOERROR;
 }
 
 _int CWeapon_Inven_InShop::Update_GameObject(_double TimeDelta)
 {
+	m_fPosX = 229.5f;
+	m_fPosY = 325.5f;
+	m_fSizeX = 280.f;
+	m_fSizeY = 471.f;
+	m_fViewZ = 4.f;
+
 	CUI::Update_GameObject(TimeDelta);
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
@@ -107,11 +132,18 @@ _int CWeapon_Inven_InShop::Update_GameObject(_double TimeDelta)
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 
 	Click_Inven();
+
+	_uint iIdx = 0;
 	
 	for (auto& pWeaponSlot : m_vecWeaponSlot)
 	{
+		if (pWeaponSlot->Get_Dead())
+			continue;
+
 		pWeaponSlot->Set_Active(m_bIsActive);
 		pWeaponSlot->Set_ViewZ(m_fViewZ - 0.1f);
+		pWeaponSlot->Set_UI_Pos(m_fPosX - 100.f + 52.f * (iIdx % 5), m_fPosY - 150.f + 52.f * (iIdx / 5));
+		iIdx++;
 	}
 
 	if (m_pWeaponBuyPopup->Get_Active())
@@ -119,7 +151,6 @@ _int CWeapon_Inven_InShop::Update_GameObject(_double TimeDelta)
 		if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
 		{
 			m_pWeaponBuyPopup->Set_Active(false);
-			Refresh_Inven();
 		}
 	}
 
@@ -128,7 +159,14 @@ _int CWeapon_Inven_InShop::Update_GameObject(_double TimeDelta)
 		if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
 		{
 			m_pWeaponSellPopup->Set_Active(false);
-			Refresh_Inven();
+		}
+	}
+	
+	if (m_pWeaponUpgradePopup->Get_Active())
+	{
+		if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
+		{
+			m_pWeaponUpgradePopup->Set_Active(false);
 		}
 	}
 	
@@ -152,6 +190,9 @@ _int CWeapon_Inven_InShop::Late_Update_GameObject(_double TimeDelta)
 HRESULT CWeapon_Inven_InShop::Render_GameObject()
 {
 	if (!m_bIsActive)
+		return NOERROR;
+
+	if(SHOP_WEAPON_UPGRADE == m_eOption)
 		return NOERROR;
 
 	if (nullptr == m_pShaderCom ||
@@ -196,7 +237,7 @@ HRESULT CWeapon_Inven_InShop::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_MenuWindow", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Weapon_Buy_UI", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -215,13 +256,27 @@ HRESULT CWeapon_Inven_InShop::SetUp_ConstantTable()
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
+	_float fYPosOffset = 195.f;
+	m_matWorld._11 = m_fSizeX * 2.f;
+	m_matWorld._22 = m_fSizeY * 0.325f;
+	m_matWorld._33 = 1.f;
+	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
+	m_matWorld._42 = -m_fPosY + WINCY * 0.5f + fYPosOffset;
+
 	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 2)))
+
+	_int iTexIdx = 15;
+	if (SHOP_WEAPON_SELL == m_eOption ||
+		SHOP_ARMOR_SELL == m_eOption ||
+		SHOP_ITEM_SELL == m_eOption)
+		iTexIdx = 16;
+
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iTexIdx)))
 		return E_FAIL;
 
 	return NOERROR;
@@ -232,8 +287,12 @@ void CWeapon_Inven_InShop::Click_Inven()
 	if (!m_bIsActive)
 		return;
 
+	_int iIdx = 0;
 	for (auto& pSlot : m_vecWeaponSlot)
 	{
+		if (pSlot->Get_Dead())
+			continue;
+
 		if (pSlot->Pt_InRect())
 		{
 			m_pHoverSlot = pSlot;
@@ -241,7 +300,16 @@ void CWeapon_Inven_InShop::Click_Inven()
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB) &&
 				!pSlot->Get_Select())
 			{
+				Refresh_Inven();
+
 				m_pSelectedSlot = pSlot;
+				if (SHOP_WEAPON_SELL == m_eOption)
+				{
+					vector<CWeapon_Slot*>* pWeaponSlot = m_pWeaponInventory->Get_VecWeaponSlot();
+					(*pWeaponSlot)[iIdx]->Set_SelectShop(true);
+					pSlot->Set_SelectShop(true);
+				}
+
 				switch (m_eOption)
 				{
 				case Client::CWeapon_Inven_InShop::SHOP_WEAPON_BUY:
@@ -262,12 +330,19 @@ void CWeapon_Inven_InShop::Click_Inven()
 					break;
 				case Client::CWeapon_Inven_InShop::SHOP_ITEM_SELL:
 					break;
+				case  Client::CWeapon_Inven_InShop::SHOP_WEAPON_UPGRADE:
+				{
+					m_pWeaponUpgradePopup->Set_Active(true);
+					return;
+				}
 				}
 			}
 			return;
 		}
+		iIdx++;
 	}
 
+	m_pHoverSlot = nullptr;
 	//m_pSelectedSlot = nullptr;
 }
 
@@ -280,6 +355,28 @@ void CWeapon_Inven_InShop::Buy_Weapon()
 void CWeapon_Inven_InShop::Sell_Weapon()
 {
 	m_pWeaponInventory->Sell_Weapon();
+
+	_ulong idx = 0;
+	for (auto& pSlot : m_vecWeaponSlot)
+	{
+		if (pSlot->Get_Dead())
+			continue;
+
+		if (pSlot->Get_SelectShop())
+		{
+			pSlot->Set_Dead();
+			m_vecWeaponSlot.erase(m_vecWeaponSlot.begin() + idx);
+			m_vecWeaponSlot.shrink_to_fit();
+			Refresh_Inven();
+			break;
+		}
+		++idx;
+	}
+}
+
+void CWeapon_Inven_InShop::Upgrade_Weapon()
+{
+	
 }
 
 HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
@@ -288,15 +385,13 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 	{
 	case Client::CWeapon_Inven_InShop::SHOP_WEAPON_BUY:
 	{
-		CWeapon* pTempWeapon = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
-		if (!pTempWeapon)
+		m_pTempWeapon = static_cast<CWeapon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon", NULL));
+		if (!m_pTempWeapon)
 			return E_FAIL;
-		pTempWeapon->AddRef();
 
 		for (_int i = 0; i < WEAPON_DATA::WPN_DATA_End; i++)
-			m_tWeaponParam[i] = pTempWeapon->Get_WeaponParam((WEAPON_DATA)i);
+			m_tWeaponParam[i] = m_pTempWeapon->Get_WeaponParam((WEAPON_DATA)i);
 
-		Safe_Release(pTempWeapon);
 		break;
 	}
 	case Client::CWeapon_Inven_InShop::SHOP_WEAPON_SELL:
@@ -308,6 +403,8 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 	case Client::CWeapon_Inven_InShop::SHOP_ITEM_BUY:
 		break;
 	case Client::CWeapon_Inven_InShop::SHOP_ITEM_SELL:
+		break;
+	case  Client::CWeapon_Inven_InShop::SHOP_WEAPON_UPGRADE:
 		break;
 	}
 
@@ -359,6 +456,7 @@ void CWeapon_Inven_InShop::Free()
 	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pTempWeapon);
 
 	CUI::Free();
 }

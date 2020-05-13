@@ -5,6 +5,7 @@
 #include "Weapon_Slot.h"
 
 BEGIN(Client)
+class CWeaponUpgradeUI;
 class CWeaponBuyPopupUI;
 class CWeapon_Inven;
 class CWeapon;
@@ -20,6 +21,8 @@ public:
 		SHOP_ARMOR_SELL,
 		SHOP_ITEM_BUY,
 		SHOP_ITEM_SELL,
+		SHOP_WEAPON_UPGRADE,
+		SHOP_ARMOR_UPGRADE,
 		SHOP_END
 	};
 private:
@@ -37,6 +40,7 @@ public:
 	void Refresh_Inven();
 	void Buy_Weapon();
 	void Sell_Weapon();
+	void Upgrade_Weapon();
 
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();
@@ -64,6 +68,7 @@ private:
 
 	CWeaponBuyPopupUI*		m_pWeaponBuyPopup = nullptr;
 	CWeaponBuyPopupUI*		m_pWeaponSellPopup = nullptr;
+	CWeaponUpgradeUI*		m_pWeaponUpgradePopup = nullptr;
 
 	CWeapon_Inven*			m_pWeaponInventory = nullptr;
 	vector<CWeapon_Slot*>	m_vecWeaponSlot;
@@ -73,7 +78,8 @@ private:
 	WPN_PARAM				m_tWeaponParam[WPN_DATA_End];
 
 	INVEN_SHOP_OPTION		m_eOption = SHOP_END;
-
+	
+	CWeapon*				m_pTempWeapon = nullptr;
 public:
 	static CWeapon_Inven_InShop*	Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);

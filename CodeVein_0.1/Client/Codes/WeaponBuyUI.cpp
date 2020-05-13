@@ -17,15 +17,12 @@ void CWeaponBuyUI::Set_Active(_bool bIsActive)
 {
 	m_bIsActive = bIsActive;
 
-	if (MOVE_END == m_eMoveType && WpnAll_END == m_eWeaponDesc)
-	{
-		m_pFontDamage->Set_Active(bIsActive);
-		m_pMyHazeCnt->Set_Active(bIsActive);
-		m_pPriceHazeCnt->Set_Active(bIsActive);
-		m_pWeaponMoveTypeUI->Set_Active(bIsActive);
-		m_pWeaponDescUI->Set_Active(bIsActive);
-		m_pStatusUI->Set_Active(bIsActive);
-	}
+	if (m_pFontDamage)m_pFontDamage->Set_Active(bIsActive);
+	if (m_pMyHazeCnt)m_pMyHazeCnt->Set_Active(bIsActive);
+	if (m_pPriceHazeCnt)m_pPriceHazeCnt->Set_Active(bIsActive);
+	if (m_pWeaponMoveTypeUI)m_pWeaponMoveTypeUI->Set_Active(bIsActive);
+	if (m_pWeaponDescUI)m_pWeaponDescUI->Set_Active(bIsActive);
+	if (m_pStatusUI)m_pStatusUI->Set_Active(bIsActive);
 }
 
 void CWeaponBuyUI::Set_WeaponMoveType(MOVE_TYPE eType)
@@ -77,6 +74,9 @@ void CWeaponBuyUI::Set_ShopType(SHOP_OPTION eType)
 		break;
 	case Client::CWeaponBuyUI::SHOP_ITEM_SELL:
 		break;
+	case Client::CWeaponBuyUI::SHOP_UPGRADE:
+		m_iTexIndex = 0;
+		break; 
 	}
 }
 
@@ -99,6 +99,8 @@ HRESULT CWeaponBuyUI::Ready_GameObject(void * pArg)
 	m_fSizeY = 512.f * 1.5f;
 	m_fViewZ = 1.f;
 
+	m_iTexIndex = 0;
+
 	m_bIsActive = false;
 
 	return NOERROR;
@@ -110,7 +112,6 @@ _int CWeaponBuyUI::Update_GameObject(_double TimeDelta)
 
 	if (MOVE_END == m_eMoveType && WpnAll_END == m_eWeaponDesc)
 	{
-		SetUp_Default();
 		Check_LateInit();
 		Check_MoveType();
 		Check_Desc();
@@ -140,11 +141,17 @@ _int CWeaponBuyUI::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CWeaponBuyUI::Render_GameObject()
 {
-	if (!m_bIsActive)
+	if(m_bIsDead)
 		return NOERROR;
+
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
+
+	if (!m_bIsActive)
+		return NOERROR;
+	if (-1 == m_iTexIndex)
+		return NOERROR;
 
 	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
 
@@ -267,14 +274,28 @@ void CWeaponBuyUI::Check_ItemOption()
 		break;
 	case Client::CWeaponBuyUI::SHOP_ITEM_SELL:
 		break;
+	case Client::CWeaponBuyUI::SHOP_UPGRADE:
+		m_pInven = m_pParent->Get_InvenUpgrade();
+		break;
 	}
+	if (!m_pInven)
+		return;
+
+	//==============================================================================================================
+	// MyHaze
+	_int iHazeCnt = _int(CUI_Manager::Get_Instance()->Get_HazeUI()->Get_Haze_Cnt());
+	if (!m_pMyHazeCnt)
+		return;
+	m_pMyHazeCnt->Update_NumberValue((_float)iHazeCnt);
+	m_pMyHazeCnt->Set_Active(m_bIsActive);
+	//==============================================================================================================
 
 	CWeapon_Slot* pWeaponSlot = m_pInven->Get_HoverSlot();
-
+	
 	if (!pWeaponSlot || m_pInven->Get_PopupOn())
 		pWeaponSlot = m_pInven->Get_SelectedSlot();
 
-	if (!pWeaponSlot)
+	if (!pWeaponSlot || pWeaponSlot->Get_Dead())
 		return;
 
 	WPN_PARAM tParam = pWeaponSlot->Get_WeaponParam();
@@ -285,20 +306,13 @@ void CWeaponBuyUI::Check_ItemOption()
 	if (!m_pFontDamage)
 		return;
 	m_pFontDamage->Update_NumberValue((_float)tParam.fDamage);
-	m_pFontDamage->Set_Active(true);
-	//==============================================================================================================
-	// MyHaze
-	_int iHazeCnt = _int(CUI_Manager::Get_Instance()->Get_HazeUI()->Get_Haze_Cnt());
-	if (!m_pMyHazeCnt)
-		return;
-	m_pMyHazeCnt->Update_NumberValue((_float)iHazeCnt);
-	m_pMyHazeCnt->Set_Active(true);
+	m_pFontDamage->Set_Active(m_bIsActive);
 	//==============================================================================================================
 	// HazePrice
 	if (!m_pPriceHazeCnt)
 		return;
 	m_pPriceHazeCnt->Update_NumberValue((_float)tParam.iPrice);
-	m_pPriceHazeCnt->Set_Active(true);
+	m_pPriceHazeCnt->Set_Active(m_bIsActive);
 	//==============================================================================================================
 	// MoveType
 	if (!m_pWeaponMoveTypeUI)
@@ -328,7 +342,7 @@ void CWeaponBuyUI::Check_ItemOption()
 	case WEAPON_End:
 		break;
 	}
-	m_pWeaponMoveTypeUI->Set_Active(true);
+	m_pWeaponMoveTypeUI->Set_Active(m_bIsActive);
 	//==============================================================================================================
 	// Desc
 	if (!m_pWeaponDescUI)
@@ -340,13 +354,19 @@ void CWeaponBuyUI::Check_ItemOption()
 		return;
 	}
 	m_pWeaponDescUI->Set_WeaponDescType(eAllDate);
-	m_pWeaponDescUI->Set_Active(true);
+	m_pWeaponDescUI->Set_Active(m_bIsActive);
 	//=======================================================
 }
 
 void CWeaponBuyUI::Check_LateInit()
 {
+	if (m_bLateInit)
+		return;
+	m_bLateInit = true;
+
+	SetUp_Default();
 }
+
 
 void CWeaponBuyUI::Check_MoveType()
 {

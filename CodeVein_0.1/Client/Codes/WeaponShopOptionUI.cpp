@@ -40,6 +40,9 @@ _int CWeaponShopOptionUI::Update_GameObject(_double TimeDelta)
 	if (m_bIsDead)
 		return DEAD_OBJ;
 
+	if (!m_bIsActive)
+		return NOERROR;
+
 	m_pRendererCom->Add_RenderList(RENDER_3DUI, this);
 	
 	_v3 vWorldPos;
@@ -101,6 +104,20 @@ _int CWeaponShopOptionUI::Update_GameObject(_double TimeDelta)
 			break;
 		}
 	}
+
+	if (MENU_UPGRADE == m_eMenu)
+	{
+		switch (m_eBuyOption)
+		{
+		case Client::CWeaponShopOptionUI::OPTION_BUY_WEAPON:
+			m_iIndex = 13;
+			break;
+		case Client::CWeaponShopOptionUI::OPTION_BUY_DRAINWEAPON:
+			m_iIndex = 14;
+			break;
+		}
+	}
+	
 	return NO_EVENT;
 }
 

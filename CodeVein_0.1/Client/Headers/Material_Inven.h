@@ -15,6 +15,9 @@ private:
 	virtual ~CMaterial_Inven() = default;
 
 public:
+	vector<CMaterial_Slot*>* Get_VecMaterialSlot() { return &m_vecMaterialSlot; }
+
+public:
 	virtual HRESULT			Ready_GameObject_Prototype();
 	virtual HRESULT			Ready_GameObject(void* pArg);
 	virtual _int			Update_GameObject(_double TimeDelta);

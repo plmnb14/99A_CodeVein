@@ -333,6 +333,8 @@
     <ClInclude Include="..\Headers\WeaponBuyUI.h" />
     <ClInclude Include="..\Headers\WeaponShopOptionUI.h" />
     <ClInclude Include="..\Headers\WeaponShopUI.h" />
+    <ClInclude Include="..\Headers\WeaponUpgradeOptionUI.h" />
+    <ClInclude Include="..\Headers\WeaponUpgradeUI.h" />
     <ClInclude Include="..\Headers\Weapon_Inven.h" />
     <ClInclude Include="..\Headers\Weapon_Inven_InShop.h" />
     <ClInclude Include="..\Headers\Weapon_Slot.h" />
@@ -510,6 +512,8 @@
     <ClCompile Include="..\Codes\WeaponBuyUI.cpp" />
     <ClCompile Include="..\Codes\WeaponShopOptionUI.cpp" />
     <ClCompile Include="..\Codes\WeaponShopUI.cpp" />
+    <ClCompile Include="..\Codes\WeaponUpgradeOptionUI.cpp" />
+    <ClCompile Include="..\Codes\WeaponUpgradeUI.cpp" />
     <ClCompile Include="..\Codes\Weapon_Inven.cpp" />
     <ClCompile Include="..\Codes\Weapon_Inven_InShop.cpp" />
     <ClCompile Include="..\Codes\Weapon_Slot.cpp" />

@@ -19,6 +19,7 @@ private:
 public:
 	CWeapon_Inven_InShop* Get_InvenBuy() { return m_pBuyInven; }
 	CWeapon_Inven_InShop* Get_InvenSell() { return m_pSellInven; }
+	CWeapon_Inven_InShop* Get_InvenUpgrade() { return m_pUpgradeInven; }
 
 public:
 	void Setup_AfterClone();
@@ -60,6 +61,7 @@ private:
 	CWeaponBuyUI*					m_pBuyUI;
 	CWeapon_Inven_InShop*			m_pBuyInven;
 	CWeapon_Inven_InShop*			m_pSellInven;
+	CWeapon_Inven_InShop*			m_pUpgradeInven;
 public:
 	static CWeaponShopUI*	Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);

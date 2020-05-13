@@ -71,6 +71,8 @@
 #include "Weapon_Inven_InShop.h"
 #include "WeaponBuyPopupUI.h"
 #include "WeaponBuyPopupOptionUI.h"
+#include "WeaponUpgradeUI.h"
+#include "WeaponUpgradeOptionUI.h"
 
 BEGIN(Client)
 
