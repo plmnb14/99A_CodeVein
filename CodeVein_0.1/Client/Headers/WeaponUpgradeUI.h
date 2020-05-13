@@ -54,8 +54,10 @@ private:
 
 	void	Upgrade_Weapon();
 
+	_int	Get_MyMaterial(CMaterial::MATERIAL_TYPE eType);
 	_int	Get_RequireMaterial(CMaterial::MATERIAL_TYPE eType, _int iReinforce);
 	_float	Get_PlusDamage(_float fDamage, _int iReinforce);
+	_float	Get_UpgradePrice(_int iReinforce);
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -81,6 +83,16 @@ private:
 	CPlayerFontUI*						m_pFontPlusDamageAfterDesc = nullptr;
 	CPlayerFontUI*						m_pFontDamageDesc = nullptr;
 	CPlayerFontUI*						m_pFontDamageAfterDesc = nullptr;
+
+	CPlayerFontUI*						m_pFontRequireHaze = nullptr;
+	CPlayerFontUI*						m_pFontMyHaze = nullptr;
+
+	CPlayerFontUI*						m_pFontRequireMatCnt_0 = nullptr;
+	CPlayerFontUI*						m_pFontRequireMatCnt_1 = nullptr;
+	CPlayerFontUI*						m_pFontRequireMatCnt_2 = nullptr;
+	CPlayerFontUI*						m_pFontMyMatCnt_0 = nullptr;
+	CPlayerFontUI*						m_pFontMyMatCnt_1 = nullptr;
+	CPlayerFontUI*						m_pFontMyMatCnt_2 = nullptr;
 
 	_bool								m_bLateInit = false;
 	_int								m_iTexIdx = 0;

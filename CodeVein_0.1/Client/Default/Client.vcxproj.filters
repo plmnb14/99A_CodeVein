@@ -493,6 +493,12 @@
     <Filter Include="95.SoundManager">
       <UniqueIdentifier>{e4f55a90-9a32-4788-a5b8-44ef84c5e70e}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI">
+      <UniqueIdentifier>{e0a40905-984a-4871-844b-7d88dbd736c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI\Option">
+      <UniqueIdentifier>{023eafb9-cae5-4944-a116-3d2c0d39de3f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1059,6 +1065,12 @@
     <ClInclude Include="..\Headers\Pet_DeerKing.h">
       <Filter>02.GameObject\Stage\10%29 Pet\02.DeerKing</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\WeaponUpgradeSuccessPopupUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\WeaponUpgradeSuccessPopupOptionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI\Option</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1609,6 +1621,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\Pet_DeerKing.cpp">
       <Filter>02.GameObject\Stage\10%29 Pet\02.DeerKing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\WeaponUpgradeSuccessPopupUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\WeaponUpgradeSuccessPopupOptionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI\Option</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
