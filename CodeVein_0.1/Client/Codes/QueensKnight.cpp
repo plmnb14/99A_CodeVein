@@ -160,6 +160,12 @@ _int CQueensKnight::Update_GameObject(_double TimeDelta)
 
 	m_pTransformCom->Set_Pos(m_pNavMeshCom->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
+	//====================================================================================================
+	// 컬링
+	//====================================================================================================
+	m_bInFrustum = m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f);
+	//====================================================================================================
+
 	return NOERROR;
 }
 
@@ -188,10 +194,13 @@ _int CQueensKnight::Late_Update_GameObject(_double TimeDelta)
 			return E_FAIL;
 	}
 
-	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
+	if (m_bInFrustum)
 	{
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-			return E_FAIL;
+		if (false == m_bDissolve)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+				return E_FAIL;
+		}
 	}
 	//=============================================================================================
 
@@ -211,9 +220,9 @@ HRESULT CQueensKnight::Render_GameObject()
 
 	m_pMeshCom->Play_Animation(_float(m_dTimeDelta)); // * alpha
 
-	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
+	if (m_bInFrustum)
 	{
-		if (FAILED(SetUp_ConstantTable()))
+		if (FAILED(SetUp_ConstantTable(m_pShaderCom)))
 			return E_FAIL;
 
 		m_pShaderCom->Begin_Shader();
@@ -254,6 +263,56 @@ HRESULT CQueensKnight::Render_GameObject()
 	Draw_Collider();
 
 	return NOERROR;
+}
+
+HRESULT CQueensKnight::Render_GameObject_Instancing_SetPass(CShader * pShader)
+{
+	if (nullptr == pShader ||
+		nullptr == m_pMeshCom)
+		return E_FAIL;
+
+	m_pMeshCom->Play_Animation(DELTA_60 * m_dAniPlayMul);
+
+	if (m_bInFrustum)
+	{
+		if (FAILED(SetUp_ConstantTable(pShader)))
+			return E_FAIL;
+
+		_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+
+		for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+		{
+			_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+
+			m_pMeshCom->Update_SkinnedMesh(i);
+
+			for (_uint j = 0; j < iNumSubSet; ++j)
+			{
+				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+
+				if (m_bDissolve)
+					m_iPass = 3;
+
+				pShader->Begin_Pass(m_iPass);
+
+				pShader->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
+
+				pShader->Commit_Changes();
+
+				m_pMeshCom->Render_Mesh(i, j);
+
+				pShader->End_Pass();
+			}
+		}
+
+	}
+
+	m_pSword->Update_GameObject(m_dTimeDelta);
+	m_pShield->Update_GameObject(m_dTimeDelta);
+	Update_Collider();
+	Draw_Collider();
+
+	return S_OK;
 }
 
 HRESULT CQueensKnight::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
@@ -2491,9 +2550,9 @@ HRESULT CQueensKnight::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CQueensKnight::SetUp_ConstantTable()
+HRESULT CQueensKnight::SetUp_ConstantTable(CShader* pShader)
 {
-	if (nullptr == m_pShaderCom)
+	if (nullptr == pShader)
 		return E_FAIL;
 
 	CManagement*		pManagement = CManagement::Get_Instance();
@@ -2502,19 +2561,19 @@ HRESULT CQueensKnight::SetUp_ConstantTable()
 
 	Safe_AddRef(pManagement);
 
-	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
 
 	_mat		ViewMatrix = pManagement->Get_Transform(D3DTS_VIEW);
 	_mat		ProjMatrix = pManagement->Get_Transform(D3DTS_PROJECTION);
 
-	if (FAILED(m_pShaderCom->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShaderCom)))
+	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", pShader)))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	//=============================================================================================
@@ -2526,15 +2585,15 @@ HRESULT CQueensKnight::SetUp_ConstantTable()
 	_float	fRimLightPower = 0.f;	// 림		: 높을 수록 빛이 퍼짐(림라이트의 범위가 넓어지고 , 밀집도가 낮아짐).
 	_float	fMinSpecular = 0.5f;	// 최소 빛	: 높을 수록 빛이 퍼짐(림라이트의 범위가 넓어지고 , 밀집도가 낮아짐).
 
-	if (FAILED(m_pShaderCom->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fRimAlpha", &fRimLightPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fRimAlpha", &fRimLightPower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
 		return E_FAIL;
 	//=============================================================================================
 

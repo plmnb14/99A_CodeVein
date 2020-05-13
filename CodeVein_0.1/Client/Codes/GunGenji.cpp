@@ -204,6 +204,12 @@ _int CGunGenji::Update_GameObject(_double TimeDelta)
 
 	m_pTransformCom->Set_Pos(m_pNavMeshCom->Axis_Y_OnNavMesh(m_pTransformCom->Get_Pos()));
 
+	//====================================================================================================
+	// 컬링
+	//====================================================================================================
+	m_bInFrustum = m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f);
+	//====================================================================================================
+
 	return NO_EVENT;
 }
 
@@ -232,10 +238,13 @@ _int CGunGenji::Late_Update_GameObject(_double TimeDelta)
 			return E_FAIL;
 	}
 
-	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
+	if (m_bInFrustum)
 	{
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-			return E_FAIL;
+		if (false == m_bDissolve)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+				return E_FAIL;
+		}
 	}
 	//=============================================================================================
 
@@ -255,9 +264,9 @@ HRESULT CGunGenji::Render_GameObject()
 	m_pMeshCom->Play_Animation(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60")); // * alpha
 
 
-	if (m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f))
+	if (m_bInFrustum)
 	{
-		if (FAILED(SetUp_ConstantTable()))
+		if (FAILED(SetUp_ConstantTable(m_pShaderCom)))
 			return E_FAIL;
 
 		m_pShaderCom->Begin_Shader();
@@ -297,6 +306,54 @@ HRESULT CGunGenji::Render_GameObject()
 	Draw_Collider();
 
 	return NOERROR;
+}
+
+HRESULT CGunGenji::Render_GameObject_Instancing_SetPass(CShader * pShader)
+{
+	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
+	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
+
+	m_pMeshCom->Play_Animation(DELTA_60 * m_dAniPlayMul);
+
+	if (m_bInFrustum)
+	{
+		if (FAILED(SetUp_ConstantTable(pShader)))
+			return E_FAIL;
+
+		_uint iNumMeshContainer = _uint(m_pMeshCom->Get_NumMeshContainer());
+
+		for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+		{
+			_uint iNumSubSet = (_uint)m_pMeshCom->Get_NumMaterials(i);
+
+			m_pMeshCom->Update_SkinnedMesh(i);
+
+			for (_uint j = 0; j < iNumSubSet; ++j)
+			{
+				m_iPass = m_pMeshCom->Get_MaterialPass(i, j);
+
+				if (m_bDissolve)
+					m_iPass = 3;
+
+				pShader->Begin_Pass(m_iPass);
+
+				pShader->Set_DynamicTexture_Auto(m_pMeshCom, i, j);
+
+				pShader->Commit_Changes();
+
+				m_pMeshCom->Render_Mesh(i, j);
+
+				pShader->End_Pass();
+			}
+		}
+
+	}
+
+	m_pGun->Update_GameObject(m_dTimeDelta);
+	Update_Collider();
+	Draw_Collider();
+
+	return S_OK;
 }
 
 HRESULT CGunGenji::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur)
@@ -1185,31 +1242,22 @@ HRESULT CGunGenji::Add_Component(void* pArg)
 	return NOERROR;
 }
 
-HRESULT CGunGenji::SetUp_ConstantTable()
+HRESULT CGunGenji::SetUp_ConstantTable(CShader * pShader)
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
-
-	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
 
 	//=============================================================================================
 	// 기본 메트릭스
 	//=============================================================================================
 
-	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
 
 	//=============================================================================================
 	// 디졸브용 상수
 	//=============================================================================================
-	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShaderCom)))
-		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	//=============================================================================================
@@ -1223,25 +1271,25 @@ HRESULT CGunGenji::SetUp_ConstantTable()
 	_float	fID_G = 0.f;	// ID_G : G채널 ID 값 , 1이 최대
 	_float	fID_B = 0.f;	// ID_B	: B채널 ID 값 , 1이 최대
 
-	if (FAILED(m_pShaderCom->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fID_R_Power", &fID_R, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fID_R_Power", &fID_R, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fID_G_Power", &fID_G, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fID_G_Power", &fID_G, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
 		return E_FAIL;
 
 	//=============================================================================================
 	// 림라이트 값들을 쉐이더에 등록시킴
 	//=============================================================================================
-	m_pBattleAgentCom->Update_RimParam_OnShader(m_pShaderCom);
+	m_pBattleAgentCom->Update_RimParam_OnShader(pShader);
 	//=============================================================================================
 
 	return NOERROR;

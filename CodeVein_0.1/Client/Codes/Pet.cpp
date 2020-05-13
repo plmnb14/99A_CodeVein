@@ -11,6 +11,11 @@ CPet::CPet(const CPet & rhs)
 {
 }
 
+HRESULT CPet::Render_GameObject_Instancing_SetPass(CShader * pShader)
+{
+	return S_OK;
+}
+
 HRESULT CPet::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 {
 	return S_OK;
@@ -18,6 +23,9 @@ HRESULT CPet::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 
 void CPet::Check_Navi()
 {
+	Function_ResetAfterAtk();
+	m_bEnable = true;
+
 	_tchar szNavData[STR_128] = L"";
 
 	lstrcpy(szNavData, (
@@ -26,13 +34,14 @@ void CPet::Check_Navi()
 		g_eSceneID_Cur == 7 ? L"Navmesh_Stage_02.dat" :
 		g_eSceneID_Cur == 8 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
 
-	//player 오른쪽으로 3.f만큼 소환될것임
-	m_pTransform->Set_Pos(TARGET_TO_TRANS(m_pPlayer)->Get_Axis(AXIS_X) * 1.f);
+	//player 오른쪽으로 2.f만큼 소환될것임
+	CTransform* pPlayerTransform = TARGET_TO_TRANS(m_pPlayer);
+	m_pTransform->Set_Pos(pPlayerTransform->Get_Pos() + pPlayerTransform->Get_Axis(AXIS_X) * 2.f);
+	m_pTransform->Set_Scale(_v3{ 0.25f, 0.25f, 0.25f });
 
 	m_pNavMesh->Set_Index(-1);
 	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, szNavData);
 	m_pNavMesh->Check_OnNavMesh(m_pTransform->Get_Pos());
-
 
 	return;
 }
@@ -48,12 +57,10 @@ void CPet::Check_CollisionEvent()
 
 void CPet::Check_CollisionPush()
 {
-	list<CGameObject*> tmpList[4];
+	list<CGameObject*> tmpList[2];
 
-	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Player", SCENE_MORTAL);
-	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
-	tmpList[2] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
-	tmpList[3] = g_pManagement->Get_GameObjectList(L"Layer_Pet", SCENE_STAGE);
+	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
+	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
 
 	for (auto& list_iter : tmpList)
 	{
@@ -604,7 +611,7 @@ HRESULT CPet::Add_Component(void * pArg)
 	return S_OK;
 }
 
-HRESULT CPet::SetUp_ConstantTable()
+HRESULT CPet::SetUp_ConstantTable(CShader* pShader)
 {
 	return S_OK;
 }
@@ -631,8 +638,6 @@ HRESULT CPet::Ready_BoneMatrix(void * pArg)
 
 void CPet::Free()
 {
-	Safe_Release(m_pMonsterUI);
-
 	IF_NOT_NULL(m_pTarget)
 		Safe_Release(m_pTarget);
 

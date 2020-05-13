@@ -49,6 +49,7 @@ public:
 	virtual _int Update_GameObject(_double TimeDelta);
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
+	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader);
 	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur = false);
 
 private:	//∆–≈œµÈ
@@ -185,7 +186,7 @@ private:
 
 private:
 	HRESULT Add_Component();
-	HRESULT SetUp_ConstantTable(_uint _iSubsetIdx);
+	HRESULT SetUp_ConstantTable(CShader* pShader);
 
 	HRESULT Ready_BoneMatrix();
 	HRESULT Ready_Collider();

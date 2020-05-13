@@ -98,6 +98,65 @@ HRESULT CPet_Inven::Render_GameObject()
 	return S_OK;
 }
 
+void CPet_Inven::Check_Call_Pet(_bool _Check_Get_SlotSelect)
+{
+	CGameObject* pTempPet = nullptr;
+
+	auto& PetContainer = g_pManagement->Get_GameObjectList(L"Layer_Pet", SCENE_STAGE);
+
+	for (auto& list_iter : PetContainer)
+	{
+		if (nullptr == list_iter)
+			continue;
+		else if (m_eNowType != static_cast<CPet*>(list_iter)->Get_PetType())
+			continue;
+
+		pTempPet = list_iter;
+	}
+
+	//1.소환한다
+	// 종류, enable 체크
+	if (true == _Check_Get_SlotSelect)
+	{
+		if (nullptr == pTempPet)
+		{
+			if (CPet::PET_TYPE::PET_POISONBUTTERFLY == m_eNowType)
+			{
+				pTempPet = g_pManagement->Clone_GameObject_Return(L"Pet_PoisonButterFly", &CPet::PET_STATUS(m_eGradeType, WEAPON_STATE::WEAPON_None));
+				g_pManagement->Add_GameOject_ToLayer_NoClone(pTempPet, SCENE_STAGE, L"Layer_Pet", nullptr);
+				return;
+			}
+			else if (CPet::PET_TYPE::PET_DEERKING == m_eNowType)
+			{
+				pTempPet = g_pManagement->Clone_GameObject_Return(L"Pet_DeerKing", &CPet::PET_STATUS(m_eGradeType, WEAPON_STATE::WEAPON_None));
+				g_pManagement->Add_GameOject_ToLayer_NoClone(pTempPet, SCENE_STAGE, L"Layer_Pet", nullptr);
+				return;
+			}
+		}
+		else
+		{
+			static_cast<CPet*>(pTempPet)->Check_Navi();
+			pTempPet = nullptr;
+			return;
+		}
+	}
+	//2.해제한다
+	// 종류, enable 체크
+	else if (false == _Check_Get_SlotSelect)
+	{
+		if (nullptr == pTempPet)
+			return;
+		else
+		{
+			pTempPet->Set_Enable(false);
+			pTempPet = nullptr;
+			return;
+		}
+	}
+
+	return;
+}
+
 void CPet_Inven::Click_Inven()
 {
 	if (!m_bIsActive)
@@ -118,6 +177,20 @@ void CPet_Inven::Click_Inven()
 			{
 				Reset_SlotSelect();
 				iter->Set_Select(true);
+				m_eNowType = iter->Get_PetType();
+				Check_Call_Pet(iter->Get_Select());
+			}
+		}
+	}
+	if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
+	{
+		for (auto& iter : m_vecPetSlot)
+		{
+			if (iter->Pt_InRect())
+			{
+				iter->Set_Select(false);
+				m_eNowType = iter->Get_PetType();
+				Check_Call_Pet(iter->Get_Select());
 			}
 		}
 	}
@@ -193,11 +266,11 @@ HRESULT CPet_Inven::SetUp_ConstantTable()
 	return S_OK;
 }
 
-void CPet_Inven::Add_Pet(CPet::PET_TYPE ePetType)
+void CPet_Inven::Add_Pet(CPet::PET_TYPE ePetType, CPet::PET_GRADE_TYPE ePetGrade)
 {
 	CPet_Slot* pPetSlot = static_cast<CPet_Slot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PetSlot", nullptr));
 	pPetSlot->Set_PetType(ePetType);
-	pPetSlot->Set_PetLevel(1); // 레벨 1부터 시작
+	pPetSlot->Set_PetGrade(CPet::PET_GRADE_NORMAL); // 등급 Normal부터 시작
 	pPetSlot->Set_UI_Size(50.f, 50.f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(pPetSlot, SCENE_MORTAL, L"Layer_PetUI", nullptr);
 	m_vecPetSlot.push_back(pPetSlot);

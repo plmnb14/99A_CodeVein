@@ -17,6 +17,7 @@
 #include "NPC_Yakumo.h"
 
 #include "Player.h"
+#include "Costume_Hair.h"
 
 #include "Weapon.h"
 #include "Drain_Weapon.h"
@@ -1359,6 +1360,7 @@ _uint CLoading::Loading_Title()
 	//============================================================================================================
 	// 進
 	//============================================================================================================
+	cout << " 進 持失 掻 . . ." << endl;
 	g_pClothManager->Ready_ClothManager();
 	//============================================================================================================
 
@@ -1595,6 +1597,10 @@ _uint CLoading::Loading_Stage()
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_NPC_Yakumo", CNPC_Yakumo::Create(m_pGraphicDev))))
 			return E_FAIL;
 		//============================================================================================================
+
+		// 進
+		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Costume_Hair", CCostume_Hair::Create(m_pGraphicDev))))
+			return E_FAIL;
 
 		g_bOnStage[0] = true;
 	}

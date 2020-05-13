@@ -564,4 +564,11 @@ namespace Engine
 		bool bUseRGBA;
 		bool bUseMaskTex;
 	}INSTANCEDATA;
+
+	typedef struct tagArmorParam
+	{
+		_uint iArmorType; // 아장 타입
+		_float fDef;		// 방어력
+		_uint iPrice;		// 가격(상점용)
+	}ARMOR_PARAM;
 }

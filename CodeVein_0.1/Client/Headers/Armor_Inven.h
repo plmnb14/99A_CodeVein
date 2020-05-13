@@ -5,6 +5,7 @@
 
 BEGIN(Client)
 class CArmor_Slot;
+class CExplainArmorUI;
 class CArmor_Inven final : public CUI
 {
 private:
@@ -13,7 +14,7 @@ private:
 	virtual ~CArmor_Inven() = default;
 
 public:
-	ARMOR_TYPE Get_UseArmorType();
+	ARMOR_PARAM Get_UseArmorParam();
 
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();
@@ -29,9 +30,10 @@ private:
 	void					Click_Inven();
 	void					Regist_Armor(CArmor_Slot* pArmorSlot);
 	void					UnRegist_Armor(CArmor_Slot* pArmorSlot);
+	void					Reset_SelectSlot();
 
 public:
-	void					Add_Armor(ARMOR_TYPE eType);
+	void					Add_Armor(ARMOR_PARAM tArmorParam);
 
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
@@ -40,7 +42,8 @@ private:
 	CTexture*				m_pTextureCom = nullptr;
 	CShader*				m_pShaderCom = nullptr;
 	vector<CArmor_Slot*>	m_vecArmorSlot;
-	ARMOR_TYPE				m_eRegistArmor = ARMOR_End;
+	ARMOR_PARAM				m_tRegistParam;
+	CExplainArmorUI*		m_pExplainUI = nullptr;
 
 public:
 	static CArmor_Inven*	Create(_Device pGraphic_Device);

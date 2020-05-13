@@ -65,6 +65,9 @@
 #include "HazeUI.h"
 #include "ScriptUI.h"
 
+#include "ExplainArmorUI.h"
+#include "ExplainWeaponUI.h"
+
 BEGIN(Client)
 
 class CUI_Manager final : public CBase
@@ -87,8 +90,8 @@ public:
 	CMistletoeUI* Get_MistletoeUI() { return m_pMistletoeUI; }
 	CStageSelectUI* Get_StageSelectUI() { return m_pStageSelectUI; }
 	CExpendables_Inven* Get_Expendables_Inven() { return m_pExpendables_Inven; }
-	CSkillUI* Get_Skill_UI() { return m_pSkillUI; }
-	CQuickSlot* Get_QuickSlot() { return m_pQuickSlot; }
+	CSkillUI* Get_Skill_UI() { return m_pSkillUI; } // Skill ƒ¸ΩΩ∑‘
+	CQuickSlot* Get_QuickSlot() { return m_pQuickSlot; } // ƒ¸ΩΩ∑‘
 	CMaterial_Inven* Get_Material_Inven() { return m_pMaterial_Inven; }
 	CWeapon_Inven* Get_Weapon_Inven() { return m_pWeapon_Inven; }
 	CArmor_Inven* Get_Armor_Inven() { return m_pArmor_Inven; }
@@ -101,8 +104,10 @@ public:
 	CSkillReleaseUI* Get_Skill_ReleaseUI() { return m_pSkillReleaseUI; }
 	CSkillAcquisitionUI* Get_Skill_AcquisitionUI() { return m_pSkillAcquisitionUI; }
 	CSkill_Inven* Get_Skill_Inven() { return m_pSkillInven; }
-	CHazeUI* Get_HazeUI() { return m_pHazeUI; }
-	CScriptUI* Get_ScriptUI() { return m_pScriptUI; }
+	CHazeUI* Get_HazeUI() { return m_pHazeUI; }	// «Ï¿Ã¡Ó UI
+	CScriptUI* Get_ScriptUI() { return m_pScriptUI; } // ¥ÎªÁ UI
+	CPlayerHP* Get_PlayerHP() { return m_pPlayerHP; } // «√∑π¿ÃæÓ HP
+	CPlayerST* Get_PlayerST() { return m_pPlayerST; } // «√∑π¿ÃæÓ ST
 	
 	// ∆Í ¿Œ∫•≈‰∏Æ
 	CPet_Inven* Get_Pet_Inven() { return m_pPet_Inven; }
@@ -129,6 +134,8 @@ private:
 	CSkill_Inven* m_pSkillInven = nullptr;
 	CHazeUI*	m_pHazeUI = nullptr;
 	CScriptUI*	m_pScriptUI = nullptr;
+	CPlayerHP*	m_pPlayerHP = nullptr;
+	CPlayerST*	m_pPlayerST = nullptr;
 	
 	// ∆Í ¿Œ∫•≈‰∏Æ
 	CPet_Inven* m_pPet_Inven = nullptr;

@@ -75,7 +75,7 @@ _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 		// 스테이터스 창 활성화
 		CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(true);
 		// 퀵슬롯 비활성화
-		CUI_Manager::Get_Instance()->Get_QuickSlot()->Set_Active(false);
+		//CUI_Manager::Get_Instance()->Get_QuickSlot()->Set_Active(false);
 	}
 
 	// 인벤 아이콘 활성화
@@ -92,7 +92,7 @@ _int CTotal_Inven::Update_GameObject(_double TimeDelta)
 	
 	// 아장
 	CArmor_Inven* pArmorInven = CUI_Manager::Get_Instance()->Get_Armor_Inven();
-	m_pArmor_Slot->Set_Type(pArmorInven->Get_UseArmorType());
+	m_pArmor_Slot->Set_ArmorParam(pArmorInven->Get_UseArmorParam());
 	m_pArmor_Slot->Set_Active(m_bIsActive);
 	
 	// 블러드코드 아이콘
@@ -241,7 +241,8 @@ void CTotal_Inven::SetUp_Default()
 		{
 			g_pManagement->Add_GameObject_ToLayer(L"GameObject_ArmorSlot", SCENE_MORTAL, L"Layer_PlayerUI", pDesc);
 			m_pArmor_Slot = static_cast<CArmor_Slot*>(g_pManagement->Get_GameObjectBack(L"Layer_PlayerUI", SCENE_MORTAL));
-			m_pArmor_Slot->Set_Type(ARMOR_End);
+			
+			m_pArmor_Slot->Init_Param();
 		}
 	}
 	
@@ -320,7 +321,7 @@ void CTotal_Inven::Click_Icon()
 		// 스테이터스 창 비활성화
 		CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(false);
 		// 퀵슬롯 활성화
-		CUI_Manager::Get_Instance()->Get_QuickSlot()->Set_Active(true);
+		//CUI_Manager::Get_Instance()->Get_QuickSlot()->Set_Active(true);
 	}
 	
 	vector<CExpendables_Slot*> vecQuickSlot = * CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Get_QuickSlot();
