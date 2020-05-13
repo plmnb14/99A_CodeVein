@@ -9,6 +9,7 @@
 
 BEGIN(Client)
 
+class CCostume_Hair;
 class CStageAgent;
 class CDrain_Weapon;
 class CWeapon;
@@ -81,11 +82,11 @@ public:
 	virtual _int	Update_GameObject(_double TimeDelta);
 	virtual _int	Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
+	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader);
 	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur = false);
 
 public:
 	virtual void Teleport_ResetOptions(_int _eSceneID, _int _eTeleportID);
-
 private:
 	ACTOR_INFO				m_tInfo = {};
 	ACT_STATE				m_eActState = ACT_Summon;
@@ -110,6 +111,9 @@ private:
 	CNavMesh*				m_pNavMesh = nullptr;
 	CCollider*				m_pCollider = nullptr;
 	CBattleAgent*			m_pBattleAgent = nullptr;
+
+private:
+	CCostume_Hair*			m_pHair = nullptr;
 
 private:
 	CUI_Manager*			m_pUIManager = nullptr;
@@ -220,7 +224,7 @@ private:
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_Default();
-	HRESULT SetUp_ConstantTable();
+	HRESULT SetUp_ConstantTable(CShader* pShader);
 
 private:
 	virtual void Movement_Aiming(_float _fAngle, _float _fMoveSpeed);

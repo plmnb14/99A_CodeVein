@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\Weapon_Inven.h"
 #include "Weapon.h"
+#include "UI_Manager.h"
 
 CWeapon_Inven::CWeapon_Inven(_Device pDevice)
 	: CUI(pDevice)
@@ -53,15 +54,21 @@ HRESULT CWeapon_Inven::Ready_GameObject(void * pArg)
 	
 	if (FAILED(SetUp_WeaponData()))
 		return E_FAIL;
+	SetUp_Default();
 	LOOP(2)
 	{
 		m_UseWeaponParam[i] = m_tWeaponParam[WPN_DATA_End];
 	}
 	
+	Add_Weapon(m_tWeaponParam[Wpn_SSword]);
+	Add_Weapon(m_tWeaponParam[Wpn_SSword_Black]);
+	Add_Weapon(m_tWeaponParam[Wpn_SSword_Military]);
+	Add_Weapon(m_tWeaponParam[Wpn_SSword_Slave]);
+	Add_Weapon(m_tWeaponParam[Wpn_Gun_Military]);
 	Add_Weapon(m_tWeaponParam[Wpn_Gun_Slave]);
 	Add_Weapon(m_tWeaponParam[Wpn_Hammer]);
 	Add_Weapon(m_tWeaponParam[Wpn_LSword_Military]);
-	Add_Weapon(m_tWeaponParam[Wpn_Halberd]);
+	
 	return NOERROR;
 }
 
@@ -88,6 +95,7 @@ _int CWeapon_Inven::Update_GameObject(_double TimeDelta)
 		vector_iter->Set_UI_Pos(m_fPosX - 100.f + 52.f * (iIdx % 5), m_fPosY - 150.f + 52.f * (iIdx / 5));
 		iIdx++;
 	}
+	m_pExplainUI->Set_Active(m_bIsActive);
 	
 	return NO_EVENT;
 }
@@ -193,6 +201,8 @@ void CWeapon_Inven::Click_Inven()
 	{
 		if (pSlot->Pt_InRect())
 		{
+			m_pExplainUI->Set_WeaponParam(pSlot->Get_WeaponParam());
+
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB) &&
 				!pSlot->Get_Select())
 			{
@@ -394,8 +404,12 @@ HRESULT CWeapon_Inven::SetUp_WeaponData()
 	// ÇØ¸Ó
 	//===========================================================================================
 
+<<<<<<< HEAD
 	m_tWeaponParam[Wpn_Hammer].iWeaponName = Wpn_LSword;
 	m_tWeaponParam[Wpn_Hammer].iWeaponName_InShop = WpnAll_Hammer_ImperseAnker;
+=======
+	m_tWeaponParam[Wpn_Hammer].iWeaponName = Wpn_Hammer;
+>>>>>>> origin/Merge_Brench
 	m_tWeaponParam[Wpn_Hammer].iWeaponType = WEAPON_Halberd;
 	m_tWeaponParam[Wpn_Hammer].iPrice = 100;
 	m_tWeaponParam[Wpn_Hammer].iReinforce = 0;
@@ -553,6 +567,12 @@ HRESULT CWeapon_Inven::SetUp_WeaponData()
 
 
 	return S_OK;
+}
+
+void CWeapon_Inven::SetUp_Default()
+{
+	m_pExplainUI = static_cast<CExplainWeaponUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExplainWeaponUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExplainUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
 
 void CWeapon_Inven::Add_Weapon(WPN_PARAM tAddWpnParam)

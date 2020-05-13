@@ -9,6 +9,18 @@ class CWeaponShopUI;
 class CNPC_Yakumo final : public CGameObject
 {
 public:
+	typedef struct tagNPCInfo
+	{
+		tagNPCInfo(_v3 vPos, _float fYAngle)
+			: vPos(vPos) , fYAngle(fYAngle)
+		{}
+
+		_v3 vPos = {};
+		_float fYAngle = 0.f;
+
+	}NPC_INFO;
+
+public:
 	enum NPC_ANI
 	{
 		Shrug,		// 손내밀며 으쓱
@@ -39,6 +51,7 @@ public:
 	virtual _int Update_GameObject(_double TimeDelta);
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
+	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader);
 	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur = false);
 private:
 	void Update_Collider();
@@ -49,7 +62,7 @@ private:
 
 private:
 	HRESULT Add_Component(void * pArg);
-	HRESULT SetUp_ConstantTable();
+	HRESULT SetUp_ConstantTable(CShader * pShader);
 	HRESULT Ready_Collider();
 	HRESULT Ready_BoneMatrix();
 

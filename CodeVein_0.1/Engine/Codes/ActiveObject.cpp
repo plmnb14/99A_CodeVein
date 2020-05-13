@@ -136,7 +136,13 @@ _int CActiveObject::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CActiveObject::Render_GameObject()
 {
-	Init_Shader();
+	_mat matveiwView = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	_mat matPro = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+
+	m_pShader->Set_Value("g_matView", &matveiwView, sizeof(_mat));
+	m_pShader->Set_Value("g_matProj", &matPro, sizeof(_mat));
+
+	Init_Shader(m_pShader);
 
 	m_pShader->Begin_Shader();
 
@@ -239,6 +245,30 @@ HRESULT CActiveObject::Render_GameObject_SetPass(CShader* pShader, _int iPass, _
 	return NOERROR;
 }
 
+HRESULT CActiveObject::Render_GameObject_Instancing_SetPass(CShader * pShader)
+{
+	Init_Shader(pShader);
+
+	_ulong dwNum = m_pMesh_Static->Get_NumMaterials();
+
+	for (_ulong i = 0; i < dwNum; ++i)
+	{
+		m_iPass = m_pMesh_Static->Get_MaterialPass(i);
+
+		pShader->Begin_Pass(m_iPass);
+
+		pShader->Set_StaticTexture_Auto(m_pMesh_Static, i);
+
+		pShader->Commit_Changes();
+
+		m_pMesh_Static->Render_Mesh(i);
+
+		pShader->End_Pass();
+	}
+
+	return S_OK;
+}
+
 
 void CActiveObject::Chaning_AtvMesh(const _tchar* _MeshName)
 {
@@ -302,17 +332,13 @@ HRESULT CActiveObject::LateInit_GameObject()
 	return S_OK;
 }
 
-void CActiveObject::Init_Shader()
+void CActiveObject::Init_Shader(CShader* pShader)
 {
 	_mat		matWorld, matView, matProj;
 
 	matWorld = m_pTransform->Get_WorldMat();
-	m_pGraphic_Dev->GetTransform(D3DTS_VIEW, &matView);
-	m_pGraphic_Dev->GetTransform(D3DTS_PROJECTION, &matProj);
 
-	m_pShader->Set_Value("g_matWorld", &matWorld, sizeof(_mat));
-	m_pShader->Set_Value("g_matView", &matView, sizeof(_mat));
-	m_pShader->Set_Value("g_matProj", &matProj, sizeof(_mat));
+	pShader->Set_Value("g_matWorld", &matWorld, sizeof(_mat));
 }
 
 HRESULT CActiveObject::Add_Components(_tchar* _meshName)

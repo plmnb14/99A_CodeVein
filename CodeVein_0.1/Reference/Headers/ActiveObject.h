@@ -46,6 +46,8 @@ public:
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
 	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur = false);
+	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader);
+
 
 public:
 	void Chaning_AtvMesh(const _tchar* _MeshName);
@@ -90,7 +92,7 @@ private:
 	virtual HRESULT Ready_GameObject(void * pArg);
 	virtual HRESULT Ready_GameObject_Prototype();
 	virtual HRESULT LateInit_GameObject();
-	virtual void	Init_Shader();
+	virtual void	Init_Shader(CShader* pShader);
 	virtual HRESULT	Add_Components(_tchar* _meshName);
 	virtual HRESULT Setup_Arg(void * pArg);
 

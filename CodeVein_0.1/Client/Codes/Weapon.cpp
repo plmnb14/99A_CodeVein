@@ -37,16 +37,13 @@ HRESULT CWeapon::Ready_GameObject(void * pArg)
 
 	m_pTrailEffect = g_pManagement->Create_Trail();
 	m_pTrailEffect->Set_TrailIdx(0);
-	//Safe_AddRef(m_pTrailEffect);
 	
 	m_pDistortionEffect = g_pManagement->Create_Trail();
 	m_pDistortionEffect->Set_TrailIdx(3);
 	m_pDistortionEffect->Set_TrailType(Engine::CTrail_VFX::Trail_Distortion);
-	//Safe_AddRef(m_pDistortionEffect);
 
 	m_pStaticTrailEffect = g_pManagement->Create_Trail();
 	m_pStaticTrailEffect->Set_TrailIdx(1);
-	//Safe_AddRef(m_pStaticTrailEffect);
 
 	return NOERROR;
 }
@@ -108,7 +105,16 @@ HRESULT CWeapon::Render_GameObject()
 		nullptr == m_pMesh_Static)
 		return E_FAIL;
 
-	if (FAILED(SetUp_ConstantTable()))
+	_mat matveiwView = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	_mat matPro = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+
+	m_pShader->Set_Value("g_matView", &matveiwView, sizeof(_mat));
+	m_pShader->Set_Value("g_matProj", &matPro, sizeof(_mat));
+
+	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShader)))
+		return E_FAIL;
+
+	if (FAILED(SetUp_ConstantTable(m_pShader)))
 		return E_FAIL;
 
 	m_pShader->Begin_Shader();
@@ -134,6 +140,40 @@ HRESULT CWeapon::Render_GameObject()
 	}
 
 	m_pShader->End_Shader();
+
+	Draw_Collider();
+
+	return NOERROR;
+}
+
+HRESULT CWeapon::Render_GameObject_Instancing_SetPass(CShader * pShader)
+{
+	if (nullptr == pShader ||
+		nullptr == m_pMesh_Static)
+		return E_FAIL;
+
+	if (FAILED(SetUp_ConstantTable(pShader)))
+		return E_FAIL;
+
+	_uint iNumSubSet = (_uint)m_pMesh_Static->Get_NumMaterials();
+
+	for (_uint i = 0; i < iNumSubSet; ++i)
+	{
+		m_iPass = m_pMesh_Static->Get_MaterialPass(i);
+
+		if (m_bDissolve)
+			m_iPass = 3;
+
+		pShader->Begin_Pass(m_iPass);
+
+		pShader->Set_StaticTexture_Auto(m_pMesh_Static, i);
+
+		pShader->Commit_Changes();
+
+		m_pMesh_Static->Render_Mesh(i);
+
+		pShader->End_Pass();
+	}
 
 	Draw_Collider();
 
@@ -1066,24 +1106,14 @@ HRESULT CWeapon::SetUp_WeaponData()
 	return S_OK;
 }
 
-HRESULT CWeapon::SetUp_ConstantTable()
+HRESULT CWeapon::SetUp_ConstantTable(CShader* pShader)
 {
-	if (nullptr == m_pShader)
+	if (nullptr == pShader)
 		return E_FAIL;
 
-	if (FAILED(m_pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
-
-	_mat ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-
-	if (FAILED(m_pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShader)))
-		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	//=============================================================================================
@@ -1095,15 +1125,15 @@ HRESULT CWeapon::SetUp_ConstantTable()
 	_float	fRimLightPower = 0.f;	// ¸²		: ³ôÀ» ¼ö·Ï ºûÀÌ ÆÛÁü(¸²¶óÀÌÆ®ÀÇ ¹üÀ§°¡ ³Ð¾îÁö°í , ¹ÐÁýµµ°¡ ³·¾ÆÁü).
 	_float	fMinSpecular = 1.f;	// ÃÖ¼Ò ºû	: ³ôÀ» ¼ö·Ï ºûÀÌ ÆÛÁü(¸²¶óÀÌÆ®ÀÇ ¹üÀ§°¡ ³Ð¾îÁö°í , ¹ÐÁýµµ°¡ ³·¾ÆÁü).
 
-	if (FAILED(m_pShader->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_fRimAlpha", &fRimLightPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fRimAlpha", &fRimLightPower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
 		return E_FAIL;
 	//=============================================================================================
 

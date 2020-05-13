@@ -49,7 +49,7 @@ HRESULT CWeaponShopUI::Ready_GameObject(void * pArg)
 _int CWeaponShopUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
-	m_pRendererCom->Add_RenderList(RENDER_ALPHA, this);
+	m_pRendererCom->Add_RenderList(RENDER_ALPHA_UI, this);
 
 	if (nullptr == m_pTarget)
 		return NO_EVENT;
@@ -172,7 +172,7 @@ HRESULT CWeaponShopUI::Render_GameObject()
 		nullptr == m_pBufferCom)
 		return E_FAIL;
 
-	if (FAILED(SetUp_ConstantTable()))
+	if (FAILED(SetUp_ConstantTable(m_pShaderCom)))
 		return E_FAIL;
 
 	m_pShaderCom->Begin_Shader();
@@ -181,6 +181,27 @@ HRESULT CWeaponShopUI::Render_GameObject()
 	m_pBufferCom->Render_VIBuffer();
 	m_pShaderCom->End_Pass();
 	m_pShaderCom->End_Shader();
+
+	return NOERROR;
+}
+
+HRESULT CWeaponShopUI::Render_GameObject_Instancing_SetPass(CShader * pShader)
+{
+	if (!m_bIsActive)
+		return NOERROR;
+	if (nullptr == pShader ||
+		nullptr == m_pBufferCom)
+		return E_FAIL;
+
+	if (FAILED(SetUp_ConstantTable(pShader)))
+		return E_FAIL;
+
+	pShader->Begin_Shader();
+	pShader->Begin_Pass(6);
+
+	m_pBufferCom->Render_VIBuffer();
+	pShader->End_Pass();
+	pShader->End_Shader();
 
 	return NOERROR;
 }
@@ -210,23 +231,23 @@ HRESULT CWeaponShopUI::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CWeaponShopUI::SetUp_ConstantTable()
+HRESULT CWeaponShopUI::SetUp_ConstantTable(CShader* pShader)
 {
-	if (nullptr == m_pShaderCom)
+	if (nullptr == pShader)
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matView", &m_matView, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
-		return E_FAIL;
-
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, _uint(0))))
+	if (FAILED(pShader->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
 
-	m_pShaderCom->Set_Texture("g_DepthTexture", g_pManagement->Get_Target_Texture(L"Target_DepthUI"));
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", pShader, _uint(0))))
+		return E_FAIL;
+
+	pShader->Set_Texture("g_DepthTexture", g_pManagement->Get_Target_Texture(L"Target_DepthUI"));
 	return NOERROR;
 }
 

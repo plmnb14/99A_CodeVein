@@ -123,7 +123,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//TARGET_TO_NAV(pInstance)->Check_OnNavMesh(_v3(0.f, 0.f, 0.f));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
 
-	//// ¾ßÄí¸ð
+	// ¾ßÄí¸ð
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_NPC_Yakumo", nullptr);
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_NPC", nullptr);
 
@@ -190,7 +190,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	// °Ë°ÕÁö
 	//====================================================================================================================================================
 
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji", 
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_SwordGenji",
 	//	&CSwordGenji::INFO(CSwordGenji::Normal, CSwordGenji::Sit1, 70.f, 10.f, 1.f,
 	//		true, _v3(5.f, 0.f, -2.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);

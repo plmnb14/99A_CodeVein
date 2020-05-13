@@ -72,6 +72,7 @@ public:
 	virtual _int Update_GameObject(_double TimeDelta) override;
 	virtual _int Late_Update_GameObject(_double TimeDelta) override;
 	virtual HRESULT Render_GameObject() override;
+	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader) override;
 	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur =false) override;
 
 private:
@@ -85,13 +86,6 @@ private:
 
 	void Play_5Shot(); // Atk_5wayShoot
 	void Play_Mist(); //allrangeshot
-	void Play_GetItem(); //아이템 획득
-	void Play_Target_CC();
-	//몬스터에게 강제로 cc기를 입히는 행위, 공격우선을 할 경우 player가 떄리는 객체를 기준으로 할 예정
-	//쿨타임 매우 길게 5초에 1번?
-	//락온한 객채를 대상으로 작동?
-	//락온 대상이 죽었을 경우 근처의 타겟을 1순위로
-	//그러나 락온으로 새로운 대상을 지정할 경우 해당 객체를 1순위로
 	void Play_PoisonWheelWind(); //atk_poisonmine
 
 protected:
@@ -103,7 +97,7 @@ protected:
 
 protected:
 	virtual HRESULT Add_Component(void * pArg) override;
-	virtual HRESULT SetUp_ConstantTable() override;
+	virtual HRESULT SetUp_ConstantTable(CShader* pShader) override;
 	virtual HRESULT Ready_Status(void * pArg) override;
 	virtual HRESULT Ready_Weapon(void * pArg) override;
 	virtual HRESULT Ready_Collider(void * pArg) override;
