@@ -252,10 +252,23 @@ void CWeaponBuyUI::SetUp_Default()
 
 void CWeaponBuyUI::Check_ItemOption()
 {
-	if (!m_bIsActive)
-		return;
+	if (SHOP_UPGRADE == m_eType)
+	{
+		m_pInven = m_pParent->Get_InvenUpgrade();
+
+		if (!m_pInven)
+			return;
+
+		if (m_pInven->Get_CheckCloseUpgradePopup())
+		{
+			this->Set_Active(true);
+			m_pInven->Set_CheckCloseUpgradePopup();
+		}
+	}
 
 	if (!m_pParent)
+		return;
+	if (!m_bIsActive)
 		return;
 
 	switch (m_eType)
@@ -275,9 +288,17 @@ void CWeaponBuyUI::Check_ItemOption()
 	case Client::CWeaponBuyUI::SHOP_ITEM_SELL:
 		break;
 	case Client::CWeaponBuyUI::SHOP_UPGRADE:
+	{
 		m_pInven = m_pParent->Get_InvenUpgrade();
+
+		if (!m_pInven)
+			return;
+		this->Set_Active(!m_pInven->Get_PopupOn());
+		m_pStatusUI->Set_Active(!m_pInven->Get_PopupOn());
 		break;
 	}
+	}
+
 	if (!m_pInven)
 		return;
 

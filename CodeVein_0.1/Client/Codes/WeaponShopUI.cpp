@@ -295,6 +295,7 @@ void CWeaponShopUI::Click_Option()
 					if (0 == iIdx) // 무기
 					{
 						m_pUpgradeInven->Set_Active(true);
+						m_pUpgradeInven->Refresh_Inven();
 						m_pBuyUI->Set_Active(true);
 						m_pBuyUI->Set_ShopType(CWeaponBuyUI::SHOP_UPGRADE);
 					}
@@ -323,6 +324,7 @@ void CWeaponShopUI::Click_Option()
 					if (0 == iIdx) // 무기
 					{
 						m_pSellInven->Set_Active(true);
+						m_pSellInven->Refresh_Inven();
 						m_pBuyUI->Set_Active(true);
 						m_pBuyUI->Set_ShopType(CWeaponBuyUI::SHOP_WEAPON_SELL);
 					}

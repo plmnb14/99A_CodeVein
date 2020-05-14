@@ -37,6 +37,7 @@ namespace Engine
 		_uint		iReinforce;		//강화 단계
 
 		_float		fDamage;		//기본 공격력
+		_float		fPlusDamage;	//추가 공격력
 
 		_uint		iPrice;			// 가격
 

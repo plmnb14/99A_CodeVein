@@ -167,6 +167,8 @@ _int CWeapon_Inven_InShop::Update_GameObject(_double TimeDelta)
 		if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
 		{
 			m_pWeaponUpgradePopup->Set_Active(false);
+			m_bCloseUpgradePopup = true;
+			Set_Active(true);
 		}
 	}
 	
@@ -303,7 +305,8 @@ void CWeapon_Inven_InShop::Click_Inven()
 				Refresh_Inven();
 
 				m_pSelectedSlot = pSlot;
-				if (SHOP_WEAPON_SELL == m_eOption)
+				if (SHOP_WEAPON_SELL == m_eOption ||
+					SHOP_WEAPON_UPGRADE == m_eOption)
 				{
 					vector<CWeapon_Slot*>* pWeaponSlot = m_pWeaponInventory->Get_VecWeaponSlot();
 					(*pWeaponSlot)[iIdx]->Set_SelectShop(true);
@@ -333,6 +336,7 @@ void CWeapon_Inven_InShop::Click_Inven()
 				case  Client::CWeapon_Inven_InShop::SHOP_WEAPON_UPGRADE:
 				{
 					m_pWeaponUpgradePopup->Set_Active(true);
+					Set_Active(false);
 					return;
 				}
 				}
@@ -374,9 +378,25 @@ void CWeapon_Inven_InShop::Sell_Weapon()
 	}
 }
 
-void CWeapon_Inven_InShop::Upgrade_Weapon()
+void CWeapon_Inven_InShop::Upgrade_Weapon(WPN_PARAM tParam)
 {
-	
+	_ulong idx = 0;
+
+	vector<CWeapon_Slot*>* pVecSlot = m_pWeaponInventory->Get_VecWeaponSlot();
+	for (auto& pSlot : m_vecWeaponSlot)
+	{
+		if (pSlot->Get_SelectShop())
+		{
+			pSlot->Set_WeaponParam(tParam);
+
+			if (idx >= pVecSlot->size())
+				return;
+
+			(*pVecSlot)[idx]->Set_WeaponParam(tParam);
+			break;
+		}
+		++idx;
+	}
 }
 
 HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)

@@ -31,16 +31,19 @@ private:
 	virtual ~CWeapon_Inven_InShop() = default;
 
 public:
-	WPN_PARAM		 Get_UseWeaponParam(_uint iIndex) { return m_UseWeaponParam[iIndex]; }
+	WPN_PARAM		Get_UseWeaponParam(_uint iIndex) { return m_UseWeaponParam[iIndex]; }
 	CWeapon_Slot*	Get_HoverSlot() { return m_pHoverSlot; }
 	CWeapon_Slot*	Get_SelectedSlot() { return m_pSelectedSlot; }
 	_bool			Get_PopupOn();
+	_bool			Get_CheckCloseUpgradePopup() { return m_bCloseUpgradePopup; }
 public:
+	void Set_CheckCloseUpgradePopup() { m_bCloseUpgradePopup = false; }
+
 	void Setup_InvenType(INVEN_SHOP_OPTION eOption);
 	void Refresh_Inven();
 	void Buy_Weapon();
 	void Sell_Weapon();
-	void Upgrade_Weapon();
+	void Upgrade_Weapon(WPN_PARAM tParam);
 
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();
@@ -80,6 +83,7 @@ private:
 	INVEN_SHOP_OPTION		m_eOption = SHOP_END;
 	
 	CWeapon*				m_pTempWeapon = nullptr;
+	_bool					m_bCloseUpgradePopup = false;
 public:
 	static CWeapon_Inven_InShop*	Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);

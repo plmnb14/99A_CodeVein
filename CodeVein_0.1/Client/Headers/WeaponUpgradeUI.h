@@ -93,6 +93,9 @@ private:
 	CPlayerFontUI*						m_pFontMyMatCnt_0 = nullptr;
 	CPlayerFontUI*						m_pFontMyMatCnt_1 = nullptr;
 	CPlayerFontUI*						m_pFontMyMatCnt_2 = nullptr;
+	CPlayerFontUI*						m_pFontSlash_0 = nullptr;
+	CPlayerFontUI*						m_pFontSlash_1 = nullptr;
+	CPlayerFontUI*						m_pFontSlash_2 = nullptr;
 
 	_bool								m_bLateInit = false;
 	_int								m_iTexIdx = 0;

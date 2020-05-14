@@ -105,6 +105,52 @@ _int CWeaponUpgradeUI::Update_GameObject(_double TimeDelta)
 		if (m_pFontMyMatCnt_0)m_pFontMyMatCnt_0->Set_Active(m_bIsActive);
 		if (m_pFontMyMatCnt_1)m_pFontMyMatCnt_1->Set_Active(m_bIsActive);
 		if (m_pFontMyMatCnt_2)m_pFontMyMatCnt_2->Set_Active(m_bIsActive);
+
+		if (m_pFontSlash_0)m_pFontSlash_0->Set_Active(m_bIsActive);
+		if (m_pFontSlash_1)m_pFontSlash_1->Set_Active(m_bIsActive);
+		if (m_pFontSlash_2)m_pFontSlash_2->Set_Active(m_bIsActive);
+
+		m_fViewZ = 0.2f;
+
+		_float fMul = 0.5f;
+		_float fPosX_1 = WINCX * 0.75f;
+		_float fPosX_2 = WINCX * 0.82f;
+		_float fPosY_1 = WINCY * 0.43f;
+		_float fPosY_2 = WINCY * 0.51f;
+		_float fPosY_3 = WINCY * 0.59f;
+		m_pFontRequireMatCnt_0->Set_UI_Pos(fPosX_2, fPosY_1);
+		m_pFontRequireMatCnt_0->Set_UI_Size(20.4f * fMul, 35.f * fMul);
+
+		m_pFontRequireMatCnt_1->Set_UI_Pos(fPosX_2, fPosY_2);
+		m_pFontRequireMatCnt_1->Set_UI_Size(20.4f * fMul, 35.f * fMul);
+
+		m_pFontRequireMatCnt_2->Set_UI_Pos(fPosX_2, fPosY_3);
+		m_pFontRequireMatCnt_2->Set_UI_Size(20.4f * fMul, 35.f * fMul);
+
+		m_pFontMyMatCnt_0->Set_UI_Pos(fPosX_1, fPosY_1);
+		m_pFontMyMatCnt_0->Set_UI_Size(20.4f * fMul, 35.f * fMul);
+
+		m_pFontMyMatCnt_1->Set_UI_Pos(fPosX_1, fPosY_2);
+		m_pFontMyMatCnt_1->Set_UI_Size(20.4f * fMul, 35.f * fMul);
+
+		m_pFontMyMatCnt_2->Set_UI_Pos(fPosX_1, fPosY_3);
+		m_pFontMyMatCnt_2->Set_UI_Size(20.4f * fMul, 35.f * fMul);
+
+		m_pFontSlash_0->Set_UI_Pos(fPosX_1 + 40.f, fPosY_1);
+		m_pFontSlash_0->Set_UI_Size(20.4f * fMul, 35.f * fMul);
+
+		m_pFontSlash_1->Set_UI_Pos(fPosX_1 + 40.f, fPosY_2);
+		m_pFontSlash_1->Set_UI_Size(20.4f * fMul, 35.f * fMul);
+
+		m_pFontSlash_2->Set_UI_Pos(fPosX_1 + 40.f, fPosY_3);
+		m_pFontSlash_2->Set_UI_Size(20.4f * fMul, 35.f * fMul);
+
+		m_pFontRequireHaze->Set_UI_Pos(WINCX * 0.88, WINCY * 0.11);
+		m_pFontRequireHaze->Set_UI_Size(20.4f * fMul, 35.f * fMul);
+
+		m_pFontMyHaze->Set_UI_Pos(WINCX * 0.88, WINCY * 0.15);
+		m_pFontMyHaze->Set_UI_Size(20.4f * fMul, 35.f * fMul);
+
 	}
 
 	if (WpnAll_END == m_eWeaponDesc &&
@@ -126,11 +172,11 @@ _int CWeaponUpgradeUI::Update_GameObject(_double TimeDelta)
 
 			_v3 vPos;
 			if (0 == i)
-				m_vecOption[i]->Set_UI_Pos(Get_UI_Pos().x, Get_UI_Pos().y + 268.f);
+				m_vecOption[i]->Set_UI_Pos(Get_UI_Pos().x, Get_UI_Pos().y + 265.f);
 			else if (1 == i)
-				m_vecOption[i]->Set_UI_Pos(Get_UI_Pos().x, Get_UI_Pos().y + 308.f);
+				m_vecOption[i]->Set_UI_Pos(Get_UI_Pos().x, Get_UI_Pos().y + 305.f);
 
-			m_vecOption[i]->Set_UI_Size(142, 70);
+			m_vecOption[i]->Set_UI_Size(126, 60);
 
 			TARGET_TO_TRANS(m_vecOption[i])->Set_Pos(vPos);
 			m_vecOption[i]->Set_ButtonType(CWeaponUpgradeOptionUI::BUTTON_TYPE(i));
@@ -235,7 +281,7 @@ void CWeaponUpgradeUI::Upgrade_Weapon()
 {
 	CWeapon_Slot* pSlot = m_pInven->Get_SelectedSlot();
 	_int iReinForce = pSlot->Get_WeaponParam().iReinforce;
-	_int iPrice = 100 + iReinForce * 200;
+	_int iPrice = (_float)Get_UpgradePrice(iReinForce);
 	_int iMyHaze = (_int)CUI_Manager::Get_Instance()->Get_HazeUI()->Get_Haze_Cnt();
 
 	if (iPrice > iMyHaze)
@@ -257,11 +303,11 @@ void CWeaponUpgradeUI::Upgrade_Weapon()
 	_int iRequireTitanium	= Get_RequireMaterial(CMaterial::MATERIAL_TYPE::Queen_Titanium, iReinForce);
 	_int iRequireTungsten	= Get_RequireMaterial(CMaterial::MATERIAL_TYPE::Queen_Tungsten, iReinForce);
 
-	if(iSteel >iRequireSteel)
+	if(iSteel < iRequireSteel)
 		return;
-	if (iTitanium > iRequireTitanium)
+	if (iTitanium < iRequireTitanium)
 		return;
-	if (iTungsten > iRequireTungsten)
+	if (iTungsten < iRequireTungsten)
 		return;
 
 	CUI_Manager::Get_Instance()->Get_HazeUI()->Accumulate_Haze(-iPrice);
@@ -289,6 +335,7 @@ void CWeaponUpgradeUI::Upgrade_Weapon()
 	tParam.iReinforce += 1;
 	tParam.fPlusDamage = Get_PlusDamage(tParam.fDamage, tParam.iReinforce);
 	pSlot->Set_WeaponParam(tParam);
+	m_pInven->Upgrade_Weapon(tParam);
 
 }
 
@@ -507,6 +554,25 @@ void CWeaponUpgradeUI::SetUp_Default()
 	m_pFontMyMatCnt_2->Set_UI_Size(20.4f * fMul, 35.f * fMul);
 	m_pFontMyMatCnt_2->Set_ViewZ(m_fViewZ - 0.1f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontMyMatCnt_2, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	m_pFontSlash_0 = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
+	m_pFontSlash_0->Set_UI_Pos(fPosX_2, fPosY_3);
+	m_pFontSlash_0->Set_UI_Size(20.4f * fMul, 35.f * fMul);
+	m_pFontSlash_0->Set_ViewZ(m_fViewZ - 0.1f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontSlash_0, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	
+	m_pFontSlash_1 = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
+	m_pFontSlash_1->Set_UI_Pos(fPosX_2, fPosY_3);
+	m_pFontSlash_1->Set_UI_Size(20.4f * fMul, 35.f * fMul);
+	m_pFontSlash_1->Set_ViewZ(m_fViewZ - 0.1f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontSlash_1, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	m_pFontSlash_2 = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
+	m_pFontSlash_2->Set_UI_Pos(fPosX_2, fPosY_3);
+	m_pFontSlash_2->Set_UI_Size(20.4f * fMul, 35.f * fMul);
+	m_pFontSlash_2->Set_ViewZ(m_fViewZ - 0.1f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontSlash_2, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
 }
 
 void CWeaponUpgradeUI::Check_LateInit()
@@ -620,6 +686,19 @@ void CWeaponUpgradeUI::Check_ItemOption()
 		return;
 	m_pFontMyMatCnt_2->Update_NumberValue(iTungsten);
 	m_pFontMyMatCnt_2->Set_Active(true);
+
+	if (!m_pFontSlash_0)
+		return;
+	m_pFontSlash_0->Set_Slash(true);
+	m_pFontSlash_0->Set_Active(true);
+	if (!m_pFontSlash_1)
+		return;
+	m_pFontSlash_1->Set_Slash(true);
+	m_pFontSlash_1->Set_Active(true);
+	if (!m_pFontSlash_2)
+		return;
+	m_pFontSlash_2->Set_Slash(true);
+	m_pFontSlash_2->Set_Active(true);
 	//==============================================================================================================
 	// Name
 	if (!m_pWeaponNameUI)
