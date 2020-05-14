@@ -58,9 +58,9 @@ HRESULT CMaterial_Inven::Ready_GameObject(void * pArg)
 
 	}
 	
-	Add_MultiMaterial(CMaterial::Queen_Steel, 8);
-	Add_MultiMaterial(CMaterial::Queen_Titanium, 9);
-	Add_MultiMaterial(CMaterial::Queen_Tungsten, 10);
+	//Add_MultiMaterial(CMaterial::Queen_Steel, 8);
+	//Add_MultiMaterial(CMaterial::Queen_Titanium, 9);
+	//Add_MultiMaterial(CMaterial::Queen_Tungsten, 10);
 	return NOERROR;
 }
 
@@ -81,6 +81,13 @@ _int CMaterial_Inven::Update_GameObject(_double TimeDelta)
 	if (m_pExplainUI)
 		m_pExplainUI->Set_Active(m_bIsActive);
 	
+	_uint iIdx = 0;
+	for (auto& iter : m_vecMaterialSlot)
+	{
+		iter->Set_UI_Pos(m_fPosX - 100.f + 52.f * (iIdx % 5), m_fPosY - 150.f + 52.f * (iIdx / 5));
+		iter->Set_Active(m_bIsActive);
+		iIdx++;
+	}
 	return NO_EVENT;
 }
 
@@ -240,6 +247,14 @@ void CMaterial_Inven::SetUp_Default()
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExplainUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
 
+void CMaterial_Inven::Add_Slot()
+{
+	CMaterial_Slot* pSlot = static_cast<CMaterial_Slot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MaterialSlot", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pSlot, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	pSlot->Set_UI_Size(50.f, 50.f);
+	m_vecMaterialSlot.push_back(pSlot);
+}
+
 void CMaterial_Inven::Add_Material(CMaterial::MATERIAL_TYPE eType)
 {
 	/*g_pManagement->Add_GameObject_ToLayer(L"GameObject_Material", SCENE_STAGE, L"Layer_Material");
@@ -283,10 +298,13 @@ void CMaterial_Inven::Sell_Material(_uint iDelete)
 				pSlot->Delete_Item();
 			}
 			
+			// 슬롯 안의 아이템 개수가 0이 되면 중간삭제
 			if (pSlot->Get_Size() == 0)
 			{
 				m_vecMaterialSlot.erase(m_vecMaterialSlot.begin() + idx);
 				m_vecMaterialSlot.shrink_to_fit();
+				// 슬롯 삭제 후 맨 뒤에 다시 슬롯 추가(슬롯의 개수가 줄어드는 것 방지)
+				Add_Slot();
 				break;
 			}
 		}
@@ -295,13 +313,13 @@ void CMaterial_Inven::Sell_Material(_uint iDelete)
 	}
 	
 	
-	_ulong Idx = 0;
+	/*_ulong Idx = 0;
 	for (auto& pSlot : m_vecMaterialSlot)
 	{
 		
 		pSlot->Set_UI_Pos(m_vecUI_DESC[Idx]->fPosX, m_vecUI_DESC[Idx]->fPosY);
 		++Idx;
-	}
+	}*/
 }
 
 CMaterial_Inven * CMaterial_Inven::Create(_Device pGraphic_Device)

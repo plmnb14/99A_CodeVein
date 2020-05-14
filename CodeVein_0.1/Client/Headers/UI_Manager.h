@@ -70,7 +70,14 @@
 #include "ExplainMaterialUI.h"
 #include "ExplainExpendUI.h"
 
-#include "MaterialShopUI.h"
+#include "GeneralStoreUI.h"
+#include "MaterialCollectionUI.h"
+#include "MaterialOptionUI.h"
+#include "Material_InfoUI.h"
+
+#include "ExpendCollectionUI.h"
+#include "ExpendOptionUI.h"
+#include "Expend_InfoUI.h"
 
 BEGIN(Client)
 
@@ -112,7 +119,7 @@ public:
 	CScriptUI* Get_ScriptUI() { return m_pScriptUI; } // 대사 UI
 	CPlayerHP* Get_PlayerHP() { return m_pPlayerHP; } // 플레이어 HP
 	CPlayerST* Get_PlayerST() { return m_pPlayerST; } // 플레이어 ST
-	CMaterialShopUI* Get_MaterialShopUI() { return m_pMaterialShopUI; }
+	CGeneralStoreUI* Get_MaterialShopUI() { return m_pGeneralStoreUI; }
 	
 	// 펫 인벤토리
 	CPet_Inven* Get_Pet_Inven() { return m_pPet_Inven; }
@@ -141,7 +148,7 @@ private:
 	CScriptUI*	m_pScriptUI = nullptr;
 	CPlayerHP*	m_pPlayerHP = nullptr;
 	CPlayerST*	m_pPlayerST = nullptr;
-	CMaterialShopUI* m_pMaterialShopUI = nullptr; // 소비, 재료 상점 UI
+	CGeneralStoreUI* m_pGeneralStoreUI = nullptr; // 소비, 재료 상점 UI
 	
 	// 펫 인벤토리
 	CPet_Inven* m_pPet_Inven = nullptr;

@@ -25,7 +25,7 @@ HRESULT CHazeUI::Ready_GameObject(void * pArg)
 	CUI::Ready_GameObject(pArg);
 	
 	SetUp_Default();
-	
+	m_uHazeCnt = 2000;
 	return NOERROR;
 }
 

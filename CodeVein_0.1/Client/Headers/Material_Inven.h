@@ -27,6 +27,7 @@ private:
 	void					Load_Materials(CMaterial* pMaterial, _uint iIndex = 0);
 	void					Click_Inven(); // 활성화일 경우에만 적용됨
 	void					SetUp_Default();
+	void					Add_Slot();
 
 public:
 	void Add_Material(CMaterial::MATERIAL_TYPE eType);
