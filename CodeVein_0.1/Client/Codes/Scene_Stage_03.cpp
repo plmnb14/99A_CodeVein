@@ -33,6 +33,10 @@ HRESULT CScene_Stage_03::Ready_Scene()
 	if (FAILED(Ready_Layer_Environment(L"Layer_Environment")))
 		return E_FAIL;
 
+	CRenderer* pRenderer = static_cast<CRenderer*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, L"Renderer"));
+	pRenderer->Fog_On(true);
+	Safe_Release(pRenderer);
+
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_03.dat");
 
 	//CScriptManager::Get_Instance()->Set_StageIdx(3);
@@ -124,6 +128,9 @@ HRESULT CScene_Stage_03::Ready_Layer_Player(const _tchar * pLayerTag)
 HRESULT CScene_Stage_03::Ready_Layer_Environment(const _tchar* pLayerTag)
 {
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Sky", SCENE_STAGE, pLayerTag)))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Sky_Blur", SCENE_STAGE, pLayerTag)))
 		return E_FAIL;
 
 	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_BossMassageUI", SCENE_STAGE, L"Layer_BossMassageUI")))

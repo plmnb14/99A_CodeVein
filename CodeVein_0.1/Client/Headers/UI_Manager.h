@@ -65,8 +65,28 @@
 #include "HazeUI.h"
 #include "ScriptUI.h"
 
+#include "WeaponShopUI.h"
+#include "WeaponShopOptionUI.h"
+#include "WeaponBuyUI.h"
+#include "Weapon_Inven_InShop.h"
+#include "WeaponBuyPopupUI.h"
+#include "WeaponBuyPopupOptionUI.h"
+#include "WeaponUpgradeUI.h"
+#include "WeaponUpgradeOptionUI.h"
+
 #include "ExplainArmorUI.h"
 #include "ExplainWeaponUI.h"
+#include "ExplainMaterialUI.h"
+#include "ExplainExpendUI.h"
+
+#include "GeneralStoreUI.h"
+#include "MaterialCollectionUI.h"
+#include "MaterialOptionUI.h"
+#include "Material_InfoUI.h"
+
+#include "ExpendCollectionUI.h"
+#include "ExpendOptionUI.h"
+#include "Expend_InfoUI.h"
 
 #include "Get_ItemUI.h"
 #include "PickUp_ItemUI.h"
@@ -99,7 +119,7 @@ public:
 	CWeapon_Inven* Get_Weapon_Inven() { return m_pWeapon_Inven; }
 	CArmor_Inven* Get_Armor_Inven() { return m_pArmor_Inven; }
 	CTotal_Inven* Get_Total_Inven() { return m_pTotal_Inven; }
-	CInventory*		Get_Inventory() { return m_pInventory; }
+	CInventory*		Get_Inventory() { return m_pWeaponInventory; }
 	void Set_BossUI_Active(_bool bIsActive);
 	CBloodCodeMenuUI* Get_BloodCode_Menu() { return m_pBloodCodeMenu; }
 	CBloodCodeOwner* Get_BloodCode_Owner() { return m_pBloodCodeOwner; }
@@ -111,6 +131,7 @@ public:
 	CScriptUI* Get_ScriptUI() { return m_pScriptUI; } // 대사 UI
 	CPlayerHP* Get_PlayerHP() { return m_pPlayerHP; } // 플레이어 HP
 	CPlayerST* Get_PlayerST() { return m_pPlayerST; } // 플레이어 ST
+	CGeneralStoreUI* Get_MaterialShopUI() { return m_pGeneralStoreUI; }
 	
 	// 펫 인벤토리
 	CPet_Inven* Get_Pet_Inven() { return m_pPet_Inven; }
@@ -128,7 +149,7 @@ private:
 	CWeapon_Inven* m_pWeapon_Inven = nullptr;
 	CArmor_Inven* m_pArmor_Inven = nullptr;
 	CTotal_Inven* m_pTotal_Inven = nullptr;
-	CInventory*		m_pInventory = nullptr;
+	CInventory*		m_pWeaponInventory = nullptr;
 	CBloodCodeMenuUI* m_pBloodCodeMenu = nullptr;
 	CBloodCodeOwner* m_pBloodCodeOwner = nullptr;
 	CBloodCodeSelectUI * m_pBloodCodeSelectUI = nullptr;
@@ -139,6 +160,7 @@ private:
 	CScriptUI*	m_pScriptUI = nullptr;
 	CPlayerHP*	m_pPlayerHP = nullptr;
 	CPlayerST*	m_pPlayerST = nullptr;
+	CGeneralStoreUI* m_pGeneralStoreUI = nullptr; // 소비, 재료 상점 UI
 	
 	// 펫 인벤토리
 	CPet_Inven* m_pPet_Inven = nullptr;

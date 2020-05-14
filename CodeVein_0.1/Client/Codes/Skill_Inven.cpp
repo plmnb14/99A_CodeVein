@@ -38,6 +38,7 @@ HRESULT CSkill_Inven::Ready_GameObject(void * pArg)
 	m_fViewZ = 4.f;
 
 	SetUp_Default();
+
 	return NOERROR;
 }
 
@@ -68,6 +69,8 @@ _int CSkill_Inven::Update_GameObject(_double TimeDelta)
 			iter->Set_Regist(false);
 			iter->Set_Select(false);
 		}
+
+		m_pExplainUI->Set_Type(SkillID_End);
 	}
 
 	return NO_EVENT;
@@ -169,8 +172,8 @@ void CSkill_Inven::SetUp_Default()
 
 	m_pExplainUI = static_cast<CExplainSkillUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExplainSkillUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExplainUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
-	m_pExplainUI->Set_UI_Pos(WINCX * 0.5f, WINCY * 0.5f);
-	m_pExplainUI->Set_UI_Size(WINCX, WINCY);
+	m_pExplainUI->Set_UI_Pos(WINCX * 0.5f + 10.f, WINCY * 0.5f - 20.f);
+	m_pExplainUI->Set_UI_Size(700.f, 700.f);
 }
 
 void CSkill_Inven::Click_SubUI()
@@ -200,6 +203,14 @@ void CSkill_Inven::Click_SubUI()
 				CUI_Manager::Get_Instance()->Get_Total_Inven()->Set_Skill_ID(m_iRegistIdx, SkillID_End);
 				m_vecSlot[i]->Set_Select(false);
 			}
+		}
+	}
+
+	for (auto& iter : m_vecSlot)
+	{
+		if (iter->Pt_InRect())
+		{
+			m_pExplainUI->Set_Type(iter->Get_SkillID());
 		}
 	}
 }

@@ -50,21 +50,27 @@ public:
 public:
 	typedef enum tagSoundOption
 	{
-		BGM_Sound, Voice_Sound, Effect_Sound, Ambient_Sound, Master_Sound,
+		BGM_Sound, Voice_Sound, Effect_Sound, Ambient_Sound,
 		End_Sound,
 	}SOUND;
+
+	typedef enum tagVolumeCtrl
+	{
+		BGM_Volume, Voice_Volume, Effect_Volume, Ambien_Volume, Master_Volume,
+		End_Volume,
+	}VOLUME;
 
 private:
 	explicit	CSoundManager();
 	virtual		~CSoundManager() = default;
 
 public:
-	virtual _float Get_Volume(SOUND _eChannel = Master_Sound) { return m_fVolumeChannel[_eChannel]; }
-	virtual _float Get_Pitch(SOUND _eChannel = Master_Sound) { return m_fPitchChannel[_eChannel]; }
+	virtual _float Get_Volume(VOLUME _eChannel = Master_Volume) { return m_fVolumeChannel[_eChannel]; }
+	virtual _float Get_Pitch(VOLUME _eChannel = Master_Volume) { return m_fPitchChannel[_eChannel]; }
 
 public:
-	virtual void Set_Volume(SOUND _eChannel = Master_Sound, _float _fVolume = 1.f) { m_fVolumeChannel[_eChannel] = _fVolume; }
-	virtual void Set_Pitch(SOUND _eChannel = Master_Sound, _float _fPitch = 1.f) { m_fPitchChannel[_eChannel] = _fPitch; }
+	virtual void Set_Volume(VOLUME _eChannel = Master_Volume, _float _fVolume = 1.f) { m_fVolumeChannel[_eChannel] = _fVolume; }
+	virtual void Set_Pitch(VOLUME _eChannel = Master_Volume, _float _fPitch = 1.f) { m_fPitchChannel[_eChannel] = _fPitch; }
 
 public: 
 	virtual void Play_Sound(TCHAR* pSoundKey, CHANNELID eID, SOUND _eSoundGroup);

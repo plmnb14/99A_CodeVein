@@ -5,7 +5,7 @@
 #include "Management.h"
 
 BEGIN(Client)
-
+class CWeaponShopUI;
 class CNPC_Yakumo final : public CGameObject
 {
 public:
@@ -47,12 +47,12 @@ protected:
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
 	virtual HRESULT Ready_GameObject(void* pArg);
+	virtual HRESULT LateInit_GameObject();
 	virtual _int Update_GameObject(_double TimeDelta);
 	virtual _int Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
 	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader);
 	virtual HRESULT Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _bIsForMotionBlur = false);
-
 private:
 	void Update_Collider();
 	void Render_Collider();
@@ -81,6 +81,8 @@ public:
 	virtual void Free();
 
 private:
+	CWeaponShopUI*			m_pWeaponShopUI;
+
 	_mat*					m_matBone[Bone_End];
 	NPC_ANI					m_eState;
 
