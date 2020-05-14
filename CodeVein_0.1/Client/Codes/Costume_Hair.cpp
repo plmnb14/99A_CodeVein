@@ -23,7 +23,6 @@ HRESULT CCostume_Hair::Ready_GameObject(void * pArg)
 	m_pmatParent = pInfo.pmatParent;
 	m_pmatBone = pInfo.pmatBone;
 	m_vColorValue = pInfo.vColorValue;
-	m_eHairType = pInfo.eHairType;
 
 
 
@@ -128,7 +127,7 @@ void CCostume_Hair::Calc_AttachBoneTransform()
 	m_pTransform->Calc_ParentMat(&(tmpMat * *m_pmatParent));
 }
 
-void CCostume_Hair::Change_HairMesh(HairType _eHairType)
+void CCostume_Hair::Change_HairMesh(CClothManager::Cloth_Static _eHairType)
 {
 	if (_eHairType == m_eHairType)
 		return;
@@ -137,46 +136,46 @@ void CCostume_Hair::Change_HairMesh(HairType _eHairType)
 
 	switch (_eHairType)
 	{
-	case CCostume_Hair::Hair_01:
+	case CClothManager::Cloth_Static::Hair_01:
 	{
 		lstrcpy(szMeshName, L"Mesh_Hair_01");
-		m_eHairTag = CClothManager::Hair01;
+		m_eHairType = CClothManager::Hair_01;
 		break;
 	}
-	case CCostume_Hair::Hair_02:
+	case CClothManager::Hair_02:
 	{
 		lstrcpy(szMeshName, L"Mesh_Hair_02");
-		m_eHairTag = CClothManager::Hair02;
+		m_eHairType = CClothManager::Hair_02;
 		break;
 	}
-	case CCostume_Hair::Hair_03:
+	case CClothManager::Hair_03:
 	{
 		lstrcpy(szMeshName, L"Mesh_Hair_03");
-		m_eHairTag = CClothManager::Hair03;
+		m_eHairType = CClothManager::Hair_03;
 		break;
 	}
-	case CCostume_Hair::Hair_04:
+	case CClothManager::Hair_04:
 	{
 		lstrcpy(szMeshName, L"Mesh_Hair_04");
-		m_eHairTag = CClothManager::Hair04;
+		m_eHairType = CClothManager::Hair_04;
 		break;
 	}
-	case CCostume_Hair::Hair_05:
+	case CClothManager::Hair_05:
 	{
 		lstrcpy(szMeshName, L"Mesh_Hair_05");
-		m_eHairTag = CClothManager::Hair05;
+		m_eHairType = CClothManager::Hair_05;
 		break;
 	}
-	case CCostume_Hair::Hair_06:
+	case CClothManager::Hair_06:
 	{
 		lstrcpy(szMeshName, L"Mesh_Hair_06");
-		m_eHairTag = CClothManager::Hair06;
+		m_eHairType = CClothManager::Hair_06;
 		break;
 	}
-	case CCostume_Hair::Hair_07:
+	case CClothManager::Hair_07:
 	{
 		lstrcpy(szMeshName, L"Mesh_Hair_07");
-		m_eHairTag = CClothManager::Hair07;
+		m_eHairType = CClothManager::Hair_07;
 		break;
 	}
 	}
@@ -193,13 +192,15 @@ void CCostume_Hair::Change_HairMesh(HairType _eHairType)
 	Safe_AddRef(iter->second);
 
 	m_eHairType = _eHairType;
+
+	g_pClothManager->Set_Sleep_AllStatic();
 }
 
 void CCostume_Hair::Change_Vertex()
 {
 	physx::PxSceneWriteLock scopedLock(*g_pPhysx->Get_Scene());
 
-	physx::PxCloth* pCloth = g_pClothManager->Get_Cloth_Static(m_eHairTag);
+	physx::PxCloth* pCloth = g_pClothManager->Get_Cloth_Static(m_eHairType);
 
 	physx::PxClothFabric* pFabric = pCloth->getFabric();
 	physx::PxClothParticleData* pData = pCloth->lockParticleData();
@@ -224,13 +225,39 @@ void CCostume_Hair::Change_Vertex()
 
 _int CCostume_Hair::Update_GameObject(_double TimeDelta)
 {
+	//if (false == m_bEnable)
+	//	return NO_EVENT;
+
+	//CGameObject::Update_GameObject(TimeDelta);
+	//Calc_AttachBoneTransform();
+
+	//g_pClothManager->Update_Cloth_Static(m_eHairTag);
+
+	//static _byte iCount = 0;
+
+	//if (g_pInput_Device->Key_Down(DIK_U))
+	//{
+	//	++iCount;
+
+	//	Change_HairMesh(HairType(iCount));
+
+	//	if (6 == iCount)
+	//		iCount = 0;
+	//}
+
+	//return NO_EVENT;
+
+	// 안씀
+	return NO_EVENT;
+}
+
+_int CCostume_Hair::Update_GameObject(_double TimeDelta, _bool bSkill)
+{
 	if (false == m_bEnable)
 		return NO_EVENT;
 
 	CGameObject::Update_GameObject(TimeDelta);
 	Calc_AttachBoneTransform();
-
-	g_pClothManager->Update_Cloth_Static(m_eHairTag);
 
 	static _byte iCount = 0;
 
@@ -238,11 +265,14 @@ _int CCostume_Hair::Update_GameObject(_double TimeDelta)
 	{
 		++iCount;
 
-		Change_HairMesh(HairType(iCount));
+		Change_HairMesh(CClothManager::Cloth_Static(iCount));
 
-		if (6 == iCount)
-			iCount = 0;
+		if (CClothManager::Cloth_Static::Static_End - 1 == iCount)
+			iCount = CClothManager::Hair_01;
 	}
+
+	if(g_pClothManager->Is_Valid_Static(m_eHairType))
+		g_pClothManager->Update_Cloth_Static(m_eHairType, bSkill);
 
 	return NO_EVENT;
 }
@@ -250,6 +280,9 @@ _int CCostume_Hair::Update_GameObject(_double TimeDelta)
 _int CCostume_Hair::Late_Update_GameObject(_double TimeDelta)
 {
 	if (false == m_bEnable)
+		return NO_EVENT;
+
+	if (false == g_pClothManager->Is_Valid_Static(m_eHairType))
 		return NO_EVENT;
 
 	if (!m_tObjParam.bInvisible)
@@ -327,7 +360,7 @@ HRESULT CCostume_Hair::Render_GameObject_Instancing_SetPass(CShader * pShader)
 	IF_NULL_VALUE_RETURN(m_pStaticMesh, E_FAIL);
 
 	//// 버텍스 교체
-	//Change_Vertex();
+	Change_Vertex();
 
 	if (FAILED(SetUp_ConstantTable(pShader)))
 		return E_FAIL;
@@ -354,7 +387,7 @@ HRESULT CCostume_Hair::Render_GameObject_Instancing_SetPass(CShader * pShader)
 	}
 
 	// 버텍스 교체
-	Change_Vertex();
+	//Change_Vertex();
 
 	return S_OK;
 }

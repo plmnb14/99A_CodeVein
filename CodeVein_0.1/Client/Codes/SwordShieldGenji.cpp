@@ -1012,6 +1012,7 @@ void CSwordShieldGenji::Check_PhyCollider()
 		m_fSkillMoveMultiply = 0.5f;
 
 		m_pAIControllerCom->Reset_BT();
+		m_pAIControllerCom->Set_Value_Of_BlackBoard(L"TrailOff", true);
 
 		_mat matPlayer = TARGET_TO_TRANS(CMonster::Get_pTargetObject())->Get_WorldMat();
 

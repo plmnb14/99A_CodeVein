@@ -8,6 +8,7 @@
 #include "ScriptManager.h"
 
 #include "Costume_Hair.h"
+#include "Costume_Outer.h"
 
 float g_OriginCamPos = 3.f;
 
@@ -60,8 +61,8 @@ HRESULT CPlayer::Ready_GameObject(void * pArg)
 
 
 
-	m_pHair = (CCostume_Hair*)g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Hair", &CCostume_Hair::_INFO(CCostume_Hair::Hair_01, &m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(0.f, 0.f, 0.f, 0.f)));
-
+	m_pHair = (CCostume_Hair*)g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Hair", &CCostume_Hair::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(0.f, 0.f, 0.f, 0.f)));
+	m_pOuter = (CCostume_Outer*)g_pManagement->Clone_GameObject_Return(L"GameObject_Costume_Outer", &CCostume_Outer::_INFO(&m_pTransform->Get_WorldMat(), m_matBones[Bone_Head], _v4(0.f, 0.f, 0.f, 0.f), nullptr));
 
 	return NOERROR;
 }
@@ -85,7 +86,9 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	CGameObject::Update_GameObject(TimeDelta);
 
-	m_pHair->Update_GameObject(TimeDelta);
+	// 플레이에 랜더에서 업데이트 해줬음.
+	//m_pHair->Update_GameObject(TimeDelta, m_bOnSkill);
+	//m_pOuter->Update_GameObject(TimeDelta, m_bOnSkill);
 
 	KeyInput();
 
@@ -134,7 +137,7 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 	m_pNavMesh->Goto_Next_Subset(m_pTransform->Get_Pos(), nullptr);
 
 	//CScriptManager::Get_Instance()->Update_ScriptMgr(TimeDelta, m_pNavMesh->Get_SubSetIndex(), m_pNavMesh->Get_CellIndex());
-
+	
 	return NO_EVENT;
 }
 
@@ -149,15 +152,18 @@ _int CPlayer::Late_Update_GameObject(_double TimeDelta)
 
 	Reset_BloodSuck_Options();
 	//Reset_Attack_Bool();
-
+	
 
 	m_pHair->Late_Update_GameObject(TimeDelta);
-
+	m_pOuter->Late_Update_GameObject(TimeDelta);
 
 	m_pDynamicMesh->SetUp_Animation_Lower(m_eAnim_Lower , m_bOffLerp);
 	m_pDynamicMesh->SetUp_Animation_Upper(m_eAnim_Upper , m_bOffLerp);
 	m_pDynamicMesh->SetUp_Animation_RightArm(m_eAnim_RightArm , m_bOffLerp);
 	m_pDynamicMesh->SetUp_Animation_LeftArm(m_eAnim_RightArm, m_bOffLerp);
+
+	// Outer 애니 세팅.
+	m_pOuter->SetUp_Animation(m_eAnim_Upper, m_bOffLerp);
 
 	IF_NOT_NULL(m_pWeapon[m_eActiveSlot])
 		m_pWeapon[m_eActiveSlot]->Late_Update_GameObject(TimeDelta);
@@ -268,6 +274,11 @@ HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 	m_pDynamicMesh->Play_Animation_Upper(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply);
 	m_pDynamicMesh->Play_Animation_RightArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply, false);
 	m_pDynamicMesh->Play_Animation_LeftArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply);
+
+	// 머리 위치 업데이트
+	m_pHair->Update_GameObject(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply, m_bOnSkill);
+	m_pOuter->Update_GameObject(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMutiply, m_bOnSkill);
+
 
 	if (m_tObjParam.bInvisible)
 		return S_OK;
@@ -11258,6 +11269,7 @@ void CPlayer::Free()
 	}
 
 	Safe_Release(m_pHair);
+	Safe_Release(m_pOuter);
 
 	CGameObject::Free();
 }

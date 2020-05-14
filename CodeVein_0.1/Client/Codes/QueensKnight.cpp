@@ -2333,6 +2333,7 @@ void CQueensKnight::Check_PhyCollider()
 					m_bAIController = false;
 
 					m_pAIControllerCom->Set_Value_Of_BlackBoard(L"PushCol", true);
+					m_pAIControllerCom->Set_Value_Of_BlackBoard(L"TrailOff", true);
 				}
 			}
 
@@ -2350,6 +2351,7 @@ void CQueensKnight::Check_PhyCollider()
 					m_bAIController = false;
 
 					m_pAIControllerCom->Set_Value_Of_BlackBoard(L"PushCol", true);
+					m_pAIControllerCom->Set_Value_Of_BlackBoard(L"TrailOff", true);
 				}
 			}
 		
