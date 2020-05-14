@@ -1,6 +1,8 @@
 #include "stdafx.h"
 #include "..\Headers\NPC_Yakumo.h"
 
+#include "WeaponShopUI.h"
+
 CNPC_Yakumo::CNPC_Yakumo(LPDIRECT3DDEVICE9 pGraphic_Device)
 	:CGameObject(pGraphic_Device)
 {
@@ -43,25 +45,34 @@ HRESULT CNPC_Yakumo::Ready_GameObject(void * pArg)
 	return S_OK;
 }
 
+HRESULT CNPC_Yakumo::LateInit_GameObject()
+{
+	// UI
+	m_pWeaponShopUI = static_cast<CWeaponShopUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_WeaponShopUI", nullptr));
+	m_pWeaponShopUI->Set_Target(this);
+	m_pWeaponShopUI->Setup_AfterClone();
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pWeaponShopUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	return S_OK;
+}
+
 _int CNPC_Yakumo::Update_GameObject(_double TimeDelta)
 {
 	if (false == m_bEnable)
 		return NO_EVENT;
 
+	CGameObject::LateInit_GameObject();
 	//====================================================================================================
 	// ÄÃ¸µ
 	//====================================================================================================
 	m_bInFrustum = m_pOptimizationCom->Check_InFrustumforObject(&m_pTransformCom->Get_Pos(), 2.f);
 	//====================================================================================================
 
-
 	CGameObject::Update_GameObject(TimeDelta);
 
 	//========================
-	// ÅÍÁø´ÙÇØ¼­ ²¨µÒ
-	//========================
-	//Check_Dist();
-	//Check_Anim();
+	Check_Dist();
+	Check_Anim();
 
 	m_pMeshCom->SetUp_Animation(m_eState);
 
@@ -304,10 +315,13 @@ void CNPC_Yakumo::Render_Collider()
 
 void CNPC_Yakumo::Check_Dist()
 {
+	if (!m_pWeaponShopUI)
+		return;
+
 	_float fLen = D3DXVec3Length(&_v3(TARGET_TO_TRANS(m_pPlayer)->Get_Pos() - m_pTransformCom->Get_Pos()));
 
 	const _float MIN_DIST = 1.5f;
-	if (fLen <= MIN_DIST)
+	if (fLen <= MIN_DIST && !m_pWeaponShopUI->Get_Active())
 		m_bCanActive = true;
 	else
 	{
@@ -322,6 +336,8 @@ void CNPC_Yakumo::Check_Dist()
 		g_pInput_Device->Key_Down(DIK_R))
 	{
 		m_bActive = true;
+
+		m_pWeaponShopUI->Set_Active(true);
 
 		if (0 == CCalculater::Random_Num(0, 1))
 			m_eState = Gloomy;
@@ -547,6 +563,14 @@ void CNPC_Yakumo::Free()
 	Safe_Release(m_pOptimizationCom);
 
 	CGameObject::Free();
+
+	Safe_Release(m_pOptimizationCom);
+	Safe_Release(m_pBattleAgentCom);
+	Safe_Release(m_pColliderCom);
+	Safe_Release(m_pTransformCom);
+	Safe_Release(m_pMeshCom);
+	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pRendererCom);
 
 	return;
 }

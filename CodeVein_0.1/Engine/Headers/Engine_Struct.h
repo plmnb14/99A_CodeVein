@@ -30,12 +30,16 @@ namespace Engine
 
 	typedef struct tagWeaponParam
 	{
-		_int		iWeaponType;	// 무기 타입 ex) Weapon_Sword
-		_int		iWeaponName;	// 무기 이름 ex) Sword_Military
+		_int		iWeaponType;		// 무기 타입 ex) Weapon_Sword
+		_int		iWeaponName;		// 무기 이름 ex) Sword_Military
+		_int		iWeaponName_InShop;	// 무기 이름 In Shop
 
 		_uint		iReinforce;		//강화 단계
 
 		_float		fDamage;		//기본 공격력
+		_float		fPlusDamage;	//추가 공격력
+
+		_uint		iPrice;			// 가격
 
 		_float		fTrail_Min;		// 트레일 최소
 		_float		fTrail_Max;		// 트레일 최대

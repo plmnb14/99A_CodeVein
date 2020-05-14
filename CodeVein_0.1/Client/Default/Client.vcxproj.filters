@@ -466,11 +466,38 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\16. ScriptUI">
       <UniqueIdentifier>{4f0943ce-c02a-408f-af5f-6c1c94ea2eee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponShopOptionUI">
+      <UniqueIdentifier>{898148ef-3190-44f5-91d2-17cfad3ee94f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponBuyUI">
+      <UniqueIdentifier>{c5b92a9d-ae56-4445-b205-6c856197dec9}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\Weapon_Inven_InShop">
+      <UniqueIdentifier>{6853725d-b417-436b-ac2e-2fa52f9f1441}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponBuyUI\WeaponBuyPopupUI">
+      <UniqueIdentifier>{e94b7d3b-bcc2-4e67-8d0a-e32b2e928a55}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponBuyUI\WeaponBuyPopupUI\WeaponBuyPopupOptionUI">
+      <UniqueIdentifier>{7b27eddf-d4a7-4e8d-94a2-6d325238987f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI">
+      <UniqueIdentifier>{048ba62c-1484-4ea1-80f8-707a4ddd7234}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeOptionUI">
+      <UniqueIdentifier>{cac786ec-53c2-44cd-a022-53470bf43665}</UniqueIdentifier>
+    </Filter>
     <Filter Include="94.StageAgent">
       <UniqueIdentifier>{4dcdf895-5442-4efd-aeeb-a5e9547eaed6}</UniqueIdentifier>
     </Filter>
     <Filter Include="95.SoundManager">
       <UniqueIdentifier>{e4f55a90-9a32-4788-a5b8-44ef84c5e70e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI">
+      <UniqueIdentifier>{e0a40905-984a-4871-844b-7d88dbd736c2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI\Option">
+      <UniqueIdentifier>{023eafb9-cae5-4944-a116-3d2c0d39de3f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1014,8 +1041,35 @@
     <ClInclude Include="..\Headers\ClothManager.h">
       <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\WeaponShopOptionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponShopOptionUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\WeaponBuyUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponBuyUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Weapon_Inven_InShop.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\Weapon_Inven_InShop</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\WeaponBuyPopupUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponBuyUI\WeaponBuyPopupUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\WeaponBuyPopupOptionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponBuyUI\WeaponBuyPopupUI\WeaponBuyPopupOptionUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\WeaponUpgradeUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\WeaponUpgradeOptionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeOptionUI</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\Pet_DeerKing.h">
       <Filter>02.GameObject\Stage\10%29 Pet\02.DeerKing</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\WeaponUpgradeSuccessPopupUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\WeaponUpgradeSuccessPopupOptionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI\Option</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1544,8 +1598,35 @@
     <ClCompile Include="..\Codes\ClothManager.cpp">
       <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
     </ClCompile>
+    <ClCompile Include="..\Codes\WeaponShopOptionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponShopOptionUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\WeaponBuyUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponBuyUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Weapon_Inven_InShop.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\Weapon_Inven_InShop</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\WeaponBuyPopupUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponBuyUI\WeaponBuyPopupUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\WeaponBuyPopupOptionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponBuyUI\WeaponBuyPopupUI\WeaponBuyPopupOptionUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\WeaponUpgradeUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\WeaponUpgradeOptionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeOptionUI</Filter>
+    </ClCompile>
     <ClCompile Include="..\Codes\Pet_DeerKing.cpp">
       <Filter>02.GameObject\Stage\10%29 Pet\02.DeerKing</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\WeaponUpgradeSuccessPopupUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\WeaponUpgradeSuccessPopupOptionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI\Option</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
