@@ -30,9 +30,6 @@ HRESULT CScene_Stage_04::Ready_Scene()
 
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_04.dat");
 
-	//CScriptManager::Get_Instance()->Set_StageIdx(4);
-	//CScriptManager::Get_Instance()->Ready_Script_DynamicObject(4);
-
 	return S_OK;
 }
 

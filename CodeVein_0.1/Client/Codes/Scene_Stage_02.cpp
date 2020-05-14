@@ -29,11 +29,7 @@ HRESULT CScene_Stage_02::Ready_Scene()
 	if (FAILED(Ready_Layer_Environment(L"Layer_Environment")))
 		return E_FAIL;
 
-	//if (m_bLoadStaticMesh)
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_02.dat");
-
-	CScriptManager::Get_Instance()->Set_StageIdx(1);
-	CScriptManager::Get_Instance()->Ready_Script_DynamicObject(1);
 
 	return S_OK;
 }
@@ -82,6 +78,8 @@ HRESULT CScene_Stage_02::Ready_Layer_Player(const _tchar * pLayerTag)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_BossUI")))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Layer(SCENE_STAGE, L"Layer_Colleague")))
+		return E_FAIL;
 
 	CPlayer* pInstance = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 
@@ -111,17 +109,17 @@ HRESULT CScene_Stage_02::Ready_LightDesc()
 	ZeroMemory(&LightDesc, sizeof(NEW_LIGHT));
 
 	LightDesc.Type = D3DLIGHT_DIRECTIONAL;
-	LightDesc.Diffuse = D3DXCOLOR(1.f, 0.882f, 0.801f, 1.f);
+	LightDesc.Diffuse = D3DXCOLOR(1.f, 1.f, 1.f, 1.f);
 	LightDesc.Ambient = D3DXCOLOR(0.1f, 0.1f, 0.1f, 1.f);
 	LightDesc.Specular = LightDesc.Diffuse;
 	// In.WorldSpace
-	_v3 vLightDir = _v3(0.2f, 1.f, 0.9f);
-
-	LightDesc.fAlpha = 1.f;
+	_v3 vLightDir = _v3(100.f, -50.f, 0.f);
 
 	V3_NORMAL_SELF(&vLightDir);
 
 	LightDesc.Direction = vLightDir;
+
+	LightDesc.fAlpha = 1.f;
 	//LightDesc.Direction = _v3(0.0f, 0.f, 1.f);
 
 	if (FAILED(g_pManagement->Add_Light(m_pGraphic_Device, LightDesc, CLight_Manager::Static_Light)))
