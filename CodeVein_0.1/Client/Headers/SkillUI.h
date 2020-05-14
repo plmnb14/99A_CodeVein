@@ -15,6 +15,9 @@ private:
 	virtual ~CSkillUI() = default;
 
 public:
+	Skill_ID Get_Skill_ID(_uint iIndex);
+
+public:
 	void Set_Active_State(CActive_Icon::ACTIVE_STATE eState, _uint iIndex);
 
 public:
@@ -24,14 +27,6 @@ public:
 
 private:
 	void	SetUp_Default();
-
-	void	Set_SkillIcon(_uint iIndex, Skill_Index eSkill_Index); // 스킬 아이콘 세팅 함수
-	void	Set_SkillGaugeCur(_ulong iNum);
-	void	Set_SkillGaugeMax(_ulong iNum);
-
-public:
-	_ulong Get_SkillGaugeCur();
-	_ulong Get_SkillGaugeMax();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;

@@ -240,8 +240,11 @@ _int CGunGenji::Late_Update_GameObject(_double TimeDelta)
 
 	if (m_bInFrustum)
 	{
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-			return E_FAIL;
+		if (false == m_bDissolve)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+				return E_FAIL;
+		}
 	}
 	//=============================================================================================
 
@@ -1245,25 +1248,16 @@ HRESULT CGunGenji::SetUp_ConstantTable(CShader * pShader)
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
-	_mat		ProjMatrix = g_pManagement->Get_Transform(D3DTS_PROJECTION);
-
 	//=============================================================================================
 	// 기본 메트릭스
 	//=============================================================================================
 
 	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
-		return E_FAIL;
-	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
-		return E_FAIL;
 
 	//=============================================================================================
 	// 디졸브용 상수
 	//=============================================================================================
-	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", pShader)))
-		return E_FAIL;
 	if (FAILED(pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 

@@ -89,7 +89,7 @@ HRESULT CPoisonButterfly::Ready_GameObject(void * pArg)
 	/////////////
 	// UI 추가(지원)
 	m_pBossUI = static_cast<CBossHP*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BossHP", nullptr));
-	m_pBossUI->Set_UI_Pos(WINCX * 0.5f, WINCY * 0.2f);
+	m_pBossUI->Set_UI_Pos(WINCX * 0.5f, WINCY * 0.1f);
 	m_pBossUI->Set_BossName(CBossNameUI::Index_PoisonButterfly);
 	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBossUI, SCENE_STAGE, L"Layer_BossHP", nullptr)))
 		return E_FAIL;
@@ -172,8 +172,7 @@ _int CPoisonButterfly::Late_Update_GameObject(_double TimeDelta)
 	if (false == m_bEnable)
 		return NO_EVENT;
 
-	if (nullptr == m_pRendererCom)
-		return E_FAIL;
+	IF_NULL_VALUE_RETURN(m_pRendererCom, E_FAIL);
 
 	//=============================================================================================
 	// 그림자랑 모션블러는 프리스텀 안에 없으면 안그림
@@ -194,8 +193,11 @@ _int CPoisonButterfly::Late_Update_GameObject(_double TimeDelta)
 
 	if (m_bInFrustum)
 	{
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-			return E_FAIL;
+		if (false == m_bDissolve)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+				return E_FAIL;
+		}
 	}
 	//=============================================================================================
 
@@ -211,7 +213,6 @@ HRESULT CPoisonButterfly::Render_GameObject()
 		return E_FAIL;
 
 	m_pMeshCom->Play_Animation(_float(m_dTimeDelta)); // * alpha
-
 
 	if (m_bInFrustum)
 	{
@@ -259,8 +260,9 @@ HRESULT CPoisonButterfly::Render_GameObject()
 
 HRESULT CPoisonButterfly::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
-	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
-	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
+	if (nullptr == pShader ||
+		nullptr == m_pMeshCom)
+		return E_FAIL;
 
 	m_pMeshCom->Play_Animation(DELTA_60 * m_dAniPlayMul);
 

@@ -136,8 +136,8 @@ _int CPlayer::Update_GameObject(_double TimeDelta)
 
 	m_pNavMesh->Goto_Next_Subset(m_pTransform->Get_Pos(), nullptr);
 
-	//CScriptManager::Get_Instance()->Update_ScriptMgr(TimeDelta, m_pNavMesh->Get_SubSetIndex(), m_pNavMesh->Get_CellIndex());
-	
+	CScriptManager::Get_Instance()->Update_ScriptMgr(TimeDelta, m_pNavMesh->Get_SubSetIndex(), m_pNavMesh->Get_CellIndex());
+
 	return NO_EVENT;
 }
 
@@ -818,7 +818,8 @@ void CPlayer::Parameter_Aiming()
 
 		Target_AimChasing();
 
-		m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(m_pTarget)->Get_Pos()));
+		if(nullptr != m_pTarget)
+			m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&TARGET_TO_TRANS(m_pTarget)->Get_Pos()));
 	}
 
 	else if (false == m_bOnAiming)

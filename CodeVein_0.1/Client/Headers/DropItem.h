@@ -72,7 +72,7 @@ private:
 protected:
 	HRESULT Add_Component(void* _pArg);
 	HRESULT Ready_Status(void * _pArg);
-	HRESULT SetUp_ConstantTable();
+	HRESULT SetUp_ConstantTable(CShader* pShader);
 
 public:
 	static CDropItem* Create(LPDIRECT3DDEVICE9 pGraphic_Device);
@@ -82,6 +82,7 @@ public:
 private:
 	CRenderer*						m_pRenderer = nullptr;
 	CTransform*						m_pTransform = nullptr;
+	COptimization*					m_pOptimization = nullptr;
 	CTrail_VFX*						m_pTrailEffect = nullptr;
 	CEffect*						m_pEffect = nullptr;
 

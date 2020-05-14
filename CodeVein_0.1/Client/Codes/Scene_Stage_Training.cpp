@@ -19,6 +19,8 @@
 #include "Player_Colleague.h"
 #include "Player.h"
 
+#include "NPC_Yakumo.h"
+
 CScene_Stage_Training::CScene_Stage_Training(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
 {
@@ -124,8 +126,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);
 
 	// ¾ßÄí¸ð
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_NPC_Yakumo", nullptr);
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_NPC", nullptr);
+	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-4.46f, 0.f, -5.294f), D3DXToRadian(90.f)));
 
 	//// ÅäÅÛ
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",

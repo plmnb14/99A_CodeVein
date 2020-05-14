@@ -32,6 +32,9 @@ HRESULT CWeapon_Slot::Ready_GameObject(void * pArg)
 
 _int CWeapon_Slot::Update_GameObject(_double TimeDelta)
 {
+	if(m_bIsDead)
+		return DEAD_OBJ;
+
 	CUI::Update_GameObject(TimeDelta);
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
@@ -118,6 +121,9 @@ _int CWeapon_Slot::Update_GameObject(_double TimeDelta)
 
 _int CWeapon_Slot::Late_Update_GameObject(_double TimeDelta)
 {
+	if (m_bIsDead)
+		return DEAD_OBJ;
+
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
 
@@ -132,6 +138,9 @@ _int CWeapon_Slot::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CWeapon_Slot::Render_GameObject()
 {
+	if (m_bIsDead)
+		return DEAD_OBJ;
+
 	if (!m_bIsActive)
 		return NOERROR;
 

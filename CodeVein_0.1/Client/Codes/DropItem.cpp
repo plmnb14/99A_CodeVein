@@ -147,10 +147,10 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 			//	CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Add_Expendables(m_eExpendablesType);
 			//	break;
 			//case ITEM_TYPE::ITEM_WEAPON:
-			//	//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(); //무기타입을 받아서 해당아이템이 추가되게끔
+			//	CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon(); //무기타입을 받아서 해당아이템이 추가되게끔 -> 이제WPN_PARAM 구조체로 받아야!!
 			//	break;
 			//case ITEM_TYPE::ITEM_PET:
-			//	CUI_Manager::Get_Instance()->Get_Pet_Inven()->Add_Pet(m_eItemGrade, m_ePetType);
+			//	CUI_Manager::Get_Instance()->Get_Pet_Inven()->Add_Pet(m_ePetType);
 			//	break;
 			//}
 
@@ -168,10 +168,19 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 
 _int CDropItem::Late_Update_GameObject(_double TimeDelta)
 {
+	if (false == m_bEnable)
+		return NO_EVENT;
+
 	IF_NULL_VALUE_RETURN(m_pRenderer, E_FAIL);
 
-	if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
-		return E_FAIL;
+	if (true == m_bInFrustum)
+	{
+		if (FAILED(m_pRenderer->Add_RenderList(RENDER_NONALPHA, this)))
+			return E_FAIL;
+
+		if (FAILED(m_pRenderer->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+			return E_FAIL;
+	}
 
 	return NO_EVENT;
 }
@@ -245,12 +254,13 @@ void CDropItem::Check_PosY()
 
 HRESULT CDropItem::Add_Component(void* _pArg)
 {
-	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransform)))
 		return E_FAIL;
 
-	// For.Com_Renderer
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRenderer)))
+		return E_FAIL;
+
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Optimization", L"Com_Optimization", (CComponent**)&m_pOptimization)))
 		return E_FAIL;
 
 	//// For.Com_NaviMesh
@@ -303,7 +313,7 @@ HRESULT CDropItem::Ready_Status(void* _pArg)
 	return S_OK;
 }
 
-HRESULT CDropItem::SetUp_ConstantTable()
+HRESULT CDropItem::SetUp_ConstantTable(CShader* pShader)
 {
 	return S_OK;
 }
