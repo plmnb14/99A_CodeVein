@@ -121,18 +121,25 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 			//아이템 종류
 			switch (m_eItemType)
 			{
-			case ITEM_MATERIAL:
-				CUI_Manager::Get_Instance()->Get_Material_Inven()->Add_Material(m_eMaterialType);
-				break;
-			case ITEM_EXPENDABLES:
-				CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Add_Expendables(m_eExpendablesType);
-				break;
-			case ITEM_WEAPON:
-				//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon();
-				break;
-			case ITEM_PET:
-				CUI_Manager::Get_Instance()->Get_Pet_Inven()->Add_Pet(m_ePetType);
-				break;
+			//case ITEM_MATERIAL:
+			//	CUI_Manager::Get_Instance()->Get_Material_Inven()->Add_Material(m_eMaterialType);
+			//	break;
+			//case ITEM_EXPENDABLES:
+			//	CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Add_Expendables(m_eExpendablesType);
+			//	break;
+			//case ITEM_WEAPON:
+			//	//CUI_Manager::Get_Instance()->Get_Weapon_Inven()->Add_Weapon();
+			//	break;
+			//case ITEM_PET:
+			//	CUI_Manager::Get_Instance()->Get_Pet_Inven()->Add_Pet(m_ePetType);
+			//	break;
+			
+
+			// 주워진 아이템 이넘값에 따라서 해당 이넘값과 같은 텍스트를 랜더 번호로 설정해서
+			// 랜더할 때 해당 번호에 맞는 아이템 리소스를 랜더한다.
+			// 조아!
+
+
 			}
 			//"줍는다" 관련 변수가 참인 경우도 포함할것
 			//섬광이펙트,파티클이펙트 등등 획득한 티를 내주고

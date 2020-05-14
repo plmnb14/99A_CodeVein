@@ -189,7 +189,10 @@ void CGet_ItemUI::SetUp_State(_double TimeDelta)
 		m_iUINumber = 2;
 		++m_iPickUp_ItemNumber;
 		pUIManager->Set_CoundItem(m_iPickUp_ItemNumber);
+		m_bShow_GetItemName = true;
 	}
+	else
+		m_bShow_GetItemName = false;
 
 	if (2 == m_iUINumber)
 		m_iUINumber = 0;

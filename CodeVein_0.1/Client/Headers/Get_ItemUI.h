@@ -32,6 +32,8 @@ public:
 	_uint	Get_Cound_Pickuptiem() { return m_iCount_PickUpitem; }
 	_float	Get_EndTimer() { return m_fEndTimer; }
 
+	_bool	Get_Show_ItemName() { return m_bShow_GetItemName; }
+
 	void	Set_EndTimer(_double TimeDelta) { m_fEndTimer += (_float)TimeDelta; }
 	void	Set_ItemTarget(CGameObject* pGameObject) { m_pTarget = pGameObject; }
 

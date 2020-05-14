@@ -222,6 +222,14 @@ void CPickUp_ItemUI::SetUp_State(_double TimeDelta)
 	
 }
 
+void CPickUp_ItemUI::SetUp_Rendering_ItemTextrue()
+{
+	/*switch (m_eItemUI_Type)
+	{
+
+	}*/
+}
+
 CPickUp_ItemUI * CPickUp_ItemUI::Create(_Device pGraphic_Device)
 {
 	CPickUp_ItemUI* pInstance = new CPickUp_ItemUI(pGraphic_Device);

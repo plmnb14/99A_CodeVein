@@ -41,6 +41,11 @@ public:
 		{
 		}
 
+		ITEM_STATUS(ITEM_GRADE_TYPE _eGrade, ITEM_NAMETYPE _eItemName, _v3 _vBirthPos, _double _dLimitTime)
+			: eItemGradeType(_eGrade), eItem_NameType(_eItemName), vBirthPos(_vBirthPos), dCanGetLimitTimeMax(_dLimitTime)
+		{
+		}
+
 		ITEM_TYPE						eItemType; //최상위 - 아이템 종류
 		ITEM_GRADE_TYPE					eItemGradeType; //최상위 - 아이템 등급
 
@@ -48,9 +53,11 @@ public:
 
 		CExpendables::EXPEND_TYPE		eExpendablesType; //상위 - 소모품 종류
 
-		WEAPON_DATA			eWeaponType;	//상위 - 무기 종류
+		WEAPON_DATA						eWeaponType;	//상위 - 무기 종류
 
 		CPet::PET_TYPE					ePetType; //상위 - 펫 종류
+
+		ITEM_NAMETYPE					eItem_NameType;	// 아이템 종류
 
 		_v3			vBirthPos; //생성위치
 		_double		dCanGetLimitTimeMax; //소멸제한 시간

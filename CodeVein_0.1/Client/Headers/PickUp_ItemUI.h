@@ -8,6 +8,7 @@ BEGIN(Client)
 
 class CPickUp_ItemUI final : public CUI
 {
+
 private:
 	explicit CPickUp_ItemUI(_Device Graphic_Device);
 	explicit CPickUp_ItemUI(const CPickUp_ItemUI& rhs);
@@ -25,6 +26,7 @@ private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable(_uint TextureIndex);
 	void	SetUp_State(_double TimeDelta);
+	void	SetUp_Rendering_ItemTextrue();
 
 private:
 	_uint		m_uiRenderNumber = 0;
