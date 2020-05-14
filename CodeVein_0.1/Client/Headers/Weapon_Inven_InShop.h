@@ -8,8 +8,10 @@ BEGIN(Client)
 class CWeaponUpgradeUI;
 class CWeaponBuyPopupUI;
 class CWeapon_Inven;
+class CArmor_Inven;
 class CWeapon;
 class CWeapon_Slot;
+class CArmor_Slot;
 class CWeapon_Inven_InShop final : public CUI
 {
 public:
@@ -32,8 +34,10 @@ private:
 
 public:
 	WPN_PARAM		Get_UseWeaponParam(_uint iIndex) { return m_UseWeaponParam[iIndex]; }
-	CWeapon_Slot*	Get_HoverSlot() { return m_pHoverSlot; }
-	CWeapon_Slot*	Get_SelectedSlot() { return m_pSelectedSlot; }
+	CWeapon_Slot*	Get_HoverSlot_Weapon() { return m_pHoverSlot_Weapon; }
+	CWeapon_Slot*	Get_SelectedSlot_Weapon() { return m_pSelectedSlot_Weapon; }
+	CArmor_Slot*	Get_HoverSlot_Armor() { return m_pHoverSlot_Armor; }
+	CArmor_Slot*	Get_SelectedSlot_Armor() { return m_pSelectedSlot_Armor; }
 	_bool			Get_PopupOn();
 	_bool			Get_CheckCloseUpgradePopup() { return m_bCloseUpgradePopup; }
 public:
@@ -42,8 +46,11 @@ public:
 	void Setup_InvenType(INVEN_SHOP_OPTION eOption);
 	void Refresh_Inven();
 	void Buy_Weapon();
+	void Buy_Armor();
 	void Sell_Weapon();
+	void Sell_Armor();
 	void Upgrade_Weapon(WPN_PARAM tParam);
+	void Upgrade_Armor(ARMOR_PARAM tParam);
 
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();
@@ -55,12 +62,14 @@ public:
 private:
 	HRESULT					Add_Component();
 	HRESULT					SetUp_ConstantTable();
-	void					Click_Inven();
+	void					Click_WeaponInven();
+	void					Click_ArmorInven();
 
 	HRESULT					SetUp_WeaponData(INVEN_SHOP_OPTION eShop);
 
 public:
 	void Add_Weapon(WPN_PARAM tAddWpnParam);
+	void Add_Armor(ARMOR_PARAM tAddArmorParam);
 
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
@@ -71,14 +80,22 @@ private:
 
 	CWeaponBuyPopupUI*		m_pWeaponBuyPopup = nullptr;
 	CWeaponBuyPopupUI*		m_pWeaponSellPopup = nullptr;
+	CWeaponBuyPopupUI*		m_pArmorBuyPopup = nullptr;
+	CWeaponBuyPopupUI*		m_pArmorSellPopup = nullptr;
 	CWeaponUpgradeUI*		m_pWeaponUpgradePopup = nullptr;
 
 	CWeapon_Inven*			m_pWeaponInventory = nullptr;
+	CArmor_Inven*			m_pArmorInventory = nullptr;
 	vector<CWeapon_Slot*>	m_vecWeaponSlot;
-	CWeapon_Slot*			m_pSelectedSlot = nullptr;
-	CWeapon_Slot*			m_pHoverSlot = nullptr;
+	vector<CArmor_Slot*>	m_vecArmorSlot;
+	CWeapon_Slot*			m_pSelectedSlot_Weapon = nullptr;
+	CWeapon_Slot*			m_pHoverSlot_Weapon = nullptr;
+	CArmor_Slot*			m_pSelectedSlot_Armor = nullptr;
+	CArmor_Slot*			m_pHoverSlot_Armor = nullptr;
+
 	WPN_PARAM				m_UseWeaponParam[2];
 	WPN_PARAM				m_tWeaponParam[WPN_DATA_End];
+	ARMOR_PARAM				m_tArmorParam[ArmorAll_END];
 
 	INVEN_SHOP_OPTION		m_eOption = SHOP_END;
 	

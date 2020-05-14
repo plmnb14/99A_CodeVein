@@ -40,6 +40,9 @@ HRESULT CArmor_Slot::Ready_GameObject(void * pArg)
 
 _int CArmor_Slot::Update_GameObject(_double TimeDelta)
 {
+	if (m_bIsDead)
+		return DEAD_OBJ;
+
 	CUI::Update_GameObject(TimeDelta);
 
 	
@@ -74,6 +77,9 @@ _int CArmor_Slot::Update_GameObject(_double TimeDelta)
 
 _int CArmor_Slot::Late_Update_GameObject(_double TimeDelta)
 {
+	if (m_bIsDead)
+		return DEAD_OBJ;
+
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
 
@@ -88,6 +94,9 @@ _int CArmor_Slot::Late_Update_GameObject(_double TimeDelta)
 
 HRESULT CArmor_Slot::Render_GameObject()
 {
+	if (m_bIsDead)
+		return DEAD_OBJ;
+
 	if (!m_bIsActive)
 		return NOERROR;
 

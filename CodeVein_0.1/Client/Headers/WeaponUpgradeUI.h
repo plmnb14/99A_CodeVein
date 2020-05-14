@@ -18,6 +18,12 @@ public:
 		MOVE_HEAVYROLLING,
 		MOVE_END
 	};
+	enum UPGRADE_TYPE
+	{
+		UPGRADE_WEAPON,
+		UPGRADE_ARMOR,
+		UPGRADE_END
+	};
 private:
 	explicit CWeaponUpgradeUI(_Device pDevice);
 	explicit CWeaponUpgradeUI(const CWeaponUpgradeUI& rhs);
@@ -27,8 +33,9 @@ public:
 	void	Set_Active(_bool bIsActive);
 	void	Set_Inven(CWeapon_Inven_InShop* pParent) { m_pInven = pParent; }
 	void	Set_WeaponDescType(WEAPON_ALL_DATA eType);
+	void	Set_ArmorDescType(ARMOR_All_DATA eType);
 	void	Set_WeaponMoveType(MOVE_TYPE eType);
-
+	void	Set_UpgradeType(UPGRADE_TYPE eType) { m_eUpgradeType = eType; }
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
 	virtual HRESULT Ready_GameObject(void* pArg);
@@ -47,12 +54,14 @@ private:
 	void	SetUp_Default();
 
 	void	Check_LateInit();
-	void	Check_ItemOption();
+	void	Check_ItemOption_Weapon();
+	void	Check_ItemOption_Armor();
 	void	Check_WeaponName();
 	void	Check_MoveType();
 	void	Check_Option();
 
 	void	Upgrade_Weapon();
+	void	Upgrade_Armor();
 
 	_int	Get_MyMaterial(CMaterial::MATERIAL_TYPE eType);
 	_int	Get_RequireMaterial(CMaterial::MATERIAL_TYPE eType, _int iReinforce);
@@ -73,7 +82,9 @@ private:
 	CWeaponUpgradeUI*					m_pWeaponNameUI = nullptr;
 	CWeaponUpgradeUI*					m_pWeaponMoveTypeUI = nullptr;
 
+	UPGRADE_TYPE						m_eUpgradeType = UPGRADE_END;
 	WEAPON_ALL_DATA						m_eWeaponDesc = WEAPON_ALL_DATA::WpnAll_END;
+	ARMOR_All_DATA						m_eArmorDesc = ARMOR_All_DATA::ArmorAll_END;
 	MOVE_TYPE							m_eMoveType = MOVE_TYPE::MOVE_END;
 
 	CPlayerFontUI*						m_pFontReinforceHeader = nullptr;
@@ -81,6 +92,10 @@ private:
 	CPlayerFontUI*						m_pFontReinforceAfterDesc = nullptr;
 	CPlayerFontUI*						m_pFontPlusDamageDesc = nullptr;
 	CPlayerFontUI*						m_pFontPlusDamageAfterDesc = nullptr;
+	CPlayerFontUI*						m_pFontPlusHPDesc = nullptr;
+	CPlayerFontUI*						m_pFontPlusHPAfterDesc = nullptr;
+	CPlayerFontUI*						m_pFontTotalHPDesc = nullptr;
+	CPlayerFontUI*						m_pFontTotalHPAfterDesc = nullptr;
 	CPlayerFontUI*						m_pFontDamageDesc = nullptr;
 	CPlayerFontUI*						m_pFontDamageAfterDesc = nullptr;
 

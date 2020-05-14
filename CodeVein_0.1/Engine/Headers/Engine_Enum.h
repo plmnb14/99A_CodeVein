@@ -154,9 +154,16 @@ enum WEAPON_ALL_DATA
 
 enum ARMOR_All_DATA
 {
-	ArmorAll_DarkBlood,
-	ArmorAll_DrakNight,
-	ArmorAll_Spike,
+	ArmorAll_Gauntlet_DarkNightHook,
+	ArmorAll_Gauntlet_NovelSilver,
+	ArmorAll_Gauntlet_MangSikHook,
+	ArmorAll_Gauntlet_QueenKiller,
+	ArmorAll_LongCoat_DarkNightSpear,
+	ArmorAll_LongCoat_WhiteSilver,
+	ArmorAll_LongCoat_QueenKiller,
+	ArmorAll_Muffler_DarkNightSpike,
+	ArmorAll_Muffler_WhiteGraze,
+	ArmorAll_Muffler_Suiside,
 
 	ArmorAll_END
 };

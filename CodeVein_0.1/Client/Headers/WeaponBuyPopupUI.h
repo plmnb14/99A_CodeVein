@@ -44,10 +44,13 @@ private:
 	HRESULT SetUp_ConstantTable();
 	void	Change_Texture(const _tchar* _Name);
 	void	SetUp_Default();
-	void	Check_ItemOption();
+	void	Check_ItemOption_Weapon();
+	void	Check_ItemOption_Armor();
 
 	void	Buy_Weapon();
 	void	Sell_Weapon();
+	void	Buy_Armor();
+	void	Sell_Armor();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;

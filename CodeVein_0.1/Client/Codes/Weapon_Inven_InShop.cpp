@@ -19,6 +19,8 @@ _bool CWeapon_Inven_InShop::Get_PopupOn()
 	if (
 		m_pWeaponBuyPopup->Get_Active() ||
 		m_pWeaponSellPopup->Get_Active() ||
+		m_pArmorBuyPopup->Get_Active() ||
+		m_pArmorSellPopup->Get_Active() ||
 		m_pWeaponUpgradePopup->Get_Active()
 		)
 		return true;
@@ -43,6 +45,14 @@ void CWeapon_Inven_InShop::Setup_InvenType(INVEN_SHOP_OPTION eOption)
 		}
 		break;
 	}
+	case Client::CWeapon_Inven_InShop::SHOP_ARMOR_BUY:
+	{
+		for (_int i = 0; i < ArmorAll_END; i++)
+		{
+			Add_Armor(m_tArmorParam[i]);;
+		}
+		break;
+	}
 	case Client::CWeapon_Inven_InShop::SHOP_WEAPON_SELL:
 	case Client::CWeapon_Inven_InShop::SHOP_WEAPON_UPGRADE:
 	{
@@ -54,28 +64,37 @@ void CWeapon_Inven_InShop::Setup_InvenType(INVEN_SHOP_OPTION eOption)
 		}
 		break;
 	}
+	case Client::CWeapon_Inven_InShop::SHOP_ARMOR_SELL:
+	case Client::CWeapon_Inven_InShop::SHOP_ARMOR_UPGRADE:
+	{
+		vector<CArmor_Slot*>* pVecMyArmor = CUI_Manager::Get_Instance()->Get_Armor_Inven()->Get_VecArmorSlot();
+		for (_int i = 0; i < pVecMyArmor->size(); i++)
+		{
+			Add_Armor((*pVecMyArmor)[i]->Get_ArmorParam());
+		}
+		break;
+	}
 	}
 }
 
 void CWeapon_Inven_InShop::Refresh_Inven()
 {
-	//for (auto& iter : m_vecWeaponSlot)
-	//{
-	//	if(iter->Get_Dead())
-	//		continue;
-	//
-	//	iter->Set_SelectShop(false);
-	//}
-	//
+
 	for (auto& iter : m_vecWeaponSlot)
 	{
 		iter->Set_Dead();
 		//m_vecWeaponSlot.erase(iter);
 	}
 	m_vecWeaponSlot.clear();
+
+	for (auto& iter : m_vecArmorSlot)
+		iter->Set_Dead();
+	m_vecArmorSlot.clear();
+
 	Setup_InvenType(m_eOption);
 
-	m_pSelectedSlot = nullptr;
+	m_pSelectedSlot_Weapon = nullptr;
+	m_pSelectedSlot_Armor = nullptr;
 }
 
 HRESULT CWeapon_Inven_InShop::Ready_GameObject_Prototype()
@@ -92,13 +111,14 @@ HRESULT CWeapon_Inven_InShop::Ready_GameObject(void * pArg)
 
 	m_fPosX = 229.5f;
 	m_fPosY = 325.5f;
-	m_fSizeX = 280.f;
+	m_fSizeX = 290.f;
 	m_fSizeY = 471.f;
 	m_fViewZ = 4.f;
 
 	m_bIsActive = false;
 
 	m_pWeaponInventory = CUI_Manager::Get_Instance()->Get_Weapon_Inven();
+	m_pArmorInventory = CUI_Manager::Get_Instance()->Get_Armor_Inven();
 
 	m_pWeaponBuyPopup = static_cast<CWeaponBuyPopupUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon_BuyPopup", nullptr));
 	m_pWeaponBuyPopup->Set_Inven(this);
@@ -110,6 +130,16 @@ HRESULT CWeapon_Inven_InShop::Ready_GameObject(void * pArg)
 	m_pWeaponSellPopup->Set_Type(CWeaponBuyPopupUI::POPUP_WEAPON_SELL);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pWeaponSellPopup, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
+	m_pArmorBuyPopup = static_cast<CWeaponBuyPopupUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon_BuyPopup", nullptr));
+	m_pArmorBuyPopup->Set_Inven(this);
+	m_pArmorBuyPopup->Set_Type(CWeaponBuyPopupUI::POPUP_ARMOR_BUY);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pArmorBuyPopup, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	m_pArmorSellPopup = static_cast<CWeaponBuyPopupUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon_BuyPopup", nullptr));
+	m_pArmorSellPopup->Set_Inven(this);
+	m_pArmorSellPopup->Set_Type(CWeaponBuyPopupUI::POPUP_ARMOR_SELL);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pArmorSellPopup, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
 	m_pWeaponUpgradePopup = static_cast<CWeaponUpgradeUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon_Upgrade", nullptr));
 	m_pWeaponUpgradePopup->Set_Inven(this);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pWeaponUpgradePopup, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
@@ -119,19 +149,14 @@ HRESULT CWeapon_Inven_InShop::Ready_GameObject(void * pArg)
 
 _int CWeapon_Inven_InShop::Update_GameObject(_double TimeDelta)
 {
-	m_fPosX = 229.5f;
-	m_fPosY = 325.5f;
-	m_fSizeX = 280.f;
-	m_fSizeY = 471.f;
-	m_fViewZ = 4.f;
-
 	CUI::Update_GameObject(TimeDelta);
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 
-	Click_Inven();
+	Click_WeaponInven();
+	Click_ArmorInven();
 
 	_uint iIdx = 0;
 	
@@ -143,6 +168,16 @@ _int CWeapon_Inven_InShop::Update_GameObject(_double TimeDelta)
 		pWeaponSlot->Set_Active(m_bIsActive);
 		pWeaponSlot->Set_ViewZ(m_fViewZ - 0.1f);
 		pWeaponSlot->Set_UI_Pos(m_fPosX - 100.f + 52.f * (iIdx % 5), m_fPosY - 150.f + 52.f * (iIdx / 5));
+		iIdx++;
+	}
+	for (auto& pArmorSlot : m_vecArmorSlot)
+	{
+		if (pArmorSlot->Get_Dead())
+			continue;
+
+		pArmorSlot->Set_Active(m_bIsActive);
+		pArmorSlot->Set_ViewZ(m_fViewZ - 0.1f);
+		pArmorSlot->Set_UI_Pos(m_fPosX - 100.f + 52.f * (iIdx % 5), m_fPosY - 150.f + 52.f * (iIdx / 5));
 		iIdx++;
 	}
 
@@ -161,7 +196,23 @@ _int CWeapon_Inven_InShop::Update_GameObject(_double TimeDelta)
 			m_pWeaponSellPopup->Set_Active(false);
 		}
 	}
-	
+
+	if (m_pArmorBuyPopup->Get_Active())
+	{
+		if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
+		{
+			m_pArmorBuyPopup->Set_Active(false);
+		}
+	}
+
+	if (m_pArmorSellPopup->Get_Active())
+	{
+		if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
+		{
+			m_pArmorSellPopup->Set_Active(false);
+		}
+	}
+
 	if (m_pWeaponUpgradePopup->Get_Active())
 	{
 		if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
@@ -192,9 +243,6 @@ _int CWeapon_Inven_InShop::Late_Update_GameObject(_double TimeDelta)
 HRESULT CWeapon_Inven_InShop::Render_GameObject()
 {
 	if (!m_bIsActive)
-		return NOERROR;
-
-	if(SHOP_WEAPON_UPGRADE == m_eOption)
 		return NOERROR;
 
 	if (nullptr == m_pShaderCom ||
@@ -259,7 +307,7 @@ HRESULT CWeapon_Inven_InShop::SetUp_ConstantTable()
 		return E_FAIL;
 
 	_float fYPosOffset = 195.f;
-	m_matWorld._11 = m_fSizeX * 2.f;
+	m_matWorld._11 = m_fSizeX * 2.1f;
 	m_matWorld._22 = m_fSizeY * 0.325f;
 	m_matWorld._33 = 1.f;
 	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
@@ -273,10 +321,27 @@ HRESULT CWeapon_Inven_InShop::SetUp_ConstantTable()
 		return E_FAIL;
 
 	_int iTexIdx = 15;
-	if (SHOP_WEAPON_SELL == m_eOption ||
-		SHOP_ARMOR_SELL == m_eOption ||
-		SHOP_ITEM_SELL == m_eOption)
+	switch (m_eOption)
+	{
+	case Client::CWeapon_Inven_InShop::SHOP_WEAPON_BUY:
+		iTexIdx = 15;
+		break;
+	case Client::CWeapon_Inven_InShop::SHOP_WEAPON_SELL:
 		iTexIdx = 16;
+		break;
+	case Client::CWeapon_Inven_InShop::SHOP_ARMOR_BUY:
+		iTexIdx = 17;
+		break;
+	case Client::CWeapon_Inven_InShop::SHOP_ARMOR_SELL:
+		iTexIdx = 18;
+		break;
+	case Client::CWeapon_Inven_InShop::SHOP_WEAPON_UPGRADE:
+		iTexIdx = 19;
+		break;
+	case Client::CWeapon_Inven_InShop::SHOP_ARMOR_UPGRADE:
+		iTexIdx = 20;
+		break;
+	}
 
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iTexIdx)))
 		return E_FAIL;
@@ -284,7 +349,78 @@ HRESULT CWeapon_Inven_InShop::SetUp_ConstantTable()
 	return NOERROR;
 }
 
-void CWeapon_Inven_InShop::Click_Inven()
+void CWeapon_Inven_InShop::Click_ArmorInven()
+{
+	if (!m_bIsActive)
+		return;
+
+	_int iIdx = 0;
+	for (auto& pSlot : m_vecArmorSlot)
+	{
+		if (pSlot->Get_Dead())
+			continue;
+
+		if (pSlot->Pt_InRect())
+		{
+			m_pHoverSlot_Armor = pSlot;
+
+			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB) &&
+				!pSlot->Get_Select())
+			{
+				Refresh_Inven();
+
+				m_pSelectedSlot_Armor = pSlot;
+				if (SHOP_ARMOR_SELL == m_eOption ||
+					SHOP_ARMOR_UPGRADE == m_eOption)
+				{
+					vector<CArmor_Slot*>* pArmorSlot = m_pArmorInventory->Get_VecArmorSlot();
+					(*pArmorSlot)[iIdx]->Set_SelectShop(true);
+					pSlot->Set_SelectShop(true);
+				}
+
+				switch (m_eOption)
+				{
+				case Client::CWeapon_Inven_InShop::SHOP_WEAPON_BUY:
+				{
+					m_pWeaponBuyPopup->Set_Active(true);
+					return;
+				}
+				case Client::CWeapon_Inven_InShop::SHOP_WEAPON_SELL:
+				{
+					m_pWeaponSellPopup->Set_Active(true);
+					return;
+				}
+				case Client::CWeapon_Inven_InShop::SHOP_ARMOR_BUY:
+				{
+					m_pArmorBuyPopup->Set_Active(true);
+					return;
+				}
+				case  Client::CWeapon_Inven_InShop::SHOP_WEAPON_UPGRADE:
+				{
+					m_pWeaponUpgradePopup->Set_Active(true);
+					m_pWeaponUpgradePopup->Set_UpgradeType(CWeaponUpgradeUI::UPGRADE_WEAPON);
+					Set_Active(false);
+					return;
+				}
+				case  Client::CWeapon_Inven_InShop::SHOP_ARMOR_UPGRADE:
+				{
+					m_pWeaponUpgradePopup->Set_Active(true);
+					m_pWeaponUpgradePopup->Set_UpgradeType(CWeaponUpgradeUI::UPGRADE_ARMOR);
+					Set_Active(false);
+					return;
+				}
+				}
+			}
+			return;
+		}
+		iIdx++;
+	}
+
+	m_pHoverSlot_Armor = nullptr;
+	//m_pSelectedSlot_Weapon = nullptr;
+}
+
+void CWeapon_Inven_InShop::Click_WeaponInven()
 {
 	if (!m_bIsActive)
 		return;
@@ -297,14 +433,14 @@ void CWeapon_Inven_InShop::Click_Inven()
 
 		if (pSlot->Pt_InRect())
 		{
-			m_pHoverSlot = pSlot;
+			m_pHoverSlot_Weapon = pSlot;
 			
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB) &&
 				!pSlot->Get_Select())
 			{
 				Refresh_Inven();
 
-				m_pSelectedSlot = pSlot;
+				m_pSelectedSlot_Weapon = pSlot;
 				if (SHOP_WEAPON_SELL == m_eOption ||
 					SHOP_WEAPON_UPGRADE == m_eOption)
 				{
@@ -326,16 +462,26 @@ void CWeapon_Inven_InShop::Click_Inven()
 					return;
 				}
 				case Client::CWeapon_Inven_InShop::SHOP_ARMOR_BUY:
-					break;
+				{
+					m_pArmorBuyPopup->Set_Active(true);
+					return;
+				}
 				case Client::CWeapon_Inven_InShop::SHOP_ARMOR_SELL:
-					break;
-				case Client::CWeapon_Inven_InShop::SHOP_ITEM_BUY:
-					break;
-				case Client::CWeapon_Inven_InShop::SHOP_ITEM_SELL:
-					break;
+				{
+					m_pArmorSellPopup->Set_Active(true);
+					return;
+				}
 				case  Client::CWeapon_Inven_InShop::SHOP_WEAPON_UPGRADE:
 				{
 					m_pWeaponUpgradePopup->Set_Active(true);
+					m_pWeaponUpgradePopup->Set_UpgradeType(CWeaponUpgradeUI::UPGRADE_WEAPON);
+					Set_Active(false);
+					return;
+				}
+				case  Client::CWeapon_Inven_InShop::SHOP_ARMOR_UPGRADE:
+				{
+					m_pWeaponUpgradePopup->Set_Active(true);
+					m_pWeaponUpgradePopup->Set_UpgradeType(CWeaponUpgradeUI::UPGRADE_ARMOR);
 					Set_Active(false);
 					return;
 				}
@@ -346,19 +492,45 @@ void CWeapon_Inven_InShop::Click_Inven()
 		iIdx++;
 	}
 
-	m_pHoverSlot = nullptr;
-	//m_pSelectedSlot = nullptr;
+	m_pHoverSlot_Weapon = nullptr;
+	//m_pSelectedSlot_Weapon = nullptr;
 }
 
 void CWeapon_Inven_InShop::Buy_Weapon()
 {
-	m_pWeaponInventory->Add_Weapon(m_pSelectedSlot->Get_WeaponParam());
+	m_pWeaponInventory->Add_Weapon(m_pSelectedSlot_Weapon->Get_WeaponParam());
 }
 
+void CWeapon_Inven_InShop::Buy_Armor()
+{
+	m_pArmorInventory->Add_Armor(m_pSelectedSlot_Armor->Get_ArmorParam());
+}
 
 void CWeapon_Inven_InShop::Sell_Weapon()
 {
 	m_pWeaponInventory->Sell_Weapon();
+
+	_ulong idx = 0;
+	for (auto& pSlot : m_vecWeaponSlot)
+	{
+		if (pSlot->Get_Dead())
+			continue;
+
+		if (pSlot->Get_SelectShop())
+		{
+			pSlot->Set_Dead();
+			m_vecWeaponSlot.erase(m_vecWeaponSlot.begin() + idx);
+			m_vecWeaponSlot.shrink_to_fit();
+			Refresh_Inven();
+			break;
+		}
+		++idx;
+	}
+}
+
+void CWeapon_Inven_InShop::Sell_Armor()
+{
+	m_pArmorInventory->Sell_Armor();
 
 	_ulong idx = 0;
 	for (auto& pSlot : m_vecWeaponSlot)
@@ -399,6 +571,27 @@ void CWeapon_Inven_InShop::Upgrade_Weapon(WPN_PARAM tParam)
 	}
 }
 
+void CWeapon_Inven_InShop::Upgrade_Armor(ARMOR_PARAM tParam)
+{
+	_ulong idx = 0;
+
+	vector<CArmor_Slot*>* pVecSlot = m_pArmorInventory->Get_VecArmorSlot();
+	for (auto& pSlot : m_vecArmorSlot)
+	{
+		if (pSlot->Get_SelectShop())
+		{
+			pSlot->Set_ArmorParam(tParam);
+
+			if (idx >= pVecSlot->size())
+				return;
+
+			(*pVecSlot)[idx]->Set_ArmorParam(tParam);
+			break;
+		}
+		++idx;
+	}
+}
+
 HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 {
 	switch (eShop)
@@ -417,7 +610,111 @@ HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)
 	case Client::CWeapon_Inven_InShop::SHOP_WEAPON_SELL:
 		break;
 	case Client::CWeapon_Inven_InShop::SHOP_ARMOR_BUY:
+	{
+		// 임시
+		ARMOR_PARAM tParam;
+		tParam.iArmorType = ARMOR_Gauntlet;
+		tParam.iArmorName = ArmorAll_Gauntlet_DarkNightHook;
+		tParam.iReinforce = 0;
+		tParam.fDef = 100;
+		tParam.fPlusDef = 20;
+		tParam.fHP = 100;
+		tParam.fPlusHP = 50;
+		tParam.iPrice = 1000;
+		m_tArmorParam[tParam.iArmorName] = tParam;
+
+		tParam.iArmorType = ARMOR_Gauntlet;
+		tParam.iArmorName = ArmorAll_Gauntlet_NovelSilver;
+		tParam.iReinforce = 0;
+		tParam.fDef = 110;
+		tParam.fPlusDef = 20;
+		tParam.fHP = 90;
+		tParam.fPlusHP = 80;
+		tParam.iPrice = 1000;
+		m_tArmorParam[tParam.iArmorName] = tParam;
+
+		tParam.iArmorType = ARMOR_Gauntlet;
+		tParam.iArmorName = ArmorAll_Gauntlet_MangSikHook;
+		tParam.iReinforce = 0;
+		tParam.fDef = 105;
+		tParam.fPlusDef = 30;
+		tParam.fHP = 95;
+		tParam.fPlusHP = 60;
+		tParam.iPrice = 1000;
+		m_tArmorParam[tParam.iArmorName] = tParam;
+
+		tParam.iArmorType = ARMOR_Gauntlet;
+		tParam.iArmorName = ArmorAll_Gauntlet_QueenKiller;
+		tParam.iReinforce = 0;
+		tParam.fDef = 120;
+		tParam.fPlusDef = 30;
+		tParam.fHP = 80;
+		tParam.fPlusHP = 60;
+		tParam.iPrice = 1000;
+		m_tArmorParam[tParam.iArmorName] = tParam;
+
+		tParam.iArmorType = ARMOR_LongCoat;
+		tParam.iArmorName = ArmorAll_LongCoat_DarkNightSpear;
+		tParam.iReinforce = 0;
+		tParam.fDef = 150;
+		tParam.fPlusDef = 30;
+		tParam.fHP = 100;
+		tParam.fPlusHP = 60;
+		tParam.iPrice = 1500;
+		m_tArmorParam[tParam.iArmorName] = tParam;
+
+		tParam.iArmorType = ARMOR_LongCoat;
+		tParam.iArmorName = ArmorAll_LongCoat_WhiteSilver;
+		tParam.iReinforce = 0;
+		tParam.fDef = 120;
+		tParam.fPlusDef = 30;
+		tParam.fHP = 130;
+		tParam.fPlusHP = 60;
+		tParam.iPrice = 1500;
+		m_tArmorParam[tParam.iArmorName] = tParam;
+
+		tParam.iArmorType = ARMOR_LongCoat;
+		tParam.iArmorName = ArmorAll_LongCoat_QueenKiller;
+		tParam.iReinforce = 0;
+		tParam.fDef = 100;
+		tParam.fPlusDef = 30;
+		tParam.fHP = 200;
+		tParam.fPlusHP = 60;
+		tParam.iPrice = 1500;
+		m_tArmorParam[tParam.iArmorName] = tParam;
+
+		tParam.iArmorType = ARMOR_Muffler;
+		tParam.iArmorName = ArmorAll_Muffler_DarkNightSpike;
+		tParam.iReinforce = 0;
+		tParam.fDef = 150;
+		tParam.fPlusDef = 30;
+		tParam.fHP = 590;
+		tParam.fPlusHP = 60;
+		tParam.iPrice = 2000;
+		m_tArmorParam[tParam.iArmorName] = tParam;
+
+		tParam.iArmorType = ARMOR_Muffler;
+		tParam.iArmorName = ArmorAll_Muffler_WhiteGraze;
+		tParam.iReinforce = 0;
+		tParam.fDef = 180;
+		tParam.fPlusDef = 30;
+		tParam.fHP = 550;
+		tParam.fPlusHP = 60;
+		tParam.iPrice = 2000;
+		m_tArmorParam[tParam.iArmorName] = tParam;
+
+		tParam.iArmorType = ARMOR_Muffler;
+		tParam.iArmorName = ArmorAll_Muffler_Suiside;
+		tParam.iReinforce = 0;
+		tParam.fDef = 100;
+		tParam.fPlusDef = 30;
+		tParam.fHP = 730;
+		tParam.fPlusHP = 60;
+		tParam.iPrice = 2000;
+		m_tArmorParam[tParam.iArmorName] = tParam;
+
 		break;
+	}
 	case Client::CWeapon_Inven_InShop::SHOP_ARMOR_SELL:
 		break;
 	case Client::CWeapon_Inven_InShop::SHOP_ITEM_BUY:
@@ -448,6 +745,22 @@ void CWeapon_Inven_InShop::Add_Weapon(WPN_PARAM tAddWpnParam)
 	}
 }
 
+void CWeapon_Inven_InShop::Add_Armor(ARMOR_PARAM tAddArmorParam)
+{
+	CArmor_Slot* pSlot = static_cast<CArmor_Slot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ArmorSlot", nullptr));
+	pSlot->Set_UI_Size(50.f, 50.f);
+	pSlot->Set_ArmorParam(tAddArmorParam);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pSlot, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	m_vecArmorSlot.push_back(pSlot);
+
+	// 슬롯 생성시 위치 조정
+	for (_uint i = 0; i < m_vecArmorSlot.size(); ++i)
+	{
+		m_vecArmorSlot[i]->Set_Active(m_bIsActive);
+		m_vecArmorSlot[i]->Set_ViewZ(m_fViewZ - 0.1f);
+		m_vecArmorSlot[i]->Set_UI_Pos(m_fPosX - 103.f + 52.f * (i % 5), m_fPosY - 140.f + 52.f * (i / 5));
+	}
+}
 
 CWeapon_Inven_InShop * CWeapon_Inven_InShop::Create(_Device pGraphic_Device)
 {

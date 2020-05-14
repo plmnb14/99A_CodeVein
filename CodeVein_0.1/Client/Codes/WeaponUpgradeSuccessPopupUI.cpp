@@ -243,11 +243,11 @@ void CWeaponUpgradeSuccessPopupUI::Check_ItemOption()
 	if (!m_bIsActive)
 		return;
 
-	CWeapon_Slot* pWeaponSlot = m_pInven->Get_HoverSlot();
+	CWeapon_Slot* pWeaponSlot = m_pInven->Get_HoverSlot_Weapon();
 	
 
 	if (!pWeaponSlot || m_pInven->Get_PopupOn())
-		pWeaponSlot = m_pInven->Get_SelectedSlot();
+		pWeaponSlot = m_pInven->Get_SelectedSlot_Weapon();
 
 	if (!pWeaponSlot)
 		return;
