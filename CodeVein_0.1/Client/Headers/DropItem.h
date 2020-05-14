@@ -12,6 +12,8 @@
 #include "Weapon.h"
 #include "Pet.h"
 
+#include "Get_ItemUI.h"
+
 BEGIN(Client)
 
 class CDropItem :public CGameObject
@@ -86,6 +88,8 @@ private:
 	CTrail_VFX*						m_pTrailEffect = nullptr;
 	CEffect*						m_pEffect = nullptr;
 
+	CGet_ItemUI*					m_pGet_ItemUI = nullptr;
+
 	ITEM_TYPE						m_eItemType = ITEM_TYPE::ITEM_TYPE_END; //아이템 종류
 
 	ITEM_GRADE_TYPE					m_eItemGrade = ITEM_GRADE_TYPE::ITEM_GRADE_TYPE_END; //등급 종류
@@ -100,9 +104,12 @@ private:
 
 	_double							m_dCanGetItemLimitTimeCur = 0; //누적을 위한 값
 	_double							m_dCanGetItemLimitTimeMax = 0; //시간값이라 double형, 해당 시간이 지나면 획득 불가, 사망
+
 	_float							m_fTempEffectLimitTime = 0.f; //이펙트를 위한 변수, 임시로 만든 변수, 변경 예정
 	_float							m_fCanGetDist = 1.5f; //획득 가능범위
+	
 	_bool							m_bCanGetItem = false; //항시 false 상호작용시 true
+	_bool							m_bCheck_Start_GetItemUI = false;
 };
 
 END

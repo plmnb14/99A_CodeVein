@@ -6,6 +6,7 @@
 
 BEGIN(Client)
 
+class CPickUp_ItemUI;
 class CGet_ItemUI final : public CUI
 {
 private:
@@ -51,6 +52,8 @@ private:
 	_uint		m_iUINumber = 0;
 	_uint		m_iCount_PickUpitem = 0;
 
+	_uint		m_iPickUp_ItemNumber = 4;
+
 private:
 	CTransform*				m_pTransformCom = nullptr;
 	CRenderer*				m_pRendererCom = nullptr;
@@ -58,7 +61,8 @@ private:
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
-
+private:
+	CPickUp_ItemUI*			m_pPickUp_ItemUI = nullptr;
 
 public:
 	static CGet_ItemUI*		Create(_Device pGraphic_Device);

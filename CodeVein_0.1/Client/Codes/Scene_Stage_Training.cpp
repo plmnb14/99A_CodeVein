@@ -115,7 +115,12 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Pickup_Item", SCENE_STAGE, L"Layer_PickUPUI")))
 	//	return E_FAIL;
 
-	//// ±èÀç±¸
+	// Test Item
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
+	//	&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_EXPENDABLES, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY, _v3(5.f, 0.f, 5.f), 5000.f));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Item", nullptr);
+
+	// ±èÀç±¸
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_Colleague", 
 	//	&CPlayer_Colleague::JACK_INFO(_v3(10.f, 0.f, 5.f), 0.f, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Colleague", nullptr);

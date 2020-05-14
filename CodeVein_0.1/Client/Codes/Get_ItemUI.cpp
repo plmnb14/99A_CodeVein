@@ -4,6 +4,7 @@
 
 #include "UI_Manager.h"
 
+#include "PickUp_ItemUI.h"
 
 
 CGet_ItemUI::CGet_ItemUI(_Device Graphic_Device)
@@ -31,17 +32,14 @@ HRESULT CGet_ItemUI::Ready_GameObject(void * pArg)
 
 	CUI::Ready_GameObject(pArg);
 
-	// 아이템 획득 시 알림이 1개 생성
-	// 아이템 이후 아이템 획득이 더이상 없을시 n초 후 삭제.
-	// n초 보다 시간이 적게 흐른 상태에서, 또 아이템을 습득할 시 n초는 갱신, 
-	// 아이템 획득 메세지 1개 더 추가로 출력
-
-
 	m_fPosX = WINCX * 0.5f;
 	m_fPosY = WINCY - 100.f;
 
 	m_fSizeX = 269.f;
 	m_fSizeY = 81.f;
+
+	m_pPickUp_ItemUI = static_cast<CPickUp_ItemUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PickUp_ItemUI", pArg));
+	m_pPickUp_ItemUI->Ready_GameObject(NULL);
 
 	return S_OK;
 }
@@ -53,22 +51,35 @@ _int CGet_ItemUI::Update_GameObject(_double TimeDelta)
 
 	SetUp_State(TimeDelta);
 
+	m_pRendererCom->Add_RenderList(RENDER_UI, this);
+
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
-
-		m_pRendererCom->Add_RenderList(RENDER_UI, this);
+	if (nullptr != m_pPickUp_ItemUI)
+		m_pPickUp_ItemUI->Update_GameObject(TimeDelta);
 
 	return S_OK;
 }
 
 _int CGet_ItemUI::Late_Update_GameObject(_double TimeDelta)
 {
+	D3DXMatrixIdentity(&m_matWorld);
+	D3DXMatrixIdentity(&m_matView);
+
+	m_matWorld._11 = m_fSizeX;
+	m_matWorld._22 = m_fSizeY;
+	m_matWorld._33 = 1.f;
+	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
+	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;
+
+	if (nullptr != m_pPickUp_ItemUI)
+		m_pPickUp_ItemUI->Late_Update_GameObject(TimeDelta);
+
 	return S_OK;
 }
 
 HRESULT CGet_ItemUI::LateInit_GameObject()
 {
-
 	return S_OK;
 }
 
@@ -78,11 +89,34 @@ HRESULT CGet_ItemUI::Render_GameObject()
 		return E_FAIL;
 
 	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
+
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
-	CUI_Manager* pUIMgr = CUI_Manager::Get_Instance();
+	m_pShaderCom->Begin_Shader();
 
+	m_pShaderCom->Begin_Pass(1);
+
+	if (0 == m_iUINumber)
+	{
+		if (FAILED(SetUp_ConstantTable(0)))
+			return E_FAIL;
+		
+		m_pShaderCom->Commit_Changes();
+		m_pBufferCom->Render_VIBuffer();
+	}
+	if (1 == m_iUINumber)
+	{
+		if (FAILED(SetUp_ConstantTable(1)))
+			return E_FAIL;
+
+		m_pShaderCom->Commit_Changes();
+		m_pBufferCom->Render_VIBuffer();
+	}
+
+	m_pShaderCom->End_Pass();
+
+	m_pShaderCom->End_Shader();
 
 	return S_OK;
 }
@@ -116,7 +150,7 @@ HRESULT CGet_ItemUI::SetUp_ConstantTable(_uint TextureIndex)
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_pTransformCom->Get_WorldMat(), sizeof(_mat))))
+	if (FAILED(m_pShaderCom->Set_Value("g_matWorld", &m_matWorld, sizeof(_mat))))
 		return E_FAIL;
 
 	if (FAILED(m_pShaderCom->Set_Value("g_matView", &m_matView, sizeof(_mat))))
@@ -134,38 +168,33 @@ HRESULT CGet_ItemUI::SetUp_ConstantTable(_uint TextureIndex)
 	if (FAILED(m_pShaderCom->Set_Value("g_fPercentage", &m_fPercentage, sizeof(_float))))
 		return E_FAIL;
 
-	if (FAILED(m_pShaderCom->Set_Value("g_fSparkle", &m_fSparkleBox, sizeof(_float))))
-		return E_FAIL;
-
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, TextureIndex)))
 		return E_FAIL;
 
-	m_iUINumber = TextureIndex;
+	//m_iUINumber = TextureIndex;
 
 	return S_OK;
 }
 
 void CGet_ItemUI::SetUp_State(_double TimeDelta)
 {
+	CUI_Manager* pUIManager = CUI_Manager::Get_Instance();
+
 	m_fPercentage = m_fNowItemBar_Size / m_fSizeX;
 
-	// 플레이어와 아이템의 거리비교
-	// 거리측정해서 일정 거리 안에 들어올 경우 UI를 띄우고 플레이어가 A키를 눌렀을 때
-	// 아이템을 줍는다.
-	// A키를 눌렀을 때 누르는 동안(프레싱) 진하게 뒷배경을 띄우고
-	// 키를 뗐을 때(Key_Down), 화면 우측 상단에 주운 아이템 이름을 띄운다.
-	// 위 알림도 약 1.2초 정도 노출시킴
+	if (g_pInput_Device->Key_Pressing(DIK_I))
+		m_iUINumber = 1;
+	if (g_pInput_Device->Key_Up(DIK_I))
+	{
+		m_iUINumber = 2;
+		++m_iPickUp_ItemNumber;
+		pUIManager->Set_CoundItem(m_iPickUp_ItemNumber);
+	}
 
-	// 지금은 더미로 했지만 나중에 아이템 생성되고 나면 생성된 아이템에 따라 아이템 이름을(enum값을?)
-	// 변수에다가 받아와서 해당 이름을 띄운다
-
-	//list<CGameObject*> ItemList = g_pManagement->Get_GameObjectList(L"Layer_Item", SCENE_STAGE);
-
-	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
-
-	_v3 Player_D3 = TARGET_TO_TRANS(m_pTarget)->Get_Pos() - TARGET_TO_TRANS(pPlayer)->Get_Pos();
-
-	
+	if (2 == m_iUINumber)
+		m_iUINumber = 0;
+	if (m_iPickUp_ItemNumber > 2)
+		m_iPickUp_ItemNumber = 0;
 }
 
 CGet_ItemUI * CGet_ItemUI::Create(_Device pGraphic_Device)

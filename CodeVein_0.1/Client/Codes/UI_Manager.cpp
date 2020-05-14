@@ -3,8 +3,6 @@
 
 // À¯¹Ì
 #include "MassageUI.h"
-#include "Get_ItemUI.h"
-#include "PickUp_ItemUI.h"
 
 //============================
 #include "UI_FontNum.h"
@@ -136,11 +134,11 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BossMassageUI", CMassageUI::Create(pDevice))))
 		return E_FAIL;
 
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Get_Item", CGet_ItemUI::Create(pDevice))))
+	/*if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Get_Item", CGet_ItemUI::Create(pDevice))))
 		return E_FAIL;
 
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Pickup_Item", CPickUp_ItemUI::Create(pDevice))))
-		return E_FAIL;
+		return E_FAIL;*/
 	
 
 	//=======================================================
@@ -248,13 +246,6 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	m_pPet_Inven = static_cast<CPet_Inven*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PetInven", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pPet_Inven, SCENE_MORTAL, L"Layer_PetUI", nullptr);
 
-
-	/////////////////////////////////// Item Get UI /////////////////////////////////////
-	m_pGet_ItemUI = static_cast<CGet_ItemUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Get_ItemUI", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pGet_ItemUI, SCENE_STAGE, L"Layer_Get_ItemUI", nullptr);
-
-	m_pPickUp_ItemUI = static_cast<CPickUp_ItemUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PickUp_ItemUI", nullptr));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pPickUp_ItemUI, SCENE_STAGE, L"Layer_PickUp_ItemUI", nullptr);
 	
 	return NOERROR;
 }

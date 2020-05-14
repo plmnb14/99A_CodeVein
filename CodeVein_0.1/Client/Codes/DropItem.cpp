@@ -27,6 +27,9 @@ HRESULT CDropItem::Ready_GameObject(void * pArg)
 	m_pEffect->Set_Desc(V3_NULL, m_pTransform);
 	m_pEffect->Reset_Init();
 
+	m_pGet_ItemUI = static_cast<CGet_ItemUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Get_ItemUI", pArg));
+	m_pGet_ItemUI->Ready_GameObject(NULL);
+
 	return S_OK;
 }
 
@@ -43,10 +46,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 	//상호작용 대상과 충돌 여부 체크
 	Check_Dist();
 
-	//if(true == m_bCanGetItem)
-	//{
-	//	"줍는다" UI 발동
-	//}
+
 
 	//0.05초마다 이펙트효과 발생
 	if (m_fTempEffectLimitTime > 0.05f)
@@ -163,6 +163,14 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 		}
 	}
 
+	if (true == m_bCheck_Start_GetItemUI)
+	{
+		// 부딪힌 상태면 m_bCanGetItem이 true가 된다.
+		m_pGet_ItemUI->Update_GameObject(TimeDelta);
+
+		// 이미지가 바뀌었을 때 m_bCanGetItem = true;
+	}
+
 	return NO_EVENT;
 }
 
@@ -182,6 +190,9 @@ _int CDropItem::Late_Update_GameObject(_double TimeDelta)
 			return E_FAIL;
 	}
 
+	if (nullptr != m_pGet_ItemUI)
+		m_pGet_ItemUI->Late_Update_GameObject(TimeDelta);
+
 	return NO_EVENT;
 }
 
@@ -193,6 +204,9 @@ HRESULT CDropItem::Render_GameObject()
 void CDropItem::Check_Dist()
 {
 	_float fDist;
+	// 펫은 자동으로 획득되게 해야 하기 때문에 m_bCheck_Start_GetItemUI를 사용하지 않는다.
+	
+
 	//p가 접근, 행동o, 제한 시간 이내라면 불값 참
 	//p가 접근, 행동o, 제한 시간 초과라면 불값 거짓
 
@@ -215,11 +229,11 @@ void CDropItem::Check_Dist()
 
 		if (m_fCanGetDist >= fDist)
 		{
-			m_bCanGetItem = true;
+			m_bCheck_Start_GetItemUI = true;
 			return;
 		}
 		else
-			m_bCanGetItem = false;
+			m_bCheck_Start_GetItemUI = false;
 	}
 
 	for (auto& Pet_iter : listPet)
@@ -241,8 +255,6 @@ void CDropItem::Check_Dist()
 		else
 			m_bCanGetItem = false;
 	}
-
-	return;
 }
 
 void CDropItem::Check_PosY()
