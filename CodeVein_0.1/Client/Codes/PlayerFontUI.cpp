@@ -82,8 +82,20 @@ HRESULT CPlayerFontUI::Render_GameObject()
 
 	m_pShader->Begin_Shader();
 
+
 	_int iLoopCnt = Calc_LoopCnt(m_fValue);
 	_int iLoopIdx = 0;
+
+	if (m_bSlash)
+	{
+		m_iIndex = 11;
+		m_pShader->Begin_Pass(1);
+		m_pTexture->SetUp_OnShader("g_DiffuseTexture", m_pShader, m_iIndex);
+		m_pBuffer->Render_VIBuffer();
+		m_pShader->End_Pass();
+		m_pShader->End_Shader();
+		return NOERROR;
+	}
 
 	Calc_NumTexIdx(m_fValue, iLoopCnt);
 

@@ -33,7 +33,7 @@ private:
 
 	SCENEID					m_eOldSceneID = SCENEID::SCENE_END;
 	_tchar					m_szName[STR_128];
-
+	_bool					m_bChangeSuccess = false;
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();

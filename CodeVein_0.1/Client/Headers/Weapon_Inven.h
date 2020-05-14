@@ -16,6 +16,10 @@ private:
 
 public:
 	WPN_PARAM Get_UseWeaponParam(_uint iIndex) { return m_UseWeaponParam[iIndex]; }
+	vector<CWeapon_Slot*>* Get_VecWeaponSlot() { return &m_vecWeaponSlot; }
+
+public:
+	HRESULT Set_WeaponData_FromWeapon();
 
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();
@@ -35,6 +39,7 @@ private:
 
 public:
 	void Add_Weapon(WPN_PARAM tAddWpnParam);
+	void Sell_Weapon();
 
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
@@ -47,6 +52,7 @@ private:
 	WPN_PARAM				m_tWeaponParam[WPN_DATA_End + 1];
 	CExplainWeaponUI*		m_pExplainUI = nullptr;
 
+	CWeapon*				m_pTempWeapon = nullptr;
 public:
 	static CWeapon_Inven*	Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);

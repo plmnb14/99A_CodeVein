@@ -13,10 +13,12 @@ private:
 
 public:
 	bool Get_Select() { return m_bIsSelect; }
+	bool Get_SelectShop() { return m_bIsSelectShop; }
 	WPN_PARAM Get_WeaponParam() { return m_tWeaponParam; }
 
 public:
 	void Set_Select(_bool bIsSelect) { m_bIsSelect = bIsSelect; }
+	void Set_SelectShop(_bool bIsSelect) { m_bIsSelectShop = bIsSelect; }
 	void Set_WeaponParam(WPN_PARAM tWeaponParam) { m_tWeaponParam = tWeaponParam; }
 
 public:
@@ -42,6 +44,7 @@ private:
 
 private:
 	_bool					m_bIsSelect = false;
+	_bool					m_bIsSelectShop = false;
 	WPN_PARAM				m_tWeaponParam;
 	_bool					m_bIsCollMouse = false;
 

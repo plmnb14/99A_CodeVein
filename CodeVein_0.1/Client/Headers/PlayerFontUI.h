@@ -22,6 +22,7 @@ public:
 	virtual void Set_ScaleUp(_float _fSizeMultiply = 4.f);
 	virtual void Update_Scale();
 	virtual void Set_Alpha(_float _fAlpha) { m_fTimerAlpha = _fAlpha; }
+	virtual void Set_Slash(_bool _bSlash) { m_bSlash = _bSlash; }
 
 public:
 	virtual void Set_ParentMatrix(_mat* _pParentMatrix) { m_pMatParent = _pParentMatrix; }
@@ -48,7 +49,7 @@ private:
 	_float					m_fTimerAlpha = 1.f;
 	_bool					m_bNegative = false;
 	_bool					m_bDecreScale = false;
-
+	_bool					m_bSlash = false;
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();

@@ -26,6 +26,7 @@ private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable(_uint iIndex);
 	HRESULT SetUp_Default();
+	void	Calc_HazeFontPos();
 
 public:
 	// 인자 만큼 헤이즈 누적

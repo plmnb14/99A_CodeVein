@@ -3,13 +3,26 @@
 #include "Client_Defines.h"
 #include "UI.h"
 
+#include "WeaponShopOptionUI.h"
+
 BEGIN(Client)
+class CWeaponBuyUI;
+class CWeaponShopOptionUI;
+class CWeapon_Inven_InShop;
 class CWeaponShopUI final : public CUI
 {
 private:
 	explicit CWeaponShopUI(_Device pDevice);
 	explicit CWeaponShopUI(const CWeaponShopUI& rhs);
 	virtual ~CWeaponShopUI() = default;
+
+public:
+	CWeapon_Inven_InShop* Get_InvenBuy() { return m_pBuyInven; }
+	CWeapon_Inven_InShop* Get_InvenSell() { return m_pSellInven; }
+	CWeapon_Inven_InShop* Get_InvenUpgrade() { return m_pUpgradeInven; }
+
+public:
+	void Setup_AfterClone();
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -24,9 +37,10 @@ private:
 	HRESULT SetUp_ConstantTable(CShader* pShader);
 	void Click_Option();
 	void Reset_Option();
+	void Check_Key();
 
 public:
-	//void Active_SubUI(CMistletoeOptionUI* pSelectOption);
+	void Active_SubUI(CWeaponShopOptionUI* pSelectOption);
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -38,8 +52,17 @@ private:
 private:
 	_float					m_fAlpha = 0.f;
 	_uint					m_iSelectIndex = 0;
-	_float m_fCross = 100.f;
+	_float					m_fCross = 100.f;
+	_bool					m_bFirestMenu = false;
+	_bool					m_bPopupOn = false;
 
+	CWeaponShopOptionUI::WEAPONSHOP_OPTION	m_eState = CWeaponShopOptionUI::WEAPONSHOP_OPTION::OPTION_END;
+
+	vector<CWeaponShopOptionUI*>	m_vecOption;
+	CWeaponBuyUI*					m_pBuyUI;
+	CWeapon_Inven_InShop*			m_pBuyInven;
+	CWeapon_Inven_InShop*			m_pSellInven;
+	CWeapon_Inven_InShop*			m_pUpgradeInven;
 public:
 	static CWeaponShopUI*	Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);

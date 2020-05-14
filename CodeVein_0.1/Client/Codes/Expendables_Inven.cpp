@@ -1,10 +1,8 @@
 #include "stdafx.h"
 #include "..\Headers\Expendables_Inven.h"
 
-
-#include "Expendables.h"
-#include "Expendables_Slot.h"
 #include "Item_Manager.h"
+#include "UI_Manager.h"
 
 CExpendables_Inven::CExpendables_Inven(_Device pDevice)
 	: CUI(pDevice)
@@ -37,6 +35,8 @@ HRESULT CExpendables_Inven::Ready_GameObject(void * pArg)
 	m_fViewZ = 4.f;
 
 	m_bIsActive = false;
+
+	SetUp_Default();
 
 	// Slot Create
 	CUI::UI_DESC* pDesc = nullptr;
@@ -82,6 +82,10 @@ _int CExpendables_Inven::Update_GameObject(_double TimeDelta)
 		pSlot->Set_Active(m_bIsActive);
 		pSlot->Set_ViewZ(m_fViewZ - 0.1f);
 	}
+
+	if (m_pExplainUI)
+		m_pExplainUI->Set_Active(m_bIsActive);
+	
 
 	return NO_EVENT;
 }
@@ -180,8 +184,16 @@ void CExpendables_Inven::Click_Inven()
 
 	for (auto& pExpendSlot : m_vecSlot)
 	{
-		if (pExpendSlot->Pt_InRect())
+		if (pExpendSlot->Pt_InRect() && pExpendSlot->Get_Type() != CExpendables::EXPEND_END)
 		{
+			m_pExplainUI->Set_Type(CExpendables::EXPEND_TYPE(pExpendSlot->Get_Type()));
+			m_pExplainUI->Set_CurHaveCnt(pExpendSlot->Get_Size());
+
+			if (pExpendSlot->Get_Type() == CExpendables::Expend_Hp)
+				m_pExplainUI->Set_MaximumCnt(m_iMaximumCnt);
+			else
+				m_pExplainUI->Set_MaximumCnt(5);
+
 			if (!pExpendSlot->Get_Select() && pExpendSlot->Get_Size() > 0 && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
 				if (m_vecQuickSlot.size() == 8)
@@ -202,6 +214,16 @@ void CExpendables_Inven::Click_Inven()
 
 	
 
+}
+
+void CExpendables_Inven::SetUp_Default()
+{
+	m_pExplainUI = static_cast<CExplainExpendUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExplainExpendUI", nullptr));
+	m_pExplainUI->Set_UI_Pos(WINCX * 0.5f, WINCY * 0.5f);
+	m_pExplainUI->Set_UI_Size(1024.f * 0.6f, 720.f * 0.6f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExplainUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	
 }
 
 void CExpendables_Inven::Add_Expendables(CExpendables::EXPEND_TYPE eType)

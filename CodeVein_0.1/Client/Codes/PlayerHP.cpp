@@ -222,7 +222,8 @@ void CPlayerHP::SetUp_State(_double TimeDelta)
 		m_fPlayerHP = 0.f;
 
 	m_fPlayerHP = m_pTarget->Get_Target_Hp();
-	m_fTotalHP = m_pTarget->Get_Target_Param().fHp_Cur;
+	// 수정
+	m_fTotalHP = m_pTarget->Get_Target_Param().fHp_Max;
 
 	// Texture UV 흐르는 속도
 	m_fSpeed += -0.2f * _float(TimeDelta);
