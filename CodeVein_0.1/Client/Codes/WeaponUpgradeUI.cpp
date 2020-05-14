@@ -371,6 +371,8 @@ _int CWeaponUpgradeUI::Get_MyMaterial(CMaterial::MATERIAL_TYPE eType)
 	case Client::CMaterial::Queen_Tungsten:
 		return iTungsten;
 	}
+
+	return -1;
 }
 
 _int CWeaponUpgradeUI::Get_RequireMaterial(CMaterial::MATERIAL_TYPE eType, _int iReinforce)

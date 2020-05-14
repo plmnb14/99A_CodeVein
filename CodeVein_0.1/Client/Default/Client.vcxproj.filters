@@ -532,6 +532,9 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI\Option">
       <UniqueIdentifier>{023eafb9-cae5-4944-a116-3d2c0d39de3f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI">
+      <UniqueIdentifier>{41c3c3de-dd61-4d16-868c-53b157aa6803}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1131,6 +1134,12 @@
     <ClInclude Include="..\Headers\WeaponUpgradeSuccessPopupOptionUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI\Option</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\GeneralStoreBuyUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BuyOptionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1714,6 +1723,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\WeaponUpgradeSuccessPopupOptionUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI\Option</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GeneralStoreBuyUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BuyOptionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

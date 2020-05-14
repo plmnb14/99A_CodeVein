@@ -111,6 +111,9 @@ void CExpendCollectionUI::SetUp_Default()
 
 	m_pInfoUI = static_cast<CExpend_InfoUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Expend_InfoUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pInfoUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	m_pBuyUI = static_cast<CGeneralStoreBuyUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_GeneralStoreBuyUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBuyUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
 
 void CExpendCollectionUI::Update_SubUI()
@@ -136,10 +139,13 @@ void CExpendCollectionUI::Click_SubUI()
 	{
 		if (iter->Pt_InRect() && CExpendables::EXPEND_END != iter->Get_Type())
 		{
-			m_pInfoUI->Set_Type(iter->Get_Type());
-
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
-				Buy_Expendable(iter);
+			{
+				m_pInfoUI->Set_Type(iter->Get_Type());
+				m_pBuyUI->Set_Active(true);
+				//Buy_Expendable(iter);
+			}
+				
 		}
 	}
 }

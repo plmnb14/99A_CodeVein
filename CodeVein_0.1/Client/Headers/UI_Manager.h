@@ -88,6 +88,9 @@
 #include "ExpendOptionUI.h"
 #include "Expend_InfoUI.h"
 
+#include "GeneralStoreBuyUI.h"
+#include "BuyOptionUI.h"
+
 BEGIN(Client)
 
 class CUI_Manager final : public CBase
