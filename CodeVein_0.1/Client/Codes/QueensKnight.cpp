@@ -196,8 +196,11 @@ _int CQueensKnight::Late_Update_GameObject(_double TimeDelta)
 
 	if (m_bInFrustum)
 	{
-		if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
-			return E_FAIL;
+		if (false == m_bDissolve)
+		{
+			if (FAILED(m_pRendererCom->Add_RenderList(RENDER_MOTIONBLURTARGET, this)))
+				return E_FAIL;
+		}
 	}
 	//=============================================================================================
 
@@ -264,8 +267,9 @@ HRESULT CQueensKnight::Render_GameObject()
 
 HRESULT CQueensKnight::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
-	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
-	IF_NULL_VALUE_RETURN(m_pMeshCom, E_FAIL);
+	if (nullptr == pShader ||
+		nullptr == m_pMeshCom)
+		return E_FAIL;
 
 	m_pMeshCom->Play_Animation(DELTA_60 * m_dAniPlayMul);
 

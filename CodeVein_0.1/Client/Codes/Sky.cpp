@@ -49,7 +49,7 @@ _int CSky::Late_Update_GameObject(_double TimeDelta)
 	if (FAILED(m_pRendererCom->Add_RenderList(RENDER_PRIORITY, this)))
 		return E_FAIL;
 
-	return _int();
+	return NOERROR;
 }
 
 HRESULT CSky::Render_GameObject()
@@ -85,11 +85,11 @@ HRESULT CSky::Render_GameObject()
 
 void CSky::Check_Scene()
 {
-	if (g_eSceneID_Cur != m_eOldSceneID)
+	//if (g_eSceneID_Cur != m_eOldSceneID)
 	{
-		m_eOldSceneID = (SCENEID)g_eSceneID_Cur;
+		//m_eOldSceneID = (SCENEID)g_eSceneID_Cur;
 
-		switch (m_eOldSceneID)
+		switch (g_eSceneID_Cur)
 		{
 		case SCENE_STATIC:
 			break;
@@ -111,7 +111,7 @@ void CSky::Check_Scene()
 			Change_Mesh(L"Mesh_Sky_1");
 			break;
 		case SCENE_STAGE_03:
-			Change_Mesh(L"Mesh_Sky_0");
+			Change_Mesh(L"Mesh_Sky_3");
 			break;
 		case SCENE_STAGE_04:
 			Change_Mesh(L"Mesh_Sky_2");
@@ -130,15 +130,21 @@ void CSky::Check_Scene()
 
 void CSky::Change_Mesh(const _tchar* _MeshName)
 {
+	if (m_bChangeSuccess)
+		return;
+
 	// 이름 비교해서 같으면 Return
 	if (!lstrcmp(m_szName, _MeshName))
 		return;
 
-	// 다르다면 이름 갱신하고,
-	lstrcpy(m_szName, _MeshName);
-
 	// 컴포넌트에 있는 매쉬 찾아서
 	auto& iter = m_pmapComponents.find(L"Com_StaticMesh");
+
+	if (iter == m_pmapComponents.end())
+		return;
+
+	// 이름 갱신하고,
+	lstrcpy(m_szName, _MeshName);
 
 	// 둘 다 해제
 	Safe_Release(m_pMeshCom);
@@ -148,6 +154,7 @@ void CSky::Change_Mesh(const _tchar* _MeshName)
 	iter->second = m_pMeshCom = static_cast<CMesh_Static*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, m_szName));
 	Safe_AddRef(iter->second);
 
+	m_bChangeSuccess = true;
 	return;
 }
 
@@ -166,7 +173,7 @@ HRESULT CSky::Add_Component()
 		return E_FAIL;
 	
 	// for.Com_Mesh
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Sky_0", L"Static_Mesh", (CComponent**)&m_pMeshCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Mesh_Sky_3", L"Com_StaticMesh", (CComponent**)&m_pMeshCom)))
 		return E_FAIL;
 
 	//// For.Com_Buffer

@@ -40,6 +40,7 @@ CBT_Node::BT_NODE_STATE CBT_MoveAround::Update_Node(_double TimeDelta, vector<CB
 			D3DXVec3TransformNormal(&vToTarget, &vToTarget, D3DXMatrixRotationY(&_mat(), D3DXToRadian(3)));
 			// 회전된 벡터를 기준으로 right벡터를 구함.
 			D3DXVec3Cross(&vRight, &vToTarget, &_v3(0.f, 1.f, 0.f));
+			D3DXVec3Normalize(&vRight, &vRight);
 
 			m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &vRight, m_fMove_Speed * (_float)TimeDelta)));
 			
@@ -55,6 +56,7 @@ CBT_Node::BT_NODE_STATE CBT_MoveAround::Update_Node(_double TimeDelta, vector<CB
 			D3DXVec3TransformNormal(&vToTarget, &vToTarget, D3DXMatrixRotationY(&_mat(), D3DXToRadian(-3)));
 			// 회전된 벡터를 기준으로 right벡터를 구함.
 			D3DXVec3Cross(&vRight, &vToTarget, &_v3(0.f, 1.f, 0.f));
+			D3DXVec3Normalize(&vRight, &vRight);
 			vRight *= -1.f;
 
 			m_pTransform->Set_Pos((m_pNavMesh->Move_OnNaviMesh(NULL, &m_pTransform->Get_Pos(), &vRight, -m_fMove_Speed * (_float)TimeDelta)));
