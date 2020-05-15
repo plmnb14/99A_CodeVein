@@ -9,6 +9,7 @@
 
 BEGIN(Client)
 
+class CCostume_Outer;
 class CCostume_Hair;
 class CStageAgent;
 class CDrain_Weapon;
@@ -114,6 +115,7 @@ private:
 
 private:
 	CCostume_Hair*			m_pHair = nullptr;
+	CCostume_Outer*			m_pOuter = nullptr;
 
 private:
 	CUI_Manager*			m_pUIManager = nullptr;

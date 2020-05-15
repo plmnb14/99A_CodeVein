@@ -19,7 +19,7 @@ void CCloth::Set_Wind()
 {
 	// 자연스러운 바람.sample
 	PxReal strength = 5.0f;
-	PxVec3 offset(PxReal(CALC::Random_Num_Double(-1, 1)), 1.0f + PxReal(CALC::Random_Num_Double(-1, 1)), PxReal(CALC::Random_Num_Double(-1, 1)));
+	PxVec3 offset(PxReal(CALC::Random_Num_Double(-1, 1)), PxReal(CALC::Random_Num_Double(-1, 1)), PxReal(CALC::Random_Num_Double(-1, 1)));
 	PxVec3 windAcceleration = strength * offset;
 	m_pCloth->setExternalAcceleration(windAcceleration);
 
