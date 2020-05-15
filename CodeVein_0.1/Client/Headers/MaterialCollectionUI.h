@@ -6,6 +6,7 @@
 BEGIN(Client)
 class CMaterialOptionUI;
 class CMaterial_InfoUI;
+class CGeneralStoreBuyUI;
 class CMaterialCollectionUI final : public CUI
 {
 private:
@@ -38,6 +39,7 @@ private:
 	CMaterial_InfoUI*			m_pInfoUI = nullptr;
 	_uint						m_iBuyCnt = 1; // 물건 사는 개수
 	_uint						m_iCost = 0; // 물건 개당 가격
+	CGeneralStoreBuyUI*			m_pBuyUI = nullptr;
 
 public:
 	static CMaterialCollectionUI*	Create(_Device pGraphic_Device);

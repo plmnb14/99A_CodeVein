@@ -5,12 +5,12 @@
 
 BEGIN(Client)
 class CPlayerFontUI;
-class CSkillGauge final : public CUI
+class CSkillPointUI final : public CUI
 {
 private:
-	explicit CSkillGauge(_Device pDevice);
-	explicit CSkillGauge(const CSkillGauge& rhs);
-	virtual ~CSkillGauge() = default;
+	explicit CSkillPointUI(_Device pDevice);
+	explicit CSkillPointUI(const CSkillPointUI& rhs);
+	virtual ~CSkillPointUI() = default;
 
 public:
 	void Set_CurSkillPoint(_uint iCurSkillPoint) { m_iCurSkillPoint = iCurSkillPoint; }
@@ -41,7 +41,7 @@ private:
 	CPlayerFontUI*			m_pMaxPointFont = nullptr;
 
 public:
-	static CSkillGauge*		Create(_Device pGraphic_Device);
+	static CSkillPointUI*	Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);
 	virtual void			Free();
 };

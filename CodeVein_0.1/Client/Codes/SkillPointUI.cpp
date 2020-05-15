@@ -1,47 +1,51 @@
-#include "stdafx.h"
-#include "..\Headers\SkillGauge.h"
+﻿#include "stdafx.h"
+#include "..\Headers\SkillPointUI.h"
 #include "PlayerFontUI.h"
 
-CSkillGauge::CSkillGauge(_Device pDevice)
+CSkillPointUI::CSkillPointUI(_Device pDevice)
 	: CUI(pDevice)
 {
 }
 
-CSkillGauge::CSkillGauge(const CSkillGauge & rhs)
+CSkillPointUI::CSkillPointUI(const CSkillPointUI & rhs)
 	: CUI(rhs)
 {
 }
 
-HRESULT CSkillGauge::Ready_GameObject_Prototype()
+HRESULT CSkillPointUI::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
 
 	return NOERROR;
 }
 
-HRESULT CSkillGauge::Ready_GameObject(void * pArg)
+HRESULT CSkillPointUI::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 
 	CUI::Ready_GameObject(pArg);
 
+	m_fPosX = 930.f;
+	m_fPosY = 642.;
+	m_fSizeX = 256.f;
+	m_fSizeY = 64.f;
 	m_bIsActive = true;
 
 	m_pCurPointFont = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
-	m_pCurPointFont->Set_UI_Size(20.8f, 40.f);
-	m_pCurPointFont->Set_UI_Pos(600.f, 680.f);
+	m_pCurPointFont->Set_UI_Size(18.23f, 35.f);
+	m_pCurPointFont->Set_UI_Pos(m_fPosX - 20.f, m_fPosY);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pCurPointFont, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	m_pMaxPointFont = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
-	m_pMaxPointFont->Set_UI_Size(20.8f, 40.f);
-	m_pMaxPointFont->Set_UI_Pos(630.f, 680.f);
+	m_pMaxPointFont->Set_UI_Size(18.23f, 35.f);
+	m_pMaxPointFont->Set_UI_Pos(m_fPosX + 40.f, m_fPosY);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pMaxPointFont, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	return NOERROR;
 }
 
-_int CSkillGauge::Update_GameObject(_double TimeDelta)
+_int CSkillPointUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
@@ -51,10 +55,9 @@ _int CSkillGauge::Update_GameObject(_double TimeDelta)
 	if (m_bIsActive)
 	{
 		m_pCurPointFont->Update_NumberValue(_float(m_iCurSkillPoint));
-		m_pMaxPointFont->Update_NumberValue(_float(m_iMaxSkillPoint));
-
+		m_pMaxPointFont->Update_NumberValue(_float(m_iMaxSkillPoint));			
 		m_pCurPointFont->Set_Active(m_bIsActive);
-		m_pMaxPointFont->Set_Active(m_bIsActive);
+		m_pMaxPointFont->Set_Active(m_bIsActive);	
 	}
 	else
 	{
@@ -64,7 +67,7 @@ _int CSkillGauge::Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-_int CSkillGauge::Late_Update_GameObject(_double TimeDelta)
+_int CSkillPointUI::Late_Update_GameObject(_double TimeDelta)
 {
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
@@ -78,7 +81,7 @@ _int CSkillGauge::Late_Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-HRESULT CSkillGauge::Render_GameObject()
+HRESULT CSkillPointUI::Render_GameObject()
 {
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
@@ -101,7 +104,7 @@ HRESULT CSkillGauge::Render_GameObject()
 	return NOERROR;
 }
 
-HRESULT CSkillGauge::Add_Component()
+HRESULT CSkillPointUI::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -112,7 +115,7 @@ HRESULT CSkillGauge::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_SkillGauge", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_SkillPointUI", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -126,7 +129,7 @@ HRESULT CSkillGauge::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CSkillGauge::SetUp_ConstantTable()
+HRESULT CSkillPointUI::SetUp_ConstantTable()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -143,9 +146,9 @@ HRESULT CSkillGauge::SetUp_ConstantTable()
 	return NOERROR;
 }
 
-CSkillGauge * CSkillGauge::Create(_Device pGraphic_Device)
+CSkillPointUI * CSkillPointUI::Create(_Device pGraphic_Device)
 {
-	CSkillGauge* pInstance = new CSkillGauge(pGraphic_Device);
+	CSkillPointUI* pInstance = new CSkillPointUI(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 		Safe_Release(pInstance);
@@ -153,9 +156,9 @@ CSkillGauge * CSkillGauge::Create(_Device pGraphic_Device)
 	return pInstance;
 }
 
-CGameObject * CSkillGauge::Clone_GameObject(void * pArg)
+CGameObject * CSkillPointUI::Clone_GameObject(void * pArg)
 {
-	CSkillGauge* pInstance = new CSkillGauge(*this);
+	CSkillPointUI* pInstance = new CSkillPointUI(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 		Safe_Release(pInstance);
@@ -163,7 +166,7 @@ CGameObject * CSkillGauge::Clone_GameObject(void * pArg)
 	return pInstance;
 }
 
-void CSkillGauge::Free()
+void CSkillPointUI::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);

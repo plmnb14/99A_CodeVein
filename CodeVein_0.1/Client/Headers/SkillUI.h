@@ -37,7 +37,7 @@ private:
 
 private:
 	CActive_Icon*			m_pActive[8];
-	CIconBase*				m_pIconBase[8];
+	//CIconBase*				m_pIconBase[8];
 	CPlayerFontUI*			m_pSkillGaugeCur = nullptr;
 	CPlayerFontUI*			m_pSkillGaugeMax = nullptr;
 

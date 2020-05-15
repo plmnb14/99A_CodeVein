@@ -52,6 +52,9 @@
 #include "ReleaseOption.h"
 #include "SkillAcquisitionUI.h"
 #include "OKMessageUI.h"
+
+#include "SkillPointUI.h"
+#include "SkillGauge.h"
 #include "Skill_Inven.h"
 #include "SkillSlot.h"
 #include "SkillIcon.h"
@@ -132,6 +135,7 @@ public:
 	CPlayerHP* Get_PlayerHP() { return m_pPlayerHP; } // 플레이어 HP
 	CPlayerST* Get_PlayerST() { return m_pPlayerST; } // 플레이어 ST
 	CGeneralStoreUI* Get_MaterialShopUI() { return m_pGeneralStoreUI; }
+	CSkillGauge* Get_SkillGauge() { return m_pSkillGauge; }
 	
 	// 펫 인벤토리
 	CPet_Inven* Get_Pet_Inven() { return m_pPet_Inven; }
@@ -161,7 +165,9 @@ private:
 	CPlayerHP*	m_pPlayerHP = nullptr;
 	CPlayerST*	m_pPlayerST = nullptr;
 	CGeneralStoreUI* m_pGeneralStoreUI = nullptr; // 소비, 재료 상점 UI
-	
+	CSkillGauge*	m_pSkillGauge = nullptr;
+	CSkillPointUI*	m_pSkillPointUI = nullptr;
+
 	// 펫 인벤토리
 	CPet_Inven* m_pPet_Inven = nullptr;
 

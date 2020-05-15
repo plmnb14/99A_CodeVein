@@ -36,7 +36,7 @@ _int CExpendCollectionUI::Update_GameObject(_double TimeDelta)
 	
 	Update_SubUI();
 	Click_SubUI();
-
+	
 	return NO_EVENT;
 }
 
@@ -143,9 +143,9 @@ void CExpendCollectionUI::Click_SubUI()
 			{
 				m_pInfoUI->Set_Type(iter->Get_Type());
 				m_pBuyUI->Set_Active(true);
-				//Buy_Expendable(iter);
-			}
+				m_pBuyUI->Set_Type(ITEM_ALL_DATA(iter->Get_Type()));
 				
+			}
 		}
 	}
 }
@@ -189,7 +189,7 @@ void CExpendCollectionUI::Buy_Expendable(CExpendOptionUI* pOption)
 
 	_uint iTotalCost = m_iCost * m_iBuyCnt; // 총 비용 = 개당 가격 * 사는 개수
 
-	_uint iHazeCnt = CUI_Manager::Get_Instance()->Get_HazeUI()->Get_Haze_Cnt();
+	_ulong iHazeCnt = CUI_Manager::Get_Instance()->Get_HazeUI()->Get_Haze_Cnt();
 
 	// 가지고 있는 헤이즈가 구매 총 비용 이상일 경우 -> 돈 충분함 -> 구매한다.
 	if (iHazeCnt >= iTotalCost)
@@ -197,7 +197,7 @@ void CExpendCollectionUI::Buy_Expendable(CExpendOptionUI* pOption)
 		// 구매해서 재료 인벤에 넣는다.
 		CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Add_MultiExpendables(pOption->Get_Type(), m_iBuyCnt);
 		// 헤이즈를 탕진한 만큼 감소시킨다
-		CUI_Manager::Get_Instance()->Get_HazeUI()->Accumulate_Haze(-iTotalCost);
+		CUI_Manager::Get_Instance()->Get_HazeUI()->Accumulate_Haze(-(_int)iTotalCost);
 	}
 	// 가지고 있는 헤이즈보다 구매 총 비용이 더 클 경우 -> 돈 부족함 -> 구매X
 	else

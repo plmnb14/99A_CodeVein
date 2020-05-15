@@ -84,6 +84,10 @@ void CMaterialCollectionUI::SetUp_Default()
 	// 아이템 설명 UI 생성
 	m_pInfoUI = static_cast<CMaterial_InfoUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Material_InfoUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pInfoUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	// 아이템 구매 UI 생성
+	m_pBuyUI = static_cast<CGeneralStoreBuyUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_GeneralStoreBuyUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBuyUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
 
 void CMaterialCollectionUI::Update_SubUI()
@@ -108,11 +112,12 @@ void CMaterialCollectionUI::Click_SubUI()
 	{
 		if (iter->Pt_InRect() && iter->Get_Type() != CMaterial::MATERIAL_END)
 		{
-			m_pInfoUI->Set_Type(iter->Get_Type());
-
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
-				Buy_Material(iter);			
+				m_pInfoUI->Set_Type(iter->Get_Type());
+				m_pInfoUI->Set_Type(iter->Get_Type());
+				m_pBuyUI->Set_Active(true);
+				m_pBuyUI->Set_Type(ITEM_ALL_DATA(iter->Get_Type() - 6));
 			}
 			
 		}
@@ -151,7 +156,7 @@ void CMaterialCollectionUI::Buy_Material(CMaterialOptionUI* pOption)
 		// 구매해서 재료 인벤에 넣는다.
 		CUI_Manager::Get_Instance()->Get_Material_Inven()->Add_MultiMaterial(pOption->Get_Type(), m_iBuyCnt);
 		// 헤이즈를 탕진한 만큼 감소시킨다
-		CUI_Manager::Get_Instance()->Get_HazeUI()->Accumulate_Haze(-iTotalCost);
+		CUI_Manager::Get_Instance()->Get_HazeUI()->Accumulate_Haze(-(_int)iTotalCost);
 	}
 	// 가지고 있는 헤이즈보다 구매 총 비용이 더 클 경우 -> 돈 부족함 -> 구매X
 	else
