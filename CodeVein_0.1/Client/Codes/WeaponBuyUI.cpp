@@ -365,8 +365,8 @@ void CWeaponBuyUI::Check_ItemOption_Weapon()
 
 	CWeapon_Slot* pWeaponSlot = m_pInven->Get_HoverSlot_Weapon();
 
-	//if (!pWeaponSlot || m_pInven->Get_PopupOn())
-	//	pWeaponSlot = m_pInven->Get_SelectedSlot_Weapon();
+	if (m_pInven->Get_PopupOn())
+		pWeaponSlot = m_pInven->Get_SelectedSlot_Weapon();
 
 	if (!pWeaponSlot || pWeaponSlot->Get_Dead())
 		return;
@@ -531,8 +531,8 @@ void CWeaponBuyUI::Check_ItemOption_Armor()
 
 	CArmor_Slot* pArmorSlot = m_pInven->Get_HoverSlot_Armor();
 
-	//if (!pArmorSlot || m_pInven->Get_PopupOn())
-	//	pArmorSlot = m_pInven->Get_SelectedSlot_Armor();
+	if (m_pInven->Get_PopupOn())
+		pArmorSlot = m_pInven->Get_SelectedSlot_Armor();
 
 	if (!pArmorSlot || pArmorSlot->Get_Dead())
 		return;

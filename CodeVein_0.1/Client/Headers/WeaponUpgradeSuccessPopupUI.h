@@ -25,6 +25,7 @@ private:
 
 public:
 	void	Set_Active(_bool bIsActive);
+	void	Set_Fade(_bool bIsActive);
 	void	Set_PopupType(POPUP_TYPE eType);
 	void	Set_Inven(CWeapon_Inven_InShop* pInven) { m_pInven = pInven; }
 
@@ -63,6 +64,8 @@ private:
 	POPUP_TYPE							m_ePopupType = POPUP_END;
 	_bool								m_bLateInit = false;
 	_int								m_iTexIdx = 0;
+	_float								m_fAlpha = 0.f;
+	_bool								m_bFadeStart = false;
 public:
 	static CWeaponUpgradeSuccessPopupUI*	Create(_Device pGraphic_Device);
 	virtual CGameObject*		Clone_GameObject(void* pArg);

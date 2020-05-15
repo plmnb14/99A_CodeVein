@@ -27,6 +27,8 @@ HRESULT CWeapon_Slot::Ready_GameObject(void * pArg)
 
 	m_bIsActive = false;
 
+	m_tWeaponParam.iWeaponName = WPN_DATA_End;
+
 	return NOERROR;
 }
 

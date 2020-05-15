@@ -406,8 +406,8 @@ void CRenderObject::Init_Shader(CShader* pShader)
 	// 쉐이더 재질정보 수치 입력
 	//=============================================================================================
 	_float	fEmissivePower = 5.f;	// 이미시브 : 높을 수록, 자체 발광이 강해짐.
-	_float	fSpecularPower = 0.5f;	// 메탈니스 : 높을 수록, 정반사가 강해짐.
-	_float	fRoughnessPower = 1.f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
+	_float	fSpecularPower = 1.f;	// 메탈니스 : 높을 수록, 정반사가 강해짐.
+	_float	fRoughnessPower = 0.1f;	// 러프니스 : 높을 수록, 빛 산란이 적어짐(빛이 응집됨).
 	_float	fMinSpecular = 0.1f;	// 최소 빛	: 최소 단위의 빛을 더해줌.
 	_float	fID_R = 1.0f;	// ID_R : R채널 ID 값 , 1이 최대
 	_float	fID_G = 0.5f;	// ID_G : G채널 ID 값 , 1이 최대

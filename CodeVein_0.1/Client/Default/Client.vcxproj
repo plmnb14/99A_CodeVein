@@ -308,9 +308,11 @@
     <ClInclude Include="..\Headers\Scene_Stage_Training.h" />
     <ClInclude Include="..\Headers\Scene_Title.h" />
     <ClInclude Include="..\Headers\ScriptManager.h" />
+    <ClInclude Include="..\Headers\ShopActionFailedPopup.h" />
     <ClInclude Include="..\Headers\SkillAcquisitionUI.h" />
     <ClInclude Include="..\Headers\SkillGauge.h" />
     <ClInclude Include="..\Headers\ReleaseQuestionUI.h" />
+    <ClInclude Include="..\Headers\SkillPointUI.h" />
     <ClInclude Include="..\Headers\SkillReleaseUI.h" />
     <ClInclude Include="..\Headers\SkillSlot.h" />
     <ClInclude Include="..\Headers\SkillUI.h" />
@@ -503,9 +505,11 @@
     <ClCompile Include="..\Codes\Scene_Stage_Training.cpp" />
     <ClCompile Include="..\Codes\Scene_Title.cpp" />
     <ClCompile Include="..\Codes\ScriptManager.cpp" />
+    <ClCompile Include="..\Codes\ShopActionFailedPopup.cpp" />
     <ClCompile Include="..\Codes\SkillAcquisitionUI.cpp" />
     <ClCompile Include="..\Codes\SkillGauge.cpp" />
     <ClCompile Include="..\Codes\ReleaseQuestionUI.cpp" />
+    <ClCompile Include="..\Codes\SkillPointUI.cpp" />
     <ClCompile Include="..\Codes\SkillReleaseUI.cpp" />
     <ClCompile Include="..\Codes\SkillSlot.cpp" />
     <ClCompile Include="..\Codes\SkillUI.cpp" />

@@ -9,6 +9,7 @@ class CWeapon_Inven_InShop;
 class CPlayerFontUI;
 class CWeaponUpgradeOptionUI;
 class CWeaponUpgradeSuccessPopupUI;
+class CShopActionFailedPopup;
 class CWeaponUpgradeUI final : public CUI
 {
 public:
@@ -68,6 +69,7 @@ private:
 	_int	Get_RequireMaterial(CMaterial::MATERIAL_TYPE eType, _int iReinforce);
 	_float	Get_PlusDamage(_float fDamage, _int iReinforce);
 	_bool	Get_UpgradeSuccess(_int iReinforce);
+	_int	Get_UpgradeSuccessPercentage(_int iReinforce);
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -80,6 +82,7 @@ private:
 	CWeapon_Inven_InShop*				m_pInven = nullptr;
 	vector<CWeaponUpgradeOptionUI*>		m_vecOption;
 
+	CShopActionFailedPopup*	m_pShopActionFailedPopup = nullptr;
 	CWeaponUpgradeSuccessPopupUI*		m_pUpgradeResultPopup = false;
 	
 	CWeaponUpgradeUI*					m_pWeaponNameUI = nullptr;
@@ -114,6 +117,8 @@ private:
 	CPlayerFontUI*						m_pFontSlash_0 = nullptr;
 	CPlayerFontUI*						m_pFontSlash_1 = nullptr;
 	CPlayerFontUI*						m_pFontSlash_2 = nullptr;
+
+	CPlayerFontUI*						m_pFontUpgradePercentage = nullptr;
 
 	_bool								m_bLateInit = false;
 	_int								m_iTexIdx = 0;

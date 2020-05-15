@@ -315,7 +315,8 @@ CGameObject * CMaterial_Slot::Clone_GameObject(void * pArg)
 
 void CMaterial_Slot::Free()
 {
-	Safe_Release(m_pItemCntFont);
+	if (m_pItemCntFont)
+		m_pItemCntFont->Set_Dead();
 
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);

@@ -57,7 +57,8 @@ HRESULT CWeapon_Inven::Ready_GameObject(void * pArg)
 	SetUp_Default();
 	LOOP(2)
 	{
-		m_UseWeaponParam[i] = m_tWeaponParam[WPN_DATA_End];
+		ZeroMemory(&m_UseWeaponParam[i], sizeof(WPN_PARAM));
+		m_UseWeaponParam[i].iWeaponName = WPN_DATA_End;
 	}
 	
 	Add_Weapon(m_tWeaponParam[Wpn_SSword]);
@@ -204,7 +205,7 @@ void CWeapon_Inven::Click_Inven()
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB) &&
 				!pSlot->Get_Select())
 			{
-				Regist_Weapon(pSlot);
+				Regist_Weapon(pSlot);			
 			}
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB) &&
 				pSlot->Get_Select())
@@ -224,12 +225,15 @@ void CWeapon_Inven::Regist_Weapon(CWeapon_Slot* pWeaponSlot)
 	if (m_UseWeaponParam[0].iWeaponName == WPN_DATA_End)
 	{
 		m_UseWeaponParam[0] = pWeaponSlot->Get_WeaponParam();
+
 		pWeaponSlot->Set_Select(true);
+		
 	}
 	else if (m_UseWeaponParam[1].iWeaponName == WPN_DATA_End)
 	{
 		m_UseWeaponParam[1] = pWeaponSlot->Get_WeaponParam();
 		pWeaponSlot->Set_Select(true);
+		
 	}
 	else
 		return;
@@ -241,12 +245,30 @@ void CWeapon_Inven::UnRegist_Weapon(CWeapon_Slot * pWeaponSlot)
 		return;
 	if (pWeaponSlot->Get_WeaponParam().iWeaponName == m_UseWeaponParam[0].iWeaponName)
 	{
-		m_UseWeaponParam[0] = m_tWeaponParam[WPN_DATA_End];
+		m_UseWeaponParam[0].iWeaponName = WPN_DATA_End;
+		m_UseWeaponParam[0].iWeaponType = WEAPON_End;
+		m_UseWeaponParam[0].iPrice = 0;
+		m_UseWeaponParam[0].iReinforce = 0;
+		m_UseWeaponParam[0].fDamage = 0.f;
+		m_UseWeaponParam[0].fPlusDamage = 0.f;
+		m_UseWeaponParam[0].fRadius = 0.f;
+		m_UseWeaponParam[0].fTrail_Min = 0.f;
+		m_UseWeaponParam[0].fTrail_Max = 0.f;
+		m_UseWeaponParam[0].fCol_Height = 0.f;
 		pWeaponSlot->Set_Select(false);
 	}
 	else if (pWeaponSlot->Get_WeaponParam().iWeaponName == m_UseWeaponParam[1].iWeaponName)
 	{
-		m_UseWeaponParam[1] = m_tWeaponParam[WPN_DATA_End];
+		m_UseWeaponParam[1].iWeaponName = WPN_DATA_End;
+		m_UseWeaponParam[1].iWeaponType = WEAPON_End;
+		m_UseWeaponParam[1].iPrice = 0;
+		m_UseWeaponParam[1].iReinforce = 0;
+		m_UseWeaponParam[1].fDamage = 0.f;
+		m_UseWeaponParam[1].fPlusDamage = 0.f;
+		m_UseWeaponParam[1].fRadius = 0.f;
+		m_UseWeaponParam[1].fTrail_Min = 0.f;
+		m_UseWeaponParam[1].fTrail_Max = 0.f;
+		m_UseWeaponParam[1].fCol_Height = 0.f;
 		pWeaponSlot->Set_Select(false);
 	}
 	else

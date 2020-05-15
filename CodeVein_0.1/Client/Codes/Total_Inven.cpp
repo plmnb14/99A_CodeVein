@@ -28,6 +28,11 @@ void CTotal_Inven::Set_Skill_ID(_uint iNum, Skill_ID eSkillID)
 	m_vecSkillIcon[iNum]->Set_SkillID(eSkillID);
 }
 
+void CTotal_Inven::Set_WeaponParam(_uint iIndex, WPN_PARAM tWpnParam)
+{
+	m_pWeapon_Slot[iIndex]->Set_WeaponParam(tWpnParam);
+}
+
 HRESULT CTotal_Inven::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();

@@ -17,7 +17,17 @@ CWeaponUpgradeSuccessPopupUI::CWeaponUpgradeSuccessPopupUI(const CWeaponUpgradeS
 void CWeaponUpgradeSuccessPopupUI::Set_Active(_bool bIsActive)
 {
 	m_bIsActive = bIsActive;
+
 	Reset_Option();
+}
+
+void CWeaponUpgradeSuccessPopupUI::Set_Fade(_bool bIsActive)
+{
+	m_bIsActive = bIsActive;
+	
+	m_fAlpha = 0.f;
+	if (bIsActive)
+		m_bFadeStart = true;
 }
 
 void CWeaponUpgradeSuccessPopupUI::Set_PopupType(POPUP_TYPE eType)
@@ -72,6 +82,13 @@ _int CWeaponUpgradeSuccessPopupUI::Update_GameObject(_double TimeDelta)
 	Check_ItemOption();
 	Check_Option();
 	Check_LateInit();
+
+	if (m_bFadeStart)
+	{
+		m_fAlpha += _float(TimeDelta) * 10.f;
+		if (m_fAlpha >= 1.f)
+			m_bFadeStart = false;
+	}
 
 	if (m_bLateInit)
 	{
@@ -134,7 +151,7 @@ HRESULT CWeaponUpgradeSuccessPopupUI::Render_GameObject()
 
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(1);
+	m_pShaderCom->Begin_Pass(5);
 
 	m_pBufferCom->Render_VIBuffer();
 
@@ -221,6 +238,9 @@ HRESULT CWeaponUpgradeSuccessPopupUI::SetUp_ConstantTable()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
+		return E_FAIL;
+
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, m_iTexIdx)))
 		return E_FAIL;
 

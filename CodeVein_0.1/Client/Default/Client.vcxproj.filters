@@ -535,6 +535,9 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI">
       <UniqueIdentifier>{41c3c3de-dd61-4d16-868c-53b157aa6803}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopActionFailedPopup">
+      <UniqueIdentifier>{fb48775f-5ad6-495d-b848-d4a07f0be4b3}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1140,6 +1143,12 @@
     <ClInclude Include="..\Headers\BuyOptionUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\SkillPointUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\02. Skill_Gauge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ShopActionFailedPopup.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopActionFailedPopup</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1729,6 +1738,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\BuyOptionUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SkillPointUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\02. Skill_Gauge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ShopActionFailedPopup.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopActionFailedPopup</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
