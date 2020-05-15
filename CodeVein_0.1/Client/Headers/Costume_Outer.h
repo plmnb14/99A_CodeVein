@@ -3,27 +3,19 @@
 #include "Client_Defines.h"
 #include "GameObject.h"
 #include "Management.h"
+#include "ClothManager.h"
 
 BEGIN(Client)
 
 class CCostume_Outer : public CGameObject
 {
-
-public:
-	enum OuterType
-	{
-		OuterNone, Outer_Drape, Outer_LongCoat, Outer_Gauntlet, Outer_Muffler,
-		Outer_End
-	};
-
 public:
 	typedef struct tagInitInfo
 	{
-		tagInitInfo(OuterType _eOuterType, _mat* pmatParent, _mat* pmatBone, _v4 vColorValue, CGameObject* pTarget)
-			:eOuterType(_eOuterType), pmatParent(pmatParent), pmatBone(pmatBone), vColorValue(vColorValue), pTarget(pTarget)
+		tagInitInfo(_mat* pmatParent, _mat* pmatBone, _v4 vColorValue, CGameObject* pTarget)
+			: pmatParent(pmatParent), pmatBone(pmatBone), vColorValue(vColorValue), pTarget(pTarget)
 		{}
 
-		OuterType		eOuterType = OuterNone;
 		_mat*			pmatParent = nullptr;
 		_mat*			pmatBone = nullptr;
 		_v4				vColorValue = _v4(0.f, 0.f, 0.f, 0.f);
@@ -39,10 +31,14 @@ public:
 	virtual void			Set_AttachBoneMartix(_mat* _matAttachBone) { m_pmatBone = _matAttachBone; }
 	virtual void			Set_ParentMatrix(_mat* _matParent) { m_pmatParent = _matParent; }
 
+	void					SetUp_Animation(_uint iIndex, _bool _bOffLerp);
+
 public:
 	virtual _int	Update_GameObject(_double TimeDelta);
+	_int	Update_GameObject(_double TimeDelta, _bool bSkill);
 	virtual _int	Late_Update_GameObject(_double TimeDelta);
 	virtual HRESULT Render_GameObject();
+	virtual HRESULT Render_GameObject_Instancing_SetPass(CShader* pShader);
 	virtual HRESULT Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur = false);
 
 private:
@@ -50,26 +46,29 @@ private:
 	virtual HRESULT Ready_GameObject(void* pArg);
 	virtual HRESULT Add_Components();
 	virtual HRESULT Setup_Default();
-	virtual HRESULT SetUp_ConstantTable();
+	virtual HRESULT SetUp_ConstantTable(CShader* pShader);
 
 private:
 	virtual void Calc_AttachBoneTransform();
-	virtual void Change_OuterMesh(OuterType _eOuterType);
+	virtual void Change_OuterMesh(CClothManager::Cloth_Dynamic _eOuterTag);
 
 private:
-	CTransform*				m_pTransform = nullptr;
-	CRenderer*				m_pRenderer = nullptr;
-	CShader*				m_pShader = nullptr;
-	CMesh_Dynamic*			m_pDynamicMesh = nullptr;
-	CBattleAgent*			m_pBattleAgent = nullptr;
+	void Change_Vertex();
 
 private:
-	_mat*					m_pmatParent = nullptr;
-	_mat*					m_pmatBone = nullptr;
+	CTransform*						m_pTransform = nullptr;
+	CRenderer*						m_pRenderer = nullptr;
+	CShader*						m_pShader = nullptr;
+	CMesh_Dynamic*					m_pDynamicMesh = nullptr;
+	CBattleAgent*					m_pBattleAgent = nullptr;
 
 private:
-	OuterType				m_eHairType = OuterNone;
-	_v4						m_vColorValue = {};
+	_mat*							m_pmatParent = nullptr;
+	_mat*							m_pmatBone = nullptr;
+
+private:
+	CClothManager::Cloth_Dynamic	m_eOuterType = CClothManager::None;
+	_v4								m_vColorValue = {};
 
 private:
 	_float					m_fAnimMultiply = 0.f;

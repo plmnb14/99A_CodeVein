@@ -129,7 +129,7 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//g_pManagement->Add_GameObject_ToLayer(L"GameObject_NPC_Yakumo", SCENE_STAGE, L"Layer_NPC", &CNPC_Yakumo::NPC_INFO(_v3(-4.46f, 0.f, -5.294f), D3DXToRadian(90.f)));
 
 	//// ÅäÅÛ
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon", 
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
 	//	&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
 	//		true, _v3(8.f, 0.f, -8.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
