@@ -115,7 +115,6 @@ void CMaterialCollectionUI::Click_SubUI()
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
 				m_pInfoUI->Set_Type(iter->Get_Type());
-				m_pInfoUI->Set_Type(iter->Get_Type());
 				m_pBuyUI->Set_Active(true);
 				m_pBuyUI->Set_Type(ITEM_ALL_DATA(iter->Get_Type() - 6));
 			}

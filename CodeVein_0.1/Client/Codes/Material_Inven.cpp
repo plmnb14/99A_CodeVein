@@ -58,9 +58,9 @@ HRESULT CMaterial_Inven::Ready_GameObject(void * pArg)
 
 	}
 
-	Add_MultiMaterial(CMaterial::Queen_Steel, 50);
+	/*Add_MultiMaterial(CMaterial::Queen_Steel, 50);
 	Add_MultiMaterial(CMaterial::Queen_Titanium, 50);
-	Add_MultiMaterial(CMaterial::Queen_Tungsten, 50);
+	Add_MultiMaterial(CMaterial::Queen_Tungsten, 50);*/
 
 	return NOERROR;
 }

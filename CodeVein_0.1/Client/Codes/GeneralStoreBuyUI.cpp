@@ -207,7 +207,7 @@ void CGeneralStoreBuyUI::Click_SubUI()
 			
 		}
 		// 아이템 타입 재료
-		else
+		else if(m_eType >= 6)
 		{
 			Buy_Material_Item();
 			
