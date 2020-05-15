@@ -50,6 +50,7 @@ private:
 	CShader*				m_pShader = nullptr;
 
 	CInventory_Icon*		m_pExitIcon = nullptr;
+	CInventory_Icon*		m_pSummonsBtn = nullptr;
 
 	vector<CPet_Slot*>		m_vecPetSlot;
 	CPet::PET_GRADE_TYPE	m_eGradeType = CPet::PET_GRADE_TYPE::PET_GRADE_TYPE_END;
