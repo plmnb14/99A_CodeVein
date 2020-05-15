@@ -10,6 +10,7 @@ class CPlayerFontUI;
 class CWeaponUpgradeOptionUI;
 class CWeaponUpgradeSuccessPopupUI;
 class CShopActionFailedPopup;
+class CShopItemIcon;
 class CWeaponUpgradeUI final : public CUI
 {
 public:
@@ -82,9 +83,10 @@ private:
 	CWeapon_Inven_InShop*				m_pInven = nullptr;
 	vector<CWeaponUpgradeOptionUI*>		m_vecOption;
 
-	CShopActionFailedPopup*	m_pShopActionFailedPopup = nullptr;
+	CShopActionFailedPopup*				m_pShopActionFailedPopup = nullptr;
 	CWeaponUpgradeSuccessPopupUI*		m_pUpgradeResultPopup = false;
-	
+	CShopItemIcon*						m_pShopItemIcon = nullptr;
+
 	CWeaponUpgradeUI*					m_pWeaponNameUI = nullptr;
 	CWeaponUpgradeUI*					m_pWeaponMoveTypeUI = nullptr;
 

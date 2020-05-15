@@ -296,6 +296,11 @@ void CWeaponBuyUI::SetUp_Default()
 	m_pFontHP->Set_ViewZ(m_fViewZ - 0.05f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontHP, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
+	m_pShopItemIcon = static_cast<CShopItemIcon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ShopItemIcon", nullptr));
+	m_pShopItemIcon->Set_UI_Pos(WINCX * 0.385, WINCY * 0.10f);
+	m_pShopItemIcon->Set_UI_Size(100.f, 100.f);
+	m_pShopItemIcon->Set_ViewZ(m_fViewZ - 0.05f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pShopItemIcon, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	m_pStatusUI = CUI_Manager::Get_Instance()->Get_StatusUI();
 }
@@ -393,7 +398,7 @@ void CWeaponBuyUI::Check_ItemOption_Weapon()
 
 	_int iPrice = tParam.iPrice;
 	if (SHOP_ARMOR_UPGRADE == m_eType)
-		iPrice = m_pInven->Get_UpgradePrice(tParam.iReinforce);
+		iPrice = (_int)m_pInven->Get_UpgradePrice(tParam.iReinforce);
 
 	m_pPriceHazeCnt->Update_NumberValue((_float)iPrice);
 	m_pPriceHazeCnt->Set_Active(m_bIsActive);
@@ -461,6 +466,18 @@ void CWeaponBuyUI::Check_ItemOption_Weapon()
 	}
 	m_pWeaponDescUI->Set_WeaponDescType(eAllDate);
 	m_pWeaponDescUI->Set_Active(m_bIsActive);
+
+	//==============================================================================================================
+	// Icon
+	if (!m_pShopItemIcon)
+		return;
+	if (WpnAll_END == eAllDate)
+	{
+		m_pShopItemIcon->Set_Active(false);
+		return;
+	}
+	m_pShopItemIcon->Set_WeaponDescType(eAllDate);
+	m_pShopItemIcon->Set_Active(m_bIsActive);	
 	//=======================================================
 }
 
@@ -559,7 +576,7 @@ void CWeaponBuyUI::Check_ItemOption_Armor()
 
 	_int iPrice = tParam.iPrice;
 	if (SHOP_ARMOR_UPGRADE == m_eType)
-		iPrice = m_pInven->Get_UpgradePrice(tParam.iReinforce);
+		iPrice = (_int)m_pInven->Get_UpgradePrice(tParam.iReinforce);
 
 	m_pPriceHazeCnt->Update_NumberValue((_float)iPrice);
 	m_pPriceHazeCnt->Set_Active(m_bIsActive);
@@ -606,7 +623,18 @@ void CWeaponBuyUI::Check_ItemOption_Armor()
 	}
 	m_pWeaponDescUI->Set_ArmorDescType(eAllDate);
 	m_pWeaponDescUI->Set_Active(m_bIsActive);
-	//=======================================================
+	//==============================================================================================================
+	// Icon
+	if (!m_pShopItemIcon)
+		return;
+	if (ArmorAll_END == eAllDate)
+	{
+		m_pShopItemIcon->Set_Active(false);
+		return;
+	}
+	m_pShopItemIcon->Set_ArmorDescType(eAllDate);
+	m_pShopItemIcon->Set_Active(m_bIsActive);
+
 }
 
 void CWeaponBuyUI::Set_NoneSelect()
@@ -620,6 +648,7 @@ void CWeaponBuyUI::Set_NoneSelect()
 	m_pFontHP->Set_Active(false);
 	m_pWeaponMoveTypeUI->Set_Active(false);
 	m_pWeaponDescUI->Set_Active(false);
+	m_pShopItemIcon->Set_Active(false);
 }
 
 void CWeaponBuyUI::Check_LateInit()

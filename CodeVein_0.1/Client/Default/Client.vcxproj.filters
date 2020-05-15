@@ -538,6 +538,9 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopActionFailedPopup">
       <UniqueIdentifier>{fb48775f-5ad6-495d-b848-d4a07f0be4b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopItemIcon">
+      <UniqueIdentifier>{348a2642-8d5b-474a-9535-b1311577cd9a}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1146,6 +1149,9 @@
     <ClInclude Include="..\Headers\ShopActionFailedPopup.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopActionFailedPopup</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\ShopItemIcon.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopItemIcon</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1738,6 +1744,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\ShopActionFailedPopup.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopActionFailedPopup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ShopItemIcon.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopItemIcon</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

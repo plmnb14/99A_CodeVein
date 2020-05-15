@@ -17,6 +17,7 @@ CWeaponUpgradeSuccessPopupUI::CWeaponUpgradeSuccessPopupUI(const CWeaponUpgradeS
 void CWeaponUpgradeSuccessPopupUI::Set_Active(_bool bIsActive)
 {
 	m_bIsActive = bIsActive;
+	m_pShopItemIcon->Set_Active(m_bIsActive);
 
 	Reset_Option();
 }
@@ -24,7 +25,8 @@ void CWeaponUpgradeSuccessPopupUI::Set_Active(_bool bIsActive)
 void CWeaponUpgradeSuccessPopupUI::Set_Fade(_bool bIsActive)
 {
 	m_bIsActive = bIsActive;
-	
+	m_pShopItemIcon->Set_Active(m_bIsActive);
+
 	m_fAlpha = 0.f;
 	if (bIsActive)
 		m_bFadeStart = true;
@@ -86,6 +88,9 @@ _int CWeaponUpgradeSuccessPopupUI::Update_GameObject(_double TimeDelta)
 	if (m_bFadeStart)
 	{
 		m_fAlpha += _float(TimeDelta) * 10.f;
+		
+		m_pShopItemIcon->Set_Alpha(m_fAlpha);
+
 		if (m_fAlpha >= 1.f)
 			m_bFadeStart = false;
 	}
@@ -112,6 +117,19 @@ _int CWeaponUpgradeSuccessPopupUI::Update_GameObject(_double TimeDelta)
 	}
 	
 	Click_Option();
+	
+	CWeapon_Slot* pWeaponSlot = m_pInven->Get_SelectedSlot_Weapon();
+	if (pWeaponSlot)
+		m_pShopItemIcon->Set_WeaponDescType((WEAPON_ALL_DATA)pWeaponSlot->Get_WeaponParam().iWeaponName_InShop);
+
+	CArmor_Slot* pArmorSlot = m_pInven->Get_SelectedSlot_Armor();
+	if (pArmorSlot)
+		m_pShopItemIcon->Set_ArmorDescType((ARMOR_All_DATA)pArmorSlot->Get_ArmorParam().iArmorName);
+
+	m_pShopItemIcon->Set_ViewZ(m_fViewZ - 0.1f);
+
+	if (POPUP_FAILED == m_ePopupType)
+		m_pShopItemIcon->Set_Active(false);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
@@ -260,7 +278,11 @@ void CWeaponUpgradeSuccessPopupUI::Change_Texture(const _tchar * _Name)
 
 void CWeaponUpgradeSuccessPopupUI::SetUp_Default()
 {
-
+	m_pShopItemIcon = static_cast<CShopItemIcon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ShopItemIcon", nullptr));
+	m_pShopItemIcon->Set_UI_Pos(WINCX * 0.5f, WINCY * 0.4f);
+	m_pShopItemIcon->Set_UI_Size(65.f, 65.f);
+	m_pShopItemIcon->Set_ViewZ(m_fViewZ - 0.1f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pShopItemIcon, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
 
 void CWeaponUpgradeSuccessPopupUI::Check_LateInit()

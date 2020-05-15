@@ -8,6 +8,7 @@ BEGIN(Client)
 class CWeapon_Inven_InShop;
 class CPlayerFontUI;
 class CWeaponUpgradeOptionUI;
+class CShopItemIcon;
 class CWeaponUpgradeSuccessPopupUI final : public CUI
 {
 public:
@@ -60,6 +61,7 @@ private:
 private:
 	CWeapon_Inven_InShop*				m_pInven = nullptr;
 	vector<CWeaponUpgradeOptionUI*>		m_vecOption;
+	CShopItemIcon*						m_pShopItemIcon = nullptr;
 
 	POPUP_TYPE							m_ePopupType = POPUP_END;
 	_bool								m_bLateInit = false;

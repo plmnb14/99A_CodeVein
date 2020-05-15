@@ -130,7 +130,10 @@ _int CWeaponUpgradeUI::Update_GameObject(_double TimeDelta)
 		if (m_pFontSlash_0)m_pFontSlash_0->Set_Active(m_bIsActive);
 		if (m_pFontSlash_1)m_pFontSlash_1->Set_Active(m_bIsActive);
 		if (m_pFontSlash_2)m_pFontSlash_2->Set_Active(m_bIsActive);
-
+		
+		if (m_pFontUpgradePercentage)m_pFontUpgradePercentage->Set_Active(m_bIsActive);
+		if (m_pShopItemIcon)m_pShopItemIcon->Set_Active(m_bIsActive);
+		
 		m_fViewZ = 0.2f;
 
 		switch (m_eUpgradeType)
@@ -732,6 +735,16 @@ void CWeaponUpgradeUI::SetUp_Default()
 	m_pUpgradeResultPopup = static_cast<CWeaponUpgradeSuccessPopupUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon_UpgradeSuccessPopup", nullptr));
 	m_pUpgradeResultPopup->Set_ViewZ(m_fViewZ - 0.1f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pUpgradeResultPopup, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	m_pShopItemIcon = static_cast<CShopItemIcon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ShopItemIcon", nullptr));
+	m_pShopItemIcon->Set_UI_Pos(WINCX * 0.2f, WINCY * 0.2f);
+	m_pShopItemIcon->Set_UI_Size(100.f, 100.f);
+	m_pShopItemIcon->Set_ViewZ(m_fViewZ - 0.05f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pShopItemIcon, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	m_pShopActionFailedPopup = static_cast<CShopActionFailedPopup*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ShopActionFailedPopup", nullptr));
+	m_pShopActionFailedPopup->Set_ViewZ(m_fViewZ - 0.1f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pShopActionFailedPopup, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
 
 void CWeaponUpgradeUI::Check_LateInit()
@@ -911,7 +924,19 @@ void CWeaponUpgradeUI::Check_ItemOption_Weapon()
 		break;
 	}
 	m_pWeaponMoveTypeUI->Set_Active(m_bIsActive);
-
+	//==============================================================================================================
+	// Icon
+	if (!m_pShopItemIcon)
+		return;
+	if (WpnAll_END == eAllDate)
+	{
+		m_pShopItemIcon->Set_Active(false);
+		return;
+	}
+	m_pShopItemIcon->Set_WeaponDescType(eAllDate);
+	m_pShopItemIcon->Set_Active(m_bIsActive);
+	m_pShopItemIcon->Set_UI_Pos(WINCX * 0.078, WINCY * 0.125f);
+	m_pShopItemIcon->Set_UI_Size(65.f, 65.f);
 }
 
 void CWeaponUpgradeUI::Check_ItemOption_Armor()
@@ -1072,7 +1097,17 @@ void CWeaponUpgradeUI::Check_ItemOption_Armor()
 	if (!m_pWeaponMoveTypeUI)
 		return;
 	m_pWeaponMoveTypeUI->Set_Active(false);
-
+	//==============================================================================================================
+	// Icon
+	if (!m_pShopItemIcon)
+		return;
+	if (ArmorAll_END == eAllDate)
+	{
+		m_pShopItemIcon->Set_Active(false);
+		return;
+	}
+	m_pShopItemIcon->Set_ArmorDescType(eAllDate);
+	m_pShopItemIcon->Set_Active(m_bIsActive);
 }
 
 void CWeaponUpgradeUI::Check_WeaponName()

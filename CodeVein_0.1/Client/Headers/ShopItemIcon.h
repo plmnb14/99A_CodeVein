@@ -2,29 +2,21 @@
 
 #include "Client_Defines.h"
 #include "UI.h"
-#include "Material.h"
 
 BEGIN(Client)
 class CPlayerFontUI;
-class CShopActionFailedPopup final : public CUI
+class CShopItemIcon final : public CUI
 {
-public:
-	enum POPUP_TYPE
-	{
-		POPUP_BUY,
-		POPUP_UPGRADE,
-		POPUP_END
-	};
-
 private:
-	explicit CShopActionFailedPopup(_Device pDevice);
-	explicit CShopActionFailedPopup(const CShopActionFailedPopup& rhs);
-	virtual ~CShopActionFailedPopup() = default;
+	explicit CShopItemIcon(_Device pDevice);
+	explicit CShopItemIcon(const CShopItemIcon& rhs);
+	virtual ~CShopItemIcon() = default;
 
 public:
 	void	Set_Active(_bool bIsActive);
-	void	Set_PopupType(POPUP_TYPE eType);
-
+	void	Set_Alpha(_float fAlpha);
+	void	Set_WeaponDescType(WEAPON_ALL_DATA eType);
+	void	Set_ArmorDescType(ARMOR_All_DATA eType);
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
 	virtual HRESULT Ready_GameObject(void* pArg);
@@ -46,16 +38,15 @@ private:
 	CBuffer_RcTex*		m_pBufferCom = nullptr;
 
 private:
-	POPUP_TYPE			m_ePopupType = POPUP_END;
+	WEAPON_ALL_DATA		m_eWeaponDesc = WEAPON_ALL_DATA::WpnAll_END;
+	ARMOR_All_DATA		m_eArmorDesc = ARMOR_All_DATA::ArmorAll_END;
+
 	_bool				m_bLateInit = false;
 	_int				m_iTexIdx = 0;
 	_float				m_fAlpha = 0.f;
-	_float				m_fFadeDelay = 0.f;
-	_bool				m_bFadeInStart = false;
-	_bool				m_bFadeOutStart = true;
 
 public:
-	static CShopActionFailedPopup*	Create(_Device pGraphic_Device);
+	static CShopItemIcon*	Create(_Device pGraphic_Device);
 	virtual CGameObject*		Clone_GameObject(void* pArg);
 	virtual void				Free();
 };
