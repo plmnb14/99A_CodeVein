@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "..\Headers\GeneralStoreBuyUI.h"
-
+#include "UI_Manager.h"
 
 CGeneralStoreBuyUI::CGeneralStoreBuyUI(_Device pDevice)
 	: CUI(pDevice)
@@ -38,6 +38,7 @@ _int CGeneralStoreBuyUI::Update_GameObject(_double TimeDelta)
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
 	Update_SubUI();
+	Click_SubUI();
 	
 	return NO_EVENT;
 }
@@ -130,14 +131,66 @@ void CGeneralStoreBuyUI::SetUp_Default()
 	m_fPosY = WINCY * 0.5f;
 	m_fSizeX = 200.f;
 	m_fSizeY = 100.f;
+	m_fViewZ = 1.f;
 
+	m_pCntMinusOption = static_cast<CBuyOptionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BuyOptionUI", nullptr));
+	m_pCntMinusOption->Set_UI_Pos(m_fPosX - 85.f, m_fPosY);
+	m_pCntMinusOption->Set_UI_Size(30.f, 30.f);
+	m_pCntMinusOption->Set_ViewZ(m_fViewZ - 0.1f);
+	m_pCntMinusOption->Set_UI_Index(1);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pCntMinusOption, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
+	m_pCntPlusOption = static_cast<CBuyOptionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BuyOptionUI", nullptr));
+	m_pCntPlusOption->Set_UI_Pos(m_fPosX + 85.f, m_fPosY);
+	m_pCntPlusOption->Set_UI_Size(30.f, 30.f);
+	m_pCntPlusOption->Set_ViewZ(m_fViewZ - 0.3f);
+	m_pCntPlusOption->Set_UI_Index(2);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pCntPlusOption, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 	
+	m_pDecisionOption = static_cast<CBuyOptionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BuyOptionUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pDecisionOption, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	m_pDecisionOption->Set_UI_Pos(m_fPosX, m_fPosY + 40.f);
+	m_pDecisionOption->Set_UI_Size(30.f, 30.f);
+	m_pDecisionOption->Set_UI_Index(3);
+	m_pDecisionOption->Set_ViewZ(m_fViewZ - 0.1f);
+
+	m_pBuyCntFont = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBuyCntFont, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	m_pBuyCntFont->Set_UI_Pos(m_fPosX, m_fPosY);
+	m_pBuyCntFont->Set_UI_Size(20.f, 40.8f);
+	m_pBuyCntFont->Set_ViewZ(m_fViewZ - 0.1f);
 }
 
 void CGeneralStoreBuyUI::Update_SubUI()
 {
-	
+	m_pCntMinusOption->Set_Active(m_bIsActive);
+	m_pCntPlusOption->Set_Active(m_bIsActive);
+	m_pDecisionOption->Set_Active(m_bIsActive);
+	m_pBuyCntFont->Set_Active(m_bIsActive);
+
+	m_pBuyCntFont->Update_NumberValue(m_iBuyCnt);
+}
+
+void CGeneralStoreBuyUI::Click_SubUI()
+{
+	if (!m_bIsActive)
+		return;
+	if (m_pCntMinusOption->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+	{
+		if (m_iBuyCnt > 0)
+			m_iBuyCnt--;
+		else return;
+	}
+	else if (m_pCntPlusOption->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+	{
+		if (m_iBuyCnt < 9)
+			m_iBuyCnt++;
+		else return;
+	}
+	else if (m_pDecisionOption->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+	{
+		
+	}
 }
 
 CGeneralStoreBuyUI * CGeneralStoreBuyUI::Create(_Device pGraphic_Device)

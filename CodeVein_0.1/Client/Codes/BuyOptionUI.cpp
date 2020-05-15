@@ -117,6 +117,11 @@ HRESULT CBuyOptionUI::SetUp_ConstantTable(_uint iIndex)
 	return NOERROR;
 }
 
+_bool CBuyOptionUI::Pt_InRect()
+{
+	return g_pInput_Device->MousePt_InRect(m_fPosX, m_fPosY, m_fSizeX, m_fSizeY, g_hWnd);
+}
+
 CBuyOptionUI * CBuyOptionUI::Create(_Device pGraphic_Device)
 {
 	CBuyOptionUI* pInstance = new CBuyOptionUI(pGraphic_Device);

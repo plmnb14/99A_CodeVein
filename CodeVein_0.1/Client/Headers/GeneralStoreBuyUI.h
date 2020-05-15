@@ -5,6 +5,7 @@
 
 BEGIN(Client)
 class CBuyOptionUI;
+class CPlayerFontUI;
 class CGeneralStoreBuyUI final : public CUI
 {
 private:
@@ -24,6 +25,7 @@ private:
 	HRESULT SetUp_ConstantTable(_uint iIndex);
 	void	SetUp_Default();
 	void	Update_SubUI();
+	void	Click_SubUI();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -33,7 +35,11 @@ private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 private:
-	CBuyOptionUI*			m_pLeftArrow = nullptr;
+	CBuyOptionUI*			m_pCntMinusOption = nullptr; // 구매 수량 마이너스
+	CBuyOptionUI*			m_pCntPlusOption = nullptr; // 구매 수량 플러스
+	CBuyOptionUI*			m_pDecisionOption = nullptr; // 구매 결정
+	_uint					m_iBuyCnt = 0;
+	CPlayerFontUI*			m_pBuyCntFont = nullptr;
 
 public:
 	static CGeneralStoreBuyUI*	Create(_Device pGraphic_Device);
