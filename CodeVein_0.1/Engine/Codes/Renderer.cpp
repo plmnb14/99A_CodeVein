@@ -577,6 +577,7 @@ HRESULT CRenderer::Render_NonAlpha()
 
 	_mat matView, matProj;
 	CManagement* pManagement = CManagement::Get_Instance();
+	Safe_AddRef(pManagement);
 
 	matView = pManagement->Get_Transform(D3DTS_VIEW);
 	matProj = pManagement->Get_Transform(D3DTS_PROJECTION);
@@ -605,10 +606,10 @@ HRESULT CRenderer::Render_NonAlpha()
 
 	m_RenderList[RENDER_NONALPHA].clear();
 
-
-
 	if (FAILED(m_pTarget_Manager->End_MRT(L"MRT_Deferred")))
 		return E_FAIL;
+
+	Safe_Release(pManagement);
 
 	return NOERROR;
 }
@@ -691,6 +692,9 @@ HRESULT CRenderer::Render_Shadow()
 
 	_v3 vLightPos = vCamPos + m_vShadowLightPos;
 	_v3 vLookAt = vCamPos;
+
+	CALC::Generate_ViewMat(&matView, &vLightPos, &vLookAt, &WORLD_UP);
+	CALC::Generate_ProjMat_Ortho(&matProj, &g_fShadow_X, &g_fShadow_Y, &g_fNear, &g_fFar);
 
 	D3DXMatrixLookAtLH(&matView, &vLightPos, &vLookAt, &WORLD_UP);
 	D3DXMatrixOrthoLH(&matProj, g_fShadow_X, g_fShadow_Y, g_fNear, g_fFar);

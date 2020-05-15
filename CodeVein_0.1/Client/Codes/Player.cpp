@@ -1306,9 +1306,6 @@ void CPlayer::Target_AimChasing()
 	if (m_bHaveAimingTarget)
 		return;
 
-	if (m_bOnAiming)
-		return;
-
 	if (false == g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE).empty())
 	{
 		_float fOldLength = 9999.f;
@@ -1316,7 +1313,7 @@ void CPlayer::Target_AimChasing()
 
 		_v3 pTargetTransPos = V3_NULL;
 
-		for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE))
+		for (auto& iter : g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE))
 		{
 			if (false == iter->Get_Enable())
 				continue;
@@ -1335,14 +1332,14 @@ void CPlayer::Target_AimChasing()
 			if (fOldLength > fLength)
 				fOldLength = fLength;
 
-			m_bHaveAimingTarget = true;
-
 			pOldTarget = iter;
 		}
 
 
 		if (nullptr != pOldTarget)
 		{
+			m_bHaveAimingTarget = true;
+
 			m_pTarget = pOldTarget;
 
 			m_pCamManager->Set_AimingTarget(m_pTarget);
@@ -1351,11 +1348,9 @@ void CPlayer::Target_AimChasing()
 			m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&pTargetTransPos));
 
 			m_bOnAiming = true;
+			return;
 		}
 	}
-
-	if (m_bOnAiming)
-		return;
 
 	if (false == g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE).empty())
 	{
@@ -1383,14 +1378,14 @@ void CPlayer::Target_AimChasing()
 			if (fOldLength > fLength)
 				fOldLength = fLength;
 
-			m_bHaveAimingTarget = true;
-
 			pOldTarget = iter;
 		}
 
 
 		if (nullptr != pOldTarget)
 		{
+			m_bHaveAimingTarget = true;
+
 			m_pTarget = pOldTarget;
 
 			m_pCamManager->Set_AimingTarget(m_pTarget);
@@ -1399,6 +1394,7 @@ void CPlayer::Target_AimChasing()
 			m_pTransform->Set_Angle(AXIS_Y, m_pTransform->Chase_Target_Angle(&pTargetTransPos));
 
 			m_bOnAiming = true;
+			return;
 		}
 	}
 

@@ -371,11 +371,7 @@ HRESULT CFireBoy::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			_int tmpPass = m_pMeshCom->Get_MaterialPass(i, j);
-
 			pShader->Begin_Pass(iPass);
-			pShader->Commit_Changes();
-
 			pShader->Commit_Changes();
 
 			m_pMeshCom->Render_Mesh(i, j);

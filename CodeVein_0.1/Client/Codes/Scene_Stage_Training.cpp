@@ -134,11 +134,11 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//		true, _v3(8.f, 0.f, -8.f), V3_NULL, 0));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
-	//// 토템
-	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
-	//	&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
-	//		true, _v3(-5.f, 0.f, -5.f), V3_NULL, 0));
-	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	// 토템
+	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
+		&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+			true, _v3(-5.f, 0.f, -5.f), V3_NULL, 0));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	//// 헌터
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter",

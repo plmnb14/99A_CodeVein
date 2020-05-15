@@ -83,9 +83,7 @@ HRESULT CRenderObject::Render_GameObject()
 
 	m_pShader->Begin_Shader();
 
-	_ulong dwNumSubSet = m_pMesh_Static->Get_NumMaterials();
-
-	for (_ulong i = 0; i < dwNumSubSet; ++i)
+	for (_ulong i = 0; i < m_dwSubsetCnt; ++i)
 	{
 		m_iPass = m_pMesh_Static->Get_MaterialPass(i);
 
@@ -118,9 +116,7 @@ HRESULT CRenderObject::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 	Init_Shader(pShader);
 
-	_ulong dwNumSubSet = m_pMesh_Static->Get_NumMaterials();
-
-	for (_ulong i = 0; i < dwNumSubSet; ++i)
+	for (_ulong i = 0; i < m_dwSubsetCnt; ++i)
 	{
 		m_iPass = m_pMesh_Static->Get_MaterialPass(i);
 
@@ -199,9 +195,7 @@ HRESULT CRenderObject::Render_GameObject_SetPass(CShader* pShader, _int iPass, _
 	// 쉐이더 시작
 	//============================================================================================
 
-	_ulong dwNumSubSet = m_pMesh_Static->Get_NumMaterials();
-
-	for (_ulong i = 0; i < dwNumSubSet; ++i)
+	for (_ulong i = 0; i < m_dwSubsetCnt; ++i)
 	{
 		pShader->Begin_Pass(iPass);
 
@@ -292,6 +286,9 @@ HRESULT CRenderObject::Default_Setting()
 	m_pTransform->Set_Pos(V3_NULL);
 	m_pTransform->Set_Scale(V3_ONE);
 
+	// 메쉬 개수 갱신
+	m_dwSubsetCnt = m_pMesh_Static->Get_NumMaterials();
+
 	return S_OK;
 }
 
@@ -314,6 +311,9 @@ void CRenderObject::Change_Mesh(const _tchar* _MeshName)
 	// Release 한 컴포넌트에 새로이 Clone 받음.
 	iter->second = m_pMesh_Static = static_cast<CMesh_Static*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, m_szName));
 	Safe_AddRef(iter->second);
+
+	// 메쉬 개수 갱신
+	m_dwSubsetCnt = m_pMesh_Static->Get_NumMaterials();
 
 	return;
 }

@@ -250,6 +250,8 @@ void CMaterial_Slot::SetUp_Default()
 	m_pItemCntFont->Set_ViewZ(m_fViewZ - 0.1f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pItemCntFont, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 	m_pItemCntFont->Set_ViewZ(m_fViewZ - 0.1f);
+
+	Safe_AddRef(m_pItemCntFont);
 }
 
 

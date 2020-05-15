@@ -143,6 +143,30 @@ CComponent * CGameObject::Get_Component(const _tchar * pComponentTag)
 	return iter->second;
 }
 
+void CGameObject::Calulate_MeshContainerSize(void * _pMesh, _bool _bIsDynamic)
+{
+	if (false == _bIsDynamic)
+	{
+		CMesh_Static* pSMesh = (CMesh_Static*)(_pMesh);
+
+		m_dwMeshContainer = pSMesh->Get_NumMaterials();
+	}
+
+	else if (true == _bIsDynamic)
+	{
+		CMesh_Dynamic* pDMesh = (CMesh_Dynamic*)(_pMesh);
+
+		m_dwMeshContainer = pDMesh->Get_NumMeshContainer();
+
+		m_arrSubsetCnt = new _ulong[m_dwMeshContainer];
+
+		for (_ulong i = 0; i < m_dwMeshContainer; ++i)
+		{
+			m_arrSubsetCnt[i] = pDMesh->Get_NumMaterials(i);
+		}
+	}
+}
+
 CComponent * CGameObject::Find_Component(const _tchar * pComponentTag)
 {
 	auto	iter = find_if(m_pmapComponents.begin(), m_pmapComponents.end(), CTag_Finder(pComponentTag));
@@ -226,4 +250,7 @@ void CGameObject::Free()
 	for (auto& Col : m_vecAttackCol)
 		Safe_Release(Col);
 	m_vecAttackCol.clear();
+
+	m_arrSubsetCnt = nullptr;
+	delete[] m_arrSubsetCnt;
 }

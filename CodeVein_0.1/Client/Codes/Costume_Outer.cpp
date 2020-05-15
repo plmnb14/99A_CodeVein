@@ -562,8 +562,6 @@ HRESULT CCostume_Outer::Render_GameObject_SetPass(CShader * pShader, _int iPass,
 
 		for (_uint j = 0; j < iNumSubSet; ++j)
 		{
-			_int tmpPass = m_pDynamicMesh->Get_MaterialPass(i, j);
-
 			pShader->Begin_Pass(iPass);
 
 			pShader->Commit_Changes();
