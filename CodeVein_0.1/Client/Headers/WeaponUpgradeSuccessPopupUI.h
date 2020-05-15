@@ -11,6 +11,12 @@ class CWeaponUpgradeOptionUI;
 class CWeaponUpgradeSuccessPopupUI final : public CUI
 {
 public:
+	enum POPUP_TYPE
+	{
+		POPUP_SUCCESS,
+		POPUP_FAILED,
+		POPUP_END
+	};
 
 private:
 	explicit CWeaponUpgradeSuccessPopupUI(_Device pDevice);
@@ -19,6 +25,8 @@ private:
 
 public:
 	void	Set_Active(_bool bIsActive);
+	void	Set_PopupType(POPUP_TYPE eType);
+	void	Set_Inven(CWeapon_Inven_InShop* pInven) { m_pInven = pInven; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -52,6 +60,7 @@ private:
 	CWeapon_Inven_InShop*				m_pInven = nullptr;
 	vector<CWeaponUpgradeOptionUI*>		m_vecOption;
 
+	POPUP_TYPE							m_ePopupType = POPUP_END;
 	_bool								m_bLateInit = false;
 	_int								m_iTexIdx = 0;
 public:

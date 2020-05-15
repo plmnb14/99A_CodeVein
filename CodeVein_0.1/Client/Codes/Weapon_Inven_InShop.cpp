@@ -493,7 +493,6 @@ void CWeapon_Inven_InShop::Click_WeaponInven()
 	}
 
 	m_pHoverSlot_Weapon = nullptr;
-	//m_pSelectedSlot_Weapon = nullptr;
 }
 
 void CWeapon_Inven_InShop::Buy_Weapon()
@@ -569,6 +568,7 @@ void CWeapon_Inven_InShop::Upgrade_Weapon(WPN_PARAM tParam)
 		}
 		++idx;
 	}
+	//Refresh_Inven();
 }
 
 void CWeapon_Inven_InShop::Upgrade_Armor(ARMOR_PARAM tParam)
@@ -590,6 +590,12 @@ void CWeapon_Inven_InShop::Upgrade_Armor(ARMOR_PARAM tParam)
 		}
 		++idx;
 	}
+	//Refresh_Inven();
+}
+
+_float CWeapon_Inven_InShop::Get_UpgradePrice(_int iReinforce)
+{
+	return (iReinforce * 1.5f) * 80 + 50;
 }
 
 HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)

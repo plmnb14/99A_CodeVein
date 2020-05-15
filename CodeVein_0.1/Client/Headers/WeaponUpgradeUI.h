@@ -8,6 +8,7 @@ BEGIN(Client)
 class CWeapon_Inven_InShop;
 class CPlayerFontUI;
 class CWeaponUpgradeOptionUI;
+class CWeaponUpgradeSuccessPopupUI;
 class CWeaponUpgradeUI final : public CUI
 {
 public:
@@ -66,7 +67,7 @@ private:
 	_int	Get_MyMaterial(CMaterial::MATERIAL_TYPE eType);
 	_int	Get_RequireMaterial(CMaterial::MATERIAL_TYPE eType, _int iReinforce);
 	_float	Get_PlusDamage(_float fDamage, _int iReinforce);
-	_float	Get_UpgradePrice(_int iReinforce);
+	_bool	Get_UpgradeSuccess(_int iReinforce);
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -79,6 +80,8 @@ private:
 	CWeapon_Inven_InShop*				m_pInven = nullptr;
 	vector<CWeaponUpgradeOptionUI*>		m_vecOption;
 
+	CWeaponUpgradeSuccessPopupUI*		m_pUpgradeResultPopup = false;
+	
 	CWeaponUpgradeUI*					m_pWeaponNameUI = nullptr;
 	CWeaponUpgradeUI*					m_pWeaponMoveTypeUI = nullptr;
 

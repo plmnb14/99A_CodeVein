@@ -73,6 +73,8 @@
 #include "WeaponBuyPopupOptionUI.h"
 #include "WeaponUpgradeUI.h"
 #include "WeaponUpgradeOptionUI.h"
+#include "WeaponUpgradeSuccessPopupUI.h"
+#include "WeaponUpgradeSuccessPopupOptionUI.h"
 
 #include "ExplainArmorUI.h"
 #include "ExplainWeaponUI.h"

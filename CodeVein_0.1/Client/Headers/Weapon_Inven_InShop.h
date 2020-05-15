@@ -40,6 +40,7 @@ public:
 	CArmor_Slot*	Get_SelectedSlot_Armor() { return m_pSelectedSlot_Armor; }
 	_bool			Get_PopupOn();
 	_bool			Get_CheckCloseUpgradePopup() { return m_bCloseUpgradePopup; }
+	_float			Get_UpgradePrice(_int iReinforce);
 public:
 	void Set_CheckCloseUpgradePopup() { m_bCloseUpgradePopup = false; }
 
@@ -51,6 +52,7 @@ public:
 	void Sell_Armor();
 	void Upgrade_Weapon(WPN_PARAM tParam);
 	void Upgrade_Armor(ARMOR_PARAM tParam);
+
 
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();

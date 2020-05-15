@@ -40,6 +40,9 @@ HRESULT CWeaponBuyPopupOptionUI::Ready_GameObject(void * pArg)
 
 _int CWeaponBuyPopupOptionUI::Update_GameObject(_double TimeDelta)
 {
+	if (!m_bIsActive)
+		return S_OK;
+
 	CUI::Update_GameObject(TimeDelta);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);

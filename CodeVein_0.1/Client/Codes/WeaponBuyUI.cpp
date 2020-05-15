@@ -352,7 +352,8 @@ void CWeaponBuyUI::Check_ItemOption_Weapon()
 	}
 
 	if (SHOP_WEAPON_BUY == m_eType ||
-		SHOP_WEAPON_SELL == m_eType)
+		SHOP_WEAPON_SELL == m_eType ||
+		SHOP_WEAPON_UPGRADE == m_eType)
 	{
 		m_pFontReinforce->Set_UI_Pos(WINCX * 0.46f, WINCY * 0.39f);
 		m_pFontPlusOption_0->Set_UI_Pos(WINCX * 0.46f, WINCY * 0.425f);
@@ -364,8 +365,8 @@ void CWeaponBuyUI::Check_ItemOption_Weapon()
 
 	CWeapon_Slot* pWeaponSlot = m_pInven->Get_HoverSlot_Weapon();
 
-	if (!pWeaponSlot || m_pInven->Get_PopupOn())
-		pWeaponSlot = m_pInven->Get_SelectedSlot_Weapon();
+	//if (!pWeaponSlot || m_pInven->Get_PopupOn())
+	//	pWeaponSlot = m_pInven->Get_SelectedSlot_Weapon();
 
 	if (!pWeaponSlot || pWeaponSlot->Get_Dead())
 		return;
@@ -389,7 +390,12 @@ void CWeaponBuyUI::Check_ItemOption_Weapon()
 	// HazePrice
 	if (!m_pPriceHazeCnt)
 		return;
-	m_pPriceHazeCnt->Update_NumberValue((_float)tParam.iPrice);
+
+	_int iPrice = tParam.iPrice;
+	if (SHOP_ARMOR_UPGRADE == m_eType)
+		iPrice = m_pInven->Get_UpgradePrice(tParam.iReinforce);
+
+	m_pPriceHazeCnt->Update_NumberValue((_float)iPrice);
 	m_pPriceHazeCnt->Set_Active(m_bIsActive);
 	//==============================================================================================================
 	// Reinforce
@@ -506,7 +512,8 @@ void CWeaponBuyUI::Check_ItemOption_Armor()
 	}
 
 	if (SHOP_ARMOR_BUY == m_eType ||
-		SHOP_ARMOR_SELL == m_eType)
+		SHOP_ARMOR_SELL == m_eType||
+		SHOP_ARMOR_UPGRADE == m_eType)
 	{
 		m_pFontDamage->Set_UI_Pos(WINCX * 0.46f, WINCY * 0.64f);
 
@@ -522,6 +529,16 @@ void CWeaponBuyUI::Check_ItemOption_Armor()
 	if (!m_pInven)
 		return;
 
+	CArmor_Slot* pArmorSlot = m_pInven->Get_HoverSlot_Armor();
+
+	//if (!pArmorSlot || m_pInven->Get_PopupOn())
+	//	pArmorSlot = m_pInven->Get_SelectedSlot_Armor();
+
+	if (!pArmorSlot || pArmorSlot->Get_Dead())
+		return;
+
+	ARMOR_PARAM tParam = pArmorSlot->Get_ArmorParam();
+
 	//==============================================================================================================
 	// MyHaze
 	_int iHazeCnt = _int(CUI_Manager::Get_Instance()->Get_HazeUI()->Get_Haze_Cnt());
@@ -529,18 +546,6 @@ void CWeaponBuyUI::Check_ItemOption_Armor()
 		return;
 	m_pMyHazeCnt->Update_NumberValue((_float)iHazeCnt);
 	m_pMyHazeCnt->Set_Active(m_bIsActive);
-	//==============================================================================================================
-
-	CArmor_Slot* pArmorSlot = m_pInven->Get_HoverSlot_Armor();
-
-	if (!pArmorSlot || m_pInven->Get_PopupOn())
-		pArmorSlot = m_pInven->Get_SelectedSlot_Armor();
-
-	if (!pArmorSlot || pArmorSlot->Get_Dead())
-		return;
-
-	ARMOR_PARAM tParam = pArmorSlot->Get_ArmorParam();
-
 	//==============================================================================================================
 	// Def
 	if (!m_pFontDamage)
@@ -551,7 +556,12 @@ void CWeaponBuyUI::Check_ItemOption_Armor()
 	// HazePrice
 	if (!m_pPriceHazeCnt)
 		return;
-	m_pPriceHazeCnt->Update_NumberValue((_float)tParam.iPrice);
+
+	_int iPrice = tParam.iPrice;
+	if (SHOP_ARMOR_UPGRADE == m_eType)
+		iPrice = m_pInven->Get_UpgradePrice(tParam.iReinforce);
+
+	m_pPriceHazeCnt->Update_NumberValue((_float)iPrice);
 	m_pPriceHazeCnt->Set_Active(m_bIsActive);
 	//==============================================================================================================
 	// Reinforce

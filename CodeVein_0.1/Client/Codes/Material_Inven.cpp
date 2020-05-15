@@ -55,9 +55,9 @@ HRESULT CMaterial_Inven::Ready_GameObject(void * pArg)
 
 	}
 	
-	Add_MultiMaterial(CMaterial::Queen_Steel, 8);
-	Add_MultiMaterial(CMaterial::Queen_Titanium, 9);
-	Add_MultiMaterial(CMaterial::Queen_Tungsten, 10);
+	Add_MultiMaterial(CMaterial::Queen_Steel, 50);
+	Add_MultiMaterial(CMaterial::Queen_Titanium, 50);
+	Add_MultiMaterial(CMaterial::Queen_Tungsten, 50);
 	return NOERROR;
 }
 
@@ -74,6 +74,13 @@ _int CMaterial_Inven::Update_GameObject(_double TimeDelta)
 
 	for (auto& pSlot : m_vecMaterialSlot)
 		pSlot->Set_Active(m_bIsActive);
+
+	_uint iIdx = 0;
+	for (auto& vector_iter : m_vecMaterialSlot)
+	{
+		vector_iter->Set_UI_Pos(m_fPosX - 100.f + 52.f * (iIdx % 5), m_fPosY - 150.f + 52.f * (iIdx / 5));
+		iIdx++;
+	}
 	
 	return NO_EVENT;
 }
