@@ -362,11 +362,20 @@ void CWeapon_Inven_InShop::Click_ArmorInven()
 
 		if (pSlot->Pt_InRect())
 		{
-			m_pHoverSlot_Armor = pSlot;
+			if (m_pHoverSlot_Armor != pSlot)
+			{
+				g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+			}
 
+			m_pHoverSlot_Armor = pSlot;
+			
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB) &&
 				!pSlot->Get_Select())
 			{
+				g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+				g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+
 				Refresh_Inven();
 
 				m_pSelectedSlot_Armor = pSlot;
@@ -438,11 +447,20 @@ void CWeapon_Inven_InShop::Click_WeaponInven()
 
 		if (pSlot->Pt_InRect())
 		{
+			if (m_pHoverSlot_Weapon != pSlot)
+			{
+				g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+			}
+
 			m_pHoverSlot_Weapon = pSlot;
 			
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB) &&
 				!pSlot->Get_Select())
 			{
+				g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+				g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+
 				Refresh_Inven();
 
 				m_pSelectedSlot_Weapon = pSlot;

@@ -157,9 +157,19 @@ void CWeaponBuyPopupUI::Click_Option()
 		{
 			Reset_Option();
 			iter->Set_Select(true);
-	
+			
+			if (m_iOption != iIdx)
+			{
+				g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+			}
+			m_iOption = iIdx;
+
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
+				g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+				g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+
 				if (0 == iIdx)
 					--m_iCount;
 				else if (1 == iIdx)
