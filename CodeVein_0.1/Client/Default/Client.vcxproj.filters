@@ -397,9 +397,6 @@
     <Filter Include="02.GameObject\Stage\10%29 Pet\01.PoisonButterFly">
       <UniqueIdentifier>{2f0b99ca-05de-474b-a3f2-deaf4be55682}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\10%29 Pet\02.DeerKing">
-      <UniqueIdentifier>{12d43b02-9be4-4bc8-8f7d-849ac5ca6a8d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\08. Pet_Inven">
       <UniqueIdentifier>{a7a0f26e-f1c3-4bbe-a84d-2ece8c87140c}</UniqueIdentifier>
     </Filter>
@@ -498,6 +495,12 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI\Option">
       <UniqueIdentifier>{023eafb9-cae5-4944-a116-3d2c0d39de3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\10%29 Pet\02.Pet_DeerKing">
+      <UniqueIdentifier>{12d43b02-9be4-4bc8-8f7d-849ac5ca6a8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\10%29 Pet\00.Pet_Bullet">
+      <UniqueIdentifier>{e24f803d-c1b7-44e9-adbb-8fa7d5e7df5a}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -888,9 +891,6 @@
     <ClInclude Include="..\Headers\Pet.h">
       <Filter>02.GameObject\Stage\10%29 Pet</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Pet_Bullet.h">
-      <Filter>02.GameObject\Stage\10%29 Pet</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\Monster.h">
       <Filter>02.GameObject\Stage\2%29 Monster</Filter>
     </ClInclude>
@@ -1063,13 +1063,16 @@
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeOptionUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Pet_DeerKing.h">
-      <Filter>02.GameObject\Stage\10%29 Pet\02.DeerKing</Filter>
+      <Filter>02.GameObject\Stage\10%29 Pet\02.Pet_DeerKing</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\WeaponUpgradeSuccessPopupUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\WeaponUpgradeSuccessPopupOptionUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI\Option</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Pet_Bullet.h">
+      <Filter>02.GameObject\Stage\10%29 Pet\00.Pet_Bullet</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1451,9 +1454,6 @@
     <ClCompile Include="..\Codes\Pet.cpp">
       <Filter>02.GameObject\Stage\10%29 Pet</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Pet_Bullet.cpp">
-      <Filter>02.GameObject\Stage\10%29 Pet</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\DeerKingIceSword.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
     </ClCompile>
@@ -1620,13 +1620,16 @@
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeOptionUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Pet_DeerKing.cpp">
-      <Filter>02.GameObject\Stage\10%29 Pet\02.DeerKing</Filter>
+      <Filter>02.GameObject\Stage\10%29 Pet\02.Pet_DeerKing</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\WeaponUpgradeSuccessPopupUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\WeaponUpgradeSuccessPopupOptionUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI\Option</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Pet_Bullet.cpp">
+      <Filter>02.GameObject\Stage\10%29 Pet\00.Pet_Bullet</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

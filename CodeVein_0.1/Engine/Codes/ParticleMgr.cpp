@@ -49,6 +49,12 @@ HRESULT CParticleMgr::Ready_ParticleManager_Essential()
 	Input_Pool(L"Totem_Fire_BulletBody", 200);
 	Input_Pool(L"Totem_Fire_Bullet_Dead_Particle", 200);
 
+	Input_Pool(L"Totem_Ice_BulletBody", 200);
+	Input_Pool(L"Totem_Ice_Bullet_Dead_0", 200);
+	Input_Pool(L"Totem_Ice_Bullet_Dead_1", 200);
+	Input_Pool(L"Totem_Ice_Bullet_Dead_Particle", 200);
+	Input_Pool(L"Totem_Ice_Ready", 200);
+
 	Input_Pool(L"Monkey_Knife", 60);
 
 	Input_Pool(L"Hunter_Bullet_Body_Lightning_Hor_0", 60);

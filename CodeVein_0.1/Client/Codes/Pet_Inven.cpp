@@ -135,7 +135,7 @@ void CPet_Inven::Check_Call_Pet(_bool _Check_Get_SlotSelect)
 		}
 		else
 		{
-			static_cast<CPet*>(pTempPet)->Check_Navi();
+			static_cast<CPet*>(pTempPet)->Function_Check_Navi();
 			pTempPet = nullptr;
 			return;
 		}

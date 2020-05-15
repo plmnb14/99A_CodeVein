@@ -510,13 +510,28 @@ void CCocoon::Play_Shot()
 				matBone = *m_matBone[Bone_Jaw_Tongue] * m_pTransformCom->Get_WorldMat();
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 
-				if(MONSTER_COLOR_TYPE::WHITE == m_eMonsterColor) //¾óÀ½ ½î¼¼¿ä
+				if (MONSTER_COLOR_TYPE::WHITE == m_eMonsterColor) //¾óÀ½ ½î¼¼¿ä
+				{
+					g_pSoundManager->Stop_Sound(CSoundManager::Cocoon_SFX_01);
+					g_pSoundManager->Play_Sound(L"Cocoon_IceBullet_Start.ogg", CSoundManager::Cocoon_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Cocoon_SFX_02);
+					g_pSoundManager->Play_Sound(L"Cocoon_IceBullet_Sub.ogg", CSoundManager::Cocoon_SFX_02, CSoundManager::Effect_Sound);
+
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_CocoonBigBullet", &MONSTER_BULLET_STATUS(
 						MONSTER_BULLET_TYPE::BULLET_ICE, vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 6.f, 2.5f));
+				}
 				else
+				{
+					g_pSoundManager->Stop_Sound(CSoundManager::Cocoon_SFX_01);
+					g_pSoundManager->Play_Sound(L"Cocoon_FireBullet_Start.ogg", CSoundManager::Cocoon_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Cocoon_SFX_02);
+					g_pSoundManager->Play_Sound(L"Cocoon_FireBullet_Sub.ogg", CSoundManager::Cocoon_SFX_02, CSoundManager::Effect_Sound);
+
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_CocoonBigBullet", &MONSTER_BULLET_STATUS(
 						MONSTER_BULLET_TYPE::BULLET_FIRE, vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 6.f, 2.5f));
-					//CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_CocoonBigBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 6.f, 1.5f));
+				}
 			}
 		}
 		else if (3.7f <= AniTime && 5.8f >= AniTime)
@@ -611,12 +626,22 @@ void CCocoon::Play_Mist()
 				memcpy(vBirth, &matBone._41, sizeof(_v3));
 				V3_NORMAL(&vShotDir, &(vMakeDirPoint1 - vMakeDirPoint2));
 
-				if(MONSTER_COLOR_TYPE::WHITE == m_eMonsterColor)
+				if (MONSTER_COLOR_TYPE::WHITE == m_eMonsterColor)
+				{
+					g_pSoundManager->Play_Sound(L"Cocoon_IceBreath_Start.ogg", CSoundManager::Cocoon_SFX_01, CSoundManager::Effect_Sound);
+
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_CocoonBullet", &MONSTER_BULLET_STATUS(
 						MONSTER_BULLET_TYPE::BULLET_ICE, vBirth, vShotDir, 4.f, 1.f));
+				}
 				else
+				{
+					g_pSoundManager->Play_Sound(L"Cocoon_FireBreath_Start.ogg", CSoundManager::Cocoon_SFX_01, CSoundManager::Effect_Sound);
+
+					g_pSoundManager->Play_Sound(L"Cocoon_FireBreath_End.ogg", CSoundManager::Cocoon_SFX_02, CSoundManager::Effect_Sound);
+
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_CocoonBullet", &MONSTER_BULLET_STATUS(
 						MONSTER_BULLET_TYPE::BULLET_FIRE, vBirth, vShotDir, 4.f, 1.f));
+				}
 			}
 		}
 		else if (0.5f <= AniTime && 2.6f >= AniTime)

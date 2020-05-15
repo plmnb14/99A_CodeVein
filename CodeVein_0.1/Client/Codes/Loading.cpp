@@ -1356,7 +1356,9 @@ _uint CLoading::Loading_Title()
 	//============================================================================================================
 	// 사운드
 	//============================================================================================================
-	g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
+	//g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
+	g_pSoundManager->Load_Directory_SouneFile_W(L"Title");
+	g_pSoundManager->Load_Directory_SouneFile_W(L"Effect");
 	//============================================================================================================
 	// 옷
 	//============================================================================================================
@@ -1586,7 +1588,7 @@ _uint CLoading::Loading_Stage()
 			return E_FAIL;
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_EffParent", L"GameObject_EffParent", 100);
 
-		///////test로 만들어둔 드롭아이템입니다 수정 Test 실험 심규명
+		// Drop_Item
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DropItem", CDropItem::Create(m_pGraphicDev))))
 			return E_FAIL;
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_DropItem", L"GameObject_DropItem", 200);
@@ -1911,6 +1913,11 @@ HRESULT CLoading::Ready_Intro_MonsterPrototype()
 	if (FAILED(g_pManagement->Add_Prototype(L"Pet_Bullet", CPet_Bullet::Create(m_pGraphicDev))))
 		return E_FAIL;
 	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Pet_Bullet", L"Pet_Bullet", 100);
+	//============================================================================================================================================
+	// 펫_사슴킹
+	//============================================================================================================================================
+	if (FAILED(g_pManagement->Add_Prototype(L"Pet_DeerKing", CPet_DeerKing::Create(m_pGraphicDev))))
+		return E_FAIL;
 	//============================================================================================================================================
 
 
