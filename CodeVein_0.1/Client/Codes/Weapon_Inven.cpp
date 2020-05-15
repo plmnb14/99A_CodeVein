@@ -83,18 +83,16 @@ _int CWeapon_Inven::Update_GameObject(_double TimeDelta)
 
 	Click_Inven();
 	
+	_uint iIdx = 0;
 	for (auto& pWeaponSlot : m_vecWeaponSlot)
 	{
 		pWeaponSlot->Set_Active(m_bIsActive);
+		pWeaponSlot->Set_UI_Pos(m_fPosX - 100.f + 52.f * (iIdx % 5), m_fPosY - 150.f + 52.f * (iIdx / 5));
 		pWeaponSlot->Set_ViewZ(m_fViewZ - 0.1f);
-	}
-
-	_uint iIdx = 0;
-	for (auto& vector_iter : m_vecWeaponSlot)
-	{
-		vector_iter->Set_UI_Pos(m_fPosX - 100.f + 52.f * (iIdx % 5), m_fPosY - 150.f + 52.f * (iIdx / 5));
 		iIdx++;
 	}
+
+	
 	m_pExplainUI->Set_Active(m_bIsActive);
 	
 	return NO_EVENT;
@@ -213,6 +211,7 @@ void CWeapon_Inven::Click_Inven()
 			{
 				UnRegist_Weapon(pSlot);
 			}
+			
 		}
 	}
 }
@@ -627,7 +626,6 @@ void CWeapon_Inven::Sell_Weapon()
 		++idx;
 	}
 }
-
 
 CWeapon_Inven * CWeapon_Inven::Create(_Device pGraphic_Device)
 {

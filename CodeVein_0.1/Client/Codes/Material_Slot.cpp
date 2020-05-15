@@ -69,7 +69,7 @@ _int CMaterial_Slot::Update_GameObject(_double TimeDelta)
 			m_pItemCntFont->Set_Active(false);
 
 		m_pItemCntFont->Update_NumberValue(_float(m_vecMaterial.size()));
-		
+		m_pItemCntFont->Set_UI_Pos(m_fPosX - m_fSizeX * 0.25f, m_fPosY + m_fSizeY * 0.25f);
 	}
 
 	m_bIsCollMouse = Pt_InRect();
@@ -313,6 +313,8 @@ CGameObject * CMaterial_Slot::Clone_GameObject(void * pArg)
 
 void CMaterial_Slot::Free()
 {
+	Safe_Release(m_pItemCntFont);
+
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom);

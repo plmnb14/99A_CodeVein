@@ -48,6 +48,10 @@ int					g_eSTeleportID_Cur = TeleportID_End;
 // [6] - 스테이지 4 Stage_04
 // [7] - 모든 리소스 레디
 // ================================================
+_v3 g_vWindDir = { 0.f, 0.f, 0.f };
+// ================================================
+
+
 
 // 이 코드 모듈에 들어 있는 함수의 정방향 선언입니다.
 ATOM                MyRegisterClass(HINSTANCE hInstance);

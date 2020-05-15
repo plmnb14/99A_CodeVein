@@ -2,6 +2,7 @@
 #include "..\Headers\Material_Inven.h"
 
 #include "Item_Manager.h"
+#include "UI_Manager.h"
 
 CMaterial_Inven::CMaterial_Inven(_Device pDevice)
 	: CUI(pDevice)
@@ -33,6 +34,8 @@ HRESULT CMaterial_Inven::Ready_GameObject(void * pArg)
 
 	m_bIsActive = false;
 
+	SetUp_Default();
+
 	// Slot Create
 	CUI::UI_DESC* pDesc = nullptr;
 	CMaterial_Slot* pSlot = nullptr;
@@ -54,17 +57,17 @@ HRESULT CMaterial_Inven::Ready_GameObject(void * pArg)
 		}
 
 	}
-	
+
 	Add_MultiMaterial(CMaterial::Queen_Steel, 50);
 	Add_MultiMaterial(CMaterial::Queen_Titanium, 50);
 	Add_MultiMaterial(CMaterial::Queen_Tungsten, 50);
+
 	return NOERROR;
 }
 
 _int CMaterial_Inven::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
-
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
@@ -81,6 +84,9 @@ _int CMaterial_Inven::Update_GameObject(_double TimeDelta)
 		vector_iter->Set_UI_Pos(m_fPosX - 100.f + 52.f * (iIdx % 5), m_fPosY - 150.f + 52.f * (iIdx / 5));
 		iIdx++;
 	}
+	
+	if (m_pExplainUI)
+		m_pExplainUI->Set_Active(m_bIsActive);
 	
 	return NO_EVENT;
 }
@@ -213,8 +219,12 @@ void CMaterial_Inven::Click_Inven()
 
 	for (auto& pSlot : m_vecMaterialSlot)
 	{
-		if (pSlot->Pt_InRect())
+		if (pSlot->Pt_InRect() && pSlot->Get_Type() != CMaterial::MATERIAL_END)
 		{
+			m_pExplainUI->Set_Type(CMaterial::MATERIAL_TYPE(pSlot->Get_Type()));
+			m_pExplainUI->Set_CurHaveCnt(pSlot->Get_Size());
+			m_pExplainUI->Set_MaximumCnt(5);
+
 			if (!pSlot->Get_Select() && pSlot->Get_Size() > 0 && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
 				// 마우스 왼쪽 버튼 눌렀을 때
@@ -227,6 +237,22 @@ void CMaterial_Inven::Click_Inven()
 			}
 		}
 	}
+}
+
+void CMaterial_Inven::SetUp_Default()
+{
+	m_pExplainUI = static_cast<CExplainMaterialUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExplainMaterialUI", nullptr));
+	m_pExplainUI->Set_UI_Pos(WINCX * 0.5f, WINCY * 0.5f);
+	m_pExplainUI->Set_UI_Size(1024.f * 0.6f, 720.f * 0.6f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExplainUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+}
+
+void CMaterial_Inven::Add_Slot()
+{
+	CMaterial_Slot* pSlot = static_cast<CMaterial_Slot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_MaterialSlot", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pSlot, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	pSlot->Set_UI_Size(50.f, 50.f);
+	m_vecMaterialSlot.push_back(pSlot);
 }
 
 void CMaterial_Inven::Add_Material(CMaterial::MATERIAL_TYPE eType)
@@ -272,10 +298,13 @@ void CMaterial_Inven::Sell_Material(_uint iDelete)
 				pSlot->Delete_Item();
 			}
 			
+			// 슬롯 안의 아이템 개수가 0이 되면 중간삭제
 			if (pSlot->Get_Size() == 0)
 			{
 				m_vecMaterialSlot.erase(m_vecMaterialSlot.begin() + idx);
 				m_vecMaterialSlot.shrink_to_fit();
+				// 슬롯 삭제 후 맨 뒤에 다시 슬롯 추가(슬롯의 개수가 줄어드는 것 방지)
+				Add_Slot();
 				break;
 			}
 		}
@@ -284,13 +313,13 @@ void CMaterial_Inven::Sell_Material(_uint iDelete)
 	}
 	
 	
-	_ulong Idx = 0;
+	/*_ulong Idx = 0;
 	for (auto& pSlot : m_vecMaterialSlot)
 	{
 		
 		pSlot->Set_UI_Pos(m_vecUI_DESC[Idx]->fPosX, m_vecUI_DESC[Idx]->fPosY);
 		++Idx;
-	}
+	}*/
 }
 
 CMaterial_Inven * CMaterial_Inven::Create(_Device pGraphic_Device)

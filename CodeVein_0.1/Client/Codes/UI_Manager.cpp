@@ -131,6 +131,28 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ExplainWeaponUI", CExplainWeaponUI::Create(pDevice))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ExplainMaterialUI", CExplainMaterialUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ExplainExpendUI", CExplainExpendUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_GeneralStoreUI", CGeneralStoreUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MaterialOptionUI", CMaterialOptionUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MaterialCollectionUI", CMaterialCollectionUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Material_InfoUI", CMaterial_InfoUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ExpendCollectionUI", CExpendCollectionUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ExpendOptionUI", CExpendOptionUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Expend_InfoUI", CExpend_InfoUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_GeneralStoreBuyUI", CGeneralStoreBuyUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BuyOptionUI", CBuyOptionUI::Create(pDevice))))
+		return E_FAIL;
 	
 	//////////////// Chae
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BossMassageUI", CMassageUI::Create(pDevice))))
@@ -265,6 +287,9 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	// 헤이즈 UI
 	m_pHazeUI = static_cast<CHazeUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_HazeUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pHazeUI, SCENE_MORTAL, L"Layer_HazeUI", nullptr);
+	// 소비, 재료 상점 UI
+	m_pGeneralStoreUI = static_cast<CGeneralStoreUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_GeneralStoreUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pGeneralStoreUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	//////////////////////////////////// 펫 UI /////////////////////////////////////////////////////////////////////
 	// 펫 인벤토리

@@ -466,6 +466,39 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\16. ScriptUI">
       <UniqueIdentifier>{4f0943ce-c02a-408f-af5f-6c1c94ea2eee}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\02.Weapon\ExplainWeapon">
+      <UniqueIdentifier>{aaad8145-0680-4e45-b963-8dba13ccd5b8}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\03.Armor\ExplainArmor">
+      <UniqueIdentifier>{862b1dde-0c7e-4e67-84be-f538675b3330}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\01.Material\ExplainMaterial">
+      <UniqueIdentifier>{9ada0970-8598-4a16-be3e-d65cc7d2cc8c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\00.Expendables\ExplainExpend">
+      <UniqueIdentifier>{f3cc84f2-1c32-4428-8ff3-36a622407b35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29">
+      <UniqueIdentifier>{dea79879-fe60-4fd6-a4bc-4f50264affd4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\00. ExpendCollection">
+      <UniqueIdentifier>{f0ed087e-8595-4e7b-9d2e-e0cadcaa4086}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\01. MaterialCollection">
+      <UniqueIdentifier>{d4d47d07-2b0f-4d6e-b8ee-852960f85573}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\01. MaterialCollection\MaterialOption">
+      <UniqueIdentifier>{82b022f6-4c0d-4861-8d63-7f245d9b6c9f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\01. MaterialCollection\Material_InfoUI">
+      <UniqueIdentifier>{ca4e0bc4-25b9-4366-b82b-21f26f7d9d6c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\00. ExpendCollection\ExpendOption">
+      <UniqueIdentifier>{fdab7362-86f2-42d9-a91e-b0c849b9df5e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\00. ExpendCollection\Expend_InfoUI">
+      <UniqueIdentifier>{a76c749a-21ca-4d05-9d05-38dc491d08db}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponShopOptionUI">
       <UniqueIdentifier>{898148ef-3190-44f5-91d2-17cfad3ee94f}</UniqueIdentifier>
     </Filter>
@@ -498,6 +531,9 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI\Option">
       <UniqueIdentifier>{023eafb9-cae5-4944-a116-3d2c0d39de3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI">
+      <UniqueIdentifier>{41c3c3de-dd61-4d16-868c-53b157aa6803}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -1026,12 +1062,6 @@
     <ClInclude Include="..\Headers\BossNameUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\02.BossUI\BossNameUI</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\ExplainArmorUI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\03.Armor</Filter>
-    </ClInclude>
-    <ClInclude Include="..\Headers\ExplainWeaponUI.h">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\02.Weapon</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\NPC_Yakumo.h">
       <Filter>02.GameObject\Stage\11%29 NPC</Filter>
     </ClInclude>
@@ -1040,6 +1070,39 @@
     </ClInclude>
     <ClInclude Include="..\Headers\ClothManager.h">
       <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ExplainWeaponUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\02.Weapon\ExplainWeapon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ExplainArmorUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\03.Armor\ExplainArmor</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ExplainMaterialUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\01.Material\ExplainMaterial</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ExplainExpendUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\00.Expendables\ExplainExpend</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ExpendCollectionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\00. ExpendCollection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MaterialCollectionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\01. MaterialCollection</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MaterialOptionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\01. MaterialCollection\MaterialOption</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Material_InfoUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\01. MaterialCollection\Material_InfoUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GeneralStoreUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ExpendOptionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\00. ExpendCollection\ExpendOption</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Expend_InfoUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\00. ExpendCollection\Expend_InfoUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\WeaponShopOptionUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponShopOptionUI</Filter>
@@ -1070,6 +1133,12 @@
     </ClInclude>
     <ClInclude Include="..\Headers\WeaponUpgradeSuccessPopupOptionUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI\Option</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GeneralStoreBuyUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BuyOptionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1583,12 +1652,6 @@
     <ClCompile Include="..\Codes\BossNameUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\02.BossUI\BossNameUI</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\ExplainArmorUI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\03.Armor</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Codes\ExplainWeaponUI.cpp">
-      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\02.Weapon</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\NPC_Yakumo.cpp">
       <Filter>02.GameObject\Stage\11%29 NPC</Filter>
     </ClCompile>
@@ -1597,6 +1660,39 @@
     </ClCompile>
     <ClCompile Include="..\Codes\ClothManager.cpp">
       <Filter>02.GameObject\Stage\Physx\Cloth</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ExplainWeaponUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\02.Weapon\ExplainWeapon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ExplainArmorUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\03.Armor\ExplainArmor</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ExplainMaterialUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\01.Material\ExplainMaterial</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ExplainExpendUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\00.Expendables\ExplainExpend</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ExpendCollectionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\00. ExpendCollection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MaterialCollectionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\01. MaterialCollection</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MaterialOptionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\01. MaterialCollection\MaterialOption</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Material_InfoUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\01. MaterialCollection\Material_InfoUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GeneralStoreUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ExpendOptionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\00. ExpendCollection\ExpendOption</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Expend_InfoUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\00. ExpendCollection\Expend_InfoUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\WeaponShopOptionUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponShopOptionUI</Filter>
@@ -1627,6 +1723,12 @@
     </ClCompile>
     <ClCompile Include="..\Codes\WeaponUpgradeSuccessPopupOptionUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI\Option</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GeneralStoreBuyUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BuyOptionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
