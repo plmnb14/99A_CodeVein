@@ -76,6 +76,8 @@
 #include "WeaponUpgradeSuccessPopupUI.h"
 #include "WeaponUpgradeSuccessPopupOptionUI.h"
 
+#include "ShopActionFailedPopup.h"
+
 #include "ExplainArmorUI.h"
 #include "ExplainWeaponUI.h"
 #include "ExplainMaterialUI.h"

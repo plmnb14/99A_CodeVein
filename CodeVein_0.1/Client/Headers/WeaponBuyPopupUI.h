@@ -4,7 +4,7 @@
 #include "UI.h"
 
 BEGIN(Client)
-class CWeapon_Inven_InShop;
+class CShopActionFailedPopup;
 class CWeapon_Inven_InShop;
 class CPlayerFontUI;
 class CWeaponBuyPopupOptionUI;
@@ -63,6 +63,7 @@ private:
 	CWeapon_Inven_InShop*				m_pInven = nullptr;
 	vector<CWeaponBuyPopupOptionUI*>	m_vecOption;
 
+	CShopActionFailedPopup*	m_pShopActionFailedPopup = nullptr;
 	CPlayerFontUI*			m_pFontItemCount = nullptr;
 
 	_float					m_fAlpha = 0.f;

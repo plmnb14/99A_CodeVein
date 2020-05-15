@@ -307,7 +307,11 @@ void CWeaponUpgradeUI::Upgrade_Weapon()
 	_int iMyHaze = (_int)CUI_Manager::Get_Instance()->Get_HazeUI()->Get_Haze_Cnt();
 
 	if (iPrice > iMyHaze)
+	{
+		m_pShopActionFailedPopup->Set_Active(true);
+		m_pShopActionFailedPopup->Set_PopupType(CShopActionFailedPopup::POPUP_UPGRADE);
 		return;
+	}
 
 	vector<CMaterial_Slot*>* pInvenMaterial = CUI_Manager::Get_Instance()->Get_Material_Inven()->Get_VecMaterialSlot();
 
@@ -318,12 +322,14 @@ void CWeaponUpgradeUI::Upgrade_Weapon()
 	_int iRequireTitanium	= Get_RequireMaterial(CMaterial::MATERIAL_TYPE::Queen_Titanium, iReinForce);
 	_int iRequireTungsten	= Get_RequireMaterial(CMaterial::MATERIAL_TYPE::Queen_Tungsten, iReinForce);
 
-	if(iSteel < iRequireSteel)
+	if (iSteel < iRequireSteel ||
+		iTitanium < iRequireTitanium ||
+		iTungsten < iRequireTungsten)
+	{
+		m_pShopActionFailedPopup->Set_Active(true);
+		m_pShopActionFailedPopup->Set_PopupType(CShopActionFailedPopup::POPUP_UPGRADE);
 		return;
-	if (iTitanium < iRequireTitanium)
-		return;
-	if (iTungsten < iRequireTungsten)
-		return;
+	}
 
 	// =======================================================================
 	// Can Upgrade
@@ -347,7 +353,7 @@ void CWeaponUpgradeUI::Upgrade_Weapon()
 
 	if (false == Get_UpgradeSuccess(iReinForce))
 	{
-		m_pUpgradeResultPopup->Set_Active(true);
+		m_pUpgradeResultPopup->Set_Fade(true);
 		m_pUpgradeResultPopup->Set_Inven(m_pInven);
 		m_pUpgradeResultPopup->Set_PopupType(CWeaponUpgradeSuccessPopupUI::POPUP_FAILED);
 		return;
@@ -361,7 +367,7 @@ void CWeaponUpgradeUI::Upgrade_Weapon()
 	pSlot->Set_WeaponParam(tParam);
 	m_pInven->Upgrade_Weapon(tParam);
 
-	m_pUpgradeResultPopup->Set_Active(true);
+	m_pUpgradeResultPopup->Set_Fade(true);
 	m_pUpgradeResultPopup->Set_Inven(m_pInven);
 	m_pUpgradeResultPopup->Set_PopupType(CWeaponUpgradeSuccessPopupUI::POPUP_SUCCESS);
 }
@@ -374,7 +380,11 @@ void CWeaponUpgradeUI::Upgrade_Armor()
 	_int iMyHaze = (_int)CUI_Manager::Get_Instance()->Get_HazeUI()->Get_Haze_Cnt();
 
 	if (iPrice > iMyHaze)
+	{
+		m_pShopActionFailedPopup->Set_Active(true);
+		m_pShopActionFailedPopup->Set_PopupType(CShopActionFailedPopup::POPUP_UPGRADE);
 		return;
+	}
 
 	vector<CMaterial_Slot*>* pInvenMaterial = CUI_Manager::Get_Instance()->Get_Material_Inven()->Get_VecMaterialSlot();
 
@@ -385,12 +395,14 @@ void CWeaponUpgradeUI::Upgrade_Armor()
 	_int iRequireTitanium = Get_RequireMaterial(CMaterial::MATERIAL_TYPE::Queen_Titanium, iReinForce);
 	_int iRequireTungsten = Get_RequireMaterial(CMaterial::MATERIAL_TYPE::Queen_Tungsten, iReinForce);
 
-	if (iSteel < iRequireSteel)
+	if (iSteel < iRequireSteel ||
+		iTitanium < iRequireTitanium ||
+		iTungsten < iRequireTungsten)
+	{
+		m_pShopActionFailedPopup->Set_Active(true);
+		m_pShopActionFailedPopup->Set_PopupType(CShopActionFailedPopup::POPUP_UPGRADE);
 		return;
-	if (iTitanium < iRequireTitanium)
-		return;
-	if (iTungsten < iRequireTungsten)
-		return;
+	}
 
 	// =======================================================================
 	// Can Upgrade
@@ -414,7 +426,7 @@ void CWeaponUpgradeUI::Upgrade_Armor()
 
 	if (false == Get_UpgradeSuccess(iReinForce))
 	{
-		m_pUpgradeResultPopup->Set_Active(true);
+		m_pUpgradeResultPopup->Set_Fade(true);
 		m_pUpgradeResultPopup->Set_Inven(m_pInven);
 		m_pUpgradeResultPopup->Set_PopupType(CWeaponUpgradeSuccessPopupUI::POPUP_FAILED);
 		return;
@@ -429,7 +441,7 @@ void CWeaponUpgradeUI::Upgrade_Armor()
 	pSlot->Set_ArmorParam(tParam);
 	m_pInven->Upgrade_Armor(tParam);
 
-	m_pUpgradeResultPopup->Set_Active(true);
+	m_pUpgradeResultPopup->Set_Fade(true);
 	m_pUpgradeResultPopup->Set_Inven(m_pInven);
 	m_pUpgradeResultPopup->Set_PopupType(CWeaponUpgradeSuccessPopupUI::POPUP_SUCCESS);
 }
@@ -492,19 +504,23 @@ _float CWeaponUpgradeUI::Get_PlusDamage(_float fDamage, _int iReinforce)
 
 _bool CWeaponUpgradeUI::Get_UpgradeSuccess(_int iReinforce)
 {
-	_int iSuccessPercentage = 100;
-	for (_int i = 0; i < iReinforce; i++)
-		iSuccessPercentage = _int(iSuccessPercentage * 0.5f);
-
+	_int iSuccessPercentage = Get_UpgradeSuccessPercentage(iReinforce);
 	_int iRandom = CCalculater::Random_Num(1, 100);
 
-	cout << iSuccessPercentage << endl;
-	
 	if (iRandom < iSuccessPercentage)
 		return true;
 	else
 		return false;
 
+}
+
+_int CWeaponUpgradeUI::Get_UpgradeSuccessPercentage(_int iReinforce)
+{
+	_int iSuccessPercentage = 100;
+	for (_int i = 0; i < iReinforce; i++)
+		iSuccessPercentage = _int(iSuccessPercentage * 0.5f);
+
+	return iSuccessPercentage;
 }
 
 HRESULT CWeaponUpgradeUI::Add_Component()
@@ -707,6 +723,12 @@ void CWeaponUpgradeUI::SetUp_Default()
 	m_pFontSlash_2->Set_ViewZ(m_fViewZ - 0.1f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontSlash_2, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
+	m_pFontUpgradePercentage = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
+	m_pFontUpgradePercentage->Set_UI_Size(20.4f, 35.f);
+	m_pFontUpgradePercentage->Set_UI_Pos(WINCX * 0.51f, WINCY * 0.27f);
+	m_pFontUpgradePercentage->Set_ViewZ(m_fViewZ - 0.1f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontUpgradePercentage, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
 	m_pUpgradeResultPopup = static_cast<CWeaponUpgradeSuccessPopupUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon_UpgradeSuccessPopup", nullptr));
 	m_pUpgradeResultPopup->Set_ViewZ(m_fViewZ - 0.1f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pUpgradeResultPopup, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
@@ -753,6 +775,11 @@ void CWeaponUpgradeUI::Check_ItemOption_Weapon()
 		return;
 	m_pFontReinforceAfterDesc->Update_NumberValue((_float)tParam.iReinforce + 1);
 	m_pFontReinforceAfterDesc->Set_Active(true);
+
+	if (!m_pFontUpgradePercentage)
+		return;
+	m_pFontUpgradePercentage->Update_NumberValue((_float)Get_UpgradeSuccessPercentage(tParam.iReinforce));
+	m_pFontUpgradePercentage->Set_Active(true);
 	//==============================================================================================================
 	// Damage 
 	if (!m_pFontPlusDamageDesc)
@@ -918,6 +945,11 @@ void CWeaponUpgradeUI::Check_ItemOption_Armor()
 		return;
 	m_pFontReinforceAfterDesc->Update_NumberValue((_float)tParam.iReinforce + 1);
 	m_pFontReinforceAfterDesc->Set_Active(true);
+
+	if (!m_pFontUpgradePercentage)
+		return;
+	m_pFontUpgradePercentage->Update_NumberValue((_float)Get_UpgradeSuccessPercentage(tParam.iReinforce));
+	m_pFontUpgradePercentage->Set_Active(true);
 	//==============================================================================================================
 	// Damage 
 	if (!m_pFontPlusDamageDesc)

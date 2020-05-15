@@ -275,6 +275,11 @@ void CWeaponBuyPopupUI::SetUp_Default()
 	m_pFontItemCount->Set_UI_Size(35.f, 55.f);
 	m_pFontItemCount->Set_ViewZ(m_fViewZ - 0.1f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontItemCount, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	m_pShopActionFailedPopup = static_cast<CShopActionFailedPopup*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ShopActionFailedPopup", nullptr));
+	m_pShopActionFailedPopup->Set_ViewZ(m_fViewZ - 0.1f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pShopActionFailedPopup, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	
 }
 
 void CWeaponBuyPopupUI::Check_ItemOption_Armor()
@@ -326,7 +331,11 @@ void CWeaponBuyPopupUI::Buy_Weapon()
 	_int iTotalPrice = m_iCount * iPrice;
 	_int iMyHaze = (_int)CUI_Manager::Get_Instance()->Get_HazeUI()->Get_Haze_Cnt();
 	if (iTotalPrice > iMyHaze)
+	{
+		m_pShopActionFailedPopup->Set_Active(true);
+		m_pShopActionFailedPopup->Set_PopupType(CShopActionFailedPopup::POPUP_BUY);
 		return;
+	}
 
 	for (_int i = 0; i < m_iCount; i++)
 	{
@@ -352,7 +361,11 @@ void CWeaponBuyPopupUI::Buy_Armor()
 	_int iTotalPrice = m_iCount * iPrice;
 	_int iMyHaze = (_int)CUI_Manager::Get_Instance()->Get_HazeUI()->Get_Haze_Cnt();
 	if (iTotalPrice > iMyHaze)
+	{
+		m_pShopActionFailedPopup->Set_Active(true);
+		m_pShopActionFailedPopup->Set_PopupType(CShopActionFailedPopup::POPUP_BUY);
 		return;
+	}
 
 	for (_int i = 0; i < m_iCount; i++)
 	{

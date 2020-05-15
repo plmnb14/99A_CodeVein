@@ -395,6 +395,11 @@ void CWeapon_Inven_InShop::Click_ArmorInven()
 					m_pArmorBuyPopup->Set_Active(true);
 					return;
 				}
+				case Client::CWeapon_Inven_InShop::SHOP_ARMOR_SELL:
+				{
+					m_pArmorSellPopup->Set_Active(true);
+					return;
+				}
 				case  Client::CWeapon_Inven_InShop::SHOP_WEAPON_UPGRADE:
 				{
 					m_pWeaponUpgradePopup->Set_Active(true);
