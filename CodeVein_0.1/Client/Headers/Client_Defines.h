@@ -13,6 +13,7 @@ extern HWND			g_hWnd;
 extern int				g_eSceneID_Cur;
 extern int				g_eSTeleportID_Cur;
 
+extern _v3				g_vWindDir;
 
 namespace Engine
 {

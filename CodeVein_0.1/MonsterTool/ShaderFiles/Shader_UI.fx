@@ -268,7 +268,7 @@ PS_OUT PS_UI_MASK3(PS_IN In)
 
 technique Default_Technique
 {
-	pass Default_Rendering
+	pass Default_Rendering	// 0
 	{
 		// RenderState		
 		AlphablendEnable = false;
@@ -277,7 +277,7 @@ technique Default_Technique
 		PixelShader = compile ps_3_0 PS_MAIN();
 	}
 
-	pass AlphaBlending
+	pass AlphaBlending		// 1
 	{
 		AlphaBlendEnable = true;
 		SrcBlend = SrcAlpha;
@@ -288,9 +288,9 @@ technique Default_Technique
 	}
 
 	
-	pass	UI_HPBar_Rendering
+	pass	UI_HPBar_Rendering	// 2
 	{
-		AlpHaBlENdEnaBLE = true;
+		AlphaBlendEnable = true;
 		srcblend = srcalpha;
 		destblend = invsrcalpha;
 
@@ -298,9 +298,9 @@ technique Default_Technique
 		pixelshader = compile ps_3_0 PS_TRANSLATION_TEX_UV();
 	}
 
-	pass	UI_STBar_Rendering
+	pass	UI_STBar_Rendering	// 3
 	{
-		AlpHaBlENdEnaBLE = true;
+		AlphaBlendEnable = true;
 		srcblend = srcalpha;
 		destblend = invsrcalpha;
 
@@ -308,9 +308,9 @@ technique Default_Technique
 		pixelshader = compile ps_3_0 PS_MAIN();
 	}
 
-	pass	UI_HPBar_Update
+	pass	UI_HPBar_Update	// 4
 	{
-		AlpHaBlENdEnaBLE = true;
+		AlphaBlendEnable = true;
 		srcblend = srcalpha;
 		destblend = invsrcalpha;
 
@@ -318,16 +318,16 @@ technique Default_Technique
 		pixelshader = compile ps_3_0 PS_UI_DOWN();
 	}
 
-	pass	UI_Fade_InOut
+	pass	UI_Fade_InOut	// 5
 	{
-		AlpHaBlENdEnaBLE = true;
+		AlphaBlendEnable = true;
 		srcblend = srcalpha;
 		destblend = invsrcalpha;
 
 		vertexshader = compile vs_3_0 VS_MAIN();
 		pixelshader = compile ps_3_0 PS_UI_FADE();
 	}
-	pass	Logo_BackUI_Rendering
+	pass	Logo_BackUI_Rendering	// 6
 	{
 		AlphaBlendEnable = true;
 		srcblend = srcalpha;
@@ -337,7 +337,7 @@ technique Default_Technique
 		pixelshader = compile ps_3_0 PS_TRANSLATION_TEX_UV();
 	}
 
-	pass	Skill_UI_Rendering
+	pass	Skill_UI_Rendering	// 7
 	{
 		AlphaBlendEnable = true;
 		srcblend = srcalpha;
@@ -347,7 +347,7 @@ technique Default_Technique
 		pixelshader = compile ps_3_0 PS_SKILL_UI();
 	}
 
-	pass	UI_Masking_Rendering
+	pass	UI_Masking_Rendering	// 8
 	{
 		AlphaBlendEnable = true;
 		srcblend = srcalpha;
@@ -356,7 +356,7 @@ technique Default_Technique
 		vertexshader = compile vs_3_0 VS_MAIN();
 		pixelshader = compile ps_3_0 PS_UI_MASK();
 	}
-	pass	UI_R_Masking_Rendering
+	pass	UI_R_Masking_Rendering	// 9
 	{
 		zEnable = false;
 		AlphaBlendEnable = true;

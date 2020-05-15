@@ -126,6 +126,63 @@ enum WEAPON_DATA
 	WPN_DATA_End
 };
 
+enum WEAPON_ALL_DATA
+{
+	WpnAll_Gun_Bayonet,
+	WpnAll_Gun_ReverTardor,
+	WpnAll_Gun_Nakil,
+	WpnAll_Gun_DarkBayonet,
+	WpnAll_Halberd_SolidPiercer,
+	WpnAll_Halberd_Black,
+	WpnAll_Halberd_DarkBodish,
+	WpnAll_Halberd_Nakil,
+	WpnAll_Hammer_ImperseAnker,
+	WpnAll_Hammer_Black,
+	WpnAll_Hammer_DarkHeavyAxe,
+	WpnAll_Hammer_Nakil,
+	WpnAll_LSword_Tsubai,
+	WpnAll_LSword_Black,
+	WpnAll_LSword_Nakil,
+	WpnAll_LSword_DarkTsubai,
+	WpnAll_SSword_Red,
+	WpnAll_SSword_Executioner,
+	WpnAll_SSword_Nakil,
+	WpnAll_SSword_DarkBrodeSword,
+
+	WpnAll_END
+};
+
+enum ARMOR_All_DATA
+{
+	ArmorAll_Gauntlet_DarkNightHook,
+	ArmorAll_Gauntlet_NovelSilver,
+	ArmorAll_Gauntlet_MangSikHook,
+	ArmorAll_Gauntlet_QueenKiller,
+	ArmorAll_LongCoat_DarkNightSpear,
+	ArmorAll_LongCoat_WhiteSilver,
+	ArmorAll_LongCoat_QueenKiller,
+	ArmorAll_Muffler_DarkNightSpike,
+	ArmorAll_Muffler_WhiteGraze,
+	ArmorAll_Muffler_Suiside,
+
+	ArmorAll_END
+};
+
+// 소비, 재료 상점에 이용
+enum ITEM_ALL_DATA
+{
+	ITEM_EXPEND_HPMAXUP,			// 재생유도약의 확장인자(재생 유도약 소지량 증가) 
+	ITEM_EXPEND_HP,					// 재생 유도약(hp 증가)
+	ITEM_EXPEND_RETURNER,			// 리터너(귀환 아이템)
+	ITEM_EXPEND_BLOOD,				// 명혈 농축약(명혈 회복)
+	ITEM_EXPEND_CHEET,				// 치트 아이템(체력, 연혈 모두 증가)
+	ITEM_EXPEND_SUPERARMER,			// 슈퍼 아머(무적 상태)
+	ITEM_MTRL_QUEENSTEEL,			// 퀸 스틸(강화재료)
+	ITEM_MTRL_QUEENTITAN,			// 퀸 티탄(강화재료)
+	ITEM_MTRL_QUEENTUNGSTEN,		// 퀸 텅스텐(강화재료)
+	ITEM_DATA_END
+};
+
 enum Teleport_ID
 {
 	TeleportID_Tutorial,
