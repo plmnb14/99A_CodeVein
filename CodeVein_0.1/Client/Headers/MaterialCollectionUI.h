@@ -29,10 +29,6 @@ private:
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
-	CRenderer*				m_pRendererCom = nullptr;
-	CTexture*				m_pTextureCom = nullptr;
-	CShader*				m_pShaderCom = nullptr;
-	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
 private:
 	vector<CMaterialOptionUI*>	m_vecOption;

@@ -25,8 +25,8 @@ HRESULT CMaterialCollectionUI::Ready_GameObject(void * pArg)
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = WINCX * 0.5f;
-	m_fPosY = WINCY * 0.5f;
+	//m_fPosX = WINCX * 0.5f;
+	//m_fPosY = WINCY * 0.5f;
 
 	SetUp_Default();
 
@@ -37,7 +37,7 @@ _int CMaterialCollectionUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 	
-	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
+	//D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 	Update_SubUI();
 	Click_SubUI();
 	return NO_EVENT;
@@ -45,14 +45,14 @@ _int CMaterialCollectionUI::Update_GameObject(_double TimeDelta)
 
 _int CMaterialCollectionUI::Late_Update_GameObject(_double TimeDelta)
 {
-	D3DXMatrixIdentity(&m_matWorld);
+	/*D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
 
 	m_matWorld._11 = m_fSizeX;
 	m_matWorld._22 = m_fSizeY;
 	m_matWorld._33 = 1.f;
 	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
-	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;
+	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;*/
 
 	return NO_EVENT;
 }

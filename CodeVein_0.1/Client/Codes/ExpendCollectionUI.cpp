@@ -42,14 +42,14 @@ _int CExpendCollectionUI::Update_GameObject(_double TimeDelta)
 
 _int CExpendCollectionUI::Late_Update_GameObject(_double TimeDelta)
 {
-	D3DXMatrixIdentity(&m_matWorld);
+	/*D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
 
 	m_matWorld._11 = m_fSizeX;
 	m_matWorld._22 = m_fSizeY;
 	m_matWorld._33 = 1.f;
 	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
-	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;
+	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;*/
 
 	return NO_EVENT;
 }
@@ -66,21 +66,7 @@ HRESULT CExpendCollectionUI::Add_Component()
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
 		return E_FAIL;
 
-	//// For.Com_Renderer
-	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Renderer", L"Com_Renderer", (CComponent**)&m_pRendererCom)))
-	//	return E_FAIL;
-
-	//// For.Com_Texture
-	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_MaterialShopUI", L"Com_Texture", (CComponent**)&m_pTextureCom)))
-	//	return E_FAIL;
-
-	//// For.Com_Shader
-	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Shader_UI", L"Com_Shader", (CComponent**)&m_pShaderCom)))
-	//	return E_FAIL;
-
-	//// for.Com_VIBuffer
-	//if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"VIBuffer_Rect", L"Com_VIBuffer", (CComponent**)&m_pBufferCom)))
-	//	return E_FAIL;
+	
 
 	return NOERROR;
 }
@@ -230,10 +216,6 @@ CGameObject * CExpendCollectionUI::Clone_GameObject(void * pArg)
 void CExpendCollectionUI::Free()
 {
 	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pBufferCom);
-	Safe_Release(m_pShaderCom);
-	Safe_Release(m_pTextureCom);
-	Safe_Release(m_pRendererCom);
-
+	
 	CUI::Free();
 }
