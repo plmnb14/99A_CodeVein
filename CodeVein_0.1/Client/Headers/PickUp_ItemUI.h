@@ -6,6 +6,7 @@
 
 BEGIN(Client)
 
+class CDropItem;
 class CPickUp_ItemUI final : public CUI
 {
 
@@ -22,6 +23,12 @@ public:
 	virtual	HRESULT	LateInit_GameObject();
 	virtual HRESULT Render_GameObject();
 
+public:
+	void	Set_Start_PickUp_Render(_bool _Start) { m_bStart_Render = _Start; }
+
+public:
+	_bool	Get_Start_PickUp_Render() { return m_bStart_Render; }
+
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable(_uint TextureIndex);
@@ -29,10 +36,13 @@ private:
 	void	SetUp_Rendering_ItemTextrue();
 
 private:
+	vector<CDropItem*>	m_vecDropItem;
+
 	_uint		m_uiRenderNumber = 0;
 	_uint		m_iRenderNum = 0;
 	_uint		m_iCheckPos = 0;
 
+	_bool		m_bStart_Render = false;
 	_bool		m_bOne_PickupUIEnd = false;
 	_bool		m_bTwo_PickupUIEnd = false;
 	_bool		m_bThree_PickupUIEnd = false;

@@ -88,7 +88,6 @@
 #include "ExpendOptionUI.h"
 #include "Expend_InfoUI.h"
 
-#include "Get_ItemUI.h"
 #include "PickUp_ItemUI.h"
 
 BEGIN(Client)
@@ -136,6 +135,8 @@ public:
 	// ∆Í ¿Œ∫•≈‰∏Æ
 	CPet_Inven* Get_Pet_Inven() { return m_pPet_Inven; }
 
+	CPickUp_ItemUI* Get_PickUP_Item() { return m_pPickUp_ItemUI; }
+
 private:
 	_uint m_uiCoundItem = 0;
 	_bool m_bTest = false;
@@ -166,7 +167,6 @@ private:
 	CPet_Inven* m_pPet_Inven = nullptr;
 
 	// Get Item UI
-	CGet_ItemUI*	m_pGet_ItemUI = nullptr;
 	CPickUp_ItemUI*	m_pPickUp_ItemUI = nullptr;
 
 public:

@@ -53,7 +53,7 @@ HRESULT CScene_Stage_Training::Ready_Scene()
 _int CScene_Stage_Training::Update_Scene(_double TimeDelta)
 {
 	CUI_Manager::Get_Instance()->Update_UI();
-
+	
 	//Create_Fog(TimeDelta);
 	//Create_Snow(TimeDelta);
 
@@ -117,9 +117,13 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_Pickup_Item", SCENE_STAGE, L"Layer_PickUPUI")))
 	//	return E_FAIL;
 
-	// Test Item
+	//// Test Item
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
-	//	&CDropItem::ITEM_STATUS(ITEM_TYPE::ITEM_EXPENDABLES, ITEM_GRADE_TYPE::ITEM_GRADE_NORMAL, CPet::PET_TYPE::PET_POISONBUTTERFLY, _v3(5.f, 0.f, 5.f), 5000.f));
+	//	&CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_UNIQUE, ITEM_NAMETYPE::NAMETYPE_Queen_Steel, _v3(5.f, 0.f, 5.f), 5000.f));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Item", nullptr);
+
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"GameObject_DropItem",
+	//	&CDropItem::ITEM_STATUS(ITEM_GRADE_TYPE::ITEM_GRADE_UNIQUE, ITEM_NAMETYPE::NAMETYPE_Queen_Titanium, _v3(10.f, 0.f, 10.f), 5000.f));
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Item", nullptr);
 
 	// ±Ë¿Á±∏

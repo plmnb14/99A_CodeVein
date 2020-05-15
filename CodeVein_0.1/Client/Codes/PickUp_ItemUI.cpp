@@ -2,6 +2,8 @@
 #include "..\Headers\PickUp_ItemUI.h"
 #include "UI_Manager.h"
 
+#include "DropItem.h"
+
 CPickUp_ItemUI::CPickUp_ItemUI(_Device Graphic_Device)
 	: CUI(Graphic_Device)
 {
@@ -40,14 +42,11 @@ _int CPickUp_ItemUI::Update_GameObject(_double TimeDelta)
 	CGameObject::LateInit_GameObject();
 	CUI::Update_GameObject(TimeDelta);
 
-	CUI_Manager* pUIManager = CUI_Manager::Get_Instance();
-
 	SetUp_State(TimeDelta);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
-	if (0 <= pUIManager->Get_CoundItem())
-		m_pRendererCom->Add_RenderList(RENDER_UI, this);
+	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	return S_OK;
 }
@@ -76,7 +75,11 @@ HRESULT CPickUp_ItemUI::Render_GameObject()
 	if (nullptr == m_pShaderCom || nullptr == m_pBufferCom)
 		return E_FAIL;
 
+	if (false == m_bIsActive)
+		return NOERROR;
+
 	CUI_Manager* pUIManager = CUI_Manager::Get_Instance();
+	CItem_Manager* pItemManager = CItem_Manager::Get_Instance();
 
 	g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
 
@@ -85,7 +88,7 @@ HRESULT CPickUp_ItemUI::Render_GameObject()
 
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(2);
+	m_pShaderCom->Begin_Pass(3);
 
 	//for (_uint i = 0; i < 3/*pUIManager->Get_CoundItem()*/; ++i)
 	//{
@@ -96,7 +99,7 @@ HRESULT CPickUp_ItemUI::Render_GameObject()
 	//	m_pBufferCom->Render_VIBuffer();
 	//}
 
-	if (FAILED(SetUp_ConstantTable(1)))
+	if (FAILED(SetUp_ConstantTable(pItemManager->Get_PickUp_Number())))
 		return E_FAIL;
 
 	m_pShaderCom->Commit_Changes();
@@ -167,24 +170,25 @@ void CPickUp_ItemUI::SetUp_State(_double TimeDelta)
 {
 	CUI_Manager* pUIManager = CUI_Manager::Get_Instance();
 
-	cout << pUIManager->Get_CoundItem() << endl;
+	m_fPercentage = m_fPickup_Itembar / m_fSizeX;
+	m_fPickup_Itembar += 7.f;
 
-	if (0 == pUIManager->Get_CoundItem() && false == m_bOne_PickupUIEnd)
-	{
-		m_fPercentage = m_fPickup_Itembar / m_fSizeX;
-		m_fPickup_Itembar += 7.f;
-	}
 
-	if (1 == pUIManager->Get_CoundItem() && false == m_bTwo_PickupUIEnd)
-	{
-		m_fPercentage = m_fPickup_Itembar2 / m_fSizeX;
-		m_fPickup_Itembar2 += 7.f;
-	}
-	if (2 == pUIManager->Get_CoundItem() && false == m_bThree_PickupUIEnd)
-	{
-		m_fPercentage = m_fPickup_Itembar3 / m_fSizeX;
-		m_fPickup_Itembar3 += 7.f;
-	}
+	//if (0 == pUIManager->Get_CoundItem() && false == m_bOne_PickupUIEnd)
+	//{
+	//	m_fPercentage = m_fPickup_Itembar / m_fSizeX;
+	//	m_fPickup_Itembar += 7.f;
+	//}
+	//else if (1 == pUIManager->Get_CoundItem() && false == m_bTwo_PickupUIEnd)
+	//{
+	//	m_fPercentage = m_fPickup_Itembar2 / m_fSizeX;
+	//	m_fPickup_Itembar2 += 7.f;
+	//}
+	//else if (2 == pUIManager->Get_CoundItem() && false == m_bThree_PickupUIEnd)
+	//{
+	//	m_fPercentage = m_fPickup_Itembar3 / m_fSizeX;
+	//	m_fPickup_Itembar3 += 7.f;
+	//}
 
 
 	if (m_fPickup_Itembar >= m_fSizeX)

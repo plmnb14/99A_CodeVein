@@ -1,10 +1,10 @@
 #pragma once
 enum ITEM_TYPE
 {
-	ITEM_MATERIAL, //재료
-	ITEM_EXPENDABLES, //소모품
-	ITEM_WEAPON, //무기
-	ITEM_PET, //펫
+	ITEM_MATERIAL,		//재료
+	ITEM_EXPENDABLES,	//소모품
+	ITEM_WEAPON,		//무기
+	ITEM_PET,			//펫
 	ITEM_TYPE_END
 };
 
@@ -52,5 +52,7 @@ enum ITEM_NAMETYPE
 	// 재료
 	NAMETYPE_Queen_Steel,
 	NAMETYPE_Queen_Titanium,
-	NAMETYPE_Queen_Tungsten
+	NAMETYPE_Queen_Tungsten,
+
+	NAMETYPE_End
 };

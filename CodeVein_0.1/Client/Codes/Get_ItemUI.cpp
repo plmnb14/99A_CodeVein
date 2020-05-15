@@ -38,9 +38,6 @@ HRESULT CGet_ItemUI::Ready_GameObject(void * pArg)
 	m_fSizeX = 269.f;
 	m_fSizeY = 81.f;
 
-	m_pPickUp_ItemUI = static_cast<CPickUp_ItemUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PickUp_ItemUI", pArg));
-	m_pPickUp_ItemUI->Ready_GameObject(NULL);
-
 	return S_OK;
 }
 
@@ -55,9 +52,6 @@ _int CGet_ItemUI::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
-	if (nullptr != m_pPickUp_ItemUI)
-		m_pPickUp_ItemUI->Update_GameObject(TimeDelta);
-
 	return S_OK;
 }
 
@@ -71,9 +65,6 @@ _int CGet_ItemUI::Late_Update_GameObject(_double TimeDelta)
 	m_matWorld._33 = 1.f;
 	m_matWorld._41 = m_fPosX - WINCX * 0.5f;
 	m_matWorld._42 = -m_fPosY + WINCY * 0.5f;
-
-	if (nullptr != m_pPickUp_ItemUI)
-		m_pPickUp_ItemUI->Late_Update_GameObject(TimeDelta);
 
 	return S_OK;
 }
@@ -178,7 +169,8 @@ HRESULT CGet_ItemUI::SetUp_ConstantTable(_uint TextureIndex)
 
 void CGet_ItemUI::SetUp_State(_double TimeDelta)
 {
-	CUI_Manager* pUIManager = CUI_Manager::Get_Instance();
+	CUI_Manager*	pUIManager = CUI_Manager::Get_Instance();
+	CItem_Manager*	pItemManager = CItem_Manager::Get_Instance();
 
 	m_fPercentage = m_fNowItemBar_Size / m_fSizeX;
 
@@ -190,6 +182,7 @@ void CGet_ItemUI::SetUp_State(_double TimeDelta)
 		++m_iPickUp_ItemNumber;
 		pUIManager->Set_CoundItem(m_iPickUp_ItemNumber);
 		m_bShow_GetItemName = true;
+		pItemManager->Set_PickUI(true);
 	}
 	else
 		m_bShow_GetItemName = false;

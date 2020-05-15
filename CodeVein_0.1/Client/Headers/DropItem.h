@@ -46,6 +46,8 @@ public:
 		{
 		}
 
+		ITEM_NAMETYPE					eItem_NameType;
+
 		ITEM_TYPE						eItemType; //최상위 - 아이템 종류
 		ITEM_GRADE_TYPE					eItemGradeType; //최상위 - 아이템 등급
 
@@ -57,7 +59,6 @@ public:
 
 		CPet::PET_TYPE					ePetType; //상위 - 펫 종류
 
-		ITEM_NAMETYPE					eItem_NameType;	// 아이템 종류
 
 		_v3			vBirthPos; //생성위치
 		_double		dCanGetLimitTimeMax; //소멸제한 시간
@@ -97,6 +98,9 @@ private:
 
 	CGet_ItemUI*					m_pGet_ItemUI = nullptr;
 
+
+	ITEM_NAMETYPE					m_eItem_NameType = ITEM_NAMETYPE::NAMETYPE_End;	// 아이템 이름
+
 	ITEM_TYPE						m_eItemType = ITEM_TYPE::ITEM_TYPE_END; //아이템 종류
 
 	ITEM_GRADE_TYPE					m_eItemGrade = ITEM_GRADE_TYPE::ITEM_GRADE_TYPE_END; //등급 종류
@@ -117,6 +121,8 @@ private:
 	
 	_bool							m_bCanGetItem = false; //항시 false 상호작용시 true
 	_bool							m_bCheck_Start_GetItemUI = false;
+
+	_uint							m_iRenderIndex = 0;
 };
 
 END

@@ -152,11 +152,8 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BossMassageUI", CMassageUI::Create(pDevice))))
 		return E_FAIL;
 
-	/*if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Get_Item", CGet_ItemUI::Create(pDevice))))
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_PickUP_ItemUI", CPickUp_ItemUI::Create(pDevice))))
 		return E_FAIL;
-
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Pickup_Item", CPickUp_ItemUI::Create(pDevice))))
-		return E_FAIL;*/
 	
 
 	//=======================================================
@@ -285,6 +282,12 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	// ∆Í ¿Œ∫•≈‰∏Æ
 	m_pPet_Inven = static_cast<CPet_Inven*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PetInven", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pPet_Inven, SCENE_MORTAL, L"Layer_PetUI", nullptr);
+
+
+	////////////Get Item UI
+	m_pPickUp_ItemUI = static_cast<CPickUp_ItemUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PickUP_ItemUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pPickUp_ItemUI, SCENE_MORTAL, L"Layer_PickUp_ItemUI", nullptr);
+
 
 	
 	return NOERROR;
