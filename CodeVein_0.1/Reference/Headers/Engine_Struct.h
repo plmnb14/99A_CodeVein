@@ -571,8 +571,17 @@ namespace Engine
 
 	typedef struct tagArmorParam
 	{
-		_uint iArmorType; // 아장 타입
-		_float fDef;		// 방어력
-		_uint iPrice;		// 가격(상점용)
+		_uint iArmorType;		// 아장 타입
+		_int  iArmorName;		// 아장 이름
+
+		_uint iReinforce;		//강화 단계
+
+		_float fDef;			// 방어력
+		_float fPlusDef;		// 추가 방어력
+		_float fHP;				// 체력
+		_float fPlusHP;			// 추가 체력
+
+		_uint iPrice;			// 가격(상점용)
+
 	}ARMOR_PARAM;
 }
