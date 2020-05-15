@@ -90,7 +90,7 @@ HRESULT CQueensKnight::Ready_GameObject(void * pArg)
 	/////////////
 	// UI 추가(지원)
 	m_pBossUI = static_cast<CBossHP*>(g_pManagement->Clone_GameObject_Return(L"GameObject_BossHP", nullptr));
-	m_pBossUI->Set_UI_Pos(WINCX * 0.5f, WINCY * 0.2f);
+	m_pBossUI->Set_UI_Pos(WINCX * 0.5f, WINCY * 0.1f);
 	m_pBossUI->Set_BossName(CBossNameUI::Index_QueensKnight);
 	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBossUI, SCENE_STAGE, L"Layer_BossHP", nullptr)))
 		return E_FAIL;
@@ -2337,6 +2337,7 @@ void CQueensKnight::Check_PhyCollider()
 					m_bAIController = false;
 
 					m_pAIControllerCom->Set_Value_Of_BlackBoard(L"PushCol", true);
+					m_pAIControllerCom->Set_Value_Of_BlackBoard(L"TrailOff", true);
 				}
 			}
 
@@ -2354,6 +2355,7 @@ void CQueensKnight::Check_PhyCollider()
 					m_bAIController = false;
 
 					m_pAIControllerCom->Set_Value_Of_BlackBoard(L"PushCol", true);
+					m_pAIControllerCom->Set_Value_Of_BlackBoard(L"TrailOff", true);
 				}
 			}
 		

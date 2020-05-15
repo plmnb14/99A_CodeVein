@@ -61,7 +61,7 @@ HRESULT CMesh_Static::Ready_Component_Prototype(const _tchar * pFilePath, const 
 	m_ppTextures = new MESHTEXTURE[m_dwNumMaterials];
 	ZeroMemory(m_ppTextures, sizeof(MESHTEXTURE) * m_dwNumMaterials);
 
-	if (!lstrcmp(pFileName, L"Building_Wall.X"))
+	if (!lstrcmp(pFileName, L"SM_MERGED_SplineGaia88.X"))
 	{
 		cout << "!" << endl;
 	}

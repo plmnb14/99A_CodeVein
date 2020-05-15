@@ -9,7 +9,6 @@
 #include "ObjectPool_Manager.h"
 #include "SoundManager.h"
 
-
 CMainApp::CMainApp()
 {
 }

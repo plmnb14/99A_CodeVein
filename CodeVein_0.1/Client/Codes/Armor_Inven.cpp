@@ -43,15 +43,32 @@ HRESULT CArmor_Inven::Ready_GameObject(void * pArg)
 
 	ARMOR_PARAM tParam;
 	tParam.iArmorType = ARMOR_Gauntlet;
+	tParam.iArmorName = ArmorAll_Gauntlet_DarkNightHook;
+	tParam.iReinforce = 0;
 	tParam.fDef = 10;
+	tParam.fPlusDef = 10;
+	tParam.fHP = 10;
+	tParam.fPlusHP = 10;
 	tParam.iPrice = 1000;
 	Add_Armor(tParam);
+
 	tParam.iArmorType = ARMOR_LongCoat;
-	tParam.fDef = 100;
+	tParam.iArmorName = ArmorAll_LongCoat_DarkNightSpear;
+	tParam.iReinforce = 0;
+	tParam.fDef = 10;
+	tParam.fPlusDef = 10;
+	tParam.fHP = 10;
+	tParam.fPlusHP = 10;
 	tParam.iPrice = 10000;
 	Add_Armor(tParam);
+
 	tParam.iArmorType = ARMOR_Muffler;
-	tParam.fDef = 1000;
+	tParam.iArmorName = ArmorAll_Muffler_DarkNightSpike;
+	tParam.iReinforce = 0;
+	tParam.fDef = 10;
+	tParam.fPlusDef = 10;
+	tParam.fHP = 10;
+	tParam.fPlusHP = 10;
 	tParam.iPrice = 30000;
 	Add_Armor(tParam);
 
@@ -73,6 +90,12 @@ _int CArmor_Inven::Update_GameObject(_double TimeDelta)
 	}
 	m_pExplainUI->Set_Active(m_bIsActive);
 
+	_uint iIdx = 0;
+	for (auto& vector_iter : m_vecArmorSlot)
+	{
+		vector_iter->Set_UI_Pos(m_fPosX - 100.f + 52.f * (iIdx % 5), m_fPosY - 150.f + 52.f * (iIdx / 5));
+		iIdx++;
+	}
 
 	Click_Inven();
 		
@@ -260,6 +283,22 @@ void CArmor_Inven::Add_Armor(ARMOR_PARAM tArmorParam)
 		m_vecArmorSlot[i]->Set_Active(m_bIsActive);
 		m_vecArmorSlot[i]->Set_ViewZ(m_fViewZ - 0.1f);
 		m_vecArmorSlot[i]->Set_UI_Pos(m_fPosX - 103.f + 52.f * (i % 5), m_fPosY - 140.f + 52.f * (i / 5));
+	}
+}
+
+void CArmor_Inven::Sell_Armor()
+{
+	_ulong idx = 0;
+	for (auto& pSlot : m_vecArmorSlot)
+	{
+		if (pSlot->Get_SelectShop())
+		{
+			pSlot->Set_Dead();
+			m_vecArmorSlot.erase(m_vecArmorSlot.begin() + idx);
+			m_vecArmorSlot.shrink_to_fit();
+			break;
+		}
+		++idx;
 	}
 }
 

@@ -5,7 +5,7 @@
 #include "Expendables_Slot.h"
 
 BEGIN(Client)
-
+class CExplainExpendUI;
 class CExpendables_Inven final : public CUI
 {
 private:
@@ -32,6 +32,7 @@ private:
 	HRESULT					SetUp_ConstantTable();
 	void					Load_Expendables(CExpendables* pExpendables, _uint iIndex = 0); // 슬롯에 아이템 넣는 함수(한 슬롯당 9개가 넘어가면 다음 슬롯 검색)
 	void					Click_Inven(); // 활성화일 경우에만 적용됨
+	void					SetUp_Default();
 
 public:
 	void Add_Expendables(CExpendables::EXPEND_TYPE eType); // 해당 타입의 소비 아이템 획득
@@ -54,6 +55,7 @@ private:
 	vector<CExpendables*>	m_vecExpendables;
 	vector<UI_DESC*>		m_vecUI_DESC;
 	_uint					m_iMaximumCnt = 3;
+	CExplainExpendUI*		m_pExplainUI = nullptr;
 
 public:
 	static CExpendables_Inven*	Create(_Device pGraphic_Device);

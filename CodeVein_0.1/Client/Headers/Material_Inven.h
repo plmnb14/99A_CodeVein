@@ -6,7 +6,7 @@
 #include "Material_Slot.h"
 
 BEGIN(Client)
-
+class CExplainMaterialUI;
 class CMaterial_Inven final : public CUI
 {
 private:
@@ -29,6 +29,8 @@ private:
 	HRESULT					SetUp_ConstantTable();
 	void					Load_Materials(CMaterial* pMaterial, _uint iIndex = 0);
 	void					Click_Inven(); // 활성화일 경우에만 적용됨
+	void					SetUp_Default();
+	void					Add_Slot();
 
 public:
 	void Add_Material(CMaterial::MATERIAL_TYPE eType);
@@ -44,6 +46,7 @@ private:
 	vector<CMaterial*>		m_vecMaterial;
 	vector<CMaterial_Slot*>	m_vecMaterialSlot;
 	vector<UI_DESC*>		m_vecUI_DESC;
+	CExplainMaterialUI*		m_pExplainUI = nullptr;
 
 public:
 	static CMaterial_Inven*	Create(_Device pGraphic_Device);

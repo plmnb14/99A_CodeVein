@@ -25,7 +25,8 @@ HRESULT CCostume_Outer::Ready_GameObject(void * pArg)
 	m_pmatParent = pInfo.pmatParent;
 	m_pmatBone = pInfo.pmatBone;
 	m_vColorValue = pInfo.vColorValue;
-	m_eHairType = pInfo.eOuterType;
+
+	m_fAnimMultiply = 1.f;
 
 	if (FAILED(Add_Components()))
 		return E_FAIL;
@@ -67,12 +68,12 @@ HRESULT CCostume_Outer::Setup_Default()
 	m_pTransform->Set_Angle(V3_NULL);
 	m_pTransform->Set_Scale(V3_ONE);
 
-	return E_NOTIMPL;
+	return S_OK;
 }
 
-HRESULT CCostume_Outer::SetUp_ConstantTable()
+HRESULT CCostume_Outer::SetUp_ConstantTable(CShader* pShader)
 {
-	if (nullptr == m_pShader)
+	if (nullptr == pShader)
 		return E_FAIL;
 
 	_mat		ViewMatrix = g_pManagement->Get_Transform(D3DTS_VIEW);
@@ -82,19 +83,19 @@ HRESULT CCostume_Outer::SetUp_ConstantTable()
 	// 기본 메트릭스
 	//=============================================================================================
 
-	if (FAILED(m_pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matWorld", &m_pTransform->Get_WorldMat(), sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matView", &ViewMatrix, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
+	if (FAILED(pShader->Set_Value("g_matProj", &ProjMatrix, sizeof(_mat))))
 		return E_FAIL;
 
 	//=============================================================================================
 	// 디졸브용 상수
 	//=============================================================================================
-	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShader)))
+	if (FAILED(g_pDissolveTexture->SetUp_OnShader("g_FXTexture", pShader)))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fFxAlpha", &m_fFXAlpha, sizeof(_float))))
 		return E_FAIL;
 
 	//=============================================================================================
@@ -108,23 +109,23 @@ HRESULT CCostume_Outer::SetUp_ConstantTable()
 	_float	fID_G = 0.5f;	// ID_G : G채널 ID 값 , 1이 최대
 	_float	fID_B = 0.1f;	// ID_B	: B채널 ID 값 , 1이 최대
 
-	if (FAILED(m_pShader->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fEmissivePower", &fEmissivePower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fSpecularPower", &fSpecularPower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fRoughnessPower", &fRoughnessPower, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fMinSpecular", &fMinSpecular, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_fID_R_Power", &fID_R, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fID_R_Power", &fID_R, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_fID_G_Power", &fID_G, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fID_G_Power", &fID_G, sizeof(_float))))
 		return E_FAIL;
-	if (FAILED(m_pShader->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
+	if (FAILED(pShader->Set_Value("g_fID_B_Power", &fID_B, sizeof(_float))))
 		return E_FAIL;
 	//=============================================================================================
 
-	m_pBattleAgent->Update_RimParam_OnShader(m_pShader);
+	m_pBattleAgent->Update_RimParam_OnShader(pShader);
 
 	return NOERROR;
 }
@@ -134,16 +135,148 @@ void CCostume_Outer::Calc_AttachBoneTransform()
 	_mat tmpMat;
 	D3DXMatrixIdentity(&tmpMat);
 
-	memcpy(&tmpMat._41, &(*m_pmatBone)._41, sizeof(_v3));
+	//memcpy(&tmpMat._41, &(*m_pmatBone)._41, sizeof(_v3));
+	//memcpy(&tmpMat, m_pmatBone, sizeof(_mat));
 
 	m_pTransform->Calc_ParentMat(&(tmpMat * *m_pmatParent));
 }
 
-void CCostume_Outer::Change_OuterMesh(OuterType _eOuterType)
+void CCostume_Outer::Change_OuterMesh(CClothManager::Cloth_Dynamic _eOuterType)
 {
+	if (_eOuterType == m_eOuterType)
+		return;
+
+	_tchar szMeshName[STR_128] = L"";
+
+	switch (_eOuterType)
+	{
+	case CClothManager::None:
+	{
+		lstrcpy(szMeshName, L"Mesh_Player");
+		m_eOuterType = CClothManager::Cloth_Dynamic::None;
+		break;
+	}
+	case CClothManager::Gauntlet_01:
+	{
+		lstrcpy(szMeshName, L"Mesh_Gauntlet_01");
+		m_eOuterType = CClothManager::Gauntlet_01;
+		break;
+	}
+	case CClothManager::Gauntlet_02:
+	{
+		lstrcpy(szMeshName, L"Mesh_Gauntlet_02");
+		m_eOuterType = CClothManager::Gauntlet_02;
+		break;
+	}
+	case CClothManager::Gauntlet_03:
+	{
+		lstrcpy(szMeshName, L"Mesh_Gauntlet_03");
+		m_eOuterType = CClothManager::Gauntlet_03;
+		break;
+	}
+	case CClothManager::Gauntlet_04:
+	{
+		lstrcpy(szMeshName, L"Mesh_Gauntlet_04");
+		m_eOuterType = CClothManager::Gauntlet_04;
+		break;
+	}
+	case CClothManager::LongCoat_01:
+	{
+		lstrcpy(szMeshName, L"Mesh_LongCoat_01");
+		m_eOuterType = CClothManager::LongCoat_01;
+		break;
+	}
+	case CClothManager::LongCoat_02:
+	{
+		lstrcpy(szMeshName, L"Mesh_LongCoat_02");
+		m_eOuterType = CClothManager::LongCoat_02;
+		break;
+	}
+	case CClothManager::LongCoat_03:
+	{
+		lstrcpy(szMeshName, L"Mesh_LongCoat_03");
+		m_eOuterType = CClothManager::LongCoat_03;
+		break;
+	}
+	case CClothManager::Muffler_01:
+	{
+		lstrcpy(szMeshName, L"Mesh_Muffler_01");
+		m_eOuterType = CClothManager::Muffler_01;
+		break;
+	}
+	case CClothManager::Muffler_02:
+	{
+		lstrcpy(szMeshName, L"Mesh_Muffler_02");
+		m_eOuterType = CClothManager::Muffler_02;
+		break;
+	}
+	case CClothManager::Muffler_03:
+	{
+		lstrcpy(szMeshName, L"Mesh_Muffler_03");
+		m_eOuterType = CClothManager::Muffler_03;
+		break;
+	}
+	}
+
+	// 컴포넌트에 있는 매쉬 찾아서
+	auto& iter = m_pmapComponents.find(L"Com_MeshDynamic");
+
+	// Static 멤버변수는 처음에 Clone 할때 AddRef 해준다., 
+	Safe_Release(m_pDynamicMesh);
+	Safe_Release(iter->second);
+
+	// Release 한 컴포넌트에 새로이 Clone 받음
+	iter->second = m_pDynamicMesh = static_cast<CMesh_Dynamic*>(CManagement::Get_Instance()->Clone_Component(SCENE_STATIC, szMeshName));
+	Safe_AddRef(iter->second);
+
+	g_pClothManager->Set_Sleep_AllDynamic();
+}
+
+void CCostume_Outer::Change_Vertex()
+{
+	physx::PxSceneWriteLock scopedLock(*g_pPhysx->Get_Scene());
+
+	physx::PxCloth* pCloth = g_pClothManager->Get_Cloth_Dynamic(m_eOuterType);
+
+	physx::PxClothFabric* pFabric = pCloth->getFabric();
+	physx::PxClothParticleData* pData = pCloth->lockParticleData();
+
+	LPD3DXMESH	pMesh = m_pDynamicMesh->Get_MeshContainer()[0]->pOriginalMesh;
+	//LPD3DXMESH	pMesh = m_pDynamicMesh->Get_MeshContainer()[0]->MeshData.pMesh;
+	_ulong dwStride = pMesh->GetNumBytesPerVertex();
+
+	_byte* pVertices = nullptr;
+
+	pMesh->LockVertexBuffer(0, (void**)&pVertices); 
+
+
+	_ulong adsfas = _ulong(pFabric->getNbParticles());
+
+	for (_ulong i = 0; i < _ulong(pFabric->getNbParticles()); ++i)
+	{
+		*(_v3*)(pVertices + (i * dwStride)) = *(_v3*)(pData->particles + i);
+	}
+
+	pMesh->UnlockVertexBuffer();
+}
+
+void CCostume_Outer::SetUp_Animation(_uint iIndex, _bool _bOffLerp)
+{
+	m_pDynamicMesh->SetUp_Animation(iIndex, _bOffLerp);
 }
 
 _int CCostume_Outer::Update_GameObject(_double TimeDelta)
+{
+	//if (false == m_bEnable)
+	//	return NO_EVENT;
+
+	//CGameObject::Update_GameObject(TimeDelta);
+	//Calc_AttachBoneTransform();
+
+	return NO_EVENT;
+}
+
+_int CCostume_Outer::Update_GameObject(_double TimeDelta, _bool bSkill)
 {
 	if (false == m_bEnable)
 		return NO_EVENT;
@@ -151,12 +284,39 @@ _int CCostume_Outer::Update_GameObject(_double TimeDelta)
 	CGameObject::Update_GameObject(TimeDelta);
 	Calc_AttachBoneTransform();
 
+	if (g_pInput_Device->Key_Down(DIK_T))
+	{
+		//++iCount;
+
+		//Change_OuterMesh(HairType(iCount));
+
+		if (m_eOuterType == CClothManager::Cloth_Dynamic::None)
+			Change_OuterMesh(CClothManager::Gauntlet_04);
+		else if (m_eOuterType == CClothManager::Gauntlet_04)
+			Change_OuterMesh(CClothManager::LongCoat_03);
+		else
+			Change_OuterMesh(CClothManager::None);
+
+		//if (6 == iCount)
+		//	iCount = 0;
+	}
+
+
+	if(g_pClothManager->Is_Valid_Dynamic(m_eOuterType))
+		g_pClothManager->Update_Cloth_Dynamic(m_eOuterType, bSkill);
+
+
+
 	return NO_EVENT;
 }
 
 _int CCostume_Outer::Late_Update_GameObject(_double TimeDelta)
 {
 	if (false == m_bEnable)
+		return NO_EVENT;
+
+	// 옷 없을 때 예외처리
+	if (m_eOuterType == CClothManager::Cloth_Dynamic::None || false == g_pClothManager->Is_Valid_Dynamic(m_eOuterType))
 		return NO_EVENT;
 
 	if (!m_tObjParam.bInvisible)
@@ -190,10 +350,10 @@ _int CCostume_Outer::Late_Update_GameObject(_double TimeDelta)
 		nullptr == m_pDynamicMesh)
 		return E_FAIL;
 
-	m_pDynamicMesh->SetUp_Animation_Lower(m_eAnimLower, m_bLerpOff);
-	m_pDynamicMesh->SetUp_Animation_Upper(m_eAnimUpper, m_bLerpOff);
-	m_pDynamicMesh->SetUp_Animation_RightArm(m_eAnimRight, m_bLerpOff);
-	m_pDynamicMesh->SetUp_Animation_LeftArm(m_eAnimLeft, m_bLerpOff);
+	//m_pDynamicMesh->SetUp_Animation_Lower(m_eAnimLower, m_bLerpOff);
+	//m_pDynamicMesh->SetUp_Animation_Upper(m_eAnimUpper, m_bLerpOff);
+	//m_pDynamicMesh->SetUp_Animation_RightArm(m_eAnimRight, m_bLerpOff);
+	//m_pDynamicMesh->SetUp_Animation_LeftArm(m_eAnimLeft, m_bLerpOff);
 
 	return NO_EVENT;
 }
@@ -207,15 +367,19 @@ HRESULT CCostume_Outer::Render_GameObject()
 		nullptr == m_pDynamicMesh)
 		return E_FAIL;
 
-	m_pDynamicMesh->Play_Animation_Lower(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
-	m_pDynamicMesh->Play_Animation_Upper(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
-	m_pDynamicMesh->Play_Animation_RightArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply, false);
-	m_pDynamicMesh->Play_Animation_LeftArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
+	//m_pDynamicMesh->SetUp_Animation(0);
+
+	//m_pDynamicMesh->Play_Animation_Lower(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
+	//m_pDynamicMesh->Play_Animation_Upper(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
+	//m_pDynamicMesh->Play_Animation_RightArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply, false);
+	//m_pDynamicMesh->Play_Animation_LeftArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
+
+	m_pDynamicMesh->Play_Animation(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
 
 	if (m_tObjParam.bInvisible)
 		return S_OK;
 
-	if (FAILED(SetUp_ConstantTable()))
+	if (FAILED(SetUp_ConstantTable(m_pShader)))
 		return E_FAIL;
 
 	m_pShader->Begin_Shader();
@@ -261,6 +425,74 @@ HRESULT CCostume_Outer::Render_GameObject()
 	m_pShader->End_Shader();
 
 	return NOERROR;
+}
+
+HRESULT CCostume_Outer::Render_GameObject_Instancing_SetPass(CShader * pShader)
+{
+	IF_NULL_VALUE_RETURN(pShader, E_FAIL);
+	IF_NULL_VALUE_RETURN(m_pDynamicMesh, E_FAIL);
+
+	//// 버텍스 교체
+	if (m_eOuterType != CClothManager::Cloth_Dynamic::None)
+		Change_Vertex();
+
+	//m_pDynamicMesh->SetUp_Animation(0);
+
+	//m_pDynamicMesh->Play_Animation_Lower(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
+	//m_pDynamicMesh->Play_Animation_Upper(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
+	//m_pDynamicMesh->Play_Animation_RightArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply, false);
+	//m_pDynamicMesh->Play_Animation_LeftArm(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
+
+	m_pDynamicMesh->Play_Animation(g_pTimer_Manager->Get_DeltaTime(L"Timer_Fps_60") * m_fAnimMultiply);
+
+	if (m_tObjParam.bInvisible)
+		return S_OK;
+
+	if (FAILED(SetUp_ConstantTable(pShader)))
+		return E_FAIL;
+
+	_uint iNumMeshContainer = _uint(m_pDynamicMesh->Get_NumMeshContainer());
+	// 메쉬 컨테이너는 3개
+
+	for (_uint i = 0; i < _uint(iNumMeshContainer); ++i)
+	{
+		_uint iNumSubSet = (_uint)m_pDynamicMesh->Get_NumMaterials(i);
+		// 서브셋은 5개
+
+		// 메시를 뼈에 붙인다.
+		m_pDynamicMesh->Update_SkinnedMesh(i);
+
+		for (_uint j = 0; j < iNumSubSet; ++j)
+		{
+			m_iPass = m_pDynamicMesh->Get_MaterialPass(i, j);
+
+			if (m_bDissolve)
+				m_iPass = 3;
+
+			pShader->Begin_Pass(m_iPass);
+
+			pShader->Set_DynamicTexture_Auto(m_pDynamicMesh, i, j);
+
+			if (13 == m_iPass)
+			{
+				_float fSpec = 0.1f;
+
+				if (FAILED(pShader->Set_Value("g_fSpecularPower", &fSpec, sizeof(_float))))
+					return E_FAIL;
+			}
+
+			pShader->Commit_Changes();
+
+			m_pDynamicMesh->Render_Mesh(i, j);
+
+			pShader->End_Pass();
+		}
+	}
+
+	// 버텍스 교체
+	//Change_Vertex();
+
+	return S_OK;
 }
 
 HRESULT CCostume_Outer::Render_GameObject_SetPass(CShader * pShader, _int iPass, _bool _bIsForMotionBlur)
@@ -375,4 +607,11 @@ CGameObject * CCostume_Outer::Clone_GameObject(void * pArg)
 
 void CCostume_Outer::free()
 {
+	Safe_Release(m_pTransform);
+	Safe_Release(m_pRenderer);
+	Safe_Release(m_pShader);
+	Safe_Release(m_pDynamicMesh);
+	Safe_Release(m_pBattleAgent);
+
+	CGameObject::Free();
 }

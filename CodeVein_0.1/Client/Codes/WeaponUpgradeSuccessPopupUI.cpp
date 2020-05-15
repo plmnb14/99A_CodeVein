@@ -17,6 +17,32 @@ CWeaponUpgradeSuccessPopupUI::CWeaponUpgradeSuccessPopupUI(const CWeaponUpgradeS
 void CWeaponUpgradeSuccessPopupUI::Set_Active(_bool bIsActive)
 {
 	m_bIsActive = bIsActive;
+
+	Reset_Option();
+}
+
+void CWeaponUpgradeSuccessPopupUI::Set_Fade(_bool bIsActive)
+{
+	m_bIsActive = bIsActive;
+	
+	m_fAlpha = 0.f;
+	if (bIsActive)
+		m_bFadeStart = true;
+}
+
+void CWeaponUpgradeSuccessPopupUI::Set_PopupType(POPUP_TYPE eType)
+{
+	m_ePopupType = eType;
+
+	switch (m_ePopupType)
+	{
+	case Client::CWeaponUpgradeSuccessPopupUI::POPUP_SUCCESS:
+		m_iTexIdx = 5;
+		break;
+	case Client::CWeaponUpgradeSuccessPopupUI::POPUP_FAILED:
+		m_iTexIdx = 11;
+		break;
+	}
 }
 
 HRESULT CWeaponUpgradeSuccessPopupUI::Ready_GameObject_Prototype()
@@ -32,10 +58,10 @@ HRESULT CWeaponUpgradeSuccessPopupUI::Ready_GameObject(void * pArg)
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = 650.f;
-	m_fPosY = 350.f;
-	m_fSizeX = 1920.f * 0.7f;
-	m_fSizeY = 1080.f * 0.7f;
+	m_fPosX = WINCX * 0.5f;
+	m_fPosY = WINCY * 0.5f;
+	m_fSizeX = 1280.f;// * 0.7f;
+	m_fSizeY = 720.f;//* 0.7f;
 
 	m_bIsActive = false;
 	
@@ -48,15 +74,25 @@ HRESULT CWeaponUpgradeSuccessPopupUI::Ready_GameObject(void * pArg)
 
 _int CWeaponUpgradeSuccessPopupUI::Update_GameObject(_double TimeDelta)
 {
+	if (!m_bIsActive)
+		return S_OK;
+
 	CUI::Update_GameObject(TimeDelta);
-	
+
 	Check_ItemOption();
 	Check_Option();
 	Check_LateInit();
 
+	if (m_bFadeStart)
+	{
+		m_fAlpha += _float(TimeDelta) * 10.f;
+		if (m_fAlpha >= 1.f)
+			m_bFadeStart = false;
+	}
+
 	if (m_bLateInit)
 	{
-		LOOP(2)
+		LOOP(1)
 		{
 			TARGET_TO_TRANS(m_vecOption[i])->Set_Angle(m_pTransformCom->Get_Angle());
 			TARGET_TO_TRANS(m_vecOption[i])->Set_Scale(_v3(1.f, 1.f, 1.f));
@@ -64,11 +100,10 @@ _int CWeaponUpgradeSuccessPopupUI::Update_GameObject(_double TimeDelta)
 
 			_v3 vPos;
 			if (0 == i)
-				m_vecOption[i]->Set_UI_Pos(Get_UI_Pos().x, Get_UI_Pos().y + 268.f);
-			else if (1 == i)
-				m_vecOption[i]->Set_UI_Pos(Get_UI_Pos().x, Get_UI_Pos().y + 308.f);
+				m_vecOption[i]->Set_UI_Pos(Get_UI_Pos().x, Get_UI_Pos().y + 76.f);
 
-			m_vecOption[i]->Set_UI_Size(142, 70);
+			m_vecOption[i]->Set_UI_Size(180, 70);
+			m_vecOption[i]->Set_ViewZ(m_fViewZ - 0.01f);
 
 			TARGET_TO_TRANS(m_vecOption[i])->Set_Pos(vPos);
 			m_vecOption[i]->Set_ButtonType(CWeaponUpgradeOptionUI::BUTTON_TYPE(i));
@@ -116,7 +151,7 @@ HRESULT CWeaponUpgradeSuccessPopupUI::Render_GameObject()
 
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(1);
+	m_pShaderCom->Begin_Pass(5);
 
 	m_pBufferCom->Render_VIBuffer();
 
@@ -145,10 +180,6 @@ void CWeaponUpgradeSuccessPopupUI::Click_Option()
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
 				if (0 == iIdx)
-				{
-
-				}
-				else if (1 == iIdx)
 				{
 					Set_Active(false);
 				}
@@ -207,6 +238,9 @@ HRESULT CWeaponUpgradeSuccessPopupUI::SetUp_ConstantTable()
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
+	if (FAILED(m_pShaderCom->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
+		return E_FAIL;
+
 	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, m_iTexIdx)))
 		return E_FAIL;
 
@@ -243,11 +277,11 @@ void CWeaponUpgradeSuccessPopupUI::Check_ItemOption()
 	if (!m_bIsActive)
 		return;
 
-	CWeapon_Slot* pWeaponSlot = m_pInven->Get_HoverSlot();
+	CWeapon_Slot* pWeaponSlot = m_pInven->Get_HoverSlot_Weapon();
 	
 
 	if (!pWeaponSlot || m_pInven->Get_PopupOn())
-		pWeaponSlot = m_pInven->Get_SelectedSlot();
+		pWeaponSlot = m_pInven->Get_SelectedSlot_Weapon();
 
 	if (!pWeaponSlot)
 		return;
@@ -262,9 +296,9 @@ void CWeaponUpgradeSuccessPopupUI::Check_Option()
 	{
 		m_bLateInit = true;
 		CWeaponUpgradeOptionUI* pInstance = nullptr;
-		LOOP(2)
+		LOOP(1)
 		{
-			pInstance = static_cast<CWeaponUpgradeOptionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon_UpgradeOption", nullptr));
+			pInstance = static_cast<CWeaponUpgradeOptionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon_UpgradeSuccessPopupOption", nullptr));
 			g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 			m_vecOption.push_back(pInstance);
 		}
