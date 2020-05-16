@@ -186,9 +186,9 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Pet_PoisonButterFly", nullptr);
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Pet", nullptr);
 
-	//// Æê_»ç½¿Å·
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Pet_DeerKing", nullptr);
-	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Pet", nullptr);
+	////// Æê_»ç½¿Å·
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Pet_DeerKing", nullptr);
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Pet", nullptr);
 
 	//====================================================================================================================================================
 	// °Ë°ÕÁö
