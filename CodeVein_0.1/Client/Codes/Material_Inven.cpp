@@ -312,14 +312,6 @@ void CMaterial_Inven::Sell_Material(_uint iDelete)
 		++idx;
 	}
 	
-	
-	/*_ulong Idx = 0;
-	for (auto& pSlot : m_vecMaterialSlot)
-	{
-		
-		pSlot->Set_UI_Pos(m_vecUI_DESC[Idx]->fPosX, m_vecUI_DESC[Idx]->fPosY);
-		++Idx;
-	}*/
 }
 
 CMaterial_Inven * CMaterial_Inven::Create(_Device pGraphic_Device)

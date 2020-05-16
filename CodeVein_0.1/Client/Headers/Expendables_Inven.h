@@ -33,14 +33,14 @@ private:
 	void					Load_Expendables(CExpendables* pExpendables, _uint iIndex = 0); // 슬롯에 아이템 넣는 함수(한 슬롯당 9개가 넘어가면 다음 슬롯 검색)
 	void					Click_Inven(); // 활성화일 경우에만 적용됨
 	void					SetUp_Default();
+	void					Add_Slot();
+	void					Delete_QuickSlot(CExpendables_Slot* pSlot);
 
 public:
 	void Add_Expendables(CExpendables::EXPEND_TYPE eType); // 해당 타입의 소비 아이템 획득
 	void Add_MultiExpendables(CExpendables::EXPEND_TYPE eType, _uint iCnt);
-
-	void Sell_Expendables(_uint iDelete); // 마우스 커서와 충돌한 아이템을 인수만큼 차감
-	void Delete_QuickSlot(CExpendables_Slot* pSlot);
-	void Use_Expendableas(CExpendables_Slot* pSlot);
+	void Sell_Expendables(_uint iDelete); // 마우스 커서와 충돌한 아이템을 인수만큼 차감	
+	void Use_Expendableas(CExpendables_Slot* pSlot); // 퀵슬롯 등록 아이템 사용시 사용
 	
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;

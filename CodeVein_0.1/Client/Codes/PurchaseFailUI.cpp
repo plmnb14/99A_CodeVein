@@ -1,43 +1,40 @@
 #include "stdafx.h"
-#include "..\Headers\MouseUI.h"
+#include "..\Headers\PurchaseFailUI.h"
 
 
-CMouseUI::CMouseUI(_Device pDevice)
+
+CPurchaseFailUI::CPurchaseFailUI(_Device pDevice)
 	: CUI(pDevice)
 {
 }
 
-CMouseUI::CMouseUI(const CMouseUI & rhs)
+CPurchaseFailUI::CPurchaseFailUI(const CPurchaseFailUI & rhs)
 	: CUI(rhs)
 {
 }
 
-HRESULT CMouseUI::Ready_GameObject_Prototype()
+HRESULT CPurchaseFailUI::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
+
 	return NOERROR;
 }
 
-HRESULT CMouseUI::Ready_GameObject(void * pArg)
+HRESULT CPurchaseFailUI::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
-	m_fPosX = _float(g_pInput_Device->Get_MousePos().x);
-	m_fPosY = _float(g_pInput_Device->Get_MousePos().y);
-
-	m_fSizeX = 30.f;
-	m_fSizeY = 30.f;
-	m_fViewZ = -3.f;
-
-	ShowCursor(FALSE);
-	m_bIsActive = true;
+	m_fPosX = WINCX * 0.5f;
+	m_fPosY = WINCY * 0.5f;
+	m_fSizeX = 1024.f;
+	m_fSizeY = 512.f;
 
 	return NOERROR;
 }
 
-_int CMouseUI::Update_GameObject(_double TimeDelta)
+_int CPurchaseFailUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
@@ -45,13 +42,27 @@ _int CMouseUI::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
-	m_fPosX = _float(g_pInput_Device->Get_MousePos().x);
-	m_fPosY = _float(g_pInput_Device->Get_MousePos().y);
+	
+	if (m_bIsActive && m_fAlpha >= 1.f)
+	{
+		m_fFadeTime += _float(TimeDelta) * 2.f;
+
+		if (m_fFadeTime >= 2.f)
+		{
+			m_fFadeTime = 0.f;
+			m_bIsActive = false;
+		}
+	}
+
+	if (m_bIsActive && m_fAlpha < 1.f)
+		m_fAlpha += _float(TimeDelta) * 1.2f;
+	if(!m_bIsActive && m_fAlpha > 0.f)
+		m_fAlpha -= _float(TimeDelta) * 1.2f;
 
 	return NO_EVENT;
 }
 
-_int CMouseUI::Late_Update_GameObject(_double TimeDelta)
+_int CPurchaseFailUI::Late_Update_GameObject(_double TimeDelta)
 {
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
@@ -65,11 +76,10 @@ _int CMouseUI::Late_Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-HRESULT CMouseUI::Render_GameObject()
+HRESULT CPurchaseFailUI::Render_GameObject()
 {
-	if (!m_bIsActive)
+	if (!m_bIsActive && m_fAlpha <= 0.f)
 		return NOERROR;
-
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
 		return E_FAIL;
@@ -78,11 +88,11 @@ HRESULT CMouseUI::Render_GameObject()
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
-	if (FAILED(SetUp_ConstantTable(0)))
+	if (FAILED(SetUp_ConstantTable()))
 		return E_FAIL;
 
 	m_pShaderCom->Begin_Shader();
-	m_pShaderCom->Begin_Pass(1);
+	m_pShaderCom->Begin_Pass(5);
 	m_pBufferCom->Render_VIBuffer();
 	m_pShaderCom->End_Pass();
 	m_pShaderCom->End_Shader();
@@ -90,7 +100,7 @@ HRESULT CMouseUI::Render_GameObject()
 	return NOERROR;
 }
 
-HRESULT CMouseUI::Add_Component()
+HRESULT CPurchaseFailUI::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -101,7 +111,7 @@ HRESULT CMouseUI::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"DefaultTex_MouseUI", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_GeneralStoreBuyUI", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -115,7 +125,7 @@ HRESULT CMouseUI::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CMouseUI::SetUp_ConstantTable(_uint iIndex)
+HRESULT CPurchaseFailUI::SetUp_ConstantTable()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -126,43 +136,47 @@ HRESULT CMouseUI::SetUp_ConstantTable(_uint iIndex)
 		return E_FAIL;
 	if (FAILED(m_pShaderCom->Set_Value("g_matProj", &m_matProj, sizeof(_mat))))
 		return E_FAIL;
-	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, iIndex)))
+	if (FAILED(m_pShaderCom->Set_Value("g_fAlpha", &m_fAlpha, sizeof(_float))))
+		return E_FAIL;
+	if (FAILED(m_pTextureCom->SetUp_OnShader("g_DiffuseTexture", m_pShaderCom, 4)))
 		return E_FAIL;
 
 	return NOERROR;
 }
 
-CMouseUI * CMouseUI::Create(_Device pGraphic_Device)
+CPurchaseFailUI * CPurchaseFailUI::Create(_Device pGraphic_Device)
 {
-	CMouseUI* pInstance = new CMouseUI(pGraphic_Device);
+	CPurchaseFailUI* pInstance = new CPurchaseFailUI(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 	{
-		MSG_BOX("Fail Creating MouseUI");
+		MSG_BOX("PurchaseFailUI Creating Failed");
 		Safe_Release(pInstance);
 	}
+
 	return pInstance;
 }
 
-CGameObject * CMouseUI::Clone_GameObject(void * pArg)
+CGameObject * CPurchaseFailUI::Clone_GameObject(void * pArg)
 {
-	CMouseUI* pInstance = new CMouseUI(*this);
+	CPurchaseFailUI* pInstance = new CPurchaseFailUI(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
-		MSG_BOX("Fail To Cloned MouseUI");
+		MSG_BOX("PurchaseFailUI Cloned Fail");
 		Safe_Release(pInstance);
 	}
+
 	return pInstance;
 }
 
-void CMouseUI::Free()
+void CPurchaseFailUI::Free()
 {
 	Safe_Release(m_pTransformCom);
-	Safe_Release(m_pRendererCom);
 	Safe_Release(m_pBufferCom);
-	Safe_Release(m_pTextureCom);
 	Safe_Release(m_pShaderCom);
+	Safe_Release(m_pTextureCom);
+	Safe_Release(m_pRendererCom);
 
 	CUI::Free();
 }

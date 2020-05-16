@@ -7,6 +7,7 @@
 BEGIN(Client)
 class CBuyOptionUI;
 class CPlayerFontUI;
+class CPurchaseFailUI;
 class CExpendBuyUI final : public CUI
 {
 private:
@@ -49,6 +50,7 @@ private:
 	CExpendables::EXPEND_TYPE			m_eType = CExpendables::EXPEND_END;
 	_uint					m_iCost = 0;	// 물건 개당 가격
 	_float					m_fAlpha = 0.f;
+	CPurchaseFailUI*		m_pBuyFailUI = nullptr;
 
 public:
 	static CExpendBuyUI*	Create(_Device pGraphic_Device);

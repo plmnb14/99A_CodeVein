@@ -1,6 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\QuickSlot.h"
 #include "UI_Manager.h"
+#include "Player.h"
 
 CQuickSlot::CQuickSlot(_Device pDevice)
 	: CUI(pDevice)
@@ -47,17 +48,19 @@ _int CQuickSlot::Update_GameObject(_double TimeDelta)
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
-	if (m_vecQuickSlot.size() > m_iSelect)
+	if (m_vecQuickSlot.size() <= m_iSelect)
+	{
+		m_eType = CExpendables::EXPEND_END;
+		m_pItemCntFont->Update_NumberValue(0.f);
+		m_iIndex = 7;
+	}
+	else if(m_vecQuickSlot.size() > m_iSelect)
 	{
 		m_eType = CExpendables::EXPEND_TYPE(m_vecQuickSlot[m_iSelect]->Get_Type());
 		m_pItemCntFont->Update_NumberValue(_float(m_vecQuickSlot[m_iSelect]->Get_Size()));
 	}
 		
-	else
-	{
-		m_eType = CExpendables::EXPEND_END;
-		m_pItemCntFont->Update_NumberValue(0.f);
-	}
+	
 
 	switch (m_eType)
 	{
@@ -91,6 +94,8 @@ _int CQuickSlot::Update_GameObject(_double TimeDelta)
 
 	m_pItemCntFont->Set_Active(m_bIsActive);
 
+	if (g_pInput_Device->Key_Up(DIK_DOWN))
+		Use_QuickSlot_Item();
 	return NO_EVENT;
 }
 
@@ -215,23 +220,73 @@ void CQuickSlot::Move_QuickSlot()
 			m_iSelect = _uint(m_vecQuickSlot.size()) - 1;
 	}
 }
+//
+//CExpendables::EXPEND_TYPE CQuickSlot::Use_Item()
+//{
+//	_uint iType = 0;
+//	if (m_vecQuickSlot.size() <= 0)
+//		return CExpendables::EXPEND_END;
+//	if (nullptr == m_vecQuickSlot[m_iSelect])
+//		return CExpendables::EXPEND_END;
+//	if (m_vecQuickSlot[m_iSelect]->Get_Size() == 0)
+//		return CExpendables::EXPEND_END;
+//
+//	
+//	iType = m_vecQuickSlot[m_iSelect]->Get_Type();
+//	
+//	CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Use_Expendableas(m_vecQuickSlot[m_iSelect]);
+//
+//	return CExpendables::EXPEND_TYPE(iType);
+//}
 
-CExpendables::EXPEND_TYPE CQuickSlot::Use_Item()
+void CQuickSlot::Use_QuickSlot_Item()
 {
-	_uint iType = 0;
-	if (m_vecQuickSlot.size() <= 0)
-		return CExpendables::EXPEND_END;
-	if (nullptr == m_vecQuickSlot[m_iSelect])
-		return CExpendables::EXPEND_END;
-	if (m_vecQuickSlot[m_iSelect]->Get_Size() == 0)
-		return CExpendables::EXPEND_END;
+	if (m_vecQuickSlot.size() <= m_iSelect)
+		return;
+	if (m_vecQuickSlot.size() <= 0 ||
+		m_vecQuickSlot[m_iSelect]->Get_Size() == 0 ||
+		m_vecQuickSlot[m_iSelect]->Get_Type() == CExpendables::EXPEND_END)
+		return;
+	
+
+	CPlayer* pPlayer = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
+	OBJECT_PARAM tPlayerParam = pPlayer->Get_Target_Param();
+	CExpendables_Inven* pExpendInven = CUI_Manager::Get_Instance()->Get_Expendables_Inven();
+
+	switch (m_vecQuickSlot[m_iSelect]->Get_Type())
+	{
+	case CExpendables::Expend_MaximumUp:
+	{
+		
+		pExpendInven->Use_Expendableas(m_vecQuickSlot[m_iSelect]);
+		pExpendInven->Set_MaximumItemCnt(pExpendInven->Get_MaximumItemCnt() + 1);
 
 	
-	iType = m_vecQuickSlot[m_iSelect]->Get_Type();
-	
-	CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Use_Expendableas(m_vecQuickSlot[m_iSelect]);
 
-	return CExpendables::EXPEND_TYPE(iType);
+	}
+		break;
+	case CExpendables::Expend_Hp:
+	{
+		pExpendInven->Use_Expendableas(m_vecQuickSlot[m_iSelect]);
+		pPlayer->Add_Target_Hp(300.f);
+	}
+		break;
+	case CExpendables::Expend_Return:
+
+		break;
+	case CExpendables::Expend_Cheet:
+	{
+		pExpendInven->Use_Expendableas(m_vecQuickSlot[m_iSelect]);
+		pPlayer->Add_Target_Hp(-300.f);
+	}
+		break;
+	case CExpendables::Expend_Blood:
+		break;
+	case CExpendables::Expend_SuperArmor:
+		break;
+	case CExpendables::EXPEND_END:
+		break;
+	}
 }
 
 

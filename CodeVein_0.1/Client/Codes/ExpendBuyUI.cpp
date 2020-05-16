@@ -161,6 +161,10 @@ void CExpendBuyUI::SetUp_Default()
 	m_pBuyCntFont->Set_UI_Pos(m_fPosX, m_fPosY);
 	m_pBuyCntFont->Set_UI_Size(20.f, 40.8f);
 	m_pBuyCntFont->Set_ViewZ(m_fViewZ - 0.1f);
+
+	m_pBuyFailUI = static_cast<CPurchaseFailUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PurchaseFailUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBuyFailUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	m_pBuyFailUI->Set_ViewZ(m_fViewZ - 0.2f);
 }
 
 void CExpendBuyUI::Update_SubUI(_double TimeDelta)
@@ -268,6 +272,8 @@ void CExpendBuyUI::Buy_Item()
 	{
 		cout << "비용 부족!" << endl;
 		m_bIsActive = false;
+
+		m_pBuyFailUI->Set_Active(true);
 		return;
 	}
 }

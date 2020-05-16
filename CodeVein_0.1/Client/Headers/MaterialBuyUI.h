@@ -7,6 +7,7 @@
 BEGIN(Client)
 class CBuyOptionUI;
 class CPlayerFontUI;
+class CPurchaseFailUI;
 class CMaterialBuyUI final : public CUI
 {
 private:
@@ -50,6 +51,7 @@ private:
 	_uint					m_iCost = 0;	// 물건 개당 가격
 	_float					m_fAlpha = 0.f;
 	CMaterial::MATERIAL_TYPE m_eType = CMaterial::MATERIAL_END;
+	CPurchaseFailUI*		m_pBuyFailUI = nullptr;
 
 public:
 	static CMaterialBuyUI*	Create(_Device pGraphic_Device);

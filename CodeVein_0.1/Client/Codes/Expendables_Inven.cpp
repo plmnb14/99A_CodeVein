@@ -77,6 +77,13 @@ _int CExpendables_Inven::Update_GameObject(_double TimeDelta)
 	
 	Click_Inven();
 
+	_uint iIdx = 0;
+	for (auto& vector_iter : m_vecSlot)
+	{
+		vector_iter->Set_UI_Pos(m_fPosX - 100.f + 52.f * (iIdx % 5), m_fPosY - 150.f + 52.f * (iIdx / 5));
+		iIdx++;
+	}
+
 	for (auto& pSlot : m_vecSlot)
 	{
 		pSlot->Set_Active(m_bIsActive);
@@ -210,10 +217,6 @@ void CExpendables_Inven::Click_Inven()
 			}
 		}
 	}
-
-
-	
-
 }
 
 void CExpendables_Inven::SetUp_Default()
@@ -224,6 +227,14 @@ void CExpendables_Inven::SetUp_Default()
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExplainUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	
+}
+
+void CExpendables_Inven::Add_Slot()
+{
+	CExpendables_Slot* pSlot = static_cast<CExpendables_Slot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExpendSlot", nullptr));
+	pSlot->Set_UI_Size(50.f, 50.f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pSlot, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	m_vecSlot.push_back(pSlot);
 }
 
 void CExpendables_Inven::Add_Expendables(CExpendables::EXPEND_TYPE eType)
@@ -289,17 +300,11 @@ void CExpendables_Inven::Use_Expendableas(CExpendables_Slot * pSlot)
 		{
 			m_vecSlot.erase(m_vecSlot.begin() + idx);
 			m_vecSlot.shrink_to_fit();
+			Add_Slot();
 			break;
 		}
 		
 		++idx;
-	}
-
-	_ulong Idx = 0;
-	for (auto& pExSlot : m_vecSlot)
-	{
-		pExSlot->Set_UI_Pos(m_vecUI_DESC[Idx]->fPosX, m_vecUI_DESC[Idx]->fPosY);
-		++Idx;
 	}
 }
 
@@ -321,6 +326,7 @@ void CExpendables_Inven::Sell_Expendables(_uint iDelete)
 			{
 				m_vecSlot.erase(m_vecSlot.begin() + idx);
 				m_vecSlot.shrink_to_fit();
+				Add_Slot();
 				break;
 			}
 		}

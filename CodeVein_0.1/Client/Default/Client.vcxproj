@@ -217,6 +217,7 @@
     <ClInclude Include="..\Headers\Material_InfoUI.h" />
     <ClInclude Include="..\Headers\NPC_Yakumo.h" />
     <ClInclude Include="..\Headers\Pet_DeerKing.h" />
+    <ClInclude Include="..\Headers\PurchaseFailUI.h" />
     <ClInclude Include="..\Headers\ScriptUI.h" />
     <ClInclude Include="..\Headers\Costume_Accessory.h" />
     <ClInclude Include="..\Headers\Costume_Hair.h" />
@@ -416,6 +417,7 @@
     <ClCompile Include="..\Codes\Material_InfoUI.cpp" />
     <ClCompile Include="..\Codes\NPC_Yakumo.cpp" />
     <ClCompile Include="..\Codes\Pet_DeerKing.cpp" />
+    <ClCompile Include="..\Codes\PurchaseFailUI.cpp" />
     <ClCompile Include="..\Codes\ScriptUI.cpp" />
     <ClCompile Include="..\Codes\Costume_Accessory.cpp" />
     <ClCompile Include="..\Codes\Costume_Hair.cpp" />

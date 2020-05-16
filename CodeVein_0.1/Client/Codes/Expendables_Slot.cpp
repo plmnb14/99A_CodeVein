@@ -83,9 +83,14 @@ _int CExpendables_Slot::Update_GameObject(_double TimeDelta)
 	m_pItemCntFont->Update_NumberValue(_float(m_vecExpendables.size()));
 
 	if (m_vecExpendables.size() == 0)
-		m_pItemCntFont->Set_Active(false);
+	{
+		//m_pItemCntFont->Set_Active(false);
+	}	
 	else
+	{
 		m_pItemCntFont->Set_Active(m_bIsActive);
+		m_pItemCntFont->Set_UI_Pos(m_fPosX - m_fSizeX * 0.25f, m_fPosY + m_fSizeY * 0.25f);
+	}
 	
 	return NO_EVENT;
 }
@@ -336,7 +341,9 @@ CGameObject * CExpendables_Slot::Clone_GameObject(void * pArg)
 
 void CExpendables_Slot::Free()
 {
-	
+	if (m_pItemCntFont)
+		m_pItemCntFont->Set_Dead();
+
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
 	Safe_Release(m_pShaderCom);
