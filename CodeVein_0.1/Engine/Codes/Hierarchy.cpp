@@ -105,7 +105,7 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 
 		pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 14;
 
-		if (!lstrcmp(szTextureFileName, L"T_Eyelash_Female1.dds"))
+		if (!lstrcmp(szTextureFileName, L"T_Hair_Female_C.dds"))
 		{
 			pMeshContainer->pMeshTexture[i].m_dwMaterialPass = 15;
 		}
@@ -139,9 +139,25 @@ STDMETHODIMP CHierarchy::CreateMeshContainer(LPCSTR Name, CONST D3DXMESHDATA * p
 			m_bIncludeMap[MESHTEXTURE::TYPE_NORMAL_MAP] = true;
 		}
 		//==================================================================================================================================
+		// H - Height
+		//==================================================================================================================================
+		Change_TextureFileName(szFullPath, L"N", L"H");
+		if (NO_EVENT == _waccess(szFullPath, 0))
+		{
+			//D3DXCreateTextureFromFileEx(
+			//	m_pGraphic_Device, szFullPath,
+			//	D3DX_DEFAULT, D3DX_DEFAULT,
+			//	1, 0,
+			//	D3DFMT_UNKNOWN, D3DPOOL_DEFAULT,
+			//	D3DX_DEFAULT, D3DX_FILTER_NONE, 0, 0, 0, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_NORMAL_MAP]);
+
+			D3DXCreateTextureFromFile(m_pGraphic_Device, szFullPath, &pMeshContainer->pMeshTexture[i].pTextures[MESHTEXTURE::TYPE_HEIGHT_MAP]);
+			m_bIncludeMap[MESHTEXTURE::TYPE_HEIGHT_MAP] = true;
+		}
+		//==================================================================================================================================
 		// S - Specular
 		//==================================================================================================================================
-		Change_TextureFileName(szFullPath, L"N", L"S");
+		Change_TextureFileName(szFullPath, L"H", L"S");
 		if (NO_EVENT == _waccess(szFullPath, 0))
 		{
 			//D3DXCreateTextureFromFileEx(

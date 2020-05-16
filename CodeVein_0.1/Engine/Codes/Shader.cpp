@@ -273,7 +273,7 @@ HRESULT CShader::Set_DynamicTexture_Auto(CMesh_Dynamic * pMeshDynamic, _ulong dw
 		m_pEffect->SetTexture("g_DiffuseTexture", pMeshDynamic->Get_MeshTexture(dwSubsetNum, dwMeshContainer, MESHTEXTURE::TYPE_DIFFUSE_MAP));
 		m_pEffect->SetTexture("g_NormalTexture", pMeshDynamic->Get_MeshTexture(dwSubsetNum, dwMeshContainer, MESHTEXTURE::TYPE_NORMAL_MAP));
 		m_pEffect->SetTexture("g_SpecularTexture", pMeshDynamic->Get_MeshTexture(dwSubsetNum, dwMeshContainer, MESHTEXTURE::TYPE_SPECULAR_MAP));
-		m_pEffect->SetTexture("g_UnionTexture", pMeshDynamic->Get_MeshTexture(dwSubsetNum, dwMeshContainer, MESHTEXTURE::TYPE_UNION_MAP));
+		m_pEffect->SetTexture("g_UnionTexture", pMeshDynamic->Get_MeshTexture(dwSubsetNum, dwMeshContainer, MESHTEXTURE::TYPE_UNION_MAP)); 
 		m_pEffect->SetTexture("g_IDTexture", pMeshDynamic->Get_MeshTexture(dwSubsetNum, dwMeshContainer, MESHTEXTURE::TYPE_ID_MAP));
 
 		break;

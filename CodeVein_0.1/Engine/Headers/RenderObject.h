@@ -13,6 +13,19 @@ class COptimization;
 
 class ENGINE_DLL CRenderObject : public CGameObject
 {
+private:
+	typedef struct tagPBRShaderInfo
+	{
+		_float	fEmissivePower = 0.f;
+		_float	fSpecularPower = 0.f;
+		_float	fRoughnessPower = 0.f;
+		_float	fMinSpecular = 0.f;
+		_float	fID_R = 0.f;
+		_float  fID_G = 0.f;
+		_float  fID_B = 0.f;
+		_float  fRimPower = 0.f;
+		_float  fRimAlpha = 0.f;
+	}PBR;
 
 public:
 	typedef struct tagObjInitInfo
@@ -82,11 +95,22 @@ protected:
 	_int			m_iIndex = 0;
 	_ulong			m_dwPassNum = 0;
 
+
+private:
+	virtual void SetUp_IndividualShaderValue();
+
 private:
 	_ulong			m_dwSubsetCnt = 0;
 
+	_bool			m_bUpdated = false;
+
 	// For	MotionBlur
 	_mat	m_matLastWVP;
+
+	// For	Shader
+	_mat*	m_pmatView = nullptr;
+	_mat*	m_pmatProj = nullptr;
+
 
 	// 툴에서 사용되는 변수
 protected:
@@ -96,6 +120,7 @@ protected:
 	// 오브젝트 렌더 그룹 변수
 private:
 	RENDERID		m_eGroup = RENDER_NONALPHA;
+	PBR				m_tPBRInfo;
 
 private:
 	virtual HRESULT Initialize_For_Protoype();

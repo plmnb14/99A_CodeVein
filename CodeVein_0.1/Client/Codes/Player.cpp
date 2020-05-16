@@ -251,13 +251,6 @@ HRESULT CPlayer::Render_GameObject()
 
 	Draw_Collider();
 
-
-	IF_NOT_NULL(m_pNavMesh)
-	{
-		//if (true == m_bEnable)
-		//	m_pNavMesh->Render_NaviMesh();
-	}
-
 	return NOERROR;
 }
 
@@ -312,12 +305,30 @@ HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 
 			pShader->Set_DynamicTexture_Auto(m_pDynamicMesh, i, j);
 
-			if (13 == m_iPass)
-			{
-				_float fSpec = 0.1f;
+			_float fAlpha = 0.5f;
+			_float fRimValue = 20.f;
+			_float fSpec = 0.1f;
 
-				if (FAILED(pShader->Set_Value("g_fSpecularPower", &fSpec, sizeof(_float))))
-					return E_FAIL;
+			if (13 == m_iPass || 19 == m_iPass)
+			{
+				if (13 == m_iPass)
+				{
+					fSpec = 0.f; 
+				}
+
+				pShader->Set_Value("g_fSpecularPower", &fSpec, sizeof(_float));
+				pShader->Set_Value("g_fRimAlpha", &fAlpha, sizeof(_float));
+				pShader->Set_Value("g_fRimPower", &fRimValue, sizeof(_float));
+			}
+			else
+			{
+				fAlpha = 0.f;
+				fRimValue = 0.f;
+				fSpec = 1.f;
+
+				pShader->Set_Value("g_fSpecularPower", &fSpec, sizeof(_float));
+				pShader->Set_Value("g_fRimAlpha", &fAlpha, sizeof(_float));
+				pShader->Set_Value("g_fRimPower", &fRimValue, sizeof(_float));
 			}
 
 			pShader->Commit_Changes();
@@ -328,13 +339,9 @@ HRESULT CPlayer::Render_GameObject_Instancing_SetPass(CShader * pShader)
 		}
 	}
 
-	Draw_Collider();
-
-	IF_NOT_NULL(m_pNavMesh)
-	{
-		//if (true == m_bEnable)
-		//	m_pNavMesh->Render_NaviMesh();
-	}
+#ifdef _DEBUG
+	//Draw_Collider();
+#endif
 
 	return NOERROR;
 }
@@ -379,7 +386,7 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 		_bool bDecalTarget = false;
 		if (FAILED(pShader->Set_Bool("g_bDecalTarget", bDecalTarget)))
 			return E_FAIL;
-		_float fBloomPower = 0.f;
+		_float fBloomPower = 10.f;
 		if (FAILED(pShader->Set_Value("g_fBloomPower", &fBloomPower, sizeof(_float))))
 			return E_FAIL;
 	}
@@ -410,29 +417,26 @@ HRESULT CPlayer::Render_GameObject_SetPass(CShader* pShader, _int iPass, _bool _
 
 			if (_bIsForMotionBlur)
 			{
-				if (15 == tmpPass)
+				if (14 == tmpPass || 15 == tmpPass)
 				{
+					// ´«½ç , ´«
 					pShader->Begin_Pass(3);
 				}
 
-				else if (13 == tmpPass || 14 == tmpPass)
+				else if (13 == tmpPass)
 				{
+					// ÇÇºÎ
 					pShader->Begin_Pass(1);
 				}
 
 				else if (19 == tmpPass)
 				{
 					// ¾ó±¼
-					pShader->Set_Texture("g_HeightTexture", m_pDynamicMesh->Get_MeshTexture(i, j, MESHTEXTURE::TYPE_HEIGHT_MAP));
 					pShader->Begin_Pass(2);
 				}
 
 				else
 				{
-					if (7 == tmpPass)
-					{
-					}
-
 					pShader->Begin_Pass(iPass);
 				}
 			}
@@ -10944,6 +10948,11 @@ HRESULT CPlayer::SetUp_ConstantTable(CShader* pShader)
 	if (nullptr == pShader)
 		return E_FAIL;
 
+	_v3 vLightPos = _v3(50.f, -100.f, 0.f);
+	V3_NORMAL_SELF(&vLightPos);
+
+	if (FAILED(pShader->Set_Value("g_vLightDir", &vLightPos, sizeof(_mat))))
+		return E_FAIL;
 	//=============================================================================================
 	// ±âº» ¸ÞÆ®¸¯½º
 	//=============================================================================================

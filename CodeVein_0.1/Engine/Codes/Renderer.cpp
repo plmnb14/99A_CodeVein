@@ -33,7 +33,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (nullptr == m_pTarget_Manager)
 		return E_FAIL;
 
-	m_vShadowLightPos = _v3(-100.f, 50.f, 0.f);
+	m_vShadowLightPos = _v3(-50.f, 100.f, 0.f);
 
 	D3DVIEWPORT9		ViewPort;
 	m_pGraphic_Dev->GetViewport(&ViewPort);
@@ -43,7 +43,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 		return E_FAIL;
 
 	// Target_Normal
-	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Normal", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.f, 1.f, 0.f, 1.f))))
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Normal", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.f, 1.f, 0.f, 0.f))))
 		return E_FAIL;
 
 	// Target_Depth
@@ -58,7 +58,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_Velocity", ViewPort.Width, ViewPort.Height, D3DFMT_A32B32G32R32F, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
 		return E_FAIL;
 	// Target_NormalForRim
-	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_RimNormal", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.0f, 1.0f, 0.0f, 1.f))))
+	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_SkinShading", ViewPort.Width, ViewPort.Height, D3DFMT_A16B16G16R16F, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
 		return E_FAIL;
 	// Target_BloomPower
 	if (FAILED(m_pTarget_Manager->Add_Render_Target(m_pGraphic_Dev, L"Target_BloomPower", ViewPort.Width, ViewPort.Height, D3DFMT_A8R8G8B8, D3DXCOLOR(0.0f, 0.0f, 0.0f, 0.f))))
@@ -152,7 +152,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Velocity", L"Target_Velocity")))
 		return E_FAIL;
-	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Velocity", L"Target_RimNormal")))
+	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Velocity", L"Target_SkinShading")))
 		return E_FAIL;
 	if (FAILED(m_pTarget_Manager->Add_MRT(L"MRT_Velocity", L"Target_BloomPower")))
 		return E_FAIL;
@@ -304,7 +304,7 @@ HRESULT CRenderer::Ready_Component_Prototype()
 		return E_FAIL;
 
 	// For.Target_RimNormal`s Debug Buffer ==  툰 쉐이딩
-	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_RimNormal", fTargetSize, fTargetSize * 2, fTargetSize, fTargetSize)))
+	if (FAILED(m_pTarget_Manager->Ready_Debug_Buffer(L"Target_SkinShading", fTargetSize, fTargetSize * 2, fTargetSize, fTargetSize)))
 		return E_FAIL;
 
 	//=====================================================================================================================
@@ -373,6 +373,9 @@ HRESULT CRenderer::Ready_Component_Prototype()
 #endif
 
 
+	//m_pmatView = &CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	//m_pmatProj = &CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+
 	return NOERROR;
 }
 
@@ -397,6 +400,7 @@ HRESULT CRenderer::Add_RenderList(RENDERID eGroup, CGameObject * pGameObject)
 
 HRESULT CRenderer::Draw_RenderList()
 {
+
 	// 디퓨즈, 노멀타겟에 필요한 정보를 그려놓느낟.
 	if (FAILED(Render_NonAlpha()))
 		return E_FAIL;
@@ -567,25 +571,25 @@ HRESULT CRenderer::Render_NonAlpha()
 	if (nullptr == m_pTarget_Manager)
 		return E_FAIL;
 
-	// 백버퍼를 뺀다. 
-	// 디퓨즈타겟과 노멀타겟을 장치에 셋한다. == MRT_Deferred를 비긴한다.
-
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Deferred")))
 		return E_FAIL;
 
 	m_pShader_RenderMesh->Begin_Shader();
 
-	_mat matView, matProj;
 	CManagement* pManagement = CManagement::Get_Instance();
 	Safe_AddRef(pManagement);
 
+	_mat matView, matProj;
+
 	matView = pManagement->Get_Transform(D3DTS_VIEW);
 	matProj = pManagement->Get_Transform(D3DTS_PROJECTION);
+
 
 	if (FAILED(m_pShader_RenderMesh->Set_Value("g_matView", &matView, sizeof(_mat))))
 		return E_FAIL;
 	if (FAILED(m_pShader_RenderMesh->Set_Value("g_matProj", &matProj, sizeof(_mat))))
 		return E_FAIL;
+
 	if (FAILED(m_pDissolveTexture->SetUp_OnShader("g_FXTexture", m_pShader_RenderMesh)))
 		return E_FAIL;
 
@@ -598,6 +602,7 @@ HRESULT CRenderer::Render_NonAlpha()
 				Safe_Release(pGameObject);
 				return E_FAIL;
 			}
+
 			Safe_Release(pGameObject);
 		}
 	}
@@ -741,11 +746,20 @@ HRESULT CRenderer::Render_MotionBlurTarget()
 	if (FAILED(m_pTarget_Manager->Begin_MRT(L"MRT_Velocity")))
 		return E_FAIL;
 
+	_mat matView, matProj;
+
+	matView = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	matProj = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+
 	m_pShader_Blur->Begin_Shader();
+
+	if (FAILED(m_pShader_Blur->Set_Value("g_matView", &matView, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(m_pShader_Blur->Set_Value("g_matProj", &matProj, sizeof(_mat))))
+		return E_FAIL;
 
 	for (auto& pGameObject : m_RenderList[RENDER_MOTIONBLURTARGET])
 	{
-
 		if (nullptr != pGameObject)
 		{
 			if (FAILED(pGameObject->Render_GameObject_SetPass(m_pShader_Blur, 0, true)))
@@ -775,6 +789,17 @@ HRESULT CRenderer::Render_Distortion()
 
 	m_pShader_Effect->Begin_Shader();
 
+	_mat matView, matProj;
+
+	matView = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	matProj = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+
+
+	if (FAILED(m_pShader_Effect->Set_Value("g_matView", &matView, sizeof(_mat))))
+		return E_FAIL;
+	if (FAILED(m_pShader_Effect->Set_Value("g_matProj", &matProj, sizeof(_mat))))
+		return E_FAIL;
+
 	for (auto& pGameObject : m_RenderList[RENDER_DISTORTION])
 	{
 		if (nullptr != pGameObject)
@@ -803,13 +828,13 @@ HRESULT CRenderer::Render_Alpha()
 	if (nullptr == m_pTarget_Manager)
 		return E_FAIL;
 
-	_mat matView, matProj;
-	CManagement* pManagement = CManagement::Get_Instance();
-
-	matView = pManagement->Get_Transform(D3DTS_VIEW);
-	matProj = pManagement->Get_Transform(D3DTS_PROJECTION);
-
 	m_pShader_Trail->Begin_Shader();
+
+	_mat matView, matProj;
+
+	matView = CManagement::Get_Instance()->Get_Transform(D3DTS_VIEW);
+	matProj = CManagement::Get_Instance()->Get_Transform(D3DTS_PROJECTION);
+
 
 	if (FAILED(m_pShader_Trail->Set_Value("g_matView", &matView, sizeof(_mat))))
 		return E_FAIL;
@@ -1094,6 +1119,8 @@ HRESULT CRenderer::Render_SSAO()
 		return E_FAIL;
 	if (FAILED(m_pShader_SSAO->Set_Texture("g_NormalTexture", m_pTarget_Manager->Get_Texture(L"Target_Normal"))))
 		return E_FAIL;
+	if (FAILED(m_pShader_SSAO->Set_Texture("g_SkinTexture", m_pTarget_Manager->Get_Texture(L"Target_SkinShading"))))
+		return E_FAIL;
 	//
 
 	CPipeLine*		pPipeLine = CPipeLine::Get_Instance();
@@ -1163,7 +1190,7 @@ HRESULT CRenderer::Render_LightAcc()
 	m_pShader_LightAcc->Set_Texture("g_NormalTexture", m_pTarget_Manager->Get_Texture(L"Target_Normal"));
 	m_pShader_LightAcc->Set_Texture("g_DepthTexture", m_pTarget_Manager->Get_Texture(L"Target_Depth"));
 	m_pShader_LightAcc->Set_Texture("g_ShadowMapTexture", m_pTarget_Manager->Get_Texture(L"Target_Shadow"));
-	m_pShader_LightAcc->Set_Texture("g_RimNormalTexture", m_pTarget_Manager->Get_Texture(L"Target_RimNormal"));
+	m_pShader_LightAcc->Set_Texture("g_RimNormalTexture", m_pTarget_Manager->Get_Texture(L"Target_SkinShading"));
 	
 	m_pShader_LightAcc->Set_Value("g_matProjInv", &pPipeLine->Get_Transform_Inverse(D3DTS_PROJECTION), sizeof(_mat));
 	m_pShader_LightAcc->Set_Value("g_matViewInv", &pPipeLine->Get_Transform_Inverse(D3DTS_VIEW), sizeof(_mat));

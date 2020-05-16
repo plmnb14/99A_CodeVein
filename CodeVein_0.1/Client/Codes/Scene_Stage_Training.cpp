@@ -135,10 +135,10 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	// ÅäÅÛ
-	pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
-		&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
-			true, _v3(-5.f, 0.f, -5.f), V3_NULL, 0));
-	g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Cocoon",
+	//	&CMonster::MONSTER_STATUS(CMonster::MONSTER_COLOR_TYPE::COLOR_NONE, WEAPON_STATE::WEAPON_None,
+	//		true, _v3(-5.f, 0.f, -5.f), V3_NULL, 0));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Monster", nullptr);
 
 	//// ÇåÅÍ
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Monster_Hunter",
@@ -382,7 +382,7 @@ HRESULT CScene_Stage_Training::Ready_LightDesc()
 	NEW_LIGHT		LightDesc;
 	ZeroMemory(&LightDesc, sizeof(NEW_LIGHT));
 
-	_v3 vLightPos = _v3(5.f, -8.f, -5.f);
+	_v3 vLightPos = _v3(50.f, -100.f, 0.f);
 	V3_NORMAL_SELF(&vLightPos);
 
 	LightDesc.Type = D3DLIGHT_DIRECTIONAL;
