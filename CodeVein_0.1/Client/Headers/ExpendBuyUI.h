@@ -2,19 +2,20 @@
 
 #include "Client_Defines.h"
 #include "UI.h"
+#include "Expendables.h"
 
 BEGIN(Client)
 class CBuyOptionUI;
 class CPlayerFontUI;
-class CGeneralStoreBuyUI final : public CUI
+class CExpendBuyUI final : public CUI
 {
 private:
-	explicit CGeneralStoreBuyUI(_Device pDevice);
-	explicit CGeneralStoreBuyUI(const CGeneralStoreBuyUI& rhs);
-	virtual ~CGeneralStoreBuyUI() = default;
+	explicit CExpendBuyUI(_Device pDevice);
+	explicit CExpendBuyUI(const CExpendBuyUI& rhs);
+	virtual ~CExpendBuyUI() = default;
 
 public:
-	void Set_Type(ITEM_ALL_DATA eType) { m_eType = eType; }
+	void Set_Type(CExpendables::EXPEND_TYPE eType) { m_eType = eType; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -30,8 +31,7 @@ private:
 	void	Update_SubUI(_double TimeDelta);
 	void	Click_SubUI();
 	void	SetUp_Cost();
-	void	Buy_Expend_Item();
-	void	Buy_Material_Item();
+	void	Buy_Item();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -46,13 +46,13 @@ private:
 	CBuyOptionUI*			m_pDecisionOption = nullptr; // 구매 결정
 	_uint					m_iBuyCnt = 0; // 구매할 물건 개수
 	CPlayerFontUI*			m_pBuyCntFont = nullptr;
-	ITEM_ALL_DATA			m_eType = ITEM_DATA_END;
+	CExpendables::EXPEND_TYPE			m_eType = CExpendables::EXPEND_END;
 	_uint					m_iCost = 0;	// 물건 개당 가격
 	_float					m_fAlpha = 0.f;
 
 public:
-	static CGeneralStoreBuyUI*	Create(_Device pGraphic_Device);
-	virtual CGameObject*		Clone_GameObject(void* pArg);
-	virtual void				Free();
+	static CExpendBuyUI*	Create(_Device pGraphic_Device);
+	virtual CGameObject*	Clone_GameObject(void* pArg);
+	virtual void			Free();
 };
 END

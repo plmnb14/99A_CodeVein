@@ -95,7 +95,8 @@
 #include "ExpendOptionUI.h"
 #include "Expend_InfoUI.h"
 
-#include "GeneralStoreBuyUI.h"
+#include "ExpendBuyUI.h"
+#include "MaterialBuyUI.h"
 #include "BuyOptionUI.h"
 
 BEGIN(Client)

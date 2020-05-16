@@ -112,7 +112,7 @@ _int CWeapon_Slot::Update_GameObject(_double TimeDelta)
 		m_iIndex = 23;
 		break;
 	default:
-		m_iIndex = 3;
+		m_iIndex = 0;
 		break;
 	}
 

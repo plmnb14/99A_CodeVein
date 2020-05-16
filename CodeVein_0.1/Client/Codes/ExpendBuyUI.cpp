@@ -1,24 +1,24 @@
 #include "stdafx.h"
-#include "..\Headers\GeneralStoreBuyUI.h"
+#include "..\Headers\ExpendBuyUI.h"
 #include "UI_Manager.h"
 
-CGeneralStoreBuyUI::CGeneralStoreBuyUI(_Device pDevice)
+CExpendBuyUI::CExpendBuyUI(_Device pDevice)
 	: CUI(pDevice)
 {
 }
 
-CGeneralStoreBuyUI::CGeneralStoreBuyUI(const CGeneralStoreBuyUI & rhs)
+CExpendBuyUI::CExpendBuyUI(const CExpendBuyUI & rhs)
 	: CUI(rhs)
 {
 }
 
-HRESULT CGeneralStoreBuyUI::Ready_GameObject_Prototype()
+HRESULT CExpendBuyUI::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
 	return NOERROR;
 }
 
-HRESULT CGeneralStoreBuyUI::Ready_GameObject(void * pArg)
+HRESULT CExpendBuyUI::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
@@ -29,7 +29,7 @@ HRESULT CGeneralStoreBuyUI::Ready_GameObject(void * pArg)
 	return NOERROR;
 }
 
-_int CGeneralStoreBuyUI::Update_GameObject(_double TimeDelta)
+_int CExpendBuyUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
@@ -44,7 +44,7 @@ _int CGeneralStoreBuyUI::Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-_int CGeneralStoreBuyUI::Late_Update_GameObject(_double TimeDelta)
+_int CExpendBuyUI::Late_Update_GameObject(_double TimeDelta)
 {
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
@@ -58,7 +58,7 @@ _int CGeneralStoreBuyUI::Late_Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-HRESULT CGeneralStoreBuyUI::Render_GameObject()
+HRESULT CExpendBuyUI::Render_GameObject()
 {
 	if (!m_bIsActive && m_fAlpha <= 0.f)
 		return NOERROR;
@@ -82,7 +82,7 @@ HRESULT CGeneralStoreBuyUI::Render_GameObject()
 	return NOERROR;
 }
 
-HRESULT CGeneralStoreBuyUI::Add_Component()
+HRESULT CExpendBuyUI::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -107,7 +107,7 @@ HRESULT CGeneralStoreBuyUI::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CGeneralStoreBuyUI::SetUp_ConstantTable(_uint iIndex)
+HRESULT CExpendBuyUI::SetUp_ConstantTable(_uint iIndex)
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -126,7 +126,7 @@ HRESULT CGeneralStoreBuyUI::SetUp_ConstantTable(_uint iIndex)
 	return NOERROR;
 }
 
-void CGeneralStoreBuyUI::SetUp_Default()
+void CExpendBuyUI::SetUp_Default()
 {
 	m_iIndex = 0;
 
@@ -163,7 +163,7 @@ void CGeneralStoreBuyUI::SetUp_Default()
 	m_pBuyCntFont->Set_ViewZ(m_fViewZ - 0.1f);
 }
 
-void CGeneralStoreBuyUI::Update_SubUI(_double TimeDelta)
+void CExpendBuyUI::Update_SubUI(_double TimeDelta)
 {
 	m_pCntMinusOption->Set_Active(m_bIsActive);
 	m_pCntPlusOption->Set_Active(m_bIsActive);
@@ -176,9 +176,14 @@ void CGeneralStoreBuyUI::Update_SubUI(_double TimeDelta)
 		m_fAlpha += _float(TimeDelta) * 1.2f;
 	if (!m_bIsActive && m_fAlpha > 0.f)
 		m_fAlpha -= _float(TimeDelta) * 1.2f;
+
+	if (!m_bIsActive)
+	{
+		m_iBuyCnt = 0;
+	}
 }
 
-void CGeneralStoreBuyUI::Click_SubUI()
+void CExpendBuyUI::Click_SubUI()
 {
 	if (!m_bIsActive)
 		return;
@@ -197,79 +202,50 @@ void CGeneralStoreBuyUI::Click_SubUI()
 	else if (m_pDecisionOption->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
 		// 아이템 타입 없음
-		if (m_eType == ITEM_ALL_DATA::ITEM_DATA_END)
+		if (m_eType == CExpendables::EXPEND_END)
 			return;
-
-		// 아이템 타입 소비
-		if (m_eType < ITEM_ALL_DATA(6))
-		{
-			Buy_Expend_Item();
-			
-		}
-		// 아이템 타입 재료
-		else if(m_eType >= 6)
-		{
-			Buy_Material_Item();
-			
-		}
+		Buy_Item();		
 	}
 }
 
-void CGeneralStoreBuyUI::SetUp_Cost()
+void CExpendBuyUI::SetUp_Cost()
 {
 	switch (m_eType)
 	{
-		case ITEM_EXPEND_HPMAXUP:
-		{
-			m_iCost = 100;
-		}
-			break;
-		case ITEM_EXPEND_HP:
-		{
-			m_iCost = 30;
-		}
-			break;
-		case ITEM_EXPEND_RETURNER:
-		{
-			m_iCost = 200;
-		}
-			break;
-		case ITEM_EXPEND_BLOOD:
-		{
-			m_iCost = 40;
-		}
-			break;
-		case ITEM_EXPEND_CHEET:
-		{
-			m_iCost = 50;
-		}
-			break;
-		case ITEM_EXPEND_SUPERARMER:
-		{
-			m_iCost = 80;
-		}
-			break;
-		case ITEM_MTRL_QUEENSTEEL:
-		{
-			m_iCost = 50;
-		}
-			break;
-		case ITEM_MTRL_QUEENTITAN:
-		{
-			m_iCost = 60;
-		}
-			break;
-		case ITEM_MTRL_QUEENTUNGSTEN:
-		{
-			m_iCost = 80;
-		}
-			break;
-		case ITEM_DATA_END:
-			break;
+	case CExpendables::Expend_MaximumUp:
+	{
+		m_iCost = 50;
+	}
+		break;
+	case CExpendables::Expend_Hp:
+	{
+		m_iCost = 30;
+	}
+		break;
+	case CExpendables::Expend_Return:
+	{
+		m_iCost = 100;
+	}
+		break;
+	case CExpendables::Expend_Blood:
+	{
+		m_iCost = 40;
+	}
+		break;
+	case CExpendables::Expend_Cheet:
+	{
+		m_iCost = 80;
+	}
+		break;
+	case CExpendables::Expend_SuperArmor:
+	{
+		m_iCost = 200;
+	}
+		break;
 	}
 }
 
-void CGeneralStoreBuyUI::Buy_Expend_Item()
+void CExpendBuyUI::Buy_Item()
 {
 	SetUp_Cost();
 
@@ -281,7 +257,7 @@ void CGeneralStoreBuyUI::Buy_Expend_Item()
 	if (iHazeCnt >= iTotalCost)
 	{
 		// 구매해서 소비 인벤에 넣는다.
-		CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Add_MultiExpendables(CExpendables::EXPEND_TYPE(m_eType), m_iBuyCnt);
+		CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Add_MultiExpendables(m_eType, m_iBuyCnt);
 		// 헤이즈를 탕진한 만큼 감소시킨다
 		CUI_Manager::Get_Instance()->Get_HazeUI()->Accumulate_Haze(-(_int)iTotalCost);
 
@@ -291,40 +267,16 @@ void CGeneralStoreBuyUI::Buy_Expend_Item()
 	else
 	{
 		cout << "비용 부족!" << endl;
-		return;
-	}
-}
-
-void CGeneralStoreBuyUI::Buy_Material_Item()
-{
-	SetUp_Cost();
-
-	_uint iTotalCost = m_iCost * m_iBuyCnt; // 총 비용 = 개당 가격 * 사는 개수
-
-	_ulong iHazeCnt = CUI_Manager::Get_Instance()->Get_HazeUI()->Get_Haze_Cnt();
-
-	// 가지고 있는 헤이즈가 구매 총 비용 이상일 경우 -> 돈 충분함 -> 구매한다.
-	if (iHazeCnt >= iTotalCost)
-	{
-		// 구매해서 소비 인벤에 넣는다.
-		CUI_Manager::Get_Instance()->Get_Material_Inven()->Add_MultiMaterial(CMaterial::MATERIAL_TYPE(m_eType - 6), m_iBuyCnt);
-		// 헤이즈를 탕진한 만큼 감소시킨다
-		CUI_Manager::Get_Instance()->Get_HazeUI()->Accumulate_Haze(-(_int)iTotalCost);
-
 		m_bIsActive = false;
-	}
-	// 가지고 있는 헤이즈보다 구매 총 비용이 더 클 경우 -> 돈 부족함 -> 구매X
-	else
-	{
-		cout << "비용 부족!" << endl;
 		return;
 	}
 }
 
 
-CGeneralStoreBuyUI * CGeneralStoreBuyUI::Create(_Device pGraphic_Device)
+
+CExpendBuyUI * CExpendBuyUI::Create(_Device pGraphic_Device)
 {
-	CGeneralStoreBuyUI* pInstance = new CGeneralStoreBuyUI(pGraphic_Device);
+	CExpendBuyUI* pInstance = new CExpendBuyUI(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 		Safe_Release(pInstance);
@@ -332,9 +284,9 @@ CGeneralStoreBuyUI * CGeneralStoreBuyUI::Create(_Device pGraphic_Device)
 	return pInstance;
 }
 
-CGameObject * CGeneralStoreBuyUI::Clone_GameObject(void * pArg)
+CGameObject * CExpendBuyUI::Clone_GameObject(void * pArg)
 {
-	CGeneralStoreBuyUI* pInstance = new CGeneralStoreBuyUI(*this);
+	CExpendBuyUI* pInstance = new CExpendBuyUI(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 		Safe_Release(pInstance);
@@ -342,7 +294,7 @@ CGameObject * CGeneralStoreBuyUI::Clone_GameObject(void * pArg)
 	return pInstance;
 }
 
-void CGeneralStoreBuyUI::Free()
+void CExpendBuyUI::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);
