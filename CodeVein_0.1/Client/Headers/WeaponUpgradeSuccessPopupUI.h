@@ -50,6 +50,7 @@ private:
 	void	Check_LateInit();
 	void	Check_ItemOption();
 	void	Check_Option();
+	void	Check_ItemIcon();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -67,6 +68,7 @@ private:
 	_bool								m_bLateInit = false;
 	_int								m_iTexIdx = 0;
 	_float								m_fAlpha = 0.f;
+	_float								m_fStartDelay = 0.f;
 	_bool								m_bFadeStart = false;
 public:
 	static CWeaponUpgradeSuccessPopupUI*	Create(_Device pGraphic_Device);

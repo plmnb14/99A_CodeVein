@@ -541,6 +541,18 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopItemIcon">
       <UniqueIdentifier>{348a2642-8d5b-474a-9535-b1311577cd9a}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgrading">
+      <UniqueIdentifier>{c4695622-8275-4908-84b1-4808088b4b1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgrading\WeaponUpgradingPopup">
+      <UniqueIdentifier>{8591d729-cb9d-4b5e-89a9-8895765325a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgrading\WeaponUpgradingEff">
+      <UniqueIdentifier>{d618a869-2089-4421-bc39-63cbc0802403}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\19.NPC_InteractionUI">
+      <UniqueIdentifier>{2daaaef8-fa47-4495-9b69-26032a063b5f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1152,6 +1164,15 @@
     <ClInclude Include="..\Headers\ShopItemIcon.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopItemIcon</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\WeaponUpgradingPopup.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgrading\WeaponUpgradingPopup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\WeaponUpgradingEff.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgrading\WeaponUpgradingEff</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\NPC_InteractionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\19.NPC_InteractionUI</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1747,6 +1768,15 @@
     </ClCompile>
     <ClCompile Include="..\Codes\ShopItemIcon.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopItemIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\WeaponUpgradingPopup.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgrading\WeaponUpgradingPopup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\WeaponUpgradingEff.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgrading\WeaponUpgradingEff</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\NPC_InteractionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\19.NPC_InteractionUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

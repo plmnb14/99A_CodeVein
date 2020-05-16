@@ -297,7 +297,7 @@ void CWeaponBuyUI::SetUp_Default()
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontHP, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	m_pShopItemIcon = static_cast<CShopItemIcon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ShopItemIcon", nullptr));
-	m_pShopItemIcon->Set_UI_Pos(WINCX * 0.385, WINCY * 0.10f);
+	m_pShopItemIcon->Set_UI_Pos(WINCX * 0.385f, WINCY * 0.10f);
 	m_pShopItemIcon->Set_UI_Size(100.f, 100.f);
 	m_pShopItemIcon->Set_ViewZ(m_fViewZ - 0.05f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pShopItemIcon, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);

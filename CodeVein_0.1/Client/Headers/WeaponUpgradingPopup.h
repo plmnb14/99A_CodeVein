@@ -5,7 +5,9 @@
 #include "Material.h"
 
 BEGIN(Client)
-class CPlayerFontUI;
+class CWeapon_Inven_InShop;
+class CShopItemIcon;
+class CWeaponUpgradingEff;
 class CWeaponUpgradingPopup final : public CUI
 {
 public:
@@ -24,6 +26,7 @@ private:
 public:
 	void	Set_Active(_bool bIsActive);
 	void	Set_PopupType(POPUP_TYPE eType);
+	void	Set_Inven(CWeapon_Inven_InShop* pInven) { m_pInven = pInven; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -38,6 +41,8 @@ private:
 	void	Change_Texture(const _tchar* _Name);
 	void	SetUp_Default();
 
+	void	Check_ItemIcon();
+
 private:
 	CTransform*			m_pTransformCom = nullptr;
 	CRenderer*			m_pRendererCom = nullptr;
@@ -46,13 +51,21 @@ private:
 	CBuffer_RcTex*		m_pBufferCom = nullptr;
 
 private:
+	CWeaponUpgradingEff*	m_pUpgradingEff = nullptr;
+	CShopItemIcon*			m_pShopItemIcon = nullptr;
+	CWeapon_Inven_InShop*	m_pInven = nullptr;
+
 	POPUP_TYPE			m_ePopupType = POPUP_END;
 	_bool				m_bLateInit = false;
 	_int				m_iTexIdx = 0;
+	_int				m_iEffFadeCnt = 0;
 	_float				m_fAlpha = 0.f;
+	_float				m_fEffAlpha = 0.f;
 	_float				m_fFadeDelay = 0.f;
 	_bool				m_bFadeInStart = false;
 	_bool				m_bFadeOutStart = true;
+	_bool				m_bEffFadeToggle = true;
+	_bool				m_bEffParticle = false;
 
 public:
 	static CWeaponUpgradingPopup*	Create(_Device pGraphic_Device);

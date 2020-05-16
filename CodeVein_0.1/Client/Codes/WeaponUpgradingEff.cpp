@@ -1,54 +1,38 @@
 #include "stdafx.h"
-#include "..\Headers\ShopItemIcon.h"
+#include "..\Headers\WeaponUpgradingEff.h"
 #include "UI_Manager.h"
 #include "Total_Inven.h"
 
-CShopItemIcon::CShopItemIcon(_Device pDevice)
+CWeaponUpgradingEff::CWeaponUpgradingEff(_Device pDevice)
 	: CUI(pDevice)
 {
 }
 
-CShopItemIcon::CShopItemIcon(const CShopItemIcon & rhs)
+CWeaponUpgradingEff::CWeaponUpgradingEff(const CWeaponUpgradingEff & rhs)
 	: CUI(rhs)
 {
 }
 
-void CShopItemIcon::Set_Active(_bool bIsActive)
-{
-	m_bIsActive = bIsActive;
-}
-
-void CShopItemIcon::Set_Alpha(_float fAlpha)
+void CWeaponUpgradingEff::Set_Alpha(_float fAlpha)
 {
 	m_fAlpha = fAlpha;
 }
 
-void CShopItemIcon::Set_WeaponDescType(WEAPON_ALL_DATA eType)
+void CWeaponUpgradingEff::Set_Active(_bool bIsActive)
 {
-	m_eWeaponDesc = eType;
+	m_bIsActive = bIsActive;
 
-	m_iTexIdx = m_eWeaponDesc;
-
-	Change_Texture(L"Tex_WeaponIcon");
+	m_fAlpha = 0.f;
 }
 
-void CShopItemIcon::Set_ArmorDescType(ARMOR_All_DATA eType)
-{
-	m_eArmorDesc = eType;
-
-	m_iTexIdx = m_eArmorDesc;
-
-	Change_Texture(L"Tex_WeaponIcon"); // test
-}
-
-HRESULT CShopItemIcon::Ready_GameObject_Prototype()
+HRESULT CWeaponUpgradingEff::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
 
 	return NOERROR;
 }
 
-HRESULT CShopItemIcon::Ready_GameObject(void * pArg)
+HRESULT CWeaponUpgradingEff::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
@@ -56,24 +40,27 @@ HRESULT CShopItemIcon::Ready_GameObject(void * pArg)
 
 	m_fPosX = WINCX * 0.5f;
 	m_fPosY = WINCY * 0.5f;
-	m_fSizeX = 100.f;
-	m_fSizeY = 100.f;
+	m_fSizeX = 1024.f;
+	m_fSizeY = 512.f;
 
 	m_bIsActive = false;
 	
-	m_iTexIdx = 0;
+	m_iTexIdx = 13;
 
 	SetUp_Default();
 
 	return NOERROR;
 }
 
-_int CShopItemIcon::Update_GameObject(_double TimeDelta)
+_int CWeaponUpgradingEff::Update_GameObject(_double TimeDelta)
 {
 	if (!m_bIsActive)
 		return S_OK;
 
 	CUI::Update_GameObject(TimeDelta);
+
+	m_fSizeX = 1024.f;
+	m_fSizeY = 512.f;
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
@@ -81,7 +68,7 @@ _int CShopItemIcon::Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-_int CShopItemIcon::Late_Update_GameObject(_double TimeDelta)
+_int CWeaponUpgradingEff::Late_Update_GameObject(_double TimeDelta)
 {
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
@@ -95,7 +82,7 @@ _int CShopItemIcon::Late_Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-HRESULT CShopItemIcon::Render_GameObject()
+HRESULT CWeaponUpgradingEff::Render_GameObject()
 {
 	if (!m_bIsActive)
 		return NOERROR;
@@ -113,7 +100,7 @@ HRESULT CShopItemIcon::Render_GameObject()
 
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(1);
+	m_pShaderCom->Begin_Pass(5);
 
 	m_pBufferCom->Render_VIBuffer();
 
@@ -125,7 +112,7 @@ HRESULT CShopItemIcon::Render_GameObject()
 }
 
 
-HRESULT CShopItemIcon::Add_Component()
+HRESULT CWeaponUpgradingEff::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -136,7 +123,7 @@ HRESULT CShopItemIcon::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_WeaponIcon", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_WeaponShop_Upgrade_UI", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -150,7 +137,7 @@ HRESULT CShopItemIcon::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CShopItemIcon::SetUp_ConstantTable()
+HRESULT CWeaponUpgradingEff::SetUp_ConstantTable()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -170,7 +157,7 @@ HRESULT CShopItemIcon::SetUp_ConstantTable()
 	return NOERROR;
 }
 
-void CShopItemIcon::Change_Texture(const _tchar * _Name)
+void CWeaponUpgradingEff::Change_Texture(const _tchar * _Name)
 {
 	auto& iter = m_pmapComponents.find(L"Com_Texture");
 
@@ -181,14 +168,14 @@ void CShopItemIcon::Change_Texture(const _tchar * _Name)
 	Safe_AddRef(iter->second);
 }
 
-void CShopItemIcon::SetUp_Default()
+void CWeaponUpgradingEff::SetUp_Default()
 {
 
 }
 
-CShopItemIcon * CShopItemIcon::Create(_Device pGraphic_Device)
+CWeaponUpgradingEff * CWeaponUpgradingEff::Create(_Device pGraphic_Device)
 {
-	CShopItemIcon* pInstance = new CShopItemIcon(pGraphic_Device);
+	CWeaponUpgradingEff* pInstance = new CWeaponUpgradingEff(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 		Safe_Release(pInstance);
@@ -196,9 +183,9 @@ CShopItemIcon * CShopItemIcon::Create(_Device pGraphic_Device)
 	return pInstance;
 }
 
-CGameObject * CShopItemIcon::Clone_GameObject(void * pArg)
+CGameObject * CWeaponUpgradingEff::Clone_GameObject(void * pArg)
 {
-	CShopItemIcon* pInstance = new CShopItemIcon(*this);
+	CWeaponUpgradingEff* pInstance = new CWeaponUpgradingEff(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 		Safe_Release(pInstance);
@@ -206,7 +193,7 @@ CGameObject * CShopItemIcon::Clone_GameObject(void * pArg)
 	return pInstance;
 }
 
-void CShopItemIcon::Free()
+void CWeaponUpgradingEff::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);

@@ -1,63 +1,47 @@
 #include "stdafx.h"
-#include "..\Headers\ShopItemIcon.h"
+#include "..\Headers\NPC_InteractionUI.h"
 #include "UI_Manager.h"
-#include "Total_Inven.h"
 
-CShopItemIcon::CShopItemIcon(_Device pDevice)
+CNPC_InteractionUI::CNPC_InteractionUI(_Device pDevice)
 	: CUI(pDevice)
 {
 }
 
-CShopItemIcon::CShopItemIcon(const CShopItemIcon & rhs)
+CNPC_InteractionUI::CNPC_InteractionUI(const CNPC_InteractionUI & rhs)
 	: CUI(rhs)
 {
 }
 
-void CShopItemIcon::Set_Active(_bool bIsActive)
-{
-	m_bIsActive = bIsActive;
-}
-
-void CShopItemIcon::Set_Alpha(_float fAlpha)
+void CNPC_InteractionUI::Set_Alpha(_float fAlpha)
 {
 	m_fAlpha = fAlpha;
 }
 
-void CShopItemIcon::Set_WeaponDescType(WEAPON_ALL_DATA eType)
+void CNPC_InteractionUI::Set_Active(_bool bIsActive)
 {
-	m_eWeaponDesc = eType;
+	m_bIsActive = bIsActive;
 
-	m_iTexIdx = m_eWeaponDesc;
-
-	Change_Texture(L"Tex_WeaponIcon");
+	m_bInteraction = false;
+	m_fAlpha = 1.f;
 }
 
-void CShopItemIcon::Set_ArmorDescType(ARMOR_All_DATA eType)
-{
-	m_eArmorDesc = eType;
-
-	m_iTexIdx = m_eArmorDesc;
-
-	Change_Texture(L"Tex_WeaponIcon"); // test
-}
-
-HRESULT CShopItemIcon::Ready_GameObject_Prototype()
+HRESULT CNPC_InteractionUI::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
 
 	return NOERROR;
 }
 
-HRESULT CShopItemIcon::Ready_GameObject(void * pArg)
+HRESULT CNPC_InteractionUI::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
 	CUI::Ready_GameObject(pArg);
 
 	m_fPosX = WINCX * 0.5f;
-	m_fPosY = WINCY * 0.5f;
-	m_fSizeX = 100.f;
-	m_fSizeY = 100.f;
+	m_fPosY = WINCY - 100.f; // WINCY * 0.5f;
+	m_fSizeX = 269.f;
+	m_fSizeY = 82.f;
 
 	m_bIsActive = false;
 	
@@ -68,12 +52,20 @@ HRESULT CShopItemIcon::Ready_GameObject(void * pArg)
 	return NOERROR;
 }
 
-_int CShopItemIcon::Update_GameObject(_double TimeDelta)
+_int CNPC_InteractionUI::Update_GameObject(_double TimeDelta)
 {
 	if (!m_bIsActive)
 		return S_OK;
 
+	m_fPosX = WINCX * 0.5f;
+	m_fPosY = WINCY * 0.8f;
+
 	CUI::Update_GameObject(TimeDelta);
+
+	if (m_bInteraction)
+		m_iTexIdx = 1;
+	else
+		m_iTexIdx = 0;
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
@@ -81,7 +73,7 @@ _int CShopItemIcon::Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-_int CShopItemIcon::Late_Update_GameObject(_double TimeDelta)
+_int CNPC_InteractionUI::Late_Update_GameObject(_double TimeDelta)
 {
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
@@ -95,7 +87,7 @@ _int CShopItemIcon::Late_Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-HRESULT CShopItemIcon::Render_GameObject()
+HRESULT CNPC_InteractionUI::Render_GameObject()
 {
 	if (!m_bIsActive)
 		return NOERROR;
@@ -113,7 +105,7 @@ HRESULT CShopItemIcon::Render_GameObject()
 
 	m_pShaderCom->Begin_Shader();
 
-	m_pShaderCom->Begin_Pass(1);
+	m_pShaderCom->Begin_Pass(5);
 
 	m_pBufferCom->Render_VIBuffer();
 
@@ -125,7 +117,7 @@ HRESULT CShopItemIcon::Render_GameObject()
 }
 
 
-HRESULT CShopItemIcon::Add_Component()
+HRESULT CNPC_InteractionUI::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -136,7 +128,7 @@ HRESULT CShopItemIcon::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_WeaponIcon", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_NPC_InteractionButton", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -150,7 +142,7 @@ HRESULT CShopItemIcon::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CShopItemIcon::SetUp_ConstantTable()
+HRESULT CNPC_InteractionUI::SetUp_ConstantTable()
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -170,7 +162,7 @@ HRESULT CShopItemIcon::SetUp_ConstantTable()
 	return NOERROR;
 }
 
-void CShopItemIcon::Change_Texture(const _tchar * _Name)
+void CNPC_InteractionUI::Change_Texture(const _tchar * _Name)
 {
 	auto& iter = m_pmapComponents.find(L"Com_Texture");
 
@@ -181,14 +173,14 @@ void CShopItemIcon::Change_Texture(const _tchar * _Name)
 	Safe_AddRef(iter->second);
 }
 
-void CShopItemIcon::SetUp_Default()
+void CNPC_InteractionUI::SetUp_Default()
 {
 
 }
 
-CShopItemIcon * CShopItemIcon::Create(_Device pGraphic_Device)
+CNPC_InteractionUI * CNPC_InteractionUI::Create(_Device pGraphic_Device)
 {
-	CShopItemIcon* pInstance = new CShopItemIcon(pGraphic_Device);
+	CNPC_InteractionUI* pInstance = new CNPC_InteractionUI(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 		Safe_Release(pInstance);
@@ -196,9 +188,9 @@ CShopItemIcon * CShopItemIcon::Create(_Device pGraphic_Device)
 	return pInstance;
 }
 
-CGameObject * CShopItemIcon::Clone_GameObject(void * pArg)
+CGameObject * CNPC_InteractionUI::Clone_GameObject(void * pArg)
 {
-	CShopItemIcon* pInstance = new CShopItemIcon(*this);
+	CNPC_InteractionUI* pInstance = new CNPC_InteractionUI(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 		Safe_Release(pInstance);
@@ -206,7 +198,7 @@ CGameObject * CShopItemIcon::Clone_GameObject(void * pArg)
 	return pInstance;
 }
 
-void CShopItemIcon::Free()
+void CNPC_InteractionUI::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);

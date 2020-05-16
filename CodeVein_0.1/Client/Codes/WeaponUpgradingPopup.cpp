@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\WeaponUpgradingPopup.h"
 #include "UI_Manager.h"
-#include "Total_Inven.h"
+#include "OrthoEffect.h"
 
 CWeaponUpgradingPopup::CWeaponUpgradingPopup(_Device pDevice)
 	: CUI(pDevice)
@@ -18,7 +18,13 @@ void CWeaponUpgradingPopup::Set_Active(_bool bIsActive)
 	m_bIsActive = bIsActive;
 
 	m_fAlpha = 0.f;
+	m_fEffAlpha = 0.f;
 	m_fFadeDelay = 0.f;
+	m_iEffFadeCnt = 0;
+	m_bEffFadeToggle = false;
+
+	m_pUpgradingEff->Set_Active(m_bIsActive);
+	m_pShopItemIcon->Set_Active(m_bIsActive);
 
 	if (bIsActive)
 		m_bFadeInStart = true;
@@ -27,16 +33,6 @@ void CWeaponUpgradingPopup::Set_Active(_bool bIsActive)
 void CWeaponUpgradingPopup::Set_PopupType(POPUP_TYPE eType)
 {
 	m_ePopupType = eType;
-
-	switch (m_ePopupType)
-	{
-	case Client::CWeaponUpgradingPopup::POPUP_BUY:
-		m_iTexIdx = 21;
-		break;
-	case Client::CWeaponUpgradingPopup::POPUP_UPGRADE:
-		m_iTexIdx = 22;
-		break;
-	}
 }
 
 HRESULT CWeaponUpgradingPopup::Ready_GameObject_Prototype()
@@ -59,7 +55,7 @@ HRESULT CWeaponUpgradingPopup::Ready_GameObject(void * pArg)
 
 	m_bIsActive = false;
 	
-	m_iTexIdx = 0;
+	m_iTexIdx = 12;
 
 	SetUp_Default();
 
@@ -73,14 +69,20 @@ _int CWeaponUpgradingPopup::Update_GameObject(_double TimeDelta)
 
 	CUI::Update_GameObject(TimeDelta);
 
-	m_fSizeX = 1024.f;
-	m_fSizeY = 512.f;
+	m_pShopItemIcon->Set_UI_Pos(WINCX * 0.5f, WINCY * 0.48f);
 
-	SetUp_Default();
+	m_pShopItemIcon->Set_Alpha(m_fAlpha);
+	m_pShopItemIcon->Set_ViewZ(m_fViewZ - 0.1f);
+	m_pUpgradingEff->Set_Alpha(m_fEffAlpha);
+	m_pUpgradingEff->Set_ViewZ(m_fViewZ - 0.1f);
+
+	Check_ItemIcon();
 
 	if (m_bFadeInStart)
 	{
 		m_fAlpha += _float(TimeDelta) * 6.f;
+		m_pUpgradingEff->Set_Alpha(0.f);
+
 		if (m_fAlpha >= 1.f)
 		{
 			m_bFadeInStart = false;
@@ -92,12 +94,86 @@ _int CWeaponUpgradingPopup::Update_GameObject(_double TimeDelta)
 	{
 		m_fFadeDelay += _float(TimeDelta);
 
-		if (m_fFadeDelay > 0.5f)
-			m_fAlpha += _float(TimeDelta) * -1.3f;
-
-		if (m_fAlpha <= 0.f)
+		if (m_fFadeDelay > 4.2f)
+		{
 			m_bFadeOutStart = false;
+			Set_Active(false);
+		}
 	}
+
+	if (6 > m_iEffFadeCnt)
+	{
+		_float fFadeSpeed = 1.1f;
+		if (!m_bEffFadeToggle)
+			m_fEffAlpha += _float(TimeDelta) * fFadeSpeed;
+		else
+			m_fEffAlpha += _float(TimeDelta) * -fFadeSpeed;
+
+		if ((!m_bEffFadeToggle && m_fEffAlpha >= 0.5f) ||
+			(m_bEffFadeToggle && m_fEffAlpha <= 0.f))
+		{
+			m_iEffFadeCnt += 1;
+			m_bEffFadeToggle = !m_bEffFadeToggle;
+
+			if (5 == m_iEffFadeCnt)
+			{
+				g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+				g_pSoundManager->Play_Sound(L"UI_Upgrading_End.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+			}
+		}
+
+		if (!m_bEffParticle && m_fEffAlpha > 0.4f)
+		{
+			m_bEffParticle = true;
+
+			g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_02);
+			g_pSoundManager->Play_Sound(L"UI_Upgrading.wav", CSoundManager::UI_SFX_02, CSoundManager::Effect_Sound);
+
+			for (_int i = 0; i < 10; i++)
+			{
+				COrthoEffect* pEff0 = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_EffectReturn(L"Ortho_UpgradeParticle_0"));
+				COrthoEffect* pEff1 = static_cast<COrthoEffect*>(CParticleMgr::Get_Instance()->Create_EffectReturn(L"Ortho_UpgradeParticle_1"));
+				pEff0->Set_UI_Layer();
+				pEff0->Set_ViewZ(m_fViewZ - 0.1f);
+				pEff1->Set_UI_Layer();
+				pEff1->Set_ViewZ(m_fViewZ - 0.1f);
+			}
+		}
+
+		if (m_fEffAlpha < 0.1f)
+			m_bEffParticle = false;
+
+	}
+	else if (6 <= m_iEffFadeCnt)
+	{
+		switch (m_ePopupType)
+		{
+		case Client::CWeaponUpgradingPopup::POPUP_SUCCESS:
+		{
+			m_fEffAlpha += _float(TimeDelta) * 1.f;
+			break;
+		}
+		case Client::CWeaponUpgradingPopup::POPUP_FAILED:
+		{
+			if(m_fEffAlpha >= 0.6f)
+				m_iEffFadeCnt += 1;
+
+			if (m_iEffFadeCnt > 6)
+			{
+				m_fEffAlpha -= _float(TimeDelta) * 2.5f;
+			}
+			else if(m_iEffFadeCnt == 6)
+			{
+				m_fEffAlpha += _float(TimeDelta) * 1.f;
+			}
+
+			break;
+		}
+		}
+	}
+
+	if (m_fEffAlpha >= 1.f)
+		m_fEffAlpha = 1.f;
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
@@ -160,7 +236,7 @@ HRESULT CWeaponUpgradingPopup::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_Weapon_Buy_UI", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Tex_WeaponShop_Upgrade_UI", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -207,7 +283,26 @@ void CWeaponUpgradingPopup::Change_Texture(const _tchar * _Name)
 
 void CWeaponUpgradingPopup::SetUp_Default()
 {
+	m_pShopItemIcon = static_cast<CShopItemIcon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ShopItemIcon", nullptr));
+	m_pShopItemIcon->Set_UI_Pos(WINCX * 0.5f, WINCY * 0.4f);
+	m_pShopItemIcon->Set_UI_Size(65.f, 65.f);
+	m_pShopItemIcon->Set_ViewZ(m_fViewZ - 0.1f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pShopItemIcon, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
+	m_pUpgradingEff = static_cast<CWeaponUpgradingEff*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon_UpgradingEff", nullptr));
+	m_pUpgradingEff->Set_ViewZ(m_fViewZ - 0.1f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pUpgradingEff, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+}
+
+void CWeaponUpgradingPopup::Check_ItemIcon()
+{
+	CWeapon_Slot* pWeaponSlot = m_pInven->Get_SelectedSlot_Weapon();
+	if (pWeaponSlot)
+		m_pShopItemIcon->Set_WeaponDescType((WEAPON_ALL_DATA)pWeaponSlot->Get_WeaponParam().iWeaponName_InShop);
+
+	CArmor_Slot* pArmorSlot = m_pInven->Get_SelectedSlot_Armor();
+	if (pArmorSlot)
+		m_pShopItemIcon->Set_ArmorDescType((ARMOR_All_DATA)pArmorSlot->Get_ArmorParam().iArmorName);
 }
 
 CWeaponUpgradingPopup * CWeaponUpgradingPopup::Create(_Device pGraphic_Device)

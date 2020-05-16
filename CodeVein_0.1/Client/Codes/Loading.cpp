@@ -1159,6 +1159,11 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_BossDead_Text", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_BossDead_Text.dat")))))
 		return E_FAIL;
 
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_UpgradeParticle_0", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_UpgradeParticle_0.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_UpgradeParticle_1", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_UpgradeParticle_1.dat")))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -1325,9 +1330,9 @@ _uint CLoading::Loading_Title()
 	//============================================================================================================
 	// 플레이어 스킬, 보스 이펙트 포함
 	//============================================================================================================
-	cout << "Particle Etc 불러오는 중 . . ." << endl;
-	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
-		return E_FAIL;
+	//cout << "Particle Etc 불러오는 중 . . ." << endl;
+	//if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
+	//	return E_FAIL;
 	//============================================================================================================
 	// UI 원형 생성
 	//============================================================================================================
@@ -1392,7 +1397,8 @@ _uint CLoading::Loading_Title()
 	cout << (g_bReleaseMode ? "true" : "false") << endl;
 	cout << "-------------------------------------------------------------------------------" << endl;
 
-	//g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
+	g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
+	g_pSoundManager->Play_Sound(L"UI_UpgradeSuccess.wav", CSoundManager::Effect_SFX_01, CSoundManager::Effect_Sound);
 	//g_pSoundManager->Play_Sound(L"Title_Intro_02.wav", CSoundManager::Background_01, CSoundManager::Master_Sound);
 	//g_pSoundManager->Play_Sound(L"Gwan_Cchak.wav", CSoundManager::Background_01, CSoundManager::BGM_Sound);
 	//g_pSoundManager->Play_BGM(L"Gwan_Cchak.wav");
