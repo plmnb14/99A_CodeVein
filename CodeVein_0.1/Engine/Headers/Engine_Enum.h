@@ -154,16 +154,16 @@ enum WEAPON_ALL_DATA
 
 enum ARMOR_All_DATA
 {
-	ArmorAll_Gauntlet_DarkNightHook,
-	ArmorAll_Gauntlet_NovelSilver,
-	ArmorAll_Gauntlet_MangSikHook,
-	ArmorAll_Gauntlet_QueenKiller,
-	ArmorAll_LongCoat_DarkNightSpear,
-	ArmorAll_LongCoat_WhiteSilver,
-	ArmorAll_LongCoat_QueenKiller,
-	ArmorAll_Muffler_DarkNightSpike,
-	ArmorAll_Muffler_WhiteGraze,
-	ArmorAll_Muffler_Suiside,
+	ArmorAll_Gauntlet_DarkNightHook,	// 암야의 갈고리
+	ArmorAll_Gauntlet_NovelSilver,		// 노블 실버
+	ArmorAll_Gauntlet_MangSikHook,		// 망식의 갈고리
+	ArmorAll_Gauntlet_QueenKiller,		// 퀸 킬러(여왕 토벌대 아장)_발톱형
+	ArmorAll_LongCoat_DarkNightSpear,	// 암야의 돌격창
+	ArmorAll_LongCoat_WhiteSilver,		// 백은의 의장
+	ArmorAll_LongCoat_QueenKiller,		// 퀸 킬러(여왕 토벌대 아장)_가시형
+	ArmorAll_Muffler_DarkNightSpike,	// 암야의 가시
+	ArmorAll_Muffler_WhiteGraze,		// 화이트 그레이즈
+	ArmorAll_Muffler_Suiside,			// 수어사이드 쏜
 
 	ArmorAll_END
 };

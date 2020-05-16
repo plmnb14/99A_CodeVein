@@ -84,7 +84,7 @@ _int CExpendables_Slot::Update_GameObject(_double TimeDelta)
 
 	if (m_vecExpendables.size() == 0)
 	{
-		//m_pItemCntFont->Set_Active(false);
+		m_pItemCntFont->Set_Active(false);
 	}	
 	else
 	{

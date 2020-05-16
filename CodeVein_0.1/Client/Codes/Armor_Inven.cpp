@@ -72,6 +72,16 @@ HRESULT CArmor_Inven::Ready_GameObject(void * pArg)
 	tParam.iPrice = 30000;
 	Add_Armor(tParam);
 
+	tParam.iArmorType = ARMOR_Gauntlet;
+	tParam.iArmorName = ArmorAll_Gauntlet_MangSikHook;
+	tParam.iReinforce = 0;
+	tParam.fDef = 10;
+	tParam.fPlusDef = 10;
+	tParam.fHP = 10;
+	tParam.fPlusHP = 10;
+	tParam.iPrice = 30000;
+	Add_Armor(tParam);
+
 	return NOERROR;
 }
 
@@ -195,6 +205,15 @@ void CArmor_Inven::SetUp_Default()
 	//m_pExplainUI->Set_UI_Pos(WINCX * 0.5f + 25.f, WINCY * 0.5f - 30.f);
 	//m_pExplainUI->Set_UI_Size(500.f, 500.f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExplainUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	m_tRegistParam.iArmorType = ARMOR_End;
+	m_tRegistParam.iArmorName = ArmorAll_END;
+	m_tRegistParam.fHP = 0.f;
+	m_tRegistParam.fDef = 0.f;
+	m_tRegistParam.fPlusDef = 0.f;
+	m_tRegistParam.fPlusHP = 0.f;
+	m_tRegistParam.iPrice = 0;
+	m_tRegistParam.iReinforce = 0;
 }
 
 void CArmor_Inven::Click_Inven()
@@ -225,9 +244,9 @@ void CArmor_Inven::Click_Inven()
 		else if (pSlot->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
 		{
 			pSlot->Set_Select(false);
+			m_tRegistParam = {};
 			m_tRegistParam.iArmorType = ARMOR_End;
-			m_tRegistParam.iPrice = 0;
-			m_tRegistParam.fDef = 0.f;
+			m_tRegistParam.iArmorName = ArmorAll_END;
 		}
 	}
 }
