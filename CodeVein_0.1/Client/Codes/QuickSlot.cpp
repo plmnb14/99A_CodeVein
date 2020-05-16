@@ -248,7 +248,6 @@ void CQuickSlot::Use_QuickSlot_Item()
 		m_vecQuickSlot[m_iSelect]->Get_Type() == CExpendables::EXPEND_END)
 		return;
 	
-
 	CPlayer* pPlayer = static_cast<CPlayer*>(g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL));
 	OBJECT_PARAM tPlayerParam = pPlayer->Get_Target_Param();
 	CExpendables_Inven* pExpendInven = CUI_Manager::Get_Instance()->Get_Expendables_Inven();
@@ -256,36 +255,46 @@ void CQuickSlot::Use_QuickSlot_Item()
 	switch (m_vecQuickSlot[m_iSelect]->Get_Type())
 	{
 	case CExpendables::Expend_MaximumUp:
-	{
-		
+	{		
 		pExpendInven->Use_Expendableas(m_vecQuickSlot[m_iSelect]);
 		pExpendInven->Set_MaximumItemCnt(pExpendInven->Get_MaximumItemCnt() + 1);
-
-	
-
 	}
 		break;
 	case CExpendables::Expend_Hp:
 	{
+		// HP 증가
 		pExpendInven->Use_Expendableas(m_vecQuickSlot[m_iSelect]);
 		pPlayer->Add_Target_Hp(300.f);
 	}
 		break;
 	case CExpendables::Expend_Return:
-
+	{
+		// 귀환 아이템
+	}
 		break;
 	case CExpendables::Expend_Cheet:
 	{
+		// 치트 물약
 		pExpendInven->Use_Expendableas(m_vecQuickSlot[m_iSelect]);
-		pPlayer->Add_Target_Hp(-300.f);
+		pPlayer->Add_Target_Hp(300.f);
+		pPlayer->Add_Target_Mana(_short(50));
 	}
 		break;
 	case CExpendables::Expend_Blood:
+	{
+		// 연혈 증가
+		pExpendInven->Use_Expendableas(m_vecQuickSlot[m_iSelect]);
+		pPlayer->Add_Target_Mana(_short(20));
+	}
 		break;
 	case CExpendables::Expend_SuperArmor:
+	{
+		// 슈퍼아머(무적상태)
+		pPlayer->Set_Target_SuperArmor(true);
+	}
 		break;
 	case CExpendables::EXPEND_END:
-		break;
+		return;
 	}
 }
 

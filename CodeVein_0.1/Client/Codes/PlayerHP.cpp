@@ -225,7 +225,6 @@ void CPlayerHP::SetUp_State(_double TimeDelta)
 	else if (m_fPlayerHP >= m_fTotalHP)
 		m_fPlayerHP = m_fTotalHP;
 	
-
 	// Texture UV 흐르는 속도
 	m_fSpeed += -0.2f * _float(TimeDelta);
 

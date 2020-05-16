@@ -45,9 +45,9 @@ _int CGeneralStoreUI::Update_GameObject(_double TimeDelta)
 	Update_SubUI();
 	Click_SubUI();
 
-	//// µð¹ö±ë¿ë
-	//if(g_pInput_Device->Key_Up(DIK_P))
-	//	m_bIsActive = !m_bIsActive;
+	// µð¹ö±ë¿ë
+	if(g_pInput_Device->Key_Up(DIK_P))
+		m_bIsActive = !m_bIsActive;
 	
 	return NO_EVENT;
 }
