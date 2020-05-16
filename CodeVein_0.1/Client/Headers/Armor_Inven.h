@@ -15,6 +15,7 @@ private:
 
 public:
 	ARMOR_PARAM Get_UseArmorParam();
+	vector<CArmor_Slot*>* Get_VecArmorSlot() { return &m_vecArmorSlot; }
 
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();
@@ -34,6 +35,7 @@ private:
 
 public:
 	void					Add_Armor(ARMOR_PARAM tArmorParam);
+	void					Sell_Armor();
 
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;

@@ -184,6 +184,7 @@
     <ClInclude Include="..\Headers\BossDecoUI.h" />
     <ClInclude Include="..\Headers\BossHP.h" />
     <ClInclude Include="..\Headers\BossNameUI.h" />
+    <ClInclude Include="..\Headers\BuyOptionUI.h" />
     <ClInclude Include="..\Headers\Client_Defines.h" />
     <ClInclude Include="..\Headers\Cloth.h" />
     <ClInclude Include="..\Headers\ClothDynamic.h" />
@@ -208,6 +209,7 @@
     <ClInclude Include="..\Headers\ExplainExpendUI.h" />
     <ClInclude Include="..\Headers\ExplainMaterialUI.h" />
     <ClInclude Include="..\Headers\ExplainWeaponUI.h" />
+    <ClInclude Include="..\Headers\GeneralStoreBuyUI.h" />
     <ClInclude Include="..\Headers\MaterialCollectionUI.h" />
     <ClInclude Include="..\Headers\MaterialOptionUI.h" />
     <ClInclude Include="..\Headers\GeneralStoreUI.h" />
@@ -306,9 +308,11 @@
     <ClInclude Include="..\Headers\Scene_Stage_Training.h" />
     <ClInclude Include="..\Headers\Scene_Title.h" />
     <ClInclude Include="..\Headers\ScriptManager.h" />
+    <ClInclude Include="..\Headers\ShopActionFailedPopup.h" />
     <ClInclude Include="..\Headers\SkillAcquisitionUI.h" />
     <ClInclude Include="..\Headers\SkillGauge.h" />
     <ClInclude Include="..\Headers\ReleaseQuestionUI.h" />
+    <ClInclude Include="..\Headers\SkillPointUI.h" />
     <ClInclude Include="..\Headers\SkillReleaseUI.h" />
     <ClInclude Include="..\Headers\SkillSlot.h" />
     <ClInclude Include="..\Headers\SkillUI.h" />
@@ -379,6 +383,7 @@
     <ClCompile Include="..\Codes\BossDecoUI.cpp" />
     <ClCompile Include="..\Codes\BossHP.cpp" />
     <ClCompile Include="..\Codes\BossNameUI.cpp" />
+    <ClCompile Include="..\Codes\BuyOptionUI.cpp" />
     <ClCompile Include="..\Codes\Cloth.cpp" />
     <ClCompile Include="..\Codes\ClothDynamic.cpp" />
     <ClCompile Include="..\Codes\ClothManager.cpp" />
@@ -402,6 +407,7 @@
     <ClCompile Include="..\Codes\ExplainExpendUI.cpp" />
     <ClCompile Include="..\Codes\ExplainMaterialUI.cpp" />
     <ClCompile Include="..\Codes\ExplainWeaponUI.cpp" />
+    <ClCompile Include="..\Codes\GeneralStoreBuyUI.cpp" />
     <ClCompile Include="..\Codes\MaterialCollectionUI.cpp" />
     <ClCompile Include="..\Codes\MaterialOptionUI.cpp" />
     <ClCompile Include="..\Codes\GeneralStoreUI.cpp" />
@@ -499,9 +505,11 @@
     <ClCompile Include="..\Codes\Scene_Stage_Training.cpp" />
     <ClCompile Include="..\Codes\Scene_Title.cpp" />
     <ClCompile Include="..\Codes\ScriptManager.cpp" />
+    <ClCompile Include="..\Codes\ShopActionFailedPopup.cpp" />
     <ClCompile Include="..\Codes\SkillAcquisitionUI.cpp" />
     <ClCompile Include="..\Codes\SkillGauge.cpp" />
     <ClCompile Include="..\Codes\ReleaseQuestionUI.cpp" />
+    <ClCompile Include="..\Codes\SkillPointUI.cpp" />
     <ClCompile Include="..\Codes\SkillReleaseUI.cpp" />
     <ClCompile Include="..\Codes\SkillSlot.cpp" />
     <ClCompile Include="..\Codes\SkillUI.cpp" />

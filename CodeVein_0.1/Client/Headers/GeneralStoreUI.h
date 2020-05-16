@@ -38,6 +38,7 @@ private:
 	CInventory_Icon*			m_pShopIcon[2];
 	CMaterialCollectionUI*		m_pMaterialCollectionUI = nullptr;
 	CExpendCollectionUI*		m_pExpendCollectionUI = nullptr;
+	_bool						m_bIsOpen = false;
 
 public:
 	static CGeneralStoreUI*	Create(_Device pGraphic_Device);

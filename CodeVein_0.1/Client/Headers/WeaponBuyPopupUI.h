@@ -4,7 +4,7 @@
 #include "UI.h"
 
 BEGIN(Client)
-class CWeapon_Inven_InShop;
+class CShopActionFailedPopup;
 class CWeapon_Inven_InShop;
 class CPlayerFontUI;
 class CWeaponBuyPopupOptionUI;
@@ -44,10 +44,13 @@ private:
 	HRESULT SetUp_ConstantTable();
 	void	Change_Texture(const _tchar* _Name);
 	void	SetUp_Default();
-	void	Check_ItemOption();
+	void	Check_ItemOption_Weapon();
+	void	Check_ItemOption_Armor();
 
 	void	Buy_Weapon();
 	void	Sell_Weapon();
+	void	Buy_Armor();
+	void	Sell_Armor();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -60,6 +63,7 @@ private:
 	CWeapon_Inven_InShop*				m_pInven = nullptr;
 	vector<CWeaponBuyPopupOptionUI*>	m_vecOption;
 
+	CShopActionFailedPopup*	m_pShopActionFailedPopup = nullptr;
 	CPlayerFontUI*			m_pFontItemCount = nullptr;
 
 	_float					m_fAlpha = 0.f;

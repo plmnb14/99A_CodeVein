@@ -39,14 +39,6 @@ HRESULT CScene_Stage_03::Ready_Scene()
 
 	g_pManagement->LoadCreateObject_FromPath(m_pGraphic_Device, L"Object_Stage_03.dat");
 
-	//CScriptManager::Get_Instance()->Set_StageIdx(3);
-	//CScriptManager::Get_Instance()->Ready_Script_DynamicObject(3);
-
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerHP", SCENE_STAGE, L"Layer_PlayerHP")))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_GameObject_ToLayer(L"GameObject_PlayerST", SCENE_STAGE, L"Layer_PlayerST")))
-		return E_FAIL;
-
 	return S_OK;
 }
 

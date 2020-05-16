@@ -6,6 +6,7 @@
 BEGIN(Client)
 class CExpendOptionUI;
 class CExpend_InfoUI;
+class CGeneralStoreBuyUI;
 class CExpendCollectionUI final : public CUI
 {
 private:
@@ -30,17 +31,14 @@ private:
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
-	CRenderer*				m_pRendererCom = nullptr;
-	CTexture*				m_pTextureCom = nullptr;
-	CShader*				m_pShaderCom = nullptr;
-	CBuffer_RcTex*			m_pBufferCom = nullptr;
+	
 
 private:
 	vector<CExpendOptionUI*>	m_vecOption;
 	CExpend_InfoUI*				m_pInfoUI = nullptr;
 	_uint						m_iBuyCnt = 1; // 물건 사는 개수
 	_uint						m_iCost = 0; // 물건 개당 가격
-
+	CGeneralStoreBuyUI*			m_pBuyUI = nullptr;
 
 public:
 	static CExpendCollectionUI*	Create(_Device pGraphic_Device);
