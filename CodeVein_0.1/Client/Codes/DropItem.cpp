@@ -135,10 +135,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 			g_pManagement->Add_GameOject_ToLayer_NoClone(pPickUp, SCENE_MORTAL, L"Layer_PickUp_ItemUI", nullptr);
 
 			pPickUp->Update_GameObject(TimeDelta);
-
-			//CUI_Manager* pUI_Mgr = CUI_Manager::Get_Instance();
-			//CPickUp_ItemUI* pTemp_PickUp = pUI_Mgr->Get_PickUP_Item();
-			//pTemp_PickUp->Set_Active(true);
+			pPickUp->Set_Active(true);
 
 			switch (m_eItem_NameType)
 			{

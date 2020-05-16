@@ -170,8 +170,24 @@ void CPickUp_ItemUI::SetUp_State(_double TimeDelta)
 {
 	CUI_Manager* pUIManager = CUI_Manager::Get_Instance();
 
-	m_fPercentage = m_fPickup_Itembar / m_fSizeX;
-	m_fPickup_Itembar += 7.f;
+	if (false == m_bOne_PickupUIEnd)
+	{
+		m_fPercentage = m_fPickup_Itembar / m_fSizeX;
+		m_fPickup_Itembar += 5.f;
+	}
+	
+	if (m_fPickup_Itembar >= m_fSizeX)
+	{
+		m_fPickup_Itembar = 0.f;
+		m_bOne_PickupUIEnd = true;
+	}
+	if(true == m_bOne_PickupUIEnd)
+		m_fTimer += (_float)TimeDelta;
+	if (1.5f <= m_fTimer)
+	{
+		m_bOne_PickupUIEnd = false;
+		m_bIsActive = false;
+	}
 
 
 	//if (0 == pUIManager->Get_CoundItem() && false == m_bOne_PickupUIEnd)
@@ -189,40 +205,30 @@ void CPickUp_ItemUI::SetUp_State(_double TimeDelta)
 	//	m_fPercentage = m_fPickup_Itembar3 / m_fSizeX;
 	//	m_fPickup_Itembar3 += 7.f;
 	//}
-
-
-	if (m_fPickup_Itembar >= m_fSizeX)
-	{
-		/*m_fPickup_Itembar = m_fSizeX;*/
-		m_fPickup_Itembar = 0.f;
-		m_fTimer += (_float)TimeDelta;
-		m_bOne_PickupUIEnd = true;
-	}
-	else if (m_fPickup_Itembar2 >= m_fSizeX)
-	{
-		m_fPickup_Itembar2 = 0.f;
-		m_fTimer = 0.f;
-		m_fTwoTimer += (_float)TimeDelta;
-		m_bTwo_PickupUIEnd = true;
-	}
-	else if (m_fPickup_Itembar3 >= m_fSizeX)
-	{
-		m_fPickup_Itembar3 = 0.f;
-		m_fTimer = 0.f;
-		m_fTwoTimer = 0.f;
-		m_fAllTimer += (_float)TimeDelta;
-		m_bThree_PickupUIEnd = true;
-	}
-
-	if (true == m_bThree_PickupUIEnd)
-	{
-		m_fPickup_Itembar = 0.f;
-		m_fPickup_Itembar2 = 0.f;
-		m_fPickup_Itembar3 = 0.f;
-		m_bOne_PickupUIEnd = false;
-		m_bTwo_PickupUIEnd = false;
-		m_bThree_PickupUIEnd = false;
-	}
+	//else if (m_fPickup_Itembar2 >= m_fSizeX)
+	//{
+	//	m_fPickup_Itembar2 = 0.f;
+	//	m_fTimer = 0.f;
+	//	m_fTwoTimer += (_float)TimeDelta;
+	//	m_bTwo_PickupUIEnd = true;
+	//}
+	//else if (m_fPickup_Itembar3 >= m_fSizeX)
+	//{
+	//	m_fPickup_Itembar3 = 0.f;
+	//	m_fTimer = 0.f;
+	//	m_fTwoTimer = 0.f;
+	//	m_fAllTimer += (_float)TimeDelta;
+	//	m_bThree_PickupUIEnd = true;
+	//}
+	//if (true == m_bThree_PickupUIEnd)
+	//{
+	//	m_fPickup_Itembar = 0.f;
+	//	m_fPickup_Itembar2 = 0.f;
+	//	m_fPickup_Itembar3 = 0.f;
+	//	m_bOne_PickupUIEnd = false;
+	//	m_bTwo_PickupUIEnd = false;
+	//	m_bThree_PickupUIEnd = false;
+	//}
 	
 }
 
