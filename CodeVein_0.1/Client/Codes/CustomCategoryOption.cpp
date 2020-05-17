@@ -1,25 +1,25 @@
 #include "stdafx.h"
-#include "..\Headers\LogoBtn.h"
+#include "..\Headers\CustomCategoryOption.h"
 #include "CursorEffect.h"
 
-CLogoBtn::CLogoBtn(_Device pGraphic_Device)
+CCustomCategoryOption::CCustomCategoryOption(_Device pGraphic_Device)
 	: CUI(pGraphic_Device)
 {
 }
 
-CLogoBtn::CLogoBtn(const CLogoBtn & rhs)
+CCustomCategoryOption::CCustomCategoryOption(const CCustomCategoryOption & rhs)
 	: CUI(rhs)
 {
 }
 
-HRESULT CLogoBtn::Ready_GameObject_Prototype()
+HRESULT CCustomCategoryOption::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
 
 	return NOERROR;
 }
 
-HRESULT CLogoBtn::Ready_GameObject(void * pArg)
+HRESULT CCustomCategoryOption::Ready_GameObject(void * pArg)
 {
 	if (FAILED(Add_Component()))
 		return E_FAIL;
@@ -28,8 +28,8 @@ HRESULT CLogoBtn::Ready_GameObject(void * pArg)
 
 	m_fPosX = WINCX * 0.5f;
 	m_fPosY = 470.f;
-	m_fSizeX = 256.f;
-	m_fSizeY = 64.f;
+	m_fSizeX = 237.f;
+	m_fSizeY = 44.f;
 	
 	m_fViewZ = 0.1f;
 	m_fAlpha = 0.f;
@@ -40,14 +40,13 @@ HRESULT CLogoBtn::Ready_GameObject(void * pArg)
 	return NOERROR;
 }
 
-_int CLogoBtn::Update_GameObject(_double TimeDelta)
+_int CCustomCategoryOption::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
-
 	m_bIsColl = Coll_Mouse();
 
 	m_pCursorEffect->Set_Active(m_bIsColl && m_bIsActive);
@@ -61,7 +60,7 @@ _int CLogoBtn::Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-_int CLogoBtn::Late_Update_GameObject(_double TimeDelta)
+_int CCustomCategoryOption::Late_Update_GameObject(_double TimeDelta)
 {
 	D3DXMatrixIdentity(&m_matWorld);
 	D3DXMatrixIdentity(&m_matView);
@@ -75,7 +74,7 @@ _int CLogoBtn::Late_Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-HRESULT CLogoBtn::Render_GameObject()
+HRESULT CCustomCategoryOption::Render_GameObject()
 {
 	if (nullptr == m_pShaderCom ||
 		nullptr == m_pBufferCom)
@@ -86,7 +85,7 @@ HRESULT CLogoBtn::Render_GameObject()
 	g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
 	g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
 
-	if (FAILED(SetUp_ConstantTable(0)))
+	if (FAILED(SetUp_ConstantTable(m_iIndex)))
 		return E_FAIL;
 
 	m_pShaderCom->Begin_Shader();
@@ -102,7 +101,7 @@ HRESULT CLogoBtn::Render_GameObject()
 	return NOERROR;
 }
 
-HRESULT CLogoBtn::Add_Component()
+HRESULT CCustomCategoryOption::Add_Component()
 {
 	// For.Com_Transform
 	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"Transform", L"Com_Transform", (CComponent**)&m_pTransformCom)))
@@ -113,7 +112,7 @@ HRESULT CLogoBtn::Add_Component()
 		return E_FAIL;
 
 	// For.Com_Texture
-	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"DefaultTex_LogoButton", L"Com_Texture", (CComponent**)&m_pTextureCom)))
+	if (FAILED(CGameObject::Add_Component(SCENE_STATIC, L"DefaultTex_Custom_UI", L"Com_Texture", (CComponent**)&m_pTextureCom)))
 		return E_FAIL;
 
 	// For.Com_Shader
@@ -129,7 +128,7 @@ HRESULT CLogoBtn::Add_Component()
 	return NOERROR;
 }
 
-HRESULT CLogoBtn::SetUp_ConstantTable(_uint iIndex)
+HRESULT CCustomCategoryOption::SetUp_ConstantTable(_uint iIndex)
 {
 	if (nullptr == m_pShaderCom)
 		return E_FAIL;
@@ -149,7 +148,7 @@ HRESULT CLogoBtn::SetUp_ConstantTable(_uint iIndex)
 	return NOERROR;
 }
 
-HRESULT CLogoBtn::SetUp_CursorEffect()
+HRESULT CCustomCategoryOption::SetUp_CursorEffect()
 {
 	UI_DESC* pDesc = new UI_DESC;
 	pDesc->fPosX = m_fPosX;
@@ -169,7 +168,7 @@ HRESULT CLogoBtn::SetUp_CursorEffect()
 }
 
 
-_bool CLogoBtn::Coll_Mouse()
+_bool CCustomCategoryOption::Coll_Mouse()
 {
 	POINT pt = {};
 
@@ -188,22 +187,22 @@ _bool CLogoBtn::Coll_Mouse()
 	return true;
 }
 
-CLogoBtn * CLogoBtn::Create(_Device pGraphic_Device)
+CCustomCategoryOption * CCustomCategoryOption::Create(_Device pGraphic_Device)
 {
-	CLogoBtn* pInstance = new CLogoBtn(pGraphic_Device);
+	CCustomCategoryOption* pInstance = new CCustomCategoryOption(pGraphic_Device);
 
 	if (FAILED(pInstance->Ready_GameObject_Prototype()))
 	{
-		MSG_BOX("LogoBtn Creating Fail");
+		MSG_BOX("CCustomCategoryOption Creating Fail");
 		Safe_Release(pInstance);
 	}
 
 	return pInstance;
 }
 
-CGameObject * CLogoBtn::Clone_GameObject(void * pArg)
+CGameObject * CCustomCategoryOption::Clone_GameObject(void * pArg)
 {
-	CLogoBtn* pInstance = new CLogoBtn(*this);
+	CCustomCategoryOption* pInstance = new CCustomCategoryOption(*this);
 
 	if (FAILED(pInstance->Ready_GameObject(pArg)))
 	{
@@ -214,7 +213,7 @@ CGameObject * CLogoBtn::Clone_GameObject(void * pArg)
 	return pInstance;
 }
 
-void CLogoBtn::Free()
+void CCustomCategoryOption::Free()
 {
 	Safe_Release(m_pTransformCom);
 	Safe_Release(m_pBufferCom);

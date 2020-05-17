@@ -202,6 +202,10 @@
     <ClInclude Include="..\Headers\ColdBeamSmall.h" />
     <ClInclude Include="..\Headers\ColdBeamBig.h" />
     <ClInclude Include="..\Headers\ColdBeamMiddle.h" />
+    <ClInclude Include="..\Headers\CustomCategory.h" />
+    <ClInclude Include="..\Headers\CustomCategoryOption.h" />
+    <ClInclude Include="..\Headers\CustomInven.h" />
+    <ClInclude Include="..\Headers\CustomSlot.h" />
     <ClInclude Include="..\Headers\ExpendCollectionUI.h" />
     <ClInclude Include="..\Headers\ExpendOptionUI.h" />
     <ClInclude Include="..\Headers\Expend_InfoUI.h" />
@@ -404,6 +408,10 @@
     <ClCompile Include="..\Codes\ColdBeamSmall.cpp" />
     <ClCompile Include="..\Codes\ColdBeamBig.cpp" />
     <ClCompile Include="..\Codes\ColdBeamMiddle.cpp" />
+    <ClCompile Include="..\Codes\CustomCategory.cpp" />
+    <ClCompile Include="..\Codes\CustomCategoryOption.cpp" />
+    <ClCompile Include="..\Codes\CustomInven.cpp" />
+    <ClCompile Include="..\Codes\CustomSlot.cpp" />
     <ClCompile Include="..\Codes\ExpendCollectionUI.cpp" />
     <ClCompile Include="..\Codes\ExpendOptionUI.cpp" />
     <ClCompile Include="..\Codes\Expend_InfoUI.cpp" />

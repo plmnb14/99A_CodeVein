@@ -553,6 +553,24 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\19.NPC_InteractionUI">
       <UniqueIdentifier>{2daaaef8-fa47-4495-9b69-26032a063b5f}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Custom">
+      <UniqueIdentifier>{bff12a33-ab9c-445f-847a-7e4474b70c8f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Custom\CategoryElem">
+      <UniqueIdentifier>{3875b696-1a1e-4c8e-bb84-bc48dc14395e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Custom\CategoryElem\Slot">
+      <UniqueIdentifier>{8fdc6001-a723-4f26-9c43-ddbd7739c689}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Custom\CategoryElem\Inven">
+      <UniqueIdentifier>{a101d3be-0738-44bf-92b9-a17539418f50}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Custom\Category">
+      <UniqueIdentifier>{304ff8b8-26bd-4607-a665-7c4794d8d223}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Custom\Category\Option">
+      <UniqueIdentifier>{341712b1-4c65-4d00-a8a7-aed85b673f86}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Client.h">
@@ -1176,6 +1194,18 @@
     <ClInclude Include="..\Headers\NPC_InteractionUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\19.NPC_InteractionUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\CustomInven.h">
+      <Filter>02.GameObject\Custom\CategoryElem\Inven</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\CustomSlot.h">
+      <Filter>02.GameObject\Custom\CategoryElem\Slot</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\CustomCategoryOption.h">
+      <Filter>02.GameObject\Custom\Category\Option</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\CustomCategory.h">
+      <Filter>02.GameObject\Custom\Category</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="Client.cpp">
@@ -1783,6 +1813,18 @@
     </ClCompile>
     <ClCompile Include="..\Codes\NPC_InteractionUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\19.NPC_InteractionUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\CustomInven.cpp">
+      <Filter>02.GameObject\Custom\CategoryElem\Inven</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\CustomSlot.cpp">
+      <Filter>02.GameObject\Custom\CategoryElem\Slot</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\CustomCategoryOption.cpp">
+      <Filter>02.GameObject\Custom\Category\Option</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\CustomCategory.cpp">
+      <Filter>02.GameObject\Custom\Category</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

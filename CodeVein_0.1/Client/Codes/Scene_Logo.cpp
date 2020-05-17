@@ -12,6 +12,11 @@
 
 #include "OrthoEffect.h"
 
+#include "CustomCategory.h"
+#include "CustomCategoryOption.h"
+#include "CustomInven.h"
+#include "CustomSlot.h"
+
 CScene_Logo::CScene_Logo(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CScene(pGraphic_Device)
 	, m_pLoading(nullptr)
@@ -27,6 +32,9 @@ HRESULT CScene_Logo::Ready_Scene()
 	if (FAILED(Ready_Layer_Logo(L"Layer_LogoUI")))
 		return E_FAIL;
 
+	//if (FAILED(Ready_Layer_Custom(L"Layer_CustomUI")))
+	//	return E_FAIL;
+	
 	m_pLoading = CLoading::Create(m_pGraphic_Device, SCENE_TITLE);
 	if (nullptr == m_pLoading)
 		return E_FAIL;
@@ -114,29 +122,29 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Title_Glitter_1", COrthoEffect::Create(m_pGraphic_Device, Read_EffectData(L"../../Data/EffectData/Ortho_Title_Glitter_1.dat")))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Title_ShadowLine", COrthoEffect::Create(m_pGraphic_Device, Read_EffectData(L"../../Data/EffectData/Ortho_Title_ShadowLine.dat")))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Title_ShadowText", COrthoEffect::Create(m_pGraphic_Device, Read_EffectData(L"../../Data/EffectData/Ortho_Title_ShadowText.dat")))))
-		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Title_Smoke", COrthoEffect::Create(m_pGraphic_Device, Read_EffectData(L"../../Data/EffectData/Ortho_Title_Smoke.dat")))))
-		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Title_BG", COrthoEffect::Create(m_pGraphic_Device, Read_EffectData(L"../../Data/EffectData/Ortho_Title_BG.dat")))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Title_WhiteFadeout", COrthoEffect::Create(m_pGraphic_Device, Read_EffectData(L"../../Data/EffectData/Ortho_Title_WhiteFadeout.dat")))))
 		return E_FAIL;
+	//if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Title_ShadowLine", COrthoEffect::Create(m_pGraphic_Device, Read_EffectData(L"../../Data/EffectData/Ortho_Title_ShadowLine.dat")))))
+	//	return E_FAIL;
+	//if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Title_ShadowText", COrthoEffect::Create(m_pGraphic_Device, Read_EffectData(L"../../Data/EffectData/Ortho_Title_ShadowText.dat")))))
+	//	return E_FAIL;
+	//if (FAILED(g_pManagement->Add_Prototype(L"Ortho_Title_Smoke", COrthoEffect::Create(m_pGraphic_Device, Read_EffectData(L"../../Data/EffectData/Ortho_Title_Smoke.dat")))))
+	//	return E_FAIL;
 
 	CParticleMgr::Get_Instance()->Ready_TitleEffect();
 
 
 	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LogoBackGround", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LogoBack/LogoBack%d.dds", 5))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LogoButton", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Button/Button%d.png", 1))))
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LogoButton", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Button/Button%d.dds", 1))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_CursorEffect", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/CursorEffect/CursorEffect%d.png", 1))))
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_CursorEffect", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/CursorEffect/CursorEffect%d.dds", 1))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LoadingScreen", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LoadingScreen/LoadingScreen%d.png", 2))))
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LoadingScreen", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LoadingScreen/LoadingScreen%d.dds", 2))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LoadingBar", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LoadingBar/LoadingBar%d.png", 10))))
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_LoadingBar", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/LoadingBar/LoadingBar%d.dds", 10))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_MouseUI", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/MouseUI/MouseUI%d.dds", 1))))
 		return E_FAIL;
@@ -195,6 +203,42 @@ HRESULT CScene_Logo::Ready_Layer_Logo(const _tchar * pLayerTag)
 	//CParticleMgr::Get_Instance()->Create_Effect(L"Ortho_Title_ShadowLine");
 	//CParticleMgr::Get_Instance()->Create_Effect(L"Ortho_Title_ShadowText");
 	//CParticleMgr::Get_Instance()->Create_Effect(L"Ortho_Title_Smoke");
+
+	return S_OK;
+}
+
+HRESULT CScene_Logo::Ready_Layer_Custom(const _tchar* pLayerTag)
+{
+
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_UI", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_UI/Custom_UI_%d.dds", 12))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_Hair", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_Hair/Custom_Hair_%d.dds", 7))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_Face", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_Face/Custom_Face_%d.dds", 10))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(SCENE_STATIC, L"DefaultTex_Custom_ToxicGuard", CTexture::Create(m_pGraphic_Device, CTexture::TYPE_GENERAL, L"../Resources/Texture/DefaultUI/Customize/Custom_ToxicGuard/Custom_ToxicGuard_%d.dds", 10))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomCategory", CCustomCategory::Create(m_pGraphic_Device))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomCategoryOption", CCustomCategoryOption::Create(m_pGraphic_Device))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomInven", CCustomInven::Create(m_pGraphic_Device))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_CustomSlot", CCustomSlot::Create(m_pGraphic_Device))))
+		return E_FAIL;
+
+	CCustomCategory* pCustomCategory = static_cast<CCustomCategory*>(g_pManagement->Clone_GameObject_Return(L"GameObject_CustomCategory", nullptr));
+	pCustomCategory->Set_Active(true);
+	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(pCustomCategory, SCENE_LOGO, pLayerTag, nullptr)))
+		return E_FAIL;
+
+	CCustomInven* pCustomInven = static_cast<CCustomInven*>(g_pManagement->Clone_GameObject_Return(L"GameObject_CustomInven", nullptr));
+	pCustomInven->Set_ActiveSlot(CCustomInven::TYPE_HAIR);
+	pCustomInven->Set_Active(true);
+	if (FAILED(g_pManagement->Add_GameOject_ToLayer_NoClone(pCustomInven, SCENE_LOGO, pLayerTag, nullptr)))
+		return E_FAIL;
+
 
 	return S_OK;
 }
