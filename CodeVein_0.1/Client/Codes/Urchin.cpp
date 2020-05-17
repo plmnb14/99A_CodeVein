@@ -646,6 +646,12 @@ void CUrchin::Play_Rolling()
 				m_bEventTrigger[10] = true;
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Urchin_SFX_01);
+				g_pSoundManager->Play_Sound(L"Urchin_Move.ogg", CSoundManager::Urchin_SFX_01, CSoundManager::Effect_Sound);
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Urchin_Voice);
+				g_pSoundManager->Play_Sound(L"Urchin_Bark.ogg", CSoundManager::Urchin_Voice, CSoundManager::Effect_Sound);
 			}
 		}
 
@@ -787,6 +793,12 @@ void CUrchin::Play_RollingRush()
 				m_bEventTrigger[9] = true;
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Urchin_SFX_01);
+				g_pSoundManager->Play_Sound(L"Urchin_Move.ogg", CSoundManager::Urchin_SFX_01, CSoundManager::Effect_Sound);
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Urchin_Voice);
+				g_pSoundManager->Play_Sound(L"Urchin_Bark.ogg", CSoundManager::Urchin_Voice, CSoundManager::Effect_Sound);
 			}
 		}
 
@@ -1026,6 +1038,7 @@ void CUrchin::Play_Dead()
 		Function_ResetAfterAtk();
 		m_bCanPlayDead = true;
 		m_eState = URCHIN_ANI::Death;
+
 	}
 	else
 	{
@@ -1033,7 +1046,7 @@ void CUrchin::Play_Dead()
 		{
 			m_bEnable = false;
 			m_dAniPlayMul = 0;
-		}
+		}\
 		else if (1.967f <= AniTime)
 		{
 			if (false == m_bEventTrigger[0])
@@ -1044,6 +1057,16 @@ void CUrchin::Play_Dead()
 				m_fDeadEffect_Delay = 0.f;
 
 				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
+			}
+		}
+		else if (0.967f <= AniTime)
+		{
+			if (false == m_bEventTrigger[1])
+			{
+				m_bEventTrigger[1] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Urchin_Voice);
+				g_pSoundManager->Play_Sound(L"Urchin_Death.ogg", CSoundManager::Urchin_Voice, CSoundManager::Effect_Sound);
 			}
 		}
 	}

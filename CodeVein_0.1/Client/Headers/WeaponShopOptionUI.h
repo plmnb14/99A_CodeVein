@@ -37,8 +37,8 @@ private:
 	virtual ~CWeaponShopOptionUI() = default;
 
 public:
-	WEAPONSHOP_OPTION Get_Option() { return m_eOption; }
-
+	WEAPONSHOP_OPTION	Get_Option() { return m_eOption; }
+	_bool				Get_Select() { return m_bIsSelect; }
 public:
 	void Set_Select(_bool bIsSelect) { m_bIsSelect = bIsSelect; }
 	void Setup_InvenType(WEAPONSHOP_OPTION eOption) { m_eOption = eOption; }

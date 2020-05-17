@@ -445,9 +445,9 @@ HRESULT CWeapon_Inven::SetUp_WeaponData()
 	// ÇØ¸Ó
 	//===========================================================================================
 
-	m_tWeaponParam[Wpn_Hammer].iWeaponName = Wpn_LSword;
+	m_tWeaponParam[Wpn_Hammer].iWeaponName = Wpn_Hammer;
 	m_tWeaponParam[Wpn_Hammer].iWeaponName_InShop = WpnAll_Hammer_ImperseAnker;
-	m_tWeaponParam[Wpn_Hammer].iWeaponType = WEAPON_Halberd;
+	m_tWeaponParam[Wpn_Hammer].iWeaponType = WEAPON_Hammer;
 	m_tWeaponParam[Wpn_Hammer].iPrice = 100;
 	m_tWeaponParam[Wpn_Hammer].iReinforce = 0;
 	m_tWeaponParam[Wpn_Hammer].fDamage = 155.f;
@@ -458,8 +458,8 @@ HRESULT CWeapon_Inven::SetUp_WeaponData()
 	m_tWeaponParam[Wpn_Hammer].fCol_Height = 1.1f;
 
 	m_tWeaponParam[Wpn_Hammer_Black].iWeaponName = Wpn_Hammer_Black;
-	m_tWeaponParam[Wpn_Hammer_Black].iWeaponName_InShop = WpnAll_Hammer_DarkHeavyAxe;
-	m_tWeaponParam[Wpn_Hammer_Black].iWeaponType = WEAPON_Halberd;
+	m_tWeaponParam[Wpn_Hammer_Black].iWeaponName_InShop = WpnAll_Hammer_Black;
+	m_tWeaponParam[Wpn_Hammer_Black].iWeaponType = WEAPON_Hammer;
 	m_tWeaponParam[Wpn_Hammer_Black].iPrice = 100;
 	m_tWeaponParam[Wpn_Hammer_Black].iReinforce = 0;
 	m_tWeaponParam[Wpn_Hammer_Black].fDamage = 155.f;
@@ -471,7 +471,7 @@ HRESULT CWeapon_Inven::SetUp_WeaponData()
 
 	m_tWeaponParam[Wpn_Hammer_Military].iWeaponName = Wpn_Hammer_Military;
 	m_tWeaponParam[Wpn_Hammer_Military].iWeaponName_InShop = WpnAll_Hammer_Nakil;
-	m_tWeaponParam[Wpn_Hammer_Military].iWeaponType = WEAPON_Halberd;
+	m_tWeaponParam[Wpn_Hammer_Military].iWeaponType = WEAPON_Hammer;
 	m_tWeaponParam[Wpn_Hammer_Military].iPrice = 100;
 	m_tWeaponParam[Wpn_Hammer_Military].iReinforce = 0;
 	m_tWeaponParam[Wpn_Hammer_Military].fDamage = 155.f;
@@ -483,7 +483,7 @@ HRESULT CWeapon_Inven::SetUp_WeaponData()
 
 	m_tWeaponParam[Wpn_Hammer_Slave].iWeaponName = Wpn_Hammer_Slave;
 	m_tWeaponParam[Wpn_Hammer_Slave].iWeaponName_InShop = WpnAll_Hammer_DarkHeavyAxe;
-	m_tWeaponParam[Wpn_Hammer_Slave].iWeaponType = WEAPON_Halberd;
+	m_tWeaponParam[Wpn_Hammer_Slave].iWeaponType = WEAPON_Hammer;
 	m_tWeaponParam[Wpn_Hammer_Slave].iPrice = 100;
 	m_tWeaponParam[Wpn_Hammer_Slave].iReinforce = 0;
 	m_tWeaponParam[Wpn_Hammer_Slave].fDamage = 155.f;

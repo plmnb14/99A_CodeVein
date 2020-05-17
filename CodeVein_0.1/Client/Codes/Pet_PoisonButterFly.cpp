@@ -31,7 +31,7 @@ HRESULT CPet_PoisonButterFly::Ready_GameObject(void * pArg)
 	if (nullptr != m_pPlayer)
 		Safe_AddRef(m_pPlayer);
 
-	Check_Navi();
+	Function_Check_Navi();
 
 	return S_OK;
 }
@@ -43,6 +43,7 @@ _int CPet_PoisonButterFly::Update_GameObject(_double TimeDelta)
 
 	CGameObject::Update_GameObject(TimeDelta);
 
+	Play_Deformation();
 	Check_Dist();
 	Check_AniEvent();
 	Function_CoolDown();
@@ -322,76 +323,10 @@ void CPet_PoisonButterFly::Check_Dist()
 		PET_STATE_TYPE::DEAD == m_eFirstCategory)
 		return;
 
-	if (nullptr != m_pTarget)
-	{
-		if (false == m_pTarget->Get_Enable() ||
-			true == m_pTarget->Get_Dead())
-		{
-			Safe_Release(m_pTarget);
-			m_pTarget = nullptr;
+	//Function_Change_Mode();
 
-			Function_ResetAfterAtk();
-			m_tObjParam.bCanAttack = true;
-			m_fCoolDownCur = 0.f;
-			m_fCoolDownMax = 0.f;
-
-			Function_Find_Target();
-		}
-	}
-
-	//p버튼 누름으로 몬스터 우선, 아이템우선으로 바뀌는 부분
-	if (g_pInput_Device->Key_Down(DIK_P))
-	{
-		//2개 뿐이므로 bool 가능하나 추후 가능성을 위해 enum값 지정
-		if (m_iCount >= 2)
-			m_iCount = 0;
-
-		++m_iCount;
-
-		switch (m_iCount)
-		{
-		case 1:
-			m_eNowPetMode = PET_MODE_TYPE::PET_MODE_ATK;
-			break;
-		case 2:
-			m_eNowPetMode = PET_MODE_TYPE::PET_MODE_UTILL;
-			break;
-		}
-
-		if (m_eNowPetMode != m_eOldPetMdoe)
-		{
-			//모드 다름, 타겟 있음
-			if (nullptr != m_pTarget)
-			{
-				m_eOldPetMdoe = m_eNowPetMode;
-
-				Safe_Release(m_pTarget);
-				m_pTarget = nullptr;
-
-				//행동 초기화, 쿨타임 초기화, 공격 가능 초기화->펫에서는 사실상 bCanActive 처럼 사용됨
-				Function_ResetAfterAtk();
-				m_tObjParam.bCanAttack = true;
-				m_fCoolDownCur = 0.f;
-				m_fCoolDownMax = 0.f;
-
-				Function_Find_Target();
-			}
-			//모드 다름, 타겟 없음
-			else
-			{
-				m_eOldPetMdoe = m_eNowPetMode;
-
-				Function_ResetAfterAtk();
-				m_tObjParam.bCanAttack = true;
-				m_fCoolDownCur = 0.f;
-				m_fCoolDownMax = 0.f;
-
-				Function_Find_Target();
-			}
-		}
-	}
-
-	if (true == m_bIsMoveAround ||
+	if (true == m_bIsSummon||
+		true == m_bIsMoveAround ||
 		true == m_tObjParam.bIsAttack ||
 		true == m_tObjParam.bIsDodge ||
 		true == m_tObjParam.bIsHit)
@@ -759,6 +694,8 @@ void CPet_PoisonButterFly::Check_AniEvent()
 		Play_Dead();
 		break;
 	}
+
+	return;
 }
 
 void CPet_PoisonButterFly::Check_DeadEffect(_double TimeDelta)
@@ -868,7 +805,6 @@ void CPet_PoisonButterFly::Play_5Shot()
 	}
 
 	return;
-
 }
 
 void CPet_PoisonButterFly::Play_Mist()
@@ -1220,24 +1156,51 @@ void CPet_PoisonButterFly::Play_PoisonWheelWind()
 			Function_DecreMoveMent(m_fSkillMoveMultiply);
 		}
 	}
+
+	return;
+}
+
+void CPet_PoisonButterFly::Play_Deformation()
+{
+	if (false == m_bCanSummon)
+	{
+		m_bCanSummon = true;
+		m_bIsSummon = true;
+		m_eState = PET_POISIONBUTTERFLY_ANI::Appearance_End;
+	}
+	else
+	{
+		if (true == m_bIsSummon)
+		{
+			if (m_pMesh->Is_Finish_Animation(0.95f))
+			{
+				Function_ResetAfterAtk();
+				m_bIsSummon = false;
+				return;
+			}
+		}
+	}
+
+	return;
 }
 
 void CPet_PoisonButterFly::Play_Idle()
 {
+	m_eState = PET_POISIONBUTTERFLY_ANI::Idle;
+
 	switch (m_eTarget)
 	{
 	case PET_TARGET_TYPE::PET_TARGET_BOSS:
 	case PET_TARGET_TYPE::PET_TARGET_MONSTER:
 		Function_RotateBody(m_pTarget);
-		m_eState = PET_POISIONBUTTERFLY_ANI::Idle;
 		break;
+
 	case PET_TARGET_TYPE::PET_TARGET_ITEM:
 		Function_RotateBody(m_pTarget);
-		m_eState = PET_POISIONBUTTERFLY_ANI::Idle;
 		break;
+
 	case PET_TARGET_TYPE::PET_TARGET_NONE:
 		Function_RotateBody(m_pPlayer);
-		m_eState = PET_POISIONBUTTERFLY_ANI::Idle;
 		break;
 	}
 
@@ -1656,4 +1619,3 @@ void CPet_PoisonButterFly::Free()
 
 	return;
 }
-

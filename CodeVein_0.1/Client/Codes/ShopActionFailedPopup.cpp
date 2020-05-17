@@ -92,10 +92,9 @@ _int CShopActionFailedPopup::Update_GameObject(_double TimeDelta)
 	{
 		m_fFadeDelay += _float(TimeDelta);
 
-		if (m_fFadeDelay < 0.5f)
-			return S_OK;
+		if (m_fFadeDelay > 0.5f)
+			m_fAlpha += _float(TimeDelta) * -1.3f;
 
-		m_fAlpha += _float(TimeDelta) * -1.3f;
 		if (m_fAlpha <= 0.f)
 			m_bFadeOutStart = false;
 	}

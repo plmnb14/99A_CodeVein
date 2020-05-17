@@ -1159,6 +1159,11 @@ HRESULT CLoading::Ready_Effect(void)
 	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_BossDead_Text", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_BossDead_Text.dat")))))
 		return E_FAIL;
 
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_UpgradeParticle_0", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_UpgradeParticle_0.dat")))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"Ortho_UpgradeParticle_1", COrthoEffect::Create(m_pGraphicDev, Read_EffectData(L"../../Data/EffectData/Ortho_UpgradeParticle_1.dat")))))
+		return E_FAIL;
+
 	return S_OK;
 }
 
@@ -1289,7 +1294,7 @@ _uint CLoading::Loading_Title()
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Dynamic_Path.dat");
 
 	//cout << "DynamicMesh 불러오는 중 . . ." << endl;
-	//g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
 	
 	cout << "NPC 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
@@ -1357,8 +1362,13 @@ _uint CLoading::Loading_Title()
 	//============================================================================================================
 	// 사운드
 	//============================================================================================================
-	g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
+
+	g_pSoundManager->Load_Directory_SouneFile_W(L"Title");
+	//g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
+	g_pSoundManager->Load_Directory_SouneFile_W(L"Effect");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"UI");
+	g_pSoundManager->Load_Directory_SouneFile_W(L"UI/UI_WeaponShop");
+	g_pSoundManager->Load_Directory_SouneFile_W(L"NPC/Yakumo");
 	//============================================================================================================
 	// 옷
 	//============================================================================================================
@@ -1393,8 +1403,10 @@ _uint CLoading::Loading_Title()
 	cout << (g_bReleaseMode ? "true" : "false") << endl;
 	cout << "-------------------------------------------------------------------------------" << endl;
 
-	//g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
-	//g_pSoundManager->Play_Sound(L"Title_Intro_02.wav", CSoundManager::Background_01, CSoundManager::BGM_Sound);
+
+	g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
+	g_pSoundManager->Play_Sound(L"UI_UpgradeSuccess.wav", CSoundManager::Effect_SFX_01, CSoundManager::Effect_Sound);
+	//g_pSoundManager->Play_Sound(L"Title_Intro_02.wav", CSoundManager::Background_01, CSoundManager::Master_Sound);
 	//g_pSoundManager->Play_Sound(L"Gwan_Cchak.wav", CSoundManager::Background_01, CSoundManager::BGM_Sound);
 	//g_pSoundManager->Play_BGM(L"Gwan_Cchak.wav");
 
@@ -1588,7 +1600,7 @@ _uint CLoading::Loading_Stage()
 			return E_FAIL;
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_EffParent", L"GameObject_EffParent", 100);
 
-		///////test로 만들어둔 드롭아이템입니다 수정 Test 실험 심규명
+		// Drop_Item
 		if (FAILED(g_pManagement->Add_Prototype(L"GameObject_DropItem", CDropItem::Create(m_pGraphicDev))))
 			return E_FAIL;
 		CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"GameObject_DropItem", L"GameObject_DropItem", 200);
@@ -1915,6 +1927,11 @@ HRESULT CLoading::Ready_Intro_MonsterPrototype()
 	if (FAILED(g_pManagement->Add_Prototype(L"Pet_Bullet", CPet_Bullet::Create(m_pGraphicDev))))
 		return E_FAIL;
 	CObjectPool_Manager::Get_Instance()->Create_ObjectPool(L"Pet_Bullet", L"Pet_Bullet", 100);
+	//============================================================================================================================================
+	// 펫_사슴킹
+	//============================================================================================================================================
+	if (FAILED(g_pManagement->Add_Prototype(L"Pet_DeerKing", CPet_DeerKing::Create(m_pGraphicDev))))
+		return E_FAIL;
 	//============================================================================================================================================
 
 

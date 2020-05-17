@@ -12,6 +12,7 @@ public:
 	{
 		Talker_Player,
 		Talker_Jack,
+		Talker_Yakumo,
 		Talker_End
 	};
 	// 말하는 대사 (Texture - 인덱스 설정시 사용)
@@ -19,6 +20,10 @@ public:
 	{
 		Jack_Player_Test1,
 		Jack_Player_Test2,
+		Yakumo_Hello_0_WhatsUp,
+		Yakumo_Hello_1_WhatsUp,
+		Yakumo_Bye_0_SeeYouAround,
+		Yakumo_Bye_1_MakeSure,
 		Script_End
 	};
 private:
