@@ -113,7 +113,7 @@ _int CDeerKingJumpInPlaceCol::Late_Update_GameObject(_double TimeDelta)
 	return NOERROR;
 }
 
-HRESULT CDeerKingJumpInPlaceCol::Render_GameObject()
+HRESULT CDeerKingJumpInPlaceCol::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
 	Update_Collider();
 	Draw_Collider();

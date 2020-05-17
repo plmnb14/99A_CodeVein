@@ -154,7 +154,7 @@ _int CDeerKingIceSword::Late_Update_GameObject(_double TimeDelta)
 	return NOERROR;
 }
 
-HRESULT CDeerKingIceSword::Render_GameObject()
+HRESULT CDeerKingIceSword::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
 	Update_Collider();
 	Draw_Collider();

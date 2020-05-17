@@ -251,7 +251,7 @@ _int CCostume_Hair::Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-_int CCostume_Hair::Update_GameObject(_double TimeDelta, _bool bSkill)
+_int CCostume_Hair::Update_GameObject(_double TimeDelta, _bool bCanCol)
 {
 	if (false == m_bEnable)
 		return NO_EVENT;
@@ -272,7 +272,7 @@ _int CCostume_Hair::Update_GameObject(_double TimeDelta, _bool bSkill)
 	}
 
 	if(g_pClothManager->Is_Valid_Static(m_eHairType))
-		g_pClothManager->Update_Cloth_Static(m_eHairType, bSkill);
+		g_pClothManager->Update_Cloth_Static(m_eHairType, bCanCol);
 
 	return NO_EVENT;
 }

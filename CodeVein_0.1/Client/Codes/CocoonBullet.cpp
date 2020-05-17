@@ -123,7 +123,7 @@ _int CCocoonBullet::Late_Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-HRESULT CCocoonBullet::Render_GameObject()
+HRESULT CCocoonBullet::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
 	Update_Collider();
 	Render_Collider();

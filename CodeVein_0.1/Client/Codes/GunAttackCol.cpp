@@ -75,7 +75,7 @@ _int CGunAttackCol::Late_Update_GameObject(_double TimeDelta)
 	return NOERROR;
 }
 
-HRESULT CGunAttackCol::Render_GameObject()
+HRESULT CGunAttackCol::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
 	Update_Collider();
 	Draw_Collider();

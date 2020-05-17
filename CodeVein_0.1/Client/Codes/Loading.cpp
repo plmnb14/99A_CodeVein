@@ -1295,7 +1295,7 @@ _uint CLoading::Loading_Title()
 
 	//cout << "DynamicMesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
-	
+
 	cout << "NPC 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
 	//============================================================================================================
@@ -1364,11 +1364,13 @@ _uint CLoading::Loading_Title()
 	//============================================================================================================
 
 	g_pSoundManager->Load_Directory_SouneFile_W(L"Title");
-	//g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
+	g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"Effect");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"UI");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"UI/UI_WeaponShop");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"NPC/Yakumo");
+	g_pSoundManager->Load_Directory_SouneFile_W(L"Boss_Genji");
+
 	//============================================================================================================
 	// 옷
 	//============================================================================================================

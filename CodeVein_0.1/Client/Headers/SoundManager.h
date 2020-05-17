@@ -15,7 +15,10 @@ public:
 	Ambient_01, Ambient_02, Ambient_03,
 	Background_01, Background_02,
 	//===============================================================
-	Genji_SFX_01, Genji_SFX_02, Genji_Voice,
+
+	GunGenji_SFX_01, GunGenji_SFX_02, GunGenji_Voice,
+	SwordGenji_SFX_01, SwordGenji_SFX_02, SwordGenji_Voice,
+	SwordShieldGenji_SFX_01, SwordShieldGenji_SFX_02, SwordShieldGenji_Voice,
 	Cocoon_SFX_01, Cocoon_SFX_02, Cocoon_Voice,
 	Hunter_SFX_01, Hunter_SFX_02, Hunter_Voice,
 	Monkey_SFX_01, Monkey_SFX_02, Monkey_Voice,
@@ -126,17 +129,17 @@ private:
 	map<TCHAR*, FMOD_SOUND*> m_mapSound;
 
 	// 재생하고 있는 사운드를 관리할 객체 
-	FMOD_CHANNEL* m_pChannelArr[MAX_CHANNEL];
+	FMOD_CHANNEL* m_pChannelArr[MAX_CHANNEL] = { nullptr, };
 
-	FMOD_CHANNELGROUP* m_pChannelGroup[3];
+	FMOD_CHANNELGROUP* m_pChannelGroup[3] = { nullptr, };
 
-	FMOD_CHANNELGROUP* m_pMasterChannelGroup;
+	FMOD_CHANNELGROUP* m_pMasterChannelGroup = nullptr;
 
 	//사운드, 채널 객체 및 장치를 관리할 객체. 
 	FMOD_SYSTEM* m_pSystem = nullptr;
 
-	_float m_fVolumeChannel[End_Sound] = {};		// 음량
-	_float m_fPitchChannel[End_Sound] = {};		// 재생 속도
+	_float m_fVolumeChannel[End_Sound] = {0.f, };		// 음량
+	_float m_fPitchChannel[End_Sound] = {0.f, };		// 재생 속도
 
 private:
 	_ulong	m_dwSoundCnt_Cur = 0;

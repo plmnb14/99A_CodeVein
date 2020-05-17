@@ -142,7 +142,7 @@ _int CColdBeamSharp::Late_Update_GameObject(_double TimeDelta)
 	return NOERROR;
 }
 
-HRESULT CColdBeamSharp::Render_GameObject()
+HRESULT CColdBeamSharp::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
 	Update_Collider();
 	Draw_Collider();

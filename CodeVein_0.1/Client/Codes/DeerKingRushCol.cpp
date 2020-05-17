@@ -91,7 +91,7 @@ _int CDeerKingRushCol::Late_Update_GameObject(_double TimeDelta)
 	return NOERROR;
 }
 
-HRESULT CDeerKingRushCol::Render_GameObject()
+HRESULT CDeerKingRushCol::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
 	Update_Collider();
 	Draw_Collider();
