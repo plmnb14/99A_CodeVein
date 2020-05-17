@@ -193,13 +193,21 @@ void CMaterialBuyUI::Click_SubUI()
 	if (m_pCntMinusOption->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
 		if (m_iBuyCnt > 0)
+		{
 			m_iBuyCnt--;
+
+			g_pSoundManager->Play_Sound(L"UI_Money_0.wav", CSoundManager::CHANNELID::Material_Buy_Left, CSoundManager::Ambient_Sound);
+		}			
 		else return;
 	}
 	else if (m_pCntPlusOption->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
 		if (m_iBuyCnt < 9)
+		{
 			m_iBuyCnt++;
+
+			g_pSoundManager->Play_Sound(L"UI_Money_0.wav", CSoundManager::CHANNELID::Material_Buy_Right, CSoundManager::Ambient_Sound);
+		}
 		else return;
 	}
 	else if (m_pDecisionOption->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
@@ -251,6 +259,8 @@ void CMaterialBuyUI::Buy_Item()
 		CUI_Manager::Get_Instance()->Get_HazeUI()->Accumulate_Haze(-(_int)iTotalCost);
 
 		m_bIsActive = false;
+
+		g_pSoundManager->Play_Sound(L"UI_WeaponBuy.wav", CSoundManager::CHANNELID::Material_Buy_Purchase, CSoundManager::Ambient_Sound);
 	}
 	// 가지고 있는 헤이즈보다 구매 총 비용이 더 클 경우 -> 돈 부족함 -> 구매X
 	else
@@ -259,6 +269,8 @@ void CMaterialBuyUI::Buy_Item()
 		m_bIsActive = false;
 
 		m_pBuyFailUI->Set_Active(true);
+
+		g_pSoundManager->Play_Sound(L"UI_ShopActionFailed.wav", CSoundManager::CHANNELID::Material_Buy_Fail, CSoundManager::Ambient_Sound);
 		return;
 	}
 }

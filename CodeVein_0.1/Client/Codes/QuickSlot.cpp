@@ -252,7 +252,7 @@ void CQuickSlot::Use_QuickSlot_Item()
 	OBJECT_PARAM tPlayerParam = pPlayer->Get_Target_Param();
 	CExpendables_Inven* pExpendInven = CUI_Manager::Get_Instance()->Get_Expendables_Inven();
 
-	g_pSoundManager->Play_Sound(L"UI_QuickSlotUse.wav", CSoundManager::CHANNELID::QuickSlot_Use_Item, CSoundManager::Ambient_Sound);
+	g_pSoundManager->Play_Sound(L"UI_UpgradeSuccess.wav", CSoundManager::CHANNELID::QuickSlot_Use_Item, CSoundManager::Ambient_Sound);
 
 	switch (m_vecQuickSlot[m_iSelect]->Get_Type())
 	{
@@ -260,7 +260,6 @@ void CQuickSlot::Use_QuickSlot_Item()
 	{		
 		pExpendInven->Use_Expendableas(m_vecQuickSlot[m_iSelect]);
 		pExpendInven->Set_MaximumItemCnt(pExpendInven->Get_MaximumItemCnt() + 1);
-		
 	}
 		break;
 	case CExpendables::Expend_Hp:
@@ -299,6 +298,8 @@ void CQuickSlot::Use_QuickSlot_Item()
 	case CExpendables::EXPEND_END:
 		return;
 	}
+
+	
 }
 
 
