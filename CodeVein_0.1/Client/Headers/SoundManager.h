@@ -16,13 +16,14 @@ public:
 	Background_01, Background_02,
 	//===============================================================
 	Genji_SFX_01, Genji_SFX_02, Genji_Voice,
+	Cocoon_SFX_01, Cocoon_SFX_02, Cocoon_Voice,
+	Hunter_SFX_01, Hunter_SFX_02, Hunter_Voice,
+	Monkey_SFX_01, Monkey_SFX_02, Monkey_Voice,
+	ThaiMan_SFX_01, ThaiMan_SFX_02, ThaiMan_Voice,
+	Urchin_SFX_01, Urchin_SFX_02, Urchin_Voice,
 	Wolf_SFX_01, Wolf_SFX_02, Wolf_Voice,
 	Yacha_SFX_01, Yacha_SFX_02, Yacha_Voice,
-	Cocoon_SFX_01, Cocoon_SFX_02, Cocoon_Voice,
-	Monkey_SFX_01, Monkey_SFX_02, Monkey_Voice,
-	Hunter_SFX_01, Hunter_SFX_02, Hunter_Voice,
 	Yeti_SFX_01, Yeti_SFX_02, Yeti_Voice,
-	SpikeBall_SFX_01, SpikeBall_SFX_02, SpikeBall_Voice,
 	//===============================================================
 	Butterfly_SFX_01, Butterfly_SFX_02, ButterFly_Voice,
 	DearKing_SFX_01, DearKing_SFX_02, DearKing_Voice,

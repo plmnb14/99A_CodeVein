@@ -406,14 +406,15 @@ void CYachaMan::Check_Dist()
 		MONSTER_STATE_TYPE::DEAD == m_eFirstCategory)
 		return;
 
-	if (true == m_bIsCombo ||
+	Function_Find_Target();
+
+	if (true == m_bIsIdle ||
+		true == m_bIsCombo ||
 		true == m_bIsMoveAround ||
 		true == m_tObjParam.bIsAttack ||
 		true == m_tObjParam.bIsDodge ||
 		true == m_tObjParam.bIsHit)
 		return;
-
-	Function_Find_Target();
 
 	if (nullptr == m_pAggroTarget)
 	{
@@ -421,24 +422,30 @@ void CYachaMan::Check_Dist()
 
 		m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
-		if (false == m_bIsIdle)
+		if (true == m_bCanIdle)
 		{
+			m_bCanIdle = false;
+
 			switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 			{
 			case MONSTER_IDLE_TYPE::IDLE_IDLE:
 				m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
+				m_eState = YACHAMAN_ANI::Hammer_Idle;
 				break;
 			case MONSTER_IDLE_TYPE::IDLE_CROUCH:
 			case MONSTER_IDLE_TYPE::IDLE_EAT:
 				m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_EAT;
+				m_eState = YACHAMAN_ANI::NF_Eat;
 				break;
 			case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
 			case MONSTER_IDLE_TYPE::IDLE_LURK:
 				m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_LURK;
+				m_eState = YACHAMAN_ANI::NF_Lurk;
 				break;
 			case MONSTER_IDLE_TYPE::IDLE_STAND:
 			case MONSTER_IDLE_TYPE::IDLE_SIT:
 				m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
+				m_eState = YACHAMAN_ANI::NF_Sit;
 				break;
 			}
 		}
@@ -490,22 +497,25 @@ void CYachaMan::Check_Dist()
 				{
 				case MONSTER_IDLE_TYPE::IDLE_IDLE:
 					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
+					m_eState = YACHAMAN_ANI::Hammer_Idle;
 					break;
 				case MONSTER_IDLE_TYPE::IDLE_CROUCH:
 				case MONSTER_IDLE_TYPE::IDLE_EAT:
 					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_EAT;
+					m_eState = YACHAMAN_ANI::NF_Eat;
 					break;
 				case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
 				case MONSTER_IDLE_TYPE::IDLE_LURK:
 					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_LURK;
+					m_eState = YACHAMAN_ANI::NF_Lurk;
 					break;
 				case MONSTER_IDLE_TYPE::IDLE_STAND:
 				case MONSTER_IDLE_TYPE::IDLE_SIT:
 					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
+					m_eState = YACHAMAN_ANI::NF_Sit;
 					break;
 				}
 			}
-
 		}
 		return;
 	}
@@ -729,6 +739,64 @@ void CYachaMan::Play_R()
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_02);
+				g_pSoundManager->Play_Sound(L"Monster_HeavyWeapon_Sub.ogg", CSoundManager::Yacha_SFX_02, CSoundManager::Effect_Sound);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing0.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing1.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing2.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing3.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		else if (3.4f <= AniTime)
+		{
+			if (false == m_bEventTrigger[4])
+			{
+				m_bEventTrigger[4] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice3.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice4.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice5.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice6.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		
@@ -837,6 +905,64 @@ void CYachaMan::Play_L()
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_02);
+				g_pSoundManager->Play_Sound(L"Monster_HeavyWeapon_Sub.ogg", CSoundManager::Yacha_SFX_02, CSoundManager::Effect_Sound);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing0.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing1.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing2.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing3.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		else if (2.3f <= AniTime)
+		{
+			if (false == m_bEventTrigger[4])
+			{
+				m_bEventTrigger[4] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice3.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice4.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice5.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice6.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -942,11 +1068,69 @@ void CYachaMan::Play_Hammering()
 			if (false == m_bEventTrigger[2])
 			{
 				m_bEventTrigger[2] = true;
+				m_tObjParam.bSuperArmor = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 
 				g_pManagement->Create_Effect(L"Weapon_HeavyDust", m_pWeapon->Get_HeadPos());
-				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_02);
+				g_pSoundManager->Play_Sound(L"Monster_HeavyWeapon_Sub.ogg", CSoundManager::Yacha_SFX_02, CSoundManager::Effect_Sound);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing0.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing1.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing2.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing3.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		else if (3.2f <= AniTime)
+		{
+			if (false == m_bEventTrigger[4])
+			{
+				m_bEventTrigger[4] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice3.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice4.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice5.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice6.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -1048,6 +1232,42 @@ void CYachaMan::Play_Shoulder()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (1.8f <= AniTime)
+		{
+			if (false == m_bEventTrigger[4])
+			{
+				m_bEventTrigger[4] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice3.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice4.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice5.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice6.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 
 		if (4.733f < AniTime && 5.800f >AniTime)
 		{
@@ -1124,6 +1344,64 @@ void CYachaMan::Play_TurnTwice()
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_02);
+				g_pSoundManager->Play_Sound(L"Monster_HeavyWeapon_Sub.ogg", CSoundManager::Yacha_SFX_02, CSoundManager::Effect_Sound);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing0.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing1.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing2.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing3.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		else if (3.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[9])
+			{
+				m_bEventTrigger[9] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice3.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice4.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice5.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice6.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (2.600f <= AniTime)
@@ -1151,6 +1429,64 @@ void CYachaMan::Play_TurnTwice()
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_02);
+				g_pSoundManager->Play_Sound(L"Monster_HeavyWeapon_Sub.ogg", CSoundManager::Yacha_SFX_02, CSoundManager::Effect_Sound);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing0.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing1.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing2.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing3.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		else if (1.8f <= AniTime)
+		{
+			if (false == m_bEventTrigger[10])
+			{
+				m_bEventTrigger[10] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice3.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice4.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice5.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice6.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -1242,6 +1578,64 @@ void CYachaMan::Play_HalfClock()
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_02);
+				g_pSoundManager->Play_Sound(L"Monster_HeavyWeapon_Sub.ogg", CSoundManager::Yacha_SFX_02, CSoundManager::Effect_Sound);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing0.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing1.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing2.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing3.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		else if (1.7f <= AniTime)
+		{
+			if (false == m_bEventTrigger[5])
+			{
+				m_bEventTrigger[5] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice3.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice4.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice5.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice6.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -1322,6 +1716,64 @@ void CYachaMan::Play_TargetHammering()
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_02);
+				g_pSoundManager->Play_Sound(L"Monster_HeavyWeapon_Sub.ogg", CSoundManager::Yacha_SFX_02, CSoundManager::Effect_Sound);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing0.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing1.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing2.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing3.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		else if (4.8f <= AniTime)
+		{
+			if (false == m_bEventTrigger[5])
+			{
+				m_bEventTrigger[5] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice3.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice4.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice5.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice6.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -1443,6 +1895,64 @@ void CYachaMan::Play_WheelWind()
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_02);
+				g_pSoundManager->Play_Sound(L"Monster_HeavyWeapon_Sub.ogg", CSoundManager::Yacha_SFX_02, CSoundManager::Effect_Sound);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing0.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing1.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing2.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing3.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		else if (6.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[18])
+			{
+				m_bEventTrigger[18] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice3.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice4.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice5.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice6.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (6.333f <= AniTime)
@@ -1470,6 +1980,64 @@ void CYachaMan::Play_WheelWind()
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_02);
+				g_pSoundManager->Play_Sound(L"Monster_HeavyWeapon_Sub.ogg", CSoundManager::Yacha_SFX_02, CSoundManager::Effect_Sound);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing0.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing1.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing2.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing3.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		else if (5.3f <= AniTime)
+		{
+			if (false == m_bEventTrigger[19])
+			{
+				m_bEventTrigger[19] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice3.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice4.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice5.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice6.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (5.100f <= AniTime)
@@ -1497,6 +2065,64 @@ void CYachaMan::Play_WheelWind()
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_02);
+				g_pSoundManager->Play_Sound(L"Monster_HeavyWeapon_Sub.ogg", CSoundManager::Yacha_SFX_02, CSoundManager::Effect_Sound);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing0.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing1.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing2.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing3.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		else if (4.5f <= AniTime)
+		{
+			if (false == m_bEventTrigger[20])
+			{
+				m_bEventTrigger[20] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice3.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice4.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice5.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice6.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (3.900f <= AniTime)
@@ -1524,6 +2150,64 @@ void CYachaMan::Play_WheelWind()
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_02);
+				g_pSoundManager->Play_Sound(L"Monster_HeavyWeapon_Sub.ogg", CSoundManager::Yacha_SFX_02, CSoundManager::Effect_Sound);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing0.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing1.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing2.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing3.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		else if (3.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[21])
+			{
+				m_bEventTrigger[21] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice3.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice4.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice5.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice6.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -1906,10 +2590,68 @@ void CYachaMan::Play_Combo_R_L()
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_02);
+				g_pSoundManager->Play_Sound(L"Monster_HeavyWeapon_Sub.ogg", CSoundManager::Yacha_SFX_02, CSoundManager::Effect_Sound);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing0.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing1.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing2.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing3.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		else if (3.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[8])
+			{
+				m_bEventTrigger[8] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice3.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice4.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice5.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice6.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
-		if (2.833f<AniTime && 4.233f> AniTime)
+		if (2.833f < AniTime && 4.233f > AniTime)
 		{
 			if (m_bEventTrigger[3] == false)
 			{
@@ -2001,10 +2743,68 @@ void CYachaMan::Play_Combo_R_L()
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_02);
+				g_pSoundManager->Play_Sound(L"Monster_HeavyWeapon_Sub.ogg", CSoundManager::Yacha_SFX_02, CSoundManager::Effect_Sound);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing0.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing1.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing2.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing3.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		else if (2.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[9])
+			{
+				m_bEventTrigger[9] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice3.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice4.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice5.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice6.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
-		if (0.900f<AniTime && 2.833f> AniTime)
+		if (0.900f < AniTime && 2.833f > AniTime)
 		{
 			if (m_bEventTrigger[7] == false)
 			{
@@ -2103,6 +2903,64 @@ void CYachaMan::Play_Combo_R_Hammering()
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_02);
+				g_pSoundManager->Play_Sound(L"Monster_HeavyWeapon_Sub.ogg", CSoundManager::Yacha_SFX_02, CSoundManager::Effect_Sound);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing0.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing1.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing2.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing3.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		else if (3.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[8])
+			{
+				m_bEventTrigger[8] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice3.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice4.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice5.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice6.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -2200,6 +3058,64 @@ void CYachaMan::Play_Combo_R_Hammering()
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_02);
+				g_pSoundManager->Play_Sound(L"Monster_HeavyWeapon_Sub.ogg", CSoundManager::Yacha_SFX_02, CSoundManager::Effect_Sound);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing0.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing1.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing2.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing3.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		else if (3.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[9])
+			{
+				m_bEventTrigger[9] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice3.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice4.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice5.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice6.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -2293,6 +3209,42 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 				m_bEventTrigger[1] = true;
 				m_vecAttackCol[0]->Set_Enabled(true);
 				m_tObjParam.bSuperArmor = true;
+			}
+		}
+		else if (2.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[13])
+			{
+				m_bEventTrigger[13] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice3.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice4.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice5.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice6.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -2401,6 +3353,64 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_02);
+				g_pSoundManager->Play_Sound(L"Monster_HeavyWeapon_Sub.ogg", CSoundManager::Yacha_SFX_02, CSoundManager::Effect_Sound);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing0.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing1.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing2.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing3.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		else if (3.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[14])
+			{
+				m_bEventTrigger[14] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice3.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice4.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice5.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice6.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 		else if (2.600f <= AniTime)
@@ -2428,6 +3438,64 @@ void CYachaMan::Play_Combo_Shoulder_TurnTwice()
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_02);
+				g_pSoundManager->Play_Sound(L"Monster_HeavyWeapon_Sub.ogg", CSoundManager::Yacha_SFX_02, CSoundManager::Effect_Sound);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing0.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing1.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing2.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing3.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		else if (1.5f <= AniTime)
+		{
+			if (false == m_bEventTrigger[15])
+			{
+				m_bEventTrigger[15] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice3.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice4.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice5.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice6.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -2635,6 +3703,42 @@ void CYachaMan::Play_Combo_Shoulder_HalfClock()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (1.8f <= AniTime)
+		{
+			if (false == m_bEventTrigger[9])
+			{
+				m_bEventTrigger[9] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice3.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice4.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice5.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice6.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 
 		if (4.733f < AniTime && 5.800f >AniTime)
 		{
@@ -2741,6 +3845,64 @@ void CYachaMan::Play_Combo_Shoulder_HalfClock()
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_02);
+				g_pSoundManager->Play_Sound(L"Monster_HeavyWeapon_Sub.ogg", CSoundManager::Yacha_SFX_02, CSoundManager::Effect_Sound);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing0.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing1.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing2.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing3.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		else if (1.5f <= AniTime)
+		{
+			if (false == m_bEventTrigger[10])
+			{
+				m_bEventTrigger[10] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice3.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice4.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice5.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice6.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -2883,6 +4045,35 @@ void CYachaMan::Play_Combo_RunHammering()
 				m_fSkillMoveSpeed_Cur = 12.f;
 				m_fSkillMoveAccel_Cur = 0.f;
 				m_fSkillMoveMultiply = 2.f;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice3.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice4.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice5.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice6.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 
 			if (nullptr == m_pAggroTarget)
@@ -2948,6 +4139,57 @@ void CYachaMan::Play_Combo_RunHammering()
 			m_fSkillMoveSpeed_Cur = 12.f;
 			m_fSkillMoveAccel_Cur = 0.f;
 			m_fSkillMoveMultiply = 2.f;
+
+			g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+			m_iRandom = CALC::Random_Num(0, 6);
+
+			switch (m_iRandom)
+			{
+			case 0:
+				g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+				break;
+			case 1:
+				g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+				break;
+			case 2:
+				g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+				break;
+			case 3:
+				g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice3.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+				break;
+			case 4:
+				g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice4.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+				break;
+			case 5:
+				g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice5.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+				break;
+			case 6:
+				g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice6.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+				break;
+			}
+
+			g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_01);
+			g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_02);
+			g_pSoundManager->Play_Sound(L"Monster_HeavyWeapon_Sub.ogg", CSoundManager::Yacha_SFX_02, CSoundManager::Effect_Sound);
+
+			m_iRandom = CALC::Random_Num(0, 3);
+
+			switch (m_iRandom)
+			{
+			case 0:
+				g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing0.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+				break;
+			case 1:
+				g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing1.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+				break;
+			case 2:
+				g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing2.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+				break;
+			case 3:
+				g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing3.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+				break;
+			}
 		}
 
 		if (nullptr == m_pAggroTarget)
@@ -3033,6 +4275,64 @@ void CYachaMan::Play_Combo_RunHammering()
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_01);
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_SFX_02);
+				g_pSoundManager->Play_Sound(L"Monster_HeavyWeapon_Sub.ogg", CSoundManager::Yacha_SFX_02, CSoundManager::Effect_Sound);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing0.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing1.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing2.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Blunt_Swing3.ogg", CSoundManager::Yacha_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		else if (0.7f <= AniTime)
+		{
+			if (false == m_bEventTrigger[6])
+			{
+				m_bEventTrigger[6] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice3.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice4.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice5.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"YachaMan_Atk_Voice6.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -3059,14 +4359,19 @@ void CYachaMan::Play_Idle()
 	switch (m_eSecondCategory_IDLE)
 	{
 	case MONSTER_IDLE_TYPE::IDLE_IDLE:
-		if (true == m_bInRecognitionRange)
+		if (nullptr != m_pAggroTarget)
 		{
-			m_bIsIdle = false;
+			if (true == m_bInRecognitionRange)
+			{
+				m_bIsIdle = false;
 
-			if (true == m_tObjParam.bCanAttack)
 				m_eState = YACHAMAN_ANI::Hammer_Idle;
+			}
 			else
+			{
+				m_bIsIdle = true;
 				m_eState = YACHAMAN_ANI::Hammer_Idle;
+			}
 		}
 		else
 		{
@@ -3075,23 +4380,31 @@ void CYachaMan::Play_Idle()
 		}
 		break;
 	case MONSTER_IDLE_TYPE::IDLE_EAT:
-		if (true == m_bInRecognitionRange)
+		if (nullptr != m_pAggroTarget)
 		{
-			if (YACHAMAN_ANI::NF_Eat == m_eState)
+			if (true == m_bInRecognitionRange)
+			{
+				if (YACHAMAN_ANI::NF_Eat == m_eState)
+				{
+					m_bIsIdle = true;
+
+					if (m_pMeshCom->Is_Finish_Animation(0.25f))
+						m_eState = YACHAMAN_ANI::NF_Eat_End;
+				}
+				else if (YACHAMAN_ANI::NF_Eat_End == m_eState)
+				{
+					if (m_pMeshCom->Is_Finish_Animation(0.95f))
+					{
+						m_bCanIdle = true;
+						m_bIsIdle = false;
+						m_eState = YACHAMAN_ANI::Hammer_Idle;
+					}
+				}
+			}
+			else
 			{
 				m_bIsIdle = true;
-
-				if (m_pMeshCom->Is_Finish_Animation(0.25f))
-					m_eState = YACHAMAN_ANI::NF_Eat_End;
-			}
-			else if (YACHAMAN_ANI::NF_Eat_End == m_eState)
-			{
-				if (m_pMeshCom->Is_Finish_Animation(0.95f))
-				{
-					m_bCanIdle = true;
-					m_bIsIdle = false;
-					m_eState = YACHAMAN_ANI::Hammer_Idle;
-				}
+				m_eState = YACHAMAN_ANI::NF_Eat;
 			}
 		}
 		else
@@ -3101,23 +4414,31 @@ void CYachaMan::Play_Idle()
 		}
 		break;
 	case MONSTER_IDLE_TYPE::IDLE_LURK:
-		if (true == m_bInRecognitionRange)
+		if (nullptr != m_pAggroTarget)
 		{
-			if (YACHAMAN_ANI::NF_Lurk == m_eState)
+			if (true == m_bInRecognitionRange)
+			{
+				if (YACHAMAN_ANI::NF_Lurk == m_eState)
+				{
+					m_bIsIdle = true;
+
+					if (m_pMeshCom->Is_Finish_Animation(0.5f))
+						m_eState = YACHAMAN_ANI::NF_Lurk_End;
+				}
+				else if (YACHAMAN_ANI::NF_Lurk_End == m_eState)
+				{
+					if (m_pMeshCom->Is_Finish_Animation(0.95f))
+					{
+						m_bCanIdle = true;
+						m_bIsIdle = false;
+						m_eState = YACHAMAN_ANI::Hammer_Idle;
+					}
+				}
+			}
+			else
 			{
 				m_bIsIdle = true;
-
-				if (m_pMeshCom->Is_Finish_Animation(0.5f))
-					m_eState = YACHAMAN_ANI::NF_Lurk_End;
-			}
-			else if (YACHAMAN_ANI::NF_Lurk_End == m_eState)
-			{
-				if (m_pMeshCom->Is_Finish_Animation(0.95f))
-				{
-					m_bCanIdle = true;
-					m_bIsIdle = false;
-					m_eState = YACHAMAN_ANI::Hammer_Idle;
-				}
+				m_eState = YACHAMAN_ANI::NF_Lurk;
 			}
 		}
 		else
@@ -3127,20 +4448,28 @@ void CYachaMan::Play_Idle()
 		}
 		break;
 	case MONSTER_IDLE_TYPE::IDLE_SIT:
-		if (true == m_bInRecognitionRange)
+		if (nullptr != m_pAggroTarget)
 		{
-			if (YACHAMAN_ANI::NF_Sit == m_eState)
+			if (true == m_bInRecognitionRange)
+			{
+				if (YACHAMAN_ANI::NF_Sit == m_eState)
+				{
+					m_bIsIdle = true;
+
+					if (m_pMeshCom->Is_Finish_Animation(0.5f))
+						m_eState = YACHAMAN_ANI::NF_Sit_End;
+				}
+				else if (YACHAMAN_ANI::NF_Sit_End == m_eState)
+				{
+					m_bCanIdle = true;
+					m_bIsIdle = false;
+					m_eState = YACHAMAN_ANI::Hammer_Idle;
+				}
+			}
+			else
 			{
 				m_bIsIdle = true;
-
-				if (m_pMeshCom->Is_Finish_Animation(0.5f))
-					m_eState = YACHAMAN_ANI::NF_Sit_End;
-			}
-			else if (YACHAMAN_ANI::NF_Sit_End == m_eState)
-			{
-				m_bCanIdle = true;
-				m_bIsIdle = false;
-				m_eState = YACHAMAN_ANI::Hammer_Idle;
+				m_eState = YACHAMAN_ANI::NF_Sit;
 			}
 		}
 		else
@@ -3148,6 +4477,7 @@ void CYachaMan::Play_Idle()
 			m_bIsIdle = true;
 			m_eState = YACHAMAN_ANI::NF_Sit;
 		}
+		break;
 	}
 
 	return;
@@ -3382,6 +4712,31 @@ void CYachaMan::Play_Hit()
 		}
 		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
 		{
+			if (false == m_bEventTrigger[0])
+			{
+				m_bEventTrigger[0] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"YachaMan_Hit0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"YachaMan_Hit1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"YachaMan_Hit2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"YachaMan_Hit3.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+
 			if (false == m_tObjParam.bCanHit)
 			{
 				m_tObjParam.bCanHit = true;
@@ -3444,6 +4799,30 @@ void CYachaMan::Play_Dead()
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
+			else if (1.4f <= AniTime)
+			{
+				if (false == m_bEventTrigger[1])
+				{
+					m_bEventTrigger[1] = true;
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+					m_iRandom = CALC::Random_Num(0, 2);
+
+					switch (m_iRandom)
+					{
+					case 0:
+						g_pSoundManager->Play_Sound(L"YachMan_Death0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+						break;
+					case 1:
+						g_pSoundManager->Play_Sound(L"YachMan_Death1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+						break;
+					case 2:
+						g_pSoundManager->Play_Sound(L"YachMan_Death2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+						break;
+					}
+				}
+			}
 			break;
 
 		case YACHAMAN_ANI::Death_B:
@@ -3465,6 +4844,30 @@ void CYachaMan::Play_Dead()
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
+			else if (1.8f <= AniTime)
+			{
+				if (false == m_bEventTrigger[1])
+				{
+					m_bEventTrigger[1] = true;
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+					m_iRandom = CALC::Random_Num(0, 2);
+
+					switch (m_iRandom)
+					{
+					case 0:
+						g_pSoundManager->Play_Sound(L"YachMan_Death0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+						break;
+					case 1:
+						g_pSoundManager->Play_Sound(L"YachMan_Death1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+						break;
+					case 2:
+						g_pSoundManager->Play_Sound(L"YachMan_Death2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+						break;
+					}
+				}
+			}
 			break;
 
 		case YACHAMAN_ANI::Death:
@@ -3473,23 +4876,9 @@ void CYachaMan::Play_Dead()
 				m_bEnable = false;
 				m_dAniPlayMul = 0;
 			}
-			else if (1.30f < AniTime && 2.80f > AniTime)
+			else if (3.233f <= AniTime)
 			{
 				if (false == m_bEventTrigger[0])
-				{
-					m_bEventTrigger[0] = true;
-					m_fSkillMoveSpeed_Cur = 1.f;
-					m_fSkillMoveAccel_Cur = 0.f;
-					m_fSkillMoveMultiply = 0.1f;
-				}
-
-				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-				Function_DecreMoveMent(m_fSkillMoveMultiply);
-			}
-
-			if (3.233f <= AniTime)
-			{
-				if (false == m_bEventTrigger[1])
 				{
 					m_bEventTrigger[1] = true;
 					Start_Dissolve(0.7f, false, true);
@@ -3497,6 +4886,44 @@ void CYachaMan::Play_Dead()
 
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 				}
+			}
+			else if (2.9f <= AniTime)
+			{
+				if (false == m_bEventTrigger[2])
+				{
+					m_bEventTrigger[2] = true;
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Yacha_Voice);
+
+					m_iRandom = CALC::Random_Num(0, 2);
+
+					switch (m_iRandom)
+					{
+					case 0:
+						g_pSoundManager->Play_Sound(L"YachMan_Death0.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+						break;
+					case 1:
+						g_pSoundManager->Play_Sound(L"YachMan_Death1.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+						break;
+					case 2:
+						g_pSoundManager->Play_Sound(L"YachMan_Death2.ogg", CSoundManager::Yacha_Voice, CSoundManager::Effect_Sound);
+						break;
+					}
+				}
+			}
+
+			if (1.30f < AniTime && 2.80f > AniTime)
+			{
+				if (false == m_bEventTrigger[1])
+				{
+					m_bEventTrigger[1] = true;
+					m_fSkillMoveSpeed_Cur = 1.f;
+					m_fSkillMoveAccel_Cur = 0.f;
+					m_fSkillMoveMultiply = 0.1f;
+				}
+
+				Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
+				Function_DecreMoveMent(m_fSkillMoveMultiply);
 			}
 			break;
 		}
