@@ -36,7 +36,8 @@ _int CSkillSlot::Update_GameObject(_double TimeDelta)
 	SetUp_SkillIndex();
 
 	m_bIsCollMouse = Pt_InRect();
-
+	
+	
 	return NO_EVENT;
 }
 

@@ -541,6 +541,18 @@
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopActionFailedPopup">
       <UniqueIdentifier>{fb48775f-5ad6-495d-b848-d4a07f0be4b3}</UniqueIdentifier>
     </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\BuyOptions">
+      <UniqueIdentifier>{aa9ae945-c50e-428b-80c8-86d9854a412e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\ExpendBuyUI">
+      <UniqueIdentifier>{6a79ab2c-c230-4ddd-9c3d-e03797b6657a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\MaterialBuyUI">
+      <UniqueIdentifier>{2e9af6be-dff2-499c-b091-3d6c2a8198ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\PurchaseFailUI">
+      <UniqueIdentifier>{91753981-d825-4b95-b825-8445657cc02e}</UniqueIdentifier>
+    </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopItemIcon">
       <UniqueIdentifier>{348a2642-8d5b-474a-9535-b1311577cd9a}</UniqueIdentifier>
     </Filter>
@@ -1167,6 +1179,18 @@
     <ClInclude Include="..\Headers\ShopActionFailedPopup.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopActionFailedPopup</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\BuyOptionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\BuyOptions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ExpendBuyUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\ExpendBuyUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MaterialBuyUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\MaterialBuyUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\PurchaseFailUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\PurchaseFailUI</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\ShopItemIcon.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopItemIcon</Filter>
     </ClInclude>
@@ -1774,6 +1798,18 @@
     </ClCompile>
     <ClCompile Include="..\Codes\ShopActionFailedPopup.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopActionFailedPopup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BuyOptionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\BuyOptions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ExpendBuyUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\ExpendBuyUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MaterialBuyUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\MaterialBuyUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\PurchaseFailUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\PurchaseFailUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\ShopItemIcon.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopItemIcon</Filter>

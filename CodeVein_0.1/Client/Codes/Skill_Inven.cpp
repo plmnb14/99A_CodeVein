@@ -39,6 +39,11 @@ HRESULT CSkill_Inven::Ready_GameObject(void * pArg)
 
 	SetUp_Default();
 
+	
+	LOOP(12)
+	{
+		Add_Skill_Data(Skill_ID(i));
+	}
 	return NOERROR;
 }
 
@@ -185,6 +190,7 @@ void CSkill_Inven::Click_SubUI()
 	{
 		m_bIsActive = false;
 		CUI_Manager::Get_Instance()->Get_Total_Inven()->Set_Active(true);
+		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::Skill_Inven_Exit, CSoundManager::Ambient_Sound);
 	}
 
 	// 스킬 슬롯 선택시
@@ -194,12 +200,14 @@ void CSkill_Inven::Click_SubUI()
 		{
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
+				Regist_Slot_Sound(i);
 				Reset_Select_Slot();
 				m_vecSlot[i]->Set_Select(true);
 				CUI_Manager::Get_Instance()->Get_Total_Inven()->Set_Skill_ID(m_iRegistIdx, m_vecSlot[i]->Get_SkillID());
 			}
 			else if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
 			{
+				UnRegist_Slot_Sound(i);
 				CUI_Manager::Get_Instance()->Get_Total_Inven()->Set_Skill_ID(m_iRegistIdx, SkillID_End);
 				m_vecSlot[i]->Set_Select(false);
 			}
@@ -242,6 +250,24 @@ void CSkill_Inven::Reset_Select_Slot()
 {
 	for (auto& iter : m_vecSlot)
 		iter->Set_Select(false);
+}
+
+void CSkill_Inven::Regist_Slot_Sound(_uint iIdx)
+{
+	if (iIdx > SkillID_End)
+		return;
+
+	_uint iChnnel = CSoundManager::SkillInven_Regist_Slot01 + iIdx;
+	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID(iChnnel), CSoundManager::Ambient_Sound);
+}
+
+void CSkill_Inven::UnRegist_Slot_Sound(_uint iIdx)
+{
+	if (iIdx > SkillID_End)
+		return;
+
+	_uint iChnnel = CSoundManager::SkillInven_UnRegist_Slot01 + iIdx;
+	g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::CHANNELID(iChnnel), CSoundManager::Ambient_Sound);
 }
 
 void CSkill_Inven::Add_Skill_Data(Skill_ID eSkillID)

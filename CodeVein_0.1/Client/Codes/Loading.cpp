@@ -1362,9 +1362,11 @@ _uint CLoading::Loading_Title()
 	//============================================================================================================
 	// 사운드
 	//============================================================================================================
+
 	g_pSoundManager->Load_Directory_SouneFile_W(L"Title");
 	//g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"Effect");
+	g_pSoundManager->Load_Directory_SouneFile_W(L"UI");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"UI/UI_WeaponShop");
 	g_pSoundManager->Load_Directory_SouneFile_W(L"NPC/Yakumo");
 	//============================================================================================================
@@ -1400,6 +1402,7 @@ _uint CLoading::Loading_Title()
 	cout << "[9] # 릴리즈 모드 # ";
 	cout << (g_bReleaseMode ? "true" : "false") << endl;
 	cout << "-------------------------------------------------------------------------------" << endl;
+
 
 	g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
 	g_pSoundManager->Play_Sound(L"UI_UpgradeSuccess.wav", CSoundManager::Effect_SFX_01, CSoundManager::Effect_Sound);

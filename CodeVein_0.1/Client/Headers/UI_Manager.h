@@ -3,7 +3,7 @@
 #include "Client_Defines.h"
 #include "UI.h"
 #include "Item_Manager.h"
-
+#include "MouseUI.h"
 
 #include "PlayerHP.h"
 #include "PlayerST.h"
@@ -99,8 +99,10 @@
 #include "ExpendOptionUI.h"
 #include "Expend_InfoUI.h"
 
-#include "GeneralStoreBuyUI.h"
+#include "ExpendBuyUI.h"
+#include "MaterialBuyUI.h"
 #include "BuyOptionUI.h"
+#include "PurchaseFailUI.h"
 
 BEGIN(Client)
 
@@ -120,6 +122,7 @@ public:
 	HRESULT Add_UI_Prototype(_Device pDevice);
 	HRESULT SetUp_UILayer();
 	_int	Update_UI();
+	CMouseUI* Get_MouseUI() { return m_pMouseUI; }
 	CStatusUI* Get_StatusUI() { return m_pStatusUI; }
 	CMistletoeUI* Get_MistletoeUI() { return m_pMistletoeUI; }
 	CStageSelectUI* Get_StageSelectUI() { return m_pStageSelectUI; }
@@ -151,6 +154,7 @@ public:
 private:
 	_uint m_uiCoundItem = 0;
 	_bool m_bTest = false;
+	CMouseUI* m_pMouseUI = nullptr;
 	CStatusUI* m_pStatusUI = nullptr;
 	CMistletoeUI* m_pMistletoeUI = nullptr;
 	CStageSelectUI* m_pStageSelectUI = nullptr;
