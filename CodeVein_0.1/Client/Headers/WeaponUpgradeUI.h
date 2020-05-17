@@ -10,6 +10,8 @@ class CPlayerFontUI;
 class CWeaponUpgradeOptionUI;
 class CWeaponUpgradeSuccessPopupUI;
 class CShopActionFailedPopup;
+class CWeaponUpgradingPopup;
+class CShopItemIcon;
 class CWeaponUpgradeUI final : public CUI
 {
 public:
@@ -67,7 +69,6 @@ private:
 
 	_int	Get_MyMaterial(CMaterial::MATERIAL_TYPE eType);
 	_int	Get_RequireMaterial(CMaterial::MATERIAL_TYPE eType, _int iReinforce);
-	_float	Get_PlusDamage(_float fDamage, _int iReinforce);
 	_bool	Get_UpgradeSuccess(_int iReinforce);
 	_int	Get_UpgradeSuccessPercentage(_int iReinforce);
 
@@ -82,9 +83,11 @@ private:
 	CWeapon_Inven_InShop*				m_pInven = nullptr;
 	vector<CWeaponUpgradeOptionUI*>		m_vecOption;
 
-	CShopActionFailedPopup*	m_pShopActionFailedPopup = nullptr;
+	CWeaponUpgradingPopup*				m_pWeaponUpgradingPopup = nullptr;
+	CShopActionFailedPopup*				m_pShopActionFailedPopup = nullptr;
 	CWeaponUpgradeSuccessPopupUI*		m_pUpgradeResultPopup = false;
-	
+	CShopItemIcon*						m_pShopItemIcon = nullptr;
+
 	CWeaponUpgradeUI*					m_pWeaponNameUI = nullptr;
 	CWeaponUpgradeUI*					m_pWeaponMoveTypeUI = nullptr;
 
@@ -122,6 +125,7 @@ private:
 
 	_bool								m_bLateInit = false;
 	_int								m_iTexIdx = 0;
+	_int								m_iOption = -1;
 public:
 	static CWeaponUpgradeUI*	Create(_Device pGraphic_Device);
 	virtual CGameObject*		Clone_GameObject(void* pArg);

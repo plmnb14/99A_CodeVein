@@ -50,6 +50,9 @@ _int CScriptUI::Update_GameObject(_double TimeDelta)
 	case Talker_Jack:
 		m_iTalkerIndex = 3;
 		break;
+	case Talker_Yakumo:
+		m_iTalkerIndex = 4;
+		break;
 	case Talker_End:
 		break;
 	}
@@ -61,6 +64,18 @@ _int CScriptUI::Update_GameObject(_double TimeDelta)
 		break;
 	case Jack_Player_Test2:
 		m_iScriptIndex = 1;
+		break;
+	case Yakumo_Hello_0_WhatsUp:
+		m_iScriptIndex = 6;
+		break;
+	case Yakumo_Hello_1_WhatsUp:
+		m_iScriptIndex = 8;
+		break;
+	case Yakumo_Bye_0_SeeYouAround:
+		m_iScriptIndex = 5;
+		break;
+	case Yakumo_Bye_1_MakeSure:
+		m_iScriptIndex = 7;
 		break;
 	case Script_End:
 		break;

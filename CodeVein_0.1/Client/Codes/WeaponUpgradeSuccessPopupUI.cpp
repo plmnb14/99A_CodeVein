@@ -17,6 +17,7 @@ CWeaponUpgradeSuccessPopupUI::CWeaponUpgradeSuccessPopupUI(const CWeaponUpgradeS
 void CWeaponUpgradeSuccessPopupUI::Set_Active(_bool bIsActive)
 {
 	m_bIsActive = bIsActive;
+	m_pShopItemIcon->Set_Active(m_bIsActive);
 
 	Reset_Option();
 }
@@ -24,8 +25,12 @@ void CWeaponUpgradeSuccessPopupUI::Set_Active(_bool bIsActive)
 void CWeaponUpgradeSuccessPopupUI::Set_Fade(_bool bIsActive)
 {
 	m_bIsActive = bIsActive;
-	
+	m_pShopItemIcon->Set_Active(m_bIsActive);
+
 	m_fAlpha = 0.f;
+	m_fStartDelay = 4.45f;
+	m_pShopItemIcon->Set_Alpha(m_fAlpha);
+
 	if (bIsActive)
 		m_bFadeStart = true;
 }
@@ -79,15 +84,60 @@ _int CWeaponUpgradeSuccessPopupUI::Update_GameObject(_double TimeDelta)
 
 	CUI::Update_GameObject(TimeDelta);
 
+	m_fStartDelay -= _float(TimeDelta);
+	m_pShopItemIcon->Set_Active(false);
+
+	if (m_fStartDelay > 0.f)
+		return S_OK;
+
+	// ======================================
 	Check_ItemOption();
 	Check_Option();
-	Check_LateInit();
+	Check_ItemIcon();
 
 	if (m_bFadeStart)
 	{
 		m_fAlpha += _float(TimeDelta) * 10.f;
+		
+
 		if (m_fAlpha >= 1.f)
+		{
 			m_bFadeStart = false;
+
+			g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+			switch (m_ePopupType)
+			{
+			case Client::CWeaponUpgradeSuccessPopupUI::POPUP_SUCCESS:
+				g_pSoundManager->Play_Sound(L"UI_UpgradeSuccess.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+				break;
+			case Client::CWeaponUpgradeSuccessPopupUI::POPUP_FAILED:
+				g_pSoundManager->Play_Sound(L"UI_UpgradeFailed.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+				break;
+			}
+
+			if (m_ePopupType == POPUP_SUCCESS)
+			{
+				CWeapon_Slot* pWeaponSlot = m_pInven->Get_SelectedSlot_Weapon();
+				if (pWeaponSlot)
+				{
+					WPN_PARAM tParam = pWeaponSlot->Get_WeaponParam();
+					tParam.iReinforce += 1;
+					tParam.fPlusDamage = m_pInven->Get_PlusDamage(tParam.fDamage, tParam.iReinforce);
+					pWeaponSlot->Set_WeaponParam(tParam);
+					m_pInven->Upgrade_Weapon(tParam);
+				}
+				else
+				{
+					CArmor_Slot* pArmorSlot = m_pInven->Get_SelectedSlot_Armor();
+
+					ARMOR_PARAM tParam = pArmorSlot->Get_ArmorParam();
+					tParam.iReinforce += 1;
+					tParam.fPlusDef = m_pInven->Get_PlusDamage(tParam.fDef, tParam.iReinforce);
+					pArmorSlot->Set_ArmorParam(tParam);
+					m_pInven->Upgrade_Armor(tParam);
+				}
+			}
+		}
 	}
 
 	if (m_bLateInit)
@@ -260,7 +310,11 @@ void CWeaponUpgradeSuccessPopupUI::Change_Texture(const _tchar * _Name)
 
 void CWeaponUpgradeSuccessPopupUI::SetUp_Default()
 {
-
+	m_pShopItemIcon = static_cast<CShopItemIcon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ShopItemIcon", nullptr));
+	m_pShopItemIcon->Set_UI_Pos(WINCX * 0.5f, WINCY * 0.4f);
+	m_pShopItemIcon->Set_UI_Size(65.f, 65.f);
+	m_pShopItemIcon->Set_ViewZ(m_fViewZ - 0.1f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pShopItemIcon, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
 
 void CWeaponUpgradeSuccessPopupUI::Check_LateInit()
@@ -269,7 +323,6 @@ void CWeaponUpgradeSuccessPopupUI::Check_LateInit()
 		return;
 	m_bLateInit = true;
 
-	SetUp_Default();
 }
 
 void CWeaponUpgradeSuccessPopupUI::Check_ItemOption()
@@ -303,6 +356,28 @@ void CWeaponUpgradeSuccessPopupUI::Check_Option()
 			m_vecOption.push_back(pInstance);
 		}
 	}
+}
+
+void CWeaponUpgradeSuccessPopupUI::Check_ItemIcon()
+{
+	m_pShopItemIcon->Set_Active(m_bIsActive);
+	m_pShopItemIcon->Set_Alpha(m_fAlpha);
+	cout <<"Icon Alpha"<< m_fAlpha << endl;
+
+	CWeapon_Slot* pWeaponSlot = m_pInven->Get_SelectedSlot_Weapon();
+	if (pWeaponSlot)
+		m_pShopItemIcon->Set_WeaponDescType((WEAPON_ALL_DATA)pWeaponSlot->Get_WeaponParam().iWeaponName_InShop);
+
+	CArmor_Slot* pArmorSlot = m_pInven->Get_SelectedSlot_Armor();
+	if (pArmorSlot)
+		m_pShopItemIcon->Set_ArmorDescType((ARMOR_All_DATA)pArmorSlot->Get_ArmorParam().iArmorName);
+
+	m_pShopItemIcon->Set_UI_Pos(WINCX * 0.5f, WINCY * 0.4f);
+	m_pShopItemIcon->Set_UI_Size(65.f, 65.f);
+	m_pShopItemIcon->Set_ViewZ(m_fViewZ - 0.1f);
+
+	if (POPUP_FAILED == m_ePopupType)
+		m_pShopItemIcon->Set_Active(false);
 }
 
 CWeaponUpgradeSuccessPopupUI * CWeaponUpgradeSuccessPopupUI::Create(_Device pGraphic_Device)

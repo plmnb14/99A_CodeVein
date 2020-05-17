@@ -162,6 +162,9 @@ HRESULT CParticleMgr::Ready_ParticleManager_Essential()
 	Input_Pool(L"Ortho_BossDead_BG", 3);
 	Input_Pool(L"Ortho_BossDead_Text", 3);
 
+	Input_Pool(L"Ortho_UpgradeParticle_0", 50);
+	Input_Pool(L"Ortho_UpgradeParticle_1", 50);
+
 	return S_OK;
 }
 
@@ -1527,6 +1530,8 @@ CEffect * CParticleMgr::Create_EffectReturn(_tchar * szName)
 	else
 	{
 		pEff = pFindedQueue->front();
+		pEff->Reset_Init();
+
 		m_EffectList.push_back(pEff);
 
 		pFindedQueue->pop();

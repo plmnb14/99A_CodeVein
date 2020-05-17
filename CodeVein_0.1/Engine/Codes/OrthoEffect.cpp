@@ -53,6 +53,11 @@ void COrthoEffect::Set_UI_Layer()
 	m_bUILayer = true;
 }
 
+void COrthoEffect::Set_ViewZ(_float fViewZ)
+{
+	m_fViewZ = fViewZ;
+}
+
 HRESULT COrthoEffect::SetUp_ConstantTable_Instance(CShader* pShader)
 {
 	_float fMaskIndex = 0.f;
@@ -178,8 +183,8 @@ _int COrthoEffect::Late_Update_GameObject(_double TimeDelta)
 	m_matWorld._11 = WINCX * m_vLerpScale.x;
 	m_matWorld._22 = WINCY * m_vLerpScale.y;
 	m_matWorld._33 = 1.f;
-	//m_matWorld._41 = 0; // WINCX * 0.5f;
-	//m_matWorld._42 = 0; // WINCY * 0.5f;
+	m_matWorld._41 = m_pTransformCom->Get_Pos().x * WINCX;// -WINCX * 0.5f;
+	m_matWorld._42 = -m_pTransformCom->Get_Pos().y * WINCY;// +WINCY * 0.5f;
 		
 	return S_OK;
 }
@@ -436,8 +441,6 @@ void COrthoEffect::Check_Move(_double TimeDelta)
 {
 	if (m_pInfo->bSlowly)
 	{
-		//m_fSlowAccel += _float(TimeDelta);
-		//m_fMoveSpeed -= (-GRAVITY * m_fSlowAccel * m_fSlowAccel * m_fMoveSpeed) *  _float(TimeDelta);
 		m_fMoveSpeed -= m_fMoveSpeed * _float(TimeDelta);
 		if (m_fMoveSpeed <= 0.f)
 			m_fMoveSpeed = 0.f;
@@ -529,7 +532,7 @@ void COrthoEffect::Check_Move(_double TimeDelta)
 		m_fAccel += _float(TimeDelta);
 		_float fY = (-GRAVITY * m_fAccel * m_fAccel * 0.5f) *  _float(TimeDelta);
 		_v3 vPos = m_pTransformCom->Get_Pos();
-		vPos.y += fY;
+		vPos.y -= fY;
 		m_pTransformCom->Set_Pos(vPos);
 	}
 

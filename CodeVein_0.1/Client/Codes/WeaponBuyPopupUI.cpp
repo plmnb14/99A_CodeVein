@@ -157,9 +157,19 @@ void CWeaponBuyPopupUI::Click_Option()
 		{
 			Reset_Option();
 			iter->Set_Select(true);
-	
+			
+			if (m_iOption != iIdx)
+			{
+				g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+			}
+			m_iOption = iIdx;
+
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
+				g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+				g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+
 				if (0 == iIdx)
 					--m_iCount;
 				else if (1 == iIdx)
@@ -169,17 +179,65 @@ void CWeaponBuyPopupUI::Click_Option()
 					switch (m_eType)
 					{
 					case Client::CWeaponBuyPopupUI::POPUP_WEAPON_BUY:
+					{
 						Buy_Weapon();
+
+						g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_02);
+						g_pSoundManager->Play_Sound(L"UI_WeaponBuy.wav", CSoundManager::UI_SFX_02, CSoundManager::Effect_Sound);
+						
+						g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_03);
+						TCHAR szBuff[128] = L"UI_Money_%d";
+						swprintf_s(szBuff, szBuff, CCalculater::Random_Num(0, 6));
+						lstrcat(szBuff, L".wav");
+						g_pSoundManager->Play_Sound(szBuff, CSoundManager::UI_SFX_02, CSoundManager::Effect_Sound);
+
 						break;
+					}
 					case Client::CWeaponBuyPopupUI::POPUP_WEAPON_SELL:
+					{
 						Sell_Weapon();
+
+						g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_02);
+						g_pSoundManager->Play_Sound(L"UI_WeaponSell.wav", CSoundManager::UI_SFX_02, CSoundManager::Effect_Sound);
+
+						g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_03);
+						TCHAR szBuff[128] = L"UI_Money_%d";
+						swprintf_s(szBuff, szBuff, CCalculater::Random_Num(0, 6));
+						lstrcat(szBuff, L".wav");
+						g_pSoundManager->Play_Sound(szBuff, CSoundManager::UI_SFX_02, CSoundManager::Effect_Sound);
+
 						break;
+					}
 					case Client::CWeaponBuyPopupUI::POPUP_ARMOR_BUY:
+					{
 						Buy_Armor();
+
+						g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_02);
+						g_pSoundManager->Play_Sound(L"UI_ArmorBuy.wav", CSoundManager::UI_SFX_02, CSoundManager::Effect_Sound);
+
+						g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_03);
+						TCHAR szBuff[128] = L"UI_Money_%d";
+						swprintf_s(szBuff, szBuff, CCalculater::Random_Num(0, 6));
+						lstrcat(szBuff, L".wav");
+						g_pSoundManager->Play_Sound(szBuff, CSoundManager::UI_SFX_02, CSoundManager::Effect_Sound);
+
 						break;
+					}
 					case Client::CWeaponBuyPopupUI::POPUP_ARMOR_SELL:
+					{
 						Sell_Armor();
+
+						g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_02);
+						g_pSoundManager->Play_Sound(L"UI_ArmorSell.wav", CSoundManager::UI_SFX_02, CSoundManager::Effect_Sound);
+
+						g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_03);
+						TCHAR szBuff[128] = L"UI_Money_%d";
+						swprintf_s(szBuff, szBuff, CCalculater::Random_Num(0, 6));
+						lstrcat(szBuff, L".wav");
+						g_pSoundManager->Play_Sound(szBuff, CSoundManager::UI_SFX_02, CSoundManager::Effect_Sound);
+
 						break;
+					}
 					}
 
 					Set_Active(false);
