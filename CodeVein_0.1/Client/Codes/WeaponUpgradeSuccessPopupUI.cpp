@@ -28,7 +28,7 @@ void CWeaponUpgradeSuccessPopupUI::Set_Fade(_bool bIsActive)
 	m_pShopItemIcon->Set_Active(m_bIsActive);
 
 	m_fAlpha = 0.f;
-	m_fStartDelay = 4.25f;
+	m_fStartDelay = 4.45f;
 	m_pShopItemIcon->Set_Alpha(m_fAlpha);
 
 	if (bIsActive)
