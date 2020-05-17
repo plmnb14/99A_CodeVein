@@ -44,22 +44,26 @@ _int CPet_Bullet::Update_GameObject(_double TimeDelta)
 
 	switch (m_eBulletType)
 	{
-	case PET_BULLET_TYPE::PET_BULLET_POISON: //현재는 코쿤 불총알을 복붙했어용
+	case PET_BULLET_TYPE::PET_BULLET_POISON:
 	{
 		m_pTransform->Add_Pos(m_fSpeed * (_float)TimeDelta, m_vDir);
 
+		if (m_pTransform->Get_Pos().y <= 0.f)
+			m_dCurTime = 1000;
+
 		if (m_dCurTime > m_dLifeTime)
 		{
-			g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_0", m_pTransform->Get_Pos());
-			g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_1", m_pTransform->Get_Pos());
-			g_pManagement->Create_Effect(L"Totem_Fire_Bullet_Dead_Particle", m_pTransform->Get_Pos());
+			g_pManagement->Create_Effect(L"ButterFly_VenomShot_DeadSplash", m_pTransform->Get_Pos());
+			g_pManagement->Create_Effect(L"ButterFly_VenomShot_DeadMist", m_pTransform->Get_Pos());
+			g_pManagement->Create_Effect(L"ButterFly_VenomShot_DeadSmoke", m_pTransform->Get_Pos());
+			g_pManagement->Create_ParticleEffect(L"ButterFly_PointParticle", 0.5f, m_pTransform->Get_Pos(), nullptr);
 			m_pEffect->Set_Dead();
 
 			m_bDead = true;
 		}
 		else
 		{
-			if (m_bEffect)
+			if (true == m_bEffect)
 				m_bEffect = false;
 
 			m_fEffectOffset += (_float)TimeDelta;
@@ -67,10 +71,14 @@ _int CPet_Bullet::Update_GameObject(_double TimeDelta)
 			if (m_fEffectOffset > 0.1f)
 			{
 				m_fEffectOffset = 0.f;
-				m_fEffectOffset = 0.f;
-				g_pManagement->Create_Effect(L"Totem_Fire_BulletBody", m_pTransform->Get_Pos() + m_vDir * 1.3f);
-				g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_01", m_pTransform->Get_Pos(), nullptr);
-				g_pManagement->Create_Effect(L"FireBoy_FireBullet_Particle_02", m_pTransform->Get_Pos(), nullptr);
+				g_pManagement->Create_Effect(L"ButterFly_VenomShot_Body_Sub", m_pTransform->Get_Pos() + m_vDir * 1.9f);
+				g_pManagement->Create_Effect(L"ButterFly_VenomShot", m_pTransform->Get_Pos(), nullptr);
+				g_pManagement->Create_Effect(L"ButterFly_VenomShot_SubSmoke", m_pTransform->Get_Pos(), nullptr);
+				g_pManagement->Create_Effect(L"ButterFly_VenomShot_PointParticle", m_pTransform->Get_Pos(), nullptr);
+				g_pManagement->Create_Effect(L"ButterFly_VenomShot_Chunk", m_pTransform->Get_Pos(), nullptr);
+				g_pManagement->Create_Effect(L"ButterFly_VenomShot_Distortion", m_pTransform->Get_Pos(), nullptr);
+				g_pManagement->Create_Effect(L"ButterFly_SoftSmoke_Mist", m_pTransform->Get_Pos(), nullptr);
+				g_pManagement->Create_Effect(L"ButterFly_VenomShot_Tail", m_pTransform->Get_Pos(), nullptr);
 			}
 		}
 
@@ -316,7 +324,6 @@ void CPet_Bullet::Check_CollisionEvent(list<CGameObject*> plistGameObject)
 					}
 
 					break;
-
 				}
 				else
 				{
@@ -364,7 +371,7 @@ HRESULT CPet_Bullet::Ready_Collider()
 	switch (m_eBulletType)
 	{
 	case PET_BULLET_TYPE::PET_BULLET_POISON:
-		fRadius = 0.4f;
+		fRadius = 0.7f;
 		break;
 
 	case PET_BULLET_TYPE::PET_BULLET_ICE:
@@ -404,8 +411,9 @@ HRESULT CPet_Bullet::Ready_Effect(void * pArg)
 	{
 	case PET_BULLET_TYPE::PET_BULLET_POISON:
 	{
-		m_pEffect = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"Totem_Fire_BulletBody", nullptr));
+		m_pEffect = static_cast<CEffect*>(g_pManagement->Clone_GameObject_Return(L"ButterFly_VenomShot_Body", nullptr));
 		m_pEffect->Set_Desc(_v3(0, 0, 0), m_pTransform);
+		m_pEffect->Set_Loop(true);
 		m_pEffect->Reset_Init();
 		g_pManagement->Add_GameOject_ToLayer_NoClone(m_pEffect, SCENE_STAGE, L"Layer_Effect", nullptr);
 
