@@ -137,7 +137,7 @@ _int CHunterBullet::Late_Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-HRESULT CHunterBullet::Render_GameObject()
+HRESULT CHunterBullet::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
 	Update_Collider();
 	Render_Collider();

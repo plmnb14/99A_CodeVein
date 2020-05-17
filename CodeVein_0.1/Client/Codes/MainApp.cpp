@@ -26,7 +26,7 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 
 	// º¼·ýÁ¶Àý
-	g_pSoundManager->Set_Volume(CSoundManager::Master_Sound, 0.f);
+	g_pSoundManager->Set_Volume(CSoundManager::Master_Volume, 1.f);
 
 	return S_OK;
 }
@@ -44,7 +44,7 @@ _int CMainApp::Update_MainApp(_double TimeDelta)
 	CObjectPool_Manager::Get_Instance()->Update_ObjectPool(TimeDelta);
 	CObjectPool_Manager::Get_Instance()->LateUpdate_ObjectPool(TimeDelta);
 
-	g_pSoundManager->Update_SoundManager();
+	//g_pSoundManager->Update_SoundManager();
 
 	return g_pManagement->Update_Management(TimeDelta);
 }	

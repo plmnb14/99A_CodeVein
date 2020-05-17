@@ -1288,9 +1288,9 @@ _uint CLoading::Loading_Title()
 	cout << "Essential Dynamic Mesh 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Essential_Dynamic_Path.dat");
 
-	//cout << "DynamicMesh 불러오는 중 . . ." << endl;
-	//g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
-	
+	cout << "DynamicMesh 불러오는 중 . . ." << endl;
+	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_Dynamic_Path.dat");
+
 	cout << "NPC 불러오는 중 . . ." << endl;
 	g_pManagement->LoadMesh_FromPath(m_pGraphicDev, L"../../Data/Load_MeshData/Mesh_NPC_Path.dat");
 	//============================================================================================================
@@ -1325,9 +1325,9 @@ _uint CLoading::Loading_Title()
 	//============================================================================================================
 	// 플레이어 스킬, 보스 이펙트 포함
 	//============================================================================================================
-	cout << "Particle Etc 불러오는 중 . . ." << endl;
-	if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
-		return E_FAIL;
+	//cout << "Particle Etc 불러오는 중 . . ." << endl;
+	//if (FAILED(CParticleMgr::Get_Instance()->Ready_ParticleManager()))
+	//	return E_FAIL;
 	//============================================================================================================
 	// UI 원형 생성
 	//============================================================================================================
@@ -1358,6 +1358,7 @@ _uint CLoading::Loading_Title()
 	// 사운드
 	//============================================================================================================
 	g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
+	g_pSoundManager->Load_Directory_SouneFile_W(L"Boss_Genji");
 	//============================================================================================================
 	// 옷
 	//============================================================================================================

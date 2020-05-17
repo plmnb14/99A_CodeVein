@@ -156,28 +156,23 @@ void CCostume_Outer::Change_OuterMesh(CClothManager::Cloth_Dynamic _eOuterType)
 		m_eOuterType = CClothManager::Cloth_Dynamic::None;
 		break;
 	}
+	case CClothManager::Drape_01:
+	{
+		lstrcpy(szMeshName, L"Mesh_Drape_01");
+		m_eOuterType = CClothManager::Drape_01;
+		break;
+
+	}
 	case CClothManager::Gauntlet_01:
 	{
 		lstrcpy(szMeshName, L"Mesh_Gauntlet_01");
 		m_eOuterType = CClothManager::Gauntlet_01;
 		break;
 	}
-	case CClothManager::Gauntlet_02:
-	{
-		lstrcpy(szMeshName, L"Mesh_Gauntlet_02");
-		m_eOuterType = CClothManager::Gauntlet_02;
-		break;
-	}
 	case CClothManager::Gauntlet_03:
 	{
 		lstrcpy(szMeshName, L"Mesh_Gauntlet_03");
 		m_eOuterType = CClothManager::Gauntlet_03;
-		break;
-	}
-	case CClothManager::Gauntlet_04:
-	{
-		lstrcpy(szMeshName, L"Mesh_Gauntlet_04");
-		m_eOuterType = CClothManager::Gauntlet_04;
 		break;
 	}
 	case CClothManager::LongCoat_01:
@@ -188,7 +183,7 @@ void CCostume_Outer::Change_OuterMesh(CClothManager::Cloth_Dynamic _eOuterType)
 	}
 	case CClothManager::LongCoat_02:
 	{
-		lstrcpy(szMeshName, L"Mesh_LongCoat_02");
+		lstrcpy(szMeshName, L"Mesh_LongCoat_01");
 		m_eOuterType = CClothManager::LongCoat_02;
 		break;
 	}
@@ -208,12 +203,6 @@ void CCostume_Outer::Change_OuterMesh(CClothManager::Cloth_Dynamic _eOuterType)
 	{
 		lstrcpy(szMeshName, L"Mesh_Muffler_02");
 		m_eOuterType = CClothManager::Muffler_02;
-		break;
-	}
-	case CClothManager::Muffler_03:
-	{
-		lstrcpy(szMeshName, L"Mesh_Muffler_03");
-		m_eOuterType = CClothManager::Muffler_03;
 		break;
 	}
 	}
@@ -284,21 +273,16 @@ _int CCostume_Outer::Update_GameObject(_double TimeDelta, _bool bSkill)
 	CGameObject::Update_GameObject(TimeDelta);
 	Calc_AttachBoneTransform();
 
+	static _byte iCount = 0;
+
 	if (g_pInput_Device->Key_Down(DIK_T))
 	{
-		//++iCount;
+		++iCount;
 
-		//Change_OuterMesh(HairType(iCount));
+		Change_OuterMesh(CClothManager::Cloth_Dynamic(iCount));
 
-		if (m_eOuterType == CClothManager::Cloth_Dynamic::None)
-			Change_OuterMesh(CClothManager::Gauntlet_04);
-		else if (m_eOuterType == CClothManager::Gauntlet_04)
-			Change_OuterMesh(CClothManager::LongCoat_03);
-		else
-			Change_OuterMesh(CClothManager::None);
-
-		//if (6 == iCount)
-		//	iCount = 0;
+		if (CClothManager::Cloth_Dynamic::Dynamic_End - 1 == iCount)
+			iCount = CClothManager::Cloth_Dynamic::None;
 	}
 
 

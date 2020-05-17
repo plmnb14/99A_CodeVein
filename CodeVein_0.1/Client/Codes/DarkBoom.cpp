@@ -132,7 +132,7 @@ _int CDarkBoom::Late_Update_GameObject(_double TimeDelta)
 	return NOERROR;
 }
 
-HRESULT CDarkBoom::Render_GameObject()
+HRESULT CDarkBoom::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
 	Update_Collider();
 	Draw_Collider();

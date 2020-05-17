@@ -107,7 +107,7 @@ _int CMonkeyBullet::Late_Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-HRESULT CMonkeyBullet::Render_GameObject()
+HRESULT CMonkeyBullet::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
 	Update_Collider();
 	Render_Collider();
