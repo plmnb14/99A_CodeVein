@@ -138,9 +138,6 @@ _int CWeaponShopUI::Update_GameObject(_double TimeDelta)
 	if (!m_bIsActive)
 	{
 		m_bFirestMenu = true;
-
-		//m_pStageSelectUI->Set_Active(false);
-		//CUI_Manager::Get_Instance()->Get_BloodCode_Menu()->Set_Active(false);
 	}
 	
 	_v3 vWorldPos;
@@ -262,11 +259,21 @@ void CWeaponShopUI::Click_Option()
 	{
 		if (CCollisionMgr::Collision_Ray(iter, g_pInput_Device->Get_Ray(), &m_fCross))
 		{
-			Reset_Option();
+			//Reset_Option();
+			
+			if (!iter->Get_Select())
+			{
+				g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+			}
+
 			iter->Set_Select(true);
 
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
+				g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+				g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+
 				if (m_bFirestMenu)
 				{
 					if (0 == iIdx)
@@ -370,8 +377,8 @@ void CWeaponShopUI::Reset_Option()
 
 void CWeaponShopUI::Check_Key()
 {
-	if (!m_bIsActive && !m_bPopupOn)
-		return;
+	//if (!m_bIsActive && !m_bPopupOn)
+	//	return;
 
 	if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
 	{
@@ -383,11 +390,8 @@ void CWeaponShopUI::Check_Key()
 			case Client::CWeaponShopOptionUI::OPTION_BUY:
 			case Client::CWeaponShopOptionUI::OPTION_SELL:
 			{
-				m_bFirestMenu = true;
 				if (m_bPopupOn)
 				{
-					m_eState = CWeaponShopOptionUI::OPTION_END;
-
 					m_pWeaponSellInven->Set_Active(false);
 					m_pArmorSellInven->Set_Active(false);
 					m_pWeaponBuyInven->Set_Active(false);
@@ -395,6 +399,14 @@ void CWeaponShopUI::Check_Key()
 					m_pWeaponUpgradeInven->Set_Active(false);
 					m_pArmorUpgradeInven->Set_Active(false);
 					m_pBuyUI->Set_Active(false);
+
+					Set_Active(true);
+					m_bPopupOn = false;
+				}
+				else
+				{
+					m_eState = CWeaponShopOptionUI::OPTION_END;
+					m_bFirestMenu = true;
 				}
 				break;
 			}
@@ -404,8 +416,25 @@ void CWeaponShopUI::Check_Key()
 		else if(m_bFirestMenu)
 		{
 			Set_Active(false);
+			m_bPopupOn = false;
 		}
 	}
+}
+
+_bool CWeaponShopUI::Get_OtherPopupOn()
+{
+	//if (m_pWeaponBuyInven->Get_Active() ||
+	//	m_pWeaponSellInven->Get_Active() ||
+	//	m_pArmorBuyInven->Get_Active() ||
+	//	m_pArmorSellInven->Get_Active() ||
+	//	m_pWeaponUpgradeInven->Get_Active() ||
+	//	m_pArmorUpgradeInven->Get_Active()
+	//	)
+	//	m_bPopupOn = true;
+	//else
+	//	m_bPopupOn = false;
+
+	return m_bPopupOn;
 }
 
 void CWeaponShopUI::Setup_AfterClone()

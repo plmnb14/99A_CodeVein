@@ -22,6 +22,7 @@ public:
 	void Set_UV_Speed(_float fX, _float fY);
 	void Set_Mask(const _tchar* _Name, _int _iMaskIdx);
 	void Set_UI_Layer();
+	void Set_ViewZ(_float fViewZ);
 
 public:
 	HRESULT SetUp_ConstantTable_Instance(CShader* pShader);

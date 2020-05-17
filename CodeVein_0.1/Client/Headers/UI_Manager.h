@@ -52,6 +52,9 @@
 #include "ReleaseOption.h"
 #include "SkillAcquisitionUI.h"
 #include "OKMessageUI.h"
+
+#include "SkillPointUI.h"
+#include "SkillGauge.h"
 #include "Skill_Inven.h"
 #include "SkillSlot.h"
 #include "SkillIcon.h"
@@ -73,6 +76,14 @@
 #include "WeaponBuyPopupOptionUI.h"
 #include "WeaponUpgradeUI.h"
 #include "WeaponUpgradeOptionUI.h"
+#include "WeaponUpgradeSuccessPopupUI.h"
+#include "WeaponUpgradeSuccessPopupOptionUI.h"
+#include "WeaponUpgradingPopup.h"
+#include "WeaponUpgradingEff.h"
+
+#include "ShopActionFailedPopup.h"
+#include "ShopItemIcon.h"
+#include "NPC_InteractionUI.h"
 
 #include "ExplainArmorUI.h"
 #include "ExplainWeaponUI.h"
@@ -88,7 +99,8 @@
 #include "ExpendOptionUI.h"
 #include "Expend_InfoUI.h"
 
-#include "PickUp_ItemUI.h"
+#include "GeneralStoreBuyUI.h"
+#include "BuyOptionUI.h"
 
 BEGIN(Client)
 
@@ -131,11 +143,10 @@ public:
 	CPlayerHP* Get_PlayerHP() { return m_pPlayerHP; } // 플레이어 HP
 	CPlayerST* Get_PlayerST() { return m_pPlayerST; } // 플레이어 ST
 	CGeneralStoreUI* Get_MaterialShopUI() { return m_pGeneralStoreUI; }
+	CSkillGauge* Get_SkillGauge() { return m_pSkillGauge; }
 	
 	// 펫 인벤토리
 	CPet_Inven* Get_Pet_Inven() { return m_pPet_Inven; }
-
-	CPickUp_ItemUI* Get_PickUP_Item() { return m_pPickUp_ItemUI; }
 
 private:
 	_uint m_uiCoundItem = 0;
@@ -162,12 +173,11 @@ private:
 	CPlayerHP*	m_pPlayerHP = nullptr;
 	CPlayerST*	m_pPlayerST = nullptr;
 	CGeneralStoreUI* m_pGeneralStoreUI = nullptr; // 소비, 재료 상점 UI
-	
+	CSkillGauge*	m_pSkillGauge = nullptr;
+	CSkillPointUI*	m_pSkillPointUI = nullptr;
+
 	// 펫 인벤토리
 	CPet_Inven* m_pPet_Inven = nullptr;
-
-	// Get Item UI
-	CPickUp_ItemUI*	m_pPickUp_ItemUI = nullptr;
 
 public:
 	virtual void Free();

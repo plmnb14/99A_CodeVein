@@ -26,7 +26,7 @@ HRESULT CMainApp::Ready_MainApp()
 		return E_FAIL;
 
 	// º¼·ýÁ¶Àý
-	g_pSoundManager->Set_Volume(CSoundManager::Master_Volume, 0.f);
+	g_pSoundManager->Set_Volume(CSoundManager::Master_Volume, 0.5f);
 
 	return S_OK;
 }
@@ -44,7 +44,7 @@ _int CMainApp::Update_MainApp(_double TimeDelta)
 	CObjectPool_Manager::Get_Instance()->Update_ObjectPool(TimeDelta);
 	CObjectPool_Manager::Get_Instance()->LateUpdate_ObjectPool(TimeDelta);
 
-	g_pSoundManager->Update_SoundManager();
+	//g_pSoundManager->Update_SoundManager();
 
 	return g_pManagement->Update_Management(TimeDelta);
 }	
@@ -115,10 +115,12 @@ HRESULT CMainApp::Ready_Default_Setting(CGraphic_Device::WINMODE eMode, _ushort 
 	m_pStageAgent = CStageAgent::Get_Instance();
 	Safe_AddRef(m_pStageAgent);
 
-	g_pSoundManager->Load_Directory_SouneFile_W(L"Title");
+	g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
+	g_pSoundManager->Load_Directory_SouneFile_W(L"UI/UI_WeaponShop");
+	g_pSoundManager->Load_Directory_SouneFile_W(L"NPC/Yakumo");
 
 	g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
-	g_pSoundManager->Play_Sound(L"Title_Intro_02.wav", CSoundManager::Background_01, CSoundManager::BGM_Sound); 
+	g_pSoundManager->Play_Sound(L"Gwan_Cchak.wav", CSoundManager::Background_01, CSoundManager::BGM_Sound); 
 
 	return S_OK;
 }

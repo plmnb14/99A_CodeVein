@@ -200,8 +200,18 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon_UpgradeSuccessPopupOption", CWeaponUpgradeSuccessPopupOptionUI::Create(pDevice))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon_UpgradingPopup", CWeaponUpgradingPopup::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon_UpgradingEff", CWeaponUpgradingEff::Create(pDevice))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_NPC_Interaction", CNPC_InteractionUI::Create(pDevice))))
+		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ShopActionFailedPopup", CShopActionFailedPopup::Create(pDevice))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ShopItemIcon", CShopItemIcon::Create(pDevice))))
+		return E_FAIL;
+
 	return NOERROR;
 }
 

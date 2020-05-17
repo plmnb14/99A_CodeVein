@@ -362,12 +362,21 @@ void CWeapon_Inven_InShop::Click_ArmorInven()
 
 		if (pSlot->Pt_InRect())
 		{
-			m_pHoverSlot_Armor = pSlot;
+			if (m_pHoverSlot_Armor != pSlot)
+			{
+				g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+			}
 
+			m_pHoverSlot_Armor = pSlot;
+			
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB) &&
 				!pSlot->Get_Select())
 			{
-				Refresh_Inven();
+				g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+				g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+
+				//Refresh_Inven();
 
 				m_pSelectedSlot_Armor = pSlot;
 				if (SHOP_ARMOR_SELL == m_eOption ||
@@ -438,12 +447,21 @@ void CWeapon_Inven_InShop::Click_WeaponInven()
 
 		if (pSlot->Pt_InRect())
 		{
+			if (m_pHoverSlot_Weapon != pSlot)
+			{
+				g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+			}
+
 			m_pHoverSlot_Weapon = pSlot;
 			
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB) &&
 				!pSlot->Get_Select())
 			{
-				Refresh_Inven();
+				g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+				g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+
+				//Refresh_Inven();
 
 				m_pSelectedSlot_Weapon = pSlot;
 				if (SHOP_WEAPON_SELL == m_eOption ||
@@ -601,6 +619,11 @@ void CWeapon_Inven_InShop::Upgrade_Armor(ARMOR_PARAM tParam)
 _float CWeapon_Inven_InShop::Get_UpgradePrice(_int iReinforce)
 {
 	return (iReinforce * 1.5f) * 80 + 50;
+}
+
+_float CWeapon_Inven_InShop::Get_PlusDamage(_float fDamage, _int iReinforce)
+{
+	return fDamage + (iReinforce * 1.5f) * (fDamage * 0.15f);
 }
 
 HRESULT CWeapon_Inven_InShop::SetUp_WeaponData(INVEN_SHOP_OPTION eShop)

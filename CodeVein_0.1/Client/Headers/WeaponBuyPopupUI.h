@@ -72,6 +72,7 @@ private:
 
 	_int					m_iTexIndex = 0;
 	_int					m_iCount = 0;
+	_int					m_iOption = -1;
 	
 	POPUP_TYPE				m_eType = POPUP_END;
 public:
