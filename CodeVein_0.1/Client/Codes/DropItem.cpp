@@ -55,7 +55,7 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 	if (m_fTempEffectLimitTime > 0.05f)
 	{
 		m_fTempEffectLimitTime = 0.f;
-		cout << "아이템 생성된 효과 발생" << endl;
+		//cout << "아이템 생성된 효과 발생" << endl;
 		switch (m_eItemGrade)
 		{
 		case ITEM_GRADE_NORMAL:
@@ -145,6 +145,9 @@ _int CDropItem::Update_GameObject(_double TimeDelta)
 					m_iRenderIndex = 0;
 					pItem_Mgr->Set_PickUp_Number(m_iRenderIndex);
 					m_bCanGetItem = true;
+					// 이렇게 하면 안 되는구나ㅜㅜ 이거랑 비슷하게 하면 될 것 같고
+					// 내일 어떻게 접근해야 하는지 좀 생각해보자
+					//pPickUp->Get_vecDropItem().push_back(m_iRenderIndex);
 					break;
 				}
 				case NAMETYPE_WpnAll_Gun_ReverTardor:

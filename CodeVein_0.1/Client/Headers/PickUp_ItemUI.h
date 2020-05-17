@@ -29,6 +29,8 @@ public:
 public:
 	_bool	Get_Start_PickUp_Render() { return m_bStart_Render; }
 
+	vector<CDropItem*> Get_vecDropItem() { return m_vecDropItem; }
+
 private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable(_uint TextureIndex);

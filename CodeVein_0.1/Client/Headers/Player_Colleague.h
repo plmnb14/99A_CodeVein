@@ -252,7 +252,7 @@ private:
 	_uint	m_iDodgeCount = 0;
 	_uint	m_iDodgeCountMax = 5;
 
-	_uint	m_iMyHeal_Count = 4;
+	_int	m_iMyHeal_Count = 4;
 
 
 	_float	m_fSpeed = 0.f;
@@ -324,7 +324,13 @@ private:
 	_bool	m_bCheck_StartGame = false;
 	_bool	m_bCheck_SEndGame = false;
 
-	_bool	m_bTestBool = false;
+	_bool	m_bLimit_Heailng = false;
+
+	_bool	m_bStage_LetsGo = false;
+	_bool	m_bJack_Death = false;
+	_bool	m_bCheck_Be_Careful = false;
+
+	_bool	m_bCheck_Skil_Voice = false;
 
 
 private: // For Effect

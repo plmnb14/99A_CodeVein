@@ -10,6 +10,8 @@
 #include "ObjectPool_Manager.h"
 #include "Haze.h"
 
+#include "Item_Manager.h"
+
 
 CPlayer_Colleague::CPlayer_Colleague(LPDIRECT3DDEVICE9 pGraphic_Device)
 	: CGameObject(pGraphic_Device)
@@ -94,10 +96,27 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 	if (g_pInput_Device->Key_Down(DIK_P))
 		m_tObjParam.fHp_Cur -= 100.f;
 
-	if (0 >= m_tObjParam.fHp_Cur && 0 >= m_iMyHeal_Count)
+	cout << m_iCenter_Count << endl;
+
+	if (0 >= m_tObjParam.fHp_Cur && 0 > m_iMyHeal_Count)
 		m_eMovetype = CPlayer_Colleague::Coll_Dead;
 
-	if ((10.f >= m_tObjParam.fHp_Cur/* && 0 <= m_tObjParam.fHp_Cur*/) &&
+	//if (m_eMovetype == CPlayer_Colleague::Coll_Dead)
+	//{
+	//	g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+	//	g_pSoundManager->Play_Sound(L"Jack_Death.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
+	//}
+
+	if (false == m_bStage_LetsGo && m_eMovetype == CPlayer_Colleague::Coll_Move)
+	{
+		m_bStage_LetsGo = true;
+		g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+		g_pSoundManager->Play_Sound(L"Jack_Let_Go.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
+	}
+
+		
+
+	if ((10.f >= m_tObjParam.fHp_Cur && 0 <= m_iMyHeal_Count) &&
 		m_eMovetype != CPlayer_Colleague::Coll_Dead)
 	{
 		m_eMovetype = CPlayer_Colleague::Coll_Heal;
@@ -109,6 +128,19 @@ _int CPlayer_Colleague::Update_GameObject(_double TimeDelta)
 		m_fCoolTimer_Skil_limit = 5.f;
 		m_eMovetype = CPlayer_Colleague::Coll_Heal;
 		m_eColl_HealMoment = CPlayer_Colleague::Player_Heal;
+	}
+	
+		
+	if (false == m_bCheck_Be_Careful &&
+		(true == m_bStart_Fighting && true == m_bNear_byMonster))
+	{
+		m_bCheck_Be_Careful = true;
+		g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+		g_pSoundManager->Play_Sound(L"Be_Careful_For_Enemy.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
+	}
+	else if (false == m_bStart_Fighting && true == m_bCheck_Be_Careful)
+	{
+		m_bCheck_Be_Careful = false;
 	}
 
 	Check_MyHit();
@@ -994,9 +1026,9 @@ void CPlayer_Colleague::Check_Do_List(_double TimeDelta)
 	{
 		m_pTransformCom->Set_Pos(_v3(m_pTargetTransformCom->Get_Pos().x - 3.f, m_pTargetTransformCom->Get_Pos().y, m_pTargetTransformCom->Get_Pos().z - 2.f));
  		Check_Navi();
+		g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+		g_pSoundManager->Play_Sound(L"Don_t_GoAway.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
 	}
-
-
 }
 
 void CPlayer_Colleague::Set_AniEvent()
@@ -1231,6 +1263,13 @@ void CPlayer_Colleague::Set_AniEvent()
 	{
 		Play_Dead();
 		m_eColleague_Ani = CPlayer_Colleague::Ani_Dead;
+		if (false == m_bJack_Death)
+		{
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+			g_pSoundManager->Play_Sound(L"Jack_Death.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
+			m_bJack_Death = true;
+		}
+		
 		break;
 	}
 	break;
@@ -1280,7 +1319,7 @@ HRESULT CPlayer_Colleague::SetUp_Default()
 	m_List_pMonTarget[1] = &(g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE));
 
 	m_tObjParam.fHp_Cur = 500.f;
-	m_tObjParam.fHp_Max = 5000.f;
+	m_tObjParam.fHp_Max = 1000.f;
 	m_tObjParam.fDamage = 10.f;
 
 	m_tObjParam.bCanHit = true;		// 맞을 수 있는지
@@ -1378,6 +1417,7 @@ void CPlayer_Colleague::Play_Dead()
 		{
 			m_bEnable = true;
 			m_dPlayAni_Time = 0;
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
 		}
 		//if (14.1f <= AniTime)
 		//{
@@ -1415,12 +1455,16 @@ void CPlayer_Colleague::Play_Hit()
 		{
 			m_eColleague_Ani = CPlayer_Colleague::Ani_Front_Hit;
 			Function_FBRL();
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+			g_pSoundManager->Play_Sound(L"Jack_Damage_Ugh2.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
 			break;
 		}
 		case CPlayer_Colleague::Coll_Back:
 		{
 			m_eColleague_Ani = CPlayer_Colleague::Ani_Back_Hit;
 			Function_FBRL();
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+			g_pSoundManager->Play_Sound(L"Jack_Damage_Ugh.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
 			break;
 		}
 		}
@@ -1435,6 +1479,7 @@ void CPlayer_Colleague::Play_Hit()
 			m_fCoolTimer_limit = 0.5f;
 
 			m_eMovetype = CPlayer_Colleague::Coll_Idle;
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
 		}
 		else if (m_pDynamicMesh->Is_Finish_Animation(0.2f))
 		{
@@ -1493,6 +1538,8 @@ void CPlayer_Colleague::CollDodge_FrontRoll()
 	{
 		m_tObjParam.bCanDodge = false;
 		m_tObjParam.bIsDodge = true;
+		g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+		g_pSoundManager->Play_Sound(L"Jack_Dodge.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
 	}
 	else
 	{
@@ -1502,6 +1549,7 @@ void CPlayer_Colleague::CollDodge_FrontRoll()
 			m_bChecking_MyHit = true;
 			m_fCoolTimer_limit = 5.f;
 			m_eMovetype = CPlayer_Colleague::Coll_Idle;
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
 			return;
 		}
 		else if (0.067f <= AniTime && 1.5f >= AniTime)
@@ -1528,6 +1576,8 @@ void CPlayer_Colleague::CollDodge_BackRoll()
 	{
 		m_tObjParam.bCanDodge = false;
 		m_tObjParam.bIsDodge = true;
+		g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_03);
+		g_pSoundManager->Play_Sound(L"Jack_Dodge.ogg", CSoundManager::Jack_SFX_03, CSoundManager::Effect_Sound);
 	}
 	else
 	{
@@ -1537,6 +1587,7 @@ void CPlayer_Colleague::CollDodge_BackRoll()
 			m_bChecking_MyHit = true;
 			m_fCoolTimer_limit = 5.f;
 			m_eMovetype = CPlayer_Colleague::Coll_Idle;
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
 			return;
 		}
 		else if (0.3f <= AniTime && 1.467f >= AniTime)
@@ -1562,6 +1613,8 @@ void CPlayer_Colleague::CollDodge_LeftRoll()
 	{
 		m_tObjParam.bCanDodge = false;
 		m_tObjParam.bIsDodge = true;
+		g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_03);
+		g_pSoundManager->Play_Sound(L"Jack_Dodge.ogg", CSoundManager::Jack_SFX_03, CSoundManager::Effect_Sound);
 	}
 	else
 	{
@@ -1571,6 +1624,7 @@ void CPlayer_Colleague::CollDodge_LeftRoll()
 			m_bChecking_MyHit = true;
 			m_fCoolTimer_limit = 5.f;
 			m_eMovetype = CPlayer_Colleague::Coll_Idle;
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
 			return;
 		}
 		else if (0.033f <= AniTime && 1.133f >= AniTime)
@@ -1596,6 +1650,8 @@ void CPlayer_Colleague::CollDodge_RightRoll()
 	{
 		m_tObjParam.bCanDodge = false;
 		m_tObjParam.bIsDodge = true;
+		g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_03);
+		g_pSoundManager->Play_Sound(L"Jack_Dodge.ogg", CSoundManager::Jack_SFX_03, CSoundManager::Effect_Sound);
 	}
 	else
 	{
@@ -1605,6 +1661,7 @@ void CPlayer_Colleague::CollDodge_RightRoll()
 			m_bChecking_MyHit = true;
 			m_fCoolTimer_limit = 5.f;
 			m_eMovetype = CPlayer_Colleague::Coll_Idle;
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
 			return;
 		}
 		else if (0.067f <= AniTime && 1.267f >= AniTime)
@@ -1625,85 +1682,10 @@ void CPlayer_Colleague::CollDodge_RightRoll()
 
 void CPlayer_Colleague::CollDodge_B_LeftRoll()
 {
-	//_double AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
-
-	//if (true == m_tObjParam.bCanDodge)
-	//{
-	//	m_tObjParam.bCanDodge = false;
-	//	m_tObjParam.bIsDodge = true;
-	//}
-	//else
-	//{
-	//	if (m_pDynamicMesh->Is_Finish_Animation(0.81f) && m_eColleague_Ani == CPlayer_Colleague::Ani_Front_Roll)
-	//	{
-	//		Funtion_Reset_State();
-	//		m_bChecking_MyHit = true;
-	//		m_fCoolTimer_limit = 5.f;
-	//		m_eMovetype = CPlayer_Colleague::Coll_Idle;
-	//		return;
-	//	}
-	//	else if (0.067f <= AniTime && 1.767f >= AniTime)
-	//	{
-	//		// 여기서는 빠르게 해서 속도 확 높여서 구르는 구간
-	//		if (false == m_bEventTrigger[1])
-	//		{
-	//			m_bEventTrigger[1] = true;
-	//			m_fAtt_MoveSpeed_Cur = 3.f;
-	//			m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
-	//			m_fAni_Multiply = 0.7f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
-	//		}
-	//		Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-	//		Colleague_SkilMovement(m_fAni_Multiply);
-	//	}
-	//}
 }
 
 void CPlayer_Colleague::CollDodge_B_RightRoll()
 {
-	//_double AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
-
-	//if (true == m_tObjParam.bCanDodge)
-	//{
-	//	m_tObjParam.bCanDodge = false;
-	//	m_tObjParam.bIsDodge = true;
-	//}
-	//else
-	//{
-	//	if (m_pDynamicMesh->Is_Finish_Animation(0.81f) && m_eColleague_Ani == CPlayer_Colleague::Ani_Front_Roll)
-	//	{
-	//		Funtion_Reset_State();
-	//		m_bChecking_MyHit = true;
-	//		m_fCoolTimer_limit = 5.f;
-	//		m_eMovetype = CPlayer_Colleague::Coll_Idle;
-	//		return;
-	//	}
-	//	else if (1.967f <= AniTime && 3.333f >= AniTime)
-	//	{
-	//		// 일어나는 구간, 천천히 일어남
-	//		if (false == m_bEventTrigger[0])
-	//		{
-	//			m_bEventTrigger[0] = true;
-	//			m_fAtt_MoveSpeed_Cur = 0.15f;
-	//			m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
-	//			m_fAni_Multiply = 1.f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
-	//		}
-	//		Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-	//		Colleague_SkilMovement(m_fAni_Multiply);
-	//	}
-	//	else if (0.167f <= AniTime && 1.633f >= AniTime)
-	//	{
-	//		// 여기서는 빠르게 해서 속도 확 높여서 구르는 구간
-	//		if (false == m_bEventTrigger[1])
-	//		{
-	//			m_bEventTrigger[1] = true;
-	//			m_fAtt_MoveSpeed_Cur = 3.f;
-	//			m_fAtt_MoveAccel_Cur = 0.f;	// 엑셀 값은 항상 0 초기화
-	//			m_fAni_Multiply = 0.7f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
-	//		}
-	//		Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-	//		Colleague_SkilMovement(m_fAni_Multiply);
-	//	}
-	//}
 }
 
 void CPlayer_Colleague::CollIdle_Waiting()
@@ -1921,39 +1903,71 @@ void CPlayer_Colleague::CollAtt_Normal()
 	{
 		if (m_iNormalAtt_Count > 4)
 			m_iNormalAtt_Count = 0;
+			
 		
-		if (3 == m_iCenter_Count)
+		if (2 <= m_iCenter_Count)
 		{
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_CenterDown;
-			
-			m_iCenter_Count = 0;
+			if (false == m_bCheck_Skil_Voice)
+			{
+				m_bCheck_Skil_Voice = true;
+				g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+				g_pSoundManager->Play_Sound(L"Skil_Three.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
+				g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
+				g_pSoundManager->Play_Sound(L"Jack_Sword_Swing.ogg", CSoundManager::Jack_SFX_02, CSoundManager::Voice_Sound);
+			}
 		}
 		else if (m_iNormalAtt_Count == 4)
 		{
 			// 여기서 삼단베기
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_ThreeCombo;
+			
+			if (false == m_bCheck_Skil_Voice)
+			{
+				m_bCheck_Skil_Voice = true;
+				g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+				g_pSoundManager->Play_Sound(L"Letheargy_CooA.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
+				g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
+				g_pSoundManager->Play_Sound(L"Jack_Sword_Swing.ogg", CSoundManager::Jack_SFX_02, CSoundManager::Voice_Sound);
+			}
 		}
 		else if (m_iNormalAtt_Count == 3)
 		{
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base4;
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+			g_pSoundManager->Play_Sound(L"Letheargy_Hap2.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
+			g_pSoundManager->Play_Sound(L"Jack_Sword_Swing.ogg", CSoundManager::Jack_SFX_02, CSoundManager::Voice_Sound);
 		}
 		else if (m_iNormalAtt_Count == 2)
 		{
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base3;
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+			g_pSoundManager->Play_Sound(L"Letheargy_Hmm.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
+			g_pSoundManager->Play_Sound(L"Jack_Sword_Swing.ogg", CSoundManager::Jack_SFX_02, CSoundManager::Voice_Sound);
 		}
 		else if (m_iNormalAtt_Count == 1)
 		{
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base2;
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+			g_pSoundManager->Play_Sound(L"Letheargy_Hmm.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
+			g_pSoundManager->Play_Sound(L"Jack_Sword_Swing.ogg", CSoundManager::Jack_SFX_02, CSoundManager::Voice_Sound);
 		}
 		else if (m_iNormalAtt_Count == 0)
 		{
 			m_eMovetype = CPlayer_Colleague::Coll_Attack;
 			m_eColl_Sub_AttMoment = CPlayer_Colleague::Att_Base1;
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+			g_pSoundManager->Play_Sound(L"Letheargy_Hmm.ogg", CSoundManager::Jack_Voice, CSoundManager::Voice_Sound);
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
+			g_pSoundManager->Play_Sound(L"Jack_Sword_Swing.ogg", CSoundManager::Jack_SFX_02, CSoundManager::Voice_Sound);
 		}
 	}
 
@@ -1987,6 +2001,9 @@ void CPlayer_Colleague::CollAtt_Base1()
 			m_bCheck_Attcing = false;
 			m_fCoolTimer_limit = 0.045f;
 			m_bBase_Att[0] = true;
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_01);
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
 			return;
 		}
 		else if (1.167f <= AniTime)
@@ -1999,14 +2016,6 @@ void CPlayer_Colleague::CollAtt_Base1()
 				m_pSword->Set_Enable_Record(false);
 			}
 		}
-		/*else if (0.8f <= AniTime)
-		{
-			if (false == m_bEventTrigger[1])
-			{
-				m_bEventTrigger[1] = true;
-				
-			}
-		}*/
 		else if (0.6f <= AniTime)
 		{
 			if (false == m_bEventTrigger[2])
@@ -2022,6 +2031,8 @@ void CPlayer_Colleague::CollAtt_Base1()
 				m_bEventTrigger[3] = true;
 				m_pSword->Set_Target_CanAttack(true);
 				m_pSword->Set_Enable_Trail(true);
+				g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_01);
+				g_pSoundManager->Play_Sound(L"Jack_Hit_Attack00.ogg", CSoundManager::Jack_SFX_01, CSoundManager::Voice_Sound);
 			}
 		}
 
@@ -2072,6 +2083,9 @@ void CPlayer_Colleague::CollAtt_Base2()
 			m_fCoolTimer_limit = 0.045f;
 			m_bBase_Att[0] = true;
 			m_bChecking_MyHit = true;
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_01);
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
 			return;
 		}
 		/*else if (0.833f <= AniTime)
@@ -2108,6 +2122,8 @@ void CPlayer_Colleague::CollAtt_Base2()
 				m_pSword->Set_Target_CanAttack(true);
 				m_pSword->Set_Enable_Record(true);
 				m_pSword->Set_Enable_Trail(true);
+				g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_01);
+				g_pSoundManager->Play_Sound(L"Jack_Hit_Attack01.ogg", CSoundManager::Jack_SFX_01, CSoundManager::Voice_Sound);
 			}
 		}
 		if (0.f <= AniTime && 0.833f >= AniTime)
@@ -2157,6 +2173,9 @@ void CPlayer_Colleague::CollAtt_Base3()
 			m_fCoolTimer_limit = 0.04f;
 			m_bBase_Att[0] = true;
 			m_bChecking_MyHit = true;
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_01);
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
 			return;
 		}
 		else if (0.9f <= AniTime)
@@ -2183,6 +2202,8 @@ void CPlayer_Colleague::CollAtt_Base3()
 				m_bEventTrigger[10] = true;
 				m_pSword->Set_Target_CanAttack(true);
 				m_pSword->Set_Enable_Record(true);
+				g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_01);
+				g_pSoundManager->Play_Sound(L"Jack_Hit_Attack02.ogg", CSoundManager::Jack_SFX_01, CSoundManager::Voice_Sound);
 			}
 		}
 		else if (0.5f <= AniTime)
@@ -2238,6 +2259,9 @@ void CPlayer_Colleague::CollAtt_Base4()
 			m_fCoolTimer_limit = 0.04f;
 			m_bBase_Att[0] = true;
 			m_bChecking_MyHit = true;
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_01);
+			g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
 			return;
 		}
 		else if (1.1f <= AniTime)
@@ -2264,6 +2288,8 @@ void CPlayer_Colleague::CollAtt_Base4()
 				m_bEventTrigger[14] = true;
 				m_pSword->Set_Target_CanAttack(true);
 				m_pSword->Set_Enable_Record(true);
+				g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_01);
+				g_pSoundManager->Play_Sound(L"Jack_Hit_Attack03.ogg", CSoundManager::Jack_SFX_01, CSoundManager::Voice_Sound);
 			}
 		}
 		else if (0.533f <= AniTime)
@@ -2300,76 +2326,6 @@ void CPlayer_Colleague::CollAtt_Base4()
 
 void CPlayer_Colleague::CollAtt_ThreeCombo()		// 4번
 {
-	//_double		AniTime = m_pDynamicMesh->Get_TrackInfo().Position;
-	//_v3 vEffPos = _v3(0.f, 1.5f, 0.f) + m_pTransformCom->Get_Axis(AXIS_Z) * 1.5f;
-
-	//// 3단 베기
-	//if (true == m_tObjParam.bCanAttack)
-	//{
-	//	m_tObjParam.bCanAttack = false;
-	//	m_tObjParam.bIsAttack = true;
-	//}
-	//else
-	//{
-	//	if (m_pDynamicMesh->Is_Finish_Animation(0.88f) && m_eMovetype == CPlayer_Colleague::Coll_Attack)
-	//	{
-	//		Funtion_Reset_State();
-	//		m_eMovetype = CPlayer_Colleague::Coll_Idle;
-	//		m_bTestRendom = true;
-	//		m_bMyHiting = false;
-	//		m_bCheck_Attcing = false;
-	//		m_fCoolTimer_limit = 5.f;
-	//		m_bChecking_MyHit = true;
-	//		++m_iNormalAtt_Count;
-	//		++m_iCenter_Count;
-	//		return;
-	//	}
-	//	else if (1.433f <= AniTime)
-	//	{
-	//		if (false == m_bEventTrigger[0])
-	//		{
-	//			m_bEventTrigger[0] = true;
-	//			m_pSword->Set_Target_CanAttack(false);
-	//			m_pSword->Set_Enable_Record(false);
-	//		}
-	//	}
-	//	else if (1.067f <= AniTime)
-	//	{
-	//		if (false == m_bEventTrigger[1])
-	//		{
-	//			m_bEventTrigger[1] = true;
-	//			m_pSword->Set_Target_CanAttack(true);
-	//			m_pSword->Set_Enable_Record(true);
-	//		}
-	//	}
-	//	if (1.067f <= AniTime && 1.433f >= AniTime)
-	//	{
-	//		if (false == m_bEventTrigger[2])
-	//		{
-	//			m_bEventTrigger[2] = true;
-	//			m_fAtt_MoveSpeed_Cur = 4.f;
-	//			m_fAtt_MoveAccel_Cur = 0.5f;	// 엑셀 값은 항상 0 초기화
-	//			m_fAni_Multiply = 0.5f;	// 감폭 수치. 값이 클수록 빨리 감소. 0일시 등속운동(원래는 감속) // 보통은 1 ~ 0.5사이
-	//		}
-	//		Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
-	//		Colleague_SkilMovement(m_fAni_Multiply);
-	//	}
-	//	if (0.f <= AniTime && 2.233f >= AniTime)
-	//	{
-	//		if (true == m_bNest_Att_CoolTimer)
-	//			m_bCheck_Attcing = true;
-	//	}
-	//	else
-	//		m_bCheck_Attcing = false;
-	//}
-	//return;
-	//if (true == m_tObjParam.bCanAttack)
-	//{
-	//	m_tObjParam.bCanAttack = false;
-	//	m_tObjParam.bIsAttack = true;
-	//}
-	//else
-	//{
 	if (m_pDynamicMesh->Is_Finish_Animation_Lower(0.8f) && m_eColleague_Ani == CPlayer_Colleague::Ani_Trun_Center_Att_Skil)
 	{
 		Funtion_Reset_State();
@@ -2381,16 +2337,16 @@ void CPlayer_Colleague::CollAtt_ThreeCombo()		// 4번
 		m_bChecking_MyHit = true;
 		++m_iNormalAtt_Count;
 		++m_iCenter_Count;
-
+		g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+		g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
+		m_bCheck_Skil_Voice = false;
 		return;
 	}
-
 	else if (m_pDynamicMesh->Get_TrackInfo().Position >= 1.7f)
 	{
 		if (m_bEventTrigger[6] == false)
 		{
 			m_bEventTrigger[6] = true;
-
 			m_pSword->Set_Enable_Trail(false);
 		}
 	}
@@ -2411,7 +2367,6 @@ void CPlayer_Colleague::CollAtt_ThreeCombo()		// 4번
 		if (m_bEventTrigger[4] == false)
 		{
 			m_bEventTrigger[4] = true;
-
 			m_pSword->Set_Target_CanAttack(true);
 			m_pSword->Set_Enable_Record(true);
 		}
@@ -2438,6 +2393,7 @@ void CPlayer_Colleague::CollAtt_ThreeCombo()		// 4번
 			m_fAtt_MoveSpeed_Cur = 0.2f;
 			m_fAni_Multiply = 0.0f;
 		}
+		Funtion_RotateBody();
 		Colleague_SkilMovement(m_fAni_Multiply);
 		Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 	}
@@ -2452,6 +2408,7 @@ void CPlayer_Colleague::CollAtt_ThreeCombo()		// 4번
 			m_fAtt_MoveSpeed_Cur = 0.2f;
 			m_fAni_Multiply = 0.0f;
 		}
+		Funtion_RotateBody();
 		Colleague_SkilMovement(m_fAni_Multiply);
 		Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 	}
@@ -2466,6 +2423,7 @@ void CPlayer_Colleague::CollAtt_ThreeCombo()		// 4번
 			m_fAtt_MoveSpeed_Cur = 4.f;
 			m_fAni_Multiply = 0.f;
 		}
+		Funtion_RotateBody();
 		Colleague_SkilMovement(m_fAni_Multiply);
 		Colleague_Movement(m_fAtt_MoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
 	}
@@ -2558,6 +2516,10 @@ void CPlayer_Colleague::CollAtt_CenterDown()		// 2번
 		m_fCoolTimer_limit = 8.f;
 		m_bChecking_MyHit = true;
 		++m_iNormalAtt_Count;
+		g_pSoundManager->Stop_Sound(CSoundManager::Jack_Voice);
+		g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_02);
+		m_bCheck_Skil_Voice = false;
+		m_iCenter_Count = 0;
 		return;
 	}
 	else if (AniTime >= 3.233f)
@@ -2775,10 +2737,10 @@ void CPlayer_Colleague::CollAtt_SlowGun()
 				memcpy(&vLook, &matBone._21, sizeof(_v3));
 				vBirth += (vLook*fLenght);
 
-				cout << "SlowGun!!! : "<< AniTime << endl;
 				CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_ColleagueBullet",
-					&BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 3.f, 1.f));
-				//Set_Friendly(true);
+					&BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 2.f, 1.f));
+				g_pSoundManager->Stop_Sound(CSoundManager::Jack_SFX_01);
+				g_pSoundManager->Play_Sound(L"Gun_Attack.ogg", CSoundManager::Jack_SFX_01, CSoundManager::Effect_Sound);
 			}
 		}
 		else if ((0.5f <= AniTime) && m_eColleague_Ani == CPlayer_Colleague::Ani_PlayerHeal_or_Gun)
@@ -2823,7 +2785,7 @@ void CPlayer_Colleague::CollHeal_ForMe()
 		{
 			Funtion_Reset_State();
 			m_eMovetype = CPlayer_Colleague::Coll_Idle;
-			m_eColleague_Ani = CPlayer_Colleague::Ani_Idle;
+
 		}
 		else if (2.267f <= AniTime)
 		{
