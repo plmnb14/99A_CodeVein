@@ -30,7 +30,7 @@ private:
 
 public:
 	// 인자 만큼 헤이즈 누적
-	void Accumulate_Haze(_ulong uAccHazeCnt) { m_uHazeCnt += uAccHazeCnt; }
+	void Accumulate_Haze(_long AccHazeCnt) { m_uHazeCnt += AccHazeCnt; }
 
 private:
 	CTransform*				m_pTransformCom = nullptr;

@@ -52,6 +52,7 @@
 
 #include "Pet_Bullet.h"
 #include "Pet_PoisonButterFly.h"
+#include "Pet_DeerKing.h"
 
 #include "GunGenji.h"
 #include "GunGenjiBullet.h"

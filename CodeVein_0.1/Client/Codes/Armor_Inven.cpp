@@ -43,15 +43,42 @@ HRESULT CArmor_Inven::Ready_GameObject(void * pArg)
 
 	ARMOR_PARAM tParam;
 	tParam.iArmorType = ARMOR_Gauntlet;
+	tParam.iArmorName = ArmorAll_Gauntlet_DarkNightHook;
+	tParam.iReinforce = 0;
 	tParam.fDef = 10;
+	tParam.fPlusDef = 10;
+	tParam.fHP = 10;
+	tParam.fPlusHP = 10;
 	tParam.iPrice = 1000;
 	Add_Armor(tParam);
+
 	tParam.iArmorType = ARMOR_LongCoat;
-	tParam.fDef = 100;
+	tParam.iArmorName = ArmorAll_LongCoat_DarkNightSpear;
+	tParam.iReinforce = 0;
+	tParam.fDef = 10;
+	tParam.fPlusDef = 10;
+	tParam.fHP = 10;
+	tParam.fPlusHP = 10;
 	tParam.iPrice = 10000;
 	Add_Armor(tParam);
+
 	tParam.iArmorType = ARMOR_Muffler;
-	tParam.fDef = 1000;
+	tParam.iArmorName = ArmorAll_Muffler_DarkNightSpike;
+	tParam.iReinforce = 0;
+	tParam.fDef = 10;
+	tParam.fPlusDef = 10;
+	tParam.fHP = 10;
+	tParam.fPlusHP = 10;
+	tParam.iPrice = 30000;
+	Add_Armor(tParam);
+
+	tParam.iArmorType = ARMOR_Gauntlet;
+	tParam.iArmorName = ArmorAll_Gauntlet_MangSikHook;
+	tParam.iReinforce = 0;
+	tParam.fDef = 10;
+	tParam.fPlusDef = 10;
+	tParam.fHP = 10;
+	tParam.fPlusHP = 10;
 	tParam.iPrice = 30000;
 	Add_Armor(tParam);
 
@@ -73,6 +100,12 @@ _int CArmor_Inven::Update_GameObject(_double TimeDelta)
 	}
 	m_pExplainUI->Set_Active(m_bIsActive);
 
+	_uint iIdx = 0;
+	for (auto& vector_iter : m_vecArmorSlot)
+	{
+		vector_iter->Set_UI_Pos(m_fPosX - 100.f + 52.f * (iIdx % 5), m_fPosY - 150.f + 52.f * (iIdx / 5));
+		iIdx++;
+	}
 
 	Click_Inven();
 		
@@ -172,6 +205,15 @@ void CArmor_Inven::SetUp_Default()
 	//m_pExplainUI->Set_UI_Pos(WINCX * 0.5f + 25.f, WINCY * 0.5f - 30.f);
 	//m_pExplainUI->Set_UI_Size(500.f, 500.f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExplainUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	m_tRegistParam.iArmorType = ARMOR_End;
+	m_tRegistParam.iArmorName = ArmorAll_END;
+	m_tRegistParam.fHP = 0.f;
+	m_tRegistParam.fDef = 0.f;
+	m_tRegistParam.fPlusDef = 0.f;
+	m_tRegistParam.fPlusHP = 0.f;
+	m_tRegistParam.iPrice = 0;
+	m_tRegistParam.iReinforce = 0;
 }
 
 void CArmor_Inven::Click_Inven()
@@ -198,13 +240,17 @@ void CArmor_Inven::Click_Inven()
 			Reset_SelectSlot();
 			pSlot->Set_Select(true);
 			m_tRegistParam = pSlot->Get_ArmorParam();
+
+			g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::ArmorInven_Regist_Slot, CSoundManager::Ambient_Sound);
 		}
 		else if (pSlot->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
-		{
+		{		
 			pSlot->Set_Select(false);
+			m_tRegistParam = {};
 			m_tRegistParam.iArmorType = ARMOR_End;
-			m_tRegistParam.iPrice = 0;
-			m_tRegistParam.fDef = 0.f;
+			m_tRegistParam.iArmorName = ArmorAll_END;
+
+			g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::ArmorInven_UnRegist_Slot, CSoundManager::Ambient_Sound);
 		}
 	}
 }
@@ -260,6 +306,22 @@ void CArmor_Inven::Add_Armor(ARMOR_PARAM tArmorParam)
 		m_vecArmorSlot[i]->Set_Active(m_bIsActive);
 		m_vecArmorSlot[i]->Set_ViewZ(m_fViewZ - 0.1f);
 		m_vecArmorSlot[i]->Set_UI_Pos(m_fPosX - 103.f + 52.f * (i % 5), m_fPosY - 140.f + 52.f * (i / 5));
+	}
+}
+
+void CArmor_Inven::Sell_Armor()
+{
+	_ulong idx = 0;
+	for (auto& pSlot : m_vecArmorSlot)
+	{
+		if (pSlot->Get_SelectShop())
+		{
+			pSlot->Set_Dead();
+			m_vecArmorSlot.erase(m_vecArmorSlot.begin() + idx);
+			m_vecArmorSlot.shrink_to_fit();
+			break;
+		}
+		++idx;
 	}
 }
 

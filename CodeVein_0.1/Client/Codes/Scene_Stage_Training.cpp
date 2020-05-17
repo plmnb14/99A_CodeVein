@@ -184,7 +184,10 @@ HRESULT CScene_Stage_Training::Ready_Layer_Enemies()
 
 	//// 펫_독나비, 소환위치는 항상 player의 오른쪽값
 	//pInstance = g_pManagement->Clone_GameObject_Return(L"Pet_PoisonButterFly", nullptr);
-	////TARGET_TO_TRANS(pInstance)->Set_Pos(_v3(4.f, 0.f, 4.f));
+	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Pet", nullptr);
+
+	////// 펫_사슴킹
+	//pInstance = g_pManagement->Clone_GameObject_Return(L"Pet_DeerKing", nullptr);
 	//g_pManagement->Add_GameOject_ToLayer_NoClone(pInstance, SCENE_STAGE, L"Layer_Pet", nullptr);
 
 	//====================================================================================================================================================

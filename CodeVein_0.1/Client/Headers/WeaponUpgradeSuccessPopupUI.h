@@ -8,9 +8,16 @@ BEGIN(Client)
 class CWeapon_Inven_InShop;
 class CPlayerFontUI;
 class CWeaponUpgradeOptionUI;
+class CShopItemIcon;
 class CWeaponUpgradeSuccessPopupUI final : public CUI
 {
 public:
+	enum POPUP_TYPE
+	{
+		POPUP_SUCCESS,
+		POPUP_FAILED,
+		POPUP_END
+	};
 
 private:
 	explicit CWeaponUpgradeSuccessPopupUI(_Device pDevice);
@@ -19,6 +26,9 @@ private:
 
 public:
 	void	Set_Active(_bool bIsActive);
+	void	Set_Fade(_bool bIsActive);
+	void	Set_PopupType(POPUP_TYPE eType);
+	void	Set_Inven(CWeapon_Inven_InShop* pInven) { m_pInven = pInven; }
 
 public:
 	virtual HRESULT Ready_GameObject_Prototype();
@@ -40,6 +50,7 @@ private:
 	void	Check_LateInit();
 	void	Check_ItemOption();
 	void	Check_Option();
+	void	Check_ItemIcon();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -51,9 +62,14 @@ private:
 private:
 	CWeapon_Inven_InShop*				m_pInven = nullptr;
 	vector<CWeaponUpgradeOptionUI*>		m_vecOption;
+	CShopItemIcon*						m_pShopItemIcon = nullptr;
 
+	POPUP_TYPE							m_ePopupType = POPUP_END;
 	_bool								m_bLateInit = false;
 	_int								m_iTexIdx = 0;
+	_float								m_fAlpha = 0.f;
+	_float								m_fStartDelay = 0.f;
+	_bool								m_bFadeStart = false;
 public:
 	static CWeaponUpgradeSuccessPopupUI*	Create(_Device pGraphic_Device);
 	virtual CGameObject*		Clone_GameObject(void* pArg);

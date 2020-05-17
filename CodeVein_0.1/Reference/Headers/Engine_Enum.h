@@ -154,11 +154,33 @@ enum WEAPON_ALL_DATA
 
 enum ARMOR_All_DATA
 {
-	ArmorAll_DarkBlood,
-	ArmorAll_DrakNight,
-	ArmorAll_Spike,
+	ArmorAll_Gauntlet_DarkNightHook,	// 암야의 갈고리
+	ArmorAll_Gauntlet_NovelSilver,		// 노블 실버
+	ArmorAll_Gauntlet_MangSikHook,		// 망식의 갈고리
+	ArmorAll_Gauntlet_QueenKiller,		// 퀸 킬러(여왕 토벌대 아장)_발톱형
+	ArmorAll_LongCoat_DarkNightSpear,	// 암야의 돌격창
+	ArmorAll_LongCoat_WhiteSilver,		// 백은의 의장
+	ArmorAll_LongCoat_QueenKiller,		// 퀸 킬러(여왕 토벌대 아장)_가시형
+	ArmorAll_Muffler_DarkNightSpike,	// 암야의 가시
+	ArmorAll_Muffler_WhiteGraze,		// 화이트 그레이즈
+	ArmorAll_Muffler_Suiside,			// 수어사이드 쏜
 
 	ArmorAll_END
+};
+
+// 소비, 재료 상점에 이용
+enum ITEM_ALL_DATA
+{
+	ITEM_EXPEND_HPMAXUP,			// 재생유도약의 확장인자(재생 유도약 소지량 증가) 
+	ITEM_EXPEND_HP,					// 재생 유도약(hp 증가)
+	ITEM_EXPEND_RETURNER,			// 리터너(귀환 아이템)
+	ITEM_EXPEND_BLOOD,				// 명혈 농축약(명혈 회복)
+	ITEM_EXPEND_CHEET,				// 치트 아이템(체력, 연혈 모두 증가)
+	ITEM_EXPEND_SUPERARMER,			// 슈퍼 아머(무적 상태)
+	ITEM_MTRL_QUEENSTEEL,			// 퀸 스틸(강화재료)
+	ITEM_MTRL_QUEENTITAN,			// 퀸 티탄(강화재료)
+	ITEM_MTRL_QUEENTUNGSTEN,		// 퀸 텅스텐(강화재료)
+	ITEM_DATA_END
 };
 
 enum Teleport_ID

@@ -29,8 +29,6 @@ HRESULT CGeneralStoreUI::Ready_GameObject(void * pArg)
 	m_fSizeX = 1280.f;
 	m_fSizeY = 700.f;
 
-	//m_bIsActive = true;
-
 	SetUp_Default();
 
 	return NOERROR;
@@ -43,9 +41,13 @@ _int CGeneralStoreUI::Update_GameObject(_double TimeDelta)
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
-
+	
 	Update_SubUI();
 	Click_SubUI();
+
+	// µð¹ö±ë¿ë
+	if(g_pInput_Device->Key_Up(DIK_P))
+		m_bIsActive = !m_bIsActive;
 	
 	return NO_EVENT;
 }
@@ -158,6 +160,18 @@ void CGeneralStoreUI::Update_SubUI()
 		m_pShopIcon[i]->Set_Active(m_bIsActive);
 		m_pShopIcon[i]->Set_UI_Pos(80.f + 80.f * i, 130.f);
 		m_pShopIcon[i]->Set_UI_Size(40.f, 40.f);
+	}
+
+	if (!m_bIsActive)
+	{
+		m_pExpendCollectionUI->Set_Active(false);
+		m_pMaterialCollectionUI->Set_Active(false);
+		m_bIsOpen = false;
+	}
+	else if (m_bIsActive && !m_bIsOpen)
+	{
+		m_pExpendCollectionUI->Set_Active(true);
+		m_bIsOpen = true;
 	}
 }
 

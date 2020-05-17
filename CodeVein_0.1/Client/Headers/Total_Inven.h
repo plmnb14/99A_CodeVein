@@ -31,6 +31,7 @@ public:
 	void Set_Detail(_bool bIsDetail) { m_bIsDetail = bIsDetail; }
 	void Set_PlayerBloodCodeType(BloodCode_ID eID) { m_ePlayerBloodCode = eID; }
 	void Set_Skill_ID(_uint iNum, Skill_ID eSkillID);
+	void Set_WeaponParam(_uint iIndex, WPN_PARAM tWpnParam);
 
 public:
 	virtual HRESULT			Ready_GameObject_Prototype();
@@ -44,6 +45,7 @@ private:
 	HRESULT					SetUp_ConstantTable();
 	void					SetUp_Default();
 	void					Click_Icon();
+	void					SkillSlot_Touch_Sound(_uint i);
 
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;

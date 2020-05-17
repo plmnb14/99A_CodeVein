@@ -1,4 +1,4 @@
-#include "stdafx.h"
+ï»¿#include "stdafx.h"
 #include "..\Headers\SkillUI.h"
 #include "Active_Icon.h"
 #include "PlayerFontUI.h"
@@ -60,8 +60,9 @@ _int CSkillUI::Update_GameObject(_double TimeDelta)
 
 void CSkillUI::SetUp_Default()
 {
-	_float fPosX1 = WINCX * 0.9f, fPosY1 = WINCY * 0.75f;
-	_float fPosX2 = WINCX * 0.83f, fPosY2 = WINCY * 0.89f;
+	//1.45078125â€¬f
+	_float fPosX1 = 1179.36456f, fPosY1 = 552.8056f;
+	_float fPosX2 = 1121.4647f, fPosY2 = 631.38395f;
 
 	for (_uint i = 0; i < 8; ++i)
 	{
@@ -74,23 +75,23 @@ void CSkillUI::SetUp_Default()
 			m_pActive[i]->Set_UI_Size(54.f, 54.f);
 	}
 
-	// °¡¿îµ¥ À§
+	// ê°€ìš´ë° ìœ„
 	m_pActive[0]->Set_UI_Pos(fPosX1, fPosY1 - 35.f);
-	// ¿ÞÂÊ Áß°£
+	// ì™¼ìª½ ì¤‘ê°„
 	m_pActive[1]->Set_UI_Pos(fPosX1 - 35.f, fPosY1);
-	// ¿À¸¥ÂÊ Áß°£
+	// ì˜¤ë¥¸ìª½ ì¤‘ê°„
 	m_pActive[2]->Set_UI_Pos(fPosX1 + 35.f, fPosY1);
-	// °¡¿îµ¥ ¾Æ·¡
+	// ê°€ìš´ë° ì•„ëž˜
 	m_pActive[3]->Set_UI_Pos(fPosX1, fPosY1 + 35.f);
 
 
-	// °¡¿îµ¥ À§
+	// ê°€ìš´ë° ìœ„
 	m_pActive[4]->Set_UI_Pos(fPosX2, fPosY2 - 30.f);
-	// ¿ÞÂÊ Áß°£
+	// ì™¼ìª½ ì¤‘ê°„
 	m_pActive[5]->Set_UI_Pos(fPosX2 - 30.f, fPosY2);
-	// ¿À¸¥ÂÊ Áß°£
+	// ì˜¤ë¥¸ìª½ ì¤‘ê°„
 	m_pActive[6]->Set_UI_Pos(fPosX2 + 30.f, fPosY2);
-	// °¡¿îµ¥ ¾Æ·¡
+	// ê°€ìš´ë° ì•„ëž˜
 	m_pActive[7]->Set_UI_Pos(fPosX2, fPosY2 + 30.f);
 
 	

@@ -3,7 +3,7 @@
 #include "Client_Defines.h"
 #include "UI.h"
 #include "Item_Manager.h"
-
+#include "MouseUI.h"
 
 #include "PlayerHP.h"
 #include "PlayerST.h"
@@ -52,6 +52,9 @@
 #include "ReleaseOption.h"
 #include "SkillAcquisitionUI.h"
 #include "OKMessageUI.h"
+
+#include "SkillPointUI.h"
+#include "SkillGauge.h"
 #include "Skill_Inven.h"
 #include "SkillSlot.h"
 #include "SkillIcon.h"
@@ -73,6 +76,14 @@
 #include "WeaponBuyPopupOptionUI.h"
 #include "WeaponUpgradeUI.h"
 #include "WeaponUpgradeOptionUI.h"
+#include "WeaponUpgradeSuccessPopupUI.h"
+#include "WeaponUpgradeSuccessPopupOptionUI.h"
+#include "WeaponUpgradingPopup.h"
+#include "WeaponUpgradingEff.h"
+
+#include "ShopActionFailedPopup.h"
+#include "ShopItemIcon.h"
+#include "NPC_InteractionUI.h"
 
 #include "ExplainArmorUI.h"
 #include "ExplainWeaponUI.h"
@@ -87,6 +98,11 @@
 #include "ExpendCollectionUI.h"
 #include "ExpendOptionUI.h"
 #include "Expend_InfoUI.h"
+
+#include "ExpendBuyUI.h"
+#include "MaterialBuyUI.h"
+#include "BuyOptionUI.h"
+#include "PurchaseFailUI.h"
 
 BEGIN(Client)
 
@@ -106,6 +122,7 @@ public:
 	HRESULT Add_UI_Prototype(_Device pDevice);
 	HRESULT SetUp_UILayer();
 	_int	Update_UI();
+	CMouseUI* Get_MouseUI() { return m_pMouseUI; }
 	CStatusUI* Get_StatusUI() { return m_pStatusUI; }
 	CMistletoeUI* Get_MistletoeUI() { return m_pMistletoeUI; }
 	CStageSelectUI* Get_StageSelectUI() { return m_pStageSelectUI; }
@@ -129,6 +146,7 @@ public:
 	CPlayerHP* Get_PlayerHP() { return m_pPlayerHP; } // 플레이어 HP
 	CPlayerST* Get_PlayerST() { return m_pPlayerST; } // 플레이어 ST
 	CGeneralStoreUI* Get_MaterialShopUI() { return m_pGeneralStoreUI; }
+	CSkillGauge* Get_SkillGauge() { return m_pSkillGauge; }
 	
 	// 펫 인벤토리
 	CPet_Inven* Get_Pet_Inven() { return m_pPet_Inven; }
@@ -136,6 +154,7 @@ public:
 private:
 	_uint m_uiCoundItem = 0;
 	_bool m_bTest = false;
+	CMouseUI* m_pMouseUI = nullptr;
 	CStatusUI* m_pStatusUI = nullptr;
 	CMistletoeUI* m_pMistletoeUI = nullptr;
 	CStageSelectUI* m_pStageSelectUI = nullptr;
@@ -158,7 +177,9 @@ private:
 	CPlayerHP*	m_pPlayerHP = nullptr;
 	CPlayerST*	m_pPlayerST = nullptr;
 	CGeneralStoreUI* m_pGeneralStoreUI = nullptr; // 소비, 재료 상점 UI
-	
+	CSkillGauge*	m_pSkillGauge = nullptr;
+	CSkillPointUI*	m_pSkillPointUI = nullptr;
+
 	// 펫 인벤토리
 	CPet_Inven* m_pPet_Inven = nullptr;
 

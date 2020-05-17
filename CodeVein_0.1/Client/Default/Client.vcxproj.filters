@@ -397,9 +397,6 @@
     <Filter Include="02.GameObject\Stage\10%29 Pet\01.PoisonButterFly">
       <UniqueIdentifier>{2f0b99ca-05de-474b-a3f2-deaf4be55682}</UniqueIdentifier>
     </Filter>
-    <Filter Include="02.GameObject\Stage\10%29 Pet\02.DeerKing">
-      <UniqueIdentifier>{12d43b02-9be4-4bc8-8f7d-849ac5ca6a8d}</UniqueIdentifier>
-    </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\03.Inven_UI\00.Inventory\08. Pet_Inven">
       <UniqueIdentifier>{a7a0f26e-f1c3-4bbe-a84d-2ece8c87140c}</UniqueIdentifier>
     </Filter>
@@ -531,6 +528,45 @@
     </Filter>
     <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI\Option">
       <UniqueIdentifier>{023eafb9-cae5-4944-a116-3d2c0d39de3f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\10%29 Pet\02.Pet_DeerKing">
+      <UniqueIdentifier>{12d43b02-9be4-4bc8-8f7d-849ac5ca6a8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\10%29 Pet\00.Pet_Bullet">
+      <UniqueIdentifier>{e24f803d-c1b7-44e9-adbb-8fa7d5e7df5a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI">
+      <UniqueIdentifier>{41c3c3de-dd61-4d16-868c-53b157aa6803}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopActionFailedPopup">
+      <UniqueIdentifier>{fb48775f-5ad6-495d-b848-d4a07f0be4b3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\BuyOptions">
+      <UniqueIdentifier>{aa9ae945-c50e-428b-80c8-86d9854a412e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\ExpendBuyUI">
+      <UniqueIdentifier>{6a79ab2c-c230-4ddd-9c3d-e03797b6657a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\MaterialBuyUI">
+      <UniqueIdentifier>{2e9af6be-dff2-499c-b091-3d6c2a8198ce}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\PurchaseFailUI">
+      <UniqueIdentifier>{91753981-d825-4b95-b825-8445657cc02e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopItemIcon">
+      <UniqueIdentifier>{348a2642-8d5b-474a-9535-b1311577cd9a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgrading">
+      <UniqueIdentifier>{c4695622-8275-4908-84b1-4808088b4b1f}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgrading\WeaponUpgradingPopup">
+      <UniqueIdentifier>{8591d729-cb9d-4b5e-89a9-8895765325a4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgrading\WeaponUpgradingEff">
+      <UniqueIdentifier>{d618a869-2089-4421-bc39-63cbc0802403}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="02.GameObject\Stage\5%29 UI\UI\19.NPC_InteractionUI">
+      <UniqueIdentifier>{2daaaef8-fa47-4495-9b69-26032a063b5f}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
@@ -921,9 +957,6 @@
     <ClInclude Include="..\Headers\Pet.h">
       <Filter>02.GameObject\Stage\10%29 Pet</Filter>
     </ClInclude>
-    <ClInclude Include="..\Headers\Pet_Bullet.h">
-      <Filter>02.GameObject\Stage\10%29 Pet</Filter>
-    </ClInclude>
     <ClInclude Include="..\Headers\Monster.h">
       <Filter>02.GameObject\Stage\2%29 Monster</Filter>
     </ClInclude>
@@ -1123,13 +1156,52 @@
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeOptionUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\Pet_DeerKing.h">
-      <Filter>02.GameObject\Stage\10%29 Pet\02.DeerKing</Filter>
+      <Filter>02.GameObject\Stage\10%29 Pet\02.Pet_DeerKing</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\WeaponUpgradeSuccessPopupUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI</Filter>
     </ClInclude>
     <ClInclude Include="..\Headers\WeaponUpgradeSuccessPopupOptionUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI\Option</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\Pet_Bullet.h">
+      <Filter>02.GameObject\Stage\10%29 Pet\00.Pet_Bullet</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\GeneralStoreBuyUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BuyOptionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\SkillPointUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\02. Skill_Gauge</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ShopActionFailedPopup.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopActionFailedPopup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\BuyOptionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\BuyOptions</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ExpendBuyUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\ExpendBuyUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\MaterialBuyUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\MaterialBuyUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\PurchaseFailUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\PurchaseFailUI</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\ShopItemIcon.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopItemIcon</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\WeaponUpgradingPopup.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgrading\WeaponUpgradingPopup</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\WeaponUpgradingEff.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgrading\WeaponUpgradingEff</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Headers\NPC_InteractionUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\19.NPC_InteractionUI</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -1511,9 +1583,6 @@
     <ClCompile Include="..\Codes\Pet.cpp">
       <Filter>02.GameObject\Stage\10%29 Pet</Filter>
     </ClCompile>
-    <ClCompile Include="..\Codes\Pet_Bullet.cpp">
-      <Filter>02.GameObject\Stage\10%29 Pet</Filter>
-    </ClCompile>
     <ClCompile Include="..\Codes\DeerKingIceSword.cpp">
       <Filter>02.GameObject\Stage\1%29 Boss\DeerKing\Bullet</Filter>
     </ClCompile>
@@ -1707,13 +1776,52 @@
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeOptionUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\Pet_DeerKing.cpp">
-      <Filter>02.GameObject\Stage\10%29 Pet\02.DeerKing</Filter>
+      <Filter>02.GameObject\Stage\10%29 Pet\02.Pet_DeerKing</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\WeaponUpgradeSuccessPopupUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\WeaponUpgradeSuccessPopupOptionUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgradeSuccessPopupUI\Option</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\Pet_Bullet.cpp">
+      <Filter>02.GameObject\Stage\10%29 Pet\00.Pet_Bullet</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\GeneralStoreBuyUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BuyOptionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SkillPointUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\02. Skill_Gauge</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ShopActionFailedPopup.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopActionFailedPopup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\BuyOptionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\BuyOptions</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ExpendBuyUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\ExpendBuyUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\MaterialBuyUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\MaterialBuyUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\PurchaseFailUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI\PurchaseFailUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\ShopItemIcon.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopItemIcon</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\WeaponUpgradingPopup.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgrading\WeaponUpgradingPopup</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\WeaponUpgradingEff.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\WeaponUpgradeUI\WeaponUpgrading\WeaponUpgradingEff</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\NPC_InteractionUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\19.NPC_InteractionUI</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>

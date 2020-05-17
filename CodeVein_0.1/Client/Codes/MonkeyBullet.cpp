@@ -55,7 +55,7 @@ HRESULT CMonkeyBullet::Ready_GameObject(void * pArg)
 	m_bEffect = true;
 
 	m_pBulletBody = CParticleMgr::Get_Instance()->Create_EffectReturn(L"Monkey_Knife");
-	m_pBulletBody->Set_Desc(V3_NULL, m_pTransformCom);
+	m_pBulletBody->Set_Desc(V3_NULL, nullptr);
 	m_pBulletBody->Set_ParentObject(this);
 	m_pBulletBody->Reset_Init();
 

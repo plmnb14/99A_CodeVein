@@ -216,15 +216,15 @@ void CPlayerHP::SetUp_Default()
 
 void CPlayerHP::SetUp_State(_double TimeDelta)
 {
-	if (m_fPlayerHP >= m_fTotalHP)
-		m_fPlayerHP = m_fTotalHP;
-	if (m_fPlayerHP <= 0.f)
-		m_fPlayerHP = 0.f;
-
-	m_fPlayerHP = m_pTarget->Get_Target_Hp();
 	// 수정
 	m_fTotalHP = m_pTarget->Get_Target_Param().fHp_Max;
+	m_fPlayerHP = m_pTarget->Get_Target_Param().fHp_Cur;
 
+	if (m_fPlayerHP <= 0.f)
+		m_fPlayerHP = 0.f;
+	else if (m_fPlayerHP >= m_fTotalHP)
+		m_fPlayerHP = m_fTotalHP;
+	
 	// Texture UV 흐르는 속도
 	m_fSpeed += -0.2f * _float(TimeDelta);
 

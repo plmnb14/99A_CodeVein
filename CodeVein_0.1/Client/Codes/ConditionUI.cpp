@@ -78,13 +78,15 @@ _int CConditionUI::Update_GameObject(_double TimeDelta)
 	case CONDITION_BLOOD:
 	{
 		m_iIndex = 2;
-		m_fMaxValue = 100.f;
+		m_fCurValue = _float(m_tObjParam.sMana_Cur);
+		m_fMaxValue = _float(m_tObjParam.sMana_Max);
 	}		
 		break;
 	case CONDITION_ATT:
 	{
 		m_iIndex = 3;
 		m_fCurValue = m_tObjParam.fDamage;
+		m_fMaxValue = 100;
 	}
 		break;
 	case CONDITION_DEF:
@@ -235,7 +237,6 @@ void CConditionUI::SetUp_State(_double TimeDelta)
 
 	if (m_pFontValue)
 	{
-		//m_pFontValue->Set_UI_Pos(m_fPosX + 50.f, m_fPosY);
 		m_pFontValue->Set_Active(m_bIsActive);
 		m_pFontValue->Update_NumberValue(m_fCurValue);
 	}

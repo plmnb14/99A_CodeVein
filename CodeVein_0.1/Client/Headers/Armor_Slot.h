@@ -13,10 +13,12 @@ private:
 
 public:
 	bool Get_Select() { return m_bIsSelect; }
+	bool Get_SelectShop() { return m_bIsSelectShop; }
 	ARMOR_PARAM Get_ArmorParam();
 
 public:
 	void Set_Select(_bool bIsSelect) { m_bIsSelect = bIsSelect; }
+	void Set_SelectShop(_bool bIsSelect) { m_bIsSelectShop = bIsSelect; }
 	void Set_ArmorParam(ARMOR_PARAM tArmorParam) { m_tArmorParam = tArmorParam; }
 
 public:
@@ -34,6 +36,7 @@ private:
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable(_uint iIndex);
 	void	SetUp_Default();
+	void	SetUp_SlotTexIdx();
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -45,6 +48,7 @@ private:
 private:
 	ARMOR_PARAM				m_tArmorParam;
 	_bool					m_bIsSelect = false;
+	_bool					m_bIsSelectShop = false;
 	_bool					m_bIsCollMouse = false;
 
 public:

@@ -60,9 +60,9 @@ HRESULT CExpendables_Inven::Ready_GameObject(void * pArg)
 		}
 	}
 
-	Add_MultiExpendables(CExpendables::Expend_Blood, 5);
-	Add_MultiExpendables(CExpendables::Expend_Cheet, 6);
-	Add_MultiExpendables(CExpendables::Expend_Hp, 7);
+	//Add_MultiExpendables(CExpendables::Expend_Blood, 5);
+	//Add_MultiExpendables(CExpendables::Expend_Cheet, 6);
+	//Add_MultiExpendables(CExpendables::Expend_Hp, 7);
 	
 	return NOERROR;
 }
@@ -76,6 +76,13 @@ _int CExpendables_Inven::Update_GameObject(_double TimeDelta)
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.0f);
 	
 	Click_Inven();
+
+	_uint iIdx = 0;
+	for (auto& vector_iter : m_vecSlot)
+	{
+		vector_iter->Set_UI_Pos(m_fPosX - 100.f + 52.f * (iIdx % 5), m_fPosY - 150.f + 52.f * (iIdx / 5));
+		iIdx++;
+	}
 
 	for (auto& pSlot : m_vecSlot)
 	{
@@ -124,7 +131,6 @@ HRESULT CExpendables_Inven::Render_GameObject()
 
 	m_pShaderCom->Begin_Pass(1);
 
-	
 	m_pBufferCom->Render_VIBuffer();
 
 	m_pShaderCom->End_Pass();
@@ -182,6 +188,7 @@ void CExpendables_Inven::Click_Inven()
 	if (!m_bIsActive)
 		return;
 
+	_uint iIdx = 0;
 	for (auto& pExpendSlot : m_vecSlot)
 	{
 		if (pExpendSlot->Pt_InRect() && pExpendSlot->Get_Type() != CExpendables::EXPEND_END)
@@ -198,22 +205,21 @@ void CExpendables_Inven::Click_Inven()
 			{
 				if (m_vecQuickSlot.size() == 8)
 					return;
-				pExpendSlot->Set_Select(true);
-				
+				pExpendSlot->Set_Select(true);			
 				m_vecQuickSlot.push_back(pExpendSlot);
+				
+				Slot_Regist_Sound(iIdx);
 			}
 			else if(pExpendSlot->Get_Select() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
 			{
-				pExpendSlot->Set_Select(false);
-				
+				pExpendSlot->Set_Select(false);				
 				Delete_QuickSlot(pExpendSlot);
+
+				Slot_UnRegist_Sound(iIdx);
 			}
 		}
+		iIdx++;
 	}
-
-
-	
-
 }
 
 void CExpendables_Inven::SetUp_Default()
@@ -224,6 +230,14 @@ void CExpendables_Inven::SetUp_Default()
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pExplainUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	
+}
+
+void CExpendables_Inven::Add_Slot()
+{
+	CExpendables_Slot* pSlot = static_cast<CExpendables_Slot*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ExpendSlot", nullptr));
+	pSlot->Set_UI_Size(50.f, 50.f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(pSlot, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	m_vecSlot.push_back(pSlot);
 }
 
 void CExpendables_Inven::Add_Expendables(CExpendables::EXPEND_TYPE eType)
@@ -260,6 +274,24 @@ void CExpendables_Inven::Delete_QuickSlot(CExpendables_Slot* pSlot)
 	return;
 }
 
+void CExpendables_Inven::Slot_Regist_Sound(_uint iIdx)
+{
+	if (iIdx >= 30)
+		return;
+	_uint iChannel = CSoundManager::CHANNELID::ExpendInven_Regist_Slot01 + iIdx;
+
+	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID(iChannel), CSoundManager::Ambient_Sound);
+}
+
+void CExpendables_Inven::Slot_UnRegist_Sound(_uint iIdx)
+{
+	if (iIdx >= 30)
+		return;
+	_uint iChannel = CSoundManager::CHANNELID::ExpendInven_UnRegist_Slot01 + iIdx;
+
+	g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::CHANNELID(iChannel), CSoundManager::Ambient_Sound);
+}
+
 void CExpendables_Inven::Use_Expendableas(CExpendables_Slot * pSlot)
 {
 	if (nullptr == pSlot)
@@ -289,17 +321,11 @@ void CExpendables_Inven::Use_Expendableas(CExpendables_Slot * pSlot)
 		{
 			m_vecSlot.erase(m_vecSlot.begin() + idx);
 			m_vecSlot.shrink_to_fit();
+			Add_Slot();
 			break;
 		}
 		
 		++idx;
-	}
-
-	_ulong Idx = 0;
-	for (auto& pExSlot : m_vecSlot)
-	{
-		pExSlot->Set_UI_Pos(m_vecUI_DESC[Idx]->fPosX, m_vecUI_DESC[Idx]->fPosY);
-		++Idx;
 	}
 }
 
@@ -321,6 +347,7 @@ void CExpendables_Inven::Sell_Expendables(_uint iDelete)
 			{
 				m_vecSlot.erase(m_vecSlot.begin() + idx);
 				m_vecSlot.shrink_to_fit();
+				Add_Slot();
 				break;
 			}
 		}

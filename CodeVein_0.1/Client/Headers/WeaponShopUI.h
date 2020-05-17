@@ -17,11 +17,16 @@ private:
 	virtual ~CWeaponShopUI() = default;
 
 public:
-	CWeapon_Inven_InShop* Get_InvenBuy() { return m_pBuyInven; }
-	CWeapon_Inven_InShop* Get_InvenSell() { return m_pSellInven; }
-	CWeapon_Inven_InShop* Get_InvenUpgrade() { return m_pUpgradeInven; }
+	CWeapon_Inven_InShop*	Get_InvenBuyWeapon() { return m_pWeaponBuyInven; }
+	CWeapon_Inven_InShop*	Get_InvenBuyArmor() { return m_pArmorBuyInven; }
+	CWeapon_Inven_InShop*	Get_InvenSellWeapon() { return m_pWeaponSellInven; }
+	CWeapon_Inven_InShop*	Get_InvenSellArmor() { return m_pArmorSellInven; }
+	CWeapon_Inven_InShop*	Get_InvenUpgradeWeapon() { return m_pWeaponUpgradeInven; }
+	CWeapon_Inven_InShop*	Get_InvenUpgradeArmor() { return m_pArmorUpgradeInven; }
+	_bool					Get_OtherPopupOn();
 
 public:
+	void Set_PopupOn(_bool bPopup) { m_bPopupOn = bPopup; }
 	void Setup_AfterClone();
 
 public:
@@ -38,9 +43,6 @@ private:
 	void Click_Option();
 	void Reset_Option();
 	void Check_Key();
-
-public:
-	void Active_SubUI(CWeaponShopOptionUI* pSelectOption);
 
 private:
 	CTransform*				m_pTransformCom = nullptr;
@@ -60,9 +62,12 @@ private:
 
 	vector<CWeaponShopOptionUI*>	m_vecOption;
 	CWeaponBuyUI*					m_pBuyUI;
-	CWeapon_Inven_InShop*			m_pBuyInven;
-	CWeapon_Inven_InShop*			m_pSellInven;
-	CWeapon_Inven_InShop*			m_pUpgradeInven;
+	CWeapon_Inven_InShop*			m_pWeaponBuyInven;
+	CWeapon_Inven_InShop*			m_pArmorBuyInven;
+	CWeapon_Inven_InShop*			m_pWeaponSellInven;
+	CWeapon_Inven_InShop*			m_pArmorSellInven;
+	CWeapon_Inven_InShop*			m_pWeaponUpgradeInven;
+	CWeapon_Inven_InShop*			m_pArmorUpgradeInven;
 public:
 	static CWeaponShopUI*	Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);

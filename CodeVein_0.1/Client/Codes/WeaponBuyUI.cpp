@@ -17,11 +17,16 @@ void CWeaponBuyUI::Set_Active(_bool bIsActive)
 {
 	m_bIsActive = bIsActive;
 
-	if (m_pFontDamage)m_pFontDamage->Set_Active(bIsActive);
-	if (m_pMyHazeCnt)m_pMyHazeCnt->Set_Active(bIsActive);
-	if (m_pPriceHazeCnt)m_pPriceHazeCnt->Set_Active(bIsActive);
-	if (m_pWeaponMoveTypeUI)m_pWeaponMoveTypeUI->Set_Active(bIsActive);
-	if (m_pWeaponDescUI)m_pWeaponDescUI->Set_Active(bIsActive);
+	//if (m_pFontDamage)m_pFontDamage->Set_Active(bIsActive);
+	//if (m_pMyHazeCnt)m_pMyHazeCnt->Set_Active(bIsActive);
+	//if (m_pPriceHazeCnt)m_pPriceHazeCnt->Set_Active(bIsActive);
+	//if (m_pWeaponMoveTypeUI)m_pWeaponMoveTypeUI->Set_Active(bIsActive);
+	//if (m_pWeaponDescUI)m_pWeaponDescUI->Set_Active(bIsActive);
+	//if (m_pFontReinforce)m_pFontReinforce->Set_Active(bIsActive);
+	//if (m_pFontPlusOption_0)m_pFontPlusOption_0->Set_Active(bIsActive);
+	//if (m_pFontPlusOption_1)m_pFontPlusOption_1->Set_Active(bIsActive);
+	//if (m_pFontHP)m_pFontHP->Set_Active(bIsActive);
+
 	if (m_pStatusUI)m_pStatusUI->Set_Active(bIsActive);
 }
 
@@ -52,6 +57,15 @@ void CWeaponBuyUI::Set_WeaponDescType(WEAPON_ALL_DATA eType)
 	Change_Texture(L"Tex_Item_Desc_Weapon");
 }
 
+void CWeaponBuyUI::Set_ArmorDescType(ARMOR_All_DATA eType)
+{
+	m_eArmorDesc = eType;
+
+	m_iTexIndex = m_eArmorDesc;
+
+	Change_Texture(L"Tex_Item_Desc_Armor");
+}
+
 void CWeaponBuyUI::Set_ShopType(SHOP_OPTION eType)
 {
 	m_eType = eType;
@@ -70,12 +84,11 @@ void CWeaponBuyUI::Set_ShopType(SHOP_OPTION eType)
 	case Client::CWeaponBuyUI::SHOP_ARMOR_SELL:
 		m_iTexIndex = 13;
 		break;
-	case Client::CWeaponBuyUI::SHOP_ITEM_BUY:
-		break;
-	case Client::CWeaponBuyUI::SHOP_ITEM_SELL:
-		break;
-	case Client::CWeaponBuyUI::SHOP_UPGRADE:
+	case Client::CWeaponBuyUI::SHOP_WEAPON_UPGRADE:
 		m_iTexIndex = 0;
+		break;
+	case Client::CWeaponBuyUI::SHOP_ARMOR_UPGRADE:
+		m_iTexIndex = 12;
 		break; 
 	}
 }
@@ -110,12 +123,23 @@ _int CWeaponBuyUI::Update_GameObject(_double TimeDelta)
 {
 	CUI::Update_GameObject(TimeDelta);
 
-	if (MOVE_END == m_eMoveType && WpnAll_END == m_eWeaponDesc)
+	if (MOVE_END == m_eMoveType &&
+		WpnAll_END == m_eWeaponDesc &&
+		ArmorAll_END == m_eArmorDesc)
 	{
 		Check_LateInit();
 		Check_MoveType();
 		Check_Desc();
-		Check_ItemOption();
+		Set_NoneSelect();
+
+		if(SHOP_WEAPON_BUY == m_eType ||
+			SHOP_WEAPON_SELL == m_eType ||
+			SHOP_WEAPON_UPGRADE == m_eType)
+			Check_ItemOption_Weapon();
+		if (SHOP_ARMOR_BUY == m_eType ||
+			SHOP_ARMOR_SELL == m_eType ||
+			SHOP_ARMOR_UPGRADE == m_eType)
+			Check_ItemOption_Armor();
 	}
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
@@ -235,26 +259,57 @@ void CWeaponBuyUI::SetUp_Default()
 	m_pFontDamage->Set_ViewZ(m_fViewZ - 0.05f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontDamage, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
+	_float fHazeX = WINCX * 0.5f;
 	m_pMyHazeCnt = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
-	m_pMyHazeCnt->Set_UI_Pos(WINCX * 0.47f, WINCY * 0.24f);
+	m_pMyHazeCnt->Set_UI_Pos(fHazeX, WINCY * 0.24f);
 	m_pMyHazeCnt->Set_UI_Size(10.4f, 20.f);
 	m_pMyHazeCnt->Set_ViewZ(m_fViewZ - 0.1f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pMyHazeCnt, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	m_pPriceHazeCnt = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
-	m_pPriceHazeCnt->Set_UI_Pos(WINCX * 0.47f, WINCY * 0.20f);
+	m_pPriceHazeCnt->Set_UI_Pos(fHazeX, WINCY * 0.20f);
 	m_pPriceHazeCnt->Set_UI_Size(10.4f, 20.f);
 	m_pPriceHazeCnt->Set_ViewZ(m_fViewZ - 0.05f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pPriceHazeCnt, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
+	m_pFontReinforce = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
+	m_pFontReinforce->Set_UI_Pos(WINCX * 0.47f, WINCY * 0.35f);
+	m_pFontReinforce->Set_UI_Size(10.4f, 20.f);
+	m_pFontReinforce->Set_ViewZ(m_fViewZ - 0.05f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontReinforce, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	m_pFontPlusOption_0 = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
+	m_pFontPlusOption_0->Set_UI_Pos(WINCX * 0.47f, WINCY * 0.37f);
+	m_pFontPlusOption_0->Set_UI_Size(10.4f, 20.f);
+	m_pFontPlusOption_0->Set_ViewZ(m_fViewZ - 0.05f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontPlusOption_0, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	m_pFontPlusOption_1 = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
+	m_pFontPlusOption_1->Set_UI_Pos(WINCX * 0.47f, WINCY * 0.39f);
+	m_pFontPlusOption_1->Set_UI_Size(10.4f, 20.f);
+	m_pFontPlusOption_1->Set_ViewZ(m_fViewZ - 0.05f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontPlusOption_1, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	m_pFontHP = static_cast<CPlayerFontUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerFontUI", nullptr));
+	m_pFontHP->Set_UI_Pos(WINCX * 0.47f, WINCY * 0.79f);
+	m_pFontHP->Set_UI_Size(10.4f, 20.f);
+	m_pFontHP->Set_ViewZ(m_fViewZ - 0.05f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontHP, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	m_pShopItemIcon = static_cast<CShopItemIcon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ShopItemIcon", nullptr));
+	m_pShopItemIcon->Set_UI_Pos(WINCX * 0.385f, WINCY * 0.10f);
+	m_pShopItemIcon->Set_UI_Size(100.f, 100.f);
+	m_pShopItemIcon->Set_ViewZ(m_fViewZ - 0.05f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pShopItemIcon, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
 	m_pStatusUI = CUI_Manager::Get_Instance()->Get_StatusUI();
 }
 
-void CWeaponBuyUI::Check_ItemOption()
+void CWeaponBuyUI::Check_ItemOption_Weapon()
 {
-	if (SHOP_UPGRADE == m_eType)
+	if (SHOP_WEAPON_UPGRADE == m_eType)
 	{
-		m_pInven = m_pParent->Get_InvenUpgrade();
+		m_pInven = m_pParent->Get_InvenUpgradeWeapon();
 
 		if (!m_pInven)
 			return;
@@ -274,22 +329,24 @@ void CWeaponBuyUI::Check_ItemOption()
 	switch (m_eType)
 	{
 	case Client::CWeaponBuyUI::SHOP_WEAPON_BUY:
-		m_pInven = m_pParent->Get_InvenBuy();
+		m_pInven = m_pParent->Get_InvenBuyWeapon();
 		break;
 	case Client::CWeaponBuyUI::SHOP_WEAPON_SELL:
-		m_pInven = m_pParent->Get_InvenSell();
+		m_pInven = m_pParent->Get_InvenSellWeapon();
 		break;
 	case Client::CWeaponBuyUI::SHOP_ARMOR_BUY:
+		m_pInven = m_pParent->Get_InvenBuyArmor();
 		break;
 	case Client::CWeaponBuyUI::SHOP_ARMOR_SELL:
+		m_pInven = m_pParent->Get_InvenSellArmor();
 		break;
 	case Client::CWeaponBuyUI::SHOP_ITEM_BUY:
 		break;
 	case Client::CWeaponBuyUI::SHOP_ITEM_SELL:
 		break;
-	case Client::CWeaponBuyUI::SHOP_UPGRADE:
+	case Client::CWeaponBuyUI::SHOP_WEAPON_UPGRADE:
 	{
-		m_pInven = m_pParent->Get_InvenUpgrade();
+		m_pInven = m_pParent->Get_InvenUpgradeWeapon();
 
 		if (!m_pInven)
 			return;
@@ -299,8 +356,27 @@ void CWeaponBuyUI::Check_ItemOption()
 	}
 	}
 
+	if (SHOP_WEAPON_BUY == m_eType ||
+		SHOP_WEAPON_SELL == m_eType ||
+		SHOP_WEAPON_UPGRADE == m_eType)
+	{
+		m_pFontReinforce->Set_UI_Pos(WINCX * 0.46f, WINCY * 0.39f);
+		m_pFontPlusOption_0->Set_UI_Pos(WINCX * 0.46f, WINCY * 0.425f);
+		m_pFontDamage->Set_UI_Pos(WINCX * 0.46f, WINCY * 0.58f);
+	}
+
 	if (!m_pInven)
 		return;
+
+	CWeapon_Slot* pWeaponSlot = m_pInven->Get_HoverSlot_Weapon();
+
+	if (m_pInven->Get_PopupOn())
+		pWeaponSlot = m_pInven->Get_SelectedSlot_Weapon();
+
+	if (!pWeaponSlot || pWeaponSlot->Get_Dead())
+		return;
+
+	WPN_PARAM tParam = pWeaponSlot->Get_WeaponParam();
 
 	//==============================================================================================================
 	// MyHaze
@@ -309,19 +385,6 @@ void CWeaponBuyUI::Check_ItemOption()
 		return;
 	m_pMyHazeCnt->Update_NumberValue((_float)iHazeCnt);
 	m_pMyHazeCnt->Set_Active(m_bIsActive);
-	//==============================================================================================================
-
-	CWeapon_Slot* pWeaponSlot = m_pInven->Get_HoverSlot();
-	
-	if (!pWeaponSlot || m_pInven->Get_PopupOn())
-		pWeaponSlot = m_pInven->Get_SelectedSlot();
-
-	if (!pWeaponSlot || pWeaponSlot->Get_Dead())
-		return;
-
-	WPN_PARAM tParam = pWeaponSlot->Get_WeaponParam();
-	//tParam.iReinforce;
-	
 	//==============================================================================================================
 	// Damage
 	if (!m_pFontDamage)
@@ -332,8 +395,35 @@ void CWeaponBuyUI::Check_ItemOption()
 	// HazePrice
 	if (!m_pPriceHazeCnt)
 		return;
-	m_pPriceHazeCnt->Update_NumberValue((_float)tParam.iPrice);
+
+	_int iPrice = tParam.iPrice;
+	if (SHOP_ARMOR_UPGRADE == m_eType)
+		iPrice = (_int)m_pInven->Get_UpgradePrice(tParam.iReinforce);
+
+	m_pPriceHazeCnt->Update_NumberValue((_float)iPrice);
 	m_pPriceHazeCnt->Set_Active(m_bIsActive);
+	//==============================================================================================================
+	// Reinforce
+	if (!m_pFontReinforce)
+		return;
+	m_pFontReinforce->Update_NumberValue((_float)tParam.iReinforce);
+	m_pFontReinforce->Set_Active(m_bIsActive);
+
+	if (!m_pFontPlusOption_0)
+		return;
+	m_pFontPlusOption_0->Update_NumberValue((_float)tParam.fPlusDamage);
+	m_pFontPlusOption_0->Set_Active(m_bIsActive);
+
+	// Option_1 false
+	if (!m_pFontPlusOption_1)
+		return;
+	m_pFontPlusOption_1->Set_Active(false);
+
+	//==============================================================================================================
+	// HP - false
+	if (!m_pFontHP)
+		return;
+	m_pFontHP->Set_Active(false);
 	//==============================================================================================================
 	// MoveType
 	if (!m_pWeaponMoveTypeUI)
@@ -376,7 +466,189 @@ void CWeaponBuyUI::Check_ItemOption()
 	}
 	m_pWeaponDescUI->Set_WeaponDescType(eAllDate);
 	m_pWeaponDescUI->Set_Active(m_bIsActive);
+
+	//==============================================================================================================
+	// Icon
+	if (!m_pShopItemIcon)
+		return;
+	if (WpnAll_END == eAllDate)
+	{
+		m_pShopItemIcon->Set_Active(false);
+		return;
+	}
+	m_pShopItemIcon->Set_WeaponDescType(eAllDate);
+	m_pShopItemIcon->Set_Active(m_bIsActive);	
 	//=======================================================
+}
+
+void CWeaponBuyUI::Check_ItemOption_Armor()
+{
+	if (SHOP_ARMOR_UPGRADE == m_eType)
+	{
+		m_pInven = m_pParent->Get_InvenUpgradeArmor();
+
+		if (!m_pInven)
+			return;
+
+		if (m_pInven->Get_CheckCloseUpgradePopup())
+		{
+			this->Set_Active(true);
+			m_pInven->Set_CheckCloseUpgradePopup();
+		}
+	}
+
+	if (!m_pParent)
+		return;
+	if (!m_bIsActive)
+		return;
+
+	switch (m_eType)
+	{
+	case Client::CWeaponBuyUI::SHOP_WEAPON_BUY:
+		m_pInven = m_pParent->Get_InvenBuyWeapon();
+		break;
+	case Client::CWeaponBuyUI::SHOP_WEAPON_SELL:
+		m_pInven = m_pParent->Get_InvenSellWeapon();
+		break;
+	case Client::CWeaponBuyUI::SHOP_ARMOR_BUY:
+		m_pInven = m_pParent->Get_InvenBuyArmor();
+		break;
+	case Client::CWeaponBuyUI::SHOP_ARMOR_SELL:
+		m_pInven = m_pParent->Get_InvenSellArmor();
+		break;
+	case Client::CWeaponBuyUI::SHOP_ARMOR_UPGRADE:
+	{
+		m_pInven = m_pParent->Get_InvenUpgradeArmor();
+
+		if (!m_pInven)
+			return;
+		this->Set_Active(!m_pInven->Get_PopupOn());
+		m_pStatusUI->Set_Active(!m_pInven->Get_PopupOn());
+		break;
+	}
+	}
+
+	if (SHOP_ARMOR_BUY == m_eType ||
+		SHOP_ARMOR_SELL == m_eType||
+		SHOP_ARMOR_UPGRADE == m_eType)
+	{
+		m_pFontDamage->Set_UI_Pos(WINCX * 0.46f, WINCY * 0.64f);
+
+		m_pFontReinforce->Set_UI_Pos(WINCX * 0.46f, WINCY * 0.39f);
+
+		m_pFontPlusOption_0->Set_UI_Pos(WINCX * 0.46f, WINCY * 0.4225f);
+
+		m_pFontPlusOption_1->Set_UI_Pos(WINCX * 0.46f, WINCY * 0.455f);
+
+		m_pFontHP->Set_UI_Pos(WINCX * 0.46f, WINCY * 0.78f);
+	}
+
+	if (!m_pInven)
+		return;
+
+	CArmor_Slot* pArmorSlot = m_pInven->Get_HoverSlot_Armor();
+
+	if (m_pInven->Get_PopupOn())
+		pArmorSlot = m_pInven->Get_SelectedSlot_Armor();
+
+	if (!pArmorSlot || pArmorSlot->Get_Dead())
+		return;
+
+	ARMOR_PARAM tParam = pArmorSlot->Get_ArmorParam();
+
+	//==============================================================================================================
+	// MyHaze
+	_int iHazeCnt = _int(CUI_Manager::Get_Instance()->Get_HazeUI()->Get_Haze_Cnt());
+	if (!m_pMyHazeCnt)
+		return;
+	m_pMyHazeCnt->Update_NumberValue((_float)iHazeCnt);
+	m_pMyHazeCnt->Set_Active(m_bIsActive);
+	//==============================================================================================================
+	// Def
+	if (!m_pFontDamage)
+		return;
+	m_pFontDamage->Update_NumberValue((_float)tParam.fDef);
+	m_pFontDamage->Set_Active(m_bIsActive);
+	//==============================================================================================================
+	// HazePrice
+	if (!m_pPriceHazeCnt)
+		return;
+
+	_int iPrice = tParam.iPrice;
+	if (SHOP_ARMOR_UPGRADE == m_eType)
+		iPrice = (_int)m_pInven->Get_UpgradePrice(tParam.iReinforce);
+
+	m_pPriceHazeCnt->Update_NumberValue((_float)iPrice);
+	m_pPriceHazeCnt->Set_Active(m_bIsActive);
+	//==============================================================================================================
+	// Reinforce
+	if (!m_pFontReinforce)
+		return;
+	m_pFontReinforce->Update_NumberValue((_float)tParam.iReinforce);
+	m_pFontReinforce->Set_Active(m_bIsActive);
+
+	if (!m_pFontPlusOption_0)
+		return;
+	m_pFontPlusOption_0->Update_NumberValue((_float)tParam.fPlusDef);
+	m_pFontPlusOption_0->Set_Active(m_bIsActive);
+
+	if (!m_pFontPlusOption_1)
+		return;
+	m_pFontPlusOption_1->Update_NumberValue((_float)tParam.fPlusHP);
+	m_pFontPlusOption_1->Set_Active(m_bIsActive);
+	//==============================================================================================================
+	// HP
+	if (!m_pFontHP)
+		return;
+	CGameObject* pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
+	if (!pPlayer)
+		return;
+	_float fPlayerHP = pPlayer->Get_Target_Hp();
+	m_pFontHP->Update_NumberValue((_float)tParam.fHP + fPlayerHP);
+	m_pFontHP->Set_Active(m_bIsActive);
+	//==============================================================================================================
+	// MoveType - false
+	if (!m_pWeaponMoveTypeUI)
+		return;
+	m_pWeaponMoveTypeUI->Set_Active(false);
+	//==============================================================================================================
+	// Desc
+	if (!m_pWeaponDescUI)
+		return;
+	ARMOR_All_DATA eAllDate = ARMOR_All_DATA(tParam.iArmorName);
+	if (ArmorAll_END == eAllDate)
+	{
+		m_pWeaponDescUI->Set_Active(false);
+		return;
+	}
+	m_pWeaponDescUI->Set_ArmorDescType(eAllDate);
+	m_pWeaponDescUI->Set_Active(m_bIsActive);
+	//==============================================================================================================
+	// Icon
+	if (!m_pShopItemIcon)
+		return;
+	if (ArmorAll_END == eAllDate)
+	{
+		m_pShopItemIcon->Set_Active(false);
+		return;
+	}
+	m_pShopItemIcon->Set_ArmorDescType(eAllDate);
+	m_pShopItemIcon->Set_Active(m_bIsActive);
+
+}
+
+void CWeaponBuyUI::Set_NoneSelect()
+{
+	m_pMyHazeCnt->Set_Active(false);
+	m_pFontDamage->Set_Active(false);
+	m_pPriceHazeCnt->Set_Active(false);
+	m_pFontReinforce->Set_Active(false);
+	m_pFontPlusOption_0->Set_Active(false);
+	m_pFontPlusOption_1->Set_Active(false);
+	m_pFontHP->Set_Active(false);
+	m_pWeaponMoveTypeUI->Set_Active(false);
+	m_pWeaponDescUI->Set_Active(false);
+	m_pShopItemIcon->Set_Active(false);
 }
 
 void CWeaponBuyUI::Check_LateInit()
@@ -387,7 +659,6 @@ void CWeaponBuyUI::Check_LateInit()
 
 	SetUp_Default();
 }
-
 
 void CWeaponBuyUI::Check_MoveType()
 {
@@ -411,6 +682,7 @@ void CWeaponBuyUI::Check_Desc()
 		m_pWeaponDescUI->Set_UI_Size(455.0f, 255.0f);
 		m_pWeaponDescUI->Set_ViewZ(m_fViewZ - 0.05f);
 		m_pWeaponDescUI->Set_WeaponDescType(WEAPON_ALL_DATA::WpnAll_Gun_Bayonet);
+		m_pWeaponDescUI->Set_ArmorDescType(ARMOR_All_DATA::ArmorAll_Gauntlet_DarkNightHook);
 		g_pManagement->Add_GameOject_ToLayer_NoClone(m_pWeaponDescUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 	}
 }

@@ -47,7 +47,7 @@ _int CWeaponUpgradeSuccessPopupOptionUI::Update_GameObject(_double TimeDelta)
 	{
 	case Client::CWeaponUpgradeSuccessPopupOptionUI::BUTTON_OK:
 	{
-		m_iIndex = 2;
+		m_iIndex = 6;
 		break;
 	}
 	}
@@ -82,38 +82,19 @@ HRESULT CWeaponUpgradeSuccessPopupOptionUI::Render_GameObject()
 	_uint iIndex = 0;
 	if(m_bIsSelect)
 	{
-		LOOP(2)
-		{
-			(i == 0) ? (iIndex = 6) : (iIndex = m_iIndex);
-
-			if (FAILED(SetUp_ConstantTable(iIndex)))
-				return E_FAIL;
-
-			m_pShaderCom->Begin_Shader();
-			m_pShaderCom->Begin_Pass(1);
-
-			m_pBufferCom->Render_VIBuffer();
-			m_pShaderCom->End_Pass();
-			m_pShaderCom->End_Shader();
-		}
-	}
-	else
-	{
-		iIndex = m_iIndex;
-
-		g_pManagement->Set_Transform(D3DTS_WORLD, m_matWorld);
-
-		g_pManagement->Set_Transform(D3DTS_VIEW, m_matView);
-		g_pManagement->Set_Transform(D3DTS_PROJECTION, m_matProj);
-
-		if (FAILED(SetUp_ConstantTable(iIndex)))
+		if (FAILED(SetUp_ConstantTable(m_iIndex)))
 			return E_FAIL;
 
 		m_pShaderCom->Begin_Shader();
 		m_pShaderCom->Begin_Pass(1);
+
 		m_pBufferCom->Render_VIBuffer();
 		m_pShaderCom->End_Pass();
 		m_pShaderCom->End_Shader();
+	}
+	else
+	{
+		
 	}
 
 	return NOERROR;

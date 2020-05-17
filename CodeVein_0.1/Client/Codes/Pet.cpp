@@ -21,31 +21,6 @@ HRESULT CPet::Render_GameObject_SetPass(CShader * pShader, _int iPass)
 	return S_OK;
 }
 
-void CPet::Check_Navi()
-{
-	Function_ResetAfterAtk();
-	m_bEnable = true;
-
-	_tchar szNavData[STR_128] = L"";
-
-	lstrcpy(szNavData, (
-		g_eSceneID_Cur == 5 ? L"Navmesh_Training.dat" :
-		g_eSceneID_Cur == 6 ? L"Navmesh_Stage_01.dat" :
-		g_eSceneID_Cur == 7 ? L"Navmesh_Stage_02.dat" :
-		g_eSceneID_Cur == 8 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
-
-	//player 오른쪽으로 2.f만큼 소환될것임
-	CTransform* pPlayerTransform = TARGET_TO_TRANS(m_pPlayer);
-	m_pTransform->Set_Pos(pPlayerTransform->Get_Pos() + pPlayerTransform->Get_Axis(AXIS_X) * 2.f);
-	m_pTransform->Set_Scale(_v3{ 0.25f, 0.25f, 0.25f });
-
-	m_pNavMesh->Set_Index(-1);
-	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, szNavData);
-	m_pNavMesh->Check_OnNavMesh(m_pTransform->Get_Pos());
-
-	return;
-}
-
 void CPet::Check_CollisionEvent()
 {
 	Check_CollisionPush();
@@ -57,31 +32,6 @@ void CPet::Check_CollisionEvent()
 
 void CPet::Check_CollisionPush()
 {
-	list<CGameObject*> tmpList[2];
-
-	tmpList[0] = g_pManagement->Get_GameObjectList(L"Layer_Monster", SCENE_STAGE);
-	tmpList[1] = g_pManagement->Get_GameObjectList(L"Layer_Boss", SCENE_STAGE);
-
-	for (auto& list_iter : tmpList)
-	{
-		for (auto& Obj_iter : list_iter)
-		{
-			CCollider* pCollider = TARGET_TO_COL(Obj_iter);
-
-			if (m_pCollider->Check_Sphere(pCollider, m_pTransform->Get_Axis(AXIS_Z), m_fSkillMoveSpeed_Cur * DELTA_60))
-			{
-				CTransform* pTrans = TARGET_TO_TRANS(Obj_iter);
-				CNavMesh*   pNav = TARGET_TO_NAV(Obj_iter);
-
-				_v3 vDir = m_pTransform->Get_Pos() - pTrans->Get_Pos();
-				V3_NORMAL_SELF(&vDir);
-
-				vDir.y = 0;
-
-				pTrans->Set_Pos(pNav->Move_OnNaviMesh(NULL, &pTrans->Get_Pos(), &vDir, m_pCollider->Get_Length().x));
-			}
-		}
-	}
 
 	return;
 }
@@ -570,13 +520,100 @@ void CPet::Function_ResetAfterAtk()
 	for (auto& vetor_iter : m_vecAttackCol)
 		vetor_iter->Set_Enabled(false);
 
-	IF_NOT_NULL(m_pWeapon)
-		m_pWeapon->Set_Target_CanAttack(false);
-	IF_NOT_NULL(m_pWeapon)
-		m_pWeapon->Set_Enable_Trail(false);
-
 	LOOP(30)
 		m_bEventTrigger[i] = false;
+
+	return;
+}
+
+void CPet::Function_Change_Mode()
+{	
+	////p버튼 누름으로 몬스터 우선, 아이템우선으로 바뀌는 부분
+	//if (g_pInput_Device->Key_Down(DIK_P))
+	//{
+	//	//2개 뿐이므로 bool 가능하나 추후 가능성을 위해 enum값 지정
+	//	if (m_iCount >= 2)
+	//		m_iCount = 0;
+
+	//	++m_iCount;
+
+	//	switch (m_iCount)
+	//	{
+	//	case 1:
+	//		m_eNowPetMode = PET_MODE_TYPE::PET_MODE_ATK;
+	//		break;
+	//	case 2:
+	//		m_eNowPetMode = PET_MODE_TYPE::PET_MODE_UTILL;
+	//		break;
+	//	}
+
+	//	if (m_eNowPetMode != m_eOldPetMdoe)
+	//	{
+	//		//모드 다름, 타겟 있음
+	//		if (nullptr != m_pTarget)
+	//		{
+	//			m_eOldPetMdoe = m_eNowPetMode;
+
+	//			Safe_Release(m_pTarget);
+	//			m_pTarget = nullptr;
+
+	//			//행동 초기화, 쿨타임 초기화, 공격 가능 초기화->펫에서는 사실상 bCanActive 처럼 사용됨
+	//			Function_ResetAfterAtk();
+	//			m_tObjParam.bCanAttack = true;
+	//			m_fCoolDownCur = 0.f;
+	//			m_fCoolDownMax = 0.f;
+
+	//			Function_Find_Target();
+	//		}
+	//		//모드 다름, 타겟 없음
+	//		else
+	//		{
+	//			m_eOldPetMdoe = m_eNowPetMode;
+
+	//			Function_ResetAfterAtk();
+	//			m_tObjParam.bCanAttack = true;
+	//			m_fCoolDownCur = 0.f;
+	//			m_fCoolDownMax = 0.f;
+
+	//			Function_Find_Target();
+	//		}
+	//	}
+	//}
+
+	return;
+}
+
+void CPet::Function_Check_Navi()
+{
+	Function_ResetAfterAtk();
+	m_bEnable = true;
+
+	_tchar szNavData[STR_128] = L"";
+
+	lstrcpy(szNavData, (
+		g_eSceneID_Cur == 5 ? L"Navmesh_Training.dat" :
+		g_eSceneID_Cur == 6 ? L"Navmesh_Stage_01.dat" :
+		g_eSceneID_Cur == 7 ? L"Navmesh_Stage_02.dat" :
+		g_eSceneID_Cur == 8 ? L"Navmesh_Stage_03.dat" : L"Navmesh_Stage_04.dat"));
+
+	//player 오른쪽으로 2.f만큼 소환될것임
+	CTransform* pPlayerTransform = TARGET_TO_TRANS(m_pPlayer);
+	m_pTransform->Set_Pos(pPlayerTransform->Get_Pos() + pPlayerTransform->Get_Axis(AXIS_X) * 2.f);
+	m_pTransform->Set_Scale(_v3{ 0.25f, 0.25f, 0.25f });
+
+	m_pNavMesh->Set_Index(-1);
+	m_pNavMesh->Ready_NaviMesh(m_pGraphic_Dev, szNavData);
+	m_pNavMesh->Check_OnNavMesh(m_pTransform->Get_Pos());
+
+	Play_Deformation();
+
+	return;
+}
+
+void CPet::Function_Teleport_Near_Player()
+{
+	CTransform* pPlayerTransform = TARGET_TO_TRANS(m_pPlayer);
+	m_pTransform->Set_Pos(pPlayerTransform->Get_Pos() + pPlayerTransform->Get_Axis(AXIS_X) * 2.f);
 
 	return;
 }

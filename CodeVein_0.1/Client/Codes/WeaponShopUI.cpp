@@ -105,12 +105,12 @@ _int CWeaponShopUI::Update_GameObject(_double TimeDelta)
 		{
 			LOOP(4)
 				m_vecOption[i]->Set_Active(false);
-			LOOP(3)
+			LOOP(2)
 			{
 				TARGET_TO_TRANS(m_vecOption[i])->Set_Angle(m_pTransformCom->Get_Angle());
 				TARGET_TO_TRANS(m_vecOption[i])->Set_Scale(_v3(0.87f, 0.2476f, 1.f));
 				TARGET_TO_TRANS(m_vecOption[i])->Set_At(m_pTransformCom->Get_At());
-				TARGET_TO_TRANS(m_vecOption[i])->Set_Pos(m_pTransformCom->Get_Pos() + _v3(0.f, _float(i) * -0.2f + 0.18f, 0.f) + *V3_NORMAL_SELF(&vLook) * +0.001f);
+				TARGET_TO_TRANS(m_vecOption[i])->Set_Pos(m_pTransformCom->Get_Pos() + _v3(0.f, _float(i) * -0.2f + 0.08f, 0.f) + *V3_NORMAL_SELF(&vLook) * +0.001f);
 				m_vecOption[i]->Set_Menu(CWeaponShopOptionUI::WEAPONSHOP_MENU::MENU_SELL);
 				m_vecOption[i]->Set_BuyOption(CWeaponShopOptionUI::WEAPONSHOP_OPTION_BUY(i));
 				m_vecOption[i]->Set_Active(m_bIsActive);
@@ -138,9 +138,6 @@ _int CWeaponShopUI::Update_GameObject(_double TimeDelta)
 	if (!m_bIsActive)
 	{
 		m_bFirestMenu = true;
-
-		//m_pStageSelectUI->Set_Active(false);
-		//CUI_Manager::Get_Instance()->Get_BloodCode_Menu()->Set_Active(false);
 	}
 	
 	_v3 vWorldPos;
@@ -262,11 +259,21 @@ void CWeaponShopUI::Click_Option()
 	{
 		if (CCollisionMgr::Collision_Ray(iter, g_pInput_Device->Get_Ray(), &m_fCross))
 		{
-			Reset_Option();
+			//Reset_Option();
+			
+			if (!iter->Get_Select())
+			{
+				g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+			}
+
 			iter->Set_Select(true);
 
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
+				g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+				g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+
 				if (m_bFirestMenu)
 				{
 					if (0 == iIdx)
@@ -294,13 +301,18 @@ void CWeaponShopUI::Click_Option()
 				{
 					if (0 == iIdx) // ¹«±â
 					{
-						m_pUpgradeInven->Set_Active(true);
-						m_pUpgradeInven->Refresh_Inven();
+						m_pWeaponUpgradeInven->Set_Active(true);
+						m_pWeaponUpgradeInven->Refresh_Inven();
 						m_pBuyUI->Set_Active(true);
-						m_pBuyUI->Set_ShopType(CWeaponBuyUI::SHOP_UPGRADE);
+						m_pBuyUI->Set_ShopType(CWeaponBuyUI::SHOP_WEAPON_UPGRADE);
 					}
 					else if (1 == iIdx) // ÈíÇ÷¾ÆÀå
-						_int a = 0;
+					{
+						m_pArmorUpgradeInven->Set_Active(true);
+						m_pArmorUpgradeInven->Refresh_Inven();
+						m_pBuyUI->Set_Active(true);
+						m_pBuyUI->Set_ShopType(CWeaponBuyUI::SHOP_ARMOR_UPGRADE);
+					}
 
 					m_bPopupOn = true;
 					Set_Active(false);
@@ -309,12 +321,16 @@ void CWeaponShopUI::Click_Option()
 				{
 					if (0 == iIdx) // ¹«±â
 					{
-						m_pBuyInven->Set_Active(true);
+						m_pWeaponBuyInven->Set_Active(true);
 						m_pBuyUI->Set_Active(true);
 						m_pBuyUI->Set_ShopType(CWeaponBuyUI::SHOP_WEAPON_BUY);
 					}
 					else if (1 == iIdx) // ÈíÇ÷¾ÆÀå
-						_int a = 0;
+					{
+						m_pArmorBuyInven->Set_Active(true);
+						m_pBuyUI->Set_Active(true);
+						m_pBuyUI->Set_ShopType(CWeaponBuyUI::SHOP_ARMOR_BUY);
+					}
 
 					m_bPopupOn = true;
 					Set_Active(false);
@@ -323,19 +339,22 @@ void CWeaponShopUI::Click_Option()
 				{
 					if (0 == iIdx) // ¹«±â
 					{
-						m_pSellInven->Set_Active(true);
-						m_pSellInven->Refresh_Inven();
+						m_pWeaponSellInven->Set_Active(true);
+						m_pWeaponSellInven->Refresh_Inven();
 						m_pBuyUI->Set_Active(true);
 						m_pBuyUI->Set_ShopType(CWeaponBuyUI::SHOP_WEAPON_SELL);
 					}
 					else if (1 == iIdx) // ÈíÇ÷¾ÆÀå
-						_int a = 0;
+					{
+						m_pArmorSellInven->Set_Active(true);
+						m_pArmorSellInven->Refresh_Inven();
+						m_pBuyUI->Set_Active(true);
+						m_pBuyUI->Set_ShopType(CWeaponBuyUI::SHOP_ARMOR_SELL);
+					}
 
 					m_bPopupOn = true;
 					Set_Active(false);
 				}
-
-				//Active_SubUI(iter);
 			}
 				
 		}
@@ -358,8 +377,8 @@ void CWeaponShopUI::Reset_Option()
 
 void CWeaponShopUI::Check_Key()
 {
-	if (!m_bIsActive && !m_bPopupOn)
-		return;
+	//if (!m_bIsActive && !m_bPopupOn)
+	//	return;
 
 	if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
 	{
@@ -371,15 +390,23 @@ void CWeaponShopUI::Check_Key()
 			case Client::CWeaponShopOptionUI::OPTION_BUY:
 			case Client::CWeaponShopOptionUI::OPTION_SELL:
 			{
-				m_bFirestMenu = true;
 				if (m_bPopupOn)
 				{
-					m_eState = CWeaponShopOptionUI::OPTION_END;
-
-					m_pSellInven->Set_Active(false);
-					m_pBuyInven->Set_Active(false);
-					m_pUpgradeInven->Set_Active(false);
+					m_pWeaponSellInven->Set_Active(false);
+					m_pArmorSellInven->Set_Active(false);
+					m_pWeaponBuyInven->Set_Active(false);
+					m_pArmorBuyInven->Set_Active(false);
+					m_pWeaponUpgradeInven->Set_Active(false);
+					m_pArmorUpgradeInven->Set_Active(false);
 					m_pBuyUI->Set_Active(false);
+
+					Set_Active(true);
+					m_bPopupOn = false;
+				}
+				else
+				{
+					m_eState = CWeaponShopOptionUI::OPTION_END;
+					m_bFirestMenu = true;
 				}
 				break;
 			}
@@ -389,8 +416,25 @@ void CWeaponShopUI::Check_Key()
 		else if(m_bFirestMenu)
 		{
 			Set_Active(false);
+			m_bPopupOn = false;
 		}
 	}
+}
+
+_bool CWeaponShopUI::Get_OtherPopupOn()
+{
+	//if (m_pWeaponBuyInven->Get_Active() ||
+	//	m_pWeaponSellInven->Get_Active() ||
+	//	m_pArmorBuyInven->Get_Active() ||
+	//	m_pArmorSellInven->Get_Active() ||
+	//	m_pWeaponUpgradeInven->Get_Active() ||
+	//	m_pArmorUpgradeInven->Get_Active()
+	//	)
+	//	m_bPopupOn = true;
+	//else
+	//	m_bPopupOn = false;
+
+	return m_bPopupOn;
 }
 
 void CWeaponShopUI::Setup_AfterClone()
@@ -399,38 +443,29 @@ void CWeaponShopUI::Setup_AfterClone()
 	m_pBuyUI->Set_Parent(this);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBuyUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
-	m_pBuyInven = static_cast<CWeapon_Inven_InShop*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon_Inven_InShop", nullptr));
-	m_pBuyInven->Setup_InvenType(CWeapon_Inven_InShop::INVEN_SHOP_OPTION::SHOP_WEAPON_BUY);
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pBuyInven, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	m_pWeaponBuyInven = static_cast<CWeapon_Inven_InShop*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon_Inven_InShop", nullptr));
+	m_pWeaponBuyInven->Setup_InvenType(CWeapon_Inven_InShop::INVEN_SHOP_OPTION::SHOP_WEAPON_BUY);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pWeaponBuyInven, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	
+	m_pArmorBuyInven = static_cast<CWeapon_Inven_InShop*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon_Inven_InShop", nullptr));
+	m_pArmorBuyInven->Setup_InvenType(CWeapon_Inven_InShop::INVEN_SHOP_OPTION::SHOP_ARMOR_BUY);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pArmorBuyInven, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
-	m_pSellInven = static_cast<CWeapon_Inven_InShop*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon_Inven_InShop", nullptr));
-	m_pSellInven->Setup_InvenType(CWeapon_Inven_InShop::INVEN_SHOP_OPTION::SHOP_WEAPON_SELL);
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pSellInven, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	m_pWeaponSellInven = static_cast<CWeapon_Inven_InShop*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon_Inven_InShop", nullptr));
+	m_pWeaponSellInven->Setup_InvenType(CWeapon_Inven_InShop::INVEN_SHOP_OPTION::SHOP_WEAPON_SELL);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pWeaponSellInven, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
-	m_pUpgradeInven = static_cast<CWeapon_Inven_InShop*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon_Inven_InShop", nullptr));
-	m_pUpgradeInven->Setup_InvenType(CWeapon_Inven_InShop::INVEN_SHOP_OPTION::SHOP_WEAPON_UPGRADE);
-	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pUpgradeInven, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
-}
+	m_pArmorSellInven = static_cast<CWeapon_Inven_InShop*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon_Inven_InShop", nullptr));
+	m_pArmorSellInven->Setup_InvenType(CWeapon_Inven_InShop::INVEN_SHOP_OPTION::SHOP_ARMOR_SELL);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pArmorSellInven, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
-void CWeaponShopUI::Active_SubUI(CWeaponShopOptionUI* pSelectOption)
-{
-	if (!m_bIsActive ||
-		nullptr == pSelectOption)
-		return;
+	m_pWeaponUpgradeInven = static_cast<CWeapon_Inven_InShop*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon_Inven_InShop", nullptr));
+	m_pWeaponUpgradeInven->Setup_InvenType(CWeapon_Inven_InShop::INVEN_SHOP_OPTION::SHOP_WEAPON_UPGRADE);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pWeaponUpgradeInven, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
-	switch (pSelectOption->Get_Option())
-	{
-	case CWeaponShopOptionUI::OPTION_UPGRADE:
-		//CUI_Manager::Get_Instance()->Get_StageSelectUI()->Set_Active(!CUI_Manager::Get_Instance()->Get_StageSelectUI()->Get_Active());
-		break;
-	case CWeaponShopOptionUI::OPTION_BUY: 
-		//CUI_Manager::Get_Instance()->Get_BloodCode_Menu()->Set_Active(!CUI_Manager::Get_Instance()->Get_BloodCode_Menu()->Get_Active());
-		break;
-	case CWeaponShopOptionUI::OPTION_SELL:
-		break;
-	case CWeaponShopOptionUI::OPTION_BYEBYE:
-		break;
-	}
+	m_pArmorUpgradeInven = static_cast<CWeapon_Inven_InShop*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon_Inven_InShop", nullptr));
+	m_pArmorUpgradeInven->Setup_InvenType(CWeapon_Inven_InShop::INVEN_SHOP_OPTION::SHOP_ARMOR_UPGRADE);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pArmorUpgradeInven, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
 
 CWeaponShopUI * CWeaponShopUI::Create(_Device pGraphic_Device)

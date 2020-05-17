@@ -1,7 +1,7 @@
 #include "stdafx.h"
 #include "..\Headers\NPC_Yakumo.h"
 
-#include "WeaponShopUI.h"
+#include "UI_Manager.h"
 
 CNPC_Yakumo::CNPC_Yakumo(LPDIRECT3DDEVICE9 pGraphic_Device)
 	:CGameObject(pGraphic_Device)
@@ -31,7 +31,8 @@ HRESULT CNPC_Yakumo::Ready_GameObject(void * pArg)
 	
 	m_pPlayer = g_pManagement->Get_GameObjectBack(L"Layer_Player", SCENE_MORTAL);
 	m_eState = Idle;
-	
+	m_bByeCheck = true; // 시작하자마자 소리 방지
+
 	m_dAniPlayMul = 1.f;
 
 	Ready_BoneMatrix();
@@ -53,6 +54,13 @@ HRESULT CNPC_Yakumo::LateInit_GameObject()
 	m_pWeaponShopUI->Setup_AfterClone();
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pWeaponShopUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
+	m_pInteractionButton = static_cast<CNPC_InteractionUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_NPC_Interaction", nullptr));
+	m_pInteractionButton->Set_Active(false);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pInteractionButton, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	m_pScriptUI = CUI_Manager::Get_Instance()->Get_ScriptUI();
+	m_pScriptUI->Set_Active(false);
+
 	return S_OK;
 }
 
@@ -73,6 +81,7 @@ _int CNPC_Yakumo::Update_GameObject(_double TimeDelta)
 	//========================
 	Check_Dist();
 	Check_Anim();
+	Check_Bye();
 
 	m_pMeshCom->SetUp_Animation(m_eState);
 
@@ -321,28 +330,55 @@ void CNPC_Yakumo::Check_Dist()
 	_float fLen = D3DXVec3Length(&_v3(TARGET_TO_TRANS(m_pPlayer)->Get_Pos() - m_pTransformCom->Get_Pos()));
 
 	const _float MIN_DIST = 1.5f;
-	if (fLen <= MIN_DIST && !m_pWeaponShopUI->Get_Active())
+	if (fLen <= MIN_DIST &&
+		!m_pWeaponShopUI->Get_Active() &&
+		!m_pWeaponShopUI->Get_OtherPopupOn())
+	{
 		m_bCanActive = true;
+		m_pInteractionButton->Set_Active(true);
+	}
 	else
 	{
 		m_bCanActive = false;
 		m_bActive = false;
+		m_pInteractionButton->Set_Active(false);
 
-		m_eState = Idle;
+		if(m_pMeshCom->Is_Finish_Animation(0.95f))
+			m_eState = Idle;
 	}
+
+	if (g_pInput_Device->Key_Pressing(DIK_R))
+		m_pInteractionButton->Set_Interaction(true);
 
 	if (!m_bActive &&
 		m_bCanActive &&
-		g_pInput_Device->Key_Down(DIK_R))
+		g_pInput_Device->Key_Up(DIK_R))
 	{
 		m_bActive = true;
+		m_bByeCheck = false;
 
 		m_pWeaponShopUI->Set_Active(true);
 
+		m_eState = Shrug;
+
 		if (0 == CCalculater::Random_Num(0, 1))
-			m_eState = Gloomy;
+		{
+			m_pScriptUI->Set_Script(CScriptUI::Talker_Yakumo, CScriptUI::Yakumo_Hello_0_WhatsUp);
+			m_pScriptUI->Set_Active(true);
+			m_pScriptUI->Set_LifeTime(1.f);
+
+			g_pSoundManager->Stop_Sound(CSoundManager::NPC_Voice_01);
+			g_pSoundManager->Play_Sound(L"yakumo_talk_greet01_s_WhatsUp.ogg", CSoundManager::NPC_Voice_01, CSoundManager::Voice_Sound);
+		}
 		else
-			m_eState = LookDown;
+		{
+			m_pScriptUI->Set_Script(CScriptUI::Talker_Yakumo, CScriptUI::Yakumo_Hello_1_WhatsUp);
+			m_pScriptUI->Set_Active(true);
+			m_pScriptUI->Set_LifeTime(1.f);
+
+			g_pSoundManager->Stop_Sound(CSoundManager::NPC_Voice_01);
+			g_pSoundManager->Play_Sound(L"yakumo_talk_greet04_s_WhatsUp.ogg", CSoundManager::NPC_Voice_01, CSoundManager::Voice_Sound);
+		}
 	}
 
 	return;
@@ -368,6 +404,39 @@ void CNPC_Yakumo::Check_Anim()
 		}
 		break;
 	}
+	}
+}
+
+void CNPC_Yakumo::Check_Bye()
+{
+	if (!m_bByeCheck && 
+		!m_pWeaponShopUI->Get_Active() && 
+		!m_pWeaponShopUI->Get_OtherPopupOn())
+	{
+		m_bByeCheck = true;
+
+		if (0 == CCalculater::Random_Num(0, 1))
+		{
+			m_eState = Gloomy;
+
+			m_pScriptUI->Set_Script(CScriptUI::Talker_Yakumo, CScriptUI::Yakumo_Bye_0_SeeYouAround);
+			m_pScriptUI->Set_Active(true);
+			m_pScriptUI->Set_LifeTime(1.f);
+
+			g_pSoundManager->Stop_Sound(CSoundManager::NPC_Voice_01);
+			g_pSoundManager->Play_Sound(L"yakumo_talk_greet01_e_SeeYouAround.ogg", CSoundManager::NPC_Voice_01, CSoundManager::Voice_Sound);
+		}
+		else
+		{
+			m_eState = LookDown;
+
+			m_pScriptUI->Set_Script(CScriptUI::Talker_Yakumo, CScriptUI::Yakumo_Bye_1_MakeSure);
+			m_pScriptUI->Set_Active(true);
+			m_pScriptUI->Set_LifeTime(1.f);
+
+			g_pSoundManager->Stop_Sound(CSoundManager::NPC_Voice_01);
+			g_pSoundManager->Play_Sound(L"yakumo_talk_greet02_e_MakeSureYoureReadyForAllEverComes.ogg", CSoundManager::NPC_Voice_01, CSoundManager::Voice_Sound);
+		}
 	}
 }
 

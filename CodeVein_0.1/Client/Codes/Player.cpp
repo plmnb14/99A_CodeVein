@@ -505,7 +505,13 @@ void CPlayer::Teleport_ResetOptions(_int _eSceneID, _int _eTeleportID)
 
 	case SCENE_STAGE_02:
 	{
-		// ¾ÆÁ÷
+		vShadowLightPos = _v3(-100.f, 50.f, 0.f);
+
+		vPos = _eTeleportID == TeleportID_St02_1 ? _v3(-3.295f, -0.f, -193.89f) :
+			_eTeleportID == TeleportID_St02_2 ? V3_NULL : V3_NULL;
+
+		fAngle = _eTeleportID == TeleportID_St02_1 ? 0.f :
+			_eTeleportID == TeleportID_St02_2 ? 0.f : 0.f;
 
 		break;
 	}

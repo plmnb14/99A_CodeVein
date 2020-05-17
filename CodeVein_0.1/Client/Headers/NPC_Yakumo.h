@@ -5,6 +5,8 @@
 #include "Management.h"
 
 BEGIN(Client)
+class CNPC_InteractionUI;
+class CScriptUI;
 class CWeaponShopUI;
 class CNPC_Yakumo final : public CGameObject
 {
@@ -59,6 +61,7 @@ private:
 
 	void Check_Dist();
 	void Check_Anim();
+	void Check_Bye();
 
 private:
 	HRESULT Add_Component(void * pArg);
@@ -81,7 +84,9 @@ public:
 	virtual void Free();
 
 private:
-	CWeaponShopUI*			m_pWeaponShopUI;
+	CWeaponShopUI*			m_pWeaponShopUI = nullptr;
+	CScriptUI*				m_pScriptUI = nullptr;
+	CNPC_InteractionUI*		m_pInteractionButton = nullptr;
 
 	_mat*					m_matBone[Bone_End];
 	NPC_ANI					m_eState;
@@ -92,7 +97,7 @@ private:
 
 	_bool					m_bCanActive = false;
 	_bool					m_bActive = false;
-
+	_bool					m_bByeCheck = false;
 };
 
 END

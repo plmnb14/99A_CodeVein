@@ -27,9 +27,14 @@ HRESULT CPet_Inven::Ready_GameObject(void * pArg)
 	CUI::Ready_GameObject(pArg);
 
 	SetUp_Default();
+	
+	Add_Pet(CPet::PET_POISONBUTTERFLY);
+	Add_Pet(CPet::PET_DEERKING);
+	Add_Pet(CPet::PET_DEERKING);
 	Add_Pet(CPet::PET_DEERKING);
 	Add_Pet(CPet::PET_POISONBUTTERFLY);
 	Add_Pet(CPet::PET_POISONBUTTERFLY);
+
 	return S_OK;
 }
 
@@ -50,6 +55,7 @@ _int CPet_Inven::Update_GameObject(_double TimeDelta)
 	}
 
 	m_pExitIcon->Set_Active(m_bIsActive);
+	m_pSummonsBtn->Set_Active(m_bIsActive);
 
 	Click_Inven();
 
@@ -135,7 +141,7 @@ void CPet_Inven::Check_Call_Pet(_bool _Check_Get_SlotSelect)
 		}
 		else
 		{
-			static_cast<CPet*>(pTempPet)->Check_Navi();
+			static_cast<CPet*>(pTempPet)->Function_Check_Navi();
 			pTempPet = nullptr;
 			return;
 		}
@@ -159,6 +165,8 @@ void CPet_Inven::Check_Call_Pet(_bool _Check_Get_SlotSelect)
 
 void CPet_Inven::Click_Inven()
 {
+	_uint iTempNum = 0;
+
 	if (!m_bIsActive)
 		return;
 
@@ -173,15 +181,23 @@ void CPet_Inven::Click_Inven()
 	{
 		for (auto& iter : m_vecPetSlot)
 		{
-			if (iter->Pt_InRect())
+			//슬롯을 선택했다
+			if (true == iter->Pt_InRect())
 			{
+				m_ivectorNum = iTempNum; //펫슬롯이 가진 번호
+				m_eNowType = iter->Get_PetType(); //펫슬롯이 가진 종류
+
 				Reset_SlotSelect();
 				iter->Set_Select(true);
-				m_eNowType = iter->Get_PetType();
+
+
 				Check_Call_Pet(iter->Get_Select());
 			}
+
+			++iTempNum;
 		}
 	}
+
 	if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
 	{
 		for (auto& iter : m_vecPetSlot)
@@ -189,19 +205,45 @@ void CPet_Inven::Click_Inven()
 			if (iter->Pt_InRect())
 			{
 				iter->Set_Select(false);
+				
 				m_eNowType = iter->Get_PetType();
 				Check_Call_Pet(iter->Get_Select());
 			}
 		}
+	}
+
+	// 소환 버튼 클릭시
+	if (m_pSummonsBtn->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+	{
+		
 	}
 	
 }
 
 void CPet_Inven::Reset_SlotSelect()
 {
+	_uint iTempNum = 0;
+	//모든 슬롯을 비활성화 == 체크 안함 표시 
 	for (auto& iter : m_vecPetSlot)
 	{
 		iter->Set_Select(false);
+	}
+	//펫을 전부 순회해서 소환된 친구가 있다면 소환을 해제하자
+	//그러나 선택한 슬롯이 이전 슬롯과 동일한 종류의 펫을 소환하려 한다면 해제하지 말자!
+	auto& PetContainer = g_pManagement->Get_GameObjectList(L"Layer_Pet", SCENE_STAGE);
+
+	for (auto& list_iter : PetContainer)
+	{
+		if (nullptr == list_iter)
+		{
+			++iTempNum;
+			continue;
+		}
+		else if (iTempNum == m_ivectorNum)
+		{
+			if (true == list_iter->Get_Enable())
+				list_iter->Set_Enable(false);
+		}
 	}
 }
 
@@ -243,6 +285,12 @@ HRESULT CPet_Inven::SetUp_Default()
 	m_pExitIcon->Set_UI_Pos(m_fPosX + 120.f, m_fPosY - 203.f);
 	m_pExitIcon->Set_UI_Size(40.f, 40.f);
 	m_pExitIcon->Set_Type(CInventory_Icon::ICON_EXIT);
+
+	m_pSummonsBtn = static_cast<CInventory_Icon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_InvenIcon", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pSummonsBtn, SCENE_MORTAL, L"Layer_PetUI", nullptr);
+	m_pSummonsBtn->Set_UI_Pos(m_fPosX + 70.f, m_fPosY - 203.f);
+	m_pSummonsBtn->Set_UI_Size(40.f, 40.f);
+	m_pSummonsBtn->Set_Type(CInventory_Icon::ICON_SUMMONS);
 
 	return S_OK;
 }

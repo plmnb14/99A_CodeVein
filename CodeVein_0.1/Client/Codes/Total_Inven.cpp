@@ -28,6 +28,11 @@ void CTotal_Inven::Set_Skill_ID(_uint iNum, Skill_ID eSkillID)
 	m_vecSkillIcon[iNum]->Set_SkillID(eSkillID);
 }
 
+void CTotal_Inven::Set_WeaponParam(_uint iIndex, WPN_PARAM tWpnParam)
+{
+	m_pWeapon_Slot[iIndex]->Set_WeaponParam(tWpnParam);
+}
+
 HRESULT CTotal_Inven::Ready_GameObject_Prototype()
 {
 	CUI::Ready_GameObject_Prototype();
@@ -300,6 +305,7 @@ void CTotal_Inven::Click_Icon()
 	if (m_vecIcon[0]->Pt_InRect() &&
 		g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
+		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::Total_Inven_All, CSoundManager::Ambient_Sound);
 		m_pInventory = CUI_Manager::Get_Instance()->Get_Inventory();
 		m_pInventory->Set_Active(true);
 		CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Set_Active(true);
@@ -308,6 +314,7 @@ void CTotal_Inven::Click_Icon()
 	else if (m_vecIcon[1]->Pt_InRect() &&
 		g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{	
+		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::Total_Inven_Pet, CSoundManager::Ambient_Sound);
 		m_bIsActive = false;
 		// 스테이터스 창 비활성화
 		CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(false);
@@ -317,11 +324,10 @@ void CTotal_Inven::Click_Icon()
 	else if (m_vecIcon[2]->Pt_InRect() &&
 		g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 	{
+		g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::Total_Inven_Exit, CSoundManager::Ambient_Sound);
 		m_bIsActive = false;
 		// 스테이터스 창 비활성화
 		CUI_Manager::Get_Instance()->Get_StatusUI()->Set_Active(false);
-		// 퀵슬롯 활성화
-		//CUI_Manager::Get_Instance()->Get_QuickSlot()->Set_Active(true);
 	}
 	
 	vector<CExpendables_Slot*> vecQuickSlot = * CUI_Manager::Get_Instance()->Get_Expendables_Inven()->Get_QuickSlot();
@@ -341,29 +347,62 @@ void CTotal_Inven::Click_Icon()
 			
 	}
 
-	//// 블러드코드 슬롯 눌렀을때
-	//if (m_pBloodCode->Pt_InRect() && 
-	//	g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
-	//{
-	//	CUI_Manager::Get_Instance()->Get_BloodCode_Inven()->Set_Active(true);
-	//	m_bIsActive = false;
-	//}
-
 	// 스킬 설정
 	for(_uint i = 0; i < m_vecSkillIcon.size(); ++i)
 	{
 		if (m_vecSkillIcon[i]->Pt_InRect())
 		{
 			m_pNoticeUI->Set_UI_Index(i + 1);
+			
+
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
+				SkillSlot_Touch_Sound(i);
 				m_bIsActive = false;
+
 				CUI_Manager::Get_Instance()->Get_Skill_Inven()->Set_SkillUI_TotalInven(i);
 				CUI_Manager::Get_Instance()->Get_Skill_Inven()->Set_Active(true);
 			}
-		
+
 		}
 	}
+}
+
+void CTotal_Inven::SkillSlot_Touch_Sound(_uint i)
+{
+	if (i > 7)
+		return;
+
+	_uint iChannel = CSoundManager::CHANNELID::Total_Skill_Slot01 + i;
+
+	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID(iChannel), CSoundManager::Ambient_Sound);
+	/*switch (i)
+	{
+	case 0:
+	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::Total_Skill_Slot01, CSoundManager::Ambient_Sound);
+	break;
+	case 1:
+	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::Total_Skill_Slot02, CSoundManager::Ambient_Sound);
+	break;
+	case 2:
+	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::Total_Skill_Slot03, CSoundManager::Ambient_Sound);
+	break;
+	case 3:
+	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::Total_Skill_Slot04, CSoundManager::Ambient_Sound);
+	break;
+	case 4:
+	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::Total_Skill_Slot05, CSoundManager::Ambient_Sound);
+	break;
+	case 5:
+	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::Total_Skill_Slot06, CSoundManager::Ambient_Sound);
+	break;
+	case 6:
+	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::Total_Skill_Slot07, CSoundManager::Ambient_Sound);
+	break;
+	case 7:
+	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID::Total_Skill_Slot08, CSoundManager::Ambient_Sound);
+	break;
+	}*/
 }
 
 CTotal_Inven * CTotal_Inven::Create(_Device pGraphic_Device)
