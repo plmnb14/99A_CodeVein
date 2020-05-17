@@ -153,6 +153,11 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BuyOptionUI", CBuyOptionUI::Create(pDevice))))
 		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SkillGauge", CSkillGauge::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SkillPointUI", CSkillPointUI::Create(pDevice))))
+		return E_FAIL;
 	
 	//////////////// Chae
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BossMassageUI", CMassageUI::Create(pDevice))))
@@ -273,6 +278,9 @@ HRESULT CUI_Manager::SetUp_UILayer()
 	// 대화 UI
 	m_pScriptUI = static_cast<CScriptUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ScriptUI", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pScriptUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+	// 스킬 포인트 UI
+	m_pSkillPointUI = static_cast<CSkillPointUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_SkillPointUI", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pSkillPointUI, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	///////////////////////////////////////// 3D /////////////////////////////////////
 	// 스테이지 선택 UI

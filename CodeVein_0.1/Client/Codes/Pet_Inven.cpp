@@ -27,9 +27,9 @@ HRESULT CPet_Inven::Ready_GameObject(void * pArg)
 	CUI::Ready_GameObject(pArg);
 
 	SetUp_Default();
-	Add_Pet(CPet::PET_DEERKING);
+	
 	Add_Pet(CPet::PET_POISONBUTTERFLY);
-	Add_Pet(CPet::PET_POISONBUTTERFLY);
+	
 	return S_OK;
 }
 
@@ -50,6 +50,7 @@ _int CPet_Inven::Update_GameObject(_double TimeDelta)
 	}
 
 	m_pExitIcon->Set_Active(m_bIsActive);
+	m_pSummonsBtn->Set_Active(m_bIsActive);
 
 	Click_Inven();
 
@@ -177,6 +178,7 @@ void CPet_Inven::Click_Inven()
 			{
 				Reset_SlotSelect();
 				iter->Set_Select(true);
+
 				m_eNowType = iter->Get_PetType();
 				Check_Call_Pet(iter->Get_Select());
 			}
@@ -189,10 +191,17 @@ void CPet_Inven::Click_Inven()
 			if (iter->Pt_InRect())
 			{
 				iter->Set_Select(false);
+				
 				m_eNowType = iter->Get_PetType();
 				Check_Call_Pet(iter->Get_Select());
 			}
 		}
+	}
+
+	// 소환 버튼 클릭시
+	if (m_pSummonsBtn->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
+	{
+		
 	}
 	
 }
@@ -243,6 +252,12 @@ HRESULT CPet_Inven::SetUp_Default()
 	m_pExitIcon->Set_UI_Pos(m_fPosX + 120.f, m_fPosY - 203.f);
 	m_pExitIcon->Set_UI_Size(40.f, 40.f);
 	m_pExitIcon->Set_Type(CInventory_Icon::ICON_EXIT);
+
+	m_pSummonsBtn = static_cast<CInventory_Icon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_InvenIcon", nullptr));
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pSummonsBtn, SCENE_MORTAL, L"Layer_PetUI", nullptr);
+	m_pSummonsBtn->Set_UI_Pos(m_fPosX + 70.f, m_fPosY - 203.f);
+	m_pSummonsBtn->Set_UI_Size(40.f, 40.f);
+	m_pSummonsBtn->Set_Type(CInventory_Icon::ICON_SUMMONS);
 
 	return S_OK;
 }

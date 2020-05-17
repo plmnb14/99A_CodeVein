@@ -32,6 +32,9 @@ private:
 	CShader*				m_pShaderCom = nullptr;
 	CBuffer_RcTex*			m_pBufferCom = nullptr;
 
+private:
+	_float					m_fAlpha = 0.f;
+
 public:
 	static CBuyOptionUI*	Create(_Device pGraphic_Device);
 	virtual CGameObject*	Clone_GameObject(void* pArg);

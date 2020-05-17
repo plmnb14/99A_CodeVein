@@ -1158,6 +1158,9 @@
     <ClInclude Include="..\Headers\BuyOptionUI.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI</Filter>
     </ClInclude>
+    <ClInclude Include="..\Headers\SkillPointUI.h">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\02. Skill_Gauge</Filter>
+    </ClInclude>
     <ClInclude Include="..\Headers\ShopActionFailedPopup.h">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopActionFailedPopup</Filter>
     </ClInclude>
@@ -1762,6 +1765,9 @@
     </ClCompile>
     <ClCompile Include="..\Codes\BuyOptionUI.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\18. GeneralStoreUI%28잡화점%29\02. GeneralStoreBuyUI</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Codes\SkillPointUI.cpp">
+      <Filter>02.GameObject\Stage\5%29 UI\UI\09. SkillUI\02. Skill_Gauge</Filter>
     </ClCompile>
     <ClCompile Include="..\Codes\ShopActionFailedPopup.cpp">
       <Filter>02.GameObject\Stage\5%29 UI\UI\17. WeaponShopUI\ShopActionFailedPopup</Filter>
