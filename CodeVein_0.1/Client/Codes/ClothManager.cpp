@@ -11,14 +11,14 @@ CClothManager::CClothManager()
 
 HRESULT CClothManager::Ready_ClothManager()
 {
+	//Ready_Cloth_Dynamic();
 	Ready_Cloth_Static();
-	Ready_Cloth_Dynamic();
 	Ready_ColRadius();
 
 	return S_OK;
 }
 
-HRESULT CClothManager::Update_Cloth_Static(Cloth_Static eTag, _bool bSkill)
+HRESULT CClothManager::Update_Cloth_Static(Cloth_Static eTag, _bool bCanCol)
 {
 	PxSceneWriteLock scopedLock(*g_pPhysx->Get_Scene());
 
@@ -39,7 +39,7 @@ HRESULT CClothManager::Update_Cloth_Static(Cloth_Static eTag, _bool bSkill)
 	Set_Wind(m_pCloth_Static[eTag], g_vWindDir);
 
 	// 스킬 쓸 때는 충돌구 잠시 제거
-	if (bSkill)
+	if (bCanCol)
 	{
 		Clear_Collider(m_pCloth_Static[eTag]);
 	}
@@ -54,7 +54,7 @@ HRESULT CClothManager::Update_Cloth_Static(Cloth_Static eTag, _bool bSkill)
 	return S_OK;
 }
 
-HRESULT CClothManager::Update_Cloth_Dynamic(Cloth_Dynamic eTag, _bool bSkill)
+HRESULT CClothManager::Update_Cloth_Dynamic(Cloth_Dynamic eTag, _bool bCanCol)
 {
 	if (Cloth_Dynamic::None == eTag)
 		return S_OK;
@@ -78,7 +78,7 @@ HRESULT CClothManager::Update_Cloth_Dynamic(Cloth_Dynamic eTag, _bool bSkill)
 	Set_Wind(m_pCloth_Dynamic[eTag], g_vWindDir);
 
 	// 스킬 쓸 때는 충돌구 잠시 제거
-	if (bSkill)
+	if (bCanCol)
 	{
 		Clear_Collider(m_pCloth_Static[eTag]);
 	}
@@ -266,26 +266,21 @@ HRESULT CClothManager::Ready_Cloth_Dynamic()
 		// 메쉬 이름 정함.
 		_tchar name[STR_128] = { 0, };
 
-		if (i != Gauntlet_04 && i != LongCoat_03)
-			continue;
-
 		switch (i)
 		{
 		case Cloth_Dynamic::None:
 			lstrcpy(name, L"Mesh_Player");
 			continue;	// None은 Pass
 
+		case Cloth_Dynamic::Drape_01:
+			lstrcpy(name, L"Mesh_Drape_01");
+			break;
+
 		case Cloth_Dynamic::Gauntlet_01:
 			lstrcpy(name, L"Mesh_Gauntlet_01");
 			break;
-		case Cloth_Dynamic::Gauntlet_02:
-			lstrcpy(name, L"Mesh_Gauntlet_02");
-			break;
 		case Cloth_Dynamic::Gauntlet_03:
 			lstrcpy(name, L"Mesh_Gauntlet_03");
-			break;
-		case Cloth_Dynamic::Gauntlet_04:
-			lstrcpy(name, L"Mesh_Gauntlet_04");
 			break;
 
 		case Cloth_Dynamic::LongCoat_01:
@@ -303,9 +298,6 @@ HRESULT CClothManager::Ready_Cloth_Dynamic()
 			break;
 		case Cloth_Dynamic::Muffler_02:
 			lstrcpy(name, L"Mesh_Muffler_02");
-			break;
-		case Cloth_Dynamic::Muffler_03:
-			lstrcpy(name, L"Mesh_Muffler_03");
 			break;
 
 		default:
@@ -333,17 +325,14 @@ HRESULT CClothManager::Ready_Cloth_Dynamic()
 
 		switch (i)
 		{
+		case Cloth_Dynamic::Drape_01:
+			Init_Drape_01(meshDesc, vertices);
+			break;
 		case Cloth_Dynamic::Gauntlet_01:
 			Init_Gauntlet_01(meshDesc, vertices);
 			break;
-		case Cloth_Dynamic::Gauntlet_02:
-			Init_Gauntlet_02(meshDesc, vertices);
-			break;
 		case Cloth_Dynamic::Gauntlet_03:
 			Init_Gauntlet_03(meshDesc, vertices);
-			break;
-		case Cloth_Dynamic::Gauntlet_04:
-			Init_Gauntlet_04(meshDesc, vertices);
 			break;
 
 		case Cloth_Dynamic::LongCoat_01:
@@ -361,9 +350,6 @@ HRESULT CClothManager::Ready_Cloth_Dynamic()
 			break;
 		case Cloth_Dynamic::Muffler_02:
 			Init_Muffler_02(meshDesc, vertices);
-			break;
-		case Cloth_Dynamic::Muffler_03:
-			Init_Muffler_03(meshDesc, vertices);
 			break;
 
 		default:
@@ -761,11 +747,15 @@ void CClothManager::Update_Hair_ColPos(physx::PxCloth* pCloth)
 
 void CClothManager::Update_Cloth_ColPos(physx::PxCloth * pCloth)
 {
+	// 드레이프 충돌 구
+	if (pCloth == m_pCloth_Dynamic[Drape_01])
+	{
+
+	}
+
 	// 건틀릿 충돌 구
-	if (pCloth == m_pCloth_Dynamic[Gauntlet_01] ||
-		pCloth == m_pCloth_Dynamic[Gauntlet_02] ||
-		pCloth == m_pCloth_Dynamic[Gauntlet_03] ||
-		pCloth == m_pCloth_Dynamic[Gauntlet_04])
+	else if (pCloth == m_pCloth_Dynamic[Gauntlet_01] ||
+		pCloth == m_pCloth_Dynamic[Gauntlet_03])
 	{
 		if (0 == pCloth->getNbCollisionSpheres())
 		{
@@ -804,7 +794,6 @@ void CClothManager::Update_Cloth_ColPos(physx::PxCloth * pCloth)
 	}
 	// 롱코트 충돌 구
 	else if (pCloth == m_pCloth_Dynamic[LongCoat_01] ||
-		pCloth == m_pCloth_Dynamic[LongCoat_02] ||
 		pCloth == m_pCloth_Dynamic[LongCoat_03])
 	{
 		if (0 == pCloth->getNbCollisionSpheres())
@@ -1233,13 +1222,33 @@ void CClothManager::Init_Hair07(physx::PxClothMeshDesc & pClothMeshDesc, vector<
 	m_pCloth_Static[Hair_07]->putToSleep();
 }
 
+void CClothManager::Init_Drape_01(physx::PxClothMeshDesc & pClothMeshDesc, vector<physx::PxVec4>& vertices)
+{
+	for (PxU32 i = 0; i < 9226; i++)
+	{
+		if (vertices[i].y < 1.0f)
+			vertices[i].w = 0.2f;
+	}
+
+	m_pCloth_Dynamic[Drape_01] = CreateQuadifier(pClothMeshDesc);
+
+	PxScene& scene = *g_pPhysx->Get_Scene();
+
+	scene.addActor(*m_pCloth_Dynamic[Drape_01]);
+
+	Set_Cloth_Default(m_pCloth_Dynamic[Drape_01]);
+
+	m_pCloth_Dynamic[Drape_01]->putToSleep();
+}
+
 void CClothManager::Init_Gauntlet_01(physx::PxClothMeshDesc & pClothMeshDesc, vector<physx::PxVec4>& vertices)
 {
-	//for (PxU32 i = 0; i < 12345; i++)
-	//{
-	//	if (vertices[i].y < 0.03f)
-	//		vertices[i].w = 0.2f;
-	//}
+	for (PxU32 i = 0; i < 13432; i++)
+	{
+		if (vertices[i].y < 1.2f &&
+			vertices[i].x < 0.f)
+			vertices[i].w = 0.2f;
+	}
 
 	m_pCloth_Dynamic[Gauntlet_01] = CreateQuadifier(pClothMeshDesc);
 
@@ -1252,32 +1261,18 @@ void CClothManager::Init_Gauntlet_01(physx::PxClothMeshDesc & pClothMeshDesc, ve
 	m_pCloth_Dynamic[Gauntlet_01]->putToSleep();
 }
 
-void CClothManager::Init_Gauntlet_02(physx::PxClothMeshDesc & pClothMeshDesc, vector<physx::PxVec4>& vertices)
-{
-	//for (PxU32 i = 0; i < 12345; i++)
-	//{
-	//	if (vertices[i].y < 0.03f)
-	//		vertices[i].w = 0.2f;
-	//}
-
-	m_pCloth_Dynamic[Gauntlet_02] = CreateQuadifier(pClothMeshDesc);
-
-	PxScene& scene = *g_pPhysx->Get_Scene();
-
-	scene.addActor(*m_pCloth_Dynamic[Gauntlet_02]);
-
-	Set_Cloth_Default(m_pCloth_Dynamic[Gauntlet_02]);
-
-	m_pCloth_Dynamic[Gauntlet_02]->putToSleep();
-}
-
 void CClothManager::Init_Gauntlet_03(physx::PxClothMeshDesc & pClothMeshDesc, vector<physx::PxVec4>& vertices)
 {
-	//for (PxU32 i = 0; i < 12345; i++)
-	//{
-	//	if (vertices[i].y < 0.03f)
-	//		vertices[i].w = 0.2f;
-	//}
+	for (PxU32 i = 0; i < 906; i++)
+	{
+		if (vertices[i].y < 1.0f)
+			vertices[i].w = 0.2f;
+	}
+	for (PxU32 i = 15285; i < 15285 + 906; i++)
+	{
+		if (vertices[i].y < 1.0f)
+			vertices[i].w = 0.2f;
+	}
 
 	m_pCloth_Dynamic[Gauntlet_03] = CreateQuadifier(pClothMeshDesc);
 
@@ -1290,38 +1285,13 @@ void CClothManager::Init_Gauntlet_03(physx::PxClothMeshDesc & pClothMeshDesc, ve
 	m_pCloth_Dynamic[Gauntlet_03]->putToSleep();
 }
 
-void CClothManager::Init_Gauntlet_04(physx::PxClothMeshDesc & pClothMeshDesc, vector<physx::PxVec4>& vertices)
-{
-	for (PxU32 i = 0; i < 1404; i++)
-	{
-		if (vertices[i].y < 1.2f)
-			vertices[i].w = 0.2f;
-	}
-
-	for (PxU32 i = 15636; i < 17040; i++)
-	{
-		if (vertices[i].y < 1.2f)
-			vertices[i].w = 0.2f;
-	}
-
-	m_pCloth_Dynamic[Gauntlet_04] = CreateQuadifier(pClothMeshDesc);
-
-	PxScene& scene = *g_pPhysx->Get_Scene();
-
-	scene.addActor(*m_pCloth_Dynamic[Gauntlet_04]);
-
-	Set_Cloth_Default(m_pCloth_Dynamic[Gauntlet_04]);
-
-	m_pCloth_Dynamic[Gauntlet_04]->putToSleep();
-}
-
 void CClothManager::Init_LongCoat_01(physx::PxClothMeshDesc & pClothMeshDesc, vector<physx::PxVec4>& vertices)
 {
-	//for (PxU32 i = 0; i < 12345; i++)
-	//{
-	//	if (vertices[i].y < 0.03f)
-	//		vertices[i].w = 0.2f;
-	//}
+	for (PxU32 i = 11855; i < 16267 + 1384; i++)
+	{
+		if (vertices[i].y < 0.7f)
+			vertices[i].w = 0.2f;
+	}
 
 	m_pCloth_Dynamic[LongCoat_01] = CreateQuadifier(pClothMeshDesc);
 
@@ -1336,11 +1306,29 @@ void CClothManager::Init_LongCoat_01(physx::PxClothMeshDesc & pClothMeshDesc, ve
 
 void CClothManager::Init_LongCoat_02(physx::PxClothMeshDesc & pClothMeshDesc, vector<physx::PxVec4>& vertices)
 {
-	//for (PxU32 i = 0; i < 12345; i++)
-	//{
-	//	if (vertices[i].y < 0.03f)
-	//		vertices[i].w = 0.2f;
-	//}
+	for (PxU32 i = 0; i < 316; i++)
+	{
+		if (vertices[i].y < 0.7f)
+			vertices[i].w = 0.2f;
+	}
+
+	for (PxU32 i = 14203; i < 14203 + 825; i++)
+	{
+		if (vertices[i].y < 0.7f)
+			vertices[i].w = 0.2f;
+	}
+
+	for (PxU32 i = 15028; i < 15028 + 316; i++)
+	{
+		if (vertices[i].y < 0.7f)
+			vertices[i].w = 0.2f;
+	}
+
+	for (PxU32 i = 15344; i < 15344 + 825; i++)
+	{
+		if (vertices[i].y < 0.7f)
+			vertices[i].w = 0.2f;
+	}
 
 	m_pCloth_Dynamic[LongCoat_02] = CreateQuadifier(pClothMeshDesc);
 
@@ -1355,19 +1343,23 @@ void CClothManager::Init_LongCoat_02(physx::PxClothMeshDesc & pClothMeshDesc, ve
 
 void CClothManager::Init_LongCoat_03(physx::PxClothMeshDesc & pClothMeshDesc, vector<physx::PxVec4>& vertices)
 {
-	for (PxU32 i = 0; i < 0 + 939 + 4423; i++)	// 벨트 + 옷깃
+	for (PxU32 i = 0; i < 939; i++)
 	{
-		if (vertices[i].y < 0.9f)
-			vertices[i].w = 0.1f;
+		if (vertices[i].y < 0.7f)
+			vertices[i].w = 0.2f;
 	}
 
-	for (PxU32 i = 18408; i < 18408 + 4423; i++)	// 옷깃
+	for (PxU32 i = 939; i < 939 + 3459; i++)
 	{
-		if (vertices[i].y < 0.9f)
-			vertices[i].w = 0.1f;
+		if (vertices[i].y < 0.7f)
+			vertices[i].w = 0.2f;
 	}
 
-
+	for (PxU32 i = 17444; i < 17444 + 3459; i++)
+	{
+		if (vertices[i].y < 0.7f)
+			vertices[i].w = 0.2f;
+	}
 
 	m_pCloth_Dynamic[LongCoat_03] = CreateQuadifier(pClothMeshDesc);
 
@@ -1382,11 +1374,11 @@ void CClothManager::Init_LongCoat_03(physx::PxClothMeshDesc & pClothMeshDesc, ve
 
 void CClothManager::Init_Muffler_01(physx::PxClothMeshDesc & pClothMeshDesc, vector<physx::PxVec4>& vertices)
 {
-	//for (PxU32 i = 0; i < 12345; i++)
-	//{
-	//	if (vertices[i].y < 0.03f)
-	//		vertices[i].w = 0.2f;
-	//}
+	for (PxU32 i = 0; i < 14402; i++)
+	{
+		if (vertices[i].y < 1.1f)
+			vertices[i].w = 0.2f;
+	}
 
 	m_pCloth_Dynamic[Muffler_01] = CreateQuadifier(pClothMeshDesc);
 
@@ -1401,11 +1393,11 @@ void CClothManager::Init_Muffler_01(physx::PxClothMeshDesc & pClothMeshDesc, vec
 
 void CClothManager::Init_Muffler_02(physx::PxClothMeshDesc & pClothMeshDesc, vector<physx::PxVec4>& vertices)
 {
-	//for (PxU32 i = 0; i < 12345; i++)
-	//{
-	//	if (vertices[i].y < 0.03f)
-	//		vertices[i].w = 0.2f;
-	//}
+	for (PxU32 i = 0; i < 2616; i++)
+	{
+		if (vertices[i].y < 1.1f)
+			vertices[i].w = 0.2f;
+	}
 
 	m_pCloth_Dynamic[Muffler_02] = CreateQuadifier(pClothMeshDesc);
 
@@ -1416,25 +1408,6 @@ void CClothManager::Init_Muffler_02(physx::PxClothMeshDesc & pClothMeshDesc, vec
 	Set_Cloth_Default(m_pCloth_Dynamic[Muffler_02]);
 
 	m_pCloth_Dynamic[Muffler_02]->putToSleep();
-}
-
-void CClothManager::Init_Muffler_03(physx::PxClothMeshDesc & pClothMeshDesc, vector<physx::PxVec4>& vertices)
-{
-	//for (PxU32 i = 0; i < 12345; i++)
-	//{
-	//	if (vertices[i].y < 0.03f)
-	//		vertices[i].w = 0.2f;
-	//}
-
-	m_pCloth_Dynamic[Muffler_03] = CreateQuadifier(pClothMeshDesc);
-
-	PxScene& scene = *g_pPhysx->Get_Scene();
-
-	scene.addActor(*m_pCloth_Dynamic[Muffler_03]);
-
-	Set_Cloth_Default(m_pCloth_Dynamic[Muffler_03]);
-
-	m_pCloth_Dynamic[Muffler_03]->putToSleep();
 }
 
 void CClothManager::Free()

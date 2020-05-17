@@ -58,9 +58,9 @@ HRESULT CMaterial_Inven::Ready_GameObject(void * pArg)
 
 	}
 
-	Add_MultiMaterial(CMaterial::Queen_Steel, 50);
+	/*Add_MultiMaterial(CMaterial::Queen_Steel, 50);
 	Add_MultiMaterial(CMaterial::Queen_Titanium, 50);
-	Add_MultiMaterial(CMaterial::Queen_Tungsten, 50);
+	Add_MultiMaterial(CMaterial::Queen_Tungsten, 50);*/
 
 	return NOERROR;
 }
@@ -228,12 +228,12 @@ void CMaterial_Inven::Click_Inven()
 			if (!pSlot->Get_Select() && pSlot->Get_Size() > 0 && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
 				// 마우스 왼쪽 버튼 눌렀을 때
-				
+				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::UI_SFX_01, CSoundManager::Ambient_Sound);
 			}
 			else if (pSlot->Get_Select() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
 			{
 				// 마우스 오른쪽 버튼 눌렀을 때
-
+				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::UI_SFX_01, CSoundManager::Ambient_Sound);
 			}
 		}
 	}
@@ -312,14 +312,6 @@ void CMaterial_Inven::Sell_Material(_uint iDelete)
 		++idx;
 	}
 	
-	
-	/*_ulong Idx = 0;
-	for (auto& pSlot : m_vecMaterialSlot)
-	{
-		
-		pSlot->Set_UI_Pos(m_vecUI_DESC[Idx]->fPosX, m_vecUI_DESC[Idx]->fPosY);
-		++Idx;
-	}*/
 }
 
 CMaterial_Inven * CMaterial_Inven::Create(_Device pGraphic_Device)

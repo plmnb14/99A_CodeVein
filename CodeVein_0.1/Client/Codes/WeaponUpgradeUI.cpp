@@ -77,8 +77,6 @@ HRESULT CWeaponUpgradeUI::Ready_GameObject(void * pArg)
 	
 	m_iTexIdx = 0;
 
-	SetUp_Default();
-
 	return NOERROR;
 }
 
@@ -88,6 +86,8 @@ _int CWeaponUpgradeUI::Update_GameObject(_double TimeDelta)
 	
 	if (MOVE_END == m_eMoveType && WpnAll_END == m_eWeaponDesc)
 	{
+		Check_LateInit();
+
 		switch (m_eUpgradeType)
 		{
 		case Client::CWeaponUpgradeUI::UPGRADE_WEAPON:
@@ -97,11 +97,6 @@ _int CWeaponUpgradeUI::Update_GameObject(_double TimeDelta)
 			Check_ItemOption_Armor();
 			break;
 		}
-
-		Check_Option();
-		Check_WeaponName();
-		Check_MoveType();
-		Check_LateInit();
 
 		if (m_pFontReinforceHeader)m_pFontReinforceHeader->Set_Active(m_bIsActive);
 		if (m_pFontReinforceDesc)m_pFontReinforceDesc->Set_Active(m_bIsActive);
@@ -130,7 +125,10 @@ _int CWeaponUpgradeUI::Update_GameObject(_double TimeDelta)
 		if (m_pFontSlash_0)m_pFontSlash_0->Set_Active(m_bIsActive);
 		if (m_pFontSlash_1)m_pFontSlash_1->Set_Active(m_bIsActive);
 		if (m_pFontSlash_2)m_pFontSlash_2->Set_Active(m_bIsActive);
-
+		
+		if (m_pFontUpgradePercentage)m_pFontUpgradePercentage->Set_Active(m_bIsActive);
+		if (m_pShopItemIcon)m_pShopItemIcon->Set_Active(m_bIsActive);
+		
 		m_fViewZ = 0.2f;
 
 		switch (m_eUpgradeType)
@@ -156,6 +154,7 @@ _int CWeaponUpgradeUI::Update_GameObject(_double TimeDelta)
 		MOVE_END == m_eMoveType &&
 		m_bLateInit)
 	{
+		m_pUpgradeResultPopup->Set_ViewZ(m_fViewZ - 0.4f);
 
 		if (m_pWeaponNameUI)m_pWeaponNameUI->Set_UI_Pos(WINCX * 0.348f, WINCY * 0.13f);
 		if (m_pWeaponNameUI)m_pWeaponNameUI->Set_UI_Size(450.0f * 1.5f, 120.f* 1.5f);
@@ -175,7 +174,7 @@ _int CWeaponUpgradeUI::Update_GameObject(_double TimeDelta)
 			else if (1 == i)
 				m_vecOption[i]->Set_UI_Pos(Get_UI_Pos().x, Get_UI_Pos().y + 305.f);
 
-			m_vecOption[i]->Set_UI_Size(126, 60);
+			m_vecOption[i]->Set_UI_Size(126, 30);
 
 			TARGET_TO_TRANS(m_vecOption[i])->Set_Pos(vPos);
 			m_vecOption[i]->Set_ButtonType(CWeaponUpgradeOptionUI::BUTTON_TYPE(i));
@@ -259,11 +258,23 @@ void CWeaponUpgradeUI::Click_Option()
 	{
 		if (iter->Pt_InRect())
 		{
-			Reset_Option();
+			//Reset_Option();
+
+			if (!iter->Get_Select())
+			{
+				g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+				g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+			}
+
 			iter->Set_Select(true);
-	
+
+			m_iOption = iIdx;
+
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
 			{
+				g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+				g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+
 				if (0 == iIdx)
 				{
 					switch (m_eUpgradeType)
@@ -306,13 +317,6 @@ void CWeaponUpgradeUI::Upgrade_Weapon()
 	_int iPrice = (_int)m_pInven->Get_UpgradePrice(iReinForce);
 	_int iMyHaze = (_int)CUI_Manager::Get_Instance()->Get_HazeUI()->Get_Haze_Cnt();
 
-	if (iPrice > iMyHaze)
-	{
-		m_pShopActionFailedPopup->Set_Active(true);
-		m_pShopActionFailedPopup->Set_PopupType(CShopActionFailedPopup::POPUP_UPGRADE);
-		return;
-	}
-
 	vector<CMaterial_Slot*>* pInvenMaterial = CUI_Manager::Get_Instance()->Get_Material_Inven()->Get_VecMaterialSlot();
 
 	_int iSteel				= Get_MyMaterial(CMaterial::MATERIAL_TYPE::Queen_Steel);
@@ -322,12 +326,17 @@ void CWeaponUpgradeUI::Upgrade_Weapon()
 	_int iRequireTitanium	= Get_RequireMaterial(CMaterial::MATERIAL_TYPE::Queen_Titanium, iReinForce);
 	_int iRequireTungsten	= Get_RequireMaterial(CMaterial::MATERIAL_TYPE::Queen_Tungsten, iReinForce);
 
-	if (iSteel < iRequireSteel ||
+	if (iPrice > iMyHaze ||
+		iSteel < iRequireSteel ||
 		iTitanium < iRequireTitanium ||
 		iTungsten < iRequireTungsten)
 	{
 		m_pShopActionFailedPopup->Set_Active(true);
 		m_pShopActionFailedPopup->Set_PopupType(CShopActionFailedPopup::POPUP_UPGRADE);
+
+		g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+		g_pSoundManager->Play_Sound(L"UI_ShopActionFailed.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+
 		return;
 	}
 
@@ -353,20 +362,27 @@ void CWeaponUpgradeUI::Upgrade_Weapon()
 
 	if (false == Get_UpgradeSuccess(iReinForce))
 	{
+		m_pWeaponUpgradingPopup->Set_Active(true);
+		m_pWeaponUpgradingPopup->Set_PopupType(CWeaponUpgradingPopup::POPUP_FAILED);
+
 		m_pUpgradeResultPopup->Set_Fade(true);
 		m_pUpgradeResultPopup->Set_Inven(m_pInven);
 		m_pUpgradeResultPopup->Set_PopupType(CWeaponUpgradeSuccessPopupUI::POPUP_FAILED);
+		
 		return;
 	}
 
 	// =======================================================================
 	// Success
-	WPN_PARAM tParam = pSlot->Get_WeaponParam();
-	tParam.iReinforce += 1;
-	tParam.fPlusDamage = Get_PlusDamage(tParam.fDamage, tParam.iReinforce);
-	pSlot->Set_WeaponParam(tParam);
-	m_pInven->Upgrade_Weapon(tParam);
-
+	//WPN_PARAM tParam = pSlot->Get_WeaponParam();
+	//tParam.iReinforce += 1;
+	//tParam.fPlusDamage = Get_PlusDamage(tParam.fDamage, tParam.iReinforce);
+	//pSlot->Set_WeaponParam(tParam);
+	//m_pInven->Upgrade_Weapon(tParam);
+	
+	m_pWeaponUpgradingPopup->Set_Active(true);
+	m_pWeaponUpgradingPopup->Set_PopupType(CWeaponUpgradingPopup::POPUP_SUCCESS);
+	
 	m_pUpgradeResultPopup->Set_Fade(true);
 	m_pUpgradeResultPopup->Set_Inven(m_pInven);
 	m_pUpgradeResultPopup->Set_PopupType(CWeaponUpgradeSuccessPopupUI::POPUP_SUCCESS);
@@ -379,13 +395,6 @@ void CWeaponUpgradeUI::Upgrade_Armor()
 	_int iPrice = (_int)m_pInven->Get_UpgradePrice(iReinForce);
 	_int iMyHaze = (_int)CUI_Manager::Get_Instance()->Get_HazeUI()->Get_Haze_Cnt();
 
-	if (iPrice > iMyHaze)
-	{
-		m_pShopActionFailedPopup->Set_Active(true);
-		m_pShopActionFailedPopup->Set_PopupType(CShopActionFailedPopup::POPUP_UPGRADE);
-		return;
-	}
-
 	vector<CMaterial_Slot*>* pInvenMaterial = CUI_Manager::Get_Instance()->Get_Material_Inven()->Get_VecMaterialSlot();
 
 	_int iSteel = Get_MyMaterial(CMaterial::MATERIAL_TYPE::Queen_Steel);
@@ -395,12 +404,17 @@ void CWeaponUpgradeUI::Upgrade_Armor()
 	_int iRequireTitanium = Get_RequireMaterial(CMaterial::MATERIAL_TYPE::Queen_Titanium, iReinForce);
 	_int iRequireTungsten = Get_RequireMaterial(CMaterial::MATERIAL_TYPE::Queen_Tungsten, iReinForce);
 
-	if (iSteel < iRequireSteel ||
+	if (iPrice > iMyHaze ||
+		iSteel < iRequireSteel ||
 		iTitanium < iRequireTitanium ||
 		iTungsten < iRequireTungsten)
 	{
 		m_pShopActionFailedPopup->Set_Active(true);
 		m_pShopActionFailedPopup->Set_PopupType(CShopActionFailedPopup::POPUP_UPGRADE);
+
+		g_pSoundManager->Stop_Sound(CSoundManager::UI_SFX_01);
+		g_pSoundManager->Play_Sound(L"UI_ShopActionFailed.wav", CSoundManager::UI_SFX_01, CSoundManager::Effect_Sound);
+
 		return;
 	}
 
@@ -426,6 +440,9 @@ void CWeaponUpgradeUI::Upgrade_Armor()
 
 	if (false == Get_UpgradeSuccess(iReinForce))
 	{
+		m_pWeaponUpgradingPopup->Set_Active(true);
+		m_pWeaponUpgradingPopup->Set_PopupType(CWeaponUpgradingPopup::POPUP_FAILED);
+
 		m_pUpgradeResultPopup->Set_Fade(true);
 		m_pUpgradeResultPopup->Set_Inven(m_pInven);
 		m_pUpgradeResultPopup->Set_PopupType(CWeaponUpgradeSuccessPopupUI::POPUP_FAILED);
@@ -435,12 +452,15 @@ void CWeaponUpgradeUI::Upgrade_Armor()
 	// =======================================================================
 	// Success
 
-	ARMOR_PARAM tParam = pSlot->Get_ArmorParam();
-	tParam.iReinforce += 1;
-	tParam.fPlusDef = Get_PlusDamage(tParam.fDef, tParam.iReinforce);
-	pSlot->Set_ArmorParam(tParam);
-	m_pInven->Upgrade_Armor(tParam);
-
+	//ARMOR_PARAM tParam = pSlot->Get_ArmorParam();
+	//tParam.iReinforce += 1;
+	//tParam.fPlusDef = Get_PlusDamage(tParam.fDef, tParam.iReinforce);
+	//pSlot->Set_ArmorParam(tParam);
+	//m_pInven->Upgrade_Armor(tParam);
+	
+	m_pWeaponUpgradingPopup->Set_Active(true);
+	m_pWeaponUpgradingPopup->Set_PopupType(CWeaponUpgradingPopup::POPUP_SUCCESS);
+	
 	m_pUpgradeResultPopup->Set_Fade(true);
 	m_pUpgradeResultPopup->Set_Inven(m_pInven);
 	m_pUpgradeResultPopup->Set_PopupType(CWeaponUpgradeSuccessPopupUI::POPUP_SUCCESS);
@@ -495,11 +515,6 @@ _int CWeaponUpgradeUI::Get_RequireMaterial(CMaterial::MATERIAL_TYPE eType, _int 
 	}
 
 	return -1;
-}
-
-_float CWeaponUpgradeUI::Get_PlusDamage(_float fDamage, _int iReinforce)
-{
-	return fDamage + (iReinforce * 1.5f) * (fDamage * 0.15f);
 }
 
 _bool CWeaponUpgradeUI::Get_UpgradeSuccess(_int iReinforce)
@@ -730,8 +745,23 @@ void CWeaponUpgradeUI::SetUp_Default()
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pFontUpgradePercentage, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 
 	m_pUpgradeResultPopup = static_cast<CWeaponUpgradeSuccessPopupUI*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon_UpgradeSuccessPopup", nullptr));
-	m_pUpgradeResultPopup->Set_ViewZ(m_fViewZ - 0.1f);
+	m_pUpgradeResultPopup->Set_ViewZ(m_fViewZ - 0.11f);
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pUpgradeResultPopup, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	m_pWeaponUpgradingPopup = static_cast<CWeaponUpgradingPopup*>(g_pManagement->Clone_GameObject_Return(L"GameObject_Weapon_UpgradingPopup", nullptr));
+	m_pWeaponUpgradingPopup->Set_Inven(m_pInven);
+	m_pWeaponUpgradingPopup->Set_ViewZ(m_fViewZ - 0.1f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pWeaponUpgradingPopup, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	m_pShopItemIcon = static_cast<CShopItemIcon*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ShopItemIcon", nullptr));
+	m_pShopItemIcon->Set_UI_Pos(WINCX * 0.078f, WINCY * 0.125f);
+	m_pShopItemIcon->Set_UI_Size(65.f, 65.f);
+	m_pShopItemIcon->Set_ViewZ(m_fViewZ - 0.05f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pShopItemIcon, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
+
+	m_pShopActionFailedPopup = static_cast<CShopActionFailedPopup*>(g_pManagement->Clone_GameObject_Return(L"GameObject_ShopActionFailedPopup", nullptr));
+	m_pShopActionFailedPopup->Set_ViewZ(m_fViewZ - 0.1f);
+	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pShopActionFailedPopup, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);
 }
 
 void CWeaponUpgradeUI::Check_LateInit()
@@ -741,6 +771,9 @@ void CWeaponUpgradeUI::Check_LateInit()
 	m_bLateInit = true;
 
 	SetUp_Default();
+	Check_Option();
+	Check_WeaponName();
+	Check_MoveType();
 }
 
 void CWeaponUpgradeUI::Check_ItemOption_Weapon()
@@ -789,7 +822,7 @@ void CWeaponUpgradeUI::Check_ItemOption_Weapon()
 
 	if (!m_pFontPlusDamageAfterDesc)
 		return;
-	_float fPlus =  Get_PlusDamage(tParam.fDamage, tParam.iReinforce + 1);
+	_float fPlus = m_pInven->Get_PlusDamage(tParam.fDamage, tParam.iReinforce + 1);
 	m_pFontPlusDamageAfterDesc->Update_NumberValue(fPlus);
 	m_pFontPlusDamageAfterDesc->Set_Active(true);
 
@@ -911,6 +944,17 @@ void CWeaponUpgradeUI::Check_ItemOption_Weapon()
 		break;
 	}
 	m_pWeaponMoveTypeUI->Set_Active(m_bIsActive);
+	//==============================================================================================================
+	// Icon
+	if (!m_pShopItemIcon)
+		return;
+	if (WpnAll_END == eAllDate)
+	{
+		m_pShopItemIcon->Set_Active(false);
+		return;
+	}
+	m_pShopItemIcon->Set_WeaponDescType(eAllDate);
+	m_pShopItemIcon->Set_Active(m_bIsActive);
 
 }
 
@@ -959,7 +1003,7 @@ void CWeaponUpgradeUI::Check_ItemOption_Armor()
 
 	if (!m_pFontPlusDamageAfterDesc)
 		return;
-	_float fPlus = Get_PlusDamage(tParam.fPlusDef, tParam.iReinforce + 1);
+	_float fPlus = m_pInven->Get_PlusDamage(tParam.fPlusDef, tParam.iReinforce + 1);
 	m_pFontPlusDamageAfterDesc->Update_NumberValue(fPlus);
 	m_pFontPlusDamageAfterDesc->Set_Active(true);
 
@@ -982,7 +1026,7 @@ void CWeaponUpgradeUI::Check_ItemOption_Armor()
 		return;
 	_float fPlayerHP = pPlayer->Get_Target_Hp();
 
-	fPlus = Get_PlusDamage(tParam.fPlusHP, tParam.iReinforce + 1);
+	fPlus = m_pInven->Get_PlusDamage(tParam.fPlusHP, tParam.iReinforce + 1);
 
 	m_pFontPlusHPDesc->Update_NumberValue((_float)tParam.fPlusHP);
 	m_pFontPlusHPDesc->Set_Active(true);
@@ -1072,7 +1116,17 @@ void CWeaponUpgradeUI::Check_ItemOption_Armor()
 	if (!m_pWeaponMoveTypeUI)
 		return;
 	m_pWeaponMoveTypeUI->Set_Active(false);
-
+	//==============================================================================================================
+	// Icon
+	if (!m_pShopItemIcon)
+		return;
+	if (ArmorAll_END == eAllDate)
+	{
+		m_pShopItemIcon->Set_Active(false);
+		return;
+	}
+	m_pShopItemIcon->Set_ArmorDescType(eAllDate);
+	m_pShopItemIcon->Set_Active(m_bIsActive);
 }
 
 void CWeaponUpgradeUI::Check_WeaponName()
@@ -1104,9 +1158,8 @@ void CWeaponUpgradeUI::Check_MoveType()
 
 void CWeaponUpgradeUI::Check_Option()
 {
-	if (WpnAll_END == m_eWeaponDesc && !m_bLateInit)
+	if (WpnAll_END == m_eWeaponDesc)
 	{
-		m_bLateInit = true;
 		CWeaponUpgradeOptionUI* pInstance = nullptr;
 		LOOP(2)
 		{

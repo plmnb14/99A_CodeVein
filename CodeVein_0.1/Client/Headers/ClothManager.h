@@ -30,9 +30,10 @@ public:
 	enum Cloth_Dynamic 
 	{
 		None,
-		Gauntlet_01, Gauntlet_02, Gauntlet_03, Gauntlet_04,
+		Drape_01,
+		Gauntlet_01, Gauntlet_03,
 		LongCoat_01, LongCoat_02, LongCoat_03,
-		Muffler_01, Muffler_02, Muffler_03,
+		Muffler_01, Muffler_02,
 		Dynamic_End
 	};
 
@@ -43,8 +44,8 @@ private:
 public:
 	HRESULT Ready_ClothManager();
 
-	HRESULT Update_Cloth_Static(Cloth_Static eTag, _bool bSkill);
-	HRESULT Update_Cloth_Dynamic(Cloth_Dynamic eTag, _bool bSkill);
+	HRESULT Update_Cloth_Static(Cloth_Static eTag, _bool bCanCol);
+	HRESULT Update_Cloth_Dynamic(Cloth_Dynamic eTag, _bool bCanCol);
 
 public:
 	physx::PxCloth* Get_Cloth_Static(Cloth_Static eStatic);
@@ -93,11 +94,9 @@ private:
 	void Init_Hair07(physx::PxClothMeshDesc& pClothMeshDesc, vector<physx::PxVec4>& vertices, CMesh_Static* pStaticMeshCom);
 
 	// 다이나믹 메쉬
-	//void Init_Drape(physx::PxClothMeshDesc& pClothMeshDesc, vector<physx::PxVec4>& vertices);
+	void Init_Drape_01(physx::PxClothMeshDesc& pClothMeshDesc, vector<physx::PxVec4>& vertices);
 	void Init_Gauntlet_01(physx::PxClothMeshDesc& pClothMeshDesc, vector<physx::PxVec4>& vertices);
-	void Init_Gauntlet_02(physx::PxClothMeshDesc& pClothMeshDesc, vector<physx::PxVec4>& vertices);
 	void Init_Gauntlet_03(physx::PxClothMeshDesc& pClothMeshDesc, vector<physx::PxVec4>& vertices);
-	void Init_Gauntlet_04(physx::PxClothMeshDesc& pClothMeshDesc, vector<physx::PxVec4>& vertices);
 	
 	void Init_LongCoat_01(physx::PxClothMeshDesc& pClothMeshDesc, vector<physx::PxVec4>& vertices);
 	void Init_LongCoat_02(physx::PxClothMeshDesc& pClothMeshDesc, vector<physx::PxVec4>& vertices);
@@ -105,7 +104,6 @@ private:
 	
 	void Init_Muffler_01(physx::PxClothMeshDesc& pClothMeshDesc, vector<physx::PxVec4>& vertices);
 	void Init_Muffler_02(physx::PxClothMeshDesc& pClothMeshDesc, vector<physx::PxVec4>& vertices);
-	void Init_Muffler_03(physx::PxClothMeshDesc& pClothMeshDesc, vector<physx::PxVec4>& vertices);
 
 private:
 	physx::PxCloth*			m_pCloth_Static[Static_End] = { 0, };

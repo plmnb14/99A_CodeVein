@@ -149,7 +149,9 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Expend_InfoUI", CExpend_InfoUI::Create(pDevice))))
 		return E_FAIL;
-	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_GeneralStoreBuyUI", CGeneralStoreBuyUI::Create(pDevice))))
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ExpendBuyUI", CExpendBuyUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_MaterialBuyUI", CMaterialBuyUI::Create(pDevice))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_BuyOptionUI", CBuyOptionUI::Create(pDevice))))
 		return E_FAIL;
@@ -157,6 +159,8 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SkillGauge", CSkillGauge::Create(pDevice))))
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_SkillPointUI", CSkillPointUI::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_PurchaseFailUI", CPurchaseFailUI::Create(pDevice))))
 		return E_FAIL;
 	
 	//////////////// Chae
@@ -205,8 +209,18 @@ HRESULT CUI_Manager::Add_UI_Prototype(_Device pDevice)
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon_UpgradeSuccessPopupOption", CWeaponUpgradeSuccessPopupOptionUI::Create(pDevice))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon_UpgradingPopup", CWeaponUpgradingPopup::Create(pDevice))))
+		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_Weapon_UpgradingEff", CWeaponUpgradingEff::Create(pDevice))))
+		return E_FAIL;
+
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_NPC_Interaction", CNPC_InteractionUI::Create(pDevice))))
+		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ShopActionFailedPopup", CShopActionFailedPopup::Create(pDevice))))
 		return E_FAIL;
+	if (FAILED(g_pManagement->Add_Prototype(L"GameObject_ShopItemIcon", CShopItemIcon::Create(pDevice))))
+		return E_FAIL;
+
 	return NOERROR;
 }
 
@@ -218,6 +232,9 @@ HRESULT CUI_Manager::SetUp_UILayer()
 		return E_FAIL;
 	if (FAILED(g_pManagement->Add_Layer(SCENE_STATIC, L"Layer_StaticUI")))
 		return E_FAIL;
+	// 마우스 UI
+	m_pMouseUI = static_cast<CMouseUI*>(g_pManagement->Get_GameObjectBack(L"Layer_MouseUI", SCENE_STATIC));
+
 	// 플레이어 HP
 	m_pPlayerHP = static_cast<CPlayerHP*>(g_pManagement->Clone_GameObject_Return(L"GameObject_PlayerHP", nullptr));
 	g_pManagement->Add_GameOject_ToLayer_NoClone(m_pPlayerHP, SCENE_MORTAL, L"Layer_PlayerUI", nullptr);

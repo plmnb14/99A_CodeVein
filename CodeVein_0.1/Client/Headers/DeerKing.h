@@ -190,6 +190,10 @@ private:
 	_bool				m_bPlayerFriendly = false;		// 플레이어 껀지
 
 private:
+	map<_int, const TCHAR*>	m_mapSound;
+
+
+private:
 	HRESULT Update_Bone_Of_BlackBoard();
 	HRESULT Update_Value_Of_BB();
 
@@ -214,6 +218,7 @@ private:
 	HRESULT Ready_BoneMatrix();
 	HRESULT Ready_Collider();
 	HRESULT Ready_NF(void* pArg);
+	HRESULT Ready_Sound();
 
 public:
 	static CDeerKing* Create(LPDIRECT3DDEVICE9 pGraphic_Device);

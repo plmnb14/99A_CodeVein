@@ -26,6 +26,7 @@ private:
 	virtual void Check_CollisionEvent(list<CGameObject*> plistGameObject);
 
 private:
+	virtual void Play_Deformation() override;
 	HRESULT Add_Component();
 	HRESULT SetUp_ConstantTable();
 	HRESULT Ready_Collider();
@@ -37,18 +38,15 @@ public:
 	virtual void Free();
 
 private:
-	CTransform*			m_pTransformCom = nullptr;
-	CCollider*			m_pCollider = nullptr;
-	CRenderer*			m_pRendererCom = nullptr;
-	CEffect*			m_pBulletBody = nullptr;
+	CEffect*			m_pEffect = nullptr;
 
 	PET_BULLET_TYPE		m_eBulletType = PET_BULLET_TYPE::PET_BULLET_NONE;
 
 	_v3					m_vDir = _v3(0.f, 0.f, 0.f);
+	_v3					m_vAngle = _v3(0.f, 0.f, 0.f);
+
 	_float				m_fSpeed = 0.f;
-
 	_float				m_fEffectOffset = 0.f;
-
 	_double				m_dCurTime = 0;
 	_double				m_dLifeTime = 0;
 

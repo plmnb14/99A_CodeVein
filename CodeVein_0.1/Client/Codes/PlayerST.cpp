@@ -166,13 +166,15 @@ HRESULT CPlayerST::SetUp_ConstantTable(_uint iIndex)
 
 void CPlayerST::SetUp_State(_double TimeDelta)
 {
-	if (m_fPlayerST >= m_fTotalST)
-		m_fPlayerST = m_fTotalST;
+	m_fTotalST = m_pTarget->Get_Target_Param().fStamina_Max;
+	m_fPlayerST = m_pTarget->Get_Target_Param().fStamina_Cur;
+
 	if (m_fPlayerST <= 0.f)
 		m_fPlayerST = 0.f;
+
+	if (m_fPlayerST >= m_fTotalST)
+		m_fPlayerST = m_fTotalST;
 	
-	m_fPlayerST = m_pTarget->Get_Target_Stamina();
-	m_fTotalST = m_pTarget->Get_Target_Param().fStamina_Max;
 
 	// Texture UV 흐르는 속도
 	m_fSpeed += 0.f;

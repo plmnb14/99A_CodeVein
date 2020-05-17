@@ -23,7 +23,6 @@ private:
 
 public:
 	void	Set_Active(_bool bIsActive);
-	void	Set_Fade(_bool bIsActive);
 	void	Set_PopupType(POPUP_TYPE eType);
 
 public:

@@ -34,6 +34,8 @@ private:
 	void					Click_SubUI();
 	void					Search_Regist_Skill();
 	void					Reset_Select_Slot();
+	void					Regist_Slot_Sound(_uint iIdx);
+	void					UnRegist_Slot_Sound(_uint iIdx);
 
 public:
 	void Add_Skill_Data(Skill_ID eSkillID);

@@ -117,7 +117,7 @@ _int CFireSphere::Late_Update_GameObject(_double TimeDelta)
 	return NOERROR;
 }
 
-HRESULT CFireSphere::Render_GameObject()
+HRESULT CFireSphere::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
 	Update_Collider();
 	Draw_Collider();

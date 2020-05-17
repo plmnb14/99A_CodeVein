@@ -21,6 +21,7 @@ private:
 public:
 	BUTTON_TYPE Get_Option() { return m_eOption; }
 	_int		Get_Count() { return m_iCount; }
+	_bool		Get_Select() { return m_bIsSelect; }
 public:
 	void		Set_IsSell(_bool bSell) { m_bSell = bSell; }
 public:

@@ -8,6 +8,7 @@ class CPlayerFontUI;
 class CWeapon_Inven_InShop;
 class CWeaponShopUI;
 class CStatusUI;
+class CShopItemIcon;
 class CWeaponBuyUI final : public CUI
 {
 public:
@@ -75,6 +76,7 @@ private:
 	CStatusUI*				m_pStatusUI = nullptr;
 	CWeapon_Inven_InShop*	m_pInven = nullptr;
 	CWeaponShopUI*			m_pParent = nullptr;
+	CShopItemIcon*			m_pShopItemIcon = nullptr;
 
 	CPlayerFontUI*			m_pFontDamage = nullptr;
 	CPlayerFontUI*			m_pMyHazeCnt = nullptr;

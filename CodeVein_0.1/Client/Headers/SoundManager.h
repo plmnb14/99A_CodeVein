@@ -15,14 +15,18 @@ public:
 	Ambient_01, Ambient_02, Ambient_03,
 	Background_01, Background_02,
 	//===============================================================
-	Genji_SFX_01, Genji_SFX_02, Genji_Voice,
+
+	GunGenji_SFX_01, GunGenji_SFX_02, GunGenji_Voice,
+	SwordGenji_SFX_01, SwordGenji_SFX_02, SwordGenji_Voice,
+	SwordShieldGenji_SFX_01, SwordShieldGenji_SFX_02, SwordShieldGenji_Voice,
+	Cocoon_SFX_01, Cocoon_SFX_02, Cocoon_Voice,
+	Hunter_SFX_01, Hunter_SFX_02, Hunter_Voice,
+	Monkey_SFX_01, Monkey_SFX_02, Monkey_Voice,
+	ThaiMan_SFX_01, ThaiMan_SFX_02, ThaiMan_Voice,
+	Urchin_SFX_01, Urchin_SFX_02, Urchin_Voice,
 	Wolf_SFX_01, Wolf_SFX_02, Wolf_Voice,
 	Yacha_SFX_01, Yacha_SFX_02, Yacha_Voice,
-	Cocoon_SFX_01, Cocoon_SFX_02, Cocoon_Voice,
-	Monkey_SFX_01, Monkey_SFX_02, Monkey_Voice,
-	Hunter_SFX_01, Hunter_SFX_02, Hunter_Voice,
 	Yeti_SFX_01, Yeti_SFX_02, Yeti_Voice,
-	SpikeBall_SFX_01, SpikeBall_SFX_02, SpikeBall_Voice,
 	//===============================================================
 	Butterfly_SFX_01, Butterfly_SFX_02, ButterFly_Voice,
 	DearKing_SFX_01, DearKing_SFX_02, DearKing_Voice,
@@ -42,9 +46,30 @@ public:
 	//===============================================================
 	Obj_SFX_01, Obj_SFX_02, Obj_SFX_03,
 	//===============================================================
-	UI_SFX_01, UI_SFX_02, UI_SFX_03,
+	UI_SFX_01, UI_SFX_02, UI_SFX_03, Inven_Icon_Expend, Inven_Icon_Material,
+	Inven_Icon_Weapon, Inven_Icon_All, Inven_Icon_Armor, Total_Inven_All, Total_Inven_Pet,
+	Inven_Icon_Exit, Inven_Expend_Slot, Inven_Mtrl_Slot, Inven_Weapon_Slot, Inven_Armor_Slot,
+	Total_Skill_Slot01, Total_Skill_Slot02, Total_Skill_Slot03, Total_Skill_Slot04,
+	Total_Skill_Slot05, Total_Skill_Slot06, Total_Skill_Slot07, Total_Skill_Slot08,
+	Total_Inven_Exit,
+	SkillInven_Regist_Slot01, SkillInven_Regist_Slot02, SkillInven_Regist_Slot03, SkillInven_Regist_Slot04,
+	SkillInven_Regist_Slot05, SkillInven_Regist_Slot06, SkillInven_Regist_Slot07, SkillInven_Regist_Slot08,
+	SkillInven_Regist_Slot09, SkillInven_Regist_Slot10, SkillInven_Regist_Slot11, SkillInven_Regist_Slot12,
+	SkillInven_Regist_Slot13, SkillInven_Regist_Slot14, SkillInven_Regist_Slot15, SkillInven_Regist_Slot16,
+	SkillInven_UnRegist_Slot01, SkillInven_UnRegist_Slot02, SkillInven_UnRegist_Slot03, SkillInven_UnRegist_Slot04,
+	SkillInven_UnRegist_Slot05, SkillInven_UnRegist_Slot06, SkillInven_UnRegist_Slot07, SkillInven_UnRegist_Slot08,
+	SkillInven_UnRegist_Slot09, SkillInven_UnRegist_Slot10, SkillInven_UnRegist_Slot11, SkillInven_UnRegist_Slot12,
+	SkillInven_UnRegist_Slot13, SkillInven_UnRegist_Slot14, SkillInven_UnRegist_Slot15, SkillInven_UnRegist_Slot16,
+	Skill_Inven_Exit,
+	QuickSlot_Use_Item,
+	ExpendInven_Regist_Slot01, ExpendInven_Regist_Slot02, ExpendInven_Regist_Slot03, ExpendInven_Regist_Slot04,
+	ExpendInven_Regist_Slot05, ExpendInven_Regist_Slot06, ExpendInven_Regist_Slot07, ExpendInven_Regist_Slot08,
+	ExpendInven_UnRegist_Slot01, ExpendInven_UnRegist_Slot02, ExpendInven_UnRegist_Slot03, ExpendInven_UnRegist_Slot04,
+	ExpendInven_UnRegist_Slot05, ExpendInven_UnRegist_Slot06, ExpendInven_UnRegist_Slot07, ExpendInven_UnRegist_Slot08,
+	WeaponInven_Regist_Slot01, WeaponInven_Regist_Slot02, WeaponInven_UnRegist_Slot01, WeaponInven_UnRegist_Slot02,
+	ArmorInven_Regist_Slot, ArmorInven_UnRegist_Slot,
 	//===============================================================
-	MAX_CHANNEL
+		MAX_CHANNEL
 	};
 
 public:
@@ -98,17 +123,17 @@ private:
 	map<TCHAR*, FMOD_SOUND*> m_mapSound;
 
 	// 재생하고 있는 사운드를 관리할 객체 
-	FMOD_CHANNEL* m_pChannelArr[MAX_CHANNEL];
+	FMOD_CHANNEL* m_pChannelArr[MAX_CHANNEL] = { nullptr, };
 
-	FMOD_CHANNELGROUP* m_pChannelGroup[3];
+	FMOD_CHANNELGROUP* m_pChannelGroup[3] = { nullptr, };
 
-	FMOD_CHANNELGROUP* m_pMasterChannelGroup;
+	FMOD_CHANNELGROUP* m_pMasterChannelGroup = nullptr;
 
 	//사운드, 채널 객체 및 장치를 관리할 객체. 
 	FMOD_SYSTEM* m_pSystem = nullptr;
 
-	_float m_fVolumeChannel[End_Sound] = {};		// 음량
-	_float m_fPitchChannel[End_Sound] = {};		// 재생 속도
+	_float m_fVolumeChannel[End_Sound] = {0.f, };		// 음량
+	_float m_fPitchChannel[End_Sound] = {0.f, };		// 재생 속도
 
 private:
 	_ulong	m_dwSoundCnt_Cur = 0;

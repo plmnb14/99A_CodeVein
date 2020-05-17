@@ -31,10 +31,8 @@ HRESULT CArmor_Slot::Ready_GameObject(void * pArg)
 
 	m_bIsActive = false;
 
-	m_tArmorParam.iArmorType = ARMOR_End;
-	m_tArmorParam.fDef = 0.f;
-	m_tArmorParam.iPrice = 0;
-
+	Init_Param();
+	
 	return NOERROR;
 }
 
@@ -51,27 +49,11 @@ _int CArmor_Slot::Update_GameObject(_double TimeDelta)
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);
 
 	
-	switch (m_tArmorParam.iArmorType)
-	{
-	/*case ARMOR_Drape:
-		m_iIndex = 3;
-		break;*/
-	case ARMOR_Gauntlet:
-		m_iIndex = 4;
-		break;
-	case ARMOR_LongCoat:
-		m_iIndex = 5;
-		break;
-	case ARMOR_Muffler:
-		m_iIndex = 6;
-		break;
-	case ARMOR_End:
-		m_iIndex = 7;
-		break;
-	}
-
+	SetUp_SlotTexIdx();
+	
 	m_bIsCollMouse = Pt_InRect();
 
+	
 	return NO_EVENT;
 }
 
@@ -207,8 +189,13 @@ _bool CArmor_Slot::Pt_InRect()
 void CArmor_Slot::Init_Param()
 {
 	m_tArmorParam.iArmorType = ARMOR_End;
+	m_tArmorParam.iArmorName = ArmorAll_END;
+	m_tArmorParam.fHP = 0.f;
 	m_tArmorParam.fDef = 0.f;
+	m_tArmorParam.fPlusDef = 0.f;
+	m_tArmorParam.fPlusHP = 0.f;
 	m_tArmorParam.iPrice = 0;
+	m_tArmorParam.iReinforce = 0;
 }
 
 ARMOR_PARAM CArmor_Slot::Get_ArmorParam()
@@ -263,6 +250,46 @@ HRESULT CArmor_Slot::SetUp_ConstantTable(_uint iIndex)
 void CArmor_Slot::SetUp_Default()
 {
 	
+}
+
+void CArmor_Slot::SetUp_SlotTexIdx()
+{
+	switch (m_tArmorParam.iArmorName)
+	{
+	case ArmorAll_Gauntlet_DarkNightHook:		// 암야의 갈고리
+		m_iIndex = 4;
+		break;
+	case ArmorAll_Gauntlet_NovelSilver:		// 노블 실버
+		m_iIndex = 5;
+		break;
+	case ArmorAll_Gauntlet_MangSikHook:		// 망식의 갈고리
+		m_iIndex = 6;
+		break;
+	case ArmorAll_Gauntlet_QueenKiller:	// 퀸 킬러(여왕 토벌대 아장)_발톱형
+		m_iIndex = 7;
+		break;
+	case ArmorAll_LongCoat_DarkNightSpear:	// 암야의 돌격창
+		m_iIndex = 8;
+		break;
+	case ArmorAll_LongCoat_WhiteSilver:		// 백은의 의장
+		m_iIndex = 9;
+		break;
+	case ArmorAll_LongCoat_QueenKiller:	// 퀸 킬러(여왕 토벌대 아장)_가시형
+		m_iIndex = 10;
+		break;
+	case ArmorAll_Muffler_DarkNightSpike:	// 암야의 가시
+		m_iIndex = 11;
+		break;
+	case ArmorAll_Muffler_WhiteGraze:		// 화이트 그레이즈
+		m_iIndex = 12;
+		break;
+	case ArmorAll_Muffler_Suiside:			// 수어사이드 쏜
+		m_iIndex = 13;
+		break;
+	case ArmorAll_END:
+		m_iIndex = 3;
+		break;
+	}
 }
 
 CArmor_Slot * CArmor_Slot::Create(_Device pGraphic_Device)

@@ -119,7 +119,7 @@ _int CYetiBullet::Late_Update_GameObject(_double TimeDelta)
 	return NO_EVENT;
 }
 
-HRESULT CYetiBullet::Render_GameObject()
+HRESULT CYetiBullet::Render_GameObject_Instancing_SetPass(CShader * pShader)
 {
 	Update_Collider();
 	Render_Collider();

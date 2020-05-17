@@ -411,13 +411,14 @@ void CMonkey::Check_Dist()
 		MONSTER_STATE_TYPE::DEAD == m_eFirstCategory)
 		return;
 
-	if (true == m_bIsCombo ||
+		Function_Find_Target();
+
+	if (true == m_bIsIdle ||
+		true == m_bIsCombo ||
 		true == m_tObjParam.bIsAttack ||
 		true == m_tObjParam.bIsDodge ||
 		true == m_tObjParam.bIsHit)
 		return;
-
-		Function_Find_Target();
 
 	if (nullptr == m_pAggroTarget)
 	{
@@ -425,15 +426,24 @@ void CMonkey::Check_Dist()
 
 		m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
 
-		if (false == m_bIsIdle)
+		if (true == m_bCanIdle)
 		{
-			switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_SIT))
+			m_bCanIdle = false;
+
+			switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
 			{
 			case MONSTER_IDLE_TYPE::IDLE_IDLE:
+			case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+			case MONSTER_IDLE_TYPE::IDLE_EAT:
 				m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
+				m_eState = MONKEY_ANI::Idle;
 				break;
+			case MONSTER_IDLE_TYPE::IDLE_LURK:
+			case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
 			case MONSTER_IDLE_TYPE::IDLE_SIT:
+			case MONSTER_IDLE_TYPE::IDLE_STAND:
 				m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
+				m_eState = MONKEY_ANI::NF_Sit;
 				break;
 			}
 		}
@@ -486,12 +496,14 @@ void CMonkey::Check_Dist()
 				case MONSTER_IDLE_TYPE::IDLE_CROUCH:
 				case MONSTER_IDLE_TYPE::IDLE_EAT:
 					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
+					m_eState = MONKEY_ANI::Idle;
 					break;
 				case MONSTER_IDLE_TYPE::IDLE_LURK:
 				case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
 				case MONSTER_IDLE_TYPE::IDLE_SIT:
 				case MONSTER_IDLE_TYPE::IDLE_STAND:
 					m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
+					m_eState = MONKEY_ANI::NF_Sit;
 					break;
 				}
 			}
@@ -533,7 +545,6 @@ void CMonkey::Check_AniEvent()
 				m_bIsCombo = true;
 				break;
 			}
-
 			return;
 		}
 		else
@@ -708,6 +719,42 @@ void CMonkey::Play_FangShot()
 			memcpy(vBirth, &matBone._41, sizeof(_v3));
 			CObjectPool_Manager::Get_Instance()->Create_Object(L"Monster_MonkeyBullet", &BULLET_INFO(vBirth, m_pTransformCom->Get_Axis(AXIS_Z), 15.f, 1.5));
 		}
+		else if (2.5f <= AniTime)
+		{
+			if (false == m_bEventTrigger[0])
+			{
+				m_bEventTrigger[0] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice0.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice1.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice2.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice3.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice4.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice5.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice6.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 		else if (0.f <= AniTime)
 		{
 			if (nullptr == m_pAggroTarget)
@@ -798,6 +845,62 @@ void CMonkey::Play_Jump_RotBody()
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_SFX_01);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing0.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing1.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing2.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		else if (1.4f <= AniTime)
+		{
+			if (false == m_bEventTrigger[4])
+			{
+				m_bEventTrigger[4] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice0.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice1.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice2.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice3.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice4.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice5.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice6.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -856,7 +959,43 @@ void CMonkey::Play_JumpLHand()
 				m_tObjParam.bSuperArmor = true;
 			}
 		}
+		else if (3.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[4])
+			{
+				m_bEventTrigger[4] = true;
 
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice0.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice1.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice2.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice3.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice4.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice5.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice6.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		
 		if (2.433f < AniTime && 3.233f > AniTime)
 		{
 			if (false == m_bEventTrigger[3])
@@ -919,6 +1058,62 @@ void CMonkey::Play_JumpDown()
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_SFX_01);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing0.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing1.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing2.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		else if (2.5f <= AniTime)
+		{
+			if (false == m_bEventTrigger[4])
+			{
+				m_bEventTrigger[4] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice0.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice1.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice2.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice3.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice4.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice5.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice6.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -984,6 +1179,62 @@ void CMonkey::Play_RDiagonal()
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_SFX_01);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing0.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing1.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing2.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		else if (1.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[4])
+			{
+				m_bEventTrigger[4] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice0.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice1.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice2.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice3.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice4.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice5.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice6.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -1048,6 +1299,62 @@ void CMonkey::Play_Atk_RotBody()
 				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_SFX_01);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing0.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing1.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing2.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		else if (0.8f <= AniTime)
+		{
+			if (false == m_bEventTrigger[4])
+			{
+				m_bEventTrigger[4] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice0.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice1.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice2.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice3.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice4.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice5.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice6.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -1107,6 +1414,62 @@ void CMonkey::Play_Combo_Normal()
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_SFX_01);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing0.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing1.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing2.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		else if (1.f <= AniTime)
+		{
+			if (false == m_bEventTrigger[8])
+			{
+				m_bEventTrigger[8] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice0.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice1.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice2.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice3.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice4.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice5.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice6.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -1159,6 +1522,62 @@ void CMonkey::Play_Combo_Normal()
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_SFX_01);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing0.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing1.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing2.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		else if (0.8f <= AniTime)
+		{
+			if (false == m_bEventTrigger[9])
+			{
+				m_bEventTrigger[9] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice0.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice1.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice2.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice3.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice4.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice5.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice6.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -1218,6 +1637,62 @@ void CMonkey::Play_Combo_Jump_Clock()
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_SFX_01);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing0.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing1.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing2.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		else if (1.5f <= AniTime)
+		{
+			if (false == m_bEventTrigger[8])
+			{
+				m_bEventTrigger[8] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice0.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice1.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice2.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice3.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice4.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice5.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice6.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -1270,6 +1745,62 @@ void CMonkey::Play_Combo_Jump_Clock()
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_SFX_01);
+
+				m_iRandom = CALC::Random_Num(0, 3);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing0.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing1.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing2.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monster_Blade_Swing3.ogg", CSoundManager::Monkey_SFX_01, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
+		else if (0.8f <= AniTime)
+		{
+			if (false == m_bEventTrigger[9])
+			{
+				m_bEventTrigger[9] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice0.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice1.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice2.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice3.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice4.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice5.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice6.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
@@ -1304,6 +1835,42 @@ void CMonkey::Play_Combo_RunAtk()
 
 			return;
 		}
+		else if (m_pMeshCom->Is_Finish_Animation(0.3f))
+		{
+			if (false == m_bEventTrigger[5])
+			{
+				m_bEventTrigger[5] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice0.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice1.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice2.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice3.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice4.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice5.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice6.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+		}
 
 		if (0.600f < AniTime)
 		{
@@ -1329,12 +1896,41 @@ void CMonkey::Play_Combo_RunAtk()
 			return;
 		}
 
-		if (false == m_bEventTrigger[5])
+		if (false == m_bEventTrigger[6])
 		{
-			m_bEventTrigger[5] = true;
+			m_bEventTrigger[6] = true;
 			m_fSkillMoveSpeed_Cur = 6.f;
 			m_fSkillMoveAccel_Cur = 0.f;
 			m_fSkillMoveMultiply = 0.0f;
+
+			g_pSoundManager->Stop_Sound(CSoundManager::Monkey_Voice);
+
+			m_iRandom = CALC::Random_Num(0, 6);
+
+			switch (m_iRandom)
+			{
+			case 0:
+				g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice0.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+				break;
+			case 1:
+				g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice1.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+				break;
+			case 2:
+				g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice2.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+				break;
+			case 3:
+				g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice3.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+				break;
+			case 4:
+				g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice4.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+				break;
+			case 5:
+				g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice5.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+				break;
+			case 6:
+				g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice6.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+				break;
+			}
 		}
 
 		Function_Movement(m_fSkillMoveSpeed_Cur, m_pTransformCom->Get_Axis(AXIS_Z));
@@ -1352,37 +1948,66 @@ void CMonkey::Play_Combo_RunAtk()
 		}
 		else if (1.167f < AniTime)
 		{
-			if (false == m_bEventTrigger[4])
+			if (false == m_bEventTrigger[1])
 			{
-				m_bEventTrigger[4] = true;
+				m_bEventTrigger[1] = true;
 				m_pWeapon->Set_Enable_Trail(false);
 			}
 		}
 		else if (0.867f < AniTime)
 		{
-			if (false == m_bEventTrigger[1])
+			if (false == m_bEventTrigger[2])
 			{
-				m_bEventTrigger[1] = true;
+				m_bEventTrigger[2] = true;
 				m_pWeapon->Set_Target_CanAttack(false);
 				m_tObjParam.bSuperArmor = false;
 			}
 		}
 		else if (0.467f < AniTime)
 		{
-			if (false == m_bEventTrigger[2])
+			if (false == m_bEventTrigger[3])
 			{
-				m_bEventTrigger[2] = true;
+				m_bEventTrigger[3] = true;
 				m_pWeapon->Set_Target_CanAttack(true);
 				m_pWeapon->Set_Enable_Trail(true);
 				m_tObjParam.bSuperArmor = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 6);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice0.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice1.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice2.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 3:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice3.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 4:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice4.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 5:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice5.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 6:
+					g_pSoundManager->Play_Sound(L"Monkey_Atk_Voice6.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
 			}
 		}
 
 		if (0.267f < AniTime && 0.800f > AniTime)
 		{
-			if (false == m_bEventTrigger[3])
+			if (false == m_bEventTrigger[4])
 			{
-				m_bEventTrigger[3] = true;
+				m_bEventTrigger[4] = true;
 				m_fSkillMoveSpeed_Cur = 10.f;
 				m_fSkillMoveAccel_Cur = 1.f;
 				m_fSkillMoveMultiply = 0.2f;
@@ -1401,56 +2026,64 @@ void CMonkey::Play_Idle()
 	switch (m_eSecondCategory_IDLE)
 	{
 	case MONSTER_IDLE_TYPE::IDLE_IDLE:
-		if (true == m_bInRecognitionRange)
+		if (nullptr != m_pAggroTarget)
 		{
-			m_bIsIdle = false;
-
-			if (true == m_tObjParam.bCanAttack)
+			if (true == m_bInRecognitionRange)
 			{
-				m_eState = MONKEY_ANI::Idle;
-			}
-			else
-			{
+				m_bIsIdle = false;
 
-				if (nullptr == m_pAggroTarget)
+				if (true == m_tObjParam.bCanAttack)
 				{
-					Function_Find_Target();
+					m_eState = MONKEY_ANI::Idle;
+				}
+				else
+				{
 
 					if (nullptr == m_pAggroTarget)
 					{
-						Function_ResetAfterAtk();
-						m_fCoolDownMax = 0.f;
-						m_fCoolDownCur = 0.f;
-						m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+						Function_Find_Target();
 
-						if (false == m_bIsIdle)
+						if (nullptr == m_pAggroTarget)
 						{
-							switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
+							Function_ResetAfterAtk();
+							m_fCoolDownMax = 0.f;
+							m_fCoolDownCur = 0.f;
+							m_eFirstCategory = MONSTER_STATE_TYPE::IDLE;
+
+							if (false == m_bIsIdle)
 							{
-							case MONSTER_IDLE_TYPE::IDLE_IDLE:
-							case MONSTER_IDLE_TYPE::IDLE_CROUCH:
-							case MONSTER_IDLE_TYPE::IDLE_EAT:
-								m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
-								break;
-							case MONSTER_IDLE_TYPE::IDLE_LURK:
-							case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
-							case MONSTER_IDLE_TYPE::IDLE_SIT:
-							case MONSTER_IDLE_TYPE::IDLE_STAND:
-								m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
-								break;
+								switch (CALC::Random_Num(MONSTER_IDLE_TYPE::IDLE_IDLE, MONSTER_IDLE_TYPE::IDLE_STAND))
+								{
+								case MONSTER_IDLE_TYPE::IDLE_IDLE:
+								case MONSTER_IDLE_TYPE::IDLE_CROUCH:
+								case MONSTER_IDLE_TYPE::IDLE_EAT:
+									m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_IDLE;
+									break;
+								case MONSTER_IDLE_TYPE::IDLE_LURK:
+								case MONSTER_IDLE_TYPE::IDLE_SCRATCH:
+								case MONSTER_IDLE_TYPE::IDLE_SIT:
+								case MONSTER_IDLE_TYPE::IDLE_STAND:
+									m_eSecondCategory_IDLE = MONSTER_IDLE_TYPE::IDLE_SIT;
+									break;
+								}
 							}
+
+							Play_Idle();
+
+							return;
 						}
-
-						Play_Idle();
-
-						return;
+						else
+							Function_RotateBody(m_pAggroTarget);
 					}
 					else
 						Function_RotateBody(m_pAggroTarget);
-				}
-				else
-					Function_RotateBody(m_pAggroTarget);
 
+					m_eState = MONKEY_ANI::Idle;
+				}
+			}
+			else
+			{
+				m_bIsIdle = true;
 				m_eState = MONKEY_ANI::Idle;
 			}
 		}
@@ -1460,24 +2093,33 @@ void CMonkey::Play_Idle()
 			m_eState = MONKEY_ANI::Idle;
 		}
 		break;
+
 	case MONSTER_IDLE_TYPE::IDLE_SIT:
-		if (true == m_bInRecognitionRange)
+		if (nullptr != m_pAggroTarget)
 		{
-			if (MONKEY_ANI::NF_Sit == m_eState)
+			if (true == m_bInRecognitionRange)
+			{
+				if (MONKEY_ANI::NF_Sit == m_eState)
+				{
+					m_bIsIdle = true;
+
+					if (m_pMeshCom->Is_Finish_Animation(0.5f))
+						m_eState = MONKEY_ANI::NF_Sit_End;
+				}
+				else if (MONKEY_ANI::NF_Sit_End == m_eState)
+				{
+					if (m_pMeshCom->Is_Finish_Animation(0.95f))
+					{
+						m_bCanIdle = true;
+						m_bIsIdle = false;
+						m_eState = MONKEY_ANI::Idle;
+					}
+				}
+			}
+			else
 			{
 				m_bIsIdle = true;
-
-				if (m_pMeshCom->Is_Finish_Animation(0.5f))
-					m_eState = MONKEY_ANI::NF_Sit_End;
-			}
-			else if (MONKEY_ANI::NF_Sit_End == m_eState)
-			{
-				if (m_pMeshCom->Is_Finish_Animation(0.95f))
-				{
-					m_bCanIdle = true;
-					m_bIsIdle = false;
-					m_eState = MONKEY_ANI::Idle;
-				}
+				m_eState = MONKEY_ANI::NF_Sit;
 			}
 		}
 		else
@@ -1685,6 +2327,28 @@ void CMonkey::Play_Hit()
 		}
 		else if (m_pMeshCom->Is_Finish_Animation(0.2f))
 		{
+			if (false == m_bEventTrigger[0])
+			{
+				m_bEventTrigger[0] = true;
+
+				g_pSoundManager->Stop_Sound(CSoundManager::Monkey_Voice);
+
+				m_iRandom = CALC::Random_Num(0, 2);
+
+				switch (m_iRandom)
+				{
+				case 0:
+					g_pSoundManager->Play_Sound(L"Monkey_Hit0.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 1:
+					g_pSoundManager->Play_Sound(L"Monkey_Hit1.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				case 2:
+					g_pSoundManager->Play_Sound(L"Monkey_Hit2.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+					break;
+				}
+			}
+
 			if (false == m_tObjParam.bCanHit)
 			{
 				m_tObjParam.bCanHit = true;
@@ -1749,6 +2413,30 @@ void CMonkey::Play_Dead()
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
+			else if (2.9f <= AniTime)
+			{
+				if (false == m_bEventTrigger[1])
+				{
+					m_bEventTrigger[1] = true;
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Monkey_Voice);
+
+					m_iRandom = CALC::Random_Num(0, 2);
+
+					switch (m_iRandom)
+					{
+					case 0:
+						g_pSoundManager->Play_Sound(L"Monkey_Death0.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+						break;
+					case 1:
+						g_pSoundManager->Play_Sound(L"Monkey_Death1.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+						break;
+					case 2:
+						g_pSoundManager->Play_Sound(L"Monkey_Death2.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+						break;
+					}
+				}
+			}
 			break;
 
 		case MONKEY_ANI::Death_F:
@@ -1770,6 +2458,30 @@ void CMonkey::Play_Dead()
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
 				}
 			}
+			else if (2.8f <= AniTime)
+			{
+				if (false == m_bEventTrigger[1])
+				{
+					m_bEventTrigger[1] = true;
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Monkey_Voice);
+
+					m_iRandom = CALC::Random_Num(0, 2);
+
+					switch (m_iRandom)
+					{
+					case 0:
+						g_pSoundManager->Play_Sound(L"Monkey_Death0.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+						break;
+					case 1:
+						g_pSoundManager->Play_Sound(L"Monkey_Death1.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+						break;
+					case 2:
+						g_pSoundManager->Play_Sound(L"Monkey_Death2.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+						break;
+					}
+				}
+			}
 			break;
 
 		case MONKEY_ANI::Death_B:
@@ -1789,6 +2501,30 @@ void CMonkey::Play_Dead()
 					m_fDeadEffect_Delay = 0.f;
 
 					CObjectPool_Manager::Get_Instance()->Create_Object(L"GameObject_Haze", (void*)&CHaze::HAZE_INFO(100.f, m_pTransformCom->Get_Pos(), 0.f));
+				}
+			}
+			else if (2.5f <= AniTime)
+			{
+				if (false == m_bEventTrigger[1])
+				{
+					m_bEventTrigger[1] = true;
+
+					g_pSoundManager->Stop_Sound(CSoundManager::Monkey_Voice);
+
+					m_iRandom = CALC::Random_Num(0, 2);
+
+					switch (m_iRandom)
+					{
+					case 0:
+						g_pSoundManager->Play_Sound(L"Monkey_Death0.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+						break;
+					case 1:
+						g_pSoundManager->Play_Sound(L"Monkey_Death1.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+						break;
+					case 2:
+						g_pSoundManager->Play_Sound(L"Monkey_Death2.ogg", CSoundManager::Monkey_Voice, CSoundManager::Effect_Sound);
+						break;
+					}
 				}
 			}
 			break;

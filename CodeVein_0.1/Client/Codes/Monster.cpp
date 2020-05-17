@@ -16,6 +16,11 @@ HRESULT CMonster::LateInit_GameObject()
 	return S_OK;
 }
 
+HRESULT CMonster::Render_GameObject()
+{
+	return S_OK;
+}
+
 HRESULT CMonster::Render_GameObject_SetShader(CShader * pShader)
 {
 	return S_OK;

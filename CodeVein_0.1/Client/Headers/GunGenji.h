@@ -161,6 +161,10 @@ private:	// 최초상태 세팅
 	_float				m_fMaxLength = 0.f;
 	_float				m_fMinLength = 0.f;
 
+private:
+	map<_int, const TCHAR*>	m_mapSound;
+
+
 private: // For Effect
 	_float			m_fDeadEffect_Delay = 0.f;
 	_float			m_fDeadEffect_Offset = 0.f;
@@ -190,6 +194,7 @@ private:
 	HRESULT Ready_BoneMatrix();
 	HRESULT Ready_Collider();
 	HRESULT Ready_NF(void* pArg);
+	HRESULT Ready_Sound();
 
 private:
 	void Check_Execution();
