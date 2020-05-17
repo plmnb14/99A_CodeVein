@@ -53,6 +53,7 @@ _int CArmor_Slot::Update_GameObject(_double TimeDelta)
 	
 	m_bIsCollMouse = Pt_InRect();
 
+	
 	return NO_EVENT;
 }
 

@@ -1358,6 +1358,7 @@ _uint CLoading::Loading_Title()
 	// »ç¿îµå
 	//============================================================================================================
 	g_pSoundManager->Load_Directory_SouneFile_W(L"BGM");
+	g_pSoundManager->Load_Directory_SouneFile_W(L"UI");
 	//============================================================================================================
 	// ¿Ê
 	//============================================================================================================
@@ -1393,7 +1394,7 @@ _uint CLoading::Loading_Title()
 	cout << "-------------------------------------------------------------------------------" << endl;
 
 	//g_pSoundManager->Stop_Sound(CSoundManager::Background_01);
-	//g_pSoundManager->Play_Sound(L"Title_Intro_02.wav", CSoundManager::Background_01, CSoundManager::Master_Sound);
+	//g_pSoundManager->Play_Sound(L"Title_Intro_02.wav", CSoundManager::Background_01, CSoundManager::BGM_Sound);
 	//g_pSoundManager->Play_Sound(L"Gwan_Cchak.wav", CSoundManager::Background_01, CSoundManager::BGM_Sound);
 	//g_pSoundManager->Play_BGM(L"Gwan_Cchak.wav");
 

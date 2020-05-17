@@ -240,13 +240,17 @@ void CArmor_Inven::Click_Inven()
 			Reset_SelectSlot();
 			pSlot->Set_Select(true);
 			m_tRegistParam = pSlot->Get_ArmorParam();
+
+			g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::ArmorInven_Regist_Slot, CSoundManager::Ambient_Sound);
 		}
 		else if (pSlot->Pt_InRect() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
-		{
+		{		
 			pSlot->Set_Select(false);
 			m_tRegistParam = {};
 			m_tRegistParam.iArmorType = ARMOR_End;
 			m_tRegistParam.iArmorName = ArmorAll_END;
+
+			g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::ArmorInven_UnRegist_Slot, CSoundManager::Ambient_Sound);
 		}
 	}
 }

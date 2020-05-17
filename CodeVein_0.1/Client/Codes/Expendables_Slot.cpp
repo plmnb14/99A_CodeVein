@@ -45,8 +45,6 @@ _int CExpendables_Slot::Update_GameObject(_double TimeDelta)
 	if (m_bIsDead)
 		return DEAD_OBJ;
 
-	
-	
 	m_pRendererCom->Add_RenderList(RENDER_UI, this);
 
 	D3DXMatrixOrthoLH(&m_matProj, WINCX, WINCY, 0.f, 1.f);

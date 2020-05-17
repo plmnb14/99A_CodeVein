@@ -35,6 +35,8 @@ private:
 	void					SetUp_Default();
 	void					Add_Slot();
 	void					Delete_QuickSlot(CExpendables_Slot* pSlot);
+	void					Slot_Regist_Sound(_uint iIdx);
+	void					Slot_UnRegist_Sound(_uint iIdx);
 
 public:
 	void Add_Expendables(CExpendables::EXPEND_TYPE eType); // 해당 타입의 소비 아이템 획득

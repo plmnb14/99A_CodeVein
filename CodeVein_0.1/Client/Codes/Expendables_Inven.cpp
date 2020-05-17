@@ -131,7 +131,6 @@ HRESULT CExpendables_Inven::Render_GameObject()
 
 	m_pShaderCom->Begin_Pass(1);
 
-	
 	m_pBufferCom->Render_VIBuffer();
 
 	m_pShaderCom->End_Pass();
@@ -189,6 +188,7 @@ void CExpendables_Inven::Click_Inven()
 	if (!m_bIsActive)
 		return;
 
+	_uint iIdx = 0;
 	for (auto& pExpendSlot : m_vecSlot)
 	{
 		if (pExpendSlot->Pt_InRect() && pExpendSlot->Get_Type() != CExpendables::EXPEND_END)
@@ -205,17 +205,20 @@ void CExpendables_Inven::Click_Inven()
 			{
 				if (m_vecQuickSlot.size() == 8)
 					return;
-				pExpendSlot->Set_Select(true);
-				
+				pExpendSlot->Set_Select(true);			
 				m_vecQuickSlot.push_back(pExpendSlot);
+				
+				Slot_Regist_Sound(iIdx);
 			}
 			else if(pExpendSlot->Get_Select() && g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_RB))
 			{
-				pExpendSlot->Set_Select(false);
-				
+				pExpendSlot->Set_Select(false);				
 				Delete_QuickSlot(pExpendSlot);
+
+				Slot_UnRegist_Sound(iIdx);
 			}
 		}
+		iIdx++;
 	}
 }
 
@@ -269,6 +272,24 @@ void CExpendables_Inven::Delete_QuickSlot(CExpendables_Slot* pSlot)
 		}	
 	}
 	return;
+}
+
+void CExpendables_Inven::Slot_Regist_Sound(_uint iIdx)
+{
+	if (iIdx >= 30)
+		return;
+	_uint iChannel = CSoundManager::CHANNELID::ExpendInven_Regist_Slot01 + iIdx;
+
+	g_pSoundManager->Play_Sound(L"UI_CommonHover.wav", CSoundManager::CHANNELID(iChannel), CSoundManager::Ambient_Sound);
+}
+
+void CExpendables_Inven::Slot_UnRegist_Sound(_uint iIdx)
+{
+	if (iIdx >= 30)
+		return;
+	_uint iChannel = CSoundManager::CHANNELID::ExpendInven_UnRegist_Slot01 + iIdx;
+
+	g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::CHANNELID(iChannel), CSoundManager::Ambient_Sound);
 }
 
 void CExpendables_Inven::Use_Expendableas(CExpendables_Slot * pSlot)

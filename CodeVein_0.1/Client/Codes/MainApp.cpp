@@ -44,7 +44,7 @@ _int CMainApp::Update_MainApp(_double TimeDelta)
 	CObjectPool_Manager::Get_Instance()->Update_ObjectPool(TimeDelta);
 	CObjectPool_Manager::Get_Instance()->LateUpdate_ObjectPool(TimeDelta);
 
-	g_pSoundManager->Update_SoundManager();
+	//g_pSoundManager->Update_SoundManager();
 
 	return g_pManagement->Update_Management(TimeDelta);
 }	

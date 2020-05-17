@@ -45,6 +45,7 @@ private:
 	HRESULT					SetUp_ConstantTable();
 	void					SetUp_Default();
 	void					Click_Icon();
+	void					SkillSlot_Touch_Sound(_uint i);
 
 private:
 	CBuffer_RcTex*			m_pBufferCom = nullptr;

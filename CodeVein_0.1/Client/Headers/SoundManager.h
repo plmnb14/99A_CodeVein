@@ -10,41 +10,62 @@ class CSoundManager : public CBase
 	DECLARE_SINGLETON(CSoundManager)
 
 public:
-	enum CHANNELID 
-	{ 
-	Ambient_01, Ambient_02, Ambient_03,
-	Background_01, Background_02,
+	enum CHANNELID
+	{
+		Ambient_01, Ambient_02, Ambient_03,
+		Background_01, Background_02,
+		//===============================================================
+		Genji_SFX_01, Genji_SFX_02, Genji_Voice,
+		Wolf_SFX_01, Wolf_SFX_02, Wolf_Voice,
+		Yacha_SFX_01, Yacha_SFX_02, Yacha_Voice,
+		Cocoon_SFX_01, Cocoon_SFX_02, Cocoon_Voice,
+		Monkey_SFX_01, Monkey_SFX_02, Monkey_Voice,
+		Hunter_SFX_01, Hunter_SFX_02, Hunter_Voice,
+		Yeti_SFX_01, Yeti_SFX_02, Yeti_Voice,
+		SpikeBall_SFX_01, SpikeBall_SFX_02, SpikeBall_Voice,
+		//===============================================================
+		Butterfly_SFX_01, Butterfly_SFX_02, ButterFly_Voice,
+		DearKing_SFX_01, DearKing_SFX_02, DearKing_Voice,
+		FireBoy_SFX_01, FireBoy_SFX_02, FireBoy_Voice,
+		IceGirl_SFX_01, IceGirl_SFX_02, IceGirl_Voice,
+		QueenKnight_SFX_01, QueenKnight_SFX_02, QueenKnight_Voice,
+		//===============================================================
+		Player_SFX_01, Player_SFX_02, Player_SFX_03, Player_Voice,
+		//===============================================================
+		Jack_SFX_01, Jack_SFX_02, Jack_SFX_03, Jack_Voice,
+		//===============================================================
+		Pet_SFX_01, Pet_SFX_02, Pet_SFX_03, Pet_Voice,
+		//===============================================================
+		NPC_Voice_01, NPC_Voice_02, NPC_Voice_03,
+		//===============================================================
+		Effect_SFX_01, Effect_SFX_02, Effect_SFX_03,
+		//===============================================================
+		Obj_SFX_01, Obj_SFX_02, Obj_SFX_03,
+		//===============================================================
+		UI_SFX_01, UI_SFX_02, UI_SFX_03, Inven_Icon_Expend, Inven_Icon_Material,
+		Inven_Icon_Weapon, Inven_Icon_All, Inven_Icon_Armor, Total_Inven_All, Total_Inven_Pet,
+		Inven_Icon_Exit, Inven_Expend_Slot, Inven_Mtrl_Slot, Inven_Weapon_Slot, Inven_Armor_Slot,
+		Total_Skill_Slot01, Total_Skill_Slot02, Total_Skill_Slot03, Total_Skill_Slot04,
+		Total_Skill_Slot05, Total_Skill_Slot06, Total_Skill_Slot07, Total_Skill_Slot08,
+		Total_Inven_Exit,
+		SkillInven_Regist_Slot01, SkillInven_Regist_Slot02, SkillInven_Regist_Slot03, SkillInven_Regist_Slot04,
+		SkillInven_Regist_Slot05, SkillInven_Regist_Slot06, SkillInven_Regist_Slot07, SkillInven_Regist_Slot08,
+		SkillInven_Regist_Slot09, SkillInven_Regist_Slot10, SkillInven_Regist_Slot11, SkillInven_Regist_Slot12,
+		SkillInven_Regist_Slot13, SkillInven_Regist_Slot14, SkillInven_Regist_Slot15, SkillInven_Regist_Slot16,
+		SkillInven_UnRegist_Slot01, SkillInven_UnRegist_Slot02, SkillInven_UnRegist_Slot03, SkillInven_UnRegist_Slot04,
+		SkillInven_UnRegist_Slot05, SkillInven_UnRegist_Slot06, SkillInven_UnRegist_Slot07, SkillInven_UnRegist_Slot08,
+		SkillInven_UnRegist_Slot09, SkillInven_UnRegist_Slot10, SkillInven_UnRegist_Slot11, SkillInven_UnRegist_Slot12,
+		SkillInven_UnRegist_Slot13, SkillInven_UnRegist_Slot14, SkillInven_UnRegist_Slot15, SkillInven_UnRegist_Slot16,
+		Skill_Inven_Exit,
+		QuickSlot_Use_Item,
+		ExpendInven_Regist_Slot01, ExpendInven_Regist_Slot02, ExpendInven_Regist_Slot03, ExpendInven_Regist_Slot04,
+		ExpendInven_Regist_Slot05, ExpendInven_Regist_Slot06, ExpendInven_Regist_Slot07, ExpendInven_Regist_Slot08,
+		ExpendInven_UnRegist_Slot01, ExpendInven_UnRegist_Slot02, ExpendInven_UnRegist_Slot03, ExpendInven_UnRegist_Slot04,
+		ExpendInven_UnRegist_Slot05, ExpendInven_UnRegist_Slot06, ExpendInven_UnRegist_Slot07, ExpendInven_UnRegist_Slot08,
+		WeaponInven_Regist_Slot01, WeaponInven_Regist_Slot02, WeaponInven_UnRegist_Slot01, WeaponInven_UnRegist_Slot02,
+		ArmorInven_Regist_Slot, ArmorInven_UnRegist_Slot,
 	//===============================================================
-	Genji_SFX_01, Genji_SFX_02, Genji_Voice,
-	Wolf_SFX_01, Wolf_SFX_02, Wolf_Voice,
-	Yacha_SFX_01, Yacha_SFX_02, Yacha_Voice,
-	Cocoon_SFX_01, Cocoon_SFX_02, Cocoon_Voice,
-	Monkey_SFX_01, Monkey_SFX_02, Monkey_Voice,
-	Hunter_SFX_01, Hunter_SFX_02, Hunter_Voice,
-	Yeti_SFX_01, Yeti_SFX_02, Yeti_Voice,
-	SpikeBall_SFX_01, SpikeBall_SFX_02, SpikeBall_Voice,
-	//===============================================================
-	Butterfly_SFX_01, Butterfly_SFX_02, ButterFly_Voice,
-	DearKing_SFX_01, DearKing_SFX_02, DearKing_Voice,
-	FireBoy_SFX_01, FireBoy_SFX_02, FireBoy_Voice,
-	IceGirl_SFX_01, IceGirl_SFX_02, IceGirl_Voice,
-	QueenKnight_SFX_01, QueenKnight_SFX_02, QueenKnight_Voice,
-	//===============================================================
-	Player_SFX_01, Player_SFX_02, Player_SFX_03, Player_Voice,
-	//===============================================================
-	Jack_SFX_01, Jack_SFX_02, Jack_SFX_03, Jack_Voice,
-	//===============================================================
-	Pet_SFX_01, Pet_SFX_02, Pet_SFX_03, Pet_Voice,
-	//===============================================================
-	NPC_Voice_01, NPC_Voice_02, NPC_Voice_03,
-	//===============================================================
-	Effect_SFX_01, Effect_SFX_02, Effect_SFX_03,
-	//===============================================================
-	Obj_SFX_01, Obj_SFX_02, Obj_SFX_03,
-	//===============================================================
-	UI_SFX_01, UI_SFX_02, UI_SFX_03,
-	//===============================================================
-	MAX_CHANNEL
+		MAX_CHANNEL
 	};
 
 public:
