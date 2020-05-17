@@ -42,6 +42,7 @@ private:
 	BloodCode_ID			m_eID = BloodCode_End;
 	_bool					m_bIsSelect = false;
 	_float					m_fAlpha = 0.f;
+	_bool					m_bIsSound = false;
 
 public:
 	static CBloodCodeOwner*		Create(_Device pGraphic_Device);

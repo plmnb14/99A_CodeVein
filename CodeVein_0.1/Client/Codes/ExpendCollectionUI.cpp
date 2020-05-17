@@ -82,19 +82,31 @@ void CExpendCollectionUI::Click_SubUI()
 	if (!m_bIsActive)
 		return;
 
+	_uint iIdx = 0;
 	for (auto& iter : m_vecOption)
 	{
 		if (iter->Pt_InRect() && CExpendables::EXPEND_END != iter->Get_Type())
 		{			
 			m_pInfoUI->Set_Type(iter->Get_Type());
 			if (g_pInput_Device->Get_DIMouseState(CInput_Device::DIM_LB))
-			{
+			{	
 				m_pBuyUI->Set_Active(true);
 				m_pBuyUI->Set_Type(iter->Get_Type());
-				
+
+				Click_ExpendSlot_Sound(iIdx);
 			}
 		}
+		iIdx++;
 	}
+}
+
+void CExpendCollectionUI::Click_ExpendSlot_Sound(_uint iIdx)
+{
+	if (iIdx > 5)
+		return;
+	_uint iChannel = CSoundManager::CHANNELID::Purchase_GeneralShop_ExpendSlot01 + iIdx;
+
+	g_pSoundManager->Play_Sound(L"UI_CommonClick.wav", CSoundManager::CHANNELID(iChannel), CSoundManager::Ambient_Sound);
 }
 
 

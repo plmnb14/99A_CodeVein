@@ -109,14 +109,14 @@ void CBloodCodeSelectUI::Click_BloodCodeSlot()
 				CUI_Manager::Get_Instance()->Get_BloodCode_Owner()->Set_Alpha(0.2f);
 				CUI_Manager::Get_Instance()->Get_BloodCode_Owner()->Set_CodeID(m_eID);
 				CUI_Manager::Get_Instance()->Get_Skill_ReleaseUI()->Set_CodeID(m_eID);
+
+				
 			}
 		}
 		else
 			iter->Set_Select(false);
 	}
 }
-
-
 
 void CBloodCodeSelectUI::SetUp_Default()
 {
