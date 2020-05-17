@@ -1135,6 +1135,9 @@ void CSwordShieldGenji::Check_PhyCollider()
 		{
 			if (true == m_pAIControllerCom->Get_BoolValue(L"Block") && Is_InFov(150, m_pTransformCom, *(_v3*)&matPlayer.m[3]))
 			{
+				g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::SwordShieldGenji_SFX_02);
+				g_pSoundManager->Play_Sound(const_cast<TCHAR*>(L"SE_BOSSGUY_SHIELD_ATTACK_001.ogg"), CSoundManager::CHANNELID::SwordShieldGenji_SFX_02, CSoundManager::SOUND::Effect_Sound);
+
 				m_pMeshCom->SetUp_Animation(Ani_GuardHit_Weak);
 
 				m_fSkillMoveSpeed_Cur = 2.f;
@@ -1143,6 +1146,9 @@ void CSwordShieldGenji::Check_PhyCollider()
 			}
 			else
 			{
+				g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::SwordShieldGenji_SFX_02);
+				g_pSoundManager->Play_Sound(const_cast<TCHAR*>(L"SE_NEW_BARK_DAMAGE_SMALL_MV_003.ogg"), CSoundManager::CHANNELID::SwordShieldGenji_SFX_02, CSoundManager::SOUND::Effect_Sound);
+
 				_float fAngle = D3DXToDegree(m_pTransformCom->Chase_Target_Angle(&TARGET_TO_TRANS(CMonster::Get_pTargetObject())->Get_Pos()));
 
 				if (0.f <= fAngle && fAngle < 90.f)
@@ -1157,6 +1163,9 @@ void CSwordShieldGenji::Check_PhyCollider()
 		}
 		else
 		{
+			g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::SwordShieldGenji_SFX_02);
+			g_pSoundManager->Play_Sound(const_cast<TCHAR*>(L"SE_NEW_BARK_DEATH_MV_V3_004.ogg"), CSoundManager::CHANNELID::SwordShieldGenji_SFX_02, CSoundManager::SOUND::Effect_Sound);
+
 			Ani eTmpAnim = (m_tObjParam.bIsExecution ? Ani_Death_F : Ani_Death);
 			_float fDelay = (m_tObjParam.bIsExecution ? 0.5f : 0.1f);
 

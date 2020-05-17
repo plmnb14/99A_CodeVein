@@ -77,7 +77,7 @@ HRESULT CDeerKing::Ready_GameObject(void * pArg)
 
 	// 패턴 확인용,  각 패턴 함수를 아래에 넣으면 재생됨
 
-	//Start_Sel->Add_Child(Rush_Body());
+	//Start_Sel->Add_Child(Jump_In_Place());
 	
 	//CBT_RotationDir* Rotation0 = Node_RotationDir("돌기", L"Player_Pos", 0.2);
 	//Start_Sel->Add_Child(Rotation0);
@@ -1015,6 +1015,9 @@ CBT_Composite_Node * CDeerKing::Jump_In_Place()
 	CBT_SetValue* Sound1Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Stop", true);
 	CBT_SetValue* Sound1Play = Node_BOOL_SetValue("소리1 재생", L"SFX_01_Play", true);
 	CBT_SetValue* Sound1Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_01_Tag", 1);
+	CBT_SetValue* Sound2Stop = Node_BOOL_SetValue("소리1 재생", L"SFX_02_Stop", true);
+	CBT_SetValue* Sound2Play = Node_BOOL_SetValue("소리1 재생", L"SFX_02_Play", true);
+	CBT_SetValue* Sound2Tag = Node_INT_SetValue("소리1 이름 설정", L"SFX_02_Tag", 5);
 
 	CBT_CreateEffect* Effect0 = Node_CreateEffect_Finite("눈 위로 폭발0", L"DeerKing_SnowChunk_Up_Particle_0"		, L"Self_Pos", 0.5, 3, 0.01, 0);
 	CBT_CreateEffect* Effect1 = Node_CreateEffect_Finite("눈 위로 폭발1", L"DeerKing_SnowChunk_Up_Particle_1"		, L"Self_Pos", 0.5, 3, 0.01, 0);
@@ -1090,6 +1093,9 @@ CBT_Composite_Node * CDeerKing::Jump_In_Place()
 	SubSeq->Add_Child(Sound1Stop);
 	SubSeq->Add_Child(Sound1Play);
 	SubSeq->Add_Child(Sound1Tag);
+	SubSeq->Add_Child(Sound2Stop);
+	SubSeq->Add_Child(Sound2Play);
+	SubSeq->Add_Child(Sound2Tag);
 
 	CBT_CreateBullet* Col0 = Node_CreateBullet("점프 찍기 충돌체", L"Monster_DeerKingJumpInPlaceCol", L"SelfPos", L"", 0, 0.1, 1.023 + 0.239 + 0.2, 1, 0, 0, CBT_Service_Node::Finite);
 	Root_Parallel->Add_Service(Col0);
@@ -1214,6 +1220,7 @@ CBT_Composite_Node * CDeerKing::Jump_Fist()
 	CBT_Play_Ani* Show_Ani0 = Node_Ani("기본", 0, 0.f);
 
 	CBT_Sequence* SubSeq = Node_Sequence("이동");
+
 	CBT_Wait* Wait0 = Node_Wait("대기", 0.6, 0);
 	CBT_RotationDir* Rotation0 = Node_RotationDir("돌기0", L"Player_Pos", 0.15);
 	CBT_SetValue* VoiceStop = Node_BOOL_SetValue("목소리 재생", L"Voice_Stop", true);
@@ -1709,7 +1716,10 @@ void CDeerKing::Update_Shield()
 	_v3 vShield_Pos = *(_v3*)&transInfo.matWorld.m[3];
 
 	if (0.8f >= transInfo.matWorld.m[3][1])
-	{
+	{		
+		g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::DearKing_SFX_02);
+		g_pSoundManager->Play_Sound(const_cast<TCHAR*>(L"SE_BOSSGUY_MATERIAL_011.ogg"), CSoundManager::CHANNELID::DearKing_SFX_02, CSoundManager::SOUND::Effect_Sound);
+
 		vShield_Pos.y = 0.8f;
 		m_bFinish_Throw_Shield = true;
 
@@ -2518,7 +2528,9 @@ HRESULT CDeerKing::Ready_Sound()
 	m_mapSound.emplace(2, L"SE_BOSSGUY_SWING_001.ogg");
 	m_mapSound.emplace(3, L"SE_BOSSGUY_SHIELD_ATTACK_000.ogg");
 	m_mapSound.emplace(4, L"SE_BOSSGUY_KETSUGI_BOOST_000.ogg");
+	m_mapSound.emplace(5, L"SE_BOSSGUY_BOOST_002.ogg");
 
+	
 	m_mapSound.emplace(10, L"SE_BOSSGUY_BARK_ATTACK_002.ogg");
 	
 	return S_OK;

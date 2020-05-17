@@ -2295,6 +2295,9 @@ void CIceGirl::Check_PhyCollider()
 		}
 		else
 		{
+			g_pSoundManager->Stop_Sound(CSoundManager::CHANNELID::IceGirl_Voice);
+			g_pSoundManager->Play_Sound(const_cast<TCHAR*>(L"Los_BossDead_01_gate_f.ogg"), CSoundManager::CHANNELID::IceGirl_Voice, CSoundManager::SOUND::Effect_Sound);
+
 			m_pMeshCom->SetUp_Animation(Ani_Death);	// 죽음처리 시작
 			Start_Dissolve(0.4f, false, true, 4.2f);
 			m_pSword->Start_Dissolve(0.4f, false, false, 4.2f);
